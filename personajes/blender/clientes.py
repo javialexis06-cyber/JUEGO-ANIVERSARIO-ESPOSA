@@ -207,12 +207,13 @@ def hat(coll, head, P, mats, name, kind):
         clay.lathe(f'{name} | copa', [(R[0] * 0.8, top - 0.12), (R[0] * 0.75, top + 0.18), (0.0, top + 0.2)], coll, mats['acc2'], segments=40)
         clay.lathe(f'{name} | cinta', [(R[0] * 0.81, top - 0.08), (R[0] * 0.79, top + 0.0)], coll, mats['acc'], segments=40)
     elif kind in ('gorra', 'gorra_atras'):
-        o = clay.blob(f'{name} | gorra', (0, 0.0, top - 0.25), (R[0] * 1.03, R[1] * 1.03, 0.52), coll, mats['acc'], n=12,
+        # La copa abraza el pelo (más ancha que el casco de cabello) y la visera sale por delante
+        o = clay.blob(f'{name} | gorra', (0, 0.0, top - 0.2), (R[0] * 1.17, R[1] * 1.2, 0.5), coll, mats['acc'], n=12,
                       shaper=lambda v: np.where(v[:, 2:3] < 0, v * np.array([1, 1, 0.05]), v))
-        vis = clay.blob(f'{name} | visera', (0, -R[1] * 0.95, top - 0.25), (0.42, 0.35, 0.03), coll, mats['acc'], n=8)
-        clay.blob(f'{name} | botón gorra', (0, 0, top + 0.26), (0.05, 0.05, 0.03), coll, mats['acc'], n=4)
+        vis = clay.blob(f'{name} | visera', (0, -R[1] * 1.12, top - 0.2), (0.46, 0.38, 0.03), coll, mats['acc'], n=8)
+        clay.blob(f'{name} | botón gorra', (0, 0, top + 0.3), (0.055, 0.055, 0.03), coll, mats['acc'], n=4)
         if kind == 'gorra_atras':
-            vis.location = (0, 2 * R[1] * 0.95, 0)
+            vis.location = (0, 2 * R[1] * 1.12, 0)
     elif kind == 'lana':
         clay.blob(f'{name} | gorro lana', (0, 0.0, top - 0.3), (R[0] * 1.05, R[1] * 1.05, 0.62), coll, mats['acc2'], n=12,
                   shaper=lambda v: np.where(v[:, 2:3] < 0, v * np.array([1, 1, 0.05]), v))
@@ -355,7 +356,7 @@ SPECS = {
     'nino': dict(base='m', label='Hijo de la mamá (niño perdido)', hat='gorra_atras', hair='corto', hair_color='#5A3A28', top='#F7D24A', sleeves='cortas',
                  bottom='#5A8FD6', lower='short', shoes='#E4564F', acc_color='#5DBB7A', mouth='o', brow_tilt=-10, scale=0.62),
     # ---------------- ayudantes ----------------
-    'cajera': dict(base='f', label='Ayudante: cajera', hat='gorra', hair='melena', hair_color='#3A2418', top='#EE7A68', sleeves='cortas',
+    'cajera': dict(base='f', label='Ayudante: cajera', hair='melena', hair_color='#3A2418', top='#EE7A68', sleeves='cortas',
                    bottom='#3A3838', shoes='#2B2A2A', accs=['placa'], acc_color='#EE7A68'),
     'reponedor': dict(base='m', label='Ayudante: reponedor', hat='gorra', hair='corto', hair_color='#2A1E1A', top='#F7F5F0', sleeves='cortas',
                       bottom='#3E6FA8', shoes='#2B2A2A', accs=['delantal', 'placa'], acc_color='#5DBB7A'),
