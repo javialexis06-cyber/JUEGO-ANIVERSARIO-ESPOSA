@@ -469,8 +469,9 @@ def _icono(c, kind, y, z):
     elif kind == 'arepa':
         b('arepa', 0.0, z, (0.047, 0.01, 0.047), 'arepa')
         for k in range(3):
-            o = (k - 1) * 0.022
-            clay.sweep(f'marca {k}', [(-0.025 + o, y - 0.011, z - 0.025 - o * 0.3), (0.025 + o, y - 0.011, z + 0.025 - o * 0.3)], 0.004, (1, 0.5), c,
+            o = (k - 1) * 0.02
+            h = 0.026 - abs(o) * 0.45
+            clay.sweep(f'marca {k}', [(-h + o, y - 0.011, z - h - o), (h + o, y - 0.011, z + h - o)], 0.004, (1, 0.5), c,
                        mat('arepa tostado'), segments=5, samples=2, up=(0, -1, 0))
 
 
