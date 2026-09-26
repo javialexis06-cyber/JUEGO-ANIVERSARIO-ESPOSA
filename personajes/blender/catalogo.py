@@ -97,7 +97,7 @@ def hide_sources():
 def hoja_productos(scene):
     hide_sources()
     coll = clay.collection('Hoja productos')
-    names = [n for n, _ in prod.CATALOGO] + [n for n, _ in prod.CAJAS]
+    names = [n for n, _ in prod.CATALOGO]
     cols = 8
     sp = 0.95
     labels = []
@@ -113,6 +113,28 @@ def hoja_productos(scene):
     cy = (rows - 1) * sp * 1.05 / 2
     cam = escena.camera('CAM productos', (0.0, cy - 7.4, 7.2), (0.0, cy - 0.15, 0.1), 40)
     render(scene, cam, '10-productos', 2000, 1500, labels, 'Productos del supermercado')
+    coll.hide_render = True
+    coll.hide_viewport = True
+    hoja_cajas(scene)
+
+
+def hoja_cajas(scene):
+    """Cajas del almacén con el ícono de su sección, en grande para ver el detalle."""
+    coll = clay.collection('Hoja cajas')
+    labels = []
+    names = [n for n, _, _ in prod.CAJAS]
+    cols = 5
+    sp = 1.0
+    for i, n in enumerate(names):
+        r, cidx = divmod(i, cols)
+        n_in_row = min(cols, len(names) - r * cols)
+        x = (cidx - (n_in_row - 1) / 2) * sp
+        y = r * sp * 1.1
+        prod.instance(n, (x, y, 0), -0.25, 1.9, coll)
+        labels.append((n.replace('caja ', '').replace('lacteos', 'lácteos').replace('panaderia', 'panadería'), (x, y - 0.42, -0.02)))
+    cy = sp * 1.1 / 2
+    cam = escena.camera('CAM cajas', (0.0, cy - 5.6, 3.6), (0.0, cy - 0.1, 0.25), 40)
+    render(scene, cam, '10b-cajas', 2000, 1200, labels, 'Cajas del almacén (cada sección con su ícono)')
     coll.hide_render = True
     coll.hide_viewport = True
 

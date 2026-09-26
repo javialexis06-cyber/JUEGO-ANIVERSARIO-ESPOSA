@@ -43,6 +43,10 @@ def m(key):
             'pantalla': M('Mueble | pantalla', '#7FD3F5', rough=0.2, emission='#9FE0FF', emission_strength=1.5),
             'luz roja': M('Mueble | luz roja', '#FF6B5E', rough=0.4, emission='#FF5A4A', emission_strength=2.5),
             'crema tecla': M('Mueble | tecla crema', '#F4EBDC', rough=0.45),
+            'azul bandera': M('Mueble | azul bandera', '#2E5AAC', rough=0.5, coat=0.15),
+            'rojo bandera': M('Mueble | rojo bandera', '#D8343A', rough=0.5, coat=0.15),
+            'brasa': M('Mueble | brasa', '#FF7A3D', rough=0.6, emission='#FF5A1F', emission_strength=1.8),
+            'chocolate': M('Mueble | chocolate', '#6B3E2A', rough=0.3, coat=0.4),
         })
     return _M[key]
 
@@ -355,19 +359,24 @@ def panaderia(level, coll):
             for sy in (-1, 1):
                 clay.sweep('pata', [(sx * 0.42, sy * 0.22, 0), (sx * 0.42, sy * 0.22, 0.48)], 0.03, (1, 1), coll, m('madera oscura'), segments=8, samples=2)
         clay.lathe('canasto', [(0.22, 0.53), (0.3, 0.7), (0.31, 0.72)], coll, m('mimbre'), segments=28, cap_top=False)
-        fill_grid(coll, 'pan', -0.15, 0.15, -0.08, 0.08, 0.6, 2, 2, 0.8, seed=2)
-        fill_row(coll, 'croissant', -0.1, 0.1, 0.0, 0.7, 2, 0.8)
+        fill_grid(coll, 'pan', -0.1, 0.1, -0.07, 0.07, 0.56, 2, 2, 0.7, seed=2)
+        fill_row(coll, 'croissant', -0.09, 0.09, 0.0, 0.68, 2, 0.75)
     elif level == 2:
         W, H = 0.7, 1.5
         for sx in (-1, 1):
             box('lateral', (sx * W, 0, H / 2), (0.035, 0.32, H / 2), coll, 'madera', p=10)
         box('fondo', (0, 0.3, H / 2), (W, 0.02, H / 2), coll, 'madera oscura', p=10)
-        for i, (z, nm, cnt) in enumerate(((0.25, 'pan', 3), (0.65, 'croissant', 4), (1.05, 'pan', 3))):
+        for i, (z, nm) in enumerate(((0.25, 'pan'), (0.65, 'croissant'), (1.05, 'pan'))):
             s = box('repisa', (0, -0.02, z), (W - 0.03, 0.3, 0.02), coll, 'madera', p=10)
             s.rotation_euler = (math.radians(-12), 0, 0)
             for x in np.linspace(-0.45, 0.45, 3):
                 clay.lathe('canastita', [(0.15, z + 0.02), (0.19, z + 0.12)], coll, m('mimbre'), segments=20, cap_top=False).location.x = x
-            fill_row(coll, nm, -0.45, 0.45, -0.02, z + 0.06, cnt, 0.75)
+                # Cada producto va dentro de su canastita
+                if nm == 'pan':
+                    prod.instance('pan', (x, 0.0, z + 0.05), 0.15, 0.72, coll)
+                else:
+                    for dx in (-0.055, 0.055):
+                        prod.instance('croissant', (x + dx, 0.0, z + 0.05), 1.57, 0.6, coll)
         sign(coll, 'blanco', (0, 0.3, H + 0.15), (0.45, 0.03, 0.1), 'amarillo')
     else:
         W = 0.9
@@ -384,6 +393,170 @@ def panaderia(level, coll):
         box('boca horno', (0.2, 0.44, 1.05), (0.3, 0.02, 0.2), coll, 'negro', p=6)
         box('brasa', (0.2, 0.43, 0.95), (0.25, 0.01, 0.04), coll, 'luz', p=6)
         sign(coll, 'blanco', (0.2, 0.44, 1.55), (0.35, 0.02, 0.09), 'rosa')
+
+
+# --------------------------------------------------------------------------
+# Zonas especiales: wafles y arepas (se reponen igual que la panadería)
+# --------------------------------------------------------------------------
+
+def _rueda(coll, x, y, r=0.09):
+    w = clay.lathe('rueda', [(0.0, -0.03), (r, -0.03), (r + 0.01, 0.0), (r, 0.03), (0.0, 0.03)], coll, m('negro'), segments=20)
+    w.rotation_euler = (0, math.pi / 2, 0)
+    w.location = (x, y, r + 0.005)
+
+
+def _parasol(coll, x, y, z0, h, r, color, trim='blanco'):
+    clay.sweep('palo parasol', [(x, y, z0), (x, y, z0 + h)], 0.018, (1, 1), coll, m('acero'), segments=6, samples=2)
+    top = clay.lathe('parasol', [(r, 0.0), (r * 0.6, 0.12), (0.0, 0.2)], coll, m(color), segments=24)
+    top.location = (x, y, z0 + h - 0.12)
+    for k in range(16):
+        a = k * math.pi / 8
+        clay.blob('festón parasol', (x + r * 0.96 * math.cos(a), y + r * 0.96 * math.sin(a), z0 + h - 0.15), (0.11, 0.11, 0.05), coll,
+                  m(color if k % 2 else trim), n=5)
+
+
+def _toldo(coll, W, y0, depth, z, colors, widths=None):
+    """Toldo a rayas de ancho 2W: franjas con festones al frente."""
+    widths = widths or [1] * 8
+    total = sum(widths)
+    x = -W
+    for k, wk in enumerate(widths):
+        w = 2 * W * wk / total
+        col = colors[k % len(colors)]
+        box('franja toldo', (x + w / 2, y0, z), (w / 2 + 0.012, depth, 0.025), coll, col, p=14, n=4)
+        clay.blob('festón', (x + w / 2, y0 - depth, z - 0.05), (w / 2 * 0.95, 0.03, 0.07), coll, m(col), n=5)
+        x += w
+
+
+def _waflera(coll, c, body, s=1.0, angle=-70):
+    """Wafflera abierta: base, placa inferior con wafle y tapa con placa cuadriculada."""
+    x, y, z = c
+    box('base wafflera', (x, y, z + 0.03 * s), (0.13 * s, 0.13 * s, 0.03 * s), coll, body, p=5)
+    box('placa wafflera', (x, y, z + 0.066 * s), (0.105 * s, 0.105 * s, 0.008 * s), coll, 'negro', p=4)
+    clay.rbox('wafle en placa', (x, y, z + 0.078 * s), (0.085 * s, 0.085 * s, 0.01 * s), coll, prod.mat('wafle'), p=4)
+    lid = box('tapa wafflera', (0, 0, 0), (0.13 * s, 0.13 * s, 0.03 * s), coll, body, p=5)
+    a = math.radians(angle)
+    vy, vz = -0.13 * s, 0.03 * s
+    lid.location = (x, y + 0.13 * s + vy * math.cos(a) - vz * math.sin(a), z + 0.06 * s + vy * math.sin(a) + vz * math.cos(a))
+    lid.rotation_euler = (a, 0, 0)
+    parts = [box('placa tapa', (0, 0, -0.032 * s), (0.105 * s, 0.105 * s, 0.006 * s), coll, 'negro', p=4),
+             clay.blob('manija wafflera', (0, -0.15 * s, 0.0), (0.045 * s, 0.022 * s, 0.016 * s), coll, m('negro'), n=4)]
+    for i in range(4):
+        for j in range(4):
+            parts.append(box('cuadro placa', ((i - 1.5) * 0.048 * s, (j - 1.5) * 0.048 * s, -0.039 * s), (0.017 * s, 0.017 * s, 0.003 * s), coll,
+                             'acero', p=4, n=4))
+    for o in parts:
+        o.parent = lid
+
+
+def _bowl(coll, x, y, z, fill, r=0.065):
+    b = clay.lathe('tazón', [(0.0, 0.0), (r * 0.7, 0.0), (r, 0.05), (r * 0.95, 0.055)], coll, m('blanco'), segments=20, cap_top=False)
+    b.location = (x, y, z)
+    if fill == 'fresas':
+        for k in range(5):
+            a = k * 1.3
+            clay.blob('fresa tazón', (x + 0.03 * math.cos(a), y + 0.03 * math.sin(a), z + 0.05), (0.02, 0.018, 0.018), coll, prod.mat('fresa'), n=4)
+    else:
+        mat = prod.mat('crema batida') if fill == 'crema' else m('chocolate')
+        clay.blob('relleno tazón', (x, y, z + 0.045), (r * 0.85, r * 0.85, 0.02), coll, mat, n=6)
+
+
+def _frasco(coll, x, y, z, mk, cap='blanco'):
+    b = clay.lathe('frasco salsa', [(0.0, 0.0), (0.03, 0.0), (0.032, 0.12), (0.012, 0.16), (0.004, 0.19)], coll, m(mk), segments=16)
+    b.location = (x, y, z)
+    clay.blob('tapa frasco', (x, y, z + 0.14), (0.02, 0.02, 0.012), coll, m(cap), n=4)
+
+
+def _kiosco(coll, body, back, awning, sign_color, awning_widths=None):
+    """Kiosco de nivel 3: mostrador con vitrina al frente, mesón de trabajo atrás y toldo."""
+    W = 0.95
+    box('mostrador', (0, 0, 0.42), (W, 0.36, 0.42), coll, body, p=6)
+    box('tapa', (0, 0, 0.86), (W + 0.03, 0.39, 0.03), coll, 'blanco', p=8)
+    box('vidrio frente', (0, -0.3, 1.07), (W - 0.04, 0.012, 0.18), coll, 'vidrio', p=8)
+    box('vidrio techo', (0, -0.16, 1.26), (W - 0.04, 0.15, 0.01), coll, 'vidrio', p=8)
+    box('meson', (0, 0.78, 0.45), (W, 0.22, 0.45), coll, back, p=6)
+    box('tapa meson', (0, 0.78, 0.915), (W + 0.02, 0.24, 0.025), coll, 'acero', p=8)
+    for sx in (-1, 1):
+        clay.sweep('poste toldo', [(sx * W, 1.0, 0.0), (sx * W, 1.0, 2.05)], 0.025, (1, 1), coll, m('acero'), segments=8, samples=2)
+    _toldo(coll, W + 0.05, 0.6, 0.45, 2.08, awning, awning_widths)
+    sign(coll, 'blanco', (0, 0.12, 2.3), (0.5, 0.03, 0.12), sign_color)
+    return W
+
+
+def wafles(level, coll):
+    if level == 1:
+        box('carrito', (0, 0, 0.44), (0.45, 0.28, 0.36), coll, 'rosa', p=6)
+        box('tapa', (0, 0, 0.82), (0.48, 0.3, 0.025), coll, 'blanco', p=8)
+        box('franja', (0, -0.285, 0.5), (0.4, 0.012, 0.035), coll, 'blanco', p=6)
+        for sx in (-1, 1):
+            _rueda(coll, sx * 0.47, -0.12)
+        _waflera(coll, (0.2, 0.02, 0.845), 'blanco')
+        for k in range(2):
+            prod.instance('wafle', (-0.2, -0.04, 0.845 + k * 0.045), 0.3 * k, 0.85, coll)
+        _parasol(coll, -0.38, 0.2, 0.845, 0.95, 0.55, 'rosa')
+    elif level == 2:
+        box('barra', (0, 0, 0.45), (0.75, 0.32, 0.45), coll, 'blanco', p=6)
+        for k in range(3):
+            box('franja', (0, -0.31, 0.2 + k * 0.2), (0.68, 0.012, 0.04), coll, 'rosa', p=6)
+        box('tapa', (0, 0, 0.92), (0.77, 0.34, 0.03), coll, 'madera', p=8)
+        for x in (0.15, 0.5):
+            _waflera(coll, (x, 0.12, 0.95), 'rosa', 0.95)
+        for x, f in ((-0.58, 'fresas'), (-0.42, 'crema'), (-0.26, 'chocolate')):
+            _bowl(coll, x, 0.14, 0.95, f)
+        fill_row(coll, 'wafle', -0.55, 0.5, -0.19, 0.95, 4, 0.75)
+        for sx in (-1, 1):
+            clay.sweep('poste letrero', [(sx * 0.5, 0.3, 0.95), (sx * 0.5, 0.3, 1.62)], 0.015, (1, 1), coll, m('acero'), segments=6, samples=2)
+        sign(coll, 'blanco', (0, 0.3, 1.72), (0.55, 0.03, 0.11), 'rosa')
+    else:
+        _kiosco(coll, 'rosa', 'blanco', ['rosa', 'blanco'], 'rosa')
+        fill_row(coll, 'wafle', -0.7, 0.7, -0.14, 0.89, 4, 0.75)
+        for x in (-0.55, 0.0, 0.55):
+            _waflera(coll, (x, 0.78, 0.94), 'rosa', 0.95)
+        for k, mk in enumerate(('chocolate', 'rojo bandera', 'amarillo')):
+            _frasco(coll, 0.62 + k * 0.1, 0.18, 0.89, mk)
+        for k, f in enumerate(('fresas', 'crema')):
+            _bowl(coll, -0.75 + k * 0.15, 0.18, 0.89, f, 0.055)
+
+
+def arepas(level, coll):
+    flag = ['amarillo', 'amarillo', 'azul bandera', 'rojo bandera']
+    if level == 1:
+        box('carrito', (0, 0, 0.42), (0.42, 0.26, 0.34), coll, 'amarillo', p=6)
+        box('franja azul', (0, -0.255, 0.3), (0.38, 0.012, 0.04), coll, 'azul bandera', p=6)
+        box('franja roja', (0, -0.255, 0.2), (0.38, 0.012, 0.04), coll, 'rojo bandera', p=6)
+        for sx in (-1, 1):
+            _rueda(coll, sx * 0.44, -0.1)
+        box('asador', (0, 0, 0.82), (0.36, 0.22, 0.06), coll, 'negro', p=6)
+        box('brasas', (0, 0, 0.865), (0.3, 0.17, 0.012), coll, 'brasa', p=6)
+        for k in range(7):
+            y = -0.18 + k * 0.06
+            clay.sweep('reja', [(-0.34, y, 0.885), (0.34, y, 0.885)], 0.008, (1, 1), coll, m('acero'), segments=6, samples=2)
+        fill_row(coll, 'arepa', -0.22, 0.22, 0.0, 0.892, 3, 0.8)
+        _parasol(coll, 0.34, 0.18, 0.88, 0.95, 0.55, 'amarillo', 'azul bandera')
+    elif level == 2:
+        box('mostrador', (0, 0, 0.45), (0.75, 0.32, 0.45), coll, 'blanco', p=6)
+        for k, (z, h, mk) in enumerate(((0.52, 0.08, 'amarillo'), (0.38, 0.04, 'azul bandera'), (0.28, 0.04, 'rojo bandera'))):
+            box('franja bandera', (0, -0.31, z), (0.68, 0.012, h), coll, mk, p=6)
+        box('tapa', (0, 0, 0.92), (0.77, 0.34, 0.03), coll, 'madera', p=8)
+        box('plancha', (0.2, 0.05, 0.965), (0.42, 0.22, 0.02), coll, 'acero', p=8)
+        box('borde plancha', (0.2, 0.26, 1.0), (0.42, 0.012, 0.04), coll, 'negro', p=8)
+        fill_grid(coll, 'arepa', -0.05, 0.45, -0.07, 0.15, 0.985, 3, 2, 0.75, seed=4)
+        clay.lathe('canasto arepas', [(0.12, 0.0), (0.16, 0.1), (0.165, 0.11)], coll, m('mimbre'), segments=24, cap_top=False).location = (-0.5, 0.0, 0.95)
+        for k in range(3):
+            prod.instance('arepa', (-0.5, 0.0, 0.96 + k * 0.035), k * 0.7, 0.75, coll)
+        clay.rbox('bloque queso', (-0.5, -0.22, 1.0), (0.09, 0.06, 0.05), coll, prod.mat('queso blanco'), p=4)
+        clay.rbox('mantequilla', (-0.3, -0.2, 0.975), (0.05, 0.04, 0.025), coll, prod.mat('mantequilla'), p=4)
+        for sx in (-1, 1):
+            clay.sweep('poste letrero', [(sx * 0.5, 0.3, 0.95), (sx * 0.5, 0.3, 1.62)], 0.015, (1, 1), coll, m('acero'), segments=6, samples=2)
+        sign(coll, 'blanco', (0, 0.3, 1.72), (0.55, 0.03, 0.11), 'amarillo')
+    else:
+        _kiosco(coll, 'amarillo', 'blanco', ['amarillo', 'azul bandera', 'rojo bandera'], 'azul bandera', [2, 1, 1, 2, 1, 1])
+        fill_row(coll, 'arepa', -0.7, 0.7, -0.14, 0.89, 5, 0.75)
+        for x in (-0.45, 0.45):
+            box('plancha', (x, 0.78, 0.95), (0.4, 0.18, 0.015), coll, 'negro', p=8)
+            fill_row(coll, 'arepa', x - 0.22, x + 0.22, 0.78, 0.965, 3, 0.7)
+        clay.rbox('bloque queso', (-0.75, 0.15, 0.94), (0.08, 0.06, 0.05), coll, prod.mat('queso blanco'), p=4)
+        clay.rbox('mantequilla', (0.75, 0.15, 0.915), (0.05, 0.04, 0.025), coll, prod.mat('mantequilla'), p=4)
 
 
 # --------------------------------------------------------------------------
@@ -516,6 +689,8 @@ TIPOS = [
     ('panaderia', 'Panadería', panaderia),
     ('bebidas', 'Bebidas', bebidas),
     ('caja', 'Caja registradora', caja_registradora),
+    ('wafles', 'Zona especial: wafles', wafles),
+    ('arepas', 'Zona especial: arepas', arepas),
 ]
 
 

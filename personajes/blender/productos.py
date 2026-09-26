@@ -65,6 +65,22 @@ def mat(key):
             'salsa': M('Prod | salsa', '#D8472F', rough=0.4),
             'caja carton': M('Prod | caja carton', '#D9A96B', rough=0.85, fuzz=fz('#E8C08A')),
             'cinta': M('Prod | cinta', '#C28D52', rough=0.6),
+            'pan tostado': M('Prod | pan tostado', '#B8773A', rough=0.55, coat=0.25, noise=dict(scale=30, strength=0.25, distance=0.006)),
+            'pan brillo': M('Prod | pan brillo', '#D99545', rough=0.4, coat=0.5, noise=dict(scale=30, strength=0.15, distance=0.004)),
+            'harina': M('Prod | harina', '#FBF6EC', rough=0.9),
+            'pan corte': M('Prod | pan corte dorado', '#EDBE72', rough=0.7),
+            'filete': M('Prod | filete', '#C8453F', rough=0.45, coat=0.3),
+            'grasa': M('Prod | grasa', '#F6E3D0', rough=0.5),
+            'grasa oscura': M('Prod | borde filete', '#8E2A26', rough=0.5),
+            'filete claro': M('Prod | vetas filete', '#F2A3A0', rough=0.5),
+            'wafle': M('Prod | wafle', '#E3A955', rough=0.55, sss=0.1, noise=dict(scale=40, strength=0.15, distance=0.004)),
+            'wafle oscuro': M('Prod | wafle hueco', '#B8762F', rough=0.6),
+            'crema batida': M('Prod | crema batida', '#FFFBF2', rough=0.5, sss=0.2),
+            'miel': M('Prod | miel', '#D98A1F', rough=0.15, coat=0.8, sss=0.3),
+            'arepa': M('Prod | arepa', '#EBC47C', rough=0.75, noise=dict(scale=35, strength=0.3, distance=0.004)),
+            'arepa tostado': M('Prod | arepa tostada', '#9C642C', rough=0.7),
+            'queso blanco': M('Prod | queso blanco', '#FBF7EE', rough=0.55, sss=0.15),
+            'mantequilla': M('Prod | mantequilla', '#F9DC6E', rough=0.35, coat=0.4),
         })
     return _MATS[key]
 
@@ -219,15 +235,74 @@ def salchichas(c):
 # --------------------------------------------------------------------------
 
 def pan(c):
-    clay.blob('pan', (0, 0, 0.06), (0.16, 0.07, 0.06), c, mat('pan'), n=8)
-    for k in range(3):
-        clay.sweep(f'corte {k}', [(-0.09 + k * 0.08, -0.03, 0.105), (-0.05 + k * 0.08, 0.03, 0.105)], 0.009, (0.6, 1), c, mat('pan claro'),
+    """Hogaza: miga dorada, corteza tostada encima, cortes abiertos y harina espolvoreada."""
+    flat = lambda v: np.where(v[:, 2:3] < 0, v * np.array([1, 1, 0.4]), v)
+    clay.blob('pan', (0, 0, 0.03), (0.17, 0.08, 0.07), c, mat('pan'), n=10, shaper=flat)
+    clay.blob('corteza', (0, 0, 0.036), (0.162, 0.074, 0.072), c, mat('pan tostado'), n=10, shaper=flat)
+    top = lambda x, y: 0.036 + 0.072 * math.sqrt(max(0.0, 1 - (x / 0.162) ** 2 - (y / 0.074) ** 2))
+    for k in range(4):
+        x0 = -0.105 + k * 0.07
+        pts = [(x0 - 0.022 + t * 0.044, -0.045 + t * 0.09) for t in (0.0, 0.5, 1.0)]
+        clay.sweep(f'corte {k}', [(x, y, top(x, y) + 0.003) for x, y in pts], [0.007, 0.012, 0.007], (0.5, 1), c, mat('pan corte'),
                    segments=6, samples=3, up=(0, 0, 1))
+    rng = np.random.default_rng(3)
+    for k in range(8):
+        x, y = rng.uniform(-0.12, 0.12), rng.uniform(-0.045, 0.045)
+        clay.blob(f'harina {k}', (x, y, top(x, y) + 0.001), (0.005, 0.005, 0.0015), c, mat('harina'), n=3)
 
 
 def croissant(c):
-    pts = [(-0.11, 0.05, 0.03), (-0.07, -0.02, 0.045), (0, -0.04, 0.055), (0.07, -0.02, 0.045), (0.11, 0.05, 0.03)]
-    clay.sweep('croissant', pts, [0.015, 0.045, 0.06, 0.045, 0.015], (1, 0.85), c, mat('pan'), segments=12, samples=6, up=(0, 0, 1))
+    """Medialuna: rollos atravesados a lo largo de una curva, más gordos al centro y con puntas."""
+    Rc, n = 0.1, 7
+    for k in range(n):
+        t = -1.15 + 2.3 * k / (n - 1)
+        f = 1 - 0.6 * (t / 1.15) ** 2
+        x, y = Rc * math.sin(t), -Rc * math.cos(t) + Rc * 0.55
+        o = clay.blob(f'rollo {k}', (0, 0, 0), (0.024 + 0.012 * f, 0.034 + 0.03 * f, 0.026 + 0.03 * f), c,
+                      mat('pan brillo' if k % 2 == 0 else 'pan tostado'), n=8)
+        o.location = (x, y, 0.026 + 0.028 * f)
+        o.rotation_euler = (0, 0, t)
+    for sgn in (-1, 1):
+        t = sgn * 1.45
+        o = clay.blob('punta', (0, 0, 0), (0.03, 0.016, 0.014), c, mat('pan brillo'), n=6)
+        o.location = (Rc * math.sin(t), -Rc * math.cos(t) + Rc * 0.55, 0.016)
+        o.rotation_euler = (0, 0, t)
+
+
+def wafle(c):
+    """Wafle en plato: cuadrícula de huecos, crema, fresas y miel."""
+    clay.lathe('plato', [(0.0, 0.0), (0.15, 0.0), (0.16, 0.012), (0.15, 0.016), (0.0, 0.014)], c, mat('bandeja'), segments=32)
+    clay.rbox('wafle', (0, 0, 0.04), (0.105, 0.105, 0.022), c, mat('wafle'), p=4)
+    for i in range(4):
+        for j in range(4):
+            clay.rbox(f'hueco {i}{j}', (-0.075 + i * 0.05, -0.075 + j * 0.05, 0.059), (0.017, 0.017, 0.005), c, mat('wafle oscuro'), p=4, n=4)
+    for k, r in enumerate((0.035, 0.026, 0.016)):
+        clay.blob(f'crema {k}', (0.045, 0.04, 0.07 + k * 0.022), (r, r, r * 0.7), c, mat('crema batida'), n=6)
+    for k, (x, y) in enumerate(((-0.05, 0.05), (0.06, -0.045))):
+        clay.blob(f'fresa {k}', (x, y, 0.078), (0.022, 0.018, 0.02), c, mat('fresa'), n=6)
+        clay.blob(f'hojita fresa {k}', (x - 0.018, y, 0.08), (0.006, 0.014, 0.006), c, mat('verde hoja'), n=4)
+    clay.sweep('miel', [(-0.08, -0.06, 0.066), (-0.03, -0.02, 0.068), (-0.06, 0.02, 0.068), (0.0, 0.05, 0.068), (0.05, -0.01, 0.068)], 0.007,
+               (0.5, 1), c, mat('miel'), segments=6, samples=5, up=(0, 0, 1))
+
+
+def arepa(c):
+    """Arepa asada: disco dorado con marcas cruzadas de parrilla, puntos tostados y mantequilla derritiéndose."""
+    clay.lathe('arepa', [(0.0, 0.0), (0.1, 0.0), (0.108, 0.018), (0.1, 0.036), (0.0, 0.039)], c, mat('arepa'), segments=32)
+    for d in (1, -1):
+        for k in range(3):
+            # Recta a 45° desplazada; se recorta al círculo de radio 0.082
+            o = (k - 1) * 0.04
+            h = math.sqrt(max(0.0, 0.082 ** 2 - o ** 2))
+            u, v = np.array([1.0, d * 1.0]) / math.sqrt(2), np.array([-d * 1.0, 1.0]) / math.sqrt(2)
+            a, b = v * o - u * h, v * o + u * h
+            clay.sweep(f'marca {d} {k}', [(a[0], a[1], 0.0395), (b[0], b[1], 0.0395)], 0.0055, (0.25, 1), c, mat('arepa tostado'),
+                       segments=6, samples=2, up=(0, 0, 1))
+    rng = np.random.default_rng(5)
+    for k in range(8):
+        a, r = rng.uniform(0, 2 * math.pi), rng.uniform(0.02, 0.085)
+        clay.blob(f'tostado {k}', (r * math.cos(a), r * math.sin(a), 0.038), (0.012, 0.009, 0.003), c, mat('arepa tostado'), n=3)
+    clay.rbox('mantequilla', (0.01, -0.005, 0.047), (0.026, 0.022, 0.009), c, mat('mantequilla'), p=3.5)
+    clay.blob('mantequilla derretida', (0.016, -0.012, 0.041), (0.04, 0.034, 0.003), c, mat('mantequilla'), n=5)
 
 
 def torta(c):
@@ -338,11 +413,83 @@ def pizza(c):
         clay.blob(f'pepperoni {k}', (math.cos(a) * r, math.sin(a) * r, 0.036), (0.025, 0.025, 0.006), c, mat('salsa'), n=4)
 
 
-def caja(c, color='rojo'):
-    """Caja de reposición del almacén, con una etiqueta del color de su sección."""
+def _icono(c, kind, y, z):
+    """Ícono en relieve (plano XZ, mirando a -Y) para el frente de las cajas."""
+    b = lambda n, cx, cz, r, mk, dy=0.0: clay.blob(n, (cx, y - dy, cz), r, c, mat(mk), n=5)
+    if kind == 'filete':
+        f = lambda v: v * (1 + 0.18 * np.sin(np.arctan2(v[:, 2], v[:, 0]) * 2 + 0.6))[:, None]
+        clay.blob('filete borde', (0.0, y, z), (0.07, 0.008, 0.05), c, mat('grasa oscura'), n=6, shaper=f)
+        clay.blob('filete', (-0.002, y - 0.004, z - 0.002), (0.062, 0.011, 0.043), c, mat('filete'), n=6, shaper=f)
+        clay.blob('hueso', (0.03, y - 0.012, z + 0.012), (0.015, 0.008, 0.015), c, mat('blanco'), n=5)
+        for k, (dx, dz) in enumerate(((-0.03, 0.008), (-0.008, -0.018), (0.012, 0.02))):
+            clay.sweep(f'vetas {k}', [(dx - 0.014, y - 0.015, z + dz), (dx + 0.014, y - 0.015, z + dz + 0.008)], 0.004, (1, 0.5), c,
+                       mat('filete claro'), segments=5, samples=2, up=(0, -1, 0))
+    elif kind == 'pan':
+        b('pan', 0.0, z, (0.07, 0.011, 0.036), 'pan')
+        b('corteza', 0.0, z + 0.006, (0.066, 0.012, 0.03), 'pan tostado', 0.002)
+        for k in range(3):
+            x0 = -0.035 + k * 0.035
+            clay.sweep(f'corte {k}', [(x0 - 0.008, y - 0.016, z - 0.012), (x0 + 0.008, y - 0.016, z + 0.018)], 0.005, (1, 0.5), c, mat('pan claro'),
+                       segments=5, samples=2, up=(0, -1, 0))
+    elif kind == 'leche':
+        b('botella', 0.0, z - 0.008, (0.03, 0.01, 0.042), 'blanco')
+        b('cuello', 0.0, z + 0.04, (0.016, 0.009, 0.014), 'blanco')
+        b('tapa', 0.0, z + 0.055, (0.017, 0.01, 0.007), 'azul', 0.002)
+        b('etiqueta', 0.0, z - 0.012, (0.031, 0.008, 0.013), 'azul', 0.004)
+    elif kind == 'manzana':
+        b('manzana', 0.0, z - 0.005, (0.045, 0.012, 0.042), 'rojo manzana')
+        clay.sweep('tallo', [(0.0, y - 0.01, z + 0.03), (0.004, y - 0.01, z + 0.05)], 0.004, (1, 1), c, mat('cafe tallo'), segments=5, samples=2)
+        b('hoja', 0.018, z + 0.045, (0.017, 0.007, 0.008), 'verde hoja', 0.004)
+    elif kind == 'lata':
+        clay.rbox('lata', (0.0, y, z), (0.032, 0.01, 0.042), c, mat('naranja empaque'), p=3, n=5)
+        for dz in (-0.042, 0.042):
+            clay.rbox('borde lata', (0.0, y - 0.002, z + dz), (0.033, 0.01, 0.006), c, mat('aluminio'), p=3, n=4)
+        b('logo lata', 0.0, z, (0.016, 0.006, 0.016), 'blanco', 0.008)
+    elif kind == 'botella':
+        b('botella', 0.0, z - 0.012, (0.026, 0.01, 0.04), 'agua')
+        b('hombro', 0.0, z + 0.024, (0.018, 0.009, 0.014), 'agua')
+        b('tapa', 0.0, z + 0.045, (0.01, 0.009, 0.008), 'rojo', 0.002)
+        b('etiqueta', 0.0, z - 0.01, (0.027, 0.007, 0.012), 'rojo', 0.004)
+    elif kind == 'copo':
+        for k in range(3):
+            a = k * math.pi / 3
+            dx, dz = 0.048 * math.cos(a), 0.048 * math.sin(a)
+            clay.sweep(f'brazo {k}', [(-dx, y - 0.006, z - dz), (dx, y - 0.006, z + dz)], 0.006, (1, 1), c, mat('blanco'), segments=6, samples=2)
+            for sgn in (-1, 1):
+                ex, ez = sgn * dx * 0.62, sgn * dz * 0.62
+                for t in (-1, 1):
+                    bx = ex + sgn * 0.016 * math.cos(a + t * 0.9)
+                    bz = ez + sgn * 0.016 * math.sin(a + t * 0.9)
+                    clay.sweep(f'rama {k}', [(ex, y - 0.006, z + ez), (bx, y - 0.006, z + bz)], 0.004, (1, 1), c, mat('blanco'), segments=5, samples=2)
+    elif kind == 'wafle':
+        clay.rbox('wafle', (0.0, y, z), (0.045, 0.01, 0.045), c, mat('wafle'), p=4, n=5)
+        for i in range(3):
+            for j in range(3):
+                clay.rbox('hueco', (-0.028 + i * 0.028, y - 0.008, z - 0.028 + j * 0.028), (0.01, 0.006, 0.01), c, mat('wafle oscuro'), p=4, n=4)
+    elif kind == 'arepa':
+        b('arepa', 0.0, z, (0.047, 0.01, 0.047), 'arepa')
+        for k in range(3):
+            o = (k - 1) * 0.022
+            clay.sweep(f'marca {k}', [(-0.025 + o, y - 0.011, z - 0.025 - o * 0.3), (0.025 + o, y - 0.011, z + 0.025 - o * 0.3)], 0.004, (1, 0.5), c,
+                       mat('arepa tostado'), segments=5, samples=2, up=(0, -1, 0))
+
+
+def caja(c, color='rojo', icon=None):
+    """Caja de reposición del almacén: cinta, placa del color de su sección y el ícono de lo que trae."""
     clay.rbox('caja', (0, 0, 0.14), (0.2, 0.15, 0.14), c, mat('caja carton'), p=8)
     clay.rbox('cinta', (0, 0, 0.28), (0.035, 0.152, 0.005), c, mat('cinta'), p=8)
-    clay.blob('etiqueta', (0, -0.151, 0.15), (0.07, 0.004, 0.05), c, mat(color), n=5)
+    clay.rbox('placa', (0, -0.151, 0.14), (0.125, 0.006, 0.1), c, mat(color), p=5, n=5)
+    clay.rbox('placa clara', (0, -0.156, 0.14), (0.108, 0.005, 0.083), c, mat('crema'), p=5, n=5)
+    if icon:
+        before = set(c.objects)
+        _icono(c, icon, -0.168, 0.14)
+        for o in c.objects:
+            if o not in before:
+                for v in o.data.vertices:
+                    v.co.x *= 1.35
+                    v.co.z = 0.14 + (v.co.z - 0.14) * 1.35
+    else:
+        clay.blob('etiqueta', (0, -0.161, 0.14), (0.05, 0.004, 0.04), c, mat(color), n=5)
 
 
 CATALOGO = [
@@ -354,10 +501,11 @@ CATALOGO = [
     ('cereal', cereal), ('enlatado', enlatado), ('arroz', arroz),
     ('gaseosa', gaseosa), ('jugo', jugo), ('agua', agua),
     ('helado', helado), ('papitas', papitas), ('galletas', galletas),
-    ('malteada', malteada), ('cafe', cafe), ('pizza', pizza),
+    ('malteada', malteada), ('cafe', cafe), ('pizza', pizza), ('wafle', wafle), ('arepa', arepa),
 ]
-CAJAS = [('caja frutas', 'verde'), ('caja lacteos', 'azul'), ('caja carnes', 'rojo'), ('caja panaderia', 'amarillo'),
-         ('caja abarrotes', 'naranja empaque'), ('caja bebidas', 'celeste'), ('caja congelados', 'morado')]
+CAJAS = [('caja frutas', 'verde', 'manzana'), ('caja lacteos', 'azul', 'leche'), ('caja carnes', 'rojo', 'filete'),
+         ('caja panaderia', 'amarillo', 'pan'), ('caja abarrotes', 'naranja empaque', 'lata'), ('caja bebidas', 'celeste', 'botella'),
+         ('caja congelados', 'morado', 'copo'), ('caja wafles', 'rosa', 'wafle'), ('caja arepas', 'pan tostado', 'arepa')]
 
 
 def build_all():
@@ -367,9 +515,9 @@ def build_all():
         c = _coll(name)
         fn(c)
         out[name] = c
-    for name, color in CAJAS:
+    for name, color, icon in CAJAS:
         c = _coll(name)
-        caja(c, color)
+        caja(c, color, icon)
         out[name] = c
     return out
 

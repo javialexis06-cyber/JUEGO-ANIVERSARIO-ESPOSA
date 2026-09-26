@@ -95,9 +95,9 @@ Cada nivel es una tienda más grande, con más secciones y más problemas:
 | Nivel | Tienda | Tamaño y secciones | Novedades |
 |---|---|---|---|
 | 1 | **Tiendita de barrio** | Local pequeño: 3–4 vitrinas, 1 caja, almacén chico | Reponer, cobrar, basura |
-| 2 | **Minimercado** | Más pasillos: frutas, lácteos, abarrotes, 1–2 cajas | Derrames, canastas abandonadas, ladrones |
-| 3 | **Supermercado** | Congeladores, vitrina refrigerada, panadería, máquina de malteadas | Productos preparados, niño perdido, cajera |
-| 4 | **Hipermercado** | Tienda grande y decorada: café, jugos, pizza, todas las secciones | Celebridad, niña traviesa, guardia, limpiador automático |
+| 2 | **Minimercado** | Más pasillos: frutas, lácteos, abarrotes, 1–2 cajas | Derrames, canastas abandonadas, ladrones, carrito de wafles |
+| 3 | **Supermercado** | Congeladores, vitrina refrigerada, panadería, máquina de malteadas | Productos preparados, niño perdido, cajera, barra de wafles y carrito de arepas |
+| 4 | **Hipermercado** | Tienda grande y decorada: café, jugos, pizza, todas las secciones | Celebridad, niña traviesa, guardia, limpiador automático, kioscos de wafles y arepas |
 
 ### Vitrinas y sus niveles de mejora
 Cada vitrina tiene **3 niveles**. Al subir de nivel gana **capacidad** (menos viajes al almacén) y **atractivo** (los clientes compran más y esperan con más paciencia).
@@ -110,11 +110,18 @@ Cada vitrina tiene **3 niveles**. Al subir de nivel gana **capacidad** (menos vi
 | Vitrina refrigerada (carnes, pescado, quesos) | Vitrina curva pequeña | Vitrina larga iluminada | Isla doble de charcutería |
 | Congelador (helados, congelados) | Baúl pequeño | Baúl con tapa de vidrio | Isla congeladora doble |
 | Panadería | Canasto de panes | Repisa de panadería | Vitrina de pastelería con horno |
+| Zona especial: wafles | Carrito con una waflera y parasol | Barra con 2 wafleras y tazones de toppings | Kiosco con vitrina, 3 wafleras, salsas y toldo |
+| Zona especial: arepas | Carrito con asador de carbón y parasol | Mostrador con plancha, canasto, queso y mantequilla | Arepería con vitrina, 2 planchas y toldo tricolor |
 | Bebidas | Canasta de alambre | Enfriador de bebidas | Enfriador grande con dispensador |
 | Caja registradora | Mostrador con registradora | Caja con banda transportadora | Caja moderna con escáner y pantalla |
 | Máquinas especiales (malteadas, café, jugo, horno) | Básica y lenta | Más rápida | Rápida y con doble tanda |
 | Carrito de reposición | 5 reposiciones | 7 reposiciones | 9 reposiciones y más veloz |
 | Almacén | Puerta con cajas | Estantería ordenada (reposición más rápida) | Banda transportadora |
+
+**Zonas especiales (wafles y arepas).** Funcionan igual que la panadería:
+- **Reponer:** se surten con su caja del almacén (caja de wafles o de arepas) y se mejoran en 3 niveles.
+- **Preparar:** además tienen un paso de preparación, como las máquinas. Un jugador pone el wafle o la arepa en la waflera o la plancha y, cuando está listo, cualquiera de los dos lo lleva a la vitrina o se lo entrega al cliente que lo pidió.
+- **En pareja:** es un buen punto para jugar en equipo; uno cocina y el otro entrega.
 
 ### Clientes
 | Cliente | Velocidad | Paciencia | Comportamiento |
@@ -151,17 +158,18 @@ Plantas, globos, música ambiental (parlante), aire acondicionado, pantalla de o
 
 1. **Personajes**: Él y Ella (aprobados en estilo plastilina), clientes (10 tipos) y ayudantes (4 uniformes).
 2. **Niveles de supermercado**: 4 tiendas completas en vista isométrica de juego.
-3. **Vitrinas**: 11 tipos × 3 niveles, llenas de producto.
+3. **Vitrinas**: 10 tipos × 3 niveles, llenas de producto (incluye las zonas especiales de wafles y arepas).
 4. **Productos** (≈24):
    - Frutas y verduras: manzana, banano, naranja, piña, uvas, tomate, brócoli, zanahoria.
    - Lácteos y refrigerados: leche, queso, yogur, huevos.
    - Carnes: pollo, pescado, salchichas.
    - Panadería: pan, croissant, torta.
+   - Zonas especiales: wafle con fresas y crema, arepa asada con mantequilla.
    - Abarrotes: cereal, enlatados, arroz.
    - Bebidas: gaseosa, jugo, agua.
    - Congelados y snacks: helado, papitas, galletas.
    - Preparados: malteada, café, pizza.
-   - **Cajas de reposición** por categoría.
+   - **Cajas de reposición** por categoría, cada una con el ícono de su sección en relieve (manzana, leche, filete, pan, lata, botella, copo de nieve, wafle, arepa).
 5. **Utilería**:
    - Compras: carrito de reposición, canasta de cliente y puesto de canastas.
    - Tienda: torniquetes de entrada, carretilla con cajas del almacén.
