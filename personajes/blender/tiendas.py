@@ -727,8 +727,13 @@ def gente_inicio(coll, level, U, W, D):
     """Al empezar: solo Él y Ella atendiendo y unos pocos clientes."""
     el_con_carrito(coll, U, 1, -W * 0.1, -D * 0.12, -0.4, 0.0, -0.65)
     person(coll, 'ella_reponer', {1: -3.4, 2: -0.2, 3: -1.2, 4: -1.0}[level], D / 2 - 1.4, math.pi - 0.8)
-    for k, key in enumerate(['abuelita', 'mama', 'deportista'][:1 + min(level, 2)]):
-        person(coll, key, -W * 0.3 + k * 1.6, -D * 0.2 + k * 0.5, -0.6 + k * 0.4)
+    # Clientes en pasillos libres (lejos de los sitios y de Él con el carrito)
+    sitios = {1: [('abuelita', -2.6, 2.3, -0.4), ('mama', 1.0, -3.2, 0.3)],
+              2: [('abuelita', -4.2, 3.4, -0.4), ('mama', 3.4, -3.8, 0.3), ('deportista', 4.2, 2.8, -0.8)],
+              3: [('abuelita', -7.4, 4.9, -0.4), ('mama', -1.4, -3.4, 0.3), ('deportista', 3.6, -1.0, -0.8)],
+              4: [('abuelita', -9.2, 6.4, -0.4), ('mama', -1.6, -4.6, 0.3), ('deportista', 3.6, -1.6, -0.8)]}
+    for key, x, y, rot in sitios[level]:
+        person(coll, key, x, y, rot)
 
 
 def gente_completa(coll, level, U):
