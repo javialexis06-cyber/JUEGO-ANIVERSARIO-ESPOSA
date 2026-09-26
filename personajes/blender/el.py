@@ -9,6 +9,7 @@ import math
 import numpy as np
 
 import clay
+import cuerpo
 import personaje
 import sdf
 from clay import sph
@@ -143,198 +144,45 @@ def hair_locks(coll, surf, mats):
 
 
 # --------------------------------------------------------------------------
-# Cuerpo (SDF)
+# Cuerpo (SDF, ver cuerpo.py)
 # --------------------------------------------------------------------------
 
+D = {
+    'joint': tuple(JOINT), 'sleeve_deg': 40, 'arm_deg': 35,
+    'torso': {'c': (0, 0.03, 0.7), 'half': (0.39, 0.27, 0.205), 'r': 0.18, 'taper': 0.6,
+              'belly': ((0, -0.05, 0.64), (0.34, 0.25, 0.2)), 'bottom': 0.5},
+    'sleeve': {'len': 0.2, 'r': (0.145, 0.15), 'hole': 0.13},
+    'neck_hole': ((0, 0.025, 0.93), (0.2, 0.165, 0.11)),
+    'shirt_bounds': ((-0.78, -0.4, 0.46), (0.78, 0.42, 1.0)),
+    'arm': {'r': (0.12, 0.115), 'hand': (0.135, 0.13, 0.145), 'wrist_t': 0.255, 'hand_t': 0.315, 'dy': 0.08},
+    'pants': {'hip_c': (0, 0.03, 0.43), 'hip_half': (0.41, 0.27, 0.11), 'hip_r': 0.1,
+              'leg_top': (0.215, 0.03, 0.4), 'leg_bot': (0.232, 0.005, 0.21), 'leg_r': (0.21, 0.222),
+              'bulge': ((0.232, 0.0, 0.225), (0.238, 0.225, 0.12)), 'crotch_z': 0.3,
+              'bottom': 0.125, 'top': 0.56, 'pockets': True, 'folds': True, 'knee': True, 'fly': True,
+              'bounds': ((-0.54, -0.32, 0.09), (0.54, 0.38, 0.58))},
+    'shoe': {'x': 0.235},
+}
+
+
 def shirt(coll, mats):
-    """Camiseta de punto: torso trapezoidal suave, mangas cortas con abertura,
-    escote redondo, dobladillos con pespunte y pliegues suaves en las axilas."""
-    torso = sdf.taper_x(sdf.round_box((0, 0.03, 0.7), (0.39, 0.27, 0.205), 0.18), 0.7, 0.6)
-    belly = sdf.ellipsoid((0, -0.05, 0.64), (0.34, 0.25, 0.2))
-    parts = [torso, belly]
-    sleeves = []
-    holes = []
-    ends = {}
-    for sx in (-1, 1):
-        d = SLEEVE_DIR * np.array([sx, 1, 1])
-        a = JOINT * np.array([sx, 1, 1]) - d * 0.05
-        b = JOINT * np.array([sx, 1, 1]) + d * 0.2
-        cone = sdf.round_cone(a, b, 0.145, 0.15)
-        cut = sdf.plane(b, d)
-        sleeves.append(lambda P, cone=cone, cut=cut: sdf.smax(cone(P), cut(P), 0.012))
-        holes.append(sdf.round_cone(b - d * 0.03, b + d * 0.2, 0.13, 0.13))
-        ends[sx] = (b, d)
-    body0 = sdf.union(*parts, k=0.07)
-    body = lambda P: sdf.smin(sdf.smin(body0(P), sleeves[0](P), 0.035), sleeves[1](P), 0.035)
-    neck = sdf.ellipsoid((0, 0.025, 0.93), (0.2, 0.165, 0.11))
-
-    def base(P):
-        dd = body(P)
-        for h in holes:
-            dd = sdf.smax(dd, -h(P), 0.01)
-        dd = sdf.smax(dd, -neck(P), 0.03)
-        dd = sdf.smax(dd, 0.5 - P[:, 2], 0.015)
-        return dd
-
-    # Pliegues: surcos suaves en diagonal desde las axilas
-    folds = []
-    for sx in (-1, 1):
-        for pts2 in ([(sx * 0.29, 0.79), (sx * 0.265, 0.75), (sx * 0.24, 0.72)],):
-            pts = sdf.front_points(base, pts2)
-            if len(pts) >= 2:
-                folds.append(sdf.stroke(pts, [0.003, 0.007, 0.003]))
-
-    def final(P):
-        dd = base(P)
-        for fo in folds:
-            dd = sdf.smax(dd, -fo(P), 0.03)
-        return dd
-
-    obj = sdf.to_mesh(f'{NAME} | torso camiseta', final, (-0.78, -0.4, 0.46), (0.78, 0.42, 1.0), 0.0045, coll, mats['shirt'], smooth=2)
-    objs = [obj]
-    # Cuello acanalado sobre el borde del escote
-    ring = []
-    for k in range(28):
-        a = 2 * math.pi * k / 28
-        o = np.array([[math.cos(a) * 0.175, 0.025 + math.sin(a) * 0.145, 1.2]])
-        p, hit = sdf.trace(final, o, (0, 0, -1), max_dist=0.6)
-        if hit[0]:
-            ring.append(p[0] + np.array([0, 0, 0.004]))
-    objs.append(clay.sweep(f'{NAME} | cuello camiseta', ring, 0.026, (1, 1), coll, mats['rib'], segments=10, samples=3, closed=True))
-    ring2 = []
-    for k in range(40):
-        a = 2 * math.pi * k / 40
-        o = np.array([[math.cos(a) * 0.212, 0.025 + math.sin(a) * 0.18, 1.2]])
-        p, hit = sdf.trace(final, o, (0, 0, -1), max_dist=0.6)
-        if hit[0]:
-            ring2.append(p[0] + np.array([0, 0, 0.003]))
-    if len(ring2) > 10:
-        clay.stitches(f'{NAME} | pespunte camiseta cuello', ring2, 0.0045, 0.022, 0.014, coll, mats['thread_dark'], closed=True)
-    # Dobladillo inferior + pespunte
-    hem = sdf.ring_points(final, (0, 0.03, 0.515), (0, 0, 1), 0.8, 36)
-    objs.append(clay.sweep(f'{NAME} | ribete camiseta', hem, 0.02, (1, 0.8), coll, mats['shirt'], segments=8, samples=3, closed=True))
-    st2 = sdf.ring_points(final, (0, 0.03, 0.555), (0, 0, 1), 0.8, 48, lift=0.002)
-    clay.stitches(f'{NAME} | pespunte camiseta bajo', st2, 0.0045, 0.022, 0.014, coll, mats['thread_dark'], closed=True)
-    # Ribete y pespunte de las mangas
-    for sx, side in ((-1, 'izq'), (1, 'der')):
-        b, d = ends[sx]
-        r1 = sdf.ring_points(final, b - d * 0.012, d, 0.3, 28)
-        objs.append(clay.sweep(f'{NAME} | ribete manga {side}', r1, 0.017, (1, 1), coll, mats['shirt'], segments=8, samples=3, closed=True))
-        r2 = sdf.ring_points(final, b - d * 0.05, d, 0.3, 36, lift=0.002)
-        clay.stitches(f'{NAME} | pespunte camiseta manga {side}', r2, 0.004, 0.02, 0.013, coll, mats['thread_dark'], closed=True)
-    return objs
+    """Camiseta de punto: torso trapezoidal con barriguita, mangas con abertura,
+    cuello acanalado y dobladillos con pespunte."""
+    return cuerpo.shirt(coll, mats, NAME, D)[0]
 
 
 def arms(coll, mats):
-    """Brazos rechonchos con la mano de manopla fundida (sin esferas separadas)."""
-    objs = []
-    for sx, side in ((-1, 'izq'), (1, 'der')):
-        s = np.array([sx, 1, 1])
-        d = ARM_DIR * s
-        start = JOINT * s + np.array([sx * 0.0, 0, 0.0])
-        wrist = start + d * 0.255
-        hand_c = start + d * 0.315
-        arm = sdf.round_cone(start, wrist, 0.12, 0.115)
-        hand = sdf.ellipsoid(hand_c, (0.135, 0.13, 0.145))
-        thumb = sdf.capsule(hand_c + np.array([-sx * 0.055, -0.08, 0.055]), hand_c + np.array([-sx * 0.085, -0.105, 0.005]), 0.04)
-        f = sdf.union(arm, hand, k=0.06)
-        f = sdf.union(f, thumb, k=0.03)
-        # Leve pliegue de muñeca
-        wr = sdf.capsule(wrist + d * 0.01 + np.array([-sx * 0.1, -0.12, 0]), wrist + d * 0.01 + np.array([-sx * 0.1, 0.12, 0]), 0.004)
-        lo = np.minimum(start, hand_c) - 0.16
-        hi = np.maximum(start, hand_c) + 0.16
-        o = sdf.to_mesh(f'{NAME} | brazo {side}', f, lo, hi, 0.004, coll, mats['skin'], smooth=2)
-        objs.append(o)
-    return objs
+    """Brazos rechonchos con la mano de manopla fundida."""
+    return cuerpo.arms(coll, mats, NAME, D)
 
 
 def pants(coll, mats):
-    """Pantalón holgado y corto: piernas abombadas, bolsillos delanteros, bragueta
-    y pliegues de tela, con pespuntes."""
-    hip = sdf.round_box((0, 0.03, 0.43), (0.41, 0.27, 0.11), 0.1)
-    parts = [hip]
-    for sx in (-1, 1):
-        parts.append(sdf.round_cone((sx * 0.215, 0.03, 0.4), (sx * 0.232, 0.005, 0.21), 0.21, 0.222))
-        parts.append(sdf.ellipsoid((sx * 0.232, 0.0, 0.225), (0.238, 0.225, 0.12)))
-    body = sdf.union(*parts, k=0.07)
-    crotch = sdf.round_box((0, 0.03, 0.1), (0.008, 0.4, 0.2), 0.008)
-
-    def base(P):
-        dd = body(P)
-        dd = sdf.smax(dd, -crotch(P), 0.07)
-        dd = sdf.smax(dd, 0.125 - P[:, 2], 0.035)
-        dd = sdf.smax(dd, P[:, 2] - 0.56, 0.01)
-        return dd
-
-    grooves = []
-    pocket_curves = {}
-    for sx in (-1, 1):
-        pk = sdf.front_points(base, [(sx * 0.22, 0.53), (sx * 0.26, 0.47), (sx * 0.32, 0.43), (sx * 0.38, 0.415)])
-        pocket_curves[sx] = pk
-        if len(pk) >= 3:
-            grooves.append((sdf.stroke(pk, 0.011), 0.012))
-        fold = sdf.front_points(base, [(sx * 0.03, 0.31), (sx * 0.085, 0.265), (sx * 0.13, 0.245)])
-        if len(fold) >= 3:
-            grooves.append((sdf.stroke(fold, [0.004, 0.012, 0.004]), 0.02))
-        knee = sdf.front_points(base, [(sx * 0.12, 0.2), (sx * 0.2, 0.185), (sx * 0.28, 0.2)])
-        if len(knee) >= 3:
-            grooves.append((sdf.stroke(knee, [0.003, 0.009, 0.003]), 0.02))
-    fly = sdf.front_points(base, [(0.0, 0.53), (0.0, 0.4), (0.0, 0.33)])
-    grooves.append((sdf.stroke(fly, 0.007), 0.01))
-
-    def final(P):
-        dd = base(P)
-        for g, k in grooves:
-            dd = sdf.smax(dd, -g(P), k)
-        return dd
-
-    obj = sdf.to_mesh(f'{NAME} | pantalon', final, (-0.54, -0.32, 0.09), (0.54, 0.38, 0.58), 0.0045, coll, mats['pants'], smooth=2)
-    objs = [obj]
-    # Pespuntes: paralelos a los bolsillos, en la bragueta y en los bajos
-    for sx in (-1, 1):
-        pk = sdf.front_points(final, [(sx * 0.25, 0.53), (sx * 0.285, 0.48), (sx * 0.335, 0.448), (sx * 0.385, 0.438)], lift=0.002)
-        if len(pk) >= 3:
-            objs.append(clay.stitches(f'{NAME} | pespunte pantalon bolsillo {"izq" if sx < 0 else "der"}', pk, 0.0045, 0.02, 0.013, coll, mats['stitch']))
-    fl = sdf.front_points(final, [(0.035, 0.53), (0.035, 0.4), (0.012, 0.36)], lift=0.002)
-    objs.append(clay.stitches(f'{NAME} | pespunte pantalon bragueta', fl, 0.0045, 0.02, 0.013, coll, mats['stitch']))
-    return objs
+    """Pantalón holgado: perneras abombadas, bolsillos, bragueta y pliegues."""
+    return cuerpo.pants(coll, mats, NAME, D)
 
 
 def shoes(coll, mats):
-    """Tenis bajos y redondeados: capellada negra acolchada, suela blanca gruesa con
-    línea negra de piso y un reborde curvo sobre el empeine."""
-    objs = []
-    for sx, side in ((-1, 'izq'), (1, 'der')):
-        x = sx * 0.235
-        upper0 = sdf.union(sdf.ellipsoid((x, -0.03, 0.11), (0.19, 0.265, 0.125)),
-                           sdf.ellipsoid((x, -0.13, 0.085), (0.186, 0.18, 0.088)), k=0.06)
-        opening = sdf.ellipsoid((x, 0.03, 0.235), (0.125, 0.15, 0.07))
-
-        def up_base(P, upper0=upper0, opening=opening):
-            dd = upper0(P)
-            dd = sdf.smax(dd, -opening(P), 0.03)
-            dd = sdf.smax(dd, 0.055 - P[:, 2], 0.01)
-            return dd
-        # Reborde curvo sobre el empeine
-        ridge_pts = []
-        for t in np.linspace(-1, 1, 7):
-            o = np.array([[x + t * 0.13, -0.12 - 0.04 * (1 - t * t), 0.6]])
-            p, hit = sdf.trace(up_base, o, (0, 0, -1), max_dist=1.0)
-            if hit[0]:
-                ridge_pts.append(p[0])
-        ridge = sdf.stroke(ridge_pts, 0.02) if len(ridge_pts) >= 3 else None
-
-        def upper(P, up_base=up_base, ridge=ridge):
-            dd = up_base(P)
-            if ridge is not None:
-                dd = sdf.smin(dd, ridge(P), 0.015)
-            return dd
-        objs.append(sdf.to_mesh(f'{NAME} | tenis {side}', upper, (x - 0.26, -0.36, 0.03), (x + 0.26, 0.32, 0.3), 0.004, coll, mats['upper'], smooth=2))
-        sole = sdf.ellipse_cylinder_z((x, -0.04, 0), 0.207, 0.305, 0.012, 0.075, 0.028)
-        objs.append(sdf.to_mesh(f'{NAME} | suela {side}', sole, (x - 0.25, -0.38, -0.01), (x + 0.25, 0.3, 0.1), 0.004, coll, mats['sole'], smooth=1))
-        out = sdf.ellipse_cylinder_z((x, -0.04, 0), 0.203, 0.301, 0.0, 0.02, 0.009)
-        objs.append(sdf.to_mesh(f'{NAME} | suela piso {side}', out, (x - 0.25, -0.38, -0.01), (x + 0.25, 0.3, 0.04), 0.004, coll, mats['outsole'], smooth=1))
-    return objs
+    """Tenis negros redondeados con suela blanca gruesa y reborde en el empeine."""
+    return cuerpo.shoes(coll, mats, NAME, D)
 
 
 def build(coll=None):

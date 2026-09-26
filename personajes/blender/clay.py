@@ -464,6 +464,51 @@ class Surface:
         return np.array(loc), np.array(nrm)
 
 
+def lathe(name, profile, coll=None, material=None, segments=32, subsurf=1, cap_bottom=True, cap_top=True):
+    """Superficie de revolución alrededor de Z a partir de un perfil [(radio, z), ...]
+    (botellas, latas, vasos, materas)."""
+    verts, faces = [], []
+    n = len(profile)
+    for i, (r, z) in enumerate(profile):
+        for k in range(segments):
+            a = 2 * math.pi * k / segments
+            verts.append((r * math.cos(a), r * math.sin(a), z))
+    for i in range(n - 1):
+        for k in range(segments):
+            a0 = i * segments + k
+            a1 = i * segments + (k + 1) % segments
+            b0 = (i + 1) * segments + k
+            b1 = (i + 1) * segments + (k + 1) % segments
+            faces.append((a0, a1, b1, b0))
+    if cap_bottom and profile[0][0] > 1e-6:
+        c0 = len(verts)
+        verts.append((0, 0, profile[0][1]))
+        for k in range(segments):
+            faces.append((c0, (k + 1) % segments, k))
+    if cap_top and profile[-1][0] > 1e-6:
+        c1 = len(verts)
+        verts.append((0, 0, profile[-1][1]))
+        base = (n - 1) * segments
+        for k in range(segments):
+            faces.append((base + k, base + (k + 1) % segments, c1))
+    obj = make_mesh_object(name, verts, faces, coll, material=material)
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.to_mesh(obj.data)
+    bm.free()
+    obj.data.shade_smooth()
+    if subsurf:
+        add_subsurf(obj, subsurf, subsurf + 1)
+    return obj
+
+
+def rbox(name, center, half, coll=None, material=None, p=6.0, n=6, subsurf=2):
+    """Caja redondeada (superelipsoide), para empaques, muebles y repisas."""
+    return blob(name, center, half, coll, material, n=n, p=p, subsurf=subsurf)
+
+
 def stitches(name, points, radius=0.006, dash=0.028, gap=0.018, coll=None, material=None, samples=10, closed=False):
     """Pespunte: guiones pequeños y alargados a lo largo de una curva (una sola malla)."""
     pts, _ = catmull_rom(points, samples, closed)
@@ -547,7 +592,7 @@ def orient_to(obj, normal, up=(0, 0, 1)):
 def material(name, color, rough=0.5, sss=0.0, sss_radius=(1.0, 0.45, 0.3), sss_scale=0.04,
              sheen=0.0, sheen_rough=0.4, sheen_tint=None, coat=0.0, coat_rough=0.08,
              spec=0.5, metallic=0.0, emission=None, emission_strength=0.0,
-             noise=None, wave=None, ribs=None, strands=None, fuzz=None):
+             noise=None, wave=None, ribs=None, strands=None, fuzz=None, transmission=0.0, ior=1.45, alpha=1.0):
     """Principled BSDF con relieve procedural opcional.
 
     noise=dict(scale, strength, detail, distance) -> grano de plastilina/fieltro
@@ -583,6 +628,11 @@ def material(name, color, rough=0.5, sss=0.0, sss_radius=(1.0, 0.45, 0.3), sss_s
         bsdf.inputs['Sheen Roughness'].default_value = sheen_rough
         if sheen_tint:
             bsdf.inputs['Sheen Tint'].default_value = rgb(sheen_tint) if isinstance(sheen_tint, str) else sheen_tint
+    if transmission > 0:
+        bsdf.inputs['Transmission Weight'].default_value = transmission
+        bsdf.inputs['IOR'].default_value = ior
+    if alpha < 1.0:
+        bsdf.inputs['Alpha'].default_value = alpha
     if coat > 0:
         bsdf.inputs['Coat Weight'].default_value = coat
         bsdf.inputs['Coat Roughness'].default_value = coat_rough

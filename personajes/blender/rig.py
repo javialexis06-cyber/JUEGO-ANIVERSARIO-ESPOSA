@@ -107,6 +107,7 @@ def side_of(obj_name):
 RULES = [
     # (fragmento del nombre, hueso, ¿por lado?)
     ('pespunte camiseta', 'torso', False),
+    ('pespunte chaleco', 'torso', False),
     ('ribete', 'torso', False),
     ('pespunte pantalon', 'pelvis', False),
     ('tenis', 'pie', True),
@@ -117,7 +118,7 @@ RULES = [
     ('puño manga', 'brazo', True),
     ('manga', 'brazo', True),
     ('brazo', 'brazo', True),
-    ('manilla', 'mano.L', False),
+    ('manilla', 'brazo.L', False),
     ('mano', 'mano', True),
     ('pulgar', 'mano', True),
     ('cuello camiseta', 'torso', False),
@@ -156,7 +157,7 @@ def bone_for(obj_name):
     return 'cabeza'
 
 
-def skin(rig, objs, long_hair=False, hair_split_z=None):
+def skin(rig, objs, long_hair=False, hair_split_z=None, pants_split_z=0.44):
     """Asigna pesos rígidos por pieza (estilo figura articulada) y, si hay cabello
     largo, pesos suaves entre la cabeza y los huesos del cabello colgante."""
     for obj in objs:
@@ -178,7 +179,7 @@ def skin(rig, objs, long_hair=False, hair_split_z=None):
             mwv = obj.matrix_world
             for v in obj.data.vertices:
                 w = mwv @ v.co
-                t = float(np.clip((0.44 - w.z) / 0.14, 0.0, 1.0))
+                t = float(np.clip((pants_split_z - w.z) / 0.14, 0.0, 1.0))
                 t = t * t * (3 - 2 * t)
                 side = float(np.clip(0.5 + w.x / 0.08, 0.0, 1.0))
                 gp.add([v.index], 1.0 - t, 'REPLACE')

@@ -20,13 +20,13 @@ import rig  # noqa: E402
 SEPARACION = 0.85  # las raíces quedan en X = -0.85 (Él) y X = +0.85 (Ella)
 
 
-def build_character(module, x_offset, extra_bones=None, long_hair=False, hair_split_z=None):
+def build_character(module, x_offset, extra_bones=None, long_hair=False, hair_split_z=None, pants_split_z=0.44):
     coll = clay.collection(f'{module.NAME} | personaje')
     module.build(coll)
     objs = list(coll.objects)
     layout = rig.bone_layout(module.P, module.B, extra_bones)
     arm = rig.build_armature(module.NAME, layout, coll)
-    rig.skin(arm, objs, long_hair=long_hair, hair_split_z=hair_split_z)
+    rig.skin(arm, objs, long_hair=long_hair, hair_split_z=hair_split_z, pants_split_z=pants_split_z)
     arm.location.x = x_offset
     return arm, coll
 
@@ -38,7 +38,7 @@ def main(out_path):
     ella_rig, ella_coll = build_character(
         ella, SEPARACION,
         extra_bones={'cabello_largo.L': (-0.7, 0.2, 1.35), 'cabello_largo.R': (0.7, 0.2, 1.35)},
-        long_hair=True, hair_split_z=1.3)
+        long_hair=True, hair_split_z=1.25, pants_split_z=0.52)
     sala = escena.warm_room(scene)
     estudio = escena.studio(scene)
     estudio.hide_render = True

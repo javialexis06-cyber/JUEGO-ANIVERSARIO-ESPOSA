@@ -30,6 +30,13 @@ if who == 'el_cabeza':
     el.shirt = el.arms = el.pants = el.shoes = lambda coll, mats: []
     c = el.build()
     who = 'el'
+if who == 'ella_cabeza':
+    import ella
+    import cuerpo as _c
+    for fn in ('shirt', 'vest', 'arms', 'pants', 'legs', 'shoes'):
+        setattr(_c, fn, lambda *a, **k: ([], None) if fn == 'shirt' else [])
+    c = ella.build()
+    who = 'ella'
 if who in ('el', 'pareja'):
     import el
     c = el.build()
@@ -41,6 +48,8 @@ VIEWS = {
     'frente': ((0, -7.6, 1.4), (0, 0, 1.27), 85),
     'cara': ((0, -5.0, 1.58), (0, 0, 1.54), 80),
     'cara_tq': ((3.0, -4.2, 1.9), (0, 0, 1.6), 80),
+    'cara_ella': ((0, -5.0, 1.66), (0, 0, 1.62), 80),
+    'cara_ella_tq': ((3.0, -4.2, 1.95), (0, 0, 1.66), 80),
     'tres_cuartos': ((4.2, -6.3, 2.0), (0, 0, 1.27), 85),
     'tres_cuartos_izq': ((-4.2, -6.3, 2.0), (0, 0, 1.27), 85),
     'lado': ((7.6, 0, 1.4), (0, 0, 1.27), 85),
