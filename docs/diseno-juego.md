@@ -90,14 +90,22 @@ Este documento reúne cómo funcionaban **Supermarket Mania** (2008) y **Superma
 - **Tiendas en lugares de ustedes** (propuesta, a confirmar): tiendita en Bucaramanga, minimercado en Medellín, súper en la costa, súper cafetero en la montaña e hipermercado de ciudad.
 
 ### Niveles de supermercado (la tienda crece)
-Cada nivel es una tienda más grande, con más secciones y más problemas:
+Cada tienda es más grande, tiene más secciones y trae problemas nuevos.
 
-| Nivel | Tienda | Tamaño y secciones | Novedades |
-|---|---|---|---|
-| 1 | **Tiendita de barrio** | Local pequeño: 3–4 vitrinas, 1 caja, almacén chico | Reponer, cobrar, basura |
-| 2 | **Minimercado** | Más pasillos: frutas, lácteos, abarrotes, 1–2 cajas | Derrames, canastas abandonadas, ladrones, carrito de wafles |
-| 3 | **Supermercado** | Congeladores, vitrina refrigerada, panadería, máquina de malteadas | Productos preparados, niño perdido, cajera, barra de wafles y carrito de arepas |
-| 4 | **Hipermercado** | Tienda grande y decorada: café, jugos, pizza, todas las secciones | Celebridad, niña traviesa, guardia, limpiador automático, kioscos de wafles y arepas |
+**Cómo avanza una tienda:**
+1. **Empieza con lo mínimo para funcionar:** unas pocas vitrinas de nivel 1 y una caja.
+2. **Sitios fijos por sección:** cada sección tiene su tapete de color y su letrero con ícono. Los sitios libres se ven con un botón **«+»** y se compran con el dinero de los días. El número de sitios está **limitado por tienda**.
+3. **Mejorar:** las vitrinas compradas se mejoran hasta el **tope de esa tienda**, lo que les da más capacidad y más atractivo.
+4. **Pasar de tienda:** al ganar las estrellas de la tienda se desbloquea la siguiente, y allí **se empieza de cero**, otra vez con vitrinas de nivel 1 y lo mínimo, pero con más sitios, secciones nuevas y un tope de mejora más alto.
+
+| Nivel | Tienda | Tamaño | Empieza con | Sitios | Tope de mejora | Se desbloquea |
+|---|---|---|---|---|---|---|
+| 1 | **Tiendita de barrio** | 12 × 9 m | Nevera, 1 estante, frutas y 1 caja | 12 | Nivel 2 | Reponer, cobrar, basura. Secciones: frutas, lácteos, abarrotes, bebidas, panadería, congelados |
+| 2 | **Minimercado** | 16 × 11 m | Nevera, 1 estante, frutas y 1 caja | 22 | Nivel 2 | Carnes, góndolas en isla, **zona especial de wafles**. Derrames, canastas abandonadas, ladrones |
+| 3 | **Supermercado** | 20 × 14 m | Nevera, bebidas, 1 estante, frutas y 1 caja | 33 | Nivel 3 | **Zona de arepas**, máquinas de malteadas y café, cajera. Niño perdido |
+| 4 | **Hipermercado** | 24 × 17 m | Nevera, bebidas, 1 estante, frutas, carnes y 2 cajas | 45 | Nivel 3 | Máquinas de jugos y pizza, ambas zonas especiales en nivel 3, guardia, aseo. Celebridad, niña traviesa |
+
+Los renders `15-tienda-nivel-N-inicio.png` y `15-tienda-nivel-N-completa.png` muestran cada tienda en esos dos momentos: recién abierta y con todo comprado y mejorado.
 
 ### Vitrinas y sus niveles de mejora
 Cada vitrina tiene **3 niveles**. Al subir de nivel gana **capacidad** (menos viajes al almacén) y **atractivo** (los clientes compran más y esperan con más paciencia).
@@ -150,7 +158,8 @@ Plantas, globos, música ambiental (parlante), aire acondicionado, pantalla de o
 - Cada producto tiene precio de venta. Los productos preparados valen más.
 - **Propinas** por atender rápido y por combos en equipo.
 - **Estrellas** por día (meta y meta experta) que desbloquean tiendas nuevas.
-- El dinero se gasta en mejoras.
+- El dinero se gasta en **comprar sitios** (vitrinas nuevas, máquinas, zonas especiales), **mejorar vitrinas** hasta el tope de la tienda, contratar ayudantes y decorar.
+- Al cambiar de tienda se conserva lo aprendido y la decoración favorita queda como recuerdo, pero la tienda nueva arranca con vitrinas de nivel 1.
 
 ---
 
