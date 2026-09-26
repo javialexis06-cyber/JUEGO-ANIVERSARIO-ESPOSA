@@ -119,6 +119,11 @@ def exclude_sources():
     walk(bpy.context.view_layer.layer_collection)
 
 
+# Los personajes chibi miden ~2.3 m en su escala de modelado; en la tienda se reducen
+# para que queden a la altura de las vitrinas, como en Supermarket Mania.
+PERSON_SCALE = 0.68
+
+
 def person(coll, key, x, y, rot=0.0):
     src = source_collection(key)
     e = bpy.data.objects.new(f'{key} (inst)', None)
@@ -126,9 +131,17 @@ def person(coll, key, x, y, rot=0.0):
     e.instance_collection = src
     e.location = (x, y, 0)
     e.rotation_euler = (0, 0, rot)
+    e.scale = (PERSON_SCALE,) * 3
     clay.link(e, coll)
     return e
 
+
+
+def el_con_carrito(coll, U, cart_level, x, y, rot, dx, dy):
+    """Él empujando el carrito; el desfase del carrito se escala con el personaje."""
+    person(coll, 'el_carrito', x, y, rot)
+    k = PERSON_SCALE
+    U('carrito', lambda c: utileria.carrito(cart_level, c), x + dx * k, y + dy * k, rot, 1.3 * k)
 
 # --------------------------------------------------------------------------
 # Arquitectura
@@ -263,9 +276,8 @@ def tienda(level, coll):
         V('panaderia', 1, 2.8, -0.6)
         U('planta', utileria.planta, -4.3, -3.4)
         U('basura', utileria.basura, 1.6, -2.2, 0, 1.6)
-        person(coll, 'el_carrito', -1.2, -0.8, -0.4)
-        U('carrito', lambda c: utileria.carrito(1, c), -1.2, -1.45, -0.4, 1.3)
-        person(coll, 'ella_reponer', -1.6, 2.0, math.pi)
+        el_con_carrito(coll, U, 1, -1.2, -0.8, -0.4, 0.0, -0.65)
+        person(coll, 'ella_reponer', -1.6, 2.0, math.pi - 0.8)
         person(coll, 'abuelita', 1.4, 1.2, -0.6)
         person(coll, 'nino', 2.0, -2.0, 0.5)
         return W, D, 'Nivel 1 · Tiendita de barrio'
@@ -290,8 +302,7 @@ def tienda(level, coll):
         U('charco', utileria.charco, 0.8, -1.8, 0, 1.4)
         U('piso mojado', utileria.cono, 1.5, -2.2, 0, 1.2)
         U('caneca', utileria.caneca, 5.8, 2.0)
-        person(coll, 'el_carrito', -3.2, 1.5, -0.3)
-        U('carrito', lambda c: utileria.carrito(2, c), -3.05, 0.85, -0.3, 1.3)
+        el_con_carrito(coll, U, 2, -3.2, 1.5, -0.3, 0.15, -0.65)
         person(coll, 'ella', -4.3, -2.6, math.pi)
         person(coll, 'mama', -1.0, 2.2, 0.3)
         person(coll, 'ejecutivo', 2.8, -1.4, -0.8)
@@ -325,9 +336,8 @@ def tienda(level, coll):
         U('planta', utileria.planta, 8.2, -5.6)
         U('parlante', utileria.parlante, 8.3, 5.4, -math.pi / 2)
         U('basura', utileria.basura, 0.0, -2.8, 0, 1.6)
-        person(coll, 'el_carrito', -4.4, 3.1, -0.2)
-        U('carrito', lambda c: utileria.carrito(2, c), -4.3, 2.45, -0.2, 1.3)
-        person(coll, 'ella_reponer', 1.6, 3.4, math.pi)
+        el_con_carrito(coll, U, 2, -4.4, 3.1, -0.2, 0.1, -0.65)
+        person(coll, 'ella_reponer', 1.6, 3.4, math.pi - 0.8)
         person(coll, 'cajera', -6.0, -3.9, math.pi)
         person(coll, 'guardia', -7.4, -2.4, -1.2)
         person(coll, 'deportista', -2.3, -0.8, 0.2)
@@ -370,9 +380,8 @@ def tienda(level, coll):
     U('parlante', utileria.parlante, 10.3, 6.9, -math.pi / 2)
     utileria.build('camara', utileria.camara, coll, (-10.6, 7.6, 2.2), -0.7, 1.5)
     U('charco', utileria.charco, 1.4, -4.4, 0, 1.4)
-    person(coll, 'el_carrito', -3.3, 4.6, -0.2)
-    U('carrito', lambda c: utileria.carrito(3, c), -3.2, 3.9, -0.2, 1.3)
-    person(coll, 'ella_reponer', -0.3, 4.9, math.pi)
+    el_con_carrito(coll, U, 3, -3.3, 4.6, -0.2, 0.1, -0.7)
+    person(coll, 'ella_reponer', -0.3, 4.9, math.pi - 0.8)
     person(coll, 'cajera', -8.0, -5.6, math.pi)
     person(coll, 'reponedor', 6.5, 4.3, math.pi)
     person(coll, 'guardia', -9.2, -3.2, -1.2)
@@ -387,14 +396,17 @@ def tienda(level, coll):
     return W, D, 'Nivel 4 · Hipermercado'
 
 
-def camera_for(W, D, name):
+def camera_for(W, D, name, aspect=4 / 3, wall_h=3.4):
+    """Cámara ortográfica isométrica que encuadra el piso completo y las paredes del fondo."""
     az, elv = math.radians(-38), math.radians(38)
     dist = 60
-    tgt = (0.0, 0.0, 0.9)
+    tgt = (0.0, 0.0, wall_h / 2)
     loc = (tgt[0] + dist * math.sin(-az) * math.cos(elv), tgt[1] - dist * math.cos(az) * math.cos(elv), tgt[2] + dist * math.sin(elv))
     cam = escena.camera(name, loc, tgt, 50)
     cam.data.type = 'ORTHO'
-    cam.data.ortho_scale = (W * math.cos(-az) + D * math.sin(-az)) * 1.08
+    horiz = W * math.cos(az) + D * math.sin(-az)
+    vert = (W * math.sin(-az) + D * math.cos(az)) * math.sin(elv) + wall_h * math.cos(elv)
+    cam.data.ortho_scale = max(horiz, vert * aspect) * 1.06
     cam.data.clip_end = 300
     return cam
 
@@ -414,7 +426,7 @@ if __name__ == '__main__':
     SCALE = int(args[3]) if len(args) > 3 else 100
     os.makedirs(OUT, exist_ok=True)
     scene = clay.reset_scene()
-    escena.setup_render(scene, 1920, 1200, SAMPLES)
+    escena.setup_render(scene, 1920, 1440, SAMPLES)
     scene.view_settings.look = 'AgX - Medium High Contrast'
     prod.build_all()
     colls = {}
