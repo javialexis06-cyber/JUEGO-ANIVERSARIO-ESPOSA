@@ -747,12 +747,12 @@ def gente_completa(coll, level, U):
     elif level == 2:
         U('charco', utileria.charco, 0.2, -0.6, 0, 1.4)
         U('piso mojado', utileria.cono, 0.9, -0.9, SIGN_ROT, 1.1)
-        el_con_carrito(coll, U, 2, -0.6, -1.6, -0.3, 0.15, -0.65)
+        el_con_carrito(coll, U, 2, -2.4, -1.3, -0.3, 0.15, -0.65)
         person(coll, 'ella_reponer', -0.2, 4.3, math.pi - 0.8)
         person(coll, 'mama', -6.2, 0.9, -1.2)
-        person(coll, 'ejecutivo', 3.0, -2.6, -0.8)
-        person(coll, 'adolescente', -2.6, -0.4, 0.6)
-        person(coll, 'deportista', 5.4, -1.8, 0.4)
+        person(coll, 'ejecutivo', 3.7, -2.9, -0.8)
+        person(coll, 'adolescente', -0.4, 0.3, 0.6)
+        person(coll, 'deportista', 4.2, -0.9, 0.4)
         person(coll, 'ladron', 2.4, 3.2, -2.4)
     elif level == 3:
         U('basura', utileria.basura, -2.6, 0.9, 0, 1.6)
