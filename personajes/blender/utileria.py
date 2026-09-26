@@ -128,8 +128,8 @@ def carrito(level, coll):
                 wheel(coll, (sx * 0.4, sy * 0.26, 0.07), 0.07, 0.04)
         clay.sweep('manubrio', [(0, 0.34, 0.5), (0, 0.4, 0.95)], 0.025, (1, 1), coll, m('acero'), segments=8, samples=2)
         clay.sweep('manija', [(-0.22, 0.4, 0.95), (0.22, 0.4, 0.95)], 0.028, (1, 1), coll, m('negro'), segments=8, samples=2)
-        clay.sweep('asta', [(0.4, 0.3, 0.5), (0.4, 0.3, 1.4)], 0.012, (1, 1), coll, m('acero'), segments=6, samples=2)
-        clay.sweep('banderín', [(0.4, 0.3, 1.38), (0.52, 0.3, 1.33), (0.4, 0.3, 1.26)], [0.03, 0.02, 0.03], (0.2, 1), coll, u('rojo'), segments=6, samples=3,
+        clay.sweep('asta', [(0.4, 0.3, 0.5), (0.4, 0.3, 1.18)], 0.012, (1, 1), coll, m('acero'), segments=6, samples=2)
+        clay.sweep('banderín', [(0.4, 0.3, 1.16), (0.52, 0.3, 1.11), (0.4, 0.3, 1.04)], [0.03, 0.02, 0.03], (0.2, 1), coll, u('rojo'), segments=6, samples=3,
                    up=(0, 1, 0))
         for k, (x, n) in enumerate(((-0.25, 'caja frutas'), (0.0, 'caja lacteos'), (0.25, 'caja bebidas'))):
             prod.instance(n, (x, -0.06, 0.28), 0.1 * k, 0.6, coll)
