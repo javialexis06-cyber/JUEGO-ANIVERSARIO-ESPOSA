@@ -3,6 +3,7 @@
 Uso: python3 catalogo.py <carpeta_salida> <hoja1,hoja2,...> [muestras] [escala%]
 Hojas: productos, vitrinas (una imagen por tipo de vitrina con sus 3 niveles)
 """
+import math
 import os
 import sys
 import time
@@ -99,20 +100,20 @@ def hoja_productos(scene):
     coll = clay.collection('Hoja productos')
     names = [n for n, _ in prod.CATALOGO]
     cols = 8
-    sp = 0.95
+    sp, sy = 1.05, 1.25
     labels = []
     for i, n in enumerate(names):
         r, cidx = divmod(i, cols)
         x = (cidx - (cols - 1) / 2) * sp
-        y = r * sp * 1.05
-        s = 1.7 if not n.startswith('caja') else 1.2
-        prod.instance(n, (x, y, 0), -0.35, s, coll)
-        labels.append((n.replace('caja ', '').replace('pina', 'piña').replace('brocoli', 'brócoli').replace('lacteos', 'lácteos')
-                        .replace('panaderia', 'panadería').replace('cafe', 'café'), (x, y - 0.32, -0.02)))
+        y = r * sy
+        prod.instance(n, (x, y, 0), -0.35, 2.1, coll)
+        labels.append((n.replace('pina', 'piña').replace('brocoli', 'brócoli').replace('cafe', 'café'), (x, y - 0.36, -0.02)))
     rows = (len(names) + cols - 1) // cols
-    cy = (rows - 1) * sp * 1.05 / 2
-    cam = escena.camera('CAM productos', (0.0, cy - 7.4, 7.2), (0.0, cy - 0.15, 0.1), 40)
-    render(scene, cam, '10-productos', 2000, 1500, labels, 'Productos del supermercado')
+    cy = (rows - 1) * sy / 2
+    el = math.radians(38)
+    dist = 10.5
+    cam = escena.camera('CAM productos', (0.0, cy - dist * math.cos(el), 0.2 + dist * math.sin(el)), (0.0, cy + 0.1, 0.2), 40)
+    render(scene, cam, '10-productos', 2000, 1250, labels, 'Productos del supermercado')
     coll.hide_render = True
     coll.hide_viewport = True
     hoja_cajas(scene)
