@@ -43,6 +43,7 @@ def m(key):
             'pantalla': M('Mueble | pantalla', '#7FD3F5', rough=0.2, emission='#9FE0FF', emission_strength=1.5),
             'luz roja': M('Mueble | luz roja', '#FF6B5E', rough=0.4, emission='#FF5A4A', emission_strength=2.5),
             'crema tecla': M('Mueble | tecla crema', '#F4EBDC', rough=0.45),
+            'amarillo bandera': M('Mueble | amarillo bandera', '#F9C80E', rough=0.5, coat=0.15),
             'azul bandera': M('Mueble | azul bandera', '#2E5AAC', rough=0.5, coat=0.15),
             'rojo bandera': M('Mueble | rojo bandera', '#D8343A', rough=0.5, coat=0.15),
             'brasa': M('Mueble | brasa', '#FF7A3D', rough=0.6, emission='#FF5A1F', emission_strength=1.8),
@@ -524,9 +525,9 @@ def wafles(level, coll):
 
 
 def arepas(level, coll):
-    flag = ['amarillo', 'amarillo', 'azul bandera', 'rojo bandera']
+    flag = ['amarillo bandera', 'amarillo bandera', 'azul bandera', 'rojo bandera']
     if level == 1:
-        box('carrito', (0, 0, 0.42), (0.42, 0.26, 0.34), coll, 'amarillo', p=6)
+        box('carrito', (0, 0, 0.42), (0.42, 0.26, 0.34), coll, 'amarillo bandera', p=6)
         box('franja azul', (0, -0.255, 0.3), (0.38, 0.012, 0.04), coll, 'azul bandera', p=6)
         box('franja roja', (0, -0.255, 0.2), (0.38, 0.012, 0.04), coll, 'rojo bandera', p=6)
         for sx in (-1, 1):
@@ -537,10 +538,10 @@ def arepas(level, coll):
             y = -0.18 + k * 0.06
             clay.sweep('reja', [(-0.34, y, 0.885), (0.34, y, 0.885)], 0.008, (1, 1), coll, m('acero'), segments=6, samples=2)
         fill_row(coll, 'arepa', -0.22, 0.22, 0.0, 0.892, 3, 0.8)
-        _parasol(coll, 0.34, 0.18, 0.88, 0.95, 0.55, 'amarillo', 'azul bandera')
+        _parasol(coll, 0.34, 0.18, 0.88, 0.95, 0.55, 'amarillo bandera', 'azul bandera')
     elif level == 2:
         box('mostrador', (0, 0, 0.45), (0.75, 0.32, 0.45), coll, 'blanco', p=6)
-        for k, (z, h, mk) in enumerate(((0.52, 0.08, 'amarillo'), (0.38, 0.04, 'azul bandera'), (0.28, 0.04, 'rojo bandera'))):
+        for k, (z, h, mk) in enumerate(((0.52, 0.08, 'amarillo bandera'), (0.38, 0.04, 'azul bandera'), (0.28, 0.04, 'rojo bandera'))):
             box('franja bandera', (0, -0.31, z), (0.68, 0.012, h), coll, mk, p=6)
         box('tapa', (0, 0, 0.92), (0.77, 0.34, 0.03), coll, 'madera', p=8)
         box('plancha', (0.2, 0.05, 0.965), (0.42, 0.22, 0.02), coll, 'acero', p=8)
@@ -553,9 +554,9 @@ def arepas(level, coll):
         clay.rbox('mantequilla', (-0.3, -0.2, 0.975), (0.05, 0.04, 0.025), coll, prod.mat('mantequilla'), p=4)
         for sx in (-1, 1):
             clay.sweep('poste letrero', [(sx * 0.5, 0.3, 0.95), (sx * 0.5, 0.3, 1.62)], 0.015, (1, 1), coll, m('acero'), segments=6, samples=2)
-        sign(coll, 'blanco', (0, 0.3, 1.72), (0.55, 0.03, 0.11), 'amarillo')
+        sign(coll, 'blanco', (0, 0.3, 1.72), (0.55, 0.03, 0.11), 'amarillo bandera')
     else:
-        _kiosco(coll, 'amarillo', 'blanco', ['amarillo', 'azul bandera', 'rojo bandera'], 'azul bandera', [2, 1, 1, 2, 1, 1])
+        _kiosco(coll, 'amarillo bandera', 'blanco', ['amarillo bandera', 'azul bandera', 'rojo bandera'], 'azul bandera', [2, 1, 1, 2, 1, 1])
         fill_row(coll, 'arepa', -0.7, 0.7, -0.14, 0.89, 5, 0.75)
         for x in (-0.45, 0.45):
             box('plancha', (x, 0.78, 0.95), (0.4, 0.18, 0.015), coll, 'negro', p=8)
