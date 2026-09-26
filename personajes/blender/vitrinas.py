@@ -41,6 +41,8 @@ def m(key):
             'mimbre': M('Mueble | mimbre', '#D2A15F', rough=0.8, wave=dict(scale=14, strength=0.5, axis='Z', distortion=1.5)),
             'toldo rojo': M('Mueble | toldo rojo', '#E8615A', rough=0.7),
             'pantalla': M('Mueble | pantalla', '#7FD3F5', rough=0.2, emission='#9FE0FF', emission_strength=1.5),
+            'luz roja': M('Mueble | luz roja', '#FF6B5E', rough=0.4, emission='#FF5A4A', emission_strength=2.5),
+            'crema tecla': M('Mueble | tecla crema', '#F4EBDC', rough=0.45),
         })
     return _M[key]
 
@@ -426,40 +428,83 @@ def bebidas(level, coll):
 # Caja registradora
 # --------------------------------------------------------------------------
 
+def _registradora(coll, c, body, s=1.0):
+    """Registradora de juguete: cajón, cuerpo, teclado inclinado con teclas y visor."""
+    x, y, z = c
+    box('cajon', (x, y, z + 0.045 * s), (0.19 * s, 0.17 * s, 0.045 * s), coll, body, p=5)
+    box('frente cajon', (x, y - 0.168 * s, z + 0.045 * s), (0.15 * s, 0.006, 0.028 * s), coll, 'blanco', p=5)
+    clay.blob('perilla cajon', (x, y - 0.18 * s, z + 0.045 * s), (0.018 * s, 0.012, 0.018 * s), coll, m('acero'), n=4)
+    box('cuerpo registradora', (x, y + 0.05 * s, z + 0.15 * s), (0.17 * s, 0.1 * s, 0.07 * s), coll, body, p=5)
+    tec = box('teclado', (0, 0, 0), (0.15 * s, 0.075 * s, 0.022 * s), coll, 'blanco', p=5)
+    tec.location = (x, y - 0.09 * s, z + 0.14 * s)
+    tec.rotation_euler = (0.5, 0, 0)
+    colors = ['coral', 'amarillo', 'celeste', 'menta']
+    for r in range(3):
+        for k in range(4):
+            key = clay.rbox('tecla', ((k - 1.5) * 0.068 * s, (r - 1) * 0.045 * s, 0.024 * s),
+                            (0.024 * s, 0.017 * s, 0.012 * s), coll, m(colors[k] if r == 0 else 'crema tecla'), p=4, n=4)
+            key.parent = tec
+    clay.sweep('cuello visor', [(x, y + 0.1 * s, z + 0.2 * s), (x, y + 0.1 * s, z + 0.3 * s)], 0.02 * s, (1, 1), coll, m('acero'), segments=8, samples=2)
+    box('visor', (x, y + 0.1 * s, z + 0.33 * s), (0.1 * s, 0.035 * s, 0.045 * s), coll, body, p=5)
+    box('pantalla visor', (x, y + 0.064 * s, z + 0.33 * s), (0.08 * s, 0.004, 0.03 * s), coll, 'pantalla', p=5)
+
+
+def _frasco_dulces(coll, c, s=1.0):
+    x, y, z = c
+    rng = np.random.default_rng(4)
+    cols = ['coral', 'amarillo', 'menta', 'lila', 'rosa', 'celeste']
+    for i in range(14):
+        a, r = rng.uniform(0, 2 * math.pi), rng.uniform(0, 0.05 * s)
+        clay.blob('dulce', (x + r * math.cos(a), y + r * math.sin(a), z + 0.03 * s + (i // 5) * 0.035 * s),
+                  (0.022 * s, 0.022 * s, 0.018 * s), coll, m(cols[i % len(cols)]), n=4)
+    j = clay.lathe('frasco dulces', [(0.075 * s, 0.0), (0.085 * s, 0.1 * s), (0.06 * s, 0.15 * s), (0.055 * s, 0.17 * s)], coll, m('vidrio'), segments=20)
+    j.location = (x, y, z)
+    box('tapa frasco', (x, y, z + 0.18 * s), (0.06 * s, 0.06 * s, 0.018 * s), coll, 'coral', p=3)
+
+
 def caja_registradora(level, coll):
     if level == 1:
         box('mostrador', (0, 0, 0.45), (0.6, 0.3, 0.45), coll, 'madera', p=6)
         box('tapa', (0, 0, 0.91), (0.64, 0.33, 0.025), coll, 'madera oscura', p=8)
-        box('registradora', (0.25, 0.05, 1.05), (0.18, 0.15, 0.12), coll, 'coral', p=4)
-        box('teclas', (0.25, -0.08, 1.02), (0.13, 0.05, 0.03), coll, 'blanco', p=5)
-        box('visor', (0.25, 0.12, 1.2), (0.1, 0.03, 0.05), coll, 'pantalla', p=5)
-        clay.lathe('frasco dulces', [(0.08, 0.93), (0.09, 1.05), (0.06, 1.15), (0.06, 1.18)], coll, m('vidrio'), segments=20).location.x = -0.35
+        _registradora(coll, (0.22, 0.02, 0.935), 'coral', 1.0)
+        _frasco_dulces(coll, (-0.35, -0.02, 0.935), 1.0)
     elif level == 2:
         box('mostrador', (0, 0, 0.45), (0.85, 0.35, 0.45), coll, 'blanco', p=6)
         for k in range(3):
-            box('franja roja', (0, -0.355, 0.2 + k * 0.22), (0.86, 0.01, 0.05), coll, 'coral', p=6)
-        box('banda', (-0.2, 0, 0.93), (0.6, 0.22, 0.03), coll, 'negro', p=8)
+            box('franja roja', (0, -0.345, 0.2 + k * 0.22), (0.78, 0.012, 0.045), coll, 'coral', p=6)
+        box('banda', (-0.25, 0, 0.93), (0.55, 0.22, 0.03), coll, 'negro', p=8)
         for sx in (-1, 1):
-            box('baranda', (-0.2, sx * 0.25, 0.96), (0.6, 0.02, 0.04), coll, 'acero', p=8)
-        box('registradora', (0.62, 0.05, 1.05), (0.18, 0.18, 0.12), coll, 'celeste', p=4)
-        box('pantalla', (0.62, 0.15, 1.25), (0.12, 0.03, 0.08), coll, 'pantalla', p=5)
-        box('bolsas', (0.62, -0.25, 1.05), (0.12, 0.08, 0.12), coll, 'crema' if False else 'amarillo', p=4)
+            box('baranda', (-0.25, sx * 0.25, 0.96), (0.55, 0.02, 0.04), coll, 'acero', p=8)
+        _registradora(coll, (0.55, 0.05, 0.9), 'celeste', 1.1)
+        for k in range(3):
+            box('bolsas', (0.55, -0.25 + 0.0, 0.93 + k * 0.03), (0.13, 0.07, 0.014), coll, 'amarillo', p=4)
     else:
         box('mostrador', (0, 0, 0.45), (1.0, 0.38, 0.45), coll, 'menta', p=6)
-        box('zocalo luz', (0, -0.385, 0.08), (0.98, 0.008, 0.02), coll, 'luz fria', p=6)
-        box('banda', (-0.25, 0, 0.93), (0.7, 0.24, 0.03), coll, 'negro', p=8)
-        box('escaner', (0.5, 0, 0.95), (0.14, 0.2, 0.03), coll, 'vidrio', p=8)
-        box('luz escaner', (0.5, 0, 0.93), (0.1, 0.16, 0.008), coll, 'luz', p=6)
-        box('monitor', (0.8, 0.15, 1.25), (0.16, 0.03, 0.12), coll, 'blanco', p=5)
-        box('pantalla', (0.8, 0.118, 1.25), (0.13, 0.006, 0.095), coll, 'pantalla', p=5)
-        box('datafono', (0.8, -0.2, 1.0), (0.06, 0.08, 0.05), coll, 'negro', p=5)
+        box('zocalo luz', (0, -0.36, 0.14), (0.88, 0.008, 0.018), coll, 'luz fria', p=6)
+        box('banda', (-0.3, 0, 0.93), (0.62, 0.24, 0.03), coll, 'negro', p=8)
+        for sx in (-1, 1):
+            box('baranda', (-0.3, sx * 0.27, 0.96), (0.62, 0.02, 0.04), coll, 'acero', p=8)
+        box('escaner', (0.45, 0, 0.93), (0.14, 0.2, 0.03), coll, 'acero', p=8)
+        box('luz escaner', (0.45, 0, 0.962), (0.1, 0.15, 0.006), coll, 'luz roja', p=6)
+        # Monitor sobre soporte, mirando al cliente
+        clay.sweep('soporte monitor', [(0.8, 0.2, 0.9), (0.8, 0.2, 1.18)], 0.025, (1, 1), coll, m('acero'), segments=8, samples=2)
+        box('monitor', (0.8, 0.18, 1.3), (0.17, 0.035, 0.13), coll, 'blanco', p=5)
+        box('pantalla', (0.8, 0.142, 1.3), (0.14, 0.006, 0.1), coll, 'pantalla', p=5)
+        clay.sweep('soporte datafono', [(0.8, -0.22, 0.9), (0.8, -0.22, 1.02)], 0.015, (1, 1), coll, m('acero'), segments=8, samples=2)
+        box('datafono', (0.8, -0.22, 1.06), (0.06, 0.09, 0.03), coll, 'negro', p=5)
+        box('pantalla datafono', (0.8, -0.25, 1.09), (0.04, 0.035, 0.004), coll, 'pantalla', p=5)
         clay.sweep('poste número', [(-0.95, 0.3, 0.9), (-0.95, 0.3, 2.0)], 0.025, (1, 1), coll, m('acero'), segments=8, samples=2)
         box('número', (-0.95, 0.3, 2.1), (0.14, 0.06, 0.14), coll, 'coral', p=4)
         box('luz número', (-0.95, 0.235, 2.1), (0.08, 0.006, 0.08), coll, 'luz', p=5)
-        # Exhibidor de dulces junto a la caja
-        box('exhibidor', (-1.25, 0, 0.55), (0.18, 0.2, 0.55), coll, 'blanco', p=6)
-        for z in (0.35, 0.7, 1.05):
-            prod.instance('galletas', (-1.25, -0.05, z), 0, 0.6, coll)
+        # Exhibidor abierto de dulces junto a la caja
+        for sx in (-1, 1):
+            box('lateral exhibidor', (-1.25 + sx * 0.17, 0, 0.55), (0.02, 0.18, 0.55), coll, 'blanco', p=8)
+        box('fondo exhibidor', (-1.25, 0.16, 0.55), (0.17, 0.02, 0.55), coll, 'blanco', p=8)
+        for z in (0.06, 0.4, 0.74, 1.08):
+            box('repisa exhibidor', (-1.25, 0, z), (0.17, 0.17, 0.015), coll, 'coral', p=8)
+        for z in (0.08, 0.42, 0.76):
+            fill_row(coll, 'galletas', -1.33, -1.17, -0.02, z, 2, 0.45)
+        _frasco_dulces(coll, (-1.25, -0.02, 1.095), 0.8)
 
 
 TIPOS = [
