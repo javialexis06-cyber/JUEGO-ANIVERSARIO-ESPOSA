@@ -680,7 +680,7 @@ def decorar(coll, level, W, D, U):
         poster(coll, -W / 2 + 0.05, -3.6, 1.9, 'pan', 'amarillo', on_left=True, size=0.4)
         poster(coll, 3.0, D / 2 - 0.02, 2.1, 'manzana', 'verde', size=0.4)
         U('planta', utileria.planta, 5.4, 3.6)
-        U('caneca', utileria.caneca, 5.4, -3.8)
+        U('caneca', utileria.caneca, 2.6, -3.9)
         for k in range(3):
             prod.instance('caja frutas', (-4.6 + k * 0.05, 0.3 + k * 0.45, 0.0), 0.3 * k, 1.0, coll)
     elif level == 2:
