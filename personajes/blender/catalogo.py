@@ -157,7 +157,7 @@ def _grid_sheet(scene, name, title, items, cols, sp, cam_dist, cam_h, lens, size
     coll.hide_viewport = True
 
 
-def _row_sheet(scene, name, title, items, sp, builder, size=(2000, 800), elev=0.42, label_dy=-0.62):
+def _row_sheet(scene, name, title, items, sp, builder, size=(2000, 800), elev=0.42, label_dy=-0.62, margin=0.6):
     """Una fila de objetos (cada uno con su escala), cámara ajustada al ancho."""
     coll = clay.collection(f'Hoja {name}')
     labels = []
@@ -167,7 +167,7 @@ def _row_sheet(scene, name, title, items, sp, builder, size=(2000, 800), elev=0.
         builder(label, fn, coll, (x, 0, 0), -0.35, s)
         labels.append((label, (x, label_dy, -0.02)))
     width = n * sp
-    dist = width / 0.95 + 0.6
+    dist = width / 0.95 + margin
     cam = escena.camera(f'CAM {name}', (0.0, -dist, dist * elev + 0.6), (0.0, 0.0, 0.45), 40)
     render(scene, cam, name, size[0], size[1], labels, title)
     coll.hide_render = True
@@ -196,7 +196,7 @@ def hoja_utileria(scene):
                [('Malteadas', P['Máquina de malteadas'], 1.0), ('Café', P['Cafetera'], 1.0), ('Horno de pizza', P['Horno de pizza'], 0.9),
                 ('Jugos naturales', P['Exprimidor'], 1.0)], 1.9, b)
     _row_sheet(scene, '13-iconos', 'Íconos 3D de la interfaz',
-               [(k.replace('Paciencia: ', ''), I[k], 2.4 if k == 'Estrella' else 1.6) for k in I], 1.0, b, size=(2200, 700), elev=0.2, label_dy=-0.35)
+               [(k.replace('Paciencia: ', ''), I[k], 2.4 if k == 'Estrella' else 1.6) for k in I], 1.0, b, size=(2200, 700), elev=0.2, label_dy=-0.35, margin=1.8)
 
 
 def hoja_clientes(scene, keys=None, name='14-clientes', title='Clientes'):

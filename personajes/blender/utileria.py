@@ -42,7 +42,7 @@ def u(key):
             'carita media': M('Util | carita media', '#F7CF4E', rough=0.35, coat=0.3),
             'carita enojada': M('Util | carita enojada', '#EE6A5E', rough=0.35, coat=0.3),
             'trazo': M('Util | trazo', '#2B2422', rough=0.4),
-            'estrella': M('Util | estrella', '#FFD34F', rough=0.3, coat=0.4, emission='#FFE59A', emission_strength=0.4),
+            'estrella': M('Util | estrella', '#FFC21A', rough=0.3, coat=0.4, emission='#FFB300', emission_strength=0.12),
             'corazon': M('Util | corazón', '#F2536E', rough=0.3, coat=0.5),
             'reloj': M('Util | reloj', '#9ED8F2', rough=0.35, coat=0.3),
             'fleco': M('Util | fleco trapero', '#F4F1EA', rough=0.9, noise=dict(scale=40, strength=0.6, distance=0.01)),
@@ -330,44 +330,101 @@ def camara(coll):
 # Máquinas especiales
 # --------------------------------------------------------------------------
 
+def _mueble(coll, W, D, body, top='blanco', doors='blanco'):
+    """Mueble de mostrador de 0.9 m con tapa y dos puertas con manijas."""
+    box('mueble', (0, 0, 0.45), (W, D, 0.45), coll, body, p=6)
+    box('tapa mueble', (0, 0, 0.92), (W + 0.02, D + 0.02, 0.03), coll, top, p=8)
+    for sx in (-1, 1):
+        box('puerta mueble', (sx * W * 0.47, -D - 0.004, 0.44), (W * 0.42, 0.012, 0.34), coll, doors, p=6)
+        clay.blob('manija mueble', (sx * W * 0.12, -D - 0.025, 0.6), (0.014, 0.014, 0.05), coll, m('acero'), n=4)
+
+
 def maquina_malteadas(coll):
-    box('base', (0, 0, 0.5), (0.3, 0.25, 0.5), coll, 'rosa', p=5)
-    box('tope', (0, 0, 1.05), (0.32, 0.27, 0.05), coll, 'blanco', p=6)
-    for k, x in enumerate((-0.14, 0.14)):
-        clay.lathe(f'jarra {k}', [(0.07, 0), (0.09, 0.28)], coll, m('vidrio'), segments=20, cap_top=False).location = (x, -0.05, 1.1)
-        clay.lathe(f'batido {k}', [(0.068, 0.01), (0.085, 0.2)], coll, prod.mat('helado'), segments=20).location = (x, -0.05, 1.1)
-        box(f'motor {k}', (x, 0.1, 1.5), (0.08, 0.1, 0.12), coll, 'blanco', p=5)
-    prod.instance('malteada', (0, -0.3, 0.2), 0, 1.2, coll)
+    _mueble(coll, 0.42, 0.28, 'rosa')
+    for k, x in enumerate((-0.2, 0.2)):
+        box(f'base batidora {k}', (x, 0.04, 0.98), (0.08, 0.11, 0.03), coll, 'menta', p=5)
+        box(f'columna batidora {k}', (x, 0.11, 1.17), (0.05, 0.04, 0.2), coll, 'menta', p=5)
+        box(f'cabezal batidora {k}', (x, 0.01, 1.38), (0.065, 0.14, 0.065), coll, 'menta', p=4)
+        clay.sweep(f'vástago {k}', [(x, -0.07, 1.32), (x, -0.07, 1.1)], 0.009, (1, 1), coll, m('acero'), segments=6, samples=2)
+        vaso = clay.lathe(f'vaso metálico {k}', [(0.045, 0.0), (0.062, 0.17)], coll, m('acero'), segments=20, cap_top=False)
+        vaso.location = (x, -0.07, 1.01)
+        batido = clay.lathe(f'batido {k}', [(0.043, 0.005), (0.058, 0.14)], coll, prod.mat('helado'), segments=20)
+        batido.location = (x, -0.07, 1.01)
+    prod.instance('malteada', (0.0, -0.16, 0.95), 0, 0.9, coll)
+    box('letrero malteadas', (0, 0.25, 1.62), (0.2, 0.025, 0.08), coll, 'rosa', p=4)
+    for k in range(3):
+        clay.blob(f'adorno letrero {k}', ((k - 1) * 0.1, 0.22, 1.62), (0.025, 0.008, 0.025), coll, m('blanco'), n=4)
+    clay.sweep('poste letrero', [(0, 0.25, 0.95), (0, 0.25, 1.54)], 0.015, (1, 1), coll, m('acero'), segments=6, samples=2)
 
 
 def cafetera(coll):
-    box('mueble', (0, 0, 0.45), (0.4, 0.3, 0.45), coll, 'madera oscura', p=6)
-    box('maquina', (0, 0.05, 1.12), (0.3, 0.22, 0.22), coll, 'coral', p=4)
-    box('bandeja', (0, -0.12, 0.93), (0.22, 0.08, 0.02), coll, 'acero', p=8)
-    for x in (-0.1, 0.1):
-        clay.sweep('grupo', [(x, -0.1, 1.05), (x, -0.1, 0.99)], 0.03, (1, 1), coll, m('acero'), segments=8, samples=2)
-    prod.instance('cafe', (-0.1, -0.12, 0.95), 0, 0.8, coll)
-    prod.instance('cafe', (0.28, -0.1, 0.9), 0, 0.8, coll)
+    _mueble(coll, 0.5, 0.3, 'madera oscura', top='blanco', doors='madera')
+    box('máquina café', (0, 0.08, 1.16), (0.3, 0.18, 0.2), coll, 'coral', p=4)
+    box('calientatazas', (0, 0.08, 1.37), (0.26, 0.15, 0.015), coll, 'acero', p=8)
+    for k, x in enumerate((-0.14, 0.0, 0.14)):
+        t = clay.lathe(f'taza arriba {k}', [(0.03, 0.0), (0.04, 0.05)], coll, m('blanco'), segments=16, cap_top=False)
+        t.location = (x, 0.1, 1.385)
+    clay.blob('manómetro', (0, -0.1, 1.27), (0.045, 0.012, 0.045), coll, m('blanco'), n=5)
+    clay.blob('aguja', (0.012, -0.114, 1.28), (0.022, 0.003, 0.005), coll, u('trazo'), n=3)
+    box('bandeja goteo', (0, -0.17, 0.97), (0.26, 0.08, 0.02), coll, 'acero', p=8)
+    for sx in (-1, 1):
+        x = sx * 0.13
+        clay.blob('grupo', (x, -0.11, 1.08), (0.055, 0.045, 0.035), coll, m('acero'), n=5)
+        clay.blob('portafiltro', (x, -0.13, 1.04), (0.045, 0.04, 0.02), coll, m('acero'), n=5)
+        clay.sweep('mango portafiltro', [(x, -0.15, 1.04), (x + sx * 0.03, -0.3, 1.035)], 0.017, (1, 1), coll, m('negro'), segments=8, samples=2)
+        prod.instance('cafe', (x, -0.15, 0.99), 0, 0.55, coll)
+    clay.sweep('vaporizador', [(0.27, -0.08, 1.14), (0.29, -0.13, 1.05), (0.29, -0.15, 0.99)], 0.01, (1, 1), coll, m('acero'), segments=6, samples=3)
+    # Plato de croissants y vasos para llevar a los lados
+    clay.lathe('plato', [(0.1, 0.0), (0.11, 0.015)], coll, m('blanco'), segments=20).location = (-0.42, -0.1, 0.95)
     for k in range(3):
-        prod.instance('croissant', (-0.25 + k * 0.08, -0.18, 0.9), 0.3 * k, 0.6, coll)
+        prod.instance('croissant', (-0.45 + k * 0.035, -0.12 + (k % 2) * 0.05, 0.965), 0.4 * k, 0.5, coll)
+    for k in range(3):
+        prod.instance('cafe', (0.42, -0.12, 0.95 + k * 0.035), 0, 0.6, coll)
 
 
 def horno_pizza(coll):
-    clay.lathe('horno', [(0.5, 0.0), (0.5, 0.55), (0.42, 0.85), (0.2, 1.05), (0.1, 1.1), (0.1, 1.4)], coll, clay.material('Util | ladrillo', '#D07A55', rough=0.8,
-               noise=dict(scale=18, strength=0.4, distance=0.01)), segments=32)
-    box('boca', (0, -0.46, 0.45), (0.22, 0.06, 0.16), coll, 'negro', p=3)
-    box('fuego', (0, -0.44, 0.36), (0.16, 0.02, 0.04), coll, 'luz', p=5)
-    box('mesa', (0.0, -0.65, 0.5), (0.35, 0.18, 0.03), coll, 'madera', p=8)
-    prod.instance('pizza', (0, -0.65, 0.53), 0, 0.9, coll)
+    lad = clay.material('Util | ladrillo', '#D07A55', rough=0.8, noise=dict(scale=18, strength=0.4, distance=0.01))
+    box('base horno', (0, 0, 0.4), (0.56, 0.5, 0.4), coll, 'blanco', p=6)
+    box('leñera', (0, -0.5, 0.36), (0.3, 0.02, 0.18), coll, 'negro', p=4)
+    for k, (x, z) in enumerate(((-0.14, 0.26), (0.0, 0.26), (0.14, 0.26), (-0.07, 0.38), (0.07, 0.38))):
+        clay.sweep(f'leño {k}', [(x, -0.47, z), (x, -0.56, z)], 0.055, (1, 1), coll, m('madera oscura'), segments=8, samples=2)
+    clay.lathe('cúpula', [(0.52, 0.8), (0.52, 0.95), (0.46, 1.15), (0.32, 1.3), (0.0, 1.37)], coll, lad, segments=36)
+    ch = clay.lathe('chimenea', [(0.07, 1.2), (0.07, 1.55), (0.09, 1.56), (0.09, 1.62)], coll, lad, segments=16, cap_top=False)
+    ch.location = (0, 0.22, 0)
+    box('boca', (0, -0.46, 0.99), (0.22, 0.08, 0.13), coll, 'negro', p=3)
+    box('fuego', (0, -0.44, 0.9), (0.16, 0.03, 0.04), coll, 'luz', p=5)
+    arch = [(0.26 * math.cos(a), -0.52, 0.86 + 0.24 * math.sin(a)) for a in np.linspace(0, math.pi, 12)]
+    clay.sweep('arco boca', arch, 0.035, (1, 1), coll, m('blanco'), segments=8, samples=3)
+    box('repisa', (0, -0.62, 0.82), (0.42, 0.12, 0.025), coll, 'madera', p=8)
+    prod.instance('pizza', (-0.12, -0.62, 0.845), 0, 0.8, coll)
+    box('pala', (0.24, -0.64, 0.855), (0.12, 0.1, 0.008), coll, 'madera', p=6)
+    clay.sweep('mango pala', [(0.24, -0.54, 0.86), (0.28, -0.1, 0.87)], 0.014, (1, 1), coll, m('madera oscura'), segments=6, samples=2)
 
 
 def exprimidor(coll):
-    box('mueble', (0, 0, 0.45), (0.35, 0.28, 0.45), coll, 'amarillo', p=6)
-    clay.lathe('exprimidor', [(0.12, 0.9), (0.14, 1.05), (0.05, 1.12), (0.0, 1.15)], coll, m('blanco'), segments=24)
-    clay.lathe('jarra', [(0.08, 0.9), (0.09, 1.15)], coll, m('vidrio'), segments=20, cap_top=False).location.x = 0.22
-    clay.lathe('jugo', [(0.075, 0.91), (0.085, 1.08)], coll, prod.mat('naranja empaque'), segments=20).location.x = 0.22
-    for k in range(4):
-        prod.instance('naranja', (-0.22 + (k % 2) * 0.1, -0.1 + (k // 2) * 0.1, 0.9), 0, 0.6, coll)
+    _mueble(coll, 0.45, 0.3, 'amarillo', top='blanco', doors='blanco')
+    # Rodaja de naranja pintada al frente
+    clay.blob('rodaja', (0, -0.33, 0.44), (0.2, 0.012, 0.2), coll, prod.mat('naranja'), n=6)
+    clay.blob('rodaja pulpa', (0, -0.342, 0.44), (0.165, 0.008, 0.165), coll, prod.mat('naranja empaque'), n=6)
+    for k in range(6):
+        a = k * math.pi / 3
+        clay.sweep(f'gajo {k}', [(0, -0.352, 0.44), (0.15 * math.cos(a), -0.352, 0.44 + 0.15 * math.sin(a))], 0.008, (1, 1), coll, m('blanco'),
+                   segments=6, samples=2)
+    # Dispensador de jugo
+    box('base dispensador', (0.2, 0.04, 0.99), (0.12, 0.12, 0.04), coll, 'blanco', p=5)
+    tank = clay.lathe('tanque', [(0.1, 0.0), (0.11, 0.34)], coll, m('vidrio'), segments=24, cap_top=False)
+    tank.location = (0.2, 0.04, 1.03)
+    juice = clay.lathe('jugo tanque', [(0.093, 0.01), (0.102, 0.26)], coll, prod.mat('naranja empaque'), segments=24)
+    juice.location = (0.2, 0.04, 1.03)
+    lid = clay.lathe('tapa tanque', [(0.115, 0.0), (0.08, 0.04), (0.0, 0.05)], coll, m('blanco'), segments=24)
+    lid.location = (0.2, 0.04, 1.37)
+    box('llave', (0.2, -0.09, 1.02), (0.02, 0.03, 0.02), coll, 'coral', p=4)
+    # Exprimidor eléctrico y naranjas
+    ex = clay.lathe('exprimidor', [(0.1, 0.0), (0.11, 0.08), (0.12, 0.1), (0.07, 0.1), (0.0, 0.2)], coll, m('blanco'), segments=24)
+    ex.location = (-0.2, 0.06, 0.95)
+    for k in range(3):
+        prod.instance('naranja', (-0.32 + k * 0.12, -0.18, 0.95), 0, 0.5, coll)
+    prod.instance('jugo', (0.02, -0.12, 0.95), 0, 0.8, coll)
 
 
 # --------------------------------------------------------------------------
@@ -422,9 +479,16 @@ def estrella(coll):
 
 
 def corazon(coll):
-    for sx in (-1, 1):
-        clay.blob('lóbulo', (sx * 0.075, 0, 0.3), (0.1, 0.06, 0.1), coll, u('corazon'), n=8)
-    clay.sweep('punta', [(-0.14, 0, 0.27), (0, 0, 0.08), (0.14, 0, 0.27)], [0.08, 0.02, 0.08], (0.6, 1), coll, u('corazon'), segments=10, samples=5, up=(0, -1, 0))
+    """Corazón inflado: dos conos redondeados fundidos (SDF), aplanado de frente."""
+    import sdf
+    lobes = [sdf.round_cone((sx * 0.078, 0, 0.3), (0, 0, 0.1), 0.1, 0.022) for sx in (-1, 1)]
+
+    def f(P):
+        Q = P.copy()
+        Q[:, 1] *= 1.8
+        return sdf.smin(lobes[0](Q), lobes[1](Q), 0.05)
+    sdf.to_mesh('corazón', f, (-0.21, -0.08, 0.04), (0.21, 0.08, 0.44), voxel=0.005, coll=coll, material=u('corazon'), decimate=0.5)
+    clay.blob('brillo corazón', (-0.09, -0.052, 0.34), (0.03, 0.008, 0.022), coll, m('blanco'), n=4)
 
 
 def reloj(coll):
