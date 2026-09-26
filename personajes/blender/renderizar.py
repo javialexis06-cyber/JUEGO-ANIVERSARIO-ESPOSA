@@ -157,6 +157,16 @@ def giro():
         r.location.x = X_EL if who == 'el' else X_ELLA
 
 
+def giro_el():
+    room(False)
+    show_collection('Ella | personaje', False)
+    EL.location.x = 0
+    for k, ang in ((0, 0), (1, 90), (2, 180), (3, 270)):
+        EL.rotation_euler.z = math.radians(ang)
+        render(f'giro-el-{k}', (0.0, -8.2, 1.7), (0.0, 0.0, 1.25), 70, 700, 900)
+    EL.rotation_euler.z = 0
+
+
 def poses_juego():
     room(False)
     show_collection('Ella | personaje', False)
@@ -169,7 +179,7 @@ def poses_juego():
 
 SHOTS = {
     'sala_pareja': sala_pareja, 'sala_el': sala_el, 'sala_el_tq': sala_el_tq, 'sala_ella': sala_ella, 'estudio_pareja': estudio_pareja,
-    'pareja_feliz': pareja_feliz, 'caras': caras, 'giro': giro, 'poses': poses_juego,
+    'pareja_feliz': pareja_feliz, 'caras': caras, 'giro': giro, 'giro_el': giro_el, 'poses': poses_juego,
 }
 
 for shot in SHOT_LIST:
