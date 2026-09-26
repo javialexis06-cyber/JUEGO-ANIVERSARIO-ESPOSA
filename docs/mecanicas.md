@@ -19,7 +19,7 @@ Las láminas `16a-estados-vitrina.png` y `16b-como-se-repone.png` (en `supermerc
 4. Camina hasta la sección de ese producto, **lo toma de la vitrina** y lo echa a la canasta. Luego sigue con el siguiente de su lista.
 5. Con la lista completa va a la **caja**, hace fila, paga y **deja propina** si lo atendieron rápido.
 6. **Si algo falta** (vitrina vacía), el cliente se queda esperando frente a la vitrina y su **paciencia baja**. Si se le acaba, se va sin comprar ese producto, o sin comprar nada si está muy bravo.
-7. **Al cerrar** se suman las ventas y propinas y se comparan con la **meta del día** y la **meta experta**, que dan 1 o 2 estrellas.
+7. **Al cerrar** se suman las ventas y las propinas, y se revisan los **3 objetivos del nivel**; cada uno da una estrella (ver punto 9).
 
 Tu trabajo, y el de ella, es que **nunca falte producto**, que **nadie espere mucho en la caja** y que la tienda esté **limpia y segura**.
 
@@ -163,26 +163,89 @@ Las **máquinas** (malteadas, café, jugos y pizza) funcionan igual: poner, espe
 
 ---
 
-## 9. Progresión: días, tiendas y mejoras
+## 9. Progresión: 100 niveles con 3 estrellas cada uno
 
-- Cada tienda tiene **10 días**. Cada día llegan más clientes y más problemas.
-- **Entre días** se abre la **tienda de mejoras**:
-  - comprar sitios «+» (vitrinas nuevas, cajas, máquinas, zonas especiales);
-  - **mejorar vitrinas** hasta el tope de esa tienda;
-  - contratar ayudantes (cajera, reponedor, guardia, aseo);
-  - comprar decoración.
-- Con las estrellas de la tienda se desbloquea la siguiente. En la tienda nueva **se empieza de cero**: vitrinas de nivel 1 y lo mínimo para funcionar, pero con más sitios, secciones nuevas y un tope de mejora más alto.
+Son **100 niveles**: 4 tiendas de **25 días** cada una. La tabla completa, con los clientes y las metas de cada nivel, está en [`niveles.md`](niveles.md). La genera `juego/datos/generar_niveles.py`, que también produce `juego/datos/niveles.json` para el juego.
 
-| Tienda | Empieza con | Sitios | Tope de mejora | Lo nuevo |
-|---|---|---|---|---|
-| 1 · Tiendita de barrio | 4 vitrinas | 12 | Nivel 2 | Reponer, cobrar, basura |
-| 2 · Minimercado | 4 vitrinas | 22 | Nivel 2 | Carnes, góndolas, zona de wafles, derrames, ladrones |
-| 3 · Supermercado | 5 vitrinas | 33 | Nivel 3 | Zona de arepas, malteadas y café, ayudantes |
-| 4 · Hipermercado | 7 vitrinas | 45 | Nivel 3 | Jugos y pizza, famoso, niña traviesa |
+### Las 3 estrellas de cada nivel
+| Estrella | Qué premia | ¿Obligatoria? |
+|---|---|---|
+| ⭐ 1 · **Ventas** | Llegar a la meta de monedas del día | **Sí**: sin ella se repite el nivel |
+| ⭐ 2 · **Objetivo del día** | Rota entre los objetivos de la lista de abajo | No |
+| ⭐ 3 · **Objetivo del día** | Otro distinto de la misma lista | No |
+
+**Objetivos que rotan en las estrellas 2 y 3:**
+- **Propinas**: recolectar al menos *X* monedas de propina. Premia atender rápido y hacer combos.
+- **Clientes perdidos**: que se vayan como máximo *X* clientes sin comprar por demora. En los niveles altos, ninguno.
+- **Espera en la caja**: que la espera promedio en la fila sea de *X* segundos o menos.
+- **Vitrinas vacías**: que ninguna vitrina quede vacía más de *X* segundos seguidos.
+- **Limpieza**: que ningún charco ni basura quede más de *X* segundos (aparece cuando ya existen basura y derrames).
+- **Robos**: ningún robo en el día (aparece desde que llega el ladrón).
+- **Productos preparados**: vender *X* wafles, arepas, malteadas…
+- **Equipo**: en **pareja**, hacer *X* combos en equipo; en **solitario**, que el *X* % de los clientes salga feliz.
+
+**Cómo se ve:**
+- Antes de empezar, la tarjeta del nivel muestra los 3 objetivos con sus metas.
+- Durante el día se ven como 3 mini-íconos arriba, que se llenan en vivo. Por ejemplo, el contador de propinas sube, y los clientes perdidos se ven como caritas tachadas.
+- Al cerrar, las estrellas se encienden una por una.
+- **Se puede repetir cualquier nivel** para sacar las estrellas que faltaron. Al repetir, se juega con las mejoras que ya se tienen en esa tienda.
+
+### Días especiales
+- **Cada 5 días hay un evento con estrellas propias:**
+  - **Hora pico** (días 5, 30, 55 y 80): clientes en oleadas. Estrellas por clientes perdidos y espera en la caja.
+  - **Día de ofertas** (días 10, 35, 60 y 85): más clientes y más ventas. Estrellas por propinas y vitrinas vacías.
+  - **Día lluvioso** (días 15, 40, 65 y 90): el doble de derrames. Estrellas por limpieza y clientes perdidos.
+  - **Visita especial** (días 20, 45, 70 y 95): inspección, y la limpieza cuenta doble. Estrellas por limpieza y equipo.
+- **Gran día** (niveles 25, 50 y 75): el final de cada tienda, con todo junto y la meta más alta.
+- **Nivel 100 · Nuestro aniversario**: la tienda decorada, música especial y un mensaje final para los dos.
+
+### Dificultad
+- Cada día llegan más clientes: por ejemplo, 8 el primer día de la tiendita y 32 el último del hipermercado, jugando en solitario.
+- La paciencia baja poco a poco.
+- Las listas pasan de 1 a 4 productos.
+- Van apareciendo clientes y problemas nuevos. Cada novedad llega sola y con un aviso corto de cómo se resuelve.
+
+### Pasar de tienda
+- Para abrir la siguiente tienda hay que **terminar el día 25** y tener **al menos 45 de las 75 estrellas** de esa tienda. Así, a veces conviene volver a sacar estrellas.
+- En la tienda nueva **se empieza de cero**: vitrinas de nivel 1, lo mínimo para funcionar y el carrito de nivel 1.
+- Las **monedas** son de cada tienda: se gastan en sitios y mejoras y no pasan a la siguiente.
+- Las **estrellas** son para siempre y desbloquean recompensas.
+
+### Recompensas por estrellas (300 en total)
+| Estrellas | Recompensa |
+|---|---|
+| Cada 10 ⭐ | Un **recuerdo** en el álbum de la pareja: una foto o un mensaje que ustedes cargan en la app |
+| 30 ⭐ | Delantales de barrio para Él y Ella |
+| 75 ⭐ | Decoración especial: guirnaldas con sus iniciales |
+| 150 ⭐ | Nuevos peinados y ropa |
+| 225 ⭐ | Música de la tienda: su canción |
+| 300 ⭐ | Final secreto del aniversario |
 
 ---
 
-## 10. Controles en el celular
+## 10. Modos de juego: en solitario y en pareja
+
+Desde el menú principal se elige cómo jugar.
+
+| | **Solitario** | **Pareja en línea** |
+|---|---|---|
+| Personajes | Solo el que elijas (Él o Ella) | Cada uno el suyo, desde su celular |
+| Clientes por día | Los de la tabla (columna solitario) | ×1.5 (columna pareja) |
+| Metas de estrellas | Escaladas a un jugador | Escaladas a dos jugadores |
+| Objetivo «equipo» | % de clientes felices | Combos en pareja |
+| Partida guardada | Una propia para cada uno: «la de Ella» y «la de Él» | Una compartida: «la de los dos» |
+
+- **Son 3 partidas independientes**, cada una con sus 100 niveles, monedas y mejoras. Así ella puede jugar sola a su ritmo sin adelantar ni dañar la partida de los dos.
+- **Las estrellas se suman en un solo álbum**: las 3 partidas desbloquean los mismos recuerdos y cosméticos.
+- **Ayuda opcional en solitario**: se puede activar un **ayudante automático**, que es el otro personaje manejado por la máquina. Hace tareas simples, como reponer lo que está en rojo o recoger basura, pero con esa ayuda el nivel da como máximo 2 estrellas.
+- **En pareja**:
+  - Uno crea la sala y el otro entra con un código de 4 letras o una invitación.
+  - Si uno se desconecta, el juego se pausa hasta 60 segundos. Si no vuelve, se puede terminar el día solo, con la ayuda automática.
+- **Progreso en la nube**: se guarda en el servidor (ver `viabilidad-cooperativo-en-linea.md`), así se puede seguir desde cualquiera de los dos celulares.
+
+---
+
+## 11. Controles en el celular
 
 - **Tocar** una vitrina, la caja, un charco, un cliente o una máquina agrega esa acción a tu cola.
 - **Tocar dos veces** una acción de la cola la cancela.

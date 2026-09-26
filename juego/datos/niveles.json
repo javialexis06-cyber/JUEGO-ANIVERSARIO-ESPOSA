@@ -1,0 +1,5475 @@
+[
+ {
+  "numero": 1,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 1,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Aprender a reponer desde la bodega y a cobrar en la caja",
+  "duracion_s": 180,
+  "paciencia": 1.0,
+  "clientes": {
+   "solitario": 8,
+   "pareja": 12
+  },
+  "problemas": [],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 55 monedas",
+     "pareja": "Vender 80 monedas"
+    },
+    "meta": {
+     "solitario": 55,
+     "pareja": 80
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 9 monedas de propina",
+     "pareja": "Recolectar 13 monedas de propina"
+    },
+    "meta": {
+     "solitario": 9,
+     "pareja": 13
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   }
+  ]
+ },
+ {
+  "numero": 2,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 2,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Clientes con listas de 2 productos",
+  "duracion_s": 180,
+  "paciencia": 0.992,
+  "clientes": {
+   "solitario": 8,
+   "pareja": 12
+  },
+  "problemas": [],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 55 monedas",
+     "pareja": "Vender 80 monedas"
+    },
+    "meta": {
+     "solitario": 55,
+     "pareja": 80
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 9 monedas de propina",
+     "pareja": "Recolectar 13 monedas de propina"
+    },
+    "meta": {
+     "solitario": 9,
+     "pareja": 13
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 12 s o menos",
+    "meta": 12
+   }
+  ]
+ },
+ {
+  "numero": 3,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 3,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Comprar sitios «+» entre días",
+  "duracion_s": 180,
+  "paciencia": 0.984,
+  "clientes": {
+   "solitario": 9,
+   "pareja": 14
+  },
+  "problemas": [],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 60 monedas",
+     "pareja": "Vender 95 monedas"
+    },
+    "meta": {
+     "solitario": 60,
+     "pareja": 95
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 25 s",
+    "meta": 25
+   }
+  ]
+ },
+ {
+  "numero": 4,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 4,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Primera mejora de vitrina (nivel 2)",
+  "duracion_s": 180,
+  "paciencia": 0.976,
+  "clientes": {
+   "solitario": 9,
+   "pareja": 14
+  },
+  "problemas": [],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 60 monedas",
+     "pareja": "Vender 95 monedas"
+    },
+    "meta": {
+     "solitario": 60,
+     "pareja": 95
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 10 monedas de propina",
+     "pareja": "Recolectar 15 monedas de propina"
+    },
+    "meta": {
+     "solitario": 10,
+     "pareja": 15
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "69 % de clientes felices",
+     "pareja": "2 combos en pareja"
+    },
+    "meta": {
+     "solitario": 69,
+     "pareja": 2
+    }
+   }
+  ]
+ },
+ {
+  "numero": 5,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 5,
+  "evento": "Hora pico",
+  "descripcion_evento": "Los clientes llegan en oleadas: +30 % de clientes",
+  "novedad": null,
+  "duracion_s": 215,
+  "paciencia": 0.968,
+  "clientes": {
+   "solitario": 13,
+   "pareja": 20
+  },
+  "problemas": [],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 90 monedas",
+     "pareja": "Vender 135 monedas"
+    },
+    "meta": {
+     "solitario": 90,
+     "pareja": 135
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 12 s o menos",
+    "meta": 12
+   }
+  ]
+ },
+ {
+  "numero": 6,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 6,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Llega el adolescente: deja basura",
+  "duracion_s": 185,
+  "paciencia": 0.96,
+  "clientes": {
+   "solitario": 10,
+   "pareja": 15
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 70 monedas",
+     "pareja": "Vender 100 monedas"
+    },
+    "meta": {
+     "solitario": 70,
+     "pareja": 100
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 11 monedas de propina",
+     "pareja": "Recolectar 16 monedas de propina"
+    },
+    "meta": {
+     "solitario": 11,
+     "pareja": 16
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 2
+    }
+   }
+  ]
+ },
+ {
+  "numero": 7,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 7,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.952,
+  "clientes": {
+   "solitario": 11,
+   "pareja": 16
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 75 monedas",
+     "pareja": "Vender 110 monedas"
+    },
+    "meta": {
+     "solitario": 75,
+     "pareja": 110
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 12 monedas de propina",
+     "pareja": "Recolectar 18 monedas de propina"
+    },
+    "meta": {
+     "solitario": 12,
+     "pareja": 18
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 12 s o menos",
+    "meta": 12
+   }
+  ]
+ },
+ {
+  "numero": 8,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 8,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Listas de 3 productos",
+  "duracion_s": 185,
+  "paciencia": 0.944,
+  "clientes": {
+   "solitario": 11,
+   "pareja": 16
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 75 monedas",
+     "pareja": "Vender 110 monedas"
+    },
+    "meta": {
+     "solitario": 75,
+     "pareja": 110
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 1 cliente perdido por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 1
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 25 s",
+    "meta": 25
+   }
+  ]
+ },
+ {
+  "numero": 9,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 9,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.936,
+  "clientes": {
+   "solitario": 12,
+   "pareja": 18
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 80 monedas",
+     "pareja": "Vender 120 monedas"
+    },
+    "meta": {
+     "solitario": 80,
+     "pareja": 120
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 13 monedas de propina",
+     "pareja": "Recolectar 20 monedas de propina"
+    },
+    "meta": {
+     "solitario": 13,
+     "pareja": 20
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "74 % de clientes felices",
+     "pareja": "3 combos en pareja"
+    },
+    "meta": {
+     "solitario": 74,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 10,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 10,
+  "evento": "Día de ofertas",
+  "descripcion_evento": "Las islas de oferta atraen clientes: +20 % de ventas y de clientes",
+  "novedad": null,
+  "duracion_s": 220,
+  "paciencia": 0.928,
+  "clientes": {
+   "solitario": 14,
+   "pareja": 21
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 115 monedas",
+     "pareja": "Vender 170 monedas"
+    },
+    "meta": {
+     "solitario": 115,
+     "pareja": 170
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 15 monedas de propina",
+     "pareja": "Recolectar 23 monedas de propina"
+    },
+    "meta": {
+     "solitario": 15,
+     "pareja": 23
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 25 s",
+    "meta": 25
+   }
+  ]
+ },
+ {
+  "numero": 11,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 11,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Llega el ejecutivo apurado (poca paciencia)",
+  "duracion_s": 190,
+  "paciencia": 0.92,
+  "clientes": {
+   "solitario": 12,
+   "pareja": 18
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 80 monedas",
+     "pareja": "Vender 120 monedas"
+    },
+    "meta": {
+     "solitario": 80,
+     "pareja": 120
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 13 monedas de propina",
+     "pareja": "Recolectar 20 monedas de propina"
+    },
+    "meta": {
+     "solitario": 13,
+     "pareja": 20
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   }
+  ]
+ },
+ {
+  "numero": 12,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 12,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.912,
+  "clientes": {
+   "solitario": 13,
+   "pareja": 20
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 90 monedas",
+     "pareja": "Vender 135 monedas"
+    },
+    "meta": {
+     "solitario": 90,
+     "pareja": 135
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 14 monedas de propina",
+     "pareja": "Recolectar 22 monedas de propina"
+    },
+    "meta": {
+     "solitario": 14,
+     "pareja": 22
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 12 s o menos",
+    "meta": 12
+   }
+  ]
+ },
+ {
+  "numero": 13,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 13,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.904,
+  "clientes": {
+   "solitario": 13,
+   "pareja": 20
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 90 monedas",
+     "pareja": "Vender 135 monedas"
+    },
+    "meta": {
+     "solitario": 90,
+     "pareja": 135
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 25 s",
+    "meta": 25
+   }
+  ]
+ },
+ {
+  "numero": 14,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 14,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.896,
+  "clientes": {
+   "solitario": 14,
+   "pareja": 21
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 95 monedas",
+     "pareja": "Vender 140 monedas"
+    },
+    "meta": {
+     "solitario": 95,
+     "pareja": 140
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 15 monedas de propina",
+     "pareja": "Recolectar 23 monedas de propina"
+    },
+    "meta": {
+     "solitario": 15,
+     "pareja": 23
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "79 % de clientes felices",
+     "pareja": "4 combos en pareja"
+    },
+    "meta": {
+     "solitario": 79,
+     "pareja": 4
+    }
+   }
+  ]
+ },
+ {
+  "numero": 15,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 15,
+  "evento": "Día lluvioso",
+  "descripcion_evento": "Entra agua por la puerta: el doble de derrames",
+  "novedad": null,
+  "duracion_s": 225,
+  "paciencia": 0.888,
+  "clientes": {
+   "solitario": 14,
+   "pareja": 21
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 95 monedas",
+     "pareja": "Vender 140 monedas"
+    },
+    "meta": {
+     "solitario": 95,
+     "pareja": 140
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   }
+  ]
+ },
+ {
+  "numero": 16,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 16,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Llega la chica deportista (frutas y bebidas)",
+  "duracion_s": 195,
+  "paciencia": 0.88,
+  "clientes": {
+   "solitario": 15,
+   "pareja": 22
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 100 monedas",
+     "pareja": "Vender 150 monedas"
+    },
+    "meta": {
+     "solitario": 100,
+     "pareja": 150
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 16 monedas de propina",
+     "pareja": "Recolectar 24 monedas de propina"
+    },
+    "meta": {
+     "solitario": 16,
+     "pareja": 24
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Que ningún cliente se vaya sin comprar",
+     "pareja": "Máximo 1 cliente perdido por demora"
+    },
+    "meta": {
+     "solitario": 0,
+     "pareja": 1
+    }
+   }
+  ]
+ },
+ {
+  "numero": 17,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 17,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.872,
+  "clientes": {
+   "solitario": 15,
+   "pareja": 22
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 100 monedas",
+     "pareja": "Vender 150 monedas"
+    },
+    "meta": {
+     "solitario": 100,
+     "pareja": 150
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 16 monedas de propina",
+     "pareja": "Recolectar 24 monedas de propina"
+    },
+    "meta": {
+     "solitario": 16,
+     "pareja": 24
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 12 s o menos",
+    "meta": 12
+   }
+  ]
+ },
+ {
+  "numero": 18,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 18,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.864,
+  "clientes": {
+   "solitario": 16,
+   "pareja": 24
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 110 monedas",
+     "pareja": "Vender 160 monedas"
+    },
+    "meta": {
+     "solitario": 110,
+     "pareja": 160
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Que ningún cliente se vaya sin comprar",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 0,
+     "pareja": 2
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 25 s",
+    "meta": 25
+   }
+  ]
+ },
+ {
+  "numero": 19,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 19,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.856,
+  "clientes": {
+   "solitario": 16,
+   "pareja": 24
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 110 monedas",
+     "pareja": "Vender 160 monedas"
+    },
+    "meta": {
+     "solitario": 110,
+     "pareja": 160
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 18 monedas de propina",
+     "pareja": "Recolectar 26 monedas de propina"
+    },
+    "meta": {
+     "solitario": 18,
+     "pareja": 26
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "84 % de clientes felices",
+     "pareja": "5 combos en pareja"
+    },
+    "meta": {
+     "solitario": 84,
+     "pareja": 5
+    }
+   }
+  ]
+ },
+ {
+  "numero": 20,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 20,
+  "evento": "Visita especial",
+  "descripcion_evento": "Inspección: la limpieza cuenta doble",
+  "novedad": "Listas de 4 productos",
+  "duracion_s": 230,
+  "paciencia": 0.848,
+  "clientes": {
+   "solitario": 17,
+   "pareja": 26
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 115 monedas",
+     "pareja": "Vender 175 monedas"
+    },
+    "meta": {
+     "solitario": 115,
+     "pareja": 175
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 12 s",
+    "meta": 12
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "85 % de clientes felices",
+     "pareja": "5 combos en pareja"
+    },
+    "meta": {
+     "solitario": 85,
+     "pareja": 5
+    }
+   }
+  ]
+ },
+ {
+  "numero": 21,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 21,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.84,
+  "clientes": {
+   "solitario": 17,
+   "pareja": 26
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 115 monedas",
+     "pareja": "Vender 175 monedas"
+    },
+    "meta": {
+     "solitario": 115,
+     "pareja": 175
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 19 monedas de propina",
+     "pareja": "Recolectar 29 monedas de propina"
+    },
+    "meta": {
+     "solitario": 19,
+     "pareja": 29
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   }
+  ]
+ },
+ {
+  "numero": 22,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 22,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.832,
+  "clientes": {
+   "solitario": 17,
+   "pareja": 26
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 115 monedas",
+     "pareja": "Vender 175 monedas"
+    },
+    "meta": {
+     "solitario": 115,
+     "pareja": 175
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 19 monedas de propina",
+     "pareja": "Recolectar 29 monedas de propina"
+    },
+    "meta": {
+     "solitario": 19,
+     "pareja": 29
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 12 s o menos",
+    "meta": 12
+   }
+  ]
+ },
+ {
+  "numero": 23,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 23,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.824,
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 120 monedas",
+     "pareja": "Vender 180 monedas"
+    },
+    "meta": {
+     "solitario": 120,
+     "pareja": 180
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 25 s",
+    "meta": 25
+   }
+  ]
+ },
+ {
+  "numero": 24,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 24,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.816,
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 120 monedas",
+     "pareja": "Vender 180 monedas"
+    },
+    "meta": {
+     "solitario": 120,
+     "pareja": 180
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 20 monedas de propina",
+     "pareja": "Recolectar 30 monedas de propina"
+    },
+    "meta": {
+     "solitario": 20,
+     "pareja": 30
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "89 % de clientes felices",
+     "pareja": "6 combos en pareja"
+    },
+    "meta": {
+     "solitario": 89,
+     "pareja": 6
+    }
+   }
+  ]
+ },
+ {
+  "numero": 25,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 25,
+  "evento": "Gran día",
+  "descripcion_evento": "Final de la tienda: todo junto y la meta más alta",
+  "novedad": null,
+  "duracion_s": 295,
+  "paciencia": 0.808,
+  "clientes": {
+   "solitario": 25,
+   "pareja": 38
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 170 monedas",
+     "pareja": "Vender 255 monedas"
+    },
+    "meta": {
+     "solitario": 170,
+     "pareja": 255
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 28 monedas de propina",
+     "pareja": "Recolectar 42 monedas de propina"
+    },
+    "meta": {
+     "solitario": 28,
+     "pareja": 42
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 26,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 1,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Nueva tienda: se empieza de cero. Derrames en el piso",
+  "duracion_s": 180,
+  "paciencia": 0.97,
+  "clientes": {
+   "solitario": 12,
+   "pareja": 18
+  },
+  "problemas": [
+   "basura",
+   "derrames"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 100 monedas",
+     "pareja": "Vender 150 monedas"
+    },
+    "meta": {
+     "solitario": 100,
+     "pareja": 150
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 15 monedas de propina",
+     "pareja": "Recolectar 22 monedas de propina"
+    },
+    "meta": {
+     "solitario": 15,
+     "pareja": 22
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 27,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 2,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Se puede comprar la zona especial de wafles",
+  "duracion_s": 180,
+  "paciencia": 0.962,
+  "clientes": {
+   "solitario": 12,
+   "pareja": 18
+  },
+  "problemas": [
+   "basura",
+   "derrames"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 100 monedas",
+     "pareja": "Vender 150 monedas"
+    },
+    "meta": {
+     "solitario": 100,
+     "pareja": 150
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 15 monedas de propina",
+     "pareja": "Recolectar 22 monedas de propina"
+    },
+    "meta": {
+     "solitario": 15,
+     "pareja": 22
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 10 s o menos",
+    "meta": 10
+   }
+  ]
+ },
+ {
+  "numero": 28,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 3,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Aparece el ladrón",
+  "duracion_s": 180,
+  "paciencia": 0.954,
+  "clientes": {
+   "solitario": 13,
+   "pareja": 20
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 105 monedas",
+     "pareja": "Vender 165 monedas"
+    },
+    "meta": {
+     "solitario": 105,
+     "pareja": 165
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 22 s",
+    "meta": 22
+   }
+  ]
+ },
+ {
+  "numero": 29,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 4,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 180,
+  "paciencia": 0.946,
+  "clientes": {
+   "solitario": 14,
+   "pareja": 21
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 115 monedas",
+     "pareja": "Vender 175 monedas"
+    },
+    "meta": {
+     "solitario": 115,
+     "pareja": 175
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 17 monedas de propina",
+     "pareja": "Recolectar 25 monedas de propina"
+    },
+    "meta": {
+     "solitario": 17,
+     "pareja": 25
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "69 % de clientes felices",
+     "pareja": "3 combos en pareja"
+    },
+    "meta": {
+     "solitario": 69,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 30,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 5,
+  "evento": "Hora pico",
+  "descripcion_evento": "Los clientes llegan en oleadas: +30 % de clientes",
+  "novedad": null,
+  "duracion_s": 215,
+  "paciencia": 0.938,
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 150 monedas",
+     "pareja": "Vender 225 monedas"
+    },
+    "meta": {
+     "solitario": 150,
+     "pareja": 225
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 4
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 10 s o menos",
+    "meta": 10
+   }
+  ]
+ },
+ {
+  "numero": 31,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 6,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.93,
+  "clientes": {
+   "solitario": 14,
+   "pareja": 21
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 115 monedas",
+     "pareja": "Vender 175 monedas"
+    },
+    "meta": {
+     "solitario": 115,
+     "pareja": 175
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 32,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 7,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.922,
+  "clientes": {
+   "solitario": 15,
+   "pareja": 22
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 125 monedas",
+     "pareja": "Vender 180 monedas"
+    },
+    "meta": {
+     "solitario": 125,
+     "pareja": 180
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "preparados",
+    "texto": {
+     "solitario": "Vender 3 productos preparados",
+     "pareja": "Vender 4 productos preparados"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 4
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 18 monedas de propina",
+     "pareja": "Recolectar 27 monedas de propina"
+    },
+    "meta": {
+     "solitario": 18,
+     "pareja": 27
+    }
+   }
+  ]
+ },
+ {
+  "numero": 33,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 8,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Llega el turista (compra un poco de todo)",
+  "duracion_s": 185,
+  "paciencia": 0.914,
+  "clientes": {
+   "solitario": 16,
+   "pareja": 24
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 130 monedas",
+     "pareja": "Vender 200 monedas"
+    },
+    "meta": {
+     "solitario": 130,
+     "pareja": 200
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 19 monedas de propina",
+     "pareja": "Recolectar 29 monedas de propina"
+    },
+    "meta": {
+     "solitario": 19,
+     "pareja": 29
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 34,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 9,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.906,
+  "clientes": {
+   "solitario": 16,
+   "pareja": 24
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 130 monedas",
+     "pareja": "Vender 200 monedas"
+    },
+    "meta": {
+     "solitario": 130,
+     "pareja": 200
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 19 monedas de propina",
+     "pareja": "Recolectar 29 monedas de propina"
+    },
+    "meta": {
+     "solitario": 19,
+     "pareja": 29
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 10 s o menos",
+    "meta": 10
+   }
+  ]
+ },
+ {
+  "numero": 35,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 10,
+  "evento": "Día de ofertas",
+  "descripcion_evento": "Las islas de oferta atraen clientes: +20 % de ventas y de clientes",
+  "novedad": null,
+  "duracion_s": 220,
+  "paciencia": 0.898,
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 200 monedas",
+     "pareja": "Vender 295 monedas"
+    },
+    "meta": {
+     "solitario": 200,
+     "pareja": 295
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 24 monedas de propina",
+     "pareja": "Recolectar 36 monedas de propina"
+    },
+    "meta": {
+     "solitario": 24,
+     "pareja": 36
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 22 s",
+    "meta": 22
+   }
+  ]
+ },
+ {
+  "numero": 36,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 11,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.89,
+  "clientes": {
+   "solitario": 17,
+   "pareja": 26
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 140 monedas",
+     "pareja": "Vender 215 monedas"
+    },
+    "meta": {
+     "solitario": 140,
+     "pareja": 215
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 21 monedas de propina",
+     "pareja": "Recolectar 31 monedas de propina"
+    },
+    "meta": {
+     "solitario": 21,
+     "pareja": 31
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "76 % de clientes felices",
+     "pareja": "4 combos en pareja"
+    },
+    "meta": {
+     "solitario": 76,
+     "pareja": 4
+    }
+   }
+  ]
+ },
+ {
+  "numero": 37,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 12,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.882,
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 150 monedas",
+     "pareja": "Vender 225 monedas"
+    },
+    "meta": {
+     "solitario": 150,
+     "pareja": 225
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 22 monedas de propina",
+     "pareja": "Recolectar 33 monedas de propina"
+    },
+    "meta": {
+     "solitario": 22,
+     "pareja": 33
+    }
+   }
+  ]
+ },
+ {
+  "numero": 38,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 13,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.874,
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 150 monedas",
+     "pareja": "Vender 225 monedas"
+    },
+    "meta": {
+     "solitario": 150,
+     "pareja": 225
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 39,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 14,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Llega el chef (compra mucho de una sola sección)",
+  "duracion_s": 190,
+  "paciencia": 0.866,
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 150 monedas",
+     "pareja": "Vender 225 monedas"
+    },
+    "meta": {
+     "solitario": 150,
+     "pareja": 225
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "preparados",
+    "texto": {
+     "solitario": "Vender 4 productos preparados",
+     "pareja": "Vender 6 productos preparados"
+    },
+    "meta": {
+     "solitario": 4,
+     "pareja": 6
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 22 monedas de propina",
+     "pareja": "Recolectar 33 monedas de propina"
+    },
+    "meta": {
+     "solitario": 22,
+     "pareja": 33
+    }
+   }
+  ]
+ },
+ {
+  "numero": 40,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 15,
+  "evento": "Día lluvioso",
+  "descripcion_evento": "Entra agua por la puerta: el doble de derrames",
+  "novedad": null,
+  "duracion_s": 225,
+  "paciencia": 0.858,
+  "clientes": {
+   "solitario": 19,
+   "pareja": 28
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 155 monedas",
+     "pareja": "Vender 230 monedas"
+    },
+    "meta": {
+     "solitario": 155,
+     "pareja": 230
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 41,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 16,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.85,
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 165 monedas",
+     "pareja": "Vender 250 monedas"
+    },
+    "meta": {
+     "solitario": 165,
+     "pareja": 250
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 24 monedas de propina",
+     "pareja": "Recolectar 36 monedas de propina"
+    },
+    "meta": {
+     "solitario": 24,
+     "pareja": 36
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 10 s o menos",
+    "meta": 10
+   }
+  ]
+ },
+ {
+  "numero": 42,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 17,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.842,
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 165 monedas",
+     "pareja": "Vender 250 monedas"
+    },
+    "meta": {
+     "solitario": 165,
+     "pareja": 250
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 22 s",
+    "meta": 22
+   }
+  ]
+ },
+ {
+  "numero": 43,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 18,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.834,
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 165 monedas",
+     "pareja": "Vender 250 monedas"
+    },
+    "meta": {
+     "solitario": 165,
+     "pareja": 250
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 24 monedas de propina",
+     "pareja": "Recolectar 36 monedas de propina"
+    },
+    "meta": {
+     "solitario": 24,
+     "pareja": 36
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "83 % de clientes felices",
+     "pareja": "6 combos en pareja"
+    },
+    "meta": {
+     "solitario": 83,
+     "pareja": 6
+    }
+   }
+  ]
+ },
+ {
+  "numero": 44,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 19,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.826,
+  "clientes": {
+   "solitario": 21,
+   "pareja": 32
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 175 monedas",
+     "pareja": "Vender 265 monedas"
+    },
+    "meta": {
+     "solitario": 175,
+     "pareja": 265
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 25 monedas de propina",
+     "pareja": "Recolectar 39 monedas de propina"
+    },
+    "meta": {
+     "solitario": 25,
+     "pareja": 39
+    }
+   }
+  ]
+ },
+ {
+  "numero": 45,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 20,
+  "evento": "Visita especial",
+  "descripcion_evento": "Inspección: la limpieza cuenta doble",
+  "novedad": null,
+  "duracion_s": 230,
+  "paciencia": 0.818,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 180 monedas",
+     "pareja": "Vender 270 monedas"
+    },
+    "meta": {
+     "solitario": 180,
+     "pareja": 270
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 12 s",
+    "meta": 12
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "85 % de clientes felices",
+     "pareja": "6 combos en pareja"
+    },
+    "meta": {
+     "solitario": 85,
+     "pareja": 6
+    }
+   }
+  ]
+ },
+ {
+  "numero": 46,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 21,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.81,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 180 monedas",
+     "pareja": "Vender 270 monedas"
+    },
+    "meta": {
+     "solitario": 180,
+     "pareja": 270
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "preparados",
+    "texto": {
+     "solitario": "Vender 6 productos preparados",
+     "pareja": "Vender 8 productos preparados"
+    },
+    "meta": {
+     "solitario": 6,
+     "pareja": 8
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 27 monedas de propina",
+     "pareja": "Recolectar 40 monedas de propina"
+    },
+    "meta": {
+     "solitario": 27,
+     "pareja": 40
+    }
+   }
+  ]
+ },
+ {
+  "numero": 47,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 22,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.802,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 180 monedas",
+     "pareja": "Vender 270 monedas"
+    },
+    "meta": {
+     "solitario": 180,
+     "pareja": 270
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 27 monedas de propina",
+     "pareja": "Recolectar 40 monedas de propina"
+    },
+    "meta": {
+     "solitario": 27,
+     "pareja": 40
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 48,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 23,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.794,
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 190 monedas",
+     "pareja": "Vender 280 monedas"
+    },
+    "meta": {
+     "solitario": 190,
+     "pareja": 280
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 28 monedas de propina",
+     "pareja": "Recolectar 41 monedas de propina"
+    },
+    "meta": {
+     "solitario": 28,
+     "pareja": 41
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 10 s o menos",
+    "meta": 10
+   }
+  ]
+ },
+ {
+  "numero": 49,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 24,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.786,
+  "clientes": {
+   "solitario": 24,
+   "pareja": 36
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 200 monedas",
+     "pareja": "Vender 295 monedas"
+    },
+    "meta": {
+     "solitario": 200,
+     "pareja": 295
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 22 s",
+    "meta": 22
+   }
+  ]
+ },
+ {
+  "numero": 50,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 25,
+  "evento": "Gran día",
+  "descripcion_evento": "Final de la tienda: todo junto y la meta más alta",
+  "novedad": null,
+  "duracion_s": 295,
+  "paciencia": 0.778,
+  "clientes": {
+   "solitario": 32,
+   "pareja": 48
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 265 monedas",
+     "pareja": "Vender 395 monedas"
+    },
+    "meta": {
+     "solitario": 265,
+     "pareja": 395
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 39 monedas de propina",
+     "pareja": "Recolectar 58 monedas de propina"
+    },
+    "meta": {
+     "solitario": 39,
+     "pareja": 58
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 4
+    }
+   }
+  ]
+ },
+ {
+  "numero": 51,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 1,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Nueva tienda: se empieza de cero. Ayudantes: cajera y reponedor",
+  "duracion_s": 180,
+  "paciencia": 0.94,
+  "clientes": {
+   "solitario": 15,
+   "pareja": 22
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 145 monedas",
+     "pareja": "Vender 215 monedas"
+    },
+    "meta": {
+     "solitario": 145,
+     "pareja": 215
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 20 monedas de propina",
+     "pareja": "Recolectar 29 monedas de propina"
+    },
+    "meta": {
+     "solitario": 20,
+     "pareja": 29
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 52,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 2,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "El niño perdido: llévalo con su mamá",
+  "duracion_s": 180,
+  "paciencia": 0.932,
+  "clientes": {
+   "solitario": 16,
+   "pareja": 24
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 155 monedas",
+     "pareja": "Vender 235 monedas"
+    },
+    "meta": {
+     "solitario": 155,
+     "pareja": 235
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 21 monedas de propina",
+     "pareja": "Recolectar 32 monedas de propina"
+    },
+    "meta": {
+     "solitario": 21,
+     "pareja": 32
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 9 s o menos",
+    "meta": 9
+   }
+  ]
+ },
+ {
+  "numero": 53,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 3,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Se pueden comprar la zona de arepas y las máquinas de malteadas y café",
+  "duracion_s": 180,
+  "paciencia": 0.924,
+  "clientes": {
+   "solitario": 16,
+   "pareja": 24
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 155 monedas",
+     "pareja": "Vender 235 monedas"
+    },
+    "meta": {
+     "solitario": 155,
+     "pareja": 235
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 4
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 19 s",
+    "meta": 19
+   }
+  ]
+ },
+ {
+  "numero": 54,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 4,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 180,
+  "paciencia": 0.916,
+  "clientes": {
+   "solitario": 17,
+   "pareja": 26
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 165 monedas",
+     "pareja": "Vender 255 monedas"
+    },
+    "meta": {
+     "solitario": 165,
+     "pareja": 255
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 22 monedas de propina",
+     "pareja": "Recolectar 34 monedas de propina"
+    },
+    "meta": {
+     "solitario": 22,
+     "pareja": 34
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "69 % de clientes felices",
+     "pareja": "4 combos en pareja"
+    },
+    "meta": {
+     "solitario": 69,
+     "pareja": 4
+    }
+   }
+  ]
+ },
+ {
+  "numero": 55,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 5,
+  "evento": "Hora pico",
+  "descripcion_evento": "Los clientes llegan en oleadas: +30 % de clientes",
+  "novedad": null,
+  "duracion_s": 215,
+  "paciencia": 0.908,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 215 monedas",
+     "pareja": "Vender 320 monedas"
+    },
+    "meta": {
+     "solitario": 215,
+     "pareja": 320
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 5 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 5
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 9 s o menos",
+    "meta": 9
+   }
+  ]
+ },
+ {
+  "numero": 56,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 6,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.9,
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 175 monedas",
+     "pareja": "Vender 265 monedas"
+    },
+    "meta": {
+     "solitario": 175,
+     "pareja": 265
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 4
+    }
+   }
+  ]
+ },
+ {
+  "numero": 57,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 7,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.892,
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 175 monedas",
+     "pareja": "Vender 265 monedas"
+    },
+    "meta": {
+     "solitario": 175,
+     "pareja": 265
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "preparados",
+    "texto": {
+     "solitario": "Vender 3 productos preparados",
+     "pareja": "Vender 4 productos preparados"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 4
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 24 monedas de propina",
+     "pareja": "Recolectar 36 monedas de propina"
+    },
+    "meta": {
+     "solitario": 24,
+     "pareja": 36
+    }
+   }
+  ]
+ },
+ {
+  "numero": 58,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 8,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.884,
+  "clientes": {
+   "solitario": 19,
+   "pareja": 28
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 185 monedas",
+     "pareja": "Vender 275 monedas"
+    },
+    "meta": {
+     "solitario": 185,
+     "pareja": 275
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 25 monedas de propina",
+     "pareja": "Recolectar 37 monedas de propina"
+    },
+    "meta": {
+     "solitario": 25,
+     "pareja": 37
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   }
+  ]
+ },
+ {
+  "numero": 59,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 9,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.876,
+  "clientes": {
+   "solitario": 19,
+   "pareja": 28
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 185 monedas",
+     "pareja": "Vender 275 monedas"
+    },
+    "meta": {
+     "solitario": 185,
+     "pareja": 275
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 25 monedas de propina",
+     "pareja": "Recolectar 37 monedas de propina"
+    },
+    "meta": {
+     "solitario": 25,
+     "pareja": 37
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 9 s o menos",
+    "meta": 9
+   }
+  ]
+ },
+ {
+  "numero": 60,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 10,
+  "evento": "Día de ofertas",
+  "descripcion_evento": "Las islas de oferta atraen clientes: +20 % de ventas y de clientes",
+  "novedad": null,
+  "duracion_s": 220,
+  "paciencia": 0.868,
+  "clientes": {
+   "solitario": 24,
+   "pareja": 36
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 280 monedas",
+     "pareja": "Vender 420 monedas"
+    },
+    "meta": {
+     "solitario": 280,
+     "pareja": 420
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 32 monedas de propina",
+     "pareja": "Recolectar 48 monedas de propina"
+    },
+    "meta": {
+     "solitario": 32,
+     "pareja": 48
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 19 s",
+    "meta": 19
+   }
+  ]
+ },
+ {
+  "numero": 61,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 11,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.86,
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 195 monedas",
+     "pareja": "Vender 290 monedas"
+    },
+    "meta": {
+     "solitario": 195,
+     "pareja": 290
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 26 monedas de propina",
+     "pareja": "Recolectar 40 monedas de propina"
+    },
+    "meta": {
+     "solitario": 26,
+     "pareja": 40
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "76 % de clientes felices",
+     "pareja": "5 combos en pareja"
+    },
+    "meta": {
+     "solitario": 76,
+     "pareja": 5
+    }
+   }
+  ]
+ },
+ {
+  "numero": 62,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 12,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.852,
+  "clientes": {
+   "solitario": 21,
+   "pareja": 32
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 205 monedas",
+     "pareja": "Vender 310 monedas"
+    },
+    "meta": {
+     "solitario": 205,
+     "pareja": 310
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 28 monedas de propina",
+     "pareja": "Recolectar 42 monedas de propina"
+    },
+    "meta": {
+     "solitario": 28,
+     "pareja": 42
+    }
+   }
+  ]
+ },
+ {
+  "numero": 63,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 13,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.844,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 215 monedas",
+     "pareja": "Vender 320 monedas"
+    },
+    "meta": {
+     "solitario": 215,
+     "pareja": 320
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 4
+    }
+   }
+  ]
+ },
+ {
+  "numero": 64,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 14,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.836,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 215 monedas",
+     "pareja": "Vender 320 monedas"
+    },
+    "meta": {
+     "solitario": 215,
+     "pareja": 320
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "preparados",
+    "texto": {
+     "solitario": "Vender 4 productos preparados",
+     "pareja": "Vender 6 productos preparados"
+    },
+    "meta": {
+     "solitario": 4,
+     "pareja": 6
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 29 monedas de propina",
+     "pareja": "Recolectar 44 monedas de propina"
+    },
+    "meta": {
+     "solitario": 29,
+     "pareja": 44
+    }
+   }
+  ]
+ },
+ {
+  "numero": 65,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 15,
+  "evento": "Día lluvioso",
+  "descripcion_evento": "Entra agua por la puerta: el doble de derrames",
+  "novedad": null,
+  "duracion_s": 225,
+  "paciencia": 0.828,
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 225 monedas",
+     "pareja": "Vender 330 monedas"
+    },
+    "meta": {
+     "solitario": 225,
+     "pareja": 330
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 4
+    }
+   }
+  ]
+ },
+ {
+  "numero": 66,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 16,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.82,
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 225 monedas",
+     "pareja": "Vender 330 monedas"
+    },
+    "meta": {
+     "solitario": 225,
+     "pareja": 330
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 30 monedas de propina",
+     "pareja": "Recolectar 45 monedas de propina"
+    },
+    "meta": {
+     "solitario": 30,
+     "pareja": 45
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 9 s o menos",
+    "meta": 9
+   }
+  ]
+ },
+ {
+  "numero": 67,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 17,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.812,
+  "clientes": {
+   "solitario": 24,
+   "pareja": 36
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 235 monedas",
+     "pareja": "Vender 350 monedas"
+    },
+    "meta": {
+     "solitario": 235,
+     "pareja": 350
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 19 s",
+    "meta": 19
+   }
+  ]
+ },
+ {
+  "numero": 68,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 18,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.804,
+  "clientes": {
+   "solitario": 24,
+   "pareja": 36
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 235 monedas",
+     "pareja": "Vender 350 monedas"
+    },
+    "meta": {
+     "solitario": 235,
+     "pareja": 350
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 32 monedas de propina",
+     "pareja": "Recolectar 48 monedas de propina"
+    },
+    "meta": {
+     "solitario": 32,
+     "pareja": 48
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "83 % de clientes felices",
+     "pareja": "7 combos en pareja"
+    },
+    "meta": {
+     "solitario": 83,
+     "pareja": 7
+    }
+   }
+  ]
+ },
+ {
+  "numero": 69,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 19,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.796,
+  "clientes": {
+   "solitario": 25,
+   "pareja": 38
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 245 monedas",
+     "pareja": "Vender 370 monedas"
+    },
+    "meta": {
+     "solitario": 245,
+     "pareja": 370
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 33 monedas de propina",
+     "pareja": "Recolectar 50 monedas de propina"
+    },
+    "meta": {
+     "solitario": 33,
+     "pareja": 50
+    }
+   }
+  ]
+ },
+ {
+  "numero": 70,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 20,
+  "evento": "Visita especial",
+  "descripcion_evento": "Inspección: la limpieza cuenta doble",
+  "novedad": null,
+  "duracion_s": 230,
+  "paciencia": 0.788,
+  "clientes": {
+   "solitario": 25,
+   "pareja": 38
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 245 monedas",
+     "pareja": "Vender 370 monedas"
+    },
+    "meta": {
+     "solitario": 245,
+     "pareja": 370
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 12 s",
+    "meta": 12
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "85 % de clientes felices",
+     "pareja": "7 combos en pareja"
+    },
+    "meta": {
+     "solitario": 85,
+     "pareja": 7
+    }
+   }
+  ]
+ },
+ {
+  "numero": 71,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 21,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.78,
+  "clientes": {
+   "solitario": 26,
+   "pareja": 39
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 255 monedas",
+     "pareja": "Vender 380 monedas"
+    },
+    "meta": {
+     "solitario": 255,
+     "pareja": 380
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "preparados",
+    "texto": {
+     "solitario": "Vender 6 productos preparados",
+     "pareja": "Vender 8 productos preparados"
+    },
+    "meta": {
+     "solitario": 6,
+     "pareja": 8
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 34 monedas de propina",
+     "pareja": "Recolectar 51 monedas de propina"
+    },
+    "meta": {
+     "solitario": 34,
+     "pareja": 51
+    }
+   }
+  ]
+ },
+ {
+  "numero": 72,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 22,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.772,
+  "clientes": {
+   "solitario": 27,
+   "pareja": 40
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 265 monedas",
+     "pareja": "Vender 390 monedas"
+    },
+    "meta": {
+     "solitario": 265,
+     "pareja": 390
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 36 monedas de propina",
+     "pareja": "Recolectar 53 monedas de propina"
+    },
+    "meta": {
+     "solitario": 36,
+     "pareja": 53
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 4
+    }
+   }
+  ]
+ },
+ {
+  "numero": 73,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 23,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.764,
+  "clientes": {
+   "solitario": 27,
+   "pareja": 40
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 265 monedas",
+     "pareja": "Vender 390 monedas"
+    },
+    "meta": {
+     "solitario": 265,
+     "pareja": 390
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 36 monedas de propina",
+     "pareja": "Recolectar 53 monedas de propina"
+    },
+    "meta": {
+     "solitario": 36,
+     "pareja": 53
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 9 s o menos",
+    "meta": 9
+   }
+  ]
+ },
+ {
+  "numero": 74,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 24,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.756,
+  "clientes": {
+   "solitario": 28,
+   "pareja": 42
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 275 monedas",
+     "pareja": "Vender 410 monedas"
+    },
+    "meta": {
+     "solitario": 275,
+     "pareja": 410
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 3
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 19 s",
+    "meta": 19
+   }
+  ]
+ },
+ {
+  "numero": 75,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 25,
+  "evento": "Gran día",
+  "descripcion_evento": "Final de la tienda: todo junto y la meta más alta",
+  "novedad": null,
+  "duracion_s": 295,
+  "paciencia": 0.748,
+  "clientes": {
+   "solitario": 38,
+   "pareja": 57
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 370 monedas",
+     "pareja": "Vender 555 monedas"
+    },
+    "meta": {
+     "solitario": 370,
+     "pareja": 555
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 50 monedas de propina",
+     "pareja": "Recolectar 75 monedas de propina"
+    },
+    "meta": {
+     "solitario": 50,
+     "pareja": 75
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 6 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 6
+    }
+   }
+  ]
+ },
+ {
+  "numero": 76,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 1,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Nueva tienda: se empieza de cero. Ayudantes: guardia y aseo",
+  "duracion_s": 180,
+  "paciencia": 0.91,
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 200 monedas",
+     "pareja": "Vender 305 monedas"
+    },
+    "meta": {
+     "solitario": 200,
+     "pareja": 305
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 26 monedas de propina",
+     "pareja": "Recolectar 39 monedas de propina"
+    },
+    "meta": {
+     "solitario": 26,
+     "pareja": 39
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 4
+    }
+   }
+  ]
+ },
+ {
+  "numero": 77,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 2,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 180,
+  "paciencia": 0.902,
+  "clientes": {
+   "solitario": 19,
+   "pareja": 28
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 215 monedas",
+     "pareja": "Vender 315 monedas"
+    },
+    "meta": {
+     "solitario": 215,
+     "pareja": 315
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 27 monedas de propina",
+     "pareja": "Recolectar 40 monedas de propina"
+    },
+    "meta": {
+     "solitario": 27,
+     "pareja": 40
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 8 s o menos",
+    "meta": 8
+   }
+  ]
+ },
+ {
+  "numero": 78,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 3,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Llega la niña traviesa (tumba productos)",
+  "duracion_s": 180,
+  "paciencia": 0.894,
+  "clientes": {
+   "solitario": 19,
+   "pareja": 28
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 215 monedas",
+     "pareja": "Vender 315 monedas"
+    },
+    "meta": {
+     "solitario": 215,
+     "pareja": 315
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 4
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 16 s",
+    "meta": 16
+   }
+  ]
+ },
+ {
+  "numero": 79,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 4,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 180,
+  "paciencia": 0.886,
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 225 monedas",
+     "pareja": "Vender 340 monedas"
+    },
+    "meta": {
+     "solitario": 225,
+     "pareja": 340
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 29 monedas de propina",
+     "pareja": "Recolectar 43 monedas de propina"
+    },
+    "meta": {
+     "solitario": 29,
+     "pareja": 43
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "69 % de clientes felices",
+     "pareja": "5 combos en pareja"
+    },
+    "meta": {
+     "solitario": 69,
+     "pareja": 5
+    }
+   }
+  ]
+ },
+ {
+  "numero": 80,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 5,
+  "evento": "Hora pico",
+  "descripcion_evento": "Los clientes llegan en oleadas: +30 % de clientes",
+  "novedad": "Máquinas de jugos y horno de pizza",
+  "duracion_s": 215,
+  "paciencia": 0.878,
+  "clientes": {
+   "solitario": 27,
+   "pareja": 40
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 305 monedas",
+     "pareja": "Vender 450 monedas"
+    },
+    "meta": {
+     "solitario": 305,
+     "pareja": 450
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 4 clientes perdidos por demora",
+     "pareja": "Máximo 6 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 4,
+     "pareja": 6
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 8 s o menos",
+    "meta": 8
+   }
+  ]
+ },
+ {
+  "numero": 81,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 6,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.87,
+  "clientes": {
+   "solitario": 21,
+   "pareja": 32
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 235 monedas",
+     "pareja": "Vender 360 monedas"
+    },
+    "meta": {
+     "solitario": 235,
+     "pareja": 360
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 5 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 5
+    }
+   }
+  ]
+ },
+ {
+  "numero": 82,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 7,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.862,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 250 monedas",
+     "pareja": "Vender 370 monedas"
+    },
+    "meta": {
+     "solitario": 250,
+     "pareja": 370
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "preparados",
+    "texto": {
+     "solitario": "Vender 3 productos preparados",
+     "pareja": "Vender 4 productos preparados"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 4
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 31 monedas de propina",
+     "pareja": "Recolectar 47 monedas de propina"
+    },
+    "meta": {
+     "solitario": 31,
+     "pareja": 47
+    }
+   }
+  ]
+ },
+ {
+  "numero": 83,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 8,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 185,
+  "paciencia": 0.854,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 250 monedas",
+     "pareja": "Vender 370 monedas"
+    },
+    "meta": {
+     "solitario": 250,
+     "pareja": 370
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 31 monedas de propina",
+     "pareja": "Recolectar 47 monedas de propina"
+    },
+    "meta": {
+     "solitario": 31,
+     "pareja": 47
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 4
+    }
+   }
+  ]
+ },
+ {
+  "numero": 84,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 9,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Visita del famoso: todos se detienen a mirarlo",
+  "duracion_s": 185,
+  "paciencia": 0.846,
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 260 monedas",
+     "pareja": "Vender 380 monedas"
+    },
+    "meta": {
+     "solitario": 260,
+     "pareja": 380
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 33 monedas de propina",
+     "pareja": "Recolectar 49 monedas de propina"
+    },
+    "meta": {
+     "solitario": 33,
+     "pareja": 49
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 8 s o menos",
+    "meta": 8
+   }
+  ]
+ },
+ {
+  "numero": 85,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 10,
+  "evento": "Día de ofertas",
+  "descripcion_evento": "Las islas de oferta atraen clientes: +20 % de ventas y de clientes",
+  "novedad": null,
+  "duracion_s": 220,
+  "paciencia": 0.838,
+  "clientes": {
+   "solitario": 28,
+   "pareja": 42
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 380 monedas",
+     "pareja": "Vender 565 monedas"
+    },
+    "meta": {
+     "solitario": 380,
+     "pareja": 565
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 40 monedas de propina",
+     "pareja": "Recolectar 60 monedas de propina"
+    },
+    "meta": {
+     "solitario": 40,
+     "pareja": 60
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 16 s",
+    "meta": 16
+   }
+  ]
+ },
+ {
+  "numero": 86,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 11,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.83,
+  "clientes": {
+   "solitario": 24,
+   "pareja": 36
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 270 monedas",
+     "pareja": "Vender 405 monedas"
+    },
+    "meta": {
+     "solitario": 270,
+     "pareja": 405
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 34 monedas de propina",
+     "pareja": "Recolectar 51 monedas de propina"
+    },
+    "meta": {
+     "solitario": 34,
+     "pareja": 51
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "76 % de clientes felices",
+     "pareja": "6 combos en pareja"
+    },
+    "meta": {
+     "solitario": 76,
+     "pareja": 6
+    }
+   }
+  ]
+ },
+ {
+  "numero": 87,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 12,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.822,
+  "clientes": {
+   "solitario": 25,
+   "pareja": 38
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 280 monedas",
+     "pareja": "Vender 430 monedas"
+    },
+    "meta": {
+     "solitario": 280,
+     "pareja": 430
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 36 monedas de propina",
+     "pareja": "Recolectar 54 monedas de propina"
+    },
+    "meta": {
+     "solitario": 36,
+     "pareja": 54
+    }
+   }
+  ]
+ },
+ {
+  "numero": 88,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 13,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.814,
+  "clientes": {
+   "solitario": 25,
+   "pareja": 38
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 280 monedas",
+     "pareja": "Vender 430 monedas"
+    },
+    "meta": {
+     "solitario": 280,
+     "pareja": 430
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 5 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 5
+    }
+   }
+  ]
+ },
+ {
+  "numero": 89,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 14,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 190,
+  "paciencia": 0.806,
+  "clientes": {
+   "solitario": 26,
+   "pareja": 39
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 290 monedas",
+     "pareja": "Vender 440 monedas"
+    },
+    "meta": {
+     "solitario": 290,
+     "pareja": 440
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "preparados",
+    "texto": {
+     "solitario": "Vender 4 productos preparados",
+     "pareja": "Vender 6 productos preparados"
+    },
+    "meta": {
+     "solitario": 4,
+     "pareja": 6
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 37 monedas de propina",
+     "pareja": "Recolectar 56 monedas de propina"
+    },
+    "meta": {
+     "solitario": 37,
+     "pareja": 56
+    }
+   }
+  ]
+ },
+ {
+  "numero": 90,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 15,
+  "evento": "Día lluvioso",
+  "descripcion_evento": "Entra agua por la puerta: el doble de derrames",
+  "novedad": null,
+  "duracion_s": 225,
+  "paciencia": 0.798,
+  "clientes": {
+   "solitario": 26,
+   "pareja": 39
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 290 monedas",
+     "pareja": "Vender 440 monedas"
+    },
+    "meta": {
+     "solitario": 290,
+     "pareja": 440
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 5 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 5
+    }
+   }
+  ]
+ },
+ {
+  "numero": 91,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 16,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.79,
+  "clientes": {
+   "solitario": 27,
+   "pareja": 40
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 305 monedas",
+     "pareja": "Vender 450 monedas"
+    },
+    "meta": {
+     "solitario": 305,
+     "pareja": 450
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 39 monedas de propina",
+     "pareja": "Recolectar 57 monedas de propina"
+    },
+    "meta": {
+     "solitario": 39,
+     "pareja": 57
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 8 s o menos",
+    "meta": 8
+   }
+  ]
+ },
+ {
+  "numero": 92,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 17,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.782,
+  "clientes": {
+   "solitario": 28,
+   "pareja": 42
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 315 monedas",
+     "pareja": "Vender 470 monedas"
+    },
+    "meta": {
+     "solitario": 315,
+     "pareja": 470
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 4
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 16 s",
+    "meta": 16
+   }
+  ]
+ },
+ {
+  "numero": 93,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 18,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.774,
+  "clientes": {
+   "solitario": 28,
+   "pareja": 42
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 315 monedas",
+     "pareja": "Vender 470 monedas"
+    },
+    "meta": {
+     "solitario": 315,
+     "pareja": 470
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 40 monedas de propina",
+     "pareja": "Recolectar 60 monedas de propina"
+    },
+    "meta": {
+     "solitario": 40,
+     "pareja": 60
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "83 % de clientes felices",
+     "pareja": "8 combos en pareja"
+    },
+    "meta": {
+     "solitario": 83,
+     "pareja": 8
+    }
+   }
+  ]
+ },
+ {
+  "numero": 94,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 19,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 195,
+  "paciencia": 0.766,
+  "clientes": {
+   "solitario": 29,
+   "pareja": 44
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 325 monedas",
+     "pareja": "Vender 495 monedas"
+    },
+    "meta": {
+     "solitario": 325,
+     "pareja": 495
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 41 monedas de propina",
+     "pareja": "Recolectar 63 monedas de propina"
+    },
+    "meta": {
+     "solitario": 41,
+     "pareja": 63
+    }
+   }
+  ]
+ },
+ {
+  "numero": 95,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 20,
+  "evento": "Visita especial",
+  "descripcion_evento": "Inspección: la limpieza cuenta doble",
+  "novedad": null,
+  "duracion_s": 230,
+  "paciencia": 0.758,
+  "clientes": {
+   "solitario": 29,
+   "pareja": 44
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 325 monedas",
+     "pareja": "Vender 495 monedas"
+    },
+    "meta": {
+     "solitario": 325,
+     "pareja": 495
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 12 s",
+    "meta": 12
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "85 % de clientes felices",
+     "pareja": "8 combos en pareja"
+    },
+    "meta": {
+     "solitario": 85,
+     "pareja": 8
+    }
+   }
+  ]
+ },
+ {
+  "numero": 96,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 21,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.75,
+  "clientes": {
+   "solitario": 30,
+   "pareja": 45
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 340 monedas",
+     "pareja": "Vender 505 monedas"
+    },
+    "meta": {
+     "solitario": 340,
+     "pareja": 505
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "preparados",
+    "texto": {
+     "solitario": "Vender 6 productos preparados",
+     "pareja": "Vender 8 productos preparados"
+    },
+    "meta": {
+     "solitario": 6,
+     "pareja": 8
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 43 monedas de propina",
+     "pareja": "Recolectar 64 monedas de propina"
+    },
+    "meta": {
+     "solitario": 43,
+     "pareja": 64
+    }
+   }
+  ]
+ },
+ {
+  "numero": 97,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 22,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.742,
+  "clientes": {
+   "solitario": 31,
+   "pareja": 46
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 350 monedas",
+     "pareja": "Vender 520 monedas"
+    },
+    "meta": {
+     "solitario": 350,
+     "pareja": 520
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 44 monedas de propina",
+     "pareja": "Recolectar 66 monedas de propina"
+    },
+    "meta": {
+     "solitario": 44,
+     "pareja": 66
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 5 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 5
+    }
+   }
+  ]
+ },
+ {
+  "numero": 98,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 23,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.734,
+  "clientes": {
+   "solitario": 31,
+   "pareja": 46
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 350 monedas",
+     "pareja": "Vender 520 monedas"
+    },
+    "meta": {
+     "solitario": 350,
+     "pareja": 520
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 44 monedas de propina",
+     "pareja": "Recolectar 66 monedas de propina"
+    },
+    "meta": {
+     "solitario": 44,
+     "pareja": 66
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 8 s o menos",
+    "meta": 8
+   }
+  ]
+ },
+ {
+  "numero": 99,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 24,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 200,
+  "paciencia": 0.726,
+  "clientes": {
+   "solitario": 32,
+   "pareja": 48
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 360 monedas",
+     "pareja": "Vender 540 monedas"
+    },
+    "meta": {
+     "solitario": 360,
+     "pareja": 540
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 4
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 16 s",
+    "meta": 16
+   }
+  ]
+ },
+ {
+  "numero": 100,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 25,
+  "evento": "Nuestro aniversario",
+  "descripcion_evento": "Tienda decorada, música especial y un mensaje final para los dos",
+  "novedad": null,
+  "duracion_s": 295,
+  "paciencia": 0.718,
+  "clientes": {
+   "solitario": 32,
+   "pareja": 48
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nino_perdido",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Vender 360 monedas",
+     "pareja": "Vender 540 monedas"
+    },
+    "meta": {
+     "solitario": 360,
+     "pareja": 540
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 46 monedas de propina",
+     "pareja": "Recolectar 69 monedas de propina"
+    },
+    "meta": {
+     "solitario": 46,
+     "pareja": 69
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "90 % de clientes felices",
+     "pareja": "9 combos en pareja"
+    },
+    "meta": {
+     "solitario": 90,
+     "pareja": 9
+    }
+   }
+  ]
+ }
+]
