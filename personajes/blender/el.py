@@ -16,37 +16,37 @@ from clay import sph
 NAME = 'El'
 
 P = {
-    'head_center': (0.0, 0.0, 1.53),
-    'head_radii': (0.71, 0.57, 0.655),
+    'head_center': (0.0, 0.0, 1.49),
+    'head_radii': (0.635, 0.565, 0.655),
     'head_p': 2.6,
-    'jowl': 0.2,
+    'jowl': 0.17,
     'jowl_band': (0.25, -0.45, -0.72, -1.0),
     'top_narrow': 0.05,
     'face_flat': 0.12,
     'chin_flat': 0.14,
-    'neck_top': 0.92,
+    'neck_top': 0.9,
     'neck_r': 0.15,
     'face': {
-        'eye_x': 0.36, 'eye_z': 1.39, 'eye_r': (0.113, 0.137), 'eye_depth': 0.05, 'eye_sink': 0.016,
+        'eye_x': 0.345, 'eye_z': 1.35, 'eye_r': (0.113, 0.137), 'eye_depth': 0.05, 'eye_sink': 0.016,
         'shine_offset': (0.03, 0.05), 'shine_r': 0.026,
-        'brow': [(0.47, 1.655), (0.385, 1.715), (0.29, 1.705)], 'brow_r': [0.04, 0.05, 0.043],
-        'blush': (0.475, 1.235), 'blush_r': (0.12, 0.08),
-        'mouth': (0.085, 1.31, 0.09), 'mouth_r': 0.028,
+        'brow': [(0.455, 1.615), (0.37, 1.675), (0.275, 1.665)], 'brow_r': [0.04, 0.05, 0.043],
+        'blush': (0.455, 1.195), 'blush_r': (0.12, 0.08),
+        'mouth': (0.098, 1.262, 0.066), 'mouth_r': 0.028,
     },
-    'ear': {'z': 1.33, 'r': (0.105, 0.145, 0.19), 'out': 0.055, 'y': 0.03, 'yaw': 6},
+    'ear': {'z': 1.29, 'r': (0.105, 0.145, 0.19), 'out': 0.055, 'y': 0.03, 'yaw': 6},
 }
 
 # Proporciones del cuerpo (usadas también por el esqueleto)
 SLEEVE_DIR = np.array([math.sin(math.radians(40)), 0.03, -math.cos(math.radians(40))])
 ARM_DIR = np.array([math.sin(math.radians(35)), 0.08, -math.cos(math.radians(35))])
-JOINT = np.array([0.26, 0.04, 0.8])
+JOINT = np.array([0.285, 0.04, 0.8])
 
 B = {
     'pelvis_z': 0.47,
     'leg_top': 0.42,
     'ankle_z': 0.15,
     'arm': {'shoulder': tuple(JOINT), 'hand': (0.44, 0.065, 0.54), 'hand_r': 0.12},
-    'shoe': {'x': 0.2},
+    'shoe': {'x': 0.21},
 }
 
 
@@ -128,11 +128,12 @@ def hair_locks(coll, surf, mats):
         ('copete der', [(150, 55, 0.0), (112, 74, 0.09), (72, 70, 0.13)], [0.2, 0.24, 0.12]),
         ('copete punta der', [(128, 46, 0.02), (100, 58, 0.09), (86, 62, 0.15)], [0.17, 0.2, 0.09]),
         ('copete atras', [(-170, 58, 0.0), (160, 78, 0.1), (130, 70, 0.13)], [0.19, 0.23, 0.11]),
-        # Flequillo: tres lóbulos gordos que barren hacia la derecha, con puntas romas
-        ('flequillo 0', [(-86, 62, 0.02), (-72, 47, 0.08), (-60, 34, 0.07)], [0.18, 0.21, 0.12]),
-        ('flequillo 1', [(-58, 68, 0.02), (-36, 49, 0.09), (-12, 36, 0.07)], [0.19, 0.24, 0.13]),
-        ('flequillo 2', [(-26, 74, 0.04), (0, 52, 0.1), (26, 37, 0.08)], [0.2, 0.25, 0.13]),
-        ('flequillo 3', [(10, 76, 0.05), (36, 55, 0.1), (60, 40, 0.09)], [0.19, 0.24, 0.12]),
+        # Flequillo: lóbulos gordos que barren de lado hacia la derecha y terminan en
+        # puntas anchas y redondas (bordes festoneados, como pétalos)
+        ('flequillo 0', [(-88, 62, 0.02), (-74, 47, 0.08), (-63, 38, 0.07)], [0.18, 0.21, 0.16]),
+        ('flequillo 1', [(-64, 66, 0.02), (-42, 51, 0.09), (-22, 43, 0.08), (-8, 41, 0.07)], [0.19, 0.24, 0.22, 0.16]),
+        ('flequillo 2', [(-34, 72, 0.03), (-8, 56, 0.1), (16, 47, 0.09), (32, 45, 0.08)], [0.2, 0.25, 0.23, 0.17]),
+        ('flequillo 3', [(0, 76, 0.04), (28, 60, 0.1), (50, 51, 0.1), (64, 48, 0.09)], [0.19, 0.24, 0.22, 0.16]),
     ]
     objs = []
     radial = lambda p: np.array(p) - hc
@@ -151,7 +152,7 @@ def hair_locks(coll, surf, mats):
 def shirt(coll, mats):
     """Camiseta de punto: torso trapezoidal suave, mangas cortas con abertura,
     escote redondo, dobladillos con pespunte y pliegues suaves en las axilas."""
-    torso = sdf.taper_x(sdf.round_box((0, 0.03, 0.7), (0.32, 0.22, 0.205), 0.15), 0.7, 0.75)
+    torso = sdf.taper_x(sdf.round_box((0, 0.03, 0.7), (0.35, 0.23, 0.205), 0.15), 0.7, 0.75)
     parts = [torso]
     sleeves = []
     holes = []
@@ -252,11 +253,11 @@ def arms(coll, mats):
 def pants(coll, mats):
     """Pantalón holgado y corto: piernas abombadas, bolsillos delanteros, bragueta
     y pliegues de tela, con pespuntes."""
-    hip = sdf.round_box((0, 0.03, 0.43), (0.35, 0.22, 0.11), 0.1)
+    hip = sdf.round_box((0, 0.03, 0.43), (0.37, 0.23, 0.11), 0.1)
     parts = [hip]
     for sx in (-1, 1):
-        parts.append(sdf.round_cone((sx * 0.19, 0.03, 0.4), (sx * 0.205, 0.005, 0.21), 0.185, 0.198))
-        parts.append(sdf.ellipsoid((sx * 0.205, 0.0, 0.225), (0.214, 0.205, 0.12)))
+        parts.append(sdf.round_cone((sx * 0.2, 0.03, 0.4), (sx * 0.215, 0.005, 0.21), 0.192, 0.205))
+        parts.append(sdf.ellipsoid((sx * 0.215, 0.0, 0.225), (0.222, 0.21, 0.12)))
     body = sdf.union(*parts, k=0.07)
     crotch = sdf.round_box((0, 0.03, 0.1), (0.008, 0.4, 0.2), 0.008)
 
@@ -306,7 +307,7 @@ def shoes(coll, mats):
     línea negra de piso y un reborde curvo sobre el empeine."""
     objs = []
     for sx, side in ((-1, 'izq'), (1, 'der')):
-        x = sx * 0.2
+        x = sx * 0.21
         upper0 = sdf.union(sdf.ellipsoid((x, -0.03, 0.11), (0.172, 0.25, 0.12)),
                            sdf.ellipsoid((x, -0.13, 0.085), (0.168, 0.17, 0.085)), k=0.06)
         opening = sdf.ellipsoid((x, 0.03, 0.235), (0.125, 0.15, 0.07))
