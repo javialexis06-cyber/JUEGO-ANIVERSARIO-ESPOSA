@@ -464,6 +464,33 @@ class Surface:
         return np.array(loc), np.array(nrm)
 
 
+def stitches(name, points, radius=0.006, dash=0.028, gap=0.018, coll=None, material=None, samples=10, closed=False):
+    """Pespunte: guiones pequeños y alargados a lo largo de una curva (una sola malla)."""
+    pts, _ = catmull_rom(points, samples, closed)
+    seg = np.linalg.norm(np.diff(pts, axis=0), axis=1)
+    s = np.concatenate([[0], np.cumsum(seg)])
+    total = s[-1]
+    base_v, base_f = quad_sphere(3)
+    verts, faces = [], []
+    t = gap / 2
+    while t + dash <= total:
+        a = np.array([np.interp(t, s, pts[:, i]) for i in range(3)])
+        b = np.array([np.interp(t + dash, s, pts[:, i]) for i in range(3)])
+        mid, d = (a + b) / 2, b - a
+        L = np.linalg.norm(d)
+        if L > 1e-6:
+            q = Vector((0, 0, 1)).rotation_difference(Vector(d / L))
+            R = np.array(q.to_matrix())
+            v = base_v * np.array([radius, radius, L / 2]) @ R.T + mid
+            off = len(verts)
+            verts.extend(v)
+            faces.extend([tuple(i + off for i in f) for f in base_f])
+        t += dash + gap
+    if not verts:
+        return None
+    return make_mesh_object(name, verts, faces, coll, material=material)
+
+
 def front_stroke(surf, pts2d, lift=0.0):
     """Proyecta puntos (x, z) sobre la superficie vista de frente; omite los que fallan."""
     out = []
@@ -520,13 +547,17 @@ def orient_to(obj, normal, up=(0, 0, 1)):
 def material(name, color, rough=0.5, sss=0.0, sss_radius=(1.0, 0.45, 0.3), sss_scale=0.04,
              sheen=0.0, sheen_rough=0.4, sheen_tint=None, coat=0.0, coat_rough=0.08,
              spec=0.5, metallic=0.0, emission=None, emission_strength=0.0,
-             noise=None, wave=None, ribs=None, strands=None):
+             noise=None, wave=None, ribs=None, strands=None, fuzz=None):
     """Principled BSDF con relieve procedural opcional.
 
     noise=dict(scale, strength, detail, distance) -> grano de plastilina/fieltro
     wave=dict(scale, strength, axis, distortion)  -> mechones / hebras
     ribs=dict(scale, strength, axis)              -> tejido acanalado
     strands=dict(scale, strength, distortion)     -> surcos de mechón a lo largo del UV
+    fuzz=dict(scale, color, amount, strength)     -> pelusa de tela/fieltro: motas de fibra
+                                                     más claras + relieve granulado
+    Escalas (coordenadas de objeto): ruido de escala S -> detalles de ~1/S unidades;
+    ondas de escala S -> periodo de ~0.314/S unidades.
     """
     m = bpy.data.materials.get(name) or bpy.data.materials.new(name)
     m.use_nodes = True
@@ -561,7 +592,7 @@ def material(name, color, rough=0.5, sss=0.0, sss_radius=(1.0, 0.45, 0.3), sss_s
 
     height_sources = []
     coord = None
-    if noise or wave or ribs or strands:
+    if noise or wave or ribs or strands or fuzz:
         coord = nt.nodes.new('ShaderNodeTexCoord')
         coord.location = (-900, 0)
     if noise:
@@ -612,6 +643,39 @@ def material(name, color, rough=0.5, sss=0.0, sss_radius=(1.0, 0.45, 0.3), sss_s
         tex.inputs['Detail'].default_value = 1.5
         nt.links.new(uvn.outputs['UV'], tex.inputs['Vector'])
         height_sources.append((tex.outputs['Fac'], strands.get('strength', 0.4), strands.get('distance', 0.01)))
+
+    if fuzz:
+        ftex = nt.nodes.new('ShaderNodeTexNoise')
+        ftex.location = (-700, 450)
+        ftex.inputs['Scale'].default_value = fuzz.get('scale', 140)
+        ftex.inputs['Detail'].default_value = fuzz.get('detail', 12)
+        ftex.inputs['Roughness'].default_value = 0.75
+        nt.links.new(coord.outputs['Object'], ftex.inputs['Vector'])
+        ramp = nt.nodes.new('ShaderNodeValToRGB')
+        ramp.location = (-450, 450)
+        # Moteado: fibras más oscuras y más claras que el color base
+        dark = tuple(c * fuzz.get('dark', 0.55) for c in col[:3]) + (1.0,)
+        fc = fuzz.get('color', '#808080')
+        light = rgb(fc) if isinstance(fc, str) else fc
+        e0, e1 = ramp.color_ramp.elements[0], ramp.color_ramp.elements[1]
+        e0.position, e0.color = fuzz.get('low', 0.3), dark
+        e1.position, e1.color = fuzz.get('high', 0.72), light
+        mid = ramp.color_ramp.elements.new(0.5)
+        mid.color = col
+        mix = nt.nodes.new('ShaderNodeMix')
+        mix.location = (-150, 350)
+        mix.data_type = 'RGBA'
+        mix.blend_type = 'MIX'
+        mix.inputs['Factor'].default_value = fuzz.get('amount', 0.6)
+        for sock in mix.inputs:
+            if sock.identifier == 'A_Color':
+                sock.default_value = col
+        b_sock = [sk for sk in mix.inputs if sk.identifier == 'B_Color'][0]
+        nt.links.new(ramp.outputs['Color'], b_sock)
+        nt.links.new(ftex.outputs['Fac'], ramp.inputs['Fac'])
+        out_col = [o for o in mix.outputs if o.identifier == 'Result_Color'][0]
+        nt.links.new(out_col, bsdf.inputs['Base Color'])
+        height_sources.append((ftex.outputs['Fac'], fuzz.get('strength', 0.4), fuzz.get('distance', 0.004)))
 
     normal_socket = None
     y = 0

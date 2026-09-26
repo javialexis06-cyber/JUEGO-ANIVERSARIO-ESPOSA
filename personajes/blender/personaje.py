@@ -6,6 +6,7 @@ cortas redondeadas) con diferencias de tamaño y vestuario.
 """
 import math
 
+import bmesh
 import numpy as np
 
 import clay
@@ -20,7 +21,7 @@ def common_materials(prefix):
     M = clay.material
     return {
         'skin': M(f'{prefix} | piel melocoton', '#F3B28A', rough=0.46, sss=0.22, sss_radius=(1.0, 0.42, 0.28), sss_scale=0.06,
-                  coat=0.08, coat_rough=0.35, noise=dict(scale=45, strength=0.04, distance=0.004)),
+                  coat=0.08, coat_rough=0.35),
         'ear_in': M(f'{prefix} | interior oreja', '#E9A58C', rough=0.55, sss=0.2, sss_scale=0.04),
         'blush': M(f'{prefix} | rubor', '#F7868E', rough=0.5, sss=0.15, sss_scale=0.03),
         'blush_dot': M(f'{prefix} | brillo rubor', '#FFD3D3', rough=0.35),
@@ -44,7 +45,9 @@ def head_shaper(P):
         u = v / np.array([a, b, c])  # coordenadas normalizadas
         x, y, z = u[:, 0], u[:, 1], u[:, 2]
         # Mofletes: más ancho en la mitad inferior, sin afilar la barbilla.
-        widen = 1 + jowl * clay.smoothstep(0.35, -0.35, z) * (1 - clay.smoothstep(-0.55, -1.0, z))
+        j0, j1, j2, j3 = P.get('jowl_band', (0.35, -0.35, -0.55, -1.0))
+        widen = 1 + jowl * clay.smoothstep(j0, j1, z) * (1 - clay.smoothstep(j2, j3, z))
+        widen = widen * (1 - P.get('top_narrow', 0.0) * clay.smoothstep(0.1, 0.9, z))
         # Cara más plana al frente para que los rasgos se asienten bien.
         yscale = np.where(y < 0, 1 - flat * clay.smoothstep(0.0, -0.9, y) * (1 - 0.5 * np.abs(x)), 1.0)
         # Base de la cabeza (barbilla) ancha y ligeramente aplanada.
@@ -77,6 +80,44 @@ def _surface_stroke(surf, pts2d, lift=0.0):
         loc, nrm = surf.front(x, z)
         out.append(loc + nrm * lift)
     return out
+
+
+def decal_dome(name, surf, cx, cz, rx, rz, height, coll, material, n=18):
+    """Parche abombado que sigue la curvatura de la superficie (rubor, manchas).
+
+    Se proyecta una rejilla elíptica sobre la cara vista de frente; el centro se
+    eleva 'height' y el borde queda enterrado, así nunca se despega ni se hunde."""
+    verts, idx = [], {}
+    us = np.linspace(-1, 1, n)
+    for i, u in enumerate(us):
+        for j, v in enumerate(us):
+            r2 = u * u + v * v
+            if r2 > 1.0:
+                continue
+            loc, nrm = surf.front(cx + u * rx, cz + v * rz)
+            if loc is None:
+                continue
+            h = height * math.sqrt(max(1.0 - r2, 0.0)) - 0.004
+            idx[(i, j)] = len(verts)
+            verts.append(loc + nrm * h)
+    faces = []
+    for i in range(n - 1):
+        for j in range(n - 1):
+            q = [(i, j), (i + 1, j), (i + 1, j + 1), (i, j + 1)]
+            if all(k in idx for k in q):
+                faces.append(tuple(idx[k] for k in q))
+    obj = clay.make_mesh_object(name, verts, faces, coll, material=material)
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    # que las normales miren hacia la cámara (-Y)
+    if sum(f.normal.y for f in bm.faces) > 0:
+        bmesh.ops.reverse_faces(bm, faces=bm.faces)
+    bm.to_mesh(obj.data)
+    bm.free()
+    obj.data.shade_smooth()
+    clay.add_subsurf(obj, 1, 2)
+    return obj
 
 
 def build_face(coll, head, P, mats, name, expression='feliz'):
@@ -119,9 +160,7 @@ def build_face(coll, head, P, mats, name, expression='feliz'):
         # Rubor con dos puntitos de brillo
         bxz = F['blush']
         loc, nrm = surf.front(sx * bxz[0], bxz[1])
-        bl = clay.blob(f'{name} | rubor {side}', (0, 0, 0), (F['blush_r'][0], 0.018, F['blush_r'][1]), coll, mats['blush'], n=8, subsurf=2)
-        bl.location = loc - nrm * 0.006
-        clay.orient_to(bl, nrm)
+        bl = decal_dome(f'{name} | rubor {side}', surf, sx * bxz[0], bxz[1], F['blush_r'][0], F['blush_r'][1], 0.012, coll, mats['blush'])
         objs[f'rubor_{side}'] = bl
         bsurf = clay.Surface(bl)
         for k, dx in enumerate((-0.035, 0.035)):
@@ -133,7 +172,9 @@ def build_face(coll, head, P, mats, name, expression='feliz'):
             clay.orient_to(d, n)
     # Boca en U
     mw, mz, md = F['mouth']  # medio ancho, altura de las puntas, profundidad de la curva
-    pts = [(-mw, mz), (-mw * 0.62, mz - md * 0.72), (0, mz - md), (mw * 0.62, mz - md * 0.72), (mw, mz)]
+    ts = np.linspace(math.pi * 1.06, math.pi * 1.94, 9)
+    s0 = math.sin(ts[0])
+    pts = [(mw * math.cos(t) / abs(math.cos(ts[0])), mz + md * (math.sin(t) - s0) / (1 + s0)) for t in ts]
     mouth = clay.sweep(f'{name} | boca', _surface_stroke(surf, pts, 0.0), F.get('mouth_r', 0.021), (0.7, 1.0), coll, mats['feature'],
                        segments=12, samples=8, up=(0, -1, 0))
     objs['boca'] = mouth

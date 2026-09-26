@@ -109,6 +109,13 @@ def sala_el():
     render('02-el-sala', (0.25, -6.7, 1.55), (0.0, 0.0, 1.27), 70, 1254, 1254, dof=2.2)
 
 
+def sala_el_tq():
+    room(True)
+    show_collection('Ella | personaje', False)
+    EL.location.x = 0
+    render('02b-el-sala-tres-cuartos', (2.6, -6.3, 1.7), (0.0, 0.0, 1.27), 70, 1254, 1254, dof=2.2)
+
+
 def sala_ella():
     room(True)
     show_collection('El | personaje', False)
@@ -161,7 +168,7 @@ def poses_juego():
 
 
 SHOTS = {
-    'sala_pareja': sala_pareja, 'sala_el': sala_el, 'sala_ella': sala_ella, 'estudio_pareja': estudio_pareja,
+    'sala_pareja': sala_pareja, 'sala_el': sala_el, 'sala_el_tq': sala_el_tq, 'sala_ella': sala_ella, 'estudio_pareja': estudio_pareja,
     'pareja_feliz': pareja_feliz, 'caras': caras, 'giro': giro, 'poses': poses_juego,
 }
 

@@ -106,6 +106,10 @@ def side_of(obj_name):
 
 RULES = [
     # (fragmento del nombre, hueso, ¿por lado?)
+    ('pespunte camiseta', 'torso', False),
+    ('ribete', 'torso', False),
+    ('pespunte pantalon', 'pelvis', False),
+    ('tenis', 'pie', True),
     ('ojo feliz', 'parpado', True),
     ('destello', 'ojo', True),
     ('ojo ', 'ojo', True),
@@ -166,7 +170,21 @@ def skin(rig, objs, long_hair=False, hair_split_z=None):
         for g in list(obj.vertex_groups):
             obj.vertex_groups.remove(g)
         bone = bone_for(obj.name)
-        if long_hair and 'mechon' in obj.name.lower() and hair_split_z is not None:
+        if obj.name.lower().endswith('| pantalon'):
+            # Pantalón de una pieza: la cadera sigue a la pelvis y cada pernera a su pierna
+            gp = obj.vertex_groups.new(name='pelvis')
+            gl = obj.vertex_groups.new(name='pierna.L')
+            gr = obj.vertex_groups.new(name='pierna.R')
+            mwv = obj.matrix_world
+            for v in obj.data.vertices:
+                w = mwv @ v.co
+                t = float(np.clip((0.44 - w.z) / 0.14, 0.0, 1.0))
+                t = t * t * (3 - 2 * t)
+                side = float(np.clip(0.5 + w.x / 0.08, 0.0, 1.0))
+                gp.add([v.index], 1.0 - t, 'REPLACE')
+                gl.add([v.index], t * (1 - side), 'REPLACE')
+                gr.add([v.index], t * side, 'REPLACE')
+        elif long_hair and 'mechon' in obj.name.lower() and hair_split_z is not None:
             side = '.L' if ' izq' in obj.name.lower() else '.R'
             gh = obj.vertex_groups.new(name='cabeza')
             gl = obj.vertex_groups.new(name='cabello_largo' + side)
