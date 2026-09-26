@@ -32,7 +32,7 @@ def m(key):
             'rosa': M('Mueble | rosa', '#F3A9BA', rough=0.5),
             'lila': M('Mueble | lila', '#B9A2E3', rough=0.5),
             'negro': M('Mueble | negro goma', '#2A2929', rough=0.6),
-            'vidrio': M('Mueble | vidrio', '#EAF6FA', rough=0.05, alpha=0.12),
+            'vidrio': M('Mueble | vidrio', '#CFE6F0', rough=0.05, alpha=0.07),
             'luz': M('Mueble | luz calida', '#FFF4DA', rough=0.5, emission='#FFF0CF', emission_strength=4.0),
             'luz fria': M('Mueble | luz fria', '#EAF8FF', rough=0.5, emission='#E4F6FF', emission_strength=1.6),
             'hielo': M('Mueble | hielo', '#DDF1F8', rough=0.25, sss=0.3, coat=0.4),
@@ -273,7 +273,7 @@ def vitrina_refrigerada(level, coll):
     if level == 1:
         W = 0.5
         box('base', (0, 0, 0.35), (W, 0.32, 0.35), coll, 'celeste', p=6)
-        box('franja', (0, -0.325, 0.55), (W, 0.01, 0.04), coll, 'coral', p=6)
+        box('franja', (0, -0.318, 0.55), (W - 0.06, 0.012, 0.035), coll, 'coral', p=6)
         box('bandeja', (0, -0.05, 0.72), (W - 0.04, 0.24, 0.02), coll, 'hielo', p=6)
         _curved_glass(coll, W - 0.02, -0.05, 0.72, 0.35, 0.28)
         box('techo', (0, 0.15, 1.06), (W, 0.14, 0.015), coll, 'acero', p=8)
@@ -282,7 +282,7 @@ def vitrina_refrigerada(level, coll):
     elif level == 2:
         W = 0.8
         box('base', (0, 0, 0.36), (W, 0.36, 0.36), coll, 'celeste', p=6)
-        box('franja', (0, -0.365, 0.58), (W, 0.012, 0.05), coll, 'coral', p=6)
+        box('franja', (0, -0.358, 0.58), (W - 0.07, 0.012, 0.04), coll, 'coral', p=6)
         box('bandeja', (0, -0.05, 0.74), (W - 0.04, 0.28, 0.025), coll, 'hielo', p=6)
         _curved_glass(coll, W - 0.02, -0.08, 0.74, 0.4, 0.32)
         box('techo', (0, 0.16, 1.14), (W, 0.16, 0.015), coll, 'acero', p=8)
