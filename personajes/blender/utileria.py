@@ -292,8 +292,12 @@ def globos(coll):
 def parlante(coll):
     box('parlante', (0, 0, 0.35), (0.18, 0.15, 0.35), coll, 'negro', p=5)
     for z, r in ((0.5, 0.11), (0.22, 0.07)):
-        clay.lathe('cono parlante', [(r, 0), (r * 0.3, 0.03)], coll, u('gris oscuro'), segments=24).location = (0, -0.15, z)
-        bpy.context.view_layer.update()
+        cone = clay.lathe('cono parlante', [(r, 0), (r * 0.3, -0.03)], coll, u('gris oscuro'), segments=24)
+        cone.rotation_euler = (math.pi / 2, 0, 0)
+        cone.location = (0, -0.15, z)
+        ring = [(r * math.cos(a), -0.155, z + r * math.sin(a)) for a in np.linspace(0, 2 * math.pi, 16, endpoint=False)]
+        clay.sweep('aro parlante', ring, 0.012, (1, 1), coll, m('acero'), segments=6, samples=3, closed=True)
+        clay.blob('centro parlante', (0, -0.13, z), (r * 0.28, 0.02, r * 0.28), coll, m('acero'), n=4)
     for k, (x, z) in enumerate(((0.28, 0.75), (0.38, 0.9), (0.25, 1.0))):
         clay.sweep(f'nota {k}', [(x, -0.1, z), (x, -0.1, z + 0.12)], 0.01, (1, 1), coll, u('trazo'), segments=6, samples=2)
         clay.blob(f'cabeza nota {k}', (x - 0.03, -0.1, z), (0.035, 0.02, 0.028), coll, u('trazo'), n=4)
@@ -310,12 +314,16 @@ def letrero_oferta(coll):
 
 
 def camara(coll):
-    box('soporte', (0, 0.1, 0.0), (0.04, 0.06, 0.04), coll, 'blanco', p=5)
-    box('cuerpo', (0, -0.05, -0.08), (0.08, 0.14, 0.07), coll, 'blanco', p=4)
-    lente = clay.lathe('lente', [(0.05, 0), (0.045, 0.03)], coll, m('negro'), segments=20)
+    """Cámara de seguridad con soporte de pared (base en z=0; en la tienda se sube a la pared)."""
+    box('placa pared', (0, 0.16, 0.2), (0.07, 0.015, 0.1), coll, 'blanco', p=5)
+    clay.sweep('brazo', [(0, 0.15, 0.24), (0, 0.06, 0.29), (0, -0.01, 0.25)], 0.022, (1, 1), coll, m('acero'), segments=8, samples=4)
+    box('cuerpo', (0, -0.06, 0.17), (0.08, 0.15, 0.07), coll, 'blanco', p=4)
+    box('visera', (0, -0.1, 0.245), (0.095, 0.14, 0.012), coll, 'blanco', p=6)
+    lente = clay.lathe('lente', [(0.055, 0), (0.045, 0.035)], coll, m('negro'), segments=20)
     lente.rotation_euler = (math.pi / 2, 0, 0)
-    lente.location = (0, -0.19, -0.08)
-    clay.blob('luz roja', (0.05, -0.15, -0.02), (0.012, 0.012, 0.012), coll, u('rojo'), n=4)
+    lente.location = (0, -0.2, 0.17)
+    clay.blob('brillo lente', (0.015, -0.237, 0.185), (0.012, 0.004, 0.012), coll, m('blanco'), n=4)
+    clay.blob('luz roja', (0.055, -0.2, 0.22), (0.012, 0.012, 0.012), coll, u('rojo'), n=4)
 
 
 # --------------------------------------------------------------------------

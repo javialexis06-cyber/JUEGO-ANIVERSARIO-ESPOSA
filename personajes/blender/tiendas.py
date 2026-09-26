@@ -363,7 +363,7 @@ def tienda(level, coll):
     U('globos', utileria.globos, 10.2, -6.6)
     U('planta', utileria.planta, -10.2, -3.4)
     U('parlante', utileria.parlante, 10.3, 6.9, -math.pi / 2)
-    U('camara', utileria.camara, -10.7, 7.2, -0.8, 1.5)
+    utileria.build('camara', utileria.camara, coll, (-10.6, 7.6, 2.2), -0.7, 1.5)
     U('charco', utileria.charco, 1.4, -4.4, 0, 1.4)
     person(coll, 'el_carrito', -3.3, 4.6, -0.2)
     U('carrito', lambda c: utileria.carrito(3, c), -3.2, 3.9, -0.2, 1.3)
