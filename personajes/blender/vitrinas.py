@@ -325,7 +325,7 @@ def congelador(level, coll):
     elif level == 2:
         W, D = 0.7, 0.38
         chest(coll, W, D, 0.76, 'celeste', 0.48)
-        box('franja', (0, -D - 0.005, 0.5), (W, 0.008, 0.06), coll, 'blanco', p=6)
+        box('franja', (0, -D - 0.004, 0.5), (W - 0.05, 0.008, 0.05), coll, 'blanco', p=6)
         fill_grid(coll, 'helado', -0.5, 0.5, -0.18, 0.18, 0.5, 5, 2, 0.8, seed=3)
         for sy in (-1, 1):
             box('tapa vidrio', (0, sy * D * 0.5, 0.78), (W - 0.02, D * 0.5 - 0.01, 0.01), coll, 'vidrio', p=8)
@@ -334,7 +334,7 @@ def congelador(level, coll):
         chest(coll, W, D, 0.76, 'lila', 0.5)
         box('zocalo', (0, 0, 0.04), (W + 0.02, D + 0.02, 0.04), coll, 'blanco', p=6)
         fill_grid(coll, 'helado', -0.75, 0.75, -0.28, 0.28, 0.52, 6, 3, 0.8, seed=5)
-        box('divisor', (0, 0, 0.72), (0.02, D - 0.05, 0.2), coll, 'acero', p=8)
+        box('divisor', (0, 0, 0.64), (0.015, D - 0.06, 0.12), coll, 'acero', p=8)
         for sx in (-1, 1):
             box('tapa vidrio', (sx * W * 0.5, 0, 0.8), (W * 0.5 - 0.02, D - 0.02, 0.01), coll, 'vidrio', p=8)
         box('luz', (0, -D - 0.005, 0.66), (W - 0.05, 0.006, 0.02), coll, 'luz fria', p=6)
