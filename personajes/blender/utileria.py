@@ -46,6 +46,26 @@ def u(key):
             'corazon': M('Util | corazón', '#F2536E', rough=0.3, coat=0.5),
             'reloj': M('Util | reloj', '#9ED8F2', rough=0.35, coat=0.3),
             'fleco': M('Util | fleco trapero', '#F4F1EA', rough=0.9, noise=dict(scale=40, strength=0.6, distance=0.01)),
+            'amarillo aviso': M('Util | amarillo aviso', '#F9C823', rough=0.4, coat=0.3),
+            'amarillo oscuro': M('Util | amarillo oscuro', '#D99A12', rough=0.45, coat=0.2),
+            'agua jabon': M('Util | agua jabón', '#8ECFEA', rough=0.05, coat=0.8, sss=0.2),
+            'espuma': M('Util | espuma', '#FFFFFF', rough=0.4, sss=0.3),
+            'charco claro': M('Util | charco claro', '#A9DDF3', rough=0.02, coat=1.0),
+            'papel sombra': M('Util | papel sombra', '#D8D2C4', rough=0.8),
+            'mal olor': M('Util | mal olor', '#8CC34A', rough=0.5, sss=0.2),
+            'azul oscuro': M('Util | azul oscuro', '#2C6FB0', rough=0.45, coat=0.2),
+            'gris claro': M('Util | gris claro', '#B8BCC2', rough=0.4, coat=0.2),
+            'matera oscura': M('Util | matera oscura', '#B9653F', rough=0.7),
+            'matera clara': M('Util | matera clara', '#F6E3C8', rough=0.6),
+            'tierra': M('Util | tierra', '#5E3F2A', rough=0.95, noise=dict(scale=60, strength=0.5, distance=0.004)),
+            'piedra': M('Util | piedrita', '#D8D1C6', rough=0.7),
+            'hoja oscura': M('Util | hoja oscura', '#3F8A48', rough=0.55, sss=0.2),
+            'nervio': M('Util | nervio hoja', '#A6D88F', rough=0.5),
+            'globo amarillo': M('Util | globo amarillo', '#FBD86A', rough=0.15, coat=0.6, sss=0.2),
+            'rejilla': M('Util | rejilla parlante', '#2F2D2C', rough=0.85, noise=dict(scale=220, strength=0.8, distance=0.002)),
+            'tiza roja': M('Util | tiza roja', '#F29A90', rough=0.95),
+            'tiza verde': M('Util | tiza verde', '#A8DDA0', rough=0.95),
+            'tiza amarilla': M('Util | tiza amarilla', '#F8E28A', rough=0.95),
         })
     return _U[key]
 
@@ -197,70 +217,206 @@ def dinero(coll):
 
 
 # --------------------------------------------------------------------------
-# Limpieza y problemas
+# Limpieza y problemas (y ayudas de modelado compartidas)
 # --------------------------------------------------------------------------
 
-def trapero_balde(coll):
-    clay.lathe('balde', [(0.17, 0.0), (0.21, 0.32), (0.22, 0.33)], coll, m('amarillo'), segments=28, cap_top=False)
-    clay.lathe('agua balde', [(0.2, 0.26), (0.0, 0.26)], coll, u('charco'), segments=28, cap_bottom=False)
+def _nuevos(coll, fn):
+    """Ejecuta fn y devuelve los objetos que creó en coll."""
+    before = set(coll.objects)
+    fn()
+    return [o for o in coll.objects if o not in before]
+
+
+def _ring(name, c, r, axis, tube, coll, mat, n=20):
+    """Aro (toro) de radio r alrededor del eje 'z' o 'y' centrado en c."""
+    pts = []
+    for k in range(n):
+        a = 2 * math.pi * k / n
+        if axis == 'z':
+            pts.append((c[0] + r * math.cos(a), c[1] + r * math.sin(a), c[2]))
+        else:
+            pts.append((c[0] + r * math.cos(a), c[1], c[2] + r * math.sin(a)))
+    return clay.sweep(name, pts, tube, (1, 1), coll, mat, segments=6, samples=3, closed=True)
+
+
+def _rueda_giratoria(coll, x, y, r=0.035):
+    clay.blob('soporte rueda', (x, y, 2 * r + 0.012), (0.022, 0.022, 0.014), coll, m('acero'), n=4)
     for sx in (-1, 1):
-        wheel(coll, (sx * 0.16, -0.1, 0.03), 0.03, 0.02)
-    clay.sweep('palo', [(0.12, -0.05, 0.05), (0.2, 0.05, 1.5)], 0.02, (1, 1), coll, m('madera'), segments=8, samples=2)
-    for k in range(10):
-        a = 2 * math.pi * k / 10
-        clay.sweep(f'fleco {k}', [(0.12, -0.05, 0.1), (0.12 + math.cos(a) * 0.07, -0.05 + math.sin(a) * 0.07, 0.0)], [0.02, 0.014], (1, 1), coll, u('fleco'),
-                   segments=6, samples=2)
+        clay.sweep('horquilla', [(x + sx * 0.018, y, 2 * r + 0.008), (x + sx * 0.018, y - 0.012, r)], 0.006, (1, 1), coll, m('acero'), segments=5, samples=2)
+    wheel(coll, (x, y - 0.012, r), r, 0.014)
+
+
+def trapero_balde(coll):
+    """Balde de aseo con ruedas, escurridor de palanca, agua jabonosa y trapero de flecos."""
+    box('base balde', (0, 0, 0.075), (0.25, 0.2, 0.025), coll, 'acero', p=6)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            _rueda_giratoria(coll, sx * 0.2, sy * 0.15)
+    clay.lathe('balde', [(0.0, 0.1), (0.17, 0.1), (0.2, 0.44), (0.226, 0.455), (0.21, 0.462)], coll, u('amarillo aviso'), segments=32, cap_top=False)
+    for z, r in ((0.2, 0.184), (0.33, 0.198)):
+        _ring('aro balde', (0, 0, z), r, 'z', 0.01, coll, u('amarillo oscuro'), n=28)
+    clay.lathe('agua jabonosa', [(0.0, 0.4), (0.2, 0.4)], coll, u('agua jabon'), segments=32, cap_bottom=False)
+    rng = np.random.default_rng(7)
+    for k in range(9):
+        a, rr = rng.uniform(0, 2 * math.pi), rng.uniform(0.02, 0.15)
+        s = rng.uniform(0.015, 0.04)
+        clay.blob(f'espuma {k}', (rr * math.cos(a), rr * math.sin(a) - 0.02, 0.405 + s * 0.5), (s, s, s * 0.8), coll, u('espuma'), n=5)
+    # Asa de alambre con agarradera
+    clay.sweep('asa balde', [(-0.225, 0.0, 0.44), (-0.18, -0.03, 0.6), (0.18, -0.03, 0.6), (0.225, 0.0, 0.44)], 0.008, (1, 1), coll, m('acero'),
+               segments=6, samples=5)
+    clay.sweep('agarradera', [(-0.07, -0.03, 0.61), (0.07, -0.03, 0.61)], 0.02, (1, 1), coll, m('negro'), segments=8, samples=2)
+    # Escurridor atrás con palanca
+    clay.rbox('escurridor', (0, 0.15, 0.53), (0.13, 0.07, 0.08), coll, u('gris claro'), p=4)
+    for k in range(4):
+        box('rejilla escurridor', (-0.075 + k * 0.05, 0.08, 0.53), (0.012, 0.006, 0.06), coll, 'negro', p=4, n=4)
+    clay.sweep('palanca', [(0.1, 0.16, 0.6), (0.14, 0.2, 0.85), (0.16, 0.22, 1.0)], 0.014, (1, 1), coll, m('acero'), segments=6, samples=4)
+    clay.sweep('mango palanca', [(0.155, 0.22, 0.98), (0.17, 0.225, 1.08)], 0.024, (1, 1), coll, m('negro'), segments=8, samples=2)
+    # Trapero: palo, agarre y flecos que asoman del agua
+    clay.sweep('palo trapero', [(-0.06, -0.02, 0.36), (-0.14, 0.12, 1.1), (-0.18, 0.18, 1.52)], 0.018, (1, 1), coll, m('madera'), segments=8, samples=3)
+    clay.sweep('agarre trapero', [(-0.172, 0.17, 1.44), (-0.185, 0.19, 1.58)], 0.026, (1, 1), coll, m('celeste'), segments=8, samples=2)
+    clay.blob('tapa palo', (-0.186, 0.19, 1.6), (0.028, 0.028, 0.02), coll, m('celeste'), n=4)
+    for k in range(14):
+        a = 2 * math.pi * k / 14
+        p0 = (-0.06 + 0.02 * math.cos(a), -0.02 + 0.02 * math.sin(a), 0.38)
+        p1 = (-0.06 + 0.1 * math.cos(a), -0.02 + 0.09 * math.sin(a), 0.43 + 0.03 * math.sin(3 * a))
+        p2 = (-0.06 + 0.14 * math.cos(a + 0.3), -0.02 + 0.12 * math.sin(a + 0.3), 0.405)
+        clay.sweep(f'fleco {k}', [p0, p1, p2], [0.016, 0.014, 0.01], (1, 1), coll, u('fleco'), segments=6, samples=3)
+    # Etiqueta con gota
+    clay.rbox('etiqueta balde', (0, -0.205, 0.27), (0.07, 0.01, 0.055), coll, m('blanco'), p=4, n=4).rotation_euler = (-0.08, 0, 0)
+    clay.blob('gota etiqueta', (0, -0.218, 0.262), (0.022, 0.006, 0.03), coll, m('celeste'), n=5,
+              shaper=lambda v: np.where(v[:, 2:3] > 0, v * np.array([0.45, 1, 1.25]), v))
 
 
 def charco(coll):
+    """Derrame: charco brillante con ondas y salpicaduras junto a la botella volcada."""
     pts = []
-    for k in range(14):
-        a = 2 * math.pi * k / 14
-        r = 0.3 + 0.07 * math.sin(3 * a) + 0.04 * math.cos(5 * a)
+    for k in range(20):
+        a = 2 * math.pi * k / 20
+        r = 0.3 + 0.07 * math.sin(3 * a) + 0.04 * math.cos(5 * a) + 0.02 * math.sin(9 * a)
         pts.append((math.cos(a) * r, math.sin(a) * r * 0.75, 0.004))
-    verts = [(0, 0, 0.012)] + pts
+    verts = [(0, 0, 0.014)] + pts
     faces = [(0, i + 1, (i + 1) % len(pts) + 1) for i in range(len(pts))]
     o = clay.make_mesh_object('charco', verts, faces, coll, material=u('charco'))
     clay.add_subsurf(o, 2, 3)
-    for k, (x, y) in enumerate(((0.35, 0.1), (-0.3, -0.18), (0.1, 0.3))):
-        clay.blob(f'gota {k}', (x, y, 0.006), (0.04, 0.03, 0.006), coll, u('charco'), n=4)
+    inner = clay.make_mesh_object('charco claro', [(x * 0.62 + 0.03, y * 0.62 - 0.02, 0.018) for x, y, _ in [(0, 0, 0)] + pts],
+                                  faces, coll, material=u('charco claro'))
+    clay.add_subsurf(inner, 2, 3)
+    for k, r in enumerate((0.07, 0.13)):
+        pts_r = [(0.03 + r * math.cos(a), -0.02 + r * 0.75 * math.sin(a), 0.021) for a in np.linspace(0, 2 * math.pi, 18, endpoint=False)]
+        clay.sweep(f'onda {k}', pts_r, 0.005, (0.35, 1), coll, u('espuma'), segments=5, samples=3, closed=True, up=(0, 0, 1))
+    for k, (x, y, z, s) in enumerate(((0.38, 0.12, 0.006, 0.04), (-0.34, -0.2, 0.006, 0.035), (0.12, 0.33, 0.006, 0.03),
+                                      (0.3, -0.26, 0.05, 0.018), (0.2, -0.3, 0.09, 0.013), (0.36, -0.18, 0.12, 0.011))):
+        clay.blob(f'gota {k}', (x, y, z), (s, s * 0.8, s * (0.3 if z < 0.01 else 1.0)), coll, u('charco'), n=5)
+    clay.blob('brillo charco', (-0.1, 0.08, 0.02), (0.06, 0.02, 0.003), coll, u('espuma'), n=4)
+    b = prod.instance('agua', (-0.36, 0.2, 0.06), 0.0, 1.0, coll)
+    b.rotation_euler = (math.pi / 2, 0, -2.3)
 
 
 def basura(coll):
-    clay.blob('papel arrugado', (0, 0, 0.06), (0.07, 0.07, 0.06), coll, u('papel'), n=6,
-              shaper=lambda v: v * (1 + 0.15 * np.sin(v[:, 0] * 60) * np.cos(v[:, 1] * 50))[:, None])
-    pts = [(0.15, -0.02, 0.01), (0.2, -0.05, 0.02), (0.25, -0.02, 0.01)]
-    for k, dy in enumerate((-0.04, 0.0, 0.04)):
-        clay.sweep(f'cáscara {k}', [(0.15, dy * 0.3, 0.02), (0.22, dy, 0.012), (0.28, dy * 1.4, 0.006)], [0.02, 0.025, 0.008], (0.35, 1), coll,
-                   prod.mat('amarillo banano'), segments=6, samples=3, up=(0, 0, 1))
+    """Basura en el piso: papel arrugado, cáscara de banano, lata aplastada, envoltura y mal olor."""
+    clay.blob('papel arrugado', (0, 0, 0.06), (0.07, 0.07, 0.06), coll, u('papel'), n=8,
+              shaper=lambda v: v * (1 + 0.16 * np.sin(v[:, 0] * 70) * np.cos(v[:, 1] * 60) + 0.08 * np.sin(v[:, 2] * 90))[:, None])
+    for k in range(3):
+        a = k * 2.1
+        clay.sweep(f'pliegue {k}', [(0.05 * math.cos(a), 0.05 * math.sin(a), 0.1), (0.07 * math.cos(a + 0.5), 0.07 * math.sin(a + 0.5), 0.05)],
+                   0.006, (0.4, 1), coll, u('papel sombra'), segments=5, samples=2)
+    # Cáscara de banano: tallo y tres gajos abiertos y curvos
+    cx, cy = 0.2, 0.02
+    clay.sweep('tallo cáscara', [(cx, cy, 0.035), (cx - 0.02, cy + 0.01, 0.07)], [0.014, 0.01], (1, 1), coll, prod.mat('cafe tallo'), segments=6, samples=2)
+    for k in range(3):
+        a = -0.6 + k * 1.3
+        d = np.array([math.cos(a), math.sin(a)])
+        p = [(cx + d[0] * t, cy + d[1] * t, 0.03 + 0.025 * math.sin(t * 20)) for t in (0.0, 0.05, 0.1, 0.14)]
+        clay.sweep(f'gajo cáscara {k}', p, [0.02, 0.028, 0.022, 0.008], (0.3, 1), coll, prod.mat('amarillo banano'), segments=6, samples=4, up=(0, 0, 1))
+        tip = p[-1]
+        clay.blob(f'punta gajo {k}', (tip[0], tip[1], tip[2]), (0.012, 0.012, 0.005), coll, prod.mat('cafe tallo'), n=3)
+    # Lata aplastada tendida
+    lata = clay.lathe('lata aplastada', [(0.0, -0.05), (0.035, -0.05), (0.04, -0.045), (0.036, 0.0), (0.041, 0.045), (0.035, 0.05), (0.0, 0.05)], coll,
+                      prod.mat('rojo'), segments=16)
+    lata.location = (-0.12, 0.14, 0.03)
+    lata.rotation_euler = (math.pi / 2, 0, 0.7)
+    lata.scale = (1, 0.7, 1)
+    # Envoltura de dulce con puntas torcidas
+    clay.blob('envoltura', (-0.14, -0.1, 0.02), (0.04, 0.025, 0.018), coll, m('rosa'), n=5)
+    for sx in (-1, 1):
+        clay.blob('punta envoltura', (-0.14 + sx * 0.055, -0.1, 0.02), (0.02, 0.022, 0.012), coll, m('rosa'), n=4)
+    for k in range(5):
+        clay.blob(f'migaja {k}', (0.05 * k - 0.08, -0.2 + 0.02 * (k % 2), 0.006), (0.01, 0.009, 0.006), coll, prod.mat('galleta'), n=3)
+    # Rayitas de mal olor
+    for k, x in enumerate((-0.04, 0.04, 0.12)):
+        pts = [(x + 0.03 * math.sin(t * 40 + k), 0.0, 0.15 + t + 0.02 * k) for t in np.linspace(0, 0.13, 7)]
+        clay.sweep(f'mal olor {k}', pts, [0.006, 0.01, 0.011, 0.011, 0.009, 0.007, 0.004], (1, 1), coll, u('mal olor'), segments=5, samples=3)
 
 
 def caneca(coll):
-    clay.lathe('caneca', [(0.24, 0.0), (0.28, 0.75)], coll, u('azul caneca'), segments=32)
-    clay.lathe('tapa', [(0.3, 0.75), (0.3, 0.8), (0.22, 0.86), (0.0, 0.88)], coll, u('azul caneca'), segments=32)
+    """Caneca de reciclaje: tapa vaivén, pedal, ruedas, costillas y símbolo de reciclaje."""
+    clay.lathe('caneca', [(0.0, 0.03), (0.23, 0.03), (0.24, 0.06), (0.28, 0.74), (0.29, 0.76)], coll, u('azul caneca'), segments=36, cap_top=False)
+    for k in range(10):
+        a = 2 * math.pi * (k + 0.5) / 10
+        if abs(math.sin(a) + 1) < 0.35:
+            continue  # sin costilla detrás del símbolo
+        r0, r1 = 0.245, 0.283
+        clay.sweep(f'costilla {k}', [(r0 * math.cos(a), r0 * math.sin(a), 0.1), (r1 * math.cos(a), r1 * math.sin(a), 0.7)], 0.012, (1, 1), coll,
+                   u('azul oscuro'), segments=5, samples=2)
+    clay.lathe('tapa', [(0.0, 0.76), (0.305, 0.76), (0.305, 0.8), (0.24, 0.87), (0.0, 0.89)], coll, u('azul oscuro'), segments=36)
+    box('boca vaivén', (0, -0.18, 0.86), (0.12, 0.03, 0.035), coll, 'negro', p=4)
+    box('tapa vaivén', (0, -0.19, 0.87), (0.11, 0.02, 0.03), coll, 'celeste', p=4).rotation_euler = (-0.5, 0, 0)
+    box('pedal', (0, -0.3, 0.04), (0.08, 0.06, 0.018), coll, 'negro', p=4)
+    for sx in (-1, 1):
+        wheel(coll, (sx * 0.2, 0.2, 0.05), 0.05, 0.02)
+    # Símbolo de reciclaje: tres flechas que se persiguen, con punta
+    cz, R = 0.42, 0.085
     for k in range(3):
-        a = 2 * math.pi * k / 3 - math.pi / 2
-        clay.sweep(f'flecha reciclaje {k}', [(math.cos(a) * 0.08, -0.285, 0.4 + math.sin(a) * 0.08),
-                                             (math.cos(a + 1.8) * 0.08, -0.285, 0.4 + math.sin(a + 1.8) * 0.08)], 0.016, (1, 1), coll, u('verde'),
-                   segments=6, samples=3)
+        a0 = math.pi / 2 + k * 2 * math.pi / 3 + 0.25
+        arc = [(R * math.cos(a0 + t), -0.29, cz + R * math.sin(a0 + t)) for t in np.linspace(0, 1.45, 5)]
+        clay.sweep(f'flecha reciclaje {k}', arc, 0.017, (1, 0.6), coll, u('verde'), segments=6, samples=3, up=(0, -1, 0))
+        a1 = a0 + 1.6
+        tip = (R * math.cos(a1), -0.292, cz + R * math.sin(a1))
+        t_dir = (-math.sin(a1), math.cos(a1))
+        n_dir = (math.cos(a1), math.sin(a1))
+        v = [(tip[0] + t_dir[0] * 0.035, tip[1], tip[2] + t_dir[1] * 0.035),
+             (tip[0] - t_dir[0] * 0.01 + n_dir[0] * 0.035, tip[1], tip[2] - t_dir[1] * 0.01 + n_dir[1] * 0.035),
+             (tip[0] - t_dir[0] * 0.01 - n_dir[0] * 0.035, tip[1], tip[2] - t_dir[1] * 0.01 - n_dir[1] * 0.035)]
+        head = clay.make_mesh_object(f'punta flecha {k}', v, [(0, 1, 2)], coll, material=u('verde'))
+        clay.add_solidify(head, 0.02, 0.0)
+    clay.rbox('etiqueta caneca', (0, -0.283, 0.62), (0.1, 0.008, 0.03), coll, m('blanco'), p=4, n=4)
 
 
 def cono(coll):
-    """Aviso de piso mojado: caballete amarillo con triángulo y signo de admiración."""
-    th, hh = 0.2, 0.3
+    """Aviso de piso mojado: caballete amarillo con muñequito resbalando, franjas y patas de goma."""
+    th, hh = 0.2, 0.32
     for sy, rot in ((-1, -th), (1, th)):
-        panel = box('aviso piso mojado', (0, 0, 0), (0.17, 0.014, hh), coll, 'amarillo', p=5)
-        panel.location = (0, sy * hh * math.sin(th), 0.02 + hh * math.cos(th))
+        panel = box('aviso piso mojado', (0, 0, 0), (0.18, 0.016, hh), coll, 'amarillo', p=5)
+        panel.material_slots[0].material = u('amarillo aviso')
+        panel.location = (0, sy * hh * math.sin(th), 0.03 + hh * math.cos(th))
         panel.rotation_euler = (rot, 0, 0)
-        yf = sy * 0.018
-        tri = [(-0.12, yf, -0.06), (0.12, yf, -0.06), (0.0, yf, 0.17)]
-        parts = [clay.sweep('triángulo aviso', tri, 0.013, (1, 1), coll, u('trazo'), segments=6, samples=2, closed=True),
-                 clay.blob('admiración', (0, yf, 0.06), (0.017, 0.006, 0.05), coll, u('trazo'), n=4),
-                 clay.blob('punto admiración', (0, yf, -0.02), (0.016, 0.006, 0.016), coll, u('trazo'), n=4)]
+        yf = sy * 0.02
+        parts = []
+        tri = [(-0.13, yf, 0.0), (0.13, yf, 0.0), (0.0, yf, 0.23)]
+        parts.append(clay.sweep('triángulo aviso', tri, 0.013, (1, 1), coll, u('trazo'), segments=6, samples=2, closed=True))
+        # Muñequito resbalando dentro del triángulo
+        parts.append(clay.blob('cabeza muñequito', (0.025, yf, 0.15), (0.018, 0.006, 0.018), coll, u('trazo'), n=4))
+        for a, b_, r in (((0.018, 0.13), (-0.01, 0.07), 0.009), ((-0.01, 0.07), (-0.05, 0.03), 0.008), ((-0.01, 0.07), (0.04, 0.035), 0.008),
+                         ((0.012, 0.115), (0.06, 0.1), 0.007), ((0.012, 0.115), (-0.04, 0.12), 0.007)):
+            parts.append(clay.sweep('trazo muñequito', [(a[0], yf, a[1]), (b_[0], yf, b_[1])], r, (1, 1), coll, u('trazo'), segments=5, samples=2))
+        for k in range(3):
+            parts.append(clay.sweep('gota piso', [(-0.07 + k * 0.05, yf, 0.018), (-0.05 + k * 0.05, yf, 0.018)], 0.006, (1, 1), coll, u('trazo'),
+                                    segments=5, samples=2))
+        # Barras de texto y franjas de advertencia
+        for k, w in enumerate((0.12, 0.09)):
+            parts.append(box('texto aviso', (0, yf, -0.07 - k * 0.045), (w, 0.005, 0.014), coll, 'negro', p=4, n=4))
+        for k in range(5):
+            f = clay.rbox('franja advertencia', (0, 0, 0), (0.018, 0.005, 0.04), coll, u('trazo'), p=4, n=4)
+            f.location = (-0.13 + k * 0.065, yf, -0.25)
+            f.rotation_euler = (0, 0.6, 0)
+            parts.append(f)
         for o in parts:
             o.parent = panel
-    box('bisagra aviso', (0, 0, 0.02 + 2 * hh * math.cos(th)), (0.16, 0.025, 0.02), coll, 'amarillo', p=5)
-    clay.sweep('asa aviso', [(-0.06, 0, 0.64), (-0.05, 0, 0.7), (0.05, 0, 0.7), (0.06, 0, 0.64)], 0.012, (1, 1), coll, u('trazo'), segments=6, samples=4)
+        for sx in (-1, 1):
+            foot = clay.blob('pata goma', (sx * 0.15, sy * (2 * hh * math.sin(th) - 0.01), 0.02), (0.035, 0.03, 0.02), coll, m('negro'), n=4)
+            del foot
+    box('bisagra aviso', (0, 0, 0.03 + 2 * hh * math.cos(th)), (0.17, 0.026, 0.022), coll, 'amarillo', p=5).material_slots[0].material = u('amarillo oscuro')
+    clay.sweep('asa aviso', [(-0.07, 0, 0.66), (-0.06, 0, 0.74), (0.06, 0, 0.74), (0.07, 0, 0.66)], 0.013, (1, 1), coll, u('trazo'), segments=6, samples=4)
 
 
 # --------------------------------------------------------------------------
@@ -268,62 +424,160 @@ def cono(coll):
 # --------------------------------------------------------------------------
 
 def planta(coll):
-    clay.lathe('matera', [(0.14, 0.0), (0.2, 0.32), (0.22, 0.34)], coll, u('matera'), segments=28, cap_top=True)
-    rng = np.random.default_rng(4)
-    for k in range(12):
-        a = rng.uniform(0, 2 * math.pi)
-        L = rng.uniform(0.3, 0.55)
-        base = np.array([0, 0, 0.32])
-        tip = base + np.array([math.cos(a) * L * 0.6, math.sin(a) * L * 0.6, L])
-        clay.sweep(f'hoja {k}', [base, (base + tip) / 2 + [0, 0, 0.08], tip], [0.01, 0.07, 0.005], (0.2, 1), coll, u('hoja'), segments=6, samples=4,
-                   caps=('flat', 'point'), up=(math.cos(a), math.sin(a), 0.3))
-    for k in range(4):
-        a = 2 * math.pi * k / 4 + 0.4
-        clay.blob(f'flor {k}', (math.cos(a) * 0.12, math.sin(a) * 0.12, 0.62), (0.04, 0.04, 0.03), coll, u('flor'), n=5)
+    """Planta en matera pintada: plato, tierra con piedritas, hojas con nervio y flores de cinco pétalos."""
+    clay.lathe('plato matera', [(0.0, 0.0), (0.2, 0.0), (0.22, 0.03), (0.2, 0.035), (0.0, 0.03)], coll, u('matera oscura'), segments=32)
+    clay.lathe('matera', [(0.0, 0.03), (0.14, 0.03), (0.19, 0.3), (0.215, 0.31), (0.225, 0.36), (0.2, 0.37)], coll, u('matera'), segments=32,
+               cap_top=False)
+    for k in range(10):
+        a = 2 * math.pi * k / 10
+        clay.blob(f'punto matera {k}', (0.19 * math.cos(a), 0.19 * math.sin(a), 0.2), (0.022, 0.022, 0.022), coll, u('matera clara'), n=4)
+    clay.lathe('tierra', [(0.0, 0.33), (0.2, 0.33)], coll, u('tierra'), segments=32, cap_bottom=False)
+    rng = np.random.default_rng(11)
+    for k in range(6):
+        a, r = rng.uniform(0, 2 * math.pi), rng.uniform(0.05, 0.17)
+        clay.blob(f'piedrita {k}', (r * math.cos(a), r * math.sin(a), 0.338), (0.018, 0.014, 0.01), coll, u('piedra'), n=3)
+    for k in range(11):
+        a = k * 2.4 + rng.uniform(-0.2, 0.2)
+        L = rng.uniform(0.32, 0.55)
+        base = np.array([0, 0, 0.34])
+        mid = base + np.array([math.cos(a) * L * 0.25, math.sin(a) * L * 0.25, L * 0.75])
+        tip = base + np.array([math.cos(a) * L * 0.62, math.sin(a) * L * 0.62, L * 0.95])
+        mat = u('hoja') if k % 3 else u('hoja oscura')
+        clay.sweep(f'hoja {k}', [base, mid, tip], [0.012, 0.075, 0.006], (0.18, 1), coll, mat, segments=6, samples=5,
+                   caps=('flat', 'point'), up=(math.cos(a), math.sin(a), 0.4))
+        clay.sweep(f'nervio {k}', [base + (mid - base) * 0.3 + [0, 0, 0.005], mid + [0, 0, 0.012], tip * 0.97 + base * 0.03], 0.004, (1, 1), coll,
+                   u('nervio'), segments=4, samples=4)
+    for k in range(3):
+        a = 2 * math.pi * k / 3 + 0.5
+        c = np.array([math.cos(a) * 0.12, math.sin(a) * 0.12, 0.68 + 0.05 * k])
+        clay.sweep(f'tallo flor {k}', [(0, 0, 0.36), c - [0, 0, 0.02]], 0.007, (1, 1), coll, u('hoja oscura'), segments=4, samples=2)
+        for j in range(5):
+            b = 2 * math.pi * j / 5
+            clay.blob(f'pétalo {k}{j}', (c[0] + 0.032 * math.cos(b), c[1] + 0.032 * math.sin(b), c[2]), (0.03, 0.03, 0.012), coll, u('flor'), n=4)
+        clay.blob(f'centro flor {k}', tuple(c + [0, 0, 0.008]), (0.018, 0.018, 0.012), coll, u('estrella'), n=4)
 
 
 def globos(coll):
-    for k, (x, y, z, key) in enumerate(((0, 0, 1.3, 'globo rosa'), (0.2, 0.05, 1.2, 'globo menta'), (-0.18, 0.02, 1.18, 'globo lila'))):
-        clay.blob(f'globo {k}', (x, y, z), (0.13, 0.13, 0.16), coll, u(key), n=8)
-        clay.sweep(f'hilo {k}', [(x, y, z - 0.16), (x * 0.5, y, z - 0.6), (0, 0, 0.08)], 0.004, (1, 1), coll, u('hilo'), segments=4, samples=4)
-    box('pesita', (0, 0, 0.05), (0.06, 0.06, 0.05), coll, 'coral', p=4)
+    """Racimo de globos con nudos, brillos, un globo corazón, cintas rizadas y pesita de regalo."""
+    pear = lambda v: v * np.where(v[:, 2:3] < 0, np.array([0.82, 0.82, 1.0]), 1.0)
+    specs = ((0.0, 0.0, 1.42, 'globo rosa'), (0.22, 0.06, 1.3, 'globo menta'), (-0.2, 0.03, 1.28, 'globo lila'), (0.08, -0.08, 1.12, 'globo amarillo'))
+    for k, (x, y, z, key) in enumerate(specs):
+        clay.blob(f'globo {k}', (x, y, z), (0.13, 0.13, 0.16), coll, u(key), n=10, shaper=pear)
+        clay.blob(f'nudo {k}', (x, y, z - 0.168), (0.02, 0.02, 0.016), coll, u(key), n=4)
+        clay.blob(f'brillo globo {k}', (x - 0.05, y - 0.1, z + 0.06), (0.025, 0.012, 0.04), coll, u('espuma'), n=4)
+        pts = [(x, y, z - 0.18)] + [(x * (1 - t) + 0.03 * math.sin(t * 14 + k), y * (1 - t) + 0.03 * math.cos(t * 14 + k), (z - 0.18) * (1 - t) + 0.14 * t)
+                                     for t in np.linspace(0.08, 1, 12)]
+        clay.sweep(f'cinta {k}', pts, 0.005, (0.35, 1), coll, u(key), segments=4, samples=3)
+    # Globo corazón (el de la pareja)
+    objs = _nuevos(coll, lambda: corazon(coll))
+    for o in objs:
+        o.scale = (0.75, 0.75, 0.75)
+        o.location = (-0.02, 0.1, 1.38)
+    clay.sweep('cinta corazón', [(-0.02, 0.1, 1.41), (0.0, 0.05, 0.8), (0.0, 0.0, 0.14)], 0.004, (1, 1), coll, u('hilo'), segments=4, samples=4)
+    # Pesita en forma de regalo
+    box('regalo', (0, 0, 0.065), (0.07, 0.07, 0.065), coll, 'coral', p=5)
+    box('cinta regalo x', (0, 0, 0.066), (0.075, 0.016, 0.068), coll, 'amarillo', p=5)
+    box('cinta regalo y', (0, 0, 0.066), (0.016, 0.075, 0.068), coll, 'amarillo', p=5)
+    for sx in (-1, 1):
+        clay.blob('moño regalo', (sx * 0.025, 0, 0.14), (0.028, 0.012, 0.018), coll, m('amarillo'), n=4)
 
 
 def parlante(coll):
-    box('parlante', (0, 0, 0.35), (0.18, 0.15, 0.35), coll, 'negro', p=5)
-    for z, r in ((0.5, 0.11), (0.22, 0.07)):
-        cone = clay.lathe('cono parlante', [(r, 0), (r * 0.3, -0.03)], coll, u('gris oscuro'), segments=24)
+    """Parlante de madera con rejilla, dos conos, tweeter, perillas, luz y notas musicales de colores."""
+    box('caja parlante', (0, 0, 0.4), (0.2, 0.16, 0.36), coll, 'madera oscura', p=6)
+    box('frente parlante', (0, -0.158, 0.37), (0.17, 0.008, 0.3), coll, 'negro', p=6).material_slots[0].material = u('rejilla')
+    for sx in (-1, 1):
+        box('pata parlante', (sx * 0.14, 0, 0.02), (0.03, 0.12, 0.02), coll, 'negro', p=4)
+    for z, r in ((0.5, 0.115), (0.22, 0.07)):
+        cone = clay.lathe('cono parlante', [(r, 0), (r * 0.35, -0.035), (0.0, -0.03)], coll, u('gris oscuro'), segments=24)
         cone.rotation_euler = (math.pi / 2, 0, 0)
-        cone.location = (0, -0.15, z)
-        ring = [(r * math.cos(a), -0.155, z + r * math.sin(a)) for a in np.linspace(0, 2 * math.pi, 16, endpoint=False)]
-        clay.sweep('aro parlante', ring, 0.012, (1, 1), coll, m('acero'), segments=6, samples=3, closed=True)
-        clay.blob('centro parlante', (0, -0.13, z), (r * 0.28, 0.02, r * 0.28), coll, m('acero'), n=4)
-    for k, (x, z) in enumerate(((0.28, 0.75), (0.38, 0.9), (0.25, 1.0))):
-        clay.sweep(f'nota {k}', [(x, -0.1, z), (x, -0.1, z + 0.12)], 0.01, (1, 1), coll, u('trazo'), segments=6, samples=2)
-        clay.blob(f'cabeza nota {k}', (x - 0.03, -0.1, z), (0.035, 0.02, 0.028), coll, u('trazo'), n=4)
+        cone.location = (0, -0.165, z)
+        _ring('aro parlante', (0, -0.168, z), r, 'y', 0.013, coll, m('acero'), n=22)
+        clay.blob('centro parlante', (0, -0.14, z), (r * 0.3, 0.022, r * 0.3), coll, m('acero'), n=5)
+    clay.blob('tweeter', (0.1, -0.165, 0.64), (0.03, 0.015, 0.03), coll, m('acero'), n=5)
+    box('barra perillas', (0, -0.02, 0.765), (0.17, 0.12, 0.012), coll, 'negro', p=6)
+    for k, x in enumerate((-0.1, -0.03, 0.04)):
+        clay.lathe(f'perilla {k}', [(0.0, 0.0), (0.022, 0.0), (0.02, 0.03), (0.0, 0.032)], coll, m('blanco' if k else 'coral'), segments=14).location = \
+            (x, -0.06, 0.777)
+    clay.blob('luz encendido', (0.12, -0.06, 0.785), (0.012, 0.012, 0.01), coll, m('pantalla'), n=4)
+    clay.sweep('manija parlante', [(-0.1, 0, 0.76), (-0.08, 0, 0.84), (0.08, 0, 0.84), (0.1, 0, 0.76)], 0.016, (1, 1), coll, m('negro'), segments=6, samples=4)
+    notes = ((0.3, 0.72, 'rosa', 1), (0.42, 0.94, 'menta', 2), (0.27, 1.08, 'lila', 1), (0.46, 1.2, 'amarillo', 1))
+    for k, (x, z, col, kind) in enumerate(notes):
+        if kind == 2:
+            for dx in (0.0, 0.09):
+                clay.sweep(f'plica {k}', [(x + dx, -0.1, z + dx * 0.3), (x + dx, -0.1, z + 0.14 + dx * 0.3)], 0.009, (1, 1), coll, m(col), segments=5, samples=2)
+                clay.blob(f'cabeza nota {k}', (x + dx - 0.028, -0.1, z + dx * 0.3), (0.032, 0.018, 0.025), coll, m(col), n=4)
+            clay.sweep(f'barra nota {k}', [(x, -0.1, z + 0.14), (x + 0.09, -0.1, z + 0.167)], 0.014, (0.5, 1), coll, m(col), segments=5, samples=2)
+        else:
+            clay.sweep(f'plica {k}', [(x, -0.1, z), (x, -0.1, z + 0.13)], 0.009, (1, 1), coll, m(col), segments=5, samples=2)
+            clay.blob(f'cabeza nota {k}', (x - 0.028, -0.1, z), (0.032, 0.018, 0.025), coll, m(col), n=4)
+            clay.sweep(f'bandera nota {k}', [(x, -0.1, z + 0.13), (x + 0.04, -0.1, z + 0.09), (x + 0.03, -0.1, z + 0.06)], 0.008, (1, 1), coll, m(col),
+                       segments=5, samples=3)
 
 
 def letrero_oferta(coll):
+    """Pizarra de oferta en caballete: estallido rojo con %, dibujos de tiza y bandeja de tizas."""
     for sx in (-1, 1):
-        clay.sweep('pata', [(sx * 0.2, 0.1, 0.0), (sx * 0.15, 0.0, 0.8)], 0.02, (1, 1), coll, m('madera oscura'), segments=6, samples=2)
-    box('tablero', (0, -0.02, 0.65), (0.26, 0.03, 0.3), coll, 'pizarra', p=6)
-    box('marco', (0, 0.0, 0.65), (0.29, 0.02, 0.33), coll, 'madera', p=6)
-    clay.blob('estrella oferta', (0, -0.06, 0.78), (0.1, 0.01, 0.1), coll, u('estrella'), n=5)
-    for k in range(2):
-        box('tiza', (0, -0.055, 0.6 - k * 0.1), (0.18 - k * 0.05, 0.004, 0.015), coll, 'tiza', p=6, n=4)
+        clay.sweep('pata', [(sx * 0.24, -0.08, 0.0), (sx * 0.2, 0.0, 0.92)], 0.022, (1, 1), coll, m('madera oscura'), segments=6, samples=2)
+    clay.sweep('pata trasera', [(0, 0.28, 0.0), (0, 0.02, 0.9)], 0.02, (1, 1), coll, m('madera oscura'), segments=6, samples=2)
+    box('marco', (0, 0.0, 0.62), (0.3, 0.025, 0.36), coll, 'madera', p=6)
+    box('tablero', (0, -0.02, 0.62), (0.26, 0.02, 0.32), coll, 'pizarra', p=6)
+    box('bandeja tizas', (0, -0.06, 0.28), (0.26, 0.04, 0.012), coll, 'madera', p=6)
+    for k, (x, col) in enumerate(((-0.12, 'tiza'), (-0.05, 'rosa'), (0.06, 'amarillo'))):
+        clay.sweep(f'tiza {k}', [(x, -0.065, 0.3), (x + 0.05, -0.07, 0.3)], 0.009, (1, 1), coll, m(col), segments=5, samples=2)
+    # Estallido de oferta
+    pts = []
+    for k in range(24):
+        a = 2 * math.pi * k / 24
+        r = 0.12 if k % 2 == 0 else 0.09
+        pts.append((0.02 + r * math.cos(a), -0.045, 0.78 + r * math.sin(a)))
+    burst = clay.make_mesh_object('estallido oferta', [(0.02, -0.045, 0.78)] + pts, [(0, i + 1, (i + 1) % 24 + 1) for i in range(24)], coll,
+                                  material=u('rojo'))
+    clay.add_solidify(burst, 0.012, 0.0)
+    for dx, dz in ((-0.03, 0.03), (0.07, -0.03)):
+        _ring('porcentaje', (0.02 + dx, -0.06, 0.78 + dz), 0.018, 'y', 0.007, coll, m('blanco'), n=12)
+    clay.sweep('barra porcentaje', [(0.08, -0.06, 0.84), (-0.04, -0.06, 0.72)], 0.008, (1, 1), coll, m('blanco'), segments=5, samples=2)
+    # Dibujos de tiza: manzana, líneas de texto y precio encerrado
+    _ring('manzana tiza', (-0.16, -0.045, 0.58), 0.045, 'y', 0.006, coll, u('tiza roja'), n=16)
+    clay.blob('hoja tiza', (-0.14, -0.045, 0.64), (0.02, 0.004, 0.01), coll, u('tiza verde'), n=3)
+    for k, w in enumerate((0.14, 0.1)):
+        clay.sweep(f'texto tiza {k}', [(-0.08, -0.045, 0.6 - k * 0.07), (-0.08 + w * 2, -0.045, 0.6 - k * 0.07)], 0.008, (1, 1), coll, m('tiza'),
+                   segments=5, samples=2)
+    _ring('precio tiza', (0.14, -0.045, 0.42), 0.055, 'y', 0.006, coll, u('tiza amarilla'), n=16)
+    clay.sweep('cifra tiza', [(0.12, -0.045, 0.4), (0.14, -0.045, 0.45), (0.16, -0.045, 0.4)], 0.007, (1, 1), coll, u('tiza amarilla'), segments=5, samples=3)
+    for sx in (-1, 1):
+        clay.blob('esquinero', (sx * 0.28, -0.03, 0.96), (0.03, 0.012, 0.03), coll, m('coral'), n=4)
 
 
 def camara(coll):
-    """Cámara de seguridad con soporte de pared (base en z=0; en la tienda se sube a la pared)."""
-    box('placa pared', (0, 0.16, 0.2), (0.07, 0.015, 0.1), coll, 'blanco', p=5)
-    clay.sweep('brazo', [(0, 0.15, 0.24), (0, 0.06, 0.29), (0, -0.01, 0.25)], 0.022, (1, 1), coll, m('acero'), segments=8, samples=4)
-    box('cuerpo', (0, -0.06, 0.17), (0.08, 0.15, 0.07), coll, 'blanco', p=4)
-    box('visera', (0, -0.1, 0.245), (0.095, 0.14, 0.012), coll, 'blanco', p=6)
-    lente = clay.lathe('lente', [(0.055, 0), (0.045, 0.035)], coll, m('negro'), segments=20)
+    """Cámara de seguridad con soporte, cable, visera, aros de lente, luces infrarrojas y letrero de zona vigilada."""
+    box('placa pared', (0, 0.17, 0.22), (0.075, 0.015, 0.11), coll, 'blanco', p=5)
+    for sx in (-1, 1):
+        for sz in (-1, 1):
+            clay.blob('tornillo', (sx * 0.05, 0.155, 0.22 + sz * 0.08), (0.01, 0.005, 0.01), coll, m('acero'), n=3)
+    clay.sweep('brazo', [(0, 0.16, 0.26), (0, 0.07, 0.31), (0, -0.0, 0.27)], 0.024, (1, 1), coll, m('acero'), segments=8, samples=4)
+    clay.blob('rótula', (0, -0.005, 0.262), (0.035, 0.035, 0.035), coll, m('acero'), n=5)
+    clay.sweep('cable', [(0.04, 0.16, 0.14), (0.07, 0.1, 0.1), (0.06, 0.0, 0.14), (0.03, -0.04, 0.16)], 0.008, (1, 1), coll, m('negro'), segments=5, samples=4)
+    body = box('cuerpo', (0, -0.08, 0.19), (0.085, 0.16, 0.075), coll, 'blanco', p=4)
+    del body
+    box('visera', (0, -0.12, 0.27), (0.1, 0.16, 0.012), coll, 'blanco', p=6)
+    for k in range(3):
+        box('ranura', (0, -0.02 - k * 0.05, 0.284), (0.07, 0.008, 0.004), coll, 'acero', p=4, n=4)
+    lente = clay.lathe('lente', [(0.06, 0), (0.055, 0.02), (0.045, 0.04)], coll, m('negro'), segments=24)
     lente.rotation_euler = (math.pi / 2, 0, 0)
-    lente.location = (0, -0.2, 0.17)
-    clay.blob('brillo lente', (0.015, -0.237, 0.185), (0.012, 0.004, 0.012), coll, m('blanco'), n=4)
-    clay.blob('luz roja', (0.055, -0.2, 0.22), (0.012, 0.012, 0.012), coll, u('rojo'), n=4)
+    lente.location = (0, -0.235, 0.19)
+    _ring('aro lente', (0, -0.245, 0.19), 0.058, 'y', 0.007, coll, m('acero'), n=20)
+    _ring('aro lente interior', (0, -0.27, 0.19), 0.036, 'y', 0.005, coll, u('azul oscuro'), n=16)
+    for k in range(8):
+        a = 2 * math.pi * k / 8
+        clay.blob(f'led ir {k}', (0.047 * math.cos(a), -0.262, 0.19 + 0.047 * math.sin(a)), (0.006, 0.004, 0.006), coll, m('luz roja'), n=3)
+    clay.blob('brillo lente', (0.012, -0.277, 0.2), (0.012, 0.004, 0.012), coll, m('blanco'), n=4)
+    clay.blob('luz estado', (0.06, -0.23, 0.245), (0.012, 0.012, 0.012), coll, m('luz roja'), n=4)
+    # Letrero «zona vigilada» debajo
+    box('letrero vigilado', (-0.22, 0.17, 0.2), (0.1, 0.012, 0.07), coll, 'amarillo', p=5).material_slots[0].material = u('amarillo aviso')
+    box('icono cámara', (-0.21, 0.155, 0.21), (0.035, 0.006, 0.02), coll, 'negro', p=4)
+    clay.blob('lente icono', (-0.255, 0.155, 0.21), (0.012, 0.006, 0.012), coll, m('negro'), n=3)
+    box('texto vigilado', (-0.22, 0.155, 0.16), (0.07, 0.005, 0.009), coll, 'negro', p=4, n=4)
 
 
 # --------------------------------------------------------------------------

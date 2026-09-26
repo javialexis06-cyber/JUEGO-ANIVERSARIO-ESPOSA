@@ -216,11 +216,11 @@ def hoja_utileria(scene):
                [('Canasta', P['Canasta'], 2.2), ('Puesto', P['Puesto de canastas'], 1.3), ('Torniquete', P['Torniquete de entrada'], 1.0),
                 ('Carretilla', P['Carretilla de reparto'], 0.95), ('Bolsa', P['Bolsa de compras'], 2.2), ('Dinero', P['Dinero'], 3.0)], 1.5, b)
     _row_sheet(scene, '12c-limpieza', 'Limpieza y problemas del día',
-               [('Trapero y balde', P['Trapero y balde'], 1.1), ('Derrame', P['Charco'], 1.5), ('Basura', P['Basura'], 3.5),
+               [('Trapero y balde', P['Trapero y balde'], 1.1), ('Derrame', P['Charco'], 1.5), ('Basura', P['Basura'], 3.0),
                 ('Caneca', P['Caneca de reciclaje'], 1.1), ('Piso mojado', P['Piso mojado'], 1.5)], 1.55, b)
     _row_sheet(scene, '12d-decoracion', 'Decoración y seguridad (más paciencia)',
                [('Planta', P['Planta'], 1.3), ('Globos', P['Globos'], 1.0), ('Música', P['Parlante'], 1.3),
-                ('Oferta', P['Letrero de oferta'], 1.3), ('Cámara', P['Cámara'], 3.5)], 1.55, b)
+                ('Oferta', P['Letrero de oferta'], 1.3), ('Cámara', P['Cámara'], 2.6)], 1.55, b)
     _row_sheet(scene, '12e-maquinas', 'Máquinas de productos preparados',
                [('Malteadas', P['Máquina de malteadas'], 1.0), ('Café', P['Cafetera'], 1.0), ('Horno de pizza', P['Horno de pizza'], 0.9),
                 ('Jugos naturales', P['Exprimidor'], 1.0)], 1.9, b)
