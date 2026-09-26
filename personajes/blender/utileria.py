@@ -24,7 +24,7 @@ def u(key):
             'azul caneca': M('Util | azul caneca', '#3F8FD2', rough=0.45, coat=0.2),
             'verde': M('Util | verde', '#5CC57E', rough=0.45, coat=0.2),
             'rojo': M('Util | rojo', '#E55B52', rough=0.45, coat=0.2),
-            'charco': M('Util | charco', '#BDE6F6', rough=0.02, coat=1.0, transmission=0.7, ior=1.33),
+            'charco': M('Util | charco', '#8FD3F2', rough=0.03, coat=1.0, transmission=0.2, ior=1.33),
             'papel': M('Util | papel', '#F2EEE4', rough=0.8),
             'bolsa papel': M('Util | bolsa papel', '#D9B07C', rough=0.85),
             'oro': M('Util | oro', '#F2C14E', rough=0.25, metallic=1.0),
@@ -246,10 +246,21 @@ def caneca(coll):
 
 
 def cono(coll):
-    clay.lathe('cono', [(0.16, 0.03), (0.03, 0.6), (0.0, 0.62)], coll, m('amarillo'), segments=28)
-    box('base cono', (0, 0, 0.02), (0.2, 0.2, 0.02), coll, 'amarillo', p=6)
-    clay.lathe('franja', [(0.105, 0.24), (0.07, 0.4)], coll, m('blanco'), segments=28, cap_bottom=False, cap_top=False)
-    clay.blob('muñequito', (0, -0.11, 0.3), (0.035, 0.006, 0.05), coll, u('trazo'), n=4)
+    """Aviso de piso mojado: caballete amarillo con triángulo y signo de admiración."""
+    th, hh = 0.2, 0.3
+    for sy, rot in ((-1, -th), (1, th)):
+        panel = box('aviso piso mojado', (0, 0, 0), (0.17, 0.014, hh), coll, 'amarillo', p=5)
+        panel.location = (0, sy * hh * math.sin(th), 0.02 + hh * math.cos(th))
+        panel.rotation_euler = (rot, 0, 0)
+        yf = sy * 0.018
+        tri = [(-0.12, yf, -0.06), (0.12, yf, -0.06), (0.0, yf, 0.17)]
+        parts = [clay.sweep('triángulo aviso', tri, 0.013, (1, 1), coll, u('trazo'), segments=6, samples=2, closed=True),
+                 clay.blob('admiración', (0, yf, 0.06), (0.017, 0.006, 0.05), coll, u('trazo'), n=4),
+                 clay.blob('punto admiración', (0, yf, -0.02), (0.016, 0.006, 0.016), coll, u('trazo'), n=4)]
+        for o in parts:
+            o.parent = panel
+    box('bisagra aviso', (0, 0, 0.02 + 2 * hh * math.cos(th)), (0.16, 0.025, 0.02), coll, 'amarillo', p=5)
+    clay.sweep('asa aviso', [(-0.06, 0, 0.64), (-0.05, 0, 0.7), (0.05, 0, 0.7), (0.06, 0, 0.64)], 0.012, (1, 1), coll, u('trazo'), segments=6, samples=4)
 
 
 # --------------------------------------------------------------------------
