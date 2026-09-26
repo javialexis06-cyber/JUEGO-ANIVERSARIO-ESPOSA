@@ -197,8 +197,10 @@ def hat(coll, head, P, mats, name, kind):
     R = P['head_radii']
     top = hc[2] + R[2]
     if kind == 'chef':
-        clay.lathe(f'{name} | banda chef', [(R[0] * 0.95, top - 0.2), (R[0] * 0.97, top + 0.02)], coll, mats['white'], segments=36)
-        clay.blob(f'{name} | gorro chef', (0, 0.02, top + 0.35), (0.55, 0.5, 0.4), coll, mats['white'], n=12,
+        # Banda que abraza el pelo y copa inflada apoyada encima (sin espacio entre ambas)
+        clay.lathe(f'{name} | banda chef', [(R[0] * 1.03, top - 0.12), (R[0] * 1.04, top - 0.02), (R[0] * 1.0, top + 0.16), (0.0, top + 0.18)],
+                   coll, mats['white'], segments=36)
+        clay.blob(f'{name} | gorro chef', (0, 0.02, top + 0.42), (0.62, 0.56, 0.36), coll, mats['white'], n=12,
                   shaper=lambda v: v * (1 + 0.08 * np.cos(np.arctan2(v[:, 1], v[:, 0]) * 7))[:, None])
     elif kind == 'sombrero':
         clay.lathe(f'{name} | ala', [(0.0, top - 0.12), (1.05, top - 0.14), (1.1, top - 0.1)], coll, mats['acc2'], segments=40)
