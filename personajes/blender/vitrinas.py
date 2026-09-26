@@ -56,12 +56,27 @@ def box(name, c, half, coll, mk, p=8.0, n=6):
     return clay.rbox(name, c, half, coll, m(mk), p=p, n=n)
 
 
+# Fracción de producto que queda en las vitrinas (1 = llenas). Sirve para mostrar cómo se
+# vacían cuando los clientes compran: cada posición se vacía siempre en el mismo orden.
+LLENADO = 1.0
+
+
+def hay_producto(x, y, z):
+    if LLENADO >= 1.0:
+        return True
+    v = math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453
+    return (v - math.floor(v)) < LLENADO
+
+
 def fill_row(coll, name, x0, x1, y, z, count, scale=1.0, rot=0.0, jitter=0.0, rng=None):
     rng = rng or np.random.default_rng(1)
     for i in range(count):
         t = 0.5 if count == 1 else i / (count - 1)
-        x = x0 + (x1 - x0) * t + (rng.uniform(-jitter, jitter) if jitter else 0)
-        prod.instance(name, (x, y, z), rot + (rng.uniform(-0.3, 0.3) if jitter else 0), scale, coll)
+        base = x0 + (x1 - x0) * t
+        x = base + (rng.uniform(-jitter, jitter) if jitter else 0)
+        r = rot + (rng.uniform(-0.3, 0.3) if jitter else 0)
+        if hay_producto(base, y, z):
+            prod.instance(name, (x, y, z), r, scale, coll)
 
 
 def fill_grid(coll, name, x0, x1, y0, y1, z, nx, ny, scale=1.0, jitter=0.02, seed=1):
@@ -374,10 +389,12 @@ def panaderia(level, coll):
                 clay.lathe('canastita', [(0.15, z + 0.02), (0.19, z + 0.12)], coll, m('mimbre'), segments=20, cap_top=False).location.x = x
                 # Cada producto va dentro de su canastita
                 if nm == 'pan':
-                    prod.instance('pan', (x, 0.0, z + 0.05), 0.15, 0.72, coll)
+                    if hay_producto(x, 0.0, z):
+                        prod.instance('pan', (x, 0.0, z + 0.05), 0.15, 0.72, coll)
                 else:
                     for dx in (-0.055, 0.055):
-                        prod.instance('croissant', (x + dx, 0.0, z + 0.05), 1.57, 0.6, coll)
+                        if hay_producto(x + dx, 0.0, z):
+                            prod.instance('croissant', (x + dx, 0.0, z + 0.05), 1.57, 0.6, coll)
         sign(coll, 'blanco', (0, 0.3, H + 0.15), (0.45, 0.03, 0.1), 'amarillo')
     else:
         W = 0.9
