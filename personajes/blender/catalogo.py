@@ -128,6 +128,9 @@ def hoja_vitrinas(scene, kinds=None):
         if kind == 'congelador':
             # Baúles: vista más alta (como la cámara del juego) para ver el interior
             cam = escena.camera(f'CAM {kind}', (0.3, -7.6, 7.0), (0.3, 0.0, 0.6), 38)
+        elif kind == 'bebidas':
+            # El nivel 3 lleva dispensador a un lado: encuadre un poco más abierto
+            cam = escena.camera(f'CAM {kind}', (0.45, -9.2, 4.2), (0.45, 0.0, 0.85), 34)
         else:
             cam = escena.camera(f'CAM {kind}', (0.3, -9.2, 4.2), (0.3, 0.0, 0.85), 38)
         out.append(render(scene, cam, f'11-vitrina-{kind}', 1800, 800, labels, title))
