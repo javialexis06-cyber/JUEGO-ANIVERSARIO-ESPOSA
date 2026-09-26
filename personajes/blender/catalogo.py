@@ -95,7 +95,7 @@ def hoja_productos(scene):
     coll = clay.collection('Hoja productos')
     names = [n for n, _ in prod.CATALOGO] + [n for n, _ in prod.CAJAS]
     cols = 8
-    sp = 0.85
+    sp = 0.95
     labels = []
     for i, n in enumerate(names):
         r, cidx = divmod(i, cols)
@@ -103,11 +103,11 @@ def hoja_productos(scene):
         y = r * sp * 1.05
         s = 1.7 if not n.startswith('caja') else 1.2
         prod.instance(n, (x, y, 0), -0.35, s, coll)
-        labels.append((n.replace('caja ', 'caja ').replace('pina', 'piña').replace('brocoli', 'brócoli').replace('lacteos', 'lácteos')
-                        .replace('panaderia', 'panadería').replace('cafe', 'café'), (x, y - 0.26, -0.02)))
+        labels.append((n.replace('caja ', '').replace('pina', 'piña').replace('brocoli', 'brócoli').replace('lacteos', 'lácteos')
+                        .replace('panaderia', 'panadería').replace('cafe', 'café'), (x, y - 0.32, -0.02)))
     rows = (len(names) + cols - 1) // cols
     cy = (rows - 1) * sp * 1.05 / 2
-    cam = escena.camera('CAM productos', (0.0, cy - 6.6, 5.6), (0.0, cy + 0.05, 0.1), 42)
+    cam = escena.camera('CAM productos', (0.0, cy - 7.4, 7.2), (0.0, cy - 0.15, 0.1), 40)
     render(scene, cam, '10-productos', 2000, 1500, labels, 'Productos del supermercado')
     coll.hide_render = True
     coll.hide_viewport = True
@@ -125,7 +125,7 @@ def hoja_vitrinas(scene, kinds=None):
             x = (lvl - 2) * 2.7
             vitrinas.build(kind, lvl, coll, (x, 0, 0), 0.0)
             labels.append((f'Nivel {lvl}', (x, -0.95, 0.0)))
-        cam = escena.camera(f'CAM {kind}', (1.2, -8.6, 4.0), (0.0, 0.0, 0.8), 38)
+        cam = escena.camera(f'CAM {kind}', (0.3, -9.2, 4.2), (0.3, 0.0, 0.85), 38)
         out.append(render(scene, cam, f'11-vitrina-{kind}', 1800, 800, labels, title))
         coll.hide_render = True
         coll.hide_viewport = True
@@ -192,6 +192,29 @@ def hoja_utileria(scene):
                [(k.replace('Paciencia: ', ''), I[k], 2.4 if k == 'Estrella' else 1.6) for k in I], 1.0, b, size=(2200, 700), elev=0.2, label_dy=-0.35)
 
 
+def hoja_clientes(scene, keys=None, name='14-clientes', title='Clientes'):
+    import clientes
+    import cuerpo
+    import utileria  # noqa: F401  (canasta de la mamá)
+    cuerpo.VOX = 1.35
+    hide_sources()
+    keys = keys or list(clientes.SPECS)
+    coll = clay.collection(f'Hoja {name}')
+    labels = []
+    sp = 1.95
+    for i, k in enumerate(keys):
+        x = (i - (len(keys) - 1) / 2) * sp
+        root = clientes.build(k, coll)
+        root.location = (x, 0, 0)
+        labels.append((clientes.SPECS[k]['label'], (x, -0.75, -0.02)))
+    width = len(keys) * sp
+    dist = width / 0.95 + 1.0
+    cam = escena.camera(f'CAM {name}', (0.0, -dist, 2.2 + dist * 0.1), (0.0, 0.0, 1.2), 40)
+    render(scene, cam, name, 2200, 1000, labels, title)
+    coll.hide_render = True
+    coll.hide_viewport = True
+
+
 scene = clay.reset_scene()
 escena.setup_render(scene, 1600, 900, SAMPLES)
 scene.view_settings.look = 'AgX - Medium High Contrast'
@@ -204,3 +227,7 @@ if 'vitrinas' in SHEETS or kinds:
     hoja_vitrinas(scene, kinds or None)
 if 'utileria' in SHEETS:
     hoja_utileria(scene)
+for s in SHEETS:
+    if s.startswith('clientes:'):
+        _, name, title, keys = s.split(':', 3)
+        hoja_clientes(scene, keys.split('+'), name, title)

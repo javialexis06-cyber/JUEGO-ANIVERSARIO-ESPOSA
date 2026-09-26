@@ -71,7 +71,9 @@ def materials(name, S):
     m['sock'] = fabric(f'{name} | medias', S.get('socks', '#F2F0EB'), '#FFFFFF', ribs=True)
     m['gold'] = M(f'{name} | dorado', '#D9A94E', rough=0.22, metallic=1.0)
     m['acc'] = M(f'{name} | accesorio', S.get('acc_color', '#E4564F'), rough=0.4, coat=0.3)
-    m['acc2'] = M(f'{name} | accesorio 2', S.get('acc2_color', '#2B2A2A'), rough=0.4, coat=0.2)
+    a2 = S.get('acc2_color', '#2B2A2A')
+    m['acc2'] = M(f'{name} | accesorio 2', a2, rough=0.8, sheen=0.3, sheen_tint='#FFFFFF', ribs=dict(scale=30, strength=0.3, axis='X', distance=0.004),
+                  fuzz=dict(scale=140, color=lighten(a2, 0.25), amount=0.5, strength=0.3, distance=0.003))
     m['lens'] = M(f'{name} | lente', '#1C2430', rough=0.05, coat=1.0)
     m['glass'] = M(f'{name} | vidrio gafas', '#EAF6FA', rough=0.05, alpha=0.15)
     m['white'] = fabric(f'{name} | blanco', '#F7F5F0', '#FFFFFF')
@@ -213,6 +215,7 @@ def hat(coll, head, P, mats, name, kind):
         clay.blob(f'{name} | gorro lana', (0, 0.0, top - 0.3), (R[0] * 1.05, R[1] * 1.05, 0.62), coll, mats['acc2'], n=12,
                   shaper=lambda v: np.where(v[:, 2:3] < 0, v * np.array([1, 1, 0.05]), v))
         clay.lathe(f'{name} | borde lana', [(R[0] * 1.08, top - 0.32), (R[0] * 1.1, top - 0.2), (R[0] * 1.02, top - 0.15)], coll, mats['acc2'], segments=40)
+        clay.blob(f'{name} | pompón', (0, 0.0, top + 0.3), (0.13, 0.13, 0.12), coll, mats['acc2'], n=8)
     elif kind == 'guardia':
         clay.lathe(f'{name} | gorra guardia', [(R[0] * 0.98, top - 0.18), (R[0] * 1.0, top + 0.05), (R[0] * 1.08, top + 0.12), (0, top + 0.16)], coll,
                    mats['acc2'], segments=40)
