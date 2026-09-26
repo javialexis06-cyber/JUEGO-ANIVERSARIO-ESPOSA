@@ -9,6 +9,10 @@ Cada nivel tiene 3 estrellas:
 Los números cambian según el modo: en pareja llegan más clientes (×1.5), y el objetivo
 «equipo» es de combos en pareja; en solitario es de clientes felices.
 
+Modo legendario (🌙): cada nivel tiene su versión legendaria, que se abre al sacar las
+3 estrellas del nivel. Tiene el doble de clientes, la mitad de paciencia y 1.5× problemas.
+Si se cumple la meta legendaria, se gana una Luna (100 en total).
+
 Salidas:
   juego/datos/niveles.json · para el juego
   docs/niveles.md          · tabla para leer
@@ -55,6 +59,9 @@ NOVEDADES = {
     (4, 5): 'Máquinas de jugos y horno de pizza',
     (4, 9): 'Visita del famoso: todos se detienen a mirarlo',
 }
+
+# Estrellas mínimas (de 75) para abrir la tienda siguiente: 70 %, 80 % y 90 %
+REQUISITO_TIENDA = {2: 53, 3: 60, 4: 68}
 
 EVENTOS = {
     5: ('Hora pico', 'Los clientes llegan en oleadas: +30 % de clientes'),
@@ -159,12 +166,21 @@ def generar():
             estrellas = [objetivo('ventas', s, d, n, evento)] + [objetivo(k, s, d, n, evento) for k in elegir_objetivos(s, d, evento)]
             duracion = 180 + 5 * (d // 5) + (30 if evento else 0) + (60 if evento in ('Gran día', 'Nuestro aniversario') else 0)
             paciencia = round(max(0.7, 1.0 - 0.008 * (d - 1) - 0.03 * (s - 1)), 3)
+            leg = {m: n[m] * 2 for m in n}
+            luna_ventas = {m: int(round(leg[m] * TICKET[s] * 0.6 / 5) * 5) for m in leg}
+            luna_perdidos = {m: round(leg[m] * 0.2) for m in leg}
+            legendario = dict(
+                clientes=leg, paciencia=round(paciencia * 0.5, 3), problemas_x=1.5,
+                luna=dict(ventas=luna_ventas, perdidos_max=luna_perdidos,
+                          texto={m: f'Vender {luna_ventas[m]} monedas con máximo {luna_perdidos[m]} clientes perdidos' for m in leg}),
+            )
             niveles.append(dict(
                 numero=num, tienda=s, nombre_tienda=TIENDAS[s], dia=d, evento=evento, descripcion_evento=desc_evento,
                 novedad=NOVEDADES.get((s, d)), duracion_s=duracion, paciencia=paciencia,
                 clientes=n,
                 problemas=[p for p in ('basura', 'derrames', 'ladron', 'nino_perdido', 'nina_traviesa', 'famoso') if habilitado(p, s, d)],
                 estrellas=[dict(numero=i + 1, clave=k, texto=t, meta=m) for i, (k, t, m) in enumerate(estrellas)],
+                legendario=legendario,
             ))
     return niveles
 
@@ -201,14 +217,21 @@ def escribir_md(niveles, ruta):
          '  - trabajo en equipo.',
          '',
          'Todas las cifras se muestran como *solitario / pareja*: en pareja llegan más clientes y las metas suben.',
+         '',
+         '**🌙 Modo legendario**: se abre en cada nivel al sacar sus 3 estrellas. Tiene el doble de clientes, la mitad de paciencia y 1.5× problemas. '
+         'Si se cumple la meta legendaria se gana **1 Luna**; hay 100 en total.',
          '']
     for s in range(1, 5):
-        L += [f'## Tienda {s} · {TIENDAS[s]}', '',
-              '| Nivel | Día | Evento | Clientes | Novedad | ⭐ 1 | ⭐ 2 | ⭐ 3 |', '|---|---|---|---|---|---|---|---|']
+        req = f'Para abrirla: terminar el día 25 de la tienda anterior con al menos **{REQUISITO_TIENDA[s]} de 75 estrellas** ' \
+              f'({ {2: 70, 3: 80, 4: 90}[s] } %).' if s > 1 else 'Abierta desde el inicio.'
+        L += [f'## Tienda {s} · {TIENDAS[s]}', '', req, '',
+              '| Nivel | Día | Evento | Clientes | Novedad | ⭐ 1 | ⭐ 2 | ⭐ 3 | 🌙 Legendario |', '|---|---|---|---|---|---|---|---|---|']
         for n in (x for x in niveles if x['tienda'] == s):
             est = [_celda(e['texto']) for e in n['estrellas']]
             L.append(f"| {n['numero']} | {n['dia']} | {n['evento'] or ''} | {n['clientes']['solitario']} / {n['clientes']['pareja']} | "
-                     f"{n['novedad'] or ''} | {est[0]} | {est[1]} | {est[2]} |")
+                     f"{n['novedad'] or ''} | {est[0]} | {est[1]} | {est[2]} | "
+                     f"{n['legendario']['clientes']['solitario']} / {n['legendario']['clientes']['pareja']} clientes · "
+                     f"{_celda(n['legendario']['luna']['texto'])} |")
         L.append('')
     with open(ruta, 'w', encoding='utf-8') as f:
         f.write('\n'.join(L))

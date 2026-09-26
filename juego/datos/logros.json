@@ -1,0 +1,724 @@
+{
+ "logros": [
+  {
+   "id": "reponer",
+   "nombre": "Nunca falta nada",
+   "categoria": "Tienda",
+   "modo": "todos",
+   "contador": "vitrinas_repuestas",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 100,
+     "texto": "Reponer 100 vitrinas"
+    },
+    {
+     "rango": "plata",
+     "meta": 500,
+     "texto": "Reponer 500 vitrinas"
+    },
+    {
+     "rango": "oro",
+     "meta": 2000,
+     "texto": "Reponer 2.000 vitrinas"
+    }
+   ]
+  },
+  {
+   "id": "siempre_llena",
+   "nombre": "Vitrina siempre llena",
+   "categoria": "Tienda",
+   "modo": "todos",
+   "contador": "niveles_sin_vacias",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 1,
+     "texto": "Terminar 1 nivel sin que ninguna vitrina quede vacía"
+    },
+    {
+     "rango": "plata",
+     "meta": 10,
+     "texto": "Terminar 10 niveles sin que ninguna vitrina quede vacía"
+    },
+    {
+     "rango": "oro",
+     "meta": 30,
+     "texto": "Terminar 30 niveles sin que ninguna vitrina quede vacía"
+    }
+   ]
+  },
+  {
+   "id": "cero_perdidos",
+   "nombre": "Nadie se va con las manos vacías",
+   "categoria": "Clientes",
+   "modo": "todos",
+   "contador": "niveles_sin_perdidos",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 1,
+     "texto": "Terminar 1 nivel sin clientes perdidos"
+    },
+    {
+     "rango": "plata",
+     "meta": 10,
+     "texto": "Terminar 10 niveles sin clientes perdidos"
+    },
+    {
+     "rango": "oro",
+     "meta": 50,
+     "texto": "Terminar 50 niveles sin clientes perdidos"
+    }
+   ]
+  },
+  {
+   "id": "propinas",
+   "nombre": "Propineros",
+   "categoria": "Clientes",
+   "modo": "todos",
+   "contador": "propinas_total",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 500,
+     "texto": "Juntar 500 monedas de propina"
+    },
+    {
+     "rango": "plata",
+     "meta": 2500,
+     "texto": "Juntar 2.500 monedas de propina"
+    },
+    {
+     "rango": "oro",
+     "meta": 10000,
+     "texto": "Juntar 10.000 monedas de propina"
+    }
+   ]
+  },
+  {
+   "id": "caja",
+   "nombre": "Caja rápida",
+   "categoria": "Clientes",
+   "modo": "todos",
+   "contador": "clientes_cobrados",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 100,
+     "texto": "Atender 100 clientes en la caja"
+    },
+    {
+     "rango": "plata",
+     "meta": 1000,
+     "texto": "Atender 1.000 clientes en la caja"
+    },
+    {
+     "rango": "oro",
+     "meta": 5000,
+     "texto": "Atender 5.000 clientes en la caja"
+    }
+   ]
+  },
+  {
+   "id": "felices",
+   "nombre": "Caritas verdes",
+   "categoria": "Clientes",
+   "modo": "todos",
+   "contador": "clientes_felices",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 100,
+     "texto": "Que 100 clientes salgan felices"
+    },
+    {
+     "rango": "plata",
+     "meta": 1000,
+     "texto": "Que 1.000 clientes salgan felices"
+    },
+    {
+     "rango": "oro",
+     "meta": 5000,
+     "texto": "Que 5.000 clientes salgan felices"
+    }
+   ]
+  },
+  {
+   "id": "trapero",
+   "nombre": "Trapero de oro",
+   "categoria": "Limpieza",
+   "modo": "todos",
+   "contador": "derrames_limpios",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 25,
+     "texto": "Limpiar 25 derrames"
+    },
+    {
+     "rango": "plata",
+     "meta": 150,
+     "texto": "Limpiar 150 derrames"
+    },
+    {
+     "rango": "oro",
+     "meta": 500,
+     "texto": "Limpiar 500 derrames"
+    }
+   ]
+  },
+  {
+   "id": "basura",
+   "nombre": "Tienda impecable",
+   "categoria": "Limpieza",
+   "modo": "todos",
+   "contador": "basuras",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 50,
+     "texto": "Recoger 50 basuras"
+    },
+    {
+     "rango": "plata",
+     "meta": 300,
+     "texto": "Recoger 300 basuras"
+    },
+    {
+     "rango": "oro",
+     "meta": 1000,
+     "texto": "Recoger 1.000 basuras"
+    }
+   ]
+  },
+  {
+   "id": "ladrones",
+   "nombre": "Atrapaladrones",
+   "categoria": "Seguridad",
+   "modo": "todos",
+   "contador": "ladrones",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 10,
+     "texto": "Atrapar 10 ladrones"
+    },
+    {
+     "rango": "plata",
+     "meta": 50,
+     "texto": "Atrapar 50 ladrones"
+    },
+    {
+     "rango": "oro",
+     "meta": 200,
+     "texto": "Atrapar 200 ladrones"
+    }
+   ]
+  },
+  {
+   "id": "ninos",
+   "nombre": "Reencuentros",
+   "categoria": "Seguridad",
+   "modo": "todos",
+   "contador": "ninos_devueltos",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 5,
+     "texto": "Devolver 5 niños perdidos a su mamá"
+    },
+    {
+     "rango": "plata",
+     "meta": 25,
+     "texto": "Devolver 25 niños perdidos a su mamá"
+    },
+    {
+     "rango": "oro",
+     "meta": 100,
+     "texto": "Devolver 100 niños perdidos a su mamá"
+    }
+   ]
+  },
+  {
+   "id": "famoso",
+   "nombre": "Fans número 1",
+   "categoria": "Clientes",
+   "modo": "todos",
+   "contador": "famoso_rapido",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 1,
+     "texto": "Atender al famoso en menos de 20 s, 1 vez"
+    },
+    {
+     "rango": "plata",
+     "meta": 5,
+     "texto": "Atender al famoso en menos de 20 s, 5 veces"
+    },
+    {
+     "rango": "oro",
+     "meta": 20,
+     "texto": "Atender al famoso en menos de 20 s, 20 veces"
+    }
+   ]
+  },
+  {
+   "id": "wafles",
+   "nombre": "Maestros del wafle",
+   "categoria": "Zonas especiales",
+   "modo": "todos",
+   "contador": "wafles",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 25,
+     "texto": "Vender 25 wafles"
+    },
+    {
+     "rango": "plata",
+     "meta": 150,
+     "texto": "Vender 150 wafles"
+    },
+    {
+     "rango": "oro",
+     "meta": 500,
+     "texto": "Vender 500 wafles"
+    }
+   ]
+  },
+  {
+   "id": "arepas",
+   "nombre": "De corazón arepero",
+   "categoria": "Zonas especiales",
+   "modo": "todos",
+   "contador": "arepas",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 25,
+     "texto": "Vender 25 arepas"
+    },
+    {
+     "rango": "plata",
+     "meta": 150,
+     "texto": "Vender 150 arepas"
+    },
+    {
+     "rango": "oro",
+     "meta": 500,
+     "texto": "Vender 500 arepas"
+    }
+   ]
+  },
+  {
+   "id": "barista",
+   "nombre": "Baristas",
+   "categoria": "Zonas especiales",
+   "modo": "todos",
+   "contador": "bebidas_preparadas",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 25,
+     "texto": "Vender 25 malteadas, cafés o jugos"
+    },
+    {
+     "rango": "plata",
+     "meta": 150,
+     "texto": "Vender 150 malteadas, cafés o jugos"
+    },
+    {
+     "rango": "oro",
+     "meta": 500,
+     "texto": "Vender 500 malteadas, cafés o jugos"
+    }
+   ]
+  },
+  {
+   "id": "quemado",
+   "nombre": "Ni uno quemado",
+   "categoria": "Zonas especiales",
+   "modo": "todos",
+   "contador": "niveles_sin_quemar",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 1,
+     "texto": "Terminar 1 nivel sin quemar nada en la cocina"
+    },
+    {
+     "rango": "plata",
+     "meta": 10,
+     "texto": "Terminar 10 niveles sin quemar nada en la cocina"
+    },
+    {
+     "rango": "oro",
+     "meta": 25,
+     "texto": "Terminar 25 niveles sin quemar nada en la cocina"
+    }
+   ]
+  },
+  {
+   "id": "combos",
+   "nombre": "Combo de amor",
+   "categoria": "Pareja",
+   "modo": "pareja",
+   "contador": "combos",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 25,
+     "texto": "Hacer 25 combos en pareja"
+    },
+    {
+     "rango": "plata",
+     "meta": 250,
+     "texto": "Hacer 250 combos en pareja"
+    },
+    {
+     "rango": "oro",
+     "meta": 1000,
+     "texto": "Hacer 1.000 combos en pareja"
+    }
+   ]
+  },
+  {
+   "id": "sincronizados",
+   "nombre": "Sincronizados",
+   "categoria": "Pareja",
+   "modo": "pareja",
+   "contador": "max_combos_dia",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 5,
+     "texto": "Hacer 5 combos en un solo día"
+    },
+    {
+     "rango": "plata",
+     "meta": 10,
+     "texto": "Hacer 10 combos en un solo día"
+    },
+    {
+     "rango": "oro",
+     "meta": 20,
+     "texto": "Hacer 20 combos en un solo día"
+    }
+   ]
+  },
+  {
+   "id": "mano_a_mano",
+   "nombre": "Mano a mano",
+   "categoria": "Pareja",
+   "modo": "pareja",
+   "contador": "niveles_pareja",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 5,
+     "texto": "Terminar 5 niveles en pareja"
+    },
+    {
+     "rango": "plata",
+     "meta": 25,
+     "texto": "Terminar 25 niveles en pareja"
+    },
+    {
+     "rango": "oro",
+     "meta": 100,
+     "texto": "Terminar 100 niveles en pareja"
+    }
+   ]
+  },
+  {
+   "id": "sola",
+   "nombre": "Yo puedo",
+   "categoria": "Solitario",
+   "modo": "solitario",
+   "contador": "tiendas_solitario",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 1,
+     "texto": "Terminar 1 tienda completa en solitario"
+    },
+    {
+     "rango": "plata",
+     "meta": 2,
+     "texto": "Terminar 2 tiendas completas en solitario"
+    },
+    {
+     "rango": "oro",
+     "meta": 4,
+     "texto": "Terminar 4 tiendas completas en solitario"
+    }
+   ]
+  },
+  {
+   "id": "estrellas",
+   "nombre": "Cielo estrellado",
+   "categoria": "Progreso",
+   "modo": "todos",
+   "contador": "estrellas",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 50,
+     "texto": "Conseguir 50 estrellas"
+    },
+    {
+     "rango": "plata",
+     "meta": 150,
+     "texto": "Conseguir 150 estrellas"
+    },
+    {
+     "rango": "oro",
+     "meta": 300,
+     "texto": "Conseguir 300 estrellas"
+    }
+   ]
+  },
+  {
+   "id": "perfectos",
+   "nombre": "Perfección",
+   "categoria": "Progreso",
+   "modo": "todos",
+   "contador": "perfectos_primer_intento",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 10,
+     "texto": "Sacar 3 estrellas al primer intento en 10 niveles"
+    },
+    {
+     "rango": "plata",
+     "meta": 50,
+     "texto": "Sacar 3 estrellas al primer intento en 50 niveles"
+    },
+    {
+     "rango": "oro",
+     "meta": 100,
+     "texto": "Sacar 3 estrellas al primer intento en 100 niveles"
+    }
+   ]
+  },
+  {
+   "id": "madrugadores",
+   "nombre": "Madrugadores",
+   "categoria": "Progreso",
+   "modo": "todos",
+   "contador": "meta_temprana",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 1,
+     "texto": "Cumplir la meta de ventas antes de la mitad del día en 1 nivel"
+    },
+    {
+     "rango": "plata",
+     "meta": 10,
+     "texto": "Cumplir la meta de ventas antes de la mitad del día en 10 niveles"
+    },
+    {
+     "rango": "oro",
+     "meta": 30,
+     "texto": "Cumplir la meta de ventas antes de la mitad del día en 30 niveles"
+    }
+   ]
+  },
+  {
+   "id": "lunas",
+   "nombre": "Noche de lunas",
+   "categoria": "Legendario",
+   "modo": "todos",
+   "contador": "lunas",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 1,
+     "texto": "Conseguir 1 Luna en modo legendario"
+    },
+    {
+     "rango": "plata",
+     "meta": 25,
+     "texto": "Conseguir 25 Lunas en modo legendario"
+    },
+    {
+     "rango": "oro",
+     "meta": 100,
+     "texto": "Conseguir 100 Lunas en modo legendario"
+    }
+   ]
+  },
+  {
+   "id": "dorados",
+   "nombre": "Todo dorado",
+   "categoria": "Legendario",
+   "modo": "todos",
+   "contador": "tiendas_lunas_completas",
+   "rangos": [
+    {
+     "rango": "bronce",
+     "meta": 1,
+     "texto": "Conseguir las 25 Lunas de 1 tienda"
+    },
+    {
+     "rango": "plata",
+     "meta": 2,
+     "texto": "Conseguir las 25 Lunas de 2 tiendas"
+    },
+    {
+     "rango": "oro",
+     "meta": 4,
+     "texto": "Conseguir las 25 Lunas de 4 tiendas"
+    }
+   ]
+  },
+  {
+   "id": "primer_dia",
+   "nombre": "Abrimos",
+   "categoria": "Especiales",
+   "modo": "todos",
+   "contador": null,
+   "rangos": [
+    {
+     "rango": "único",
+     "meta": 1,
+     "texto": "Terminar el nivel 1"
+    }
+   ]
+  },
+  {
+   "id": "duenos_1",
+   "nombre": "Dueños de la tiendita",
+   "categoria": "Especiales",
+   "modo": "todos",
+   "contador": null,
+   "rangos": [
+    {
+     "rango": "único",
+     "meta": 1,
+     "texto": "Comprar los 12 sitios de la tiendita y mejorarlos todos al tope"
+    }
+   ]
+  },
+  {
+   "id": "duenos_2",
+   "nombre": "Dueños del minimercado",
+   "categoria": "Especiales",
+   "modo": "todos",
+   "contador": null,
+   "rangos": [
+    {
+     "rango": "único",
+     "meta": 1,
+     "texto": "Comprar los 22 sitios del minimercado y mejorarlos todos al tope"
+    }
+   ]
+  },
+  {
+   "id": "duenos_3",
+   "nombre": "Dueños del supermercado",
+   "categoria": "Especiales",
+   "modo": "todos",
+   "contador": null,
+   "rangos": [
+    {
+     "rango": "único",
+     "meta": 1,
+     "texto": "Comprar los 33 sitios del supermercado y mejorarlos todos al tope"
+    }
+   ]
+  },
+  {
+   "id": "duenos_4",
+   "nombre": "Dueños del hipermercado",
+   "categoria": "Especiales",
+   "modo": "todos",
+   "contador": null,
+   "rangos": [
+    {
+     "rango": "único",
+     "meta": 1,
+     "texto": "Comprar los 45 sitios del hipermercado y mejorarlos todos al tope"
+    }
+   ]
+  },
+  {
+   "id": "equipo_completo",
+   "nombre": "Equipo completo",
+   "categoria": "Especiales",
+   "modo": "todos",
+   "contador": null,
+   "rangos": [
+    {
+     "rango": "único",
+     "meta": 1,
+     "texto": "Tener los 4 ayudantes contratados al mismo tiempo"
+    }
+   ]
+  },
+  {
+   "id": "aniversario",
+   "nombre": "Feliz aniversario",
+   "categoria": "Especiales",
+   "modo": "todos",
+   "contador": null,
+   "rangos": [
+    {
+     "rango": "único",
+     "meta": 1,
+     "texto": "Terminar el nivel 100"
+    }
+   ]
+  },
+  {
+   "id": "leyendas",
+   "nombre": "Leyendas del súper",
+   "categoria": "Especiales",
+   "modo": "todos",
+   "contador": null,
+   "rangos": [
+    {
+     "rango": "único",
+     "meta": 1,
+     "texto": "Conseguir las 300 estrellas y las 100 Lunas"
+    }
+   ]
+  }
+ ],
+ "coleccionables": [
+  {
+   "id": "corazones",
+   "nombre": "Corazones escondidos",
+   "total": 100,
+   "descripcion": "En cada nivel aparece una vez un corazoncito de plastilina escondido (dura 10 s). Tócalo para guardarlo. Cada 10 corazones se abre una página del álbum de recuerdos de la pareja."
+  },
+  {
+   "id": "figuritas",
+   "nombre": "Álbum de clientes",
+   "total": 30,
+   "descripcion": "Cada uno de los 10 tipos de cliente tiene una figurita de bronce, plata y oro, que se gana al atenderlo 10, 50 y 200 veces."
+  },
+  {
+   "id": "cajas_doradas",
+   "nombre": "Cajas doradas",
+   "total": 9,
+   "descripcion": "Al conseguir todas las Lunas de los niveles de una sección, su caja de la bodega se vuelve dorada."
+  },
+  {
+   "id": "recetas",
+   "nombre": "Recetas",
+   "total": 8,
+   "descripcion": "Variantes que se desbloquean con logros: arepa de queso, arepa de choclo, arepa con huevo, wafle de chocolate, wafle de arequipe, malteada de mora, café con leche y pizza hawaiana. Aparecen como productos nuevos."
+  },
+  {
+   "id": "postales",
+   "nombre": "Postales",
+   "total": 4,
+   "descripcion": "Una por tienda, al sacar las 3 estrellas en su Gran día. Muestran un lugar especial para ustedes, que ustedes eligen."
+  }
+ ]
+}

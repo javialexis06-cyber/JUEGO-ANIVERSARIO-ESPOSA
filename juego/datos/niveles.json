@@ -51,7 +51,29 @@
      "pareja": 2
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 16,
+    "pareja": 24
+   },
+   "paciencia": 0.5,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 85,
+     "pareja": 130
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 85 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 130 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 2,
@@ -99,7 +121,29 @@
     "texto": "Espera promedio en caja de 12 s o menos",
     "meta": 12
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 16,
+    "pareja": 24
+   },
+   "paciencia": 0.496,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 85,
+     "pareja": 130
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 85 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 130 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 3,
@@ -147,7 +191,29 @@
     "texto": "Ninguna vitrina vacía por más de 25 s",
     "meta": 25
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 18,
+    "pareja": 28
+   },
+   "paciencia": 0.492,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 95,
+     "pareja": 150
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 95 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 150 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 4,
@@ -201,7 +267,29 @@
      "pareja": 2
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 18,
+    "pareja": 28
+   },
+   "paciencia": 0.488,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 95,
+     "pareja": 150
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 95 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 150 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 5,
@@ -249,7 +337,29 @@
     "texto": "Espera promedio en caja de 12 s o menos",
     "meta": 12
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 26,
+    "pareja": 40
+   },
+   "paciencia": 0.484,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 140,
+     "pareja": 215
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 140 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 215 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 6,
@@ -305,7 +415,29 @@
      "pareja": 2
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 20,
+    "pareja": 30
+   },
+   "paciencia": 0.48,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 110,
+     "pareja": 160
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 110 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 160 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 7,
@@ -355,7 +487,29 @@
     "texto": "Espera promedio en caja de 12 s o menos",
     "meta": 12
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 22,
+    "pareja": 32
+   },
+   "paciencia": 0.476,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 120,
+     "pareja": 175
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 120 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 175 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 8,
@@ -405,7 +559,29 @@
     "texto": "Ninguna vitrina vacía por más de 25 s",
     "meta": 25
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 22,
+    "pareja": 32
+   },
+   "paciencia": 0.472,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 120,
+     "pareja": 175
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 120 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 175 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 9,
@@ -461,7 +637,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 24,
+    "pareja": 36
+   },
+   "paciencia": 0.468,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 130,
+     "pareja": 195
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 7
+    },
+    "texto": {
+     "solitario": "Vender 130 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 195 monedas con máximo 7 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 10,
@@ -511,7 +709,29 @@
     "texto": "Ninguna vitrina vacía por más de 25 s",
     "meta": 25
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 28,
+    "pareja": 42
+   },
+   "paciencia": 0.464,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 150,
+     "pareja": 225
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 150 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 225 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 11,
@@ -567,7 +787,29 @@
      "pareja": 2
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 24,
+    "pareja": 36
+   },
+   "paciencia": 0.46,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 130,
+     "pareja": 195
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 7
+    },
+    "texto": {
+     "solitario": "Vender 130 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 195 monedas con máximo 7 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 12,
@@ -617,7 +859,29 @@
     "texto": "Espera promedio en caja de 12 s o menos",
     "meta": 12
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 26,
+    "pareja": 40
+   },
+   "paciencia": 0.456,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 140,
+     "pareja": 215
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 140 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 215 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 13,
@@ -667,7 +931,29 @@
     "texto": "Ninguna vitrina vacía por más de 25 s",
     "meta": 25
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 26,
+    "pareja": 40
+   },
+   "paciencia": 0.452,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 140,
+     "pareja": 215
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 140 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 215 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 14,
@@ -723,7 +1009,29 @@
      "pareja": 4
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 28,
+    "pareja": 42
+   },
+   "paciencia": 0.448,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 150,
+     "pareja": 225
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 150 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 225 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 15,
@@ -773,7 +1081,29 @@
      "pareja": 2
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 28,
+    "pareja": 42
+   },
+   "paciencia": 0.444,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 150,
+     "pareja": 225
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 150 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 225 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 16,
@@ -829,7 +1159,29 @@
      "pareja": 1
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 30,
+    "pareja": 44
+   },
+   "paciencia": 0.44,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 160,
+     "pareja": 240
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 160 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 240 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 17,
@@ -879,7 +1231,29 @@
     "texto": "Espera promedio en caja de 12 s o menos",
     "meta": 12
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 30,
+    "pareja": 44
+   },
+   "paciencia": 0.436,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 160,
+     "pareja": 240
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 160 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 240 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 18,
@@ -929,7 +1303,29 @@
     "texto": "Ninguna vitrina vacía por más de 25 s",
     "meta": 25
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 32,
+    "pareja": 48
+   },
+   "paciencia": 0.432,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 175,
+     "pareja": 260
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 175 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 260 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 19,
@@ -985,7 +1381,29 @@
      "pareja": 5
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 32,
+    "pareja": 48
+   },
+   "paciencia": 0.428,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 175,
+     "pareja": 260
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 175 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 260 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 20,
@@ -1035,7 +1453,29 @@
      "pareja": 5
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 34,
+    "pareja": 52
+   },
+   "paciencia": 0.424,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 185,
+     "pareja": 280
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 185 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 280 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 21,
@@ -1091,7 +1531,29 @@
      "pareja": 2
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 34,
+    "pareja": 52
+   },
+   "paciencia": 0.42,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 185,
+     "pareja": 280
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 185 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 280 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 22,
@@ -1141,7 +1603,29 @@
     "texto": "Espera promedio en caja de 12 s o menos",
     "meta": 12
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 34,
+    "pareja": 52
+   },
+   "paciencia": 0.416,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 185,
+     "pareja": 280
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 185 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 280 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 23,
@@ -1191,7 +1675,29 @@
     "texto": "Ninguna vitrina vacía por más de 25 s",
     "meta": 25
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.412,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 195,
+     "pareja": 290
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 195 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 290 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 24,
@@ -1247,7 +1753,29 @@
      "pareja": 6
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.408,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 195,
+     "pareja": 290
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 195 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 290 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 25,
@@ -1303,7 +1831,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 50,
+    "pareja": 76
+   },
+   "paciencia": 0.404,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 270,
+     "pareja": 410
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 15
+    },
+    "texto": {
+     "solitario": "Vender 270 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 410 monedas con máximo 15 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 26,
@@ -1360,7 +1910,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 24,
+    "pareja": 36
+   },
+   "paciencia": 0.485,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 160,
+     "pareja": 240
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 7
+    },
+    "texto": {
+     "solitario": "Vender 160 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 240 monedas con máximo 7 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 27,
@@ -1411,7 +1983,29 @@
     "texto": "Espera promedio en caja de 10 s o menos",
     "meta": 10
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 24,
+    "pareja": 36
+   },
+   "paciencia": 0.481,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 160,
+     "pareja": 240
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 7
+    },
+    "texto": {
+     "solitario": "Vender 160 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 240 monedas con máximo 7 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 28,
@@ -1463,7 +2057,29 @@
     "texto": "Ninguna vitrina vacía por más de 22 s",
     "meta": 22
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 26,
+    "pareja": 40
+   },
+   "paciencia": 0.477,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 170,
+     "pareja": 265
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 170 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 265 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 29,
@@ -1521,7 +2137,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 28,
+    "pareja": 42
+   },
+   "paciencia": 0.473,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 185,
+     "pareja": 275
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 185 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 275 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 30,
@@ -1573,7 +2211,29 @@
     "texto": "Espera promedio en caja de 10 s o menos",
     "meta": 10
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.469,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 240,
+     "pareja": 355
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 240 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 355 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 31,
@@ -1625,7 +2285,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 28,
+    "pareja": 42
+   },
+   "paciencia": 0.465,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 185,
+     "pareja": 275
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 185 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 275 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 32,
@@ -1683,7 +2365,29 @@
      "pareja": 27
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 30,
+    "pareja": 44
+   },
+   "paciencia": 0.461,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 200,
+     "pareja": 290
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 200 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 290 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 33,
@@ -1741,7 +2445,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 32,
+    "pareja": 48
+   },
+   "paciencia": 0.457,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 210,
+     "pareja": 315
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 210 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 315 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 34,
@@ -1793,7 +2519,29 @@
     "texto": "Espera promedio en caja de 10 s o menos",
     "meta": 10
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 32,
+    "pareja": 48
+   },
+   "paciencia": 0.453,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 210,
+     "pareja": 315
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 210 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 315 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 35,
@@ -1845,7 +2593,29 @@
     "texto": "Ninguna vitrina vacía por más de 22 s",
     "meta": 22
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.449,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 265,
+     "pareja": 395
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 265 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 395 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 36,
@@ -1903,7 +2673,29 @@
      "pareja": 4
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 34,
+    "pareja": 52
+   },
+   "paciencia": 0.445,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 225,
+     "pareja": 345
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 225 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 345 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 37,
@@ -1955,7 +2747,29 @@
      "pareja": 33
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.441,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 240,
+     "pareja": 355
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 240 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 355 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 38,
@@ -2007,7 +2821,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.437,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 240,
+     "pareja": 355
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 240 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 355 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 39,
@@ -2065,7 +2901,29 @@
      "pareja": 33
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.433,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 240,
+     "pareja": 355
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 240 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 355 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 40,
@@ -2117,7 +2975,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 38,
+    "pareja": 56
+   },
+   "paciencia": 0.429,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 250,
+     "pareja": 370
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 250 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 370 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 41,
@@ -2169,7 +3049,29 @@
     "texto": "Espera promedio en caja de 10 s o menos",
     "meta": 10
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.425,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 265,
+     "pareja": 395
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 265 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 395 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 42,
@@ -2221,7 +3123,29 @@
     "texto": "Ninguna vitrina vacía por más de 22 s",
     "meta": 22
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.421,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 265,
+     "pareja": 395
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 265 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 395 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 43,
@@ -2279,7 +3203,29 @@
      "pareja": 6
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.417,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 265,
+     "pareja": 395
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 265 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 395 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 44,
@@ -2331,7 +3277,29 @@
      "pareja": 39
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 42,
+    "pareja": 64
+   },
+   "paciencia": 0.413,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 275,
+     "pareja": 420
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 275 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 420 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 45,
@@ -2383,7 +3351,29 @@
      "pareja": 6
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.409,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 290,
+     "pareja": 435
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 290 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 435 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 46,
@@ -2441,7 +3431,29 @@
      "pareja": 40
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.405,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 290,
+     "pareja": 435
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 290 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 435 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 47,
@@ -2499,7 +3511,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.401,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 290,
+     "pareja": 435
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 290 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 435 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 48,
@@ -2551,7 +3585,29 @@
     "texto": "Espera promedio en caja de 10 s o menos",
     "meta": 10
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.397,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 305,
+     "pareja": 450
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 305 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 450 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 49,
@@ -2603,7 +3659,29 @@
     "texto": "Ninguna vitrina vacía por más de 22 s",
     "meta": 22
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 48,
+    "pareja": 72
+   },
+   "paciencia": 0.393,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 315,
+     "pareja": 475
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 315 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 475 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 50,
@@ -2661,7 +3739,29 @@
      "pareja": 4
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 64,
+    "pareja": 96
+   },
+   "paciencia": 0.389,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 420,
+     "pareja": 635
+    },
+    "perdidos_max": {
+     "solitario": 13,
+     "pareja": 19
+    },
+    "texto": {
+     "solitario": "Vender 420 monedas con máximo 13 clientes perdidos",
+     "pareja": "Vender 635 monedas con máximo 19 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 51,
@@ -2719,7 +3819,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 30,
+    "pareja": 44
+   },
+   "paciencia": 0.47,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 235,
+     "pareja": 345
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 235 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 345 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 52,
@@ -2772,7 +3894,29 @@
     "texto": "Espera promedio en caja de 9 s o menos",
     "meta": 9
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 32,
+    "pareja": 48
+   },
+   "paciencia": 0.466,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 250,
+     "pareja": 375
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 250 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 375 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 53,
@@ -2825,7 +3969,29 @@
     "texto": "Ninguna vitrina vacía por más de 19 s",
     "meta": 19
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 32,
+    "pareja": 48
+   },
+   "paciencia": 0.462,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 250,
+     "pareja": 375
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 250 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 375 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 54,
@@ -2884,7 +4050,29 @@
      "pareja": 4
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 34,
+    "pareja": 52
+   },
+   "paciencia": 0.458,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 265,
+     "pareja": 405
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 265 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 405 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 55,
@@ -2937,7 +4125,29 @@
     "texto": "Espera promedio en caja de 9 s o menos",
     "meta": 9
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.454,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 345,
+     "pareja": 515
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 345 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 515 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 56,
@@ -2990,7 +4200,29 @@
      "pareja": 4
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.45,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 280,
+     "pareja": 420
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 280 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 420 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 57,
@@ -3049,7 +4281,29 @@
      "pareja": 36
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.446,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 280,
+     "pareja": 420
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 280 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 420 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 58,
@@ -3108,7 +4362,29 @@
      "pareja": 3
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 38,
+    "pareja": 56
+   },
+   "paciencia": 0.442,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 295,
+     "pareja": 435
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 295 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 435 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 59,
@@ -3161,7 +4437,29 @@
     "texto": "Espera promedio en caja de 9 s o menos",
     "meta": 9
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 38,
+    "pareja": 56
+   },
+   "paciencia": 0.438,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 295,
+     "pareja": 435
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 295 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 435 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 60,
@@ -3214,7 +4512,29 @@
     "texto": "Ninguna vitrina vacía por más de 19 s",
     "meta": 19
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 48,
+    "pareja": 72
+   },
+   "paciencia": 0.434,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 375,
+     "pareja": 560
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 375 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 560 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 61,
@@ -3273,7 +4593,29 @@
      "pareja": 5
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.43,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 310,
+     "pareja": 470
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 310 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 470 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 62,
@@ -3326,7 +4668,29 @@
      "pareja": 42
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 42,
+    "pareja": 64
+   },
+   "paciencia": 0.426,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 330,
+     "pareja": 500
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 330 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 500 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 63,
@@ -3379,7 +4743,29 @@
      "pareja": 4
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.422,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 345,
+     "pareja": 515
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 345 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 515 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 64,
@@ -3438,7 +4824,29 @@
      "pareja": 44
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.418,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 345,
+     "pareja": 515
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 345 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 515 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 65,
@@ -3491,7 +4899,29 @@
      "pareja": 4
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.414,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 360,
+     "pareja": 530
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 360 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 530 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 66,
@@ -3544,7 +4974,29 @@
     "texto": "Espera promedio en caja de 9 s o menos",
     "meta": 9
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.41,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 360,
+     "pareja": 530
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 360 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 530 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 67,
@@ -3597,7 +5049,29 @@
     "texto": "Ninguna vitrina vacía por más de 19 s",
     "meta": 19
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 48,
+    "pareja": 72
+   },
+   "paciencia": 0.406,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 375,
+     "pareja": 560
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 375 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 560 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 68,
@@ -3656,7 +5130,29 @@
      "pareja": 7
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 48,
+    "pareja": 72
+   },
+   "paciencia": 0.402,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 375,
+     "pareja": 560
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 375 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 560 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 69,
@@ -3709,7 +5205,29 @@
      "pareja": 50
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 50,
+    "pareja": 76
+   },
+   "paciencia": 0.398,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 390,
+     "pareja": 595
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 15
+    },
+    "texto": {
+     "solitario": "Vender 390 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 595 monedas con máximo 15 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 70,
@@ -3762,7 +5280,29 @@
      "pareja": 7
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 50,
+    "pareja": 76
+   },
+   "paciencia": 0.394,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 390,
+     "pareja": 595
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 15
+    },
+    "texto": {
+     "solitario": "Vender 390 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 595 monedas con máximo 15 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 71,
@@ -3821,7 +5361,29 @@
      "pareja": 51
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 52,
+    "pareja": 78
+   },
+   "paciencia": 0.39,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 405,
+     "pareja": 610
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 16
+    },
+    "texto": {
+     "solitario": "Vender 405 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 610 monedas con máximo 16 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 72,
@@ -3880,7 +5442,29 @@
      "pareja": 4
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 54,
+    "pareja": 80
+   },
+   "paciencia": 0.386,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 420,
+     "pareja": 625
+    },
+    "perdidos_max": {
+     "solitario": 11,
+     "pareja": 16
+    },
+    "texto": {
+     "solitario": "Vender 420 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 625 monedas con máximo 16 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 73,
@@ -3933,7 +5517,29 @@
     "texto": "Espera promedio en caja de 9 s o menos",
     "meta": 9
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 54,
+    "pareja": 80
+   },
+   "paciencia": 0.382,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 420,
+     "pareja": 625
+    },
+    "perdidos_max": {
+     "solitario": 11,
+     "pareja": 16
+    },
+    "texto": {
+     "solitario": "Vender 420 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 625 monedas con máximo 16 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 74,
@@ -3986,7 +5592,29 @@
     "texto": "Ninguna vitrina vacía por más de 19 s",
     "meta": 19
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 56,
+    "pareja": 84
+   },
+   "paciencia": 0.378,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 435,
+     "pareja": 655
+    },
+    "perdidos_max": {
+     "solitario": 11,
+     "pareja": 17
+    },
+    "texto": {
+     "solitario": "Vender 435 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 655 monedas con máximo 17 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 75,
@@ -4045,7 +5673,29 @@
      "pareja": 6
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 76,
+    "pareja": 114
+   },
+   "paciencia": 0.374,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 595,
+     "pareja": 890
+    },
+    "perdidos_max": {
+     "solitario": 15,
+     "pareja": 23
+    },
+    "texto": {
+     "solitario": "Vender 595 monedas con máximo 15 clientes perdidos",
+     "pareja": "Vender 890 monedas con máximo 23 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 76,
@@ -4104,7 +5754,29 @@
      "pareja": 4
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.455,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 325,
+     "pareja": 485
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 325 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 485 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 77,
@@ -4157,7 +5829,29 @@
     "texto": "Espera promedio en caja de 8 s o menos",
     "meta": 8
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 38,
+    "pareja": 56
+   },
+   "paciencia": 0.451,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 340,
+     "pareja": 505
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 340 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 505 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 78,
@@ -4211,7 +5905,29 @@
     "texto": "Ninguna vitrina vacía por más de 16 s",
     "meta": 16
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 38,
+    "pareja": 56
+   },
+   "paciencia": 0.447,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 340,
+     "pareja": 505
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 340 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 505 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 79,
@@ -4271,7 +5987,29 @@
      "pareja": 5
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.443,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 360,
+     "pareja": 540
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 360 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 540 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 80,
@@ -4325,7 +6063,29 @@
     "texto": "Espera promedio en caja de 8 s o menos",
     "meta": 8
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 54,
+    "pareja": 80
+   },
+   "paciencia": 0.439,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 485,
+     "pareja": 720
+    },
+    "perdidos_max": {
+     "solitario": 11,
+     "pareja": 16
+    },
+    "texto": {
+     "solitario": "Vender 485 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 720 monedas con máximo 16 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 81,
@@ -4379,7 +6139,29 @@
      "pareja": 5
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 42,
+    "pareja": 64
+   },
+   "paciencia": 0.435,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 380,
+     "pareja": 575
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 380 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 575 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 82,
@@ -4439,7 +6221,29 @@
      "pareja": 47
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.431,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 395,
+     "pareja": 595
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 395 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 595 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 83,
@@ -4499,7 +6303,29 @@
      "pareja": 4
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.427,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 395,
+     "pareja": 595
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 395 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 595 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 84,
@@ -4554,7 +6380,29 @@
     "texto": "Espera promedio en caja de 8 s o menos",
     "meta": 8
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.423,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 415,
+     "pareja": 610
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 415 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 610 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 85,
@@ -4609,7 +6457,29 @@
     "texto": "Ninguna vitrina vacía por más de 16 s",
     "meta": 16
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 56,
+    "pareja": 84
+   },
+   "paciencia": 0.419,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 505,
+     "pareja": 755
+    },
+    "perdidos_max": {
+     "solitario": 11,
+     "pareja": 17
+    },
+    "texto": {
+     "solitario": "Vender 505 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 755 monedas con máximo 17 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 86,
@@ -4670,7 +6540,29 @@
      "pareja": 6
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 48,
+    "pareja": 72
+   },
+   "paciencia": 0.415,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 430,
+     "pareja": 650
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 430 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 650 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 87,
@@ -4725,7 +6617,29 @@
      "pareja": 54
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 50,
+    "pareja": 76
+   },
+   "paciencia": 0.411,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 450,
+     "pareja": 685
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 15
+    },
+    "texto": {
+     "solitario": "Vender 450 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 685 monedas con máximo 15 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 88,
@@ -4780,7 +6694,29 @@
      "pareja": 5
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 50,
+    "pareja": 76
+   },
+   "paciencia": 0.407,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 450,
+     "pareja": 685
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 15
+    },
+    "texto": {
+     "solitario": "Vender 450 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 685 monedas con máximo 15 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 89,
@@ -4841,7 +6777,29 @@
      "pareja": 56
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 52,
+    "pareja": 78
+   },
+   "paciencia": 0.403,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 470,
+     "pareja": 700
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 16
+    },
+    "texto": {
+     "solitario": "Vender 470 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 700 monedas con máximo 16 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 90,
@@ -4896,7 +6854,29 @@
      "pareja": 5
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 52,
+    "pareja": 78
+   },
+   "paciencia": 0.399,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 470,
+     "pareja": 700
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 16
+    },
+    "texto": {
+     "solitario": "Vender 470 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 700 monedas con máximo 16 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 91,
@@ -4951,7 +6931,29 @@
     "texto": "Espera promedio en caja de 8 s o menos",
     "meta": 8
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 54,
+    "pareja": 80
+   },
+   "paciencia": 0.395,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 485,
+     "pareja": 720
+    },
+    "perdidos_max": {
+     "solitario": 11,
+     "pareja": 16
+    },
+    "texto": {
+     "solitario": "Vender 485 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 720 monedas con máximo 16 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 92,
@@ -5006,7 +7008,29 @@
     "texto": "Ninguna vitrina vacía por más de 16 s",
     "meta": 16
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 56,
+    "pareja": 84
+   },
+   "paciencia": 0.391,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 505,
+     "pareja": 755
+    },
+    "perdidos_max": {
+     "solitario": 11,
+     "pareja": 17
+    },
+    "texto": {
+     "solitario": "Vender 505 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 755 monedas con máximo 17 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 93,
@@ -5067,7 +7091,29 @@
      "pareja": 8
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 56,
+    "pareja": 84
+   },
+   "paciencia": 0.387,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 505,
+     "pareja": 755
+    },
+    "perdidos_max": {
+     "solitario": 11,
+     "pareja": 17
+    },
+    "texto": {
+     "solitario": "Vender 505 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 755 monedas con máximo 17 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 94,
@@ -5122,7 +7168,29 @@
      "pareja": 63
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 58,
+    "pareja": 88
+   },
+   "paciencia": 0.383,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 520,
+     "pareja": 790
+    },
+    "perdidos_max": {
+     "solitario": 12,
+     "pareja": 18
+    },
+    "texto": {
+     "solitario": "Vender 520 monedas con máximo 12 clientes perdidos",
+     "pareja": "Vender 790 monedas con máximo 18 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 95,
@@ -5177,7 +7245,29 @@
      "pareja": 8
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 58,
+    "pareja": 88
+   },
+   "paciencia": 0.379,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 520,
+     "pareja": 790
+    },
+    "perdidos_max": {
+     "solitario": 12,
+     "pareja": 18
+    },
+    "texto": {
+     "solitario": "Vender 520 monedas con máximo 12 clientes perdidos",
+     "pareja": "Vender 790 monedas con máximo 18 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 96,
@@ -5238,7 +7328,29 @@
      "pareja": 64
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 60,
+    "pareja": 90
+   },
+   "paciencia": 0.375,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 540,
+     "pareja": 810
+    },
+    "perdidos_max": {
+     "solitario": 12,
+     "pareja": 18
+    },
+    "texto": {
+     "solitario": "Vender 540 monedas con máximo 12 clientes perdidos",
+     "pareja": "Vender 810 monedas con máximo 18 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 97,
@@ -5299,7 +7411,29 @@
      "pareja": 5
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 62,
+    "pareja": 92
+   },
+   "paciencia": 0.371,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 560,
+     "pareja": 830
+    },
+    "perdidos_max": {
+     "solitario": 12,
+     "pareja": 18
+    },
+    "texto": {
+     "solitario": "Vender 560 monedas con máximo 12 clientes perdidos",
+     "pareja": "Vender 830 monedas con máximo 18 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 98,
@@ -5354,7 +7488,29 @@
     "texto": "Espera promedio en caja de 8 s o menos",
     "meta": 8
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 62,
+    "pareja": 92
+   },
+   "paciencia": 0.367,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 560,
+     "pareja": 830
+    },
+    "perdidos_max": {
+     "solitario": 12,
+     "pareja": 18
+    },
+    "texto": {
+     "solitario": "Vender 560 monedas con máximo 12 clientes perdidos",
+     "pareja": "Vender 830 monedas con máximo 18 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 99,
@@ -5409,7 +7565,29 @@
     "texto": "Ninguna vitrina vacía por más de 16 s",
     "meta": 16
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 64,
+    "pareja": 96
+   },
+   "paciencia": 0.363,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 575,
+     "pareja": 865
+    },
+    "perdidos_max": {
+     "solitario": 13,
+     "pareja": 19
+    },
+    "texto": {
+     "solitario": "Vender 575 monedas con máximo 13 clientes perdidos",
+     "pareja": "Vender 865 monedas con máximo 19 clientes perdidos"
+    }
+   }
+  }
  },
  {
   "numero": 100,
@@ -5470,6 +7648,28 @@
      "pareja": 9
     }
    }
-  ]
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 64,
+    "pareja": 96
+   },
+   "paciencia": 0.359,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 575,
+     "pareja": 865
+    },
+    "perdidos_max": {
+     "solitario": 13,
+     "pareja": 19
+    },
+    "texto": {
+     "solitario": "Vender 575 monedas con máximo 13 clientes perdidos",
+     "pareja": "Vender 865 monedas con máximo 19 clientes perdidos"
+    }
+   }
+  }
  }
 ]

@@ -96,7 +96,7 @@ Cada tienda es más grande, tiene más secciones y trae problemas nuevos.
 1. **Empieza con lo mínimo para funcionar:** unas pocas vitrinas de nivel 1 y una caja.
 2. **Sitios fijos por sección:** cada sección tiene su tapete de color y su letrero con ícono. Los sitios libres se ven con un botón **«+»** y se compran con el dinero de los días. El número de sitios está **limitado por tienda**.
 3. **Mejorar:** las vitrinas compradas se mejoran hasta el **tope de esa tienda**, lo que les da más capacidad y más atractivo.
-4. **Pasar de tienda:** cada tienda tiene 25 días (niveles). Al terminar el día 25 con al menos 45 de sus 75 estrellas se desbloquea la siguiente, y allí **se empieza de cero**, otra vez con vitrinas de nivel 1 y lo mínimo, pero con más sitios, secciones nuevas y un tope de mejora más alto.
+4. **Pasar de tienda:** cada tienda tiene 25 días (niveles). Al terminar el día 25 con al menos el 70 %, 80 % o 90 % de sus estrellas (según la tienda) se desbloquea la siguiente, y allí **se empieza de cero**, otra vez con vitrinas de nivel 1 y lo mínimo, pero con más sitios, secciones nuevas y un tope de mejora más alto.
 
 | Nivel | Tienda | Tamaño | Empieza con | Sitios | Tope de mejora | Se desbloquea |
 |---|---|---|---|---|---|---|
@@ -157,7 +157,7 @@ Plantas, globos, música ambiental (parlante), aire acondicionado, pantalla de o
 ### Economía
 - Cada producto tiene precio de venta. Los productos preparados valen más.
 - **Propinas** por atender rápido y por combos en equipo.
-- **3 estrellas por nivel**. La primera es de ventas y es obligatoria. Las otras dos son de propinas, clientes perdidos, espera en la caja, limpieza, robos, productos preparados o equipo. Son **100 niveles** (4 tiendas × 25 días) y **300 estrellas**. El detalle está en `mecanicas.md` y `niveles.md`.
+- **3 estrellas por nivel**. La primera es de ventas y es obligatoria. Las otras dos son de propinas, clientes perdidos, espera en la caja, limpieza, robos, productos preparados o equipo. Son **100 niveles** (4 tiendas × 25 días) y **300 estrellas**, más **100 Lunas** del modo legendario (doble de clientes, mitad de paciencia) y logros y coleccionables. El detalle está en `mecanicas.md`, `niveles.md` y `logros.md`.
 - El dinero se gasta en **comprar sitios** (vitrinas nuevas, máquinas, zonas especiales), **mejorar vitrinas** hasta el tope de la tienda, contratar ayudantes y decorar.
 - Al cambiar de tienda se conserva lo aprendido y la decoración favorita queda como recuerdo, pero la tienda nueva arranca con vitrinas de nivel 1.
 

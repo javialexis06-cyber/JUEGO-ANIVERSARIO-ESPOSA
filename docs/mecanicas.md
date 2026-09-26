@@ -206,10 +206,42 @@ Son **100 niveles**: 4 tiendas de **25 días** cada una. La tabla completa, con 
 - Van apareciendo clientes y problemas nuevos. Cada novedad llega sola y con un aviso corto de cómo se resuelve.
 
 ### Pasar de tienda
-- Para abrir la siguiente tienda hay que **terminar el día 25** y tener **al menos 45 de las 75 estrellas** de esa tienda. Así, a veces conviene volver a sacar estrellas.
+- Para abrir la siguiente tienda hay que **terminar el día 25** y tener un mínimo de estrellas de esa tienda. El mínimo sube con cada tienda, así que a veces conviene volver a sacar estrellas:
+  - **Tiendita → Minimercado:** 70 %, es decir 53 de 75 estrellas.
+  - **Minimercado → Supermercado:** 80 %, es decir 60 de 75.
+  - **Supermercado → Hipermercado:** 90 %, es decir 68 de 75.
 - En la tienda nueva **se empieza de cero**: vitrinas de nivel 1, lo mínimo para funcionar y el carrito de nivel 1.
 - Las **monedas** son de cada tienda: se gastan en sitios y mejoras y no pasan a la siguiente.
 - Las **estrellas** son para siempre y desbloquean recompensas.
+
+### 🌙 Modo legendario: las Lunas
+- **Cuándo se abre:** cuando se sacan las 3 estrellas de un nivel, se abre su **versión legendaria**.
+- **Qué cambia:**
+  - llega el **doble de clientes**;
+  - tienen **la mitad de paciencia**;
+  - hay **1.5 veces más problemas** (derrames, basura, ladrones…).
+- **La Luna:** si se cumple la meta legendaria, se gana **1 Luna 🌙**. La meta pide llegar a unas ventas y no pasar de cierto número de clientes perdidos. Hay **100 Lunas**, una por nivel.
+- **Por qué se puede pasar:**
+  - la meta de ventas es proporcionalmente más baja (60 % en vez de 75 %);
+  - se permite perder hasta el 20 % de los clientes;
+  - se juega con todas las mejoras que ya se tienen en esa tienda.
+  - Es difícil de verdad, pero pensado para lograrse con práctica y buena coordinación.
+- **Qué desbloquean las Lunas:**
+  - las cajas doradas de la bodega;
+  - el logro «Noche de lunas»;
+  - con las 100 Lunas y las 300 estrellas, el título **Leyendas del súper**: vitrinas doradas en todas las tiendas.
+- **Metas nivel por nivel:** están en la última columna de [`niveles.md`](niveles.md).
+
+### 🏆 Logros y coleccionables
+Todo el detalle está en [`logros.md`](logros.md), que genera `juego/datos/logros.py`.
+- **24 logros con 3 rangos** (bronce, plata y oro): reponer vitrinas, cero clientes perdidos, propinas, limpieza, ladrones, niños devueltos, wafles, arepas, combos en pareja, Lunas…
+- **8 logros especiales:** dueños de cada tienda, equipo completo de ayudantes, «Feliz aniversario» (nivel 100) y «Leyendas del súper».
+- **Coleccionables:**
+  - **100 corazones escondidos:** uno por nivel; aparece un momento y hay que tocarlo. Cada 10 corazones abren una página del álbum de recuerdos.
+  - **30 figuritas de clientes:** bronce, plata y oro por cada tipo de cliente.
+  - **9 cajas doradas.**
+  - **8 recetas nuevas:** por ejemplo, arepa de choclo y wafle de arequipe.
+  - **4 postales:** de lugares especiales para ustedes.
 
 ### Recompensas por estrellas (300 en total)
 | Estrellas | Recompensa |
