@@ -416,10 +416,10 @@ def bebidas(level, coll):
         box('cabecera', (0, -D, H + 0.1), (W + 0.02, 0.05, 0.12), coll, 'coral', p=5)
         box('luz', (0, -D - 0.05, H + 0.1), (W - 0.12, 0.006, 0.04), coll, 'luz', p=5)
         # Dispensador de jugos al lado
-        box('dispensador', (W + 0.3, -0.05, 0.55), (0.22, 0.28, 0.55), coll, 'blanco', p=5)
+        box('dispensador', (W + 0.24, -0.05, 0.55), (0.2, 0.28, 0.55), coll, 'blanco', p=5)
         for k, col in enumerate(('naranja', 'rosa')):
-            clay.lathe(f'tanque {k}', [(0.1, 0.0), (0.1, 0.35)], coll, clay.material(f'Mueble | jugo {k}', '#F59B3A' if k == 0 else '#F4A7C0', rough=0.1,
-                                                                                    transmission=0.6, sss=0.3), segments=20).location = (W + 0.2 + k * 0.22, -0.1, 1.1)
+            clay.lathe(f'tanque {k}', [(0.08, 0.0), (0.08, 0.32)], coll, clay.material(f'Mueble | jugo {k}', '#F59B3A' if k == 0 else '#F4A7C0', rough=0.2,
+                                                                                    sss=0.3, coat=0.5), segments=20).location = (W + 0.15 + k * 0.18, -0.1, 1.1)
 
 
 # --------------------------------------------------------------------------

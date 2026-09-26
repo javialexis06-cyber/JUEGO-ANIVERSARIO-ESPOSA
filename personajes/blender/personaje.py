@@ -153,7 +153,14 @@ def build_face(coll, head, P, mats, name, expression='feliz'):
         objs[f'ojo_feliz_{side}'] = lid
         # Cejas
         bx = F['brow']
-        pts = [(sx * bx[0][0], bx[0][1]), (sx * bx[1][0], bx[1][1]), (sx * bx[2][0], bx[2][1])]
+        tilt = math.radians(F.get('brow_tilt', 0.0))  # >0: extremo interior más bajo (enojado/apurado)
+        cxb, czb = bx[1][0], bx[1][1]
+        pts = []
+        for bxx, bzz in bx:
+            dxx, dzz = bxx - cxb, bzz - czb
+            rx = dxx * math.cos(tilt) - dzz * math.sin(tilt)
+            rz = dxx * math.sin(tilt) + dzz * math.cos(tilt)
+            pts.append((sx * (cxb + rx), czb + rz + F.get('brow_lift', 0.0)))
         brow = clay.sweep(f'{name} | ceja {side}', _surface_stroke(surf, pts, 0.0), F.get('brow_r', [0.026, 0.033, 0.028]),
                           (0.55, 1.0), coll, mats['brow'], segments=12, samples=8, up=(0, -1, 0))
         objs[f'ceja_{side}'] = brow
@@ -170,14 +177,30 @@ def build_face(coll, head, P, mats, name, expression='feliz'):
             d = clay.blob(f'{name} | puntito rubor {side} {k}', (0, 0, 0), (0.014, 0.006, 0.02), coll, mats['blush_dot'], n=5, subsurf=1)
             d.location = p - n * 0.001
             clay.orient_to(d, n)
-    # Boca en U
+    # Boca: en U (sonrisa), recta, en O o sonrisa con lengua
     mw, mz, md = F['mouth']  # medio ancho, altura de las puntas, profundidad de la curva
-    ts = np.linspace(math.pi * 1.06, math.pi * 1.94, 9)
-    s0 = math.sin(ts[0])
-    pts = [(mw * math.cos(t) / abs(math.cos(ts[0])), mz + md * (math.sin(t) - s0) / (1 + s0)) for t in ts]
+    kind = F.get('mouth_type', 'u')
+    if kind == 'o':
+        loc, nrm = surf.front(0, mz - md * 0.5)
+        mo = clay.blob(f'{name} | boca', (0, 0, 0), (mw * 0.45, 0.02, md * 0.7), coll, mats['feature'], n=6, subsurf=2)
+        mo.location = loc - nrm * 0.004
+        clay.orient_to(mo, nrm)
+        objs['boca'] = mo
+        return objs, surf
+    if kind == 'recta':
+        pts = [(-mw * 0.8, mz - md * 0.45), (0, mz - md * 0.5), (mw * 0.8, mz - md * 0.45)]
+    else:
+        ts = np.linspace(math.pi * 1.06, math.pi * 1.94, 9)
+        s0 = math.sin(ts[0])
+        pts = [(mw * math.cos(t) / abs(math.cos(ts[0])), mz + md * (math.sin(t) - s0) / (1 + s0)) for t in ts]
     mouth = clay.sweep(f'{name} | boca', _surface_stroke(surf, pts, 0.0), F.get('mouth_r', 0.021), (0.7, 1.0), coll, mats['feature'],
                        segments=12, samples=8, up=(0, -1, 0))
     objs['boca'] = mouth
+    if kind == 'lengua':
+        loc, nrm = surf.front(mw * 0.3, mz - md * 1.05)
+        t = clay.blob(f'{name} | lengua', (0, 0, 0), (0.035, 0.02, 0.03), coll, mats['blush'], n=5, subsurf=2)
+        t.location = loc
+        clay.orient_to(t, nrm)
     return objs, surf
 
 

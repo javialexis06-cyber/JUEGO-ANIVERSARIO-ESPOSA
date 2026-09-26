@@ -227,7 +227,10 @@ def ring_points(f, center, axis, radius_out, n=24, lift=0.0):
 # Malla
 # --------------------------------------------------------------------------
 
-def to_mesh(name, f, bmin, bmax, voxel=0.006, coll=None, material=None, smooth=2, chunk=400000):
+DECIMATE = 0.3  # fracción de triángulos que se conserva tras marching cubes
+
+
+def to_mesh(name, f, bmin, bmax, voxel=0.006, coll=None, material=None, smooth=2, chunk=400000, decimate=None):
     bmin = np.asarray(bmin, float)
     bmax = np.asarray(bmax, float)
     dims = np.ceil((bmax - bmin) / voxel).astype(int) + 1
@@ -247,6 +250,13 @@ def to_mesh(name, f, bmin, bmax, voxel=0.006, coll=None, material=None, smooth=2
     bm.to_mesh(obj.data)
     bm.free()
     obj.data.shade_smooth()
+    ratio = DECIMATE if decimate is None else decimate
+    if ratio < 1.0:
+        dm = obj.modifiers.new('Reducir', 'DECIMATE')
+        dm.decimate_type = 'COLLAPSE'
+        dm.ratio = ratio
+        clay.apply_modifiers(obj)
+        obj.data.shade_smooth()
     if smooth:
         m = obj.modifiers.new('Suavizado', 'SMOOTH')
         m.factor = 0.5

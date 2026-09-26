@@ -13,6 +13,13 @@ import clay
 import sdf
 
 
+VOX = 1.0  # multiplicador de resolución de las mallas SDF (clientes: >1, más livianos)
+
+
+def _vx(v):
+    return v * VOX
+
+
 def _dir(deg, dy=0.0):
     return np.array([math.sin(math.radians(deg)), dy, -math.cos(math.radians(deg))])
 
@@ -79,7 +86,7 @@ def shirt(coll, mats, name, D):
             dd = sdf.smax(dd, -fo(P), 0.03)
         return dd
     lo, hi = D['shirt_bounds']
-    objs = [sdf.to_mesh(f'{name} | torso camiseta', final, lo, hi, 0.0045, coll, mats['shirt'], smooth=2)]
+    objs = [sdf.to_mesh(f'{name} | torso camiseta', final, lo, hi, _vx(0.0045), coll, mats['shirt'], smooth=2)]
     nc = np.array(D['neck_hole'][0])
     cr = D.get('collar_r', (0.175, 0.145))
     ring = []
@@ -150,7 +157,7 @@ def vest(coll, mats, name, D):
         dd = sdf.smax(dd, V['bottom'] - P[:, 2], 0.012)
         return dd
     lo, hi = V['bounds']
-    objs = [sdf.to_mesh(f'{name} | chaleco', base, lo, hi, 0.0045, coll, mats['vest'], smooth=2)]
+    objs = [sdf.to_mesh(f'{name} | chaleco', base, lo, hi, _vx(0.0045), coll, mats['vest'], smooth=2)]
     # Solapas: tiras planas que siguen el borde de la abertura, anchas arriba y en punta abajo
     for sx, side in ((-1, 'izq'), (1, 'der')):
         pts2, widths = [], []
@@ -201,7 +208,7 @@ def arms(coll, mats, name, D, bracelet_side=None):
         f = sdf.union(f, thumb, k=0.03)
         lo = np.minimum(start, hand_c) - 0.17
         hi = np.maximum(start, hand_c) + 0.17
-        objs.append(sdf.to_mesh(f'{name} | brazo {side}', f, lo, hi, 0.004, coll, mats['skin'], smooth=2))
+        objs.append(sdf.to_mesh(f'{name} | brazo {side}', f, lo, hi, _vx(0.004), coll, mats['skin'], smooth=2))
         if bracelet_side == side:
             ring = sdf.ring_points(f, wrist + d * 0.012, d, 0.3, 24, lift=0.006)
             if len(ring) > 8:
@@ -261,7 +268,7 @@ def pants(coll, mats, name, D):
             dd = sdf.smax(dd, -g(P), k)
         return dd
     lo, hi = Pn['bounds']
-    objs = [sdf.to_mesh(f'{name} | pantalon', final, lo, hi, 0.0045, coll, mats['pants'], smooth=2)]
+    objs = [sdf.to_mesh(f'{name} | pantalon', final, lo, hi, _vx(0.0045), coll, mats['pants'], smooth=2)]
     if Pn.get('pockets'):
         for sx in (-1, 1):
             pk = sdf.front_points(final, [(sx * hx * 0.61, tz), (sx * hx * 0.7, tz - 0.05), (sx * hx * 0.82, tz - 0.082), (sx * hx * 0.94, tz - 0.092)], lift=0.002)
@@ -280,6 +287,35 @@ def pants(coll, mats, name, D):
             if len(ring) > 10:
                 ring.sort(key=lambda p: math.atan2(p[1] - c[1], p[0] - c[0]))
                 objs.append(clay.sweep(f'{name} | dobladillo short {side}', ring, 0.026, (1, 1), coll, mats['pants'], segments=10, samples=3, closed=True))
+    return objs
+
+
+# --------------------------------------------------------------------------
+# Falda / vestido
+# --------------------------------------------------------------------------
+
+def skirt(coll, mats, name, D):
+    S = D['skirt']
+    top, hem = S['top'], S['hem']
+    bell = sdf.round_cone((0, 0.03, top), (0, 0.03, hem + 0.02), S['r'][0], S['r'][1])
+    pleats = []
+    for k in range(10):
+        a = 2 * math.pi * k / 10
+        pleats.append(sdf.capsule((math.cos(a) * S['r'][1] * 1.02, 0.03 + math.sin(a) * S['r'][1] * 1.02, hem + 0.02),
+                                  (math.cos(a) * S['r'][0] * 1.0, 0.03 + math.sin(a) * S['r'][0] * 1.0, top - 0.05), 0.012))
+
+    def f(P):
+        dd = bell(P)
+        dd = sdf.smax(dd, hem - P[:, 2], 0.02)
+        dd = sdf.smax(dd, P[:, 2] - top - 0.02, 0.01)
+        for pl in pleats:
+            dd = sdf.smax(dd, -pl(P), 0.02)
+        return dd
+    R = S['r'][1] + 0.08
+    objs = [sdf.to_mesh(f'{name} | falda', f, (-R, -R + 0.03, hem - 0.05), (R, R + 0.03, top + 0.06), _vx(0.0045), coll, mats['pants'], smooth=2)]
+    ring = sdf.ring_points(f, (0, 0.03, hem + 0.025), (0, 0, 1), R + 0.3, 40, lift=0.003)
+    if len(ring) > 12:
+        objs.append(clay.stitches(f'{name} | pespunte falda', ring, 0.0045, 0.022, 0.014, coll, mats['stitch'], closed=True))
     return objs
 
 
@@ -336,7 +372,7 @@ def shoes(coll, mats, name, D):
             if ridge is not None:
                 dd = sdf.smin(dd, ridge(P), 0.015)
             return dd
-        objs.append(sdf.to_mesh(f'{name} | tenis {side}', upper, (x - 0.26 * k, -0.36 * k, 0.03 * k), (x + 0.26 * k, 0.32 * k, 0.3 * k), 0.004, coll, mats['upper'], smooth=2))
+        objs.append(sdf.to_mesh(f'{name} | tenis {side}', upper, (x - 0.26 * k, -0.36 * k, 0.03 * k), (x + 0.26 * k, 0.32 * k, 0.3 * k), _vx(0.004), coll, mats['upper'], smooth=2))
         if S.get('laces'):
             for li, (yy, zz) in enumerate(((-0.07, 0.0), (-0.015, 0.0))):
                 pts = []
@@ -348,7 +384,7 @@ def shoes(coll, mats, name, D):
                 if len(pts) >= 3:
                     objs.append(clay.sweep(f'{name} | cordon {side} {li}', pts, 0.014 * k, (0.7, 1.0), coll, mats['lace'], segments=8, samples=4, up=(0, 0, 1)))
         sole = sdf.ellipse_cylinder_z((x, -0.04 * k, 0), 0.207 * k, 0.305 * k, 0.012 * k, 0.075 * k, 0.028 * k)
-        objs.append(sdf.to_mesh(f'{name} | suela {side}', sole, (x - 0.25 * k, -0.38 * k, -0.01), (x + 0.25 * k, 0.3 * k, 0.1 * k), 0.004, coll, mats['sole'], smooth=1))
+        objs.append(sdf.to_mesh(f'{name} | suela {side}', sole, (x - 0.25 * k, -0.38 * k, -0.01), (x + 0.25 * k, 0.3 * k, 0.1 * k), _vx(0.004), coll, mats['sole'], smooth=1))
         out = sdf.ellipse_cylinder_z((x, -0.04 * k, 0), 0.203 * k, 0.301 * k, 0.0, 0.02 * k, 0.009 * k)
-        objs.append(sdf.to_mesh(f'{name} | suela piso {side}', out, (x - 0.25 * k, -0.38 * k, -0.01), (x + 0.25 * k, 0.3 * k, 0.04 * k), 0.004, coll, mats['outsole'], smooth=1))
+        objs.append(sdf.to_mesh(f'{name} | suela piso {side}', out, (x - 0.25 * k, -0.38 * k, -0.01), (x + 0.25 * k, 0.3 * k, 0.04 * k), _vx(0.004), coll, mats['outsole'], smooth=1))
     return objs
