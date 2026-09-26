@@ -828,6 +828,11 @@ if __name__ == '__main__':
             colls[(lvl, estado)] = (c, W, D, title)
             print('CONSTRUIDA', lvl, estado, round(time.time() - t0, 1), 's', flush=True)
     exclude_sources()
+    # Las tiendas se ven de lejos: un nivel de subdivisión al renderizar basta y ahorra mucha memoria
+    for o in bpy.data.objects:
+        for mod in o.modifiers:
+            if mod.type == 'SUBSURF':
+                mod.render_levels = min(mod.render_levels, 1)
     for key in colls:
         lvl, estado = key
         for other, (c2, *_r) in colls.items():
