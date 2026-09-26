@@ -159,8 +159,8 @@ def hair(coll, head, P, mats, name, style):
                                       base + np.array([0, 0.42, -0.6])], [0.12, 0.15, 0.14, 0.11, 0.04], (1, 1), coll, mats['hair'], segments=14, samples=7)
         clay.lathe(f'{name} | moña', [(0.1, -0.04), (0.11, 0.0), (0.1, 0.04)], coll, mats['acc'], segments=20).location = base
         bpy.context.view_layer.update()
-        band = [surf.radial(hc, sph(a, 32 if abs(a) < 100 else 25), 0.015)[0] for a in range(-180, 180, 15)]
-        clay.sweep(f'{name} | balaca', band, 0.035, (0.5, 1), coll, mats['acc'], segments=8, samples=3, closed=True, up_fn=lambda q: np.array(q) - hc)
+        band = [surf.radial(hc, sph(a, 36 if abs(a) < 100 else 28), 0.02)[0] for a in range(-180, 180, 15)]
+        clay.sweep(f'{name} | balaca', band, 0.055, (0.4, 1), coll, mats['acc'], segments=8, samples=3, closed=True, up_fn=lambda q: np.array(q) - hc)
     elif style == 'despeinado':
         c = cap(coll, P, mats, name, [34, 34, 26, 12, 4, -6, -26, -38], 0.12, 0.05)
         surf = clay.Surface([head, c])

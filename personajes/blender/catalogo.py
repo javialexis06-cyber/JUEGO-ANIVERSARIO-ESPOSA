@@ -39,7 +39,7 @@ def font(size):
 
 def studio(scene, floor='#F3E6DA'):
     coll = clay.collection('Estudio catálogo')
-    clay.make_mesh_object('piso', [(-60, -60, 0), (60, -60, 0), (60, 60, 0), (-60, 60, 0)], [(0, 1, 2, 3)], coll,
+    clay.make_mesh_object('piso', [(-300, -300, 0), (300, -300, 0), (300, 300, 0), (-300, 300, 0)], [(0, 1, 2, 3)], coll,
                           material=clay.material('Catálogo | piso', floor, rough=0.8))
     escena.world_color(scene, '#F4EAE0', 0.55)
     escena.area_light('Luz | clave', (-6, -8, 10), (0, 0, 0), 2600, 8.0, '#FFF1E2', coll)
@@ -67,10 +67,14 @@ def render(scene, cam, name, w, h, labels=(), title=None):
         for text, pos in labels:
             co = world_to_camera_view(scene, cam, Vector(pos))
             x, y = co.x * W, (1 - co.y) * H
-            tw = d.textlength(text, font=f)
+            lines = text.split('\n')
+            tw = max(d.textlength(t, font=f) for t in lines)
+            lh = int(f.size * 1.2)
             pad = 6
-            d.rounded_rectangle((x - tw / 2 - pad, y - pad, x + tw / 2 + pad, y + f.size + pad), radius=10, fill=(255, 255, 255))
-            d.text((x - tw / 2, y), text, font=f, fill=(70, 60, 55))
+            d.rounded_rectangle((x - tw / 2 - pad, y - pad, x + tw / 2 + pad, y + lh * (len(lines) - 1) + f.size + pad), radius=10,
+                                fill=(255, 255, 255))
+            for i, t in enumerate(lines):
+                d.text((x - d.textlength(t, font=f) / 2, y + i * lh), t, font=f, fill=(70, 60, 55))
         if title:
             ft = font(max(16, int(W / 45)))
             tw = d.textlength(title, font=ft)
@@ -199,6 +203,15 @@ def hoja_utileria(scene):
                [(k.replace('Paciencia: ', ''), I[k], 2.4 if k == 'Estrella' else 1.6) for k in I], 1.0, b, size=(2200, 700), elev=0.2, label_dy=-0.35, margin=1.8)
 
 
+def _wrap(text, width):
+    """Parte una etiqueta larga en dos líneas por el espacio más cercano al centro."""
+    if len(text) <= width or ' ' not in text:
+        return text
+    mid = len(text) // 2
+    cut = min((i for i, ch in enumerate(text) if ch == ' '), key=lambda i: abs(i - mid))
+    return text[:cut] + '\n' + text[cut + 1:]
+
+
 def hoja_clientes(scene, keys=None, name='14-clientes', title='Clientes'):
     import clientes
     import cuerpo
@@ -213,10 +226,11 @@ def hoja_clientes(scene, keys=None, name='14-clientes', title='Clientes'):
         x = (i - (len(keys) - 1) / 2) * sp
         root = clientes.build(k, coll)
         root.location = (x, 0, 0)
-        labels.append((clientes.SPECS[k]['label'], (x, -0.75, -0.02)))
+        labels.append((_wrap(clientes.SPECS[k]['label'], 16), (x, -0.75, -0.02)))
     width = len(keys) * sp
     dist = width / 0.95 + 1.0
-    cam = escena.camera(f'CAM {name}', (0.0, -dist, 2.2 + dist * 0.1), (0.0, 0.0, 1.2), 40)
+    # Cámara algo más alta: sin horizonte visible al fondo
+    cam = escena.camera(f'CAM {name}', (0.0, -dist, 2.2 + dist * 0.25), (0.0, 0.0, 1.1), 40)
     render(scene, cam, name, 2200, 1000, labels, title)
     coll.hide_render = True
     coll.hide_viewport = True
