@@ -380,14 +380,19 @@ def panaderia(level, coll):
         sign(coll, 'blanco', (0, 0.3, H + 0.15), (0.45, 0.03, 0.1), 'amarillo')
     else:
         W = 0.9
-        box('mostrador', (0, 0, 0.42), (W, 0.4, 0.42), coll, 'rosa', p=6)
-        box('tapa', (0, 0, 0.86), (W + 0.03, 0.43, 0.03), coll, 'blanco', p=8)
-        box('vidrio frente', (0, -0.32, 0.72), (W - 0.04, 0.012, 0.28), coll, 'vidrio', p=8)
-        for z in (0.5, 0.88):
-            box('repisa', (0, 0.0, z), (W - 0.06, 0.3, 0.012), coll, 'blanco', p=10)
-        fill_row(coll, 'torta', -0.5, 0.5, 0.0, 0.51, 3, 0.8)
-        fill_row(coll, 'croissant', -0.5, 0.5, 0.0, 0.9, 4, 0.8)
-        box('luz', (0, 0.0, 0.84), (W - 0.1, 0.25, 0.008), coll, 'luz', p=6)
+        # Vitrina de pastelería: base rosada y caja de vidrio con dos repisas a la vista
+        box('mostrador', (0, 0, 0.3), (W, 0.4, 0.3), coll, 'rosa', p=6)
+        box('piso vitrina', (0, 0, 0.615), (W + 0.02, 0.42, 0.025), coll, 'blanco', p=8)
+        box('vidrio frente', (0, -0.38, 0.91), (W - 0.02, 0.012, 0.27), coll, 'vidrio', p=8)
+        box('vidrio techo', (0, 0, 1.19), (W, 0.4, 0.012), coll, 'vidrio', p=8)
+        for sx in (-1, 1):
+            box('vidrio lado', (sx * (W - 0.01), 0, 0.91), (0.012, 0.38, 0.27), coll, 'vidrio', p=8)
+            box('marco', (sx * W, -0.38, 0.91), (0.02, 0.02, 0.29), coll, 'blanco', p=8)
+        box('repisa', (0, 0.05, 0.9), (W - 0.06, 0.3, 0.012), coll, 'blanco', p=10)
+        fill_row(coll, 'torta', -0.55, 0.55, 0.0, 0.64, 3, 0.75)
+        fill_row(coll, 'croissant', -0.6, -0.1, -0.05, 0.915, 2, 0.8)
+        fill_row(coll, 'pan', 0.15, 0.6, 0.05, 0.915, 2, 0.7)
+        box('franja', (0, -0.395, 0.3), (W - 0.08, 0.012, 0.04), coll, 'blanco', p=6)
         # Horno de pan detrás
         box('horno', (0.2, 0.75, 0.9), (0.45, 0.3, 0.9), coll, 'blanco', p=5)
         box('boca horno', (0.2, 0.44, 1.05), (0.3, 0.02, 0.2), coll, 'negro', p=6)
