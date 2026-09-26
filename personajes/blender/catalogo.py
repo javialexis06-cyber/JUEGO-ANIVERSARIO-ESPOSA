@@ -100,19 +100,21 @@ def hoja_productos(scene):
     coll = clay.collection('Hoja productos')
     names = [n for n, _ in prod.CATALOGO]
     cols = 8
-    sp, sy = 1.05, 1.25
+    sp, sy = 1.15, 1.7
     labels = []
     for i, n in enumerate(names):
         r, cidx = divmod(i, cols)
         x = (cidx - (cols - 1) / 2) * sp
         y = r * sy
         prod.instance(n, (x, y, 0), -0.35, 2.1, coll)
-        labels.append((n.replace('pina', 'piña').replace('brocoli', 'brócoli').replace('cafe', 'café'), (x, y - 0.36, -0.02)))
+        labels.append((n.replace('pina', 'piña').replace('brocoli', 'brócoli').replace('cafe', 'café'), (x, y - 0.42, -0.02)))
     rows = (len(names) + cols - 1) // cols
     cy = (rows - 1) * sy / 2
-    el = math.radians(38)
-    dist = 10.5
-    cam = escena.camera('CAM productos', (0.0, cy - dist * math.cos(el), 0.2 + dist * math.sin(el)), (0.0, cy + 0.1, 0.2), 40)
+    el = math.radians(40)
+    tgt = (0.0, cy + 0.15, 0.3)
+    cam = escena.camera('CAM productos', (0.0, tgt[1] - 30 * math.cos(el), tgt[2] + 30 * math.sin(el)), tgt, 40)
+    cam.data.type = 'ORTHO'
+    cam.data.ortho_scale = cols * sp * 1.04
     render(scene, cam, '10-productos', 2000, 1250, labels, 'Productos del supermercado')
     coll.hide_render = True
     coll.hide_viewport = True
