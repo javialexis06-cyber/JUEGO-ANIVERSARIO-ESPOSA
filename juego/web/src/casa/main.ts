@@ -1340,7 +1340,7 @@ function salir() {
 // ---------------------------------------------------------------------------
 let ultimo = performance.now();
 let acumulado = 0;
-let cadaSegundo = 0;
+let ultimaRevision = -Infinity;
 /** ?rapido=N (pruebas): N pasos fijos de 0,1 s por cuadro, para ver las coreografías en navegadores sin tarjeta gráfica. */
 const RAPIDO = Number(params.get('rapido') ?? 0);
 
@@ -1358,9 +1358,9 @@ function bucle() {
     if (RAPIDO > 0) for (let i = 0; i < RAPIDO; i++) for (const m of Object.values(mascotas)) m.update(0.1);
     else for (const m of Object.values(mascotas)) m.update(paso);
     casa3d.animar(ahora / 1000);
-    cadaSegundo -= paso;
-    if (cadaSegundo <= 0) {
-      cadaSegundo = 0.5;
+    // Cada medio segundo de reloj real (aunque el celular vaya lento, despertar y demás no se atrasan)
+    if (ahora - ultimaRevision >= 500) {
+      ultimaRevision = ahora;
       revisar();
     }
     efectos();

@@ -196,11 +196,15 @@ if (partes.includes('4')) {
   await ella.click('#ventana [data-cerrar]').catch(() => {});
   // Mimos muy seguidos: uno a la vez
   await el.bringToFront();
+  // Espera a que termine la coreografía del regalo (si no, el beso responde «Un momentico…»)
+  await el.waitForFunction(() => !window.__fase('el') && !window.__fase('ella'), null, { timeout: 90000 }).catch(() => {});
   await el.evaluate(() => document.getElementById('chip-pareja').click());
   await Promise.all(Array.from({ length: 8 }, () => el.evaluate(() => document.querySelector('[data-mimo="beso"]')?.click())));
-  await el.waitForTimeout(2000);
-  const besos = (await estado(el)).eventos;
-  revisar(besos <= 3, `8 toques a «Beso» seguidos no mandan 8 besos (eventos: ${besos})`);
+  const contarBesos = () => JSON.parse(localStorage.getItem('nuestro-hogar-local')).eventos.filter((x) => x.tipo === 'beso').length;
+  await el.waitForFunction(contarBesos, null, { timeout: 30000 }).catch(() => {});
+  await el.waitForTimeout(3000);
+  const besos = await el.evaluate(contarBesos);
+  revisar(besos === 1, `8 toques a «Beso» seguidos mandan un solo beso (${besos})`);
   revisar(!el.errores.length && !ella.errores.length, `Sin errores${[...el.errores, ...ella.errores].length ? `: ${[...el.errores, ...ella.errores].slice(0, 3).join(' | ')}` : ''}`);
   await ctx.close();
 }
