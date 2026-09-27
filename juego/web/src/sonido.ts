@@ -283,6 +283,8 @@ export const musica = {
     reloj = setInterval(() => {
       if (!ctx) return;
       const corchea = 60 / bpm / 2;
+      // Si el reloj se atrasó (celular lento o pestaña dormida), se salta lo perdido en vez de tocarlo todo junto
+      if (proximo < ctx.currentTime - 0.3) proximo = ctx.currentTime + 0.05;
       while (proximo < ctx.currentTime + 0.2) {
         // Un poco de swing: la corchea del contratiempo llega tarde
         const swing = pasoActual % 2 ? corchea * 0.08 : 0;

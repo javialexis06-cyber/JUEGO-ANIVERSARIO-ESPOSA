@@ -270,12 +270,16 @@ export class Juego {
     }));
   }
 
+  /** Ya se salió del día: lo que termine de cargar después no debe aparecer en la tienda del menú. */
+  private destruido = false;
+
   private async nuevoCliente(tipo: TipoCliente) {
     const e = this.tienda.entrada;
     const c = new Cliente(tipo, { x: e.x - 1.2, y: e.y }, this.tiendaDato.escala_personas * (this.escalas[tipo] ?? 1), this.nivel.paciencia, this);
     c.lista = this.listaPara(tipo);
     c.velocidad *= this.efectos.velocidad_x ?? 1;
     await c.preparar();
+    if (this.destruido) return;
     this.clientes.push(c);
     this.mundo.escena.add(c.grupo);
     c.empezar();
@@ -293,6 +297,7 @@ export class Juego {
     const e = this.tienda.entrada;
     const l = new Ladron({ x: e.x - 1.2, y: e.y }, this.tiendaDato.escala_personas * (this.escalas.ladron ?? 1), this, !!this.mejoras.camara);
     await l.preparar();
+    if (this.destruido) return;
     this.ladrones.push(l);
     this.mundo.escena.add(l.grupo);
     l.empezar();
@@ -303,6 +308,7 @@ export class Juego {
     const e = this.tienda.entrada;
     const n = new Nina({ x: e.x - 1.2, y: e.y }, this.tiendaDato.escala_personas * (this.escalas.nina ?? 1), this);
     await n.preparar();
+    if (this.destruido) return;
     this.ninas.push(n);
     this.mundo.escena.add(n.grupo);
     n.empezar();
@@ -329,6 +335,7 @@ export class Juego {
     }
     obj.position.copy(aTres(pos.x, pos.y));
     const m: Mugre = { id: this.sigMugre++, tipo, pos, tiempo: 0, obj, vitrina, unidades, producto: vitrina?.productos[0] };
+    if (this.destruido) return m;
     this.mugres.push(m);
     this.mundo.escena.add(obj);
     return m;
@@ -361,6 +368,7 @@ export class Juego {
     obj.rotation.set(0, Math.random() * Math.PI * 2, 0.35);
     obj.scale.setScalar(0.85 * this.tiendaDato.escala_personas / 0.68);
     const c: CanastaSuelta = { id: this.sigMugre++, pos, obj };
+    if (this.destruido) return;
     this.canastasSueltas.push(c);
     this.mundo.escena.add(obj);
   }
@@ -638,6 +646,7 @@ export class Juego {
   }
 
   destruir() {
+    this.destruido = true;
     liberarPropios(this.tienda.grupo);
     this.mundo.escena.remove(this.tienda.grupo, this.jugador.grupo, ...this.clientes.map((c) => c.grupo), ...this.mugres.map((b) => b.obj),
       ...this.canastasSueltas.map((c) => c.obj), ...this.ladrones.map((l) => l.grupo), ...this.ninas.map((n) => n.grupo), ...this.ayudantes.map((a) => a.grupo));

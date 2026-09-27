@@ -471,8 +471,10 @@ export class SincroLinea extends Base implements Sincro {
 
   async cambiarCasa(fn: (c: Casa) => void) {
     for (let intento = 0; intento < 6; intento++) {
-      const copia: Casa = JSON.parse(JSON.stringify(this.casa));
+      const antes = JSON.stringify(this.casa);
+      const copia: Casa = JSON.parse(antes);
       fn(copia);
+      if (JSON.stringify(copia) === antes) return;
       const { data, error } = await this.sb.rpc('guardar_casa', { p: this.id, nueva: copia, version_leida: this.version });
       if (error) throw new Error(mensaje(error, 'No se pudo guardar la casa.'));
       if (Number(data) >= 0) {

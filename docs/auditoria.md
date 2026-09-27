@@ -43,6 +43,9 @@ carpeta de la casa.
 | Datos dañados | Un dato raro (de otra versión o a medias) podía dejar necesidades en NaN o romper la casa. | Todo lo que se lee se normaliza (necesidades 0–100, monedas ≥ 0, colores válidos). |
 | Doble entrada | Dos toques en «Crear nuestra casa» podían crear dos casas. | Un solo intento a la vez; «Reintentar» si no hay internet. |
 | Sin internet al abrir | La app en línea quedaba en la bienvenida sin poder reintentar. | Botón «Reintentar la conexión» y recarga de todo al volver a la app. |
+| Mimo que llega mientras se aplicaba otro | Quedaba esperando hasta volver a abrir la app. | Se aplica apenas termina el anterior. |
+| Guardados de más | Revisar el bono cuando ya estaba dado igual guardaba la casa (más choques entre los dos celulares). | Si nada cambió, no se guarda. |
+| Volver a la app en Android | La casa solo se enteraba por el evento del navegador. | También escucha a Android (`appStateChange`) para refrescar al volver. |
 
 ### Casa (3D e interfaz)
 

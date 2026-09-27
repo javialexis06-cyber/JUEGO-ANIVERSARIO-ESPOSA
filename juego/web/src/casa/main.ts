@@ -360,6 +360,7 @@ async function aplicarPendientes(): Promise<Evento[]> {
     return [...pendientes, ...saludos];
   } finally {
     aplicando = false;
+    if (s?.eventos.some((e) => e.de !== yo && !e.visto)) setTimeout(() => void aplicarPendientes(), 0);
   }
 }
 
@@ -1217,6 +1218,15 @@ function controles() {
     }
   });
   if (Capacitor.isNativePlatform()) {
+    void App.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) {
+        sonido.activar();
+        void alAbrir();
+      } else {
+        escribir(CLAVE_VISTO(yo), Date.now());
+        sonido.suspender();
+      }
+    });
     void App.addListener('backButton', () => {
       if (!$('ventana').hidden) cerrarVentana();
       else if (hojaAbierta()) cerrarHoja();
