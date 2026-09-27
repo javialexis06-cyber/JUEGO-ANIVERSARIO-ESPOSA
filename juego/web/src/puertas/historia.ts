@@ -102,6 +102,16 @@ export const PUERTAS: Record<number, string[]> = {
   18: ['El reloj de sol marca la hora de las cosas bonitas: la del corazón.'],
   19: ['Barrimos este jardín mil veces. Siempre aparecía algo debajo de las hojas.'],
   20: ['El invernadero está empañado. Adentro guardábamos nuestras plantas favoritas, cada una con su número.'],
+  21: ['Nuestro pedido de siempre está dibujado en la pizarrita. Prepáralo en orden.'],
+  22: ['El café de esa tarde tenía un corazón en la espuma. ¿Me haces uno?'],
+  23: ['La balanza de las tortas nunca quedaba pareja. Hay que equilibrarla.'],
+  24: ['Nuestra canción sonaba en esa rocola. Escúchala bien.'],
+  25: ['Llegó la cuenta. Esta vez invitas tú… si sabes cuánto es.'],
+  26: ['Una vez escribí algo en el vidrio empañado. Se borró… ¿o no?'],
+  27: ['Las galletas de la fortuna siempre acertaban: hoy dicen lo que más me gusta darte.'],
+  28: ['El mesero escondió la llave debajo de una taza. No le quites el ojo.'],
+  29: ['El letrero de la entrada gira. Solo abre cuando muestra lo que sentimos.'],
+  30: ['Ya cerraron… o eso dice el letrero. Tal vez hay que verlo desde otro lado.'],
 };
 
 /** Ánimo (nunca pistas): tras varios intentos o un buen rato quieto. */

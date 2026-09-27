@@ -279,6 +279,54 @@ const noche: Luces = {
 };
 
 export const TEMAS: Record<number, Tema> = {
+  3: {
+    capitulo: 3,
+    luces: { fondo: '#2a211d', ambiente: '#a0795c', intensidadAmbiente: 0.8, sol: '#ffe4c4', intensidadSol: 1.45, solDesde: [2, 6, 5.5], entorno: 0.45 },
+    puerta: 'vidrio',
+    armar(g) {
+      paredFondo(g, '#f3e3cf', '#a5713f', 1.0);
+      paredesLado(g, '#efdcc4', '#9a6a3c', 1.0);
+      piso(g, baldosas('#f1e3cc', '#b98a5e', '#e8d6bc', 4), 3);
+      techo(g, '#f6ead8');
+      // Pizarra del menú y lámparas colgantes de café
+      const pizarra = letrero(1.2, 0.8, (cx, w, h) => {
+        cx.fillStyle = '#2f3b33';
+        cx.fillRect(0, 0, w, h);
+        cx.strokeStyle = '#a5713f';
+        cx.lineWidth = 22;
+        cx.strokeRect(0, 0, w, h);
+        cx.fillStyle = '#f6f1e6';
+        cx.textAlign = 'center';
+        cx.font = `600 ${h * 0.13}px 'Fredoka', sans-serif`;
+        cx.fillText('Café de los dos', w / 2, h * 0.24);
+        cx.font = `500 ${h * 0.09}px 'Fredoka', sans-serif`;
+        ['café · té · chocolate', 'torta · galletas', 'y un beso de postre'].forEach((t, i) => cx.fillText(t, w / 2, h * (0.46 + i * 0.16)));
+      }, 'pizarra');
+      en(pizarra, -2.35, 2.35, 0.03);
+      g.add(pizarra);
+      for (const x of [-1.1, 1.3]) {
+        const z = 2.3;
+        const cable = cilindro(0.01, 0.01, 0.9, mat('#3d2b27'));
+        en(cable, x, CUARTO.alto - 0.45, z);
+        const pantalla = cilindro(0.08, 0.26, 0.24, mat('#3c7a62'));
+        en(pantalla, x, CUARTO.alto - 1.0, z);
+        const foco = esfera(0.06, matNuevo('#ffe9b0', { emisivo: '#ffd27a', intensidad: 2.4 }));
+        en(foco, x, CUARTO.alto - 1.1, z);
+        const luz = new THREE.PointLight('#ffd9a8', 3.5, 5, 1.6);
+        en(luz, x, CUARTO.alto - 1.2, z);
+        g.add(cable, pantalla, foco, luz);
+      }
+      // Repisa con tazas en la pared
+      const repisa = caja(1.5, 0.05, 0.25, mat('#8e5b3c'), 0.02);
+      en(repisa, 2.4, 2.2, 0.13);
+      g.add(repisa);
+      ['#e4574b', '#fff8ee', '#8EC5F0', '#F7C948', '#fff8ee'].forEach((col, i) => {
+        const t = cilindro(0.07, 0.06, 0.12, mat(col), undefined, 16);
+        en(t, 1.8 + i * 0.3, 2.285, 0.13);
+        g.add(t);
+      });
+    },
+  },
   2: {
     capitulo: 2,
     luces: { fondo: '#9fd6f2', ambiente: '#7fa35a', intensidadAmbiente: 1.0, sol: '#fff4dc', intensidadSol: 2.3, solDesde: [4, 8, 6], entorno: 0.55, exposicion: 1.25 },

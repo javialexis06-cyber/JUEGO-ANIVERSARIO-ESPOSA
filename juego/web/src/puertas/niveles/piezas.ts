@@ -262,3 +262,102 @@ export function candadoPuerta(c: import('../nivel').Ctx, ruedas: string[][], cor
   });
   return g;
 }
+
+// ---------------------------------------------------------------------------
+// Reconocer dibujos hechos con el dedo (corazón, círculo)
+// ---------------------------------------------------------------------------
+type Pt = { x: number; y: number };
+
+function remuestrear(pts: Pt[], n = 64): Pt[] {
+  const largo = pts.reduce((a, p, i) => (i ? a + Math.hypot(p.x - pts[i - 1].x, p.y - pts[i - 1].y) : 0), 0);
+  const paso = largo / (n - 1);
+  const out: Pt[] = [pts[0]];
+  let acum = 0;
+  const q = pts.map((p) => ({ ...p }));
+  for (let i = 1; i < q.length && out.length < n; i++) {
+    const d = Math.hypot(q[i].x - q[i - 1].x, q[i].y - q[i - 1].y);
+    if (acum + d >= paso && d > 0) {
+      const t = (paso - acum) / d;
+      const nuevo = { x: q[i - 1].x + t * (q[i].x - q[i - 1].x), y: q[i - 1].y + t * (q[i].y - q[i - 1].y) };
+      out.push(nuevo);
+      q.splice(i, 0, nuevo);
+      acum = 0;
+    } else acum += d;
+  }
+  while (out.length < n) out.push(pts[pts.length - 1]);
+  return out;
+}
+
+function normalizar(pts: Pt[]): Pt[] {
+  const cx = pts.reduce((a, p) => a + p.x, 0) / pts.length, cy = pts.reduce((a, p) => a + p.y, 0) / pts.length;
+  const xs = pts.map((p) => p.x), ys = pts.map((p) => p.y);
+  const t = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) || 1;
+  return pts.map((p) => ({ x: (p.x - cx) / t, y: (p.y - cy) / t }));
+}
+
+/** Silueta de corazón (y hacia abajo, como la pantalla). */
+export function corazonPuntos(n = 64): Pt[] {
+  return Array.from({ length: n }, (_, i) => {
+    const t = (i / n) * Math.PI * 2;
+    return { x: 16 * Math.sin(t) ** 3, y: -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) };
+  });
+}
+
+export function circuloPuntos(n = 64): Pt[] {
+  return Array.from({ length: n }, (_, i) => ({ x: Math.cos((i / n) * Math.PI * 2), y: Math.sin((i / n) * Math.PI * 2) }));
+}
+
+/** ¿El trazo es un corazón? Tiene que parecerse al corazón y claramente más que a un círculo. */
+export function esCorazon(trazo: Pt[]) {
+  const dc = parecido(trazo, corazonPuntos());
+  return dc < 0.14 && dc < parecido(trazo, circuloPuntos()) * 0.8;
+}
+
+/** Qué tanto se parece un trazo cerrado a una figura (0 = igual). Prueba todos los puntos de inicio y ambos sentidos. */
+export function parecido(trazo: Pt[], figura: Pt[]) {
+  if (trazo.length < 8) return 9;
+  const a = normalizar(remuestrear(trazo));
+  const b0 = normalizar(remuestrear([...figura, figura[0]]));
+  let mejor = 9;
+  for (const b of [b0, [...b0].reverse()]) {
+    for (let k = 0; k < b.length; k += 2) {
+      let d = 0;
+      for (let i = 0; i < a.length; i++) {
+        const q = b[(i + k) % b.length];
+        d += Math.hypot(a[i].x - q.x, a[i].y - q.y);
+      }
+      mejor = Math.min(mejor, d / a.length);
+    }
+  }
+  return mejor;
+}
+
+/** Taza de café con plato (y espuma si se pide). */
+export function taza(color = '#fff8ee', nombre = 'taza', espuma?: string) {
+  const g = grupo(nombre);
+  g.add(en(cilindro(0.2, 0.16, 0.03, mat(color), undefined, 24), 0, 0.015, 0));
+  g.add(en(cilindro(0.13, 0.1, 0.16, mat(color), undefined, 24), 0, 0.11, 0));
+  const asa = toro(0.05, 0.015, mat(color));
+  en(asa, 0.14, 0.12, 0);
+  g.add(asa);
+  if (espuma) g.add(en(cilindro(0.12, 0.12, 0.01, mat(espuma), `${nombre} espuma`, 24), 0, 0.185, 0));
+  return g;
+}
+
+/** Mesita redonda de café. */
+export function mesaRedonda(r = 0.45, alto = 0.75, color = '#c49468', nombre = 'mesa redonda') {
+  const g = grupo(nombre);
+  g.add(en(cilindro(r, r, 0.05, mat(color), undefined, 32), 0, alto - 0.025, 0));
+  g.add(en(cilindro(0.04, 0.05, alto - 0.05, mat('#3d2b27')), 0, (alto - 0.05) / 2, 0));
+  g.add(en(cilindro(0.22, 0.25, 0.03, mat('#3d2b27'), undefined, 20), 0, 0.015, 0));
+  return g;
+}
+
+/** Mostrador largo de café. */
+export function mostrador(ancho: number, color = '#a5713f', tope = '#efe2d0') {
+  const g = grupo('mostrador');
+  g.add(en(caja(ancho, 0.95, 0.6, mat(color), 0.03), 0, 0.475, 0));
+  g.add(en(caja(ancho + 0.08, 0.05, 0.68, mat(tope), 0.02), 0, 0.975, 0));
+  for (let i = 0; i < Math.floor(ancho / 0.5); i++) g.add(en(caja(0.02, 0.6, 0.01, mat('#8e5b3c'), 0.005), -ancho / 2 + 0.25 + i * 0.5, 0.45, 0.305));
+  return g;
+}
