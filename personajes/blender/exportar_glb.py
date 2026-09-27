@@ -59,6 +59,9 @@ def simplificar_materiales():
                 if src.type == 'TEX_BRICK':
                     info['mortero'] = list(src.inputs['Mortar'].default_value)[:3]
                     info['mortero_tam'] = src.inputs['Mortar Size'].default_value
+                    info['ancho'] = src.inputs['Brick Width'].default_value
+                    info['alto'] = src.inputs['Row Height'].default_value
+                    info['desfase'] = src.offset
                 mat['baldosa'] = json.dumps(info)
                 base.default_value = tuple((a + b) / 2 for a, b in zip(c1, c2))
             nt.links.remove(base.links[0])
@@ -203,6 +206,17 @@ POSES_CLIENTE = {'reposo': 'reposo', 'caminar_a': 'caminar', 'caminar_b': 'camin
 POSES_FAMOSO = dict(POSES_CLIENTE, saludar='saludo')
 POSES_AYUDANTE = {'reposo': 'reposo', 'caminar_a': 'caminar', 'caminar_b': 'caminar_espejo', 'carrito_a': 'carrito',
                   'carrito_b': 'carrito_espejo', 'reponer': 'reponer', 'cobrar': 'cobrar'}
+# Poses de la mascota de pareja (Nuestro Hogar); se suman a las de la tienda en el mismo archivo
+POSES_MASCOTA = {
+    'comer_a': 'comer_a', 'comer_b': 'comer_b', 'dormido': 'dormido', 'frotar_a': 'frotar_a', 'frotar_b': 'frotar_b',
+    'recibir_caricia': 'recibir_caricia', 'acariciar': 'acariciar', 'abrazo_izq': 'abrazo_izq', 'abrazo_der': 'abrazo_der',
+    'beso': 'beso', 'regalo': 'regalo', 'hablar_a': 'hablar_a', 'hablar_b': 'hablar_b', 'triste': 'triste',
+    'saludo_a': 'saludo', 'saludo_b': 'saludo_b', 'sentado': 'sentado', 'pensando': 'pensando',
+    'comer_sentado_a': 'comer_sentado_a', 'comer_sentado_b': 'comer_sentado_b', 'sentado_feliz': 'sentado_feliz',
+}
+# Mallas de expresión (ojos cerrados, bocas, barro): se exportan y el juego muestra la que toque
+EXPRESIONES = ('ojo feliz', 'boca hablar', 'boca beso', 'boca triste', 'suciedad')
+
 # Clientes y ayudantes que se suman en la tiendita (problemas del día y mejoras)
 CLIENTES_2 = {'ejecutivo': POSES_CLIENTE, 'deportista': POSES_CLIENTE, 'nina': POSES_CLIENTE, 'ladron': POSES_CLIENTE,
               'famoso': POSES_FAMOSO, 'cajera': POSES_AYUDANTE, 'reponedor': POSES_AYUDANTE, 'guardia': POSES_AYUDANTE,
@@ -294,6 +308,10 @@ def exportar_personaje_animado(key, poses_map):
     y en el juego las poses se mezclan suavemente en lugar de saltar de una a otra."""
     import poses
     arm, objs, escala = _rig_personaje(key)
+    for o in objs:
+        if any(e in o.name.lower() for e in EXPRESIONES):
+            o.hide_viewport = False
+            o.hide_render = False
     arm.animation_data_create()
     ad = arm.animation_data
     for archivo, pose in poses_map.items():
@@ -431,6 +449,41 @@ def exportar_iconos(out_iconos, nombres):
     print('ICONOS', len(nombres), flush=True)
 
 
+def exportar_iconos_piezas(out_iconos, piezas):
+    """Íconos PNG de piezas construidas con una función (regalos y decoración de la casa)."""
+    from mathutils import Vector
+    os.makedirs(out_iconos, exist_ok=True)
+    tiendas.exclude_sources()
+    scene = bpy.context.scene
+    scene.render.film_transparent = True
+    scene.render.resolution_x = scene.render.resolution_y = 160
+    scene.render.resolution_percentage = 100
+    scene.cycles.samples = 24
+    luces = clay.collection('Iconos piezas')
+    escena.area_light('Luz icono', (-2, -3, 4), (0, 0, 0.1), 300, 2.0, '#FFF3E6', luces)
+    escena.area_light('Relleno icono', (3, -2, 2), (0, 0, 0.1), 120, 2.0, '#EAF2FF', luces)
+    escena.world_color(scene, '#FFFFFF', 0.8)
+    scene.view_settings.look = 'AgX - Medium High Contrast'
+    for n, fn in piezas.items():
+        c = clay.collection(f'Icono {n}')
+        root = fn(c)
+        root.rotation_euler = (0, 0, -0.35)
+        bpy.context.view_layer.update()
+        pts = [o.matrix_world @ Vector(v) for o in arbol(root) if o.type == 'MESH' for v in o.bound_box]
+        zmin, zmax = min(p.z for p in pts), max(p.z for p in pts)
+        xmin, xmax = min(p.x for p in pts), max(p.x for p in pts)
+        cx, cz = (xmin + xmax) / 2, (zmin + zmax) / 2
+        size = max(zmax - zmin, xmax - xmin) * 1.3
+        cam = escena.camera(f'Cam icono {n}', (cx, -3.0, cz + 1.0), (cx, 0, cz), 50)
+        cam.data.type = 'ORTHO'
+        cam.data.ortho_scale = size
+        scene.camera = cam
+        scene.render.filepath = os.path.join(out_iconos, f'{n}.png')
+        bpy.ops.render.render(write_still=True)
+        c.hide_render = True
+    print('ICONOS PIEZAS', len(piezas), flush=True)
+
+
 if __name__ == '__main__':
     args = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:]
     OUT = args[0]
@@ -467,6 +520,48 @@ if __name__ == '__main__':
         for key, poses_map in CLIENTES_2.items():
             escalas[key] = exportar_personaje_animado(key, poses_map)
         manifest['personajes'] = dict(previo.get('personajes', {}), escalas=escalas)
+    if 'pareja' in PARTES:
+        # Él y Ella con todas las poses (tienda + casa) y sus expresiones
+        path = os.path.join(OUT, 'manifest_export.json')
+        previo = json.load(open(path)) if os.path.exists(path) else {}
+        escalas = previo.get('personajes', {}).get('escalas', {})
+        for key in ('el', 'ella'):
+            escalas[key] = exportar_personaje_animado(key, dict(POSES_EL, **POSES_MASCOTA))
+        manifest['personajes'] = dict(previo.get('personajes', {}), escalas=escalas, poses_mascota=list(POSES_MASCOTA))
+    if 'casa' in PARTES:
+        import casa
+        for key in casa.CUARTOS:
+            coll = casa.construir(key)
+            nuevos = list(coll.objects)
+            for o in nuevos:
+                if o.type == 'EMPTY' and o.instance_type == 'COLLECTION' and o.instance_collection:
+                    o['producto'] = o.instance_collection.name.replace('Producto | ', '')
+                    o.instance_type = 'NONE'
+                    o.instance_collection = None
+            raiz = bpy.data.objects.new(f'casa_{key}', None)
+            coll.objects.link(raiz)
+            for o in nuevos:
+                if o.parent is None:
+                    o.parent = raiz
+            exportar(arbol(raiz), os.path.join(OUT, f'casa_{key}.glb'))
+            coll.hide_render = coll.hide_viewport = True
+        datos = dict(W=casa.W, D=casa.D, alto=casa.ALTO, escala_personas=tiendas.PERSON_SCALE,
+                     cuartos={k: dict(nombre=v['nombre'], puntos={n: dict(x=p[0], y=p[1], rot=p[2]) for n, p in casa.PUNTOS[k].items()},
+                                      sitios=casa.SITIOS_DECO[k]) for k, v in casa.CUARTOS.items()},
+                     notas=casa.NOTAS)
+        with open(os.path.join(OUT, 'casa.json'), 'w', encoding='utf-8') as f:
+            json.dump(datos, f, ensure_ascii=False, indent=1)
+    if 'regalos' in PARTES:
+        import regalos
+        for key in regalos.PIEZAS:
+            coll = clay.collection(f'Export {key}')
+            root = regalos.build(key, coll)
+            exportar(arbol(root), os.path.join(OUT, f'{key}.glb'))
+            coll.hide_render = coll.hide_viewport = True
+        piezas = {k: (lambda c, k=k: regalos.build(k, c)) for k in regalos.PIEZAS}
+        piezas['planta'] = lambda c: utileria.build('planta', utileria.planta, c)
+        piezas['globos'] = lambda c: utileria.build('globos', utileria.globos, c)
+        exportar_iconos_piezas(os.path.join(OUT, 'iconos'), piezas)
     if 'utileria2' in PARTES:
         for nombre in ('charco', 'trapero_balde', 'planta', 'parlante', 'globos', 'camara'):
             coll = clay.collection(f'Export {nombre}')

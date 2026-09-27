@@ -187,7 +187,24 @@ def poses_juego():
     poses.apply_pose(EL, 'reposo')
 
 
+def retratos():
+    """Caritas felices con fondo transparente para la interfaz de Nuestro Hogar."""
+    show_collection('Sala', False)
+    show_collection('Estudio', False)
+    set_world('estudio')
+    scene.render.film_transparent = True
+    set_expression('El', True)
+    set_expression('Ella', True)
+    show_collection('Ella | personaje', False)
+    render('retrato-el', (X_EL + 0.0, -4.6, 1.64), (X_EL, 0, 1.58), 70, 320, 320)
+    show_collection('Ella | personaje', True)
+    show_collection('El | personaje', False)
+    render('retrato-ella', (X_ELLA + 0.0, -4.6, 1.68), (X_ELLA, 0, 1.62), 70, 320, 320)
+    scene.render.film_transparent = False
+
+
 SHOTS = {
+    'retratos': retratos,
     'sala_pareja': sala_pareja, 'sala_el': sala_el, 'sala_el_tq': sala_el_tq, 'sala_ella': sala_ella, 'estudio_pareja': estudio_pareja,
     'pareja_feliz': pareja_feliz, 'caras': caras, 'giro': giro, 'giro_el': giro_el, 'giro_ella': giro_ella, 'poses': poses_juego,
 }

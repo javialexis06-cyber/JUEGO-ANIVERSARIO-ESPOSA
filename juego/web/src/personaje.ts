@@ -8,6 +8,11 @@ import { cargarAnimado, copiaAnimada } from './recursos';
 /** Qué tan rápido llega cada peso a su meta (1/s). */
 const SUAVIDAD = 14;
 
+/** Caras que se arman mostrando u ocultando mallas de expresión (vienen ocultas en el modelo). */
+export type Cara = 'normal' | 'feliz' | 'hablar' | 'beso' | 'triste' | 'dormido';
+/** Nombre de malla sin el prefijo del personaje: «Ella_|_boca_hablar» → «boca hablar». */
+const parte = (o: THREE.Object3D) => o.name.replace(/_/g, ' ').replace(/^.*\|\s*/, '').trim();
+
 export class Personaje {
   grupo = new THREE.Group();
   cuerpo = new THREE.Group();
@@ -24,6 +29,13 @@ export class Personaje {
   poseCaminar: [string, string] = ['caminar_a', 'caminar_b'];
   poseQuieto = 'reposo';
   alLlegar: (() => void) | null = null;
+  modelo: THREE.Object3D | null = null;
+  /** Hueso por nombre (p. ej. «comida» o «regalo», donde se sostienen cosas). */
+  huesos = new Map<string, THREE.Object3D>();
+  private mallas = new Map<string, THREE.Object3D[]>();
+  private caraActual: Cara = 'normal';
+  private parpadeo = 2 + Math.random() * 3;
+  private nivelSucio = 0;
 
   constructor(pos: P, public escala: number) {
     this.pos = { ...pos };
@@ -34,7 +46,17 @@ export class Personaje {
   async cargarPoses(clave: string) {
     const { escena, clips } = await cargarAnimado(`${clave}.glb`);
     const modelo = copiaAnimada(escena);
+    this.modelo = modelo;
     this.cuerpo.add(modelo);
+    modelo.traverse((o) => {
+      if ((o as THREE.Bone).isBone) this.huesos.set(o.name, o);
+      if (!(o as THREE.Mesh).isMesh) return;
+      const n = parte(o);
+      const lista = this.mallas.get(n) ?? [];
+      lista.push(o);
+      this.mallas.set(n, lista);
+    });
+    this.aplicarCara();
     this.mezclador = new THREE.AnimationMixer(modelo);
     for (const clip of clips) {
       const a = this.mezclador.clipAction(clip);
@@ -46,6 +68,48 @@ export class Personaje {
     }
     this.pose(this.poseQuieto, true);
     this.sincronizar();
+  }
+
+  private ver(nombre: string | RegExp, si: boolean) {
+    for (const [n, lista] of this.mallas) {
+      if (typeof nombre === 'string' ? n === nombre : nombre.test(n)) for (const o of lista) o.visible = si;
+    }
+  }
+
+  /** Arma la cara: ojos abiertos o cerrados (felices) y la boca que toca. */
+  private aplicarCara(ojosCerrados = false) {
+    if (!this.mallas.size) return;
+    const c = this.caraActual;
+    const cerrados = ojosCerrados || c === 'feliz' || c === 'beso' || c === 'dormido';
+    this.ver(/^ojo (izq|der)$/, !cerrados);
+    this.ver(/^destello /, !cerrados);
+    this.ver(/^ojo feliz /, cerrados);
+    const boca = c === 'hablar' ? 'hablar' : c === 'beso' ? 'beso' : c === 'triste' ? 'triste' : '';
+    this.ver('boca', !boca);
+    this.ver(/^boca hablar/, boca === 'hablar');
+    this.ver('boca beso', boca === 'beso');
+    this.ver('boca triste', boca === 'triste');
+    for (let k = 0; k < 3; k++) {
+      this.ver(`suciedad cara ${k}`, this.nivelSucio > k);
+      this.ver(`suciedad ropa ${k}`, this.nivelSucio > k);
+    }
+  }
+
+  cara(c: Cara) {
+    if (c === this.caraActual) return;
+    this.caraActual = c;
+    this.aplicarCara();
+  }
+
+  get caraVisible() {
+    return this.caraActual;
+  }
+
+  /** Barro en la cara y la ropa: 0 (limpio) a 3 (muy sucio). */
+  suciedad(n: number) {
+    if (n === this.nivelSucio) return;
+    this.nivelSucio = n;
+    this.aplicarCara();
   }
 
   tienePose(nombre: string) {
@@ -113,8 +177,21 @@ export class Personaje {
       // respiración suave
       this.cuerpo.scale.setScalar(this.escala * (1 + Math.sin(this.t * 2.2) * 0.008));
     }
+    this.parpadear(dt);
     this.mezclar(dt);
     this.sincronizar();
+  }
+
+  /** Parpadeo cada pocos segundos (solo con los ojos abiertos). */
+  private parpadear(dt: number) {
+    if (!this.mallas.size) return;
+    const antes = this.parpadeo;
+    this.parpadeo -= dt;
+    if (antes > 0 && this.parpadeo <= 0) this.aplicarCara(true);
+    if (this.parpadeo <= -0.13) {
+      this.parpadeo = 2.2 + Math.random() * 3.5;
+      this.aplicarCara();
+    }
   }
 
   private mezclar(dt: number) {

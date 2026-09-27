@@ -29,7 +29,9 @@ function ajustes(nombre) {
   return [...SEPARAR, '--simplify-ratio', '0', '--simplify-error', '0.001'];
 }
 
-const archivos = readdirSync(CRUDOS).filter((f) => f.endsWith('.glb') && !POSES_VIEJAS.test(f));
+// SOLO=regex optimiza solo esos archivos (p. ej. SOLO='^(casa_|regalo_|deco_)')
+const SOLO = process.env.SOLO ? new RegExp(process.env.SOLO) : null;
+const archivos = readdirSync(CRUDOS).filter((f) => f.endsWith('.glb') && !POSES_VIEJAS.test(f) && (!SOLO || SOLO.test(f)));
 for (const f of archivos) {
   const salida = join(DESTINO, f);
   execFileSync('npx', ['gltf-transform', 'optimize', join(CRUDOS, f), salida, ...BASE, ...ajustes(f)], { stdio: 'pipe' });

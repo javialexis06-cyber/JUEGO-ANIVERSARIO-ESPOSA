@@ -106,6 +106,8 @@ def side_of(obj_name):
 
 RULES = [
     # (fragmento del nombre, hueso, ¿por lado?)
+    ('suciedad cara', 'suciedad_cara', False),
+    ('suciedad ropa', 'suciedad_ropa', False),
     ('pespunte camiseta', 'torso', False),
     ('pespunte chaleco', 'torso', False),
     ('ribete', 'torso', False),

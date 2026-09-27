@@ -18,6 +18,7 @@ y tiempo real. Así, lo que hace uno le llega al otro al instante, de Medellín 
    - la clave **anon public** (o **publishable key**).
 5. Mándame esos dos datos. Esa clave es pública por diseño: las reglas del esquema hacen que cada pareja solo pueda
    ver lo suyo. **No** me mandes la clave `service_role` ni la contraseña de la base de datos.
+   (También se pueden escribir directo en la app: Menú → Ajustes → «Servidor para conectar los dos celulares».)
 
 ## Cómo se emparejan en la app
 

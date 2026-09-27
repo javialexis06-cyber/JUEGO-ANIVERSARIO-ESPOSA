@@ -1,4 +1,4 @@
-# Compila la app de Android (APK de prueba) del juego y la deja en Releases para descargarla en el celular.
+# Compila la app de Android (APK de prueba) de Nuestro Hogar (con el minijuego Súper Manía) y la deja en Releases.
 name: APK Android
 
 on:
@@ -40,6 +40,10 @@ jobs:
         run: npm ci
 
       - name: Compilar el juego web
+        env:
+          # Opcional: variables del repositorio con el servidor de la pareja (Supabase)
+          VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          VITE_SUPABASE_KEY: ${{ vars.SUPABASE_ANON_KEY }}
         run: npm run build
 
       - name: Quitar la copia de modelos sin WebAssembly (la app no la necesita)
@@ -55,24 +59,25 @@ jobs:
         run: ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Nombrar la APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk SuperMania.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk NuestroHogar.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: SuperMania-apk
-          path: juego/web/SuperMania.apk
+          name: NuestroHogar-apk
+          path: juego/web/NuestroHogar.apk
 
       - name: Publicar en Releases
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-${{ github.run_number }}
           target_commitish: ${{ github.sha }}
-          name: Súper Manía · APK de prueba ${{ github.run_number }}
+          name: Nuestro Hogar · APK de prueba ${{ github.run_number }}
           prerelease: false
           make_latest: true
-          files: juego/web/SuperMania.apk
+          files: juego/web/NuestroHogar.apk
           body: |
-            APK de prueba de Súper Manía en Pareja (la tiendita completa, 25 días).
+            APK de prueba de Nuestro Hogar: la mascota de pareja (casa con sala, cocina, baño y cuarto; necesidades,
+            mimos, regalos, notas en la nevera, álbum de fotos y fechas especiales) con el minijuego Súper Manía.
 
-            Para instalar en Android: descarga SuperMania.apk, ábrela y permite «instalar apps de fuentes desconocidas» cuando el celular lo pida.
-            Las versiones nuevas se instalan encima de la anterior sin perder el progreso.
+            Para instalar en Android: descarga NuestroHogar.apk, ábrela y permite «instalar apps de fuentes desconocidas» cuando el celular lo pida.
+            Se instala encima de la versión anterior (Súper Manía) sin perder el progreso del súper.

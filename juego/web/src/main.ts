@@ -19,6 +19,9 @@ import { cargar, cargarAnimado, cargarJSON, elegirModelos, icono, Productos } fr
 import * as sonido from './sonido';
 import { NOMBRE_SECCION, Tienda, TiendaDato } from './tienda';
 import { mostrar, pantallaUnica, UI } from './ui';
+import { SUELDO_FRACCION } from './casa/catalogo';
+
+const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const NIVELES_JUGABLES = 25;
@@ -245,6 +248,15 @@ async function jugar(n: number) {
     if (r.corazon) partida.corazones[n] = true;
     partida.dinero += r.ganancia;
     guardado.guardar(partida);
+    // Un tercio de lo ganado pasa a la casa (Nuestro Hogar) como sueldo
+    const sueldo = Math.max(0, Math.round(r.ganancia * SUELDO_FRACCION));
+    try {
+      localStorage.setItem(CLAVE_SUELDO, String((Number(localStorage.getItem(CLAVE_SUELDO)) || 0) + sueldo));
+    } catch {
+      /* sin almacenamiento */
+    }
+    $('rec-sueldo').hidden = sueldo <= 0;
+    $('rec-sueldo').textContent = `Sueldo para la casa: +${sueldo} monedas`;
     ui.terminarNivel();
     ui.resultado(j, r, antes);
     pantallaUnica('resultado');
@@ -446,7 +458,7 @@ function conectarBotones() {
       else if (visible('pausa')) $('btn-continuar').click();
       else if (visible('resultado')) $('btn-rmenu').click();
       else if (visible('tarjeta') || visible('mejoras') || visible('como')) abrirMenu();
-      else void App.exitApp();
+      else location.href = './index.html';
     });
   }
 }

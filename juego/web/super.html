@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Súper Manía en Pareja</title>
+</head>
+<body>
+<canvas id="lienzo" aria-label="La tienda"></canvas>
+<div id="capa" aria-hidden="true"></div>
+
+<!-- Carga -->
+<section id="carga" class="pantalla pantalla-carga">
+  <div class="logo">
+    <span class="logo-linea">Súper Manía</span>
+    <span class="logo-pareja">en Pareja</span>
+  </div>
+  <div class="carga-riel" role="progressbar" aria-label="Cargando la tienda"><i id="carga-barra"></i></div>
+  <p id="carga-texto">Abriendo la tiendita…</p>
+</section>
+
+<!-- Menú: etiquetas de precio colgadas del riel de la góndola -->
+<section id="menu" class="pantalla pantalla-menu" hidden>
+  <header class="menu-cabeza">
+    <div class="logo logo-chico">
+      <span class="logo-linea">Súper Manía</span>
+      <span class="logo-pareja">en Pareja</span>
+    </div>
+    <div class="menu-saldos">
+      <span class="saldo"><i class="moneda" aria-hidden="true"></i><b id="menu-dinero">0</b></span>
+      <span class="saldo"><i class="estrella" aria-hidden="true"></i><b id="menu-estrellas">0</b></span>
+      <span class="saldo" title="Lunas del modo legendario"><i class="luna-icono" aria-hidden="true"></i><b id="menu-lunas">0</b></span>
+      <span class="saldo" title="Corazones escondidos"><i class="corazon-icono" aria-hidden="true"></i><b id="menu-corazones">0</b></span>
+    </div>
+  </header>
+  <div class="riel">
+    <p class="riel-titulo">Tiendita de barrio · 25 días · desliza para ver más</p>
+    <div id="niveles" class="riel-etiquetas"></div>
+  </div>
+  <nav class="menu-botones">
+    <a id="btn-casa" class="boton boton-papel" href="./index.html">Volver a la casa</a>
+    <button id="btn-mejoras" class="boton boton-tomate">Mejorar la tienda</button>
+    <button id="btn-como" class="boton boton-papel">Cómo se juega</button>
+    <button id="btn-musica-menu" class="boton boton-papel boton-chico">Música: sonando</button>
+  </nav>
+</section>
+
+<!-- Tarjeta del nivel: lista de mercado -->
+<section id="tarjeta" class="pantalla pantalla-centro" hidden>
+  <article class="lista-mercado">
+    <p class="lista-evento" id="tarjeta-evento">Día normal</p>
+    <h2 id="tarjeta-titulo">Nivel 1</h2>
+    <p class="lista-sub" id="tarjeta-sub"></p>
+    <p class="lista-novedad" id="tarjeta-novedad"></p>
+    <aside id="tarjeta-noticia" class="periodico" hidden>
+      <p class="periodico-nombre">El Diario del Barrio</p>
+      <p class="periodico-fecha" id="noticia-fecha"></p>
+      <h4 id="noticia-titular"></h4>
+      <p id="noticia-texto"></p>
+    </aside>
+    <h3>Hoy vienen (y lo que más compran)</h3>
+    <ul id="tarjeta-clientes" class="lista-clientes"></ul>
+    <h3>Estrellas del día</h3>
+    <ul id="tarjeta-objetivos" class="lista-objetivos"></ul>
+    <div class="fila-botones">
+      <button id="btn-legendario" class="boton boton-luna" hidden>Modo legendario</button>
+      <button id="btn-tarjeta-volver" class="boton boton-papel">Volver</button>
+      <button id="btn-abrir" class="boton boton-tomate">Abrir la tienda</button>
+    </div>
+  </article>
+</section>
+
+<!-- Resultado: tiquete de caja -->
+<section id="resultado" class="pantalla pantalla-centro" hidden>
+  <article class="tiquete">
+    <p class="tiquete-negocio">TIENDITA DE BARRIO<br><span>Bucaramanga · Medellín</span></p>
+    <p class="tiquete-titulo" id="rec-titulo">Nivel 1</p>
+    <ul id="rec-estrellas" class="tiquete-estrellas"></ul>
+    <div id="rec-lineas" class="tiquete-lineas"></div>
+    <div class="tiquete-total"><span>GANANCIA DEL DÍA</span><span><i class="moneda" aria-hidden="true"></i><b id="rec-total">0</b></span></div>
+    <p id="rec-pasa" class="tiquete-pasa"></p>
+    <p id="rec-sueldo" class="tiquete-pasa" hidden></p>
+    <div class="tiquete-botones">
+      <button id="btn-siguiente" class="boton boton-tomate">Siguiente día</button>
+      <button id="btn-repetir" class="boton boton-papel">Repetir</button>
+      <button id="btn-rmejoras" class="boton boton-papel">Mejorar la tienda</button>
+      <button id="btn-rmenu" class="boton boton-papel">Menú</button>
+    </div>
+  </article>
+</section>
+
+<!-- Mejoras -->
+<section id="mejoras" class="pantalla pantalla-lado" hidden>
+  <article class="catalogo">
+    <header class="catalogo-cabeza">
+      <h2>Mejorar la tienda</h2>
+      <span class="saldo"><i class="moneda" aria-hidden="true"></i><b id="mej-dinero">0</b></span>
+    </header>
+    <p class="catalogo-nota">Lo que compres aparece en la tienda de atrás y se queda para los próximos días. En esta tienda las vitrinas llegan hasta el nivel 2.</p>
+    <ul id="mej-lista" class="catalogo-lista"></ul>
+    <button id="btn-mej-cerrar" class="boton boton-tomate">Listo</button>
+  </article>
+</section>
+
+<!-- Cómo se juega -->
+<section id="como" class="pantalla pantalla-centro" hidden>
+  <article class="lista-mercado como">
+    <h2>Cómo se juega</h2>
+    <ol class="pasos">
+      <li><b>Toca una vitrina</b> que se esté quedando vacía. Él va a la bodega, carga cajas en el carrito y la llena. Las vitrinas de nivel 1 solo alcanzan para uno o dos clientes.</li>
+      <li><b>Toca la caja</b> cuando haya fila. Si nadie cobra, la fila se enoja rápido y los clientes se van sin pagar.</li>
+      <li><b>Encadena toques:</b> cada toque se suma a la lista de Él con su número. Un segundo toque sobre lo mismo lo cancela. Reponer varias vitrinas en un viaje o cobrar seguido da <b>combos</b>.</li>
+      <li><b>Mira los globos:</b> muestran lo que busca cada cliente, cuántas unidades y su paciencia.</li>
+      <li><b>Basura</b> (día 6): recógela y Él la lleva a la caneca. <b>Charcos</b> (día 8): trapéalos antes de que alguien se resbale.</li>
+      <li><b>Canastas:</b> sin canastas en la entrada no entra nadie. Recoge las que dejan tiradas.</li>
+      <li><b>Ladrón</b> (día 12): tócalo antes de que llegue a la puerta. <b>Niña traviesa</b> (día 14): tócala para calmarla y recoge lo que tumbó. <b>Famoso</b> (día 18): todos se quedan mirándolo.</li>
+      <li><b>Entre días</b> compra vitrinas, tenis, carrito, bodega ordenada, adornos y ayudantes. Las <b>ayudas</b> (tinto, canción, limpieza) se usan con los botones de la izquierda.</li>
+      <li>Con 3 estrellas se abre el <b>modo legendario</b> de ese día: gana una Luna. Y en cada día hay un <b>corazón escondido</b> que aparece un momento.</li>
+    </ol>
+    <p class="como-nota">Con dos dedos acercas la cámara. Juega con el celular acostado para ver mejor la tienda.</p>
+    <div class="fila-botones">
+      <button id="btn-borrar" class="boton boton-papel boton-chico">Empezar de cero</button>
+      <button id="btn-como-cerrar" class="boton boton-tomate">Entendido</button>
+    </div>
+  </article>
+</section>
+
+<!-- Pausa -->
+<section id="pausa" class="pantalla pantalla-centro" hidden>
+  <article class="lista-mercado pausa">
+    <h2>Pausa</h2>
+    <div class="fila-botones">
+      <button id="btn-musica" class="boton boton-papel boton-chico">Música: sonando</button>
+      <button id="btn-salir" class="boton boton-papel">Salir al menú</button>
+      <button id="btn-continuar" class="boton boton-tomate">Seguir jugando</button>
+    </div>
+  </article>
+</section>
+
+<!-- HUD del día -->
+<header id="hud" hidden>
+  <div class="hud-izq">
+    <span id="hud-nivel" class="hud-nivel">Nivel 1</span>
+    <span id="hud-reloj" class="hud-reloj">3:00</span>
+    <span class="hud-contadores" title="Atendidos · se fueron bravos · canastas en la entrada">
+      <span class="cont-ok"><i aria-hidden="true"></i><b id="hud-atendidos">0</b></span>
+      <span class="cont-mal"><i aria-hidden="true"></i><b id="hud-perdidos">0</b></span>
+      <span class="cont-canasta"><i aria-hidden="true"></i><b id="hud-canastas">8</b></span>
+    </span>
+    <span id="hud-efectos" class="hud-efectos" hidden></span>
+  </div>
+  <div id="hud-objetivos" class="hud-objetivos"></div>
+  <div class="hud-der">
+    <span class="saldo"><i class="moneda" aria-hidden="true"></i><b id="hud-dinero">0</b></span>
+    <button id="btn-sonido" class="boton-sonido" aria-label="Silenciar"><i></i></button>
+    <button id="btn-pausa" class="boton-pausa" aria-label="Pausa"><i></i><i></i></button>
+  </div>
+</header>
+<footer id="alertas" hidden></footer>
+<nav id="ayudas" class="ayudas" aria-label="Ayudas" hidden></nav>
+<div id="cargando-nivel" hidden>Acomodando la tienda…</div>
+<div id="toast" role="status" hidden></div>
+<script type="module" src="./src/main.ts"></script>
+</body>
+</html>

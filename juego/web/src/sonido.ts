@@ -36,7 +36,7 @@ export function activar() {
     salidaMusica = ctx.createGain();
     salidaMusica.gain.value = 0;
     salidaMusica.connect(filtro).connect(maestro);
-    if (musicaPendiente) musica.iniciar(musicaPendiente);
+    if (musicaPendiente) musica.iniciar(musicaPendiente, bpm, cancion);
   } catch {
     ctx = null;
   }
@@ -90,6 +90,14 @@ export const resbalon = () => nota(500, 0.25, 0, 'sine', 0.08, 180);
 export const limpio = () => nota(1200, 0.08, 0, 'sine', 0.05, 1600);
 export const corazon = () => { nota(784, 0.1); nota(988, 0.1, 0.09); nota(1318, 0.25, 0.18); };
 export const campana = () => { nota(1568, 0.5, 0, 'sine', 0.06); nota(2093, 0.4, 0.05, 'sine', 0.04); };
+// Casa
+export const beso = () => { nota(1400, 0.05, 0, 'sine', 0.08, 700); nota(1800, 0.04, 0.05, 'sine', 0.05, 900); };
+export const abrazo = () => [523, 659, 784].forEach((f, i) => nota(f, 0.5, i * 0.04, 'sine', 0.05));
+export const mordisco = () => { nota(300, 0.05, 0, 'square', 0.03, 180); nota(260, 0.05, 0.12, 'square', 0.03, 160); };
+export const burbuja = () => nota(600 + Math.random() * 500, 0.08, 0, 'sine', 0.05, 1400 + Math.random() * 600);
+export const regalo = () => [784, 988, 1175, 1568].forEach((f, i) => nota(f, 0.2, i * 0.07, 'triangle', 0.06));
+export const aviso = () => { nota(988, 0.12, 0, 'sine', 0.07); nota(1318, 0.2, 0.1, 'sine', 0.07); };
+export const bostezo = () => nota(440, 0.6, 0, 'sine', 0.05, 250);
 export const fin = (bien: boolean) => (bien ? [523, 659, 784, 1046].forEach((f, i) => nota(f, 0.18, i * 0.12, 'triangle', 0.08)) : [392, 330, 262].forEach((f, i) => nota(f, 0.22, i * 0.15, 'triangle', 0.08)));
 
 // ---------------------------------------------------------------------------
@@ -205,6 +213,57 @@ function tocarPaso(paso: number, t: number, corchea: number) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// «Nuestro Hogar»: balada suave de cajita de música en fa mayor (arpegios, bajo largo y melodía).
+// ---------------------------------------------------------------------------
+const ACORDES_HOGAR: Record<string, { bajo: number; voces: number[] }> = {
+  F: { bajo: 41, voces: [65, 69, 72] },
+  Dm: { bajo: 38, voces: [62, 65, 69] },
+  Bb: { bajo: 46, voces: [62, 65, 70] },
+  C: { bajo: 36, voces: [64, 67, 72] },
+  Am: { bajo: 45, voces: [64, 69, 72] },
+  Gm: { bajo: 43, voces: [62, 67, 70] },
+};
+const PROGRESION_HOGAR = ['F', 'Dm', 'Bb', 'C', 'F', 'Am', 'Bb', 'C', 'Dm', 'Am', 'Bb', 'F', 'Gm', 'C', 'F', 'C'];
+const MELODIA_HOGAR: [number, number, number, number][] = [
+  [0, 0, 77, 3], [0, 3, 76, 1], [0, 4, 77, 2], [0, 6, 81, 2],
+  [1, 0, 81, 3], [1, 3, 79, 1], [1, 4, 77, 4],
+  [2, 0, 74, 2], [2, 2, 77, 2], [2, 4, 82, 3], [2, 7, 81, 1],
+  [3, 0, 79, 6],
+  [4, 0, 77, 3], [4, 3, 76, 1], [4, 4, 77, 2], [4, 6, 84, 2],
+  [5, 0, 84, 3], [5, 3, 81, 1], [5, 4, 76, 4],
+  [6, 0, 74, 2], [6, 2, 77, 2], [6, 4, 82, 2], [6, 6, 81, 2],
+  [7, 0, 79, 6],
+  [8, 0, 81, 3], [8, 3, 79, 1], [8, 4, 77, 2], [8, 6, 74, 2],
+  [9, 0, 76, 3], [9, 3, 77, 1], [9, 4, 81, 4],
+  [10, 0, 82, 2], [10, 2, 81, 2], [10, 4, 79, 2], [10, 6, 77, 2],
+  [11, 0, 81, 6],
+  [12, 0, 79, 2], [12, 2, 77, 2], [12, 4, 74, 2], [12, 6, 79, 2],
+  [13, 0, 79, 3], [13, 3, 81, 1], [13, 4, 76, 4],
+  [14, 0, 77, 8],
+];
+const MELODIA_HOGAR_PASO = new Map<number, [number, number]>();
+for (const [c, k, n, d] of MELODIA_HOGAR) MELODIA_HOGAR_PASO.set(c * 8 + k, [n, d]);
+
+function tocarPasoHogar(paso: number, t: number, corchea: number) {
+  const compas = Math.floor(paso / 8) % 16;
+  const k = paso % 8;
+  const ac = ACORDES_HOGAR[PROGRESION_HOGAR[compas]];
+  if (k === 0) voz(midi(ac.bajo), t, corchea * 7, 'triangle', 0.12, 0.05);
+  if (k === 4) voz(midi(ac.bajo + 7), t, corchea * 3.5, 'triangle', 0.07, 0.05);
+  // Arpegio de piano suave: sube y baja por el acorde
+  const arpegio = [0, 1, 2, 1, 0, 1, 2, 1][k];
+  voz(midi(ac.voces[arpegio]), t, corchea * 2.2, 'sine', 0.035, 0.01);
+  // Cajita de música: fundamental + dos octavas arriba muy suave
+  const m = MELODIA_HOGAR_PASO.get(compas * 8 + k);
+  if (m) {
+    voz(midi(m[0]), t, Math.min(1.6, corchea * m[1] * 1.2), 'sine', 0.06, 0.004);
+    voz(midi(m[0] + 24), t, 0.25, 'sine', 0.012, 0.002);
+  }
+  if (k === 0 && compas % 4 === 0) percusion(t, 0.8, 9000, 2, 0.01);
+}
+
+let cancion: 'cumbia' | 'hogar' = 'cumbia';
 let musicaPendiente: 'menu' | 'juego' | null = null;
 let reloj: ReturnType<typeof setInterval> | null = null;
 let pasoActual = 0;
@@ -213,9 +272,10 @@ let bpm = 100;
 
 export const musica = {
   /** Arranca (o cambia de ambiente): en el menú suena más bajito. */
-  iniciar(modo: 'menu' | 'juego', tempo = 100) {
+  iniciar(modo: 'menu' | 'juego', tempo = 100, cual: 'cumbia' | 'hogar' = 'cumbia') {
     musicaPendiente = modo;
     bpm = tempo;
+    cancion = cual;
     if (!ctx || !salidaMusica) return;
     salidaMusica.gain.setTargetAtTime(musicaApagada ? 0 : modo === 'menu' ? 0.45 : 0.8, ctx.currentTime, 0.4);
     if (reloj) return;
@@ -226,7 +286,7 @@ export const musica = {
       while (proximo < ctx.currentTime + 0.2) {
         // Un poco de swing: la corchea del contratiempo llega tarde
         const swing = pasoActual % 2 ? corchea * 0.08 : 0;
-        if (!musicaApagada && !silencio) tocarPaso(pasoActual, proximo + swing, corchea);
+        if (!musicaApagada && !silencio) (cancion === 'hogar' ? tocarPasoHogar : tocarPaso)(pasoActual, proximo + (cancion === 'hogar' ? 0 : swing), corchea);
         proximo += corchea;
         pasoActual = (pasoActual + 1) % 128;
       }

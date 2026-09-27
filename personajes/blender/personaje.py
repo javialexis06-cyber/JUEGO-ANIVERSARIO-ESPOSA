@@ -82,6 +82,66 @@ def _surface_stroke(surf, pts2d, lift=0.0):
     return out
 
 
+def build_expressions(coll, P, name, surf):
+    """Expresiones de la mascota: boca abierta (hablar), boca de beso, boca triste y barro en la cara.
+    Quedan ocultas; el juego muestra la que toque según lo que esté haciendo el personaje."""
+    M = clay.material
+    feature = M(f'{name} | trazo expresion', '#1B1512', rough=0.35, coat=0.4, coat_rough=0.15)
+    lengua = M(f'{name} | lengua', '#E86F7A', rough=0.45, sss=0.1, sss_scale=0.02)
+    beso = M(f'{name} | labios beso', '#E5566A', rough=0.35, coat=0.3, coat_rough=0.2, sss=0.1, sss_scale=0.02)
+    barro = M(f'{name} | barro', '#6B4A33', rough=0.85, noise=dict(scale=60, strength=0.25, detail=4, distance=0.004))
+    F = P['face']
+    mw, mz, md = F['mouth']
+    out = []
+    # Boca abierta con lengüita (hablar)
+    loc, nrm = surf.front(0, mz - md * 0.55)
+    o = clay.blob(f'{name} | boca hablar', (0, 0, 0), (mw * 0.42, 0.022, md * 0.9 + 0.012), coll, feature, n=6, subsurf=2)
+    o.location = loc - nrm * 0.004
+    clay.orient_to(o, nrm)
+    loc, nrm = surf.front(0, mz - md * 0.85)
+    t = clay.blob(f'{name} | boca hablar lengua', (0, 0, 0), (mw * 0.26, 0.018, md * 0.35 + 0.006), coll, lengua, n=5, subsurf=2)
+    t.location = loc + nrm * 0.004
+    clay.orient_to(t, nrm)
+    out += [o, t]
+    # Piquito de beso
+    loc, nrm = surf.front(0, mz - md * 0.45)
+    k = clay.blob(f'{name} | boca beso', (0, 0, 0), (mw * 0.3, 0.035, mw * 0.24), coll, beso, n=7, subsurf=2)
+    k.location = loc + nrm * 0.008
+    clay.orient_to(k, nrm)
+    out.append(k)
+    # Boca triste (U invertida)
+    ts = np.linspace(math.pi * 0.08, math.pi * 0.92, 9)
+    pts = [(mw * 0.75 * math.cos(t), mz - md * 0.9 + md * 0.7 * math.sin(t)) for t in ts]
+    s = clay.sweep(f'{name} | boca triste', _surface_stroke(surf, pts, 0.0), F.get('mouth_r', 0.021), (0.7, 1.0), coll, feature,
+                   segments=12, samples=8, up=(0, -1, 0))
+    out.append(s)
+    # Barro en la cara (cuando la higiene está baja)
+    ex, ez = F['eye_x'], F['eye_z']
+    for i, (cx, cz, rx, rz) in enumerate(((-ex * 1.25, ez - 0.2, 0.05, 0.04), (ex * 0.55, ez + 0.2, 0.045, 0.035),
+                                          (ex * 1.35, ez - 0.28, 0.03, 0.03))):
+        out.append(decal_dome(f'{name} | suciedad cara {i}', surf, cx, cz, rx, rz, 0.012, coll, barro))
+    for x in out:
+        x.hide_render = True
+        x.hide_viewport = True
+    return out
+
+
+def build_dirt_clothes(coll, name, objs):
+    """Barro en la ropa (camiseta), oculto por defecto."""
+    barro = clay.material(f'{name} | barro ropa', '#6B4A33', rough=0.85, noise=dict(scale=60, strength=0.25, detail=4, distance=0.004))
+    surf = clay.Surface(objs)
+    out = []
+    for i, (cx, cz, rx, rz) in enumerate(((-0.14, 0.66, 0.06, 0.05), (0.12, 0.78, 0.045, 0.04), (0.2, 0.6, 0.035, 0.03))):
+        try:
+            d = decal_dome(f'{name} | suciedad ropa {i}', surf, cx, cz, rx, rz, 0.014, coll, barro)
+        except Exception:
+            continue
+        d.hide_render = True
+        d.hide_viewport = True
+        out.append(d)
+    return out
+
+
 def decal_dome(name, surf, cx, cz, rx, rz, height, coll, material, n=18):
     """Parche abombado que sigue la curvatura de la superficie (rubor, manchas).
 

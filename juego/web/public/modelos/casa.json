@@ -1,0 +1,276 @@
+{
+ "W": 5.4,
+ "D": 4.2,
+ "alto": 3.0,
+ "escala_personas": 0.68,
+ "cuartos": {
+  "sala": {
+   "nombre": "Sala",
+   "puntos": {
+    "entrada": {
+     "x": -2.1,
+     "y": -1.3,
+     "rot": 90
+    },
+    "centro_izq": {
+     "x": -0.6,
+     "y": -0.95,
+     "rot": 0
+    },
+    "centro_der": {
+     "x": 0.8,
+     "y": -0.95,
+     "rot": 0
+    },
+    "sofa_izq": {
+     "x": -0.35,
+     "y": 1.35,
+     "rot": 0
+    },
+    "sofa_der": {
+     "x": 0.95,
+     "y": 1.35,
+     "rot": 0
+    },
+    "tv": {
+     "x": -1.3,
+     "y": 0.2,
+     "rot": -90
+    }
+   },
+   "sitios": [
+    {
+     "id": "sala_cuadro",
+     "tipo": "cuadro",
+     "x": -2.6700000000000004,
+     "y": 1.2,
+     "z": 1.75,
+     "rot": 90
+    },
+    {
+     "id": "sala_planta",
+     "tipo": "piso",
+     "x": -2.35,
+     "y": 1.7,
+     "z": 0,
+     "rot": 0
+    },
+    {
+     "id": "sala_lampara",
+     "tipo": "piso",
+     "x": 1.95,
+     "y": 1.65,
+     "z": 0,
+     "rot": 0
+    },
+    {
+     "id": "sala_peluche",
+     "tipo": "peluche",
+     "x": 1.05,
+     "y": 1.55,
+     "z": 0.62,
+     "rot": 0
+    },
+    {
+     "id": "sala_mesa",
+     "tipo": "mesa",
+     "x": 0.5,
+     "y": 0.3,
+     "z": 0.44,
+     "rot": 0
+    }
+   ]
+  },
+  "cocina": {
+   "nombre": "Cocina",
+   "puntos": {
+    "entrada": {
+     "x": 2.2,
+     "y": 1.35,
+     "rot": 0
+    },
+    "comer_izq": {
+     "x": -0.2,
+     "y": -0.5,
+     "rot": 90
+    },
+    "comer_der": {
+     "x": 1.4,
+     "y": -0.5,
+     "rot": -90
+    },
+    "nevera": {
+     "x": 1.15,
+     "y": 1.0,
+     "rot": 180
+    },
+    "estufa": {
+     "x": -1.95,
+     "y": 1.15,
+     "rot": 180
+    },
+    "centro_izq": {
+     "x": -1.9,
+     "y": -0.8,
+     "rot": 0
+    },
+    "centro_der": {
+     "x": -0.6,
+     "y": -1.3,
+     "rot": 0
+    }
+   },
+   "sitios": [
+    {
+     "id": "cocina_cuadro",
+     "tipo": "cuadro",
+     "x": -2.6700000000000004,
+     "y": 1.1,
+     "z": 1.85,
+     "rot": 90
+    },
+    {
+     "id": "cocina_planta",
+     "tipo": "piso",
+     "x": 2.35,
+     "y": -1.7,
+     "z": 0,
+     "rot": 0
+    },
+    {
+     "id": "cocina_mesa",
+     "tipo": "mesa",
+     "x": 0.35,
+     "y": -0.3,
+     "z": 0.76,
+     "rot": 0
+    }
+   ]
+  },
+  "bano": {
+   "nombre": "Baño",
+   "puntos": {
+    "entrada": {
+     "x": 2.25,
+     "y": 1.35,
+     "rot": 0
+    },
+    "tina": {
+     "x": 0.55,
+     "y": 1.6,
+     "rot": 0
+    },
+    "espejo": {
+     "x": -1.75,
+     "y": 0.1,
+     "rot": -90
+    },
+    "centro_izq": {
+     "x": -0.9,
+     "y": -0.8,
+     "rot": 0
+    },
+    "centro_der": {
+     "x": 0.5,
+     "y": -0.9,
+     "rot": 0
+    }
+   },
+   "sitios": [
+    {
+     "id": "bano_cuadro",
+     "tipo": "cuadro",
+     "x": -2.6700000000000004,
+     "y": 1.3,
+     "z": 1.85,
+     "rot": 90
+    },
+    {
+     "id": "bano_planta",
+     "tipo": "piso",
+     "x": -2.35,
+     "y": -1.7,
+     "z": 0,
+     "rot": 0
+    }
+   ]
+  },
+  "cuarto": {
+   "nombre": "Cuarto",
+   "puntos": {
+    "entrada": {
+     "x": 2.3,
+     "y": 1.35,
+     "rot": 0
+    },
+    "cama_izq": {
+     "x": -0.4,
+     "y": 0.95,
+     "rot": 0
+    },
+    "cama_der": {
+     "x": 0.6,
+     "y": 0.95,
+     "rot": 0
+    },
+    "centro_izq": {
+     "x": -0.7,
+     "y": -1.3,
+     "rot": 0
+    },
+    "centro_der": {
+     "x": 0.7,
+     "y": -1.35,
+     "rot": 0
+    },
+    "closet": {
+     "x": -1.55,
+     "y": -0.8,
+     "rot": -90
+    }
+   },
+   "sitios": [
+    {
+     "id": "cuarto_cuadro",
+     "tipo": "cuadro",
+     "x": 0.1,
+     "y": 2.0700000000000003,
+     "z": 2.2,
+     "rot": 0
+    },
+    {
+     "id": "cuarto_peluche",
+     "tipo": "peluche",
+     "x": 0.75,
+     "y": 1.65,
+     "z": 0.7,
+     "rot": 0
+    },
+    {
+     "id": "cuarto_planta",
+     "tipo": "piso",
+     "x": 2.35,
+     "y": -1.7,
+     "z": 0,
+     "rot": 0
+    },
+    {
+     "id": "cuarto_lampara",
+     "tipo": "piso",
+     "x": 2.35,
+     "y": 0.2,
+     "z": 0,
+     "rot": 0
+    }
+   ]
+  }
+ },
+ "notas": {
+  "cuarto": "cocina",
+  "x": 1.15,
+  "y": 1.2600000000000002,
+  "z": 1.35,
+  "ancho": 0.7,
+  "alto": 0.9
+ }
+}

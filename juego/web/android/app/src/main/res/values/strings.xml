@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Súper Manía</string>
-    <string name="title_activity_main">Súper Manía</string>
+    <string name="app_name">Nuestro Hogar</string>
+    <string name="title_activity_main">Nuestro Hogar</string>
     <string name="package_name">com.javialexis.supermania</string>
     <string name="custom_url_scheme">com.javialexis.supermania</string>
 </resources>

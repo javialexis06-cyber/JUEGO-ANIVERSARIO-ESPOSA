@@ -13,7 +13,8 @@
    "cajera": 1.0,
    "reponedor": 1.0,
    "guardia": 1.0,
-   "aseo": 1.0
+   "aseo": 1.0,
+   "ella": 1.0
   },
   "poses_el": [
    "reposo",
@@ -31,6 +32,29 @@
    "caminar_b",
    "tomar"
   ],
-  "animados": true
+  "animados": true,
+  "poses_mascota": [
+   "comer_a",
+   "comer_b",
+   "dormido",
+   "frotar_a",
+   "frotar_b",
+   "recibir_caricia",
+   "acariciar",
+   "abrazo_izq",
+   "abrazo_der",
+   "beso",
+   "regalo",
+   "hablar_a",
+   "hablar_b",
+   "triste",
+   "saludo_a",
+   "saludo_b",
+   "sentado",
+   "pensando",
+   "comer_sentado_a",
+   "comer_sentado_b",
+   "sentado_feliz"
+  ]
  }
 }

@@ -184,6 +184,7 @@ def build(coll=None):
     mats = materials()
     head = personaje.build_head(coll, P, mats, NAME)
     face, surf = personaje.build_face(coll, head, P, mats, NAME)
+    personaje.build_expressions(coll, P, NAME, surf)
     personaje.build_ears(coll, head, P, mats, NAME, surf)
     personaje.build_neck(coll, P, mats, NAME)
     cap = hair_cap(coll, head, mats)
@@ -194,4 +195,7 @@ def build(coll=None):
     cuerpo.pants(coll, mats, NAME, D)
     cuerpo.legs(coll, mats, NAME, D)
     cuerpo.shoes(coll, mats, NAME, D)
+    ropa = [o for o in coll.objects if o.type == 'MESH' and ('camiseta' in o.name or 'torso' in o.name or 'chaleco' in o.name) and not o.hide_viewport]
+    if ropa:
+        personaje.build_dirt_clothes(coll, NAME, ropa)
     return coll
