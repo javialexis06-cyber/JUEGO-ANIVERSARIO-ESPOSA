@@ -390,10 +390,11 @@ await foto(ella, '03-beso-visto-por-ella');
 
 // Ella sin internet: Él le manda besos y un regalo; al volver le llega todo una sola vez
 await esperar(el, () => !window.__casa || !document.querySelector('.accion') || true, null, 1000);
-await el.waitForTimeout(4000); // termina la coreografía
+await el.waitForFunction(() => !window.__fase('el') && !window.__fase('ella'), null, { timeout: 90000 }).catch(() => {}); // termina el beso
 sinRed.add(ella);
 const cOff = (await estado(ella)).personajes.ella.carino;
 for (let i = 0; i < 3; i++) {
+  await el.waitForFunction(() => !window.__fase('el') && !window.__fase('ella'), null, { timeout: 90000 }).catch(() => {});
   await el.evaluate(() => document.getElementById('chip-pareja').click());
   await el.click('[data-mimo="abrazo"]');
   await el.waitForFunction(() => !window.__fase('el') && !window.__fase('ella'), null, { timeout: 60000 }).catch(() => {});
@@ -458,9 +459,11 @@ await ella.click('[data-hoja="album"]');
 await ella.setInputFiles('#rec-foto', { name: 'foto.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64') });
 await ella.fill('#rec-titulo', 'Nuestra primera cita');
 await ella.click('#form-recuerdo button[type="submit"]');
-await esperar(el, () => window.__casa && document && true, null, 1000);
-await el.waitForTimeout(3000);
-revisar(db.recuerdos.length === 1 && db.fotos.size === 1, 'Ella sube una foto y queda en el álbum de los dos');
+for (let i = 0; i < 30 && !db.recuerdos.length; i++) await ella.waitForTimeout(1000);
+const avisoFoto = await ella.textContent('#rec-aviso').catch(() => '(sin hoja)');
+revisar(db.recuerdos.length === 1 && db.fotos.size === 1, `Ella sube una foto y queda en el álbum de los dos (aviso: «${(avisoFoto ?? '').trim()}»)`);
+await el.waitForTimeout(2000);
+revisar((await estado(el)) && (await el.evaluate(() => window.__casa())) !== null, 'Él recibe el recuerdo');
 
 console.log(errores.length ? `\nERRORES:\n${errores.join('\n')}` : '\nsin errores');
 await navegador.close();
