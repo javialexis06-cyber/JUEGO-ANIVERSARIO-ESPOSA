@@ -1,5 +1,16 @@
 // Súper Manía en Pareja · jugable 1 (la tiendita completa: 25 días, en solitario con Él).
+// Letras empacadas con el juego (funciona sin internet, también en la app de Android)
+import '@fontsource/courier-prime/latin-400.css';
+import '@fontsource/courier-prime/latin-700.css';
+import '@fontsource/fredoka/latin-500.css';
+import '@fontsource/fredoka/latin-600.css';
+import '@fontsource/fredoka/latin-700.css';
+import '@fontsource/nunito/latin-600.css';
+import '@fontsource/nunito/latin-700.css';
+import '@fontsource/nunito/latin-800.css';
 import './estilos.css';
+import { App } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import { AYUDAS, AYUDAS_MAX, CLIENTES, GrupoMejora, MEJORAS, TipoCliente } from './balance';
 import * as guardado from './guardado';
 import { Juego, NivelDato, textoDe } from './juego';
@@ -420,6 +431,24 @@ function conectarBotones() {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && juego && !juego.terminado) $('btn-pausa').click();
   });
+  // Si el celular cambia de app o se apaga la pantalla, el día se pausa y la música calla
+  const alSalir = () => {
+    if (juego && !juego.terminado && !pausado) $('btn-pausa').click();
+    sonido.suspender();
+  };
+  document.addEventListener('visibilitychange', () => (document.hidden ? alSalir() : sonido.activar()));
+  if (Capacitor.isNativePlatform()) {
+    void App.addListener('appStateChange', ({ isActive }) => (isActive ? sonido.activar() : alSalir()));
+    // Botón «atrás» de Android: pausa el día, vuelve al menú o sale de la app
+    void App.addListener('backButton', () => {
+      const visible = (id: string) => !$(id).hidden;
+      if (juego && !juego.terminado && !pausado) $('btn-pausa').click();
+      else if (visible('pausa')) $('btn-continuar').click();
+      else if (visible('resultado')) $('btn-rmenu').click();
+      else if (visible('tarjeta') || visible('mejoras') || visible('como')) abrirMenu();
+      else void App.exitApp();
+    });
+  }
 }
 
 /** Piloto automático para pruebas (?bot): juega como alguien atento. Atrapa, cobra cuando hay fila,

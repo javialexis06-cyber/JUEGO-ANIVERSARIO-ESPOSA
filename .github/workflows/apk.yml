@@ -1,0 +1,78 @@
+# Compila la app de Android (APK de prueba) del juego y la deja en Releases para descargarla en el celular.
+name: APK Android
+
+on:
+  push:
+    branches: [claude/supermarket-mania-minigame-xn2it8]
+    paths: ['juego/web/**', '.github/workflows/apk.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apk
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: juego/web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: juego/web/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+          cache-dependency-path: juego/web/android/**/*.gradle*
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar el juego web
+        run: npm run build
+
+      - name: Quitar la copia de modelos sin WebAssembly (la app no la necesita)
+        run: rm -rf dist/modelos-plano
+
+      - name: Copiar el juego al proyecto de Android
+        run: npx cap sync android
+
+      - name: Compilar la APK
+        working-directory: juego/web/android
+        env:
+          NUMERO_VERSION: ${{ github.run_number }}
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Nombrar la APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk SuperMania.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SuperMania-apk
+          path: juego/web/SuperMania.apk
+
+      - name: Publicar en Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: Súper Manía · APK de prueba ${{ github.run_number }}
+          prerelease: false
+          make_latest: true
+          files: juego/web/SuperMania.apk
+          body: |
+            APK de prueba de Súper Manía en Pareja (la tiendita completa, 25 días).
+
+            Para instalar en Android: descarga SuperMania.apk, ábrela y permite «instalar apps de fuentes desconocidas» cuando el celular lo pida.
+            Las versiones nuevas se instalan encima de la anterior sin perder el progreso.

@@ -31,3 +31,15 @@ node scripts/probar.mjs [url] [nivel] [carpeta] [ancho]x[alto] [partida.json]   
 - Tono AgX + `saturate/contrast` en el lienzo para parecerse al «AgX Medium High Contrast» de los renders.
 - El piso de baldosas se redibuja en el juego con los datos del material de Blender (`extras.baldosa`) y los colores medidos en el render.
 - Si el celular no sostiene ~30 cuadros por segundo, se apaga la oclusión y se baja la resolución solo.
+
+## App de Android (APK)
+
+El proyecto de Android está en `android/` (Capacitor: el mismo juego web dentro de una app).
+GitHub Actions (`.github/workflows/apk.yml`) compila la APK en cada cambio de `juego/web/` y la publica en
+**Releases**; la más reciente siempre está en
+`https://github.com/javialexis06-cyber/juego-aniversario-esposa/releases/latest/download/SuperMania.apk`.
+
+- La app va en horizontal, a pantalla completa y sin apagar la pantalla; el botón «atrás» pausa el día.
+- Se firma con la clave de depuración estándar de Android (`android/app/debug.keystore`, pública por diseño) para que
+  cada versión se instale encima de la anterior sin perder el progreso. Para Play Store se usaría otra clave, privada.
+- Compilar a mano (con Android SDK): `npm run build && npx cap sync android && cd android && ./gradlew assembleDebug`.

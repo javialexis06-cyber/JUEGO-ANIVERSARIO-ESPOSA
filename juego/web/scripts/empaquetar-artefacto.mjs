@@ -40,6 +40,10 @@ const pagina = [
 ].join('\n');
 writeFileSync(join(SALIDA, 'index.html'), pagina);
 
+// Letras (el CSS de adentro las pide en ./assets/)
+mkdirSync(join(SALIDA, 'assets'), { recursive: true });
+for (const f of readdirSync(join(DIST, 'assets')).filter((f) => /\.woff2?$/.test(f))) cpSync(join(DIST, 'assets', f), join(SALIDA, 'assets', f));
+
 // Modelos, íconos y datos (se leen con fetch relativo)
 for (const carpeta of ['modelos', 'modelos-plano', 'datos']) if (existsSync(join(DIST, carpeta))) cpSync(join(DIST, carpeta), join(SALIDA, carpeta), { recursive: true });
 // El visor no sirve .glb: cada modelo va como texto base64 (.glb.txt) y el juego lo decodifica al cargar

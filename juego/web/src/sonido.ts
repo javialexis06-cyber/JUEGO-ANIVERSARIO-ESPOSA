@@ -42,6 +42,11 @@ export function activar() {
   }
 }
 
+/** Calla todo mientras la app está en segundo plano (activar() la despierta). */
+export function suspender() {
+  if (ctx && ctx.state === 'running') void ctx.suspend();
+}
+
 export function silenciado() {
   return silencio;
 }
