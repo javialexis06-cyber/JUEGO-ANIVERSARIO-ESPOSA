@@ -131,6 +131,19 @@ interface DatosLocales {
   personajes: Record<Rol, EstadoPersonaje>;
   recuerdos: Recuerdo[];
   eventos: Evento[];
+  /** Cuántas veces se ha guardado: entre pestañas manda la copia más nueva. */
+  v: number;
+}
+
+function datosNormales(d: Partial<DatosLocales> | null): DatosLocales | null {
+  if (!d || typeof d !== 'object') return null;
+  return {
+    casa: normalizarCasa(d.casa),
+    personajes: personajesNormales(d.personajes),
+    recuerdos: Array.isArray(d.recuerdos) ? d.recuerdos.filter((r) => r && typeof r.foto === 'string') : [],
+    eventos: eventosNormales(d.eventos),
+    v: Number.isFinite(d.v) ? Number(d.v) : 0,
+  };
 }
 
 export class SincroLocal extends Base implements Sincro {
@@ -138,6 +151,8 @@ export class SincroLocal extends Base implements Sincro {
   codigo = 'LOCAL';
   private canal: BroadcastChannel | null = null;
   private alSalir = () => this.canal?.postMessage({ tipo: 'adios', rol: this.rol });
+  /** Lo último que avisó otra pestaña (o esta): el almacenamiento de esta pestaña puede ir un instante atrasado. */
+  private ultimo: DatosLocales | null = null;
 
   constructor(public rol: Rol) {
     super();
@@ -156,14 +171,10 @@ export class SincroLocal extends Base implements Sincro {
   }
 
   private leerDatos(): DatosLocales | null {
-    const d = leer<Partial<DatosLocales>>(CLAVE_LOCAL);
-    if (!d || typeof d !== 'object') return null;
-    return {
-      casa: normalizarCasa(d.casa),
-      personajes: personajesNormales(d.personajes),
-      recuerdos: Array.isArray(d.recuerdos) ? d.recuerdos.filter((r) => r && typeof r.foto === 'string') : [],
-      eventos: eventosNormales(d.eventos),
-    };
+    const d = datosNormales(leer<Partial<DatosLocales>>(CLAVE_LOCAL));
+    // Si otra pestaña ya avisó algo más nuevo que lo que alcanzó a llegar al almacenamiento, manda lo avisado
+    if (this.ultimo && (!d || this.ultimo.v > d.v)) return structuredClone(this.ultimo);
+    return d;
   }
 
   private tomar(d: DatosLocales) {
@@ -183,6 +194,8 @@ export class SincroLocal extends Base implements Sincro {
       this.enLinea[m.rol as Rol] = false;
       this.avisar('presencia');
     } else if (m.tipo === 'datos') {
+      const llegado = datosNormales(m.datos);
+      if (llegado && (!this.ultimo || llegado.v >= this.ultimo.v)) this.ultimo = llegado;
       const d = this.leerDatos();
       if (!d) return;
       this.tomar(d);
@@ -195,12 +208,15 @@ export class SincroLocal extends Base implements Sincro {
 
   /** Lee lo último guardado (la otra pestaña pudo cambiarlo), aplica solo este cambio y lo guarda. */
   private actualizar(que: QueCambio, cambio: (d: DatosLocales) => void, rol?: Rol) {
-    const d: DatosLocales = this.leerDatos() ?? { casa: this.casa, personajes: this.personajes, recuerdos: this.recuerdos, eventos: this.eventos };
+    const d: DatosLocales = this.leerDatos() ?? { casa: this.casa, personajes: this.personajes, recuerdos: this.recuerdos, eventos: this.eventos, v: 0 };
     cambio(d);
     d.eventos = d.eventos.slice(0, 40);
+    d.v++;
     if (!escribir(CLAVE_LOCAL, d)) throw new Error('No cabe más en este celular.');
+    this.ultimo = d;
     this.tomar(d);
-    this.canal?.postMessage({ tipo: 'datos', que, rolCambio: rol });
+    // Los datos van en el aviso: la otra pestaña no depende de que su almacenamiento ya esté al día
+    this.canal?.postMessage({ tipo: 'datos', que, rolCambio: rol, datos: d });
     this.avisar(que, rol);
   }
 

@@ -34,7 +34,8 @@ async function abrir(ctx, rol, datos, extra = '') {
       sessionStorage.setItem('sembrado', '1');
     }
   }, ['nuestro-hogar-local', datos]);
-  await p.goto(`${url}?rol=${rol}&local=1&rapido=3${extra}`, { waitUntil: 'domcontentloaded', timeout: 180000 });
+  p.urlCasa = `${url}?rol=${rol}&local=1&rapido=3${extra}`;
+  await p.goto(p.urlCasa, { waitUntil: 'domcontentloaded', timeout: 180000 });
   const listo = await p.waitForFunction(() => window.__listo === true, null, { timeout: 180000 }).then(() => true, () => false);
   p.listo = listo;
   return p;
@@ -197,7 +198,8 @@ if (partes.includes('4')) {
   // Mimos muy seguidos: uno a la vez
   await el.bringToFront();
   // Espera a que termine la coreografía del regalo (si no, el beso responde «Un momentico…»)
-  await el.waitForFunction(() => !window.__fase('el') && !window.__fase('ella'), null, { timeout: 90000 }).catch(() => {});
+  const libres = await el.waitForFunction(() => !window.__fase('el') && !window.__fase('ella'), null, { timeout: 240000 }).then(() => true, () => false);
+  if (!libres) console.log('   (la coreografía del regalo no terminó a tiempo:', JSON.stringify(await el.evaluate(() => [window.__fase('el'), window.__fase('ella')])), ')');
   await el.evaluate(() => document.getElementById('chip-pareja').click());
   await Promise.all(Array.from({ length: 8 }, () => el.evaluate(() => document.querySelector('[data-mimo="beso"]')?.click())));
   const contarBesos = () => JSON.parse(localStorage.getItem('nuestro-hogar-local')).eventos.filter((x) => x.tipo === 'beso').length;
@@ -205,6 +207,9 @@ if (partes.includes('4')) {
   await el.waitForTimeout(3000);
   const besos = await el.evaluate(contarBesos);
   revisar(besos === 1, `8 toques a «Beso» seguidos mandan un solo beso (${besos})`);
+  // Con las dos pestañas escribiendo a la vez no se pierde ningún aviso (el regalo sigue ahí)
+  const tipos = await el.evaluate(() => JSON.parse(localStorage.getItem('nuestro-hogar-local')).eventos.map((x) => x.tipo));
+  revisar(tipos.filter((t) => t === 'regalo').length === 1, `Ningún evento se pierde entre las dos pestañas (${tipos.join(', ')})`);
   revisar(!el.errores.length && !ella.errores.length, `Sin errores${[...el.errores, ...ella.errores].length ? `: ${[...el.errores, ...ella.errores].slice(0, 3).join(' | ')}` : ''}`);
   await ctx.close();
 }
@@ -276,10 +281,17 @@ if (partes.includes('6')) {
       }
       n++;
       await p.waitForTimeout(40);
+      // Un toque pudo caer en «Ir a trabajar» (abre el súper) o en «Salir»: se vuelve a la casa como lo haría la persona
+      if (p.url() !== p.urlCasa) {
+        p.salidas = (p.salidas ?? 0) + 1;
+        await p.goto(p.urlCasa, { waitUntil: 'domcontentloaded', timeout: 180000 });
+        await p.waitForFunction(() => window.__listo === true, null, { timeout: 180000 });
+      }
     }
     return n;
   };
   const [n1, n2] = await Promise.all([mono(el, 150000), mono(ella, 150000)]);
+  if (el.salidas || ella.salidas) console.log(`   salieron de la casa y volvieron: Él ${el.salidas ?? 0}, Ella ${ella.salidas ?? 0}`);
   await el.waitForTimeout(3000);
   const e1 = await estado(el), e2 = await estado(ella);
   const inv = Object.values(e1.inventario).every((v) => Number.isInteger(v) && v >= 0);
