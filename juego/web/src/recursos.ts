@@ -232,6 +232,17 @@ export function copiaAnimada<T extends THREE.Object3D>(o: T): T {
   return clonarConEsqueleto(o) as T;
 }
 
+/** Suelta lo propio de copias animadas que ya salieron de la escena: cada malla con esqueleto tiene su propia
+ *  textura de huesos en la tarjeta gráfica (la geometría y los materiales se comparten y se quedan). */
+export function liberarEsqueletos(...raices: THREE.Object3D[]) {
+  for (const raiz of raices) {
+    raiz.traverse((o) => {
+      const m = o as THREE.SkinnedMesh;
+      if (m.isSkinnedMesh) m.skeleton.dispose();
+    });
+  }
+}
+
 /** Copia que comparte geometría y materiales (liviana). */
 export function copia<T extends THREE.Object3D>(o: T): T {
   return o.clone(true) as T;

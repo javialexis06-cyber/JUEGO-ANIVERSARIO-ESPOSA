@@ -71,6 +71,7 @@ carpeta de la casa.
 | Fallo | Qué pasaba | Arreglo |
 |---|---|---|
 | Memoria de la tarjeta gráfica | Cada día jugado y cada compra dejaban tapetes 3D sin soltar. | Se liberan al salir del día y al volver al menú. |
+| Texturas de huesos de los personajes | Cada cliente, ayudante o ladrón es una copia con su propio esqueleto, y cada parte del cuerpo guarda una textura en la tarjeta gráfica. Al irse de la tienda o al salir del día no se soltaba: **259 texturas más por cada día** (tras 10 días, de 541 a 3131). En el celular eso termina en lentitud o en que la app se cierre. | Se sueltan cuando el personaje sale de la tienda y al terminar el día: después de cada día se vuelve a las mismas 23 texturas del menú. |
 | Dos tiendas montadas | Dos compras seguidas en «Mejorar la tienda» podían dejar dos tiendas en el fondo. | Solo se queda la última. |
 | Partida dañada | Una partida guardada rara podía romper el menú. | Se normaliza al cargar. |
 | Cliente fantasma | Salir del día justo cuando entraba un cliente lo dejaba parado en la tienda del menú. | Lo que termina de cargar después de salir ya no aparece. |

@@ -9,7 +9,7 @@ import { Jugador, NuevaTarea } from './jugador';
 import { aTres, Mundo } from './mundo';
 import { P } from './navegacion';
 import { CanastaSuelta, Ladron, Mugre, Nina, Perseguible } from './problemas';
-import { cargar, cargarAnimado, copia, Productos } from './recursos';
+import { cargar, cargarAnimado, copia, liberarEsqueletos, Productos } from './recursos';
 import * as sonido from './sonido';
 import { liberarPropios, Tienda, TiendaDato, Vitrina } from './tienda';
 
@@ -558,7 +558,10 @@ export class Juego {
     for (const n of this.ninas) n.update(dt);
     for (const a of this.ayudantes) a.update(dt);
     const fuera = <T extends { estado: string; grupo: THREE.Object3D }>(xs: T[]) => {
-      for (const x of xs.filter((x) => x.estado === 'fuera')) this.mundo.escena.remove(x.grupo);
+      for (const x of xs.filter((x) => x.estado === 'fuera')) {
+        this.mundo.escena.remove(x.grupo);
+        liberarEsqueletos(x.grupo);
+      }
       return xs.filter((x) => x.estado !== 'fuera');
     };
     this.clientes = fuera(this.clientes);
@@ -648,7 +651,9 @@ export class Juego {
   destruir() {
     this.destruido = true;
     liberarPropios(this.tienda.grupo);
-    this.mundo.escena.remove(this.tienda.grupo, this.jugador.grupo, ...this.clientes.map((c) => c.grupo), ...this.mugres.map((b) => b.obj),
-      ...this.canastasSueltas.map((c) => c.obj), ...this.ladrones.map((l) => l.grupo), ...this.ninas.map((n) => n.grupo), ...this.ayudantes.map((a) => a.grupo));
+    const personas = [this.jugador.grupo, ...this.clientes.map((c) => c.grupo), ...this.ladrones.map((l) => l.grupo), ...this.ninas.map((n) => n.grupo),
+      ...this.ayudantes.map((a) => a.grupo)];
+    this.mundo.escena.remove(this.tienda.grupo, ...personas, ...this.mugres.map((b) => b.obj), ...this.canastasSueltas.map((c) => c.obj));
+    liberarEsqueletos(...personas);
   }
 }

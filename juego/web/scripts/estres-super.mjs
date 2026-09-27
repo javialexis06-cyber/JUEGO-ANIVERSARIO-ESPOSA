@@ -120,8 +120,11 @@ if (partes.includes('3')) {
   await p.click('#btn-abrir');
   await p.waitForSelector('#hud:not([hidden])', { timeout: 120000 });
   let toques = 0;
-  const fin = Date.now() + 240000;
+  const fin = Date.now() + 150000;
   while (Date.now() < fin && !(await p.isVisible('#resultado'))) {
+    // Si quedó en pausa (el toque a «Seguir» no alcanzó), se quita antes de seguir tocando: un toque al azar sobre
+    // «Salir» sacaría del día, que no es lo que se prueba aquí
+    if (await p.isVisible('#btn-continuar')) await p.click('#btn-continuar', { timeout: 5000 }).catch(() => {});
     const r = Math.random();
     if (r < 0.75) await p.mouse.click(Math.random() * 960, 60 + Math.random() * 420).catch(() => {});
     else if (r < 0.83) await p.click('#alertas .alerta', { timeout: 300 }).catch(() => {});
@@ -134,7 +137,9 @@ if (partes.includes('3')) {
     toques++;
     if (toques % 50 === 0) await p.waitForTimeout(200);
   }
-  const terminado = await p.isVisible('#resultado');
+  // Ya sin toques, el día tiene que terminar solo
+  if (await p.isVisible('#btn-continuar')) await p.click('#btn-continuar', { timeout: 5000 }).catch(() => {});
+  const terminado = await p.waitForSelector('#resultado:not([hidden])', { timeout: 900000 }).then(() => true, () => false);
   const est = await p.evaluate(() => window.__estado());
   await p.screenshot({ path: `${carpeta}/3-toques-al-azar.png`, animations: 'disabled', timeout: 120000 }).catch(() => {});
   revisar(terminado, `El día 14 termina aunque se toque todo al azar (${toques} toques)${terminado ? ` · ${JSON.stringify(est.resultado?.estrellas)}` : ` · estado ${JSON.stringify(est.juego)}`}`);
