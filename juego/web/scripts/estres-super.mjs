@@ -143,7 +143,18 @@ if (partes.includes('3')) {
   }
   // Ya sin toques, el día tiene que terminar solo
   await seguir();
-  const terminado = await p.waitForSelector('#resultado:not([hidden])', { timeout: 900000 }).then(() => true, () => false);
+  console.log(`   fin de los toques: tiempo del día ${(await p.evaluate(() => window.__estado().juego?.tiempo))?.toFixed(1)}`);
+  const hasta = Date.now() + 900000;
+  let terminado = false;
+  for (let i = 0; Date.now() < hasta; i++) {
+    terminado = await p.evaluate(() => !document.getElementById('resultado').hidden);
+    if (terminado) break;
+    if (i % 6 === 0) {
+      const e = await p.evaluate(() => window.__estado().juego);
+      console.log(`   esperando el cierre: tiempo ${e?.tiempo?.toFixed(1)} · clientes ${e?.clientes} · fila ${e?.fila} · pausa ${await p.isVisible('#pausa')}`);
+    }
+    await p.waitForTimeout(5000);
+  }
   const est = await p.evaluate(() => window.__estado());
   if (!terminado) {
     const pantallas = await p.evaluate(() => [...document.querySelectorAll('body *[id]')]
