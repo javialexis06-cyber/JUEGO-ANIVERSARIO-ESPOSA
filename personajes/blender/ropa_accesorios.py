@@ -804,9 +804,17 @@ def espalda_z(ctx, t):
     return T['bottom'] + (T['c'][2] + T['half'][2] - T['bottom']) * t
 
 
-def atras_y(ctx):
+def atras_y(ctx, z=None, x=0.0):
+    """Y de la espalda donde se apoya algo; en Ella, por fuera del pelo largo (si no, el pelo lo tapa)."""
     T = ctx.D['torso']
-    return T['c'][1] + T['half'][1] + 0.04
+    y = T['c'][1] + T['half'][1] + 0.04
+    if z is not None and not ctx.el:
+        # Varios rayos: los dos mechones largos pueden dejar una raya en el centro
+        for dx in (-0.16, -0.08, 0.0, 0.08, 0.16):
+            loc, _ = ctx.sup_pelo.ray((x + dx, 5.0, z), (0, -1, 0))
+            if loc is not None:
+                y = max(y, float(loc[1]) + 0.01)
+    return y
 
 
 @prenda('capa', 'espalda', [V('capa_roja', 'Capa de héroe roja', principal='rojo', broche='dorado'),
@@ -862,7 +870,7 @@ def alas_angel(ctx):
     m = ctx.m('principal', tipo='peluche')
     base_z = espalda_z(ctx, 0.7)
     for sx in (-1, 1):
-        base = np.array([sx * 0.1, atras_y(ctx) + 0.02, base_z])
+        base = np.array([sx * 0.1, atras_y(ctx, base_z) + 0.02, base_z])
         plumas = [(0.12, 0.05, 0.16, 0.14), (0.3, 0.1, 0.2, 0.15), (0.48, 0.16, 0.2, 0.13), (0.28, -0.1, 0.18, 0.12), (0.46, -0.04, 0.16, 0.1),
                   (0.62, 0.1, 0.14, 0.1)]
         ala(ctx, sx, plumas, m, base)
@@ -876,7 +884,7 @@ def alas_mariposa(ctx):
     m, d, p = ctx.m('principal', tipo='lisa'), ctx.m('detalle', tipo='lisa'), ctx.m('puntos', tipo='lisa')
     base_z = espalda_z(ctx, 0.62)
     for sx in (-1, 1):
-        base = np.array([sx * 0.06, atras_y(ctx) + 0.03, base_z])
+        base = np.array([sx * 0.06, atras_y(ctx, base_z) + 0.03, base_z])
         ala(ctx, sx, [(0.34, 0.22, 0.34, 0.3)], m, base, inclinar=15)
         ala(ctx, sx, [(0.26, -0.22, 0.24, 0.2)], d, base + np.array([0, 0.005, 0]), inclinar=15)
         for k, (dx, dz) in enumerate(((0.42, 0.3), (0.28, 0.12), (0.3, -0.25))):
@@ -889,7 +897,7 @@ def alas_abeja(ctx):
     m = ctx.m('principal', tipo='brillo')
     base_z = espalda_z(ctx, 0.72)
     for sx in (-1, 1):
-        base = np.array([sx * 0.06, atras_y(ctx) + 0.03, base_z])
+        base = np.array([sx * 0.06, atras_y(ctx, base_z) + 0.03, base_z])
         ala(ctx, sx, [(0.2, 0.16, 0.2, 0.13), (0.16, -0.04, 0.14, 0.09)], m, base, inclinar=30)
 
 
@@ -900,7 +908,7 @@ def alas_murcielago(ctx):
     m = ctx.m('principal', tipo='lisa')
     base_z = espalda_z(ctx, 0.7)
     for sx in (-1, 1):
-        base = np.array([sx * 0.08, atras_y(ctx) + 0.02, base_z])
+        base = np.array([sx * 0.08, atras_y(ctx, base_z) + 0.02, base_z])
         for k, (dx, dz, rx, rz) in enumerate(((0.2, 0.08, 0.2, 0.2), (0.38, 0.12, 0.18, 0.22), (0.54, 0.2, 0.14, 0.2))):
             o = clay.blob(ctx.nombre(f'ala murcielago {ctx.lado(sx)} {k}'), (0, 0, 0), (rx, 0.02, rz), ctx.coll, m, n=6,
                           shaper=lambda v, rz=rz: v * np.column_stack([1 - 0.7 * np.clip(-v[:, 2] / rz, 0, 1), np.ones(len(v)), np.ones(len(v))]))
@@ -919,8 +927,8 @@ def alas_murcielago(ctx):
 def mochila(ctx):
     m, d = ctx.m('principal'), ctx.m('detalle')
     T = ctx.D['torso']
-    y = atras_y(ctx) + 0.1
     z = T['c'][2]
+    y = atras_y(ctx, z + 0.1) + 0.1
     ctx.pieza(clay.rbox(ctx.nombre('mochila'), (0, y, z), (0.3, 0.12, 0.3), ctx.coll, m, p=4, n=6), 'torso')
     ctx.pieza(clay.rbox(ctx.nombre('bolsillo mochila'), (0, y + 0.12, z - 0.1), (0.2, 0.05, 0.13), ctx.coll, d, p=4, n=5), 'torso')
     ctx.pieza(clay.rbox(ctx.nombre('tapa mochila'), (0, y + 0.02, z + 0.27), (0.29, 0.13, 0.06), ctx.coll, d, p=4, n=5), 'torso')
@@ -940,8 +948,10 @@ def mochila(ctx):
 # ---------------------------------------------------------------------------
 
 def base_cola(ctx):
-    y = (ctx.D['pants']['hip_half'][1] + 0.05) if ctx.el else 0.3
-    return np.array([0, y + 0.02, ctx.B['pelvis_z'] + 0.02])
+    z = ctx.B['pelvis_z'] + 0.02
+    # En Ella la cola sale por fuera del pelo largo, que le cae hasta la cadera
+    y = (ctx.D['pants']['hip_half'][1] + 0.05) if ctx.el else max(0.3, atras_y(ctx, z) - 0.04)
+    return np.array([0, y + 0.02, z])
 
 
 @prenda('cola_gato', 'cola', [V('cola_gato', 'Cola de gatito negra', principal='negro'), V('cola_gato_blanca', 'Cola de gatito blanca', principal='blanco'),
