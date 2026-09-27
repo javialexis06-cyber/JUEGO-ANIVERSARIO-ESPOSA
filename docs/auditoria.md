@@ -63,6 +63,7 @@ carpeta de la casa.
 | Mimos encimados | Tocar «Beso» muchas veces encadenaba coreografías. | Un mimo a la vez («Un momentico…»). |
 | La tienda saltaba arriba | Al comprar, la lista volvía al principio. | Se queda donde iba. |
 | Fotos sin internet | Sin internet cabían pocas fotos y al llenarse no se podía guardar nada más. | Fotos más livianas (900 px) y máximo 20 sin internet. |
+| Casa lenta en celulares viejos | Con cuadros muy espaciados (celular viejo o mientras carga la casa), el despertar solo, la cajita del regalo y el fin de los mimos se atrasaban muchísimo. | Se revisa cada medio segundo de reloj real, sin importar cuántos cuadros alcance a dibujar. |
 
 ### Súper Manía
 
