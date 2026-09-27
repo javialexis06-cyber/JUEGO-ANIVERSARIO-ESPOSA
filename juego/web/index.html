@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Súper Manía en Pareja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap">
+</head>
+<body>
+<canvas id="lienzo" aria-label="La tienda"></canvas>
+<div id="capa" aria-hidden="true"></div>
+
+<!-- Carga -->
+<section id="carga" class="pantalla pantalla-carga">
+  <div class="logo">
+    <span class="logo-linea">Súper Manía</span>
+    <span class="logo-pareja">en Pareja</span>
+  </div>
+  <div class="carga-riel" role="progressbar" aria-label="Cargando la tienda"><i id="carga-barra"></i></div>
+  <p id="carga-texto">Abriendo la tiendita…</p>
+</section>
+
+<!-- Menú: etiquetas de precio colgadas del riel de la góndola -->
+<section id="menu" class="pantalla pantalla-menu" hidden>
+  <header class="menu-cabeza">
+    <div class="logo logo-chico">
+      <span class="logo-linea">Súper Manía</span>
+      <span class="logo-pareja">en Pareja</span>
+    </div>
+    <div class="menu-saldos">
+      <span class="saldo"><i class="moneda" aria-hidden="true"></i><b id="menu-dinero">0</b></span>
+      <span class="saldo"><i class="estrella" aria-hidden="true"></i><b id="menu-estrellas">0</b></span>
+    </div>
+  </header>
+  <div class="riel">
+    <p class="riel-titulo">Tiendita de barrio · elige el día</p>
+    <div id="niveles" class="riel-etiquetas"></div>
+  </div>
+  <nav class="menu-botones">
+    <button id="btn-mejoras" class="boton boton-tomate">Mejorar la tienda</button>
+    <button id="btn-como" class="boton boton-papel">Cómo se juega</button>
+  </nav>
+</section>
+
+<!-- Tarjeta del nivel: lista de mercado -->
+<section id="tarjeta" class="pantalla pantalla-centro" hidden>
+  <article class="lista-mercado">
+    <p class="lista-evento" id="tarjeta-evento">Día normal</p>
+    <h2 id="tarjeta-titulo">Nivel 1</h2>
+    <p class="lista-sub" id="tarjeta-sub"></p>
+    <p class="lista-novedad" id="tarjeta-novedad"></p>
+    <h3>Estrellas del día</h3>
+    <ul id="tarjeta-objetivos" class="lista-objetivos"></ul>
+    <div class="fila-botones">
+      <button id="btn-tarjeta-volver" class="boton boton-papel">Volver</button>
+      <button id="btn-abrir" class="boton boton-tomate">Abrir la tienda</button>
+    </div>
+  </article>
+</section>
+
+<!-- Resultado: tiquete de caja -->
+<section id="resultado" class="pantalla pantalla-centro" hidden>
+  <article class="tiquete">
+    <p class="tiquete-negocio">TIENDITA DE BARRIO<br><span>Bucaramanga · Medellín</span></p>
+    <p class="tiquete-titulo" id="rec-titulo">Nivel 1</p>
+    <ul id="rec-estrellas" class="tiquete-estrellas"></ul>
+    <div id="rec-lineas" class="tiquete-lineas"></div>
+    <div class="tiquete-total"><span>GANANCIA DEL DÍA</span><span><i class="moneda" aria-hidden="true"></i><b id="rec-total">0</b></span></div>
+    <p id="rec-pasa" class="tiquete-pasa"></p>
+    <div class="tiquete-botones">
+      <button id="btn-siguiente" class="boton boton-tomate">Siguiente día</button>
+      <button id="btn-repetir" class="boton boton-papel">Repetir</button>
+      <button id="btn-rmejoras" class="boton boton-papel">Mejorar la tienda</button>
+      <button id="btn-rmenu" class="boton boton-papel">Menú</button>
+    </div>
+  </article>
+</section>
+
+<!-- Mejoras -->
+<section id="mejoras" class="pantalla pantalla-lado" hidden>
+  <article class="catalogo">
+    <header class="catalogo-cabeza">
+      <h2>Mejorar la tienda</h2>
+      <span class="saldo"><i class="moneda" aria-hidden="true"></i><b id="mej-dinero">0</b></span>
+    </header>
+    <p class="catalogo-nota">Lo que compres aparece en la tienda de atrás y se queda para los próximos días. En esta tienda las vitrinas llegan hasta el nivel 2.</p>
+    <ul id="mej-lista" class="catalogo-lista"></ul>
+    <button id="btn-mej-cerrar" class="boton boton-tomate">Listo</button>
+  </article>
+</section>
+
+<!-- Cómo se juega -->
+<section id="como" class="pantalla pantalla-centro" hidden>
+  <article class="lista-mercado como">
+    <h2>Cómo se juega</h2>
+    <ol class="pasos">
+      <li><b>Toca una vitrina</b> que se esté quedando vacía. Él va a la bodega, carga la caja en el carrito y la llena.</li>
+      <li><b>Toca la caja registradora</b> cuando haya fila. Él se queda cobrando mientras haya clientes esperando.</li>
+      <li><b>Encadena toques:</b> cada toque se suma a su lista y verás el número de orden encima. En un solo viaje a la bodega carga hasta 5 cajas.</li>
+      <li><b>Mira los globos:</b> muestran lo que busca cada cliente y su paciencia. Si se pone roja, se va sin comprar.</li>
+      <li><b>Los avisos de abajo</b> te dicen qué vitrina está baja o vacía. Tocarlos también manda a reponer.</li>
+      <li><b>Basura</b> (desde el día 6): tócala para que Él la recoja antes de que espante clientes.</li>
+    </ol>
+    <p class="como-nota">Con dos dedos acercas la cámara. Juega con el celular acostado para ver mejor la tienda.</p>
+    <div class="fila-botones">
+      <button id="btn-borrar" class="boton boton-papel boton-chico">Empezar de cero</button>
+      <button id="btn-como-cerrar" class="boton boton-tomate">Entendido</button>
+    </div>
+  </article>
+</section>
+
+<!-- Pausa -->
+<section id="pausa" class="pantalla pantalla-centro" hidden>
+  <article class="lista-mercado pausa">
+    <h2>Pausa</h2>
+    <div class="fila-botones">
+      <button id="btn-salir" class="boton boton-papel">Salir al menú</button>
+      <button id="btn-continuar" class="boton boton-tomate">Seguir jugando</button>
+    </div>
+  </article>
+</section>
+
+<!-- HUD del día -->
+<header id="hud" hidden>
+  <div class="hud-izq">
+    <span id="hud-nivel" class="hud-nivel">Nivel 1</span>
+    <span id="hud-reloj" class="hud-reloj">3:00</span>
+  </div>
+  <div id="hud-objetivos" class="hud-objetivos"></div>
+  <div class="hud-der">
+    <span class="saldo"><i class="moneda" aria-hidden="true"></i><b id="hud-dinero">0</b></span>
+    <button id="btn-pausa" class="boton-pausa" aria-label="Pausa"><i></i><i></i></button>
+  </div>
+</header>
+<footer id="alertas" hidden></footer>
+<div id="cargando-nivel" hidden>Acomodando la tienda…</div>
+<div id="toast" role="status" hidden></div>
+<script type="module" src="./src/main.ts"></script>
+</body>
+</html>

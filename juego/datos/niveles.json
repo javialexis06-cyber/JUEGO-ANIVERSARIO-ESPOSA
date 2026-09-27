@@ -19,12 +19,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 55 monedas",
-     "pareja": "Vender 80 monedas"
+     "solitario": "Vender 35 monedas",
+     "pareja": "Vender 50 monedas"
     },
     "meta": {
-     "solitario": 55,
-     "pareja": 80
+     "solitario": 35,
+     "pareja": 50
     }
    },
    {
@@ -61,16 +61,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 85,
-     "pareja": 130
+     "solitario": 55,
+     "pareja": 80
     },
     "perdidos_max": {
      "solitario": 3,
      "pareja": 5
     },
     "texto": {
-     "solitario": "Vender 85 monedas con máximo 3 clientes perdidos",
-     "pareja": "Vender 130 monedas con máximo 5 clientes perdidos"
+     "solitario": "Vender 55 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 80 monedas con máximo 5 clientes perdidos"
     }
    }
   }
@@ -95,12 +95,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 55 monedas",
-     "pareja": "Vender 80 monedas"
+     "solitario": "Vender 50 monedas",
+     "pareja": "Vender 75 monedas"
     },
     "meta": {
-     "solitario": 55,
-     "pareja": 80
+     "solitario": 50,
+     "pareja": 75
     }
    },
    {
@@ -131,16 +131,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 85,
-     "pareja": 130
+     "solitario": 80,
+     "pareja": 120
     },
     "perdidos_max": {
      "solitario": 3,
      "pareja": 5
     },
     "texto": {
-     "solitario": "Vender 85 monedas con máximo 3 clientes perdidos",
-     "pareja": "Vender 130 monedas con máximo 5 clientes perdidos"
+     "solitario": "Vender 80 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 120 monedas con máximo 5 clientes perdidos"
     }
    }
   }
@@ -165,12 +165,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 60 monedas",
-     "pareja": "Vender 95 monedas"
+     "solitario": "Vender 55 monedas",
+     "pareja": "Vender 90 monedas"
     },
     "meta": {
-     "solitario": 60,
-     "pareja": 95
+     "solitario": 55,
+     "pareja": 90
     }
    },
    {
@@ -201,16 +201,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 95,
-     "pareja": 150
+     "solitario": 90,
+     "pareja": 140
     },
     "perdidos_max": {
      "solitario": 4,
      "pareja": 6
     },
     "texto": {
-     "solitario": "Vender 95 monedas con máximo 4 clientes perdidos",
-     "pareja": "Vender 150 monedas con máximo 6 clientes perdidos"
+     "solitario": "Vender 90 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 140 monedas con máximo 6 clientes perdidos"
     }
    }
   }
@@ -235,12 +235,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 60 monedas",
-     "pareja": "Vender 95 monedas"
+     "solitario": "Vender 55 monedas",
+     "pareja": "Vender 90 monedas"
     },
     "meta": {
-     "solitario": 60,
-     "pareja": 95
+     "solitario": 55,
+     "pareja": 90
     }
    },
    {
@@ -277,16 +277,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 95,
-     "pareja": 150
+     "solitario": 90,
+     "pareja": 140
     },
     "perdidos_max": {
      "solitario": 4,
      "pareja": 6
     },
     "texto": {
-     "solitario": "Vender 95 monedas con máximo 4 clientes perdidos",
-     "pareja": "Vender 150 monedas con máximo 6 clientes perdidos"
+     "solitario": "Vender 90 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 140 monedas con máximo 6 clientes perdidos"
     }
    }
   }
@@ -311,12 +311,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 90 monedas",
-     "pareja": "Vender 135 monedas"
+     "solitario": "Vender 80 monedas",
+     "pareja": "Vender 125 monedas"
     },
     "meta": {
-     "solitario": 90,
-     "pareja": 135
+     "solitario": 80,
+     "pareja": 125
     }
    },
    {
@@ -347,16 +347,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 140,
-     "pareja": 215
+     "solitario": 130,
+     "pareja": 200
     },
     "perdidos_max": {
      "solitario": 5,
      "pareja": 8
     },
     "texto": {
-     "solitario": "Vender 140 monedas con máximo 5 clientes perdidos",
-     "pareja": "Vender 215 monedas con máximo 8 clientes perdidos"
+     "solitario": "Vender 130 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 200 monedas con máximo 8 clientes perdidos"
     }
    }
   }
@@ -383,12 +383,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 70 monedas",
-     "pareja": "Vender 100 monedas"
+     "solitario": "Vender 65 monedas",
+     "pareja": "Vender 95 monedas"
     },
     "meta": {
-     "solitario": 70,
-     "pareja": 100
+     "solitario": 65,
+     "pareja": 95
     }
    },
    {
@@ -425,16 +425,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 110,
-     "pareja": 160
+     "solitario": 100,
+     "pareja": 150
     },
     "perdidos_max": {
      "solitario": 4,
      "pareja": 6
     },
     "texto": {
-     "solitario": "Vender 110 monedas con máximo 4 clientes perdidos",
-     "pareja": "Vender 160 monedas con máximo 6 clientes perdidos"
+     "solitario": "Vender 100 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 150 monedas con máximo 6 clientes perdidos"
     }
    }
   }
@@ -461,12 +461,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 75 monedas",
-     "pareja": "Vender 110 monedas"
+     "solitario": "Vender 70 monedas",
+     "pareja": "Vender 100 monedas"
     },
     "meta": {
-     "solitario": 75,
-     "pareja": 110
+     "solitario": 70,
+     "pareja": 100
     }
    },
    {
@@ -497,16 +497,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 120,
-     "pareja": 175
+     "solitario": 110,
+     "pareja": 160
     },
     "perdidos_max": {
      "solitario": 4,
      "pareja": 6
     },
     "texto": {
-     "solitario": "Vender 120 monedas con máximo 4 clientes perdidos",
-     "pareja": "Vender 175 monedas con máximo 6 clientes perdidos"
+     "solitario": "Vender 110 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 160 monedas con máximo 6 clientes perdidos"
     }
    }
   }
@@ -533,12 +533,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 75 monedas",
-     "pareja": "Vender 110 monedas"
+     "solitario": "Vender 90 monedas",
+     "pareja": "Vender 135 monedas"
     },
     "meta": {
-     "solitario": 75,
-     "pareja": 110
+     "solitario": 90,
+     "pareja": 135
     }
    },
    {
@@ -569,16 +569,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 120,
-     "pareja": 175
+     "solitario": 150,
+     "pareja": 215
     },
     "perdidos_max": {
      "solitario": 4,
      "pareja": 6
     },
     "texto": {
-     "solitario": "Vender 120 monedas con máximo 4 clientes perdidos",
-     "pareja": "Vender 175 monedas con máximo 6 clientes perdidos"
+     "solitario": "Vender 150 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 215 monedas con máximo 6 clientes perdidos"
     }
    }
   }
@@ -605,12 +605,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 80 monedas",
-     "pareja": "Vender 120 monedas"
+     "solitario": "Vender 100 monedas",
+     "pareja": "Vender 150 monedas"
     },
     "meta": {
-     "solitario": 80,
-     "pareja": 120
+     "solitario": 100,
+     "pareja": 150
     }
    },
    {
@@ -647,16 +647,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 130,
-     "pareja": 195
+     "solitario": 160,
+     "pareja": 240
     },
     "perdidos_max": {
      "solitario": 5,
      "pareja": 7
     },
     "texto": {
-     "solitario": "Vender 130 monedas con máximo 5 clientes perdidos",
-     "pareja": "Vender 195 monedas con máximo 7 clientes perdidos"
+     "solitario": "Vender 160 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 240 monedas con máximo 7 clientes perdidos"
     }
    }
   }
@@ -683,12 +683,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 115 monedas",
-     "pareja": "Vender 170 monedas"
+     "solitario": "Vender 140 monedas",
+     "pareja": "Vender 210 monedas"
     },
     "meta": {
-     "solitario": 115,
-     "pareja": 170
+     "solitario": 140,
+     "pareja": 210
     }
    },
    {
@@ -719,16 +719,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 150,
-     "pareja": 225
+     "solitario": 190,
+     "pareja": 280
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 8
     },
     "texto": {
-     "solitario": "Vender 150 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 225 monedas con máximo 8 clientes perdidos"
+     "solitario": "Vender 190 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 280 monedas con máximo 8 clientes perdidos"
     }
    }
   }
@@ -755,12 +755,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 80 monedas",
-     "pareja": "Vender 120 monedas"
+     "solitario": "Vender 100 monedas",
+     "pareja": "Vender 150 monedas"
     },
     "meta": {
-     "solitario": 80,
-     "pareja": 120
+     "solitario": 100,
+     "pareja": 150
     }
    },
    {
@@ -797,16 +797,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 130,
-     "pareja": 195
+     "solitario": 160,
+     "pareja": 240
     },
     "perdidos_max": {
      "solitario": 5,
      "pareja": 7
     },
     "texto": {
-     "solitario": "Vender 130 monedas con máximo 5 clientes perdidos",
-     "pareja": "Vender 195 monedas con máximo 7 clientes perdidos"
+     "solitario": "Vender 160 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 240 monedas con máximo 7 clientes perdidos"
     }
    }
   }
@@ -833,12 +833,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 90 monedas",
-     "pareja": "Vender 135 monedas"
+     "solitario": "Vender 110 monedas",
+     "pareja": "Vender 170 monedas"
     },
     "meta": {
-     "solitario": 90,
-     "pareja": 135
+     "solitario": 110,
+     "pareja": 170
     }
    },
    {
@@ -869,16 +869,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 140,
-     "pareja": 215
+     "solitario": 175,
+     "pareja": 270
     },
     "perdidos_max": {
      "solitario": 5,
      "pareja": 8
     },
     "texto": {
-     "solitario": "Vender 140 monedas con máximo 5 clientes perdidos",
-     "pareja": "Vender 215 monedas con máximo 8 clientes perdidos"
+     "solitario": "Vender 175 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 270 monedas con máximo 8 clientes perdidos"
     }
    }
   }
@@ -905,12 +905,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 90 monedas",
-     "pareja": "Vender 135 monedas"
+     "solitario": "Vender 110 monedas",
+     "pareja": "Vender 170 monedas"
     },
     "meta": {
-     "solitario": 90,
-     "pareja": 135
+     "solitario": 110,
+     "pareja": 170
     }
    },
    {
@@ -941,16 +941,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 140,
-     "pareja": 215
+     "solitario": 175,
+     "pareja": 270
     },
     "perdidos_max": {
      "solitario": 5,
      "pareja": 8
     },
     "texto": {
-     "solitario": "Vender 140 monedas con máximo 5 clientes perdidos",
-     "pareja": "Vender 215 monedas con máximo 8 clientes perdidos"
+     "solitario": "Vender 175 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 270 monedas con máximo 8 clientes perdidos"
     }
    }
   }
@@ -977,12 +977,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 95 monedas",
-     "pareja": "Vender 140 monedas"
+     "solitario": "Vender 120 monedas",
+     "pareja": "Vender 175 monedas"
     },
     "meta": {
-     "solitario": 95,
-     "pareja": 140
+     "solitario": 120,
+     "pareja": 175
     }
    },
    {
@@ -1019,16 +1019,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 150,
-     "pareja": 225
+     "solitario": 190,
+     "pareja": 280
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 8
     },
     "texto": {
-     "solitario": "Vender 150 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 225 monedas con máximo 8 clientes perdidos"
+     "solitario": "Vender 190 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 280 monedas con máximo 8 clientes perdidos"
     }
    }
   }
@@ -1055,12 +1055,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 95 monedas",
-     "pareja": "Vender 140 monedas"
+     "solitario": "Vender 120 monedas",
+     "pareja": "Vender 175 monedas"
     },
     "meta": {
-     "solitario": 95,
-     "pareja": 140
+     "solitario": 120,
+     "pareja": 175
     }
    },
    {
@@ -1091,16 +1091,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 150,
-     "pareja": 225
+     "solitario": 190,
+     "pareja": 280
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 8
     },
     "texto": {
-     "solitario": "Vender 150 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 225 monedas con máximo 8 clientes perdidos"
+     "solitario": "Vender 190 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 280 monedas con máximo 8 clientes perdidos"
     }
    }
   }
@@ -1127,12 +1127,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 100 monedas",
-     "pareja": "Vender 150 monedas"
+     "solitario": "Vender 125 monedas",
+     "pareja": "Vender 185 monedas"
     },
     "meta": {
-     "solitario": 100,
-     "pareja": 150
+     "solitario": 125,
+     "pareja": 185
     }
    },
    {
@@ -1169,16 +1169,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 160,
-     "pareja": 240
+     "solitario": 200,
+     "pareja": 295
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 9
     },
     "texto": {
-     "solitario": "Vender 160 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 240 monedas con máximo 9 clientes perdidos"
+     "solitario": "Vender 200 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 295 monedas con máximo 9 clientes perdidos"
     }
    }
   }
@@ -1205,12 +1205,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 100 monedas",
-     "pareja": "Vender 150 monedas"
+     "solitario": "Vender 125 monedas",
+     "pareja": "Vender 185 monedas"
     },
     "meta": {
-     "solitario": 100,
-     "pareja": 150
+     "solitario": 125,
+     "pareja": 185
     }
    },
    {
@@ -1241,16 +1241,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 160,
-     "pareja": 240
+     "solitario": 200,
+     "pareja": 295
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 9
     },
     "texto": {
-     "solitario": "Vender 160 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 240 monedas con máximo 9 clientes perdidos"
+     "solitario": "Vender 200 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 295 monedas con máximo 9 clientes perdidos"
     }
    }
   }
@@ -1277,12 +1277,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 110 monedas",
-     "pareja": "Vender 160 monedas"
+     "solitario": "Vender 135 monedas",
+     "pareja": "Vender 200 monedas"
     },
     "meta": {
-     "solitario": 110,
-     "pareja": 160
+     "solitario": 135,
+     "pareja": 200
     }
    },
    {
@@ -1313,16 +1313,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 175,
-     "pareja": 260
+     "solitario": 215,
+     "pareja": 325
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 175 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 260 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 215 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 325 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -1349,12 +1349,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 110 monedas",
-     "pareja": "Vender 160 monedas"
+     "solitario": "Vender 135 monedas",
+     "pareja": "Vender 200 monedas"
     },
     "meta": {
-     "solitario": 110,
-     "pareja": 160
+     "solitario": 135,
+     "pareja": 200
     }
    },
    {
@@ -1391,16 +1391,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 175,
-     "pareja": 260
+     "solitario": 215,
+     "pareja": 325
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 175 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 260 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 215 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 325 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -1427,12 +1427,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 115 monedas",
-     "pareja": "Vender 175 monedas"
+     "solitario": "Vender 180 monedas",
+     "pareja": "Vender 275 monedas"
     },
     "meta": {
-     "solitario": 115,
-     "pareja": 175
+     "solitario": 180,
+     "pareja": 275
     }
    },
    {
@@ -1463,16 +1463,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 185,
-     "pareja": 280
+     "solitario": 285,
+     "pareja": 435
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 185 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 280 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 285 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 435 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -1499,12 +1499,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 115 monedas",
-     "pareja": "Vender 175 monedas"
+     "solitario": "Vender 180 monedas",
+     "pareja": "Vender 275 monedas"
     },
     "meta": {
-     "solitario": 115,
-     "pareja": 175
+     "solitario": 180,
+     "pareja": 275
     }
    },
    {
@@ -1541,16 +1541,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 185,
-     "pareja": 280
+     "solitario": 285,
+     "pareja": 435
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 185 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 280 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 285 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 435 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -1577,12 +1577,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 115 monedas",
-     "pareja": "Vender 175 monedas"
+     "solitario": "Vender 180 monedas",
+     "pareja": "Vender 275 monedas"
     },
     "meta": {
-     "solitario": 115,
-     "pareja": 175
+     "solitario": 180,
+     "pareja": 275
     }
    },
    {
@@ -1613,16 +1613,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 185,
-     "pareja": 280
+     "solitario": 285,
+     "pareja": 435
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 185 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 280 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 285 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 435 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -1649,12 +1649,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 120 monedas",
-     "pareja": "Vender 180 monedas"
+     "solitario": "Vender 190 monedas",
+     "pareja": "Vender 285 monedas"
     },
     "meta": {
-     "solitario": 120,
-     "pareja": 180
+     "solitario": 190,
+     "pareja": 285
     }
    },
    {
@@ -1685,16 +1685,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 195,
-     "pareja": 290
+     "solitario": 300,
+     "pareja": 455
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 195 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 290 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 300 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 455 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -1721,12 +1721,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 120 monedas",
-     "pareja": "Vender 180 monedas"
+     "solitario": "Vender 190 monedas",
+     "pareja": "Vender 285 monedas"
     },
     "meta": {
-     "solitario": 120,
-     "pareja": 180
+     "solitario": 190,
+     "pareja": 285
     }
    },
    {
@@ -1763,16 +1763,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 195,
-     "pareja": 290
+     "solitario": 300,
+     "pareja": 455
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 195 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 290 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 300 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 455 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -1799,12 +1799,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 170 monedas",
-     "pareja": "Vender 255 monedas"
+     "solitario": "Vender 260 monedas",
+     "pareja": "Vender 400 monedas"
     },
     "meta": {
-     "solitario": 170,
-     "pareja": 255
+     "solitario": 260,
+     "pareja": 400
     }
    },
    {
@@ -1841,16 +1841,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 270,
-     "pareja": 410
+     "solitario": 420,
+     "pareja": 640
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 15
     },
     "texto": {
-     "solitario": "Vender 270 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 410 monedas con máximo 15 clientes perdidos"
+     "solitario": "Vender 420 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 640 monedas con máximo 15 clientes perdidos"
     }
    }
   }
@@ -1878,12 +1878,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 100 monedas",
-     "pareja": "Vender 150 monedas"
+     "solitario": "Vender 85 monedas",
+     "pareja": "Vender 130 monedas"
     },
     "meta": {
-     "solitario": 100,
-     "pareja": 150
+     "solitario": 85,
+     "pareja": 130
     }
    },
    {
@@ -1920,16 +1920,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 160,
-     "pareja": 240
+     "solitario": 140,
+     "pareja": 205
     },
     "perdidos_max": {
      "solitario": 5,
      "pareja": 7
     },
     "texto": {
-     "solitario": "Vender 160 monedas con máximo 5 clientes perdidos",
-     "pareja": "Vender 240 monedas con máximo 7 clientes perdidos"
+     "solitario": "Vender 140 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 205 monedas con máximo 7 clientes perdidos"
     }
    }
   }
@@ -1957,12 +1957,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 100 monedas",
-     "pareja": "Vender 150 monedas"
+     "solitario": "Vender 115 monedas",
+     "pareja": "Vender 175 monedas"
     },
     "meta": {
-     "solitario": 100,
-     "pareja": 150
+     "solitario": 115,
+     "pareja": 175
     }
    },
    {
@@ -1993,16 +1993,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 160,
-     "pareja": 240
+     "solitario": 185,
+     "pareja": 275
     },
     "perdidos_max": {
      "solitario": 5,
      "pareja": 7
     },
     "texto": {
-     "solitario": "Vender 160 monedas con máximo 5 clientes perdidos",
-     "pareja": "Vender 240 monedas con máximo 7 clientes perdidos"
+     "solitario": "Vender 185 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 275 monedas con máximo 7 clientes perdidos"
     }
    }
   }
@@ -2031,12 +2031,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 105 monedas",
-     "pareja": "Vender 165 monedas"
+     "solitario": "Vender 125 monedas",
+     "pareja": "Vender 190 monedas"
     },
     "meta": {
-     "solitario": 105,
-     "pareja": 165
+     "solitario": 125,
+     "pareja": 190
     }
    },
    {
@@ -2067,16 +2067,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 170,
-     "pareja": 265
+     "solitario": 200,
+     "pareja": 305
     },
     "perdidos_max": {
      "solitario": 5,
      "pareja": 8
     },
     "texto": {
-     "solitario": "Vender 170 monedas con máximo 5 clientes perdidos",
-     "pareja": "Vender 265 monedas con máximo 8 clientes perdidos"
+     "solitario": "Vender 200 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 305 monedas con máximo 8 clientes perdidos"
     }
    }
   }
@@ -2105,12 +2105,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 115 monedas",
-     "pareja": "Vender 175 monedas"
+     "solitario": "Vender 135 monedas",
+     "pareja": "Vender 200 monedas"
     },
     "meta": {
-     "solitario": 115,
-     "pareja": 175
+     "solitario": 135,
+     "pareja": 200
     }
    },
    {
@@ -2147,16 +2147,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 185,
-     "pareja": 275
+     "solitario": 215,
+     "pareja": 325
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 8
     },
     "texto": {
-     "solitario": "Vender 185 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 275 monedas con máximo 8 clientes perdidos"
+     "solitario": "Vender 215 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 325 monedas con máximo 8 clientes perdidos"
     }
    }
   }
@@ -2185,12 +2185,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 150 monedas",
-     "pareja": "Vender 225 monedas"
+     "solitario": "Vender 175 monedas",
+     "pareja": "Vender 260 monedas"
     },
     "meta": {
-     "solitario": 150,
-     "pareja": 225
+     "solitario": 175,
+     "pareja": 260
     }
    },
    {
@@ -2221,16 +2221,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 240,
-     "pareja": 355
+     "solitario": 275,
+     "pareja": 415
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 240 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 355 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 275 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 415 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -2259,12 +2259,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 115 monedas",
-     "pareja": "Vender 175 monedas"
+     "solitario": "Vender 135 monedas",
+     "pareja": "Vender 200 monedas"
     },
     "meta": {
-     "solitario": 115,
-     "pareja": 175
+     "solitario": 135,
+     "pareja": 200
     }
    },
    {
@@ -2295,16 +2295,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 185,
-     "pareja": 275
+     "solitario": 215,
+     "pareja": 325
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 8
     },
     "texto": {
-     "solitario": "Vender 185 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 275 monedas con máximo 8 clientes perdidos"
+     "solitario": "Vender 215 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 325 monedas con máximo 8 clientes perdidos"
     }
    }
   }
@@ -2333,12 +2333,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 125 monedas",
-     "pareja": "Vender 180 monedas"
+     "solitario": "Vender 145 monedas",
+     "pareja": "Vender 210 monedas"
     },
     "meta": {
-     "solitario": 125,
-     "pareja": 180
+     "solitario": 145,
+     "pareja": 210
     }
    },
    {
@@ -2375,16 +2375,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 200,
-     "pareja": 290
+     "solitario": 230,
+     "pareja": 340
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 9
     },
     "texto": {
-     "solitario": "Vender 200 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 290 monedas con máximo 9 clientes perdidos"
+     "solitario": "Vender 230 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 340 monedas con máximo 9 clientes perdidos"
     }
    }
   }
@@ -2413,12 +2413,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 130 monedas",
-     "pareja": "Vender 200 monedas"
+     "solitario": "Vender 190 monedas",
+     "pareja": "Vender 290 monedas"
     },
     "meta": {
-     "solitario": 130,
-     "pareja": 200
+     "solitario": 190,
+     "pareja": 290
     }
    },
    {
@@ -2455,16 +2455,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 210,
-     "pareja": 315
+     "solitario": 305,
+     "pareja": 460
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 210 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 315 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 305 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 460 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -2493,12 +2493,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 130 monedas",
-     "pareja": "Vender 200 monedas"
+     "solitario": "Vender 190 monedas",
+     "pareja": "Vender 290 monedas"
     },
     "meta": {
-     "solitario": 130,
-     "pareja": 200
+     "solitario": 190,
+     "pareja": 290
     }
    },
    {
@@ -2529,16 +2529,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 210,
-     "pareja": 315
+     "solitario": 305,
+     "pareja": 460
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 210 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 315 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 305 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 460 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -2567,12 +2567,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 200 monedas",
-     "pareja": "Vender 295 monedas"
+     "solitario": "Vender 290 monedas",
+     "pareja": "Vender 430 monedas"
     },
     "meta": {
-     "solitario": 200,
-     "pareja": 295
+     "solitario": 290,
+     "pareja": 430
     }
    },
    {
@@ -2603,16 +2603,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 265,
-     "pareja": 395
+     "solitario": 385,
+     "pareja": 575
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 12
     },
     "texto": {
-     "solitario": "Vender 265 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 395 monedas con máximo 12 clientes perdidos"
+     "solitario": "Vender 385 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 575 monedas con máximo 12 clientes perdidos"
     }
    }
   }
@@ -2641,12 +2641,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 140 monedas",
-     "pareja": "Vender 215 monedas"
+     "solitario": "Vender 205 monedas",
+     "pareja": "Vender 310 monedas"
     },
     "meta": {
-     "solitario": 140,
-     "pareja": 215
+     "solitario": 205,
+     "pareja": 310
     }
    },
    {
@@ -2683,16 +2683,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 225,
-     "pareja": 345
+     "solitario": 325,
+     "pareja": 500
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 225 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 345 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 325 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 500 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -2721,12 +2721,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 150 monedas",
-     "pareja": "Vender 225 monedas"
+     "solitario": "Vender 215 monedas",
+     "pareja": "Vender 325 monedas"
     },
     "meta": {
-     "solitario": 150,
-     "pareja": 225
+     "solitario": 215,
+     "pareja": 325
     }
    },
    {
@@ -2757,16 +2757,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 240,
-     "pareja": 355
+     "solitario": 345,
+     "pareja": 520
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 240 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 355 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 345 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 520 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -2795,12 +2795,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 150 monedas",
-     "pareja": "Vender 225 monedas"
+     "solitario": "Vender 215 monedas",
+     "pareja": "Vender 325 monedas"
     },
     "meta": {
-     "solitario": 150,
-     "pareja": 225
+     "solitario": 215,
+     "pareja": 325
     }
    },
    {
@@ -2831,16 +2831,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 240,
-     "pareja": 355
+     "solitario": 345,
+     "pareja": 520
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 240 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 355 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 345 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 520 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -2869,12 +2869,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 150 monedas",
-     "pareja": "Vender 225 monedas"
+     "solitario": "Vender 215 monedas",
+     "pareja": "Vender 325 monedas"
     },
     "meta": {
-     "solitario": 150,
-     "pareja": 225
+     "solitario": 215,
+     "pareja": 325
     }
    },
    {
@@ -2911,16 +2911,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 240,
-     "pareja": 355
+     "solitario": 345,
+     "pareja": 520
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 240 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 355 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 345 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 520 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -2949,12 +2949,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 155 monedas",
-     "pareja": "Vender 230 monedas"
+     "solitario": "Vender 230 monedas",
+     "pareja": "Vender 335 monedas"
     },
     "meta": {
-     "solitario": 155,
-     "pareja": 230
+     "solitario": 230,
+     "pareja": 335
     }
    },
    {
@@ -2985,16 +2985,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 250,
-     "pareja": 370
+     "solitario": 365,
+     "pareja": 540
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 250 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 370 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 365 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 540 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -3023,12 +3023,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 165 monedas",
-     "pareja": "Vender 250 monedas"
+     "solitario": "Vender 240 monedas",
+     "pareja": "Vender 360 monedas"
     },
     "meta": {
-     "solitario": 165,
-     "pareja": 250
+     "solitario": 240,
+     "pareja": 360
     }
    },
    {
@@ -3059,16 +3059,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 265,
-     "pareja": 395
+     "solitario": 385,
+     "pareja": 575
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 12
     },
     "texto": {
-     "solitario": "Vender 265 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 395 monedas con máximo 12 clientes perdidos"
+     "solitario": "Vender 385 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 575 monedas con máximo 12 clientes perdidos"
     }
    }
   }
@@ -3097,12 +3097,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 165 monedas",
-     "pareja": "Vender 250 monedas"
+     "solitario": "Vender 240 monedas",
+     "pareja": "Vender 360 monedas"
     },
     "meta": {
-     "solitario": 165,
-     "pareja": 250
+     "solitario": 240,
+     "pareja": 360
     }
    },
    {
@@ -3133,16 +3133,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 265,
-     "pareja": 395
+     "solitario": 385,
+     "pareja": 575
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 12
     },
     "texto": {
-     "solitario": "Vender 265 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 395 monedas con máximo 12 clientes perdidos"
+     "solitario": "Vender 385 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 575 monedas con máximo 12 clientes perdidos"
     }
    }
   }
@@ -3171,12 +3171,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 165 monedas",
-     "pareja": "Vender 250 monedas"
+     "solitario": "Vender 240 monedas",
+     "pareja": "Vender 360 monedas"
     },
     "meta": {
-     "solitario": 165,
-     "pareja": 250
+     "solitario": 240,
+     "pareja": 360
     }
    },
    {
@@ -3213,16 +3213,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 265,
-     "pareja": 395
+     "solitario": 385,
+     "pareja": 575
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 12
     },
     "texto": {
-     "solitario": "Vender 265 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 395 monedas con máximo 12 clientes perdidos"
+     "solitario": "Vender 385 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 575 monedas con máximo 12 clientes perdidos"
     }
    }
   }
@@ -3251,12 +3251,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 175 monedas",
-     "pareja": "Vender 265 monedas"
+     "solitario": "Vender 250 monedas",
+     "pareja": "Vender 385 monedas"
     },
     "meta": {
-     "solitario": 175,
-     "pareja": 265
+     "solitario": 250,
+     "pareja": 385
     }
    },
    {
@@ -3287,16 +3287,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 275,
-     "pareja": 420
+     "solitario": 405,
+     "pareja": 615
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 275 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 420 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 405 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 615 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -3325,12 +3325,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 180 monedas",
-     "pareja": "Vender 270 monedas"
+     "solitario": "Vender 315 monedas",
+     "pareja": "Vender 475 monedas"
     },
     "meta": {
-     "solitario": 180,
-     "pareja": 270
+     "solitario": 315,
+     "pareja": 475
     }
    },
    {
@@ -3361,16 +3361,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 290,
-     "pareja": 435
+     "solitario": 505,
+     "pareja": 760
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 290 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 435 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 505 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 760 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -3399,12 +3399,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 180 monedas",
-     "pareja": "Vender 270 monedas"
+     "solitario": "Vender 315 monedas",
+     "pareja": "Vender 475 monedas"
     },
     "meta": {
-     "solitario": 180,
-     "pareja": 270
+     "solitario": 315,
+     "pareja": 475
     }
    },
    {
@@ -3441,16 +3441,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 290,
-     "pareja": 435
+     "solitario": 505,
+     "pareja": 760
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 290 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 435 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 505 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 760 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -3479,12 +3479,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 180 monedas",
-     "pareja": "Vender 270 monedas"
+     "solitario": "Vender 315 monedas",
+     "pareja": "Vender 475 monedas"
     },
     "meta": {
-     "solitario": 180,
-     "pareja": 270
+     "solitario": 315,
+     "pareja": 475
     }
    },
    {
@@ -3521,16 +3521,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 290,
-     "pareja": 435
+     "solitario": 505,
+     "pareja": 760
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 290 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 435 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 505 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 760 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -3559,12 +3559,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 190 monedas",
-     "pareja": "Vender 280 monedas"
+     "solitario": "Vender 330 monedas",
+     "pareja": "Vender 490 monedas"
     },
     "meta": {
-     "solitario": 190,
-     "pareja": 280
+     "solitario": 330,
+     "pareja": 490
     }
    },
    {
@@ -3595,16 +3595,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 305,
-     "pareja": 450
+     "solitario": 530,
+     "pareja": 785
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 14
     },
     "texto": {
-     "solitario": "Vender 305 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 450 monedas con máximo 14 clientes perdidos"
+     "solitario": "Vender 530 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 785 monedas con máximo 14 clientes perdidos"
     }
    }
   }
@@ -3633,12 +3633,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 200 monedas",
-     "pareja": "Vender 295 monedas"
+     "solitario": "Vender 345 monedas",
+     "pareja": "Vender 520 monedas"
     },
     "meta": {
-     "solitario": 200,
-     "pareja": 295
+     "solitario": 345,
+     "pareja": 520
     }
    },
    {
@@ -3669,16 +3669,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 315,
-     "pareja": 475
+     "solitario": 555,
+     "pareja": 830
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 14
     },
     "texto": {
-     "solitario": "Vender 315 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 475 monedas con máximo 14 clientes perdidos"
+     "solitario": "Vender 555 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 830 monedas con máximo 14 clientes perdidos"
     }
    }
   }
@@ -3707,12 +3707,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 265 monedas",
-     "pareja": "Vender 395 monedas"
+     "solitario": "Vender 460 monedas",
+     "pareja": "Vender 690 monedas"
     },
     "meta": {
-     "solitario": 265,
-     "pareja": 395
+     "solitario": 460,
+     "pareja": 690
     }
    },
    {
@@ -3749,16 +3749,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 420,
-     "pareja": 635
+     "solitario": 735,
+     "pareja": 1105
     },
     "perdidos_max": {
      "solitario": 13,
      "pareja": 19
     },
     "texto": {
-     "solitario": "Vender 420 monedas con máximo 13 clientes perdidos",
-     "pareja": "Vender 635 monedas con máximo 19 clientes perdidos"
+     "solitario": "Vender 735 monedas con máximo 13 clientes perdidos",
+     "pareja": "Vender 1105 monedas con máximo 19 clientes perdidos"
     }
    }
   }
@@ -3787,12 +3787,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 145 monedas",
-     "pareja": "Vender 215 monedas"
+     "solitario": "Vender 160 monedas",
+     "pareja": "Vender 240 monedas"
     },
     "meta": {
-     "solitario": 145,
-     "pareja": 215
+     "solitario": 160,
+     "pareja": 240
     }
    },
    {
@@ -3829,16 +3829,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 235,
-     "pareja": 345
+     "solitario": 260,
+     "pareja": 380
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 9
     },
     "texto": {
-     "solitario": "Vender 235 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 345 monedas con máximo 9 clientes perdidos"
+     "solitario": "Vender 260 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 380 monedas con máximo 9 clientes perdidos"
     }
    }
   }
@@ -3868,12 +3868,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 155 monedas",
-     "pareja": "Vender 235 monedas"
+     "solitario": "Vender 215 monedas",
+     "pareja": "Vender 325 monedas"
     },
     "meta": {
-     "solitario": 155,
-     "pareja": 235
+     "solitario": 215,
+     "pareja": 325
     }
    },
    {
@@ -3904,16 +3904,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 250,
-     "pareja": 375
+     "solitario": 345,
+     "pareja": 520
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 250 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 375 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 345 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 520 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -3943,12 +3943,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 155 monedas",
-     "pareja": "Vender 235 monedas"
+     "solitario": "Vender 215 monedas",
+     "pareja": "Vender 325 monedas"
     },
     "meta": {
-     "solitario": 155,
-     "pareja": 235
+     "solitario": 215,
+     "pareja": 325
     }
    },
    {
@@ -3979,16 +3979,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 250,
-     "pareja": 375
+     "solitario": 345,
+     "pareja": 520
     },
     "perdidos_max": {
      "solitario": 6,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 250 monedas con máximo 6 clientes perdidos",
-     "pareja": "Vender 375 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 345 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 520 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -4018,12 +4018,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 165 monedas",
-     "pareja": "Vender 255 monedas"
+     "solitario": "Vender 230 monedas",
+     "pareja": "Vender 350 monedas"
     },
     "meta": {
-     "solitario": 165,
-     "pareja": 255
+     "solitario": 230,
+     "pareja": 350
     }
    },
    {
@@ -4060,16 +4060,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 265,
-     "pareja": 405
+     "solitario": 365,
+     "pareja": 560
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 10
     },
     "texto": {
-     "solitario": "Vender 265 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 405 monedas con máximo 10 clientes perdidos"
+     "solitario": "Vender 365 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 560 monedas con máximo 10 clientes perdidos"
     }
    }
   }
@@ -4099,12 +4099,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 215 monedas",
-     "pareja": "Vender 320 monedas"
+     "solitario": "Vender 295 monedas",
+     "pareja": "Vender 445 monedas"
     },
     "meta": {
-     "solitario": 215,
-     "pareja": 320
+     "solitario": 295,
+     "pareja": 445
     }
    },
    {
@@ -4135,16 +4135,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 345,
-     "pareja": 515
+     "solitario": 475,
+     "pareja": 715
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 345 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 515 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 475 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 715 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -4174,12 +4174,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 175 monedas",
-     "pareja": "Vender 265 monedas"
+     "solitario": "Vender 245 monedas",
+     "pareja": "Vender 365 monedas"
     },
     "meta": {
-     "solitario": 175,
-     "pareja": 265
+     "solitario": 245,
+     "pareja": 365
     }
    },
    {
@@ -4210,16 +4210,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 280,
-     "pareja": 420
+     "solitario": 390,
+     "pareja": 585
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 280 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 420 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 390 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 585 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -4249,12 +4249,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 175 monedas",
-     "pareja": "Vender 265 monedas"
+     "solitario": "Vender 245 monedas",
+     "pareja": "Vender 365 monedas"
     },
     "meta": {
-     "solitario": 175,
-     "pareja": 265
+     "solitario": 245,
+     "pareja": 365
     }
    },
    {
@@ -4291,16 +4291,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 280,
-     "pareja": 420
+     "solitario": 390,
+     "pareja": 585
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 280 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 420 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 390 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 585 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -4330,12 +4330,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 185 monedas",
-     "pareja": "Vender 275 monedas"
+     "solitario": "Vender 310 monedas",
+     "pareja": "Vender 455 monedas"
     },
     "meta": {
-     "solitario": 185,
-     "pareja": 275
+     "solitario": 310,
+     "pareja": 455
     }
    },
    {
@@ -4372,16 +4372,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 295,
-     "pareja": 435
+     "solitario": 490,
+     "pareja": 725
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 295 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 435 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 490 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 725 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -4411,12 +4411,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 185 monedas",
-     "pareja": "Vender 275 monedas"
+     "solitario": "Vender 310 monedas",
+     "pareja": "Vender 455 monedas"
     },
     "meta": {
-     "solitario": 185,
-     "pareja": 275
+     "solitario": 310,
+     "pareja": 455
     }
    },
    {
@@ -4447,16 +4447,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 295,
-     "pareja": 435
+     "solitario": 490,
+     "pareja": 725
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 295 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 435 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 490 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 725 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -4486,12 +4486,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 280 monedas",
-     "pareja": "Vender 420 monedas"
+     "solitario": "Vender 465 monedas",
+     "pareja": "Vender 700 monedas"
     },
     "meta": {
-     "solitario": 280,
-     "pareja": 420
+     "solitario": 465,
+     "pareja": 700
     }
    },
    {
@@ -4522,16 +4522,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 375,
-     "pareja": 560
+     "solitario": 620,
+     "pareja": 935
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 14
     },
     "texto": {
-     "solitario": "Vender 375 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 560 monedas con máximo 14 clientes perdidos"
+     "solitario": "Vender 620 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 935 monedas con máximo 14 clientes perdidos"
     }
    }
   }
@@ -4561,12 +4561,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 195 monedas",
-     "pareja": "Vender 290 monedas"
+     "solitario": "Vender 325 monedas",
+     "pareja": "Vender 485 monedas"
     },
     "meta": {
-     "solitario": 195,
-     "pareja": 290
+     "solitario": 325,
+     "pareja": 485
     }
    },
    {
@@ -4603,16 +4603,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 310,
-     "pareja": 470
+     "solitario": 520,
+     "pareja": 780
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 12
     },
     "texto": {
-     "solitario": "Vender 310 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 470 monedas con máximo 12 clientes perdidos"
+     "solitario": "Vender 520 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 780 monedas con máximo 12 clientes perdidos"
     }
    }
   }
@@ -4642,12 +4642,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 205 monedas",
-     "pareja": "Vender 310 monedas"
+     "solitario": "Vender 340 monedas",
+     "pareja": "Vender 520 monedas"
     },
     "meta": {
-     "solitario": 205,
-     "pareja": 310
+     "solitario": 340,
+     "pareja": 520
     }
    },
    {
@@ -4678,16 +4678,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 330,
-     "pareja": 500
+     "solitario": 545,
+     "pareja": 830
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 330 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 500 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 545 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 830 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -4717,12 +4717,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 215 monedas",
-     "pareja": "Vender 320 monedas"
+     "solitario": "Vender 355 monedas",
+     "pareja": "Vender 535 monedas"
     },
     "meta": {
-     "solitario": 215,
-     "pareja": 320
+     "solitario": 355,
+     "pareja": 535
     }
    },
    {
@@ -4753,16 +4753,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 345,
-     "pareja": 515
+     "solitario": 570,
+     "pareja": 855
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 345 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 515 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 570 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 855 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -4792,12 +4792,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 215 monedas",
-     "pareja": "Vender 320 monedas"
+     "solitario": "Vender 355 monedas",
+     "pareja": "Vender 535 monedas"
     },
     "meta": {
-     "solitario": 215,
-     "pareja": 320
+     "solitario": 355,
+     "pareja": 535
     }
    },
    {
@@ -4834,16 +4834,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 345,
-     "pareja": 515
+     "solitario": 570,
+     "pareja": 855
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 345 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 515 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 570 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 855 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -4873,12 +4873,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 225 monedas",
-     "pareja": "Vender 330 monedas"
+     "solitario": "Vender 375 monedas",
+     "pareja": "Vender 550 monedas"
     },
     "meta": {
-     "solitario": 225,
-     "pareja": 330
+     "solitario": 375,
+     "pareja": 550
     }
    },
    {
@@ -4909,16 +4909,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 360,
-     "pareja": 530
+     "solitario": 595,
+     "pareja": 880
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 14
     },
     "texto": {
-     "solitario": "Vender 360 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 530 monedas con máximo 14 clientes perdidos"
+     "solitario": "Vender 595 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 880 monedas con máximo 14 clientes perdidos"
     }
    }
   }
@@ -4948,12 +4948,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 225 monedas",
-     "pareja": "Vender 330 monedas"
+     "solitario": "Vender 375 monedas",
+     "pareja": "Vender 550 monedas"
     },
     "meta": {
-     "solitario": 225,
-     "pareja": 330
+     "solitario": 375,
+     "pareja": 550
     }
    },
    {
@@ -4984,16 +4984,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 360,
-     "pareja": 530
+     "solitario": 595,
+     "pareja": 880
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 14
     },
     "texto": {
-     "solitario": "Vender 360 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 530 monedas con máximo 14 clientes perdidos"
+     "solitario": "Vender 595 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 880 monedas con máximo 14 clientes perdidos"
     }
    }
   }
@@ -5023,12 +5023,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 235 monedas",
-     "pareja": "Vender 350 monedas"
+     "solitario": "Vender 390 monedas",
+     "pareja": "Vender 585 monedas"
     },
     "meta": {
-     "solitario": 235,
-     "pareja": 350
+     "solitario": 390,
+     "pareja": 585
     }
    },
    {
@@ -5059,16 +5059,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 375,
-     "pareja": 560
+     "solitario": 620,
+     "pareja": 935
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 14
     },
     "texto": {
-     "solitario": "Vender 375 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 560 monedas con máximo 14 clientes perdidos"
+     "solitario": "Vender 620 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 935 monedas con máximo 14 clientes perdidos"
     }
    }
   }
@@ -5098,12 +5098,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 235 monedas",
-     "pareja": "Vender 350 monedas"
+     "solitario": "Vender 390 monedas",
+     "pareja": "Vender 585 monedas"
     },
     "meta": {
-     "solitario": 235,
-     "pareja": 350
+     "solitario": 390,
+     "pareja": 585
     }
    },
    {
@@ -5140,16 +5140,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 375,
-     "pareja": 560
+     "solitario": 620,
+     "pareja": 935
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 14
     },
     "texto": {
-     "solitario": "Vender 375 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 560 monedas con máximo 14 clientes perdidos"
+     "solitario": "Vender 620 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 935 monedas con máximo 14 clientes perdidos"
     }
    }
   }
@@ -5179,12 +5179,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 245 monedas",
-     "pareja": "Vender 370 monedas"
+     "solitario": "Vender 405 monedas",
+     "pareja": "Vender 615 monedas"
     },
     "meta": {
-     "solitario": 245,
-     "pareja": 370
+     "solitario": 405,
+     "pareja": 615
     }
    },
    {
@@ -5215,16 +5215,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 390,
-     "pareja": 595
+     "solitario": 650,
+     "pareja": 985
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 15
     },
     "texto": {
-     "solitario": "Vender 390 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 595 monedas con máximo 15 clientes perdidos"
+     "solitario": "Vender 650 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 985 monedas con máximo 15 clientes perdidos"
     }
    }
   }
@@ -5254,12 +5254,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 245 monedas",
-     "pareja": "Vender 370 monedas"
+     "solitario": "Vender 470 monedas",
+     "pareja": "Vender 720 monedas"
     },
     "meta": {
-     "solitario": 245,
-     "pareja": 370
+     "solitario": 470,
+     "pareja": 720
     }
    },
    {
@@ -5290,16 +5290,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 390,
-     "pareja": 595
+     "solitario": 755,
+     "pareja": 1150
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 15
     },
     "texto": {
-     "solitario": "Vender 390 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 595 monedas con máximo 15 clientes perdidos"
+     "solitario": "Vender 755 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 1150 monedas con máximo 15 clientes perdidos"
     }
    }
   }
@@ -5329,12 +5329,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 255 monedas",
-     "pareja": "Vender 380 monedas"
+     "solitario": "Vender 490 monedas",
+     "pareja": "Vender 735 monedas"
     },
     "meta": {
-     "solitario": 255,
-     "pareja": 380
+     "solitario": 490,
+     "pareja": 735
     }
    },
    {
@@ -5371,16 +5371,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 405,
-     "pareja": 610
+     "solitario": 785,
+     "pareja": 1180
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 16
     },
     "texto": {
-     "solitario": "Vender 405 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 610 monedas con máximo 16 clientes perdidos"
+     "solitario": "Vender 785 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 1180 monedas con máximo 16 clientes perdidos"
     }
    }
   }
@@ -5410,12 +5410,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 265 monedas",
-     "pareja": "Vender 390 monedas"
+     "solitario": "Vender 510 monedas",
+     "pareja": "Vender 755 monedas"
     },
     "meta": {
-     "solitario": 265,
-     "pareja": 390
+     "solitario": 510,
+     "pareja": 755
     }
    },
    {
@@ -5452,16 +5452,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 420,
-     "pareja": 625
+     "solitario": 815,
+     "pareja": 1210
     },
     "perdidos_max": {
      "solitario": 11,
      "pareja": 16
     },
     "texto": {
-     "solitario": "Vender 420 monedas con máximo 11 clientes perdidos",
-     "pareja": "Vender 625 monedas con máximo 16 clientes perdidos"
+     "solitario": "Vender 815 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 1210 monedas con máximo 16 clientes perdidos"
     }
    }
   }
@@ -5491,12 +5491,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 265 monedas",
-     "pareja": "Vender 390 monedas"
+     "solitario": "Vender 510 monedas",
+     "pareja": "Vender 755 monedas"
     },
     "meta": {
-     "solitario": 265,
-     "pareja": 390
+     "solitario": 510,
+     "pareja": 755
     }
    },
    {
@@ -5527,16 +5527,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 420,
-     "pareja": 625
+     "solitario": 815,
+     "pareja": 1210
     },
     "perdidos_max": {
      "solitario": 11,
      "pareja": 16
     },
     "texto": {
-     "solitario": "Vender 420 monedas con máximo 11 clientes perdidos",
-     "pareja": "Vender 625 monedas con máximo 16 clientes perdidos"
+     "solitario": "Vender 815 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 1210 monedas con máximo 16 clientes perdidos"
     }
    }
   }
@@ -5566,12 +5566,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 275 monedas",
-     "pareja": "Vender 410 monedas"
+     "solitario": "Vender 530 monedas",
+     "pareja": "Vender 795 monedas"
     },
     "meta": {
-     "solitario": 275,
-     "pareja": 410
+     "solitario": 530,
+     "pareja": 795
     }
    },
    {
@@ -5602,16 +5602,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 435,
-     "pareja": 655
+     "solitario": 845,
+     "pareja": 1270
     },
     "perdidos_max": {
      "solitario": 11,
      "pareja": 17
     },
     "texto": {
-     "solitario": "Vender 435 monedas con máximo 11 clientes perdidos",
-     "pareja": "Vender 655 monedas con máximo 17 clientes perdidos"
+     "solitario": "Vender 845 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 1270 monedas con máximo 17 clientes perdidos"
     }
    }
   }
@@ -5641,12 +5641,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 370 monedas",
-     "pareja": "Vender 555 monedas"
+     "solitario": "Vender 720 monedas",
+     "pareja": "Vender 1075 monedas"
     },
     "meta": {
-     "solitario": 370,
-     "pareja": 555
+     "solitario": 720,
+     "pareja": 1075
     }
    },
    {
@@ -5683,16 +5683,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 595,
-     "pareja": 890
+     "solitario": 1150,
+     "pareja": 1725
     },
     "perdidos_max": {
      "solitario": 15,
      "pareja": 23
     },
     "texto": {
-     "solitario": "Vender 595 monedas con máximo 15 clientes perdidos",
-     "pareja": "Vender 890 monedas con máximo 23 clientes perdidos"
+     "solitario": "Vender 1150 monedas con máximo 15 clientes perdidos",
+     "pareja": "Vender 1725 monedas con máximo 23 clientes perdidos"
     }
    }
   }
@@ -5722,12 +5722,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 200 monedas",
-     "pareja": "Vender 305 monedas"
+     "solitario": "Vender 270 monedas",
+     "pareja": "Vender 405 monedas"
     },
     "meta": {
-     "solitario": 200,
-     "pareja": 305
+     "solitario": 270,
+     "pareja": 405
     }
    },
    {
@@ -5764,16 +5764,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 325,
-     "pareja": 485
+     "solitario": 430,
+     "pareja": 650
     },
     "perdidos_max": {
      "solitario": 7,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 325 monedas con máximo 7 clientes perdidos",
-     "pareja": "Vender 485 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 430 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 650 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -5803,12 +5803,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 215 monedas",
-     "pareja": "Vender 315 monedas"
+     "solitario": "Vender 340 monedas",
+     "pareja": "Vender 505 monedas"
     },
     "meta": {
-     "solitario": 215,
-     "pareja": 315
+     "solitario": 340,
+     "pareja": 505
     }
    },
    {
@@ -5839,16 +5839,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 340,
-     "pareja": 505
+     "solitario": 545,
+     "pareja": 805
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 340 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 505 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 545 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 805 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -5879,12 +5879,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 215 monedas",
-     "pareja": "Vender 315 monedas"
+     "solitario": "Vender 340 monedas",
+     "pareja": "Vender 505 monedas"
     },
     "meta": {
-     "solitario": 215,
-     "pareja": 315
+     "solitario": 340,
+     "pareja": 505
     }
    },
    {
@@ -5915,16 +5915,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 340,
-     "pareja": 505
+     "solitario": 545,
+     "pareja": 805
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 11
     },
     "texto": {
-     "solitario": "Vender 340 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 505 monedas con máximo 11 clientes perdidos"
+     "solitario": "Vender 545 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 805 monedas con máximo 11 clientes perdidos"
     }
    }
   }
@@ -5955,12 +5955,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 225 monedas",
-     "pareja": "Vender 340 monedas"
+     "solitario": "Vender 360 monedas",
+     "pareja": "Vender 540 monedas"
     },
     "meta": {
-     "solitario": 225,
-     "pareja": 340
+     "solitario": 360,
+     "pareja": 540
     }
    },
    {
@@ -5997,16 +5997,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 360,
-     "pareja": 540
+     "solitario": 575,
+     "pareja": 865
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 12
     },
     "texto": {
-     "solitario": "Vender 360 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 540 monedas con máximo 12 clientes perdidos"
+     "solitario": "Vender 575 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 865 monedas con máximo 12 clientes perdidos"
     }
    }
   }
@@ -6037,12 +6037,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 305 monedas",
-     "pareja": "Vender 450 monedas"
+     "solitario": "Vender 485 monedas",
+     "pareja": "Vender 720 monedas"
     },
     "meta": {
-     "solitario": 305,
-     "pareja": 450
+     "solitario": 485,
+     "pareja": 720
     }
    },
    {
@@ -6073,16 +6073,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 485,
-     "pareja": 720
+     "solitario": 780,
+     "pareja": 1150
     },
     "perdidos_max": {
      "solitario": 11,
      "pareja": 16
     },
     "texto": {
-     "solitario": "Vender 485 monedas con máximo 11 clientes perdidos",
-     "pareja": "Vender 720 monedas con máximo 16 clientes perdidos"
+     "solitario": "Vender 780 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 1150 monedas con máximo 16 clientes perdidos"
     }
    }
   }
@@ -6113,12 +6113,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 235 monedas",
-     "pareja": "Vender 360 monedas"
+     "solitario": "Vender 380 monedas",
+     "pareja": "Vender 575 monedas"
     },
     "meta": {
-     "solitario": 235,
-     "pareja": 360
+     "solitario": 380,
+     "pareja": 575
     }
    },
    {
@@ -6149,16 +6149,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 380,
-     "pareja": 575
+     "solitario": 605,
+     "pareja": 920
     },
     "perdidos_max": {
      "solitario": 8,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 380 monedas con máximo 8 clientes perdidos",
-     "pareja": "Vender 575 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 605 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 920 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -6189,12 +6189,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 250 monedas",
-     "pareja": "Vender 370 monedas"
+     "solitario": "Vender 395 monedas",
+     "pareja": "Vender 595 monedas"
     },
     "meta": {
-     "solitario": 250,
-     "pareja": 370
+     "solitario": 395,
+     "pareja": 595
     }
    },
    {
@@ -6231,16 +6231,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 395,
-     "pareja": 595
+     "solitario": 635,
+     "pareja": 950
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 395 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 595 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 635 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 950 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -6271,12 +6271,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 250 monedas",
-     "pareja": "Vender 370 monedas"
+     "solitario": "Vender 460 monedas",
+     "pareja": "Vender 695 monedas"
     },
     "meta": {
-     "solitario": 250,
-     "pareja": 370
+     "solitario": 460,
+     "pareja": 695
     }
    },
    {
@@ -6313,16 +6313,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 395,
-     "pareja": 595
+     "solitario": 740,
+     "pareja": 1110
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 13
     },
     "texto": {
-     "solitario": "Vender 395 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 595 monedas con máximo 13 clientes perdidos"
+     "solitario": "Vender 740 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 1110 monedas con máximo 13 clientes perdidos"
     }
    }
   }
@@ -6354,12 +6354,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 260 monedas",
-     "pareja": "Vender 380 monedas"
+     "solitario": "Vender 485 monedas",
+     "pareja": "Vender 715 monedas"
     },
     "meta": {
-     "solitario": 260,
-     "pareja": 380
+     "solitario": 485,
+     "pareja": 715
     }
    },
    {
@@ -6390,16 +6390,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 415,
-     "pareja": 610
+     "solitario": 775,
+     "pareja": 1140
     },
     "perdidos_max": {
      "solitario": 9,
      "pareja": 14
     },
     "texto": {
-     "solitario": "Vender 415 monedas con máximo 9 clientes perdidos",
-     "pareja": "Vender 610 monedas con máximo 14 clientes perdidos"
+     "solitario": "Vender 775 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 1140 monedas con máximo 14 clientes perdidos"
     }
    }
   }
@@ -6431,12 +6431,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 380 monedas",
-     "pareja": "Vender 565 monedas"
+     "solitario": "Vender 705 monedas",
+     "pareja": "Vender 1060 monedas"
     },
     "meta": {
-     "solitario": 380,
-     "pareja": 565
+     "solitario": 705,
+     "pareja": 1060
     }
    },
    {
@@ -6467,16 +6467,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 505,
-     "pareja": 755
+     "solitario": 940,
+     "pareja": 1410
     },
     "perdidos_max": {
      "solitario": 11,
      "pareja": 17
     },
     "texto": {
-     "solitario": "Vender 505 monedas con máximo 11 clientes perdidos",
-     "pareja": "Vender 755 monedas con máximo 17 clientes perdidos"
+     "solitario": "Vender 940 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 1410 monedas con máximo 17 clientes perdidos"
     }
    }
   }
@@ -6508,12 +6508,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 270 monedas",
-     "pareja": "Vender 405 monedas"
+     "solitario": "Vender 505 monedas",
+     "pareja": "Vender 755 monedas"
     },
     "meta": {
-     "solitario": 270,
-     "pareja": 405
+     "solitario": 505,
+     "pareja": 755
     }
    },
    {
@@ -6550,16 +6550,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 430,
-     "pareja": 650
+     "solitario": 805,
+     "pareja": 1210
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 14
     },
     "texto": {
-     "solitario": "Vender 430 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 650 monedas con máximo 14 clientes perdidos"
+     "solitario": "Vender 805 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 1210 monedas con máximo 14 clientes perdidos"
     }
    }
   }
@@ -6591,12 +6591,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 280 monedas",
-     "pareja": "Vender 430 monedas"
+     "solitario": "Vender 525 monedas",
+     "pareja": "Vender 800 monedas"
     },
     "meta": {
-     "solitario": 280,
-     "pareja": 430
+     "solitario": 525,
+     "pareja": 800
     }
    },
    {
@@ -6627,16 +6627,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 450,
-     "pareja": 685
+     "solitario": 840,
+     "pareja": 1275
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 15
     },
     "texto": {
-     "solitario": "Vender 450 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 685 monedas con máximo 15 clientes perdidos"
+     "solitario": "Vender 840 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 1275 monedas con máximo 15 clientes perdidos"
     }
    }
   }
@@ -6668,12 +6668,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 280 monedas",
-     "pareja": "Vender 430 monedas"
+     "solitario": "Vender 525 monedas",
+     "pareja": "Vender 800 monedas"
     },
     "meta": {
-     "solitario": 280,
-     "pareja": 430
+     "solitario": 525,
+     "pareja": 800
     }
    },
    {
@@ -6704,16 +6704,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 450,
-     "pareja": 685
+     "solitario": 840,
+     "pareja": 1275
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 15
     },
     "texto": {
-     "solitario": "Vender 450 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 685 monedas con máximo 15 clientes perdidos"
+     "solitario": "Vender 840 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 1275 monedas con máximo 15 clientes perdidos"
     }
    }
   }
@@ -6745,12 +6745,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 290 monedas",
-     "pareja": "Vender 440 monedas"
+     "solitario": "Vender 545 monedas",
+     "pareja": "Vender 820 monedas"
     },
     "meta": {
-     "solitario": 290,
-     "pareja": 440
+     "solitario": 545,
+     "pareja": 820
     }
    },
    {
@@ -6787,16 +6787,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 470,
-     "pareja": 700
+     "solitario": 875,
+     "pareja": 1310
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 16
     },
     "texto": {
-     "solitario": "Vender 470 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 700 monedas con máximo 16 clientes perdidos"
+     "solitario": "Vender 875 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 1310 monedas con máximo 16 clientes perdidos"
     }
    }
   }
@@ -6828,12 +6828,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 290 monedas",
-     "pareja": "Vender 440 monedas"
+     "solitario": "Vender 545 monedas",
+     "pareja": "Vender 820 monedas"
     },
     "meta": {
-     "solitario": 290,
-     "pareja": 440
+     "solitario": 545,
+     "pareja": 820
     }
    },
    {
@@ -6864,16 +6864,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 470,
-     "pareja": 700
+     "solitario": 875,
+     "pareja": 1310
     },
     "perdidos_max": {
      "solitario": 10,
      "pareja": 16
     },
     "texto": {
-     "solitario": "Vender 470 monedas con máximo 10 clientes perdidos",
-     "pareja": "Vender 700 monedas con máximo 16 clientes perdidos"
+     "solitario": "Vender 875 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 1310 monedas con máximo 16 clientes perdidos"
     }
    }
   }
@@ -6905,12 +6905,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 305 monedas",
-     "pareja": "Vender 450 monedas"
+     "solitario": "Vender 565 monedas",
+     "pareja": "Vender 840 monedas"
     },
     "meta": {
-     "solitario": 305,
-     "pareja": 450
+     "solitario": 565,
+     "pareja": 840
     }
    },
    {
@@ -6941,16 +6941,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 485,
-     "pareja": 720
+     "solitario": 905,
+     "pareja": 1345
     },
     "perdidos_max": {
      "solitario": 11,
      "pareja": 16
     },
     "texto": {
-     "solitario": "Vender 485 monedas con máximo 11 clientes perdidos",
-     "pareja": "Vender 720 monedas con máximo 16 clientes perdidos"
+     "solitario": "Vender 905 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 1345 monedas con máximo 16 clientes perdidos"
     }
    }
   }
@@ -6982,12 +6982,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 315 monedas",
-     "pareja": "Vender 470 monedas"
+     "solitario": "Vender 590 monedas",
+     "pareja": "Vender 880 monedas"
     },
     "meta": {
-     "solitario": 315,
-     "pareja": 470
+     "solitario": 590,
+     "pareja": 880
     }
    },
    {
@@ -7018,16 +7018,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 505,
-     "pareja": 755
+     "solitario": 940,
+     "pareja": 1410
     },
     "perdidos_max": {
      "solitario": 11,
      "pareja": 17
     },
     "texto": {
-     "solitario": "Vender 505 monedas con máximo 11 clientes perdidos",
-     "pareja": "Vender 755 monedas con máximo 17 clientes perdidos"
+     "solitario": "Vender 940 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 1410 monedas con máximo 17 clientes perdidos"
     }
    }
   }
@@ -7059,12 +7059,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 315 monedas",
-     "pareja": "Vender 470 monedas"
+     "solitario": "Vender 590 monedas",
+     "pareja": "Vender 880 monedas"
     },
     "meta": {
-     "solitario": 315,
-     "pareja": 470
+     "solitario": 590,
+     "pareja": 880
     }
    },
    {
@@ -7101,16 +7101,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 505,
-     "pareja": 755
+     "solitario": 940,
+     "pareja": 1410
     },
     "perdidos_max": {
      "solitario": 11,
      "pareja": 17
     },
     "texto": {
-     "solitario": "Vender 505 monedas con máximo 11 clientes perdidos",
-     "pareja": "Vender 755 monedas con máximo 17 clientes perdidos"
+     "solitario": "Vender 940 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 1410 monedas con máximo 17 clientes perdidos"
     }
    }
   }
@@ -7142,12 +7142,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 325 monedas",
-     "pareja": "Vender 495 monedas"
+     "solitario": "Vender 610 monedas",
+     "pareja": "Vender 925 monedas"
     },
     "meta": {
-     "solitario": 325,
-     "pareja": 495
+     "solitario": 610,
+     "pareja": 925
     }
    },
    {
@@ -7178,16 +7178,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 520,
-     "pareja": 790
+     "solitario": 975,
+     "pareja": 1480
     },
     "perdidos_max": {
      "solitario": 12,
      "pareja": 18
     },
     "texto": {
-     "solitario": "Vender 520 monedas con máximo 12 clientes perdidos",
-     "pareja": "Vender 790 monedas con máximo 18 clientes perdidos"
+     "solitario": "Vender 975 monedas con máximo 12 clientes perdidos",
+     "pareja": "Vender 1480 monedas con máximo 18 clientes perdidos"
     }
    }
   }
@@ -7219,12 +7219,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 325 monedas",
-     "pareja": "Vender 495 monedas"
+     "solitario": "Vender 695 monedas",
+     "pareja": "Vender 1055 monedas"
     },
     "meta": {
-     "solitario": 325,
-     "pareja": 495
+     "solitario": 695,
+     "pareja": 1055
     }
    },
    {
@@ -7255,16 +7255,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 520,
-     "pareja": 790
+     "solitario": 1115,
+     "pareja": 1690
     },
     "perdidos_max": {
      "solitario": 12,
      "pareja": 18
     },
     "texto": {
-     "solitario": "Vender 520 monedas con máximo 12 clientes perdidos",
-     "pareja": "Vender 790 monedas con máximo 18 clientes perdidos"
+     "solitario": "Vender 1115 monedas con máximo 12 clientes perdidos",
+     "pareja": "Vender 1690 monedas con máximo 18 clientes perdidos"
     }
    }
   }
@@ -7296,12 +7296,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 340 monedas",
-     "pareja": "Vender 505 monedas"
+     "solitario": "Vender 720 monedas",
+     "pareja": "Vender 1080 monedas"
     },
     "meta": {
-     "solitario": 340,
-     "pareja": 505
+     "solitario": 720,
+     "pareja": 1080
     }
    },
    {
@@ -7338,16 +7338,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 540,
-     "pareja": 810
+     "solitario": 1150,
+     "pareja": 1730
     },
     "perdidos_max": {
      "solitario": 12,
      "pareja": 18
     },
     "texto": {
-     "solitario": "Vender 540 monedas con máximo 12 clientes perdidos",
-     "pareja": "Vender 810 monedas con máximo 18 clientes perdidos"
+     "solitario": "Vender 1150 monedas con máximo 12 clientes perdidos",
+     "pareja": "Vender 1730 monedas con máximo 18 clientes perdidos"
     }
    }
   }
@@ -7379,12 +7379,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 350 monedas",
-     "pareja": "Vender 520 monedas"
+     "solitario": "Vender 745 monedas",
+     "pareja": "Vender 1105 monedas"
     },
     "meta": {
-     "solitario": 350,
-     "pareja": 520
+     "solitario": 745,
+     "pareja": 1105
     }
    },
    {
@@ -7421,16 +7421,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 560,
-     "pareja": 830
+     "solitario": 1190,
+     "pareja": 1765
     },
     "perdidos_max": {
      "solitario": 12,
      "pareja": 18
     },
     "texto": {
-     "solitario": "Vender 560 monedas con máximo 12 clientes perdidos",
-     "pareja": "Vender 830 monedas con máximo 18 clientes perdidos"
+     "solitario": "Vender 1190 monedas con máximo 12 clientes perdidos",
+     "pareja": "Vender 1765 monedas con máximo 18 clientes perdidos"
     }
    }
   }
@@ -7462,12 +7462,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 350 monedas",
-     "pareja": "Vender 520 monedas"
+     "solitario": "Vender 745 monedas",
+     "pareja": "Vender 1105 monedas"
     },
     "meta": {
-     "solitario": 350,
-     "pareja": 520
+     "solitario": 745,
+     "pareja": 1105
     }
    },
    {
@@ -7498,16 +7498,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 560,
-     "pareja": 830
+     "solitario": 1190,
+     "pareja": 1765
     },
     "perdidos_max": {
      "solitario": 12,
      "pareja": 18
     },
     "texto": {
-     "solitario": "Vender 560 monedas con máximo 12 clientes perdidos",
-     "pareja": "Vender 830 monedas con máximo 18 clientes perdidos"
+     "solitario": "Vender 1190 monedas con máximo 12 clientes perdidos",
+     "pareja": "Vender 1765 monedas con máximo 18 clientes perdidos"
     }
    }
   }
@@ -7539,12 +7539,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 360 monedas",
-     "pareja": "Vender 540 monedas"
+     "solitario": "Vender 770 monedas",
+     "pareja": "Vender 1150 monedas"
     },
     "meta": {
-     "solitario": 360,
-     "pareja": 540
+     "solitario": 770,
+     "pareja": 1150
     }
    },
    {
@@ -7575,16 +7575,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 575,
-     "pareja": 865
+     "solitario": 1230,
+     "pareja": 1845
     },
     "perdidos_max": {
      "solitario": 13,
      "pareja": 19
     },
     "texto": {
-     "solitario": "Vender 575 monedas con máximo 13 clientes perdidos",
-     "pareja": "Vender 865 monedas con máximo 19 clientes perdidos"
+     "solitario": "Vender 1230 monedas con máximo 13 clientes perdidos",
+     "pareja": "Vender 1845 monedas con máximo 19 clientes perdidos"
     }
    }
   }
@@ -7616,12 +7616,12 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Vender 360 monedas",
-     "pareja": "Vender 540 monedas"
+     "solitario": "Vender 770 monedas",
+     "pareja": "Vender 1150 monedas"
     },
     "meta": {
-     "solitario": 360,
-     "pareja": 540
+     "solitario": 770,
+     "pareja": 1150
     }
    },
    {
@@ -7658,16 +7658,16 @@
    "problemas_x": 1.5,
    "luna": {
     "ventas": {
-     "solitario": 575,
-     "pareja": 865
+     "solitario": 1230,
+     "pareja": 1845
     },
     "perdidos_max": {
      "solitario": 13,
      "pareja": 19
     },
     "texto": {
-     "solitario": "Vender 575 monedas con máximo 13 clientes perdidos",
-     "pareja": "Vender 865 monedas con máximo 19 clientes perdidos"
+     "solitario": "Vender 1230 monedas con máximo 13 clientes perdidos",
+     "pareja": "Vender 1845 monedas con máximo 19 clientes perdidos"
     }
    }
   }

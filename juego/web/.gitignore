@@ -1,0 +1,6 @@
+node_modules/
+dist/
+modelos-crudos/
+public/modelos-plano/
+artefacto/
+test-results/

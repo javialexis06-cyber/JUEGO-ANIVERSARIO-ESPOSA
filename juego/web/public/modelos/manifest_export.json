@@ -1,0 +1,27 @@
+{
+ "personajes": {
+  "escalas": {
+   "el": 1.0,
+   "abuelita": 0.949999988079071,
+   "mama": 1.0,
+   "adolescente": 1.0
+  },
+  "poses_el": [
+   "reposo",
+   "caminar_a",
+   "caminar_b",
+   "carrito_a",
+   "carrito_b",
+   "reponer",
+   "cobrar",
+   "celebrar"
+  ],
+  "poses_cliente": [
+   "reposo",
+   "caminar_a",
+   "caminar_b",
+   "tomar"
+  ],
+  "animados": true
+ }
+}

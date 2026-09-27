@@ -31,7 +31,7 @@ FACTOR_PAREJA = 1.5
 
 BASE_CLIENTES = {1: 8, 2: 12, 3: 15, 4: 18}      # clientes el día 1 (modo solitario)
 PASO_CLIENTES = {1: 0.45, 2: 0.5, 3: 0.55, 4: 0.6}  # clientes extra por día dentro de la tienda
-TICKET = {1: 9, 2: 11, 3: 13, 4: 15}              # monedas promedio por cliente
+PRECIO_MEDIO = {1: 5.6, 2: 6.4, 3: 7.2, 4: 8.0}   # monedas por producto (promedio de las vitrinas de cada tienda)
 ESPERA_CAJA = {1: 12, 2: 10, 3: 9, 4: 8}           # segundos máximos de espera promedio en caja
 VACIA_MAX = {1: 25, 2: 22, 3: 19, 4: 16}           # segundos máximos que una vitrina puede quedar vacía
 
@@ -90,13 +90,24 @@ def clientes(s, d, evento):
     return round(n)
 
 
+def productos_por_cliente(s, d):
+    """Largo promedio de la lista de compras. El juego sortea de 1 a `maximo` productos (igual que aquí)."""
+    maximo = (1 if d <= 1 else 2 if d < 8 else 3 if d < 20 else 4) + (s - 1)
+    return (maximo + 1) / 2
+
+
+def ticket(s, d):
+    """Monedas que deja en promedio un cliente que compra toda su lista."""
+    return productos_por_cliente(s, d) * PRECIO_MEDIO[s]
+
+
 def objetivo(clave, s, d, n, evento):
     """Devuelve (clave, texto, meta). n = {'solitario': clientes, 'pareja': clientes}.
     Texto y meta son diccionarios por modo: en pareja llegan más clientes y la meta sube."""
     modos = ('solitario', 'pareja')
     if clave == 'ventas':
         f = 1.2 if evento == 'Día de ofertas' else 1.0
-        meta = {m: int(round(n[m] * TICKET[s] * 0.75 * f / 5) * 5) for m in modos}
+        meta = {m: int(round(n[m] * ticket(s, d) * 0.75 * f / 5) * 5) for m in modos}
         return clave, {m: f'Vender {meta[m]} monedas' for m in modos}, meta
     if clave == 'propinas':
         meta = {m: round(n[m] * 1.1 * (1 + 0.1 * (s - 1))) for m in modos}
@@ -167,7 +178,7 @@ def generar():
             duracion = 180 + 5 * (d // 5) + (30 if evento else 0) + (60 if evento in ('Gran día', 'Nuestro aniversario') else 0)
             paciencia = round(max(0.7, 1.0 - 0.008 * (d - 1) - 0.03 * (s - 1)), 3)
             leg = {m: n[m] * 2 for m in n}
-            luna_ventas = {m: int(round(leg[m] * TICKET[s] * 0.6 / 5) * 5) for m in leg}
+            luna_ventas = {m: int(round(leg[m] * ticket(s, d) * 0.6 / 5) * 5) for m in leg}
             luna_perdidos = {m: round(leg[m] * 0.2) for m in leg}
             legendario = dict(
                 clientes=leg, paciencia=round(paciencia * 0.5, 3), problemas_x=1.5,
