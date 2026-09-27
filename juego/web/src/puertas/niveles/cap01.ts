@@ -1,0 +1,802 @@
+// Capítulo 1 · Nuestra casa (puertas 1–10): aprender a tocar, arrastrar, deslizar, inclinar, sacudir…
+import * as THREE from 'three';
+import * as sonido from '../../sonido';
+import { caja, cilindro, en, esfera, estrella, FUENTE, grupo, letrero, lienzo, mat, matNuevo, textoEn, toro } from '../kit';
+import { modelo } from '../modelos';
+import type { Ctx, Nivel } from '../nivel';
+import { Canica, lamparita, limites, llave, mesa, planoPared, planoPiso, sofa } from './piezas';
+
+/** Pone una planta u otro adorno de la casa (si no carga, no pasa nada). */
+async function adorno(c: Ctx, nombre: string, alto: number, x: number, y: number, z: number, ry = 0) {
+  try {
+    const o = await modelo(nombre, alto);
+    en(o, x, y, z, ry);
+    c.g.add(o);
+    return o;
+  } catch {
+    return null;
+  }
+}
+
+/** La llave aparece: se toca para guardarla y se usa en la puerta. */
+function llaveParaLaPuerta(c: Ctx, k: THREE.Object3D) {
+  c.tocar(k, () => c.dar('llave', k));
+  c.conLlave();
+}
+
+// ---------------------------------------------------------------------------
+// 1 · La llave bajo el tapete
+// ---------------------------------------------------------------------------
+const tapete: Nivel = {
+  titulo: 'La llave bajo el tapete',
+  pistas: ['Lo que buscas está justo bajo tus pies, frente a la puerta.', 'Arrastra el tapete hacia un lado, toca la llave y luego úsala en la puerta.'],
+  async montar(c) {
+    const k = llave();
+    en(k, 0.18, 0.012, 0.78);
+    c.g.add(k);
+    const t = grupo('tapete');
+    t.add(caja(1.1, 0.035, 0.62, mat('#b5543c', { rough: 1 }), 0.02));
+    const texto = letrero(0.95, 0.5, (cx, w, h) => {
+      cx.fillStyle = '#e9b27a';
+      cx.fillRect(0, 0, w, h);
+      cx.fillStyle = '#b5543c';
+      cx.fillRect(10, 10, w - 20, h - 20);
+      textoEn(cx, 'H O L A', w / 2, h / 2, h * 0.34, '#f6e0c0', 700);
+    });
+    texto.rotation.x = -Math.PI / 2;
+    en(texto, 0, 0.019, 0);
+    t.add(texto);
+    en(t, 0.05, 0.018, 0.78);
+    c.g.add(t);
+    let vista = false;
+    c.arrastrar(t, {
+      plano: planoPiso(0.018),
+      limites: limites(-2.2, 0.018, 0.45, 2.6, 0.018, 1.9),
+      alSoltar: (pnt) => {
+        sonido.rumor(0.2, 300, 0.05);
+        if (!vista && (Math.abs(pnt.x - 0.18) > 0.62 || Math.abs(pnt.z - 0.78) > 0.42)) {
+          vista = true;
+          c.bien();
+          llaveParaLaPuerta(c, k);
+        }
+      },
+    });
+    await adorno(c, 'deco_monstera', 1.3, 2.6, 0, 0.55);
+    const perchero = grupo('perchero');
+    perchero.add(en(cilindro(0.03, 0.03, 1.7, mat('#8e5b3c')), 0, 0.85, 0), en(cilindro(0.22, 0.25, 0.04, mat('#8e5b3c')), 0, 0.02, 0));
+    perchero.add(en(caja(0.3, 0.55, 0.12, mat('#f4b6c2'), 0.06), 0.1, 1.35, 0.05));
+    en(perchero, -1.35, 0, 0.35);
+    c.g.add(perchero);
+  },
+  async prueba(p) {
+    await p.arrastrar('tapete', new THREE.Vector3(1.6, 0.02, 1.2));
+    await p.tocar('llave');
+    await p.usar('llave', 'puerta toque');
+  },
+};
+
+// ---------------------------------------------------------------------------
+// 2 · Tres golpecitos y uno largo
+// ---------------------------------------------------------------------------
+const golpecitos: Nivel = {
+  titulo: 'Tres golpecitos y uno largo',
+  pistas: ['El narrador te contó cómo tocaban la puerta. Usa la aldaba.', 'Toca la aldaba tres veces rapidito y la cuarta déjala presionada un segundo.'],
+  montar(c) {
+    const aldaba = grupo('aldaba');
+    const placa = cilindro(0.09, 0.09, 0.03, mat('#d9b25a', { metal: 0.7, rough: 0.3 }));
+    placa.rotation.x = Math.PI / 2;
+    const aro = toro(0.085, 0.018, mat('#d9b25a', { metal: 0.7, rough: 0.3 }), 'aro aldaba');
+    const aroPiv = grupo('aro piv');
+    en(aro, 0, -0.09, 0.03);
+    aroPiv.add(aro);
+    en(aroPiv, 0, 0.02, 0.02);
+    aldaba.add(placa, aroPiv);
+    const toque = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 6), new THREE.MeshBasicMaterial({ visible: false }));
+    toque.name = 'aldaba toque';
+    aldaba.add(toque);
+    c.puerta.pegar(aldaba, 0, 1.6, 0.1);
+    const golpes: string[] = [];
+    let ultimo = 0;
+    const golpe = (largo: boolean) => {
+      const ahora = c.escena.t;
+      if (ahora - ultimo > 2.5) golpes.length = 0;
+      ultimo = ahora;
+      golpes.push(largo ? 'L' : 'c');
+      sonido.rumor(largo ? 0.35 : 0.1, 170, 0.14, 0, 2);
+      void c.escena.animar(largo ? 320 : 160, (k) => (aroPiv.rotation.x = -Math.sin(k * Math.PI) * 0.5));
+      const ult = golpes.slice(-4).join('');
+      if (ult === 'cccL') {
+        c.bien();
+        c.puerta.bloqueada = false;
+        c.despues(500, () => {
+          sonido.campana();
+          c.resolver();
+        });
+      } else if (golpes.length >= 4 && largo) c.mal();
+    };
+    c.mantener(aldaba, () => {}, (ms) => golpe(ms > 550));
+    // Un cuadrito de ambiente
+    const cuadro = letrero(0.7, 0.5, (cx, w, h) => {
+      cx.fillStyle = '#fff8ee';
+      cx.fillRect(0, 0, w, h);
+      cx.strokeStyle = '#8e5b3c';
+      cx.lineWidth = 18;
+      cx.strokeRect(0, 0, w, h);
+      cx.fillStyle = '#3d2b27';
+      cx.font = `600 ${h * 0.14}px ${FUENTE}`;
+      cx.textAlign = 'center';
+      cx.fillText('toc toc toc…', w / 2, h * 0.45);
+      cx.fillText('¿quién es?', w / 2, h * 0.68);
+    }, 'cuadro toc');
+    en(cuadro, 1.9, 1.75, 0.02);
+    c.g.add(cuadro);
+  },
+  async prueba(p) {
+    await p.tocar('aldaba toque', 3, 150);
+    await p.mantener('aldaba toque', 900);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// 3 · Las lámparas del cuadro
+// ---------------------------------------------------------------------------
+const ORDEN_COLORES = ['#F7C948', '#F59FC0', '#8EC5F0', '#8FD6B9'];
+const lamparas: Nivel = {
+  titulo: 'Las lámparas del cuadro',
+  pistas: ['Mira bien el cuadro de la pared: sus colores van en un orden.', 'Prende las lámparas de arriba hacia abajo según las franjas del cuadro: amarilla, rosada, azul, verde.'],
+  montar(c) {
+    // El cuadro: un corazón a franjas
+    const cuadro = letrero(0.8, 0.8, (cx, w, h) => {
+      cx.fillStyle = '#fff8ee';
+      cx.fillRect(0, 0, w, h);
+      cx.save();
+      cx.beginPath();
+      const s = w * 0.8, x0 = w / 2, y0 = h * 0.52;
+      cx.moveTo(x0, y0 + s * 0.4);
+      cx.bezierCurveTo(x0 - s * 0.06, y0 + s * 0.34, x0 - s * 0.5, y0 + s * 0.06, x0 - s * 0.5, y0 - s * 0.14);
+      cx.bezierCurveTo(x0 - s * 0.5, y0 - s * 0.42, x0 - s * 0.2, y0 - s * 0.5, x0, y0 - s * 0.28);
+      cx.bezierCurveTo(x0 + s * 0.2, y0 - s * 0.5, x0 + s * 0.5, y0 - s * 0.42, x0 + s * 0.5, y0 - s * 0.14);
+      cx.bezierCurveTo(x0 + s * 0.5, y0 + s * 0.06, x0 + s * 0.06, y0 + s * 0.34, x0, y0 + s * 0.4);
+      cx.clip();
+      const franja = (s * 0.9) / 4;
+      ORDEN_COLORES.forEach((col, i) => {
+        cx.fillStyle = col;
+        cx.fillRect(0, y0 - s * 0.5 + i * franja, w, franja + 1);
+      });
+      cx.restore();
+      cx.strokeStyle = '#8e5b3c';
+      cx.lineWidth = 22;
+      cx.strokeRect(0, 0, w, h);
+    }, 'cuadro franjas');
+    en(cuadro, -2.1, 1.8, 0.02);
+    c.g.add(cuadro);
+    const m = mesa(2.2, 0.5, 0.75, '#c49468', 'consola');
+    en(m, 2.0, 0, 0.45);
+    c.g.add(m);
+    // Colores en otro orden sobre la mesa
+    const puestos = ['#8EC5F0', '#F7C948', '#8FD6B9', '#F59FC0'];
+    const lamps = puestos.map((col, i) => {
+      const l = lamparita(col, `lampara ${i}`);
+      en(l, 1.2 + i * 0.52, 0.75, 0.45);
+      c.g.add(l);
+      return { l, col, prendida: false };
+    });
+    let paso = 0;
+    for (const x of lamps) {
+      c.tocar(x.l, () => {
+        if (x.prendida) return;
+        x.prendida = true;
+        x.l.userData.prender(true);
+        sonido.nota(600 + paso * 120, 0.08, 0, 'triangle', 0.06);
+        if (x.col === ORDEN_COLORES[paso]) {
+          paso++;
+          if (paso === 4) {
+            c.bien();
+            c.despues(500, () => c.resolver());
+          }
+        } else {
+          c.mal();
+          c.despues(450, () => {
+            for (const y of lamps) {
+              y.prendida = false;
+              y.l.userData.prender(false);
+            }
+          });
+          paso = 0;
+        }
+      });
+    }
+  },
+  async prueba(p) {
+    for (const i of [1, 3, 0, 2]) await p.tocar(`lampara ${i}`);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// 4 · Entre los cojines
+// ---------------------------------------------------------------------------
+const cojines: Nivel = {
+  titulo: 'Entre los cojines',
+  pistas: ['Las cosas se pierden debajo de los cojines del sofá.', 'Desliza el dedo hacia arriba sobre cada cojín para levantarlo. La llave está debajo de uno.'],
+  montar(c) {
+    const s = sofa('#9ccbef');
+    en(s, 1.5, 0, 0.75);
+    c.g.add(s);
+    const debajo = [
+      () => {
+        const miga = esfera(0.03, mat('#e8c07a'), 'migas');
+        return miga;
+      },
+      () => {
+        const control = caja(0.06, 0.03, 0.2, mat('#3d2b27'), 0.02, 'control');
+        return control;
+      },
+      () => llave('llave'),
+    ];
+    const orden = [1, 2, 0];
+    [0.9, 1.5, 2.1].forEach((x, i) => {
+      const cosa = debajo[orden[i]]();
+      en(cosa, x, 0.56, 0.8);
+      c.g.add(cosa);
+      if (cosa.name === 'llave') llaveParaLaPuerta(c, cosa);
+      const cj = caja(0.55, 0.2, 0.55, mat(['#f4b6c2', '#f6cf5a', '#c9b6ea'][i]), 0.09, `cojin ${i}`);
+      en(cj, x, 0.62, 0.8);
+      c.g.add(cj);
+      let levantado = false;
+      c.tocar(cj, () => {
+        if (levantado) return;
+        void c.escena.animar(260, (k) => (cj.rotation.z = Math.sin(k * Math.PI * 2) * 0.08));
+      });
+      cj.userData.levantar = () => {
+        if (levantado) return;
+        levantado = true;
+        sonido.rumor(0.25, 500, 0.06);
+        const y0 = cj.position.y, x0 = cj.position.x;
+        void c.escena.animar(600, (k) => {
+          cj.position.y = y0 + Math.sin(k * Math.PI) * 0.5 + k * 0.25;
+          cj.position.x = x0 + k * 0.1;
+          cj.position.z = 0.8 - k * 0.45;
+          cj.rotation.x = -k * 1.2;
+        });
+        c.quitarToque(cj);
+      };
+    });
+    c.gesto.deslizar((dir, _v, obj) => {
+      if (dir === 'arriba' && obj?.name.startsWith('cojin')) obj.userData.levantar();
+    });
+    const lampara = lamparita('#fff3e0', 'lampara piso');
+    lampara.scale.setScalar(2.2);
+    en(lampara, -1.2, 0, 0.5);
+    c.g.add(lampara);
+    lampara.userData.prender(true);
+  },
+  async prueba(p) {
+    for (const i of [0, 1, 2]) await p.deslizar('arriba', `cojin ${i}`, 160);
+    await p.tocar('llave');
+    await p.usar('llave', 'puerta toque');
+  },
+};
+
+// ---------------------------------------------------------------------------
+// 5 · El timbre trabado
+// ---------------------------------------------------------------------------
+const timbre: Nivel = {
+  titulo: 'El timbre trabado',
+  pistas: ['El timbre suena muy débil… hay que insistir.', 'Toca el timbre muchas veces seguidas y muy rápido, sin parar, hasta que suene.'],
+  montar(c) {
+    const base = caja(0.18, 0.26, 0.04, mat('#fff8ee'), 0.03, 'timbre base');
+    en(base, 0.98, 1.25, 0.02);
+    const aro = toro(0.06, 0.012, matNuevo('#e4574b', { emisivo: '#e4574b', intensidad: 0 }), 'aro timbre');
+    en(aro, 0.98, 1.27, 0.05);
+    const boton = cilindro(0.045, 0.05, 0.04, mat('#f6cf5a'), 'timbre');
+    boton.rotation.x = Math.PI / 2;
+    en(boton, 0.98, 1.27, 0.055);
+    c.g.add(base, aro, boton);
+    let carga = 0;
+    let listo = false;
+    c.tocar(boton, () => {
+      if (listo) return;
+      carga += 1;
+      sonido.nota(160 + carga * 12, 0.06, 0, 'square', 0.03);
+      void c.escena.animar(90, (k) => (boton.position.z = 0.055 - Math.sin(k * Math.PI) * 0.015));
+      if (carga >= 15) {
+        listo = true;
+        c.bien();
+        sonido.nota(988, 0.5, 0, 'sine', 0.1);
+        sonido.nota(784, 0.7, 0.45, 'sine', 0.1);
+        c.despues(1200, () => c.resolver());
+      }
+    });
+    c.cada((dt) => {
+      if (!listo) carga = Math.max(0, carga - dt * 2.5);
+      (aro.material as THREE.MeshStandardMaterial).emissiveIntensity = listo ? 2 : carga / 9;
+    });
+    void adorno(c, 'deco_girasoles', 1.0, -1.6, 0, 0.5);
+    void adorno(c, 'deco_cuadro_flores', 0.7, 2.1, 1.4, 0.02);
+  },
+  async prueba(p) {
+    await p.tocar('timbre', 22, 60);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// 6 · El laberinto de canica
+// ---------------------------------------------------------------------------
+const TABLA = { w: 1.2, h: 1.0, solidos: [[0, 0.68, 0.92, 0.72], [0.28, 0.43, 1.2, 0.47], [0, 0.18, 0.86, 0.22]] as [number, number, number, number][] };
+const laberinto: Nivel = {
+  titulo: 'El laberinto de canica',
+  pistas: ['La canica rueda según como gires el celular.', 'Gira el celular (como un timón) a un lado y al otro para llevar la canica por los huecos hasta el hoyito de abajo a la izquierda.'],
+  montar(c) {
+    const x0 = 1.4, y0 = 1.1;
+    const tablero = grupo('tablero');
+    en(tablero, x0, y0, 0.06);
+    c.g.add(tablero);
+    tablero.add(en(caja(TABLA.w + 0.1, TABLA.h + 0.1, 0.06, mat('#8e5b3c'), 0.03), TABLA.w / 2, TABLA.h / 2, -0.04));
+    tablero.add(en(caja(TABLA.w, TABLA.h, 0.02, mat('#fff3e0'), 0.01), TABLA.w / 2, TABLA.h / 2, -0.005));
+    for (const [a, b, cc, d] of TABLA.solidos) tablero.add(en(caja(cc - a, d - b, 0.05, mat('#c49468'), 0.008), (a + cc) / 2, (b + d) / 2, 0.02));
+    const hoyo = cilindro(0.05, 0.05, 0.02, mat('#2a211d'), 'hoyo');
+    hoyo.rotation.x = Math.PI / 2;
+    en(hoyo, 0.12, 0.05, 0.005);
+    tablero.add(hoyo);
+    const bola = esfera(0.035, mat('#e4574b', { rough: 0.2, metal: 0.2 }), 'canica');
+    tablero.add(bola);
+    const canica = new Canica(TABLA, 0.1, 0.8);
+    bola.userData.canica = canica;
+    // Bandeja debajo donde cae la llave
+    const bandeja = caja(0.4, 0.08, 0.2, mat('#8e5b3c'), 0.03);
+    en(bandeja, x0 + 0.12, y0 - 0.25, 0.12);
+    c.g.add(bandeja);
+    const k = llave('llave', '#f2c75c', false);
+    k.visible = false;
+    en(k, x0 + 0.12, y0 - 0.12, 0.14);
+    c.g.add(k);
+    let hecho = false;
+    let arrastrando = false;
+    c.cada((dt) => {
+      if (hecho) return;
+      const s = c.sensores;
+      const ax = s.inclinacion.x * 9.8 * 0.35, ay = -s.inclinacion.y * 9.8 * 0.35;
+      if (!arrastrando) canica.paso(dt, ax, ay);
+      bola.position.set(canica.x, canica.y, 0.035);
+      bola.rotation.z = -canica.x / 0.035;
+      if (Math.hypot(canica.x - 0.12, canica.y - 0.05) < 0.05) {
+        hecho = true;
+        sonido.nota(300, 0.3, 0, 'sine', 0.1, 120);
+        bola.visible = false;
+        c.bien();
+        k.visible = true;
+        void c.escena.animar(500, (t) => (k.position.y = y0 - 0.12 - t * 0.1));
+        llaveParaLaPuerta(c, k);
+      }
+    });
+    // Sin acelerómetro: se lleva la canica con el dedo
+    c.despues(3000, () => {
+      if (c.sensores.hayMovimiento || hecho) return;
+      c.aviso('Este celular no avisa cuando se gira: lleva la canica con el dedo.', 3500);
+      c.mantener(bola, () => (arrastrando = true), () => (arrastrando = false));
+      c.gesto.mover((x, y, abajo) => {
+        if (!abajo || !arrastrando) return;
+        const pnt = c.enPlano(x, y, planoPared(0.095));
+        if (!pnt) return;
+        const dx = pnt.x - x0 - canica.x, dy = pnt.y - y0 - canica.y;
+        canica.vx = dx * 12;
+        canica.vy = dy * 12;
+        canica.paso(0.03, 0, 0);
+      });
+    });
+  },
+  async prueba(p) {
+    const canica = p.obj('canica').userData.canica as Canica;
+    // Derecha, izquierda, derecha, izquierda (girando el celular)
+    p.sensor.inclinar(0.75, 0.66);
+    await p.esperarQue(() => canica.y < 0.66, 60000);
+    p.sensor.inclinar(-0.75, 0.66);
+    await p.esperarQue(() => canica.y < 0.42, 60000);
+    p.sensor.inclinar(0.75, 0.66);
+    await p.esperarQue(() => canica.y < 0.17, 60000);
+    p.sensor.inclinar(-0.8, 0.6);
+    await p.esperarQue(() => !p.obj('canica').visible, 60000);
+    p.sensor.soltar();
+    await p.tocar('llave');
+    await p.usar('llave', 'puerta toque');
+  },
+};
+
+// ---------------------------------------------------------------------------
+// 7 · La foto rota
+// ---------------------------------------------------------------------------
+const CODIGO_FOTO = '5283';
+function dibujoFoto(cx: CanvasRenderingContext2D, w: number, h: number) {
+  const g = cx.createLinearGradient(0, 0, 0, h);
+  g.addColorStop(0, '#9ccbef');
+  g.addColorStop(1, '#fbe3d0');
+  cx.fillStyle = g;
+  cx.fillRect(0, 0, w, h);
+  // Los dos (caritas redondas) y un corazón
+  const cara = (x: number, pelo: string, largo: boolean) => {
+    cx.fillStyle = pelo;
+    if (largo) cx.fillRect(x - w * 0.13, h * 0.3, w * 0.26, h * 0.5);
+    cx.beginPath();
+    cx.arc(x, h * 0.46, w * 0.13, Math.PI, 0);
+    cx.fill();
+    cx.fillStyle = '#f7d2b6';
+    cx.beginPath();
+    cx.arc(x, h * 0.52, w * 0.11, 0, Math.PI * 2);
+    cx.fill();
+    cx.fillStyle = '#2a211d';
+    cx.beginPath();
+    cx.arc(x - w * 0.035, h * 0.52, w * 0.012, 0, Math.PI * 2);
+    cx.arc(x + w * 0.035, h * 0.52, w * 0.012, 0, Math.PI * 2);
+    cx.fill();
+    cx.strokeStyle = '#2a211d';
+    cx.lineWidth = 3;
+    cx.beginPath();
+    cx.arc(x, h * 0.56, w * 0.03, 0.2, Math.PI - 0.2);
+    cx.stroke();
+  };
+  cara(w * 0.35, '#1c1917', false);
+  cara(w * 0.65, '#1c1917', true);
+  cx.fillStyle = '#e4574b';
+  cx.font = `700 ${h * 0.18}px sans-serif`;
+  cx.textAlign = 'center';
+  cx.fillText('♥', w * 0.5, h * 0.3);
+  // Un número en cada esquina (se leen en el sentido del reloj)
+  const esquinas: [number, number][] = [[0.1, 0.14], [0.9, 0.14], [0.9, 0.92], [0.1, 0.92]];
+  esquinas.forEach(([x, y], i) => textoEn(cx, CODIGO_FOTO[i], w * x, h * y, h * 0.13, '#3d2b27', 700));
+}
+
+const fotoRota: Nivel = {
+  titulo: 'La foto rota',
+  pistas: ['Los pedazos de la foto van en el marco vacío. Arrástralos.', 'Arma la foto; los números de las esquinas, leídos en el sentido del reloj desde arriba a la izquierda, abren el teclado junto a la puerta.'],
+  montar(c) {
+    const W = 0.8, H = 0.6;
+    const cx0 = -2.1, cy0 = 1.75;
+    const marco = grupo('marco foto');
+    marco.add(en(caja(W + 0.12, H + 0.12, 0.04, mat('#8e5b3c'), 0.02), 0, 0, -0.01), en(caja(W, H, 0.02, mat('#efe2d0'), 0.005), 0, 0, 0.01));
+    en(marco, cx0, cy0, 0.02);
+    c.g.add(marco);
+    const tex = lienzo(512, 384, dibujoFoto);
+    const desordenado: [number, number][] = [[1.55, 2.2], [2.5, 1.35], [-1.0, 2.35], [1.6, 0.9]];
+    let puestas = 0;
+    for (let i = 0; i < 4; i++) {
+      const col = i % 2, fil = Math.floor(i / 2);
+      const geo = new THREE.PlaneGeometry(W / 2, H / 2);
+      const uv = geo.getAttribute('uv') as THREE.BufferAttribute;
+      for (let v = 0; v < uv.count; v++) uv.setXY(v, (uv.getX(v) + col) / 2, (uv.getY(v) + (1 - fil)) / 2);
+      const pedazo = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: tex, roughness: 0.85, side: THREE.DoubleSide }));
+      pedazo.name = `pedazo ${i}`;
+      pedazo.castShadow = true;
+      const destino = new THREE.Vector3(cx0 + (col - 0.5) * (W / 2), cy0 + (0.5 - fil) * (H / 2), 0.05);
+      const [dx, dy] = desordenado[i];
+      en(pedazo, dx, dy, 0.05);
+      pedazo.rotation.z = (i - 1.5) * 0.25;
+      c.g.add(pedazo);
+      let fijo = false;
+      c.arrastrar(pedazo, {
+        plano: planoPared(0.05),
+        limites: limites(-3.6, 0.4, 0.05, 3.6, 2.8, 0.05),
+        alTomar: () => {
+          if (!fijo) pedazo.rotation.z = 0;
+        },
+        alSoltar: (pnt) => {
+          if (fijo) return;
+          if (pnt.distanceTo(destino) < 0.16) {
+            fijo = true;
+            pedazo.position.copy(destino);
+            c.quitarToque(pedazo);
+            puestas++;
+            c.bien();
+            if (puestas === 4) sonido.regalo();
+          } else if (Math.abs(pnt.x - cx0) < W && Math.abs(pnt.y - cy0) < H) c.mal();
+        },
+      });
+    }
+    // Teclado junto a la puerta
+    const caja4 = grupo('teclado puerta');
+    caja4.add(caja(0.2, 0.28, 0.05, mat('#3d2b27'), 0.03));
+    for (let f = 0; f < 3; f++) for (let k = 0; k < 3; k++) caja4.add(en(caja(0.04, 0.04, 0.02, mat('#efe2d0'), 0.008), -0.055 + k * 0.055, 0.06 - f * 0.055, 0.03));
+    caja4.add(en(caja(0.14, 0.04, 0.02, matNuevo('#7ff0b0', { emisivo: '#2f8f68', intensidad: 0.6 }), 0.008), 0, 0.105, 0.03));
+    en(caja4, 0.98, 1.25, 0.03);
+    c.g.add(caja4);
+    c.tocar(caja4, async () => {
+      await c.enfocar(caja4, 0.9);
+      const ok = await c.ui.teclado({ titulo: 'Teclado de la puerta', largo: 4, correcto: CODIGO_FOTO });
+      if (ok) c.resolver();
+      else await c.volver();
+    });
+  },
+  async prueba(p) {
+    const W = 0.8, H = 0.6, cx0 = -2.1, cy0 = 1.75;
+    for (let i = 0; i < 4; i++) {
+      const col = i % 2, fil = Math.floor(i / 2);
+      await p.arrastrar(`pedazo ${i}`, new THREE.Vector3(cx0 + (col - 0.5) * (W / 2), cy0 + (0.5 - fil) * (H / 2), 0.05), 18);
+    }
+    await p.tocar('teclado puerta');
+    await p.panel(CODIGO_FOTO);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// 8 · Lo que brilla en la oscuridad
+// ---------------------------------------------------------------------------
+const CODIGO_ESTRELLAS = ['4', '1', '7'];
+function estrellasNumero(d: string): [number, number][] {
+  // Dígitos de 3×5 puntos
+  const F: Record<string, string[]> = {
+    '4': ['101', '101', '111', '001', '001'],
+    '1': ['010', '110', '010', '010', '111'],
+    '7': ['111', '001', '010', '010', '010'],
+  };
+  const pts: [number, number][] = [];
+  F[d].forEach((fila, y) => [...fila].forEach((v, x) => v === '1' && pts.push([x, 4 - y])));
+  return pts;
+}
+
+const oscuridad: Nivel = {
+  titulo: 'Lo que brilla en la oscuridad',
+  pistas: ['«Algunas cosas solo brillan en la oscuridad». ¿Y si apagas la luz?', 'Apaga el interruptor junto a la puerta: arriba de la puerta aparecen tres números hechos de estrellas. Esa es la clave de la cajita fuerte.'],
+  montar(c) {
+    // Interruptor
+    const inter = grupo('interruptor');
+    inter.add(caja(0.12, 0.2, 0.03, mat('#fff8ee'), 0.02));
+    const palanca = caja(0.04, 0.07, 0.04, mat('#efe2d0'), 0.012, 'palanca');
+    en(palanca, 0, 0.02, 0.025);
+    inter.add(palanca);
+    en(inter, -0.98, 1.25, 0.02);
+    c.g.add(inter);
+    // Estrellitas en la pared del fondo, arriba (solo se ven a oscuras)
+    const brillos: THREE.Mesh[] = [];
+    const mb = new THREE.MeshBasicMaterial({ color: '#d9ff9a', transparent: true, opacity: 0 });
+    CODIGO_ESTRELLAS.forEach((d, i) => {
+      for (const [x, y] of estrellasNumero(d)) {
+        const e = estrella(0.07, 0.01, mb);
+        en(e, -1.2 + i * 1.2 + x * 0.1 - 0.1, 2.55 + y * 0.1 - 0.2, 0.03);
+        c.g.add(e);
+        brillos.push(e);
+      }
+    });
+    // Unas estrellas de adorno también (despistan un poquito)
+    for (const [x, y] of [[-3.4, 2.1], [-2.5, 2.3], [-1.9, 2.95], [1.9, 2.95], [2.5, 2.25], [3.3, 2.05], [-3.0, 2.9], [3.0, 2.8], [-2.2, 1.9], [2.7, 1.75]]) {
+      const e = estrella(0.05, 0.01, mb);
+      en(e, x, y, 0.03);
+      c.g.add(e);
+    }
+    let luz = 1, meta = 1;
+    c.tocar(inter, () => {
+      meta = meta > 0.5 ? 0.06 : 1;
+      palanca.position.y = meta > 0.5 ? 0.02 : -0.02;
+      sonido.nota(1400, 0.03, 0, 'square', 0.05);
+      if (meta < 0.5) c.bien();
+    });
+    c.cada((dt) => {
+      luz += (meta - luz) * Math.min(1, dt * 6);
+      c.escena.atenuar(luz);
+      mb.opacity = Math.max(0, 1 - luz * 1.4);
+    });
+    // Cajita fuerte con candado de tres ruedas
+    const m = mesa(0.8, 0.5, 0.7, '#c49468', 'mesita');
+    en(m, 2.2, 0, 0.6);
+    const caja3 = grupo('cajita fuerte');
+    caja3.add(caja(0.5, 0.4, 0.4, mat('#6b7680', { metal: 0.5, rough: 0.45 }), 0.04));
+    const puertita = grupo('puertita');
+    puertita.add(en(caja(0.42, 0.32, 0.03, mat('#8a949e', { metal: 0.5, rough: 0.4 }), 0.02), 0.21, 0, 0));
+    puertita.add(en(cilindro(0.05, 0.05, 0.03, mat('#d9b25a', { metal: 0.7, rough: 0.3 })), 0.3, 0, 0.03));
+    (puertita.children[1] as THREE.Mesh).rotation.x = Math.PI / 2;
+    en(puertita, -0.21, 0, 0.21);
+    caja3.add(puertita);
+    en(caja3, 2.2, 0.9, 0.6);
+    c.g.add(m, caja3);
+    const k = llave('llave', '#f2c75c', true);
+    en(k, 2.2, 0.73, 0.62);
+    k.visible = false;
+    c.g.add(k);
+    let abierta = false;
+    c.tocar(caja3, async () => {
+      if (abierta) return;
+      const ok = await c.ui.ruedas({ titulo: 'Cajita fuerte', ruedas: [0, 1, 2].map(() => '0123456789'.split('')), correcto: CODIGO_ESTRELLAS });
+      if (!ok) return;
+      abierta = true;
+      c.bien();
+      k.visible = true;
+      llaveParaLaPuerta(c, k);
+      await c.escena.animar(600, (t) => (puertita.rotation.y = -t * 1.9));
+    });
+  },
+  async prueba(p) {
+    await p.tocar('interruptor');
+    await p.esperar(400);
+    await p.tocar('interruptor');
+    await p.tocar('cajita fuerte');
+    await p.panel(CODIGO_ESTRELLAS.join(''));
+    await p.esperar(800);
+    await p.tocar('llave');
+    await p.usar('llave', 'puerta toque');
+  },
+};
+
+// ---------------------------------------------------------------------------
+// 9 · El reloj sin hora
+// ---------------------------------------------------------------------------
+const reloj: Nivel = {
+  titulo: 'El reloj sin hora',
+  pistas: ['El reloj quiere saber qué hora es… de verdad, ahora mismo.', 'Arrastra cada manecilla hasta la hora que marca tu celular (la corta es la hora, la larga los minutos).'],
+  montar(c) {
+    const cx0 = -2.0, cy0 = 1.8, R = 0.42;
+    const centro = new THREE.Vector3(cx0, cy0, 0.06);
+    const cara = letrero(R * 2.2, R * 2.2, (cx, w, h) => {
+      cx.fillStyle = '#fff8ee';
+      cx.beginPath();
+      cx.arc(w / 2, h / 2, w * 0.48, 0, Math.PI * 2);
+      cx.fill();
+      cx.strokeStyle = '#8e5b3c';
+      cx.lineWidth = w * 0.05;
+      cx.stroke();
+      for (let i = 1; i <= 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        textoEn(cx, String(i), w / 2 + Math.sin(a) * w * 0.36, h / 2 - Math.cos(a) * h * 0.36, w * 0.09, '#3d2b27', 700);
+      }
+    }, 'reloj cara', { transparente: true });
+    en(cara, cx0, cy0, 0.03);
+    c.g.add(cara);
+    const manecilla = (largo: number, grosor: number, color: string, nombre: string) => {
+      const piv = grupo(nombre);
+      const m = caja(grosor, largo, 0.015, mat(color), grosor / 3);
+      en(m, 0, largo / 2 - 0.03, 0);
+      piv.add(m);
+      const toque = new THREE.Mesh(new THREE.BoxGeometry(0.1, largo, 0.04), new THREE.MeshBasicMaterial({ visible: false }));
+      toque.position.y = largo / 2;
+      piv.add(toque);
+      en(piv, cx0, cy0, nombre === 'minutero' ? 0.07 : 0.06);
+      c.g.add(piv);
+      return piv;
+    };
+    const horario = manecilla(0.24, 0.05, '#3d2b27', 'horario');
+    const minutero = manecilla(0.36, 0.035, '#e4574b', 'minutero');
+    horario.rotation.z = -1.3;
+    minutero.rotation.z = -3.5;
+    c.g.add(en(esfera(0.03, mat('#d9b25a', { metal: 0.7, rough: 0.3 })), cx0, cy0, 0.08));
+    let moviendo: THREE.Object3D | null = null;
+    const angulo = (o: THREE.Object3D) => ((-o.rotation.z % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+    const revisar = () => {
+      const d = new Date();
+      const h = d.getHours() % 12, m = d.getMinutes();
+      const aMin = (m / 60) * Math.PI * 2, aHora = ((h + m / 60) / 12) * Math.PI * 2;
+      const dif = (a: number, b: number) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b)));
+      if (dif(angulo(minutero), aMin) < 0.45 && dif(angulo(horario), aHora) < 0.4) {
+        hecho = true;
+        c.bien();
+        void pajarito();
+      }
+    };
+    let hecho = false;
+    // Se agarra la manecilla según dónde se toca: lejos del centro, el minutero; cerca, la más parecida
+    // (cuando se enciman, cerca del centro gana el horario, que es el de abajo)
+    const toqueReloj = new THREE.Mesh(new THREE.CircleGeometry(R * 1.05, 32), new THREE.MeshBasicMaterial({ visible: false }));
+    toqueReloj.name = 'reloj toque';
+    en(toqueReloj, cx0, cy0, 0.09);
+    c.g.add(toqueReloj);
+    c.mantener(toqueReloj, (hit) => {
+      const d = Math.hypot(hit.point.x - cx0, hit.point.y - cy0);
+      const a = Math.atan2(hit.point.x - cx0, hit.point.y - cy0);
+      const dif = (o: THREE.Object3D) => Math.abs(Math.atan2(Math.sin(a - angulo(o)), Math.cos(a - angulo(o))));
+      moviendo = d > 0.27 ? minutero : dif(horario) < 0.35 || dif(horario) < dif(minutero) ? horario : minutero;
+    }, () => {
+      moviendo = null;
+      sonido.nota(1100, 0.03, 0, 'square', 0.04);
+      if (!hecho) revisar();
+    });
+    c.gesto.mover((x, y, abajo) => {
+      if (!abajo || !moviendo || hecho) return;
+      const pnt = c.enPlano(x, y, planoPared(0.06));
+      if (!pnt) return;
+      const a = Math.atan2(pnt.x - centro.x, pnt.y - centro.y);
+      moviendo.rotation.z = -a;
+    });
+    // El pajarito del reloj trae la llave
+    const casita = grupo('puertita reloj');
+    en(casita, cx0, cy0 + R + 0.14, 0.05);
+    casita.add(caja(0.2, 0.16, 0.08, mat('#8e5b3c'), 0.02));
+    c.g.add(casita);
+    const pajaro = grupo('pajarito');
+    pajaro.add(esfera(0.06, mat('#f6cf5a')), en(esfera(0.02, mat('#e4574b')), 0, 0, 0.06));
+    const k = llave('llave', '#f2c75c', false);
+    k.scale.setScalar(0.8);
+    en(k, 0.05, -0.07, 0.03);
+    pajaro.add(k);
+    en(pajaro, 0, 0, 0);
+    pajaro.visible = false;
+    casita.add(pajaro);
+    const pajarito = async () => {
+      pajaro.visible = true;
+      sonido.nota(1318, 0.12, 0, 'sine', 0.08);
+      sonido.nota(1046, 0.16, 0.15, 'sine', 0.08);
+      llaveParaLaPuerta(c, k);
+      await c.escena.animar(500, (t) => (pajaro.position.z = t * 0.25));
+    };
+    void adorno(c, 'deco_estanteria', 1.9, 2.3, 0, 0.35);
+  },
+  async prueba(p) {
+    const d = new Date();
+    const h = d.getHours() % 12, m = d.getMinutes();
+    const aMin = (m / 60) * Math.PI * 2, aHora = ((h + m / 60) / 12) * Math.PI * 2;
+    const cx0 = -2.0, cy0 = 1.8;
+    const punta = (o: string, r: number) => {
+      const a = -p.obj(o).rotation.z;
+      return new THREE.Vector3(cx0 + Math.sin(a) * r, cy0 + Math.cos(a) * r, 0.09);
+    };
+    // Minutero por la punta, horario desde cerca del centro
+    await p.arrastrarDesde(punta('minutero', 0.33), new THREE.Vector3(cx0 + Math.sin(aMin) * 0.33, cy0 + Math.cos(aMin) * 0.33, 0.09));
+    await p.arrastrarDesde(punta('horario', 0.16), new THREE.Vector3(cx0 + Math.sin(aHora) * 0.16, cy0 + Math.cos(aHora) * 0.16, 0.09));
+    await p.esperarQue(() => p.obj('pajarito').visible, 20000);
+    await p.esperar(900);
+    await p.tocar('llave');
+    await p.usar('llave', 'puerta toque');
+  },
+};
+
+// ---------------------------------------------------------------------------
+// 10 · La llave en la lámpara
+// ---------------------------------------------------------------------------
+const lampara: Nivel = {
+  titulo: 'La llave en la lámpara',
+  pistas: ['La llave cuelga muy alto. ¿Y si mueves todo un poquito?', 'Sacude el celular (o toca la lámpara muchas veces) hasta que la llave se caiga.'],
+  montar(c) {
+    const piv = grupo('colgante');
+    en(piv, 0, 3.2 - 0.86, 1.6);
+    const hilo = cilindro(0.004, 0.004, 0.6, mat('#3d2b27'));
+    en(hilo, 0, -0.3, 0);
+    const k = llave('llave', '#f2c75c', false);
+    k.rotation.z = Math.PI / 2;
+    en(k, 0, -0.62, 0);
+    piv.add(hilo, k);
+    c.g.add(piv);
+    const toque = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.9, 0.5), new THREE.MeshBasicMaterial({ visible: false }));
+    toque.name = 'lampara toque';
+    en(toque, 0, 2.25, 1.6);
+    c.g.add(toque);
+    let vaiven = 0, fase = 0, caida = false;
+    const empujar = (f: number) => {
+      if (caida) return;
+      vaiven = Math.min(0.9, vaiven + f);
+      sonido.rumor(0.2, 900, 0.04);
+      if (vaiven > 0.75) soltar();
+    };
+    const soltar = () => {
+      caida = true;
+      c.bien();
+      const mundo = k.getWorldPosition(new THREE.Vector3());
+      piv.remove(k);
+      k.position.copy(mundo);
+      k.rotation.set(-Math.PI / 2, 0, 0.4);
+      c.g.add(k);
+      const y0 = mundo.y;
+      void c.escena.animar(700, (t) => {
+        k.position.y = y0 - (y0 - 0.03) * t * t;
+        if (t >= 1) sonido.nota(1500, 0.08, 0, 'triangle', 0.06);
+      }, (t) => t);
+      llaveParaLaPuerta(c, k);
+    };
+    c.sensor.sacudida(() => empujar(0.4));
+    c.tocar(toque, () => empujar(0.11));
+    c.cada((dt) => {
+      fase += dt * 3;
+      vaiven = Math.max(0, vaiven - dt * 0.08);
+      piv.rotation.z = Math.sin(fase) * vaiven * 0.5;
+    });
+    const s = sofa('#f4b6c2');
+    en(s, 1.9, 0, 0.7);
+    c.g.add(s);
+    void adorno(c, 'deco_osito', 0.45, 1.6, 0.54, 0.75);
+  },
+  async prueba(p) {
+    p.sensor.sacudir();
+    await p.esperar(200);
+    p.sensor.sacudir();
+    await p.esperarQue(() => p.obj('llave').position.y < 0.2, 20000);
+    await p.esperar(300);
+    await p.tocar('llave');
+    await p.usar('llave', 'puerta toque');
+  },
+};
+
+export const CAP1: Nivel[] = [tapete, golpecitos, lamparas, cojines, timbre, laberinto, fotoRota, oscuridad, reloj, lampara];

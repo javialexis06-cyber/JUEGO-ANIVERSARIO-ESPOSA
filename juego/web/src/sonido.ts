@@ -62,7 +62,7 @@ export function alternar() {
 }
 
 /** Una nota corta con envolvente suave. */
-function nota(frec: number, dur: number, cuando = 0, tipo: OscillatorType = 'sine', vol = 0.12, hasta?: number) {
+export function nota(frec: number, dur: number, cuando = 0, tipo: OscillatorType = 'sine', vol = 0.12, hasta?: number) {
   if (!ctx || silencio || !salidaEfectos) return;
   const t = ctx.currentTime + cuando;
   const o = ctx.createOscillator();
@@ -97,6 +97,29 @@ export const mordisco = () => { nota(300, 0.05, 0, 'square', 0.03, 180); nota(26
 export const burbuja = () => nota(600 + Math.random() * 500, 0.08, 0, 'sine', 0.05, 1400 + Math.random() * 600);
 export const regalo = () => [784, 988, 1175, 1568].forEach((f, i) => nota(f, 0.2, i * 0.07, 'triangle', 0.06));
 export const aviso = () => { nota(988, 0.12, 0, 'sine', 0.07); nota(1318, 0.2, 0.1, 'sine', 0.07); };
+/** Ruido filtrado corto (puertas que crujen, arena, viento, papel). */
+export function rumor(dur: number, frec = 1200, vol = 0.08, cuando = 0, q = 0.8, hasta?: number) {
+  if (!ctx || silencio || !salidaEfectos) return;
+  const t = ctx.currentTime + cuando;
+  const n = Math.max(1, Math.floor(ctx.sampleRate * dur));
+  const b = ctx.createBuffer(1, n, ctx.sampleRate);
+  const d = b.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = b;
+  const f = ctx.createBiquadFilter();
+  f.type = 'bandpass';
+  f.Q.value = q;
+  f.frequency.setValueAtTime(frec, t);
+  if (hasta) f.frequency.exponentialRampToValueAtTime(hasta, t + dur);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + Math.min(0.03, dur / 3));
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.connect(f).connect(g).connect(salidaEfectos);
+  src.start(t);
+}
+
 export const bostezo = () => nota(440, 0.6, 0, 'sine', 0.05, 250);
 export const fin = (bien: boolean) => (bien ? [523, 659, 784, 1046].forEach((f, i) => nota(f, 0.18, i * 0.12, 'triangle', 0.08)) : [392, 330, 262].forEach((f, i) => nota(f, 0.22, i * 0.15, 'triangle', 0.08)));
 

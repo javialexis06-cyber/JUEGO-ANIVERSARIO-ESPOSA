@@ -23,7 +23,7 @@ export async function elegirModelos() {
 let relieve: THREE.Texture | null = null;
 
 /** Textura de relieve suave (ruido) que imita la plastilina y el fieltro de los renders. */
-function texturaRelieve(): THREE.Texture {
+export function texturaRelieve(): THREE.Texture {
   if (relieve) return relieve;
   const n = 128;
   const c = document.createElement('canvas');

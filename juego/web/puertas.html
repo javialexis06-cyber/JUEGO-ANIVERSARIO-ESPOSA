@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Cien Puertas</title>
+</head>
+<body class="puertas">
+<canvas id="lienzo" aria-label="El cuarto de la puerta"></canvas>
+
+<!-- Carga -->
+<section id="carga" class="pantalla pantalla-carga">
+  <div class="logo logo-puertas">
+    <span class="logo-linea">Cien Puertas</span>
+    <span class="logo-pareja">el camino de vuelta a casa</span>
+  </div>
+  <div class="carga-riel" role="progressbar" aria-label="Cargando"><i id="carga-barra"></i></div>
+  <p id="carga-texto">Buscando las llaves…</p>
+</section>
+
+<!-- Mapa: los diez capítulos con sus puertas -->
+<section id="mapa" class="pantalla mapa" hidden>
+  <header class="mapa-cabeza">
+    <a class="boton-redondo boton-casa" href="./index.html" aria-label="Volver a la casa"></a>
+    <div class="logo logo-puertas logo-chico">
+      <span class="logo-linea">Cien Puertas</span>
+      <span class="logo-pareja" id="mapa-abiertas">0 de 100 puertas</span>
+    </div>
+    <button id="btn-continuar" class="boton boton-tomate">Empezar</button>
+  </header>
+  <div id="capitulos" class="capitulos"></div>
+</section>
+
+<!-- Durante una puerta -->
+<section id="hud" class="hud-puertas" hidden>
+  <div class="hud-chip"><b id="hud-puerta">Puerta 1</b><span id="hud-lugar">Nuestra casa</span></div>
+  <div class="hud-botones">
+    <button id="btn-pista" class="boton-redondo boton-pista" aria-label="Pista" hidden></button>
+    <button id="btn-sonido" class="boton-redondo boton-sonido" aria-label="Sonido"></button>
+    <button id="btn-mapa" class="boton-redondo boton-mapa" aria-label="Mapa de puertas"></button>
+  </div>
+  <button id="btn-volver" class="boton boton-papel btn-volver" hidden>‹ Volver</button>
+</section>
+<div id="inventario" class="inventario" hidden></div>
+<div id="aviso" class="aviso" role="status" hidden></div>
+
+<!-- El narrador -->
+<div id="dialogo" class="dialogo" hidden></div>
+<div id="globo" class="globo" hidden><p id="globo-texto"></p><span id="globo-seguir" class="globo-seguir" hidden>toca para seguir ▸</span></div>
+<div id="globo-chico" class="globo globo-chico" hidden></div>
+
+<!-- Candados, teclados y notas -->
+<section id="panel" class="panel" hidden><article id="panel-carta" class="panel-carta"></article></section>
+
+<div id="fundido" class="fundido" hidden></div>
+<script type="module" src="./src/puertas/main.ts"></script>
+</body>
+</html>

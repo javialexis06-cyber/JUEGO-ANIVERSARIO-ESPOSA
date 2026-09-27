@@ -323,7 +323,7 @@ async function abrirDeVerdad() {
     } catch {
       /* nada */
     }
-    mensajes.push(`Llegó el sueldo del súper: +${sueldo} monedas`);
+    mensajes.push(`Llegaron monedas de los minijuegos: +${sueldo}`);
   }
   // Bono diario (uno por persona y por día)
   if (await unaVez(`${hoy()}|${yo}|bono`, BONO_DIARIO)) mensajes.push(`Bono del día: +${BONO_DIARIO} monedas`);
@@ -1188,6 +1188,14 @@ function hojaJuegos() {
         <p>Atiende la tiendita de barrio: reponer, cobrar, limpiar y atrapar ladrones. Un tercio de lo que ganes cada día llega a la casa como sueldo.</p>
         <a class="boton boton-tomate" href="./super.html">Ir a trabajar</a>
       </div>
+    </article>
+    <article class="minijuego">
+      <img src="./modelos/iconos/deco_reloj.png" alt="">
+      <div>
+        <h3>Cien Puertas</h3>
+        <p>Un escape room para ti: cien puertas con acertijos (inclina, sacude, voltea el celular…) y ${nombre(otro(yo))} te cuenta la historia. Cada puerta abierta da monedas para la casa.</p>
+        <a class="boton boton-menta" href="./puertas.html">Abrir puertas</a>
+      </div>
     </article>`;
   abrirHoja('Minijuegos', html, { saldo: s?.casa.monedas });
 }
@@ -1584,12 +1592,26 @@ function bucle() {
   }
 }
 let errorReportado = false;
+let vestidosGuardados = '';
+
+/** Lo que tiene puesto cada uno, para que en Cien Puertas el narrador salga vestido igual (también en línea). */
+function guardarVestidos() {
+  if (!s) return;
+  const v = JSON.stringify({
+    el: { ropa: s.personajes.el.ropa, colorPelo: s.personajes.el.colorPelo },
+    ella: { ropa: s.personajes.ella.ropa, colorPelo: s.personajes.ella.colorPelo },
+  });
+  if (v === vestidosGuardados) return;
+  vestidosGuardados = v;
+  escribir('nuestro-hogar-vestidos', JSON.parse(v));
+}
 
 /** Cada medio segundo: estado de los personajes, barras, despertar solo, regalo por abrir. */
 function revisar() {
   if (!s) return;
   const ahora = Date.now();
   for (const r of ['el', 'ella'] as Rol[]) mascotas[r].aplicar(s.personajes[r], ahora);
+  guardarVestidos();
   pintarNecesidades($('necesidades'), est(yo));
   if (dormido(yo) && est(yo).energia >= 100) void despertar(true);
   const g = regaloPendiente();
