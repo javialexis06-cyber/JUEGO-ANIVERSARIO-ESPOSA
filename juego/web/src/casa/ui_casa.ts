@@ -35,6 +35,11 @@ export const SVG: Record<string, string> = {
 
 export const ico = (k: string) => `<span class="ico" aria-hidden="true">${SVG[k] ?? ''}</span>`;
 export const iconoItem = (it: Item) => (it.producto ? icono(it.producto) : `${RUTA}iconos/${it.modelo}.png`);
+/** Ícono de una prenda puesta en ese personaje (o en el otro si solo le queda al otro). */
+export const iconoRopa = (it: Item, rol: Rol) => {
+  const r = !it.para || it.para.includes(rol) ? rol : it.para[0];
+  return `${RUTA}iconos/ropa_${it.id}_${r}.webp`;
+};
 export const esc = (t: string) => t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
 /** Barras de las cuatro necesidades. */

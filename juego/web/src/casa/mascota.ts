@@ -7,6 +7,7 @@ import type { Casa3D, Punto } from './escena_casa';
 import { modeloItem } from './escena_casa';
 import { ITEM } from './catalogo';
 import { Actividad, alDia, animo, Cuarto, EstadoPersonaje, Rol } from './modelo';
+import { Vestuario } from './ropa';
 
 type P = { x: number; y: number };
 /** Dirección «a lo ancho de la pantalla» en el piso de la casa (la cámara está girada 38°). */
@@ -79,7 +80,11 @@ export class Mascota {
 
   async cargar() {
     await this.p.cargarPoses(this.rol);
+    this.vestuario = new Vestuario(this.p, this.rol);
   }
+
+  /** Ropa puesta, peinado y tinte (lo que diga su estado). */
+  vestuario: Vestuario | null = null;
 
   get lado() {
     return this.rol === 'el' ? 'izq' : 'der';
@@ -145,6 +150,7 @@ export class Mascota {
   }
 
   aplicar(e: EstadoPersonaje, ahora = Date.now(), animado = true) {
+    void this.vestuario?.aplicar(e.ropa, e.colorPelo);
     const a = e.actividad;
     const { accion, clave } = this.clave(e, ahora);
     const ahoraEstado = alDia(e, ahora);

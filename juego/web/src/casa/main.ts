@@ -15,18 +15,19 @@ import * as THREE from 'three';
 import { Mundo } from '../mundo';
 import { elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
-import { BONO_DIARIO, CATALOGO, EFECTO_CARINO, ITEM, Item, paraSitio, PREMIO_CARINO, TipoItem } from './catalogo';
+import { BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, lePasa, paraSitio, PREMIO_CARINO, TINTES, TipoItem } from './catalogo';
 import { Casa3D, Sitio } from './escena_casa';
 import { Mascota } from './mascota';
 import {
   Accion, alDia, animo, Casa, colorSeguro, Cuarto, CUARTOS, diasPara, EstadoPersonaje, Evento, FechaEspecial, hoy, Necesidad,
-  NECESIDADES, NOMBRE_CUARTO, NOMBRE_NECESIDAD, nuevoId, otro, personajeNuevo, Rol, sumar,
+  NECESIDADES, NOMBRE_CUARTO, NOMBRE_NECESIDAD, NOMBRE_RANURA, nuevoId, otro, personajeNuevo, Ranura, RANURAS, Rol, Ropa, sumar,
 } from './modelo';
+import { ranurasDe } from './ropa';
 import {
   configLinea, guardarConfigLinea, olvidarSesion, PersonajeOcupado, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal,
 } from './sincro';
 import {
-  $, abrirHoja, Capa, caraClase, cerrarHoja, cerrarVentana, cuerpoHoja, esc, hojaAbierta, ico, iconoItem, lluviaCorazones,
+  $, abrirHoja, Capa, caraClase, cerrarHoja, cerrarVentana, cuerpoHoja, esc, hojaAbierta, ico, iconoItem, iconoRopa, lluviaCorazones,
   mostrar, nombre, pintarNecesidades, SVG, toast, ventana,
 } from './ui_casa';
 
@@ -738,6 +739,7 @@ async function alAccion(id: string) {
     case 'dormir':
       return dormir();
     case 'closet':
+      hojaCloset('arriba');
       return hacer('closet', 'cuarto', 5, { higiene: 12 });
     case 'pareja':
       return hojaPareja();
@@ -770,6 +772,7 @@ function tarjetaItem(it: Item, pie: string, extra = '') {
 function hojaTienda(tab: TipoItem) {
   const pintar = () => {
     if (!s) return;
+    if (tab === 'ropa' || tab === 'disfraz') return tiendaRopa(tab);
     const lista = CATALOGO.filter((i) => i.tipo === tab && i.id !== 'osito_deco');
     const html = `<p class="nota-hoja">Las monedas son de los dos. Se ganan con el bono de cada día, los primeros mimos del día y trabajando en el súper.</p>
       <ul class="catalogo-casa">${lista
@@ -781,11 +784,7 @@ function hojaTienda(tab: TipoItem) {
     abrirHoja('Tienda de la casa', html, {
       mantener: true,
       saldo: s.casa.monedas,
-      pestanas: [
-        { id: 'comida', nombre: 'Comida' },
-        { id: 'regalo', nombre: 'Regalos' },
-        { id: 'deco', nombre: 'Decoración' },
-      ],
+      pestanas: PESTANAS_TIENDA,
       activa: tab,
       alPestana: (p) => hojaTienda(p as TipoItem),
       alCerrar: () => (repintarHoja = null),
@@ -795,17 +794,210 @@ function hojaTienda(tab: TipoItem) {
   pintar();
 }
 
+const PESTANAS_TIENDA = [
+  { id: 'comida', nombre: 'Comida' },
+  { id: 'regalo', nombre: 'Regalos' },
+  { id: 'deco', nombre: 'Decoración' },
+  { id: 'ropa', nombre: 'Ropa' },
+  { id: 'disfraz', nombre: 'Disfraces' },
+];
+
+// ---------------------------------------------------------------------------
+// Ropa: tienda, clóset y vestirse
+// ---------------------------------------------------------------------------
+type FiltroRanura = Ranura | 'tintes';
+const FILTROS_RANURA: { id: FiltroRanura; nombre: string }[] = [
+  ...RANURAS.map((r) => ({ id: r as FiltroRanura, nombre: NOMBRE_RANURA[r] })),
+  { id: 'tintes', nombre: 'Tintes' },
+];
+let filtroRopa: { para: Rol | null; ranura: FiltroRanura } = { para: null, ranura: 'arriba' };
+const tiene = (id: string) => (s?.casa.inventario[id] ?? 0) > 0;
+const ropaDe = (r: Rol): Ropa => s?.personajes[r].ropa ?? {};
+const puesto = (id: string) => Object.values(ropaDe(yo)).includes(id);
+/** ¿Qué ranuras de esta pestaña del clóset muestra la prenda? (un vestido sale en Arriba) */
+const enRanura = (it: Item, r: Ranura) => it.ranura === r;
+
+function chips<T extends string>(lista: { id: T; nombre: string }[], activo: T, dato: string) {
+  return `<div class="filtros" role="group">${lista
+    .map((f) => `<button class="filtro" data-${dato}="${esc(f.id)}" aria-pressed="${f.id === activo}">${esc(f.nombre)}</button>`)
+    .join('')}</div>`;
+}
+
+function tarjetaRopa(it: Item, rol: Rol, pie: string) {
+  const img = it.tinte
+    ? `<span class="muestra-tinte" style="background:${colorSeguro(it.tinte, '#6B4A33')}"></span>`
+    : `<img src="${iconoRopa(it, rol)}" alt="" loading="lazy">`;
+  const detalle = it.tinte ? 'Color de pelo para los dos' : `${it.ranura ? NOMBRE_RANURA[it.ranura] : ''}${it.tambien?.length ? ' y abajo' : ''} · ${
+    it.para?.length === 2 ? 'Él y Ella' : nombre(it.para![0])}`;
+  return `<li class="item${puesto(it.id) ? ' puesto' : ''}">${img}<b>${esc(it.nombre)}</b><small>${esc(detalle)}</small><div class="fila-item">${pie}</div></li>`;
+}
+
+function botonCompra(it: Item) {
+  if (tiene(it.id)) return `<span class="tengo">La tienen</span>`;
+  return `<button class="boton-precio-casa" data-comprar="${it.id}" ${s!.casa.monedas < it.precio ? 'disabled' : ''}><i class="moneda"></i>${it.precio}</button>`;
+}
+
+function tiendaRopa(tab: 'ropa' | 'disfraz') {
+  if (!s) return;
+  let html: string;
+  if (tab === 'disfraz') {
+    html = `<p class="nota-hoja">Disfraces para los dos: traen todas las piezas (más baratas que por separado) y se ponen de una en el clóset.</p>
+      <ul class="catalogo-casa">${DISFRACES_LISTA.map((d) => tarjetaDisfraz(d, botonCompra(d))).join('')}</ul>`;
+  } else {
+    const para = filtroRopa.para ?? yo;
+    const ran = filtroRopa.ranura;
+    const lista = ran === 'tintes' ? TINTES : CATALOGO.filter((i) => i.tipo === 'ropa' && !i.tinte && lePasa(i, para) && i.ranura === ran);
+    html = `${chips([{ id: 'el' as Rol, nombre: `Para ${nombre('el')}` }, { id: 'ella' as Rol, nombre: `Para ${nombre('ella')}` }], para, 'ropa-para')}
+      ${chips(FILTROS_RANURA, ran, 'ropa-ranura')}
+      <p class="nota-hoja">Lo que compran queda en el clóset (en el cuarto, «Cambiarse»). ${ran === 'tintes' ? '' : `Se ve en ${nombre(para)}.`}</p>
+      <ul class="catalogo-casa">${lista.map((it) => tarjetaRopa(it, para, botonCompra(it) + botonPoner(it))).join('')}</ul>`;
+  }
+  abrirHoja('Tienda de la casa', html, {
+    mantener: true,
+    saldo: s.casa.monedas,
+    pestanas: PESTANAS_TIENDA,
+    activa: tab,
+    alPestana: (p) => hojaTienda(p as TipoItem),
+    alCerrar: () => (repintarHoja = null),
+  });
+}
+
+function botonPoner(it: Item) {
+  if (!tiene(it.id)) return '';
+  if (it.tinte) {
+    const actual = s!.personajes[yo].colorPelo === it.tinte;
+    return actual ? `<span class="tengo">Puesto</span>` : `<button class="boton boton-chico boton-menta" data-tinte="${esc(it.tinte)}">Ponérmelo</button>`;
+  }
+  if (!lePasa(it, yo)) return '';
+  return puesto(it.id)
+    ? `<button class="boton boton-chico boton-papel" data-quitar-ropa="${it.id}">Quitármelo</button>`
+    : `<button class="boton boton-chico boton-menta" data-poner-ropa="${it.id}">Ponérmelo</button>`;
+}
+
+function tarjetaDisfraz(d: Item, pie: string) {
+  const ej = (r: Rol) => {
+    const id = d.piezas?.[r]?.find((x) => ITEM[x]?.ranura === 'arriba' || ITEM[x]?.ranura === 'cabeza') ?? d.piezas?.[r]?.[0];
+    return id ? `<img src="${iconoRopa(ITEM[id], r)}" alt="" loading="lazy">` : '';
+  };
+  const mias = d.piezas?.[yo] ?? [];
+  const lo = mias.length && mias.every((id) => puesto(id));
+  const poner = tiene(d.id) && mias.length
+    ? lo ? `<button class="boton boton-chico boton-papel" data-quitar-disfraz="${d.id}">Quitármelo</button>`
+      : `<button class="boton boton-chico boton-menta" data-poner-disfraz="${d.id}">Ponérmelo</button>`
+    : '';
+  return `<li class="item disfraz${lo ? ' puesto' : ''}"><span class="pareja-iconos">${ej('el')}${ej('ella')}</span><b>${esc(d.nombre)}</b><small>${esc(d.texto ?? '')}</small>
+    <div class="fila-item">${pie}${poner}</div></li>`;
+}
+
+/** El clóset: ponerse, quitarse, tinte y disfraces (cada uno se viste en su celular; el otro lo ve igual). */
+function hojaCloset(tab: Ranura | 'disfraz') {
+  const pintar = () => {
+    if (!s) return;
+    let html = '';
+    if (tab === 'disfraz') {
+      const mios = DISFRACES_LISTA.filter((d) => tiene(d.id));
+      html = mios.length
+        ? `<ul class="catalogo-casa">${mios.map((d) => tarjetaDisfraz(d, '')).join('')}</ul>`
+        : `<p class="nota-hoja">Todavía no tienen disfraces.</p>`;
+      html += `<button class="boton boton-tomate" data-ir-tienda="disfraz">Ver disfraces en la tienda</button>`;
+    } else {
+      if (tab === 'pelo') {
+        const color = s.personajes[yo].colorPelo;
+        const mios = TINTES.filter((t) => tiene(t.id));
+        html += `<p class="nota-hoja">Color del pelo</p><div class="tintes">
+          <button class="tinte" data-tinte="" aria-pressed="${!color}" title="Natural"><span style="background:#1c1917"></span>Natural</button>
+          ${mios.map((t) => `<button class="tinte" data-tinte="${esc(t.tinte!)}" aria-pressed="${color === t.tinte}" title="${esc(t.nombre)}"><span style="background:${colorSeguro(t.tinte, '#000000')}"></span>${esc(t.nombre.replace('Tinte ', ''))}</button>`).join('')}
+          </div>`;
+      }
+      const mias = CATALOGO.filter((i) => i.tipo === 'ropa' && !i.tinte && lePasa(i, yo) && tiene(i.id) && enRanura(i, tab));
+      const libre = !ropaDe(yo)[tab];
+      html += `<ul class="catalogo-casa">
+        <li class="item${libre ? ' puesto' : ''}"><span class="muestra-fabrica">${ico('closet')}</span><b>Como siempre</b><small>La ropa de ${nombre(yo)} de todos los días</small>
+          <div class="fila-item">${libre ? '<span class="tengo">Puesto</span>' : `<button class="boton boton-chico boton-menta" data-quitar-ranura="${tab}">Ponérmelo</button>`}</div></li>
+        ${mias.map((it) => tarjetaRopa(it, yo, botonPoner(it))).join('')}</ul>
+        ${mias.length ? '' : `<p class="nota-hoja">No tienen nada de «${NOMBRE_RANURA[tab].toLowerCase()}» para ${nombre(yo)} todavía.</p>`}
+        <button class="boton boton-tomate" data-ir-tienda-ropa="${tab}">Comprar más en la tienda</button>`;
+    }
+    abrirHoja(`Clóset de ${nombre(yo)}`, html, {
+      mantener: true,
+      pestanas: [...RANURAS.map((r) => ({ id: r, nombre: NOMBRE_RANURA[r] })), { id: 'disfraz', nombre: 'Disfraces' }],
+      activa: tab,
+      alPestana: (p) => hojaCloset(p as Ranura | 'disfraz'),
+      alCerrar: () => (repintarHoja = null),
+    });
+  };
+  repintarHoja = pintar;
+  pintar();
+}
+
+/** Cambia la ropa de mi personaje (se guarda y el otro celular lo ve). */
+async function vestir(cambio: (ropa: Ropa) => void, colorPelo?: string | null) {
+  if (!s) return;
+  const ahora = Date.now();
+  const actual = s.personajes[yo];
+  const ropa: Ropa = { ...(actual.ropa ?? {}) };
+  cambio(ropa);
+  const e: EstadoPersonaje = { ...alDia(actual, ahora) };
+  delete e.ropa;
+  if (Object.keys(ropa).length) e.ropa = ropa;
+  if (colorPelo !== undefined) {
+    delete e.colorPelo;
+    if (colorPelo) e.colorPelo = colorPelo;
+  }
+  await guardarYo(e);
+  repintarHoja?.();
+}
+
+/** Pone una prenda en la ropa (quita lo que ocupa sus mismas ranuras: un vestido quita la falda y la blusa). */
+function ponerEn(ropa: Ropa, id: string) {
+  const it = ITEM[id];
+  if (!it?.ranura) return;
+  const ocupa = ranurasDe(it);
+  for (const [r, otro] of Object.entries(ropa)) {
+    const o = otro ? ITEM[otro] : undefined;
+    if (!o || ranurasDe(o).some((x) => ocupa.includes(x))) delete ropa[r as Ranura];
+  }
+  ropa[it.ranura] = id;
+}
+
+function ponerRopa(id: string) {
+  const it = ITEM[id];
+  if (!it || !tiene(id) || !lePasa(it, yo)) return;
+  void vestir((ropa) => ponerEn(ropa, id)).then(() => toast(`${nombre(yo)} se puso: ${it.nombre.toLowerCase()}`));
+}
+
+function quitarRopa(id: string) {
+  void vestir((ropa) => {
+    for (const [r, x] of Object.entries(ropa)) if (x === id) delete ropa[r as Ranura];
+  });
+}
+
+function ponerDisfraz(id: string, quitar = false) {
+  const d = ITEM[id];
+  const mias = d?.piezas?.[yo] ?? [];
+  if (!d || !tiene(id) || !mias.length) return;
+  void vestir((ropa) => {
+    if (quitar) {
+      for (const [r, x] of Object.entries(ropa)) if (x && mias.includes(x)) delete ropa[r as Ranura];
+    } else for (const p of mias) ponerEn(ropa, p);
+  }).then(() => toast(quitar ? '¡Listo, sin disfraz!' : `¡${nombre(yo)} se disfrazó: ${d.nombre.toLowerCase()}!`));
+}
+
 async function comprar(id: string) {
   const it = ITEM[id];
   if (!s || !it || s.casa.monedas < it.precio) return toast('No alcanzan las monedas.');
+  const unaVezNomas = it.tipo === 'ropa' || it.tipo === 'disfraz';
+  if (unaVezNomas && tiene(id)) return toast('Ya lo tienen.');
   const ok = await cambiarCasa((c) => {
+    if (unaVezNomas && (c.inventario[id] ?? 0) > 0) throw new Error('ya lo tienen');
     if (c.monedas < it.precio) throw new Error('No alcanzan las monedas.');
     c.monedas -= it.precio;
-    c.inventario[id] = (c.inventario[id] ?? 0) + 1;
+    c.inventario[id] = unaVezNomas ? 1 : (c.inventario[id] ?? 0) + 1;
+    for (const r of ['el', 'ella'] as Rol[]) for (const p of it.piezas?.[r] ?? []) c.inventario[p] = 1;
   });
   if (ok) {
     sonido.caja();
-    toast(`Compraron: ${it.nombre}`);
+    toast(unaVezNomas ? `Compraron: ${it.nombre}. Está en el clóset.` : `Compraron: ${it.nombre}`);
   }
 }
 
@@ -1135,6 +1327,24 @@ function controles() {
     const d = (sel: string) => t.closest(sel) as HTMLElement | null;
     let b: HTMLElement | null;
     if ((b = d('[data-comprar]'))) void comprar(b.dataset.comprar!);
+    else if ((b = d('[data-ropa-para]'))) {
+      filtroRopa.para = b.dataset.ropaPara as Rol;
+      hojaTienda('ropa');
+    } else if ((b = d('[data-ropa-ranura]'))) {
+      filtroRopa.ranura = b.dataset.ropaRanura as FiltroRanura;
+      hojaTienda('ropa');
+    } else if ((b = d('[data-ir-tienda-ropa]'))) {
+      filtroRopa = { para: yo, ranura: b.dataset.irTiendaRopa as FiltroRanura };
+      hojaTienda('ropa');
+    } else if ((b = d('[data-poner-ropa]'))) ponerRopa(b.dataset.ponerRopa!);
+    else if ((b = d('[data-quitar-ropa]'))) quitarRopa(b.dataset.quitarRopa!);
+    else if ((b = d('[data-quitar-ranura]'))) {
+      const r = b.dataset.quitarRanura as Ranura;
+      void vestir((ropa) => delete ropa[r]);
+    } else if ((b = d('[data-tinte]'))) void vestir(() => {}, b.dataset.tinte || null);
+    else if ((b = d('[data-poner-disfraz]'))) ponerDisfraz(b.dataset.ponerDisfraz!);
+    else if ((b = d('[data-quitar-disfraz]'))) ponerDisfraz(b.dataset.quitarDisfraz!, true);
+    else if (d('[data-abrir-closet]')) hojaCloset('arriba');
     else if ((b = d('[data-comer]'))) {
       cerrarHoja();
       void comer(b.dataset.comer!);
@@ -1280,7 +1490,8 @@ function hojaYo() {
   };
   const bajos = NECESIDADES.filter((n) => e[n] < 45).map((n) => `<li>${consejos[n]}</li>`).join('');
   abrirHoja(nombre(yo), `<ul class="necesidades" id="necesidades-yo"></ul>
-    ${bajos ? `<ul class="nota-hoja">${bajos}</ul>` : '<p class="nota-hoja">Está muy bien. Las necesidades bajan poco a poco, incluso con la app cerrada.</p>'}`);
+    ${bajos ? `<ul class="nota-hoja">${bajos}</ul>` : '<p class="nota-hoja">Está muy bien. Las necesidades bajan poco a poco, incluso con la app cerrada.</p>'}
+    <button class="boton boton-menta" data-abrir-closet>${ico('closet')} Cambiar ropa y peinado</button>`);
   pintarNecesidades($('necesidades-yo'), e);
 }
 
@@ -1429,6 +1640,13 @@ function efectos() {
 (window as any).__escena = (r: Rol) => mascotas?.[r].escenaActual ?? '';
 (window as any).__fase = (r: Rol) => mascotas?.[r].fase ?? null;
 (window as any).__quieto = (r: Rol) => !!s && mascotas[r].mostrando(s.personajes[r]);
+/** Pone una pose fija (pruebas de ropa). */
+(window as any).__pose = (r: Rol, n: string) => {
+  const m = mascotas?.[r] as any;
+  if (!m) return;
+  m.reposo = n;
+  m.p.pose(n, true);
+};
 /** Posición en pantalla del aro de un sitio de decoración (pruebas). */
 (window as any).__sitio = (id: string) => {
   const d = casa3d.sitioDe(id);

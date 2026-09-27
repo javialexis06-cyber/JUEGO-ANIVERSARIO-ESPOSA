@@ -37,12 +37,27 @@ for (const f of archivos) {
   execFileSync('npx', ['gltf-transform', 'optimize', join(CRUDOS, f), salida, ...BASE, ...ajustes(f)], { stdio: 'pipe' });
   console.log('ok', f);
 }
+// Ropa (con el esqueleto del personaje): carpeta propia, sin unir mallas (cada una va a su hueso)
+const ROPA = join(CRUDOS, 'ropa');
+let nRopa = 0;
+if (existsSync(ROPA)) {
+  mkdirSync(join(DESTINO, 'ropa'), { recursive: true });
+  for (const f of readdirSync(ROPA).filter((f) => f.endsWith('.glb') && (!SOLO || SOLO.test(`ropa/${f}`)))) {
+    execFileSync('npx', ['gltf-transform', 'optimize', join(ROPA, f), join(DESTINO, 'ropa', f), ...BASE, ...SEPARAR, '--simplify-ratio', '0',
+      '--simplify-error', '0.003'], { stdio: 'pipe' });
+    nRopa++;
+  }
+  console.log('ropa:', nRopa);
+}
 if (!PLANO) {
-  for (const f of readdirSync(CRUDOS).filter((f) => f.endsWith('.json'))) cpSync(join(CRUDOS, f), join(DESTINO, f));
+  for (const f of readdirSync(CRUDOS).filter((f) => f.endsWith('.json') && !f.startsWith('ropa_'))) cpSync(join(CRUDOS, f), join(DESTINO, f));
   // Íconos con guion bajo en vez de espacios (rutas limpias al publicar)
   if (existsSync(join(CRUDOS, 'iconos'))) {
     mkdirSync(join(DESTINO, 'iconos'), { recursive: true });
-    for (const f of readdirSync(join(CRUDOS, 'iconos'))) cpSync(join(CRUDOS, 'iconos', f), join(DESTINO, 'iconos', f.replace(/ /g, '_')));
+    for (const f of readdirSync(join(CRUDOS, 'iconos')).filter((f) => !f.startsWith('ropa_'))) {
+      cpSync(join(CRUDOS, 'iconos', f), join(DESTINO, 'iconos', f.replace(/ /g, '_')));
+    }
   }
 }
+if (!PLANO) execFileSync('node', ['scripts/ropa-catalogo.mjs'], { stdio: 'inherit' });
 console.log('listo:', archivos.length, 'modelos');

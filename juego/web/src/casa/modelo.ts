@@ -14,6 +14,15 @@ export const otro = (r: Rol): Rol => (r === 'el' ? 'ella' : 'el');
 export const DESGASTE: Record<Necesidad, number> = { hambre: 8, energia: 6, higiene: 4, carino: 5 };
 export const RECUPERA_DURMIENDO = 16; // energía por hora
 
+/** Dónde va cada prenda en el personaje. */
+export type Ranura = 'pelo' | 'cabeza' | 'cara' | 'arriba' | 'abajo' | 'pies' | 'espalda' | 'cola';
+export const RANURAS: Ranura[] = ['pelo', 'cabeza', 'cara', 'arriba', 'abajo', 'pies', 'espalda', 'cola'];
+export const NOMBRE_RANURA: Record<Ranura, string> = {
+  pelo: 'Peinado', cabeza: 'Cabeza', cara: 'Cara', arriba: 'Arriba', abajo: 'Abajo', pies: 'Zapatos', espalda: 'Espalda', cola: 'Cola',
+};
+/** Lo que tiene puesto (id de la prenda por ranura); sin prenda se ve la ropa de fábrica. */
+export type Ropa = Partial<Record<Ranura, string>>;
+
 /** Lo que se ve haciendo al personaje (también en el celular del otro). */
 export type Accion = 'comer' | 'banar' | 'lavar' | 'sofa' | 'tv' | 'nevera' | 'closet' | 'saludo' | 'pensar';
 
@@ -39,6 +48,9 @@ export interface EstadoPersonaje {
   /** Última vez que abrió la app (para el «en línea» y el bono diario). */
   visto: number;
   bonoDia?: string;
+  /** Ropa puesta y tinte del pelo (cada uno se viste en su celular; el otro lo ve igual). */
+  ropa?: Ropa;
+  colorPelo?: string;
 }
 
 export function personajeNuevo(ahora = Date.now()): EstadoPersonaje {
@@ -65,6 +77,15 @@ export function normalizarPersonaje(e: unknown, ahora = Date.now()): EstadoPerso
     visto: numero(e.visto, t),
   };
   if (typeof e.bonoDia === 'string') r.bonoDia = e.bonoDia;
+  if (esObjeto(e.ropa)) {
+    const ropa: Ropa = {};
+    for (const k of RANURAS) {
+      const v = (e.ropa as Record<string, unknown>)[k];
+      if (typeof v === 'string' && /^[a-z0-9_]{1,40}$/.test(v)) ropa[k] = v;
+    }
+    if (Object.keys(ropa).length) r.ropa = ropa;
+  }
+  if (typeof e.colorPelo === 'string' && /^#[0-9a-f]{6}$/i.test(e.colorPelo)) r.colorPelo = e.colorPelo;
   const a = e.actividad;
   if (esObjeto(a) && (a.tipo === 'nada' || a.tipo === 'dormir')) {
     r.actividad = { tipo: a.tipo, desde: numero(a.desde, t) };

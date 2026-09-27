@@ -848,3 +848,99 @@ body.hogar {
 @media (prefers-reduced-motion: reduce) {
   .efecto span, .pensamiento, .necesidad.alerta .ico, .lluvia-corazones span { animation: none; opacity: 1; }
 }
+
+/* Ropa: filtros, prendas puestas, tintes y disfraces */
+.pestanas {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.pestanas::-webkit-scrollbar {
+  display: none;
+}
+.pestana {
+  flex: none;
+}
+.filtros {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filtros::-webkit-scrollbar {
+  display: none;
+}
+.filtro {
+  flex: none;
+  border: 2px solid #efe3d3;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: #fff;
+  font: 700 13px var(--texto);
+  color: var(--cacao);
+}
+.filtro[aria-pressed='true'] {
+  border-color: var(--cacao);
+  background: var(--cacao);
+  color: var(--papel);
+}
+.item.puesto {
+  box-shadow: 0 0 0 3px var(--menta-oscura, #3f9d7f), 0 2px 0 rgba(61, 43, 39, 0.14);
+}
+.muestra-tinte,
+.muestra-fabrica {
+  grid-row: 1 / 4;
+  width: 48px;
+  height: 48px;
+  margin: 4px;
+  border-radius: 50%;
+  box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.18), 0 2px 0 rgba(61, 43, 39, 0.2);
+}
+.muestra-fabrica {
+  display: grid;
+  place-items: center;
+  background: #f6efe6;
+  box-shadow: none;
+}
+.muestra-fabrica svg {
+  width: 36px;
+  height: 36px;
+}
+.pareja-iconos {
+  grid-row: 1 / 4;
+  display: flex;
+  width: 56px;
+}
+.pareja-iconos img {
+  width: 36px !important;
+  height: 56px !important;
+  object-fit: cover;
+}
+.tintes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.tinte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: 0;
+  background: none;
+  font: 700 11px var(--texto);
+  color: var(--cacao-suave);
+}
+.tinte span {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+}
+.tinte[aria-pressed='true'] span {
+  outline: 3px solid var(--cacao);
+  outline-offset: 2px;
+}

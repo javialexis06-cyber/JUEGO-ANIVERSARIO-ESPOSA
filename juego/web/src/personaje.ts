@@ -34,6 +34,8 @@ export class Personaje {
   huesos = new Map<string, THREE.Object3D>();
   private mallas = new Map<string, THREE.Object3D[]>();
   private caraActual: Cara = 'normal';
+  /** Partes del modelo base que tapa la ropa puesta (prefijos: «torso camiseta», «mechon»...). */
+  private tapadas: string[] = [];
   private parpadeo = 2 + Math.random() * 3;
   private nivelSucio = 0;
 
@@ -91,8 +93,37 @@ export class Personaje {
     this.ver('boca triste', boca === 'triste');
     for (let k = 0; k < 3; k++) {
       this.ver(`suciedad cara ${k}`, this.nivelSucio > k);
-      this.ver(`suciedad ropa ${k}`, this.nivelSucio > k);
+      // El barro de la camiseta de fábrica no se pinta encima de otra prenda
+      this.ver(`suciedad ropa ${k}`, this.nivelSucio > k && !this.tapada(`suciedad ropa ${k}`));
     }
+  }
+
+  private tapada(n: string) {
+    return this.tapadas.some((t) => n.startsWith(t));
+  }
+
+  /** Oculta las partes de fábrica que tapa la ropa puesta (y muestra las que ya no). */
+  tapar(prefijos: string[]) {
+    this.tapadas = prefijos;
+    for (const [n, lista] of this.mallas) {
+      if (/^(ojo|destello|boca|suciedad)/.test(n)) continue;
+      for (const o of lista) o.visible = !this.tapada(n);
+    }
+    this.aplicarCara();
+  }
+
+  /** Donde se cuelgan las mallas con esqueleto del personaje (la ropa va al lado). */
+  get raizMallas(): THREE.Object3D | null {
+    let r: THREE.Object3D | null = null;
+    this.modelo?.traverse((o) => {
+      if (!r && (o as THREE.SkinnedMesh).isSkinnedMesh) r = o.parent;
+    });
+    return r;
+  }
+
+  /** Todas las mallas del modelo de fábrica, por parte («cabello base», «mechon copete 1»...). */
+  get partes(): ReadonlyMap<string, THREE.Object3D[]> {
+    return this.mallas;
   }
 
   cara(c: Cara) {
