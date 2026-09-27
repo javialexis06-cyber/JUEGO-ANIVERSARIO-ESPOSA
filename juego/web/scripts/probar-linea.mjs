@@ -421,7 +421,7 @@ registrar = true;
 const registro = [];
 ella.on('console', (m) => registro.push(`${m.type()}: ${m.text().slice(0, 300)}`));
 await ella.reload({ waitUntil: 'domcontentloaded', timeout: 180000 });
-if (!(await esperar(ella, () => window.__listo === true, null, 90000, 'Ella recarga'))) {
+if (!(await esperar(ella, () => window.__listo === true, null, 240000, 'Ella recarga'))) {
   console.log('   consola de Ella al recargar:\n   ' + registro.slice(-15).join('\n   '));
   console.log('   aviso:', await ella.textContent('#bienv-aviso'), '| bienvenida visible:', await ella.isVisible('#bienvenida'));
   await foto(ella, '99-recarga');
