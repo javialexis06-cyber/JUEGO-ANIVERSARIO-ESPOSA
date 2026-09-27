@@ -136,6 +136,7 @@ export class Casa3D {
     for (const [id, actual] of [...this.decos]) {
       if (deco[id] !== actual.clave) {
         actual.obj.removeFromParent();
+        liberarFoto(actual.obj);
         this.decos.delete(id);
       }
     }
@@ -189,6 +190,7 @@ export class Casa3D {
         t.offset.set(0, (1 - fotoA / marcoA) / 2);
       }
       m.material = new THREE.MeshStandardMaterial({ map: t, roughness: 0.55 });
+      m.userData.fotoPropia = true;
     });
   }
 
@@ -291,6 +293,17 @@ export class Casa3D {
 
 const GEO_NOTA = new THREE.PlaneGeometry(0.27, 0.25);
 const GEO_IMAN = new THREE.SphereGeometry(0.025, 12, 8);
+
+/** Suelta el material y la copia de la foto hechos para un marco (el resto del modelo es compartido). */
+function liberarFoto(o: THREE.Object3D) {
+  o.traverse((x) => {
+    const m = x as THREE.Mesh;
+    if (!m.isMesh || !m.userData.fotoPropia) return;
+    const mat = m.material as THREE.MeshStandardMaterial;
+    mat.map?.dispose();
+    mat.dispose();
+  });
+}
 
 /** three.js también toca objetos escondidos: se revisa que él y sus padres se vean. */
 function visibleDeVerdad(o: THREE.Object3D | null): boolean {

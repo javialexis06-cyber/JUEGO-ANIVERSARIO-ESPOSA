@@ -38,8 +38,9 @@ const posando = async (p, rol) => {
   await p.waitForFunction((r) => window.__fase(r) === 'pose', rol, { timeout: 90000 }).catch(() => errores.push(`${rol} no llegó a la pose`));
   await p.waitForTimeout(500);
 };
+// Sin tarjeta gráfica la casa va a ~1 cuadro por segundo: Playwright necesita varios cuadros para ver el botón quieto
 const clic = async (p, sel) => {
-  await p.click(sel);
+  await p.click(sel, { timeout: 90000 });
   await p.waitForTimeout(300);
 };
 

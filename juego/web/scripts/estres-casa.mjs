@@ -290,7 +290,14 @@ if (partes.includes('6')) {
     }
     return n;
   };
-  const [n1, n2] = await Promise.all([mono(el, 150000), mono(ella, 150000)]);
+  const memoria = (p) => p.evaluate(() => window.__mundo().renderer.info.memory);
+  // Dos tandas: en la primera se cargan los cuartos y objetos por primera vez; en la segunda la memoria ya no debe crecer
+  const [a1, a2] = await Promise.all([mono(el, 75000), mono(ella, 75000)]);
+  const m1 = await memoria(el);
+  const [b1, b2] = await Promise.all([mono(el, 75000), mono(ella, 75000)]);
+  const m2 = await memoria(el);
+  const n1 = a1 + b1, n2 = a2 + b2;
+  revisar(m2.geometries - m1.geometries < 60 && m2.textures - m1.textures < 30, `Memoria 3D estable con toques al azar (geometrías ${m1.geometries} → ${m2.geometries}, texturas ${m1.textures} → ${m2.textures})`);
   if (el.salidas || ella.salidas) console.log(`   salieron de la casa y volvieron: Él ${el.salidas ?? 0}, Ella ${ella.salidas ?? 0}`);
   await el.waitForTimeout(3000);
   const e1 = await estado(el), e2 = await estado(ella);
