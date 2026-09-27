@@ -115,7 +115,8 @@ if (partes.includes('2')) {
 // ---------------------------------------------------------------------------
 if (partes.includes('3')) {
   console.log('\n3. Un día con el piloto y toques al azar encima');
-  const p = await pagina(MEJOR, '&rapido=8');
+  // Sin tarjeta gráfica el día 14 va a ~0,2 cuadros por segundo: con 4 s de juego por cuadro alcanza a cerrar
+  const p = await pagina(MEJOR, '&rapido=40');
   await p.click('#niveles .etiqueta:nth-child(14)');
   await p.click('#btn-abrir');
   await p.waitForSelector('#hud:not([hidden])', { timeout: 120000 });
@@ -149,7 +150,7 @@ if (partes.includes('3')) {
   for (let i = 0; Date.now() < hasta; i++) {
     terminado = await p.evaluate(() => !document.getElementById('resultado').hidden);
     if (terminado) break;
-    if (i % 6 === 0) {
+    if (i % 12 === 0) {
       const e = await p.evaluate(() => window.__estado().juego);
       console.log(`   esperando el cierre: tiempo ${e?.tiempo?.toFixed(1)} · clientes ${e?.clientes} · fila ${e?.fila} · pausa ${await p.isVisible('#pausa')}`);
     }
