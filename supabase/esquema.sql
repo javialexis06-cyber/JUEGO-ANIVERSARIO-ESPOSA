@@ -85,15 +85,23 @@ begin
 end $$;
 
 -- Unirse con el código. También sirve para volver a entrar después de reinstalar o desde otro celular.
-create or replace function public.unirse_pareja(cod text, mi_rol text) returns uuid
+-- Si ese personaje ya lo tiene otra sesión, pide confirmar (reemplazar = true): así, si Ella toca «Soy Él» por error,
+-- no saca a Él de su casa. Con la confirmación, el celular nuevo se queda con el personaje.
+drop function if exists public.unirse_pareja(text, text);
+create or replace function public.unirse_pareja(cod text, mi_rol text, reemplazar boolean default false) returns uuid
 language plpgsql security definer set search_path = public as $$
 declare
   p uuid;
+  actual uuid;
 begin
   if auth.uid() is null then raise exception 'Sin sesión'; end if;
   if mi_rol not in ('el', 'ella') then raise exception 'Rol inválido'; end if;
   select id into p from parejas where codigo = upper(trim(cod));
   if p is null then raise exception 'Código no encontrado'; end if;
+  select usuario into actual from miembros where pareja_id = p and rol = mi_rol;
+  if actual is not null and actual <> auth.uid() and not coalesce(reemplazar, false) then
+    raise exception 'Personaje ocupado';
+  end if;
   insert into miembros (pareja_id, rol, usuario) values (p, mi_rol, auth.uid())
   on conflict (pareja_id, rol) do update set usuario = excluded.usuario, unido = now();
   return p;
@@ -131,7 +139,7 @@ create policy "eventos: todo" on public.eventos for all using (es_miembro(pareja
 drop policy if exists "recuerdos: todo" on public.recuerdos;
 create policy "recuerdos: todo" on public.recuerdos for all using (es_miembro(pareja_id)) with check (es_miembro(pareja_id));
 
-grant execute on function public.crear_pareja(text), public.unirse_pareja(text, text),
+grant execute on function public.crear_pareja(text), public.unirse_pareja(text, text, boolean),
   public.guardar_casa(uuid, jsonb, bigint), public.es_miembro(uuid) to authenticated;
 
 -- Tiempo real: el otro celular se entera al instante
@@ -150,8 +158,18 @@ end $$;
 insert into storage.buckets (id, name, public) values ('recuerdos', 'recuerdos', false)
 on conflict (id) do nothing;
 drop policy if exists "recuerdos: ver fotos" on storage.objects;
+-- (la carpeta tiene que ser el id de la casa; cualquier otro nombre se rechaza sin error)
+create or replace function public.carpeta_de_mi_casa(nombre text) returns boolean
+language sql stable security definer set search_path = public as $$
+  select case
+    when (storage.foldername(nombre))[1] ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    then public.es_miembro(((storage.foldername(nombre))[1])::uuid)
+    else false
+  end;
+$$;
+grant execute on function public.carpeta_de_mi_casa(text) to authenticated;
 create policy "recuerdos: ver fotos" on storage.objects for select
-  using (bucket_id = 'recuerdos' and public.es_miembro(((storage.foldername(name))[1])::uuid));
+  using (bucket_id = 'recuerdos' and public.carpeta_de_mi_casa(name));
 drop policy if exists "recuerdos: subir fotos" on storage.objects;
 create policy "recuerdos: subir fotos" on storage.objects for insert
-  with check (bucket_id = 'recuerdos' and public.es_miembro(((storage.foldername(name))[1])::uuid));
+  with check (bucket_id = 'recuerdos' and public.carpeta_de_mi_casa(name));

@@ -17,7 +17,7 @@ import { Juego, NivelDato, textoDe } from './juego';
 import { Mundo } from './mundo';
 import { cargar, cargarAnimado, cargarJSON, elegirModelos, icono, Productos } from './recursos';
 import * as sonido from './sonido';
-import { NOMBRE_SECCION, Tienda, TiendaDato } from './tienda';
+import { liberarPropios, NOMBRE_SECCION, Tienda, TiendaDato } from './tienda';
 import { mostrar, pantallaUnica, UI } from './ui';
 import { SUELDO_FRACCION } from './casa/catalogo';
 
@@ -107,10 +107,22 @@ async function iniciar() {
 }
 
 /** La tienda de fondo del menú y de la tienda de mejoras, con lo que se ha comprado. */
+let turnoFondo = 0;
 async function montarFondo() {
-  if (fondo) mundo.escena.remove(fondo.grupo);
-  fondo = new Tienda(tiendaDato, productos);
-  await fondo.montar(partida.sitios, partida.mejoras);
+  // Dos compras seguidas no dejan dos tiendas montadas: solo la última se queda
+  const turno = ++turnoFondo;
+  if (fondo) {
+    mundo.escena.remove(fondo.grupo);
+    liberarPropios(fondo.grupo);
+    fondo = null;
+  }
+  const nueva = new Tienda(tiendaDato, productos);
+  await nueva.montar(partida.sitios, partida.mejoras);
+  if (turno !== turnoFondo || juego) {
+    liberarPropios(nueva.grupo);
+    return;
+  }
+  fondo = nueva;
   mundo.escena.add(fondo.grupo);
   mundo.encuadrar(tiendaDato.W, tiendaDato.D);
   mundo.sucio = true;
@@ -215,8 +227,10 @@ async function jugar(n: number) {
   sonido.musica.iniciar('juego', legendario ? 112 : 100);
   pantallaUnica(null);
   if (juego) juego.destruir();
+  turnoFondo++;
   if (fondo) {
     mundo.escena.remove(fondo.grupo);
+    liberarPropios(fondo.grupo);
     fondo = null;
   }
   $('cargando-nivel').hidden = false;

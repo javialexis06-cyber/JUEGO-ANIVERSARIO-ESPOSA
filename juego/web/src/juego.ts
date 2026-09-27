@@ -11,7 +11,7 @@ import { P } from './navegacion';
 import { CanastaSuelta, Ladron, Mugre, Nina, Perseguible } from './problemas';
 import { cargar, cargarAnimado, copia, Productos } from './recursos';
 import * as sonido from './sonido';
-import { Tienda, TiendaDato, Vitrina } from './tienda';
+import { liberarPropios, Tienda, TiendaDato, Vitrina } from './tienda';
 
 export interface Estrella {
   numero: number;
@@ -638,6 +638,7 @@ export class Juego {
   }
 
   destruir() {
+    liberarPropios(this.tienda.grupo);
     this.mundo.escena.remove(this.tienda.grupo, this.jugador.grupo, ...this.clientes.map((c) => c.grupo), ...this.mugres.map((b) => b.obj),
       ...this.canastasSueltas.map((c) => c.obj), ...this.ladrones.map((l) => l.grupo), ...this.ninas.map((n) => n.grupo), ...this.ayudantes.map((a) => a.grupo));
   }

@@ -6,7 +6,7 @@ import { copia, Productos } from '../recursos';
 import type { Casa3D, Punto } from './escena_casa';
 import { modeloItem } from './escena_casa';
 import { ITEM } from './catalogo';
-import { alDia, animo, Cuarto, EstadoPersonaje, Rol } from './modelo';
+import { Actividad, alDia, animo, Cuarto, EstadoPersonaje, Rol } from './modelo';
 
 type P = { x: number; y: number };
 /** Dirección «a lo ancho de la pantalla» en el piso de la casa (la cámara está girada 38°). */
@@ -61,6 +61,9 @@ export class Mascota {
   private retener = 0;
   private desdeActual = 0;
   private sonrisa = 0;
+  private vistas = new Map<number, number>();
+  /** Cada objeto que se pone en la mano tiene su turno: si se suelta mientras carga, no aparece después. */
+  private turnoMano = 0;
   /** Burbujas, corazones y «zzz» que dibuja la interfaz encima del personaje. */
   efecto: Efecto['tipo'] | null = null;
   pickeable: THREE.Mesh;
@@ -89,7 +92,10 @@ export class Mascota {
   }
 
   private ponerEn(c: Cuarto, pt: P, rot?: number) {
-    if (this.p.grupo.parent !== this.casa.cuarto(c)) this.casa.cuarto(c).add(this.p.grupo);
+    if (this.p.grupo.parent !== this.casa.cuarto(c)) {
+      this.casa.cuarto(c).add(this.p.grupo);
+      if (this.enMano) this.casa.cuarto(c).add(this.enMano);
+    }
     this.cuarto = c;
     this.p.pos = { x: pt.x, y: pt.y };
     this.p.ruta = [];
@@ -113,8 +119,24 @@ export class Mascota {
   /** Muestra lo que el estado dice que está haciendo (dormir, comer, bañarse...) o lo deja libre en el cuarto. */
   private clave(e: EstadoPersonaje, ahora: number) {
     const a = e.actividad;
-    const accion = a.tipo === 'dormir' ? 'dormir' : a.accion && (a.hasta ?? 0) > ahora ? a.accion : '';
+    const accion = a.tipo === 'dormir' ? 'dormir' : this.vigente(a, ahora) ? a.accion! : '';
     return { accion, clave: `${e.cuarto}|${accion}|${a.item ?? ''}|${a.desde}` };
+  }
+
+  /** ¿Sigue la acción corta (comer, bañarse...)? Se mide con la duración (hasta - desde, del mismo reloj) desde que
+   *  este celular la vio, así una diferencia de hora entre los dos celulares no la alarga ni la corta. */
+  private vigente(a: Actividad, ahora: number) {
+    if (!a.accion || typeof a.hasta !== 'number') return false;
+    const dur = a.hasta - a.desde;
+    if (!(dur > 0 && dur <= 120000)) return false;
+    let visto = this.vistas.get(a.desde);
+    if (visto === undefined) {
+      visto = ahora;
+      this.vistas.set(a.desde, ahora);
+      if (this.vistas.size > 16) this.vistas.delete(this.vistas.keys().next().value!);
+    }
+    // Y si empezó hace rato (abrir la app horas después), ya pasó
+    return ahora - visto < dur && ahora - a.desde < dur + 120000;
   }
 
   /** ¿Ya está mostrando este estado (llegó a su sitio y está haciendo lo que dice)? */
@@ -152,6 +174,7 @@ export class Mascota {
       else {
         this.ponerEn(c, pt, pt.rot);
         luego();
+        this.sinTransicion();
       }
     };
     switch (accion) {
@@ -205,6 +228,12 @@ export class Mascota {
     }
   }
 
+  /** Sin animación (al abrir la app): ya acostado o sentado, sin la transición. */
+  private sinTransicion() {
+    this.tumbado = this.metaTumbado;
+    this.alto = this.metaAlto;
+  }
+
   private bucle(pasos: Paso[]) {
     // Al llegar: la acción se muestra al menos 5 s (comer, bañarse, sentarse...)
     this.retener = pasos.length ? 5 : 0;
@@ -218,10 +247,11 @@ export class Mascota {
   /** Pone una comida o un regalo en las manos: el objeto sigue al hueso «comida» o «regalo» del esqueleto. */
   async sostener(item: string, hueso: 'comida' | 'regalo') {
     this.soltar();
+    const turno = this.turnoMano;
     const it = ITEM[item];
-    const obj = it?.producto ? this.productos.crear(it.producto) : await modeloItem(item);
+    const obj = it?.producto ? this.productos.crear(it.producto) : await modeloItem(item).catch(() => null);
     const h = this.p.huesos.get(hueso);
-    if (!obj || !h || !this.p.grupo.parent) return;
+    if (turno !== this.turnoMano || !obj || !h || !this.p.grupo.parent) return;
     const g = new THREE.Group();
     g.add(obj);
     g.scale.setScalar(hueso === 'comida' ? 0.75 : 0.9);
@@ -242,6 +272,7 @@ export class Mascota {
   }
 
   soltar() {
+    this.turnoMano++;
     this.enMano?.removeFromParent();
     this.enMano = null;
     this.huesoMano = null;
@@ -314,11 +345,25 @@ export class Mascota {
   private terminarCoreo() {
     const c = this.coreo;
     this.coreo = null;
+    if (c?.fase === 'dormido') {
+      // Sigue dormido: misma pose, ojos cerrados y «zzz»
+      this.efecto = 'zzz';
+      this.p.cara('dormido');
+      return;
+    }
     this.soltar();
     this.pasos = [];
-    this.efecto = c?.fase === 'dormido' ? 'zzz' : null;
-    this.escena = c?.fase === 'dormido' ? this.escena : '';
-    this.p.cara(c?.fase === 'dormido' ? 'dormido' : this.caraReposo);
+    this.efecto = null;
+    this.escena = '';
+    this.p.cara(this.caraReposo);
+  }
+
+  /** Caminar hasta donde se tocó el piso: solo si está libre (no comiendo, durmiendo ni en un mimo). */
+  pasear(x: number, y: number) {
+    if (this.coreo || this.pasos.length || this.metaTumbado > 0 || this.metaAlto > 0 || this.p.moviendo || !this.p.grupo.parent) return false;
+    this.p.ruta = [{ x, y }];
+    this.p.alLlegar = null;
+    return true;
   }
 
   get ocupado() {

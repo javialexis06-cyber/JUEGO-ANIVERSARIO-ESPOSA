@@ -46,6 +46,37 @@ export function personajeNuevo(ahora = Date.now()): EstadoPersonaje {
 }
 
 const limitar = (v: number) => Math.max(0, Math.min(100, v));
+const numero = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) ? v : d);
+const esObjeto = (v: unknown): v is Record<string, any> => !!v && typeof v === 'object' && !Array.isArray(v);
+
+/** Estado de un personaje confiable aunque venga dañado o incompleto (almacenamiento viejo, otra versión, servidor). */
+export function normalizarPersonaje(e: unknown, ahora = Date.now()): EstadoPersonaje {
+  const base = personajeNuevo(ahora);
+  if (!esObjeto(e)) return base;
+  const t = numero(e.t, ahora);
+  const r: EstadoPersonaje = {
+    hambre: limitar(numero(e.hambre, base.hambre)),
+    energia: limitar(numero(e.energia, base.energia)),
+    higiene: limitar(numero(e.higiene, base.higiene)),
+    carino: limitar(numero(e.carino, base.carino)),
+    t,
+    cuarto: (CUARTOS as string[]).includes(e.cuarto) ? e.cuarto : 'sala',
+    actividad: { tipo: 'nada', desde: t },
+    visto: numero(e.visto, t),
+  };
+  if (typeof e.bonoDia === 'string') r.bonoDia = e.bonoDia;
+  const a = e.actividad;
+  if (esObjeto(a) && (a.tipo === 'nada' || a.tipo === 'dormir')) {
+    r.actividad = { tipo: a.tipo, desde: numero(a.desde, t) };
+    if (typeof a.accion === 'string') r.actividad.accion = a.accion as Accion;
+    if (typeof a.hasta === 'number' && Number.isFinite(a.hasta)) r.actividad.hasta = a.hasta;
+    if (typeof a.item === 'string') r.actividad.item = a.item;
+  }
+  return r;
+}
+
+/** Color seguro para una nota (solo #rrggbb). */
+export const colorSeguro = (c: unknown, d = '#FFE58A') => (typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c) ? c : d);
 
 /** Valores de ahora, aplicando el desgaste desde la última vez que se guardaron. */
 export function alDia(e: EstadoPersonaje, ahora = Date.now()): EstadoPersonaje {
@@ -126,6 +157,33 @@ export function casaNueva(): Casa {
   };
 }
 
+/** La casa compartida siempre con la forma esperada (y sin valores imposibles como monedas negativas). */
+export function normalizarCasa(c: unknown): Casa {
+  const base = casaNueva();
+  if (!esObjeto(c)) return base;
+  const cantidades = (o: unknown) => {
+    const r: Record<string, number> = {};
+    if (esObjeto(o)) for (const [k, v] of Object.entries(o)) if (typeof v === 'number' && Number.isFinite(v)) r[k] = Math.max(0, Math.floor(v));
+    return r;
+  };
+  const textos = (o: unknown) => {
+    const r: Record<string, string> = {};
+    if (esObjeto(o)) for (const [k, v] of Object.entries(o)) if (typeof v === 'string') r[k] = v;
+    return r;
+  };
+  const lista = <T,>(v: unknown, ok: (x: any) => boolean): T[] => (Array.isArray(v) ? (v.filter((x) => esObjeto(x) && ok(x)) as T[]) : []);
+  return {
+    monedas: Math.max(0, Math.floor(numero(c.monedas, base.monedas))),
+    inventario: esObjeto(c.inventario) ? cantidades(c.inventario) : base.inventario,
+    deco: textos(c.deco),
+    notas: lista<Nota>(c.notas, (n) => typeof n.texto === 'string' && typeof n.id === 'string').map((n) => ({ ...n, color: colorSeguro(n.color) })),
+    fechas: lista<FechaEspecial>(c.fechas, (f) => typeof f.fecha === 'string' && typeof f.nombre === 'string'),
+    regalos: lista<RegaloRecibido>(c.regalos, (g) => typeof g.id === 'string' && typeof g.item === 'string'),
+    aniversario: typeof c.aniversario === 'string' ? c.aniversario : '',
+    diario: cantidades(c.diario),
+  };
+}
+
 export interface Recuerdo {
   id: string;
   autor: Rol;
@@ -143,6 +201,22 @@ export interface Evento {
   tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nota' | 'comida' | 'saludo';
   datos: Record<string, unknown>;
   t: number;
+  /** Ya lo recibió y aplicó quien lo recibe (el cariño sube en su celular, no en el de quien lo manda). */
+  visto?: boolean;
+}
+
+/** Evento confiable (datos siempre es un objeto). */
+const TIPOS_EVENTO: Evento['tipo'][] = ['caricia', 'abrazo', 'beso', 'regalo', 'nota', 'comida', 'saludo'];
+export function normalizarEvento(f: any): Evento | null {
+  if (!esObjeto(f) || (f.de !== 'el' && f.de !== 'ella') || !TIPOS_EVENTO.includes(f.tipo)) return null;
+  return {
+    id: String(f.id),
+    de: f.de,
+    tipo: f.tipo,
+    datos: esObjeto(f.datos) ? f.datos : {},
+    t: typeof f.creado === 'string' ? Date.parse(f.creado) || Date.now() : numero(f.t, Date.now()),
+    visto: !!f.visto,
+  };
 }
 
 export const hoy = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;

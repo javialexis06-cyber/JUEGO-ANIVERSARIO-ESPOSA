@@ -21,23 +21,50 @@ export function nueva(t: TiendaDato): Partida {
   return { dinero: 0, sitios, estrellas: {}, mejoras: { carrito: 1 }, ayudas: {}, corazones: {}, lunas: {} };
 }
 
+const esObjeto = (v: unknown): v is Record<string, any> => !!v && typeof v === 'object' && !Array.isArray(v);
+const entero = (v: unknown, d = 0) => (typeof v === 'number' && Number.isFinite(v) ? Math.max(0, Math.floor(v)) : d);
+function numeros(o: unknown): Record<string, number> {
+  const r: Record<string, number> = {};
+  if (esObjeto(o)) for (const [k, v] of Object.entries(o)) if (typeof v === 'number' && Number.isFinite(v)) r[k] = Math.max(0, Math.floor(v));
+  return r;
+}
+function banderas(o: unknown): Record<number, boolean> {
+  const r: Record<number, boolean> = {};
+  if (esObjeto(o)) for (const [k, v] of Object.entries(o)) if (v === true) r[Number(k)] = true;
+  return r;
+}
+
+/** Partida guardada confiable: si algo viene dañado (otra versión, datos a medias) se arregla en vez de romper el menú. */
+export function normalizar(raw: unknown, t: TiendaDato): Partida {
+  const base = nueva(t);
+  if (!esObjeto(raw)) return base;
+  const p: Partida = {
+    dinero: entero(raw.dinero),
+    sitios: { ...base.sitios, ...numeros(raw.sitios) },
+    estrellas: {},
+    mejoras: numeros(raw.mejoras),
+    ayudas: numeros(raw.ayudas),
+    corazones: banderas(raw.corazones),
+    lunas: banderas(raw.lunas),
+  };
+  // Partidas de la primera versión: el carrito estaba suelto
+  if (!esObjeto(raw.mejoras)) p.mejoras = { carrito: entero(raw.carrito, 1) || 1 };
+  p.mejoras.carrito = Math.max(1, p.mejoras.carrito ?? 1);
+  for (const s of t.sitios) p.sitios[s.id] = Math.min(p.sitios[s.id] ?? 0, t.tope ?? 2);
+  if (esObjeto(raw.estrellas)) {
+    for (const [k, v] of Object.entries(raw.estrellas)) {
+      if (Array.isArray(v)) p.estrellas[Number(k)] = [0, 1, 2].map((i) => v[i] === true);
+    }
+  }
+  return p;
+}
+
 export function cargar(t: TiendaDato): Partida {
   try {
     const raw = localStorage.getItem(CLAVE);
-    if (raw) {
-      const p = JSON.parse(raw) as Partida & { carrito?: number };
-      for (const s of t.sitios) if (p.sitios[s.id] === undefined) p.sitios[s.id] = s.inicio ? 1 : 0;
-      // Partidas de la primera versión: el carrito estaba suelto
-      p.mejoras ??= { carrito: p.carrito ?? 1 };
-      p.mejoras.carrito ??= 1;
-      p.ayudas ??= {};
-      p.corazones ??= {};
-      p.lunas ??= {};
-      delete p.carrito;
-      return p;
-    }
+    if (raw) return normalizar(JSON.parse(raw), t);
   } catch {
-    /* sin almacenamiento disponible: partida nueva */
+    /* sin almacenamiento o datos ilegibles: partida nueva */
   }
   return nueva(t);
 }

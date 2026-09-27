@@ -64,6 +64,7 @@ function punteado(forma: THREE.Shape, color: string): THREE.Mesh {
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.computeVertexNormals();
   const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color, roughness: 0.9, side: THREE.DoubleSide }));
+  m.userData.propio = true;
   m.position.y = 0.004;
   m.receiveShadow = true;
   return m;
@@ -89,6 +90,7 @@ function tapete(color: string, hx: number, hy: number, r = 0.18, borde?: string)
     mat.emissiveIntensity = 0.18;
   }
   const m = new THREE.Mesh(g, mat);
+  m.userData.propio = true;
   m.position.y = 0.012;
   m.receiveShadow = true;
   if (borde) {
@@ -251,6 +253,17 @@ export class Caja {
 const OBSTACULOS: Record<number, [number, number, number, number][]> = {
   1: [[4.2, -3.9, 5.8, -2.6], [1.3, 3.0, 2.9, 4.5], [-5.9, -4.4, -5.2, -3.7], [-5.8, -4.0, -5.0, -3.3]],
 };
+
+/** Libera la geometría y el material hechos a mano para esta tienda (tapetes y punteados); lo cargado de los .glb
+ *  se comparte entre copias y se queda. Sin esto, cada día jugado dejaba memoria de la tarjeta gráfica sin soltar. */
+export function liberarPropios(raiz: THREE.Object3D) {
+  raiz.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh || !m.userData.propio) return;
+    m.geometry.dispose();
+    (m.material as THREE.Material).dispose();
+  });
+}
 
 export class Tienda {
   grupo = new THREE.Group();

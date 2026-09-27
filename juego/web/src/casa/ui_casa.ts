@@ -81,21 +81,29 @@ export interface Pestana {
 }
 let alCerrarHoja: (() => void) | null = null;
 
-export function abrirHoja(titulo: string, cuerpo: string, opciones: { saldo?: number; pestanas?: Pestana[]; activa?: string; alPestana?: (id: string) => void; alCerrar?: () => void } = {}) {
+export function abrirHoja(
+  titulo: string,
+  cuerpo: string,
+  opciones: { saldo?: number; pestanas?: Pestana[]; activa?: string; alPestana?: (id: string) => void; alCerrar?: () => void; mantener?: boolean } = {},
+) {
+  // Al repintar la misma hoja (llegó un cambio del otro celular) se queda donde iba la lectura
+  const misma = !$('hoja').hidden && $('hoja-titulo').textContent === titulo && ($('hoja-pestanas').dataset.activa ?? '') === (opciones.activa ?? '');
+  const y = opciones.mantener && misma ? $('hoja-cuerpo').scrollTop : 0;
   $('hoja-titulo').textContent = titulo;
+  $('hoja-pestanas').dataset.activa = opciones.activa ?? '';
   $('hoja-saldo').hidden = opciones.saldo === undefined;
   if (opciones.saldo !== undefined) $('hoja-monedas').textContent = String(opciones.saldo);
   const nav = $('hoja-pestanas');
   nav.hidden = !opciones.pestanas?.length;
   nav.innerHTML = (opciones.pestanas ?? [])
-    .map((p) => `<button class="pestana" role="tab" data-p="${p.id}" aria-selected="${p.id === opciones.activa}">${esc(p.nombre)}</button>`)
+    .map((p) => `<button class="pestana" role="tab" data-p="${esc(p.id)}" aria-selected="${p.id === opciones.activa}">${esc(p.nombre)}</button>`)
     .join('');
   nav.onclick = (ev) => {
     const b = (ev.target as HTMLElement).closest('[data-p]') as HTMLElement | null;
     if (b) opciones.alPestana?.(b.dataset.p!);
   };
   $('hoja-cuerpo').innerHTML = cuerpo;
-  $('hoja-cuerpo').scrollTop = 0;
+  $('hoja-cuerpo').scrollTop = y;
   alCerrarHoja = opciones.alCerrar ?? null;
   mostrar('hoja');
 }

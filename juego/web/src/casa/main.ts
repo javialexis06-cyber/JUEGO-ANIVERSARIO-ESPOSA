@@ -19,10 +19,12 @@ import { BONO_DIARIO, CATALOGO, EFECTO_CARINO, ITEM, Item, paraSitio, PREMIO_CAR
 import { Casa3D, Sitio } from './escena_casa';
 import { Mascota } from './mascota';
 import {
-  Accion, alDia, animo, Cuarto, CUARTOS, diasPara, EstadoPersonaje, Evento, FechaEspecial, hoy, Necesidad, NECESIDADES,
-  NOMBRE_CUARTO, NOMBRE_NECESIDAD, nuevoId, otro, personajeNuevo, Rol, sumar,
+  Accion, alDia, animo, Casa, colorSeguro, Cuarto, CUARTOS, diasPara, EstadoPersonaje, Evento, FechaEspecial, hoy, Necesidad,
+  NECESIDADES, NOMBRE_CUARTO, NOMBRE_NECESIDAD, nuevoId, otro, personajeNuevo, Rol, sumar,
 } from './modelo';
-import { configLinea, guardarConfigLinea, olvidarSesion, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal } from './sincro';
+import {
+  configLinea, guardarConfigLinea, olvidarSesion, PersonajeOcupado, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal,
+} from './sincro';
 import {
   $, abrirHoja, Capa, caraClase, cerrarHoja, cerrarVentana, cuerpoHoja, esc, hojaAbierta, ico, iconoItem, lluviaCorazones,
   mostrar, nombre, pintarNecesidades, SVG, toast, ventana,
@@ -35,6 +37,20 @@ const CLAVE_VISTO = (r: Rol) => `nuestro-hogar-visto-${r}`;
 export const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
 const BONO_ANIVERSARIO = 50;
 const COLORES_NOTA = ['#FFE58A', '#FFC4D6', '#BFE9D8', '#CFE3FF', '#FFD7B0'];
+/** Formularios que se están guardando (un doble toque no manda dos veces). */
+const guardando = new Set<string>();
+async function unaSolaVez(id: string, fn: () => Promise<unknown>) {
+  if (guardando.has(id)) return;
+  guardando.add(id);
+  const b = document.querySelector<HTMLButtonElement>(`#${id} button[type="submit"]`);
+  if (b) b.disabled = true;
+  try {
+    await fn();
+  } finally {
+    guardando.delete(id);
+    if (b?.isConnected) b.disabled = false;
+  }
+}
 
 interface Modo {
   modo: 'local' | 'linea';
@@ -95,8 +111,11 @@ async function iniciar() {
   controles();
   mostrar('carga', false);
   const modo = leerModo();
+  modoGuardado = modo;
   if (!modo || !(await entrar(modo))) bienvenida();
 }
+
+let modoGuardado: Modo | null = null;
 
 function leerModo(): Modo | null {
   const r = params.get('rol');
@@ -106,7 +125,28 @@ function leerModo(): Modo | null {
   return m;
 }
 
-async function entrar(m: Modo, como?: 'crear' | { codigo: string }): Promise<boolean> {
+let entrando = false;
+
+type Como = 'crear' | { codigo: string; reemplazar?: boolean };
+
+async function entrar(m: Modo, como?: Como): Promise<boolean> {
+  // Un doble toque en «Crear» o «Unirme» no crea dos casas ni conecta dos veces
+  if (entrando || s) return !!s;
+  entrando = true;
+  const botones = ['btn-crear', 'btn-local', 'btn-reintentar'].map((id) => $(id) as HTMLButtonElement | null);
+  const unirse = $('form-unirse').querySelector('button') as HTMLButtonElement;
+  const antes = [...botones.map((b) => b?.disabled ?? false), unirse.disabled];
+  for (const b of [...botones, unirse]) if (b) b.disabled = true;
+  try {
+    return await entrarDeVerdad(m, como);
+  } finally {
+    entrando = false;
+    botones.forEach((b, i) => b && (b.disabled = antes[i]));
+    unirse.disabled = antes[antes.length - 1];
+  }
+}
+
+async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
   const aviso = $('bienv-aviso');
   try {
     if (m.modo === 'local') s = new SincroLocal(m.rol);
@@ -115,15 +155,23 @@ async function entrar(m: Modo, como?: 'crear' | { codigo: string }): Promise<boo
       if (!cfg) throw new Error('Falta conectar el servidor.');
       aviso.textContent = 'Conectando…';
       if (como === 'crear') s = await SincroLinea.crear(cfg, m.rol);
-      else if (como) s = await SincroLinea.unirse(cfg, como.codigo, m.rol);
+      else if (como) s = await SincroLinea.unirse(cfg, como.codigo, m.rol, como.reemplazar);
       else s = await SincroLinea.reanudar(cfg, sesionGuardada()!);
     }
   } catch (e) {
+    s = null;
+    if (e instanceof PersonajeOcupado && como && como !== 'crear') {
+      aviso.textContent = '';
+      confirmarReemplazo(m, como.codigo);
+      return false;
+    }
     aviso.textContent = e instanceof Error ? e.message : 'No se pudo entrar a la casa.';
-    if (!params.get('rol')) toast('No se pudo conectar. Revisa el internet.');
+    // Si ya tenían casa en línea y falló (sin internet), se ofrece reintentar sin volver a elegir todo
+    $('btn-reintentar').hidden = !(m.modo === 'linea' && !como);
     return false;
   }
   aviso.textContent = '';
+  $('btn-reintentar').hidden = true;
   yo = m.rol;
   if (!params.get('rol')) escribir(CLAVE_MODO, m);
   s.alCambiar(alCambiar);
@@ -144,6 +192,22 @@ async function entrar(m: Modo, como?: 'crear' | { codigo: string }): Promise<boo
   sonido.musica.iniciar('menu', 76, 'hogar');
   (window as any).__listo = true;
   return true;
+}
+
+/** El personaje ya está en otro celular: ¿es un celular nuevo o se equivocó de personaje? */
+function confirmarReemplazo(m: Modo, codigo: string) {
+  const otroNombre = nombre(otro(m.rol));
+  ventana(`<h2>${nombre(m.rol)} ya está en otro celular</h2>
+    <p class="nota-hoja">Si es tu celular nuevo (o reinstalaste la app), entra aquí y el otro se desconecta.
+    Si eres ${otroNombre}, vuelve y toca «Soy ${otroNombre}».</p>
+    <div class="fila-botones" style="justify-content:center">
+      <button class="boton boton-papel" data-cerrar>Me equivoqué</button>
+      <button class="boton boton-tomate" id="btn-si-reemplazar">Soy yo, entrar aquí</button>
+    </div>`);
+  $('btn-si-reemplazar').onclick = () => {
+    cerrarVentana();
+    void entrar(m, { codigo, reemplazar: true });
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -204,46 +268,99 @@ function alCambiar(que: QueCambio) {
   if (que === 'recuerdos') void casa3d.ponerDeco(s!.casa.deco, s!.recuerdos);
   pintarTodo();
   if (hojaAbierta()) repintarHoja?.();
+  if (que === 'eventos' || que === 'casa') void aplicarPendientes();
 }
 
-/** Al abrir la app (o volver a ella): bono del día, sueldo del súper, lo que pasó mientras no estaba. */
-async function alAbrir() {
+/** Al abrir la app (o volver a ella): lo que pasó en segundo plano, bono del día, sueldo del súper y aniversario.
+ *  Si se llama otra vez mientras corre (volver y salir rápido), espera la que ya va: nada se cobra dos veces. */
+let abriendo: Promise<void> | null = null;
+function alAbrir() {
+  abriendo ??= abrirDeVerdad().finally(() => (abriendo = null));
+  return abriendo;
+}
+
+/** Suma monedas una sola vez por clave (queda anotada en la casa, así no se repite en otro celular ni al reintentar). */
+async function unaVez(clave: string, monedas: number): Promise<boolean> {
+  let dado = false;
+  const ok = await cambiarCasa((c) => {
+    dado = false;
+    if (c.diario[clave]) return;
+    for (const k of Object.keys(c.diario)) if (!k.startsWith(hoy()) && !k.startsWith('aniversario-')) delete c.diario[k];
+    c.diario[clave] = 1;
+    c.monedas += monedas;
+    dado = true;
+  });
+  return ok && dado;
+}
+
+async function abrirDeVerdad() {
   if (!s) return;
   const ahora = Date.now();
   const mensajes: string[] = [];
-  // Sueldo del súper
+  if (s.modo === 'linea') {
+    try {
+      await s.refrescar();
+    } catch {
+      mensajes.push('Sin conexión: se muestra lo último que se guardó.');
+    }
+  }
+  // Sueldo del súper: se descuenta del sobre solo lo que sí llegó a la casa
   let sueldo = 0;
   try {
-    sueldo = Number(localStorage.getItem(CLAVE_SUELDO) ?? 0) || 0;
-    localStorage.removeItem(CLAVE_SUELDO);
+    sueldo = Math.max(0, Math.floor(Number(localStorage.getItem(CLAVE_SUELDO) ?? 0) || 0));
   } catch {
     /* nada */
   }
-  if (sueldo > 0 && (await cambiarCasa((c) => (c.monedas += sueldo)))) mensajes.push(`Llegó el sueldo del súper: +${sueldo} monedas`);
-  // Bono diario (uno por persona)
-  const mio = est(yo);
-  if (mio.bonoDia !== hoy()) {
-    if (await cambiarCasa((c) => (c.monedas += BONO_DIARIO))) {
-      await guardarYo({ ...mio, bonoDia: hoy(), visto: ahora });
-      mensajes.push(`Bono del día: +${BONO_DIARIO} monedas`);
+  if (sueldo > 0 && (await cambiarCasa((c) => (c.monedas += sueldo)))) {
+    try {
+      const queda = (Number(localStorage.getItem(CLAVE_SUELDO)) || 0) - sueldo;
+      if (queda > 0) localStorage.setItem(CLAVE_SUELDO, String(queda));
+      else localStorage.removeItem(CLAVE_SUELDO);
+    } catch {
+      /* nada */
     }
-  } else await guardarYo({ ...mio, visto: ahora });
+    mensajes.push(`Llegó el sueldo del súper: +${sueldo} monedas`);
+  }
+  // Bono diario (uno por persona y por día)
+  if (await unaVez(`${hoy()}|${yo}|bono`, BONO_DIARIO)) mensajes.push(`Bono del día: +${BONO_DIARIO} monedas`);
+  await guardarYo({ ...est(yo), visto: ahora });
   // Aniversario
   const aniv = s.casa.aniversario;
   if (aniv && diasPara(aniv, true) === 0) {
-    const clave = `aniversario-${new Date().getFullYear()}`;
     lluviaCorazones(36);
-    if (!s.casa.diario[clave] && (await cambiarCasa((c) => {
-      c.diario[clave] = 1;
-      c.monedas += BONO_ANIVERSARIO;
-    }))) mensajes.push(`¡Feliz aniversario! +${BONO_ANIVERSARIO} monedas`);
+    if (await unaVez(`aniversario-${new Date().getFullYear()}`, BONO_ANIVERSARIO)) mensajes.push(`¡Feliz aniversario! +${BONO_ANIVERSARIO} monedas`);
   }
-  // Lo que hizo la pareja mientras no estaba
-  const visto = Number(leer<number>(CLAVE_VISTO(yo)) ?? 0);
-  const nuevos = s.eventos.filter((e) => e.de !== yo && e.t > visto);
-  if (visto && nuevos.length) mensajes.push(`Mientras no estabas, ${nombre(otro(yo))} ${resumen(nuevos)}`);
+  // Lo que hizo la pareja mientras no estaba (y su cariño llega ahora)
+  const nuevos = await aplicarPendientes();
+  if (nuevos.length) mensajes.push(`Mientras no estabas, ${nombre(otro(yo))} ${resumen(nuevos)}`);
   escribir(CLAVE_VISTO(yo), ahora);
   mensajes.forEach((m, i) => setTimeout(() => toast(m, 3400), i * 3600));
+}
+
+/** Aplica a mi personaje los mimos y la comida que me mandaron y que todavía no se habían aplicado. */
+let aplicando = false;
+async function aplicarPendientes(): Promise<Evento[]> {
+  if (!s || aplicando) return [];
+  const pendientes = s.eventos.filter((e) => e.de !== yo && !e.visto && e.tipo !== 'saludo');
+  const saludos = s.eventos.filter((e) => e.de !== yo && !e.visto && e.tipo === 'saludo');
+  if (!pendientes.length && !saludos.length) return [];
+  aplicando = true;
+  try {
+    for (const e of [...pendientes, ...saludos]) e.visto = true;
+    const cambios: Partial<Record<Necesidad, number>> = {};
+    const sumarA = (ef: Partial<Record<Necesidad, number>>) => {
+      for (const [k, v] of Object.entries(ef) as [Necesidad, number][]) cambios[k] = (cambios[k] ?? 0) + v;
+    };
+    for (const e of pendientes) {
+      if (e.tipo === 'caricia' || e.tipo === 'abrazo' || e.tipo === 'beso') sumarA({ carino: EFECTO_CARINO[e.tipo].suyo });
+      else if (e.tipo === 'comida' && typeof e.datos.item === 'string' && ITEM[e.datos.item]?.tipo === 'comida') sumarA(ITEM[e.datos.item].efecto ?? {});
+    }
+    if (Object.keys(cambios).length) await guardarYo(sumar(s.personajes[yo], cambios));
+    await s.marcarVistos([...pendientes, ...saludos].map((e) => e.id)).catch((err) => console.error(err));
+    return [...pendientes, ...saludos];
+  } finally {
+    aplicando = false;
+  }
 }
 
 function resumen(ev: Evento[]) {
@@ -273,11 +390,17 @@ async function hacer(accion: Accion, cuarto: Cuarto, seg: number, cambios: Parti
   await guardarYo({ ...e, cuarto, actividad: { tipo: 'nada', desde: ahora, accion, hasta: ahora + seg * 1000, item }, visto: ahora });
 }
 
+/** Saca uno del inventario (con los datos de ese momento: el otro pudo gastar el último). */
+function gastar(c: Casa, id: string) {
+  if ((c.inventario[id] ?? 0) <= 0) throw new Error(`ya no queda ${ITEM[id]?.nombre.toLowerCase() ?? 'eso'}`);
+  c.inventario[id] -= 1;
+}
+
 async function comer(id: string) {
   const it = ITEM[id];
   if (!s || !it || (s.casa.inventario[id] ?? 0) <= 0) return;
   if (dormido(yo)) return toast('Primero hay que despertar.');
-  if (!(await cambiarCasa((c) => (c.inventario[id] = (c.inventario[id] ?? 1) - 1)))) return;
+  if (!(await cambiarCasa((c) => gastar(c, id)))) return;
   sonido.mordisco();
   setTimeout(() => sonido.mordisco(), 1600);
   await hacer('comer', 'cocina', 7, it.efecto ?? {}, id);
@@ -307,15 +430,9 @@ async function despertar(auto = false) {
 // Con la pareja
 // ---------------------------------------------------------------------------
 async function premio(tipo: string) {
-  const clave = `${hoy()}|${yo}|${tipo}`;
   const p = PREMIO_CARINO[tipo] ?? 0;
-  if (!p || s!.casa.diario[clave]) return;
-  const ok = await cambiarCasa((c) => {
-    for (const k of Object.keys(c.diario)) if (!k.startsWith(hoy()) && !k.startsWith('aniversario-')) delete c.diario[k];
-    c.diario[clave] = 1;
-    c.monedas += p;
-  });
-  if (ok) setTimeout(() => toast(`Primer${tipo === 'caricia' ? 'a caricia' : tipo === 'abrazo' ? ' abrazo' : ' beso'} del día: +${p} monedas`), 1800);
+  if (!p || !(await unaVez(`${hoy()}|${yo}|${tipo}`, p))) return;
+  setTimeout(() => toast(`Primer${tipo === 'caricia' ? 'a caricia' : tipo === 'abrazo' ? ' abrazo' : ' beso'} del día: +${p} monedas`), 1800);
 }
 
 function coreografia(tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo', de: Rol, item?: string) {
@@ -326,9 +443,19 @@ function coreografia(tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo', de: Rol, it
   setTimeout(() => (tipo === 'beso' ? sonido.beso() : tipo === 'regalo' ? sonido.regalo() : sonido.abrazo()), 1500);
 }
 
+/** Un mimo a la vez: mientras los dos posan, otro toque no empieza otra coreografía. */
+function ocupados() {
+  if (mascotas[yo].ocupado || mascotas[otro(yo)].ocupado) {
+    toast('Un momentico…');
+    return true;
+  }
+  return false;
+}
+
 async function carino(tipo: 'caricia' | 'abrazo' | 'beso') {
   if (!s) return;
   if (dormido(yo)) return toast('Primero hay que despertar.');
+  if (ocupados()) return;
   cerrarHoja();
   const par = otro(yo);
   const ef = EFECTO_CARINO[tipo];
@@ -336,8 +463,8 @@ async function carino(tipo: 'caricia' | 'abrazo' | 'beso') {
   const cuarto = s.personajes[par].cuarto;
   coreografia(tipo, yo);
   await guardarYo({ ...sumar(s.personajes[yo], { carino: ef.mio }, ahora), cuarto, actividad: { tipo: 'nada', desde: ahora }, visto: ahora });
+  // El cariño de la pareja lo suma su propio celular al recibir el evento (así no se pisa lo que está haciendo)
   try {
-    await s.guardarPersonaje(par, sumar(s.personajes[par], { carino: ef.suyo }, ahora));
     await s.enviar(tipo);
   } catch (err) {
     fallo(err);
@@ -348,10 +475,11 @@ async function carino(tipo: 'caricia' | 'abrazo' | 'beso') {
 async function regalar(id: string, mensaje: string) {
   if (!s || (s.casa.inventario[id] ?? 0) <= 0) return;
   if (dormido(yo)) return toast('Primero hay que despertar.');
+  if (ocupados()) return;
   const par = otro(yo);
   const r = { id: nuevoId(), item: id, de: yo, para: par, mensaje: mensaje.trim().slice(0, 240), t: Date.now(), abierto: false };
   const ok = await cambiarCasa((c) => {
-    c.inventario[id] = (c.inventario[id] ?? 1) - 1;
+    gastar(c, id);
     c.regalos = [...c.regalos.slice(-29), r];
   });
   if (!ok) return;
@@ -371,14 +499,14 @@ async function mandarComida(id: string) {
   const it = ITEM[id];
   if (!s || !it || (s.casa.inventario[id] ?? 0) <= 0) return;
   if (dormido(yo)) return toast('Primero hay que despertar.');
+  if (ocupados()) return;
   const par = otro(yo);
-  if (!(await cambiarCasa((c) => (c.inventario[id] = (c.inventario[id] ?? 1) - 1)))) return;
+  if (!(await cambiarCasa((c) => gastar(c, id)))) return;
   cerrarHoja();
   coreografia('regalo', yo, id);
   const ahora = Date.now();
   await guardarYo({ ...alDia(s.personajes[yo], ahora), cuarto: s.personajes[par].cuarto, actividad: { tipo: 'nada', desde: ahora }, visto: ahora });
   try {
-    await s.guardarPersonaje(par, sumar(s.personajes[par], it.efecto ?? {}, ahora));
     await s.enviar('comida', { item: id });
   } catch (err) {
     fallo(err);
@@ -402,7 +530,7 @@ function alEvento(e: Evento) {
   if (e.de === yo) return;
   const quien = nombre(e.de);
   sonido.aviso();
-  const item = typeof e.datos.item === 'string' ? e.datos.item : undefined;
+  const item = typeof e.datos.item === 'string' && ITEM[e.datos.item] ? e.datos.item : undefined;
   switch (e.tipo) {
     case 'caricia':
     case 'abrazo':
@@ -416,7 +544,7 @@ function alEvento(e: Evento) {
       break;
     case 'comida':
       coreografia('regalo', e.de, item);
-      toast(`${quien} te trajo ${item ? ITEM[item]?.nombre.toLowerCase() : 'comida'}`);
+      toast(`${quien} te trajo ${item ? ITEM[item].nombre.toLowerCase() : 'comida'}`);
       break;
     case 'nota':
       toast(`${quien} te dejó una nota en la nevera`, 3200);
@@ -426,13 +554,25 @@ function alEvento(e: Evento) {
       break;
   }
   escribir(CLAVE_VISTO(yo), Date.now());
+  void aplicarPendientes();
 }
 
 function regaloPendiente() {
   return s?.casa.regalos.find((r) => r.para === yo && !r.abierto) ?? null;
 }
 
+let abriendoRegalo = false;
 async function abrirRegalo() {
+  if (abriendoRegalo) return;
+  abriendoRegalo = true;
+  try {
+    await abrirRegaloDeVerdad();
+  } finally {
+    abriendoRegalo = false;
+  }
+}
+
+async function abrirRegaloDeVerdad() {
   const r = regaloPendiente();
   if (!s || !r) return;
   const it = ITEM[r.item];
@@ -445,13 +585,18 @@ async function abrirRegalo() {
   }
   const deco = r.item === 'osito' ? 'osito_deco' : null;
   if (deco) extra = 'El osito quedó guardado para decorar la casa.';
+  let abierto = false;
   const ok = await cambiarCasa((c) => {
+    abierto = false;
     const x = c.regalos.find((g) => g.id === r.id);
-    if (x) x.abierto = true;
+    // Si ya lo abrió (en otro celular o con otro toque), no se repite lo de adentro
+    if (!x || x.abierto) return;
+    x.abierto = true;
+    abierto = true;
     if (sorpresa) c.inventario[sorpresa] = (c.inventario[sorpresa] ?? 0) + 1;
     if (deco) c.inventario[deco] = (c.inventario[deco] ?? 0) + 1;
   });
-  if (!ok) return;
+  if (!ok || !abierto) return;
   await guardarYo(sumar(s.personajes[yo], it?.efecto ?? { carino: 10 }));
   sonido.regalo();
   ventana(`
@@ -630,6 +775,7 @@ function hojaTienda(tab: TipoItem) {
         )
         .join('')}</ul>`;
     abrirHoja('Tienda de la casa', html, {
+      mantener: true,
       saldo: s.casa.monedas,
       pestanas: [
         { id: 'comida', nombre: 'Comida' },
@@ -669,7 +815,7 @@ function elegirComida(para: 'comer' | 'llevar') {
           .map((it) => tarjetaItem(it, `<span class="tengo">Hay ${s!.casa.inventario[it.id]}</span><button class="boton boton-chico boton-menta" data-${para}="${it.id}">${para === 'comer' ? 'Comer' : 'Llevar'}</button>`))
           .join('')}</ul>`
       : `<p class="nota-hoja">La despensa está vacía.</p><button class="boton boton-tomate" data-ir-tienda>Ir a la tienda</button>`;
-    abrirHoja(para === 'comer' ? 'La despensa' : `Llevarle comida a ${nombre(otro(yo))}`, html, { alCerrar: () => (repintarHoja = null) });
+    abrirHoja(para === 'comer' ? 'La despensa' : `Llevarle comida a ${nombre(otro(yo))}`, html, { mantener: true, alCerrar: () => (repintarHoja = null) });
   };
   repintarHoja = pintar;
   pintar();
@@ -698,7 +844,7 @@ function hojaPareja() {
           <button class="accion" data-mimo="saludo">${ico('saludo')}<span>Saludar</span></button>
         </div>
       </div>`;
-    abrirHoja(`${nombre(par)}`, html, { alCerrar: () => (repintarHoja = null) });
+    abrirHoja(`${nombre(par)}`, html, { mantener: true, alCerrar: () => (repintarHoja = null) });
     pintarNecesidades($('necesidades-pareja'), e);
   };
   repintarHoja = pintar;
@@ -749,8 +895,8 @@ function hojaNotas() {
       </form>
       <ul class="notas">${notas
         .map(
-          (n) => `<li class="nota-adhesiva" style="background:${n.color}">${esc(n.texto)}<small>${nombre(n.de)} · ${new Date(n.t).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })}</small>${
-            n.de === yo ? `<button class="quitar" data-quitar-nota="${n.id}">Quitar</button>` : ''
+          (n) => `<li class="nota-adhesiva" style="background:${colorSeguro(n.color)}">${esc(n.texto)}<small>${nombre(n.de)} · ${new Date(n.t).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })}</small>${
+            n.de === yo ? `<button class="quitar" data-quitar-nota="${esc(n.id)}">Quitar</button>` : ''
           }</li>`,
         )
         .join('')}</ul>`;
@@ -758,13 +904,11 @@ function hojaNotas() {
   };
   repintarHoja = null;
   pintar();
-  const cuerpo = $('hoja-cuerpo');
-  cuerpo.dataset.repintar = 'notas';
 }
 
 async function pegarNota(texto: string) {
   if (!s || !texto.trim()) return;
-  const n = { id: nuevoId(), de: yo, texto: texto.trim().slice(0, 200), color: colorNota, t: Date.now() };
+  const n = { id: nuevoId(), de: yo, texto: texto.trim().slice(0, 200), color: colorSeguro(colorNota), t: Date.now() };
   if (!(await cambiarCasa((c) => (c.notas = [...c.notas.slice(-29), n])))) return;
   try {
     await s.enviar('nota', { texto: n.texto });
@@ -787,7 +931,7 @@ function hojaAlbum() {
     </form>
     <ul class="album">${lista
       .map(
-        (r) => `<li><button class="polaroid" data-foto="${r.id}"><img src="${esc(r.foto)}" alt=""><b>${esc(r.titulo)}</b><small>${r.fecha ? esc(fechaLarga(r.fecha)) : ''}</small></button></li>`,
+        (r) => `<li><button class="polaroid" data-foto="${esc(r.id)}"><img src="${esc(r.foto)}" alt=""><b>${esc(r.titulo)}</b><small>${r.fecha ? esc(fechaLarga(r.fecha)) : ''}</small></button></li>`,
       )
       .join('')}</ul>`;
   abrirHoja('Nuestro álbum', html, { alCerrar: () => (repintarHoja = null) });
@@ -809,7 +953,7 @@ function hojaFechas() {
     const mes = new Date(2000, +m[2] - 1, 1).toLocaleDateString('es-CO', { month: 'short' });
     const falta = d === null ? '' : d === 0 ? '¡Es hoy!' : d < 0 ? 'Ya pasó' : d === 1 ? 'Mañana' : `Faltan ${d} días`;
     return `<li class="calendario${d === 0 ? ' hoy' : ''}"><span class="mes">${mes}</span><span class="dia">${+m[3]}</span><b>${esc(nombreF)}</b><small>${falta}${
-      id ? ` · <button class="enlace" data-quitar-fecha="${id}">quitar</button>` : ''
+      id ? ` · <button class="enlace" data-quitar-fecha="${esc(id)}">quitar</button>` : ''
     }</small></li>`;
   };
   const html = `<ul class="fechas">${s.casa.aniversario ? cal('Nuestro aniversario', s.casa.aniversario, true) : ''}${s.casa.fechas.map((f) => cal(f.nombre, f.fecha, f.cadaAno, f.id)).join('')}</ul>
@@ -854,8 +998,10 @@ function hojaJuegos() {
 function hojaAjustes() {
   const cfg = configLinea();
   const enLinea = s?.modo === 'linea';
-  const html = `<p class="nota-hoja">Eres <b>${nombre(yo)}</b>. ${
-    enLinea ? `Casa en línea con el código <b class="codigo-chico">${esc(s!.codigo)}</b>.` : 'Estás jugando solo en este celular (sin internet).'
+  const html = `<p class="nota-hoja">${
+    !s ? 'Todavía no han entrado a una casa.' : `Eres <b>${nombre(yo)}</b>. ${
+      enLinea ? `Casa en línea con el código <b class="codigo-chico">${esc(s.codigo)}</b>.` : 'Estás jugando solo en este celular (sin internet).'
+    }`
   }</p>
     <div class="fila-botones" style="justify-content:flex-start">
       ${enLinea ? '<button class="boton boton-papel boton-chico" data-compartir>Compartir el código</button>' : ''}
@@ -868,9 +1014,9 @@ function hojaAjustes() {
       <label class="campo">Clave pública (anon)<input id="cfg-clave" placeholder="eyJhbGciOi…" value="${esc(cfg?.clave ?? '')}"></label>
       <button class="boton boton-menta" type="submit">Guardar conexión</button>
     </form>
-    <div class="fila-botones" style="margin-top:14px;justify-content:flex-start">
+    ${s ? `<div class="fila-botones" style="margin-top:14px;justify-content:flex-start">
       <button class="boton boton-papel boton-chico" data-salir>Salir de esta casa</button>
-    </div>`;
+    </div>` : ''}`;
   abrirHoja('Ajustes', html);
 }
 
@@ -895,7 +1041,7 @@ function hojaDecorar(sitio: Sitio) {
         ? `<h3>Marco con una foto del álbum</h3>${
             s.recuerdos.length
               ? `<ul class="album">${s.recuerdos
-                  .map((r) => `<li><button class="polaroid" data-poner="cuadro_foto:${r.id}" data-sitio="${sitio.id}"><img src="${esc(r.foto)}" alt=""><b>${esc(r.titulo)}</b></button></li>`)
+                  .map((r) => `<li><button class="polaroid" data-poner="cuadro_foto:${esc(r.id)}" data-sitio="${sitio.id}"><img src="${esc(r.foto)}" alt=""><b>${esc(r.titulo)}</b></button></li>`)
                   .join('')}</ul>`
               : '<p class="nota-hoja">Primero agreguen fotos al álbum.</p>'
           }`
@@ -911,8 +1057,9 @@ async function ponerDeco(clave: string, sitio: string) {
   if ((s.casa.inventario[item] ?? 0) <= 0) return;
   const ok = await cambiarCasa((c) => {
     const antes = c.deco[sitio];
+    if (antes === clave) return;
+    gastar(c, item);
     if (antes) c.inventario[antes.split(':')[0]] = (c.inventario[antes.split(':')[0]] ?? 0) + 1;
-    c.inventario[item] = (c.inventario[item] ?? 1) - 1;
     c.deco[sitio] = clave;
   });
   if (ok) {
@@ -953,6 +1100,7 @@ function controles() {
     void entrar({ modo: 'linea', rol: rolElegido }, { codigo: cod });
   };
   $('btn-bienv-config').onclick = () => hojaAjustes();
+  $('btn-reintentar').onclick = () => modoGuardado && void entrar(modoGuardado);
   $('btn-codigo-listo').onclick = () => mostrar('codigo', false);
   $('btn-codigo-compartir').onclick = () => compartirCodigo();
   $('cuartos').onclick = (ev) => {
@@ -1030,9 +1178,9 @@ function controles() {
     ev.preventDefault();
     const f = ev.target as HTMLFormElement;
     const val = (id: string) => ($(id) as HTMLInputElement).value;
-    if (f.id === 'form-nota') void pegarNota(val('nota-texto'));
-    else if (f.id === 'form-regalo' && regaloElegido) void regalar(regaloElegido, val('regalo-mensaje'));
-    else if (f.id === 'form-recuerdo') void guardarRecuerdo();
+    if (f.id === 'form-nota') void unaSolaVez(f.id, () => pegarNota(val('nota-texto')));
+    else if (f.id === 'form-regalo' && regaloElegido) void unaSolaVez(f.id, () => regalar(regaloElegido!, val('regalo-mensaje')));
+    else if (f.id === 'form-recuerdo') void unaSolaVez(f.id, guardarRecuerdo);
     else if (f.id === 'form-aniversario') void cambiarCasa((c) => (c.aniversario = val('aniv-fecha'))).then(() => {
       toast('Aniversario guardado');
       hojaFechas();
@@ -1102,12 +1250,9 @@ function tocar(x: number, y: number) {
   }
   // Pasear: su personaje camina hasta donde se tocó (si está en ese cuarto y libre)
   const m = mascotas[yo];
-  if (t.tipo === 'suelo' && m.cuarto === casa3d.actual && !dormido(yo) && !m.p.moviendo) {
+  if (t.tipo === 'suelo' && m.cuarto === casa3d.actual && !dormido(yo)) {
     const d = casa3d.dato;
-    const px = THREE.MathUtils.clamp(t.x, -d.W / 2 + 0.5, d.W / 2 - 0.5);
-    const py = THREE.MathUtils.clamp(t.y, -d.D / 2 + 0.4, d.D / 2 - 0.8);
-    m.p.ruta = [{ x: px, y: py }];
-    m.p.alLlegar = null;
+    m.pasear(THREE.MathUtils.clamp(t.x, -d.W / 2 + 0.5, d.W / 2 - 0.5), THREE.MathUtils.clamp(t.y, -d.D / 2 + 0.4, d.D / 2 - 0.8));
   }
 }
 
@@ -1196,17 +1341,24 @@ function bucle() {
   if (acumulado < 1 / 32) return;
   const paso = acumulado;
   acumulado = 0;
-  if (RAPIDO > 0) for (let i = 0; i < RAPIDO; i++) for (const m of Object.values(mascotas)) m.update(0.1);
-  else for (const m of Object.values(mascotas)) m.update(paso);
-  casa3d.animar(ahora / 1000);
-  cadaSegundo -= paso;
-  if (cadaSegundo <= 0) {
-    cadaSegundo = 0.5;
-    revisar();
+  try {
+    if (RAPIDO > 0) for (let i = 0; i < RAPIDO; i++) for (const m of Object.values(mascotas)) m.update(0.1);
+    else for (const m of Object.values(mascotas)) m.update(paso);
+    casa3d.animar(ahora / 1000);
+    cadaSegundo -= paso;
+    if (cadaSegundo <= 0) {
+      cadaSegundo = 0.5;
+      revisar();
+    }
+    efectos();
+    mundo.dibujar(paso, true);
+  } catch (e) {
+    // Un error en un cuadro no debe congelar la casa; se reporta una vez
+    if (!errorReportado) console.error(e);
+    errorReportado = true;
   }
-  efectos();
-  mundo.dibujar(paso, true);
 }
+let errorReportado = false;
 
 /** Cada medio segundo: estado de los personajes, barras, despertar solo, regalo por abrir. */
 function revisar() {
@@ -1217,8 +1369,8 @@ function revisar() {
   if (dormido(yo) && est(yo).energia >= 100) void despertar(true);
   const g = regaloPendiente();
   const m = mascotas[yo];
-  if (g && !casa3d.hayRegaloVisible) void casa3d.mostrarRegalo(m.cuarto, m.p.pos.x + (yo === 'el' ? -0.7 : 0.7), m.p.pos.y - 0.5);
-  if (!g && casa3d.hayRegaloVisible) void casa3d.mostrarRegalo(null);
+  if (g) void casa3d.mostrarRegalo(m.cuarto, m.p.pos.x + (yo === 'el' ? -0.7 : 0.7), m.p.pos.y - 0.5);
+  else if (casa3d.hayRegaloVisible) void casa3d.mostrarRegalo(null);
 }
 
 const PENSAR: Record<Necesidad, string> = {
