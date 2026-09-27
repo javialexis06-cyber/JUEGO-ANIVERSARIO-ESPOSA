@@ -46,6 +46,7 @@ carpeta de la casa.
 | Mimo que llega mientras se aplicaba otro | Quedaba esperando hasta volver a abrir la app. | Se aplica apenas termina el anterior. |
 | Guardados de más | Revisar el bono cuando ya estaba dado igual guardaba la casa (más choques entre los dos celulares). | Si nada cambió, no se guarda. |
 | Volver a la app en Android | La casa solo se enteraba por el evento del navegador. | También escucha a Android (`appStateChange`) para refrescar al volver. |
+| Dos pestañas en el mismo navegador (sin internet) | El navegador copia el almacenamiento entre pestañas con un retraso: una pestaña podía guardar encima una copia vieja y se perdían besos, regalos o cambios. | Cada guardado lleva un número de versión y viaja en el aviso a la otra pestaña: siempre se usa la copia más nueva. |
 
 ### Casa (3D e interfaz)
 
