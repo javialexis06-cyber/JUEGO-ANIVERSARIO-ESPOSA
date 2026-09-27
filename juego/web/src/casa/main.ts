@@ -116,6 +116,7 @@ async function iniciar() {
 }
 
 let modoGuardado: Modo | null = null;
+let entradoEn = 0;
 
 function leerModo(): Modo | null {
   const r = params.get('rol');
@@ -187,6 +188,7 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
   verCuarto(s.personajes[yo].cuarto);
   await casa3d.ponerDeco(s.casa.deco, s.recuerdos);
   casa3d.pintarNotas(s.casa.notas);
+  entradoEn = Date.now();
   await alAbrir();
   pintarTodo();
   sonido.musica.iniciar('menu', 76, 'hogar');
@@ -297,7 +299,8 @@ async function abrirDeVerdad() {
   if (!s) return;
   const ahora = Date.now();
   const mensajes: string[] = [];
-  if (s.modo === 'linea') {
+  // (recién entrando ya se leyó todo: solo se vuelve a leer al volver a la app)
+  if (s.modo === 'linea' && Date.now() - entradoEn > 5000) {
     try {
       await s.refrescar();
     } catch {
