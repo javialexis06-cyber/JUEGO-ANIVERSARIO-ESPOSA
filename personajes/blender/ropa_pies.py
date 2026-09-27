@@ -44,7 +44,7 @@ def suela(ctx, sx, x, k, mat, alto=0.075, parte='suela', tacon=0.0, mat_tacon=No
 
 
 def capellada(ctx, sx, x, k, f, mat, parte='tenis', lo_z=0.03, hi_z=0.3):
-    return ctx.pieza(sdf.to_mesh(ctx.nombre(f'{parte} {ctx.lado(sx)}'), f, (x - 0.26 * k, -0.42 * k, lo_z * k), (x + 0.26 * k, 0.32 * k, hi_z),
+    return ctx.pieza(sdf.to_mesh(ctx.nombre(f'{parte} {ctx.lado(sx)}'), f, (x - 0.26 * k, -0.52 * k, lo_z * k), (x + 0.26 * k, 0.32 * k, hi_z),
                                  VX * 0.8, ctx.coll, mat, smooth=2), ctx.hueso_lado('pie', sx))
 
 

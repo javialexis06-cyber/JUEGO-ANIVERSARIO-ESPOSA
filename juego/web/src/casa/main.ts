@@ -940,6 +940,7 @@ async function vestir(cambio: (ropa: Ropa) => void, colorPelo?: string | null) {
   const e: EstadoPersonaje = { ...alDia(actual, ahora) };
   delete e.ropa;
   if (Object.keys(ropa).length) e.ropa = ropa;
+  if (colorPelo && !TINTES.some((t) => t.tinte === colorPelo && tiene(t.id))) return;
   if (colorPelo !== undefined) {
     delete e.colorPelo;
     if (colorPelo) e.colorPelo = colorPelo;

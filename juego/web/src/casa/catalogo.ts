@@ -77,7 +77,8 @@ const disfraz = (id: string, nombre: string, piezas: Partial<Record<Rol, string[
 });
 const DISFRACES: Item[] = [
   disfraz('gatitos', 'Pareja de gatitos', ambos('orejas_gato', 'cola_gato', 'bigotes_gato'), 'Orejitas, cola y bigotes para los dos'),
-  disfraz('conejitos', 'Pareja de conejitos', ambos('orejas_conejo', 'cola_conejo', 'pantuflas_conejo'), 'Orejas largas, colita y pantuflas'),
+  disfraz('conejitos', 'Pareja de conejitos', ambos('pijama_conejo', 'capucha_conejo', 'cola_conejo', 'pantuflas_conejo'),
+    'Pijama, capucha con orejas largas, colita y pantuflas'),
   disfraz('ositos', 'Pareja de ositos', ambos('pijama_oso', 'capucha_oso', 'cola_oso', 'pantuflas_oso'), 'Pijama enteriza con capucha de osito'),
   disfraz('pandas', 'Pareja de pandas', ambos('pijama_panda', 'capucha_panda', 'cola_panda', 'pantuflas_panda'), 'Pijama y capucha de panda'),
   disfraz('dinos', 'Pareja de dinosaurios', ambos('pijama_dino', 'capucha_dino', 'cola_dino'), 'Pijama con púas, capucha con ojos y cola'),

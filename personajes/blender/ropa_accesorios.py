@@ -75,8 +75,17 @@ def gorra(ctx):
                             V('boina_rosada', 'Boina rosada', principal='rosado'), V('boina_mostaza', 'Boina mostaza', principal='mostaza')],
         oculta=COP, precio=25)
 def boina(ctx):
-    copa, R, els, azs = domo(ctx, 'boina', ctx.m('principal'), el_min=40, margen=0.05, aplastar=0.8, ancho=1.1, frente=0.03)
-    pompon(ctx, 'boina rabito', ctx.hc + np.array([0.04, 0.03, R[-1].mean() * 0.75 + 0.07]), 0.025, ctx.m('principal'))
+    m = ctx.m('principal')
+    copa, R, els, azs = domo(ctx, 'boina', m, el_min=40, margen=0.05, ancho=1.06, frente=0.02)
+    # Plato de la boina: un disco blando más ancho que la copa, ladeado hacia un lado
+    hc = ctx.hc
+    r = float(np.mean(R[0])) * math.cos(math.radians(els[0])) + 0.1
+    z = float(np.mean(R[-1])) + 0.02
+    o = clay.blob(ctx.nombre('boina plato'), (0, 0, 0), (r * 1.08, r, 0.085), ctx.coll, m, n=7)
+    o.rotation_euler = (math.radians(4), math.radians(-9), 0)
+    o.location = tuple(hc + np.array([0.05, 0.03, z - 0.05]))
+    ctx.pieza(o, 'cabeza')
+    pompon(ctx, 'boina rabito', hc + np.array([0.06, 0.03, z + 0.04]), 0.028, m)
 
 
 @prenda('gorro_lana', 'cabeza', [V('gorro_lana_rojo', 'Gorro de lana rojo', principal='rojo', pompon='blanco'),
@@ -346,10 +355,10 @@ def orejas(ctx, forma, m1, m2, az=48, el=62, alto=0.24):
         elif forma == 'conejo':
             base = loc
             pts = [base, base + n * 0.12 + np.array([sx * 0.03, 0.02, 0.12]), base + n * 0.2 + np.array([sx * 0.07, 0.05, 0.34])]
-            ctx.pieza(clay.sweep(ctx.nombre(f'oreja conejo {sx}'), pts, [0.06, 0.09, 0.05], (1.0, 0.45), ctx.coll, m1, segments=10, samples=5,
+            ctx.pieza(clay.sweep(ctx.nombre(f'oreja conejo {sx}'), pts, [0.06, 0.09, 0.05], (0.45, 1.0), ctx.coll, m1, segments=10, samples=5,
                                  up=(0, -1, 0)), 'cabeza')
             pts2 = [p + np.array([0, -0.025, 0.01]) for p in pts]
-            ctx.pieza(clay.sweep(ctx.nombre(f'oreja conejo dentro {sx}'), pts2, [0.03, 0.05, 0.025], (1.0, 0.25), ctx.coll, m2, segments=8, samples=5,
+            ctx.pieza(clay.sweep(ctx.nombre(f'oreja conejo dentro {sx}'), pts2, [0.03, 0.05, 0.025], (0.25, 1.0), ctx.coll, m2, segments=8, samples=5,
                                  up=(0, -1, 0)), 'cabeza')
         else:
             c = loc + n * 0.08
@@ -511,21 +520,28 @@ def capucha(ctx, m, margen=0.07):
     # Ribete de la cara
     ring = [verts[j] for j in range(n_az)]
     ctx.pieza(clay.sweep(ctx.nombre('borde capucha'), ring, 0.04, (1, 1), ctx.coll, m, segments=8, samples=3, closed=True), 'cabeza')
-    return R, E, azs
+    return R + margen, E, azs
+
+
+def sobre_capucha(ctx, cap, az, el, hundir=0.02):
+    """Punto sobre la superficie exterior de la capucha (orejas, ojos y púas van encima, no dentro)."""
+    R, E, azs = cap
+    j = int(np.argmin(np.abs((azs - az + 180) % 360 - 180)))
+    r = float(np.interp(el, E[:, j], R[:, j]))
+    d = np.array(sph(az, el))
+    return ctx.hc + d * (r - hundir), d
 
 
 @prenda('capucha_dino', 'cabeza', [V('capucha_dino', 'Capucha de dinosaurio', principal='#7DC47A', puas='#F7A93B', ojos='blanco')],
         oculta=COP, precio=40)
 def capucha_dino(ctx):
     m = ctx.m('principal', tipo='peluche')
-    R, E, azs = capucha(ctx, m)
+    cap = capucha(ctx, m)
     puas = ctx.m('puas', tipo='lisa')
     for k, (az, el) in enumerate(((0, 70), (0, 84), (180, 80), (180, 60), (180, 38), (180, 14))):
-        loc, n = punto_cabeza(ctx, az, el, 0.1)
-        if loc is None:
-            continue
-        s = 0.09 - 0.008 * k
-        o = clay.blob(ctx.nombre(f'pua capucha {k}'), (0, 0, 0), (0.02, s, s * 1.2), ctx.coll, puas, n=5,
+        loc, n = sobre_capucha(ctx, cap, az, el)
+        s = 0.16 - 0.012 * k
+        o = clay.blob(ctx.nombre(f'pua capucha {k}'), (0, 0, 0), (0.035, s, s * 1.2), ctx.coll, puas, n=5,
                       shaper=lambda v: v * np.where(v[:, 2:3] > 0, [0.5, 0.5, 1], [1, 1, 1]))
         o.location = tuple(loc)
         from mathutils import Vector
@@ -534,31 +550,82 @@ def capucha_dino(ctx):
         ctx.pieza(o, 'cabeza')
     blanco, negro = ctx.m('ojos', tipo='brillo'), ctx.m('pupila', tipo='brillo', color='#1E1B1A')
     for sx in (-1, 1):
-        loc, n = punto_cabeza(ctx, sx * 22, 62, 0.1)
-        if loc is None:
-            continue
-        ctx.pieza(clay.blob(ctx.nombre(f'ojo dino {sx}'), tuple(loc), (0.07, 0.06, 0.07), ctx.coll, blanco, n=5), 'cabeza')
-        ctx.pieza(clay.blob(ctx.nombre(f'pupila dino {sx}'), tuple(loc + np.array([0, -0.05, 0.01])), (0.03, 0.02, 0.035), ctx.coll, negro, n=4),
-                  'cabeza')
+        loc, n = sobre_capucha(ctx, cap, sx * 24, 60, 0.0)
+        ctx.pieza(clay.blob(ctx.nombre(f'ojo dino {sx}'), tuple(loc), (0.12, 0.1, 0.12), ctx.coll, blanco, n=5), 'cabeza')
+        ctx.pieza(clay.blob(ctx.nombre(f'pupila dino {sx}'), tuple(loc + n * 0.09 + np.array([0, -0.02, 0.01])), (0.055, 0.035, 0.06), ctx.coll,
+                            negro, n=4), 'cabeza')
 
 
-@prenda('capucha_oso', 'cabeza', [V('capucha_oso', 'Capucha de osito', principal='#B07A52', dentro='#F1D6B3'),
-                                  V('capucha_panda', 'Capucha de panda', principal='#F6F2EA', dentro='#2B2422'),
-                                  V('capucha_conejo', 'Capucha de conejito', principal='#FAF6F2', dentro='#F7C6D2'),
-                                  V('capucha_unicornio', 'Capucha de unicornio', principal='#DCCDF5', dentro='#FFFFFF')],
+@prenda('capucha_oso', 'cabeza', [V('capucha_oso', 'Capucha de osito', principal='#B07A52', orejas='#B07A52', dentro='#F1D6B3'),
+                                  V('capucha_panda', 'Capucha de panda', principal='#F6F2EA', orejas='#2B2422', dentro='#2B2422'),
+                                  V('capucha_osa_rosa', 'Capucha de osita rosada', principal='#F7C6D2', orejas='#F7C6D2', dentro='#FFFFFF')],
         oculta=COP, precio=40)
 def capucha_oso(ctx):
+    capucha_animal(ctx, 'oso')
+
+
+@prenda('capucha_conejo', 'cabeza', [V('capucha_conejo', 'Capucha de conejito', principal='#FAF6F2', orejas='#FAF6F2', dentro='#F7C6D2'),
+                                     V('capucha_conejo_rosa', 'Capucha de conejita rosada', principal='#F7C6D2', orejas='#F7C6D2', dentro='#FFFFFF'),
+                                     V('capucha_conejo_gris', 'Capucha de conejito gris', principal='#B9B4B0', orejas='#B9B4B0', dentro='#F7C6D2')],
+        oculta=COP, precio=40)
+def capucha_conejo(ctx):
+    capucha_animal(ctx, 'conejo')
+
+
+@prenda('capucha_unicornio', 'cabeza', [V('capucha_unicornio', 'Capucha de unicornio', principal='#DCCDF5', orejas='#DCCDF5', dentro='#FFFFFF',
+                                          cuerno='#F2C75C', crin='#F59FC0'),
+                                        V('capucha_unicornio_blanca', 'Capucha de unicornio blanca', principal='#FAF6F2', orejas='#FAF6F2',
+                                          dentro='#F7C6D2', cuerno='#F2C75C', crin='#8EC5F0')],
+        oculta=COP, precio=45)
+def capucha_unicornio(ctx):
+    capucha_animal(ctx, 'unicornio')
+
+
+def capucha_animal(ctx, forma):
+    """Capucha de peluche con orejas (redondas, largas de conejo o de punta con cuerno de unicornio)."""
     m = ctx.m('principal', tipo='peluche')
-    capucha(ctx, m)
-    dentro = ctx.m('dentro', tipo='peluche')
+    cap = capucha(ctx, m)
+    orejas_m, dentro = ctx.m('orejas', tipo='peluche'), ctx.m('dentro', tipo='peluche')
     for sx in (-1, 1):
-        loc, n = punto_cabeza(ctx, sx * 55, 58, 0.1)
-        if loc is None:
+        if forma == 'conejo':
+            base, n = sobre_capucha(ctx, cap, sx * 26, 72, 0.04)
+            pts = [base, base + n * 0.12 + np.array([sx * 0.04, 0.03, 0.1]), base + n * 0.18 + np.array([sx * 0.12, 0.07, 0.28])]
+            ctx.pieza(clay.sweep(ctx.nombre(f'oreja capucha {sx}'), pts, [0.08, 0.11, 0.07], (0.45, 1.0), ctx.coll, orejas_m, segments=10,
+                                 samples=5, up=(0, -1, 0)), 'cabeza')
+            pts2 = [p + np.array([0, -0.035, 0.01]) for p in pts]
+            ctx.pieza(clay.sweep(ctx.nombre(f'oreja capucha dentro {sx}'), pts2, [0.04, 0.065, 0.035], (0.25, 1.0), ctx.coll, dentro, segments=8,
+                                 samples=5, up=(0, -1, 0)), 'cabeza')
             continue
-        c = np.array(loc) + np.array(n) * 0.06
-        ctx.pieza(clay.blob(ctx.nombre(f'oreja capucha {sx}'), tuple(c), (0.12, 0.06, 0.12), ctx.coll, m, n=6), 'cabeza')
-        ctx.pieza(clay.blob(ctx.nombre(f'oreja capucha dentro {sx}'), tuple(c + np.array([0, -0.04, -0.005])), (0.07, 0.025, 0.07), ctx.coll, dentro, n=5),
-                  'cabeza')
+        loc, n = sobre_capucha(ctx, cap, sx * 46, 58)
+        c = loc + n * 0.13
+        if forma == 'unicornio':
+            o = clay.blob(ctx.nombre(f'oreja capucha {sx}'), (0, 0, 0), (0.16, 0.08, 0.21), ctx.coll, orejas_m, n=6,
+                          shaper=lambda v: v * np.column_stack([1 - 0.7 * np.clip(v[:, 2] / 0.21, 0, 1), np.ones(len(v)), np.ones(len(v))]))
+            o.location = tuple(c)
+            o.rotation_euler = (0, math.radians(sx * 22), 0)
+            ctx.pieza(o, 'cabeza')
+            continue
+        ctx.pieza(clay.blob(ctx.nombre(f'oreja capucha {sx}'), tuple(c), (0.2, 0.09, 0.2), ctx.coll, orejas_m, n=6), 'cabeza')
+        ctx.pieza(clay.blob(ctx.nombre(f'oreja capucha dentro {sx}'), tuple(c + np.array([0, -0.075, -0.015])), (0.12, 0.035, 0.12), ctx.coll, dentro,
+                            n=5), 'cabeza')
+    if forma == 'unicornio':
+        # Cuerno en espiral sobre la frente y una crin de bolitas por la nuca
+        base, n = sobre_capucha(ctx, cap, 0, 58, 0.03)
+        cuerno = ctx.m('cuerno', tipo='brillo')
+        eje = n * 0.75 + np.array([0, -0.25, 0.4])
+        eje = eje / np.linalg.norm(eje)
+        pts = [base + eje * t * 0.5 for t in (0, 0.5, 1)]
+        ctx.pieza(clay.sweep(ctx.nombre('cuerno unicornio'), pts, [0.11, 0.065, 0.008], (1, 1), ctx.coll, cuerno, segments=10, samples=6,
+                             up=(1, 0, 0)), 'cabeza')
+        for k in range(3):
+            q = base + eje * (0.09 + 0.13 * k)
+            ctx.pieza(clay.blob(ctx.nombre(f'espiral cuerno {k}'), tuple(q), (0.1 - 0.022 * k, 0.1 - 0.022 * k, 0.025), ctx.coll, cuerno, n=5),
+                      'cabeza')
+        crin = ctx.m('crin', tipo='peluche')
+        for k, el in enumerate((80, 64, 48, 32, 16)):
+            q, nq = sobre_capucha(ctx, cap, 180, el, 0.0)
+            r = 0.12 - 0.01 * k
+            ctx.pieza(clay.blob(ctx.nombre(f'crin {k}'), tuple(q + nq * r * 0.4), (r, r, r), ctx.coll, crin, n=5), 'cabeza')
 
 
 # ---------------------------------------------------------------------------
