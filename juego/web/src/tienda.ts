@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { aTres } from './mundo';
 import { Navegacion, P } from './navegacion';
+import { CAPACIDAD, COBRO, PUNTOS_TIENDA } from './balance';
 import { cargar, copia, Productos } from './recursos';
 
 export interface SitioDato {
@@ -27,12 +28,7 @@ export interface TiendaDato {
   sitios: SitioDato[];
 }
 
-// Capacidad (unidades) por tipo de vitrina y nivel (docs/mecanicas.md, punto 8)
-export const CAPACIDAD: Record<string, number[]> = {
-  estante: [0, 8, 12, 18], frutas: [0, 8, 12, 18], nevera: [0, 6, 10, 15], vitrina: [0, 4, 8, 12],
-  congelador: [0, 6, 10, 15], panaderia: [0, 6, 10, 14], bebidas: [0, 8, 12, 18],
-};
-export const PRECIO: Record<string, number> = { frutas: 5, lacteos: 6, abarrotes: 6, bebidas: 5, panaderia: 6, congelados: 8, carnes: 9 };
+export { CAPACIDAD, PRECIO } from './balance';
 export const NOMBRE_SECCION: Record<string, string> = {
   frutas: 'Frutas', lacteos: 'Lácteos', abarrotes: 'Abarrotes', bebidas: 'Bebidas', panaderia: 'Panadería', congelados: 'Congelados',
   carnes: 'Carnes', caja: 'Caja',
@@ -230,9 +226,10 @@ export class Caja {
   get nivel() {
     return this.vitrina.nivel;
   }
-  /** Segundos que tarda en cobrarle a un cliente. */
-  get tiempoCobro() {
-    return [0, 3.2, 2.2, 1.5][this.nivel] ?? 3.2;
+  /** Segundos que tarda en cobrarle a un cliente según cuántas unidades lleva. */
+  tiempoCobro(unidades: number) {
+    const n = Math.max(1, Math.min(3, this.nivel));
+    return COBRO.base[n] + COBRO.porUnidad[n] * unidades;
   }
   /** Donde se para quien cobra (detrás del mostrador). */
   puestoCajero(): P {
@@ -262,10 +259,28 @@ export class Tienda {
   nav!: Navegacion;
   bodega!: P;
   entrada!: P;
+  canecas: P[] = [];
+  puestoCanastas!: P;
+  puestoGuardia!: P;
+  private obstaculosExtra: [number, number, number, number][] = [];
 
   constructor(public dato: TiendaDato, private productos: Productos) {}
 
-  async montar(niveles: Record<number, number>) {
+  /** Pone un objeto de utilería en el piso (y opcionalmente lo vuelve obstáculo). */
+  private async utileria(nombre: string, p: P, rot = 0, escala = 1, obstaculo?: [number, number, number, number]) {
+    try {
+      const o = copia(await cargar(`${nombre}.glb`));
+      o.position.copy(aTres(p.x, p.y));
+      o.rotation.y = rot;
+      o.scale.setScalar(escala);
+      this.grupo.add(o);
+      if (obstaculo) this.obstaculosExtra.push(obstaculo);
+    } catch {
+      /* modelo no disponible: se juega igual */
+    }
+  }
+
+  async montar(niveles: Record<number, number>, mejoras: Record<string, number> = {}) {
     const base = await cargar(`tienda${this.dato.nivel}_base.glb`);
     const cascaron = copia(base);
     // Las cajas de la bodega vienen como marcas: se llenan con el producto
@@ -285,13 +300,37 @@ export class Tienda {
       this.grupo.add(v.grupo);
       if (s.seccion === 'caja') this.caja = new Caja(v);
     }
+    // Canecas, canastas y adornos comprados
+    const pt = PUNTOS_TIENDA[this.dato.nivel];
+    if (pt) {
+      const caja = (p: P, r: number): [number, number, number, number] => [p.x - r, p.y - r, p.x + r, p.y + r];
+      this.canecas = [pt.caneca];
+      await this.utileria('caneca', pt.caneca, 0, 1.1, caja(pt.caneca, 0.3));
+      if (mejoras.caneca2) {
+        this.canecas.push(pt.caneca2);
+        await this.utileria('caneca', pt.caneca2, 0, 1.1, caja(pt.caneca2, 0.3));
+      }
+      this.puestoCanastas = pt.canastas;
+      this.puestoGuardia = pt.guardia;
+      for (const [id, d] of Object.entries(pt.decoracion)) if (mejoras[id]) await this.utileria(id, d.p, d.rot, d.escala, d.obstaculo);
+    } else {
+      this.canecas = [this.bodega];
+      this.puestoCanastas = this.entrada;
+      this.puestoGuardia = this.entrada;
+    }
     this.armarCaminos();
+  }
+
+  /** La caneca más cercana a un punto. */
+  canecaCercana(p: P): P {
+    return this.canecas.reduce((a, c) => (Math.hypot(c.x - p.x, c.y - p.y) < Math.hypot(a.x - p.x, a.y - p.y) ? c : a));
   }
 
   armarCaminos() {
     this.nav = new Navegacion(this.dato.W, this.dato.D);
     for (const v of this.vitrinas) if (v.nivel) this.nav.bloquear(...v.rect());
     for (const r of OBSTACULOS[this.dato.nivel] ?? []) this.nav.bloquear(...r);
+    for (const r of this.obstaculosExtra) this.nav.bloquear(...r);
   }
 
   /** Vitrinas compradas donde se venden productos (sin la caja). */

@@ -1,39 +1,55 @@
-// Clientes: entran, recorren su lista, esperan si falta producto, hacen fila, pagan y se van.
-import * as THREE from 'three';
+// Clientes: toman canasta, recorren su lista, esperan si falta producto, hacen fila, pagan y se van.
+// La paciencia baja más rápido esperando producto o en la fila (y más si nadie está cobrando).
+import {
+  ALIVIO_DECORACION, CANASTA_ABANDONO, CLIENTES, PRECIO, PROPINA, RESBALON, RITMO_PACIENCIA, TipoCliente,
+} from './balance';
 import type { Juego } from './juego';
 import { P } from './navegacion';
 import { Personaje } from './personaje';
 import { cargar, copia } from './recursos';
-import { PRECIO, Vitrina } from './tienda';
+import * as sonido from './sonido';
+import { Vitrina } from './tienda';
 
-export type TipoCliente = 'abuelita' | 'mama' | 'adolescente';
-export const TIPOS: Record<TipoCliente, { velocidad: number; paciencia: number; basura: number }> = {
-  abuelita: { velocidad: 0.85, paciencia: 70, basura: 0 },
-  mama: { velocidad: 1.1, paciencia: 55, basura: 0 },
-  adolescente: { velocidad: 1.4, paciencia: 45, basura: 0.55 },
-};
+export type { TipoCliente } from './balance';
 
-type Estado = 'entrando' | 'buscando' | 'tomando' | 'esperando' | 'afila' | 'enfila' | 'saliendo' | 'fuera';
+type Estado = 'entrando' | 'sinCanasta' | 'buscando' | 'tomando' | 'esperando' | 'afila' | 'enfila' | 'saliendo' | 'fuera';
 let siguienteId = 1;
+
+export interface ItemLista {
+  vitrina: Vitrina;
+  producto: string;
+  cantidad: number;
+  tomadas: number;
+}
 
 export class Cliente extends Personaje {
   id = siguienteId++;
   estado: Estado = 'entrando';
-  lista: { vitrina: Vitrina; producto: string }[] = [];
+  lista: ItemLista[] = [];
   paso = 0;
   gasto = 0;
+  unidades = 0;
   paciencia = 1;
   enojado = false;
+  /** Segundos que se queda quieto mirando al famoso o sobándose después de resbalar. */
+  pausa = 0;
   private pacienciaMax: number;
   private accion = 0;
   private inicioFila = 0;
   private dejoBasura = false;
   private lugarFila = -1;
+  private tieneCanasta = false;
+  private canasta: import('three').Object3D | null = null;
+  private charcosPisados = new Set<number>();
 
   constructor(public tipo: TipoCliente, pos: P, escala: number, multPaciencia: number, private juego: Juego) {
     super(pos, escala);
-    this.velocidad = TIPOS[tipo].velocidad;
-    this.pacienciaMax = TIPOS[tipo].paciencia * multPaciencia;
+    this.velocidad = CLIENTES[tipo].velocidad;
+    this.pacienciaMax = CLIENTES[tipo].paciencia * multPaciencia;
+  }
+
+  get datos() {
+    return CLIENTES[this.tipo];
   }
 
   async preparar() {
@@ -42,23 +58,46 @@ export class Cliente extends Personaje {
     canasta.scale.setScalar(0.9);
     canasta.position.set(-0.55, 0.62, 0.05);
     canasta.rotation.y = Math.PI / 2;
+    canasta.visible = false;
+    this.canasta = canasta;
     this.cuerpo.add(canasta);
   }
 
   /** Lo que busca ahora (para el globo). */
   get deseo(): string | null {
-    return this.estado === 'buscando' || this.estado === 'esperando' || this.estado === 'tomando' || this.estado === 'entrando'
+    return this.estado === 'buscando' || this.estado === 'esperando' || this.estado === 'tomando' || this.estado === 'entrando' || this.estado === 'sinCanasta'
       ? this.lista[this.paso]?.producto ?? null
       : null;
   }
+  get cantidadDeseada() {
+    const it = this.lista[this.paso];
+    return it ? it.cantidad - it.tomadas : 0;
+  }
   get listoParaPagar() {
     return this.estado === 'enfila' && this.juego.fila[0] === this && !this.moviendo;
+  }
+  get esperandoCanasta() {
+    return this.estado === 'sinCanasta';
   }
 
   empezar() {
     const j = this.juego;
     this.estado = 'entrando';
-    this.ir(j.tienda.nav, { x: j.tienda.entrada.x + 0.6, y: j.tienda.entrada.y }, () => this.siguiente());
+    this.ir(j.tienda.nav, { x: j.tienda.entrada.x + 0.6, y: j.tienda.entrada.y }, () => this.tomarCanasta());
+  }
+
+  /** Sin canasta no se compra: si el puesto está vacío, espera en la puerta. */
+  private tomarCanasta() {
+    const j = this.juego;
+    if (j.canastas > 0) {
+      j.canastas--;
+      this.tieneCanasta = true;
+      if (this.canasta) this.canasta.visible = true;
+      this.siguiente();
+    } else {
+      this.estado = 'sinCanasta';
+      this.quieto();
+    }
   }
 
   private siguiente() {
@@ -76,7 +115,7 @@ export class Cliente extends Personaje {
     this.mirarA(item.vitrina.centro());
     if (item.vitrina.stock > 0) {
       this.estado = 'tomando';
-      this.accion = 0.8;
+      this.accion = 0.6;
       this.pose('tomar');
     } else {
       this.estado = 'esperando';
@@ -108,8 +147,9 @@ export class Cliente extends Personaje {
 
   /** Le cobraron: paga, deja propina según su paciencia y se va. */
   pagar(): { monto: number; propina: number; espera: number; feliz: boolean } {
-    const propina = this.paciencia >= 0.66 ? 3 : this.paciencia >= 0.33 ? 1 : 0;
-    const r = { monto: this.gasto, propina, espera: this.juego.tiempo - this.inicioFila, feliz: this.paciencia >= 0.66 };
+    const animo = this.paciencia >= 0.66 ? 2 : this.paciencia >= 0.33 ? 1 : 0;
+    const propina = PROPINA[animo] + (animo === 2 ? this.datos.propinaExtra : 0) + (animo >= 1 ? this.juego.efectos.propina_extra ?? 0 : 0);
+    const r = { monto: this.gasto, propina, espera: this.juego.tiempo - this.inicioFila, feliz: animo === 2 };
     this.salir(false);
     return r;
   }
@@ -122,6 +162,15 @@ export class Cliente extends Personaje {
       j.fila.splice(k, 1);
       j.fila.forEach((c) => c.moverEnFila());
     }
+    // La canasta: vuelve al puesto, o queda tirada en el piso (sobre todo si sale bravo)
+    if (this.tieneCanasta) {
+      this.tieneCanasta = false;
+      if (this.canasta) this.canasta.visible = false;
+      const prob = enojado ? CANASTA_ABANDONO.enojado : CANASTA_ABANDONO.normal;
+      if (Math.random() < prob && this.estado !== 'entrando') void j.canastaTirada({ ...this.pos });
+      else j.canastas++;
+    }
+    if (enojado) sonido.enojo();
     this.estado = 'saliendo';
     this.ir(j.tienda.nav, { x: j.tienda.entrada.x - 0.2, y: j.tienda.entrada.y }, () => {
       this.ruta = [{ x: j.tienda.entrada.x - 1.2, y: j.tienda.entrada.y }];
@@ -129,17 +178,51 @@ export class Cliente extends Personaje {
     });
   }
 
+  /** Ritmo de pérdida de paciencia en este momento. */
+  private ritmo(): number {
+    const j = this.juego;
+    let r: number;
+    if (this.estado === 'esperando') r = RITMO_PACIENCIA.esperandoProducto;
+    else if (this.estado === 'sinCanasta') r = RITMO_PACIENCIA.esperandoCanasta;
+    else if (this.estado === 'enfila' || this.estado === 'afila') {
+      // El primero de la fila: si nadie cobra se enoja rápido; si ya lo están atendiendo, casi no
+      if (j.fila[0] === this) r = j.alguienCobra ? RITMO_PACIENCIA.siendoAtendido : RITMO_PACIENCIA.filaSinCajero;
+      else r = RITMO_PACIENCIA.enFila;
+    }
+    else r = RITMO_PACIENCIA.caminando;
+    if (j.mugreCerca(this.pos, 2.2)) r += RITMO_PACIENCIA.cercaDeMugre;
+    return r * Math.max(0.4, 1 - ALIVIO_DECORACION * j.adornos);
+  }
+
   update(dt: number) {
+    if (this.pausa > 0 && this.estado !== 'saliendo' && this.estado !== 'fuera') {
+      // Quieto mirando al famoso (o sobándose): no camina ni pierde paciencia
+      this.pausa -= dt;
+      super.update(0);
+      return;
+    }
     super.update(dt);
     if (this.estado === 'fuera' || this.estado === 'saliendo') return;
     const j = this.juego;
-    // Paciencia: baja rápido esperando producto o en la fila, lento caminando
-    const ritmo = this.estado === 'esperando' ? 1 : this.estado === 'enfila' || this.estado === 'afila' ? 0.8 : 0.2;
-    this.paciencia -= (dt * ritmo) / this.pacienciaMax;
+    // Resbalones en charcos
+    if (this.moviendo) {
+      const charco = j.charcoEn(this.pos, 0.45);
+      if (charco && !this.charcosPisados.has(charco.id)) {
+        this.charcosPisados.add(charco.id);
+        this.paciencia -= RESBALON;
+        this.pausa = 0.8;
+        j.resbalon(this);
+      }
+    }
+    if (!j.pacienciaCongelada) this.paciencia -= (dt * this.ritmo()) / this.pacienciaMax;
     if (this.paciencia <= 0) {
       this.paciencia = 0;
       j.clientePerdido(this);
       this.salir(true);
+      return;
+    }
+    if (this.estado === 'sinCanasta') {
+      if (j.canastas > 0) this.tomarCanasta();
       return;
     }
     if (this.estado === 'tomando') {
@@ -148,10 +231,15 @@ export class Cliente extends Personaje {
         const item = this.lista[this.paso];
         if (item.vitrina.stock > 0) {
           item.vitrina.ponerStock(item.vitrina.stock - 1);
+          if (item.vitrina.stock === 0) j.vitrinaVacia(item.vitrina);
+          item.tomadas++;
+          this.unidades++;
           this.gasto += PRECIO[item.vitrina.seccion] ?? 5;
-          this.paso++;
-          this.soltarBasura();
-          this.siguiente();
+          if (item.tomadas >= item.cantidad) {
+            this.paso++;
+            this.soltarBasura();
+            this.siguiente();
+          } else this.accion = 0.5;
         } else {
           this.estado = 'esperando';
           this.quieto();
@@ -164,18 +252,10 @@ export class Cliente extends Personaje {
   }
 
   private soltarBasura() {
-    const prob = TIPOS[this.tipo].basura * (this.juego.problemas.includes('basura') ? 1 : 0);
+    const prob = Math.min(0.95, this.datos.basura * (this.juego.efectos.basura_x ?? 1)) * (this.juego.problemas.includes('basura') ? 1 : 0);
     if (!this.dejoBasura && Math.random() < prob) {
       this.dejoBasura = true;
-      this.juego.nuevaBasura({ x: this.pos.x + 0.3, y: this.pos.y - 0.2 });
+      void this.juego.nuevaMugre('basura', { x: this.pos.x + 0.3, y: this.pos.y - 0.2 });
     }
   }
-
-  get visible() {
-    return this.estado !== 'fuera';
-  }
-}
-
-export function quitarDelMundo(c: Cliente, escena: THREE.Scene) {
-  escena.remove(c.grupo);
 }

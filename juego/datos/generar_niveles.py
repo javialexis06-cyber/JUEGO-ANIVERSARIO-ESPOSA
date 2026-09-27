@@ -42,22 +42,23 @@ NOVEDADES = {
     (1, 3): 'Comprar sitios «+» entre días',
     (1, 4): 'Primera mejora de vitrina (nivel 2)',
     (1, 6): 'Llega el adolescente: deja basura',
-    (1, 8): 'Listas de 3 productos',
+    (1, 7): 'Se puede contratar a la cajera',
+    (1, 8): 'Listas de 3 productos y derrames: toca el charco para trapearlo',
     (1, 11): 'Llega el ejecutivo apurado (poca paciencia)',
+    (1, 12): 'Aparece el ladrón: tócalo antes de que llegue a la puerta',
+    (1, 14): 'Llega la niña traviesa: tumba productos, tócala para calmarla',
     (1, 16): 'Llega la chica deportista (frutas y bebidas)',
+    (1, 18): 'Visita del famoso: todos se detienen a mirarlo, atiéndelo rápido',
     (1, 20): 'Listas de 4 productos',
-    (2, 1): 'Nueva tienda: se empieza de cero. Derrames en el piso',
+    (2, 1): 'Nueva tienda: se empieza de cero',
     (2, 2): 'Se puede comprar la zona especial de wafles',
-    (2, 3): 'Aparece el ladrón',
     (2, 8): 'Llega el turista (compra un poco de todo)',
     (2, 14): 'Llega el chef (compra mucho de una sola sección)',
-    (3, 1): 'Nueva tienda: se empieza de cero. Ayudantes: cajera y reponedor',
+    (3, 1): 'Nueva tienda: se empieza de cero, ayudantes incluidos',
     (3, 2): 'El niño perdido: llévalo con su mamá',
     (3, 3): 'Se pueden comprar la zona de arepas y las máquinas de malteadas y café',
-    (4, 1): 'Nueva tienda: se empieza de cero. Ayudantes: guardia y aseo',
-    (4, 3): 'Llega la niña traviesa (tumba productos)',
+    (4, 1): 'Nueva tienda: se empieza de cero',
     (4, 5): 'Máquinas de jugos y horno de pizza',
-    (4, 9): 'Visita del famoso: todos se detienen a mirarlo',
 }
 
 # Estrellas mínimas (de 75) para abrir la tienda siguiente: 70 %, 80 % y 90 %
@@ -72,15 +73,52 @@ EVENTOS = {
 }
 
 
+# El Diario del Barrio: días en que una noticia cambia el ánimo de la gente.
+# clientes y paciencia multiplican los del día; unidades suma al promedio de lo que lleva cada cliente;
+# efectos los aplica el juego (tipos de cliente más frecuentes, secciones preferidas, basura, propina, prisa).
+NOTICIAS = {
+    'madres': dict(titular='Se acerca el Día de la Madre',
+                   texto='Llegan muchas mamás y abuelitas. Son pacientes y dejan mejor propina.',
+                   clientes=1.1, paciencia=1.1, unidades=0, efectos=dict(tipos={'mama': 3, 'abuelita': 3}, propina_extra=1)),
+    'partido': dict(titular='¡Hoy juega la Selección!',
+                    texto='Todos quieren llegar a ver el partido: la gente está impaciente y lleva gaseosa y paquetes.',
+                    clientes=1.0, paciencia=0.72, unidades=0, efectos=dict(preferir=['bebidas', 'abarrotes'])),
+    'calor': dict(titular='Ola de calor en el barrio',
+                  texto='Todos buscan bebidas y helados, y el calor los pone de mal genio.',
+                  clientes=1.1, paciencia=0.85, unidades=0, efectos=dict(preferir=['bebidas', 'congelados'])),
+    'quincena': dict(titular='¡Llegó la quincena!',
+                     texto='La gente cobró: cada cliente lleva una unidad más de cada producto.',
+                     clientes=1.1, paciencia=1.0, unidades=0.5, efectos=dict(unidades_extra=1)),
+    'concierto': dict(titular='Concierto gratis en el parque',
+                      texto='Los adolescentes pasan antes del concierto: más clientes y el doble de basura.',
+                      clientes=1.2, paciencia=0.9, unidades=0, efectos=dict(tipos={'adolescente': 4}, basura_x=2)),
+    'feria': dict(titular='Feria del barrio en la cuadra',
+                  texto='Llega mucha más gente de lo normal. Prepara las vitrinas desde temprano.',
+                  clientes=1.4, paciencia=0.95, unidades=0, efectos={}),
+    'paro': dict(titular='Paro de buses en la ciudad',
+                 texto='Llega menos gente, pero todos van de afán: caminan rápido y se cansan de esperar.',
+                 clientes=0.85, paciencia=0.6, unidades=0, efectos=dict(velocidad_x=1.2)),
+}
+DIAS_NOTICIA = {3: 'madres', 7: 'partido', 9: 'calor', 12: 'quincena', 13: 'concierto', 17: 'feria', 19: 'paro',
+                22: 'calor', 23: 'partido', 24: 'quincena'}
+
+
+def noticia(d, evento):
+    return NOTICIAS[DIAS_NOTICIA[d]] | {'id': DIAS_NOTICIA[d]} if d in DIAS_NOTICIA and not evento else None
+
+
 def habilitado(cosa, s, d):
     """¿Está disponible 'cosa' en la tienda s, día d? (las tiendas nuevas conservan lo aprendido)."""
-    desde = {'basura': (1, 6), 'derrames': (2, 1), 'ladron': (2, 3), 'preparados': (2, 2), 'nino_perdido': (3, 2),
-             'nina_traviesa': (4, 3), 'famoso': (4, 9)}[cosa]
+    desde = {'basura': (1, 6), 'derrames': (1, 8), 'ladron': (1, 12), 'nina_traviesa': (1, 14), 'famoso': (1, 18),
+             'preparados': (2, 2), 'nino_perdido': (3, 2)}[cosa]
     return (s, d) >= desde
 
 
 def clientes(s, d, evento):
     n = BASE_CLIENTES[s] + PASO_CLIENTES[s] * (d - 1)
+    nt = noticia(d, evento)
+    if nt:
+        n *= nt['clientes']
     if evento == 'Hora pico':
         n *= 1.3
     elif evento == 'Día de ofertas':
@@ -96,9 +134,16 @@ def productos_por_cliente(s, d):
     return (maximo + 1) / 2
 
 
+def unidades_por_producto(d):
+    """De cada producto lleva 1 unidad los dos primeros días y luego 1 o 2 (igual que UNIDADES_MAX del juego)."""
+    return 1 if d <= 2 else 1.5
+
+
 def ticket(s, d):
-    """Monedas que deja en promedio un cliente que compra toda su lista."""
-    return productos_por_cliente(s, d) * PRECIO_MEDIO[s]
+    """Monedas que deja en promedio un cliente que compra toda su lista (con la quincena, una unidad más)."""
+    nt = noticia(d, EVENTOS.get(d, (None,))[0])
+    extra = nt['unidades'] if nt else 0
+    return productos_por_cliente(s, d) * (unidades_por_producto(d) + extra) * PRECIO_MEDIO[s]
 
 
 def objetivo(clave, s, d, n, evento):
@@ -107,7 +152,7 @@ def objetivo(clave, s, d, n, evento):
     modos = ('solitario', 'pareja')
     if clave == 'ventas':
         f = 1.2 if evento == 'Día de ofertas' else 1.0
-        meta = {m: int(round(n[m] * ticket(s, d) * 0.75 * f / 5) * 5) for m in modos}
+        meta = {m: int(round(n[m] * ticket(s, d) * 0.65 * f / 5) * 5) for m in modos}
         return clave, {m: f'Vender {meta[m]} monedas' for m in modos}, meta
     if clave == 'propinas':
         meta = {m: round(n[m] * 1.1 * (1 + 0.1 * (s - 1))) for m in modos}
@@ -157,11 +202,14 @@ def elegir_objetivos(s, d, evento):
     pool = [('propinas', 'perdidos'), ('propinas', 'espera_caja'), ('perdidos', 'sin_vacias'), ('propinas', 'equipo')]
     if habilitado('basura', s, d):
         pool.append(('limpieza', 'propinas'))
+    if habilitado('derrames', s, d):
+        pool.append(('limpieza', 'perdidos'))
     if habilitado('ladron', s, d):
         pool.append(('robos', 'perdidos'))
     if habilitado('preparados', s, d) and s >= 2:
         pool.append(('preparados', 'propinas'))
-    return list(pool[(d - 1) % len(pool)])
+    # Salto de 3 para que los objetivos nuevos no caigan siempre en los días de evento (múltiplos de 5)
+    return list(pool[(d * 3) % len(pool)])
 
 
 def generar():
@@ -176,10 +224,14 @@ def generar():
             n = {'solitario': n1, 'pareja': round(n1 * FACTOR_PAREJA)}
             estrellas = [objetivo('ventas', s, d, n, evento)] + [objetivo(k, s, d, n, evento) for k in elegir_objetivos(s, d, evento)]
             duracion = 180 + 5 * (d // 5) + (30 if evento else 0) + (60 if evento in ('Gran día', 'Nuestro aniversario') else 0)
-            paciencia = round(max(0.7, 1.0 - 0.008 * (d - 1) - 0.03 * (s - 1)), 3)
+            paciencia = max(0.7, 1.0 - 0.008 * (d - 1) - 0.03 * (s - 1))
+            nt = noticia(d, evento)
+            if nt:
+                paciencia *= nt['paciencia']
+            paciencia = round(paciencia, 3)
             leg = {m: n[m] * 2 for m in n}
-            luna_ventas = {m: int(round(leg[m] * ticket(s, d) * 0.6 / 5) * 5) for m in leg}
-            luna_perdidos = {m: round(leg[m] * 0.2) for m in leg}
+            luna_ventas = {m: int(round(leg[m] * ticket(s, d) * 0.8 / 5) * 5) for m in leg}
+            luna_perdidos = {m: round(leg[m] * 0.12) for m in leg}
             legendario = dict(
                 clientes=leg, paciencia=round(paciencia * 0.5, 3), problemas_x=1.5,
                 luna=dict(ventas=luna_ventas, perdidos_max=luna_perdidos,
@@ -188,6 +240,7 @@ def generar():
             niveles.append(dict(
                 numero=num, tienda=s, nombre_tienda=TIENDAS[s], dia=d, evento=evento, descripcion_evento=desc_evento,
                 novedad=NOVEDADES.get((s, d)), duracion_s=duracion, paciencia=paciencia,
+                noticia=dict(id=nt['id'], titular=nt['titular'], texto=nt['texto'], efectos=nt['efectos']) if nt else None,
                 clientes=n,
                 problemas=[p for p in ('basura', 'derrames', 'ladron', 'nino_perdido', 'nina_traviesa', 'famoso') if habilitado(p, s, d)],
                 estrellas=[dict(numero=i + 1, clave=k, texto=t, meta=m) for i, (k, t, m) in enumerate(estrellas)],
@@ -229,6 +282,9 @@ def escribir_md(niveles, ruta):
          '',
          'Todas las cifras se muestran como *solitario / pareja*: en pareja llegan más clientes y las metas suben.',
          '',
+         '**Noticias del Diario del Barrio**: algunos días traen una noticia (partido de la Selección, quincena, ola de calor, '
+         'feria, paro de buses…) que cambia cuánta gente llega, su paciencia y lo que compra.',
+         '',
          '**🌙 Modo legendario**: se abre en cada nivel al sacar sus 3 estrellas. Tiene el doble de clientes, la mitad de paciencia y 1.5× problemas. '
          'Si se cumple la meta legendaria se gana **1 Luna**; hay 100 en total.',
          '']
@@ -239,7 +295,8 @@ def escribir_md(niveles, ruta):
               '| Nivel | Día | Evento | Clientes | Novedad | ⭐ 1 | ⭐ 2 | ⭐ 3 | 🌙 Legendario |', '|---|---|---|---|---|---|---|---|---|']
         for n in (x for x in niveles if x['tienda'] == s):
             est = [_celda(e['texto']) for e in n['estrellas']]
-            L.append(f"| {n['numero']} | {n['dia']} | {n['evento'] or ''} | {n['clientes']['solitario']} / {n['clientes']['pareja']} | "
+            evento = n['evento'] or (f"Noticia: {n['noticia']['titular']}" if n['noticia'] else '')
+            L.append(f"| {n['numero']} | {n['dia']} | {evento} | {n['clientes']['solitario']} / {n['clientes']['pareja']} | "
                      f"{n['novedad'] or ''} | {est[0]} | {est[1]} | {est[2]} | "
                      f"{n['legendario']['clientes']['solitario']} / {n['legendario']['clientes']['pareja']} clientes · "
                      f"{_celda(n['legendario']['luna']['texto'])} |")

@@ -71,9 +71,10 @@ La paciencia sube un poco con la **decoración**: plantas, música, globos, letr
 **Truco de planeación:**
 - Si tocas **varias vitrinas seguidas**, el personaje hace **un solo viaje** a la bodega y carga todas las cajas de una vez.
 - Cuántas caben depende del **carrito de reposición**:
-  - **Nivel 1:** 5 cajas por viaje.
-  - **Nivel 2:** 7 cajas.
-  - **Nivel 3:** 9 cajas y camina más rápido. Es el carrito eléctrico.
+  - **Nivel 1:** 3 cajas por viaje.
+  - **Nivel 2:** 5 cajas.
+  - **Nivel 3:** 7 cajas.
+- **Combo de reposición:** llenar 2 o más vitrinas con la misma carga da monedas extra (+2 por cada vitrina después de la primera).
 - **Una caja rellena una vitrina completa.** Si la vitrina está a medias, la caja igual la deja llena.
 - **Cada tienda nueva empieza con el carrito de nivel 1.**
 
@@ -92,7 +93,9 @@ La paciencia sube un poco con la **decoración**: plantas, música, globos, letr
 ## 4. La caja: cobrar
 
 - Los clientes hacen **fila** detrás de la caja (con los postes y la cinta).
-- **Tocas la caja** para atender: cada cliente tarda según el nivel de la caja.
+- **Si nadie está cobrando, la fila se enoja más rápido**: el primero de la fila pierde paciencia 1.7 veces más rápido que esperando producto, y si se le acaba se va **sin pagar**.
+- **Combo de caja:** cobrarle a varios clientes seguidos sin soltar la caja da +1, +2, +3… monedas (hasta +5).
+- **Tocas la caja** para atender: cada cliente tarda según el nivel de la caja y cuántas unidades lleva (nivel 1: 2.2 s + 0.9 s por unidad; nivel 2: 1.4 s + 0.55 s).
   - **Nivel 1:** registradora de teclas, lenta.
   - **Nivel 2:** caja con banda, media.
   - **Nivel 3:** escáner con pantalla, rápida.
@@ -121,16 +124,32 @@ Las **máquinas** (malteadas, café, jugos y pizza) funcionan igual: poner, espe
 
 ## 6. Problemas del día
 
-| Problema | Qué pasa | Cómo se resuelve |
-|---|---|---|
-| **Derrame** | Los clientes se resbalan y se enojan | Tocar el charco: el personaje trae el trapero y pone el aviso de piso mojado |
-| **Basura** | Baja la paciencia de todos los que están cerca | Tocarla para recogerla y llevarla a la caneca |
-| **Ladrón** | Toma productos y corre a la salida | Tocarlo para atraparlo, o dejar que lo detenga el guardia |
-| **Niño perdido** | Llora; la mamá no se va sin él | Llevarlo con la mamá |
-| **Niña traviesa** | Tumba productos: la vitrina baja de golpe | Calmarla tocándola, o con el guardia |
-| **Famoso** | Todos se detienen a mirarlo | Atenderlo rápido: deja una propina enorme |
+En la tiendita aparecen uno por uno; desde la segunda tienda ya vienen todos.
 
----
+| Día (tiendita) | Problema | Qué pasa | Cómo se resuelve |
+|---|---|---|---|
+| 6 | **Basura** | Baja la paciencia de todos los que están cerca | Tocarla: Él la recoge y la lleva a la **caneca** (si hay varias seguidas, las recoge todas antes de ir) |
+| 8 | **Derrame** | El que lo pisa se resbala, se queda quieto y pierde paciencia | Tocar el charco: Él lo trapea |
+| todos | **Canastas tiradas** | Sin canastas en la entrada no entra nadie: los clientes esperan en la puerta | Tocar la canasta: Él la devuelve al puesto |
+| 12 | **Ladrón** | Toma productos y corre a la salida | Tocarlo antes de que salga: devuelve lo robado y da 5 monedas |
+| 14 | **Niña traviesa** | Tumba productos de varias vitrinas; quedan en el piso | Tocarla para calmarla, y tocar los productos caídos para devolverlos a su vitrina |
+| 18 | **Famoso** | Todos se quedan mirándolo unos segundos | Atenderlo rápido: si sale feliz deja 15 monedas de propina |
+
+- **Día lluvioso:** el doble de charcos, muchos junto a la puerta.
+- **Hora pico:** los clientes llegan en tres oleadas.
+- **Día de ofertas:** algunos clientes llevan una unidad más de cada producto.
+
+### Tipos de cliente (tiendita)
+| Cliente | Desde | Camina | Paciencia | Prefiere | Propina extra |
+|---|---|---|---|---|---|
+| Abuelita | día 1 | lenta | mucha | panadería, lácteos, frutas | |
+| Mamá | día 1 | normal | media | lácteos, frutas, abarrotes | |
+| Adolescente | día 6 | rápido | poca, y tira basura | bebidas, abarrotes, congelados | |
+| Ejecutivo apurado | día 11 | muy rápido | muy poca | bebidas, congelados, abarrotes | +3 si sale feliz |
+| Chica deportista | día 16 | rápida | media | frutas, bebidas | +1 |
+| Famoso | día 18 | normal | poca | bebidas, panadería, frutas | +12 |
+
+La tarjeta de cada día muestra quién viene y qué prefiere, como en Supermarket Mania.
 
 ## 7. Jugando en pareja (cooperativo)
 
@@ -143,25 +162,46 @@ Las **máquinas** (malteadas, café, jugos y pizza) funcionan igual: poner, espe
 
 ---
 
-## 8. Números iniciales de balance (se ajustan probando)
+## 8. Números de balance (juego/web/src/balance.ts)
 
-| Vitrina | Capacidad nivel 1 | Nivel 2 | Nivel 3 | Qué mejora además |
+| Vitrina | Capacidad nivel 1 | Nivel 2 | Nivel 3 |
+|---|---|---|---|
+| Estante de abarrotes, frutas, bebidas | 3 | 6 | 10 |
+| Nevera de lácteos | 3 | 6 | 9 |
+| Congelador, panadería | 3 | 5 | 8 |
+| Vitrina de carnes | 2 | 4 | 7 |
+
+- **Una vitrina de nivel 1 alcanza para uno o dos clientes**: desde el día 3 cada cliente lleva 1 o 2 unidades de cada producto. Al vaciarse, las piezas desaparecen de la vitrina en proporción.
+- **Tiempos de Él:** camina a 1.7 m/s; cargar en la bodega toma 2.4 s + 0.35 s por caja; llenar una vitrina, 2.2 s.
+- **Paciencia** (segundos de espera): abuelita 62, mamá 46, adolescente 36, ejecutivo 27, deportista 38. Baja a ritmo 1 esperando producto, 1.3 en la fila, 1.7 si es el primero y nadie cobra, 0.25 caminando y +0.45 cerca de basura.
+- Un producto vale entre 5 y 9 monedas. La propina es 0, 1 o 3 según la carita, más la propina extra del tipo de cliente.
+
+### Mejoras que se compran entre días
+| Grupo | Mejora | Niveles | Efecto | Desde el día |
 |---|---|---|---|---|
-| Estante de abarrotes | 8 | 12 | 18 | Más atractivo: los clientes compran 1 extra a veces |
-| Frutas y verduras | 8 | 12 | 18 | |
-| Nevera de lácteos | 6 | 10 | 15 | |
-| Vitrina de carnes | 4 | 8 | 12 | |
-| Congelador | 6 | 10 | 15 | |
-| Panadería | 6 | 10 | 14 | |
-| Bebidas | 8 | 12 | 18 | |
-| Zonas especiales (vitrina / cocinas) | 3 / 1 | 5 / 2 | 8 / 3 | Cocina más rápido |
-| Caja registradora | 6 s por cliente | 4 s | 2.5 s | |
-| Carrito de reposición | 5 cajas | 7 cajas | 9 cajas y +30 % de velocidad | |
+| Vitrinas | Comprar sitios «+» / subir a nivel 2 | | Más vitrinas y el doble de capacidad | 3 / 4 |
+| Caja | Banda | 1 | Cobra 40 % más rápido | 4 |
+| Él | Tenis | 3 | Camina 15 %, 30 % y 47 % más rápido | 2 |
+| Él | Carrito de reposición | 2 | 5 y 7 cajas por viaje | 3 |
+| Bodega | Bodega ordenada | 3 | Carga 28 %, 48 % y 64 % más rápido | 2 |
+| Bodega | Reposición rápida | 3 | Llena vitrinas 28 %, 48 % y 64 % más rápido | 3 |
+| Tienda | Matera, música y globos | 1 c/u | Cada uno: −10 % en la pérdida de paciencia | 3, 6 y 10 |
+| Tienda | Más canastas | 1 | 9 canastas en vez de 6 | 6 |
+| Tienda | Segunda caneca | 1 | Menos camino para botar basura | 7 |
+| Tienda | Cámara de seguridad | 1 | El ladrón se ve desde que entra y corre más lento | 12 |
+| Ayudantes | Cajera | 1 | Cobra sola (70 % más lenta que Él) | 7 |
+| Ayudantes | Aseo | 1 | Basura, charcos y productos caídos | 9 |
+| Ayudantes | Reponedor | 1 | Repone las vitrinas que bajan del 34 % | 10 |
+| Ayudantes | Guardia | 1 | Atrapa ladrones y calma a la niña | 13 |
 
-- Un producto vale entre 2 y 8 monedas; los productos preparados valen entre 10 y 15.
-- La propina va de 0 a 5 según la carita, y se duplica con el combo en equipo.
+### Ayudas de un día (se compran y se usan con un botón)
+- **Tinto** (día 4): Él corre 40 % más rápido por 20 s.
+- **Canción favorita** (día 6): nadie pierde paciencia por 12 s.
+- **Limpieza total** (día 8): la tienda queda limpia al instante.
 
----
+### Música y sonido
+- Música de fondo sintetizada en el juego: una cumbia suave de tienda de barrio. En el menú suena más bajo y se acelera cuando faltan 25 s para cerrar.
+- Efectos: caja registradora, vitrina vacía, combo, alarma del ladrón, resbalón y corazón encontrado.
 
 ## 9. Progresión: 100 niveles con 3 estrellas cada uno
 
@@ -198,6 +238,17 @@ Son **100 niveles**: 4 tiendas de **25 días** cada una. La tabla completa, con 
   - **Visita especial** (días 20, 45, 70 y 95): inspección, y la limpieza cuenta doble. Estrellas por limpieza y equipo.
 - **Gran día** (niveles 25, 50 y 75): el final de cada tienda, con todo junto y la meta más alta.
 - **Nivel 100 · Nuestro aniversario**: la tienda decorada, música especial y un mensaje final para los dos.
+- **Noticias del Diario del Barrio** (días 3, 7, 9, 12, 13, 17, 19, 22, 23 y 24 de cada tienda): la tarjeta del día trae un recorte de periódico y la noticia cambia el día:
+  | Noticia | Qué pasa |
+  |---|---|
+  | Se acerca el Día de la Madre | Más mamás y abuelitas, un poco más de paciencia y +1 de propina |
+  | ¡Hoy juega la Selección! | Paciencia −28 %; todos buscan bebidas y paquetes |
+  | Ola de calor en el barrio | Paciencia −15 %, +10 % de clientes; bebidas y helados |
+  | ¡Llegó la quincena! | +10 % de clientes y cada uno lleva una unidad más de cada producto |
+  | Concierto gratis en el parque | +20 % de clientes, muchos adolescentes y el doble de basura |
+  | Feria del barrio en la cuadra | +40 % de clientes |
+  | Paro de buses en la ciudad | −15 % de clientes, pero paciencia −40 % y caminan 20 % más rápido |
+  Las metas de ventas de esos días ya cuentan la noticia.
 
 ### Dificultad
 - Cada día llegan más clientes: por ejemplo, 8 el primer día de la tiendita y 32 el último del hipermercado, jugando en solitario.
@@ -222,8 +273,8 @@ Son **100 niveles**: 4 tiendas de **25 días** cada una. La tabla completa, con 
   - hay **1.5 veces más problemas** (derrames, basura, ladrones…).
 - **La Luna:** si se cumple la meta legendaria, se gana **1 Luna 🌙**. La meta pide llegar a unas ventas y no pasar de cierto número de clientes perdidos. Hay **100 Lunas**, una por nivel.
 - **Por qué se puede pasar:**
-  - la meta de ventas es proporcionalmente más baja (60 % en vez de 75 %);
-  - se permite perder hasta el 20 % de los clientes;
+  - la meta de ventas pide el 80 % de lo posible, como un día normal bien jugado;
+  - se permite perder hasta el 12 % de los clientes;
   - se juega con todas las mejoras que ya se tienen en esa tienda.
   - Es difícil de verdad, pero pensado para lograrse con práctica y buena coordinación.
 - **Qué desbloquean las Lunas:**

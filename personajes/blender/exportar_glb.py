@@ -200,6 +200,13 @@ POSES_EL = {
     'reponer': 'reponer', 'cobrar': 'cobrar', 'celebrar': 'feliz',
 }
 POSES_CLIENTE = {'reposo': 'reposo', 'caminar_a': 'caminar', 'caminar_b': 'caminar_espejo', 'tomar': 'reponer'}
+POSES_FAMOSO = dict(POSES_CLIENTE, saludar='saludo')
+POSES_AYUDANTE = {'reposo': 'reposo', 'caminar_a': 'caminar', 'caminar_b': 'caminar_espejo', 'carrito_a': 'carrito',
+                  'carrito_b': 'carrito_espejo', 'reponer': 'reponer', 'cobrar': 'cobrar'}
+# Clientes y ayudantes que se suman en la tiendita (problemas del día y mejoras)
+CLIENTES_2 = {'ejecutivo': POSES_CLIENTE, 'deportista': POSES_CLIENTE, 'nina': POSES_CLIENTE, 'ladron': POSES_CLIENTE,
+              'famoso': POSES_FAMOSO, 'cajera': POSES_AYUDANTE, 'reponedor': POSES_AYUDANTE, 'guardia': POSES_AYUDANTE,
+              'aseo': POSES_AYUDANTE}
 
 
 def _poses_extra():
@@ -453,6 +460,19 @@ if __name__ == '__main__':
         for key in ('abuelita', 'mama', 'adolescente'):
             escalas[key] = exportar_personaje(key, POSES_CLIENTE)
         manifest['personajes'] = dict(escalas=escalas, poses_el=list(POSES_EL), poses_cliente=list(POSES_CLIENTE))
+    if 'animados2' in PARTES:
+        path = os.path.join(OUT, 'manifest_export.json')
+        previo = json.load(open(path)) if os.path.exists(path) else {}
+        escalas = previo.get('personajes', {}).get('escalas', {})
+        for key, poses_map in CLIENTES_2.items():
+            escalas[key] = exportar_personaje_animado(key, poses_map)
+        manifest['personajes'] = dict(previo.get('personajes', {}), escalas=escalas)
+    if 'utileria2' in PARTES:
+        for nombre in ('charco', 'trapero_balde', 'planta', 'parlante', 'globos', 'camara'):
+            coll = clay.collection(f'Export {nombre}')
+            root = utileria.build(nombre, getattr(utileria, nombre), coll, (0, 0, 0), 0.0, 1.0)
+            instancias_a_marcas(root)
+            exportar(arbol(root), os.path.join(OUT, f'{nombre}.glb'))
     if 'animados' in PARTES:
         escalas = {'el': exportar_personaje_animado('el', POSES_EL)}
         for key in ('abuelita', 'mama', 'adolescente'):

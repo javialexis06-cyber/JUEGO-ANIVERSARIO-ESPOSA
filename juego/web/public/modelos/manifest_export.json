@@ -4,7 +4,16 @@
    "el": 1.0,
    "abuelita": 0.949999988079071,
    "mama": 1.0,
-   "adolescente": 1.0
+   "adolescente": 1.0,
+   "ejecutivo": 1.0,
+   "deportista": 1.0,
+   "nina": 0.699999988079071,
+   "ladron": 1.0,
+   "famoso": 1.0,
+   "cajera": 1.0,
+   "reponedor": 1.0,
+   "guardia": 1.0,
+   "aseo": 1.0
   },
   "poses_el": [
    "reposo",

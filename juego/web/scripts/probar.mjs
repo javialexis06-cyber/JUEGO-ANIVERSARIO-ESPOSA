@@ -1,7 +1,7 @@
 // Prueba automática: abre el juego, juega un nivel con el piloto (?bot) y guarda capturas.
 // Uso: node scripts/probar.mjs [url] [nivel] [carpeta] [ancho]x[alto]
 import { chromium } from '@playwright/test';
-import { existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 
 const url = process.argv[2] ?? 'http://localhost:5173/';
 const nivel = Number(process.argv[3] ?? 1);
@@ -22,6 +22,11 @@ pagina.on('console', (m) => m.type() === 'error' && !m.text().startsWith('Failed
 pagina.on('response', (r) => r.status() >= 400 && errores.push(`${r.status()} ${r.url()}`));
 pagina.on('requestfailed', (r) => errores.push(`falló ${r.url()}`));
 
+// Partida inicial opcional (JSON con mejoras y estrellas) para probar días avanzados
+if (process.argv[6]) {
+  const partida = readFileSync(process.argv[6], 'utf8');
+  await pagina.addInitScript((p) => localStorage.setItem('supermania-jugable1', p), partida);
+}
 const t0 = Date.now();
 await pagina.goto(`${url}${url.includes('?') ? '&' : '?'}bot&rapido=40`);
 await pagina.waitForSelector('#menu:not([hidden])', { timeout: 120000 });
@@ -31,6 +36,7 @@ await pagina.screenshot({ path: `${carpeta}/1-menu.png` });
 await pagina.click(`#niveles .etiqueta:nth-child(${nivel})`);
 await pagina.waitForTimeout(500);
 await pagina.screenshot({ path: `${carpeta}/2-tarjeta.png` });
+if (process.env.LEGENDARIO) await pagina.click('#btn-legendario');
 await pagina.click('#btn-abrir');
 await pagina.waitForSelector('#hud:not([hidden])', { timeout: 60000 });
 for (let k = 0; k < 3; k++) {
@@ -41,6 +47,7 @@ for (let k = 0; k < 3; k++) {
 // Acercamiento a Él para revisar el detalle de los modelos
 await pagina.evaluate(() => {
   const j = window.__juego();
+  if (!j) return;
   const p = j.jugador.pos;
   window.__mundo().enfocar({ x: p.x, y: 0.9, z: -p.y }, 2.6);
 });
