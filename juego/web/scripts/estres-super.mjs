@@ -120,11 +120,14 @@ if (partes.includes('3')) {
   await p.click('#btn-abrir');
   await p.waitForSelector('#hud:not([hidden])', { timeout: 120000 });
   let toques = 0;
+  // Sin tarjeta gráfica la página va a menos de un cuadro por segundo y Playwright no alcanza a ver quieto el botón:
+  // «Seguir jugando» se toca directo
+  const seguir = () => p.evaluate(() => { const b = document.getElementById('btn-continuar'); if (b && b.offsetParent) b.click(); }).catch(() => {});
   const fin = Date.now() + 150000;
   while (Date.now() < fin && !(await p.isVisible('#resultado'))) {
     // Si quedó en pausa (el toque a «Seguir» no alcanzó), se quita antes de seguir tocando: un toque al azar sobre
     // «Salir» sacaría del día, que no es lo que se prueba aquí
-    if (await p.isVisible('#btn-continuar')) await p.click('#btn-continuar', { timeout: 5000 }).catch(() => {});
+    await seguir();
     const r = Math.random();
     if (r < 0.75) await p.mouse.click(Math.random() * 960, 60 + Math.random() * 420).catch(() => {});
     else if (r < 0.83) await p.click('#alertas .alerta', { timeout: 300 }).catch(() => {});
@@ -132,13 +135,14 @@ if (partes.includes('3')) {
     else if (r < 0.92) await p.click('#btn-sonido', { timeout: 300 }).catch(() => {});
     else if (r < 0.96) {
       await p.click('#btn-pausa', { timeout: 300 }).catch(() => {});
-      await p.click('#btn-continuar', { timeout: 1000 }).catch(() => {});
+      await p.waitForTimeout(300);
+      await seguir();
     } else await p.mouse.dblclick(Math.random() * 960, 60 + Math.random() * 420).catch(() => {});
     toques++;
     if (toques % 50 === 0) await p.waitForTimeout(200);
   }
   // Ya sin toques, el día tiene que terminar solo
-  if (await p.isVisible('#btn-continuar')) await p.click('#btn-continuar', { timeout: 5000 }).catch(() => {});
+  await seguir();
   const terminado = await p.waitForSelector('#resultado:not([hidden])', { timeout: 900000 }).then(() => true, () => false);
   const est = await p.evaluate(() => window.__estado());
   await p.screenshot({ path: `${carpeta}/3-toques-al-azar.png`, animations: 'disabled', timeout: 120000 }).catch(() => {});
