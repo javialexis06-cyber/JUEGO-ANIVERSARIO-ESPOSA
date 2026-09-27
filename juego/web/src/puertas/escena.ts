@@ -4,8 +4,8 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 /** Dónde está el ojo cuando se mira el cuarto entero. */
-export const OJO = new THREE.Vector3(0, 1.45, 4.3);
-export const MIRA = new THREE.Vector3(0, 1.3, 0);
+export const OJO = new THREE.Vector3(0, 1.5, 4.3);
+export const MIRA = new THREE.Vector3(0, 1.15, 0);
 
 export interface Luces {
   fondo: string;

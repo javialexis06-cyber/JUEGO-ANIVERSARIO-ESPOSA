@@ -131,3 +131,134 @@ export class Canica {
 export function brillo(color = '#fff6d8') {
   return esfera(0.02, new THREE.MeshBasicMaterial({ color }));
 }
+
+/** Superficie que se borra frotando (vidrio empañado, hojas secas, arena): devuelve la malla y cuánto se limpió. */
+export function borrable(w: number, h: number, pintar: (c: CanvasRenderingContext2D, W: number, H: number) => void, nombre: string, px = 256) {
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(px * (w / Math.max(w, h)));
+  cv.height = Math.round(px * (h / Math.max(w, h)));
+  const cx = cv.getContext('2d', { willReadFrequently: true })!;
+  pintar(cx, cv.width, cv.height);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const m = new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: 0.9, depthWrite: false });
+  const malla = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m);
+  malla.name = nombre;
+  malla.renderOrder = 2;
+  return {
+    malla,
+    /** Borra un círculo en la coordenada de textura (radio en fracción del ancho). */
+    borrar(uv: THREE.Vector2, radio = 0.07) {
+      cx.globalCompositeOperation = 'destination-out';
+      cx.beginPath();
+      cx.arc(uv.x * cv.width, (1 - uv.y) * cv.height, radio * cv.width, 0, Math.PI * 2);
+      cx.fill();
+      cx.globalCompositeOperation = 'source-over';
+      tex.needsUpdate = true;
+    },
+    /** Fracción limpia (0..1), medida en una grilla. */
+    limpio() {
+      const d = cx.getImageData(0, 0, cv.width, cv.height).data;
+      let n = 0, vacios = 0;
+      for (let y = 4; y < cv.height; y += 8)
+        for (let x = 4; x < cv.width; x += 8) {
+          n++;
+          if (d[(y * cv.width + x) * 4 + 3] < 40) vacios++;
+        }
+      return vacios / Math.max(1, n);
+    },
+  };
+}
+
+/** Gotas o partículas que caen con gravedad (agua de la regadera, arena…). */
+export class Chorro {
+  private gotas: { m: THREE.Mesh; v: THREE.Vector3; vida: number }[] = [];
+  constructor(private padre: THREE.Object3D, private color = '#7cc4f0', private r = 0.02) {}
+
+  soltar(desde: THREE.Vector3, vel: THREE.Vector3) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(this.r, 6, 5), mat(this.color, { rough: 0.2, plano: true }));
+    m.position.copy(desde);
+    this.padre.add(m);
+    this.gotas.push({ m, v: vel.clone(), vida: 1.6 });
+  }
+
+  /** Avanza; `piso(y)` dice dónde se deshacen. Devuelve cuántas llegaron abajo en este paso. */
+  paso(dt: number, piso = 0) {
+    let llegaron = 0;
+    for (const g of this.gotas) {
+      g.v.y -= 9.8 * dt;
+      g.m.position.addScaledVector(g.v, dt);
+      g.vida -= dt;
+      if (g.m.position.y <= piso) {
+        g.vida = 0;
+        llegaron++;
+      }
+    }
+    for (const g of this.gotas.filter((x) => x.vida <= 0)) {
+      g.m.removeFromParent();
+      g.m.geometry.dispose();
+    }
+    this.gotas = this.gotas.filter((x) => x.vida > 0);
+    return llegaron;
+  }
+}
+
+/** Florecita (tallo, pétalos de un color que se puede cambiar y centro amarillo). */
+export function florecita(color: string, nombre: string, alto = 0.5) {
+  const g = grupo(nombre);
+  g.add(en(cilindro(0.015, 0.02, alto, mat('#4f8a55')), 0, alto / 2, 0));
+  const petalos = new THREE.MeshStandardMaterial({ color, roughness: 0.7 });
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    const p = esfera(0.07, petalos, undefined, 10);
+    p.scale.set(1, 1, 0.45);
+    en(p, Math.cos(a) * 0.08, alto + Math.sin(a) * 0.08, 0.02);
+    g.add(p);
+  }
+  g.add(en(esfera(0.05, mat('#F7C948'), undefined, 10), 0, alto, 0.05));
+  const hoja = esfera(0.07, mat('#5f9e4f'), undefined, 8);
+  hoja.scale.set(1.4, 0.4, 0.6);
+  en(hoja, 0.08, alto * 0.35, 0);
+  g.add(hoja);
+  g.userData.petalos = petalos;
+  return g;
+}
+
+/** Teclado numérico en la pared: al tocarlo se acerca y pide el código; si acierta, se abre la puerta. */
+export function tecladoPared(c: import('../nivel').Ctx, x: number, y: number, z: number, codigo: string, titulo = 'Teclado de la puerta') {
+  const t = grupo('teclado');
+  t.add(caja(0.2, 0.28, 0.05, mat('#3d2b27'), 0.03));
+  for (let f = 0; f < 3; f++) for (let k = 0; k < 3; k++) t.add(en(caja(0.04, 0.04, 0.02, mat('#efe2d0'), 0.008), -0.055 + k * 0.055, 0.06 - f * 0.055, 0.03));
+  t.add(en(caja(0.14, 0.04, 0.02, mat('#7ff0b0', { emisivo: '#2f8f68', intensidad: 0.6 }), 0.008), 0, 0.105, 0.03));
+  en(t, x, y, z);
+  c.g.add(t);
+  c.tocar(t, async () => {
+    await c.enfocar(t, 0.9);
+    const ok = await c.ui.teclado({ titulo, largo: codigo.length, correcto: codigo });
+    if (ok) c.resolver();
+    else await c.volver();
+  });
+  return t;
+}
+
+/** Candado colgado de la puerta (o de la reja) con ruedas; si acierta, se abre la puerta. */
+export function candadoPuerta(c: import('../nivel').Ctx, ruedas: string[][], correcto: string[], titulo = 'Candado', x = 0.35, y = 1.05) {
+  const g = grupo('candado');
+  const cuerpo = caja(0.2, 0.18, 0.08, mat('#d9b25a', { metal: 0.7, rough: 0.3 }), 0.04);
+  const arco = toro(0.065, 0.018, mat('#b8bcc4', { metal: 0.8, rough: 0.3 }), undefined, Math.PI);
+  en(arco, 0, 0.09, 0);
+  g.add(cuerpo, arco);
+  for (let i = 0; i < ruedas.length; i++) g.add(en(caja(0.04, 0.07, 0.02, mat('#3d2b27'), 0.01), -0.05 * (ruedas.length - 1) / 2 + i * 0.05, -0.01, 0.045));
+  const toque = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 6), new THREE.MeshBasicMaterial({ visible: false }));
+  g.add(toque);
+  c.puerta.pegar(g, x, y, 0.14);
+  c.tocar(g, async () => {
+    const ok = await c.ui.ruedas({ titulo, ruedas, correcto });
+    if (ok) {
+      const y0 = g.position.y;
+      void c.escena.animar(400, (k) => (g.position.y = y0 - k * 0.25));
+      c.resolver();
+    }
+  });
+  return g;
+}

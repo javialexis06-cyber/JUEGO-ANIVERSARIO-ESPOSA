@@ -51,7 +51,7 @@ const tapete: Nivel = {
     let vista = false;
     c.arrastrar(t, {
       plano: planoPiso(0.018),
-      limites: limites(-2.2, 0.018, 0.45, 2.6, 0.018, 1.9),
+      limites: limites(-2.2, 0.018, 0.45, 2.6, 0.018, 1.5),
       alSoltar: (pnt) => {
         sonido.rumor(0.2, 300, 0.05);
         if (!vista && (Math.abs(pnt.x - 0.18) > 0.62 || Math.abs(pnt.z - 0.78) > 0.42)) {
@@ -69,7 +69,7 @@ const tapete: Nivel = {
     c.g.add(perchero);
   },
   async prueba(p) {
-    await p.arrastrar('tapete', new THREE.Vector3(1.6, 0.02, 1.2));
+    await p.arrastrar('tapete', new THREE.Vector3(1.6, 0.02, 1.1));
     await p.tocar('llave');
     await p.usar('llave', 'puerta toque');
   },

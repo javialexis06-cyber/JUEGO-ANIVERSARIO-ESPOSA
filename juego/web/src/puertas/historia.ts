@@ -92,6 +92,16 @@ export const PUERTAS: Record<number, string[]> = {
   8: ['Algunas cosas solo brillan en la oscuridad. Como tú.'],
   9: ['El reloj se quedó sin manecillas. ¿Qué hora es para nosotros?', 'La de ahora mismo.'],
   10: ['La llave de la puerta de la calle quedó colgando de la lámpara. Uy, qué alto.'],
+  11: ['La primera matica que sembramos… se está secando. Pobrecita.'],
+  12: ['Esa mariposa siempre se posaba en flores de su mismo color.'],
+  13: ['¡Topos! Se llevaron cosas del jardín. Uno tiene algo brillante en la boca.'],
+  14: ['El árbol de manzanas está cargadito… pero no se ve ni una.'],
+  15: ['Un diente de león. Pide un deseo… y sopla.'],
+  16: ['Ese caracol se llevó la llave. Es muy tímido: si lo tocas, se esconde.'],
+  17: ['Hicimos un mapa del camino de piedras para no pisar las flores.'],
+  18: ['El reloj de sol marca la hora de las cosas bonitas: la del corazón.'],
+  19: ['Barrimos este jardín mil veces. Siempre aparecía algo debajo de las hojas.'],
+  20: ['El invernadero está empañado. Adentro guardábamos nuestras plantas favoritas, cada una con su número.'],
 };
 
 /** Ánimo (nunca pistas): tras varios intentos o un buen rato quieto. */

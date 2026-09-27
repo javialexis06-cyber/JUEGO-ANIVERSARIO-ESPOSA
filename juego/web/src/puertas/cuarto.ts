@@ -2,7 +2,7 @@
 // la decoración fija. Lo propio de cada acertijo lo pone el acertijo.
 import * as THREE from 'three';
 import type { Luces } from './escena';
-import { caja, cilindro, en, esfera, letrero, lienzo, mat, matNuevo, plano, toro } from './kit';
+import { caja, cilindro, en, esfera, grupo, letrero, lienzo, mat, matNuevo, plano, toro } from './kit';
 import { HUECO, OpPuerta, shade, TipoPuerta } from './puerta';
 
 /** Medidas del cuarto: pared del fondo en z = 0, paredes laterales en x = ±ANCHO/2. */
@@ -62,13 +62,13 @@ export function baldosas(c1: string, c2: string, junta = '#ffffff', n = 4) {
   return t;
 }
 
-function piso(g: THREE.Group, tex: THREE.Texture | string, repetir = 3) {
+function piso(g: THREE.Group, tex: THREE.Texture | string, repetir = 3, ancho = CUARTO.ancho + 0.4) {
   const m = typeof tex === 'string' ? mat(tex) : new THREE.MeshStandardMaterial({ map: tex, roughness: 0.8 });
   if (typeof tex !== 'string') {
-    tex.repeat.set(repetir * (CUARTO.ancho / CUARTO.fondo), repetir);
+    tex.repeat.set(repetir * (ancho / CUARTO.fondo), repetir);
     tex.colorSpace = THREE.SRGBColorSpace;
   }
-  const p = plano(CUARTO.ancho + 0.4, CUARTO.fondo, m, 'piso');
+  const p = plano(ancho, CUARTO.fondo, m, 'piso');
   p.rotation.x = -Math.PI / 2;
   en(p, 0, 0, CUARTO.fondo / 2);
   p.receiveShadow = true;
@@ -186,6 +186,91 @@ function tapete(g: THREE.Group, color: string, x = 0, z = 2.2, r = 1.2) {
   g.add(borde);
 }
 
+
+// ---------------------------------------------------------------------------
+// Afuera: pasto, setos, cielo
+// ---------------------------------------------------------------------------
+export function pastoTextura(c1 = '#8fca6a', c2 = '#6fb24f') {
+  const t = lienzo(512, 512, (c, w, h) => {
+    c.fillStyle = c1;
+    c.fillRect(0, 0, w, h);
+    let s = 3;
+    const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+    for (let i = 0; i < 2600; i++) {
+      c.strokeStyle = r() > 0.5 ? c2 : shade(c1, 0.06);
+      c.lineWidth = 2;
+      const x = r() * w, y = r() * h;
+      c.beginPath();
+      c.moveTo(x, y);
+      c.lineTo(x + (r() - 0.5) * 6, y - 6 - r() * 8);
+      c.stroke();
+    }
+  });
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
+}
+
+/** Seto con bultos (hojas) y florecitas. */
+function seto(w: number, h: number, d: number, color = '#5f9e4f', flores = true) {
+  const g = grupo('seto');
+  const m = mat(color, { rough: 1 });
+  g.add(en(caja(w, h, d, m, Math.min(0.25, d / 2 - 0.01)), 0, h / 2, 0));
+  let s = Math.round(w * 100 + h * 10);
+  const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+  const n = Math.round(w * h * 3);
+  for (let i = 0; i < n; i++) {
+    const b = esfera(0.18 + r() * 0.12, mat(shade(color, (r() - 0.5) * 0.08), { rough: 1 }), undefined, 10);
+    en(b, (r() - 0.5) * w * 0.95, 0.15 + r() * (h - 0.2), d / 2 - 0.05);
+    b.castShadow = false;
+    g.add(b);
+    if (flores && r() > 0.7) {
+      const f = esfera(0.04, mat(['#F59FC0', '#ffffff', '#F7C948'][i % 3]), undefined, 8);
+      en(f, b.position.x, b.position.y + 0.08, d / 2 + 0.14);
+      g.add(f);
+    }
+  }
+  return g;
+}
+
+export function cieloDia(arriba = '#8fcff2', abajo = '#dff2fb', nubes = true) {
+  return lienzo(512, 256, (c, w, h) => {
+    const g = c.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, arriba);
+    g.addColorStop(1, abajo);
+    c.fillStyle = g;
+    c.fillRect(0, 0, w, h);
+    if (!nubes) return;
+    c.fillStyle = 'rgba(255,255,255,0.9)';
+    for (const [x, y, r] of [[80, 60, 26], [110, 55, 34], [140, 64, 24], [360, 90, 22], [390, 82, 30], [420, 92, 20], [250, 40, 18], [270, 36, 24]]) {
+      c.beginPath();
+      c.arc(x, y, r, 0, Math.PI * 2);
+      c.fill();
+    }
+  });
+}
+
+/** Telón de fondo (cielo, mar, montañas) detrás de la pared del fondo. */
+function telon(g: THREE.Group, tex: THREE.Texture, y = 3.5, z = -4) {
+  const t = new THREE.Mesh(new THREE.PlaneGeometry(22, 11), new THREE.MeshBasicMaterial({ map: tex, fog: false }));
+  en(t, 0, y, z);
+  g.add(t);
+}
+
+function cantero(g: THREE.Group, x: number, z: number, ancho: number, colores = ['#F59FC0', '#F7C948', '#ffffff', '#c9b6ea']) {
+  const tierra = caja(ancho, 0.12, 0.5, mat('#8a5e40', { rough: 1 }), 0.05);
+  en(tierra, x, 0.06, z);
+  g.add(tierra);
+  const n = Math.round(ancho * 5);
+  for (let i = 0; i < n; i++) {
+    const fx = x - ancho / 2 + 0.1 + (i * (ancho - 0.2)) / Math.max(1, n - 1);
+    const tallo = cilindro(0.01, 0.01, 0.25, mat('#4f8a55'));
+    en(tallo, fx, 0.25, z + ((i % 2) - 0.5) * 0.18);
+    const flor = esfera(0.06, mat(colores[i % colores.length]), undefined, 10);
+    en(flor, fx, 0.4, tallo.position.z);
+    g.add(tallo, flor);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Los diez escenarios
 // ---------------------------------------------------------------------------
@@ -194,6 +279,39 @@ const noche: Luces = {
 };
 
 export const TEMAS: Record<number, Tema> = {
+  2: {
+    capitulo: 2,
+    luces: { fondo: '#9fd6f2', ambiente: '#7fa35a', intensidadAmbiente: 1.0, sol: '#fff4dc', intensidadSol: 2.3, solDesde: [4, 8, 6], entorno: 0.55, exposicion: 1.25 },
+    puerta: 'reja',
+    armar(g) {
+      telon(g, cieloDia(), 4.2, -5);
+      // Pared de seto con el hueco de la reja
+      const W = CUARTO.ancho, lado = (W - HUECO.w) / 2 - 0.1 + 1.6;
+      for (const sx of [-1, 1]) {
+        const s = seto(lado, 2.9, 0.7);
+        en(s, sx * (HUECO.w / 2 + 0.1 + lado / 2), 0, -0.35);
+        g.add(s);
+        // Setos bajitos a los lados: el jardín se ve abierto
+        const sl = seto(CUARTO.fondo, 1.0, 0.6, '#5a984a', false);
+        sl.rotation.y = -sx * Math.PI / 2;
+        en(sl, sx * (W / 2 + 0.6), 0, CUARTO.fondo / 2);
+        g.add(sl);
+      }
+      const arriba = seto(HUECO.w + 0.3, 0.45, 0.7, '#5f9e4f', false);
+      en(arriba, 0, 2.62, -0.35);
+      g.add(arriba);
+      piso(g, pastoTextura(), 3, 16);
+      cantero(g, -2.3, 0.45, 1.6);
+      cantero(g, 2.4, 0.45, 1.4, ['#e4574b', '#F7C948', '#ffffff']);
+      // Camino de piedras hasta la reja
+      for (let i = 0; i < 5; i++) {
+        const p = cilindro(0.22, 0.24, 0.05, mat('#cfc6ba', { rough: 1 }), undefined, 14);
+        p.scale.z = 0.7;
+        en(p, (i % 2 ? 0.12 : -0.1), 0.02, 0.5 + i * 0.6);
+        g.add(p);
+      }
+    },
+  },
   1: {
     capitulo: 1,
     luces: noche,

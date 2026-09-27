@@ -68,8 +68,14 @@ export class Puerta {
 
   /** Pega un objeto del acertijo a la primera hoja (se mueve con ella); (x, y, z) medidos con la puerta cerrada. */
   pegar(obj: THREE.Object3D, x: number, y: number, z: number) {
-    const hoja = this.hojas[0]?.obj ?? this.grupo;
     this.grupo.updateMatrixWorld(true);
+    // La hoja que está en ese punto (en las puertas dobles, la izquierda o la derecha)
+    const punto = this.grupo.localToWorld(new THREE.Vector3(x, y, 0));
+    const hoja =
+      this.hojas.find((h) => {
+        const b = new THREE.Box3().setFromObject(h.obj);
+        return punto.x >= b.min.x - 0.01 && punto.x <= b.max.x + 0.01;
+      })?.obj ?? this.hojas[0]?.obj ?? this.grupo;
     const mundo = this.grupo.localToWorld(new THREE.Vector3(x, y, z));
     obj.position.copy(hoja.worldToLocal(mundo));
     hoja.add(obj);
