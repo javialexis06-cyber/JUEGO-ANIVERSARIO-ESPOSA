@@ -20,6 +20,11 @@ y tiempo real. Así, lo que hace uno le llega al otro al instante, de Medellín 
    ver lo suyo. **No** me mandes la clave `service_role` ni la contraseña de la base de datos.
    (También se pueden escribir directo en la app: Menú → Ajustes → «Servidor para conectar los dos celulares».)
 
+**Estado:** listo. El proyecto `nuestro-hogar` (São Paulo) ya tiene el esquema y los accesos anónimos, y su dirección y
+clave publicable están en [`juego/web/src/casa/servidor.ts`](../juego/web/src/casa/servidor.ts): la APK ya entra en línea
+sin escribir nada. Si algún día se cambia el esquema, hay que volver a correr `supabase/esquema.sql` completo (se puede
+correr varias veces).
+
 ## Cómo se emparejan en la app
 
 - Uno abre la app, elige **Soy Él** o **Soy Ella** y toca **Crear nuestra casa**: aparece un código de 6 letras.

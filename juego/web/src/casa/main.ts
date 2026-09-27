@@ -1015,7 +1015,7 @@ function hojaAjustes() {
     <form class="form-config" id="form-config" style="margin-top:12px">
       <p class="nota-hoja">Servidor para conectar los dos celulares (Supabase). Solo la dirección del proyecto y la clave pública «anon».</p>
       <label class="campo">Dirección (Project URL)<input id="cfg-url" inputmode="url" placeholder="https://xxxx.supabase.co" value="${esc(cfg?.url ?? '')}"></label>
-      <label class="campo">Clave pública (anon)<input id="cfg-clave" placeholder="eyJhbGciOi…" value="${esc(cfg?.clave ?? '')}"></label>
+      <label class="campo">Clave publicable (anon)<input id="cfg-clave" placeholder="sb_publishable_…" value="${esc(cfg?.clave ?? '')}"></label>
       <button class="boton boton-menta" type="submit">Guardar conexión</button>
     </form>
     ${s ? `<div class="fila-botones" style="margin-top:14px;justify-content:flex-start">
