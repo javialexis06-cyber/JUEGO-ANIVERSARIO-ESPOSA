@@ -145,6 +145,14 @@ if (partes.includes('3')) {
   await seguir();
   const terminado = await p.waitForSelector('#resultado:not([hidden])', { timeout: 900000 }).then(() => true, () => false);
   const est = await p.evaluate(() => window.__estado());
+  if (!terminado) {
+    const pantallas = await p.evaluate(() => [...document.querySelectorAll('body *[id]')]
+      .filter((e) => !e.hidden && e.parentElement === document.body && getComputedStyle(e).display !== 'none').map((e) => e.id));
+    const t1 = est.juego?.tiempo;
+    await p.waitForTimeout(5000);
+    const t2 = (await p.evaluate(() => window.__estado())).juego?.tiempo;
+    console.log('   pantallas a la vista', JSON.stringify(pantallas), '· oculta', await p.evaluate(() => document.hidden), `· tiempo ${t1} → ${t2} en 5 s`);
+  }
   await p.screenshot({ path: `${carpeta}/3-toques-al-azar.png`, animations: 'disabled', timeout: 120000 }).catch(() => {});
   revisar(terminado, `El día 14 termina aunque se toque todo al azar (${toques} toques)${terminado ? ` · ${JSON.stringify(est.resultado?.estrellas)}` : ` · estado ${JSON.stringify(est.juego)}`}`);
   revisar(!p.errores.length, `Sin errores con toques al azar${p.errores.length ? `: ${p.errores.slice(0, 3).join(' | ')}` : ''}`);
