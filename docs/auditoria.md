@@ -76,3 +76,19 @@ carpeta de la casa.
 | Partida dañada | Una partida guardada rara podía romper el menú. | Se normaliza al cargar. |
 | Cliente fantasma | Salir del día justo cuando entraba un cliente lo dejaba parado en la tienda del menú. | Lo que termina de cargar después de salir ya no aparece. |
 | Música atropellada | Si el celular se atrasaba, la música tocaba de golpe las notas perdidas. | Se salta lo perdido. |
+
+## Resultados de las pruebas
+
+Corridas en un navegador sin tarjeta gráfica (la casa va a ~1 cuadro por segundo y el súper a ~0,2; por eso las
+pruebas usan tiempos de espera largos y simulan varios pasos por cuadro).
+
+| Prueba | Resultado |
+|---|---|
+| Reglas de la base de datos (`probar_reglas.sql`, Postgres 16) | 28 de 28 |
+| Casa: datos dañados, días sin abrir, textos raros, toques rapidísimos, almacenamiento lleno, toques al azar (`estres-casa.mjs`) | Todo bien: 3.700 toques al azar en dos pestañas sin errores, la misma casa en las dos y la memoria 3D estable |
+| Casa en dos pestañas con capturas (`probar-casa.mjs`) | Todo bien |
+| Súper: partidas dañadas, 10 días entrando y saliendo, día con 1.476 toques al azar, días 1, 6, 8, 12, 16, 20 y 25 y el legendario con el piloto (`estres-super.mjs`) | Todo bien: los días terminan sin errores y las texturas quedan en 23 después de cada día (antes subían 259 por día) |
+
+Lo que no se puede probar desde aquí: la conexión real con el proyecto de Supabase (la red de este entorno no deja
+salir a `supabase.co`). La prueba en línea usa un Supabase de mentiras con las mismas reglas; la prueba de verdad es
+instalar la APK en los dos celulares, crear la casa en uno y unirse con el código en el otro.
