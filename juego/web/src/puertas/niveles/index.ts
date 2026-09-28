@@ -7,8 +7,9 @@ import { CAP4 } from './cap04';
 import { CAP5 } from './cap05';
 import { CAP6 } from './cap06';
 import { CAP7 } from './cap07';
+import { CAP8 } from './cap08';
 
-const capitulos: Nivel[][] = [CAP1, CAP2, CAP3, CAP4, CAP5, CAP6, CAP7];
+const capitulos: Nivel[][] = [CAP1, CAP2, CAP3, CAP4, CAP5, CAP6, CAP7, CAP8];
 
 export const NIVELES: Record<number, Nivel> = {};
 capitulos.forEach((lista, c) => lista.forEach((nivel, i) => (NIVELES[c * 10 + i + 1] = nivel)));

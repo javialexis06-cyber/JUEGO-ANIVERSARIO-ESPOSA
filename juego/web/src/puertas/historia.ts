@@ -506,6 +506,16 @@ export const PUERTAS: Record<number, string[]> = {
   68: ['En el carrusel, el caballito dorado lleva la llave. Hay que agarrarla al vuelo.'],
   69: ['La casa de los espejos: aquí todo está al revés. Hasta la clave.'],
   70: ['Para entrar a la carpa hace falta el tiquete. La clave está en la letra pequeña.'],
+  71: ['La reja de este castillo sube con dos tornos… y los dos a la vez.'],
+  72: ['Shhh… un dragón dormido. Tiene la llave en la punta de la cola. Despacito.'],
+  73: ['Las velas no dejan ver lo que dice la pared. Con un soplido se apagan.'],
+  74: ['La luz de la lámpara quiere llegar a la gema. Los espejos le ayudan.'],
+  75: ['Una armadura sin armar. Un caballero no sale sin su casco.'],
+  76: ['El caballito de ajedrez solo salta en L. Y las casillas rotas no aguantan.'],
+  77: ['Todos los escudos son iguales… menos uno.'],
+  78: ['La poción del color del pergamino abre la reja. Tres gotas, dice.'],
+  79: ['El criptex guarda la llave. La pregunta es fácil: quién manda en este castillo.'],
+  80: ['En la torre hay una trenza negra, larga, larga… como el pelo de alguien que yo conozco.'],
 };
 
 /** Ánimo (nunca pistas): tras varios intentos o un buen rato quieto. */

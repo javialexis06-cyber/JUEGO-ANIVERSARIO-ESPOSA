@@ -448,6 +448,128 @@ function ruedaFortunaFondo(g: THREE.Group, x: number, z: number, r = 2.4) {
   };
 }
 
+
+// ---------------------------------------------------------------------------
+// Castillo
+// ---------------------------------------------------------------------------
+/** Piedras del muro (con juntas y tonos distintos). */
+export function piedraTextura(base = '#b9b2ab', w = 512, h = 512, filas = 8) {
+  return lienzo(w, h, (c) => {
+    c.fillStyle = '#7d746c';
+    c.fillRect(0, 0, w, h);
+    const alto = h / filas;
+    let semilla = 7;
+    const r = () => ((semilla = (semilla * 16807) % 2147483647) - 1) / 2147483646;
+    for (let f = 0; f < filas; f++) {
+      let x = f % 2 ? -alto * 0.7 : 0;
+      while (x < w) {
+        const ancho = alto * (1.3 + r() * 0.9);
+        const k = 0.86 + r() * 0.22;
+        const col = new THREE.Color(base).multiplyScalar(k);
+        c.fillStyle = `#${col.getHexString()}`;
+        c.beginPath();
+        c.roundRect(x + 3, f * alto + 3, ancho - 6, alto - 6, 8);
+        c.fill();
+        c.fillStyle = 'rgba(255,255,255,0.08)';
+        c.fillRect(x + 6, f * alto + 5, ancho - 14, 4);
+        x += ancho;
+      }
+    }
+  });
+}
+
+function muroPiedra(g: THREE.Group) {
+  const W = CUARTO.ancho, H = CUARTO.alto, e = CUARTO.grueso, F = CUARTO.fondo;
+  const lado = (W - HUECO.w) / 2;
+  const tex = (ancho: number, alto: number) => {
+    const t = piedraTextura();
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(ancho / 1.6, alto / 1.6);
+    return new THREE.MeshStandardMaterial({ map: t, roughness: 0.95 });
+  };
+  for (const s of [-1, 1]) g.add(en(new THREE.Mesh(new THREE.BoxGeometry(lado, H, e), tex(lado, H)), s * (HUECO.w / 2 + lado / 2), H / 2, -e / 2));
+  g.add(en(new THREE.Mesh(new THREE.BoxGeometry(HUECO.w, H - HUECO.h, e), tex(HUECO.w, H - HUECO.h)), 0, HUECO.h + (H - HUECO.h) / 2, -e / 2));
+  for (const s of [-1, 1]) {
+    const p = new THREE.Mesh(new THREE.BoxGeometry(0.2, H, F), tex(F, H));
+    en(p, s * (W / 2 + 0.1), H / 2, F / 2);
+    g.add(p);
+  }
+}
+
+/** Antorcha en la pared con llama que titila. */
+function antorcha(g: THREE.Group, x: number, y: number, z = 0.05) {
+  const a = grupo('antorcha');
+  const soporte = cilindro(0.035, 0.05, 0.32, mat('#4a3a30'));
+  soporte.rotation.x = 0.5;
+  en(soporte, 0, 0, 0.1);
+  const copa = cilindro(0.08, 0.05, 0.1, mat('#3d2b27', { metal: 0.4 }));
+  en(copa, 0, 0.13, 0.17);
+  const llama = new THREE.Mesh(new THREE.ConeGeometry(0.065, 0.2, 10), new THREE.MeshBasicMaterial({ color: '#ffb23f' }));
+  en(llama, 0, 0.27, 0.17);
+  const centro = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.12, 8), new THREE.MeshBasicMaterial({ color: '#fff1a8' }));
+  en(centro, 0, 0.24, 0.17);
+  const luz = new THREE.PointLight('#ffb46a', 2.4, 5, 1.6);
+  en(luz, 0, 0.35, 0.35);
+  a.add(soporte, copa, llama, centro, luz);
+  llama.onBeforeRender = () => {
+    const t = performance.now() / 1000 + x;
+    const k = 1 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.06;
+    llama.scale.set(1, k, 1);
+    luz.intensity = 2.2 * k;
+  };
+  en(a, x, y, z);
+  g.add(a);
+}
+
+/** Estandarte colgado con el escudo de un corazón. */
+function estandarte(g: THREE.Group, x: number, color = '#b83a52') {
+  const e = letrero(0.62, 1.1, (c, w, h) => {
+    c.fillStyle = color;
+    c.beginPath();
+    c.moveTo(0, 0);
+    c.lineTo(w, 0);
+    c.lineTo(w, h * 0.86);
+    c.lineTo(w / 2, h);
+    c.lineTo(0, h * 0.86);
+    c.fill();
+    c.strokeStyle = '#f2c75c';
+    c.lineWidth = 10;
+    c.strokeRect(14, 14, w - 28, h * 0.8);
+    c.fillStyle = '#f2c75c';
+    c.font = `700 ${w * 0.5}px sans-serif`;
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.fillText('♥', w / 2, h * 0.44);
+  }, 'estandarte', { transparente: true });
+  en(e, x, 2.35, 0.03);
+  g.add(e);
+  const barra = cilindro(0.02, 0.02, 0.72, mat('#d9b25a', { metal: 0.6, rough: 0.3 }));
+  barra.rotation.z = Math.PI / 2;
+  g.add(en(barra, x, 2.92, 0.05));
+}
+
+export function cieloCastillo() {
+  return lienzo(256, 204, (c, w, h) => {
+    const gr = c.createLinearGradient(0, 0, 0, h);
+    gr.addColorStop(0, '#1b1f45');
+    gr.addColorStop(1, '#5b4a86');
+    c.fillStyle = gr;
+    c.fillRect(0, 0, w, h);
+    c.fillStyle = '#fff6d0';
+    c.beginPath();
+    c.arc(w * 0.7, h * 0.3, 20, 0, Math.PI * 2);
+    c.fill();
+    c.fillStyle = 'rgba(255,255,255,0.8)';
+    for (let i = 0; i < 30; i++) c.fillRect((i * 67) % w, (i * 29) % (h * 0.6), 2, 2);
+    c.fillStyle = '#2b2346';
+    c.beginPath();
+    c.moveTo(0, h);
+    for (let x = 0; x <= w; x += 32) c.lineTo(x, h * (0.72 + ((x / 32) % 2) * 0.05));
+    c.lineTo(w, h);
+    c.fill();
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Los diez escenarios
 // ---------------------------------------------------------------------------
@@ -456,6 +578,35 @@ const noche: Luces = {
 };
 
 export const TEMAS: Record<number, Tema> = {
+  8: {
+    capitulo: 8,
+    luces: { fondo: '#1b1f45', ambiente: '#6a5a78', intensidadAmbiente: 0.7, sol: '#ffd8a8', intensidadSol: 1.05, solDesde: [2.5, 6, 5.5], entorno: 0.3, exposicion: 1.3 },
+    puerta: 'rastrillo',
+    opPuerta: { color: '#4a4f58', marco: '#8a8078' },
+    armar(g) {
+      muroPiedra(g);
+      const suelo = piedraTextura('#a39a90', 512, 512, 4);
+      suelo.wrapS = suelo.wrapT = THREE.RepeatWrapping;
+      piso(g, suelo, 2.2);
+      techo(g, '#4a3a30');
+      for (let i = 0; i < 5; i++) g.add(en(caja(CUARTO.ancho, 0.16, 0.2, mat('#5e4636'), 0.02), 0, CUARTO.alto - 0.1, 0.6 + i * 1.3));
+      // Arco de piedra sobre el hueco
+      const arco = new THREE.Mesh(new THREE.TorusGeometry(HUECO.w / 2 + 0.14, 0.12, 8, 20, Math.PI), mat('#9a918a', { rough: 0.95 }));
+      en(arco, 0, HUECO.h - 0.02, 0.06);
+      g.add(arco);
+      for (const s of [-1, 1]) g.add(en(caja(0.24, HUECO.h, 0.16, mat('#9a918a', { rough: 0.95 }), 0.03), s * (HUECO.w / 2 + 0.14), HUECO.h / 2, 0.06));
+      antorcha(g, -2.1, 1.75);
+      antorcha(g, 2.1, 1.75);
+      estandarte(g, -1.25);
+      estandarte(g, 1.25, '#3b5ea8');
+      ventanaLado(g, cieloCastillo(), 2.6, '#8a2f45');
+      // Alfombra roja hacia la puerta
+      const alfombra = caja(1.2, 0.02, 2.4, mat('#a8324a', { rough: 1 }), 0.005);
+      en(alfombra, 0, 0.01, 1.4);
+      g.add(alfombra);
+      for (const s of [-1, 1]) g.add(en(caja(0.06, 0.021, 2.4, mat('#f2c75c'), 0.005), s * 0.57, 0.012, 1.4));
+    },
+  },
   7: {
     capitulo: 7,
     luces: { fondo: '#3b2f6c', ambiente: '#8a6a8a', intensidadAmbiente: 0.85, sol: '#ffd8b0', intensidadSol: 1.7, solDesde: [3, 6, 6], entorno: 0.45, exposicion: 1.35 },
