@@ -477,9 +477,9 @@ function barajar<T>(xs: T[], azar: () => number): T[] {
 function facil(e: EstadoCajas, azar: () => number): number {
   const p = crearPos(e);
   const sv = servidas(p);
-  if (sv.length && azar() < 0.8) return libreDe(p, alAzar(sv, azar));
+  if (sv.length && azar() < 0.85) return libreDe(p, alAzar(sv, azar));
   const segs = seguras(p);
-  if (segs.length && azar() < 0.72) return alAzar(segs, azar);
+  if (segs.length && azar() < 0.8) return alAzar(segs, azar);
   if (!segs.length && !sv.length && azar() < 0.5) return menorRegalo(p, azar);
   return alAzar(libres(p), azar);
 }

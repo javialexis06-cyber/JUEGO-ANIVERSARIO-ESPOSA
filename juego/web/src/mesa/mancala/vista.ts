@@ -95,10 +95,11 @@ function planear(W: number, H: number, yo: Rol): Plano {
       lados: { [yo]: lado(colX[0]), [otroRol]: lado(colX[1]) } as Record<Rol, Caja>,
     };
   }
-  // Acostado: la fila de `yo` abajo (de izquierda a derecha) y su almacén a la derecha
+  // Acostado: la fila de `yo` abajo (de izquierda a derecha) y su almacén a la derecha, con su etiqueta al lado
   const g = limitar(Math.round(Math.min(W, H) * 0.02), 5, 10);
-  const lat = limitar(H * 0.1, 22, 34);
-  let pw = (W - 9 * g) / 8.7;
+  const lat = limitar(H * 0.1, 22, 30);
+  const etiqueta = 60;
+  let pw = (W - 2 * etiqueta - 9 * g) / 8.7;
   let ph = Math.min((H - 2 * lat - 3 * g) / 2, pw * 0.95, 110);
   pw = Math.min(pw, ph * 1.3);
   ph = Math.min(ph, pw);
@@ -113,7 +114,7 @@ function planear(W: number, H: number, yo: Rol): Plano {
     if (esAlmacen(i)) {
       const x = mio(i) ? x0 + bw - g - sw / 2 : x0 + g + sw / 2;
       casillas.push({ x, y: y0 + bh / 2, w: sw, h: bh - 2 * g });
-      cuentas.push({ x, y: mio(i) ? y0 + bh + fuera + 4 : y0 - fuera - 4 });
+      cuentas.push({ x: mio(i) ? x0 + bw + 32 : x0 - 32, y: y0 + bh / 2 });
     } else {
       const c = { x: colX(mio(i) ? k : HOYOS - 1 - k), y: filaY[mio(i) ? 1 : 0], w: pw, h: ph };
       casillas.push(c);

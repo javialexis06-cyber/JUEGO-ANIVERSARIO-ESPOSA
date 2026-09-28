@@ -164,7 +164,8 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
     const ancho = w > h * 1.3;
     this.cont.classList.toggle('cajas-ancho', ancho);
     const arriba = 8; // lo que asoman las cintas
-    const esc = ancho ? Math.min((w - TIRA - 150) / vw, (h - arriba) / vh) : Math.min((w - TIRA) / vw, (h - arriba - 58) / vh);
+    // En tableta no crece sin fin: cajas de hasta ~92 px
+    const esc = Math.min(0.92, ancho ? Math.min((w - TIRA - 150) / vw, (h - arriba) / vh) : Math.min((w - TIRA) / vw, (h - arriba - 58) / vh));
     const sw = Math.max(120, vw * esc), sh = Math.max(120, vh * esc);
     this.svg.style.width = `${sw}px`;
     this.svg.style.height = `${sh}px`;
@@ -409,10 +410,17 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
   /** Suceso de una línea que no cerró nada: segura, regalo o trato doble. */
   private sucesoLinea(antes: EstadoCajas, l: number, despues: EstadoCajas): Suceso {
     const quien = antes.turno;
-    const servidas = listas(despues).length;
+    const ls = listas(despues);
+    const servidas = ls.length;
     if (listas(antes).length) {
-      // Dejó cajas sin comer: el trato doble (deja 2 o 4 al final para quedarse con el control) o un descuido
-      if (servidas <= 4 && !haySegura(despues)) {
+      // Dejó cajas sin comer: el trato doble (deja 1 o 2 parejas que se cierran con una sola línea, para que el
+      // otro tenga que abrir la siguiente cadena) o un descuido
+      const g = geo(despues);
+      const parejas = servidas <= 4 && ls.every((b) => {
+        const k = g.lineasDe[b].find((x) => !despues.lineas[x])!;
+        return g.cajasDe[k].some((o) => o !== b && ls.includes(o));
+      });
+      if (parejas) {
         this.ctx.sonido('atrapado');
         return { tipo: 'jugada', quien, calidad: 'genial', texto: '¡Jugada maestra!' };
       }
