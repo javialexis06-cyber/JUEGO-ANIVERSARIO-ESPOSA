@@ -19,6 +19,8 @@ export class Personaje {
   pos: P;
   rot = 0;
   velocidad = 1.2;
+  /** Qué tan rápido se llega a la pose nueva (1/s); las reacciones la suben para golpes secos. */
+  suavidad = SUAVIDAD;
   ruta: P[] = [];
   private t = Math.random() * 10;
   private mezclador: THREE.AnimationMixer | null = null;
@@ -156,7 +158,7 @@ export class Personaje {
   }
 
   /** Mezcla continua entre dos poses (0 = a, 1 = b). */
-  private vaiven(a: string, b: string, w: number) {
+  vaiven(a: string, b: string, w: number) {
     this.poseActual = a;
     for (const k of this.metas.keys()) this.metas.set(k, k === a ? 1 - w : k === b ? w : 0);
   }
@@ -227,7 +229,7 @@ export class Personaje {
 
   private mezclar(dt: number) {
     if (!this.mezclador) return;
-    const k = Math.min(1, dt * SUAVIDAD);
+    const k = Math.min(1, dt * this.suavidad);
     let suma = 0;
     for (const [n, w] of this.pesos) {
       const nw = w + ((this.metas.get(n) ?? 0) - w) * k;

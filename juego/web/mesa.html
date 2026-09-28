@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Juegos de Mesa</title>
+</head>
+<body class="mesa">
+
+<!-- Menú: elegir juego y con quién -->
+<section id="menu" class="pantalla mesa-menu">
+  <header class="mesa-cabeza">
+    <a class="boton-redondo boton-casa" href="./index.html" aria-label="Volver a la casa"></a>
+    <div class="logo logo-mesa">
+      <span class="logo-linea">Juegos de Mesa</span>
+      <span class="logo-pareja">Él contra Ella, sin trampa (casi)</span>
+    </div>
+    <button id="btn-sonido-menu" class="boton-redondo boton-sonido" aria-label="Sonido"><i></i></button>
+  </header>
+  <div id="juegos" class="mesa-juegos"></div>
+  <div class="mesa-modos" role="radiogroup" aria-label="Con quién">
+    <button class="modo" data-modo="ia" aria-pressed="true"><b>Contra <span data-otro>Ella</span></b><small>Un jugador: juega el celular</small></button>
+    <button class="modo" data-modo="local" aria-pressed="false"><b>Los dos aquí</b><small>Se turnan el mismo celular</small></button>
+    <button class="modo" data-modo="linea" aria-pressed="false"><b>En línea</b><small>Cada uno en su celular</small></button>
+  </div>
+  <div class="mesa-nivel" id="mesa-nivel" role="radiogroup" aria-label="Dificultad">
+    <span>Dificultad</span>
+    <button data-nivel="facil" aria-pressed="false">Suave</button>
+    <button data-nivel="normal" aria-pressed="true">Normal</button>
+    <button data-nivel="dificil" aria-pressed="false">Sin piedad</button>
+  </div>
+  <p id="menu-nota" class="mesa-nota" hidden></p>
+</section>
+
+<!-- Partida -->
+<section id="partida" class="partida" hidden>
+  <header id="escenario" class="escenario">
+    <canvas id="escenario-lienzo" aria-hidden="true"></canvas>
+    <div id="efectos" class="efectos" aria-hidden="true"></div>
+    <div class="marcador" data-lado="izq"><b class="marcador-nombre"></b><span class="marcador-puntos">0</span></div>
+    <div class="marcador" data-lado="der"><b class="marcador-nombre"></b><span class="marcador-puntos">0</span></div>
+    <div class="escenario-barra">
+      <button id="btn-salir" class="boton-redondo boton-atras" aria-label="Salir de la partida"></button>
+      <span id="partida-juego" class="partida-juego"></span>
+      <button id="btn-ayuda" class="boton-redondo boton-ayuda" aria-label="Cómo se juega">?</button>
+      <button id="btn-sonido" class="boton-redondo boton-sonido" aria-label="Sonido"><i></i></button>
+    </div>
+    <p id="turno" class="turno" aria-live="polite"></p>
+  </header>
+  <main id="tablero" class="tablero"></main>
+  <div id="etiqueta" class="etiqueta-suceso" aria-live="polite" hidden></div>
+</section>
+
+<!-- Final -->
+<section id="final" class="pantalla mesa-final" hidden>
+  <article class="final-carta">
+    <h2 id="final-titulo"></h2>
+    <p id="final-marcador" class="final-marcador"></p>
+    <p id="final-premio" class="final-premio" hidden></p>
+    <div class="fila-botones">
+      <button id="btn-menu" class="boton boton-papel">Otro juego</button>
+      <button id="btn-revancha" class="boton boton-tomate">¡Revancha!</button>
+    </div>
+  </article>
+</section>
+
+<!-- Hojas: ayuda, invitación en línea -->
+<section id="hoja" class="mesa-hoja" hidden>
+  <article class="hoja-carta"><div id="hoja-cuerpo"></div><div class="fila-botones" id="hoja-botones"></div></article>
+</section>
+<div id="aviso" class="aviso" role="status" hidden></div>
+
+<script type="module" src="./src/mesa/main.ts"></script>
+</body>
+</html>

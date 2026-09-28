@@ -359,6 +359,26 @@ async function cliente(cfg: ConfigLinea): Promise<SupabaseClient> {
   return sb;
 }
 
+/**
+ * Conexión liviana para los minijuegos en línea (la mesa de juegos): la misma sesión de la casa,
+ * sin cargar la casa. null si este celular no está en una casa en línea.
+ */
+export async function conexionPareja(): Promise<{ sb: SupabaseClient; sesion: SesionLinea } | null> {
+  const cfg = configLinea();
+  const sesion = sesionGuardada();
+  if (!cfg || !sesion) return null;
+  const sb = await cliente(cfg);
+  const { error } = await sb.rpc('unirse_pareja', { cod: sesion.codigo, mi_rol: sesion.rol, reemplazar: true });
+  if (error) throw new Error(mensaje(error, 'No se pudo entrar a la casa.'));
+  return { sb, sesion };
+}
+
+/** Avisa algo al otro por la tabla de eventos (le llega aunque no esté en la mesa: lo ve en la casa). */
+export async function eventoPareja(sb: SupabaseClient, sesion: SesionLinea, tipo: Evento['tipo'], datos: Record<string, unknown>) {
+  const { error } = await sb.from('eventos').insert({ pareja_id: sesion.parejaId, de: sesion.rol, tipo, datos });
+  if (error) throw new Error(mensaje(error, 'No se pudo avisar.'));
+}
+
 export class SincroLinea extends Base implements Sincro {
   modo = 'linea' as const;
   private version = 0;

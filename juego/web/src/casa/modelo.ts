@@ -236,7 +236,7 @@ export interface Recuerdo {
 export interface Evento {
   id: string;
   de: Rol;
-  tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nota' | 'comida' | 'saludo' | 'voz';
+  tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nota' | 'comida' | 'saludo' | 'voz' | 'juego';
   datos: Record<string, unknown>;
   t: number;
   /** Ya lo recibió y aplicó quien lo recibe (el cariño sube en su celular, no en el de quien lo manda). */
@@ -244,7 +244,7 @@ export interface Evento {
 }
 
 /** Evento confiable (datos siempre es un objeto). */
-const TIPOS_EVENTO: Evento['tipo'][] = ['caricia', 'abrazo', 'beso', 'regalo', 'nota', 'comida', 'saludo', 'voz'];
+const TIPOS_EVENTO: Evento['tipo'][] = ['caricia', 'abrazo', 'beso', 'regalo', 'nota', 'comida', 'saludo', 'voz', 'juego'];
 export function normalizarEvento(f: any): Evento | null {
   if (!esObjeto(f) || (f.de !== 'el' && f.de !== 'ella') || !TIPOS_EVENTO.includes(f.tipo)) return null;
   return {
