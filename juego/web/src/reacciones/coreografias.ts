@@ -43,7 +43,7 @@ export const COREOS: Record<string, Coreografia> = {
 
   salto_confeti: c('salto confeti', [
     { dur: 0.24, pose: 'preparar_salto', cara: 'concentrado', suave: 26, mov: [{ tipo: 'estirar', cuanto: -0.14 }] },
-    { dur: 0.62, pose: 'salto', cara: 'carcajada', suave: 30, mov: [{ tipo: 'salto', alto: 0.55 }], fx: [{ tipo: 'confeti', n: 46 }, { tipo: 'estrellas', n: 6 }], sonido: 'boing' },
+    { dur: 0.62, pose: 'salto', cara: 'carcajada', suave: 30, mov: [{ tipo: 'salto', alto: 0.42 }], fx: [{ tipo: 'confeti', n: 46 }, { tipo: 'estrellas', n: 6 }], sonido: 'boing' },
     { dur: 0.2, pose: 'preparar_salto', cara: 'carcajada', suave: 30, mov: [{ tipo: 'estirar', cuanto: -0.12 }], fx: [{ tipo: 'polvo' }] },
     { dur: 0.75, pose: 'celebrar', cara: 'carcajada', suave: 18, mov: [{ tipo: 'rebote', alto: 0.05, frec: 3.2 }], habla: true },
     { dur: 0.25, pose: 'reposo', cara: 'feliz' },

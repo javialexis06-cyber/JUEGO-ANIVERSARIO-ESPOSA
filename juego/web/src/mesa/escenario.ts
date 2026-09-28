@@ -106,7 +106,7 @@ export class Escenario {
     this.camara.aspect = aspecto;
     const alto = this.m.el.listo ? this.m.el.p.escala * this.m.el.alto : 2.7;
     // Alto visible: el muñeco + espacio para saltos arriba + un poquito bajo los pies
-    const visible = alto * 1.5;
+    const visible = alto * 1.58;
     const dist = visible / 2 / Math.tan(THREE.MathUtils.degToRad(this.camara.fov / 2));
     const centroY = alto * 0.6;
     this.camara.position.set(0, centroY + alto * 0.1, dist);
