@@ -419,7 +419,8 @@ class VistaDados implements Vista<EstadoDados, MovDados> {
   private async animarTiro(antes: EstadoDados, m: Extract<MovDados, { t: 'tirar' }>, despues: EstadoDados) {
     const quien = antes.turno;
     this.elegida = null;
-    for (const c of CASILLAS) this.celdas[quien][c].classList.remove('posible', 'elegida', 'activa');
+    // Las vistas previas del tiro anterior se borran mientras ruedan los dados
+    for (const c of CASILLAS) this.pintarCelda(quien, c);
     // Los guardados de quien tira (la IA o el otro celular los va tocando uno por uno)
     for (let i = 0; i < 5; i++) {
       if (this.dados[i].el.classList.contains('guardado') === m.retener[i]) continue;
