@@ -210,6 +210,7 @@ class Partida {
         // Que se note que piensa (más si la jugada es importante), sin hacer esperar de más
         await esperar(Math.max(0, 650 + azar() * 700 - (performance.now() - t0)));
         escenario!.pensar(t, false);
+        if (this.terminada) return;
       } else {
         escenario!.pensar(t, true);
         m = await this.recibir(this.n);
@@ -221,6 +222,7 @@ class Partida {
       this.e = reglas.aplicar(antes, m);
       this.n++;
       await this.vista.animar(antes, m, this.e);
+      if (this.terminada) return;
       this.marcador(puntosAntes);
       guardarPartida(this);
     }
@@ -546,11 +548,41 @@ if (unirse && directo) {
     const entrada = JUEGOS.find((j) => j.id === directo);
     if (entrada) void jugar(entrada, prefs.modo, em === 'el' || em === 'ella' ? { empieza: em } : {});
   }
-} else if (guardada && JUEGOS.some((j) => j.id === guardada.juego)) {
+} else if (!params.has('vitrina') && guardada && JUEGOS.some((j) => j.id === guardada.juego)) {
   const entrada = JUEGOS.find((j) => j.id === guardada.juego)!;
   prefs.nivel = guardada.nivel;
   void jugar(entrada, guardada.modo, { empieza: guardada.empieza, e: guardada.e, n: guardada.n });
 }
+
+// Vitrina de reacciones (mesa.html?vitrina): los dos muñequitos y un botón por reacción, para verlas todas
+async function vitrina() {
+  const { COREOS } = await import('../reacciones/coreografias');
+  $('partida-juego').textContent = 'Reacciones';
+  mostrar('partida');
+  escenario ??= new Escenario($<HTMLCanvasElement>('escenario-lienzo'), $('efectos'), RAPIDO);
+  await escenario.preparar(yo);
+  let quien: Rol = yo;
+  const tablero = $('tablero');
+  tablero.className = 'tablero tablero-vitrina';
+  const pintar = () => {
+    tablero.innerHTML = `<div class="vitrina-quien">${(['el', 'ella'] as Rol[])
+      .map((r) => `<button data-vitrina-rol="${r}" aria-pressed="${r === quien}">${nombreDe(r)}</button>`)
+      .join('')}</div><div class="vitrina-lista">${Object.entries(COREOS)
+      .filter(([, c]) => !c.bucle)
+      .map(([k, c]) => `<button data-vitrina="${k}">${c.nombre}</button>`)
+      .join('')}</div>`;
+  };
+  pintar();
+  tablero.addEventListener('click', (ev) => {
+    const b = (ev.target as HTMLElement).closest<HTMLElement>('button');
+    if (!b) return;
+    if (b.dataset.vitrinaRol) {
+      quien = b.dataset.vitrinaRol as Rol;
+      pintar();
+    } else if (b.dataset.vitrina) void escenario!.probar(quien, b.dataset.vitrina);
+  });
+}
+if (params.has('vitrina')) void vitrina();
 
 // Para las pruebas automáticas
 (globalThis as Record<string, unknown>).__mesa = {

@@ -104,3 +104,30 @@ Se conservan las que ya existen (`reposo`, `feliz`, `triste`, `pensando`, `habla
 
 `reaccion_trofeo.glb`, `reaccion_corona.glb`, `reaccion_bandera.glb`, `reaccion_panuelo.glb`, `reaccion_dados.glb`:
 estilo plastilina de la casa, origen en el punto donde se agarra (o, en la corona, la base), Y arriba.
+
+## En el juego (`juego/web/src/reacciones/`)
+
+| Archivo | Qué hace |
+|---|---|
+| `tipos.ts` | Paso (pose, vaivén entre dos poses, cara, rapidez de la transición, movimiento, efectos, sonido, frase, utilería) y coreografía |
+| `coreografias.ts` | El catálogo (abajo) y `PARECIDA`: si al modelo le falta una pose nueva usa la más parecida |
+| `muneco.ts` | Ejecuta una coreografía sobre el personaje: poses mezcladas, salto con estirar y aplastar, rebotes, temblor, balanceo, giros, cabeceo (sí / no / ladeo) y huesos oscilando encima de la pose; mira al otro o se voltea; se acerca a chocar los cinco o a abrazar; se cae de espaldas. Sin coreografía respira, mira al otro, estudia el tablero o piensa |
+| `efectos.ts` + `reacciones.css` | Efectos 2D anclados a la cabeza, la cara o los pies: confeti (también a pantalla completa), corazones, estrellas, brillo, gotita de sudor, venita de enojo, humo por las orejas, chorros de lágrimas (de tristeza o de risa), nubecita con lluvia, «zzz», «?» «!» «!?» «…», rayos de sorpresa, polvo al pisar, notas musicales, besito volador que llega al otro y lo sonroja, chispa al chocar los cinco, bombillo de idea, aura dorada, «ja ja», reloj, soplido, resoplido, estrellitas de mareo, sonrojo |
+| `sonidos.ts` | Sonidos sintetizados de cada reacción (boing, fanfarria, trombón triste, pisotones, palmadas, risitas, llanto...) |
+| `frases.ts` | Lo que dicen en su globito, distinto para Él y para Ella, con guiños a su historia |
+| `director.ts` | Traduce lo que pasa en un minijuego (jugada genial / buena / normal / mala / nula, captura, turno extra, tirar, suerte, casi, regalo, ir adelante, pensar, esperar, inicio y final) a lo que hace cada uno: el que jugó y la respuesta del otro |
+
+**Vitrina:** `mesa.html?vitrina` muestra a los dos con un botón por reacción para verlas todas (y elegir a quién).
+
+### Catálogo
+
+| Reacción | Cuándo |
+|---|---|
+| presumir (sacudirse el hombro), pulgares, bailecito, salto con confeti, puño al aire, músculo, celebrar, asentir | Jugada genial o buena propia, ir adelante |
+| puchero, facepalm, triste (nubecita con lluvia), rascarse la cabeza, gotita, encogerse de hombros, alivio | Jugada mala o nula, casi, el otro casi lo logra |
+| enojo chistoso (pataleta con venita y humo), brazos cruzados de reojo, boca abierta, aplauso de mala gana, mirada asesina | El otro juega bien o captura |
+| risita burlona, señalar y reír (con lágrimas de risa), frotarse las manos, encogerse burlón | Al otro le va mal, regalo del otro |
+| soplar y lanzar los dados, cruzar los dedos, contar semillas, pensando, idea, estudiar el tablero, impaciente (reloj y zapateo), bostezo | Propias de los juegos y de la espera |
+| trofeo, corona, baile final, besito volado, reverencia | Gana |
+| llorar dramático (con pañuelo), de rodillas, bandera blanca, desmayo, «¡otra!» | Pierde (y pide revancha) |
+| chocar los cinco, abrazo, sonrojarse | Empate y cariño |

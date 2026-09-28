@@ -534,6 +534,8 @@ async function saludar() {
 }
 
 /** Lo que llega del otro celular. */
+const JUEGOS_MESA: Record<string, string> = { dados: 'Dados Party', mancala: 'Mancala', cajas: 'Puntos y Cajas', parchis: 'Parchís' };
+
 function alEvento(e: Evento) {
   if (e.de === yo) return;
   const quien = nombre(e.de);
@@ -565,6 +567,15 @@ function alEvento(e: Evento) {
       if (document.visibilityState === 'visible' && !hojaAbierta() && $('llamada')?.hidden !== false) void contestarVoz(String(e.datos.voz ?? ''), true);
       else toast(`${quien} te dejó un mensaje de voz`, 3400);
       break;
+    case 'juego': {
+      // Invitación a la mesa de juegos (vale unos minutos)
+      const j = JUEGOS_MESA[String(e.datos.juego)];
+      if (!j || Date.now() - e.t > 3 * 60_000) break;
+      const url = `./mesa.html?modo=linea&juego=${encodeURIComponent(String(e.datos.juego))}&unirse=${encodeURIComponent(String(e.datos.id ?? ''))}&empieza=${e.datos.empieza === 'ella' ? 'ella' : 'el'}`;
+      abrirHoja('¡A jugar!', `<p class="nota-hoja">${quien} te invita a una partida de <b>${j}</b>.</p>
+        <div class="fila-botones"><a class="boton boton-tomate" href="${url}">¡Juguemos!</a></div>`);
+      break;
+    }
   }
   escribir(CLAVE_VISTO(yo), Date.now());
   void aplicarPendientes();
@@ -1321,6 +1332,14 @@ function hojaJuegos() {
         <h3>Cien Puertas</h3>
         <p>Un escape room para ti: cien puertas con acertijos (inclina, sacude, voltea el celular…) y ${nombre(otro(yo))} te cuenta la historia. Cada puerta abierta da monedas para la casa.</p>
         <a class="boton boton-menta" href="./puertas.html">Abrir puertas</a>
+      </div>
+    </article>
+    <article class="minijuego">
+      <img src="./modelos/iconos/mesa_juegos.svg" alt="">
+      <div>
+        <h3>Juegos de Mesa</h3>
+        <p>Dados Party, Mancala, Puntos y Cajas y Parchís: contra ${nombre(otro(yo))} (el celular), los dos en este celular o cada uno en el suyo. Los muñequitos celebran, se enojan y hacen drama con cada jugada.</p>
+        <a class="boton boton-tomate" href="./mesa.html">Jugar</a>
       </div>
     </article>`;
   abrirHoja('Minijuegos', html, { saldo: s?.casa.monedas });

@@ -125,6 +125,7 @@ body.mesa {
   box-shadow: 0 2px 0 rgba(61, 43, 39, 0.18);
 }
 .mesa-nivel button[aria-pressed='true'] { background: var(--tomate); color: var(--papel); box-shadow: 0 2px 0 var(--tomate-oscuro); }
+.mesa-vitrina { align-self: center; text-decoration: none; font-size: 14px; }
 .mesa-nota {
   margin: 0;
   background: var(--papel);
@@ -190,24 +191,26 @@ body.mesa {
 }
 .marcador {
   position: absolute;
-  bottom: 8px;
+  bottom: 40px;
+  left: 50%;
   display: grid;
   justify-items: center;
   gap: 1px;
-  min-width: 64px;
+  min-width: 62px;
   padding: 5px 10px 6px;
   border-radius: 14px;
   background: var(--papel);
   box-shadow: 0 2px 0 rgba(61, 43, 39, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.marcador[data-lado='izq'] { left: 8px; }
-.marcador[data-lado='der'] { right: 8px; }
+.marcador[data-lado='izq'] { transform: translateX(calc(-100% - 5px)); }
+.marcador[data-lado='der'] { transform: translateX(5px); }
 .marcador-nombre { font: 600 12px/1 var(--display); color: var(--cacao-suave); }
 .marcador-puntos { font: 700 24px/1 var(--display); font-variant-numeric: tabular-nums; }
 .marcador[data-quien='el'] .marcador-puntos { color: var(--el); }
 .marcador[data-quien='ella'] .marcador-puntos { color: var(--ella); }
-.marcador.activo { transform: translateY(-3px); }
+.marcador[data-lado='izq'].activo { transform: translateX(calc(-100% - 5px)) translateY(-3px); }
+.marcador[data-lado='der'].activo { transform: translateX(5px) translateY(-3px); }
 .marcador[data-quien='el'].activo { box-shadow: 0 0 0 3px var(--el), 0 4px 10px rgba(91, 143, 214, 0.45); }
 .marcador[data-quien='ella'].activo { box-shadow: 0 0 0 3px var(--ella), 0 4px 10px rgba(232, 106, 138, 0.45); }
 .marcador.salta .marcador-puntos { animation: salto-puntos 0.5s ease; }
@@ -274,6 +277,8 @@ body.mesa {
 }
 
 /* ---------- Final y hojas ---------- */
+/* El final deja ver el escenario: arriba siguen celebrando (o llorando) los dos */
+.mesa-final { top: calc(var(--alto-escenario) + env(safe-area-inset-top, 0px)) !important; background: rgba(61, 43, 39, 0.22) !important; }
 .mesa-final, .mesa-hoja {
   position: fixed;
   inset: 0;
@@ -334,3 +339,18 @@ body.mesa {
   text-align: center;
   box-shadow: var(--sombra);
 }
+
+/* ---------- Vitrina de reacciones ---------- */
+.tablero-vitrina { overflow-y: auto; }
+.vitrina-quien { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+.vitrina-quien button, .vitrina-lista button {
+  border: 0;
+  border-radius: 12px;
+  padding: 8px 12px;
+  background: var(--papel);
+  font: 600 14px/1.1 var(--display);
+  box-shadow: 0 2px 0 rgba(61, 43, 39, 0.2);
+}
+.vitrina-quien button[aria-pressed='true'] { background: var(--mantequilla); }
+.vitrina-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+.vitrina-lista button:active { transform: translateY(2px); }
