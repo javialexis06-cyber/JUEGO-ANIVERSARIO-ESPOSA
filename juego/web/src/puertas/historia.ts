@@ -112,6 +112,16 @@ export const PUERTAS: Record<number, string[]> = {
   28: ['El mesero escondió la llave debajo de una taza. No le quites el ojo.'],
   29: ['El letrero de la entrada gira. Solo abre cuando muestra lo que sentimos.'],
   30: ['Ya cerraron… o eso dice el letrero. Tal vez hay que verlo desde otro lado.'],
+  31: ['Siempre buscábamos en el tablero el bus que iba a donde estaba el otro.', 'Hoy vamos a donde el mapa tiene un corazón.'],
+  32: ['La maleta de los viajes tiene candado. La clave siempre salía de las calcomanías.'],
+  33: ['El tablero de letras se enloqueció. Hay que pararlo en lo que siempre nos decimos.'],
+  34: ['El torniquete es delicado: ni muy lento ni muy rápido.'],
+  35: ['Planeamos una ruta que pasaba por todas las carreteras una sola vez.'],
+  36: ['Tres relojes siguen una regla. El cuarto se desordenó.'],
+  37: ['Cada vez que pasa un bus tiembla todo. Hay que quedarse quieto para que las cosas se acomoden.'],
+  38: ['La máquina de dulces… mis favoritos siempre fueron los de la fila B, columna 4.'],
+  39: ['Nuestra maleta es la roja con un corazón. No te vayas a equivocar.'],
+  40: ['El túnel es largo y oscuro. Cierra los ojos un momento… y al abrirlos, ya llegamos.'],
 };
 
 /** Ánimo (nunca pistas): tras varios intentos o un buen rato quieto. */

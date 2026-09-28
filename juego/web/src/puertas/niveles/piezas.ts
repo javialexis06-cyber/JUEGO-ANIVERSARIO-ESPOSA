@@ -1,6 +1,6 @@
 // Piezas que se repiten entre acertijos: llaves, muebles simples, planos para arrastrar y física de canicas.
 import * as THREE from 'three';
-import { caja, cilindro, en, esfera, grupo, mat, toro } from '../kit';
+import { caja, cilindro, en, esfera, grupo, letrero, mat, textoEn, toro } from '../kit';
 
 /** Plano de la pared del fondo (un poco por delante) para arrastrar cosas colgadas. */
 export const planoPared = (z = 0.04) => new THREE.Plane(new THREE.Vector3(0, 0, 1), -z);
@@ -359,5 +359,86 @@ export function mostrador(ancho: number, color = '#a5713f', tope = '#efe2d0') {
   g.add(en(caja(ancho, 0.95, 0.6, mat(color), 0.03), 0, 0.475, 0));
   g.add(en(caja(ancho + 0.08, 0.05, 0.68, mat(tope), 0.02), 0, 0.975, 0));
   for (let i = 0; i < Math.floor(ancho / 0.5); i++) g.add(en(caja(0.02, 0.6, 0.01, mat('#8e5b3c'), 0.005), -ancho / 2 + 0.25 + i * 0.5, 0.45, 0.305));
+  return g;
+}
+
+/** Reloj de pared (plano en z); con `mover` sus manecillas se arrastran. */
+export function relojPared(
+  c: import('../nivel').Ctx,
+  cx0: number,
+  cy0: number,
+  R: number,
+  nombre: string,
+  op: { hora?: [number, number]; mover?: boolean; alSoltar?: () => void; z?: number } = {},
+) {
+  const z = op.z ?? 0.03;
+  const cara = letrero(R * 2.2, R * 2.2, (cx, w, h) => {
+    cx.fillStyle = '#fff8ee';
+    cx.beginPath();
+    cx.arc(w / 2, h / 2, w * 0.48, 0, Math.PI * 2);
+    cx.fill();
+    cx.strokeStyle = '#3d2b27';
+    cx.lineWidth = w * 0.05;
+    cx.stroke();
+    for (let i = 1; i <= 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      textoEn(cx, String(i), w / 2 + Math.sin(a) * w * 0.36, h / 2 - Math.cos(a) * h * 0.36, w * 0.09, '#3d2b27', 700);
+    }
+  }, nombre, { transparente: true });
+  en(cara, cx0, cy0, z);
+  c.g.add(cara);
+  const manecilla = (largo: number, grosor: number, color: string, n: string, dz: number) => {
+    const piv = grupo(n);
+    piv.add(en(caja(grosor, largo, 0.012, mat(color), grosor / 3), 0, largo / 2 - largo * 0.1, 0));
+    en(piv, cx0, cy0, z + dz);
+    c.g.add(piv);
+    return piv;
+  };
+  const horario = manecilla(R * 0.55, R * 0.11, '#3d2b27', `${nombre} horario`, 0.02);
+  const minutero = manecilla(R * 0.82, R * 0.08, '#e4574b', `${nombre} minutero`, 0.03);
+  c.g.add(en(esfera(R * 0.07, mat('#d9b25a', { metal: 0.7, rough: 0.3 })), cx0, cy0, z + 0.04));
+  const angulo = (o: THREE.Object3D) => ((-o.rotation.z % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+  const poner = (h: number, m: number) => {
+    minutero.rotation.z = -(m / 60) * Math.PI * 2;
+    horario.rotation.z = -((h % 12) + m / 60) / 12 * Math.PI * 2;
+  };
+  if (op.hora) poner(...op.hora);
+  /** Hora que marca (horas 0–12 con decimales, minutos 0–60). */
+  const hora = () => ({ h: (angulo(horario) / (Math.PI * 2)) * 12, m: (angulo(minutero) / (Math.PI * 2)) * 60 });
+  /** ¿Marca h:m (con tolerancia)? */
+  const marca = (h: number, m: number, tolMin = 0.45, tolHora = 0.4) => {
+    const dif = (a: number, b: number) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b)));
+    return dif(angulo(minutero), (m / 60) * Math.PI * 2) < tolMin && dif(angulo(horario), (((h % 12) + m / 60) / 12) * Math.PI * 2) < tolHora;
+  };
+  if (op.mover) {
+    const toque = new THREE.Mesh(new THREE.CircleGeometry(R * 1.05, 32), new THREE.MeshBasicMaterial({ visible: false }));
+    toque.name = `${nombre} toque`;
+    en(toque, cx0, cy0, z + 0.06);
+    c.g.add(toque);
+    let moviendo: THREE.Object3D | null = null;
+    c.mantener(toque, (hit) => {
+      const d = Math.hypot(hit.point.x - cx0, hit.point.y - cy0);
+      const a = Math.atan2(hit.point.x - cx0, hit.point.y - cy0);
+      const dif = (o: THREE.Object3D) => Math.abs(Math.atan2(Math.sin(a - angulo(o)), Math.cos(a - angulo(o))));
+      moviendo = d > R * 0.62 ? minutero : dif(horario) < 0.35 || dif(horario) < dif(minutero) ? horario : minutero;
+    }, () => {
+      moviendo = null;
+      op.alSoltar?.();
+    });
+    const plano = new THREE.Plane(new THREE.Vector3(0, 0, 1), -(z + 0.06));
+    c.gesto.mover((x, y, abajo) => {
+      if (!abajo || !moviendo) return;
+      const p = c.enPlano(x, y, plano);
+      if (p) moviendo.rotation.z = -Math.atan2(p.x - cx0, p.y - cy0);
+    });
+  }
+  return { cara, horario, minutero, hora, marca, poner };
+}
+
+/** Banca de espera. */
+export function banca(ancho = 1.6, color = '#3c7a62') {
+  const g = grupo('banca');
+  g.add(en(caja(ancho, 0.07, 0.45, mat(color), 0.02), 0, 0.45, 0), en(caja(ancho, 0.4, 0.06, mat(color), 0.02), 0, 0.7, -0.2));
+  for (const sx of [-1, 1]) g.add(en(caja(0.06, 0.45, 0.4, mat('#5b6b7e', { metal: 0.4, rough: 0.4 }), 0.01), sx * (ancho / 2 - 0.1), 0.225, 0));
   return g;
 }

@@ -279,6 +279,57 @@ const noche: Luces = {
 };
 
 export const TEMAS: Record<number, Tema> = {
+  4: {
+    capitulo: 4,
+    luces: { fondo: '#c7d3dc', ambiente: '#8a9aa6', intensidadAmbiente: 0.95, sol: '#fff6ea', intensidadSol: 1.6, solDesde: [3, 7, 6], entorno: 0.55 },
+    puerta: 'corrediza',
+    armar(g) {
+      paredFondo(g, '#eef1ea', '#7fbfae', 1.1);
+      paredesLado(g, '#e8ece4', '#76b5a4', 1.1);
+      piso(g, baldosas('#e4e6e2', '#cfd4d0', '#b8bdb8', 4), 3);
+      techo(g, '#f4f6f2');
+      // Ventanal con los buses afuera
+      const buses = lienzo(512, 200, (cx, w, h) => {
+        const gr = cx.createLinearGradient(0, 0, 0, h);
+        gr.addColorStop(0, '#9fd3f0');
+        gr.addColorStop(1, '#e8f4f8');
+        cx.fillStyle = gr;
+        cx.fillRect(0, 0, w, h);
+        cx.fillStyle = '#8a8f96';
+        cx.fillRect(0, h * 0.78, w, h);
+        [['#e4574b', 20], ['#3c7a62', 190], ['#F7C948', 360]].forEach(([col, x]) => {
+          const X = Number(x);
+          cx.fillStyle = String(col);
+          cx.fillRect(X, h * 0.42, 150, h * 0.36);
+          cx.fillStyle = '#dff2fb';
+          for (let i = 0; i < 4; i++) cx.fillRect(X + 10 + i * 34, h * 0.48, 26, 22);
+          cx.fillStyle = '#2a211d';
+          cx.beginPath();
+          cx.arc(X + 30, h * 0.79, 12, 0, Math.PI * 2);
+          cx.arc(X + 120, h * 0.79, 12, 0, Math.PI * 2);
+          cx.fill();
+        });
+      });
+      const vista = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.95), new THREE.MeshBasicMaterial({ map: buses }));
+      en(vista, -2.35, 2.35, 0.02);
+      g.add(vista);
+      const mv = mat('#5b6b7e', { metal: 0.4, rough: 0.4 });
+      g.add(en(caja(2.5, 0.06, 0.06, mv, 0.01), -2.35, 2.83, 0.04), en(caja(2.5, 0.06, 0.06, mv, 0.01), -2.35, 1.87, 0.04));
+      for (const x of [-3.57, -2.35, -1.13]) g.add(en(caja(0.06, 1.0, 0.06, mv, 0.01), x, 2.35, 0.04));
+      // Reloj grande y letrero de la terminal
+      const cartel = letrero(1.6, 0.3, (cx, w, h) => {
+        cx.fillStyle = '#26375E';
+        cx.fillRect(0, 0, w, h);
+        cx.fillStyle = '#F7C948';
+        cx.textAlign = 'center';
+        cx.textBaseline = 'middle';
+        cx.font = `600 ${h * 0.55}px 'Fredoka', sans-serif`;
+        cx.fillText('TERMINAL DE LOS DOS', w / 2, h / 2 + 2);
+      }, 'cartel terminal');
+      en(cartel, 2.3, 2.75, 0.03);
+      g.add(cartel);
+    },
+  },
   3: {
     capitulo: 3,
     luces: { fondo: '#2a211d', ambiente: '#a0795c', intensidadAmbiente: 0.8, sol: '#ffe4c4', intensidadSol: 1.45, solDesde: [2, 6, 5.5], entorno: 0.45 },
