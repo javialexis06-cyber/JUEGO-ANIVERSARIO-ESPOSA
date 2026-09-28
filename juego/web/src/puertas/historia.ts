@@ -122,6 +122,16 @@ export const PUERTAS: Record<number, string[]> = {
   38: ['La máquina de dulces… mis favoritos siempre fueron los de la fila B, columna 4.'],
   39: ['Nuestra maleta es la roja con un corazón. No te vayas a equivocar.'],
   40: ['El túnel es largo y oscuro. Cierra los ojos un momento… y al abrirlos, ya llegamos.'],
+  41: ['Recogíamos conchas de la más chiquita a la más grande. Siempre en ese orden.'],
+  42: ['Hicimos un castillo de arena enorme. Algo quedó enterrado adentro.'],
+  43: ['Una botella con un mensaje viene flotando. Ojo con las rocas.'],
+  44: ['Ese cangrejo se robó la llave. Dicen que tiene muchísimas cosquillas.'],
+  45: ['Cuando la marea baja, se ven unos dibujos en la arena. Duran poquito.'],
+  46: ['Tu velerito de papel quedó en el charco. Sóplalo hasta el muelle.'],
+  47: ['Los cocos de esa palmera guardan sorpresas.'],
+  48: ['El faro parpadea un mensaje. En la cabaña está la tabla para leerlo.'],
+  49: ['Las estrellas de mar brillan todas juntas… o ninguna.'],
+  50: ['El atardecer más lindo del mundo. Ayúdale al sol a bajar.'],
 };
 
 /** Ánimo (nunca pistas): tras varios intentos o un buen rato quieto. */

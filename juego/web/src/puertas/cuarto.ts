@@ -252,6 +252,7 @@ export function cieloDia(arriba = '#8fcff2', abajo = '#dff2fb', nubes = true) {
 /** Telón de fondo (cielo, mar, montañas) detrás de la pared del fondo. */
 function telon(g: THREE.Group, tex: THREE.Texture, y = 3.5, z = -4) {
   const t = new THREE.Mesh(new THREE.PlaneGeometry(22, 11), new THREE.MeshBasicMaterial({ map: tex, fog: false }));
+  t.name = 'telon';
   en(t, 0, y, z);
   g.add(t);
 }
@@ -271,6 +272,65 @@ function cantero(g: THREE.Group, x: number, z: number, ancho: number, colores = 
   }
 }
 
+
+// ---------------------------------------------------------------------------
+// Playa: arena, mar, cabaña y palmeras
+// ---------------------------------------------------------------------------
+export function arenaTextura() {
+  const t = lienzo(512, 512, (c, w, h) => {
+    c.fillStyle = '#f1d9a8';
+    c.fillRect(0, 0, w, h);
+    let s = 11;
+    const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+    for (let i = 0; i < 5000; i++) {
+      c.fillStyle = r() > 0.5 ? 'rgba(200,160,100,0.35)' : 'rgba(255,245,220,0.5)';
+      c.fillRect(r() * w, r() * h, 2, 2);
+    }
+  });
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
+}
+
+export function cieloPlaya(atardecer = 0) {
+  return lienzo(512, 256, (c, w, h) => {
+    const g = c.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, atardecer ? '#6a5aa8' : '#6fc3ee');
+    g.addColorStop(0.55, atardecer ? '#f59f7a' : '#bfe6f7');
+    g.addColorStop(0.62, atardecer ? '#ffd27a' : '#e8f6fb');
+    g.addColorStop(0.63, atardecer ? '#3d6a9c' : '#3b8fc4');
+    g.addColorStop(1, atardecer ? '#2a4a78' : '#5fb0dc');
+    c.fillStyle = g;
+    c.fillRect(0, 0, w, h);
+    c.fillStyle = 'rgba(255,255,255,0.85)';
+    for (const [x, y, r] of [[90, 50, 18], [112, 46, 24], [134, 52, 16], [390, 70, 16], [410, 64, 22]]) {
+      c.beginPath();
+      c.arc(x, y, r, 0, Math.PI * 2);
+      c.fill();
+    }
+  });
+}
+
+/** Palmera sencilla: tronco curvo y hojas. */
+export function palmera(alto = 3.2, inclina = 0.4) {
+  const g = grupo('palmera');
+  const curva = new THREE.QuadraticBezierCurve3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(inclina * 0.3, alto * 0.5, 0), new THREE.Vector3(inclina, alto, 0));
+  const tronco = new THREE.Mesh(new THREE.TubeGeometry(curva, 16, 0.12, 10), mat('#a5713f'));
+  tronco.castShadow = true;
+  g.add(tronco);
+  for (let i = 0; i < 7; i++) {
+    const a = (i / 7) * Math.PI * 2;
+    const hoja = esfera(0.5, mat(i % 2 ? '#4f9a4f' : '#5fae5a'), undefined, 10);
+    hoja.scale.set(1.4, 0.12, 0.35);
+    hoja.rotation.y = a;
+    hoja.rotation.z = -0.35;
+    hoja.position.set(inclina + Math.cos(a) * 0.55, alto - 0.12, -Math.sin(a) * 0.55);
+    hoja.castShadow = true;
+    g.add(hoja);
+  }
+  for (let i = 0; i < 3; i++) g.add(en(esfera(0.1, mat('#6b4a33'), undefined, 10), inclina + (i - 1) * 0.12, alto - 0.18, 0.08));
+  return g;
+}
+
 // ---------------------------------------------------------------------------
 // Los diez escenarios
 // ---------------------------------------------------------------------------
@@ -279,6 +339,75 @@ const noche: Luces = {
 };
 
 export const TEMAS: Record<number, Tema> = {
+  5: {
+    capitulo: 5,
+    luces: { fondo: '#8fcff2', ambiente: '#c9a878', intensidadAmbiente: 1.0, sol: '#fff0d0', intensidadSol: 2.3, solDesde: [-4, 7, 7], entorno: 0.6, exposicion: 1.25 },
+    puerta: 'bambu',
+    armar(g) {
+      telon(g, cieloPlaya(), 3.2, -14);
+      // El mar (con olitas) detrás de la cabaña
+      const agua = lienzo(256, 256, (c, w, h) => {
+        c.fillStyle = '#4aa6d8';
+        c.fillRect(0, 0, w, h);
+        c.strokeStyle = 'rgba(255,255,255,0.35)';
+        c.lineWidth = 3;
+        for (let i = 0; i < 18; i++) {
+          c.beginPath();
+          const y = (i * 37) % h, x = (i * 71) % w;
+          c.moveTo(x, y);
+          c.quadraticCurveTo(x + 14, y - 6, x + 28, y);
+          c.stroke();
+        }
+      });
+      agua.wrapS = agua.wrapT = THREE.RepeatWrapping;
+      agua.repeat.set(6, 3);
+      const mar = new THREE.Mesh(new THREE.PlaneGeometry(40, 13), new THREE.MeshStandardMaterial({ map: agua, roughness: 0.25, metalness: 0.1 }));
+      mar.name = 'mar';
+      mar.rotation.x = -Math.PI / 2;
+      en(mar, 0, 0.01, -7.6);
+      g.add(mar);
+      const espuma = caja(40, 0.02, 0.25, mat('#ffffff', { rough: 0.6 }), 0.01);
+      en(espuma, 0, 0.02, -1.15);
+      g.add(espuma);
+      piso(g, arenaTextura(), 3, 40);
+      const orilla = new THREE.Mesh(new THREE.PlaneGeometry(40, 1.4), new THREE.MeshStandardMaterial({ map: arenaTextura(), roughness: 0.9 }));
+      orilla.rotation.x = -Math.PI / 2;
+      en(orilla, 0, 0.001, -0.65);
+      orilla.receiveShadow = true;
+      g.add(orilla);
+      // Cabaña de bambú alrededor de la puerta
+      const bambu = mat('#d9b77a');
+      const anchoCab = 3.4;
+      const lado = (anchoCab - HUECO.w) / 2;
+      for (const sx of [-1, 1]) {
+        for (let i = 0; i < Math.round(lado / 0.13); i++) {
+          const x = sx * (HUECO.w / 2 + 0.065 + i * 0.13);
+          const t = cilindro(0.065, 0.065, 3.0, i % 3 ? bambu : mat('#c9a25e'));
+          en(t, x, 1.5, -0.1);
+          g.add(t);
+        }
+      }
+      for (let i = 0; i < Math.round(HUECO.w / 0.13); i++) {
+        const t = cilindro(0.065, 0.065, 3.0 - HUECO.h, bambu);
+        en(t, -HUECO.w / 2 + 0.065 + i * 0.13, HUECO.h + (3.0 - HUECO.h) / 2, -0.1);
+        g.add(t);
+      }
+      const techo = caja(anchoCab + 1.0, 0.25, 2.2, mat('#c9a15a', { rough: 1 }), 0.1);
+      techo.rotation.x = 0.28;
+      en(techo, 0, 3.15, -0.6);
+      g.add(techo);
+      for (const x of [-anchoCab / 2 - 0.35, anchoCab / 2 + 0.35]) {
+        const barandal = caja(0.9, 0.08, 0.08, mat('#8a6a3c'), 0.02);
+        en(barandal, x + (x < 0 ? 0.2 : -0.2), 0.9, 0.1);
+        g.add(barandal);
+      }
+      const p1 = palmera(3.4, 0.5);
+      en(p1, -3.4, 0, -0.4);
+      const p2 = palmera(3.0, -0.45);
+      en(p2, 4.4, 0, 0.4);
+      g.add(p1, p2);
+    },
+  },
   4: {
     capitulo: 4,
     luces: { fondo: '#c7d3dc', ambiente: '#8a9aa6', intensidadAmbiente: 0.95, sol: '#fff6ea', intensidadSol: 1.6, solDesde: [3, 7, 6], entorno: 0.55 },
