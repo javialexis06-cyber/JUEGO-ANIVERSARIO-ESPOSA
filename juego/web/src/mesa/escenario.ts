@@ -128,11 +128,12 @@ export class Escenario {
     this.ultimo = ms;
     if (!this.m.el.listo || !this.lienzo.offsetParent) return;
     if (!this.congelado) this.paso(dt);
-    this.renderer.render(this.escena, this.camara);
+    if (!this.sin3d) this.renderer.render(this.escena, this.camara);
   }
 
-  /** Pruebas: el tiempo solo avanza con `simular`. */
+  /** Pruebas: el tiempo solo avanza con `simular`; `sin3d` no pinta (los navegadores de prueba van lentos). */
   congelado = new URLSearchParams(location.search).has('congelar');
+  sin3d = new URLSearchParams(location.search).has('sin3d');
 
   /** Pruebas en computadores lentos: adelanta la animación a pasos cortos y pinta una vez. */
   simular(segundos: number) {

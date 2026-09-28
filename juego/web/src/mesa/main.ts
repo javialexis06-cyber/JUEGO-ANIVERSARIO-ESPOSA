@@ -124,7 +124,8 @@ function pintarMenu() {
 
 function mostrar(id: 'menu' | 'partida' | 'final') {
   $('menu').hidden = id !== 'menu';
-  $('partida').hidden = id !== 'partida';
+  // El final sale encima del tablero: arriba siguen los muñequitos celebrando o haciendo drama
+  $('partida').hidden = id === 'menu';
   $('final').hidden = id !== 'final';
 }
 

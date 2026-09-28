@@ -114,7 +114,7 @@ async function celular(rol) {
   await p.exposeFunction('__srv', (a) => servidor(p, a));
   await p.addInitScript(CLIENTE, [rol]);
   paginas.add(p);
-  await p.goto(`${url}?rapido=4`, { waitUntil: 'domcontentloaded', timeout: 180000 });
+  await p.goto(`${url}?rapido=4&sin3d`, { waitUntil: 'domcontentloaded', timeout: 180000 });
   return p;
 }
 const revisar = (ok, texto) => {
