@@ -496,6 +496,16 @@ export const PUERTAS: Record<number, string[]> = {
   58: ['La luna crece y decrece. La tabla de piedra quiere sus fases en orden.'],
   59: ['El árbol está dormido. Solo abre a quien cierra los ojos con él… un buen rato.'],
   60: ['El árbol se despertó y quiere jugar a las adivinanzas.'],
+  61: ['¡Tiro al blanco! Dicen que los patitos con corazón traen premio.'],
+  62: ['La rueda de colores se desordenó. La banderita de arriba se acuerda de cómo iba.'],
+  63: ['¿Algodón de azúcar? Hay que darle vueltas… como las agujas del reloj.'],
+  64: ['La máquina de peluches. Ese osito café tiene algo brillante… ¡la llave!'],
+  65: ['El martillo de fuerza: primero se toma impulso… y luego, ¡pum!'],
+  66: ['La adivina dejó sus cartas. Dice que el futuro está en las parejas.'],
+  67: ['Hay que reventar globos en orden. Forman lo que te daría mil veces.'],
+  68: ['En el carrusel, el caballito dorado lleva la llave. Hay que agarrarla al vuelo.'],
+  69: ['La casa de los espejos: aquí todo está al revés. Hasta la clave.'],
+  70: ['Para entrar a la carpa hace falta el tiquete. La clave está en la letra pequeña.'],
 };
 
 /** Ánimo (nunca pistas): tras varios intentos o un buen rato quieto. */
