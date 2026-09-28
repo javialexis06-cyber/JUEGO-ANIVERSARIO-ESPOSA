@@ -14,6 +14,20 @@ con los dos muñequitos arriba reaccionando a cada jugada.
 Premios (monedas para la casa, por el sueldo pendiente como en el súper y Cien Puertas): contra la IA 8 / 15 / 25
 según la dificultad si ganas (2 si pierdes, 4 empate); los dos aquí 10; en línea 12 al que gana y 6 al otro.
 
+## Estado
+
+Los cuatro juegos están completos y probados en los tres modos (contra la IA, los dos aquí y en línea).
+
+| Juego | IA difícil contra la fácil | Detalles |
+|---|---|---|
+| Dados Party | gana 82 % (promedia 254 puntos, casi el óptimo) | Expectimax sobre todas las formas de guardar dados |
+| Mancala | gana 99,8 % | Alfa-beta con turnos extra y final exacto |
+| Puntos y Cajas | gana 99,8 % | Jugada maestra (regalar las dos últimas de una cadena) y final resuelto |
+| Parchís | gana 95 % | Expectimax sobre el dado del otro (el parchís es mucha suerte) |
+
+`node scripts/probar-mesa-linea.mjs <juego>` juega una partida completa entre dos celulares con un Supabase de
+mentiras que pierde el 8 % de los mensajes: los cuatro terminan con el mismo estado en los dos.
+
 ## Pruebas
 
 `mesa.html?juego=dados&modo=local&rol=el&empieza=el&semilla=7&rapido=4` entra directo a una partida.
