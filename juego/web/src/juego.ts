@@ -579,7 +579,7 @@ export class Juego {
     }
     const quedan = this.clientes.length + this.ladrones.length + this.ninas.length;
     const acabo = this.cerrado && this.creados >= this.llegadas.length && quedan === 0;
-    const forzado = this.tiempo >= this.nivel.duracion_s + 60;
+    const forzado = this.tiempo >= this.nivel.duracion_s + 40;
     if (acabo || forzado) this.finalizar();
   }
 

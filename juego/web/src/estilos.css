@@ -1348,3 +1348,62 @@ button:focus-visible {
   margin: 0;
   font: 400 13.5px/1.35 Georgia, 'Times New Roman', serif;
 }
+
+/* Carrito de reposición (a la derecha): un hueco por estante que alcanza a llenar en un viaje */
+.carrito-hud {
+  position: fixed;
+  right: calc(env(safe-area-inset-right, 0px) + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 11;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 8px 7px;
+  border-radius: 16px;
+  background: rgba(255, 248, 238, 0.94);
+  box-shadow: 0 3px 0 rgba(61, 43, 39, 0.22);
+  pointer-events: none;
+}
+.carrito-ico {
+  width: 34px;
+  height: 28px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 32'%3E%3Cpath d='M2 4h6l4 18h20l4-13H10' fill='none' stroke='%233d2b27' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M11 9h25l-4 13H13z' fill='%23e4574b'/%3E%3Ccircle cx='15' cy='27' r='3' fill='%233d2b27'/%3E%3Ccircle cx='29' cy='27' r='3' fill='%233d2b27'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.carrito-hud.cargando .carrito-ico { animation: sacudir-carrito 0.35s ease-in-out infinite; }
+@keyframes sacudir-carrito {
+  50% { transform: translateY(-3px) rotate(-6deg); }
+}
+#carrito-huecos { display: grid; gap: 6px; }
+.hueco-carrito {
+  position: relative;
+  width: 50px;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 4px 3px 5px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #eadfce;
+}
+.hueco-carrito img { width: 34px; height: 34px; object-fit: contain; }
+.hueco-carrito b {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--menta-oscura);
+  color: var(--papel);
+  font: 700 12px/18px var(--texto);
+  text-align: center;
+}
+.barrita { width: 40px; height: 6px; border-radius: 3px; background: #eadfce; overflow: hidden; }
+.barrita i { display: block; height: 100%; background: var(--menta-oscura); border-radius: 3px; transition: width 0.3s; }
+.hueco-carrito.vacio { height: 54px; place-items: center; box-shadow: inset 0 0 0 2px #eadfce; background: transparent; border: 2px dashed #d8cfc3; box-sizing: border-box; }
+.hueco-carrito.vacio span { font: 700 11px var(--texto); color: var(--cacao-suave); }
+@media (max-height: 420px) {
+  .carrito-hud { top: auto; bottom: 70px; transform: none; }
+}

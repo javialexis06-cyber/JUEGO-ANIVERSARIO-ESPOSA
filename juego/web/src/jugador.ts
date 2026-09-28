@@ -1,6 +1,6 @@
 // Él: fila de acciones por toques (reponer, cobrar, limpiar, recoger canastas, atrapar) y el carrito de reposición.
 import * as THREE from 'three';
-import { CAJAS_CARRITO, CARGA_BODEGA, COMBO, RECOGER, REPONER, VELOCIDAD_EL } from './balance';
+import { CARGA_BODEGA, COMBO, ESTANTES_CARRITO, RECOGER, REPONER, VELOCIDAD_EL } from './balance';
 import type { Juego } from './juego';
 import { P } from './navegacion';
 import { Personaje } from './personaje';
@@ -22,10 +22,21 @@ export type NuevaTarea = Tarea extends infer T ? (T extends Tarea ? Omit<T, 'id'
 let siguienteId = 1;
 const distancia = (a: P, b: P) => Math.hypot(a.x - b.x, a.y - b.y);
 
+/** Lo que lleva el carrito para un estante: su sección y las unidades que quedan (se carga lo justo para llenarlo). */
+export interface CargaCarrito {
+  seccion: string;
+  producto: string;
+  unidades: number;
+  max: number;
+}
+
 export class Jugador extends Personaje {
   tareas: Tarea[] = [];
   actual: Tarea | null = null;
-  cajas: string[] = [];
+  /** Lo que lleva en el carrito (se ve arriba en la pantalla). */
+  carga: CargaCarrito[] = [];
+  /** Está cargando en la bodega (para animar el carrito de la pantalla). */
+  cargandoBodega = false;
   private carrito = new THREE.Group();
   private huecosCarrito: THREE.Object3D[] = [];
   private accion = 0;
@@ -47,8 +58,28 @@ export class Jugador extends Personaje {
   private get mejoras() {
     return this.juego.mejoras;
   }
+  /** Estantes que alcanza a llenar en un viaje. */
   get capacidadCarrito() {
-    return CAJAS_CARRITO[Math.max(1, Math.min(3, this.mejoras.carrito ?? 1))];
+    return ESTANTES_CARRITO[Math.max(1, Math.min(3, this.mejoras.carrito ?? 1))];
+  }
+  /** Secciones que lleva (una por estante cargado que todavía tiene algo). */
+  get cajas() {
+    return this.carga.filter((c) => c.unidades > 0).map((c) => c.seccion);
+  }
+  unidadesDe(seccion: string) {
+    return this.carga.reduce((a, c) => a + (c.seccion === seccion ? c.unidades : 0), 0);
+  }
+  /** Saca del carrito hasta `n` unidades de una sección y dice cuántas sacó. */
+  private sacar(seccion: string, n: number) {
+    let sacadas = 0;
+    for (const c of this.carga) {
+      if (c.seccion !== seccion || sacadas >= n) continue;
+      const k = Math.min(c.unidades, n - sacadas);
+      c.unidades -= k;
+      sacadas += k;
+    }
+    this.carga = this.carga.filter((c) => c.unidades > 0);
+    return sacadas;
   }
 
   async preparar(productos: Productos) {
@@ -143,34 +174,40 @@ export class Jugador extends Personaje {
     if (t.tipo !== 'caja') this.cobrosSeguidos = 0;
     if (t.tipo === 'reponer') {
       const v = t.vitrina;
+      const falta = () => Math.max(0, v.capacidad - v.stock);
       const irAVitrina = () =>
         this.ir(nav, v.frente(), () => {
           this.mirarA(v.centro());
           if (v.stock >= v.capacidad || !v.nivel) return this.terminar(); // ya la llenó alguien más
           this.hacer(REPONER.base * REPONER.mejora[this.mejoras.alacena ?? 0], 'reponer', () => {
-            v.ponerStock(v.capacidad);
-            const i = this.cajas.indexOf(v.seccion);
-            if (i >= 0) this.cajas.splice(i, 1);
+            const puestas = this.sacar(v.seccion, falta());
+            v.ponerStock(v.stock + puestas);
             this.actualizarCarrito();
-            j.alReponer(v);
-            this.repuestasEnViaje++;
-            if (this.repuestasEnViaje >= 2) j.bono(COMBO.porVitrinaExtra, `Combo x${this.repuestasEnViaje}`, v.centro(), this.repuestasEnViaje);
+            if (puestas > 0) {
+              j.alReponer(v);
+              this.repuestasEnViaje++;
+              if (this.repuestasEnViaje >= 2) j.bono(COMBO.porVitrinaExtra, `Combo x${this.repuestasEnViaje}`, v.centro(), this.repuestasEnViaje);
+            }
             this.terminar();
           });
         });
-      if (this.cajas.includes(v.seccion)) irAVitrina();
+      // Ya está llena (la llenó alguien más): nada que hacer
+      if (falta() <= 0 || !v.nivel) return this.terminar();
+      // Si lo que queda en el carrito alcanza para llenarla, va directo; si no, pasa por la bodega
+      if (this.unidadesDe(v.seccion) >= falta()) irAVitrina();
       else
         this.ir(nav, j.tienda.bodega, () => {
           this.mirarA({ x: j.tienda.bodega.x, y: j.tienda.bodega.y + 1 });
-          // Carga en un solo viaje las cajas de esta y de las siguientes reposiciones de la fila
+          // Carga lo justo para dejar llena esta vitrina (y las siguientes de la fila, si el carrito es grande).
+          // Lo que sobraba de otras secciones se queda en la bodega.
           const pendientes = [v, ...this.tareas.filter((x) => x.tipo === 'reponer').map((x) => (x as any).vitrina as Vitrina)];
-          const cargar: string[] = [];
-          for (const p of pendientes) if (cargar.length < this.capacidadCarrito && !cargar.includes(p.seccion)) cargar.push(p.seccion);
-          const tiempo = (CARGA_BODEGA.base + CARGA_BODEGA.porCaja * cargar.length) * CARGA_BODEGA.mejora[this.mejoras.bodega ?? 0];
+          const cargar: Vitrina[] = [];
+          for (const p of pendientes) if (cargar.length < this.capacidadCarrito && !cargar.includes(p) && p.capacidad > 0) cargar.push(p);
+          const tiempo = (CARGA_BODEGA.base + CARGA_BODEGA.porEstante * cargar.length) * CARGA_BODEGA.mejora[this.mejoras.bodega ?? 0];
+          this.cargandoBodega = true;
           this.hacer(tiempo, 'reponer', () => {
-            // Se repite la sección si hay dos vitrinas iguales en la fila (una caja por vitrina)
-            this.cajas = [];
-            for (const p of pendientes) if (this.cajas.length < this.capacidadCarrito) this.cajas.push(p.seccion);
+            this.cargandoBodega = false;
+            this.carga = cargar.map((p) => ({ seccion: p.seccion, producto: p.productos[0], unidades: p.capacidad, max: p.capacidad }));
             this.repuestasEnViaje = 0;
             this.actualizarCarrito();
             irAVitrina();

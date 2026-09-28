@@ -115,7 +115,7 @@ export class Cliente extends Personaje {
     this.mirarA(item.vitrina.centro());
     if (item.vitrina.stock > 0) {
       this.estado = 'tomando';
-      this.accion = 0.6;
+      this.accion = 0.4;
       this.pose('tomar');
     } else {
       this.estado = 'esperando';
@@ -210,7 +210,7 @@ export class Cliente extends Personaje {
       if (charco && !this.charcosPisados.has(charco.id)) {
         this.charcosPisados.add(charco.id);
         this.paciencia -= RESBALON;
-        this.pausa = 0.8;
+        this.pausa = 0.6;
         j.resbalon(this);
       }
     }
@@ -239,7 +239,7 @@ export class Cliente extends Personaje {
             this.paso++;
             this.soltarBasura();
             this.siguiente();
-          } else this.accion = 0.5;
+          } else this.accion = 0.35;
         } else {
           this.estado = 'esperando';
           this.quieto();

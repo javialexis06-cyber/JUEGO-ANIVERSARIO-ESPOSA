@@ -26,7 +26,7 @@ export class Ayudante extends Personaje {
 
   constructor(public tipo: TipoAyudante, pos: P, escala: number, private juego: Juego) {
     super(pos, escala);
-    this.velocidad = tipo === 'guardia' ? 1.9 : AYUDANTE.velocidad;
+    this.velocidad = tipo === 'guardia' ? 2.5 : AYUDANTE.velocidad;
   }
 
   async preparar(productos: Productos) {
@@ -188,7 +188,7 @@ export class Ayudante extends Personaje {
           } else if (m.tipo === 'caidos' && m.vitrina) {
             const v = m.vitrina;
             this.ir(j.tienda.nav, v.frente(), () =>
-              this.hacer(0.8, 'reponer', () => {
+              this.hacer(0.6, 'reponer', () => {
                 v.ponerStock(v.stock + (m.unidades ?? 1));
                 j.alReponer(v);
                 this.libre();

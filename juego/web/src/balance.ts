@@ -2,21 +2,23 @@
 import type { P } from './navegacion';
 
 // ---------- Vitrinas ----------
-/** Unidades por tipo de vitrina y nivel: en nivel 1 alcanza para 1 o 2 clientes antes de quedar vacía. */
+/** Unidades por tipo de vitrina y nivel (el carrito carga lo justo para llenar una: cada viaje rinde lo que ella tenga). */
 export const CAPACIDAD: Record<string, number[]> = {
-  estante: [0, 3, 6, 10], frutas: [0, 3, 6, 10], nevera: [0, 3, 6, 9], vitrina: [0, 2, 4, 7],
-  congelador: [0, 3, 5, 8], panaderia: [0, 3, 5, 8], bebidas: [0, 3, 6, 10],
+  estante: [0, 5, 8, 12], frutas: [0, 5, 8, 12], nevera: [0, 5, 8, 11], vitrina: [0, 4, 6, 9],
+  congelador: [0, 5, 7, 10], panaderia: [0, 5, 7, 10], bebidas: [0, 5, 8, 12],
 };
 /** Monedas por unidad vendida. */
 export const PRECIO: Record<string, number> = { frutas: 5, lacteos: 6, abarrotes: 6, bebidas: 5, panaderia: 6, congelados: 8, carnes: 9 };
 
 // ---------- Él y las mejoras que lo aceleran ----------
-export const VELOCIDAD_EL = [1.9, 2.15, 2.45, 2.75]; // m/s según «zapatos»
-export const CARGA_BODEGA = { base: 2.4, porCaja: 0.35, mejora: [1, 0.72, 0.52, 0.36] }; // s, × «bodega»
-export const REPONER = { base: 2.2, mejora: [1, 0.72, 0.52, 0.36] }; // s por vitrina, × «alacena»
-export const CAJAS_CARRITO = [0, 3, 5, 7]; // cajas por viaje según «carrito»
-export const COBRO = { base: [0, 1.8, 1.2, 0.8], porUnidad: [0, 0.7, 0.45, 0.3] }; // s por cliente, según nivel de la caja
-export const RECOGER = { basura: 0.9, botar: 0.6, trapear: 2.4, caidos: 1.4, canasta: 0.6, calmar: 0.8 };
+// (todo va más rápido que al principio: los días duran 1:30)
+export const VELOCIDAD_EL = [2.6, 2.95, 3.3, 3.7]; // m/s según «zapatos»
+export const CARGA_BODEGA = { base: 1.5, porEstante: 0.25, mejora: [1, 0.72, 0.52, 0.36] }; // s, × «bodega»
+export const REPONER = { base: 1.4, mejora: [1, 0.72, 0.52, 0.36] }; // s por vitrina, × «alacena»
+/** Estantes que alcanza a llenar el carrito en un viaje, según «carrito»: carga lo justo para dejar cada uno lleno. */
+export const ESTANTES_CARRITO = [0, 1, 2, 3];
+export const COBRO = { base: [0, 1.2, 0.8, 0.55], porUnidad: [0, 0.45, 0.3, 0.2] }; // s por cliente, según nivel de la caja
+export const RECOGER = { basura: 0.6, botar: 0.4, trapear: 1.6, caidos: 0.9, canasta: 0.4, calmar: 0.55 };
 
 // ---------- Clientes ----------
 export type TipoCliente = 'abuelita' | 'mama' | 'adolescente' | 'ejecutivo' | 'deportista' | 'famoso';
@@ -30,12 +32,12 @@ export interface DatosCliente {
   desde: number; // día de la tiendita en que aparece
 }
 export const CLIENTES: Record<TipoCliente, DatosCliente> = {
-  abuelita: { nombre: 'Abuelita', velocidad: 0.85, paciencia: 70, basura: 0, propinaExtra: 0, prefiere: ['panaderia', 'lacteos', 'frutas'], desde: 1 },
-  mama: { nombre: 'Mamá', velocidad: 1.1, paciencia: 55, basura: 0, propinaExtra: 0, prefiere: ['lacteos', 'frutas', 'abarrotes'], desde: 1 },
-  adolescente: { nombre: 'Adolescente', velocidad: 1.35, paciencia: 42, basura: 0.5, propinaExtra: 0, prefiere: ['bebidas', 'abarrotes', 'congelados'], desde: 6 },
-  ejecutivo: { nombre: 'Ejecutivo apurado', velocidad: 1.5, paciencia: 32, basura: 0, propinaExtra: 3, prefiere: ['bebidas', 'congelados', 'abarrotes'], desde: 11 },
-  deportista: { nombre: 'Chica deportista', velocidad: 1.45, paciencia: 45, basura: 0, propinaExtra: 1, prefiere: ['frutas', 'bebidas'], desde: 16 },
-  famoso: { nombre: 'Famoso', velocidad: 1.0, paciencia: 36, basura: 0, propinaExtra: 12, prefiere: ['bebidas', 'panaderia', 'frutas'], desde: 99 },
+  abuelita: { nombre: 'Abuelita', velocidad: 1.15, paciencia: 63, basura: 0, propinaExtra: 0, prefiere: ['panaderia', 'lacteos', 'frutas'], desde: 1 },
+  mama: { nombre: 'Mamá', velocidad: 1.5, paciencia: 50, basura: 0, propinaExtra: 0, prefiere: ['lacteos', 'frutas', 'abarrotes'], desde: 1 },
+  adolescente: { nombre: 'Adolescente', velocidad: 1.8, paciencia: 38, basura: 0.5, propinaExtra: 0, prefiere: ['bebidas', 'abarrotes', 'congelados'], desde: 6 },
+  ejecutivo: { nombre: 'Ejecutivo apurado', velocidad: 2.0, paciencia: 29, basura: 0, propinaExtra: 3, prefiere: ['bebidas', 'congelados', 'abarrotes'], desde: 11 },
+  deportista: { nombre: 'Chica deportista', velocidad: 1.95, paciencia: 40, basura: 0, propinaExtra: 1, prefiere: ['frutas', 'bebidas'], desde: 16 },
+  famoso: { nombre: 'Famoso', velocidad: 1.35, paciencia: 32, basura: 0, propinaExtra: 12, prefiere: ['bebidas', 'panaderia', 'frutas'], desde: 99 },
 };
 /** Ritmo al que baja la paciencia según lo que esté haciendo el cliente. */
 export const RITMO_PACIENCIA = {
@@ -49,13 +51,13 @@ export const UNIDADES_MAX = (dia: number) => (dia <= 2 ? 1 : 2); // unidades que
 
 // ---------- Problemas del día ----------
 export const PROBLEMAS = {
-  derrameCada: 38, // s entre derrames (el día lluvioso, la mitad)
-  ladronVel: 1.45,
+  derrameCada: 26, // s entre derrames (el día lluvioso, la mitad)
+  ladronVel: 1.95,
   ladronRoba: 2,
-  ninaVel: 1.8,
+  ninaVel: 2.4,
   ninaTumba: 2,
   ninaVitrinas: 4,
-  famosoMirar: 4.5, // s que los demás se quedan mirando
+  famosoMirar: 3, // s que los demás se quedan mirando
 };
 export const CANASTAS_INICIO = 8;
 export const CANASTA_ABANDONO = { enojado: 0.3, normal: 0.05 };
@@ -90,23 +92,23 @@ export interface Mejora {
 }
 export const MEJORAS: Mejora[] = [
   { id: 'zapatos', grupo: 'Él', nombre: 'Tenis para Él', desde: 2, niveles: [
-    { precio: 70, texto: 'Camina 15 % más rápido' }, { precio: 150, texto: 'Camina 30 % más rápido' }, { precio: 260, texto: 'Camina 47 % más rápido' }] },
-  { id: 'carrito', grupo: 'Él', nombre: 'Carrito de reposición', desde: 3, niveles: [
-    { precio: 110, texto: 'Lleva 5 cajas por viaje (ahora 3)' }, { precio: 240, texto: 'Lleva 7 cajas por viaje' }] },
+    { precio: 50, texto: 'Camina 15 % más rápido' }, { precio: 105, texto: 'Camina 30 % más rápido' }, { precio: 180, texto: 'Camina 47 % más rápido' }] },
+  { id: 'carrito', grupo: 'Él', nombre: 'Carrito grande', desde: 3, niveles: [
+    { precio: 75, texto: 'Alcanza para llenar 2 estantes por viaje (ahora 1)' }, { precio: 170, texto: 'Alcanza para 3 estantes por viaje' }] },
   { id: 'bodega', grupo: 'Bodega', nombre: 'Bodega ordenada', desde: 2, niveles: [
-    { precio: 60, texto: 'Carga las cajas 28 % más rápido' }, { precio: 130, texto: 'Carga las cajas 48 % más rápido' }, { precio: 230, texto: 'Carga las cajas 64 % más rápido' }] },
+    { precio: 40, texto: 'Carga las cajas 28 % más rápido' }, { precio: 90, texto: 'Carga las cajas 48 % más rápido' }, { precio: 160, texto: 'Carga las cajas 64 % más rápido' }] },
   { id: 'alacena', grupo: 'Bodega', nombre: 'Reposición rápida', desde: 3, niveles: [
-    { precio: 60, texto: 'Llena las vitrinas 28 % más rápido' }, { precio: 130, texto: 'Llena las vitrinas 48 % más rápido' }, { precio: 230, texto: 'Llena las vitrinas 64 % más rápido' }] },
-  { id: 'planta', grupo: 'Tienda', nombre: 'Matera con flores', desde: 3, niveles: [{ precio: 50, texto: 'Los clientes pierden paciencia 10 % más lento' }] },
-  { id: 'parlante', grupo: 'Tienda', nombre: 'Música en la tienda', desde: 6, niveles: [{ precio: 90, texto: 'Otro 10 % más de paciencia' }] },
-  { id: 'canastas', grupo: 'Tienda', nombre: 'Más canastas', desde: 6, niveles: [{ precio: 60, texto: '11 canastas en la entrada (ahora 8)' }] },
-  { id: 'caneca2', grupo: 'Tienda', nombre: 'Segunda caneca', desde: 7, niveles: [{ precio: 70, texto: 'Una caneca al fondo: menos camino para botar basura' }] },
-  { id: 'globos', grupo: 'Tienda', nombre: 'Globos de fiesta', desde: 10, niveles: [{ precio: 120, texto: 'Otro 10 % más de paciencia' }] },
-  { id: 'camara', grupo: 'Tienda', nombre: 'Cámara de seguridad', desde: 12, niveles: [{ precio: 140, texto: 'El ladrón se ve desde que entra y corre más lento' }] },
-  { id: 'cajera', grupo: 'Ayudantes', nombre: 'Cajera', desde: 7, niveles: [{ precio: 380, texto: 'Cobra sola en la caja, aunque más despacio que Él' }] },
-  { id: 'aseo', grupo: 'Ayudantes', nombre: 'Aseo', desde: 9, niveles: [{ precio: 280, texto: 'Recoge basura, trapea charcos y levanta productos caídos' }] },
-  { id: 'reponedor', grupo: 'Ayudantes', nombre: 'Reponedor', desde: 10, niveles: [{ precio: 380, texto: 'Repone solo las vitrinas que están por acabarse' }] },
-  { id: 'guardia', grupo: 'Ayudantes', nombre: 'Guardia', desde: 13, niveles: [{ precio: 330, texto: 'Atrapa ladrones y calma a la niña traviesa' }] },
+    { precio: 40, texto: 'Llena las vitrinas 28 % más rápido' }, { precio: 90, texto: 'Llena las vitrinas 48 % más rápido' }, { precio: 160, texto: 'Llena las vitrinas 64 % más rápido' }] },
+  { id: 'planta', grupo: 'Tienda', nombre: 'Matera con flores', desde: 3, niveles: [{ precio: 35, texto: 'Los clientes pierden paciencia 10 % más lento' }] },
+  { id: 'parlante', grupo: 'Tienda', nombre: 'Música en la tienda', desde: 6, niveles: [{ precio: 65, texto: 'Otro 10 % más de paciencia' }] },
+  { id: 'canastas', grupo: 'Tienda', nombre: 'Más canastas', desde: 6, niveles: [{ precio: 40, texto: '11 canastas en la entrada (ahora 8)' }] },
+  { id: 'caneca2', grupo: 'Tienda', nombre: 'Segunda caneca', desde: 7, niveles: [{ precio: 50, texto: 'Una caneca al fondo: menos camino para botar basura' }] },
+  { id: 'globos', grupo: 'Tienda', nombre: 'Globos de fiesta', desde: 10, niveles: [{ precio: 85, texto: 'Otro 10 % más de paciencia' }] },
+  { id: 'camara', grupo: 'Tienda', nombre: 'Cámara de seguridad', desde: 12, niveles: [{ precio: 100, texto: 'El ladrón se ve desde que entra y corre más lento' }] },
+  { id: 'cajera', grupo: 'Ayudantes', nombre: 'Cajera', desde: 7, niveles: [{ precio: 265, texto: 'Cobra sola en la caja, aunque más despacio que Él' }] },
+  { id: 'aseo', grupo: 'Ayudantes', nombre: 'Aseo', desde: 9, niveles: [{ precio: 195, texto: 'Recoge basura, trapea charcos y levanta productos caídos' }] },
+  { id: 'reponedor', grupo: 'Ayudantes', nombre: 'Reponedor', desde: 10, niveles: [{ precio: 265, texto: 'Repone solo las vitrinas que están por acabarse' }] },
+  { id: 'guardia', grupo: 'Ayudantes', nombre: 'Guardia', desde: 13, niveles: [{ precio: 230, texto: 'Atrapa ladrones y calma a la niña traviesa' }] },
 ];
 
 /** Ayudas de un solo uso: se compran entre días y se usan con un botón durante el día. */
@@ -119,9 +121,9 @@ export interface Ayuda {
   duracion: number;
 }
 export const AYUDAS: Ayuda[] = [
-  { id: 'cafe', nombre: 'Tinto', texto: 'Él corre 40 % más rápido por 20 s', precio: 25, desde: 4, duracion: 20 },
-  { id: 'musica', nombre: 'Canción favorita', texto: 'Nadie pierde paciencia por 12 s', precio: 35, desde: 6, duracion: 12 },
-  { id: 'limpieza', nombre: 'Limpieza total', texto: 'Deja la tienda limpia al instante', precio: 35, desde: 8, duracion: 0 },
+  { id: 'cafe', nombre: 'Tinto', texto: 'Él corre 40 % más rápido por 15 s', precio: 20, desde: 4, duracion: 15 },
+  { id: 'musica', nombre: 'Canción favorita', texto: 'Nadie pierde paciencia por 10 s', precio: 25, desde: 6, duracion: 10 },
+  { id: 'limpieza', nombre: 'Limpieza total', texto: 'Deja la tienda limpia al instante', precio: 25, desde: 8, duracion: 0 },
 ];
 export const AYUDAS_MAX = 3;
 
@@ -129,4 +131,4 @@ export const AYUDAS_MAX = 3;
 export const COMBO = { cajaMax: 5, porVitrinaExtra: 2 };
 
 // ---------- Ayudantes ----------
-export const AYUDANTE = { velocidad: 1.45, lentitud: 1.3, lentitudCajera: 1.7, cargaReponedor: 2, umbralReponedor: 0.34 };
+export const AYUDANTE = { velocidad: 1.95, lentitud: 1.3, lentitudCajera: 1.7, cargaReponedor: 2, umbralReponedor: 0.34 };

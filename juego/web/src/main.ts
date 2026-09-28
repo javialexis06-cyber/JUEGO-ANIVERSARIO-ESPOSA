@@ -25,9 +25,10 @@ const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const NIVELES_JUGABLES = 25;
-const PRECIO_COMPRA: Record<string, number> = { frutas: 60, abarrotes: 60, bebidas: 60, lacteos: 80, panaderia: 80, congelados: 100, carnes: 100 };
-const PRECIO_MEJORA_VITRINA = 90;
-const PRECIO_MEJORA_CAJA = 120;
+// (los días duran la mitad que antes y se gana menos por día: todo cuesta un 30 % menos)
+const PRECIO_COMPRA: Record<string, number> = { frutas: 40, abarrotes: 40, bebidas: 40, lacteos: 55, panaderia: 55, congelados: 70, carnes: 70 };
+const PRECIO_MEJORA_VITRINA = 65;
+const PRECIO_MEJORA_CAJA = 85;
 /** Producto de muestra por sección (para los íconos de «qué prefiere cada cliente»). */
 const MUESTRA: Record<string, string> = { frutas: 'manzana', lacteos: 'leche', abarrotes: 'enlatado', bebidas: 'gaseosa', panaderia: 'pan', congelados: 'helado', carnes: 'pollo' };
 

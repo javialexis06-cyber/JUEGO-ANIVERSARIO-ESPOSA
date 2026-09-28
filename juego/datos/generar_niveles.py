@@ -29,8 +29,11 @@ TIENDAS = {1: 'Tiendita de barrio', 2: 'Minimercado', 3: 'Supermercado', 4: 'Hip
 DIAS = 25
 FACTOR_PAREJA = 1.5
 
-BASE_CLIENTES = {1: 8, 2: 12, 3: 15, 4: 18}      # clientes el día 1 (modo solitario)
+BASE_CLIENTES = {1: 8, 2: 12, 3: 15, 4: 18}      # clientes el día 1 (modo solitario) en un día de 3 minutos
 PASO_CLIENTES = {1: 0.45, 2: 0.5, 3: 0.55, 4: 0.6}  # clientes extra por día dentro de la tienda
+# Los días duran 1:30 (antes 3:00) y todo va más rápido: llega el 70 % de la gente de antes, más seguido
+FACTOR_CLIENTES = 0.7
+DURACION_BASE = 90
 PRECIO_MEDIO = {1: 5.6, 2: 6.4, 3: 7.2, 4: 8.0}   # monedas por producto (promedio de las vitrinas de cada tienda)
 ESPERA_CAJA = {1: 12, 2: 10, 3: 9, 4: 8}           # segundos máximos de espera promedio en caja
 VACIA_MAX = {1: 25, 2: 22, 3: 19, 4: 16}           # segundos máximos que una vitrina puede quedar vacía
@@ -115,7 +118,7 @@ def habilitado(cosa, s, d):
 
 
 def clientes(s, d, evento):
-    n = BASE_CLIENTES[s] + PASO_CLIENTES[s] * (d - 1)
+    n = (BASE_CLIENTES[s] + PASO_CLIENTES[s] * (d - 1)) * FACTOR_CLIENTES
     nt = noticia(d, evento)
     if nt:
         n *= nt['clientes']
@@ -178,7 +181,7 @@ def objetivo(clave, s, d, n, evento):
         return clave, {m: f'Vender {meta[m]} productos preparados' for m in modos}, meta
     if clave == 'equipo':
         # En pareja: combos en equipo. En solitario: porcentaje de clientes felices.
-        combos = 2 + d // 6 + (s - 1)
+        combos = 1 + d // 8 + (s - 1)
         felices = min(90, 65 + d)
         return clave, {'solitario': f'{felices} % de clientes felices', 'pareja': f'{combos} combos en pareja'}, \
             {'solitario': felices, 'pareja': combos}
@@ -223,7 +226,7 @@ def generar():
             n1 = clientes(s, d, evento)
             n = {'solitario': n1, 'pareja': round(n1 * FACTOR_PAREJA)}
             estrellas = [objetivo('ventas', s, d, n, evento)] + [objetivo(k, s, d, n, evento) for k in elegir_objetivos(s, d, evento)]
-            duracion = 180 + 5 * (d // 5) + (30 if evento else 0) + (60 if evento in ('Gran día', 'Nuestro aniversario') else 0)
+            duracion = DURACION_BASE + 3 * (d // 5) + (20 if evento else 0) + (30 if evento in ('Gran día', 'Nuestro aniversario') else 0)
             paciencia = max(0.7, 1.0 - 0.008 * (d - 1) - 0.03 * (s - 1))
             nt = noticia(d, evento)
             if nt:

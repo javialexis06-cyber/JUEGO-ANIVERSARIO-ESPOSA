@@ -79,8 +79,29 @@ export class UI {
       obj.appendChild(chip);
     }
     this.pintarAyudas(ayudas, j);
+    this.claveCarrito = '';
     mostrar('hud');
     mostrar('alertas');
+    mostrar('carrito');
+  }
+
+  private claveCarrito = '';
+  /** El carrito de la pantalla: un hueco por estante que alcanza a llenar, con lo que le queda de cada producto. */
+  private pintarCarrito(j: Juego) {
+    const jug = j.jugador;
+    const huecos = Array.from({ length: jug.capacidadCarrito }, (_, i) => jug.carga[i] ?? null);
+    const clave = `${jug.cargandoBodega}|${huecos.map((h) => (h ? `${h.producto}:${h.unidades}/${h.max}` : '-')).join(',')}`;
+    if (clave === this.claveCarrito) return;
+    this.claveCarrito = clave;
+    $('carrito').classList.toggle('cargando', jug.cargandoBodega);
+    $('carrito').title = 'Carrito: carga en la bodega lo justo para dejar lleno un estante';
+    $('carrito-huecos').innerHTML = huecos
+      .map((h) =>
+        h
+          ? `<div class="hueco-carrito"><img src="${icono(h.producto)}" alt=""><span class="barrita"><i style="width:${Math.round((100 * h.unidades) / Math.max(1, h.max))}%"></i></span><b>${h.unidades}</b></div>`
+          : `<div class="hueco-carrito vacio"><span>${jug.cargandoBodega ? '…' : 'vacío'}</span></div>`,
+      )
+      .join('');
   }
 
   /** Botones de las ayudas de un solo uso (tinto, canción, limpieza). */
@@ -109,6 +130,7 @@ export class UI {
     mostrar('hud', false);
     mostrar('alertas', false);
     mostrar('ayudas', false);
+    mostrar('carrito', false);
   }
 
   private pos(p: P, z: number) {
@@ -123,6 +145,7 @@ export class UI {
     reloj.classList.toggle('poco', !j.cerrado && r <= 20);
     reloj.classList.toggle('cerrado', j.cerrado);
     $('hud-dinero').textContent = String(j.ganancia);
+    this.pintarCarrito(j);
     $('hud-atendidos').textContent = String(j.stats.atendidos);
     $('hud-perdidos').textContent = String(j.stats.perdidos);
     $('hud-canastas').textContent = String(j.canastas);

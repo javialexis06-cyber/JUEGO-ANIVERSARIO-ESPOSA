@@ -52,7 +52,7 @@ export class Ladron extends Personaje implements Perseguible {
 
   constructor(pos: P, escala: number, private juego: Juego, private camara: boolean) {
     super(pos, escala);
-    this.velocidad = 1.1;
+    this.velocidad = 1.5;
     this.visible = camara;
   }
 
@@ -114,7 +114,7 @@ export class Ladron extends Personaje implements Perseguible {
   private irse() {
     const j = this.juego;
     if (this.estado !== 'atrapado') this.estado = 'saliendo';
-    this.velocidad = 1.1;
+    this.velocidad = 1.5;
     this.ir(j.tienda.nav, { x: j.tienda.entrada.x - 0.2, y: j.tienda.entrada.y }, () => {
       this.ruta = [{ x: j.tienda.entrada.x - 1.2, y: j.tienda.entrada.y }];
       this.alLlegar = () => (this.estado = 'fuera');
@@ -193,7 +193,7 @@ export class Nina extends Personaje implements Perseguible {
   private irse() {
     const j = this.juego;
     if (this.estado !== 'calmada') this.estado = 'saliendo';
-    this.velocidad = 1.0;
+    this.velocidad = 1.35;
     this.ir(j.tienda.nav, { x: j.tienda.entrada.x - 0.2, y: j.tienda.entrada.y }, () => {
       this.ruta = [{ x: j.tienda.entrada.x - 1.2, y: j.tienda.entrada.y }];
       this.alLlegar = () => (this.estado = 'fuera');
