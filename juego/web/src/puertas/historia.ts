@@ -17,8 +17,8 @@ export interface Capitulo {
 }
 
 export interface Recuerdo {
-  /** Capítulo en el que se recupera (al abrir su última puerta). */
-  capitulo: number;
+  /** Puerta que lo devuelve al abrirse (la 5 y la 10 de cada capítulo). */
+  puerta: number;
   titulo: string;
   fecha: string;
   icono: string;
@@ -36,7 +36,7 @@ export const CAPITULOS: Capitulo[] = [
     n: 1,
     titulo: 'Nuestra casa',
     llegada: ['Empecemos por casa. Todas las puertas amanecieron con seguro.'],
-    despedida: ['¡Salimos de la casa! Y mira… se nos devolvió el primer recuerdo.'],
+    despedida: ['¡Salimos de la casa! Y mira… se nos devolvió otro recuerdo.'],
   },
   {
     n: 2,
@@ -94,10 +94,18 @@ export const CAPITULOS: Capitulo[] = [
   },
 ];
 
-/** Los recuerdos que devuelve cada capítulo (hablan los dos; a veces discuten cómo pasó). */
+/** Lo que dice el narrador cuando aparece un recuerdo a mitad de capítulo. */
+export const HALLAZGO = [
+  '¡Espera! Algo brilla detrás de esta puerta… ¡es un recuerdo nuestro!',
+  '¡Mira lo que había escondido aquí! Un recuerdo.',
+  'El Olvido dejó caer algo… ¡otro recuerdo!',
+  'Shhh… ¿oyes? Es un recuerdo que quiere volver.',
+];
+
+/** Los veinte recuerdos, en orden: vuelven en las puertas 5, 10, 15… (hablan los dos; a veces discuten cómo pasó). */
 export const RECUERDOS: Recuerdo[] = [
   {
-    capitulo: 1,
+    puerta: 5,
     titulo: 'La villa de Transformice',
     fecha: '15 de septiembre',
     icono: 'raton',
@@ -114,8 +122,8 @@ export const RECUERDOS: Recuerdo[] = [
     ],
   },
   {
-    capitulo: 2,
-    titulo: 'Matemáticas, filosofía y buscarnos',
+    puerta: 10,
+    titulo: 'Matemáticas y filosofía',
     fecha: 'Esa misma noche',
     icono: 'charla',
     dialogo: [
@@ -123,22 +131,34 @@ export const RECUERDOS: Recuerdo[] = [
       ['ella', 'Y yo te dije que nada de eso me gustaba.'],
       ['el', 'Pero yo seguí hablando.'],
       ['ella', 'Y lo fuiste volviendo cosas que sí me gustaban. Terminó encantándome la conversación.'],
-      ['ella', 'Me fui a dormir pensando en ti… y me acordé de que no nos habíamos agregado de amigos. Me dio mucha tristeza.'],
+      ['el', '¿Ves? La filosofía sí sirve para algo.'],
+      ['ella', 'La filosofía no sé. El filósofo, tal vez.'],
+      ['el', 'Eso también es filosofía.'],
+    ],
+  },
+  {
+    puerta: 15,
+    titulo: 'Te busqué por todos lados',
+    fecha: 'Al día siguiente',
+    icono: 'lupa',
+    dialogo: [
+      ['ella', 'Me fui a dormir pensando en ti… y ahí me acordé: ¡no nos habíamos agregado de amigos!'],
+      ['ella', 'Me dio una tristeza… pensé que no te iba a volver a encontrar.'],
       ['ella', 'Así que te busqué por todo el juego, con la esperanza de que estuvieras en línea.'],
       ['el', 'Y cuando me encontraste, te dije que yo también te estaba buscando.'],
       ['ella', '¿De verdad me estabas buscando o lo dijiste por quedar bien?'],
       ['el', '…Te di mi número de teléfono, ¿no?'],
       ['ella', 'Buen punto. Punto para las matemáticas.'],
+      ['ella', 'Desde ahí nos contábamos todo, todos los días.'],
     ],
   },
   {
-    capitulo: 3,
+    puerta: 20,
     titulo: 'El 25 de octubre',
     fecha: '25 de octubre',
     icono: 'calendario',
     dialogo: [
-      ['ella', 'Empezamos a contarnos el día, todos los días.'],
-      ['ella', 'Y no sé en qué momento me di cuenta de que era feliz solo con contarte mis cosas.'],
+      ['ella', 'No sé en qué momento me di cuenta de que era feliz solo con contarte mis cosas. Fue una conexión inmediata.'],
       ['el', 'Yo al principio era un poco indiferente…'],
       ['ella', '¿Un poco? ¡Eras un témpano de hielo!'],
       ['el', 'Pero tú estuviste ahí, te esforzaste tanto… que poquito a poco me fui enamorando.'],
@@ -150,7 +170,57 @@ export const RECUERDOS: Recuerdo[] = [
     ],
   },
   {
-    capitulo: 4,
+    puerta: 25,
+    titulo: 'Videollamadas de 24 horas',
+    fecha: 'La pandemia',
+    icono: 'videollamada',
+    dialogo: [
+      ['ella', 'Al principio las videollamadas eran a veces sí, a veces no. Teníamos colegio y mil cosas.'],
+      ['el', 'Y llegó la pandemia.'],
+      ['ella', '¡Clases virtuales! Podíamos estar en llamada todo el día.'],
+      ['el', 'Casi completamos las 24 horas en llamada.'],
+      ['ella', '¿Casi? Las completamos. Dormíamos, estudiábamos, comíamos… todo juntos.'],
+      ['el', 'Lo mejor era despertarse y que siguieras ahí, en la pantalla.'],
+      ['ella', 'Lo único bueno de la pandemia: tenerte todo el día.'],
+    ],
+  },
+  {
+    puerta: 30,
+    titulo: 'Compañeros de estudio',
+    fecha: '2021, los dos en once',
+    icono: 'lapiz',
+    dialogo: [
+      ['ella', 'Siempre nos ayudábamos con las tareas. Yo te hacía las de artística.'],
+      ['el', 'Y yo casi todas las tuyas.'],
+      ['ella', '¿Casi todas?'],
+      ['el', '…Todas. Pero con mucho amor.'],
+      ['ella', 'Contigo me sentía muy acompañada.'],
+      ['el', 'Después volvimos al colegio: los dos en once, graduándonos el mismo año.'],
+      ['ella', 'Y estudiamos juntos para el ICFES. Teníamos nuestras sesiones.'],
+      ['el', 'Bueno, «estudiábamos»… yo explicaba y tú aprendías.'],
+      ['ella', '¡Oye! Yo también ponía de mi parte.'],
+      ['el', 'Ponías lo más importante: las ganas de estar conmigo.'],
+      ['ella', 'Eso sí.'],
+    ],
+  },
+  {
+    puerta: 35,
+    titulo: 'Psicología',
+    fecha: 'Un cumpleaños con examen',
+    icono: 'birrete',
+    dialogo: [
+      ['ella', 'Cuando nos graduamos, yo no quería seguir estudiando.'],
+      ['ella', 'Quería un año sabático, tranquila. Y la verdad… no me sentía capaz. Creía que no iba a poder.'],
+      ['el', 'Y yo no paré hasta convencerte.'],
+      ['ella', 'Eres muy insistente.'],
+      ['el', 'Persistente, que es distinto.'],
+      ['ella', 'Y justo abrieron Psicología, en la universidad que yo quería, donde yo quería.'],
+      ['ella', 'Hice el examen el día de mi cumpleaños… ¡y pasé!'],
+      ['el', 'El mejor regalo de cumpleaños. Yo siempre supe que ibas a poder.'],
+    ],
+  },
+  {
+    puerta: 40,
     titulo: 'La primera vez que nos vimos',
     fecha: 'El primer encuentro',
     icono: 'ojos',
@@ -164,25 +234,60 @@ export const RECUERDOS: Recuerdo[] = [
     ],
   },
   {
-    capitulo: 5,
+    puerta: 45,
+    titulo: 'La meta de diciembre',
+    fecha: 'Un diciembre',
+    icono: 'trofeo',
+    dialogo: [
+      ['ella', 'Yo quería trabajar, tener mi propia plata. Intenté de todo… y algunas cosas eran estafas.'],
+      ['el', 'Esta vez te estafaron a ti.'],
+      ['ella', '¡Ja! El karma de Transformice.'],
+      ['ella', 'Hasta que decidí ser directora de Yanbal. Casi un año intentándolo.'],
+      ['ella', 'Y la meta se cumplía en diciembre… justo antes de nuestro viaje a Cartagena.'],
+      ['ella', 'Tenía un miedo: si no la cumplía, iba a estar triste en Cartagena y te iba a dañar el paseo.'],
+      ['el', 'Tú nunca me dañas nada.'],
+      ['ella', '¡Y la cumplí! A los dos días ya íbamos para Cartagena.'],
+      ['el', 'Mi directora.'],
+    ],
+  },
+  {
+    puerta: 50,
     titulo: 'Cartagena',
-    fecha: 'Nuestro viaje al mar',
+    fecha: 'Nuestro primer viaje de playa',
     icono: 'ola',
     dialogo: [
-      ['ella', '¡Cartagena! ¿Te acuerdas de la moto acuática?'],
-      ['el', 'Alquilamos una moto acuática y salimos volando por el mar.'],
-      ['ella', 'Y después vinieron las tormentas.'],
-      ['ella', 'A mí me tocó dormir en el aeropuerto.'],
-      ['el', 'Y a mí en un hotel cinco estrellas.'],
+      ['ella', '¡Cartagena! Nuestro primer viaje de playa. Solo los dos.'],
+      ['el', 'Bueno… primero hubo un problemita con el vuelo.'],
+      ['ella', '¿Problemita? No pudiste viajar el día que habíamos acordado.'],
+      ['el', 'Y la aerolínea me dio un hotel cinco estrellas, de compensación.'],
+      ['ella', 'Y yo dormí toda la noche en una banca de piedra del aeropuerto.'],
       ['ella', '¡¿Y todavía lo dices así de tranquilo?!'],
       ['el', 'Te pensé toda la noche… desde la cama grandota.'],
       ['ella', 'Muy chistoso.'],
+      ['el', 'Después alquilamos una moto acuática y salimos volando por el mar.'],
+      ['ella', 'Y conocí el castillo, y tantas cosas que nunca había visto.'],
+      ['el', 'Parecías una niña chiquita, mirándolo todo.'],
+      ['ella', 'Es que allá me sentí yo, contigo. Muy feliz.'],
       ['el', 'La próxima vez yo duermo en el aeropuerto y tú en el hotel. Prometido.'],
       ['ella', 'Lo dejo por escrito aquí, para que no se te olvide.'],
     ],
   },
   {
-    capitulo: 6,
+    puerta: 55,
+    titulo: 'Me enamoré de la vida',
+    fecha: 'Después de los días grises',
+    icono: 'flor',
+    dialogo: [
+      ['ella', 'Hubo un tiempo en que yo estaba muy triste. Sin ganas de nada.'],
+      ['el', 'Me acuerdo.'],
+      ['ella', 'Y tú me motivabas en todo. Todos los días.'],
+      ['ella', 'No sé en qué momento empecé a sentirme feliz… a amar la vida, a imaginarme un futuro y desearlo.'],
+      ['el', 'Yo sí sé: cuando empezaste a verte como yo te veo.'],
+      ['ella', 'Me enamoré de ti… y después me enamoré de la vida.'],
+    ],
+  },
+  {
+    puerta: 60,
     titulo: 'Las luces de diciembre',
     fecha: 'Diciembre en Medellín',
     icono: 'luces',
@@ -195,7 +300,23 @@ export const RECUERDOS: Recuerdo[] = [
     ],
   },
   {
-    capitulo: 7,
+    puerta: 65,
+    titulo: 'De Sopetrán a Bucaramanga',
+    fecha: 'Ocho horas de distancia',
+    icono: 'bus',
+    dialogo: [
+      ['ella', 'Yo en Sopetrán, tú en Bucaramanga. Ocho horas de distancia.'],
+      ['el', 'Nueve.'],
+      ['ella', 'Ocho… si el bus no para.'],
+      ['el', 'El bus siempre para.'],
+      ['ella', 'Distintos departamentos, distintas costumbres… y aquí estamos.'],
+      ['el', 'Tú eres todo lo contrario a mí.'],
+      ['ella', 'Y tú a mí. Por eso encajamos: lo que no tiene uno, lo tiene el otro.'],
+      ['el', 'Somos el complemento.'],
+    ],
+  },
+  {
+    puerta: 70,
     titulo: 'Halloween elegante',
     fecha: 'Todos los 31 de octubre',
     icono: 'antifaz',
@@ -209,9 +330,9 @@ export const RECUERDOS: Recuerdo[] = [
     ],
   },
   {
-    capitulo: 8,
+    puerta: 75,
     titulo: 'Un cumpleaños de reina',
-    fecha: 'Tu cumpleaños',
+    fecha: 'Su cumpleaños',
     icono: 'copa',
     dialogo: [
       ['el', 'Por tu cumpleaños te llevé a un restaurante de súper lujo.'],
@@ -222,7 +343,23 @@ export const RECUERDOS: Recuerdo[] = [
     ],
   },
   {
-    capitulo: 9,
+    puerta: 80,
+    titulo: 'Un cuento de hadas',
+    fecha: 'Lo que le pedí a Dios',
+    icono: 'castillo',
+    dialogo: [
+      ['ella', 'Yo siempre digo que tú eres mis oraciones respondidas. Todo lo que le pedí a Dios.'],
+      ['el', '¿Todo, todo? ¿Hasta lo de las tareas?'],
+      ['ella', 'Hasta lo de las tareas.'],
+      ['el', 'Somos la persona que el otro soñó.'],
+      ['ella', 'Esta historia es un cuento de hadas.'],
+      ['el', 'Con castillo y todo.'],
+      ['ella', 'Y solo le pido una cosa: un final de Disney.'],
+      ['el', 'Eso déjamelo a mí.'],
+    ],
+  },
+  {
+    puerta: 85,
     titulo: 'El planetario',
     fecha: 'Mi primera vez en Medellín',
     icono: 'estrellas',
@@ -236,22 +373,63 @@ export const RECUERDOS: Recuerdo[] = [
     ],
   },
   {
-    capitulo: 10,
-    titulo: 'Para siempre',
-    fecha: 'En nuestra casa',
+    puerta: 90,
+    titulo: 'Mi hogar eres tú',
+    fecha: 'Los días difíciles',
+    icono: 'casa',
+    dialogo: [
+      ['ella', 'Después vino la ansiedad. Me faltaba el aire y creía que mis pulmones estaban enfermos.'],
+      ['ella', 'Y luego se fue mi abuela.'],
+      ['el', 'Y ahí estuve contigo, en todo.'],
+      ['ella', 'Cuando viajé a Bucaramanga a verte, solo pensaba una cosa: «cuando lo vea, todo va a ser más fácil».'],
+      ['el', '¿Y fue así?'],
+      ['ella', 'Siempre es así. Tú eres mi pilar: cuando siento que no puedo más, me sostengo en ti y la vida se vuelve más liviana.'],
+      ['ella', 'Tú eres mi hogar.'],
+      ['el', 'Y tú el mío. Por eso siempre volvemos a casa.'],
+    ],
+  },
+  {
+    puerta: 95,
+    titulo: 'La propuesta',
+    fecha: 'Una noche en casa',
     icono: 'anillo',
     dialogo: [
-      ['el', 'Te pedí matrimonio aquí, en la casa. Solos tú y yo.'],
+      ['ella', 'Yo llevaba tiempo pensando: ¿cuándo me va a pedir matrimonio?'],
+      ['el', 'Y yo, calladito, comprando el anillo.'],
+      ['ella', 'Estábamos comiendo picada. Yo en pijama.'],
+      ['el', 'Y después de la picada te dije que cerraras los ojos.'],
+      ['ella', 'Me pusiste una cajita en las manos y me preguntaste qué creía que era.'],
+      ['ella', 'Yo pensaba: ¿unos aretes? ¿Una cadena? Pero una vocecita me decía: es el anillo, es el anillo…'],
+      ['el', 'Y era el anillo.'],
+      ['ella', 'Tú arrodillado en la cama, yo sentada… y me puse a llorar.'],
+      ['el', 'Lloraste muchísimo.'],
+      ['ella', '¡Lloré lo justo!'],
+      ['el', 'Te dije lo mucho que te amo, que quiero pasar el resto de mi vida contigo, hacer una familia, un hogar.'],
       ['ella', '¡Y yo toda desarreglada!'],
       ['el', 'Estabas perfecta.'],
-      ['el', 'Te dije lo mucho que te amo, que quiero pasar el resto de mi vida contigo…'],
-      ['el', '…y que ojalá seas la mamá de nuestros hijos.'],
-      ['ella', 'Y ya tenemos nombre: Lexy Katherine.'],
+      ['ella', 'Fue tan nuestro… Jamás me lo habría esperado.'],
+    ],
+  },
+  {
+    puerta: 100,
+    titulo: 'Para siempre',
+    fecha: 'Lo que viene',
+    icono: 'familia',
+    dialogo: [
+      ['el', 'Tenemos un sueño: ser papás.'],
+      ['ella', 'Queremos una niña… y si es niño, lo vamos a amar igualito.'],
+      ['ella', 'Y ya tiene nombre: Katherine.'],
+      ['el', 'Lexy Katherine.'],
+      ['ella', 'Katherine.'],
       ['el', 'Lexy, de Alexis, mi segundo nombre…'],
-      ['ella', '…y con L, como manda la tradición de mi familia.'],
+      ['ella', '…y con L, como manda la tradición de mi familia. Bueno, está bien: Lexy Katherine.'],
+      ['ella', 'Tú vas a ser el mejor papá y el mejor esposo.'],
+      ['el', 'Y tú la mejor mamá del mundo.'],
       ['el', 'Lo que más amo de ti son tus labios y tu sonrisa. Cada vez que sonríes, me vuelvo a enamorar.'],
       ['ella', 'Y lo que más me gusta a mí es estar abrazados en camita, sin hacer nada.'],
       ['el', 'Plan perfecto para el resto de la vida.'],
+      ['ella', 'Nuestro cuento de hadas…'],
+      ['el', '…con final de Disney: felices para siempre.'],
     ],
   },
 ];
@@ -339,11 +517,14 @@ export const ANIMO_DE: Record<Quien, string[]> = {
     'Tú, que te diste cuenta de mi estafa al instante… esto es facilito.',
     'Piénsalo como cuando me explicabas matemáticas, pero con cosas que me gusten.',
     'Me gusta la carita que pones cuando piensas.',
+    'Tú me explicabas para el ICFES. Esto, al lado de eso, es nada.',
   ],
   el: [
     'Sonríe un poquito, que cuando sonríes todo sale mejor.',
     'Tú no te rindes nunca. Así me conquistaste.',
     'Tranquila, mi amor. Yo te espero el tiempo que sea.',
+    'Pasaste a Psicología el día de tu cumpleaños. Esto es facilito para ti.',
+    'Sostente en mí, como siempre. Aquí estoy.',
   ],
 };
 
@@ -380,6 +561,9 @@ export const BONITO_DE: Record<Quien, string[]> = {
     'Contigo hasta la filosofía me gusta.',
     'Soy feliz solo con contarte mis cosas.',
     'Qué bueno que tú también me estabas buscando.',
+    'Tú eres mis oraciones respondidas.',
+    'Tú eres mi hogar.',
+    'Contigo la vida se hace más liviana.',
   ],
   el: [
     'Cada vez que sonríes me vuelvo a enamorar.',
@@ -387,6 +571,8 @@ export const BONITO_DE: Record<Quien, string[]> = {
     'Eres la mujer más hermosa del mundo.',
     'Eres el amor de mi vida.',
     'Gracias por esforzarte tanto por mí.',
+    'Siempre supe que ibas a poder. Siempre.',
+    'Ya quiero verte de esposa… y de mamá.',
   ],
 };
 
@@ -396,6 +582,7 @@ export const FINAL_DE: Record<Quien, string[]> = {
     '¡Cien puertas, mi amor! Todos nuestros recuerdos volvieron a casa.',
     'El Olvido no tuvo nada que hacer contra nosotros.',
     'Te quise estafar en una villa de Transformice… y terminé dándote mi corazón para siempre.',
+    'Eres mis oraciones respondidas, mi pilar, mi hogar.',
     'Feliz aniversario. Te amo.',
   ],
   el: [
@@ -412,7 +599,7 @@ export function voz(texto: string, quien: Quien) {
 }
 
 export const capituloDe = (n: number) => CAPITULOS[Math.min(9, Math.floor((n - 1) / 10))];
-export const recuerdoDe = (capitulo: number) => RECUERDOS.find((r) => r.capitulo === capitulo);
+export const recuerdoDe = (puerta: number) => RECUERDOS.find((r) => r.puerta === puerta);
 
 /** Frase para una puerta (siempre la misma para la misma puerta, sin repetir seguidas). */
 export const elegir = <T,>(lista: T[], n: number) => lista[((n * 7) % lista.length + lista.length) % lista.length];

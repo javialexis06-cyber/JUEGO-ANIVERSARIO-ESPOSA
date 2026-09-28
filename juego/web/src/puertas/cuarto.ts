@@ -385,6 +385,69 @@ function luciernagas(g: THREE.Group, n = 24) {
   };
 }
 
+
+// ---------------------------------------------------------------------------
+// Feria
+// ---------------------------------------------------------------------------
+function cieloFeria() {
+  return lienzo(512, 256, (c, w, h) => {
+    const g = c.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#3b2f6c');
+    g.addColorStop(0.6, '#c9709a');
+    g.addColorStop(1, '#f6b47a');
+    c.fillStyle = g;
+    c.fillRect(0, 0, w, h);
+    c.fillStyle = 'rgba(255,248,220,0.8)';
+    for (let i = 0; i < 40; i++) c.fillRect((i * 97) % w, (i * 41) % (h * 0.45), 2, 2);
+  });
+}
+
+/** Guirnalda de bombillos entre dos puntos. */
+export function bombillos(g: THREE.Group, a: THREE.Vector3, b: THREE.Vector3, n = 10, caida = 0.3) {
+  const colores = ['#ffd27a', '#ff8fa3', '#8ee0ff', '#b6f07a'];
+  const pts: THREE.Vector3[] = [];
+  for (let i = 0; i <= 20; i++) {
+    const t = i / 20;
+    pts.push(new THREE.Vector3().lerpVectors(a, b, t).add(new THREE.Vector3(0, -Math.sin(t * Math.PI) * caida, 0)));
+  }
+  const cable = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, 0.008, 5), mat('#3d2b27'));
+  g.add(cable);
+  for (let i = 1; i < n; i++) {
+    const t = i / n;
+    const p = new THREE.Vector3().lerpVectors(a, b, t).add(new THREE.Vector3(0, -Math.sin(t * Math.PI) * caida - 0.05, 0));
+    g.add(en(esfera(0.045, new THREE.MeshBasicMaterial({ color: colores[i % colores.length] }), undefined, 8), p.x, p.y, p.z));
+  }
+}
+
+function ruedaFortunaFondo(g: THREE.Group, x: number, z: number, r = 2.4) {
+  const rueda = grupo('rueda fondo');
+  const blanco = mat('#fff3e0');
+  rueda.add(toro(r, 0.05, blanco));
+  rueda.add(toro(r * 0.2, 0.05, blanco));
+  for (let i = 0; i < 10; i++) {
+    const a = (i / 10) * Math.PI * 2;
+    const rayo = caja(0.04, r, 0.04, blanco, 0.01);
+    rayo.position.set(Math.cos(a) * r / 2, Math.sin(a) * r / 2, 0);
+    rayo.rotation.z = a - Math.PI / 2;
+    rueda.add(rayo);
+    const cab = caja(0.3, 0.3, 0.3, mat(['#e4574b', '#F7C948', '#8EC5F0', '#8FD6B9', '#F59FC0'][i % 5]), 0.08);
+    cab.position.set(Math.cos(a) * r, Math.sin(a) * r - 0.2, 0);
+    rueda.add(cab);
+  }
+  en(rueda, x, r + 0.6, z);
+  g.add(rueda);
+  for (const s of [-1, 1]) {
+    const pata = caja(0.1, r + 0.8, 0.1, mat('#b8bcc4'), 0.02);
+    pata.rotation.z = s * 0.25;
+    en(pata, x + s * 0.4, (r + 0.8) / 2, z - 0.1);
+    g.add(pata);
+  }
+  (rueda.children[0] as THREE.Mesh).onBeforeRender = () => {
+    rueda.rotation.z = performance.now() / 9000;
+    for (const cab of rueda.children.filter((o, i) => i >= 2 && i % 2 === 1)) cab.rotation.z = -rueda.rotation.z;
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Los diez escenarios
 // ---------------------------------------------------------------------------
@@ -393,6 +456,61 @@ const noche: Luces = {
 };
 
 export const TEMAS: Record<number, Tema> = {
+  7: {
+    capitulo: 7,
+    luces: { fondo: '#3b2f6c', ambiente: '#8a6a8a', intensidadAmbiente: 0.85, sol: '#ffd8b0', intensidadSol: 1.7, solDesde: [3, 6, 6], entorno: 0.45, exposicion: 1.35 },
+    puerta: 'carpa',
+    opPuerta: { color: '#e4574b', marco: '#fff3e0' },
+    armar(g) {
+      telon(g, cieloFeria(), 3.6, -9);
+      const tierra = lienzo(256, 256, (c, w, h) => {
+        c.fillStyle = '#c9a57a';
+        c.fillRect(0, 0, w, h);
+        for (let i = 0; i < 900; i++) {
+          c.fillStyle = i % 2 ? 'rgba(150,110,70,0.3)' : 'rgba(255,240,210,0.3)';
+          c.fillRect((i * 71) % w, (i * 37) % h, 3, 3);
+        }
+      });
+      tierra.wrapS = tierra.wrapT = THREE.RepeatWrapping;
+      piso(g, tierra, 4, 30);
+      const fondo = new THREE.Mesh(new THREE.PlaneGeometry(30, 12), new THREE.MeshStandardMaterial({ map: tierra, roughness: 1 }));
+      fondo.rotation.x = -Math.PI / 2;
+      en(fondo, 0, -0.002, -6);
+      g.add(fondo);
+      // Fachada de la carpa a rayas alrededor de la puerta
+      const rayas = lienzo(256, 256, (c, w, h) => {
+        for (let i = 0; i < 8; i++) {
+          c.fillStyle = i % 2 ? '#fff3e0' : '#e4574b';
+          c.fillRect((i * w) / 8, 0, w / 8, h);
+        }
+      });
+      rayas.wrapS = THREE.RepeatWrapping;
+      for (const sx of [-1, 1]) {
+        const ancho = 1.9;
+        const m = new THREE.MeshStandardMaterial({ map: rayas.clone(), roughness: 0.9 });
+        (m.map as THREE.Texture).repeat.set(ancho, 1);
+        (m.map as THREE.Texture).needsUpdate = true;
+        const panel = new THREE.Mesh(new THREE.BoxGeometry(ancho, 2.85, 0.1), m);
+        en(panel, sx * (HUECO.w / 2 + 0.25 + ancho / 2), 1.425, -0.05);
+        panel.castShadow = true;
+        g.add(panel);
+      }
+      const techo = new THREE.Mesh(new THREE.ConeGeometry(2.8, 1.5, 16, 1, true), new THREE.MeshStandardMaterial({ map: rayas, roughness: 0.9, side: THREE.DoubleSide }));
+      en(techo, 0, 3.55, -1.4);
+      g.add(techo);
+      g.add(en(esfera(0.1, mat('#F7C948')), 0, 4.35, -1.4));
+      bombillos(g, new THREE.Vector3(-3.4, 2.9, 0.1), new THREE.Vector3(-0.7, 2.75, 0.1), 8, 0.25);
+      bombillos(g, new THREE.Vector3(0.7, 2.75, 0.1), new THREE.Vector3(3.4, 2.9, 0.1), 8, 0.25);
+      ruedaFortunaFondo(g, 5.2, -5.5, 2.6);
+      for (const x of [-3.7, 3.7]) {
+        g.add(en(cilindro(0.04, 0.05, 2.9, mat('#3d2b27')), x, 1.45, 0.3));
+        g.add(en(esfera(0.12, new THREE.MeshBasicMaterial({ color: '#ffe9b0' })), x, 2.95, 0.3));
+      }
+      const luz = new THREE.PointLight('#ffcf8a', 3, 8, 1.4);
+      en(luz, 0, 2.6, 1.5);
+      g.add(luz);
+    },
+  },
   6: {
     capitulo: 6,
     luces: { fondo: '#0e1430', ambiente: '#1f2a4a', intensidadAmbiente: 0.55, sol: '#a8c0ff', intensidadSol: 1.1, solDesde: [-3, 7, 4], entorno: 0.22, exposicion: 1.5 },

@@ -47,22 +47,34 @@ recuerdo (una lucecita en forma de corazón). En la puerta 100 los recuerdos vue
 
 ## Los recuerdos (de verdad)
 
-Al abrir la última puerta de cada capítulo vuelve un recuerdo: aparece una tarjeta tipo polaroid y los dos lo
-cuentan en una conversación (el narrador en su globo y quien juega abajo, con su nombre). A veces no se ponen de
-acuerdo en cómo pasó, para que dé risa. Quedan guardados en «Recuerdos» del mapa para volver a leerlos.
+Cada cinco puertas (la 5 y la 10 de cada capítulo) vuelve un recuerdo: veinte en total, en orden, desde la villa
+de Transformice hasta la niña que sueñan tener. Aparece una tarjeta tipo polaroid y los dos lo cuentan en una
+conversación (el narrador en su globo y quien juega abajo, con su nombre). A veces no se ponen de acuerdo en cómo
+pasó, para que dé risa; los recuerdos difíciles se cuentan con cariño y sin chistes. Quedan en «Recuerdos» del
+mapa para volver a leerlos (un recuerdo se tiene cuando su puerta ya se abrió).
 
-| Cap. | Recuerdo | Lo que discuten |
+| Puerta | Recuerdo | Lo que discuten (o lo que cuentan) |
 |---|---|---|
-| 1 | La villa de Transformice (15 de septiembre) | ¿Lo quería estafar o no? «Estás como necesitada, así que ten» |
-| 2 | Matemáticas, filosofía y buscarnos | Ella lo buscó por todo el juego… ¿él de verdad la estaba buscando? |
-| 3 | El 25 de octubre | ¿Treinta días o cuarenta? (del 15 de septiembre al 25 de octubre) |
-| 4 | La primera vez que nos vimos | «Eras perfecta» — «¿Era?» |
-| 5 | Cartagena | La moto acuática, y ella durmiendo en el aeropuerto mientras él estaba en un hotel cinco estrellas |
-| 6 | Las luces de diciembre en Medellín (con Disney) | ¿Las luces o los ojos de ella? |
-| 7 | Halloween elegante | «Me derrite» — «Dímelo otra vez» |
-| 8 | Un cumpleaños de reina | El restaurante de súper lujo… y quién pagó |
-| 9 | El planetario del Parque Explora | ¿Quién miraba a quién? |
-| 10 | Para siempre | La propuesta en la casa, Lexy Katherine, los labios y la sonrisa, abrazados en camita |
+| 5 | La villa de Transformice (15 de septiembre) | ¿Lo quería estafar o no? «Estás como necesitada, así que ten» |
+| 10 | Matemáticas y filosofía | «La filosofía no sé. El filósofo, tal vez» |
+| 15 | Te busqué por todos lados | Ella lo buscó por todo el juego… ¿él de verdad la estaba buscando? |
+| 20 | El 25 de octubre | ¿Treinta días o cuarenta? (del 15 de septiembre al 25 de octubre) |
+| 25 | Videollamadas de 24 horas (la pandemia) | ¿Casi completaron las 24 horas o las completaron? |
+| 30 | Compañeros de estudio (2021, los dos en once) | Las tareas de artística contra «casi todas» las de ella; el ICFES: ¿estudiaban o él explicaba? |
+| 35 | Psicología | Él la convenció: ¿insistente o persistente? Pasó con el examen del día de su cumpleaños |
+| 40 | La primera vez que nos vimos | «Eras perfecta» — «¿Era?» |
+| 45 | La meta de diciembre (directora de Yanbal) | «Esta vez te estafaron a ti» — «El karma de Transformice»; la meta justo antes de Cartagena |
+| 50 | Cartagena | Ella en una banca de piedra del aeropuerto y él en un hotel cinco estrellas; la moto acuática y el castillo |
+| 55 | Me enamoré de la vida | Los días grises y cómo él la motivaba (sin chistes) |
+| 60 | Las luces de diciembre en Medellín (con Disney) | ¿Las luces o los ojos de ella? |
+| 65 | De Sopetrán a Bucaramanga | ¿Ocho horas o nueve? Somos el complemento |
+| 70 | Halloween elegante | «Me derrite» — «Dímelo otra vez» |
+| 75 | Un cumpleaños de reina | El restaurante de súper lujo… y quién pagó |
+| 80 | Un cuento de hadas | «Eres mis oraciones respondidas» — «¿Hasta lo de las tareas?» |
+| 85 | El planetario del Parque Explora | ¿Quién miraba a quién? |
+| 90 | Mi hogar eres tú | La ansiedad, la abuela, el viaje a Bucaramanga: «tú eres mi pilar» (sin chistes) |
+| 95 | La propuesta | La picada, la pijama, los ojos cerrados: ¿aretes, una cadena… o el anillo? «¡Lloré lo justo!» |
+| 100 | Para siempre | ¿Katherine o Lexy Katherine? Los labios, la sonrisa, la camita y el final de Disney |
 
 Además, las felicitaciones y los ánimos usan frases propias de quien narra (Ella: «me robaste el corazón… y eso
 que la estafadora era yo»; Él: «cada vez que sonríes me vuelvo a enamorar»), y el final de la puerta 100 cambia
@@ -213,7 +225,7 @@ la explica), para que nadie se quede trabado.
 ## Recompensas
 
 - Primera vez que se abre una puerta: +5 monedas para la casa (pasan como el sueldo del súper). Terminar un
-  capítulo: +40 y un recuerdo nuevo en el mapa de puertas.
+  capítulo: +40. Cada cinco puertas vuelve un recuerdo nuevo al álbum del mapa.
 - Estrellas por puerta (1–3) según tiempo y si se usó la pista; no bloquean nada.
 
 ## Técnica

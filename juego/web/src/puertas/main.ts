@@ -17,7 +17,7 @@ import * as sonido from '../sonido';
 import { tema } from './cuarto';
 import { Entrada } from './entrada';
 import { Escena, OJO } from './escena';
-import { CAPITULOS, capituloDe, FINAL_DE, INICIO, PUERTAS, RECUERDOS, recuerdoDe, voz } from './historia';
+import { CAPITULOS, capituloDe, elegir, FINAL_DE, HALLAZGO, INICIO, PUERTAS, RECUERDOS, recuerdoDe, voz } from './historia';
 import { azar, grupo, iconoItem } from './kit';
 import { Narrador } from './narrador';
 import type { Ctx, Nivel } from './nivel';
@@ -40,7 +40,7 @@ interface Progreso {
   hasta: number;
   estrellas: Record<number, number>;
   vioInicio: boolean;
-  /** Capítulos cuyo recuerdo ya se recuperó. */
+  /** (Versión vieja: capítulos cuyo recuerdo se vio; ahora un recuerdo se tiene si su puerta ya se abrió.) */
   recuerdos?: number[];
 }
 
@@ -167,7 +167,7 @@ function mapa() {
   const siguiente = Math.min(100, progreso.hasta + 1);
   $('btn-continuar').textContent = progreso.hasta ? `Seguir: puerta ${siguiente}` : 'Empezar';
   $('mapa-abiertas').textContent = `${progreso.hasta} de 100 puertas`;
-  $('btn-recuerdos').textContent = `Recuerdos ${(progreso.recuerdos ?? []).length}/${RECUERDOS.length}`;
+  $('btn-recuerdos').textContent = `Recuerdos ${RECUERDOS.filter((r) => r.puerta <= progreso.hasta).length}/${RECUERDOS.length}`;
   $('capitulos').innerHTML = CAPITULOS.map((c) => {
     const desde = (c.n - 1) * 10 + 1;
     const hechas = Math.max(0, Math.min(10, progreso.hasta - desde + 1));
@@ -195,13 +195,12 @@ const nombreDe = (r: Rol) => (r === 'el' ? 'Él' : 'Ella');
 
 /** Los recuerdos recuperados, para volver a leerlos. */
 function album() {
-  const tengo = new Set(progreso.recuerdos ?? []);
-  const html = RECUERDOS.map((r) =>
-    tengo.has(r.capitulo)
+  const html = RECUERDOS.map((r, i) =>
+    r.puerta <= progreso.hasta
       ? `<article><h4>${esc(r.titulo)}</h4><small>${esc(r.fecha)}</small>${r.dialogo
           .map(([q, t]) => `<p><span class="quien ${q}">${nombreDe(q)}:</span> ${esc(voz(t, q))}</p>`)
           .join('')}</article>`
-      : `<article class="bloqueado"><h4>Recuerdo ${r.capitulo}</h4><small>Se recupera al terminar el capítulo ${r.capitulo}</small></article>`,
+      : `<article class="bloqueado"><h4>Recuerdo ${i + 1}</h4><small>Vuelve al abrir la puerta ${r.puerta}</small></article>`,
   ).join('');
   void paneles.nota(`<div class="album">${html}</div>`, 'album-recuerdos');
 }
@@ -301,21 +300,15 @@ async function jugar(n: number) {
   guardar();
   if (!SIN_HISTORIA) {
     await narrador.celebrar(n);
-    if (n % 10 === 0) {
-      const cap = n / 10;
-      await narrador.decir(capituloDe(n).despedida);
-      // El recuerdo real que devuelve el capítulo, contado por los dos
-      const r = recuerdoDe(cap);
-      if (r) {
-        await tarjetaRecuerdo(r, cap, RECUERDOS.length);
-        await narrador.conversar(r.dialogo, nombreDe(yo));
-      }
-      if (n === 100) await narrador.decir(FINAL_DE[otro(yo)]);
+    if (n % 10 === 0) await narrador.decir(capituloDe(n).despedida);
+    // Cada cinco puertas vuelve un recuerdo de verdad, contado por los dos
+    const r = recuerdoDe(n);
+    if (r) {
+      if (n % 10 !== 0) await narrador.decir([elegir(HALLAZGO, n / 5)]);
+      await tarjetaRecuerdo(r, RECUERDOS.indexOf(r) + 1, RECUERDOS.length);
+      await narrador.conversar(r.dialogo, nombreDe(yo));
     }
-  }
-  if (n % 10 === 0 && !(progreso.recuerdos ?? []).includes(n / 10)) {
-    progreso.recuerdos = [...(progreso.recuerdos ?? []), n / 10];
-    guardar();
+    if (n === 100) await narrador.decir(FINAL_DE[otro(yo)]);
   }
   if (turno !== jugadas) return;
   // Cruzar la puerta
