@@ -126,9 +126,10 @@ export class Escenario {
     requestAnimationFrame((t) => this.cuadro(t));
     const dt = Math.min(0.05, (ms - (this.ultimo || ms)) / 1000) * this.rapido;
     this.ultimo = ms;
-    if (!this.m.el.listo || !this.lienzo.offsetParent) return;
+    if (!this.m.el.listo) return;
+    // La actuación sigue aunque no se vea (así el final y el saludo siempre terminan)
     if (!this.congelado) this.paso(dt);
-    if (!this.sin3d) this.renderer.render(this.escena, this.camara);
+    if (!this.sin3d && this.lienzo.offsetParent) this.renderer.render(this.escena, this.camara);
   }
 
   /** Pruebas: el tiempo solo avanza con `simular`; `sin3d` no pinta (los navegadores de prueba van lentos). */
@@ -158,7 +159,7 @@ export class Escenario {
 
   // ------------------------------------------------------------------ Lo que manda la partida
   async inicio(empieza: Rol) {
-    await this.director.inicio(empieza);
+    await conLimite(this.director.inicio(empieza), 3500 / this.rapido);
   }
   turno(t: Rol, humanoAqui: boolean) {
     for (const m of document.querySelectorAll<HTMLElement>('.marcador')) m.classList.toggle('activo', m.dataset.quien === t);
@@ -188,7 +189,7 @@ export class Escenario {
   }
   async final(f: Final) {
     for (const m of document.querySelectorAll<HTMLElement>('.marcador')) m.classList.remove('activo');
-    await this.director.final(f.ganador);
+    await conLimite(this.director.final(f.ganador), 4500 / this.rapido);
   }
 
   /** Pruebas y vitrina: que un muñeco haga una reacción del catálogo. */
@@ -196,6 +197,9 @@ export class Escenario {
     return this.director.hacer(rol, coreo);
   }
 }
+
+/** Nunca deja la partida esperando a una animación (si el celular se pausa o algo se queda pegado). */
+const conLimite = (p: Promise<void>, ms: number) => Promise.race([p, new Promise<void>((r) => setTimeout(r, ms))]);
 
 function sombraTextura() {
   const c = document.createElement('canvas');
