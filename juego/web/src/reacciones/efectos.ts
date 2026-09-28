@@ -99,7 +99,8 @@ export class Efectos {
         return false;
       }
       const a = s.ancla();
-      this.ubicar(s.el, a.x + s.dx * a.r, a.y + s.dy * a.r);
+      // Que no se salga por arriba del escenario (la nubecita, el bombillo, los signos)
+      this.ubicar(s.el, a.x + s.dx * a.r, Math.max(a.y + s.dy * a.r, a.r * 0.9 + 6));
       s.el.style.setProperty('--r', `${a.r}px`);
       const quedan = s.hasta - this.t;
       if (s.salida && quedan < s.salida) s.el.style.opacity = String(Math.max(0, quedan / s.salida));

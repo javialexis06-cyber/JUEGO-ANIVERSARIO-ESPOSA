@@ -61,9 +61,14 @@ export class Muneco {
     this.p.grupo.updateMatrixWorld(true);
     const caja = new THREE.Box3().setFromObject(this.p.cuerpo);
     this.alto = caja.max.y - caja.min.y || 1;
-    const cab = this.p.huesos.get('cabeza');
+    const cab = this.hueso('cabeza');
     if (cab) this.altoCabeza = (caja.max.y - cab.getWorldPosition(new THREE.Vector3()).y) / this.alto;
     this.listo = true;
+  }
+
+  /** Hueso por su nombre de Blender («mano.L»): three.js le quita el punto al cargar («manoL»). */
+  hueso(nombre: string): THREE.Object3D | undefined {
+    return this.p.huesos.get(nombre) ?? this.p.huesos.get(nombre.replace(/\./g, ''));
   }
 
   /** Coloca al muñeco en su sitio (three) mirando hacia `rot`. */
@@ -218,8 +223,8 @@ export class Muneco {
     const cual = this.propActual;
     if (!cual) return;
     const o = this.props.get(cual)!;
-    const hueso = (n: string) => this.p.huesos.get(n)?.getWorldPosition(new THREE.Vector3());
-    const mD = hueso('mano.R'), mI = hueso('mano.L'), cab = this.p.huesos.get('cabeza');
+    const hueso = (n: string) => this.hueso(n)?.getWorldPosition(new THREE.Vector3());
+    const mD = hueso('mano.R'), mI = hueso('mano.L'), cab = this.hueso('cabeza');
     let mundo: THREE.Vector3 | undefined;
     if (cual === 'corona' && cab) {
       mundo = cab.localToWorld(new THREE.Vector3(0, 0, 0));
@@ -387,7 +392,7 @@ export class Muneco {
     // Huesos encima de la pose (el mezclador los reescribe en cada cuadro, así que se suman sin acumular)
     if (this.cabezaAbajo > 0.001) huesos.push(['cabeza', 'x', -this.cabezaAbajo]);
     for (const [n, eje, ang] of huesos) {
-      const h = this.p.huesos.get(n);
+      const h = this.hueso(n);
       if (!h) continue;
       const q = new THREE.Quaternion().setFromAxisAngle(eje === 'x' ? EJE_X : eje === 'y' ? EJE_Y : EJE_Z, ang);
       h.quaternion.multiply(q);
@@ -403,7 +408,7 @@ export class Muneco {
 
   /** Puntos del cuerpo en el mundo (para anclar efectos). */
   puntoCabeza(): THREE.Vector3 {
-    const cab = this.p.huesos.get('cabeza');
+    const cab = this.hueso('cabeza');
     const v = cab ? cab.getWorldPosition(new THREE.Vector3()) : this.p.grupo.position.clone().setY(this.alto * this.p.escala * 0.8);
     v.y += this.altoCabeza * this.alto * this.p.escala * 0.5;
     return v;
