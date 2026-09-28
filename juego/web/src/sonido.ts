@@ -286,7 +286,32 @@ function tocarPasoHogar(paso: number, t: number, corchea: number) {
   if (k === 0 && compas % 4 === 0) percusion(t, 0.8, 9000, 2, 0.01);
 }
 
-let cancion: 'cumbia' | 'hogar' = 'cumbia';
+// --- Mesa de juegos: bossa bajita (Fmaj7 · Dm7 · Gm7 · C7), para acompañar sin estorbar ---
+const ACORDES_MESA = [
+  { bajo: 41, voces: [57, 60, 64, 69] },
+  { bajo: 38, voces: [57, 60, 62, 65] },
+  { bajo: 43, voces: [58, 62, 65, 67] },
+  { bajo: 36, voces: [58, 60, 64, 67] },
+];
+const MELODIA_MESA = [69, 72, 74, 72, 69, 67, 65, 67, 69, 74, 72, 69, 67, 69, 65, 64];
+
+function tocarPasoMesa(paso: number, t: number, corchea: number) {
+  const compas = Math.floor(paso / 8) % 16;
+  const k = paso % 8;
+  const ac = ACORDES_MESA[compas % 4];
+  // Bajo de bossa: raíz, quinta y raíz arriba
+  if (k === 0) voz(midi(ac.bajo), t, corchea * 2.6, 'triangle', 0.09, 0.02);
+  if (k === 3) voz(midi(ac.bajo + 7), t, corchea * 1.4, 'triangle', 0.06, 0.02);
+  if (k === 6) voz(midi(ac.bajo + 12), t, corchea * 1.2, 'triangle', 0.05, 0.02);
+  // Piano eléctrico: acorde largo al comienzo y un toquecito sincopado
+  if (k === 0 || k === 5) for (const n of ac.voces) voz(midi(n), t, corchea * (k === 0 ? 3.5 : 1.2), 'sine', k === 0 ? 0.018 : 0.012, 0.015);
+  // Melodía escasa: una nota cada tanto, en los compases pares
+  if (compas % 2 === 0 && (k === 2 || k === 7)) voz(midi(MELODIA_MESA[(compas + k) % MELODIA_MESA.length]), t, corchea * 2.4, 'sine', 0.022, 0.01);
+  // Escobillas muy suaves
+  if (k === 2 || k === 6) percusion(t, 0.09, 6000, 1.5, 0.006);
+}
+
+let cancion: 'cumbia' | 'hogar' | 'mesa' = 'cumbia';
 let musicaPendiente: 'menu' | 'juego' | null = null;
 let reloj: ReturnType<typeof setInterval> | null = null;
 let pasoActual = 0;
@@ -295,7 +320,7 @@ let bpm = 100;
 
 export const musica = {
   /** Arranca (o cambia de ambiente): en el menú suena más bajito. */
-  iniciar(modo: 'menu' | 'juego', tempo = 100, cual: 'cumbia' | 'hogar' = 'cumbia') {
+  iniciar(modo: 'menu' | 'juego', tempo = 100, cual: 'cumbia' | 'hogar' | 'mesa' = 'cumbia') {
     musicaPendiente = modo;
     bpm = tempo;
     cancion = cual;
@@ -311,7 +336,7 @@ export const musica = {
       while (proximo < ctx.currentTime + 0.2) {
         // Un poco de swing: la corchea del contratiempo llega tarde
         const swing = pasoActual % 2 ? corchea * 0.08 : 0;
-        if (!musicaApagada && !silencio) (cancion === 'hogar' ? tocarPasoHogar : tocarPaso)(pasoActual, proximo + (cancion === 'hogar' ? 0 : swing), corchea);
+        if (!musicaApagada && !silencio) (cancion === 'hogar' ? tocarPasoHogar : cancion === 'mesa' ? tocarPasoMesa : tocarPaso)(pasoActual, proximo + (cancion === 'cumbia' ? swing : 0), corchea);
         proximo += corchea;
         pasoActual = (pasoActual + 1) % 128;
       }

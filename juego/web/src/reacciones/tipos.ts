@@ -23,8 +23,10 @@ export type Mov =
   | { tipo: 'inflarse'; cuanto: number }
   /** Voltea el cuerpo: hacia el otro, hacia la cámara, lejos del otro o al tablero. */
   | { tipo: 'mirar'; a: 'otro' | 'camara' | 'lejos' | 'tablero' }
-  /** Da unos pasitos hacia el otro (fracción de la distancia) y vuelve al terminar la coreografía. */
+  /** Camina hacia el otro (1 = hasta quedar frente a frente) y vuelve al terminar la coreografía. */
   | { tipo: 'acercarse'; cuanto: number }
+  /** Sale corriendo lejos del otro (1 = fuera del escenario) y vuelve cuando el paso ya no lo pide. */
+  | { tipo: 'huir'; cuanto: number }
   /** Se cae de espaldas (y se queda tirado lo que dure el paso). */
   | { tipo: 'caer' }
   /** Se hunde (tristeza, derrota). */

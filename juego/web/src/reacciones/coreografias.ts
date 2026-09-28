@@ -189,15 +189,15 @@ export const COREOS: Record<string, Coreografia> = {
   ], { prioridad: 1 }),
 
   chocar_cinco: c('chocar los cinco', [
-    { dur: 0.45, pose: 'reposo', cara: 'feliz', mov: [{ tipo: 'acercarse', cuanto: 0.34 }, { tipo: 'mirar', a: 'otro' }, { tipo: 'rebote', alto: 0.04, frec: 4.4 }] },
-    { dur: 0.16, pose: 'chocar_cinco', cara: 'concentrado', suave: 30, mov: [{ tipo: 'acercarse', cuanto: 0.34 }, { tipo: 'mirar', a: 'otro' }, { tipo: 'estirar', cuanto: 0.06 }] },
-    { dur: 0.55, pose: 'chocar_cinco', cara: 'carcajada', mov: [{ tipo: 'acercarse', cuanto: 0.34 }, { tipo: 'mirar', a: 'otro' }], fx: [{ tipo: 'chispa' }], sonido: 'palmada_fuerte', habla: true },
+    { dur: 0.45, pose: 'reposo', cara: 'feliz', mov: [{ tipo: 'acercarse', cuanto: 1 }, { tipo: 'mirar', a: 'otro' }, { tipo: 'rebote', alto: 0.04, frec: 4.4 }] },
+    { dur: 0.16, pose: 'chocar_cinco', cara: 'concentrado', suave: 30, mov: [{ tipo: 'acercarse', cuanto: 1 }, { tipo: 'mirar', a: 'otro' }, { tipo: 'estirar', cuanto: 0.06 }] },
+    { dur: 0.55, pose: 'chocar_cinco', cara: 'carcajada', mov: [{ tipo: 'acercarse', cuanto: 1 }, { tipo: 'mirar', a: 'otro' }], fx: [{ tipo: 'chispa' }], sonido: 'palmada_fuerte', habla: true },
     { dur: 0.45, pose: 'feliz', cara: 'feliz', mov: [{ tipo: 'mirar', a: 'otro' }] },
   ], { prioridad: 3 }),
 
   abrazo: c('abrazo', [
-    { dur: 0.5, pose: 'reposo', cara: 'feliz', mov: [{ tipo: 'acercarse', cuanto: 0.42 }, { tipo: 'mirar', a: 'otro' }, { tipo: 'rebote', alto: 0.03, frec: 4 }] },
-    { dur: 1.6, pose: 'abrazo', cara: 'feliz', suave: 12, mov: [{ tipo: 'acercarse', cuanto: 0.42 }, { tipo: 'mirar', a: 'otro' }, { tipo: 'balanceo', grados: 4, frec: 0.9 }], fx: [{ tipo: 'corazones', n: 7 }], sonido: 'abrazo', habla: true },
+    { dur: 0.5, pose: 'reposo', cara: 'feliz', mov: [{ tipo: 'acercarse', cuanto: 1 }, { tipo: 'mirar', a: 'otro' }, { tipo: 'rebote', alto: 0.03, frec: 4 }] },
+    { dur: 1.6, pose: 'abrazo', cara: 'feliz', suave: 12, mov: [{ tipo: 'acercarse', cuanto: 1 }, { tipo: 'mirar', a: 'otro' }, { tipo: 'balanceo', grados: 4, frec: 0.9 }], fx: [{ tipo: 'corazones', n: 7 }], sonido: 'abrazo', habla: true },
     { dur: 0.3, pose: 'feliz', cara: 'feliz' },
   ], { prioridad: 3 }),
 
@@ -294,6 +294,15 @@ export const COREOS: Record<string, Coreografia> = {
     { dur: 1.5, pose: 'tirado', cara: 'dormido', suave: 12, mov: [{ tipo: 'caer' }], fx: [{ tipo: 'mareo', dur: 1.4 }, { tipo: 'polvo' }] },
     { dur: 0.45, pose: 'reposo', cara: 'nervioso', suave: 10 },
   ], { prioridad: 3 }),
+
+  huir: c('salir corriendo', [
+    { dur: 0.3, pose: 'boca_abierta', cara: 'sorprendido', suave: 30, mov: [{ tipo: 'salto', alto: 0.08 }, { tipo: 'mirar', a: 'otro' }], fx: [{ tipo: 'signo', c: '!' }], sonido: 'sorpresa' },
+    { dur: 1.3, pose: 'caminar_a', pose2: 'caminar_b', ritmo: 4.5, cara: 'llorando', suave: 30, mov: [{ tipo: 'huir', cuanto: 1 }, { tipo: 'mirar', a: 'lejos' }, { tipo: 'rebote', alto: 0.05, frec: 9 }], fx: [{ tipo: 'polvo' }, { tipo: 'lagrimas', dur: 1.2 }], sonido: 'huida', habla: true },
+    { dur: 0.9, pose: 'reposo', cara: 'puchero', mov: [{ tipo: 'huir', cuanto: 1 }] },
+    { dur: 0.7, pose: 'caminar_a', pose2: 'caminar_b', ritmo: 2, cara: 'puchero', suave: 20, mov: [{ tipo: 'huir', cuanto: 0.55 }, { tipo: 'mirar', a: 'otro' }], fx: [{ tipo: 'signo', c: '…' }] },
+    { dur: 1.1, pose: 'caminar_a', pose2: 'caminar_b', ritmo: 2.2, cara: 'puchero', suave: 20, mov: [{ tipo: 'mirar', a: 'camara' }] },
+    { dur: 0.35, pose: 'brazos_cruzados', cara: 'aburrido', mov: [{ tipo: 'mirar', a: 'lejos' }], fx: [{ tipo: 'resoplido' }], sonido: 'hmph' },
+  ], { prioridad: 2 }),
 
   reverencia: c('reverencia', [
     { dur: 1.1, pose: 'reverencia', cara: 'feliz', suave: 10, fx: [{ tipo: 'estrellas', n: 3 }], habla: true },

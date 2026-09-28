@@ -44,7 +44,7 @@ const REACCION: Record<string, [Opcion[], Opcion[]]> = {
   ],
   captura_grande: [
     [['salto_confeti', 'captura'], ['senalar_reir', 'captura'], ['bailecito', 'captura']],
-    [['llorar', 'capturado'], ['enojo', 'capturado'], ['rodillas', 'capturado']],
+    [['llorar', 'capturado'], ['enojo', 'capturado'], ['rodillas', 'capturado'], ['huir', 'huir']],
   ],
   turno_extra: [
     [['pulgares', 'extra'], ['frotarse_manos', 'extra'], ['celebrar', 'extra']],
@@ -62,7 +62,7 @@ const REACCION: Record<string, [Opcion[], Opcion[]]> = {
   ],
   adelante: [
     [['presumir', 'adelante'], ['musculo', 'adelante'], ['pulgares', 'adelante']],
-    [['gotita', 'atras'], ['mirada_asesina', 'atras']],
+    [['gotita', 'atras'], ['mirada_asesina', 'atras'], ['huir', 'huir']],
   ],
 };
 

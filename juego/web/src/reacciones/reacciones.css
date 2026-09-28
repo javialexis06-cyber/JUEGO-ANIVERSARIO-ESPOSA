@@ -66,7 +66,7 @@
 
 .fx-globo {
   position: absolute;
-  max-width: 44%;
+  max-width: min(44%, 170px);
   padding: 6px 10px;
   border-radius: 14px;
   background: #fff;
@@ -89,6 +89,8 @@
   border-left: 0;
 }
 .fx-globo.hacia-izq::after { left: auto; right: -7px; border-right: 0; border-left: 8px solid #fff; }
+.fx-globo.arriba { transform-origin: 50% 100%; }
+.fx-globo.arriba::after { left: calc(50% - 6px); bottom: -7px; border: 6px solid transparent; border-top: 8px solid #fff; border-bottom: 0; }
 
 .fx-foco > svg { filter: drop-shadow(0 0 8px rgba(246, 207, 90, 0.9)); }
 .fx-reloj .manecilla { transform-origin: 20px 21px; animation: fx-reloj 1s steps(8) infinite; }
@@ -147,4 +149,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .fx-vena > svg, .fx-nube > svg, .fx-aura { animation-duration: 2s; }
+}
+
+@media (orientation: landscape) {
+  .fx-globo { max-width: 49%; font-size: 12px; }
 }

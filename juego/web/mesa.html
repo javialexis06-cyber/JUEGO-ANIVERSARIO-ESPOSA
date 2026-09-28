@@ -16,7 +16,10 @@
       <span class="logo-linea">Juegos de Mesa</span>
       <span class="logo-pareja">Él contra Ella, sin trampa (casi)</span>
     </div>
-    <button id="btn-sonido-menu" class="boton-redondo boton-sonido" aria-label="Sonido"><i></i></button>
+    <div class="mesa-cabeza-botones">
+      <button class="boton-redondo boton-musica" aria-label="Música">♪</button>
+      <button id="btn-sonido-menu" class="boton-redondo boton-sonido" aria-label="Sonido"><i></i></button>
+    </div>
   </header>
   <div class="mesa-modos" role="radiogroup" aria-label="Con quién">
     <button class="modo" data-modo="ia" aria-pressed="true"><b>Contra <span data-otro>Ella</span></b><small>Un jugador: juega el celular</small></button>
@@ -45,6 +48,7 @@
       <button id="btn-salir" class="boton-redondo boton-atras" aria-label="Salir de la partida"></button>
       <span id="partida-juego" class="partida-juego"></span>
       <button id="btn-ayuda" class="boton-redondo boton-ayuda" aria-label="Cómo se juega">?</button>
+      <button class="boton-redondo boton-musica" aria-label="Música">♪</button>
       <button id="btn-sonido" class="boton-redondo boton-sonido" aria-label="Sonido"><i></i></button>
     </div>
     <p id="turno" class="turno" aria-live="polite"></p>

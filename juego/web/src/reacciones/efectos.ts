@@ -123,15 +123,25 @@ export class Efectos {
     const ancla = () => {
       const c = a.cabeza();
       const ancho = this.capa.clientWidth;
+      // Escenario angosto (columna del celular acostado): el globo va encima de la cabeza, sin chocar con el otro
+      if (ancho < 420) {
+        const w = el.offsetWidth, h = el.offsetHeight;
+        const x = Math.max(4, Math.min(c.x - w / 2, ancho - w - 4));
+        return { x, y: Math.max(c.y - c.r * 1.05, h + 4), r: c.r, hacia: 0 };
+      }
       // El globo sale hacia el centro y nunca se sale del escenario
       const hacia = c.x < ancho / 2 ? 1 : -1;
-      // Al lado de la cabeza (arriba no cabe: el escenario es bajito); la colita apunta a la boca
-      return { x: c.x + hacia * c.r * 1.15, y: Math.max(c.y + c.r * 0.55, 60), r: c.r, hacia };
+      // Al lado de la cabeza (arriba no cabe: el escenario es bajito); la colita apunta a la boca.
+      // Nunca se sale del escenario (en el celular acostado la columna de los muñequitos es angosta)
+      const w = el.offsetWidth, h = el.offsetHeight;
+      let x = c.x + hacia * c.r * 1.15;
+      x = hacia > 0 ? Math.max(4, Math.min(x, ancho - w - 4)) : Math.min(ancho - 4, Math.max(x, w + 4));
+      return { x, y: Math.max(c.y + c.r * 0.55, h + 48), r: c.r, hacia };
     };
     const pos = ancla();
-    el.classList.add(pos.hacia > 0 ? 'hacia-der' : 'hacia-izq');
+    el.classList.add(pos.hacia > 0 ? 'hacia-der' : pos.hacia < 0 ? 'hacia-izq' : 'arriba');
     this.seguir(el, () => ancla(), 0, 0, dur, 0.35);
-    const base = pos.hacia > 0 ? 'translateY(-100%)' : 'translate(-100%, -100%)';
+    const base = pos.hacia < 0 ? 'translate(-100%, -100%)' : 'translateY(-100%)';
     el.animate([{ transform: `${base} scale(.3)`, opacity: 0 }, { transform: `${base} scale(1)`, opacity: 1 }], {
       duration: 260 / this.rapido,
       easing: 'cubic-bezier(.2,1.5,.4,1)',

@@ -43,6 +43,7 @@ export const SONIDOS: Record<string, () => void> = {
   rendirse: () => [659, 587, 523].forEach((f, i) => nota(f, 0.3, i * 0.28, 'sine', 0.05)),
   otra: () => { nota(392, 0.1, 0, 'square', 0.04); nota(523, 0.22, 0.1, 'square', 0.04); },
   desmayo: () => nota(700, 0.8, 0, 'sine', 0.05, 150),
+  huida: () => { for (let i = 0; i < 6; i++) nota(i % 2 ? 330 : 294, 0.07, i * 0.11, 'triangle', 0.045); },
 };
 
 export function sonar(nombre: string | undefined) {

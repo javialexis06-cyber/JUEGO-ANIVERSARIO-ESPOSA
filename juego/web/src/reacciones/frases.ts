@@ -4,7 +4,7 @@ import type { Rol } from '../casa/modelo';
 export type Situacion =
   | 'presumir' | 'bien' | 'mal' | 'cero' | 'celos' | 'burla' | 'captura' | 'capturado' | 'extra' | 'extra_otro'
   | 'lanzar' | 'suerte' | 'suerte_otro' | 'casi' | 'alivio' | 'regalo' | 'regalado' | 'adelante' | 'atras'
-  | 'pensar' | 'impaciente' | 'inicio' | 'ganar' | 'perder' | 'empate' | 'otra' | 'beso' | 'sonrojo';
+  | 'pensar' | 'impaciente' | 'inicio' | 'ganar' | 'perder' | 'empate' | 'otra' | 'beso' | 'sonrojo' | 'huir';
 
 const FRASES: Record<Situacion, Record<Rol, string[]>> = {
   presumir: {
@@ -114,6 +114,10 @@ const FRASES: Record<Situacion, Record<Rol, string[]>> = {
   beso: {
     el: ['Para ti, mi reina', 'Muack', 'Te amo'],
     ella: ['Muack', 'Para ti, amor', 'Te amo'],
+  },
+  huir: {
+    el: ['¡No juego más!', 'Me voy…', '¡Así no juego!'],
+    ella: ['¡No quiero!', '¡Ya no juego!', 'Me voy, bye'],
   },
   sonrojo: {
     el: ['Ay, mi amor…', 'Jejeje', 'Yo también'],

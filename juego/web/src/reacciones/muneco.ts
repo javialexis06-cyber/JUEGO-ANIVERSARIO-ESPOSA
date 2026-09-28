@@ -43,6 +43,8 @@ export class Muneco {
   private inflado = 0;
   private cabezaAbajo = 0;
   private props = new Map<Prop, THREE.Object3D>();
+  /** Giros sumados a cada hueso en el último cuadro. */
+  private sumados = new Map<THREE.Object3D, THREE.Quaternion>();
   private propActual: Prop | null = null;
   private tQuieto = 3;
   private mirarOtroHasta = 0;
@@ -252,13 +254,15 @@ export class Muneco {
     if (!this.listo) return;
     this.t += dt;
     const paso = this.paso;
+    // Las coreografías van un poco más pausadas que su tiempo escrito: se alcanzan a ver bien
+    const dtA = dt * TEMPO;
     if (paso) {
-      this.tPaso += dt;
+      this.tPaso += dtA;
       if (paso.pose2) {
         const a = this.pose(paso.pose)!, b = this.pose(paso.pose2)!;
         const ritmo = paso.ritmo ?? 2;
         const antes = this.fase;
-        this.fase += dt * ritmo;
+        this.fase += dtA * ritmo;
         this.p.vaiven(a, b, 0.5 - 0.5 * Math.cos(this.fase * Math.PI * 2));
         if (paso.sonidoRitmo && Math.floor(antes * 2) !== Math.floor(this.fase * 2)) sonar(paso.sonidoRitmo);
       }
@@ -266,6 +270,7 @@ export class Muneco {
     } else {
       this.quieto(dt);
     }
+    this.deshacerSumados();
     this.p.update(dt);
     this.cuerpo(dt, this.paso);
     this.moverProp(dt);
@@ -353,6 +358,9 @@ export class Muneco {
         case 'acercarse':
           metaAcerca = m.cuanto;
           break;
+        case 'huir':
+          metaAcerca = -m.cuanto;
+          break;
         case 'caer':
           metaCaida = 1;
           break;
@@ -360,18 +368,24 @@ export class Muneco {
     }
     const k = (v: number) => Math.min(1, dt * v);
     this.giroExtra = acercarA(this.giroExtra, metaGiro, k(9));
-    this.acercamiento = acercarA(this.acercamiento, metaAcerca, k(6));
+    this.acercamiento = acercarA(this.acercamiento, metaAcerca, k(metaAcerca < 0 ? 3.2 : 6));
     this.caida = acercarA(this.caida, metaCaida, k(metaCaida ? 7 : 4));
     this.hundido = acercarA(this.hundido, metaHundido, k(5));
     this.estirado = acercarA(this.estirado, metaEstirado, k(18));
     this.inflado = acercarA(this.inflado, metaInflado, k(10));
     this.cabezaAbajo = acercarA(this.cabezaAbajo, metaCabezaAbajo, k(6));
 
-    // Posición: su sitio, más lo que se acerque al otro (a saltitos)
+    // Posición: su sitio, más lo que se acerque al otro (hasta quedar tocándose) o se aleje corriendo
     const pos = this.base.clone();
-    if (this.otro && this.acercamiento > 0.001) {
-      pos.lerp(this.otro.base, this.acercamiento);
-      y += Math.abs(Math.sin(t * 14)) * 0.05 * Math.min(1, Math.abs(metaAcerca - this.acercamiento) * 8);
+    if (this.otro && Math.abs(this.acercamiento) > 0.001) {
+      const hacia = this.otro.base.clone().sub(this.base);
+      const lejos = hacia.length();
+      hacia.normalize();
+      // 1 = frente a frente, casi tocándose (cada uno camina hasta la mitad menos medio cuerpo)
+      const alcance = this.acercamiento > 0 ? Math.max(0, lejos / 2 - this.alto * this.p.escala * 0.25) : this.alto * this.p.escala * 2.2;
+      pos.addScaledVector(hacia, alcance * this.acercamiento);
+      const moviendo = Math.min(1, Math.abs(metaAcerca - this.acercamiento) * 8);
+      y += Math.abs(Math.sin(t * 14)) * 0.05 * moviendo;
     }
     // Las cantidades del catálogo van en «muñecos»: 1 = 60 % de su altura
     const u = 0.6 * this.alto * this.p.escala;
@@ -389,14 +403,23 @@ export class Muneco {
     c.position.set(0, y - this.hundido * u * 0.5, 0);
     c.rotation.set(-this.caida * Math.PI * 0.47, 0, rz);
 
-    // Huesos encima de la pose (el mezclador los reescribe en cada cuadro, así que se suman sin acumular)
+    // Huesos encima de la pose. El mezclador solo reescribe un hueso cuando su valor cambia: por eso lo que se
+    // sumó en el cuadro anterior se deshace antes de mezclar (si no, un cabeceo se acumula y la cabeza da vueltas)
     if (this.cabezaAbajo > 0.001) huesos.push(['cabeza', 'x', -this.cabezaAbajo]);
     for (const [n, eje, ang] of huesos) {
       const h = this.hueso(n);
       if (!h) continue;
       const q = new THREE.Quaternion().setFromAxisAngle(eje === 'x' ? EJE_X : eje === 'y' ? EJE_Y : EJE_Z, ang);
       h.quaternion.multiply(q);
+      const antes = this.sumados.get(h);
+      this.sumados.set(h, antes ? antes.multiply(q) : q.clone());
     }
+  }
+
+  /** Quita lo sumado a los huesos en el cuadro anterior (queda la pose limpia para el mezclador). */
+  private deshacerSumados() {
+    for (const [h, q] of this.sumados) h.quaternion.multiply(q.invert());
+    this.sumados.clear();
   }
 
   /** Giro (relativo a su reposo) para quedar mirando al otro. */
@@ -428,6 +451,8 @@ export class Muneco {
   }
 }
 
+/** Velocidad de las coreografías (menos de 1 = más pausadas que lo escrito en el catálogo). */
+const TEMPO = 0.78;
 const EJE_X = new THREE.Vector3(1, 0, 0);
 const EJE_Y = new THREE.Vector3(0, 1, 0);
 const EJE_Z = new THREE.Vector3(0, 0, 1);

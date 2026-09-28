@@ -206,6 +206,9 @@ class Partida {
         if (this.terminada) return;
         if (this.modo === 'linea') canal?.movimiento(this.id, this.n, m);
       } else if (this.modo === 'ia') {
+        // Deja terminar las reacciones de la jugada anterior antes de jugar (se alcanzan a ver)
+        await escenario!.calma(this.turnoAnterior === t ? 1800 : 3200);
+        if (this.terminada) return;
         escenario!.pensar(t, true);
         const t0 = performance.now();
         m = juego.ia(this.e, this.nivel, azar);
@@ -314,14 +317,15 @@ class Partida {
   }
 }
 
+/** Monedas para la casa (la economía va a la cuarta parte de lo que era: se gana con calma). */
 function premioDe(p: Partida, fin: Final) {
   if (p.modo === 'ia') {
-    if (fin.ganador !== yo) return fin.ganador === null ? 4 : 2;
-    return p.nivel === 'dificil' ? 25 : p.nivel === 'normal' ? 15 : 8;
+    if (fin.ganador !== yo) return fin.ganador === null ? 1 : 0;
+    return p.nivel === 'dificil' ? 6 : p.nivel === 'normal' ? 4 : 2;
   }
   // Entre los dos: cada celular cobra lo suyo (en local se paga una vez)
-  if (p.modo === 'local') return 10;
-  return fin.ganador === yo ? 12 : 6;
+  if (p.modo === 'local') return 3;
+  return fin.ganador === yo ? 3 : 1;
 }
 
 function pagar(monedas: number) {
@@ -470,10 +474,28 @@ function iniciarCanal() {
 
 // ---------------------------------------------------------------------------
 // Botones
+// Música suave de fondo (arranca con el primer toque: los navegadores no dejan sonar antes)
+let conMusica = false;
+function arrancarMusica() {
+  if (conMusica) return;
+  conMusica = true;
+  sonido.activar();
+  sonido.musica.iniciar('menu', 84, 'mesa');
+}
+function pintarMusica() {
+  for (const b of document.querySelectorAll('.boton-musica')) b.classList.toggle('apagado', sonido.musica.apagada());
+}
+
+document.addEventListener('pointerdown', arrancarMusica, { once: true });
 document.addEventListener('click', (ev) => {
   const t = ev.target as HTMLElement;
   const b = t.closest<HTMLElement>('button');
   if (!b) return;
+  if (b.classList.contains('boton-musica')) {
+    sonido.musica.alternar();
+    pintarMusica();
+    return;
+  }
   if (b.dataset.juego) void elegirJuego(b.dataset.juego);
   else if (b.dataset.modo) {
     prefs.modo = b.dataset.modo as Modo;
@@ -526,6 +548,7 @@ if (Capacitor.isNativePlatform()) {
 // ---------------------------------------------------------------------------
 // Arranque
 pintarSonido();
+pintarMusica();
 pintarMenu();
 if (prefs.modo === 'linea') iniciarCanal();
 // Entrar directo a un juego (desde la invitación de la casa o en pruebas): ?juego=dados&modo=local

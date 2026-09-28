@@ -106,15 +106,17 @@ export class Escenario {
     this.camara.aspect = aspecto;
     const alto = this.m.el.listo ? this.m.el.p.escala * this.m.el.alto : 2.7;
     // Alto visible: el muñeco + espacio para saltos arriba + un poquito bajo los pies
-    const visible = alto * 1.58;
+    // En una columna angosta (celular acostado) se aleja para que quepan los dos de lado a lado
+    const visible = Math.max(alto * 1.58, (alto * 2.35) / aspecto);
     const dist = visible / 2 / Math.tan(THREE.MathUtils.degToRad(this.camara.fov / 2));
-    const centroY = alto * 0.6;
+    // Los pies casi en el borde de abajo; el aire que sobre queda arriba para saltar
+    const centroY = visible / 2 - alto * 0.1;
     this.camara.position.set(0, centroY + alto * 0.1, dist);
     this.camara.lookAt(0, centroY, 0);
     this.camara.updateProjectionMatrix();
     const ancho = visible * aspecto;
     // A los lados, dejando el centro para el marcador
-    const x = Math.min(ancho * 0.33, alto * 1.35);
+    const x = Math.min(ancho * (aspecto > 1.4 ? 0.33 : 0.26), alto * 1.35);
     const lados: [Rol, number][] = [[this.yo, -x], [otro(this.yo), x]];
     for (const [r, px] of lados) {
       this.m[r].ubicar(px, 0, px < 0 ? 0.42 : -0.42);
@@ -190,6 +192,19 @@ export class Escenario {
   async final(f: Final) {
     for (const m of document.querySelectorAll<HTMLElement>('.marcador')) m.classList.remove('activo');
     await conLimite(this.director.final(f.ganador), 4500 / this.rapido);
+  }
+
+  /** Espera a que los dos terminen lo que están actuando (la IA no juega encima de una reacción). */
+  calma(maxMs: number): Promise<void> {
+    const t0 = performance.now();
+    return new Promise((listo) => {
+      const mirar = () => {
+        const ocupados = (['el', 'ella'] as Rol[]).some((r) => this.m[r].actuando);
+        if (!ocupados || performance.now() - t0 > maxMs / this.rapido) listo();
+        else setTimeout(mirar, 80);
+      };
+      mirar();
+    });
   }
 
   /** Pruebas y vitrina: que un muñeco haga una reacción del catálogo. */
