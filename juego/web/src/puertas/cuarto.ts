@@ -570,6 +570,114 @@ export function cieloCastillo() {
   });
 }
 
+
+// ---------------------------------------------------------------------------
+// Nave
+// ---------------------------------------------------------------------------
+/** Paneles metálicos con tornillos y juntas. */
+export function panelesTextura(base = '#c9d3dd', w = 512, h = 512) {
+  return lienzo(w, h, (c) => {
+    c.fillStyle = base;
+    c.fillRect(0, 0, w, h);
+    const n = 2;
+    for (let i = 0; i < n; i++)
+      for (let j = 0; j < n; j++) {
+        const x = (i * w) / n, y = (j * h) / n;
+        const gr = c.createLinearGradient(x, y, x + w / n, y + h / n);
+        gr.addColorStop(0, 'rgba(255,255,255,0.18)');
+        gr.addColorStop(1, 'rgba(0,0,0,0.08)');
+        c.fillStyle = gr;
+        c.fillRect(x + 4, y + 4, w / n - 8, h / n - 8);
+        c.strokeStyle = 'rgba(40,50,70,0.35)';
+        c.lineWidth = 4;
+        c.strokeRect(x + 2, y + 2, w / n - 4, h / n - 4);
+        c.fillStyle = 'rgba(40,50,70,0.45)';
+        for (const [a, b] of [[14, 14], [w / n - 14, 14], [14, h / n - 14], [w / n - 14, h / n - 14]]) {
+          c.beginPath();
+          c.arc(x + a, y + b, 5, 0, Math.PI * 2);
+          c.fill();
+        }
+      }
+  });
+}
+
+export function espacioTextura(w = 512, h = 512, nebulosa = true) {
+  return lienzo(w, h, (c) => {
+    c.fillStyle = '#070a1f';
+    c.fillRect(0, 0, w, h);
+    if (nebulosa) {
+      for (const [x, y, r, col] of [[0.3, 0.4, 0.45, 'rgba(180,90,200,0.35)'], [0.7, 0.6, 0.4, 'rgba(70,120,230,0.35)'], [0.55, 0.3, 0.25, 'rgba(240,140,180,0.25)']] as [number, number, number, string][]) {
+        const g = c.createRadialGradient(x * w, y * h, 1, x * w, y * h, r * w);
+        g.addColorStop(0, col);
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        c.fillStyle = g;
+        c.fillRect(0, 0, w, h);
+      }
+    }
+    for (let i = 0; i < 260; i++) {
+      const x = (i * 197.3) % w, y = (i * 83.7 + i * i * 0.37) % h;
+      const r = i % 17 === 0 ? 2.2 : i % 5 === 0 ? 1.4 : 0.8;
+      c.fillStyle = i % 9 === 0 ? '#ffe9b0' : '#ffffff';
+      c.beginPath();
+      c.arc(x, y, r, 0, Math.PI * 2);
+      c.fill();
+    }
+  });
+}
+
+function muroNave(g: THREE.Group) {
+  const W = CUARTO.ancho, H = CUARTO.alto, e = CUARTO.grueso, F = CUARTO.fondo;
+  const lado = (W - HUECO.w) / 2;
+  const tex = (ancho: number, alto: number) => {
+    const t = panelesTextura();
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(ancho / 1.2, alto / 1.2);
+    return new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.35 });
+  };
+  for (const s of [-1, 1]) g.add(en(new THREE.Mesh(new THREE.BoxGeometry(lado, H, e), tex(lado, H)), s * (HUECO.w / 2 + lado / 2), H / 2, -e / 2));
+  g.add(en(new THREE.Mesh(new THREE.BoxGeometry(HUECO.w, H - HUECO.h, e), tex(HUECO.w, H - HUECO.h)), 0, HUECO.h + (H - HUECO.h) / 2, -e / 2));
+  for (const s of [-1, 1]) g.add(en(new THREE.Mesh(new THREE.BoxGeometry(0.2, H, F), tex(F, H)), s * (W / 2 + 0.1), H / 2, F / 2));
+}
+
+/** Ventanilla redonda con el espacio (y un planeta) detrás. */
+function ventanilla(g: THREE.Group, x: number, y: number, r = 0.55) {
+  const vista = new THREE.Mesh(new THREE.CircleGeometry(r, 40), new THREE.MeshBasicMaterial({ map: espacioTextura() }));
+  en(vista, x, y, 0.01);
+  g.add(vista);
+  const planeta = new THREE.Mesh(new THREE.CircleGeometry(r * 0.35, 32), new THREE.MeshBasicMaterial({ map: lienzo(128, 128, (c, w, h) => {
+    const gr = c.createRadialGradient(w * 0.35, h * 0.35, 4, w / 2, h / 2, w / 2);
+    gr.addColorStop(0, '#ffd1a8');
+    gr.addColorStop(0.6, '#e4577a');
+    gr.addColorStop(1, '#5b2a5e');
+    c.fillStyle = gr;
+    c.beginPath();
+    c.arc(w / 2, h / 2, w / 2, 0, Math.PI * 2);
+    c.fill();
+  }), transparent: true }));
+  en(planeta, x + r * 0.3, y - r * 0.25, 0.012);
+  g.add(planeta);
+  g.add(en(toro(r + 0.03, 0.06, mat('#8a94a8', { metal: 0.7, rough: 0.3 })), x, y, 0.03));
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2;
+    g.add(en(esfera(0.018, mat('#5a6478', { metal: 0.6 }), undefined, 8), x + Math.cos(a) * (r + 0.03), y + Math.sin(a) * (r + 0.03), 0.08));
+  }
+}
+
+/** Lucecitas de tablero que parpadean. */
+function lucesTablero(g: THREE.Group, x: number, y: number, n = 6) {
+  const colores = ['#5af0a0', '#ffd24a', '#ff6a7a', '#6ac8ff'];
+  for (let i = 0; i < n; i++) {
+    const m = new THREE.MeshBasicMaterial({ color: colores[i % 4] });
+    const l = esfera(0.025, m, undefined, 8);
+    en(l, x + i * 0.09, y, 0.03);
+    l.onBeforeRender = () => {
+      const t = performance.now() / 1000;
+      m.color.set(Math.sin(t * (1.5 + i * 0.7) + i) > 0 ? colores[i % 4] : '#2a3040');
+    };
+    g.add(l);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Los diez escenarios
 // ---------------------------------------------------------------------------
@@ -578,6 +686,64 @@ const noche: Luces = {
 };
 
 export const TEMAS: Record<number, Tema> = {
+  9: {
+    capitulo: 9,
+    luces: { fondo: '#070a1f', ambiente: '#8aa0c8', intensidadAmbiente: 0.85, sol: '#dfe8ff', intensidadSol: 1.25, solDesde: [2, 6, 6], entorno: 0.45, exposicion: 1.25 },
+    puerta: 'iris',
+    opPuerta: { color: '#8a94a8', marco: '#5a6478' },
+    armar(g) {
+      muroNave(g);
+      const rejilla = lienzo(256, 256, (c, w, h) => {
+        c.fillStyle = '#4a5468';
+        c.fillRect(0, 0, w, h);
+        c.strokeStyle = '#384052';
+        c.lineWidth = 6;
+        for (let i = 0; i <= 8; i++) {
+          c.beginPath();
+          c.moveTo((i * w) / 8, 0);
+          c.lineTo((i * w) / 8, h);
+          c.moveTo(0, (i * h) / 8);
+          c.lineTo(w, (i * h) / 8);
+          c.stroke();
+        }
+      });
+      rejilla.wrapS = rejilla.wrapT = THREE.RepeatWrapping;
+      piso(g, rejilla, 3);
+      techo(g, '#5a6478');
+      for (let i = 0; i < 3; i++) {
+        const tira = caja(4, 0.04, 0.12, new THREE.MeshBasicMaterial({ color: '#dff0ff' }), 0.01);
+        en(tira, 0, CUARTO.alto - 0.03, 1 + i * 1.8);
+        g.add(tira);
+      }
+      // Marco de luz alrededor de la compuerta
+      const marco = toro(HUECO.w / 2 + 0.28, 0.035, new THREE.MeshBasicMaterial({ color: '#6ac8ff' }), undefined);
+      en(marco, 0, HUECO.h / 2 + 0.05, 0.08);
+      marco.scale.y = 1.45;
+      g.add(marco);
+      ventanilla(g, -2.25, 1.85, 0.55);
+      lucesTablero(g, -1.95, 0.95);
+      lucesTablero(g, 2.6, 2.6, 5);
+      // Consola baja a la izquierda
+      const consola = caja(1.0, 0.8, 0.5, mat('#8a94a8', { metal: 0.5, rough: 0.35 }), 0.05);
+      en(consola, -2.3, 0.4, 0.3);
+      g.add(consola);
+      const pantalla = letrero(0.7, 0.3, (c, w, h) => {
+        c.fillStyle = '#0d1a2e';
+        c.fillRect(0, 0, w, h);
+        c.strokeStyle = '#5af0a0';
+        c.lineWidth = 4;
+        c.beginPath();
+        for (let x = 0; x < w; x += 4) c.lineTo(x, h / 2 + Math.sin(x / 18) * h * 0.25);
+        c.stroke();
+      }, undefined, { brillo: 0.9 });
+      pantalla.rotation.x = -0.5;
+      en(pantalla, -2.3, 0.83, 0.42);
+      g.add(pantalla);
+      const azul = new THREE.PointLight('#6ac8ff', 1.2, 6, 1.5);
+      en(azul, 0, 2.4, 1.2);
+      g.add(azul);
+    },
+  },
   8: {
     capitulo: 8,
     luces: { fondo: '#1b1f45', ambiente: '#6a5a78', intensidadAmbiente: 0.7, sol: '#ffd8a8', intensidadSol: 1.05, solDesde: [2.5, 6, 5.5], entorno: 0.3, exposicion: 1.3 },

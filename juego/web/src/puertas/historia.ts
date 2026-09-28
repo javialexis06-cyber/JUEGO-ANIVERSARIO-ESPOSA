@@ -516,6 +516,16 @@ export const PUERTAS: Record<number, string[]> = {
   78: ['La poción del color del pergamino abre la reja. Tres gotas, dice.'],
   79: ['El criptex guarda la llave. La pregunta es fácil: quién manda en este castillo.'],
   80: ['En la torre hay una trenza negra, larga, larga… como el pelo de alguien que yo conozco.'],
+  81: ['Mira esas estrellas: algunas esconden un corazón. Únelas con el dedo.'],
+  82: ['Aquí no hay gravedad. La llave flota… y el celular manda para dónde va.'],
+  83: ['Los planetas se salieron de su lugar. Del más cerquita del sol hacia afuera.'],
+  84: ['La radio de la nave busca una estación. Cuando se limpie el ruido, escucha bien.'],
+  85: ['La nave manda un mensaje en Morse. La tabla de la pared ayuda a leerlo.'],
+  86: ['En el espacio no hay arriba ni abajo… ¿y si le das la vuelta?'],
+  87: ['¡Asteroides en el camino! Hay que abrir paso a punta de toques.'],
+  88: ['La energía no llega a la compuerta. Hay que girar los tubos.'],
+  89: ['El cohete necesita exactamente tres segundos de combustible. Ni uno más.'],
+  90: ['Un eclipse: la luna quiere darle un beso al sol. Ayúdale a llegar justo.'],
 };
 
 /** Ánimo (nunca pistas): tras varios intentos o un buen rato quieto. */
