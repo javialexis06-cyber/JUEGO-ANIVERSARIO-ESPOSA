@@ -143,6 +143,7 @@ class Partida {
   /** Movimientos jugados (en línea: el número de orden de cada mensaje). */
   n = 0;
   private recibidos = new Map<number, unknown>();
+  private turnoAnterior: Rol | null = null;
   private alRecibir: (() => void) | null = null;
 
   constructor(
@@ -207,8 +208,9 @@ class Partida {
         escenario!.pensar(t, true);
         const t0 = performance.now();
         m = juego.ia(this.e, this.nivel, azar);
-        // Que se note que piensa (más si la jugada es importante), sin hacer esperar de más
-        await esperar(Math.max(0, 650 + azar() * 700 - (performance.now() - t0)));
+        // Que se note que piensa, sin hacer esperar de más (si sigue jugando él mismo, va más rápido)
+        const sigue = this.turnoAnterior === t;
+        await esperar(Math.max(0, (sigue ? 280 + azar() * 220 : 650 + azar() * 700) - (performance.now() - t0)));
         escenario!.pensar(t, false);
         if (this.terminada) return;
       } else {
@@ -217,6 +219,7 @@ class Partida {
         escenario!.pensar(t, false);
         if (this.terminada) return;
       }
+      this.turnoAnterior = t;
       const antes = this.e;
       const puntosAntes = reglas.puntos(antes);
       this.e = reglas.aplicar(antes, m);

@@ -126,7 +126,8 @@
   transform: translateY(-1px);
   z-index: 1;
 }
-.dados-celda.elegida .dados-num { opacity: 1; }
+.dados-celda.posible.cero .dados-num { opacity: 0.32; color: var(--c); }
+.dados-tarjeta .dados-celda.elegida .dados-num { opacity: 1; color: var(--papel); }
 .dados-celda.elegida::after { display: none; }
 .dados-celda.escrita { background: var(--s); }
 @keyframes dados-brillo {
@@ -253,7 +254,7 @@
   border: 0;
   background: none;
   perspective: calc(var(--lado) * 7);
-  perspective-origin: 50% -40%;
+  perspective-origin: 50% 50%;
   -webkit-tap-highlight-color: transparent;
 }
 .dados-bandeja.activa .dados-dado { cursor: pointer; }
@@ -276,7 +277,7 @@
   inset: 0;
   border-radius: 24%;
   background: radial-gradient(circle at 30% 25%, #fffefa, #fff5e6 55%, #f1e0c6);
-  box-shadow: inset 0 0 0 1.5px rgba(61, 43, 39, 0.16), inset 0 -3px 5px rgba(61, 43, 39, 0.1);
+  box-shadow: inset 0 0 0 1.5px rgba(61, 43, 39, 0.16), inset 0 -3px 5px rgba(61, 43, 39, 0.1), 0 4px 0 #dcc5a2;
   backface-visibility: hidden;
 }
 .dados-cara[data-v='1'] { transform: translateZ(calc(var(--lado) / 2)); }

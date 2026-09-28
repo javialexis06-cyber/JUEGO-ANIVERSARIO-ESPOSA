@@ -302,6 +302,7 @@ class VistaDados implements Vista<EstadoDados, MovDados> {
     for (const o of opcionesDe(e.tarjetas[e.turno], e.dados)) {
       const b = this.celdas[e.turno][o.casilla];
       b.classList.add('posible');
+      b.classList.toggle('cero', o.valor === 0);
       b.firstElementChild!.textContent = String(o.valor);
     }
   }
@@ -452,7 +453,6 @@ class VistaDados implements Vista<EstadoDados, MovDados> {
     );
     // Los dados saltan, giran y caen con rebote
     const dur = ms(900);
-    let ultimoGolpe = 0;
     await Promise.all(
       rodar.map((d, n) => {
         const i = this.dados.indexOf(d);
@@ -484,7 +484,6 @@ class VistaDados implements Vista<EstadoDados, MovDados> {
         );
         golpe((retraso + dur * 0.44) / 1000, 1);
         golpe((retraso + dur * 0.74) / 1000, 0.45);
-        ultimoGolpe = Math.max(ultimoGolpe, retraso + dur * 0.44);
         return d.salto.animate(
           [
             { transform: 'translate(0,0) scale(1)', easing: arriba },
