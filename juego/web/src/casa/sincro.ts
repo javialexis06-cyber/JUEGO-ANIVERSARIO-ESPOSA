@@ -31,6 +31,10 @@ export interface Sincro {
   /** Vuelve a leer todo (al volver a la app: lo que pasó mientras estaba en segundo plano). */
   refrescar(): Promise<void>;
   agregarRecuerdo(titulo: string, fecha: string, foto: Blob): Promise<void>;
+  /** Guarda el audio de un mensaje de voz y devuelve su referencia (para NotaVoz.ref). */
+  subirVoz(id: string, audio: Blob): Promise<string>;
+  /** Dirección para oír un mensaje de voz. */
+  urlVoz(ref: string): Promise<string>;
   cerrar(): void;
 }
 
@@ -71,9 +75,11 @@ const aDataURL = (b: Blob) =>
   new Promise<string>((ok, mal) => {
     const r = new FileReader();
     r.onload = () => ok(String(r.result));
-    r.onerror = () => mal(new Error('No se pudo leer la foto.'));
+    r.onerror = () => mal(new Error('No se pudo leer el archivo.'));
     r.readAsDataURL(b);
   });
+/** Extensión de archivo para el tipo de audio que grabó el celular. */
+const extensionAudio = (tipo: string) => (tipo.includes('mp4') || tipo.includes('aac') ? 'm4a' : tipo.includes('ogg') ? 'ogg' : 'webm');
 
 const personajesNormales = (p: unknown): Record<Rol, EstadoPersonaje> => {
   const o = (p && typeof p === 'object' ? p : {}) as Record<string, unknown>;
@@ -260,6 +266,16 @@ export class SincroLocal extends Base implements Sincro {
     } catch {
       throw new Error('No cabe más en este celular. Conecten la casa en línea para guardar más fotos.');
     }
+  }
+
+  async subirVoz(_id: string, audio: Blob) {
+    // Sin internet el audio viaja dentro de la casa guardada en el celular (por eso los mensajes son cortos)
+    if (audio.size > 600_000) throw new Error('El mensaje quedó muy pesado. Graba uno más corto.');
+    return aDataURL(audio);
+  }
+
+  async urlVoz(ref: string) {
+    return ref;
   }
 
   cerrar() {
@@ -547,6 +563,21 @@ export class SincroLinea extends Base implements Sincro {
     const [r] = await this.conFotos([data]);
     if (!this.recuerdos.some((x) => x.id === r.id)) this.recuerdos = [r, ...this.recuerdos];
     this.avisar('recuerdos');
+  }
+
+  async subirVoz(id: string, audio: Blob) {
+    // Va en la misma carpeta privada de la casa que las fotos (así sirven las mismas reglas de acceso)
+    const ruta = `${this.id}/voces/${id}.${extensionAudio(audio.type)}`;
+    const { error } = await this.sb.storage.from('recuerdos').upload(ruta, audio, { contentType: audio.type || 'audio/webm' });
+    if (error) throw new Error(mensaje(error, 'No se pudo subir el mensaje de voz.'));
+    return ruta;
+  }
+
+  async urlVoz(ref: string) {
+    if (ref.startsWith('data:')) return ref;
+    const { data, error } = await this.sb.storage.from('recuerdos').createSignedUrl(ref, 60 * 60);
+    if (error || !data) throw new Error(mensaje(error, 'No se pudo abrir el mensaje de voz.'));
+    return data.signedUrl;
   }
 
   cerrar() {

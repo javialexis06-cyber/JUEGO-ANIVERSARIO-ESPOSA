@@ -39,4 +39,4 @@ correr varias veces).
 | `miembros` | Qué sesión es Él y cuál es Ella |
 | `personajes` | Necesidades (hambre, energía, higiene, cariño), qué está haciendo y en qué cuarto |
 | `eventos` | Besos, abrazos, caricias, regalos y notas que uno le manda al otro |
-| `recuerdos` | El álbum: fotos (en la carpeta privada `recuerdos`), títulos y fechas |
+| `recuerdos` | El álbum: fotos (en la carpeta privada `recuerdos`), títulos y fechas. Los mensajes de voz van en la misma carpeta (`<casa>/voces/`) |

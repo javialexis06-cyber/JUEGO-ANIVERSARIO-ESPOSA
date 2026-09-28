@@ -53,6 +53,16 @@ al abrirla ve el regalo, el mensaje y sube su cariño.
 | Ramo de flores | 25 | +30 | |
 | Osito de peluche | 40 | +40 | se queda para decorar |
 
+## Mensajes de voz (como una llamada)
+
+- En la hoja de la pareja: «Mensaje de voz». Se graba hasta 30 segundos (con onda y reloj), se puede oír y repetir,
+  y enviarlo cuesta 15 monedas de la casa.
+- A quien lo recibe le suena el teléfono (timbre y vibración) con la carita de quien llama: «Contestar» o «Después».
+  Al contestar suena el mensaje; al terminar puede oírlo otra vez o «Responder» con otro mensaje.
+- Oír un mensaje nuevo sube 20 de cariño. Si llegó mientras la app estaba cerrada, aparece el botón «Mensaje de voz».
+- Todos quedan en el menú → «Buzón de voz». En línea el audio va a la carpeta privada de la casa en Supabase
+  (la misma de las fotos, no hay que correr nada nuevo); sin internet quedan en el celular (los últimos 6).
+
 ## Monedas (de los dos)
 
 - Bono del día: +20 para cada uno al abrir la app.

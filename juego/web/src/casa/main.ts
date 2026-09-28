@@ -17,6 +17,7 @@ import { elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
 import { BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, lePasa, paraSitio, PREMIO_CARINO, TINTES, TipoItem } from './catalogo';
 import { Casa3D, Sitio } from './escena_casa';
+import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
 import { Mascota } from './mascota';
 import {
   Accion, alDia, animo, Casa, colorSeguro, Cuarto, CUARTOS, diasPara, EstadoPersonaje, Evento, FechaEspecial, hoy, Necesidad,
@@ -337,6 +338,7 @@ async function abrirDeVerdad() {
   // Lo que hizo la pareja mientras no estaba (y su cariño llega ahora)
   const nuevos = await aplicarPendientes();
   if (nuevos.length) mensajes.push(`Mientras no estabas, ${nombre(otro(yo))} ${resumen(nuevos)}`);
+  else if (vozPendiente()) mensajes.push(`Tienes un mensaje de voz de ${nombre(otro(yo))} sin oír.`);
   escribir(CLAVE_VISTO(yo), ahora);
   mensajes.forEach((m, i) => setTimeout(() => toast(m, 3400), i * 3600));
 }
@@ -378,6 +380,7 @@ function resumen(ev: Evento[]) {
   if (n('regalo')) partes.push(plural(n('regalo'), 'regalo', 'regalos'));
   if (n('comida')) partes.push(plural(n('comida'), 'comida', 'comidas'));
   if (n('nota')) partes.push(plural(n('nota'), 'nota', 'notas'));
+  if (n('voz')) partes.push(plural(n('voz'), 'mensaje de voz', 'mensajes de voz'));
   if (!partes.length) return 'pasó a saludar.';
   const ult = partes.pop()!;
   return `te dejó ${partes.length ? `${partes.join(', ')} y ${ult}` : ult}.`;
@@ -557,9 +560,127 @@ function alEvento(e: Evento) {
     case 'saludo':
       toast(`${quien} te está saludando`);
       break;
+    case 'voz':
+      // Suena como una llamada si la app está a la vista y no se está en medio de algo
+      if (document.visibilityState === 'visible' && !hojaAbierta() && $('llamada')?.hidden !== false) void contestarVoz(String(e.datos.voz ?? ''), true);
+      else toast(`${quien} te dejó un mensaje de voz`, 3400);
+      break;
   }
   escribir(CLAVE_VISTO(yo), Date.now());
   void aplicarPendientes();
+}
+
+// ---------------------------------------------------------------------------
+// Mensajes de voz (se regalan por monedas y suenan como una llamada)
+// ---------------------------------------------------------------------------
+const MAX_VOCES = () => (s?.modo === 'local' ? 6 : 30);
+
+function vozPendiente() {
+  return s?.casa.voces.find((v) => v.para === yo && !v.oida) ?? null;
+}
+
+let grabandoVoz = false;
+async function mandarVoz() {
+  if (!s || grabandoVoz) return;
+  if (dormido(yo)) return toast('Primero hay que despertar.');
+  const par = otro(yo);
+  cerrarHoja();
+  grabandoVoz = true;
+  try {
+    const g = await grabarMensaje({ para: par, nombre: nombre(par), precio: PRECIO_VOZ, monedas: s.casa.monedas });
+    if (!g || !s) return;
+    const id = nuevoId();
+    let ref: string;
+    try {
+      ref = await s.subirVoz(id, g.blob);
+    } catch (err) {
+      return fallo(err);
+    }
+    const v = { id, de: yo, para: par, ref, dur: Math.round(g.dur * 10) / 10, t: Date.now(), oida: false };
+    const ok = await cambiarCasa((c) => {
+      if (c.monedas < PRECIO_VOZ) throw new Error(`faltan monedas (el mensaje cuesta ${PRECIO_VOZ})`);
+      c.monedas -= PRECIO_VOZ;
+      c.voces = [...c.voces.filter((x) => x.id !== id), v].slice(-MAX_VOCES());
+    });
+    if (!ok) return;
+    try {
+      await s.enviar('voz', { voz: id });
+    } catch (err) {
+      fallo(err);
+    }
+    sonido.regalo();
+    toast(`Le dejaste un mensaje de voz a ${nombre(par)}`);
+  } finally {
+    grabandoVoz = false;
+  }
+}
+
+/** Contesta un mensaje (sonando primero como llamada si `sonar`). Sin id, el primero que falte por oír. */
+let contestando = false;
+async function contestarVoz(id: string, sonar: boolean) {
+  if (!s || contestando) return;
+  contestando = true;
+  try {
+    let v = id ? s.casa.voces.find((x) => x.id === id) : vozPendiente();
+    // El aviso puede llegar antes que la casa con el mensaje: se espera un momento y se vuelve a leer
+    for (let i = 0; !v && id && i < 3; i++) {
+      await new Promise((ok) => setTimeout(ok, 1200));
+      if (i === 1) await s.refrescar().catch(() => {});
+      v = s.casa.voces.find((x) => x.id === id);
+    }
+    if (!v) return toast(`${nombre(otro(yo))} te dejó un mensaje de voz: está en el buzón.`);
+    if (sonar && !(await llamadaEntrante({ de: v.de, nombre: nombre(v.de), dur: v.dur }))) {
+      pintarAcciones();
+      return;
+    }
+    await oirVoz(v.id);
+  } finally {
+    contestando = false;
+  }
+}
+
+async function oirVoz(id: string) {
+  const v = s?.casa.voces.find((x) => x.id === id);
+  if (!s || !v) return;
+  cerrarHoja();
+  let url: string;
+  try {
+    url = await s.urlVoz(v.ref);
+  } catch (err) {
+    return fallo(err);
+  }
+  const nueva = v.para === yo && !v.oida;
+  if (nueva) {
+    let marcada = false;
+    await cambiarCasa((c) => {
+      marcada = false;
+      const x = c.voces.find((y) => y.id === id);
+      if (x && !x.oida) x.oida = marcada = true;
+    });
+    if (marcada) {
+      await guardarYo(sumar(s.personajes[yo], { carino: CARINO_VOZ }));
+      lluviaCorazones(10);
+    }
+  }
+  const r = await enLlamada({ de: v.de, nombre: nombre(v.de), url, dur: v.dur, puedeResponder: v.de !== yo });
+  if (r === 'responder') await mandarVoz();
+}
+
+function hojaBuzon() {
+  if (!s) return;
+  const pintar = () => {
+    const voces = [...s!.casa.voces].reverse();
+    const html = `<p class="nota-hoja">Mensajes de voz de la casa. Dejar uno cuesta ${PRECIO_VOZ} monedas; a quien lo recibe le suena como una llamada.</p>
+      <button class="boton boton-rosa" data-hoja="voz">Dejarle un mensaje a ${esc(nombre(otro(yo)))}</button>
+      <ul class="buzon">${voces.length ? voces
+        .map((v) => `<li class="${v.para === yo && !v.oida ? 'nueva' : ''}"><span class="chip-cara ${caraClase(v.de)}"></span>
+          <div><b>${v.de === yo ? `Para ${esc(nombre(v.para))}` : `De ${esc(nombre(v.de))}`}</b><small>${new Date(v.t).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })} · ${haceCuanto(v.t)} · ${Math.max(1, Math.round(v.dur))} s</small></div>
+          <button class="boton-redondo boton-oir" data-oir-voz="${esc(v.id)}" aria-label="Oír"></button></li>`)
+        .join('') : '<li class="vacio">Todavía no hay mensajes.</li>'}</ul>`;
+    abrirHoja('Buzón de voz', html, { saldo: s!.casa.monedas, alCerrar: () => (repintarHoja = null) });
+  };
+  repintarHoja = pintar;
+  pintar();
 }
 
 function regaloPendiente() {
@@ -673,6 +794,7 @@ function pintarAcciones() {
     { id: 'decorar', texto: decorando ? 'Listo' : 'Decorar', icono: ico('decorar'), activo: decorando },
     { id: 'tienda', texto: 'Tienda', icono: ico('tienda') },
   ];
+  if (vozPendiente()) b.unshift({ id: 'oir-voz', texto: 'Mensaje de voz', icono: ico('telefono'), principal: true });
   if (regaloPendiente()) b.unshift({ id: 'abrir-regalo', texto: 'Abrir regalo', icono: `<img src="${iconoItem(ITEM.cajita)}" alt="">`, principal: true });
   html(cont, b
     .map((x) => `<button class="accion${x.principal ? ' principal' : ''}${x.activo ? ' activa' : ''}" data-accion="${x.id}">${x.icono}<span>${esc(x.texto)}</span></button>`)
@@ -752,6 +874,8 @@ async function alAccion(id: string) {
       return hojaTienda('comida');
     case 'abrir-regalo':
       return abrirRegalo();
+    case 'oir-voz':
+      return contestarVoz('', false);
   }
 }
 
@@ -1038,6 +1162,7 @@ function hojaPareja() {
           <button class="accion" data-hoja="regalar"><img src="${iconoItem(ITEM.flores)}" alt=""><span>Regalar</span></button>
           <button class="accion" data-hoja="llevar"><img src="${iconoItem(ITEM.manzana)}" alt=""><span>Llevar comida</span></button>
           <button class="accion" data-hoja="notas">${ico('nota')}<span>Dejar una nota</span></button>
+          <button class="accion" data-hoja="voz">${ico('telefono')}<span>Mensaje de voz</span></button>
           <button class="accion" data-mimo="saludo">${ico('saludo')}<span>Saludar</span></button>
         </div>
       </div>`;
@@ -1173,6 +1298,7 @@ function hojaMenu() {
       <button class="accion" data-hoja="album">${ico('album')}<span>Álbum de fotos</span></button>
       <button class="accion" data-hoja="fechas">${ico('fechas')}<span>Fechas especiales</span></button>
       <button class="accion" data-hoja="notas">${ico('nota')}<span>Notas de la nevera</span></button>
+      <button class="accion" data-hoja="buzon">${ico('telefono')}<span>Buzón de voz${s && vozPendiente() ? ' (nuevo)' : ''}</span></button>
       <button class="accion" data-hoja="juegos">${ico('juegos')}<span>Minijuegos</span></button>
       <button class="accion" data-hoja="tienda">${ico('tienda')}<span>Tienda</span></button>
       <button class="accion" data-hoja="ajustes">${ico('ajustes')}<span>Ajustes</span></button>
@@ -1368,12 +1494,15 @@ function controles() {
       if (h === 'regalar') hojaRegalar();
       else if (h === 'llevar') elegirComida('llevar');
       else if (h === 'notas') hojaNotas();
+      else if (h === 'voz') void mandarVoz();
+      else if (h === 'buzon') hojaBuzon();
       else if (h === 'album') hojaAlbum();
       else if (h === 'fechas') hojaFechas();
       else if (h === 'juegos') hojaJuegos();
       else if (h === 'tienda') hojaTienda('comida');
       else if (h === 'ajustes') hojaAjustes();
-    } else if ((b = d('[data-elegir-regalo]'))) {
+    } else if ((b = d('[data-oir-voz]'))) void oirVoz(b.dataset.oirVoz!);
+    else if ((b = d('[data-elegir-regalo]'))) {
       regaloElegido = b.dataset.elegirRegalo!;
       for (const x of Array.from(document.querySelectorAll('[data-elegir-regalo]'))) x.setAttribute('aria-pressed', String(x === b));
     } else if ((b = d('[data-color]'))) {

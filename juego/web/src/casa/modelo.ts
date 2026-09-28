@@ -141,6 +141,19 @@ export interface FechaEspecial {
   cadaAno: boolean;
 }
 
+/** Mensaje de voz que uno le deja al otro (suena como una llamada y queda en el buzón). */
+export interface NotaVoz {
+  id: string;
+  de: Rol;
+  para: Rol;
+  /** Dónde está el audio: data URL (sin internet) o ruta en el almacenamiento de la casa (en línea). */
+  ref: string;
+  /** Segundos. */
+  dur: number;
+  t: number;
+  oida: boolean;
+}
+
 export interface RegaloRecibido {
   id: string;
   item: string;
@@ -160,6 +173,7 @@ export interface Casa {
   notas: Nota[];
   fechas: FechaEspecial[];
   regalos: RegaloRecibido[];
+  voces: NotaVoz[];
   aniversario: string;
   /** Registro de caricias, abrazos y besos del día (para los premios de cariño). */
   diario: Record<string, number>;
@@ -173,6 +187,7 @@ export function casaNueva(): Casa {
     notas: [],
     fechas: [],
     regalos: [],
+    voces: [],
     aniversario: '',
     diario: {},
   };
@@ -200,6 +215,8 @@ export function normalizarCasa(c: unknown): Casa {
     notas: lista<Nota>(c.notas, (n) => typeof n.texto === 'string' && typeof n.id === 'string').map((n) => ({ ...n, color: colorSeguro(n.color) })),
     fechas: lista<FechaEspecial>(c.fechas, (f) => typeof f.fecha === 'string' && typeof f.nombre === 'string'),
     regalos: lista<RegaloRecibido>(c.regalos, (g) => typeof g.id === 'string' && typeof g.item === 'string'),
+    voces: lista<NotaVoz>(c.voces, (v) => typeof v.id === 'string' && typeof v.ref === 'string' && (v.de === 'el' || v.de === 'ella') && (v.para === 'el' || v.para === 'ella'))
+      .map((v) => ({ ...v, dur: Math.max(0, Math.min(60, numero(v.dur, 0))), t: numero(v.t, 0), oida: !!v.oida })),
     aniversario: typeof c.aniversario === 'string' ? c.aniversario : '',
     diario: cantidades(c.diario),
   };
@@ -219,7 +236,7 @@ export interface Recuerdo {
 export interface Evento {
   id: string;
   de: Rol;
-  tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nota' | 'comida' | 'saludo';
+  tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nota' | 'comida' | 'saludo' | 'voz';
   datos: Record<string, unknown>;
   t: number;
   /** Ya lo recibió y aplicó quien lo recibe (el cariño sube en su celular, no en el de quien lo manda). */
@@ -227,7 +244,7 @@ export interface Evento {
 }
 
 /** Evento confiable (datos siempre es un objeto). */
-const TIPOS_EVENTO: Evento['tipo'][] = ['caricia', 'abrazo', 'beso', 'regalo', 'nota', 'comida', 'saludo'];
+const TIPOS_EVENTO: Evento['tipo'][] = ['caricia', 'abrazo', 'beso', 'regalo', 'nota', 'comida', 'saludo', 'voz'];
 export function normalizarEvento(f: any): Evento | null {
   if (!esObjeto(f) || (f.de !== 'el' && f.de !== 'ella') || !TIPOS_EVENTO.includes(f.tipo)) return null;
   return {
