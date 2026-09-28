@@ -199,7 +199,7 @@ const cofre: Nivel = {
   async prueba(p) {
     await p.tocar('cofre');
     await p.panel(RESPUESTAS.join('|'));
-    await p.esperar(2500);
+    await p.esperarQue(() => !!document.querySelector('#inventario [data-item="llave"]'), 20000);
     await p.usar('llave', 'puerta toque');
   },
 };
@@ -466,6 +466,7 @@ const matica: Nivel = {
     await p.esperarQue(() => !!tallo.userData.lista, 10000);
     await p.esperar(400);
     await p.tocar('llave');
+    await p.esperarQue(() => !!document.querySelector('#inventario [data-item="llave"]'), 20000);
     await p.usar('llave', 'puerta toque');
   },
 };
@@ -790,6 +791,7 @@ const cajaMusical: Nivel = {
     await p.trazar(pts, 6200);
     await p.esperarQue(() => !!p.obj('caja toque').userData.lista, 10000);
     await p.tocar('llave');
+    await p.esperarQue(() => !!document.querySelector('#inventario [data-item="llave"]'), 20000);
     await p.usar('llave', 'puerta toque');
   },
 };
