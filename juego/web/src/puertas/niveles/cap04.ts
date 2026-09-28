@@ -21,10 +21,10 @@ function abrirYa(c: Ctx, ms = 700) {
 // ---------------------------------------------------------------------------
 // 31 · El bus a donde vamos
 // ---------------------------------------------------------------------------
-const SALIDAS: [string, string, string][] = [['Cali', '18:40', '3'], ['Bogotá', '19:15', '8'], ['Santa Marta', '20:30', '12'], ['Medellín', '21:05', '5'], ['Bucaramanga', '22:00', '7']];
+const SALIDAS: [string, string, string][] = [['Cali', '18:40', '3'], ['Bogotá', '19:15', '8'], ['Cartagena', '20:30', '12'], ['Medellín', '21:05', '5'], ['Bucaramanga', '22:00', '7']];
 const tablero: Nivel = {
   titulo: 'El bus a donde vamos',
-  pistas: ['El mapa tiene un corazón en una ciudad. Búscala en el tablero de salidas.', 'El corazón está en Santa Marta: su bus sale del andén 12. Escríbelo en el teclado de la puerta.'],
+  pistas: ['El mapa tiene un corazón en una ciudad. Búscala en el tablero de salidas.', 'El corazón está en Cartagena: su bus sale del andén 12. Escríbelo en el teclado de la puerta.'],
   montar(c) {
     const mapa = letrero(1.0, 0.8, (cx, w, h) => {
       cx.fillStyle = '#fff3e0';
@@ -32,7 +32,7 @@ const tablero: Nivel = {
       cx.strokeStyle = '#8a5e40';
       cx.lineWidth = 16;
       cx.strokeRect(0, 0, w, h);
-      const ciudades: [string, number, number][] = [['Santa Marta', 0.62, 0.14], ['Medellín', 0.36, 0.52], ['Bucaramanga', 0.66, 0.42], ['Bogotá', 0.58, 0.68], ['Cali', 0.3, 0.84]];
+      const ciudades: [string, number, number][] = [['Cartagena', 0.4, 0.14], ['Medellín', 0.36, 0.52], ['Bucaramanga', 0.66, 0.42], ['Bogotá', 0.58, 0.68], ['Cali', 0.3, 0.84]];
       cx.strokeStyle = '#c9b6ea';
       cx.lineWidth = 6;
       cx.beginPath();
@@ -48,7 +48,7 @@ const tablero: Nivel = {
         cx.fill();
         textoEn(cx, n, x * w, y * h + 26, 22, '#3d2b27', 600);
       }
-      textoEn(cx, '♥', 0.62 * w + 28, 0.14 * h - 6, 44, '#e4574b', 700);
+      textoEn(cx, '♥', 0.4 * w + 28, 0.14 * h - 6, 44, '#e4574b', 700);
     }, 'mapa');
     en(mapa, -1.7, 1.3, 0.03);
     c.g.add(mapa);

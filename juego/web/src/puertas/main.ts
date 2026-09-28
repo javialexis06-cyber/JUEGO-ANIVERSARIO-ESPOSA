@@ -17,7 +17,7 @@ import * as sonido from '../sonido';
 import { tema } from './cuarto';
 import { Entrada } from './entrada';
 import { Escena, OJO } from './escena';
-import { CAPITULOS, capituloDe, FINAL, INICIO, PUERTAS } from './historia';
+import { CAPITULOS, capituloDe, FINAL_DE, INICIO, PUERTAS, RECUERDOS, recuerdoDe, voz } from './historia';
 import { azar, grupo, iconoItem } from './kit';
 import { Narrador } from './narrador';
 import type { Ctx, Nivel } from './nivel';
@@ -25,7 +25,7 @@ import { NIVELES } from './niveles';
 import { ProbadorReal } from './probador';
 import { Puerta } from './puerta';
 import { Sensores } from './sensores';
-import { $, aviso, esc, Inventario, mostrar, Paneles, pausa } from './ui';
+import { $, aviso, esc, Inventario, mostrar, Paneles, pausa, tarjetaRecuerdo } from './ui';
 
 const params = new URLSearchParams(location.search);
 const CLAVE = 'cien-puertas';
@@ -40,6 +40,8 @@ interface Progreso {
   hasta: number;
   estrellas: Record<number, number>;
   vioInicio: boolean;
+  /** Capítulos cuyo recuerdo ya se recuperó. */
+  recuerdos?: number[];
 }
 
 const leer = <T,>(k: string): T | null => {
@@ -138,6 +140,10 @@ function controles() {
     $('btn-sonido').classList.toggle('apagado', callado);
   };
   $('btn-sonido').classList.toggle('apagado', sonido.silenciado());
+  $('btn-recuerdos').onclick = () => {
+    sonido.toque();
+    album();
+  };
   $('btn-continuar').onclick = () => {
     sonido.toque();
     void jugar(Math.min(100, progreso.hasta + 1));
@@ -161,6 +167,7 @@ function mapa() {
   const siguiente = Math.min(100, progreso.hasta + 1);
   $('btn-continuar').textContent = progreso.hasta ? `Seguir: puerta ${siguiente}` : 'Empezar';
   $('mapa-abiertas').textContent = `${progreso.hasta} de 100 puertas`;
+  $('btn-recuerdos').textContent = `Recuerdos ${(progreso.recuerdos ?? []).length}/${RECUERDOS.length}`;
   $('capitulos').innerHTML = CAPITULOS.map((c) => {
     const desde = (c.n - 1) * 10 + 1;
     const hechas = Math.max(0, Math.min(10, progreso.hasta - desde + 1));
@@ -182,6 +189,21 @@ function mapa() {
     };
   }
   $('capitulos').querySelector('.siguiente')?.scrollIntoView({ block: 'center' });
+}
+
+const nombreDe = (r: Rol) => (r === 'el' ? 'Él' : 'Ella');
+
+/** Los recuerdos recuperados, para volver a leerlos. */
+function album() {
+  const tengo = new Set(progreso.recuerdos ?? []);
+  const html = RECUERDOS.map((r) =>
+    tengo.has(r.capitulo)
+      ? `<article><h4>${esc(r.titulo)}</h4><small>${esc(r.fecha)}</small>${r.dialogo
+          .map(([q, t]) => `<p><span class="quien ${q}">${nombreDe(q)}:</span> ${esc(voz(t, q))}</p>`)
+          .join('')}</article>`
+      : `<article class="bloqueado"><h4>Recuerdo ${r.capitulo}</h4><small>Se recupera al terminar el capítulo ${r.capitulo}</small></article>`,
+  ).join('');
+  void paneles.nota(`<div class="album">${html}</div>`, 'album-recuerdos');
 }
 
 function salirAlMapa() {
@@ -279,7 +301,21 @@ async function jugar(n: number) {
   guardar();
   if (!SIN_HISTORIA) {
     await narrador.celebrar(n);
-    if (n % 10 === 0) await narrador.decir(n === 100 ? FINAL : capituloDe(n).despedida);
+    if (n % 10 === 0) {
+      const cap = n / 10;
+      await narrador.decir(capituloDe(n).despedida);
+      // El recuerdo real que devuelve el capítulo, contado por los dos
+      const r = recuerdoDe(cap);
+      if (r) {
+        await tarjetaRecuerdo(r, cap, RECUERDOS.length);
+        await narrador.conversar(r.dialogo, nombreDe(yo));
+      }
+      if (n === 100) await narrador.decir(FINAL_DE[otro(yo)]);
+    }
+  }
+  if (n % 10 === 0 && !(progreso.recuerdos ?? []).includes(n / 10)) {
+    progreso.recuerdos = [...(progreso.recuerdos ?? []), n / 10];
+    guardar();
   }
   if (turno !== jugadas) return;
   // Cruzar la puerta

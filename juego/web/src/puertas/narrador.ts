@@ -6,7 +6,7 @@ import type { Rol, Ropa } from '../casa/modelo';
 import { Personaje } from '../personaje';
 import * as sonido from '../sonido';
 import { Escena, OJO } from './escena';
-import { ANIMO, BONITO, elegir, FELICITAR, voz } from './historia';
+import { ANIMO, ANIMO_DE, BONITO, BONITO_DE, type Dicho, elegir, FELICITAR, voz } from './historia';
 import { Globo } from './ui';
 
 const ESCALA = 0.68;
@@ -103,6 +103,27 @@ export class Narrador {
     this.p.cara('feliz');
   }
 
+  /** Conversación de los dos: lo del narrador sale en su globo y lo de quien juega, abajo con su nombre. */
+  async conversar(dialogo: Dicho[], nombreJugador: string) {
+    if (!dialogo.length) return;
+    this.hablando = true;
+    this.p.pose('hablar_a');
+    const lineas = dialogo.map(([quien, texto]) => (quien === this.rol ? voz(texto, quien) : { texto: voz(texto, quien), jugador: nombreJugador }));
+    await this.globo.decir(lineas, (h, jugador) => {
+      if (jugador) {
+        // Mientras habla quien juega, el narrador escucha (y a veces pone cara)
+        this.p.cara('normal');
+        this.p.pose('pensando');
+      } else {
+        this.p.cara(h ? 'hablar' : 'normal');
+        if (this.p.poseVisible === 'pensando') this.p.pose('hablar_a');
+      }
+    });
+    this.hablando = false;
+    this.p.quieto();
+    this.p.cara('feliz');
+  }
+
   /** Se corre a la esquina (queda asomado sin tapar el acertijo). */
   irEsquina(): Promise<void> {
     const z = 0.75;
@@ -131,7 +152,8 @@ export class Narrador {
   /** Ánimo corto (nunca pistas), como mucho dos veces por puerta. */
   animar(n: number) {
     if (this.animos >= 2 || this.hablando) return;
-    this.globo.susurrar(voz(elegir(ANIMO, n + this.animos * 3), this.rol));
+    const lista = [...ANIMO, ...ANIMO_DE[this.rol], ...ANIMO_DE[this.rol]];
+    this.globo.susurrar(voz(elegir(lista, n + this.animos * 3), this.rol));
     this.animos++;
     this.p.cara('feliz');
     this.p.pose('saludo_a');
@@ -150,7 +172,9 @@ export class Narrador {
     this.p.cara('feliz');
     sonido.corazon();
     await this.escena.esperar(500);
-    await this.decir([`${elegir(FELICITAR, n)} ${elegir(BONITO, n)}`]);
+    // La mitad de las veces algo propio de quien narra (los labios, la sonrisa, la estafa…)
+    const bonito = n % 2 ? elegir(BONITO_DE[this.rol], Math.floor(n / 2)) : elegir(BONITO, n);
+    await this.decir([`${elegir(FELICITAR, n)} ${bonito}`]);
     this.p.pose('beso');
     this.p.cara('beso');
     sonido.beso();

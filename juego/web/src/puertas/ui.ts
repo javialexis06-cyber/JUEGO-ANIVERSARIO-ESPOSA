@@ -23,31 +23,43 @@ export class Globo {
   ancla = { x: 0, y: 0 };
   hablando = false;
 
-  /** Muestra las líneas una por una (máquina de escribir) y espera un toque para cada una. */
-  async decir(lineas: string[], alLetra?: (hablando: boolean) => void) {
+  private yo = $('globo-yo');
+  private yoTexto = $('globo-yo-texto');
+  private yoNombre = $('globo-yo-nombre');
+  private yoSeguir = $('globo-yo-seguir');
+
+  /** Muestra las líneas una por una (máquina de escribir) y espera un toque para cada una.
+   *  Una línea con `jugador` la dice quien juega (globo de abajo, con su nombre). */
+  async decir(lineas: (string | { texto: string; jugador: string })[], alLetra?: (hablando: boolean, jugador: boolean) => void) {
     this.capa.hidden = false;
-    this.el.hidden = false;
-    for (const linea of lineas) {
+    for (const l of lineas) {
+      const linea = typeof l === 'string' ? l : l.texto;
+      const deJugador = typeof l !== 'string';
+      const texto = deJugador ? this.yoTexto : this.texto;
+      const seguir = deJugador ? this.yoSeguir : this.seguir;
+      this.el.hidden = deJugador;
+      this.yo.hidden = !deJugador;
+      if (deJugador) this.yoNombre.textContent = l.jugador;
       this.hablando = true;
-      this.seguir.hidden = true;
+      seguir.hidden = true;
       let saltar = false;
       const toque = () => (saltar = true);
       this.capa.addEventListener('pointerdown', toque);
-      this.texto.textContent = '';
+      texto.textContent = '';
       for (let i = 1; i <= linea.length; i++) {
         if (saltar) {
-          this.texto.textContent = linea;
+          texto.textContent = linea;
           break;
         }
-        this.texto.textContent = linea.slice(0, i);
-        alLetra?.(i % 3 !== 0);
-        if (i % 4 === 0) sonido.nota(520 + (i % 5) * 40, 0.03, 0, 'sine', 0.018);
+        texto.textContent = linea.slice(0, i);
+        alLetra?.(i % 3 !== 0, deJugador);
+        if (i % 4 === 0) sonido.nota((deJugador ? 440 : 520) + (i % 5) * 40, 0.03, 0, 'sine', 0.018);
         await pausa(/[.,!?…]/.test(linea[i - 1]) ? 110 : 26);
       }
       this.capa.removeEventListener('pointerdown', toque);
-      alLetra?.(false);
+      alLetra?.(false, deJugador);
       this.hablando = false;
-      this.seguir.hidden = false;
+      seguir.hidden = false;
       await new Promise<void>((listo) => {
         const fn = () => {
           this.capa.removeEventListener('pointerdown', fn);
@@ -59,6 +71,7 @@ export class Globo {
       sonido.toque();
     }
     this.el.hidden = true;
+    this.yo.hidden = true;
     this.capa.hidden = true;
   }
 
@@ -339,6 +352,41 @@ function mismo(a: string, b: string) {
   }
   return false;
 }
+
+/** Tarjeta de «Recuerdo recuperado» (se cierra tocando). */
+export function tarjetaRecuerdo(r: { titulo: string; fecha: string; icono: string }, n: number, total: number): Promise<void> {
+  const capa = $('recuerdo');
+  capa.innerHTML = `<article class="polaroid"><span class="recuerdo-cinta">Recuerdo recuperado · ${n} de ${total}</span>
+    <div class="recuerdo-dibujo">${DIBUJOS[r.icono] ?? DIBUJOS.corazon}</div>
+    <h3>${esc(r.titulo)}</h3><p>${esc(r.fecha)}</p><small>toca para recordar ▸</small></article>`;
+  capa.hidden = false;
+  sonido.regalo();
+  return new Promise((listo) => {
+    setTimeout(() => {
+      capa.onclick = () => {
+        capa.onclick = null;
+        capa.hidden = true;
+        sonido.toque();
+        listo();
+      };
+    }, 400);
+  });
+}
+
+/** Dibujitos de los recuerdos. */
+export const DIBUJOS: Record<string, string> = {
+  raton: '<svg viewBox="0 0 120 100"><circle cx="30" cy="30" r="20" fill="#c9b6ea" stroke="#3d2b27" stroke-width="4"/><circle cx="90" cy="30" r="20" fill="#c9b6ea" stroke="#3d2b27" stroke-width="4"/><ellipse cx="60" cy="58" rx="38" ry="32" fill="#e8e0d4" stroke="#3d2b27" stroke-width="4"/><circle cx="46" cy="52" r="5" fill="#3d2b27"/><circle cx="74" cy="52" r="5" fill="#3d2b27"/><circle cx="60" cy="66" r="6" fill="#e86a8a"/><path d="M40 70l-22 4M40 76l-20 10M80 70l22 4M80 76l20 10" stroke="#3d2b27" stroke-width="3" stroke-linecap="round"/><path d="M60 12c6-8 16-4 12 4-2 4-12 10-12 10s-10-6-12-10c-4-8 6-12 12-4z" fill="#e4574b"/></svg>',
+  charla: '<svg viewBox="0 0 120 100"><path d="M10 14h64a8 8 0 0 1 8 8v26a8 8 0 0 1-8 8H36l-14 12V56H18a8 8 0 0 1-8-8V22a8 8 0 0 1 8-8z" fill="#9ccbef" stroke="#3d2b27" stroke-width="4" stroke-linejoin="round"/><text x="46" y="42" font-size="20" text-anchor="middle" font-family="sans-serif" fill="#3d2b27">π ∞</text><path d="M110 40H56a8 8 0 0 0-8 8v22a8 8 0 0 0 8 8h36l14 12V78h4a8 8 0 0 0 0-16z" fill="#f4b6c2" stroke="#3d2b27" stroke-width="4" stroke-linejoin="round"/><text x="80" y="66" font-size="20" text-anchor="middle" fill="#e4574b">♥</text></svg>',
+  calendario: '<svg viewBox="0 0 120 100"><rect x="22" y="16" width="76" height="72" rx="10" fill="#fff8ee" stroke="#3d2b27" stroke-width="4"/><rect x="22" y="16" width="76" height="20" rx="10" fill="#e4574b"/><text x="60" y="30" font-size="12" text-anchor="middle" fill="#fff" font-family="sans-serif">OCTUBRE</text><text x="60" y="70" font-size="30" text-anchor="middle" fill="#3d2b27" font-family="sans-serif" font-weight="700">25</text><text x="86" y="84" font-size="16" fill="#e4574b">♥</text></svg>',
+  ojos: '<svg viewBox="0 0 120 100"><circle cx="60" cy="50" r="40" fill="#f7d2b6" stroke="#3d2b27" stroke-width="4"/><path d="M44 44c-8-10-20 0-8 12l8 8 8-8c12-12 0-22-8-12zM80 44c-8-10-20 0-8 12l8 8 8-8c12-12 0-22-8-12z" fill="#e4574b"/><path d="M44 72q16 12 32 0" stroke="#3d2b27" stroke-width="4" fill="none" stroke-linecap="round"/></svg>',
+  ola: '<svg viewBox="0 0 120 100"><path d="M0 70q15-14 30 0t30 0 30 0 30 0v30H0z" fill="#4aa6d8"/><path d="M28 60l40-16 26 10-10 10H34z" fill="#e4574b" stroke="#3d2b27" stroke-width="4" stroke-linejoin="round"/><circle cx="62" cy="34" r="8" fill="#f7d2b6" stroke="#3d2b27" stroke-width="3"/><path d="M94 20l6 10M100 14l6 12" stroke="#8a94b8" stroke-width="4" stroke-linecap="round"/><path d="M84 12q10-10 20 0" stroke="#6a7a9a" stroke-width="5" fill="none"/></svg>',
+  luces: '<svg viewBox="0 0 120 100"><path d="M6 20q54 40 108 0" stroke="#3d2b27" stroke-width="3" fill="none"/><g stroke="#3d2b27" stroke-width="2"><circle cx="20" cy="34" r="7" fill="#f7c948"/><circle cx="40" cy="42" r="7" fill="#e4574b"/><circle cx="60" cy="45" r="7" fill="#8fd3b6"/><circle cx="80" cy="42" r="7" fill="#9ccbef"/><circle cx="100" cy="34" r="7" fill="#f59fc0"/></g><circle cx="60" cy="78" r="12" fill="#1e1a18"/><circle cx="48" cy="66" r="8" fill="#1e1a18"/><circle cx="72" cy="66" r="8" fill="#1e1a18"/></svg>',
+  antifaz: '<svg viewBox="0 0 120 100"><path d="M14 40q46-20 92 0-4 26-26 26-12 0-20-10-8 10-20 10-22 0-26-26z" fill="#3b2f5c" stroke="#f2c75c" stroke-width="4"/><ellipse cx="40" cy="46" rx="10" ry="7" fill="#fff8ee"/><ellipse cx="80" cy="46" rx="10" ry="7" fill="#fff8ee"/><path d="M60 70l-18 26h36z" fill="#e86a8a" stroke="#3d2b27" stroke-width="3"/></svg>',
+  copa: '<svg viewBox="0 0 120 100"><path d="M30 14h26q2 28-13 30Q28 42 30 14z" fill="#f7d6c0" stroke="#3d2b27" stroke-width="4"/><path d="M43 44v34M32 80h22" stroke="#3d2b27" stroke-width="4" stroke-linecap="round"/><path d="M64 14h26q2 28-13 30-15-2-13-30z" fill="#f7d6c0" stroke="#3d2b27" stroke-width="4"/><path d="M77 44v34M66 80h22" stroke="#3d2b27" stroke-width="4" stroke-linecap="round"/><path d="M60 8l4 8 8 1-6 5 2 8-8-4-8 4 2-8-6-5 8-1z" fill="#f2c75c"/></svg>',
+  estrellas: '<svg viewBox="0 0 120 100"><path d="M10 90a50 50 0 0 1 100 0z" fill="#26375E" stroke="#3d2b27" stroke-width="4"/><g fill="#fff6c8"><circle cx="40" cy="60" r="3"/><circle cx="60" cy="50" r="4"/><circle cx="78" cy="64" r="3"/><circle cx="52" cy="74" r="2"/><circle cx="88" cy="80" r="2"/><circle cx="30" cy="80" r="2"/></g><path d="M40 60L60 50 78 64" stroke="#fff6c8" stroke-width="1.5"/></svg>',
+  anillo: '<svg viewBox="0 0 120 100"><circle cx="60" cy="62" r="26" fill="none" stroke="#f2c75c" stroke-width="10"/><path d="M48 30l12-16 12 16-12 10z" fill="#bfe9ff" stroke="#3d2b27" stroke-width="3" stroke-linejoin="round"/><path d="M92 20c4-6 12-2 9 4-2 3-9 8-9 8s-7-5-9-8c-3-6 5-10 9-4z" fill="#e4574b"/></svg>',
+  corazon: '<svg viewBox="0 0 120 100"><path d="M60 88C24 64 14 46 14 32a22 22 0 0 1 46-6 22 22 0 0 1 46 6c0 14-10 32-46 56z" fill="#e4574b" stroke="#3d2b27" stroke-width="4"/></svg>',
+};
 
 export const pausa = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 

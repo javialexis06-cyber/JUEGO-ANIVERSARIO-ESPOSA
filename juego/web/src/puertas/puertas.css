@@ -244,6 +244,9 @@ body.puertas { background: #1d2340; }
   --cola: 30px;
   position: fixed;
   z-index: 26;
+  /* La clase .globo del súper trae margen y rejilla propios: aquí no aplican */
+  margin: 0;
+  display: block;
   width: max-content;
   max-width: min(380px, 48vw);
   box-sizing: border-box;
@@ -397,3 +400,70 @@ body.puertas { background: #1d2340; }
   .teclas { grid-template-columns: repeat(3, 56px); gap: 6px; }
   .panel-carta { padding: 14px 16px 12px; }
 }
+
+/* ---------- Lo que dice quien juega y los recuerdos ---------- */
+.globo-yo {
+  left: auto !important;
+  top: auto !important;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  background: #dff4ea;
+  max-width: min(420px, 60vw);
+}
+.globo-yo::after { display: none; }
+.globo-nombre {
+  display: block;
+  font: 700 12px var(--texto);
+  color: var(--menta-oscura);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+.recuerdo {
+  z-index: 45;
+  display: grid;
+  place-items: center;
+  background: rgba(29, 35, 64, 0.55);
+}
+.polaroid {
+  position: relative;
+  width: min(300px, 70vw);
+  background: #fffdf6;
+  padding: 16px 16px 14px;
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transform: rotate(-2deg);
+  text-align: center;
+  animation: entra 0.4s ease-out;
+}
+.recuerdo-cinta {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(2deg);
+  background: var(--oro);
+  color: var(--cacao);
+  font: 700 12px var(--texto);
+  padding: 4px 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.recuerdo-dibujo {
+  background: #f3e9dc;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.recuerdo-dibujo svg { width: 100%; height: auto; max-height: 34vh; display: block; }
+.polaroid h3 { margin: 0; font: 600 20px var(--display); }
+.polaroid p { margin: 2px 0 6px; font: 700 13px var(--texto); color: var(--cacao-suave); }
+.polaroid small { font: 700 12px var(--texto); color: var(--cacao-suave); animation: latido 1.2s ease-in-out infinite; display: inline-block; }
+.mapa-botones { display: flex; gap: 8px; }
+.album { display: grid; gap: 12px; }
+.album article { border-left: 4px solid var(--oro); padding-left: 10px; }
+.album h4 { margin: 0; font: 600 17px var(--display); }
+.album small { color: var(--cacao-suave); font: 700 12px var(--texto); }
+.album p { margin: 3px 0; font: 600 14px/1.35 var(--texto); }
+.album .quien { color: var(--rosa-oscuro); font-weight: 800; }
+.album .quien.el { color: #2c5a86; }
+.album .bloqueado { opacity: 0.5; }

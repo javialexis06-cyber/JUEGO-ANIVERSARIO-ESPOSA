@@ -45,6 +45,29 @@ recuerdo (una lucecita en forma de corazón). En la puerta 100 los recuerdos vue
 - Las pistas son aparte: un bombillo que aparece al rato, con dos niveles (una idea y luego casi la respuesta).
 - Se puede cambiar todo el texto en `src/puertas/historia.ts` (por ejemplo, poner recuerdos propios).
 
+## Los recuerdos (de verdad)
+
+Al abrir la última puerta de cada capítulo vuelve un recuerdo: aparece una tarjeta tipo polaroid y los dos lo
+cuentan en una conversación (el narrador en su globo y quien juega abajo, con su nombre). A veces no se ponen de
+acuerdo en cómo pasó, para que dé risa. Quedan guardados en «Recuerdos» del mapa para volver a leerlos.
+
+| Cap. | Recuerdo | Lo que discuten |
+|---|---|---|
+| 1 | La villa de Transformice (15 de septiembre) | ¿Lo quería estafar o no? «Estás como necesitada, así que ten» |
+| 2 | Matemáticas, filosofía y buscarnos | Ella lo buscó por todo el juego… ¿él de verdad la estaba buscando? |
+| 3 | El 25 de octubre | ¿Treinta días o cuarenta? (del 15 de septiembre al 25 de octubre) |
+| 4 | La primera vez que nos vimos | «Eras perfecta» — «¿Era?» |
+| 5 | Cartagena | La moto acuática, y ella durmiendo en el aeropuerto mientras él estaba en un hotel cinco estrellas |
+| 6 | Las luces de diciembre en Medellín (con Disney) | ¿Las luces o los ojos de ella? |
+| 7 | Halloween elegante | «Me derrite» — «Dímelo otra vez» |
+| 8 | Un cumpleaños de reina | El restaurante de súper lujo… y quién pagó |
+| 9 | El planetario del Parque Explora | ¿Quién miraba a quién? |
+| 10 | Para siempre | La propuesta en la casa, Lexy Katherine, los labios y la sonrisa, abrazados en camita |
+
+Además, las felicitaciones y los ánimos usan frases propias de quien narra (Ella: «me robaste el corazón… y eso
+que la estafadora era yo»; Él: «cada vez que sonríes me vuelvo a enamorar»), y el final de la puerta 100 cambia
+según quién narra. Todo está en `src/puertas/historia.ts`.
+
 ## Capítulos y puertas
 
 | Cap. | Puertas | Escenario | Puertas que se usan |
@@ -52,8 +75,8 @@ recuerdo (una lucecita en forma de corazón). En la puerta 100 los recuerdos vue
 | 1 | 1–10 | **Nuestra casa** de noche (sala con sofá, lámpara, cuadros) | de madera con pomo |
 | 2 | 11–20 | **El jardín** de día (flores, árbol, colmena) | reja de jardín en arco |
 | 3 | 21–30 | **La cafetería** de la primera cita | de vidrio con campanita |
-| 4 | 31–40 | **La terminal** de buses (el viaje entre dos ciudades) | automática corrediza |
-| 5 | 41–50 | **La playa** al atardecer | cabaña de bambú que sube |
+| 4 | 31–40 | **La terminal** de buses (el viaje entre Medellín y la otra ciudad) | automática corrediza |
+| 5 | 41–50 | **La playa** (Cartagena) | cabaña de bambú que sube |
 | 6 | 51–60 | **El bosque** de las luciérnagas (noche) | redonda en el tronco de un árbol |
 | 7 | 61–70 | **La feria** | cortinas de carpa |
 | 8 | 71–80 | **El castillo** de los cuentos | rastrillo de hierro que sube |
@@ -116,7 +139,7 @@ la explica), para que nadie se quede trabado.
 | 28 | Las tres tazas: seguir la que tiene la llave | seguimiento |
 | 29 | El letrero giratorio: girarlo con dos dedos para leerlo | girar con dos dedos |
 | 30 | El letrero dice CERRADO… al voltear el celular dice ABIERTO | voltear 180° |
-| 31 | El tablero de salidas: elegir el andén del bus a casa | leer y deducir |
+| 31 | El mapa tiene un corazón en Cartagena: buscar su andén en el tablero de salidas | leer y deducir |
 | 32 | La maleta de tres números: los sacan las calcomanías | contar + candado |
 | 33 | Letras que giran en el tablero: pararlas en TE AMO | tiempo justo |
 | 34 | El torniquete: pasar el tiquete de un deslizón, ni lento ni rápido | deslizar con velocidad |
