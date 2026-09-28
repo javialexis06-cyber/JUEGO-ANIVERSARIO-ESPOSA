@@ -144,6 +144,7 @@ function abrirMenu() {
   sonido.musica.iniciar('menu');
   pantallaUnica('menu');
   $('menu-dinero').textContent = String(partida.dinero);
+  $('menu-fichas').textContent = String(guardado.fichas(partida));
   $('menu-estrellas').textContent = `${guardado.totalEstrellas(partida)} / ${NIVELES_JUGABLES * 3}`;
   $('menu-lunas').textContent = String(guardado.cuenta(partida.lunas));
   $('menu-corazones').textContent = String(guardado.cuenta(partida.corazones));
@@ -258,8 +259,12 @@ async function jugar(n: number) {
   juego.alTerminar = (r) => {
     const j = juego!;
     const antes = partida.estrellas[n] ?? [false, false, false];
+    const fichasAntes = guardado.fichasGanadas(partida);
     if (!j.legendario) partida.estrellas[n] = antes.map((e, i) => e || r.estrellas[i]);
     if (r.luna) partida.lunas[n] = true;
+    const fichasNuevas = guardado.fichasGanadas(partida) - fichasAntes;
+    $('rec-fichas').hidden = fichasNuevas <= 0;
+    $('rec-fichas').textContent = `+${fichasNuevas} ${fichasNuevas === 1 ? 'estrella' : 'estrellas'} para mejorar la tienda (tienes ${guardado.fichas(partida)})`;
     if (r.corazon) partida.corazones[n] = true;
     partida.dinero += r.ganancia;
     guardado.guardar(partida);
@@ -287,6 +292,7 @@ function abrirMejoras() {
 
 function pintarMejoras() {
   $('mej-dinero').textContent = String(partida.dinero);
+  $('mej-fichas').textContent = String(guardado.fichas(partida));
   const lista = $('mej-lista');
   lista.innerHTML = '';
   const dia = diaAlcanzado();
@@ -296,17 +302,20 @@ function pintarMejoras() {
     li.textContent = t;
     lista.appendChild(li);
   };
-  const fila = (nombre: string, detalle: string, precio: number, accion: () => void, estado: 'comprar' | 'listo' | 'bloqueado' = 'comprar', bloqueo = '') => {
+  const fila = (nombre: string, detalle: string, precio: number, accion: () => void, estado: 'comprar' | 'listo' | 'bloqueado' = 'comprar', bloqueo = '', conFichas = false) => {
     const li = document.createElement('li');
     if (estado === 'bloqueado') li.className = 'bloqueada';
     li.innerHTML = `<div><strong>${nombre}</strong><span>${estado === 'bloqueado' ? bloqueo : detalle}</span></div>`;
     const b = document.createElement('button');
-    b.className = 'boton-precio';
-    b.disabled = estado !== 'comprar' || partida.dinero < precio;
+    b.className = `boton-precio${conFichas ? ' con-fichas' : ''}`;
+    const alcanza = () => (conFichas ? guardado.fichas(partida) >= precio : partida.dinero >= precio);
+    b.disabled = estado !== 'comprar' || !alcanza();
     b.textContent = estado === 'listo' ? 'Listo' : estado === 'bloqueado' ? '—' : `${precio}`;
+    if (conFichas && estado === 'comprar') b.setAttribute('aria-label', `${precio} estrellas`);
     b.addEventListener('click', async () => {
-      if (partida.dinero < precio) return;
-      partida.dinero -= precio;
+      if (!alcanza()) return;
+      if (conFichas) partida.gastadas += precio;
+      else partida.dinero -= precio;
       accion();
       sonido.activar();
       sonido.caja();
@@ -344,7 +353,7 @@ function pintarMejoras() {
       }
       const sig = m.niveles[k];
       const nombre = m.niveles.length > 1 ? `${m.nombre} · nivel ${k + 1}` : m.nombre;
-      fila(nombre, sig.texto, sig.precio, () => (partida.mejoras[m.id] = nivel + 1), dia >= m.desde ? 'comprar' : 'bloqueado', `Desde el día ${m.desde}`);
+      fila(nombre, sig.texto, sig.precio, () => (partida.mejoras[m.id] = nivel + 1), dia >= m.desde ? 'comprar' : 'bloqueado', `Desde el día ${m.desde}`, true);
     }
   }
   titulo('Ayudas para un día');

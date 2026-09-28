@@ -38,6 +38,11 @@ export class Cliente extends Personaje {
   private inicioFila = 0;
   private dejoBasura = false;
   private lugarFila = -1;
+  /** En qué caja hace la fila. */
+  private numCaja = 0;
+  private get miFila() {
+    return this.juego.filas[this.numCaja] ?? this.juego.filas[0];
+  }
   private tieneCanasta = false;
   private canasta: import('three').Object3D | null = null;
   private charcosPisados = new Set<number>();
@@ -74,7 +79,7 @@ export class Cliente extends Personaje {
     return it ? it.cantidad - it.tomadas : 0;
   }
   get listoParaPagar() {
-    return this.estado === 'enfila' && this.juego.fila[0] === this && !this.moviendo;
+    return this.estado === 'enfila' && this.miFila[0] === this && !this.moviendo;
   }
   get esperandoCanasta() {
     return this.estado === 'sinCanasta';
@@ -127,7 +132,10 @@ export class Cliente extends Personaje {
     const j = this.juego;
     if (this.gasto === 0) return this.salir(false);
     this.estado = 'afila';
-    j.fila.push(this);
+    // La fila más corta (y si están iguales, donde ya estén cobrando)
+    const puntaje = (i: number) => j.filas[i].length + (j.cobrandoEn(i) ? 0 : 0.5);
+    this.numCaja = j.filas.reduce((mejor, _, i) => (puntaje(i) < puntaje(mejor) ? i : mejor), 0);
+    this.miFila.push(this);
     this.inicioFila = j.tiempo;
     this.moverEnFila();
   }
@@ -135,12 +143,13 @@ export class Cliente extends Personaje {
   /** Se acomoda en su puesto de la fila (se llama cuando la fila avanza). */
   moverEnFila() {
     const j = this.juego;
-    const k = j.fila.indexOf(this);
+    const k = this.miFila.indexOf(this);
     if (k < 0 || k === this.lugarFila) return;
     this.lugarFila = k;
-    this.ir(j.tienda.nav, j.tienda.caja.puestoFila(k), () => {
+    const caja = j.tienda.cajas[this.numCaja] ?? j.tienda.caja;
+    this.ir(j.tienda.nav, caja.puestoFila(k), () => {
       this.estado = 'enfila';
-      this.mirarA(j.tienda.caja.vitrina.centro());
+      this.mirarA(caja.vitrina.centro());
       this.quieto();
     });
   }
@@ -157,10 +166,11 @@ export class Cliente extends Personaje {
   salir(enojado: boolean) {
     const j = this.juego;
     this.enojado = enojado;
-    const k = j.fila.indexOf(this);
+    const fila = this.miFila;
+    const k = fila.indexOf(this);
     if (k >= 0) {
-      j.fila.splice(k, 1);
-      j.fila.forEach((c) => c.moverEnFila());
+      fila.splice(k, 1);
+      fila.forEach((c) => c.moverEnFila());
     }
     // La canasta: vuelve al puesto, o queda tirada en el piso (sobre todo si sale bravo)
     if (this.tieneCanasta) {
@@ -186,7 +196,7 @@ export class Cliente extends Personaje {
     else if (this.estado === 'sinCanasta') r = RITMO_PACIENCIA.esperandoCanasta;
     else if (this.estado === 'enfila' || this.estado === 'afila') {
       // El primero de la fila: si nadie cobra se enoja rápido; si ya lo están atendiendo, casi no
-      if (j.fila[0] === this) r = j.alguienCobra ? RITMO_PACIENCIA.siendoAtendido : RITMO_PACIENCIA.filaSinCajero;
+      if (this.miFila[0] === this) r = j.cobrandoEn(this.numCaja) ? RITMO_PACIENCIA.siendoAtendido : RITMO_PACIENCIA.filaSinCajero;
       else r = RITMO_PACIENCIA.enFila;
     }
     else r = RITMO_PACIENCIA.caminando;

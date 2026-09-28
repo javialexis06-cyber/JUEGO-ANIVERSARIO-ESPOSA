@@ -1,4 +1,5 @@
 // Progreso guardado en el navegador (partida en solitario de la tiendita).
+import { FICHAS } from './balance';
 import type { TiendaDato } from './tienda';
 
 export interface Partida {
@@ -11,6 +12,8 @@ export interface Partida {
   ayudas: Record<string, number>;
   corazones: Record<number, boolean>;
   lunas: Record<number, boolean>;
+  /** Estrellas ya gastadas en mejoras (las ganadas salen de las estrellas y lunas conseguidas). */
+  gastadas: number;
 }
 
 const CLAVE = 'supermania-jugable1';
@@ -18,7 +21,7 @@ const CLAVE = 'supermania-jugable1';
 export function nueva(t: TiendaDato): Partida {
   const sitios: Record<number, number> = {};
   for (const s of t.sitios) sitios[s.id] = s.inicio ? 1 : 0;
-  return { dinero: 0, sitios, estrellas: {}, mejoras: { carrito: 1 }, ayudas: {}, corazones: {}, lunas: {} };
+  return { dinero: 0, sitios, estrellas: {}, mejoras: { carrito: 1 }, ayudas: {}, corazones: {}, lunas: {}, gastadas: 0 };
 }
 
 const esObjeto = (v: unknown): v is Record<string, any> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -46,6 +49,7 @@ export function normalizar(raw: unknown, t: TiendaDato): Partida {
     ayudas: numeros(raw.ayudas),
     corazones: banderas(raw.corazones),
     lunas: banderas(raw.lunas),
+    gastadas: entero(raw.gastadas),
   };
   // Partidas de la primera versión: el carrito estaba suelto
   if (!esObjeto(raw.mejoras)) p.mejoras = { carrito: entero(raw.carrito, 1) || 1 };
@@ -87,3 +91,6 @@ export function borrar() {
 
 export const totalEstrellas = (p: Partida) => Object.values(p.estrellas).reduce((a, e) => a + e.filter(Boolean).length, 0);
 export const cuenta = (r: Record<number, boolean>) => Object.values(r).filter(Boolean).length;
+/** Estrellas para mejorar: 1 por cada estrella conseguida y 5 por cada luna, menos lo ya gastado. */
+export const fichasGanadas = (p: Partida) => totalEstrellas(p) * FICHAS.estrella + cuenta(p.lunas) * FICHAS.luna;
+export const fichas = (p: Partida) => Math.max(0, fichasGanadas(p) - p.gastadas);

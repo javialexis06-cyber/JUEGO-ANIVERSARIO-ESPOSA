@@ -90,25 +90,31 @@ export interface Mejora {
   niveles: { precio: number; texto: string }[];
   desde: number; // día en que aparece en el catálogo
 }
+/** Las mejoras se compran con estrellas: cada estrella nueva de un día da 1 y cada luna nueva da 5. */
+export const FICHAS = { estrella: 1, luna: 5 };
 export const MEJORAS: Mejora[] = [
   { id: 'zapatos', grupo: 'Él', nombre: 'Tenis para Él', desde: 2, niveles: [
-    { precio: 50, texto: 'Camina 15 % más rápido' }, { precio: 105, texto: 'Camina 30 % más rápido' }, { precio: 180, texto: 'Camina 47 % más rápido' }] },
+    { precio: 3, texto: 'Camina 15 % más rápido' }, { precio: 6, texto: 'Camina 30 % más rápido' }, { precio: 10, texto: 'Camina 47 % más rápido' }] },
   { id: 'carrito', grupo: 'Él', nombre: 'Carrito grande', desde: 3, niveles: [
-    { precio: 75, texto: 'Alcanza para llenar 2 estantes por viaje (ahora 1)' }, { precio: 170, texto: 'Alcanza para 3 estantes por viaje' }] },
+    { precio: 5, texto: 'Alcanza para llenar 2 estantes por viaje (ahora 1)' }, { precio: 10, texto: 'Alcanza para 3 estantes por viaje' }] },
   { id: 'bodega', grupo: 'Bodega', nombre: 'Bodega ordenada', desde: 2, niveles: [
-    { precio: 40, texto: 'Carga las cajas 28 % más rápido' }, { precio: 90, texto: 'Carga las cajas 48 % más rápido' }, { precio: 160, texto: 'Carga las cajas 64 % más rápido' }] },
-  { id: 'alacena', grupo: 'Bodega', nombre: 'Reposición rápida', desde: 3, niveles: [
-    { precio: 40, texto: 'Llena las vitrinas 28 % más rápido' }, { precio: 90, texto: 'Llena las vitrinas 48 % más rápido' }, { precio: 160, texto: 'Llena las vitrinas 64 % más rápido' }] },
-  { id: 'planta', grupo: 'Tienda', nombre: 'Matera con flores', desde: 3, niveles: [{ precio: 35, texto: 'Los clientes pierden paciencia 10 % más lento' }] },
-  { id: 'parlante', grupo: 'Tienda', nombre: 'Música en la tienda', desde: 6, niveles: [{ precio: 65, texto: 'Otro 10 % más de paciencia' }] },
-  { id: 'canastas', grupo: 'Tienda', nombre: 'Más canastas', desde: 6, niveles: [{ precio: 40, texto: '11 canastas en la entrada (ahora 8)' }] },
-  { id: 'caneca2', grupo: 'Tienda', nombre: 'Segunda caneca', desde: 7, niveles: [{ precio: 50, texto: 'Una caneca al fondo: menos camino para botar basura' }] },
-  { id: 'globos', grupo: 'Tienda', nombre: 'Globos de fiesta', desde: 10, niveles: [{ precio: 85, texto: 'Otro 10 % más de paciencia' }] },
-  { id: 'camara', grupo: 'Tienda', nombre: 'Cámara de seguridad', desde: 12, niveles: [{ precio: 100, texto: 'El ladrón se ve desde que entra y corre más lento' }] },
-  { id: 'cajera', grupo: 'Ayudantes', nombre: 'Cajera', desde: 7, niveles: [{ precio: 265, texto: 'Cobra sola en la caja, aunque más despacio que Él' }] },
-  { id: 'aseo', grupo: 'Ayudantes', nombre: 'Aseo', desde: 9, niveles: [{ precio: 195, texto: 'Recoge basura, trapea charcos y levanta productos caídos' }] },
-  { id: 'reponedor', grupo: 'Ayudantes', nombre: 'Reponedor', desde: 10, niveles: [{ precio: 265, texto: 'Repone solo las vitrinas que están por acabarse' }] },
-  { id: 'guardia', grupo: 'Ayudantes', nombre: 'Guardia', desde: 13, niveles: [{ precio: 230, texto: 'Atrapa ladrones y calma a la niña traviesa' }] },
+    { precio: 2, texto: 'Carga el carrito 28 % más rápido' }, { precio: 4, texto: 'Carga el carrito 48 % más rápido' }, { precio: 7, texto: 'Carga el carrito 64 % más rápido' }] },
+  { id: 'alacena', grupo: 'Bodega', nombre: 'Estantes fáciles de llenar', desde: 3, niveles: [
+    { precio: 2, texto: 'Arregla los estantes 28 % más rápido' }, { precio: 4, texto: 'Arregla los estantes 48 % más rápido' }, { precio: 7, texto: 'Arregla los estantes 64 % más rápido' }] },
+  { id: 'planta', grupo: 'Tienda', nombre: 'Matera con flores', desde: 3, niveles: [{ precio: 2, texto: 'Los clientes pierden paciencia 10 % más lento' }] },
+  { id: 'parlante', grupo: 'Tienda', nombre: 'Música en la tienda', desde: 6, niveles: [{ precio: 3, texto: 'Otro 10 % más de paciencia' }] },
+  { id: 'canastas', grupo: 'Tienda', nombre: 'Más canastas', desde: 6, niveles: [{ precio: 2, texto: '11 canastas en la entrada (ahora 8)' }] },
+  { id: 'caneca2', grupo: 'Tienda', nombre: 'Segunda caneca', desde: 7, niveles: [{ precio: 2, texto: 'Una caneca al fondo: menos camino para botar basura' }] },
+  { id: 'globos', grupo: 'Tienda', nombre: 'Globos de fiesta', desde: 10, niveles: [{ precio: 4, texto: 'Otro 10 % más de paciencia' }] },
+  { id: 'camara', grupo: 'Tienda', nombre: 'Cámara de seguridad', desde: 12, niveles: [{ precio: 5, texto: 'El ladrón se ve desde que entra y corre más lento' }] },
+  { id: 'caja2', grupo: 'Tienda', nombre: 'Segunda caja', desde: 12, niveles: [{ precio: 12, texto: 'Otra caja con su propio cajero: cada cliente hace la fila más corta' }] },
+  { id: 'cajera', grupo: 'Ayudantes', nombre: 'Cajera', desde: 7, niveles: [{ precio: 8, texto: 'Cobra sola en la caja, aunque más despacio que Él' }] },
+  { id: 'aseo', grupo: 'Ayudantes', nombre: 'Aseo', desde: 9, niveles: [{ precio: 6, texto: 'Recoge basura, trapea charcos y levanta productos caídos' }] },
+  { id: 'reponedor', grupo: 'Ayudantes', nombre: 'Reponedor', desde: 10, niveles: [{ precio: 8, texto: 'Repone solo las vitrinas que están por acabarse' }] },
+  { id: 'capacitacion', grupo: 'Ayudantes', nombre: 'Capacitación del equipo', desde: 11, niveles: [
+    { precio: 6, texto: 'Los ayudantes caminan y trabajan 20 % más rápido' }, { precio: 10, texto: 'Caminan y trabajan 40 % más rápido' }] },
+  { id: 'guardia', grupo: 'Ayudantes', nombre: 'Guardia', desde: 13, niveles: [{ precio: 6, texto: 'Atrapa ladrones y calma a la niña traviesa' }] },
+  { id: 'reponedor2', grupo: 'Ayudantes', nombre: 'Segundo reponedor', desde: 15, niveles: [{ precio: 12, texto: 'Otro reponedor: se reparten las vitrinas' }] },
 ];
 
 /** Ayudas de un solo uso: se compran entre días y se usan con un botón durante el día. */
@@ -132,3 +138,5 @@ export const COMBO = { cajaMax: 5, porVitrinaExtra: 2 };
 
 // ---------- Ayudantes ----------
 export const AYUDANTE = { velocidad: 1.95, lentitud: 1.3, lentitudCajera: 1.7, cargaReponedor: 2, umbralReponedor: 0.34 };
+/** Capacitación del equipo (nivel 0, 1, 2): más rápidos caminando y trabajando. */
+export const CAPACITACION = [1, 1.2, 1.4];

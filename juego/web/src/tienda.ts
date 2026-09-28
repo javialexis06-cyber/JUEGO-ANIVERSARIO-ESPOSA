@@ -265,10 +265,16 @@ export function liberarPropios(raiz: THREE.Object3D) {
   });
 }
 
+/** Dónde va la segunda caja (se compra con la mejora «Segunda caja»), por tienda. */
+const CAJA2_X: Record<number, number> = { 1: 0.3 };
+export const ID_CAJA2 = 90;
+
 export class Tienda {
   grupo = new THREE.Group();
   vitrinas: Vitrina[] = [];
   caja!: Caja;
+  /** Todas las cajas (la primera es la de Él y la cajera; la segunda tiene su propio cajero). */
+  cajas: Caja[] = [];
   nav!: Navegacion;
   bodega!: P;
   entrada!: P;
@@ -306,13 +312,23 @@ export class Tienda {
     this.grupo.add(cascaron);
     this.bodega = this.dato.bodega;
     this.entrada = this.dato.entrada;
-    for (const s of this.dato.sitios) {
+    const sitios = [...this.dato.sitios];
+    const niv = { ...niveles };
+    const cajaSitio = this.dato.sitios.find((x) => x.seccion === 'caja');
+    if (mejoras.caja2 && cajaSitio) {
+      const x2 = CAJA2_X[this.dato.nivel] ?? 0;
+      const posicion = Object.fromEntries(Object.entries(cajaSitio.posicion).map(([k, p]) => [k, { ...p, x: x2 }]));
+      sitios.push({ ...cajaSitio, id: ID_CAJA2, posicion, letrero: false, inicio: true });
+      niv[ID_CAJA2] = niveles[cajaSitio.id] ?? 1;
+    }
+    for (const s of sitios) {
       const v = new Vitrina(s);
-      await v.montar(niveles[s.id] ?? 0, this.productos);
+      await v.montar(niv[s.id] ?? 0, this.productos);
       this.vitrinas.push(v);
       this.grupo.add(v.grupo);
-      if (s.seccion === 'caja') this.caja = new Caja(v);
+      if (s.seccion === 'caja') this.cajas.push(new Caja(v));
     }
+    this.caja = this.cajas[0];
     // Canecas, canastas y adornos comprados
     const pt = PUNTOS_TIENDA[this.dato.nivel];
     if (pt) {

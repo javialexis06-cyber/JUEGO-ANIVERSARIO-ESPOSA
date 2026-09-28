@@ -28,6 +28,7 @@
     </div>
     <div class="menu-saldos">
       <span class="saldo"><i class="moneda" aria-hidden="true"></i><b id="menu-dinero">0</b></span>
+      <span class="saldo" title="Estrellas para mejorar la tienda"><i class="ficha" aria-hidden="true"></i><b id="menu-fichas">0</b></span>
       <span class="saldo"><i class="estrella" aria-hidden="true"></i><b id="menu-estrellas">0</b></span>
       <span class="saldo" title="Lunas del modo legendario"><i class="luna-icono" aria-hidden="true"></i><b id="menu-lunas">0</b></span>
       <span class="saldo" title="Corazones escondidos"><i class="corazon-icono" aria-hidden="true"></i><b id="menu-corazones">0</b></span>
@@ -79,6 +80,7 @@
     <div id="rec-lineas" class="tiquete-lineas"></div>
     <div class="tiquete-total"><span>GANANCIA DEL DÍA</span><span><i class="moneda" aria-hidden="true"></i><b id="rec-total">0</b></span></div>
     <p id="rec-pasa" class="tiquete-pasa"></p>
+    <p id="rec-fichas" class="tiquete-pasa tiquete-fichas" hidden></p>
     <p id="rec-sueldo" class="tiquete-pasa" hidden></p>
     <div class="tiquete-botones">
       <button id="btn-siguiente" class="boton boton-tomate">Siguiente día</button>
@@ -95,8 +97,9 @@
     <header class="catalogo-cabeza">
       <h2>Mejorar la tienda</h2>
       <span class="saldo"><i class="moneda" aria-hidden="true"></i><b id="mej-dinero">0</b></span>
+      <span class="saldo" title="Estrellas para mejorar"><i class="ficha" aria-hidden="true"></i><b id="mej-fichas">0</b></span>
     </header>
-    <p class="catalogo-nota">Lo que compres aparece en la tienda de atrás y se queda para los próximos días. En esta tienda las vitrinas llegan hasta el nivel 2.</p>
+    <p class="catalogo-nota">Las vitrinas y las ayudas se pagan con monedas. Las mejoras se pagan con <b>estrellas</b>: cada estrella nueva de un día da 1 y cada luna, 5. ¿No te alcanza? Repite días y saca las estrellas o lunas que te faltan.</p>
     <ul id="mej-lista" class="catalogo-lista"></ul>
     <button id="btn-mej-cerrar" class="boton boton-tomate">Listo</button>
   </article>
@@ -114,7 +117,7 @@
       <li><b>Basura</b> (día 6): recógela y Él la lleva a la caneca. <b>Charcos</b> (día 8): trapéalos antes de que alguien se resbale.</li>
       <li><b>Canastas:</b> sin canastas en la entrada no entra nadie. Recoge las que dejan tiradas.</li>
       <li><b>Ladrón</b> (día 12): tócalo antes de que llegue a la puerta. <b>Niña traviesa</b> (día 14): tócala para calmarla y recoge lo que tumbó. <b>Famoso</b> (día 18): todos se quedan mirándolo.</li>
-      <li><b>Entre días</b> compra vitrinas, tenis, carrito, bodega ordenada, adornos y ayudantes. Las <b>ayudas</b> (tinto, canción, limpieza) se usan con los botones de la izquierda.</li>
+      <li><b>Entre días</b> compra vitrinas con monedas y <b>mejoras con estrellas</b> (1 por cada estrella nueva, 5 por cada luna): tenis, carrito grande, estantes más fáciles, ayudantes, capacitación, segunda caja… Los últimos días no se pasan sin mejorar: si te trabas, repite días por las estrellas que te faltan. Las <b>ayudas</b> (tinto, canción, limpieza) se usan con los botones de la izquierda.</li>
       <li>Con 3 estrellas se abre el <b>modo legendario</b> de ese día: gana una Luna. Y en cada día hay un <b>corazón escondido</b> que aparece un momento.</li>
     </ol>
     <p class="como-nota">Con dos dedos acercas la cámara. Juega con el celular acostado para ver mejor la tienda.</p>

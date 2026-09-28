@@ -1,7 +1,7 @@
 // Ayudantes que se contratan en la tienda de mejoras: cajera, reponedor, aseo y guardia.
 // Cada uno trabaja solo, un poco más lento que Él, y no toma lo que Él ya tiene en su fila.
 import * as THREE from 'three';
-import { AYUDANTE, CARGA_BODEGA, RECOGER, REPONER } from './balance';
+import { AYUDANTE, CAPACITACION, CARGA_BODEGA, RECOGER, REPONER } from './balance';
 import type { Juego } from './juego';
 import { P } from './navegacion';
 import { Personaje } from './personaje';
@@ -24,9 +24,17 @@ export class Ayudante extends Personaje {
   private carrito: THREE.Group | null = null;
   private huecos: THREE.Object3D[] = [];
 
-  constructor(public tipo: TipoAyudante, pos: P, escala: number, private juego: Juego) {
+  constructor(public tipo: TipoAyudante, pos: P, escala: number, private juego: Juego, public numCaja = 0) {
     super(pos, escala);
-    this.velocidad = tipo === 'guardia' ? 2.5 : AYUDANTE.velocidad;
+    this.velocidad = (tipo === 'guardia' ? 2.5 : AYUDANTE.velocidad) * this.capacitacion;
+  }
+
+  /** Cuánto más rápido trabaja por la capacitación del equipo. */
+  private get capacitacion() {
+    return CAPACITACION[Math.min(2, this.juego.mejoras.capacitacion ?? 0)];
+  }
+  private get miCaja() {
+    return this.juego.tienda.cajas[this.numCaja] ?? this.juego.tienda.caja;
   }
 
   async preparar(productos: Productos) {
@@ -61,8 +69,9 @@ export class Ayudante extends Personaje {
   empezar() {
     const j = this.juego;
     if (this.tipo === 'cajera') {
-      this.ir(j.tienda.nav, j.tienda.caja.puestoCajero(), () => {
-        this.mirarA(j.tienda.caja.puestoFila(0));
+      const caja = this.miCaja;
+      this.ir(j.tienda.nav, caja.puestoCajero(), () => {
+        this.mirarA(caja.puestoFila(0));
         this.pose('cobrar');
       });
     } else if (this.tipo === 'guardia') {
@@ -71,7 +80,7 @@ export class Ayudante extends Personaje {
   }
 
   private hacer(s: number, pose: string, luego: () => void) {
-    this.accion = s * AYUDANTE.lentitud;
+    this.accion = (s * AYUDANTE.lentitud) / this.capacitacion;
     this.pose(pose);
     this.alTerminar = luego;
   }
@@ -103,11 +112,11 @@ export class Ayudante extends Personaje {
   private cajera(dt: number) {
     if (this.moviendo) return;
     const j = this.juego;
-    const primero = j.fila[0];
+    const primero = (j.filas[this.numCaja] ?? [])[0];
     if (primero && primero.listoParaPagar) {
       this.pose('cobrar');
       this.cobroEn += dt;
-      if (this.cobroEn >= j.tienda.caja.tiempoCobro(primero.unidades) * AYUDANTE.lentitudCajera) {
+      if (this.cobroEn >= (this.miCaja.tiempoCobro(primero.unidades) * AYUDANTE.lentitudCajera) / this.capacitacion) {
         this.cobroEn = 0;
         j.cobrar(primero);
       }

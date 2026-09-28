@@ -95,7 +95,8 @@ export class Juego {
   tienda!: Tienda;
   jugador!: Jugador;
   clientes: Cliente[] = [];
-  fila: Cliente[] = [];
+  /** Una fila por caja (la 0 es la de Él y la cajera). */
+  filas: Cliente[][] = [[]];
   mugres: Mugre[] = [];
   canastasSueltas: CanastaSuelta[] = [];
   canastas = CANASTAS_INICIO;
@@ -139,11 +140,20 @@ export class Juego {
   get adornos() {
     return ['planta', 'parlante', 'globos'].filter((k) => this.mejoras[k]).length;
   }
+  /** La fila de la caja principal. */
+  get fila() {
+    return this.filas[0];
+  }
   get cajera() {
-    return this.ayudantes.find((a) => a.tipo === 'cajera') ?? null;
+    return this.ayudantes.find((a) => a.tipo === 'cajera' && a.numCaja === 0) ?? null;
   }
   get alguienCobra() {
-    return this.jugador.estaCobrando || !!this.cajera?.cobrando;
+    return this.cobrandoEn(0);
+  }
+  /** ¿Alguien está cobrando en la caja i? */
+  cobrandoEn(i: number) {
+    if (i === 0) return this.jugador.estaCobrando || !!this.cajera?.cobrando;
+    return this.ayudantes.some((a) => a.tipo === 'cajera' && a.numCaja === i && a.cobrando);
   }
   get cerrado() {
     return this.tiempo >= this.nivel.duracion_s;
@@ -159,6 +169,7 @@ export class Juego {
   async preparar() {
     this.tienda = new Tienda(this.tiendaDato, this.productos);
     await this.tienda.montar(this.sitios, this.mejoras);
+    this.filas = this.tienda.cajas.map(() => []);
     this.mundo.escena.add(this.tienda.grupo);
     this.mundo.encuadrar(this.tiendaDato.W, this.tiendaDato.D);
     const esc = this.tiendaDato.escala_personas;
@@ -173,12 +184,18 @@ export class Juego {
     if (this.programados.some((p) => p.que === 'ladron')) await cargarAnimado('ladron.glb');
     if (this.programados.some((p) => p.que === 'nina')) await cargarAnimado('nina.glb');
     for (const m of ['basura.glb', 'charco.glb', 'canasta.glb']) await cargar(m).catch(() => null);
-    // Ayudantes contratados
-    const ayudantes: TipoAyudante[] = ['cajera', 'reponedor', 'aseo', 'guardia'];
-    for (const tipo of ayudantes) {
-      if (!this.mejoras[tipo]) continue;
-      const inicio = tipo === 'reponedor' || tipo === 'aseo' ? { x: this.tienda.bodega.x - 0.6, y: this.tienda.bodega.y - 1.6 } : { x: this.tienda.entrada.x + 1.2, y: this.tienda.entrada.y + 0.5 };
-      const a = new Ayudante(tipo, inicio, esc * (this.escalas[tipo] ?? 1), this);
+    // Ayudantes contratados (la segunda caja trae su propio cajero)
+    const m = this.mejoras;
+    const contratados: [TipoAyudante, number][] = [];
+    if (m.cajera) contratados.push(['cajera', 0]);
+    if (m.caja2 && this.tienda.cajas[1]) contratados.push(['cajera', 1]);
+    if (m.reponedor) contratados.push(['reponedor', 0]);
+    if (m.reponedor2) contratados.push(['reponedor', 1]);
+    if (m.aseo) contratados.push(['aseo', 0]);
+    if (m.guardia) contratados.push(['guardia', 0]);
+    for (const [tipo, k] of contratados) {
+      const inicio = tipo === 'reponedor' || tipo === 'aseo' ? { x: this.tienda.bodega.x - 0.6 - k * 0.7, y: this.tienda.bodega.y - 1.6 } : { x: this.tienda.entrada.x + 1.2 + k * 0.8, y: this.tienda.entrada.y + 0.5 };
+      const a = new Ayudante(tipo, inicio, esc * (this.escalas[tipo] ?? 1), this, tipo === 'cajera' ? k : 0);
       await a.preparar(this.productos);
       this.ayudantes.push(a);
       this.mundo.escena.add(a.grupo);
@@ -522,7 +539,7 @@ export class Juego {
       const v = this.tienda.porGrupo(g.object);
       if (!v) continue;
       if (!v.nivel) return null;
-      if (v.seccion === 'caja') return this.cajera ? 'cajera' : this.tarea({ tipo: 'caja' }, 'caja');
+      if (v.seccion === 'caja') return this.cajera || v !== this.tienda.caja.vitrina ? 'cajera' : this.tarea({ tipo: 'caja' }, 'caja');
       if (v.stock < v.capacidad || this.jugador.vaAReponer(v)) return this.tarea({ tipo: 'reponer', vitrina: v }, 'reponer');
       return 'llena';
     }
