@@ -25,6 +25,7 @@ import { NIVELES } from './niveles';
 import { ProbadorReal } from './probador';
 import { Puerta } from './puerta';
 import { Sensores } from './sensores';
+import { idRecuerdo } from './voces';
 import { $, aviso, esc, Inventario, mostrar, Paneles, pausa, tarjetaRecuerdo } from './ui';
 
 const params = new URLSearchParams(location.search);
@@ -306,9 +307,9 @@ async function jugar(n: number) {
     if (r) {
       if (n % 10 !== 0) await narrador.decir([elegir(HALLAZGO, n / 5)]);
       await tarjetaRecuerdo(r, RECUERDOS.indexOf(r) + 1, RECUERDOS.length);
-      await narrador.conversar(r.dialogo, nombreDe(yo));
+      await narrador.conversar(r.dialogo, nombreDe(yo), r.dialogo.map((_, i) => idRecuerdo(r.puerta, i)));
     }
-    if (n === 100) await narrador.decir(FINAL_DE[otro(yo)]);
+    if (n === 100) await narrador.decir(FINAL_DE[otro(yo)], FINAL_DE[otro(yo)].map((_, i) => `final-${otro(yo)}-${i + 1}`));
   }
   if (turno !== jugadas) return;
   // Cruzar la puerta

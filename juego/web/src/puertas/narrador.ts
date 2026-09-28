@@ -8,6 +8,7 @@ import * as sonido from '../sonido';
 import { Escena, OJO } from './escena';
 import { ANIMO, ANIMO_DE, BONITO, BONITO_DE, type Dicho, elegir, FELICITAR, voz } from './historia';
 import { Globo } from './ui';
+import * as voces from './voces';
 
 const ESCALA = 0.68;
 /** Personaje (x, y) ↔ three (x, 0, -y). */
@@ -92,19 +93,20 @@ export class Narrador {
     void this.escena.animar(380, (k) => g.scale.setScalar(ESCALA * (0.6 + 0.4 * k)));
   }
 
-  /** Cuenta algo (varias líneas, tocar para seguir). */
-  async decir(lineas: string[]) {
+  /** Cuenta algo (varias líneas, tocar para seguir). `audios`: código de la voz grabada de cada línea. */
+  async decir(lineas: string[], audios?: string[]) {
     if (!lineas.length) return;
     this.hablando = true;
     this.p.pose('hablar_a');
-    await this.globo.decir(lineas.map((l) => voz(l, this.rol)), (h) => this.p.cara(h ? 'hablar' : 'normal'));
+    await this.globo.decir(lineas.map((l) => voz(l, this.rol)), (h) => this.p.cara(h ? 'hablar' : 'normal'), audios && ((i) => void voces.oir(audios[i])));
+    if (audios) voces.callar();
     this.hablando = false;
     this.p.quieto();
     this.p.cara('feliz');
   }
 
   /** Conversación de los dos: lo del narrador sale en su globo y lo de quien juega, abajo con su nombre. */
-  async conversar(dialogo: Dicho[], nombreJugador: string) {
+  async conversar(dialogo: Dicho[], nombreJugador: string, audios?: string[]) {
     if (!dialogo.length) return;
     this.hablando = true;
     this.p.pose('hablar_a');
@@ -118,7 +120,8 @@ export class Narrador {
         this.p.cara(h ? 'hablar' : 'normal');
         if (this.p.poseVisible === 'pensando') this.p.pose('hablar_a');
       }
-    });
+    }, audios && ((i) => void voces.oir(audios[i])));
+    if (audios) voces.callar();
     this.hablando = false;
     this.p.quieto();
     this.p.cara('feliz');

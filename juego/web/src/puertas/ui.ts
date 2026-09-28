@@ -30,9 +30,14 @@ export class Globo {
 
   /** Muestra las líneas una por una (máquina de escribir) y espera un toque para cada una.
    *  Una línea con `jugador` la dice quien juega (globo de abajo, con su nombre). */
-  async decir(lineas: (string | { texto: string; jugador: string })[], alLetra?: (hablando: boolean, jugador: boolean) => void) {
+  async decir(
+    lineas: (string | { texto: string; jugador: string })[],
+    alLetra?: (hablando: boolean, jugador: boolean) => void,
+    alLinea?: (i: number) => void,
+  ) {
     this.capa.hidden = false;
-    for (const l of lineas) {
+    for (const [n, l] of lineas.entries()) {
+      alLinea?.(n);
       const linea = typeof l === 'string' ? l : l.texto;
       const deJugador = typeof l !== 'string';
       const texto = deJugador ? this.yoTexto : this.texto;

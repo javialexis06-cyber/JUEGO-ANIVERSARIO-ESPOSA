@@ -76,6 +76,10 @@ mapa para volver a leerlos (un recuerdo se tiene cuando su puerta ya se abrió).
 | 95 | La propuesta | La picada, la pijama, los ojos cerrados: ¿aretes, una cadena… o el anillo? «¡Lloré lo justo!» |
 | 100 | Para siempre | ¿Katherine o Lexy Katherine? Los labios, la sonrisa, la camita y el final de Disney |
 
+**Voces grabadas (opcional):** cada línea de los recuerdos y del final tiene un código (`r005-01`, `final-ella-2`…).
+Si en `juego/web/public/voces/` hay un audio con ese nombre (y `node scripts/voces.mjs` lo agregó a `lista.json`),
+se oye mientras sale su globo; si no, la línea se lee escrita. El guion para grabar está en `docs/guion-voces.md`.
+
 Además, las felicitaciones y los ánimos usan frases propias de quien narra (Ella: «me robaste el corazón… y eso
 que la estafadora era yo»; Él: «cada vez que sonríes me vuelvo a enamorar»), y el final de la puerta 100 cambia
 según quién narra. Todo está en `src/puertas/historia.ts`.
