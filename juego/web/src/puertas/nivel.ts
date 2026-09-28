@@ -76,6 +76,8 @@ export interface Probador {
   frotar(o: string | THREE.Object3D, pasadas?: number): Promise<void>;
   /** Trazo por puntos de pantalla en fracciones (0..1). */
   trazar(puntos: [number, number][], ms?: number): Promise<void>;
+  /** Como trazar, pero un movimiento por cuadro (como un dedo de verdad en el celular). */
+  trazarPorCuadro(puntos: [number, number][]): Promise<void>;
   dedos(objs: (string | THREE.Object3D)[], ms: number): Promise<void>;
   pellizcar(escala: number): Promise<void>;
   girar(angulo: number): Promise<void>;

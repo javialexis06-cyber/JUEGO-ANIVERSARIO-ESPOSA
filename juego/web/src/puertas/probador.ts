@@ -149,6 +149,19 @@ export class ProbadorReal implements Probador {
     await pausa(150);
   }
 
+  async trazarPorCuadro(puntos: [number, number][]) {
+    const id = ++this.id;
+    const P = puntos.map(([x, y]) => ({ x: x * innerWidth, y: y * innerHeight }));
+    const cuadro = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+    this.evento('pointerdown', id, P[0].x, P[0].y);
+    for (const p of P.slice(1)) {
+      await cuadro();
+      this.evento('pointermove', id, p.x, p.y);
+    }
+    this.evento('pointerup', id, P[P.length - 1].x, P[P.length - 1].y);
+    await pausa(150);
+  }
+
   async dedos(objs: (string | THREE.Object3D)[], ms: number) {
     const ids = objs.map(() => ++this.id);
     const ps = objs.map((o) => this.pantalla(o));

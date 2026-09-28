@@ -773,6 +773,8 @@ const cajaMusical: Nivel = {
           notas.concat(notas).forEach((f, i) => sonido.nota(f, 0.3, i * 0.3, 'sine', 0.05));
           k.position.set(B.x + 0.12, B.y + 0.3, B.z + 0.05);
           k.visible = true;
+          // La cajita ya no recibe toques: si no, tapa la llave que salió de ella
+          c.quitarToque(area);
           area.userData.lista = true;
         });
       }
@@ -784,13 +786,13 @@ const cajaMusical: Nivel = {
     const s = p.pantalla('caja toque');
     const pts: [number, number][] = [[s.x / innerWidth, s.y / innerHeight]];
     const r = 32;
-    // Pasos de 45°: en un navegador de pruebas lento cada movimiento llega casi un segundo después
+    // Un movimiento por cuadro, de a 45° (la prueba corre con el tiempo acelerado: queda dentro del ritmo pedido)
     const N = 8;
-    for (let i = 0; i <= 8 * N; i++) {
+    for (let i = 0; i <= 6.5 * N; i++) {
       const a = (i / N) * Math.PI * 2;
       pts.push([(s.x + Math.cos(a) * r) / innerWidth, (s.y + Math.sin(a) * r) / innerHeight]);
     }
-    await p.trazar(pts, 8000);
+    await p.trazarPorCuadro(pts);
     await p.esperarQue(() => !!p.obj('caja toque').userData.lista, 10000);
     await p.tocar('llave');
     await p.esperarQue(() => !!document.querySelector('#inventario [data-item="llave"]'), 20000);
