@@ -312,6 +312,97 @@ def exportar_personaje(key, poses_map):
     return escala
 
 
+def podar_animaciones(path, rotan, se_mueven):
+    """Quita del GLB los canales de animación que no hacen nada: huesos que ninguna pose rota o corre y la escala
+    (siempre 1). El exportador de glTF escribe traslación, rotación y escala de TODOS los huesos en cada animación
+    (84 canales por pose); three.js deja en reposo lo que no se anima, así que las poses se ven igual."""
+    import struct
+    with open(path, 'rb') as f:
+        data = f.read()
+    n_json = struct.unpack('<I', data[12:16])[0]
+    doc = json.loads(data[20:20 + n_json])
+    p_bin = 20 + n_json
+    n_bin = struct.unpack('<I', data[p_bin:p_bin + 4])[0]
+    binario = data[p_bin + 8:p_bin + 8 + n_bin]
+    nodos = doc['nodes']
+    sirve = {'rotation': rotan, 'translation': se_mueven}
+    for anim in doc.get('animations', []):
+        canales = [c for c in anim['channels'] if nodos[c['target']['node']].get('name') in sirve.get(c['target']['path'], ())]
+        usados = sorted({c['sampler'] for c in canales})
+        nuevo = {v: i for i, v in enumerate(usados)}
+        anim['samplers'] = [anim['samplers'][i] for i in usados]
+        for c in canales:
+            c['sampler'] = nuevo[c['sampler']]
+        anim['channels'] = canales
+    doc['animations'] = [a for a in doc.get('animations', []) if a['channels']]
+    # Accesores y vistas que siguen en uso (el resto se descarta y el binario se compacta)
+    usados = set()
+
+    def marcar(i):
+        if i is not None:
+            usados.add(i)
+    for m in doc.get('meshes', []):
+        for pr in m['primitives']:
+            for i in pr['attributes'].values():
+                marcar(i)
+            marcar(pr.get('indices'))
+            for t in pr.get('targets', []):
+                for i in t.values():
+                    marcar(i)
+    for sk in doc.get('skins', []):
+        marcar(sk.get('inverseBindMatrices'))
+    for anim in doc.get('animations', []):
+        for sm in anim['samplers']:
+            marcar(sm['input'])
+            marcar(sm['output'])
+    orden = sorted(usados)
+    mapa = {v: i for i, v in enumerate(orden)}
+    doc['accessors'] = [doc['accessors'][i] for i in orden]
+    for m in doc.get('meshes', []):
+        for pr in m['primitives']:
+            pr['attributes'] = {k: mapa[i] for k, i in pr['attributes'].items()}
+            if 'indices' in pr:
+                pr['indices'] = mapa[pr['indices']]
+            if 'targets' in pr:
+                pr['targets'] = [{k: mapa[i] for k, i in t.items()} for t in pr['targets']]
+    for sk in doc.get('skins', []):
+        if 'inverseBindMatrices' in sk:
+            sk['inverseBindMatrices'] = mapa[sk['inverseBindMatrices']]
+    for anim in doc.get('animations', []):
+        for sm in anim['samplers']:
+            sm['input'], sm['output'] = mapa[sm['input']], mapa[sm['output']]
+    vistas = sorted({a['bufferView'] for a in doc['accessors'] if 'bufferView' in a} |
+                    {im['bufferView'] for im in doc.get('images', []) if 'bufferView' in im})
+    mapa_v = {v: i for i, v in enumerate(vistas)}
+    nuevo_bin = bytearray()
+    nuevas = []
+    for v in vistas:
+        bv = dict(doc['bufferViews'][v])
+        trozo = binario[bv.get('byteOffset', 0):bv.get('byteOffset', 0) + bv['byteLength']]
+        while len(nuevo_bin) % 4:
+            nuevo_bin.append(0)
+        bv['byteOffset'] = len(nuevo_bin)
+        nuevo_bin += trozo
+        nuevas.append(bv)
+    doc['bufferViews'] = nuevas
+    for a in doc['accessors']:
+        if 'bufferView' in a:
+            a['bufferView'] = mapa_v[a['bufferView']]
+    for im in doc.get('images', []):
+        if 'bufferView' in im:
+            im['bufferView'] = mapa_v[im['bufferView']]
+    while len(nuevo_bin) % 4:
+        nuevo_bin.append(0)
+    doc['buffers'] = [{'byteLength': len(nuevo_bin)}]
+    js = json.dumps(doc, separators=(',', ':')).encode('utf-8')
+    js += b' ' * (-len(js) % 4)
+    total = 12 + 8 + len(js) + 8 + len(nuevo_bin)
+    with open(path, 'wb') as f:
+        f.write(struct.pack('<III', 0x46546C67, 2, total))
+        f.write(struct.pack('<II', len(js), 0x4E4F534A) + js)
+        f.write(struct.pack('<II', len(nuevo_bin), 0x004E4942) + bytes(nuevo_bin))
+
+
 def exportar_personaje_animado(key, poses_map):
     """Un solo modelo con esqueleto y una animación (pose fija) por cada pose del juego.
 
@@ -325,12 +416,22 @@ def exportar_personaje_animado(key, poses_map):
             o.hide_render = False
     arm.animation_data_create()
     ad = arm.animation_data
+    # Solo se animan los huesos que alguna pose mueve (los de la cara y la utilería quedan en reposo): cada canal
+    # cuesta ~200 bytes de JSON por animación; un hueso movido se anima en todas para que las mezclas cuadren.
+    movidos = {'rotation_euler': set(), 'location': set()}
+    for pose in poses_map.values():
+        poses.apply_pose(arm, pose)
+        for pb in arm.pose.bones:
+            for prop, nombres in movidos.items():
+                if any(abs(a) > 1e-6 for a in getattr(pb, prop)):
+                    nombres.add(pb.name)
     for archivo, pose in poses_map.items():
         poses.apply_pose(arm, pose)
         for f in (1, 2):
             for pb in arm.pose.bones:
-                pb.keyframe_insert('rotation_euler', frame=f)
-                pb.keyframe_insert('location', frame=f)
+                for prop, nombres in movidos.items():
+                    if pb.name in nombres:
+                        pb.keyframe_insert(prop, frame=f)
         act = ad.action
         act.name = f'{key} {archivo}'
         act.use_fake_user = True
@@ -353,6 +454,7 @@ def exportar_personaje_animado(key, poses_map):
                               export_extras=True, export_animations=True, export_animation_mode='NLA_TRACKS',
                               export_skins=True, export_def_bones=False, export_morph=False, export_cameras=False,
                               export_lights=False, export_optimize_animation_size=False)
+    podar_animaciones(path, movidos['rotation_euler'], movidos['location'])
     print('GLB', os.path.basename(path), round(os.path.getsize(path) / 1e6, 2), 'MB', flush=True)
     return escala
 

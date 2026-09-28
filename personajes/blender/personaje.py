@@ -195,7 +195,7 @@ def _mirar_camara(obj):
     return obj
 
 
-def parche(name, surf, contorno, alto, coll, material, anillos=7, hundir=0.004, centro=None):
+def parche(name, surf, contorno, alto, coll, material, anillos=5, hundir=0.004, centro=None):
     """Parche abombado con cualquier contorno (x, z) visto de frente, proyectado sobre la superficie.
 
     Generaliza decal_dome a formas libres (bocas en D, lágrimas...): anillos del centro al borde; el centro
@@ -242,8 +242,9 @@ def build_reacciones(coll, head, P, mats, name, face):
     bmx, bmz = bx[1]
     br = F.get('brow_r', [0.026, 0.033, 0.028])
     out = []
-    stroke = lambda n, pts, r, mat=feature, prof=(0.7, 1.0), caps=('round', 'round'): clay.sweep(
-        f'{name} | {n}', _surface_stroke(surf, pts, 0.0), r, prof, coll, mat, segments=12, samples=8, caps=caps, up=(0, -1, 0))
+    # Mallas livianas: pocas muestras por tramo (la subdivisión las redondea); son muchas piezas ocultas
+    stroke = lambda n, pts, r, mat=feature, prof=(0.7, 1.0), caps=('round', 'round'), muestras=4: clay.sweep(
+        f'{name} | {n}', _surface_stroke(surf, pts, 0.0), r, prof, coll, mat, segments=10, samples=muestras, caps=caps, up=(0, -1, 0))
 
     for side, sx in (('izq', -1), ('der', 1)):
         X = lambda x: sx * x
@@ -256,7 +257,7 @@ def build_reacciones(coll, head, P, mats, name, face):
         }
         for tipo, (pts, radios) in cejas.items():
             out.append(clay.sweep(f'{name} | ceja {tipo} {side}', _surface_stroke(surf, [(X(x), bmz + dz) for x, dz in pts], 0.0),
-                                  radios, (0.55, 1.0), coll, mats['brow'], segments=12, samples=8, up=(0, -1, 0)))
+                                  radios, (0.55, 1.0), coll, mats['brow'], segments=10, samples=5, up=(0, -1, 0)))
         # --- Ojo apretado: «>» del lado izquierdo de la pantalla, «<» del derecho (la punta hacia la nariz)
         ap = [(X(ex + erx * 0.95), ez + erz * 0.6), (X(ex - erx * 0.35), ez + erz * 0.16), (X(ex - erx * 0.8), ez),
               (X(ex - erx * 0.35), ez - erz * 0.16), (X(ex + erx * 0.95), ez - erz * 0.6)]
@@ -268,7 +269,7 @@ def build_reacciones(coll, head, P, mats, name, face):
         # --- Párpado a media asta: piel sobre la mitad de arriba del ojo y la línea de las pestañas
         ojo = face[f'ojo_{side}']
         s2 = clay.Surface([head, ojo])
-        nu, nv = 17, 9
+        nu, nv = 13, 7
         zb = lambda u: ez + erz * 0.08 - erz * 0.1 * u * u
         zt = lambda u: ez + erz * 1.3 * math.sqrt(max(1 - u * u, 0.0)) + erz * 0.02
         verts, faces = [], []
@@ -288,16 +289,16 @@ def build_reacciones(coll, head, P, mats, name, face):
         out.append(lid)
         linea = [(X(ex + u * erx * 1.14), zb(u)) for u in np.linspace(-1, 1, 7)]
         pts = [p + n * 0.013 for p, n in (s2.front(x, z) for x, z in linea)]
-        out.append(clay.sweep(f'{name} | parpado medio linea {side}', pts, 0.022, (0.6, 1.0), coll, feature, segments=10, samples=6,
+        out.append(clay.sweep(f'{name} | parpado medio linea {side}', pts, 0.022, (0.6, 1.0), coll, feature, segments=8, samples=3,
                               up=(0, -1, 0)))
         # --- Lágrimas a chorro: desde el rabito del ojo, bajando por el cachete, y una gota al final
         ch = [(X(ex + erx * 0.25), ez - erz * 0.45), (X(ex + erx * 0.5), ez - 0.16), (X(ex + erx * 0.62), ez - 0.26),
               (X(ex + erx * 0.55), ez - 0.35)]
         pts = _surface_stroke(surf, ch, 0.02)
         out.append(clay.sweep(f'{name} | lagrima {side}', pts, [0.038, 0.047, 0.056, 0.064], (0.42, 1.0), coll, agua,
-                              segments=14, samples=8, caps=('round', 'round'), up=(0, -1, 0)))
+                              segments=10, samples=5, caps=('round', 'round'), up=(0, -1, 0)))
         loc, nrm = surf.front(X(ex + erx * 0.52), ez - 0.4)
-        gota = clay.blob(f'{name} | lagrima gota {side}', (0, 0, 0), (0.058, 0.032, 0.07), coll, agua, n=6, subsurf=2,
+        gota = clay.blob(f'{name} | lagrima gota {side}', (0, 0, 0), (0.058, 0.032, 0.07), coll, agua, n=5, subsurf=1,
                          shaper=lambda v: v * np.stack([1 - 0.35 * clay.smoothstep(-0.02, 0.05, v[:, 2])] * 2 + [np.ones(len(v))], 1))
         gota.location = loc + nrm * 0.022
         clay.orient_to(gota, nrm)
@@ -307,8 +308,8 @@ def build_reacciones(coll, head, P, mats, name, face):
     # --- Boca de enojo: mueca apretada con las esquinas hacia abajo y los dientes pelados
     w, h = mw * 1.75, md * 1.5
     cont = []
-    for k in range(40):
-        a = 2 * math.pi * k / 40
+    for k in range(30):
+        a = 2 * math.pi * k / 30
         u, v = math.cos(a), math.sin(a)
         x = u * w * (1 - 0.08 * v)
         z = zc - md * 0.25 + v * h * 0.5 - 0.35 * h * u * u  # arco ∩: las esquinas caen
@@ -326,19 +327,19 @@ def build_reacciones(coll, head, P, mats, name, face):
     for k, r in enumerate(rayas):
         pts = [p + n * 0.001 for p, n in (sd.front(x, z) for x, z in r) if p is not None]
         if len(pts) >= 2:
-            out.append(clay.sweep(f'{name} | boca enojo linea {k}', pts, 0.0065, (0.6, 1.0), coll, feature, segments=8, samples=4))
+            out.append(clay.sweep(f'{name} | boca enojo linea {k}', pts, 0.0065, (0.6, 1.0), coll, feature, segments=6, samples=2))
     # --- Puchero: labio de abajo para afuera y una rayita temblorosa encima
     t = np.linspace(-1, 1, 11)
     pts = [(mw * 0.8 * u, zc - md * 0.1 + md * 0.5 * (1 - u * u) + 0.005 * math.sin(u * 9.0)) for u in t]
     out.append(parche(f'{name} | boca puchero labio', surf,
-                      [(mw * 0.72 * math.cos(a), zc - md * 0.62 + md * 0.58 * math.sin(a)) for a in np.linspace(0, 2 * math.pi, 32, endpoint=False)],
+                      [(mw * 0.72 * math.cos(a), zc - md * 0.62 + md * 0.58 * math.sin(a)) for a in np.linspace(0, 2 * math.pi, 24, endpoint=False)],
                       0.045, coll, labio))
     lab = clay.Surface([head, out[-1]])
     out.append(clay.sweep(f'{name} | boca puchero', [p + n * 0.003 for p, n in (lab.front(x, z) for x, z in pts)], mr * 0.85, (0.7, 1.0),
-                          coll, feature, segments=12, samples=8, up=(0, -1, 0)))
+                          coll, feature, segments=10, samples=2, up=(0, -1, 0)))
     # --- Boca en O (sorpresa) y O grande con lengua (bostezo)
-    anillo = lambda cx, cz, rx, rz: [(cx + rx * math.cos(a), cz + rz * math.sin(a)) for a in np.linspace(0, 2 * math.pi, 36, endpoint=False)]
-    out.append(parche(f'{name} | boca o', surf, anillo(0, zc - md * 0.5, mw * 0.62, md * 1.2), 0.012, coll, interior))
+    anillo = lambda cx, cz, rx, rz: [(cx + rx * math.cos(a), cz + rz * math.sin(a)) for a in np.linspace(0, 2 * math.pi, 28, endpoint=False)]
+    out.append(parche(f'{name} | boca o', surf, anillo(0, zc - md * 0.6, mw * 0.72, md * 1.4), 0.012, coll, interior))
     og = parche(f'{name} | boca o grande', surf, anillo(0, zc - md * 1.3, mw * 1.0, md * 2.2), 0.012, coll, interior)
     out.append(og)
     out.append(parche(f'{name} | boca o grande lengua', clay.Surface([head, og]), anillo(0, zc - md * 2.65, mw * 0.62, md * 0.6), 0.01, coll, lengua,
@@ -347,8 +348,8 @@ def build_reacciones(coll, head, P, mats, name, face):
     w, h = mw * 1.75, md * 3.0
     ztop = zc + md * 0.1
     cont = []
-    for k in range(40):
-        a = 2 * math.pi * k / 40
+    for k in range(30):
+        a = 2 * math.pi * k / 30
         u, v = math.cos(a), math.sin(a)
         x = u * w * (1 + 0.12 * (-v))
         z = ztop - h * 0.55 + (v * h * 0.5 if v > 0 else v * h * 0.32) - 0.12 * h * u * u * (v > 0)
@@ -360,21 +361,21 @@ def build_reacciones(coll, head, P, mats, name, face):
     # --- Carcajada: D grande (borde de arriba recto), dientes de arriba y lengua
     w, h = mw * 1.85, md * 3.4
     ztop = mz - md * 0.3
-    cont = [(x, ztop + 0.006 * (1 - (x / w) ** 2)) for x in np.linspace(-w, w, 12)]
-    cont += [(w * math.cos(a), ztop + h * math.sin(a)) for a in np.linspace(-0.12, -math.pi + 0.12, 26)]
+    cont = [(x, ztop + 0.006 * (1 - (x / w) ** 2)) for x in np.linspace(-w, w, 9)]
+    cont += [(w * math.cos(a), ztop + h * math.sin(a)) for a in np.linspace(-0.12, -math.pi + 0.12, 20)]
     cj = parche(f'{name} | boca carcajada', surf, cont, 0.014, coll, interior, centro=(0, ztop - h * 0.45))
     out.append(cj)
     scj = clay.Surface([head, cj])
     out.append(parche(f'{name} | boca carcajada lengua', scj, anillo(0, ztop - h * 0.74, w * 0.5, h * 0.18), 0.012, coll, lengua, hundir=0.0))
-    diente = [(x, ztop - 0.004 - 0.034 * (1 - (x / (w * 0.8)) ** 6)) for x in np.linspace(w * 0.78, -w * 0.78, 14)]
-    diente += [(x, ztop - 0.002) for x in np.linspace(-w * 0.78, w * 0.78, 14)]
+    diente = [(x, ztop - 0.004 - 0.034 * (1 - (x / (w * 0.8)) ** 6)) for x in np.linspace(w * 0.78, -w * 0.78, 10)]
+    diente += [(x, ztop - 0.002) for x in np.linspace(-w * 0.78, w * 0.78, 10)]
     out.append(parche(f'{name} | boca carcajada dientes', scj, diente, 0.006, coll, dientes, anillos=4, hundir=0.0, centro=(0, ztop - 0.014)))
     # --- Recta, ladeada (media sonrisa hacia la derecha de la pantalla) y ondulada (nervios)
     out.append(stroke('boca recta', [(-mw * 0.9, zc), (0, zc - 0.005), (mw * 0.9, zc)], mr))
     out.append(stroke('boca ladeada', [(-mw * 0.85, zc - 0.004), (-mw * 0.2, zc - 0.016), (mw * 0.45, zc - 0.008), (mw * 0.9, zc + 0.026),
                                        (mw * 1.08, zc + 0.055)], mr))
     t = np.linspace(-1, 1, 13)
-    out.append(stroke('boca ondulada', [(mw * 1.3 * u, zc - 0.01 + 0.022 * math.sin((u + 1) * math.pi * 1.5)) for u in t], mr * 0.9))
+    out.append(stroke('boca ondulada', [(mw * 1.3 * u, zc - 0.01 + 0.022 * math.sin((u + 1) * math.pi * 1.5)) for u in t], mr * 0.9, muestras=2))
     for x in out:
         x.hide_render = True
         x.hide_viewport = True
