@@ -5,7 +5,8 @@ y el juego alterna entre ellas con un rebote al caminar. Las vitrinas llevan los
 vacíos con `producto` en sus extras: el juego pone ahí el producto y lo quita según el stock.
 
 Uso: python3 exportar_glb.py <carpeta_salida> [partes]
-  partes: productos,vitrinas,letreros,utileria,personajes,tienda,iconos (por defecto todas)
+  partes: productos,vitrinas,letreros,utileria,personajes,tienda,iconos (por defecto todas);
+          aparte: pareja (Él y Ella animados), reaccion (utilería de las reacciones), casa, regalos...
 """
 import copy
 import json
@@ -214,8 +215,18 @@ POSES_MASCOTA = {
     'saludo_a': 'saludo', 'saludo_b': 'saludo_b', 'sentado': 'sentado', 'pensando': 'pensando',
     'comer_sentado_a': 'comer_sentado_a', 'comer_sentado_b': 'comer_sentado_b', 'sentado_feliz': 'sentado_feliz',
 }
-# Mallas de expresión (ojos cerrados, bocas, barro): se exportan y el juego muestra la que toque
-EXPRESIONES = ('ojo feliz', 'boca hablar', 'boca beso', 'boca triste', 'suciedad')
+# Reacciones de los minijuegos (docs/reacciones.md): una pose fija por reacción, con el mismo nombre
+POSES_REACCION = {n: n for n in (
+    'presumir_a', 'presumir_b', 'pulgares_a', 'pulgares_b', 'baile_a', 'baile_b', 'preparar_salto', 'salto', 'puno_a', 'puno_b',
+    'musculo', 'jarras', 'puchero', 'facepalm', 'rascarse', 'triste_b', 'encogerse', 'llorar_a', 'llorar_b', 'rodillas_a',
+    'rodillas_b', 'bandera', 'desmayo', 'tirado', 'enojo_a', 'enojo_b', 'brazos_cruzados', 'boca_abierta', 'aplauso_a', 'aplauso_b',
+    'senalar_a', 'senalar_b', 'risita_a', 'risita_b', 'beso_volado_a', 'beso_volado_b', 'pensando_b', 'reloj', 'impaciente_a',
+    'impaciente_b', 'bostezo', 'agitar_a', 'agitar_b', 'soplar', 'lanzar', 'suplicar', 'frotar_manos_a', 'frotar_manos_b',
+    'contar_a', 'contar_b', 'inclinado', 'trofeo', 'corona', 'reverencia', 'chocar_cinco', 'senalar_arriba')}
+# Mallas de expresión (ojos cerrados, bocas, barro, caras de las reacciones): se exportan y el juego muestra la que toque
+EXPRESIONES = ('ojo feliz', 'boca hablar', 'boca beso', 'boca triste', 'suciedad',
+               'ceja enojo', 'ceja triste', 'ceja arriba', 'ceja seria', 'ojo apretado', 'ojo cerrado', 'parpado medio', 'lagrima',
+               'boca enojo', 'boca puchero', 'boca o', 'boca llanto', 'boca carcajada', 'boca recta', 'boca ladeada', 'boca ondulada')
 
 # Clientes y ayudantes que se suman en la tiendita (problemas del día y mejoras)
 CLIENTES_2 = {'ejecutivo': POSES_CLIENTE, 'deportista': POSES_CLIENTE, 'nina': POSES_CLIENTE, 'ladron': POSES_CLIENTE,
@@ -526,8 +537,9 @@ if __name__ == '__main__':
         previo = json.load(open(path)) if os.path.exists(path) else {}
         escalas = previo.get('personajes', {}).get('escalas', {})
         for key in ('el', 'ella'):
-            escalas[key] = exportar_personaje_animado(key, dict(POSES_EL, **POSES_MASCOTA))
-        manifest['personajes'] = dict(previo.get('personajes', {}), escalas=escalas, poses_mascota=list(POSES_MASCOTA))
+            escalas[key] = exportar_personaje_animado(key, dict(POSES_EL, **POSES_MASCOTA, **POSES_REACCION))
+        manifest['personajes'] = dict(previo.get('personajes', {}), escalas=escalas, poses_mascota=list(POSES_MASCOTA),
+                                      poses_reaccion=list(POSES_REACCION))
     if 'casa' in PARTES:
         import casa
         for key in casa.CUARTOS:
@@ -562,6 +574,13 @@ if __name__ == '__main__':
         piezas['planta'] = lambda c: utileria.build('planta', utileria.planta, c)
         piezas['globos'] = lambda c: utileria.build('globos', utileria.globos, c)
         exportar_iconos_piezas(os.path.join(OUT, 'iconos'), piezas)
+    if 'reaccion' in PARTES:
+        # Utilería de las reacciones (trofeo, corona, bandera, pañuelo, dados): origen donde se agarra
+        for nombre, fn in utileria.REACCIONES.items():
+            coll = clay.collection(f'Export {nombre}')
+            root = utileria.build(nombre, fn, coll, (0, 0, 0), 0.0, 1.0)
+            exportar(arbol(root), os.path.join(OUT, f'{nombre}.glb'))
+            coll.hide_render = coll.hide_viewport = True
     if 'utileria2' in PARTES:
         for nombre in ('charco', 'trapero_balde', 'planta', 'parlante', 'globos', 'camara'):
             coll = clay.collection(f'Export {nombre}')

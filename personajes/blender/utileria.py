@@ -756,6 +756,187 @@ def reloj(coll):
     clay.sweep('aguja 2', [(0, -0.04, 0.22), (0.07, -0.04, 0.22)], 0.01, (1, 1), coll, u('trazo'), segments=6, samples=2)
 
 
+
+# --------------------------------------------------------------------------
+# Reacciones de los muñequitos (docs/reacciones.md): se cuelgan de un hueso en el juego.
+# Origen en el punto donde se agarra (la corona: el centro de la base); Z arriba (Y en el GLB).
+# --------------------------------------------------------------------------
+
+def _mat_reaccion(clave):
+    M = clay.material
+    tabla = {
+        'oro': lambda: M('Reacción | oro', '#F5C246', rough=0.26, metallic=0.85, coat=0.3, coat_rough=0.1),
+        'oro oscuro': lambda: M('Reacción | oro oscuro', '#D9982A', rough=0.3, metallic=0.85),
+        'rosa': lambda: M('Reacción | rosa', '#F2587A', rough=0.25, coat=0.6, coat_rough=0.05),
+        'gema': lambda: M('Reacción | gema rosa', '#FF7FA8', rough=0.08, coat=1.0, coat_rough=0.02, spec=0.8, sss=0.2),
+        'brillo': lambda: M('Reacción | brillo', '#FFFFFF', rough=0.2, emission='#FFFFFF', emission_strength=1.2),
+        'madera': lambda: M('Reacción | madera', '#8A5A3C', rough=0.55, coat=0.2),
+        'palo': lambda: M('Reacción | palo', '#C9956A', rough=0.6),
+        'tela': lambda: M('Reacción | tela blanca', '#FBF8F2', rough=0.9, fuzz=dict(scale=160, color='#FFFFFF', amount=0.3, strength=0.25, distance=0.002)),
+        'tela rosa': lambda: M('Reacción | tela rosa', '#F7A8BE', rough=0.85),
+        'crema': lambda: M('Reacción | dado crema', '#FFF3DC', rough=0.35, coat=0.35, coat_rough=0.1),
+        'punto rosa': lambda: M('Reacción | punto rosa', '#E4566B', rough=0.3, coat=0.4),
+        'punto turquesa': lambda: M('Reacción | punto turquesa', '#1F9BB0', rough=0.3, coat=0.4),
+    }
+    return tabla[clave]()
+
+
+def _corazon(name, c, s, coll, mat, grosor=0.45):
+    """Corazón inflado de frente (-Y), tamaño s (ancho ≈ 0,42·s)."""
+    import sdf
+    lobes = [sdf.round_cone((sx * 0.078, 0, 0.3), (0, 0, 0.1), 0.1, 0.022) for sx in (-1, 1)]
+    c = np.array(c, float)
+
+    def f(P):
+        Q = (P - c) / s + np.array([0, 0, 0.24])
+        Q[:, 1] /= grosor
+        return sdf.smin(lobes[0](Q), lobes[1](Q), 0.05) * s * grosor
+    h = 0.24 * s
+    return sdf.to_mesh(name, f, c - np.array([h, 0.12 * s * grosor, 0.22 * s]), c + np.array([h, 0.12 * s * grosor, 0.22 * s]),
+                       voxel=0.004 * max(s, 0.3), coll=coll, material=mat, decimate=0.5)
+
+
+def reaccion_trofeo(coll):
+    """Copa dorada con asas, corazón rosado al frente y peana de madera; se agarra del tallo (origen)."""
+    oro = _mat_reaccion('oro')
+    perfil = [(0.0, -0.04), (0.035, -0.04), (0.032, 0.02), (0.045, 0.05), (0.07, 0.07), (0.12, 0.1), (0.165, 0.16), (0.185, 0.25),
+              (0.19, 0.33), (0.2, 0.355), (0.185, 0.37), (0.165, 0.355), (0.155, 0.27), (0.12, 0.17), (0.0, 0.14)]
+    clay.lathe('copa', perfil, coll, oro, segments=40, cap_bottom=False, cap_top=False)
+    clay.lathe('nudo tallo', [(0.0, -0.02), (0.05, -0.02), (0.06, 0.0), (0.05, 0.02), (0.0, 0.02)], coll, _mat_reaccion('oro oscuro'), segments=24)
+    for sx in (-1, 1):
+        clay.sweep('asa copa', [(sx * 0.17, 0, 0.31), (sx * 0.27, 0, 0.3), (sx * 0.28, 0, 0.21), (sx * 0.2, 0, 0.15), (sx * 0.15, 0, 0.16)],
+                   0.022, (1, 1), coll, oro, segments=10, samples=6)
+    clay.lathe('pie copa', [(0.0, -0.08), (0.1, -0.08), (0.115, -0.07), (0.1, -0.05), (0.04, -0.035), (0.0, -0.035)], coll, oro, segments=36)
+    clay.rbox('peana', (0, 0, -0.15), (0.14, 0.14, 0.07), coll, _mat_reaccion('madera'), p=6, n=6)
+    clay.rbox('placa peana', (0, -0.14, -0.15), (0.08, 0.008, 0.035), coll, oro, p=8, n=4, subsurf=1)
+    _corazon('corazón copa', (0, -0.19, 0.245), 0.36, coll, _mat_reaccion('rosa'))
+    clay.blob('brillo copa', (-0.12, -0.13, 0.29), (0.018, 0.008, 0.045), coll, _mat_reaccion('brillo'), n=4)
+    clay.blob('brillo corazón copa', (-0.04, -0.225, 0.29), (0.014, 0.006, 0.01), coll, _mat_reaccion('brillo'), n=4)
+
+
+def reaccion_corona(coll):
+    """Corona dorada de cinco puntas con bolitas y gemas rosadas; origen en el centro de la base."""
+    import sdf
+    R, alto = 0.27, 0.11
+    puntas = []
+    for k in range(5):
+        a = math.pi / 2 + 2 * math.pi * k / 5 + math.pi  # una punta al frente (-Y)
+        d = np.array([math.cos(a), math.sin(a), 0])
+        puntas.append((d * R * 0.97 + np.array([0, 0, alto * 0.6]), d * R * 1.07 + np.array([0, 0, alto + 0.13])))
+
+    def f(P):
+        r = np.sqrt(P[:, 0] ** 2 + P[:, 1] ** 2)
+        banda = np.maximum(np.maximum(r - R - 0.018, R - 0.022 - r), np.abs(P[:, 2] - alto / 2) - alto / 2) - 0.008
+        dd = banda
+        for a, b in puntas:
+            dd = sdf.smin(dd, sdf.round_cone(a, b, 0.058, 0.016)(P) + 0.0 * r, 0.03)
+        # la corona es hueca por dentro
+        return np.maximum(dd, (R - 0.03) - r)
+    sdf.to_mesh('corona', f, (-0.34, -0.34, -0.03), (0.34, 0.34, 0.3), voxel=0.005, coll=coll, material=_mat_reaccion('oro'), decimate=0.5)
+    for k, (a, b) in enumerate(puntas):
+        clay.blob(f'bolita corona {k}', b + np.array([0, 0, 0.02]), (0.03, 0.03, 0.03), coll, _mat_reaccion('oro'), n=5)
+        ang = math.atan2(a[1], a[0])
+        d = np.array([math.cos(ang), math.sin(ang), 0])
+        g = clay.blob(f'gema corona {k}', (0, 0, 0), (0.046, 0.02, 0.052), coll, _mat_reaccion('gema'), n=5)
+        g.location = d * (R + 0.028) + np.array([0, 0, alto * 0.5])
+        g.rotation_euler = (0, 0, ang + math.pi / 2)
+    for k in range(5):
+        ang = math.pi / 2 + 2 * math.pi * (k + 0.5) / 5 + math.pi
+        d = np.array([math.cos(ang), math.sin(ang), 0])
+        g = clay.blob(f'gemita corona {k}', (0, 0, 0), (0.02, 0.012, 0.02), coll, _mat_reaccion('gema'), n=4)
+        g.location = d * (R + 0.022) + np.array([0, 0, alto * 0.5])
+        g.rotation_euler = (0, 0, ang + math.pi / 2)
+
+
+def reaccion_bandera(coll):
+    """Bandera blanca de rendirse: palito con bolita y tela ondeando hacia +X; se agarra abajo del palito (origen)."""
+    clay.sweep('palito bandera', [(0, 0, -0.18), (0, 0, 0.98)], 0.022, (1, 1), coll, _mat_reaccion('palo'), segments=10, samples=2)
+    clay.blob('bolita bandera', (0, 0, 1.0), (0.04, 0.04, 0.04), coll, _mat_reaccion('oro'), n=5)
+    W, H, nu, nv = 0.5, 0.34, 18, 10
+    verts, faces = [], []
+    for i in range(nu):
+        u = i / (nu - 1)
+        for j in range(nv):
+            v = j / (nv - 1)
+            x = 0.02 + u * W * (1 - 0.06 * math.sin(v * math.pi))
+            z = 0.94 - v * H - u * 0.05 * math.sin(v * math.pi * 0.5)
+            y = 0.045 * math.sin(u * math.pi * 2.2 + v * 0.8) * u ** 0.7
+            verts.append((x, y, z))
+    for i in range(nu - 1):
+        for j in range(nv - 1):
+            a = i * nv + j
+            faces.append((a, a + nv, a + nv + 1, a + 1))
+    tela = clay.make_mesh_object('tela bandera', verts, faces, coll, material=_mat_reaccion('tela'))
+    clay.add_solidify(tela, 0.012, 0.0)
+    clay.add_subsurf(tela, 1, 2)
+    for z in (0.93, 0.62):
+        clay.sweep('amarre bandera', [(0.0, -0.028, z), (0.028, 0, z), (0.0, 0.028, z), (-0.028, 0, z)], 0.008, (1, 1), coll,
+                   _mat_reaccion('tela'), segments=6, samples=4, closed=True)
+
+
+def reaccion_panuelo(coll):
+    """Pañuelo blanco con borde rosado y corazoncito, colgando de una punta (origen = donde se agarra)."""
+    S, n = 0.36, 14
+    verts, faces = [], []
+    for i in range(n):
+        u = i / (n - 1)
+        for j in range(n):
+            v = j / (n - 1)
+            x = (u - v) * S / math.sqrt(2)
+            z = -(u + v) * S / math.sqrt(2)
+            junto = 1 - 0.75 * math.exp(-(u + v) * 4.0)  # recogido cerca de los dedos
+            x *= junto
+            y = 0.035 * math.sin((u - v) * math.pi * 1.6) * (u + v) + 0.02 * math.sin((u + v) * 5.0)
+            verts.append((x, y, z + 0.02))
+    for i in range(n - 1):
+        for j in range(n - 1):
+            a = i * n + j
+            faces.append((a, a + n, a + n + 1, a + 1))
+    tela = clay.make_mesh_object('pañuelo', verts, faces, coll, material=_mat_reaccion('tela'))
+    clay.add_solidify(tela, 0.01, 0.0)
+    clay.add_subsurf(tela, 1, 2)
+    idx = lambda i, j: verts[i * n + j]
+    bordes = [[idx(i, 0) for i in range(n)], [idx(n - 1, j) for j in range(n)], [idx(i, n - 1) for i in range(n)], [idx(0, j) for j in range(n)]]
+    for k, b in enumerate(bordes):
+        clay.sweep(f'borde pañuelo {k}', b[1:], 0.011, (1, 1), coll, _mat_reaccion('tela rosa'), segments=8, samples=3)
+    fondo = idx(n - 1, n - 1)
+    _corazon('corazón pañuelo', (fondo[0], fondo[1] - 0.02, fondo[2] + 0.1), 0.2, coll, _mat_reaccion('rosa'))
+    clay.blob('nudo pañuelo', (0, 0, 0.0), (0.035, 0.03, 0.045), coll, _mat_reaccion('tela'), n=5)
+
+
+def _dado(coll, nombre, c, rot, lado, mat_punto):
+    """Dado crema redondeado con puntos de color (las caras opuestas suman 7)."""
+    h = lado / 2
+    caja = clay.rbox(f'dado {nombre}', (0, 0, 0), (h, h, h), coll, _mat_reaccion('crema'), p=5.0, n=6)
+    patrones = {1: [(0, 0)], 2: [(-1, -1), (1, 1)], 3: [(-1, -1), (0, 0), (1, 1)], 4: [(-1, -1), (-1, 1), (1, -1), (1, 1)],
+                5: [(-1, -1), (-1, 1), (0, 0), (1, -1), (1, 1)], 6: [(-1, -1), (-1, 0), (-1, 1), (1, -1), (1, 0), (1, 1)]}
+    caras = {1: ((0, -1, 0), (1, 0, 0), (0, 0, 1)), 6: ((0, 1, 0), (1, 0, 0), (0, 0, 1)), 2: ((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+             5: ((-1, 0, 0), (0, 1, 0), (0, 0, 1)), 3: ((0, 0, 1), (1, 0, 0), (0, 1, 0)), 4: ((0, 0, -1), (1, 0, 0), (0, 1, 0))}
+    piezas = [caja]
+    for num, (nrm, e1, e2) in caras.items():
+        nrm, e1, e2 = np.array(nrm, float), np.array(e1, float), np.array(e2, float)
+        for a, b in patrones[num]:
+            p = nrm * (h * 0.985) + (e1 * a + e2 * b) * h * 0.5
+            r = h * (0.26 if num == 1 else 0.19)
+            s = np.abs(nrm) * 0.5 + (1 - np.abs(nrm))
+            punto = clay.blob(f'punto dado {nombre}', (0, 0, 0), tuple(r * s), coll, mat_punto, n=4)
+            punto.location = tuple(p)
+            punto.parent = caja
+    caja.location = c
+    caja.rotation_euler = tuple(math.radians(x) for x in rot)
+    return caja
+
+
+def reaccion_dados(coll):
+    """Dos dados crema (puntos rosados y turquesa) juntos, como en las manos; origen entre los dos."""
+    _dado(coll, 'rosa', (-0.105, 0.0, 0.0), (8, 12, 22), 0.19, _mat_reaccion('punto rosa'))
+    _dado(coll, 'turquesa', (0.105, 0.015, 0.035), (-14, 30, -12), 0.19, _mat_reaccion('punto turquesa'))
+
+
+REACCIONES = {'reaccion_trofeo': reaccion_trofeo, 'reaccion_corona': reaccion_corona, 'reaccion_bandera': reaccion_bandera,
+              'reaccion_panuelo': reaccion_panuelo, 'reaccion_dados': reaccion_dados}
+
+
 PIEZAS = [
     ('Carrito N1', lambda c: carrito(1, c)), ('Carrito N2', lambda c: carrito(2, c)), ('Carrito N3', lambda c: carrito(3, c)),
     ('Canasta', canasta), ('Puesto de canastas', puesto_canastas), ('Torniquete de entrada', torniquete),
