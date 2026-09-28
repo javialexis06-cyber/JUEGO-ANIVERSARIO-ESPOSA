@@ -331,6 +331,60 @@ export function palmera(alto = 3.2, inclina = 0.4) {
   return g;
 }
 
+
+// ---------------------------------------------------------------------------
+// Bosque de noche
+// ---------------------------------------------------------------------------
+export function cieloNocheBosque() {
+  return lienzo(512, 256, (c, w, h) => {
+    const g = c.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#0b1030');
+    g.addColorStop(1, '#2b3570');
+    c.fillStyle = g;
+    c.fillRect(0, 0, w, h);
+    let s = 17;
+    const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+    for (let i = 0; i < 160; i++) {
+      c.fillStyle = `rgba(255,248,220,${0.4 + r() * 0.6})`;
+      c.fillRect(r() * w, r() * h * 0.8, r() > 0.9 ? 3 : 2, r() > 0.9 ? 3 : 2);
+    }
+    c.fillStyle = '#fff6d8';
+    c.beginPath();
+    c.arc(w * 0.78, h * 0.25, 22, 0, Math.PI * 2);
+    c.fill();
+  });
+}
+
+/** Árbol de bosque: tronco y copa de bolas oscuras. */
+export function arbolBosque(alto = 3.6, r = 0.25, verde = '#2f5a3c') {
+  const g = grupo('arbol');
+  g.add(en(cilindro(r * 0.8, r, alto * 0.6, mat('#5e3d28')), 0, alto * 0.3, 0));
+  for (const [x, y, z, rr] of [[0, 0.75, 0, 0.9], [-0.5, 0.62, 0.1, 0.6], [0.5, 0.65, -0.1, 0.65], [0, 0.95, 0, 0.6]] as [number, number, number, number][]) {
+    g.add(en(esfera(rr, mat(shade(verde, (x + z) * 0.05), { rough: 1 }), undefined, 12), x, alto * y, z));
+  }
+  return g;
+}
+
+/** Luciérnagas que flotan solas (se animan al dibujarse). */
+function luciernagas(g: THREE.Group, n = 24) {
+  const m = new THREE.MeshBasicMaterial({ color: '#e8ff7a' });
+  const puntos: { o: THREE.Mesh; x: number; y: number; z: number; f: number }[] = [];
+  for (let i = 0; i < n; i++) {
+    const o = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 5), m);
+    const p = { o, x: -3.6 + ((i * 0.37) % 1) * 7.2, y: 0.5 + ((i * 0.61) % 1) * 2.2, z: -0.5 + ((i * 0.83) % 1) * 2.2, f: i * 1.7 };
+    o.position.set(p.x, p.y, p.z);
+    puntos.push(p);
+    g.add(o);
+  }
+  puntos[0].o.onBeforeRender = () => {
+    const t = performance.now() / 1000;
+    for (const p of puntos) {
+      p.o.position.set(p.x + Math.sin(t * 0.5 + p.f) * 0.3, p.y + Math.sin(t * 0.7 + p.f * 2) * 0.2, p.z + Math.cos(t * 0.4 + p.f) * 0.2);
+      p.o.scale.setScalar(0.6 + 0.4 * Math.max(0, Math.sin(t * 2 + p.f * 3)));
+    }
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Los diez escenarios
 // ---------------------------------------------------------------------------
@@ -339,6 +393,36 @@ const noche: Luces = {
 };
 
 export const TEMAS: Record<number, Tema> = {
+  6: {
+    capitulo: 6,
+    luces: { fondo: '#0e1430', ambiente: '#1f2a4a', intensidadAmbiente: 0.55, sol: '#a8c0ff', intensidadSol: 1.1, solDesde: [-3, 7, 4], entorno: 0.22, exposicion: 1.5 },
+    puerta: 'tronco',
+    armar(g) {
+      telon(g, cieloNocheBosque(), 3.4, -9);
+      piso(g, pastoTextura('#35573a', '#27442d'), 3, 30);
+      const fondo = new THREE.Mesh(new THREE.PlaneGeometry(30, 12), new THREE.MeshStandardMaterial({ map: pastoTextura('#35573a', '#27442d'), roughness: 1 }));
+      fondo.rotation.x = -Math.PI / 2;
+      en(fondo, 0, -0.002, -6);
+      g.add(fondo);
+      for (const [x, z, a] of [[-3.3, -1.2, 3.8], [3.2, -1.0, 4.2], [-5.0, -3.0, 4.5], [5.2, -3.5, 4.6], [-2.2, -4.5, 4.0], [2.4, -5.0, 4.4], [-0.6, -7.0, 4.8], [4.0, 0.3, 3.6]] as [number, number, number][]) {
+        const a1 = arbolBosque(a);
+        en(a1, x, 0, z);
+        g.add(a1);
+      }
+      // Hongos que brillan
+      for (const [x, z, col] of [[-1.3, 0.3, '#7af0ff'], [-1.05, 0.45, '#f59fc0'], [1.4, 0.2, '#b6f07a'], [2.3, 0.5, '#7af0ff']] as [number, number, string][]) {
+        const h = grupo('hongo');
+        h.add(en(cilindro(0.03, 0.04, 0.14, mat('#f6f1e6')), 0, 0.07, 0), en(esfera(0.09, matNuevo(col, { emisivo: col, intensidad: 0.8 }), undefined, 12), 0, 0.15, 0));
+        (h.children[1] as THREE.Mesh).scale.y = 0.55;
+        en(h, x, 0, z);
+        g.add(h);
+      }
+      luciernagas(g);
+      const luna = new THREE.PointLight('#9fb4ff', 2.0, 12, 1.2);
+      en(luna, 0, 3.0, 2.0);
+      g.add(luna);
+    },
+  },
   5: {
     capitulo: 5,
     luces: { fondo: '#8fcff2', ambiente: '#c9a878', intensidadAmbiente: 1.0, sol: '#fff0d0', intensidadSol: 2.3, solDesde: [-4, 7, 7], entorno: 0.6, exposicion: 1.25 },

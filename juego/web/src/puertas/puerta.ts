@@ -313,13 +313,31 @@ const Construir: Record<TipoPuerta, (p: Puerta, o: OpPuerta) => void> = {
   },
 
   tronco(p, o) {
-    // Tronco enorme con una puerta redonda
+    // Tronco enorme con un hueco al frente (la puerta redonda va en el hueco)
     const corteza = mat(o.marco ?? '#7a5236');
-    const tronco = cilindro(1.35, 1.6, 4.2, corteza, 'tronco', 32);
-    en(tronco, 0, 2.1, -1.25);
+    const R = 1.45, alto = 4.4;
+    const hueco = 2 * Math.asin((W / 2 + 0.04) / R);
+    const cuerpo = new THREE.Mesh(new THREE.CylinderGeometry(R, R + 0.1, alto, 36, 1, false, hueco / 2, Math.PI * 2 - hueco), matNuevo(o.marco ?? '#7a5236', { lados: THREE.DoubleSide }));
+    cuerpo.castShadow = true;
+    cuerpo.receiveShadow = true;
+    en(cuerpo, 0, alto / 2, -R);
+    const arriba = new THREE.Mesh(new THREE.CylinderGeometry(R, R + 0.02, alto - H, 12, 1, true, -hueco / 2, hueco), corteza);
+    en(arriba, 0, H + (alto - H) / 2, -R);
+    // Tapa las esquinas del hueco rectangular alrededor de la puerta redonda
+    const forma = new THREE.Shape();
+    forma.moveTo(-W / 2 - 0.05, 0);
+    forma.lineTo(W / 2 + 0.05, 0);
+    forma.lineTo(W / 2 + 0.05, H + 0.02);
+    forma.lineTo(-W / 2 - 0.05, H + 0.02);
+    forma.closePath();
+    const agujero = new THREE.Path();
+    agujero.absarc(0, 1.2, 0.72, 0, Math.PI * 2, false);
+    forma.holes.push(agujero);
+    const tapa = new THREE.Mesh(new THREE.ShapeGeometry(forma, 32), matNuevo(o.marco ?? '#7a5236', { lados: THREE.DoubleSide }));
+    en(tapa, 0, 0, 0.0);
     const aro = toro(0.72, 0.1, mat('#5e3d28'));
     en(aro, 0, 1.2, 0.02);
-    p.grupo.add(tronco, aro);
+    p.grupo.add(cuerpo, arriba, tapa, aro);
     const hoja = grupo('hoja');
     const disco = cilindro(0.66, 0.66, 0.08, mat(o.color ?? '#a5713f'), 'disco', 40);
     disco.rotation.x = Math.PI / 2;

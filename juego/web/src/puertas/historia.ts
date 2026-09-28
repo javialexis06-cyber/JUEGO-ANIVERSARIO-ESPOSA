@@ -132,6 +132,16 @@ export const PUERTAS: Record<number, string[]> = {
   48: ['El faro parpadea un mensaje. En la cabaña está la tabla para leerlo.'],
   49: ['Las estrellas de mar brillan todas juntas… o ninguna.'],
   50: ['El atardecer más lindo del mundo. Ayúdale al sol a bajar.'],
+  51: ['Qué oscuro está… menos mal traje una linterna.'],
+  52: ['Las luciérnagas se prenden en un orden. Si las sigues, te abren el camino.'],
+  53: ['Ese búho se sabe la clave. Cuenta muy bien lo que dice.'],
+  54: ['Las luciérnagas son tímidas: solo se juntan en la oscuridad total, cuando nadie las mira.'],
+  55: ['Los hongos de este bosque cantan. La piedra tiene pintada su canción.'],
+  56: ['Para cruzar el arroyo hay que mantener la pelota en equilibrio sobre la tabla.'],
+  57: ['La telaraña amaneció llena de rocío. Algo tiene tejido.'],
+  58: ['La luna crece y decrece. La tabla de piedra quiere sus fases en orden.'],
+  59: ['El árbol está dormido. Solo abre a quien cierra los ojos con él… un buen rato.'],
+  60: ['El árbol se despertó y quiere jugar a las adivinanzas.'],
 };
 
 /** Ánimo (nunca pistas): tras varios intentos o un buen rato quieto. */
