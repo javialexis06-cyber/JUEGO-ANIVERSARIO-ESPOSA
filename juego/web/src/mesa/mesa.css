@@ -247,7 +247,8 @@ body.mesa {
 .etiqueta-suceso {
   position: fixed;
   left: 50%;
-  top: calc(var(--alto-escenario) + env(safe-area-inset-top, 0px) + 18px);
+  /* Sobre el borde del escenario: no tapa el tablero */
+  top: calc(var(--alto-escenario) + env(safe-area-inset-top, 0px) - 30px);
   transform: translateX(-50%);
   z-index: 30;
   padding: 8px 18px;

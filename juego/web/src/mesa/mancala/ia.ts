@@ -66,18 +66,25 @@ class Corte extends Error {}
 /** Orden de exploración: primero los turnos extra, luego las capturas, luego del almacén hacia atrás. */
 function ordenar(b: number[], t: number): number[] {
   const hs: number[] = [];
-  const pesos: number[] = [];
+  const ps: number[] = [];
   for (let k = HOYOS - 1; k >= 0; k--) {
     const n = b[t * 7 + k];
     if (n === 0) continue;
     const llega = k + n;
-    let p = 0;
-    if (llega === 6) p = 3;
-    else if (llega < 6 && b[t * 7 + llega] === 0 && b[12 - (t * 7 + llega)] > 0) p = 2;
+    const p = llega === 6 ? 3 : llega < 6 && b[t * 7 + llega] === 0 && b[12 - (t * 7 + llega)] > 0 ? 2 : 0;
+    // Inserción estable (sin arreglos de más: la búsqueda llama esto miles de veces)
+    let j = hs.length;
     hs.push(k);
-    pesos.push(p);
+    ps.push(p);
+    while (j > 0 && ps[j - 1] < p) {
+      hs[j] = hs[j - 1];
+      ps[j] = ps[j - 1];
+      j--;
+    }
+    hs[j] = k;
+    ps[j] = p;
   }
-  return hs.map((h, i) => [h, pesos[i]] as const).sort((x, y) => y[1] - x[1]).map((x) => x[0]);
+  return hs;
 }
 
 interface Busqueda {
@@ -87,7 +94,7 @@ interface Busqueda {
 
 /** `libres`: turnos extra que todavía no gastan profundidad (las cadenas se miran enteras, hasta un punto). */
 function alfabeta(b: number[], t: number, prof: number, alfa: number, beta: number, s: Busqueda, libres = PESOS.libres): number {
-  if ((++s.nodos & 511) === 0 && ahora() > s.limite) throw new Corte();
+  if ((++s.nodos & 255) === 0 && ahora() > s.limite) throw new Corte();
   if (prof === 0 || b[6] > 24 || b[13] > 24) return evaluar(b, false);
   const hs = ordenar(b, t);
   if (t === 0) {
@@ -143,7 +150,7 @@ function valores(e: EstadoMancala, prof: number, s: Busqueda, orden?: number[], 
  * Sin piedad: profundización iterativa con alfa-beta, cortada por el reloj (en un celular llega a 8–10 jugadas;
  * al final, con pocas semillas, mucho más hondo).
  */
-function sinPiedad(e: EstadoMancala, azar: () => number, ms = 100, maxProf = 12): number {
+function sinPiedad(e: EstadoMancala, azar: () => number, ms = 75, maxProf = 12): number {
   const t = e.turno === 'el' ? 0 : 1;
   let quedan = 0;
   for (let k = 0; k < HOYOS; k++) quedan += e.c[k] + e.c[7 + k];

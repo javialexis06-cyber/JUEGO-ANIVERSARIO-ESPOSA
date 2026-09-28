@@ -9,7 +9,39 @@ import { cargarAnimado, copiaAnimada } from './recursos';
 const SUAVIDAD = 14;
 
 /** Caras que se arman mostrando u ocultando mallas de expresión (vienen ocultas en el modelo). */
-export type Cara = 'normal' | 'feliz' | 'hablar' | 'beso' | 'triste' | 'dormido';
+export type Cara = 'normal' | 'feliz' | 'hablar' | 'beso' | 'triste' | 'dormido' | 'enojado' | 'puchero' | 'sorprendido' | 'llorando'
+  | 'carcajada' | 'concentrado' | 'aburrido' | 'guino' | 'presumido' | 'nervioso' | 'bostezo';
+
+/** Ojo de un lado: abierto, ^ (feliz), > < (apretado), línea (cerrado) o con el párpado a media asta. */
+type Ojo = 'abierto' | 'feliz' | 'apretado' | 'cerrado' | 'medio';
+/** Cómo se arma cada cara (docs/reacciones.md): ojos y cejas [izq, der] (izq = izquierda de la pantalla), boca y lágrimas. */
+interface Rostro { ojos: [Ojo, Ojo]; cejas?: [string, string]; boca: string; lagrimas?: boolean }
+const AB: [Ojo, Ojo] = ['abierto', 'abierto'];
+const ROSTROS: Record<Cara, Rostro> = {
+  normal: { ojos: AB, boca: 'boca' },
+  feliz: { ojos: ['feliz', 'feliz'], boca: 'boca' },
+  hablar: { ojos: AB, boca: 'boca hablar' },
+  beso: { ojos: ['feliz', 'feliz'], boca: 'boca beso' },
+  triste: { ojos: AB, boca: 'boca triste' },
+  dormido: { ojos: ['feliz', 'feliz'], boca: 'boca' },
+  enojado: { ojos: AB, cejas: ['enojo', 'enojo'], boca: 'boca enojo' },
+  puchero: { ojos: AB, cejas: ['triste', 'triste'], boca: 'boca puchero' },
+  sorprendido: { ojos: AB, cejas: ['arriba', 'arriba'], boca: 'boca o' },
+  llorando: { ojos: ['apretado', 'apretado'], cejas: ['triste', 'triste'], boca: 'boca llanto', lagrimas: true },
+  carcajada: { ojos: ['apretado', 'apretado'], cejas: ['arriba', 'arriba'], boca: 'boca carcajada' },
+  concentrado: { ojos: ['medio', 'medio'], cejas: ['seria', 'seria'], boca: 'boca recta' },
+  aburrido: { ojos: ['medio', 'medio'], boca: 'boca recta' },
+  guino: { ojos: ['abierto', 'feliz'], cejas: ['arriba', ''], boca: 'boca ladeada' },
+  presumido: { ojos: ['medio', 'medio'], cejas: ['arriba', ''], boca: 'boca ladeada' },
+  nervioso: { ojos: AB, cejas: ['triste', 'triste'], boca: 'boca ondulada' },
+  bostezo: { ojos: ['cerrado', 'cerrado'], boca: 'boca o grande' },
+};
+/** Las caras de siempre parpadean con ^ ^; las nuevas, con una línea. */
+const PARPADEO_FELIZ = new Set<Cara>(['normal', 'hablar', 'triste']);
+const CEJAS = ['enojo', 'triste', 'arriba', 'seria'];
+/** Cada boca con sus piezas (lengua, dientes, labio, rayitas de los dientes). */
+const BOCAS = ['boca', 'boca hablar', 'boca beso', 'boca triste', 'boca enojo', 'boca puchero', 'boca o', 'boca o grande', 'boca llanto',
+  'boca carcajada', 'boca recta', 'boca ladeada', 'boca ondulada'].map((b) => [b, new RegExp(`^${b}( lengua| dientes| labio| linea \\d+)?$`)] as const);
 /** Nombre de malla sin el prefijo del personaje: «Ella_|_boca_hablar» → «boca hablar». */
 const parte = (o: THREE.Object3D) => o.name.replace(/_/g, ' ').replace(/^.*\|\s*/, '').trim();
 
@@ -80,19 +112,29 @@ export class Personaje {
     }
   }
 
-  /** Arma la cara: ojos abiertos o cerrados (felices) y la boca que toca. */
+  /** Arma la cara: ojos (o el parpadeo), cejas, la boca que toca y las lágrimas. */
   private aplicarCara(ojosCerrados = false) {
     if (!this.mallas.size) return;
     const c = this.caraActual;
-    const cerrados = ojosCerrados || c === 'feliz' || c === 'beso' || c === 'dormido';
-    this.ver(/^ojo (izq|der)$/, !cerrados);
-    this.ver(/^destello /, !cerrados);
-    this.ver(/^ojo feliz /, cerrados);
-    const boca = c === 'hablar' ? 'hablar' : c === 'beso' ? 'beso' : c === 'triste' ? 'triste' : '';
-    this.ver('boca', !boca);
-    this.ver(/^boca hablar/, boca === 'hablar');
-    this.ver('boca beso', boca === 'beso');
-    this.ver('boca triste', boca === 'triste');
+    const r = ROSTROS[c] ?? ROSTROS.normal;
+    const cierre: Ojo = PARPADEO_FELIZ.has(c) ? 'feliz' : 'cerrado';
+    (['izq', 'der'] as const).forEach((lado, i) => {
+      let o = r.ojos[i];
+      if (ojosCerrados && (o === 'abierto' || o === 'medio')) o = cierre;
+      this.ver(`ojo ${lado}`, o === 'abierto' || o === 'medio');
+      // Con el párpado a media asta solo queda el destello de abajo
+      this.ver(`destello ${lado} 0`, o === 'abierto');
+      this.ver(`destello ${lado} 1`, o === 'abierto' || o === 'medio');
+      this.ver(`ojo feliz ${lado}`, o === 'feliz');
+      this.ver(`ojo apretado ${lado}`, o === 'apretado');
+      this.ver(`ojo cerrado ${lado}`, o === 'cerrado');
+      this.ver(new RegExp(`^parpado medio (linea )?${lado}$`), o === 'medio');
+      const ceja = r.cejas?.[i] ?? '';
+      this.ver(`ceja ${lado}`, !ceja);
+      for (const v of CEJAS) this.ver(`ceja ${v} ${lado}`, ceja === v);
+    });
+    for (const [b, rx] of BOCAS) this.ver(rx, b === r.boca);
+    this.ver(/^lagrima /, !!r.lagrimas);
     for (let k = 0; k < 3; k++) {
       this.ver(`suciedad cara ${k}`, this.nivelSucio > k);
       // El barro de la camiseta de fábrica no se pinta encima de otra prenda

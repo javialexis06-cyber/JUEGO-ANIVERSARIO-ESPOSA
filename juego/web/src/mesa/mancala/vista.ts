@@ -478,8 +478,7 @@ export function crearVista(ctx: CtxVista<Jugada>): Vista<EstadoMancala, Jugada> 
       ctx.sonido('repuesto');
       destello(mio, 'otra-vez');
       if (racha >= 3) suceso({ tipo: 'jugada', quien, calidad: 'genial', texto: `¡Cadena de ${racha}!` });
-      // `texto` no está en el tipo de turno_extra, pero la mesa lo muestra igual
-      else suceso({ tipo: 'turno_extra', quien, texto: '¡Otra vez!' } as Suceso);
+      else suceso({ tipo: 'turno_extra', quien, texto: '¡Otra vez!' });
     } else {
       racha = 0;
     }

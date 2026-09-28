@@ -43,7 +43,7 @@ export type Suceso =
   /** Le quitó algo al otro (captura en Mancala, le robó una caja que el otro preparó...). */
   | { tipo: 'captura'; quien: Rol; cuanto: number; texto?: string }
   /** Vuelve a jugar (última semilla en su almacén, cerró una caja...). */
-  | { tipo: 'turno_extra'; quien: Rol }
+  | { tipo: 'turno_extra'; quien: Rol; texto?: string }
   /** Va a tirar los dados (sopla, agita). */
   | { tipo: 'lanzar'; quien: Rol }
   /** Espera un resultado con los dedos cruzados (último tiro, jugada arriesgada). */

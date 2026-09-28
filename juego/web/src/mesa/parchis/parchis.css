@@ -285,10 +285,10 @@
 .parchis-globo {
   position: absolute;
   z-index: 3;
-  left: 78%;
-  top: 60%;
+  left: 78.3%;
+  top: 66%;
   transform: translate(-50%, -50%);
-  max-width: 44%;
+  max-width: 36%;
   padding: 6px 11px;
   border-radius: 14px;
   background: var(--cacao);
@@ -298,7 +298,7 @@
   box-shadow: 0 3px 0 rgba(61, 43, 39, 0.3);
   pointer-events: none;
 }
-.parchis-globo[data-lado='arriba'] { left: 22%; top: 40%; }
+.parchis-globo[data-lado='arriba'] { left: 21.7%; top: 34%; }
 .parchis-globo[data-quien='el'] { background: #3b69a8; }
 .parchis-globo[data-quien='ella'] { background: #b9456a; }
 .parchis-globo.parchis-sale { animation: parchis-globo 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
