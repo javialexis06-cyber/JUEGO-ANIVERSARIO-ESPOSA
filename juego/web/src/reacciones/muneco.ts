@@ -226,11 +226,12 @@ export class Muneco {
       const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(cab.getWorldQuaternion(new THREE.Quaternion()));
       mundo.addScaledVector(arriba, this.altoCabeza * this.alto * this.p.escala * 0.93);
       o.quaternion.copy(this.p.grupo.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(cab.getWorldQuaternion(new THREE.Quaternion())));
-    } else if ((cual === 'trofeo' || cual === 'dados') && mD && mI) {
+    } else if (cual === 'dados' && mD && mI) {
       mundo = mD.clone().add(mI).multiplyScalar(0.5);
       o.quaternion.identity();
-    } else if (mD) {
-      mundo = mD;
+    } else if (mI) {
+      // La mano derecha del personaje es el hueso «.L» (la que queda a la izquierda de la pantalla)
+      mundo = mI;
       o.quaternion.identity();
     }
     if (!mundo) return;

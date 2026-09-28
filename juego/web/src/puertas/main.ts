@@ -574,6 +574,11 @@ const probador = () => new ProbadorReal(() => escena.escena, escena, entrada, pa
     return { ...s, obj: b?.obj.name ?? null, cual: b?.hit.object.name ?? null };
   },
   camara: () => escena.camara.position.toArray(),
+  /** Un dato de un objeto del cuarto (si es función, lo que devuelve). */
+  dato: (nombre: string, clave: string) => {
+    const v = probador().obj(nombre).userData[clave];
+    return typeof v === 'function' ? v() : v;
+  },
 };
 
 void iniciar();

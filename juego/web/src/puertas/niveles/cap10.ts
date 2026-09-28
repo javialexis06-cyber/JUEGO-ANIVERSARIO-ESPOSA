@@ -736,21 +736,22 @@ const cajaMusical: Nivel = {
     c.gesto.mover((x, y, abajo) => {
       if (!abajo || !activo || hecho) return;
       const a = Math.atan2(y - centro.y, x - centro.x);
-      const ahora = performance.now();
+      // Reloj del juego (en el celular es el de verdad; en las pruebas aceleradas va al ritmo de la escena)
+      const ahora = c.escena.t;
       if (previo === null) {
         previo = a;
         tPrevio = ahora;
         return;
       }
       const d = Math.abs(difAng(a, previo));
-      const dt = Math.max(1, ahora - tPrevio) / 1000;
+      const dt = Math.max(1 / 60, ahora - tPrevio);
       previo = a;
       tPrevio = ahora;
       vel = vel * 0.6 + (d / dt) * 0.4;
       manivela.rotation.x += d;
       if (vel > 11) {
         progreso = Math.max(0, progreso - d / (Math.PI * 2) / 2);
-        if (ahora - avisado > 2500) {
+        if (ahora - avisado > 2.5) {
           avisado = ahora;
           sonido.nota(160, 0.15, 0, 'square', 0.04);
           c.aviso('¡Despacio! Parejito…', 1500);
@@ -783,12 +784,13 @@ const cajaMusical: Nivel = {
     const s = p.pantalla('caja toque');
     const pts: [number, number][] = [[s.x / innerWidth, s.y / innerHeight]];
     const r = 32;
-    const N = 24;
-    for (let i = 0; i <= 6.2 * N; i++) {
+    // Pasos de 45°: en un navegador de pruebas lento cada movimiento llega casi un segundo después
+    const N = 8;
+    for (let i = 0; i <= 8 * N; i++) {
       const a = (i / N) * Math.PI * 2;
       pts.push([(s.x + Math.cos(a) * r) / innerWidth, (s.y + Math.sin(a) * r) / innerHeight]);
     }
-    await p.trazar(pts, 6200);
+    await p.trazar(pts, 8000);
     await p.esperarQue(() => !!p.obj('caja toque').userData.lista, 10000);
     await p.tocar('llave');
     await p.esperarQue(() => !!document.querySelector('#inventario [data-item="llave"]'), 20000);
