@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import type { Luces } from './escena';
 import { caja, cilindro, en, esfera, grupo, letrero, lienzo, mat, matNuevo, plano, toro } from './kit';
 import { HUECO, OpPuerta, shade, TipoPuerta } from './puerta';
+import { DIBUJOS } from './ui';
 
 /** Medidas del cuarto: pared del fondo en z = 0, paredes laterales en x = ±ANCHO/2. */
 export const CUARTO = { ancho: 7.8, alto: 3.2, fondo: 6.5, grueso: 0.25 };
@@ -678,6 +679,28 @@ function lucesTablero(g: THREE.Group, x: number, y: number, n = 6) {
   }
 }
 
+
+// ---------------------------------------------------------------------------
+// Nuestro hogar para siempre
+// ---------------------------------------------------------------------------
+/** Cuadrito con el dibujo de un recuerdo (el SVG se pinta cuando carga). */
+function cuadroRecuerdo(g: THREE.Group, icono: string, x: number, y: number) {
+  const t = lienzo(256, 256, (c, w, h) => {
+    c.fillStyle = '#fffaf1';
+    c.fillRect(0, 0, w, h);
+  });
+  const img = new Image();
+  img.onload = () => {
+    const c = (t.image as HTMLCanvasElement).getContext('2d')!;
+    c.drawImage(img, 20, 30, 216, 180);
+    t.needsUpdate = true;
+  };
+  img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(DIBUJOS[icono] ?? DIBUJOS.corazon)}`;
+  const foto = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.3), new THREE.MeshStandardMaterial({ map: t, roughness: 0.8 }));
+  en(foto, x, y, 0.035);
+  g.add(foto, en(caja(0.36, 0.36, 0.03, mat('#c49468'), 0.01), x, y, 0.015));
+}
+
 // ---------------------------------------------------------------------------
 // Los diez escenarios
 // ---------------------------------------------------------------------------
@@ -686,6 +709,38 @@ const noche: Luces = {
 };
 
 export const TEMAS: Record<number, Tema> = {
+  10: {
+    capitulo: 10,
+    luces: { ...noche, fondo: '#2a1d33', ambiente: '#b08a8a', intensidadAmbiente: 0.85, intensidadSol: 1.35 },
+    puerta: 'corazon',
+    opPuerta: { color: '#e4574b', marco: '#f6e3d0' },
+    armar(g) {
+      paredFondo(g, '#f6dbe0', '#ecc2cb');
+      paredesLado(g, '#f3d5da', '#e7bcc5');
+      piso(g, tablas('#cf9d70', '#c38f63'), 2.5);
+      techo(g, '#fbf1e6');
+      ventanaLado(g, cieloNoche());
+      lamparaTecho(g, 0, 1.6, '#ffd8e6');
+      tapete(g, '#e8b4b8', 0.4, 2.3, 1.3);
+      bombillos(g, new THREE.Vector3(-3.6, 3.0, 0.12), new THREE.Vector3(-0.95, 2.85, 0.12), 10, 0.28);
+      bombillos(g, new THREE.Vector3(0.95, 2.85, 0.12), new THREE.Vector3(3.6, 3.0, 0.12), 10, 0.28);
+      // Los recuerdos recuperados, en cuadritos sobre las paredes
+      ['raton', 'calendario', 'videollamada', 'ojos'].forEach((ic, i) => cuadroRecuerdo(g, ic, -1.25 - i * 0.45, 2.35));
+      ['ola', 'luces', 'estrellas', 'casa'].forEach((ic, i) => cuadroRecuerdo(g, ic, 1.25 + i * 0.45, 2.35));
+      const cor = letrero(0.5, 0.42, (cx, w, h) => {
+        cx.fillStyle = '#e4574b';
+        cx.font = `700 ${h * 0.8}px sans-serif`;
+        cx.textAlign = 'center';
+        cx.textBaseline = 'middle';
+        cx.fillText('♥', w / 2, h / 2 + 4);
+      }, undefined, { transparente: true });
+      en(cor, 0, 2.95, 0.02);
+      g.add(cor);
+      const tibia = new THREE.PointLight('#ffb8c8', 1.4, 7, 1.5);
+      en(tibia, 0, 2.2, 1.5);
+      g.add(tibia);
+    },
+  },
   9: {
     capitulo: 9,
     luces: { fondo: '#070a1f', ambiente: '#8aa0c8', intensidadAmbiente: 0.85, sol: '#dfe8ff', intensidadSol: 1.25, solDesde: [2, 6, 6], entorno: 0.45, exposicion: 1.25 },

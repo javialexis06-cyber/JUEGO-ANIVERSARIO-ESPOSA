@@ -526,6 +526,16 @@ export const PUERTAS: Record<number, string[]> = {
   88: ['La energía no llega a la compuerta. Hay que girar los tubos.'],
   89: ['El cohete necesita exactamente tres segundos de combustible. Ni uno más.'],
   90: ['Un eclipse: la luna quiere darle un beso al sol. Ayúdale a llegar justo.'],
+  91: ['Volvimos a casa. Las fotos de nuestra historia se cayeron… ¿te acuerdas del orden?'],
+  92: ['El cofre de la sala pregunta por nuestros recuerdos. Esos ya los tenemos de vuelta.'],
+  93: ['Te dejé una carta… pero la escribí en clave. La rueda te ayuda a leerla.'],
+  94: ['La matica de la ventana está triste. Necesita agua y un poquito de sol.'],
+  95: ['El piano de colores tiene una canción pintada en la pared. Una que habla de estrellas.'],
+  96: ['¡La torta del aniversario! Primero la receta, en orden… y después las velas.'],
+  97: ['La caja musical necesita cuerda. Parejito, sin afán, como nosotros.'],
+  98: ['Cierra los ojos y pide un deseo. De verdad: apaga la pantalla un momento.'],
+  99: ['Ya casi. Esta puerta pide un poquito de todo lo que aprendimos juntos.'],
+  100: ['La última puerta, mi amor. Esta no se abre con llave: se abre con los dos.'],
 };
 
 /** Ánimo (nunca pistas): tras varios intentos o un buen rato quieto. */

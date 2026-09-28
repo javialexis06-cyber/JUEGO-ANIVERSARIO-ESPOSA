@@ -124,12 +124,14 @@ export class Efectos {
       const ancho = this.capa.clientWidth;
       // El globo sale hacia el centro y nunca se sale del escenario
       const hacia = c.x < ancho / 2 ? 1 : -1;
-      return { x: c.x + hacia * c.r * 1.3, y: c.y - c.r * 0.6, r: c.r, hacia };
+      // Al lado de la cabeza (arriba no cabe: el escenario es bajito); la colita apunta a la boca
+      return { x: c.x + hacia * c.r * 1.15, y: Math.max(c.y + c.r * 0.55, 60), r: c.r, hacia };
     };
     const pos = ancla();
     el.classList.add(pos.hacia > 0 ? 'hacia-der' : 'hacia-izq');
     this.seguir(el, () => ancla(), 0, 0, dur, 0.35);
-    el.animate([{ transform: `${pos.hacia > 0 ? '' : 'translateX(-100%) '}scale(.3)`, opacity: 0 }, { transform: `${pos.hacia > 0 ? '' : 'translateX(-100%) '}scale(1)`, opacity: 1 }], {
+    const base = pos.hacia > 0 ? 'translateY(-100%)' : 'translate(-100%, -100%)';
+    el.animate([{ transform: `${base} scale(.3)`, opacity: 0 }, { transform: `${base} scale(1)`, opacity: 1 }], {
       duration: 260 / this.rapido,
       easing: 'cubic-bezier(.2,1.5,.4,1)',
       fill: 'forwards',
