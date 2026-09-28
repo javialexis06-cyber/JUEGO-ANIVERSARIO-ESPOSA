@@ -185,6 +185,7 @@ def build(coll=None):
     head = personaje.build_head(coll, P, mats, NAME)
     face, surf = personaje.build_face(coll, head, P, mats, NAME)
     personaje.build_expressions(coll, P, NAME, surf)
+    personaje.build_reacciones(coll, head, P, mats, NAME, face)
     personaje.build_ears(coll, head, P, mats, NAME, surf)
     personaje.build_neck(coll, P, mats, NAME)
     cap = hair_cap(coll, head, mats)

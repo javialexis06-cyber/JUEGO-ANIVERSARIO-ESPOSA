@@ -246,7 +246,7 @@ def _reacciones():
     }
     R['rodillas_b'] = {
         'pierna.L': (80, 0, -6), 'pierna.R': (80, 0, 6), 'pie.L': (-10, 0, 0), 'pie.R': (-10, 0, 0), '_raiz_z': -0.14,
-        'torso': (38, 0, 0), 'cabeza': (16, 0, 0),
+        'torso': (28, 0, 0), 'cabeza': (8, 0, 6),
         'brazo.L': B('L', 0.5, 0.6, -0.6), 'brazo.R': B('R', 0.5, 0.6, -0.6),
     }
     R['bandera'] = {
@@ -341,7 +341,7 @@ def _reacciones():
     R['impaciente_b'] = dict(R['impaciente_a'], **{'pie.L': (0, 0, 0), 'pierna.L': (-6, 0, -4)})
     R['bostezo'] = {
         'torso': (-14, 0, 0), 'cabeza': (-24, 0, 0),
-        'brazo.L': AB('L', -0.3, 0.28), 'brazo.R': AB('R', -0.3, 0.28), '_raiz_z': 0.02,
+        'brazo.L': AB('L', 0.1, 0.28), 'brazo.R': AB('R', 0.1, 0.28), '_raiz_z': 0.02,
     }
     # --- Dados y fichas (manos juntas al frente: hombros adelantados)
     JUNTAS = _h(L=(0.08, 0.12, 0), R=(0.08, 0.12, 0))
