@@ -243,9 +243,9 @@ export class Cine {
       n.normalize();
       if (n.dot(ABIERTO) < 0) n.negate();
       // Un poquito hacia el lado abierto (tres cuartos), sin llegar a que uno tape al otro
-      n.lerp(ABIERTO, 0.2).normalize();
+      n.lerp(ABIERTO, 0.4).normalize();
       this.metaMira.copy(centro);
-      this.metaPos.copy(centro).addScaledVector(new THREE.Vector3(n.x, Math.tan(rad(grande ? 8 : 13)), n.z).normalize(), Math.max(3.2, sep * 1.3 + 2.2));
+      this.metaPos.copy(centro).addScaledVector(new THREE.Vector3(n.x, Math.tan(rad(grande ? 8 : 13)), n.z).normalize(), Math.max(3.5, sep * 1.4 + 2.4));
     } else {
       const actor: Actor = p === 'A' || p === 'caraA' ? 'A' : 'B';
       const m = this.m[actor];
@@ -294,6 +294,7 @@ export class Cine {
 
   /** Pruebas en computadores lentos: adelanta la escena y pinta una vez. */
   simular(seg: number) {
+    if (seg <= 0) this.paso(0);
     for (let t = 0; t < seg; t += 1 / 30) this.paso(1 / 30);
     this.composer.render();
   }
@@ -322,11 +323,12 @@ export class Cine {
   }
 
   private ejecutar(toma: Toma) {
+    // La cámara primero: así «mirar al otro» ya sabe desde dónde se filma
+    if (toma.camara) this.encuadre(toma.camara, toma.camara === 'general');
     for (const a of ['A', 'B'] as Actor[]) {
       const h = toma[a];
       if (h !== undefined) this.hacer(a, h);
     }
-    if (toma.camara) this.encuadre(toma.camara, toma.camara === 'general');
     if (toma.dice) this.efectos.globo(toma.dice[1], this.anclas[toma.dice[0]], 2.4 / this.rapido);
     if (toma.sub !== undefined) this.subtitulo(toma.sub);
     for (const [a, fx] of toma.fx ?? []) this.efectos.lanzar(fx, this.anclas[a], this.anclas[a === 'A' ? 'B' : 'A']);
@@ -360,7 +362,7 @@ export class Cine {
     if (h.acostado !== undefined) m.recostar(h.acostado ? 1 : 0, ya);
     if (h.ir) {
       const p = aTres(h.ir[0], h.ir[1]);
-      void m.irA(p.x, p.z, h.vel ?? 1.1, this.rotDe(a, h.rot));
+      void m.irA(p.x, p.z, h.vel ?? 1.1, this.rotDe(a, h.rot, p));
     } else if (h.rot !== undefined) {
       const r = this.rotDe(a, h.rot);
       if (r !== undefined) m.girarA(r);
@@ -369,18 +371,20 @@ export class Cine {
     if (h.pasos) void m.actuar({ nombre: 'escena', pasos: h.pasos, prioridad: 5 });
   }
 
-  private rotDe(a: Actor, rot: number | 'otro' | 'camara' | undefined): number | undefined {
+  /** Giro para `rot` visto desde `desde` (donde va a quedar parado; por defecto donde está). */
+  private rotDe(a: Actor, rot: number | 'otro' | 'camara' | undefined, desde?: THREE.Vector3): number | undefined {
     if (rot === undefined) return undefined;
-    const m = this.m[a];
+    const aqui = desde ?? this.m[a].p.grupo.position;
+    const hacia = (v: THREE.Vector3) => Math.atan2(v.x - aqui.x, v.z - aqui.z);
     if (rot === 'otro') {
-      const o = this.m[a === 'A' ? 'B' : 'A'].p.grupo.position;
-      const d = o.clone().sub(m.p.grupo.position);
-      return Math.atan2(d.x, d.z);
+      // Como en el teatro: hacia el otro pero abiertos a la cámara, de tres cuartos (con el pelo tan grande,
+      // de perfil no se les ve la cara)
+      const alOtro = hacia(this.m[a === 'A' ? 'B' : 'A'].p.grupo.position);
+      const aCamara = hacia(this.metaPos);
+      const d = Math.atan2(Math.sin(aCamara - alOtro), Math.cos(aCamara - alOtro));
+      return alOtro + d * 0.35;
     }
-    if (rot === 'camara') {
-      const d = this.camPos.clone().sub(m.p.grupo.position);
-      return Math.atan2(d.x, d.z);
-    }
+    if (rot === 'camara') return hacia(this.metaPos);
     return rad(rot);
   }
 
