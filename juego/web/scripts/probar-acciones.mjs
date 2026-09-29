@@ -7,6 +7,8 @@ mkdirSync(carpeta, { recursive: true });
 const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const b = await chromium.launch({ executablePath: existsSync(PRE) ? PRE : undefined, args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const p = await b.newPage({ viewport: { width: 960, height: 540 } });
+// Sin tarjeta gráfica va a 1 o 2 cuadros por segundo: los clics necesitan más espera
+p.setDefaultTimeout(120000);
 const errores = [];
 p.on('pageerror', (e) => errores.push(String(e)));
 await p.goto(url);

@@ -18,6 +18,8 @@ const contexto = await navegador.newContext({ viewport: { width: ancho, height: 
 const errores = [];
 async function abrir(rol) {
   const p = await contexto.newPage();
+  // Sin tarjeta gráfica (y con otras pruebas corriendo) cargar y hacer clic puede tardar más de 30 s
+  p.setDefaultTimeout(180000);
   p.on('pageerror', (e) => errores.push(`${rol}: ${e}`));
   p.on('console', (m) => m.type() === 'error' && !m.text().startsWith('Failed to load resource') && errores.push(`${rol}: ${m.text()}`));
   p.on('response', (r) => r.status() >= 400 && errores.push(`${rol}: ${r.status()} ${r.url()}`));
@@ -47,7 +49,11 @@ const clic = async (p, sel) => {
 // Casa limpia
 const limpia = await contexto.newPage();
 await limpia.goto(url.replace(/\?.*$/, ''));
-await limpia.evaluate(() => localStorage.clear());
+// Con monedas de sobra para las compras de la prueba (una casa nueva empieza con 40)
+await limpia.evaluate(() => {
+  localStorage.clear();
+  localStorage.setItem('nuestro-hogar-local', JSON.stringify({ casa: { monedas: 150 } }));
+});
 await limpia.close();
 
 const el = await abrir('el');
@@ -79,8 +85,10 @@ const ella = await abrir('ella');
 await ella.waitForTimeout(3000);
 await foto(ella, '05-ella-llega');
 
-// Él le da un abrazo y un beso a Ella
+// Él le da un abrazo y un beso a Ella (los mimos son en el mismo cuarto: Él vuelve a la sala, donde está Ella)
 await el.bringToFront();
+await clic(el, '[data-cuarto="sala"]');
+await quieto(el, 'el');
 await clic(el, '#chip-pareja');
 await foto(el, '06-hoja-pareja');
 await clic(el, '[data-mimo="abrazo"]');

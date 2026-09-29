@@ -15,8 +15,29 @@ Cuatro cuartos tipo diorama, en plastilina como las tiendas (`personajes/blender
 | Baño | Bañarse (en la tina con burbujas) · Lavarse en el lavamanos | higiene al 100 · +25 higiene |
 | Cuarto | Dormir (acostado en la cama) · Cambiarse en el clóset | +16 energía por hora dormido · +12 higiene |
 
-Se cambia de cuarto con las pestañas de abajo; cada pestaña muestra la carita de quién está ahí.
-Tocar el piso hace caminar a tu personaje; tocar al otro abre sus mimos; tocar la nevera abre las notas.
+Se cambia de cuarto con las pestañas de abajo; cada pestaña muestra la carita de quién está ahí. Tu personaje va
+contigo: camina hasta la puerta del cuarto donde está (la cámara lo espera un momento), sale y entra caminando por
+la puerta del otro cuarto. El de tu pareja se queda donde está (lo que se ve es su estado). Dormido no se levanta:
+la pestaña solo muestra el cuarto.
+
+Tocar el piso hace caminar a tu personaje hasta ahí; tocar al otro abre su hoja; tocar la nevera abre las notas.
+Cualquier orden nueva (tocar el piso, otra acción, otro cuarto u otro mimo) corta lo que estaba haciendo: se levanta
+del sofá o de la silla, suelta la comida y va a lo nuevo (el otro celular lo ve igual).
+
+### Caminos y muebles
+
+- Cada cuarto tiene una cuadrícula de caminos (`src/navegacion.ts`, casillas de 12,5 cm) con la huella de los
+  muebles que llegan a la altura del cuerpo, medida del propio modelo (`Casa3D.nav`), y de la decoración de piso
+  que pongan (plantas, lámparas, estantería…); se rehace al decorar. Los personajes la rodean con A*.
+- Los puntos donde se sientan, se bañan o se acuestan traen un **acceso** (`personajes/blender/casa.py`, cuarto
+  elemento de `PUNTOS`, que va a `casa.json`): los pasos para llegar sin atravesar el mueble. Sofá: por detrás de
+  la mesa de centro, de lado; silla del comedor: por delante (el lado sin espaldar); tina: por delante, subiendo por
+  encima del borde; cama: por el lado de cada uno. Se sale por los mismos pasos al revés.
+- Alturas del cuerpo medidas contra cada mueble (`ALTO` y `SUBIR` en `mascota.ts`): sofá 0,48 (sentado sobre el
+  cojín, la espalda contra el espaldar), silla 0,34, tina 0,12, cama 0,74 y recostado a 76° para que la cabeza quede
+  en la almohada y no contra la cabecera.
+- Los mimos se hacen a un lado del otro que quede libre (si ese lado cae dentro de un mueble, del otro lado); a quien
+  duerme se le da desde el lado de su cama. La cajita de regalo aparece sobre piso libre.
 
 ## Necesidades
 
@@ -30,15 +51,18 @@ Comida, energía, higiene y cariño (0 a 100). Bajan con el reloj real, **tambi�
 
 ## Mimos con la pareja
 
-| Mimo | Tu cariño | Su cariño | Primer mimo del día |
-|---|---|---|---|
-| Caricia | +4 | +10 | +5 monedas |
-| Abrazo | +15 | +15 | +8 monedas |
-| Beso | +20 | +20 | +10 monedas |
+| Mimo | Tu cariño | Su cariño |
+|---|---|---|
+| Caricia | +4 | +10 |
+| Abrazo | +15 | +15 |
+| Beso | +20 | +20 |
 
-Tu personaje camina hasta el otro (aunque esté en otro cuarto), se ponen de perfil y posan juntos, con corazones.
-Si el otro está dormido, sonríe entre sueños. También se puede **llevarle comida** (sube su comida), **saludar** y
-**dejar notas** en la nevera (se ven pegadas en la puerta).
+Los mimos no dan monedas. Se hacen **estando los dos en el mismo cuarto**: el botón con el nombre de la pareja solo
+aparece entonces (y aparece o se va en vivo cuando uno entra o sale). Tocar su carita de arriba abre igual su hoja:
+lejos muestra cómo está y «Ir a …» (tu personaje camina hasta ese cuarto), además de notas y mensajes de voz, que
+llegan desde donde sea. Juntos, tu personaje se acerca, se ponen de perfil y posan con corazones; si el otro estaba
+sentado se levanta primero. Si el otro está dormido, sonríe entre sueños. También se puede **llevarle comida** (sube
+su comida), **regalar**, **saludar** y **dejar notas** en la nevera (se ven pegadas en la puerta).
 
 ## Regalos
 
@@ -47,16 +71,16 @@ al abrirla ve el regalo, el mensaje y sube su cariño.
 
 | Regalo | Precio | Cariño | Extra |
 |---|---|---|---|
-| Carta de amor | 5 | +15 | |
-| Cajita sorpresa | 15 | +20 | trae una comida al azar |
-| Chocolates | 20 | +25 | +8 comida |
-| Ramo de flores | 25 | +30 | |
-| Osito de peluche | 40 | +40 | se queda para decorar |
+| Carta de amor | 2 | +15 | |
+| Cajita sorpresa | 5 | +20 | trae una comida al azar |
+| Chocolates | 7 | +25 | +8 comida |
+| Ramo de flores | 8 | +30 | |
+| Osito de peluche | 13 | +40 | se queda para decorar |
 
 ## Mensajes de voz (como una llamada)
 
 - En la hoja de la pareja: «Mensaje de voz». Se graba hasta 30 segundos (con onda y reloj), se puede oír y repetir,
-  y enviarlo cuesta 15 monedas de la casa.
+  y enviarlo cuesta 4 monedas de la casa.
 - A quien lo recibe le suena el teléfono (timbre y vibración) con la carita de quien llama: «Contestar» o «Después».
   Al contestar suena el mensaje; al terminar puede oírlo otra vez o «Responder» con otro mensaje.
 - Oír un mensaje nuevo sube 20 de cariño. Si llegó mientras la app estaba cerrada, aparece el botón «Mensaje de voz».
@@ -65,11 +89,28 @@ al abrirla ve el regalo, el mensaje y sube su cariño.
 
 ## Monedas (de los dos)
 
-- Bono del día: +20 para cada uno al abrir la app.
-- Primeros mimos del día (tabla de arriba) y +50 el día del aniversario.
-- **Sueldo del súper**: un tercio de la ganancia de cada día jugado en Súper Manía.
+Se ganan poco y despacio (se bajó a la cuarta parte: con lo de antes se compraba todo en pocos días).
 
-Se gastan en comida (3 a 18), regalos (5 a 40), decoración (20 a 45), ropa (15 a 90), tintes (20) y disfraces.
+| De dónde | Cuánto |
+|---|---|
+| Bono del día (al abrir la app) | +5 para cada uno (antes 20) |
+| Aniversario | +13 una vez al año (antes 50) |
+| Mimos, saludos y demás con la pareja | nada (antes 5 a 10 los primeros del día) |
+| Minijuegos (súper, Cien Puertas, juegos de mesa) | lo que pague cada juego (cada uno paga la cuarta parte de antes); llega por `nuestro-hogar-sueldo` y la casa lo suma tal cual, sin volver a dividirlo |
+| Casa nueva | empieza con 40 (antes 120) |
+
+Precios: lo de todos los días se abarató a un tercio para que el cuidado siga alcanzando; lo que se colecciona quedó
+igual, así que ahora cuesta días.
+
+| Qué | Precio | Con lo que se gana |
+|---|---|---|
+| Comida | 1 a 7 (pan 2, arepa 3, pizza 5, bandeja paisa 7) | ~8 de comida por moneda: el bono del día da para 1 o 2 comidas |
+| Regalos | 2 a 13 | un día de bono o una partida |
+| Mensaje de voz | 4 | |
+| Tintes | 20 | 1 a 2 días jugando |
+| Decoración | 15 a 80 (la mayoría 30 a 45) | 2 a 4 días jugando un rato (unos 20 a 30 al día entre los dos con minijuegos; 10 solo con los bonos) |
+| Ropa | 10 a 120 (la mitad cuesta 40 o menos) | igual que la decoración |
+| Disfraces | 40 a 295 (las piezas con 25 % de descuento) | de unos días a dos semanas: el premio grande |
 
 ## Decoración
 

@@ -181,7 +181,7 @@ export interface Casa {
 
 export function casaNueva(): Casa {
   return {
-    monedas: 120,
+    monedas: 40,
     inventario: { pan: 2, manzana: 2, galletas: 1 },
     deco: {},
     notas: [],

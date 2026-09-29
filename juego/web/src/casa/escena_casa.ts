@@ -2,6 +2,7 @@
 // las notas pegadas en la nevera y los marcadores de «aquí se puede decorar».
 import * as THREE from 'three';
 import { aTres, Mundo } from '../mundo';
+import { Navegacion, P } from '../navegacion';
 import { cargar, cargarJSON, copia, Productos } from '../recursos';
 import { ITEM, TipoSitio } from './catalogo';
 import { colorSeguro, Cuarto, Nota, Recuerdo } from './modelo';
@@ -10,6 +11,8 @@ export interface Punto {
   x: number;
   y: number;
   rot: number;
+  /** Pasos para llegar sin atravesar el mueble (sofá, silla, tina, cama); se sale por los mismos al revés. */
+  acceso?: [number, number][];
 }
 export interface Sitio {
   id: string;
@@ -36,6 +39,14 @@ export type Toque =
   | null;
 
 const COLORES_NOTA = ['#FFE58A', '#FFC4D6', '#BFE9D8', '#CFE3FF', '#FFD7B0'];
+/** Piezas del cuarto que no estorban al caminar (paredes, piso, puertas, ventanas, tapetes). */
+const NO_ESTORBA = /^(pared|muro|piso|z[oó]calo|cornisa|puerta|ventan|marco|vidrio|parteluz|cortina|manija|tapete|utiler)/i;
+/** Casillas de la cuadrícula de caminos de la casa (más finas que las de la tienda: los cuartos son chicos). */
+const CELDA = 0.125;
+/** Distancia del centro del personaje a un mueble (medio cuerpo). */
+const HOLGURA = 0.2;
+/** Huella de un mueble en el piso (x, y de Blender). */
+type Huella = { x0: number; y0: number; x1: number; y1: number };
 
 /** Modelo 3D de un objeto del catálogo (o de la utilería del súper, como la planta y los globos). */
 export async function modeloItem(id: string): Promise<THREE.Object3D | null> {
@@ -60,6 +71,9 @@ export class Casa3D {
   private regaloCaja: THREE.Object3D | null = null;
   private rayo = new THREE.Raycaster();
   private fotos = new Map<string, THREE.Texture>();
+  /** Caminos de cada cuarto (se rehacen cuando cambia la decoración del piso). */
+  private navs = new Map<Cuarto, Navegacion>();
+  private muebles = new Map<Cuarto, Huella[]>();
 
   private constructor(private mundo: Mundo, public dato: CasaDato) {
     mundo.escena.add(this.grupo);
@@ -154,7 +168,69 @@ export class Casa3D {
       this.cuartos.get(donde.cuarto)!.add(obj);
       this.decos.set(id, { clave, obj });
     }
+    this.navs.clear();
     this.mundo.sucio = true;
+  }
+
+  /** Huellas de los muebles del cuarto que llegan a la altura del cuerpo (se miden del modelo, así sirven para muebles nuevos). */
+  private huellasMuebles(c: Cuarto): Huella[] {
+    let h = this.muebles.get(c);
+    if (h) return h;
+    h = [];
+    const base = this.bases.get(c)!;
+    base.updateMatrixWorld(true);
+    // Los muebles son los hijos del nodo casa_<cuarto> (o del modelo, si no lo trae)
+    const raiz = base.getObjectByName(`casa_${c}`) ?? base;
+    for (const o of raiz.children) {
+      if (NO_ESTORBA.test(o.name)) continue;
+      const hh = huella(o);
+      if (hh) h.push(hh);
+    }
+    this.muebles.set(c, h);
+    return h;
+  }
+
+  /** Cuadrícula de caminos del cuarto: muebles, decoración del piso y una franja junto a la pared del fondo (la cabeza no la atraviesa). */
+  nav(c: Cuarto): Navegacion {
+    let n = this.navs.get(c);
+    if (n) return n;
+    const { W, D } = this.dato;
+    n = new Navegacion(W, D, 0.35, CELDA);
+    n.bloquear(-W / 2, D / 2 - 0.5, W / 2, D / 2, 0);
+    for (const h of this.huellasMuebles(c)) n.bloquear(h.x0, h.y0, h.x1, h.y1, HOLGURA);
+    for (const [id, d] of this.decos) {
+      const donde = this.sitioDe(id);
+      if (donde?.cuarto !== c || donde.sitio.tipo !== 'piso') continue;
+      const hh = huella(d.obj);
+      if (hh) n.bloquear(hh.x0, hh.y0, hh.x1, hh.y1, HOLGURA);
+    }
+    this.navs.set(c, n);
+    return n;
+  }
+
+  /** ¿Se puede estar parado ahí sin atravesar nada? */
+  libre(c: Cuarto, p: P) {
+    const n = this.nav(c);
+    const [i, j] = n.aCelda(p);
+    return n.esLibre(i, j);
+  }
+
+  /** El punto libre más cercano (para destinos que caen dentro de un mueble). */
+  cercaLibre(c: Cuarto, p: P): P {
+    if (this.libre(c, p)) return p;
+    const n = this.nav(c);
+    return n.aPunto(...n.cercana(p));
+  }
+
+  /** Junto a la puerta del cuarto (en la pared más cercana a su entrada): por ahí se sale y se entra. */
+  puerta(c: Cuarto): Punto {
+    const pts = this.puntos(c);
+    if (pts.puerta) return pts.puerta;
+    const e = pts.entrada;
+    const { W, D } = this.dato;
+    // Las puertas van en las dos paredes altas (izquierda y fondo); mirando hacia adentro (rot 0 = hacia la cámara)
+    if (e.x + W / 2 < D / 2 - e.y) return { x: -W / 2 + 0.22, y: e.y, rot: 90 };
+    return { x: e.x, y: D / 2 - 0.22, rot: 0 };
   }
 
   private async ponerFoto(marco: THREE.Object3D, r: Recuerdo | undefined) {
@@ -243,7 +319,9 @@ export class Casa3D {
     this.regaloCaja = caja;
     if (this.cuartoRegalo !== cuarto) return;
     const d = this.dato;
-    caja.position.copy(aTres(THREE.MathUtils.clamp(x, -d.W / 2 + 0.5, d.W / 2 - 0.5), THREE.MathUtils.clamp(y, -d.D / 2 + 0.4, d.D / 2 - 0.6), 0));
+    // Sobre el piso libre (no dentro del sofá ni de la mesa)
+    const p = this.cercaLibre(cuarto, { x: THREE.MathUtils.clamp(x, -d.W / 2 + 0.5, d.W / 2 - 0.5), y: THREE.MathUtils.clamp(y, -d.D / 2 + 0.4, d.D / 2 - 0.6) });
+    caja.position.copy(aTres(p.x, p.y, 0));
     this.cuartos.get(cuarto)!.add(caja);
     this.mundo.sucio = true;
   }
@@ -289,6 +367,15 @@ export class Casa3D {
     if (this.actual === n.cuarto && Math.hypot(x - n.x, y - (n.y + 0.35)) < 0.55 && h.point.y > 0.2) return { tipo: 'nevera' };
     return { tipo: 'suelo', x, y };
   }
+}
+
+/** Huella en el piso de un objeto que estorba al caminar: llega abajo (menos de 60 cm) y no es plano como un tapete. */
+function huella(o: THREE.Object3D): Huella | null {
+  o.updateMatrixWorld(true);
+  const b = new THREE.Box3().setFromObject(o);
+  if (b.isEmpty() || b.min.y > 0.6 || b.max.y < 0.15) return null;
+  // Three (x, arriba, -y) → Blender (x, y)
+  return { x0: b.min.x, x1: b.max.x, y0: -b.max.z, y1: -b.min.z };
 }
 
 const GEO_NOTA = new THREE.PlaneGeometry(0.27, 0.25);

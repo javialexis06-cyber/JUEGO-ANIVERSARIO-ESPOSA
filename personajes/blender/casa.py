@@ -436,22 +436,26 @@ def dormitorio(coll):
 CONSTRUIR = {'sala': sala, 'cocina': cocina, 'bano': bano, 'cuarto': dormitorio}
 
 # Puntos de acción (x, y, rot en grados; rot 0 = mirando a la cámara) y sitios de decoración comprables.
+# Un cuarto elemento opcional es el acceso: los pasos (x, y) para llegar sin atravesar el mueble (se sale por los
+# mismos pasos al revés). La puerta de cada cuarto es la de su «entrada»: por ahí se sale y se entra al cambiar de cuarto.
 PUNTOS = {
     'sala': {
         'entrada': (-2.1, -1.3, 90), 'centro_izq': (-0.6, -0.95, 0), 'centro_der': (0.8, -0.95, 0),
-        'sofa_izq': (-0.35, 1.35, 0), 'sofa_der': (0.95, 1.35, 0), 'tv': (-1.3, 0.2, -90),
+        # Sentados en el cojín (no en el borde): se llega por detrás de la mesa de centro, de lado
+        'sofa_izq': (-0.2, 1.45, 0, [(-1.2, 0.88), (-0.2, 0.88)]), 'sofa_der': (0.8, 1.45, 0, [(1.8, 0.88), (0.8, 0.88)]),
+        'tv': (-1.3, 0.2, -90),
     },
     'cocina': {
-        'entrada': (2.2, 1.35, 0), 'comer_izq': (-0.2, -0.5, 90), 'comer_der': (1.4, -0.5, -90), 'nevera': (1.15, 1.0, 180),
-        'estufa': (-1.95, 1.15, 180), 'centro_izq': (-1.9, -0.8, 0), 'centro_der': (-0.6, -1.3, 0),
+        'entrada': (2.2, 1.35, 0), 'comer_izq': (-0.2, -0.5, 90, [(-0.22, -1.2)]), 'comer_der': (1.4, -0.5, -90, [(1.42, -1.2)]),
+        'nevera': (1.15, 1.0, 180), 'estufa': (-1.95, 1.15, 180), 'centro_izq': (-1.9, -0.8, 0), 'centro_der': (-0.6, -1.3, 0),
     },
     'bano': {
-        'entrada': (2.25, 1.35, 0), 'tina': (0.55, 1.6, 0), 'espejo': (-1.75, 0.1, -90), 'centro_izq': (-0.9, -0.8, 0),
+        'entrada': (2.25, 1.35, 0), 'tina': (0.55, 1.45, 0, [(0.55, 0.6)]), 'espejo': (-1.75, 0.1, -90), 'centro_izq': (-0.9, -0.8, 0),
         'centro_der': (0.5, -0.9, 0),
     },
     'cuarto': {
-        'entrada': (2.3, 1.35, 0), 'cama_izq': (-0.4, 0.95, 0), 'cama_der': (0.6, 0.95, 0), 'centro_izq': (-0.7, -1.3, 0),
-        'centro_der': (0.7, -1.35, 0), 'closet': (-1.55, -0.8, -90),
+        'entrada': (2.3, 1.35, 0), 'cama_izq': (-0.4, 0.62, 0, [(-1.42, 0.62)]), 'cama_der': (0.6, 0.62, 0, [(1.62, 0.62)]),
+        'centro_izq': (-0.7, -1.3, 0), 'centro_der': (0.7, -1.35, 0), 'closet': (-1.55, -0.8, -90),
     },
 }
 SITIOS_DECO = {

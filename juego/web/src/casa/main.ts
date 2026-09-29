@@ -15,7 +15,7 @@ import * as THREE from 'three';
 import { Mundo } from '../mundo';
 import { elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
-import { BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, lePasa, paraSitio, PREMIO_CARINO, TINTES, TipoItem } from './catalogo';
+import { BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, lePasa, paraSitio, TINTES, TipoItem } from './catalogo';
 import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
 import { Mascota } from './mascota';
@@ -37,7 +37,6 @@ const CLAVE_MODO = 'nuestro-hogar-modo';
 const CLAVE_VISTO = (r: Rol) => `nuestro-hogar-visto-${r}`;
 /** Monedas ganadas en el súper que esperan pasar a la casa (las escribe super.html). */
 export const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
-const BONO_ANIVERSARIO = 50;
 const COLORES_NOTA = ['#FFE58A', '#FFC4D6', '#BFE9D8', '#CFE3FF', '#FFD7B0'];
 /** Formularios que se están guardando (un doble toque no manda dos veces). */
 const guardando = new Set<string>();
@@ -265,6 +264,8 @@ async function cambiarCasa(fn: Parameters<Sincro['cambiarCasa']>[0]) {
 }
 
 function alCambiar(que: QueCambio) {
+  // El personaje reacciona enseguida a su estado nuevo (no espera la revisión de cada medio segundo)
+  if (que === 'personaje') for (const r of ['el', 'ella'] as Rol[]) mascotas[r].aplicar(s!.personajes[r]);
   if (que === 'casa') {
     void casa3d.ponerDeco(s!.casa.deco, s!.recuerdos);
     casa3d.pintarNotas(s!.casa.notas);
@@ -394,7 +395,7 @@ async function hacer(accion: Accion, cuarto: Cuarto, seg: number, cambios: Parti
   if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
   const ahora = Date.now();
   const e = sumar(s.personajes[yo], cambios, ahora);
-  verCuarto(cuarto);
+  seguir(cuarto);
   await guardarYo({ ...e, cuarto, actividad: { tipo: 'nada', desde: ahora, accion, hasta: ahora + seg * 1000, item }, visto: ahora });
 }
 
@@ -420,7 +421,7 @@ async function dormir() {
   const e = est(yo);
   if (e.energia >= 92) return toast('Todavía no tiene sueño.');
   const ahora = Date.now();
-  verCuarto('cuarto');
+  seguir('cuarto');
   sonido.bostezo();
   await guardarYo({ ...e, cuarto: 'cuarto', actividad: { tipo: 'dormir', desde: ahora }, visto: ahora });
   toast('A dormir. La energía sube mientras duerme (también con la app cerrada).', 3400);
@@ -437,33 +438,34 @@ async function despertar(auto = false) {
 // ---------------------------------------------------------------------------
 // Con la pareja
 // ---------------------------------------------------------------------------
-async function premio(tipo: string) {
-  const p = PREMIO_CARINO[tipo] ?? 0;
-  if (!p || !(await unaVez(`${hoy()}|${yo}|${tipo}`, p))) return;
-  setTimeout(() => toast(`Primer${tipo === 'caricia' ? 'a caricia' : tipo === 'abrazo' ? ' abrazo' : ' beso'} del día: +${p} monedas`), 1800);
-}
-
 function coreografia(tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo', de: Rol, item?: string) {
   const para = otro(de);
-  mascotas[de].interactuar(tipo, mascotas[para], de, item);
+  // Primero quien recibe (se levanta de donde esté), así quien lo hace llega a su lado
   mascotas[para].interactuar(tipo, mascotas[de], de, item);
+  mascotas[de].interactuar(tipo, mascotas[para], de, item);
+  vistaPendiente = null;
   verCuarto(mascotas[para].cuarto);
   setTimeout(() => (tipo === 'beso' ? sonido.beso() : tipo === 'regalo' ? sonido.regalo() : sonido.abrazo()), 1500);
 }
 
-/** Un mimo a la vez: mientras los dos posan, otro toque no empieza otra coreografía. */
-function ocupados() {
-  if (mascotas[yo].ocupado || mascotas[otro(yo)].ocupado) {
-    toast('Un momentico…');
-    return true;
-  }
-  return false;
+/** Los mimos (y regalar o llevar comida en persona) solo se hacen estando los dos en el mismo cuarto. */
+function juntos() {
+  return !!s && !!mascotas && mascotas[yo].cuarto === mascotas[otro(yo)].cuarto;
 }
+
+function lejos() {
+  if (juntos()) return false;
+  toast(`Primero ve a donde está ${nombre(otro(yo))}.`);
+  return true;
+}
+
+/** Un mimo distinto corta el que va; el mismo repetido (doble toque) no se manda dos veces. */
+const repetido = (tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo') => mascotas[yo].mimo === tipo;
 
 async function carino(tipo: 'caricia' | 'abrazo' | 'beso') {
   if (!s) return;
   if (dormido(yo)) return toast('Primero hay que despertar.');
-  if (ocupados()) return;
+  if (lejos() || repetido(tipo)) return;
   cerrarHoja();
   const par = otro(yo);
   const ef = EFECTO_CARINO[tipo];
@@ -477,13 +479,12 @@ async function carino(tipo: 'caricia' | 'abrazo' | 'beso') {
   } catch (err) {
     fallo(err);
   }
-  await premio(tipo);
 }
 
 async function regalar(id: string, mensaje: string) {
   if (!s || (s.casa.inventario[id] ?? 0) <= 0) return;
   if (dormido(yo)) return toast('Primero hay que despertar.');
-  if (ocupados()) return;
+  if (lejos() || repetido('regalo')) return;
   const par = otro(yo);
   const r = { id: nuevoId(), item: id, de: yo, para: par, mensaje: mensaje.trim().slice(0, 240), t: Date.now(), abierto: false };
   const ok = await cambiarCasa((c) => {
@@ -507,7 +508,7 @@ async function mandarComida(id: string) {
   const it = ITEM[id];
   if (!s || !it || (s.casa.inventario[id] ?? 0) <= 0) return;
   if (dormido(yo)) return toast('Primero hay que despertar.');
-  if (ocupados()) return;
+  if (lejos() || repetido('regalo')) return;
   const par = otro(yo);
   if (!(await cambiarCasa((c) => gastar(c, id)))) return;
   cerrarHoja();
@@ -716,7 +717,7 @@ async function abrirRegaloDeVerdad() {
   let extra = '';
   let sorpresa: string | null = null;
   if (r.item === 'cajita') {
-    const comidas = CATALOGO.filter((i) => i.tipo === 'comida' && i.precio >= 6);
+    const comidas = CATALOGO.filter((i) => i.tipo === 'comida' && i.precio >= 2);
     sorpresa = comidas[Math.floor(Math.random() * comidas.length)].id;
     extra = `Adentro había: ${ITEM[sorpresa].nombre}. Quedó en la despensa.`;
   }
@@ -756,6 +757,49 @@ function verCuarto(c: Cuarto) {
   pintarAcciones();
 }
 
+/** Cambio de cuarto con su personaje a la vista: la cámara espera a que salga por la puerta (un momento) y lo sigue. */
+let vistaPendiente: { cuarto: Cuarto; hasta: number } | null = null;
+const cuartoVista = (): Cuarto => vistaPendiente?.cuarto ?? casa3d.actual;
+
+/** La vista sigue a mi personaje al cuarto `c`: si se le ve salir, primero se ve caminar hasta la puerta. */
+function seguir(c: Cuarto) {
+  if (c === casa3d.actual) {
+    vistaPendiente = null;
+    return verCuarto(c);
+  }
+  if (mascotas[yo].visible && s?.personajes[yo].cuarto !== c) {
+    vistaPendiente = { cuarto: c, hasta: performance.now() + 1700 };
+    pintarCuartos();
+    pintarAcciones();
+  } else {
+    vistaPendiente = null;
+    verCuarto(c);
+  }
+}
+
+/** ¿Ya salió por la puerta (o se acabó la espera)? Entonces se muestra el cuarto nuevo, donde entra caminando. */
+function revisarVista() {
+  const v = vistaPendiente;
+  if (!v || !s) return;
+  if (mascotas[yo].cuarto === v.cuarto || performance.now() >= v.hasta || s.personajes[yo].cuarto !== v.cuarto) {
+    vistaPendiente = null;
+    verCuarto(v.cuarto);
+  }
+}
+
+/** Pestaña de un cuarto: su personaje camina hasta allá (sale por la puerta y entra por la del otro cuarto).
+ *  Dormido no se levanta: solo se mira el cuarto. */
+async function irACuarto(c: Cuarto) {
+  if (!s) return;
+  if (dormido(yo) || s.personajes[yo].cuarto === c) {
+    vistaPendiente = null;
+    return verCuarto(c);
+  }
+  const ahora = Date.now();
+  seguir(c);
+  await guardarYo({ ...est(yo), cuarto: c, actividad: { tipo: 'nada', desde: ahora }, visto: ahora });
+}
+
 /** Cambia el HTML solo si cambió (así un toque no se pierde porque el botón se reemplazó justo entonces). */
 function html(el: HTMLElement, h: string) {
   if (el.dataset.html !== h) {
@@ -767,7 +811,7 @@ function html(el: HTMLElement, h: string) {
 function pintarCuartos() {
   html($('cuartos'), CUARTOS.map((c) => {
     const quien = s ? (['el', 'ella'] as Rol[]).filter((r) => s!.personajes[r].cuarto === c) : [];
-    return `<button class="cuarto-tab" data-cuarto="${c}" aria-current="${c === casa3d.actual}">${NOMBRE_CUARTO[c]}${
+    return `<button class="cuarto-tab" data-cuarto="${c}" aria-current="${c === cuartoVista()}">${NOMBRE_CUARTO[c]}${
       quien.length ? `<span class="quien">${quien.map((r) => `<span class="${caraClase(r)}"></span>`).join('')}</span>` : ''
     }</button>`;
   }).join(''));
@@ -779,7 +823,7 @@ function botonesCuarto(): Boton[] {
   if (!s) return [];
   if (dormido(yo)) return [{ id: 'despertar', texto: 'Despertar', icono: ico('despertar'), principal: true }];
   const b: Boton[] = [];
-  switch (casa3d.actual) {
+  switch (cuartoVista()) {
     case 'sala':
       b.push({ id: 'sofa', texto: 'Descansar', icono: ico('sofa') }, { id: 'tv', texto: 'Ver tele', icono: ico('tv') });
       break;
@@ -801,15 +845,41 @@ function pintarAcciones() {
   if (!s) return html(cont, '');
   const b = [
     ...botonesCuarto(),
-    { id: 'pareja', texto: nombre(otro(yo)), icono: ico('carino') },
+    // Consentir a la pareja: solo cuando están en el mismo cuarto
+    ...(juntos() ? [{ id: 'pareja', texto: nombre(otro(yo)), icono: ico('carino') }] : []),
     { id: 'decorar', texto: decorando ? 'Listo' : 'Decorar', icono: ico('decorar'), activo: decorando },
     { id: 'tienda', texto: 'Tienda', icono: ico('tienda') },
   ];
   if (vozPendiente()) b.unshift({ id: 'oir-voz', texto: 'Mensaje de voz', icono: ico('telefono'), principal: true });
   if (regaloPendiente()) b.unshift({ id: 'abrir-regalo', texto: 'Abrir regalo', icono: `<img src="${iconoItem(ITEM.cajita)}" alt="">`, principal: true });
-  html(cont, b
-    .map((x) => `<button class="accion${x.principal ? ' principal' : ''}${x.activo ? ' activa' : ''}" data-accion="${x.id}">${x.icono}<span>${esc(x.texto)}</span></button>`)
-    .join(''));
+  botones(cont, b.map((x) => ({
+    id: x.id,
+    h: `<button class="accion${x.principal ? ' principal' : ''}${x.activo ? ' activa' : ''}" data-accion="${x.id}">${x.icono}<span>${esc(x.texto)}</span></button>`,
+  })));
+}
+
+/** Pone los botones sin rehacer los que no cambiaron (el de la pareja entra y sale seguido: los demás no se reemplazan
+ *  bajo el dedo). */
+function botones(cont: HTMLElement, lista: { id: string; h: string }[]) {
+  const todo = lista.map((x) => x.h).join('');
+  if (cont.dataset.html === todo) return;
+  cont.dataset.html = todo;
+  const viejos = new Map<string, HTMLElement>();
+  for (const e of Array.from(cont.children) as HTMLElement[]) viejos.set(e.dataset.accion ?? '', e);
+  let ref = cont.firstElementChild;
+  for (const { id, h } of lista) {
+    let e = viejos.get(id);
+    if (e && e.dataset.h === h) viejos.delete(id);
+    else {
+      const t = document.createElement('template');
+      t.innerHTML = h;
+      e = t.content.firstElementChild as HTMLElement;
+      e.dataset.h = h;
+    }
+    if (e === ref) ref = ref.nextElementSibling;
+    else cont.insertBefore(e, ref);
+  }
+  for (const e of viejos.values()) e.remove();
 }
 
 function pintarTodo() {
@@ -909,7 +979,7 @@ function hojaTienda(tab: TipoItem) {
     if (!s) return;
     if (tab === 'ropa' || tab === 'disfraz') return tiendaRopa(tab);
     const lista = CATALOGO.filter((i) => i.tipo === tab && i.id !== 'osito_deco');
-    const html = `<p class="nota-hoja">Las monedas son de los dos. Se ganan con el bono de cada día, los primeros mimos del día y trabajando en el súper.</p>
+    const html = `<p class="nota-hoja">Las monedas son de los dos. Se ganan con el bono de cada día y jugando los minijuegos (el súper, Cien Puertas y los juegos de mesa).</p>
       <ul class="catalogo-casa">${lista
         .map((it) =>
           tarjetaItem(it, `<span class="tengo">${s!.casa.inventario[it.id] ? `Tienen ${s!.casa.inventario[it.id]}` : ''}</span>
@@ -1153,34 +1223,45 @@ function elegirComida(para: 'comer' | 'llevar') {
   pintar();
 }
 
+/** La hoja de la pareja que está abierta (para repintarla en vivo cuando se juntan o se separan). */
+let pintarPareja: (() => void) | null = null;
+
 function hojaPareja() {
   if (!s) return;
   const par = otro(yo);
   const pintar = () => {
     const e = est(par);
     const a = s!.personajes[par].actividad;
-    const donde = NOMBRE_CUARTO[s!.personajes[par].cuarto].toLowerCase();
-    const haciendo = a.tipo === 'dormir' ? `Está durmiendo en el ${donde}.` : `Está en ${s!.personajes[par].cuarto === 'bano' ? 'el baño' : `la ${donde}`}.`;
+    const cuarto = mascotas[par].cuarto;
+    const donde = NOMBRE_CUARTO[cuarto].toLowerCase();
+    const enEl = cuarto === 'bano' ? 'el baño' : cuarto === 'cuarto' ? 'el cuarto' : `la ${donde}`;
+    const haciendo = a.tipo === 'dormir' ? `Está durmiendo en ${enEl}.` : `Está en ${enEl}.`;
     const linea = s!.enLinea[par] ? 'En línea ahora.' : `Entró por última vez ${haceCuanto(s!.personajes[par].visto)}.`;
     const an = animo(e);
-    const html = `<div class="estado-pareja">
-        <p class="nota-hoja">${esc(haciendo)} ${esc(linea)} ${an === 'triste' ? 'Necesita que la consientas.' : an === 'feliz' ? 'Se ve feliz.' : ''}</p>
-        <ul class="necesidades" id="necesidades-pareja"></ul>
-        <div class="menu-casa">
-          <button class="accion" data-mimo="caricia">${ico('caricia')}<span>Caricia</span></button>
+    // Los mimos y los regalos en persona, solo en el mismo cuarto; notas y mensajes de voz, desde donde sea
+    const cerca = juntos();
+    const mimos = cerca
+      ? `<button class="accion" data-mimo="caricia">${ico('caricia')}<span>Caricia</span></button>
           <button class="accion" data-mimo="abrazo">${ico('abrazo')}<span>Abrazo</span></button>
           <button class="accion principal" data-mimo="beso">${ico('beso')}<span>Beso</span></button>
           <button class="accion" data-hoja="regalar"><img src="${iconoItem(ITEM.flores)}" alt=""><span>Regalar</span></button>
-          <button class="accion" data-hoja="llevar"><img src="${iconoItem(ITEM.manzana)}" alt=""><span>Llevar comida</span></button>
+          <button class="accion" data-hoja="llevar"><img src="${iconoItem(ITEM.manzana)}" alt=""><span>Llevar comida</span></button>`
+      : `<button class="accion principal" data-ir-pareja="${cuarto}">${ico('carino')}<span>Ir a ${esc(enEl)}</span></button>`;
+    const html = `<div class="estado-pareja">
+        <p class="nota-hoja">${esc(haciendo)} ${esc(linea)} ${an === 'triste' ? 'Necesita que la consientas.' : an === 'feliz' ? 'Se ve feliz.' : ''}${
+          cerca ? '' : ` Para darle mimos o regalos, ve a ${esc(enEl)}.`}</p>
+        <ul class="necesidades" id="necesidades-pareja"></ul>
+        <div class="menu-casa">
+          ${mimos}
           <button class="accion" data-hoja="notas">${ico('nota')}<span>Dejar una nota</span></button>
           <button class="accion" data-hoja="voz">${ico('telefono')}<span>Mensaje de voz</span></button>
-          <button class="accion" data-mimo="saludo">${ico('saludo')}<span>Saludar</span></button>
+          ${cerca ? `<button class="accion" data-mimo="saludo">${ico('saludo')}<span>Saludar</span></button>` : ''}
         </div>
       </div>`;
     abrirHoja(`${nombre(par)}`, html, { mantener: true, alCerrar: () => (repintarHoja = null) });
     pintarNecesidades($('necesidades-pareja'), e);
   };
-  repintarHoja = pintar;
+  repintarHoja = pintarPareja = pintar;
   pintar();
 }
 
@@ -1322,7 +1403,7 @@ function hojaJuegos() {
       <img src="./modelos/iconos/caja_frutas.png" alt="">
       <div>
         <h3>Súper Manía en Pareja</h3>
-        <p>Atiende la tiendita de barrio: reponer, cobrar, limpiar y atrapar ladrones. Un tercio de lo que ganes cada día llega a la casa como sueldo.</p>
+        <p>Atiende la tiendita de barrio: reponer, cobrar, limpiar y atrapar ladrones. Parte de lo que ganes llega a la casa como sueldo.</p>
         <a class="boton boton-tomate" href="./super.html">Ir a trabajar</a>
       </div>
     </article>
@@ -1457,7 +1538,7 @@ function controles() {
     const b = (ev.target as HTMLElement).closest('[data-cuarto]') as HTMLElement | null;
     if (!b) return;
     sonido.toque();
-    verCuarto(b.dataset.cuarto as Cuarto);
+    void irACuarto(b.dataset.cuarto as Cuarto);
   };
   $('acciones').onclick = (ev) => {
     const b = (ev.target as HTMLElement).closest('[data-accion]') as HTMLElement | null;
@@ -1504,7 +1585,10 @@ function controles() {
       void comer(b.dataset.comer!);
     } else if ((b = d('[data-llevar]'))) void mandarComida(b.dataset.llevar!);
     else if ((b = d('[data-ir-tienda]'))) hojaTienda((b.dataset.irTienda || 'comida') as TipoItem);
-    else if ((b = d('[data-mimo]'))) {
+    else if ((b = d('[data-ir-pareja]'))) {
+      cerrarHoja();
+      void irACuarto(b.dataset.irPareja as Cuarto);
+    } else if ((b = d('[data-mimo]'))) {
       const m = b.dataset.mimo!;
       if (m === 'saludo') void saludar();
       else void carino(m as 'caricia' | 'abrazo' | 'beso');
@@ -1628,12 +1712,26 @@ function tocar(x: number, y: number) {
     void hacer('nevera', 'cocina', 6, {});
     return hojaNotas();
   }
-  // Pasear: su personaje camina hasta donde se tocó (si está en ese cuarto y libre)
+  // Pasear: su personaje camina hasta donde se tocó; si estaba haciendo algo (comiendo, sentado, en un mimo,
+  // saliendo del cuarto) lo deja ya y va para allá
   const m = mascotas[yo];
-  if (t.tipo === 'suelo' && m.cuarto === casa3d.actual && !dormido(yo)) {
-    const d = casa3d.dato;
-    m.pasear(THREE.MathUtils.clamp(t.x, -d.W / 2 + 0.5, d.W / 2 - 0.5), THREE.MathUtils.clamp(t.y, -d.D / 2 + 0.4, d.D / 2 - 0.8));
+  if (t.tipo === 'suelo' && m.cuarto === casa3d.actual && !dormido(yo)) void pasear(t.x, t.y);
+}
+
+async function pasear(x: number, y: number) {
+  if (!s) return;
+  const m = mascotas[yo];
+  const d = casa3d.dato;
+  vistaPendiente = null;
+  if (!m.pasear(THREE.MathUtils.clamp(x, -d.W / 2 + 0.5, d.W / 2 - 0.5), THREE.MathUtils.clamp(y, -d.D / 2 + 0.4, d.D / 2 - 0.6))) return;
+  // Lo que hacía se acaba también en el estado (así el otro celular lo ve levantarse o quedarse en este cuarto)
+  const e = s.personajes[yo];
+  const ahora = Date.now();
+  if (e.cuarto !== m.cuarto || e.actividad.accion) {
+    await guardarYo({ ...est(yo), cuarto: m.cuarto, actividad: { tipo: 'nada', desde: ahora }, visto: ahora });
   }
+  pintarCuartos();
+  pintarAcciones();
 }
 
 function hojaYo() {
@@ -1731,6 +1829,7 @@ function bucle() {
       ultimaRevision = ahora;
       revisar();
     }
+    revisarVista();
     efectos();
     mundo.dibujar(paso, true);
   } catch (e) {
@@ -1740,6 +1839,7 @@ function bucle() {
   }
 }
 let errorReportado = false;
+let estabanJuntos = false;
 let vestidosGuardados = '';
 
 /** Lo que tiene puesto cada uno, para que en Cien Puertas el narrador salga vestido igual (también en línea). */
@@ -1760,6 +1860,13 @@ function revisar() {
   const ahora = Date.now();
   for (const r of ['el', 'ella'] as Rol[]) mascotas[r].aplicar(s.personajes[r], ahora);
   guardarVestidos();
+  // El botón de la pareja aparece y se va en vivo cuando uno de los dos entra o sale del cuarto
+  const j = juntos();
+  if (j !== estabanJuntos) {
+    estabanJuntos = j;
+    pintarAcciones();
+    if (hojaAbierta() && repintarHoja && repintarHoja === pintarPareja) repintarHoja();
+  }
   pintarNecesidades($('necesidades'), est(yo));
   if (dormido(yo) && est(yo).energia >= 100) void despertar(true);
   const g = regaloPendiente();
@@ -1789,7 +1896,7 @@ function efectos() {
     // Globo de pensamiento con lo que más necesita (si está libre)
     const e = est(r);
     const falta = NECESIDADES.filter((n) => e[n] < 30).sort((a, b) => e[a] - e[b])[0];
-    capa.poner(`${r}-piensa`, !m.efecto && falta && !m.p.moviendo ? 'pensamiento' : null, p.x, p.y, falta ? PENSAR[falta] : undefined);
+    capa.poner(`${r}-piensa`, !m.efecto && falta && !m.enCamino ? 'pensamiento' : null, p.x, p.y, falta ? PENSAR[falta] : undefined);
   }
 }
 
@@ -1808,6 +1915,8 @@ function efectos() {
   deco: s?.casa.deco,
 });
 (window as any).__mundo = () => mundo;
+(window as any).__mascotas = () => mascotas;
+(window as any).__casa3d = () => casa3d;
 (window as any).__escena = (r: Rol) => mascotas?.[r].escenaActual ?? '';
 (window as any).__fase = (r: Rol) => mascotas?.[r].fase ?? null;
 (window as any).__quieto = (r: Rol) => !!s && mascotas[r].mostrando(s.personajes[r]);
@@ -1817,6 +1926,16 @@ function efectos() {
   if (!m) return;
   m.reposo = n;
   m.p.pose(n, true);
+};
+/** Hace una acción sin pasar por los botones (pruebas): dormir o una acción corta de `seg` segundos. */
+(window as any).__hacer = (c: Cuarto, a: Accion | 'dormir', seg = 60) => {
+  if (!s) return;
+  const ahora = Date.now();
+  if (a === 'dormir') {
+    seguir(c);
+    return guardarYo({ ...est(yo), cuarto: c, actividad: { tipo: 'dormir', desde: ahora }, visto: ahora });
+  }
+  return hacer(a, c, seg, {}, a === 'comer' ? 'pan' : undefined);
 };
 /** Posición en pantalla del aro de un sitio de decoración (pruebas). */
 (window as any).__sitio = (id: string) => {

@@ -1,5 +1,6 @@
-// Él o Ella dentro de la casa: camina entre los puntos del cuarto, come, duerme en la cama, se baña,
-// se sienta en el sofá y reacciona a caricias, abrazos, besos y regalos (con caras y corazones).
+// Él o Ella dentro de la casa: camina entre los puntos del cuarto (esquivando los muebles y saliendo y entrando por
+// las puertas), come, duerme en la cama, se baña, se sienta en el sofá y reacciona a caricias, abrazos, besos y
+// regalos (con caras y corazones).
 import * as THREE from 'three';
 import { Cara, Personaje } from '../personaje';
 import { copia, Productos } from '../recursos';
@@ -10,6 +11,24 @@ import { Actividad, alDia, animo, Cuarto, EstadoPersonaje, Rol } from './modelo'
 import { Vestuario } from './ropa';
 
 type P = { x: number; y: number };
+/** Un destino: punto del cuarto (con su giro y su acceso) o un sitio libre del piso. */
+type Destino = P & { rot?: number; acceso?: [number, number][]; nombre?: string };
+/** Cómo salir del mueble en el que está (los pasos del acceso al revés). */
+interface Salida {
+  pasos: P[];
+  alto: number;
+  rot: number;
+}
+/** Un tramo del camino: caminar recto a un punto (con la altura y el giro del cuerpo mientras llega), buscar
+ *  camino esquivando los muebles o cruzar la puerta a otro cuarto. */
+type Tramo = { a: P; alto?: number; rot?: number; salida?: Salida } | { ruta: P } | { cruzar: Cuarto };
+/** Altura del cuerpo mientras se sube al mueble (y al bajarse): se ve que se sienta, se mete a la tina o se sube a la cama. */
+const SUBIR: Record<string, number> = { sofa: 0.48, comer: 0.34, tina: 0.72, cama: 0.8 };
+/** Altura final de cada acción (medida con el cuerpo en su pose contra el cojín, la silla, el agua y el colchón). */
+const ALTO = { sofa: 0.48, comer: 0.34, tina: 0.12, cama: 0.74 };
+const rad = THREE.MathUtils.degToRad;
+/** Cuánto se recuesta en la cama (90° sería plano). */
+const RECLINADO = rad(76);
 /** Dirección «a lo ancho de la pantalla» en el piso de la casa (la cámara está girada 38°). */
 const AZ = THREE.MathUtils.degToRad(38);
 const ANCHO_PANTALLA = { x: Math.cos(AZ), y: Math.sin(AZ) };
@@ -32,6 +51,8 @@ interface Coreo {
   item?: string;
   /** ir: camina hacia el otro · esperar: aguarda a que llegue · pose: el mimo · dormido: sonríe dormido */
   fase: 'ir' | 'esperar' | 'pose' | 'dormido';
+  /** Cuarto donde se hace el mimo (un estado nuevo en otro cuarto o con otra acción lo corta). */
+  cuarto: Cuarto;
   t: number;
   dur: number;
   total: number;
@@ -65,6 +86,14 @@ export class Mascota {
   private vistas = new Map<number, number>();
   /** Cada objeto que se pone en la mano tiene su turno: si se suelta mientras carga, no aparece después. */
   private turnoMano = 0;
+  /** Camino en curso (tramo por tramo) y qué hacer al terminarlo. */
+  private plan: Tramo[] = [];
+  private finPlan: (() => void) | null = null;
+  private meta: P | null = null;
+  /** Giro fijo mientras se mete al mueble (se sienta de espaldas al sofá, no dándole la cara). */
+  private rotTramo: number | null = null;
+  /** Si está sentado, acostado o en la tina: por dónde se sale. */
+  private salida: Salida | null = null;
   /** Burbujas, corazones y «zzz» que dibuja la interfaz encima del personaje. */
   efecto: Efecto['tipo'] | null = null;
   pickeable: THREE.Mesh;
@@ -91,9 +120,9 @@ export class Mascota {
   }
 
   /** Punto del cuarto para este personaje (usa la versión _izq/_der si existe). */
-  punto(nombre: string, cuarto = this.cuarto): Punto {
+  punto(nombre: string, cuarto = this.cuarto): Punto & { nombre: string } {
     const pts = this.casa.puntos(cuarto);
-    return pts[`${nombre}_${this.lado}`] ?? pts[nombre] ?? pts[`centro_${this.lado}`];
+    return { ...(pts[`${nombre}_${this.lado}`] ?? pts[nombre] ?? pts[`centro_${this.lado}`]), nombre };
   }
 
   private ponerEn(c: Cuarto, pt: P, rot?: number) {
@@ -102,23 +131,123 @@ export class Mascota {
       if (this.enMano) this.casa.cuarto(c).add(this.enMano);
     }
     this.cuarto = c;
+    this.salida = null;
     this.p.pos = { x: pt.x, y: pt.y };
     this.p.ruta = [];
-    if (rot !== undefined) this.p.rot = THREE.MathUtils.degToRad(rot);
+    if (rot !== undefined) this.p.rot = rad(rot);
     this.p.sincronizar();
   }
 
-  /** Camina hasta un punto del mismo cuarto; si viene de otro, entra por la puerta. */
-  private ir(c: Cuarto, pt: Punto, alLlegar?: () => void) {
-    if (c !== this.cuarto || !this.p.grupo.parent) {
-      const e = this.casa.puntos(c).entrada;
-      this.ponerEn(c, e, e.rot);
-    }
-    this.p.ruta = [{ x: pt.x, y: pt.y }];
-    this.p.alLlegar = () => {
-      this.p.rot = THREE.MathUtils.degToRad(pt.rot);
+  /** Aparece en la puerta de un cuarto, mirando hacia adentro. */
+  private cruzar(c: Cuarto) {
+    const pu = this.casa.puerta(c);
+    this.ponerEn(c, pu, pu.rot);
+    this.metaAlto = this.alto = 0;
+    this.metaTumbado = this.tumbado = 0;
+  }
+
+  /** Camina hasta un punto esquivando los muebles: primero se levanta del mueble donde esté (por donde entró); si el
+   *  punto es de otro cuarto, sale por la puerta de este y entra por la del otro; si el punto tiene acceso (sofá,
+   *  silla, tina, cama), llega por esos pasos y se sube al mueble. */
+  private ir(c: Cuarto, pt: Destino, alLlegar?: () => void) {
+    this.p.ruta = [];
+    this.p.alLlegar = null;
+    this.rotTramo = null;
+    const acceso = (pt.acceso ?? []).map(([x, y]) => ({ x, y }));
+    const alto = SUBIR[pt.nombre ?? ''] ?? 0;
+    const fin = () => {
+      if (pt.rot !== undefined) this.p.rot = rad(pt.rot);
       alLlegar?.();
     };
+    this.meta = { x: pt.x, y: pt.y };
+    // Ya está sentado justo ahí (del sofá a ver tele): no se levanta
+    if (this.salida && c === this.cuarto && this.p.grupo.parent && Math.hypot(this.p.pos.x - pt.x, this.p.pos.y - pt.y) < 0.05) {
+      this.plan = [];
+      this.finPlan = null;
+      fin();
+      return;
+    }
+    const plan: Tramo[] = [];
+    if (!this.p.grupo.parent || (c !== this.cuarto && this.casa.actual !== this.cuarto)) this.cruzar(c);
+    if (this.salida) {
+      const sal = this.salida;
+      this.salida = null;
+      this.metaTumbado = 0;
+      sal.pasos.forEach((q, i) => plan.push(i === 0 ? { a: q, alto: sal.alto, rot: sal.rot } : { a: q, alto: 0 }));
+    }
+    if (c !== this.cuarto) {
+      const e = this.casa.puntos(this.cuarto).entrada;
+      plan.push({ ruta: e }, { a: this.casa.puerta(this.cuarto), alto: 0 }, { cruzar: c }, { a: this.casa.puntos(c).entrada });
+    }
+    if (acceso.length) {
+      plan.push({ ruta: acceso[0] });
+      for (const q of acceso.slice(1)) plan.push({ a: q });
+      plan.push({ a: pt, alto, rot: pt.rot, salida: { pasos: [...acceso].reverse(), alto, rot: pt.rot ?? 0 } });
+    } else plan.push({ ruta: pt });
+    this.plan = plan;
+    this.finPlan = fin;
+    this.avanzar();
+  }
+
+  /** Siguiente tramo del camino (o lo que tocaba hacer al llegar). */
+  private avanzar = () => {
+    const t = this.plan.shift();
+    this.rotTramo = null;
+    if (!t) {
+      const f = this.finPlan;
+      this.finPlan = null;
+      f?.();
+      return;
+    }
+    if ('cruzar' in t) {
+      this.cruzar(t.cruzar);
+      this.avanzar();
+      return;
+    }
+    if ('ruta' in t) {
+      this.metaAlto = 0;
+      this.metaTumbado = 0;
+      this.p.ruta = this.casa.nav(this.cuarto).ruta(this.p.pos, t.ruta);
+    } else {
+      if (t.alto !== undefined) this.metaAlto = t.alto;
+      if (t.rot !== undefined) this.rotTramo = rad(t.rot);
+      if (t.salida) this.salida = t.salida;
+      this.p.ruta = [{ x: t.a.x, y: t.a.y }];
+    }
+    this.p.alLlegar = this.avanzar;
+  };
+
+  /** Si el cuarto que deja no está a la vista, no hace falta verlo caminar hasta la puerta: entra de una al otro. */
+  private saltarAPuerta() {
+    const k = this.plan.findIndex((t) => 'cruzar' in t);
+    if (k < 0) return;
+    const t = this.plan[k] as { cruzar: Cuarto };
+    this.plan = this.plan.slice(k + 1);
+    this.p.ruta = [];
+    this.p.alLlegar = null;
+    this.rotTramo = null;
+    this.cruzar(t.cruzar);
+    this.avanzar();
+  }
+
+  /** Deja de caminar donde va (sin levantarse). */
+  private parar() {
+    this.plan = [];
+    this.finPlan = null;
+    this.meta = null;
+    this.rotTramo = null;
+    this.p.ruta = [];
+    this.p.alLlegar = null;
+  }
+
+  /** ¿Va caminando a algún lado? */
+  get enCamino() {
+    return this.p.moviendo || this.plan.length > 0;
+  }
+
+  /** Dónde va a quedar parado (para que el otro llegue a su lado y no a donde estaba). */
+  dondeQueda(): P {
+    return this.enCamino && this.meta ? this.meta : this.p.pos;
   }
 
   /** Muestra lo que el estado dice que está haciendo (dormir, comer, bañarse...) o lo deja libre en el cuarto. */
@@ -146,7 +275,9 @@ export class Mascota {
 
   /** ¿Ya está mostrando este estado (llegó a su sitio y está haciendo lo que dice)? */
   mostrando(e: EstadoPersonaje, ahora = Date.now()) {
-    return this.escena === this.clave(e, ahora).clave && !this.p.moviendo && !this.coreo;
+    if (this.enCamino || this.coreo) return false;
+    // (o la acción que ya se venció mientras llegaba y se deja ver unos segundos)
+    return this.escena === this.clave(e, ahora).clave || (this.retener > 0 && this.desdeActual === e.actividad.desde && this.escena.startsWith(`${e.cuarto}|`));
   }
 
   aplicar(e: EstadoPersonaje, ahora = Date.now(), animado = true) {
@@ -162,9 +293,12 @@ export class Mascota {
     if (!this.pasos.length && !this.coreo) this.p.cara(this.caraReposo);
     if (clave === this.escena && this.p.grupo.parent) return;
     // La acción se ve completa aunque haya tardado en llegar: si solo se venció (mismo momento), se deja terminar
-    if (!accion && a.desde === this.desdeActual && (this.p.moviendo || this.retener > 0)) return;
-    // Durante una coreografía (un abrazo) no se cambia nada: se vuelve a aplicar en la siguiente vuelta
-    if (this.coreo) return;
+    if (!accion && a.desde === this.desdeActual && (this.enCamino || this.retener > 0)) return;
+    // Durante una coreografía (un abrazo) no se cambia nada, salvo que llegue otra orden (otra acción u otro cuarto): esa la corta
+    if (this.coreo) {
+      if (!accion && e.cuarto === this.coreo.cuarto) return;
+      this.cortarCoreo();
+    }
     this.escena = clave;
     this.desdeActual = a.desde;
     this.retener = 0;
@@ -178,7 +312,10 @@ export class Mascota {
       const pt = this.punto(nombre, c);
       if (animado) this.ir(c, pt, luego);
       else {
+        this.parar();
         this.ponerEn(c, pt, pt.rot);
+        const alto = SUBIR[pt.nombre ?? ''] ?? 0;
+        if (pt.acceso?.length) this.salida = { pasos: pt.acceso.map(([x, y]) => ({ x, y })).reverse(), alto, rot: pt.rot };
         luego();
         this.sinTransicion();
       }
@@ -187,7 +324,7 @@ export class Mascota {
       case 'dormir':
         llegar('cama', () => {
           this.metaTumbado = 1;
-          this.metaAlto = 0.76;
+          this.metaAlto = ALTO.cama;
           this.bucle([{ pose: 'dormido', dur: 99, cara: 'dormido' }]);
           this.efecto = 'zzz';
         });
@@ -195,14 +332,14 @@ export class Mascota {
       case 'comer':
         // Sentado en la silla del comedor, mirando a la mesa
         llegar('comer', () => {
-          this.metaAlto = 0.14;
+          this.metaAlto = ALTO.comer;
           void this.sostener(a.item ?? 'pan', 'comida');
           this.bucle([{ pose: 'comer_sentado_a', pose2: 'comer_sentado_b', ritmo: 1.6, dur: 99, cara: 'feliz' }]);
         });
         break;
       case 'banar':
         llegar('tina', () => {
-          this.metaAlto = 0.12;
+          this.metaAlto = ALTO.tina;
           this.bucle([{ pose: 'frotar_a', pose2: 'frotar_b', ritmo: 2.4, dur: 99, cara: 'feliz' }]);
           this.efecto = 'burbujas';
         });
@@ -213,7 +350,7 @@ export class Mascota {
       case 'sofa':
       case 'tv':
         llegar('sofa', () => {
-          this.metaAlto = 0.25;
+          this.metaAlto = ALTO.sofa;
           this.bucle([{ pose: accion === 'tv' ? 'sentado_feliz' : 'sentado', dur: 99, cara: accion === 'tv' ? 'feliz' : 'normal' }]);
         });
         break;
@@ -230,7 +367,20 @@ export class Mascota {
         llegar('centro', () => this.bucle([{ pose: 'pensando', dur: 99 }]));
         break;
       default:
-        llegar('centro', () => this.bucle([]));
+        // Libre: si ya está en ese cuarto se queda donde está (si estaba sentado, se levanta y sale del mueble;
+        // si iba caminando a donde lo mandaron, sigue); si viene de otro cuarto, entra por la puerta
+        if (animado && c === this.cuarto && this.p.grupo.parent) {
+          const sal = this.salida;
+          if (sal) {
+            const q = sal.pasos[sal.pasos.length - 1];
+            this.ir(c, { x: q.x, y: q.y }, () => this.bucle([]));
+          } else if (!this.enCamino) this.bucle([]);
+          else {
+            // Iba a sentarse (o a otra acción) y ya no: sigue caminando pero no se sube al mueble
+            this.plan = this.plan.filter((t) => !('a' in t) || !t.salida);
+            this.finPlan = () => this.bucle([]);
+          }
+        } else llegar('centro', () => this.bucle([]));
     }
   }
 
@@ -290,36 +440,55 @@ export class Mascota {
     const yo = this.rol === quien;
     const dormido = this.escena.includes('|dormir|') || otra.escena.includes('|dormir|');
     const dur = 3.4;
+    // Si ya estaba en otro mimo, ese termina aquí (una orden nueva corta la anterior)
+    if (this.coreo) this.cortarCoreo();
+    const cuarto = yo ? otra.cuarto : this.cuarto;
     if (dormido && !yo) {
       // Quien duerme sigue dormido: solo sonríe entre sueños
-      this.coreo = { tipo, otra, yo, item, fase: 'dormido', t: 0, dur, total: 0 };
+      this.coreo = { tipo, otra, yo, item, fase: 'dormido', cuarto, t: 0, dur, total: 0 };
       this.p.cara('feliz');
       this.efecto = 'corazones';
       return;
     }
     this.soltar();
-    this.metaTumbado = 0;
-    this.metaAlto = 0;
     this.pasos = [];
-    this.coreo = { tipo, otra, yo, item, fase: yo ? 'ir' : 'esperar', t: 0, dur, total: 0 };
-    if (!yo) return;
-    // Quien lo hace camina hasta el otro (entra por la puerta si está en otro cuarto)
-    const o = otra.p.pos;
+    this.coreo = { tipo, otra, yo, item, fase: yo ? 'ir' : 'esperar', cuarto, t: 0, dur, total: 0 };
+    if (!yo) {
+      // Quien recibe deja lo que hacía: si estaba sentado (o en la tina) se levanta y sale del mueble; si caminaba, para
+      const sal = this.salida;
+      if (sal) {
+        const q = sal.pasos[sal.pasos.length - 1];
+        this.ir(this.cuarto, { x: q.x, y: q.y, rot: 0 });
+      } else {
+        this.parar();
+        this.metaTumbado = 0;
+        this.metaAlto = 0;
+      }
+      return;
+    }
+    // Quien lo hace camina hasta el otro (sale por la puerta y entra por la del otro si está en otro cuarto)
+    const o = otra.dondeQueda();
     const sep = tipo === 'abrazo' ? 0.5 : tipo === 'beso' ? 0.44 : 0.62;
-    // A lo ancho de la pantalla (la cámara mira en diagonal), así se ven los dos de perfil y ninguno tapa al otro
+    // A lo ancho de la pantalla (la cámara mira en diagonal), así se ven los dos de perfil y ninguno tapa al otro;
+    // si ese lado queda dentro de un mueble, el otro lado, y si no, lo libre más cerca
     const lado = this.rol === 'el' ? -1 : 1;
-    const x = o.x + lado * sep * ANCHO_PANTALLA.x;
-    const y = o.y + lado * sep * ANCHO_PANTALLA.y;
-    const mira = THREE.MathUtils.radToDeg(Math.atan2(o.x - x, -(o.y - y)));
-    const destino: Punto = dormido ? { x: o.x, y: o.y - 1.25, rot: 0 } : { x, y, rot: mira };
+    const junto = (k: number) => ({ x: o.x + k * sep * ANCHO_PANTALLA.x, y: o.y + k * sep * ANCHO_PANTALLA.y });
+    let p = junto(lado);
+    if (dormido) {
+      // Junto a la cama, por el lado de quien duerme
+      const pie = otra.salida?.pasos[otra.salida.pasos.length - 1];
+      p = pie ? { x: pie.x, y: pie.y } : { x: o.x, y: o.y - 1.25 };
+    } else if (!this.casa.libre(cuarto, p)) p = this.casa.libre(cuarto, junto(-lado)) ? junto(-lado) : junto(lado);
+    p = this.casa.cercaLibre(cuarto, p);
+    const destino: Destino = { ...p, rot: THREE.MathUtils.radToDeg(Math.atan2(o.x - p.x, -(o.y - p.y))) };
     const llegar = () => {
       if (this.coreo?.fase === 'ir') this.posar();
     };
-    if (this.cuarto === otra.cuarto && this.p.grupo.parent && Math.hypot(this.p.pos.x - destino.x, this.p.pos.y - destino.y) < 0.05) {
-      this.p.ruta = [];
-      this.p.rot = THREE.MathUtils.degToRad(destino.rot);
+    if (this.cuarto === cuarto && this.p.grupo.parent && !this.salida && Math.hypot(this.p.pos.x - destino.x, this.p.pos.y - destino.y) < 0.05) {
+      this.parar();
+      this.p.rot = rad(destino.rot!);
       llegar();
-    } else this.ir(otra.cuarto, destino, llegar);
+    } else this.ir(cuarto, destino, llegar);
   }
 
   /** Arranca la pose del mimo (los dos a la vez). */
@@ -364,11 +533,30 @@ export class Mascota {
     this.p.cara(this.caraReposo);
   }
 
-  /** Caminar hasta donde se tocó el piso: solo si está libre (no comiendo, durmiendo ni en un mimo). */
+  /** Termina el mimo en curso ya (una orden nueva lo interrumpe), y también el del otro si lo estaba haciendo con este. */
+  cortarCoreo() {
+    const c = this.coreo;
+    if (!c) return;
+    this.terminarCoreo();
+    if (c.fase !== 'dormido') this.parar();
+    if (c.otra.coreo?.otra === this) {
+      const fase = c.otra.coreo.fase;
+      c.otra.terminarCoreo();
+      if (fase !== 'dormido') c.otra.parar();
+    }
+  }
+
+  /** Caminar hasta donde se tocó el piso (a lo libre más cerca si fue sobre un mueble). Interrumpe lo que esté
+   *  haciendo: se levanta del mueble, suelta lo que tiene en la mano y deja el mimo. */
   pasear(x: number, y: number) {
-    if (this.coreo || this.pasos.length || this.metaTumbado > 0 || this.metaAlto > 0 || this.p.moviendo || !this.p.grupo.parent) return false;
-    this.p.ruta = [{ x, y }];
-    this.p.alLlegar = null;
+    if (!this.p.grupo.parent || this.escena.includes('|dormir|')) return false;
+    this.cortarCoreo();
+    this.soltar();
+    this.pasos = [];
+    this.efecto = null;
+    this.retener = 0;
+    this.metaTumbado = 0;
+    this.ir(this.cuarto, this.casa.cercaLibre(this.cuarto, { x, y }), () => this.bucle([]));
     return true;
   }
 
@@ -376,9 +564,14 @@ export class Mascota {
     return !!this.coreo;
   }
 
+  /** El mimo que está haciendo este personaje (no el que recibe). */
+  get mimo(): TipoMimo | null {
+    return this.coreo?.yo ? this.coreo.tipo : null;
+  }
+
   /** Qué está mostrando ahora (cuarto|acción|...), para las pruebas. */
   get escenaActual() {
-    return this.p.moviendo ? '' : this.escena;
+    return this.enCamino ? '' : this.escena;
   }
 
   get fase() {
@@ -387,7 +580,9 @@ export class Mascota {
 
   update(dt: number) {
     const p = this.p;
-    if (this.retener > 0 && !p.moviendo) this.retener -= dt;
+    if (this.retener > 0 && !this.enCamino) this.retener -= dt;
+    // Va para otro cuarto y el suyo ya no está a la vista: entra de una por la puerta del otro
+    if (this.casa.actual !== this.cuarto && this.plan.some((t) => 'cruzar' in t)) this.saltarAPuerta();
     const c = this.coreo;
     if (c) {
       c.total += dt;
@@ -398,7 +593,7 @@ export class Mascota {
       if (c.t >= c.dur || c.total > 20) this.terminarCoreo();
     }
     // Coreografía en curso
-    if (!p.moviendo && this.pasos.length) {
+    if (!this.enCamino && this.pasos.length) {
       const paso = this.pasos[0];
       this.tPaso += dt;
       if (paso.pose2) {
@@ -411,7 +606,7 @@ export class Mascota {
         this.pasos[0].alEmpezar?.();
         p.cara(this.pasos[0].cara ?? this.caraReposo);
       }
-    } else if (!p.moviendo) {
+    } else if (!this.enCamino) {
       p.pose(this.reposo);
       if (this.sonrisa > 0 && (this.sonrisa -= dt) <= 0) p.cara(this.caraReposo);
       // De vez en cuando, libre en el cuarto, sonríe o mira a su alrededor
@@ -428,11 +623,19 @@ export class Mascota {
     const k = Math.min(1, dt * 5);
     this.tumbado += (this.metaTumbado - this.tumbado) * k;
     this.alto += (this.metaAlto - this.alto) * k;
+    const rotAntes = p.rot;
     p.update(dt);
+    // Metiéndose al mueble: gira hacia donde queda sentado en vez de mirar hacia donde camina
+    if (this.rotTramo !== null && p.moviendo) {
+      const d = Math.atan2(Math.sin(this.rotTramo - rotAntes), Math.cos(this.rotTramo - rotAntes));
+      p.rot = rotAntes + d * Math.min(1, dt * 8);
+      p.grupo.rotation.y = p.rot;
+    }
     // sincronizar() deja el grupo en el piso cada cuadro; aquí se sube, se acuesta y se corre hacia la almohada
     const g = p.grupo;
     g.rotation.order = 'YXZ';
-    g.rotation.x = -this.tumbado * Math.PI / 2;
+    // Acostado no del todo plano: la cabeza (grande) queda apoyada en la almohada, no hundida en el colchón
+    g.rotation.x = -this.tumbado * RECLINADO;
     g.position.y += this.alto;
     if (this.tumbado > 0.001) {
       const avance = this.tumbado * 0.5;

@@ -345,10 +345,10 @@ await foto(ella, '02-ella-entra');
 
 // Monedas: cada uno recibió su bono
 let e1 = await estado(el);
-revisar(e1.monedas === 160, `Bonos de los dos: 120 + 20 + 20 = ${e1.monedas}`);
+revisar(e1.monedas === 50, `Bonos de los dos: 40 + 5 + 5 = ${e1.monedas}`);
 
 // Compras a la vez desde los dos celulares (choques de versión)
-const precio = { manzana: 3, pan: 5, galletas: 5 };
+const precio = { manzana: 1, pan: 2, galletas: 2 };
 const antes = (await estado(el)).monedas;
 const inv0 = { ...(await estado(el)).inventario };
 const compras = [];

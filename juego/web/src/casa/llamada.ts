@@ -7,7 +7,7 @@ import { caraClase, esc } from './ui_casa';
 /** Segundos máximos de un mensaje. */
 export const MAX_VOZ = 30;
 /** Lo que cuesta dejar un mensaje de voz (monedas de la casa). */
-export const PRECIO_VOZ = 15;
+export const PRECIO_VOZ = 4;
 /** Cariño que sube al oír un mensaje nuevo. */
 export const CARINO_VOZ = 20;
 

@@ -107,10 +107,10 @@ if (partes.includes('2')) {
   revisar(e.personajes.ella.hambre === 0, `Ella lleva 16 días sin comer: comida en 0 (${e.personajes.ella.hambre})`);
   const escenaElla = await p.evaluate(() => window.__escena('ella'));
   revisar(!escenaElla.includes('|comer|'), `La comida de hace 16 días ya no se sigue mostrando (${escenaElla || 'caminando'})`);
-  revisar(e.monedas === 70, `El bono del día llega una sola vez (${e.monedas})`);
+  revisar(e.monedas === 55, `El bono del día llega una sola vez (${e.monedas})`);
   await p.reload({ waitUntil: 'domcontentloaded' });
   await p.waitForFunction(() => window.__listo === true, null, { timeout: 180000 });
-  revisar((await estado(p)).monedas === 70, 'Recargar no da el bono otra vez');
+  revisar((await estado(p)).monedas === 55, 'Recargar no da el bono otra vez');
   // Sueldo del súper: llega una vez
   await p.evaluate(() => localStorage.setItem('nuestro-hogar-sueldo', '37'));
   await p.reload({ waitUntil: 'domcontentloaded' });
@@ -118,7 +118,7 @@ if (partes.includes('2')) {
   await p.waitForTimeout(1500);
   const m = (await estado(p)).monedas;
   const queda = await p.evaluate(() => localStorage.getItem('nuestro-hogar-sueldo'));
-  revisar(m === 107 && !queda, `El sueldo del súper (37) entra una vez y se borra del sobre (${m}, sobre ${queda})`);
+  revisar(m === 92 && !queda, `El sueldo del súper (37) entra una vez y se borra del sobre (${m}, sobre ${queda})`);
   revisar(!p.errores.length, `Sin errores${p.errores.length ? `: ${p.errores.slice(0, 2).join(' | ')}` : ''}`);
   await ctx.close();
 }
@@ -170,11 +170,11 @@ if (partes.includes('4')) {
   await el.bringToFront();
   await el.click('[data-accion="tienda"]');
   await el.click('[data-p="regalo"]');
-  // 30 toques seguidos comprando flores (25 cada una): con 100+20+20 monedas alcanzan para 5
+  // 30 toques seguidos comprando flores (8 cada una): con 100+5+5 monedas alcanzan para 13
   await Promise.all(Array.from({ length: 30 }, () => el.evaluate(() => document.querySelector('[data-comprar="flores"]')?.click())));
   await el.waitForTimeout(800);
   let e = await estado(el);
-  revisar(e.monedas >= 0 && e.monedas === 140 - 25 * (e.inventario.flores ?? 0), `30 toques comprando: monedas ${e.monedas}, flores ${e.inventario.flores} (nunca negativo y cuadra)`);
+  revisar(e.monedas >= 0 && e.monedas === 110 - 8 * (e.inventario.flores ?? 0), `30 toques comprando: monedas ${e.monedas}, flores ${e.inventario.flores} (nunca negativo y cuadra)`);
   await el.click('#hoja-cerrar');
   // Regalar dos veces seguidas con un solo ramo... y con varios
   await el.evaluate(() => document.getElementById('chip-pareja').click());
@@ -197,7 +197,7 @@ if (partes.includes('4')) {
   await ella.click('#ventana [data-cerrar]').catch(() => {});
   // Mimos muy seguidos: uno a la vez
   await el.bringToFront();
-  // Espera a que termine la coreografía del regalo (si no, el beso responde «Un momentico…»)
+  // Espera a que termine la coreografía del regalo (un mimo nuevo la cortaría)
   const libres = await el.waitForFunction(() => !window.__fase('el') && !window.__fase('ella'), null, { timeout: 240000 }).then(() => true, () => false);
   if (!libres) console.log('   (la coreografía del regalo no terminó a tiempo:', JSON.stringify(await el.evaluate(() => [window.__fase('el'), window.__fase('ella')])), ')');
   await el.evaluate(() => document.getElementById('chip-pareja').click());

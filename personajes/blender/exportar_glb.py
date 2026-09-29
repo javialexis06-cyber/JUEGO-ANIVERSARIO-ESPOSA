@@ -660,7 +660,8 @@ if __name__ == '__main__':
             exportar(arbol(raiz), os.path.join(OUT, f'casa_{key}.glb'))
             coll.hide_render = coll.hide_viewport = True
         datos = dict(W=casa.W, D=casa.D, alto=casa.ALTO, escala_personas=tiendas.PERSON_SCALE,
-                     cuartos={k: dict(nombre=v['nombre'], puntos={n: dict(x=p[0], y=p[1], rot=p[2]) for n, p in casa.PUNTOS[k].items()},
+                     cuartos={k: dict(nombre=v['nombre'], puntos={n: dict(x=p[0], y=p[1], rot=p[2], **({'acceso': [list(q) for q in p[3]]} if len(p) > 3 else {}))
+                                                              for n, p in casa.PUNTOS[k].items()},
                                       sitios=casa.SITIOS_DECO[k]) for k, v in casa.CUARTOS.items()},
                      notas=casa.NOTAS)
         with open(os.path.join(OUT, 'casa.json'), 'w', encoding='utf-8') as f:

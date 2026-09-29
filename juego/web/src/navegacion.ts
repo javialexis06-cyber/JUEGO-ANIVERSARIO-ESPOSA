@@ -2,14 +2,14 @@
 export type P = { x: number; y: number };
 
 export class Navegacion {
-  readonly celda = 0.25;
   readonly nx: number;
   readonly ny: number;
   private libre: Uint8Array;
   private x0: number;
   private y0: number;
 
-  constructor(W: number, D: number, margen = 0.35) {
+  /** `celda`: tamaño de cada casilla (la casa usa casillas más finas que la tienda). */
+  constructor(W: number, D: number, margen = 0.35, readonly celda = 0.25) {
     this.x0 = -W / 2 + margen;
     this.y0 = -D / 2 + margen;
     this.nx = Math.floor((W - 2 * margen) / this.celda);
