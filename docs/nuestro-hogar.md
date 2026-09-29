@@ -39,6 +39,17 @@ del sofá o de la silla, suelta la comida y va a lo nuevo (el otro celular lo ve
 - Los mimos se hacen a un lado del otro que quede libre (si ese lado cae dentro de un mueble, del otro lado); a quien
   duerme se le da desde el lado de su cama. La cajita de regalo aparece sobre piso libre.
 
+## Recuerdos en el baño y abrazados en la cama
+
+- **Bañarse** dura 30 s: en la tina quedan en ropa interior (Él sin camisa y en bóxer, Ella en ropa
+  interior rosada; la ropa comprada se esconde salvo el peinado) y al salir se vuelven a vestir.
+- Mientras tanto sale una burbuja de pensamiento con **recuerdos** al azar (10–15 s cada uno): los 20
+  recuerdos de verdad de Cien Puertas, cada uno con su dibujito animado y lo que se dijeron.
+- **Dormir** se puede aunque no tengan sueño (una siesta: se despiertan solos con la energía llena y
+  después de media hora, o con «Despertar»). Si los dos duermen, se abrazan: boca arriba juntitos o en
+  cucharita (el mismo en los dos celulares), y la burbuja mezcla recuerdos, **discusiones bobas** («¿treinta
+  días o cuarenta?», «¿Katherine o Lexy Katherine?»…) y **deseos a futuro**. Código: `src/casa/recuerdos.ts`.
+
 ## La tele (YouTube)
 
 - **Ver tele** en la sala: el personaje se sienta en el sofá y la tele se pone a pantalla completa, con la casa

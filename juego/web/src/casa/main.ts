@@ -20,6 +20,7 @@ import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
 import { Mascota } from './mascota';
 import { type EstadoTele, Tele } from './tele';
+import { PanelRecuerdos } from './recuerdos';
 import {
   Accion, alDia, animo, Casa, colorSeguro, Cuarto, CUARTOS, diasPara, EstadoPersonaje, Evento, FechaEspecial, hoy, Necesidad,
   NECESIDADES, NOMBRE_CUARTO, NOMBRE_NECESIDAD, NOMBRE_RANURA, nuevoId, otro, personajeNuevo, Ranura, RANURAS, Rol, Ropa, sumar,
@@ -112,6 +113,7 @@ async function iniciar() {
   bucle();
   controles();
   iniciarTele();
+  panelRecuerdos = new PanelRecuerdos();
   mostrar('carga', false);
   const modo = leerModo();
   modoGuardado = modo;
@@ -421,12 +423,16 @@ async function comer(id: string) {
 async function dormir() {
   if (!s) return;
   const e = est(yo);
-  if (e.energia >= 92) return toast('Todavía no tiene sueño.');
   const ahora = Date.now();
   seguir('cuarto');
   sonido.bostezo();
   await guardarYo({ ...e, cuarto: 'cuarto', actividad: { tipo: 'dormir', desde: ahora }, visto: ahora });
-  toast('A dormir. La energía sube mientras duerme (también con la app cerrada).', 3400);
+  toast(
+    e.energia >= 92
+      ? 'Una siestica aunque no tenga sueño. Si los dos se acuestan, se quedan abrazados.'
+      : 'A dormir. La energía sube mientras duerme (también con la app cerrada).',
+    3400,
+  );
 }
 
 async function despertar(auto = false) {
@@ -441,6 +447,20 @@ async function despertar(auto = false) {
 // La tele de la sala (YouTube con cola de videos)
 // ---------------------------------------------------------------------------
 let tele: Tele;
+let panelRecuerdos: PanelRecuerdos;
+
+/** Recuerdos flotantes: mientras mi personaje se baña (y se ve el baño) o mientras los dos duermen abrazados. */
+function revisarRecuerdos() {
+  if (!s || !panelRecuerdos) return;
+  const accionDe = (r: Rol) => mascotas[r].escenaActual.split('|')[1] ?? '';
+  const abrazados = dormido('el') && dormido('ella') && accionDe('el') === 'dormir' && accionDe('ella') === 'dormir';
+  // La misma forma de abrazarse en los dos celulares (sale de cuándo se acostaron)
+  const variante = abrazados ? (Math.floor(Math.max(s.personajes.el.actividad.desde, s.personajes.ella.actividad.desde) / 1000) % 2 ? 'cucharita' : 'arriba') : null;
+  for (const r of ['el', 'ella'] as Rol[]) mascotas[r].abrazarEnCama(variante);
+  if (accionDe(yo) === 'banar' && casa3d.actual === 'bano') panelRecuerdos.mostrar('bano');
+  else if (abrazados && casa3d.actual === 'cuarto') panelRecuerdos.mostrar('cama');
+  else if (panelRecuerdos.visible || accionDe(yo) === '') panelRecuerdos.reiniciar();
+}
 let teleAntes: EstadoTele = 'apagada';
 /** Mientras ven tele se quedan sentados (se renueva de a poco; si se cierra la app, se paran solos). */
 const TELE_SEG = 20 * 60;
@@ -1011,7 +1031,8 @@ async function alAccion(id: string) {
       return hojaNotas();
     case 'banar':
       sonido.burbuja();
-      await hacer('banar', 'bano', 8, { higiene: 100 });
+      // Un bañito largo: mientras tanto salen recuerdos de los dos
+      await hacer('banar', 'bano', 30, { higiene: 100 });
       for (let i = 1; i < 6; i++) setTimeout(() => sonido.burbuja(), i * 700);
       return;
     case 'lavar':
@@ -1912,6 +1933,7 @@ function bucle() {
       ultimaRevision = ahora;
       revisar();
       renovarTele();
+      revisarRecuerdos();
     }
     revisarVista();
     efectos();
@@ -1952,7 +1974,7 @@ function revisar() {
     if (hojaAbierta() && repintarHoja && repintarHoja === pintarPareja) repintarHoja();
   }
   pintarNecesidades($('necesidades'), est(yo));
-  if (dormido(yo) && est(yo).energia >= 100) void despertar(true);
+  if (dormido(yo) && est(yo).energia >= 100 && Date.now() - s!.personajes[yo].actividad.desde > 30 * 60_000) void despertar(true);
   const g = regaloPendiente();
   const m = mascotas[yo];
   if (g) void casa3d.mostrarRegalo(m.cuarto, m.p.pos.x + (yo === 'el' ? -0.7 : 0.7), m.p.pos.y - 0.5);

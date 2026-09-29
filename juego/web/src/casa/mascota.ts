@@ -27,6 +27,7 @@ const SUBIR: Record<string, number> = { sofa: 0.48, comer: 0.34, tina: 0.72, cam
 /** Altura final de cada acción (medida con el cuerpo en su pose contra el cojín, la silla, el agua y el colchón). */
 const ALTO = { sofa: 0.48, comer: 0.34, tina: 0.12, cama: 0.74 };
 const rad = THREE.MathUtils.degToRad;
+const EJE_Y = new THREE.Vector3(0, 1, 0);
 /** Cuánto se recuesta en la cama (90° sería plano). */
 const RECLINADO = rad(76);
 /** Dirección «a lo ancho de la pantalla» en el piso de la casa (la cámara está girada 38°). */
@@ -114,6 +115,11 @@ export class Mascota {
 
   /** Ropa puesta, peinado y tinte (lo que diga su estado). */
   vestuario: Vestuario | null = null;
+  /** Abrazados en la cama (los dos durmiendo): boca arriba juntitos o en cucharita (Él detrás). */
+  private abrazo: 'arriba' | 'cucharita' | null = null;
+  /** Giro sobre el eje largo del cuerpo (acostado de lado) y corrimiento hacia el centro de la cama. */
+  private rodar = 0;
+  private juntar = 0;
 
   get lado() {
     return this.rol === 'el' ? 'izq' : 'der';
@@ -305,6 +311,8 @@ export class Mascota {
     this.desdeActual = a.desde;
     this.retener = 0;
     this.soltar();
+    this.vestuario?.enBano(false);
+    if (accion !== 'dormir') this.abrazo = null;
     this.pasos = [];
     this.efecto = null;
     this.metaTumbado = 0;
@@ -327,7 +335,7 @@ export class Mascota {
         llegar('cama', () => {
           this.metaTumbado = 1;
           this.metaAlto = ALTO.cama;
-          this.bucle([{ pose: 'dormido', dur: 99, cara: 'dormido' }]);
+          this.bucle([{ pose: this.poseCama(), dur: 99, cara: 'dormido' }]);
           this.efecto = 'zzz';
         });
         break;
@@ -342,6 +350,8 @@ export class Mascota {
       case 'banar':
         llegar('tina', () => {
           this.metaAlto = ALTO.tina;
+          // Adentro de la tina, en ropa interior
+          this.vestuario?.enBano(true);
           this.bucle([{ pose: 'frotar_a', pose2: 'frotar_b', ritmo: 2.4, dur: 99, cara: 'feliz' }]);
           this.efecto = 'burbujas';
         });
@@ -384,6 +394,20 @@ export class Mascota {
           }
         } else llegar('centro', () => this.bucle([]));
     }
+  }
+
+  /** Los dos durmiendo en la cama: se juntan y se abrazan (o se separan si uno se despierta). */
+  abrazarEnCama(v: 'arriba' | 'cucharita' | null) {
+    if (v === this.abrazo) return;
+    this.abrazo = v;
+    if (this.escena.split('|')[1] === 'dormir' && !this.enCamino) this.bucle([{ pose: this.poseCama(), dur: 99, cara: 'dormido' }]);
+  }
+
+  private poseCama() {
+    if (!this.abrazo) return 'dormido';
+    // En cucharita Él abraza desde atrás; boca arriba cada uno estira el brazo hacia el otro
+    if (this.abrazo === 'cucharita') return this.rol === 'el' ? 'abrazo_der' : 'dormido';
+    return this.rol === 'el' ? 'abrazo_der' : 'abrazo_izq';
   }
 
   /** Sin animación (al abrir la app): ya acostado o sentado, sin la transición. */
@@ -638,11 +662,23 @@ export class Mascota {
     g.rotation.order = 'YXZ';
     // Acostado no del todo plano: la cabeza (grande) queda apoyada en la almohada, no hundida en el colchón
     g.rotation.x = -this.tumbado * RECLINADO;
+    g.rotation.z = 0;
     g.position.y += this.alto;
     if (this.tumbado > 0.001) {
       const avance = this.tumbado * 0.5;
       g.position.x += Math.sin(p.rot) * avance;
       g.position.z += Math.cos(p.rot) * avance;
+    }
+    // Abrazados: de lado (cucharita, los dos mirando hacia el lado de Ella) o boca arriba girados el uno al otro
+    const hacia = this.rol === 'el' ? 1 : -1;
+    const metaRodar = this.abrazo === 'cucharita' ? rad(68) : this.abrazo === 'arriba' ? rad(22) * hacia : 0;
+    const metaJuntar = this.abrazo === 'cucharita' ? (this.rol === 'el' ? 0.26 : -0.14) : this.abrazo === 'arriba' ? 0.14 * hacia : 0;
+    const kc = Math.min(1, dt * 2.5);
+    this.rodar += (metaRodar - this.rodar) * kc;
+    this.juntar += (metaJuntar - this.juntar) * kc;
+    if (this.tumbado > 0.3) {
+      g.position.x += this.juntar * this.tumbado;
+      if (Math.abs(this.rodar) > 0.001) g.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(EJE_Y, this.rodar * this.tumbado));
     }
     if (this.enMano) {
       g.updateMatrixWorld(true);

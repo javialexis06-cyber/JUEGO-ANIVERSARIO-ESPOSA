@@ -27,6 +27,17 @@ const TAPA: Record<Rol, Partial<Record<Ranura | 'medias' | 'copete', string[]>>>
   },
 };
 
+/** En la tina quedan en ropa interior: se esconden los zapatos, el chaleco y los detalles de la ropa… */
+const BANO_TAPA: Record<Rol, string[]> = {
+  el: ['cuello camiseta', 'ribete', 'pespunte', 'suciedad ropa', 'tenis', 'suela'],
+  ella: ['chaleco', 'solapa', 'tapa bolsillo', 'pespunte', 'cuello camiseta', 'ribete manga', 'suciedad ropa', 'tenis', 'suela', 'cordon', 'media', 'puño media'],
+};
+/** …y la camiseta y el pantalón de fábrica cambian de color: Él sin camisa y en bóxer, Ella en ropa interior rosada. */
+const BANO_COLOR: Record<Rol, Record<string, string>> = {
+  el: { 'torso camiseta': 'piel', pantalon: '#6b8fd6' },
+  ella: { 'torso camiseta': '#f7c6d2', pantalon: '#f7c6d2' },
+};
+
 /** Colores de pelo (tintes): el negro de fábrica no necesita tinte. */
 const MATERIAL_PELO = /cabello|\bpelo\b/i;
 
@@ -43,6 +54,8 @@ export class Vestuario {
   private turno = 0;
   private clave = '';
   private coloresPelo = new Map<THREE.Material, THREE.Color>();
+  private bano = false;
+  private originales = new Map<THREE.Mesh, THREE.Material | THREE.Material[]>();
 
   constructor(private p: Personaje, private rol: Rol) {}
 
@@ -77,6 +90,37 @@ export class Vestuario {
     }
     this.taparFabrica();
     this.teñir(colorPelo);
+    if (this.bano) this.ponerBano(true);
+  }
+
+  /** En la tina: en ropa interior (sin la ropa comprada, salvo el peinado). Al salir se vuelve a vestir. */
+  enBano(si: boolean) {
+    if (si === this.bano) return;
+    this.bano = si;
+    this.ponerBano(si);
+  }
+
+  private ponerBano(si: boolean) {
+    for (const [r, puesto] of this.puestos) if (r !== 'pelo') for (const m of puesto.mallas) m.visible = !si;
+    if (!si) {
+      for (const [m, mat] of this.originales) m.material = mat;
+      this.originales.clear();
+      this.taparFabrica();
+      return;
+    }
+    const tapa = TAPA[this.rol];
+    this.p.tapar([...BANO_TAPA[this.rol], ...(this.puestos.has('pelo') ? tapa.pelo ?? [] : [])]);
+    const piel = (this.p.partes.get('brazo der')?.[0] as THREE.Mesh | undefined)?.material as THREE.MeshStandardMaterial | undefined;
+    for (const [parte, color] of Object.entries(BANO_COLOR[this.rol])) {
+      for (const o of this.p.partes.get(parte) ?? []) {
+        const m = o as THREE.Mesh;
+        if (!m.isMesh || this.originales.has(m)) continue;
+        this.originales.set(m, m.material);
+        const nuevo = color === 'piel' && piel ? piel : ((Array.isArray(m.material) ? m.material[0] : m.material).clone() as THREE.MeshStandardMaterial);
+        if (color !== 'piel') nuevo.color.set(color);
+        m.material = nuevo;
+      }
+    }
   }
 
   private quitar(r: Ranura) {
