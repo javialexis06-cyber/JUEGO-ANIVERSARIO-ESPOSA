@@ -8,6 +8,8 @@ import { DIBUJOS } from './ui';
 
 /** Medidas del cuarto: pared del fondo en z = 0, paredes laterales en x = ±ANCHO/2. */
 export const CUARTO = { ancho: 7.8, alto: 3.2, fondo: 6.5, grueso: 0.25 };
+/** Dónde cuelga la lámpara de la casa (a un lado: nada cuelga delante de la puerta). */
+export const LAMPARA = { x: -1.2, z: 1.0 };
 
 export interface Tema {
   capitulo: number;
@@ -372,7 +374,8 @@ function luciernagas(g: THREE.Group, n = 24) {
   const puntos: { o: THREE.Mesh; x: number; y: number; z: number; f: number }[] = [];
   for (let i = 0; i < n; i++) {
     const o = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 5), m);
-    const p = { o, x: -3.6 + ((i * 0.37) % 1) * 7.2, y: 0.5 + ((i * 0.61) % 1) * 2.2, z: -0.5 + ((i * 0.83) % 1) * 2.2, f: i * 1.7 };
+    // (nunca delante de la puerta)
+    const p = { o, x: (i % 2 ? -1 : 1) * (1.1 + ((i * 0.37) % 1) * 2.5), y: 0.5 + ((i * 0.61) % 1) * 2.2, z: -0.5 + ((i * 0.83) % 1) * 2.2, f: i * 1.7 };
     o.position.set(p.x, p.y, p.z);
     puntos.push(p);
     g.add(o);
@@ -720,7 +723,7 @@ export const TEMAS: Record<number, Tema> = {
       piso(g, tablas('#cf9d70', '#c38f63'), 2.5);
       techo(g, '#fbf1e6');
       ventanaLado(g, cieloNoche());
-      lamparaTecho(g, 0, 1.6, '#ffd8e6');
+      lamparaTecho(g, LAMPARA.x, LAMPARA.z, '#ffd8e6');
       tapete(g, '#e8b4b8', 0.4, 2.3, 1.3);
       bombillos(g, new THREE.Vector3(-3.6, 3.0, 0.12), new THREE.Vector3(-0.95, 2.85, 0.12), 10, 0.28);
       bombillos(g, new THREE.Vector3(0.95, 2.85, 0.12), new THREE.Vector3(3.6, 3.0, 0.12), 10, 0.28);
@@ -771,7 +774,7 @@ export const TEMAS: Record<number, Tema> = {
         g.add(tira);
       }
       // Marco de luz alrededor de la compuerta
-      const marco = toro(HUECO.w / 2 + 0.28, 0.035, new THREE.MeshBasicMaterial({ color: '#6ac8ff' }), undefined);
+      const marco = toro(HUECO.w / 2 + 0.28, 0.035, new THREE.MeshBasicMaterial({ color: '#6ac8ff' }), 'marco de luz');
       en(marco, 0, HUECO.h / 2 + 0.05, 0.08);
       marco.scale.y = 1.45;
       g.add(marco);
@@ -1124,7 +1127,7 @@ export const TEMAS: Record<number, Tema> = {
       piso(g, tablas('#cf9d70', '#c38f63'), 2.5);
       techo(g, '#fbf1e6');
       ventanaLado(g, cieloNoche());
-      lamparaTecho(g, 0, 1.6);
+      lamparaTecho(g, LAMPARA.x, LAMPARA.z);
       tapete(g, '#e8b4b8', 0.4, 2.3, 1.3);
       // Un corazón pintado sobre la puerta (la casa de los dos)
       const c = letrero(0.5, 0.42, (cx, w, h) => {

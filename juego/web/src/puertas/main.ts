@@ -15,6 +15,7 @@ import { otro, type Rol } from '../casa/modelo';
 import { elegirModelos, liberarEsqueletos } from '../recursos';
 import * as sonido from '../sonido';
 import { tema } from './cuarto';
+import { Desorden, esquinaNarrador, zonasNarrador } from './desorden';
 import { Entrada } from './entrada';
 import { Escena, OJO } from './escena';
 import { CAPITULOS, capituloDe, elegir, FINAL_DE, HALLAZGO, INICIO, PUERTAS, RECUERDOS, recuerdoDe, voz } from './historia';
@@ -26,14 +27,20 @@ import { ProbadorReal } from './probador';
 import { Puerta } from './puerta';
 import { Sensores } from './sensores';
 import { idRecuerdo } from './voces';
-import { $, aviso, esc, Inventario, mostrar, Paneles, pausa, tarjetaRecuerdo } from './ui';
+import { gastarMonedas, saldo } from './monedero';
+import { HUECO } from './puerta';
+import { rectDeCaja } from './revision';
+import * as sfx from './sonidos';
+import { $, aviso, esc, Inventario, mostrar, Paneles, pausa, tarjetaRecuerdo, type Antojo } from './ui';
 
 const params = new URLSearchParams(location.search);
 const CLAVE = 'cien-puertas';
 const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
-const MONEDAS_PUERTA = 5;
-const MONEDAS_CAPITULO = 40;
-const PISTA_TRAS = 40;
+// Las monedas van a la casa (un cuarto de lo que era: la casa se gana despacio)
+const MONEDAS_PUERTA = 1;
+const MONEDAS_CAPITULO = 10;
+/** A partir de cuándo late el botón de los antojos (siempre está, pero cuesta). */
+const PISTA_TRAS = 60;
 const SIN_HISTORIA = params.get('sinhistoria') === '1';
 
 interface Progreso {
@@ -82,7 +89,8 @@ let cuarto: THREE.Group | null = null;
 let puerta: Puerta | null = null;
 let capActual = 0;
 let jugando = 0;
-let ctx: (Ctx & { _salir: () => void; _resuelto: Promise<void>; _fallos: number; _ultimoToque: number }) | null = null;
+type CtxJuego = Ctx & { _salir: () => void; _resuelto: Promise<void>; _fallos: number; _ultimoToque: number; _desorden?: Desorden };
+let ctx: CtxJuego | null = null;
 
 // ---------------------------------------------------------------------------
 // Arranque
@@ -95,6 +103,8 @@ async function iniciar() {
   barra(0.1, 'Buscando las llaves…');
   escena = new Escena($('lienzo') as HTMLCanvasElement);
   escena.rapidez = Number(params.get('rapido')) || 1;
+  // Revisión automática: sin dibujar (va mucho más rápido)
+  if (params.get('revisar') === '1') escena.dibujar = false;
   sensores = new Sensores();
   sensores.teclado();
   entrada = new Entrada($('lienzo') as HTMLCanvasElement, escena.camara);
@@ -106,6 +116,11 @@ async function iniciar() {
   barra(0.4, 'Despertando a quien te acompaña…');
   narrador = new Narrador(otro(yo), escena);
   await narrador.cargar();
+  // El narrador empuja lo que tenga en los pies cuando camina
+  escena.cada(() => {
+    if (ctx?._desorden && narrador.p.moviendo && narrador.p.grupo.visible) ctx._desorden.empujar(narrador.p.pos.x, -narrador.p.pos.y);
+    if (tamPuerta !== `${window.innerWidth}x${window.innerHeight}`) ubicarPuerta();
+  });
   barra(1, 'Listo');
   let antes = performance.now();
   const bucle = (t: number) => {
@@ -134,7 +149,7 @@ function controles() {
     sonido.toque();
     salirAlMapa();
   };
-  $('btn-pista').onclick = () => pista();
+  $('btn-pista').onclick = () => void antojo();
   $('btn-volver').onclick = () => void ctx?.volver();
   $('btn-sonido').onclick = () => {
     const callado = sonido.alternar();
@@ -245,11 +260,21 @@ async function jugar(n: number) {
   ctx = c;
   await nivel.montar(c);
   if (turno !== jugadas) return;
+  // Las cosas regadas del cuarto (sin tapar la puerta ni lo del acertijo)
+  c._desorden = new Desorden(c, escena, cap, {
+    interfaz: zonasInterfaz(),
+    narrador: zonasNarrador(esquinaNarrador(escena.camara)),
+    voz: (t) => voz(t, otro(yo)),
+    alRomper: (primera) => narrador.susto(primera && !pistaDada.length ? elegir(ROTO, n) : undefined),
+  });
+  c._desorden.sembrar(nivel.desorden);
+  ubicarPuerta();
   $('hud-puerta').textContent = `Puerta ${n}`;
   $('hud-lugar').textContent = capituloDe(n).titulo;
   mostrar('hud', true);
   mostrar('btn-pista', false);
   mostrar('btn-volver', false);
+  $('btn-pista').classList.remove('latiendo');
   // El narrador cuenta la historia
   entrada.bloqueada = true;
   narrador.animos = 0;
@@ -269,11 +294,24 @@ async function jugar(n: number) {
   entrada.bloqueada = false;
   const t0 = escena.t;
   c._ultimoToque = escena.t;
-  let pistaVisible = false;
+  // El ambiente del escenario (pájaros, olas, grillos…)
+  const amb = sfx.AMBIENTE[cap];
+  if (amb && !sfx.SIN_AMBIENTE.has(n)) {
+    let falta = 2 + Math.random() * 3;
+    c.cada((dt) => {
+      falta -= dt;
+      if (falta > 0) return;
+      falta = amb.cada[0] + Math.random() * (amb.cada[1] - amb.cada[0]);
+      amb.sonar();
+    });
+  }
+  // Los antojos (pistas pagadas) están desde el comienzo; el botón late después de un rato
+  mostrar('btn-pista', true);
+  let pistaLate = false;
   c.cada((_, t) => {
-    if (!pistaVisible && t - t0 > (c._fallos >= 3 ? PISTA_TRAS / 2 : PISTA_TRAS)) {
-      pistaVisible = true;
-      mostrar('btn-pista', true);
+    if (!pistaLate && t - t0 > (c._fallos >= 3 ? PISTA_TRAS / 2 : PISTA_TRAS)) {
+      pistaLate = true;
+      $('btn-pista').classList.add('latiendo');
     }
     // Un buen rato sin tocar nada: ánimo (nunca pistas)
     if (t - c._ultimoToque > 55) {
@@ -292,7 +330,8 @@ async function jugar(n: number) {
   await puerta!.abrir();
   const primera = n > progreso.hasta;
   const segundos = escena.t - t0;
-  const estrellas = pistasUsadas ? 1 : segundos < 90 ? 3 : 2;
+  // Con pista grande, una estrella; con la pistica, máximo dos
+  const estrellas = pistaDada.length >= 2 ? 1 : pistaDada.length === 1 ? Math.min(2, segundos < 90 ? 3 : 2) : segundos < 90 ? 3 : 2;
   progreso.estrellas[n] = Math.max(progreso.estrellas[n] ?? 0, estrellas);
   if (primera) {
     progreso.hasta = n;
@@ -324,7 +363,35 @@ async function jugar(n: number) {
   }
 }
 let jugadas = 0;
-let pistasUsadas = 0;
+/** Las pistas que ya soltó el narrador en esta puerta (de la 1 a la 3). */
+let pistaDada: string[] = [];
+
+/** Lo que dice el narrador cuando algo se rompe (una vez por puerta). */
+const ROTO = ['¡Ay, eso era de mi abuela!', 'Tranquil{a|o}… después lo pegamos.', '¡Uy! Hagamos como que no pasó.', 'Eso no era la llave, mi amor.', '¡Mi cosita favorita!'];
+
+/** Rectángulo de la puerta en la pantalla: el globo del narrador se acomoda sin taparla. */
+let tamPuerta = '';
+function ubicarPuerta() {
+  if (!escena || !narrador) return;
+  tamPuerta = `${window.innerWidth}x${window.innerHeight}`;
+  const cam = escena.camara.clone();
+  cam.position.copy(OJO);
+  cam.lookAt(0, 1.15, 0);
+  cam.updateMatrixWorld();
+  const caja = new THREE.Box3(new THREE.Vector3(-HUECO.w / 2 - 0.12, 0, 0), new THREE.Vector3(HUECO.w / 2 + 0.12, HUECO.h + 0.12, 0.05));
+  narrador.globo.evitar = rectDeCaja(caja, cam, window.innerWidth, window.innerHeight);
+}
+
+/** Zonas de la interfaz donde no se riegan cosas (se tocarían los botones en vez de ellas). */
+function zonasInterfaz() {
+  const W = window.innerWidth, H = window.innerHeight;
+  return [
+    { x0: 0, y0: 0, x1: 150, y1: 70 },
+    { x0: W - 190, y0: 0, x1: W, y1: 70 },
+    { x0: W - 80, y0: 60, x1: W, y1: H },
+    { x0: W - 130, y0: H - 70, x1: W, y1: H },
+  ];
+}
 
 async function cruzar() {
   const f = $('fundido');
@@ -353,18 +420,67 @@ function pagar(monedas: number) {
   } catch {
     /* sin almacenamiento */
   }
-  aviso(`+${monedas} monedas para la casa`);
+  aviso(`+${monedas} ${monedas === 1 ? 'moneda' : 'monedas'} para la casa`);
 }
 
-async function pista() {
+/** Lo que dice el narrador antes de soltar la pista (según el dulce). */
+const ANTES_DE_PISTA: Record<number, string[]> = {
+  1: ['Mmm, rico… Bueno, solo un poquito:', 'Un caramelo, una pistica:', 'Ay, qué dulce eres. Te digo algo chiquito:'],
+  2: ['¡Chocolates! Así sí se habla:', 'Con chocolate hasta te ayudo un poco más:', 'Mmm… Está bien, te lo digo más claro:'],
+  3: ['¡Fresas con crema! Por esto te lo digo casi todo:', 'Me compraste, lo admito. Escucha bien:', 'Con fresas no me puedo negar:'],
+};
+const SIN_PLATA = ['¿Sin dulce? Así no se vale, mi amor.', 'Primero mi antojo… y no alcanza.', 'Esa alcancía está flaquita. Tú puedes sin mí.'];
+
+/** Los antojos del narrador: se le compra un dulce y a cambio suelta una pista (más grande mientras más cueste). */
+async function antojo() {
   const n = jugando;
   const nivel = NIVELES[n];
-  if (!nivel) return;
-  sonido.aviso();
-  pistasUsadas++;
-  const segunda = $('btn-pista').dataset.vista === String(n);
-  $('btn-pista').dataset.vista = String(n);
-  await paneles.nota(`<p class="pista-titulo">💡 Pista${segunda ? ' (la más clara)' : ''}</p><p>${esc(nivel.pistas[segunda ? 1 : 0])}</p>`, 'pista');
+  if (!nivel || !ctx || entrada.bloqueada || paneles.abierto) return;
+  sonido.toque();
+  const quien = nombreDe(otro(yo));
+  const elegido = await paneles.antojos({ quien, yaDio: pistaDada, saldo: saldo().then((s) => s.total) });
+  if (!elegido || jugando !== n) return;
+  entrada.bloqueada = true;
+  try {
+    if (!(await gastarMonedas(elegido.precio))) {
+      narrador.negarse(elegir(SIN_PLATA, n + pistaDada.length));
+      return;
+    }
+    sfx.monedas(3);
+    // Si la cámara estaba acercada a algo, se vuelve para ver al narrador comer
+    if (!escena.enVistaGeneral) await ctx?.volver();
+    await darDulce(elegido);
+    if (jugando !== n) return;
+    await narrador.comer();
+    pistaDada = nivel.pistas.slice(0, elegido.nivel);
+    await narrador.decir([elegir(ANTES_DE_PISTA[elegido.nivel], n), nivel.pistas[elegido.nivel - 1]]);
+    void narrador.irEsquina();
+  } finally {
+    if (jugando === n) entrada.bloqueada = false;
+  }
+}
+
+/** El dulce vuela del botón hasta el narrador. */
+function darDulce(a: Antojo) {
+  const el = document.createElement('div');
+  el.className = 'item-volando';
+  el.innerHTML = a.icono;
+  const b = $('btn-pista').getBoundingClientRect();
+  el.style.left = `${b.left + b.width / 2}px`;
+  el.style.top = `${b.top + b.height / 2}px`;
+  document.body.appendChild(el);
+  const cabeza = narrador.p.grupo.localToWorld(new THREE.Vector3(0, 1.3, 0));
+  const s = escena.aPantalla(cabeza);
+  requestAnimationFrame(() => {
+    el.style.left = `${s.x}px`;
+    el.style.top = `${s.y}px`;
+  });
+  return new Promise<void>((listo) =>
+    setTimeout(() => {
+      el.remove();
+      listo();
+    }, 650),
+  );
 }
 
 function terminarCtx() {
@@ -392,12 +508,11 @@ function crearCtx(n: number) {
   let resolver!: () => void;
   const resuelto = new Promise<void>((r) => (resolver = r));
   let hecho = false;
-  pistasUsadas = 0;
+  pistaDada = [];
   entrada.limpiar();
   inv.vaciar();
-  $('btn-pista').dataset.vista = '';
   const p = puerta!;
-  const c: Ctx & { _salir: () => void; _resuelto: Promise<void>; _fallos: number; _ultimoToque: number } = {
+  const c: CtxJuego = {
     n,
     escena,
     g,
@@ -536,7 +651,7 @@ function volarAlInventario(item: string, x: number, y: number) {
 function pendiente(n: number): Nivel {
   return {
     titulo: `Puerta ${n}`,
-    pistas: ['Esta puerta todavía se está construyendo.', 'Tócala para pasar.'],
+    pistas: ['Esta puerta todavía se está construyendo.', 'Tócala para pasar.', 'Tócala para pasar.'],
     montar(c) {
       c.puerta.bloqueada = false;
       c.tocar(c.puerta.toque, () => c.resolver());
@@ -574,6 +689,21 @@ const probador = () => new ProbadorReal(() => escena.escena, escena, entrada, pa
     return { ...s, obj: b?.obj.name ?? null, cual: b?.hit.object.name ?? null };
   },
   camara: () => escena.camara.position.toArray(),
+  /** Qué tapa la puerta desde la cámara de siempre (objetos, narrador, interfaz). */
+  tapan: async () => {
+    const { revisarPuerta } = await import('./revisar');
+    return revisarPuerta(escena, puerta!, cuarto!, ctx?.g ?? null, ctx?._desorden ?? null, narrador);
+  },
+  /** Cuántas cosas hay regadas y cuántas se rompieron (pruebas). */
+  desorden: () => ({
+    cosas: ctx?._desorden?.cuerpos.length ?? 0,
+    rotas: ctx?._desorden?.cuerpos.filter((b) => b.roto).length ?? 0,
+    lista: ctx?._desorden?.cuerpos.map((b) => `${b.id} ${b.pos.toArray().map((v) => v.toFixed(2)).join(',')} desde ${b.origen.toArray().map((v) => v.toFixed(2)).join(',')}`),
+  }),
+  /** Tira una cosa del desorden con cierta velocidad (pruebas de la física). */
+  lanzar: (i: number, vx: number, vy: number, vz: number) => ctx?._desorden?.lanzar(i, new THREE.Vector3(vx, vy, vz)),
+  /** Compra un antojo (pruebas). */
+  antojo: () => antojo(),
   /** Un dato de un objeto del cuarto (si es función, lo que devuelve). */
   dato: (nombre: string, clave: string) => {
     const v = probador().obj(nombre).userData[clave];

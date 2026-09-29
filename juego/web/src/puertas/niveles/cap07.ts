@@ -68,7 +68,11 @@ function corazonChico(s: number) {
 
 const tiro: Nivel = {
   titulo: 'Tiro al blanco',
-  pistas: ['Solo cuentan los patitos con corazón. El botón rojo dispara justo por la mira.', 'Toca el botón cuando un patito con corazón pase dentro del aro rojo. Hay que tumbar los tres.'],
+  pistas: [
+    'No todos los patitos valen lo mismo.',
+    'El botón rojo dispara justo por el aro. Fíjate cuáles patitos tienen algo especial.',
+    'Dispara solo cuando un patito con corazón pase dentro del aro rojo; hay que tumbarlos a todos.',
+  ],
   montar(c) {
     const cx = 1.75, yP = 1.24, zP = 0.25, x0 = 0.9, L = 1.7, N = 7;
     c.g.add(en(caja(1.9, 1.0, 0.06, mat('#3b2f6c'), 0.02), cx, 1.45, 0.12));
@@ -185,7 +189,11 @@ const COLORES_RUEDA = ['#e4574b', '#F7C948', '#8FD6B9', '#8EC5F0', '#b48ef0', '#
 const ROSADO = 5;
 const rueda: Nivel = {
   titulo: 'La rueda de colores',
-  pistas: ['Los tres anillos giran por separado: arrastra el dedo en círculo sobre cada uno. La banderita de arriba dice qué color va arriba.', 'Deja los tres anillos con los colores alineados en cada rayo y el rosado arriba, bajo la banderita.'],
+  pistas: [
+    'Esa rueda está toda revuelta.',
+    'Los tres anillos giran por separado, arrastrando en círculo sobre cada uno. La banderita de arriba tiene algo que decir.',
+    'Deja los colores de los tres anillos alineados en cada rayo, con el color de la banderita arriba.',
+  ],
   montar(c) {
     const C = new THREE.Vector3(1.75, 1.5, 0.1);
     const radios: [number, number][] = [[0.1, 0.25], [0.27, 0.42], [0.44, 0.6]];
@@ -324,7 +332,11 @@ const rueda: Nivel = {
 const VUELTAS_ALGODON = 6;
 const algodon: Nivel = {
   titulo: 'Algodón de azúcar',
-  pistas: ['El algodón crece dando vueltas con el dedo sobre la olla. Fíjate hacia dónde apunta la flecha del letrero.', 'Dibuja círculos seguidos sobre la olla como las agujas del reloj (al revés se deshace). Seis vueltas y sale con sorpresa.'],
+  pistas: [
+    'La máquina de algodón está esperando.',
+    'El algodón crece dando vueltas con el dedo sobre la olla. El letrero dice hacia dónde.',
+    'Dibuja círculos seguidos sobre la olla en el sentido de la flecha del letrero; al revés se deshace.',
+  ],
   montar(c) {
     const O = new THREE.Vector3(1.55, 0.8, 0.95);
     const carrito = grupo('carrito algodon');
@@ -468,7 +480,11 @@ function osito(nombre: string, color: string) {
 const PELUCHES = { minX: 1.35, maxX: 2.25, oso: 2.05, pal0: 1.98, pal1: 2.22 };
 const peluches: Nivel = {
   titulo: 'La máquina de peluches',
-  pistas: ['Mueve la garra inclinando el celular (o con la palanca) y suelta con el botón rojo. El osito café tiene la llave.', 'Pon la garra justo encima del osito café, bien centrada, y toca el botón: lo lleva hasta la salida de abajo.'],
+  pistas: [
+    'Uno de esos peluches tiene algo que no es de peluche.',
+    'La garra se mueve inclinando el celular (o con la palanca) y el botón rojo la baja.',
+    'Centra la garra justo encima del peluche que tiene algo brillante y toca el botón.',
+  ],
   montar(c) {
     const X = 1.8, Z = 0.75, P = PELUCHES;
     c.g.add(en(caja(1.1, 0.8, 0.6, mat('#e4574b'), 0.03), X, 0.4, Z));
@@ -651,7 +667,11 @@ const peluches: Nivel = {
 const FUERZA = { meta: 18, max: 24, baja: 2 };
 const martillo: Nivel = {
   titulo: 'El martillo de fuerza',
-  pistas: ['Primero toma impulso (toca el mazo muchas veces seguidas) y luego ¡pum!: desliza el dedo hacia abajo.', 'Toca el mazo muy rápido hasta que casi todas las luces de la torre estén prendidas y enseguida desliza hacia abajo.'],
+  pistas: [
+    'La campana de arriba nunca ha sonado.',
+    'El mazo necesita impulso antes del golpe: fíjate en las luces de la torre.',
+    'Toca el mazo muy rápido hasta que casi todas las luces estén prendidas, y ahí mismo desliza hacia abajo.',
+  ],
   montar(c) {
     const X = 2.1;
     c.g.add(en(caja(0.7, 0.06, 0.6, mat('#e4574b'), 0.02), X, 0.03, 0.85));
@@ -769,7 +789,11 @@ const NUMERO: Record<string, string> = { '☾': '3', '★': '1', '♥': '7', '�
 const ORDEN_BOLA = ['♥', '☾', '☀', '★'];
 const cartas: Nivel = {
   titulo: 'Las cartas de la adivina',
-  pistas: ['Destapa las cartas de a dos y encuentra las parejas. Cuando estén todas, la bola de cristal dice el orden.', 'Cada símbolo trae un número en la esquina. La bola muestra ♥ ☾ ☀ ★: pon sus números en ese orden en el teclado.'],
+  pistas: [
+    'La adivina dejó el juego a medias.',
+    'Destapa las cartas de a dos y encuentra las parejas. La bola de cristal ayuda al final.',
+    'Con todas las parejas halladas, la bola muestra un orden de símbolos; cada símbolo trae su número en la esquina de la carta.',
+  ],
   montar(c) {
     const fondo = letrero(1.6, 1.12, (cv, w, h) => {
       cv.fillStyle = '#3b2f6c';
@@ -903,7 +927,11 @@ const cartas: Nivel = {
 const PALABRA = 'BESOS';
 const globos: Nivel = {
   titulo: 'Los globos',
-  pistas: ['Cada globo tiene una letra. Reviéntalos en el orden que responda la pregunta del letrero.', '¿Qué te daría mil veces? B-E-S-O-S. Si te equivocas, los globos se vuelven a inflar.'],
+  pistas: [
+    'Esos globos tienen letras.',
+    'El letrero hace una pregunta; los globos tienen la respuesta, pero en desorden.',
+    'Revienta los globos en el orden de las letras que responden la pregunta del letrero.',
+  ],
   montar(c) {
     c.g.add(en(caja(1.6, 1.3, 0.05, mat('#c49468'), 0.02), 1.8, 1.45, 0.03));
     c.g.add(en(caja(1.7, 0.8, 0.35, mat('#e4574b'), 0.03), 1.8, 0.4, 0.45));
@@ -1052,7 +1080,11 @@ function caballito(nombre: string, color: string) {
 const CARRUSEL = { x: 1.95, z: 0.9, r: 0.55, vuelta: 8, sube: 2.4 };
 const carrusel: Nivel = {
   titulo: 'El carrusel',
-  pistas: ['El caballito dorado lleva la llave, pero solo se alcanza cuando pasa por delante y va abajo.', 'Espera a que el caballito dorado esté al frente (del lado tuyo) y en lo más bajo de su subida, y tócalo justo ahí.'],
+  pistas: [
+    'Uno de esos caballitos brilla más que los otros.',
+    'El caballito dorado lleva algo, pero solo se alcanza en cierto momento de la vuelta.',
+    'Tócalo cuando pase por delante y esté en lo más bajo de su subida.',
+  ],
   montar(c) {
     const K = CARRUSEL;
     const base = grupo('carrusel');
@@ -1163,7 +1195,11 @@ function rayasTextura() {
 const CLAVE_ESPEJO = '2517';
 const espejos: Nivel = {
   titulo: 'La casa de los espejos',
-  pistas: ['El letrero de la izquierda está escrito al revés, como en un espejo. ¿Y si le pones un espejo al lado?', 'Arrastra el espejito de mano hasta el letrero: en el espejo se lee la clave derecha. Escríbela en el teclado junto a la puerta.'],
+  pistas: [
+    'Aquí nada se ve derecho.',
+    'El letrero de la izquierda está escrito al revés, como en un espejo.',
+    'Pon el espejito de mano junto al letrero para leerlo derecho; la clave va en el teclado junto a la puerta.',
+  ],
   montar(c) {
     const cartel = letrero(0.8, 0.5, (cv, w, h) => {
       cv.fillStyle = '#fff8ee';
@@ -1262,7 +1298,11 @@ const espejos: Nivel = {
 const CLAVE_TIQUETE = ['2', '5', '1', '0'];
 const tiquete: Nivel = {
   titulo: 'El tiquete',
-  pistas: ['La clave de la carpa está en la letra pequeña del tiquete. Acércate y amplía con dos dedos, como en una foto.', 'Toca el tiquete y pellizca hacia afuera (o tócalo otra vez) hasta leer la línea de abajo: dice 2 5 1 0. Luego el candado de la carpa.'],
+  pistas: [
+    'Sin tiquete no se entra a la carpa.',
+    'El tiquete tiene más letras de las que se alcanzan a ver.',
+    'Acércate al tiquete y amplía con dos dedos, como una foto, hasta leer la letra más pequeña; va en el candado de la carpa.',
+  ],
   montar(c) {
     c.g.add(en(caja(1.2, 1.0, 0.5, mat('#8EC5F0'), 0.03), 1.8, 0.5, 0.6));
     c.g.add(en(caja(1.3, 0.05, 0.6, mat('#fff3e0'), 0.02), 1.8, 1.02, 0.62));

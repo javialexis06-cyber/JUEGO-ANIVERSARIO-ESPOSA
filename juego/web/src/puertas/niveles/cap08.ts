@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import * as sonido from '../../sonido';
 import { piedraTextura } from '../cuarto';
+import * as sfx from '../sonidos';
 import { caja, cilindro, corazon, en, esfera, forma, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
 import { candadoPuerta, limites, llave, planoPiso } from './piezas';
@@ -42,7 +43,11 @@ const pergamino = (w: number, h: number, pintar: (c: CanvasRenderingContext2D, W
 // ---------------------------------------------------------------------------
 const cadenas: Nivel = {
   titulo: 'Las dos cadenas',
-  pistas: ['Cada torno sube un lado de la reja. Uno solo no puede con ella.', 'Mantén presionados los dos tornos al mismo tiempo, con dos dedos, hasta que la reja suba.'],
+  pistas: [
+    'Esa reja pesa demasiado para un solo lado.',
+    'Cada torno sube un lado de la reja. Uno solo no puede con ella.',
+    'Mantén presionados los dos tornos al mismo tiempo, con dos dedos, hasta que la reja suba.',
+  ],
   montar(c) {
     const tornos = [-1, 1].map((s) => {
       const t = grupo(s < 0 ? 'torno izq' : 'torno der');
@@ -67,8 +72,8 @@ const cadenas: Nivel = {
     });
     // Cadenas de cada torno a la reja
     const cadena = (s: number) => {
-      const g = grupo();
-      const a = new THREE.Vector3(s * 1.35, 1.15, 0.5), b = new THREE.Vector3(s * 0.5, 2.3, 0.12);
+      const g = grupo('marco cadena');
+      const a = new THREE.Vector3(s * 1.35, 1.15, 0.5), b = new THREE.Vector3(s * 0.74, 2.42, 0.12);
       const n = 12;
       for (let i = 0; i < n; i++) {
         const e = toro(0.035, 0.01, mat('#8a94a0', { metal: 0.7, rough: 0.35 }), undefined);
@@ -125,7 +130,11 @@ const cadenas: Nivel = {
 // ---------------------------------------------------------------------------
 const dragon: Nivel = {
   titulo: 'El dragón dormido',
-  pistas: ['La llave está en la punta de la cola del dragón. Si la jalas rápido, se despierta.', 'Arrastra la llave muy despacito, lejos del dragón (hacia la izquierda), y luego tócala para tomarla.'],
+  pistas: [
+    'Ese dragón tiene el sueño liviano.',
+    'Lo que buscas está en la punta de su cola. Si lo jalas rápido, se despierta.',
+    'Arrastra lo de la cola muy, muy despacito, alejándolo del dragón, y luego tómalo.',
+  ],
   montar(c) {
     const D = new THREE.Vector3(1.9, 0, 0.75);
     const d = grupo('dragon');
@@ -221,8 +230,14 @@ const dragon: Nivel = {
         if (!lejos) k.position.copy(inicio);
       },
     });
+    let ronca = 1;
     c.cada((dt, t) => {
       despierto = Math.max(0, despierto - dt);
+      ronca -= dt;
+      if (ronca <= 0 && despierto <= 0 && !lejos) {
+        ronca = 3.6;
+        sfx.ronquido();
+      }
       ojos.forEach((o) => (o.visible = despierto <= 0));
       abiertos.forEach((o) => (o.visible = despierto > 0));
       cuerpo.scale.y = 0.62 + Math.sin(t * 1.6) * 0.02;
@@ -249,7 +264,11 @@ const dragon: Nivel = {
 const CLAVE_VELAS = ['1', '5', '0', '9'];
 const velas: Nivel = {
   titulo: 'Las velas',
-  pistas: ['Lo escrito en la pared solo se ve sin la luz de las velas. Sopla al celular para apagarlas.', 'Sopla tres veces (o mantén el dedo sobre cada llama un segundo). Aparece 15 · 09, el día que se conocieron: esa es la clave del candado.'],
+  pistas: [
+    'Hay demasiada luz para leer la pared.',
+    'Lo escrito en la pared solo se ve con las velas apagadas.',
+    'Apaga las velas soplando cerca del micrófono (o manteniendo el dedo sobre cada llama); lo que aparece es la clave del candado.',
+  ],
   montar(c) {
     const M = new THREE.Vector3(2.2, 0, 0.75);
     c.g.add(en(caja(0.9, 0.7, 0.45, mat('#5e4636'), 0.03), M.x, 0.35, M.z));
@@ -339,17 +358,21 @@ const velas: Nivel = {
 // ---------------------------------------------------------------------------
 type Dir2 = [number, number];
 const ESPEJOS: { x: number; z: number; inicial: 'a' | 'b'; meta: 'a' | 'b' }[] = [
-  { x: -0.6, z: 0.6, inicial: 'b', meta: 'a' },
-  { x: -0.6, z: 1.45, inicial: 'b', meta: 'a' },
-  { x: 1.0, z: 1.45, inicial: 'a', meta: 'b' },
+  { x: -1.05, z: 0.6, inicial: 'b', meta: 'a' },
+  { x: -1.05, z: 1.45, inicial: 'b', meta: 'a' },
+  { x: 1.1, z: 1.45, inicial: 'a', meta: 'b' },
 ];
 const luzGema: Nivel = {
   titulo: 'La luz de la gema',
-  pistas: ['Toca los espejos para girarlos. La luz de la lámpara tiene que llegar hasta la gema.', 'Sigue el rayo: el primer espejo lo manda hacia ti, el segundo a la derecha y el tercero de vuelta hacia la gema.'],
+  pistas: [
+    'Esa gema está apagada.',
+    'Toca los espejos para girarlos: la luz de la lámpara tiene que llegar hasta la gema.',
+    'Sigue el rayo desde la lámpara, espejo por espejo, y gira solo los que lo mandan para donde no es.',
+  ],
   montar(c) {
     const Y = 0.5;
-    const S = { x: -1.7, z: 0.6 };
-    const G = { x: 1.0, z: 0.45 };
+    const S = { x: -2.0, z: 0.6 };
+    const G = { x: 1.1, z: 0.45 };
     const lampara = grupo('lampara');
     lampara.add(en(cilindro(0.12, 0.15, 0.4, mat('#9a918a')), 0, 0.2, 0), en(caja(0.18, 0.16, 0.16, new THREE.MeshStandardMaterial({ color: '#fff3c0', emissive: '#ffd070', emissiveIntensity: 1 }), 0.03), 0, 0.5, 0));
     en(lampara, S.x, 0, S.z);
@@ -458,16 +481,20 @@ function escudoForma(s = 1) {
 }
 
 const PIEZAS = [
-  { id: 'casco', meta: new THREE.Vector3(1.7, 1.66, 0.9), desde: new THREE.Vector3(-1.15, 0.64, 0.9) },
-  { id: 'peto', meta: new THREE.Vector3(1.7, 1.2, 0.9), desde: new THREE.Vector3(-0.6, 0.66, 0.9) },
-  { id: 'escudo', meta: new THREE.Vector3(1.32, 1.1, 0.95), desde: new THREE.Vector3(-0.05, 0.68, 0.9) },
-  { id: 'espada', meta: new THREE.Vector3(2.08, 1.05, 0.95), desde: new THREE.Vector3(0.45, 0.62, 0.9) },
+  { id: 'casco', meta: new THREE.Vector3(2.3, 1.66, 0.9), desde: new THREE.Vector3(1.0, 0.64, 0.9) },
+  { id: 'peto', meta: new THREE.Vector3(2.3, 1.2, 0.9), desde: new THREE.Vector3(1.38, 0.66, 0.9) },
+  { id: 'escudo', meta: new THREE.Vector3(1.92, 1.1, 0.95), desde: new THREE.Vector3(1.76, 0.68, 0.9) },
+  { id: 'espada', meta: new THREE.Vector3(2.68, 1.05, 0.95), desde: new THREE.Vector3(1.4, 0.06, 0.9) },
 ];
 const armadura: Nivel = {
   titulo: 'La armadura',
-  pistas: ['El caballero no puede salir sin su armadura. Arrastra cada pieza a su lugar.', 'El casco va arriba, el peto en el pecho, el escudo a su izquierda (tu izquierda) y la espada a la derecha.'],
+  pistas: [
+    'Ese caballero está en pijama.',
+    'Cada pieza tiene su lugar marcado en el soporte.',
+    'Arrastra cada pieza a la silueta que le toca: piensa en dónde se pone cada cosa un caballero.',
+  ],
   montar(c) {
-    const X = 1.7;
+    const X = 2.3;
     const soporte = grupo('soporte');
     soporte.add(en(cilindro(0.25, 0.28, 0.06, mat('#5e4636')), 0, 0.03, 0), en(cilindro(0.03, 0.03, 1.5, mat('#5e4636')), 0, 0.78, 0));
     const hombros = caja(0.62, 0.05, 0.06, mat('#5e4636'), 0.02);
@@ -482,8 +509,8 @@ const armadura: Nivel = {
       c.g.add(s);
     }
     // Banca con las piezas
-    c.g.add(en(caja(2.0, 0.08, 0.4, mat('#8a6a55'), 0.02), -0.35, 0.48, 0.9));
-    for (const x of [-1.2, 0.5]) c.g.add(en(caja(0.08, 0.46, 0.34, mat('#6b5a4c'), 0.02), x, 0.23, 0.9));
+    c.g.add(en(caja(1.2, 0.08, 0.4, mat('#8a6a55'), 0.02), 1.38, 0.48, 0.9));
+    for (const x of [0.88, 1.88]) c.g.add(en(caja(0.08, 0.46, 0.34, mat('#6b5a4c'), 0.02), x, 0.23, 0.9));
     const plata = mat('#c9d0d8', { metal: 0.75, rough: 0.3 });
     const modelos: Record<string, () => THREE.Object3D> = {
       casco: () => {
@@ -528,7 +555,7 @@ const armadura: Nivel = {
       c.g.add(g);
       c.arrastrar(g, {
         plano: new THREE.Plane(new THREE.Vector3(0, 0, 1), -0.9),
-        limites: limites(-1.5, 0.3, 0.9, 2.8, 2.1, 0.9),
+        limites: limites(0.6, 0.05, 0.9, 3.0, 2.1, 0.9),
         alSoltar: (pos) => {
           if (g.userData.puesta) return;
           const meta = p.meta;
@@ -539,6 +566,7 @@ const armadura: Nivel = {
             if (p.id === 'espada') void c.escena.animar(250, (q) => (g.children[0].rotation.z = Math.PI / 2 * (1 - q)));
             void c.escena.animar(250, (q) => g.position.lerpVectors(a, meta, q));
             sonido.nota(880 + puestas * 110, 0.12, 0, 'triangle', 0.07);
+            sfx.metal();
             if (++puestas === PIEZAS.length) {
               c.despues(500, () => {
                 sonido.nota(523, 0.2, 0, 'square', 0.04);
@@ -571,7 +599,11 @@ const ROTAS = ['1,2', '3,2', '2,2'];
 const CAMINO: [number, number][] = [[2, 1], [0, 2], [2, 3], [4, 4]];
 const ajedrez: Nivel = {
   titulo: 'El caballo de ajedrez',
-  pistas: ['El caballito salta en L: dos casillas para un lado y una para el otro. Las casillas rotas no aguantan su peso.', 'Un camino: arriba a la derecha en L, luego a la izquierda, luego a la derecha, y el último salto llega a la llave de la esquina.'],
+  pistas: [
+    'Ese caballito quiere llegar a la llave.',
+    'Se mueve como el caballo del ajedrez, en L. Las casillas rotas no lo aguantan.',
+    'Planea los saltos desde el final hacia atrás: ¿desde qué casillas sanas se llega en L a la de la llave?',
+  ],
   montar(c) {
     const { x0, y0, lado, n, z } = TAB;
     const pos = (i: number, j: number) => new THREE.Vector3(x0 + lado / 2 + i * lado, y0 + lado / 2 + j * lado, z);
@@ -666,7 +698,11 @@ const ajedrez: Nivel = {
 // ---------------------------------------------------------------------------
 const escudos: Nivel = {
   titulo: 'El escudo distinto',
-  pistas: ['Los ocho escudos parecen iguales. Mira bien dónde está cada cosa.', 'En todos el corazón está arriba a la izquierda y la estrella abajo a la derecha… menos en uno. Tócalo.'],
+  pistas: [
+    'Algo no cuadra en esa pared.',
+    'Los ocho escudos parecen iguales. Mira bien dónde está cada cosa.',
+    'Compara dónde está el corazón y dónde la estrella en cada escudo: uno los tiene en otro lugar.',
+  ],
   montar(c) {
     c.g.add(en(caja(2.4, 0.06, 0.1, mat('#5e4636'), 0.02), 1.88, 1.56, 0.25), en(caja(2.4, 0.06, 0.1, mat('#5e4636'), 0.02), 1.88, 1.02, 0.25));
     const distinto = Math.floor(c.azar() * 8);
@@ -767,7 +803,11 @@ function mezcla(r: number, y: number, b: number) {
 const RECETA = { rojo: 1, amarillo: 0, azul: 2 };
 const pocion: Nivel = {
   titulo: 'La poción',
-  pistas: ['El pergamino muestra el color de la poción y cuántas gotas lleva. Toca un frasco para echar una gota; toca la olla para vaciarla.', 'Morado azulado: una gota roja y dos azules.'],
+  pistas: [
+    'Esa olla está esperando una receta.',
+    'El pergamino muestra el color de la poción y cuántas gotas lleva. Tocar la olla la vacía.',
+    'Mezcla los colores de los frascos como mezclarías pinturas hasta llegar al color del pergamino, con el número justo de gotas.',
+  ],
   montar(c) {
     const T = new THREE.Vector3(1.5, 0, 0.9);
     c.g.add(en(caja(1.5, 0.08, 0.6, mat('#6b5a4c'), 0.02), T.x, 0.74, T.z));
@@ -894,7 +934,11 @@ const pocion: Nivel = {
 const PALABRA_CRIPTEX = 'REINA';
 const criptex: Nivel = {
   titulo: 'El criptex',
-  pistas: ['El pergamino pregunta quién manda en este castillo (y en un corazón). Son cinco letras.', 'Gira los anillos del criptex hasta formar REINA.'],
+  pistas: [
+    'Ese cilindro de letras guarda algo.',
+    'El pergamino hace una pregunta; la respuesta tiene tantas letras como anillos tiene el criptex.',
+    'Piensa quién manda en este castillo (y en un corazón) y gira los anillos hasta escribirlo.',
+  ],
   montar(c) {
     const P = new THREE.Vector3(1.6, 0, 0.95);
     c.g.add(en(cilindro(0.2, 0.26, 0.9, mat('#9a918a')), P.x, 0.45, P.z), en(cilindro(0.26, 0.26, 0.06, mat('#8a8078')), P.x, 0.92, P.z));
@@ -970,7 +1014,11 @@ const criptex: Nivel = {
 const LARGO_TRENZA = 1.65;
 const trenza: Nivel = {
   titulo: 'La trenza de la torre',
-  pistas: ['La trenza está enrollada en la ventana de la torre. Desliza el dedo hacia abajo sobre ella para soltarla.', 'Desliza hacia abajo varias veces sobre la torre hasta que la trenza toque el piso; la llave viene amarrada en la punta.'],
+  pistas: [
+    'La ventana de la torre está muy alta.',
+    'Algo largo está enrollado en la ventana. Se puede soltar con el dedo.',
+    'Desliza el dedo hacia abajo sobre la torre, varias veces, hasta que lo que cuelga toque el piso.',
+  ],
   montar(c) {
     const Tx = 2.25, Tz = 0.55, R = 0.5;
     const tex = piedraTextura('#c1b8ae', 512, 512, 10);

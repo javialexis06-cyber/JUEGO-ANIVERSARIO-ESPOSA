@@ -35,6 +35,8 @@ export class Escena {
   t = 0;
   /** Multiplicador del tiempo (pruebas en computadores lentos). */
   rapidez = 1;
+  /** Sin dibujar (revisiones automáticas: todo corre igual, pero mucho más rápido). */
+  dibujar = true;
 
   constructor(lienzo: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true });
@@ -185,6 +187,7 @@ export class Escena {
     const d = Math.min(dt, 0.1) * this.rapidez;
     this.t += d;
     for (const fn of [...this.tareas]) fn(d, this.t);
-    this.renderer.render(this.escena, this.camara);
+    if (this.dibujar) this.renderer.render(this.escena, this.camara);
+    else this.escena.updateMatrixWorld();
   }
 }

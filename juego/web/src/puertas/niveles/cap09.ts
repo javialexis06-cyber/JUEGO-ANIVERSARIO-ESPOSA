@@ -6,7 +6,7 @@ import * as sonido from '../../sonido';
 import { espacioTextura } from '../cuarto';
 import { caja, cilindro, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
-import { Canica, limites, llave, planoPared, type Tabla } from './piezas';
+import { Canica, limites, llave, planoPared, type Tabla, reservar } from './piezas';
 
 function llaveParaLaPuerta(c: Ctx, k: THREE.Object3D, puede: () => boolean = () => true) {
   c.tocar(k, () => {
@@ -54,7 +54,11 @@ function estrellita(nombre: string, color = '#fff6d0') {
 // ---------------------------------------------------------------------------
 const constelacion: Nivel = {
   titulo: 'La constelación',
-  pistas: ['Algunas estrellas forman un corazón. Pasa el dedo por ellas sin soltarlo.', 'Traza el corazón pasando por las estrellas más brillantes, una tras otra, sin tocar las de más. Si te equivocas, suelta y empieza otra vez.'],
+  pistas: [
+    'Ese cielo tiene un dibujo escondido.',
+    'Algunas estrellas brillan más que otras y forman una figura. Se unen pasando el dedo sin soltarlo.',
+    'Traza la figura pasando por las estrellas más brillantes, una tras otra, sin tocar las de más; si te equivocas, suelta y empieza otra vez.',
+  ],
   montar(c) {
     const C = new THREE.Vector3(1.85, 1.42, 0.05);
     pantallaEspacio(c, C.x, C.y, 1.9, 1.45);
@@ -160,7 +164,11 @@ const constelacion: Nivel = {
 const ZERO: Tabla = { w: 1.4, h: 1.0, solidos: [[0.3, 0, 0.4, 0.65], [0.7, 0.35, 0.8, 1.0], [1.0, 0, 1.1, 0.6]] };
 const gravedad: Nivel = {
   titulo: 'Gravedad cero',
-  pistas: ['La llave flota: inclina el celular hacia donde quieras que vaya. Tiene que llegar a la cerradura de la derecha.', 'Arriba, a la derecha por encima de la primera chatarra, abajo, a la derecha por debajo de la segunda, arriba otra vez y a la derecha hasta la cerradura.'],
+  pistas: [
+    'Aquí nada se queda quieto.',
+    'La llave flota hacia donde se incline el celular. Tiene que llegar a la cerradura de la derecha.',
+    'Esquiva la chatarra: sube, baja y avanza inclinando el celular con calma, sin chocar.',
+  ],
   montar(c) {
     const x0 = 1.15, y0 = 0.85;
     const tablero = grupo('tablero');
@@ -259,16 +267,22 @@ const gravedad: Nivel = {
 // 83 · Los planetas
 // ---------------------------------------------------------------------------
 const PLANETAS = [
-  { id: 'mercurio', r: 0.05, color: '#a8a09a', desde: -1.3 },
-  { id: 'venus', r: 0.07, color: '#e8c47a', desde: -0.3 },
-  { id: 'tierra', r: 0.075, color: '#4a8fd8', desde: -0.9 },
-  { id: 'marte', r: 0.06, color: '#d8643a', desde: 0.3 },
-  { id: 'jupiter', r: 0.12, color: '#d8a878', desde: -0.6 },
+  { id: 'mercurio', r: 0.05, color: '#a8a09a', desde: -2.05 },
+  { id: 'venus', r: 0.07, color: '#e8c47a', desde: -1.15 },
+  { id: 'tierra', r: 0.075, color: '#4a8fd8', desde: -1.75 },
+  { id: 'marte', r: 0.06, color: '#d8643a', desde: -0.85 },
+  { id: 'jupiter', r: 0.12, color: '#d8a878', desde: -1.45 },
 ];
 const HUECOS_PLANETA = [1.35, 1.65, 1.97, 2.3, 2.72];
+/** Profundidad del estante de los planetas (y del plano por donde se arrastran). */
+const ZP = 1.25;
 const planetas: Nivel = {
   titulo: 'Los planetas',
-  pistas: ['Los planetas van en su riel en orden, del más cerca del sol hacia afuera. Arrástralos a su hueco.', 'Mercurio (gris), Venus (amarillo), la Tierra (azul), Marte (rojo) y Júpiter (el grande).'],
+  pistas: [
+    'Los planetas están desordenados.',
+    'Cada planeta tiene su hueco en el riel, empezando junto al sol.',
+    'Ponlos en su orden de verdad: el más cercano al sol en el primer hueco, y así hacia afuera.',
+  ],
   montar(c) {
     const Y = 1.25, Z = 0.35;
     const sol = new THREE.Mesh(new THREE.SphereGeometry(0.2, 24, 16), new THREE.MeshBasicMaterial({ color: '#ffcf5a' }));
@@ -279,7 +293,7 @@ const planetas: Nivel = {
       c.g.add(en(toro(0.13, 0.012, mat('#6ac8ff')), x, Y, Z - 0.02));
       c.g.add(en(letrero(0.1, 0.08, (cv, w, h) => textoEn(cv, String(i + 1), w / 2, h / 2 + 2, h * 0.8, '#dff0ff', 700), undefined, { transparente: true }), x, Y - 0.22, Z));
     });
-    c.g.add(en(caja(2.0, 0.05, 0.35, mat('#8a94a8', { metal: 0.5 }), 0.02), -0.5, 0.72, 0.72));
+    c.g.add(en(caja(1.6, 0.05, 0.35, mat('#8a94a8', { metal: 0.5 }), 0.02), -1.45, 0.72, ZP));
     const colocados: (string | null)[] = HUECOS_PLANETA.map(() => null);
     PLANETAS.forEach((pl) => {
       const g = grupo(pl.id);
@@ -287,12 +301,12 @@ const planetas: Nivel = {
       g.add(cuerpo, toque(Math.max(0.12, pl.r + 0.04)));
       if (pl.id === 'jupiter') for (const dy of [-0.04, 0.02, 0.06]) g.add(en(toro(pl.r * Math.sqrt(1 - (dy / pl.r) ** 2), 0.008, mat('#b8784a')), 0, dy, 0));
       if (pl.id === 'tierra') g.add(en(esfera(pl.r * 0.45, mat('#5aa85a'), undefined, 10), 0.03, 0.02, 0.04));
-      const inicio = new THREE.Vector3(pl.desde, 0.72 + 0.03 + pl.r, 0.72);
+      const inicio = new THREE.Vector3(pl.desde, 0.72 + 0.03 + pl.r, ZP);
       g.position.copy(inicio);
       c.g.add(g);
       c.arrastrar(g, {
-        plano: new THREE.Plane(new THREE.Vector3(0, 0, 1), -0.72),
-        limites: limites(-1.6, 0.5, 0.72, 3.0, 2.2, 0.72),
+        plano: new THREE.Plane(new THREE.Vector3(0, 0, 1), -ZP),
+        limites: limites(-2.4, 0.5, ZP, 3.0, 2.2, ZP),
         alSoltar: (pos) => {
           if (g.userData.puesto) return;
           // Se compara en la pantalla (el planeta va por delante del riel)
@@ -326,9 +340,9 @@ const planetas: Nivel = {
   },
   async prueba(p) {
     // Punto del plano de arrastre que se ve encima de cada hueco (cámara en OJO = (0, 1.5, 4.3))
-    const k = (4.3 - 0.72) / (4.3 - 0.35);
+    const k = (4.3 - ZP) / (4.3 - 0.35);
     for (let i = 0; i < PLANETAS.length; i++) {
-      await p.arrastrar(PLANETAS[i].id, new THREE.Vector3(HUECOS_PLANETA[i] * k, 1.5 + (1.25 - 1.5) * k, 0.72), 16);
+      await p.arrastrar(PLANETAS[i].id, new THREE.Vector3(HUECOS_PLANETA[i] * k, 1.5 + (1.25 - 1.5) * k, ZP), 16);
       await p.esperarQue(() => !!p.obj(PLANETAS[i].id).userData.puesto, 5000);
       await p.esperar(200);
     }
@@ -341,7 +355,11 @@ const planetas: Nivel = {
 const RADIO = { desde: 90.0, meta: 101.1, margen: 0.3, codigo: '417' };
 const radio: Nivel = {
   titulo: 'La radio',
-  pistas: ['Gira la perilla de la radio (con dos dedos, o arrastrando en círculo sobre ella) hasta que se limpie el ruido.', 'Cuando la barra se llena, la estación se queda: cuenta los pitidos de cada grupo. Son 4, 1 y 7.'],
+  pistas: [
+    'Esa radio solo hace ruido.',
+    'Gira la perilla (con dos dedos, o arrastrando en círculo) hasta que se limpie el ruido.',
+    'Cuando la barra se llene, la estación queda fija: cuenta los pitidos de cada grupo; cada grupo es un número.',
+  ],
   montar(c) {
     const R = new THREE.Vector3(1.8, 1.0, 0.35);
     c.g.add(en(caja(1.2, 0.75, 0.5, mat('#8a94a8', { metal: 0.5, rough: 0.35 }), 0.06), R.x, R.y, R.z - 0.1));
@@ -469,7 +487,11 @@ const MORSE: Record<string, string> = { A: '.-', E: '.', I: '..', L: '.-..', M: 
 const PALABRA_MORSE = 'AMOR';
 const morse: Nivel = {
   titulo: 'El mensaje en Morse',
-  pistas: ['Toca el botón de la consola: la nave vibra (y la luz parpadea) en Morse. La tabla de la pared traduce cada letra.', 'Corto-largo es A, largo-largo es M, tres largos es O y corto-largo-corto es R.'],
+  pistas: [
+    'La nave quiere decirte algo.',
+    'El botón de la consola hace que la nave hable: vibra, parpadea y pita. La tabla de la pared traduce.',
+    'Anota cada señal corta y larga, busca cada grupo en la tabla de la pared y escribe la palabra.',
+  ],
   montar(c) {
     const tabla = letrero(0.9, 0.95, (cv, w, h) => {
       cv.fillStyle = '#0d1a2e';
@@ -567,7 +589,11 @@ const morse: Nivel = {
 // ---------------------------------------------------------------------------
 const alReves: Nivel = {
   titulo: 'No hay arriba',
-  pistas: ['Todo lo de esta nave quedó pegado al techo. ¿Y si el arriba fuera abajo?', 'Dale la vuelta al celular (de cabeza) y vuelve a ponerlo derecho. Sin sensores: mantén presionado el letrero de la gravedad.'],
+  pistas: [
+    'Aquí todo está patas arriba.',
+    '¿Y si el arriba fuera abajo? El mundo se puede voltear.',
+    'Dale la vuelta al celular (de cabeza) y vuelve a ponerlo derecho. (Sin sensores: mantén presionado el letrero de la gravedad.)',
+  ],
   montar(c) {
     const cosas: { o: THREE.Object3D; x: number; z: number; piso: number }[] = [];
     const taza = grupo('taza al reves');
@@ -583,6 +609,7 @@ const alReves: Nivel = {
       en(o, x, 2.35, z);
       c.g.add(o);
       cosas.push({ o, x, z, piso });
+      reservar(c, x, 0, z, 0.35, 0.3, 0.35);
     }
     const cartel = letrero(1.0, 0.36, (cv, w, h) => {
       cv.save();
@@ -642,7 +669,11 @@ const alReves: Nivel = {
 // ---------------------------------------------------------------------------
 const asteroides: Nivel = {
   titulo: 'Asteroides',
-  pistas: ['Los asteroides tapan el camino de la nave. Tócalos muchas veces para romperlos.', 'Cada asteroide aguanta tres toques. Rómpelos todos y la compuerta se abre.'],
+  pistas: [
+    'El camino está bloqueado.',
+    'Los asteroides se rompen, pero son duros.',
+    'Tócalos varias veces cada uno hasta romperlos todos.',
+  ],
   montar(c) {
     const C = new THREE.Vector3(1.85, 1.4, 0.05);
     pantallaEspacio(c, C.x, C.y, 1.8, 1.25);
@@ -727,7 +758,11 @@ const TUBOS: Pieza[][] = [
 ];
 const tubos: Nivel = {
   titulo: 'Los tubos de energía',
-  pistas: ['Toca los tubos para girarlos. La energía sale de la batería de la izquierda y tiene que llegar a la compuerta.', 'El camino pasa por la fila del medio, sube a la de arriba en la segunda columna y vuelve a bajar en la tercera.'],
+  pistas: [
+    'La compuerta no tiene energía.',
+    'Los tubos giran si los tocas; la energía sale de la batería de la izquierda.',
+    'Arma un camino continuo de tubos desde la batería hasta la compuerta; no hace falta usarlos todos.',
+  ],
   montar(c) {
     const x0 = 1.2, y0 = 1.65, L = 0.3;
     const grid = TUBOS.map((fila) => fila.map((p) => ({ ...p })));
@@ -829,7 +864,11 @@ const tubos: Nivel = {
 // ---------------------------------------------------------------------------
 const cohete: Nivel = {
   titulo: 'El cohete',
-  pistas: ['Mantén presionado el botón de despegue: el cohete necesita exactamente tres segundos de combustible.', 'Suelta cuando la barra llegue a la raya dorada (tres segundos): ni antes ni después.'],
+  pistas: [
+    'El cohete necesita combustible.',
+    'El botón de despegue carga la barra mientras lo mantienes presionado. Fíjate en la rayita dorada.',
+    'Mantén el botón y suelta justo cuando la barra llegue a la raya dorada: ni antes ni después.',
+  ],
   montar(c) {
     const C = new THREE.Vector3(1.85, 1.4, 0.05);
     pantallaEspacio(c, C.x, C.y, 1.5, 1.2);
@@ -862,8 +901,8 @@ const cohete: Nivel = {
     c.g.add(en(caja(0.16, 0.02, 0.01, mat('#f2c75c'), 0.003), X, Y0 + (3 / MAX) * H, 0.08));
     const boton = grupo('boton cohete');
     boton.add(cilindro(0.1, 0.11, 0.06, mat('#fff3e0')), en(cilindro(0.08, 0.08, 0.06, matNuevo('#e4574b')), 0, 0.04, 0), toque(0.15));
-    c.g.add(en(caja(0.5, 0.8, 0.4, mat('#8a94a8', { metal: 0.5 }), 0.04), 0.35, 0.4, 0.9));
-    en(boton, 0.35, 0.83, 0.95);
+    c.g.add(en(caja(0.5, 0.8, 0.4, mat('#8a94a8', { metal: 0.5 }), 0.04), -1.3, 0.4, 0.9));
+    en(boton, -1.3, 0.83, 0.95);
     c.g.add(boton);
     let desde = 0, cargando = false, hecho = false;
     c.mantener(boton, () => {
@@ -910,7 +949,11 @@ const cohete: Nivel = {
 const SOL = new THREE.Vector3(1.9, 1.55, 0.1);
 const eclipse: Nivel = {
   titulo: 'El eclipse',
-  pistas: ['Arrastra la luna hasta el sol. Tiene que quedar justo encima.', 'Pon la luna exactamente sobre el sol, bien centrada, y suéltala: el cielo se oscurece y aparece la corona.'],
+  pistas: [
+    'La luna está muy lejos del sol.',
+    'La luna se deja arrastrar.',
+    'Pon la luna exactamente sobre el sol, bien centrada, y suéltala.',
+  ],
   montar(c) {
     pantallaEspacio(c, 1.85, 1.4, 1.8, 1.25);
     const sol = new THREE.Mesh(new THREE.CircleGeometry(0.16, 40), new THREE.MeshBasicMaterial({ color: '#ffcf5a' }));

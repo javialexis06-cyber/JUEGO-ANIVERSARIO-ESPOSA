@@ -180,9 +180,10 @@ body.puertas { background: #1d2340; }
 .inventario {
   position: fixed;
   z-index: 11;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
-  left: 50%;
-  transform: translateX(-50%);
+  /* En columna a la derecha, debajo de los botones: nunca encima de la puerta */
+  top: calc(env(safe-area-inset-top, 0px) + 64px);
+  right: max(12px, env(safe-area-inset-right));
+  flex-direction: column;
   display: flex;
   gap: 8px;
   background: rgba(255, 248, 238, 0.9);
@@ -220,17 +221,18 @@ body.puertas { background: #1d2340; }
 .aviso {
   position: fixed;
   z-index: 40;
-  top: calc(env(safe-area-inset-top, 0px) + 64px);
-  left: 50%;
-  transform: translateX(-50%);
+  /* Abajo a la izquierda: nunca encima de la puerta */
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  left: max(12px, env(safe-area-inset-left));
   background: var(--noche);
   color: #fff;
   font: 600 15px var(--display);
   padding: 8px 16px;
   border-radius: 999px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-  max-width: 80vw;
-  text-align: center;
+  max-width: calc(50vw - 110px);
+  border-radius: 18px;
+  text-align: left;
 }
 
 /* ---------- Narrador ---------- */
@@ -408,7 +410,8 @@ body.puertas { background: #1d2340; }
   right: max(18px, env(safe-area-inset-right));
   bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
   background: #dff4ea;
-  max-width: min(420px, 60vw);
+  /* Siempre a la derecha de la puerta, sin taparla */
+  max-width: min(420px, calc(50vw - 100px));
 }
 .globo-yo::after { display: none; }
 .globo-nombre {
@@ -467,3 +470,57 @@ body.puertas { background: #1d2340; }
 .album .quien { color: var(--rosa-oscuro); font-weight: 800; }
 .album .quien.el { color: #2c5a86; }
 .album .bloqueado { opacity: 0.5; }
+
+/* ---------- Antojos: las pistas se compran con dulces ---------- */
+.boton-pista.boton-antojo {
+  background-color: #f4b6c2;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233d2b27' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M7 12L2 8v8zM17 12l5-4v8z'/%3E%3Cellipse cx='12' cy='12' rx='6' ry='5' fill='%23fff8ee'/%3E%3Cpath d='M9 10q3-2 6 1M9 14q3 2 6-1' stroke-linecap='round'/%3E%3C/svg%3E");
+  animation: none;
+}
+.boton-pista.boton-antojo.latiendo { animation: latido 1.6s ease-in-out infinite; }
+.antojos-carta { max-width: min(560px, 92vw); }
+.antojo-sub { margin: -6px 0 6px; font: 600 14px var(--texto); color: var(--cacao-suave); }
+.antojo-saldo { margin: 0 0 10px; font: 800 14px var(--texto); color: var(--menta-oscura, #2f8f68); }
+.antojos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.antojo {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 8px 6px 10px;
+  border: 0;
+  border-radius: 14px;
+  background: #fff3e0;
+  box-shadow: 0 3px 0 rgba(61, 43, 39, 0.2);
+  color: var(--cacao);
+  font: inherit;
+  cursor: pointer;
+}
+.antojo:active { transform: translateY(2px); box-shadow: none; }
+.antojo-dibujo svg { width: 56px; height: 42px; display: block; }
+.antojo b { font: 600 15px var(--display); }
+.antojo small { font: 700 11px var(--texto); color: var(--cacao-suave); text-align: center; }
+.antojo-precio { margin-top: 4px; font: 800 13px var(--texto); background: var(--oro); border-radius: 999px; padding: 2px 10px; }
+.antojo.dado { opacity: 0.55; cursor: default; }
+.antojo.dado .antojo-precio { background: #dff4ea; }
+.antojo.caro .antojo-precio { background: #f1d6d0; color: #9a4a3c; }
+.antojo-ya { margin-top: 12px; border-left: 4px solid var(--oro); padding-left: 10px; }
+.antojo-ya h4 { margin: 0 0 2px; font: 600 15px var(--display); }
+.antojo-ya p { margin: 2px 0; font: 600 14px/1.35 var(--texto); }
+@media (max-height: 420px) {
+  .antojos-carta { padding: 10px 14px 10px; }
+  .antojo-dibujo svg { width: 44px; height: 32px; }
+  .antojo small { display: none; }
+}
+
+/* ---------- Papelitos que se encuentran debajo de las cosas ---------- */
+.papelito-nota .nota-cuerpo { display: grid; place-items: center; }
+.papelito {
+  background: #ffe0ea;
+  padding: 18px 22px;
+  border-radius: 4px;
+  transform: rotate(-2deg);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  max-width: 320px;
+}
+.papelito.falsa { background: #fff3a8; }
+.papelito p { margin: 0; font: 600 20px/1.35 var(--display); color: var(--cacao); text-align: center; }

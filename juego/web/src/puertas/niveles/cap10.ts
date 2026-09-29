@@ -3,6 +3,7 @@
 // musical, pedir un deseo con los ojos cerrados, todo junto y la puerta del corazón que se abre con los dos.
 import * as THREE from 'three';
 import * as sonido from '../../sonido';
+import * as sfx from '../sonidos';
 import { caja, cilindro, corazon, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
 import { DIBUJOS } from '../ui';
@@ -67,9 +68,15 @@ const FOTOS = [
   { icono: 'anillo', titulo: 'La propuesta' },
 ];
 const MARCOS = [1.05, 1.45, 1.85, 2.25, 2.65];
+/** Profundidad de la mesa de las fotos (y del plano por donde se arrastran). */
+const ZF = 1.3;
 const fotos: Nivel = {
   titulo: 'Las fotos de nuestra historia',
-  pistas: ['Las fotos se cayeron de sus marcos. Van en orden, de la primera vez hasta hoy.', 'Primero la villa de Transformice, luego el 25 de octubre, las videollamadas, Cartagena y al final la propuesta.'],
+  pistas: [
+    'Las fotos no están donde deberían.',
+    'Cada foto tiene su marco, y los marcos están numerados.',
+    'Pon las fotos en los marcos en el orden en que pasaron las cosas, desde la primera vez hasta hoy.',
+  ],
   montar(c) {
     const Y = 1.45;
     MARCOS.forEach((x, i) => {
@@ -77,8 +84,8 @@ const fotos: Nivel = {
       c.g.add(en(caja(0.3, 0.36, 0.01, mat('#f3e3d3'), 0.003), x, Y, 0.05));
       c.g.add(en(letrero(0.1, 0.08, (cv, w, h) => textoEn(cv, String(i + 1), w / 2, h / 2 + 2, h * 0.8, '#3d2b27', 700), undefined, { transparente: true }), x, Y - 0.28, 0.04));
     });
-    const m = mesa(1.9, 0.5, 0.72, '#c49468', 'mesa fotos');
-    en(m, -0.55, 0, 0.95);
+    const m = mesa(1.7, 0.5, 0.72, '#c49468', 'mesa fotos');
+    en(m, -1.42, 0, ZF);
     c.g.add(m);
     const orden = [3, 0, 4, 1, 2];
     const puestas: boolean[] = FOTOS.map(() => false);
@@ -87,13 +94,13 @@ const fotos: Nivel = {
       const g = grupo(`foto ${fi}`);
       const p = polaroid(f.icono, f.titulo);
       g.add(p);
-      const inicio = new THREE.Vector3(-1.3 + pos * 0.38, 0.95, 0.9);
+      const inicio = new THREE.Vector3(-2.1 + pos * 0.34, 0.95, ZF);
       g.position.copy(inicio);
       g.rotation.z = (pos % 2 ? 1 : -1) * 0.12;
       c.g.add(g);
       c.arrastrar(g, {
-        plano: new THREE.Plane(new THREE.Vector3(0, 0, 1), -0.9),
-        limites: limites(-1.6, 0.6, 0.9, 3.0, 2.2, 0.9),
+        plano: new THREE.Plane(new THREE.Vector3(0, 0, 1), -ZF),
+        limites: limites(-2.4, 0.6, ZF, 3.0, 2.2, ZF),
         alSoltar: (q) => {
           if (g.userData.puesta) return;
           const sp = c.escena.aPantalla(q);
@@ -123,9 +130,9 @@ const fotos: Nivel = {
     });
   },
   async prueba(p) {
-    const k = (4.3 - 0.9) / (4.3 - 0.06);
+    const k = (4.3 - ZF) / (4.3 - 0.06);
     for (let i = 0; i < FOTOS.length; i++) {
-      await p.arrastrar(`foto ${i}`, new THREE.Vector3(MARCOS[i] * k, 1.5 + (1.45 - 1.5) * k, 0.9), 16);
+      await p.arrastrar(`foto ${i}`, new THREE.Vector3(MARCOS[i] * k, 1.5 + (1.45 - 1.5) * k, ZF), 16);
       await p.esperarQue(() => !!p.obj(`foto ${i}`).userData.puesta, 5000);
       await p.esperar(200);
     }
@@ -138,7 +145,11 @@ const fotos: Nivel = {
 const RESPUESTAS = ['🐭', '25', 'C'];
 const cofre: Nivel = {
   titulo: 'El cofre de los recuerdos',
-  pistas: ['El cofre se abre con tres respuestas sobre nosotros. Las preguntas están en el cuadro.', 'Nos conocimos en la villa de Transformice (el ratoncito), fuimos novios el 25 de octubre y el viaje de playa fue a Cartagena (C).'],
+  pistas: [
+    'Ese cofre hace preguntas.',
+    'Las preguntas están en el cuadro; las respuestas, en nuestros recuerdos.',
+    'Contesta con lo que recuperamos por el camino: dónde nos conocimos, el día que empezamos y a qué playa fuimos. El álbum de recuerdos ayuda.',
+  ],
   montar(c) {
     const cuadro = letrero(1.1, 0.8, (cv, w, h) => {
       cv.fillStyle = '#fff8ee';
@@ -213,7 +224,11 @@ const SALTO = 7;
 const cifrar = (t: string, k: number) => t.replace(/[A-Z]/g, (l) => ABC[(ABC.indexOf(l) + k + 26) % 26]);
 const carta: Nivel = {
   titulo: 'La carta cifrada',
-  pistas: ['La carta está escrita en clave. Gira el anillo de adentro de la rueda: la línea de abajo muestra cómo se lee.', 'Gira el anillo siete letras (la A de afuera con la H de adentro) hasta que la carta diga algo bonito.'],
+  pistas: [
+    'Esa carta no se entiende… todavía.',
+    'La rueda de letras sirve para descifrarla: al girar el anillo de adentro, la línea de abajo cambia.',
+    'Gira el anillo de adentro, poco a poco, hasta que la carta diga algo con sentido.',
+  ],
   montar(c) {
     const cifrado = cifrar(MENSAJE, SALTO);
     const hoja = letrero(1.0, 0.62, () => {}, 'carta', { px: 512 });
@@ -329,7 +344,11 @@ const carta: Nivel = {
 // ---------------------------------------------------------------------------
 const matica: Nivel = {
   titulo: 'La matica',
-  pistas: ['La matica necesita agua y sol. La regadera se inclina con el celular; la cortina se corre con el dedo.', 'Inclina el celular hacia la derecha hasta que la regadera eche agua un rato, y arrastra la cortina hacia un lado para que entre el sol.'],
+  pistas: [
+    'Esa matica está muy triste.',
+    'Una planta necesita dos cosas, y aquí hay con qué dárselas: una regadera y una cortina.',
+    'Inclina el celular para que la regadera eche agua un rato, y corre la cortina con el dedo para que entre el sol.',
+  ],
   montar(c) {
     // Ventana con sol detrás de la cortina
     const V = new THREE.Vector3(2.3, 1.65, 0.03);
@@ -486,7 +505,11 @@ const TECLAS = [
 const MELODIA = [0, 0, 4, 4, 5, 5, 4];
 const piano: Nivel = {
   titulo: 'El piano de colores',
-  pistas: ['La partitura de la pared tiene la canción pintada en colores. Tócala en el piano.', 'Rojo, rojo, celeste, celeste, azul, azul, celeste: «Estrellita, ¿dónde estás?».'],
+  pistas: [
+    'Ese piano está esperando que lo toquen.',
+    'En la pared hay una partitura pintada de colores.',
+    'Toca las teclas en el orden de los colores de la partitura, de izquierda a derecha: es una canción de cuna muy conocida.',
+  ],
   montar(c) {
     const hoja = letrero(1.1, 0.4, (cv, w, h) => {
       cv.fillStyle = '#fffaf1';
@@ -521,14 +544,14 @@ const piano: Nivel = {
     teclas.forEach((k, i) =>
       c.tocar(k, () => {
         if (hecho) return;
-        sonido.nota(TECLAS[i].f, 0.35, 0, 'triangle', 0.09);
+        sfx.piano(TECLAS[i].f);
         void c.escena.animar(160, (q) => (k.position.y = 0.73 - Math.sin(q * Math.PI) * 0.02));
         if (MELODIA[pos] === i) {
           pos++;
           hoja.userData.pos = pos;
           if (pos === MELODIA.length) {
             hecho = true;
-            MELODIA.concat([3, 3, 2, 2, 1, 1, 0]).forEach((n, j) => sonido.nota(TECLAS[n].f, 0.3, 0.6 + j * 0.32, 'sine', 0.06));
+            MELODIA.concat([3, 3, 2, 2, 1, 1, 0]).forEach((n, j) => sfx.piano(TECLAS[n].f, 0.6 + j * 0.32, 0.07, 0.6));
             abrirYa(c, 2400);
           }
         } else {
@@ -555,7 +578,11 @@ const INGREDIENTES = [
 ];
 const torta: Nivel = {
   titulo: 'La torta del aniversario',
-  pistas: ['Primero la receta en orden (está en la pared) y después hay que apagar las velas soplando.', 'Harina, huevos, leche y azúcar. Luego sopla al celular (o mantén el dedo sobre cada vela).'],
+  pistas: [
+    'La torta todavía no existe.',
+    'La receta está en la pared; los ingredientes, en la mesa. Y toda torta de aniversario tiene velas.',
+    'Echa los ingredientes en el orden de la receta y después apaga las velas soplando cerca del micrófono (o dejando el dedo sobre cada una).',
+  ],
   montar(c) {
     const receta = letrero(0.7, 0.62, (cv, w, h) => {
       cv.fillStyle = '#fffaf1';
@@ -685,7 +712,11 @@ const torta: Nivel = {
 const VUELTAS_CAJA = 5;
 const cajaMusical: Nivel = {
   titulo: 'La caja musical',
-  pistas: ['Dale cuerda a la caja musical dibujando círculos con el dedo sobre ella: parejito, ni muy rápido ni muy lento.', 'Haz círculos tranquilos (más o menos una vuelta por segundo). Si vas muy rápido se traba. Cinco vueltas buenas y se abre.'],
+  pistas: [
+    'La caja musical se quedó sin cuerda.',
+    'Se le da cuerda dibujando círculos con el dedo sobre ella… pero no a lo loco.',
+    'Haz círculos tranquilos y parejos, más o menos una vuelta por segundo; si vas muy rápido, se traba.',
+  ],
   montar(c) {
     const B = new THREE.Vector3(1.7, 0.75, 0.9);
     c.g.add(en(caja(1.0, 0.75, 0.5, mat('#c49468'), 0.04), B.x, 0.375, B.z));
@@ -762,7 +793,7 @@ const cajaMusical: Nivel = {
       progreso += d / (Math.PI * 2);
       if (Math.floor(progreso * 3) !== cuarto) {
         cuarto = Math.floor(progreso * 3);
-        sonido.nota(notas[nota++ % notas.length], 0.25, 0, 'sine', 0.05);
+        sfx.cajita(notas[nota++ % notas.length], 0, 0.06);
       }
       if (progreso >= VUELTAS_CAJA) {
         hecho = true;
@@ -770,7 +801,7 @@ const cajaMusical: Nivel = {
         c.bien();
         void c.escena.animar(700, (q) => (tapa.rotation.x = -q * 1.9)).then(() => {
           void c.escena.animar(600, (q) => pareja.scale.setScalar(0.01 + q * 0.99));
-          notas.concat(notas).forEach((f, i) => sonido.nota(f, 0.3, i * 0.3, 'sine', 0.05));
+          notas.concat(notas).forEach((f, i) => sfx.cajita(f, i * 0.3, 0.07));
           k.position.set(B.x + 0.12, B.y + 0.3, B.z + 0.05);
           k.visible = true;
           // La cajita ya no recibe toques: si no, tapa la llave que salió de ella
@@ -805,7 +836,11 @@ const cajaMusical: Nivel = {
 // ---------------------------------------------------------------------------
 const deseo: Nivel = {
   titulo: 'Pide un deseo',
-  pistas: ['Cierra los ojos y pide un deseo… de verdad: apaga la pantalla del celular un momento.', 'Apaga la pantalla por lo menos tres segundos y vuelve a prenderla. Si no puedes, deja el dedo sobre la estrella cinco segundos.'],
+  pistas: [
+    'Esa estrella está esperando un deseo.',
+    'Los deseos se piden con los ojos cerrados… de verdad.',
+    'Apaga la pantalla por lo menos tres segundos y vuelve a prenderla. (Si no puedes, deja el dedo sobre la estrella un buen rato.)',
+  ],
   montar(c) {
     const E = new THREE.Vector3(1.8, 1.6, 0.1);
     const estrellaMat = new THREE.MeshBasicMaterial({ color: '#fff3a0' });
@@ -828,6 +863,15 @@ const deseo: Nivel = {
     const area = toque(0.35, 'deseo toque');
     en(area, E.x, E.y, E.z);
     c.g.add(area);
+    // Un papelito bajo la estrella: cómo se piden los deseos en esta casa
+    const regla = letrero(0.62, 0.16, (cx, w, h) => {
+      cx.fillStyle = '#fff3a8';
+      cx.fillRect(0, 0, w, h);
+      textoEn(cx, 'los deseos, con los ojos cerrados ✨', w / 2, h / 2 + 1, h * 0.3, '#3d2b27', 700);
+    }, 'papel deseo');
+    regla.rotation.z = 0.04;
+    en(regla, E.x, E.y - 0.5, 0.04);
+    c.g.add(regla);
     const chispas = Array.from({ length: 24 }, (_, i) => {
       const m = esfera(0.02, new THREE.MeshBasicMaterial({ color: ['#fff3a0', '#F59FC0', '#8EC5F0', '#8FD6B9'][i % 4] }), undefined, 6);
       m.visible = false;
@@ -881,7 +925,11 @@ const deseo: Nivel = {
 // ---------------------------------------------------------------------------
 const todoJunto: Nivel = {
   titulo: 'Todo junto',
-  pistas: ['Tres pasos en orden: inclinar para meter la bolita, sacudir el globo de nieve y tocar el corazón.', 'Inclina el celular a la izquierda hasta que la bolita caiga en el hoyo, sacude el celular y toca el corazón cinco veces.'],
+  pistas: [
+    'Esta puerta tiene varios pasos.',
+    'Son tres cosas, y las lucecitas dicen si vas bien: la bolita, el globo de nieve y el corazón.',
+    'Primero lleva la bolita a su hoyo inclinando el celular, después sacude el globo de nieve y al final dale toquecitos al corazón.',
+  ],
   montar(c) {
     const tarjeta = letrero(0.75, 0.5, (cv, w, h) => {
       cv.fillStyle = '#fffaf1';
@@ -1003,7 +1051,11 @@ const todoJunto: Nivel = {
 const SEGUNDOS_CORAZON = 5;
 const puertaCorazon: Nivel = {
   titulo: 'La puerta del corazón',
-  pistas: ['Esta puerta no tiene llave: se abre con los dos. Pon los dos pulgares en las huellas al mismo tiempo.', 'Mantén los dos pulgares sobre las huellas del corazón cinco segundos, sin soltar.'],
+  pistas: [
+    'Esta puerta no tiene llave.',
+    'Tiene dos huellas: una para cada uno.',
+    'Pon los dos pulgares sobre las huellas al mismo tiempo y no los sueltes hasta que el corazón se llene.',
+  ],
   montar(c) {
     const huella = (nombre: string) => {
       const g = grupo(nombre);
@@ -1024,6 +1076,8 @@ const puertaCorazon: Nivel = {
     c.puerta.pegar(hi, -0.25, 1.1, 0.16);
     c.puerta.pegar(hd, 0.25, 1.1, 0.16);
     const brillo = new THREE.Mesh(new THREE.CircleGeometry(0.5, 40), new THREE.MeshBasicMaterial({ color: '#ffe0ea', transparent: true, opacity: 0, depthWrite: false }));
+    // (el brillo es de la puerta misma: se llena de luz mientras se sostiene)
+    brillo.name = 'marco brillo';
     en(brillo, 0, 1.2, 0.3);
     brillo.scale.set(1, 1.3, 1);
     c.g.add(brillo);

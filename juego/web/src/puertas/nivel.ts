@@ -1,5 +1,6 @@
 // Lo que ve cada acertijo (Ctx) y cómo se describe una puerta (Nivel), con su prueba automática (Probador).
 import type * as THREE from 'three';
+import type { OpDesorden } from './desorden';
 import type { Dir, OpArrastre, PuntoTrazo } from './entrada';
 import type { Escena } from './escena';
 import type { Puerta } from './puerta';
@@ -93,8 +94,11 @@ export interface Probador {
 
 export interface Nivel {
   titulo: string;
-  /** Dos pistas: una idea y luego casi la respuesta. */
-  pistas: [string, string];
+  /** Las pistas que da el narrador a cambio de un dulce: 1 un empujoncito, 2 más clara, 3 la grande (nunca la
+   *  respuesta: ni la clave ni el orden exacto). */
+  pistas: [string, string, string];
+  /** Las cosas regadas por el cuarto (por defecto 9–12 del capítulo; `nada` si cualquier toque cuenta). */
+  desorden?: OpDesorden;
   montar(c: Ctx): void | Promise<void>;
   prueba(p: Probador): Promise<void>;
 }

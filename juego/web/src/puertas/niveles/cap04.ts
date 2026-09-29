@@ -3,6 +3,7 @@
 // máquina de dulces, observar la banda de maletas y cerrar los ojos en el túnel.
 import * as THREE from 'three';
 import * as sonido from '../../sonido';
+import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
 import { banca, llave, relojPared, tecladoPared } from './piezas';
@@ -24,7 +25,11 @@ function abrirYa(c: Ctx, ms = 700) {
 const SALIDAS: [string, string, string][] = [['Cali', '18:40', '3'], ['Bogotá', '19:15', '8'], ['Cartagena', '20:30', '12'], ['Medellín', '21:05', '5'], ['Bucaramanga', '22:00', '7']];
 const tablero: Nivel = {
   titulo: 'El bus a donde vamos',
-  pistas: ['El mapa tiene un corazón en una ciudad. Búscala en el tablero de salidas.', 'El corazón está en Cartagena: su bus sale del andén 12. Escríbelo en el teclado de la puerta.'],
+  pistas: [
+    'Antes de viajar hay que saber para dónde.',
+    'El mapa tiene marcada una ciudad especial; el tablero de salidas dice de qué andén sale su bus.',
+    'Busca en el tablero la ciudad marcada en el mapa y escribe su andén en el teclado de la puerta.',
+  ],
   montar(c) {
     const mapa = letrero(1.0, 0.8, (cx, w, h) => {
       cx.fillStyle = '#fff3e0';
@@ -81,10 +86,14 @@ const tablero: Nivel = {
 // ---------------------------------------------------------------------------
 const maleta: Nivel = {
   titulo: 'La maleta de los viajes',
-  pistas: ['Cuenta las calcomanías de cada forma que tiene la maleta.', 'Hay 4 estrellas, 2 corazones y 6 soles: el candado va en el orden ★ ♥ ☀ → 4, 2, 6.'],
+  pistas: [
+    'Esa maleta ha viajado mucho… y se nota.',
+    'El candado tiene tres símbolos; la maleta está llena de esos mismos símbolos.',
+    'Cuenta cuántas calcomanías hay de cada forma y ponlas en el candado en el orden de sus símbolos.',
+  ],
   montar(c) {
     const b = banca(1.8);
-    en(b, 1.4, 0, 0.85);
+    en(b, 2.1, 0, 0.85);
     c.g.add(b);
     const mal = grupo('maleta');
     const cuerpo = caja(0.9, 0.6, 0.3, mat('#e4574b'), 0.06);
@@ -115,11 +124,11 @@ const maleta: Nivel = {
     const candado = caja(0.12, 0.08, 0.04, mat('#d9b25a', { metal: 0.7, rough: 0.3 }), 0.015, 'candado maleta');
     en(candado, 0, 0.56, 0.17);
     mal.add(candado);
-    en(mal, 1.4, 0.49, 0.85);
+    en(mal, 2.1, 0.49, 0.85);
     c.g.add(mal);
     const k = llave('llave', '#f2c75c', true);
     k.visible = false;
-    en(k, 1.4, 1.0, 0.85);
+    en(k, 2.1, 1.16, 0.85);
     c.g.add(k);
     let abierta = false;
     c.tocar(mal, async () => {
@@ -149,11 +158,22 @@ const LETRAS = ['A', 'E', 'M', 'O', 'T', 'R', 'S', 'L'];
 const META = 'TEAMO';
 const paletas: Nivel = {
   titulo: 'Las letras que giran',
-  pistas: ['Cada letra se queda quieta si la tocas justo cuando pasa la que quieres.', 'Toca cada paleta cuando muestre su letra hasta que el tablero diga TE AMO.'],
+  pistas: [
+    'Ese tablero no se queda quieto.',
+    'Cada paleta se detiene si la tocas justo cuando pasa la letra que quieres. El letrerito de abajo dice qué mensaje buscar.',
+    'Deja cada paleta quieta en su letra para formar, de izquierda a derecha, lo que siempre nos decimos.',
+  ],
   montar(c) {
     const marco = caja(1.9, 0.62, 0.08, mat('#1e2430'), 0.03);
     en(marco, 2.05, 1.85, 0.03);
     c.g.add(marco);
+    const mensaje = letrero(1.3, 0.16, (cx, w, h) => {
+      cx.fillStyle = '#F7C948';
+      cx.fillRect(0, 0, w, h);
+      textoEn(cx, 'PRÓXIMA SALIDA: lo que siempre nos decimos ♥', w / 2, h / 2 + 2, h * 0.5, '#1e2430', 700);
+    }, 'letrero mensaje');
+    en(mensaje, 2.05, 1.44, 0.04);
+    c.g.add(mensaje);
     const pal = [...META].map((meta, i) => {
       const cv = document.createElement('canvas');
       cv.width = 96;
@@ -228,7 +248,11 @@ const paletas: Nivel = {
 // ---------------------------------------------------------------------------
 const torniquete: Nivel = {
   titulo: 'El torniquete',
-  pistas: ['El lector del tiquete es delicado: ni muy lento ni muy rápido.', 'Desliza el dedo sobre el lector de izquierda a derecha con un movimiento parejo, como pasando una tarjeta.'],
+  pistas: [
+    'Ese torniquete es muy delicado.',
+    'Al lector hay que pasarle el tiquete, pero no de cualquier manera.',
+    'Desliza el dedo sobre el lector de lado a lado con un movimiento parejo: ni muy lento ni muy rápido.',
+  ],
   montar(c) {
     const t = grupo('torniquete');
     t.add(en(caja(0.3, 1.0, 0.5, mat('#b8bcc4', { metal: 0.5, rough: 0.35 }), 0.05), 0, 0.5, 0));
@@ -296,7 +320,11 @@ const PUEBLOS: [number, number][] = [[0.15, 0.8], [0.5, 0.9], [0.85, 0.75], [0.3
 const CARRETERAS: [number, number][] = [[0, 1], [1, 2], [0, 3], [1, 3], [1, 4], [2, 4], [3, 4]];
 const ruta: Nivel = {
   titulo: 'La ruta sin repetir',
-  pistas: ['Hay que pasar por todas las carreteras, cada una una sola vez, sin levantar el lápiz.', 'Empieza en uno de los pueblos que tiene tres carreteras (abajo) y termina en el otro.'],
+  pistas: [
+    'Ese mapa es un rompecabezas.',
+    'Hay que pasar por todas las carreteras, cada una una sola vez, sin saltar.',
+    'Empieza en un pueblo del que salgan tres carreteras (hay dos así) y termina en el otro.',
+  ],
   montar(c) {
     const W = 1.5, H = 1.1, x0 = 2.05, y0 = 1.55;
     const cv = document.createElement('canvas');
@@ -326,6 +354,7 @@ const ruta: Nivel = {
         cx.stroke();
       });
       cx.setLineDash([]);
+      textoEn(cx, 'todas las carreteras · ninguna dos veces', 300, 412, 22, '#8a5e40', 700);
       tex.needsUpdate = true;
     };
     pintar();
@@ -378,7 +407,11 @@ const ruta: Nivel = {
 // ---------------------------------------------------------------------------
 const relojes: Nivel = {
   titulo: 'Los relojes de las ciudades',
-  pistas: ['Los tres primeros relojes siguen una regla. ¿Cuánto avanza cada uno?', 'Cada reloj va una hora y diez minutos adelante del anterior: 1:10, 2:20, 3:30… pon el último en 4:40.'],
+  pistas: [
+    'Uno de esos relojes anda perdido.',
+    'Los tres primeros siguen una regla. ¿Cuánto avanza cada uno respecto al anterior?',
+    'Averigua cuánto se adelanta cada reloj respecto al anterior y súmaselo una vez más al último.',
+  ],
   montar(c) {
     const horas: [number, number][] = [[1, 10], [2, 20], [3, 30]];
     const nombres = ['Cali', 'Bogotá', 'Medellín', 'Bucaramanga'];
@@ -420,7 +453,11 @@ const relojes: Nivel = {
 // ---------------------------------------------------------------------------
 const quieto: Nivel = {
   titulo: 'Quietos, que tiembla',
-  pistas: ['Las bolitas no se acomodan si todo se mueve.', 'Sostén el celular muy quieto (y sin tocar la pantalla) unos segundos hasta que las bolitas caigan en sus huecos.'],
+  pistas: [
+    'Todo aquí tiembla demasiado.',
+    'Las bolitas buscan sus huecos, pero con tanto movimiento no pueden.',
+    'Sostén el celular muy quieto, sin tocar la pantalla, unos segundos.',
+  ],
   montar(c) {
     const b = banca(1.8);
     en(b, 1.5, 0, 0.8);
@@ -447,9 +484,16 @@ const quieto: Nivel = {
     c.g.add(k);
     let listo = 0, hecho = false, tocando = false;
     c.gesto.dedos((n) => (tocando = n > 0));
-    c.aviso('Sostén el celular quieto…', 2500);
+    let bus = 1.5;
     c.cada((dt, t) => {
       if (hecho) return;
+      // Cada tanto pasa un bus por detrás y retumba
+      bus -= dt;
+      if (bus <= 0) {
+        bus = 6 + Math.random() * 3;
+        sfx.motor(0.4, 1.6);
+        sfx.pito(0.5);
+      }
       const moviendo = c.sensores.quieto < 900 || tocando;
       if (moviendo) listo = Math.max(0, listo - dt * 2);
       else listo += dt;
@@ -484,16 +528,32 @@ const quieto: Nivel = {
 // ---------------------------------------------------------------------------
 const maquina: Nivel = {
   titulo: 'La máquina de dulces',
-  pistas: ['Primero hace falta una moneda. Después: fila B, columna 4.', 'Toma la moneda bajo la banca, úsala en la ranura, marca B4 y, cuando el dulce se trabe, sacude el celular (o dale golpecitos a la máquina).'],
+  pistas: [
+    'Un dulcecito para el viaje no cae mal.',
+    'La máquina no fía: primero hace falta una moneda. Y en algún lado quedó anotado cuál es mi favorito.',
+    'Con la moneda en la ranura, marca el código del papelito; si el dulce se traba, hay que mover la máquina.',
+  ],
   montar(c) {
     const b = banca(1.4);
-    en(b, -0.9, 0, 0.75);
+    en(b, -1.35, 0, 0.75);
+    // La envoltura del dulce favorito, tirada por ahí
+    const papel = letrero(0.2, 0.13, (cx, w, h) => {
+      cx.fillStyle = '#f59fc0';
+      cx.fillRect(0, 0, w, h);
+      textoEn(cx, 'mi favorito', w / 2, h * 0.32, h * 0.2, '#3d2b27', 700);
+      textoEn(cx, 'B4 ♥', w / 2, h * 0.68, h * 0.3, '#3d2b27', 700);
+    }, 'envoltura');
+    papel.rotation.x = -Math.PI / 2;
+    papel.rotation.z = -0.5;
+    en(papel, 1.45, 0.006, 1.2);
+    c.g.add(papel);
+    c.tocar(papel, () => void c.ui.nota('<p style="font-size:22px;text-align:center">La envoltura de mi dulce favorito:<br><b>B4</b> ♥</p>'));
     c.g.add(b);
     const moneda = grupo('moneda');
     const disco = cilindro(0.05, 0.05, 0.012, mat('#f2c75c', { metal: 0.8, rough: 0.3 }), undefined, 20);
     moneda.add(disco);
     moneda.add(new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), new THREE.MeshBasicMaterial({ visible: false })));
-    en(moneda, -0.7, 0.008, 0.95);
+    en(moneda, -1.15, 0.008, 0.95);
     c.g.add(moneda);
     c.tocar(moneda, () => c.dar('moneda', moneda));
     const maq = grupo('maquina');
@@ -577,6 +637,7 @@ const maquina: Nivel = {
       await c.volver();
       if (ok) {
         elegido = true;
+        maq.userData.elegido = true;
         trabar();
       }
     });
@@ -592,7 +653,8 @@ const maquina: Nivel = {
     await p.usar('moneda', 'panel maquina');
     await p.tocar('panel maquina');
     await p.panel('B4');
-    await p.esperar(1500);
+    await p.esperarQue(() => !!p.obj('maquina').userData.elegido, 30000);
+    await p.esperar(300);
     p.sensor.sacudir();
     await p.esperarQue(() => !!p.obj('maquina').userData.cayo, 30000);
     await p.tocar('llave');
@@ -606,9 +668,13 @@ const maquina: Nivel = {
 const MALETAS: [string, string][] = [['#e4574b', '★'], ['#8EC5F0', '♥'], ['#e4574b', '♥'], ['#8FD6B9', '♥'], ['#F7C948', '☀'], ['#e4574b', '']];
 const banda: Nivel = {
   titulo: 'La banda de las maletas',
-  pistas: ['Nuestra maleta es la roja con un corazón. Hay varias parecidas.', 'Toca la maleta roja con corazón cuando pase por delante; adentro está la llave.'],
+  pistas: [
+    'Todas las maletas se parecen, pero solo una es nuestra.',
+    'En la pared hay una nota que dice cómo es la nuestra.',
+    'Toca nuestra maleta cuando pase por delante en la banda; las otras no sirven.',
+  ],
   montar(c) {
-    const cx0 = 1.3, cz0 = 1.0, rx = 1.2, rz = 0.35;
+    const cx0 = 2.1, cz0 = 1.0, rx = 1.2, rz = 0.35;
     const cinta = new THREE.Mesh(new THREE.TorusGeometry(1, 0.1, 8, 48), mat('#3d4450', { rough: 0.6 }));
     cinta.rotation.x = Math.PI / 2;
     cinta.scale.set(rx, rz, 1);
@@ -683,7 +749,11 @@ const banda: Nivel = {
 // ---------------------------------------------------------------------------
 const tunel: Nivel = {
   titulo: 'El túnel',
-  pistas: ['Cierra los ojos un momento…', 'Apaga la pantalla del celular (el botón de encendido) y vuelve a prenderla. Si no puedes, deja el dedo quieto sobre la pantalla cinco segundos.'],
+  pistas: [
+    'Este túnel no se acaba nunca.',
+    'El letrero del túnel pide algo raro… hazle caso de verdad.',
+    'Apaga la pantalla del celular un momento y vuelve a prenderla. (Si no puedes, deja el dedo quieto sobre la pantalla unos segundos.)',
+  ],
   montar(c) {
     const letreroT = letrero(1.3, 0.35, (cx, w, h) => {
       cx.fillStyle = '#F7C948';

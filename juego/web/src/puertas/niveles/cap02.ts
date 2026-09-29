@@ -2,6 +2,7 @@
 // paciencia, secuencias, arrastrar el sol, barrer hojas y limpiar el vidrio.
 import * as THREE from 'three';
 import * as sonido from '../../sonido';
+import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
 import { borrable, candadoPuerta, Chorro, florecita, limites, llave, tecladoPared } from './piezas';
@@ -29,7 +30,11 @@ function letreroPalo(nombre: string, x: number, z: number, w: number, h: number,
 // ---------------------------------------------------------------------------
 const regadera: Nivel = {
   titulo: 'La semilla tiene sed',
-  pistas: ['La regadera está llena… pero no se inclina sola.', 'Gira el celular hacia la izquierda (como un timón) para que la regadera eche agua en la matera.'],
+  pistas: [
+    'Algo en este jardín tiene mucha sed.',
+    'La regadera está llena, pero no se inclina sola: la mueve el mundo entero.',
+    'Inclina el celular hacia el lado del pico, como un timón, y sostenlo mientras el agua cae en la matera.',
+  ],
   montar(c) {
     const matera = grupo('matera');
     matera.add(en(cilindro(0.24, 0.18, 0.32, mat('#d9824f')), 0, 0.16, 0), en(cilindro(0.22, 0.22, 0.02, mat('#6b4a33')), 0, 0.31, 0));
@@ -75,7 +80,7 @@ const regadera: Nivel = {
         cada = 0.05;
         flor.getWorldPosition(pico0);
         chorro.soltar(pico0, new THREE.Vector3(-0.4, -0.2, (Math.random() - 0.5) * 0.1));
-        if (Math.random() < 0.2) sonido.rumor(0.1, 2400, 0.02);
+        if (Math.random() < 0.12) sfx.agua(0.35, 0.05);
       }
       chorro.paso(dt, 0.3);
       // Cuenta el agua que cae sobre la matera
@@ -115,7 +120,11 @@ const PALETA = ['#F59FC0', '#F7C948', '#ffffff', '#c9b6ea', '#e4574b'];
 const META_FLORES = [3, 0, 4, 1, 2];
 const mariposa: Nivel = {
   titulo: 'Las flores de la mariposa',
-  pistas: ['La mariposa tiene cinco manchas en las alas… y hay cinco flores.', 'Toca cada flor para cambiarle el color hasta que queden como las manchas de la mariposa, de izquierda a derecha.'],
+  pistas: [
+    'Esa mariposa es muy exigente con las flores.',
+    'Las alas tienen manchas de colores, y hay tantas manchas como flores.',
+    'Toca cada flor para cambiarle el color hasta que, de izquierda a derecha, copien las manchas de las alas.',
+  ],
   montar(c) {
     const m = grupo('mariposa');
     const ala = (lado: number) => {
@@ -138,7 +147,7 @@ const mariposa: Nivel = {
     // Las cinco manchas de izquierda a derecha
     META_FLORES.forEach((ci, i) => m.add(en(cilindro(0.055, 0.055, 0.02, mat(PALETA[ci]), undefined, 20), -0.52 + i * 0.26, 0.08, 0.03)));
     for (const g of m.children.slice(-5)) g.rotation.x = Math.PI / 2;
-    en(m, -1.35, 2.05, 0.5);
+    en(m, -1.75, 2.05, 0.5);
     m.scale.setScalar(1.5);
     c.g.add(m);
     c.cada((_, t) => {
@@ -150,7 +159,7 @@ const mariposa: Nivel = {
     actual.forEach((ci, i) => {
       const f = florecita(PALETA[ci], `flor ${i}`, 0.55);
       f.scale.setScalar(1.4);
-      en(f, 0.55 + i * 0.5, 0, 1.25);
+      en(f, 1.0 + i * 0.5, 0, 1.25);
       f.userData.idx = ci;
       c.g.add(f);
       c.tocar(f, () => {
@@ -183,9 +192,15 @@ const mariposa: Nivel = {
 // ---------------------------------------------------------------------------
 // 13 · Los topos
 // ---------------------------------------------------------------------------
+/** Topos que hay que tumbar antes de que salga el de la llave. */
+const TOPOS = 8;
 const topos: Nivel = {
   titulo: 'Los topos',
-  pistas: ['Los topos salen un momento y se esconden. Hay que ser rápido.', 'Toca seis topos cuando se asomen; después sale el que tiene la llave en la boca.'],
+  pistas: [
+    'Esos topos no se están quietos.',
+    'Hay que ser más rápid{o|a} que ellos. El letrero lleva la cuenta.',
+    'Pégales cuando se asomen hasta llenar el letrero; después sale uno distinto que hay que atrapar a tiempo.',
+  ],
   montar(c) {
     const huecos: { x: number; z: number; topo: THREE.Object3D; arriba: number; estado: 'abajo' | 'subiendo' | 'arriba' | 'bajando'; llave?: boolean }[] = [];
     const cartel = letrero(0.5, 0.3, () => {}, 'cartel topos');
@@ -194,7 +209,7 @@ const topos: Nivel = {
       const cx = (t.image as HTMLCanvasElement).getContext('2d')!;
       cx.fillStyle = '#c49468';
       cx.fillRect(0, 0, cx.canvas.width, cx.canvas.height);
-      textoEn(cx, `${Math.min(n, 6)} / 6`, cx.canvas.width / 2, cx.canvas.height / 2, cx.canvas.height * 0.5, '#3d2b27', 700);
+      textoEn(cx, `${Math.min(n, TOPOS)} / ${TOPOS}`, cx.canvas.width / 2, cx.canvas.height / 2, cx.canvas.height * 0.5, '#3d2b27', 700);
       t.needsUpdate = true;
     };
     pintarCartel(0);
@@ -237,7 +252,7 @@ const topos: Nivel = {
         }
         golpes++;
         pintarCartel(golpes);
-        sonido.nota(220, 0.12, 0, 'square', 0.06, 110);
+        sfx.topoGolpe();
         topo.scale.set(1.2, 0.6, 1.2);
         h.estado = 'bajando';
         c.bien();
@@ -248,13 +263,14 @@ const topos: Nivel = {
     c.cada((dt) => {
       espera -= dt;
       if (espera <= 0 && !conLlaveFuera) {
-        espera = golpes >= 6 ? 99 : 0.7 + Math.random() * 0.6;
+        espera = golpes >= TOPOS ? 99 : 0.6 + Math.random() * 0.55;
         const libres = huecos.filter((h) => h.estado === 'abajo');
         if (libres.length) {
           const h = libres[Math.floor(Math.random() * libres.length)];
           h.estado = 'subiendo';
-          h.arriba = golpes >= 6 ? 9999 : 1.25;
-          if (golpes >= 6) {
+          sfx.topoSale();
+          h.arriba = golpes >= TOPOS ? 9999 : 1.05;
+          if (golpes >= TOPOS) {
             h.llave = true;
             conLlaveFuera = true;
             (h.topo.children.find((o) => o.name.startsWith('llave')) as THREE.Object3D).visible = true;
@@ -302,7 +318,11 @@ const topos: Nivel = {
 const MANZANAS: [string, number][] = [['#e4574b', 3], ['#8fcf5a', 5], ['#f7d24a', 2]];
 const arbol: Nivel = {
   titulo: 'El árbol de manzanas',
-  pistas: ['Las manzanas están escondidas entre las hojas. Hay que moverlo todo.', 'Sacude el celular (o toca el tronco muchas veces) hasta que caigan todas, y cuenta rojas, verdes y amarillas para el candado.'],
+  pistas: [
+    'Ese árbol guarda más de lo que muestra.',
+    'Lo que hay entre las hojas cae si el árbol se mueve. El candado quiere saber cuántas hay de cada color.',
+    'Mueve el árbol con todo el celular (o con muchos toquecitos al tronco) hasta que no caiga nada más, y cuenta por colores en el orden del candado.',
+  ],
   montar(c) {
     const arbolG = grupo('arbol');
     arbolG.add(en(cilindro(0.16, 0.24, 1.8, mat('#8a5e40')), 0, 0.9, 0));
@@ -387,7 +407,11 @@ const DIGITOS: Record<string, string[]> = {
 };
 const diente: Nivel = {
   titulo: 'El diente de león',
-  pistas: ['Los dientes de león se soplan… y al volar dibujan algo.', 'Sopla al celular (o desliza el dedo rápido sobre el diente de león): las semillas forman cuatro números en el cielo. Escríbelos en el teclado.'],
+  pistas: [
+    'Ese diente de león está esperando un deseo.',
+    'Los dientes de león se deshacen con el viento. ¿De dónde sacas viento?',
+    'Sopla cerquita del micrófono del celular (o frota rápido el dedo sobre la flor) y mira qué dibujan las semillas en el cielo.',
+  ],
   montar(c) {
     const planta = grupo('diente de leon');
     planta.add(en(cilindro(0.012, 0.015, 0.8, mat('#6fa54f')), 0, 0.4, 0));
@@ -461,13 +485,17 @@ const diente: Nivel = {
 // ---------------------------------------------------------------------------
 const caracol: Nivel = {
   titulo: 'El caracol tímido',
-  pistas: ['El caracol se asusta cuando lo tocas… o cuando tocas cualquier cosa.', 'No toques la pantalla: espera a que el caracol llegue a la piedra y deje la llave. Después sí, tómala.'],
+  pistas: [
+    'Hay alguien muy lento en este jardín… y muy tímido.',
+    'Cada vez que tocas algo, el caracol se asusta y se esconde.',
+    'No toques nada un buen rato: deja que el caracol termine su camino y suelte lo que lleva.',
+  ],
   montar(c) {
     const tronco = cilindro(0.18, 0.2, 2.6, mat('#8a5e40'));
     tronco.rotation.z = Math.PI / 2;
     en(tronco, 1.6, 0.18, 1.3);
     const piedra = cilindro(0.2, 0.24, 0.08, mat('#cfc6ba', { rough: 1 }), 'piedra plana', 14);
-    en(piedra, 0.1, 0.04, 1.35);
+    en(piedra, 0.45, 0.04, 1.35);
     c.g.add(tronco, piedra);
     const car = grupo('caracol');
     const cuerpo = grupo('cuerpo caracol');
@@ -507,7 +535,7 @@ const caracol: Nivel = {
       cuerpo.scale.setScalar(Math.min(1, cuerpo.scale.x + dt * 3));
       car.position.x -= dt * 0.16;
       baba.scale.x = 1.8 + Math.sin(t * 6) * 0.1;
-      if (car.position.x <= 0.55) {
+      if (car.position.x <= 0.9) {
         llego = true;
         // Baja la llave a la piedra
         const w = k.getWorldPosition(new THREE.Vector3());
@@ -515,7 +543,7 @@ const caracol: Nivel = {
         c.g.add(k);
         k.position.copy(w);
         const y0 = w.y, x0 = w.x;
-        void c.escena.animar(600, (q) => k.position.set(x0 + (0.1 - x0) * q, y0 - (y0 - 0.14) * q, 1.35));
+        void c.escena.animar(600, (q) => k.position.set(x0 + (0.45 - x0) * q, y0 - (y0 - 0.14) * q, 1.35));
         k.userData.suelta = true;
         c.bien();
         llaveParaLaPuerta(c, k);
@@ -536,7 +564,11 @@ const caracol: Nivel = {
 const CAMINO: [number, number][] = [[0, 0], [0, 1], [1, 1], [1, 2], [2, 2], [2, 1]];
 const piedras: Nivel = {
   titulo: 'El camino de piedras',
-  pistas: ['El mapa del letrero muestra por dónde pisar.', 'Toca las piedras en el orden del mapa, empezando por la de adelante (donde dice «tú»).'],
+  pistas: [
+    'No todas las piedras se pueden pisar.',
+    'Uno de los letreros del jardín tiene dibujado por dónde pasar.',
+    'Pisa las piedras en el mismo orden del dibujo del letrero, empezando por la más cercana a ti.',
+  ],
   montar(c) {
     const pos = (fila: number, col: number) => new THREE.Vector3(1.0 + col * 0.7, 0.03, 1.55 - fila * 0.42);
     const lista: THREE.Mesh[][] = [];
@@ -612,7 +644,11 @@ const piedras: Nivel = {
 // ---------------------------------------------------------------------------
 const relojSol: Nivel = {
   titulo: 'El reloj de sol',
-  pistas: ['El sol se puede mover. La sombra se mueve con él.', 'Arrastra el sol por el cielo hasta que la sombra del reloj apunte al corazón.'],
+  pistas: [
+    'Ese reloj no funciona con pilas.',
+    'La sombra depende de dónde esté el sol… y aquí el sol se deja mover.',
+    'Arrastra el sol por el cielo hasta que la sombra caiga justo sobre la marca especial del reloj.',
+  ],
   montar(c) {
     const cx0 = 1.3, cz0 = 1.25;
     const ped = grupo('reloj de sol');
@@ -702,7 +738,11 @@ const relojSol: Nivel = {
 const SIMBOLOS = ['☾', '♥', '★', '☀', '✿'];
 const hojas: Nivel = {
   titulo: 'Las hojas secas',
-  pistas: ['Debajo de tanta hoja seca puede haber algo.', 'Frota (barre) las hojas con el dedo: aparece una trampilla con tres símbolos. Ponlos en el candado de la reja.'],
+  pistas: [
+    'Este jardín necesita una barridita.',
+    'Debajo de las hojas hay algo con símbolos.',
+    'Frota con el dedo sobre las hojas hasta limpiar lo de abajo y copia sus símbolos en el candado, en el mismo orden.',
+  ],
   montar(c) {
     const W = 1.8, D = 1.0, x = 1.2, z = 1.05;
     const trampilla = grupo('trampilla');
@@ -757,7 +797,11 @@ const hojas: Nivel = {
 const CODIGO_INVERNADERO = '8164';
 const invernadero: Nivel = {
   titulo: 'El invernadero empañado',
-  pistas: ['No se ve nada por el vidrio empañado. Límpialo.', 'Frota el vidrio del invernadero: cada matera tiene un número. De izquierda a derecha es la clave del teclado.'],
+  pistas: [
+    'No se alcanza a ver qué hay adentro.',
+    'El vidrio está empañado: límpialo como el espejo del baño después de la ducha.',
+    'Frota el vidrio con el dedo: cada matera tiene un número; léelos de izquierda a derecha para el teclado.',
+  ],
   montar(c) {
     const x0 = 2.05, z0 = 0.75, W = 1.5, H = 1.4, D = 0.9;
     const inv = grupo('invernadero');

@@ -15,7 +15,8 @@ empezar cada puerta a contar la historia, acompaña en una esquina sin estorbar 
 - **Brain Test / Tricky Doors**: acertijos «de pensar distinto», con trampas amables (la respuesta está en el
   texto, en darle la vuelta al celular o en tocar donde nadie mira).
 - Lo que funciona: niveles cortos (1–3 min), una idea por puerta, pista opcional cuando alguien se atasca, recompensa
-  inmediata (la puerta abriéndose) y variedad constante de mecánicas.
+  inmediata (la puerta abriéndose) y variedad constante de mecánicas. Los cuartos llenos de cosas (que se mueven, se
+  caen y a veces esconden algo) hacen que buscar sea parte del juego.
 - Lo que molesta: pistas que regañan, textos largos en medio del juego, sensores que no responden sin explicarlo.
 
 Fuentes: [100 Doors Challenge (Google Play)](https://play.google.com/store/apps/details?id=com.protey.doors_challenge&hl=en_US),
@@ -36,13 +37,16 @@ recuerdo (una lucecita en forma de corazón). En la puerta 100 los recuerdos vue
 
 - **Narrador**: el otro personaje, con su modelo 3D, sus caras (feliz, hablar, beso) y la ropa que tenga puesta
   en la casa. Habla en segunda persona, con cariño («mi amor», «mi vida»), en frases cortas.
-- **Al empezar** cada puerta: 1–2 frases de ambiente; a veces esconden una pista («llamábamos con tres golpecitos
-  y uno largo»). Se pasa tocando y el narrador se corre a su esquina.
+- **Al empezar** cada puerta: 1–2 frases de historia, recuerdo o molestadera («Ese cangrejo me pellizcó el dedo en
+  Cartagena. Todavía le tengo rabia»). **Nunca** explica cómo se resuelve: lo que el acertijo necesita saber está en el
+  cuarto (un cuadrito con la contraseña de golpes, la envoltura del dulce favorito, un dibujo en la arena, el letrero
+  del túnel…). Se pasa tocando y el narrador se corre a su esquina.
 - **Durante** la puerta: solo ánimo, nunca pistas, y poco: tras varios intentos fallidos o un buen rato quieto
   («Tú puedes, yo te espero aquí»), máximo dos veces por puerta, en un globito que se va solo. Cuando algo sale
-  bien, sonríe (sin texto).
+  bien, sonríe (sin texto); si algo se rompe, pone cara de susto (y la primera vez dice algo: «¡Ay, eso era de mi
+  abuela!»).
 - **Al terminar**: felicita y dice algo bonito («Contigo hasta las puertas más difíciles se abren»).
-- Las pistas son aparte: un bombillo que aparece al rato, con dos niveles (una idea y luego casi la respuesta).
+- **Las pistas se compran** (ver «Antojos» abajo): el narrador no da nada gratis.
 - Se puede cambiar todo el texto en `src/puertas/historia.ts` (por ejemplo, poner recuerdos propios).
 
 ## Los recuerdos (de verdad)
@@ -125,19 +129,19 @@ la explica), para que nadie se quede trabado.
 
 | # | Acertijo | Mecánica |
 |---|---|---|
-| 1 | La llave está bajo el tapete: correrlo, tomar la llave y usarla en la cerradura | arrastrar, inventario |
-| 2 | Llamar como llamábamos: tres golpecitos y uno largo (lo dice la historia) | ritmo de toques |
-| 3 | Prender las lámparas en el orden de colores del cuadro | secuencia |
+| 1 | Bajo el tapete ya no está la llave, sino una notica («ahora la guardo en un bolsillo»): tocar el abrigo del perchero, tomar la llave y usarla | arrastrar, inventario |
+| 2 | Llamar como llamábamos: tres golpecitos y uno largo (anotado en un cuadrito de la sala; hay otro cuadrito que despista) | ritmo de toques |
+| 3 | Prender las lámparas en el orden de colores del cuadro (hay una quinta lámpara, lila, que no va) | secuencia |
 | 4 | La llave se perdió entre los cojines del sofá: levantarlos | deslizar |
-| 5 | El timbre está pegado: tocarlo muchas veces seguidas | toques rápidos |
+| 5 | El timbre está pegado: tocarlo muchas veces seguidas (zumba cada vez más y al final suena ding-dong) | toques rápidos |
 | 6 | Laberinto de canica en la pared: llevarla al hueco | inclinar |
 | 7 | La foto de los dos rota en cuatro: armarla; atrás está el código | rompecabezas + candado |
 | 8 | «Algunas cosas solo brillan en la oscuridad»: apagar la luz y leer las estrellas del techo | interruptor + código |
-| 9 | El reloj de la sala sin manecillas: ponerlo en la hora del celular | girar, hora real |
+| 9 | El reloj de la sala («aquí siempre es ahora», dice el papelito): ponerlo en la hora del celular | girar, hora real |
 | 10 | La llave cuelga de la lámpara del techo | sacudir |
 | 11 | La semilla tiene sed: echarle agua con la regadera | inclinar para verter |
 | 12 | Pintar las flores como las alas de la mariposa | colores |
-| 13 | Topos: pegarles hasta que salga el de la llave | reflejos |
+| 13 | Topos: pegarles a ocho (más rápidos que antes) hasta que salga el de la llave | reflejos |
 | 14 | Sacudir el árbol y contar manzanas rojas, verdes y amarillas | sacudir + contar |
 | 15 | Soplar el diente de león: las semillas dejan ver el número | soplar |
 | 16 | El caracol lleva la llave; si lo tocas se esconde | paciencia |
@@ -148,24 +152,24 @@ la explica), para que nadie se quede trabado.
 | 21 | Preparar el pedido del tablero en su orden | secuencia |
 | 22 | Arte latte: dibujar un corazón en la espuma | dibujar |
 | 23 | Equilibrar la balanza con terrones de azúcar | lógica |
-| 24 | La rocola: repetir la canción | memoria de sonidos |
-| 25 | La cuenta: el total es la clave | sumar |
+| 24 | La rocola: repetir la canción (siete notas, con sonido de rocola) | memoria de sonidos |
+| 25 | La cuenta con propina: el total (30) es la clave | sumar |
 | 26 | El vidrio del café se empaña: soplar | soplar |
 | 27 | Galletas de la fortuna: armar la palabra con sus letras | anagrama |
-| 28 | Las tres tazas: seguir la que tiene la llave | seguimiento |
+| 28 | Las tres tazas: seguir la que tiene la llave (nueve cambios, más rápidos) | seguimiento |
 | 29 | El letrero giratorio: girarlo con dos dedos para leerlo | girar con dos dedos |
 | 30 | El letrero dice CERRADO… al voltear el celular dice ABIERTO | voltear 180° |
 | 31 | El mapa tiene un corazón en Cartagena: buscar su andén en el tablero de salidas | leer y deducir |
 | 32 | La maleta de tres números: los sacan las calcomanías | contar + candado |
-| 33 | Letras que giran en el tablero: pararlas en TE AMO | tiempo justo |
+| 33 | Letras que giran en el tablero: pararlas en TE AMO («lo que siempre nos decimos», dice el letrerito) | tiempo justo |
 | 34 | El torniquete: pasar el tiquete de un deslizón, ni lento ni rápido | deslizar con velocidad |
 | 35 | Trazar la ruta en el mapa sin repetir carretera | camino |
 | 36 | Tres relojes: poner el cuarto con la misma regla | lógica |
-| 37 | El bus se mueve: sostener el celular quieto hasta que las pelotas caigan | quieto |
-| 38 | La máquina de dulces se trabó: sacudirla | monedas + sacudir |
+| 37 | El bus se mueve: sostener el celular quieto hasta que las pelotas caigan (se oyen los buses pasar) | quieto |
+| 38 | La máquina de dulces: la envoltura del favorito dice B4; moneda, código y sacudirla cuando se traba | monedas + sacudir |
 | 39 | La banda de maletas: tomar la que dice la etiqueta | observar |
 | 40 | El túnel: cerrar los ojos (apagar la pantalla) y volver a abrirlos | pantalla |
-| 41 | Ordenar las conchas de menor a mayor | ordenar |
+| 41 | Ordenar las conchas de menor a mayor (así lo dibujaron en la arena) | ordenar |
 | 42 | Alisar el castillo de arena | sacudir |
 | 43 | La botella: inclinar para traerla; el mensaje está al revés | inclinar + espejo |
 | 44 | El cangrejo tiene cosquillas | frotar rápido |
@@ -228,9 +232,77 @@ la explica), para que nadie se quede trabado.
 
 ## Recompensas
 
-- Primera vez que se abre una puerta: +5 monedas para la casa (pasan como el sueldo del súper). Terminar un
-  capítulo: +40. Cada cinco puertas vuelve un recuerdo nuevo al álbum del mapa.
-- Estrellas por puerta (1–3) según tiempo y si se usó la pista; no bloquean nada.
+- Primera vez que se abre una puerta: +1 moneda para la casa (pasa como el sueldo del súper). Terminar un
+  capítulo: +10 (un cuarto de lo que era: la casa se gana despacio). Cada cinco puertas vuelve un recuerdo nuevo al
+  álbum del mapa.
+- Estrellas por puerta (1–3) según el tiempo; con la pistica del caramelo, máximo 2; con una pista más grande, 1.
+  No bloquean nada.
+
+## Antojos: las pistas se compran con dulces
+
+El narrador no regala pistas. El botón rosado del caramelo (arriba a la derecha, siempre está; late después de un
+minuto) abre sus **antojos**: se le compra un dulce con monedas de la casa y, según lo que cueste, suelta una pista
+más chica o más grande. Nunca la respuesta: ni la clave, ni el orden exacto.
+
+| Dulce | Precio | Pista |
+|---|---|---|
+| Un caramelo | 4 | 1: un empujoncito («Algo en este jardín tiene mucha sed») |
+| Chocolates | 10 | 2: más clara (dónde mirar, qué se puede hacer) |
+| Fresas con crema | 20 | 3: la grande (cómo se hace, sin dar la clave) |
+
+- Cada puerta tiene sus tres pistas en `pistas` (`src/puertas/niveles/capNN.ts`). Lo que ya dijo se puede volver a
+  leer en el mismo panel gratis; los dulces de pistas ya dadas (o más chicas) no se venden otra vez.
+- El dulce vuela hasta el narrador, se lo come (pose de comer, mordiscos), guiña el ojo y dice la pista en su globo.
+  Si no alcanza la plata, se cruza de brazos con puchero («¿Sin dulce? Así no se vale, mi amor»).
+- **De dónde sale la plata** (`src/puertas/monedero.ts`, `saldo()` y `gastarMonedas(n)`): primero del sobre del
+  sueldo (`nuestro-hogar-sueldo`, lo ganado en los minijuegos que todavía no llegó a la casa) y el resto de la casa
+  compartida: si la casa es local se cobra con `SincroLocal`; si es en línea, con la misma sesión de la casa
+  (`conexionPareja()` y `guardar_casa` con la versión leída, como la casa). Sin conexión solo alcanza el sobre.
+  Si la casa llega a tener su propio ayudante para cobrar desde otras páginas, se cambia solo en ese archivo.
+
+## El desorden: cuartos llenos de cosas
+
+Cada puerta riega entre 9 y 12 cosas del escenario (`src/puertas/desorden.ts`): libros, jarrones, cojines y portarretratos
+en la casa; materas, gnomos y regaderas en el jardín; tazas, platos y jarras en el café; maletas y conos en la terminal;
+baldes, cocos y conchas en la playa; hongos, farolitos y tronquitos en el bosque; bolos y palomitas en la feria; copas,
+barriles y cascos en el castillo; herramientas, robotitos y pantallitas en la nave. Algunas van colgadas en la pared y
+otras encima de un cajón o un banquito.
+
+- **Todo se mueve**: se toma con el dedo, se arrastra y se lanza (sale con la velocidad del dedo; lanzar hacia arriba
+  también lo manda contra la pared del fondo). Hay gravedad, rebote (las pelotas rebotan más), roce con el piso y
+  paredes; las cosas caen encima de los muebles del acertijo y de otras cosas. Un toque suelto las hace saltar.
+- **Lo frágil se rompe**: jarrones, platos, tazas, vasos, botellas, materas, frascos, copas, bombillos, portarretratos y
+  espejos se hacen pedazos (con sonido de vidrio) si se estrellan a más de 5 m/s contra el piso o una pared; los
+  pedazos saltan y se desvanecen a los tres segundos.
+- **Esconden cosas**: debajo de algunas hay una notica de amor, una cosita perdida (un arete, un botón…) o una **pista
+  falsa** del capítulo (`FALSAS`: parecen claves —«Cajita: 3 · 9 · 2», «Andén 7 → Bogotá»— pero no abren nada).
+- **Nunca tapan**: se acomodan con una rejilla de la pantalla donde se pinta la puerta con su marco, todo lo del
+  acertijo (también lo que aparece después, como una llave que cae), la interfaz y donde se para el narrador. Si algo
+  lanzado queda quieto delante de la puerta, se corre solo hacia un lado. El narrador, al caminar, empuja lo que
+  tenga en los pies.
+- **Celular**: cada cosa es una sola malla con colores por vértice (una llamada de dibujo) y geometría en caché; la
+  física corre a pasos fijos solo para lo que está despierto y todo se duerme al quedarse quieto.
+- Un nivel puede pedir menos cosas o ninguna con `desorden: { cuantas }` o `desorden: { nada: true }`.
+
+## Sonidos
+
+Todo sintetizado (`src/puertas/sonidos.ts`, sobre `nota` y `rumor` de `src/sonido.ts`): el ding-dong del timbre (y su
+zumbido trabado), los golpes en la madera, el tic tac y el cucú del reloj, el interruptor, las lámparas, el agua de la
+regadera, los topos, la rocola, los hongos cantores, el ronquido del dragón, el choque de la armadura, la bocina del
+faro, las olas, el piano y la caja musical de verdad, y lo que se rompe. Cada escenario tiene un ambiente bajito
+(pájaros en el jardín, tazas en el café, buses en la terminal, olas y gaviotas en la playa, grillos en el bosque),
+menos en las puertas donde hay que oír y contar (el búho) o que ya tienen su propio sonido (los buses de la 37).
+
+## Nada tapa la puerta
+
+- La lámpara del techo de la casa cuelga a un lado (`LAMPARA` en `cuarto.ts`), los muebles de los acertijos están a
+  los lados de la puerta, el narrador cuenta la historia desde un lado y celebra sin taparla, su globo se acomoda
+  entre el borde de la pantalla y la puerta, el inventario va en columna a la derecha y los avisos abajo a la izquierda.
+- Revisión automática: `window.__puertas.tapan()` pinta en una rejilla de la pantalla las hojas de la puerta y cuenta
+  qué se les cruza desde la vista de siempre (objetos del cuarto y del acertijo, el desorden, el narrador contando, en
+  la esquina y celebrando, y la interfaz con textos largos de prueba). `node scripts/_puertas_tapan.mjs 1 100` lo
+  corre en 844×390, 740×360 y 1024×768 (con `?revisar=1`, sin dibujar). Lo que es parte de la puerta (las cadenas de
+  la reja, el aro de luz de la compuerta, el brillo del corazón) se llama `marco…` y no cuenta.
 
 ## Técnica
 
@@ -240,3 +312,6 @@ la explica), para que nadie se quede trabado.
 - Cada puerta es un módulo con su montaje, su lógica, sus pistas y una **prueba** que la resuelve con toques y
   sensores simulados, para verificar que las 100 se pueden pasar.
 - Progreso en el celular (`localStorage`); las monedas llegan a la casa compartida.
+- Pruebas: `PUERTO=5174 node scripts/_puertas.mjs <carpeta> <desde> <hasta>` resuelve cada puerta con su prueba
+  (`?sinhistoria=1&rapido=4`); `scripts/_puertas_fotos.mjs` saca fotos sin resolver. `window.__puertas` tiene además
+  `tapan()`, `desorden()` (cuántas cosas hay y cuántas se rompieron), `lanzar(i, vx, vy, vz)` y `antojo()`.

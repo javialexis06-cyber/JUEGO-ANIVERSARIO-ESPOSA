@@ -3,9 +3,10 @@
 import * as THREE from 'three';
 import { cieloPlaya } from '../cuarto';
 import * as sonido from '../../sonido';
+import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, estrella, grupo, letrero, mat, matNuevo, textoEn } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
-import { candadoPuerta, llave } from './piezas';
+import { candadoPuerta, llave, reservar } from './piezas';
 
 function llaveParaLaPuerta(c: Ctx, k: THREE.Object3D) {
   c.tocar(k, () => c.dar('llave', k));
@@ -40,17 +41,42 @@ function concha(color: string, nombre: string) {
 const TAMANOS = [1.3, 0.6, 1.0, 1.5, 0.8];
 const conchas: Nivel = {
   titulo: 'Las conchas',
-  pistas: ['Las conchas se recogen en un orden. ¿Cuál es la más chiquita?', 'Toca las conchas de la más pequeña a la más grande.'],
+  pistas: [
+    'Las conchas no se recogen de cualquier manera.',
+    'En la arena alguien dibujó cómo se recogen.',
+    'Recógelas según su tamaño, como muestra el dibujo de la arena.',
+  ],
   montar(c) {
     const orden = TAMANOS.map((t, i) => [t, i] as const).sort((a, b) => a[0] - b[0]).map(([, i]) => i);
     let paso = 0;
     const cs = TAMANOS.map((t, i) => {
       const o = concha(['#F59FC0', '#f7d6c0', '#fff3e0', '#f6b48a', '#e8c9f0'][i], `concha ${i}`);
       o.scale.setScalar(t * 1.9);
-      en(o, -0.6 + i * 0.75, 0.03, 0.75 + (i % 2) * 0.45, i * 0.7);
+      en(o, -1.5 + i * 0.75, 0.03, 1.05 + (i % 2) * 0.35, i * 0.7);
       c.g.add(o);
       return o;
     });
+    // En la arena: tres conchitas de menor a mayor con una flecha
+    const dibujo = letrero(0.9, 0.3, (cx, w, h) => {
+      cx.strokeStyle = '#a5713f';
+      cx.lineWidth = 6;
+      [0.14, 0.24, 0.36].forEach((r, i) => {
+        cx.beginPath();
+        cx.arc(w * (0.12 + i * 0.22), h * 0.55, h * r, Math.PI, 0);
+        cx.closePath();
+        cx.stroke();
+      });
+      cx.beginPath();
+      cx.moveTo(w * 0.7, h * 0.5);
+      cx.lineTo(w * 0.94, h * 0.5);
+      cx.lineTo(w * 0.87, h * 0.3);
+      cx.moveTo(w * 0.94, h * 0.5);
+      cx.lineTo(w * 0.87, h * 0.7);
+      cx.stroke();
+    }, 'dibujo arena', { transparente: true });
+    dibujo.rotation.x = -Math.PI / 2;
+    en(dibujo, 2.4, 0.012, 1.05);
+    c.g.add(dibujo);
     cs.forEach((o, i) => {
       c.tocar(o, () => {
         if (paso >= orden.length || o.userData.lista) return;
@@ -80,7 +106,11 @@ const conchas: Nivel = {
 // ---------------------------------------------------------------------------
 const castillo: Nivel = {
   titulo: 'El castillo de arena',
-  pistas: ['Algo quedó enterrado debajo del castillo.', 'Sacude el celular (o toca el castillo muchas veces) para deshacerlo; luego toca el cofre.'],
+  pistas: [
+    'Ese castillo esconde algo.',
+    'Lo que hay adentro no sale sin deshacer el castillo.',
+    'Mueve el celular con fuerza (o dale muchos toques al castillo) hasta desbaratarlo, y revisa lo que aparece.',
+  ],
   montar(c) {
     const arena = mat('#e8c98e', { rough: 1 });
     const cas = grupo('castillo');
@@ -98,6 +128,7 @@ const castillo: Nivel = {
     cofre.add(caja(0.34, 0.2, 0.24, mat('#8a5e40'), 0.03), en(caja(0.36, 0.04, 0.26, mat('#d9b25a', { metal: 0.6, rough: 0.35 }), 0.01), 0, 0.1, 0));
     en(cofre, 1.3, -0.25, 0.9);
     c.g.add(cofre);
+    reservar(c, 1.3, 0, 1.05, 0.5, 0.35, 0.6);
     let nivelArena = 0;
     const alisar = () => {
       if (nivelArena >= 3) return;
@@ -150,7 +181,11 @@ const ROCAS: [number, number][] = [[3.7, -3.9], [4.55, -2.9], [3.9, -2.0]];
 const CODIGO_BOTELLA = ['7', '3', '9'];
 const botella: Nivel = {
   titulo: 'La botella con mensaje',
-  pistas: ['La botella se mueve hacia donde inclines el celular. Esquiva las rocas.', 'Gira el celular a los lados para guiarla hasta la orilla; el mensaje está escrito al revés, como en un espejo: 7 3 9.'],
+  pistas: [
+    'Algo viene flotando desde el mar.',
+    'La botella se mueve hacia donde se incline el mundo… y le tiene miedo a las rocas.',
+    'Guíala inclinando el celular hasta la orilla; el mensaje hay que leerlo como si estuvieras frente a un espejo.',
+  ],
   montar(c) {
     for (const [x, z] of ROCAS) {
       const r = esfera(0.32, mat('#7a7068', { rough: 1 }), undefined, 12);
@@ -243,7 +278,11 @@ const botella: Nivel = {
 // ---------------------------------------------------------------------------
 const cangrejo: Nivel = {
   titulo: 'El cangrejo con cosquillas',
-  pistas: ['Dicen que tiene muchas cosquillas…', 'Frota rápido el dedo de un lado a otro sobre el cangrejo hasta que suelte la llave.'],
+  pistas: [
+    'Ese cangrejo tiene algo que no es suyo.',
+    'No le gusta que lo toquen… pero tiene un punto débil: es muy cosquilloso.',
+    'Pasa el dedo de un lado a otro, rápido, sobre el cangrejo, hasta que suelte lo que tiene.',
+  ],
   montar(c) {
     const cr = grupo('cangrejo');
     const rojo = mat('#e4574b');
@@ -311,7 +350,11 @@ const SIMBOLOS = ['☾', '★', '♥', '✿'];
 const TODOS = ['☀', '☾', '★', '♥', '✿', '♣'];
 const marea: Nivel = {
   titulo: 'Lo que deja la marea',
-  pistas: ['Cuando la marea baja se ven cuatro dibujos en la arena, a la derecha de la cabaña.', 'Espera a que baje el agua, memoriza los cuatro dibujos de izquierda a derecha y ponlos en el candado.'],
+  pistas: [
+    'El mar se lleva y trae cosas.',
+    'Cuando el agua se retira, a la derecha de la cabaña quedan unos dibujos… por poco rato.',
+    'Espera a que baje la marea, memoriza los dibujos de izquierda a derecha y ponlos en el candado.',
+  ],
   montar(c) {
     const dib = letrero(1.8, 0.45, (cx, w, h) => SIMBOLOS.forEach((s, i) => textoEn(cx, s, w * (0.14 + i * 0.24), h / 2 + 4, h * 0.8, '#a5713f', 700)), 'dibujos', { transparente: true });
     dib.rotation.x = -Math.PI / 2;
@@ -326,6 +369,8 @@ const marea: Nivel = {
       fase += dt / 7;
       const k = (Math.sin(fase * Math.PI * 2) + 1) / 2;
       const sube = k > 0.35;
+      if (sube && !agua.userData.sube) sfx.ola();
+      agua.userData.sube = sube;
       agua.position.set(2.85, 0.02, -1.62 + (sube ? Math.min(1, (k - 0.35) / 0.3) : 0) * 0.92);
       dib.userData.visible = !sube || k < 0.45;
       agua.scale.z = 1;
@@ -343,7 +388,11 @@ const marea: Nivel = {
 // ---------------------------------------------------------------------------
 const velero: Nivel = {
   titulo: 'El velero de papel',
-  pistas: ['El velerito necesita viento para llegar al muelle.', 'Sopla al celular varias veces (o desliza el dedo sobre el velero hacia la derecha) hasta que llegue al muelle.'],
+  pistas: [
+    'Ese velerito no tiene viento.',
+    'Un velero sin viento no llega a ninguna parte. ¿Quién le da viento?',
+    'Sopla cerquita del micrófono varias veces (o desliza el dedo sobre el velero hacia el muelle) hasta que llegue.',
+  ],
   montar(c) {
     const charco = cilindro(0.85, 0.85, 0.02, new THREE.MeshStandardMaterial({ color: '#6fbfe6', roughness: 0.15 }), 'charco', 40);
     charco.scale.z = 0.55;
@@ -410,7 +459,11 @@ const velero: Nivel = {
 // ---------------------------------------------------------------------------
 const cocos: Nivel = {
   titulo: 'Los cocos',
-  pistas: ['Los cocos están muy arriba en la palmera. Hay que moverla.', 'Sacude el celular para tumbar los cocos; luego toca cada coco para abrirlo: uno tiene la llave.'],
+  pistas: [
+    'Esa palmera está muy cargada.',
+    'Los cocos no se bajan solos: hay que mover la palmera. Luego, a abrirlos.',
+    'Sacude el celular para tumbar los cocos y ábrelos tocándolos; solo uno trae lo que buscas.',
+  ],
   montar(c) {
     const cs = [0, 1, 2].map((i) => {
       const o = esfera(0.12, mat('#6b4a33', { rough: 0.9 }), `coco ${i}`, 14);
@@ -487,7 +540,11 @@ const cocos: Nivel = {
 const CODIGO_FARO = ['7', '2', '6'];
 const faro: Nivel = {
   titulo: 'El faro',
-  pistas: ['El faro parpadea largo y corto. En la tabla de la cabaña dice cuánto vale cada destello.', 'Destello largo = 5, corto = 1. Parpadea «largo corto corto», «corto corto», «largo corto»: 7, 2, 6.'],
+  pistas: [
+    'Ese faro no parpadea por parpadear.',
+    'Los destellos largos y cortos valen distinto; en la cabaña hay una tabla que lo explica.',
+    'Suma los destellos de cada grupo según la tabla: cada grupo es un número del candado. Tocar el faro repite la señal.',
+  ],
   montar(c) {
     const f = grupo('faro');
     f.add(en(esfera(0.9, mat('#7a7068', { rough: 1 }), undefined, 12), 0, -0.3, 0));
@@ -538,6 +595,13 @@ const faro: Nivel = {
       const patron: number[] = [];
       for (const [on, off] of sec) patron.push(Math.round(on * 500), Math.round(off * 500));
       c.sensores.vibrar(patron);
+      // La señal también se oye: bocina larga o corta
+      let t = 0;
+      for (const [on, off] of sec) {
+        sonido.nota(196, on * 0.5, t, 'sawtooth', 0.03);
+        sonido.nota(147, on * 0.5, t, 'triangle', 0.06);
+        t += (on + off) * 0.5;
+      }
     });
     candadoPuerta(c, [0, 1, 2].map(() => '0123456789'.split('')), CODIGO_FARO, 'Candado de la cabaña');
   },
@@ -553,7 +617,11 @@ const faro: Nivel = {
 const INICIO_APAGADAS = [0, 4, 8];
 const estrellasMar: Nivel = {
   titulo: 'Las estrellas de mar',
-  pistas: ['Cada estrella que tocas cambia ella y las que tiene al lado (arriba, abajo, a los lados).', 'Toca las tres estrellas apagadas: la de una esquina, la del centro y la de la esquina opuesta.'],
+  pistas: [
+    'Esas estrellas están desordenadas.',
+    'Cada estrella que tocas también cambia a sus vecinas.',
+    'Busca que todas queden iguales: empieza por las apagadas y fíjate qué les pasa a las de al lado.',
+  ],
   montar(c) {
     const on = Array(9).fill(true);
     const alternar = (i: number) => {
@@ -599,7 +667,11 @@ const estrellasMar: Nivel = {
 const CODIGO_VELAS = ['5', '1', '9'];
 const atardecer: Nivel = {
   titulo: 'El atardecer',
-  pistas: ['Ayúdale al sol a bajar hasta el mar.', 'Arrastra el sol hasta el horizonte: al atardecer, las velas de los barcos muestran tres números para el candado.'],
+  pistas: [
+    'Todavía es muy temprano.',
+    'El sol se puede arrastrar. Al atardecer, algo en el mar cambia.',
+    'Baja el sol hasta el horizonte y mira las velas de los barquitos: ahí están los números del candado.',
+  ],
   montar(c) {
     const telon = c.escena.escena.getObjectByName('telon') as THREE.Mesh | undefined;
     const antes = telon ? (telon.material as THREE.MeshBasicMaterial).map : null;

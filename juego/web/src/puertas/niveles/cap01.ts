@@ -2,7 +2,9 @@
 import * as THREE from 'three';
 import * as sonido from '../../sonido';
 import { caja, cilindro, en, esfera, estrella, FUENTE, grupo, letrero, lienzo, mat, matNuevo, textoEn, toro } from '../kit';
+import { LAMPARA } from '../cuarto';
 import { modelo } from '../modelos';
+import * as sfx from '../sonidos';
 import type { Ctx, Nivel } from '../nivel';
 import { Canica, lamparita, limites, llave, mesa, planoPared, planoPiso, sofa } from './piezas';
 
@@ -29,11 +31,31 @@ function llaveParaLaPuerta(c: Ctx, k: THREE.Object3D) {
 // ---------------------------------------------------------------------------
 const tapete: Nivel = {
   titulo: 'La llave bajo el tapete',
-  pistas: ['Lo que buscas está justo bajo tus pies, frente a la puerta.', 'Arrastra el tapete hacia un lado, toca la llave y luego úsala en la puerta.'],
+  pistas: [
+    'La casa siempre guarda algo cerca de la entrada.',
+    'Lo que se pisa al entrar se puede correr. Lo que aparece debajo te dice dónde seguir.',
+    'Corre el tapete y lee lo que hay debajo; lo que buscas está en algo que se cuelga en la entrada.',
+  ],
   async montar(c) {
+    // Ya no está bajo el tapete: debajo hay una notica, y la llave quedó en el bolsillo del abrigo
     const k = llave();
-    en(k, 0.18, 0.012, 0.78);
+    en(k, -1.12, 0.012, 0.62);
+    k.visible = false;
     c.g.add(k);
+    const nota = letrero(0.2, 0.15, (cx, w, h) => {
+      cx.fillStyle = '#fff3a8';
+      cx.fillRect(0, 0, w, h);
+      textoEn(cx, 'ya no está', w / 2, h * 0.36, h * 0.2, '#3d2b27', 700);
+      textoEn(cx, 'aquí ♥', w / 2, h * 0.66, h * 0.2, '#e4574b', 700);
+    }, 'nota tapete');
+    nota.rotation.x = -Math.PI / 2;
+    nota.rotation.z = 0.3;
+    en(nota, 0.16, 0.008, 0.8);
+    c.g.add(nota);
+    c.tocar(nota, () => {
+      sfx.papel();
+      void c.ui.nota('<p style="font-size:20px;text-align:center">Ya no la dejo bajo el tapete, que todo el mundo sabe.<br>Ahora la guardo en un bolsillo. ♥</p>');
+    });
     const t = grupo('tapete');
     t.add(caja(1.1, 0.035, 0.62, mat('#b5543c', { rough: 1 }), 0.02));
     const texto = letrero(0.95, 0.5, (cx, w, h) => {
@@ -57,19 +79,36 @@ const tapete: Nivel = {
         if (!vista && (Math.abs(pnt.x - 0.18) > 0.62 || Math.abs(pnt.z - 0.78) > 0.42)) {
           vista = true;
           c.bien();
-          llaveParaLaPuerta(c, k);
         }
       },
     });
     await adorno(c, 'deco_monstera', 1.3, 2.6, 0, 0.55);
     const perchero = grupo('perchero');
     perchero.add(en(cilindro(0.03, 0.03, 1.7, mat('#8e5b3c')), 0, 0.85, 0), en(cilindro(0.22, 0.25, 0.04, mat('#8e5b3c')), 0, 0.02, 0));
-    perchero.add(en(caja(0.3, 0.55, 0.12, mat('#f4b6c2'), 0.06), 0.1, 1.35, 0.05));
+    const abrigo = caja(0.3, 0.55, 0.12, mat('#f4b6c2'), 0.06, 'abrigo');
+    en(abrigo, 0.1, 1.35, 0.05);
+    const bolsillo = caja(0.1, 0.08, 0.02, mat('#e89aaa'), 0.02);
+    en(bolsillo, 0.16, 1.22, 0.115);
+    perchero.add(abrigo, bolsillo);
     en(perchero, -1.35, 0, 0.35);
     c.g.add(perchero);
+    let suelta = false;
+    c.tocar(abrigo, () => {
+      void c.escena.animar(360, (t) => (abrigo.rotation.z = Math.sin(t * Math.PI * 3) * 0.12 * (1 - t)));
+      sfx.papel();
+      // Solo se busca en el bolsillo cuando ya se sabe que no está bajo el tapete
+      if (!vista || suelta) return;
+      suelta = true;
+      k.visible = true;
+      const y0 = 1.25;
+      void c.escena.animar(520, (t) => (k.position.y = y0 - (y0 - 0.012) * t * t), (t) => t).then(() => sonido.nota(1500, 0.08, 0, 'triangle', 0.06));
+      llaveParaLaPuerta(c, k);
+    });
   },
   async prueba(p) {
     await p.arrastrar('tapete', new THREE.Vector3(1.6, 0.02, 1.1));
+    await p.tocar('abrigo');
+    await p.esperar(700);
     await p.tocar('llave');
     await p.usar('llave', 'puerta toque');
   },
@@ -80,7 +119,11 @@ const tapete: Nivel = {
 // ---------------------------------------------------------------------------
 const golpecitos: Nivel = {
   titulo: 'Tres golpecitos y uno largo',
-  pistas: ['El narrador te contó cómo tocaban la puerta. Usa la aldaba.', 'Toca la aldaba tres veces rapidito y la cuarta déjala presionada un segundo.'],
+  pistas: [
+    'Esta puerta no se abre con llave: se abre sabiendo tocar.',
+    'Teníamos una manera de tocar para saber que éramos nosotros. En la sala quedó anotada.',
+    'En el cuadrito, cada punto es un golpe cortico y la raya es uno largo: deja el dedo quieto un momento sobre la aldaba.',
+  ],
   montar(c) {
     const aldaba = grupo('aldaba');
     const placa = cilindro(0.09, 0.09, 0.03, mat('#d9b25a', { metal: 0.7, rough: 0.3 }));
@@ -102,7 +145,7 @@ const golpecitos: Nivel = {
       if (ahora - ultimo > 2.5) golpes.length = 0;
       ultimo = ahora;
       golpes.push(largo ? 'L' : 'c');
-      sonido.rumor(largo ? 0.35 : 0.1, 170, 0.14, 0, 2);
+      sfx.golpePuerta(largo);
       void c.escena.animar(largo ? 320 : 160, (k) => (aroPiv.rotation.x = -Math.sin(k * Math.PI) * 0.5));
       const ult = golpes.slice(-4).join('');
       if (ult === 'cccL') {
@@ -123,12 +166,34 @@ const golpecitos: Nivel = {
       cx.lineWidth = 18;
       cx.strokeRect(0, 0, w, h);
       cx.fillStyle = '#3d2b27';
-      cx.font = `600 ${h * 0.14}px ${FUENTE}`;
+      cx.font = `600 ${h * 0.12}px ${FUENTE}`;
       cx.textAlign = 'center';
-      cx.fillText('toc toc toc…', w / 2, h * 0.45);
-      cx.fillText('¿quién es?', w / 2, h * 0.68);
+      cx.fillText('así tocamos nosotros:', w / 2, h * 0.3);
+      // La contraseña: tres puntos y una raya
+      cx.fillStyle = '#e4574b';
+      for (let i = 0; i < 3; i++) {
+        cx.beginPath();
+        cx.arc(w * (0.2 + i * 0.13), h * 0.6, h * 0.05, 0, Math.PI * 2);
+        cx.fill();
+      }
+      cx.fillRect(w * 0.58, h * 0.56, w * 0.26, h * 0.08);
     }, 'cuadro toc');
-    en(cuadro, 1.9, 1.75, 0.02);
+    en(cuadro, 2.7, 1.35, 0.02);
+    // Otro cuadrito que no dice nada útil (despista)
+    const otro = letrero(0.5, 0.36, (cx, w, h) => {
+      cx.fillStyle = '#fff8ee';
+      cx.fillRect(0, 0, w, h);
+      cx.strokeStyle = '#8e5b3c';
+      cx.lineWidth = 14;
+      cx.strokeRect(0, 0, w, h);
+      cx.fillStyle = '#3d2b27';
+      cx.font = `600 ${h * 0.15}px ${FUENTE}`;
+      cx.textAlign = 'center';
+      cx.fillText('toc toc…', w / 2, h * 0.45);
+      cx.fillText('¿quién es?', w / 2, h * 0.7);
+    }, 'cuadro quien');
+    en(otro, -2.2, 1.9, 0.02);
+    c.g.add(otro);
     c.g.add(cuadro);
   },
   async prueba(p) {
@@ -143,7 +208,11 @@ const golpecitos: Nivel = {
 const ORDEN_COLORES = ['#F7C948', '#F59FC0', '#8EC5F0', '#8FD6B9'];
 const lamparas: Nivel = {
   titulo: 'Las lámparas del cuadro',
-  pistas: ['Mira bien el cuadro de la pared: sus colores van en un orden.', 'Prende las lámparas de arriba hacia abajo según las franjas del cuadro: amarilla, rosada, azul, verde.'],
+  pistas: [
+    'Las lámparas no se prenden en cualquier orden.',
+    'Algo colgado en la pared tiene los mismos colores que las lámparas.',
+    'Las franjas del cuadro del corazón se leen de arriba hacia abajo. La lámpara que no sale en el cuadro, ni la mires.',
+  ],
   montar(c) {
     // El cuadro: un corazón a franjas
     const cuadro = letrero(0.8, 0.8, (cx, w, h) => {
@@ -170,14 +239,14 @@ const lamparas: Nivel = {
     }, 'cuadro franjas');
     en(cuadro, -2.1, 1.8, 0.02);
     c.g.add(cuadro);
-    const m = mesa(2.2, 0.5, 0.75, '#c49468', 'consola');
-    en(m, 2.0, 0, 0.45);
+    const m = mesa(2.3, 0.5, 0.75, '#c49468', 'consola');
+    en(m, 2.35, 0, 0.45);
     c.g.add(m);
-    // Colores en otro orden sobre la mesa
-    const puestos = ['#8EC5F0', '#F7C948', '#8FD6B9', '#F59FC0'];
+    // Colores en otro orden sobre la mesa (y una lámpara lila que no está en el cuadro)
+    const puestos = ['#8EC5F0', '#F7C948', '#8FD6B9', '#F59FC0', '#c9b6ea'];
     const lamps = puestos.map((col, i) => {
       const l = lamparita(col, `lampara ${i}`);
-      en(l, 1.2 + i * 0.52, 0.75, 0.45);
+      en(l, 1.4 + i * 0.47, 0.75, 0.45);
       c.g.add(l);
       return { l, col, prendida: false };
     });
@@ -187,7 +256,7 @@ const lamparas: Nivel = {
         if (x.prendida) return;
         x.prendida = true;
         x.l.userData.prender(true);
-        sonido.nota(600 + paso * 120, 0.08, 0, 'triangle', 0.06);
+        sfx.prender(600 + paso * 120);
         if (x.col === ORDEN_COLORES[paso]) {
           paso++;
           if (paso === 4) {
@@ -217,10 +286,14 @@ const lamparas: Nivel = {
 // ---------------------------------------------------------------------------
 const cojines: Nivel = {
   titulo: 'Entre los cojines',
-  pistas: ['Las cosas se pierden debajo de los cojines del sofá.', 'Desliza el dedo hacia arriba sobre cada cojín para levantarlo. La llave está debajo de uno.'],
+  pistas: [
+    'En este sofá se pierde todo.',
+    'Los cojines no se levantan tocándolos: hay que alzarlos con el dedo.',
+    'Desliza el dedo hacia arriba sobre cada cojín, uno por uno.',
+  ],
   montar(c) {
     const s = sofa('#9ccbef');
-    en(s, 1.5, 0, 0.75);
+    en(s, 2.35, 0, 0.75);
     c.g.add(s);
     const debajo = [
       () => {
@@ -234,7 +307,7 @@ const cojines: Nivel = {
       () => llave('llave'),
     ];
     const orden = [1, 2, 0];
-    [0.9, 1.5, 2.1].forEach((x, i) => {
+    [1.75, 2.35, 2.95].forEach((x, i) => {
       const cosa = debajo[orden[i]]();
       en(cosa, x, 0.56, 0.8);
       c.g.add(cosa);
@@ -282,8 +355,12 @@ const cojines: Nivel = {
 // ---------------------------------------------------------------------------
 const timbre: Nivel = {
   titulo: 'El timbre trabado',
-  pistas: ['El timbre suena muy débil… hay que insistir.', 'Toca el timbre muchas veces seguidas y muy rápido, sin parar, hasta que suene.'],
-  montar(c) {
+  pistas: [
+    'El timbre está trabado, no dañado.',
+    'Un toquecito no le alcanza. Fíjate en la lucecita alrededor del botón.',
+    'Tócalo muy rápido y sin parar: si descansas, la lucecita se apaga y toca empezar otra vez.',
+  ],
+  async montar(c) {
     const base = caja(0.18, 0.26, 0.04, mat('#fff8ee'), 0.03, 'timbre base');
     en(base, 0.98, 1.25, 0.02);
     const aro = toro(0.06, 0.012, matNuevo('#e4574b', { emisivo: '#e4574b', intensidad: 0 }), 'aro timbre');
@@ -297,22 +374,23 @@ const timbre: Nivel = {
     c.tocar(boton, () => {
       if (listo) return;
       carga += 1;
-      sonido.nota(160 + carga * 12, 0.06, 0, 'square', 0.03);
+      sfx.timbreTrabado(Math.min(1, carga / 15));
       void c.escena.animar(90, (k) => (boton.position.z = 0.055 - Math.sin(k * Math.PI) * 0.015));
       if (carga >= 15) {
         listo = true;
         c.bien();
-        sonido.nota(988, 0.5, 0, 'sine', 0.1);
-        sonido.nota(784, 0.7, 0.45, 'sine', 0.1);
-        c.despues(1200, () => c.resolver());
+        // ¡Ding… dong! (y otra vez, por si no oyeron)
+        sfx.timbre();
+        sfx.timbre(1.5);
+        c.despues(1800, () => c.resolver());
       }
     });
     c.cada((dt) => {
       if (!listo) carga = Math.max(0, carga - dt * 2.5);
       (aro.material as THREE.MeshStandardMaterial).emissiveIntensity = listo ? 2 : carga / 9;
     });
-    void adorno(c, 'deco_girasoles', 1.0, -1.6, 0, 0.5);
-    void adorno(c, 'deco_cuadro_flores', 0.7, 2.1, 1.4, 0.02);
+    await adorno(c, 'deco_girasoles', 1.0, -1.6, 0, 0.5);
+    await adorno(c, 'deco_cuadro_flores', 0.7, 2.1, 1.4, 0.02);
   },
   async prueba(p) {
     await p.tocar('timbre', 22, 60);
@@ -325,7 +403,11 @@ const timbre: Nivel = {
 const TABLA = { w: 1.2, h: 1.0, solidos: [[0, 0.68, 0.92, 0.72], [0.28, 0.43, 1.2, 0.47], [0, 0.18, 0.86, 0.22]] as [number, number, number, number][] };
 const laberinto: Nivel = {
   titulo: 'El laberinto de canica',
-  pistas: ['La canica rueda según como gires el celular.', 'Gira el celular (como un timón) a un lado y al otro para llevar la canica por los huecos hasta el hoyito de abajo a la izquierda.'],
+  pistas: [
+    'La canica no se mueve con el dedo… al menos no al principio.',
+    'La canica rueda hacia donde se incline el mundo. Y tu mundo cabe en tu mano.',
+    'Gira el celular como un timón, a un lado y al otro, para bajarla piso por piso hasta el hoyito.',
+  ],
   montar(c) {
     const x0 = 1.4, y0 = 1.1;
     const tablero = grupo('tablero');
@@ -447,7 +529,11 @@ function dibujoFoto(cx: CanvasRenderingContext2D, w: number, h: number) {
 
 const fotoRota: Nivel = {
   titulo: 'La foto rota',
-  pistas: ['Los pedazos de la foto van en el marco vacío. Arrástralos.', 'Arma la foto; los números de las esquinas, leídos en el sentido del reloj desde arriba a la izquierda, abren el teclado junto a la puerta.'],
+  pistas: [
+    'Los pedazos de la foto quieren volver a su marco.',
+    'Arrastra cada pedazo al marco vacío. La foto armada tiene algo en las esquinas.',
+    'Los números de las esquinas se leen como avanzan las agujas del reloj, empezando arriba a la izquierda. Hay un teclado junto a la puerta.',
+  ],
   montar(c) {
     const W = 0.8, H = 0.6;
     const cx0 = -2.1, cy0 = 1.75;
@@ -534,7 +620,11 @@ function estrellasNumero(d: string): [number, number][] {
 
 const oscuridad: Nivel = {
   titulo: 'Lo que brilla en la oscuridad',
-  pistas: ['«Algunas cosas solo brillan en la oscuridad». ¿Y si apagas la luz?', 'Apaga el interruptor junto a la puerta: arriba de la puerta aparecen tres números hechos de estrellas. Esa es la clave de la cajita fuerte.'],
+  pistas: [
+    'Hay cosas que con la luz prendida no se ven.',
+    'Busca cómo dejar el cuarto a oscuras.',
+    'Con el interruptor de junto a la puerta apagado, mira hacia arriba: las estrellas que forman números son las de la cajita fuerte.',
+  ],
   montar(c) {
     // Interruptor
     const inter = grupo('interruptor');
@@ -565,7 +655,7 @@ const oscuridad: Nivel = {
     c.tocar(inter, () => {
       meta = meta > 0.5 ? 0.06 : 1;
       palanca.position.y = meta > 0.5 ? 0.02 : -0.02;
-      sonido.nota(1400, 0.03, 0, 'square', 0.05);
+      sfx.interruptor();
       if (meta < 0.5) c.bien();
     });
     c.cada((dt) => {
@@ -619,8 +709,12 @@ const oscuridad: Nivel = {
 // ---------------------------------------------------------------------------
 const reloj: Nivel = {
   titulo: 'El reloj sin hora',
-  pistas: ['El reloj quiere saber qué hora es… de verdad, ahora mismo.', 'Arrastra cada manecilla hasta la hora que marca tu celular (la corta es la hora, la larga los minutos).'],
-  montar(c) {
+  pistas: [
+    'Ese reloj está perdido en el tiempo.',
+    'El papelito del reloj dice qué hora quiere: la de verdad.',
+    'Mueve las dos manecillas hasta la hora de este momento, la que marca tu celular: la corta es la hora y la larga los minutos.',
+  ],
+  async montar(c) {
     const cx0 = -2.0, cy0 = 1.8, R = 0.42;
     const centro = new THREE.Vector3(cx0, cy0, 0.06);
     const cara = letrero(R * 2.2, R * 2.2, (cx, w, h) => {
@@ -682,9 +776,27 @@ const reloj: Nivel = {
       moviendo = d > 0.27 ? minutero : dif(horario) < 0.35 || dif(horario) < dif(minutero) ? horario : minutero;
     }, () => {
       moviendo = null;
-      sonido.nota(1100, 0.03, 0, 'square', 0.04);
+      sfx.clic();
       if (!hecho) revisar();
     });
+    // Tic tac de fondo (se calla cuando llega la hora)
+    let tic = 0;
+    c.cada((dt) => {
+      tic += dt;
+      if (tic > 2 && !hecho) {
+        tic = 0;
+        sfx.tictac(4, 0.5);
+      }
+    });
+    // Un papelito pegado debajo del reloj
+    const papel = letrero(0.46, 0.16, (cx, w, h) => {
+      cx.fillStyle = '#fff3a8';
+      cx.fillRect(0, 0, w, h);
+      textoEn(cx, 'aquí siempre es ahora', w / 2, h / 2, h * 0.34, '#3d2b27', 700);
+    }, 'papel reloj');
+    papel.rotation.z = -0.05;
+    en(papel, cx0 + 0.05, cy0 - R - 0.2, 0.03);
+    c.g.add(papel);
     c.gesto.mover((x, y, abajo) => {
       if (!abajo || !moviendo || hecho) return;
       const pnt = c.enPlano(x, y, planoPared(0.06));
@@ -708,12 +820,15 @@ const reloj: Nivel = {
     casita.add(pajaro);
     const pajarito = async () => {
       pajaro.visible = true;
-      sonido.nota(1318, 0.12, 0, 'sine', 0.08);
-      sonido.nota(1046, 0.16, 0.15, 'sine', 0.08);
+      // ¡Cucú, cucú!
+      for (let i = 0; i < 2; i++) {
+        sonido.nota(784, 0.18, i * 0.5, 'sine', 0.1);
+        sonido.nota(622, 0.26, i * 0.5 + 0.2, 'sine', 0.1);
+      }
       llaveParaLaPuerta(c, k);
       await c.escena.animar(500, (t) => (pajaro.position.z = t * 0.25));
     };
-    void adorno(c, 'deco_estanteria', 1.9, 2.3, 0, 0.35);
+    await adorno(c, 'deco_estanteria', 1.9, 2.3, 0, 0.35);
   },
   async prueba(p) {
     const d = new Date();
@@ -739,10 +854,14 @@ const reloj: Nivel = {
 // ---------------------------------------------------------------------------
 const lampara: Nivel = {
   titulo: 'La llave en la lámpara',
-  pistas: ['La llave cuelga muy alto. ¿Y si mueves todo un poquito?', 'Sacude el celular (o toca la lámpara muchas veces) hasta que la llave se caiga.'],
-  montar(c) {
+  pistas: [
+    'Lo que buscas no está en el piso.',
+    'Mira la lámpara del techo. ¿Cómo se baja algo que cuelga tan alto?',
+    'Hay que mover la lámpara hasta que suelte lo que tiene: con el celular entero… o con muchos toquecitos.',
+  ],
+  async montar(c) {
     const piv = grupo('colgante');
-    en(piv, 0, 3.2 - 0.86, 1.6);
+    en(piv, LAMPARA.x, 3.2 - 0.86, LAMPARA.z);
     const hilo = cilindro(0.004, 0.004, 0.6, mat('#3d2b27'));
     en(hilo, 0, -0.3, 0);
     const k = llave('llave', '#f2c75c', false);
@@ -752,13 +871,15 @@ const lampara: Nivel = {
     c.g.add(piv);
     const toque = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.9, 0.5), new THREE.MeshBasicMaterial({ visible: false }));
     toque.name = 'lampara toque';
-    en(toque, 0, 2.25, 1.6);
+    en(toque, LAMPARA.x, 2.25, LAMPARA.z);
     c.g.add(toque);
     let vaiven = 0, fase = 0, caida = false;
     const empujar = (f: number) => {
       if (caida) return;
       vaiven = Math.min(0.9, vaiven + f);
       sonido.rumor(0.2, 900, 0.04);
+      // La cadenita de la lámpara
+      sfx.cadena();
       if (vaiven > 0.75) soltar();
     };
     const soltar = () => {
@@ -786,7 +907,7 @@ const lampara: Nivel = {
     const s = sofa('#f4b6c2');
     en(s, 1.9, 0, 0.7);
     c.g.add(s);
-    void adorno(c, 'deco_osito', 0.45, 1.6, 0.54, 0.75);
+    await adorno(c, 'deco_osito', 0.45, 1.6, 0.54, 0.75);
   },
   async prueba(p) {
     p.sensor.sacudir();

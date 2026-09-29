@@ -62,7 +62,8 @@ export class ProbadorReal implements Probador {
       const p = this.pantalla(x);
       const id = ++this.id;
       this.evento('pointerdown', id, p.x, p.y);
-      await pausa(40);
+      // (sin esperar un temporizador: en un computador lento un cuadro puede tardar más que un toque)
+      await Promise.resolve();
       this.evento('pointerup', id, p.x, p.y);
       await pausa(cada);
     }
@@ -212,7 +213,7 @@ export class ProbadorReal implements Probador {
   }
 
   async panel(valor: string) {
-    await this.esperarQue(() => this.paneles.abierto !== null, 4000);
+    await this.esperarQue(() => this.paneles.abierto !== null, 20000);
     await this.paneles.escribir(valor);
     await pausa(900);
   }

@@ -2,6 +2,7 @@
 // soplar el vidrio, anagrama, seguir la taza, girar con dos dedos y voltear el celular.
 import * as THREE from 'three';
 import * as sonido from '../../sonido';
+import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, grupo, letrero, lienzo, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
 import { candadoPuerta, corazonPuntos, esCorazon, limites, llave, mesaRedonda, mostrador, planoPiso, taza } from './piezas';
@@ -23,7 +24,11 @@ function abrirYa(c: Ctx, ms = 700) {
 const PEDIDO = ['taza', 'cafetera', 'leche', 'canela'];
 const pedido: Nivel = {
   titulo: 'El pedido de siempre',
-  pistas: ['La pizarrita del mostrador tiene dibujado el pedido, paso por paso.', 'Toca en orden: la taza, la cafetera, la leche y la canela (el azúcar no va).'],
+  pistas: [
+    'El café no se prepara en cualquier orden.',
+    'En el mostrador hay una pizarrita con el pedido de siempre.',
+    'Toca las cosas en el orden de los dibujos de la pizarrita. Lo que no está dibujado, no va.',
+  ],
   montar(c) {
     const m = mostrador(2.6);
     en(m, 2.15, 0, 0.5);
@@ -145,7 +150,11 @@ const pedido: Nivel = {
 // ---------------------------------------------------------------------------
 const latte: Nivel = {
   titulo: 'Arte latte',
-  pistas: ['Acércate al café y dibuja con el dedo sobre la espuma.', 'Toca la taza grande y dibuja un corazón de un solo trazo sobre la espuma.'],
+  pistas: [
+    'Ese café está muy simple.',
+    'Acércate a la taza grande: la espuma se deja dibujar con el dedo.',
+    'Dibuja sobre la espuma, de un solo trazo, la figura que más nos representa.',
+  ],
   montar(c) {
     const mesa = mesaRedonda(0.5);
     en(mesa, 1.2, 0, 0.95);
@@ -182,6 +191,7 @@ const latte: Nivel = {
       if (cerca || hecho) return;
       await c.enfocar(new THREE.Vector3(1.2, espumaY, 0.95), 0.75);
       cerca = true;
+      t.userData.cerca = true;
       c.aviso('Dibuja sobre la espuma', 2200);
     });
     const plano = planoPiso(espumaY);
@@ -221,7 +231,8 @@ const latte: Nivel = {
   },
   async prueba(p) {
     await p.tocar('taza grande');
-    await p.esperar(1500);
+    await p.esperarQue(() => !!p.obj('taza grande').userData.cerca, 30000);
+    await p.esperar(300);
     const asp = innerWidth / innerHeight;
     const pts = corazonPuntos(40).map(({ x, y }) => [0.5 + (x / 34) * (0.45 / asp), 0.5 + (y / 34) * 0.45] as [number, number]);
     pts.push(pts[0]);
@@ -235,14 +246,18 @@ const latte: Nivel = {
 const PESOS = [1, 2, 3, 5];
 const balanza: Nivel = {
   titulo: 'La balanza de la torta',
-  pistas: ['La torta pesa lo que dice su etiqueta; cada cajita pesa lo que tiene de terrones.', 'Arrastra al platillo de la derecha las cajitas que sumen 7: la de 2 y la de 5.'],
+  pistas: [
+    'Esa balanza está muy triste de un lado.',
+    'La torta tiene su peso escrito; cada cajita pesa lo que tiene de terrones.',
+    'Pon en el otro platillo cajitas que sumen exactamente lo mismo que la torta.',
+  ],
   montar(c) {
     const mesa = grupo('mesa balanza');
     mesa.add(en(caja(2.2, 0.06, 0.8, mat('#c49468'), 0.02), 0, 0.72, 0));
     for (const sx of [-1, 1]) for (const sz of [-1, 1]) mesa.add(en(caja(0.06, 0.7, 0.06, mat('#c49468'), 0.015), sx * 1.02, 0.35, sz * 0.32));
-    en(mesa, 1.5, 0, 0.8);
+    en(mesa, 2.1, 0, 0.8);
     c.g.add(mesa);
-    const bx = 1.0, by = 0.75, bz = 0.8;
+    const bx = 1.6, by = 0.75, bz = 0.8;
     const base = grupo('balanza');
     base.add(en(cilindro(0.14, 0.18, 0.05, mat('#d9b25a', { metal: 0.6, rough: 0.35 })), 0, 0.025, 0), en(cilindro(0.025, 0.025, 0.6, mat('#d9b25a', { metal: 0.6, rough: 0.35 })), 0, 0.33, 0));
     const cajon = caja(0.26, 0.08, 0.2, mat('#a5713f'), 0.02, 'cajon');
@@ -280,7 +295,7 @@ const balanza: Nivel = {
       cj.add(caja(0.16, 0.08, 0.12, mat(['#8EC5F0', '#F7C948', '#8FD6B9', '#c9b6ea'][i]), 0.02));
       for (let k = 0; k < w; k++) cj.add(en(caja(0.022, 0.022, 0.022, mat('#ffffff'), 0.004), -0.055 + (k % 3) * 0.055, 0.052, -0.025 + Math.floor(k / 3) * 0.05));
       cj.userData.peso = w;
-      en(cj, 1.75 + i * 0.26, 0.79, 0.95);
+      en(cj, 2.35 + i * 0.26, 0.79, 0.95);
       c.g.add(cj);
       return cj;
     });
@@ -314,7 +329,7 @@ const balanza: Nivel = {
     for (const cj of cajas) {
       c.arrastrar(cj, {
         plano: planoMesa,
-        limites: limites(0.45, 0.79, 0.45, 2.55, 0.79, 1.15),
+        limites: limites(1.05, 0.79, 0.45, 3.15, 0.79, 1.15),
         alTomar: () => {
           const i = enPlatillo.indexOf(cj);
           if (i >= 0) {
@@ -357,10 +372,14 @@ const balanza: Nivel = {
 // ---------------------------------------------------------------------------
 const NOTAS = [523, 659, 784, 1046];
 const COLORES_ROCOLA = ['#e4574b', '#F7C948', '#8FD6B9', '#8EC5F0'];
-const MELODIA = [0, 2, 1, 3, 2, 0];
+const MELODIA = [0, 2, 1, 3, 2, 0, 3];
 const rocola: Nivel = {
   titulo: 'La rocola',
-  pistas: ['Oprime el botón de reproducir y fíjate qué botones se iluminan.', 'Repite la canción tocando los botones de colores en el mismo orden (son seis notas).'],
+  pistas: [
+    'Esa rocola quiere que la acompañes.',
+    'El botón de abajo la pone a sonar: mira qué botones de colores se iluminan.',
+    'Repite la canción tocando los botones de colores en el mismo orden en que se prendieron.',
+  ],
   montar(c) {
     const r = grupo('rocola');
     r.add(en(caja(1.0, 1.2, 0.5, mat('#b8653a'), 0.08), 0, 0.6, 0));
@@ -395,7 +414,7 @@ const rocola: Nivel = {
     const brillar = (i: number, ms: number) => {
       const m = botones[i].material as THREE.MeshStandardMaterial;
       m.emissiveIntensity = 1.4;
-      sonido.nota(NOTAS[i], ms / 1000, 0, 'triangle', 0.09);
+      sfx.rocola(NOTAS[i], 0, ms / 1000);
       c.despues(ms, () => (m.emissiveIntensity = 0));
     };
     let sonando = false, escuchada = false, paso = 0, hecho = false;
@@ -419,7 +438,7 @@ const rocola: Nivel = {
           paso++;
           if (paso === MELODIA.length) {
             hecho = true;
-            c.despues(400, () => [523, 659, 784, 1046, 1318].forEach((f, k) => sonido.nota(f, 0.2, k * 0.1, 'triangle', 0.08)));
+            c.despues(400, () => [523, 659, 784, 1046, 1318].forEach((f, k) => sfx.rocola(f, k * 0.1, 0.22)));
             (vidrio.material as THREE.MeshStandardMaterial).emissiveIntensity = 1.5;
             abrirYa(c, 1300);
           }
@@ -440,25 +459,31 @@ const rocola: Nivel = {
 // ---------------------------------------------------------------------------
 // 25 · La cuenta
 // ---------------------------------------------------------------------------
+/** 2 × 4 + 9 + 3 × 3 + 0 + 4 de propina. */
+const TOTAL_CUENTA = '30';
 const cuenta: Nivel = {
   titulo: 'La cuenta',
-  pistas: ['Lee la cuenta que dejaron en la mesa y haz la suma.', '2 cafés de 4, 1 torta de 9 y 3 galletas de 3: 8 + 9 + 9 = 26. Escríbelo en la caja registradora.'],
+  pistas: [
+    'Hay que pagar antes de irse.',
+    'El recibo de la mesa dice qué pedimos; la caja registradora quiere el total.',
+    'Multiplica cada línea del recibo (cantidad por precio), súmalo todo, propina incluida, y escribe el total en la caja.',
+  ],
   montar(c) {
     const mesa = mesaRedonda(0.45);
-    en(mesa, 0.9, 0, 1.05);
+    en(mesa, 1.2, 0, 1.05);
     c.g.add(mesa);
     const recibo = letrero(0.26, 0.38, (cx, w, h) => {
       cx.fillStyle = '#fffdf6';
       cx.fillRect(0, 0, w, h);
       cx.fillStyle = '#3d2b27';
       cx.font = `700 ${h * 0.07}px 'Courier Prime', monospace`;
-      ['CAFÉ DE LOS DOS', '', '2 café    x 4', '1 torta   x 9', '3 galleta x 3', '', 'TOTAL     ??'].forEach((l, i) => cx.fillText(l, w * 0.08, h * (0.12 + i * 0.12)));
+      ['CAFÉ DE LOS DOS', '2 café    x 4', '1 torta   x 9', '3 galleta x 3', '1 beso    x 0', 'propina   + 4', 'TOTAL     ??'].forEach((l, i) => cx.fillText(l, w * 0.08, h * (0.12 + i * 0.12)));
     }, 'recibo');
     recibo.rotation.x = -Math.PI / 2 + 0.35;
-    en(recibo, 0.9, 0.78, 1.05);
+    en(recibo, 1.2, 0.78, 1.05);
     c.g.add(recibo);
     c.tocar(recibo, () =>
-      void c.ui.nota(`<pre style="font:700 17px/1.5 'Courier Prime',monospace;margin:0">CAFÉ DE LOS DOS\n\n2 café     x 4\n1 torta    x 9\n3 galleta  x 3\n\nTOTAL      ??</pre>`),
+      void c.ui.nota(`<pre style="font:700 17px/1.5 'Courier Prime',monospace;margin:0">CAFÉ DE LOS DOS\n\n2 café     x 4\n1 torta    x 9\n3 galleta  x 3\n1 beso     x 0\npropina    + 4\n\nTOTAL      ??</pre>`),
     );
     const m = mostrador(1.6);
     en(m, 2.5, 0, 0.5);
@@ -470,7 +495,7 @@ const cuenta: Nivel = {
     c.g.add(caja3);
     c.tocar(caja3, async () => {
       await c.enfocar(caja3, 1.0);
-      const ok = await c.ui.teclado({ titulo: 'Caja registradora', largo: 2, correcto: '26' });
+      const ok = await c.ui.teclado({ titulo: 'Caja registradora', largo: 2, correcto: TOTAL_CUENTA });
       if (ok) {
         sonido.caja();
         c.resolver();
@@ -479,7 +504,7 @@ const cuenta: Nivel = {
   },
   async prueba(p) {
     await p.tocar('caja registradora');
-    await p.panel('26');
+    await p.panel(TOTAL_CUENTA);
   },
 };
 
@@ -489,7 +514,11 @@ const cuenta: Nivel = {
 const CODIGO_VIDRIO = ['3', '1', '5'];
 const vidrio: Nivel = {
   titulo: 'El secreto del vidrio',
-  pistas: ['Lo que se escribe en un vidrio empañado vuelve a aparecer cuando se empaña otra vez.', 'Sopla al celular (o mantén presionada la ventana) para empañarla y leer los números para el candado.'],
+  pistas: [
+    'Esa ventana guarda un secreto.',
+    'Lo que se escribe en un vidrio empañado vuelve a aparecer cuando se empaña otra vez.',
+    'Empaña el vidrio con tu aliento (sopla cerca del micrófono o mantén el dedo sobre la ventana) y lee lo que aparece.',
+  ],
   montar(c) {
     const x0 = -2.05, y0 = 1.65;
     const calle = lienzo(256, 210, (cx, w, h) => {
@@ -575,7 +604,11 @@ const vidrio: Nivel = {
 const LETRAS_GALLETAS = ['O', 'S', 'E', 'B'];
 const galletas: Nivel = {
   titulo: 'Galletas de la fortuna',
-  pistas: ['Cada galleta trae una letra. Juntas forman una palabra.', 'Abre las cuatro galletas: O, S, E, B… ordénalas y pon BESO en el candado.'],
+  pistas: [
+    'Las galletas traen algo adentro.',
+    'Cada galleta esconde una letra; juntas forman una palabra.',
+    'Abre todas las galletas y ordena sus letras para formar algo que te doy todos los días. Va en el candado.',
+  ],
   montar(c) {
     const mesa = mesaRedonda(0.55);
     en(mesa, 1.2, 0, 0.95);
@@ -632,14 +665,18 @@ const galletas: Nivel = {
 // ---------------------------------------------------------------------------
 const tazas: Nivel = {
   titulo: 'Las tres tazas',
-  pistas: ['No le quites el ojo a la taza que tapó la llave.', 'Sigue con la mirada la taza de la llave mientras se revuelven y tócala cuando paren.'],
+  pistas: [
+    'El mesero es rápido, pero tú más.',
+    'Fíjate bien debajo de cuál taza queda lo brillante antes de que empiecen a moverse.',
+    'No le quites el ojo a esa taza mientras se revuelven y tócala cuando se queden quietas.',
+  ],
   montar(c) {
     const mesa = grupo('mesa tazas');
     mesa.add(en(caja(1.8, 0.06, 0.7, mat('#c49468'), 0.02), 0, 0.72, 0));
     for (const sx of [-1, 1]) for (const sz of [-1, 1]) mesa.add(en(caja(0.06, 0.7, 0.06, mat('#c49468'), 0.015), sx * 0.82, 0.35, sz * 0.28));
-    en(mesa, 1.2, 0, 0.95);
+    en(mesa, 1.9, 0, 0.95);
     c.g.add(mesa);
-    const X = [0.65, 1.2, 1.75];
+    const X = [1.35, 1.9, 2.45];
     const Y = 0.75;
     const k = llave('llave', '#f2c75c', true);
     k.scale.setScalar(0.8);
@@ -668,13 +705,14 @@ const tazas: Nivel = {
     const revolver = async () => {
       estado = 'revolviendo';
       k.visible = false;
-      for (let n = 0; n < 7; n++) {
+      for (let n = 0; n < 9; n++) {
         const a = Math.floor(Math.random() * 3);
         const b = (a + 1 + Math.floor(Math.random() * 2)) % 3;
         const ta = cs[lugar.indexOf(a)], tb = cs[lugar.indexOf(b)];
         const xa = X[a], xb = X[b];
         sonido.rumor(0.2, 900, 0.03);
-        await c.escena.animar(480, (q) => {
+        sfx.toc(0.5);
+        await c.escena.animar(420, (q) => {
           ta.position.x = xa + (xb - xa) * q;
           ta.position.z = 0.95 + Math.sin(q * Math.PI) * 0.18;
           tb.position.x = xb + (xa - xb) * q;
@@ -735,7 +773,11 @@ const tazas: Nivel = {
 const SIMBOLOS_RUEDA = ['★', '☕', '☀', '♣', '☾', '✿', '♦', '♥'];
 const letreroGira: Nivel = {
   titulo: 'El letrero giratorio',
-  pistas: ['El letrero redondo gira, pero hay que girarlo como se gira una tapa.', 'Pon dos dedos sobre la pantalla y gíralos (o arrastra en círculo con uno) hasta que el corazón quede arriba, en la ventanita.'],
+  pistas: [
+    'Ese letrero redondo no está derecho.',
+    'Gira, pero no como una perilla cualquiera: como se gira una tapa.',
+    'Gíralo con dos dedos (o arrastrando en círculo con uno) hasta que lo que sentimos quede arriba, en la ventanita.',
+  ],
   montar(c) {
     const x0 = 2.0, y0 = 1.6;
     const rueda = grupo('rueda');
@@ -828,7 +870,11 @@ const letreroGira: Nivel = {
 // ---------------------------------------------------------------------------
 const cerrado: Nivel = {
   titulo: 'Cerrado… o abierto',
-  pistas: ['El letrero de la puerta dice CERRADO. ¿Y si lo miras al revés?', 'Voltea el celular (dale la vuelta, de cabeza) y vuelve a ponerlo derecho: el letrero cambia a ABIERTO.'],
+  pistas: [
+    'Nada es lo que parece desde donde estás.',
+    'Ese letrero se lee distinto si el mundo se pone de cabeza.',
+    'Voltea el celular de cabeza y vuelve a ponerlo derecho. (Si no se entera, toca el letrero varias veces.)',
+  ],
   montar(c) {
     const pintar = (texto: string, color: string, alReves: boolean) => (cx: CanvasRenderingContext2D, w: number, h: number) => {
       cx.save();

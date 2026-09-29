@@ -5,6 +5,7 @@ import { Vestuario } from '../casa/ropa';
 import type { Rol, Ropa } from '../casa/modelo';
 import { Personaje } from '../personaje';
 import * as sonido from '../sonido';
+import { esquinaNarrador } from './desorden';
 import { Escena, OJO } from './escena';
 import { ANIMO, ANIMO_DE, BONITO, BONITO_DE, type Dicho, elegir, FELICITAR, voz } from './historia';
 import { Globo } from './ui';
@@ -80,10 +81,10 @@ export class Narrador {
     this.p.rot += d * Math.min(1, dt * 7);
   }
 
-  /** Aparece en el centro del cuarto (al empezar la puerta). */
+  /** Aparece a un lado del cuarto (al empezar la puerta), sin tapar la puerta. */
   aparecer() {
     this.p.grupo.visible = true;
-    this.p.pos = P(-1.15, 1.5);
+    this.p.pos = P(-1.75, 1.5);
     this.p.ruta = [];
     this.p.rot = 0.5;
     this.p.quieto();
@@ -129,11 +130,7 @@ export class Narrador {
 
   /** Se corre a la esquina (queda asomado sin tapar el acertijo). */
   irEsquina(): Promise<void> {
-    const z = 0.75;
-    const dist = OJO.z - z;
-    const cam = this.escena.camara;
-    const medioAncho = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * dist * cam.aspect;
-    const destino = P(-Math.min(3.3, medioAncho - 0.9), z);
+    const destino = P(esquinaNarrador(this.escena.camara), 0.75);
     return new Promise((listo) => {
       this.p.ruta = [destino];
       this.p.alLlegar = () => {
@@ -164,11 +161,42 @@ export class Narrador {
     sonido.aviso();
   }
 
+  /** Se come el dulce que le dieron (antes de soltar la pista). */
+  async comer() {
+    this.globo.callar();
+    this.p.cara('feliz');
+    for (let i = 0; i < 5; i++) {
+      this.p.pose(i % 2 ? 'comer_b' : 'comer_a');
+      if (i % 2 === 0) sonido.mordisco();
+      await this.escena.esperar(360);
+    }
+    this.p.pose('risita_a');
+    this.p.cara('guino');
+    await this.escena.esperar(500);
+  }
+
+  /** Sin dulce no hay pista: brazos cruzados y puchero. */
+  negarse(texto: string) {
+    this.globo.susurrar(voz(texto, this.rol), 3000);
+    this.p.pose('brazos_cruzados');
+    this.p.cara('puchero');
+    this.hasta = this.escena.t + 2.2;
+  }
+
+  /** Algo se rompió: cara de susto (y la primera vez, un comentario). */
+  susto(texto?: string) {
+    if (this.hablando) return;
+    this.p.pose(texto ? 'facepalm' : 'boca_abierta');
+    this.p.cara('sorprendido');
+    this.hasta = this.escena.t + 1.4;
+    if (texto) this.globo.susurrar(voz(texto, this.rol), 2600);
+  }
+
   /** Al abrir la puerta: se acerca, celebra y dice algo bonito. */
   async celebrar(n: number) {
     this.globo.callar();
     await new Promise<void>((listo) => {
-      this.p.ruta = [P(-1.05, 1.05)];
+      this.p.ruta = [P(-1.3, 1.05)];
       this.p.alLlegar = () => listo();
     });
     this.p.pose('celebrar');

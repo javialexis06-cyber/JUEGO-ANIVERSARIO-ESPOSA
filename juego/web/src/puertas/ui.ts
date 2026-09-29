@@ -96,14 +96,22 @@ export class Globo {
     this.chico.hidden = true;
   }
 
+  /** Rectángulo de la puerta en la pantalla (px): el globo nunca la tapa. */
+  evitar: { x0: number; y0: number; x1: number; y1: number } | null = null;
+
   /** Sigue la cabeza del narrador en la pantalla. */
   ubicar(x: number, y: number) {
     this.ancla = { x, y };
     const w = window.innerWidth;
+    const e = this.evitar;
     for (const el of [this.el, this.chico]) {
       if (el.hidden) continue;
+      // Si el narrador está a un lado de la puerta, el globo cabe entre el borde y la puerta
+      const lado = e && x < e.x0 ? e.x0 - 22 : 0;
+      const tope = lado > 150 ? `${Math.round(lado)}px` : '';
+      if (el.style.maxWidth !== tope) el.style.maxWidth = tope;
       const ancho = el.offsetWidth || 260;
-      const izq = Math.min(Math.max(12, x + 18), w - ancho - 12);
+      const izq = lado > 150 ? Math.min(Math.max(12, x - ancho * 0.35), e!.x0 - 10 - ancho) : Math.min(Math.max(12, x + 18), w - ancho - 12);
       el.style.left = `${izq}px`;
       el.style.top = `${Math.max(12, y - el.offsetHeight - 8)}px`;
       el.style.setProperty('--cola', `${Math.max(16, Math.min(ancho - 24, x - izq))}px`);
@@ -323,6 +331,51 @@ export class Paneles {
     });
   }
 
+  /** Los antojos del narrador: se le compra un dulce y a cambio da una pista (más grande mientras más cueste).
+   *  Devuelve el antojo elegido (o null si se cerró). `saldo` llega después (se cuenta en la casa). */
+  antojos(op: { quien: string; yaDio: string[]; saldo: Promise<number | null> }): Promise<Antojo | null> {
+    const dados = op.yaDio.length;
+    const tarjetas = ANTOJOS.map(
+      (a) => `<button class="antojo${a.nivel <= dados ? ' dado' : ''}" data-n="${a.nivel}" ${a.nivel <= dados ? 'disabled' : ''}>
+        <span class="antojo-dibujo">${a.icono}</span><b>${esc(a.nombre)}</b><small>${esc(a.que)}</small>
+        <span class="antojo-precio">${a.nivel <= dados ? 'Ya te la dio' : `${a.precio} monedas`}</span></button>`,
+    ).join('');
+    const ya = op.yaDio.length
+      ? `<div class="antojo-ya"><h4>Lo que ya te dijo</h4>${op.yaDio.map((p) => `<p>${esc(p)}</p>`).join('')}</div>`
+      : '';
+    const html = `<h3>Antojos para ${esc(op.quien)}</h3><p class="antojo-sub">No da pistas gratis… pero con un dulce se ablanda.</p>
+      <p class="antojo-saldo">Contando monedas…</p><div class="antojos">${tarjetas}</div>${ya}`;
+    return new Promise((listo) => {
+      this.abrir('nota', html, 'antojos-carta');
+      let hecho = false;
+      this.cerrar = () => {
+        this.finalizar();
+        if (!hecho) listo(null);
+      };
+      this.carta.querySelector<HTMLElement>('.panel-x')!.onclick = () => this.cerrar?.();
+      this.capa.onclick = (e) => {
+        if (e.target === this.capa) this.cerrar?.();
+      };
+      void op.saldo.then((s) => {
+        const el = this.carta.querySelector('.antojo-saldo');
+        if (!el) return;
+        el.textContent = s === null ? 'No se pudo contar las monedas de la casa.' : `Tienes ${s} ${s === 1 ? 'moneda' : 'monedas'}`;
+        for (const b of this.carta.querySelectorAll<HTMLButtonElement>('.antojo:not(.dado)')) {
+          const a = ANTOJOS[Number(b.dataset.n) - 1];
+          if (s !== null && s < a.precio) b.classList.add('caro');
+        }
+      });
+      for (const b of this.carta.querySelectorAll<HTMLButtonElement>('.antojo:not(.dado)')) {
+        b.onclick = () => {
+          hecho = true;
+          sonido.toque();
+          this.finalizar();
+          listo(ANTOJOS[Number(b.dataset.n) - 1]);
+        };
+      }
+    });
+  }
+
   // --- Para las pruebas -----------------------------------------------------
   async escribir(valor: string) {
     if (this.abierto === 'teclado') {
@@ -348,6 +401,29 @@ export class Paneles {
     }
   }
 }
+
+/** Los dulces que se le pueden dar al narrador: el nivel es el de la pista que suelta. */
+export interface Antojo {
+  nivel: 1 | 2 | 3;
+  nombre: string;
+  que: string;
+  precio: number;
+  icono: string;
+}
+export const ANTOJOS: Antojo[] = [
+  {
+    nivel: 1, nombre: 'Un caramelo', que: 'Una pistica chiquita', precio: 4,
+    icono: '<svg viewBox="0 0 64 48"><path d="M16 24L4 14v20zM48 24l12-10v20z" fill="#F59FC0" stroke="#7a3848" stroke-width="3" stroke-linejoin="round"/><ellipse cx="32" cy="24" rx="17" ry="13" fill="#E4574B" stroke="#7a2020" stroke-width="3"/><path d="M22 18q10-6 20 4M20 28q10 6 22-2" stroke="#fff8ee" stroke-width="3" fill="none" stroke-linecap="round"/></svg>',
+  },
+  {
+    nivel: 2, nombre: 'Chocolates', que: 'Una pista más clara', precio: 10,
+    icono: '<svg viewBox="0 0 64 48"><path d="M32 44C12 32 6 24 6 16a12 12 0 0 1 26-4 12 12 0 0 1 26 4c0 8-6 16-26 28z" fill="#8a4b2c" stroke="#3d2b27" stroke-width="3"/><circle cx="22" cy="20" r="5" fill="#b8784a"/><circle cx="42" cy="20" r="5" fill="#b8784a"/><circle cx="32" cy="31" r="5" fill="#b8784a"/><path d="M10 8l8 6M54 8l-8 6" stroke="#E4574B" stroke-width="4" stroke-linecap="round"/></svg>',
+  },
+  {
+    nivel: 3, nombre: 'Fresas con crema', que: 'La pista grande (casi, casi)', precio: 20,
+    icono: '<svg viewBox="0 0 64 48"><path d="M8 22h48l-6 20H14z" fill="#fff8ee" stroke="#7a625a" stroke-width="3" stroke-linejoin="round"/><path d="M12 22q4-12 12-6 6-10 14-2 8-8 14 8z" fill="#fff3e0" stroke="#7a625a" stroke-width="2.5"/><path d="M24 14c-4 2-4 8 0 10 4-2 4-8 0-10z" fill="#E4574B" stroke="#7a2020" stroke-width="2"/><path d="M40 10c-4 2-4 8 0 10 4-2 4-8 0-10z" fill="#E4574B" stroke="#7a2020" stroke-width="2"/><path d="M24 12l-2-3M24 12l2-3M40 8l-2-3M40 8l2-3" stroke="#3c7a62" stroke-width="2"/></svg>',
+  },
+];
 
 function mismo(a: string, b: string) {
   if (a === b) return true;

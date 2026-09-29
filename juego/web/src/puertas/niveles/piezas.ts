@@ -442,3 +442,13 @@ export function banca(ancho = 1.6, color = '#3c7a62') {
   for (const sx of [-1, 1]) g.add(en(caja(0.06, 0.45, 0.4, mat('#5b6b7e', { metal: 0.4, rough: 0.4 }), 0.01), sx * (ancho / 2 - 0.1), 0.225, 0));
   return g;
 }
+
+/** Espacio que el desorden debe dejar libre: donde algo va a caer o aparecer después (una caja oculta). */
+export function reservar(c: import('../nivel').Ctx, x: number, y: number, z: number, w = 0.45, h = 0.35, d = 0.45) {
+  const r = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshBasicMaterial());
+  r.name = 'reservado';
+  r.visible = false;
+  en(r, x, y + h / 2, z);
+  c.g.add(r);
+  return r;
+}

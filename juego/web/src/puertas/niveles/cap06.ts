@@ -2,6 +2,7 @@
 // sonidos, celular boca abajo, melodía, equilibrio, frotar el rocío, ordenar fases, ojos cerrados y adivinanza.
 import * as THREE from 'three';
 import * as sonido from '../../sonido';
+import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
 import { borrable, candadoPuerta, limites, llave, planoPared } from './piezas';
@@ -37,7 +38,11 @@ function luciernaga(nombre: string, color = '#e8ff7a') {
 // ---------------------------------------------------------------------------
 const linterna: Nivel = {
   titulo: 'La linterna',
-  pistas: ['Arrastra el dedo por la pantalla: la linterna alumbra donde lo pongas.', 'Busca con la linterna entre los helechos de la derecha: ahí brilla la llave.'],
+  pistas: [
+    'Aquí no se ve ni la punta de la nariz.',
+    'Donde pones el dedo, se hace la luz.',
+    'Pasea la luz despacio por las matas de los lados: algo brilla entre ellas.',
+  ],
   montar(c) {
     c.escena.atenuar(0.08);
     const foco = new THREE.SpotLight('#fff3d0', 40, 14, 0.2, 0.55, 1.2);
@@ -87,7 +92,11 @@ const linterna: Nivel = {
 const SECUENCIA = [2, 0, 4, 1, 3];
 const luces: Nivel = {
   titulo: 'Las luciérnagas en orden',
-  pistas: ['Toca el farolito del suelo y mira en qué orden se prenden las luciérnagas.', 'Repite el orden tocando las luciérnagas: son cinco destellos.'],
+  pistas: [
+    'Esas luciérnagas tienen algo que decirte.',
+    'Hay un farolito en el suelo que las despierta; fíjate en qué orden se prenden.',
+    'Toca el farolito, mira el orden en que brillan y repítelo tocando las luciérnagas.',
+  ],
   montar(c) {
     const pos: [number, number, number][] = [[-0.9, 1.5, 0.8], [0.2, 2.4, 0.6], [1.2, 1.3, 0.9], [1.9, 2.1, 0.7], [2.6, 1.6, 0.9]];
     const ls = pos.map(([x, y, z], i) => {
@@ -149,7 +158,11 @@ const luces: Nivel = {
 const CODIGO_BUHO = ['4', '2', '5'];
 const buho: Nivel = {
   titulo: 'El búho que cuenta',
-  pistas: ['El búho ulula varias veces seguidas y luego descansa. Cuenta cada grupo.', 'Cuatro ululatos, pausa, dos, pausa, cinco: la clave es 4 2 5. Tócalo para oírlo otra vez.'],
+  pistas: [
+    'Ese búho no para de hablar.',
+    'Ulula en grupos, con pausas en medio. Si lo tocas, repite.',
+    'Cuenta los ululatos de cada grupo: cada grupo es un número del candado, en orden.',
+  ],
   montar(c) {
     const rama = cilindro(0.06, 0.08, 1.5, mat('#5e3d28'));
     rama.rotation.z = Math.PI / 2 - 0.15;
@@ -207,7 +220,11 @@ const buho: Nivel = {
 // ---------------------------------------------------------------------------
 const bocaAbajo: Nivel = {
   titulo: 'En la oscuridad total',
-  pistas: ['Las luciérnagas solo se juntan cuando nadie las mira… en la oscuridad total.', 'Pon el celular boca abajo (sobre la mesa o la cama) unos segundos y vuelve a mirarlo. Si no se puede, mantén presionada la piedra.'],
+  pistas: [
+    'Esas luciérnagas están muy dispersas.',
+    'Son tímidas: solo se juntan en la oscuridad total, cuando nadie las mira.',
+    'Pon el celular boca abajo unos segundos y vuelve a mirarlo. (Sin sensores: mantén presionada la piedra un buen rato.)',
+  ],
   montar(c) {
     const piedra = cilindro(0.45, 0.55, 0.3, mat('#6f6a64', { rough: 1 }), 'piedra', 16);
     en(piedra, 0.9, 0.15, 0.95);
@@ -216,7 +233,7 @@ const bocaAbajo: Nivel = {
     for (let i = 0; i < 26; i++) {
       const l = luciernaga(`bicho ${i}`);
       l.scale.setScalar(0.5);
-      en(l, -3 + ((i * 0.37) % 1) * 6.5, 0.6 + ((i * 0.53) % 1) * 2.2, -0.4 + ((i * 0.71) % 1) * 1.8);
+      en(l, (i % 2 ? -1 : 1) * (1.05 + ((i * 0.37) % 1) * 2.3), 0.6 + ((i * 0.53) % 1) * 2.2, -0.4 + ((i * 0.71) % 1) * 1.8);
       l.userData.brillo(0.3);
       c.g.add(l);
       ls.push(l);
@@ -234,7 +251,7 @@ const bocaAbajo: Nivel = {
       ls.forEach((l, i) => {
         const t = (i / ls.length) * Math.PI * 2;
         const x = 16 * Math.sin(t) ** 3, y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-        const destino = new THREE.Vector3(0.9 + x * 0.035, 1.35 + y * 0.035, 0.95);
+        const destino = new THREE.Vector3(1.55 + x * 0.03, 1.4 + y * 0.03, 0.95);
         const desde = l.position.clone();
         void c.escena.animar(1400, (q) => l.position.lerpVectors(desde, destino, q));
         l.userData.brillo(1);
@@ -271,7 +288,11 @@ const NOTAS_HONGOS = [523, 587, 659, 784, 880];
 const CANCION = [3, 1, 4, 0, 2];
 const hongos: Nivel = {
   titulo: 'Los hongos que cantan',
-  pistas: ['Cada hongo suena distinto. La piedra tiene su canción pintada con colores.', 'Toca los hongos en el orden de los colores de la piedra, de izquierda a derecha.'],
+  pistas: [
+    'Esos hongos tienen voz.',
+    'Cada hongo suena distinto, y en algún lugar está pintada su canción.',
+    'Toca los hongos en el orden de los colores pintados en la piedra, de izquierda a derecha.',
+  ],
   montar(c) {
     const hs = COLORES_HONGOS.map((col, i) => {
       const h = grupo(`hongo ${i}`);
@@ -302,7 +323,7 @@ const hongos: Nivel = {
     hs.forEach((h, i) =>
       c.tocar(h, () => {
         if (hecho) return;
-        sonido.nota(NOTAS_HONGOS[i], 0.3, 0, 'sine', 0.09);
+        sfx.hongo(NOTAS_HONGOS[i]);
         const m = h.userData.som.material as THREE.MeshStandardMaterial;
         m.emissiveIntensity = 1.6;
         c.despues(300, () => (m.emissiveIntensity = 0.4));
@@ -329,7 +350,11 @@ const hongos: Nivel = {
 // ---------------------------------------------------------------------------
 const equilibrio: Nivel = {
   titulo: 'El equilibrio',
-  pistas: ['La tabla se inclina como inclines el celular. Que la pelota no se caiga.', 'Gira el celular a un lado y al otro, suavecito, para dejar la pelota en el centro de la tabla hasta que se llene la barra.'],
+  pistas: [
+    'Esa tabla está muy inestable.',
+    'La tabla se inclina como se incline el celular; la barra se llena mientras la pelota no se caiga.',
+    'Mueve el celular suavecito de un lado al otro para dejar la pelota en el centro hasta que se llene la barra.',
+  ],
   montar(c) {
     const cx0 = 1.2, y0 = 0.62, z0 = 1.0;
     c.g.add(en(cilindro(0.18, 0.24, y0 - 0.05, mat('#6b4a33')), cx0, (y0 - 0.05) / 2, z0));
@@ -405,7 +430,11 @@ const equilibrio: Nivel = {
 // ---------------------------------------------------------------------------
 const telarana: Nivel = {
   titulo: 'La telaraña con rocío',
-  pistas: ['El rocío tapa algo tejido en la telaraña.', 'Frota la telaraña para quitarle el rocío: dice LUNA. Ponlo en el candado.'],
+  pistas: [
+    'Esa telaraña está muy mojada.',
+    'El rocío tapa algo tejido en la telaraña.',
+    'Frota la telaraña con el dedo para quitarle el rocío y lee la palabra: va en el candado.',
+  ],
   montar(c) {
     const x0 = 2.2, y0 = 1.55, z0 = 0.45, T = 1.2;
     const red = letrero(T, T, (cx, w, h) => {
@@ -492,7 +521,11 @@ function dibujarFase(cx: CanvasRenderingContext2D, w: number, h: number, fase: s
 }
 const fases: Nivel = {
   titulo: 'Las fases de la luna',
-  pistas: ['La luna crece y decrece. La tabla de piedra ya tiene la primera: la luna nueva.', 'Arrastra las fichas a la tabla en orden: nueva, creciente, llena y menguante.'],
+  pistas: [
+    'La luna no siempre se ve igual.',
+    'La tabla de piedra ya tiene la primera luna puesta; faltan las otras.',
+    'Arrastra las fichas a la tabla siguiendo el ciclo de la luna: después de la que ya está, la que sigue, y así.',
+  ],
   montar(c) {
     const x0 = 2.05, y0 = 1.75, z = 0.35;
     const tabla = caja(1.9, 0.6, 0.12, mat('#7a746c', { rough: 1 }), 0.05);
@@ -546,7 +579,11 @@ const fases: Nivel = {
 // ---------------------------------------------------------------------------
 const ojosCerrados: Nivel = {
   titulo: 'Los ojos cerrados',
-  pistas: ['El árbol solo abre si cierras los ojos con él… de verdad, un buen rato.', 'Apaga la pantalla del celular por lo menos cinco segundos y vuelve a prenderla. Si no puedes, deja el dedo quieto sobre el árbol siete segundos.'],
+  pistas: [
+    'Ese árbol está profundamente dormido.',
+    'Para despertarlo hay que dormirse con él… de verdad.',
+    'Apaga la pantalla del celular por lo menos cinco segundos y vuelve a prenderla. (Si no puedes, deja el dedo quieto sobre el árbol un buen rato.)',
+  ],
   montar(c) {
     const cara = letrero(1.2, 0.5, (cx, w, h) => {
       cx.strokeStyle = '#3a2618';
@@ -591,7 +628,11 @@ const ojosCerrados: Nivel = {
 // ---------------------------------------------------------------------------
 const adivinanza: Nivel = {
   titulo: 'La adivinanza del árbol',
-  pistas: ['Toca la cara del árbol para oír la adivinanza. La respuesta está sobre el tronco cortado.', 'Tiene agujas y números pero no cose ni lee: es un reloj. Toca el reloj de bolsillo.'],
+  pistas: [
+    'Ese árbol tiene cara… y ganas de hablar.',
+    'Tócale la cara para oír su adivinanza; la respuesta está cerquita.',
+    'La respuesta está entre las cosas del tronco cortado: piensa cuál tiene agujas y números.',
+  ],
   montar(c) {
     const cara = letrero(1.2, 0.55, (cx, w, h) => {
       cx.fillStyle = '#3a2618';
