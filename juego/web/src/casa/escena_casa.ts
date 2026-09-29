@@ -338,6 +338,11 @@ export class Casa3D {
     this.mundo.sucio = true;
   }
 
+  /** El inodoro del baño (sale volando con el retrete espacial y cae de vuelta). */
+  inodoro(): THREE.Object3D | null {
+    return this.bases.get('bano')?.getObjectByName('inodoro') ?? null;
+  }
+
   /** Prende o apaga la pantalla de la tele de la sala (se ve desde la casa con la tele en la ventanita). */
   telePrendida(si: boolean) {
     if (si && !this.tele) {

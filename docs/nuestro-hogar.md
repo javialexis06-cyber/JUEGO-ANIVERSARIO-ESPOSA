@@ -39,6 +39,22 @@ del sofá o de la silla, suelta la comida y va a lo nuevo (el otro celular lo ve
 - Los mimos se hacen a un lado del otro que quede libre (si ese lado cae dentro de un mueble, del otro lado); a quien
   duerme se le da desde el lado de su cama. La cajita de regalo aparece sobre piso libre.
 
+## Ir al baño y el retrete espacial
+
+- **Ir al baño** (en el baño): se sienta en el inodoro y pone caras exageradas mientras piensa cosas
+  («¡Ugh!», «¿Y el papel?», «¡Victoria! 😌»).
+- **Lo que les cae pesado**: a Ella la leche (vaso de leche, yogur, arroz con leche) y a Él el picante
+  (empanada con ají, tacos), comido por uno mismo o llevado por la pareja. Le sale un globito con un
+  inodoro que tiembla y el botón «Ir al baño» se pone en rojo.
+- Con esas ganas, en el inodoro todo tiembla, echa humo y **sale disparado por el techo al espacio**: un
+  minijuego de esquivar asteroides arrastrando el dedo (el personaje de verdad, vestido como está, sentado
+  en el inodoro con fuego de cohete). Mientras vuela dice cosas («Siempre supe que algún día saldría como
+  un cohete del baño», «Intolerante a la lactosa… y ahora astronauta»…). Se gana por el tiempo que aguante
+  (1 moneda cada 15 s, hasta 3).
+- Al chocar, cae dando vueltas y **aterriza en el baño con un ¡KABOOM!** (humo, sacudón). El marcador
+  compartido guarda el récord de cada uno (`casa.retrete`) y se ve en Minijuegos → Retrete espacial.
+  Código: `src/casa/cohete.ts`.
+
 ## Recuerdos en el baño y abrazados en la cama
 
 - **Bañarse** dura 30 s: en la tina quedan en ropa interior (Él sin camisa y en bóxer, Ella en ropa

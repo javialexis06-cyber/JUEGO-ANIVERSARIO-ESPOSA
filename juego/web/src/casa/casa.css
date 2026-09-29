@@ -799,8 +799,10 @@ body.hogar {
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 2px 0 rgba(61, 43, 39, 0.2);
-  animation: late 1.4s ease-in-out infinite;
+  /* Con «scale» y no «transform»: la posición en pantalla va en el transform en línea y la animación la pisaba */
+  animation: late-globo 1.4s ease-in-out infinite;
 }
+@keyframes late-globo { 50% { scale: 1.1; } }
 .pensamiento::after {
   content: '';
   position: absolute;
@@ -1094,3 +1096,89 @@ body.en-tele #lienzo {
 }
 body.en-tele:has(.tele.con-cola) #lienzo { opacity: 0; }
 body.en-tele #toast { z-index: 80; }
+
+/* Lo que va pensando en el inodoro y las ganas urgentes de ir al baño */
+.pensamiento.frase {
+  width: auto;
+  height: auto;
+  max-width: 170px;
+  margin: -74px 0 0 -34px;
+  padding: 6px 11px;
+  border-radius: 14px;
+  font: 700 12px/1.25 var(--texto);
+  color: var(--cacao);
+  text-align: center;
+}
+.pensamiento.apuro { background: #fff4d6; animation: apuro 0.32s ease-in-out infinite; }
+.pensamiento.apuro::before {
+  content: '!!';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  color: var(--tomate);
+  font: 700 17px/1 var(--display);
+}
+@keyframes apuro { 0%, 100% { rotate: -9deg; } 50% { rotate: 9deg; } }
+
+/* ---------------------------------------------------------------------------
+   Retrete espacial: humo al despegar, ¡KABOOM! al caer y el marcador
+   --------------------------------------------------------------------------- */
+.explosion { position: fixed; z-index: 35; width: 0; height: 0; pointer-events: none; }
+.explosion span {
+  position: absolute;
+  left: -18px;
+  top: -18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #eeeaf2;
+  animation: explota 1.2s ease-out forwards;
+  animation-delay: calc(var(--d) - 0.4s);
+}
+.explosion.kaboom span { background: radial-gradient(circle, #fff3b0 0%, #ff9f1c 55%, #8d7b6a 100%); }
+@keyframes explota {
+  0% { opacity: 0.95; translate: 0 0; scale: 0.3; }
+  100% { opacity: 0; translate: calc(cos(var(--a)) * 90px) calc(sin(var(--a)) * 70px - 30px); scale: 1.6; }
+}
+.explosion b {
+  position: absolute;
+  left: 0;
+  top: -70px;
+  translate: -50% 0;
+  color: #fff3b0;
+  font: 600 30px/1 var(--display);
+  -webkit-text-stroke: 2px #b93d33;
+  white-space: nowrap;
+  animation: kaboom 1.4s cubic-bezier(0.2, 1.6, 0.4, 1) forwards;
+}
+@keyframes kaboom {
+  0% { scale: 0.2; opacity: 0; }
+  20% { scale: 1.2; opacity: 1; }
+  80% { scale: 1; opacity: 1; }
+  100% { scale: 1; opacity: 0; }
+}
+body.sacudon #lienzo { animation: sacudon 0.5s ease-out; }
+@keyframes sacudon {
+  0%, 100% { translate: 0 0; }
+  20% { translate: -8px 5px; }
+  40% { translate: 7px -6px; }
+  60% { translate: -5px 4px; }
+  80% { translate: 3px -2px; }
+}
+.retrete-records { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 6px; }
+.retrete-records li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: #fff;
+  font: 700 15px/1.2 var(--texto);
+}
+.retrete-records li.lider { background: var(--mantequilla); }
+.retrete-records span { width: 30px; height: 30px; flex: none; border-radius: 50%; }
+.retrete-records em { margin-left: auto; font: 600 18px/1 var(--display); font-style: normal; font-variant-numeric: tabular-nums; }
+.retrete-records i { font-style: normal; font-size: 18px; }
+.minijuego-ico { display: grid; place-items: center; width: 72px; height: 72px; flex: none; }
+.minijuego-ico .ico, .minijuego-ico svg { width: 56px; height: 56px; }
+.retrete-records span { background-size: cover; background-position: center; }

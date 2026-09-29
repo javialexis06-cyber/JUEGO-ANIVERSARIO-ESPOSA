@@ -17,6 +17,7 @@ export const SVG: Record<string, string> = {
   tina: '<svg viewBox="0 0 32 32"><circle cx="10" cy="9" r="4" fill="#E6F2FF" stroke="#8FC9EE" stroke-width="1.4"/><circle cx="18" cy="6" r="3" fill="#E6F2FF" stroke="#8FC9EE" stroke-width="1.4"/><circle cx="23" cy="11" r="2.4" fill="#E6F2FF" stroke="#8FC9EE" stroke-width="1.4"/><path d="M3 16h26v3a8 8 0 0 1-8 8H11a8 8 0 0 1-8-8z" fill="#fff" stroke="#8FC9EE" stroke-width="1.8"/><path d="M8 27l-1 3M24 27l1 3" stroke="#C9A15C" stroke-width="2.2" stroke-linecap="round"/></svg>',
   lavar: '<svg viewBox="0 0 32 32"><rect x="7" y="3" width="18" height="15" rx="7" fill="#DDEAF2" stroke="#F2A5B8" stroke-width="2.2"/><path d="M5 22h22a11 5 0 0 1-22 0z" fill="#fff" stroke="#8FC9EE" stroke-width="1.8"/><path d="M16 22v7" stroke="#8FC9EE" stroke-width="3" stroke-linecap="round"/></svg>',
   sofa: '<svg viewBox="0 0 32 32"><rect x="6" y="8" width="20" height="10" rx="4" fill="#E88C7D"/><rect x="3" y="13" width="6" height="11" rx="3" fill="#D97565"/><rect x="23" y="13" width="6" height="11" rx="3" fill="#D97565"/><rect x="7" y="16" width="18" height="8" rx="3" fill="#F2A294"/><path d="M6 25v3M26 25v3" stroke="#8A5A3B" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  inodoro: '<svg viewBox="0 0 32 32"><rect x="7" y="3" width="14" height="10" rx="3" fill="#F3EFE7" stroke="#3D2B27" stroke-width="2"/><path d="M5 14h22c0 5-4 9-11 9S5 19 5 14z" fill="#F3EFE7" stroke="#3D2B27" stroke-width="2" stroke-linejoin="round"/><path d="M11 23l-1 6h12l-1-6" fill="#F3EFE7" stroke="#3D2B27" stroke-width="2" stroke-linejoin="round"/></svg>',
   tv: '<svg viewBox="0 0 32 32"><rect x="3" y="6" width="26" height="17" rx="4" fill="#2B2A2A"/><rect x="6" y="9" width="20" height="11" rx="2" fill="#8FC7E8"/><path d="M11 3l5 3 5-3M10 27h12" stroke="#2B2A2A" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>',
   closet: '<svg viewBox="0 0 32 32"><path d="M16 9a3 3 0 1 1 3-3" stroke="#7A625A" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M16 9 3 20c-1 1 0 3 1.5 3h23c1.5 0 2.5-2 1.5-3z" fill="#C9B6EA" stroke="#8F76C9" stroke-width="1.8" stroke-linejoin="round"/></svg>',
   nota: '<svg viewBox="0 0 32 32"><path d="M5 5h22v15l-7 7H5z" fill="#FFE58A" stroke="#D9B84A" stroke-width="1.6" stroke-linejoin="round"/><path d="M20 27v-7h7" fill="#F2CF62" stroke="#D9B84A" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 11h13M9 15h9" stroke="#B8923A" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="5" r="3" fill="#E4566B"/></svg>',
@@ -157,9 +158,8 @@ export class Capa {
       e?.remove();
       e = document.createElement('div');
       e.dataset.tipo = tipo;
-      if (tipo === 'pensamiento') {
-        e.className = 'pensamiento';
-        e.innerHTML = contenido ?? '';
+      if (tipo === 'pensamiento' || tipo === 'apuro' || tipo === 'frase') {
+        e.className = tipo === 'pensamiento' ? 'pensamiento' : `pensamiento ${tipo}`;
       } else {
         e.className = `efecto ${tipo}`;
         const uno = tipo === 'zzz' ? 'z' : tipo === 'corazones' ? CORAZON : '';
@@ -167,6 +167,11 @@ export class Capa {
       }
       this.el.appendChild(e);
       this.efectos.set(clave, e);
+    }
+    // El globito cambia de texto sin volver a crearse (lo que va pensando en el inodoro)
+    if ((tipo === 'pensamiento' || tipo === 'apuro' || tipo === 'frase') && e.dataset.contenido !== (contenido ?? '')) {
+      e.innerHTML = contenido ?? '';
+      e.dataset.contenido = contenido ?? '';
     }
     e.style.transform = `translate(${x}px, ${y}px)`;
   }

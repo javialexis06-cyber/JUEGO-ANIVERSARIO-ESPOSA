@@ -104,6 +104,9 @@ const DISFRACES: Item[] = [
   disfraz('hawaianos', 'Vacaciones en la playa', ambos('camisa_hawaiana', 'bermuda_caqui', 'sandalias_cafe', 'gafas_sol'), 'Camisa de flores, bermuda y sandalias'),
 ];
 
+/** Lo que le cae pesado a cada uno: a Ella la leche, a Él el picante (el retrete sale volando). */
+export const LE_CAE_MAL: Record<'el' | 'ella', string[]> = { ella: ['leche', 'yogur', 'arroz_leche'], el: ['empanada', 'tacos'] };
+
 /** La comida y los regalos son lo de todos los días: baratos, para que el bono diario alcance para cuidarse. */
 export const CATALOGO: Item[] = [
   comida('manzana', 'Manzana', 1, 8),
@@ -113,6 +116,7 @@ export const CATALOGO: Item[] = [
   comida('croissant', 'Croissant', 2, 16),
   comida('galletas', 'Galletas', 2, 10, { carino: 2 }),
   comida('yogur', 'Yogur', 2, 10),
+  comida('leche', 'Vaso de leche', 1, 6, { energia: 2 }),
   comida('queso', 'Queso', 2, 12),
   comida('arepa', 'Arepa', 3, 22),
   comida('wafle', 'Wafle', 3, 20, { carino: 3 }),

@@ -24,7 +24,7 @@ export const NOMBRE_RANURA: Record<Ranura, string> = {
 export type Ropa = Partial<Record<Ranura, string>>;
 
 /** Lo que se ve haciendo al personaje (también en el celular del otro). */
-export type Accion = 'comer' | 'banar' | 'lavar' | 'sofa' | 'tv' | 'nevera' | 'closet' | 'saludo' | 'pensar';
+export type Accion = 'comer' | 'banar' | 'lavar' | 'sofa' | 'tv' | 'nevera' | 'closet' | 'saludo' | 'pensar' | 'inodoro';
 
 export interface Actividad {
   tipo: 'nada' | 'dormir';
@@ -51,6 +51,8 @@ export interface EstadoPersonaje {
   /** Ropa puesta y tinte del pelo (cada uno se viste en su celular; el otro lo ve igual). */
   ropa?: Ropa;
   colorPelo?: string;
+  /** Desde cuándo tiene ganas de ir al baño (leche para Ella, picante para Él): el retrete sale volando. */
+  apuro?: number;
 }
 
 export function personajeNuevo(ahora = Date.now()): EstadoPersonaje {
@@ -86,6 +88,7 @@ export function normalizarPersonaje(e: unknown, ahora = Date.now()): EstadoPerso
     if (Object.keys(ropa).length) r.ropa = ropa;
   }
   if (typeof e.colorPelo === 'string' && /^#[0-9a-f]{6}$/i.test(e.colorPelo)) r.colorPelo = e.colorPelo;
+  if (typeof e.apuro === 'number' && Number.isFinite(e.apuro)) r.apuro = e.apuro;
   const a = e.actividad;
   if (esObjeto(a) && (a.tipo === 'nada' || a.tipo === 'dormir')) {
     r.actividad = { tipo: a.tipo, desde: numero(a.desde, t) };
@@ -177,6 +180,8 @@ export interface Casa {
   aniversario: string;
   /** Registro de caricias, abrazos y besos del día (para los premios de cariño). */
   diario: Record<string, number>;
+  /** Récords del retrete espacial: los segundos que más ha durado cada uno esquivando asteroides. */
+  retrete?: Partial<Record<Rol, number>>;
 }
 
 export function casaNueva(): Casa {
@@ -219,6 +224,13 @@ export function normalizarCasa(c: unknown): Casa {
       .map((v) => ({ ...v, dur: Math.max(0, Math.min(60, numero(v.dur, 0))), t: numero(v.t, 0), oida: !!v.oida })),
     aniversario: typeof c.aniversario === 'string' ? c.aniversario : '',
     diario: cantidades(c.diario),
+    ...(esObjeto(c.retrete)
+      ? {
+          retrete: Object.fromEntries(
+            (['el', 'ella'] as Rol[]).filter((r) => typeof c.retrete[r] === 'number' && Number.isFinite(c.retrete[r])).map((r) => [r, Math.max(0, Math.min(3600, c.retrete[r]))]),
+          ),
+        }
+      : {}),
   };
 }
 

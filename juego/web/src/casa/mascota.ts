@@ -23,9 +23,9 @@ interface Salida {
  *  camino esquivando los muebles o cruzar la puerta a otro cuarto. */
 type Tramo = { a: P; alto?: number; rot?: number; salida?: Salida } | { ruta: P } | { cruzar: Cuarto };
 /** Altura del cuerpo mientras se sube al mueble (y al bajarse): se ve que se sienta, se mete a la tina o se sube a la cama. */
-const SUBIR: Record<string, number> = { sofa: 0.48, comer: 0.34, tina: 0.72, cama: 0.8 };
+const SUBIR: Record<string, number> = { sofa: 0.48, comer: 0.34, tina: 0.72, cama: 0.8, inodoro: 0.36 };
 /** Altura final de cada acción (medida con el cuerpo en su pose contra el cojín, la silla, el agua y el colchón). */
-const ALTO = { sofa: 0.48, comer: 0.34, tina: 0.12, cama: 0.74 };
+const ALTO = { sofa: 0.48, comer: 0.34, tina: 0.12, cama: 0.74, inodoro: 0.36 };
 const rad = THREE.MathUtils.degToRad;
 const EJE_Y = new THREE.Vector3(0, 1, 0);
 /** Cuánto se recuesta en la cama (90° sería plano). */
@@ -120,6 +120,11 @@ export class Mascota {
   /** Giro sobre el eje largo del cuerpo (acostado de lado) y corrimiento hacia el centro de la cama. */
   private rodar = 0;
   private juntar = 0;
+  /** Lo que va pensando en el inodoro (globito). */
+  frase: string | null = null;
+  /** El retrete cohete: altura extra (despega o cae del cielo) y temblor antes de despegar. */
+  vuelo = 0;
+  temblor = 0;
 
   get lado() {
     return this.rol === 'el' ? 'izq' : 'der';
@@ -313,6 +318,7 @@ export class Mascota {
     this.soltar();
     this.vestuario?.enBano(false);
     if (accion !== 'dormir') this.abrazo = null;
+    this.frase = null;
     this.pasos = [];
     this.efecto = null;
     this.metaTumbado = 0;
@@ -354,6 +360,24 @@ export class Mascota {
           this.vestuario?.enBano(true);
           this.bucle([{ pose: 'frotar_a', pose2: 'frotar_b', ritmo: 2.4, dur: 99, cara: 'feliz' }]);
           this.efecto = 'burbujas';
+        });
+        break;
+      case 'inodoro':
+        // Sentado en el inodoro con caras exageradas (y lo que va pensando)
+        llegar('inodoro', () => {
+          this.metaAlto = ALTO.inodoro;
+          const f = (frase: string | null) => () => (this.frase = frase);
+          this.bucle([
+            { pose: 'sentado', dur: 1.6, cara: 'concentrado', alEmpezar: f('Mmm…') },
+            { pose: 'comer_sentado_a', dur: 1.4, cara: 'enojado', alEmpezar: f('¡Ugh!') },
+            { pose: 'sentado', dur: 1.0, cara: 'sorprendido', alEmpezar: f('¡¿Qué fue eso?!') },
+            { pose: 'comer_sentado_b', dur: 1.5, cara: 'nervioso', alEmpezar: f('Vamos… tú puedes…') },
+            { pose: 'sentado', dur: 1.3, cara: 'llorando', alEmpezar: f('¿Por qué me haces esto, estómago?') },
+            { pose: 'sentado', dur: 1.4, cara: 'bostezo', alEmpezar: f('…') },
+            { pose: 'comer_sentado_a', dur: 1.2, cara: 'puchero', alEmpezar: f('¿Y el papel?') },
+            { pose: 'sentado', dur: 1.2, cara: 'enojado', alEmpezar: f('¡Último esfuerzo!') },
+            { pose: 'sentado_feliz', dur: 99, cara: 'carcajada', alEmpezar: f('¡Victoria! 😌') },
+          ]);
         });
         break;
       case 'lavar':
@@ -663,7 +687,11 @@ export class Mascota {
     // Acostado no del todo plano: la cabeza (grande) queda apoyada en la almohada, no hundida en el colchón
     g.rotation.x = -this.tumbado * RECLINADO;
     g.rotation.z = 0;
-    g.position.y += this.alto;
+    g.position.y += this.alto + this.vuelo;
+    if (this.temblor > 0) {
+      g.position.x += (Math.random() - 0.5) * this.temblor;
+      g.position.z += (Math.random() - 0.5) * this.temblor;
+    }
     if (this.tumbado > 0.001) {
       const avance = this.tumbado * 0.5;
       g.position.x += Math.sin(p.rot) * avance;

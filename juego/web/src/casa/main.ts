@@ -15,7 +15,7 @@ import * as THREE from 'three';
 import { aTres, Mundo } from '../mundo';
 import { elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
-import { BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, lePasa, paraSitio, TINTES, TipoItem } from './catalogo';
+import { BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, LE_CAE_MAL, lePasa, paraSitio, TINTES, TipoItem } from './catalogo';
 import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
 import { Mascota } from './mascota';
@@ -366,7 +366,10 @@ async function aplicarPendientes(): Promise<Evento[]> {
       if (e.tipo === 'caricia' || e.tipo === 'abrazo' || e.tipo === 'beso') sumarA({ carino: EFECTO_CARINO[e.tipo].suyo });
       else if (e.tipo === 'comida' && typeof e.datos.item === 'string' && ITEM[e.datos.item]?.tipo === 'comida') sumarA(ITEM[e.datos.item].efecto ?? {});
     }
-    if (Object.keys(cambios).length) await guardarYo(sumar(s.personajes[yo], cambios));
+    // La leche (Ella) o el picante (Él) que le trajo la pareja: ganas urgentes de ir al baño
+    const apuro = pendientes.some((e) => e.tipo === 'comida' && LE_CAE_MAL[yo].includes(String(e.datos.item)));
+    if (Object.keys(cambios).length || apuro) await guardarYo({ ...sumar(s.personajes[yo], cambios), ...(apuro ? { apuro: Date.now() } : {}) });
+    if (apuro) setTimeout(() => toast(`¡Uy! A ${nombre(yo)} eso le cayó pesado… ¡al baño, rápido!`, 3600), 2500);
     await s.marcarVistos([...pendientes, ...saludos].map((e) => e.id)).catch((err) => console.error(err));
     return [...pendientes, ...saludos];
   } finally {
@@ -418,6 +421,10 @@ async function comer(id: string) {
   setTimeout(() => sonido.mordisco(), 1600);
   await hacer('comer', 'cocina', 7, it.efecto ?? {}, id);
   toast(`¡Qué rico! ${it.nombre}`);
+  if (LE_CAE_MAL[yo].includes(id) && s) {
+    await guardarYo({ ...s.personajes[yo], apuro: Date.now() });
+    setTimeout(() => toast(`¡Uy! ${it.nombre}… a ${nombre(yo)} eso le cae pesado. ¡Al baño, rápido!`, 3600), 2600);
+  }
 }
 
 async function dormir() {
@@ -441,6 +448,156 @@ async function despertar(auto = false) {
   const e = est(yo);
   await guardarYo({ ...e, actividad: { tipo: 'nada', desde: ahora, accion: 'saludo', hasta: ahora + 2500 }, visto: ahora });
   toast(auto ? `${nombre(yo)} se despertó con toda la energía.` : '¡Buenos días!');
+}
+
+// ---------------------------------------------------------------------------
+// El retrete espacial: la leche (Ella) o el picante (Él) mandan el inodoro al espacio
+// ---------------------------------------------------------------------------
+let enCohete = false;
+/** Mientras se juega en el espacio no se dibuja la casa (ahorra batería). */
+let pausaCasa = false;
+const pausa = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+async function esperarQue(cond: () => boolean, maxMs: number) {
+  const t0 = performance.now();
+  while (!cond() && performance.now() - t0 < maxMs) await pausa(200);
+  return cond();
+}
+
+async function irAlBano() {
+  if (!s || enCohete) return;
+  if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
+  const apuro = !!s.personajes[yo].apuro;
+  await hacer('inodoro', 'bano', apuro ? 90 : 14, {});
+  if (!apuro) return;
+  enCohete = true;
+  try {
+    const m = mascotas[yo];
+    if (!(await esperarQue(() => m.escenaActual.split('|')[1] === 'inodoro', 25000))) return;
+    await pausa(3200);
+    await despegar(m);
+    const { jugarCohete } = await import('./cohete');
+    pausaCasa = true;
+    const r = await jugarCohete({ rol: yo, ropa: s.personajes[yo].ropa, colorPelo: s.personajes[yo].colorPelo, record: s.casa.retrete });
+    pausaCasa = false;
+    await aterrizar(m);
+    await terminarCohete(r.segundos);
+  } finally {
+    enCohete = false;
+    pausaCasa = false;
+  }
+}
+
+/** Anima algo durante `seg` segundos (k de 0 a 1). */
+function animar(seg: number, fn: (k: number) => void) {
+  return new Promise<void>((listo) => {
+    const t0 = performance.now();
+    const paso = () => {
+      const k = Math.min(1, (performance.now() - t0) / 1000 / seg);
+      fn(k);
+      if (k < 1) requestAnimationFrame(paso);
+      else listo();
+    };
+    requestAnimationFrame(paso);
+  });
+}
+
+/** Tiembla, echa humo y sale disparado por el techo con el inodoro. */
+async function despegar(m: Mascota) {
+  verCuarto('bano');
+  const inodoro = casa3d.inodoro();
+  const y0 = inodoro?.position.y ?? 0;
+  m.frase = '¡¿Qué está pasando?!';
+  sonido.rumor(1.4, 160, 0.1, 0, 0.6, 80);
+  await animar(1.3, (k) => {
+    m.temblor = 0.02 + k * 0.05;
+    if (inodoro) inodoro.rotation.z = (Math.random() - 0.5) * 0.08 * k;
+  });
+  m.frase = '¡AAAAAH!';
+  sonido.nota(90, 1.4, 0, 'sawtooth', 0.06, 420);
+  sonido.rumor(1.4, 400, 0.14, 0, 0.5, 2000);
+  explosion(inodoro, 'humo');
+  await animar(1.4, (k) => {
+    const h = k * k * 9;
+    m.vuelo = h;
+    m.temblor = 0.04 * (1 - k);
+    if (inodoro) inodoro.position.y = y0 + h;
+  });
+  m.temblor = 0;
+  m.frase = null;
+}
+
+/** Cae del cielo con el inodoro y el baño explota. */
+async function aterrizar(m: Mascota) {
+  verCuarto('bano');
+  const inodoro = casa3d.inodoro();
+  m.frase = '¡Me voooy!';
+  await animar(0.8, (k) => {
+    const h = (1 - k * k) * 9;
+    m.vuelo = h;
+    if (inodoro) inodoro.position.y = h;
+  });
+  m.vuelo = 0;
+  if (inodoro) {
+    inodoro.position.y = 0;
+    inodoro.rotation.z = 0;
+  }
+  explosion(inodoro, 'kaboom');
+  sonido.rumor(1.2, 120, 0.2, 0, 0.5, 50);
+  sonido.nota(70, 0.9, 0, 'sawtooth', 0.08, 30);
+  document.body.classList.remove('sacudon');
+  void document.body.offsetWidth;
+  document.body.classList.add('sacudon');
+  m.frase = '¡Estoy bien!… creo.';
+  await animar(0.6, (k) => (m.temblor = 0.05 * (1 - k)));
+  setTimeout(() => (m.frase = null), 2500);
+}
+
+/** Humo o explosión en la pantalla, sobre el inodoro. */
+function explosion(obj: THREE.Object3D | null, tipo: 'humo' | 'kaboom') {
+  if (!obj) return;
+  const p = mundo.aPantalla(obj.getWorldPosition(new THREE.Vector3()));
+  const e = document.createElement('div');
+  e.className = `explosion ${tipo}`;
+  e.style.left = `${p.x}px`;
+  e.style.top = `${p.y}px`;
+  e.innerHTML = Array.from({ length: 12 }, (_, i) => `<span style="--a:${i * 30}deg;--d:${0.4 + (i % 4) * 0.12}s"></span>`).join('') + (tipo === 'kaboom' ? '<b>¡KABOOM!</b>' : '');
+  document.body.append(e);
+  setTimeout(() => e.remove(), 1800);
+}
+
+async function terminarCohete(seg: number) {
+  if (!s) return;
+  const antes = s.casa.retrete?.[yo] ?? 0;
+  const record = seg > antes;
+  const premio = Math.min(3, Math.floor(seg / 15));
+  await cambiarCasa((c) => {
+    c.retrete = { ...(c.retrete ?? {}) };
+    if (seg > (c.retrete[yo] ?? 0)) c.retrete[yo] = seg;
+    c.monedas += premio;
+  });
+  // Ya fue al baño: se le quitan las ganas y se levanta del inodoro
+  const ahora = Date.now();
+  const e = { ...est(yo), actividad: { tipo: 'nada' as const, desde: ahora }, visto: ahora };
+  delete e.apuro;
+  await guardarYo(e);
+  setTimeout(() => hojaRetrete(seg, record, premio), 1400);
+}
+
+/** El marcador del retrete espacial: quién ha durado más en el espacio. */
+function hojaRetrete(seg?: number, record = false, premio = 0) {
+  const r = s?.casa.retrete ?? {};
+  const a = r.el ?? 0, b = r.ella ?? 0;
+  const lider: Rol | null = a === b ? null : a > b ? 'el' : 'ella';
+  const fila = (q: Rol) =>
+    `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${r[q] ? `${r[q]!.toFixed(1)} s` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
+  const html = `${
+    seg !== undefined
+      ? `<p class="nota-hoja">Duraste <b>${seg.toFixed(1)} s</b> esquivando asteroides en el retrete.${record ? ' <b>¡Nuevo récord!</b>' : ''}${premio ? ` +${premio} ${premio === 1 ? 'moneda' : 'monedas'}.` : ''}</p>`
+      : ''
+  }<ol class="retrete-records">${fila('el')}${fila('ella')}</ol>
+    <p class="nota-hoja">La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién aguanta más?</p>`;
+  abrirHoja('Retrete espacial', html, { saldo: s?.casa.monedas });
+  if (record) lluviaCorazones(14);
 }
 
 // ---------------------------------------------------------------------------
@@ -928,7 +1085,11 @@ function botonesCuarto(): Boton[] {
       b.push({ id: 'comer', texto: 'Comer', icono: `<img src="${iconoItem(ITEM.pan)}" alt="">`, principal: true }, { id: 'notas', texto: 'Notas', icono: ico('nota') });
       break;
     case 'bano':
-      b.push({ id: 'banar', texto: 'Bañarse', icono: ico('tina'), principal: true }, { id: 'lavar', texto: 'Lavarse', icono: ico('lavar') });
+      b.push(
+        { id: 'banar', texto: 'Bañarse', icono: ico('tina'), principal: !s.personajes[yo].apuro },
+        { id: 'lavar', texto: 'Lavarse', icono: ico('lavar') },
+        { id: 'inodoro', texto: 'Ir al baño', icono: ico('inodoro'), principal: !!s.personajes[yo].apuro },
+      );
       break;
     case 'cuarto':
       b.push({ id: 'dormir', texto: 'Dormir', icono: ico('luna'), principal: true }, { id: 'closet', texto: 'Cambiarse', icono: ico('closet') });
@@ -1037,6 +1198,8 @@ async function alAccion(id: string) {
       return;
     case 'lavar':
       return hacer('lavar', 'bano', 5, { higiene: 25 });
+    case 'inodoro':
+      return irAlBano();
     case 'dormir':
       return dormir();
     case 'closet':
@@ -1520,6 +1683,14 @@ function hojaJuegos() {
         <p>Dados Party, Mancala, Puntos y Cajas y Parchís: contra ${nombre(otro(yo))} (el celular), los dos en este celular o cada uno en el suyo. Los muñequitos celebran, se enojan y hacen drama con cada jugada.</p>
         <a class="boton boton-tomate" href="./mesa.html">Jugar</a>
       </div>
+    </article>
+    <article class="minijuego">
+      <span class="minijuego-ico">${ico('inodoro')}</span>
+      <div>
+        <h3>Retrete espacial</h3>
+        <p>Dale leche a Ella o picante a Él y… al baño. El inodoro sale volando al espacio: esquiva asteroides el mayor tiempo posible. ¿Quién aguanta más?</p>
+        <button class="boton boton-menta" data-hoja="retrete">Ver récords</button>
+      </div>
     </article>`;
   abrirHoja('Minijuegos', html, { saldo: s?.casa.monedas });
 }
@@ -1699,6 +1870,7 @@ function controles() {
     } else if ((b = d('[data-hoja]'))) {
       const h = b.dataset.hoja!;
       if (h === 'regalar') hojaRegalar();
+      else if (h === 'retrete') hojaRetrete();
       else if (h === 'llevar') elegirComida('llevar');
       else if (h === 'notas') hojaNotas();
       else if (h === 'voz') void mandarVoz();
@@ -1937,7 +2109,7 @@ function bucle() {
     }
     revisarVista();
     efectos();
-    mundo.dibujar(paso, true);
+    if (!pausaCasa) mundo.dibujar(paso, true);
   } catch (e) {
     // Un error en un cuadro no debe congelar la casa; se reporta una vez
     if (!errorReportado) console.error(e);
@@ -1999,10 +2171,12 @@ function efectos() {
     }
     const p = mundo.aPantalla(m.cabeza());
     capa.poner(`${r}-efecto`, m.efecto, p.x, p.y);
-    // Globo de pensamiento con lo que más necesita (si está libre)
+    // Globo: lo que piensa en el inodoro, las ganas urgentes de ir al baño o lo que más necesita (si está libre)
     const e = est(r);
     const falta = NECESIDADES.filter((n) => e[n] < 30).sort((a, b) => e[a] - e[b])[0];
-    capa.poner(`${r}-piensa`, !m.efecto && falta && !m.enCamino ? 'pensamiento' : null, p.x, p.y, falta ? PENSAR[falta] : undefined);
+    if (m.frase) capa.poner(`${r}-piensa`, 'frase', p.x, p.y, esc(m.frase));
+    else if (s.personajes[r].apuro && !m.efecto) capa.poner(`${r}-piensa`, 'apuro', p.x, p.y, ico('inodoro'));
+    else capa.poner(`${r}-piensa`, !m.efecto && falta && !m.enCamino ? 'pensamiento' : null, p.x, p.y, falta ? PENSAR[falta] : undefined);
   }
 }
 
@@ -2043,6 +2217,8 @@ function efectos() {
   }
   return hacer(a, c, seg, {}, a === 'comer' ? 'pan' : undefined);
 };
+/** Ganas urgentes de ir al baño sin comer nada (pruebas del retrete espacial). */
+(window as any).__apuro = () => s && guardarYo({ ...s.personajes[yo], apuro: Date.now() });
 /** Posición en pantalla del aro de un sitio de decoración (pruebas). */
 (window as any).__sitio = (id: string) => {
   const d = casa3d.sitioDe(id);
