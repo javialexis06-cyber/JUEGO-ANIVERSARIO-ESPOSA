@@ -25,6 +25,10 @@ const params = new URLSearchParams(location.search);
 const RAPIDO = Math.max(1, Number(params.get('rapido')) || 1);
 const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const VEL = (quieto ? 0.6 : 1) / RAPIDO;
+/** Siembra: ms por salto de semilla (las primeras ocho), el más rápido al apurar y el tope de toda la siembra. */
+const PASO = 235;
+const PASO_MIN = 115;
+const SIEMBRA_MAX = 5200;
 
 /** Azar fijo por número (las semillas caen siempre en el mismo sitio de cada hoyo). */
 const hash = (n: number) => {
@@ -95,26 +99,25 @@ function planear(W: number, H: number, yo: Rol): Plano {
       lados: { [yo]: lado(colX[0]), [otroRol]: lado(colX[1]) } as Record<Rol, Caja>,
     };
   }
-  // Acostado: la fila de `yo` abajo (de izquierda a derecha) y su almacén a la derecha, con su etiqueta al lado
+  // Acostado: la fila de `yo` abajo (de izquierda a derecha) y su almacén a la derecha. El tablero va de borde
+  // a borde; las etiquetas de los almacenes van debajo del mío y encima del otro, en la fila de los numeritos
   const g = limitar(Math.round(Math.min(W, H) * 0.02), 5, 10);
-  const lat = limitar(H * 0.1, 22, 30);
-  const etiqueta = 60;
-  let pw = (W - 2 * etiqueta - 9 * g) / 8.7;
-  let ph = Math.min((H - 2 * lat - 3 * g) / 2, pw * 0.95, 110);
+  const lat = limitar(H * 0.09, 24, 34);
+  let pw = Math.min((W - 9 * g) / 8.6, 110);
+  let ph = Math.min((H - 2 * lat - 3 * g) / 2, pw * 1.5, 130);
   pw = Math.min(pw, ph * 1.3);
-  ph = Math.min(ph, pw);
-  const sw = pw * 1.35;
+  const sw = pw * 1.3;
   const bw = 6 * pw + 2 * sw + 9 * g, bh = 2 * ph + 3 * g;
   const x0 = (W - bw) / 2, y0 = (H - bh) / 2;
   const colX = (c: number) => x0 + 2 * g + sw + c * (pw + g) + pw / 2;
   const filaY = [y0 + g + ph / 2, y0 + 2 * g + 1.5 * ph];
-  const fuera = Math.min(17, y0 - 12);
+  const fuera = Math.min(19, y0 - 13);
   for (let i = 0; i < CASILLAS; i++) {
     const k = i - base(duenoDe(i));
     if (esAlmacen(i)) {
       const x = mio(i) ? x0 + bw - g - sw / 2 : x0 + g + sw / 2;
       casillas.push({ x, y: y0 + bh / 2, w: sw, h: bh - 2 * g });
-      cuentas.push({ x: mio(i) ? x0 + bw + 32 : x0 - 32, y: y0 + bh / 2 });
+      cuentas.push({ x, y: mio(i) ? y0 + bh + fuera : y0 - fuera });
     } else {
       const c = { x: colX(mio(i) ? k : HOYOS - 1 - k), y: filaY[mio(i) ? 1 : 0], w: pw, h: ph };
       casillas.push(c);
@@ -407,13 +410,17 @@ export function crearVista(ctx: CtxVista<Jugada>): Vista<EstadoMancala, Jugada> 
       const p = enMano(r.desde, j);
       s.el.style.zIndex = String(1000 + n - j);
       s.el.classList.add('mancala-en-mano');
-      void volar(s, p.x, p.y, 190, d * 1.1, 1.15);
+      void volar(s, p.x, p.y, 300, d * 1.1, 1.15);
     });
-    await pausa(200);
-    const paso = n <= 6 ? 125 : Math.max(80, 125 - (n - 6) * 5);
+    await pausa(340);
+    // Con calma, una por una; en los puñados grandes va apurando poco a poco después de la octava
+    const pasos = Array.from({ length: n }, (_, t) => (t < 8 ? PASO : Math.max(PASO_MIN, PASO * 0.92 ** (t - 7))));
+    const total = pasos.reduce((a, b) => a + b, 0);
+    const k0 = total > SIEMBRA_MAX ? SIEMBRA_MAX / total : 1;
     for (let t = 0; t < n; t++) {
       const dest = r.caidas[t];
       const resto = mano.slice(t);
+      const paso = pasos[t] * k0;
       resto.forEach((s, j) => {
         const p = enMano(dest, j);
         void volar(s, p.x, p.y, paso, d * 0.9, 1.15);
@@ -423,21 +430,23 @@ export function crearVista(ctx: CtxVista<Jugada>): Vista<EstadoMancala, Jugada> 
       const k = pilas[dest].length;
       pilas[dest].push(s);
       const p = asentar(s, dest, k);
-      void volar(s, p.x, p.y, 110, 0, 1);
+      void volar(s, p.x, p.y, Math.min(190, paso * 0.8), 0, 1);
       contar(dest, true);
       clic(t, esAlmacen(dest));
       if (esAlmacen(dest)) destello(dest);
     }
-    await pausa(130);
+    await pausa(240);
   }
 
   /** Lleva semillas de varias casillas a un almacén en un barrido lindo; las cuenta al llegar. */
-  async function alAlmacen(desde: number[], destino: number, retraso = 45) {
+  async function alAlmacen(desde: number[], destino: number, retraso = 80) {
     const viajan: [Semilla, number][] = [];
     for (const i of desde) {
       for (const s of pilas[i].splice(0)) viajan.push([s, i]);
       contar(i, true);
     }
+    // Una tras otra, pero sin pasar de un par de segundos aunque sean muchas
+    retraso = Math.min(retraso, 1600 / Math.max(1, viajan.length));
     const d = plano.d;
     await Promise.all(
       viajan.map(async ([s], j) => {
@@ -447,7 +456,7 @@ export function crearVista(ctx: CtxVista<Jugada>): Vista<EstadoMancala, Jugada> 
         const k = pilas[destino].length;
         pilas[destino].push(s);
         const p = hueco(destino, k);
-        await volar(s, p.x, p.y, 480, d * 3.2, 1);
+        await volar(s, p.x, p.y, 700, d * 3.2, 1);
         asentar(s, destino, k);
         contar(destino, true);
         if (j % 2 === 0 || viajan.length < 6) clic(Math.min(j, 12), true);
@@ -484,10 +493,10 @@ export function crearVista(ctx: CtxVista<Jugada>): Vista<EstadoMancala, Jugada> 
     }
     if (r.captura) {
       const { hoyo, enfrente, ajenas } = r.captura;
-      await pausa(120);
+      await pausa(260);
       destello(hoyo, 'captura');
       if (ajenas > 0) destello(enfrente, 'robado');
-      await pausa(160);
+      await pausa(380);
       const cuanto = 1 + ajenas;
       if (ajenas > 0) {
         suceso({ tipo: 'captura', quien, cuanto, texto: `¡Captura +${cuanto}!` });
@@ -496,7 +505,7 @@ export function crearVista(ctx: CtxVista<Jugada>): Vista<EstadoMancala, Jugada> 
       } else {
         suceso({ tipo: 'jugada', quien, calidad: 'normal' });
       }
-      await alAlmacen(ajenas > 0 ? [enfrente, hoyo] : [hoyo], mio, 55);
+      await alAlmacen(ajenas > 0 ? [enfrente, hoyo] : [hoyo], mio, 100);
       if (ajenas > 0) flotar(`+${cuanto}`, mio, quien);
     } else if (!r.extra) {
       if (juicio.regalo) suceso({ tipo: 'regalo', quien, texto: '¡Regalito!' });
@@ -507,7 +516,7 @@ export function crearVista(ctx: CtxVista<Jugada>): Vista<EstadoMancala, Jugada> 
 
     if (r.barrido) {
       // Se acabó: cada uno se lleva lo que le quedó en sus hoyos
-      await pausa(320);
+      await pausa(520);
       zumbido(0.6);
       ctx.sonido('limpio');
       const barridos = (['el', 'ella'] as Rol[]).map(async (dueno) => {
@@ -515,11 +524,11 @@ export function crearVista(ctx: CtxVista<Jugada>): Vista<EstadoMancala, Jugada> 
         if (!hoyos.length) return;
         const cuanto = hoyos.reduce((a, i) => a + pilas[i].length, 0);
         const almacen = dueno === 'el' ? 6 : 13;
-        await alAlmacen(hoyos, almacen, 38);
+        await alAlmacen(hoyos, almacen, 70);
         flotar(`+${cuanto}`, almacen, dueno);
       });
       await Promise.all(barridos);
-      await pausa(250);
+      await pausa(400);
     }
 
     animando = false;

@@ -611,6 +611,16 @@ async function vitrina() {
 }
 if (params.has('vitrina')) void vitrina();
 
+// Ver una escena premium sola (pruebas y vitrina): ?escena=<id>
+async function verEscena(id: string) {
+  const [{ escenaDe }, { Cine }] = await Promise.all([import('../escenas/catalogo'), import('../escenas/cine')]);
+  const e = escenaDe(id);
+  if (!e) return aviso('No existe esa escena.');
+  await Cine.reproducir(e, yo, RAPIDO);
+}
+const escenaPedida = params.get('escena');
+if (escenaPedida) void verEscena(escenaPedida);
+
 // Para las pruebas automáticas
 (globalThis as Record<string, unknown>).__mesa = {
   get estado() {
@@ -622,5 +632,6 @@ if (params.has('vitrina')) void vitrina();
   get escenario() {
     return escenario;
   },
+  cine: () => import('../escenas/cine').then((m) => m.cineActual.c),
   yo,
 };

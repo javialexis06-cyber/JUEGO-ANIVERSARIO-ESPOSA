@@ -241,6 +241,20 @@
 }
 @keyframes mancala-pop { from { transform: translate(-50%, -85%) scale(0.3); } }
 
+/* Acostado: el tablero de borde a borde y la etiqueta del almacén en una sola línea («Tú 12») */
+@media (orientation: landscape) {
+  .mancala-mesa { inset: calc(env(safe-area-inset-top, 0px) + 4px) 4px calc(env(safe-area-inset-bottom, 0px) + 4px) calc(env(safe-area-inset-left, 0px) + 4px); }
+}
+.acostado .mancala-granero {
+  grid-auto-flow: column;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 11px 5px;
+  border-radius: 999px;
+}
+.acostado .mancala-granero-nombre { font-size: 13px; }
+.acostado .mancala-granero-num { font-size: 21px; }
+
 @media (prefers-reduced-motion: reduce) {
   .mancala-jugable::before { animation: none; }
   .mancala-jugable::after { animation-duration: 2.4s; }

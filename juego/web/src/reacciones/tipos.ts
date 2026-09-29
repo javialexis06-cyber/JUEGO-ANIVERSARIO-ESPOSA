@@ -60,7 +60,11 @@ export type Fx =
   | { tipo: 'sonrojo'; dur: number };
 
 /** Utilería que se cuelga de un hueso mientras dura (hasta que otro paso la cambie o termine la coreografía). */
-export type Prop = 'trofeo' | 'corona' | 'bandera' | 'panuelo' | 'dados';
+export type Prop =
+  | 'trofeo' | 'corona' | 'bandera' | 'panuelo' | 'dados'
+  // Escenas premium
+  | 'guitarra' | 'almohada' | 'pastel' | 'chocolate' | 'lupa' | 'anillo' | 'camara' | 'ramo' | 'globo' | 'microfono'
+  | 'tablero' | 'taza' | 'helado' | 'sombrilla' | 'libro' | 'carta' | 'peluche' | 'palomitas' | 'abanico' | 'sombrero';
 
 export interface Paso {
   /** Segundos. */

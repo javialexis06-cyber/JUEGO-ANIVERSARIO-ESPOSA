@@ -1,7 +1,7 @@
 // Vista de Puntos y Cajas: hoja de cuaderno cuadriculada con margen rojo, puntos de tinta, líneas de marcador
 // que se trazan solas y cajas que se colorean con una estrella (Él) o un corazón (Ella).
-// Se toca cerca de una línea libre (la más cercana al dedo): mientras el dedo está abajo se ve la línea
-// fantasma y se traza al soltar.
+// Se toca cerca de una línea libre (la más cercana al dedo) y queda elegida, resaltada con el color de quien
+// juega; se traza al confirmarla con «✓ Trazar» o tocándola otra vez (se cambia tocando otra, se suelta con ✕).
 import './cajas.css';
 import { otro, type Rol } from '../../casa/modelo';
 import * as sonido from '../../sonido';
@@ -11,9 +11,11 @@ import { type EstadoCajas, type MovCajas, geo, haySegura, listas, regalo, reglas
 const NS = 'http://www.w3.org/2000/svg';
 /** Lado de una caja y margen alrededor de los puntos, en unidades del dibujo. */
 const U = 100;
-const M = 34;
+const M = 24;
 /** Tira del margen rojo (con los huecos de la hoja) a la izquierda, en px. */
-const TIRA = 22;
+const TIRA = 16;
+/** Ancho mínimo de la columna de fichas y botones cuando va al lado de la hoja, en px. */
+const LADO = 136;
 const params = new URLSearchParams(location.search);
 const RAPIDO = Math.max(1, Number(params.get('rapido')) || 1);
 const REDUCIDO = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -63,13 +65,21 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
   private fantasma!: SVGGElement;
   private fantasmaLinea!: SVGPathElement;
   private fantasmaPuntos!: SVGCircleElement[];
+  private asomo!: SVGPathElement;
   private fichas: Record<Rol, HTMLElement>;
   private quedan: HTMLElement;
   private nota: HTMLElement;
+  private btnTrazar: HTMLButtonElement;
+  private btnCancelar: HTMLButtonElement;
   private permitido: Rol | null = null;
   private animando = false;
   private puntero: number | null = null;
+  /** La línea bajo el dedo mientras está abajo (-1 = ninguna). */
   private candidato = -1;
+  /** La línea elegida que espera confirmación (-1 = ninguna). */
+  private seleccion = -1;
+  /** El dedo bajó sobre la línea ya elegida y no se ha ido a otra: al soltar, se traza. */
+  private sobreElegida = false;
   /** Cajas seguidas que lleva cerrando el que juega (para la cadena y el «turno extra» una sola vez). */
   private racha = { quien: null as Rol | null, n: 0 };
   private ro: ResizeObserver;
@@ -78,8 +88,14 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
     const r = ctx.raiz;
     r.innerHTML = `<div class="cajas">
       <div class="cajas-hoja"><i class="cajas-cinta cajas-cinta-a"></i><i class="cajas-cinta cajas-cinta-b"></i>
-        <p class="cajas-nota" hidden>Toca entre dos puntos y suelta para trazar</p></div>
-      <div class="cajas-fichas"></div>
+        <p class="cajas-nota" hidden>Toca una línea y confírmala con ✓</p></div>
+      <div class="cajas-lado">
+        <div class="cajas-fichas"></div>
+        <div class="cajas-accion">
+          <button class="cajas-trazar" type="button" disabled>Toca una línea</button>
+          <button class="cajas-cancelar" type="button" aria-label="Soltar la línea elegida" disabled>✕</button>
+        </div>
+      </div>
     </div>`;
     this.cont = r.querySelector('.cajas')!;
     this.hoja = r.querySelector('.cajas-hoja')!;
@@ -92,6 +108,13 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
     fichas.innerHTML = `${ficha(ctx.yo)}<span class="cajas-quedan"></span>${ficha(otro(ctx.yo))}`;
     this.fichas = { el: fichas.querySelector('[data-quien="el"]')!, ella: fichas.querySelector('[data-quien="ella"]')! };
     this.quedan = fichas.querySelector('.cajas-quedan')!;
+    this.btnTrazar = r.querySelector('.cajas-trazar')!;
+    this.btnCancelar = r.querySelector('.cajas-cancelar')!;
+    this.btnTrazar.addEventListener('click', () => this.confirmar());
+    this.btnCancelar.addEventListener('click', () => {
+      sonido.activar();
+      this.elegir(-1);
+    });
 
     const h = this.hoja;
     h.addEventListener('pointerdown', this.alBajar);
@@ -136,9 +159,12 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
     this.ultima = el('path', { class: 'cajas-ultima', d: '' }, this.capas.ultima);
     this.ultima.style.display = 'none';
     if (e.ultima >= 0) this.marcarUltima(e.ultima, false);
+    this.asomo = el('path', { class: 'cajas-asomo', d: '' }, this.capas.fantasma);
+    this.asomo.style.display = 'none';
     this.fantasma = el('g', { class: 'cajas-fantasma' }, this.capas.fantasma);
     this.fantasma.style.display = 'none';
-    this.fantasmaLinea = el('path', { class: 'cajas-fantasma-linea', d: '' }, this.fantasma);
+    el('path', { class: 'cajas-fantasma-halo', d: '' }, this.fantasma);
+    this.fantasmaLinea = el('path', { class: 'cajas-fantasma-linea', d: '', pathLength: 100 }, this.fantasma);
     this.fantasmaPuntos = [0, 1].map(() => el('circle', { class: 'cajas-fantasma-punto', r: 17 }, this.fantasma));
     for (let r = 0; r <= g.filas; r++)
       for (let c = 0; c <= g.columnas; c++) {
@@ -151,7 +177,7 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
     this.medir();
   }
 
-  /** Acomoda la hoja al espacio (a lo alto en el celular, con las fichas al lado si es apaisado). */
+  /** Acomoda la hoja al espacio: lo más grande que quepa, con las fichas y los botones al lado si es apaisado. */
   private medir() {
     if (!this.e) return;
     const r = this.ctx.raiz;
@@ -163,9 +189,9 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
     const vw = g.columnas * U + 2 * M, vh = g.filas * U + 2 * M;
     const ancho = w > h * 1.3;
     this.cont.classList.toggle('cajas-ancho', ancho);
-    const arriba = 8; // lo que asoman las cintas
-    // En tableta no crece sin fin: cajas de hasta ~92 px
-    const esc = Math.min(0.92, ancho ? Math.min((w - TIRA - 150) / vw, (h - arriba) / vh) : Math.min((w - TIRA) / vw, (h - arriba - 58) / vh));
+    const arriba = 4; // lo que asoman las cintas
+    // En tableta no crece sin fin: cajas de hasta ~92 px. Parado, abajo van las fichas y el botón de trazar
+    const esc = Math.min(0.92, ancho ? Math.min((w - TIRA - LADO - 12) / vw, (h - arriba) / vh) : Math.min((w - TIRA) / vw, (h - arriba - 128) / vh));
     const sw = Math.max(120, vw * esc), sh = Math.max(120, vh * esc);
     this.svg.style.width = `${sw}px`;
     this.svg.style.height = `${sh}px`;
@@ -243,14 +269,14 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
   }
 
   // -------------------------------------------------------------------------
-  // Tocar
+  // Tocar: el dedo elige una línea (se ve resaltada) y se traza al confirmarla
 
   permitir(quien: Rol | null) {
     this.permitido = quien;
     this.cont.classList.toggle('cajas-activo', !!quien);
     if (quien) this.cont.dataset.tinta = quien;
     this.nota.hidden = !quien || this.e.lineas.filter(Boolean).length > 1;
-    if (!quien) this.soltar();
+    this.soltar();
     this.marcarListas();
   }
 
@@ -276,17 +302,20 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
     return dmin <= U * 0.62 ? mejor : -1;
   }
 
-  private apuntar(ev: PointerEvent) {
+  private lineaEn(ev: PointerEvent) {
     const [x, y] = this.punto(ev);
-    const l = this.cercana(x, y);
-    if (l === this.candidato) return;
-    this.candidato = l;
+    return this.cercana(x, y);
+  }
+
+  /** Resalta la línea `l` (la que está bajo el dedo o la elegida); -1 la apaga. */
+  private resaltar(l: number) {
     const f = this.fantasma;
     if (l < 0) {
       f.style.display = 'none';
       return;
     }
-    this.fantasmaLinea.setAttribute('d', this.camino(l));
+    const d = this.camino(l);
+    for (const p of f.querySelectorAll('path')) p.setAttribute('d', d);
     const [r1, c1, r2, c2] = geo(this.e).puntos[l];
     this.fantasmaPuntos[0].setAttribute('cx', String(M + c1 * U));
     this.fantasmaPuntos[0].setAttribute('cy', String(M + r1 * U));
@@ -296,13 +325,66 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
     f.classList.remove('aparece');
     void f.getBoundingClientRect();
     f.classList.add('aparece');
-    if (this.puntero !== null) sonido.rumor(0.035, 3200, 0.025, 0, 2);
+  }
+
+  /** Deja elegida la línea `l` (-1 = ninguna) esperando «✓ Trazar». */
+  private elegir(l: number) {
+    this.seleccion = l;
+    this.candidato = -1;
+    this.fantasma.classList.toggle('elegida', l >= 0);
+    this.resaltar(l);
+    this.asomar(-1);
+    if (l >= 0) sonido.nota(740, 0.06, 0, 'triangle', 0.045, 988);
+    this.pintarAccion();
+  }
+
+  /** El botón de trazar: apagado hasta que haya una línea elegida; la ✕ la suelta. */
+  private pintarAccion() {
+    const mio = !!this.permitido && !this.animando;
+    const hay = mio && this.seleccion >= 0;
+    const a = this.btnTrazar.parentElement!;
+    a.classList.toggle('visible', mio);
+    a.classList.toggle('lista', hay);
+    this.btnTrazar.disabled = !hay;
+    this.btnTrazar.innerHTML = hay ? '<b aria-hidden="true">✓</b> Trazar' : 'Toca una línea';
+    this.btnCancelar.disabled = !hay;
+    this.btnCancelar.textContent = this.cont.classList.contains('cajas-ancho') ? '✕ Soltar' : '✕';
+  }
+
+  /** Línea tenue bajo el ratón (solo con mouse, sin apretar). */
+  private asomar(l: number) {
+    if (l < 0 || l === this.seleccion) {
+      this.asomo.style.display = 'none';
+      return;
+    }
+    this.asomo.setAttribute('d', this.camino(l));
+    this.asomo.style.display = '';
+  }
+
+  private confirmar() {
+    const l = this.seleccion;
+    if (l < 0 || !this.permitido || this.animando) return;
+    sonido.activar();
+    // La línea elegida se queda hasta que se trace (no se toca el tablero antes de animar)
+    this.permitido = null;
+    this.seleccion = -1;
+    this.cont.classList.remove('cajas-activo');
+    this.fantasma.classList.add('trazando');
+    this.pintarAccion();
+    this.ctx.jugar({ l });
   }
 
   private soltar() {
     this.puntero = null;
     this.candidato = -1;
-    if (this.fantasma) this.fantasma.style.display = 'none';
+    this.sobreElegida = false;
+    this.seleccion = -1;
+    if (this.fantasma) {
+      this.fantasma.style.display = 'none';
+      this.fantasma.classList.remove('elegida', 'trazando');
+      this.asomo.style.display = 'none';
+    }
+    this.pintarAccion();
   }
 
   private alBajar = (ev: PointerEvent) => {
@@ -317,34 +399,47 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
       /* sin captura */
     }
     this.nota.hidden = true;
-    this.candidato = -2;
-    this.apuntar(ev);
+    this.asomar(-1);
+    const l = this.lineaEn(ev);
+    this.sobreElegida = l >= 0 && l === this.seleccion;
+    this.candidato = l;
+    this.resaltar(l >= 0 ? l : this.seleccion);
   };
 
   private alMover = (ev: PointerEvent) => {
-    if (this.puntero === ev.pointerId) this.apuntar(ev);
-    else if (this.puntero === null && ev.pointerType === 'mouse' && this.permitido && !this.animando) this.apuntar(ev);
+    if (this.puntero === ev.pointerId) {
+      const l = this.lineaEn(ev);
+      if (l === this.candidato) return;
+      this.candidato = l;
+      if (l !== this.seleccion) this.sobreElegida = false;
+      this.fantasma.classList.toggle('elegida', l >= 0 && l === this.seleccion);
+      this.resaltar(l >= 0 ? l : this.seleccion);
+      if (l >= 0) sonido.rumor(0.035, 3200, 0.025, 0, 2);
+    } else if (this.puntero === null && ev.pointerType === 'mouse' && this.permitido && !this.animando) this.asomar(this.lineaEn(ev));
   };
 
   private alSubir = (ev: PointerEvent) => {
     if (this.puntero !== ev.pointerId) return;
     this.puntero = null;
     const l = this.candidato;
-    if (l >= 0 && this.permitido && !this.animando) {
-      // El fantasma se queda hasta que la línea se trace (no se toca el tablero antes de animar)
-      this.permitido = null;
-      this.cont.classList.remove('cajas-activo');
-      this.fantasma.classList.add('elegida');
-      this.ctx.jugar({ l });
-    } else this.soltar();
+    if (!this.permitido || this.animando) return;
+    // Tocar otra vez la elegida la traza; tocar otra la cambia; tocar lejos de las líneas la suelta
+    if (l >= 0 && this.sobreElegida && l === this.seleccion) this.confirmar();
+    else this.elegir(l);
+    this.sobreElegida = false;
   };
 
   private alCancelar = (ev: PointerEvent) => {
-    if (this.puntero === ev.pointerId) this.soltar();
+    if (this.puntero !== ev.pointerId) return;
+    this.puntero = null;
+    this.candidato = -1;
+    this.sobreElegida = false;
+    this.fantasma.classList.toggle('elegida', this.seleccion >= 0);
+    this.resaltar(this.seleccion);
   };
 
   private alSalir = (ev: PointerEvent) => {
-    if (ev.pointerType === 'mouse' && this.puntero === null) this.soltar();
+    if (ev.pointerType === 'mouse' && this.puntero === null) this.asomar(-1);
   };
 
   // -------------------------------------------------------------------------
@@ -355,7 +450,6 @@ class VistaCajas implements Vista<EstadoCajas, MovCajas> {
     const quien = antes.turno;
     const l = m.l;
     this.soltar();
-    this.fantasma.classList.remove('elegida');
     this.nota.hidden = true;
     this.e = despues;
     this.guias[l]?.remove();

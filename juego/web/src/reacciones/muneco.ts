@@ -5,13 +5,15 @@ import * as THREE from 'three';
 import type { Rol } from '../casa/modelo';
 import { type Cara, Personaje } from '../personaje';
 import { COREOS, PARECIDA } from './coreografias';
-import { utileria } from './utileria';
+import { AGARRE, utileria } from './utileria';
 import { sonar } from './sonidos';
 import type { Coreografia, Fx, Mov, Paso, Prop } from './tipos';
 
 const rad = THREE.MathUtils.degToRad;
 const suave = (x: number) => x * x * (3 - 2 * x);
 const acercarA = (v: number, meta: number, k: number) => v + (meta - v) * k;
+/** Cuánto se recuesta en la cama (90° sería plano). */
+const RECLINADO = rad(76);
 
 /** Qué hace mientras no reacciona a nada. */
 export type Espera = 'nada' | 'turno' | 'pensando' | 'mirando';
@@ -42,6 +44,12 @@ export class Muneco {
   private estirado = 0;
   private inflado = 0;
   private cabezaAbajo = 0;
+  private rotMeta: number | null = null;
+  private elevacion = 0;
+  private metaElevacion = 0;
+  private recostado = 0;
+  private metaRecostado = 0;
+  private destino: { x: number; z: number; vel: number; rotFinal?: number; listo: () => void; fase: number } | null = null;
   private props = new Map<Prop, THREE.Object3D>();
   /** Giros sumados a cada hueso en el último cuadro. */
   private sumados = new Map<THREE.Object3D, THREE.Quaternion>();
@@ -129,6 +137,89 @@ export class Muneco {
       if (demora > 0) setTimeout(empezar, demora * 1000);
       else empezar();
     });
+  }
+
+  /**
+   * Camina (o corre) hasta (x, z) mirando hacia donde va; al llegar queda mirando `rotFinal` (o hacia donde
+   * iba). Se puede actuar una coreografía al mismo tiempo: la cara y los efectos son de la coreografía y el
+   * cuerpo va caminando.
+   */
+  irA(x: number, z: number, vel = 1.2, rotFinal?: number): Promise<void> {
+    this.destino?.listo();
+    return new Promise((listo) => (this.destino = { x, z, vel, rotFinal, listo, fase: 0 }));
+  }
+
+  /** Aparece de una vez en (x, z) mirando hacia `rot` (para empezar una escena). */
+  ponerEn(x: number, z: number, rot: number) {
+    this.destino?.listo();
+    this.destino = null;
+    this.ubicar(x, z, rot);
+    this.giroExtra = 0;
+    this.acercamiento = 0;
+  }
+
+  get caminando() {
+    return !!this.destino;
+  }
+
+  /** Se voltea (suave) hasta mirar hacia `rot` (radianes; 0 = de frente a la cámara). */
+  girarA(rot: number) {
+    this.rotMeta = rot;
+  }
+
+  /** Sube el cuerpo a una altura (sentarse en el sofá, subirse a la cama); 0 = en el piso. */
+  elevar(h: number, ya = false) {
+    this.metaElevacion = h;
+    if (ya) this.elevacion = h;
+  }
+
+  /** Se acuesta boca arriba (1) o se incorpora (0): en la cama, la cabeza queda hacia atrás, en la almohada. */
+  recostar(cuanto: number, ya = false) {
+    this.metaRecostado = cuanto;
+    if (ya) this.recostado = cuanto;
+  }
+
+  /** Toma (o suelta, con null) una cosa de la utilería. */
+  sostener(cual: Prop | null) {
+    this.ponerProp(cual);
+  }
+
+  private caminar(dt: number) {
+    const d = this.destino;
+    if (!d) {
+      if (this.rotMeta !== null) {
+        let delta = this.rotMeta - this.rotBase;
+        delta = Math.atan2(Math.sin(delta), Math.cos(delta));
+        this.rotBase += delta * Math.min(1, dt * 8);
+        if (Math.abs(delta) < 0.01) this.rotMeta = null;
+      }
+      return;
+    }
+    this.rotMeta = null;
+    const dx = d.x - this.base.x, dz = d.z - this.base.z;
+    const lejos = Math.hypot(dx, dz);
+    const paso = d.vel * dt;
+    if (lejos <= paso) {
+      this.base.set(d.x, 0, d.z);
+      if (d.rotFinal !== undefined) this.rotBase = d.rotFinal;
+      this.destino = null;
+      this.p.suavidad = 10;
+      this.p.pose(this.pose(this.paso?.pose) ?? 'reposo');
+      d.listo();
+      return;
+    }
+    this.base.x += (dx / lejos) * paso;
+    this.base.z += (dz / lejos) * paso;
+    // Mira hacia donde camina (giro suave)
+    let delta = Math.atan2(dx, dz) - this.rotBase;
+    delta = Math.atan2(Math.sin(delta), Math.cos(delta));
+    this.rotBase += delta * Math.min(1, dt * 10);
+    this.giroExtra *= 0.8;
+    // Zancadas: más rápidas si corre
+    d.fase += dt * (2.2 + d.vel * 2.2);
+    this.p.suavidad = 20;
+    const a = this.pose('caminar_a'), b = this.pose('caminar_b');
+    if (a && b) this.p.vaiven(a, b, 0.5 - 0.5 * Math.cos(d.fase * Math.PI));
   }
 
   /** Cambia lo que hace mientras espera; si estaba en un bucle (pensar, estudiar), lo suelta. */
@@ -228,12 +319,13 @@ export class Muneco {
     const hueso = (n: string) => this.hueso(n)?.getWorldPosition(new THREE.Vector3());
     const mD = hueso('mano.R'), mI = hueso('mano.L'), cab = this.hueso('cabeza');
     let mundo: THREE.Vector3 | undefined;
-    if (cual === 'corona' && cab) {
+    const agarre = AGARRE[cual];
+    if (agarre === 'cabeza' && cab) {
       mundo = cab.localToWorld(new THREE.Vector3(0, 0, 0));
       const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(cab.getWorldQuaternion(new THREE.Quaternion()));
       mundo.addScaledVector(arriba, this.altoCabeza * this.alto * this.p.escala * 0.93);
       o.quaternion.copy(this.p.grupo.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(cab.getWorldQuaternion(new THREE.Quaternion())));
-    } else if (cual === 'dados' && mD && mI) {
+    } else if (agarre === 'dos' && mD && mI) {
       mundo = mD.clone().add(mI).multiplyScalar(0.5);
       o.quaternion.identity();
     } else if (mI) {
@@ -270,6 +362,7 @@ export class Muneco {
     } else {
       this.quieto(dt);
     }
+    this.caminar(dt);
     this.deshacerSumados();
     this.p.update(dt);
     this.cuerpo(dt, this.paso);
@@ -388,6 +481,7 @@ export class Muneco {
       y += Math.abs(Math.sin(t * 14)) * 0.05 * moviendo;
     }
     // Las cantidades del catálogo van en «muñecos»: 1 = 60 % de su altura
+    if (this.destino) y += Math.abs(Math.sin(this.destino.fase * Math.PI)) * 0.025 * (0.6 + this.destino.vel * 0.4);
     const u = 0.6 * this.alto * this.p.escala;
     x *= u;
     y *= u;
@@ -400,8 +494,11 @@ export class Muneco {
     sy *= (1 + this.estirado) * (1 - this.hundido * 0.6) * respira;
     sxz *= (1 - this.estirado * 0.45) * (1 + this.inflado) * (1 + this.hundido * 0.2);
     c.scale.set(e * sxz, e * sy * (1 + this.inflado * 0.4), e * sxz);
-    c.position.set(0, y - this.hundido * u * 0.5, 0);
-    c.rotation.set(-this.caida * Math.PI * 0.47, 0, rz);
+    this.elevacion = acercarA(this.elevacion, this.metaElevacion, k(5));
+    this.recostado = acercarA(this.recostado, this.metaRecostado, k(4));
+    // Acostado no del todo plano (la cabeza grande queda en la almohada) y corrido hacia los pies
+    c.position.set(0, y - this.hundido * u * 0.5 + this.elevacion, this.recostado * 0.5);
+    c.rotation.set(-this.caida * Math.PI * 0.47 - this.recostado * RECLINADO, 0, rz);
 
     // Huesos encima de la pose. El mezclador solo reescribe un hueso cuando su valor cambia: por eso lo que se
     // sumó en el cuadro anterior se deshace antes de mezclar (si no, un cabeceo se acumula y la cabeza da vueltas)

@@ -11,8 +11,9 @@ export const JUEGO: JuegoMesa<EstadoCajas, MovCajas> = {
   reglas,
   ia,
   crearVista,
-  ayuda: `<p>Por turnos, cada uno une dos puntos vecinos con una línea: toca entre los dos puntos (mientras tienes el
-    dedo abajo ves cuál va a quedar) y suelta para trazarla.</p>
+  ayuda: `<p>Por turnos, cada uno une dos puntos vecinos con una línea: toca entre los dos puntos y la línea queda
+    elegida, resaltada con tu color. Trázala con <b>✓ Trazar</b> (o tocándola otra vez); si no era esa, toca otra o
+    suéltala con ✕.</p>
   <ul>
     <li>El que pone la <b>cuarta línea</b> de una caja se la lleva, sin importar quién puso las otras tres, y
       <b>vuelve a jugar</b>. Las de Él llevan estrella y las de Ella, corazón.</li>

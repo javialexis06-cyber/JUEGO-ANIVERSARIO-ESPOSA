@@ -1,0 +1,55 @@
+/* Cine de las escenas premium: pantalla completa por encima de todo */
+.cine {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: #1d1714;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.cine.visible { opacity: 1; }
+.cine-lienzo { position: absolute; inset: 0; width: 100%; height: 100%; display: block; filter: saturate(1.22) contrast(1.04); }
+.cine-efectos { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.cine-titulo {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(255, 248, 238, 0.9);
+  font: 600 14px/1 var(--display);
+  color: var(--cacao);
+  animation: cine-titulo 3.2s ease both;
+}
+@keyframes cine-titulo { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }
+.cine-sub {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+  transform: translateX(-50%);
+  max-width: min(88%, 620px);
+  margin: 0;
+  padding: 7px 16px;
+  border-radius: 12px;
+  background: rgba(29, 23, 20, 0.72);
+  color: #fff8ee;
+  font: 600 15px/1.3 var(--texto);
+  text-align: center;
+}
+.cine-saltar {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 8px);
+  right: calc(env(safe-area-inset-right, 0px) + 10px);
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 248, 238, 0.85);
+  color: var(--cacao);
+  font: 700 22px/1 var(--display);
+}
+.cine-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+.cine-flash.va { animation: cine-flash 0.5s ease-out; }
+@keyframes cine-flash { 0% { opacity: 0.95; } 100% { opacity: 0; } }

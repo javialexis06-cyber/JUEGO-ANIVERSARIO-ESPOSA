@@ -43,6 +43,12 @@ export const SONIDOS: Record<string, () => void> = {
   rendirse: () => [659, 587, 523].forEach((f, i) => nota(f, 0.3, i * 0.28, 'sine', 0.05)),
   otra: () => { nota(392, 0.1, 0, 'square', 0.04); nota(523, 0.22, 0.1, 'square', 0.04); },
   desmayo: () => nota(700, 0.8, 0, 'sine', 0.05, 150),
+  flash: () => { rumor(0.05, 5000, 0.08, 0, 1.2); nota(2600, 0.12, 0.02, 'sine', 0.03, 1800); },
+  guitarra: () => [196, 247, 294, 392, 494].forEach((f, i) => nota(f, 0.9, i * 0.05, 'triangle', 0.035, f * 0.998)),
+  almohadazo: () => { rumor(0.12, 700, 0.12, 0, 0.6, 300); nota(140, 0.12, 0, 'sine', 0.08, 90); },
+  splash: () => { rumor(0.25, 1600, 0.1, 0, 0.8, 500); nota(300, 0.2, 0, 'sine', 0.05, 120); },
+  pasos: () => { for (let i = 0; i < 4; i++) nota(120, 0.05, i * 0.18, 'sine', 0.06, 80); },
+  tada: () => { nota(523, 0.12, 0, 'triangle', 0.06); nota(784, 0.4, 0.12, 'triangle', 0.07); nota(1047, 0.5, 0.12, 'sine', 0.03); },
   huida: () => { for (let i = 0; i < 6; i++) nota(i % 2 ? 330 : 294, 0.07, i * 0.11, 'triangle', 0.045); },
 };
 

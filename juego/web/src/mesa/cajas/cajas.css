@@ -2,6 +2,10 @@
 .tablero-cajas {
   display: flex;
 }
+/* Acostado, la hoja llega casi al borde de arriba y de abajo (se ve más grande) */
+@media (orientation: landscape) {
+  .tablero-cajas { padding-top: calc(env(safe-area-inset-top, 0px) + 4px); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px); }
+}
 .cajas {
   --tinta: var(--cacao);
   flex: 1;
@@ -17,7 +21,7 @@
 .cajas[data-tinta='ella'] { --tinta: var(--ella); }
 .cajas.cajas-ancho {
   flex-direction: row;
-  gap: 18px;
+  gap: 12px;
 }
 
 /* ---------- La hoja ---------- */
@@ -26,7 +30,7 @@
   --cuadro: 14px;
   position: relative;
   flex: none;
-  margin-top: 8px;
+  margin-top: 4px;
   padding-left: var(--tira);
   border-radius: 5px 14px 14px 5px;
   background:
@@ -57,7 +61,7 @@
   top: 10px;
   bottom: 10px;
   width: calc(var(--tira) - 4px);
-  background: radial-gradient(circle at 50% 50%, var(--mantel) 0 4px, rgba(61, 43, 39, 0.22) 4.5px 5.5px, transparent 6px) center top / 100% 34px repeat-y;
+  background: radial-gradient(circle at 50% 50%, var(--mantel) 0 3.5px, rgba(61, 43, 39, 0.22) 4px 5px, transparent 5.5px) center top / 100% 30px repeat-y;
   pointer-events: none;
 }
 .cajas-svg {
@@ -67,10 +71,10 @@
 /* Cinta de enmascarar (washi) */
 .cajas-cinta {
   position: absolute;
-  top: -10px;
+  top: -8px;
   z-index: 2;
-  width: 64px;
-  height: 20px;
+  width: 60px;
+  height: 18px;
   background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.35) 0 4px, transparent 4px 9px), var(--rosa);
   opacity: 0.88;
   clip-path: polygon(0 0, 100% 0, 96% 25%, 100% 50%, 96% 75%, 100% 100%, 0 100%, 4% 75%, 0 50%, 4% 25%);
@@ -170,22 +174,51 @@
   100% { opacity: 0.55; stroke-width: 24; }
 }
 
-.cajas-fantasma { opacity: 0.55; }
+/* La línea bajo el dedo y la elegida (esperando «✓ Trazar»): gruesa, del color de quien juega */
+.cajas-fantasma-halo {
+  fill: none;
+  stroke: var(--tinta);
+  stroke-width: 38;
+  stroke-linecap: round;
+  opacity: 0.22;
+}
 .cajas-fantasma-linea {
   fill: none;
   stroke: var(--tinta);
   stroke-width: 16;
   stroke-linecap: round;
+  opacity: 0.65;
 }
 .cajas-fantasma-punto {
-  fill: none;
+  fill: var(--papel);
   stroke: var(--tinta);
-  stroke-width: 5;
+  stroke-width: 6;
 }
 .cajas-fantasma.aparece { animation: cajas-fantasma 0.16s ease-out; }
-.cajas-fantasma.elegida { opacity: 0.8; }
 @keyframes cajas-fantasma {
   from { opacity: 0; }
+}
+/* Elegida: raya que camina y halo que late, hasta confirmarla */
+.cajas-fantasma.elegida .cajas-fantasma-linea {
+  opacity: 1;
+  stroke-dasharray: 9 7;
+  animation: cajas-camina 0.7s linear infinite;
+}
+.cajas-fantasma.elegida .cajas-fantasma-halo { animation: cajas-late 1.1s ease-in-out infinite; }
+.cajas-fantasma.trazando .cajas-fantasma-linea { stroke-dasharray: none; animation: none; }
+@keyframes cajas-camina {
+  to { stroke-dashoffset: -16; }
+}
+@keyframes cajas-late {
+  50% { opacity: 0.4; stroke-width: 46; }
+}
+.cajas-asomo {
+  fill: none;
+  stroke: var(--tinta);
+  stroke-width: 10;
+  stroke-linecap: round;
+  opacity: 0.25;
+  pointer-events: none;
 }
 
 .cajas-punto circle:first-child { fill: var(--cacao); }
@@ -227,20 +260,35 @@
   40% { transform: translateY(-16px) scale(1.25) rotate(-8deg); }
 }
 
-/* ---------- Fichas de los dos ---------- */
+/* ---------- Fichas de los dos y el botón de trazar ---------- */
+.cajas-lado {
+  flex: none;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+.cajas-ancho .cajas-lado {
+  width: auto;
+  min-width: 136px;
+  max-width: 190px;
+  flex: 1 1 0;
+  gap: 16px;
+}
 .cajas-fichas {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  width: 100%;
-  max-width: 460px;
-  flex: none;
 }
 .cajas-ancho .cajas-fichas {
   flex-direction: column;
-  width: 140px;
+  align-items: stretch;
+  gap: 8px;
 }
+.cajas-ancho .cajas-ficha { justify-content: center; }
 .cajas-ficha {
   position: relative;
   display: flex;
@@ -308,12 +356,70 @@
   font: 600 14px/1.1 var(--display);
   color: var(--cacao-suave);
 }
-.cajas-ancho .cajas-quedan { flex: none; }
+.cajas-ancho .cajas-quedan { flex: none; max-width: none; }
+
+.cajas-accion {
+  display: flex;
+  gap: 8px;
+  height: 52px;
+  visibility: hidden;
+}
+/* Al lado de la hoja: «✓ Trazar» a todo lo ancho y «✕ Soltar» debajo */
+.cajas-ancho .cajas-accion { flex-direction: column; height: auto; }
+.cajas-ancho .cajas-trazar { flex: none; height: 54px; }
+.cajas-ancho .cajas-cancelar { width: auto; height: 42px; font-size: 16px; }
+.cajas-accion.visible { visibility: visible; }
+.cajas-accion:not(.lista) .cajas-cancelar { visibility: hidden; }
+.cajas:not(.cajas-ancho) .cajas-accion { width: 100%; max-width: 320px; align-self: center; }
+.cajas-trazar, .cajas-cancelar {
+  height: 100%;
+  border: 0;
+  border-radius: 16px;
+  font: 700 19px/1.05 var(--display);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.cajas-trazar {
+  flex: 1;
+  min-width: 0;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--tinta);
+  color: var(--papel);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--tinta) 60%, #000);
+}
+.cajas-trazar b { font: 700 24px/1 var(--display); }
+.cajas-trazar:disabled {
+  background: var(--papel);
+  color: var(--cacao-suave);
+  font-size: 14.5px;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--tinta) 35%, transparent), 0 2px 0 rgba(61, 43, 39, 0.12);
+}
+.cajas-accion.lista .cajas-trazar { animation: cajas-invita 1.4s ease-in-out infinite; }
+.cajas-trazar:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 color-mix(in srgb, var(--tinta) 60%, #000); animation: none; }
+.cajas-cancelar {
+  flex: none;
+  width: 48px;
+  background: var(--papel);
+  color: var(--cacao-suave);
+  font-size: 20px;
+  box-shadow: 0 3px 0 rgba(61, 43, 39, 0.2);
+}
+.cajas-cancelar:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(61, 43, 39, 0.2); }
+@keyframes cajas-invita {
+  50% { transform: scale(1.04); box-shadow: 0 4px 0 color-mix(in srgb, var(--tinta) 60%, #000), 0 0 0 5px color-mix(in srgb, var(--tinta) 25%, transparent); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .cajas-activo .cajas-guia,
   .cajas-celda.lista,
   .cajas-ficha.activa .cajas-lapiz,
+  .cajas-fantasma.elegida .cajas-fantasma-linea,
+  .cajas-fantasma.elegida .cajas-fantasma-halo,
+  .cajas-accion.lista .cajas-trazar,
   .cajas-nota { animation: none; }
   .cajas-activo .cajas-guia { opacity: 0.7; }
   .cajas-celda.lista { opacity: 0.35; }

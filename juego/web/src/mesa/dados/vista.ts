@@ -421,13 +421,18 @@ class VistaDados implements Vista<EstadoDados, MovDados> {
     this.elegida = null;
     // Las vistas previas del tiro anterior se borran mientras ruedan los dados
     for (const c of CASILLAS) this.pintarCelda(quien, c);
-    // Los guardados de quien tira (la IA o el otro celular los va tocando uno por uno)
-    for (let i = 0; i < 5; i++) {
-      if (this.dados[i].el.classList.contains('guardado') === m.retener[i]) continue;
-      this.dados[i].el.classList.toggle('guardado', m.retener[i]);
+    // Los guardados de quien tira (la IA o el otro celular los va tocando uno por uno, con calma para que se vea)
+    const cambian = [0, 1, 2, 3, 4].filter((i) => this.dados[i].el.classList.contains('guardado') !== m.retener[i]);
+    if (cambian.length) await esperar(260);
+    for (const i of cambian) {
+      if (!this.vivo) return;
+      const d = this.dados[i];
+      d.el.classList.toggle('guardado', m.retener[i]);
       clic(m.retener[i]);
-      await esperar(150);
+      d.el.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.12)', offset: 0.4 }, { transform: 'scale(1)' }], { duration: ms(300), easing: 'ease-out' });
+      await esperar(430);
     }
+    if (cambian.length) await esperar(220);
     this.guardados = m.retener.slice();
     const tras = persigue(antes, m.retener);
     const ultimo = antes.tiradas === TIROS - 1;
@@ -537,7 +542,7 @@ class VistaDados implements Vista<EstadoDados, MovDados> {
       this.ctx.sonido('toque');
       await cel.animate(
         [{ transform: 'scale(1)' }, { transform: 'scale(1.14)', offset: 0.25 }, { transform: 'scale(1)', offset: 0.5 }, { transform: 'scale(1.14)', offset: 0.75 }, { transform: 'scale(1)' }],
-        { duration: ms(560), easing: 'ease-in-out' },
+        { duration: ms(820), easing: 'ease-in-out' },
       ).finished.catch(() => undefined);
     } else await esperar(90);
     if (!this.vivo) return;

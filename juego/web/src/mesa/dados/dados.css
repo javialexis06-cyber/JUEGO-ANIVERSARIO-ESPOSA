@@ -118,7 +118,9 @@
   animation: dados-brillo 2.4s ease-in-out infinite;
   pointer-events: none;
 }
-.dados-tarjeta .dados-celda.elegida {
+/* (gana también sobre el tinte de la columna de quien juega) */
+.dados-tarjeta .dados-celda.elegida,
+.dados-tarjeta[data-turno] .dados-celda.elegida:not(.lleno) {
   background: var(--c);
   color: var(--papel);
   outline: 0;
@@ -393,19 +395,38 @@
   .dados-tirar, .dados-jugar { height: 46px; font-size: 19px; }
 }
 
-/* Acostado (o tableta ancha): tarjeta a la izquierda, bandeja y botones a la derecha */
-@media (orientation: landscape) and (min-aspect-ratio: 4/3) {
+/* Celular acostado: tarjeta a la izquierda, bandeja y botones a la derecha (en la tableta cabe todo en columna) */
+@media (orientation: landscape) {
+  .tablero-dados { padding-top: calc(env(safe-area-inset-top, 0px) + 4px); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px); }
+}
+@media (orientation: landscape) and (min-aspect-ratio: 4/3) and (max-height: 599px) {
   .dados-juego {
     max-width: 920px;
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(250px, 1fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(236px, 1fr);
     grid-template-rows: 1fr auto auto 1fr;
-    column-gap: 16px;
-    row-gap: 12px;
+    column-gap: 14px;
+    row-gap: 14px;
   }
-  .dados-tarjeta { grid-row: 1 / 5; max-height: none; }
-  .dados-bandeja { grid-column: 2; grid-row: 2; }
+  .dados-tarjeta { grid-row: 1 / 5; max-height: none; padding: 5px; gap: 6px; }
+  .dados-tabla { gap: 3px 3px; }
+  .dados-cab { padding: 3px 2px 2px; font-size: 11.5px; }
+  .dados-bandeja { grid-column: 2; grid-row: 2; padding: 22px 10px 12px; }
   .dados-acciones { grid-column: 2; grid-row: 3; }
-  .dados-fila { --lado: clamp(38px, min(16cqw, 11vh), 62px); }
+  /* La pista va en el borde de abajo de la bandeja: arriba no caben las dos etiquetas */
+  .dados-pestana { max-width: 72%; }
+  .dados-pista { top: auto; bottom: -12px; right: 10px; max-width: 78%; pointer-events: none; }
+  .dados-tirar, .dados-jugar { height: 56px; }
+  /* Los cinco dados en dos filas (tres y dos): más grandes y fáciles de tocar */
+  .dados-fila {
+    --lado: clamp(42px, min(22cqw, 13.5vh), 64px);
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: calc(var(--lado) * 0.5);
+    row-gap: 22px;
+    height: auto;
+    padding: 4px 0 6px;
+  }
   .dados-rotulo-abajo small { display: none; }
+  .dados-rotulo-bono small:last-child { white-space: normal; line-height: 1.1; }
 }
