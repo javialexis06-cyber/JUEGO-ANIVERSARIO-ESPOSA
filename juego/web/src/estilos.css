@@ -835,6 +835,32 @@ button:focus-visible {
 .globo[data-modo='fila'] .cara {
   background: radial-gradient(circle at 42% 40%, #ffe9a3 0 12%, var(--mantequilla) 13% 36%, #d9a92c 37% 42%, transparent 43%) var(--papel);
 }
+/* En la fila: verde contento, amarillo impaciente, rojo a punto de irse */
+.globo[data-animo='feliz'] .cara {
+  background:
+    radial-gradient(circle at 50% 32%, transparent 0 26%, var(--cacao) 27% 32%, transparent 33%),
+    radial-gradient(circle at 36% 40%, var(--cacao) 0 7%, transparent 8%),
+    radial-gradient(circle at 64% 40%, var(--cacao) 0 7%, transparent 8%) #7fce9f;
+}
+.globo[data-animo='medio'] .cara {
+  background:
+    linear-gradient(var(--cacao), var(--cacao)) 50% 68% / 36% 7% no-repeat,
+    radial-gradient(circle at 36% 42%, var(--cacao) 0 7%, transparent 8%),
+    radial-gradient(circle at 64% 42%, var(--cacao) 0 7%, transparent 8%) var(--mantequilla);
+}
+.globo[data-animo='bravo'] .cara {
+  background:
+    radial-gradient(circle at 50% 96%, transparent 0 26%, var(--papel) 27% 32%, transparent 33%),
+    linear-gradient(20deg, transparent 44%, var(--papel) 45% 55%, transparent 56%) 27% 26% / 26% 16% no-repeat,
+    linear-gradient(-20deg, transparent 44%, var(--papel) 45% 55%, transparent 56%) 73% 26% / 26% 16% no-repeat,
+    radial-gradient(circle at 36% 44%, var(--papel) 0 7%, transparent 8%),
+    radial-gradient(circle at 64% 44%, var(--papel) 0 7%, transparent 8%) var(--tomate);
+  animation: temblor 0.35s linear infinite;
+}
+@keyframes temblor {
+  25% { translate: -2px 0; }
+  75% { translate: 2px 0; }
+}
 .globo[data-modo='feliz'] .cara {
   background:
     radial-gradient(circle at 50% 32%, transparent 0 26%, var(--cacao) 27% 32%, transparent 33%),
@@ -928,7 +954,7 @@ button:focus-visible {
   background: #8b6f4e;
   color: var(--papel);
   font: 700 16px/1 var(--display);
-  animation: late 1s ease-in-out infinite;
+  animation: palpita 1s ease-in-out infinite;
 }
 .numero-tarea {
   width: 26px;
@@ -1240,7 +1266,7 @@ button:focus-visible {
   place-items: center;
   border-radius: 50%;
   box-shadow: 0 2px 0 rgba(61, 43, 39, 0.3);
-  animation: late 1s ease-in-out infinite;
+  animation: palpita 1s ease-in-out infinite;
 }
 .marca-mugre.reservada { animation: none; opacity: 0.75; }
 .marca-mugre i { display: block; }
@@ -1278,7 +1304,7 @@ button:focus-visible {
   color: #fff;
   font: 700 20px/1 var(--display);
   box-shadow: 0 2px 0 rgba(61, 43, 39, 0.3);
-  animation: late 0.6s ease-in-out infinite;
+  animation: palpita 0.6s ease-in-out infinite;
 }
 .marca-alerta.ladron { background: #2f2e2e; box-shadow: 0 0 0 3px var(--tomate); }
 .marca-alerta.nina { background: #f08bb0; }
@@ -1292,7 +1318,17 @@ button:focus-visible {
   cursor: pointer;
   background: var(--tomate);
   clip-path: path('M22 38 C9 28 2 21 2 13 C2 6 7 2 13 2 C17 2 20 4.5 22 7.5 C24 4.5 27 2 31 2 C37 2 42 6 42 13 C42 21 35 28 22 38 Z');
-  animation: late 0.7s ease-in-out infinite;
+  /* Aparece suave y late quieto en su sitio (antes el latido pisaba la posición y el corazón entraba y salía de la pantalla) */
+  animation: corazon-aparece 0.5s ease-out both, palpita 1.4s ease-in-out 0.5s infinite;
+  transition: opacity 1.4s linear;
+}
+#capa > .corazon-escondido.se-va { opacity: 0.25; }
+@keyframes corazon-aparece {
+  from { opacity: 0; scale: 0.4; }
+}
+/* Latido para lo que va anclado al mundo 3D: usa «scale» porque la posición va en «transform» */
+@keyframes palpita {
+  50% { scale: 1.1; }
 }
 
 /* Textos que saltan: combos, premios y resbalones */
@@ -1349,64 +1385,220 @@ button:focus-visible {
   font: 400 13.5px/1.35 Georgia, 'Times New Roman', serif;
 }
 
-/* Carrito de reposición (a la derecha): un hueco por estante que alcanza a llenar en un viaje */
-.carrito-hud {
+/* ---------- Súper: herramientas, joysticks, modo de juego y choques ---------- */
+/* Lo que lleva cada uno (arriba a la izquierda; en pareja, Ella arriba a la derecha) */
+.herramientas {
   position: fixed;
-  right: calc(env(safe-area-inset-right, 0px) + 10px);
-  top: 50%;
-  transform: translateY(-50%);
+  inset: 0;
   z-index: 11;
-  display: grid;
-  justify-items: center;
-  gap: 6px;
-  padding: 8px 7px;
-  border-radius: 16px;
-  background: rgba(255, 248, 238, 0.94);
-  box-shadow: 0 3px 0 rgba(61, 43, 39, 0.22);
   pointer-events: none;
 }
-.carrito-ico {
-  width: 34px;
-  height: 28px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 32'%3E%3Cpath d='M2 4h6l4 18h20l4-13H10' fill='none' stroke='%233d2b27' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M11 9h25l-4 13H13z' fill='%23e4574b'/%3E%3Ccircle cx='15' cy='27' r='3' fill='%233d2b27'/%3E%3Ccircle cx='29' cy='27' r='3' fill='%233d2b27'/%3E%3C/svg%3E") center / contain no-repeat;
+.herr {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 54px);
+  left: calc(env(safe-area-inset-left, 0px) + 10px);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 6px;
+  border-radius: 14px;
+  background: rgba(255, 248, 238, 0.93);
+  box-shadow: 0 3px 0 rgba(61, 43, 39, 0.2);
 }
-.carrito-hud.cargando .carrito-ico { animation: sacudir-carrito 0.35s ease-in-out infinite; }
-@keyframes sacudir-carrito {
-  50% { transform: translateY(-3px) rotate(-6deg); }
+.herramientas.pareja .herr-ella { left: auto; right: calc(env(safe-area-inset-right, 0px) + 10px); }
+.herr-nombre {
+  padding: 3px 7px;
+  border-radius: 9px;
+  color: #fff;
+  font: 700 12px/1 var(--display);
+  background: #3f8fd6;
 }
-#carrito-huecos { display: grid; gap: 6px; }
-.hueco-carrito {
-  position: relative;
-  width: 50px;
-  display: grid;
-  justify-items: center;
-  gap: 3px;
-  padding: 4px 3px 5px;
+.herr-ella .herr-nombre { background: #e8577a; }
+.herr-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px 2px 3px;
   border-radius: 10px;
   background: #fff;
   box-shadow: inset 0 0 0 2px #eadfce;
 }
-.hueco-carrito img { width: 34px; height: 34px; object-fit: contain; }
-.hueco-carrito b {
+.herr-item b {
+  min-width: 2.2em;
+  font: 700 12.5px/1 var(--texto);
+  font-variant-numeric: tabular-nums;
+  color: var(--cacao);
+  white-space: nowrap;
+}
+.herr-item .ico { width: 24px; height: 22px; flex: none; background: center / contain no-repeat; }
+.medidor { width: 32px; height: 7px; border-radius: 4px; background: #eadfce; overflow: hidden; }
+.medidor i { display: block; height: 100%; border-radius: 4px; background: var(--menta-oscura); transition: width 0.25s; }
+.herr-carrito .ico {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 32'%3E%3Cpath d='M2 4h6l4 18h20l4-13H10' fill='none' stroke='%233d2b27' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M11 9h25l-4 13H13z' fill='%23e4574b'/%3E%3Ccircle cx='15' cy='27' r='3' fill='%233d2b27'/%3E%3Ccircle cx='29' cy='27' r='3' fill='%233d2b27'/%3E%3C/svg%3E");
+}
+.herr-carrito.vacio { box-shadow: inset 0 0 0 2px var(--tomate); }
+.herr-carrito.cargando .ico { animation: sacudir-carrito 0.35s ease-in-out infinite; }
+@keyframes sacudir-carrito {
+  50% { transform: translateY(-3px) rotate(-6deg); }
+}
+.herr-trapero .ico {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M22 2 14 20' stroke='%23c9a36b' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M9 19h10l3 10H6z' fill='%23f1e6cf' stroke='%233d2b27' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M10 23v6M14 23v6M18 23v6' stroke='%23b8a98c' stroke-width='1.4'/%3E%3C/svg%3E");
+}
+.herr-trapero .medidor i { background: #8a6446; }
+.herr-trapero.lleno { background: var(--tomate); box-shadow: none; animation: palpita 0.8s ease-in-out infinite; }
+.herr-trapero.lleno b { color: var(--papel); }
+.herr-trapero.lleno .medidor { background: rgba(255, 255, 255, 0.5); }
+.herr-trapero.lavando .ico { animation: sacudir-carrito 0.3s ease-in-out infinite; }
+.herr-bolsa .ico {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M12 6c1-3 7-3 8 0l-1 3h-6z' fill='%23596068'/%3E%3Cpath d='M11 9h10c5 4 7 10 5 17-1 3-4 4-10 4S7 29 6 26c-2-7 0-13 5-17z' fill='%23596068'/%3E%3Cpath d='M12 16c2 1 6 1 8 0' stroke='%23889099' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.herr-bolsa.lleno { box-shadow: inset 0 0 0 2px var(--tomate); }
+.herr-canastas .ico {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M9 13c0-6 14-6 14 0' stroke='%23d78e1e' stroke-width='2.5' fill='none'/%3E%3Cpath d='M4 13h24l-3 13H7z' fill='%23f2b33d'/%3E%3Cpath d='M10 16v7M16 16v7M22 16v7' stroke='%23d78e1e' stroke-width='2'/%3E%3C/svg%3E");
+}
+/* Con joysticks, las ayudas bajan un poco y la bandeja de avisos se aparta de las esquinas */
+#hud:not([hidden]) ~ .ayudas { top: calc(env(safe-area-inset-top, 0px) + 96px); transform: none; }
+#hud:not([hidden]) ~ .ayudas .ayuda { width: 42px; height: 42px; }
+#hud:not([hidden]) ~ #alertas { padding-inline: 150px; }
+
+/* Joysticks transparentes en las esquinas de abajo */
+.mandos { position: fixed; inset: auto 0 0 0; z-index: 9; pointer-events: none; }
+.mando {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 160px;
+  height: 150px;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.mando-der { left: auto; right: 0; }
+.mando[hidden] { display: none; }
+.mando-base {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  border-radius: 9px;
-  background: var(--menta-oscura);
-  color: var(--papel);
-  font: 700 12px/18px var(--texto);
-  text-align: center;
+  left: calc(env(safe-area-inset-left, 0px) + 22px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0 55%, rgba(255, 255, 255, 0.22) 56% 100%);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55), 0 0 0 1px rgba(61, 43, 39, 0.12);
+  display: grid;
+  place-items: center;
+  opacity: 0.75;
+  transition: opacity 0.2s;
 }
-.barrita { width: 40px; height: 6px; border-radius: 3px; background: #eadfce; overflow: hidden; }
-.barrita i { display: block; height: 100%; background: var(--menta-oscura); border-radius: 3px; transition: width 0.3s; }
-.hueco-carrito.vacio { height: 54px; place-items: center; box-shadow: inset 0 0 0 2px #eadfce; background: transparent; border: 2px dashed #d8cfc3; box-sizing: border-box; }
-.hueco-carrito.vacio span { font: 700 11px var(--texto); color: var(--cacao-suave); }
-@media (max-height: 420px) {
-  .carrito-hud { top: auto; bottom: 70px; transform: none; }
+.mando-der .mando-base { left: auto; right: calc(env(safe-area-inset-right, 0px) + 22px); }
+.mando.activo .mando-base { opacity: 1; }
+.mando-perilla {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85), 0 2px 6px rgba(61, 43, 39, 0.25);
+  will-change: transform;
 }
+.mandos.pareja .mando-izq .mando-perilla { background: rgba(63, 143, 214, 0.55); }
+.mandos.pareja .mando-der .mando-perilla { background: rgba(232, 87, 122, 0.55); }
+.mando-nombre {
+  position: absolute;
+  left: calc(env(safe-area-inset-left, 0px) + 76px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 128px);
+  transform: translateX(-50%);
+  font: 700 12px/1 var(--display);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(61, 43, 39, 0.6);
+}
+.mando-der .mando-nombre { left: auto; right: calc(env(safe-area-inset-right, 0px) + 76px); transform: translateX(50%); }
+.mando-nombre:empty { display: none; }
+@media (max-height: 380px) {
+  .mando-base { width: 96px; height: 96px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); }
+  .mando-nombre { bottom: calc(env(safe-area-inset-bottom, 0px) + 112px); left: calc(env(safe-area-inset-left, 0px) + 70px); }
+  .mando-der .mando-nombre { right: calc(env(safe-area-inset-right, 0px) + 70px); }
+}
+
+/* Sobre los personajes: barrita de lo que hacen, mareo del choque y (en pareja) su nombre */
+.barra-accion {
+  width: 40px;
+  height: 7px;
+  margin: -14px 0 0 -20px;
+  border-radius: 999px;
+  background: rgba(255, 248, 238, 0.92);
+  box-shadow: 0 0 0 2px rgba(61, 43, 39, 0.35);
+  overflow: hidden;
+}
+.barra-accion i { display: block; height: 100%; background: var(--menta-oscura); }
+.mareo { width: 0; height: 0; }
+.mareo span {
+  position: absolute;
+  left: -28px;
+  top: -4px;
+  width: 56px;
+  height: 22px;
+  animation: mareo 0.7s linear infinite;
+}
+.mareo i {
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  background: var(--mantequilla);
+  clip-path: polygon(50% 3%, 62% 36%, 97% 37%, 69% 58%, 79% 93%, 50% 72%, 21% 93%, 31% 58%, 3% 37%, 38% 36%);
+  filter: drop-shadow(0 1px 0 rgba(61, 43, 39, 0.4));
+}
+.mareo i:nth-child(1) { left: 0; top: 5px; }
+.mareo i:nth-child(2) { left: 20px; top: -2px; }
+.mareo i:nth-child(3) { left: 39px; top: 5px; }
+@keyframes mareo {
+  from { transform: perspective(80px) rotateY(0deg); }
+  to { transform: perspective(80px) rotateY(360deg); }
+}
+.nombre-jugador {
+  margin: -34px 0 0 0;
+  translate: -50% 0;
+  padding: 2px 7px;
+  border-radius: 8px;
+  color: #fff;
+  font: 700 11px/1.2 var(--display);
+  background: #3f8fd6;
+  box-shadow: 0 2px 0 rgba(61, 43, 39, 0.25);
+  white-space: nowrap;
+}
+.nombre-ella { background: #e8577a; }
+.numero-tarea.tarea-ella { border-color: #e8577a; color: #c23f60; }
+.numero-tarea.tarea-ella.actual { background: #e8577a; color: #fff; }
+.moneda-salta.choque { color: var(--cacao); font-size: 22px; }
+.marca-sucio { background: #8a6446; }
+.marca-sucio i { width: 13px; height: 13px; background: #f1e6cf; border-radius: 50% 50% 45% 55%; }
+
+/* Tarjeta del día: jugar solo o los dos en el mismo celular */
+.modo-juego {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+.modo-boton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: #f1e9dc;
+  color: var(--cacao);
+  font: 700 14px/1.15 var(--display);
+  box-shadow: inset 0 0 0 2px #e2d6c4;
+  cursor: pointer;
+}
+.modo-boton[aria-pressed='true'] { background: var(--menta); box-shadow: inset 0 0 0 2px var(--menta-oscura), 0 2px 0 var(--menta-oscura); }
+.modo-ico { width: 22px; height: 20px; flex: none; background: center / contain no-repeat; }
+.modo-ico.solo { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 22'%3E%3Ccircle cx='12' cy='6' r='4.5' fill='%233f8fd6'/%3E%3Cpath d='M3 21c0-6 4-8 9-8s9 2 9 8z' fill='%233f8fd6'/%3E%3C/svg%3E"); }
+.modo-ico.pareja { width: 30px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 22'%3E%3Ccircle cx='9' cy='6' r='4.2' fill='%233f8fd6'/%3E%3Cpath d='M1 21c0-6 3-8 8-8s8 2 8 8z' fill='%233f8fd6'/%3E%3Ccircle cx='23' cy='6' r='4.2' fill='%23e8577a'/%3E%3Cpath d='M15 21c0-6 3-8 8-8s8 2 8 8z' fill='%23e8577a'/%3E%3C/svg%3E"); }
+.modo-nota { margin: 2px 0 0; font-size: 12.5px; color: var(--cacao-suave); text-align: center; }
 
 /* Estrellas para mejorar (moneda de las mejoras): estrella blanca en un círculo rosado */
 .ficha {

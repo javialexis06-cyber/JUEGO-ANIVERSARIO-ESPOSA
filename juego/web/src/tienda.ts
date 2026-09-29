@@ -122,6 +122,8 @@ export class Vitrina {
   private marcas: THREE.Object3D[] = [];
   tiempoVacia = 0;
   maxVacia = 0;
+  /** Segundos desde que la tumbaron en un choque (-1: de pie). */
+  private caida = -1;
 
   constructor(public dato: SitioDato) {
     this.grupo.userData = { tipo: 'sitio', id: dato.id };
@@ -215,6 +217,43 @@ export class Vitrina {
     this.grupo.traverse((o) => (o.userData = { ...o.userData, tipo: 'sitio', id: this.dato.id }));
   }
 
+  get tumbada() {
+    return this.caida >= 0;
+  }
+  /** Se va de cara al piso y a los dos segundos se levanta sola. */
+  tumbar() {
+    if (this.caida < 0) this.caida = 0;
+  }
+  animar(dt: number) {
+    if (this.caida < 0) return;
+    this.caida += dt;
+    const t = this.caida;
+    const MAX = 1.2;
+    const ang = t < 0.35 ? MAX * (t / 0.35) ** 2
+      : t < 0.55 ? MAX - 0.14 * Math.sin(((t - 0.35) / 0.2) * Math.PI)
+      : t < 2.1 ? MAX
+      : t < 2.7 ? MAX * (1 - (t - 2.1) / 0.6) : 0;
+    const base = this.grupo.children[0];
+    if (!base) return;
+    if (t >= 2.7) {
+      this.caida = -1;
+      base.matrixAutoUpdate = true;
+      return;
+    }
+    // Gira sobre el borde de adelante (queda acostada en el pasillo)
+    const p = this.posicion();
+    const h = this.dato.huella[String(this.nivel || 1)];
+    const borde = new THREE.Vector3((h[0] + h[1]) / 2, 0, -h[2]);
+    base.matrixAutoUpdate = false;
+    base.matrix
+      .makeTranslation(p.x, 0, -p.y)
+      .multiply(new THREE.Matrix4().makeRotationY(p.rot))
+      .multiply(new THREE.Matrix4().makeTranslation(borde.x, borde.y, borde.z))
+      .multiply(new THREE.Matrix4().makeRotationX(ang))
+      .multiply(new THREE.Matrix4().makeTranslation(-borde.x, -borde.y, -borde.z));
+    base.matrixWorldNeedsUpdate = true;
+  }
+
   ponerStock(n: number) {
     this.stock = Math.max(0, Math.min(this.capacidad, n));
     const visibles = this.capacidad ? Math.ceil((this.stock / this.capacidad) * this.marcas.length) : 0;
@@ -265,6 +304,38 @@ export function liberarPropios(raiz: THREE.Object3D) {
   });
 }
 
+/** Balde azul con su trapero (hecho a mano: no hay modelo): aquí se lava el trapero cuando se llena. */
+function balde(): THREE.Group {
+  const g = new THREE.Group();
+  const mat = (color: string, rugosidad = 0.6) => new THREE.MeshStandardMaterial({ color, roughness: rugosidad });
+  const pieza = (geo: THREE.BufferGeometry, m: THREE.Material, x = 0, y = 0, z = 0) => {
+    const o = new THREE.Mesh(geo, m);
+    o.position.set(x, y, z);
+    o.castShadow = true;
+    o.receiveShadow = true;
+    o.userData.propio = true;
+    g.add(o);
+    return o;
+  };
+  // Balde (un poco más ancho arriba), con el agua y el borde
+  pieza(new THREE.CylinderGeometry(0.2, 0.16, 0.34, 22, 1, true), mat('#3f8fd6', 0.45), 0, 0.17, 0).material.side = THREE.DoubleSide;
+  pieza(new THREE.CircleGeometry(0.16, 22).rotateX(-Math.PI / 2), mat('#2f6fae'), 0, 0.005, 0);
+  pieza(new THREE.CircleGeometry(0.185, 22).rotateX(-Math.PI / 2), mat('#9fd3f2', 0.15), 0, 0.27, 0);
+  pieza(new THREE.TorusGeometry(0.2, 0.018, 8, 26).rotateX(Math.PI / 2), mat('#2f78c0', 0.4), 0, 0.34, 0);
+  // Escurridor amarillo del lado del pasillo
+  pieza(new THREE.BoxGeometry(0.12, 0.1, 0.16), mat('#f2b33d', 0.5), 0.13, 0.38, 0);
+  // Trapero recostado contra la pared: palo de madera y mechas
+  const palo = pieza(new THREE.CylinderGeometry(0.018, 0.018, 1.25, 8), mat('#c9a36b', 0.7), -0.1, 0.72, -0.04);
+  palo.rotation.z = 0.3;
+  const mechas = pieza(new THREE.CylinderGeometry(0.07, 0.11, 0.16, 10), mat('#f1e6cf', 0.9), 0.03, 0.22, 0);
+  mechas.rotation.z = 0.2;
+  // Letrerito hacia la cámara para que se entienda qué es
+  pieza(new THREE.BoxGeometry(0.3, 0.19, 0.02), mat('#fff8ee', 0.8), 0, 0.6, 0.23).rotation.x = -0.1;
+  pieza(new THREE.BoxGeometry(0.22, 0.045, 0.022), mat('#3f8fd6', 0.6), 0, 0.62, 0.236).rotation.x = -0.1;
+  g.traverse((o) => (o.userData = { ...o.userData, tipo: 'lavadero' }));
+  return g;
+}
+
 /** Dónde va la segunda caja (se compra con la mejora «Segunda caja»), por tienda. */
 const CAJA2_X: Record<number, number> = { 1: 0.3 };
 export const ID_CAJA2 = 90;
@@ -281,6 +352,10 @@ export class Tienda {
   canecas: P[] = [];
   puestoCanastas!: P;
   puestoGuardia!: P;
+  /** Balde para lavar el trapero y dónde se para quien lo lava. */
+  lavadero!: P;
+  puestoLavado!: P;
+  private balde: THREE.Object3D | null = null;
   private obstaculosExtra: [number, number, number, number][] = [];
 
   constructor(public dato: TiendaDato, private productos: Productos) {}
@@ -341,13 +416,34 @@ export class Tienda {
       }
       this.puestoCanastas = pt.canastas;
       this.puestoGuardia = pt.guardia;
+      this.lavadero = pt.lavadero;
+      // Quien lava se para a 60 cm del balde, del lado del centro de la tienda
+      const l = pt.lavadero, dl = Math.hypot(l.x, l.y) || 1;
+      this.puestoLavado = { x: l.x - (0.6 * l.x) / dl, y: l.y - (0.6 * l.y) / dl };
+      this.balde = balde();
+      this.balde.position.copy(aTres(pt.lavadero.x, pt.lavadero.y));
+      this.grupo.add(this.balde);
+      this.obstaculosExtra.push([pt.lavadero.x - 0.22, pt.lavadero.y - 0.22, pt.lavadero.x + 0.22, pt.lavadero.y + 0.22]);
       for (const [id, d] of Object.entries(pt.decoracion)) if (mejoras[id]) await this.utileria(id, d.p, d.rot, d.escala, d.obstaculo);
     } else {
       this.canecas = [this.bodega];
       this.puestoCanastas = this.entrada;
       this.puestoGuardia = this.entrada;
+      this.lavadero = this.bodega;
+      this.puestoLavado = this.bodega;
     }
     this.armarCaminos();
+  }
+
+  /** ¿Este objeto es parte del balde del trapero? (para tocarlo) */
+  esLavadero(o: THREE.Object3D | null) {
+    for (; o; o = o.parent) if (o === this.balde) return true;
+    return false;
+  }
+
+  /** Estantes tumbados que se están cayendo o levantando. */
+  animar(dt: number) {
+    for (const v of this.vitrinas) v.animar(dt);
   }
 
   /** La caneca más cercana a un punto. */

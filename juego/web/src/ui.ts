@@ -1,7 +1,9 @@
-// Interfaz sobre el lienzo: HUD, globos, avisos de vitrinas, marcas de problemas, números de la fila de acciones y monedas.
-import { AYUDAS } from './balance';
+// Interfaz sobre el lienzo: HUD, herramientas (carrito, trapero, bolsa), globos, avisos de vitrinas, marcas de problemas,
+// números de la fila de acciones, mareos de los choques y monedas.
+import { AYUDAS, BOLSA_BASURA } from './balance';
 import type { Juego, Resultado } from './juego';
 import { metaDe, textoDe } from './juego';
+import type { Jugador } from './jugador';
 import { aTres, Mundo } from './mundo';
 import type { P } from './navegacion';
 import { icono } from './recursos';
@@ -79,30 +81,46 @@ export class UI {
       obj.appendChild(chip);
     }
     this.pintarAyudas(ayudas, j);
-    this.claveCarrito = '';
+    // Una tira de herramientas por personaje (en pareja, cada una en la esquina de su joystick)
+    const herr = $('herramientas');
+    herr.innerHTML = '';
+    herr.classList.toggle('pareja', j.pareja);
+    this.clavesHerr = j.jugadores.map(() => '');
+    for (const p of j.jugadores) herr.appendChild(div(`herr herr-${p.rol}`));
+    document.body.classList.toggle('en-pareja', j.pareja);
     mostrar('hud');
     mostrar('alertas');
-    mostrar('carrito');
+    mostrar('herramientas');
   }
 
-  private claveCarrito = '';
-  /** El carrito de la pantalla: un hueco por estante que alcanza a llenar, con lo que le queda de cada producto. */
-  private pintarCarrito(j: Juego) {
-    const jug = j.jugador;
-    const huecos = Array.from({ length: jug.capacidadCarrito }, (_, i) => jug.carga[i] ?? null);
-    const clave = `${jug.cargandoBodega}|${huecos.map((h) => (h ? `${h.producto}:${h.unidades}/${h.max}` : '-')).join(',')}`;
-    if (clave === this.claveCarrito) return;
-    this.claveCarrito = clave;
-    $('carrito').classList.toggle('cargando', jug.cargandoBodega);
-    $('carrito').title = 'Carrito: carga en la bodega lo justo para dejar lleno un estante';
-    $('carrito-huecos').innerHTML = huecos
-      .map((h) =>
-        h
-          ? `<div class="hueco-carrito"><img src="${icono(h.producto)}" alt=""><span class="barrita"><i style="width:${Math.round((100 * h.unidades) / Math.max(1, h.max))}%"></i></span><b>${h.unidades}</b></div>`
-          : `<div class="hueco-carrito vacio"><span>${jug.cargandoBodega ? '…' : 'vacío'}</span></div>`,
-      )
-      .join('');
+  private clavesHerr: string[] = [];
+  /** Lo que lleva cada uno: el carrito (unidades para cualquier estante), el trapero, la bolsa de basura y las canastas. */
+  private pintarHerramientas(j: Juego) {
+    const tiras = $('herramientas').children;
+    const conTrapero = j.pareja || j.problemas.includes('derrames') || this.vioMugre;
+    const conBolsa = j.problemas.includes('basura');
+    j.jugadores.forEach((p, i) => {
+      const tira = tiras[i] as HTMLElement | undefined;
+      if (!tira) return;
+      const clave = [p.carga, p.capacidadCarrito, p.cargandoBodega, p.trapero, p.capacidadTrapero, p.lavando, p.bolsa, p.canastasEnMano, conTrapero, conBolsa].join('|');
+      if (clave === this.clavesHerr[i]) return;
+      this.clavesHerr[i] = clave;
+      const pct = (a: number, b: number) => Math.round((100 * a) / Math.max(1, b));
+      const partes = [
+        `<span class="herr-item herr-carrito${p.cargandoBodega ? ' cargando' : ''}${p.carga === 0 ? ' vacio' : ''}" title="Carrito: se llena en la bodega y sirve para cualquier estante">`
+          + `<i class="ico" aria-hidden="true"></i><span class="medidor"><i style="width:${pct(p.carga, p.capacidadCarrito)}%"></i></span><b>${p.carga}/${p.capacidadCarrito}</b></span>`,
+      ];
+      if (conTrapero || p.trapero > 0)
+        partes.push(`<span class="herr-item herr-trapero${p.traperoLleno ? ' lleno' : ''}${p.lavando ? ' lavando' : ''}" title="Trapero: cuando se llena, a lavarlo en el balde">`
+          + `<i class="ico" aria-hidden="true"></i><span class="medidor"><i style="width:${pct(p.trapero, p.capacidadTrapero)}%"></i></span><b>${p.traperoLleno ? '¡Lávalo!' : `${p.trapero}/${p.capacidadTrapero}`}</b></span>`);
+      if (conBolsa || p.bolsa > 0)
+        partes.push(`<span class="herr-item herr-bolsa${p.bolsa >= BOLSA_BASURA ? ' lleno' : ''}" title="Bolsa de basura: se vacía en la caneca"><i class="ico" aria-hidden="true"></i><b>${p.bolsa}/${BOLSA_BASURA}</b></span>`);
+      if (p.canastasEnMano > 0) partes.push(`<span class="herr-item herr-canastas" title="Canastas para devolver a la entrada"><i class="ico" aria-hidden="true"></i><b>${p.canastasEnMano}</b></span>`);
+      tira.innerHTML = (j.pareja ? `<span class="herr-nombre">${p.nombre}</span>` : '') + partes.join('');
+    });
   }
+  /** Ya salió mugre por trapear hoy (aunque no sea día de derrames): desde ahí se ve el trapero. */
+  private vioMugre = false;
 
   /** Botones de las ayudas de un solo uso (tinto, canción, limpieza). */
   pintarAyudas(ayudas: Record<string, number>, j: Juego) {
@@ -130,7 +148,9 @@ export class UI {
     mostrar('hud', false);
     mostrar('alertas', false);
     mostrar('ayudas', false);
-    mostrar('carrito', false);
+    mostrar('herramientas', false);
+    document.body.classList.remove('en-pareja');
+    this.vioMugre = false;
   }
 
   private pos(p: P, z: number) {
@@ -145,7 +165,8 @@ export class UI {
     reloj.classList.toggle('poco', !j.cerrado && r <= 20);
     reloj.classList.toggle('cerrado', j.cerrado);
     $('hud-dinero').textContent = String(j.ganancia);
-    this.pintarCarrito(j);
+    if (!this.vioMugre && j.mugres.some((m) => m.tipo === 'charco' || m.tipo === 'sucio')) this.vioMugre = true;
+    this.pintarHerramientas(j);
     $('hud-atendidos').textContent = String(j.stats.atendidos);
     $('hud-perdidos').textContent = String(j.stats.perdidos);
     $('hud-canastas').textContent = String(j.canastas);
@@ -206,6 +227,8 @@ export class UI {
       const deseo = c.deseo;
       const modo = c.estado === 'saliendo' ? (c.enojado ? 'enojado' : 'feliz') : c.esperandoCanasta ? 'canasta' : c.estado === 'enfila' || c.estado === 'afila' ? 'fila' : 'compra';
       g.dataset.modo = modo;
+      // En la fila: carita verde (contento), amarilla (impaciente) o roja (a punto de irse)
+      g.dataset.animo = modo === 'fila' ? c.animo : '';
       g.classList.toggle('esperando', c.estado === 'esperando' || c.esperandoCanasta);
       g.classList.toggle('famoso', c.tipo === 'famoso');
       if (modo === 'compra' && deseo && img.dataset.p !== deseo) {
@@ -228,6 +251,7 @@ export class UI {
         return d;
       });
       e.classList.toggle('reservada', !!m.reservado);
+      if (m.tipo === 'caidos') (e.querySelector('b') as HTMLElement).textContent = String(m.unidades ?? 1);
       e.style.transform = `translate(${p.x}px, ${p.y}px)`;
     }
     for (const c of j.canastasSueltas) {
@@ -248,7 +272,7 @@ export class UI {
       const e = this.capa.elemento(`nina-${n.id}`, () => div('marca-alerta nina', '!'));
       e.style.transform = `translate(${p.x}px, ${p.y}px)`;
     }
-    // Corazón escondido: se toca directamente
+    // Corazón escondido: aparece quieto en su sitio; se toca o se pasa por encima. Se desvanece al final de su rato.
     if (j.corazonVisible && j.corazon) {
       const p = this.pos(j.corazon.pos, 0.35);
       const e = this.capa.elemento('corazon', () => {
@@ -261,17 +285,10 @@ export class UI {
         });
         return b;
       });
-      e.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      e.classList.toggle('se-va', j.corazon.hasta - j.tiempo < 1.5);
+      e.style.transform = `translate(${Math.round(p.x)}px, ${Math.round(p.y)}px)`;
     }
-    // Números de la fila de acciones
-    j.jugador.fila.forEach((t, k) => {
-      const o = j.jugador.objetivo(t);
-      const p = this.pos(o, t.tipo === 'reponer' || t.tipo === 'caja' ? 1.7 : 0.9);
-      const e = this.capa.elemento(`tarea-${t.id}`, () => div('numero-tarea'));
-      e.textContent = String(k + 1);
-      e.classList.toggle('actual', k === 0);
-      e.style.transform = `translate(${p.x}px, ${p.y}px)`;
-    });
+    for (const jug of j.jugadores) this.pintarJugador(j, jug);
     this.capa.terminar();
     // Monedas, combos y avisos
     for (; this.ultimoEvento < j.eventos.length; this.ultimoEvento++) {
@@ -294,6 +311,32 @@ export class UI {
       }
       return true;
     });
+  }
+
+  /** Números de su fila de acciones, barrita de lo que está haciendo, estrellitas del mareo y (en pareja) su nombre. */
+  private pintarJugador(j: Juego, jug: Jugador) {
+    jug.fila.forEach((t, k) => {
+      const o = jug.objetivo(t);
+      const p = this.pos(o, t.tipo === 'reponer' || t.tipo === 'caja' ? 1.7 : 0.9);
+      const e = this.capa.elemento(`tarea-${t.id}`, () => div(`numero-tarea tarea-${jug.rol}`));
+      e.textContent = String(k + 1);
+      e.classList.toggle('actual', k === 0);
+      e.style.transform = `translate(${p.x}px, ${p.y}px)`;
+    });
+    const cabeza = this.mundo.aPantalla(jug.cabeza());
+    if (jug.haciendo) {
+      const e = this.capa.elemento(`hace-${jug.rol}`, () => div('barra-accion', '<i></i>'));
+      e.style.transform = `translate(${cabeza.x}px, ${cabeza.y}px)`;
+      (e.firstElementChild as HTMLElement).style.width = `${Math.round(jug.progresoAccion * 100)}%`;
+    }
+    if (jug.atontado) {
+      const e = this.capa.elemento(`mareo-${jug.rol}`, () => div('mareo', '<span><i></i><i></i><i></i></span>'));
+      e.style.transform = `translate(${cabeza.x}px, ${cabeza.y}px)`;
+    }
+    if (j.pareja) {
+      const e = this.capa.elemento(`nombre-${jug.rol}`, () => div(`nombre-jugador nombre-${jug.rol}`, jug.nombre));
+      e.style.transform = `translate(${cabeza.x}px, ${cabeza.y}px)`;
+    }
   }
 
   private pop(pos: P, html: string, clase: string, z: number) {
@@ -369,6 +412,10 @@ export class UI {
     if (j.problemas.includes('basura') || j.problemas.includes('derrames')) lineas.push(['Mugre en el piso (máx.)', `${s.basuraMax.toFixed(0)} s`]);
     if (j.problemas.includes('derrames')) lineas.push(['Resbalones', `${s.resbalones}`]);
     if (j.problemas.includes('ladron')) lineas.push(['Ladrones atrapados / robos', `${s.atrapados} / ${s.robos}`]);
+    if (j.pareja) {
+      lineas.push(['Combos en pareja', `${s.combosPareja}`]);
+      if (s.choques) lineas.push(['Choques / estantes tumbados', `${s.choques} / ${s.tumbados}`]);
+    }
     if (r.corazon) lineas.push(['Corazón escondido', 'Encontrado']);
     $('rec-lineas').innerHTML = lineas.map(([a, b]) => `<div><span>${a}</span><span>${b}</span></div>`).join('');
     $('rec-total').textContent = String(r.ganancia);

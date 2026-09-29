@@ -1,11 +1,11 @@
-// Un día de juego: reloj, llegada de clientes, problemas, ayudantes, estadísticas, toques y las 3 estrellas.
+// Un día de juego: reloj, llegada de clientes, problemas, ayudantes, estadísticas, toques, choques en pareja y las 3 estrellas.
 import * as THREE from 'three';
 import { Ayudante, TipoAyudante } from './ayudantes';
 import {
-  AYUDAS, CANASTAS_INICIO, CLIENTES, PROBLEMAS, TipoCliente, UNIDADES_MAX,
+  AYUDAS, CANASTAS_INICIO, CHOQUE, CLIENTES, COMBO, PROBLEMAS, TipoCliente, UNIDADES_MAX,
 } from './balance';
 import { Cliente } from './cliente';
-import { Jugador, NuevaTarea } from './jugador';
+import { Jugador, NuevaTarea, Rol } from './jugador';
 import { aTres, Mundo } from './mundo';
 import { P } from './navegacion';
 import { CanastaSuelta, Ladron, Mugre, Nina, Perseguible } from './problemas';
@@ -63,6 +63,10 @@ export interface Stats {
   calmadas: number;
   resbalones: number;
   combos: number;
+  /** En pareja: combos en equipo, choques y estantes tumbados. */
+  combosPareja: number;
+  choques: number;
+  tumbados: number;
 }
 
 export interface Resultado {
@@ -93,7 +97,8 @@ type Programado = { t: number; que: 'ladron' | 'nina' | 'famoso' | 'derrame' };
 
 export class Juego {
   tienda!: Tienda;
-  jugador!: Jugador;
+  /** Él (y Ella, si juegan los dos en el mismo celular). */
+  jugadores: Jugador[] = [];
   clientes: Cliente[] = [];
   /** Una fila por caja (la 0 es la de Él y la cajera). */
   filas: Cliente[][] = [[]];
@@ -107,7 +112,7 @@ export class Juego {
   terminado = false;
   stats: Stats = {
     ventas: 0, propinas: 0, bonos: 0, perdidos: 0, atendidos: 0, felices: 0, esperas: [], vaciaMax: 0, basuraMax: 0,
-    robos: 0, atrapados: 0, calmadas: 0, resbalones: 0, combos: 0,
+    robos: 0, atrapados: 0, calmadas: 0, resbalones: 0, combos: 0, combosPareja: 0, choques: 0, tumbados: 0,
   };
   problemas: string[] = [];
   eventos: Evento[] = [];
@@ -125,9 +130,14 @@ export class Juego {
 
   constructor(public mundo: Mundo, public nivel: NivelDato, private productos: Productos, private tiendaDato: TiendaDato,
     private sitios: Record<number, number>, private escalas: Record<string, number>, public mejoras: Record<string, number>,
-    public legendario = false) {
+    public legendario = false, public pareja = false) {
     this.problemasX = legendario ? nivel.legendario?.problemas_x ?? 1.5 : 1;
     if (mejoras.canastas) this.canastas += 3;
+  }
+
+  /** El primer personaje (Él): el del joystick de la izquierda. */
+  get jugador() {
+    return this.jugadores[0];
   }
 
   get cafeActivo() {
@@ -152,9 +162,18 @@ export class Juego {
   }
   /** ¿Alguien está cobrando en la caja i? */
   cobrandoEn(i: number) {
-    if (i === 0) return this.jugador.estaCobrando || !!this.cajera?.cobrando;
+    if (i === 0) return this.jugadores.some((p) => p.estaCobrando) || !!this.cajera?.cobrando;
     return this.ayudantes.some((a) => a.tipo === 'cajera' && a.numCaja === i && a.cobrando);
   }
+  /** ¿El otro personaje ya está cobrando en la caja? (en la caja cobra uno a la vez). */
+  otroCobrando(yo: Jugador) {
+    return this.jugadores.some((p) => p !== yo && p.estaCobrando);
+  }
+  /** ¿Alguno de los dos va a reponer esta vitrina? */
+  vaAReponer(v: Vitrina) {
+    return this.jugadores.some((p) => p.vaAReponer(v));
+  }
+
   get cerrado() {
     return this.tiempo >= this.nivel.duracion_s;
   }
@@ -173,9 +192,15 @@ export class Juego {
     this.mundo.escena.add(this.tienda.grupo);
     this.mundo.encuadrar(this.tiendaDato.W, this.tiendaDato.D);
     const esc = this.tiendaDato.escala_personas;
-    this.jugador = new Jugador({ x: this.tienda.bodega.x - 1.2, y: this.tienda.bodega.y - 1.2 }, esc, this);
-    await this.jugador.preparar(this.productos);
-    this.mundo.escena.add(this.jugador.grupo);
+    const b = this.tienda.bodega;
+    const roles: [Rol, P][] = [['el', { x: b.x - 1.2, y: b.y - 1.2 }]];
+    if (this.pareja) roles.push(['ella', { x: b.x - 2.4, y: b.y - 1.0 }]);
+    for (const [rol, pos] of roles) {
+      const p = new Jugador(pos, esc * (this.escalas[rol] ?? 1), this, rol);
+      await p.preparar(this.productos);
+      this.jugadores.push(p);
+      this.mundo.escena.add(p.grupo);
+    }
     this.problemas = this.nivel.problemas;
     this.planear();
     // Precarga de lo que va a aparecer, para que nada se congele al entrar
@@ -346,9 +371,19 @@ export class Juego {
         obj.add(p);
       }
     } else {
-      obj = copia(await cargar(tipo === 'charco' ? 'charco.glb' : 'basura.glb'));
-      obj.scale.setScalar(tipo === 'charco' ? 1.3 : 1.6);
+      obj = copia(await cargar(tipo === 'basura' ? 'basura.glb' : 'charco.glb'));
+      obj.scale.setScalar(tipo === 'basura' ? 1.6 : tipo === 'sucio' ? 1.55 : 1.3);
       obj.rotation.y = Math.random() * Math.PI * 2;
+      // Mugre del piso (de un estante tumbado o un carrito regado): el mismo charco, color barro
+      if (tipo === 'sucio')
+        obj.traverse((o) => {
+          const m = o as THREE.Mesh;
+          if (!m.isMesh) return;
+          const mat = (m.material as THREE.MeshStandardMaterial).clone();
+          mat.color.set('#8a6446');
+          m.material = mat;
+          m.userData.materialPropio = true;
+        });
     }
     obj.position.copy(aTres(pos.x, pos.y));
     const m: Mugre = { id: this.sigMugre++, tipo, pos, tiempo: 0, obj, vitrina, unidades, producto: vitrina?.productos[0] };
@@ -362,6 +397,9 @@ export class Juego {
     const i = this.mugres.indexOf(m);
     if (i < 0) return;
     this.mundo.escena.remove(m.obj);
+    m.obj.traverse((o) => {
+      if (o.userData.materialPropio) ((o as THREE.Mesh).material as THREE.Material).dispose();
+    });
     this.mugres.splice(i, 1);
     sonido.limpio();
   }
@@ -369,8 +407,9 @@ export class Juego {
   mugreCerca(p: P, r: number) {
     return this.mugres.some((m) => m.tipo !== 'charco' && Math.hypot(m.pos.x - p.x, m.pos.y - p.y) < r);
   }
+  /** Charco (o mugre húmeda) donde alguien se puede resbalar. */
   charcoEn(p: P, r: number) {
-    return this.mugres.find((m) => m.tipo === 'charco' && Math.hypot(m.pos.x - p.x, m.pos.y - p.y) < r) ?? null;
+    return this.mugres.find((m) => (m.tipo === 'charco' || m.tipo === 'sucio') && Math.hypot(m.pos.x - p.x, m.pos.y - p.y) < r) ?? null;
   }
 
   resbalon(c: Cliente) {
@@ -397,8 +436,9 @@ export class Juego {
     this.canastasSueltas.splice(i, 1);
   }
 
-  cobrar(c: Cliente) {
+  cobrar(c: Cliente, quien?: Jugador) {
     const r = c.pagar();
+    if (quien) this.trabajoHecho(quien, c.pos);
     this.stats.ventas += r.monto;
     this.stats.propinas += r.propina;
     this.stats.atendidos++;
@@ -419,11 +459,113 @@ export class Juego {
   clientePerdido(c: Cliente) {
     this.stats.perdidos++;
     this.eventos.push({ t: this.tiempo, tipo: 'perdido', data: { id: c.id } });
+    this.eventos.push({ t: this.tiempo, tipo: 'pop', texto: '¡Me voy!', pos: { ...c.pos }, data: { clase: 'mal' } });
   }
 
-  alReponer(v: Vitrina) {
+  alReponer(v: Vitrina, quien?: Jugador) {
     sonido.repuesto();
     this.eventos.push({ t: this.tiempo, tipo: 'repuesto', data: { id: v.dato.id } });
+    if (quien) this.trabajoHecho(quien, v.centro());
+  }
+
+  private ultimoTrabajo: { rol: Rol; t: number } | null = null;
+  /** En pareja: si los dos terminan algo útil casi al mismo tiempo (uno repone y el otro cobra…), es combo en equipo. */
+  trabajoHecho(quien: Jugador, pos: P) {
+    if (!this.pareja) return;
+    const u = this.ultimoTrabajo;
+    if (u && u.rol !== quien.rol && this.tiempo - u.t <= COMBO.parejaVentana) {
+      this.ultimoTrabajo = null;
+      this.stats.combosPareja++;
+      this.stats.bonos += COMBO.pareja;
+      sonido.corazon();
+      this.eventos.push({ t: this.tiempo, tipo: 'pop', texto: `¡Combo en pareja! +${COMBO.pareja}`, pos: { ...pos }, data: { clase: 'corazon' } });
+      return;
+    }
+    this.ultimoTrabajo = { rol: quien.rol, t: this.tiempo };
+  }
+
+  // ---------- Choques entre Él y Ella ----------
+
+  /** Revisa si los dos se chocaron de frente (y rápido); si no, apenas se apartan para no quedar uno encima del otro. */
+  private choques() {
+    const [a, b] = this.jugadores;
+    if (!a || !b || a.atontado || b.atontado) return;
+    const dx = b.pos.x - a.pos.x, dy = b.pos.y - a.pos.y;
+    const d = Math.hypot(dx, dy);
+    if (d >= CHOQUE.radio * 2 || d < 1e-4) return;
+    const n = { x: dx / d, y: dy / d };
+    const va = a.vel.x * n.x + a.vel.y * n.y; // Él hacia Ella
+    const vb = -(b.vel.x * n.x + b.vel.y * n.y); // Ella hacia Él
+    const deFrente = va > CHOQUE.acercandose && vb > CHOQUE.acercandose;
+    if (deFrente && a.puedeChocar && b.puedeChocar && (a.manejado || b.manejado)) return this.choque(a, b, n);
+    // Se apartan: solo se mueve el que va caminando con el joystick
+    const falta = CHOQUE.radio * 2 - d;
+    const mover = (p: Jugador, s: number) => {
+      const q = { x: p.pos.x + n.x * s, y: p.pos.y + n.y * s };
+      const [i, j] = this.tienda.nav.aCelda(q);
+      if (this.tienda.nav.esLibre(i, j)) {
+        p.pos = q;
+        p.sincronizar();
+      }
+    };
+    const ma = a.manejado || (!a.haciendo && !a.estaCobrando), mb = b.manejado || (!b.haciendo && !b.estaCobrando);
+    if (ma && mb) {
+      mover(a, -falta / 2);
+      mover(b, falta / 2);
+    } else if (ma) mover(a, -falta);
+    else if (mb) mover(b, falta);
+  }
+
+  private choque(a: Jugador, b: Jugador, n: P) {
+    this.stats.choques++;
+    a.chocar({ x: -n.x, y: -n.y });
+    b.chocar(n);
+    const medio = { x: (a.pos.x + b.pos.x) / 2, y: (a.pos.y + b.pos.y) / 2 };
+    sonido.nota(190, 0.16, 0, 'square', 0.07, 80);
+    sonido.nota(1400, 0.08, 0.05, 'triangle', 0.05, 2200);
+    sonido.nota(1700, 0.08, 0.14, 'triangle', 0.04, 2600);
+    this.eventos.push({ t: this.tiempo, tipo: 'pop', texto: '¡Pum!', pos: medio, data: { clase: 'choque' } });
+    // Con el carrito lleno (o casi), se riega todo y ensucia el piso
+    for (const p of [a, b]) {
+      if (p.carga <= 0 || p.carga < CHOQUE.cargaLlena * p.capacidadCarrito) continue;
+      p.regarCarrito();
+      void this.nuevaMugre('sucio', this.puntoCerca(p.pos));
+      this.eventos.push({ t: this.tiempo + 0.01, tipo: 'pop', texto: 'Se regó el carrito', pos: { ...p.pos }, data: { clase: 'mal' } });
+    }
+  }
+
+  /** Alguien salió empujado contra un mueble: si es un estante, se tumba. */
+  golpeContra(p: Jugador, donde: P) {
+    const v = this.tienda.enVenta.find((x) => {
+      const [x0, y0, x1, y1] = x.rect();
+      const m = 0.45;
+      return donde.x > x0 - m && donde.x < x1 + m && donde.y > y0 - m && donde.y < y1 + m;
+    });
+    if (v) this.tumbarVitrina(v);
+    else sonido.nota(160, 0.1, 0, 'square', 0.05, 90);
+  }
+
+  /** Estante tumbado: se vacía, los productos quedan en el piso y queda mugre por trapear. */
+  tumbarVitrina(v: Vitrina) {
+    if (v.tumbada) return;
+    const n = v.stock;
+    v.tumbar();
+    v.ponerStock(0);
+    this.stats.tumbados++;
+    this.vitrinaVacia(v);
+    sonido.resbalon();
+    sonido.nota(120, 0.35, 0.05, 'sawtooth', 0.05, 60);
+    const f = v.frente();
+    this.eventos.push({ t: this.tiempo, tipo: 'pop', texto: '¡Se cayó el estante!', pos: v.centro(), data: { clase: 'mal' } });
+    void this.nuevaMugre('sucio', this.puntoCerca({ x: f.x + 0.35, y: f.y }));
+    if (n > 0) void this.nuevaMugre('caidos', { x: f.x - 0.35, y: f.y - 0.1 }, v, Math.min(3, n));
+  }
+
+  /** Un punto libre del piso cerca de otro (para dejar mugre donde se pueda trapear). */
+  private puntoCerca(p: P): P {
+    const nav = this.tienda.nav;
+    const [i, j] = nav.cercana(p);
+    return nav.aPunto(i, j);
   }
 
   vitrinaVacia(v: Vitrina) {
@@ -452,6 +594,11 @@ export class Juego {
 
   avisar(texto: string) {
     this.eventos.push({ t: this.tiempo, tipo: 'aviso', texto });
+  }
+
+  /** El personaje más cercano a un punto (a quien le llega un toque en pareja). */
+  masCercano(p: P): Jugador {
+    return this.jugadores.reduce((a, b) => (Math.hypot(b.pos.x - p.x, b.pos.y - p.y) < Math.hypot(a.pos.x - p.x, a.pos.y - p.y) ? b : a));
   }
 
   perseguibles(): Perseguible[] {
@@ -501,13 +648,16 @@ export class Juego {
     return t;
   }
 
-  private tarea(t: NuevaTarea, codigo: string): string {
-    const j = this.jugador;
-    if (j.tiene(t)) return j.cancelar(t) ? 'cancelada' : 'ya';
+  /** Agrega (o cancela, si ya estaba) una acción en la fila de quien esté más cerca de ella. */
+  private tarea(t: NuevaTarea, codigo: string, donde: P): string {
+    const ya = this.jugadores.find((p) => p.tiene(t));
+    if (ya) return ya.cancelar(t) ? 'cancelada' : 'ya';
+    const libres = this.jugadores.filter((p) => !p.atontado);
+    const j = libres.length ? libres.reduce((a, b) => (Math.hypot(b.pos.x - donde.x, b.pos.y - donde.y) < Math.hypot(a.pos.x - donde.x, a.pos.y - donde.y) ? b : a)) : this.jugador;
     return j.agregar(t) ? codigo : 'ya';
   }
 
-  /** Toque en la pantalla: agrega (o cancela) la acción correspondiente en la fila de Él. */
+  /** Toque en la pantalla: agrega (o cancela) la acción correspondiente en la fila de Él (o de Ella, si está más cerca). */
   tocar(x: number, y: number): string | null {
     // 1) Lo pequeño que está en el piso o lo que corre: se elige por cercanía en la pantalla
     let mejor: Tocable | null = null;
@@ -523,31 +673,37 @@ export class Juego {
       }
     }
     if (mejor) {
+      const donde = mejor.pos;
       if (mejor.tipo === 'mugre') {
         const m = mejor.ref as Mugre;
         if (m.reservado === 'aseo') return 'aseo';
-        return this.tarea({ tipo: 'mugre', mugre: m }, m.tipo);
+        return this.tarea({ tipo: 'mugre', mugre: m }, m.tipo, donde);
       }
-      if (mejor.tipo === 'canasta') return this.tarea({ tipo: 'canasta', canasta: mejor.ref as CanastaSuelta }, 'canasta');
-      return this.tarea({ tipo: 'atrapar', objetivo: mejor.ref as Perseguible }, mejor.tipo);
+      if (mejor.tipo === 'canasta') return this.tarea({ tipo: 'canasta', canasta: mejor.ref as CanastaSuelta }, 'canasta', donde);
+      return this.tarea({ tipo: 'atrapar', objetivo: mejor.ref as Perseguible }, mejor.tipo, donde);
     }
     // 2) Vitrinas y caja: por rayo
     const ndc = new THREE.Vector2((x / window.innerWidth) * 2 - 1, -(y / window.innerHeight) * 2 + 1);
     this.raycaster.setFromCamera(ndc, this.mundo.camara);
     const golpes = this.raycaster.intersectObjects(this.tienda.grupo.children, true);
     for (const g of golpes) {
+      if (this.tienda.esLavadero(g.object)) return this.tarea({ tipo: 'lavar' }, 'lavar', this.tienda.lavadero);
       const v = this.tienda.porGrupo(g.object);
       if (!v) continue;
       if (!v.nivel) return null;
-      if (v.seccion === 'caja') return this.cajera || v !== this.tienda.caja.vitrina ? 'cajera' : this.tarea({ tipo: 'caja' }, 'caja');
-      if (v.stock < v.capacidad || this.jugador.vaAReponer(v)) return this.tarea({ tipo: 'reponer', vitrina: v }, 'reponer');
+      if (v.seccion === 'caja') {
+        if (this.cajera || v !== this.tienda.caja.vitrina) return 'cajera';
+        return this.tarea({ tipo: 'caja' }, 'caja', this.tienda.caja.puestoCajero());
+      }
+      if (v.stock < v.capacidad || this.vaAReponer(v)) return this.tarea({ tipo: 'reponer', vitrina: v }, 'reponer', v.frente());
       return 'llena';
     }
     return null;
   }
 
   reponerSeccion(v: Vitrina) {
-    return this.jugador.agregar({ tipo: 'reponer', vitrina: v });
+    if (this.vaAReponer(v)) return false;
+    return this.tarea({ tipo: 'reponer', vitrina: v }, 'reponer', v.frente()) === 'reponer';
   }
 
   update(dt: number) {
@@ -569,7 +725,9 @@ export class Juego {
       // Cerrado: los que esperaban canasta en la puerta se van sin contar como perdidos
       for (const c of this.clientes) if (c.esperandoCanasta) c.salir(false);
     }
-    this.jugador.update(dt);
+    for (const p of this.jugadores) p.update(dt);
+    this.choques();
+    this.tienda.animar(dt);
     for (const c of this.clientes) c.update(dt);
     for (const l of this.ladrones) l.update(dt);
     for (const n of this.ninas) n.update(dt);
@@ -621,6 +779,8 @@ export class Juego {
       case 'limpieza': return s.basuraMax <= m;
       case 'robos': return s.robos === 0;
       case 'equipo': {
+        // En pareja son combos en equipo; solo, el % de clientes felices
+        if (this.pareja) return s.combosPareja >= m;
         const tot = s.atendidos + s.perdidos;
         return final ? tot > 0 && (100 * s.felices) / tot >= m : tot === 0 || (100 * s.felices) / tot >= m;
       }
@@ -643,6 +803,7 @@ export class Juego {
       case 'limpieza': return `${s.basuraMax.toFixed(0)}/${m} s`;
       case 'robos': return s.robos ? `${s.robos} robo${s.robos > 1 ? 's' : ''}` : 'Sin robos';
       case 'equipo': {
+        if (this.pareja) return `${s.combosPareja}/${m} combos`;
         const tot = s.atendidos + s.perdidos;
         return `${tot ? Math.round((100 * s.felices) / tot) : 100}/${m} %`;
       }
@@ -668,7 +829,7 @@ export class Juego {
   destruir() {
     this.destruido = true;
     liberarPropios(this.tienda.grupo);
-    const personas = [this.jugador.grupo, ...this.clientes.map((c) => c.grupo), ...this.ladrones.map((l) => l.grupo), ...this.ninas.map((n) => n.grupo),
+    const personas = [...this.jugadores.map((p) => p.grupo), ...this.clientes.map((c) => c.grupo), ...this.ladrones.map((l) => l.grupo), ...this.ninas.map((n) => n.grupo),
       ...this.ayudantes.map((a) => a.grupo)];
     this.mundo.escena.remove(this.tienda.grupo, ...personas, ...this.mugres.map((b) => b.obj), ...this.canastasSueltas.map((c) => c.obj));
     liberarEsqueletos(...personas);

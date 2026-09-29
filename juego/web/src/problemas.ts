@@ -7,14 +7,14 @@ import { Personaje } from './personaje';
 import * as sonido from './sonido';
 import { Vitrina } from './tienda';
 
-/** Basura, charcos y productos caídos: todo lo que ensucia el piso. */
+/** Basura, charcos, mugre (de un estante tumbado o un carrito regado) y productos caídos: todo lo que ensucia el piso. */
 export interface Mugre {
   id: number;
-  tipo: 'basura' | 'charco' | 'caidos';
+  tipo: 'basura' | 'charco' | 'sucio' | 'caidos';
   pos: P;
   tiempo: number;
   obj: THREE.Object3D;
-  /** Quién va en camino a limpiarla ('el' o 'aseo'). */
+  /** Quién va en camino a limpiarla ('el', 'ella' o 'aseo'). */
   reservado?: string;
   vitrina?: Vitrina;
   unidades?: number;

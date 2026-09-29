@@ -13,6 +13,9 @@ const ALTO_PARED = 3.4;
 /** Blender (x, y) → Three (x, 0, -y). */
 export const aTres = (x: number, y: number, z = 0) => new THREE.Vector3(x, z, -y);
 
+/** Dirección en el piso (Blender) que en la pantalla se ve hacia la derecha (x) y hacia arriba (y): para el joystick. */
+export const dePantalla = (x: number, y: number) => ({ x: x * Math.cos(AZ) - y * Math.sin(AZ), y: x * Math.sin(AZ) + y * Math.cos(AZ) });
+
 export class Mundo {
   renderer: THREE.WebGLRenderer;
   escena = new THREE.Scene();

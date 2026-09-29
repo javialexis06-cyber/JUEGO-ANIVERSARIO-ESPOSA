@@ -63,6 +63,11 @@
     <ul id="tarjeta-clientes" class="lista-clientes"></ul>
     <h3>Estrellas del día</h3>
     <ul id="tarjeta-objetivos" class="lista-objetivos"></ul>
+    <div class="modo-juego" role="group" aria-label="Quién juega">
+      <button id="btn-modo-solo" class="modo-boton" aria-pressed="true"><i class="modo-ico solo" aria-hidden="true"></i>Jugar solo</button>
+      <button id="btn-modo-pareja" class="modo-boton" aria-pressed="false"><i class="modo-ico pareja" aria-hidden="true"></i>Los dos en este celular</button>
+    </div>
+    <p id="modo-nota" class="modo-nota"></p>
     <div class="fila-botones">
       <button id="btn-legendario" class="boton boton-luna" hidden>Modo legendario</button>
       <button id="btn-tarjeta-volver" class="boton boton-papel">Volver</button>
@@ -110,12 +115,13 @@
   <article class="lista-mercado como">
     <h2>Cómo se juega</h2>
     <ol class="pasos">
-      <li><b>Toca una vitrina</b> que se esté quedando vacía. Él va a la bodega, carga cajas en el carrito y la llena. Las vitrinas de nivel 1 solo alcanzan para uno o dos clientes.</li>
-      <li><b>Toca la caja</b> cuando haya fila. Si nadie cobra, la fila se enoja rápido y los clientes se van sin pagar.</li>
-      <li><b>Encadena toques:</b> cada toque se suma a la lista de Él con su número. Un segundo toque sobre lo mismo lo cancela. Reponer varias vitrinas en un viaje o cobrar seguido da <b>combos</b>.</li>
-      <li><b>Mira los globos:</b> muestran lo que busca cada cliente, cuántas unidades y su paciencia.</li>
-      <li><b>Basura</b> (día 6): recógela y Él la lleva a la caneca. <b>Charcos</b> (día 8): trapéalos antes de que alguien se resbale.</li>
-      <li><b>Canastas:</b> sin canastas en la entrada no entra nadie. Recoge las que dejan tiradas.</li>
+      <li><b>Muévete con el joystick</b> de la esquina de abajo a la izquierda (en el computador, con WASD o las flechas). <b>Quédate quieto junto a algo y se hace solo:</b> en la bodega se llena el carrito, junto a un estante se repone, detrás de la caja se cobra y en el balde azul se lava el trapero.</li>
+      <li><b>El carrito</b> se llena en la bodega con unidades que sirven para <b>cualquier estante</b>: en cada uno deja lo que le falta hasta quedar vacío. Mira cuánto le queda arriba a la izquierda. Llenar varios estantes en un viaje da <b>combos</b>.</li>
+      <li><b>La caja:</b> quédate detrás de ella cuando haya fila. Las caritas de la fila dicen cómo van: <b>verde</b> contentos, <b>amarilla</b> impacientes y <b>roja</b> a punto de irse bravos (y se van desde la fila).</li>
+      <li><b>También puedes tocar</b> una vitrina, la caja o una mugre: el personaje va solo, y cada toque se suma a su lista con un número (otro toque lo cancela). Si mueves el joystick, la lista se borra.</li>
+      <li><b>Basura</b> (día 6): pasa por encima para echarla a la bolsa (caben 4) y vacíala en la caneca. <b>Charcos</b> (día 8): quédate encima para trapearlos; el <b>trapero</b> aguanta 4 manchas y luego hay que lavarlo en el balde.</li>
+      <li><b>Canastas:</b> sin canastas en la entrada no entra nadie. Pasa por encima de las tiradas (hasta 3) y llévalas a la entrada.</li>
+      <li><b>Los dos en este celular:</b> Él con el joystick de la izquierda y Ella con el de la derecha. Si se chocan de frente y rápido quedan mareados; si uno sale volando contra un estante, lo tumba (se vacía y ensucia el piso), y un carrito lleno se riega. Si terminan cosas casi a la vez hacen <b>combos en pareja</b>.</li>
       <li><b>Ladrón</b> (día 12): tócalo antes de que llegue a la puerta. <b>Niña traviesa</b> (día 14): tócala para calmarla y recoge lo que tumbó. <b>Famoso</b> (día 18): todos se quedan mirándolo.</li>
       <li><b>Entre días</b> compra vitrinas con monedas y <b>mejoras con estrellas</b> (1 por cada estrella nueva, 5 por cada luna): tenis, carrito grande, estantes más fáciles, ayudantes, capacitación, segunda caja… Los últimos días no se pasan sin mejorar: si te trabas, repite días por las estrellas que te faltan. Las <b>ayudas</b> (tinto, canción, limpieza) se usan con los botones de la izquierda.</li>
       <li>Con 3 estrellas se abre el <b>modo legendario</b> de ese día: gana una Luna. Y en cada día hay un <b>corazón escondido</b> que aparece un momento.</li>
@@ -161,7 +167,11 @@
 </header>
 <footer id="alertas" hidden></footer>
 <nav id="ayudas" class="ayudas" aria-label="Ayudas" hidden></nav>
-<aside id="carrito" class="carrito-hud" aria-label="Lo que lleva el carrito" hidden><i class="carrito-ico" aria-hidden="true"></i><div id="carrito-huecos"></div></aside>
+<aside id="herramientas" class="herramientas" aria-label="Lo que lleva cada uno: carrito, trapero y bolsa" hidden></aside>
+<div id="mandos" class="mandos" hidden>
+  <div class="mando mando-izq"><div class="mando-base"><i class="mando-perilla"></i></div><span class="mando-nombre"></span></div>
+  <div class="mando mando-der" hidden><div class="mando-base"><i class="mando-perilla"></i></div><span class="mando-nombre"></span></div>
+</div>
 <div id="cargando-nivel" hidden>Acomodando la tienda…</div>
 <div id="toast" role="status" hidden></div>
 <script type="module" src="./src/main.ts"></script>

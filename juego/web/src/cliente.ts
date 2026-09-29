@@ -1,5 +1,6 @@
 // Clientes: toman canasta, recorren su lista, esperan si falta producto, hacen fila, pagan y se van.
-// La paciencia baja más rápido esperando producto o en la fila (y más si nadie está cobrando).
+// La paciencia baja más rápido esperando producto o en la fila (y más si nadie está cobrando); si se acaba, se va
+// bravo desde donde esté (también desde la fila) con una pataleta, y cuenta como perdido.
 import {
   ALIVIO_DECORACION, CANASTA_ABANDONO, CLIENTES, PRECIO, PROPINA, RESBALON, RITMO_PACIENCIA, TipoCliente,
 } from './balance';
@@ -33,6 +34,8 @@ export class Cliente extends Personaje {
   enojado = false;
   /** Segundos que se queda quieto mirando al famoso o sobándose después de resbalar. */
   pausa = 0;
+  /** Pataleta antes de irse bravo. */
+  private berrinche = 0;
   private pacienciaMax: number;
   private accion = 0;
   private inicioFila = 0;
@@ -83,6 +86,10 @@ export class Cliente extends Personaje {
   }
   get esperandoCanasta() {
     return this.estado === 'sinCanasta';
+  }
+  /** Carita según la paciencia: verde contento, amarillo impaciente, rojo a punto de irse. */
+  get animo(): 'feliz' | 'medio' | 'bravo' {
+    return this.paciencia >= 0.66 ? 'feliz' : this.paciencia >= 0.3 ? 'medio' : 'bravo';
   }
 
   empezar() {
@@ -205,6 +212,15 @@ export class Cliente extends Personaje {
   }
 
   update(dt: number) {
+    if (this.berrinche > 0) {
+      // Pataleta: brinca bravo en su puesto antes de salir
+      this.berrinche -= dt;
+      super.update(0);
+      const k = Math.max(0, this.berrinche);
+      this.cuerpo.position.y = Math.abs(Math.sin(k * 16)) * 0.07;
+      this.cuerpo.rotation.z = Math.sin(k * 30) * 0.08;
+      return;
+    }
     if (this.pausa > 0 && this.estado !== 'saliendo' && this.estado !== 'fuera') {
       // Quieto mirando al famoso (o sobándose): no camina ni pierde paciencia
       this.pausa -= dt;
@@ -229,6 +245,8 @@ export class Cliente extends Personaje {
       this.paciencia = 0;
       j.clientePerdido(this);
       this.salir(true);
+      this.berrinche = 0.7;
+      this.quieto();
       return;
     }
     if (this.estado === 'sinCanasta') {

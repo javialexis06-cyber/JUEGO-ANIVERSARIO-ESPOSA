@@ -1,7 +1,7 @@
 // Ayudantes que se contratan en la tienda de mejoras: cajera, reponedor, aseo y guardia.
-// Cada uno trabaja solo, un poco más lento que Él, y no toma lo que Él ya tiene en su fila.
+// Cada uno trabaja solo, un poco más lento que Él, y no toma lo que Él (o Ella) ya tiene en su fila.
 import * as THREE from 'three';
-import { AYUDANTE, CAPACITACION, CARGA_BODEGA, RECOGER, REPONER } from './balance';
+import { AYUDANTE, CAPACITACION, CARGA_BODEGA, LAVAR, RECOGER, REPONER, TRAPERO } from './balance';
 import type { Juego } from './juego';
 import { P } from './navegacion';
 import { Personaje } from './personaje';
@@ -23,6 +23,8 @@ export class Ayudante extends Personaje {
   private cobroEn = 0;
   private carrito: THREE.Group | null = null;
   private huecos: THREE.Object3D[] = [];
+  /** Manchas en el trapero del aseo (también lo lava en el balde cuando se llena). */
+  private trapero = 0;
 
   constructor(public tipo: TipoAyudante, pos: P, escala: number, private juego: Juego, public numCaja = 0) {
     super(pos, escala);
@@ -153,14 +155,14 @@ export class Ayudante extends Personaje {
     const j = this.juego;
     const otras = j.ayudantes.filter((a) => a !== this && a.vitrina).map((a) => a.vitrina);
     const candidatas = j.tienda.enVenta
-      .filter((v) => v.fraccion <= AYUDANTE.umbralReponedor && !j.jugador.vaAReponer(v) && !otras.includes(v))
+      .filter((v) => v.fraccion <= AYUDANTE.umbralReponedor && !v.tumbada && !j.vaAReponer(v) && !otras.includes(v))
       .sort((a, b) => a.fraccion - b.fraccion);
     const v = candidatas[0];
     if (!v) return;
     this.ocupado = true;
     this.vitrina = v;
     this.ir(j.tienda.nav, j.tienda.bodega, () => {
-      this.hacer(CARGA_BODEGA.base * CARGA_BODEGA.mejora[j.mejoras.bodega ?? 0], 'reponer', () => {
+      this.hacer((CARGA_BODEGA.base + CARGA_BODEGA.porUnidad * v.capacidad) * CARGA_BODEGA.mejora[j.mejoras.bodega ?? 0], 'reponer', () => {
         if (this.huecos[0]) this.huecos[0].visible = true;
         this.ir(j.tienda.nav, v.frente(), () => {
           this.mirarA(v.centro());
@@ -188,10 +190,19 @@ export class Ayudante extends Personaje {
       m.reservado = 'aseo';
       this.ir(j.tienda.nav, m.pos, () => {
         if (!j.mugres.includes(m)) return this.libre();
-        const t = m.tipo === 'charco' ? RECOGER.trapear : m.tipo === 'basura' ? RECOGER.basura : RECOGER.caidos;
+        const trapea = m.tipo === 'charco' || m.tipo === 'sucio';
+        const t = trapea ? RECOGER.trapear : m.tipo === 'basura' ? RECOGER.basura : RECOGER.caidos;
         this.hacer(t, 'reponer', () => {
           j.quitarMugre(m);
-          if (m.tipo === 'basura') {
+          if (trapea && ++this.trapero >= TRAPERO[Math.min(2, j.mejoras.trapero ?? 0)]) {
+            // Trapero lleno: a lavarlo en el balde
+            this.ir(j.tienda.nav, j.tienda.puestoLavado, () =>
+              this.hacer(LAVAR, 'reponer', () => {
+                this.trapero = 0;
+                this.libre();
+              }),
+            );
+          } else if (m.tipo === 'basura') {
             const c = j.tienda.canecaCercana(this.pos);
             this.ir(j.tienda.nav, c, () => this.hacer(RECOGER.botar, 'reponer', () => this.libre()));
           } else if (m.tipo === 'caidos' && m.vitrina) {

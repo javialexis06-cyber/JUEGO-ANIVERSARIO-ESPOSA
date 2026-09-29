@@ -1,4 +1,4 @@
-// Súper Manía en Pareja · jugable 1 (la tiendita completa: 25 días, en solitario con Él).
+// Súper Manía en Pareja · jugable 1 (la tiendita completa: 25 días, solo con Él o los dos en el mismo celular).
 // Letras empacadas con el juego (funciona sin internet, también en la app de Android)
 import '@fontsource/courier-prime/latin-400.css';
 import '@fontsource/courier-prime/latin-700.css';
@@ -14,14 +14,18 @@ import { Capacitor } from '@capacitor/core';
 import { AYUDAS, AYUDAS_MAX, CLIENTES, GrupoMejora, MEJORAS, TipoCliente } from './balance';
 import * as guardado from './guardado';
 import { Juego, NivelDato, textoDe } from './juego';
+import type { Jugador } from './jugador';
+import { Mandos } from './mando';
 import { Mundo } from './mundo';
 import { cargar, cargarAnimado, cargarJSON, elegirModelos, icono, Productos } from './recursos';
 import * as sonido from './sonido';
 import { liberarPropios, NOMBRE_SECCION, Tienda, TiendaDato } from './tienda';
 import { mostrar, pantallaUnica, UI } from './ui';
-import { SUELDO_FRACCION } from './casa/catalogo';
 
 const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
+/** Parte de la ganancia del día que llega a la casa como sueldo: un tercio, dividido entre 4 (la casa se paga con calma). */
+const SUELDO_FRACCION = 1 / 12;
+const CLAVE_MODO = 'supermania-modo';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const NIVELES_JUGABLES = 25;
@@ -48,10 +52,20 @@ let fondo: Tienda | null = null;
 let pausado = false;
 let nivelElegido = 1;
 let legendario = false;
+let mandos: Mandos;
+/** Juegan los dos en el mismo celular (dos joysticks). */
+let enPareja = (() => {
+  try {
+    return localStorage.getItem(CLAVE_MODO) === 'pareja';
+  } catch {
+    return false;
+  }
+})();
 
 async function iniciar() {
   mundo = new Mundo($('lienzo') as HTMLCanvasElement);
   ui = new UI(mundo);
+  mandos = new Mandos($('mandos'));
   pantallaUnica('carga');
   const barra = $('carga-barra');
   const pasos: (() => Promise<unknown>)[] = [
@@ -67,6 +81,7 @@ async function iniciar() {
     () => cargar('boton_comprar.glb'),
     ...['estante', 'frutas', 'nevera', 'caja'].map((k) => () => cargar(`vitrina_${k}_1.glb`)),
     () => cargarAnimado('el.glb'),
+    () => cargarAnimado('ella.glb'),
     () => cargar('carrito_1.glb'),
     () => cargar('canasta.glb'),
     () => cargar('caneca.glb'),
@@ -94,6 +109,7 @@ async function iniciar() {
     if (juego && !pausado && !juego.terminado) {
       // En pruebas (?bot&rapido=N) se simulan N pasos fijos de 0,1 s por cuadro
       const pasos = BOT ? RAPIDO : 1;
+      if (!BOT) juego.jugadores.forEach((p, i) => (p.mando = mandos.leer(i)));
       for (let k = 0; k < pasos && !juego.terminado; k++) {
         if (BOT) piloto(juego);
         juego.update(BOT ? 0.1 : dt);
@@ -141,6 +157,7 @@ function diaAlcanzado() {
 
 function abrirMenu() {
   ui.terminarNivel();
+  mandos.mostrar(false);
   sonido.musica.iniciar('menu');
   pantallaUnica('menu');
   $('menu-dinero').textContent = String(partida.dinero);
@@ -180,13 +197,18 @@ function tiposDelDia(nv: NivelDato): TipoCliente[] {
 
 function abrirTarjeta(n: number) {
   nivelElegido = n;
-  const nv = niveles[n - 1];
   const tres = (partida.estrellas[n] ?? []).filter(Boolean).length === 3;
   if (!tres) legendario = false;
+  const nv = nivelDeJuego(n);
   pantallaUnica('tarjeta');
   $('tarjeta-titulo').textContent = `${legendario ? 'Legendario' : 'Nivel'} ${n}`;
-  const clientes = legendario && nv.legendario ? nv.legendario.clientes.solitario : nv.clientes.solitario;
-  $('tarjeta-sub').textContent = `${tiendaDato.nombre} · Día ${nv.dia} · ${clientes} clientes`;
+  $('tarjeta-sub').textContent = `${tiendaDato.nombre} · Día ${nv.dia} · ${nv.clientes.solitario} clientes`;
+  // Solo (Él) o los dos en este celular (Él con el joystick de la izquierda, Ella con el de la derecha)
+  $('btn-modo-solo').setAttribute('aria-pressed', String(!enPareja));
+  $('btn-modo-pareja').setAttribute('aria-pressed', String(enPareja));
+  $('modo-nota').textContent = enPareja
+    ? 'Él con el joystick de la izquierda y Ella con el de la derecha. Vienen más clientes. ¡Cuidado con chocarse!'
+    : 'Él solo, con el joystick de la izquierda.';
   $('tarjeta-novedad').textContent = legendario
     ? 'El doble de clientes, la mitad de paciencia y más problemas. Se juega con todas tus mejoras.'
     : nv.descripcion_evento ?? nv.novedad ?? 'Atiende bien a todos y no dejes vitrinas vacías.';
@@ -217,11 +239,29 @@ function abrirTarjeta(n: number) {
   bl.setAttribute('aria-pressed', String(legendario));
 }
 
-/** Copia del nivel con las reglas del modo legendario. */
+/** Copia del nivel con las reglas del modo legendario y, en pareja, con los clientes y las metas de los dos
+ *  (puestos donde el juego lee las de uno solo). */
 function nivelDeJuego(n: number): NivelDato {
-  const nv = niveles[n - 1];
-  if (!legendario || !nv.legendario) return nv;
-  return { ...nv, clientes: nv.legendario.clientes, paciencia: nv.legendario.paciencia };
+  const base = niveles[n - 1];
+  let nv: NivelDato = base;
+  if (legendario && base.legendario) nv = { ...base, clientes: base.legendario.clientes, paciencia: base.legendario.paciencia };
+  if (!enPareja) return nv;
+  const x = nv.clientes.pareja / Math.max(1, nv.clientes.solitario);
+  const par = <T,>(v: T | { solitario: T; pareja: T }): T => (typeof v === 'object' && v !== null && 'pareja' in (v as object) ? (v as { pareja: T }).pareja : v as T);
+  const l = nv.legendario;
+  return {
+    ...nv,
+    clientes: { solitario: nv.clientes.pareja, pareja: nv.clientes.pareja },
+    estrellas: nv.estrellas.map((e) => ({ ...e, texto: par(e.texto), meta: par(e.meta) })),
+    legendario: l && {
+      ...l,
+      luna: {
+        ventas: { solitario: Math.round(l.luna.ventas.solitario * x) },
+        perdidos_max: { solitario: Math.round(l.luna.perdidos_max.solitario * x) },
+        texto: { solitario: `Vender ${Math.round(l.luna.ventas.solitario * x)} y perder máximo ${Math.round(l.luna.perdidos_max.solitario * x)} clientes` },
+      },
+    },
+  };
 }
 
 async function jugar(n: number) {
@@ -238,11 +278,12 @@ async function jugar(n: number) {
   $('cargando-nivel').hidden = false;
   // El día empieza a correr solo cuando todo está cargado
   juego = null;
-  const nuevo = new Juego(mundo, nivelDeJuego(n), productos, tiendaDato, partida.sitios, escalas, partida.mejoras, legendario);
+  const nuevo = new Juego(mundo, nivelDeJuego(n), productos, tiendaDato, partida.sitios, escalas, partida.mejoras, legendario, enPareja);
   await nuevo.preparar();
   juego = nuevo;
   $('cargando-nivel').hidden = true;
   ui.empezarNivel(juego, partida.ayudas);
+  mandos.mostrar(true, enPareja, juego.jugadores.map((p) => p.nombre));
   ui.alTocarAlerta = (id) => {
     const v = juego?.tienda.vitrinas.find((x) => x.dato.id === id);
     if (v && juego?.reponerSeccion(v)) ui.aviso('Reposición en la fila');
@@ -268,8 +309,8 @@ async function jugar(n: number) {
     if (r.corazon) partida.corazones[n] = true;
     partida.dinero += r.ganancia;
     guardado.guardar(partida);
-    // Un tercio de lo ganado pasa a la casa (Nuestro Hogar) como sueldo
-    const sueldo = Math.max(0, Math.round(r.ganancia * SUELDO_FRACCION));
+    // Una parte de lo ganado pasa a la casa (Nuestro Hogar) como sueldo (al menos 1 moneda si se ganó algo)
+    const sueldo = r.ganancia > 0 ? Math.max(1, Math.round(r.ganancia * SUELDO_FRACCION)) : 0;
     try {
       localStorage.setItem(CLAVE_SUELDO, String((Number(localStorage.getItem(CLAVE_SUELDO)) || 0) + sueldo));
     } catch {
@@ -278,6 +319,7 @@ async function jugar(n: number) {
     $('rec-sueldo').hidden = sueldo <= 0;
     $('rec-sueldo').textContent = `Sueldo para la casa: +${sueldo} monedas`;
     ui.terminarNivel();
+    mandos.mostrar(false);
     ui.resultado(j, r, antes);
     pantallaUnica('resultado');
     (window as any).__resultado = r;
@@ -342,7 +384,7 @@ function pintarMejoras() {
   if (alTope) fila(`${alTope} vitrina${alTope > 1 ? 's' : ''} al tope`, 'Ya están en el nivel máximo de esta tienda', 0, () => {}, 'listo');
   const grupos: GrupoMejora[] = ['Él', 'Bodega', 'Tienda', 'Ayudantes'];
   for (const g of grupos) {
-    titulo(g === 'Él' ? 'Para Él' : g);
+    titulo(g === 'Él' ? 'Para Él y Ella' : g);
     for (const m of MEJORAS.filter((x) => x.grupo === g)) {
       const base = m.id === 'carrito' ? 1 : 0;
       const nivel = partida.mejoras[m.id] ?? base;
@@ -367,6 +409,17 @@ function pintarMejoras() {
 function conectarBotones() {
   $('btn-abrir').addEventListener('click', () => void jugar(nivelElegido));
   $('btn-tarjeta-volver').addEventListener('click', abrirMenu);
+  const elegirModo = (pareja: boolean) => {
+    enPareja = pareja;
+    try {
+      localStorage.setItem(CLAVE_MODO, pareja ? 'pareja' : 'solo');
+    } catch {
+      /* sin almacenamiento */
+    }
+    abrirTarjeta(nivelElegido);
+  };
+  $('btn-modo-solo').addEventListener('click', () => elegirModo(false));
+  $('btn-modo-pareja').addEventListener('click', () => elegirModo(true));
   $('btn-legendario').addEventListener('click', () => {
     legendario = !legendario;
     abrirTarjeta(nivelElegido);
@@ -401,10 +454,12 @@ function conectarBotones() {
   }, { once: true });
   $('btn-pausa').addEventListener('click', () => {
     pausado = true;
+    mandos.mostrar(false);
     pantallaUnica('pausa');
   });
   $('btn-continuar').addEventListener('click', () => {
     pausado = false;
+    if (juego && !juego.terminado) mandos.mostrar(true, juego.pareja, juego.jugadores.map((p) => p.nombre));
     pantallaUnica(null);
   });
   $('btn-salir').addEventListener('click', async () => {
@@ -456,6 +511,7 @@ function conectarBotones() {
     cancelada: 'Acción cancelada',
     cajera: 'La cajera se encarga de la caja',
     aseo: 'El aseo ya va para allá',
+    lavar: 'A lavar el trapero',
   };
   lienzo.addEventListener('pointerup', (e) => {
     if (!juego || pausado || juego.terminado) return;
@@ -487,15 +543,19 @@ function conectarBotones() {
   }
 }
 
-/** Piloto automático para pruebas (?bot): juega como alguien atento. Atrapa, cobra cuando hay fila,
- *  carga varias cajas por viaje y limpia cuando le queda tiempo. */
+/** Piloto automático para pruebas (?bot): juega como alguien atento (con toques). Atrapa, cobra cuando hay fila,
+ *  llena varias vitrinas por viaje y limpia cuando le queda tiempo. En pareja, Él cuida la caja y Ella repone. */
 function piloto(j: Juego) {
-  const jug = j.jugador;
+  j.jugadores.forEach((jug, i) => pilotoDe(j, jug, !j.pareja || i === 0));
+}
+
+function pilotoDe(j: Juego, jug: Jugador, cuidaCaja: boolean) {
+  if (jug.atontado) return;
   const guardia = j.ayudantes.some((a) => a.tipo === 'guardia');
-  if (!guardia) for (const o of j.perseguibles()) if (o.visible) jug.agregar({ tipo: 'atrapar', objetivo: o });
+  if (!guardia) for (const o of j.perseguibles()) if (o.visible && !o.reservado) jug.agregar({ tipo: 'atrapar', objetivo: o });
   const repone = j.ayudantes.filter((a) => a.vitrina).map((a) => a.vitrina);
   const bajas = j.tienda.enVenta
-    .filter((v) => v.fraccion <= 0.5 && !jug.vaAReponer(v) && !repone.includes(v))
+    .filter((v) => v.fraccion <= 0.5 && !v.tumbada && !j.vaAReponer(v) && !repone.includes(v))
     .sort((a, c) => a.fraccion - c.fraccion);
   const vacias = bajas.filter((v) => v.stock === 0);
   const reponiendo = jug.fila.some((t) => t.tipo === 'reponer');
@@ -503,35 +563,51 @@ function piloto(j: Juego) {
   if (j.canastas <= 2) for (const c of j.canastasSueltas.filter((x) => !x.reservado).slice(0, 2)) jug.agregar({ tipo: 'canasta', canasta: c });
   // Un charco o basura a la vez, sin esperar a estar libre del todo
   const limpiando = jug.fila.some((t) => t.tipo === 'mugre');
-  const sucia = j.mugres.find((x) => !x.reservado && (x.tipo === 'charco' || x.tiempo > 12));
+  const sucia = j.mugres.find((x) => !x.reservado && (x.tipo === 'charco' || x.tipo === 'sucio' || x.tiempo > 12));
   if (!limpiando && sucia && jug.fila.length <= 2) jug.agregar({ tipo: 'mugre', mugre: sucia });
   const alguienEspera = j.clientes.some((c) => c.estado === 'esperando');
-  if (!j.cajera && j.fila.length && !jug.estaCobrando && !jug.tiene({ tipo: 'caja' })) {
+  const otroCobra = j.jugadores.some((p) => p !== jug && (p.estaCobrando || p.tiene({ tipo: 'caja' })));
+  if (cuidaCaja && !j.cajera && !otroCobra && j.fila.length && !jug.estaCobrando && !jug.tiene({ tipo: 'caja' })) {
     const urgente = j.fila.length >= 2 || j.fila[0].paciencia < 0.45 || !reponiendo;
     if (urgente) jug.agregar({ tipo: 'caja' });
   }
   // Mientras cobra, solo sale a reponer si alguien está esperando un producto que se acabó
   const puedeReponer = !jug.estaCobrando || alguienEspera || !j.fila.length;
   if (!reponiendo && puedeReponer && (bajas.length >= 2 || vacias.length || (bajas.length && !jug.fila.length))) {
-    for (const v of bajas.slice(0, jug.capacidadCarrito)) jug.agregar({ tipo: 'reponer', vitrina: v });
+    // Las que alcancen con un carrito lleno (al menos una)
+    let cabe = jug.capacidadCarrito;
+    for (const v of bajas) {
+      const falta = v.capacidad - v.stock;
+      if (cabe <= 0 || (falta > cabe && cabe < jug.capacidadCarrito)) break;
+      jug.agregar({ tipo: 'reponer', vitrina: v });
+      cabe -= falta;
+    }
     return;
   }
   if (jug.fila.length) return;
+  if (jug.traperoLleno) {
+    jug.agregar({ tipo: 'lavar' });
+    return;
+  }
   const m = j.mugres.filter((x) => !x.reservado).sort((a, c) => (a.tipo === 'charco' ? -1 : 0) - (c.tipo === 'charco' ? -1 : 0))[0];
   if (m && jug.agregar({ tipo: 'mugre', mugre: m })) return;
   const c = j.canastasSueltas.find((x) => !x.reservado);
   if (c) jug.agregar({ tipo: 'canasta', canasta: c });
 }
 
-if (BOT) {
+if (BOT || params.has('prueba')) {
   (window as any).__mundo = () => mundo;
   (window as any).__juego = () => juego;
 }
 (window as any).__estado = () => ({
-  juego: juego ? { tiempo: juego.tiempo, stats: juego.stats, clientes: juego.clientes.length, fila: juego.fila.length, terminado: juego.terminado } : null,
+  juego: juego ? { tiempo: juego.tiempo, stats: juego.stats, clientes: juego.clientes.length, fila: juego.fila.length, terminado: juego.terminado, pareja: juego.pareja } : null,
+  jugadores: juego ? juego.jugadores.map((p) => ({
+    rol: p.nombre, pos: p.pos, carga: `${p.carga}/${p.capacidadCarrito}`, trapero: `${p.trapero}/${p.capacidadTrapero}`, bolsa: p.bolsa,
+    canastas: p.canastasEnMano, mareo: p.atontado, tareas: p.fila.map((t) => t.tipo), cobrando: p.estaCobrando,
+  })) : null,
   el: juego ? {
     tareas: juego.jugador.fila.map((t) => t.tipo), cobrando: juego.jugador.estaCobrando, moviendo: juego.jugador.moviendo,
-    pos: juego.jugador.pos, cajas: juego.jugador.cajas.length,
+    pos: juego.jugador.pos, cajas: juego.jugador.carga,
     vitrinas: juego.tienda.enVenta.map((v) => `${v.seccion}:${v.stock}/${v.capacidad}`).join(' '),
     clientes: juego.clientes.map((c) => `${c.tipo[0]}${c.estado}:${c.paciencia.toFixed(2)}`).join(' '),
     mugres: juego.mugres.length, canastas: juego.canastas,

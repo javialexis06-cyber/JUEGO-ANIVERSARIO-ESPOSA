@@ -45,7 +45,7 @@ Cada vitrina tiene una **capacidad** en unidades (ver la tabla del punto 8) y el
 La **barra de inventario** flota sobre cada vitrina y solo aparece cuando baja del 50 %, para no llenar la pantalla. Así, de un vistazo, se sabe qué se está acabando.
 
 ### La paciencia del cliente
-Sobre cada cliente hay una **carita** que cambia de feliz (verde) a normal (amarilla) y a enojada (roja). La paciencia baja cuando:
+Sobre cada cliente de la **fila de la caja** hay una **carita** según su paciencia: **verde** contento (66 % o más: deja la propina completa), **amarilla** impaciente (30 % a 66 %) y **roja**, temblando, a punto de irse (menos de 30 %). Si la paciencia se le acaba, **se va desde donde esté, también desde la fila**: hace una pataleta corta («¡Me voy!»), la fila avanza y cuenta como cliente perdido. La paciencia baja cuando:
 - espera frente a una vitrina vacía,
 - hace fila larga en la caja,
 - se resbala en un derrame,
@@ -62,21 +62,35 @@ La paciencia sube un poco con la **decoración**: plantas, música, globos, letr
 - Adentro hay **una caja por sección**, con su ícono en relieve: manzana (frutas), leche (lácteos), filete (carnes), pan (panadería), lata (abarrotes), botella (bebidas), copo de nieve (congelados), wafle y arepa.
 - Las cajas **no se acaban** y **no cuestan**: lo que cuesta es **tiempo**, porque ir y volver toma varios segundos. La estrategia está en **cuándo** ir y **cuántas** cosas traer por viaje.
 
-### Cómo se repone con toques (como en Supermarket Mania)
-1. **Tocas la vitrina** que quieres reponer. Aparece un **número flotante (1, 2, 3…)**: esa acción entró a tu **cola de acciones**.
-2. Tu personaje **camina a la bodega** y **toma la caja de esa sección**.
-3. Vuelve por el pasillo **empujando el carrito** hasta la vitrina.
-4. **La rellena**: la animación dura de 1 a 2 segundos, los productos aparecen con un brillo y la barra vuelve a verde.
+### Cómo se mueve y cómo se trabaja (joystick)
+- **El joystick** transparente de la esquina de abajo a la izquierda mueve a Él (en el computador, WASD o las flechas). Es la forma principal de moverse; los muebles no se atraviesan (se desliza por el borde).
+- **Quedarse quieto junto a algo lo hace solo**, con una barrita sobre la cabeza que muestra cuánto falta:
+  - en la **bodega** se llena el carrito;
+  - junto a un **estante** que no esté lleno se vacía en él lo que lleva el carrito;
+  - **detrás de la caja**, si hay fila, se cobra (uno a la vez);
+  - en el **balde azul** (contra la pared, junto a la puerta) se lava el trapero;
+  - encima de un **charco o mugre** se trapea;
+  - junto a la **caneca** se bota la bolsa y en la **entrada** se dejan las canastas.
+- **Al pasar por encima** (sin detenerse) se recogen la basura, los productos caídos y las canastas tiradas, se atrapa al ladrón o a la niña y se toma el corazón escondido.
+- **Tocar sigue sirviendo:** tocar una vitrina, la caja, una mugre, una canasta, el ladrón o el balde manda al personaje solo (con un número en su fila de acciones; otro toque lo cancela). Al mover el joystick, la fila se borra: manda el joystick.
 
-**Truco de planeación:**
-- Si tocas **varias vitrinas seguidas**, el personaje hace **un solo viaje** a la bodega y carga todas las cajas de una vez.
-- Cuántas caben depende del **carrito de reposición**:
-  - **Nivel 1:** 3 cajas por viaje.
-  - **Nivel 2:** 5 cajas.
-  - **Nivel 3:** 7 cajas.
-- **Combo de reposición:** llenar 2 o más vitrinas con la misma carga da monedas extra (+2 por cada vitrina después de la primera).
-- **Una caja rellena una vitrina completa.** Si la vitrina está a medias, la caja igual la deja llena.
-- **Cada tienda nueva empieza con el carrito de nivel 1.**
+### El carrito: unidades para cualquier estante
+1. En la **bodega** se llena el carrito hasta el tope con **unidades generales** (tarda 1 s + 0,07 s por unidad, menos con la «Bodega ordenada»).
+2. En cada estante se deja **lo que le falta**, hasta que el carrito quede vacío. El mismo carrito sirve para frutas, lácteos o bebidas: no importa cuál.
+3. Cuánto cabe depende del **Carrito grande**: **8** unidades (nivel 1), **14** (nivel 2) y **20** (nivel 3). Una vitrina de nivel 1 guarda 4 o 5 unidades, así que un carrito lleno alcanza para dos o tres estantes a medias.
+4. **Combo de reposición:** llenar 2 o más estantes con la misma carga da +2 monedas por cada estante después del primero.
+5. Los **productos caídos** (de la niña traviesa o de un estante tumbado) se suben al carrito y sirven para cualquier estante; si el carrito va lleno, se devuelven a mano a su estante.
+6. El HUD (arriba a la izquierda) muestra el carrito con su barrita y sus unidades (por ejemplo, 6/8). Con toques, si lo que queda no alcanza para llenar el estante tocado, primero pasa por la bodega.
+
+### Herramientas con capacidad (todas funcionan igual: se llenan y se vacían o recargan en su puesto)
+| Herramienta | Capacidad | Se llena con | Se vacía o recarga en |
+|---|---|---|---|
+| **Carrito** | 8 / 14 / 20 unidades (Carrito grande) | Nada: se gasta al reponer | La **bodega** (se recarga) |
+| **Trapero** | 4 / 6 / 9 manchas (Trapero grande) | Charcos y mugre del piso | El **balde** (se lava en 1,3 s) |
+| **Bolsa de basura** | 4 basuras | Basura del piso | La **caneca** |
+| **Canastas en la mano** | 3 canastas | Canastas tiradas | El **puesto de la entrada** |
+
+El HUD muestra cada una con su barrita; cuando el trapero se llena dice **«¡Lávalo!»** y ya no trapea hasta lavarlo. El ayudante de **aseo** también lava su trapero en el balde cuando se le llena.
 
 ### ¿Cómo sé cuándo ir a la bodega?
 - **Barras de inventario** amarillas y rojas sobre las vitrinas.
@@ -128,11 +142,11 @@ En la tiendita aparecen uno por uno; desde la segunda tienda ya vienen todos.
 
 | Día (tiendita) | Problema | Qué pasa | Cómo se resuelve |
 |---|---|---|---|
-| 6 | **Basura** | Baja la paciencia de todos los que están cerca | Tocarla: Él la recoge y la lleva a la **caneca** (si hay varias seguidas, las recoge todas antes de ir) |
-| 8 | **Derrame** | El que lo pisa se resbala, se queda quieto y pierde paciencia | Tocar el charco: Él lo trapea |
-| todos | **Canastas tiradas** | Sin canastas en la entrada no entra nadie: los clientes esperan en la puerta | Tocar la canasta: Él la devuelve al puesto |
-| 12 | **Ladrón** | Toma productos y corre a la salida | Tocarlo antes de que salga: devuelve lo robado y da 5 monedas |
-| 14 | **Niña traviesa** | Tumba productos de varias vitrinas; quedan en el piso | Tocarla para calmarla, y tocar los productos caídos para devolverlos a su vitrina |
+| 6 | **Basura** | Baja la paciencia de todos los que están cerca | Pasar por encima (o tocarla): va a la **bolsa** (caben 4) y la bolsa se vacía en la **caneca** |
+| 8 | **Derrame** | El que lo pisa se resbala, se queda quieto y pierde paciencia | Quedarse encima (o tocarlo): se trapea y llena el **trapero**, que se lava en el **balde** |
+| todos | **Canastas tiradas** | Sin canastas en la entrada no entra nadie: los clientes esperan en la puerta | Pasar por encima (hasta 3 en la mano) y llevarlas a la entrada |
+| 12 | **Ladrón** | Toma productos y corre a la salida | Alcanzarlo (o tocarlo) antes de que salga: devuelve lo robado y da 5 monedas |
+| 14 | **Niña traviesa** | Tumba productos de varias vitrinas; quedan en el piso | Alcanzarla para calmarla, y recoger los productos caídos (van al carrito) |
 | 18 | **Famoso** | Todos se quedan mirándolo unos segundos | Atenderlo rápido: si sale feliz deja 15 monedas de propina |
 
 - **Día lluvioso:** el doble de charcos, muchos junto a la puerta.
@@ -153,12 +167,26 @@ La tarjeta de cada día muestra quién viene y qué prefiere, como en Supermarke
 
 ## 7. Jugando en pareja (cooperativo)
 
+### Los dos en el mismo celular (ya se puede jugar)
+- En la tarjeta de cada día se elige **«Jugar solo»** (Él) o **«Los dos en este celular»**. Se recuerda para la próxima vez.
+- En pareja aparece **un segundo joystick en la esquina de abajo a la derecha**: Él juega con el de la izquierda (azul) y Ella con el de la derecha (rosado). En el computador, Él con WASD y Ella con las flechas. Cada uno tiene su nombre sobre la cabeza, su tira de herramientas (Él arriba a la izquierda, Ella arriba a la derecha) y su propio carrito, trapero y bolsa.
+- Se juega con la **columna «pareja»** de `niveles.json`: más clientes y metas de dos (ventas, propinas, perdidos). La estrella «equipo» pide **combos en pareja**.
+- **Combo en pareja** (corazón, +3 monedas): cuando los dos terminan algo útil con 3,5 s o menos de diferencia (uno repone y el otro cobra, uno trapea y el otro atrapa al ladrón…).
+- En la caja **cobra uno a la vez**; si el otro llega, le sale el aviso de que ya están cobrando.
+- Un toque en la pantalla le llega a **quien esté más cerca** de lo tocado.
+- Las estrellas que se ganan en pareja cuentan en la misma partida guardada.
+
+### Choques
+- **Solo cuentan los choques de frente y rápidos:** los dos tienen que ir el uno hacia el otro a más de 1,4 m/s (casi a toda velocidad) y al menos uno debe ir con el joystick. Si apenas se rozan, solo se apartan.
+- Al chocar suena un «¡pum!», los dos **salen empujados** unos 80 cm hacia atrás con un saltico, sueltan lo que estaban haciendo y quedan **mareados 0,8 s** con estrellitas dando vueltas. Después hay 1,6 s en que no se vuelven a chocar.
+- **Si uno sale volando contra un estante, el estante se tumba:** cae de cara al pasillo, **se vacía** (hasta 3 productos quedan tirados en el piso y se pueden recoger al carrito) y deja **mugre** que hay que trapear (y en la que los clientes se resbalan). A los dos segundos se levanta solo, vacío.
+- **Si alguno llevaba el carrito lleno** (75 % o más), **se riega**: el carrito queda vacío y el piso sucio.
+
+### Pareja en línea (plan)
 - **Cada uno controla su personaje** desde su celular, con su propia **cola de acciones**. Los números de ella se ven de otro color.
 - **No se duplican tareas**: si Él ya va a reponer los lácteos, a Ella le aparece esa vitrina con la carita de Él y no la puede tomar.
 - **Marcar para el otro**: si mantienes el dedo sobre algo, le pones un marcador al otro, por ejemplo «¡ve tú a la caja!».
-- **Combo en equipo** (ícono de corazón): pasa cuando los dos atienden al mismo cliente o terminan tareas juntos en pocos segundos (uno cocina y el otro entrega; uno repone y el otro cobra). Da **propina doble** y llena la barra de corazón.
 - **Roles sugeridos** (no son obligatorios): uno se encarga de **reponer** y el otro de la **caja, la limpieza y las zonas especiales**.
-- **Jugar solo**: se puede jugar con un solo personaje, o controlar a los dos alternando.
 
 ---
 
@@ -172,7 +200,10 @@ La tarjeta de cada día muestra quién viene y qué prefiere, como en Supermarke
 | Vitrina de carnes | 2 | 4 | 7 |
 
 - **Una vitrina de nivel 1 alcanza para uno o dos clientes**: desde el día 3 cada cliente lleva 1 o 2 unidades de cada producto. Al vaciarse, las piezas desaparecen de la vitrina en proporción.
-- **Tiempos de Él:** camina a 1.7 m/s; cargar en la bodega toma 2.4 s + 0.35 s por caja; llenar una vitrina, 2.2 s.
+- **Tiempos de Él y Ella:** caminan a 2,6 m/s (hasta 3,7 con tenis); cargar el carrito toma 1 s + 0,07 s por unidad; llenar una vitrina, 1,4 s; trapear, 1,6 s; lavar el trapero, 1,3 s.
+- **Carrito:** 8, 14 o 20 unidades. **Trapero:** 4, 6 o 9 manchas. **Bolsa:** 4 basuras. **Canastas en la mano:** 3.
+- **Choques (en pareja):** cada uno a más de 1,4 m/s hacia el otro; empujón de 3,2 m/s por 0,26 s; mareo 0,8 s; carrito regado desde el 75 % (`CHOQUE` en `balance.ts`).
+- **Sueldo para la casa:** una doceava parte de la ganancia del día (un tercio dividido entre 4), mínimo 1 moneda.
 - **Paciencia** (segundos de espera): abuelita 62, mamá 46, adolescente 36, ejecutivo 27, deportista 38. Baja a ritmo 1 esperando producto, 1.3 en la fila, 1.7 si es el primero y nadie cobra, 0.25 caminando y +0.45 cerca de basura.
 - Un producto vale entre 5 y 9 monedas. La propina es 0, 1 o 3 según la carita, más la propina extra del tipo de cliente.
 
@@ -181,8 +212,9 @@ La tarjeta de cada día muestra quién viene y qué prefiere, como en Supermarke
 |---|---|---|---|---|
 | Vitrinas | Comprar sitios «+» / subir a nivel 2 | | Más vitrinas y el doble de capacidad | 3 / 4 |
 | Caja | Banda | 1 | Cobra 40 % más rápido | 4 |
-| Él | Tenis | 3 | Camina 15 %, 30 % y 47 % más rápido | 2 |
-| Él | Carrito de reposición | 2 | 5 y 7 cajas por viaje | 3 |
+| Él y Ella | Tenis nuevos | 3 | Caminan 15 %, 30 % y 47 % más rápido | 2 |
+| Él y Ella | Carrito grande | 2 | 14 y 20 unidades (empieza en 8) | 3 |
+| Él y Ella | Trapero grande | 2 | 6 y 9 manchas antes de lavarlo (empieza en 4) | 8 |
 | Bodega | Bodega ordenada | 3 | Carga 28 %, 48 % y 64 % más rápido | 2 |
 | Bodega | Reposición rápida | 3 | Llena vitrinas 28 %, 48 % y 64 % más rápido | 3 |
 | Tienda | Matera, música y globos | 1 c/u | Cada uno: −10 % en la pérdida de paciencia | 3, 6 y 10 |
@@ -190,7 +222,7 @@ La tarjeta de cada día muestra quién viene y qué prefiere, como en Supermarke
 | Tienda | Segunda caneca | 1 | Menos camino para botar basura | 7 |
 | Tienda | Cámara de seguridad | 1 | El ladrón se ve desde que entra y corre más lento | 12 |
 | Ayudantes | Cajera | 1 | Cobra sola (70 % más lenta que Él) | 7 |
-| Ayudantes | Aseo | 1 | Basura, charcos y productos caídos | 9 |
+| Ayudantes | Aseo | 1 | Basura, charcos y productos caídos (lava su trapero en el balde) | 9 |
 | Ayudantes | Reponedor | 1 | Repone las vitrinas que bajan del 34 % | 10 |
 | Ayudantes | Guardia | 1 | Atrapa ladrones y calma a la niña | 13 |
 
@@ -330,8 +362,10 @@ Desde el menú principal se elige cómo jugar.
 
 ## 11. Controles en el celular
 
-- **Tocar** una vitrina, la caja, un charco, un cliente o una máquina agrega esa acción a tu cola.
-- **Tocar dos veces** una acción de la cola la cancela.
-- **Mantener el dedo** pone un marcador para tu pareja.
-- **Pellizcar** acerca o aleja la cámara (en las tiendas grandes).
+- **Joystick** (esquina de abajo a la izquierda; en pareja, otro a la derecha para Ella): mueve al personaje. En el computador, WASD o flechas.
+- **Quedarse quieto** junto a la bodega, un estante, la caja, el balde, la caneca, la entrada o una mancha hace esa tarea sola.
+- **Pasar por encima** recoge basura, productos caídos y canastas, atrapa al ladrón y toma el corazón escondido.
+- **Tocar** una vitrina, la caja, una mugre, una canasta, el ladrón o el balde manda al personaje solo (fila de acciones con números); **tocar otra vez** lo mismo lo cancela. Mover el joystick borra la fila.
+- Los botones de la **bandeja de abajo** (vitrinas que se acaban) mandan a reponer esa vitrina.
+- **Pellizcar** acerca o aleja la cámara.
 - La cámara es la misma vista isométrica de los renders de las tiendas.
