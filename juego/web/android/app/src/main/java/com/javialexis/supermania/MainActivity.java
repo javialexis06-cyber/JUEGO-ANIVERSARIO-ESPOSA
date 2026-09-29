@@ -7,13 +7,15 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.getcapacitor.BridgeActivity;
 
-/** El juego ocupa toda la pantalla y la pantalla no se apaga mientras se juega. */
+/** El juego ocupa toda la pantalla, la pantalla no se apaga mientras se juega y los videos de la tele siguen solos. */
 public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // La tele de la casa: el siguiente video de la cola empieza solo, sin tocar la pantalla
+        getBridge().getWebView().getSettings().setMediaPlaybackRequiresUserGesture(false);
         pantallaCompleta();
     }
 

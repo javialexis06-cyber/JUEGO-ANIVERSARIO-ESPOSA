@@ -17,6 +17,13 @@ línea, la escena sale en los dos celulares al mismo tiempo; la IA espera a que 
 - **Compradas**: la casa guarda la lista en `nuestro-hogar-escenas`; en pruebas `mesa.html?todas` las abre
   todas y `mesa.html?escena=<id>` muestra una sola.
 
+## En pausa (siguiente paso cuando se retomen)
+
+- **Escenarios propios**: en vez de los cuartos pequeños de la casa (donde parece que dan vueltas en un
+  espacio diminuto), cada escena tendrá su escenario: espacios grandes y blancos, amplios para correr,
+  con solo lo necesario de utilería.
+- Pestaña «Escenas» en la tienda de la casa para comprarlas (con vista previa).
+
 ## Catálogo
 
 ### Sala
