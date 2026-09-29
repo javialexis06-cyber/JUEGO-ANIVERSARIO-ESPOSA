@@ -12,13 +12,14 @@ import './casa.css';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import * as THREE from 'three';
-import { Mundo } from '../mundo';
+import { aTres, Mundo } from '../mundo';
 import { elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
 import { BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, lePasa, paraSitio, TINTES, TipoItem } from './catalogo';
 import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
 import { Mascota } from './mascota';
+import { type EstadoTele, Tele } from './tele';
 import {
   Accion, alDia, animo, Casa, colorSeguro, Cuarto, CUARTOS, diasPara, EstadoPersonaje, Evento, FechaEspecial, hoy, Necesidad,
   NECESIDADES, NOMBRE_CUARTO, NOMBRE_NECESIDAD, NOMBRE_RANURA, nuevoId, otro, personajeNuevo, Ranura, RANURAS, Rol, Ropa, sumar,
@@ -110,6 +111,7 @@ async function iniciar() {
   for (const r of ['el', 'ella'] as Rol[]) mascotas[r].aplicar(personajeNuevo(ahora), ahora, false);
   bucle();
   controles();
+  iniciarTele();
   mostrar('carga', false);
   const modo = leerModo();
   modoGuardado = modo;
@@ -433,6 +435,81 @@ async function despertar(auto = false) {
   const e = est(yo);
   await guardarYo({ ...e, actividad: { tipo: 'nada', desde: ahora, accion: 'saludo', hasta: ahora + 2500 }, visto: ahora });
   toast(auto ? `${nombre(yo)} se despertó con toda la energía.` : '¡Buenos días!');
+}
+
+// ---------------------------------------------------------------------------
+// La tele de la sala (YouTube con cola de videos)
+// ---------------------------------------------------------------------------
+let tele: Tele;
+let teleAntes: EstadoTele = 'apagada';
+/** Mientras ven tele se quedan sentados (se renueva de a poco; si se cierra la app, se paran solos). */
+const TELE_SEG = 20 * 60;
+let teleRenovando = false;
+
+function iniciarTele() {
+  tele = new Tele();
+  tele.alCambiar = alCambiarTele;
+  tele.alTocarMini = () => void verTele(true);
+  alCambiarTele();
+}
+
+/** «Ver tele»: se sientan y la tele se agranda; si ya está prendida, se puede seguir viendo o apagarla. */
+async function verTele(directo = false) {
+  if (!s) return;
+  if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
+  if (tele.prendida && tele.estado !== 'grande' && !directo) {
+    const titulo = tele.actual?.titulo ? `: «${esc(tele.actual.titulo)}»` : '';
+    abrirHoja(
+      'La tele',
+      `<p class="nota-hoja">La tele está prendida${titulo}.</p>
+       <div class="menu-casa">
+         <button class="accion principal" data-tele-casa="ver">${ico('tv')}<span>Seguir viendo</span></button>
+         <button class="accion" data-tele-casa="apagar">${ico('tv')}<span>Apagar la tele</span></button>
+       </div>`,
+    );
+    return;
+  }
+  cerrarHoja();
+  await hacer('tv', 'sala', TELE_SEG, { energia: 4, carino: 2 });
+  tele.ver();
+}
+
+function alCambiarTele() {
+  const e = tele.estado;
+  document.body.classList.toggle('en-tele', e === 'grande');
+  casa3d.telePrendida(e !== 'apagada');
+  if (e === 'grande' && teleAntes !== 'grande') {
+    // La casa queda chiquita en una esquina: los dos en el sofá
+    verCuarto('sala');
+    const pt = casa3d.puntos('sala');
+    const a = pt.sofa_izq ?? pt.centro_izq, b = pt.sofa_der ?? pt.centro_der;
+    const centro = aTres((a.x + b.x) / 2, (a.y + b.y) / 2, 0.75);
+    mundo.ajustar();
+    mundo.enfocar(centro, 2.3);
+  } else if (e !== 'grande' && teleAntes === 'grande') {
+    mundo.ajustar();
+    mundo.fijarZoom(1);
+    void levantarseDeTele();
+  }
+  teleAntes = e;
+  pintarAcciones();
+}
+
+/** Al levantarse (o apagar) se para del sofá; la tele sigue sonando en la ventanita si no la apagaron. */
+async function levantarseDeTele() {
+  if (!s || s.personajes[yo].actividad.accion !== 'tv') return;
+  const ahora = Date.now();
+  await guardarYo({ ...est(yo), actividad: { tipo: 'nada', desde: ahora }, visto: ahora });
+}
+
+/** Mientras la tele está en grande siguen sentados: se alarga el rato antes de que se acabe. */
+function renovarTele() {
+  if (!s || !tele || tele.estado !== 'grande' || teleRenovando) return;
+  const act = s.personajes[yo].actividad;
+  if (act.accion !== 'tv' || (act.hasta ?? 0) - Date.now() > 5 * 60_000) return;
+  teleRenovando = true;
+  const ahora = Date.now();
+  void guardarYo({ ...est(yo), actividad: { ...act, hasta: ahora + TELE_SEG * 1000 }, visto: ahora }).finally(() => (teleRenovando = false));
 }
 
 // ---------------------------------------------------------------------------
@@ -825,7 +902,7 @@ function botonesCuarto(): Boton[] {
   const b: Boton[] = [];
   switch (cuartoVista()) {
     case 'sala':
-      b.push({ id: 'sofa', texto: 'Descansar', icono: ico('sofa') }, { id: 'tv', texto: 'Ver tele', icono: ico('tv') });
+      b.push({ id: 'sofa', texto: 'Descansar', icono: ico('sofa') }, { id: 'tv', texto: tele?.prendida ? 'Tele prendida' : 'Ver tele', icono: ico('tv'), activo: !!tele?.prendida });
       break;
     case 'cocina':
       b.push({ id: 'comer', texto: 'Comer', icono: `<img src="${iconoItem(ITEM.pan)}" alt="">`, principal: true }, { id: 'notas', texto: 'Notas', icono: ico('nota') });
@@ -926,7 +1003,7 @@ async function alAccion(id: string) {
     case 'sofa':
       return hacer('sofa', 'sala', 10, { energia: 8 });
     case 'tv':
-      return hacer('tv', 'sala', 10, { energia: 4, carino: 2 });
+      return verTele();
     case 'comer':
       return elegirComida('comer');
     case 'notas':
@@ -1561,7 +1638,13 @@ function controles() {
     const t = ev.target as HTMLElement;
     const d = (sel: string) => t.closest(sel) as HTMLElement | null;
     let b: HTMLElement | null;
-    if ((b = d('[data-comprar]'))) void comprar(b.dataset.comprar!);
+    if ((b = d('[data-tele-casa]'))) {
+      cerrarHoja();
+      if (b.dataset.teleCasa === 'apagar') {
+        tele.apagar();
+        toast('Tele apagada.');
+      } else void verTele(true);
+    } else if ((b = d('[data-comprar]'))) void comprar(b.dataset.comprar!);
     else if ((b = d('[data-ropa-para]'))) {
       filtroRopa.para = b.dataset.ropaPara as Rol;
       hojaTienda('ropa');
@@ -1828,6 +1911,7 @@ function bucle() {
     if (ahora - ultimaRevision >= 500) {
       ultimaRevision = ahora;
       revisar();
+      renovarTele();
     }
     revisarVista();
     efectos();

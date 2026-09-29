@@ -262,7 +262,9 @@ export class Mascota {
   private vigente(a: Actividad, ahora: number) {
     if (!a.accion || typeof a.hasta !== 'number') return false;
     const dur = a.hasta - a.desde;
-    if (!(dur > 0 && dur <= 120000)) return false;
+    // Las acciones son cortas; ver tele dura lo que duren los videos (se alarga de a 20 min mientras está en
+    // grande; si se cierra la app, a los 20 min se paran solos)
+    if (!(dur > 0 && dur <= (a.accion === 'tv' ? 6 * 3600_000 : 120000))) return false;
     let visto = this.vistas.get(a.desde);
     if (visto === undefined) {
       visto = ahora;

@@ -39,6 +39,20 @@ del sofá o de la silla, suelta la comida y va a lo nuevo (el otro celular lo ve
 - Los mimos se hacen a un lado del otro que quede libre (si ese lado cae dentro de un mueble, del otro lado); a quien
   duerme se le da desde el lado de su cama. La cajita de regalo aparece sobre piso libre.
 
+## La tele (YouTube)
+
+- **Ver tele** en la sala: el personaje se sienta en el sofá y la tele se pone a pantalla completa, con la casa
+  chiquita en una esquina (los dos en el sofá). Se pegan enlaces de YouTube (youtu.be, watch, shorts,
+  music; con o sin https) y quedan en una **cola**: al acabarse un video empieza el siguiente. Cada video de la
+  cola se puede ver ya, subir o quitar.
+- **Levantarse**: la tele sigue prendida en una ventanita (se ve y se oye); en la tele de la sala salen
+  dibujitos animados de los dos. Tocar la ventanita es volver al sofá.
+- **Apagar**: desde «Ver tele → Apagar la tele» o con ⏻ a pantalla completa.
+- Videos que no dejan verse fuera de YouTube: aviso y sigue el próximo. La cola y el segundo donde iba se
+  guardan (`nuestro-hogar-tele`); al abrir la app, la ventanita muestra el video en pausa.
+- Mientras la tele está en grande se quedan sentados (la acción `tv` se alarga de a 20 minutos); si se cierra
+  la app, a los 20 minutos se paran solos. Código: `src/casa/tele.ts` (pruebas sin internet con `?tele-falsa`).
+
 ## Necesidades
 
 Comida, energía, higiene y cariño (0 a 100). Bajan con el reloj real, **también con la app cerrada**

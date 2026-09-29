@@ -74,6 +74,8 @@ export class Casa3D {
   /** Caminos de cada cuarto (se rehacen cuando cambia la decoración del piso). */
   private navs = new Map<Cuarto, Navegacion>();
   private muebles = new Map<Cuarto, Huella[]>();
+  /** Dibujitos animados en la pantalla de la tele de la sala mientras está prendida. */
+  private tele: { panel: THREE.Mesh; lienzo: HTMLCanvasElement; tex: THREE.CanvasTexture; ultimo: number } | null = null;
 
   private constructor(private mundo: Mundo, public dato: CasaDato) {
     mundo.escena.add(this.grupo);
@@ -336,7 +338,38 @@ export class Casa3D {
     this.mundo.sucio = true;
   }
 
+  /** Prende o apaga la pantalla de la tele de la sala (se ve desde la casa con la tele en la ventanita). */
+  telePrendida(si: boolean) {
+    if (si && !this.tele) {
+      const base = this.bases.get('sala');
+      const pantalla = base?.getObjectByName('pantalla_tv') as THREE.Mesh | undefined;
+      if (!pantalla?.geometry) return;
+      pantalla.geometry.computeBoundingBox();
+      const b = pantalla.geometry.boundingBox!;
+      const lienzo = document.createElement('canvas');
+      lienzo.width = 256;
+      lienzo.height = 144;
+      const tex = new THREE.CanvasTexture(lienzo);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      // La pantalla del modelo no tiene coordenadas de textura: una lámina encima, un pelito adelante
+      const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry((b.max.x - b.min.x) * 0.96, (b.max.y - b.min.y) * 0.94),
+        new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }),
+      );
+      panel.position.set((b.max.x + b.min.x) / 2, (b.max.y + b.min.y) / 2, b.max.z + 0.003);
+      pantalla.add(panel);
+      this.tele = { panel, lienzo, tex, ultimo: -1 };
+    }
+    if (this.tele) this.tele.panel.visible = si;
+    this.mundo.sucio = true;
+  }
+
   animar(t: number) {
+    if (this.tele?.panel.visible && t - this.tele.ultimo > 1 / 12) {
+      this.tele.ultimo = t;
+      dibujarTele(this.tele.lienzo.getContext('2d')!, t);
+      this.tele.tex.needsUpdate = true;
+    }
     for (const m of this.marcadores.values()) {
       if (!m.visible) continue;
       m.scale.setScalar(1 + Math.sin(t * 4) * 0.08);
@@ -414,4 +447,102 @@ function marcador(s: Sitio): THREE.Mesh {
   const toque = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 6), new THREE.MeshBasicMaterial({ visible: false }));
   aro.add(toque);
   return aro;
+}
+
+/** Lo que se ve en la tele prendida: tres dibujitos de los dos que se turnan (sus caritas con un corazón,
+ *  un ecualizador con notas y un cielo de noche con estrellas). */
+function dibujarTele(g: CanvasRenderingContext2D, t: number) {
+  const W = 256, H = 144;
+  const modo = Math.floor(t / 7) % 3;
+  const fondo = g.createLinearGradient(0, 0, W, H);
+  const h = (t * 12) % 360;
+  if (modo === 2) {
+    fondo.addColorStop(0, '#2d2150');
+    fondo.addColorStop(1, '#5b3f78');
+  } else {
+    fondo.addColorStop(0, `hsl(${h} 80% 86%)`);
+    fondo.addColorStop(1, `hsl(${(h + 60) % 360} 80% 80%)`);
+  }
+  g.fillStyle = fondo;
+  g.fillRect(0, 0, W, H);
+  const corazon = (x: number, y: number, r: number, color: string) => {
+    g.fillStyle = color;
+    g.beginPath();
+    g.moveTo(x, y + r * 0.9);
+    g.bezierCurveTo(x - r * 1.6, y - r * 0.2, x - r * 0.8, y - r * 1.4, x, y - r * 0.5);
+    g.bezierCurveTo(x + r * 0.8, y - r * 1.4, x + r * 1.6, y - r * 0.2, x, y + r * 0.9);
+    g.fill();
+  };
+  const carita = (x: number, y: number, ella: boolean, guino: boolean) => {
+    g.fillStyle = '#2b1d18';
+    g.beginPath();
+    if (ella) g.ellipse(x, y + 8, 27, 34, 0, 0, Math.PI * 2);
+    else g.arc(x, y - 4, 26, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = '#f2c9a8';
+    g.beginPath();
+    g.arc(x, y + 4, 21, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = '#2b1d18';
+    g.beginPath();
+    g.ellipse(x, y - 12, 22, 10, 0, Math.PI, Math.PI * 2);
+    g.fill();
+    g.beginPath();
+    g.arc(x - 8, y + 4, 3, 0, Math.PI * 2);
+    if (guino) g.fillRect(x + 5, y + 3, 7, 2);
+    else g.arc(x + 8, y + 4, 3, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = 'rgba(232,106,138,0.55)';
+    g.beginPath();
+    g.arc(x - 13, y + 12, 4, 0, Math.PI * 2);
+    g.arc(x + 13, y + 12, 4, 0, Math.PI * 2);
+    g.fill();
+  };
+  if (modo === 0) {
+    // Sus caritas meciéndose con un corazón que late en el medio
+    const m = Math.sin(t * 2.4) * 4;
+    carita(74, 72 + m, false, Math.sin(t * 1.3) > 0.85);
+    carita(182, 72 - m, true, Math.sin(t * 1.7 + 1) > 0.85);
+    corazon(128, 70, 13 + Math.sin(t * 6) * 2.5, '#e4574b');
+  } else if (modo === 1) {
+    // Ecualizador con notas que suben
+    for (let i = 0; i < 12; i++) {
+      const alto = 18 + (Math.sin(t * 5 + i * 1.3) * 0.5 + 0.5) * 70;
+      g.fillStyle = `hsl(${(i * 30 + h) % 360} 70% 60%)`;
+      g.fillRect(18 + i * 19, H - 16 - alto, 13, alto);
+    }
+    g.fillStyle = '#fff';
+    g.font = '600 26px sans-serif';
+    for (let i = 0; i < 3; i++) g.fillText(i % 2 ? '♫' : '♪', 40 + i * 80, 40 + Math.sin(t * 3 + i) * 10);
+  } else {
+    // Noche de estrellas con una luna y un corazón
+    for (let i = 0; i < 26; i++) {
+      const x = (i * 97) % W, y = (i * 53) % (H - 20);
+      g.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(t * 2 + i));
+      g.fillStyle = '#fff6c9';
+      g.fillRect(x, y, 2.5, 2.5);
+    }
+    g.globalAlpha = 1;
+    g.fillStyle = '#fff1b8';
+    g.beginPath();
+    g.arc(196, 44, 20, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = '#2d2150';
+    g.beginPath();
+    g.arc(206, 38, 18, 0, Math.PI * 2);
+    g.fill();
+    corazon(90, 80 + Math.sin(t * 2) * 6, 16, '#f4b6c2');
+  }
+  // Corazoncitos que suben
+  for (let i = 0; i < 4; i++) {
+    const k = (t * 0.35 + i / 4) % 1;
+    g.globalAlpha = 1 - k;
+    corazon(30 + i * 62, H - k * H, 5, '#ffffff');
+  }
+  g.globalAlpha = 1;
+  // Barrita de «se está reproduciendo»
+  g.fillStyle = 'rgba(255,255,255,0.35)';
+  g.fillRect(12, H - 8, W - 24, 3);
+  g.fillStyle = '#e4574b';
+  g.fillRect(12, H - 8, (W - 24) * ((t / 40) % 1), 3);
 }

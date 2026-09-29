@@ -106,14 +106,15 @@
 .tele-vacia[hidden] { display: none; }
 
 /* Levantados del sofá: la tele sigue prendida en una ventanita que se ve y se oye (tocarla es volver al sofá) */
-.tele.mini { inset: auto; background: none; pointer-events: none; }
+/* Por debajo de las hojas y encima de las pestañas de los cuartos (no las tapa) */
+.tele.mini { inset: auto; z-index: 15; background: none; pointer-events: none; }
 .tele.mini .tele-barra, .tele.mini .tele-pip, .tele.mini .tele-cola { display: none; }
 .tele.mini .tele-video {
   position: fixed;
   inset: auto;
   left: calc(env(safe-area-inset-left, 0px) + 12px);
-  bottom: 12px;
-  width: min(34vw, 256px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 64px);
+  width: min(28vw, 220px);
   aspect-ratio: 16 / 9;
   border-radius: 14px;
   overflow: hidden;
