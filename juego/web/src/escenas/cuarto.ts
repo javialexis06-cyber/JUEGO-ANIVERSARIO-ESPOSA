@@ -149,7 +149,7 @@ export const CUARTO: Escena[] = [
       { t: 1.4, A: { prop: 'sombrero', rot: 0, pasos: [{ dur: 1.2, pose: 'jarras', cara: 'presumido' }] }, sonido: 'pop' },
       { t: 2.6, A: { ir: [0.2, -1.2], vel: 0.7, pasos: [{ dur: 2.2, pose: 'presumir_a', cara: 'presumido', mov: [{ tipo: 'balanceo', grados: 8, frec: 1.6 }] }] }, sonido: 'musiquita', camara: 'A' },
       { t: 4.8, A: { rot: 'camara', pasos: [{ dur: 1.2, pose: 'musculo', cara: 'guino' }] }, B: { prop: 'camara' }, flash: true, dice: ['B', '¡Divino!'] },
-      { t: 6.0, A: { rot: 'camara', pasos: [{ dur: 1.4, pose: 'giro', cara: 'presumido', mov: [{ tipo: 'giro', vueltas: 1 }] }] }, flash: true, camara: 'dos' },
+      { t: 6.0, A: { rot: 'camara', pasos: [{ dur: 1.4, pose: 'presumir_b', cara: 'presumido', mov: [{ tipo: 'giro', vueltas: 1 }] }] }, flash: true, camara: 'dos' },
       { t: 7.6, A: { prop: 'corona', pasos: [{ dur: 1.4, pose: 'corona', cara: 'presumido' }] }, sonido: 'tada', fx: [['A', { tipo: 'brillo' }]], sub: 'Cambio de vestuario: ¡REALEZA!' },
       { t: 9.0, B: { prop: null, pasos: [{ dur: 1.8, pose: 'aplauso_a', pose2: 'aplauso_b', ritmo: 3, cara: 'carcajada', sonidoRitmo: 'palmada' }] }, dice: ['B', '¡Diez de diez!'], sub: '' },
       { t: 10.8, A: { pasos: [{ dur: 1.4, pose: 'reverencia', cara: 'feliz' }] }, fx: [['A', { tipo: 'estrellas', n: 6 }], ['B', { tipo: 'corazones', n: 4 }]], sub: 'La modelo más linda (y más chistosa).' },

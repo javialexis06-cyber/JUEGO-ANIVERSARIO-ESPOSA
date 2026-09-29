@@ -19,13 +19,16 @@ type Mensaje =
   | { t: 'cancelar'; id: string }
   | { t: 'mov'; id: string; n: number; m: unknown }
   | { t: 'pedir'; id: string; desde: number }
-  | { t: 'salir'; id: string };
+  | { t: 'salir'; id: string }
+  /** Escena premium que lanzó uno de los dos (se ve en los dos celulares); k evita verla dos veces. */
+  | { t: 'escena'; id: string; escena: string; de: Rol; k: number };
 
 interface Avisos {
   alCambiar(): void;
   alInvitacion(inv: Invitacion): void;
   alMovimiento(id: string, n: number, m: unknown): void;
   alSalir(id: string): void;
+  alEscena(id: string, escena: string, de: Rol): void;
 }
 
 /** Cuánto se espera a que el otro acepte (le llega también como aviso en la casa). */
@@ -43,6 +46,7 @@ export class Canal {
   private respuestas = new Map<string, (si: boolean) => void>();
   /** Invitaciones que llegaron (por la casa o por el canal) y siguen abiertas. */
   private pendientes = new Map<string, Invitacion>();
+  private escenasVistas = new Set<string>();
 
   constructor(private yo: Rol, private avisos: Avisos) {}
 
@@ -108,6 +112,11 @@ export class Canal {
       for (let n = m.desde; n < h.length; n++) if (h[n] !== undefined) this.mandar({ t: 'mov', id: m.id, n, m: h[n] });
     } else if (m.t === 'salir') {
       this.avisos.alSalir(m.id);
+    } else if (m.t === 'escena') {
+      const clave = `${m.de}-${m.k}`;
+      if (m.de === this.yo || this.escenasVistas.has(clave)) return;
+      this.escenasVistas.add(clave);
+      this.avisos.alEscena(m.id, m.escena, m.de);
     }
   }
 
@@ -160,6 +169,13 @@ export class Canal {
   /** Pide de nuevo los movimientos desde `desde` (por si se perdió alguno). */
   pedir(id: string, desde: number) {
     this.mandar({ t: 'pedir', id, desde });
+  }
+
+  /** Avisa que se lanzó una escena (dos veces, por si se pierde el mensaje; el otro la ve una sola). */
+  escena(id: string, escena: string) {
+    const m: Mensaje = { t: 'escena', id, escena, de: this.yo, k: Date.now() };
+    this.mandar(m);
+    window.setTimeout(() => this.mandar(m), 700);
   }
 
   salir(id: string) {

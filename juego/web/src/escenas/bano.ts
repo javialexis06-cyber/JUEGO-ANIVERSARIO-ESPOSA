@@ -1,0 +1,102 @@
+// Escenas en el baño: tina al fondo (0,55; 1,45; se entra desde 0,55; 0,6), espejo en la pared izquierda
+// (−1,75; 0,1) y la puerta a la derecha (2,25; 1,35).
+import type { Escena } from './tipos';
+
+/** Altura del cuerpo sentado dentro de la tina. */
+export const TINA = 0.12;
+
+export const BANO: Escena[] = [
+  {
+    id: 'guerra-agua',
+    nombre: 'Guerra de agua',
+    descripcion: 'Uno está en la tina, el otro lo salpica… y termina adentro también, empapados de risa.',
+    precio: 35,
+    lugar: 'bano',
+    dur: 12,
+    inicio: { A: [0.55, 1.45, 0], B: [1.9, 0.2, -130] },
+    guion: [
+      { t: 0, A: { alto: TINA, pasos: [{ dur: 2.4, pose: 'sentado_feliz', cara: 'feliz' }] }, particulas: ['burbujas', [0.55, 1.3]], camara: 'general', fx: [['A', { tipo: 'notas', dur: 2 }]], sub: 'Un bañito tranquilo…' },
+      { t: 1.8, B: { ir: [1.1, 0.6], vel: 0.6, rot: 'otro', pasos: [{ dur: 1.6, pose: 'frotar_manos_a', pose2: 'frotar_manos_b', ritmo: 3, cara: 'presumido' }] } },
+      { t: 3.6, B: { pasos: [{ dur: 0.5, pose: 'lanzar', cara: 'carcajada', suave: 30 }] }, particulas: ['agua', 'A'], sonido: 'splash', sub: '' },
+      { t: 4.1, A: { pasos: [{ dur: 1, pose: 'boca_abierta', cara: 'sorprendido', mov: [{ tipo: 'temblor', amp: 0.01, frec: 12 }] }] }, fx: [['A', { tipo: 'gotita' }]], dice: ['A', '¡Oye!'], camara: 'dos' },
+      { t: 5.1, A: { pasos: [{ dur: 1.8, pose: 'agitar_a', pose2: 'lanzar', ritmo: 3, cara: 'carcajada' }] }, particulas: ['agua', 'B'], sonido: 'splash' },
+      { t: 5.9, particulas: ['agua', 'B'], B: { pasos: [{ dur: 1.2, pose: 'encogerse', cara: 'carcajada', mov: [{ tipo: 'temblor', amp: 0.015, frec: 12 }] }] }, fx: [['B', { tipo: 'risa', texto: 'JA JA' }]] },
+      { t: 7.2, A: { pasos: [{ dur: 1, pose: 'regalo', cara: 'guino' }] }, dice: ['A', 'Si te vas a mojar… ¡ven!'] },
+      { t: 8.2, B: { ir: [0.95, 1.45], vel: 1.2, rot: 0 }, camara: 'general' },
+      { t: 9.2, B: { alto: TINA, pasos: [{ dur: 2.6, pose: 'sentado_feliz', cara: 'carcajada' }] }, A: { pasos: [{ dur: 2.6, pose: 'sentado_feliz', cara: 'carcajada' }] }, particulas: ['agua', [0.75, 1.4]], sonido: 'splash', temblor: 0.15 },
+      { t: 10.2, particulas: ['burbujas', [0.75, 1.35]], fx: [['A', { tipo: 'corazones', n: 5 }], ['B', { tipo: 'corazones', n: 5 }]], camara: 'dos', sub: 'Empapados y felices.' },
+    ],
+  },
+  {
+    id: 'espejo-caras',
+    nombre: 'Caras en el espejo',
+    descripcion: 'Frente al espejo, uno hace una cara chistosa, el otro la supera… y así hasta morirse de la risa.',
+    precio: 20,
+    lugar: 'bano',
+    dur: 12,
+    inicio: { A: [-1.3, 0.35, -90], B: [-1.3, -0.35, -90] },
+    guion: [
+      { t: 0, camara: 'dos', sub: 'Concurso de caras feas.' },
+      { t: 0.8, A: { rot: 'camara', pasos: [{ dur: 1.5, pose: 'boca_abierta', cara: 'enojado', mov: [{ tipo: 'inflarse', cuanto: 0.1 }] }] }, sonido: 'boing', camara: 'caraA' },
+      { t: 2.3, B: { rot: 'camara', pasos: [{ dur: 1.5, pose: 'rascarse', cara: 'bostezo', mov: [{ tipo: 'cabeza', eje: 'ladeo', grados: 25, frec: 1.5 }] }] }, sonido: 'wawa', camara: 'caraB' },
+      { t: 3.8, A: { pasos: [{ dur: 1.5, pose: 'musculo', cara: 'presumido', mov: [{ tipo: 'estirar', cuanto: 0.1 }, { tipo: 'temblor', amp: 0.01, frec: 12 }] }] }, sonido: 'boing', camara: 'caraA' },
+      { t: 5.3, B: { pasos: [{ dur: 1.5, pose: 'puchero', cara: 'guino', mov: [{ tipo: 'estirar', cuanto: -0.1 }, { tipo: 'balanceo', grados: 12, frec: 2.5 }] }] }, sonido: 'puchero', camara: 'caraB' },
+      { t: 6.8, A: { pasos: [{ dur: 1.6, pose: 'enojo_a', cara: 'sorprendido', mov: [{ tipo: 'giro', vueltas: 1 }] }] }, B: { pasos: [{ dur: 1.6, pose: 'enojo_b', cara: 'carcajada', mov: [{ tipo: 'rebote', alto: 0.1, frec: 3 }] }] }, sonido: 'boing', camara: 'dos', sub: '¡Empate!' },
+      { t: 8.4, A: { pasos: [{ dur: 2.6, pose: 'risita_a', pose2: 'risita_b', ritmo: 3, cara: 'carcajada' }] }, B: { pasos: [{ dur: 2.6, pose: 'risita_a', pose2: 'risita_b', ritmo: 3, cara: 'carcajada' }] }, fx: [['A', { tipo: 'lagrimas', dur: 2.2, risa: true }], ['B', { tipo: 'lagrimas', dur: 2.2, risa: true }]], sonido: 'carcajada', sub: 'Los más lindos (aunque no lo parezca).' },
+    ],
+  },
+  {
+    id: 'peinado-loco',
+    nombre: 'El peinado loco',
+    descripcion: 'Uno le arregla el pelo al otro frente al espejo… y el resultado es un desastre que terminan amando.',
+    precio: 25,
+    lugar: 'bano',
+    dur: 12,
+    inicio: { A: [-1.05, -0.2, -110], B: [-1.35, 0.25, -90] },
+    guion: [
+      { t: 0, B: { pasos: [{ dur: 2, pose: 'reposo', cara: 'feliz' }] }, camara: 'dos', dice: ['B', '¿Me peinas?'] },
+      { t: 1.6, A: { pasos: [{ dur: 3.4, pose: 'frotar_a', pose2: 'frotar_b', ritmo: 2.4, cara: 'concentrado' }] }, B: { pasos: [{ dur: 3.4, pose: 'recibir_caricia', cara: 'feliz' }] }, sonido: 'frotar', fx: [['A', { tipo: 'gotita' }]], sub: 'Un poquito de aquí… otro de allá…' },
+      { t: 5.0, A: { pasos: [{ dur: 1.2, pose: 'jarras', cara: 'nervioso' }] }, B: { rot: 'camara', pasos: [{ dur: 0.4, pose: 'reposo', cara: 'normal' }] }, sub: '' },
+      { t: 5.6, B: { prop: 'corona', pasos: [{ dur: 1.4, pose: 'boca_abierta', cara: 'sorprendido' }] }, fx: [['B', { tipo: 'signo', c: '!?' }], ['B', { tipo: 'humo', dur: 1 }]], sonido: 'sorpresa', camara: 'caraB', dice: ['B', '¡¿QUÉ ME HICISTE?!'] },
+      { t: 7.2, A: { pasos: [{ dur: 1.6, pose: 'encogerse', cara: 'nervioso' }] }, dice: ['A', 'Es… ¿moderno?'], camara: 'dos' },
+      { t: 8.8, B: { pasos: [{ dur: 1.5, pose: 'presumir_a', cara: 'presumido', mov: [{ tipo: 'balanceo', grados: 8, frec: 1.6 }] }] }, dice: ['B', '…me encanta.'], fx: [['B', { tipo: 'brillo' }]] },
+      { t: 10.3, A: { pasos: [{ dur: 1.6, pose: 'aplauso_a', pose2: 'aplauso_b', ritmo: 3, cara: 'carcajada', sonidoRitmo: 'palmada' }] }, B: { pasos: [{ dur: 1.6, pose: 'reverencia', cara: 'feliz' }] }, sub: 'Nuevo estilo de la casa.' },
+    ],
+  },
+  {
+    id: 'burbujas',
+    nombre: 'Baño de burbujas',
+    descripcion: 'Un baño de burbujas juntos: se soplan burbujas, se hacen barba de espuma y terminan riendo en la tina.',
+    precio: 35,
+    lugar: 'bano',
+    dur: 13,
+    inicio: { A: [0.3, 1.45, 10], B: [0.85, 1.45, -10] },
+    guion: [
+      { t: 0, A: { alto: TINA, pasos: [{ dur: 3, pose: 'sentado_feliz', cara: 'feliz' }] }, B: { alto: TINA, pasos: [{ dur: 3, pose: 'sentado_feliz', cara: 'feliz' }] }, particulas: ['burbujas', [0.55, 1.35]], camara: 'general', sub: 'Noche de spa en casa.' },
+      { t: 1.5, particulas: ['burbujas', [0.4, 1.35]], sonido: 'pop' },
+      { t: 3.0, A: { pasos: [{ dur: 1.2, pose: 'soplar', cara: 'beso' }] }, particulas: ['burbujas', 'A'], sonido: 'soplo', camara: 'dos' },
+      { t: 4.2, B: { pasos: [{ dur: 1.4, pose: 'aplauso_a', pose2: 'aplauso_b', ritmo: 3, cara: 'carcajada' }] }, particulas: ['burbujas', 'B'], sonido: 'pop', dice: ['B', '¡Qué bonitas!'] },
+      { t: 5.8, A: { pasos: [{ dur: 1.6, pose: 'rascarse', cara: 'presumido' }] }, dice: ['A', 'Mira mi barba de espuma.'], particulas: ['crema', 'A'], camara: 'caraA' },
+      { t: 7.4, B: { pasos: [{ dur: 1.8, pose: 'risita_a', pose2: 'risita_b', ritmo: 3, cara: 'carcajada' }] }, fx: [['B', { tipo: 'risa', texto: 'JA JA JA' }]], sonido: 'carcajada', camara: 'dos' },
+      { t: 9.2, B: { pasos: [{ dur: 1.2, pose: 'soplar', cara: 'beso' }] }, particulas: ['burbujas', 'B'], sonido: 'soplo', fx: [['A', { tipo: 'signo', c: '♪' }]] },
+      { t: 10.6, A: { pasos: [{ dur: 2.2, pose: 'abrazo_der', cara: 'feliz' }] }, B: { pasos: [{ dur: 2.2, pose: 'abrazo_izq', cara: 'feliz' }] }, particulas: ['burbujas', [0.55, 1.4]], fx: [['A', { tipo: 'corazones', n: 6 }]], sub: 'Burbujas, risas y nosotros.' },
+    ],
+  },
+  {
+    id: 'cepillarse-juntos',
+    nombre: 'Cepillándonos juntos',
+    descripcion: 'Los dos se cepillan frente al espejo, compiten a ver quién hace más espuma… y se sonríen con la boca llena.',
+    precio: 20,
+    lugar: 'bano',
+    dur: 11,
+    inicio: { A: [-1.3, 0.4, -90], B: [-1.3, -0.3, -90] },
+    guion: [
+      { t: 0, A: { pasos: [{ dur: 2.6, pose: 'comer_a', pose2: 'comer_b', ritmo: 3, cara: 'concentrado' }] }, B: { pasos: [{ dur: 2.6, pose: 'comer_a', pose2: 'comer_b', ritmo: 3, cara: 'concentrado' }] }, sonido: 'frotar', camara: 'dos', sub: 'Rutina de la noche.' },
+      { t: 2.6, A: { rot: 'otro', pasos: [{ dur: 1, pose: 'comer_a', pose2: 'comer_b', ritmo: 6, cara: 'presumido' }] }, particulas: ['crema', 'A'], dice: ['A', 'Más espuma que tú.'] },
+      { t: 3.8, B: { rot: 'otro', pasos: [{ dur: 1.2, pose: 'comer_a', pose2: 'comer_b', ritmo: 8, cara: 'enojado', mov: [{ tipo: 'temblor', amp: 0.01, frec: 14 }] }] }, particulas: ['crema', 'B'], sonido: 'agitar', fx: [['B', { tipo: 'vena', dur: 1 }]] },
+      { t: 5.2, A: { pasos: [{ dur: 1.2, pose: 'comer_a', pose2: 'comer_b', ritmo: 10, cara: 'carcajada' }] }, B: { pasos: [{ dur: 1.2, pose: 'comer_a', pose2: 'comer_b', ritmo: 10, cara: 'carcajada' }] }, particulas: ['crema', [-1.3, 0.05]], sub: '¡Competencia de espuma!', camara: 'general' },
+      { t: 6.6, A: { rot: 'camara', pasos: [{ dur: 1.6, pose: 'pulgares_a', cara: 'carcajada' }] }, B: { rot: 'camara', pasos: [{ dur: 1.6, pose: 'pulgares_a', cara: 'carcajada' }] }, sonido: 'carcajada', fx: [['A', { tipo: 'risa' }], ['B', { tipo: 'risa' }]], camara: 'dos', sub: '' },
+      { t: 8.4, A: { rot: 'otro', pasos: [{ dur: 1.4, pose: 'beso_volado_a', cara: 'beso' }] }, B: { rot: 'otro', pasos: [{ dur: 1.4, pose: 'beso_volado_a', cara: 'beso' }] }, fx: [['A', { tipo: 'beso' }]], sonido: 'beso', sub: 'Besito con sabor a menta.' },
+    ],
+  },
+];

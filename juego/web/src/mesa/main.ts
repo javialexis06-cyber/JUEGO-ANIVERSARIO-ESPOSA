@@ -206,7 +206,9 @@ class Partida {
         if (this.terminada) return;
         if (this.modo === 'linea') canal?.movimiento(this.id, this.n, m);
       } else if (this.modo === 'ia') {
-        // Deja terminar las reacciones de la jugada anterior antes de jugar (se alcanzan a ver)
+        // Deja terminar las reacciones de la jugada anterior antes de jugar (se alcanzan a ver); durante una
+        // escena premium la IA espera a que termine
+        await cineLibre();
         await escenario!.calma(this.turnoAnterior === t ? 1800 : 3200);
         if (this.terminada) return;
         escenario!.pensar(t, true);
@@ -459,6 +461,9 @@ function iniciarCanal() {
     alMovimiento: (id, n, m) => {
       if (partida && partida.id === id) partida.llegaMovimiento(n, m);
     },
+    alEscena: (id, escena, de) => {
+      if (partida && partida.id === id) void lanzarEscena(escena, de, false);
+    },
     alSalir: (id) => {
       if (partida && partida.id === id && partida.modo === 'linea') {
         partida.abandonar();
@@ -509,6 +514,11 @@ document.addEventListener('click', (ev) => {
   } else if (b.classList.contains('boton-sonido')) {
     sonido.alternar();
     pintarSonido();
+  } else if (b.id === 'btn-escenas') {
+    void elegirEscena();
+  } else if (b.dataset.escena) {
+    $('hoja').hidden = true;
+    void lanzarEscena(b.dataset.escena, yo, true);
   } else if (b.id === 'btn-ayuda' && partida) {
     hoja(`<h3>${partida.juego.nombre}</h3>${partida.juego.ayuda}`, [{ texto: 'A jugar', clase: 'boton-tomate' }]);
   } else if (b.id === 'btn-salir') {
@@ -611,15 +621,60 @@ async function vitrina() {
 }
 if (params.has('vitrina')) void vitrina();
 
-// Ver una escena premium sola (pruebas y vitrina): ?escena=<id>
-async function verEscena(id: string) {
+// ---------------------------------------------------------------------------
+// Escenas premium: se compran en la tienda de la casa y se lanzan aquí con 🎭 (en línea, en los dos celulares)
+const CLAVE_ESCENAS = 'nuestro-hogar-escenas';
+let cine: Promise<void> | null = null;
+/** Se cumple cuando no hay ninguna escena en pantalla. */
+const cineLibre = () => cine ?? Promise.resolve();
+
+function escenasMias(): Set<string> {
+  if (params.has('todas')) return new Set(['*']);
+  return new Set(leer<string[]>(CLAVE_ESCENAS) ?? []);
+}
+
+async function elegirEscena() {
+  const { ESCENAS } = await import('../escenas/catalogo');
+  const mias = escenasMias();
+  const tiene = (id: string) => mias.has('*') || mias.has(id);
+  const lugar: Record<string, string> = { grande: '🎭', sala: '🛋️', cocina: '🍳', bano: '🛁', cuarto: '🛏️' };
+  const propias = ESCENAS.filter((e) => tiene(e.id));
+  const faltan = ESCENAS.filter((e) => !tiene(e.id));
+  const boton = (e: (typeof ESCENAS)[number]) =>
+    `<button class="escena-opcion" data-escena="${e.id}"><i>${lugar[e.lugar]}</i><b>${e.nombre}</b><small>${e.descripcion}</small></button>`;
+  hoja(
+    `<h3>Escenas premium</h3>${
+      propias.length
+        ? `<div class="escenas-lista">${propias.map(boton).join('')}</div>`
+        : '<p>Todavía no tienen escenas. Se compran con monedas en la tienda de la casa, en la pestaña «Escenas».</p>'
+    }${
+      faltan.length && propias.length
+        ? `<p class="escenas-faltan">Faltan ${faltan.length} por comprar en la tienda de la casa.</p>`
+        : ''
+    }`,
+    [{ texto: 'Cerrar' }],
+  );
+}
+
+/** Pone una escena a pantalla completa; las del escenario grande dejan el tablero chiquito en una esquina. */
+async function lanzarEscena(id: string, quien: Rol, avisar: boolean) {
+  if (cine) return;
   const [{ escenaDe }, { Cine }] = await Promise.all([import('../escenas/catalogo'), import('../escenas/cine')]);
   const e = escenaDe(id);
   if (!e) return aviso('No existe esa escena.');
-  await Cine.reproducir(e, yo, RAPIDO);
+  if (avisar && partida?.modo === 'linea') canal?.escena(partida.id, id);
+  const mini = e.lugar === 'grande' && !$('partida').hidden;
+  $('partida').classList.toggle('cine-mini', mini);
+  cine = Cine.reproducir(e, quien, RAPIDO).finally(() => {
+    cine = null;
+    $('partida').classList.remove('cine-mini');
+  });
+  await cine;
 }
+
+// Ver una escena sola (pruebas y la vista previa de la tienda): ?escena=<id>
 const escenaPedida = params.get('escena');
-if (escenaPedida) void verEscena(escenaPedida);
+if (escenaPedida) void lanzarEscena(escenaPedida, yo, false);
 
 // Para las pruebas automáticas
 (globalThis as Record<string, unknown>).__mesa = {
@@ -633,5 +688,7 @@ if (escenaPedida) void verEscena(escenaPedida);
     return escenario;
   },
   cine: () => import('../escenas/cine').then((m) => m.cineActual.c),
+  escena: (id: string) => lanzarEscena(id, yo, false),
+  escenas: () => import('../escenas/catalogo').then((m) => m.ESCENAS.map((e) => ({ id: e.id, dur: e.dur, lugar: e.lugar }))),
   yo,
 };
