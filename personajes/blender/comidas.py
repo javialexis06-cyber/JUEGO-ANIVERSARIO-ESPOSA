@@ -433,6 +433,118 @@ def comida_ensalada_frutas(coll):
     clay.rbox('queso rallado', (0.01, 0.01, h + 0.06), (0.03, 0.03, 0.006), coll, mat('queso', '#F9E7A6', 0.4), p=4, n=3)
 
 
+# ---------------------------------------------------------------------------
+# Platos de chef (solo salen de la cocina de chef): más grandes y más adornados que los de la tienda
+# ---------------------------------------------------------------------------
+
+def wafle_redondo(coll, z, r=0.13, h=0.035, color='#D9963F', nombre='wafle'):
+    """Un wafle belga redondo con su cuadrícula levantada encima; devuelve la altura de arriba."""
+    clay.lathe(nombre, [(0.0, z), (r * 0.96, z), (r, z + h * 0.3), (r, z + h * 0.8), (r * 0.95, z + h), (0.0, z + h)], coll,
+               masa(f'{nombre} {color}', color), segments=36)
+    rejilla = masa(f'rejilla {color}', clay_aclarar(color, 0.18))
+    paso = 2 * r / 5
+    for i in range(1, 5):
+        c = -r + paso * i
+        largo = math.sqrt(max(0.0, r * r - c * c)) * 0.94
+        clay.rbox(f'{nombre} barra x {i}', (c, 0, z + h + 0.004), (0.006, largo, 0.006), coll, rejilla, p=4, n=2)
+        clay.rbox(f'{nombre} barra y {i}', (0, c, z + h + 0.004), (largo, 0.006, 0.006), coll, rejilla, p=4, n=2)
+    return z + h + 0.008
+
+
+def clay_aclarar(color, t):
+    c = [int(color[i:i + 2], 16) for i in (1, 3, 5)]
+    return '#' + ''.join(f'{round(v + (255 - v) * t):02X}' for v in c)
+
+
+def chantilly_espiral(coll, centro, r, z, pisos=4, color='#FFFDF5', nombre='chantilly'):
+    """Crema de manga: anillos que se van cerrando hacia arriba con su puntica."""
+    crema = mat(f'{nombre} {color}', color, 0.4)
+    for k in range(pisos):
+        rk = r * (1 - k / (pisos + 0.6))
+        clay.blob(f'{nombre} {k}', (centro[0], centro[1], z + k * r * 0.42), (rk, rk, r * 0.34), coll, crema, n=6)
+    clay.blob(f'{nombre} punta', (centro[0] + r * 0.06, centro[1], z + pisos * r * 0.42 + r * 0.08), (r * 0.18, r * 0.18, r * 0.28), coll, crema, n=4)
+    return z + pisos * r * 0.42 + r * 0.3
+
+
+def chorrito(coll, puntos, color, nombre='salsa', r=0.006):
+    clay.sweep(nombre, puntos, r, (1, 0.6), coll, mat(f'{nombre} {color}', color, 0.2, coat=0.7), segments=6, samples=6)
+
+
+def media_fresa(coll, c, rot, nombre):
+    fresa = mat('fresa chef', '#E23A4E', 0.35, coat=0.4)
+    o = clay.blob(nombre, c, (0.022, 0.012, 0.03), coll, fresa, n=5)
+    o.rotation_euler = (0.3, 0, rot)
+    clay.blob(f'{nombre} corazón', (c[0], c[1], c[2] + 0.012), (0.015, 0.004, 0.02), coll, mat('fresa por dentro', '#FFC9CF', 0.4), n=4).rotation_euler = (0.3, 0, rot)
+
+
+def comida_wafle_chef(coll):
+    z = plato(coll, 0.2, '#FFFFFF')
+    z = wafle_redondo(coll, z, 0.14, 0.036, '#D48C38', 'wafle abajo')
+    z = wafle_redondo(coll, z, 0.13, 0.036, '#DB9A45', 'wafle arriba')
+    # Mantequilla derritiéndose, fresas alrededor, una bola de helado y crema
+    clay.rbox('mantequilla', (0.0, 0.0, z + 0.012), (0.028, 0.024, 0.012), coll, mat('mantequilla', '#FBE37A', 0.3, coat=0.5), p=6, n=4)
+    for k in range(5):
+        a = 2 * math.pi * k / 5 + 0.3
+        media_fresa(coll, (math.cos(a) * 0.085, math.sin(a) * 0.085, z + 0.015), a, f'fresa wafle {k}')
+    clay.blob('helado wafle', (0.03, -0.02, z + 0.045), (0.042, 0.042, 0.038), coll, mat('helado vainilla', '#FFF2CC', 0.45), n=6)
+    chantilly_espiral(coll, (-0.035, 0.03), 0.03, z + 0.01, 3, nombre='crema wafle')
+    for k in range(3):
+        clay.blob(f'arándano {k}', (-0.07 + k * 0.03, -0.07, z + 0.015), (0.011, 0.011, 0.011), coll, mat('arándano', '#3A4AA8', 0.3, coat=0.4), n=4)
+    # Miel en zigzag
+    pts = []
+    for k in range(9):
+        t = k / 8
+        pts.append((-0.1 + t * 0.2, (0.06 if k % 2 else -0.06) * (1 - abs(t - 0.5)), z + 0.03))
+    chorrito(coll, pts, '#E9A21F', 'miel')
+    clay.blob('menta wafle', (0.03, -0.02, z + 0.088), (0.02, 0.008, 0.012), coll, mat('menta', '#4FAE4A', 0.5), n=4)
+
+
+def comida_fresas_chef(coll):
+    vidrio = transparente('vaso fresas', '#FFEFF3', 0.3)
+    clay.lathe('vaso fresas', [(0.0, 0.0), (0.075, 0.0), (0.105, 0.24), (0.1, 0.24), (0.07, 0.012), (0.0, 0.012)], coll, vidrio, segments=32, cap_top=False)
+    clay.lathe('borde vaso fresas', [(0.1, 0.235), (0.11, 0.24), (0.1, 0.245)], coll, laca('borde fresas', '#E2475D', 0.3), segments=32, cap_top=False,
+               cap_bottom=False)
+    crema = mat('crema fresas', '#FFFBF3', 0.45)
+    rng = np.random.default_rng(4)
+    # Capas: fresas picadas y crema
+    for capa, (z0, n) in enumerate([(0.03, 6), (0.1, 7), (0.17, 8)]):
+        for k in range(n):
+            a = rng.uniform(0, 2 * math.pi)
+            r = rng.uniform(0.02, 0.06 + z0 * 0.12)
+            media_fresa(coll, (math.cos(a) * r, math.sin(a) * r, z0 + rng.uniform(0, 0.02)), a, f'fresa capa {capa} {k}')
+        clay.lathe(f'crema capa {capa}', [(0.0, z0 + 0.03), (0.075 + z0 * 0.12, z0 + 0.03), (0.078 + z0 * 0.12, z0 + 0.05), (0.0, z0 + 0.05)], coll, crema,
+                   segments=24)
+    z = chantilly_espiral(coll, (0, 0), 0.07, 0.24, 3, nombre='crema fresas')
+    fresa = mat('fresa chef', '#E23A4E', 0.35, coat=0.4)
+    clay.blob('fresa entera', (0.0, 0.0, z + 0.02), (0.028, 0.028, 0.036), coll, fresa, n=5)
+    clay.blob('hojas fresa', (0.0, 0.0, z + 0.056), (0.022, 0.022, 0.006), coll, mat('hojita', '#5FA85A', 0.5), n=4)
+    for k in range(10):
+        a = rng.uniform(0, 2 * math.pi)
+        o = clay.rbox(f'queso {k}', (math.cos(a) * 0.05, math.sin(a) * 0.05, 0.3 + rng.uniform(0, 0.02)), (0.012, 0.003, 0.003), coll,
+                      mat('queso rallado', '#F9E08A', 0.4), p=3, n=2)
+        o.rotation_euler = (0, 0, a)
+    chorrito(coll, [(-0.06, 0.02, 0.29), (-0.02, -0.03, 0.31), (0.02, 0.03, 0.31), (0.06, -0.02, 0.29)], '#F2DFB0', 'leche condensada')
+    o = clay.rbox('barquillo', (0.022, 0.0, 0.345), (0.008, 0.008, 0.06), coll, mat('barquillo', '#E0A860', 0.5), p=5, n=3)
+    o.rotation_euler = (0, 0.3, 0)
+
+
+def comida_frape_chef(coll):
+    vidrio = transparente('vaso frappé', '#EAF6FB', 0.3)
+    clay.lathe('vaso frappé', [(0.0, 0.0), (0.055, 0.0), (0.08, 0.3), (0.075, 0.3), (0.05, 0.012), (0.0, 0.012)], coll, vidrio, segments=32, cap_top=False)
+    clay.lathe('frappé', [(0.0, 0.012), (0.05, 0.012), (0.074, 0.28), (0.0, 0.28)], coll, mat('frappé café', '#8A5536', 0.5, noise=dict(scale=20, strength=0.15)),
+               segments=32)
+    z = chantilly_espiral(coll, (0, 0), 0.07, 0.29, 4, nombre='crema frappé')
+    pts = []
+    for k in range(10):
+        a = k * 1.3
+        pts.append((math.cos(a) * 0.05 * (1 - k / 14), math.sin(a) * 0.05 * (1 - k / 14), 0.31 + k * 0.009))
+    chorrito(coll, pts, '#C9822E', 'caramelo')
+    clay.blob('cereza frappé', (0.0, 0.0, z + 0.02), (0.022, 0.022, 0.022), coll, mat('cereza', '#D62839', 0.2, coat=0.6), n=5)
+    clay.sweep('palito cereza', [(0.0, 0.0, z + 0.04), (0.01, 0.0, z + 0.07)], 0.003, (1, 1), coll, mat('palito', '#4B7A2A', 0.5), segments=6, samples=2)
+    chispas(coll, (0, 0), 0.05, 0.33, n=12, semilla=7)
+    pitillo(coll, (0.01, 0.02, 0.05), (0.05, 0.05, 0.46), '#E8434F')
+
+
 PIEZAS = {
     'comida_empanada': comida_empanada, 'comida_bunuelos': comida_bunuelos, 'comida_pandebono': comida_pandebono,
     'comida_arepa_queso': comida_arepa_queso, 'comida_bandeja_paisa': comida_bandeja_paisa, 'comida_ajiaco': comida_ajiaco,
@@ -443,4 +555,5 @@ PIEZAS = {
     'comida_cupcake': comida_cupcake, 'comida_flan': comida_flan, 'comida_galletas_corazon': comida_galletas_corazon,
     'comida_chocolate': comida_chocolate, 'comida_te': comida_te, 'comida_limonada': comida_limonada, 'comida_malteada': comida_malteada,
     'comida_palomitas': comida_palomitas, 'comida_sandia': comida_sandia, 'comida_ensalada_frutas': comida_ensalada_frutas,
+    'comida_wafle_chef': comida_wafle_chef, 'comida_fresas_chef': comida_fresas_chef, 'comida_frape_chef': comida_frape_chef,
 }

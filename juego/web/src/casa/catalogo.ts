@@ -34,6 +34,8 @@ export interface Item {
   rareza?: Rareza;
   /** Prenda que solo viene con su disfraz (no se vende suelta). */
   exclusiva?: boolean;
+  /** Plato que solo sale de la cocina de chef (no se vende): llena mucho más y se puede regalar. */
+  cocina?: boolean;
 }
 
 /** Rareza de los disfraces: blanco es la calidad de siempre; verde el doble de detalle, azul el triple, morado cinco
@@ -215,6 +217,10 @@ export const CATALOGO: Item[] = [
   plato('palomitas', 'Palomitas', 2, 10, { carino: 3 }),
   plato('sandia', 'Tajada de sandía', 1, 8, { energia: 3 }),
   plato('ensalada_frutas', 'Ensalada de frutas', 3, 18, { energia: 4 }),
+  // Los de la cocina de chef (solo se cocinan): llenan mucho más y se pueden regalar
+  { ...plato('wafle_chef', 'Wafles de chef', 0, 70, { carino: 12, energia: 10 }), cocina: true },
+  { ...plato('fresas_chef', 'Fresas con crema de chef', 0, 55, { carino: 18, energia: 6 }), cocina: true },
+  { ...plato('frape_chef', 'Frappé de chef', 0, 40, { energia: 30, carino: 12 }), cocina: true },
   { id: 'carta', nombre: 'Carta de amor', tipo: 'regalo', precio: 2, modelo: 'regalo_carta', efecto: { carino: 15 }, texto: 'Con un mensaje tuyo' },
   { id: 'flores', nombre: 'Ramo de flores', tipo: 'regalo', precio: 8, modelo: 'regalo_flores', efecto: { carino: 30 }, texto: 'Después se puede poner en un florero' },
   { id: 'chocolates', nombre: 'Chocolates', tipo: 'regalo', precio: 7, modelo: 'regalo_chocolates', efecto: { carino: 25, hambre: 8 } },

@@ -22,6 +22,7 @@ import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } fro
 import { Mascota } from './mascota';
 import { conGenero, EVENTOS_BANO, type EventoBano, eventoDe } from './bano_frases';
 import { Bichos } from './bichos';
+import { nombreRango, progresoNuevo, rangoDe, type ProgresoCocina, type RecetaId, type ResultadoDia } from './cocina/tipos';
 import { type EstadoTele, Tele } from './tele';
 import { Patio } from './patio';
 import { PanelRecuerdos } from './recuerdos';
@@ -891,10 +892,117 @@ function hojaLavado(r: { segundos: number; gano: boolean; eliminados: number; ni
   if (record || r.gano) lluviaCorazones(12);
 }
 
+// ---------------------------------------------------------------------------
+// Cocinar: camina a la estufa, se concentra como un chef profesional y la cocina se vuelve un restaurante (tres
+// minijuegos al estilo de Papa's: waflería, fresas con crema y frappés). Cada uno lleva su propio progreso.
+// ---------------------------------------------------------------------------
+const RESTAURANTES: { id: RecetaId; nombre: string; icono: string; plato: string; texto: string }[] = [
+  { id: 'wafles', nombre: 'La Waflería', icono: '🧇', plato: 'wafle_chef', texto: 'Wafles en la plancha, toppings y jugos' },
+  { id: 'fresas', nombre: 'La Fresería', icono: '🍓', plato: 'fresas_chef', texto: 'Fresas picadas, crema batida y queso' },
+  { id: 'frappes', nombre: 'La Frapería', icono: '🥤', plato: 'frape_chef', texto: 'Frappés licuados con crema y salsas' },
+];
+let cocinando = false;
+
+function hojaCocinar() {
+  if (!s) return;
+  const prog = s.casa.cocina?.[yo] ?? {};
+  const html = `<p class="nota-hoja">${conGenero(yo, 'Hoy eres un|una chef profesional en tu propia cocina: llegan invitados, cocinas lo que piden y te califican. Con las propinas mejoras la cocina; cada día te deja monedas y platos de chef para comer o regalar.')}</p>
+    <ul class="restaurantes">${RESTAURANTES.map((r) => {
+      const p = prog[r.id];
+      const rg = p ? rangoDe(p.xp) : 1;
+      return `<li><button class="restaurante" data-cocinar="${r.id}"><span class="ico-rest">${r.icono}</span><b>${r.nombre}</b><small>${r.texto}</small>
+        <em>${p ? `Día ${p.dia} · ${nombreRango(rg)}` : '¡Nuevo!'}</em>${(s!.casa.inventario[r.plato] ?? 0) ? `<i>Hay ${s!.casa.inventario[r.plato]} en la despensa</i>` : ''}</button></li>`;
+    }).join('')}</ul>`;
+  abrirHoja(conGenero(yo, '¿Qué cocinamos, chef?'), html, { saldo: s.casa.monedas });
+}
+
+async function cocinar(receta: RecetaId) {
+  if (!s || cocinando || lavandose || enCohete) return;
+  if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
+  cerrarHoja();
+  cocinando = true;
+  const m = mascotas[yo];
+  const sigue = () => s?.personajes[yo].actividad.accion === 'cocinar';
+  const lienzo = $('lienzo');
+  let v0: ReturnType<Mundo['vista']> | null = null;
+  const ganado = { monedas: 0, platos: 0, dias: 0 };
+  // El restaurante se va cargando mientras camina a la estufa
+  const modulo = import('./cocina');
+  try {
+    await hacer('cocinar', 'cocina', 3600, {});
+    if (!(await esperarQue(() => !sigue() || m.escenaActual.split('|')[1] === 'cocinar', 25000)) || !sigue()) return;
+    // Se soba las manos, se concentra… y la cámara se le acerca
+    const frases = ['Concentración total…', 'Hoy cocino como un|una chef profesional', 'Modo chef… activándose', 'La receta secreta de la casa…'];
+    m.frase = conGenero(yo, frases[Math.floor(Math.random() * frases.length)]);
+    v0 = mundo.vista();
+    const meta = m.p.grupo.getWorldPosition(new THREE.Vector3()).setY(1.0);
+    const desde = v0.p.clone(), z0 = v0.zoom;
+    await animar(1.3, (k) => {
+      const e = k * k * (3 - 2 * k);
+      mundo.enfocar(desde.clone().lerp(meta, e), z0 + (3.4 - z0) * e, 3.4);
+    });
+    await pausa(1500);
+    if (!sigue()) return;
+    m.frase = null;
+    const { jugarCocina } = await modulo;
+    pausaCasa = true;
+    const tapar = setTimeout(() => (lienzo.style.visibility = 'hidden'), 700);
+    await jugarCocina({
+      rol: yo,
+      receta,
+      progreso: s.casa.cocina?.[yo]?.[receta] ?? progresoNuevo(),
+      pareja: { rol: otro(yo), nombre: nombre(otro(yo)) },
+      guardar: async (p, dia) => {
+        await guardarCocina(receta, p, dia);
+        if (dia) {
+          ganado.monedas += dia.monedas;
+          ganado.platos += dia.platos;
+          ganado.dias++;
+        }
+      },
+    });
+    clearTimeout(tapar);
+  } finally {
+    cocinando = false;
+    pausaCasa = false;
+    lienzo.style.visibility = '';
+    if (v0) {
+      const z1 = mundo.vista().zoom, p1 = mundo.vista().p, v = v0;
+      void animar(1, (k) => {
+        const e = k * k * (3 - 2 * k);
+        mundo.enfocar(p1.clone().lerp(v.p, e), z1 + (v.zoom - z1) * e, 3.4);
+      });
+    }
+    if (s && sigue()) {
+      const ahora = Date.now();
+      await guardarYo({ ...alDia(s.personajes[yo], ahora), actividad: { tipo: 'nada', desde: ahora, accion: 'saludo', hasta: ahora + 2500 }, visto: ahora });
+    }
+  }
+  if (ganado.dias) {
+    const r = RESTAURANTES.find((x) => x.id === receta)!;
+    toast(`¡Qué chef! +${ganado.monedas} monedas${ganado.platos ? ` y ${ganado.platos} × ${ITEM[r.plato].nombre.toLowerCase()} en la despensa` : ''}`);
+    mascotas[yo].frase = conGenero(yo, '¡Soy todo|toda un|una chef!');
+    setTimeout(() => (mascotas[yo].frase = null), 3000);
+    lluviaCorazones(10);
+  }
+}
+
+/** Guarda el progreso del restaurante y paga el día (monedas y platos de chef a la despensa). */
+async function guardarCocina(receta: RecetaId, p: ProgresoCocina, dia?: ResultadoDia) {
+  const plato = RESTAURANTES.find((x) => x.id === receta)!.plato;
+  await cambiarCasa((c) => {
+    c.cocina = { ...(c.cocina ?? {}), [yo]: { ...(c.cocina?.[yo] ?? {}), [receta]: p } };
+    if (dia) {
+      c.monedas += dia.monedas;
+      if (dia.platos) c.inventario[plato] = (c.inventario[plato] ?? 0) + dia.platos;
+    }
+  });
+}
+
 /** Qué pasa al tocar cada mueble (por el nombre del mueble en el modelo del cuarto). */
 const MUEBLES: Partial<Record<Cuarto, [RegExp, string][]>> = {
   sala: [[/^sof/, 'sofa'], [/^televisor/, 'tv']],
-  cocina: [[/^(mesa_comedor|silla)/, 'comer'], [/^nevera/, 'notas']],
+  cocina: [[/^(mesa_comedor|silla)/, 'comer'], [/^nevera/, 'notas'], [/^(mes[oó]n|estufa)/, 'cocinar']],
   bano: [[/^tina/, 'banar'], [/^lavamanos/, 'lavar'], [/^inodoro/, 'inodoro']],
   cuarto: [[/^cama/, 'dormir'], [/^cl/, 'closet']],
   patio: [[/^(casita|platos|tina)/, 'perro'], [/^banca/, 'banca']],
@@ -1566,6 +1674,7 @@ async function abrirRegaloDeVerdad() {
   }
   const deco = r.item === 'osito' ? 'osito_deco' : null;
   if (deco) extra = 'El osito quedó guardado para decorar la casa.';
+  if (it?.cocina) extra = `¡Lo cocinó con sus propias manos en su cocina de chef! Te lo comiste de una.`;
   let abierto = false;
   const ok = await cambiarCasa((c) => {
     abierto = false;
@@ -1578,7 +1687,8 @@ async function abrirRegaloDeVerdad() {
     if (deco) c.inventario[deco] = (c.inventario[deco] ?? 0) + 1;
   });
   if (!ok || !abierto) return;
-  await guardarYo(sumar(s.personajes[yo], it?.efecto ?? { carino: 10 }));
+  // Un plato de chef regalado llena y además sabe a amor
+  await guardarYo(sumar(s.personajes[yo], it?.cocina ? { ...it.efecto, carino: (it.efecto?.carino ?? 0) + 15 } : it?.efecto ?? { carino: 10 }));
   sonido.regalo();
   ventana(`
     <h2>${esc(nombre(r.de))} te regaló</h2>
@@ -1683,7 +1793,11 @@ function botonesCuarto(): Boton[] {
       b.push({ id: 'sofa', texto: 'Descansar', icono: ico('sofa') }, { id: 'tv', texto: tele?.prendida ? 'Tele prendida' : 'Ver tele', icono: ico('tv'), activo: !!tele?.prendida });
       break;
     case 'cocina':
-      b.push({ id: 'comer', texto: 'Comer', icono: `<img src="${iconoItem(ITEM.pan)}" alt="">`, principal: true }, { id: 'notas', texto: 'Notas', icono: ico('nota') });
+      b.push(
+        { id: 'comer', texto: 'Comer', icono: `<img src="${iconoItem(ITEM.pan)}" alt="">`, principal: true },
+        { id: 'cocinar', texto: 'Cocinar', icono: `<span class="ico ico-emoji">${yo === 'el' ? '👨‍🍳' : '👩‍🍳'}</span>` },
+        { id: 'notas', texto: 'Notas', icono: ico('nota') },
+      );
       break;
     case 'bano':
       b.push(
@@ -1834,6 +1948,8 @@ async function alAccion(id: string) {
       return;
     case 'lavar':
       return lavarse();
+    case 'cocinar':
+      return hojaCocinar();
     case 'inodoro':
       return irAlBano();
     case 'dormir':
@@ -1912,7 +2028,7 @@ function hojaTienda(tab: TipoItem) {
   const pintar = () => {
     if (!s) return;
     if (tab === 'ropa' || tab === 'disfraz') return tiendaRopa(tab);
-    const lista = CATALOGO.filter((i) => i.tipo === tab && i.id !== 'osito_deco');
+    const lista = CATALOGO.filter((i) => i.tipo === tab && i.id !== 'osito_deco' && !i.cocina);
     const html = `<p class="nota-hoja">Las monedas son de los dos. Se ganan con el bono de cada día y jugando los minijuegos (el súper, Cien Puertas y los juegos de mesa).</p>
       <ul class="catalogo-casa">${lista
         .map((it) =>
@@ -2222,7 +2338,7 @@ let regaloElegido: string | null = null;
 function hojaRegalar() {
   if (!s) return;
   const pintar = () => {
-    const hay = CATALOGO.filter((i) => i.tipo === 'regalo' && (s!.casa.inventario[i.id] ?? 0) > 0);
+    const hay = CATALOGO.filter((i) => (i.tipo === 'regalo' || i.cocina) && (s!.casa.inventario[i.id] ?? 0) > 0);
     if (regaloElegido && !hay.some((i) => i.id === regaloElegido)) regaloElegido = null;
     regaloElegido ??= hay[0]?.id ?? null;
     const html = hay.length
@@ -2512,6 +2628,7 @@ function controles() {
       void comer(b.dataset.comer!);
     } else if ((b = d('[data-llevar]'))) void mandarComida(b.dataset.llevar!);
     else if ((b = d('[data-ir-tienda]'))) hojaTienda((b.dataset.irTienda || 'comida') as TipoItem);
+    else if ((b = d('[data-cocinar]'))) void cocinar(b.dataset.cocinar as RecetaId);
     else if ((b = d('[data-ir-pareja]'))) {
       cerrarHoja();
       void irACuarto(b.dataset.irPareja as Cuarto);
@@ -2628,7 +2745,9 @@ function controles() {
     });
     void App.addListener('backButton', () => {
       const salirLavado = document.querySelector<HTMLElement>('.lavado-fin:not([hidden]) [data-listo], .lavado-salir');
+      const pausaCocina = document.querySelector<HTMLElement>('.cocina .cocina-pausa');
       if (salirLavado) salirLavado.click();
+      else if (pausaCocina) pausaCocina.click();
       else if (!$('ventana').hidden) cerrarVentana();
       else if (hojaAbierta()) cerrarHoja();
       else if (!$('codigo').hidden) mostrar('codigo', false);
@@ -2888,7 +3007,15 @@ function efectos() {
   regalos: s?.casa.regalos,
   deco: s?.casa.deco,
   lavado: s?.casa.lavado,
+  cocina: s?.casa.cocina,
 });
+/** Progreso de prueba en un restaurante (para ver rangos altos). */
+(window as any).__cocinaXp = (receta: RecetaId, xp: number, dia = 6, propinas = 300) =>
+  cambiarCasa((c) => {
+    c.cocina = { ...(c.cocina ?? {}), [yo]: { ...(c.cocina?.[yo] ?? {}), [receta]: { ...progresoNuevo(), xp, dia, propinas } } };
+  });
+/** La cocina de chef abierta (pruebas). */
+(window as any).__cocina = () => import('./cocina').then((m) => m.cocina.actual);
 (window as any).__mundo = () => mundo;
 (window as any).__mascotas = () => mascotas;
 (window as any).__casa3d = () => casa3d;

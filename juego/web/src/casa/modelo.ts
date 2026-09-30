@@ -1,4 +1,5 @@
 // Nuestro Hogar: datos de la pareja y reglas de las necesidades (se calculan con el reloj real).
+import { normalizarProgreso, type ProgresoCocina, RECETAS, type RecetaId } from './cocina/tipos';
 export type Rol = 'el' | 'ella';
 export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto' | 'juegos' | 'trofeos' | 'cuna' | 'cuarto_el' | 'cuarto_ella' | 'patio';
 export type Necesidad = 'hambre' | 'energia' | 'higiene' | 'carino';
@@ -33,7 +34,7 @@ export const NOMBRE_RANURA: Record<Ranura, string> = {
 export type Ropa = Partial<Record<Ranura, string>>;
 
 /** Lo que se ve haciendo al personaje (también en el celular del otro). */
-export type Accion = 'comer' | 'banar' | 'lavar' | 'sofa' | 'tv' | 'nevera' | 'closet' | 'saludo' | 'pensar' | 'inodoro'
+export type Accion = 'comer' | 'banar' | 'lavar' | 'sofa' | 'tv' | 'nevera' | 'closet' | 'saludo' | 'pensar' | 'inodoro' | 'cocinar'
   /** Usar un mueble de los cuartos nuevos (el item dice cuál: arcade, mesa, cuna, mecedora, tocador…). */
   | 'usar';
 
@@ -205,6 +206,8 @@ export interface Casa {
   pintura?: Partial<Record<Cuarto, string>>;
   /** El perrito del patio (de los dos). */
   perro?: Perrito;
+  /** La cocina de chef: el progreso de cada uno en cada restaurante (día, rango, propinas y mejoras). */
+  cocina?: Partial<Record<Rol, Partial<Record<RecetaId, ProgresoCocina>>>>;
 }
 
 // ---------------------------------------------------------------------------
@@ -368,6 +371,15 @@ export function normalizarCasa(c: unknown): Casa {
       ? { pintura: Object.fromEntries(Object.entries(c.pintura).filter(([k, v]) => k in DUENO && typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v))) }
       : {}),
     ...(normalizarPerro(c.perro) ? { perro: normalizarPerro(c.perro)! } : {}),
+    ...(esObjeto(c.cocina)
+      ? {
+          cocina: Object.fromEntries(
+            (['el', 'ella'] as Rol[])
+              .filter((r) => esObjeto(c.cocina[r]))
+              .map((r) => [r, Object.fromEntries(RECETAS.filter((k) => esObjeto(c.cocina[r][k])).map((k) => [k, normalizarProgreso(c.cocina[r][k])]))]),
+          ),
+        }
+      : {}),
   };
 }
 

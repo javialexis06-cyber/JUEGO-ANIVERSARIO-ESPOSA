@@ -166,6 +166,55 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
   en `casa.lavado`. Al salir, el velo de agua se va, la casa vuelve a verse nítida y la cámara se aleja.
   Código: `src/casa/lavado.ts` (el juego en un canvas 2D) y `lavarse()` en `src/casa/main.ts` (el espejo).
 
+## La cocina de chef (tres minijuegos estilo Papa's)
+
+- En la cocina, **Cocinar** (o tocar el mesón/la estufa) abre los tres restaurantes: **La Waflería**, **La
+  Fresería** y **La Frapería** (cada uno con su propio progreso, por persona). El personaje camina a la estufa,
+  se soba las manos, se concentra (cara de concentrado) y la cámara se le acerca; entonces sale el **«MODO
+  CHEF»**: fondo oscuro con líneas de velocidad que giran, el chef (Él o Ella con gorro y chaqueta de chef,
+  sacado del modelo 3D) acercándose con destellos en los ojos, y la cocina se vuelve un restaurante
+  profesional (azulejos, acero, campana extractora). La otra persona lo ve en la estufa, concentrado.
+- Se juega como Papa's: en **Pedidos** llegan invitados al mostrador —familia, vecinos y amigos: la Abuela
+  Rosa, la Tía Marta, el Primo Santi, Vale la del gym, la Sobrinita Luci, Doña Rubi, Pacho el del colegio, el
+  vecino misterioso, Don Jairo el portero, Nelly, Don Hernán (apurado) y **el crítico famoso** (exigente, cada
+  5 días), sacados de los muñecos del súper con las poses de Él y Ella— y **la pareja** llega a comer cada
+  3 días (paciente, con corazones, doble propina y frases de amor). Se toca «Tomar pedido», el tiquete se
+  escribe y queda colgado en el riel de arriba; se escoge un tiquete y se cocina en las estaciones de abajo.
+  Al entregar, el invitado califica **Espera** y cada estación (barras), da el total y la propina, y
+  reacciona (encantado, contento, así-así o bravo con vapor 💢).
+- **Waflería**: *Plancha* (jarras de masa: clásica, chocolate, red velvet, avena; se sirve en las
+  waffleras, se voltea cuando la flecha llega a la rayita **D**oradito o **T**ostadito y se saca a la
+  rejilla; si se pasa, humo y se quema), *Armar* (los wafles al plato y los toppings: mantequilla, miel,
+  arequipe, chocolate, leche condensada se **chorrean** arrastrando; chispitas y azúcar glas se
+  **espolvorean**; fresas, banano, arándanos, crema chantilly, helado, masmelos y kiwi se **ponen donde dice
+  el dibujito** del tiquete) y desde el rango 3 *Bebidas* (vaso P/M/G, jugo de naranja, mora, lulo, café con
+  leche o chocolate hasta la rayita, y el hielo que pida).
+- **Fresería** (fresas con crema a la colombiana): *Picar* (el vaso y las fresas: se cortan **deslizando el
+  dedo** en mitades, cuartos o láminas; se califica qué tan derechito y centrado quedó cada corte), *Batir*
+  (crema de leche hasta la rayita, cucharadas de leche condensada, arequipe o chocolate, y batir hasta el
+  punto **suave** o **firme**: si se pasa, la crema se corta), *Servir* (bañar con la crema hasta el borde
+  y decorar: queso rallado, leche condensada, arequipe, chispitas, fresa entera, masmelos, barquillo,
+  helado, menta, galleta).
+- **Frapería**: *Preparar* (vaso de 12, 16 o 20 oz, los bombazos de la base —café, chocolate, moca, fresa,
+  caramelo, galleta, maracuyá, matcha—, las cucharadas de hielo y la leche hasta la rayita), *Licuar*
+  (hasta **grueso**, **normal** o **cremoso**, sin que se agüe) y *Decorar* (crema chantilly a la altura
+  que pide, salsas, toppings, cereza y el pitillo del color que pide).
+- **Progreso como en Papa's**: puntos de chef por cada plato (el % de la calificación) suben el **rango**
+  (Aprendiz, Ayudante de cocina… Leyenda de la cocina) y cada rango trae masas, bases, toppings, bebidas,
+  cortes e invitados nuevos. Cada día vienen más invitados (3 el primero, hasta 10), más seguido y pidiendo
+  cosas más complicadas, así que hay que **mejorar la cocina con las propinas**: otra wafflera / batidora /
+  licuadora, turbo (25 % y 50 % más rápido), alarma de punto, guía de emplatado (marquitas de dónde va cada
+  pieza), cuchillo de chef (perdona más y muestra por dónde cortar), dispensador o jarra de precisión, parlante
+  con música (paciencia) y frasco de propinas bonito (más propina).
+- **Premio para la casa** al terminar cada día: monedas (según invitados y calificación, hasta 20) y **platos
+  de chef** a la despensa —*Wafles de chef* (+70 comida), *Fresas con crema de chef* (+55 comida, +18
+  cariño) y *Frappé de chef* (+30 energía)— que no se venden en la tienda, llenan mucho más y **se pueden
+  regalar** (al abrirlo, la pareja se lo come y suma 15 de cariño extra: «lo cocinó con sus propias manos»).
+- Código: `src/casa/cocina/` (motor.ts: invitados, tiquetes, calificación, día, mejoras; wafles.ts,
+  fresas.ts, frappes.ts: las estaciones; dibujo.ts y herramientas.ts: la comida dibujada y el chorrear,
+  espolvorear y poner piezas) y `cocinar()` en `src/casa/main.ts`. Los recortes de los invitados y del chef
+  salen de `scripts/generar-sprites-cocina.mjs`; los platos 3D de `personajes/blender/comidas.py`.
+
 ## Recuerdos en el baño y abrazados en la cama
 
 - **Bañarse** dura 55 s: en la tina quedan en ropa interior (Él sin camisa y en bóxer, Ella en ropa
@@ -265,6 +314,7 @@ Se ganan poco y despacio (se bajó a la cuarta parte: con lo de antes se comprab
 | Mimos, saludos y demás con la pareja | nada (antes 5 a 10 los primeros del día) |
 | Minijuegos (súper, Cien Puertas, juegos de mesa) | lo que pague cada juego (cada uno paga la cuarta parte de antes); llega por `nuestro-hogar-sueldo` y la casa lo suma tal cual, sin volver a dividirlo |
 | Trofeos | 5 / 10 / 20 por bronce, plata y oro de cada juego (una vez); la copa del amor, el triple |
+| Cocina de chef | 1 a 20 por día cocinado (invitados × calificación) y hasta 4 platos de chef a la despensa |
 | Casa nueva | empieza con 40 (antes 120) |
 
 Precios: lo de todos los días se abarató a un tercio para que el cuidado siga alcanzando; lo que se colecciona quedó

@@ -1,0 +1,432 @@
+/* La cocina de chef: el lienzo de juego y los letreros (modo chef, el día, las mejoras y el final). */
+.cocina {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #231a16;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: Nunito, 'Baloo 2', system-ui, sans-serif;
+}
+.cocina.visible {
+  opacity: 1;
+}
+.cocina-lienzo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.cocina-pausa {
+  position: absolute;
+  top: max(6px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 0;
+  background: #fff3e4;
+  color: #4a2a10;
+  font-size: 15px;
+  font-weight: 900;
+  box-shadow: 0 3px 0 #c9a98c;
+}
+.cocina-capa {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(30, 18, 12, 0.55);
+  padding: 10px 16px;
+  overflow: auto;
+}
+.cocina-capa[hidden] {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ Modo chef */
+.cocina-capa.intro {
+  background: #120a07;
+  overflow: hidden;
+  animation: cocina-aparece 0.5s ease;
+}
+.cocina-modo-chef {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.cocina-modo-chef .lineas {
+  position: absolute;
+  inset: -50%;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 190, 90, 0.18) 0deg 3deg, transparent 3deg 11deg);
+  animation: cocina-gira 6s linear infinite, cocina-aparece 1.2s ease;
+  mask-image: radial-gradient(circle at center, transparent 18%, black 55%);
+  -webkit-mask-image: radial-gradient(circle at center, transparent 18%, black 55%);
+}
+.cocina-modo-chef::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 55%, rgba(255, 150, 60, 0.35), transparent 45%);
+  animation: cocina-late 1.2s ease-in-out infinite alternate;
+}
+.cocina-modo-chef .chef {
+  position: relative;
+  height: 72vh;
+  animation: cocina-acerca 3.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cocina-modo-chef .chef img {
+  height: 100%;
+  filter: drop-shadow(0 0 24px rgba(255, 170, 70, 0.55));
+}
+.cocina-modo-chef .destello {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  top: 41%;
+  background: radial-gradient(circle, #fff 0 12%, rgba(255, 240, 180, 0.9) 18%, transparent 60%);
+  clip-path: polygon(50% 0, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0 50%, 42% 42%);
+  opacity: 0;
+  animation: cocina-destello 0.9s ease-out 2.1s both;
+}
+.cocina-modo-chef .destello.a {
+  left: 32%;
+}
+.cocina-modo-chef .destello.b {
+  left: 58%;
+  animation-delay: 2.2s;
+}
+.cocina-modo-chef .respira {
+  position: absolute;
+  top: 7%;
+  width: 100%;
+  text-align: center;
+  color: #ffe4c0;
+  font-size: clamp(14px, 3.4vh, 20px);
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  animation: cocina-escribe 2s steps(40) 0.2s both;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.cocina-modo-chef h1 {
+  position: absolute;
+  bottom: 10%;
+  margin: 0;
+  font-size: clamp(38px, 13vh, 84px);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-shadow: 0 4px 0 #7a2a0a, 0 0 30px rgba(255, 120, 40, 0.8);
+  animation: cocina-golpe 0.6s cubic-bezier(0.2, 1.8, 0.4, 1) 2.2s both;
+}
+.cocina-modo-chef h1 b {
+  background: linear-gradient(180deg, #fff6b0, #ffb627 45%, #ff5a1f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cocina-modo-chef small {
+  position: absolute;
+  bottom: 3%;
+  color: rgba(255, 228, 192, 0.55);
+  font-size: 13px;
+  font-weight: 700;
+  animation: cocina-aparece 0.5s ease 3s both;
+}
+@keyframes cocina-aparece {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cocina-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes cocina-late {
+  to {
+    opacity: 0.5;
+  }
+}
+@keyframes cocina-acerca {
+  0% {
+    transform: scale(0.7) translateY(12%);
+    opacity: 0;
+    filter: brightness(0.3);
+  }
+  60% {
+    transform: scale(1.02);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  68% {
+    transform: scale(1.02) translateX(-1%);
+  }
+  72% {
+    transform: scale(1.02) translateX(1%);
+  }
+  76% {
+    transform: scale(1.02) translateX(-1%);
+  }
+  100% {
+    transform: scale(1.06);
+  }
+}
+@keyframes cocina-destello {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) rotate(0deg);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.6) rotate(45deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.6) rotate(90deg);
+  }
+}
+@keyframes cocina-escribe {
+  from {
+    max-width: 0;
+  }
+  to {
+    max-width: 100%;
+  }
+}
+@keyframes cocina-golpe {
+  from {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ Tarjetas */
+.cocina-tarjeta,
+.cocina-fin,
+.cocina-tienda {
+  width: min(640px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  background: linear-gradient(#fff8ee, #f6e6d2);
+  border-radius: 22px;
+  padding: 14px 20px 16px;
+  text-align: center;
+  color: #4a2a10;
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.25);
+  animation: cocina-sube 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+@keyframes cocina-sube {
+  from {
+    transform: translateY(30px) scale(0.95);
+    opacity: 0;
+  }
+}
+.cocina-tarjeta .letrero {
+  margin: 0;
+  display: inline-block;
+  padding: 4px 16px;
+  border-radius: 999px;
+  background: #3a2c26;
+  color: #ffe4c0;
+  font-weight: 800;
+  font-size: 14px;
+}
+.cocina-tarjeta h2,
+.cocina-fin h2,
+.cocina-tienda h2 {
+  margin: 6px 0 4px;
+  font-size: 30px;
+  font-weight: 900;
+}
+.cocina-tarjeta p {
+  margin: 4px 0;
+  font-weight: 700;
+}
+.cocina-tarjeta .rango {
+  color: #9a6a4a;
+  font-size: 14px;
+}
+.cocina-tarjeta .nota {
+  font-size: 12px;
+  color: #9a7a68;
+}
+.cocina .botones {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.boton-cocina {
+  border: 0;
+  border-radius: 14px;
+  padding: 10px 18px;
+  font: inherit;
+  font-weight: 900;
+  font-size: 16px;
+  background: #fff3e4;
+  color: #4a2a10;
+  box-shadow: 0 4px 0 #c9a98c;
+}
+.boton-cocina:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #c9a98c;
+}
+.boton-cocina.principal {
+  background: #ffb627;
+  box-shadow: 0 4px 0 #b9761a;
+}
+.boton-cocina.apagado {
+  background: #e3d6ca;
+  color: #9a8a80;
+  box-shadow: 0 4px 0 #bcae9f;
+}
+
+/* ------------------------------------------------------------------ Final del día */
+.cocina-fin .estrellas {
+  font-size: 40px;
+  line-height: 1;
+}
+.cocina-fin .estrellas i {
+  font-style: normal;
+  color: #d9c8b6;
+  display: inline-block;
+}
+.cocina-fin .estrellas i.si {
+  color: #ffb627;
+  text-shadow: 0 2px 0 #b9761a;
+  animation: cocina-golpe 0.5s cubic-bezier(0.2, 1.8, 0.4, 1) var(--d) both;
+}
+.cocina-fin .cifras {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.cocina-fin .cifras li {
+  background: #fff;
+  border-radius: 12px;
+  padding: 6px 4px;
+}
+.cocina-fin .cifras b {
+  display: block;
+  font-size: 20px;
+}
+.cocina-fin .cifras span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a6a58;
+}
+.cocina-fin .rango-barra {
+  text-align: left;
+  font-weight: 800;
+  font-size: 13px;
+}
+.cocina-fin .rango-barra b {
+  color: #e0793a;
+}
+.cocina-fin .rango-barra i {
+  display: block;
+  height: 12px;
+  margin-top: 4px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #5cc26a var(--v), #e8d8c6 var(--v));
+}
+.cocina-fin .nuevo {
+  margin-top: 8px;
+  background: #fff4c9;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-weight: 800;
+  font-size: 14px;
+}
+.cocina-fin .nuevo p {
+  margin: 4px 0;
+}
+.cocina-fin .premio {
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ Mejoras */
+.cocina-tienda header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.cocina-tienda .saldo {
+  background: #3a2c26;
+  color: #ffd46b;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.cocina-tienda ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+}
+.cocina-tienda li {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 8px 10px;
+  text-align: left;
+}
+.cocina-tienda li.lleno {
+  background: #eaf7e4;
+}
+.cocina-tienda .ico {
+  font-size: 28px;
+}
+.cocina-tienda b {
+  display: block;
+  font-size: 15px;
+}
+.cocina-tienda small {
+  display: block;
+  font-size: 12px;
+  color: #7a5a48;
+  font-weight: 700;
+}
+.cocina-tienda .puntos i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 3px;
+  border-radius: 50%;
+  background: #e3d6ca;
+}
+.cocina-tienda .puntos i.si {
+  background: #5cc26a;
+}
+.cocina-tienda em {
+  font-style: normal;
+  font-weight: 900;
+  color: #2f8a3a;
+  font-size: 13px;
+}
+.cocina-tienda .boton-cocina {
+  padding: 8px 12px;
+  font-size: 15px;
+}
