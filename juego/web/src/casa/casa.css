@@ -1392,3 +1392,47 @@ button.plano-cuarto:active { transform: translateY(1px); }
   white-space: nowrap;
   animation: kaboom 1.5s cubic-bezier(0.2, 1.6, 0.4, 1) forwards;
 }
+
+/* ---------------------------------------------------------------------------
+   Disfraces por rareza: verde (especial), azul (raro), morado (épico) y dorado (legendario)
+   --------------------------------------------------------------------------- */
+.item.disfraz { position: relative; padding-top: 22px; }
+.sello-rareza {
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  font: 800 10px/1 var(--texto);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9a8b82;
+}
+.item.rareza-verde { box-shadow: 0 0 0 2px #6cc47a, 0 2px 0 rgba(61, 43, 39, 0.14); background: linear-gradient(180deg, #f1fbef, #fff 45%); }
+.item.rareza-verde .sello-rareza, .r-verde { color: #3f9a4f; }
+.item.rareza-azul { box-shadow: 0 0 0 2px #5b9be6, 0 0 12px rgba(91, 155, 230, 0.35); background: linear-gradient(180deg, #eef5ff, #fff 45%); }
+.item.rareza-azul .sello-rareza, .r-azul { color: #2f6fc0; }
+.item.rareza-morado { box-shadow: 0 0 0 2.5px #a46ae6, 0 0 16px rgba(164, 106, 230, 0.45); background: linear-gradient(180deg, #f6efff, #fff 50%); }
+.item.rareza-morado .sello-rareza, .r-morado { color: #7a3fc4; }
+.item.rareza-dorado {
+  overflow: hidden;
+  box-shadow: 0 0 0 3px #e9b93a, 0 0 20px rgba(245, 194, 70, 0.6);
+  background: linear-gradient(180deg, #fff6d6, #fffdf4 55%);
+}
+.item.rareza-dorado .sello-rareza, .r-dorado { color: #b07d06; }
+/* Un brillo que cruza la tarjeta dorada de vez en cuando */
+.item.rareza-dorado::after {
+  content: '';
+  position: absolute;
+  inset: -20% auto -20% -40%;
+  width: 30%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  transform: skewX(-18deg);
+  animation: brillo-dorado 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes brillo-dorado {
+  0%, 60% { left: -40%; }
+  100% { left: 130%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .item.rareza-dorado::after { animation: none; display: none; }
+}

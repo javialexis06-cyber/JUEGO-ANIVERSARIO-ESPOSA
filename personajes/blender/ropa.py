@@ -44,17 +44,18 @@ PRENDAS = {}
 PRECIO = {'pelo': 35, 'cabeza': 30, 'cara': 20, 'arriba': 40, 'abajo': 35, 'pies': 30, 'espalda': 45, 'cola': 25, 'conjunto': 70}
 
 
-def prenda(clave, ranura, variantes, para=('el', 'ella'), oculta=(), tambien=(), precio=None, nombre_para=None):
+def prenda(clave, ranura, variantes, para=('el', 'ella'), oculta=(), tambien=(), precio=None, nombre_para=None, exclusiva=False):
     """Registra una prenda.
 
     ranura: pelo, cabeza, cara, arriba, abajo, pies, espalda, cola o conjunto (conjunto = arriba + abajo).
     variantes: [(id, nombre, {papel: color})...]; la primera da los colores del modelo exportado.
     para: a quién le queda; oculta: otras partes de fábrica que tapa (copete, medias); tambien: otras ranuras.
     nombre_para: {'el': 'nombre', ...} si el nombre de la primera variante cambia según quién lo lleva.
+    exclusiva: solo viene con su disfraz (no se vende suelta en la tienda).
     """
     def deco(fn):
         PRENDAS[clave] = dict(fn=fn, ranura=ranura, variantes=variantes, para=tuple(para), oculta=tuple(oculta),
-                              tambien=tuple(tambien), precio=precio or PRECIO[ranura], nombre_para=nombre_para or {})
+                              tambien=tuple(tambien), precio=precio or PRECIO[ranura], nombre_para=nombre_para or {}, exclusiva=exclusiva)
         return fn
     return deco
 
@@ -608,7 +609,7 @@ def punto_cabeza(ctx, az, el, lift=0.0, sup=None):
 
 def cargar_modulos():
     import importlib
-    for nombre in ('ropa_arriba', 'ropa_abajo', 'ropa_pies', 'ropa_pelo', 'ropa_accesorios'):
+    for nombre in ('ropa_arriba', 'ropa_abajo', 'ropa_pies', 'ropa_pelo', 'ropa_accesorios', 'ropa_disfraces'):
         if os.path.exists(os.path.join(HERE, f'{nombre}.py')):
             importlib.import_module(nombre)
 
@@ -639,7 +640,28 @@ def construir(ctx, clave):
             o['modo'] = 'pantalon'
         if not o.get('hueso') and not o.get('modo'):
             o['hueso'] = regla(o.name) or HUESO_RANURA[info['ranura']]
+    if info['exclusiva']:
+        objs = unir_por_material(objs)
     return objs
+
+
+def unir_por_material(objs):
+    """Junta en una sola malla las piezas que comparten material y hueso: los disfraces elaborados traen cientos de
+    piezas (flores, escamas, pelitos) y cada una sería una llamada de dibujo aparte en el celular."""
+    grupos = {}
+    for o in objs:
+        m = o.material_slots[0].material if o.type == 'MESH' and len(o.material_slots) == 1 else None
+        clave = None if (m is None or o.get('modo')) else (m.name, o.get('hueso'))
+        grupos.setdefault(clave, []).append(o)
+    out = []
+    for clave, g in grupos.items():
+        if clave is None or len(g) == 1:
+            out += g
+            continue
+        unido = clay.join(g, g[0].name)
+        unido['hueso'] = clave[1]
+        out.append(unido)
+    return out
 
 
 def main(out, rol, claves=None, iconos=True):
@@ -678,7 +700,7 @@ def main(out, rol, claves=None, iconos=True):
                     ranura='arriba' if ranura == 'conjunto' else ranura,
                     tambien=(['abajo'] if ranura == 'conjunto' else []) + list(info['tambien']),
                     oculta=list(info['oculta']), colores={p: c for p, c in colores.items() if p in papeles},
-                    orden=list(PRENDAS).index(clave) * 100 + k)
+                    orden=list(PRENDAS).index(clave) * 100 + k, **({'exclusiva': True} if info['exclusiva'] else {}))
             if iconos and len(info['variantes']) > 1:
                 ctx.m.recolorear(info['variantes'][0][2])
             exportar(arm, objs, os.path.join(out, 'ropa', f'{clave}_{rol}.glb'))

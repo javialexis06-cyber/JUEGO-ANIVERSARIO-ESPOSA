@@ -15,7 +15,7 @@ import * as THREE from 'three';
 import { aTres, Mundo } from '../mundo';
 import { elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
-import { BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, LE_CAE_MAL, lePasa, paraSitio, TINTES, TipoItem } from './catalogo';
+import { BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, LE_CAE_MAL, lePasa, paraSitio, RAREZA, RAREZAS, TINTES, TipoItem } from './catalogo';
 import { CORTO, htmlBebe, htmlPintar, htmlPlano, htmlTrofeos } from './ampliacion';
 import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
@@ -1980,12 +1980,14 @@ function tiendaRopa(tab: 'ropa' | 'disfraz') {
   if (!s) return;
   let html: string;
   if (tab === 'disfraz') {
-    html = `<p class="nota-hoja">Disfraces para los dos: traen todas las piezas (más baratas que por separado) y se ponen de una en el clóset.</p>
+    html = `<p class="nota-hoja">Disfraces para los dos: traen todas las piezas y se ponen de una en el clóset. Entre más raro, más detallado:
+      <b class="r-verde">Especial</b> el doble, <b class="r-azul">Raro</b> el triple, <b class="r-morado">Épico</b> cinco veces y <b class="r-dorado">Legendario</b> diez.</p>
       <ul class="catalogo-casa">${DISFRACES_LISTA.map((d) => tarjetaDisfraz(d, botonCompra(d))).join('')}</ul>`;
   } else {
     const para = filtroRopa.para ?? yo;
     const ran = filtroRopa.ranura;
-    const lista = ran === 'tintes' ? TINTES : CATALOGO.filter((i) => i.tipo === 'ropa' && !i.tinte && lePasa(i, para) && i.ranura === ran);
+    // Las prendas de los disfraces nuevos solo vienen con su disfraz
+    const lista = ran === 'tintes' ? TINTES : CATALOGO.filter((i) => i.tipo === 'ropa' && !i.tinte && !i.exclusiva && lePasa(i, para) && i.ranura === ran);
     html = `${chips([{ id: 'el' as Rol, nombre: `Para ${nombre('el')}` }, { id: 'ella' as Rol, nombre: `Para ${nombre('ella')}` }], para, 'ropa-para')}
       ${chips(FILTROS_RANURA, ran, 'ropa-ranura')}
       <p class="nota-hoja">Lo que compran queda en el clóset (en el cuarto, «Cambiarse»). ${ran === 'tintes' ? '' : `Se ve en ${nombre(para)}.`}</p>
@@ -2024,7 +2026,8 @@ function tarjetaDisfraz(d: Item, pie: string) {
     ? lo ? `<button class="boton boton-chico boton-papel" data-quitar-disfraz="${d.id}">Quitármelo</button>`
       : `<button class="boton boton-chico boton-menta" data-poner-disfraz="${d.id}">Ponérmelo</button>`
     : '';
-  return `<li class="item disfraz${lo ? ' puesto' : ''}"><span class="pareja-iconos">${ej('el')}${ej('ella')}</span><b>${esc(d.nombre)}</b><small>${esc(d.texto ?? '')}</small>
+  const r = d.rareza ?? 'blanco';
+  return `<li class="item disfraz rareza-${r}${lo ? ' puesto' : ''}"><span class="sello-rareza">${r === 'blanco' ? '' : '★'.repeat(RAREZAS.length - RAREZAS.indexOf(r) - 1)} ${RAREZA[r].nombre}</span><span class="pareja-iconos">${ej('el')}${ej('ella')}</span><b>${esc(d.nombre)}</b><small>${esc(d.texto ?? '')}</small>
     <div class="fila-item">${pie}${poner}</div></li>`;
 }
 
@@ -2119,7 +2122,11 @@ function ponerDisfraz(id: string, quitar = false) {
   void vestir((ropa) => {
     if (quitar) {
       for (const [r, x] of Object.entries(ropa)) if (x && mias.includes(x)) delete ropa[r as Ranura];
-    } else for (const p of mias) ponerEn(ropa, p);
+    } else {
+      // Las piezas que solo existen con su disfraz (la cola de Angel, las patitas de la pulga) se van con él
+      for (const [r, x] of Object.entries(ropa)) if (x && ITEM[x]?.exclusiva && !mias.includes(x)) delete ropa[r as Ranura];
+      for (const p of mias) ponerEn(ropa, p);
+    }
   }).then(() => toast(quitar ? '¡Listo, sin disfraz!' : `¡${nombre(yo)} se disfrazó: ${d.nombre.toLowerCase()}!`));
 }
 

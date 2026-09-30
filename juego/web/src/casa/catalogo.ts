@@ -30,7 +30,23 @@ export interface Item {
   piezas?: Partial<Record<Rol, string[]>>;
   /** Tinte de pelo: el color que pone. */
   tinte?: string;
+  /** Disfraz: qué tan elaborado es (el precio sube con la rareza). */
+  rareza?: Rareza;
+  /** Prenda que solo viene con su disfraz (no se vende suelta). */
+  exclusiva?: boolean;
 }
+
+/** Rareza de los disfraces: blanco es la calidad de siempre; verde el doble de detalle, azul el triple, morado cinco
+ *  veces y dorado diez. */
+export type Rareza = 'blanco' | 'verde' | 'azul' | 'morado' | 'dorado';
+export const RAREZAS: Rareza[] = ['dorado', 'morado', 'azul', 'verde', 'blanco'];
+export const RAREZA: Record<Rareza, { nombre: string; factor: number; minimo: number }> = {
+  blanco: { nombre: 'Común', factor: 1, minimo: 20 },
+  verde: { nombre: 'Especial', factor: 1.5, minimo: 180 },
+  azul: { nombre: 'Raro', factor: 2, minimo: 300 },
+  morado: { nombre: 'Épico', factor: 3, minimo: 520 },
+  dorado: { nombre: 'Legendario', factor: 5, minimo: 900 },
+};
 
 const comida = (id: string, nombre: string, precio: number, hambre: number, extra: Partial<Record<Necesidad, number>> = {}): Item =>
   ({ id, nombre, tipo: 'comida', precio, producto: id, efecto: { hambre, ...extra } });
@@ -51,6 +67,7 @@ interface DatoRopa {
   colores: Record<string, string>;
   para: Rol[];
   orden: number;
+  exclusiva?: boolean;
 }
 const ROPA: Item[] = (ropaDatos as unknown as DatoRopa[])
   .slice()
@@ -59,6 +76,7 @@ const ROPA: Item[] = (ropaDatos as unknown as DatoRopa[])
     id: r.id, nombre: r.nombre, tipo: 'ropa', precio: r.precio, modelo: r.modelo, ranura: r.ranura, para: r.para,
     ...(r.tambien.length ? { tambien: r.tambien } : {}), ...(r.oculta.length ? { oculta: r.oculta } : {}),
     ...(Object.keys(r.colores).length ? { colores: r.colores } : {}),
+    ...(r.exclusiva ? { exclusiva: true } : {}),
   }));
 
 /** Tintes: cambian el color del pelo (de fábrica o comprado); se compran una vez y sirven para los dos. */
@@ -72,8 +90,8 @@ export const TINTES: Item[] = [
 
 /** Disfraces para los dos: traen todas sus piezas (algunas distintas para Él y para Ella). */
 const ambos = (...piezas: string[]) => ({ el: piezas, ella: piezas });
-const disfraz = (id: string, nombre: string, piezas: Partial<Record<Rol, string[]>>, texto: string): Item => ({
-  id: `disfraz_${id}`, nombre, tipo: 'disfraz', precio: 0, piezas, texto,
+const disfraz = (id: string, nombre: string, piezas: Partial<Record<Rol, string[]>>, texto: string, rareza: Rareza = 'blanco'): Item => ({
+  id: `disfraz_${id}`, nombre, tipo: 'disfraz', precio: 0, piezas, texto, rareza,
 });
 const DISFRACES: Item[] = [
   disfraz('gatitos', 'Pareja de gatitos', ambos('orejas_gato', 'cola_gato', 'bigotes_gato'), 'Orejitas, cola y bigotes para los dos'),
@@ -102,6 +120,46 @@ const DISFRACES: Item[] = [
   disfraz('payasos', 'Payasitos', ambos('nariz_payaso', 'pelo_afro', 'gorro_fiesta'), 'Nariz roja, pelo loco y gorrito'),
   disfraz('medicos', 'Doctores', ambos('bata_medico', 'gafas_redondas'), 'Bata con fonendoscopio y gafas'),
   disfraz('hawaianos', 'Vacaciones en la playa', ambos('camisa_hawaiana', 'bermuda_caqui', 'sandalias_cafe', 'gafas_sol'), 'Camisa de flores, bermuda y sandalias'),
+  // --- Dorados (diez veces más detalle) ---
+  disfraz('stitch_angel', 'Stitch y Angel', {
+    el: ['enterizo_stitch', 'capucha_stitch', 'pantuflas_stitch', 'cola_stitch'],
+    ella: ['enterizo_angel', 'capucha_angel', 'pantuflas_angel', 'cola_angel'],
+  }, 'Enterizos de peluche con panza, manchas y púas, capuchas con orejotas, ojazos y la antena de Angel, garritas y pantuflas con deditos', 'dorado'),
+  disfraz('silleteros', 'Silleteros de la Feria de las Flores', {
+    el: ['sombrero_aguadeno', 'ruana_paisa', 'silleta_flores', 'alpargatas'],
+    ella: ['sombrero_flores', 'vestido_chapolera', 'silleta_corazon', 'alpargatas_rojas'],
+  }, 'Sombrero aguadeño, ruana con carriel y silletas de madera llenas de flores a la espalda', 'dorado'),
+  disfraz('dragones', 'Dragones', {
+    el: ['enterizo_dragon', 'capucha_dragon', 'alas_dragon', 'cola_dragon', 'pantuflas_dragon'],
+    ella: ['enterizo_dragona', 'capucha_dragona', 'alas_dragona', 'cola_dragona', 'pantuflas_dragona'],
+  }, 'Escamas, cuernos, alas con membrana, cola con púas y garras', 'dorado'),
+  // --- Morados (cinco veces) ---
+  disfraz('pandas_bambu', 'Pandas con bambú', ambos('enterizo_panda', 'capucha_panda_bambu', 'mochila_bambu', 'pantuflas_panda_garra'),
+    'Panda de verdad: brazos y piernas negros, manchas en los ojos, mochila de bambú', 'morado'),
+  disfraz('perrito_pulga', 'El perrito y la pulguita', {
+    el: ['enterizo_perrito', 'capucha_perrito', 'cola_perrito', 'pantuflas_perrito'],
+    ella: ['enterizo_pulga', 'capucha_pulga', 'patitas_pulga', 'pantuflas_pulga'],
+  }, 'Él de perrito con collar y placa; Ella de pulguita con antenas, ojazos y patitas de más', 'morado'),
+  disfraz('sirena_triton', 'Sirena y tritón', {
+    el: ['corona_triton', 'chaleco_escamas', 'pantalon_escamas', 'tridente'],
+    ella: ['corona_conchas', 'top_conchas', 'cola_sirena'],
+  }, 'Cola de escamas con aleta, conchas, collar de perlas, coronas y tridente dorado', 'morado'),
+  disfraz('zorritos', 'Zorritos del bosque', ambos('enterizo_zorro', 'capucha_zorro', 'cola_zorro_esponjosa', 'pantuflas_zorro'),
+    'Pecho blanco, orejas de punta, cola esponjosa y coronita de hojas', 'morado'),
+  disfraz('arepa_chocolate', 'Arepa y chocolatico', { el: ['traje_arepa', 'gorro_mantequilla'], ella: ['traje_chocolate', 'gorro_espuma'] },
+    'Él de arepa con queso derretido; Ella de taza de chocolate con espuma y malvaviscos', 'morado'),
+  disfraz('ratoncitos', 'Ratoncitos de Transformice', ambos('enterizo_raton', 'capucha_raton', 'cola_raton', 'queso_espalda'),
+    'Como cuando se conocieron: orejotas, bigotes, colita y un queso a la espalda', 'morado'),
+  // --- Azules (el triple) ---
+  disfraz('lilo_stitch', 'Lilo y Stitch', { el: ['diadema_stitch', 'camiseta_stitch', 'bermuda_caqui', 'sandalias_cafe'], ella: ['vestido_lilo', 'flor_pelo_roja', 'sandalias_cafe'] },
+    'Él con orejas de Stitch y su camiseta; Ella con el vestido rojo de hojas y collar de flores', 'azul'),
+  disfraz('ranitas', 'Ranitas', ambos('enterizo_rana', 'capucha_rana', 'pantuflas_rana'), 'Ojos saltones, panza con pintas y patas de rana', 'azul'),
+  disfraz('vaquitas', 'Vaquitas', ambos('enterizo_vaca', 'capucha_vaca', 'cola_vaca'), 'Manchas, cachitos, orejas y campanita', 'azul'),
+  disfraz('pollitos', 'Pollitos', ambos('enterizo_pollito', 'capucha_cascaron', 'pantuflas_pollito'), 'Plumitas amarillas, cascarón en la cabeza y patas', 'azul'),
+  // --- Verdes (el doble) ---
+  disfraz('tigres', 'Tigres', ambos('enterizo_tigre', 'capucha_tigre', 'cola_tigre'), 'Rayas, orejas y cola a rayas', 'verde'),
+  disfraz('ovejitas', 'Ovejitas', ambos('enterizo_oveja', 'capucha_oveja'), 'Lanita esponjosa y orejitas', 'verde'),
+  disfraz('leoncitos', 'Leoncitos', ambos('enterizo_leon', 'capucha_leon', 'cola_leon'), 'Melena, orejas y cola con borla', 'verde'),
 ];
 
 /** Lo que le cae pesado a cada uno: a Ella la leche, a Él el picante (el retrete sale volando). */
@@ -231,12 +289,22 @@ export const CATALOGO: Item[] = [
 export const ITEM: Record<string, Item> = Object.fromEntries(CATALOGO.map((i) => [i.id, i]));
 
 // Un disfraz solo trae piezas que existen para quien las lleva; su precio es el de las piezas con descuento
+// (los nuevos solo salen cuando ya están todas sus piezas: uno a medio hacer no se vende)
+const incompletos = new Set<string>();
 for (const d of DISFRACES) {
-  for (const r of ['el', 'ella'] as Rol[]) d.piezas![r] = (d.piezas![r] ?? []).filter((id) => ITEM[id]?.para?.includes(r));
+  for (const r of ['el', 'ella'] as Rol[]) {
+    const todas = d.piezas![r] ?? [];
+    d.piezas![r] = todas.filter((id) => ITEM[id]?.para?.includes(r));
+    if (d.rareza !== 'blanco' && d.piezas![r]!.length < todas.length) incompletos.add(d.id);
+  }
   const ids = new Set([...(d.piezas!.el ?? []), ...(d.piezas!.ella ?? [])]);
-  d.precio = Math.max(20, Math.round(([...ids].reduce((t, id) => t + (ITEM[id]?.precio ?? 0), 0) * 0.75) / 5) * 5);
+  const r = RAREZA[d.rareza ?? 'blanco'];
+  d.precio = Math.max(r.minimo, Math.round(([...ids].reduce((t, id) => t + (ITEM[id]?.precio ?? 0), 0) * 0.75 * r.factor) / 5) * 5);
 }
-export const DISFRACES_LISTA = DISFRACES.filter((d) => (d.piezas!.el?.length ?? 0) + (d.piezas!.ella?.length ?? 0) > 0);
+/** Los disfraces que ya tienen sus piezas, de los más elaborados a los de siempre. */
+export const DISFRACES_LISTA = DISFRACES.filter((d) => !incompletos.has(d.id) && (d.piezas!.el?.length ?? 0) + (d.piezas!.ella?.length ?? 0) > 0).sort(
+  (a, b) => RAREZAS.indexOf(a.rareza ?? 'blanco') - RAREZAS.indexOf(b.rareza ?? 'blanco'),
+);
 /** ¿Le queda a este personaje? (los tintes y los disfraces les sirven a los dos) */
 export const lePasa = (it: Item, r: Rol) => !it.para || it.para.includes(r);
 

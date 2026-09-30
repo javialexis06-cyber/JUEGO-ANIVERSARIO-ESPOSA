@@ -315,10 +315,21 @@ hoja del personaje), donde se pone y se quita cuando quieran. La ropa se compra 
 - Cada modelo trae varias versiones de color (camiseta blanca, roja, amarilla…).
 - **Tintes de pelo** (20 monedas, sirven para los dos): castaño, rubio, pelirrojo, rosado, lila, azul, menta,
   plateado… Se elige el color en la pestaña Peinado del clóset.
-- **Disfraces de pareja**: gatitos, conejitos, ositos, pandas, dinos, unicornios, súper héroes, piratas, brujos,
-  angelito y diablito, abejitas, chefs, novios, rey y reina, vaqueros, hinchas de la selección, Navidad,
-  astronautas, payasitos, doctores y hawaianos. Traen todas las piezas para los dos con 25 % de descuento y se
-  ponen de una vez desde el clóset.
+- **Disfraces de pareja** por **rareza** (tarjetas con borde de color; las doradas brillan). Traen todas las
+  piezas para los dos y se ponen de una vez desde el clóset. Las piezas de los disfraces nuevos solo vienen con su
+  disfraz (no se venden sueltas). Precio: las piezas × 0,75 × el factor de la rareza, con un mínimo.
+
+| Rareza | Detalle | Precio | Disfraces |
+|---|---|---|---|
+| Blanco · común | el de siempre | ×1 | gatitos, conejitos, ositos, pandas, dinos, unicornios, héroes, piratas, brujos, angelito y diablito, abejitas, chefs, novios, reyes, vaqueros, hinchas, Navidad, astronautas, payasitos, doctores, hawaianos |
+| Verde · especial | el doble | ×1,5 (mín. 180) | tigres (rayas), ovejitas (lana en motas), leoncitos (melena) |
+| Azul · raro | el triple | ×2 (mín. 300) | Lilo y Stitch (orejas y camiseta de Stitch; vestido rojo de hojas con collar de flores), ranitas (ojos saltones, pintas, patas con ventosas), vaquitas (manchas, cachos, campanita), pollitos (plumitas, alitas, cascarón en la cabeza) |
+| Morado · épico | cinco veces | ×3 (mín. 520) | pandas con bambú (brazos y piernas negros, manchas de los ojos, atado de bambú), el perrito y la pulguita (collar con placa de huesito, orejas caídas, lengüita · caparazón por segmentos, ojos compuestos, antenas y patitas de más), sirena y tritón (cola de escamas con aleta, conchas y perlas · corona, camisa y pantalón de escamas, tridente), zorritos (pechera, coronita de hojas y bellotas, cola esponjosa), arepa y chocolatico (arepa con parrilla y queso derretido, gorro de mantequilla · taza con flores, espuma, queso y canela), ratoncitos de Transformice (orejotas, bigotes, dientes, queso a la espalda) |
+| Dorado · legendario | diez veces | ×5 (mín. 900) | **Stitch y Angel** (enterizos con panza, manchas y púas, capuchas con orejotas, ojazos, pestañas y antena, garras, pantuflas con deditos), **silleteros de la Feria de las Flores** (sombrero aguadeño tejido, ruana al hombro, pañuelo, carriel con flecos · sombrero de flores con cintas, vestido de chapolera; silletas de madera cargadas de flores: la redonda con girasol y la del corazón), **dragones** (placas, escamas, cresta, cuernos, ojos de reptil, colmillos, alas con membrana, cola con flecha, garras) |
+
+- Las piezas elaboradas juntan en una sola malla lo que comparte material y hueso (flores, escamas, pelitos): así
+  un disfraz de cientos de piezas no hace cientos de llamadas de dibujo en el celular. Código:
+  `personajes/blender/ropa_disfraces.py` (vista previa: `vista_disfraz.py`).
 - Lo puesto se guarda en el estado de cada personaje (`ropa` y `colorPelo`) y la pareja lo ve en línea.
 
 ## Recuerdos y fechas

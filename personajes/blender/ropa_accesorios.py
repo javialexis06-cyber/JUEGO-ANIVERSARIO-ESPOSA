@@ -497,11 +497,16 @@ def capucha(ctx, m, margen=0.07):
             E[i, j] = e
             loc, _ = sup.radial(hc, sph(a, e))
             R[i, j] = np.linalg.norm(loc - hc) if loc is not None else 0.6
+    crudo = R.copy()
     for _ in range(2):
         R = np.maximum(R, np.maximum(np.roll(R, 1, 1), np.roll(R, -1, 1)))
     for _ in range(6):
         R = 0.5 * R + 0.25 * (np.roll(R, 1, 1) + np.roll(R, -1, 1))
         R[1:-1] = 0.5 * R[1:-1] + 0.25 * (R[:-2] + R[2:])
+    # El suavizado bajaba los picos: los mechones de la coronilla de Él se salían por la capucha (puntos negros)
+    vecinos = np.maximum(crudo, np.maximum(np.roll(crudo, 1, 1), np.roll(crudo, -1, 1)))
+    vecinos[1:-1] = np.maximum(vecinos[1:-1], np.maximum(vecinos[:-2], vecinos[2:]))
+    R = np.maximum(R, vecinos + 0.015)
     for i in range(n_el):
         for j, a in enumerate(azs):
             verts.append(hc + np.array(sph(a, E[i, j])) * (R[i, j] + margen))
