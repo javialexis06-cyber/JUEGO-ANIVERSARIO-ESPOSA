@@ -95,10 +95,16 @@ async function iniciar() {
   conectarBotones();
   abrirMenu();
   let antes = performance.now();
+  let acumulado = 0;
   const bucle = (ahora: number) => {
-    const dt = Math.min((ahora - antes) / 1000, 0.1);
+    acumulado += Math.min((ahora - antes) / 1000, 0.1);
     antes = ahora;
     requestAnimationFrame(bucle);
+    // 30 cuadros por segundo: se ve igual de bonito y el celular no se calienta (el doble de cuadros era el doble
+    // de trabajo para la tarjeta gráfica con las sombras y el suavizado)
+    if (!BOT && acumulado < 1 / 32) return;
+    const dt = Math.min(acumulado, 0.1);
+    acumulado = 0;
     try {
       paso(dt);
     } catch (e) {
@@ -551,6 +557,11 @@ function piloto(j: Juego) {
 
 function pilotoDe(j: Juego, jug: Jugador, cuidaCaja: boolean) {
   if (jug.atontado) return;
+  // ?bot=caja: el que se queda en la caja todo el día sin reponer ni limpiar (no debería poder pasar los días)
+  if (params.get('bot') === 'caja') {
+    if (!jug.estaCobrando && !jug.tiene({ tipo: 'caja' }) && j.fila.length) jug.agregar({ tipo: 'caja' });
+    return;
+  }
   const guardia = j.ayudantes.some((a) => a.tipo === 'guardia');
   if (!guardia) for (const o of j.perseguibles()) if (o.visible && !o.reservado) jug.agregar({ tipo: 'atrapar', objetivo: o });
   const repone = j.ayudantes.filter((a) => a.vitrina).map((a) => a.vitrina);
@@ -574,14 +585,8 @@ function pilotoDe(j: Juego, jug: Jugador, cuidaCaja: boolean) {
   // Mientras cobra, solo sale a reponer si alguien está esperando un producto que se acabó
   const puedeReponer = !jug.estaCobrando || alguienEspera || !j.fila.length;
   if (!reponiendo && puedeReponer && (bajas.length >= 2 || vacias.length || (bajas.length && !jug.fila.length))) {
-    // Las que alcancen con un carrito lleno (al menos una)
-    let cabe = jug.capacidadCarrito;
-    for (const v of bajas) {
-      const falta = v.capacidad - v.stock;
-      if (cabe <= 0 || (falta > cabe && cabe < jug.capacidadCarrito)) break;
-      jug.agregar({ tipo: 'reponer', vitrina: v });
-      cabe -= falta;
-    }
+    // Las que alcancen con un carrito lleno (cada reposición deja lleno un estante)
+    for (const v of bajas.slice(0, jug.capacidadCarrito)) jug.agregar({ tipo: 'reponer', vitrina: v });
     return;
   }
   if (jug.fila.length) return;

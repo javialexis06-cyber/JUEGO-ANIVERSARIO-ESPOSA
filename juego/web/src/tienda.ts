@@ -163,7 +163,8 @@ export class Vitrina {
     return this.capacidad ? this.stock / this.capacidad : 0;
   }
 
-  async montar(nivel: number, productos: Productos) {
+  /** `botonComprar`: el botón verde de «por comprar» sale solo fuera del día (en el menú y las mejoras). */
+  async montar(nivel: number, productos: Productos, botonComprar = true) {
     this.grupo.clear();
     this.nivel = nivel;
     this.marcas = [];
@@ -179,10 +180,12 @@ export class Vitrina {
       const t = tapete('#FFFFFF', hx + 0.12, hy + 0.12, 0.3, '#B59C8C');
       t.position.set(cx, 0.008, -cy);
       base.add(t);
-      const boton = copia(await cargar('boton_comprar.glb'));
-      boton.position.set(cx, 0, -cy);
-      boton.rotation.y = GIRO_LETRERO - pos.rot;
-      base.add(boton);
+      if (botonComprar) {
+        const boton = copia(await cargar('boton_comprar.glb'));
+        boton.position.set(cx, 0, -cy);
+        boton.rotation.y = GIRO_LETRERO - pos.rot;
+        base.add(boton);
+      }
       this.capacidad = 0;
       this.stock = 0;
     } else {
@@ -374,7 +377,7 @@ export class Tienda {
     }
   }
 
-  async montar(niveles: Record<number, number>, mejoras: Record<string, number> = {}) {
+  async montar(niveles: Record<number, number>, mejoras: Record<string, number> = {}, botonesComprar = true) {
     const base = await cargar(`tienda${this.dato.nivel}_base.glb`);
     const cascaron = copia(base);
     // Las cajas de la bodega vienen como marcas: se llenan con el producto
@@ -398,7 +401,7 @@ export class Tienda {
     }
     for (const s of sitios) {
       const v = new Vitrina(s);
-      await v.montar(niv[s.id] ?? 0, this.productos);
+      await v.montar(niv[s.id] ?? 0, this.productos, botonesComprar);
       this.vitrinas.push(v);
       this.grupo.add(v.grupo);
       if (s.seccion === 'caja') this.cajas.push(new Caja(v));

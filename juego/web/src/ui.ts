@@ -94,7 +94,7 @@ export class UI {
   }
 
   private clavesHerr: string[] = [];
-  /** Lo que lleva cada uno: el carrito (unidades para cualquier estante), el trapero, la bolsa de basura y las canastas. */
+  /** Lo que lleva cada uno: el carrito (reposiciones para cualquier estante), el trapero, la bolsa de basura y las canastas. */
   private pintarHerramientas(j: Juego) {
     const tiras = $('herramientas').children;
     const conTrapero = j.pareja || j.problemas.includes('derrames') || this.vioMugre;
@@ -107,7 +107,7 @@ export class UI {
       this.clavesHerr[i] = clave;
       const pct = (a: number, b: number) => Math.round((100 * a) / Math.max(1, b));
       const partes = [
-        `<span class="herr-item herr-carrito${p.cargandoBodega ? ' cargando' : ''}${p.carga === 0 ? ' vacio' : ''}" title="Carrito: se llena en la bodega y sirve para cualquier estante">`
+        `<span class="herr-item herr-carrito${p.cargandoBodega ? ' cargando' : ''}${p.carga === 0 ? ' vacio' : ''}" title="Carrito: se llena en la bodega; cada reposición deja lleno un estante">`
           + `<i class="ico" aria-hidden="true"></i><span class="medidor"><i style="width:${pct(p.carga, p.capacidadCarrito)}%"></i></span><b>${p.carga}/${p.capacidadCarrito}</b></span>`,
       ];
       if (conTrapero || p.trapero > 0)

@@ -13,11 +13,11 @@ export const PRECIO: Record<string, number> = { frutas: 5, lacteos: 6, abarrotes
 // ---------- Él, Ella y las mejoras que los aceleran ----------
 // (todo va más rápido que al principio: los días duran 1:30)
 export const VELOCIDAD_EL = [2.6, 2.95, 3.3, 3.7]; // m/s según «zapatos»
-/** Cargar el carrito en la bodega: base + un poquito por unidad, × «bodega». */
-export const CARGA_BODEGA = { base: 1.0, porUnidad: 0.07, mejora: [1, 0.72, 0.52, 0.36] }; // s
+/** Cargar el carrito en la bodega: base + un poquito por cada reposición que le cabe, × «bodega». */
+export const CARGA_BODEGA = { base: 1.0, porUnidad: 0.3, mejora: [1, 0.72, 0.52, 0.36] }; // s
 export const REPONER = { base: 1.4, mejora: [1, 0.72, 0.52, 0.36] }; // s por vitrina, × «alacena»
-/** Unidades que caben en el carrito según «carrito» (sirven para cualquier estante: se reparten hasta vaciarlo). */
-export const CARRITO_UNIDADES = [0, 8, 14, 20];
+/** Reposiciones que lleva el carrito según «carrito»: cada una deja lleno un estante (el que sea). */
+export const CARRITO_UNIDADES = [0, 2, 3, 5, 7];
 /** Manchas que limpia el trapero antes de tener que lavarlo, según «trapero» (0, 1, 2). */
 export const TRAPERO = [4, 6, 9];
 /** Segundos para lavar el trapero en el balde. */
@@ -78,6 +78,14 @@ export const PROBLEMAS = {
   famosoMirar: 3, // s que los demás se quedan mirando
 };
 export const CANASTAS_INICIO = 8;
+/** Con cuánto arranca cada estante (fracción de lo que le cabe): el camión acaba de llegar y hay que llenarlos.
+ *  Así no se gana el día quedándose en la caja: sin reponer se acaba todo y los clientes se van. */
+export function stockInicial(dia: number, evento: string | null, legendario: boolean) {
+  if (legendario) return 0.3;
+  if (dia <= 1) return 0.8;
+  if (evento === 'Hora pico' || evento === 'Gran día') return 0.3;
+  return dia <= 3 ? 0.55 : 0.4;
+}
 export const CANASTA_ABANDONO = { enojado: 0.3, normal: 0.05 };
 
 // ---------- Tiendita: puntos fijos ----------
@@ -115,7 +123,8 @@ export const MEJORAS: Mejora[] = [
   { id: 'zapatos', grupo: 'Él', nombre: 'Tenis nuevos', desde: 2, niveles: [
     { precio: 3, texto: 'Caminan 15 % más rápido' }, { precio: 6, texto: 'Caminan 30 % más rápido' }, { precio: 10, texto: 'Caminan 47 % más rápido' }] },
   { id: 'carrito', grupo: 'Él', nombre: 'Carrito grande', desde: 3, niveles: [
-    { precio: 5, texto: `Le caben ${CARRITO_UNIDADES[2]} unidades (ahora ${CARRITO_UNIDADES[1]})` }, { precio: 10, texto: `Le caben ${CARRITO_UNIDADES[3]} unidades` }] },
+    { precio: 4, texto: `Alcanza para ${CARRITO_UNIDADES[2]} estantes por viaje (ahora ${CARRITO_UNIDADES[1]})` },
+    { precio: 8, texto: `Alcanza para ${CARRITO_UNIDADES[3]} estantes por viaje` }, { precio: 14, texto: `Alcanza para ${CARRITO_UNIDADES[4]} estantes por viaje` }] },
   { id: 'trapero', grupo: 'Él', nombre: 'Trapero grande', desde: 8, niveles: [
     { precio: 3, texto: `Limpia ${TRAPERO[1]} manchas antes de lavarlo (ahora ${TRAPERO[0]})` }, { precio: 6, texto: `Limpia ${TRAPERO[2]} manchas antes de lavarlo` }] },
   { id: 'bodega', grupo: 'Bodega', nombre: 'Bodega ordenada', desde: 2, niveles: [

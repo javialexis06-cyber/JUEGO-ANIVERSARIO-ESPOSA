@@ -74,18 +74,20 @@ La paciencia sube un poco con la **decoración**: plantas, música, globos, letr
 - **Al pasar por encima** (sin detenerse) se recogen la basura, los productos caídos y las canastas tiradas, se atrapa al ladrón o a la niña y se toma el corazón escondido.
 - **Tocar sigue sirviendo:** tocar una vitrina, la caja, una mugre, una canasta, el ladrón o el balde manda al personaje solo (con un número en su fila de acciones; otro toque lo cancela). Al mover el joystick, la fila se borra: manda el joystick.
 
-### El carrito: unidades para cualquier estante
-1. En la **bodega** se llena el carrito hasta el tope con **unidades generales** (tarda 1 s + 0,07 s por unidad, menos con la «Bodega ordenada»).
-2. En cada estante se deja **lo que le falta**, hasta que el carrito quede vacío. El mismo carrito sirve para frutas, lácteos o bebidas: no importa cuál.
-3. Cuánto cabe depende del **Carrito grande**: **8** unidades (nivel 1), **14** (nivel 2) y **20** (nivel 3). Una vitrina de nivel 1 guarda 4 o 5 unidades, así que un carrito lleno alcanza para dos o tres estantes a medias.
+### El carrito: reposiciones para cualquier estante
+1. En la **bodega** se llena el carrito hasta el tope (tarda 1 s + 0,3 s por reposición, menos con la «Bodega ordenada»).
+2. Cada **reposición deja lleno un estante**, el que sea (frutas, lácteos o bebidas: no importa cuál).
+3. Cuántas caben depende del **Carrito grande**: **2** estantes por viaje (nivel 1), **3** (nivel 2), **5** (nivel 3) y **7** (nivel 4). Al principio hay que ir seguido a la bodega; con las mejoras se hacen viajes más largos.
 4. **Combo de reposición:** llenar 2 o más estantes con la misma carga da +2 monedas por cada estante después del primero.
-5. Los **productos caídos** (de la niña traviesa o de un estante tumbado) se suben al carrito y sirven para cualquier estante; si el carrito va lleno, se devuelven a mano a su estante.
-6. El HUD (arriba a la izquierda) muestra el carrito con su barrita y sus unidades (por ejemplo, 6/8). Con toques, si lo que queda no alcanza para llenar el estante tocado, primero pasa por la bodega.
+5. Los **productos caídos** (de la niña traviesa o de un estante tumbado) se suben al carrito como una reposición si cabe; si el carrito va lleno, se devuelven a mano a su estante.
+6. El HUD (arriba a la izquierda) muestra el carrito con su barrita y las reposiciones que le quedan (por ejemplo, 1/2). Con toques, si el carrito está vacío, primero pasa por la bodega.
+7. **Los estantes arrancan a medio llenar** («¡Llegó el camión!»): 80 % el primer día, 55 % los días 2 y 3, 40 % después y 30 % en la hora pico, el gran día y los días legendarios. Quedarse en la caja todo el día ya no alcanza: sin reponer se acaba todo y los clientes se van.
+8. Los botones verdes de los sitios «por comprar» solo salen en el menú y en las mejoras, no mientras se juega.
 
 ### Herramientas con capacidad (todas funcionan igual: se llenan y se vacían o recargan en su puesto)
 | Herramienta | Capacidad | Se llena con | Se vacía o recarga en |
 |---|---|---|---|
-| **Carrito** | 8 / 14 / 20 unidades (Carrito grande) | Nada: se gasta al reponer | La **bodega** (se recarga) |
+| **Carrito** | 2 / 3 / 5 / 7 estantes por viaje (Carrito grande) | Nada: se gasta al reponer | La **bodega** (se recarga) |
 | **Trapero** | 4 / 6 / 9 manchas (Trapero grande) | Charcos y mugre del piso | El **balde** (se lava en 1,3 s) |
 | **Bolsa de basura** | 4 basuras | Basura del piso | La **caneca** |
 | **Canastas en la mano** | 3 canastas | Canastas tiradas | El **puesto de la entrada** |

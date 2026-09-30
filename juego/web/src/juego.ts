@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { Ayudante, TipoAyudante } from './ayudantes';
 import {
-  AYUDAS, CANASTAS_INICIO, CHOQUE, CLIENTES, COMBO, PROBLEMAS, TipoCliente, UNIDADES_MAX,
+  AYUDAS, CANASTAS_INICIO, CHOQUE, CLIENTES, COMBO, PROBLEMAS, stockInicial, TipoCliente, UNIDADES_MAX,
 } from './balance';
 import { Cliente } from './cliente';
 import { Jugador, NuevaTarea, Rol } from './jugador';
@@ -187,8 +187,15 @@ export class Juego {
 
   async preparar() {
     this.tienda = new Tienda(this.tiendaDato, this.productos);
-    await this.tienda.montar(this.sitios, this.mejoras);
+    // Jugando no salen los botones verdes de «por comprar» (esos son para las mejoras entre días)
+    await this.tienda.montar(this.sitios, this.mejoras, false);
     this.filas = this.tienda.cajas.map(() => []);
+    // Los estantes arrancan a medio llenar (unos más vacíos que otros): hay que ir a la bodega desde el principio
+    const f = stockInicial(this.dia, this.nivel.evento, this.legendario);
+    this.tienda.enVenta.forEach((v, i) => {
+      const k = f * (0.7 + ((i * 0.37) % 0.6));
+      v.ponerStock(Math.max(1, Math.min(v.capacidad, Math.round(v.capacidad * k))));
+    });
     this.mundo.escena.add(this.tienda.grupo);
     this.mundo.encuadrar(this.tiendaDato.W, this.tiendaDato.D);
     const esc = this.tiendaDato.escala_personas;
@@ -228,6 +235,7 @@ export class Juego {
     }
     sonido.campana();
     if (this.nivel.noticia && !this.legendario) this.avisar(`Diario del Barrio: ${this.nivel.noticia.titular}`);
+    else if (this.dia > 1) this.avisar('¡Llegó el camión! Los estantes están a medio llenar');
   }
 
   /** Horario del día: clientes, eventos y problemas. */

@@ -87,9 +87,9 @@ export class Jugador extends Personaje {
   private get mejoras() {
     return this.juego.mejoras;
   }
-  /** Unidades que le caben al carrito. */
+  /** Reposiciones que le caben al carrito (cada una deja lleno un estante). */
   get capacidadCarrito() {
-    return CARRITO_UNIDADES[Math.max(1, Math.min(3, this.mejoras.carrito ?? 1))];
+    return CARRITO_UNIDADES[Math.max(1, Math.min(4, this.mejoras.carrito ?? 1))];
   }
   get espacioCarrito() {
     return Math.max(0, this.capacidadCarrito - this.carga);
@@ -244,15 +244,15 @@ export class Jugador extends Personaje {
     });
   }
 
-  /** Vacía en el estante lo que le falta (o lo que quede en el carrito). */
+  /** Deja el estante lleno y gasta una reposición del carrito. */
   private reponerEn(v: Vitrina, luego: () => void) {
     if (v.stock >= v.capacidad || !v.nivel || v.tumbada || this.carga <= 0) return luego();
     this.mirarA(v.centro());
     this.hacer(REPONER.base * REPONER.mejora[this.mejoras.alacena ?? 0], 'reponer', () => {
-      const puestas = v.tumbada ? 0 : Math.min(this.carga, v.capacidad - v.stock);
+      const puestas = v.tumbada || this.carga <= 0 ? 0 : v.capacidad - v.stock;
       if (puestas > 0) {
         v.ponerStock(v.stock + puestas);
-        this.carga -= puestas;
+        this.carga -= 1;
         this.actualizarCarrito();
         this.juego.alReponer(v, this);
         this.repuestasEnViaje++;
@@ -308,15 +308,12 @@ export class Jugador extends Personaje {
     } else luego();
   }
 
-  /** Sube al carrito los productos caídos que quepan. */
+  /** Sube al carrito los productos caídos (cuentan como una reposición, si cabe). */
   private subirCaidos(m: Mugre) {
-    const n = m.unidades ?? 1;
-    const k = Math.min(n, this.espacioCarrito);
-    if (k <= 0) return;
-    this.carga += k;
+    if (this.espacioCarrito <= 0) return;
+    this.carga += 1;
     this.actualizarCarrito();
-    if (k >= n) this.juego.quitarMugre(m);
-    else m.unidades = n - k;
+    this.juego.quitarMugre(m);
   }
 
   private irALavar(luego: () => void) {
@@ -378,8 +375,8 @@ export class Jugador extends Personaje {
       // Ya está llena (la llenó alguien más): nada que hacer
       if (falta <= 0 || !v.nivel || v.tumbada) return fin();
       const irAVitrina = () => this.ir(nav, v.frente(), () => this.reponerEn(v, fin));
-      // Si lo que lleva alcanza para dejarla llena (o el carrito va lleno) va directo; si no, pasa primero por la bodega
-      if (this.carga >= Math.min(falta, this.capacidadCarrito)) irAVitrina();
+      // Si le queda alguna reposición en el carrito va directo; si no, pasa primero por la bodega
+      if (this.carga >= 1) irAVitrina();
       else this.ir(nav, j.tienda.bodega, () => this.cargarEnBodega(irAVitrina));
     } else if (t.tipo === 'caja') {
       if (j.cajera || j.otroCobrando(this)) return fin();
