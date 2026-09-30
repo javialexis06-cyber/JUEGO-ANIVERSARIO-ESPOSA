@@ -1625,3 +1625,30 @@ button:focus-visible {
   color: #c23f60;
   font-weight: 800;
 }
+
+/* Pantallas de carga con escenitas de Él y Ella haciendo tonterías (src/carga.ts) */
+.pantalla-carga.con-escena {
+  gap: 6px;
+}
+.con-escena .logo .logo-linea {
+  font-size: clamp(24px, 7.5vh, 46px);
+}
+.con-escena .logo .logo-pareja {
+  display: none;
+}
+.carga-escena {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+}
+.carga-escena canvas {
+  width: min(620px, 94vw);
+  height: min(250px, 52vh);
+  display: block;
+}
+.carga-escena p {
+  margin: -2px 0 2px;
+  font: 700 13px var(--display);
+  color: var(--cacao-suave);
+  letter-spacing: 0.02em;
+}

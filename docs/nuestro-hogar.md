@@ -389,6 +389,16 @@ hoja del personaje), donde se pone y se quita cuando quieran. La ropa se compra 
   «Faltan N días» cuando falta un mes o menos. El día del aniversario llueven corazones.
 - Al volver a la app: «Mientras no estabas, Ella te dejó 2 besos y 1 regalo».
 
+## Pantallas de carga
+
+Mientras carga la casa, el súper o Cien Puertas, Él y Ella hacen tonterías en una escenita (sale una distinta
+cada vez y cambia a otra si la carga se demora): guerra de almohadas, se persiguen (y luego ella a él con la
+chancla), globo de agua, pastel en la cara, cosquillas, baile loco, ¡BU!, choque de manos fallido, confeti
+sorpresa, avioncito de papel con carta de amor, cojín pedorro, concurso de músculos, palomitas al aire, bolas
+de nieve, beso robado, burbujas, la última arepa (que se la roba el perrito) y la selfie. Son 18 en
+`src/carga.ts` (canvas 2D) con recortes de los dos sacados del modelo 3D a la misma escala y con los pies
+marcados (`scripts/generar-sprites-carga.mjs` → `public/carga/` y `src/carga_recortes.json`).
+
 ## Técnica
 
 - Personajes con esqueleto: una animación fija por pose (tienda + mascota) mezclada con pesos; las caras se arman

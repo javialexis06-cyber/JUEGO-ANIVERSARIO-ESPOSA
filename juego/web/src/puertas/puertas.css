@@ -524,3 +524,7 @@ body.puertas { background: #1d2340; }
 }
 .papelito.falsa { background: #fff3a8; }
 .papelito p { margin: 0; font: 600 20px/1.35 var(--display); color: var(--cacao); text-align: center; }
+
+.puertas .carga-escena p {
+  color: #eadcff;
+}
