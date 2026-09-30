@@ -34,7 +34,7 @@ import {
   NECESIDADES, NOMBRE_CUARTO, NOMBRE_NECESIDAD, NOMBRE_RANURA, nuevoId, otro, personajeNuevo, PRECIO_CUARTO, Ranura, RANURAS, Rol, Ropa,
   sumar, tieneCuarto,
 } from './modelo';
-import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, TROFEOS } from './trofeos';
+import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, salaTrofeos, TROFEOS } from './trofeos';
 import { ranurasDe } from './ropa';
 import {
   configLinea, guardarConfigLinea, olvidarSesion, PersonajeOcupado, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal,
@@ -1010,7 +1010,7 @@ const MUEBLES: Partial<Record<Cuarto, [RegExp, string][]>> = {
   cuarto: [[/^cama/, 'dormir'], [/^cl/, 'closet']],
   patio: [[/^(casita|platos|tina)/, 'perro'], [/^banca/, 'banca']],
   juegos: [[/^arcade/, 'jugar-super'], [/^la_puerta_100/, 'jugar-puertas'], [/^(mesa_de_juegos|puf)/, 'jugar-mesa'], [/^retrete_cohete/, 'retrete']],
-  trofeos: [[/^(pedestal|podio|vitrina)/, 'trofeos']],
+  trofeos: [[/^(pedestal|podio|vitrina|placa_titulo|cuadro_honor)/, 'trofeos']],
   cuna: [[/^cuna/, 'cuna'], [/^mecedora/, 'mecedora']],
   cuarto_el: [[/^(escritorio|silla_gamer)/, 'escritorio'], [/^sill/, 'sillon']],
   cuarto_ella: [[/^(tocador|taburete)/, 'tocador'], [/^(estudio|silla)/, 'estudiar'], [/^sill/, 'sillon']],
@@ -1026,7 +1026,7 @@ function sincronizarAmpliacion() {
   if (!s) return;
   const c = s.casa;
   casa3d.pintar(c.pintura ?? {});
-  casa3d.ponerTrofeos({ ...niveles(c), amor: nivelAmor(c) });
+  casa3d.ponerTrofeos(salaTrofeos(c));
   const clave = c.bebe ? `${c.bebe.nombre}|${c.bebe.desde}` : '';
   if (clave !== bebeVisto) {
     // La pidió el otro mientras esta app estaba abierta: también se ve llegar a la cigüeña

@@ -7,6 +7,8 @@ import { Navegacion, P } from '../navegacion';
 import { cargar, cargarJSON, copia, Productos } from '../recursos';
 import { ITEM, TipoSitio } from './catalogo';
 import { colorSeguro, Cuarto, Nota, Recuerdo } from './modelo';
+import { acomodarDato, acomodarModelo, AdornosSala } from './sala_trofeos';
+import type { SalaTrofeos } from './trofeos';
 
 export interface Punto {
   x: number;
@@ -86,8 +88,10 @@ export class Casa3D {
   private cargas = new Map<Cuarto, Promise<void>>();
   /** Color de las paredes de los cuartos propios. */
   private pintura: Partial<Record<Cuarto, string>> = {};
-  private nivelesTrofeo: Record<string, number> | null = null;
+  private salaTrofeos: SalaTrofeos | null = null;
   private trofeos = new Map<string, { nivel: number; obj: THREE.Object3D }>();
+  /** Las placas con los títulos, el cuadro de honor y la vitrina de la sala de trofeos. */
+  private adornos: AdornosSala | null = null;
   private colaTrofeos: Promise<void> = Promise.resolve();
   private hayBebe = false;
   /** La cigüeña la trae en el pañuelo: todavía no está en la cuna. */
@@ -107,6 +111,7 @@ export class Casa3D {
   /** Carga la casa con los cuartos de siempre; los de la ampliación se cargan con `asegurar` cuando se construyen. */
   static async cargar(mundo: Mundo, productos: Productos, progreso?: (k: number) => void, iniciales: Cuarto[] = INICIALES): Promise<Casa3D> {
     const dato = await cargarJSON<CasaDato>('casa.json');
+    acomodarDato(dato);
     const c = new Casa3D(mundo, dato, productos);
     const claves = Object.keys(dato.cuartos) as Cuarto[];
     for (const k of claves) {
@@ -144,6 +149,11 @@ export class Casa3D {
             if (pr) o.add(pr);
           }
         });
+        if (k === 'trofeos') {
+          acomodarModelo(base);
+          // Dentro del modelo: así tocarlos es tocar un mueble (abre la hoja de trofeos)
+          this.adornos = new AdornosSala(base.getObjectByName('casa_trofeos') ?? base);
+        }
         this.cuartos.get(k)!.add(base);
         this.bases.set(k, base);
         this.navs.delete(k);
@@ -416,9 +426,10 @@ export class Casa3D {
     this.mundo.sucio = true;
   }
 
-  /** Los trofeos de la sala de trofeos (0 = sin ganar: se ve la silueta; 1 bronce, 2 plata, 3 oro). */
-  ponerTrofeos(n: Record<string, number>) {
-    this.nivelesTrofeo = { ...n };
+  /** Los trofeos de la sala de trofeos (0 = sin ganar: se ve la silueta; 1 bronce, 2 plata, 3 oro), con los títulos
+   *  de las placas, el cuadro de honor y los trofeos chiquitos de cada uno en la vitrina. */
+  ponerTrofeos(sala: SalaTrofeos) {
+    this.salaTrofeos = sala;
     if (this.bases.has('trofeos')) this.aplicarTrofeos();
   }
 
@@ -426,11 +437,11 @@ export class Casa3D {
     this.colaTrofeos = this.colaTrofeos
       .then(async () => {
         const marcas = this.dato.cuartos.trofeos?.marcas;
-        const n = this.nivelesTrofeo;
-        if (!marcas || !n) return;
+        const sala = this.salaTrofeos;
+        if (!marcas || !sala) return;
         const modelo = await cargar('reaccion_trofeo.glb');
         for (const [id, m] of Object.entries(marcas)) {
-          const nv = n[id] ?? 0;
+          const nv = sala.niveles[id as keyof SalaTrofeos['niveles']] ?? 0;
           const ya = this.trofeos.get(id);
           if (ya?.nivel === nv) continue;
           ya?.obj.removeFromParent();
@@ -444,6 +455,11 @@ export class Casa3D {
           this.cuartos.get('trofeos')!.add(t);
           this.trofeos.set(id, { nivel: nv, obj: t });
         }
+        this.adornos?.actualizar(sala, (nv) => {
+          const t = copia(modelo);
+          tenirTrofeo(t, nv);
+          return t;
+        });
         this.mundo.sucio = true;
       })
       .catch((e) => console.error(e));

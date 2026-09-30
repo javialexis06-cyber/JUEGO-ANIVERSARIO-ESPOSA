@@ -1,7 +1,7 @@
 // Ampliar la casa: el plano con los cuartos construidos y por construir, los trofeos de los minijuegos, la pintura
 // del cuarto propio y el pedido a la cigüeña. Aquí solo se arma lo que se ve; las acciones las hace main.ts.
 import { Casa, Cuarto, DUENO, NOMBRE_CUARTO, PRECIO_CUARTO, Rol, tieneCuarto } from './modelo';
-import { METAL, nivel, nivelAmor, TROFEOS, valor, valorDe } from './trofeos';
+import { cuenta, METAL, nivel, nivelAmor, nivelDe, titulo, TITULOS_AMOR, tituloDe, TROFEOS, valor, valorDe } from './trofeos';
 import { caraClase, esc, nombre } from './ui_casa';
 
 /** El plano: la casa vista desde arriba, tres pisos de a tres cuartos. */
@@ -46,41 +46,48 @@ export function htmlPlano(c: Casa, vista: Cuarto, donde: Record<Rol, Cuarto>) {
 }
 
 export function htmlTrofeos(c: Casa) {
-  const fila = (titulo: string, nv: number, detalle: string, barra: number, sub: string) => `
+  const fila = (titulo: string, nv: number, detalle: string, barra: number, sub: string, extra = '') => `
     <li class="trofeo metal-${nv}">
       <span class="trofeo-copa" aria-hidden="true">🏆</span>
       <div>
         <h3>${titulo} <em>${METAL[nv]}</em></h3>
         <p>${detalle}</p>
         <div class="trofeo-barra"><i style="width:${Math.round(Math.min(1, barra) * 100)}%"></i></div>
+        ${extra}
         <small>${sub}</small>
       </div>
     </li>`;
+  // El título de cada uno en ese juego, con su medallita
+  const cada = (id: (typeof TROFEOS)[number]['id']) =>
+    `<ul class="trofeo-cada">${(['el', 'ella'] as Rol[])
+      .map((r) => `<li class="metal-${nivelDe(c, id, r)}"><span>${nombre(r)}</span><b>${esc(tituloDe(c, id, r))}</b><small>${cuenta(id, valorDe(c, id, r))}</small></li>`)
+      .join('')}</ul>`;
   const lista = TROFEOS.map((t) => {
     const nv = nivel(c, t.id);
     const v = valor(c, t.id);
     const meta: number | undefined = (t.metas as number[])[nv];
     const antes = nv ? t.metas[nv - 1] : 0;
-    const cada = `${nombre('el')}: ${valorDe(c, t.id, 'el')} · ${nombre('ella')}: ${valorDe(c, t.id, 'ella')}`;
+    const falta = t.id === 'cocina' ? `Rango ${v} de ${meta}` : `${v} de ${meta} ${t.unidad}`;
     return fila(
-      t.nombre,
+      `${t.nombre} · <span class="trofeo-titulo">${esc(titulo(c, t.id))}</span>`,
       nv,
-      meta !== undefined ? `${v} de ${meta} ${t.unidad} para ${METAL[nv + 1].toLowerCase()}` : `¡Oro! ${v} ${t.unidad}`,
+      meta !== undefined ? `${falta} para ${METAL[nv + 1].toLowerCase()}` : `¡Oro! ${cuenta(t.id, v)}`,
       meta !== undefined ? (v - antes) / (meta - antes) : 1,
-      `Cuenta lo mejor de los dos. ${cada}`,
+      'El trofeo cuenta lo mejor de los dos; los títulos son de cada uno.',
+      cada(t.id),
     );
   }).join('');
   const amor = nivelAmor(c);
   const copa = fila(
-    'Copa del amor',
+    `Copa del amor · <span class="trofeo-titulo">${TITULOS_AMOR[amor]}</span>`,
     amor,
     amor === 3 ? '¡De oro! Los mejores en todo.' : 'Es del metal del trofeo más bajito: brillen en todos los juegos.',
-    TROFEOS.reduce((a, t) => a + nivel(c, t.id), 0) / 12,
+    TROFEOS.reduce((a, t) => a + nivel(c, t.id), 0) / (TROFEOS.length * 3),
     'La del podio del centro.',
   );
   const sala = tieneCuarto(c, 'trofeos')
     ? '<button class="boton boton-menta" data-ir-cuarto="trofeos">Ir a la sala de trofeos</button>'
-    : `<p class="nota-hoja">Construyan la sala de trofeos para verlos brillar en sus pedestales.</p>
+    : `<p class="nota-hoja">Construyan la sala de trofeos para verlos brillar en sus pedestales, con sus títulos en la pared.</p>
        <button class="boton boton-tomate" data-construir="trofeos">Construir la sala · <i class="moneda" aria-hidden="true"></i>${PRECIO_CUARTO.trofeos}</button>`;
   return `<ul class="trofeos-lista">${lista}${copa}</ul><div class="fila-botones">${sala}</div>`;
 }

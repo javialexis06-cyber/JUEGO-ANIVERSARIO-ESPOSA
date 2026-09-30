@@ -49,7 +49,7 @@ const USOS: Record<string, { pasos: Paso[]; efecto?: Efecto['tipo']; mecer?: boo
   banca: { pasos: [{ pose: 'sentado_feliz', dur: 99, cara: 'feliz' }] },
 };
 // Los trofeos: aplaude frente al pedestal
-for (const t of ['super', 'puertas', 'mesa', 'retrete', 'amor']) {
+for (const t of ['super', 'puertas', 'mesa', 'retrete', 'lavado', 'cocina', 'amor']) {
   USOS[`ver_${t}`] = { pasos: [{ pose: 'aplauso_a', pose2: 'aplauso_b', ritmo: 4, dur: 3, cara: 'feliz' }, { pose: 'presumir_a', pose2: 'presumir_b', ritmo: 1, dur: 99, cara: 'feliz' }], efecto: 'brillos' };
 }
 const rad = THREE.MathUtils.degToRad;

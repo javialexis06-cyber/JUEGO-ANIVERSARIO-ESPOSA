@@ -56,7 +56,7 @@ con `CASA_SOLO=juegos,trofeos,cuna,cuarto_el,cuarto_ella,bebe,ciguena python3 ex
 | Cuarto | Precio | Qué tiene y qué se hace |
 |---|---|---|
 | Juegos | gratis (viene con la casa) | Los **minijuegos ya no están en el menú**: arcade de Súper Manía (con la pantalla prendida), la **puerta 100** morada de Cien Puertas y la mesa con el parchís servido (dos pufs). El personaje camina al arcade, a la puerta o se sienta en el puf, y de ahí se entra al juego. También un retrete espacial en miniatura de adorno (se sientan en él). Los minijuegos **secretos** (retrete espacial, lavarse la cara) no están aquí: salen solos con lo que les pasa |
-| Trofeos | 50 | Cuatro pedestales de mármol con los trofeos de cada minijuego, vitrina de medallas, alfombra roja y el podio de la **copa del amor**. «Admirar»: aplaude frente al mejor trofeo |
+| Trofeos | 50 | Seis pedestales de mármol con los trofeos de cada minijuego y su **placa con el título** encima, el **cuadro de honor** con el título de cada uno en cada juego, la vitrina con los trofeos chiquitos de cada uno, alfombra roja y el podio de la **copa del amor**. «Admirar»: aplaude frente al mejor trofeo |
 | Bebé | 150 | Cuna de barrotes con móvil de estrellas, mecedora, cómoda con cambiador y juguetes. **Pedir a la cigüeña**: se escoge el nombre (Katherine, como dice Él, o Lexy Katherine, como dice Ella, u otro) y la cigüeña entra volando por la ventana con la bebé en un pañuelo y la deja en la cuna (`casa.bebe`). Luego: arrullarla (la cuna se mece, suena una nanita), la mecedora (se mece de verdad) y tocarla (se ríe) |
 | Cuarto de Él | 80 | Escritorio con computador (la pantalla escribe código), silla gamer, sillón, repisa y balón |
 | Cuarto de Ella | 80 | Tocador con espejo de bombillitos y taburete, escritorio de estudio (libros de psicología y un cerebrito rosado), sillón y repisa |
@@ -75,10 +75,32 @@ Cada minijuego da bronce, plata y oro con lo mejor de los dos (`src/casa/trofeos
 | Cien Puertas | 10 | 50 | 100 puertas | `cien-puertas` |
 | Juegos de mesa | 1 | 10 | 30 partidas ganadas | `nuestro-hogar-victorias` (lo cuenta `mesa.html`) |
 | Retrete espacial | 15 | 45 | 90 segundos | `casa.retrete` |
+| Lavarse la cara | 80 | 300 | 700 gérmenes en una lavada | `casa.lavado` |
+| Cocina de chef | rango 3 | rango 6 | rango 9 (el mejor de los tres restaurantes) | `casa.cocina` |
 
 Al abrir la app, lo de cada celular sube a la casa (`casa.logros`, se guarda el máximo). Cada metal nuevo paga una
 vez 5, 10 o 20 monedas; la **copa del amor** es del metal del trofeo más bajito (paga el triple). En la sala se ven
 en sus pedestales dando vueltas despacito (sin ganar: una silueta clarita).
+
+**Títulos.** Cada uno tiene un título en cada juego según su metal (el de la pareja es el de lo mejor de los dos);
+el de la cocina es su rango de chef y la copa del amor da el de la pareja:
+
+| Juego | Sin ganar | Bronce | Plata | Oro |
+|---|---|---|---|---|
+| Súper Manía | En práctica | Estrella de la caja | Gerente del barrio | Leyenda del súper |
+| Cien Puertas | Curiosidad pura | Alma exploradora | Mente cerrajera | Leyenda de las 100 puertas |
+| Juegos de mesa | Aprendiz de la mesa | Rival de cuidado | Mente estratega | Leyenda de la mesa |
+| Retrete espacial | Astronauta en pañales | Piloto del retrete | Comandante espacial | Leyenda galáctica |
+| Lavarse la cara | Carita sucia | Carita limpia | Terror de los gérmenes | Piel de porcelana |
+| Cocina de chef | Aprendiz… | (el rango: Cocinero de casa, Chef de la cuadra…) | | Leyenda de la cocina |
+| Copa del amor | Pareja en práctica | Pareja que brilla | Pareja de campeones | Pareja legendaria |
+
+Quien todavía no ha jugado sale «Sin estrenar». La sala (`src/casa/sala_trofeos.ts`) corre los cuatro pedestales
+del modelo y copia dos más (burbujas para lavarse la cara, gorro de chef para la cocina); encima de cada uno va una
+placa con el nombre del juego, el título de la pareja y sus medallas; en la pared de la izquierda, el **cuadro de
+honor** con el título y el récord de Ella y de Él en cada juego; y en la vitrina, los trofeos chiquitos que cada uno
+se ha ganado (arriba los de Ella, abajo los de Él). Los dos cuadros que se pueden poner pasaron a la pared de la
+izquierda. Tocar el cuadro, una placa o la vitrina abre la hoja de trofeos, donde se lee todo en grande.
 
 ## El patio y el perrito (estilo Pou / Talking Tom)
 

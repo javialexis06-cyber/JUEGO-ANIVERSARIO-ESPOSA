@@ -75,7 +75,10 @@ await foto(el, '04-tienda');
 await clic(el, '[data-p="regalo"]');
 await clic(el, '[data-comprar="flores"]');
 await clic(el, '[data-p="deco"]');
+// La decoración abre en los conceptos: las piezas sueltas están por sitio
+await clic(el, '[data-filtro-deco="cuadro"]');
 await clic(el, '[data-comprar="cuadro_corazon"]');
+await clic(el, '[data-filtro-deco="mesa"]');
 await clic(el, '[data-comprar="florero"]');
 await clic(el, '#hoja-cerrar');
 console.log('después de comprar', JSON.stringify((await estado(el)).inventario), (await estado(el)).monedas);
