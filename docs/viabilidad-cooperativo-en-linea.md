@@ -55,7 +55,12 @@ Si más adelante se necesita más control, se migra a Nakama sin cambiar la lóg
 - **Los dos deben estar en línea al tiempo**: se puede ofrecer también un modo de un jugador que controla a Él y a Ella a la vez, para jugar sola o solo.
 
 ## Plan por fases
-1. **Prototipo de un jugador** (Godot o web): mecánicas completas del día con Él y Ella.
-2. **Cooperativo en la misma red wifi**: validar la sincronización del anfitrión.
-3. **Cooperativo por internet**: relevo con Supabase y reconexión.
+1. ✅ **Prototipo de un jugador** (Godot o web): mecánicas completas del día con Él y Ella.
+2. ✅ **Sincronización del anfitrión** (probada con dos pestañas por `BroadcastChannel`, `super.html?linea=local&rol=el|ella`).
+3. ✅ **Cooperativo por internet**: relevo con Supabase y reconexión.
 4. **APK y prueba real** entre Medellín y Bucaramanga: medir latencia y ajustar la frecuencia de envío.
+
+**Estado (Súper Manía):** el cooperativo en línea ya está en el juego con el anfitrión que simula y manda una foto
+cada 100 ms, el invitado como espejo con su personaje predicho al instante, invitación por el canal o por la casa,
+pausa compartida y pausa automática si se corta la conexión. Detalles en `mecanicas.md` → «Pareja en línea». Falta
+la fase 4: probarlo entre Medellín y Bucaramanga con datos móviles y ajustar la frecuencia de fotos si hace falta.

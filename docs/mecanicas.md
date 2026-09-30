@@ -170,7 +170,7 @@ La tarjeta de cada día muestra quién viene y qué prefiere, como en Supermarke
 ## 7. Jugando en pareja (cooperativo)
 
 ### Los dos en el mismo celular (ya se puede jugar)
-- En la tarjeta de cada día se elige **«Jugar solo»** (Él) o **«Los dos en este celular»**. Se recuerda para la próxima vez.
+- En la tarjeta de cada día se elige **«Jugar solo»** (Él), **«Los dos en este celular»** o **«En línea»** (abajo). Se recuerda para la próxima vez.
 - En pareja aparece **un segundo joystick en la esquina de abajo a la derecha**: Él juega con el de la izquierda (azul) y Ella con el de la derecha (rosado). En el computador, Él con WASD y Ella con las flechas. Cada uno tiene su nombre sobre la cabeza, su tira de herramientas (Él arriba a la izquierda, Ella arriba a la derecha) y su propio carrito, trapero y bolsa.
 - Se juega con la **columna «pareja»** de `niveles.json`: más clientes y metas de dos (ventas, propinas, perdidos). La estrella «equipo» pide **combos en pareja**.
 - **Combo en pareja** (corazón, +3 monedas): cuando los dos terminan algo útil con 3,5 s o menos de diferencia (uno repone y el otro cobra, uno trapea y el otro atrapa al ladrón…).
@@ -184,11 +184,15 @@ La tarjeta de cada día muestra quién viene y qué prefiere, como en Supermarke
 - **Si uno sale volando contra un estante, el estante se tumba:** cae de cara al pasillo, **se vacía** (hasta 3 productos quedan tirados en el piso y se pueden recoger al carrito) y deja **mugre** que hay que trapear (y en la que los clientes se resbalan). A los dos segundos se levanta solo, vacío.
 - **Si alguno llevaba el carrito lleno** (75 % o más), **se riega**: el carrito queda vacío y el piso sucio.
 
-### Pareja en línea (plan)
-- **Cada uno controla su personaje** desde su celular, con su propia **cola de acciones**. Los números de ella se ven de otro color.
-- **No se duplican tareas**: si Él ya va a reponer los lácteos, a Ella le aparece esa vitrina con la carita de Él y no la puede tomar.
-- **Marcar para el otro**: si mantienes el dedo sobre algo, le pones un marcador al otro, por ejemplo «¡ve tú a la caja!».
-- **Roles sugeridos** (no son obligatorios): uno se encarga de **reponer** y el otro de la **caja, la limpieza y las zonas especiales**.
+### Pareja en línea: cada uno en su celular (ya se puede jugar)
+- En la tarjeta del día se elige **«En línea, cada uno en el suyo»**. Los dos celulares tienen que estar en la **casa en línea** (Nuestro Hogar → Conectar); si el otro tiene Súper Manía abierto, la nota lo dice en verde.
+- **El que abre la tienda invita** al otro: si el otro está en el súper le sale «¡Él te invita!» con «¡Vamos!» / «Ahora no»; si no, le llega un **aviso en la casa** con el botón para entrar (vale 3 minutos). Si los dos invitan a la vez, gana la invitación más vieja.
+- Se juega el día **con las vitrinas y mejoras del que invita** (la columna «pareja» de `niveles.json`, igual que en el mismo celular). Cada uno mueve **su personaje con su joystick** (uno solo, a la izquierda) y **toca para su personaje**: los toques no le quitan al otro lo que ya tiene en su fila («Ella ya va para allá»); las alertas de vitrina vacía también son para el que las toca.
+- **Pausa, ayudas y corazón** valen para los dos: si uno pausa, al otro le sale «Él pausó el juego» y cualquiera puede seguir. Cada uno gasta sus propias ayudas.
+- **Al final** los dos ven el mismo tiquete y **cada uno gana en su partida** las estrellas, la luna, el corazón y las monedas del día. El **sueldo para la casa** lo pone solo el celular del que invitó (la casa es una sola).
+- **Si se corta el internet** de alguno, a los dos se les pausa con «Se cortó la conexión con Ella… esperando a que vuelva» y sigue solo cuando vuelve; si pasan 2 minutos y medio, o el otro sale o cierra el juego, se vuelve al menú con el aviso.
+- Cómo funciona por dentro: el celular que invita (**anfitrión**) simula todo el día y 10 veces por segundo le manda al otro una **foto** de la tienda (~1-3 KB: personajes, estantes, mugre, canastas, reloj, cuentas y lo que pasó). El otro (**invitado**) arma la misma tienda como **espejo**, mueve a todos suavecito de una foto a la siguiente y mueve su propio personaje **al instante** con el joystick (si se aleja mucho de lo que dice el anfitrión, se corrige). Viaja por un canal de Supabase Realtime (`super-<pareja>`); para probar sin internet, dos pestañas con `super.html?linea=local&rol=el` y `?linea=local&rol=ella`. Código: `src/linea_super.ts` (canal), `src/espejo.ts` (foto, órdenes y espejo) y la sección «En línea» de `src/main.ts`.
+- **Ideas para después:** marcar algo para el otro con el dedo sostenido («¡ve tú a la caja!») y roles sugeridos (uno repone, el otro caja y limpieza).
 
 ---
 

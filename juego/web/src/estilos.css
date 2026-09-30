@@ -417,6 +417,22 @@ button:focus-visible {
   font-size: 13px;
 }
 .pausa { text-align: center; }
+.pausa-nota { margin: -6px 0 14px; font: 700 15px/1.3 var(--display); color: #c23f60; }
+/* Sala de espera del juego en línea */
+.sala { max-width: 440px; text-align: center; }
+.sala h2 { margin-bottom: 8px; }
+.sala .fila-botones { justify-content: center; }
+.sala-texto { margin: 0 0 16px; font-size: 15px; line-height: 1.4; }
+.sala-ico {
+  display: block;
+  width: 72px;
+  height: 44px;
+  margin: 0 auto 6px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 22'%3E%3Crect x='1' y='2' width='10' height='18' rx='2.5' fill='%233f8fd6'/%3E%3Crect x='25' y='2' width='10' height='18' rx='2.5' fill='%23e8577a'/%3E%3Cpath d='M14 8q4-4 8 0M15.5 11q2.5-2.5 5 0' stroke='%23c9a46a' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='14' r='1.5' fill='%23c9a46a'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.sala.esperando .sala-ico { animation: sala-late 1.4s ease-in-out infinite; }
+@keyframes sala-late { 50% { transform: scale(1.08); opacity: 0.75; } }
+@media (prefers-reduced-motion: reduce) { .sala.esperando .sala-ico { animation: none; } }
 .pausa h2 { margin-bottom: 16px; }
 .pausa .fila-botones { justify-content: center; }
 
@@ -1578,7 +1594,7 @@ button:focus-visible {
 /* Tarjeta del día: jugar solo o los dos en el mismo celular */
 .modo-juego {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
   margin: 12px 0 4px;
 }
@@ -1601,6 +1617,10 @@ button:focus-visible {
 .modo-ico { width: 22px; height: 20px; flex: none; background: center / contain no-repeat; }
 .modo-ico.solo { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 22'%3E%3Ccircle cx='12' cy='6' r='4.5' fill='%233f8fd6'/%3E%3Cpath d='M3 21c0-6 4-8 9-8s9 2 9 8z' fill='%233f8fd6'/%3E%3C/svg%3E"); }
 .modo-ico.pareja { width: 30px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 22'%3E%3Ccircle cx='9' cy='6' r='4.2' fill='%233f8fd6'/%3E%3Cpath d='M1 21c0-6 3-8 8-8s8 2 8 8z' fill='%233f8fd6'/%3E%3Ccircle cx='23' cy='6' r='4.2' fill='%23e8577a'/%3E%3Cpath d='M15 21c0-6 3-8 8-8s8 2 8 8z' fill='%23e8577a'/%3E%3C/svg%3E"); }
+.modo-ico.linea { width: 34px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 22'%3E%3Crect x='1' y='2' width='10' height='18' rx='2.5' fill='%233f8fd6'/%3E%3Crect x='25' y='2' width='10' height='18' rx='2.5' fill='%23e8577a'/%3E%3Cpath d='M14 8q4-4 8 0M15.5 11q2.5-2.5 5 0' stroke='%23c9a46a' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='14' r='1.5' fill='%23c9a46a'/%3E%3C/svg%3E"); }
+/* Tres modos: el ícono encima del texto para que quepan en una fila */
+.modo-juego .modo-boton { flex-direction: column; gap: 3px; padding: 6px 6px; font-size: 13.5px; }
+.modo-nota.en-linea-si { color: #2f8a5b; font-weight: 700; }
 .modo-nota { margin: 2px 0 0; font-size: 12.5px; color: var(--cacao-suave); text-align: center; }
 
 /* Estrellas para mejorar (moneda de las mejoras): estrella blanca en un círculo rosado */

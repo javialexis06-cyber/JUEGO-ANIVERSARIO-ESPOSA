@@ -66,6 +66,7 @@
     <div class="modo-juego" role="group" aria-label="Quién juega">
       <button id="btn-modo-solo" class="modo-boton" aria-pressed="true"><i class="modo-ico solo" aria-hidden="true"></i>Jugar solo</button>
       <button id="btn-modo-pareja" class="modo-boton" aria-pressed="false"><i class="modo-ico pareja" aria-hidden="true"></i>Los dos en este celular</button>
+      <button id="btn-modo-linea" class="modo-boton" aria-pressed="false"><i class="modo-ico linea" aria-hidden="true"></i>En línea, cada uno en el suyo</button>
     </div>
     <p id="modo-nota" class="modo-nota"></p>
     <div class="fila-botones">
@@ -122,6 +123,7 @@
       <li><b>Basura</b> (día 6): pasa por encima para echarla a la bolsa (caben 4) y vacíala en la caneca. <b>Charcos</b> (día 8): quédate encima para trapearlos; el <b>trapero</b> aguanta 4 manchas y luego hay que lavarlo en el balde.</li>
       <li><b>Canastas:</b> sin canastas en la entrada no entra nadie. Pasa por encima de las tiradas (hasta 3) y llévalas a la entrada.</li>
       <li><b>Los dos en este celular:</b> Él con el joystick de la izquierda y Ella con el de la derecha. Si se chocan de frente y rápido quedan mareados; si uno sale volando contra un estante, lo tumba (se vacía y ensucia el piso), y un carrito lleno se riega. Si terminan cosas casi a la vez hacen <b>combos en pareja</b>.</li>
+      <li><b>En línea, cada uno en su celular:</b> los dos celulares tienen que estar en la casa en línea (Nuestro Hogar). El que abre la tienda invita al otro (le llega el aviso en la casa) y se juega con las vitrinas y mejoras del que invita. Cada uno mueve su personaje con su joystick y toca lo que quiere hacer; los dos ganan las estrellas y las monedas del día.</li>
       <li><b>Ladrón</b> (día 12): tócalo antes de que llegue a la puerta. <b>Niña traviesa</b> (día 14): tócala para calmarla y recoge lo que tumbó. <b>Famoso</b> (día 18): todos se quedan mirándolo.</li>
       <li><b>Entre días</b> compra vitrinas con monedas y <b>mejoras con estrellas</b> (1 por cada estrella nueva, 5 por cada luna): tenis, carrito grande, estantes más fáciles, ayudantes, capacitación, segunda caja… Los últimos días no se pasan sin mejorar: si te trabas, repite días por las estrellas que te faltan. Las <b>ayudas</b> (tinto, canción, limpieza) se usan con los botones de la izquierda.</li>
       <li>Con 3 estrellas se abre el <b>modo legendario</b> de ese día: gana una Luna. Y en cada día hay un <b>corazón escondido</b> que aparece un momento.</li>
@@ -134,10 +136,24 @@
   </article>
 </section>
 
+<!-- Sala de espera del juego en línea (invitar, recibir la invitación, esperar a que el otro cargue) -->
+<section id="sala" class="pantalla pantalla-centro" hidden>
+  <article class="lista-mercado sala">
+    <i class="sala-ico" aria-hidden="true"></i>
+    <h2 id="sala-titulo">En línea</h2>
+    <p id="sala-texto" class="sala-texto"></p>
+    <div class="fila-botones">
+      <button id="btn-sala-no" class="boton boton-papel">Cancelar</button>
+      <button id="btn-sala-si" class="boton boton-tomate" hidden>¡Vamos!</button>
+    </div>
+  </article>
+</section>
+
 <!-- Pausa -->
 <section id="pausa" class="pantalla pantalla-centro" hidden>
   <article class="lista-mercado pausa">
     <h2>Pausa</h2>
+    <p id="pausa-nota" class="pausa-nota" hidden></p>
     <div class="fila-botones">
       <button id="btn-musica" class="boton boton-papel boton-chico">Música: sonando</button>
       <button id="btn-salir" class="boton boton-papel">Salir al menú</button>

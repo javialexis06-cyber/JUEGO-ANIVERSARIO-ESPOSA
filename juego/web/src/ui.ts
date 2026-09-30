@@ -15,7 +15,7 @@ export function mostrar(id: string, si = true) {
 }
 
 export function pantallaUnica(id: string | null) {
-  for (const p of ['carga', 'menu', 'tarjeta', 'resultado', 'mejoras', 'como', 'pausa']) mostrar(p, p === id);
+  for (const p of ['carga', 'menu', 'tarjeta', 'resultado', 'mejoras', 'como', 'pausa', 'sala']) mostrar(p, p === id);
 }
 
 /** Elementos anclados al mundo 3D, reciclados cuadro a cuadro. */

@@ -1520,6 +1520,15 @@ function alEvento(e: Evento) {
       else toast(`${quien} te dejó un mensaje de voz`, 3400);
       break;
     case 'juego': {
+      // Invitación a atender la tienda juntos, cada uno en su celular (Súper Manía en línea)
+      if (e.datos.juego === 'super') {
+        if (Date.now() - e.t > 3 * 60_000) break;
+        const nivel = Number(e.datos.nivel) || 1;
+        const url = `./super.html?unirse=${encodeURIComponent(String(e.datos.id ?? ''))}`;
+        abrirHoja('¡A la tienda!', `<p class="nota-hoja">${quien} te invita a atender el súper juntos: <b>${e.datos.legendario ? 'Legendario' : 'Nivel'} ${nivel}</b>, cada uno desde su celular.</p>
+          <div class="fila-botones"><a class="boton boton-tomate" href="${url}">¡Vamos!</a></div>`);
+        break;
+      }
       // Invitación a la mesa de juegos (vale unos minutos)
       const j = JUEGOS_MESA[String(e.datos.juego)];
       if (!j || Date.now() - e.t > 3 * 60_000) break;

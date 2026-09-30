@@ -123,8 +123,8 @@ export class Juego {
   private creados = 0;
   private programados: Programado[] = [];
   private sigMugre = 1;
-  private cafeHasta = -1;
-  private musicaHasta = -1;
+  cafeHasta = -1;
+  musicaHasta = -1;
   private raycaster = new THREE.Raycaster();
   private problemasX: number;
 
@@ -185,7 +185,8 @@ export class Juego {
     return this.nivel.noticia?.efectos ?? {};
   }
 
-  async preparar() {
+  /** `espejo`: el celular invitado en línea arma la misma tienda pero no simula (le llega la foto del anfitrión). */
+  async preparar(espejo = false) {
     this.tienda = new Tienda(this.tiendaDato, this.productos);
     // Jugando no salen los botones verdes de «por comprar» (esos son para las mejoras entre días)
     await this.tienda.montar(this.sitios, this.mejoras, false);
@@ -209,12 +210,14 @@ export class Juego {
       this.mundo.escena.add(p.grupo);
     }
     this.problemas = this.nivel.problemas;
-    this.planear();
+    if (!espejo) this.planear();
     // Precarga de lo que va a aparecer, para que nada se congele al entrar
-    const tipos = new Set(this.llegadas.map((l) => l.tipo));
+    const tipos = espejo
+      ? new Set([...(Object.keys(CLIENTES) as TipoCliente[]).filter((t) => CLIENTES[t].desde <= this.dia), ...(this.problemas.includes('famoso') ? ['famoso' as const] : [])])
+      : new Set(this.llegadas.map((l) => l.tipo));
     for (const t of tipos) await cargarAnimado(`${t}.glb`);
-    if (this.programados.some((p) => p.que === 'ladron')) await cargarAnimado('ladron.glb');
-    if (this.programados.some((p) => p.que === 'nina')) await cargarAnimado('nina.glb');
+    if (espejo ? this.problemas.includes('ladron') : this.programados.some((p) => p.que === 'ladron')) await cargarAnimado('ladron.glb');
+    if (espejo ? this.problemas.includes('nina_traviesa') : this.programados.some((p) => p.que === 'nina')) await cargarAnimado('nina.glb');
     for (const m of ['basura.glb', 'charco.glb', 'canasta.glb']) await cargar(m).catch(() => null);
     // Ayudantes contratados (la segunda caja trae su propio cajero)
     const m = this.mejoras;
@@ -231,9 +234,10 @@ export class Juego {
       await a.preparar(this.productos);
       this.ayudantes.push(a);
       this.mundo.escena.add(a.grupo);
-      a.empezar();
+      if (!espejo) a.empezar();
     }
     sonido.campana();
+    if (espejo) return;
     if (this.nivel.noticia && !this.legendario) this.avisar(`Diario del Barrio: ${this.nivel.noticia.titular}`);
     else if (this.dia > 1) this.avisar('¡Llegó el camión! Los estantes están a medio llenar');
   }
@@ -362,6 +366,11 @@ export class Juego {
     this.ninas.push(n);
     this.mundo.escena.add(n.grupo);
     n.empezar();
+  }
+
+  /** Tamaño de un personaje en esta tienda (sin tipo: el de la gente en general). */
+  escalaDe(tipo?: string) {
+    return this.tiendaDato.escala_personas * (tipo ? this.escalas[tipo] ?? 1 : 1);
   }
 
   async nuevaMugre(tipo: Mugre['tipo'], pos: P, vitrina?: Vitrina, unidades?: number) {
@@ -656,8 +665,14 @@ export class Juego {
     return t;
   }
 
-  /** Agrega (o cancela, si ya estaba) una acción en la fila de quien esté más cerca de ella. */
-  private tarea(t: NuevaTarea, codigo: string, donde: P): string {
+  /** Agrega (o cancela, si ya estaba) una acción en la fila de quien esté más cerca de ella (o de `quien`, en línea:
+   *  cada uno toca en su celular para su personaje y no le quita las cosas al otro). */
+  private tarea(t: NuevaTarea, codigo: string, donde: P, quien?: Jugador): string {
+    if (quien) {
+      if (quien.tiene(t)) return quien.cancelar(t) ? 'cancelada' : 'ya';
+      if (this.jugadores.some((p) => p.tiene(t))) return 'otro';
+      return quien.agregar(t) ? codigo : 'ya';
+    }
     const ya = this.jugadores.find((p) => p.tiene(t));
     if (ya) return ya.cancelar(t) ? 'cancelada' : 'ya';
     const libres = this.jugadores.filter((p) => !p.atontado);
@@ -666,7 +681,18 @@ export class Juego {
   }
 
   /** Toque en la pantalla: agrega (o cancela) la acción correspondiente en la fila de Él (o de Ella, si está más cerca). */
-  tocar(x: number, y: number): string | null {
+  tocar(x: number, y: number, quien?: Jugador): string | null {
+    const o = this.objetivoDeToque(x, y);
+    return o && typeof o === 'object' ? this.tarea(o.t, o.codigo, o.donde, quien) : o;
+  }
+
+  /** En línea: lo que tocó el otro en su celular, para su personaje. */
+  asignar(t: NuevaTarea, quien: Jugador): string {
+    return this.tarea(t, t.tipo, quien.pos, quien);
+  }
+
+  /** Qué se tocó: la acción que corresponde (o un aviso: «llena», «cajera», «aseo»…). */
+  objetivoDeToque(x: number, y: number): { t: NuevaTarea; codigo: string; donde: P } | string | null {
     // 1) Lo pequeño que está en el piso o lo que corre: se elige por cercanía en la pantalla
     let mejor: Tocable | null = null;
     let dmin = 46;
@@ -685,33 +711,33 @@ export class Juego {
       if (mejor.tipo === 'mugre') {
         const m = mejor.ref as Mugre;
         if (m.reservado === 'aseo') return 'aseo';
-        return this.tarea({ tipo: 'mugre', mugre: m }, m.tipo, donde);
+        return { t: { tipo: 'mugre', mugre: m }, codigo: m.tipo, donde };
       }
-      if (mejor.tipo === 'canasta') return this.tarea({ tipo: 'canasta', canasta: mejor.ref as CanastaSuelta }, 'canasta', donde);
-      return this.tarea({ tipo: 'atrapar', objetivo: mejor.ref as Perseguible }, mejor.tipo, donde);
+      if (mejor.tipo === 'canasta') return { t: { tipo: 'canasta', canasta: mejor.ref as CanastaSuelta }, codigo: 'canasta', donde };
+      return { t: { tipo: 'atrapar', objetivo: mejor.ref as Perseguible }, codigo: mejor.tipo, donde };
     }
     // 2) Vitrinas y caja: por rayo
     const ndc = new THREE.Vector2((x / window.innerWidth) * 2 - 1, -(y / window.innerHeight) * 2 + 1);
     this.raycaster.setFromCamera(ndc, this.mundo.camara);
     const golpes = this.raycaster.intersectObjects(this.tienda.grupo.children, true);
     for (const g of golpes) {
-      if (this.tienda.esLavadero(g.object)) return this.tarea({ tipo: 'lavar' }, 'lavar', this.tienda.lavadero);
+      if (this.tienda.esLavadero(g.object)) return { t: { tipo: 'lavar' }, codigo: 'lavar', donde: this.tienda.lavadero };
       const v = this.tienda.porGrupo(g.object);
       if (!v) continue;
       if (!v.nivel) return null;
       if (v.seccion === 'caja') {
         if (this.cajera || v !== this.tienda.caja.vitrina) return 'cajera';
-        return this.tarea({ tipo: 'caja' }, 'caja', this.tienda.caja.puestoCajero());
+        return { t: { tipo: 'caja' }, codigo: 'caja', donde: this.tienda.caja.puestoCajero() };
       }
-      if (v.stock < v.capacidad || this.vaAReponer(v)) return this.tarea({ tipo: 'reponer', vitrina: v }, 'reponer', v.frente());
+      if (v.stock < v.capacidad || this.vaAReponer(v)) return { t: { tipo: 'reponer', vitrina: v }, codigo: 'reponer', donde: v.frente() };
       return 'llena';
     }
     return null;
   }
 
-  reponerSeccion(v: Vitrina) {
+  reponerSeccion(v: Vitrina, quien?: Jugador) {
     if (this.vaAReponer(v)) return false;
-    return this.tarea({ tipo: 'reponer', vitrina: v }, 'reponer', v.frente()) === 'reponer';
+    return this.tarea({ tipo: 'reponer', vitrina: v }, 'reponer', v.frente(), quien) === 'reponer';
   }
 
   update(dt: number) {
