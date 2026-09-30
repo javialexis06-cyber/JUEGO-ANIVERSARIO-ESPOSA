@@ -97,3 +97,19 @@ Parchís clásico adaptado a dos: cada uno juega un color (esquinas opuestas) co
 - Barrera: dos fichas del mismo color en una casilla no dejan pasar a nadie. Con un 6, hay que abrir la
   barrera propia si se puede.
 - Gana quien meta primero sus 4 fichas.
+- El dado se ve desde arriba y **el número que salió es la cara de arriba**, como en la mesa de verdad.
+
+**Con dos colores cada uno** (al tocar Parchís se elige «1 color» o «2 colores»; en el código es el juego
+`parchis2`, así viaja igual en línea y en las partidas guardadas):
+
+- Él juega azul y amarillo, Ella rosado y verde: 8 fichas cada uno, las cuatro casas juegan. Gana quien meta las 8.
+- Se tiran **dos dados que caen al centro del tablero** (desde el lado de quien tira) y quedan con su número
+  arriba. Cada dado mueve una ficha (la misma o distintas, de cualquiera de los dos colores). Se toca un dado
+  para elegir con cuál se mueve (arranca elegido el más alto; el usado se apaga).
+- Se sale con un 5 en un dado (obligatorio con ese dado si la salida lo permite) o si los dos **suman 5** (se
+  gastan los dos).
+- **Par:** se vuelve a tirar; con tres pares seguidos la última ficha movida vuelve a casa. El 6 no cuenta 7 y
+  no hay que abrir barreras.
+- Comer da 20 y llegar a la meta 10, y se cuentan antes del dado que falte. Dos fichas del mismo jugador (aunque
+  sean de sus dos colores) hacen barrera; cada color tiene su propio pasillo.
+- IA: igual que con un color; «Sin piedad» juega como «Normal» (ya piensa la jugada de sus dos dados).

@@ -102,7 +102,7 @@ function pintarSonido() {
 // Menú
 function pintarMenu() {
   const cont = $('juegos');
-  cont.innerHTML = JUEGOS.map(
+  cont.innerHTML = JUEGOS.filter((j) => !j.oculto).map(
     (j) => `<button class="juego-carta" data-juego="${j.id}" style="--color:${j.color}">
       <span class="juego-icono">${j.icono}</span>
       <span class="juego-texto"><b>${j.nombre}</b><small>${j.resumen}</small></span>
@@ -417,11 +417,19 @@ async function jugar(entrada: Entrada, modo: Modo, opciones: { empieza?: Rol; id
   }
 }
 
-async function elegirJuego(id: string) {
+async function elegirJuego(id: string, colores?: 1 | 2) {
   const entrada = JUEGOS.find((j) => j.id === id);
   if (!entrada) return;
   sonido.activar();
   sonido.toque();
+  // El Parchís se juega con un color cada uno (un dado) o con dos (dos dados al centro)
+  if (id === 'parchis' && !colores) {
+    hoja(`<h3>Parchís</h3><p>¿Cada uno con <b>un color</b> (4 fichas y un dado) o con <b>dos colores</b> (8 fichas y dos dados que caen al centro)?</p>`, [
+      { texto: '1 color', alTocar: () => void elegirJuego('parchis', 1) },
+      { texto: '2 colores', clase: 'boton-tomate', alTocar: () => void elegirJuego('parchis2', 2) },
+    ]);
+    return;
+  }
   if (prefs.modo !== 'linea') return jugar(entrada, prefs.modo);
   // En línea: invitar al otro y esperar a que acepte
   if (!canal?.listo) {

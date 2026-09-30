@@ -1,15 +1,19 @@
 // IA del Parchís. Suave: mueve al azar (a veces aprovecha para comer o llegar). Normal: mira cómo queda el
 // tablero (comer, llegar, escapar del peligro, avanzar la de adelante, hacer barrera). Sin piedad: además
-// piensa en los seis dados que puede sacar el otro y en su mejor respuesta.
+// piensa en los seis dados que puede sacar el otro y en su mejor respuesta (con dos colores y dos dados juega
+// como Normal: ya piensa la jugada entera de sus dos dados).
 import { otro, type Rol } from '../../casa/modelo';
 import type { NivelIA } from '../tipos';
 import {
   CASA,
   ENTRADA,
   META,
-  SALIDA,
+  SALIDAS,
   SEGUROS,
   absoluta,
+  colorDe,
+  dosColores,
+  enBarrera,
   enVuelta,
   esBarrera,
   mapa,
@@ -29,20 +33,23 @@ function valorFicha(p: number) {
 /** Probabilidad de que `o` coma en su próxima tirada a una ficha sola en la casilla `a` de la vuelta. */
 function peligro(e: EstadoParchis, o: Rol, a: number, m: Uint8Array, oCasa: boolean): number {
   const seguro = SEGUROS.has(a);
-  const salidaLibre = oCasa && m[SALIDA[o] * 2 + (o === 'el' ? 0 : 1)] < 2;
+  const dos = dosColores(e);
+  // Salidas del otro con fichas en casa (con un color, la única)
+  const salidas = SALIDAS[o].slice(0, dos ? 2 : 1).filter((x, c) => e.fichas[o].some((p, k) => p === CASA && colorDe(k) === c) && m[x * 2 + (o === 'el' ? 0 : 1)] < 2);
+  const salidaLibre = oCasa && salidas.length > 0;
   let casos = 0;
   for (let d = 1; d <= 6; d++) {
     if (d === 5 && salidaLibre) {
       // Con un 5 está obligado a sacar: solo come si la ficha está en su salida
-      if (a === SALIDA[o]) casos++;
+      if (salidas.includes(a)) casos++;
       continue;
     }
     if (seguro) continue;
-    const pasos = d === 6 && !oCasa ? 7 : d;
-    for (const pb of e.fichas[o]) {
-      if (!enVuelta(pb) || pb + pasos > ENTRADA || absoluta(o, pb + pasos) !== a) continue;
+    const pasos = d === 6 && !oCasa && !dos ? 7 : d;
+    for (const [k, pb] of e.fichas[o].entries()) {
+      if (!enVuelta(pb) || pb + pasos > ENTRADA || absoluta(o, pb + pasos, k) !== a) continue;
       let libre = true;
-      for (let s = pb + 1; s < pb + pasos && libre; s++) if (esBarrera(m, absoluta(o, s))) libre = false;
+      for (let s = pb + 1; s < pb + pasos && libre; s++) if (esBarrera(m, absoluta(o, s, k))) libre = false;
       if (libre) {
         casos++;
         break;
@@ -59,17 +66,16 @@ function lado(e: EstadoParchis, r: Rol, m: Uint8Array): number {
   // Al que le toca mover todavía puede escapar: su peligro pesa menos
   const peso = e.turno === r ? 0.35 : 1;
   let v = 0;
-  for (const p of f) {
+  for (const [i, p] of f.entries()) {
     v += valorFicha(p);
     if (!enVuelta(p)) continue;
-    const a = absoluta(r, p);
-    const barrera = f.filter((x) => x === p).length >= 2;
-    if (barrera) {
+    const a = absoluta(r, p, i);
+    if (enBarrera(r, f, i)) {
       // Una barrera no se puede comer y frena al otro si viene detrás
       v += 1.5;
-      for (const pb of e.fichas[o]) {
+      for (const [k, pb] of e.fichas[o].entries()) {
         if (!enVuelta(pb)) continue;
-        const dist = (a - absoluta(o, pb) + 68) % 68;
+        const dist = (a - absoluta(o, pb, k) + 68) % 68;
         if (dist > 0 && dist <= 12 && pb + dist <= ENTRADA) v += 2;
       }
       continue;
@@ -93,7 +99,7 @@ const esMover = (m: MovParchis): m is { t: 'mover'; ficha: number; pasos: number
 
 /** Juega `r` a lo voraz mientras le toque mover (el dado y luego sus premios). */
 function voraz(e: EstadoParchis, r: Rol): EstadoParchis {
-  for (let k = 0; k < 8 && e.turno === r && e.fase === 'mover' && !reglas.fin(e); k++) {
+  for (let k = 0; k < 12 && e.turno === r && e.fase === 'mover' && !reglas.fin(e); k++) {
     let mejor: EstadoParchis | null = null;
     let mv = -Infinity;
     for (const m of reglas.movimientos(e)) {
@@ -129,7 +135,8 @@ function esperado(s: EstadoParchis, r: Rol, prof: number): number {
 }
 
 export function ia(e: EstadoParchis, nivel: NivelIA, azar: () => number): MovParchis {
-  if (e.fase === 'tirar') return { t: 'tirar', dado: Math.min(6, 1 + Math.floor(azar() * 6)) };
+  const tiro = () => Math.min(6, 1 + Math.floor(azar() * 6));
+  if (e.fase === 'tirar') return dosColores(e) ? { t: 'tirar', dado: tiro(), dado2: tiro() } : { t: 'tirar', dado: tiro() };
   const movs = reglas.movimientos(e);
   if (movs.length <= 1) return movs[0] ?? { t: 'pasar' };
   const r = e.turno;
@@ -151,7 +158,7 @@ export function ia(e: EstadoParchis, nivel: NivelIA, azar: () => number): MovPar
   let mv = -Infinity;
   for (const m of movs) {
     const s = reglas.aplicar(e, m);
-    const v = (nivel === 'dificil' ? esperado(s, r, 3) : valor(voraz(s, r), r)) + azar() * 0.01;
+    const v = (nivel === 'dificil' && !dosColores(e) ? esperado(s, r, 3) : valor(voraz(s, r), r)) + azar() * 0.01;
     if (v > mv) {
       mv = v;
       mejor = m;

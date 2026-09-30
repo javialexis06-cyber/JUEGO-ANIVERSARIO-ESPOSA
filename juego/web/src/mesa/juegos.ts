@@ -9,6 +9,8 @@ export interface Entrada {
   color: string;
   icono: string;
   cargar: () => Promise<JuegoMesa | null>;
+  /** No sale como tarjeta en el menú (se llega a él desde otro: el Parchís a 2 colores sale del Parchís). */
+  oculto?: boolean;
 }
 
 const svg = (cuerpo: string) => `<svg viewBox="0 0 64 64" aria-hidden="true">${cuerpo}</svg>`;
@@ -58,5 +60,14 @@ export const JUEGOS: Entrada[] = [
       <rect x="8" y="36" width="20" height="20" rx="4" fill="#f6cf5a"/><rect x="36" y="36" width="20" height="20" rx="4" fill="#8fd3b6"/>
       <path d="M32 24L40 32L32 40L24 32Z" fill="#3d2b27"/>`),
     cargar: async () => (await import('./parchis')).JUEGO as JuegoMesa | null,
+  },
+  {
+    id: 'parchis2',
+    nombre: 'Parchís a 2 colores',
+    resumen: 'Dos colores cada uno y dos dados al centro.',
+    color: 'var(--rosa)',
+    icono: '',
+    oculto: true,
+    cargar: async () => (await import('./parchis')).JUEGO2 as JuegoMesa | null,
   },
 ];

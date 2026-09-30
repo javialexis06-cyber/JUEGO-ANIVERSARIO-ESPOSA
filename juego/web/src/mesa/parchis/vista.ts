@@ -1,10 +1,15 @@
 // Vista del Parchís: el tablero en SVG con la casa de este celular abajo a la izquierda, fichas gorditas que
-// saltan casilla por casilla, un dado 3D para cada uno en las esquinas libres y los avisos a los muñequitos.
+// saltan casilla por casilla y los avisos a los muñequitos. Con un color, un dado 3D para cada uno en las
+// esquinas libres; con dos colores, dos dados que caen al centro del tablero (se toca uno para elegirlo).
+// El número que salió queda en la cara de arriba del dado, como en la mesa de verdad.
 import { otro, type Rol } from '../../casa/modelo';
 import * as sonido from '../../sonido';
 import type { CtxVista, Vista } from '../tipos';
-import { CASA, ENTRADA, META, SEGUROS, absoluta, enBarrera, enVuelta, pasosDelDado, reglas, type EstadoParchis, type MovParchis } from './reglas';
-import { CAJA, COLOR, ESCALA, Geo, definiciones, peon, type Pt } from './tablero';
+import {
+  CASA, ENTRADA, FICHAS, META, SEGUROS, absoluta, colorDe, dosColores, enBarrera, enVuelta, pasosDelDado, reglas,
+  type EstadoParchis, type MovParchis,
+} from './reglas';
+import { CAJA, COLOR, ESCALA, Geo, colorFicha, definiciones, peon, type Pt } from './tablero';
 import './parchis.css';
 
 const ROLES: Rol[] = ['el', 'ella'];
@@ -43,8 +48,10 @@ function toc(n: number) {
   sonido.rumor(0.025, 3200, 0.035, 0, 4);
 }
 
-/** Rotación del cubo para dejar cada cara al frente. */
-const CARAS: Record<number, [number, number]> = { 1: [0, 0], 2: [0, -90], 3: [-90, 0], 4: [90, 0], 5: [0, 90], 6: [0, 180] };
+/** Rotación del cubo (X, Y) para dejar cada cara ARRIBA: el número que salió es el de arriba, como en la mesa. */
+const CARAS: Record<number, [number, number]> = { 1: [90, 0], 2: [-90, 90], 3: [0, 0], 4: [180, 0], 5: [90, 90], 6: [-90, 0] };
+/** Cómo se mira el dado: desde arriba y un poquito de lado (la cara de arriba es la grande). */
+const MIRADA = 'rotateX(-63deg) rotateY(22deg)';
 const PUNTOS: Record<number, number[]> = { 1: [5], 2: [1, 9], 3: [1, 5, 9], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
 /** El menor valor >= min que da `meta` vueltas completas aparte. */
 const siguiente = (min: number, meta: number) => min + ((((meta - min) % 360) + 360) % 360);
@@ -71,6 +78,9 @@ type Mover = Extract<MovParchis, { t: 'mover' }>;
 const esMover = (m: MovParchis): m is Mover => m.t === 'mover';
 
 class VistaParchis implements Vista<EstadoParchis, MovParchis> {
+  /** Con dos colores: los dos dados del centro y cuál se eligió para mover. */
+  private readonly centro: Dado[] = [];
+  private elegido: 0 | 1 = 0;
   private e: EstadoParchis = reglas.inicial('el');
   private quien: Rol | null = null;
   private readonly geo: Geo;
@@ -88,27 +98,29 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
   private tPase = 0;
   private vivo = true;
 
-  constructor(private readonly ctx: CtxVista<MovParchis>) {
+  constructor(private readonly ctx: CtxVista<MovParchis>, private readonly colores: 1 | 2 = 1) {
     this.abajo = ctx.yo;
-    this.geo = new Geo(ctx.yo === 'el');
+    this.geo = new Geo(ctx.yo === 'el', colores);
+    const dos = colores === 2;
     const arriba = otro(ctx.yo);
     const nombre = (r: Rol) => (ctx.modo === 'local' ? ctx.nombres[r] : r === ctx.yo ? 'Tú' : ctx.nombres[r]);
     const franja = (r: Rol, lado: string) => `
       <div class="parchis-franja" data-lado="${lado}" data-quien="${r}">
         <svg class="parchis-avatar" viewBox="-12 -14 24 25" aria-hidden="true">${peon(r)}</svg>
-        <span class="parchis-quien"><b>${nombre(r)}</b><span class="parchis-metas" aria-label="Fichas en la meta"><i></i><i></i><i></i><i></i></span></span>
+        <span class="parchis-quien"><b>${nombre(r)}</b><span class="parchis-metas" aria-label="Fichas en la meta">${Array.from({ length: FICHAS * colores }, (_, k) => `<i${k >= FICHAS ? ' class="parchis-meta2"' : ''}></i>`).join('')}</span></span>
         <span class="parchis-estado" aria-live="polite"></span>
         <button class="parchis-tirar" type="button">Tirar</button>
       </div>`;
     const cara = (n: number) => `<div class="parchis-cara parchis-c${n}">${PUNTOS[n].map((p) => `<i style="grid-area:${Math.ceil(p / 3)}/${((p - 1) % 3) + 1}"></i>`).join('')}</div>`;
-    const dado = (r: Rol, lado: string) => `
+    const cubo = `<div class="parchis-salto"><div class="parchis-cubo">${[1, 2, 3, 4, 5, 6].map(cara).join('')}</div></div><span class="parchis-premio" hidden></span>`;
+    const dado = (r: Rol, lado: string) => dos ? '' : `
       <div class="parchis-dado" data-lado="${lado}" data-quien="${r}" role="button" aria-label="Dado de ${ctx.nombres[r]}"
-        style="left:${Geo.bandeja(lado as 'abajo')}%;top:${Geo.bandeja(lado as 'abajo')}%">
-        <div class="parchis-salto"><div class="parchis-cubo">${[1, 2, 3, 4, 5, 6].map(cara).join('')}</div></div>
-        <span class="parchis-premio" hidden></span>
-      </div>`;
+        style="left:${Geo.bandeja(lado as 'abajo')}%;top:${Geo.bandeja(lado as 'abajo')}%">${cubo}</div>`;
+    const centro = (k: number) => `
+      <div class="parchis-dado parchis-dado-centro parchis-activo" data-k="${k}" role="button" aria-label="Dado ${k + 1}"
+        style="left:${k ? 54.6 : 45.4}%;top:50%">${cubo}</div>`;
     ctx.raiz.innerHTML = `
-      <div class="parchis">
+      <div class="parchis${dos ? ' dos-colores' : ''}">
         <div class="parchis-mesa">
           ${franja(arriba, 'arriba')}
           <div class="parchis-tablero">
@@ -116,7 +128,7 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
               ${definiciones()}${this.geo.dibujar()}
               <g class="parchis-pistas"></g><g class="parchis-fichas"></g><g class="parchis-chispas"></g>
             </svg>
-            ${dado(arriba, 'arriba')}${dado(ctx.yo, 'abajo')}
+            ${dado(arriba, 'arriba')}${dado(ctx.yo, 'abajo')}${dos ? centro(0) + centro(1) : ''}
             <div class="parchis-globo" hidden></div>
           </div>
           ${franja(ctx.yo, 'abajo')}
@@ -129,25 +141,46 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
     this.capaChispas = raiz.querySelector('.parchis-chispas')!;
     this.globo = raiz.querySelector('.parchis-globo')!;
     const NS = 'http://www.w3.org/2000/svg';
+    const armar = (d: HTMLElement): Dado => ({ el: d, cubo: d.querySelector('.parchis-cubo')!, premio: d.querySelector('.parchis-premio')!, rx: 0, ry: 0 });
     for (const r of ROLES) {
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < FICHAS * colores; i++) {
         const g = document.createElementNS(NS, 'g');
         g.setAttribute('class', 'parchis-ficha');
         g.dataset.rol = r;
         g.dataset.ficha = String(i);
-        g.innerHTML = peon(r);
+        g.innerHTML = peon(colorFicha(r, i));
         this.capaFichas.append(g);
         this.fichas[r].push(g);
       }
-      const d = raiz.querySelector<HTMLElement>(`.parchis-dado[data-quien="${r}"]`)!;
-      this.dados[r] = { el: d, cubo: d.querySelector('.parchis-cubo')!, premio: d.querySelector('.parchis-premio')!, rx: 0, ry: 0 };
-      d.style.setProperty('--punto', COLOR[r].oscuro);
-      d.addEventListener('click', () => this.tirar(r));
+      if (!dos) {
+        const d = raiz.querySelector<HTMLElement>(`.parchis-dado[data-quien="${r}"]`)!;
+        this.dados[r] = armar(d);
+        d.style.setProperty('--punto', COLOR[r].oscuro);
+        d.addEventListener('click', () => this.tirar(r));
+      }
       const f = raiz.querySelector<HTMLElement>(`.parchis-franja[data-quien="${r}"]`)!;
+      f.style.setProperty('--color2', r === 'el' ? COLOR.amarillo.oscuro : COLOR.verde.oscuro);
       this.franjas[r] = { el: f, estado: f.querySelector('.parchis-estado')!, metas: f.querySelector('.parchis-metas')!, tirar: f.querySelector('.parchis-tirar')! };
       this.franjas[r].tirar.hidden = !(ctx.modo === 'local' || r === ctx.yo);
       this.franjas[r].tirar.addEventListener('click', () => this.tirar(r));
-      this.ponerCara(r, r === ctx.yo ? 5 : 1, false);
+      if (!dos) this.ponerCara(this.dados[r], r === ctx.yo ? 5 : 1, false);
+    }
+    if (dos) {
+      raiz.querySelectorAll<HTMLElement>('.parchis-dado-centro').forEach((d, k) => {
+        const dd = armar(d);
+        this.centro.push(dd);
+        d.style.setProperty('--punto', '#3d2b27');
+        this.ponerCara(dd, k ? 6 : 5, false);
+        // En su turno: toca los dados para tirar; ya tirados, toca uno para elegir con cuál mueve
+        d.addEventListener('click', () => {
+          const e = this.e;
+          if (e.fase === 'tirar') return this.quien && this.tirar(this.quien);
+          if (!this.quien || e.turno !== this.quien || e.bono > 0 || e.usados?.[k]) return;
+          sonido.toque();
+          this.elegido = k as 0 | 1;
+          this.refrescar();
+        });
+      });
     }
     this.svg.addEventListener('pointerdown', this.alTocar);
   }
@@ -157,7 +190,9 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
   pintar(e: EstadoParchis) {
     this.e = e;
     this.colocar(e, false);
-    if (e.dado) this.ponerCara(e.turno, e.dado, false);
+    if (this.colores === 2) {
+      if (e.dados?.[0]) e.dados.forEach((n, k) => this.ponerCara(this.centro[k], n, false));
+    } else if (e.dado) this.ponerCara(this.dados[e.turno], e.dado, false);
     this.refrescar();
   }
 
@@ -195,10 +230,24 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
     if (this.quien !== r || e.turno !== r || e.fase !== 'tirar' || reglas.fin(e)) return;
     sonido.activar();
     this.quien = null;
-    this.dados[r].el.classList.add('parchis-apretado');
+    for (const d of this.colores === 2 ? this.centro : [this.dados[r]]) d.el.classList.add('parchis-apretado');
     this.refrescar();
-    const dado = Math.min(6, 1 + Math.floor(this.ctx.azar() * 6));
-    this.ctx.jugar({ t: 'tirar', dado });
+    const tiro = () => Math.min(6, 1 + Math.floor(this.ctx.azar() * 6));
+    const dado = tiro();
+    this.ctx.jugar(this.colores === 2 ? { t: 'tirar', dado, dado2: tiro() } : { t: 'tirar', dado });
+  }
+
+  /** Movimientos que se muestran (con dos dados, los del dado elegido; los premios, todos). */
+  private visibles(e: EstadoParchis): MovParchis[] {
+    const movs = reglas.movimientos(e);
+    if (!dosColores(e) || e.bono > 0 || e.fase !== 'mover') return movs;
+    const con = (k: number) => movs.filter((m) => m.t !== 'mover' || m.cual === k || m.cual === 2);
+    // Si el elegido ya se usó o no mueve nada, se pasa solo al otro
+    if (e.usados?.[this.elegido] || !con(this.elegido).some(esMover)) {
+      const otroK = (1 - this.elegido) as 0 | 1;
+      if (!e.usados?.[otroK] && con(otroK).some(esMover)) this.elegido = otroK;
+    }
+    return con(this.elegido);
   }
 
   private readonly alTocar = (ev: PointerEvent) => {
@@ -212,7 +261,7 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
     // La ficha más cercana (o la marca de a dónde llegaría) que se pueda mover
     let mejor: Mover | null = null;
     let dist = 30;
-    for (const m of reglas.movimientos(e).filter(esMover)) {
+    for (const m of this.visibles(e).filter(esMover)) {
       const g = this.fichas[r][m.ficha];
       const p = this.pos.get(g)!;
       const pistas = [{ x: p.x, y: p.y - 2 * p.s }, this.destinoDe(e, m)];
@@ -246,7 +295,7 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
     const grupos = new Map<string, { g: SVGGElement; r: Rol; p: number; i: number }[]>();
     for (const r of ROLES) {
       e.fichas[r].forEach((p, i) => {
-        const k = p === CASA || p === META ? `${r}${p}${i}` : enVuelta(p) ? `v${absoluta(r, p)}` : `${r}p${p}`;
+        const k = p === CASA || p === META ? `${r}${p}${i}` : enVuelta(p) ? `v${absoluta(r, p, i)}` : `${r}${colorDe(i)}p${p}`;
         if (!grupos.has(k)) grupos.set(k, []);
         grupos.get(k)!.push({ g: this.fichas[r][i], r, p, i });
       });
@@ -258,7 +307,7 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
         let s = p === CASA ? ESCALA.casa : p === META ? ESCALA.meta : ESCALA.vuelta;
         if (grupo.length > 1) {
           const lado = k === 0 ? -1 : 1;
-          const vert = this.geo.vertical(r, p);
+          const vert = this.geo.vertical(r, p, i);
           c.x += lado * (vert ? 5.8 : 4.2);
           c.y += vert ? 0 : lado * 3.6;
           s = ESCALA.doble;
@@ -304,14 +353,28 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
     if (f) return f.ganador === r ? '¡Ganó!' : '';
     if (e.turno !== r) return '';
     const mio = this.quien === r;
-    if (e.fase === 'tirar') return mio ? (e.seises ? '¡Seis! Tira otra vez' : 'Te toca tirar') : e.seises ? 'Repite…' : 'Va a tirar…';
+    const dos = dosColores(e);
+    if (e.fase === 'tirar') {
+      const repite = dos ? '¡Par! Tira otra vez' : '¡Seis! Tira otra vez';
+      return mio ? (e.seises ? repite : 'Te toca tirar') : e.seises ? 'Repite…' : 'Va a tirar…';
+    }
     const movs = reglas.movimientos(e);
     if (movs[0]?.t === 'pasar') return e.bono ? `Nadie puede contar ${e.bono}` : 'Sin jugada';
     if (e.bono) return mio ? `Cuenta ${e.bono} con una ficha` : `Cuenta ${e.bono}…`;
     if (!mio) return 'Moviendo…';
     const f2 = e.fichas[r];
+    if (dos) {
+      const [a, b] = e.dados ?? [0, 0];
+      const quedan = [a, b].filter((_, k) => !e.usados?.[k]);
+      const vis = this.visibles(e).filter(esMover);
+      if (vis.length && vis.every((m) => f2[m.ficha] === CASA && m.cual !== 2) && (e.dados?.[this.elegido] === 5)) return '¡Saca una ficha con el 5!';
+      if (vis.length && vis.every((m) => m.cual === 2)) return `¡${a} y ${b} suman 5: saca una ficha!`;
+      const otroSirve = movs.some((m) => esMover(m) && m.cual === 1 - this.elegido);
+      if (quedan.length === 2 && a !== b) return otroSirve ? `Mueve el ${e.dados?.[this.elegido]} (toca el otro dado para cambiar)` : `Mueve el ${e.dados?.[this.elegido]}`;
+      return quedan.length === 2 ? `Mueve ${a} y ${b}` : `Te queda el ${quedan[0]}`;
+    }
     if (e.dado === 5 && movs.every((m) => esMover(m) && f2[m.ficha] === CASA)) return '¡Saca una ficha!';
-    if (e.dado === 6 && movs.every((m) => esMover(m) && enBarrera(f2, f2[m.ficha])) && f2.some((p, i) => !movs.some((m) => esMover(m) && m.ficha === i) && p !== CASA && p !== META))
+    if (e.dado === 6 && movs.every((m) => esMover(m) && enBarrera(r, f2, m.ficha)) && f2.some((p, i) => !movs.some((m) => esMover(m) && m.ficha === i) && p !== CASA && p !== META))
       return 'Abre tu barrera';
     if (pasosDelDado(e) === 7) return 'El 6 cuenta 7';
     return `Mueve ${e.dado}`;
@@ -328,18 +391,39 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
       f.estado.textContent = this.textoEstado(r);
       f.tirar.disabled = !puedeTirar;
       f.tirar.classList.toggle('parchis-listo', puedeTirar);
-      const metas = e.fichas[r].filter((p) => p === META).length;
-      [...f.metas.children].forEach((c, k) => c.classList.toggle('parchis-llena', k < metas));
+      // Fichas en la meta de cada color (con dos colores, los cuatro primeros puntos son del primero)
+      [...f.metas.children].forEach((c, k) => {
+        const col = k >= FICHAS ? 1 : 0;
+        const llenas = e.fichas[r].filter((p, i) => p === META && colorDe(i) === col).length;
+        c.classList.toggle('parchis-llena', k % FICHAS < llenas);
+      });
       const d = this.dados[r];
+      if (!d) continue;
       d.el.classList.toggle('parchis-activo', suTurno);
       d.el.classList.toggle('parchis-listo', puedeTirar);
       if (!puedeTirar) d.el.classList.remove('parchis-apretado');
       d.premio.hidden = !(suTurno && e.fase === 'mover' && e.bono > 0);
       d.premio.textContent = `+${e.bono}`;
     }
-    // Fichas que se pueden mover: saltan, y se marca a dónde llegarían
+    // Dos colores: los dados del centro (el elegido con aro, los usados apagados)
     const r = this.quien;
-    const movs = r && e.turno === r && e.fase === 'mover' && !fin ? reglas.movimientos(e) : [];
+    if (this.centro.length) {
+      const puedeTirar = !fin && !!r && e.turno === r && e.fase === 'tirar';
+      const eligiendo = !fin && !!r && e.turno === r && e.fase === 'mover' && e.bono === 0;
+      if (eligiendo) this.visibles(e);
+      this.centro.forEach((d, k) => {
+        d.el.classList.toggle('parchis-listo', puedeTirar);
+        if (!puedeTirar) d.el.classList.remove('parchis-apretado');
+        d.el.classList.toggle('parchis-usado', e.fase === 'mover' && !!e.usados?.[k]);
+        d.el.classList.toggle('parchis-elegido', eligiendo && !e.usados?.[k] && this.elegido === k && e.dados?.[0] !== e.dados?.[1]);
+        d.el.style.setProperty('--punto', COLOR[e.turno].oscuro);
+      });
+      const pr = this.centro[1].premio;
+      pr.hidden = !(!fin && e.fase === 'mover' && e.bono > 0);
+      pr.textContent = `+${e.bono}`;
+    }
+    // Fichas que se pueden mover: saltan, y se marca a dónde llegarían
+    const movs = r && e.turno === r && e.fase === 'mover' && !fin ? this.visibles(e) : [];
     const movibles = new Set(movs.filter(esMover).map((m) => m.ficha));
     for (const rr of ROLES)
       this.fichas[rr].forEach((g, i) => {
@@ -387,8 +471,7 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
 
   // -------------------------------------------------------------------------
   // Dado
-  private ponerCara(r: Rol, n: number, girar: boolean) {
-    const d = this.dados[r];
+  private ponerCara(d: Dado, n: number, girar: boolean) {
     const [ax, ay] = CARAS[n];
     if (girar) {
       d.rx = siguiente(d.rx + 360, ax);
@@ -399,7 +482,7 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
       d.ry = ay;
       d.cubo.style.transitionDuration = '0s';
     }
-    d.cubo.style.transform = `rotateX(-17deg) rotateY(20deg) rotateX(${d.rx}deg) rotateY(${d.ry}deg)`;
+    d.cubo.style.transform = `${MIRADA} rotateX(${d.rx}deg) rotateY(${d.ry}deg)`;
   }
 
   private async rodar(r: Rol, n: number) {
@@ -409,10 +492,30 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
     d.el.style.setProperty('--dur', `${ms(820)}ms`);
     d.el.classList.add('parchis-rodando');
     sonarDado();
-    this.ponerCara(r, n, true);
+    this.ponerCara(d, n, true);
     await dormir(840);
     golpe();
     d.el.classList.remove('parchis-rodando');
+  }
+
+  /** Dos colores: los dos dados caen al centro desde el lado de quien tira y quedan con su número arriba. */
+  private async caer(r: Rol, n: [number, number]) {
+    const desde = r === this.abajo ? 1 : -1;
+    this.centro.forEach((d, k) => {
+      d.el.classList.remove('parchis-cae', 'parchis-apretado', 'parchis-usado', 'parchis-elegido');
+      void d.el.offsetWidth;
+      d.el.style.setProperty('--dur', `${ms(900)}ms`);
+      d.el.style.setProperty('--dy', `${desde * (330 + k * 40)}%`);
+      d.el.style.setProperty('--dx', `${(k ? 1 : -1) * 60}%`);
+      d.el.style.setProperty('--punto', COLOR[r].oscuro);
+      d.el.classList.add('parchis-cae');
+      this.ponerCara(d, n[k], true);
+    });
+    sonarDado();
+    await dormir(520);
+    golpe();
+    await dormir(400);
+    for (const d of this.centro) d.el.classList.remove('parchis-cae');
   }
 
   // -------------------------------------------------------------------------
@@ -420,15 +523,21 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
   private async animarTiro(antes: EstadoParchis, dado: number, despues: EstadoParchis) {
     const r = antes.turno;
     const f = antes.fichas[r];
+    const dos = dosColores(antes);
+    const par = dos && !!despues.dados && despues.dados[0] === despues.dados[1];
     // Solo le quedan fichas en el pasillo: necesita el número exacto
     const apurado = f.some((p) => p > ENTRADA && p < META) && f.every((p) => p > ENTRADA);
     this.ctx.suceso({ tipo: apurado ? 'suerte' : 'lanzar', quien: r });
-    await this.rodar(r, dado);
+    if (dos) await this.caer(r, despues.dados ?? [dado, dado]);
+    else await this.rodar(r, dado);
     if (!this.vivo) return;
-    if (antes.seises === 2 && dado === 6) {
-      // Tres seises: la última ficha movida vuelve a casa
-      this.ctx.suceso({ tipo: 'jugada', quien: r, calidad: 'nula', texto: '¡Tres seises!' });
-      this.decir(r, '¡Tres seises!', 1600);
+    // Arranca con el dado más alto elegido
+    if (dos && despues.dados) this.elegido = despues.dados[1] > despues.dados[0] ? 1 : 0;
+    if (antes.seises === 2 && (dos ? par : dado === 6)) {
+      // Tres seises (o tres pares): la última ficha movida vuelve a casa
+      const texto = dos ? '¡Tres pares!' : '¡Tres seises!';
+      this.ctx.suceso({ tipo: 'jugada', quien: r, calidad: 'nula', texto });
+      this.decir(r, texto, 1600);
       this.ctx.sonido('enojo');
       const i = f.findIndex((p, k) => p !== despues.fichas[r][k]);
       if (i >= 0) {
@@ -440,10 +549,10 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
     this.e = despues;
     const movs = reglas.movimientos(despues);
     const sinJugada = movs[0]?.t === 'pasar';
-    if (dado === 6) {
+    if (dos ? par : dado === 6) {
       this.ctx.suceso({ tipo: 'turno_extra', quien: r });
       this.ctx.sonido('campana');
-      this.decir(r, sinJugada ? 'Sin jugada… ¡pero repite!' : '¡Seis! Repite', 1500);
+      this.decir(r, sinJugada ? 'Sin jugada… ¡pero repite!' : dos ? '¡Par! Repite' : '¡Seis! Repite', 1500);
     } else if (sinJugada) {
       this.ctx.suceso({ tipo: 'casi', quien: r });
       this.ctx.sonido('vacia');
@@ -456,6 +565,7 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
 
   /** ¿Alguna ficha estaba a un pasito de la meta y el dado se pasó? */
   private seQuedoCorto(e: EstadoParchis) {
+    if (dosColores(e)) return false;
     const pasos = pasosDelDado(e);
     const f = e.fichas[e.turno];
     const llega = reglas.movimientos(e).some((m) => esMover(m) && f[m.ficha] + m.pasos === META);
@@ -518,14 +628,14 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
   /** La ficha quedó sola en una casilla normal, justo delante de una del otro (y tenía otra opción). */
   private esRegalo(antes: EstadoParchis, despues: EstadoParchis, r: Rol, i: number) {
     const p = despues.fichas[r][i];
-    if (!enVuelta(p) || p < 8 || enBarrera(despues.fichas[r], p)) return false;
-    const a = absoluta(r, p);
+    if (!enVuelta(p) || p < 8 || enBarrera(r, despues.fichas[r], i)) return false;
+    const a = absoluta(r, p, i);
     if (SEGUROS.has(a)) return false;
     if (reglas.movimientos(antes).filter(esMover).length < 2) return false;
     const o = otro(r);
-    return despues.fichas[o].some((pb) => {
+    return despues.fichas[o].some((pb, k) => {
       if (!enVuelta(pb)) return false;
-      const dist = (a - absoluta(o, pb) + 68) % 68;
+      const dist = (a - absoluta(o, pb, k) + 68) % 68;
       return dist >= 1 && dist <= 3 && pb + dist <= ENTRADA;
     });
   }
@@ -600,4 +710,9 @@ class VistaParchis implements Vista<EstadoParchis, MovParchis> {
 
 export function crearVista(ctx: CtxVista<MovParchis>): Vista<EstadoParchis, MovParchis> {
   return new VistaParchis(ctx);
+}
+
+/** Con dos colores cada uno y los dados al centro. */
+export function crearVista2(ctx: CtxVista<MovParchis>): Vista<EstadoParchis, MovParchis> {
+  return new VistaParchis(ctx, 2);
 }

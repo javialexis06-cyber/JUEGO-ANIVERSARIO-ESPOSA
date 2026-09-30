@@ -1,8 +1,9 @@
 // Geometría y dibujo del tablero de Parchís en SVG: la cruz de 68 casillas (brazos de 3 carriles por 8),
 // los pasillos de colores, las cuatro casas y la meta en el centro. Se dibuja con la casa de este celular
-// abajo a la izquierda (si hace falta, todo se gira media vuelta; las fichas siguen de pie).
+// abajo a la izquierda (si hace falta, todo se gira media vuelta; las fichas siguen de pie). Con dos colores
+// cada uno juegan las cuatro casas: Él azul y amarillo, Ella rosado y verde.
 import type { Rol } from '../../casa/modelo';
-import { CASA, ENTRADA, META, SALIDA, SEGUROS, absoluta } from './reglas';
+import { CASA, ENTRADA, META, SALIDA, SEGUROS, absoluta, colorDe } from './reglas';
 
 /** Largo de una casilla (a lo largo del camino) y ancho de un carril, en unidades del SVG. */
 export const U = 20;
@@ -27,14 +28,19 @@ interface Rect {
 
 /** Brazo de cada color en el dibujo sin girar (0 abajo, 1 derecha, 2 arriba, 3 izquierda). */
 export const BRAZO: Record<Rol, number> = { el: 1, ella: 3 };
-/** Colores de los cuatro brazos (0 y 2 no juegan: van suaves). */
+/** Brazos de los dos colores de cada uno (el segundo solo juega con dos colores). */
+export const BRAZOS: Record<Rol, [number, number]> = { el: [1, 0], ella: [3, 2] };
+/** Colores de los cuatro brazos (con un color, el amarillo y el verde no juegan: van suaves). */
 export const COLOR = {
   el: { base: '#5b8fd6', claro: '#b9d4f5', oscuro: '#3b69a8', suave: '#cfe2f7', pasillo: '#9fc2ee' },
   ella: { base: '#e86a8a', claro: '#f9bfcd', oscuro: '#b9456a', suave: '#fbd6df', pasillo: '#f3a6ba' },
-  amarillo: { base: '#f6cf5a', suave: '#fbeab4', pasillo: '#f8dd8c' },
-  verde: { base: '#8fd3b6', suave: '#d3efe2', pasillo: '#b3e2cd' },
+  amarillo: { base: '#f6cf5a', claro: '#fdf0bf', oscuro: '#c99a1e', suave: '#fbeab4', pasillo: '#f8dd8c' },
+  verde: { base: '#8fd3b6', claro: '#d6f2e6', oscuro: '#2f8f68', suave: '#d3efe2', pasillo: '#b3e2cd' },
 };
+export type ClaveColor = keyof typeof COLOR;
 const COLOR_BRAZO = [COLOR.amarillo, COLOR.el, COLOR.verde, COLOR.ella];
+/** Color de la ficha `i` de `r` (las 4..7 son del segundo color). */
+export const colorFicha = (r: Rol, i: number): ClaveColor => (colorDe(i) === 0 ? r : r === 'el' ? 'amarillo' : 'verde');
 
 function celda(brazo: number, carril: number, j: number): Rect {
   switch (brazo) {
@@ -101,7 +107,11 @@ export const ESCALA = { vuelta: 1, casa: 1.4, meta: 0.68, doble: 0.9 };
 
 /** Posiciones en pantalla (ya giradas si la casa de este celular es la de Él). */
 export class Geo {
-  constructor(readonly gira: boolean) {}
+  constructor(readonly gira: boolean, readonly colores: 1 | 2 = 1) {}
+  /** ¿El brazo `b` es de alguien? (con un color solo el de Él y el de Ella) */
+  juega(b: number) {
+    return this.colores === 2 || b % 2 === 1;
+  }
   p(q: Pt): Pt {
     return this.gira ? { x: L - q.x, y: L - q.y } : q;
   }
@@ -110,12 +120,14 @@ export class Geo {
   }
   /** Centro de la ficha `i` de `r` que va en `p` (sin el corrimiento de cuando comparten casilla). */
   punto(r: Rol, p: number, i: number): Pt {
+    const brazo = BRAZOS[r][colorDe(i)];
+    const k = i % 4;
     if (p === CASA) {
-      const c = this.p(ESQUINA[BRAZO[r]]);
-      return { x: c.x + PUESTOS[i].x, y: c.y + PUESTOS[i].y };
+      const c = this.p(ESQUINA[brazo]);
+      return { x: c.x + PUESTOS[k].x, y: c.y + PUESTOS[k].y };
     }
-    if (p === META) return this.p(this.enMeta(BRAZO[r], i));
-    const q = p <= ENTRADA ? medio(celdaVuelta(absoluta(r, p))) : medio(celdaPasillo(BRAZO[r], p - ENTRADA));
+    if (p === META) return this.p(this.enMeta(brazo, k));
+    const q = p <= ENTRADA ? medio(celdaVuelta(absoluta(r, p, i))) : medio(celdaPasillo(brazo, p - ENTRADA));
     const s = this.p(q);
     return { x: s.x, y: s.y - 1.5 };
   }
@@ -125,8 +137,8 @@ export class Geo {
     return { x: b.x + n.x * d + t.x * a, y: b.y + n.y * d + t.y * a + (n.y === 0 ? 2 : n.y < 0 ? -1 : 5) };
   }
   /** ¿La casilla va en un brazo de arriba/abajo (casillas anchas)? */
-  vertical(r: Rol, p: number) {
-    const brazo = p <= ENTRADA ? lugarVuelta(absoluta(r, p))[0] : BRAZO[r];
+  vertical(r: Rol, p: number, i = 0) {
+    const brazo = p <= ENTRADA ? lugarVuelta(absoluta(r, p, i))[0] : BRAZOS[r][colorDe(i)];
     return brazo % 2 === 0;
   }
   /** Centro de la bandeja del dado de quien juega abajo o arriba (en % del tablero). */
@@ -152,7 +164,7 @@ export class Geo {
       const col = COLOR_BRAZO[b];
       const e = ESQUINA[b];
       const r: Rect = { x: e.x - M / 2, y: e.y - M / 2, w: M, h: M };
-      const juega = b % 2 === 1;
+      const juega = this.juega(b);
       if (juega) {
         const c = col as typeof COLOR.el;
         out.push(R(r, `fill="${c.oscuro}"`, 5, 18));
@@ -191,7 +203,7 @@ export class Geo {
       out.push(R(r, `fill="${fill}" stroke="${borde}" stroke-width="1.3"`, 1.2));
       if (SEGUROS.has(t)) {
         const c = this.p(medio(r));
-        const tinta = s !== undefined ? (s % 2 ? COLOR_BRAZO[s].base : '#c9a66b') : '#cdb89e';
+        const tinta = s !== undefined ? (this.juega(s) ? COLOR_BRAZO[s].base : '#c9a66b') : '#cdb89e';
         out.push(`<circle cx="${c.x}" cy="${c.y}" r="5.6" fill="none" stroke="${tinta}" stroke-width="1.7"/>`);
         out.push(`<circle cx="${c.x}" cy="${c.y}" r="1.8" fill="${tinta}"/>`);
       }
@@ -199,7 +211,7 @@ export class Geo {
     // Pasillos
     for (let b = 0; b < 4; b++) {
       const col = COLOR_BRAZO[b];
-      const juega = b % 2 === 1;
+      const juega = this.juega(b);
       for (let c = 1; c <= 7; c++) {
         out.push(R(celdaPasillo(b, c), `fill="${col.pasillo}" stroke="${juega ? (col as typeof COLOR.el).base : col.base}" stroke-opacity="${juega ? 0.8 : 0.5}" stroke-width="1.3"`, 1.2));
       }
@@ -225,7 +237,7 @@ export class Geo {
       const col = COLOR_BRAZO[b];
       const [p1, p2] = esq[b].map((q) => this.p(q));
       const c = this.p(cen);
-      out.push(`<path d="M${p1.x} ${p1.y}L${p2.x} ${p2.y}L${c.x} ${c.y}Z" fill="${b % 2 ? col.base : col.suave}" stroke="#fff8ee" stroke-width="2.5" stroke-linejoin="round"/>`);
+      out.push(`<path d="M${p1.x} ${p1.y}L${p2.x} ${p2.y}L${c.x} ${c.y}Z" fill="${this.juega(b) ? col.base : col.suave}" stroke="#fff8ee" stroke-width="2.5" stroke-linejoin="round"/>`);
     }
     const c = this.p(cen);
     out.push(
@@ -237,15 +249,15 @@ export class Geo {
 
 /** Degradados de las fichas (brillo arriba a la izquierda). */
 export function definiciones(): string {
-  const g = (r: Rol) => {
+  const g = (r: ClaveColor) => {
     const c = COLOR[r];
     return `<radialGradient id="parchis-g-${r}" cx="38%" cy="30%" r="78%"><stop offset="0" stop-color="${c.claro}"/><stop offset=".5" stop-color="${c.base}"/><stop offset="1" stop-color="${c.oscuro}"/></radialGradient>`;
   };
-  return `<defs>${g('el')}${g('ella')}</defs>`;
+  return `<defs>${g('el')}${g('ella')}${g('amarillo')}${g('verde')}</defs>`;
 }
 
 /** Una ficha (peón gordito) centrada en (0,0): mide ~15 de ancho y ~21 de alto. */
-export function peon(r: Rol): string {
+export function peon(r: ClaveColor): string {
   const c = COLOR[r];
   const f = `url(#parchis-g-${r})`;
   return `<ellipse class="parchis-halo" cx="0" cy="8" rx="11" ry="4.6" fill="none" stroke="${c.base}" stroke-width="2.2"/>

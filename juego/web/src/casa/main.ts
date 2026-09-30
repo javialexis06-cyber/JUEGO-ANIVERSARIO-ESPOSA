@@ -1473,7 +1473,7 @@ async function saludar() {
 }
 
 /** Lo que llega del otro celular. */
-const JUEGOS_MESA: Record<string, string> = { dados: 'Dados Party', mancala: 'Mancala', cajas: 'Puntos y Cajas', parchis: 'Parchís' };
+const JUEGOS_MESA: Record<string, string> = { dados: 'Dados Party', mancala: 'Mancala', cajas: 'Puntos y Cajas', parchis: 'Parchís', parchis2: 'Parchís a 2 colores' };
 
 function alEvento(e: Evento) {
   if (e.de === yo) return;
