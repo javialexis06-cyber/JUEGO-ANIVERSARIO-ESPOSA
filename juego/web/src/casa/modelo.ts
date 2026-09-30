@@ -1,17 +1,17 @@
 // Nuestro Hogar: datos de la pareja y reglas de las necesidades (se calculan con el reloj real).
 export type Rol = 'el' | 'ella';
-export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto' | 'juegos' | 'trofeos' | 'cuna' | 'cuarto_el' | 'cuarto_ella';
+export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto' | 'juegos' | 'trofeos' | 'cuna' | 'cuarto_el' | 'cuarto_ella' | 'patio';
 export type Necesidad = 'hambre' | 'energia' | 'higiene' | 'carino';
 
 export const NECESIDADES: Necesidad[] = ['hambre', 'energia', 'higiene', 'carino'];
 export const NOMBRE_NECESIDAD: Record<Necesidad, string> = { hambre: 'Comida', energia: 'Energía', higiene: 'Higiene', carino: 'Cariño' };
-export const CUARTOS: Cuarto[] = ['sala', 'cocina', 'bano', 'cuarto', 'juegos', 'trofeos', 'cuna', 'cuarto_el', 'cuarto_ella'];
+export const CUARTOS: Cuarto[] = ['sala', 'cocina', 'bano', 'cuarto', 'patio', 'juegos', 'trofeos', 'cuna', 'cuarto_el', 'cuarto_ella'];
 export const NOMBRE_CUARTO: Record<Cuarto, string> = {
   sala: 'Sala', cocina: 'Cocina', bano: 'Baño', cuarto: 'Cuarto', juegos: 'Juegos', trofeos: 'Trofeos', cuna: 'Bebé', cuarto_el: 'Cuarto de Él',
-  cuarto_ella: 'Cuarto de Ella',
+  cuarto_ella: 'Cuarto de Ella', patio: 'Patio',
 };
 /** Con los que empieza la casa; los demás se construyen con monedas en «Ampliar la casa». */
-export const CUARTOS_BASE: Cuarto[] = ['sala', 'cocina', 'bano', 'cuarto', 'juegos'];
+export const CUARTOS_BASE: Cuarto[] = ['sala', 'cocina', 'bano', 'cuarto', 'patio', 'juegos'];
 export const PRECIO_CUARTO: Partial<Record<Cuarto, number>> = { trofeos: 50, cuarto_el: 80, cuarto_ella: 80, cuna: 150 };
 /** Los cuartos propios: solo su dueño los decora y les pinta las paredes. */
 export const DUENO: Partial<Record<Cuarto, Rol>> = { cuarto_el: 'el', cuarto_ella: 'ella' };
@@ -201,6 +201,89 @@ export interface Casa {
   logros?: Partial<Record<Rol, Logros>>;
   /** Color de las paredes de los cuartos propios. */
   pintura?: Partial<Record<Cuarto, string>>;
+  /** El perrito del patio (de los dos). */
+  perro?: Perrito;
+}
+
+// ---------------------------------------------------------------------------
+// El perrito del patio: necesidades como las de ellos (con el reloj real), nivel y popós en la grama
+// ---------------------------------------------------------------------------
+export type NecesidadPerro = 'hambre' | 'energia' | 'higiene' | 'alegria';
+export const NECESIDADES_PERRO: NecesidadPerro[] = ['hambre', 'energia', 'higiene', 'alegria'];
+export type AccionPerro = 'comer' | 'premio' | 'banar' | 'dormir' | 'despertar';
+
+export interface Perrito {
+  nombre: string;
+  pelaje: string;
+  hembra: boolean;
+  desde: number;
+  hambre: number;
+  energia: number;
+  higiene: number;
+  alegria: number;
+  /** Momento de los valores guardados. */
+  t: number;
+  xp: number;
+  /** Dormido en su casita desde… */
+  dormido?: number;
+  /** Lo último que le hicieron (así el otro celular también lo ve comer, bañarse o irse a dormir). */
+  accion?: { tipo: AccionPerro; desde: number; de: Rol };
+  /** Popós en la grama (x, y) y cuándo le toca la próxima (un rato después de comer). */
+  popos: [number, number][];
+  popoEn?: number;
+}
+
+/** Lo que baja por hora; dormido la energía sube y el hambre baja a la mitad. Cada popó ensucia y aburre. */
+const DESGASTE_PERRO: Record<NecesidadPerro, number> = { hambre: 6, energia: 4, higiene: 3, alegria: 5 };
+const RECUPERA_PERRO = 20;
+
+export function perritoNuevo(nombre: string, pelaje: string, hembra: boolean, ahora = Date.now()): Perrito {
+  return { nombre, pelaje, hembra, desde: ahora, hambre: 70, energia: 90, higiene: 80, alegria: 85, t: ahora, xp: 0, popos: [] };
+}
+
+export function perroAlDia(p: Perrito, ahora = Date.now()): Perrito {
+  const h = Math.max(0, (ahora - p.t) / 3600000);
+  const dormido = !!p.dormido;
+  const n = p.popos.length;
+  return {
+    ...p,
+    hambre: limitar(p.hambre - DESGASTE_PERRO.hambre * h * (dormido ? 0.5 : 1)),
+    energia: limitar(dormido ? p.energia + RECUPERA_PERRO * h : p.energia - DESGASTE_PERRO.energia * h),
+    higiene: limitar(p.higiene - (DESGASTE_PERRO.higiene + 2 * n) * h),
+    alegria: limitar(p.alegria - (DESGASTE_PERRO.alegria + n) * h * (dormido ? 0.4 : 1)),
+    t: ahora,
+  };
+}
+
+/** Nivel del perrito (sube con los cuidados): 2 a los 20 puntos, 3 a los 80, 4 a los 180… */
+export const nivelPerro = (xp: number) => 1 + Math.floor(Math.sqrt(Math.max(0, xp) / 20));
+export const xpDeNivel = (n: number) => 20 * (n - 1) ** 2;
+
+function normalizarPerro(p: any): Perrito | null {
+  if (!esObjeto(p) || typeof p.nombre !== 'string' || !p.nombre.trim()) return null;
+  const ahora = Date.now();
+  const r: Perrito = {
+    nombre: p.nombre.trim().slice(0, 24),
+    pelaje: typeof p.pelaje === 'string' && /^[a-z]{1,20}$/.test(p.pelaje) ? p.pelaje : 'caramelo',
+    hembra: !!p.hembra,
+    desde: numero(p.desde, ahora),
+    hambre: limitar(numero(p.hambre, 70)),
+    energia: limitar(numero(p.energia, 90)),
+    higiene: limitar(numero(p.higiene, 80)),
+    alegria: limitar(numero(p.alegria, 85)),
+    t: numero(p.t, ahora),
+    xp: Math.max(0, Math.min(1e6, Math.floor(numero(p.xp, 0)))),
+    popos: Array.isArray(p.popos)
+      ? p.popos.filter((q: unknown) => Array.isArray(q) && q.length === 2 && q.every((v) => typeof v === 'number' && Number.isFinite(v))).slice(0, 5)
+      : [],
+  };
+  if (typeof p.dormido === 'number' && Number.isFinite(p.dormido)) r.dormido = p.dormido;
+  if (typeof p.popoEn === 'number' && Number.isFinite(p.popoEn)) r.popoEn = p.popoEn;
+  const a = p.accion;
+  if (esObjeto(a) && ['comer', 'premio', 'banar', 'dormir', 'despertar'].includes(a.tipo) && (a.de === 'el' || a.de === 'ella')) {
+    r.accion = { tipo: a.tipo, desde: numero(a.desde, 0), de: a.de };
+  }
+  return r;
 }
 
 export interface Logros {
@@ -275,6 +358,7 @@ export function normalizarCasa(c: unknown): Casa {
     ...(esObjeto(c.pintura)
       ? { pintura: Object.fromEntries(Object.entries(c.pintura).filter(([k, v]) => k in DUENO && typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v))) }
       : {}),
+    ...(normalizarPerro(c.perro) ? { perro: normalizarPerro(c.perro)! } : {}),
   };
 }
 

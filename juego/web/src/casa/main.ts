@@ -21,6 +21,7 @@ import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
 import { Mascota } from './mascota';
 import { type EstadoTele, Tele } from './tele';
+import { Patio } from './patio';
 import { PanelRecuerdos } from './recuerdos';
 import {
   Accion, alDia, animo, Casa, colorSeguro, Cuarto, CUARTOS, diasPara, DUENO, EstadoPersonaje, Evento, FechaEspecial, hoy, Necesidad,
@@ -117,6 +118,18 @@ async function iniciar() {
   controles();
   iniciarTele();
   panelRecuerdos = new PanelRecuerdos();
+  patio = new Patio({
+    mundo,
+    casa3d,
+    capa,
+    casa: () => s?.casa ?? null,
+    yo: () => yo,
+    cambiarCasa,
+    personajes: (v) => {
+      for (const m of Object.values(mascotas)) m.p.grupo.visible = v;
+    },
+    alCambiarModo: () => pintarAcciones(),
+  });
   mostrar('carga', false);
   const modo = leerModo();
   modoGuardado = modo;
@@ -197,6 +210,7 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
   for (const r of ['el', 'ella'] as Rol[]) mascotas[r].aplicar(s.personajes[r], ahora, false);
   verCuarto(s.personajes[yo].cuarto);
   sincronizarAmpliacion();
+  patio.sincronizar();
   await casa3d.ponerDeco(s.casa.deco, s.recuerdos);
   casa3d.pintarNotas(s.casa.notas);
   entradoEn = Date.now();
@@ -285,6 +299,7 @@ function alCambiar(que: QueCambio) {
     void casa3d.ponerDeco(s!.casa.deco, s!.recuerdos);
     casa3d.pintarNotas(s!.casa.notas);
     sincronizarAmpliacion();
+    patio.sincronizar();
   }
   if (que === 'recuerdos') void casa3d.ponerDeco(s!.casa.deco, s!.recuerdos);
   pintarTodo();
@@ -626,6 +641,7 @@ const MUEBLES: Partial<Record<Cuarto, [RegExp, string][]>> = {
   cocina: [[/^(mesa_comedor|silla)/, 'comer'], [/^nevera/, 'notas']],
   bano: [[/^tina/, 'banar'], [/^lavamanos/, 'lavar'], [/^inodoro/, 'inodoro']],
   cuarto: [[/^cama/, 'dormir'], [/^cl/, 'closet']],
+  patio: [[/^(casita|platos|tina)/, 'perro'], [/^banca/, 'banca']],
   juegos: [[/^arcade/, 'jugar-super'], [/^la_puerta_100/, 'jugar-puertas'], [/^(mesa_de_juegos|puf)/, 'jugar-mesa'], [/^retrete_cohete/, 'retrete']],
   trofeos: [[/^(pedestal|podio|vitrina)/, 'trofeos']],
   cuna: [[/^cuna/, 'cuna'], [/^mecedora/, 'mecedora']],
@@ -864,6 +880,7 @@ async function pintarPared(color: string) {
 // ---------------------------------------------------------------------------
 let tele: Tele;
 let panelRecuerdos: PanelRecuerdos;
+let patio: Patio;
 
 /** Recuerdos flotantes: mientras mi personaje se baña (y se ve el baño) o mientras los dos duermen abrazados. */
 function revisarRecuerdos() {
@@ -1267,7 +1284,9 @@ async function abrirRegaloDeVerdad() {
 const puedeDecorar = (c: Cuarto) => !DUENO[c] || DUENO[c] === yo;
 
 function verCuarto(c: Cuarto) {
+  if (c !== 'patio' && patio?.activo) patio.salir();
   casa3d.mostrar(c);
+  if (c === 'patio') patio?.sincronizar();
   if (decorando) casa3d.modoDecorar(true, puedeDecorar);
   pintarCuartos();
   pintarAcciones();
@@ -1370,6 +1389,16 @@ function botonesCuarto(): Boton[] {
         { id: 'retrete', texto: 'Retrete espacial', icono: ico('inodoro') },
       );
       break;
+    case 'patio': {
+      const perro = s.casa.perro;
+      b.push(
+        perro
+          ? { id: 'perro', texto: `Jugar con ${perro.nombre}`, icono: '<span class="ico ico-emoji">🐶</span>', principal: true }
+          : { id: 'adoptar', texto: 'Adoptar un perrito', icono: '<span class="ico ico-emoji">🐶</span>', principal: true },
+        { id: 'banca', texto: 'Sentarse', icono: ico('sofa') },
+      );
+      break;
+    }
     case 'trofeos':
       b.push({ id: 'trofeos', texto: 'Ver trofeos', icono: ico('trofeo'), principal: true }, { id: 'admirar', texto: 'Admirar', icono: ico('aplauso') });
       break;
@@ -1501,6 +1530,12 @@ async function alAccion(id: string) {
       return hacer('closet', 'cuarto', 5, { higiene: 12 });
     case 'pareja':
       return hojaPareja();
+    case 'adoptar':
+      return patio.hojaAdoptar();
+    case 'perro':
+      return patio.activar();
+    case 'banca':
+      return hacer('usar', 'patio', 25, { energia: 4, carino: 2 }, 'banca');
     case 'jugar-super':
       return jugar('super');
     case 'jugar-puertas':
@@ -2270,6 +2305,7 @@ function controles() {
       if (!$('ventana').hidden) cerrarVentana();
       else if (hojaAbierta()) cerrarHoja();
       else if (!$('codigo').hidden) mostrar('codigo', false);
+      else if (patio.activo) patio.salir();
       else if (decorando) void alAccion('decorar');
       else void App.exitApp();
     });
@@ -2278,6 +2314,8 @@ function controles() {
 
 function tocar(x: number, y: number) {
   if (!s) return;
+  // En el modo mascota todo toque es para el perrito (o la pelota, o un popó)
+  if (patio.activo) return void patio.tocar(x, y);
   // ¿Tocó a alguien?
   const v = new THREE.Vector2((x / window.innerWidth) * 2 - 1, -(y / window.innerHeight) * 2 + 1);
   const rayo = new THREE.Raycaster();
@@ -2289,6 +2327,7 @@ function tocar(x: number, y: number) {
       return r === yo ? hojaYo() : hojaPareja();
     }
   }
+  if (casa3d.actual === 'patio' && !decorando && patio.tocar(x, y)) return;
   const t = casa3d.tocar(x, y);
   if (!t) return;
   if (t.tipo === 'sitio') {
@@ -2421,6 +2460,8 @@ function bucle() {
     if (RAPIDO > 0) for (let i = 0; i < RAPIDO; i++) for (const m of Object.values(mascotas)) m.update(0.1);
     else for (const m of Object.values(mascotas)) m.update(paso);
     casa3d.animar(ahora / 1000);
+    // (con ?rapido=N el perrito también va más rápido, para las pruebas)
+    patio?.update(RAPIDO > 0 ? paso * RAPIDO : paso, ahora / 1000);
     // Cada medio segundo de reloj real (aunque el celular vaya lento, despertar y demás no se atrasan)
     if (ahora - ultimaRevision >= 500) {
       ultimaRevision = ahora;
@@ -2489,7 +2530,7 @@ function efectos() {
   if (!s) return;
   for (const r of ['el', 'ella'] as Rol[]) {
     const m = mascotas[r];
-    if (!m.visible) {
+    if (!m.visible || patio?.activo) {
       capa.poner(`${r}-efecto`, null, 0, 0);
       capa.poner(`${r}-piensa`, null, 0, 0);
       continue;
@@ -2554,6 +2595,7 @@ function efectos() {
 
 /** Monedas de regalo y botones de acción directos (pruebas de la ampliación). */
 (window as any).__monedas = (n: number) => cambiarCasa((c) => (c.monedas += n));
+(window as any).__patio = () => patio;
 (window as any).__accion = (id: string) => alAccion(id);
 /** Logros de prueba para los trofeos (se guardan como si vinieran de los minijuegos). */
 (window as any).__logros = (l: { super?: number; puertas?: number; mesa?: number }, retrete?: number) =>

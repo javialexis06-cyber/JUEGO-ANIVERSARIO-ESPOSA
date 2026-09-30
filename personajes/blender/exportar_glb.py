@@ -675,7 +675,8 @@ if __name__ == '__main__':
                 continue
             coll = clay.collection(f'Export {key}')
             raiz = tiendas._group(coll, key, (0, 0, 0), 0.0, lambda fn=fn, coll=coll: fn(coll))
-            casa.aligerar(coll)
+            if key not in casa.SIN_ALIGERAR:
+                casa.aligerar(coll)
             exportar(arbol(raiz), os.path.join(OUT, f'{key}.glb'))
             coll.hide_render = coll.hide_viewport = True
         with open(os.path.join(OUT, 'casa.json'), 'w', encoding='utf-8') as f:

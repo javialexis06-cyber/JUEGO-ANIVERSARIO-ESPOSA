@@ -6,7 +6,7 @@ import { aTres, Mundo } from '../mundo';
 import { Navegacion, P } from '../navegacion';
 import { cargar, cargarJSON, copia, Productos } from '../recursos';
 import { ITEM, TipoSitio } from './catalogo';
-import { colorSeguro, Cuarto, CUARTOS_BASE, Nota, Recuerdo } from './modelo';
+import { colorSeguro, Cuarto, Nota, Recuerdo } from './modelo';
 
 export interface Punto {
   x: number;
@@ -42,6 +42,8 @@ export type Toque =
   | null;
 
 const COLORES_NOTA = ['#FFE58A', '#FFC4D6', '#BFE9D8', '#CFE3FF', '#FFD7B0'];
+/** Los que se cargan al abrir la casa (los demás cuando alguien entra o se miran). */
+const INICIALES: Cuarto[] = ['sala', 'cocina', 'bano', 'cuarto'];
 /** Piezas del cuarto que no estorban al caminar (paredes, piso, puertas, ventanas, tapetes). */
 const NO_ESTORBA = /^(pared|muro|piso|z[oó]calo|cornisa|puerta|ventan|marco|vidrio|parteluz|cortina|manija|tapete|utiler)/i;
 /** Casillas de la cuadrícula de caminos de la casa (más finas que las de la tienda: los cuartos son chicos). */
@@ -103,7 +105,7 @@ export class Casa3D {
   }
 
   /** Carga la casa con los cuartos de siempre; los de la ampliación se cargan con `asegurar` cuando se construyen. */
-  static async cargar(mundo: Mundo, productos: Productos, progreso?: (k: number) => void, iniciales: Cuarto[] = CUARTOS_BASE): Promise<Casa3D> {
+  static async cargar(mundo: Mundo, productos: Productos, progreso?: (k: number) => void, iniciales: Cuarto[] = INICIALES): Promise<Casa3D> {
     const dato = await cargarJSON<CasaDato>('casa.json');
     const c = new Casa3D(mundo, dato, productos);
     const claves = Object.keys(dato.cuartos) as Cuarto[];
@@ -507,6 +509,46 @@ export class Casa3D {
       this.cigue = { obj, alas, paquete, t0: -1, soltado: false, alSoltar, fin };
       this.mundo.sucio = true;
     });
+  }
+
+  /** Una pieza del modelo de un cuarto por su nombre (si el cuarto ya cargó). */
+  objeto(c: Cuarto, nombre: string): THREE.Object3D | null {
+    return this.bases.get(c)?.getObjectByName(nombre) ?? null;
+  }
+
+  /** Escribe un texto en un letrero del modelo (el nombre del perrito en su casita). */
+  letrero(c: Cuarto, malla: string, texto: string) {
+    const m = this.objeto(c, malla) as THREE.Mesh | null;
+    if (!m?.geometry) return;
+    let panel = m.userData.panel as THREE.Mesh | undefined;
+    if (!panel) {
+      m.geometry.computeBoundingBox();
+      const b = m.geometry.boundingBox!;
+      const lienzo = document.createElement('canvas');
+      lienzo.width = 256;
+      lienzo.height = 72;
+      const tex = new THREE.CanvasTexture(lienzo);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      panel = new THREE.Mesh(
+        new THREE.PlaneGeometry((b.max.x - b.min.x) * 0.92, (b.max.y - b.min.y) * 0.8),
+        new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false }),
+      );
+      panel.position.set((b.max.x + b.min.x) / 2, (b.max.y + b.min.y) / 2, b.max.z + 0.002);
+      m.add(panel);
+      m.userData.panel = panel;
+    }
+    const tex = (panel.material as THREE.MeshBasicMaterial).map as THREE.CanvasTexture;
+    const g = (tex.image as HTMLCanvasElement).getContext('2d')!;
+    g.clearRect(0, 0, 256, 72);
+    g.fillStyle = '#7a3b2e';
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    let t = 44;
+    do g.font = `700 ${t}px Fredoka, sans-serif`;
+    while (g.measureText(texto).width > 236 && (t -= 3) > 16);
+    g.fillText(texto, 128, 38);
+    tex.needsUpdate = true;
+    this.mundo.sucio = true;
   }
 
   /** Un mueble del cuarto por el nombre (el primer hijo del modelo cuyo nombre empieza así). */

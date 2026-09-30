@@ -15,6 +15,7 @@ import bpy
 
 import clay
 import escena
+import perro
 import productos as prod
 import tiendas
 import utileria
@@ -37,6 +38,8 @@ CUARTOS = {
     'cuna': dict(nombre='Bebé', piso=('tablas', '#EBD3AE', '#E2C79F', 0.9, '#CFAE82'), pared='#FFF1D2', muro='#F6DEB0'),
     'cuarto_el': dict(nombre='Cuarto de Él', piso=('tablas', '#C9A27C', '#BF9670', 0.9, '#A57C58'), pared='#D3E5F2', muro='#BBD4E8'),
     'cuarto_ella': dict(nombre='Cuarto de Ella', piso=('tablas', '#E3C4A0', '#D9B893', 0.9, '#C4A07A'), pared='#F8DCE6', muro='#F0C6D5'),
+    # Afuera: el patio del perrito (el piso es grama y las paredes son la fachada y la cerca)
+    'patio': dict(nombre='Patio', piso=('tablas', '#9BD27A', '#8CC96A', 0.9, '#7FB85F'), pared='#F6D8C0', muro='#E9C9AE'),
 }
 
 
@@ -964,6 +967,231 @@ def cuarto_ella(coll):
     puerta_interior(coll, 2.2)
 
 
+# ----- El patio (afuera: grama, cerca de madera y la fachada de la casa) -----
+
+def _cascaron_patio(coll):
+    """Grama con relieve, la fachada de la casa al fondo (con alero de tejas), cerca de madera alta a la izquierda y
+    cerquita blanca al frente y a la derecha."""
+    grama = _mat('Grama', '#9BD27A', rough=0.95, fuzz=dict(scale=90, color='#8CC96A', amount=0.45, strength=0.4, distance=0.003))
+    floor = clay.make_mesh_object('piso', [(-W / 2, -D / 2, 0), (W / 2, -D / 2, 0), (W / 2, D / 2, 0), (-W / 2, D / 2, 0)], [(0, 1, 2, 3)], coll,
+                                  smooth=False, material=grama)
+    clay.add_solidify(floor, 0.15, -1.0)
+    fachada = M('Pared | fachada patio', '#F6D8C0', rough=0.9, noise=dict(scale=5, strength=0.04, distance=0.04))
+    clay.rbox('pared fondo', (0, D / 2 + 0.1, ALTO / 2), (W / 2 + 0.2, 0.1, ALTO / 2), coll, fachada, p=24, n=4, subsurf=1)
+    borde = M('Zócalo casa', '#FBF7F1', rough=0.5)
+    clay.rbox('zócalo fondo', (0, D / 2 - 0.02, 0.1), (W / 2, 0.03, 0.1), coll, borde, p=12, n=4)
+    teja = laca('teja', '#C96F5C', 0.55)
+    clay.rbox('muro alero', (0, D / 2 - 0.15, ALTO - 0.05), (W / 2 + 0.2, 0.28, 0.06), coll, teja, p=12, n=4)
+    for k in range(14):
+        x = -W / 2 + (k + 0.5) * W / 14
+        clay.blob('muro teja', (x, D / 2 - 0.42, ALTO - 0.08), (0.2, 0.05, 0.05), coll, teja, n=4)
+    tabla = madera('cerca', '#C08A5B')
+    # Cerca de tablas a la izquierda, con dos travesaños
+    y = -D / 2
+    k = 0
+    while y < D / 2:
+        alto = 1.25 + 0.06 * (k % 2)
+        clay.rbox('muro tabla', (-W / 2 - 0.05, y + 0.1, alto / 2), (0.03, 0.095, alto / 2), coll, tabla, p=6, n=4, subsurf=1)
+        clay.blob('muro punta', (-W / 2 - 0.05, y + 0.1, alto), (0.03, 0.095, 0.05), coll, tabla, n=4)
+        y += 0.21
+        k += 1
+    for z in (0.35, 0.95):
+        clay.rbox('muro travesaño', (-W / 2 + 0.0, 0, z), (0.025, D / 2, 0.04), coll, madera('travesaño', '#A87447'), p=6, n=4, subsurf=1)
+    # Cerquita blanca al frente y a la derecha
+    blanca = laca('cerquita', '#FFFDF8', 0.5)
+    for lado in ('frente', 'derecha'):
+        largo = W if lado == 'frente' else D
+        n = int(largo / 0.24)
+        for k in range(n + 1):
+            t = -largo / 2 + k * largo / n
+            pos = (t, -D / 2 - 0.05, 0.22) if lado == 'frente' else (W / 2 + 0.05, t, 0.22)
+            clay.rbox('muro estaca', pos, (0.03, 0.03, 0.22), coll, blanca, p=6, n=4, subsurf=1)
+            clay.blob('muro punta estaca', (pos[0], pos[1], 0.45), (0.03, 0.03, 0.03), coll, blanca, n=4)
+        for z in (0.14, 0.32):
+            if lado == 'frente':
+                clay.rbox('muro riel', (0, -D / 2 - 0.05, z), (W / 2, 0.018, 0.025), coll, blanca, p=6, n=4, subsurf=1)
+            else:
+                clay.rbox('muro riel', (W / 2 + 0.05, 0, z), (0.018, D / 2, 0.025), coll, blanca, p=6, n=4, subsurf=1)
+
+
+def casita_perro(coll):
+    """Casita del perro: paredes rojas, techo de dos aguas, puerta en arco, letrero para su nombre y un cojín adentro."""
+    roja = laca('casita perro', '#E4574B', 0.45)
+    blanco = laca('marco casita', '#FFFDF8', 0.45)
+    techo = laca('techo casita', '#5B4A6B', 0.5)
+    for s in (-1, 1):
+        clay.rbox('pared casita', (s * 0.4, 0, 0.42), (0.03, 0.38, 0.42), coll, roja, p=6, n=4)
+    clay.rbox('fondo casita', (0, 0.36, 0.42), (0.4, 0.03, 0.42), coll, roja, p=6, n=4)
+    for s in (-1, 1):
+        clay.rbox('frente casita', (s * 0.3, -0.37, 0.42), (0.11, 0.03, 0.42), coll, roja, p=6, n=4)
+    clay.rbox('dintel casita', (0, -0.37, 0.76), (0.2, 0.03, 0.08), coll, roja, p=6, n=4)
+    # Arco de la puerta (borde blanco) y los frontones del techo
+    arco = [(0.2 * math.cos(a), -0.4, 0.5 + 0.2 * math.sin(a)) for a in [k * math.pi / 10 for k in range(11)]]
+    clay.sweep('arco casita', [(0.2, -0.4, 0.0)] + arco + [(-0.2, -0.4, 0.0)], 0.022, (1, 1), coll, blanco, segments=6, samples=3, up=(0, 1, 0))
+    for yy in (-0.37, 0.36):
+        o = clay.make_mesh_object('frontón casita', [(-0.43, yy, 0.84), (0.43, yy, 0.84), (0.0, yy, 1.16)], [(0, 1, 2)], coll, smooth=False,
+                                  material=roja)
+        clay.add_solidify(o, 0.05, 0.0)
+    for s in (-1, 1):
+        o = clay.make_mesh_object('techo casita', [(0.0, -0.48, 1.2), (0.0, 0.47, 1.2), (s * 0.55, 0.47, 0.78), (s * 0.55, -0.48, 0.78)],
+                                  [(0, 1, 2, 3)], coll, smooth=False, material=techo)
+        clay.add_solidify(o, 0.05, 0.0)
+    clay.sweep('cumbrera', [(0, -0.5, 1.22), (0, 0.49, 1.22)], 0.03, (1, 1), coll, blanco, segments=6, samples=2)
+    clay.rbox('letrero casita', (0, -0.41, 0.93), (0.19, 0.012, 0.055), coll, laca('letrero casita', '#FFF6E6', 0.5), p=6, n=4)
+    # Huesito de adorno sobre el letrero
+    hueso = laca('hueso', '#FFFDF8', 0.4)
+    clay.sweep('hueso casita', [(-0.07, -0.42, 1.03), (0.07, -0.42, 1.03)], 0.014, (1, 1), coll, hueso, segments=6, samples=2)
+    for sx in (-1, 1):
+        for sz in (-1, 1):
+            clay.blob('punta hueso', (sx * 0.075, -0.42, 1.03 + sz * 0.012), (0.016, 0.012, 0.016), coll, hueso, n=4)
+    clay.blob('cojín casita', (0, 0.05, 0.07), (0.3, 0.26, 0.06), coll, tela('cojín casita', '#9ED9C0'), n=8, p=2.4)
+    clay.rbox('piso casita', (0, 0, 0.02), (0.4, 0.37, 0.02), coll, madera('piso casita', '#C9956A'), p=6, n=4)
+
+
+def platos_perro(coll):
+    """Tapete con el plato de cuido (el juego lo llena) y el de agua."""
+    tiendas.rug(coll, '#F2A5B8', 0, 0, 0.36, 0.2, border='#E88C9C')
+    for x, col, nombre in ((-0.16, '#E4574B', 'plato cuido'), (0.16, '#4A90D9', 'plato agua')):
+        clay.lathe(nombre, [(0.0, 0.03), (0.1, 0.03), (0.13, 0.1), (0.12, 0.11), (0.09, 0.05), (0.0, 0.05)], coll, laca(nombre, col, 0.3),
+                   segments=24).location = (x, 0, 0)
+
+    def cuido():
+        for k in range(14):
+            a, r = k * 2.4, 0.07 * math.sqrt((k + 0.5) / 14)
+            clay.blob('croqueta', (r * math.cos(a), r * math.sin(a), 0.085 + 0.012 * (k % 3)), (0.018, 0.018, 0.012), coll,
+                      laca('croqueta', '#9C6B45', 0.6), n=4, subsurf=0)
+    _group(coll, 'cuido', (-0.16, 0, 0), 0.0, cuido)
+    clay.lathe('agua', [(0.0, 0.09), (0.095, 0.09), (0.0, 0.09)], coll, _mat('Agua jabonosa', '#BDE4F4', rough=0.1, coat=0.8, coat_rough=0.05),
+               segments=24).location = (0.16, 0, 0)
+
+
+def tina_perro(coll):
+    """Tina de lata para bañar al perro, con espuma (el juego la muestra al bañarlo) y el patito."""
+    lata = _mat('Lata tina', '#B8C2CC', rough=0.35, metallic=0.7)
+    clay.lathe('tina perro', [(0.0, 0.0), (0.36, 0.0), (0.42, 0.3), (0.44, 0.32), (0.41, 0.33), (0.37, 0.05), (0.0, 0.05)], coll, lata, segments=36)
+    for s in (-1, 1):
+        clay.sweep('asa tina', [(s * 0.42, -0.08, 0.22), (s * 0.5, 0, 0.24), (s * 0.42, 0.08, 0.22)], 0.018, (1, 1), coll, lata, segments=6, samples=3)
+    clay.lathe('agua tina perro', [(0.0, 0.24), (0.395, 0.24), (0.0, 0.24)], coll, _mat('Agua jabonosa', '#BDE4F4', rough=0.1, coat=0.8, coat_rough=0.05),
+               segments=36)
+
+    def espuma():
+        for k in range(10):
+            a = k / 10 * math.tau
+            clay.blob('espuma perro', (0.33 * math.cos(a), 0.33 * math.sin(a), 0.28), (0.1, 0.09, 0.06), coll, _mat('Espuma', '#FFFFFF', rough=0.7), n=5)
+    _group(coll, 'espuma tina', (0, 0, 0), 0.0, espuma)
+    patito(coll, (0.52, -0.2, 0.0))
+
+
+def arbol(coll):
+    """Tronco del árbol de mango (la copa y el columpio van aparte: por debajo de la copa se camina)."""
+    clay.sweep('tronco', [(0, 0, 0), (0.03, 0.02, 0.8), (-0.02, 0.0, 1.5)], [0.16, 0.12, 0.1], (1, 1), coll, madera('tronco', '#8A5A3B'), segments=10,
+               samples=5)
+
+
+def copa(coll):
+    """Copa redonda con mangos y la rama del columpio."""
+    tronco = madera('tronco', '#8A5A3B')
+    clay.sweep('rama', [(0.0, 0.0, 1.35), (0.35, -0.05, 1.7), (0.6, -0.05, 1.8)], [0.07, 0.05, 0.04], (1, 1), coll, tronco, segments=8, samples=4)
+    hojas = [('#7CC46A', (0, 0, 2.05), (0.6, 0.55, 0.45)), ('#6BB45B', (0.45, -0.1, 1.85), (0.42, 0.4, 0.35)), ('#8FD27A', (-0.35, 0.1, 1.9), (0.42, 0.4, 0.36)),
+             ('#76BE64', (0.1, -0.3, 2.35), (0.4, 0.35, 0.3)), ('#84CB70', (0.05, 0.3, 2.3), (0.38, 0.34, 0.3))]
+    for k, (col, c, r) in enumerate(hojas):
+        clay.blob('copa árbol', c, r, coll, tela(f'hojas {col}', col), n=10)
+    for k, (x, y, z) in enumerate(((0.3, -0.42, 1.85), (-0.2, -0.4, 2.0), (0.55, -0.3, 1.65), (0.0, -0.5, 2.25))):
+        clay.blob('mango', (x, y, z), (0.05, 0.045, 0.06), coll, laca('mango', '#F7B538', 0.4), n=6)
+
+
+def columpio(coll):
+    """Columpio de llanta colgado de la rama."""
+    for dy in (-0.03, 0.03):
+        clay.sweep('lazo columpio', [(0.55, dy, 1.78), (0.55, dy, 0.75)], 0.008, (1, 1), coll, _mat('Lazo', '#E8D9B5', rough=0.9), segments=4, samples=2)
+    llanta = clay.lathe('llanta', [(0.1, -0.06), (0.17, -0.07), (0.2, 0.0), (0.17, 0.07), (0.1, 0.06), (0.08, 0.0)], coll,
+                        laca('llanta', '#3A3939', 0.6), segments=24, cap_bottom=False, cap_top=False)
+    llanta.rotation_euler = (math.pi / 2, 0, 0)
+    llanta.location = (0.55, 0, 0.6)
+
+
+def banca(coll):
+    """Banca de jardín con tablas de madera y patas de hierro (se sientan igual que en una silla)."""
+    mad = madera('banca', '#C9956A')
+    hierro = laca('hierro banca', '#3A3A48', 0.4)
+    for k in range(3):
+        clay.rbox('tabla banca', (0, -0.14 + k * 0.1, 0.44), (0.62, 0.045, 0.02), coll, mad, p=6, n=4)
+    for k in range(2):
+        clay.rbox('respaldo banca', (0, 0.2, 0.64 + k * 0.14), (0.62, 0.018, 0.05), coll, mad, p=6, n=4)
+    for s in (-1, 1):
+        clay.sweep('pata banca', [(s * 0.55, -0.18, 0.0), (s * 0.56, -0.15, 0.42), (s * 0.56, 0.18, 0.42), (s * 0.56, 0.22, 0.85)], 0.02, (1, 1),
+                   coll, hierro, segments=6, samples=4)
+        clay.sweep('pata banca', [(s * 0.55, 0.18, 0.0), (s * 0.56, 0.15, 0.42)], 0.02, (1, 1), coll, hierro, segments=6, samples=2)
+        clay.sweep('brazo banca', [(s * 0.56, 0.2, 0.62), (s * 0.58, -0.1, 0.62), (s * 0.56, -0.18, 0.5)], 0.02, (1, 1), coll, hierro, segments=6,
+                   samples=4)
+
+
+def flores(coll, n=14, largo=1.1, seed=0):
+    """Una fila de flores de colores con sus tallos y hojitas."""
+    colores = ('#F2587A', '#F7C948', '#C9B6EA', '#FF9A5A', '#FFFFFF', '#F7A8BE')
+    for k in range(n):
+        y = -largo / 2 + k * largo / (n - 1)
+        x = 0.06 * math.sin(k * 2.3 + seed)
+        alto = 0.22 + 0.08 * ((k * 7 + seed) % 3)
+        clay.sweep('tallo flor', [(x, y, 0.0), (x + 0.01, y, alto)], 0.008, (1, 1), coll, _mat('Tallo', '#5FA35A', rough=0.7), segments=4, samples=2,
+                   subsurf=0)
+        clay.blob('hojita', (x + 0.03, y, alto * 0.45), (0.035, 0.015, 0.012), coll, _mat('Hoja', '#6FBF8F', rough=0.6), n=4, subsurf=0)
+        col = colores[(k + seed) % len(colores)]
+        for p in range(5):
+            a = p / 5 * math.tau
+            clay.blob('pétalo', (x + 0.03 * math.cos(a), y + 0.03 * math.sin(a), alto + 0.01), (0.024, 0.024, 0.01), coll, laca(f'pétalo {col}', col, 0.5),
+                      n=4, subsurf=0)
+        clay.blob('centro flor', (x, y, alto + 0.02), (0.016, 0.016, 0.012), coll, laca('centro flor', '#F7C948', 0.5), n=4, subsurf=0)
+
+
+def arbustos(coll):
+    for c, r, col in (((0, 0, 0.22), (0.32, 0.28, 0.24), '#6BB45B'), ((0.3, 0.15, 0.18), (0.24, 0.22, 0.2), '#7CC46A'),
+                      ((-0.25, 0.2, 0.16), (0.22, 0.2, 0.18), '#84CB70')):
+        clay.blob('arbusto', c, r, coll, tela(f'hojas {col}', col), n=8)
+    for k in range(5):
+        a = k * 1.3
+        clay.blob('florcita arbusto', (0.25 * math.cos(a), -0.2 + 0.1 * math.sin(a), 0.3 + 0.05 * (k % 2)), (0.03, 0.03, 0.025), coll,
+                  laca('florcita', '#F2587A', 0.5), n=4)
+
+
+def piedras(coll):
+    """Caminito de piedras desde la puerta hasta la grama."""
+    for k, (x, y) in enumerate(((2.2, 1.0), (1.95, 0.55), (1.6, 0.15), (1.2, -0.2), (0.75, -0.45))):
+        clay.blob('tapete piedra', (x, y, 0.015), (0.2 - 0.01 * (k % 2), 0.15, 0.02), coll, _mat('Piedra', '#CFC7BD', rough=0.8), n=6)
+
+
+def luces_patio(coll, a, b, n=12):
+    """Guirnalda de bombillos calientes entre dos puntos."""
+    pts = []
+    for k in range(9):
+        t = k / 8
+        pts.append(tuple(a[i] + (b[i] - a[i]) * t - (0.3 * 4 * t * (1 - t) if i == 2 else 0) for i in range(3)))
+    clay.sweep('cable luces', pts, 0.006, (1, 1), coll, laca('cable', '#3A3A48', 0.5), segments=4, samples=3)
+    for k in range(n):
+        t = (k + 0.5) / n
+        p = [a[i] + (b[i] - a[i]) * t - (0.3 * 4 * t * (1 - t) if i == 2 else 0) for i in range(3)]
+        clay.blob('bombillo patio', (p[0], p[1], p[2] - 0.05), (0.03, 0.03, 0.04), coll, luz('bombillo patio', '#FFE9A8', 3.5), n=5)
+
+
+def patio(coll):
+    _cascaron_patio(coll)
+    ventana_con_cortinas(coll, 0.1, D / 2 - 0.01, 1.75, 1.3, 0.95, '#F7E3B5')
+    clay.rbox('matera ventana', (0.1, D / 2 - 0.12, 1.2), (0.62, 0.1, 0.07), coll, madera('matera', '#C08A5B'), p=6, n=4)
+    _group(coll, 'flores ventana', (0.1, D / 2 - 0.12, 1.25), IZQ, lambda: flores(coll, 10, 1.1, 3))
+    puerta_interior(coll, 2.2, '#9ED9C0')
+    tiendas.clock(coll, 1.35, D / 2 - 0.02, 2.55)
+    _poner(coll, 'casita', casita_perro, -1.9, D / 2 - 0.62)
+    _poner(coll, 'platos', platos_perro, -0.95, D / 2 - 0.45)
+    _poner(coll, 'banca', banca, 0.1, D / 2 - 0.45)
+    _poner(coll, 'tina', tina_perro, 1.05, D / 2 - 0.7)
+    _poner(coll, 'árbol', arbol, -2.25, -0.2)
+    _poner(coll, 'copa árbol', copa, -2.25, -0.2)
+    _poner(coll, 'columpio', columpio, -2.25, -0.2)
+    _group(coll, 'flores', (-2.45, -1.35, 0), 0.0, lambda: flores(coll, 12, 1.1, 0))
+    _poner(coll, 'arbustos', arbustos, 2.2, -1.65)
+    piedras(coll)
+    luces_patio(coll, (-2.2, -0.2, 2.5), (1.6, D / 2 - 0.3, 2.8))
+
 # ----- La cigüeña y la bebé (piezas sueltas: el juego las pone y las anima) -----
 
 def bebe(coll):
@@ -1020,11 +1248,11 @@ def ciguena(coll):
     clay.blob('gorrito', (0.6, -0.06, -0.08), (0.06, 0.05, 0.03), coll, tela('manta bebé', '#F7C6D3'), n=6)
 
 
-PIEZAS = {'bebe': bebe, 'ciguena': ciguena}
+PIEZAS = {'bebe': bebe, 'ciguena': ciguena, 'perro': perro.perro}
 
 
 CONSTRUIR = {'sala': sala, 'cocina': cocina, 'bano': bano, 'cuarto': dormitorio, 'juegos': juegos, 'trofeos': trofeos,
-             'cuna': cuna_cuarto, 'cuarto_el': cuarto_el, 'cuarto_ella': cuarto_ella}
+             'cuna': cuna_cuarto, 'cuarto_el': cuarto_el, 'cuarto_ella': cuarto_ella, 'patio': patio}
 
 # Puntos de acción (x, y, rot en grados; rot 0 = mirando a la cámara) y sitios de decoración comprables.
 # Un cuarto elemento opcional es el acceso: los pasos (x, y) para llegar sin atravesar el mueble (se sale por los
@@ -1071,6 +1299,14 @@ PUNTOS = {
         'entrada': (2.2, 1.35, 0), 'centro_izq': (-0.5, -1.4, 0), 'centro_der': (1.0, -1.45, 0),
         'tocador': (-1.3, 1.15, 180, [(-1.3, 0.55)]), 'estudiar': (-1.83, -0.6, -90, [(-1.83, -1.3)]),
         'sillon': (0.55, 1.45, 0, [(0.55, 0.8)]),
+    },
+    'patio': {
+        'entrada': (2.2, 1.35, 0), 'centro_izq': (-0.7, -1.3, 0), 'centro_der': (0.9, -1.35, 0),
+        # En la banca, debajo de la ventana (como en el sofá: por delante y de lado)
+        'banca_izq': (-0.2, 1.52, 0, [(-0.2, 0.95)]), 'banca_der': (0.4, 1.52, 0, [(0.4, 0.95)]),
+        # Los sitios del perrito
+        'perro_casita': (-1.9, 0.78, 0), 'perro_dormir': (-1.9, 1.5, 0), 'perro_plato': (-1.11, 1.25, 180), 'perro_agua': (-0.79, 1.25, 180),
+        'perro_tina': (1.05, D / 2 - 0.7, 0), 'perro_juego': (0.2, -0.55, 0),
     },
 }
 SITIOS_DECO = {
@@ -1140,16 +1376,24 @@ SITIOS_DECO = {
         dict(id='ella_piso3', tipo='piso', x=1.45, y=1.65, z=0, rot=0),
     ],
 }
+SITIOS_DECO['patio'] = [
+    dict(id='patio_planta', tipo='piso', x=1.55, y=-1.8, z=0, rot=0),
+    dict(id='patio_planta2', tipo='piso', x=2.35, y=-0.35, z=0, rot=0),
+    dict(id='patio_planta3', tipo='piso', x=-0.3, y=-1.8, z=0, rot=0),
+]
 # Marcas: dónde pone el juego lo que aparece solo (los trofeos ganados, la bebé en la cuna, por dónde entra la cigüeña)
 MARCAS = {
     'trofeos': {**{k: dict(x=x, y=TROFEOS_Y, z=1.085) for k, x in TROFEOS_X.items()}, 'amor': dict(x=PODIO[0], y=PODIO[1], z=0.52)},
     'cuna': {'bebe': dict(x=-0.72, y=D / 2 - 0.6, z=0.585), 'ventana': dict(x=-W / 2 + 0.2, y=1.2, z=1.75)},
+    'patio': {'tina': dict(x=1.05, y=D / 2 - 0.7, z=0.24), 'cuido': dict(x=-1.11, y=D / 2 - 0.45, z=0.09), 'dormir': dict(x=-1.9, y=D / 2 - 0.62, z=0.1)},
 }
 # Dónde se pegan las notas (en la nevera) y dónde aparecen los regalos recibidos
 NOTAS = dict(cuarto='cocina', x=1.15, y=D / 2 - 0.84, z=1.35, ancho=0.7, alto=0.9)
 
 
-AMPLIACION = {'juegos', 'trofeos', 'cuna', 'cuarto_el', 'cuarto_ella'}
+AMPLIACION = {'juegos', 'trofeos', 'cuna', 'cuarto_el', 'cuarto_ella', 'patio'}
+# El perrito se ve de cerca (modo mascota): no se le baja el suavizado
+SIN_ALIGERAR = {'perro'}
 
 
 def aligerar(coll):

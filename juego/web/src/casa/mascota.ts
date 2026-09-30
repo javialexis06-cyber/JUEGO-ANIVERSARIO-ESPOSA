@@ -26,7 +26,7 @@ type Tramo = { a: P; alto?: number; rot?: number; salida?: Salida } | { ruta: P 
 const SUBIR: Record<string, number> = {
   sofa: 0.48, comer: 0.34, tina: 0.72, cama: 0.8, inodoro: 0.36,
   // Los muebles de la ampliación (pufs, sillas, mecedora, taburete y sillones)
-  mesa: 0.31, escritorio: 0.34, estudiar: 0.34, tocador: 0.34, mecedora: 0.34, sillon: 0.48,
+  mesa: 0.31, escritorio: 0.34, estudiar: 0.34, tocador: 0.34, mecedora: 0.34, sillon: 0.48, banca: 0.3,
 };
 /** Altura final de cada acción (medida con el cuerpo en su pose contra el cojín, la silla, el agua y el colchón). */
 const ALTO = { sofa: 0.48, comer: 0.34, tina: 0.12, cama: 0.74, inodoro: 0.36 };
@@ -43,6 +43,7 @@ const USOS: Record<string, { pasos: Paso[]; efecto?: Efecto['tipo']; mecer?: boo
   estudiar: { pasos: [{ pose: 'comer_sentado_b', dur: 3 }, { pose: 'sentado', dur: 2 }, { pose: 'comer_sentado_a', pose2: 'comer_sentado_b', ritmo: 0.8, dur: 99 }] },
   tocador: { pasos: [{ pose: 'frotar_a', pose2: 'frotar_b', ritmo: 1.6, dur: 99, cara: 'feliz' }], efecto: 'brillos' },
   sillon: { pasos: [{ pose: 'sentado_feliz', dur: 99, cara: 'feliz' }] },
+  banca: { pasos: [{ pose: 'sentado_feliz', dur: 99, cara: 'feliz' }] },
 };
 // Los trofeos: aplaude frente al pedestal
 for (const t of ['super', 'puertas', 'mesa', 'retrete', 'amor']) {

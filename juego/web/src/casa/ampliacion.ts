@@ -9,9 +9,11 @@ const PLANO: Cuarto[][] = [
   ['cuarto_el', 'cuarto', 'cuarto_ella'],
   ['bano', 'sala', 'cocina'],
   ['juegos', 'trofeos', 'cuna'],
+  // Afuera, a lo ancho: el patio del perrito
+  ['patio'],
 ];
 export const EMOJI: Record<Cuarto, string> = {
-  sala: '🛋️', cocina: '🍳', bano: '🛁', cuarto: '🛏️', juegos: '🕹️', trofeos: '🏆', cuna: '🍼', cuarto_el: '💙', cuarto_ella: '💗',
+  sala: '🛋️', cocina: '🍳', bano: '🛁', cuarto: '🛏️', juegos: '🕹️', trofeos: '🏆', cuna: '🍼', cuarto_el: '💙', cuarto_ella: '💗', patio: '🐶',
 };
 /** Nombre corto para las pestañas de abajo. */
 export const CORTO: Partial<Record<Cuarto, string>> = { cuarto_el: 'De Él', cuarto_ella: 'De Ella' };

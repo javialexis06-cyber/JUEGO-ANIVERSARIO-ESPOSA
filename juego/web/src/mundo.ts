@@ -165,12 +165,12 @@ export class Mundo {
   }
 
   /** Centra la vista en un punto del mundo con cierto acercamiento. */
-  enfocar(p: { x: number; y: number; z: number }, zoom: number) {
+  enfocar(p: { x: number; y: number; z: number }, zoom: number, max = 3) {
     const dir = new THREE.Vector3(Math.sin(AZ) * Math.cos(EL), Math.sin(EL), Math.cos(AZ) * Math.cos(EL));
     const derecha = new THREE.Vector3(Math.cos(AZ), 0, -Math.sin(AZ));
     const arriba = new THREE.Vector3().crossVectors(dir, derecha).negate().normalize();
     const d = new THREE.Vector3(p.x, p.y, p.z).sub(this.objetivo);
-    this.zoom = THREE.MathUtils.clamp(zoom, 1, 3);
+    this.zoom = THREE.MathUtils.clamp(zoom, 1, max);
     this.camara.zoom = this.zoom;
     this.desplazamiento.set(d.dot(derecha), d.dot(arriba));
     this.colocarCamara();

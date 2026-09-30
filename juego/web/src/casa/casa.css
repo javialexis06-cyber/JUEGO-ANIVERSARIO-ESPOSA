@@ -1335,3 +1335,7 @@ button.plano-cuarto:active { transform: translateY(1px); }
   .plano-emoji { font-size: 19px; }
   .plano-cuarto small { font-size: 10px; }
 }
+/* El patio va afuera, a lo ancho debajo de la casa */
+.plano-patio { grid-column: 1 / -1; background: #dff0cf; }
+/* Ícono con un emoji (el perrito en el botón del patio) */
+.ico-emoji { display: grid; place-items: center; font-size: 25px; line-height: 1; }

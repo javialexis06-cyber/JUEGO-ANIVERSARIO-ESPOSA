@@ -77,6 +77,45 @@ Al abrir la app, lo de cada celular sube a la casa (`casa.logros`, se guarda el 
 vez 5, 10 o 20 monedas; la **copa del amor** es del metal del trofeo más bajito (paga el triple). En la sala se ven
 en sus pedestales dando vueltas despacito (sin ganar: una silueta clarita).
 
+## El patio y el perrito (estilo Pou / Talking Tom)
+
+El **patio** viene con la casa (pestaña «Patio», abajo del plano): grama, la fachada con su alero de tejas, cerca de
+madera, cerquita blanca, árbol de mango con columpio de llanta, banca debajo de la ventana (para sentarse), la
+**casita del perro** con su nombre en el letrero, los platos de cuido y agua, la tina de lata con el patito, flores,
+caminito de piedras y guirnalda de bombillos (`casa.py`, sección «El patio»).
+
+**Adoptar** (botón del patio): perrito o perrita, nombre (Canela, Toby, Maní, Luna, Coco, Lucas u otro) y color
+(caramelo, chocolate, negrito, gris, con manchas o dorado). Es de los dos (`casa.perro`); entra corriendo por la puerta.
+
+El perrito (`personajes/blender/perro.py` → `perro.glb`) es un cachorro de plastilina por piezas con bisagras
+(cuerpo, cabeza, orejas, cejas, cola y patas) y caras que se prenden y apagan (ojos abiertos, felices ^ ^ o
+cerrados; boca cerrada o abierta con la lengua). En el juego se anima con código (`src/casa/perro.ts`): camina
+esquivando los muebles, respira, parpadea y mueve la cola según su ánimo (triste: orejas y cola gachas).
+
+**Jugar con él** (o tocarlo) abre el **modo mascota** (`src/casa/patio.ts`): la cámara se le acerca, arriba sus 4
+barras y abajo botones grandes:
+
+| Botón / toque | Qué pasa | Efecto |
+|---|---|---|
+| Comida → Cuido | va al plato y come (crunch, crunch) | +40 comida (gratis) |
+| Comida → Huesito | lo pide sentado en dos patas | +15 comida, +25 alegría (2 monedas) |
+| Bañar | se mete a la tina de un brinco, espuma y burbujas; sale y se sacude salpicando | limpieza al 100 |
+| Pelota (o tocar la grama) | la pelota vuela a donde se tocó; corre, la trae en la boca y la suelta | +12 alegría, −4 energía |
+| Dormir / Despertar | se va a su casita y duerme (zzz); la energía sube también con la app cerrada | |
+| Trucos | sentado (nivel 1), dar la pata (2), rodar (3), hacerse el muerto (4), saltar (5), pedir (6) | +4 alegría |
+| Háblale (mantener apretado) | pone las orejas a escuchar y repite lo que le dijeron con vocecita (micrófono) | +3 alegría |
+| Tocar la cabeza | caricia: ojos felices, ladea la cabeza, cola a mil, corazones | +4 alegría |
+| Tocar la barriga | cosquillas: panza arriba pataleando y riéndose | +5 alegría |
+| Tocar la cola | se enoja: cejas bravas, gruñe y ladra | −3 alegría |
+| Tocar la nariz | estornudo («¡achís!») | +2 alegría |
+| Tocar una pata | da la pata (o se sienta si aún no aprende) | |
+
+Las necesidades bajan con el reloj real (comida 6, energía 4, limpieza 3 y alegría 5 por hora; dormido la energía
+sube 20 por hora). Si algo baja de 30 sale un globito con lo que necesita. Un rato después de comer aparece un
+**popó** en la grama (hasta 3; ensucian y aburren): se recoge tocándolo. Cada cuidado da puntos y el perrito sube de
+**nivel** (2 a los 20 puntos, 3 a los 80, 4 a los 180…) y aprende trucos nuevos. Lo que le hace uno (comer,
+bañarse, irse a dormir) también se ve en el celular del otro si está mirando el patio.
+
 ## Ir al baño y el retrete espacial
 
 - **Ir al baño** (en el baño): se sienta en el inodoro y pone caras exageradas mientras piensa cosas
