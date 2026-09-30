@@ -23,6 +23,7 @@ const params = new URLSearchParams(location.search);
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
 const CLAVE_PREFS = 'mesa-preferencias';
+const CLAVE_VICTORIAS = 'nuestro-hogar-victorias';
 export const nombreDe = (r: Rol) => (r === 'el' ? 'Él' : 'Ella');
 
 function rolJugador(): Rol {
@@ -304,6 +305,8 @@ class Partida {
       pagar(premio);
       pp.textContent = `+${premio} monedas para la casa`;
     }
+    // Para los trofeos de la casa: cuántas ha ganado quien juega en este celular
+    if (g === yo) contarVictoria();
     sonido.fin(g === null || g === yo || this.modo === 'local');
     mostrar('final');
   }
@@ -333,6 +336,14 @@ function premioDe(p: Partida, fin: Final) {
 function pagar(monedas: number) {
   try {
     localStorage.setItem(CLAVE_SUELDO, String((Number(localStorage.getItem(CLAVE_SUELDO)) || 0) + monedas));
+  } catch {
+    /* sin almacenamiento */
+  }
+}
+
+function contarVictoria() {
+  try {
+    localStorage.setItem(CLAVE_VICTORIAS, String((Number(localStorage.getItem(CLAVE_VICTORIAS)) || 0) + 1));
   } catch {
     /* sin almacenamiento */
   }

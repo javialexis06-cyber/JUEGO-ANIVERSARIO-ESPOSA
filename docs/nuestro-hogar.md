@@ -15,12 +15,15 @@ Cuatro cuartos tipo diorama, en plastilina como las tiendas (`personajes/blender
 | Baño | Bañarse (en la tina con burbujas) · Lavarse en el lavamanos | higiene al 100 · +25 higiene |
 | Cuarto | Dormir (acostado en la cama) · Cambiarse en el clóset | +16 energía por hora dormido · +12 higiene |
 
-Se cambia de cuarto con las pestañas de abajo; cada pestaña muestra la carita de quién está ahí. Tu personaje va
+Se cambia de cuarto con las pestañas de abajo (solo los cuartos construidos; si no caben, se desplazan de lado) o
+con el **plano** (la casita amarilla al principio de las pestañas): la casa vista desde arriba, tres pisos de a tres
+cuartos, con la carita de quién está en cada uno. Cada pestaña muestra la carita de quién está ahí. Tu personaje va
 contigo: camina hasta la puerta del cuarto donde está (la cámara lo espera un momento), sale y entra caminando por
 la puerta del otro cuarto. El de tu pareja se queda donde está (lo que se ve es su estado). Dormido no se levanta:
 la pestaña solo muestra el cuarto.
 
 Tocar el piso hace caminar a tu personaje hasta ahí; tocar al otro abre su hoja; tocar la nevera abre las notas.
+Tocar un mueble lo usa: el sofá, la tele, la tina, la cama, el arcade, la cuna, la mecedora, el tocador…
 Cualquier orden nueva (tocar el piso, otra acción, otro cuarto u otro mimo) corta lo que estaba haciendo: se levanta
 del sofá o de la silla, suelta la comida y va a lo nuevo (el otro celular lo ve igual).
 
@@ -39,6 +42,41 @@ del sofá o de la silla, suelta la comida y va a lo nuevo (el otro celular lo ve
 - Los mimos se hacen a un lado del otro que quede libre (si ese lado cae dentro de un mueble, del otro lado); a quien
   duerme se le da desde el lado de su cama. La cajita de regalo aparece sobre piso libre.
 
+## Ampliar la casa
+
+Menú → **Ampliar la casa** (o el plano): los cuartos que faltan salen punteados con su precio y se construyen con
+las monedas de los dos (`casa.ampliaciones`). Se cargan en 3D solo cuando existen (`Casa3D.asegurar`), así la casa
+abre igual de rápido. Modelos en `personajes/blender/casa.py` (sección «Ampliación»); se exportan solo los nuevos
+con `CASA_SOLO=juegos,trofeos,cuna,cuarto_el,cuarto_ella,bebe,ciguena python3 exportar_glb.py <salida> casa`
+(`casa.json` sale siempre completo; a las piezas chiquitas se les baja el suavizado para que pesen menos).
+
+| Cuarto | Precio | Qué tiene y qué se hace |
+|---|---|---|
+| Juegos | gratis (viene con la casa) | Los **minijuegos ya no están en el menú**: arcade de Súper Manía (con la pantalla prendida), la **puerta 100** morada de Cien Puertas y la mesa con el parchís servido (dos pufs). El personaje camina al arcade, a la puerta o se sienta en el puf, y de ahí se entra al juego. También el retrete espacial en miniatura (sus récords) |
+| Trofeos | 50 | Cuatro pedestales de mármol con los trofeos de cada minijuego, vitrina de medallas, alfombra roja y el podio de la **copa del amor**. «Admirar»: aplaude frente al mejor trofeo |
+| Bebé | 150 | Cuna de barrotes con móvil de estrellas, mecedora, cómoda con cambiador y juguetes. **Pedir a la cigüeña**: se escoge el nombre (Katherine, como dice Él, o Lexy Katherine, como dice Ella, u otro) y la cigüeña entra volando por la ventana con la bebé en un pañuelo y la deja en la cuna (`casa.bebe`). Luego: arrullarla (la cuna se mece, suena una nanita), la mecedora (se mece de verdad) y tocarla (se ríe) |
+| Cuarto de Él | 80 | Escritorio con computador (la pantalla escribe código), silla gamer, sillón, repisa y balón |
+| Cuarto de Ella | 80 | Tocador con espejo de bombillitos y taburete, escritorio de estudio (libros de psicología y un cerebrito rosado), sillón y repisa |
+
+Los cuartos propios tienen 8 o 9 sitios de decoración y **solo su dueño los decora y les pinta las paredes**
+(«Pintar»: 15 colores, `casa.pintura`); el otro puede entrar y sentarse en el sillón, pero ni le sale el botón de
+decorar.
+
+### Trofeos
+
+Cada minijuego da bronce, plata y oro con lo mejor de los dos (`src/casa/trofeos.ts`):
+
+| Juego | Bronce | Plata | Oro | De dónde sale |
+|---|---|---|---|---|
+| Súper Manía | 5 | 25 | 60 estrellas (lunas incluidas) | `supermania-jugable1` |
+| Cien Puertas | 10 | 50 | 100 puertas | `cien-puertas` |
+| Juegos de mesa | 1 | 10 | 30 partidas ganadas | `nuestro-hogar-victorias` (lo cuenta `mesa.html`) |
+| Retrete espacial | 15 | 45 | 90 segundos | `casa.retrete` |
+
+Al abrir la app, lo de cada celular sube a la casa (`casa.logros`, se guarda el máximo). Cada metal nuevo paga una
+vez 5, 10 o 20 monedas; la **copa del amor** es del metal del trofeo más bajito (paga el triple). En la sala se ven
+en sus pedestales dando vueltas despacito (sin ganar: una silueta clarita).
+
 ## Ir al baño y el retrete espacial
 
 - **Ir al baño** (en el baño): se sienta en el inodoro y pone caras exageradas mientras piensa cosas
@@ -52,7 +90,7 @@ del sofá o de la silla, suelta la comida y va a lo nuevo (el otro celular lo ve
   un cohete del baño», «Intolerante a la lactosa… y ahora astronauta»…). Se gana por el tiempo que aguante
   (1 moneda cada 15 s, hasta 3).
 - Al chocar, cae dando vueltas y **aterriza en el baño con un ¡KABOOM!** (humo, sacudón). El marcador
-  compartido guarda el récord de cada uno (`casa.retrete`) y se ve en Minijuegos → Retrete espacial.
+  compartido guarda el récord de cada uno (`casa.retrete`) y se ve en el cuarto de juegos → Retrete espacial.
   Código: `src/casa/cohete.ts`.
 
 ## Recuerdos en el baño y abrazados en la cama
@@ -138,6 +176,7 @@ Se ganan poco y despacio (se bajó a la cuarta parte: con lo de antes se comprab
 | Aniversario | +13 una vez al año (antes 50) |
 | Mimos, saludos y demás con la pareja | nada (antes 5 a 10 los primeros del día) |
 | Minijuegos (súper, Cien Puertas, juegos de mesa) | lo que pague cada juego (cada uno paga la cuarta parte de antes); llega por `nuestro-hogar-sueldo` y la casa lo suma tal cual, sin volver a dividirlo |
+| Trofeos | 5 / 10 / 20 por bronce, plata y oro de cada juego (una vez); la copa del amor, el triple |
 | Casa nueva | empieza con 40 (antes 120) |
 
 Precios: lo de todos los días se abarató a un tercio para que el cuidado siga alcanzando; lo que se colecciona quedó
@@ -152,6 +191,7 @@ igual, así que ahora cuesta días.
 | Decoración | 15 a 80 (la mayoría 30 a 45) | 2 a 4 días jugando un rato (unos 20 a 30 al día entre los dos con minijuegos; 10 solo con los bonos) |
 | Ropa | 10 a 120 (la mitad cuesta 40 o menos) | igual que la decoración |
 | Disfraces | 40 a 295 (las piezas con 25 % de descuento) | de unos días a dos semanas: el premio grande |
+| Cuartos nuevos | 50 (trofeos), 80 (cada cuarto propio), 150 (bebé) | de unos días a una semana |
 
 ## Decoración
 

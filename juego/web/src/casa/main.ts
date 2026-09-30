@@ -16,15 +16,18 @@ import { aTres, Mundo } from '../mundo';
 import { elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
 import { BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, LE_CAE_MAL, lePasa, paraSitio, TINTES, TipoItem } from './catalogo';
+import { CORTO, htmlBebe, htmlPintar, htmlPlano, htmlTrofeos } from './ampliacion';
 import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
 import { Mascota } from './mascota';
 import { type EstadoTele, Tele } from './tele';
 import { PanelRecuerdos } from './recuerdos';
 import {
-  Accion, alDia, animo, Casa, colorSeguro, Cuarto, CUARTOS, diasPara, EstadoPersonaje, Evento, FechaEspecial, hoy, Necesidad,
-  NECESIDADES, NOMBRE_CUARTO, NOMBRE_NECESIDAD, NOMBRE_RANURA, nuevoId, otro, personajeNuevo, Ranura, RANURAS, Rol, Ropa, sumar,
+  Accion, alDia, animo, Casa, colorSeguro, Cuarto, CUARTOS, diasPara, DUENO, EstadoPersonaje, Evento, FechaEspecial, hoy, Necesidad,
+  NECESIDADES, NOMBRE_CUARTO, NOMBRE_NECESIDAD, NOMBRE_RANURA, nuevoId, otro, personajeNuevo, PRECIO_CUARTO, Ranura, RANURAS, Rol, Ropa,
+  sumar, tieneCuarto,
 } from './modelo';
+import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, TROFEOS } from './trofeos';
 import { ranurasDe } from './ropa';
 import {
   configLinea, guardarConfigLinea, olvidarSesion, PersonajeOcupado, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal,
@@ -188,9 +191,12 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
   $('pareja-nombre').textContent = nombre(otro(yo));
   $('chip-yo').querySelector('.chip-cara')!.className = `chip-cara ${caraClase(yo)}`;
   $('chip-pareja').querySelector('.chip-cara')!.className = `chip-cara ${caraClase(otro(yo))}`;
+  // Los cuartos donde están los dos (si son de la ampliación, se cargan antes de ponerlos ahí)
+  await Promise.all([...new Set([s.personajes.el.cuarto, s.personajes.ella.cuarto])].map((c) => casa3d.asegurar(c).catch(() => {})));
   const ahora = Date.now();
   for (const r of ['el', 'ella'] as Rol[]) mascotas[r].aplicar(s.personajes[r], ahora, false);
   verCuarto(s.personajes[yo].cuarto);
+  sincronizarAmpliacion();
   await casa3d.ponerDeco(s.casa.deco, s.recuerdos);
   casa3d.pintarNotas(s.casa.notas);
   entradoEn = Date.now();
@@ -269,10 +275,16 @@ async function cambiarCasa(fn: Parameters<Sincro['cambiarCasa']>[0]) {
 
 function alCambiar(que: QueCambio) {
   // El personaje reacciona enseguida a su estado nuevo (no espera la revisión de cada medio segundo)
-  if (que === 'personaje') for (const r of ['el', 'ella'] as Rol[]) mascotas[r].aplicar(s!.personajes[r]);
+  if (que === 'personaje') {
+    for (const r of ['el', 'ella'] as Rol[]) {
+      void casa3d.asegurar(s!.personajes[r].cuarto).catch(() => {});
+      mascotas[r].aplicar(s!.personajes[r]);
+    }
+  }
   if (que === 'casa') {
     void casa3d.ponerDeco(s!.casa.deco, s!.recuerdos);
     casa3d.pintarNotas(s!.casa.notas);
+    sincronizarAmpliacion();
   }
   if (que === 'recuerdos') void casa3d.ponerDeco(s!.casa.deco, s!.recuerdos);
   pintarTodo();
@@ -294,7 +306,7 @@ async function unaVez(clave: string, monedas: number): Promise<boolean> {
   const ok = await cambiarCasa((c) => {
     dado = false;
     if (c.diario[clave]) return;
-    for (const k of Object.keys(c.diario)) if (!k.startsWith(hoy()) && !k.startsWith('aniversario-')) delete c.diario[k];
+    for (const k of Object.keys(c.diario)) if (!k.startsWith(hoy()) && !k.startsWith('aniversario-') && !k.startsWith('trofeo-')) delete c.diario[k];
     c.diario[clave] = 1;
     c.monedas += monedas;
     dado = true;
@@ -331,6 +343,9 @@ async function abrirDeVerdad() {
     }
     mensajes.push(`Llegaron monedas de los minijuegos: +${sueldo}`);
   }
+  // Lo que se logró en los minijuegos de este celular sube a la casa (para los trofeos) y se cobran los trofeos nuevos
+  await subirLogros();
+  mensajes.push(...(await premiosTrofeos()));
   // Bono diario (uno por persona y por día)
   if (await unaVez(`${hoy()}|${yo}|bono`, BONO_DIARIO)) mensajes.push(`Bono del día: +${BONO_DIARIO} monedas`);
   await guardarYo({ ...est(yo), visto: ahora });
@@ -581,6 +596,8 @@ async function terminarCohete(seg: number) {
   delete e.apuro;
   await guardarYo(e);
   setTimeout(() => hojaRetrete(seg, record, premio), 1400);
+  const nuevos = await premiosTrofeos();
+  nuevos.forEach((m, i) => setTimeout(() => toast(m, 3400), 4000 + i * 3600));
 }
 
 /** El marcador del retrete espacial: quién ha durado más en el espacio. */
@@ -598,6 +615,248 @@ function hojaRetrete(seg?: number, record = false, premio = 0) {
     <p class="nota-hoja">La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién aguanta más?</p>`;
   abrirHoja('Retrete espacial', html, { saldo: s?.casa.monedas });
   if (record) lluviaCorazones(14);
+}
+
+// ---------------------------------------------------------------------------
+// Ampliar la casa: cuartos nuevos, minijuegos en su cuarto, trofeos, la bebé y el cuarto de cada uno
+// ---------------------------------------------------------------------------
+/** Qué pasa al tocar cada mueble (por el nombre del mueble en el modelo del cuarto). */
+const MUEBLES: Partial<Record<Cuarto, [RegExp, string][]>> = {
+  sala: [[/^sof/, 'sofa'], [/^televisor/, 'tv']],
+  cocina: [[/^(mesa_comedor|silla)/, 'comer'], [/^nevera/, 'notas']],
+  bano: [[/^tina/, 'banar'], [/^lavamanos/, 'lavar'], [/^inodoro/, 'inodoro']],
+  cuarto: [[/^cama/, 'dormir'], [/^cl/, 'closet']],
+  juegos: [[/^arcade/, 'jugar-super'], [/^la_puerta_100/, 'jugar-puertas'], [/^(mesa_de_juegos|puf)/, 'jugar-mesa'], [/^retrete_cohete/, 'retrete']],
+  trofeos: [[/^(pedestal|podio|vitrina)/, 'trofeos']],
+  cuna: [[/^cuna/, 'cuna'], [/^mecedora/, 'mecedora']],
+  cuarto_el: [[/^(escritorio|silla_gamer)/, 'escritorio'], [/^sill/, 'sillon']],
+  cuarto_ella: [[/^(tocador|taburete)/, 'tocador'], [/^(estudio|silla)/, 'estudiar'], [/^sill/, 'sillon']],
+};
+
+/** La bebé que ya se ve (nombre|desde); null antes de la primera vez. */
+let bebeVisto: string | null = null;
+let cigueñaEnCamino = false;
+
+/** Pone en 3D lo que dice la casa compartida: pintura, trofeos y la bebé (cada cuarto lo aplica al cargarse, que es
+ *  cuando alguien entra o se mira: así el celular no tiene todos los cuartos en memoria). */
+function sincronizarAmpliacion() {
+  if (!s) return;
+  const c = s.casa;
+  casa3d.pintar(c.pintura ?? {});
+  casa3d.ponerTrofeos({ ...niveles(c), amor: nivelAmor(c) });
+  const clave = c.bebe ? `${c.bebe.nombre}|${c.bebe.desde}` : '';
+  if (clave !== bebeVisto) {
+    // La pidió el otro mientras esta app estaba abierta: también se ve llegar a la cigüeña
+    const llego = bebeVisto === '' && !!c.bebe;
+    bebeVisto = clave;
+    if (llego && !cigueñaEnCamino) void traerBebe(false);
+    else if (!cigueñaEnCamino) casa3d.ponerBebe(!!c.bebe);
+  }
+}
+
+/** Lo mejor de este celular en los minijuegos sube a la casa (nunca baja: se guarda el máximo). */
+async function subirLogros() {
+  if (!s) return;
+  const l = logrosLocales();
+  const ya = s.casa.logros?.[yo];
+  if (ya && l.super <= ya.super && l.puertas <= ya.puertas && l.mesa <= ya.mesa) return;
+  await cambiarCasa((c) => {
+    const a = c.logros?.[yo] ?? { super: 0, puertas: 0, mesa: 0 };
+    c.logros = { ...c.logros, [yo]: { super: Math.max(a.super, l.super), puertas: Math.max(a.puertas, l.puertas), mesa: Math.max(a.mesa, l.mesa) } };
+  });
+}
+
+/** Monedas por cada trofeo nuevo (una sola vez por metal, aunque lo vean los dos celulares). */
+async function premiosTrofeos(): Promise<string[]> {
+  if (!s) return [];
+  const msj: string[] = [];
+  for (const t of TROFEOS) {
+    const nv = nivel(s.casa, t.id);
+    for (let k = 1; k <= nv; k++) {
+      if (s.casa.diario[`trofeo-${t.id}-${k}`]) continue;
+      if (await unaVez(`trofeo-${t.id}-${k}`, PREMIO_TROFEO[k])) msj.push(`¡Trofeo de ${METAL[k].toLowerCase()} en ${t.nombre}! +${PREMIO_TROFEO[k]} monedas`);
+    }
+  }
+  const amor = nivelAmor(s.casa);
+  for (let k = 1; k <= amor; k++) {
+    if (s.casa.diario[`trofeo-amor-${k}`]) continue;
+    if (await unaVez(`trofeo-amor-${k}`, PREMIO_TROFEO[k] * 3)) msj.push(`¡La copa del amor ya es de ${METAL[k].toLowerCase()}! +${PREMIO_TROFEO[k] * 3} monedas`);
+  }
+  if (msj.length) setTimeout(() => lluviaCorazones(16), 600);
+  return msj;
+}
+
+function hojaPlano() {
+  if (!s) return;
+  abrirHoja('Nuestra casa', htmlPlano(s.casa, cuartoVista(), { el: s.personajes.el.cuarto, ella: s.personajes.ella.cuarto }), {
+    saldo: s.casa.monedas,
+    alCerrar: () => (repintarHoja = null),
+  });
+  repintarHoja = hojaPlano;
+}
+
+const AL_CONSTRUIR: Partial<Record<Cuarto, string>> = {
+  trofeos: '¡Sala de trofeos lista! Los que ganen en los minijuegos brillan en los pedestales.',
+  cuna: '¡Cuarto del bebé listo! Ahora pueden pedirle una bebé a la cigüeña.',
+  cuarto_el: '¡Cuarto de Él listo! Solo Él lo decora y le escoge el color.',
+  cuarto_ella: '¡Cuarto de Ella listo! Solo Ella lo decora y le escoge el color.',
+};
+
+async function construir(k: Cuarto) {
+  const precio = PRECIO_CUARTO[k];
+  if (!s || !precio) return;
+  if (tieneCuarto(s.casa, k)) return void irACuarto(k);
+  if (s.casa.monedas < precio) return toast(`Faltan ${precio - s.casa.monedas} monedas. Se ganan jugando en el cuarto de juegos.`, 3200);
+  const ok = await cambiarCasa((c) => {
+    if (tieneCuarto(c, k)) return;
+    if (c.monedas < precio) throw new Error('ya no alcanzan las monedas');
+    c.monedas -= precio;
+    c.ampliaciones = [...(c.ampliaciones ?? []), k];
+  });
+  if (!ok) return;
+  cerrarHoja();
+  sonido.regalo();
+  lluviaCorazones(18);
+  toast(AL_CONSTRUIR[k] ?? '¡Cuarto nuevo!', 3800);
+  await casa3d.asegurar(k).catch(() => {});
+  void irACuarto(k);
+}
+
+function hojaTrofeos() {
+  if (!s) return;
+  abrirHoja('Trofeos', htmlTrofeos(s.casa), { saldo: s.casa.monedas, alCerrar: () => (repintarHoja = null) });
+  repintarHoja = hojaTrofeos;
+}
+
+/** Va a aplaudirle al mejor trofeo que tengan (o a la copa del amor, si ya brilla). */
+function admirar() {
+  if (!s) return;
+  const n = niveles(s.casa);
+  const mejor = nivelAmor(s.casa) > 0 ? 'amor' : [...TROFEOS].sort((a, b) => n[b.id] - n[a.id])[0].id;
+  if (mejor !== 'amor' && !n[mejor]) toast('Todavía no hay trofeos: ganen en los minijuegos y aquí aparecen.', 3200);
+  sonido.aviso();
+  return hacer('usar', 'trofeos', 15, { carino: 3 }, `ver_${mejor}`);
+}
+
+// Minijuegos: su personaje va al arcade, a la puerta 100 o a la mesa del parchís y de ahí se entra al juego
+const JUEGOS = {
+  super: { punto: 'arcade', url: './super.html', nombre: 'Súper Manía' },
+  puertas: { punto: 'cien', url: './puertas.html', nombre: 'Cien Puertas' },
+  mesa: { punto: 'mesa', url: './mesa.html', nombre: 'los juegos de mesa' },
+} as const;
+let yendoAJugar = false;
+
+async function jugar(j: keyof typeof JUEGOS) {
+  if (!s || yendoAJugar) return;
+  if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
+  yendoAJugar = true;
+  try {
+    const J = JUEGOS[j];
+    await hacer('usar', 'juegos', 30, {}, J.punto);
+    toast(`¡A jugar ${J.nombre}!`);
+    await esperarQue(() => !!s && mascotas[yo].mostrando(s.personajes[yo]), 7000);
+    await pausa(1100);
+    if (params.has('sin-salir')) (window as any).__salioA = J.url;
+    else location.href = J.url;
+  } finally {
+    setTimeout(() => (yendoAJugar = false), 2500);
+  }
+}
+
+function hojaBebe() {
+  if (!s) return;
+  if (!tieneCuarto(s.casa, 'cuna')) return hojaPlano();
+  abrirHoja(s.casa.bebe ? s.casa.bebe.nombre : 'La cigüeña', htmlBebe(s.casa), { alCerrar: () => (repintarHoja = null) });
+  repintarHoja = null;
+}
+
+async function pedirBebe(nombreBebe: string) {
+  const n = nombreBebe.trim().replace(/\s+/g, ' ').slice(0, 30);
+  if (!s || !n || s.casa.bebe || cigueñaEnCamino) return;
+  cigueñaEnCamino = true;
+  const ok = await cambiarCasa((c) => {
+    if (!c.bebe) c.bebe = { nombre: n, desde: Date.now() };
+  });
+  cerrarHoja();
+  // (la casa ya viene con la bebé que quedó guardada: la mía o la que pidió el otro al mismo tiempo)
+  const b = (s as Sincro).casa.bebe;
+  if (!ok || !b) {
+    cigueñaEnCamino = false;
+    return;
+  }
+  bebeVisto = `${b.nombre}|${b.desde}`;
+  await traerBebe(true);
+}
+
+/** La cigüeña trae a la bebé (se ve si se está mirando el cuarto del bebé; si no, ya aparece en la cuna). */
+async function traerBebe(yoLaPedi: boolean) {
+  if (!s?.casa.bebe) return;
+  const b = s.casa.bebe;
+  cigueñaEnCamino = true;
+  try {
+    if (casa3d.actual === 'cuna') {
+      toast('¡Miren por la ventana! Ahí viene la cigüeña…', 3200);
+      sonido.campana();
+      await casa3d.cigueña(() => {
+        sonido.regalo();
+        lluviaCorazones(30);
+        toast(`¡Llegó ${b.nombre}! Bienvenida a la casa 💕`, 4200);
+        if (yoLaPedi) void hacer('usar', 'cuna', 14, { carino: 15 }, 'cuna');
+      });
+    } else {
+      casa3d.ponerBebe(true);
+      lluviaCorazones(20);
+      toast(`¡La cigüeña trajo a ${b.nombre}! Está en su cuna, en el cuarto del bebé.`, 4200);
+    }
+  } finally {
+    cigueñaEnCamino = false;
+    pintarAcciones();
+  }
+}
+
+/** Una nanita (la de Brahms) mientras la arrullan o se mecen. */
+function nana() {
+  const notas = [659, 659, 784, 659, 659, 784, 659, 784, 1046, 988, 880, 880, 784];
+  const dur = [0.3, 0.3, 0.9, 0.3, 0.3, 0.9, 0.3, 0.3, 0.6, 0.6, 0.6, 0.6, 1.2];
+  let t = 0;
+  notas.forEach((f, i) => {
+    sonido.nota(f, dur[i] * 0.95, t, 'sine', 0.05);
+    t += dur[i];
+  });
+}
+
+function arrullar() {
+  if (!s?.casa.bebe) return hojaBebe();
+  nana();
+  return hacer('usar', 'cuna', 18, { carino: 8 }, 'cuna');
+}
+
+function mimarBebe() {
+  if (!s?.casa.bebe) return;
+  const n = s.casa.bebe.nombre.split(' ')[0];
+  [1318, 1568, 1760, 1568].forEach((f, i) => sonido.nota(f, 0.09, i * 0.09, 'sine', 0.05));
+  const frases = [`${n} se ríe`, `${n} te agarra el dedo`, `${n} hace ruiditos`, `${n} bosteza chiquitico`, `${n} sonríe dormida`];
+  toast(frases[Math.floor(Math.random() * frases.length)]);
+  lluviaCorazones(6);
+}
+
+function hojaPintar(k: Cuarto) {
+  if (!s) return;
+  if (DUENO[k] !== yo) return toast(`Este es el cuarto de ${nombre(DUENO[k] ?? otro(yo))}: solo ${DUENO[k] === 'ella' ? 'ella' : 'él'} lo pinta.`);
+  abrirHoja('Pintar las paredes', htmlPintar(s.casa, k), { alCerrar: () => (repintarHoja = null) });
+  repintarHoja = () => hojaPintar(k);
+}
+
+async function pintarPared(color: string) {
+  const k = cuartoVista();
+  if (!s || DUENO[k] !== yo) return;
+  const ok = await cambiarCasa((c) => {
+    const p = { ...(c.pintura ?? {}) };
+    if (color) p[k] = color;
+    else delete p[k];
+    c.pintura = p;
+  });
+  if (ok) sonido.repuesto();
 }
 
 // ---------------------------------------------------------------------------
@@ -1004,9 +1263,12 @@ async function abrirRegaloDeVerdad() {
 // ---------------------------------------------------------------------------
 // Cuartos, botones y HUD
 // ---------------------------------------------------------------------------
+/** Los cuartos propios solo los decora su dueño. */
+const puedeDecorar = (c: Cuarto) => !DUENO[c] || DUENO[c] === yo;
+
 function verCuarto(c: Cuarto) {
   casa3d.mostrar(c);
-  if (decorando) casa3d.modoDecorar(true);
+  if (decorando) casa3d.modoDecorar(true, puedeDecorar);
   pintarCuartos();
   pintarAcciones();
 }
@@ -1062,13 +1324,19 @@ function html(el: HTMLElement, h: string) {
   }
 }
 
+/** Pestañas de los cuartos construidos (se desplazan de lado si no caben) y, primero, el plano de la casa. */
 function pintarCuartos() {
-  html($('cuartos'), CUARTOS.map((c) => {
+  const cont = $('cuartos');
+  const antes = cont.dataset.html;
+  const lista = CUARTOS.filter((c) => !s || tieneCuarto(s.casa, c));
+  html(cont, `<button class="cuarto-tab plano-tab" data-plano aria-label="Plano de la casa">${ico('casa')}</button>` + lista.map((c) => {
     const quien = s ? (['el', 'ella'] as Rol[]).filter((r) => s!.personajes[r].cuarto === c) : [];
-    return `<button class="cuarto-tab" data-cuarto="${c}" aria-current="${c === cuartoVista()}">${NOMBRE_CUARTO[c]}${
+    return `<button class="cuarto-tab" data-cuarto="${c}" aria-current="${c === cuartoVista()}">${CORTO[c] ?? NOMBRE_CUARTO[c]}${
       quien.length ? `<span class="quien">${quien.map((r) => `<span class="${caraClase(r)}"></span>`).join('')}</span>` : ''
     }</button>`;
   }).join(''));
+  // Que la pestaña del cuarto a la vista no quede escondida a un lado
+  if (cont.dataset.html !== antes) cont.querySelector<HTMLElement>('[aria-current="true"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
 
 type Boton = { id: string; texto: string; icono: string; principal?: boolean; activo?: boolean };
@@ -1094,6 +1362,31 @@ function botonesCuarto(): Boton[] {
     case 'cuarto':
       b.push({ id: 'dormir', texto: 'Dormir', icono: ico('luna'), principal: true }, { id: 'closet', texto: 'Cambiarse', icono: ico('closet') });
       break;
+    case 'juegos':
+      b.push(
+        { id: 'jugar-super', texto: 'Súper Manía', icono: '<img src="./modelos/iconos/caja_frutas.png" alt="">', principal: true },
+        { id: 'jugar-puertas', texto: 'Cien Puertas', icono: ico('puerta') },
+        { id: 'jugar-mesa', texto: 'Juegos de mesa', icono: '<img src="./modelos/iconos/mesa_juegos.svg" alt="">' },
+        { id: 'retrete', texto: 'Retrete espacial', icono: ico('inodoro') },
+      );
+      break;
+    case 'trofeos':
+      b.push({ id: 'trofeos', texto: 'Ver trofeos', icono: ico('trofeo'), principal: true }, { id: 'admirar', texto: 'Admirar', icono: ico('aplauso') });
+      break;
+    case 'cuna':
+      if (s.casa.bebe) b.push({ id: 'arrullar', texto: `Arrullar a ${s.casa.bebe.nombre.split(' ')[0]}`, icono: ico('bebe'), principal: true });
+      else b.push({ id: 'pedir-bebe', texto: 'Pedir a la cigüeña', icono: ico('cigueña'), principal: true });
+      b.push({ id: 'mecedora', texto: 'Mecedora', icono: ico('mecedora') });
+      break;
+    case 'cuarto_el':
+    case 'cuarto_ella': {
+      const c = cuartoVista();
+      if (c === 'cuarto_el') b.push({ id: 'escritorio', texto: 'Computador', icono: ico('pc') });
+      else b.push({ id: 'tocador', texto: 'Tocador', icono: ico('espejo') }, { id: 'estudiar', texto: 'Estudiar', icono: ico('libro') });
+      b.push({ id: 'sillon', texto: 'Sillón', icono: ico('sofa') });
+      if (DUENO[c] === yo) b.push({ id: 'pintar', texto: 'Pintar', icono: ico('pintar') });
+      break;
+    }
   }
   return b;
 }
@@ -1105,7 +1398,8 @@ function pintarAcciones() {
     ...botonesCuarto(),
     // Consentir a la pareja: solo cuando están en el mismo cuarto
     ...(juntos() ? [{ id: 'pareja', texto: nombre(otro(yo)), icono: ico('carino') }] : []),
-    { id: 'decorar', texto: decorando ? 'Listo' : 'Decorar', icono: ico('decorar'), activo: decorando },
+    // (el cuarto propio del otro no se decora: ni aparece el botón)
+    ...(decorando || puedeDecorar(cuartoVista()) ? [{ id: 'decorar', texto: decorando ? 'Listo' : 'Decorar', icono: ico('decorar'), activo: decorando }] : []),
     { id: 'tienda', texto: 'Tienda', icono: ico('tienda') },
   ];
   if (vozPendiente()) b.unshift({ id: 'oir-voz', texto: 'Mensaje de voz', icono: ico('telefono'), principal: true });
@@ -1207,9 +1501,40 @@ async function alAccion(id: string) {
       return hacer('closet', 'cuarto', 5, { higiene: 12 });
     case 'pareja':
       return hojaPareja();
+    case 'jugar-super':
+      return jugar('super');
+    case 'jugar-puertas':
+      return jugar('puertas');
+    case 'jugar-mesa':
+      return jugar('mesa');
+    case 'retrete':
+      void hacer('usar', 'juegos', 12, {}, 'cohete');
+      return hojaRetrete();
+    case 'trofeos':
+      return hojaTrofeos();
+    case 'admirar':
+      return admirar();
+    case 'pedir-bebe':
+      return hojaBebe();
+    case 'arrullar':
+      return arrullar();
+    case 'mecedora':
+      nana();
+      return hacer('usar', 'cuna', 25, { energia: 6, carino: 4 }, 'mecedora');
+    case 'escritorio':
+      return hacer('usar', 'cuarto_el', 20, {}, 'escritorio');
+    case 'tocador':
+      sonido.limpio();
+      return hacer('usar', 'cuarto_ella', 15, { higiene: 8 }, 'tocador');
+    case 'estudiar':
+      return hacer('usar', 'cuarto_ella', 25, {}, 'estudiar');
+    case 'sillon':
+      return hacer('usar', cuartoVista(), 20, { energia: 6 }, 'sillon');
+    case 'pintar':
+      return hojaPintar(cuartoVista());
     case 'decorar':
       decorando = !decorando;
-      casa3d.modoDecorar(decorando);
+      casa3d.modoDecorar(decorando, puedeDecorar);
       if (decorando) toast('Toca un aro rojo para poner decoración. Compra más en la tienda.');
       return pintarAcciones();
     case 'tienda':
@@ -1652,47 +1977,12 @@ function hojaMenu() {
       <button class="accion" data-hoja="fechas">${ico('fechas')}<span>Fechas especiales</span></button>
       <button class="accion" data-hoja="notas">${ico('nota')}<span>Notas de la nevera</span></button>
       <button class="accion" data-hoja="buzon">${ico('telefono')}<span>Buzón de voz${s && vozPendiente() ? ' (nuevo)' : ''}</span></button>
-      <button class="accion" data-hoja="juegos">${ico('juegos')}<span>Minijuegos</span></button>
+      <button class="accion" data-hoja="plano">${ico('casa')}<span>Ampliar la casa</span></button>
+      <button class="accion" data-hoja="trofeos">${ico('trofeo')}<span>Trofeos</span></button>
       <button class="accion" data-hoja="tienda">${ico('tienda')}<span>Tienda</span></button>
       <button class="accion" data-hoja="ajustes">${ico('ajustes')}<span>Ajustes</span></button>
     </div>`;
   abrirHoja('Nuestro Hogar', html, { saldo: s?.casa.monedas });
-}
-
-function hojaJuegos() {
-  const html = `<article class="minijuego">
-      <img src="./modelos/iconos/caja_frutas.png" alt="">
-      <div>
-        <h3>Súper Manía en Pareja</h3>
-        <p>Atiende la tiendita de barrio: reponer, cobrar, limpiar y atrapar ladrones. Parte de lo que ganes llega a la casa como sueldo.</p>
-        <a class="boton boton-tomate" href="./super.html">Ir a trabajar</a>
-      </div>
-    </article>
-    <article class="minijuego">
-      <img src="./modelos/iconos/deco_reloj.png" alt="">
-      <div>
-        <h3>Cien Puertas</h3>
-        <p>Un escape room para ti: cien puertas con acertijos (inclina, sacude, voltea el celular…) y ${nombre(otro(yo))} te cuenta la historia. Cada puerta abierta da monedas para la casa.</p>
-        <a class="boton boton-menta" href="./puertas.html">Abrir puertas</a>
-      </div>
-    </article>
-    <article class="minijuego">
-      <img src="./modelos/iconos/mesa_juegos.svg" alt="">
-      <div>
-        <h3>Juegos de Mesa</h3>
-        <p>Dados Party, Mancala, Puntos y Cajas y Parchís: contra ${nombre(otro(yo))} (el celular), los dos en este celular o cada uno en el suyo. Los muñequitos celebran, se enojan y hacen drama con cada jugada.</p>
-        <a class="boton boton-tomate" href="./mesa.html">Jugar</a>
-      </div>
-    </article>
-    <article class="minijuego">
-      <span class="minijuego-ico">${ico('inodoro')}</span>
-      <div>
-        <h3>Retrete espacial</h3>
-        <p>Dale leche a Ella o picante a Él y… al baño. El inodoro sale volando al espacio: esquiva asteroides el mayor tiempo posible. ¿Quién aguanta más?</p>
-        <button class="boton boton-menta" data-hoja="retrete">Ver récords</button>
-      </div>
-    </article>`;
-  abrirHoja('Minijuegos', html, { saldo: s?.casa.monedas });
 }
 
 function hojaAjustes() {
@@ -1804,7 +2094,12 @@ function controles() {
   $('btn-codigo-listo').onclick = () => mostrar('codigo', false);
   $('btn-codigo-compartir').onclick = () => compartirCodigo();
   $('cuartos').onclick = (ev) => {
-    const b = (ev.target as HTMLElement).closest('[data-cuarto]') as HTMLElement | null;
+    const t = ev.target as HTMLElement;
+    if (t.closest('[data-plano]')) {
+      sonido.toque();
+      return hojaPlano();
+    }
+    const b = t.closest('[data-cuarto]') as HTMLElement | null;
     if (!b) return;
     sonido.toque();
     void irACuarto(b.dataset.cuarto as Cuarto);
@@ -1877,9 +2172,18 @@ function controles() {
       else if (h === 'buzon') hojaBuzon();
       else if (h === 'album') hojaAlbum();
       else if (h === 'fechas') hojaFechas();
-      else if (h === 'juegos') hojaJuegos();
+      else if (h === 'plano') hojaPlano();
+      else if (h === 'trofeos') hojaTrofeos();
       else if (h === 'tienda') hojaTienda('comida');
       else if (h === 'ajustes') hojaAjustes();
+    } else if ((b = d('[data-construir]'))) void construir(b.dataset.construir as Cuarto);
+    else if ((b = d('[data-ir-cuarto]'))) {
+      cerrarHoja();
+      void irACuarto(b.dataset.irCuarto as Cuarto);
+    } else if ((b = d('[data-pintar]'))) void pintarPared(b.dataset.pintar!);
+    else if ((b = d('[data-accion-hoja]'))) {
+      cerrarHoja();
+      void alAccion(b.dataset.accionHoja!);
     } else if ((b = d('[data-oir-voz]'))) void oirVoz(b.dataset.oirVoz!);
     else if ((b = d('[data-elegir-regalo]'))) {
       regaloElegido = b.dataset.elegirRegalo!;
@@ -1912,6 +2216,11 @@ function controles() {
     if (f.id === 'form-nota') void unaSolaVez(f.id, () => pegarNota(val('nota-texto')));
     else if (f.id === 'form-regalo' && regaloElegido) void unaSolaVez(f.id, () => regalar(regaloElegido!, val('regalo-mensaje')));
     else if (f.id === 'form-recuerdo') void unaSolaVez(f.id, guardarRecuerdo);
+    else if (f.id === 'form-bebe') {
+      const otro = val('bebe-otro').trim();
+      const elegido = (f.querySelector('input[name="bebe-nombre"]:checked') as HTMLInputElement | null)?.value ?? 'Katherine';
+      void unaSolaVez(f.id, () => pedirBebe(otro || elegido));
+    }
     else if (f.id === 'form-aniversario') void cambiarCasa((c) => (c.aniversario = val('aniv-fecha'))).then(() => {
       toast('Aniversario guardado');
       hojaFechas();
@@ -1982,7 +2291,19 @@ function tocar(x: number, y: number) {
   }
   const t = casa3d.tocar(x, y);
   if (!t) return;
-  if (t.tipo === 'sitio') return hojaDecorar(t.sitio);
+  if (t.tipo === 'sitio') {
+    if (!puedeDecorar(casa3d.actual)) return;
+    return hojaDecorar(t.sitio);
+  }
+  if (t.tipo === 'bebe') return mimarBebe();
+  // Tocar un mueble es usarlo (el arcade, la cuna, el sofá, la tina…)
+  if (t.tipo === 'suelo' && t.mueble && !decorando) {
+    const uso = MUEBLES[casa3d.actual]?.find(([re]) => re.test(t.mueble!))?.[1];
+    if (uso) {
+      sonido.toque();
+      return void alAccion(uso === 'cuna' ? (s.casa.bebe ? 'arrullar' : 'pedir-bebe') : uso);
+    }
+  }
   if (t.tipo === 'regalo') return void abrirRegalo();
   if (t.tipo === 'nevera') {
     void hacer('nevera', 'cocina', 6, {});
@@ -2146,6 +2467,10 @@ function revisar() {
     if (hojaAbierta() && repintarHoja && repintarHoja === pintarPareja) repintarHoja();
   }
   pintarNecesidades($('necesidades'), est(yo));
+  casa3d.mecerCuna((['el', 'ella'] as Rol[]).some((r) => {
+    const a = s!.personajes[r].actividad;
+    return a.accion === 'usar' && a.item === 'cuna' && (a.hasta ?? 0) > ahora && mascotas[r].escenaActual.includes('|usar|cuna|');
+  }));
   if (dormido(yo) && est(yo).energia >= 100 && Date.now() - s!.personajes[yo].actividad.desde > 30 * 60_000) void despertar(true);
   const g = regaloPendiente();
   const m = mascotas[yo];
@@ -2226,6 +2551,16 @@ function efectos() {
   const z = d.sitio.tipo === 'cuadro' ? d.sitio.z : d.sitio.z + 0.25;
   return mundo.aPantalla(new THREE.Vector3(d.sitio.x, z, -d.sitio.y));
 };
+
+/** Monedas de regalo y botones de acción directos (pruebas de la ampliación). */
+(window as any).__monedas = (n: number) => cambiarCasa((c) => (c.monedas += n));
+(window as any).__accion = (id: string) => alAccion(id);
+/** Logros de prueba para los trofeos (se guardan como si vinieran de los minijuegos). */
+(window as any).__logros = (l: { super?: number; puertas?: number; mesa?: number }, retrete?: number) =>
+  cambiarCasa((c) => {
+    c.logros = { ...c.logros, [yo]: { super: 0, puertas: 0, mesa: 0, ...c.logros?.[yo], ...l } };
+    if (retrete !== undefined) c.retrete = { ...c.retrete, [yo]: retrete };
+  }).then(() => premiosTrofeos());
 
 iniciar().catch((e) => {
   console.error(e);

@@ -644,7 +644,11 @@ if __name__ == '__main__':
                                       poses_reaccion=list(POSES_REACCION))
     if 'casa' in PARTES:
         import casa
+        # CASA_SOLO=juegos,cuna,bebe exporta solo esos cuartos (y piezas); casa.json siempre sale completo
+        solo = [k for k in os.environ.get('CASA_SOLO', '').split(',') if k]
         for key in casa.CUARTOS:
+            if solo and key not in solo:
+                continue
             coll = casa.construir(key)
             nuevos = list(coll.objects)
             for o in nuevos:
@@ -662,8 +666,18 @@ if __name__ == '__main__':
         datos = dict(W=casa.W, D=casa.D, alto=casa.ALTO, escala_personas=tiendas.PERSON_SCALE,
                      cuartos={k: dict(nombre=v['nombre'], puntos={n: dict(x=p[0], y=p[1], rot=p[2], **({'acceso': [list(q) for q in p[3]]} if len(p) > 3 else {}))
                                                               for n, p in casa.PUNTOS[k].items()},
-                                      sitios=casa.SITIOS_DECO[k]) for k, v in casa.CUARTOS.items()},
+                                      sitios=casa.SITIOS_DECO[k], **({'marcas': casa.MARCAS[k]} if k in casa.MARCAS else {}))
+                              for k, v in casa.CUARTOS.items()},
                      notas=casa.NOTAS)
+        # La cigüeña y la bebé: piezas sueltas que el juego pone y anima
+        for key, fn in casa.PIEZAS.items():
+            if solo and key not in solo:
+                continue
+            coll = clay.collection(f'Export {key}')
+            raiz = tiendas._group(coll, key, (0, 0, 0), 0.0, lambda fn=fn, coll=coll: fn(coll))
+            casa.aligerar(coll)
+            exportar(arbol(raiz), os.path.join(OUT, f'{key}.glb'))
+            coll.hide_render = coll.hide_viewport = True
         with open(os.path.join(OUT, 'casa.json'), 'w', encoding='utf-8') as f:
             json.dump(datos, f, ensure_ascii=False, indent=1)
     if 'regalos' in PARTES:

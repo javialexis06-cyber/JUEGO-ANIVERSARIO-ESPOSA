@@ -1,12 +1,21 @@
 // Nuestro Hogar: datos de la pareja y reglas de las necesidades (se calculan con el reloj real).
 export type Rol = 'el' | 'ella';
-export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto';
+export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto' | 'juegos' | 'trofeos' | 'cuna' | 'cuarto_el' | 'cuarto_ella';
 export type Necesidad = 'hambre' | 'energia' | 'higiene' | 'carino';
 
 export const NECESIDADES: Necesidad[] = ['hambre', 'energia', 'higiene', 'carino'];
 export const NOMBRE_NECESIDAD: Record<Necesidad, string> = { hambre: 'Comida', energia: 'Energía', higiene: 'Higiene', carino: 'Cariño' };
-export const CUARTOS: Cuarto[] = ['sala', 'cocina', 'bano', 'cuarto'];
-export const NOMBRE_CUARTO: Record<Cuarto, string> = { sala: 'Sala', cocina: 'Cocina', bano: 'Baño', cuarto: 'Cuarto' };
+export const CUARTOS: Cuarto[] = ['sala', 'cocina', 'bano', 'cuarto', 'juegos', 'trofeos', 'cuna', 'cuarto_el', 'cuarto_ella'];
+export const NOMBRE_CUARTO: Record<Cuarto, string> = {
+  sala: 'Sala', cocina: 'Cocina', bano: 'Baño', cuarto: 'Cuarto', juegos: 'Juegos', trofeos: 'Trofeos', cuna: 'Bebé', cuarto_el: 'Cuarto de Él',
+  cuarto_ella: 'Cuarto de Ella',
+};
+/** Con los que empieza la casa; los demás se construyen con monedas en «Ampliar la casa». */
+export const CUARTOS_BASE: Cuarto[] = ['sala', 'cocina', 'bano', 'cuarto', 'juegos'];
+export const PRECIO_CUARTO: Partial<Record<Cuarto, number>> = { trofeos: 50, cuarto_el: 80, cuarto_ella: 80, cuna: 150 };
+/** Los cuartos propios: solo su dueño los decora y les pinta las paredes. */
+export const DUENO: Partial<Record<Cuarto, Rol>> = { cuarto_el: 'el', cuarto_ella: 'ella' };
+export const tieneCuarto = (c: Pick<Casa, 'ampliaciones'>, k: Cuarto) => CUARTOS_BASE.includes(k) || !!c.ampliaciones?.includes(k);
 export const NOMBRE_ROL: Record<Rol, string> = { el: 'Él', ella: 'Ella' };
 export const otro = (r: Rol): Rol => (r === 'el' ? 'ella' : 'el');
 
@@ -24,7 +33,9 @@ export const NOMBRE_RANURA: Record<Ranura, string> = {
 export type Ropa = Partial<Record<Ranura, string>>;
 
 /** Lo que se ve haciendo al personaje (también en el celular del otro). */
-export type Accion = 'comer' | 'banar' | 'lavar' | 'sofa' | 'tv' | 'nevera' | 'closet' | 'saludo' | 'pensar' | 'inodoro';
+export type Accion = 'comer' | 'banar' | 'lavar' | 'sofa' | 'tv' | 'nevera' | 'closet' | 'saludo' | 'pensar' | 'inodoro'
+  /** Usar un mueble de los cuartos nuevos (el item dice cuál: arcade, mesa, cuna, mecedora, tocador…). */
+  | 'usar';
 
 export interface Actividad {
   tipo: 'nada' | 'dormir';
@@ -182,7 +193,22 @@ export interface Casa {
   diario: Record<string, number>;
   /** Récords del retrete espacial: los segundos que más ha durado cada uno esquivando asteroides. */
   retrete?: Partial<Record<Rol, number>>;
+  /** Cuartos construidos con «Ampliar la casa» (además de los de siempre). */
+  ampliaciones?: Cuarto[];
+  /** La bebé que trajo la cigüeña. */
+  bebe?: { nombre: string; desde: number };
+  /** Lo mejor de cada uno en los minijuegos (para los trofeos): estrellas del súper, puertas abiertas, partidas ganadas. */
+  logros?: Partial<Record<Rol, Logros>>;
+  /** Color de las paredes de los cuartos propios. */
+  pintura?: Partial<Record<Cuarto, string>>;
 }
+
+export interface Logros {
+  super: number;
+  puertas: number;
+  mesa: number;
+}
+const LOGROS: (keyof Logros)[] = ['super', 'puertas', 'mesa'];
 
 export function casaNueva(): Casa {
   return {
@@ -230,6 +256,24 @@ export function normalizarCasa(c: unknown): Casa {
             (['el', 'ella'] as Rol[]).filter((r) => typeof c.retrete[r] === 'number' && Number.isFinite(c.retrete[r])).map((r) => [r, Math.max(0, Math.min(3600, c.retrete[r]))]),
           ),
         }
+      : {}),
+    ...(Array.isArray(c.ampliaciones)
+      ? { ampliaciones: CUARTOS.filter((k) => !CUARTOS_BASE.includes(k) && (c.ampliaciones as unknown[]).includes(k)) }
+      : {}),
+    ...(esObjeto(c.bebe) && typeof c.bebe.nombre === 'string' && c.bebe.nombre.trim()
+      ? { bebe: { nombre: c.bebe.nombre.trim().slice(0, 30), desde: numero(c.bebe.desde, 0) } }
+      : {}),
+    ...(esObjeto(c.logros)
+      ? {
+          logros: Object.fromEntries(
+            (['el', 'ella'] as Rol[])
+              .filter((r) => esObjeto(c.logros[r]))
+              .map((r) => [r, Object.fromEntries(LOGROS.map((k) => [k, Math.max(0, Math.min(100000, Math.floor(numero(c.logros[r][k], 0))))])) as unknown as Logros]),
+          ),
+        }
+      : {}),
+    ...(esObjeto(c.pintura)
+      ? { pintura: Object.fromEntries(Object.entries(c.pintura).filter(([k, v]) => k in DUENO && typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v))) }
       : {}),
   };
 }

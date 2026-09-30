@@ -1,11 +1,12 @@
-// La casa en 3D: un cuarto a la vista (sala, cocina, baño o cuarto), la decoración puesta en sus sitios,
-// las notas pegadas en la nevera y los marcadores de «aquí se puede decorar».
+// La casa en 3D: un cuarto a la vista (sala, cocina, baño, cuarto y los de la ampliación), la decoración puesta en
+// sus sitios, las notas pegadas en la nevera, los marcadores de «aquí se puede decorar», los trofeos ganados en los
+// minijuegos, la bebé en su cuna (y la cigüeña que la trae). Los cuartos se cargan cuando hacen falta.
 import * as THREE from 'three';
 import { aTres, Mundo } from '../mundo';
 import { Navegacion, P } from '../navegacion';
 import { cargar, cargarJSON, copia, Productos } from '../recursos';
 import { ITEM, TipoSitio } from './catalogo';
-import { colorSeguro, Cuarto, Nota, Recuerdo } from './modelo';
+import { colorSeguro, Cuarto, CUARTOS_BASE, Nota, Recuerdo } from './modelo';
 
 export interface Punto {
   x: number;
@@ -27,7 +28,7 @@ export interface CasaDato {
   D: number;
   alto: number;
   escala_personas: number;
-  cuartos: Record<Cuarto, { nombre: string; puntos: Record<string, Punto>; sitios: Sitio[] }>;
+  cuartos: Record<Cuarto, { nombre: string; puntos: Record<string, Punto>; sitios: Sitio[]; marcas?: Record<string, { x: number; y: number; z: number }> }>;
   notas: { cuarto: Cuarto; x: number; y: number; z: number; ancho: number; alto: number };
 }
 
@@ -35,7 +36,9 @@ export type Toque =
   | { tipo: 'sitio'; sitio: Sitio }
   | { tipo: 'nevera' }
   | { tipo: 'regalo' }
-  | { tipo: 'suelo'; x: number; y: number }
+  | { tipo: 'bebe' }
+  /** El piso o un mueble (`mueble`: el nombre del mueble tocado, como «arcade» o «pedestal_super»). */
+  | { tipo: 'suelo'; x: number; y: number; mueble?: string }
   | null;
 
 const COLORES_NOTA = ['#FFE58A', '#FFC4D6', '#BFE9D8', '#CFE3FF', '#FFD7B0'];
@@ -76,35 +79,43 @@ export class Casa3D {
   private muebles = new Map<Cuarto, Huella[]>();
   /** Dibujitos animados en la pantalla de la tele de la sala mientras está prendida. */
   private tele: { panel: THREE.Mesh; lienzo: HTMLCanvasElement; tex: THREE.CanvasTexture; ultimo: number } | null = null;
+  /** Pantallas siempre prendidas (la del arcade, la del computador de Él). */
+  private pantallas: { cuarto: Cuarto; panel: THREE.Mesh; lienzo: HTMLCanvasElement; tex: THREE.CanvasTexture; ultimo: number; dibujar: Dibujo }[] = [];
+  private cargas = new Map<Cuarto, Promise<void>>();
+  /** Color de las paredes de los cuartos propios. */
+  private pintura: Partial<Record<Cuarto, string>> = {};
+  private nivelesTrofeo: Record<string, number> | null = null;
+  private trofeos = new Map<string, { nivel: number; obj: THREE.Object3D }>();
+  private colaTrofeos: Promise<void> = Promise.resolve();
+  private hayBebe = false;
+  /** La cigüeña la trae en el pañuelo: todavía no está en la cuna. */
+  private bebeEnCamino = false;
+  private bebe: THREE.Object3D | null = null;
+  private cargaBebe: Promise<void> | null = null;
+  private meciendo = false;
+  private vaivenCuna = 0;
+  private cigue: { obj: THREE.Object3D; alas: THREE.Object3D[]; paquete: THREE.Object3D[]; t0: number; soltado: boolean; alSoltar: () => void; fin: () => void } | null = null;
+  /** Qué cuartos puede decorar quien juega (los propios solo su dueño). */
+  private puedeDecorar: (c: Cuarto) => boolean = () => true;
 
-  private constructor(private mundo: Mundo, public dato: CasaDato) {
+  private constructor(private mundo: Mundo, public dato: CasaDato, private productos: Productos) {
     mundo.escena.add(this.grupo);
   }
 
-  static async cargar(mundo: Mundo, productos: Productos, progreso?: (k: number) => void): Promise<Casa3D> {
+  /** Carga la casa con los cuartos de siempre; los de la ampliación se cargan con `asegurar` cuando se construyen. */
+  static async cargar(mundo: Mundo, productos: Productos, progreso?: (k: number) => void, iniciales: Cuarto[] = CUARTOS_BASE): Promise<Casa3D> {
     const dato = await cargarJSON<CasaDato>('casa.json');
-    const c = new Casa3D(mundo, dato);
+    const c = new Casa3D(mundo, dato, productos);
     const claves = Object.keys(dato.cuartos) as Cuarto[];
+    for (const k of claves) {
+      const g = new THREE.Group();
+      g.visible = k === c.actual;
+      c.cuartos.set(k, g);
+      c.grupo.add(g);
+    }
+    const primero = iniciales.filter((k) => claves.includes(k));
     let hechos = 0;
-    await Promise.all(
-      claves.map(async (k) => {
-        const base = copia(await cargar(`casa_${k}.glb`));
-        // El frutero y demás: marcas que se llenan con productos del súper
-        base.traverse((o) => {
-          if (o.userData?.producto) {
-            const pr = productos.crear(o.userData.producto);
-            if (pr) o.add(pr);
-          }
-        });
-        const g = new THREE.Group();
-        g.add(base);
-        c.bases.set(k, base);
-        g.visible = k === c.actual;
-        c.cuartos.set(k, g);
-        c.grupo.add(g);
-        progreso?.(++hechos / claves.length);
-      }),
-    );
+    await Promise.all(primero.map((k) => c.asegurar(k).then(() => progreso?.(++hechos / primero.length))));
     c.cuartos.get(dato.notas.cuarto)!.add(c.notas);
     for (const k of claves) {
       for (const s of dato.cuartos[k].sitios) {
@@ -118,9 +129,44 @@ export class Casa3D {
     return c;
   }
 
+  /** Carga el modelo de un cuarto (una sola vez) y le pone lo suyo: pintura, trofeos, la bebé, las pantallas. */
+  asegurar(k: Cuarto): Promise<void> {
+    let p = this.cargas.get(k);
+    if (!p) {
+      p = (async () => {
+        const base = copia(await cargar(`casa_${k}.glb`));
+        // El frutero y demás: marcas que se llenan con productos del súper
+        base.traverse((o) => {
+          if (o.userData?.producto) {
+            const pr = this.productos.crear(o.userData.producto);
+            if (pr) o.add(pr);
+          }
+        });
+        this.cuartos.get(k)!.add(base);
+        this.bases.set(k, base);
+        this.navs.delete(k);
+        this.muebles.delete(k);
+        this.aplicarPintura(k);
+        if (k === 'trofeos') this.aplicarTrofeos();
+        if (k === 'cuna') void this.aplicarBebe();
+        if (k === 'juegos') this.crearPantalla(k, 'pantalla_arcade', dibujarArcade);
+        if (k === 'cuarto_el') this.crearPantalla(k, 'pantalla_pc', dibujarComputador);
+        this.mundo.sucio = true;
+      })();
+      p.catch(() => this.cargas.delete(k));
+      this.cargas.set(k, p);
+    }
+    return p;
+  }
+
+  cargado(k: Cuarto) {
+    return this.bases.has(k);
+  }
+
   mostrar(c: Cuarto) {
     this.actual = c;
     for (const [k, g] of this.cuartos) g.visible = k === c;
+    void this.asegurar(c);
     this.mundo.sucio = true;
   }
 
@@ -179,7 +225,8 @@ export class Casa3D {
     let h = this.muebles.get(c);
     if (h) return h;
     h = [];
-    const base = this.bases.get(c)!;
+    const base = this.bases.get(c);
+    if (!base) return h;
     base.updateMatrixWorld(true);
     // Los muebles son los hijos del nodo casa_<cuarto> (o del modelo, si no lo trae)
     const raiz = base.getObjectByName(`casa_${c}`) ?? base;
@@ -206,7 +253,8 @@ export class Casa3D {
       const hh = huella(d.obj);
       if (hh) n.bloquear(hh.x0, hh.y0, hh.x1, hh.y1, HOLGURA);
     }
-    this.navs.set(c, n);
+    // (sin el modelo todavía no se sabe dónde están los muebles: no se guarda)
+    if (this.bases.has(c)) this.navs.set(c, n);
     return n;
   }
 
@@ -332,10 +380,162 @@ export class Casa3D {
     return !!this.regaloCaja?.parent;
   }
 
-  /** Muestra los marcadores de los sitios de decoración del cuarto a la vista. */
-  modoDecorar(si: boolean) {
-    for (const [id, m] of this.marcadores) m.visible = si && this.sitioDe(id)?.cuarto === this.actual;
+  /** Muestra los marcadores de los sitios de decoración del cuarto a la vista (si quien juega lo puede decorar). */
+  modoDecorar(si: boolean, puede?: (c: Cuarto) => boolean) {
+    if (puede) this.puedeDecorar = puede;
+    for (const [id, m] of this.marcadores) {
+      const c = this.sitioDe(id)?.cuarto;
+      m.visible = si && c === this.actual && this.puedeDecorar(c);
+    }
     this.mundo.sucio = true;
+  }
+
+  /** Color de las paredes de los cuartos propios (sin color: el de fábrica). */
+  pintar(p: Partial<Record<Cuarto, string>>) {
+    this.pintura = { ...p };
+    for (const k of this.bases.keys()) this.aplicarPintura(k);
+  }
+
+  private aplicarPintura(k: Cuarto) {
+    const base = this.bases.get(k);
+    if (!base) return;
+    base.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (!m.isMesh || !/^pared_(fondo|izquierda)/.test(m.name)) return;
+      if (!m.userData.colorFabrica) {
+        // Cada cuarto con su propio material (el modelo lo comparte con las copias)
+        m.material = (m.material as THREE.MeshStandardMaterial).clone();
+        m.userData.colorFabrica = '#' + (m.material as THREE.MeshStandardMaterial).color.getHexString();
+      }
+      (m.material as THREE.MeshStandardMaterial).color.set(this.pintura[k] ?? m.userData.colorFabrica);
+    });
+    this.mundo.sucio = true;
+  }
+
+  /** Los trofeos de la sala de trofeos (0 = sin ganar: se ve la silueta; 1 bronce, 2 plata, 3 oro). */
+  ponerTrofeos(n: Record<string, number>) {
+    this.nivelesTrofeo = { ...n };
+    if (this.bases.has('trofeos')) this.aplicarTrofeos();
+  }
+
+  private aplicarTrofeos() {
+    this.colaTrofeos = this.colaTrofeos
+      .then(async () => {
+        const marcas = this.dato.cuartos.trofeos?.marcas;
+        const n = this.nivelesTrofeo;
+        if (!marcas || !n) return;
+        const modelo = await cargar('reaccion_trofeo.glb');
+        for (const [id, m] of Object.entries(marcas)) {
+          const nv = n[id] ?? 0;
+          const ya = this.trofeos.get(id);
+          if (ya?.nivel === nv) continue;
+          ya?.obj.removeFromParent();
+          const t = copia(modelo);
+          tenirTrofeo(t, nv);
+          const esc = id === 'amor' ? 1.25 : 0.72;
+          t.scale.setScalar(esc);
+          // El origen del trofeo es el tallo: la peana queda 22 cm más abajo
+          t.position.copy(aTres(m.x, m.y, m.z + 0.225 * esc));
+          t.userData.trofeo = id;
+          this.cuartos.get('trofeos')!.add(t);
+          this.trofeos.set(id, { nivel: nv, obj: t });
+        }
+        this.mundo.sucio = true;
+      })
+      .catch((e) => console.error(e));
+  }
+
+  /** La bebé en su cuna (cuando la cigüeña ya la trajo). */
+  ponerBebe(si: boolean) {
+    this.hayBebe = si;
+    if (this.bases.has('cuna')) void this.aplicarBebe();
+  }
+
+  private async aplicarBebe() {
+    if (!this.hayBebe || this.bebeEnCamino) {
+      this.bebe?.removeFromParent();
+      return;
+    }
+    if (this.bebe?.parent) return;
+    this.cargaBebe ??= (async () => {
+      const m = this.dato.cuartos.cuna?.marcas?.bebe;
+      if (!m) return;
+      const b = copia(await cargar('bebe.glb'));
+      // Recostadita en la almohada, con la carita hacia quien la mira (grandecita: que se vea)
+      b.scale.setScalar(1.6);
+      b.rotation.x = -0.95;
+      const acostada = new THREE.Group();
+      acostada.add(b);
+      acostada.rotation.y = 0.55;
+      const caja = new THREE.Box3().setFromObject(acostada);
+      const centro = caja.getCenter(new THREE.Vector3());
+      const destino = aTres(m.x, m.y, m.z);
+      acostada.position.set(destino.x - centro.x, destino.y - caja.min.y, destino.z - centro.z);
+      acostada.userData.bebe = true;
+      this.bebe = acostada;
+    })();
+    await this.cargaBebe;
+    if (!this.bebe || !this.hayBebe || this.bebeEnCamino) return;
+    // Va dentro de la cuna: si la mecen, se mece con ella
+    const cuna = this.mueble('cuna', /^cuna/);
+    (cuna ?? this.cuartos.get('cuna')!).attach(this.bebe);
+    this.mundo.sucio = true;
+  }
+
+  /** Alguien está meciendo la cuna. */
+  mecerCuna(si: boolean) {
+    this.meciendo = si;
+  }
+
+  /** La cigüeña entra por la ventana con la bebé en el pañuelo, la deja en la cuna y se va. */
+  async cigueña(alSoltar: () => void): Promise<void> {
+    const m = this.dato.cuartos.cuna?.marcas;
+    if (!m?.bebe) return alSoltar();
+    await this.asegurar('cuna');
+    const obj = copia(await cargar('ciguena.glb'));
+    obj.scale.setScalar(1.8);
+    const alas: THREE.Object3D[] = [];
+    const paquete: THREE.Object3D[] = [];
+    obj.traverse((o) => {
+      if (/^ala_/.test(o.name)) alas.push(o);
+      if (/^(pa.uelo|cabeza_en|gorrito|nudo_pa)/.test(o.name)) paquete.push(o);
+    });
+    this.bebeEnCamino = true;
+    this.bebe?.removeFromParent();
+    this.cuartos.get('cuna')!.add(obj);
+    return new Promise((fin) => {
+      this.cigue = { obj, alas, paquete, t0: -1, soltado: false, alSoltar, fin };
+      this.mundo.sucio = true;
+    });
+  }
+
+  /** Un mueble del cuarto por el nombre (el primer hijo del modelo cuyo nombre empieza así). */
+  mueble(c: Cuarto, patron: RegExp): THREE.Object3D | null {
+    const base = this.bases.get(c);
+    const raiz = base?.getObjectByName(`casa_${c}`) ?? base;
+    return raiz?.children.find((o) => patron.test(o.name)) ?? null;
+  }
+
+  private crearPantalla(c: Cuarto, nombre: string, dibujar: Dibujo) {
+    let pantalla: THREE.Mesh | undefined;
+    this.bases.get(c)?.traverse((o) => {
+      if (!pantalla && (o as THREE.Mesh).isMesh && o.name.startsWith(nombre)) pantalla = o as THREE.Mesh;
+    });
+    if (!pantalla?.geometry) return;
+    pantalla.geometry.computeBoundingBox();
+    const b = pantalla.geometry.boundingBox!;
+    const lienzo = document.createElement('canvas');
+    lienzo.width = 256;
+    lienzo.height = 192;
+    const tex = new THREE.CanvasTexture(lienzo);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const panel = new THREE.Mesh(
+      new THREE.PlaneGeometry((b.max.x - b.min.x) * 0.94, (b.max.y - b.min.y) * 0.92),
+      new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }),
+    );
+    panel.position.set((b.max.x + b.min.x) / 2, (b.max.y + b.min.y) / 2, b.max.z + 0.003);
+    pantalla.add(panel);
+    this.pantallas.push({ cuarto: c, panel, lienzo, tex, ultimo: -1, dibujar });
   }
 
   /** El inodoro del baño (sale volando con el retrete espacial y cae de vuelta). */
@@ -375,11 +575,78 @@ export class Casa3D {
       dibujarTele(this.tele.lienzo.getContext('2d')!, t);
       this.tele.tex.needsUpdate = true;
     }
+    for (const p of this.pantallas) {
+      if (p.cuarto !== this.actual || t - p.ultimo < 1 / 12) continue;
+      p.ultimo = t;
+      p.dibujar(p.lienzo.getContext('2d')!, t);
+      p.tex.needsUpdate = true;
+    }
+    // Los trofeos dan vueltas despacito en sus pedestales
+    if (this.actual === 'trofeos') for (const { obj } of this.trofeos.values()) obj.rotation.y = t * 0.5 + obj.position.x;
+    if (this.bebe?.parent) {
+      // Respira dormidita
+      const b = this.bebe.children[0];
+      if (b) b.scale.z = 1.6 * (1 + Math.sin(t * 2.2) * 0.04);
+    }
+    // La cuna se mece mientras la arrullan
+    this.vaivenCuna += ((this.meciendo ? 1 : 0) - this.vaivenCuna) * 0.05;
+    if (this.vaivenCuna > 0.002) {
+      const cuna = this.mueble('cuna', /^cuna/);
+      if (cuna) cuna.rotation.x = Math.sin(t * 2.6) * 0.045 * this.vaivenCuna;
+    }
+    if (this.cigue) this.volarCigueña(t);
     for (const m of this.marcadores.values()) {
       if (!m.visible) continue;
       m.scale.setScalar(1 + Math.sin(t * 4) * 0.08);
     }
     if (this.regaloCaja?.parent) this.regaloCaja.rotation.y = Math.sin(t * 2) * 0.25;
+  }
+
+  private volarCigueña(t: number) {
+    const v = this.cigue!;
+    if (v.t0 < 0) v.t0 = t;
+    const k = t - v.t0;
+    const m = this.dato.cuartos.cuna!.marcas!;
+    const b = m.bebe, ven = m.ventana ?? { x: -2.5, y: 1.2, z: 1.75 };
+    // Afuera → la ventana → encima de la cuna → baja, suelta la bebé → sube y se va por la derecha
+    const tramos: [number, [number, number, number]][] = [
+      [0, [-3.6, ven.y - 0.3, ven.z + 0.9]],
+      [1.6, [ven.x + 0.4, ven.y - 0.2, ven.z + 0.3]],
+      [3.4, [b.x - 0.15, b.y - 0.35, b.z + 1.35]],
+      [4.6, [b.x - 0.1, b.y - 0.3, b.z + 0.78]],
+      [5.8, [b.x - 0.05, b.y - 0.3, b.z + 0.78]],
+      [7.6, [2.6, -0.4, 2.6]],
+      [8.6, [3.8, -1.0, 3.0]],
+    ];
+    const i = Math.max(0, tramos.findIndex(([tt]) => tt > k) - 1);
+    const fin = tramos[tramos.length - 1][0];
+    if (k >= fin) {
+      v.obj.removeFromParent();
+      this.cigue = null;
+      v.fin();
+      return;
+    }
+    const [t0, a] = tramos[i], [t1, c] = tramos[i + 1];
+    const u = (k - t0) / (t1 - t0);
+    const s = u * u * (3 - 2 * u);
+    const p = aTres(a[0] + (c[0] - a[0]) * s, a[1] + (c[1] - a[1]) * s, a[2] + (c[2] - a[2]) * s + Math.sin(k * 3) * 0.04);
+    const d = aTres(c[0] - a[0], c[1] - a[1], 0);
+    if (Math.hypot(d.x, d.z) > 0.05) {
+      const meta = Math.atan2(-d.z, d.x);
+      v.obj.rotation.y += Math.atan2(Math.sin(meta - v.obj.rotation.y), Math.cos(meta - v.obj.rotation.y)) * 0.12;
+    }
+    v.obj.position.copy(p);
+    // Aletea (más despacio mientras baja con cuidado)
+    const aleteo = Math.sin(k * (i === 3 || i === 4 ? 9 : 15)) * 0.7;
+    for (const ala of v.alas) ala.rotation.x = /izq/.test(ala.name) ? aleteo : -aleteo;
+    if (!v.soltado && k >= 5.2) {
+      v.soltado = true;
+      for (const o of v.paquete) o.visible = false;
+      this.bebeEnCamino = false;
+      this.hayBebe = true;
+      void this.aplicarBebe();
+      v.alSoltar();
+    }
   }
 
   /** Qué se tocó en pantalla: un marcador de decoración, la nevera, el regalo o el piso. */
@@ -397,13 +664,19 @@ export class Casa3D {
       if (d) return { tipo: 'sitio', sitio: d.sitio };
     }
     if (this.regaloCaja?.parent && visibleDeVerdad(this.regaloCaja) && this.rayo.intersectObject(this.regaloCaja, true).length) return { tipo: 'regalo' };
+    if (this.bebe?.parent && visibleDeVerdad(this.bebe) && this.rayo.intersectObject(this.bebe, true).length) return { tipo: 'bebe' };
     const base = this.bases.get(this.actual);
     const h = base ? this.rayo.intersectObject(base, true).find((x) => visibleDeVerdad(x.object)) : undefined;
     if (!h) return null;
     const x = h.point.x, y = -h.point.z;
     const n = this.dato.notas;
     if (this.actual === n.cuarto && Math.hypot(x - n.x, y - (n.y + 0.35)) < 0.55 && h.point.y > 0.2) return { tipo: 'nevera' };
-    return { tipo: 'suelo', x, y };
+    // El mueble tocado: el hijo del modelo del cuarto que contiene lo que tocó el dedo
+    const raiz = base!.getObjectByName(`casa_${this.actual}`) ?? base!;
+    let o: THREE.Object3D | null = h.object;
+    while (o && o.parent && o.parent !== raiz) o = o.parent;
+    const mueble = o && o.parent === raiz && !NO_ESTORBA.test(o.name) ? o.name : undefined;
+    return { tipo: 'suelo', x, y, mueble };
   }
 }
 
@@ -414,6 +687,107 @@ function huella(o: THREE.Object3D): Huella | null {
   if (b.isEmpty() || b.min.y > 0.6 || b.max.y < 0.15) return null;
   // Three (x, arriba, -y) → Blender (x, y)
   return { x0: b.min.x, x1: b.max.x, y0: -b.max.z, y1: -b.min.z };
+}
+
+/** Tiñe una copia del trofeo: bronce, plata u oro (o una silueta clarita si todavía no se gana). */
+function tenirTrofeo(t: THREE.Object3D, nivel: number) {
+  const metal = ['#cfc3b6', '#C98A4B', '#D9DEE6', ''][nivel] ?? '';
+  t.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    const mat = (m.material as THREE.MeshStandardMaterial).clone();
+    if (nivel === 0) {
+      mat.color.set(metal);
+      mat.metalness = 0;
+      mat.transparent = true;
+      mat.opacity = 0.35;
+      mat.depthWrite = false;
+    } else if (metal && /oro/i.test(mat.name)) mat.color.set(metal);
+    m.material = mat;
+  });
+}
+
+type Dibujo = (g: CanvasRenderingContext2D, t: number) => void;
+
+/** La pantalla del arcade: la tiendita de Súper Manía con productos que caen al carrito y «TOCA PARA JUGAR». */
+function dibujarArcade(g: CanvasRenderingContext2D, t: number) {
+  const W = 256, H = 192;
+  const cielo = g.createLinearGradient(0, 0, 0, H);
+  cielo.addColorStop(0, '#2d2150');
+  cielo.addColorStop(1, '#6a3f86');
+  g.fillStyle = cielo;
+  g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 18; i++) {
+    g.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(t * 2 + i));
+    g.fillStyle = '#fff6c9';
+    g.fillRect((i * 71) % W, (i * 37) % 90, 2, 2);
+  }
+  g.globalAlpha = 1;
+  // Estantes con productos de colores
+  for (let f = 0; f < 2; f++) {
+    g.fillStyle = '#c9956a';
+    g.fillRect(14, 70 + f * 34, W - 28, 5);
+    for (let k = 0; k < 9; k++) {
+      g.fillStyle = ['#e4574b', '#f7c948', '#4fb477', '#4a90d9', '#f2a5b8'][(k + f) % 5];
+      g.fillRect(22 + k * 25, 52 + f * 34, 16, 18);
+    }
+  }
+  // El carrito que va y viene recogiendo lo que cae
+  const x = 128 + Math.sin(t * 1.6) * 90;
+  g.fillStyle = '#f7d774';
+  g.fillRect(x - 20, 146, 40, 16);
+  g.fillStyle = '#2b2a33';
+  g.beginPath();
+  g.arc(x - 12, 166, 5, 0, Math.PI * 2);
+  g.arc(x + 12, 166, 5, 0, Math.PI * 2);
+  g.fill();
+  const caeX = 128 + Math.sin((t - ((t * 0.9) % 1.1)) * 1.6) * 90;
+  const k = (t * 0.9) % 1.1;
+  g.fillStyle = '#e4574b';
+  g.fillRect(caeX - 6, 20 + k * 115, 12, 12);
+  // Letrero
+  g.fillStyle = '#ffffff';
+  g.font = '800 22px sans-serif';
+  g.textAlign = 'center';
+  g.fillText('SÚPER MANÍA', W / 2, 32);
+  if (Math.floor(t * 2) % 2 === 0) {
+    g.fillStyle = '#ffe38a';
+    g.font = '800 15px sans-serif';
+    g.fillText('TOCA PARA JUGAR', W / 2, 138);
+  }
+  g.textAlign = 'start';
+}
+
+/** La pantalla del computador de Él: código que se escribe solo y un corazón que late en la esquina. */
+function dibujarComputador(g: CanvasRenderingContext2D, t: number) {
+  const W = 256, H = 192;
+  g.fillStyle = '#1e2433';
+  g.fillRect(0, 0, W, H);
+  g.fillStyle = '#2b3348';
+  g.fillRect(0, 0, W, 16);
+  for (const [i, c] of ['#e4574b', '#f7c948', '#4fb477'].entries()) {
+    g.fillStyle = c;
+    g.beginPath();
+    g.arc(10 + i * 12, 8, 4, 0, Math.PI * 2);
+    g.fill();
+  }
+  const lineas = Math.floor(t * 3) % 14;
+  const colores = ['#9fd3f2', '#f2a5b8', '#b8e2a0', '#f7d774', '#c9b6ea'];
+  for (let i = 0; i <= lineas; i++) {
+    const sangria = [0, 12, 24, 24, 12, 0, 12, 24, 36, 24, 12, 0, 12, 0][i] ?? 0;
+    const largo = 30 + ((i * 53) % 110);
+    const ancho = i === lineas ? largo * ((t * 3) % 1) : largo;
+    g.fillStyle = colores[i % colores.length];
+    g.fillRect(10 + sangria, 24 + i * 11, ancho, 5);
+  }
+  const r = 14 + Math.sin(t * 5) * 2;
+  const x = W - 34, y = H - 34;
+  g.fillStyle = '#e4574b';
+  g.beginPath();
+  g.moveTo(x, y + r * 0.9);
+  g.bezierCurveTo(x - r * 1.6, y - r * 0.2, x - r * 0.8, y - r * 1.4, x, y - r * 0.5);
+  g.bezierCurveTo(x + r * 0.8, y - r * 1.4, x + r * 1.6, y - r * 0.2, x, y + r * 0.9);
+  g.fill();
 }
 
 const GEO_NOTA = new THREE.PlaneGeometry(0.27, 0.25);

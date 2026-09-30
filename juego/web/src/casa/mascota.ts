@@ -23,9 +23,31 @@ interface Salida {
  *  camino esquivando los muebles o cruzar la puerta a otro cuarto. */
 type Tramo = { a: P; alto?: number; rot?: number; salida?: Salida } | { ruta: P } | { cruzar: Cuarto };
 /** Altura del cuerpo mientras se sube al mueble (y al bajarse): se ve que se sienta, se mete a la tina o se sube a la cama. */
-const SUBIR: Record<string, number> = { sofa: 0.48, comer: 0.34, tina: 0.72, cama: 0.8, inodoro: 0.36 };
+const SUBIR: Record<string, number> = {
+  sofa: 0.48, comer: 0.34, tina: 0.72, cama: 0.8, inodoro: 0.36,
+  // Los muebles de la ampliación (pufs, sillas, mecedora, taburete y sillones)
+  mesa: 0.31, escritorio: 0.34, estudiar: 0.34, tocador: 0.34, mecedora: 0.34, sillon: 0.48,
+};
 /** Altura final de cada acción (medida con el cuerpo en su pose contra el cojín, la silla, el agua y el colchón). */
 const ALTO = { sofa: 0.48, comer: 0.34, tina: 0.12, cama: 0.74, inodoro: 0.36 };
+/** Qué hace con cada mueble de los cuartos nuevos (acción «usar»; el item dice cuál). */
+const USOS: Record<string, { pasos: Paso[]; efecto?: Efecto['tipo']; mecer?: boolean }> = {
+  arcade: { pasos: [{ pose: 'frotar_manos_a', pose2: 'frotar_manos_b', ritmo: 3, dur: 99, cara: 'feliz' }] },
+  cien: { pasos: [{ pose: 'pensando', dur: 2.5 }, { pose: 'pensando_b', dur: 99, cara: 'sorprendido' }] },
+  mesa: { pasos: [{ pose: 'comer_sentado_a', pose2: 'comer_sentado_b', ritmo: 1.2, dur: 99, cara: 'feliz' }] },
+  cohete: { pasos: [{ pose: 'senalar_a', pose2: 'senalar_b', ritmo: 1.5, dur: 3 }, { pose: 'risita_a', pose2: 'risita_b', ritmo: 3, dur: 99, cara: 'feliz' }] },
+  cuna: { pasos: [{ pose: 'acariciar', dur: 99, cara: 'feliz' }], efecto: 'nota' },
+  comoda: { pasos: [{ pose: 'frotar_a', pose2: 'frotar_b', ritmo: 2, dur: 99, cara: 'feliz' }] },
+  mecedora: { pasos: [{ pose: 'sentado', dur: 99, cara: 'feliz' }], mecer: true, efecto: 'nota' },
+  escritorio: { pasos: [{ pose: 'comer_sentado_a', pose2: 'comer_sentado_b', ritmo: 3.2, dur: 99, cara: 'normal' }] },
+  estudiar: { pasos: [{ pose: 'comer_sentado_b', dur: 3 }, { pose: 'sentado', dur: 2 }, { pose: 'comer_sentado_a', pose2: 'comer_sentado_b', ritmo: 0.8, dur: 99 }] },
+  tocador: { pasos: [{ pose: 'frotar_a', pose2: 'frotar_b', ritmo: 1.6, dur: 99, cara: 'feliz' }], efecto: 'brillos' },
+  sillon: { pasos: [{ pose: 'sentado_feliz', dur: 99, cara: 'feliz' }] },
+};
+// Los trofeos: aplaude frente al pedestal
+for (const t of ['super', 'puertas', 'mesa', 'retrete', 'amor']) {
+  USOS[`ver_${t}`] = { pasos: [{ pose: 'aplauso_a', pose2: 'aplauso_b', ritmo: 4, dur: 3, cara: 'feliz' }, { pose: 'presumir_a', pose2: 'presumir_b', ritmo: 1, dur: 99, cara: 'feliz' }], efecto: 'brillos' };
+}
 const rad = THREE.MathUtils.degToRad;
 const EJE_Y = new THREE.Vector3(0, 1, 0);
 /** Cuánto se recuesta en la cama (90° sería plano). */
@@ -125,6 +147,9 @@ export class Mascota {
   /** El retrete cohete: altura extra (despega o cae del cielo) y temblor antes de despegar. */
   vuelo = 0;
   temblor = 0;
+  /** Meciéndose en la mecedora (vaivén hacia atrás y adelante). */
+  private mecer = 0;
+  private metaMecer = 0;
 
   get lado() {
     return this.rol === 'el' ? 'izq' : 'der';
@@ -323,6 +348,7 @@ export class Mascota {
     this.efecto = null;
     this.metaTumbado = 0;
     this.metaAlto = 0;
+    this.metaMecer = 0;
     const c = e.cuarto;
     const llegar = (nombre: string, luego: () => void) => {
       const pt = this.punto(nombre, c);
@@ -396,6 +422,21 @@ export class Mascota {
       case 'closet':
         llegar('closet', () => this.bucle([{ pose: 'pensando', dur: 99 }]));
         break;
+      case 'usar': {
+        // Un mueble de los cuartos nuevos: el arcade, el parchís, la cuna, la mecedora, el tocador…
+        const u = USOS[a.item ?? ''];
+        if (!u) {
+          llegar('centro', () => this.bucle([]));
+          break;
+        }
+        llegar(a.item!, () => {
+          this.metaAlto = SUBIR[a.item!] ?? 0;
+          if (u.mecer) this.metaMecer = 1;
+          this.bucle(u.pasos);
+          if (u.efecto) this.efecto = u.efecto;
+        });
+        break;
+      }
       case 'saludo':
         llegar('centro', () => this.bucle([{ pose: 'saludo_a', pose2: 'saludo_b', ritmo: 3, dur: 99, cara: 'feliz' }]));
         break;
@@ -687,6 +728,8 @@ export class Mascota {
     // Acostado no del todo plano: la cabeza (grande) queda apoyada en la almohada, no hundida en el colchón
     g.rotation.x = -this.tumbado * RECLINADO;
     g.rotation.z = 0;
+    this.mecer += (this.metaMecer - this.mecer) * k;
+    if (this.mecer > 0.002) g.rotation.x += Math.sin(performance.now() / 1000 * 2.2) * 0.1 * this.mecer;
     g.position.y += this.alto + this.vuelo;
     if (this.temblor > 0) {
       g.position.x += (Math.random() - 0.5) * this.temblor;
