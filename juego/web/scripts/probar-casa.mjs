@@ -178,6 +178,9 @@ await clic(el, '[data-cuarto="sala"]');
 await clic(el, '[data-accion="tv"]');
 await quieto(el, 'el', 2000);
 await foto(el, '18-el-sofa');
+// La tele de YouTube ocupa toda la pantalla: se apaga para volver a la casa
+await clic(el, '[data-tele="apagar"]');
+await el.waitForTimeout(800);
 
 // Menú, fechas y minijuegos
 await clic(el, '#btn-menu');
@@ -188,10 +191,10 @@ await clic(el, '#form-aniversario button');
 await el.waitForTimeout(500);
 await foto(el, '20-fechas');
 await clic(el, '#hoja-cerrar');
-await clic(el, '#btn-menu');
-await clic(el, '[data-hoja="juegos"]');
-await foto(el, '21-minijuegos');
-await clic(el, '#hoja-cerrar');
+// Los minijuegos ya no están en el menú: viven en el cuarto de juegos
+await clic(el, '[data-cuarto="juegos"]');
+await quieto(el, 'el', 1500);
+await foto(el, '21-cuarto-juegos');
 
 console.log('final el', JSON.stringify(await estado(el)));
 console.log('final ella', JSON.stringify(await estado(ella)));
