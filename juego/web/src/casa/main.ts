@@ -2814,13 +2814,13 @@ async function pasear(x: number, y: number) {
   const m = mascotas[yo];
   const d = casa3d.dato;
   vistaPendiente = null;
-  if (!m.pasear(THREE.MathUtils.clamp(x, -d.W / 2 + 0.5, d.W / 2 - 0.5), THREE.MathUtils.clamp(y, -d.D / 2 + 0.4, d.D / 2 - 0.6))) return;
-  // Lo que hacía se acaba también en el estado (así el otro celular lo ve levantarse o quedarse en este cuarto)
-  const e = s.personajes[yo];
+  const px = THREE.MathUtils.clamp(x, -d.W / 2 + 0.5, d.W / 2 - 0.5), py = THREE.MathUtils.clamp(y, -d.D / 2 + 0.4, d.D / 2 - 0.6);
+  if (!m.pasear(px, py)) return;
+  // Hasta dónde camina queda en el estado: el otro celular lo ve levantarse de lo que hacía y caminar hasta allá
+  // (la casa siempre en línea: cada uno ve moverse al otro)
   const ahora = Date.now();
-  if (e.cuarto !== m.cuarto || e.actividad.accion) {
-    await guardarYo({ ...est(yo), cuarto: m.cuarto, actividad: { tipo: 'nada', desde: ahora }, visto: ahora });
-  }
+  const r2 = (v: number) => Math.round(v * 100) / 100;
+  await guardarYo({ ...est(yo), cuarto: m.cuarto, actividad: { tipo: 'nada', desde: ahora, pos: { x: r2(px), y: r2(py) } }, visto: ahora });
   pintarCuartos();
   pintarAcciones();
 }

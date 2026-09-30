@@ -461,6 +461,13 @@ export class SincroLinea extends Base implements Sincro {
   }
 
   async refrescar() {
+    // La casa siempre en línea: si el celular durmió y el canal en vivo se cayó, se vuelve a abrir (así se sigue
+    // viendo moverse al otro y el puntico de «en línea»)
+    const estado = (this.canal as unknown as { state?: string } | null)?.state;
+    if (!this.canal || (estado && estado !== 'joined' && estado !== 'joining')) {
+      if (this.canal) void this.sb.removeChannel(this.canal);
+      this.suscribir();
+    } else void this.canal.track({ rol: this.rol, t: Date.now() });
     await this.leerTodo();
     for (const e of this.eventos) this.despachados.add(e.id);
     this.avisar('casa');

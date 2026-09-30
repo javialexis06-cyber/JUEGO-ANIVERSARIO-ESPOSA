@@ -46,6 +46,8 @@ export interface Actividad {
   hasta?: number;
   /** Comida o regalo que tiene en la mano. */
   item?: string;
+  /** Libre en el cuarto: hasta dónde caminó (tocando el piso). El otro celular lo ve caminar hasta ahí. */
+  pos?: { x: number; y: number };
 }
 
 /** Estado de un personaje tal como se guarda (valores en el instante `t`). */
@@ -107,6 +109,8 @@ export function normalizarPersonaje(e: unknown, ahora = Date.now()): EstadoPerso
     if (typeof a.accion === 'string') r.actividad.accion = a.accion as Accion;
     if (typeof a.hasta === 'number' && Number.isFinite(a.hasta)) r.actividad.hasta = a.hasta;
     if (typeof a.item === 'string') r.actividad.item = a.item;
+    const pos = a.pos as Record<string, unknown> | undefined;
+    if (esObjeto(pos) && typeof pos.x === 'number' && typeof pos.y === 'number' && Math.abs(pos.x) < 30 && Math.abs(pos.y) < 30) r.actividad.pos = { x: pos.x, y: pos.y };
   }
   return r;
 }

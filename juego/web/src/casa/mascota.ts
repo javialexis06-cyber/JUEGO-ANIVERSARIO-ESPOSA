@@ -466,7 +466,20 @@ export class Mascota {
       case 'pensar':
         llegar('centro', () => this.bucle([{ pose: 'pensando', dur: 99 }]));
         break;
-      default:
+      default: {
+        // Caminó hasta un punto del cuarto (tocando el piso en su celular): aquí también camina hasta allá
+        // (entra por la puerta si venía de otro cuarto; al abrir la app, ya está ahí)
+        const pos = a.tipo === 'nada' && a.pos ? this.casa.cercaLibre(c, a.pos) : null;
+        if (pos) {
+          if (animado && this.p.grupo.parent) this.ir(c, pos, () => this.bucle([]));
+          else {
+            this.parar();
+            this.ponerEn(c, pos);
+            this.bucle([]);
+            this.sinTransicion();
+          }
+          break;
+        }
         // Libre: si ya está en ese cuarto se queda donde está (si estaba sentado, se levanta y sale del mueble;
         // si iba caminando a donde lo mandaron, sigue); si viene de otro cuarto, entra por la puerta
         if (animado && c === this.cuarto && this.p.grupo.parent) {
@@ -481,6 +494,7 @@ export class Mascota {
             this.finPlan = () => this.bucle([]);
           }
         } else llegar('centro', () => this.bucle([]));
+      }
     }
   }
 

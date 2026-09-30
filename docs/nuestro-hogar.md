@@ -23,6 +23,9 @@ cuarto a mitad de camino), sale y entra caminando por la puerta del otro cuarto.
 la pestaña solo muestra el cuarto.
 
 Tocar el piso hace caminar a tu personaje hasta ahí; tocar al otro abre su hoja; tocar la nevera abre las notas.
+**La casa siempre en línea:** hasta dónde caminó cada uno queda en su estado (`actividad.pos`), así en el celular
+del otro se le ve caminar hasta el mismo sitio (y al abrir la app ya está parado ahí). Al volver a la app, si el
+canal en vivo se cayó mientras el celular dormía, se vuelve a abrir solo.
 Tocar un mueble lo usa: el sofá, la tele, la tina, la cama, el arcade, la cuna, la mecedora, el tocador…
 Cualquier orden nueva (tocar el piso, otra acción, otro cuarto u otro mimo) corta lo que estaba haciendo: se levanta
 del sofá o de la silla, suelta la comida y va a lo nuevo (el otro celular lo ve igual).
@@ -415,4 +418,7 @@ marcados (`scripts/generar-sprites-carga.mjs` → `public/carga/` y `src/carga_r
   cada cuadro (más calor y parpadeos en algunos Android). En calidad baja el color de fondo se calcula igual en JS.
 - Si Android le quita al juego el dibujo 3D (poca memoria), se espera a que lo devuelva y, si no vuelve en 5 s, se
   recarga la página en vez de quedarse en blanco (`src/contexto.ts`, en la casa, el súper, Cien Puertas y la mesa).
+  Los minijuegos con su propio dibujo 3D (el retrete espacial, las escenas grandes) lo sueltan al salir
+  (`forceContextLoss`): si se acumulaban, Android le quitaba el suyo a la casa. El apagón del baño es un velo encima
+  (`#velo`), no un filtro sobre el lienzo.
 - Las pestañas de las hojas (tienda, clóset…) no se encogen con listas largas (antes se tapaban los nombres).
