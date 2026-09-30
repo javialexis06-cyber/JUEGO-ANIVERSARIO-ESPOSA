@@ -3,7 +3,7 @@
 // cama se mezclan con discusiones bobas y deseos a futuro. Cada uno dura de 10 a 15 s y salen al azar.
 import './recuerdos.css';
 import { type Dicho, RECUERDOS } from '../puertas/historia';
-import { ESCENAS, H, precargar, W } from './recuerdos_arte';
+import { ESCENAS, H, Movimiento, Pose, ponerReacciones, precargar, W } from './recuerdos_arte';
 import { esc } from './ui_casa';
 
 export type ModoRecuerdos = 'bano' | 'cama';
@@ -43,22 +43,56 @@ const DESEOS: Vineta[] = [
 
 const MEMORIAS: Vineta[] = RECUERDOS.map((r) => ({ titulo: r.titulo, sub: r.fecha, dibujo: r.icono, lineas: r.dialogo }));
 
+/** Cómo reacciona quien habla y quien escucha a una frase (por lo que dice). */
+export function emocion(texto: string): { habla: Pose; oye: Pose | null; mov: Movimiento; movOye: Movimiento } {
+  const t = texto.toLowerCase();
+  if (/ja(ja)+|je(je)+|jaj|😂|🤣|cobarde|chiste|risa/.test(t)) return { habla: 'risa', oye: 'risa', mov: 'risa', movOye: 'risa' };
+  if (/llor|triste|extrañ|😭|sniff|me doli|lejos|adiós|despedi/.test(t)) return { habla: 'llora', oye: 'abrazo', mov: 'temblor', movOye: 'vaiven' };
+  if (/te amo|te quiero|beso|❤|💕|amor|mi vida|hermos|perfecta|bonita|lind|coraz|mi reina|mi princesa/.test(t)) return { habla: 'beso', oye: 'timido', mov: 'vaiven', movOye: 'vaiven' };
+  if (/lo logr|ganamos|gané|¡sí|yay|🎉|increíble|por fin|feliz|graduad|campeon/.test(t)) return { habla: 'celebra', oye: 'celebra', mov: 'brinco', movOye: 'brinco' };
+  if (/¡¿|¿¡|!!|en serio|no puede ser|wow|guau|qué\?|sorpresa|nunca/.test(t)) return { habla: 'sorpresa', oye: 'sorpresa', mov: 'asomo', movOye: 'asomo' };
+  if (/bueno…|hmph|no es justo|ya verás|😤|insistente|me querías|¡tú nunca/.test(t)) return { habla: 'puchero', oye: 'guino', mov: 'temblor', movOye: 'vaiven' };
+  if (/¿o no\?|obvio|claro que|yo sabía|te lo dije|persistente|los conté|funcionó|😎/.test(t)) return { habla: 'presume', oye: 'puchero', mov: 'vaiven', movOye: null };
+  if (/\?$|creo|pienso|hmm|mmm|quizás|tal vez|me acuerdo|recuerdas/.test(t)) return { habla: 'piensa', oye: 'piensa', mov: 'vaiven', movOye: null };
+  return { habla: 'habla', oye: null, mov: null, movOye: null };
+}
+
+/** Tiempos del panel (segundos). */
+const NEBLINA = 1.1;
+const PAUSA = 0.7;
+const ANTES_DEL_TEXTO = 0.9;
+const POR_LETRA = 0.045;
+const LEER_POR_LETRA = 0.055;
+const LEER_MIN = 2.4;
+const ENTRE_FRASES = 0.45;
+
+interface Frase {
+  quien: 'el' | 'ella';
+  texto: string;
+  desde: number;
+  escrita: number;
+  hasta: number;
+}
+
 export class PanelRecuerdos {
   private raiz: HTMLElement;
   private lienzo: HTMLCanvasElement;
   private g: CanvasRenderingContext2D;
+  private linea: HTMLElement;
+  private niebla: HTMLElement;
   private modo: ModoRecuerdos | null = null;
   private actual: Vineta | null = null;
-  private lineas: Dicho[] = [];
+  private frases: Frase[] = [];
   private t0 = 0;
-  private dur = 12;
-  private linea = -1;
+  /** Cuándo termina el recuerdo (después viene la neblina y la pausa). */
+  private fin = 0;
   private recientes: string[] = [];
   private cuadro = 0;
   private cerrado = false;
   /** El fondo de la escena actual, pintado una sola vez. */
   private fondo: HTMLCanvasElement | null = null;
   private ultimoCuadro = 0;
+  private escrito = '';
 
   constructor() {
     this.raiz = document.createElement('aside');
@@ -67,11 +101,13 @@ export class PanelRecuerdos {
     this.raiz.innerHTML = `
       <button class="recuerdo-cerrar" aria-label="Cerrar">✕</button>
       <header><b class="recuerdo-titulo"></b><small class="recuerdo-sub"></small></header>
-      <canvas width="640" height="340"></canvas>
+      <div class="recuerdo-lamina"><canvas width="640" height="340"></canvas><div class="recuerdo-niebla"></div></div>
       <p class="recuerdo-linea"></p>`;
     document.body.append(this.raiz);
     this.lienzo = this.raiz.querySelector('canvas')!;
     this.g = this.lienzo.getContext('2d')!;
+    this.linea = this.raiz.querySelector('.recuerdo-linea')!;
+    this.niebla = this.raiz.querySelector('.recuerdo-niebla')!;
     this.raiz.querySelector('.recuerdo-cerrar')!.addEventListener('click', () => {
       this.cerrado = true;
       this.ocultar();
@@ -85,7 +121,10 @@ export class PanelRecuerdos {
     this.modo = modo;
     this.raiz.hidden = false;
     this.raiz.dataset.modo = modo;
-    this.siguiente();
+    this.raiz.classList.remove('entra');
+    void this.raiz.offsetWidth;
+    this.raiz.classList.add('entra');
+    this.siguiente(performance.now() / 1000);
     cancelAnimationFrame(this.cuadro);
     const bucle = (ms: number) => {
       if (!this.modo) return;
@@ -98,6 +137,7 @@ export class PanelRecuerdos {
   ocultar() {
     this.modo = null;
     this.raiz.hidden = true;
+    ponerReacciones({});
     cancelAnimationFrame(this.cuadro);
   }
 
@@ -111,43 +151,64 @@ export class PanelRecuerdos {
     return !!this.modo;
   }
 
-  private siguiente() {
+  /** El recuerdo siguiente: sus frases con el tiempo de escribirlas letra por letra y de leerlas con calma. */
+  private siguiente(ahora: number) {
     const lista = this.modo === 'cama' ? [...MEMORIAS, ...DISCUSIONES, ...DISCUSIONES, ...DESEOS, ...DESEOS] : MEMORIAS;
     const libres = lista.filter((v) => !this.recientes.includes(v.titulo + (v.sub ?? '')));
     const v = (libres.length ? libres : lista)[Math.floor(Math.random() * (libres.length || lista.length))];
     this.recientes = [...this.recientes, v.titulo + (v.sub ?? '')].slice(-8);
     this.actual = v;
     this.fondo = null;
-    // De 10 a 15 segundos: unas 4 o 5 frases (las de más se dejan para otra vez)
+    // Unas 4 o 5 frases (las de más se dejan para otra vez)
     const n = Math.min(v.lineas.length, 5);
     const desde = v.lineas.length > n ? Math.floor(Math.random() * (v.lineas.length - n + 1)) : 0;
-    this.lineas = v.lineas.slice(desde, desde + n);
-    this.dur = Math.min(15, Math.max(10, 1.6 + this.lineas.length * 2.6));
-    this.t0 = performance.now() / 1000;
-    this.linea = -1;
-    const tipo = DISCUSIONES.includes(v) ? 'Discusión boba' : DESEOS.includes(v) ? v.sub ?? '' : v.sub ?? '';
+    this.t0 = ahora;
+    let t = NEBLINA + ANTES_DEL_TEXTO;
+    this.frases = v.lineas.slice(desde, desde + n).map(([quien, texto]) => {
+      const txt = forma(texto, quien);
+      const escrita = t + txt.length * POR_LETRA;
+      const f = { quien, texto: txt, desde: t, escrita, hasta: escrita + Math.max(LEER_MIN, txt.length * LEER_POR_LETRA) };
+      t = f.hasta + ENTRE_FRASES;
+      return f;
+    });
+    this.fin = t;
+    this.escrito = '';
+    this.linea.innerHTML = '';
+    const tipo = DISCUSIONES.includes(v) ? 'Discusión boba' : v.sub ?? '';
     this.raiz.querySelector('.recuerdo-titulo')!.textContent = v.titulo;
     this.raiz.querySelector('.recuerdo-sub')!.textContent = tipo;
-    this.raiz.classList.remove('entra');
-    void this.raiz.offsetWidth;
-    this.raiz.classList.add('entra');
   }
 
   private pintar(t: number) {
     const v = this.actual;
     if (!v) return;
     const k = t - this.t0;
-    if (k > this.dur) return this.siguiente();
-    // Las frases van saliendo una tras otra después del título
-    const i = Math.min(this.lineas.length - 1, Math.floor(Math.max(0, k - 1.2) / ((this.dur - 1.2) / this.lineas.length)));
-    if (i !== this.linea && k > 1.2) {
-      this.linea = i;
-      const [quien, texto] = this.lineas[i];
-      const p = this.raiz.querySelector<HTMLElement>('.recuerdo-linea')!;
-      p.innerHTML = `<span class="quien-${quien}">${quien === 'el' ? 'Él' : 'Ella'}</span>${esc(forma(texto, quien))}`;
-      p.classList.remove('sale');
-      void p.offsetWidth;
-      p.classList.add('sale');
+    if (k > this.fin + NEBLINA + PAUSA) return this.siguiente(t);
+    // Neblina: se despeja al empezar y vuelve a cubrir al terminar (como pasar de diapositiva)
+    const entra = Math.max(0, 1 - k / NEBLINA);
+    const sale = Math.min(1, Math.max(0, (k - this.fin) / NEBLINA));
+    const niebla = Math.max(entra, sale);
+    this.niebla.style.opacity = niebla.toFixed(3);
+    this.lienzo.style.filter = niebla > 0.01 ? `blur(${(niebla * 6).toFixed(2)}px)` : '';
+    // La frase de ahora, escribiéndose letra por letra
+    const f = this.frases.find((x) => k >= x.desde && k < x.hasta + ENTRE_FRASES) ?? null;
+    let html = '';
+    if (f && k < this.fin) {
+      const n = Math.min(f.texto.length, Math.floor((k - f.desde) / POR_LETRA));
+      const escribiendo = n < f.texto.length;
+      html = `<span class="quien-${f.quien}">${f.quien === 'el' ? 'Él' : 'Ella'}</span>${esc(f.texto.slice(0, n))}${escribiendo ? '<i class="cursor"></i>' : ''}`;
+      // Reacciones: quien habla y quien escucha, toda la frase
+      const e = emocion(f.texto);
+      const otro = f.quien === 'el' ? 'ella' : 'el';
+      ponerReacciones({
+        [f.quien]: { pose: e.habla, mov: e.mov, desde: f.desde },
+        ...(e.oye ? { [otro]: { pose: e.oye, mov: e.movOye, desde: f.desde } } : {}),
+      });
+    } else ponerReacciones({});
+    if (html !== this.escrito) {
+      this.escrito = html;
+      this.linea.innerHTML = html;
+      this.linea.style.opacity = String(1 - sale);
     }
     // Unos 30 cuadros por segundo bastan (la casa se sigue dibujando detrás)
     if (t - this.ultimoCuadro < 1 / 30) return;
@@ -165,8 +226,8 @@ export class PanelRecuerdos {
     g.drawImage(this.fondo, 0, 0);
     g.save();
     g.scale(2, 2);
-    const habla = this.linea >= 0 ? this.lineas[this.linea][0] : null;
-    escena.frente(g, k, habla);
+    // (las escenas cuentan el tiempo desde que empezó el recuerdo)
+    escena.frente(g, k, f && k < this.fin ? f.quien : null);
     g.restore();
   }
 }

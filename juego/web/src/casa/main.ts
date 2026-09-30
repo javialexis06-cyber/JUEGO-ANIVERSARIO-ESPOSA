@@ -1564,7 +1564,7 @@ async function alAccion(id: string) {
     case 'banar':
       sonido.burbuja();
       // Un bañito largo: mientras tanto salen recuerdos de los dos
-      await hacer('banar', 'bano', 30, { higiene: 100 });
+      await hacer('banar', 'bano', 55, { higiene: 100 });
       for (let i = 1; i < 6; i++) setTimeout(() => sonido.burbuja(), i * 700);
       return;
     case 'lavar':

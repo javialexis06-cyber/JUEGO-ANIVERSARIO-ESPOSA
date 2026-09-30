@@ -55,3 +55,26 @@
   font: 700 12px/1 var(--texto);
   cursor: pointer;
 }
+/* La lámina con su neblina (entre un recuerdo y otro, como pasar de diapositiva) */
+.recuerdo-lamina { position: relative; border-radius: 14px; overflow: hidden; }
+.recuerdo-lamina canvas { transition: filter 0.1s linear; }
+.recuerdo-niebla {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.95), transparent 60%),
+    radial-gradient(ellipse at 75% 65%, rgba(255, 248, 238, 0.95), transparent 55%),
+    rgba(255, 250, 244, 0.85);
+  opacity: 1;
+}
+.recuerdo-linea .cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: -2px;
+  background: currentColor;
+  animation: cursor-recuerdo 0.7s steps(1) infinite;
+}
+@keyframes cursor-recuerdo { 50% { opacity: 0; } }

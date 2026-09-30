@@ -134,10 +134,15 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
 
 ## Recuerdos en el baño y abrazados en la cama
 
-- **Bañarse** dura 30 s: en la tina quedan en ropa interior (Él sin camisa y en bóxer, Ella en ropa
+- **Bañarse** dura 55 s: en la tina quedan en ropa interior (Él sin camisa y en bóxer, Ella en ropa
   interior rosada; la ropa comprada se esconde salvo el peinado) y al salir se vuelven a vestir.
-- Mientras tanto sale una burbuja de pensamiento con **recuerdos** al azar (10–15 s cada uno): los 20
-  recuerdos de verdad de Cien Puertas, cada uno con su dibujito animado y lo que se dijeron.
+- Mientras tanto sale una burbuja de pensamiento con **recuerdos** al azar: los 20 recuerdos de verdad de Cien
+  Puertas, cada uno con su dibujito animado y lo que se dijeron. Se leen con calma: entre un recuerdo y otro la
+  lámina se cubre de **neblina** y se despeja con el siguiente (como pasar de diapositiva); cada frase se
+  **escribe letra por letra** (con su cursor) y se queda lo que tome leerla (2,4 s como mínimo, más si es larga).
+  Los dos **reaccionan a lo que se dice** y sostienen la reacción toda la frase: se ríen sacudiéndose con un
+  «jajaja», lloran temblando y el otro abraza, se ponen tímidos con un «te amo», celebran brincando, se
+  sorprenden con un brinquito, presumen, hacen puchero o se quedan pensando con una pregunta.
 - **Dormir** se puede aunque no tengan sueño (una siesta: se despiertan solos con la energía llena y
   después de media hora, o con «Despertar»). Si los dos duermen, se abrazan: boca arriba juntitos o en
   cucharita (el mismo en los dos celulares), y la burbuja mezcla recuerdos, **discusiones bobas** («¿treinta

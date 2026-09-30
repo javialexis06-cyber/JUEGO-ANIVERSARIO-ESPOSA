@@ -19,16 +19,48 @@ export function precargar() {
     }
 }
 
+/** Cómo reacciona cada uno a la frase que se está diciendo (la pone el panel de recuerdos): la pose se queda toda
+ *  la frase y se mueve de a poquito (se ríe sacudiéndose, llora temblando, celebra brincando…), sin volver a empezar. */
+export type Movimiento = 'risa' | 'temblor' | 'brinco' | 'vaiven' | 'asomo' | null;
+export interface Reaccion {
+  pose: Pose;
+  mov: Movimiento;
+  /** Cuándo empezó (segundos desde que empezó el recuerdo): el brinco de la sorpresa se hace una sola vez. */
+  desde: number;
+}
+let reacciones: Partial<Record<'el' | 'ella', Reaccion>> = {};
+export function ponerReacciones(r: Partial<Record<'el' | 'ella', Reaccion>>) {
+  reacciones = r;
+}
+/** Poses que la escena necesita tal cual (dormidos, sentados): la reacción no las cambia. */
+const FIJAS: Pose[] = ['duerme', 'sentado', 'arriba'];
+
 /** Él o Ella parado en (x, y = los pies), de `alto` px. Ella se voltea para mirar hacia la izquierda. */
 function actor(g: G, rol: 'el' | 'ella', pose: Pose, x: number, y: number, alto: number, t: number, habla: Quien, o: { espejo?: boolean; sombra?: boolean; salto?: boolean } = {}) {
+  const r = reacciones[rol];
+  const reacciona = r && !FIJAS.includes(pose) && alto > 40;
+  if (reacciona) pose = r.pose;
   const img = sprites.get(`${rol}_${pose}`);
   if (!img?.complete || !img.naturalWidth) return;
   const k = alto / img.naturalHeight;
   const w = img.naturalWidth * k;
   const fase = rol === 'el' ? 0 : 1.7;
   let dy = Math.sin(t * 2 + fase) * 0.7;
-  if (habla === rol) dy -= Math.abs(Math.sin(t * 9)) * 1.8;
-  if (o.salto) dy -= Math.abs(Math.sin(t * 3.2 + fase)) * 7;
+  let dx = 0;
+  let giro = 0;
+  if (reacciona) {
+    const u = t - r.desde;
+    // Cada reacción se sostiene toda la frase (no se reinicia)
+    if (r.mov === 'risa') {
+      dy -= Math.abs(Math.sin(t * 16)) * 1.6;
+      giro = Math.sin(t * 8) * 0.035;
+    } else if (r.mov === 'temblor') dx = Math.sin(t * 30) * 0.7;
+    else if (r.mov === 'brinco') dy -= Math.abs(Math.sin(t * 5 + fase)) * 6;
+    else if (r.mov === 'vaiven') giro = Math.sin(t * 2.2 + fase) * 0.05;
+    else if (r.mov === 'asomo') dy -= u < 0.35 ? Math.sin((u / 0.35) * Math.PI) * 9 : 0;
+    else if (habla === rol) dy -= Math.abs(Math.sin(t * 7)) * 0.9;
+  } else if (habla === rol) dy -= Math.abs(Math.sin(t * 7)) * 0.9;
+  if (o.salto && !reacciona) dy -= Math.abs(Math.sin(t * 3.2 + fase)) * 7;
   if (o.sombra !== false) {
     const gr = g.createRadialGradient(x, y, 1, x, y, w * 0.45);
     gr.addColorStop(0, 'rgba(40,20,20,0.32)');
@@ -39,7 +71,8 @@ function actor(g: G, rol: 'el' | 'ella', pose: Pose, x: number, y: number, alto:
     g.fill();
   }
   g.save();
-  g.translate(x, y + dy);
+  g.translate(x + dx, y + dy);
+  if (giro) g.rotate(giro);
   if (o.espejo ?? rol === 'ella') g.scale(-1, 1);
   g.drawImage(img, -w / 2, -alto, w, alto);
   g.restore();
