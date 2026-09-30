@@ -1339,3 +1339,48 @@ button.plano-cuarto:active { transform: translateY(1px); }
 .plano-patio { grid-column: 1 / -1; background: #dff0cf; }
 /* Ícono con un emoji (el perrito en el botón del patio) */
 .ico-emoji { display: grid; place-items: center; font-size: 25px; line-height: 1; }
+
+/* La nalgada: ¡PLAF! de cómic con estrellitas y la manito marcada */
+.plaf { position: fixed; z-index: 35; width: 0; height: 0; pointer-events: none; }
+.plaf span {
+  position: absolute;
+  left: -9px;
+  top: -9px;
+  width: 18px;
+  height: 18px;
+  background: #ffe066;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  animation: explota 0.9s ease-out forwards;
+  animation-delay: calc(var(--d) - 0.35s);
+}
+.plaf i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: -50% -50%;
+  font-size: 34px;
+  font-style: normal;
+  animation: manito 1.5s ease-out forwards;
+}
+@keyframes manito {
+  0% { scale: 2.2; opacity: 0; rotate: -30deg; }
+  15% { scale: 1; opacity: 1; rotate: 0deg; }
+  75% { opacity: 1; }
+  100% { opacity: 0; scale: 1.1; }
+}
+.plaf b {
+  position: absolute;
+  left: 0;
+  top: -78px;
+  translate: -50% 0;
+  padding: 6px 14px 8px;
+  border-radius: 14px;
+  background: #fff;
+  color: #e4574b;
+  font: 700 34px/1 var(--display);
+  -webkit-text-stroke: 1.5px #b93d33;
+  box-shadow: 0 0 0 4px #ffe066, 0 6px 0 rgba(61, 43, 39, 0.2);
+  rotate: -8deg;
+  white-space: nowrap;
+  animation: kaboom 1.5s cubic-bezier(0.2, 1.6, 0.4, 1) forwards;
+}

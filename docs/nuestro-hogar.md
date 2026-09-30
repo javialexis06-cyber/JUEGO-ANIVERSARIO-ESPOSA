@@ -174,6 +174,14 @@ Comida, energía, higiene y cariño (0 a 100). Bajan con el reloj real, **tambi�
 | Caricia | +4 | +10 |
 | Abrazo | +15 | +15 |
 | Beso | +20 | +20 |
+| Nalgadita (solo Él) | +8 | +5 |
+
+La **nalgadita** solo le sale a Él (en la hoja de Ella, estando juntos; no si ella duerme). Súper exagerada: él
+llega por detrás, se frota las manos («Jejeje… 😏»), levanta la mano y brinca hacia ella: **¡PLAF!** de cómic con
+estrellitas, la manito marcada y sacudón de pantalla. Ella pega un brinco («¡¡AAAY!! 😱»), cae de espaldas al piso
+llorando y pataleando de berrinche («¡Me dolióoo! 😭») mientras él da dos vueltitas muerto de la risa, y al final ella
+se levanta de brazos cruzados («¡Ya verás! 😤») y él presume («Esa nalguita es mía 😎»). En el celular de ella se ve
+igual (evento `nalgada`).
 
 Los mimos no dan monedas. Se hacen **estando los dos en el mismo cuarto**: el botón con el nombre de la pareja solo
 aparece entonces (y aparece o se va en vivo cuando uno entra o sale). Tocar su carita de arriba abre igual su hoja:

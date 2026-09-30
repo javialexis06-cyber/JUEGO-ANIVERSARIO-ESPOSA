@@ -247,6 +247,8 @@ export const EFECTO_CARINO: Record<string, { mio: number; suyo: number }> = {
   caricia: { mio: 4, suyo: 10 },
   abrazo: { mio: 15, suyo: 15 },
   beso: { mio: 20, suyo: 20 },
+  // (la nalgada: a él le da risa; a ella, después del berrinche, también un poquito)
+  nalgada: { mio: 8, suyo: 5 },
 };
 // Economía (ver docs/nuestro-hogar.md, «Monedas»): se gana poco y despacio; los mimos no dan monedas.
 /** Bono por abrir la app, uno por persona y por día. */

@@ -65,9 +65,18 @@ interface Paso {
   dur: number;
   cara?: Cara;
   alEmpezar?: () => void;
+  /** Vueltas sobre sí mismo (radianes por segundo), brinco (altura en el medio del paso) y temblor. */
+  giro?: number;
+  salto?: number;
+  temblor?: number;
+  /** Acostado (0 a 1) y a qué altura, desde que empieza el paso (caerse al piso). */
+  tumbado?: number;
+  alto?: number;
+  /** Cuánto se adelanta hacia donde mira (el brinco de la nalgada), en metros. */
+  avance?: number;
 }
 
-export type TipoMimo = 'caricia' | 'abrazo' | 'beso' | 'regalo';
+export type TipoMimo = 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nalgada';
 interface Coreo {
   tipo: TipoMimo;
   otra: Mascota;
@@ -148,6 +157,13 @@ export class Mascota {
   /** El retrete cohete: altura extra (despega o cae del cielo) y temblor antes de despegar. */
   vuelo = 0;
   temblor = 0;
+  /** Lo del paso de la coreografía en curso: vueltas acumuladas, brinco y temblor. */
+  private giroPaso = 0;
+  private saltoPaso = 0;
+  private temblorPaso = 0;
+  private avancePaso = 0;
+  /** Él: justo cuando la mano llega (el ¡PLAF! de la nalgada lo pone la casa). */
+  alNalgada: (() => void) | null = null;
   /** Meciéndose en la mecedora (vaivén hacia atrás y adelante). */
   private mecer = 0;
   private metaMecer = 0;
@@ -531,7 +547,7 @@ export class Mascota {
   interactuar(tipo: TipoMimo, otra: Mascota, quien: Rol, item?: string) {
     const yo = this.rol === quien;
     const dormido = this.escena.includes('|dormir|') || otra.escena.includes('|dormir|');
-    const dur = 3.4;
+    const dur = tipo === 'nalgada' ? 7.6 : 3.4;
     // Si ya estaba en otro mimo, ese termina aquí (una orden nueva corta la anterior)
     if (this.coreo) this.cortarCoreo();
     const cuarto = yo ? otra.cuarto : this.cuarto;
@@ -556,14 +572,17 @@ export class Mascota {
         this.metaTumbado = 0;
         this.metaAlto = 0;
       }
+      // Nalgada: ella queda de lado mirando a lo ancho de la pantalla, desprevenida (él llega por detrás)
+      if (tipo === 'nalgada') this.p.rot = Math.atan2(ANCHO_PANTALLA.x, -ANCHO_PANTALLA.y);
       return;
     }
     // Quien lo hace camina hasta el otro (sale por la puerta y entra por la del otro si está en otro cuarto)
     const o = otra.dondeQueda();
-    const sep = tipo === 'abrazo' ? 0.5 : tipo === 'beso' ? 0.44 : 0.62;
+    const sep = tipo === 'abrazo' ? 0.5 : tipo === 'beso' ? 0.44 : tipo === 'nalgada' ? 1.0 : 0.62;
     // A lo ancho de la pantalla (la cámara mira en diagonal), así se ven los dos de perfil y ninguno tapa al otro;
     // si ese lado queda dentro de un mueble, el otro lado, y si no, lo libre más cerca
-    const lado = this.rol === 'el' ? -1 : 1;
+    // (la nalgada, siempre por detrás de ella: a su izquierda en la pantalla)
+    const lado = this.rol === 'el' || tipo === 'nalgada' ? -1 : 1;
     const junto = (k: number) => ({ x: o.x + k * sep * ANCHO_PANTALLA.x, y: o.y + k * sep * ANCHO_PANTALLA.y });
     let p = junto(lado);
     if (dormido) {
@@ -590,6 +609,7 @@ export class Mascota {
     c.fase = 'pose';
     c.t = 0;
     const { tipo, yo } = c;
+    if (tipo === 'nalgada') return this.posarNalgada(c);
     let pose: string;
     let cara: Cara = 'feliz';
     if (tipo === 'caricia') pose = yo ? 'acariciar' : 'recibir_caricia';
@@ -609,6 +629,50 @@ export class Mascota {
     if (o && o.fase === 'esperar' && o.otra === this) c.otra.posar();
   }
 
+  /** La nalgada (solo la da Él): se frota las manos, levanta la mano, ¡PLAF!, da vueltitas muerto de la risa y
+   *  presume. Ella, desprevenida, pega un brinco, cae al piso llorando y pataleando de berrinche y se levanta brava. */
+  private posarNalgada(c: Coreo) {
+    const f = (frase: string | null) => () => (this.frase = frase);
+    if (c.yo) {
+      this.p.mirarA(c.otra.p.pos);
+      this.pasos = [
+        { pose: 'frotar_manos_a', pose2: 'frotar_manos_b', ritmo: 5, dur: 1.5, cara: 'guino', alEmpezar: f('Jejeje… 😏') },
+        { pose: 'chocar_cinco', dur: 0.55, cara: 'presumido', avance: 0.2, alEmpezar: f(null) },
+        { pose: 'lanzar', dur: 0.4, cara: 'carcajada', avance: 0.42, alEmpezar: () => this.alNalgada?.() },
+        { pose: 'baile_a', pose2: 'baile_b', ritmo: 7, dur: 2.2, cara: 'carcajada', giro: (Math.PI * 4) / 2.2, salto: 0.14, avance: 0, alEmpezar: f('¡Jajajá! 🤣') },
+        { pose: 'presumir_a', pose2: 'presumir_b', ritmo: 1.2, dur: 99, cara: 'presumido', alEmpezar: f('Esa nalguita es mía 😎') },
+      ];
+      this.efecto = null;
+    } else {
+      // De espaldas a él (desprevenida)
+      const o = c.otra.p.pos;
+      this.p.mirarA({ x: 2 * this.p.pos.x - o.x, y: 2 * this.p.pos.y - o.y });
+      this.pasos = [
+        { pose: 'reposo', dur: 2.05, cara: 'normal' },
+        { pose: 'boca_abierta', dur: 0.45, cara: 'sorprendido', salto: 0.4, alEmpezar: f('¡¡AAAY!! 😱') },
+        { pose: 'desmayo', dur: 0.45, cara: 'llorando', tumbado: 0.9, alto: 0.05 },
+        { pose: 'llorar_a', pose2: 'llorar_b', ritmo: 7, dur: 2.6, cara: 'llorando', temblor: 0.045, alEmpezar: f('¡Me dolióoo! 😭') },
+        { pose: 'brazos_cruzados', dur: 99, cara: 'puchero', tumbado: 0, alto: 0, alEmpezar: f('¡Ya verás! 😤') },
+      ];
+      this.efecto = null;
+    }
+    this.tPaso = 0;
+    this.empezarPaso(this.pasos[0]);
+    // Quien espera arranca justo cuando llega el otro
+    const o = c.otra.coreo;
+    if (o && o.fase === 'esperar' && o.otra === this) c.otra.posar();
+  }
+
+  /** Arranca un paso: lo que haga al empezar, la cara y si se acuesta o se levanta. */
+  private empezarPaso(paso: Paso | undefined) {
+    if (!paso) return;
+    paso.alEmpezar?.();
+    this.p.cara(paso.cara ?? this.caraReposo);
+    if (paso.tumbado !== undefined) this.metaTumbado = paso.tumbado;
+    if (paso.alto !== undefined) this.metaAlto = paso.alto;
+    this.giroPaso = 0;
+  }
+
   private terminarCoreo() {
     const c = this.coreo;
     this.coreo = null;
@@ -623,6 +687,12 @@ export class Mascota {
     this.efecto = null;
     this.escena = '';
     this.p.cara(this.caraReposo);
+    if (c?.tipo === 'nalgada') {
+      this.frase = null;
+      this.metaTumbado = 0;
+      this.metaAlto = 0;
+    }
+    this.giroPaso = this.saltoPaso = this.temblorPaso = this.avancePaso = 0;
   }
 
   /** Termina el mimo en curso ya (una orden nueva lo interrumpe), y también el del otro si lo estaba haciendo con este. */
@@ -692,11 +762,14 @@ export class Mascota {
         const w = 0.5 + 0.5 * Math.sin(this.tPaso * (paso.ritmo ?? 2) * Math.PI);
         p.pose(w > 0.5 ? paso.pose2 : paso.pose);
       } else p.pose(p.tienePose(paso.pose) ? paso.pose : 'reposo');
+      this.giroPaso = paso.giro ? this.giroPaso + paso.giro * dt : 0;
+      this.saltoPaso = paso.salto ? Math.sin(Math.min(1, this.tPaso / paso.dur) * Math.PI) * paso.salto : 0;
+      this.temblorPaso = paso.temblor ?? 0;
+      this.avancePaso += ((paso.avance ?? 0) - this.avancePaso) * Math.min(1, dt * 14);
       if (this.tPaso >= paso.dur && this.pasos.length > 1) {
         this.pasos.shift();
         this.tPaso = 0;
-        this.pasos[0].alEmpezar?.();
-        p.cara(this.pasos[0].cara ?? this.caraReposo);
+        this.empezarPaso(this.pasos[0]);
       }
     } else if (!this.enCamino) {
       p.pose(this.reposo);
@@ -731,10 +804,17 @@ export class Mascota {
     g.rotation.z = 0;
     this.mecer += (this.metaMecer - this.mecer) * k;
     if (this.mecer > 0.002) g.rotation.x += Math.sin(performance.now() / 1000 * 2.2) * 0.1 * this.mecer;
-    g.position.y += this.alto + this.vuelo;
-    if (this.temblor > 0) {
-      g.position.x += (Math.random() - 0.5) * this.temblor;
-      g.position.z += (Math.random() - 0.5) * this.temblor;
+    g.position.y += this.alto + this.vuelo + this.saltoPaso;
+    // Vueltitas y el brinco hacia adelante (la nalgada)
+    if (this.giroPaso) g.rotation.y += this.giroPaso;
+    if (this.avancePaso) {
+      g.position.x += Math.sin(p.rot) * this.avancePaso;
+      g.position.z += Math.cos(p.rot) * this.avancePaso;
+    }
+    const temblor = this.temblor + this.temblorPaso;
+    if (temblor > 0) {
+      g.position.x += (Math.random() - 0.5) * temblor;
+      g.position.z += (Math.random() - 0.5) * temblor;
     }
     if (this.tumbado > 0.001) {
       const avance = this.tumbado * 0.5;

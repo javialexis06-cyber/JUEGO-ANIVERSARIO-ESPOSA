@@ -109,6 +109,7 @@ async function iniciar() {
   casa3d = await Casa3D.cargar(mundo, productos, (k) => progreso(0.2 + k * 0.45));
   progreso(0.7, 'Despertando a Él y a Ella…');
   mascotas = { el: new Mascota('el', casa3d, productos), ella: new Mascota('ella', casa3d, productos) };
+  mascotas.el.alNalgada = () => plaf(mascotas.ella);
   await Promise.all([mascotas.el.cargar(), mascotas.ella.cargar()]);
   progreso(1, 'Listo');
   // De fondo, mientras se elige quién es quién: los dos en la sala
@@ -393,7 +394,7 @@ async function aplicarPendientes(): Promise<Evento[]> {
       for (const [k, v] of Object.entries(ef) as [Necesidad, number][]) cambios[k] = (cambios[k] ?? 0) + v;
     };
     for (const e of pendientes) {
-      if (e.tipo === 'caricia' || e.tipo === 'abrazo' || e.tipo === 'beso') sumarA({ carino: EFECTO_CARINO[e.tipo].suyo });
+      if (e.tipo === 'caricia' || e.tipo === 'abrazo' || e.tipo === 'beso' || e.tipo === 'nalgada') sumarA({ carino: EFECTO_CARINO[e.tipo].suyo });
       else if (e.tipo === 'comida' && typeof e.datos.item === 'string' && ITEM[e.datos.item]?.tipo === 'comida') sumarA(ITEM[e.datos.item].efecto ?? {});
     }
     // La leche (Ella) o el picante (Él) que le trajo la pareja: ganas urgentes de ir al baño
@@ -413,6 +414,7 @@ function resumen(ev: Evento[]) {
   const partes: string[] = [];
   const plural = (k: number, uno: string, varios: string) => (k === 1 ? `1 ${uno}` : `${k} ${varios}`);
   if (n('beso')) partes.push(plural(n('beso'), 'beso', 'besos'));
+  if (n('nalgada')) partes.push(plural(n('nalgada'), 'nalgadita', 'nalgaditas'));
   if (n('abrazo')) partes.push(plural(n('abrazo'), 'abrazo', 'abrazos'));
   if (n('caricia')) partes.push(plural(n('caricia'), 'caricia', 'caricias'));
   if (n('regalo')) partes.push(plural(n('regalo'), 'regalo', 'regalos'));
@@ -968,14 +970,56 @@ function renovarTele() {
 // ---------------------------------------------------------------------------
 // Con la pareja
 // ---------------------------------------------------------------------------
-function coreografia(tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo', de: Rol, item?: string) {
+function coreografia(tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nalgada', de: Rol, item?: string) {
   const para = otro(de);
   // Primero quien recibe (se levanta de donde esté), así quien lo hace llega a su lado
   mascotas[para].interactuar(tipo, mascotas[de], de, item);
   mascotas[de].interactuar(tipo, mascotas[para], de, item);
   vistaPendiente = null;
   verCuarto(mascotas[para].cuarto);
-  setTimeout(() => (tipo === 'beso' ? sonido.beso() : tipo === 'regalo' ? sonido.regalo() : sonido.abrazo()), 1500);
+  // (la nalgada suena justo cuando la mano llega: ¡PLAF!)
+  if (tipo !== 'nalgada') setTimeout(() => (tipo === 'beso' ? sonido.beso() : tipo === 'regalo' ? sonido.regalo() : sonido.abrazo()), 1500);
+}
+
+/** La nalgada: solo la da Él. Súper exagerada: ¡PLAF!, él da vueltitas y ella cae al piso haciendo berrinche. */
+async function nalgada() {
+  if (!s || yo !== 'el') return;
+  if (dormido(yo)) return toast('Primero hay que despertar.');
+  if (lejos() || mascotas.el.mimo === 'nalgada') return;
+  if (dormido('ella')) return toast('Está dormida… déjala dormir, pícaro 😏');
+  cerrarHoja();
+  const ahora = Date.now();
+  const cuarto = s.personajes.ella.cuarto;
+  coreografia('nalgada', 'el');
+  await guardarYo({ ...sumar(s.personajes.el, { carino: EFECTO_CARINO.nalgada.mio }, ahora), cuarto, actividad: { tipo: 'nada', desde: ahora }, visto: ahora });
+  try {
+    await s.enviar('nalgada');
+  } catch (err) {
+    fallo(err);
+  }
+}
+
+/** El ¡PLAF! sobre la nalga de ella: estrellitas, la manito marcada, sacudón de pantalla y el sonido. */
+function plaf(ella: Mascota) {
+  if (!ella.visible) return;
+  const v = ella.p.grupo.localToWorld(new THREE.Vector3(0, 0.95, 0));
+  const p = mundo.aPantalla(v);
+  const e = document.createElement('div');
+  e.className = 'plaf';
+  e.style.left = `${p.x}px`;
+  e.style.top = `${p.y}px`;
+  e.innerHTML = Array.from({ length: 10 }, (_, i) => `<span style="--a:${i * 36}deg;--d:${0.35 + (i % 3) * 0.1}s"></span>`).join('') + '<i>🖐️</i><b>¡PLAF!</b>';
+  document.body.append(e);
+  setTimeout(() => e.remove(), 2200);
+  // Zumbido de la mano, el golpe seco y el eco
+  sonido.rumor(0.18, 600, 0.05, 0, 0.8, 2400);
+  sonido.rumor(0.16, 2600, 0.26, 0.17, 0.5, 900);
+  sonido.nota(110, 0.3, 0.17, 'sine', 0.22, 60);
+  sonido.nota(1800, 0.12, 0.2, 'triangle', 0.05, 900);
+  document.body.classList.remove('sacudon');
+  void document.body.offsetWidth;
+  document.body.classList.add('sacudon');
+  setTimeout(() => document.body.classList.remove('sacudon'), 600);
 }
 
 /** Los mimos (y regalar o llevar comida en persona) solo se hacen estando los dos en el mismo cuarto. */
@@ -1082,6 +1126,10 @@ function alEvento(e: Evento) {
     case 'regalo':
       coreografia('regalo', e.de, item);
       toast(`¡${quien} te trajo un regalo! Tócalo para abrirlo.`, 3400);
+      break;
+    case 'nalgada':
+      coreografia('nalgada', e.de);
+      toast(`¡${quien} te dio una nalgada! 😤🍑`, 3400);
       break;
     case 'comida':
       coreografia('regalo', e.de, item);
@@ -1866,7 +1914,9 @@ function hojaPareja() {
           <button class="accion" data-mimo="abrazo">${ico('abrazo')}<span>Abrazo</span></button>
           <button class="accion principal" data-mimo="beso">${ico('beso')}<span>Beso</span></button>
           <button class="accion" data-hoja="regalar"><img src="${iconoItem(ITEM.flores)}" alt=""><span>Regalar</span></button>
-          <button class="accion" data-hoja="llevar"><img src="${iconoItem(ITEM.manzana)}" alt=""><span>Llevar comida</span></button>`
+          <button class="accion" data-hoja="llevar"><img src="${iconoItem(ITEM.manzana)}" alt=""><span>Llevar comida</span></button>${
+            yo === 'el' ? `<button class="accion" data-mimo="nalgada"><span class="ico ico-emoji">🍑</span><span>Nalgadita</span></button>` : ''
+          }`
       : `<button class="accion principal" data-ir-pareja="${cuarto}">${ico('carino')}<span>Ir a ${esc(enEl)}</span></button>`;
     const html = `<div class="estado-pareja">
         <p class="nota-hoja">${esc(haciendo)} ${esc(linea)} ${an === 'triste' ? 'Necesita que la consientas.' : an === 'feliz' ? 'Se ve feliz.' : ''}${
@@ -2196,6 +2246,7 @@ function controles() {
     } else if ((b = d('[data-mimo]'))) {
       const m = b.dataset.mimo!;
       if (m === 'saludo') void saludar();
+      else if (m === 'nalgada') void nalgada();
       else void carino(m as 'caricia' | 'abrazo' | 'beso');
     } else if ((b = d('[data-hoja]'))) {
       const h = b.dataset.hoja!;
@@ -2597,6 +2648,7 @@ function efectos() {
 (window as any).__monedas = (n: number) => cambiarCasa((c) => (c.monedas += n));
 (window as any).__patio = () => patio;
 (window as any).__accion = (id: string) => alAccion(id);
+(window as any).__nalgada = () => nalgada();
 /** Logros de prueba para los trofeos (se guardan como si vinieran de los minijuegos). */
 (window as any).__logros = (l: { super?: number; puertas?: number; mesa?: number }, retrete?: number) =>
   cambiarCasa((c) => {
