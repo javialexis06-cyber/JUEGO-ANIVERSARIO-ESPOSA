@@ -208,9 +208,11 @@ export class Casa3D {
       if (this.decos.has(id)) continue;
       const donde = this.sitioDe(id);
       if (!donde) continue;
-      const [item, foto] = clave.split(':');
+      const [base, color] = clave.split('#');
+      const [item, foto] = base.split(':');
       const obj = await modeloItem(item);
       if (!obj) continue;
+      if (color && /^[0-9a-f]{6}$/i.test(color)) pintarTinte(obj, `#${color}`);
       const s = donde.sitio;
       obj.position.copy(aTres(s.x, s.y, s.z));
       obj.rotation.y = THREE.MathUtils.degToRad(s.rot);
@@ -839,10 +841,27 @@ const GEO_IMAN = new THREE.SphereGeometry(0.025, 12, 8);
 function liberarFoto(o: THREE.Object3D) {
   o.traverse((x) => {
     const m = x as THREE.Mesh;
-    if (!m.isMesh || !m.userData.fotoPropia) return;
+    if (!m.isMesh || !(m.userData.fotoPropia || m.userData.tintePropio)) return;
     const mat = m.material as THREE.MeshStandardMaterial;
-    mat.map?.dispose();
+    if (m.userData.fotoPropia) mat.map?.dispose();
     mat.dispose();
+  });
+}
+
+/** Pinta de otro color las partes «tinte» de una decoración (luces neón, LED, lava…), con materiales propios
+ *  para no pintar las demás copias del mismo modelo. */
+function pintarTinte(o: THREE.Object3D, color: string) {
+  const c = new THREE.Color(color);
+  o.traverse((x) => {
+    const m = x as THREE.Mesh;
+    if (!m.isMesh) return;
+    const mat = m.material as THREE.MeshStandardMaterial;
+    if (Array.isArray(mat) || !/tinte/i.test(mat.name)) return;
+    const nuevo = mat.clone();
+    nuevo.color.copy(c);
+    if (nuevo.emissive && nuevo.emissive.getHex() !== 0) nuevo.emissive.copy(c);
+    m.material = nuevo;
+    m.userData.tintePropio = true;
   });
 }
 

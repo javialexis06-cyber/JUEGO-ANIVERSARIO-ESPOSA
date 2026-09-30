@@ -508,6 +508,69 @@ body.hogar {
   font: 700 12px var(--texto);
   color: var(--menta-oscura);
 }
+/* Conceptos de decoración: el color de las paredes, el nombre y las 9 piezas */
+.conceptos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.concepto {
+  display: grid;
+  gap: 6px;
+  padding: 0 0 8px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 2px 0 rgba(61, 43, 39, 0.14);
+  overflow: hidden;
+}
+.concepto-cabeza {
+  display: grid;
+  gap: 1px;
+  padding: 8px 10px;
+  background: linear-gradient(135deg, var(--pared), color-mix(in srgb, var(--pared) 70%, #fff));
+  border-bottom: 2px solid rgba(61, 43, 39, 0.08);
+}
+.concepto-cabeza b {
+  font: 600 16px/1.1 var(--display);
+  color: var(--cacao);
+  background: rgba(255, 248, 238, 0.85);
+  justify-self: start;
+  padding: 1px 8px;
+  border-radius: 999px;
+}
+.concepto-cabeza small {
+  font: 700 11px/1.25 var(--texto);
+  color: var(--cacao);
+  background: rgba(255, 248, 238, 0.75);
+  justify-self: start;
+  padding: 1px 8px;
+  border-radius: 999px;
+}
+.concepto-piezas {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 2px;
+  padding: 0 6px;
+}
+.concepto-piezas img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+.concepto .fila-item {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 8px;
+}
+.concepto .tengo {
+  font: 700 12px var(--texto);
+  color: var(--menta-oscura);
+}
 .boton-precio-casa {
   display: inline-flex;
   align-items: center;

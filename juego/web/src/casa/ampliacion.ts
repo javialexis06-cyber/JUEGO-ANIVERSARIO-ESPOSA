@@ -89,6 +89,9 @@ export function htmlTrofeos(c: Casa) {
 export const COLORES_PARED = [
   '#F8DCE6', '#F7C6D3', '#F2A5B8', '#FBE3C4', '#FFF1D2', '#FCE7A8', '#DDEFD9', '#BFE3D8', '#D3E5F2', '#BFD9F2', '#DCD6F7', '#C9B6EA', '#F2D1B8',
   '#FFFFFF', '#E9E1D8',
+  // Los de los conceptos de decoración (gamer, griego, egipcio…)
+  '#3A3F5C', '#EAF2F8', '#F2D9A6', '#34406B', '#BFE9E4', '#F6E7DA', '#F9D5E5', '#4A4A5E', '#F8E27A', '#F5E6CA', '#C8D8E4', '#DCE8D2', '#FBE3F0',
+  '#EDE3D1', '#E9F2EC', '#4E3D63', '#5A2E3A', '#46306E', '#F7D6D6', '#EFEFEA',
 ];
 
 export function htmlPintar(c: Casa, k: Cuarto) {

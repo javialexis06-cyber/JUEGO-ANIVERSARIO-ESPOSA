@@ -15,7 +15,10 @@ import * as THREE from 'three';
 import { aTres, Mundo } from '../mundo';
 import { elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
-import { BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, LE_CAE_MAL, lePasa, paraSitio, RAREZA, RAREZAS, TINTES, TipoItem } from './catalogo';
+import {
+  BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, COLORES_TINTE, CONCEPTOS, type Concepto, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, LE_CAE_MAL, lePasa, paraSitio,
+  piezasConcepto, precioConcepto, RAREZA, RAREZAS, TINTES, TipoItem, type TipoSitio,
+} from './catalogo';
 import { CORTO, htmlBebe, htmlPintar, htmlPlano, htmlTrofeos } from './ampliacion';
 import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
@@ -2037,6 +2040,7 @@ function hojaTienda(tab: TipoItem) {
   const pintar = () => {
     if (!s) return;
     if (tab === 'ropa' || tab === 'disfraz') return tiendaRopa(tab);
+    if (tab === 'deco') return tiendaDeco();
     const lista = CATALOGO.filter((i) => i.tipo === tab && i.id !== 'osito_deco' && !i.cocina);
     const html = `<p class="nota-hoja">Las monedas son de los dos. Se ganan con el bono de cada día y jugando los minijuegos (el súper, Cien Puertas y los juegos de mesa).</p>
       <ul class="catalogo-casa">${lista
@@ -2056,6 +2060,139 @@ function hojaTienda(tab: TipoItem) {
   };
   repintarHoja = pintar;
   pintar();
+}
+
+// ---------------------------------------------------------------------------
+// Decoración: conceptos para el cuarto propio (gamer, griego, egipcio…) y piezas sueltas por sitio
+// ---------------------------------------------------------------------------
+type FiltroDeco = 'conceptos' | TipoSitio;
+const FILTROS_DECO: { id: FiltroDeco; nombre: string }[] = [
+  { id: 'conceptos', nombre: 'Conceptos' },
+  { id: 'cuadro', nombre: 'Pared' },
+  { id: 'mesa', nombre: 'Mesa' },
+  { id: 'piso', nombre: 'Piso' },
+  { id: 'peluche', nombre: 'Peluches' },
+];
+let filtroDeco: FiltroDeco = 'conceptos';
+/** El item de lo que hay puesto en un sitio («cuadro_foto:<foto>», «neon_gg#35f0ff»…). */
+const itemDeClave = (clave: string) => clave.split(/[:#]/)[0];
+const miCuarto = (): Cuarto => (yo === 'el' ? 'cuarto_el' : 'cuarto_ella');
+
+/** ¿Tienen todas las piezas del concepto? (guardadas o ya puestas en mi cuarto) */
+function tienePiezas(con: Concepto) {
+  if (!s) return false;
+  const k = miCuarto();
+  const puestas: Record<string, number> = {};
+  for (const st of casa3d.dato.cuartos[k]?.sitios ?? []) {
+    const v = s.casa.deco[st.id];
+    if (v) puestas[itemDeClave(v)] = (puestas[itemDeClave(v)] ?? 0) + 1;
+  }
+  const falta: Record<string, number> = {};
+  for (const p of piezasConcepto(con)) falta[p.id] = (falta[p.id] ?? 0) + 1;
+  return Object.entries(falta).every(([id, n]) => (s!.casa.inventario[id] ?? 0) + (puestas[id] ?? 0) >= n);
+}
+
+function tiendaDeco() {
+  if (!s) return;
+  const k = miCuarto();
+  const hayCuarto = tieneCuarto(s.casa, k);
+  let html = chips(FILTROS_DECO, filtroDeco, 'filtro-deco');
+  if (filtroDeco === 'conceptos') {
+    html += `<p class="nota-hoja">Un concepto trae las 9 piezas para tu cuarto y le pinta las paredes (con 30 % de descuento). Todo queda guardado:
+      después puedes mezclar piezas de varios conceptos en «Decorar». ${hayCuarto ? '' : '<b>Primero construyan tu cuarto en «Ampliar la casa».</b>'}</p>
+      <ul class="conceptos">${CONCEPTOS.map((con) => {
+        const precio = precioConcepto(con);
+        const tiene = tienePiezas(con);
+        const iconos = piezasConcepto(con).map((p) => `<img src="${iconoItem(ITEM[p.id])}" alt="" loading="lazy">`).join('');
+        const botones = (tiene ? '' : `<button class="boton-precio-casa" data-comprar-concepto="${con.id}" ${s!.casa.monedas < precio ? 'disabled' : ''}><i class="moneda"></i>${precio}</button>`) +
+          (tiene && hayCuarto ? `<button class="boton boton-chico boton-menta" data-poner-concepto="${con.id}">Poner en mi cuarto</button>` : '') +
+          (tiene && !hayCuarto ? '<span class="tengo">Lo tienen</span>' : '');
+        return `<li class="concepto"><div class="concepto-cabeza" style="--pared:${con.pared}"><b>${esc(con.nombre)}</b><small>${esc(con.texto)}</small></div>
+          <div class="concepto-piezas">${iconos}</div><div class="fila-item">${botones}</div></li>`;
+      }).join('')}</ul>`;
+  } else {
+    const lista = paraSitio(filtroDeco).filter((i) => i.id !== 'osito_deco');
+    html += `<p class="nota-hoja">Las monedas son de los dos. Lo que compran queda guardado para ponerlo con «Decorar».</p>
+      <ul class="catalogo-casa">${lista
+        .map((it) =>
+          tarjetaItem(it, `<span class="tengo">${s!.casa.inventario[it.id] ? `Tienen ${s!.casa.inventario[it.id]}` : ''}</span>
+            <button class="boton-precio-casa" data-comprar="${it.id}" ${s!.casa.monedas < it.precio ? 'disabled' : ''}><i class="moneda"></i>${it.precio}</button>`),
+        )
+        .join('')}</ul>`;
+  }
+  abrirHoja('Tienda de la casa', html, {
+    mantener: true,
+    saldo: s.casa.monedas,
+    pestanas: PESTANAS_TIENDA,
+    activa: 'deco',
+    alPestana: (p) => hojaTienda(p as TipoItem),
+    alCerrar: () => (repintarHoja = null),
+  });
+}
+
+async function comprarConcepto(id: string) {
+  const con = CONCEPTOS.find((x) => x.id === id);
+  if (!s || !con) return;
+  const precio = precioConcepto(con);
+  if (s.casa.monedas < precio) return toast('No alcanzan las monedas.');
+  const ok = await cambiarCasa((c) => {
+    if (c.monedas < precio) throw new Error('No alcanzan las monedas.');
+    c.monedas -= precio;
+    for (const p of piezasConcepto(con)) c.inventario[p.id] = (c.inventario[p.id] ?? 0) + 1;
+  });
+  if (!ok) return;
+  sonido.caja();
+  // Si ya tiene su cuarto, queda puesto de una
+  if (tieneCuarto(s.casa, miCuarto())) await ponerConcepto(id);
+  else toast(`Compraron el concepto ${con.nombre}. Queda guardado para tu cuarto.`);
+}
+
+/** Pone las 9 piezas del concepto en mi cuarto (lo que había vuelve al inventario) y pinta las paredes. */
+async function ponerConcepto(id: string) {
+  const con = CONCEPTOS.find((x) => x.id === id);
+  if (!s || !con) return;
+  const k = miCuarto();
+  if (!tieneCuarto(s.casa, k)) return toast('Primero construyan tu cuarto en «Ampliar la casa».');
+  const sitios = casa3d.dato.cuartos[k]?.sitios ?? [];
+  const ok = await cambiarCasa((c) => {
+    for (const st of sitios) {
+      const antes = c.deco[st.id];
+      if (!antes) continue;
+      const it = itemDeClave(antes);
+      c.inventario[it] = (c.inventario[it] ?? 0) + 1;
+      delete c.deco[st.id];
+    }
+    const libres: Record<string, string[]> = {};
+    for (const st of sitios) (libres[st.tipo] ??= []).push(st.id);
+    for (const p of piezasConcepto(con)) {
+      const sitio = libres[p.tipo]?.shift();
+      if (!sitio || (c.inventario[p.id] ?? 0) <= 0) continue;
+      gastar(c, p.id);
+      c.deco[sitio] = p.id;
+    }
+    c.pintura = { ...(c.pintura ?? {}), [k]: con.pared };
+  });
+  if (!ok) return;
+  cerrarHoja();
+  sonido.repuesto();
+  lluviaCorazones(8);
+  toast(`¡Tu cuarto quedó ${con.nombre.toLowerCase()}!`);
+  if (casa3d.actual !== k) void irACuarto(k);
+}
+
+/** Cambia el color de lo que se puede pintar (neón, LED, lava…) sin gastar nada. */
+async function pintarDeco(sitio: string, color: string) {
+  if (!s) return;
+  const ok = await cambiarCasa((c) => {
+    const antes = c.deco[sitio];
+    if (!antes || !ITEM[itemDeClave(antes)]?.tintable) return;
+    c.deco[sitio] = `${antes.split('#')[0]}${color ? `#${color.replace('#', '').toLowerCase()}` : ''}`;
+  });
+  if (ok) {
+    sonido.toque();
+    const donde = casa3d.sitioDe(sitio);
+    if (donde) hojaDecorar(donde.sitio);
+  }
 }
 
 const PESTANAS_TIENDA = [
@@ -2497,14 +2634,21 @@ function hojaDecorar(sitio: Sitio) {
   const actual = s.casa.deco[sitio.id];
   const opciones = paraSitio(sitio.tipo).filter((i) => (s!.casa.inventario[i.id] ?? 0) > 0);
   const esFoto = sitio.tipo === 'cuadro' && (s.casa.inventario.cuadro_foto ?? 0) > 0;
-  const html = `${actual ? `<p class="nota-hoja">Aquí está: <b>${esc(ITEM[actual.split(':')[0]]?.nombre ?? '')}</b></p><button class="boton boton-papel boton-chico" data-quitar-deco="${sitio.id}">Quitar y guardar</button>` : ''}
+  const itActual = actual ? ITEM[itemDeClave(actual)] : undefined;
+  const colorActual = actual?.split('#')[1] ?? '';
+  const colores = itActual?.tintable
+    ? `<p class="nota-hoja">Color de las luces:</p><div class="paleta-pared">${COLORES_TINTE.map(
+        (col) => `<button class="muestra-pared" data-tinte-deco="${col}" data-sitio="${sitio.id}" style="background:${col}" aria-pressed="${col.slice(1).toLowerCase() === colorActual}" aria-label="Color ${col}"></button>`,
+      ).join('')}</div><div class="fila-botones"><button class="boton boton-papel boton-chico" data-tinte-deco="" data-sitio="${sitio.id}">Como venía</button></div>`
+    : '';
+  const html = `${actual ? `<p class="nota-hoja">Aquí está: <b>${esc(itActual?.nombre ?? '')}</b></p><button class="boton boton-papel boton-chico" data-quitar-deco="${sitio.id}">Quitar y guardar</button>${colores}` : ''}
     ${
       opciones.length
         ? `<ul class="catalogo-casa" style="margin-top:10px">${opciones
             .filter((i) => i.id !== 'cuadro_foto')
             .map((it) => tarjetaItem(it, `<span class="tengo">Tienen ${s!.casa.inventario[it.id]}</span><button class="boton boton-chico boton-menta" data-poner="${it.id}" data-sitio="${sitio.id}">Poner</button>`))
             .join('')}</ul>`
-        : `<p class="nota-hoja">No tienen decoración para este lugar. En la tienda (pestaña Decoración) hay ${
+        : `<p class="nota-hoja">${actual ? 'No tienen más guardado para este lugar.' : 'No tienen decoración para este lugar.'} En la tienda (pestaña Decoración) hay ${
             sitio.tipo === 'cuadro' ? 'cuadros' : sitio.tipo === 'mesa' ? 'floreros y velas' : sitio.tipo === 'peluche' ? 'ositos' : 'plantas, lámparas y globos'
           }.</p><button class="boton boton-tomate" data-ir-tienda="deco">Ir a la tienda</button>`
     }
@@ -2525,13 +2669,13 @@ function hojaDecorar(sitio: Sitio) {
 
 async function ponerDeco(clave: string, sitio: string) {
   if (!s) return;
-  const item = clave.split(':')[0];
+  const item = itemDeClave(clave);
   if ((s.casa.inventario[item] ?? 0) <= 0) return;
   const ok = await cambiarCasa((c) => {
     const antes = c.deco[sitio];
     if (antes === clave) return;
     gastar(c, item);
-    if (antes) c.inventario[antes.split(':')[0]] = (c.inventario[antes.split(':')[0]] ?? 0) + 1;
+    if (antes) c.inventario[itemDeClave(antes)] = (c.inventario[itemDeClave(antes)] ?? 0) + 1;
     c.deco[sitio] = clave;
   });
   if (ok) {
@@ -2546,7 +2690,7 @@ async function quitarDeco(sitio: string) {
   const ok = await cambiarCasa((c) => {
     const antes = c.deco[sitio];
     if (!antes) return;
-    c.inventario[antes.split(':')[0]] = (c.inventario[antes.split(':')[0]] ?? 0) + 1;
+    c.inventario[itemDeClave(antes)] = (c.inventario[itemDeClave(antes)] ?? 0) + 1;
     delete c.deco[sitio];
   });
   if (ok) cerrarHoja();
@@ -2614,6 +2758,12 @@ function controles() {
         toast('Tele apagada.');
       } else void verTele(true);
     } else if ((b = d('[data-comprar]'))) void comprar(b.dataset.comprar!);
+    else if ((b = d('[data-comprar-concepto]'))) void comprarConcepto(b.dataset.comprarConcepto!);
+    else if ((b = d('[data-poner-concepto]'))) void ponerConcepto(b.dataset.ponerConcepto!);
+    else if ((b = d('[data-filtro-deco]'))) {
+      filtroDeco = b.dataset.filtroDeco as FiltroDeco;
+      hojaTienda('deco');
+    } else if ((b = d('[data-tinte-deco]'))) void pintarDeco(b.dataset.sitio!, b.dataset.tinteDeco!);
     else if ((b = d('[data-ropa-para]'))) {
       filtroRopa.para = b.dataset.ropaPara as Rol;
       hojaTienda('ropa');
@@ -3027,6 +3177,10 @@ function efectos() {
 (window as any).__cocina = () => import('./cocina').then((m) => m.cocina.actual);
 (window as any).__mundo = () => mundo;
 (window as any).__mascotas = () => mascotas;
+(window as any).__decorar = (sitio: string) => {
+  const d = casa3d.sitioDe(sitio);
+  if (d) hojaDecorar(d.sitio);
+};
 (window as any).__casa3d = () => casa3d;
 (window as any).__escena = (r: Rol) => mascotas?.[r].escenaActual ?? '';
 (window as any).__fase = (r: Rol) => mascotas?.[r].fase ?? null;

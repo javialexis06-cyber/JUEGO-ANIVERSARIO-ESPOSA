@@ -36,6 +36,10 @@ export interface Item {
   exclusiva?: boolean;
   /** Plato que solo sale de la cocina de chef (no se vende): llena mucho más y se puede regalar. */
   cocina?: boolean;
+  /** Decoración con luces o partes que se pueden pintar de otro color (neón, LED, lava…). */
+  tintable?: boolean;
+  /** Decoración que viene con un concepto (gamer, griego…): sale en la tienda con el concepto. */
+  concepto?: string;
 }
 
 /** Rareza de los disfraces: blanco es la calidad de siempre; verde el doble de detalle, azul el triple, morado cinco
@@ -56,6 +60,9 @@ const plato = (id: string, nombre: string, precio: number, hambre: number, extra
   ({ id, nombre, tipo: 'comida', precio, modelo: `comida_${id}`, efecto: { hambre, ...extra } });
 const deco = (id: string, nombre: string, precio: number, sitio: TipoSitio, texto?: string): Item =>
   ({ id, nombre, tipo: 'deco', precio, modelo: `deco_${id}`, sitio, ...(texto ? { texto } : {}) });
+/** Decoración de un concepto (y si se le puede cambiar el color). */
+const dc = (concepto: string, id: string, nombre: string, precio: number, sitio: TipoSitio, tintable = false): Item =>
+  ({ ...deco(id, nombre, precio, sitio, tintable ? 'Se le puede cambiar el color' : undefined), concepto, ...(tintable ? { tintable } : {}) });
 
 /** Ropa, peinados y accesorios: los arma personajes/blender/ropa.py (modelo = ropa/<modelo>_<rol>.glb). */
 interface DatoRopa {
@@ -168,6 +175,223 @@ const DISFRACES: Item[] = [
 export const LE_CAE_MAL: Record<'el' | 'ella', string[]> = { ella: ['leche', 'yogur', 'arroz_leche'], el: ['empanada', 'tacos'] };
 
 /** La comida y los regalos son lo de todos los días: baratos, para que el bono diario alcance para cuidarse. */
+// ---------------------------------------------------------------------------
+// Conceptos de decoración para los cuartos propios (personajes/blender/deco_conceptos.py)
+// ---------------------------------------------------------------------------
+const DECO_CONCEPTOS: Item[] = [
+  // Gamer
+  dc('gamer', 'neon_gg', 'Letrero neón «GG»', 55, 'cuadro', true),
+  dc('gamer', 'paneles_hex', 'Paneles de luz hexagonales', 60, 'cuadro', true),
+  dc('gamer', 'poster_control', 'Afiche de control', 30, 'cuadro'),
+  dc('gamer', 'audifonos', 'Audífonos gamer con soporte', 45, 'mesa', true),
+  dc('gamer', 'consola', 'Consola portátil', 50, 'mesa'),
+  dc('gamer', 'slime', 'Slime de peluche', 35, 'peluche'),
+  dc('gamer', 'torre_pc', 'Torre gamer con ventiladores de luz', 70, 'piso', true),
+  dc('gamer', 'lampara_led', 'Barra de luz LED', 50, 'piso', true),
+  // Griego
+  dc('griego', 'meandro', 'Placa del templo griego', 45, 'cuadro'),
+  dc('griego', 'laurel', 'Corona de laurel dorada', 40, 'cuadro'),
+  dc('griego', 'anfora', 'Ánfora pequeña', 30, 'mesa'),
+  dc('griego', 'busto', 'Busto de mármol', 50, 'mesa'),
+  dc('griego', 'pegaso', 'Pegaso de peluche', 45, 'peluche'),
+  dc('griego', 'columna', 'Columna jónica con hiedra', 70, 'piso'),
+  dc('griego', 'anfora_grande', 'Ánfora grande con olivo', 55, 'piso'),
+  // Egipcio
+  dc('egipcio', 'papiro', 'Papiro con jeroglíficos', 35, 'cuadro'),
+  dc('egipcio', 'escarabajo', 'Escarabajo sagrado', 40, 'cuadro'),
+  dc('egipcio', 'piramide', 'Pirámide de luz', 40, 'mesa'),
+  dc('egipcio', 'gato_egipcio', 'Gato egipcio', 45, 'mesa'),
+  dc('egipcio', 'momia', 'Momia de peluche', 40, 'peluche'),
+  dc('egipcio', 'obelisco', 'Obelisco', 65, 'piso'),
+  // Espacial
+  dc('espacial', 'planetas', 'Sistema solar', 50, 'cuadro'),
+  dc('espacial', 'cuadro_astronauta', 'Cuadro de astronauta', 35, 'cuadro'),
+  dc('espacial', 'lampara_luna', 'Lámpara de luna', 45, 'mesa'),
+  dc('espacial', 'cohete_mesa', 'Cohete de juguete', 35, 'mesa'),
+  dc('espacial', 'alien', 'Extraterrestre de peluche', 40, 'peluche'),
+  dc('espacial', 'telescopio', 'Telescopio', 70, 'piso'),
+  // Tropical
+  dc('tropical', 'cuadro_ola', 'Cuadro de la ola', 35, 'cuadro'),
+  dc('tropical', 'flotador', 'Salvavidas', 35, 'cuadro'),
+  dc('tropical', 'concha', 'Caracola y estrella de mar', 25, 'mesa'),
+  dc('tropical', 'tortuga', 'Tortuga de peluche', 40, 'peluche'),
+  dc('tropical', 'tabla_surf', 'Tabla de surf', 60, 'piso'),
+  // Japonés
+  dc('japones', 'abanico', 'Abanico japonés', 35, 'cuadro'),
+  dc('japones', 'cuadro_fuji', 'Cuadro del monte Fuji', 40, 'cuadro'),
+  dc('japones', 'maneki', 'Gato de la suerte', 40, 'mesa'),
+  dc('japones', 'farol_papel', 'Farol de papel', 55, 'piso'),
+  dc('japones', 'cerezo', 'Cerezo en flor', 65, 'piso'),
+  // Princesa
+  dc('princesa', 'espejo_princesa', 'Espejo de princesa', 55, 'cuadro'),
+  dc('princesa', 'corona_pared', 'Corona de luces', 45, 'cuadro'),
+  dc('princesa', 'tiara_cojin', 'Tiara en su cojín', 45, 'mesa'),
+  dc('princesa', 'joyero', 'Joyero con perlas', 45, 'mesa'),
+  dc('princesa', 'castillo', 'Castillo de princesa', 75, 'piso'),
+  // Música
+  dc('musica', 'vinilos', 'Discos de vinilo', 40, 'cuadro'),
+  dc('musica', 'poster_rock', 'Afiche de rock', 30, 'cuadro'),
+  dc('musica', 'microfono', 'Micrófono retro', 40, 'mesa'),
+  dc('musica', 'guitarra_electrica', 'Guitarra eléctrica', 80, 'piso', true),
+  dc('musica', 'amplificador', 'Amplificador', 60, 'piso'),
+  // Fútbol
+  dc('futbol', 'camiseta', 'Camiseta del 10 enmarcada', 50, 'cuadro'),
+  dc('futbol', 'bufanda', 'Bufanda de hincha', 30, 'cuadro'),
+  dc('futbol', 'copa', 'Copa de campeón', 45, 'mesa'),
+  dc('futbol', 'balon', 'Balón', 30, 'piso'),
+  dc('futbol', 'arco', 'Arco de fútbol', 60, 'piso'),
+  // Colombiano
+  dc('colombiano', 'vueltiao_pared', 'Sombrero vueltiao', 50, 'cuadro'),
+  dc('colombiano', 'mochila_wayuu', 'Mochila wayuu', 45, 'cuadro'),
+  dc('colombiano', 'chiva', 'Chiva de artesanía', 50, 'mesa'),
+  dc('colombiano', 'guacamaya', 'Guacamaya de peluche', 40, 'peluche'),
+  dc('colombiano', 'silleta', 'Silleta de flores', 75, 'piso'),
+  dc('colombiano', 'bulto_cafe', 'Bulto de café', 40, 'piso'),
+  // Pirata
+  dc('pirata', 'timon', 'Timón de barco', 45, 'cuadro'),
+  dc('pirata', 'mapa_tesoro', 'Mapa del tesoro', 35, 'cuadro'),
+  dc('pirata', 'barco_botella', 'Barco en botella', 45, 'mesa'),
+  dc('pirata', 'loro', 'Loro pirata de peluche', 40, 'peluche'),
+  dc('pirata', 'cofre', 'Cofre del tesoro', 65, 'piso'),
+  dc('pirata', 'barril', 'Barril', 45, 'piso'),
+  // Bosque
+  dc('bosque', 'reloj_cucu', 'Reloj cucú', 50, 'cuadro'),
+  dc('bosque', 'cuadro_pinos', 'Cuadro del bosque', 35, 'cuadro'),
+  dc('bosque', 'hongos', 'Lámpara de hongos', 40, 'mesa', true),
+  dc('bosque', 'zorro', 'Zorro de peluche', 40, 'peluche'),
+  dc('bosque', 'tronco', 'Tronco con hongos', 45, 'piso'),
+  dc('bosque', 'pino', 'Pino en matera', 50, 'piso'),
+  // Kawaii
+  dc('kawaii', 'nube_arcoiris', 'Arcoíris con nubes', 40, 'cuadro'),
+  dc('kawaii', 'neon_corazon', 'Corazón de neón', 55, 'cuadro', true),
+  dc('kawaii', 'leche_fresa', 'Leche de fresa kawaii', 25, 'mesa'),
+  dc('kawaii', 'nube_peluche', 'Nube de peluche', 35, 'peluche'),
+  dc('kawaii', 'lampara_estrella', 'Lámpara de estrella', 55, 'piso', true),
+  // Biblioteca
+  dc('biblioteca', 'repisa_libros', 'Repisa con libros', 45, 'cuadro'),
+  dc('biblioteca', 'cuadro_cerebro', 'Lámina del cerebro', 35, 'cuadro'),
+  dc('biblioteca', 'lampara_banquero', 'Lámpara verde de estudio', 45, 'mesa'),
+  dc('biblioteca', 'buho', 'Búho lector de peluche', 40, 'peluche'),
+  dc('biblioteca', 'pila_libros', 'Torre de libros', 45, 'piso'),
+  // Navidad
+  dc('navidad', 'corona_navidad', 'Corona de Navidad', 40, 'cuadro'),
+  dc('navidad', 'medias', 'Medias de Navidad', 35, 'cuadro'),
+  dc('navidad', 'casita_jengibre', 'Casita de jengibre', 35, 'mesa'),
+  dc('navidad', 'reno', 'Reno de peluche', 40, 'peluche'),
+  dc('navidad', 'muneco_nieve', 'Muñeco de nieve', 60, 'piso'),
+  dc('navidad', 'regalos', 'Pila de regalos', 45, 'piso'),
+  // Halloween
+  dc('halloween', 'murcielagos', 'Murciélagos de papel', 25, 'cuadro'),
+  dc('halloween', 'luna_bruja', 'Cuadro de la bruja', 35, 'cuadro'),
+  dc('halloween', 'calabaza', 'Calabaza con cara', 30, 'mesa'),
+  dc('halloween', 'caldero', 'Caldero de bruja', 40, 'mesa'),
+  dc('halloween', 'fantasma', 'Fantasmita de peluche', 35, 'peluche'),
+  dc('halloween', 'calabaza_grande', 'Calabaza gigante', 55, 'piso'),
+  dc('halloween', 'escoba', 'Escoba de bruja', 40, 'piso'),
+  // Cine
+  dc('cine', 'poster_cine', 'Afiche de película', 35, 'cuadro'),
+  dc('cine', 'claqueta', 'Claqueta', 35, 'cuadro'),
+  dc('cine', 'balde_crispetas', 'Balde de crispetas', 25, 'mesa'),
+  dc('cine', 'rollo_pelicula', 'Rollo de película', 35, 'mesa'),
+  dc('cine', 'silla_director', 'Silla de director', 65, 'piso'),
+  dc('cine', 'foco_cine', 'Reflector de cine', 60, 'piso'),
+  // Retro 80s
+  dc('retro', 'neon_palmera', 'Neón de palmera', 55, 'cuadro', true),
+  dc('retro', 'cassette', 'Cassette gigante', 40, 'cuadro'),
+  dc('retro', 'lava', 'Lámpara de lava', 40, 'mesa', true),
+  dc('retro', 'bola_disco', 'Bola de discoteca', 45, 'mesa'),
+  dc('retro', 'patines', 'Patines', 50, 'piso'),
+  dc('retro', 'arcade_mini', 'Maquinita de arcade', 85, 'piso'),
+  // Romántico
+  dc('romantico', 'luces_corazon', 'Corazón de bombillitos', 45, 'cuadro'),
+  dc('romantico', 'cuadro_amor', 'Cuadro de los dos corazones', 35, 'cuadro'),
+  dc('romantico', 'rosas', 'Docena de rosas', 45, 'mesa'),
+  dc('romantico', 'rosal', 'Rosal', 60, 'piso'),
+  // Nórdico
+  dc('nordico', 'cuadro_geometrico', 'Cuadro geométrico', 35, 'cuadro'),
+  dc('nordico', 'espejo_sol', 'Espejo de sol', 45, 'cuadro'),
+  dc('nordico', 'jarron_nordico', 'Jarrón con pampas', 35, 'mesa'),
+  dc('nordico', 'lampara_arco', 'Lámpara de arco', 70, 'piso'),
+  dc('nordico', 'canasta_manta', 'Canasta con manta', 40, 'piso'),
+];
+
+/** Colores para lo que se puede pintar (luces, neón, lava…). */
+export const COLORES_TINTE = ['#35F0FF', '#FF4FA3', '#8E3BFF', '#7BD66B', '#F7C948', '#FF7A45', '#3B6FB6', '#FFFFFF'];
+
+/**
+ * Un concepto llena los 9 sitios de un cuarto propio (3 cuadros, 2 mesas, 1 peluche y 3 de piso) y pinta las
+ * paredes. Trae piezas nuevas y algunas de las de siempre que combinan; todo queda en el inventario, así se puede
+ * mezclar después con piezas de otros conceptos.
+ */
+export interface Concepto {
+  id: string;
+  nombre: string;
+  texto: string;
+  pared: string;
+  cuadro: [string, string, string];
+  mesa: [string, string];
+  peluche: string;
+  piso: [string, string, string];
+}
+
+export const CONCEPTOS: Concepto[] = [
+  { id: 'gamer', nombre: 'Gamer', texto: 'Luces de colores, torre gamer y audífonos', pared: '#3A3F5C',
+    cuadro: ['neon_gg', 'paneles_hex', 'poster_control'], mesa: ['audifonos', 'consola'], peluche: 'slime', piso: ['torre_pc', 'lampara_led', 'puf'] },
+  { id: 'griego', nombre: 'Griego', texto: 'Mármol, laureles y columnas', pared: '#EAF2F8',
+    cuadro: ['meandro', 'laurel', 'espejo'], mesa: ['anfora', 'busto'], peluche: 'pegaso', piso: ['columna', 'anfora_grande', 'palma'] },
+  { id: 'egipcio', nombre: 'Egipcio', texto: 'Pirámides, papiros y un obelisco', pared: '#F2D9A6',
+    cuadro: ['papiro', 'escarabajo', 'cuadro_atardecer'], mesa: ['piramide', 'gato_egipcio'], peluche: 'momia', piso: ['obelisco', 'palma', 'cactus'] },
+  { id: 'espacial', nombre: 'Espacial', texto: 'Planetas, cohete y telescopio', pared: '#34406B',
+    cuadro: ['planetas', 'cuadro_astronauta', 'cuadro_noche'], mesa: ['lampara_luna', 'cohete_mesa'], peluche: 'alien',
+    piso: ['telescopio', 'lampara_bola', 'lampara_estrella'] },
+  { id: 'tropical', nombre: 'Playa tropical', texto: 'Surf, olas y palmeras', pared: '#BFE9E4',
+    cuadro: ['cuadro_ola', 'flotador', 'guirnalda'], mesa: ['concha', 'pecera'], peluche: 'tortuga', piso: ['tabla_surf', 'palma', 'monstera'] },
+  { id: 'japones', nombre: 'Japonés', texto: 'Cerezo, farol de papel y el monte Fuji', pared: '#F6E7DA',
+    cuadro: ['abanico', 'cuadro_fuji', 'cuadro_flores'], mesa: ['maneki', 'bonsai'], peluche: 'panda', piso: ['farol_papel', 'cerezo', 'puf'] },
+  { id: 'princesa', nombre: 'Princesa', texto: 'Castillo, tiara y espejo dorado', pared: '#F9D5E5',
+    cuadro: ['espejo_princesa', 'corona_pared', 'banderin'], mesa: ['tiara_cojin', 'joyero'], peluche: 'unicornio',
+    piso: ['castillo', 'lampara_bola', 'cojin_corazon'] },
+  { id: 'musica', nombre: 'Rock y música', texto: 'Guitarra eléctrica, amplificador y vinilos', pared: '#4A4A5E',
+    cuadro: ['vinilos', 'poster_rock', 'guirnalda'], mesa: ['microfono', 'tocadiscos'], peluche: 'dino_peluche',
+    piso: ['guitarra_electrica', 'amplificador', 'guitarra'] },
+  { id: 'futbol', nombre: 'Fútbol', texto: 'La camiseta del 10, la copa y el arco', pared: '#F8E27A',
+    cuadro: ['camiseta', 'bufanda', 'banderin'], mesa: ['copa', 'radio'], peluche: 'perro_peluche', piso: ['balon', 'arco', 'puf'] },
+  { id: 'colombiano', nombre: 'Colombiano', texto: 'Silleta, vueltiao, chiva y café', pared: '#F5E6CA',
+    cuadro: ['vueltiao_pared', 'mochila_wayuu', 'cuadro_mapa'], mesa: ['chiva', 'taza_corazon'], peluche: 'guacamaya',
+    piso: ['silleta', 'bulto_cafe', 'palma'] },
+  { id: 'pirata', nombre: 'Pirata', texto: 'Cofre del tesoro, timón y barril', pared: '#C8D8E4',
+    cuadro: ['timon', 'mapa_tesoro', 'flotador'], mesa: ['barco_botella', 'globo_terraqueo'], peluche: 'loro', piso: ['cofre', 'barril', 'palma'] },
+  { id: 'bosque', nombre: 'Cabaña del bosque', texto: 'Pinos, hongos que brillan y reloj cucú', pared: '#DCE8D2',
+    cuadro: ['reloj_cucu', 'cuadro_pinos', 'cuadro_paisaje'], mesa: ['hongos', 'vela_frasco'], peluche: 'zorro', piso: ['tronco', 'pino', 'lampara'] },
+  { id: 'kawaii', nombre: 'Kawaii', texto: 'Nubes, arcoíris y todo pastel', pared: '#FBE3F0',
+    cuadro: ['nube_arcoiris', 'neon_corazon', 'cuadro_gato'], mesa: ['leche_fresa', 'caja_musical'], peluche: 'nube_peluche',
+    piso: ['lampara_estrella', 'puf', 'cojin_corazon'] },
+  { id: 'biblioteca', nombre: 'Biblioteca', texto: 'Libros, lámpara de estudio y el cerebrito', pared: '#EDE3D1',
+    cuadro: ['repisa_libros', 'cuadro_cerebro', 'reloj'], mesa: ['lampara_banquero', 'libros'], peluche: 'buho', piso: ['pila_libros', 'estanteria', 'lampara'] },
+  { id: 'navidad', nombre: 'Navidad', texto: 'Arbolito, medias, muñeco de nieve y regalos', pared: '#E9F2EC',
+    cuadro: ['corona_navidad', 'medias', 'guirnalda'], mesa: ['casita_jengibre', 'bola_nieve'], peluche: 'reno',
+    piso: ['arbol_navidad', 'muneco_nieve', 'regalos'] },
+  { id: 'halloween', nombre: 'Halloween', texto: 'Calabazas, caldero y murciélagos', pared: '#4E3D63',
+    cuadro: ['murcielagos', 'luna_bruja', 'cuadro_noche'], mesa: ['calabaza', 'caldero'], peluche: 'fantasma', piso: ['calabaza_grande', 'escoba', 'lampara_bola'] },
+  { id: 'cine', nombre: 'Cine', texto: 'Crispetas, claqueta y silla de director', pared: '#5A2E3A',
+    cuadro: ['poster_cine', 'claqueta', 'guirnalda'], mesa: ['balde_crispetas', 'rollo_pelicula'], peluche: 'corazon_peluche', piso: ['silla_director', 'foco_cine', 'puf'] },
+  { id: 'retro', nombre: 'Retro 80s', texto: 'Neón, lámpara de lava, patines y arcade', pared: '#46306E',
+    cuadro: ['neon_palmera', 'cassette', 'vinilos'], mesa: ['lava', 'bola_disco'], peluche: 'gato_peluche', piso: ['patines', 'arcade_mini', 'lampara_led'] },
+  { id: 'romantico', nombre: 'Romántico', texto: 'Rosas, corazones y bombillitos', pared: '#F7D6D6',
+    cuadro: ['luces_corazon', 'cuadro_amor', 'letrero_amor'], mesa: ['rosas', 'velas'], peluche: 'corazon_peluche', piso: ['rosal', 'cojin_corazon', 'globos'] },
+  { id: 'nordico', nombre: 'Nórdico', texto: 'Madera clara, pampas y una lámpara de arco', pared: '#EFEFEA',
+    cuadro: ['cuadro_geometrico', 'espejo_sol', 'reloj'], mesa: ['jarron_nordico', 'suculentas'], peluche: 'conejo_peluche',
+    piso: ['lampara_arco', 'canasta_manta', 'monstera'] },
+];
+
+/** Las 9 piezas de un concepto en el orden de los sitios de un cuarto propio (por tipo). */
+export const piezasConcepto = (c: Concepto): { tipo: TipoSitio; id: string }[] => [
+  ...c.cuadro.map((id) => ({ tipo: 'cuadro' as TipoSitio, id })),
+  ...c.mesa.map((id) => ({ tipo: 'mesa' as TipoSitio, id })),
+  { tipo: 'peluche', id: c.peluche },
+  ...c.piso.map((id) => ({ tipo: 'piso' as TipoSitio, id })),
+];
+
 export const CATALOGO: Item[] = [
   comida('manzana', 'Manzana', 1, 8),
   comida('banano', 'Banano', 1, 8),
@@ -287,6 +511,7 @@ export const CATALOGO: Item[] = [
   deco('panda', 'Panda de peluche', 40, 'peluche'),
   deco('elefante', 'Elefante de peluche', 40, 'peluche'),
   deco('corazon_peluche', 'Corazón de peluche', 30, 'peluche'),
+  ...DECO_CONCEPTOS,
   ...ROPA,
   ...TINTES,
   ...DISFRACES,
@@ -313,6 +538,9 @@ export const DISFRACES_LISTA = DISFRACES.filter((d) => !incompletos.has(d.id) &&
 );
 /** ¿Le queda a este personaje? (los tintes y los disfraces les sirven a los dos) */
 export const lePasa = (it: Item, r: Rol) => !it.para || it.para.includes(r);
+
+/** Precio de un concepto: sus 9 piezas con 30 % de descuento. */
+export const precioConcepto = (c: Concepto) => Math.round((piezasConcepto(c).reduce((t, p) => t + (ITEM[p.id]?.precio ?? 0), 0) * 0.7) / 5) * 5;
 
 /** Qué objetos sirven para un tipo de sitio (incluye regalos que se quedan como decoración). */
 export const paraSitio = (t: TipoSitio) => CATALOGO.filter((i) => i.sitio === t && i.tipo === 'deco');

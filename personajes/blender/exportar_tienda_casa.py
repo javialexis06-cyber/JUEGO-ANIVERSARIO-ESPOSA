@@ -1,4 +1,4 @@
-"""Exporta las comidas y la decoración nuevas de la tienda de la casa (comidas.py y deco_nueva.py).
+"""Exporta las comidas y la decoración nuevas de la tienda de la casa (comidas.py, deco_nueva.py y deco_conceptos.py).
 
 Uso: python3 exportar_tienda_casa.py <carpeta_salida> [claves separadas por coma]
      salida: <carpeta>/<clave>.glb y <carpeta>/iconos/<clave>.png
@@ -14,11 +14,12 @@ import bpy  # noqa: E402
 
 import clay  # noqa: E402
 import comidas  # noqa: E402
+import deco_conceptos  # noqa: E402
 import deco_nueva  # noqa: E402
 import escena  # noqa: E402
 import exportar_glb  # noqa: E402
 
-PIEZAS = {**comidas.PIEZAS, **deco_nueva.PIEZAS}
+PIEZAS = {**comidas.PIEZAS, **deco_nueva.PIEZAS, **deco_conceptos.PIEZAS}
 
 
 def construir(key, coll):

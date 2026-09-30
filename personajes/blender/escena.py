@@ -15,7 +15,12 @@ def setup_render(scene, width=1000, height=1000, samples=96, transparent=False):
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.adaptive_threshold = 0.02
     scene.cycles.use_denoising = True
-    scene.cycles.denoiser = 'OPENIMAGEDENOISE'
+    try:
+        scene.cycles.denoiser = 'OPENIMAGEDENOISE'
+    except TypeError:
+        # Blender sin OpenImageDenoise (el de los paquetes de Ubuntu): sin quitar ruido, con más muestras
+        scene.cycles.use_denoising = False
+        scene.cycles.samples = samples * 4
     scene.cycles.max_bounces = 8
     scene.cycles.diffuse_bounces = 3
     scene.cycles.glossy_bounces = 3

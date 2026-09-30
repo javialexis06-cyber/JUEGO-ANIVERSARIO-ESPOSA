@@ -344,6 +344,19 @@ plantas (monstera, girasoles, palma, bonsái, suculentas), árbol de Navidad, gu
 pecera, tocadiscos, globo terráqueo, caja musical, bola de nieve, radio y peluches (conejo, gato, dino, perro,
 pingüino, unicornio, panda, elefante, corazón).
 
+**Conceptos para los cuartos propios** (tienda → Decoración → «Conceptos»): 20 estilos ya armados — Gamer, Griego,
+Egipcio, Espacial, Playa tropical, Japonés, Princesa, Rock y música, Fútbol, Colombiano, Pirata, Cabaña del bosque,
+Kawaii, Biblioteca, Navidad, Halloween, Cine, Retro 80s, Romántico y Nórdico. Cada uno trae las 9 piezas del cuarto
+(3 de pared, 2 de mesa, 1 peluche y 3 de piso: piezas nuevas de `deco_conceptos.py` —114 en total— y algunas de las
+de siempre que combinan) con 30 % de descuento, y al comprarlo **queda puesto en tu cuarto y le pinta las paredes**
+con su color (lo que había vuelve al inventario). Las piezas quedan guardadas una por una: en «Decorar» se mezclan
+con las de otros conceptos, y en la tienda también se venden sueltas (filtros Pared, Mesa, Piso y Peluches). Las
+que tienen luces (neón «GG», paneles hexagonales, barra LED, torre gamer, audífonos, corazón de neón, neón de
+palmera, lámpara de lava, hongos, estrella y guitarra eléctrica) **se pintan de otro color** tocándolas en
+«Decorar» (8 colores; se guarda como `id#rrggbb` en el sitio y se pintan solo sus materiales «tinte»).
+Regenerar: `blender -b -P exportar_tienda_casa.py -- <juego/web/modelos-crudos> [claves]` y luego
+`SOLO='^deco_' node scripts/optimizar-modelos.mjs`.
+
 La comida también creció con `comidas.py`: 31 platos colombianos y antojos (empanadas, buñuelos, pandebono, arepa
 con queso, bandeja paisa, ajiaco, tamal, obleas, cholado, mango biche, mazorca, churros, arroz con leche, perro,
 hamburguesa, salchipapa, sushi, tacos, fresas con crema, brownie, dona, cupcake, flan, galletas, chocolate, té,
