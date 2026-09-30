@@ -44,7 +44,10 @@ body {
   height: 100%;
   display: block;
   touch-action: none;
-  /* Acerca el tono AgX de three.js al «AgX Medium High Contrast» de los renders de Blender */
+  /* El toque de color de los renders de Blender va dentro del sombreador (src/tono.ts), no como filtro CSS */
+}
+/* (solo si el sombreador no se pudo ajustar) */
+.tono-css #lienzo {
   filter: saturate(1.28) contrast(1.05);
 }
 button {

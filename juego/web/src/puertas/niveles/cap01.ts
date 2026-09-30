@@ -353,6 +353,8 @@ const cojines: Nivel = {
 // ---------------------------------------------------------------------------
 // 5 · El timbre trabado
 // ---------------------------------------------------------------------------
+/** Toques seguidos que necesita (se van perdiendo de a 1,3 por segundo si se descansa). */
+const META_TIMBRE = 12;
 const timbre: Nivel = {
   titulo: 'El timbre trabado',
   pistas: [
@@ -361,22 +363,27 @@ const timbre: Nivel = {
     'Tócalo muy rápido y sin parar: si descansas, la lucecita se apaga y toca empezar otra vez.',
   ],
   async montar(c) {
-    const base = caja(0.18, 0.26, 0.04, mat('#fff8ee'), 0.03, 'timbre base');
-    en(base, 0.98, 1.25, 0.02);
-    const aro = toro(0.06, 0.012, matNuevo('#e4574b', { emisivo: '#e4574b', intensidad: 0 }), 'aro timbre');
-    en(aro, 0.98, 1.27, 0.05);
-    const boton = cilindro(0.045, 0.05, 0.04, mat('#f6cf5a'), 'timbre');
+    // Grande y con un área de toque generosa: hay que darle muy seguido (sirve tamborilear con dos dedos)
+    const base = caja(0.44, 0.6, 0.04, mat('#fff8ee'), 0.05, 'timbre base');
+    en(base, 1.05, 1.25, 0.02);
+    const aro = toro(0.15, 0.024, matNuevo('#e4574b', { emisivo: '#e4574b', intensidad: 0 }), 'aro timbre');
+    en(aro, 1.05, 1.29, 0.05);
+    const boton = cilindro(0.115, 0.125, 0.05, mat('#f6cf5a'), 'timbre');
     boton.rotation.x = Math.PI / 2;
-    en(boton, 0.98, 1.27, 0.055);
-    c.g.add(base, aro, boton);
+    en(boton, 1.05, 1.29, 0.06);
+    const area = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 8), new THREE.MeshBasicMaterial({ visible: false }));
+    area.name = 'timbre toque';
+    en(area, 1.05, 1.27, 0.08);
+    c.g.add(base, aro, boton, area);
     let carga = 0;
     let listo = false;
-    c.tocar(boton, () => {
+    // Cuenta al bajar el dedo (no al soltarlo): aunque el dedo se corra un poquito al darle rápido, vale
+    const golpe = () => {
       if (listo) return;
       carga += 1;
-      sfx.timbreTrabado(Math.min(1, carga / 15));
-      void c.escena.animar(90, (k) => (boton.position.z = 0.055 - Math.sin(k * Math.PI) * 0.015));
-      if (carga >= 15) {
+      sfx.timbreTrabado(Math.min(1, carga / META_TIMBRE));
+      void c.escena.animar(90, (k) => (boton.position.z = 0.06 - Math.sin(k * Math.PI) * 0.02));
+      if (carga >= META_TIMBRE) {
         listo = true;
         c.bien();
         // ¡Ding… dong! (y otra vez, por si no oyeron)
@@ -384,16 +391,17 @@ const timbre: Nivel = {
         sfx.timbre(1.5);
         c.despues(1800, () => c.resolver());
       }
-    });
+    };
+    c.mantener(area, golpe, () => {});
     c.cada((dt) => {
-      if (!listo) carga = Math.max(0, carga - dt * 2.5);
-      (aro.material as THREE.MeshStandardMaterial).emissiveIntensity = listo ? 2 : carga / 9;
+      if (!listo) carga = Math.max(0, carga - dt * 1.3);
+      (aro.material as THREE.MeshStandardMaterial).emissiveIntensity = listo ? 2 : (carga / META_TIMBRE) * 1.6;
     });
     await adorno(c, 'deco_girasoles', 1.0, -1.6, 0, 0.5);
     await adorno(c, 'deco_cuadro_flores', 0.7, 2.1, 1.4, 0.02);
   },
   async prueba(p) {
-    await p.tocar('timbre', 22, 60);
+    await p.tocar('timbre toque', 18, 60);
   },
 };
 

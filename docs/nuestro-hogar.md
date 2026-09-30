@@ -12,14 +12,14 @@ Cuatro cuartos tipo diorama, en plastilina como las tiendas (`personajes/blender
 |---|---|---|
 | Sala | Descansar en el sofá · Ver tele (sentados) | +8 energía · +4 energía y +2 cariño |
 | Cocina | Comer (sentado en la silla del comedor, con la comida en la mano) · Notas en la nevera | según la comida |
-| Baño | Bañarse (en la tina con burbujas) · Lavarse en el lavamanos | higiene al 100 · +25 higiene |
+| Baño | Bañarse (en la tina con burbujas) · Lavarse la cara en el espejo (minijuego) | higiene al 100 · según cómo le vaya |
 | Cuarto | Dormir (acostado en la cama) · Cambiarse en el clóset | +16 energía por hora dormido · +12 higiene |
 
 Se cambia de cuarto con las pestañas de abajo (solo los cuartos construidos; si no caben, se desplazan de lado) o
 con el **plano** (la casita amarilla al principio de las pestañas): la casa vista desde arriba, tres pisos de a tres
 cuartos, con la carita de quién está en cada uno. Cada pestaña muestra la carita de quién está ahí. Tu personaje va
-contigo: camina hasta la puerta del cuarto donde está (la cámara lo espera un momento), sale y entra caminando por
-la puerta del otro cuarto. El de tu pareja se queda donde está (lo que se ve es su estado). Dormido no se levanta:
+contigo: camina hasta la puerta del cuarto donde está (la cámara lo espera hasta que cruza la puerta; no cambia de
+cuarto a mitad de camino), sale y entra caminando por la puerta del otro cuarto. El de tu pareja se queda donde está (lo que se ve es su estado). Dormido no se levanta:
 la pestaña solo muestra el cuarto.
 
 Tocar el piso hace caminar a tu personaje hasta ahí; tocar al otro abre su hoja; tocar la nevera abre las notas.
@@ -52,7 +52,7 @@ con `CASA_SOLO=juegos,trofeos,cuna,cuarto_el,cuarto_ella,bebe,ciguena python3 ex
 
 | Cuarto | Precio | Qué tiene y qué se hace |
 |---|---|---|
-| Juegos | gratis (viene con la casa) | Los **minijuegos ya no están en el menú**: arcade de Súper Manía (con la pantalla prendida), la **puerta 100** morada de Cien Puertas y la mesa con el parchís servido (dos pufs). El personaje camina al arcade, a la puerta o se sienta en el puf, y de ahí se entra al juego. También el retrete espacial en miniatura (sus récords) |
+| Juegos | gratis (viene con la casa) | Los **minijuegos ya no están en el menú**: arcade de Súper Manía (con la pantalla prendida), la **puerta 100** morada de Cien Puertas y la mesa con el parchís servido (dos pufs). El personaje camina al arcade, a la puerta o se sienta en el puf, y de ahí se entra al juego. También un retrete espacial en miniatura de adorno (se sientan en él). Los minijuegos **secretos** (retrete espacial, lavarse la cara) no están aquí: salen solos con lo que les pasa |
 | Trofeos | 50 | Cuatro pedestales de mármol con los trofeos de cada minijuego, vitrina de medallas, alfombra roja y el podio de la **copa del amor**. «Admirar»: aplaude frente al mejor trofeo |
 | Bebé | 150 | Cuna de barrotes con móvil de estrellas, mecedora, cómoda con cambiador y juguetes. **Pedir a la cigüeña**: se escoge el nombre (Katherine, como dice Él, o Lexy Katherine, como dice Ella, u otro) y la cigüeña entra volando por la ventana con la bebé en un pañuelo y la deja en la cuna (`casa.bebe`). Luego: arrullarla (la cuna se mece, suena una nanita), la mecedora (se mece de verdad) y tocarla (se ríe) |
 | Cuarto de Él | 80 | Escritorio con computador (la pantalla escribe código), silla gamer, sillón, repisa y balón |
@@ -118,8 +118,20 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
 
 ## Ir al baño y el retrete espacial
 
-- **Ir al baño** (en el baño): se sienta en el inodoro y pone caras exageradas mientras piensa cosas
-  («¡Ugh!», «¿Y el papel?», «¡Victoria! 😌»).
+- **Ir al baño** (en el baño): se sienta en el inodoro y pone caras exageradas mientras piensa cosas. Cada
+  visita arma su propia rutina (llega, puja, piensa, se entretiene, algo raro, se queja, gana) con un banco de
+  **más de 200 frases** («¿Los peces tienen sed?», «Tres memes y me paro. Bueno, cinco», «Descarga completada ✅»,
+  y unas propias de Él y de Ella), escogidas con el momento en que se sentó: los dos celulares ven lo mismo.
+  Las frases traen la forma de Él y la de Ella («liviano|liviana»). Código: `src/casa/bano_frases.ts`.
+- **Eventos graciosos (10 % de las veces)**, 20 distintos: se tapó el inodoro (el agua se riega por el piso),
+  entra un **ratón** o **cucarachas** (una vuela) y sale corriendo a subirse a la bañera, se acaba el papel,
+  se va la luz (el baño a oscuras), una araña baja del techo frente a su cara, una mosca, un concierto en el
+  baño, se queda dormido(a), lo(a) llama la mamá, el chorro del inodoro, se le duermen las piernas, el eco,
+  una lagartija (a la que le pone nombre), se queda encerrado(a), el patito de hule que lo(a) mira, sin wifi,
+  el ambientador y un ruido de fantasma. Los bichos son figuritas 3D (`src/casa/bichos.ts`).
+- En 7 de ellos **llama a la pareja** («¡AMOOOR! ¡HAY UN RATÓN!»): a la pareja le sale «¡Auxilio!» con el
+  botón **¡Voy corriendo!**; su personaje llega al baño, espanta el bicho (o destapa, o trae el papel), y quien
+  estaba en apuros sale feliz («¡Mi héroe!») con cariño para los dos.
 - **Lo que les cae pesado**: a Ella la leche (vaso de leche, yogur, arroz con leche) y a Él el picante
   (empanada con ají, tacos), comido por uno mismo o llevado por la pareja. Le sale un globito con un
   inodoro que tiembla y el botón «Ir al baño» se pone en rojo.
@@ -129,8 +141,30 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
   un cohete del baño», «Intolerante a la lactosa… y ahora astronauta»…). Se gana por el tiempo que aguante
   (1 moneda cada 15 s, hasta 3).
 - Al chocar, cae dando vueltas y **aterriza en el baño con un ¡KABOOM!** (humo, sacudón). El marcador
-  compartido guarda el récord de cada uno (`casa.retrete`) y se ve en el cuarto de juegos → Retrete espacial.
-  Código: `src/casa/cohete.ts`.
+  compartido guarda el récord de cada uno (`casa.retrete`) y se ve al terminar. Es un minijuego **secreto**:
+  no tiene botón en el cuarto de juegos, solo sale cuando algo les cae pesado. Código: `src/casa/cohete.ts`.
+
+## Lavarse la cara (minijuego secreto, estilo Vampire Survivors)
+
+- En el baño, **Lavarse** (o tocar el lavamanos): camina al espejo, se mira («¿Y esos granitos?»), la cámara
+  se acerca al espejo, la casa se pone borrosa y **la cara en el espejo se deshace en ondas de agua** hasta
+  que se entra, como a otro plano, a su propia cara.
+- Ahí adentro es **Vampire Survivors**: el personaje chiquito camina sobre su cara (piel con poros, pequitas
+  y cachetes) arrastrando el dedo en cualquier parte (o con las flechas / WASD). Las armas disparan solas y
+  los enemigos llegan en oleadas cada vez más grandes: **gérmenes** verdes, **puntos negros**, **gotas de
+  grasa**, **granitos** gordos y **ácaros** rápidos (con enjambres cada 30 s), y a los 2:30 el jefe, **el
+  Espinillón** (con corona, embiste de vez en cuando).
+- Cada enemigo suelta **gotitas** (azules, verdes, rosadas) que se juntan para subir de nivel; al subir se
+  escoge **1 de 3 cartas** (como en VS): 6 armas con 5 niveles —burbujas de jabón (varita), esponja
+  giratoria (biblia), chorro de agua (látigo, luego a los dos lados), aura de espuma (ajo), toalla bumerán
+  (cruz) y charcos de agua (agua bendita)— y 6 pasivas —jabón extra fuerte (daño), agua tibia (recarga),
+  toalla grande (área), pies ligeros, imán de gotitas y crema hidratante (vida y regeneración)—. Máximo 4
+  armas y 4 pasivas. A veces caen una toallita (vida), un imán (todas las gotitas) o una ola de agua fría
+  (limpia la pantalla).
+- Se gana aguantando **3 minutos**. Premio: higiene al 100 si gana (si no, según lo que aguantó), 1 moneda
+  cada 30 s, +3 por ganar y +2 por vencer al Espinillón. El récord de gérmenes eliminados de cada uno queda
+  en `casa.lavado`. Al salir, el velo de agua se va, la casa vuelve a verse nítida y la cámara se aleja.
+  Código: `src/casa/lavado.ts` (el juego en un canvas 2D) y `lavarse()` en `src/casa/main.ts` (el espejo).
 
 ## Recuerdos en el baño y abrazados en la cama
 
@@ -157,6 +191,8 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
 - **Levantarse**: la tele sigue prendida en una ventanita (se ve y se oye); en la tele de la sala salen
   dibujitos animados de los dos. Tocar la ventanita es volver al sofá.
 - **Apagar**: desde «Ver tele → Apagar la tele» o con ⏻ a pantalla completa.
+- Con la tele prendida (en grande o en la ventanita) la **música de la casa se calla** para que se oiga el video, y
+  vuelve al apagarla (sin cambiar si la música estaba prendida o apagada en el menú).
 - Videos que no dejan verse fuera de YouTube: aviso y sigue el próximo. La cola y el segundo donde iba se
   guardan (`nuestro-hogar-tele`); al abrir la app, la ventanita muestra el video en pausa.
 - Mientras la tele está en grande se quedan sentados (la acción `tv` se alarga de a 20 minutos); si se cierra
@@ -303,3 +339,9 @@ hoja del personaje), donde se pone y se quita cuando quieran. La ropa se compra 
   personaje, se esconde la ropa de fábrica que tapa y se pinta según el color comprado (`src/casa/ropa.ts`).
   Regenerar: `python3 ropa.py <juego/web/modelos-crudos> el|ella [claves]` y luego `npm run optimizar`.
 - Modo local (sin internet, o dos pestañas del mismo navegador) con la misma interfaz que el modo en línea.
+- Color: el toque de los renders de Blender (saturación 1,28 y contraste 1,05 sobre el tono AgX) va dentro del
+  sombreador del tono (`src/tono.ts`), no como filtro CSS del lienzo: el filtro obligaba al celular a un paso extra
+  cada cuadro (más calor y parpadeos en algunos Android). En calidad baja el color de fondo se calcula igual en JS.
+- Si Android le quita al juego el dibujo 3D (poca memoria), se espera a que lo devuelva y, si no vuelve en 5 s, se
+  recarga la página en vez de quedarse en blanco (`src/contexto.ts`, en la casa, el súper, Cien Puertas y la mesa).
+- Las pestañas de las hojas (tienda, clóset…) no se encogen con listas largas (antes se tapaban los nombres).

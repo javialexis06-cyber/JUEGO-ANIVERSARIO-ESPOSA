@@ -5,6 +5,8 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { vigilarContexto } from './contexto';
+import { conTono } from './tono';
 
 const AZ = THREE.MathUtils.degToRad(38);
 const EL = THREE.MathUtils.degToRad(38);
@@ -67,6 +69,10 @@ export class Mundo {
     this.composer.addPass(this.smaa);
     this.composer.addPass(new OutputPass());
     window.addEventListener('resize', () => this.ajustar());
+    vigilarContexto(lienzo, () => {
+      this.ajustar();
+      this.sucio = true;
+    });
     this.controles(lienzo);
   }
 
@@ -176,6 +182,14 @@ export class Mundo {
     this.colocarCamara();
   }
 
+  /** Hacia dónde mira ahora la cámara y con cuánto acercamiento (para moverla suavecito). */
+  vista(): { p: THREE.Vector3; zoom: number } {
+    const dir = new THREE.Vector3(Math.sin(AZ) * Math.cos(EL), Math.sin(EL), Math.cos(AZ) * Math.cos(EL));
+    const derecha = new THREE.Vector3(Math.cos(AZ), 0, -Math.sin(AZ));
+    const arriba = new THREE.Vector3().crossVectors(dir, derecha).negate().normalize();
+    return { p: this.objetivo.clone().addScaledVector(derecha, this.desplazamiento.x).addScaledVector(arriba, this.desplazamiento.y), zoom: this.zoom };
+  }
+
   fijarZoom(z: number) {
     this.zoom = THREE.MathUtils.clamp(z, 1, 3);
     if (this.zoom <= 1.01) this.desplazamiento.set(0, 0);
@@ -207,8 +221,12 @@ export class Mundo {
     this.tiempos = [];
     if (orden[Math.floor(orden.length / 2)] > 1 / 28) {
       this.calidad = 'baja';
+      // Sin el paso final el fondo no pasa por el tono: se le pone ya con el tono para que no se vea gris
+      if (this.escena.background instanceof THREE.Color) this.escena.background = conTono(this.escena.background, this.renderer.toneMappingExposure);
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       this.ajustar();
+      // Cambiar el tamaño borra el lienzo: se vuelve a dibujar ya (si no, ese cuadro sale en blanco: un parpadeo)
+      this.renderer.render(this.escena, this.camara);
     }
   }
 }

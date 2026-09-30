@@ -664,7 +664,7 @@ const peluches: Nivel = {
 // ---------------------------------------------------------------------------
 // 65 · El martillo de fuerza
 // ---------------------------------------------------------------------------
-const FUERZA = { meta: 18, max: 24, baja: 2 };
+const FUERZA = { meta: 16, max: 24, baja: 1.2 };
 const martillo: Nivel = {
   titulo: 'El martillo de fuerza',
   pistas: [
@@ -716,7 +716,7 @@ const martillo: Nivel = {
     const cabeza = cilindro(0.1, 0.1, 0.28, mat('#8a6a55'));
     cabeza.rotation.z = Math.PI / 2;
     en(cabeza, 0, -largo, 0);
-    brazo.add(mango, cabeza, en(toque(0.2), 0, -largo, 0), en(toque(0.16), 0, -largo / 2, 0));
+    brazo.add(mango, cabeza, en(toque(0.3), 0, -largo, 0), en(toque(0.22), 0, -largo / 2, 0));
     mazo.add(brazo);
     const G = new THREE.Vector3(X - 0.6, 0.95, 1.0);
     en(mazo, G.x, G.y, G.z);
@@ -728,11 +728,16 @@ const martillo: Nivel = {
     k.visible = false;
     c.g.add(k);
     let carga = 0, golpeando = false, hecho = false;
-    c.tocar(mazo, () => {
-      if (golpeando || hecho) return;
-      carga = Math.min(FUERZA.max, carga + 1);
-      sonido.nota(200 + carga * 25, 0.05, 0, 'square', 0.03);
-    });
+    // Cuenta al bajar el dedo: dándole rápido el dedo se corre y el toque no se perdía por eso
+    c.mantener(
+      mazo,
+      () => {
+        if (golpeando || hecho) return;
+        carga = Math.min(FUERZA.max, carga + 1);
+        sonido.nota(200 + carga * 25, 0.05, 0, 'square', 0.03);
+      },
+      () => {},
+    );
     c.cada((dt) => {
       if (!golpeando) {
         carga = Math.max(0, carga - FUERZA.baja * dt);

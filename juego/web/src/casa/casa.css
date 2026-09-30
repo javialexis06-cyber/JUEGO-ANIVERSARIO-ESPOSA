@@ -427,6 +427,7 @@ body.hogar {
   padding-bottom: 12px;
 }
 .hoja-cabeza {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -872,6 +873,10 @@ body.hogar {
 
 /* Ropa: filtros, prendas puestas, tintes y disfraces */
 .pestanas {
+  /* Con scroll de lado, en la columna de la hoja se encogía hasta tapar los nombres cuando la lista era larga */
+  flex: none;
+  min-height: 34px;
+  padding-bottom: 2px;
   flex-wrap: nowrap;
   overflow-x: auto;
   scrollbar-width: none;
@@ -1155,6 +1160,9 @@ body.en-tele #toast { z-index: 80; }
   animation-delay: calc(var(--d) - 0.4s);
 }
 .explosion.kaboom span { background: radial-gradient(circle, #fff3b0 0%, #ff9f1c 55%, #8d7b6a 100%); }
+/* Eventos del baño: el chorro de agua del inodoro y el apagón */
+.explosion.agua span { background: radial-gradient(circle at 35% 30%, #ffffff 0%, #bfe6f7 40%, #6cc6f5 100%); width: 22px; height: 22px; left: -11px; top: -11px; }
+body.apagon #lienzo { filter: brightness(0.22) saturate(0.5) hue-rotate(200deg); transition: filter 0.25s steps(2); }
 @keyframes explota {
   0% { opacity: 0.95; translate: 0 0; scale: 0.3; }
   100% { opacity: 0; translate: calc(cos(var(--a)) * 90px) calc(sin(var(--a)) * 70px - 30px); scale: 1.6; }

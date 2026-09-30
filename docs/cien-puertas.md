@@ -133,7 +133,7 @@ la explica), para que nadie se quede trabado.
 | 2 | Llamar como llamábamos: tres golpecitos y uno largo (anotado en un cuadrito de la sala; hay otro cuadrito que despista) | ritmo de toques |
 | 3 | Prender las lámparas en el orden de colores del cuadro (hay una quinta lámpara, lila, que no va) | secuencia |
 | 4 | La llave se perdió entre los cojines del sofá: levantarlos | deslizar |
-| 5 | El timbre está pegado: tocarlo muchas veces seguidas (zumba cada vez más y al final suena ding-dong) | toques rápidos |
+| 5 | El timbre está pegado: tocarlo muchas veces seguidas (zumba cada vez más y al final suena ding-dong). Timbre grande con un área de toque generosa; cuenta al bajar el dedo (vale tamborilear con dos dedos): 12 toques y se descarga despacio | toques rápidos |
 | 6 | Laberinto de canica en la pared: llevarla al hueco | inclinar |
 | 7 | La foto de los dos rota en cuatro: armarla; atrás está el código | rompecabezas + candado |
 | 8 | «Algunas cosas solo brillan en la oscuridad»: apagar la luz y leer las estrellas del techo | interruptor + código |
@@ -193,7 +193,7 @@ la explica), para que nadie se quede trabado.
 | 62 | La rueda de la fortuna: alinear los colores | girar |
 | 63 | Algodón de azúcar: dar vueltas con el dedo | dibujar círculos |
 | 64 | La máquina de peluches | inclinar + tocar |
-| 65 | El martillo de fuerza | toques rápidos |
+| 65 | El martillo de fuerza (cuenta al bajar el dedo, mazo con área de toque grande, meta 16 y se descarga despacio) | toques rápidos |
 | 66 | Las cartas de la adivina: parejas | memoria |
 | 67 | Reventar los globos en orden | orden |
 | 68 | El carrusel: tocar el caballito de la llave cuando baje | tiempo justo |

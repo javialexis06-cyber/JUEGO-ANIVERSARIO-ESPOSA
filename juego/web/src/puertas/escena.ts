@@ -2,6 +2,8 @@
 // objetos y el paseo a través de la puerta abierta.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { vigilarContexto } from '../contexto';
+import '../tono';
 
 /** Dónde está el ojo cuando se mira el cuarto entero. */
 export const OJO = new THREE.Vector3(0, 1.5, 4.3);
@@ -40,6 +42,7 @@ export class Escena {
 
   constructor(lienzo: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true });
+    vigilarContexto(lienzo);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.AgXToneMapping;

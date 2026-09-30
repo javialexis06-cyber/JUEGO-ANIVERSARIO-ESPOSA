@@ -7,6 +7,7 @@ import { copia, Productos } from '../recursos';
 import type { Casa3D, Punto } from './escena_casa';
 import { modeloItem } from './escena_casa';
 import { ITEM } from './catalogo';
+import { EVENTOS_BANO, type EventoBano, type PasoBano, pasosEvento, rutinaInodoro } from './bano_frases';
 import { Actividad, alDia, animo, Cuarto, EstadoPersonaje, Rol } from './modelo';
 import { Vestuario } from './ropa';
 
@@ -35,6 +36,8 @@ const USOS: Record<string, { pasos: Paso[]; efecto?: Efecto['tipo']; mecer?: boo
   arcade: { pasos: [{ pose: 'frotar_manos_a', pose2: 'frotar_manos_b', ritmo: 3, dur: 99, cara: 'feliz' }] },
   cien: { pasos: [{ pose: 'pensando', dur: 2.5 }, { pose: 'pensando_b', dur: 99, cara: 'sorprendido' }] },
   mesa: { pasos: [{ pose: 'comer_sentado_a', pose2: 'comer_sentado_b', ritmo: 1.2, dur: 99, cara: 'feliz' }] },
+  // Llega corriendo al baño a salvar a su amor (espanta el bicho, destapa, trae el papel) y posa de héroe
+  rescate: { pasos: [{ pose: 'lanzar', pose2: 'senalar_a', ritmo: 2.6, dur: 2.4, cara: 'enojado' }, { pose: 'presumir_a', dur: 99, cara: 'presumido' }] },
   cohete: { pasos: [{ pose: 'senalar_a', pose2: 'senalar_b', ritmo: 1.5, dur: 3 }, { pose: 'risita_a', pose2: 'risita_b', ritmo: 3, dur: 99, cara: 'feliz' }] },
   cuna: { pasos: [{ pose: 'acariciar', dur: 99, cara: 'feliz' }], efecto: 'nota' },
   comoda: { pasos: [{ pose: 'frotar_a', pose2: 'frotar_b', ritmo: 2, dur: 99, cara: 'feliz' }] },
@@ -164,6 +167,8 @@ export class Mascota {
   private avancePaso = 0;
   /** Él: justo cuando la mano llega (el ¡PLAF! de la nalgada lo pone la casa). */
   alNalgada: (() => void) | null = null;
+  /** Evento gracioso en el baño: «pasa» (aparece el bicho, se va la luz…) y «llama» (grita a la pareja). */
+  alBano: ((m: Mascota, ev: EventoBano, que: 'pasa' | 'llama') => void) | null = null;
   /** Meciéndose en la mecedora (vaivén hacia atrás y adelante). */
   private mecer = 0;
   private metaMecer = 0;
@@ -316,8 +321,8 @@ export class Mascota {
     if (!a.accion || typeof a.hasta !== 'number') return false;
     const dur = a.hasta - a.desde;
     // Las acciones son cortas; ver tele dura lo que duren los videos (se alarga de a 20 min mientras está en
-    // grande; si se cierra la app, a los 20 min se paran solos)
-    if (!(dur > 0 && dur <= (a.accion === 'tv' ? 6 * 3600_000 : 120000))) return false;
+    // grande; si se cierra la app, a los 20 min se paran solos). Lavarse la cara dura lo que dure el minijuego.
+    if (!(dur > 0 && dur <= (a.accion === 'tv' ? 6 * 3600_000 : a.accion === 'lavar' ? 360_000 : 120000))) return false;
     let visto = this.vistas.get(a.desde);
     if (visto === undefined) {
       visto = ahora;
@@ -406,21 +411,13 @@ export class Mascota {
         });
         break;
       case 'inodoro':
-        // Sentado en el inodoro con caras exageradas (y lo que va pensando)
+        // Sentado en el inodoro con caras exageradas y lo que va pensando: cada visita es distinta (un banco grande de
+        // frases, escogidas con el momento en que se sentó, así los dos celulares ven lo mismo); a veces pasa algo
+        // gracioso (el evento viene en el item): un ratón, cucarachas, se tapó, se fue la luz…
         llegar('inodoro', () => {
           this.metaAlto = ALTO.inodoro;
-          const f = (frase: string | null) => () => (this.frase = frase);
-          this.bucle([
-            { pose: 'sentado', dur: 1.6, cara: 'concentrado', alEmpezar: f('Mmm…') },
-            { pose: 'comer_sentado_a', dur: 1.4, cara: 'enojado', alEmpezar: f('¡Ugh!') },
-            { pose: 'sentado', dur: 1.0, cara: 'sorprendido', alEmpezar: f('¡¿Qué fue eso?!') },
-            { pose: 'comer_sentado_b', dur: 1.5, cara: 'nervioso', alEmpezar: f('Vamos… tú puedes…') },
-            { pose: 'sentado', dur: 1.3, cara: 'llorando', alEmpezar: f('¿Por qué me haces esto, estómago?') },
-            { pose: 'sentado', dur: 1.4, cara: 'bostezo', alEmpezar: f('…') },
-            { pose: 'comer_sentado_a', dur: 1.2, cara: 'puchero', alEmpezar: f('¿Y el papel?') },
-            { pose: 'sentado', dur: 1.2, cara: 'enojado', alEmpezar: f('¡Último esfuerzo!') },
-            { pose: 'sentado_feliz', dur: 99, cara: 'carcajada', alEmpezar: f('¡Victoria! 😌') },
-          ]);
+          const ev = EVENTOS_BANO.find((x) => x.id === a.item);
+          this.bucle(ev ? this.eventoBano(ev, a.desde) : rutinaInodoro(this.rol, a.desde).map((q) => this.pasoBano(q)));
         });
         break;
       case 'lavar':
@@ -506,6 +503,48 @@ export class Mascota {
     pasos[0]?.alEmpezar?.();
     if (pasos[0]) this.p.cara(pasos[0].cara ?? this.caraReposo);
     else this.p.cara(this.caraReposo);
+  }
+
+  /** Un momento en el inodoro: la frase (y las notas o los Zzz) cuando empieza. */
+  private pasoBano(q: PasoBano, luego?: () => void): Paso {
+    return {
+      pose: q.pose,
+      pose2: q.pose2,
+      ritmo: q.ritmo,
+      dur: q.dur,
+      cara: q.cara,
+      temblor: q.temblor,
+      alEmpezar: () => {
+        this.frase = q.frase;
+        this.efecto = q.efecto ?? null;
+        luego?.();
+      },
+    };
+  }
+
+  /** El evento gracioso: unos segundos normales en el inodoro y luego lo que pasa; si hay bicho o agua en el piso sale
+   *  corriendo (más rápido que de costumbre) y se sube a la bañera, y desde ahí sigue gritando. */
+  private eventoBano(ev: EventoBano, semilla: number): Paso[] {
+    const antes = rutinaInodoro(this.rol, semilla).slice(0, 2).map((q) => this.pasoBano(q));
+    const pasos = pasosEvento(ev, this.rol).map((q, i) =>
+      this.pasoBano(q, () => {
+        if (i === (ev.en ?? 1)) this.alBano?.(this, ev, 'pasa');
+        if (i === ev.llama) this.alBano?.(this, ev, 'llama');
+        if (i === ev.huye) {
+          const vel = this.p.velocidad;
+          this.p.velocidad = 2.6;
+          this.ir('bano', this.punto('tina', 'bano'), () => {
+            this.p.velocidad = vel;
+            // Parado dentro de la bañera (encaramado, con las piernas escondidas)
+            this.metaAlto = 0.42;
+            this.bucle(resto);
+          });
+        }
+      }),
+    );
+    if (ev.huye === undefined) return [...antes, ...pasos];
+    const resto = pasos.slice(ev.huye + 1);
+    return [...antes, ...pasos.slice(0, ev.huye + 1)];
   }
 
   /** Pone una comida o un regalo en las manos: el objeto sigue al hueso «comida» o «regalo» del esqueleto. */
@@ -729,6 +768,11 @@ export class Mascota {
   /** El mimo que está haciendo este personaje (no el que recibe). */
   get mimo(): TipoMimo | null {
     return this.coreo?.yo ? this.coreo.tipo : null;
+  }
+
+  /** La escena que le tocó (aunque vaya caminando): para saber si sigue el evento del baño. */
+  get claveEscena() {
+    return this.escena;
   }
 
   /** Qué está mostrando ahora (cuarto|acción|...), para las pruebas. */

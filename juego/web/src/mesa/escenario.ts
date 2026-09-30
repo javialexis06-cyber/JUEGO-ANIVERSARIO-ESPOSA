@@ -8,6 +8,7 @@ import { Director } from '../reacciones/director';
 import { type Anclas, Efectos } from '../reacciones/efectos';
 import { Muneco } from '../reacciones/muneco';
 import type { Final, Suceso } from './tipos';
+import { vigilarContexto } from '../contexto';
 
 export class Escenario {
   private renderer: THREE.WebGLRenderer;
@@ -25,6 +26,7 @@ export class Escenario {
 
   constructor(private lienzo: HTMLCanvasElement, capa: HTMLElement, private rapido = 1) {
     this.renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true, alpha: true });
+    vigilarContexto(lienzo);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.AgXToneMapping;

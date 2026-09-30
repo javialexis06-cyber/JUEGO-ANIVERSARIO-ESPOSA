@@ -193,6 +193,8 @@ export interface Casa {
   diario: Record<string, number>;
   /** Récords del retrete espacial: los segundos que más ha durado cada uno esquivando asteroides. */
   retrete?: Partial<Record<Rol, number>>;
+  /** Récords de lavarse la cara: los gérmenes que más ha eliminado cada uno en una lavada. */
+  lavado?: Partial<Record<Rol, number>>;
   /** Cuartos construidos con «Ampliar la casa» (además de los de siempre). */
   ampliaciones?: Cuarto[];
   /** La bebé que trajo la cigüeña. */
@@ -340,6 +342,13 @@ export function normalizarCasa(c: unknown): Casa {
           ),
         }
       : {}),
+    ...(esObjeto(c.lavado)
+      ? {
+          lavado: Object.fromEntries(
+            (['el', 'ella'] as Rol[]).filter((r) => typeof c.lavado[r] === 'number' && Number.isFinite(c.lavado[r])).map((r) => [r, Math.max(0, Math.min(99999, Math.round(c.lavado[r])))]),
+          ),
+        }
+      : {}),
     ...(Array.isArray(c.ampliaciones)
       ? { ampliaciones: CUARTOS.filter((k) => !CUARTOS_BASE.includes(k) && (c.ampliaciones as unknown[]).includes(k)) }
       : {}),
@@ -376,7 +385,9 @@ export interface Recuerdo {
 export interface Evento {
   id: string;
   de: Rol;
-  tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nota' | 'comida' | 'saludo' | 'voz' | 'juego' | 'nalgada';
+  tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nota' | 'comida' | 'saludo' | 'voz' | 'juego' | 'nalgada'
+    /** Pide ayuda desde el baño (ratón, cucarachas, se tapó…) y la pareja llega a rescatarlo. */
+    | 'auxilio' | 'rescate';
   datos: Record<string, unknown>;
   t: number;
   /** Ya lo recibió y aplicó quien lo recibe (el cariño sube en su celular, no en el de quien lo manda). */
@@ -384,7 +395,7 @@ export interface Evento {
 }
 
 /** Evento confiable (datos siempre es un objeto). */
-const TIPOS_EVENTO: Evento['tipo'][] = ['caricia', 'abrazo', 'beso', 'regalo', 'nota', 'comida', 'saludo', 'voz', 'juego', 'nalgada'];
+const TIPOS_EVENTO: Evento['tipo'][] = ['caricia', 'abrazo', 'beso', 'regalo', 'nota', 'comida', 'saludo', 'voz', 'juego', 'nalgada', 'auxilio', 'rescate'];
 export function normalizarEvento(f: any): Evento | null {
   if (!esObjeto(f) || (f.de !== 'el' && f.de !== 'ella') || !TIPOS_EVENTO.includes(f.tipo)) return null;
   return {

@@ -20,6 +20,8 @@ import { CORTO, htmlBebe, htmlPintar, htmlPlano, htmlTrofeos } from './ampliacio
 import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
 import { Mascota } from './mascota';
+import { conGenero, EVENTOS_BANO, type EventoBano, eventoDe } from './bano_frases';
+import { Bichos } from './bichos';
 import { type EstadoTele, Tele } from './tele';
 import { Patio } from './patio';
 import { PanelRecuerdos } from './recuerdos';
@@ -110,6 +112,8 @@ async function iniciar() {
   progreso(0.7, 'Despertando a Él y a Ella…');
   mascotas = { el: new Mascota('el', casa3d, productos), ella: new Mascota('ella', casa3d, productos) };
   mascotas.el.alNalgada = () => plaf(mascotas.ella);
+  bichos = new Bichos(() => casa3d.cuarto('bano'));
+  for (const r of ['el', 'ella'] as Rol[]) mascotas[r].alBano = alBano;
   await Promise.all([mascotas.el.cargar(), mascotas.ella.cargar()]);
   progreso(1, 'Listo');
   // De fondo, mientras se elige quién es quién: los dos en la sala
@@ -499,7 +503,11 @@ async function irAlBano() {
   if (!s || enCohete) return;
   if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
   const apuro = !!s.personajes[yo].apuro;
-  await hacer('inodoro', 'bano', apuro ? 90 : 14, {});
+  // De vez en cuando (10 %) pasa algo gracioso: si hay que llamar a la pareja, se queda esperándola un rato
+  const ev = apuro ? null : (eventoForzado ? EVENTOS_BANO.find((x) => x.id === eventoForzado) ?? null : eventoDe(Date.now()));
+  eventoForzado = null;
+  // (el tiempo cuenta desde que sale para el baño: incluye lo que tarda en llegar al inodoro)
+  await hacer('inodoro', 'bano', apuro ? 90 : ev ? (ev.llama !== undefined ? 75 : 32) : 22, {}, ev?.id);
   if (!apuro) return;
   enCohete = true;
   try {
@@ -585,7 +593,7 @@ async function aterrizar(m: Mascota) {
 }
 
 /** Humo o explosión en la pantalla, sobre el inodoro. */
-function explosion(obj: THREE.Object3D | null, tipo: 'humo' | 'kaboom') {
+function explosion(obj: THREE.Object3D | null, tipo: 'humo' | 'kaboom' | 'agua') {
   if (!obj) return;
   const p = mundo.aPantalla(obj.getWorldPosition(new THREE.Vector3()));
   const e = document.createElement('div');
@@ -637,6 +645,252 @@ function hojaRetrete(seg?: number, record = false, premio = 0) {
 // ---------------------------------------------------------------------------
 // Ampliar la casa: cuartos nuevos, minijuegos en su cuarto, trofeos, la bebé y el cuarto de cada uno
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Eventos graciosos del baño (10 %): un ratón, cucarachas, se tapó, se fue la luz… y la pareja llega a rescatar
+// ---------------------------------------------------------------------------
+let bichos: Bichos | null = null;
+/** El evento que se está viendo: de quién es y en qué escena pasó (si esa escena se acaba, se acaba el evento). */
+let eventoBano: { rol: Rol; clave: string; ev: EventoBano } | null = null;
+/** Para las pruebas: el próximo «Ir al baño» trae este evento. */
+let eventoForzado: string | null = null;
+
+const SONIDO_BANO: Partial<Record<EventoBano['id'], () => void>> = {
+  raton: () => [0, 0.18, 0.4].forEach((d) => sonido.nota(2600, 0.06, d, 'sine', 0.05, 3200)),
+  cucarachas: () => sonido.rumor(1.2, 5000, 0.03, 0, 0.8, 4000),
+  arana: () => sonido.nota(300, 1.2, 0, 'sine', 0.03, 150),
+  mosca: () => sonido.nota(220, 2.5, 0, 'sawtooth', 0.012, 260),
+  tapado: () => [0, 0.3, 0.6, 0.9].forEach((d) => sonido.nota(180, 0.2, d, 'sine', 0.08, 90)),
+  luz: () => sonido.nota(1200, 0.03, 0, 'square', 0.05),
+  llamada: () => [0, 0.5, 1.2, 1.7].forEach((d) => sonido.nota(d % 1 < 0.4 ? 1320 : 990, 0.35, d, 'sine', 0.05)),
+  chorro: () => sonido.rumor(0.9, 1400, 0.1, 0, 0.6, 500),
+  ambientador: () => sonido.rumor(1.4, 6000, 0.05, 0, 1.2, 5000),
+  patito: () => sonido.nota(900, 0.18, 0, 'square', 0.05, 1300),
+  perrito: () => [0, 0.25, 0.5, 0.75].forEach((d) => sonido.rumor(0.15, 3000, 0.04, d, 1, 2000)),
+  eco: () => [0, 0.45, 0.9].forEach((d, i) => sonido.nota(660, 0.3, d, 'sine', 0.05 / (i + 1))),
+};
+
+function alBano(m: Mascota, ev: EventoBano, que: 'pasa' | 'llama') {
+  if (que === 'llama') {
+    // Solo el celular de quien está en el baño le avisa a la pareja
+    if (m.rol === yo && s) void s.enviar('auxilio', { evento: ev.id });
+    sonido.alarma();
+    return;
+  }
+  eventoBano = { rol: m.rol, clave: m.claveEscena, ev };
+  SONIDO_BANO[ev.id]?.();
+  const pt = casa3d.puntos('bano').inodoro;
+  if (ev.bicho) bichos?.soltar(ev.bicho, ev.cuantos ?? 1, pt, 1.3, 70);
+  else if (ev.id === 'tapado') bichos?.agua(pt, 70);
+  else if (ev.id === 'chorro') explosion(casa3d.inodoro(), 'agua');
+  else if (ev.id === 'ambientador') explosion(casa3d.inodoro(), 'humo');
+}
+
+/** Cada cuadro: el evento sigue mientras siga esa escena; con la luz ida el baño se ve a oscuras. */
+function revisarEventoBano(dt: number) {
+  bichos?.update(dt);
+  if (eventoBano && mascotas[eventoBano.rol].claveEscena !== eventoBano.clave) {
+    bichos?.quitar();
+    eventoBano = null;
+  }
+  const oscuro = eventoBano?.ev.id === 'luz' && casa3d.actual === 'bano';
+  if (document.body.classList.contains('apagon') !== oscuro) document.body.classList.toggle('apagon', oscuro);
+}
+
+/** La pareja pidió ayuda desde el baño. */
+function hojaAuxilio(de: Rol, ev: EventoBano) {
+  sonido.alarma();
+  abrirHoja(
+    '¡Auxilio!',
+    `<p class="nota-hoja">${conGenero(de, ev.aviso(nombre(de)))}</p>
+    <div class="fila-botones"><button class="boton boton-tomate" data-rescate="${ev.id}">¡Voy corriendo!</button></div>`,
+  );
+}
+
+/** Voy al baño a rescatar a mi amor: ahuyento el bicho, destapo, traigo el papel… */
+async function rescatar(id: string) {
+  const ev = EVENTOS_BANO.find((x) => x.id === id);
+  if (!s || !ev) return;
+  cerrarHoja();
+  if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
+  await hacer('usar', 'bano', 14, { carino: 6 }, 'rescate');
+  const m = mascotas[yo];
+  const listo = () => {
+    const e = m.escenaActual.split('|');
+    return e[1] === 'usar' && e[2] === 'rescate';
+  };
+  if (!(await esperarQue(listo, 30000))) return;
+  const frases = ev.rescate ?? ['¡Aquí estoy!', 'Tranquilidad, ya llegué.'];
+  m.frase = conGenero(otro(yo), frases[Math.floor(Math.random() * frases.length)]);
+  sonido.atrapado();
+  if (eventoBano) {
+    bichos?.quitar();
+    eventoBano = null;
+  }
+  void s.enviar('rescate', { evento: id });
+  setTimeout(() => (m.frase = null), 4800);
+}
+
+/** Me rescataron: se acaba el susto, salgo del baño feliz y con cariño. */
+async function rescatado(de: Rol) {
+  if (!s) return;
+  bichos?.quitar();
+  eventoBano = null;
+  await pausa(1200);
+  const ahora = Date.now();
+  await guardarYo({ ...sumar(est(yo), { carino: 6 }, ahora), actividad: { tipo: 'nada', desde: ahora, accion: 'saludo', hasta: ahora + 3500 }, visto: ahora });
+  mascotas[yo].frase = conGenero(de, '¡Mi héroe|heroína! 💖');
+  setTimeout(() => (mascotas[yo].frase = null), 4800);
+  lluviaCorazones(10);
+}
+
+// ---------------------------------------------------------------------------
+// Lavarse la cara: se mira al espejo, la cara se pone borrosa con ondas y entra (como a otro plano) a un
+// minijuego estilo Vampire Survivors contra los gérmenes de su propia cara
+// ---------------------------------------------------------------------------
+let lavandose = false;
+
+async function lavarse() {
+  if (!s || lavandose || enCohete) return;
+  if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
+  lavandose = true;
+  const m = mascotas[yo];
+  const sigue = () => s?.personajes[yo].actividad.accion === 'lavar';
+  const lienzo = $('lienzo');
+  let portal: HTMLElement | null = null;
+  let v0: ReturnType<Mundo['vista']> | null = null;
+  // El minijuego (y los estilos del espejo) se van cargando mientras camina al espejo
+  const modulo = import('./lavado');
+  try {
+    await hacer('lavar', 'bano', 360, {});
+    // Camina hasta el espejo (si mientras tanto le mandan a hacer otra cosa, no hay minijuego)
+    if (!(await esperarQue(() => !sigue() || m.escenaActual.split('|')[1] === 'lavar', 25000)) || !sigue()) return;
+    const frases = ['A ver esta carita…', '¿Y esos granitos?', 'Mmm… algo raro hay aquí', '¡Uy, qué es esto!'];
+    m.frase = frases[Math.floor(Math.random() * frases.length)];
+    sonido.limpio();
+    await pausa(1500);
+    if (!sigue()) return;
+    // La cámara se acerca al espejo
+    v0 = mundo.vista();
+    const espejo = casa3d.objeto('bano', 'espejo');
+    const meta = espejo ? espejo.getWorldPosition(new THREE.Vector3()) : m.p.grupo.getWorldPosition(new THREE.Vector3()).setY(1.4);
+    const desde = v0.p.clone(), z0 = v0.zoom;
+    await animar(1.2, (k) => {
+      const e = k * k * (3 - 2 * k);
+      mundo.enfocar(desde.clone().lerp(meta, e), z0 + (3.4 - z0) * e, 3.4);
+    });
+    m.frase = null;
+    const { jugarLavado } = await modulo;
+    // La cara en el espejo se pone borrosa, con ondas… y entra a otro plano
+    document.body.classList.add('lavandose');
+    portal = abrirPortal(yo);
+    lienzo.classList.add('lienzo-borroso');
+    sonido.rumor(1.6, 700, 0.06, 0, 0.5, 2400);
+    await pausa(1700);
+    portal.classList.add('entra');
+    [0, 0.25, 0.5].forEach((d) => sonido.nota(1400 - d * 800, 0.4, d, 'sine', 0.04, 500));
+    await pausa(1500);
+    pausaCasa = true;
+    const juego = jugarLavado({ rol: yo });
+    // Ya con el juego encima, la casa borrosa y las ondas no se ven: se esconden (el filtro gasta batería)
+    const tapar = setTimeout(() => {
+      lienzo.style.visibility = 'hidden';
+      if (portal) portal.style.display = 'none';
+    }, 800);
+    const r = await juego;
+    clearTimeout(tapar);
+    // De vuelta: el velo de agua se va, la casa vuelve a verse nítida y la cámara se aleja
+    lienzo.style.visibility = '';
+    portal.style.display = '';
+    pausaCasa = false;
+    await pausa(450);
+    portal.classList.add('sale');
+    lienzo.classList.add('lienzo-volviendo');
+    lienzo.classList.remove('lienzo-borroso');
+    const z1 = mundo.vista().zoom, p1 = mundo.vista().p;
+    const vuelta = animar(1, (k) => {
+      const e = k * k * (3 - 2 * k);
+      mundo.enfocar(p1.clone().lerp(v0!.p, e), z1 + (v0!.zoom - z1) * e, 3.4);
+    });
+    await terminarLavado(r);
+    await vuelta;
+  } finally {
+    lavandose = false;
+    pausaCasa = false;
+    document.body.classList.remove('lavandose');
+    lienzo.style.visibility = '';
+    lienzo.classList.remove('lienzo-borroso');
+    setTimeout(() => lienzo.classList.remove('lienzo-volviendo'), 1000);
+    if (portal) setTimeout(() => portal?.remove(), 900);
+    if (v0 && mundo.vista().zoom > 3.01) mundo.fijarZoom(1);
+  }
+}
+
+/** El espejo con la cara del personaje moviéndose en ondas (un filtro SVG que se va agitando) y anillos de agua. */
+function abrirPortal(rol: Rol) {
+  const p = document.createElement('div');
+  p.className = 'lavado-portal';
+  p.innerHTML = `<svg aria-hidden="true"><filter id="lavado-ondas" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="turbulence" baseFrequency="0.012 0.05" numOctaves="2" seed="3" result="ruido"/>
+      <feDisplacementMap in="SourceGraphic" in2="ruido" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="0"/>
+    </filter></svg>
+    <div class="velo"></div>
+    ${[0, 0.4, 0.8, 1.2].map((d) => `<span class="onda" style="--d:${d}s"></span>`).join('')}
+    <div class="lavado-espejo"><i style="background-image:url(./recuerdos/${rol}_sorpresa.webp)"></i></div>`;
+  document.body.append(p);
+  const ruido = p.querySelector('feTurbulence')!;
+  const mapa = p.querySelector('feDisplacementMap')!;
+  const borroso = p.querySelector('feGaussianBlur')!;
+  const t0 = performance.now();
+  const paso = () => {
+    if (!p.isConnected) return;
+    const t = (performance.now() - t0) / 1000;
+    const k = Math.min(1, t / 1.6);
+    ruido.setAttribute('baseFrequency', `${(0.012 + Math.sin(t * 3) * 0.004).toFixed(4)} ${(0.05 + Math.sin(t * 2.2) * 0.02).toFixed(4)}`);
+    mapa.setAttribute('scale', String(Math.round(k * 34 + Math.sin(t * 7) * 6 * k)));
+    borroso.setAttribute('stdDeviation', (k * 2.2).toFixed(2));
+    requestAnimationFrame(paso);
+  };
+  requestAnimationFrame(paso);
+  return p;
+}
+
+async function terminarLavado(r: { segundos: number; gano: boolean; eliminados: number; nivel: number; jefe: boolean }) {
+  if (!s) return;
+  const higiene = r.gano ? 100 : Math.round(15 + (r.segundos / 180) * 60);
+  const premio = Math.min(10, Math.floor(r.segundos / 30) + (r.gano ? 3 : 0) + (r.jefe ? 2 : 0));
+  const record = r.eliminados > (s.casa.lavado?.[yo] ?? 0);
+  await cambiarCasa((c) => {
+    c.lavado = { ...(c.lavado ?? {}) };
+    if (r.eliminados > (c.lavado[yo] ?? 0)) c.lavado[yo] = r.eliminados;
+    c.monedas += premio;
+  });
+  // Ya se lavó: deja el espejo con la carita fresca
+  const ahora = Date.now();
+  await guardarYo({ ...sumar(est(yo), { higiene }, ahora), actividad: { tipo: 'nada', desde: ahora, accion: 'saludo', hasta: ahora + 2500 }, visto: ahora });
+  mascotas[yo].frase = r.gano ? '¡Carita limpiecita! ✨' : '¡Algo es algo!';
+  setTimeout(() => (mascotas[yo].frase = null), 2600);
+  setTimeout(() => hojaLavado(r, record, premio, higiene), 1300);
+}
+
+/** Cómo le fue lavándose la cara y quién ha eliminado más gérmenes. */
+function hojaLavado(r: { segundos: number; gano: boolean; eliminados: number; nivel: number; jefe: boolean }, record: boolean, premio: number, higiene: number) {
+  const l = s?.casa.lavado ?? {};
+  const a = l.el ?? 0, b = l.ella ?? 0;
+  const lider: Rol | null = a === b ? null : a > b ? 'el' : 'ella';
+  const fila = (q: Rol) =>
+    `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${l[q] ? `${l[q]} 🦠` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
+  const mm = `${Math.floor(r.segundos / 60)}:${String(Math.floor(r.segundos % 60)).padStart(2, '0')}`;
+  abrirHoja(
+    r.gano ? '¡Carita limpia!' : 'Lavada a medias',
+    `<p class="nota-hoja">${r.gano ? `Aguantaste los 3 minutos` : `Aguantaste ${mm}`}, llegaste a nivel <b>${r.nivel}</b> y eliminaste <b>${r.eliminados}</b> gérmenes${r.jefe ? ', ¡y hasta al Espinillón!' : '.'}${record ? ' <b>¡Nuevo récord!</b>' : ''}</p>
+    <p class="nota-hoja">Higiene ${higiene >= 100 ? 'al máximo' : `+${higiene}`}${premio ? ` · +${premio} ${premio === 1 ? 'moneda' : 'monedas'}` : ''}</p>
+    <ol class="retrete-records">${fila('el')}${fila('ella')}</ol>`,
+    { saldo: s?.casa.monedas },
+  );
+  if (record || r.gano) lluviaCorazones(12);
+}
+
 /** Qué pasa al tocar cada mueble (por el nombre del mueble en el modelo del cuarto). */
 const MUEBLES: Partial<Record<Cuarto, [RegExp, string][]>> = {
   sala: [[/^sof/, 'sofa'], [/^televisor/, 'tv']],
@@ -933,6 +1187,8 @@ function alCambiarTele() {
   const e = tele.estado;
   document.body.classList.toggle('en-tele', e === 'grande');
   casa3d.telePrendida(e !== 'apagada');
+  // Con la tele prendida la música de la casa se calla para que se oiga el video
+  sonido.musica.callar(e !== 'apagada');
   if (e === 'grande' && teleAntes !== 'grande') {
     // La casa queda chiquita en una esquina: los dos en el sofá
     verCuarto('sala');
@@ -1138,6 +1394,15 @@ function alEvento(e: Evento) {
     case 'nota':
       toast(`${quien} te dejó una nota en la nevera`, 3200);
       break;
+    case 'auxilio': {
+      const ev = EVENTOS_BANO.find((x) => x.id === e.datos.evento);
+      if (ev && Date.now() - e.t < 5 * 60_000) hojaAuxilio(e.de, ev);
+      break;
+    }
+    case 'rescate':
+      toast(`¡${quien} vino a rescatarte! 💖`, 3200);
+      void rescatado(e.de);
+      break;
     case 'saludo':
       toast(`${quien} te está saludando`);
       break;
@@ -1340,7 +1605,7 @@ function verCuarto(c: Cuarto) {
   pintarAcciones();
 }
 
-/** Cambio de cuarto con su personaje a la vista: la cámara espera a que salga por la puerta (un momento) y lo sigue. */
+/** Cambio de cuarto con su personaje a la vista: la cámara espera a que llegue a la puerta y salga, y lo sigue. */
 let vistaPendiente: { cuarto: Cuarto; hasta: number } | null = null;
 const cuartoVista = (): Cuarto => vistaPendiente?.cuarto ?? casa3d.actual;
 
@@ -1351,7 +1616,8 @@ function seguir(c: Cuarto) {
     return verCuarto(c);
   }
   if (mascotas[yo].visible && s?.personajes[yo].cuarto !== c) {
-    vistaPendiente = { cuarto: c, hasta: performance.now() + 1700 };
+    // Se cambia de cuarto cuando cruza la puerta (el tope es solo por si algo lo detiene en el camino)
+    vistaPendiente = { cuarto: c, hasta: performance.now() + 15000 };
     pintarCuartos();
     pintarAcciones();
   } else {
@@ -1434,7 +1700,6 @@ function botonesCuarto(): Boton[] {
         { id: 'jugar-super', texto: 'Súper Manía', icono: '<img src="./modelos/iconos/caja_frutas.png" alt="">', principal: true },
         { id: 'jugar-puertas', texto: 'Cien Puertas', icono: ico('puerta') },
         { id: 'jugar-mesa', texto: 'Juegos de mesa', icono: '<img src="./modelos/iconos/mesa_juegos.svg" alt="">' },
-        { id: 'retrete', texto: 'Retrete espacial', icono: ico('inodoro') },
       );
       break;
     case 'patio': {
@@ -1568,7 +1833,7 @@ async function alAccion(id: string) {
       for (let i = 1; i < 6; i++) setTimeout(() => sonido.burbuja(), i * 700);
       return;
     case 'lavar':
-      return hacer('lavar', 'bano', 5, { higiene: 25 });
+      return lavarse();
     case 'inodoro':
       return irAlBano();
     case 'dormir':
@@ -1591,8 +1856,8 @@ async function alAccion(id: string) {
     case 'jugar-mesa':
       return jugar('mesa');
     case 'retrete':
-      void hacer('usar', 'juegos', 12, {}, 'cohete');
-      return hojaRetrete();
+      // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse
+      return hacer('usar', 'juegos', 12, {}, 'cohete');
     case 'trofeos':
       return hojaTrofeos();
     case 'admirar':
@@ -2248,6 +2513,8 @@ function controles() {
       if (m === 'saludo') void saludar();
       else if (m === 'nalgada') void nalgada();
       else void carino(m as 'caricia' | 'abrazo' | 'beso');
+    } else if ((b = d('[data-rescate]'))) {
+      void rescatar(b.dataset.rescate!);
     } else if ((b = d('[data-hoja]'))) {
       const h = b.dataset.hoja!;
       if (h === 'regalar') hojaRegalar();
@@ -2353,7 +2620,9 @@ function controles() {
       }
     });
     void App.addListener('backButton', () => {
-      if (!$('ventana').hidden) cerrarVentana();
+      const salirLavado = document.querySelector<HTMLElement>('.lavado-fin:not([hidden]) [data-listo], .lavado-salir');
+      if (salirLavado) salirLavado.click();
+      else if (!$('ventana').hidden) cerrarVentana();
       else if (hojaAbierta()) cerrarHoja();
       else if (!$('codigo').hidden) mostrar('codigo', false);
       else if (patio.activo) patio.salir();
@@ -2513,6 +2782,7 @@ function bucle() {
     casa3d.animar(ahora / 1000);
     // (con ?rapido=N el perrito también va más rápido, para las pruebas)
     patio?.update(RAPIDO > 0 ? paso * RAPIDO : paso, ahora / 1000);
+    revisarEventoBano(paso);
     // Cada medio segundo de reloj real (aunque el celular vaya lento, despertar y demás no se atrasan)
     if (ahora - ultimaRevision >= 500) {
       ultimaRevision = ahora;
@@ -2610,6 +2880,7 @@ function efectos() {
   notas: s?.casa.notas.length,
   regalos: s?.casa.regalos,
   deco: s?.casa.deco,
+  lavado: s?.casa.lavado,
 });
 (window as any).__mundo = () => mundo;
 (window as any).__mascotas = () => mascotas;
@@ -2649,6 +2920,9 @@ function efectos() {
 (window as any).__patio = () => patio;
 (window as any).__accion = (id: string) => alAccion(id);
 (window as any).__nalgada = () => nalgada();
+/** El próximo «Ir al baño» trae este evento gracioso (o se ve la lista). */
+(window as any).__bano = (id?: string) => (id ? (eventoForzado = id) : EVENTOS_BANO.map((x) => x.id));
+(window as any).__bichos = () => ({ hay: bichos?.hay, evento: eventoBano?.ev.id ?? null });
 /** Logros de prueba para los trofeos (se guardan como si vinieran de los minijuegos). */
 (window as any).__logros = (l: { super?: number; puertas?: number; mesa?: number }, retrete?: number) =>
   cambiarCasa((c) => {

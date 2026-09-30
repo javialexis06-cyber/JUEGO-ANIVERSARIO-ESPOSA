@@ -313,6 +313,9 @@ function tocarPasoMesa(paso: number, t: number, corchea: number) {
 
 let cancion: 'cumbia' | 'hogar' | 'mesa' = 'cumbia';
 let musicaPendiente: 'menu' | 'juego' | null = null;
+/** Callada por un rato sin tocar la preferencia de quien juega (con la tele prendida, para oír el video). */
+let musicaCallada = false;
+const volumenMusica = () => (musicaApagada || musicaCallada ? 0 : musicaPendiente === 'menu' ? 0.45 : 0.8);
 let reloj: ReturnType<typeof setInterval> | null = null;
 let pasoActual = 0;
 let proximo = 0;
@@ -325,7 +328,7 @@ export const musica = {
     bpm = tempo;
     cancion = cual;
     if (!ctx || !salidaMusica) return;
-    salidaMusica.gain.setTargetAtTime(musicaApagada ? 0 : modo === 'menu' ? 0.45 : 0.8, ctx.currentTime, 0.4);
+    salidaMusica.gain.setTargetAtTime(volumenMusica(), ctx.currentTime, 0.4);
     if (reloj) return;
     proximo = ctx.currentTime + 0.1;
     reloj = setInterval(() => {
@@ -336,7 +339,7 @@ export const musica = {
       while (proximo < ctx.currentTime + 0.2) {
         // Un poco de swing: la corchea del contratiempo llega tarde
         const swing = pasoActual % 2 ? corchea * 0.08 : 0;
-        if (!musicaApagada && !silencio) (cancion === 'hogar' ? tocarPasoHogar : cancion === 'mesa' ? tocarPasoMesa : tocarPaso)(pasoActual, proximo + (cancion === 'cumbia' ? swing : 0), corchea);
+        if (!musicaApagada && !musicaCallada && !silencio) (cancion === 'hogar' ? tocarPasoHogar : cancion === 'mesa' ? tocarPasoMesa : tocarPaso)(pasoActual, proximo + (cancion === 'cumbia' ? swing : 0), corchea);
         proximo += corchea;
         pasoActual = (pasoActual + 1) % 128;
       }
@@ -356,7 +359,13 @@ export const musica = {
     } catch {
       /* sin almacenamiento */
     }
-    if (ctx && salidaMusica) salidaMusica.gain.setTargetAtTime(musicaApagada ? 0 : musicaPendiente === 'menu' ? 0.45 : 0.8, ctx.currentTime, 0.2);
+    if (ctx && salidaMusica) salidaMusica.gain.setTargetAtTime(volumenMusica(), ctx.currentTime, 0.2);
     return musicaApagada;
+  },
+  /** Calla la música un rato (la tele prendida) y la devuelve después, sin cambiar lo que eligió quien juega. */
+  callar(si: boolean) {
+    if (musicaCallada === si) return;
+    musicaCallada = si;
+    if (ctx && salidaMusica) salidaMusica.gain.setTargetAtTime(volumenMusica(), ctx.currentTime, si ? 0.15 : 0.8);
   },
 };
