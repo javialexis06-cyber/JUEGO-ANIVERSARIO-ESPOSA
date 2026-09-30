@@ -1162,7 +1162,17 @@ body.en-tele #toast { z-index: 80; }
 .explosion.kaboom span { background: radial-gradient(circle, #fff3b0 0%, #ff9f1c 55%, #8d7b6a 100%); }
 /* Eventos del baño: el chorro de agua del inodoro y el apagón */
 .explosion.agua span { background: radial-gradient(circle at 35% 30%, #ffffff 0%, #bfe6f7 40%, #6cc6f5 100%); width: 22px; height: 22px; left: -11px; top: -11px; }
-body.apagon #lienzo { filter: brightness(0.22) saturate(0.5) hue-rotate(200deg); transition: filter 0.25s steps(2); }
+/* El apagón es un velo encima del dibujo 3D (un filtro CSS sobre el lienzo hacía parpadear o dejaba la pantalla en
+   blanco en algunos Android) */
+#velo {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  background: #0b0f2a;
+  opacity: 0;
+  pointer-events: none;
+}
+body.apagon #velo { opacity: 0.8; }
 @keyframes explota {
   0% { opacity: 0.95; translate: 0 0; scale: 0.3; }
   100% { opacity: 0; translate: calc(cos(var(--a)) * 90px) calc(sin(var(--a)) * 70px - 30px); scale: 1.6; }

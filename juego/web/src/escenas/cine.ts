@@ -504,6 +504,8 @@ export class Cine {
       this.efectos.limpiar();
       this.composer.dispose();
       this.renderer.dispose();
+      // Suelta el contexto 3D de una vez: si no, se van acumulando y el celular le quita el suyo a la casa (pantalla en blanco)
+      this.renderer.forceContextLoss();
       this.capa.remove();
       if (cineActual.c === this) cineActual.c = null;
       this.terminar();

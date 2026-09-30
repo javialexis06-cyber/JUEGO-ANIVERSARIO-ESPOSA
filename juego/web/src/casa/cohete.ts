@@ -490,6 +490,8 @@ class RetreteEspacial {
     const segundos = Math.round(this.tJuego * 10) / 10;
     setTimeout(() => {
       this.renderer.dispose();
+      // Suelta el contexto 3D de una vez: si no, se van acumulando y el celular le quita el suyo a la casa (pantalla en blanco)
+      this.renderer.forceContextLoss();
       this.capa.remove();
       if (cohete.actual === this) cohete.actual = null;
       this.listo({ segundos });
