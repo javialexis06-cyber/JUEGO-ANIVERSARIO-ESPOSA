@@ -17,6 +17,18 @@ const svg = (cuerpo: string) => `<svg viewBox="0 0 64 64" aria-hidden="true">${c
 
 export const JUEGOS: Entrada[] = [
   {
+    // El concurso de preguntas en pareja: tiene su propio estudio de televisión (src/mesa/show), no usa el tablero
+    id: 'show',
+    nombre: 'El Show de Nosotros',
+    resumen: 'Concurso de televisión con el perrito de presentador: ¿quién conoce más al otro?',
+    color: 'var(--mantequilla)',
+    icono: svg(`<rect x="5" y="12" width="54" height="38" rx="9" fill="#3a1d63" stroke="#3d2b27" stroke-width="3"/>
+      <rect x="11" y="18" width="42" height="26" rx="5" fill="#ff6fa5"/><path d="M32 39S22 33 22 27a5 5 0 0 1 10-2 5 5 0 0 1 10 2c0 6-10 12-10 12z" fill="#fff8ee"/>
+      <g fill="#f6cf5a"><circle cx="10" cy="15" r="2.4"/><circle cx="22" cy="15" r="2.4"/><circle cx="42" cy="15" r="2.4"/><circle cx="54" cy="15" r="2.4"/><circle cx="10" cy="47" r="2.4"/><circle cx="54" cy="47" r="2.4"/></g>
+      <path d="M24 50l-6 8M40 50l6 8" stroke="#3d2b27" stroke-width="3" stroke-linecap="round"/>`),
+    cargar: async () => null,
+  },
+  {
     id: 'dados',
     nombre: 'Dados Party',
     resumen: 'Cinco dados, tres tiros y trece casillas. ¿Quién saca el Dados Party?',

@@ -1,5 +1,6 @@
 // Nuestro Hogar: datos de la pareja y reglas de las necesidades (se calculan con el reloj real).
 import { normalizarProgreso, type ProgresoCocina, RECETAS, type RecetaId } from './cocina/tipos';
+import { normalizarShow, type ShowCasa } from './show_casa';
 export type Rol = 'el' | 'ella';
 export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto' | 'juegos' | 'trofeos' | 'cuna' | 'cuarto_el' | 'cuarto_ella' | 'patio';
 export type Necesidad = 'hambre' | 'energia' | 'higiene' | 'carino';
@@ -212,6 +213,8 @@ export interface Casa {
   perro?: Perrito;
   /** La cocina de chef: el progreso de cada uno en cada restaurante (día, rango, propinas y mejoras). */
   cocina?: Partial<Record<Rol, Partial<Record<RecetaId, ProgresoCocina>>>>;
+  /** El Show de Nosotros: sus respuestas (el libro), los episodios y la pregunta del día (show_casa.ts). */
+  show?: ShowCasa;
 }
 
 // ---------------------------------------------------------------------------
@@ -384,6 +387,7 @@ export function normalizarCasa(c: unknown): Casa {
           ),
         }
       : {}),
+    ...(normalizarShow(c.show) ? { show: normalizarShow(c.show)! } : {}),
   };
 }
 
