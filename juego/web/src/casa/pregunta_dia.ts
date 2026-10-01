@@ -5,13 +5,13 @@
 import './pregunta_dia.css';
 import { calificar, candidatasDelDia, preguntaDelDia } from '../mesa/show/motor';
 import { armar, CATEGORIAS, NOMBRE, pregunta, type Pregunta } from '../mesa/show/preguntas';
-import { MAX_DIAS, type ShowCasa, showVacio } from './show_casa';
+import { fechaHoy, MAX_DIAS, type ShowCasa, showVacio } from './show_casa';
+
+export { fechaHoy };
 
 export type Rol = 'el' | 'ella';
 const otro = (r: Rol): Rol => (r === 'el' ? 'ella' : 'el');
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
-
-export const fechaHoy = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 /** Pone la pregunta de hoy si todavía no hay (la de ayer pasa al libro). Devuelve true si cambió algo. */
 export function asegurarDia(s: ShowCasa, fecha = fechaHoy()): boolean {
@@ -40,24 +40,6 @@ export function estadoDia(s: ShowCasa | undefined | null, yo: Rol): Dia | null {
   const suyo = { a: s.r[o][p.id], g: s.g[o][p.id] };
   const contestada = mio.a !== undefined && mio.g !== undefined;
   return { p, fecha: s.dia.f, mio, suyo, contestada, revelada: contestada && suyo.a !== undefined && suyo.g !== undefined, pagado: !!s.dia.pagado?.[yo] };
-}
-
-/** Para la casa: qué avisar al abrir (null si nada). */
-export function avisoDia(s: ShowCasa | undefined | null, yo: Rol): string | null {
-  const d = estadoDia(s, yo);
-  if (!d || d.fecha !== fechaHoy()) return '💌 Hay una pregunta del día nueva en la nevera.';
-  if (!d.contestada && d.suyo.a !== undefined) return `💌 ${NOMBRE[otro(yo)]} ya contestó la pregunta del día. ¡Te toca!`;
-  if (!d.contestada) return '💌 Hay una pregunta del día esperándote en la nevera.';
-  if (d.revelada && !d.pagado) return '💌 ¡Se reveló la pregunta del día! Ve a la nevera a verla.';
-  return null;
-}
-
-/** Tarjetica para la nevera (un botón que abre la pregunta). */
-export function tarjetaDia(s: ShowCasa | undefined | null, yo: Rol): string {
-  const d = estadoDia(s, yo);
-  const estado = !d || d.fecha !== fechaHoy() ? 'Nueva' : d.revelada ? (d.pagado ? 'Revelada' : '¡Revelada!') : d.contestada ? `Esperando a ${NOMBRE[otro(yo)]}` : 'Sin contestar';
-  const nueva = !d || !d.contestada || (d.revelada && !d.pagado);
-  return `<button class="dia-tarjeta${nueva ? ' nueva' : ''}" data-pregunta-dia><span class="dia-tarjeta-icono">💌</span><span><b>Pregunta del día</b><small>${esc(estado)}</small></span></button>`;
 }
 
 interface Opciones {

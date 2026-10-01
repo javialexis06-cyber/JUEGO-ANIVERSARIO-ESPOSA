@@ -36,6 +36,7 @@ import {
 } from './modelo';
 import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, salaTrofeos, TROFEOS } from './trofeos';
 import { ranurasDe } from './ropa';
+import { avisoDia, estadoDiaLigero, showVacio, tarjetaDia } from './show_casa';
 import {
   configLinea, guardarConfigLinea, olvidarSesion, PersonajeOcupado, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal,
 } from './sincro';
@@ -383,6 +384,12 @@ async function abrirDeVerdad() {
   const nuevos = await aplicarPendientes();
   if (nuevos.length) mensajes.push(`Mientras no estabas, ${nombre(otro(yo))} ${resumen(nuevos)}`);
   else if (vozPendiente()) mensajes.push(`Tienes un mensaje de voz de ${nombre(otro(yo))} sin oír.`);
+  // La pregunta del día del show (un aviso por día y por novedad)
+  const dia = avisoDia(s.casa.show, yo);
+  if (dia && leer<string>('show-aviso-dia') !== `${hoy()}|${dia}`) {
+    mensajes.push(dia);
+    escribir('show-aviso-dia', `${hoy()}|${dia}`);
+  }
   escribir(CLAVE_VISTO(yo), ahora);
   mensajes.forEach((m, i) => setTimeout(() => toast(m, 3400), i * 3600));
 }
@@ -1476,7 +1483,7 @@ async function saludar() {
 }
 
 /** Lo que llega del otro celular. */
-const JUEGOS_MESA: Record<string, string> = { dados: 'Dados Party', mancala: 'Mancala', cajas: 'Puntos y Cajas', parchis: 'Parchís', parchis2: 'Parchís a 2 colores' };
+const JUEGOS_MESA: Record<string, string> = { dados: 'Dados Party', mancala: 'Mancala', cajas: 'Puntos y Cajas', parchis: 'Parchís', parchis2: 'Parchís a 2 colores', show: 'El Show de Nosotros' };
 
 function alEvento(e: Evento) {
   if (e.de === yo) return;
@@ -2507,7 +2514,7 @@ function hojaNotas() {
   if (!s) return;
   const pintar = () => {
     const notas = [...s!.casa.notas].reverse();
-    const html = `<form class="form-nota" id="form-nota">
+    const html = `${tarjetaDia(s!.casa.show, yo)}<form class="form-nota" id="form-nota">
         <label class="campo">Nota para la nevera<textarea id="nota-texto" maxlength="200" placeholder="Te amo, no olvides…"></textarea></label>
         <div class="colores" role="radiogroup" aria-label="Color">${COLORES_NOTA.map((c) => `<button type="button" class="color" data-color="${c}" style="background:${c}" aria-pressed="${c === colorNota}" aria-label="Color"></button>`).join('')}</div>
         <button class="boton boton-tomate" type="submit">Pegar en la nevera</button>
@@ -2523,6 +2530,38 @@ function hojaNotas() {
   };
   repintarHoja = null;
   pintar();
+}
+
+/** La pregunta del día de El Show de Nosotros (pregunta_dia.ts): se contesta aquí y se revela cuando contesten los dos. */
+function hojaPreguntaDia() {
+  if (!s) return;
+  abrirHoja('Pregunta del día', '<div class="dia-hoja"></div>', { alCerrar: () => (repintarHoja = null) });
+  const montar = () => {
+    const cont = document.querySelector<HTMLElement>('#hoja-cuerpo .dia-hoja');
+    if (!cont || !s) return;
+    void import('./pregunta_dia').then((m) =>
+      m.montarPreguntaDia(cont, {
+        yo,
+        leer: async () => s?.casa.show ?? null,
+        cambiar: async (fn) => ((await cambiarCasa((c) => fn((c.show ??= showVacio()), c))) ? s?.casa.show ?? null : null),
+        aviso: (t) => toast(t, 3000),
+        celebrar: () => {
+          sonido.regalo();
+          lluviaCorazones(30);
+        },
+        alLibro: () => (location.href = './mesa.html?libro'),
+      }),
+    );
+  };
+  montar();
+  // Si el otro contesta mientras se mira (y uno ya contestó), se revela ahí mismo
+  let antes = estadoDiaLigero(s.casa.show, yo).suya;
+  repintarHoja = () => {
+    const e = estadoDiaLigero(s?.casa.show, yo);
+    if (e.suya === antes) return;
+    antes = e.suya;
+    if (e.mia) montar();
+  };
 }
 
 async function pegarNota(texto: string) {
@@ -2595,6 +2634,7 @@ function hojaMenu() {
       <button class="accion" data-hoja="album">${ico('album')}<span>Álbum de fotos</span></button>
       <button class="accion" data-hoja="fechas">${ico('fechas')}<span>Fechas especiales</span></button>
       <button class="accion" data-hoja="notas">${ico('nota')}<span>Notas de la nevera</span></button>
+      <button class="accion" data-pregunta-dia>${ico('nota')}<span>Pregunta del día</span></button>
       <button class="accion" data-hoja="buzon">${ico('telefono')}<span>Buzón de voz${s && vozPendiente() ? ' (nuevo)' : ''}</span></button>
       <button class="accion" data-hoja="plano">${ico('casa')}<span>Ampliar la casa</span></button>
       <button class="accion" data-hoja="trofeos">${ico('trofeo')}<span>Trofeos</span></button>
@@ -2798,6 +2838,8 @@ function controles() {
       else void carino(m as 'caricia' | 'abrazo' | 'beso');
     } else if ((b = d('[data-rescate]'))) {
       void rescatar(b.dataset.rescate!);
+    } else if ((b = d('[data-pregunta-dia]'))) {
+      hojaPreguntaDia();
     } else if ((b = d('[data-hoja]'))) {
       const h = b.dataset.hoja!;
       if (h === 'regalar') hojaRegalar();

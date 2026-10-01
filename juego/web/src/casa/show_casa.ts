@@ -110,3 +110,45 @@ export function normalizarShow(v: unknown): ShowCasa | null {
   if (d) s.dia = d;
   return s;
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// La pregunta del día, vista desde la casa (sin cargar el banco de preguntas: solo mira quién contestó)
+
+export const fechaHoy = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const NOMBRE_SHOW: Record<RolShow, string> = { el: 'Él', ella: 'Ella' };
+const otroShow = (r: RolShow): RolShow => (r === 'el' ? 'ella' : 'el');
+
+export interface EstadoDiaLigero {
+  hoy: boolean;
+  mia: boolean;
+  suya: boolean;
+  revelada: boolean;
+  pagado: boolean;
+}
+
+export function estadoDiaLigero(s: ShowCasa | undefined | null, yo: RolShow): EstadoDiaLigero {
+  const d = s?.dia;
+  if (!s || !d) return { hoy: false, mia: false, suya: false, revelada: false, pagado: false };
+  const o = otroShow(yo);
+  const mia = s.r[yo][d.q] !== undefined && s.g[yo][d.q] !== undefined;
+  const suya = s.r[o][d.q] !== undefined && s.g[o][d.q] !== undefined;
+  return { hoy: d.f === fechaHoy(), mia, suya, revelada: mia && suya, pagado: !!d.pagado?.[yo] };
+}
+
+/** Qué avisar al abrir la casa (null si nada). */
+export function avisoDia(s: ShowCasa | undefined | null, yo: RolShow): string | null {
+  const e = estadoDiaLigero(s, yo);
+  if (!e.hoy) return '💌 Hay una pregunta del día nueva en la nevera.';
+  if (!e.mia && e.suya) return `💌 ${NOMBRE_SHOW[otroShow(yo)]} ya contestó la pregunta del día. ¡Te toca!`;
+  if (!e.mia) return '💌 La pregunta del día te espera en la nevera.';
+  if (e.revelada && !e.pagado) return '💌 ¡Se reveló la pregunta del día! Ve a la nevera a verla.';
+  return null;
+}
+
+/** La tarjetica de la nevera (abre la pregunta del día). */
+export function tarjetaDia(s: ShowCasa | undefined | null, yo: RolShow): string {
+  const e = estadoDiaLigero(s, yo);
+  const estado = !e.hoy ? 'Nueva' : e.revelada ? (e.pagado ? 'Revelada' : '¡Revelada!') : e.mia ? `Esperando a ${NOMBRE_SHOW[otroShow(yo)]}` : e.suya ? `${NOMBRE_SHOW[otroShow(yo)]} ya contestó` : 'Sin contestar';
+  const nueva = !e.hoy || !e.mia || (e.revelada && !e.pagado);
+  return `<button class="dia-tarjeta${nueva ? ' nueva' : ''}" data-pregunta-dia><span class="dia-tarjeta-icono">💌</span><span><b>Pregunta del día</b><small>${estado}</small></span></button>`;
+}

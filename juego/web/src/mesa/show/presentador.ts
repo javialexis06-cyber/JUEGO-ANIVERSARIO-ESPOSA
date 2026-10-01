@@ -63,9 +63,9 @@ export class Presentador {
     // El corbatín va en el pecho, sobre el collar (se inclina con el cuerpo)
     const cuerpo = this.partes.get('p_cuerpo')?.obj;
     if (corbatin && cuerpo) {
-      corbatin.position.set(0, 0.03, 0.245);
-      corbatin.rotation.set(-0.35, 0, 0);
-      corbatin.scale.setScalar(1.15);
+      corbatin.position.set(0, 0.035, 0.255);
+      corbatin.rotation.set(-0.5, 0, 0);
+      corbatin.scale.setScalar(0.85);
       cuerpo.add(corbatin);
     }
     if (micro) {
@@ -116,9 +116,9 @@ export class Presentador {
     M.cuerpoRX = -1.12;
     M.cuerpoY = 0.035;
     M.pataTI = M.pataTD = -1.25;
-    M.pataDD = -1.75;
+    M.pataDD = -1.45;
     M.pataDI = -0.55 + Math.sin(t * 1.3) * 0.08;
-    M.cabezaRX = 0.62 + Math.sin(t * 0.9) * 0.03;
+    M.cabezaRX = 0.42 + Math.sin(t * 0.9) * 0.03;
     M.cabezaRY = this.mirarA * 0.45 + Math.sin(t * 0.55) * 0.12;
     M.cabezaRZ = Math.sin(t * 0.7) * 0.05;
     M.orejas = 0.15;
@@ -236,7 +236,7 @@ export class Presentador {
     if (this.micro && pata && cab) {
       this.grupo.updateMatrixWorld(true);
       const punta = pata.localToWorld(new THREE.Vector3(0, -0.15, 0.03));
-      const boca = cab.localToWorld(new THREE.Vector3(0, -0.02, 0.22));
+      const boca = cab.localToWorld(new THREE.Vector3(0, -0.12, 0.3));
       const local = this.grupo.worldToLocal(punta.clone());
       this.micro.position.copy(local);
       const hacia = this.grupo.worldToLocal(boca.clone()).sub(local).normalize();

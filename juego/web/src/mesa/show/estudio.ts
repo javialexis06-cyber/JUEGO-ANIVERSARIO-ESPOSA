@@ -24,7 +24,7 @@ export type Pantalla =
   | { modo: 'ronda'; titulo: string; texto: string; color?: string }
   | { modo: 'medidor'; valor: number };
 
-const ESCALA_MUNECO = 0.37;
+const ESCALA_MUNECO = 0.43;
 const FPS = 30;
 /** Blender (x, y, z arriba) → three (x, z, -y). */
 const tres = (x: number, y: number, z: number) => new THREE.Vector3(x, z, -y);
@@ -40,10 +40,10 @@ interface Toma {
 
 const TOMAS: Record<Exclude<Plano, 'grua'>, Toma> = {
   general: { pos: new THREE.Vector3(0, 2.35, 9.2), mira: new THREE.Vector3(0, 1.55, -0.4), ancho: 9.4, cam: 0 },
-  pareja: { pos: new THREE.Vector3(0, 1.32, 3.7), mira: new THREE.Vector3(0, 0.98, 0.15), ancho: 3.5, cam: 0 },
-  el: { pos: new THREE.Vector3(-0.42, 1.2, 2.45), mira: new THREE.Vector3(-0.95, 1.02, 0.2), ancho: 1.45, cam: 1 },
-  ella: { pos: new THREE.Vector3(0.42, 1.2, 2.45), mira: new THREE.Vector3(0.95, 1.0, 0.2), ancho: 1.45, cam: 1 },
-  presentador: { pos: new THREE.Vector3(-1.45, 1.22, 2.55), mira: new THREE.Vector3(-2.62, 1.0, 0.72), ancho: 1.7, cam: 1 },
+  pareja: { pos: new THREE.Vector3(0, 1.45, 3.9), mira: new THREE.Vector3(0, 1.05, 0.15), ancho: 3.7, cam: 0 },
+  el: { pos: new THREE.Vector3(-0.35, 1.3, 2.75), mira: new THREE.Vector3(-0.95, 1.05, 0.2), ancho: 2.1, cam: 1 },
+  ella: { pos: new THREE.Vector3(0.35, 1.3, 2.75), mira: new THREE.Vector3(0.95, 1.03, 0.2), ancho: 2.1, cam: 1 },
+  presentador: { pos: new THREE.Vector3(-1.2, 1.3, 2.9), mira: new THREE.Vector3(-2.55, 0.95, 0.75), ancho: 2.5, cam: 1 },
   pantalla: { pos: new THREE.Vector3(0, 2.0, 4.6), mira: new THREE.Vector3(0, 1.85, -2.5), ancho: 5.6, cam: 2 },
   publico: { pos: new THREE.Vector3(0.4, 1.7, -0.2), mira: new THREE.Vector3(0, 0.7, 6.5), ancho: 9, cam: 2 },
 };
@@ -111,9 +111,12 @@ void main() {
     float ang = atan(d.y, d.x);
     f = 0.5 + 0.5 * sin(ang * 8.0 + t * 2.4) * smoothstep(0.0, 0.6, length(d));
   } else {
-    vec2 g = fract(c * vec2(6.0, 3.0) + vec2(t * 0.15, 0.0)) - 0.5;
-    f = 1.0 - smoothstep(-0.02, 0.06, corazon(g * 2.2));
-    f = max(f * 0.9, 0.25 + 0.15 * sin(t + c.x * 9.0));
+    // Ecualizador: columnas que suben y bajan, con un corazón que late arriba
+    float col8 = floor(c.x * 8.0);
+    float alto = 0.25 + 0.6 * abs(sin(t * (1.3 + fract(col8 * 0.37) * 2.0) + col8 * 1.7));
+    f = step(c.y, alto) * (0.55 + 0.45 * c.y / max(alto, 0.01));
+    vec2 hp = (uv - vec2(0.5, 0.86)) * vec2(1.0, uCeldas.y / uCeldas.x) * 3.2;
+    f = max(f, (1.0 - smoothstep(-0.02, 0.04, corazon(hp))) * (0.8 + 0.2 * sin(t * 6.0)));
   }
   vec3 col = mix(uA * 0.35, uB, f);
   if (uHayTexto > 0.5) {
