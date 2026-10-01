@@ -97,6 +97,7 @@ class Pieza:
     def girar(self, objs, rx=0.0, ry=0.0, rz=0.0, pivote=(0, 0, 0)):
         """Gira piezas alrededor de un pivote (aplicando la transformación, sin la trampa del origen)."""
         from mathutils import Euler, Matrix
+        bpy.context.view_layer.update()
         R = Euler((rx, ry, rz), 'XYZ').to_matrix().to_4x4()
         T = Matrix.Translation(Vector(pivote))
         for o in objs:
@@ -151,21 +152,30 @@ def vapor(p, puntos, r=0.07):
 
 # ----------------------------------------------------------------------------------------------------- Armas
 def toalla(p, color='#F39AB0', raya='#FFFFFF', caliente=False):
+    """Toalla ondeando en pleno toallazo: tela rectangular doblada en ola, rayas y flecos."""
     m = tela(color, '#FFD1DC' if not caliente else '#FFB0A0')
     r = tela(raya)
-    pts = [(-0.42, 0, 0.12), (-0.22, -0.02, 0.3), (0.0, 0.0, 0.42), (0.2, 0.0, 0.48), (0.42, 0.0, 0.62)]
-    p.tubo(pts, [0.07, 0.09, 0.1, 0.09, 0.06], m, perfil=(1.6, 0.45), seg=14)
-    # Rayas en la punta
-    for d in (0.06, 0.1):
-        p.tubo([(0.3 - d, -0.01, 0.53 + d * 0.3), (0.32 - d, -0.01, 0.57 + d * 0.3)], 0.075, r, perfil=(1.8, 0.55), seg=12)
-    # Flecos
-    for k in range(5):
-        p.tubo([(0.42 + k * 0.01, 0, 0.62), (0.48 + k * 0.012, -0.01, 0.66 + (k - 2) * 0.03)], 0.012, m, seg=5)
+
+    def ola(v, fase=0.0):
+        x = v[:, 0]
+        return np.column_stack([x, v[:, 1] + 0.1 * np.sin(x * 5.0 + fase), v[:, 2] + 0.12 * np.sin(x * 3.2 + 0.6)])
+    k = len(p.objs)
+    p.blob((0, 0, 0.42), (0.5, 0.045, 0.2), m, n=14, p=5.0, shaper=ola, subsurf=2)
+    for x0 in (0.3, 0.38):
+        p.blob((x0, -0.012, 0.42), (0.022, 0.05, 0.205), r, n=8, p=5.0,
+               shaper=lambda v, x0=x0: np.column_stack([v[:, 0], v[:, 1] + 0.1 * np.sin((v[:, 0] + x0) * 5.0), v[:, 2] + 0.12 * np.sin((v[:, 0] + x0) * 3.2 + 0.6)]))
+    # Flecos al final
+    yb = 0.1 * math.sin(0.5 * 5.0)
+    zb = 0.42 + 0.12 * math.sin(0.5 * 3.2 + 0.6)
+    for j in range(7):
+        z = zb - 0.17 + j * 0.057
+        p.tubo([(0.49, yb, z), (0.56, yb - 0.01, z + 0.01 * (j - 3)), (0.6, yb, z + 0.02 * (j - 3))], 0.011, m, seg=5)
+    p.girar(p.desde(k), ry=-0.35, pivote=(0, 0, 0.42))
     if caliente:
-        vapor(p, [(0.1, -0.05, 0.75), (-0.2, -0.05, 0.6), (0.4, -0.05, 0.85)], 0.06)
-        gotas(p, (0.0, -0.05, 0.05), 3, 0.035, '#FF7A5C')
+        vapor(p, [(0.1, -0.1, 0.78), (-0.25, -0.1, 0.68), (0.4, -0.1, 0.86)], 0.06)
+        gotas(p, (0.0, -0.08, 0.08), 3, 0.035, '#FF7A5C')
     else:
-        gotas(p, (0.0, -0.05, 0.02), 3, 0.035)
+        gotas(p, (0.05, -0.08, 0.06), 3, 0.035)
 
 
 def varita(p, dorada=False):
@@ -187,17 +197,19 @@ def varita(p, dorada=False):
 
 def cepillo(p, color='#5AA6E0', dorado=False):
     m = oro() if dorado else M(color, rough=0.3, coat=0.5)
-    p.tubo([(-0.45, 0, 0.05), (0.0, 0, 0.1), (0.28, 0, 0.14), (0.42, 0, 0.17)], [0.035, 0.04, 0.03, 0.035], m, perfil=(1.0, 0.6), seg=10)
-    p.caja((0.36, 0, 0.19), (0.1, 0.035, 0.015), m)
+    k0 = len(p.objs)
+    p.tubo([(-0.45, 0, 0.05), (0.0, 0, 0.1), (0.28, 0, 0.14), (0.42, 0, 0.17)], [0.055, 0.06, 0.045, 0.05], m, perfil=(1.0, 0.7), seg=12)
+    p.caja((0.36, 0, 0.19), (0.11, 0.05, 0.025), m)
     cerdas = M('#FFFFFF', rough=0.6)
     cerdas2 = M('#68C9B9', rough=0.6)
     for i in range(5):
         for j in range(2):
             x = 0.28 + i * 0.04
-            p.blob((x, -0.015 + j * 0.03, 0.25), (0.014, 0.012, 0.05), cerdas if (i + j) % 2 else cerdas2, n=5)
+            p.blob((x, -0.02 + j * 0.04, 0.26), (0.018, 0.016, 0.06), cerdas if (i + j) % 2 else cerdas2, n=5)
     # Pegote de crema dental
     p.tubo([(0.27, 0, 0.3), (0.33, -0.01, 0.32), (0.4, 0.0, 0.31), (0.45, 0.0, 0.33)], 0.028, M('#F4FAFF', 0.5), seg=8)
     p.tubo([(0.28, -0.02, 0.31), (0.4, -0.02, 0.32)], 0.012, M('#E85D6A', 0.5), seg=6)
+    p.girar(p.desde(k0), ry=-0.5, pivote=(0, 0, 0.15))
 
 
 def mil_cerdas(p):
@@ -953,12 +965,12 @@ def preparar(scene):
     escena.area_light('Clave', (-2.4, -3.2, 4.0), (0, 0, 0.3), 480, 2.4, '#FFF1E2', luces)
     escena.area_light('Relleno', (3.0, -2.2, 1.8), (0, 0, 0.3), 160, 3.0, '#E4F0FF', luces)
     escena.area_light('Contraluz', (1.0, 3.0, 3.2), (0, 0, 0.5), 380, 2.0, '#FFE0EC', luces)
-    escena.world_color(scene, '#FFFFFF', 0.55)
+    escena.world_color(scene, '#FFFFFF', 0.4)
     try:
         scene.view_settings.look = 'AgX - Punchy'
     except TypeError:
         scene.view_settings.look = 'AgX - Medium High Contrast'
-    scene.view_settings.exposure = 0.35
+    scene.view_settings.exposure = float(os.environ.get('EXPOSICION', -0.15))
 
 
 def iconos(salida, pedidos):
