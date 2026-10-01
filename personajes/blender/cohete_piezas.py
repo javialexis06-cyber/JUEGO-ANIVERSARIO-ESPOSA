@@ -232,7 +232,7 @@ def retrete_chiva(coll):
     rojo = laca('chiva rojo', '#E23B3B', 0.3)
     azul = laca('chiva azul', '#2456C9', 0.3)
     verde = laca('chiva verde', '#36A852', 0.3)
-    inodoro_base(coll, amarillo, asiento=rojo, tanque=amarillo, tapa_tanque=rojo, palanca=cromo(), tapa=azul)
+    inodoro_base(coll, amarillo, asiento=rojo, tanque=amarillo, tapa_tanque=rojo, palanca=cromo(), con_tapa=False)
     # Franjas de colores alrededor del tanque y del pie
     for k, (z, col) in enumerate(((0.5, rojo), (0.56, azul), (0.62, verde), (0.71, rojo), (0.77, azul))):
         clay.rbox(f'franja tanque {k}', (0, 0.22, z), (0.226, 0.106, 0.014), coll, col, p=8, n=4)
@@ -288,7 +288,7 @@ def retrete_nave(coll):
     blanco = laca('nave blanco', '#F4F6FA', 0.25)
     rojo = laca('nave rojo', '#E4574B', 0.25)
     azul = laca('nave azul', '#2F6FD6', 0.25)
-    inodoro_base(coll, c, asiento=rojo, con_tanque=False, tapa=blanco)
+    inodoro_base(coll, c, asiento=rojo, con_tanque=False, con_tapa=False)
     # El cohete del tanque
     clay.lathe('cuerpo cohete', [(0.0, 0.42), (0.13, 0.43), (0.165, 0.55), (0.17, 0.8), (0.15, 0.95), (0.1, 1.05), (0.04, 1.11), (0.0, 1.12)], coll, blanco,
                segments=32).location = (0, 0.24, 0)
@@ -320,7 +320,7 @@ def retrete_princesa(coll):
     rosa = laca('princesa', '#F7B6CF', 0.22)
     blanco = peluche('princesa', '#FFF4FA')
     o = oro()
-    inodoro_base(coll, rosa, asiento=blanco, tanque=rosa, tapa_tanque=rosa, palanca=o, tapa=blanco)
+    inodoro_base(coll, rosa, asiento=blanco, tanque=rosa, tapa_tanque=rosa, palanca=o, con_tapa=False)
     for k, z in enumerate((0.02, 0.36)):
         clay.lathe(f'aro dorado {k}', [(0.16 if k == 0 else 0.2, z - 0.01), (0.168 if k == 0 else 0.208, z), (0.16 if k == 0 else 0.2, z + 0.01)], coll, o,
                    segments=32, cap_bottom=False, cap_top=False)
@@ -349,7 +349,7 @@ def retrete_gamer(coll):
     """Negro mate con tiras RGB, portavasos con gaseosa y audífonos colgando del tanque."""
     negro = m('gamer negro', '#25262E', rough=0.45, coat=0.3)
     gris = m('gamer gris', '#3A3C48', rough=0.4)
-    inodoro_base(coll, negro, asiento=gris, tanque=negro, tapa_tanque=gris, palanca=rgb(1, '#FF3FA4'), tapa=gris)
+    inodoro_base(coll, negro, asiento=gris, tanque=negro, tapa_tanque=gris, palanca=rgb(1, '#FF3FA4'), con_tapa=False)
     aro_z('tira rgb asiento', (0, -0.05, 0.425), 0.205, 0.25, 0.008, coll, rgb(2, '#3FD5FF'))
     clay.lathe('tira rgb pie', [(0.12, 0.09), (0.127, 0.1), (0.12, 0.11)], coll, rgb(3, '#7CFF6B'), segments=32, cap_bottom=False, cap_top=False)
     for k, (z, col) in enumerate(((0.47, '#FF3FA4'), (0.83, '#3FD5FF'))):
@@ -409,7 +409,7 @@ def retrete_diamantes(coll):
     """Oro con diamantes incrustados y un diamante enorme encima del tanque."""
     o = oro()
     d = diamante()
-    inodoro_base(coll, o, asiento=m('nácar', '#FFF8F0', rough=0.15, coat=1.0), tanque=o, tapa_tanque=o, palanca=o, tapa=m('nácar', '#FFF8F0', rough=0.15, coat=1.0))
+    inodoro_base(coll, o, asiento=m('nácar', '#FFF8F0', rough=0.15, coat=1.0), tanque=o, tapa_tanque=o, palanca=o, con_tapa=False)
     # Filas de diamantes en el frente del tanque
     for fila, z in enumerate((0.5, 0.58, 0.66, 0.74)):
         for k in range(7):

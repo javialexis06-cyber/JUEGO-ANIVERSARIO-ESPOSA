@@ -199,7 +199,7 @@ export class Tienda {
       }
       return u;
     }
-    if (tipo === 'casco') return id === 'ninguno' ? ico('casco_ninguno') : ico(`casco_${id}_${this.rol}`);
+    if (tipo === 'casco') return ico(`casco_${id}_${this.rol}`);
     return ico(`retrete_${id}`);
   }
 
