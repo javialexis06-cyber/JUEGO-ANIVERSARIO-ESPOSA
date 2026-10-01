@@ -392,6 +392,8 @@ export class SincroLinea extends Base implements Sincro {
   private sinGuardar: EstadoPersonaje | null = null;
   private quitarFondo: (() => void)[] = [];
   private alVolverInternet = () => void this.reintentar();
+  /** El canal en vivo ya estuvo conectado alguna vez (para saber cuándo es una reconexión). */
+  private conectadoAntes = false;
 
   private constructor(private sb: SupabaseClient, private sesion: SesionLinea) {
     super();
@@ -555,7 +557,12 @@ export class SincroLinea extends Base implements Sincro {
         this.avisar('presencia');
       })
       .subscribe((s) => {
-        if (s === 'SUBSCRIBED') void this.canal!.track({ rol: this.rol, t: Date.now() });
+        if (s !== 'SUBSCRIBED') return;
+        void this.canal!.track({ rol: this.rol, t: Date.now() });
+        // Volvió el canal después de un corte (internet intermitente): lo que pasó mientras tanto no llegó en vivo,
+        // así que se vuelve a leer todo (los mimos pendientes se aplican una sola vez, como al abrir la app)
+        if (this.conectadoAntes) void this.refrescar().catch(() => undefined);
+        this.conectadoAntes = true;
       });
   }
 

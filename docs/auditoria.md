@@ -92,3 +92,93 @@ pruebas usan tiempos de espera largos y simulan varios pasos por cuadro).
 Lo que no se puede probar desde aquí: la conexión real con el proyecto de Supabase (la red de este entorno no deja
 salir a `supabase.co`). La prueba en línea usa un Supabase de mentiras con las mismas reglas; la prueba de verdad es
 instalar la APK en los dos celulares, crear la casa en uno y unirse con el código en el otro.
+
+---
+
+# Segunda auditoría (octubre de 2026): segundo plano, base de datos, memoria y rendimiento
+
+Revisión de todo lo que no se estaba rehaciendo en ese momento (casa, súper, mesa, reacciones, escenas, carga,
+navegación, sonido, Android y Supabase). Cada fila dice qué pasaba, dónde, qué tan grave era y cómo quedó.
+Gravedad: **alta** (se pierde algo o gasta batería sin parar), **media** (se ve mal o falla a veces), **baja** (detalle).
+
+## Segundo plano: batería y música
+
+Pedido del dueño: «que la app en segundo plano quite la música y pause el consumo de batería y procesos».
+
+Módulo nuevo **`src/segundo_plano.ts`** (para cualquier pantalla o minijuego): `alPausar(fn)`, `alReanudar(fn)`
+(recibe los milisegundos que estuvo afuera), `enPausa()`, `cuadros(fn)` (bucle de dibujo que se detiene solo en el
+fondo y vuelve sin salto de tiempo), `reloj()` (milisegundos sin contar el tiempo afuera, para minijuegos con tiempo)
+y `esperar(fn, ms)` (temporizador que se congela afuera). Escucha `visibilitychange`, `pagehide`/`pageshow`,
+`freeze`/`resume` y `appStateChange` de Capacitor y avisa **una sola vez** por ida y por vuelta.
+
+| Hallazgo | Dónde | Gravedad | Arreglo |
+|---|---|---|---|
+| En Android la app seguía corriendo en el fondo: Capacitor deja el WebView despierto (`KeepRunning`), con relojes de JavaScript, red y animaciones | `MainActivity.java` | alta | `onPause`: `webView.onPause()` y, 0,7 s después (para que la página alcance a avisarle al otro celular), `pauseTimers()`; `onResume`: lo despierta antes de avisarle a la página |
+| El reloj de la música seguía despertando al celular 33 veces por segundo con la app escondida | `sonido.ts` | alta | Se detiene en el fondo y vuelve donde iba; el `AudioContext` se suspende |
+| La mesa no se enteraba de nada: la música seguía sonando con el celular bloqueado | `mesa/main.ts` | alta | Usa el módulo (música, efectos y dibujo se pausan) |
+| La casa, el súper y la mesa pedían cuadros en el fondo (en el navegador) | `casa/main.ts`, `main.ts`, `mesa/escenario.ts` | media | Los bucles se detienen del todo y al volver siguen sin salto (dt máximo 0,1 s) |
+| El timbre de un mensaje de voz seguía vibrando en el fondo | `casa/llamada.ts` | media | No timbra mientras está afuera (vuelve a sonar al regresar si nadie contestó) |
+| El audio con el que el perrito repite lo que le dicen quedaba despierto para siempre (un `AudioContext` despierto gasta batería aunque no suene) | `casa/patio.ts` | media | Se duerme al terminar |
+| Si Android le quitaba el dibujo 3D en el fondo, a los 5 s la página se recargaba escondida (se perdía la partida del súper) | `contexto.ts` | media | La cuenta de 5 s no corre en el fondo |
+| Súper en línea: si uno salía de la app, al otro le salía «Ella pausó el juego» y (en el navegador) los «sigo aquí» seguían llegando | `main.ts`, `linea_super.ts` | media | Mensaje `fuera`: al otro le sale «Se cortó la conexión con Ella: salió de la app… esperando a que vuelva» sin poder seguir solo; al volver, «Ella pausó el juego» y cualquiera sigue. Afuera más de 2,5 min: se termina con aviso |
+| Mesa en línea: no había pausa de conexión; si el otro se iba, el que esperaba veía «Le toca a Ella» para siempre | `mesa/main.ts`, `mesa/canal.ts` | media | Pausa encima del tablero («salió de la app» o «se cortó la conexión»), se quita sola al volver y se vuelve a pedir la jugada perdida |
+| Casa en línea: al irse al fondo, el otro lo seguía viendo «en línea» hasta que se caía el canal (un minuto o más) | `casa/sincro.ts` | baja | Se quita la presencia al irse y se pone al volver |
+| La tele de YouTube sigue sonando en el fondo en el navegador (en la APK la pausa el WebView) | `casa/tele.ts` (no es de este frente) | media | **Pasado al frente de la tele**: `Tele` no tiene `pausar()`; ver «Para otros frentes» |
+
+Prueba nueva: `node scripts/probar-segundo-plano.mjs [casa,super,mesa] <base>` (la casa deja de dibujar y calla,
+el súper en línea y la mesa en línea muestran la pausa de conexión y retoman). Resultado: todo bien.
+
+## Base de datos (Supabase)
+
+Revisión de `supabase/esquema.sql`. Las reglas ya impedían que una pareja viera o cambiara la casa de otra (las 28
+pruebas de `probar_reglas.sql` siguen pasando), pero dentro de la API quedaban puertas abiertas. Los cambios están
+en **`supabase/cambios-pendientes.sql`** (el dueño lo pega en el SQL Editor; ver `docs/supabase.md`) con 23 pruebas
+nuevas en `supabase/pruebas/probar_cambios.sql`, todas bien en Postgres 16.
+
+| Hallazgo | Gravedad | Arreglo (pendiente de aplicar) |
+|---|---|---|
+| Las funciones `crear_pareja`, `unirse_pareja`, `guardar_casa`… se podían llamar sin sesión (Postgres da permiso a «public» por defecto) | baja | Solo `authenticated` |
+| Regla «personajes: todo»: cualquiera de los dos podía reescribir el personaje del otro | media | Cada uno escribe solo el suyo (`es_rol`) |
+| Eventos: se podían mandar a nombre del otro, reescribir lo que decían o borrarlos | media | Solo a nombre propio; de los mandados solo se cambia `visto` (permiso por columna) |
+| Recuerdos a nombre del otro | baja | Solo a nombre propio |
+| Adivinar el código de 6 letras: sin límite de intentos | media | 20 equivocados por hora y se bloquea un rato (el código que no existe vuelve vacío para poder anotar el intento; la app ya lo entiende) |
+| Crear casas sin límite | baja | Máximo 5 por celular |
+| La casa guardada, las fotos y los audios sin tamaño máximo | baja | Casa hasta 1 MB y de tipo objeto; fotos y audios hasta 5 MB |
+| Los eventos se acumulaban para siempre | baja | Los ya vistos de más de 30 días se borran solos al llegar uno nuevo |
+| Los audios de mensajes de voz que salen del buzón (se guardan los últimos 30) se quedan en el almacenamiento | baja | Pendiente (no hay regla para borrar archivos; se puede agregar cuando haga falta) |
+
+## Sincronización de la casa
+
+| Hallazgo | Dónde | Gravedad | Arreglo |
+|---|---|---|---|
+| Choque de versiones: si llegaba por el canal una versión más nueva del otro mientras se guardaba la propia, la respuesta del guardado la pisaba con la vieja (la casa se veía atrasada hasta el siguiente choque) | `sincro.ts` `cambiarCasa` | media | Solo se toma lo propio si es más nuevo que lo que ya llegó |
+| Sin internet, lo que hacía mi personaje no se subía y al volver se perdía (la lectura del servidor lo pisaba con lo viejo) | `sincro.ts` | alta | Queda pendiente y se sube al volver el internet (evento `online`) o al volver a la app, solo si sigue siendo lo último |
+| Si el canal en vivo se caía y volvía (internet intermitente), los besos y regalos de ese rato no llegaban hasta volver a abrir la app | `sincro.ts` | media | Al reconectarse el canal se vuelve a leer todo (los mimos pendientes se aplican una vez) |
+| Campos que trae una versión más nueva de la app (el otro celular actualizó y este no): cada guardado del celular viejo se los borraba | `modelo.ts` `normalizarCasa` | alta | Se conservan tal cual. `CAMPOS_CASA` lista los campos conocidos y TypeScript obliga a agregar ahí cada campo nuevo de `Casa` |
+| Notas, fechas y regalos con datos raros (sin id, mensaje que no es texto, quién/para quién inválido) rompían las hojas que los pintan | `modelo.ts` | media | Se normalizan (los regalos sin quién o para quién válido se descartan) |
+
+## Memoria (tarjeta gráfica) y fugas
+
+| Hallazgo | Dónde | Gravedad | Arreglo |
+|---|---|---|---|
+| Cada popó del perrito creaba 6 geometrías y 3 materiales que nunca se soltaban | `casa/patio.ts` | media | Piezas compartidas por todos |
+| Cada baño del perrito dejaba 16 burbujas en la tarjeta gráfica, y cada sacudida 26 gotitas | `casa/perro.ts` | media | Las burbujas se sueltan; una sola gotita compartida |
+| Escuchas, intervalos y temporizadores: revisados en casa, súper, mesa, reacciones y escenas | — | — | Sin huérfanos nuevos (los de las partidas en línea se limpian en `cerrarLinea`) |
+| Contextos WebGL: el cine (`escenas/cine.ts`) y el cohete los sueltan al salir | — | — | Bien |
+
+## Animaciones que se veían pobres o bruscas
+
+Módulo común nuevo `src/transiciones.ts` + `src/transiciones.css` (`salirSuave`, `avisoSuave`, `fundido`). Todo
+respeta «reducir movimiento» del celular.
+
+| Antes | Dónde | Ahora |
+|---|---|---|
+| Las hojas (tienda, notas, álbum, fechas…) y las ventanas (regalo, foto, confirmaciones) aparecían y desaparecían de golpe | casa | Entran con un saltico de resorte (el fondo se oscurece suave) y se van bajando y desvaneciendo. La salida la hace una copia sin toques, así la lógica no espera la animación |
+| Cambiar de cuarto era un corte seco | casa (`escena_casa.ts`) | El cuarto nuevo aparece desde el color del fondo en 0,36 s (no cambia ningún tiempo de la lógica) |
+| La lluvia de corazones caía en línea recta, todos girando igual y sin el tamaño que se les daba (la animación pisaba la escala) | casa | Cada corazón con su tamaño, su vaivén de lado a lado, su giro y su duración; se desvanecen al final |
+| Los globitos de pensamiento aparecían y desaparecían de golpe | casa | Se inflan con un saltico y se desinflan al irse |
+| Los botones de acción nuevos (al cambiar de cuarto, cuando llega la pareja) aparecían de golpe | casa | Entran escalonados con un saltico (los que no cambian se quedan quietos) |
+| Los avisos de abajo (toast) desaparecían de golpe; en la mesa ni siquiera entraban con animación | casa, súper, mesa | Entran con un brinquito y se van bajando |
+| La pantalla de carga se cortaba de golpe | casa, súper | Se desvanece y el logo se agranda un poquito |
+| Las monedas y los «¡Pum!» del súper solo subían derechito | súper | Saltan con un golpecito y después suben |
+| La hoja de la mesa (invitación, ayuda) desaparecía de golpe | mesa | Se va suave como las de la casa |

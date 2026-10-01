@@ -934,26 +934,35 @@ export class Patio {
 }
 
 /** Un popó de caricatura (tres bolitas en espiral) con su brillito. */
+/** Piezas del popó, hechas una sola vez y compartidas por todos (así recogerlos no deja memoria suelta en la
+ *  tarjeta gráfica: antes cada popó creaba 6 geometrías y 3 materiales que nunca se soltaban). */
+let piezasPopo: { bolas: THREE.SphereGeometry[]; punta: THREE.ConeGeometry; brillo: THREE.SphereGeometry; toque: THREE.SphereGeometry; mat: THREE.Material; matBrillo: THREE.Material; matToque: THREE.Material } | null = null;
+
 function popo(): THREE.Object3D {
+  piezasPopo ??= {
+    bolas: [0.075, 0.058, 0.038].map((r) => new THREE.SphereGeometry(r, 14, 10)),
+    punta: new THREE.ConeGeometry(0.02, 0.05, 10),
+    brillo: new THREE.SphereGeometry(0.012, 6, 5),
+    toque: new THREE.SphereGeometry(0.16, 8, 6),
+    mat: new THREE.MeshStandardMaterial({ color: '#7A4B2A', roughness: 0.5 }),
+    matBrillo: new THREE.MeshBasicMaterial({ color: '#ffffff' }),
+    matToque: new THREE.MeshBasicMaterial({ visible: false }),
+  };
+  const k = piezasPopo;
   const g = new THREE.Group();
-  const mat = new THREE.MeshStandardMaterial({ color: '#7A4B2A', roughness: 0.5 });
-  [
-    [0.075, 0.045],
-    [0.058, 0.1],
-    [0.038, 0.145],
-  ].forEach(([r, y]) => {
-    const m = new THREE.Mesh(new THREE.SphereGeometry(r, 14, 10), mat);
+  [0.045, 0.1, 0.145].forEach((y, i) => {
+    const m = new THREE.Mesh(k.bolas[i], k.mat);
     m.position.y = y;
     m.scale.y = 0.75;
     g.add(m);
   });
-  const punta = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.05, 10), mat);
+  const punta = new THREE.Mesh(k.punta, k.mat);
   punta.position.y = 0.18;
   g.add(punta);
-  const brillo = new THREE.Mesh(new THREE.SphereGeometry(0.012, 6, 5), new THREE.MeshBasicMaterial({ color: '#ffffff' }));
+  const brillo = new THREE.Mesh(k.brillo, k.matBrillo);
   brillo.position.set(-0.03, 0.12, 0.045);
   g.add(brillo);
   // Área de toque más grande que el dibujo
-  g.add(new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), new THREE.MeshBasicMaterial({ visible: false })));
+  g.add(new THREE.Mesh(k.toque, k.matToque));
   return g;
 }

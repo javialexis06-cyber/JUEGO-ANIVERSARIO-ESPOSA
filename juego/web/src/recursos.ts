@@ -15,10 +15,17 @@ const cacheAnimados = new Map<string, Promise<{ escena: THREE.Group; clips: THRE
 export async function elegirModelos() {
   try {
     await MeshoptDecoder.ready;
+    // Descomprimir los modelos en hilos aparte: la pantalla no se traba mientras cargan y en un celular de varios
+    // núcleos los cuartos y los personajes llegan antes (una sola vez por página)
+    if (!trabajadores && typeof Worker !== 'undefined') {
+      trabajadores = true;
+      (MeshoptDecoder as unknown as { useWorkers?: (n: number) => void }).useWorkers?.(Math.max(1, Math.min(2, (navigator.hardwareConcurrency || 2) - 1)));
+    }
   } catch {
     rutaModelos = './modelos-plano/';
   }
 }
+let trabajadores = false;
 
 let relieve: THREE.Texture | null = null;
 
@@ -209,6 +216,8 @@ export function cargar(nombre: string): Promise<THREE.Group> {
       return g.scene;
     });
     cache.set(nombre, p);
+    // Si falla (memoria, archivo a medias), la próxima vez se vuelve a intentar en vez de fallar siempre
+    p.catch(() => cache.get(nombre) === p && cache.delete(nombre));
   }
   return p;
 }
@@ -223,6 +232,7 @@ export function cargarAnimado(nombre: string): Promise<{ escena: THREE.Group; cl
       return { escena: g.scene, clips: g.animations };
     });
     cacheAnimados.set(nombre, p);
+    p.catch(() => cacheAnimados.get(nombre) === p && cacheAnimados.delete(nombre));
   }
   return p;
 }

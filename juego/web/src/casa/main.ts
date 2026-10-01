@@ -13,9 +13,10 @@ import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import * as THREE from 'three';
 import { aTres, Mundo } from '../mundo';
-import { elegirModelos, Productos } from '../recursos';
+import { cargar, cargarAnimado, elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
 import * as fondo from '../segundo_plano';
+import { salirSuave } from '../transiciones';
 import {
   BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, COLORES_TINTE, CONCEPTOS, type Concepto, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, LE_CAE_MAL, lePasa, paraSitio,
   piezasConcepto, precioConcepto, RAREZA, RAREZAS, TINTES, TipoItem, type TipoSitio,
@@ -111,6 +112,10 @@ async function iniciar() {
   // Con el tono AgX del dibujo en alta calidad este color queda en el mismo beige cálido de la interfaz
   mundo.escena.background = new THREE.Color('#e9d3c0');
   await elegirModelos();
+  // Los cuartos de siempre y los dos personajes se empiezan a descargar de una, a la par con los productos (se
+  // descomprimen en otros hilos): la casa abre antes
+  for (const k of ['sala', 'cocina', 'bano', 'cuarto']) void cargar(`casa_${k}.glb`).catch(() => undefined);
+  for (const r of ['el', 'ella']) void cargarAnimado(`${r}.glb`).catch(() => undefined);
   productos = await Productos.cargar();
   progreso(0.2, 'Acomodando los muebles…');
   casa3d = await Casa3D.cargar(mundo, productos, (k) => progreso(0.2 + k * 0.45));
@@ -140,6 +145,7 @@ async function iniciar() {
     },
     alCambiarModo: () => pintarAcciones(),
   });
+  salirSuave($('carga'));
   mostrar('carga', false);
   const modo = leerModo();
   modoGuardado = modo;

@@ -4,9 +4,11 @@ import { AYUDAS, BOLSA_BASURA } from './balance';
 import type { Juego, Resultado } from './juego';
 import { metaDe, textoDe } from './juego';
 import type { Jugador } from './jugador';
-import { aTres, Mundo } from './mundo';
+import * as THREE from 'three';
+import { Mundo } from './mundo';
 import type { P } from './navegacion';
 import { icono } from './recursos';
+import { avisoSuave, salirSuave } from './transiciones';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -15,6 +17,8 @@ export function mostrar(id: string, si = true) {
 }
 
 export function pantallaUnica(id: string | null) {
+  // La pantalla de carga se desvanece en vez de cortarse de golpe
+  if (id !== 'carga') salirSuave($('carga'));
   for (const p of ['carga', 'menu', 'tarjeta', 'resultado', 'mejoras', 'como', 'pausa', 'sala']) mostrar(p, p === id);
 }
 
@@ -64,6 +68,9 @@ const texto = (el: HTMLElement, v: string) => cambio(el, '#t', v) && (el.textCon
 const estilo = (el: HTMLElement, prop: 'transform' | 'width', v: string) => cambio(el, prop, v) && el.style.setProperty(prop, v);
 const dato = (el: HTMLElement, k: string, v: string) => cambio(el, `d-${k}`, v) && (el.dataset[k] = v);
 const mover = (el: HTMLElement, x: number, y: number) => estilo(el, 'transform', `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`);
+
+/** Punto de trabajo para pasar del piso a la pantalla (sin crear un vector por globo en cada cuadro). */
+const PUNTO = new THREE.Vector3();
 
 const div = (clase: string, html = '') => {
   const d = document.createElement('div');
@@ -169,7 +176,7 @@ export class UI {
   }
 
   private pos(p: P, z: number) {
-    return this.mundo.aPantalla(aTres(p.x, p.y, z));
+    return this.mundo.aPantalla(PUNTO.set(p.x, z, -p.y));
   }
 
   actualizar(j: Juego, dt: number) {
@@ -382,15 +389,10 @@ export class UI {
     }
   }
 
+  private relojAviso = { id: 0 };
+  /** Aviso abajo: entra con un brinquito y se va bajando suave. */
   aviso(texto: string) {
-    const t = $('toast');
-    t.textContent = texto;
-    t.hidden = false;
-    t.classList.remove('sale');
-    void t.offsetWidth;
-    t.classList.add('sale');
-    clearTimeout((t as any)._h);
-    (t as any)._h = setTimeout(() => (t.hidden = true), 2400);
+    avisoSuave($('toast'), texto, 2400, this.relojAviso);
   }
 
   /** Tiquete de caja con el resultado del día. */

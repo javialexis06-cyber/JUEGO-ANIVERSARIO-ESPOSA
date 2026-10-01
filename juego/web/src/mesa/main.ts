@@ -15,6 +15,7 @@ import { otro, type Rol } from '../casa/modelo';
 import { leer } from '../casa/sincro';
 import * as sonido from '../sonido';
 import { enPausa } from '../segundo_plano';
+import { avisoSuave, salirSuave } from '../transiciones';
 import { Canal, type Invitacion } from './canal';
 import { Escenario } from './escenario';
 import { type Entrada, JUEGOS } from './juegos';
@@ -68,13 +69,10 @@ const guardarPrefs = () => {
 
 // ---------------------------------------------------------------------------
 // Avisos y hojas
-let tAviso = 0;
+const relojAviso = { id: 0 };
+/** Aviso abajo: entra con un brinquito y se va bajando suave. */
 export function aviso(texto: string, ms = 2200) {
-  const a = $('aviso');
-  a.textContent = texto;
-  a.hidden = false;
-  clearTimeout(tAviso);
-  tAviso = window.setTimeout(() => (a.hidden = true), ms);
+  avisoSuave($('aviso'), texto, ms, relojAviso);
 }
 
 function hoja(html: string, botones: { texto: string; clase?: string; alTocar?: () => void }[]) {
@@ -87,6 +85,7 @@ function hoja(html: string, botones: { texto: string; clase?: string; alTocar?: 
     el.className = `boton ${b.clase ?? 'boton-papel'}`;
     el.textContent = b.texto;
     el.onclick = () => {
+      salirSuave(h);
       h.hidden = true;
       b.alTocar?.();
     };
