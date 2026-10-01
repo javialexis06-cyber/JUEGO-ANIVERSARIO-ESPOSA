@@ -14,6 +14,7 @@ import { Capacitor } from '@capacitor/core';
 import { otro, type Rol } from '../casa/modelo';
 import { leer } from '../casa/sincro';
 import * as sonido from '../sonido';
+import { enPausa } from '../segundo_plano';
 import { Canal, type Invitacion } from './canal';
 import { Escenario } from './escenario';
 import { type Entrada, JUEGOS } from './juegos';
@@ -141,7 +142,7 @@ class Partida {
   vista!: Vista<unknown, unknown>;
   private esperando: ((m: unknown) => void) | null = null;
   private turnoPermitido: Rol | null = null;
-  private terminada = false;
+  terminada = false;
   /** Movimientos jugados (en línea: el número de orden de cada mensaje). */
   n = 0;
   private recibidos = new Map<number, unknown>();
@@ -266,6 +267,11 @@ class Partida {
     if (n < this.n) return;
     this.recibidos.set(n, m);
     this.alRecibir?.();
+  }
+
+  /** Volvió de segundo plano: si estaba esperando la jugada del otro, la pide de una (se pudo perder afuera). */
+  alVolver() {
+    if (this.modo === 'linea' && !this.terminada && this.alRecibir) canal?.pedir(this.id, this.n);
   }
 
   private suceso(s: Suceso) {
@@ -404,6 +410,7 @@ async function jugar(entrada: Entrada, modo: Modo, opciones: { empieza?: Rol; id
   escenario ??= new Escenario($<HTMLCanvasElement>('escenario-lienzo'), $('efectos'), RAPIDO);
   await escenario.preparar(yo);
   const p = new Partida(juego, modo, prefs.nivel, empieza, opciones.id);
+  otroFuera = false;
   if (opciones.e !== undefined) {
     p.e = opciones.e;
     p.n = opciones.n ?? 0;
@@ -470,12 +477,44 @@ function alInvitacion(inv: Invitacion) {
   ]);
 }
 
+// ---------------------------------------------------------------------------
+// Conexión en línea: si el otro se va a segundo plano (otra app, pantalla bloqueada) o se le cae el internet, la
+// partida se pausa con «se cortó la conexión» hasta que vuelva
+let otroFuera = false;
+/** Desde cuándo se ve cortada (la presencia de Supabase titila un instante al reconectar: se espera un poquito). */
+let cortadaDesde = 0;
+function revisarConexion() {
+  const p = partida;
+  const enLinea = !!p && p.modo === 'linea' && !p.terminada && !!canal && $('final').hidden;
+  const cortada = enLinea && (otroFuera || !canal!.listo || !canal!.otroPresente);
+  if (!cortada) cortadaDesde = 0;
+  else if (!cortadaDesde) cortadaDesde = performance.now();
+  const ver = cortada && (otroFuera || performance.now() - cortadaDesde > 2500);
+  const caja = $('pausa-linea');
+  if (ver === !caja.hidden) return;
+  caja.hidden = !ver;
+  if (ver) {
+    $('pausa-linea-texto').textContent = otroFuera
+      ? `${nombreDe(otro(yo))} salió de la app un momentico… esperando a que vuelva.`
+      : `Se cortó la conexión con ${nombreDe(otro(yo))}… esperando a que vuelva.`;
+  } else if (enLinea) aviso(`¡${nombreDe(otro(yo))} volvió! Sigan jugando.`);
+}
+window.setInterval(() => {
+  if (!enPausa()) revisarConexion();
+}, 500);
+
 function iniciarCanal() {
   if (canal) return;
   canal = new Canal(yo, {
     alCambiar: () => {
       if (!$('menu').hidden) pintarMenu();
+      revisarConexion();
     },
+    alFuera: (si) => {
+      otroFuera = si;
+      revisarConexion();
+    },
+    alVolver: () => partida?.alVolver(),
     alInvitacion,
     alMovimiento: (id, n, m) => {
       if (partida && partida.id === id) partida.llegaMovimiento(n, m);
@@ -540,6 +579,13 @@ document.addEventListener('click', (ev) => {
     void lanzarEscena(b.dataset.escena, yo, true);
   } else if (b.id === 'btn-ayuda' && partida) {
     hoja(`<h3>${partida.juego.nombre}</h3>${partida.juego.ayuda}`, [{ texto: 'A jugar', clase: 'boton-tomate' }]);
+  } else if (b.id === 'btn-pausa-salir') {
+    partida?.abandonar();
+    partida = null;
+    otroFuera = false;
+    revisarConexion();
+    mostrar('menu');
+    pintarMenu();
   } else if (b.id === 'btn-salir') {
     hoja('<h3>¿Salir de la partida?</h3><p>Se pierde lo que llevan de esta partida.</p>', [
       { texto: 'Seguir jugando' },

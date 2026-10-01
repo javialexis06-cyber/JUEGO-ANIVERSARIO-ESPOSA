@@ -905,7 +905,8 @@ export class Patio {
       src.start();
       const t0 = performance.now();
       const medir = () => {
-        if (performance.now() - t0 > (dur + 0.3) * 1000) return;
+        // Al terminar, el audio se duerme (un AudioContext despierto gasta batería aunque no suene)
+        if (performance.now() - t0 > (dur + 0.3) * 1000) return void ctx.suspend().catch(() => undefined);
         an.getByteTimeDomainData(datos);
         let s = 0;
         for (const v of datos) s += ((v - 128) / 128) ** 2;
