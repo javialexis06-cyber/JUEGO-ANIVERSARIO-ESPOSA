@@ -1,5 +1,6 @@
 // Recortes para la cocina de chef (fondo transparente): los invitados que llegan a comer (los mismos muñecos del
-// súper) y Él y Ella vestidos de chef. Lo usa scripts/generar-sprites-cocina.mjs en un navegador.
+// súper, con las poses de Él y Ella: caminar, esperar, impacientarse, comer y reaccionar), la pareja de visita y Él y
+// Ella vestidos de chef. Lo usa scripts/generar-sprites-cocina.mjs en un navegador.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Vestuario } from '../src/casa/ropa';
@@ -18,7 +19,8 @@ export interface Pedido {
 /** Dibuja el modelo `clave` (el, ella o un cliente del súper) en cada pose y devuelve los recortes en webp. */
 export async function generar(clave: string, pedidos: Pedido[], opciones: { alto?: number; ropa?: Ropa; clipsDe?: string } = {}): Promise<Record<string, string>> {
   const alto = opciones.alto ?? 320;
-  const W = 700, H = 860;
+  // El lienzo de render crece con el alto pedido (los recortes grandes salen nítidos, sin estirar)
+  const H = Math.max(860, Math.round(alto * 1.75)), W = Math.round(H * 0.82);
   const lienzo = document.createElement('canvas');
   lienzo.width = W;
   lienzo.height = H;
@@ -99,7 +101,7 @@ export async function generar(clave: string, pedidos: Pedido[], opciones: { alto
     const g = out.getContext('2d')!;
     g.imageSmoothingQuality = 'high';
     g.drawImage(lienzo, x0, y0, x1 - x0 + 1, y1 - y0 + 1, 0, 0, out.width, out.height);
-    salida[pd.nombre] = out.toDataURL('image/webp', 0.88);
+    salida[pd.nombre] = out.toDataURL('image/webp', 0.86);
   }
   renderer.dispose();
   return salida;

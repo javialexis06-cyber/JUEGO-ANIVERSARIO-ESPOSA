@@ -45,8 +45,9 @@ def mat_salsa(nombre, color, rough=0.12, alpha=1.0):
 
 
 def mat_liquido(nombre, color, trans=0.6, rough=0.04):
-    """Jugos y almíbares: translúcidos (dejan pasar la luz) con su color."""
-    return M(f'Líquido | {nombre}', color, rough=rough, transmission=trans, ior=1.34, sss=0.3, sss_scale=0.01, spec=0.5)
+    """Jugos y almíbares: con su color vivo, un brillo y un poquito de luz por dentro."""
+    return M(f'Líquido | {nombre}', color, rough=rough, transmission=min(trans, 0.12), ior=1.34, sss=0.5, sss_radius=(1, 0.6, 0.3), sss_scale=0.02,
+             coat=0.5, spec=0.5)
 
 
 def mat_crema(nombre='crema', color='#FFFBF2', sss=0.35):
@@ -54,12 +55,30 @@ def mat_crema(nombre='crema', color='#FFFBF2', sss=0.35):
              noise=dict(scale=260, strength=0.15, distance=0.0006))
 
 
+def sin_sombra(m):
+    """El vidrio deja pasar la luz para las sombras (si no, lo de adentro de un frasco queda negro: sin cáusticas,
+    Cycles no deja pasar la luz por el vidrio)."""
+    nt = m.node_tree
+    if any(n.type == 'MIX_SHADER' for n in nt.nodes):
+        return m
+    out = next(n for n in nt.nodes if n.type == 'OUTPUT_MATERIAL')
+    bsdf = next(n for n in nt.nodes if n.type == 'BSDF_PRINCIPLED')
+    lp = nt.nodes.new('ShaderNodeLightPath')
+    tr = nt.nodes.new('ShaderNodeBsdfTransparent')
+    mix = nt.nodes.new('ShaderNodeMixShader')
+    nt.links.new(lp.outputs['Is Shadow Ray'], mix.inputs['Fac'])
+    nt.links.new(bsdf.outputs['BSDF'], mix.inputs[1])
+    nt.links.new(tr.outputs['BSDF'], mix.inputs[2])
+    nt.links.new(mix.outputs['Shader'], out.inputs['Surface'])
+    return m
+
+
 def mat_vidrio(nombre='vidrio', color='#F4FBFF', rough=0.02, ior=1.45):
-    return M(f'Vidrio | {nombre}', color, rough=rough, transmission=1.0, ior=ior, spec=0.6)
+    return sin_sombra(M(f'Vidrio | {nombre}', color, rough=rough, transmission=1.0, ior=ior, spec=0.6))
 
 
 def mat_plastico_claro(nombre='plástico', color='#FBFEFF', rough=0.05):
-    return M(f'Plástico | {nombre}', color, rough=rough, transmission=1.0, ior=1.4, spec=0.55)
+    return sin_sombra(M(f'Plástico | {nombre}', color, rough=rough, transmission=1.0, ior=1.4, spec=0.55))
 
 
 def mat_metal(nombre='acero', color='#C9CED2', rough=0.22):
@@ -592,7 +611,7 @@ def construir_tapa_wafflera(coll):
     clay.lathe('perilla', [(0.0, 0.054), (0.012, 0.054), (0.014, 0.062), (0.01, 0.07), (0.0, 0.071)], coll,
                M('baquelita', '#1C1A19', rough=0.3, coat=0.5), segments=32)
     clay.lathe('base perilla', [(0.0, 0.0545), (0.016, 0.0545), (0.017, 0.056), (0.0, 0.0562)], coll, acero, segments=32)
-    gotas = M('gotas', '#FFFFFF', rough=0.02, transmission=1.0, ior=1.33)
+    gotas = sin_sombra(M('gotas', '#FFFFFF', rough=0.02, transmission=1.0, ior=1.33))
     rng = RNG(11)
     for k in range(60):
         t = rng.uniform(0.15, 1.35)
@@ -780,7 +799,7 @@ def corte_fresa(coll, tipo, R=0.022):
             a = j * (n_u + 1) + i
             faces.append((a, a + 1, a + n_u + 2, a + n_u + 1))
     cara = clay.make_mesh_object('cara', verts, faces, coll,
-                                 material=mat_vc('pulpa fresa', rough=0.3, coat=0.25, sss=0.08, brillo_var=0.06,
+                                 material=mat_vc('pulpa fresa', rough=0.32, coat=0.2, sss=0.0, brillo_var=0.06,
                                                  ruido=dict(scale=1400, strength=0.15, distance=0.00015)))
 
     def color(pos):
@@ -908,8 +927,8 @@ def rodaja_kiwi(coll):
     def color(pos):
         r = np.sqrt(pos[:, 0] ** 2 + pos[:, 1] ** 2) / R
         a = np.arctan2(pos[:, 1], pos[:, 0])
-        c = mezcla(lin('#F3F0C8'), lin('#A9CF4E'), clay.smoothstep(0.2, 0.42, r))
-        c = mezcla(c, lin('#6FA42C'), clay.smoothstep(0.5, 0.95, r))
+        c = mezcla(lin('#F1EDB8'), lin('#86C232'), clay.smoothstep(0.2, 0.42, r))
+        c = mezcla(c, lin('#4E8E18'), clay.smoothstep(0.5, 0.95, r))
         rayos = 0.08 * np.sin(a * 46)
         return c * (1 + rayos[:, None] * clay.smoothstep(0.35, 0.6, r)[:, None])
     pintar(cara, color)
@@ -1292,7 +1311,7 @@ def construir_vaso_plastico(tabla, tam, logo=None):
 
 def cubo_hielo(coll, s=0.012, semilla=0):
     rng = RNG(semilla)
-    hielo = M('hielo', '#F4FBFF', rough=0.12, transmission=0.92, ior=1.31, noise=dict(scale=300, strength=0.3, distance=0.0006))
+    hielo = sin_sombra(M('hielo', '#F4FBFF', rough=0.12, transmission=0.92, ior=1.31, noise=dict(scale=300, strength=0.3, distance=0.0006)))
 
     def shp(v):
         return v * np.array([s, s * 0.95, s * 0.9]) + rng.normal(0, s * 0.03, v.shape)
@@ -1537,7 +1556,7 @@ def construir_ingrediente(cual):
 
 def construir_manga(coll):
     """Manga pastelera llena de crema, con boquilla de estrella (apunta hacia abajo a la izquierda)."""
-    pl = M('manga', '#FDFEFF', rough=0.15, transmission=0.6, ior=1.4)
+    pl = sin_sombra(M('manga', '#FDFEFF', rough=0.15, transmission=0.6, ior=1.4))
     crema = mat_crema('crema manga')
 
     def cono(r0, r1, z0, z1, mat, nombre):
@@ -1591,7 +1610,7 @@ def construir_hielera_pala(coll):
     for k in range(28):
         x, y = rng.uniform(-W * 0.82, W * 0.82), rng.uniform(-D * 0.78, D * 0.78)
         grupo(coll, lambda c, k=k: cubo_hielo(c, 0.01, k + 50), loc=(x, y, H * 0.85 + rng.uniform(-0.004, 0.006)))
-    pala = M('pala', '#E9F6FF', rough=0.08, transmission=0.85, ior=1.45)
+    pala = sin_sombra(M('pala', '#E9F6FF', rough=0.08, transmission=0.85, ior=1.45))
     clay.blob('pala', (W * 0.3, -D * 0.1, H * 1.08), (0.03, 0.02, 0.012), coll, pala, n=8,
               shaper=lambda v: v + np.array([0, 0, 0.4]) * np.clip(np.abs(v[:, 1:2]), 0, 1))
     tubo('mango pala', [(W * 0.55, -D * 0.2, H * 1.12), (W * 0.95, -D * 0.35, H * 1.2), (W * 1.25, -D * 0.45, H * 1.24)], 0.006, coll, pala, seg=10)
