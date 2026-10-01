@@ -69,21 +69,22 @@ def desatascador(ctx):
     loc, n = punto_cabeza(ctx, 0, 32, 0.0)
     n = np.array(n)
     rojo = ctx.m('copa', '#D93A3A', tipo='brillo')
-    copa = clay.lathe(ctx.nombre('copa desatascador'), [(0.0, 0.22), (0.05, 0.22), (0.12, 0.17), (0.2, 0.06), (0.24, 0.0), (0.21, -0.01), (0.0, 0.03)], ctx.coll, rojo,
-                      segments=32)
+    K = 2.2
+    copa = clay.lathe(ctx.nombre('copa desatascador'), [(0.0, 0.22 * K), (0.05 * K, 0.22 * K), (0.12 * K, 0.17 * K), (0.2 * K, 0.06 * K), (0.24 * K, 0.0),
+                                                        (0.21 * K, -0.01 * K), (0.0, 0.03 * K)], ctx.coll, rojo, segments=32)
     apuntar(copa, n)
     copa.location = tuple(loc - n * 0.02)
     pieza(ctx, copa)
-    tip = loc + n * 0.22
-    palo_fin = loc + n * 0.95 + np.array([0, 0, 0.12])
-    pieza(ctx, clay.sweep(ctx.nombre('palo desatascador'), [tip, (tip + palo_fin) / 2, palo_fin], 0.05, (1, 1), ctx.coll,
+    tip = loc + n * 0.45
+    palo_fin = loc + n * 1.9 + np.array([0, 0, 0.3])
+    pieza(ctx, clay.sweep(ctx.nombre('palo desatascador'), [tip, (tip + palo_fin) / 2, palo_fin], 0.09, (1, 1), ctx.coll,
                           ctx.m('palo', '#C9956A', tipo='lisa'), segments=10, samples=3))
-    pieza(ctx, clay.blob(ctx.nombre('tapa palo'), tuple(palo_fin), (0.06, 0.06, 0.06), ctx.coll, ctx.m('tapa palo', '#2456C9', tipo='brillo'), n=5))
+    pieza(ctx, clay.blob(ctx.nombre('tapa palo'), tuple(palo_fin), (0.12, 0.12, 0.12), ctx.coll, ctx.m('tapa palo', '#2456C9', tipo='brillo'), n=5))
     # Rayitas de «pegado» alrededor de la copa
     for k in range(3):
         a = math.radians(-40 + k * 40)
-        p0 = loc + np.array([math.sin(a) * 0.3, -0.05, math.cos(a) * 0.3])
-        pieza(ctx, clay.sweep(ctx.nombre(f'rayita {k}'), [p0, p0 + np.array([math.sin(a) * 0.12, -0.04, math.cos(a) * 0.12])], 0.012, (1, 1), ctx.coll,
+        p0 = loc + np.array([math.sin(a) * 0.62, -0.12, math.cos(a) * 0.62])
+        pieza(ctx, clay.sweep(ctx.nombre(f'rayita {k}'), [p0, p0 + np.array([math.sin(a) * 0.22, -0.06, math.cos(a) * 0.22])], 0.025, (1, 1), ctx.coll,
                               ctx.m('rayitas', '#FFFFFF', tipo='lisa'), segments=5, samples=2))
 
 
@@ -107,9 +108,9 @@ def ducha(ctx):
         if loc is None:
             continue
         n = np.array(n)
-        pieza(ctx, clay.blob(ctx.nombre(f'patito {k}'), tuple(loc), (0.07, 0.05, 0.045), ctx.coll, amarillo, n=6))
-        pieza(ctx, clay.blob(ctx.nombre(f'cabeza patito {k}'), tuple(loc + n * 0.04 + np.array([0.04, 0, 0.02])), (0.035, 0.035, 0.035), ctx.coll, amarillo, n=5))
-        pieza(ctx, clay.blob(ctx.nombre(f'pico patito {k}'), tuple(loc + n * 0.05 + np.array([0.075, 0, 0.015])), (0.02, 0.012, 0.01), ctx.coll, naranja, n=4))
+        pieza(ctx, clay.blob(ctx.nombre(f'patito {k}'), tuple(loc + n * 0.03), (0.15, 0.11, 0.09), ctx.coll, amarillo, n=6))
+        pieza(ctx, clay.blob(ctx.nombre(f'cabeza patito {k}'), tuple(loc + n * 0.11 + np.array([0.08, 0, 0.04])), (0.075, 0.075, 0.075), ctx.coll, amarillo, n=5))
+        pieza(ctx, clay.blob(ctx.nombre(f'pico patito {k}'), tuple(loc + n * 0.12 + np.array([0.16, 0, 0.03])), (0.045, 0.025, 0.02), ctx.coll, naranja, n=4))
 
 
 @casco('rollo')
@@ -118,8 +119,8 @@ def rollo(ctx):
     t = tope(ctx)
     papel = ctx.m('papel', '#FBFBF6', tipo='tela')
     carton = ctx.m('cartón', '#C9A27A', tipo='lisa')
-    c = t + np.array([0, 0.02, -0.16])
-    r, h, hueco = 0.42, 0.42, 0.14
+    c = t + np.array([0, 0.02, -0.2])
+    r, h, hueco = 0.62, 0.6, 0.2
     perfil = [(hueco, 0), (r - 0.03, 0), (r, 0.03), (r, h - 0.03), (r - 0.03, h), (hueco, h)]
     o = clay.lathe(ctx.nombre('rollo sombrero'), perfil, ctx.coll, papel, segments=40, cap_bottom=False, cap_top=False)
     o.location = tuple(c)
@@ -131,7 +132,7 @@ def rollo(ctx):
     # La tira que cae por el lado derecho hasta el hombro
     x0 = c[0] + r
     pts = [(x0, c[1] - 0.05, c[2] + h * 0.8), (x0 + 0.04, c[1] - 0.08, c[2] + h * 0.3), (x0 + 0.06, c[1] - 0.1, c[2] - 0.3), (x0 + 0.02, c[1] - 0.12, c[2] - 0.75)]
-    pieza(ctx, clay.sweep(ctx.nombre('tira sombrero'), pts, 0.16, (0.12, 1.0), ctx.coll, papel, segments=6, samples=5, up=(1, 0, 0), caps=('flat', 'flat')))
+    pieza(ctx, clay.sweep(ctx.nombre('tira sombrero'), pts, 0.26, (0.1, 1.0), ctx.coll, papel, segments=6, samples=5, up=(1, 0, 0), caps=('flat', 'flat')))
     # Linea de picado cada tanto
     for k in range(3):
         z = c[2] + h * 0.1 - k * 0.3
@@ -139,11 +140,11 @@ def rollo(ctx):
                               ctx.m('picado', '#D8D4CA', tipo='lisa'), segments=4, samples=2))
     # Un moñito rosado
     for lado in (-1, 1):
-        lz = clay.blob(ctx.nombre(f'moño rollo {lado}'), (0, 0, 0), (0.09, 0.03, 0.06), ctx.coll, ctx.m('moño', '#F2649A', tipo='brillo'), n=5)
-        lz.location = tuple(c + np.array([-0.2 + lado * 0.08, -r * 0.94, h * 0.55]))
+        lz = clay.blob(ctx.nombre(f'moño rollo {lado}'), (0, 0, 0), (0.16, 0.05, 0.11), ctx.coll, ctx.m('moño', '#F2649A', tipo='brillo'), n=5)
+        lz.location = tuple(c + np.array([-0.25 + lado * 0.14, -r * 0.94, h * 0.55]))
         lz.rotation_euler = (0, lado * 0.4, 0)
         pieza(ctx, lz)
-    pieza(ctx, clay.blob(ctx.nombre('nudo moño rollo'), tuple(c + np.array([-0.2, -r * 0.96, h * 0.55])), (0.035, 0.03, 0.035), ctx.coll,
+    pieza(ctx, clay.blob(ctx.nombre('nudo moño rollo'), tuple(c + np.array([-0.25, -r * 0.98, h * 0.55])), (0.06, 0.05, 0.06), ctx.coll,
                          ctx.m('moño', '#F2649A', tipo='brillo'), n=4))
 
 
@@ -152,7 +153,7 @@ def antenas(ctx):
     """Diadema con dos antenas de resorte y bolitas verdes que brillan."""
     from ropa_accesorios import diadema
     verde = ctx.m('diadema marciano', '#7CD957', tipo='brillo')
-    diadema(ctx, verde, lift=0.03)
+    diadema(ctx, verde, lift=0.05, grosor=0.06)
     luzv = ctx.m('bolita antena', '#B6FF6B', tipo='luz')
     for sx in (-1, 1):
         loc, n = punto_cabeza(ctx, sx * 60, 62, 0.04)
@@ -161,9 +162,9 @@ def antenas(ctx):
         pts = [loc]
         for k in range(1, 9):
             t = k / 8
-            pts.append(loc + np.array([sx * 0.18 * t + 0.03 * math.cos(k * 2.2), 0.03 * math.sin(k * 2.2), 0.55 * t]))
-        pieza(ctx, clay.sweep(ctx.nombre(f'resorte {sx}'), pts, 0.022, (1, 1), ctx.coll, verde, segments=6, samples=4))
-        pieza(ctx, clay.blob(ctx.nombre(f'bolita {sx}'), tuple(pts[-1] + np.array([0, 0, 0.07])), (0.09, 0.09, 0.09), ctx.coll, luzv, n=7))
+            pts.append(loc + np.array([sx * 0.4 * t + 0.07 * math.cos(k * 2.2), 0.07 * math.sin(k * 2.2), 1.0 * t]))
+        pieza(ctx, clay.sweep(ctx.nombre(f'resorte {sx}'), pts, 0.04, (1, 1), ctx.coll, verde, segments=6, samples=4))
+        pieza(ctx, clay.blob(ctx.nombre(f'bolita {sx}'), tuple(pts[-1] + np.array([0, 0, 0.14])), (0.17, 0.17, 0.17), ctx.coll, luzv, n=7))
 
 
 @casco('aviador')
@@ -227,12 +228,11 @@ def vikingo(ctx):
         loc, n = punto_cabeza(ctx, sx * 90, 45, 0.06)
         if loc is None:
             continue
-        pts = [loc, loc + np.array([sx * 0.22, -0.02, 0.08]), loc + np.array([sx * 0.38, -0.04, 0.3]), loc + np.array([sx * 0.4, -0.06, 0.55])]
-        pieza(ctx, clay.sweep(ctx.nombre(f'cuerno {sx}'), pts, [0.11, 0.08, 0.05, 0.015], (1, 1), ctx.coll, hueso, segments=12, samples=5, caps=('round', 'point')))
+        pts = [loc - np.array([sx * 0.05, 0, 0]), loc + np.array([sx * 0.45, -0.04, 0.12]), loc + np.array([sx * 0.78, -0.08, 0.55]), loc + np.array([sx * 0.8, -0.1, 1.05])]
+        pieza(ctx, clay.sweep(ctx.nombre(f'cuerno {sx}'), pts, [0.24, 0.17, 0.09, 0.02], (1, 1), ctx.coll, hueso, segments=12, samples=6, caps=('round', 'point')))
         for k in range(2):
-            t = 0.25 + k * 0.25
-            c = loc + np.array([sx * 0.22 * t * 3, -0.02, 0.08 * t * 2])
-            pieza(ctx, clay.blob(ctx.nombre(f'anillo cuerno {sx}{k}'), tuple(c), (0.06, 0.1, 0.1), ctx.coll, oro, n=5))
+            c = loc + np.array([sx * (0.25 + k * 0.22), -0.03, 0.05 + k * 0.08])
+            pieza(ctx, clay.blob(ctx.nombre(f'anillo cuerno {sx}{k}'), tuple(c), (0.06, 0.2, 0.2), ctx.coll, oro, n=5))
 
 
 @casco('astronauta', oculta=())
@@ -242,7 +242,7 @@ def astronauta(ctx):
     rmax = max(radio_cabeza(ctx, a, e) for a in range(-180, 180, 30) for e in (0, 30, 60, 89))
     R = rmax + 0.1
     c = hc + np.array([0, 0, 0.04])
-    burbuja = clay.blob(ctx.nombre('burbuja casco'), tuple(c), (R, R, R), ctx.coll, vidrio(ctx, 'vidrio casco', '#CFEFFF', 0.18), n=14)
+    burbuja = clay.blob(ctx.nombre('burbuja casco'), tuple(c), (R, R, R), ctx.coll, vidrio(ctx, 'vidrio casco', '#EAF8FF', 0.08), n=14)
     pieza(ctx, burbuja)
     blanco = ctx.m('collar casco', '#F4F6FA', tipo='brillo')
     zc = c[2] - R * 0.82
@@ -274,14 +274,15 @@ def astronauta(ctx):
 def galactica(ctx):
     """Corona galáctica: un aro de luz flotando con planeticas, un anillito y estrellas."""
     t = tope(ctx)
-    c = t + np.array([0, 0.0, 0.06])
+    c = t + np.array([0, 0.0, 0.16])
     oro = ctx.m('aro galáctico', '#FFD23F', tipo='metal')
-    pts = [(c[0] + 0.48 * math.cos(a), c[1] + 0.42 * math.sin(a), c[2] + 0.05 * math.sin(2 * a)) for a in np.linspace(0, 2 * math.pi, 24, endpoint=False)]
-    pieza(ctx, clay.sweep(ctx.nombre('aro galáctico'), pts, 0.022, (1, 1), ctx.coll, oro, segments=6, samples=3, closed=True))
-    planetas = (('#7FB8FF', 0.08), ('#FF8FB1', 0.06), ('#8FE3C8', 0.07), ('#F7A23A', 0.05))
+    RX, RY = 0.78, 0.66
+    pts = [(c[0] + RX * math.cos(a), c[1] + RY * math.sin(a), c[2] + 0.08 * math.sin(2 * a)) for a in np.linspace(0, 2 * math.pi, 28, endpoint=False)]
+    pieza(ctx, clay.sweep(ctx.nombre('aro galáctico'), pts, 0.04, (1, 1), ctx.coll, oro, segments=6, samples=3, closed=True))
+    planetas = (('#7FB8FF', 0.16), ('#FF8FB1', 0.12), ('#8FE3C8', 0.14), ('#F7A23A', 0.1))
     for k, (col, r) in enumerate(planetas):
         a = 2 * math.pi * k / 4 + 0.4
-        p = (c[0] + 0.48 * math.cos(a), c[1] + 0.42 * math.sin(a), c[2] + 0.05 * math.sin(2 * a) + r * 0.6)
+        p = (c[0] + RX * math.cos(a), c[1] + RY * math.sin(a), c[2] + 0.08 * math.sin(2 * a) + r * 0.7)
         pieza(ctx, clay.blob(ctx.nombre(f'planeta {k}'), p, (r, r, r), ctx.coll, ctx.m(f'planeta {k}', col, tipo='brillo'), n=7))
         if k == 0:
             anillo = clay.lathe(ctx.nombre('anillito'), [(r * 1.35, -0.006), (r * 1.8, -0.006), (r * 1.8, 0.006), (r * 1.35, 0.006)], ctx.coll,
@@ -292,8 +293,8 @@ def galactica(ctx):
     from casa import estrella_plana
     for k in range(5):
         a = 2 * math.pi * k / 5 + 1.1
-        p = (c[0] + 0.5 * math.cos(a), c[1] + 0.44 * math.sin(a), c[2] + 0.2 + 0.06 * (k % 2))
-        e = estrella_plana(ctx.nombre(f'estrella {k}'), (0, 0, 0), 0.06, ctx.coll, ctx.m('estrella', '#FFF2A8', tipo='luz'), grosor=0.02)
+        p = (c[0] + RX * 1.05 * math.cos(a), c[1] + RY * 1.05 * math.sin(a), c[2] + 0.3 + 0.1 * (k % 2))
+        e = estrella_plana(ctx.nombre(f'estrella {k}'), (0, 0, 0), 0.13, ctx.coll, ctx.m('estrella', '#FFF2A8', tipo='luz'), grosor=0.04)
         e.location = p
         pieza(ctx, e)
 
