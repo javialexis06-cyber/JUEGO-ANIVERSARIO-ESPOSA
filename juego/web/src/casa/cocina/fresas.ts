@@ -1,24 +1,26 @@
 // La fresería (fresas con crema a la colombiana, estilo Papa's Freezeria/Cupcakeria): en «Picar» se escoge el vaso
-// y se cortan las fresas deslizando el dedo (en mitades, cuartos o láminas, bien por el centro); en «Batir» se echa
-// la crema de leche hasta la rayita, la leche condensada a cucharadas y se bate hasta el punto (suave o firme, sin
-// que se corte); en «Servir» se baña con la crema y se decora: queso rallado, leche condensada, arequipe, chispitas…
+// y se cortan las fresas deslizando el cuchillo (en mitades, cuartos o láminas, bien por el centro); en «Batir» se
+// echa la crema de leche hasta la rayita, la leche condensada a cucharadas y se bate hasta el punto (suave o firme,
+// sin que se corte); en «Servir» se baña con la crema y se decora: queso rallado, leche condensada, arequipe…
+// En pareja las batidoras son de los dos; cada uno tiene su tabla de picar.
+import { aclarar, dentro, elipse, fresa, G, lineal, mezclar, oscurecer, Rect, rr, sombra, texto } from './dibujo';
 import {
-  aclarar, boton, conAlfa, dentro, elipse, fresa, fresaCorte, G, lineal, oscurecer, radial, Rect, rr, sombra, texto,
-} from './dibujo';
-import {
-  Aplicador, aUV, botonBotar, botonEntregar, botonesToppings, calificarToppings, dibujarBotonesToppings, dibujarGuia, dibujarSuperficie,
-  filaTopping, medidor, Ovalo, puntajeCuenta, puntajeNivel, puntajeZona, rayita, separador, Superficie, superficieNueva, ToppingDef,
-  ToppingPedido,
+  Aplicador, aUV, botonBotar, botonEntregar, botonesToppings, calificarToppings, dibujarBotonesToppings, dibujarEnMano, dibujarGuia, dibujarSuperficie,
+  filaTopping, letra, medidor, Ovalo, puntajeCuenta, puntajeNivel, puntajeZona, rayita, separador, Superficie, superficieNueva, ToppingDef, ToppingPedido,
 } from './herramientas';
+import type { Invitado } from './invitados';
 import { BARRA, Categoria, Estacion, Motor, Receta, RIEL, sonidos, Ticket } from './motor';
+import { fondoEstacion } from './pantallas';
+import { hay, punto, recorte, spr } from './sprites';
 import type { Desbloqueo, Mejora } from './tipos';
+import { caminoInterior, chorro, GeoVaso, geoVaso, radioEn, yEn, zNivel } from './vasos';
 
 // ---------------------------------------------------------------------------------------------- Ingredientes
 type Tam = 'P' | 'M' | 'G';
-const VASOS: Record<Tam, { nombre: string; esc: number; fresas: number; desde: number }> = {
-  P: { nombre: 'Pequeño', esc: 0.85, fresas: 3, desde: 1 },
-  M: { nombre: 'Mediano', esc: 1, fresas: 4, desde: 1 },
-  G: { nombre: 'Grande', esc: 1.15, fresas: 5, desde: 2 },
+const VASOS: Record<Tam, { nombre: string; fresas: number; desde: number; rb: number; rt: number; alto: number }> = {
+  P: { nombre: 'Pequeño', fresas: 3, desde: 1, rb: 0.03, rt: 0.042, alto: 0.085 },
+  M: { nombre: 'Mediano', fresas: 4, desde: 1, rb: 0.034, rt: 0.048, alto: 0.1 },
+  G: { nombre: 'Grande', fresas: 5, desde: 2, rb: 0.038, rt: 0.054, alto: 0.115 },
 };
 type Corte = 'mitades' | 'cuartos' | 'laminas';
 interface Linea {
@@ -71,7 +73,6 @@ interface FresaPicada {
   valor: number;
 }
 interface Tazon {
-  ticket: number;
   nivel: number;
   dulce: number;
   sabor: Record<string, number>;
@@ -87,7 +88,7 @@ interface ObraFresas {
   sup: Superficie;
 }
 
-function pedido(rango: number, _dia: number, azar: () => number): PedidoFresas {
+function pedido(rango: number, _dia: number, azar: () => number, inv?: Invitado): PedidoFresas {
   const tomar = <T,>(l: T[]) => l[Math.floor(azar() * l.length)];
   const vasos = (Object.keys(VASOS) as Tam[]).filter((k) => VASOS[k].desde <= rango);
   const cortes = (Object.keys(CORTES) as Corte[]).filter((k) => CORTES[k].desde <= rango);
@@ -101,8 +102,10 @@ function pedido(rango: number, _dia: number, azar: () => number): PedidoFresas {
   // El queso siempre abajo (así se come en Colombia) y las piezas encima
   elegidos.sort((a, b) => (a.id === 'queso' ? -1 : b.id === 'queso' ? 1 : 0) || (a.tipo === 'pieza' ? 1 : 0) - (b.tipo === 'pieza' ? 1 : 0));
   const sabores = SABORES.filter((s) => s.desde <= rango);
+  // La pareja las pide gigantes (como las de Amor y Amistad)
+  const pareja = inv?.especial === 'pareja';
   return {
-    vaso: tomar(vasos),
+    vaso: pareja ? vasos[vasos.length - 1] : tomar(vasos),
     corte: tomar(cortes),
     punto: rango >= 2 && azar() < 0.45 ? 'firme' : 'suave',
     dulce: 1 + Math.floor(azar() * (rango >= 3 ? 3 : 2)),
@@ -115,23 +118,41 @@ function pedido(rango: number, _dia: number, azar: () => number): PedidoFresas {
   };
 }
 
-// ---------------------------------------------------------------------------------------------- Dibujos
-/** Una fresa cortada: cada pedazo se corre un poquito de las líneas de corte (y se ve lo clarito de adentro). */
+// ---------------------------------------------------------------------------------------------- La fresa en la tabla
+/** Pulpa vista por el corte: borde rojo, carne rosada y el corazón blanco (una franjita a lo largo del corte). */
+function caraCorte(g: G, x0: number, y0: number, x1: number, y1: number, ancho: number) {
+  const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy) || 1;
+  const nx = -dy / L, ny = dx / L;
+  const gr = g.createLinearGradient(x0 + nx * ancho, y0 + ny * ancho, x0 - nx * ancho, y0 - ny * ancho);
+  gr.addColorStop(0, '#c8102e');
+  gr.addColorStop(0.25, '#f06a78');
+  gr.addColorStop(0.5, '#fff0ee');
+  gr.addColorStop(0.75, '#f06a78');
+  gr.addColorStop(1, '#c8102e');
+  g.strokeStyle = gr;
+  g.lineWidth = ancho * 2;
+  g.lineCap = 'butt';
+  g.beginPath();
+  g.moveTo(x0, y0);
+  g.lineTo(x1, y1);
+  g.stroke();
+}
+
+/** Una fresa (vista desde arriba en la tabla) cortada: cada pedazo se corre de las líneas de corte y deja ver la pulpa. */
 function fresaCortada(g: G, x: number, y: number, s: number, cortes: Linea[], sep = 7) {
+  const dibujarFresa = () => {
+    if (!spr(g, 'fresa_grande', x, y, s)) fresa(g, x, y, s);
+  };
   const n = cortes.length;
-  if (!n) return fresa(g, x, y, s);
+  if (!n) return dibujarFresa();
   for (let k = 0; k < 1 << n; k++) {
     g.save();
     let dx = 0, dy = 0;
-    g.beginPath();
-    g.rect(x - s * 2, y - s * 2, s * 4, s * 4);
-    g.clip();
     cortes.forEach((c, i) => {
       const lado = k & (1 << i) ? 1 : -1;
-      // Normal de la línea y el semiplano de este pedazo
       const nx = -Math.sin(c.a), ny = Math.cos(c.a);
       const px = x + nx * c.d * s, py = y + ny * c.d * s;
-      const L = s * 4;
+      const L = s * 5;
       g.beginPath();
       g.moveTo(px - Math.cos(c.a) * L, py - Math.sin(c.a) * L);
       g.lineTo(px + Math.cos(c.a) * L, py + Math.sin(c.a) * L);
@@ -142,153 +163,184 @@ function fresaCortada(g: G, x: number, y: number, s: number, cortes: Linea[], se
       dx += nx * lado * sep;
       dy += ny * lado * sep;
     });
-    {
-      g.translate(dx, dy);
-      fresa(g, x, y, s);
-      // Lo clarito de adentro, en el borde del corte
-      for (const c of cortes) {
-        const nx = -Math.sin(c.a), ny = Math.cos(c.a);
-        const px = x + nx * c.d * s, py = y + ny * c.d * s;
-        g.strokeStyle = 'rgba(255,214,220,0.95)';
-        g.lineWidth = s * 0.16;
-        g.beginPath();
-        g.moveTo(px - Math.cos(c.a) * s, py - Math.sin(c.a) * s);
-        g.lineTo(px + Math.cos(c.a) * s, py + Math.sin(c.a) * s);
-        g.stroke();
-      }
+    g.translate(dx, dy);
+    dibujarFresa();
+    // La pulpa por donde se cortó (recortada al cuerpo de la fresa)
+    g.save();
+    g.beginPath();
+    g.ellipse(x - s * 0.05, y + s * 0.05, s * 1.25, s * 0.82, -0.25, 0, Math.PI * 2);
+    g.clip();
+    for (const c of cortes) {
+      const nx = -Math.sin(c.a), ny = Math.cos(c.a);
+      const px = x + nx * c.d * s, py = y + ny * c.d * s;
+      caraCorte(g, px - Math.cos(c.a) * s * 1.4, py - Math.sin(c.a) * s * 1.4, px + Math.cos(c.a) * s * 1.4, py + Math.sin(c.a) * s * 1.4, s * 0.09);
     }
+    g.restore();
     g.restore();
   }
 }
 
-/** El vaso de plástico con las fresas adentro, la crema y (si hay) la superficie de toppings. */
-function dibujarVaso(g: G, o: ObraFresas, x: number, yBase: number, esc: number, ahora: number, conRaya = false, guia?: ToppingPedido[]) {
-  const t = VASOS[o.vaso ?? 'M'];
-  const k = esc * t.esc;
-  const h = 190 * k, wA = 160 * k, wB = 112 * k;
-  const arriba = yBase - h;
-  const forma = () => {
-    g.beginPath();
-    g.moveTo(x - wA / 2, arriba);
-    g.lineTo(x + wA / 2, arriba);
-    g.lineTo(x + wB / 2, yBase);
-    g.lineTo(x - wB / 2, yBase);
-    g.closePath();
-  };
-  sombra(g, x, yBase + 4, wA * 0.6, 12, 0.28);
-  g.save();
-  forma();
-  g.clip();
-  g.fillStyle = 'rgba(255,245,248,0.35)';
-  g.fillRect(x - wA, arriba, wA * 2, h);
-  // Fresas (en capas desde abajo)
-  const pedazos = o.fresas.flatMap((f, i) => {
-    const n = Math.max(1, Math.min(4, f.cortes.length + 1));
-    const tipo = f.cortes.length >= 3 ? 'lamina' : f.cortes.length === 2 ? 'cuarto' : 'mitad';
-    return Array.from({ length: f.cortes.length ? n : 1 }, (_, j) => ({ i, j, tipo: f.cortes.length ? tipo : 'entera' }));
+// ---------------------------------------------------------------------------------------------- El vaso con las fresas y la crema
+const ID_VASO = (t: Tam) => `vasofresa_${t}`;
+const geoDe = (t: Tam, x: number, y: number, tam: number) => geoVaso(ID_VASO(t), x, y, tam, { ...VASOS[t], fondo: 0.002, elev: 20 });
+
+/** Los pedazos de fresa en capas adentro del vaso (vistos por el plástico). */
+function fresasEnVaso(g: G, v: GeoVaso, o: ObraFresas) {
+  const pedazos: { tipo: string; i: number }[] = [];
+  o.fresas.forEach((f, i) => {
+    const n = f.cortes.length;
+    const tipo = n >= 3 ? 'lamina' : n === 2 ? 'cuarto' : n === 1 ? 'mitad' : 'entera';
+    const cuantos = n ? Math.min(4, n + 1) : 1;
+    for (let j = 0; j < cuantos; j++) pedazos.push({ tipo, i: i * 7 + j });
   });
+  const porFila = 3;
+  const tam = v.rb * v.k * 0.62;
   pedazos.forEach((p, n) => {
-    const fila = Math.floor(n / 3), col = n % 3;
-    const px = x + (col - 1) * wB * 0.32 + (fila % 2) * 10 * k, py = yBase - 24 * k - fila * 22 * k - (col === 1 ? 6 : 0);
-    if (p.tipo === 'entera') fresa(g, px, py, 24 * k, (n % 3) * 0.6 - 0.6);
-    else fresaCorte(g, px, py, 24 * k, (n * 1.3) % 2 - 1, p.tipo as 'mitad' | 'cuarto' | 'lamina');
+    const fila = Math.floor(n / porFila), col = n % porFila;
+    const z = v.fondo + 0.008 + fila * 0.0085;
+    if (z > v.alto * 0.95) return;
+    const r = radioEn(v, z);
+    const ang = (col / (porFila - 1) - 0.5) * 1.6 + (fila % 2) * 0.35;
+    const px = v.x + Math.sin(ang) * r * 0.62;
+    const py = yEn(v, z) + Math.cos(ang) * r * v.se * 0.4;
+    const id = `vfresa_${p.tipo}`;
+    if (!spr(g, id, px, py, tam, { rot: Math.sin(p.i * 1.7) * 0.5, espejo: p.i % 2 === 1 })) fresa(g, px, py, tam * 0.9);
   });
-  // Crema (cubre las fresas hasta donde llegue), con sombrita para que se note en el vaso
-  if (o.crema > 0 && o.tazon) {
-    const col = colorCrema(o.tazon);
-    const yl = yBase - h * Math.min(1.05, o.crema);
-    const picos = o.tazon.textura > 0.62 ? 7 : 3, alto = o.tazon.textura > 0.62 ? 12 * k : 5 * k;
-    const borde = () => {
-      g.beginPath();
-      g.moveTo(x - wA, yl);
-      for (let i = 0; i <= 28; i++) g.lineTo(x - wA + (i / 28) * wA * 2, yl - Math.abs(Math.sin((i / 28) * Math.PI * picos)) * alto);
-    };
-    g.globalAlpha = 0.95;
-    g.fillStyle = lineal(g, 0, yl - alto, 0, yBase, [[0, aclarar(col, 0.5)], [0.35, col], [1, oscurecer(col, 0.12)]]);
-    borde();
-    g.lineTo(x + wA, yBase);
-    g.lineTo(x - wA, yBase);
+}
+
+function colorCrema(t: Tazon) {
+  let c = t.textura > CORTADA ? '#f3e2a6' : '#fffaf2';
+  for (const s of SABORES) if ((t.sabor[s.id] ?? 0) > 0) c = aclarar(s.color, 0.55 - Math.min(0.3, (t.sabor[s.id] - 1) * 0.12));
+  return c;
+}
+
+/** La crema adentro del vaso: cubre las fresas hasta donde llegue, con picos y brillos arriba. */
+function cremaEnVaso(g: G, v: GeoVaso, nivel: number, t: Tazon) {
+  const col = colorCrema(t);
+  const zl = zNivel(v, Math.min(1.08, nivel));
+  g.save();
+  caminoInterior(g, v, v.fondo + 0.003, zl);
+  g.globalAlpha = 0.93;
+  g.fillStyle = lineal(g, 0, yEn(v, zl), 0, yEn(v, v.fondo), [[0, aclarar(col, 0.4)], [0.4, col], [1, oscurecer(col, 0.1)]]);
+  g.fill();
+  g.restore();
+  // Superficie con picos (más con más textura)
+  const r = radioEn(v, zl);
+  const y = yEn(v, zl);
+  const firme = t.textura > 0.62;
+  g.fillStyle = aclarar(col, 0.25);
+  g.beginPath();
+  g.ellipse(v.x, y, r, r * v.se, 0, 0, Math.PI * 2);
+  g.fill();
+  const picos = firme ? 9 : 5;
+  for (let i = 0; i < picos; i++) {
+    const a = i * 2.39 + 0.5, d = Math.sqrt((i + 0.5) / picos) * 0.8;
+    const px = v.x + Math.cos(a) * r * d, py = y + Math.sin(a) * r * v.se * d;
+    const h = (firme ? 13 : 6) * (v.k / 2200);
+    g.fillStyle = aclarar(col, 0.4);
+    g.beginPath();
+    g.moveTo(px - h * 1.1, py + 2);
+    g.quadraticCurveTo(px - h * 0.2, py - h * 0.6, px + h * 0.15, py - h * 1.3);
+    g.quadraticCurveTo(px + h * 0.25, py - h * 0.4, px + h * 1.1, py + 2);
     g.closePath();
     g.fill();
-    g.globalAlpha = 1;
-    g.strokeStyle = oscurecer(col, 0.2);
-    g.lineWidth = 2.5;
-    borde();
+    g.fillStyle = 'rgba(255,255,255,0.7)';
+    elipse(g, px - h * 0.15, py - h * 0.55, h * 0.18, h * 0.3);
+    g.fill();
+  }
+  if (t.textura > CORTADA) {
+    g.fillStyle = 'rgba(230,200,110,0.65)';
+    for (let i = 0; i < 6; i++) {
+      elipse(g, v.x + Math.cos(i * 1.7) * r * 0.6, y + Math.sin(i * 1.7) * r * v.se * 0.6, r * 0.12, r * v.se * 0.12);
+      g.fill();
+    }
+  }
+}
+
+/** El vaso de plástico con las fresas, la crema y (si hay) los toppings encima. */
+function dibujarVaso(g: G, o: ObraFresas, x: number, yBase: number, tam: number, ahora: number, conRaya = false, guia?: ToppingPedido[]) {
+  const tv = o.vaso ?? 'M';
+  const v = geoDe(tv, x, yBase, tam);
+  sombra(g, x, yBase + 2, v.rt * v.k * 1.05, 10, 0.25);
+  g.save();
+  caminoInterior(g, v, v.fondo, v.alto);
+  g.clip();
+  fresasEnVaso(g, v, o);
+  g.restore();
+  if (o.crema > 0 && o.tazon) cremaEnVaso(g, v, o.crema, o.tazon);
+  if (!spr(g, ID_VASO(tv), x, yBase, tam)) {
+    g.strokeStyle = 'rgba(200,120,140,0.6)';
+    g.lineWidth = 3;
+    caminoInterior(g, v, 0, v.alto, 0);
     g.stroke();
   }
-  g.restore();
-  // Borde del vaso con brillo
-  g.strokeStyle = 'rgba(200,120,140,0.55)';
-  g.lineWidth = 3;
-  forma();
-  g.stroke();
-  g.fillStyle = 'rgba(255,255,255,0.4)';
-  g.fillRect(x - wA * 0.36, arriba + 12, 7 * k, h * 0.7);
-  g.fillStyle = '#e2475d';
-  rr(g, x - wA / 2 - 4, arriba - 6, wA + 8, 10, 5);
-  g.fill();
-  if (conRaya) rayita(g, x - wA / 2 - 8, x + wA / 2 + 8, yBase - h * LLENO_VASO);
-  // Toppings encima de la crema
+  if (conRaya) {
+    const z = zNivel(v, LLENO_VASO), r = radioEn(v, z);
+    rayita(g, x - r - 8, x + r + 8, yEn(v, z));
+  }
   if (o.crema > 0.3) {
-    const s = superficieVaso(x, yBase, esc, o);
+    const s = superficieVaso(x, yBase, tam, o);
     if (guia) dibujarGuia(g, guia, TOP, s);
     dibujarSuperficie(g, o.sup, s, TOP, ahora);
   }
 }
-function superficieVaso(x: number, yBase: number, esc: number, o: ObraFresas): Ovalo {
-  const k = esc * VASOS[o.vaso ?? 'M'].esc;
-  const h = 190 * k, wA = 160 * k;
-  return { x, y: yBase - h * Math.min(1.02, Math.max(0.6, o.crema)) + 4 * k, rx: wA * 0.44, ry: wA * 0.16 };
-}
-function colorCrema(t: Tazon) {
-  let c = t.textura > CORTADA ? '#f6e7b0' : '#fffaf2';
-  for (const s of SABORES) if ((t.sabor[s.id] ?? 0) > 0) c = aclarar(s.color, 0.55 - Math.min(0.3, (t.sabor[s.id] - 1) * 0.12));
-  return c;
+function superficieVaso(x: number, yBase: number, tam: number, o: ObraFresas): Ovalo {
+  const v = geoDe(o.vaso ?? 'M', x, yBase, tam);
+  const z = zNivel(v, Math.min(1.04, Math.max(0.6, o.crema)));
+  const r = radioEn(v, z);
+  return { x, y: yEn(v, z), rx: r * 0.86, ry: r * v.se * 0.86 };
 }
 
 // ---------------------------------------------------------------------------------------------- Picar
 class EstacionPicar implements Estacion {
   id = 'picar';
   nombre = 'Picar';
-  icono = '🔪';
+  icono = 'cuchillo';
+  emoji = '🔪';
   usaTicket = true;
+  /** (local) la fresa en la tabla de cada uno. */
   private tabla: { cortes: Linea[]; t: number } | null = null;
   private trazo: { x: number; y: number }[] = [];
   private volando: { t: number; cortes: Linea[] } | null = null;
+  private filo = 0;
   constructor(private m: Motor) {}
 
   private get obra(): ObraFresas | null {
     return (this.m.activo?.obra as ObraFresas) ?? null;
   }
   private rVasos(): (Rect & { tam: Tam })[] {
-    return (['P', 'M', 'G'] as Tam[]).filter((t) => VASOS[t].desde <= this.m.rango).map((tam, i) => ({ tam, x: 14, y: RIEL + 14 + i * 124, w: 150, h: 114 }));
+    return (['P', 'M', 'G'] as Tam[]).filter((t) => VASOS[t].desde <= this.m.rango).map((tam, i) => ({ tam, x: 14, y: RIEL + 14 + i * 128, w: 156, h: 120 }));
   }
   private tablaPos() {
     const z = this.m.zona;
-    return { x: 180 + (z.w - 180 - 250) / 2, y: RIEL + 250, r: 100 };
+    return { x: 190 + (z.w - 190 - 250) / 2, y: RIEL + 236, r: 92 };
   }
   private rCanasta(): Rect {
-    return { x: 180, y: this.m.H - BARRA - 140, w: 170, h: 124 };
+    return { x: 184, y: this.m.H - BARRA - 150, w: 200, h: 140 };
   }
   private rVasoPos() {
-    return { x: this.m.zona.w - 130, y: this.m.H - BARRA - 30 };
+    return { x: this.m.zona.w - 128, y: this.m.H - BARRA - 34 };
   }
   private rAlVaso(): Rect {
     const p = this.tablaPos();
-    return { x: p.x - 100, y: this.m.H - BARRA - 100, w: 200, h: 70 };
+    return { x: p.x - 104, y: this.m.H - BARRA - 92, w: 208, h: 70 };
   }
   private rBotar(): Rect {
-    return { x: this.m.zona.w - 200, y: RIEL + 14, w: 150, h: 60 };
+    return { x: this.m.zona.w - 210, y: RIEL + 14, w: 160, h: 58 };
+  }
+  enMano() {
+    return this.tabla ? 'cuchillo' : null;
   }
 
   fondo(g: G) {
-    this.m.fondoCocina(g, { mesa: RIEL + 150 });
+    fondoEstacion(this.m, g, RIEL + 130);
   }
   paso(dt: number) {
     if (this.volando) {
       this.volando.t += dt;
       if (this.volando.t > 0.5) this.volando = null;
     }
+    this.filo = Math.max(0, this.filo - dt);
   }
 
   toque(tipo: 'bajar' | 'mover' | 'subir', x: number, y: number) {
@@ -300,6 +352,7 @@ class EstacionPicar implements Estacion {
         if (!obra) return m.aviso('Primero toca un pedido del riel de arriba');
         if (obra.fresas.length) return m.aviso('Ese vaso ya tiene fresas: bótalo si quieres otro');
         obra.vaso = rv.tam;
+        m.cambioObra();
         sonidos.pop();
         m.pistaUnaVez('canasta', 'Toca la canasta para poner una fresa en la tabla');
         return;
@@ -308,13 +361,14 @@ class EstacionPicar implements Estacion {
         if (this.tabla) return m.aviso('Ya hay una fresa en la tabla');
         this.tabla = { cortes: [], t: m.reloj };
         sonidos.pop();
-        m.pistaUnaVez('cortar', 'Desliza el dedo sobre la fresa para cortarla como dice el tiquete');
+        m.pistaUnaVez('cortar', 'Desliza el cuchillo sobre la fresa para cortarla como dice el tiquete');
         return;
       }
       if (dentro(this.rAlVaso(), x, y) && this.tabla) return this.alVaso();
       if (dentro(this.rBotar(), x, y) && obra && (obra.vaso || obra.fresas.length)) {
         obra.vaso = null;
         obra.fresas = [];
+        m.cambioObra();
         sonidos.papel();
         return;
       }
@@ -323,6 +377,7 @@ class EstacionPicar implements Estacion {
     }
     if (tipo === 'mover') {
       if (this.trazo.length) this.trazo.push({ x, y });
+      if (this.trazo.length > 60) this.trazo.splice(1, 1);
       return;
     }
     // Soltó: ¿el trazo cruzó la fresa?
@@ -333,14 +388,22 @@ class EstacionPicar implements Estacion {
     const a = tr[0], b = tr[tr.length - 1];
     const L = Math.hypot(b.x - a.x, b.y - a.y);
     if (L < p.r * 1.1) return;
-    // La línea del corte: su ángulo (entre 0 y π) y a qué distancia del centro pasa (en radios, sobre su normal)
     const an = ((Math.atan2(b.y - a.y, b.x - a.x) % Math.PI) + Math.PI) % Math.PI;
     const nx = -Math.sin(an), ny = Math.cos(an);
     const d = -((p.x - a.x) * nx + (p.y - a.y) * ny) / p.r;
     if (Math.abs(d) > 0.95 || this.tabla.cortes.length >= 5) return;
     this.tabla.cortes.push({ a: an, d });
     sonidos.corte();
-    m.chispas(p.x, p.y, '#ff8a9a', 6, 'gota');
+    this.filo = 0.25;
+    m.fx.salpicar(p.x, p.y, '#e2304a', 8, 0.8);
+    m.fx.salpicar(p.x, p.y, '#ff8a9a', 4, 0.5);
+    // ¿Corte limpio? (sobre una línea de las que pide)
+    const pd = m.activo?.pedido as PedidoFresas | undefined;
+    if (pd && CORTES[pd.corte].lineas.some((q) => {
+      let da = Math.abs(an - q.a) % Math.PI;
+      da = Math.min(da, Math.PI - da);
+      return da < 0.12 && Math.abs(d * (Math.abs(an - q.a) < Math.PI / 2 ? 1 : -1) - q.d) < 0.1;
+    })) m.acierto(p.x, p.y - p.r, '¡Derechito!');
   }
 
   private alVaso() {
@@ -350,92 +413,103 @@ class EstacionPicar implements Estacion {
     if (obra.fresas.length >= 8) return m.aviso('El vaso ya está lleno');
     const pd = m.activo!.pedido as PedidoFresas;
     const c = this.tabla!.cortes;
-    obra.fresas.push({ cortes: c, valor: valorCortes(c, CORTES[pd.corte].lineas, m.mejora('cuchillo')) });
+    obra.fresas.push({ cortes: c.map((x) => ({ a: Math.round(x.a * 1000) / 1000, d: Math.round(x.d * 1000) / 1000 })), valor: Math.round(valorCortes(c, CORTES[pd.corte].lineas, m.mejora('cuchillo')) * 1000) / 1000 });
+    m.cambioObra();
     this.volando = { t: 0, cortes: c };
     this.tabla = null;
     sonidos.pop();
+    if (obra.fresas.length === VASOS[obra.vaso].fresas) m.acierto(this.rVasoPos().x, this.rVasoPos().y - 200, '¡Completo!');
     if (obra.fresas.length === 1) m.pistaUnaVez('llenar', `Llena el vaso hasta que tenga ${VASOS[obra.vaso].fresas} fresas y luego ve a «Batir»`);
   }
 
   dibujar(g: G, t: number) {
     const m = this.m, obra = this.obra;
-    for (const r of this.rVasos()) {
+    g.fillStyle = 'rgba(70,45,30,0.3)';
+    const vs = this.rVasos();
+    rr(g, 6, RIEL + 6, 172, vs.length * 128 + 8, 18);
+    g.fill();
+    for (const r of vs) {
       const act = obra?.vaso === r.tam;
-      boton(g, r, { color: act ? '#ffe2a8' : '#ffffff', activo: act, radio: 14 });
-      dibujarVaso(g, { vaso: r.tam, fresas: [], tazon: null, crema: 0, sup: superficieNueva() }, r.x + 52, r.y + r.h - 12, 0.42, t);
-      texto(g, VASOS[r.tam].nombre, r.x + 110, r.y + r.h / 2, { tam: 17, color: '#4a2a10', max: 70 });
+      g.fillStyle = act ? 'rgba(255,226,168,0.95)' : 'rgba(255,248,238,0.8)';
+      rr(g, r.x, r.y, r.w, r.h, 14);
+      g.fill();
+      if (act) {
+        g.strokeStyle = '#ffb627';
+        g.lineWidth = 4;
+        rr(g, r.x, r.y, r.w, r.h, 14);
+        g.stroke();
+      }
+      if (!spr(g, ID_VASO(r.tam), r.x + 50, r.y + r.h - 10, 92)) texto(g, '🥤', r.x + 50, r.y + r.h / 2, { tam: 40 });
+      texto(g, VASOS[r.tam].nombre, r.x + 112, r.y + r.h / 2, { tam: 17, color: '#4a2a10', max: 80 });
     }
     // Tabla de picar
     const p = this.tablaPos();
-    sombra(g, p.x, p.y + 110, 230, 30, 0.3);
-    g.fillStyle = lineal(g, 0, p.y - 150, 0, p.y + 150, [[0, '#e8b77f'], [1, '#c98a50']]);
-    rr(g, p.x - 220, p.y - 140, 440, 270, 40);
-    g.fill();
-    g.strokeStyle = 'rgba(140,80,40,0.25)';
-    g.lineWidth = 2;
-    for (let i = -4; i <= 4; i++) {
-      g.beginPath();
-      g.moveTo(p.x - 200, p.y + i * 28);
-      g.bezierCurveTo(p.x - 60, p.y + i * 28 + 8, p.x + 60, p.y + i * 28 - 8, p.x + 200, p.y + i * 28);
-      g.stroke();
+    if (!spr(g, 'tabla', p.x, p.y + 16, 230)) {
+      g.fillStyle = lineal(g, 0, p.y - 150, 0, p.y + 150, [[0, '#e8b77f'], [1, '#c98a50']]);
+      rr(g, p.x - 220, p.y - 140, 440, 270, 40);
+      g.fill();
     }
     if (this.tabla) {
       const cae = Math.max(0, 1 - (m.reloj - this.tabla.t) / 0.25);
-      fresaCortada(g, p.x, p.y - cae * 80, p.r, this.tabla.cortes);
-      // Guía del cuchillo afilado: dónde van los cortes
+      fresaCortada(g, p.x, p.y - cae * 90, p.r, this.tabla.cortes);
       if (m.mejora('cuchillo') >= 2 && m.activo) {
         g.save();
         g.setLineDash([8, 8]);
-        g.strokeStyle = 'rgba(255,255,255,0.7)';
+        g.strokeStyle = 'rgba(255,255,255,0.75)';
         g.lineWidth = 3;
         for (const c of CORTES[(m.activo.pedido as PedidoFresas).corte].lineas) {
           const nx = -Math.sin(c.a), ny = Math.cos(c.a);
           const px = p.x + nx * c.d * p.r, py = p.y + ny * c.d * p.r;
           g.beginPath();
-          g.moveTo(px - Math.cos(c.a) * p.r * 1.3, py - Math.sin(c.a) * p.r * 1.3);
-          g.lineTo(px + Math.cos(c.a) * p.r * 1.3, py + Math.sin(c.a) * p.r * 1.3);
+          g.moveTo(px - Math.cos(c.a) * p.r * 1.4, py - Math.sin(c.a) * p.r * 1.4);
+          g.lineTo(px + Math.cos(c.a) * p.r * 1.4, py + Math.sin(c.a) * p.r * 1.4);
           g.stroke();
         }
         g.restore();
       }
-      boton(g, this.rAlVaso(), { color: '#ff8fa3' });
-      texto(g, 'Al vaso ➜', this.rAlVaso().x + 100, this.rAlVaso().y + 36, { tam: 28, color: '#fff', borde: '#b83a52' });
-    } else texto(g, 'Toca la canasta 🧺', p.x, p.y, { tam: 26, color: 'rgba(90,50,20,0.55)' });
-    // El trazo del cuchillo
+      m.boton(this.rAlVaso(), 'Al vaso ➜', '#ff8fa3', { color: '#fff', borde: '#b83a52', tam: 28 });
+    } else texto(g, 'Toca la canasta 🧺', p.x, p.y, { tam: 26, color: 'rgba(90,50,20,0.65)' });
+    // El cuchillo sigue el dedo y deja una estela
     if (this.trazo.length > 1) {
-      g.strokeStyle = 'rgba(255,255,255,0.85)';
-      g.lineWidth = 8;
+      g.strokeStyle = 'rgba(255,255,255,0.55)';
+      g.lineWidth = 10;
       g.lineCap = 'round';
       g.beginPath();
       g.moveTo(this.trazo[0].x, this.trazo[0].y);
       for (const q of this.trazo) g.lineTo(q.x, q.y);
       g.stroke();
+      const u = this.trazo[this.trazo.length - 1], a = this.trazo[Math.max(0, this.trazo.length - 6)];
+      const ang = Math.atan2(u.y - a.y, u.x - a.x);
+      if (!spr(g, 'cuchillo', u.x, u.y, 120, { rot: ang - 0.15 })) texto(g, '🔪', u.x, u.y, { tam: 50 });
+    } else if (this.tabla && m.dedo === null) {
+      // Cuchillo quieto al lado de la tabla
+      spr(g, 'cuchillo', p.x + 150, p.y + 120, 110, { rot: -0.3 });
+    }
+    if (this.filo > 0) {
+      g.globalAlpha = this.filo / 0.25;
+      g.fillStyle = '#fff';
+      elipse(g, p.x, p.y, p.r * 1.5, p.r * 0.25);
+      g.fill();
+      g.globalAlpha = 1;
     }
     // Canasta de fresas
     const c = this.rCanasta();
-    g.fillStyle = lineal(g, 0, c.y + 40, 0, c.y + c.h, [[0, '#d99a52'], [1, '#9a6230']]);
-    rr(g, c.x, c.y + 40, c.w, c.h - 40, 18);
-    g.fill();
-    for (let i = 0; i < 7; i++) fresa(g, c.x + 26 + (i % 4) * 38, c.y + 44 - Math.floor(i / 4) * 22, 22, (i % 3) * 0.4 - 0.4);
-    g.strokeStyle = '#7a4a22';
-    g.lineWidth = 3;
-    for (let i = 1; i < 6; i++) {
-      g.beginPath();
-      g.moveTo(c.x + i * (c.w / 6), c.y + 48);
-      g.lineTo(c.x + i * (c.w / 6), c.y + c.h - 6);
-      g.stroke();
-    }
+    if (!spr(g, 'canasta', c.x + c.w / 2, c.y + c.h - 10, 92)) texto(g, '🧺', c.x + c.w / 2, c.y + c.h / 2, { tam: 70 });
     // El vaso del pedido
     const v = this.rVasoPos();
     if (obra?.vaso) {
-      dibujarVaso(g, obra, v.x, v.y, 1.05, t);
+      dibujarVaso(g, obra, v.x, v.y, 220, t);
       const need = VASOS[obra.vaso].fresas;
-      texto(g, `${obra.fresas.length} / ${need} fresas`, v.x, v.y - 250, { tam: 24, color: obra.fresas.length === need ? '#2f8a3a' : '#5a3a28', borde: '#fff' });
+      const lleno = obra.fresas.length >= need;
+      g.fillStyle = lleno ? 'rgba(80,170,90,0.92)' : 'rgba(40,24,16,0.78)';
+      rr(g, v.x - 84, v.y - 238, 168, 36, 18);
+      g.fill();
+      texto(g, `${obra.fresas.length} / ${need} fresas`, v.x, v.y - 219, { tam: 21, color: '#fff' });
       botonBotar(g, this.rBotar());
-    } else if (obra) texto(g, '← Escoge el vaso', v.x, v.y - 100, { tam: 22, color: '#6a5a50' });
+    } else if (obra) texto(g, '← Escoge el vaso', v.x, v.y - 100, { tam: 22, color: '#fff', borde: 'rgba(40,30,25,0.7)' });
     if (this.volando) {
       const k = this.volando.t / 0.5;
-      fresaCortada(g, p.x + (v.x - p.x) * k, p.y + (v.y - 120 - p.y) * k - Math.sin(k * Math.PI) * 120, p.r * (1 - k * 0.7), this.volando.cortes, 4);
+      fresaCortada(g, p.x + (v.x - p.x) * k, p.y + (v.y - 130 - p.y) * k - Math.sin(k * Math.PI) * 130, p.r * (1 - k * 0.7), this.volando.cortes, 4);
     }
   }
 }
@@ -451,7 +525,6 @@ function valorCortes(hechos: Linea[], ideales: Linea[], cuchillo: number) {
     libres.forEach((h, i) => {
       let da = Math.abs(h.a - q.a) % Math.PI;
       da = Math.min(da, Math.PI - da);
-      // Una línea con el ángulo al revés tiene la distancia con el signo cambiado
       const mismo = Math.abs(h.a - q.a) < Math.PI / 2 ? 1 : -1;
       const c = da / 0.45 + Math.abs(h.d * mismo - q.d) / 0.3;
       if (c < costo) {
@@ -469,64 +542,86 @@ function valorCortes(hechos: Linea[], ideales: Linea[], cuchillo: number) {
 class EstacionBatir implements Estacion {
   id = 'batir';
   nombre = 'Batir';
-  icono = '🥣';
+  icono = 'batidora';
+  emoji = '🥣';
   usaTicket = true;
-  tazones: (Tazon | null)[];
   private elegido = 0;
   private vertiendo = false;
   private sonando = 0;
-  constructor(private m: Motor) {
-    this.tazones = Array.from({ length: 1 + m.mejora('batidoras') }, () => null);
-  }
+  constructor(private m: Motor) {}
 
+  /** Qué tiquete tiene cada batidora (0 = libre). */
+  private get slots(): number[] {
+    return this.m.maq.batidoras;
+  }
+  private tazonDeSlot(i: number): { t: Ticket; tz: Tazon } | null {
+    const id = this.slots[i];
+    if (!id) return null;
+    const t = this.m.s.tickets.find((x) => x.id === id);
+    const tz = (t?.obra as ObraFresas | undefined)?.tazon;
+    return t && tz ? { t, tz } : null;
+  }
   private herramientas(): (Rect & { id: string; nombre: string })[] {
     const l = [{ id: 'crema', nombre: 'Crema de leche' }, { id: 'condensada', nombre: 'Leche condensada' }, ...SABORES.filter((s) => s.desde <= this.m.rango).map((s) => ({ id: s.id, nombre: s.nombre }))];
-    return l.map((h, i) => ({ ...h, x: 14, y: RIEL + 14 + i * 104, w: 200, h: 96 }));
+    const h = Math.min(104, (this.m.H - RIEL - BARRA - 110) / l.length);
+    return l.map((x, i) => ({ ...x, x: 14, y: RIEL + 14 + i * h, w: 206, h: h - 8 }));
   }
   private rTazon(i: number) {
-    const x0 = 240, x1 = this.m.zona.w - 10;
-    const w = (x1 - x0) / this.tazones.length;
-    const cx = x0 + w * (i + 0.5);
-    return { cx, cy: RIEL + 250, caja: { x: cx - w / 2 + 8, y: RIEL + 60, w: w - 16, h: 290 }, boton: { x: cx - 90, y: this.m.H - BARRA - 96, w: 180, h: 70 } };
+    const x0 = 236, x1 = this.m.zona.w - 10;
+    const w = (x1 - x0) / this.slots.length;
+    const cx = x0 + w * (i + 0.5) - 30;
+    const by = RIEL + 340;
+    return { cx, by, caja: { x: cx - w / 2 + 36, y: RIEL + 40, w: w - 12, h: 320 }, boton: { x: cx - 92, y: this.m.H - BARRA - 90, w: 184, h: 68 } };
   }
   private vel() {
     return (1 / 16) * (1 + 0.25 * this.m.mejora('turbo'));
   }
   alerta() {
-    return this.tazones.some((t) => t?.batiendo && t.textura > 0.85);
+    return this.slots.some((_, i) => {
+      const s = this.tazonDeSlot(i);
+      return !!s && s.tz.batiendo && s.tz.textura > 0.85;
+    });
+  }
+  enMano() {
+    return this.vertiendo ? 'crema' : null;
   }
 
   fondo(g: G) {
-    this.m.fondoCocina(g, { mesa: RIEL + 330 });
+    fondoEstacion(this.m, g, RIEL + 300, { campana: false });
   }
 
   paso(dt: number) {
     const m = this.m;
     let motor = false;
-    // Los tazones de pedidos ya entregados quedan libres
-    this.tazones.forEach((t, i) => {
-      if (t && !m.tickets.some((k) => k.id === t.ticket)) this.tazones[i] = null;
-    });
-    this.tazones.forEach((t) => {
-      if (!t || !t.batiendo) return;
+    // Las batidoras de pedidos ya entregados quedan libres
+    for (let i = 0; i < this.slots.length; i++) if (this.slots[i] && !m.s.tickets.some((k) => k.id === this.slots[i])) this.slots[i] = 0;
+    for (let i = 0; i < this.slots.length; i++) {
+      const s = this.tazonDeSlot(i);
+      if (!s || !s.tz.batiendo) continue;
+      const tz = s.tz;
       motor = true;
-      const antes = t.textura;
-      t.textura = Math.min(1.1, t.textura + this.vel() * dt * (t.nivel > 0.05 ? 1 : 0));
+      const antes = tz.textura;
+      tz.textura = Math.min(1.1, tz.textura + this.vel() * dt * (tz.nivel > 0.05 ? 1 : 0));
       if (m.mejora('alarma'))
         for (const meta of Object.values(PUNTO_CREMA))
-          if (antes < meta && t.textura >= meta) {
+          if (antes < meta && tz.textura >= meta) {
             sonidos.alarma();
-            t.avisado = m.reloj;
+            tz.avisado = m.reloj;
           }
-      if (antes < CORTADA && t.textura >= CORTADA) {
+      if (antes < CORTADA && tz.textura >= CORTADA) {
         sonidos.quemado();
         m.chef('susto', 2);
         m.aviso(m.actual === 2 ? '¡Uy! La crema se está cortando' : '¡Se está cortando una crema en «Batir»!');
       }
-    });
-    const t = this.tazones[this.elegido];
-    if (this.vertiendo && t) {
-      t.nivel = Math.min(1.1, t.nivel + dt * 0.42);
+      if (m.actual === 2 && Math.random() < dt * 4) {
+        const r = this.rTazon(i);
+        m.fx.salpicar(r.cx, r.by - 80, '#fffaf2', 1, 0.5);
+      }
+    }
+    const s = this.tazonDeSlot(this.elegido);
+    if (this.vertiendo && s) {
+      s.tz.nivel = Math.min(1.1, s.tz.nivel + dt * 0.42);
+      m.cambioObra(s.t);
       this.sonando -= dt;
       if (this.sonando <= 0) {
         sonidos.vertir(0.3);
@@ -542,203 +637,214 @@ class EstacionBatir implements Estacion {
     }
   }
 
-  /** El tazón del pedido escogido (o uno libre para él). */
-  private tazonDe(ticket: number) {
-    return this.tazones.findIndex((t) => t?.ticket === ticket);
-  }
-
   toque(tipo: 'bajar' | 'mover' | 'subir', x: number, y: number) {
     const m = this.m;
     if (tipo === 'subir') {
+      if (this.vertiendo) {
+        const s = this.tazonDeSlot(this.elegido);
+        if (s && Math.abs(s.tz.nivel - NIVEL_TAZON) < 0.05) m.acierto(this.rTazon(this.elegido).cx, RIEL + 150, '¡Exacto!');
+      }
       this.vertiendo = false;
       return;
     }
     if (tipo !== 'bajar') return;
-    for (let i = 0; i < this.tazones.length; i++) {
+    for (let i = 0; i < this.slots.length; i++) {
       const r = this.rTazon(i);
       if (dentro(r.boton, x, y)) {
-        const t = this.tazones[i];
-        if (!t) return m.aviso('Ese tazón está vacío');
-        t.batiendo = !t.batiendo;
+        const s = this.tazonDeSlot(i);
+        if (!s) return m.aviso('Ese tazón está vacío');
+        s.tz.batiendo = !s.tz.batiendo;
+        m.cambioObra(s.t);
         sonidos.clic();
-        if (t.batiendo) m.pistaUnaVez('punto', 'Para la batidora cuando la flecha esté en el punto que pide (suave o firme)');
+        if (!s.tz.batiendo) {
+          const p = (s.t.pedido as PedidoFresas).punto;
+          if (Math.abs(s.tz.textura - PUNTO_CREMA[p]) < 0.05) m.acierto(r.cx, RIEL + 150, p === 'firme' ? '¡Firme!' : '¡Suavecita!');
+        } else m.pistaUnaVez('punto', 'Para la batidora cuando la flecha esté en el punto que pide (suave o firme)');
         return;
       }
       if (dentro(r.caja, x, y)) {
         this.elegido = i;
-        const t = this.tazones[i];
-        if (!t && m.activo) {
-          const ya = this.tazonDe(m.activo.id);
+        const s = this.tazonDeSlot(i);
+        if (!s && m.activo) {
+          const ya = this.slots.indexOf(m.activo.id);
           if (ya >= 0) {
             this.elegido = ya;
             return m.aviso(`El pedido #${m.activo.numero} ya tiene su tazón`);
           }
-          this.tazones[i] = { ticket: m.activo.id, nivel: 0, dulce: 0, sabor: {}, textura: 0, batiendo: false, avisado: 0 };
-          (m.activo.obra as ObraFresas).tazon = this.tazones[i];
+          const obra = m.activo.obra as ObraFresas;
+          this.slots[i] = m.activo.id;
+          obra.tazon = { nivel: 0, dulce: 0, sabor: {}, textura: 0, batiendo: false, avisado: 0 };
+          m.cambioMaq('batidoras');
+          m.cambioObra();
           sonidos.pop();
           m.pistaUnaVez('crema', 'Mantén «Crema de leche» hasta la rayita y agrega las cucharadas de leche condensada');
-        } else if (t) {
-          const tk = m.tickets.find((x) => x.id === t.ticket);
-          if (tk) m.activo = tk;
-        }
+        } else if (s) m.activo = s.t;
         sonidos.clic();
         return;
       }
     }
     const h = this.herramientas().find((r) => dentro(r, x, y));
     if (h) {
-      let t = this.tazones[this.elegido];
+      let s = this.tazonDeSlot(this.elegido);
       // Si el tazón escogido es de otro pedido, se usa el del pedido activo
-      if (m.activo && t?.ticket !== m.activo.id) {
-        const i = this.tazonDe(m.activo.id);
+      if (m.activo && s?.t.id !== m.activo.id) {
+        const i = this.slots.indexOf(m.activo.id);
         if (i >= 0) {
           this.elegido = i;
-          t = this.tazones[i];
+          s = this.tazonDeSlot(i);
         }
       }
-      if (!t) return m.aviso('Toca un tazón vacío para el pedido');
-      if (t.batiendo || t.textura > 0.05) return m.aviso('Ya se está batiendo: bota el tazón para empezar otra vez');
+      if (!s) return m.aviso('Toca una batidora libre para el pedido');
+      if (s.tz.batiendo || s.tz.textura > 0.05) return m.aviso('Ya se está batiendo: bota el tazón para empezar otra vez');
       if (h.id === 'crema') this.vertiendo = true;
       else if (h.id === 'condensada') {
-        t.dulce++;
+        s.tz.dulce++;
         sonidos.pop();
-        m.flotar(`🥄 ${t.dulce}`, this.rTazon(this.elegido).cx, RIEL + 120, '#fff4c9');
+        m.flotar(`🥄 ${s.tz.dulce}`, this.rTazon(this.elegido).cx, RIEL + 120, '#fff4c9');
+        m.fx.salpicar(this.rTazon(this.elegido).cx, this.rTazon(this.elegido).by - 90, '#f4e3bc', 5, 0.6);
       } else {
-        t.sabor[h.id] = (t.sabor[h.id] ?? 0) + 1;
+        s.tz.sabor[h.id] = (s.tz.sabor[h.id] ?? 0) + 1;
         sonidos.pop();
+        m.fx.salpicar(this.rTazon(this.elegido).cx, this.rTazon(this.elegido).by - 90, SABORES.find((q) => q.id === h.id)!.color, 5, 0.6);
       }
+      m.cambioObra(s.t);
       return;
     }
     if (dentro(this.rBotarTazon(), x, y)) {
-      const t = this.tazones[this.elegido];
-      if (!t) return;
-      const tk = m.tickets.find((k) => k.id === t.ticket);
-      if (tk) (tk.obra as ObraFresas).tazon = null;
-      this.tazones[this.elegido] = null;
+      const id = this.slots[this.elegido];
+      if (!id) return;
+      const tk = m.s.tickets.find((k) => k.id === id);
+      if (tk) {
+        (tk.obra as ObraFresas).tazon = null;
+        m.cambioObra(tk);
+      }
+      this.slots[this.elegido] = 0;
+      m.cambioMaq('batidoras');
       sonidos.papel();
     }
   }
   private rBotarTazon(): Rect {
-    return { x: 14, y: this.m.H - BARRA - 84, w: 200, h: 64 };
+    return { x: 14, y: this.m.H - BARRA - 82, w: 206, h: 62 };
   }
 
   dibujar(g: G, tiempo: number) {
     const m = this.m;
-    for (const h of this.herramientas()) {
+    const hs = this.herramientas();
+    g.fillStyle = 'rgba(70,45,30,0.3)';
+    rr(g, 6, RIEL + 6, 222, hs.length * (hs[0]?.h + 8 || 100) + 8, 18);
+    g.fill();
+    for (const h of hs) {
       const act = h.id === 'crema' && this.vertiendo;
-      boton(g, h, { color: act ? '#ffe2a8' : '#ffffff', hundido: act, radio: 14 });
-      const cx = h.x + 44, cy = h.y + h.h / 2;
-      if (h.id === 'crema') {
-        g.fillStyle = lineal(g, cx - 22, 0, cx + 22, 0, [[0, '#e8f2ff'], [1, '#bcd4f2']]);
-        rr(g, cx - 22, cy - 34, 44, 64, 6);
-        g.fill();
-        g.fillStyle = '#4f86c6';
-        g.fillRect(cx - 22, cy - 6, 44, 14);
-      } else if (h.id === 'condensada') {
-        g.fillStyle = lineal(g, cx - 24, 0, cx + 24, 0, [[0, '#d7dde0'], [0.5, '#ffffff'], [1, '#b9c0c4']]);
-        rr(g, cx - 24, cy - 26, 48, 54, 8);
-        g.fill();
-        g.fillStyle = '#e2475d';
-        g.fillRect(cx - 24, cy - 10, 48, 20);
-      } else {
-        const s = SABORES.find((q) => q.id === h.id)!;
-        g.fillStyle = 'rgba(240,230,210,0.9)';
-        rr(g, cx - 24, cy - 28, 48, 58, 10);
-        g.fill();
-        g.fillStyle = s.color;
-        rr(g, cx - 20, cy - 8, 40, 34, 8);
-        g.fill();
-      }
-      texto(g, h.nombre, h.x + 144, cy, { tam: 17, color: '#4a2a10', max: 100 });
+      g.fillStyle = act ? 'rgba(255,226,168,0.95)' : 'rgba(255,248,238,0.82)';
+      rr(g, h.x, h.y, h.w, h.h, 14);
+      g.fill();
+      const id = h.id === 'crema' ? 'ing_crema' : h.id === 'condensada' ? 'ing_condensada' : `ing_${h.id}`;
+      if (!spr(g, id, h.x + 46, h.y + h.h - 8, Math.min(1, h.h / 96) * 50, act ? { rot: -0.9 } : undefined)) texto(g, h.id === 'crema' ? '🥛' : '🥫', h.x + 46, h.y + h.h / 2, { tam: 36 });
+      texto(g, h.nombre, h.x + 144, h.y + h.h / 2, { tam: 17, color: '#4a2a10', max: 104 });
     }
-    this.tazones.forEach((t, i) => {
+    m.boton(this.rBotarTazon(), '🗑 Botar tazón', '#f0e4d8', { tam: 20, color: '#7a4a3a' });
+    this.slots.forEach((_, i) => {
       const r = this.rTazon(i);
+      const s = this.tazonDeSlot(i);
       const sel = i === this.elegido;
-      if (sel && this.tazones.length > 1) {
-        g.strokeStyle = conAlfa('#ffb627', 0.8);
-        g.lineWidth = 5;
-        g.setLineDash([14, 10]);
-        rr(g, r.caja.x, r.caja.y, r.caja.w, r.caja.h, 20);
-        g.stroke();
-        g.setLineDash([]);
+      if (sel && this.slots.length > 1) {
+        g.fillStyle = 'rgba(255,190,60,0.16)';
+        rr(g, r.caja.x, r.caja.y, r.caja.w, r.caja.h, 22);
+        g.fill();
       }
-      this.dibujarTazon(g, t, r.cx, r.cy, tiempo);
-      if (t) {
-        const tk = m.tickets.find((k) => k.id === t.ticket);
-        texto(g, tk ? `Pedido #${tk.numero}` : '—', r.cx, r.cy + 140, { tam: 22, color: '#8a4a2a', borde: '#fff' });
-        const tkp = tk?.pedido as PedidoFresas | undefined;
-        medidor(g, r.cx + 120, r.cy - 140, 26, 220, t.textura, [
-          { desde: 0.4, hasta: 0.6, color: '#bfe8c0', etiqueta: tkp?.punto === 'suave' ? 'Suave ★' : 'Suave' },
-          { desde: 0.64, hasta: 0.84, color: '#8fd49a', etiqueta: tkp?.punto === 'firme' ? 'Firme ★' : 'Firme' },
+      this.dibujarBatidora(g, s?.tz ?? null, r.cx, r.by, tiempo, sel && this.vertiendo);
+      if (s) {
+        const tz = s.tz;
+        const p = s.t.pedido as PedidoFresas;
+        texto(g, `Pedido #${s.t.numero}`, r.cx, RIEL + 28, { tam: 20, color: '#fff', borde: 'rgba(40,30,25,0.75)' });
+        medidor(g, r.cx + 150, RIEL + 70, 26, 230, tz.textura, [
+          { desde: 0.4, hasta: 0.6, color: '#bfe8c0', etiqueta: p.punto === 'suave' ? 'Suave ★' : 'Suave' },
+          { desde: 0.64, hasta: 0.84, color: '#8fd49a', etiqueta: p.punto === 'firme' ? 'Firme ★' : 'Firme' },
           { desde: CORTADA, hasta: 1, color: '#f2a0a0' },
-        ], m.mejora('alarma') && m.reloj - t.avisado < 1.2 ? m.reloj : undefined);
-        boton(g, r.boton, { color: t.batiendo ? '#e8434f' : '#5cc26a', hundido: t.batiendo });
-        texto(g, t.batiendo ? '■ Parar' : '▶ Batir', r.boton.x + 90, r.boton.y + 36 + (t.batiendo ? 4 : 0), { tam: 26, color: '#fff' });
-        texto(g, `Cucharadas: ${t.dulce}${Object.entries(t.sabor).map(([k, v]) => ` · ${k === 'arequipe' ? 'arequipe' : 'chocolate'} ${v}`).join('')}`, r.cx, r.cy + 110, { tam: 20, color: '#5a3a28', borde: '#fff' });
-      } else texto(g, m.activo ? `Toca para el #${m.activo.numero}` : 'Libre', r.cx, r.cy + 110, { tam: 20, color: '#6a5a50', borde: '#fff' });
+        ], m.mejora('alarma') && m.reloj - tz.avisado < 1.2 ? m.reloj : undefined);
+        m.boton(r.boton, tz.batiendo ? '■ Parar' : '▶ Batir', tz.batiendo ? '#e8434f' : '#5cc26a', { color: '#fff', tam: 26 });
+        texto(g, `🥄 ${tz.dulce}${Object.entries(tz.sabor).map(([k, v]) => ` · ${k} ${v}`).join('')}`, r.cx, r.by + 30, { tam: 18, color: '#fff', borde: 'rgba(40,30,25,0.75)' });
+      } else texto(g, m.activo ? `Toca para el #${m.activo.numero}` : 'Libre', r.cx, r.by + 30, { tam: 20, color: '#fff', borde: 'rgba(40,30,25,0.75)' });
     });
-    boton(g, this.rBotarTazon(), { color: '#f0e4d8' });
-    texto(g, '🗑 Botar tazón', 114, this.rBotarTazon().y + 34, { tam: 20, color: '#7a4a3a' });
   }
 
-  private dibujarTazon(g: G, t: Tazon | null, x: number, y: number, tiempo: number) {
-    sombra(g, x, y + 70, 150, 26, 0.3);
-    // Tazón de acero
-    g.fillStyle = lineal(g, x - 130, 0, x + 130, 0, [[0, '#8f989d'], [0.35, '#eef2f4'], [0.6, '#c3cacd'], [1, '#7d868b']]);
-    g.beginPath();
-    g.moveTo(x - 130, y - 40);
-    g.bezierCurveTo(x - 124, y + 70, x + 124, y + 70, x + 130, y - 40);
-    g.closePath();
-    g.fill();
-    g.fillStyle = '#5e666b';
-    elipse(g, x, y - 40, 130, 26);
-    g.fill();
-    if (t && t.nivel > 0) {
-      const col = colorCrema(t);
-      const nv = Math.min(1, t.nivel);
-      const ry = 22 * nv + 2;
-      g.fillStyle = radial(g, x - 30, y - 45, 5, 120, [[0, aclarar(col, 0.4)], [1, oscurecer(col, 0.06)]]);
-      elipse(g, x, y - 36 + (1 - nv) * 30, 124 * (0.75 + 0.25 * nv), ry);
+  private dibujarBatidora(g: G, tz: Tazon | null, x: number, by: number, t: number, vertiendo: boolean) {
+    const vib = tz?.batiendo ? Math.sin(t * 60) * 1.5 : 0;
+    const tam = 132;
+    const bol = punto('batidora', 'bol', x, by, tam);
+    const eje = punto('batidora', 'eje', x + vib, by, tam);
+    const hayB = hay('batidora');
+    // Cuerpo de la batidora (atrás)
+    if (hayB) spr(g, 'batidora', x + vib, by, tam);
+    // Varilla girando (de lado: se estira y se encoge)
+    const giro = tz?.batiendo ? Math.cos(t * 26) : 1;
+    // Bol con la crema
+    if (!spr(g, 'bol', bol.x, bol.y, tam)) {
+      g.fillStyle = lineal(g, x - 130, 0, x + 130, 0, [[0, '#8f989d'], [0.35, '#eef2f4'], [0.6, '#c3cacd'], [1, '#7d868b']]);
+      g.beginPath();
+      g.moveTo(x - 120, by - 100);
+      g.bezierCurveTo(x - 114, by, x + 114, by, x + 120, by - 100);
       g.fill();
-      // Picos de crema (más con más textura) y un aro que gira si bate
-      const picos = Math.floor(Math.min(1, t.textura) * 10);
+    }
+    const rb = recorte('bol');
+    const R = ((rb?.r_boca as number) ?? 0.11) * (tam / (rb?.ref ?? 0.11));
+    const alto = ((rb?.alto as number) ?? 0.075) * (tam / (rb?.ref ?? 0.11));
+    const se = Math.sin(25 * Math.PI / 180), ce = Math.cos(25 * Math.PI / 180);
+    const boca = { x: bol.x, y: bol.y - alto * ce };
+    if (tz && tz.nivel > 0) {
+      const col = colorCrema(tz);
+      const nv = Math.min(1.05, tz.nivel);
+      const h = alto * (0.25 + 0.65 * nv);
+      const rr2 = R * (0.62 + 0.36 * Math.min(1, h / alto));
+      const cy = bol.y - h * ce;
+      g.save();
+      g.beginPath();
+      g.ellipse(boca.x, boca.y, R * 0.985, R * 0.985 * se, 0, 0, Math.PI * 2);
+      g.clip();
+      g.fillStyle = lineal(g, 0, cy - rr2 * se, 0, cy + rr2 * se, [[0, aclarar(col, 0.4)], [1, oscurecer(col, 0.06)]]);
+      g.beginPath();
+      g.ellipse(boca.x, cy, rr2, rr2 * se, 0, 0, Math.PI * 2);
+      g.fill();
+      // Picos de crema (más con más textura) que giran si bate
+      const picos = Math.floor(Math.min(1, tz.textura) * 11);
       for (let i = 0; i < picos; i++) {
-        const a = i * 2.4 + (t.batiendo ? tiempo * 4 : 0);
-        const px = x + Math.cos(a) * 70 * ((i % 3) / 3 + 0.3), py = y - 38 + (1 - nv) * 30 + Math.sin(a) * 12;
-        g.fillStyle = aclarar(col, 0.25);
+        const a = i * 2.4 + (tz.batiendo ? t * 4 : 0);
+        const d = ((i % 3) / 3 + 0.25) * rr2 * 0.85;
+        const px = boca.x + Math.cos(a) * d, py = cy + Math.sin(a) * d * se;
+        const hp = 8 + tz.textura * 16;
+        g.fillStyle = aclarar(col, 0.3);
         g.beginPath();
-        g.moveTo(px - 12, py + 4);
-        g.quadraticCurveTo(px, py - 12 - t.textura * 16, px + 12, py + 4);
+        g.moveTo(px - 12, py + 3);
+        g.quadraticCurveTo(px - 2, py - hp * 0.5, px + 2, py - hp);
+        g.quadraticCurveTo(px + 4, py - hp * 0.4, px + 12, py + 3);
+        g.closePath();
         g.fill();
       }
-      if (t.textura > CORTADA) {
-        g.fillStyle = '#f2d77a';
-        for (let i = 0; i < 6; i++) {
-          elipse(g, x + Math.cos(i * 1.7) * 60, y - 36 + Math.sin(i * 1.7) * 10, 10, 6);
+      if (tz.textura > CORTADA) {
+        g.fillStyle = 'rgba(232,206,120,0.75)';
+        for (let i = 0; i < 7; i++) {
+          elipse(g, boca.x + Math.cos(i * 1.7) * rr2 * 0.6, cy + Math.sin(i * 1.7) * rr2 * se * 0.6, 12, 6);
           g.fill();
         }
       }
+      g.restore();
     }
-    rayita(g, x - 110, x + 110, y - 36 + (1 - NIVEL_TAZON) * 30 - 22 * NIVEL_TAZON * 0.2);
-    // La batidora encima
-    const vib = t?.batiendo ? Math.sin(tiempo * 60) * 2 : 0;
-    g.fillStyle = lineal(g, x - 60, 0, x + 60, 0, [[0, '#ffb3c2'], [1, '#e2475d']]);
-    rr(g, x - 60 + vib, y - 190, 120, 60, 26);
-    g.fill();
-    g.fillStyle = '#fff';
-    rr(g, x - 40 + vib, y - 176, 30, 12, 6);
-    g.fill();
-    g.strokeStyle = '#c9d0d4';
-    g.lineWidth = 6;
-    for (const dx of [-22, 22]) {
-      const giro = t?.batiendo ? Math.sin(tiempo * 30 + dx) * 10 : 0;
+    // La rayita de «hasta aquí» por dentro del bol
+    const hR = alto * (0.25 + 0.65 * NIVEL_TAZON);
+    rayita(g, boca.x - R * 0.82, boca.x + R * 0.82, bol.y - hR * ce);
+    // Varilla (entra a la crema)
+    if (hayB) {
+      g.save();
       g.beginPath();
-      g.moveTo(x + dx + vib, y - 132);
-      g.lineTo(x + dx + vib, y - 60);
-      g.stroke();
-      g.beginPath();
-      g.ellipse(x + dx + vib, y - 56, 14 + giro * 0.3, 22, 0, 0, Math.PI * 2);
-      g.stroke();
+      g.rect(eje.x - 60, eje.y - 10, 120, (bol.y - alto * 0.3 * ce) - eje.y + 10);
+      g.clip();
+      spr(g, 'varilla', eje.x, eje.y, tam * 0.82, { ex: 0.25 + 0.75 * Math.abs(giro) });
+      g.restore();
+    }
+    if (vertiendo) {
+      const c = { x: x - R * 1.2, y: boca.y - 150 };
+      chorro(g, c.x + 20, c.y + 26, boca.x - 10, boca.y + 4, '#fffaf2', 12, t);
+      spr(g, 'ing_crema', c.x, c.y + 30, 54, { rot: 1.9 });
     }
   }
 }
@@ -747,7 +853,8 @@ class EstacionBatir implements Estacion {
 class EstacionServir implements Estacion {
   id = 'servir';
   nombre = 'Servir';
-  icono = '🍓';
+  icono = 'vasofresa_M';
+  emoji = '🍓';
   usaTicket = true;
   private herramienta: string | null = null;
   private aplicador = new Aplicador(TOP);
@@ -761,32 +868,38 @@ class EstacionServir implements Estacion {
     return (this.m.activo?.obra as ObraFresas) ?? null;
   }
   private botones() {
-    return botonesToppings(TOPS, this.m.rango, 14, RIEL + 14);
+    return botonesToppings(TOPS, this.m.rango, 16, RIEL + 16, 3, 92, this.m.H - RIEL - BARRA - 24);
   }
   private pos() {
-    return { x: 300 + (this.m.zona.w - 300) / 2, y: this.m.H - BARRA - 40 };
+    return { x: 330 + (this.m.zona.w - 330) / 2 - 40, y: this.m.H - BARRA - 30 };
+  }
+  private tam() {
+    return 330;
   }
   private rCrema(): Rect {
     const p = this.pos();
-    return { x: p.x - 330, y: RIEL + 60, w: 170, h: 120 };
+    return { x: p.x - 330, y: RIEL + 70, w: 160, h: 150 };
   }
   private rEntregar(): Rect {
     const p = this.pos();
-    return { x: p.x + 150, y: this.m.H - BARRA - 90, w: 190, h: 66 };
+    return { x: p.x + 150, y: this.m.H - BARRA - 88, w: 200, h: 66 };
   }
   private rBotar(): Rect {
     const p = this.pos();
-    return { x: p.x + 150, y: this.m.H - BARRA - 170, w: 190, h: 60 };
+    return { x: p.x + 150, y: this.m.H - BARRA - 166, w: 200, h: 60 };
   }
   private superficie(): Ovalo | null {
     const o = this.obra;
     if (!o || o.crema <= 0.3) return null;
     const p = this.pos();
-    return superficieVaso(p.x, p.y, 1.45, o);
+    return superficieVaso(p.x, p.y, this.tam(), o);
+  }
+  enMano() {
+    return this.herramienta ?? (this.echando ? 'crema' : null);
   }
 
   fondo(g: G) {
-    this.m.fondoCocina(g, { mesa: RIEL + 300 });
+    fondoEstacion(this.m, g, RIEL + 290);
   }
 
   paso(dt: number) {
@@ -798,6 +911,7 @@ class EstacionServir implements Estacion {
     }
     o.crema = Math.min(1.1, o.crema + dt * 0.32);
     o.tazon.nivel = Math.max(0, o.tazon.nivel - dt * 0.2);
+    this.m.cambioObra();
     this.sonando -= dt;
     if (this.sonando <= 0) {
       sonidos.vertir(0.3);
@@ -809,10 +923,11 @@ class EstacionServir implements Estacion {
     const m = this.m, o = this.obra;
     if (tipo === 'mover') {
       const s = this.superficie();
-      if (this.aplicando && s) this.aplicador.mover(aUV(s, x, y));
+      if (this.aplicando && s && this.aplicador.mover(aUV(s, x, y), m.reloj)) m.cambioObra();
       return;
     }
     if (tipo === 'subir') {
+      if (this.echando && o && Math.abs(o.crema - LLENO_VASO) < 0.05) m.acierto(this.pos().x, this.pos().y - 300, '¡Hasta el borde!');
       this.aplicando = false;
       this.echando = false;
       this.aplicador.subir();
@@ -828,6 +943,7 @@ class EstacionServir implements Estacion {
     if (dentro(this.rCrema(), x, y)) {
       if (!o.vaso || !o.fresas.length) return m.aviso('Primero pica las fresas en «Picar»');
       if (!o.tazon || o.tazon.nivel <= 0.02) return m.aviso('Primero bate la crema en «Batir»');
+      if (o.tazon.batiendo) return m.aviso('Para la batidora antes de servir');
       if (o.sup.capas.length) return m.aviso('Ya decoraste: la crema va antes que los toppings');
       this.echando = true;
       return;
@@ -845,6 +961,7 @@ class EstacionServir implements Estacion {
     if (dentro(this.rBotar(), x, y)) {
       o.crema = 0;
       o.sup = superficieNueva();
+      m.cambioObra();
       sonidos.papel();
       return;
     }
@@ -853,6 +970,7 @@ class EstacionServir implements Estacion {
       if (!s) return m.aviso('Primero échale la crema');
       const r = this.aplicador.bajar(o.sup, this.herramienta, aUV(s, x, y), m.reloj);
       if (r) {
+        m.cambioObra();
         this.aplicando = r !== 'pieza';
         if (r === 'pieza') sonidos.pop();
         else if (r === 'salsa') sonidos.vertir(0.3);
@@ -866,66 +984,55 @@ class EstacionServir implements Estacion {
     dibujarBotonesToppings(g, this.botones(), TOP, this.herramienta);
     const p = this.pos();
     if (!o) {
-      texto(g, 'Toca un pedido del riel', p.x, p.y - 180, { tam: 26, color: '#9a8a80' });
+      texto(g, 'Toca un pedido del riel', p.x, p.y - 180, { tam: 26, color: '#fff', borde: 'rgba(40,30,25,0.7)' });
       return;
     }
-    // Manga con la crema del tazón
+    // La manga con la crema del tazón
     const c = this.rCrema();
-    boton(g, c, { color: this.echando ? '#ffe2a8' : '#ffffff', hundido: this.echando, radio: 18 });
-    g.fillStyle = o.tazon ? colorCrema(o.tazon) : '#eee';
-    g.beginPath();
-    g.moveTo(c.x + 40, c.y + 20);
-    g.lineTo(c.x + 130, c.y + 20);
-    g.lineTo(c.x + 90, c.y + 86);
-    g.lineTo(c.x + 80, c.y + 86);
-    g.closePath();
+    g.fillStyle = this.echando ? 'rgba(255,226,168,0.95)' : 'rgba(255,248,238,0.85)';
+    rr(g, c.x, c.y, c.w, c.h, 18);
     g.fill();
-    g.strokeStyle = '#d9c7b8';
-    g.lineWidth = 3;
-    g.stroke();
-    texto(g, 'Echar crema', c.x + c.w / 2, c.y + c.h - 16, { tam: 18, color: '#4a2a10' });
-    if (this.echando && o.tazon) {
-      const s = superficieVaso(p.x, p.y, 1.45, o);
-      g.strokeStyle = colorCrema(o.tazon);
-      g.lineWidth = 16;
-      g.lineCap = 'round';
-      g.beginPath();
-      g.moveTo(c.x + 85, c.y + 90);
-      g.quadraticCurveTo(p.x, c.y + 100, p.x, s.y - 10);
-      g.stroke();
+    if (!this.echando && !spr(g, 'manga', c.x + c.w / 2, c.y + c.h - 30, 70, { rot: 0.5 })) texto(g, '🍦', c.x + c.w / 2, c.y + 60, { tam: 48 });
+    texto(g, 'Echar crema (mantén)', c.x + c.w / 2, c.y + c.h - 14, { tam: 15, color: '#4a2a10', max: c.w - 8 });
+    if (o.vaso) dibujarVaso(g, o, p.x, p.y, this.tam(), t, o.crema < 1.1 && !o.sup.capas.length, m.mejora('guia') ? (m.activo!.pedido as PedidoFresas).toppings : undefined);
+    else texto(g, 'Este pedido no tiene vaso: ve a «Picar»', p.x, p.y - 180, { tam: 24, color: '#fff', borde: 'rgba(40,30,25,0.7)' });
+    if (this.echando && o.tazon && o.vaso) {
+      const s = superficieVaso(p.x, p.y, this.tam(), o);
+      const col = colorCrema(o.tazon);
+      const mx = p.x + 30, my = s.y - 190;
+      chorro(g, mx - 14, my + 70, p.x, s.y - 6, col, 18, t);
+      spr(g, 'manga', mx, my, 90, { rot: -0.3 });
+      if (Math.random() < 0.3) m.fx.salpicar(p.x, s.y - 6, col, 1, 0.4);
     }
-    if (o.vaso) dibujarVaso(g, o, p.x, p.y, 1.45, t, o.crema < 1.1 && !o.sup.capas.length, m.mejora('guia') ? (m.activo!.pedido as PedidoFresas).toppings : undefined);
-    else texto(g, 'Este pedido no tiene vaso: ve a «Picar»', p.x, p.y - 180, { tam: 24, color: '#9a8a80' });
     botonEntregar(g, this.rEntregar());
     botonBotar(g, this.rBotar());
     if (this.herramienta) {
       const d = TOP[this.herramienta];
-      texto(g, `En la mano: ${d.nombre}`, p.x, RIEL + 26, { tam: 20, color: '#fff', borde: 'rgba(40,30,25,0.8)' });
+      texto(g, `En la mano: ${d.nombre}`, p.x, RIEL + 26, { tam: 20, color: '#fff', borde: 'rgba(40,30,25,0.85)' });
+      if (m.dedo && this.aplicador.enUso) dibujarEnMano(g, d, m.dedo.x, m.dedo.y, t);
     }
   }
 }
 
 // ---------------------------------------------------------------------------------------------- Tiquete y calificación
-function iconoCorte(g: G, x: number, y: number, c: Corte) {
-  fresaCortada(g, x, y, 20, CORTES[c].lineas, 2.5);
-}
 function dibujarTicket(g: G, p: PedidoFresas, r: Rect) {
-  let y = r.y + 16;
-  dibujarVaso(g, { vaso: p.vaso, fresas: [], tazon: null, crema: 0, sup: superficieNueva() }, r.x + 36, y + 50, 0.26, 0);
-  texto(g, `Vaso ${VASOS[p.vaso].nombre.toLowerCase()}`, r.x + 66, y + 18, { tam: 18, color: '#3b2a22', alinear: 'left', max: r.w - 76 });
-  texto(g, `${VASOS[p.vaso].fresas} fresas`, r.x + 66, y + 40, { tam: 15, color: '#8a6a58', alinear: 'left', peso: 700 });
-  y += 62;
-  iconoCorte(g, r.x + 36, y + 18, p.corte);
-  texto(g, CORTES[p.corte].nombre, r.x + 66, y + 18, { tam: 18, color: '#3b2a22', alinear: 'left', max: r.w - 76 });
+  let y = r.y + 8;
+  const v = geoDe(p.vaso, r.x + 34, y + 62, 60);
+  if (!spr(g, ID_VASO(p.vaso), v.x, v.y, 60)) texto(g, '🥤', r.x + 34, y + 30, { tam: 30 });
+  letra(g, `Vaso ${VASOS[p.vaso].nombre.toLowerCase()}`, r.x + 66, y + 18, { tam: 16, max: r.w - 74 });
+  letra(g, `${VASOS[p.vaso].fresas} fresas`, r.x + 66, y + 40, { tam: 14, color: '#8a6a58', max: r.w - 74 });
+  y += 70;
+  fresaCortada(g, r.x + 34, y + 18, 17, CORTES[p.corte].lineas, 2.5);
+  letra(g, CORTES[p.corte].nombre, r.x + 66, y + 18, { tam: 16, max: r.w - 74 });
   y += 46;
   g.fillStyle = p.sabor ? aclarar(SABORES.find((s) => s.id === p.sabor)!.color, 0.5) : '#fffaf2';
-  elipse(g, r.x + 36, y + 20, 22, 12);
+  elipse(g, r.x + 34, y + 20, 22, 12);
   g.fill();
   g.strokeStyle = '#c3cacd';
   g.lineWidth = 3;
   g.stroke();
-  texto(g, `Crema ${p.punto}${p.sabor ? ` de ${p.sabor}` : ''}`, r.x + 66, y + 12, { tam: 17, color: '#3b2a22', alinear: 'left', max: r.w - 76 });
-  texto(g, `🥄 ${p.dulce} de leche condensada`, r.x + 66, y + 34, { tam: 14, color: '#8a6a58', alinear: 'left', peso: 700, max: r.w - 76 });
+  letra(g, `Crema ${p.punto}${p.sabor ? ` de ${p.sabor}` : ''}`, r.x + 66, y + 12, { tam: 15, max: r.w - 74 });
+  letra(g, `🥄 ${p.dulce} de leche condensada`, r.x + 66, y + 34, { tam: 13, color: '#8a6a58', max: r.w - 74 });
   y += 54;
   separador(g, r.x + 14, r.x + r.w - 14, y);
   y += 6;
@@ -937,11 +1044,9 @@ function dibujarTicket(g: G, p: PedidoFresas, r: Rect) {
 
 function calificar(t: Ticket<PedidoFresas, ObraFresas>): Categoria[] {
   const p = t.pedido, o = t.obra;
-  // Picar: el vaso, cuántas fresas y qué tan bien cortadas
   const need = VASOS[p.vaso].fresas;
   const cortes = o.fresas.length ? o.fresas.reduce((a, f) => a + f.valor, 0) / o.fresas.length : 0;
   const picar = o.vaso ? Math.round((puntajeCuenta(o.fresas.length, need) * 0.4 + cortes * 100 * 0.6) * (o.vaso === p.vaso ? 1 : 0.6)) : 0;
-  // Batido: cantidad, dulce, sabor y el punto
   const tz = o.tazon;
   let batido = 0;
   if (tz) {
@@ -981,9 +1086,11 @@ export const FRESAS = {
   titulo: (rol) => `La Fresería de ${rol === 'el' ? 'Él' : 'Ella'}`,
   plato: 'fresas_chef',
   nombrePlato: 'Fresas con crema de chef',
-  tema: { pared: '#f8c9d2', acento: '#e2475d', piso: '#f5e1e3' },
+  icono: 'vasofresa_M',
+  tema: { pared: '#f8c9d2', acento: '#e2475d', piso: '#f5e1e3', oscuro: '#6a1a2a' },
   mejoras: MEJORAS,
   desbloqueos: DESBLOQUEOS,
+  maquinas: (mejora) => ({ batidoras: Array.from({ length: 1 + mejora('batidoras') }, () => 0) }),
   crearEstaciones(m) {
     return [new EstacionPicar(m), new EstacionBatir(m), new EstacionServir(m)];
   },
@@ -993,8 +1100,10 @@ export const FRESAS = {
   dibujarTicket: (g, p, r) => dibujarTicket(g, p, r),
   calificar,
   dibujarPlato(g, t, x, y, esc, m) {
-    if (t.obra.vaso) dibujarVaso(g, t.obra, x, y + 150 * esc, 1.2 * esc, m.reloj + 99);
+    if (t.obra.vaso) dibujarVaso(g, t.obra, x, y + 130 * esc, 300 * esc, m.reloj + 99);
   },
   /** Para las pruebas automáticas. */
   pruebas: { TOP, CORTES, VASOS, superficieVaso, PUNTO_CREMA },
 } as Receta<PedidoFresas, ObraFresas> & { pruebas: unknown };
+void mezclar;
+void chorro;
