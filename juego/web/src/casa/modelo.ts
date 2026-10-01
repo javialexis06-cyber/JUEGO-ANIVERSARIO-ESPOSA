@@ -317,6 +317,13 @@ export function casaNueva(): Casa {
   };
 }
 
+/** Todos los campos de la casa que esta versión conoce y normaliza (los demás vienen de una versión más nueva y se
+ *  conservan). Al agregar un campo a `Casa`, TypeScript obliga a ponerlo aquí también. */
+const CAMPOS_CASA = {
+  monedas: 1, inventario: 1, deco: 1, notas: 1, fechas: 1, regalos: 1, voces: 1, aniversario: 1, diario: 1, retrete: 1, lavado: 1,
+  ampliaciones: 1, bebe: 1, logros: 1, pintura: 1, perro: 1, cocina: 1,
+} satisfies Record<keyof Casa, 1>;
+
 /** La casa compartida siempre con la forma esperada (y sin valores imposibles como monedas negativas). */
 export function normalizarCasa(c: unknown): Casa {
   const base = casaNueva();
@@ -332,7 +339,11 @@ export function normalizarCasa(c: unknown): Casa {
     return r;
   };
   const lista = <T,>(v: unknown, ok: (x: any) => boolean): T[] => (Array.isArray(v) ? (v.filter((x) => esObjeto(x) && ok(x)) as T[]) : []);
+  // Campos que trae una versión más nueva de la app (el otro celular ya actualizó y este no): se conservan tal cual,
+  // si no, cada guardado de este celular se los borraría al otro
+  const nuevos = Object.fromEntries(Object.entries(c).filter(([k]) => !(k in CAMPOS_CASA)));
   return {
+    ...nuevos,
     monedas: Math.max(0, Math.floor(numero(c.monedas, base.monedas))),
     inventario: esObjeto(c.inventario) ? cantidades(c.inventario) : base.inventario,
     deco: textos(c.deco),

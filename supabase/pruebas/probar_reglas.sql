@@ -41,8 +41,10 @@ do $$ begin
 exception when others then raise notice 'OK    C no puede escribir personajes ajenos';
 end $$;
 do $$ begin
-  perform unirse_pareja('ZZZZZZ', 'ella');
-  raise notice 'FALLA un código inventado dejó entrar';
+  -- (con cambios-pendientes.sql un código que no existe devuelve vacío en vez de error: igual no deja entrar)
+  if unirse_pareja('ZZZZZZ', 'ella') is null then raise notice 'OK    un código inventado no deja entrar (vuelve vacío)';
+  else raise notice 'FALLA un código inventado dejó entrar';
+  end if;
 exception when others then raise notice 'OK    un código inventado no deja entrar (%)', sqlerrm;
 end $$;
 do $$ begin

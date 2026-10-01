@@ -345,6 +345,7 @@ function mensaje(error: { message?: string } | null | undefined, porDefecto: str
   const m = error?.message ?? '';
   if (/failed to fetch|network|fetch/i.test(m)) return 'Sin conexión con el servidor. Revisa el internet.';
   if (/no encontrado/i.test(m)) return 'Ese código no existe. Revísalo con tu pareja.';
+  if (/demasiad/i.test(m)) return m;
   if (/anonymous/i.test(m)) return 'Faltan activar las sesiones anónimas en Supabase (Authentication → Sign In / Providers).';
   if (/does not exist|could not find the function/i.test(m)) return 'Falta correr supabase/esquema.sql en el SQL Editor de Supabase.';
   return m || porDefecto;
@@ -419,6 +420,8 @@ export class SincroLinea extends Base implements Sincro {
     const { data, error } = await sb.rpc('unirse_pareja', { cod, mi_rol: rol, reemplazar });
     if (error && /ocupado/i.test(error.message)) throw new PersonajeOcupado();
     if (error) throw new Error(mensaje(error, 'No se pudo entrar con ese código.'));
+    // (con las reglas nuevas de la base, un código que no existe vuelve vacío en vez de error)
+    if (!data) throw new Error('Ese código no existe. Revísalo con tu pareja.');
     const s = new SincroLinea(sb, { parejaId: data as string, codigo: cod, rol });
     await s.iniciar(false);
     return s;

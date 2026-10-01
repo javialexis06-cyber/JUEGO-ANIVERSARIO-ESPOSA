@@ -3061,8 +3061,10 @@ function bucle() {
   const dt = Math.min(0.1, (ahora - ultimo) / 1000);
   ultimo = ahora;
   acumulado += dt;
-  // 30 cuadros por segundo bastan para la casa (ahorra batería)
-  if (acumulado < 1 / 32) return;
+  // 30 cuadros por segundo bastan para la casa (ahorra batería); con una hoja encima o la tele en grande la casa
+  // casi no se ve: 16 cuadros por segundo (la mitad de trabajo para la tarjeta gráfica)
+  const tapada = casaTapada();
+  if (acumulado < (tapada ? 1 / 16 : 1 / 32)) return;
   const paso = acumulado;
   acumulado = 0;
   try {
@@ -3081,7 +3083,8 @@ function bucle() {
     }
     revisarVista();
     efectos();
-    if (!pausaCasa) mundo.dibujar(paso, true);
+    // (tapada se dibuja a la mitad a propósito: al vigilante de la calidad le cuenta como el cuadro que habría sido)
+    if (!pausaCasa) mundo.dibujar(tapada ? paso / 2 : paso, true);
   } catch (e) {
     // Un error en un cuadro no debe congelar la casa; se reporta una vez
     if (!errorReportado) console.error(e);
@@ -3089,6 +3092,8 @@ function bucle() {
   }
 }
 let errorReportado = false;
+const hojaCasa = document.getElementById('hoja');
+const casaTapada = () => (!!hojaCasa && !hojaCasa.hidden) || document.body.classList.contains('en-tele');
 let estabanJuntos = false;
 let vestidosGuardados = '';
 

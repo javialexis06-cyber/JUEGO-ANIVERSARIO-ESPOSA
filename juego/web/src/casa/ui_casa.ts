@@ -184,8 +184,14 @@ export class Capa {
       e.innerHTML = contenido ?? '';
       e.dataset.contenido = contenido ?? '';
     }
-    e.style.transform = `translate(${x}px, ${y}px)`;
+    // (solo si se movió: escribir la misma posición cada cuadro hace recalcular la página sin necesidad)
+    const pos = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+    if (this.posiciones.get(e) !== pos) {
+      this.posiciones.set(e, pos);
+      e.style.transform = pos;
+    }
   }
+  private posiciones = new WeakMap<HTMLElement, string>();
 
   quitarTodo() {
     for (const e of this.efectos.values()) e.remove();
