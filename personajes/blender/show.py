@@ -321,11 +321,16 @@ def escenario():
         for s in (-1, 1):
             o = caja('cinta', (0, 0, 0), (0.11, 0.012, 0.002), cinta, n=2, subsurf=0)
             o.rotation_euler = (0, 0, s * 0.78)
-            o.location = (x, -0.12, 0.425)
-    prisma('tarima concursantes', [(-1.75, -0.45), (1.75, -0.45), (1.75, 0.55), (-1.75, 0.55)], 0.24, 0.42, lado, bisel=0.02)
-    caja('tapa tarima', (0, 0.05, 0.415), (1.73, 0.49, 0.01), tarima, p=10, n=2, subsurf=0)
-    tubo('led tarima', [(-1.74, -0.458, 0.33), (1.74, -0.458, 0.33)], 0.012, led, seg=6, muestras=2, perfil=(1, 2))
-    tubo('filo tarima', [(-1.76, -0.455, 0.42), (1.76, -0.455, 0.42)], 0.014, oro, seg=6, muestras=2)
+            o.location = (x, -0.12, 0.525)
+    # (alta: los muñecos son cabezones y así se les ve el cuerpo por encima del atril)
+    prisma('tarima concursantes', [(-1.75, -0.45), (1.75, -0.45), (1.75, 0.55), (-1.75, 0.55)], 0.24, 0.52, lado, bisel=0.02)
+    caja('tapa tarima', (0, 0.05, 0.515), (1.73, 0.49, 0.01), tarima, p=10, n=2, subsurf=0)
+    for z in (0.33, 0.43):
+        tubo('led tarima', [(-1.74, -0.458, z), (1.74, -0.458, z)], 0.012, led, seg=6, muestras=2, perfil=(1, 2))
+    tubo('filo tarima', [(-1.76, -0.455, 0.52), (1.76, -0.455, 0.52)], 0.014, oro, seg=6, muestras=2)
+    # Escalones a los lados de la tarima
+    for s in (-1, 1):
+        caja('escalón tarima', (s * 1.95, 0.05, 0.31), (0.2, 0.45, 0.07), lado, p=8, n=2)
 
 
 def atril(x, rol):
@@ -595,16 +600,16 @@ def camaras():
         torno('volante', [(0.2, -0.015), (0.22, 0.0), (0.2, 0.015)], (x, y, 0.9), metal, seg=20, subsurf=0)
         cuerpo_camara(i, (x, y, 1.25), giro)
     # Grúa: base, poste, brazo largo con contrapesos y la cámara en la punta
-    bx, by = 4.9, -3.4
+    bx, by = 6.3, -2.6
     caja('base grúa', (bx, by, 0.08), (0.4, 0.4, 0.08), negro, p=6, n=2)
     cilindro('poste grúa', (bx, by, 0.85), 0.07, 1.5, metal, seg=16)
-    brazo = [(bx + 0.9, by + 0.55, 1.75), (bx, by, 1.62), (bx - 1.7, by - 0.4, 2.35), (bx - 2.6, by - 0.62, 2.7)]
+    brazo = [(bx + 0.9, by + 0.55, 1.75), (bx, by, 1.62), (bx - 1.2, by - 0.3, 2.45), (bx - 1.9, by - 0.45, 2.85)]
     tubo('brazo grúa', brazo, 0.045, metal, seg=8, muestras=3)
-    tubo('tensor', [(bx + 0.9, by + 0.55, 1.95), (bx, by, 2.1), (bx - 2.6, by - 0.62, 2.85)], 0.008, metal, seg=4, muestras=3)
+    tubo('tensor', [(bx + 0.9, by + 0.55, 1.95), (bx, by, 2.1), (bx - 1.9, by - 0.45, 3.0)], 0.008, metal, seg=4, muestras=3)
     for k in range(3):
         caja('contrapeso', (bx + 0.95, by + 0.6, 1.62 - k * 0.12), (0.12, 0.12, 0.05), negro, p=6, n=2, subsurf=0)
-    jx, jy = bx - 2.65, by - 0.66
-    cuerpo_camara(2, (jx, jy, 2.55), math.atan2(0 - jx, -(-0.6 - jy)), inclina=0.32)
+    jx, jy = bx - 1.95, by - 0.5
+    cuerpo_camara(2, (jx, jy, 2.7), math.atan2(0 - jx, -(-0.6 - jy)), inclina=0.32)
 
 
 def publico():
@@ -718,7 +723,7 @@ def detalles():
 
 
 def anclas():
-    for nombre, pos in (('ancla_el', (-0.95, -0.2, 0.42)), ('ancla_ella', (0.95, -0.2, 0.42))):
+    for nombre, pos in (('ancla_el', (-0.95, -0.2, 0.52)), ('ancla_ella', (0.95, -0.2, 0.52))):
         a = bpy.data.objects.new(nombre, None)
         clay.link(a, COLL)
         a.location = pos

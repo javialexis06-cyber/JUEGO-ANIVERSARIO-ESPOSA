@@ -369,7 +369,7 @@ export class Estudio {
     this.camara.updateProjectionMatrix();
     for (const p of Object.values(this.paletas)) if (p) p.visible = true;
     if (this.papeles) this.papeles.m.visible = true;
-    await this.renderer.compileAsync(this.escena, this.camara).catch(() => undefined);
+    if (!this.sin3d) await this.renderer.compileAsync(this.escena, this.camara).catch(() => undefined);
     for (const p of Object.values(this.paletas)) if (p) p.visible = false;
     if (this.papeles) this.papeles.m.visible = false;
     this.ultimo = performance.now();
