@@ -141,6 +141,32 @@ function texturaRadial(colorCentro = 'rgba(255,255,255,1)', n = 128) {
   return t;
 }
 
+/** La geometría de un molde con su tamaño real: al comprimir el GLB, las posiciones quedan normalizadas y la escala
+ *  verdadera queda en el nodo; aquí se hornea (en flotantes) para poder repetirla sola. */
+function geometriaReal(m: THREE.Mesh): THREE.BufferGeometry {
+  m.updateWorldMatrix(true, false);
+  const g = new THREE.BufferGeometry();
+  for (const [k, a] of Object.entries(m.geometry.attributes)) {
+    const at = a as THREE.BufferAttribute;
+    const arr = new Float32Array(at.count * at.itemSize);
+    for (let i = 0; i < at.count; i++) for (let j = 0; j < at.itemSize; j++) arr[i * at.itemSize + j] = at.getComponent(i, j);
+    g.setAttribute(k, new THREE.BufferAttribute(arr, at.itemSize));
+  }
+  if (m.geometry.index) g.setIndex(m.geometry.index.clone());
+  g.applyMatrix4(m.matrixWorld);
+  return g;
+}
+
+/** Envuelve un nodo del GLB en un grupo (así se mueve sin perder la escala que le dejó la compresión). */
+function envolver(o: THREE.Object3D | undefined): THREE.Object3D | null {
+  if (!o) return null;
+  o.removeFromParent();
+  const g = new THREE.Group();
+  g.name = `${o.name} (envoltura)`;
+  g.add(o);
+  return g;
+}
+
 /** Envuelve un texto en líneas que quepan en `ancho`. */
 function lineas(g: CanvasRenderingContext2D, texto: string, ancho: number): string[] {
   const palabras = texto.split(/\s+/);
@@ -275,6 +301,8 @@ export class Estudio {
     this.lienzoTexto.height = 512;
     this.texTexto = new THREE.CanvasTexture(this.lienzoTexto);
     this.texTexto.colorSpace = THREE.SRGBColorSpace;
+    // Las superficies del GLB traen la v de arriba hacia abajo (como glTF)
+    this.texTexto.flipY = false;
     this.escena.add(this.perro.grupo);
     window.addEventListener('resize', this.ajustar);
   }
@@ -332,6 +360,15 @@ export class Estudio {
     this.camMira.copy(this.toma.mira);
     this.metaPos.copy(this.toma.pos);
     this.metaMira.copy(this.toma.mira);
+    // Los sombreadores se preparan durante la pantalla de carga (si no, el primer cuadro congela el show)
+    this.camara.position.copy(this.camPos);
+    this.camara.lookAt(this.camMira);
+    this.camara.updateProjectionMatrix();
+    for (const p of Object.values(this.paletas)) if (p) p.visible = true;
+    if (this.papeles) this.papeles.m.visible = true;
+    await this.renderer.compileAsync(this.escena, this.camara).catch(() => undefined);
+    for (const p of Object.values(this.paletas)) if (p) p.visible = false;
+    if (this.papeles) this.papeles.m.visible = false;
     this.ultimo = performance.now();
     this.reloj = requestAnimationFrame(this.cuadro);
   }
@@ -439,12 +476,8 @@ export class Estudio {
       this.haces.push({ yugo, cabeza, cono, charco, fase: i * 1.37, color: new THREE.Color('#ffffff'), meta: new THREE.Color('#ffffff') });
     }
     // El vestuario del presentador y el público salen del set (son moldes)
-    this.corbatin = s.getObjectByName('corbatin') ?? null;
-    this.microfono = s.getObjectByName('microfono') ?? null;
-    this.corbatin?.removeFromParent();
-    this.microfono?.removeFromParent();
-    if (this.corbatin) this.corbatin.position.set(0, 0, 0);
-    if (this.microfono) this.microfono.position.set(0, 0, 0);
+    this.corbatin = envolver(s.getObjectByName('corbatin'));
+    this.microfono = envolver(s.getObjectByName('microfono'));
     this.armarPublico(s);
     this.armarConfeti();
   }
@@ -455,6 +488,7 @@ export class Estudio {
     lienzo.height = 104;
     const tex = new THREE.CanvasTexture(lienzo);
     tex.colorSpace = THREE.SRGBColorSpace;
+    tex.flipY = false;
     return { lienzo, tex, puntos: 0, listo: false, sobre: false };
   }
 
@@ -489,8 +523,10 @@ export class Estudio {
   private armarPublico(s: THREE.Object3D) {
     const moldes = ['publico_a', 'publico_b', 'publico_c'].map((n) => s.getObjectByName(n) as THREE.Mesh | undefined).filter((m): m is THREE.Mesh => !!m?.isMesh);
     const mano = s.getObjectByName('publico_mano') as THREE.Mesh | undefined;
-    for (const m of [...moldes, mano]) m?.removeFromParent();
     if (!moldes.length || !mano) return;
+    const geos = moldes.map(geometriaReal);
+    const geoMano = geometriaReal(mano);
+    for (const m of [...moldes, mano]) m.removeFromParent();
     const sitios: { p: THREE.Vector3; v: number; k: number; fase: number }[] = [];
     const filas: [number, number][] = [[-6.0, 0], [-6.9, 0.32], [-7.8, 0.64]];
     let k = 0;
@@ -505,7 +541,7 @@ export class Estudio {
       const lista = sitios.filter((x) => x.v === v);
       const mat = (molde.material as THREE.MeshStandardMaterial).clone();
       mat.color.set('#ffffff');
-      const im = new THREE.InstancedMesh(molde.geometry, mat, Math.max(1, lista.length));
+      const im = new THREE.InstancedMesh(geos[v], mat, Math.max(1, lista.length));
       im.count = lista.length;
       lista.forEach((x, i) => im.setColorAt(i, new THREE.Color(paleta[(x.k * 7) % paleta.length]).multiplyScalar(0.55 + Math.random() * 0.25)));
       im.frustumCulled = false;
@@ -514,7 +550,7 @@ export class Estudio {
     });
     const mm = (mano.material as THREE.MeshStandardMaterial).clone();
     mm.color.set('#d9b8a0');
-    const manos = new THREE.InstancedMesh(mano.geometry, mm, sitios.length * 2);
+    const manos = new THREE.InstancedMesh(geoMano, mm, sitios.length * 2);
     manos.frustumCulled = false;
     this.escena.add(manos);
     this.publicoMallas = { cuerpos, manos, sitios };
@@ -899,6 +935,11 @@ export class Estudio {
       this.medir(performance.now() - t0, dtReal);
     }
   };
+
+  /** Pruebas (con ?sin3d el cuadro no pinta): pinta una vez lo que hay ahora. */
+  pintar() {
+    this.renderer.render(this.escena, this.camara);
+  }
 
   /** Pruebas: avanza a pasos y pinta una vez. */
   simular(segundos: number) {
