@@ -2,7 +2,7 @@
 // ordenar los planetas, sintonizar la radio, el Morse que vibra, voltear el celular, asteroides a punta de toques,
 // los tubos de energía, los tres segundos del cohete y el eclipse.
 import * as THREE from 'three';
-import * as sonido from '../../sonido';
+import * as sonido from '../sonido_eco';
 import { espacioTextura } from '../cuarto';
 import { caja, cilindro, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';

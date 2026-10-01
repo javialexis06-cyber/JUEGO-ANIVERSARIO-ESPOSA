@@ -1,7 +1,7 @@
 // Capítulo 2 · El jardín (puertas 11–20): verter inclinando, colores, reflejos, sacudir y contar, soplar,
 // paciencia, secuencias, arrastrar el sol, barrer hojas y limpiar el vidrio.
 import * as THREE from 'three';
-import * as sonido from '../../sonido';
+import * as sonido from '../sonido_eco';
 import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';

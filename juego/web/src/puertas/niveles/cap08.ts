@@ -2,7 +2,7 @@
 // velas, los espejos que llevan la luz a la gema, vestir la armadura, el caballo de ajedrez, el escudo distinto,
 // la poción del color pedido, el criptex y la trenza de la torre.
 import * as THREE from 'three';
-import * as sonido from '../../sonido';
+import * as sonido from '../sonido_eco';
 import { piedraTextura } from '../cuarto';
 import * as sfx from '../sonidos';
 import { caja, cilindro, corazon, en, esfera, forma, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';

@@ -27,6 +27,12 @@ export function mat(color: string, o: OpMat = {}): THREE.MeshStandardMaterial {
   return m;
 }
 
+/** ¿Es uno de los materiales compartidos (no cambia nunca de color)? */
+export const compartido = (m: THREE.Material) => {
+  for (const x of mats.values()) if (x === m) return true;
+  return false;
+};
+
 /** Material propio (para cambiarle el color o la emisión sin afectar a otros). */
 export function matNuevo(color: string, o: OpMat = {}) {
   const m = new THREE.MeshStandardMaterial({

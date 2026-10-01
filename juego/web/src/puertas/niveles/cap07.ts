@@ -2,7 +2,7 @@
 // vueltas con el dedo, la máquina de peluches (inclinar o palanca), el martillo de fuerza, las cartas de la adivina,
 // los globos que forman una palabra, el carrusel, la casa de los espejos y la letra pequeña del tiquete.
 import * as THREE from 'three';
-import * as sonido from '../../sonido';
+import * as sonido from '../sonido_eco';
 import { caja, cilindro, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
 import { candadoPuerta, limites, llave, mesaRedonda, tecladoPared } from './piezas';
@@ -1303,6 +1303,7 @@ const espejos: Nivel = {
 const CLAVE_TIQUETE = ['2', '5', '1', '0'];
 const tiquete: Nivel = {
   titulo: 'El tiquete',
+  pareja: { pista: ['tiquete'] },
   pistas: [
     'Sin tiquete no se entra a la carpa.',
     'El tiquete tiene más letras de las que se alcanzan a ver.',

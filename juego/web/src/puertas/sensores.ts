@@ -15,6 +15,10 @@ export class Sensores {
   profundidad = 0;
   /** Hubo lecturas reales del acelerómetro (si no, las mecánicas usan su alternativa táctil). */
   hayMovimiento = false;
+  /** Lo mismo, pero solo del celular propio (en pareja la inclinación puede venir del otro). */
+  hayMovimientoPropio = false;
+  /** Lo que mide el celular propio (la inclinación de arriba puede venir del otro en pareja). */
+  private local = { x: 0, y: 1, z: 0 };
   /** Volumen del micrófono (0..1) mientras está encendido. */
   volumen = 0;
   microfono: 'apagado' | 'pidiendo' | 'encendido' | 'negado' = 'apagado';
@@ -54,6 +58,24 @@ export class Sensores {
     return () => s!.delete(fn);
   }
 
+  /** Pareja (anfitrión): un sensor del otro celular (sacudió, volteó, apagó la pantalla, sopló). */
+  externo(e: Evento, dato = 0) {
+    this.emitir(e, dato);
+  }
+
+  /** Pareja (anfitrión): inclinación del otro celular [x, y, profundidad]; cuenta mientras la propia esté quieta. */
+  ponerInclinacionExterna(i: [number, number, number] | null) {
+    this.externa = i ? { x: i[0], y: i[1], z: i[2], t: performance.now() } : null;
+  }
+  private externa: { x: number; y: number; z: number; t: number } | null = null;
+
+  /** Inclinación propia para mandarla al otro celular (null si no hay acelerómetro o no se está usando). */
+  inclinacionPropia(): [number, number, number] | null {
+    if (!this.hayMovimientoPropio && !this.simulada) return null;
+    const l = this.local;
+    return [Math.round(l.x * 100) / 100, Math.round(l.y * 100) / 100, Math.round(l.z * 100) / 100];
+  }
+
   private emitir(e: Evento, dato = 0) {
     for (const fn of [...(this.oyentes.get(e) ?? [])]) fn(dato);
   }
@@ -74,6 +96,7 @@ export class Sensores {
     if (!a || a.x == null || a.y == null || a.z == null) return;
     if (!this.hayMovimiento && Math.abs(a.x) + Math.abs(a.y) + Math.abs(a.z) < 1) return;
     this.hayMovimiento = true;
+    this.hayMovimientoPropio = true;
     this.gravedad(a.x, a.y, a.z);
     // Sacudida: picos fuertes de aceleración (sin gravedad si el celular la da)
     const l = e.acceleration;
@@ -96,12 +119,13 @@ export class Sensores {
     const derecha = (x * Math.cos(t) - y * Math.sin(t)) * this.signo;
     const arriba = (x * Math.sin(t) + y * Math.cos(t)) * this.signo;
     const k = 0.25;
-    this.inclinacion.x += (-derecha / G - this.inclinacion.x) * k;
-    this.inclinacion.y += (arriba / G - this.inclinacion.y) * k;
-    this.profundidad += (-z / G - this.profundidad) * k;
+    const l = this.local;
+    l.x += (-derecha / G - l.x) * k;
+    l.y += (arriba / G - l.y) * k;
+    l.z += (-z / G - l.z) * k;
     // Con la app en horizontal la pantalla gira sola: si «abajo» sale arriba por mucho rato, el signo está al revés
     const ahora = performance.now();
-    if (this.inclinacion.y < -0.6 && Math.abs(this.profundidad) < 0.5) {
+    if (l.y < -0.6 && Math.abs(l.z) < 0.5) {
       if (!this.invertidoDesde) this.invertidoDesde = ahora;
       else if (ahora - this.invertidoDesde > 1800) {
         this.signo *= -1;
@@ -153,11 +177,26 @@ export class Sensores {
 
   /** Cada cuadro: volumen del micrófono y detección de soplido (ruido fuerte y parejo). */
   actualizar() {
+    const l = this.local;
     if (this.simulada) {
       const s = this.simulada;
-      this.inclinacion.x += (s.x - this.inclinacion.x) * 0.3;
-      this.inclinacion.y += (s.y - this.inclinacion.y) * 0.3;
-      this.profundidad += (s.z - this.profundidad) * 0.3;
+      l.x += (s.x - l.x) * 0.3;
+      l.y += (s.y - l.y) * 0.3;
+      l.z += (s.z - l.z) * 0.3;
+    }
+    // En pareja: si el celular propio está quieto (o no tiene acelerómetro) y el del otro se está inclinando, manda
+    // el del otro
+    const ex = this.externa;
+    const propia = (this.hayMovimientoPropio || !!this.simulada) && (Math.abs(l.x) > 0.2 || Math.abs(l.y - 1) > 0.25 || Math.abs(l.z) > 0.4);
+    if (ex && performance.now() - ex.t < 700 && !propia) {
+      this.inclinacion.x += (ex.x - this.inclinacion.x) * 0.35;
+      this.inclinacion.y += (ex.y - this.inclinacion.y) * 0.35;
+      this.profundidad += (ex.z - this.profundidad) * 0.35;
+      this.hayMovimiento = true;
+    } else {
+      this.inclinacion.x = l.x;
+      this.inclinacion.y = l.y;
+      this.profundidad = l.z;
     }
     if (!this.audio) return;
     this.audio.an.getFloatTimeDomainData(this.audio.datos);
@@ -188,6 +227,7 @@ export class Sensores {
     },
     soltar: () => {
       this.simulada = null;
+      this.local = { x: 0, y: 1, z: 0 };
       this.inclinacion = { x: 0, y: 1 };
       this.profundidad = 0;
     },

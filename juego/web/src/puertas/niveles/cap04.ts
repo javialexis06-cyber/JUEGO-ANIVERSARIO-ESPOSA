@@ -2,7 +2,7 @@
 // tiempo, deslizar con la velocidad justa, recorrer carreteras, seguir una regla, quedarse quieto, sacudir la
 // máquina de dulces, observar la banda de maletas y cerrar los ojos en el túnel.
 import * as THREE from 'three';
-import * as sonido from '../../sonido';
+import * as sonido from '../sonido_eco';
 import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
@@ -25,6 +25,7 @@ function abrirYa(c: Ctx, ms = 700) {
 const SALIDAS: [string, string, string][] = [['Cali', '18:40', '3'], ['Bogotá', '19:15', '8'], ['Cartagena', '20:30', '12'], ['Medellín', '21:05', '5'], ['Bucaramanga', '22:00', '7']];
 const tablero: Nivel = {
   titulo: 'El bus a donde vamos',
+  pareja: { pista: ['mapa', 'tablero salidas'] },
   pistas: [
     'Antes de viajar hay que saber para dónde.',
     'El mapa tiene marcada una ciudad especial; el tablero de salidas dice de qué andén sale su bus.',
@@ -528,6 +529,7 @@ const quieto: Nivel = {
 // ---------------------------------------------------------------------------
 const maquina: Nivel = {
   titulo: 'La máquina de dulces',
+  pareja: { pista: ['envoltura'] },
   pistas: [
     'Un dulcecito para el viaje no cae mal.',
     'La máquina no fía: primero hace falta una moneda. Y en algún lado quedó anotado cuál es mi favorito.',

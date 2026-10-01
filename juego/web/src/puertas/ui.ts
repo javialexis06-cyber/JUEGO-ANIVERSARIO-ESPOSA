@@ -147,6 +147,16 @@ export class Inventario {
     this.pintar();
   }
 
+  /** Pareja (invitado): el inventario es el mismo del otro celular (lo que uno recoge lo tienen los dos). */
+  mostrar(items: string[]) {
+    if (items.join('|') === this.items.join('|')) return;
+    const nuevos = items.filter((x) => !this.items.includes(x));
+    this.items = [...items];
+    if (this.elegido && !items.includes(this.elegido)) this.elegir(null);
+    this.pintar();
+    if (nuevos.length) sonido.caja();
+  }
+
   elegir(item: string | null) {
     this.elegido = item;
     this.alElegir(item);
@@ -196,25 +206,88 @@ export interface OpTeclado {
 }
 
 export class Paneles {
-  private capa = $('panel');
-  private carta = $('panel-carta');
+  private capa: HTMLElement;
+  private carta: HTMLElement;
   private cerrar: (() => void) | null = null;
   alFallar: () => void = () => {};
   abierto: 'ruedas' | 'teclado' | 'nota' | null = null;
+  /** Modo pareja: cada vez que cambia lo que muestra (para verlo en el otro celular). */
+  alCambiar: (() => void) | null = null;
+  private observador: MutationObserver | null = null;
+
+  /** Sin elementos, usa los de la página; con elementos sueltos (fuera de la página) sirve para los candados que
+   *  abre el otro celular en pareja: se arman aquí, invisibles, y se le muestran a quien los abrió. */
+  constructor(capa?: HTMLElement, carta?: HTMLElement) {
+    this.capa = capa ?? $('panel');
+    this.carta = carta ?? $('panel-carta');
+  }
+
+  /** Lo que se ve del panel (para mandarlo al otro celular). */
+  foto() {
+    return { abierto: this.abierto, clase: this.carta.className, html: this.carta.innerHTML };
+  }
+
+  /** Toca el botón número `i` del panel (lo tocó el otro en su celular). */
+  pulsar(i: number) {
+    this.carta.querySelectorAll<HTMLElement>('button')[i]?.click();
+  }
+
+  /** Muestra un panel que se está resolviendo en el otro celular (modo pareja): los botones se mandan allá. */
+  espejar(f: { abierto: Paneles['abierto']; clase: string; html: string } | null, alPulsar: (i: number) => void, alCerrar: () => void) {
+    if (!f || !f.abierto) {
+      if (this.abierto) this.finalizar();
+      return;
+    }
+    const nuevo = !this.abierto;
+    if (nuevo) this.desde = performance.now();
+    this.abierto = f.abierto;
+    this.carta.className = f.clase;
+    this.carta.innerHTML = f.html;
+    this.capa.hidden = false;
+    if (nuevo) sonido.toque();
+    this.carta.querySelectorAll<HTMLElement>('button').forEach((b, i) => {
+      b.onclick = () => {
+        if (b.classList.contains('flecha') || b.classList.contains('tecla')) sonido.nota(820 + i * 15, 0.03, 0, 'square', 0.03);
+        alPulsar(i);
+      };
+    });
+    this.cerrar = () => {
+      this.finalizar();
+      alCerrar();
+    };
+    this.capa.onclick = (e) => {
+      if (this.fondo(e)) this.cerrar?.();
+    };
+  }
+
+  /** Cuándo se abrió el último panel (un segundo toque seguido no lo cierra por error). */
+  private desde = 0;
+
+  /** ¿Toque en el fondo oscuro que sí cierra? (no el segundo toque de un doble toque que lo acaba de abrir) */
+  private fondo(e: MouseEvent) {
+    return e.target === this.capa && performance.now() - this.desde > 450;
+  }
 
   private abrir(tipo: 'ruedas' | 'teclado' | 'nota', html: string, clase = '') {
     this.cerrar?.();
+    this.desde = performance.now();
     this.abierto = tipo;
     this.carta.className = `panel-carta ${tipo} ${clase}`;
     this.carta.innerHTML = `<button class="boton-redondo boton-cerrar panel-x" aria-label="Cerrar"></button>${html}`;
     this.capa.hidden = false;
-    sonido.toque();
+    if (this.capa.isConnected) sonido.toque();
+    if (this.alCambiar && !this.observador) {
+      this.observador = new MutationObserver(() => this.alCambiar?.());
+      this.observador.observe(this.carta, { subtree: true, childList: true, characterData: true, attributes: true });
+    }
+    this.alCambiar?.();
   }
 
   private finalizar() {
     this.capa.hidden = true;
     this.abierto = null;
     this.cerrar = null;
+    this.alCambiar?.();
   }
 
   /** Cierra lo que esté abierto (como si tocaran la X). */
@@ -326,7 +399,7 @@ export class Paneles {
       };
       this.carta.querySelector<HTMLElement>('.panel-x')!.onclick = () => this.cerrar?.();
       this.capa.onclick = (e) => {
-        if (e.target === this.capa) this.cerrar?.();
+        if (this.fondo(e)) this.cerrar?.();
       };
     });
   }
@@ -354,7 +427,7 @@ export class Paneles {
       };
       this.carta.querySelector<HTMLElement>('.panel-x')!.onclick = () => this.cerrar?.();
       this.capa.onclick = (e) => {
-        if (e.target === this.capa) this.cerrar?.();
+        if (this.fondo(e)) this.cerrar?.();
       };
       void op.saldo.then((s) => {
         const el = this.carta.querySelector('.antojo-saldo');

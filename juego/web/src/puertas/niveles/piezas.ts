@@ -90,7 +90,9 @@ export class Canica {
 
   /** Avanza con la gravedad (ax, ay) del tablero. */
   paso(dt: number, ax: number, ay: number) {
-    const sub = 4;
+    // Pasos chiquitos según la rapidez (un cuadro lento no la deja atravesar las tablitas)
+    const v = Math.hypot(this.vx, this.vy) + Math.hypot(ax, ay) * dt;
+    const sub = Math.min(48, Math.max(4, Math.ceil((v * dt) / (this.r * 0.4))));
     const h = dt / sub;
     for (let i = 0; i < sub; i++) {
       this.vx += ax * h;

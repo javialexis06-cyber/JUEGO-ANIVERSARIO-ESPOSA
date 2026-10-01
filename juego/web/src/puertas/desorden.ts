@@ -463,9 +463,19 @@ const NOTICAS = [
 
 const COSITAS = ['un arete', 'una moneda de chocolate', 'un botón', 'una media sin pareja', 'un caramelo de menta', 'una hebilla del pelo'];
 
+type TipoEscondido = 'falsa' | 'notica' | 'cosita';
 interface Escondido {
   obj: THREE.Object3D;
   visto: boolean;
+  tipo: TipoEscondido;
+  /** Cuál de los escondidos de la puerta es (para el texto). */
+  i: number;
+}
+
+/** Dónde quedó cada cosa del desorden (lo que viaja al otro celular en pareja). */
+export interface PlanoDesorden {
+  cosas: { id: string; tono: number; p: number[]; yaw: number }[];
+  esc: { k: number; tipo: TipoEscondido; i: number; p: number[]; giro: number }[];
 }
 
 // ---------------------------------------------------------------------------
@@ -473,6 +483,8 @@ interface Escondido {
 // ---------------------------------------------------------------------------
 interface Cuerpo {
   id: string;
+  /** Variante de color (para armar la misma cosa en el otro celular). */
+  tono: number;
   obj: THREE.Group;
   h: THREE.Vector3;
   pos: THREE.Vector3;
@@ -491,6 +503,10 @@ interface Cuerpo {
   origen: THREE.Vector3;
   yaw: number;
   roto: boolean;
+  /** Veces que se ha corrido solo porque quedó tapando algo. */
+  empujes: number;
+  /** A dónde va saltando (para no resbalar al caer). */
+  salto: THREE.Vector3 | null;
 }
 
 interface Pedazo {
@@ -521,6 +537,12 @@ export interface Zonas {
   alRomper?: (primera: boolean) => void;
   /** Quién habla ({a|o}) para las noticas. */
   voz: (t: string) => string;
+  /** Semilla del desorden (en pareja los dos celulares riegan lo mismo). Por defecto sale del número de la puerta. */
+  semilla?: number;
+  /** Lo importante de la puerta en la pantalla (vista general): nada se queda quieto encima. */
+  protegida?: () => Mascara | null;
+  /** Quien escribe las noticas (para firmarlas). */
+  firma?: string;
 }
 
 export class Desorden {
@@ -541,7 +563,7 @@ export class Desorden {
 
   constructor(private c: Ctx, private escena: Escena, private cap: number, private zonas: Zonas) {
     this.grupo.name = 'desorden';
-    let s = c.n * 7919 + 17;
+    let s = Math.abs(Math.floor(zonas.semilla ?? c.n * 7919 + 17)) % 2147483646 || 1;
     this.azar = () => {
       s = (s * 16807) % 2147483647;
       return (s - 1) / 2147483646;
@@ -616,7 +638,7 @@ export class Desorden {
         const caja = new THREE.Box3(centro.clone().sub(medio), centro.clone().add(medio));
         if (!libre(caja)) continue;
         puestos.push(caja);
-        return this.agregar(id, obj, medio, color, centro);
+        return this.agregar(id, obj, medio, color, centro, tono);
       }
       return null;
     };
@@ -662,46 +684,117 @@ export class Desorden {
     const piso = this.cuerpos.filter((b) => !b.colgado && b.pos.y - b.h.y < 0.05 && b.h.x > 0.05 && b.h.z > 0.05);
     const barajar = piso.sort(() => this.azar() - 0.5);
     const falsas = FALSAS[this.cap] ?? [];
-    const cosas: ('falsa' | 'notica' | 'cosita')[] = [];
+    const cosas: TipoEscondido[] = [];
     if (falsas.length) cosas.push('falsa');
     if (this.azar() < 0.6) cosas.push(this.azar() < 0.55 ? 'notica' : 'cosita');
     cosas.forEach((tipo, i) => {
       const b = barajar[i];
       if (!b) return;
-      const papel = tipo !== 'cosita';
-      const obj = papel ? papelito(tipo === 'falsa' ? '#fff3a8' : '#ffe0ea') : cosita();
-      obj.position.set(b.pos.x, 0.006, b.pos.z);
-      obj.visible = false;
-      this.grupo.add(obj);
-      b.escondido = { obj, visto: false };
+      // Encima de lo que haya en el piso en ese punto (un tapete, una alfombra del acertijo): nunca por debajo
+      this.ponerEscondido(b, tipo, i, new THREE.Vector3(b.pos.x, this.alturaPiso(b.pos.x, b.pos.z) + 0.004, b.pos.z), (this.azar() - 0.5) * 0.5);
+    });
+  }
+
+  private ponerEscondido(b: Cuerpo, tipo: TipoEscondido, i: number, donde: THREE.Vector3, giro: number) {
+    const falsas = FALSAS[this.cap] ?? [];
+    const obj = tipo === 'cosita' ? cosita() : papelito(tipo === 'falsa');
+    obj.position.copy(donde);
+    obj.rotation.y = giro;
+    obj.visible = false;
+    this.grupo.add(obj);
+    b.escondido = { obj, visto: false, tipo, i };
+    this.conEscondido.push(b);
+    {
       const texto =
         tipo === 'falsa'
           ? falsas[(this.c.n + i) % falsas.length]
           : tipo === 'notica'
             ? this.zonas.voz(NOTICAS[(this.c.n * 3) % NOTICAS.length])
             : COSITAS[this.c.n % COSITAS.length];
+      // Con prioridad: aunque algo le quede delante, el toque le llega (son chiquitos y viven debajo de las cosas)
       this.c.tocar(obj, () => {
+        if (!obj.visible) return;
         sfx.papel();
         if (tipo === 'cosita') {
           this.c.aviso(`Encontraste ${texto}. Nada que ver con la puerta… creo.`);
-          obj.visible = false;
+          this.c.bien();
+          void this.escena.animar(380, (k) => {
+            obj.position.y += 0.012;
+            obj.scale.setScalar(Math.max(0.01, 1 - k));
+          }).then(() => (obj.visible = false));
           this.c.quitarToque(obj);
+          this.papeles = this.papeles.filter((p) => p !== obj);
           return;
         }
-        void this.c.ui.nota(`<div class="papelito${tipo === 'falsa' ? ' falsa' : ''}"><p>${esc(texto)}</p></div>`, 'papelito-nota');
-      });
-    });
+        // Se levanta un poquito al leerlo
+        const y0 = obj.position.y;
+        void this.escena.animar(260, (k) => (obj.position.y = y0 + Math.sin(k * Math.PI) * 0.06));
+        const firma = tipo === 'notica' && this.zonas.firma ? `<span class="papelito-firma">— ${esc(this.zonas.firma)} ♥</span>` : '';
+        const que = tipo === 'falsa' ? 'Un papelito arrugado' : 'Una notica para ti';
+        void this.c.ui.nota(`<div class="papelito ${tipo}"><i class="papelito-cinta"></i><small class="papelito-que">${que}</small><p>${esc(texto)}</p>${firma}</div>`, 'papelito-nota');
+      }, true);
+    }
   }
 
-  private agregar(id: string, obj: THREE.Group, h: THREE.Vector3, color: string, centro: THREE.Vector3) {
+  /** Dónde quedó cada cosa (para armar el mismo reguero en el otro celular, en pareja). */
+  plano(): PlanoDesorden {
+    const r = (v: number) => Math.round(v * 10000) / 10000;
+    return {
+      cosas: this.cuerpos.map((b) => ({ id: b.id, tono: b.tono, p: [r(b.pos.x), r(b.pos.y), r(b.pos.z)], yaw: r(b.yaw) })),
+      // (en el orden en que se crearon: así quedan igual en el otro celular)
+      esc: this.conEscondido.map((b) => ({ k: this.cuerpos.indexOf(b), tipo: b.escondido!.tipo, i: b.escondido!.i, p: b.escondido!.obj.position.toArray().map(r), giro: r(b.escondido!.obj.rotation.y) })),
+    };
+  }
+
+  /** Arma el reguero que mandó el otro celular (en pareja: el invitado ve lo mismo que el anfitrión). */
+  sembrarDesde(pl: PlanoDesorden) {
+    this.vista = this.escena.camara.clone();
+    const W = window.innerWidth, H = window.innerHeight;
+    this.puertaRect = rectDeCaja(new THREE.Box3(new THREE.Vector3(-HUECO.w / 2 - 0.15, 0, 0), new THREE.Vector3(HUECO.w / 2 + 0.15, HUECO.h + 0.15, 0.05)), this.vista, W, H);
+    for (const c of pl.cosas ?? []) {
+      if (!M[c.id]) continue;
+      const { obj, medio, color } = mallaDe(c.id, c.tono);
+      this.agregar(c.id, obj, medio, color, new THREE.Vector3(c.p[0], c.p[1], c.p[2]), c.tono, c.yaw);
+    }
+    // (lo escondido va después de todas las cosas, igual que en el otro celular)
+    for (const e of pl.esc ?? []) {
+      const b = this.cuerpos[e.k];
+      if (b) this.ponerEscondido(b, e.tipo, e.i, new THREE.Vector3(e.p[0], e.p[1], e.p[2]), e.giro);
+    }
+  }
+
+  /** Lo que se encontró y sigue a la vista (papelitos, cositas): es importante, nada se queda encima. */
+  papeles: THREE.Object3D[] = [];
+  /** Las cosas que esconden algo, en el orden en que se escondió. */
+  private conEscondido: Cuerpo[] = [];
+
+  /** Altura de lo que hay en el piso en (x, z): un tapete, una alfombra… (lo que esté bajito). */
+  private alturaPiso(x: number, z: number) {
+    const rc = new THREE.Raycaster(new THREE.Vector3(x, 0.6, z), new THREE.Vector3(0, -1, 0), 0, 0.8);
+    const raices: THREE.Object3D[] = [this.c.g];
+    const cuarto = this.escena.escena.getObjectByName('cuarto');
+    if (cuarto) raices.push(cuarto);
+    let y = 0;
+    for (const h of rc.intersectObjects(raices, true)) {
+      const m = h.object as THREE.Mesh;
+      const mt = m.material as THREE.Material;
+      if (!m.isMesh || !mt || mt.visible === false || h.point.y > 0.2) continue;
+      let vis = true;
+      for (let o: THREE.Object3D | null = m; o; o = o.parent) if (!o.visible) vis = false;
+      if (vis) y = Math.max(y, h.point.y);
+    }
+    return y;
+  }
+
+  private agregar(id: string, obj: THREE.Group, h: THREE.Vector3, color: string, centro: THREE.Vector3, tono: number, giro?: number) {
     const molde = M[id];
     obj.name = `cosa ${id} ${this.cuerpos.length}`;
     obj.position.copy(centro);
-    const yaw = molde.colgado ? 0 : (this.azar() - 0.5) * 1.2;
+    const yaw = giro ?? (molde.colgado ? 0 : (this.azar() - 0.5) * 1.2);
     obj.rotation.y = yaw;
     this.grupo.add(obj);
     const b: Cuerpo = {
-      id, obj, h, molde, color, yaw,
+      id, obj, h, molde, color, yaw, tono,
       pos: centro.clone(),
       vel: new THREE.Vector3(),
       giro: new THREE.Vector3(),
@@ -714,6 +807,8 @@ export class Desorden {
       muestras: [],
       origen: centro.clone(),
       roto: false,
+      empujes: 0,
+      salto: null,
     };
     this.cuerpos.push(b);
     this.c.arrastrar(obj, {
@@ -735,6 +830,8 @@ export class Desorden {
   }
 
   private tomar(b: Cuerpo) {
+    b.empujes = 0;
+    b.salto = null;
     b.tomado = true;
     b.colgado = false;
     b.dormido = false;
@@ -791,18 +888,30 @@ export class Desorden {
     const e = b.escondido;
     if (!e || e.visto) return;
     const dx = b.pos.x - b.origen.x, dz = b.pos.z - b.origen.z, dy = b.pos.y - b.origen.y;
-    if (Math.hypot(dx, dz) > Math.max(b.h.x, b.h.z) + 0.04 || dy > b.h.y * 2 + 0.1) {
-      e.visto = true;
-      e.obj.visible = true;
-      const s0 = e.obj.scale.x;
-      void this.escena.animar(260, (k) => e.obj.scale.setScalar(s0 * (0.6 + 0.4 * k)));
-      sfx.descubrir();
-    }
+    if (Math.hypot(dx, dz) > Math.max(b.h.x, b.h.z) + 0.04 || dy > b.h.y * 2 + 0.1) this.descubrir(e);
+  }
+
+  /** Aparece lo escondido: brinca, brilla y queda protegido (nada se queda quieto encima). */
+  private descubrir(e: Escondido) {
+    e.visto = true;
+    e.obj.visible = true;
+    this.papeles.push(e.obj);
+    this.protegidaCache = null;
+    const y0 = e.obj.position.y;
+    void this.escena.animar(520, (k) => {
+      e.obj.scale.setScalar(0.4 + 0.6 * k + Math.sin(k * Math.PI) * 0.35);
+      e.obj.position.y = y0 + Math.sin(k * Math.PI) * 0.12;
+    });
+    sfx.descubrir();
   }
 
   // --- Física ---------------------------------------------------------------
   private paso(dt: number) {
     this.pedacitos(dt);
+    for (const p of this.papeles) {
+      const aro = p.userData.aro as THREE.Mesh | undefined;
+      if (aro) (aro.material as THREE.MeshBasicMaterial).opacity = 0.28 + Math.sin(this.escena.t * 3.2) * 0.16;
+    }
     const despiertos = this.cuerpos.filter((b) => !b.dormido && !b.roto);
     if (!despiertos.length) return;
     this.acum = Math.min(this.acum + dt, 0.5);
@@ -876,6 +985,12 @@ export class Desorden {
     }
     if (golpe > 1.1) this.choque(b, golpe);
     if (b.roto) return;
+    // Al caer de un saltico se queda ahí (sin resbalar)
+    if (apoyo && b.salto && v.y <= 0) {
+      v.x = 0;
+      v.z = 0;
+      b.salto = null;
+    }
     // Roce y giro
     if (apoyo) {
       const k = Math.max(0, 1 - 5.5 * dt);
@@ -895,23 +1010,95 @@ export class Desorden {
       b.quieto += dt;
       if (b.quieto > 0.35) {
         v.set(0, 0, 0);
-        // Que no quede tapando la puerta: se corre hacia un lado
-        if (this.tapaPuerta(b)) {
-          v.x = (p.x >= 0 ? 1 : -1) * 1.6;
+        // Que no quede tapando la puerta ni nada importante: se corre hacia un lado (y si no hay caso, vuelve a
+        // donde estaba al principio, que era un sitio libre)
+        if (b.empujes < 4 && this.estorba(b, b.pos)) {
+          b.empujes++;
           b.quieto = 0;
+          // Un saltico hasta el sitio libre más cercano; si no hay, a donde estaba al principio (era libre… salvo que
+          // ahí haya quedado a la vista lo que escondía)
+          const destino = this.sitioLibre(b, b.empujes >= 3);
+          if (destino) this.saltar(b, destino);
+          else if (b.escondido?.visto) b.empujes = 4;
+          else {
+            p.copy(b.origen);
+            p.y += 0.25;
+            v.set(0, 0.4, 0);
+            b.salto = null;
+            if (b.molde.colgado) b.colgado = true;
+          }
           return;
         }
+        b.empujes = 0;
         b.dormido = true;
         b.obj.quaternion.setFromEuler(new THREE.Euler(0, b.yaw, 0));
       }
     } else b.quieto = 0;
   }
 
-  private tapaPuerta(b: Cuerpo) {
-    if (!this.vista) return false;
-    const r = rectDeCaja(new THREE.Box3(b.pos.clone().sub(b.h), b.pos.clone().add(b.h)), this.vista, window.innerWidth, window.innerHeight);
-    const d = this.puertaRect;
-    return r.x1 > d.x0 && r.x0 < d.x1 && r.y1 > d.y0 && r.y0 < d.y1;
+  private protegidaCache: { t: number; m: Mascara | null } | null = null;
+
+  /** Lo que no se puede tapar (lo importante y la puerta) en la pantalla de la vista general. */
+  private prohibida() {
+    if (!this.vista) return null;
+    if (!this.protegidaCache || this.escena.t - this.protegidaCache.t > 0.4) {
+      const W = window.innerWidth, H = window.innerHeight;
+      const m = this.zonas.protegida?.() ?? new Mascara(W, H);
+      const d = this.puertaRect;
+      m.rect(d.x0, d.y0, d.x1, d.y1);
+      for (const r of this.zonas.interfaz) m.rect(r.x0, r.y0, r.x1, r.y1);
+      this.protegidaCache = { t: this.escena.t, m };
+    }
+    return this.protegidaCache.m;
+  }
+
+  /** ¿Puesto en `pos`, tapa la puerta, algo importante o la interfaz? */
+  private estorba(b: Cuerpo, pos: THREE.Vector3) {
+    const prot = this.prohibida();
+    if (!prot || !this.vista) return false;
+    const antes = b.obj.position.clone();
+    b.obj.position.copy(pos);
+    b.obj.updateWorldMatrix(true, true);
+    const m = new Mascara(prot.ancho, prot.alto);
+    pintar(m, b.obj, this.vista);
+    b.obj.position.copy(antes);
+    b.obj.updateWorldMatrix(true, true);
+    return m.cruce(prot) >= 3;
+  }
+
+  /** El sitio libre más cercano en el piso (a los lados primero, luego más adelante o más atrás). `lejos`: busca en
+   *  todo el cuarto. */
+  private sitioLibre(b: Cuerpo, lejos = false): THREE.Vector3 | null {
+    const p = b.pos;
+    const otros = this.cuerpos.filter((o) => o !== b && !o.roto).map((o) => new THREE.Box3(o.pos.clone().sub(o.h), o.pos.clone().add(o.h)));
+    const W = window.innerWidth, H = window.innerHeight;
+    const prueba = new THREE.Vector3();
+    for (const dz of lejos ? [0, -0.3, 0.3, -0.6, 0.6, 0.9, -0.9] : [0, -0.3, 0.3, -0.6]) {
+      for (let k = 1; k <= (lejos ? 44 : 16); k++) {
+        for (const lado of [1, -1]) {
+          prueba.set(p.x + lado * k * 0.16, b.h.y, THREE.MathUtils.clamp(p.z + dz, this.Z0 + b.h.z, 2.1));
+          if (prueba.x - b.h.x < this.X0 || prueba.x + b.h.x > this.X1) continue;
+          const caja = new THREE.Box3(prueba.clone().sub(b.h), prueba.clone().add(b.h)).expandByScalar(0.02);
+          if (this.muebles.some((m) => m.intersectsBox(caja)) || otros.some((o) => o.intersectsBox(caja))) continue;
+          if (this.zonas.narrador.some((z) => z.intersectsBox(caja))) continue;
+          const r = rectDeCaja(caja, this.vista!, W, H);
+          if (!isFinite(r.x0) || r.x0 < 4 || r.x1 > W - 4 || r.y0 < 4 || r.y1 > H - 4) continue;
+          if (!this.estorba(b, prueba)) return prueba.clone();
+        }
+      }
+    }
+    return null;
+  }
+
+  /** Saltico hasta `destino` (llega ahí y se queda: sin resbalar). */
+  private saltar(b: Cuerpo, destino: THREE.Vector3) {
+    const d = Math.hypot(destino.x - b.pos.x, destino.z - b.pos.z);
+    const T = 0.38 + Math.min(0.3, d * 0.12);
+    b.vel.set((destino.x - b.pos.x) / T, (destino.y - b.pos.y + 0.5 * G * T * T) / T, (destino.z - b.pos.z) / T);
+    b.giro.set(0, (this.azar() - 0.5) * 4, 0);
+    b.salto = destino.clone();
+    b.dormido = false;
+    sfx.toc(0.5);
   }
 
   private choque(b: Cuerpo, v: number) {
@@ -932,10 +1119,7 @@ export class Desorden {
     b.obj.visible = false;
     this.c.quitarToque(b.obj);
     // Lo que escondía queda a la vista
-    if (b.escondido && !b.escondido.visto) {
-      b.escondido.visto = true;
-      b.escondido.obj.visible = true;
-    }
+    if (b.escondido && !b.escondido.visto) this.descubrir(b.escondido);
     sfx.romper();
     this.rotos++;
     this.zonas.alRomper?.(this.rotos === 1);
@@ -945,6 +1129,7 @@ export class Desorden {
     const n = 9;
     for (let i = 0; i < n; i++) {
       const pz = new THREE.Mesh(geo, m);
+      pz.name = 'pedazo';
       const s = 0.3 + this.azar() * 0.6;
       pz.scale.set(b.h.x * s, b.h.y * s * 0.8, b.h.z * s);
       pz.position.copy(b.pos).add(new THREE.Vector3((this.azar() - 0.5) * b.h.x, (this.azar() - 0.3) * b.h.y, (this.azar() - 0.5) * b.h.z));
@@ -1027,11 +1212,12 @@ export class Desorden {
       if (m.isMesh && m.userData.propio) {
         m.geometry.dispose();
         const mt = m.material as THREE.MeshStandardMaterial;
-        mt.map?.dispose();
+        if (!m.userData.mapaFijo) mt.map?.dispose();
         mt.dispose();
       }
     });
     this.cuerpos = [];
+    this.papeles = [];
   }
 }
 
@@ -1040,46 +1226,114 @@ function pedazoGeo() {
   return (geoPedazo ??= new THREE.TetrahedronGeometry(1, 0));
 }
 
-/** Papelito doblado en el piso (se toca para leerlo). */
-function papelito(color: string) {
-  const t = lienzo(96, 72, (cx, w, h) => {
-    cx.fillStyle = color;
+let texSombraPapel: THREE.Texture | null = null;
+/** Sombrita de contacto (compartida: no se libera con la puerta). */
+function sombrita(w: number, d: number, fuerza = 0.32) {
+  texSombraPapel ??= lienzo(64, 64, (c) => {
+    const g = c.createRadialGradient(32, 32, 2, 32, 32, 31);
+    g.addColorStop(0, 'rgba(40,25,20,1)');
+    g.addColorStop(1, 'rgba(40,25,20,0)');
+    c.fillStyle = g;
+    c.fillRect(0, 0, 64, 64);
+  });
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshBasicMaterial({ map: texSombraPapel, transparent: true, opacity: fuerza, depthWrite: false }));
+  m.rotation.x = -Math.PI / 2;
+  m.position.y = 0.002;
+  m.renderOrder = -1;
+  m.userData.propio = true;
+  m.userData.mapaFijo = true;
+  return m;
+}
+
+/** Aro de luz en el piso que late (para que se note lo que se encontró). */
+function aroDeLuz(r: number, color: string) {
+  const aro = new THREE.Mesh(
+    new THREE.RingGeometry(r * 0.72, r, 36),
+    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.35, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }),
+  );
+  aro.rotation.x = -Math.PI / 2;
+  aro.position.y = 0.003;
+  aro.userData.propio = true;
+  return aro;
+}
+
+/** Papelito doblado como carpita (la cara de adelante mira a la cámara: se ve aunque el piso quede de lado). */
+function papelito(falsa: boolean) {
+  const color = falsa ? '#fff3a8' : '#ffe3ec';
+  const t = lienzo(256, 128, (cx, w, h) => {
+    const g = cx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, color);
+    g.addColorStop(1, falsa ? '#f3e08a' : '#f7c9d6');
+    cx.fillStyle = g;
     cx.fillRect(0, 0, w, h);
-    cx.strokeStyle = 'rgba(61,43,39,0.35)';
-    cx.lineWidth = 3;
+    // Renglones escritos a mano
+    cx.strokeStyle = falsa ? 'rgba(80,60,30,0.55)' : 'rgba(120,50,70,0.5)';
+    cx.lineWidth = 5;
+    cx.lineCap = 'round';
     for (let i = 0; i < 3; i++) {
       cx.beginPath();
-      cx.moveTo(12, 20 + i * 16);
-      cx.lineTo(w - 14 - i * 10, 20 + i * 16);
+      const y = 30 + i * 30;
+      cx.moveTo(26, y);
+      for (let x = 26; x < w - 70 - i * 20; x += 14) cx.lineTo(x, y + Math.sin(x * 0.35 + i) * 3);
       cx.stroke();
     }
-    textoEn(cx, '?', w - 16, h - 16, 18, '#e4574b', 700);
-    cx.font = `600 10px ${FUENTE}`;
+    if (falsa) textoEn(cx, '?', w - 36, h / 2, 72, '#e4574b', 700);
+    else {
+      cx.fillStyle = '#e4574b';
+      cx.beginPath();
+      const x = w - 40, y = h / 2 - 6, r = 16;
+      cx.moveTo(x, y + r * 1.4);
+      cx.bezierCurveTo(x - r * 2, y, x - r, y - r * 1.3, x, y - r * 0.3);
+      cx.bezierCurveTo(x + r, y - r * 1.3, x + r * 2, y, x, y + r * 1.4);
+      cx.fill();
+    }
+    // Borde un poquito más oscuro (el doblez)
+    cx.strokeStyle = 'rgba(61,43,39,0.25)';
+    cx.lineWidth = 4;
+    cx.strokeRect(2, 2, w - 4, h - 4);
   });
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.12), new THREE.MeshStandardMaterial({ map: t, roughness: 0.9 }));
-  m.rotation.x = -Math.PI / 2;
-  m.rotation.z = 0.4;
-  m.userData.propio = true;
+  const mt = new THREE.MeshStandardMaterial({ map: t, roughness: 0.92, side: THREE.DoubleSide });
+  const atras = new THREE.MeshStandardMaterial({ color: falsa ? '#eedd8e' : '#f2cbd6', roughness: 0.95, side: THREE.DoubleSide });
+  const W = 0.24, D = 0.06, Hh = 0.07;
+  const largo = Math.hypot(D, Hh);
+  const ang = Math.atan2(D, Hh);
   const g = new THREE.Group();
   g.name = 'papelito';
-  g.add(m);
-  // Área de toque más grande (es chiquito)
-  const toque = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), new THREE.MeshBasicMaterial({ visible: false }));
+  // Cara de adelante: de la arista de arriba (z = 0, y = Hh) hasta el piso (z = D)
+  const frente = new THREE.Mesh(new THREE.PlaneGeometry(W, largo), mt);
+  frente.position.set(0, Hh / 2, D / 2);
+  frente.rotation.x = -ang;
+  frente.castShadow = true;
+  const espalda = new THREE.Mesh(new THREE.PlaneGeometry(W, largo), atras);
+  espalda.position.set(0, Hh / 2, -D / 2);
+  espalda.rotation.x = ang;
+  for (const m of [frente, espalda]) m.userData.propio = true;
+  const aro = aroDeLuz(0.2, falsa ? '#fff2a0' : '#ffc4d8');
+  g.userData.aro = aro;
+  // Área de toque generosa (el dedo es más grande que el papel)
+  const toque = new THREE.Mesh(new THREE.SphereGeometry(0.21, 10, 8), new THREE.MeshBasicMaterial({ visible: false }));
+  toque.position.y = 0.06;
   toque.userData.propio = true;
-  g.add(toque);
+  g.add(sombrita(0.34, 0.2), aro, frente, espalda, toque);
   return g;
 }
 
-/** Cosita perdida (un arete, un botón…): una bolita brillante. */
+/** Cosita perdida (un arete, un botón…): una joyita dorada que brilla. */
 function cosita() {
   const g = new THREE.Group();
   g.name = 'cosita';
-  const m = new THREE.Mesh(new THREE.SphereGeometry(0.025, 10, 8), new THREE.MeshStandardMaterial({ color: '#f2c75c', metalness: 0.7, roughness: 0.3 }));
-  m.position.y = 0.02;
-  m.userData.propio = true;
-  const toque = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 6), new THREE.MeshBasicMaterial({ visible: false }));
+  const oro = new THREE.MeshStandardMaterial({ color: '#f2c75c', metalness: 0.75, roughness: 0.25, emissive: '#5a3a08', emissiveIntensity: 0.4 });
+  const aro = new THREE.Mesh(new THREE.TorusGeometry(0.03, 0.009, 8, 20), oro);
+  aro.position.y = 0.03;
+  const gema = new THREE.Mesh(new THREE.OctahedronGeometry(0.018), new THREE.MeshStandardMaterial({ color: '#f59fc0', metalness: 0.2, roughness: 0.15, emissive: '#7a2848', emissiveIntensity: 0.5 }));
+  gema.position.set(0, 0.012, 0);
+  for (const m of [aro, gema]) m.userData.propio = true;
+  const luz = aroDeLuz(0.13, '#fff2a0');
+  g.userData.aro = luz;
+  const toque = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 6), new THREE.MeshBasicMaterial({ visible: false }));
+  toque.position.y = 0.04;
   toque.userData.propio = true;
-  g.add(m, toque);
+  g.add(sombrita(0.14, 0.1, 0.25), luz, aro, gema, toque);
   return g;
 }
 

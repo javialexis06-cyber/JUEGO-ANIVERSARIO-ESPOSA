@@ -19,7 +19,8 @@ export interface Ctx {
   /** Azar repetible de esta puerta. */
   azar: () => number;
 
-  tocar(obj: THREE.Object3D, fn: (hit: THREE.Intersection) => void): void;
+  /** `prioridad`: el toque le llega aunque otra cosa le quede delante (papelitos, cositas chiquitas). */
+  tocar(obj: THREE.Object3D, fn: (hit: THREE.Intersection) => void, prioridad?: boolean): void;
   mantener(obj: THREE.Object3D, bajar: (hit: THREE.Intersection) => void, soltar: (ms: number) => void): void;
   arrastrar(obj: THREE.Object3D, op: OpArrastre): void;
   frotar(obj: THREE.Object3D, fn: (hit: THREE.Intersection, px: number) => void): void;
@@ -64,6 +65,9 @@ export interface Ctx {
   alSalir(fn: () => void): void;
   /** Aviso corto y amable (no es del narrador): «Sostén el celular quieto». */
   aviso(texto: string, ms?: number): void;
+  /** Marca algo como importante (una pista pintada, unas estrellas): ni el desorden ni la decoración lo tapan.
+   *  Lo que se toca o se arrastra y los letreros pintados ya cuentan solos. */
+  proteger(obj: THREE.Object3D): void;
 }
 
 export interface Probador {
@@ -99,6 +103,9 @@ export interface Nivel {
   pistas: [string, string, string];
   /** Las cosas regadas por el cuarto (por defecto 9–12 del capítulo; `nada` si cualquier toque cuenta). */
   desorden?: OpDesorden;
+  /** En pareja, puerta repartida (como en los juegos de escape cooperativos): uno ve la pista (estos objetos, por
+   *  nombre) y el otro tiene el candado; se turnan de una puerta a otra y se cuentan lo que ven con una notica. */
+  pareja?: { pista: string[] };
   montar(c: Ctx): void | Promise<void>;
   prueba(p: Probador): Promise<void>;
 }

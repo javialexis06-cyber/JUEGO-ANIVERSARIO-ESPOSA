@@ -27,6 +27,7 @@
       <span class="logo-pareja" id="mapa-abiertas">0 de 100 puertas</span>
     </div>
     <div class="mapa-botones">
+      <button id="btn-pareja" class="boton boton-menta boton-pareja">En pareja</button>
       <button id="btn-recuerdos" class="boton boton-papel">Recuerdos</button>
       <button id="btn-continuar" class="boton boton-tomate">Empezar</button>
     </div>
@@ -37,7 +38,9 @@
 <!-- Durante una puerta -->
 <section id="hud" class="hud-puertas" hidden>
   <div class="hud-chip"><b id="hud-puerta">Puerta 1</b><span id="hud-lugar">Nuestra casa</span></div>
+  <div id="pareja-chip" class="pareja-chip" hidden></div>
   <div class="hud-botones">
+    <button id="btn-sena" class="boton-redondo boton-sena" aria-label="Señas para tu pareja" hidden></button>
     <button id="btn-pista" class="boton-redondo boton-pista boton-antojo" aria-label="Antojos: comprarle un dulce a cambio de una pista" hidden></button>
     <button id="btn-sonido" class="boton-redondo boton-sonido" aria-label="Sonido"></button>
     <button id="btn-mapa" class="boton-redondo boton-mapa" aria-label="Mapa de puertas"></button>
@@ -45,6 +48,25 @@
   <button id="btn-volver" class="boton boton-papel btn-volver" hidden>‹ Volver</button>
 </section>
 <div id="inventario" class="inventario" hidden></div>
+<div id="senas" class="senas" hidden></div>
+
+<!-- En pareja: la manito del otro, sus señas y la pausa si se va -->
+<div id="dedo-otro" class="dedo-otro" hidden><i class="dedo-onda"></i><i class="cara-pareja"></i><svg class="dedo-mano" viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10h.5V4a1.5 1.5 0 0 1 3 0v6h.5V5.5a1.5 1.5 0 0 1 3 0V14c0 4-2.5 7-6.5 7-3 0-4.6-1.6-6-4l-2.2-3.7a1.4 1.4 0 0 1 2.3-1.6z"/></svg></div>
+<div id="sena-aro" class="sena-aro" hidden></div>
+<div id="sena-globo" class="sena-globo" hidden></div>
+<div id="notica-otro" class="notica-otro" hidden></div>
+<form id="libretica" class="libretica" hidden>
+  <label for="libretica-texto">Notica para tu pareja</label>
+  <input id="libretica-texto" maxlength="60" autocomplete="off" placeholder="4 1 7, BESO, ♥ ★ ☀…">
+  <div class="libretica-botones"><button type="button" id="libretica-cerrar" class="boton boton-papel">Cancelar</button><button class="boton boton-tomate">Mandar</button></div>
+</form>
+<div id="pareja-espera" class="pareja-espera" hidden><i class="pareja-espera-puntos"></i><span id="pareja-espera-texto"></span></div>
+<section id="pareja-pausa" class="pareja-pausa" hidden>
+  <article><i id="pareja-pausa-cara" class="cara-pareja grande"></i><p id="pareja-pausa-texto"></p><button id="pareja-pausa-salir" class="boton boton-papel">Salir al mapa</button></article>
+</section>
+<section id="hoja-pareja" class="panel hoja-pareja-capa" hidden>
+  <article class="panel-carta hoja-pareja"><div id="hoja-pareja-cuerpo"></div><div id="hoja-pareja-botones" class="hoja-botones"></div></article>
+</section>
 <div id="aviso" class="aviso" role="status" hidden></div>
 
 <!-- El narrador -->
@@ -57,7 +79,9 @@
 <!-- Candados, teclados y notas -->
 <section id="panel" class="panel" hidden><article id="panel-carta" class="panel-carta"></article></section>
 
+<div id="celebra" class="celebra" hidden></div>
 <div id="fundido" class="fundido" hidden></div>
+<div id="tarjeta-puerta" class="tarjeta-puerta" hidden></div>
 <script type="module" src="./src/carga.ts"></script>
 <script type="module" src="./src/puertas/main.ts"></script>
 </body>

@@ -1,7 +1,7 @@
 // Capítulo 6 · El bosque de las luciérnagas (puertas 51–60): linterna con el dedo, memoria de luces, contar
 // sonidos, celular boca abajo, melodía, equilibrio, frotar el rocío, ordenar fases, ojos cerrados y adivinanza.
 import * as THREE from 'three';
-import * as sonido from '../../sonido';
+import * as sonido from '../sonido_eco';
 import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';

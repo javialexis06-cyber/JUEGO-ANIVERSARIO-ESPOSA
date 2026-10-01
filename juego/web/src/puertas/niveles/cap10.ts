@@ -2,7 +2,7 @@
 // recuerdos, la carta cifrada, la matica (agua y sol), el piano de colores, la torta del aniversario, la caja
 // musical, pedir un deseo con los ojos cerrados, todo junto y la puerta del corazón que se abre con los dos.
 import * as THREE from 'three';
-import * as sonido from '../../sonido';
+import * as sonido from '../sonido_eco';
 import * as sfx from '../sonidos';
 import { caja, cilindro, corazon, en, esfera, grupo, letrero, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';

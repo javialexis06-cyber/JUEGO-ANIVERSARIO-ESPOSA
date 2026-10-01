@@ -1,6 +1,6 @@
 // Sonidos propios de Cien Puertas, sintetizados con las notas y el ruido de ../sonido (sin archivos):
 // el timbre de la casa, el teléfono, la radio, la caja musical, el búho, los relojes, las olas, lo que se rompe…
-import { nota, rumor } from '../sonido';
+import { nota, rumor } from './sonido_eco';
 
 /** Campana con parciales de campana de verdad (f, 2.76 f, 5.4 f) y cola larga. */
 function campanada(f: number, cuando = 0, vol = 0.12, dur = 1.4) {

@@ -82,6 +82,11 @@ export class Puerta {
     this.pegados.push(obj);
   }
 
+  /** Lo que el acertijo pegó a la puerta (el espejo de pareja lo sigue también). */
+  get pegadas() {
+    return this.pegados;
+  }
+
   /** Quita lo pegado por el acertijo anterior. */
   despegar() {
     for (const o of this.pegados.splice(0)) o.removeFromParent();
@@ -107,18 +112,25 @@ export class Puerta {
   async desbloquear() {
     if (!this.bloqueada) return;
     this.bloqueada = false;
+    const vez = this.vez;
     sonido.nota(1800, 0.05, 0, 'square', 0.05);
     sonido.nota(1200, 0.07, 0.07, 'square', 0.05);
-    await this.escena.animar(300, (k) => (this.cerradura.rotation.z = -k * Math.PI * 0.5));
+    await this.escena.animar(300, (k) => vez === this.vez && (this.cerradura.rotation.z = -k * Math.PI * 0.5));
   }
+
+  /** Cambia cada vez que se cierra: una apertura que iba a medias ya no mueve las hojas. */
+  private vez = 0;
 
   async abrir() {
     if (this.abierta) return;
+    const vez = this.vez;
     await this.desbloquear();
+    if (vez !== this.vez) return;
     this.abierta = true;
     sonido.rumor(0.9, 380, 0.06, 0, 2, 900);
     const m = this.luzDetras.material as THREE.MeshBasicMaterial;
     await this.escena.animar(1300, (k) => {
+      if (vez !== this.vez) return;
       for (const h of this.hojas) h.abrir(k);
       for (const fn of this.extras) fn(k);
       m.opacity = Math.min(1, k * 1.6);
@@ -127,6 +139,7 @@ export class Puerta {
 
   /** Vuelve a quedar cerrada (al repetir una puerta). */
   cerrar() {
+    this.vez++;
     this.abierta = false;
     this.bloqueada = true;
     this.cerradura.rotation.z = 0;

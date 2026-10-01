@@ -65,6 +65,34 @@ export class Mascara {
     if (i >= 0 && j >= 0 && i < this.w && j < this.h) this.d[j * this.w + i] = 1;
   }
 
+  /** Agranda lo marcado unos píxeles hacia todos los lados (margen alrededor de lo importante). */
+  engordar(px: number) {
+    const r = Math.max(1, Math.round(px / CELDA));
+    const antes = this.d.slice();
+    for (let y = 0; y < this.h; y++)
+      for (let x = 0; x < this.w; x++) {
+        if (!antes[y * this.w + x]) continue;
+        for (let j = Math.max(0, y - r); j <= Math.min(this.h - 1, y + r); j++)
+          for (let i = Math.max(0, x - r); i <= Math.min(this.w - 1, x + r); i++) this.d[j * this.w + i] = 1;
+      }
+    return this;
+  }
+
+  /** Cuántas celdas marcadas hay dentro del rectángulo (px). */
+  cuentaRect(x0: number, y0: number, x1: number, y1: number) {
+    const a = Math.max(0, Math.floor(x0 / CELDA)), b = Math.min(this.w - 1, Math.floor(x1 / CELDA));
+    const c = Math.max(0, Math.floor(y0 / CELDA)), e = Math.min(this.h - 1, Math.floor(y1 / CELDA));
+    let n = 0;
+    for (let y = c; y <= e; y++) for (let x = a; x <= b; x++) n += this.d[y * this.w + x];
+    return n;
+  }
+
+  /** Une lo marcado de otra máscara del mismo tamaño. */
+  sumar(o: Mascara) {
+    for (let i = 0; i < this.d.length; i++) if (o.d[i]) this.d[i] = 1;
+    return this;
+  }
+
   /** Celdas marcadas en las dos. */
   cruce(o: Mascara) {
     let n = 0;

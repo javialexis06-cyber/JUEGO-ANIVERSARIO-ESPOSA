@@ -1,7 +1,7 @@
 // Capítulo 3 · La cafetería (puertas 21–30): secuencias, dibujar, balancear, memoria de sonidos, sumar,
 // soplar el vidrio, anagrama, seguir la taza, girar con dos dedos y voltear el celular.
 import * as THREE from 'three';
-import * as sonido from '../../sonido';
+import * as sonido from '../sonido_eco';
 import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, grupo, letrero, lienzo, mat, matNuevo, textoEn, toro } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
@@ -463,6 +463,7 @@ const rocola: Nivel = {
 const TOTAL_CUENTA = '30';
 const cuenta: Nivel = {
   titulo: 'La cuenta',
+  pareja: { pista: ['recibo'] },
   pistas: [
     'Hay que pagar antes de irse.',
     'El recibo de la mesa dice qué pedimos; la caja registradora quiere el total.',

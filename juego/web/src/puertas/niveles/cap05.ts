@@ -2,7 +2,7 @@
 // memoria con la marea, soplar el velero, cocos, destellos y vibración, estrellas que se prenden y el atardecer.
 import * as THREE from 'three';
 import { cieloPlaya } from '../cuarto';
-import * as sonido from '../../sonido';
+import * as sonido from '../sonido_eco';
 import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, estrella, grupo, letrero, mat, matNuevo, textoEn } from '../kit';
 import type { Ctx, Nivel } from '../nivel';
@@ -181,6 +181,7 @@ const ROCAS: [number, number][] = [[3.7, -3.9], [4.55, -2.9], [3.9, -2.0]];
 const CODIGO_BOTELLA = ['7', '3', '9'];
 const botella: Nivel = {
   titulo: 'La botella con mensaje',
+  pareja: { pista: ['botella'] },
   pistas: [
     'Algo viene flotando desde el mar.',
     'La botella se mueve hacia donde se incline el mundo… y le tiene miedo a las rocas.',

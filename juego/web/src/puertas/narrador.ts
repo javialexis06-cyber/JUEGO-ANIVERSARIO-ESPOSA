@@ -5,7 +5,6 @@ import { Vestuario } from '../casa/ropa';
 import type { Rol, Ropa } from '../casa/modelo';
 import { Personaje } from '../personaje';
 import * as sonido from '../sonido';
-import { esquinaNarrador } from './desorden';
 import { Escena, OJO } from './escena';
 import { ANIMO, ANIMO_DE, BONITO, BONITO_DE, type Dicho, elegir, FELICITAR, voz } from './historia';
 import { Globo } from './ui';
@@ -24,6 +23,8 @@ export class Narrador {
   private hasta = 0;
   /** Ánimos dados en esta puerta (máximo dos). */
   animos = 0;
+  /** Dónde se queda mientras se juega (x; la z es 0.75): la esquina izquierda, o la derecha si allá estorba. */
+  esquina = -3.3;
   private listo = false;
 
   constructor(public rol: Rol, private escena: Escena) {
@@ -130,7 +131,7 @@ export class Narrador {
 
   /** Se corre a la esquina (queda asomado sin tapar el acertijo). */
   irEsquina(): Promise<void> {
-    const destino = P(esquinaNarrador(this.escena.camara), 0.75);
+    const destino = P(this.esquina, 0.75);
     return new Promise((listo) => {
       this.p.ruta = [destino];
       this.p.alLlegar = () => {

@@ -39,6 +39,8 @@ export class Escena {
   rapidez = 1;
   /** Sin dibujar (revisiones automáticas: todo corre igual, pero mucho más rápido). */
   dibujar = true;
+  /** En pareja, mientras el otro no está (se cortó o se fue a segundo plano) todo se queda quieto. */
+  pausada = false;
 
   constructor(lienzo: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true });
@@ -188,8 +190,10 @@ export class Escena {
 
   cuadro(dt: number) {
     const d = Math.min(dt, 0.1) * this.rapidez;
-    this.t += d;
-    for (const fn of [...this.tareas]) fn(d, this.t);
+    if (!this.pausada) {
+      this.t += d;
+      for (const fn of [...this.tareas]) fn(d, this.t);
+    }
     if (this.dibujar) this.renderer.render(this.escena, this.camara);
     else this.escena.updateMatrixWorld();
   }

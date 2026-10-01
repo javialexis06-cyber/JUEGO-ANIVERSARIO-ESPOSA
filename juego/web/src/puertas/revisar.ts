@@ -3,7 +3,8 @@
 // sus tres puestos (contando, en la esquina y celebrando) y la interfaz; se cuenta cuánto se cruzan.
 import * as THREE from 'three';
 import type { Desorden } from './desorden';
-import { esquinaNarrador } from './desorden';
+import type { Entrada } from './entrada';
+import { esDe, listarImportantes, muestras, nombreDe as nombreImp, primeroDelante, unidad } from './protegidas';
 import { MIRA, OJO, type Escena } from './escena';
 import type { Narrador } from './narrador';
 import type { Puerta } from './puerta';
@@ -53,7 +54,7 @@ export function revisarPuerta(escena: Escena, puerta: Puerta, cuarto: THREE.Obje
   const p = narrador.p;
   const antes = { pos: { ...p.pos }, rot: p.rot, visible: p.grupo.visible };
   p.grupo.visible = true;
-  const esquina = esquinaNarrador(escena.camara);
+  const esquina = narrador.esquina;
   for (const [que, x, z] of [['narrador contando', -1.75, 1.5], ['narrador en la esquina', esquina, 0.75], ['narrador celebrando', -1.3, 1.05]] as [string, number, number][]) {
     p.pos = { x, y: -z };
     p.sincronizar();
@@ -119,4 +120,138 @@ export function revisarPuerta(escena: Escena, puerta: Puerta, cuarto: THREE.Obje
       if (ix > 2 && iy > 2) tapan.push({ que, celdas: Math.round((ix * iy) / 16) });
     }
   return { pantalla: `${W}x${H}`, puerta: rect, cosas: desorden?.cuerpos.length ?? 0, tapan };
+}
+
+// ---------------------------------------------------------------------------
+// Lo importante (lo que se toca, las pistas pintadas, los papelitos): ¿algo lo tapa?
+// ---------------------------------------------------------------------------
+export interface Tapado {
+  /** Lo importante que queda tapado. */
+  que: string;
+  /** Lo que lo tapa. */
+  por: string;
+  /** Puntos tapados de los que se ven. */
+  n: number;
+  de: number;
+  vista: string;
+}
+
+/** Rectángulos de la interfaz que siempre están durante una puerta (con el inventario lleno a tres cosas). */
+function interfazFija() {
+  const out: { que: string; x0: number; y0: number; x1: number; y1: number }[] = [];
+  const medir = (el: HTMLElement | null, que: string) => {
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (r.width > 0) out.push({ que, x0: r.left, y0: r.top, x1: r.right, y1: r.bottom });
+  };
+  const hud = document.getElementById('hud');
+  if (hud && !hud.hidden) for (const h of [...hud.children] as HTMLElement[]) if (!h.hidden) medir(h, `interfaz: ${h.id || h.className}`);
+  const inv = document.getElementById('inventario')!;
+  const antes = { html: inv.innerHTML, oculto: inv.hidden };
+  // (con una cosa: la llave; más de una al tiempo es raro y el inventario crece hacia abajo, por el borde)
+  inv.innerHTML = '<button class="ranura"></button>';
+  inv.hidden = false;
+  medir(inv, 'interfaz: inventario');
+  inv.innerHTML = antes.html;
+  inv.hidden = antes.oculto;
+  return out;
+}
+
+/**
+ * Revisa con rayos desde la cámara qué tapa lo importante. `cam` es la vista (la general o un acercamiento del
+ * nivel). Lo que el acertijo esconde a propósito detrás de otra cosa que se toca (la llave entre los cojines) no
+ * cuenta.
+ */
+export function revisarImportantes(o: {
+  escena: Escena;
+  cam: THREE.Camera;
+  vista: string;
+  puerta: Puerta;
+  cuarto: THREE.Object3D;
+  g: THREE.Object3D;
+  desorden: Desorden | null;
+  narrador: Narrador | null;
+  entrada: Entrada;
+  extra: THREE.Object3D[];
+  /** Solo lo que está dentro de la vista (en los acercamientos). */
+  soloEnVista?: boolean;
+}): Tapado[] {
+  const W = window.innerWidth, H = window.innerHeight;
+  o.escena.escena.updateMatrixWorld(true);
+  (o.cam as THREE.PerspectiveCamera).updateMatrixWorld();
+  const lista = listarImportantes({ g: o.g, puerta: o.puerta, entrada: o.entrada, extra: o.extra });
+  // Las piezas del acertijo que se tocan (esconder algo detrás de ellas es parte del juego)
+  const tocables = new Set<THREE.Object3D>();
+  for (const [obj] of o.entrada.registrados()) if (esDe(obj, o.g)) tocables.add(unidad(obj, o.g));
+  const raices: THREE.Object3D[] = [o.cuarto, o.g];
+  if (o.desorden) raices.push(o.desorden.grupo);
+  // El narrador en su esquina (donde se queda mientras se juega)
+  let volverNarrador = () => {};
+  if (o.narrador) {
+    const p = o.narrador.p;
+    const antes = { pos: { ...p.pos }, rot: p.rot, visible: p.grupo.visible };
+    p.grupo.visible = true;
+    p.pos = { x: o.narrador.esquina, y: -0.75 };
+    p.sincronizar();
+    p.grupo.updateMatrixWorld(true);
+    raices.push(p.grupo);
+    volverNarrador = () => {
+      p.pos = antes.pos;
+      p.rot = antes.rot;
+      p.sincronizar();
+      p.grupo.visible = antes.visible;
+    };
+  }
+  const interfaz = o.soloEnVista ? [] : interfazFija();
+  const fuera: Tapado[] = [];
+  const v = new THREE.Vector3();
+  try {
+    for (const imp of lista) {
+      // Lo que está escondido debajo del piso (los topos en su hueco) todavía no se ve: no cuenta
+      const caja = new THREE.Box3().setFromObject(imp.obj);
+      if (!caja.isEmpty() && caja.max.y < 0.03) continue;
+      const ps = muestras(imp.obj, 40);
+      let vistos = 0;
+      const por = new Map<string, number>();
+      for (const p of ps) {
+        v.copy(p).project(o.cam);
+        if (v.z > 1 || Math.abs(v.x) > 1 || Math.abs(v.y) > 1) {
+          if (!o.soloEnVista) por.set('fuera de la pantalla', (por.get('fuera de la pantalla') ?? 0) + 1);
+          if (!o.soloEnVista) vistos++;
+          continue;
+        }
+        const { cual, propio } = primeroDelante(o.cam, p, raices, imp.propios);
+        if (propio) continue;
+        vistos++;
+        let quien = '';
+        if (cual) {
+          if (o.narrador && esDe(cual, o.narrador.p.grupo)) quien = 'narrador en la esquina';
+          else if (o.desorden && esDe(cual, o.desorden.grupo)) quien = `desorden: ${nombreImp(unidad(cual, o.desorden.grupo))}`;
+          else if (esDe(cual, o.puerta.grupo)) quien = 'la puerta';
+          else if (esDe(cual, o.g)) {
+            const u = unidad(cual, o.g);
+            if (!tocables.has(u)) quien = `acertijo: ${nombreImp(u)}`;
+          } else if (esDe(cual, o.cuarto)) {
+            // (el piso, la arena o el mar que tapan lo que está enterrado o flotando lejos es parte del acertijo)
+            const u = unidad(cual, o.cuarto);
+            if (!/^(piso|arena|mar|agua|olas|pasto|suelo|nieve|cesped)/i.test(u.name) && !/^(piso|arena|mar|agua|olas)/i.test(cual.name)) quien = `cuarto: ${nombreImp(u)}`;
+          }
+        }
+        if (!quien && interfaz.length) {
+          const x = (v.x * 0.5 + 0.5) * W, y = (-v.y * 0.5 + 0.5) * H;
+          const r = interfaz.find((r) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1);
+          if (r) quien = r.que;
+        }
+        if (quien) por.set(quien, (por.get(quien) ?? 0) + 1);
+      }
+      // (lo del mismo acertijo que tapa un poquito es parte de cómo se armó: un cojín metido en el sofá)
+      for (const [quien, n] of por) {
+        const tope = quien.startsWith('acertijo') ? 0.3 : quien === 'fuera de la pantalla' ? 0.34 : 0.12;
+        if (n >= 2 && n / Math.max(1, vistos) >= tope) fuera.push({ que: imp.que, por: quien, n, de: vistos, vista: o.vista });
+      }
+    }
+  } finally {
+    volverNarrador();
+  }
+  return fuera;
 }

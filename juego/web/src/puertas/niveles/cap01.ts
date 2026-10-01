@@ -1,6 +1,6 @@
 // Capítulo 1 · Nuestra casa (puertas 1–10): aprender a tocar, arrastrar, deslizar, inclinar, sacudir…
 import * as THREE from 'three';
-import * as sonido from '../../sonido';
+import * as sonido from '../sonido_eco';
 import { caja, cilindro, en, esfera, estrella, FUENTE, grupo, letrero, lienzo, mat, matNuevo, textoEn, toro } from '../kit';
 import { LAMPARA } from '../cuarto';
 import { modelo } from '../modelos';
@@ -141,7 +141,8 @@ const golpecitos: Nivel = {
     const golpes: string[] = [];
     let ultimo = 0;
     const golpe = (largo: boolean) => {
-      const ahora = c.escena.t;
+      // En tiempo de verdad (el que dura el dedo apoyado también lo es)
+      const ahora = performance.now() / 1000;
       if (ahora - ultimo > 2.5) golpes.length = 0;
       ultimo = ahora;
       golpes.push(largo ? 'L' : 'c');
@@ -626,8 +627,22 @@ function estrellasNumero(d: string): [number, number][] {
   return pts;
 }
 
+/** Resplandor suave alrededor de cada estrellita (se ve solo a oscuras). */
+let texHalo: THREE.Texture | null = null;
+function haloTextura() {
+  return (texHalo ??= lienzo(64, 64, (c) => {
+    const g = c.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, 'rgba(255,255,255,0.9)');
+    g.addColorStop(0.35, 'rgba(255,255,255,0.35)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = g;
+    c.fillRect(0, 0, 64, 64);
+  }));
+}
+
 const oscuridad: Nivel = {
   titulo: 'Lo que brilla en la oscuridad',
+  pareja: { pista: ['estrellas codigo'] },
   pistas: [
     'Hay cosas que con la luz prendida no se ven.',
     'Busca cómo dejar el cuarto a oscuras.',
@@ -642,19 +657,28 @@ const oscuridad: Nivel = {
     inter.add(palanca);
     en(inter, -0.98, 1.25, 0.02);
     c.g.add(inter);
-    // Estrellitas en la pared del fondo, arriba (solo se ven a oscuras)
+    // Estrellitas en la pared del fondo, a la derecha de la puerta y por encima de la cajita (solo se ven a
+    // oscuras). Van donde nada las tapa: ni la lámpara, ni el corazón de la puerta, ni lo que se cuelgue o se tire.
     const brillos: THREE.Mesh[] = [];
-    const mb = new THREE.MeshBasicMaterial({ color: '#d9ff9a', transparent: true, opacity: 0 });
+    const mb = new THREE.MeshBasicMaterial({ color: '#d9ff9a', transparent: true, opacity: 0, toneMapped: false });
+    const halo = new THREE.MeshBasicMaterial({ map: haloTextura(), color: '#c8ff8a', transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false });
+    const codigo = grupo('estrellas codigo');
     CODIGO_ESTRELLAS.forEach((d, i) => {
       for (const [x, y] of estrellasNumero(d)) {
-        const e = estrella(0.07, 0.01, mb);
-        en(e, -1.2 + i * 1.2 + x * 0.1 - 0.1, 2.55 + y * 0.1 - 0.2, 0.03);
-        c.g.add(e);
+        const px = 1.25 + i * 0.62 + x * 0.105, py = 1.86 + y * 0.105;
+        const e = estrella(0.082, 0.012, mb);
+        en(e, px, py, 0.03);
+        const h = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.2), halo);
+        en(h, px, py, 0.025);
+        codigo.add(h, e);
         brillos.push(e);
       }
     });
-    // Unas estrellas de adorno también (despistan un poquito)
-    for (const [x, y] of [[-3.4, 2.1], [-2.5, 2.3], [-1.9, 2.95], [1.9, 2.95], [2.5, 2.25], [3.3, 2.05], [-3.0, 2.9], [3.0, 2.8], [-2.2, 1.9], [2.7, 1.75]]) {
+    c.g.add(codigo);
+    // Que nada las tape (el desorden se riega lejos y la decoración que estorbe se quita)
+    c.proteger(codigo);
+    // Unas estrellas de adorno también (despistan un poquito), lejos del número
+    for (const [x, y] of [[-3.4, 2.1], [-2.5, 2.35], [-1.9, 2.95], [-3.0, 2.85], [-2.2, 1.9], [-0.95, 2.6], [0.95, 2.75], [3.45, 2.95], [3.5, 1.65], [3.1, 2.55]]) {
       const e = estrella(0.05, 0.01, mb);
       en(e, x, y, 0.03);
       c.g.add(e);
@@ -670,6 +694,7 @@ const oscuridad: Nivel = {
       luz += (meta - luz) * Math.min(1, dt * 6);
       c.escena.atenuar(luz);
       mb.opacity = Math.max(0, 1 - luz * 1.4);
+      halo.opacity = mb.opacity * 0.55;
     });
     // Cajita fuerte con candado de tres ruedas
     const m = mesa(0.8, 0.5, 0.7, '#c49468', 'mesita');
