@@ -55,7 +55,8 @@ for (const semilla of semillas) {
   let errores = [];
   pagina.on('pageerror', (e) => errores.push(String(e.message ?? e)));
   pagina.on('console', (m) => m.type() === 'error' && !/Failed to load resource|favicon/.test(m.text()) && errores.push(m.text()));
-  await pagina.goto(`http://127.0.0.1:${PUERTO}/puertas.html?sinhistoria=1&rapido=3&una=1&semilla=${semilla}`, { timeout: 180000 });
+  // Sin fotos, la página corre sin dibujar (todo igual, pero mucho más rápido)
+  await pagina.goto(`http://127.0.0.1:${PUERTO}/puertas.html?sinhistoria=1&rapido=3&una=1&semilla=${semilla}${FOTOS ? '' : '&revisar=1'}`, { timeout: 180000 });
   await pagina.waitForFunction(() => window.__listo, null, { timeout: 180000 });
   await pagina.evaluate(() => (window.__revisarVistas = true));
   for (let n = desde; n <= hasta; n++) {
@@ -66,7 +67,7 @@ for (const semilla of semillas) {
     const t0 = Date.now();
     try {
       await pagina.evaluate((n) => void window.__puertas.jugar(n), n);
-      await pagina.waitForFunction((n) => window.__puertas.estado().jugando === n && !window.__puertas.estado().bloqueada, n, { timeout: 90000 });
+      await pagina.waitForFunction((n) => window.__puertas.estado().jugando === n && window.__puertas.estado().listo, n, { timeout: 90000 });
       await pagina.waitForTimeout(500);
       const rev = await pagina.evaluate(() => window.__puertas.revision());
       r.revision = rev;
@@ -76,7 +77,9 @@ for (const semilla of semillas) {
       if (FOTOS) await pagina.screenshot({ path: `${carpeta}/p${String(n).padStart(3, '0')}-s${semilla}.png` });
       if (REVOLVER) {
         await pagina.evaluate((s) => window.__puertas.revolver(s + 1), semilla);
-        await pagina.waitForFunction(() => window.__puertas.quieto(), null, { timeout: 60000, polling: 500 }).catch(() => anotar(r, 'el desorden no se queda quieto'));
+        await pagina
+          .waitForFunction(() => window.__puertas.quieto(), null, { timeout: 60000, polling: 500 })
+          .catch(async () => anotar(r, `el desorden no se queda quieto: ${(await pagina.evaluate(() => window.__puertas.despiertos())).join(' | ')}`));
         await pagina.waitForTimeout(300);
         const rev2 = await pagina.evaluate(() => window.__puertas.revision());
         r.revuelto = rev2;
@@ -92,7 +95,7 @@ for (const semilla of semillas) {
       if (res !== 'ok') anotar(r, `la prueba no pasó: ${res}`);
       else {
         const abierta = await pagina
-          .waitForFunction((n) => window.__puertas.estado().abierta || window.__puertas.estado().progreso.hasta >= n, n, { timeout: 15000 })
+          .waitForFunction((n) => window.__puertas.estado().abierta || window.__puertas.estado().progreso.hasta >= n, n, { timeout: 60000 })
           .then(() => true, () => false);
         if (!abierta) anotar(r, 'la prueba terminó pero la puerta no se abrió');
       }

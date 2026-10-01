@@ -139,7 +139,7 @@ await el.evaluate(() => window.__puertas.parejaInvitar(1));
 await ella.waitForSelector('#hoja-pareja:not([hidden]) .boton-tomate', { timeout: 60000 });
 await ella.screenshot({ path: `${carpeta}/1-invitacion.png` });
 await ella.click('#hoja-pareja:not([hidden]) .boton-tomate');
-await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 1 && !window.__puertas.estado().bloqueada, null, { timeout: 90000 })));
+await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 1 && window.__puertas.estado().listo, null, { timeout: 90000 })));
 revisar(true, 'Los dos entran a la puerta 1');
 revisar((await estado(el)).papel === 'anfitrion' && (await estado(ella)).papel === 'invitado', 'Él es el anfitrión y Ella la invitada');
 
@@ -200,7 +200,7 @@ async function iguales(texto) {
   await ella.click('#inventario [data-item="llave"]');
   await esperar(150);
   await tocar(ella, 'puerta toque');
-  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 2 && !window.__puertas.estado().bloqueada, null, { timeout: 90000 }).catch(() => {})));
+  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 2 && window.__puertas.estado().listo, null, { timeout: 90000 }).catch(() => {})));
   revisar((await estado(el)).jugando === 2 && (await estado(ella)).jugando === 2, 'Ella abrió la puerta 1 y los dos pasaron a la 2');
 }
 
@@ -224,7 +224,7 @@ async function iguales(texto) {
   revisar(r === 'ok', `Él resolvió la puerta 2 con su prueba (${r})`);
   await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 3, null, { timeout: 90000 }).catch(() => {})));
   revisar((await estado(ella)).jugando === 3, 'A Ella se le abrió la puerta 2 también y pasó a la 3');
-  await Promise.all([el, ella].map((p) => p.waitForFunction(() => !window.__puertas.estado().bloqueada, null, { timeout: 60000 }).catch(() => {})));
+  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.estado().listo, null, { timeout: 60000 }).catch(() => {})));
 }
 
 // --- Pausa: Ella se va a segundo plano y luego se corta la conexión -----------------------------
@@ -248,7 +248,7 @@ async function iguales(texto) {
 {
   const r = await el.evaluate(() => window.__puertas.probar().then(() => 'ok', (e) => String(e)));
   revisar(r === 'ok', `Él resolvió la puerta 3 (${r})`);
-  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 4 && !window.__puertas.estado().bloqueada, null, { timeout: 90000 }).catch(() => {})));
+  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 4 && window.__puertas.estado().listo, null, { timeout: 90000 }).catch(() => {})));
   revisar((await estado(ella)).jugando === 4, 'Los dos pasaron a la puerta 4');
   await iguales('Puerta 4 al empezar: los dos ven lo mismo (mismo desorden en pantallas distintas)');
 }
@@ -256,7 +256,7 @@ async function iguales(texto) {
 // --- Puerta 8 (candado): Ella abre la cajita fuerte; el candado le sale a ella ---------------------
 {
   await el.evaluate(() => window.__puertas.jugar(8));
-  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 8 && !window.__puertas.estado().bloqueada, null, { timeout: 90000 }).catch(() => {})));
+  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 8 && window.__puertas.estado().listo, null, { timeout: 90000 }).catch(() => {})));
   revisar((await estado(ella)).jugando === 8, 'Él saltó a la puerta 8 y Ella lo siguió');
   await tocar(ella, 'interruptor');
   await el.waitForFunction(() => window.__puertas.luz() < 0.3, null, { timeout: 15000 }).catch(() => {});
