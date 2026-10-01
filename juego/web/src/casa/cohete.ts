@@ -1,23 +1,56 @@
 // El retrete espacial: después de la leche (Ella) o del picante (Él), el inodoro sale disparado al espacio con
-// el personaje sentado. Se arrastra el dedo para esquivar asteroides; se gana por el tiempo que se aguante y el
-// personaje va diciendo lo que piensa. Al chocar, explota y cae de vuelta a la casa.
+// el personaje sentado. Se arrastra el dedo para esquivar lo que venga (pájaros, chanclas, satélites, asteroides,
+// ovnis, cometas, agujeros negros…), se recogen rollitos de papel dorados y poderes (burbuja, imán, turbo de
+// frijoles, cámara lenta, ×2, desatascador láser, ayudante…). El viaje pasa por tramos con su propio cielo y
+// música. Al chocar cae con un paracaídas de papel y sale la pantalla del vuelo; con los rollitos se compran
+// mejoras, retretes, estelas y cascos en la tienda del retrete (que también se abre desde el cuarto de juegos).
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { clone as clonarConEsqueleto } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import './cohete.css';
 import { Muneco } from '../reacciones/muneco';
-import { nota, rumor } from '../sonido';
+import { cargar, cargarAnimado, liberarEsqueletos } from '../recursos';
+import { activar as activarSonido, musica, nota, rumor } from '../sonido';
+import { CUADRO, atlasParticulas, texturaHalo } from './cohete/arte';
+import {
+  type Cuentas, type IdPoder, PODERES, type ProgresoCohete, TRAMOS, type TipoCosmetico, copiaProgreso, cuentasNuevas,
+  multiplicador, normalizarCohete, revisarMisiones, tramoDe, valorDe,
+} from './cohete/datos';
+import { Efectos, Propulsor } from './cohete/efectos';
+import { Escenario } from './cohete/escenario';
+import { Modelos } from './cohete/modelos';
+import { MusicaEspacial } from './cohete/musica';
+import { type Obst, Obstaculos } from './cohete/obstaculos';
+import { Particulas } from './cohete/particulas';
+import { Poderes } from './cohete/poderes';
+import { mostrarResultado, type DatosResultado } from './cohete/resultado';
+import { FIGURAS, Rollitos } from './cohete/rollitos';
+import { Tienda } from './cohete/tienda';
 import type { Rol, Ropa } from './modelo';
 import { Vestuario } from './ropa';
 
 export interface Resultado {
+  /** Segundos que duró el vuelo (para el récord viejo y las monedas de la casa). */
   segundos: number;
+  metros: number;
+  puntaje: number;
+  rollitos: number;
+  /** Si voló (false: solo se abrió la tienda). */
+  volo: boolean;
 }
 
 interface Opciones {
   rol: Rol;
   ropa?: Ropa;
   colorPelo?: string;
-  record?: Partial<Record<Rol, number>>;
+  /** Lo de cada uno en el retrete (rollitos, mejoras, misiones…). */
+  progreso?: ProgresoCohete;
+  /** Récord de la pareja (metros) para ponerle su banderita en el camino. */
+  recordPareja?: number;
+  /** Guarda el progreso en la casa (después del vuelo y en cada compra). */
+  guardar?: (p: ProgresoCohete) => Promise<unknown> | void;
+  /** Solo la tienda (desde el cuarto de juegos), sin vuelo. */
+  soloTienda?: boolean;
 }
 
 /** Lo que va diciendo en el espacio (se sabía que algún día pasaría). */
@@ -47,11 +80,49 @@ const FRASES: Record<Rol, string[]> = {
     '¡Mi amor, esto es culpa de tu leche!',
   ],
 };
-const CASI = ['¡Uy, casi!', '¡Esa estuvo cerca!', '¡Ay, mi retrete!', '¡Por un pelito!'];
-const FIN = ['¡NOOOO!', '¡Me voooy!', '¡Mi baño!'];
+const FRASES_TRAMO: Record<Rol, string[]> = {
+  el: [
+    '¡Chao, barrio!',
+    'Desde aquí la Tierra se ve chiquitica… como mi dignidad.',
+    'La Luna… y yo sin una serenata preparada.',
+    '¿Habrá baños en Marte? Pregunto por un amigo.',
+    'Esto está más lleno que el metro de Medellín en hora pico.',
+    'Parece un concierto con luces de colores. Qué nivel.',
+    '¡Todo es rosado! Esto lo decoró mi amor, seguro.',
+  ],
+  ella: [
+    '¡Chao, barrio! ¡Que nadie me vea!',
+    'Desde aquí la Tierra se ve chiquitica… como mi paciencia.',
+    '¿La Luna es de queso? Ni loca la pruebo: lactosa.',
+    '¿Habrá baños en Marte? Ojalá con papel.',
+    'Esto está más lleno que el metro de Medellín en hora pico.',
+    '¡Qué colores tan bonitos! Parece el planetario de Explora.',
+    '¡Todo rosado! Así sí me gusta el espacio.',
+  ],
+};
+const FRASE_PODER: Record<IdPoder, Record<Rol, string>> = {
+  escudo: { el: '¡Limpiecito y protegido!', ella: '¡Burbujita protectora!' },
+  iman: { el: '¡Vengan, rollitos míos!', ella: '¡Vengan a mamá, rollitos!' },
+  turbo: { el: '¡Los frijoles de mi suegra!', ella: '¡Esa bandeja paisa no perdona!' },
+  lenta: { el: 'Todo va como Netflix con mal internet…', ella: 'Ay, qué paz… todo despacito.' },
+  doble: { el: '¡Doble o nada!', ella: '¡Todo me sale doble!' },
+  laser: { el: '¡Destapando el universo!', ella: '¡Desatascador láser, a la orden!' },
+  mini: { el: '¡Mi retretico ayudante!', ella: '¡Un retretico bebé!' },
+  hormiga: { el: '¡Me encogí como ropa en lavadora!', ella: '¡Quedé chiquitica!' },
+  ambientador: { el: '¡Huele a lavanda! Ya era hora.', ella: '¡Aroma a lavanda, por fin!' },
+  paca: { el: '¡Papel para todo el año!', ella: '¡Papel pa’ la casa entera!' },
+};
+const CASI = ['¡Uy, casi!', '¡Esa estuvo cerca!', '¡Ay, mi retrete!', '¡Por un pelito!', '¡Uf!', '¡Me peinó!'];
+const FIN = ['¡NOOOO!', '¡Me voooy!', '¡Mi baño!', '¡Mi retreteee!'];
+/** Cascos que tapan el copete de Él. */
+const TAPA_COPETE = new Set(['ducha', 'aviador', 'vikingo', 'rollo', 'astronauta']);
+/** Unidades del mundo → metros. */
+const METROS = 2.5;
+const EJE_Z = new THREE.Vector3(0, 0, 1);
 
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 const elegir = <T,>(l: T[]) => l[Math.floor(Math.random() * l.length)];
+const mil = (v: number) => Math.round(v).toLocaleString('es-CO');
 
 export function jugarCohete(o: Opciones): Promise<Resultado> {
   return new Promise((listo) => {
@@ -59,178 +130,295 @@ export function jugarCohete(o: Opciones): Promise<Resultado> {
   });
 }
 
-interface Roca {
-  m: THREE.Mesh;
-  r: number;
-  v: number;
-  giro: THREE.Vector3;
-  casi: boolean;
+/** La tienda del retrete sola (desde el retrete en miniatura del cuarto de juegos). */
+export function abrirTiendaCohete(o: Omit<Opciones, 'soloTienda'>): Promise<Resultado> {
+  return jugarCohete({ ...o, soloTienda: true });
 }
+
+type Fase = 'carga' | 'intro' | 'juego' | 'revivir' | 'choque' | 'resultado' | 'taller' | 'fin';
 
 class RetreteEspacial {
   private capa: HTMLElement;
   private renderer: THREE.WebGLRenderer;
   private escena = new THREE.Scene();
-  private camara = new THREE.PerspectiveCamera(50, 2, 0.1, 200);
+  private camara = new THREE.PerspectiveCamera(50, 2, 0.1, 300);
+  private mundo = new THREE.Group();
+  /** La nave: el retrete, el personaje y lo que se le pega (la burbuja, el imán, el cañón). */
   private nave = new THREE.Group();
-  private fuego = new THREE.Group();
+  private soporte = new THREE.Group();
+  private retreteObj: THREE.Object3D | null = null;
   private muneco: Muneco;
-  private rocas: Roca[] = [];
-  private formas: THREE.BufferGeometry[] = [];
-  private matRoca = new THREE.MeshStandardMaterial({ color: '#8d7b6a', roughness: 0.95, flatShading: true });
-  private estrellas: THREE.Points[] = [];
-  private tierra: THREE.Mesh;
-  private chispas: { m: THREE.Mesh; v: THREE.Vector3; vida: number }[] = [];
-  private bolita = new THREE.SphereGeometry(1, 8, 6);
-  private matHumo = new THREE.MeshBasicMaterial({ color: '#d9d4e8', transparent: true, opacity: 0.8 });
-  private matChispa = new THREE.MeshBasicMaterial({ color: '#ffb347', transparent: true, toneMapped: false });
-  private tHumo = 0;
-  // Estado del juego
-  private fase: 'intro' | 'juego' | 'choque' | 'fin' = 'intro';
+  private vestuario: Vestuario | null = null;
+  private cascoMallas: THREE.Object3D[] = [];
+  private copete: THREE.Object3D[] = [];
+  private paracaidas: THREE.Group | null = null;
+  // Piezas
+  private modelos!: Modelos;
+  private escenario!: Escenario;
+  private brillo!: Particulas;
+  private humo!: Particulas;
+  private fx!: Efectos;
+  private propulsor!: Propulsor;
+  private obst!: Obstaculos;
+  private rollos!: Rollitos;
+  private poderes!: Poderes;
+  private musica = new MusicaEspacial();
+  private texHalo = texturaHalo();
+  private atlas = atlasParticulas();
+  private marcas: { g: THREE.Group; metros: number }[] = [];
+  // Progreso (copia de trabajo; se guarda al terminar y en cada compra)
+  private p: ProgresoCohete;
+  private inicioMisiones: number[];
+  private cuentas: Cuentas = cuentasNuevas();
+  // Estado del vuelo
+  private fase: Fase = 'carga';
+  private pausado = false;
   private t = 0;
+  private tFase = 0;
   private tJuego = 0;
-  private proxRoca = 0;
-  private proxFrase = 3;
+  private distancia = 0;
+  private puntaje = 0;
+  private rollitosVuelo = 0;
+  private velocidad = 7;
+  private avance = 0;
+  private sinPoder = 0;
+  private revivir = 0;
+  private invulnerable = 0;
+  private turboArranque = 0;
+  private escalaHormiga = 1;
+  private tramoActual = -1;
+  private rachaRollitos = 0;
+  private tRacha = 0;
+  private proxFigura = 3;
+  private proxFrase = 7;
   private temblor = 0;
-  private meta = new THREE.Vector2(-3, 0);
-  private vel = new THREE.Vector2();
-  private limites = { x: 6, y: 3.3 };
+  private fov = 50;
+  private meta = new THREE.Vector2(-5, 0);
+  private limites = { x: 11, y: 4.7 };
+  private jalon = new THREE.Vector2();
   private teclas = new Set<string>();
   private arrastre: { x: number; y: number } | null = null;
   private ultimo = 0;
+  private acumulado = 0;
   private cuadro = 0;
+  private tiempos: number[] = [];
+  private calidad: 'alta' | 'media' | 'baja' = 'alta';
+  private bot = false;
+  manual = false;
+  private record = 0;
+  private pasoRecord = false;
+  private pasoPareja = false;
+  private tienda: Tienda | null = null;
+  private resultado: DatosResultado | null = null;
+  private carasHasta = 0;
+  private caraBase = 'nervioso';
+  private debug = new URLSearchParams(location.search).has('cohete_debug');
+  private aros: THREE.LineLoop[] = [];
+  private tmp = new THREE.Vector3();
+  private tmp2 = new THREE.Vector3();
+  private blanco = { x: 0, y: 0, r: 0.6 };
 
   constructor(private o: Opciones, private listo: (r: Resultado) => void) {
     cohete.actual = this;
+    this.p = copiaProgreso(normalizarCohete(o.progreso));
+    this.inicioMisiones = this.p.misiones.map((m) => m.avance);
+    this.record = this.p.mejor;
     this.capa = document.createElement('section');
     this.capa.className = 'cohete';
     this.capa.innerHTML = `
       <canvas class="cohete-lienzo"></canvas>
-      <div class="cohete-hud">
-        <b class="cohete-tiempo">0.0 s</b>
-        <span class="cohete-records"></span>
+      <div class="cohete-velo"></div>
+      <div class="cohete-hud" hidden>
+        <div class="ch-izq"><b class="ch-metros">0 m</b><small class="ch-record"></small></div>
+        <div class="ch-centro"><span class="ch-rollitos"><i class="ico-rollito"></i><b>0</b></span></div>
+        <div class="ch-der"><span class="ch-puntos"><em>×${multiplicador(this.p)}</em><b>0</b></span><button class="ch-pausa" aria-label="Pausa"><i></i><i></i></button></div>
       </div>
-      <p class="cohete-aviso">¡Despegue!</p>
+      <div class="ch-poderes"></div>
+      <div class="ch-avisos"></div>
+      <p class="cohete-aviso"></p>
+      <div class="cohete-tramo"><small></small><b></b></div>
+      <div class="ch-mision" hidden></div>
       <p class="cohete-globo" hidden></p>
-      <div class="cohete-destello"></div>`;
+      <div class="ch-dedo" hidden><i></i><span>Arrastra el dedo para esquivar</span></div>
+      <div class="cohete-destello"></div>
+      <div class="ch-pausa-capa" hidden><div><b>En pausa</b><p>El retrete flota quietico esperándote.</p><button class="cb-boton cb-principal" data-seguir>Seguir volando</button><button class="cb-boton" data-rendirse>Aterrizar ya</button></div></div>
+      <div class="cohete-carga"><i class="ico-rollito cc-rollo"></i><p>Prendiendo motores…</p></div>`;
     document.body.append(this.capa);
     const lienzo = this.capa.querySelector('canvas')!;
-    this.renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true });
+    this.renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.AgXToneMapping;
-    this.renderer.toneMappingExposure = 1.3;
+    this.renderer.toneMappingExposure = 1.25;
     const pmrem = new THREE.PMREMGenerator(this.renderer);
     this.escena.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    this.escena.environmentIntensity = 0.5;
-    this.escena.background = new THREE.Color('#0b0a1f');
-    this.escena.add(new THREE.HemisphereLight('#c9d8ff', '#2a1a3a', 1.1));
-    const sol = new THREE.DirectionalLight('#fff1e2', 2.2);
-    sol.position.set(-6, 5, 8);
-    this.escena.add(sol);
-    const borde = new THREE.DirectionalLight('#9ccbef', 1.2);
-    borde.position.set(6, -2, -4);
-    this.escena.add(borde);
+    pmrem.dispose();
+    this.escena.environmentIntensity = 0.55;
+    this.escena.add(this.mundo);
     this.camara.position.set(0, 0, 12);
-    this.camara.lookAt(0, 0, 0);
-    this.cielo();
-    this.tierra = new THREE.Mesh(new THREE.SphereGeometry(9, 48, 32), new THREE.MeshStandardMaterial({ color: '#3f7fd0', roughness: 0.8 }));
-    const tierraVerde = new THREE.Mesh(new THREE.SphereGeometry(9.03, 24, 16, 0.3, 1.4, 0.6, 1.2), new THREE.MeshStandardMaterial({ color: '#6ab04c', roughness: 0.9 }));
-    this.tierra.add(tierraVerde);
-    this.tierra.position.set(0, -12, -2);
-    this.escena.add(this.tierra);
-    // Formas de asteroide (esferas abolladas)
-    for (let k = 0; k < 4; k++) {
-      const g = new THREE.IcosahedronGeometry(1, 2);
-      const pos = g.attributes.position;
-      // Abolladuras que dependen del punto (los vértices repetidos se mueven igual y no quedan grietas)
-      const a = rnd(2, 5), b = rnd(2, 5), c = rnd(0, 6);
-      for (let i = 0; i < pos.count; i++) {
-        const v = new THREE.Vector3().fromBufferAttribute(pos, i);
-        v.multiplyScalar(1 + 0.2 * Math.sin(v.x * a + c) * Math.cos(v.y * b - v.z * a) + 0.08 * Math.sin(v.z * 7 + v.y * 5));
-        pos.setXYZ(i, v.x, v.y, v.z);
-      }
-      g.computeVertexNormals();
-      this.formas.push(g);
-    }
     this.muneco = new Muneco(o.rol, 0.62);
-    this.retrete();
-    // Grande en pantalla (el personaje y el retrete juntos)
-    this.nave.scale.setScalar(1.5);
-    this.nave.position.set(-3, -7, 0);
-    this.escena.add(this.nave);
     this.ajustar();
     window.addEventListener('resize', this.ajustar);
+    document.addEventListener('visibilitychange', this.alOcultar);
     this.controles(lienzo);
-    const r = o.record ?? {};
-    const fmt = (v?: number) => (v ? `${v.toFixed(1)} s` : '—');
-    this.capa.querySelector('.cohete-records')!.textContent = `Récord · Él ${fmt(r.el)} · Ella ${fmt(r.ella)}`;
+    this.botones();
   }
 
   async empezar() {
-    await this.muneco.cargar();
-    if (this.o.ropa || this.o.colorPelo) await new Vestuario(this.muneco.p, this.o.rol).aplicar(this.o.ropa, this.o.colorPelo).catch(() => undefined);
-    this.nave.add(this.muneco.p.grupo);
+    activarSonido();
+    // Mientras carga se ve el rollito girando
+    requestAnimationFrame(() => this.capa.classList.add('visible'));
+    const [modelos] = await Promise.all([Modelos.cargar(), this.muneco.cargar()]);
+    this.modelos = modelos;
+    this.armar();
+    const p = this.p;
+    if (this.o.ropa || this.o.colorPelo || p.puesto.casco !== 'ninguno') {
+      this.vestuario = new Vestuario(this.muneco.p, this.o.rol);
+      const ropa = { ...(this.o.ropa ?? {}) };
+      if (p.puesto.casco !== 'ninguno') delete ropa.cabeza;
+      await this.vestuario.aplicar(ropa, this.o.colorPelo).catch(() => undefined);
+    }
+    this.soporte.add(this.muneco.p.grupo);
     this.muneco.ponerEn(0, 0.02, 0);
-    void this.muneco.actuar({ nombre: 'retrete', pasos: [{ dur: 99, pose: 'sentado', cara: 'sorprendido' }], bucle: true });
-    this.capa.classList.add('visible');
-    rumor(2.4, 180, 0.12, 0, 0.6, 90);
-    nota(90, 2.2, 0, 'sawtooth', 0.05, 320);
+    await this.ponerCasco(p.puesto.casco);
+    this.ponerRetrete(p.puesto.retrete);
+    this.propulsor.estela = p.puesto.estela;
+    this.capa.querySelector('.cohete-carga')!.remove();
     this.ultimo = performance.now();
+    if (this.o.soloTienda) {
+      this.entrarTaller();
+    } else {
+      this.fase = 'intro';
+      this.tFase = 0;
+      this.cara('sorprendido', 99);
+      rumor(2.4, 180, 0.12, 0, 0.6, 90);
+      nota(90, 2.2, 0, 'sawtooth', 0.05, 320);
+      musica.callar(true);
+      this.musica.iniciar();
+      this.musica.tramo(0);
+      this.aviso('¡Despegue!');
+    }
     this.cuadro = requestAnimationFrame((t) => this.bucle(t));
   }
 
   // ------------------------------------------------------------------ Armado
-  private cielo() {
-    for (const [n, tam, z] of [[500, 0.05, -30], [260, 0.08, -18], [90, 0.12, -8]] as const) {
-      const g = new THREE.BufferGeometry();
-      const p = new Float32Array(n * 3);
-      for (let i = 0; i < n; i++) {
-        p[i * 3] = rnd(-40, 40);
-        p[i * 3 + 1] = rnd(-24, 24);
-        p[i * 3 + 2] = z;
-      }
-      g.setAttribute('position', new THREE.BufferAttribute(p, 3));
-      const pts = new THREE.Points(g, new THREE.PointsMaterial({ color: '#fff6d8', size: tam * (z < -20 ? 4 : 2.5), sizeAttenuation: true }));
-      this.estrellas.push(pts);
-      this.escena.add(pts);
-    }
-    // Un planeta con anillo, lejos
-    const planeta = new THREE.Mesh(new THREE.SphereGeometry(2.4, 32, 20), new THREE.MeshStandardMaterial({ color: '#e8a6c8', roughness: 0.7 }));
-    const anillo = new THREE.Mesh(new THREE.TorusGeometry(3.6, 0.18, 8, 48), new THREE.MeshStandardMaterial({ color: '#f6cf5a', roughness: 0.6 }));
-    anillo.rotation.x = 1.2;
-    planeta.add(anillo);
-    planeta.position.set(14, 7, -20);
-    planeta.name = 'planeta';
-    this.escena.add(planeta);
+  private armar() {
+    this.brillo = new Particulas(1400, this.atlas, true);
+    this.humo = new Particulas(900, this.atlas, false);
+    this.escenario = new Escenario(this.camara, this.modelos.asteroidesChicos[0], this.modelos.matRocas[4]);
+    this.escena.add(this.escenario.grupo);
+    this.mundo.add(this.brillo.puntos, this.humo.puntos);
+    this.fx = new Efectos(this.brillo, this.humo, this.mundo, this.modelos.asteroidesChicos[1], this.modelos.matRocas[0], this.texturaAro());
+    this.propulsor = new Propulsor(this.fx);
+    this.obst = new Obstaculos(this.mundo, this.modelos, this.fx, {
+      aviso: (y, tipo) => this.avisoBorde(y, tipo),
+      lluvia: (si) => {
+        if (si) {
+          this.aviso('¡Lluvia de meteoritos!');
+          this.decir(this.o.rol === 'el' ? '¡Está lloviendo piedra!' : '¡Ay no, granizo espacial!', 2.4);
+          rumor(1.2, 600, 0.06, 0, 0.7, 200);
+        } else this.decir('¡Sobreviví a la lluvia!', 1.8);
+      },
+      frase: (t) => this.decir(t, 2.2),
+    }, this.texHalo);
+    this.rollos = new Rollitos(this.modelos.rollito);
+    this.mundo.add(this.rollos.grupo);
+    this.mundo.add(this.nave);
+    this.nave.add(this.soporte);
+    this.poderes = new Poderes(this.mundo, this.nave, this.modelos, this.fx, this.p, this.texHalo);
+    this.nave.scale.setScalar(1.5);
+    this.nave.position.set(-this.limites.x * 0.45, -8, 0);
+    // Medio de perfil: el frente del retrete mira hacia donde va (la derecha)
+    this.soporte.rotation.y = 0.55;
+    this.ajustar();
+    if (this.debug) this.armarAros();
   }
 
-  /** El inodoro de porcelana con su fuego de cohete. */
-  private retrete() {
-    const porcelana = new THREE.MeshStandardMaterial({ color: '#f7f5f0', roughness: 0.22 });
-    // Las mismas medidas del inodoro del baño de la casa (la taza a la altura de la cadera)
-    const base = new THREE.Mesh(new THREE.LatheGeometry([new THREE.Vector2(0.13, 0), new THREE.Vector2(0.12, 0.2), new THREE.Vector2(0.2, 0.38), new THREE.Vector2(0.001, 0.4)], 24), porcelana);
-    const taza = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.055, 10, 28), porcelana);
-    taza.rotation.x = Math.PI / 2;
-    taza.scale.set(1, 1.2, 1);
-    taza.position.set(0, 0.41, 0.05);
-    const tanque = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.44, 0.2), porcelana);
-    tanque.position.set(0, 0.62, -0.22);
-    const boton = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.02, 16), new THREE.MeshStandardMaterial({ color: '#c9ccd1', metalness: 0.8, roughness: 0.25 }));
-    boton.position.set(0, 0.85, -0.22);
-    const inodoro = new THREE.Group();
-    inodoro.add(base, taza, tanque, boton);
-    inodoro.position.y = -0.42;
-    this.nave.add(inodoro);
-    // Fuego: conos que titilan bajo la taza
-    for (const [r, h, color] of [[0.24, 1.1, '#ff9f1c'], [0.15, 0.8, '#ffe066'], [0.07, 0.5, '#ffffff']] as const) {
-      const cono = new THREE.Mesh(new THREE.ConeGeometry(r, h, 16), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, toneMapped: false }));
-      cono.rotation.x = Math.PI;
-      cono.position.y = -h / 2;
-      this.fuego.add(cono);
+  private texturaAro() {
+    const c = document.createElement('canvas');
+    c.width = c.height = 128;
+    const g = c.getContext('2d')!;
+    const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gr.addColorStop(0, 'rgba(255,255,255,0)');
+    gr.addColorStop(0.7, 'rgba(255,255,255,0)');
+    gr.addColorStop(0.85, 'rgba(255,255,255,1)');
+    gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr;
+    g.fillRect(0, 0, 128, 128);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }
+
+  private ponerRetrete(id: string) {
+    if (this.retreteObj) this.soporte.remove(this.retreteObj);
+    const r = this.modelos.retrete(id);
+    r.position.y = -0.42;
+    this.retreteObj = r;
+    this.soporte.add(r);
+    this.luces = [];
+    r.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (!m.isMesh) return;
+      const mats = Array.isArray(m.material) ? m.material : [m.material];
+      for (const mat of mats as THREE.MeshStandardMaterial[]) if (/rgb|led/i.test(mat.name)) this.luces.push(mat);
+    });
+  }
+  private luces: THREE.MeshStandardMaterial[] = [];
+
+  /** El casco o gorro comprado, amarrado a la cabeza del personaje (con su esqueleto). */
+  private async ponerCasco(id: string) {
+    for (const m of this.cascoMallas) m.removeFromParent();
+    liberarEsqueletos(...this.cascoMallas);
+    this.cascoMallas = [];
+    for (const c of this.copete) c.visible = true;
+    this.copete = [];
+    if (id === 'ninguno') return;
+    const raiz = this.muneco.p.raizMallas;
+    const r = await cargarAnimado(`ropa/cohete_${id}_${this.o.rol}.glb`).catch(() => null);
+    if (!r || !raiz) return;
+    const copia = clonarConEsqueleto(r.escena);
+    const mallas: THREE.SkinnedMesh[] = [];
+    copia.traverse((o) => {
+      if ((o as THREE.SkinnedMesh).isSkinnedMesh) mallas.push(o as THREE.SkinnedMesh);
+    });
+    for (const m of mallas) {
+      const huesos = m.skeleton.bones.map((b) => this.muneco.p.huesos.get(b.name));
+      if (huesos.some((h) => !h)) continue;
+      m.bind(new THREE.Skeleton(huesos as THREE.Bone[], m.skeleton.boneInverses), m.bindMatrix);
+      m.frustumCulled = false;
+      raiz.add(m);
+      this.cascoMallas.push(m);
     }
-    this.fuego.position.y = -0.42;
-    this.nave.add(this.fuego);
+    // Brillo del vidrio y el metal
+    for (const m of mallas) {
+      const mats = Array.isArray(m.material) ? m.material : [m.material];
+      for (const mat of mats as THREE.MeshStandardMaterial[]) {
+        const n = mat.name.toLowerCase();
+        if (/vidrio/.test(n)) {
+          mat.transparent = true;
+          mat.opacity = 0.28;
+          mat.roughness = 0.04;
+          mat.depthWrite = false;
+          mat.normalMap = null;
+          m.renderOrder = 10;
+        } else if (/metal|oro|dorad|cromo|plata/.test(n)) {
+          mat.metalness = 1;
+          mat.roughness = 0.25;
+        } else if (/luz|estrella/.test(n)) {
+          mat.toneMapped = false;
+          mat.emissiveIntensity = Math.max(1.5, mat.emissiveIntensity);
+        }
+      }
+    }
+    if (this.o.rol === 'el' && TAPA_COPETE.has(id)) {
+      for (const [n, lista] of this.muneco.p.partes) {
+        if (/^mechon (copete|flequillo)/.test(n)) for (const o of lista) {
+          o.visible = false;
+          this.copete.push(o);
+        }
+      }
+    }
   }
 
   private ajustar = () => {
@@ -240,7 +428,11 @@ class RetreteEspacial {
     this.camara.updateProjectionMatrix();
     // Lo que se ve a la profundidad del juego
     const alto = 2 * Math.tan(THREE.MathUtils.degToRad(this.camara.fov / 2)) * 12;
-    this.limites = { x: (alto * this.camara.aspect) / 2 - 0.8, y: alto / 2 - 0.9 };
+    this.limites = { x: (alto * this.camara.aspect) / 2 - 0.8, y: alto / 2 - 0.95 };
+    const px = h * this.renderer.getPixelRatio();
+    this.brillo?.ajustar(px, this.camara.fov);
+    this.humo?.ajustar(px, this.camara.fov);
+    this.escenario?.ajustar(px);
   };
 
   private controles(lienzo: HTMLCanvasElement) {
@@ -248,12 +440,13 @@ class RetreteEspacial {
     lienzo.addEventListener('pointerdown', (e) => {
       this.arrastre = { x: e.clientX, y: e.clientY };
       lienzo.setPointerCapture(e.pointerId);
+      this.capa.querySelector('.ch-dedo')?.setAttribute('hidden', '');
     });
     lienzo.addEventListener('pointermove', (e) => {
-      if (!this.arrastre) return;
-      const k = (2 * this.limites.y + 1.8) / window.innerHeight;
-      this.meta.x += (e.clientX - this.arrastre.x) * k * 1.15;
-      this.meta.y -= (e.clientY - this.arrastre.y) * k * 1.15;
+      if (!this.arrastre || this.fase !== 'juego' || this.pausado) return;
+      const k = (2 * this.limites.y + 1.9) / window.innerHeight;
+      this.meta.x += (e.clientX - this.arrastre.x) * k * 1.2;
+      this.meta.y -= (e.clientY - this.arrastre.y) * k * 1.2;
       this.arrastre = { x: e.clientX, y: e.clientY };
     });
     const soltar = () => (this.arrastre = null);
@@ -266,16 +459,68 @@ class RetreteEspacial {
   private tecla = (e: KeyboardEvent) => {
     if (e.type === 'keydown') this.teclas.add(e.key.toLowerCase());
     else this.teclas.delete(e.key.toLowerCase());
+    if (e.type === 'keydown' && (e.key === 'p' || e.key === 'Escape')) this.pausar(!this.pausado);
   };
+
+  private botones() {
+    this.capa.querySelector('.ch-pausa')!.addEventListener('click', () => this.pausar(true));
+    this.capa.querySelector('[data-seguir]')!.addEventListener('click', () => this.pausar(false));
+    this.capa.querySelector('[data-rendirse]')!.addEventListener('click', () => {
+      this.pausar(false);
+      if (this.fase === 'juego') this.chocar(true);
+    });
+  }
+
+  /** Si la app se va a segundo plano, se pausa sola. */
+  private alOcultar = () => {
+    if (document.hidden && (this.fase === 'juego' || this.fase === 'intro')) this.pausar(true);
+    if (document.hidden) this.musica.pausar(true);
+    else if (!this.pausado) this.musica.pausar(false);
+  };
+
+  private pausar(si: boolean) {
+    if (si && !(this.fase === 'juego' || this.fase === 'intro')) return;
+    this.pausado = si;
+    this.capa.querySelector('.ch-pausa-capa')!.toggleAttribute('hidden', !si);
+    this.musica.pausar(si);
+    this.arrastre = null;
+    this.ultimo = performance.now();
+  }
 
   // ------------------------------------------------------------------ Bucle
   private bucle(ms: number) {
     if (this.fase === 'fin') return;
     this.cuadro = requestAnimationFrame((t) => this.bucle(t));
-    const dt = Math.min(0.05, (ms - this.ultimo) / 1000);
+    // Pruebas: el tiempo lo maneja `simular` (sin tarjeta gráfica cada cuadro tarda demasiado)
+    if (this.manual) return;
+    const dt = Math.min(0.1, (ms - this.ultimo) / 1000);
     this.ultimo = ms;
-    this.paso(dt);
-    this.renderer.render(this.escena, this.camara);
+    this.acumulado += dt;
+    // 30 cuadros por segundo bastan (ahorra batería y no calienta)
+    if (this.acumulado < 1 / 31) return;
+    const paso = Math.min(0.1, this.acumulado);
+    this.acumulado = 0;
+    if (!this.pausado) {
+      this.paso(paso);
+      this.renderer.render(this.escena, this.camara);
+      this.vigilarRitmo(paso);
+    }
+  }
+
+  /** Si el celular no alcanza ~30 cuadros por segundo, se baja la resolución y las partículas. */
+  private vigilarRitmo(dt: number) {
+    if (this.calidad === 'baja' || document.hidden || this.fase !== 'juego') return;
+    this.tiempos.push(dt);
+    if (this.tiempos.length < 60) return;
+    const orden = [...this.tiempos].sort((a, b) => a - b);
+    this.tiempos = [];
+    if (orden[30] > 1 / 26) {
+      this.calidad = this.calidad === 'alta' ? 'media' : 'baja';
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.calidad === 'media' ? 1.3 : 1));
+      this.brillo.densidad = this.humo.densidad = this.calidad === 'media' ? 0.7 : 0.45;
+      if (this.calidad === 'baja') this.escenario.bajar();
+      this.ajustar();
+    }
   }
 
   /** Pruebas: avanza el juego a pasos fijos y pinta una vez. */
@@ -285,168 +530,829 @@ class RetreteEspacial {
   }
 
   private paso(dt: number) {
+    if (!this.modelos) return;
     this.t += dt;
+    this.tFase += dt;
+    const lento = this.poderes.tiene('lenta') ? 0.5 : 1;
+    const turbo = this.turboActivo();
     this.muneco.update(dt);
-    // Las estrellas pasan de derecha a izquierda (van hacia adelante)
-    const rapidez = this.fase === 'intro' ? 0.4 : 1 + this.tJuego * 0.02;
-    this.estrellas.forEach((e, i) => {
-      e.position.x -= dt * (1.5 + i * 2.5) * rapidez;
-      if (e.position.x < -40) e.position.x += 80;
-    });
-    const planeta = this.escena.getObjectByName('planeta')!;
-    planeta.position.x -= dt * 0.25;
-    planeta.rotation.y += dt * 0.1;
-    // Fuego que titila
-    const f = 1 + Math.sin(this.t * 40) * 0.12 + (this.fase === 'intro' ? 0.5 : 0);
-    this.fuego.scale.set(1, f * (this.fase === 'choque' ? 0.2 : 1), 1);
-    // Estela: bolitas de humo y chispas que salen del fuego
-    this.tHumo -= dt;
-    if (this.fase !== 'choque' && this.tHumo <= 0) {
-      this.tHumo = 0.035;
-      const boca = new THREE.Vector3(0, -1.1, 0).applyMatrix4(this.nave.matrixWorld);
-      const humo = Math.random() < 0.7;
-      const m = new THREE.Mesh(this.bolita, humo ? this.matHumo.clone() : this.matChispa.clone());
-      m.scale.setScalar(humo ? rnd(0.12, 0.26) : rnd(0.05, 0.09));
-      m.position.copy(boca);
-      this.escena.add(m);
-      this.chispas.push({ m, v: new THREE.Vector3(rnd(-4.5, -2.5), rnd(-1.2, 0.2), 0), vida: humo ? 0.7 : 0.4 });
-    }
+    // Velocidad del mundo: sube con la distancia; el turbo la triplica y la cámara lenta la parte en dos
+    const metros = this.distancia * METROS;
+    const base = 7 + 8 * (1 - Math.exp(-metros / 4000));
+    let v = 0;
+    if (this.fase === 'juego') v = base * (turbo ? 2.7 : 1) * lento;
+    else if (this.fase === 'intro') v = base * Math.min(1, this.tFase / 2.4) * 0.6;
+    else if (this.fase === 'choque') v = base * Math.max(0, 1 - this.tFase * 0.8);
+    else if (this.fase === 'resultado' || this.fase === 'taller') v = 1.2;
+    this.velocidad += (v - this.velocidad) * Math.min(1, dt * (turbo ? 3 : 5));
+    this.avance = this.velocidad * dt;
+    if (this.fase === 'juego') this.distancia += this.avance;
+    this.escenario.subiendo = this.fase === 'intro' ? Math.max(0, 1 - this.tFase / 2.6) : 0;
+    this.escenario.actualizar(dt, this.avance, this.distancia * METROS, turbo ? 1 : 0);
     if (this.fase === 'intro') this.intro(dt);
-    else if (this.fase === 'juego') this.juego(dt);
+    else if (this.fase === 'juego') this.juego(dt, lento);
+    else if (this.fase === 'revivir') this.revivirPaso(dt);
     else if (this.fase === 'choque') this.choque(dt);
-    this.moverRocas(dt);
-    this.moverChispas(dt);
-    // Temblor de cámara
-    this.temblor = Math.max(0, this.temblor - dt * 1.5);
-    this.camara.position.set((Math.random() - 0.5) * this.temblor, (Math.random() - 0.5) * this.temblor, 12);
-    this.globo(dt);
-  }
-
-  private intro(dt: number) {
-    // Despega desde la Tierra hasta su lugar
-    const k = Math.min(1, this.t / 2.6);
-    this.nave.position.y = -7 + (7 * (1 - Math.pow(1 - k, 3)));
-    this.nave.rotation.z = Math.sin(this.t * 18) * 0.03 * (1 - k);
-    this.tierra.position.y = -12 - k * 6;
-    this.temblor = 0.25 * (1 - k);
-    if (this.t > 1.4 && this.t - dt <= 1.4) this.aviso('¡Esquiva los asteroides!');
-    if (k >= 1) {
-      this.fase = 'juego';
-      this.meta.set(this.nave.position.x, this.nave.position.y);
-      this.decir(elegir(FRASES[this.o.rol]), 3.2);
-      void this.muneco.actuar({ nombre: 'retrete', pasos: [{ dur: 99, pose: 'sentado', cara: 'nervioso' }], bucle: true });
+    else if (this.fase === 'resultado') this.vitrina(dt, false);
+    else if (this.fase === 'taller') this.vitrina(dt, true);
+    // Fuego y estela
+    this.nave.updateMatrixWorld(true);
+    const boca = this.tmp.set(0, -0.48, 0.05).applyMatrix4(this.soporte.matrixWorld);
+    const dir = this.tmp2.set(-0.55, -1, 0).applyAxisAngle(EJE_Z, this.nave.rotation.z).normalize();
+    this.propulsor.fuerza = this.fase === 'intro' ? 2.2 : turbo ? 2.6 : this.fase === 'taller' || this.fase === 'resultado' ? 0.7 : 1;
+    this.propulsor.verde += ((turbo ? 1 : 0) - this.propulsor.verde) * Math.min(1, dt * 6);
+    this.propulsor.actualizar(dt, { x: boca.x, y: boca.y, dx: dir.x, dy: dir.y }, this.velocidad, this.fase !== 'choque' && this.fase !== 'resultado');
+    const dtp = dt * (this.fase === 'juego' ? lento : 1);
+    this.brillo.actualizar(dtp, this.velocidad);
+    this.humo.actualizar(dtp, this.velocidad);
+    this.fx.actualizar(dtp, this.velocidad);
+    // Luces RGB del retrete gamer
+    if (this.luces.length) this.luces.forEach((m, i) => m.emissive.setHSL((this.t * 0.25 + i * 0.17) % 1, 1, 0.5));
+    // Cámara: sigue un poquito a la nave, tiembla con los golpes y abre el lente con el turbo
+    this.temblor = Math.max(0, this.temblor - dt * 1.6);
+    this.fov += ((turbo ? 58 : 50) - this.fov) * Math.min(1, dt * 3);
+    if (Math.abs(this.camara.fov - this.fov) > 0.01) {
+      this.camara.fov = this.fov;
+      this.camara.updateProjectionMatrix();
     }
+    if (this.fase !== 'taller' && this.fase !== 'resultado') {
+      const sigue = THREE.MathUtils.clamp(this.nave.position.y * 0.12, -0.6, 0.6);
+      this.camara.position.set((Math.random() - 0.5) * this.temblor, sigue + (Math.random() - 0.5) * this.temblor, 12);
+      this.camara.lookAt(0, sigue * 0.6, 0);
+    }
+    this.globo(dt);
+    if (this.debug) this.moverAros();
   }
 
-  private juego(dt: number) {
+  private turboActivo() {
+    return this.poderes?.tiene('turbo') || this.turboArranque > 0;
+  }
+
+  // ------------------------------------------------------------------ Fases
+  private intro(dt: number) {
+    // Despega desde abajo, entre nubes que bajan, hasta su lugar
+    const k = Math.min(1, this.tFase / 2.6);
+    const e = 1 - Math.pow(1 - k, 3);
+    this.nave.position.set(-this.limites.x * 0.45, -9 + 9 * e, 0);
+    this.nave.rotation.z = Math.sin(this.t * 18) * 0.04 * (1 - k) - 0.1 * e;
+    this.temblor = 0.3 * (1 - k);
+    if (this.tFase > 1.3 && this.tFase - dt <= 1.3) this.aviso('¡Esquiva lo que venga!');
+    if (k >= 1) this.arrancar();
+  }
+
+  private arrancar() {
+    this.fase = 'juego';
+    this.tFase = 0;
+    this.meta.set(this.nave.position.x, this.nave.position.y);
+    this.capa.querySelector('.cohete-hud')!.removeAttribute('hidden');
+    this.decir(elegir(FRASES[this.o.rol]), 3.2);
+    this.caraBase = 'nervioso';
+    this.cara('nervioso', 99);
+    this.revivir = valorDe(this.p, 'revivir');
+    this.pintarRecord();
+    // Lo comprado para el arranque
+    const arr = valorDe(this.p, 'arranque');
+    if (arr > 0) {
+      this.turboArranque = arr / METROS;
+      this.aviso('¡Arranque con frijoles!');
+      this.cara('carcajada', 99);
+      rumor(1.5, 120, 0.12, 0, 0.6, 50);
+    }
+    const esc = valorDe(this.p, 'escudo_inicio');
+    if (esc > 0) this.poderes.activar('escudo', esc);
+    if (this.p.vuelos < 2) {
+      const d = this.capa.querySelector('.ch-dedo') as HTMLElement;
+      d.hidden = false;
+      setTimeout(() => (d.hidden = true), 4200);
+    }
+    this.mostrarTramo(0);
+    // Las marcas del récord propio y de la pareja
+    if (this.record > 150) this.marca(this.record, 'Tu récord', '#FFD23F');
+    if ((this.o.recordPareja ?? 0) > 150) this.marca(this.o.recordPareja!, this.o.rol === 'el' ? 'Récord de Ella' : 'Récord de Él', '#FF7FB0');
+  }
+
+  private juego(dt: number, lento: number) {
     this.tJuego += dt;
-    this.capa.querySelector('.cohete-tiempo')!.textContent = `${this.tJuego.toFixed(1)} s`;
-    // Teclado (pruebas en el computador)
+    const turbo = this.turboActivo();
+    if (this.turboArranque > 0) {
+      this.turboArranque -= this.avance;
+      if (this.turboArranque <= 0) {
+        this.invulnerable = Math.max(this.invulnerable, 1.2);
+        this.caraBase = 'nervioso';
+        this.cara('nervioso', 99);
+      }
+    }
+    this.invulnerable = Math.max(0, this.invulnerable - dt);
+    const metros = this.distancia * METROS;
+    this.cuentas.metros = metros;
+    // Teclado (pruebas en el computador) y piloto automático
     const ej = (this.teclas.has('arrowright') || this.teclas.has('d') ? 1 : 0) - (this.teclas.has('arrowleft') || this.teclas.has('a') ? 1 : 0);
     const ei = (this.teclas.has('arrowup') || this.teclas.has('w') ? 1 : 0) - (this.teclas.has('arrowdown') || this.teclas.has('s') ? 1 : 0);
-    this.meta.x += ej * dt * 7;
-    this.meta.y += ei * dt * 7;
-    this.meta.x = THREE.MathUtils.clamp(this.meta.x, -this.limites.x, this.limites.x * 0.35);
-    this.meta.y = THREE.MathUtils.clamp(this.meta.y, -this.limites.y, this.limites.y);
+    this.meta.x += ej * dt * 8;
+    this.meta.y += ei * dt * 8;
+    if (this.bot) this.pilotar();
+    // El agujero negro jala (hay que pelearle)
+    this.meta.x += this.jalon.x * dt;
+    this.meta.y += this.jalon.y * dt;
+    const L = this.limites;
+    this.meta.x = THREE.MathUtils.clamp(this.meta.x, -L.x + 0.8, L.x * 0.3);
+    this.meta.y = THREE.MathUtils.clamp(this.meta.y, -L.y, L.y);
     const antes = this.nave.position.y;
-    this.nave.position.x += (this.meta.x - this.nave.position.x) * Math.min(1, dt * 9);
-    this.nave.position.y += (this.meta.y - this.nave.position.y) * Math.min(1, dt * 9);
-    // Se inclina según sube o baja
-    const vy = (this.nave.position.y - antes) / Math.max(dt, 1e-3);
-    this.nave.rotation.z += (THREE.MathUtils.clamp(-vy * 0.05, -0.4, 0.4) - 0.15 - this.nave.rotation.z) * Math.min(1, dt * 6);
-    // Asteroides: cada vez más seguidos y más rápidos
-    this.proxRoca -= dt;
-    if (this.proxRoca <= 0) {
-      this.nuevaRoca();
-      this.proxRoca = Math.max(0.26, 0.95 - this.tJuego * 0.012) * rnd(0.7, 1.3);
+    const n = this.nave.position;
+    n.x += (this.meta.x - n.x) * Math.min(1, dt * 10);
+    n.y += (this.meta.y - n.y) * Math.min(1, dt * 10);
+    const vy = (n.y - antes) / Math.max(dt, 1e-3);
+    this.nave.rotation.z += (THREE.MathUtils.clamp(-vy * 0.045, -0.4, 0.4) - 0.12 - this.nave.rotation.z) * Math.min(1, dt * 6);
+    // Tamaño: chiquitico con la pastilla
+    const meta = this.poderes.tiene('hormiga') ? 0.55 : 1;
+    this.escalaHormiga += (meta - this.escalaHormiga) * Math.min(1, dt * 7);
+    this.nave.scale.setScalar(1.5 * this.escalaHormiga);
+    // Parpadeo mientras es invulnerable (sin contar el turbo)
+    this.soporte.visible = this.invulnerable <= 0 || turbo || Math.sin(this.t * 30) > -0.3;
+    // Tramos
+    const tramo = tramoDe(metros);
+    if (tramo !== this.tramoActual) this.mostrarTramo(tramo);
+    // Lo que sale
+    this.obst.dirigir(this.avance, metros, tramo, L.x, L.y, this.velocidad, dt * lento, false);
+    this.poderes.aparecer(dt, L.x, L.y, this.obst.lista);
+    this.proxFigura -= this.avance;
+    if (this.proxFigura <= 0) {
+      const f = this.figuraAlAzar(tramo);
+      const n = this.rollos.poner(f, L.x + 3, rnd(-L.y * 0.7, L.y * 0.7), L.y - 0.3);
+      this.proxFigura = Math.max(6, n * 0.45) + rnd(7, 13);
     }
+    // Movimiento y choques
+    const b = this.hitbox();
+    this.obst.actualizar(dt, this.velocidad, L.x, L.y, b, this.jalon, lento);
+    this.obst.choca(b, (o) => this.golpe(o, turbo));
+    if (this.fase !== 'juego') return;
+    this.obst.pasados(n.x, (o) => this.pasoCerca(o));
+    // Rollitos (el imán y el ayudante los jalan)
+    const iman = this.poderes.tiene('iman') || turbo ? { x: n.x, y: n.y + 0.5 * this.nave.scale.y, radio: turbo ? 2.2 : valorDe(this.p, 'fuerza_iman') } : null;
+    const ay = this.poderes.ayudante ? this.poderes.posAyudante : null;
+    this.poderes.guiarAyudante(dt, ay ? this.rollos.cercano(ay.x, ay.y, 7, -1) : null);
+    this.rollos.actualizar(
+      dt,
+      this.avance,
+      iman,
+      (x, y) => this.toca(x, y, b) || (!!ay && (x - ay.x) ** 2 + (y - ay.y) ** 2 < 0.45),
+      (x, y, valor) => this.cogerRollito(x, y, valor),
+      (nombre, corazon) => this.figuraCompleta(nombre, corazon),
+      ay,
+    );
+    // Poderes
+    const agarrado = this.poderes.recoger(dt, this.avance, n.x, n.y + 0.5 * this.nave.scale.y, b.r);
+    if (agarrado) this.agarrar(agarrado);
+    for (const fin of this.poderes.actualizar(dt, this.velocidad, this.obst, (o) => this.destruido(o, 'laser'))) this.seAcabo(fin);
+    if (!this.poderes.activos.size && !turbo) this.sinPoder += this.avance * METROS;
+    this.cuentas.sinpoder = Math.max(this.cuentas.sinpoder, this.sinPoder);
+    // Puntaje: los metros cuentan (×2 con el poder) por el multiplicador de misiones
+    const mult = multiplicador(this.p) * (this.poderes.tiene('doble') ? 2 : 1);
+    this.puntaje += this.avance * METROS * mult;
+    this.cuentas.puntaje = Math.floor(this.puntaje);
+    this.cuentas.tramo = Math.max(this.cuentas.tramo, tramo);
+    Object.assign(this.cuentas, this.obst.cuentas);
+    this.tRacha -= dt;
+    if (this.tRacha <= 0) this.rachaRollitos = 0;
+    // Récords en el camino
+    if (!this.pasoRecord && this.record > 150 && metros > this.record) {
+      this.pasoRecord = true;
+      this.aviso('¡Récord nuevo!');
+      this.decir('¡Récord nuevo! ¡Que me vean!', 2.2);
+      this.fx.estallido(n.x, n.y + 1, CUADRO.estrella, ['#FFD23F', '#FFFFFF', '#FF9F1C'], 24, 6, 0.5, true);
+      [784, 988, 1175, 1568].forEach((f, i) => nota(f, 0.2, i * 0.08, 'triangle', 0.06));
+    }
+    const rp = this.o.recordPareja ?? 0;
+    if (!this.pasoPareja && rp > 150 && metros > rp) {
+      this.pasoPareja = true;
+      this.decir(this.o.rol === 'el' ? '¡Te pasé, mi amor! 😏' : '¡Chao, mi amor! Te dejé atrás 💅', 2.6);
+      this.fx.estallido(n.x, n.y + 1, CUADRO.corazon, ['#FF4F7E', '#FF8FB1'], 18, 5, 0.45);
+    }
+    this.moverMarcas();
+    // Misiones (cada medio segundo)
+    if (Math.floor(this.tJuego * 2) !== Math.floor((this.tJuego - dt) * 2)) this.revisarMisiones(false);
+    // Frases de vez en cuando
     this.proxFrase -= dt;
     if (this.proxFrase <= 0) {
-      this.decir(elegir(FRASES[this.o.rol]), 3.2);
-      this.proxFrase = rnd(4.5, 7);
+      this.decir(elegir(FRASES[this.o.rol]), 3);
+      this.proxFrase = rnd(9, 14);
     }
-    // ¿Chocó? (un círculo un poquito más chico que el retrete con el personaje: se perdonan los roces)
-    const radio = 0.82;
-    for (const r of this.rocas) {
-      const d = Math.hypot(r.m.position.x - this.nave.position.x, r.m.position.y - (this.nave.position.y + 0.5));
-      if (d < r.r * 0.85 + radio) return this.chocar();
-      if (!r.casi && d < r.r + radio + 0.55 && r.m.position.x < this.nave.position.x) {
-        r.casi = true;
-        this.decir(elegir(CASI), 1.4);
-        nota(1200, 0.12, 0, 'sine', 0.05, 700);
-      }
+    if (this.carasHasta > 0 && this.t > this.carasHasta) {
+      this.carasHasta = 0;
+      this.cara(this.turboActivo() ? 'carcajada' : this.caraBase, 99);
     }
+    this.hud(metros);
   }
 
-  private nuevaRoca() {
-    const r = rnd(0.35, 1.25) * (this.tJuego > 25 ? rnd(0.8, 1.2) : 1);
-    const m = new THREE.Mesh(this.formas[Math.floor(Math.random() * this.formas.length)], this.matRoca);
-    m.scale.setScalar(r);
-    m.position.set(this.limites.x + 2 + r, rnd(-this.limites.y - 0.4, this.limites.y + 0.4), 0);
-    this.escena.add(m);
-    this.rocas.push({ m, r, v: rnd(3.2, 5.5) + this.tJuego * 0.09, giro: new THREE.Vector3(rnd(-2, 2), rnd(-2, 2), rnd(-2, 2)), casi: false });
+  private figuraAlAzar(tramo: number) {
+    // En la galaxia del amor salen más corazones y mensajes
+    if (tramo >= 6 && Math.random() < 0.5) return FIGURAS[elegir([4, 5, 6, 7, 8])]();
+    const r = Math.random();
+    if (r < 0.45) return FIGURAS[Math.floor(Math.random() * 4)]();
+    return FIGURAS[Math.floor(Math.random() * FIGURAS.length)]();
   }
 
-  private moverRocas(dt: number) {
-    this.rocas = this.rocas.filter((r) => {
-      r.m.position.x -= r.v * dt;
-      r.m.rotation.x += r.giro.x * dt;
-      r.m.rotation.y += r.giro.y * dt;
-      if (r.m.position.x < -this.limites.x - 3) {
-        this.escena.remove(r.m);
-        return false;
+  /** Dónde está la nave para los choques (un círculo en el centro del personaje sentado en el retrete). */
+  private hitbox() {
+    const n = this.nave.position, s = this.nave.scale.y;
+    this.blanco.x = n.x;
+    this.blanco.y = n.y + 0.38 * s;
+    this.blanco.r = 0.56 * s * valorDe(this.p, 'aero');
+    return this.blanco;
+  }
+
+  /** ¿Un rollito toca la nave? (un poco más generoso que los choques). */
+  private toca(x: number, y: number, b: { x: number; y: number; r: number }) {
+    return (x - b.x) ** 2 + ((y - b.y) * 0.85) ** 2 < (b.r + 0.42) ** 2;
+  }
+
+  /** Algo tocó la nave: con turbo explota; con la burbuja revienta; si no, ¡pum! */
+  private golpe(o: Obst, turbo: boolean): boolean {
+    if (turbo) {
+      if (o.tipo === 'rayo' || o.tipo === 'agujero') return false;
+      if (o.destruible || o.tipo === 'avion') {
+        this.destruido(o, 'turbo');
+        this.obst.destruir(o);
+        this.temblor = Math.max(this.temblor, 0.25);
       }
+      return false;
+    }
+    if (this.invulnerable > 0) return false;
+    if (this.poderes.tiene('escudo') && o.tipo !== 'agujero') {
+      this.poderes.reventar();
+      this.cuentas.escudos++;
+      if (o.destruible) this.obst.destruir(o);
+      this.invulnerable = 1.3;
+      this.temblor = 0.4;
+      this.decir('¡Plop! Se reventó la burbuja.', 1.6);
+      this.cara('enojado', 0.9);
+      nota(600, 0.15, 0, 'sine', 0.08, 1400);
+      return false;
+    }
+    if (this.revivir > 0 && o.tipo !== 'agujero') {
+      this.revivir--;
+      this.empezarRevivir();
       return true;
-    });
+    }
+    this.chocar(false, o.tipo === 'agujero');
+    return true;
   }
 
-  private chocar() {
-    this.fase = 'choque';
-    this.tChoque = 0;
-    this.temblor = 0.9;
-    this.decir(elegir(FIN), 2);
-    void this.muneco.actuar({ nombre: 'retrete', pasos: [{ dur: 99, pose: 'sentado', cara: 'llorando' }], bucle: true });
+  private destruido(o: Obst, por: 'turbo' | 'laser' | 'ambientador') {
+    const mult = multiplicador(this.p) * (this.poderes.tiene('doble') ? 2 : 1);
+    this.puntaje += o.puntos * mult;
+    this.cuentas.destruidos++;
+    if (por === 'laser') this.cuentas.laser++;
+    if (o.tipo === 'ovni') this.cuentas.ovnis++;
+    // A veces sueltan rollitos
+    if (Math.random() < 0.35) for (let k = 0; k < 1 + Math.floor(Math.random() * 3); k++) this.rollos.suelto(o.x, o.y, 1, rnd(-3, 3), rnd(-3, 3));
+  }
+
+  private pasoCerca(o: Obst) {
+    if (o.holgura < 0.5 && o.holgura >= 0 && !this.turboActivo()) {
+      this.cuentas.casi++;
+      const mult = multiplicador(this.p);
+      this.puntaje += 50 * mult;
+      if (Math.random() < 0.6) this.decir(elegir(CASI), 1.2);
+      this.cara('sorprendido', 0.8);
+      this.texto3d('¡Por un pelito! +50', '#FFE27A');
+      rumor(0.3, 2400, 0.05, 0, 1, 500);
+    }
+    if (o.tipo === 'cometa' && !this.turboActivo()) this.decir('¡Esquivé el cometa!', 1.5);
+    if (o.tipo === 'agujero') {
+      this.decir(this.o.rol === 'el' ? '¡Casi me espaguetifico!' : '¡Me salvé del agujero negro!', 2);
+      this.texto3d('¡Te escapaste del agujero negro!', '#C3A6FF');
+    }
+  }
+
+  private cogerRollito(x: number, y: number, valor: number) {
+    const doble = this.poderes.tiene('doble') ? 2 : 1;
+    const n = valor * doble;
+    this.rollitosVuelo += n;
+    this.cuentas.rollitos += n;
+    this.puntaje += 10 * n * multiplicador(this.p);
+    this.rachaRollitos++;
+    this.tRacha = 0.5;
+    this.fx.chispazo(x, y, '#FFD23F', valor > 1 ? 16 : 5, valor > 1 ? 0.6 : 0.28);
+    // Cada rollito seguido suena un poquito más agudo
+    const f = 1046 * Math.pow(2, Math.min(this.rachaRollitos, 14) / 24);
+    nota(f, 0.07, 0, 'triangle', 0.035);
+    nota(f * 1.5, 0.05, 0.03, 'sine', 0.015);
+    if (valor > 1) this.texto3d(`+${n} rollitos`, '#FFE27A');
+  }
+
+  private figuraCompleta(nombre: string, corazon: boolean) {
+    this.cuentas.figuras++;
+    if (corazon) this.cuentas.corazon++;
+    const premio = 10 * (this.poderes.tiene('doble') ? 2 : 1);
+    this.rollitosVuelo += premio;
+    this.cuentas.rollitos += premio;
+    this.texto3d(`¡${nombre[0].toUpperCase() + nombre.slice(1)} completo! +${premio}`, corazon ? '#FF8FB1' : '#FFE27A');
+    const n = this.nave.position;
+    if (corazon) this.fx.estallido(n.x + 1, n.y + 1, CUADRO.corazon, ['#FF4F7E', '#FF8FB1', '#FFFFFF'], 16, 5, 0.45);
+    [1046, 1318, 1568].forEach((f, i) => nota(f, 0.12, i * 0.06, 'triangle', 0.05));
+  }
+
+  private agarrar(id: IdPoder) {
+    const info = PODERES[id];
+    this.cuentas.poderes++;
+    this.sinPoder = 0;
+    this.aviso(info.grito);
+    this.decir(FRASE_PODER[id][this.o.rol], 2);
+    [784, 988, 1318, 1568].forEach((f, i) => nota(f, 0.14, i * 0.05, 'triangle', 0.05));
+    const n = this.nave.position;
+    switch (id) {
+      case 'turbo':
+        this.cuentas.turbos++;
+        this.poderes.activar('turbo');
+        this.caraBase = 'nervioso';
+        this.cara('carcajada', 99);
+        this.temblor = 0.4;
+        this.musica.prisa = 1.15;
+        rumor(1.2, 110, 0.14, 0, 0.6, 45);
+        // ¡Prrrt!
+        nota(95, 0.35, 0, 'sawtooth', 0.07, 55);
+        break;
+      case 'ambientador': {
+        // Una ola de lavanda que vuelve flores todo lo que hay en pantalla
+        this.fx.onda(n.x, n.y, 30, 0.9, '#C3A6FF');
+        this.fx.onda(n.x, n.y, 22, 0.7, '#FFB3E6');
+        for (const o of this.obst.lista) {
+          if (o.vivo && o.destruible && o.x < this.limites.x + 4) {
+            this.destruido(o, 'ambientador');
+            this.obst.destruir(o, 'flores');
+          }
+        }
+        rumor(1.1, 5000, 0.08, 0, 0.5, 2000);
+        this.cara('feliz', 1.5);
+        break;
+      }
+      case 'paca': {
+        // Llueven rollitos: un corazón lleno, una hilera doble y un rollito gigante
+        const L = this.limites;
+        this.rollos.poner(FIGURAS[5](), L.x + 2, 0, L.y - 0.3);
+        this.rollos.poner(FIGURAS[1](), L.x + 7, rnd(-2, 2), L.y - 0.3);
+        this.rollos.suelto(L.x + 1, rnd(-2, 2), 25);
+        this.proxFigura += 10;
+        this.cara('carcajada', 1.5);
+        break;
+      }
+      default:
+        this.poderes.activar(id);
+        this.cara(id === 'doble' || id === 'laser' ? 'presumido' : id === 'lenta' ? 'concentrado' : 'feliz', 1.6);
+        if (id === 'hormiga') nota(1200, 0.4, 0, 'sine', 0.06, 300);
+        if (id === 'lenta') this.capa.classList.add('lenta');
+    }
+  }
+
+  private seAcabo(id: IdPoder) {
+    if (id === 'turbo') {
+      this.invulnerable = Math.max(this.invulnerable, 1.5);
+      this.decir('¡Ahhh, qué alivio!', 1.6);
+      this.caraBase = 'nervioso';
+      this.cara('nervioso', 99);
+      this.musica.prisa = 1;
+    }
+    if (id === 'lenta') this.capa.classList.remove('lenta');
+    if (id === 'hormiga') nota(300, 0.4, 0, 'sine', 0.06, 1200);
+  }
+
+  private empezarRevivir() {
+    this.fase = 'revivir';
+    this.tFase = 0;
+    this.temblor = 0.6;
+    const n = this.nave.position;
+    this.fx.estallido(n.x, n.y + 0.5, CUADRO.corazon, ['#FF4F7E', '#FF8FB1', '#FFFFFF'], 30, 7, 0.55);
+    this.fx.onda(n.x, n.y + 0.5, 9, 0.6, '#FF8FB1');
+    this.aviso('¡Segunda oportunidad!');
+    this.decir('¡Todavía no me voy!', 1.8);
+    this.cara('sorprendido', 1);
+    [523, 659, 784, 1046].forEach((f, i) => nota(f, 0.2, i * 0.09, 'sine', 0.07));
+    this.capa.querySelector('.cohete-destello')!.classList.remove('va');
+    void (this.capa.querySelector('.cohete-destello') as HTMLElement).offsetWidth;
     this.capa.querySelector('.cohete-destello')!.classList.add('va');
+  }
+
+  private revivirPaso(dt: number) {
+    void dt;
+    this.nave.rotation.z = Math.sin(this.tFase * 20) * 0.1 * (1 - this.tFase);
+    if (this.tFase > 0.9) {
+      this.obst.despejar(this.nave.position.x, this.nave.position.y, 7);
+      this.invulnerable = 2.5;
+      if (valorDe(this.p, 'revivir') >= 1 && (this.p.mejoras.revivir ?? 0) >= 2) this.poderes.activar('escudo', 6);
+      this.fase = 'juego';
+      this.tFase = 0;
+    }
+  }
+
+  /** ¡Pum! (o se rindió desde la pausa). */
+  private chocar(rendido: boolean, agujero = false) {
+    this.fase = 'choque';
+    this.tFase = 0;
+    this.temblor = rendido ? 0.3 : 0.9;
+    this.decir(agujero ? '¡Me chupa el agujero negrooo!' : elegir(FIN), 2);
+    this.cara('llorando', 99);
+    this.capa.classList.remove('lenta');
+    const d = this.capa.querySelector('.cohete-destello')!;
+    d.classList.remove('va');
+    void (d as HTMLElement).offsetWidth;
+    d.classList.add('va');
     rumor(1.4, 140, 0.2, 0, 0.5, 60);
     nota(110, 0.9, 0, 'sawtooth', 0.08, 40);
-    // Explosión: chispas naranjas, amarillas y humo
-    for (let i = 0; i < 60; i++) {
-      const color = ['#ff9f1c', '#ffe066', '#e4574b', '#8d7b6a', '#ffffff'][i % 5];
-      const m = new THREE.Mesh(new THREE.SphereGeometry(rnd(0.05, 0.16), 6, 4), new THREE.MeshBasicMaterial({ color, transparent: true, toneMapped: false }));
-      m.position.copy(this.nave.position);
-      const a = rnd(0, Math.PI * 2), v = rnd(2, 8);
-      this.escena.add(m);
-      this.chispas.push({ m, v: new THREE.Vector3(Math.cos(a) * v, Math.sin(a) * v, rnd(-2, 2)), vida: rnd(0.6, 1.4) });
-    }
+    const n = this.nave.position;
+    if (!rendido) this.fx.explotar(n.x, n.y + 0.4, 1.6);
+    this.poderes.vaciar();
+    this.capa.querySelector('.cohete-hud')!.setAttribute('hidden', '');
+    this.capa.querySelector('.ch-poderes')!.innerHTML = '';
+    this.musica.pausar(true);
   }
 
-  private tChoque = 0;
   private choque(dt: number) {
-    this.tChoque += dt;
-    // Cae dando vueltas hacia la Tierra
-    this.nave.rotation.z += dt * 7;
-    this.nave.position.y -= dt * (2 + this.tChoque * 6);
-    this.nave.position.x -= dt * 1.5;
-    if (this.tChoque > 2.2) this.terminar();
+    // Cae dando vueltas y echando humo
+    this.nave.rotation.z += dt * 7 * Math.max(0.2, 1 - this.tFase * 0.4);
+    this.nave.position.y -= dt * (1.5 + this.tFase * 4);
+    this.nave.position.x -= dt * 1.2;
+    this.soporte.visible = true;
+    if (Math.random() < dt * 30) {
+      const n = this.nave.position;
+      this.humo.emitir({ x: n.x, y: n.y + 0.4, vx: rnd(-1, 1), vy: rnd(0.5, 1.5), vida: 1.2, tam0: 0.6, tam1: 1.8, color0: '#5A5050', color1: '#2A2630', alfa: 0.7, cuadro: CUADRO.humo, roce: 1 });
+    }
+    if (this.tFase > 1.9) this.terminarVuelo();
   }
 
-  private moverChispas(dt: number) {
-    this.chispas = this.chispas.filter((c) => {
-      c.vida -= dt;
-      c.m.position.addScaledVector(c.v, dt);
-      c.v.multiplyScalar(1 - dt * 1.5);
-      (c.m.material as THREE.MeshBasicMaterial).opacity = Math.max(0, c.vida);
-      if (c.vida <= 0) {
-        this.escena.remove(c.m);
-        if (c.m.geometry !== this.bolita) c.m.geometry.dispose();
-        (c.m.material as THREE.Material).dispose();
-        return false;
-      }
-      return true;
+  // ------------------------------------------------------------------ Fin del vuelo
+  private cumplidas: { texto: string; premio: number }[] = [];
+  private revisarMisiones(cerrar: boolean) {
+    const r = revisarMisiones(this.p, this.cuentas, this.inicioMisiones, cerrar);
+    for (const c of r.cumplidas) {
+      this.toastMision(c.texto, c.premio);
+      this.cumplidas.push(c);
+    }
+    return r;
+  }
+
+  private terminarVuelo() {
+    const p = this.p;
+    const metros = Math.floor(this.distancia * METROS);
+    // Rollitos: lo recogido más el papel triple hoja
+    const extra = Math.round(this.rollitosVuelo * valorDe(p, 'triple'));
+    const ganados = this.rollitosVuelo + extra;
+    const antesNivel = p.nivel;
+    const misiones = p.misiones.map((m) => ({ ...m }));
+    const r = this.revisarMisiones(true);
+    // Las que se completaron al terminar ya quedaron hechas en la copia de antes
+    if (r.subio) for (const m of misiones) m.hecha = true;
+    p.rollitos += ganados;
+    p.ganados += ganados;
+    p.vuelos++;
+    const record = metros > p.mejor;
+    if (record) p.mejor = metros;
+    const recordPuntaje = this.puntaje > p.mejorPuntaje;
+    if (recordPuntaje) p.mejorPuntaje = Math.floor(this.puntaje);
+    void this.o.guardar?.(copiaProgreso(p));
+    this.resultado = {
+      metros, puntaje: Math.floor(this.puntaje), rollitos: this.rollitosVuelo, extraTriple: extra, record, recordPuntaje,
+      segundos: this.tJuego, mult: multiplicador(p), misionesAntes: misiones, cumplidas: this.cumplidas, subio: r.subio, nivelAntes: antesNivel,
+      progreso: p, rol: this.o.rol, recordPareja: this.o.recordPareja ?? 0,
+    };
+    // Cae con un paracaídas de papel higiénico
+    this.fase = 'resultado';
+    this.tFase = 0;
+    this.obst.vaciar();
+    this.rollos.vaciar();
+    this.nave.rotation.set(0, 0, 0);
+    this.nave.position.set(-this.limites.x * 0.42, 6, 0);
+    this.nave.scale.setScalar(1.5);
+    this.escalaHormiga = 1;
+    this.ponerParacaidas(true);
+    this.cara(record ? 'carcajada' : 'puchero', 99);
+    setTimeout(() => this.mostrarResultado(), 900);
+  }
+
+  private mostrarResultado() {
+    if (!this.resultado || this.fase === 'fin') return;
+    mostrarResultado(this.capa, this.resultado, {
+      tienda: () => this.entrarTaller(),
+      casa: () => this.terminar(),
     });
   }
 
-  // ------------------------------------------------------------------ Textos
+  /** La vitrina: el retrete flotando grande (resultado) o dando vueltas para la tienda. */
+  private vitrina(dt: number, taller: boolean) {
+    const n = this.nave.position;
+    if (taller) {
+      const x = -this.limites.x * 0.52;
+      n.x += (x - n.x) * Math.min(1, dt * 4);
+      n.y += (-0.9 + Math.sin(this.t * 1.4) * 0.15 - n.y) * Math.min(1, dt * 4);
+      this.soporte.rotation.y += dt * 0.45;
+      this.nave.rotation.z = Math.sin(this.t * 1.1) * 0.05;
+      this.nave.scale.setScalar(THREE.MathUtils.lerp(this.nave.scale.x, 2.1, Math.min(1, dt * 3)));
+    } else {
+      const meta = -0.6 + Math.sin(this.t * 0.9) * 0.25;
+      n.y += (meta - n.y) * Math.min(1, dt * 1.6);
+      n.x += (-this.limites.x * 0.42 - n.x) * Math.min(1, dt * 2);
+      this.nave.rotation.z = Math.sin(this.t * 1.3) * 0.12;
+      this.soporte.rotation.y += (0.35 - this.soporte.rotation.y) * Math.min(1, dt * 2);
+    }
+    this.camara.position.set(0, 0, 12);
+    this.camara.lookAt(0, 0, 0);
+  }
+
+  private ponerParacaidas(si: boolean) {
+    if (!si) {
+      if (this.paracaidas) this.paracaidas.visible = false;
+      return;
+    }
+    if (!this.paracaidas) {
+      const g = new THREE.Group();
+      // Cúpula de papel higiénico con franjas pastel
+      const c = document.createElement('canvas');
+      c.width = 256;
+      c.height = 64;
+      const ctx = c.getContext('2d')!;
+      const cols = ['#FFFFFF', '#FFE3EC', '#FFFFFF', '#DFF3FF'];
+      for (let k = 0; k < 8; k++) {
+        ctx.fillStyle = cols[k % 4];
+        ctx.fillRect(k * 32, 0, 32, 64);
+      }
+      ctx.fillStyle = 'rgba(0,0,0,0.06)';
+      for (let k = 0; k < 40; k++) ctx.fillRect((k * 37) % 256, (k * 23) % 64, 2, 2);
+      const t = new THREE.CanvasTexture(c);
+      t.colorSpace = THREE.SRGBColorSpace;
+      const cupula = new THREE.Mesh(new THREE.SphereGeometry(1.3, 32, 12, 0, Math.PI * 2, 0, Math.PI * 0.42), new THREE.MeshStandardMaterial({ map: t, side: THREE.DoubleSide, roughness: 0.9 }));
+      cupula.scale.set(1, 0.7, 1);
+      cupula.position.y = 2.3;
+      g.add(cupula);
+      const pts: number[] = [];
+      for (let k = 0; k < 8; k++) {
+        const a = (k / 8) * Math.PI * 2;
+        pts.push(Math.cos(a) * 1.25 * 0.97, 2.3 + 0.62 * 0.7 * 0.5, Math.sin(a) * 1.25 * 0.97, 0, 0.95, 0);
+      }
+      const gl = new THREE.BufferGeometry();
+      gl.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+      g.add(new THREE.LineSegments(gl, new THREE.LineBasicMaterial({ color: '#F2E6D8' })));
+      this.paracaidas = g;
+      this.nave.add(g);
+    }
+    this.paracaidas.visible = true;
+  }
+
+  private entrarTaller() {
+    this.fase = 'taller';
+    this.tFase = 0;
+    this.ponerParacaidas(false);
+    this.capa.querySelector('.cohete-hud')?.setAttribute('hidden', '');
+    this.capa.querySelector('.cohete-resultado')?.remove();
+    if (this.o.soloTienda) {
+      this.nave.position.set(-this.limites.x * 0.52, -0.9, 0);
+      // Sin vuelo, la tienda se ve con el cielo de un tramo bonito
+      this.distancia = 0;
+    }
+    this.cara('feliz', 99);
+    this.tienda = new Tienda(this.capa, this.p, this.o.rol, {
+      probar: (tipo, id) => this.probar(tipo, id),
+      comprado: () => {
+        void this.o.guardar?.(copiaProgreso(this.p));
+        this.cara('carcajada', 1.4);
+        const n = this.nave.position;
+        this.fx.estallido(n.x, n.y + 1.2, CUADRO.estrella, ['#FFD23F', '#FFFFFF', '#FF9F1C'], 18, 5, 0.45, true);
+      },
+      cerrar: () => {
+        this.tienda = null;
+        // Lo que se dejó puesto (lo probado sin comprar vuelve a lo de antes)
+        this.probar('retrete', this.p.puesto.retrete);
+        this.probar('estela', this.p.puesto.estela);
+        this.probar('casco', this.p.puesto.casco);
+        if (this.o.soloTienda || !this.resultado) this.terminar();
+        else {
+          this.fase = 'resultado';
+          this.soporte.rotation.y = 0.35;
+          this.ponerParacaidas(true);
+          this.mostrarResultado();
+        }
+      },
+    });
+  }
+
+  private cascoProbado = '';
+  private probar(tipo: TipoCosmetico, id: string) {
+    if (tipo === 'retrete') this.ponerRetrete(id);
+    else if (tipo === 'estela') this.propulsor.estela = id;
+    else if (id !== this.cascoProbado) {
+      this.cascoProbado = id;
+      void this.ponerCasco(id);
+    }
+    if (tipo === 'casco') this.cascoProbado = id;
+    this.cara('presumido', 1.2);
+  }
+
+  private terminar() {
+    if (this.fase === 'fin') return;
+    this.fase = 'fin';
+    cancelAnimationFrame(this.cuadro);
+    this.musica.detener();
+    musica.callar(false);
+    window.removeEventListener('resize', this.ajustar);
+    window.removeEventListener('keydown', this.tecla);
+    window.removeEventListener('keyup', this.tecla);
+    document.removeEventListener('visibilitychange', this.alOcultar);
+    this.capa.classList.remove('visible');
+    const r: Resultado = {
+      segundos: Math.round(this.tJuego * 10) / 10,
+      metros: Math.floor(this.distancia * METROS),
+      puntaje: Math.floor(this.puntaje),
+      rollitos: this.rollitosVuelo,
+      volo: !this.o.soloTienda,
+    };
+    setTimeout(() => {
+      this.liberar();
+      if (cohete.actual === this) cohete.actual = null;
+      this.listo(r);
+    }, 450);
+  }
+
+  private liberar() {
+    this.poderes?.liberar();
+    this.obst?.vaciar();
+    this.obst?.liberar();
+    this.rollos?.liberar();
+    this.brillo?.liberar();
+    this.humo?.liberar();
+    this.escenario?.liberar();
+    this.modelos?.liberar();
+    this.vestuario?.liberar();
+    for (const m of this.cascoMallas) m.removeFromParent();
+    liberarEsqueletos(...this.cascoMallas);
+    liberarEsqueletos(this.muneco.p.grupo);
+    this.atlas.dispose();
+    this.texHalo.dispose();
+    this.escena.environment?.dispose();
+    this.renderer.dispose();
+    // Suelta el contexto 3D de una vez: si no, se van acumulando y el celular le quita el suyo a la casa (pantalla en blanco)
+    this.renderer.forceContextLoss();
+    this.capa.remove();
+  }
+
+  // ------------------------------------------------------------------ Interfaz
+  private hudCache = { m: -1, r: -1, p: -1, mult: -1, poderes: '' };
+  private hud(metros: number) {
+    const c = this.hudCache;
+    const m = Math.floor(metros);
+    if (m !== c.m) {
+      c.m = m;
+      this.capa.querySelector('.ch-metros')!.textContent = `${mil(m)} m`;
+    }
+    if (this.rollitosVuelo !== c.r) {
+      c.r = this.rollitosVuelo;
+      const b = this.capa.querySelector('.ch-rollitos b')!;
+      b.textContent = mil(c.r);
+      const s = this.capa.querySelector('.ch-rollitos') as HTMLElement;
+      s.classList.remove('salta');
+      void s.offsetWidth;
+      s.classList.add('salta');
+    }
+    const pts = Math.floor(this.puntaje / 10) * 10;
+    if (pts !== c.p) {
+      c.p = pts;
+      this.capa.querySelector('.ch-puntos b')!.textContent = mil(pts);
+    }
+    const mult = multiplicador(this.p) * (this.poderes.tiene('doble') ? 2 : 1);
+    if (mult !== c.mult) {
+      c.mult = mult;
+      const em = this.capa.querySelector('.ch-puntos em') as HTMLElement;
+      em.textContent = `×${mult}`;
+      em.classList.toggle('doble', this.poderes.tiene('doble'));
+    }
+    // Poderes activos con su reloj
+    const lista = [...this.poderes.activos.entries()];
+    if (this.turboArranque > 0) lista.unshift(['turbo', { resta: this.turboArranque * METROS / 100, total: valorDe(this.p, 'arranque') / 100 }]);
+    const clave = lista.map(([id]) => id).join(',');
+    const cont = this.capa.querySelector('.ch-poderes') as HTMLElement;
+    if (clave !== c.poderes) {
+      c.poderes = clave;
+      cont.innerHTML = lista.map(([id]) => `<span class="ch-poder" data-p="${id}" style="--c:${PODERES[id].color}"><img src="./modelos/iconos/cohete_poder_${id}.webp" alt="" onerror="this.style.visibility='hidden'"><i></i></span>`).join('');
+    }
+    for (const [id, a] of lista) {
+      const el = cont.querySelector(`[data-p="${id}"]`) as HTMLElement | null;
+      if (el) {
+        const k = Math.max(0, a.resta / a.total);
+        el.style.setProperty('--k', `${k * 360}deg`);
+        el.classList.toggle('acaba', a.resta < 2);
+      }
+    }
+  }
+
+  private pintarRecord() {
+    const r = this.capa.querySelector('.ch-record')!;
+    r.textContent = this.record > 0 ? `Récord ${mil(this.record)} m` : '¡Primer vuelo!';
+  }
+
+  /** Banderita en el camino con un récord (tuyo o de la pareja). */
+  private marca(metros: number, texto: string, color: string) {
+    const g = new THREE.Group();
+    const linea = new THREE.Mesh(new THREE.PlaneGeometry(0.06, 13), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.55, depthWrite: false, toneMapped: false }));
+    g.add(linea);
+    const c = document.createElement('canvas');
+    c.width = 512;
+    c.height = 96;
+    const ctx = c.getContext('2d')!;
+    ctx.font = '800 44px Fredoka, Nunito, system-ui, sans-serif';
+    const w = Math.min(500, ctx.measureText(texto).width + 48);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.roundRect((512 - w) / 2, 14, w, 68, 34);
+    ctx.fill();
+    ctx.fillStyle = '#3D2B27';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(texto, 256, 50);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false }));
+    s.scale.set(3.6, 0.68, 1);
+    s.position.y = this.limites.y + 0.1;
+    g.add(s);
+    g.visible = false;
+    this.mundo.add(g);
+    this.marcas.push({ g, metros });
+  }
+
+  private moverMarcas() {
+    for (const m of this.marcas) {
+      const x = this.nave.position.x + (m.metros / METROS - this.distancia);
+      m.g.visible = x < this.limites.x + 4 && x > -this.limites.x - 4;
+      m.g.position.x = x;
+    }
+  }
+
+  private mostrarTramo(i: number) {
+    const anterior = this.tramoActual;
+    this.tramoActual = i;
+    this.musica.tramo(i);
+    const t = this.capa.querySelector('.cohete-tramo') as HTMLElement;
+    t.querySelector('small')!.textContent = i === 0 ? 'Despegando de' : `Tramo ${i + 1}`;
+    t.querySelector('b')!.textContent = TRAMOS[i].nombre;
+    t.classList.remove('sale');
+    void t.offsetWidth;
+    t.classList.add('sale');
+    if (anterior >= 0) {
+      this.decir(FRASES_TRAMO[this.o.rol][i], 3);
+      this.proxFrase = 8;
+      nota(523, 0.3, 0, 'sine', 0.05);
+      nota(784, 0.4, 0.12, 'sine', 0.05);
+    }
+  }
+
+  private toastMision(texto: string, premio: number) {
+    const m = this.capa.querySelector('.ch-mision') as HTMLElement;
+    m.innerHTML = `<b>¡Misión cumplida!</b><span>${texto}</span><em>+${mil(premio)} <i class="ico-rollito"></i></em>`;
+    m.hidden = false;
+    m.classList.remove('sale');
+    void m.offsetWidth;
+    m.classList.add('sale');
+    [1046, 1318, 1568, 2093].forEach((f, i) => nota(f, 0.16, i * 0.07, 'triangle', 0.05));
+    clearTimeout(this.tMision);
+    this.tMision = setTimeout(() => (m.hidden = true), 3200);
+  }
+  private tMision: ReturnType<typeof setTimeout> | undefined;
+
+  private avisoBorde(y: number, tipo: 'cometa' | 'avion' | 'rayo') {
+    const cont = this.capa.querySelector('.ch-avisos') as HTMLElement;
+    const p = this.tmp.set(this.limites.x, y, 0).project(this.camara);
+    const top = (-p.y * 0.5 + 0.5) * window.innerHeight;
+    const e = document.createElement('div');
+    e.className = `ch-alerta ${tipo}`;
+    e.style.top = `${top}px`;
+    e.innerHTML = tipo === 'rayo' ? '<i></i>' : '<b>!</b>';
+    cont.append(e);
+    setTimeout(() => e.remove(), tipo === 'rayo' ? 1000 : 1350);
+  }
+
+  /** Texto que sube desde la nave («¡Por un pelito!», «+25 rollitos»). */
+  private texto3d(texto: string, color: string) {
+    const n = this.nave.position;
+    const p = this.tmp.set(n.x, n.y + 1.6 * this.nave.scale.y, 0).project(this.camara);
+    const e = document.createElement('div');
+    e.className = 'ch-flota';
+    e.style.left = `${(p.x * 0.5 + 0.5) * window.innerWidth}px`;
+    e.style.top = `${(-p.y * 0.5 + 0.5) * window.innerHeight}px`;
+    e.style.color = color;
+    e.textContent = texto;
+    this.capa.append(e);
+    setTimeout(() => e.remove(), 1300);
+  }
+
+  /** Cara del personaje (por un rato o fija). */
+  private cara(c: string, seg: number) {
+    const feliz = ['feliz', 'carcajada', 'presumido', 'guino'].includes(c);
+    void this.muneco.actuar({
+      nombre: 'retrete',
+      pasos: [{ dur: 99, pose: feliz ? 'sentado_feliz' : 'sentado', cara: c, mov: c === 'nervioso' ? [{ tipo: 'temblor', amp: 0.004, frec: 9 }] : c === 'carcajada' ? [{ tipo: 'rebote', alto: 0.02, frec: 5 }] : undefined }],
+      bucle: true,
+    });
+    this.carasHasta = seg < 90 ? this.t + seg : 0;
+  }
+
   private tGlobo = 0;
   private decir(texto: string, dur: number) {
     const g = this.capa.querySelector<HTMLElement>('.cohete-globo')!;
@@ -463,11 +1369,12 @@ class RetreteEspacial {
     const g = this.capa.querySelector<HTMLElement>('.cohete-globo')!;
     if (g.hidden) return;
     this.tGlobo -= dt;
-    if (this.tGlobo <= 0) {
+    if (this.tGlobo <= 0 || this.fase === 'taller') {
       g.hidden = true;
       return;
     }
-    const p = this.nave.position.clone().add(new THREE.Vector3(0.3, 2.5, 0)).project(this.camara);
+    const n = this.nave.position;
+    const p = this.tmp.set(n.x + 0.3, n.y + 1.75 * this.nave.scale.y, 0).project(this.camara);
     g.style.left = `${(p.x * 0.5 + 0.5) * window.innerWidth}px`;
     g.style.top = `${(-p.y * 0.5 + 0.5) * window.innerHeight}px`;
   }
@@ -480,24 +1387,116 @@ class RetreteEspacial {
     a.classList.add('sale');
   }
 
-  private terminar() {
-    this.fase = 'fin';
-    cancelAnimationFrame(this.cuadro);
-    window.removeEventListener('resize', this.ajustar);
-    window.removeEventListener('keydown', this.tecla);
-    window.removeEventListener('keyup', this.tecla);
-    this.capa.classList.remove('visible');
-    const segundos = Math.round(this.tJuego * 10) / 10;
-    setTimeout(() => {
-      this.renderer.dispose();
-      // Suelta el contexto 3D de una vez: si no, se van acumulando y el celular le quita el suyo a la casa (pantalla en blanco)
-      this.renderer.forceContextLoss();
-      this.capa.remove();
-      if (cohete.actual === this) cohete.actual = null;
-      this.listo({ segundos });
-    }, 450);
+  // ------------------------------------------------------------------ Pruebas
+  /** Piloto automático: busca la altura con menos peligro (y con rollitos y poderes cerca). */
+  private pilotar() {
+    const L = this.limites;
+    const n = this.nave.position;
+    const b = this.hitbox();
+    let mejor = n.y, menor = Infinity;
+    for (let k = 0; k <= 16; k++) {
+      const y = -L.y + (2 * L.y * k) / 16;
+      let peligro = Math.abs(y - n.y) * 0.08;
+      for (const o of this.obst.lista) {
+        if (!o.vivo || o.x < n.x - 1.5) continue;
+        const rel = o.vx - this.velocidad * o.arrastre;
+        const tLlega = rel < -0.1 ? (o.x - n.x) / -rel : o.tipo === 'ovni' ? 0.5 : 99;
+        if (o.tipo === 'rayo') {
+          if (Math.abs(y + 0.38 * this.nave.scale.y - o.y) < 1.4) peligro += 50;
+          continue;
+        }
+        if (o.tipo === 'ovni' && (o.fase === 'carga' || o.fase === 'dispara')) {
+          if (Math.abs(y + 0.4 - o.y) < 1.6) peligro += 40;
+        }
+        if (tLlega > 2.5) continue;
+        const yo = o.y + o.vy * tLlega;
+        const lado = o.radio + b.r + 0.9;
+        const d = Math.abs(yo - (y + 0.38 * this.nave.scale.y));
+        if (d < lado) peligro += (12 * (1 - d / lado)) / (tLlega + 0.25);
+      }
+      this.rollos.cada((x, ry) => {
+        if (x > n.x && x < n.x + 7 && Math.abs(ry - y) < 0.9) peligro -= 0.05;
+      });
+      for (const f of this.poderes.flotando) if (f.x > n.x && f.x < n.x + 9 && Math.abs(f.y - y) < 1) peligro -= 1.5;
+      if (peligro < menor) {
+        menor = peligro;
+        mejor = y;
+      }
+    }
+    this.meta.y += (mejor - this.meta.y) * 0.35;
+    this.meta.x += (-L.x * 0.5 - this.meta.x) * 0.1;
+  }
+
+  private armarAros() {
+    for (let k = 0; k < 1; k++) {
+      const pts = [];
+      for (let i = 0; i < 32; i++) pts.push(new THREE.Vector3(Math.cos((i / 32) * Math.PI * 2), Math.sin((i / 32) * Math.PI * 2), 0.5));
+      const l = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: '#00FF88', depthTest: false }));
+      l.renderOrder = 99;
+      this.mundo.add(l);
+      this.aros.push(l);
+    }
+  }
+
+  private moverAros() {
+    const b = this.hitbox();
+    this.aros[0].position.set(b.x, b.y, 0.5);
+    this.aros[0].scale.setScalar(b.r);
+  }
+
+  /** Para las pruebas. */
+  get estado() {
+    return {
+      fase: this.fase, metros: Math.floor(this.distancia * METROS), puntaje: Math.floor(this.puntaje), rollitos: this.rollitosVuelo, t: this.tJuego,
+      poderes: [...this.poderes?.activos.keys() ?? []], obstaculos: this.obst?.lista.length ?? 0, tramo: this.tramoActual, revivir: this.revivir,
+      progreso: this.p, cuentas: this.cuentas, calidad: this.calidad, particulas: (this.brillo?.vivas ?? 0) + (this.humo?.vivas ?? 0),
+    };
+  }
+  pruebaPoder(id: IdPoder) {
+    if (this.fase === 'juego') this.agarrar(id);
+  }
+  pruebaSaltar(metros: number) {
+    this.distancia += metros / METROS;
+  }
+  pruebaBot(si: boolean) {
+    this.bot = si;
+  }
+  pruebaSacar(id: IdPoder) {
+    this.poderes.sacar(id, this.nave.position.x + 4, this.nave.position.y + 0.5);
+  }
+  pruebaRollitos(n: number) {
+    this.p.rollitos += n;
+    void this.o.guardar?.(copiaProgreso(this.p));
+    this.tienda?.repintar();
+  }
+  pruebaChocar() {
+    if (this.fase === 'juego') this.chocar(false);
+  }
+  pruebaBoton(sel: string) {
+    (this.capa.querySelector(sel) as HTMLElement | null)?.click();
   }
 }
 
 /** Para las pruebas: el juego en curso. */
 export const cohete: { actual: RetreteEspacial | null } = { actual: null };
+
+/** Ganchos de prueba: `__cohete.dar(500)`, `.saltar(1000)`, `.poder('turbo')`, `.bot(true)`, `.simular(5)`… */
+(window as any).__cohete = {
+  juego: () => cohete.actual,
+  estado: () => cohete.actual?.estado,
+  simular: (seg: number) => cohete.actual?.simular(seg),
+  dar: (n: number) => cohete.actual?.pruebaRollitos(n),
+  saltar: (m: number) => cohete.actual?.pruebaSaltar(m),
+  poder: (id: IdPoder) => cohete.actual?.pruebaPoder(id),
+  sacar: (id: IdPoder) => cohete.actual?.pruebaSacar(id),
+  bot: (si = true) => cohete.actual?.pruebaBot(si),
+  manual: (si = true) => cohete.actual && (cohete.actual.manual = si),
+  chocar: () => cohete.actual?.pruebaChocar(),
+  boton: (sel: string) => cohete.actual?.pruebaBoton(sel),
+};
+
+/** Empieza a cargar los modelos del vuelo (mientras el personaje va al baño). */
+export function precargarCohete() {
+  void cargar('cohete_retretes.glb').catch(() => null);
+  void cargar('cohete_cosas.glb').catch(() => null);
+}

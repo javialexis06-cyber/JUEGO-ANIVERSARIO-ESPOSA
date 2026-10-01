@@ -35,6 +35,7 @@ import {
   sumar, tieneCuarto,
 } from './modelo';
 import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, salaTrofeos, TROFEOS } from './trofeos';
+import { mejorDistancia, type ProgresoCohete } from './cohete/datos';
 import { ranurasDe } from './ropa';
 import {
   configLinea, guardarConfigLinea, olvidarSesion, PersonajeOcupado, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal,
@@ -514,20 +515,57 @@ async function irAlBano() {
   await hacer('inodoro', 'bano', apuro ? 90 : ev ? (ev.llama !== undefined ? 75 : 32) : 22, {}, ev?.id);
   if (!apuro) return;
   enCohete = true;
+  // El juego y sus modelos se van cargando mientras llega al inodoro
+  void import('./cohete').then((c) => c.precargarCohete());
   try {
     const m = mascotas[yo];
     if (!(await esperarQue(() => m.escenaActual.split('|')[1] === 'inodoro', 25000))) return;
     await pausa(3200);
     await despegar(m);
-    const { jugarCohete } = await import('./cohete');
-    pausaCasa = true;
-    const r = await jugarCohete({ rol: yo, ropa: s.personajes[yo].ropa, colorPelo: s.personajes[yo].colorPelo, record: s.casa.retrete });
-    pausaCasa = false;
-    await aterrizar(m);
-    await terminarCohete(r.segundos);
+    await volarCohete(m);
   } finally {
     enCohete = false;
     pausaCasa = false;
+  }
+}
+
+/** Lo que el retrete espacial necesita de la casa (y cómo guarda los rollitos, las compras y las misiones). */
+function opcionesCohete() {
+  return {
+    rol: yo,
+    ropa: s!.personajes[yo].ropa,
+    colorPelo: s!.personajes[yo].colorPelo,
+    progreso: s!.casa.cohete?.[yo],
+    recordPareja: mejorDistancia(s!.casa.cohete, s!.casa.retrete, otro(yo)),
+    guardar: (p: ProgresoCohete) => cambiarCasa((c) => (c.cohete = { ...(c.cohete ?? {}), [yo]: p })),
+  };
+}
+
+/** El vuelo: la casa se deja de dibujar mientras tanto y al volver cae al baño con el ¡KABOOM! */
+async function volarCohete(m: Mascota | null) {
+  if (!s) return;
+  const { jugarCohete } = await import('./cohete');
+  pausaCasa = true;
+  const r = await jugarCohete(opcionesCohete());
+  pausaCasa = false;
+  // Con la tele prendida, la música de la casa sigue callada
+  sonido.musica.callar(!!tele && tele.estado !== 'apagada');
+  if (m) await aterrizar(m);
+  await terminarCohete(r.segundos);
+}
+
+/** La tienda del retrete sola (desde el retrete en miniatura del cuarto de juegos). */
+async function abrirTiendaRetrete() {
+  if (!s || enCohete) return;
+  enCohete = true;
+  cerrarHoja();
+  try {
+    const { abrirTiendaCohete } = await import('./cohete');
+    pausaCasa = true;
+    await abrirTiendaCohete(opcionesCohete());
+  } finally {
+    pausaCasa = false;
+    enCohete = false;
   }
 }
 
@@ -611,39 +649,33 @@ function explosion(obj: THREE.Object3D | null, tipo: 'humo' | 'kaboom' | 'agua')
 
 async function terminarCohete(seg: number) {
   if (!s) return;
-  const antes = s.casa.retrete?.[yo] ?? 0;
-  const record = seg > antes;
+  // El récord (en metros), los rollitos y las misiones ya los guardó el vuelo; la casa da sus monedas escasas
   const premio = Math.min(3, Math.floor(seg / 15));
-  await cambiarCasa((c) => {
-    c.retrete = { ...(c.retrete ?? {}) };
-    if (seg > (c.retrete[yo] ?? 0)) c.retrete[yo] = seg;
-    c.monedas += premio;
-  });
+  if (premio) await cambiarCasa((c) => (c.monedas += premio));
   // Ya fue al baño: se le quitan las ganas y se levanta del inodoro
   const ahora = Date.now();
   const e = { ...est(yo), actividad: { tipo: 'nada' as const, desde: ahora }, visto: ahora };
   delete e.apuro;
   await guardarYo(e);
-  setTimeout(() => hojaRetrete(seg, record, premio), 1400);
+  if (premio) setTimeout(() => toast(`+${premio} ${premio === 1 ? 'moneda' : 'monedas'} para la casa por el viaje espacial`, 3000), 1400);
   const nuevos = await premiosTrofeos();
   nuevos.forEach((m, i) => setTimeout(() => toast(m, 3400), 4000 + i * 3600));
 }
 
-/** El marcador del retrete espacial: quién ha durado más en el espacio. */
-function hojaRetrete(seg?: number, record = false, premio = 0) {
-  const r = s?.casa.retrete ?? {};
-  const a = r.el ?? 0, b = r.ella ?? 0;
+/** El marcador del retrete espacial: quién ha volado más lejos (y el botón de la tienda del retrete). */
+function hojaRetrete() {
+  if (!s) return;
+  const c = s.casa;
+  const a = mejorDistancia(c.cohete, c.retrete, 'el'), b = mejorDistancia(c.cohete, c.retrete, 'ella');
   const lider: Rol | null = a === b ? null : a > b ? 'el' : 'ella';
-  const fila = (q: Rol) =>
-    `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${r[q] ? `${r[q]!.toFixed(1)} s` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
-  const html = `${
-    seg !== undefined
-      ? `<p class="nota-hoja">Duraste <b>${seg.toFixed(1)} s</b> esquivando asteroides en el retrete.${record ? ' <b>¡Nuevo récord!</b>' : ''}${premio ? ` +${premio} ${premio === 1 ? 'moneda' : 'monedas'}.` : ''}</p>`
-      : ''
-  }<ol class="retrete-records">${fila('el')}${fila('ella')}</ol>
-    <p class="nota-hoja">La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién aguanta más?</p>`;
-  abrirHoja('Retrete espacial', html, { saldo: s?.casa.monedas });
-  if (record) lluviaCorazones(14);
+  const fila = (q: Rol) => {
+    const m = q === 'el' ? a : b;
+    return `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${m ? `${m.toLocaleString('es-CO')} m` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
+  };
+  const html = `<ol class="retrete-records">${fila('el')}${fila('ella')}</ol>
+    <p class="nota-hoja">La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién vuela más lejos?</p>
+    <button class="boton" data-accion-hoja="tienda-retrete">Tienda del retrete</button>`;
+  abrirHoja('Retrete espacial', html, { saldo: c.monedas });
 }
 
 // ---------------------------------------------------------------------------
@@ -1826,6 +1858,7 @@ function botonesCuarto(): Boton[] {
         { id: 'jugar-super', texto: 'Súper Manía', icono: '<img src="./modelos/iconos/caja_frutas.png" alt="">', principal: true },
         { id: 'jugar-puertas', texto: 'Cien Puertas', icono: ico('puerta') },
         { id: 'jugar-mesa', texto: 'Juegos de mesa', icono: '<img src="./modelos/iconos/mesa_juegos.svg" alt="">' },
+        { id: 'tienda-retrete', texto: 'Tienda del retrete', icono: '<img src="./modelos/iconos/cohete_rollito.webp" alt="">' },
       );
       break;
     case 'patio': {
@@ -1984,8 +2017,12 @@ async function alAccion(id: string) {
     case 'jugar-mesa':
       return jugar('mesa');
     case 'retrete':
-      // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse
-      return hacer('usar', 'juegos', 12, {}, 'cohete');
+      // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse,
+      // ver quién ha volado más lejos y abrir la tienda del retrete
+      void hacer('usar', 'juegos', 12, {}, 'cohete');
+      return hojaRetrete();
+    case 'tienda-retrete':
+      return abrirTiendaRetrete();
     case 'trofeos':
       return hojaTrofeos();
     case 'admirar':
@@ -3204,6 +3241,9 @@ function efectos() {
 };
 /** Ganas urgentes de ir al baño sin comer nada (pruebas del retrete espacial). */
 (window as any).__apuro = () => s && guardarYo({ ...s.personajes[yo], apuro: Date.now() });
+/** Vuela en el retrete espacial sin pasar por el baño, y abre su tienda (pruebas). */
+(window as any).__volar = () => !enCohete && ((enCohete = true), volarCohete(null).finally(() => (enCohete = false)));
+(window as any).__tiendaRetrete = () => abrirTiendaRetrete();
 /** Posición en pantalla del aro de un sitio de decoración (pruebas). */
 (window as any).__sitio = (id: string) => {
   const d = casa3d.sitioDe(id);

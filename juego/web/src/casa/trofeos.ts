@@ -1,8 +1,9 @@
 // Trofeos de los minijuegos: cada juego da bronce, plata y oro según lo mejor de los dos (estrellas del súper,
-// puertas abiertas, partidas de mesa ganadas, segundos en el retrete espacial, gérmenes de una lavada y el rango de
+// puertas abiertas, partidas de mesa ganadas, metros en el retrete espacial, gérmenes de una lavada y el rango de
 // chef). La copa del amor tiene el metal del trofeo más bajito: para que sea de oro hay que brillar en todo.
 // Cada uno se gana además un título en cada juego (el de la pareja es el de lo mejor de los dos).
 import { RECETAS, nombreRango, rangoDe } from './cocina/tipos';
+import { mejorDistancia } from './cohete/datos';
 import type { Casa, Logros, Rol } from './modelo';
 
 export type IdTrofeo = 'super' | 'puertas' | 'mesa' | 'retrete' | 'lavado' | 'cocina';
@@ -23,7 +24,9 @@ export const TROFEOS: Trofeo[] = [
   { id: 'super', nombre: 'Súper Manía', unidad: 'estrellas', metas: [5, 25, 60], color: '#E4574B', titulos: ['En práctica', 'Estrella de la caja', 'Gerente del barrio', 'Leyenda del súper'] },
   { id: 'puertas', nombre: 'Cien Puertas', unidad: 'puertas abiertas', metas: [10, 50, 100], color: '#8E6FD1', titulos: ['Curiosidad pura', 'Alma exploradora', 'Mente cerrajera', 'Leyenda de las 100 puertas'] },
   { id: 'mesa', nombre: 'Juegos de mesa', unidad: 'partidas ganadas', metas: [1, 10, 30], color: '#4FB477', titulos: ['Aprendiz de la mesa', 'Rival de cuidado', 'Mente estratega', 'Leyenda de la mesa'] },
-  { id: 'retrete', nombre: 'Retrete espacial', unidad: 'segundos en el espacio', metas: [15, 45, 90], color: '#4A90D9', titulos: ['Astronauta en pañales', 'Piloto del retrete', 'Comandante espacial', 'Leyenda galáctica'] },
+  // Con los poderes los segundos dejaron de decir mucho: el retrete se mide en metros de vuelo (los récords viejos en
+  // segundos se pasan a metros)
+  { id: 'retrete', nombre: 'Retrete espacial', unidad: 'metros de vuelo', metas: [500, 2000, 5000], color: '#4A90D9', titulos: ['Astronauta en pañales', 'Piloto del retrete', 'Comandante espacial', 'Leyenda galáctica'] },
   { id: 'lavado', nombre: 'Lavarse la cara', unidad: 'gérmenes en una lavada', metas: [80, 300, 700], color: '#35B6C4', titulos: ['Carita sucia', 'Carita limpia', 'Terror de los gérmenes', 'Piel de porcelana'] },
   // Los títulos de la cocina son los rangos de chef (van de Aprendiz a Leyenda de la cocina)
   { id: 'cocina', nombre: 'Cocina de chef', unidad: 'rango de chef', metas: [3, 6, 9], color: '#F29B38', titulos: ['Aprendiz', 'Cocinero de casa', 'Chef de la cuadra', 'Chef reconocido'] },
@@ -36,7 +39,7 @@ export const PREMIO_TROFEO = [0, 5, 10, 20];
 
 /** Lo de cada uno en un juego. */
 export function valorDe(c: Casa, id: IdTrofeo, r: Rol): number {
-  if (id === 'retrete') return Math.floor(c.retrete?.[r] ?? 0);
+  if (id === 'retrete') return mejorDistancia(c.cohete, c.retrete, r);
   if (id === 'lavado') return Math.floor(c.lavado?.[r] ?? 0);
   if (id === 'cocina') {
     // El rango del restaurante donde mejor le va (0 si todavía no ha cocinado)

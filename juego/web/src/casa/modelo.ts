@@ -1,5 +1,6 @@
 // Nuestro Hogar: datos de la pareja y reglas de las necesidades (se calculan con el reloj real).
 import { normalizarProgreso, type ProgresoCocina, RECETAS, type RecetaId } from './cocina/tipos';
+import { normalizarCohete, type ProgresoCohete } from './cohete/datos';
 export type Rol = 'el' | 'ella';
 export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto' | 'juegos' | 'trofeos' | 'cuna' | 'cuarto_el' | 'cuarto_ella' | 'patio';
 export type Necesidad = 'hambre' | 'energia' | 'higiene' | 'carino';
@@ -198,6 +199,8 @@ export interface Casa {
   diario: Record<string, number>;
   /** Récords del retrete espacial: los segundos que más ha durado cada uno esquivando asteroides. */
   retrete?: Partial<Record<Rol, number>>;
+  /** El retrete espacial de cada uno: rollitos, mejoras, retretes/estelas/cascos, misiones y récords (metros). */
+  cohete?: Partial<Record<Rol, ProgresoCohete>>;
   /** Récords de lavarse la cara: los gérmenes que más ha eliminado cada uno en una lavada. */
   lavado?: Partial<Record<Rol, number>>;
   /** Cuartos construidos con «Ampliar la casa» (además de los de siempre). */
@@ -348,6 +351,9 @@ export function normalizarCasa(c: unknown): Casa {
             (['el', 'ella'] as Rol[]).filter((r) => typeof c.retrete[r] === 'number' && Number.isFinite(c.retrete[r])).map((r) => [r, Math.max(0, Math.min(3600, c.retrete[r]))]),
           ),
         }
+      : {}),
+    ...(esObjeto(c.cohete)
+      ? { cohete: Object.fromEntries((['el', 'ella'] as Rol[]).filter((r) => esObjeto(c.cohete[r])).map((r) => [r, normalizarCohete(c.cohete[r])])) }
       : {}),
     ...(esObjeto(c.lavado)
       ? {
