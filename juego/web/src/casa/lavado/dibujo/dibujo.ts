@@ -233,6 +233,14 @@ export class Dibujo {
     }
   }
 
+  private v3 = new THREE.Vector3();
+  /** Dónde queda un punto del mapa en la pantalla (píxeles CSS). */
+  aPantalla(x: number, y: number): [number, number] {
+    this.v3.set(x, 0, y).project(this.camara);
+    const w = this.o.lienzo.clientWidth || window.innerWidth, h = this.o.lienzo.clientHeight || window.innerHeight;
+    return [((this.v3.x + 1) / 2) * w, ((1 - this.v3.y) / 2) * h];
+  }
+
   sacudir(f: number) {
     this.sacudon = Math.max(this.sacudon, f);
   }

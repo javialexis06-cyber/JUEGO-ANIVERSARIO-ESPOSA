@@ -87,7 +87,14 @@ export class Jugador3D {
         hueso.getWorldScale(s);
         o.scale.setScalar(d.s / Math.max(1e-3, s.x));
         o.traverse((m) => {
-          if ((m as THREE.Mesh).isMesh) (m as THREE.Mesh).frustumCulled = false;
+          const malla = m as THREE.Mesh;
+          if (!malla.isMesh) return;
+          malla.frustumCulled = false;
+          // El vidrio con transmisión obliga a dibujar la escena dos veces: en el celular, transparente sencillo
+          const mat = malla.material as THREE.MeshPhysicalMaterial;
+          if (mat && mat.transmission > 0) {
+            malla.material = new THREE.MeshStandardMaterial({ color: mat.color, roughness: 0.1, metalness: 0.1, transparent: true, opacity: 0.32, depthWrite: false });
+          }
         });
         hueso.add(o);
       }

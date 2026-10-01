@@ -8,6 +8,7 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 import { ID_ARMAS, ID_PASIVAS, baseEnNivel } from './armas';
 import { ID_ENEMIGOS, ENEMIGOS } from './enemigos';
 import { MAX_ENEMIGOS, type CofreAbierto, type Jugador, type Motor, type Opcion, type OpcionesJugador } from './motor';
+import type { ResumenPartida } from './progreso';
 import type { Efecto, IdArma, IdCarta, IdEscenario, IdObjeto, IdPasiva, Rol, Stats, TipoEfecto } from './tipos';
 
 export interface Invitacion {
@@ -53,7 +54,7 @@ export type MensajeLavado =
   | { t: 'carta'; id: string; c: IdCarta | null }
   | { t: 'pausa'; id: string; si: boolean; de: Rol }
   | { t: 'latido'; id: string; de: Rol }
-  | { t: 'fin'; id: string; retiro: boolean }
+  | { t: 'fin'; id: string; retiro: boolean; resumen?: ResumenPartida }
   | { t: 'salir'; id: string; de: Rol };
 
 const otro = (r: Rol): Rol => (r === 'el' ? 'ella' : 'el');
