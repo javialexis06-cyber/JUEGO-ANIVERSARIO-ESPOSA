@@ -182,3 +182,16 @@ respeta «reducir movimiento» del celular.
 | La pantalla de carga se cortaba de golpe | casa, súper | Se desvanece y el logo se agranda un poquito |
 | Las monedas y los «¡Pum!» del súper solo subían derechito | súper | Saltan con un golpecito y después suben |
 | La hoja de la mesa (invitación, ayuda) desaparecía de golpe | mesa | Se va suave como las de la casa |
+
+## Para otros frentes (fuera de esta parte)
+
+| Qué | Dónde | Gravedad | Propuesta |
+|---|---|---|---|
+| La tele no tiene cómo pausarse: en el navegador el video sigue sonando con la app escondida (en la APK lo pausa el WebView) | `src/casa/tele.ts` (`reproductorYoutube` no expone `pauseVideo`) | media | Agregar `pausar()`/`reanudar()` a `Tele` con `p.pauseVideo()`/`p.playVideo()` y suscribirlos con `alPausar`/`alReanudar` de `segundo_plano.ts` |
+| Al lavarse la cara, el bucle que anima las ondas del espejo (`abrirPortal`) sigue corriendo todo el minijuego aunque el portal está escondido | `src/casa/main.ts` `abrirPortal` (función `lavarse`) | baja | Detener el `requestAnimationFrame` mientras `portal.style.display === 'none'` |
+| Lavado, cohete y cocina no muestran pausa al volver de segundo plano (el juego se congela y sigue, sin salto de tiempo porque su `dt` va topado a 0,05 s) | `lavado.ts`, `cohete.ts`, `cocina/motor.ts` | baja | `alPausar(() => abrir su menú de pausa)` de `segundo_plano.ts` |
+| Cien Puertas: ya apaga los sensores en segundo plano; puede usar el módulo común para la música y su bucle | `src/puertas/` | baja | `import { alPausar, alReanudar, cuadros } from '../segundo_plano'` |
+| Las escenas premium dibujan a 60 cuadros por segundo (todo lo demás va a 30) | `src/escenas/cine.ts` | baja | Al rehacerlas, usar `cuadros()` con tope de 30 |
+| Nombres de animaciones CSS repetidos: `cae`, `sube` y `late` existen en `estilos.css` y en `casa.css` con movimientos distintos (en la casa ganan los de `casa.css`) | `src/estilos.css`, `src/casa/casa.css` | baja | Renombrar los de la casa (`cae-corazon`, `sube-efecto`, `late-ico`) |
+| **Campos nuevos de la casa**: `modelo.ts` ahora tiene `CAMPOS_CASA` y TypeScript obliga a listar ahí cada campo nuevo de `Casa` (si no, no compila). Así un celular con la app vieja no borra lo que guarda la nueva | `src/casa/modelo.ts` | — | Al juntar ramas que agreguen campos a `Casa` (p. ej. el tocador), agregar la clave a `CAMPOS_CASA` además de su normalización |
+| Íconos de productos en PNG (248 archivos, 6,3 MB) junto a 701 en WebP | `public/modelos/iconos` | baja | Pasarlos a WebP sin pérdida en el optimizador (ahorraría ~2-3 MB de la APK); hay rutas `.png` fijas en `recursos.ts`, `ui_casa.ts` y `main.ts` |
