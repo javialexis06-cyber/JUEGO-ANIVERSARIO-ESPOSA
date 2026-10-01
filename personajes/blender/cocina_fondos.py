@@ -174,9 +174,16 @@ def planta(coll, x, y, z, tam, rng, maceta='#E9E2D8'):
                    segments=6, samples=4, caps=('flat', 'point'), up=(math.cos(a), math.sin(a), 0.4))
 
 
-def cuadro(coll, x, y, z, w, h, color, marco='#7A4A2A', rot_x=math.pi / 2):
-    caja('marco', (x, y, z), (w / 2 + 0.03, 0.02, h / 2 + 0.03), coll, M(f'marco {marco}', marco, rough=0.5), p=6)
-    caja('lámina', (x, y - 0.021, z), (w / 2, 0.003, h / 2), coll, M(f'lámina {color}', color, rough=0.7), p=8, subsurf=0)
+def cuadro(coll, x, y, z, w, h, color, marco='#7A4A2A', rot_x=math.pi / 2, dibujo=None):
+    caja('marco', (x, y, z), (w / 2 + 0.04, 0.025, h / 2 + 0.04), coll, M(f'marco {marco}', marco, rough=0.5), p=14)
+    caja('paspartú', (x, y - 0.026, z), (w / 2, 0.003, h / 2), coll, M('paspartú', '#FFF8EE', rough=0.7), p=16, subsurf=0)
+    caja('lámina', (x, y - 0.03, z), (w / 2 - 0.05, 0.003, h / 2 - 0.05), coll, M(f'lámina {color}', color, rough=0.7), p=16, subsurf=0)
+    if dibujo:
+        # Un dibujito sencillo adentro (un corazón, una taza o una fresa)
+        col = M(f'dibujo {dibujo}', dibujo, rough=0.6)
+        for s in (-1, 1):
+            clay.blob('lóbulo', (x + s * w * 0.1, y - 0.035, z + h * 0.06), (w * 0.13, 0.004, h * 0.13), coll, col, n=5, subsurf=0)
+        clay.blob('punta', (x, y - 0.035, z - h * 0.1), (w * 0.16, 0.004, h * 0.16), coll, col, n=4, p=1.4, subsurf=0)
 
 
 # ---------------------------------------------------------------------------
@@ -209,13 +216,13 @@ def construir_sala(coll, tema, receta):
     caja('friso', (0, fondo_y - 0.03, 0.55), (ancho / 2, 0.03, 0.55), coll, madera, p=10, subsurf=0)
     for k in range(int(ancho / 0.9)):
         x = -ancho / 2 + 0.45 + k * 0.9
-        caja('panel', (x, fondo_y - 0.065, 0.55), (0.36, 0.01, 0.4), coll, M('panel madera', T['madera'], rough=0.45), p=5, subsurf=1)
+        caja('panel', (x, fondo_y - 0.065, 0.55), (0.36, 0.01, 0.4), coll, M('panel madera', T['madera'], rough=0.45), p=10, subsurf=1)
     caja('moldura', (0, fondo_y - 0.07, 1.12), (ancho / 2, 0.05, 0.035), coll, M('moldura', '#FFF6EA', rough=0.4), p=6, subsurf=0)
     caja('cornisa', (0, fondo_y - 0.06, 4.0), (ancho / 2, 0.08, 0.06), coll, M('moldura', '#FFF6EA', rough=0.4), p=6, subsurf=0)
     caja('zócalo', (0, fondo_y - 0.07, 0.05), (ancho / 2, 0.05, 0.05), coll, M('zócalo', T['oscuro'], rough=0.5), p=6, subsurf=0)
     # Ventanas con luz de día y cortinas
     cielo = M('cielo', '#DDF2FF', rough=1.0, emission='#E8F6FF', emission_strength=3.0)
-    for vx in (-4.6, 4.2):
+    for vx in (-3.75,):
         plano('vidrio ventana', [(vx - 0.85, fondo_y - 0.01, 1.4), (vx + 0.85, fondo_y - 0.01, 1.4), (vx + 0.85, fondo_y - 0.01, 3.2),
                                  (vx - 0.85, fondo_y - 0.01, 3.2)], coll, cielo)
         marco = M('marco ventana', '#FFFFFF', rough=0.4)
@@ -232,8 +239,8 @@ def construir_sala(coll, tema, receta):
                       shaper=lambda v: v + np.column_stack([np.sin(v[:, 2] * 3) * 0.04, np.zeros(len(v)), np.zeros(len(v))]))
         caja('barra cortina', (vx, fondo_y - 0.15, 3.42), (1.35, 0.02, 0.02), coll, M('barra', '#C9A24A', rough=0.3, metallic=1), p=4, subsurf=0)
     # La pizarra del menú (en blanco: el juego escribe encima)
-    caja('marco pizarra', (0, fondo_y - 0.05, 2.65), (1.35, 0.04, 0.72), coll, madera, p=8)
-    caja('pizarra', (0, fondo_y - 0.095, 2.65), (1.22, 0.01, 0.6), coll, M('pizarra', '#2F3B36', rough=0.85, noise=dict(scale=40, strength=0.1)), p=10,
+    caja('marco pizarra', (0, fondo_y - 0.05, 2.65), (1.35, 0.04, 0.72), coll, madera, p=16)
+    caja('pizarra', (0, fondo_y - 0.095, 2.65), (1.22, 0.01, 0.6), coll, M('pizarra', '#2F3B36', rough=0.85, noise=dict(scale=40, strength=0.1)), p=18,
          subsurf=0)
     for k in range(5):
         clay.blob('tiza', (-0.6 + k * 0.08, fondo_y - 0.12, 2.0), (0.025, 0.008, 0.008), coll, M('tiza', ['#FFFFFF', '#FFD3E0', '#FFE7A0', '#BDE7FF', '#C8F2C0'][k], rough=0.9),
@@ -241,13 +248,17 @@ def construir_sala(coll, tema, receta):
     caja('repisita tiza', (0, fondo_y - 0.11, 1.97), (1.2, 0.03, 0.012), coll, madera, p=6, subsurf=0)
     pizarra = [(-1.22, fondo_y - 0.1, 3.25), (1.22, fondo_y - 0.1, 2.05)]
     # Cuadros y repisas con cosas
-    cuadro(coll, -2.4, fondo_y - 0.02, 2.7, 0.7, 0.5, T['acento'])
-    cuadro(coll, 2.35, fondo_y - 0.02, 2.75, 0.55, 0.7, T['papel'])
-    cuadro(coll, -2.25, fondo_y - 0.02, 1.85, 0.4, 0.4, '#FFF4E0')
-    for rx in (-6.6, 6.6):
-        caja('repisa', (rx, fondo_y - 0.15, 2.0), (0.7, 0.15, 0.025), coll, madera, p=6, subsurf=0)
+    cuadro(coll, -2.05, fondo_y - 0.02, 2.75, 0.62, 0.48, T['acento'], dibujo='#FFFFFF')
+    cuadro(coll, 2.05, fondo_y - 0.02, 2.8, 0.5, 0.64, T['papel'], dibujo=T['acento'])
+    cuadro(coll, -2.2, fondo_y - 0.02, 1.75, 0.36, 0.36, '#FFF4E0', dibujo='#E2304A')
+    cuadro(coll, 2.2, fondo_y - 0.02, 1.8, 0.36, 0.3, '#FFF4E0', dibujo='#6B4228')
+    for rx in (-2.1, 2.1):
+        caja('repisa', (rx, fondo_y - 0.15, 3.45), (0.62, 0.15, 0.025), coll, madera, p=10, subsurf=0)
         for k in range(4):
-            frasco(coll, rx - 0.5 + k * 0.33, fondo_y - 0.15, 2.025, 0.08, 0.22, ['#F3DEA6', '#E2304A', '#6B4228', '#F6F1E7'][k], T['acento'], rng)
+            if k == 1:
+                planta(coll, rx - 0.45 + k * 0.3, fondo_y - 0.15, 3.475, 0.26, rng)
+            else:
+                frasco(coll, rx - 0.45 + k * 0.3, fondo_y - 0.15, 3.475, 0.075, 0.2, ['#F3DEA6', '#E2304A', '#6B4228', '#F6F1E7'][k], T['acento'], rng)
     # Lámparas colgantes con luz cálida
     for lx in (-3.3, 0.0, 3.3):
         clay.sweep('cable', [(lx, fondo_y - 1.2, 4.2), (lx, fondo_y - 1.2, 3.55)], 0.006, (1, 1), coll, M('cable', '#222222', rough=0.5), segments=6)
@@ -271,18 +282,20 @@ def construir_sala(coll, tema, receta):
             for dx in (-0.16, 0.16):
                 for dy in (-0.16, 0.16):
                     caja('pata', (sx + dx, my + dy, 0.22), (0.018, 0.018, 0.22), coll, madera, p=4, subsurf=0)
-    caja('marco puerta', (6.4, fondo_y - 0.05, 1.3), (0.75, 0.06, 1.35), coll, M('marco puerta', T['oscuro'], rough=0.5), p=8)
-    caja('puerta', (6.4, fondo_y - 0.08, 1.25), (0.62, 0.03, 1.25), coll, madera, p=8)
-    plano('vidrio puerta', [(6.0, fondo_y - 0.12, 1.4), (6.8, fondo_y - 0.12, 1.4), (6.8, fondo_y - 0.12, 2.3), (6.0, fondo_y - 0.12, 2.3)], coll, cielo)
-    clay.blob('perilla', (5.92, fondo_y - 0.13, 1.2), (0.04, 0.04, 0.04), coll, M('perilla', '#E8B23A', rough=0.2, metallic=1), n=5)
-    caja('letrero abierto', (6.4, fondo_y - 0.14, 2.6), (0.42, 0.01, 0.12), coll, M('abierto', '#FFFFFF', rough=0.4), p=6)
-    caja('letrero rojo', (6.4, fondo_y - 0.15, 2.6), (0.36, 0.01, 0.07), coll, M('abierto rojo', T['acento'], rough=0.4, emission=T['acento'], emission_strength=1.2),
-         p=6)
-    planta(coll, -7.2, fondo_y - 0.6, 0, 1.1, rng)
-    planta(coll, 7.4, fondo_y - 0.8, 0, 1.0, rng, maceta=T['acento'])
+    dx = 3.75
+    caja('marco puerta', (dx, fondo_y - 0.05, 1.3), (0.75, 0.06, 1.35), coll, M('marco puerta', T['oscuro'], rough=0.5), p=14)
+    caja('puerta', (dx, fondo_y - 0.08, 1.25), (0.62, 0.03, 1.25), coll, madera, p=14)
+    plano('vidrio puerta', [(dx - 0.4, fondo_y - 0.12, 1.4), (dx + 0.4, fondo_y - 0.12, 1.4), (dx + 0.4, fondo_y - 0.12, 2.3), (dx - 0.4, fondo_y - 0.12, 2.3)], coll, cielo)
+    clay.blob('perilla', (dx - 0.48, fondo_y - 0.13, 1.2), (0.04, 0.04, 0.04), coll, M('perilla', '#E8B23A', rough=0.2, metallic=1), n=5)
+    caja('letrero abierto', (dx, fondo_y - 0.14, 2.6), (0.42, 0.01, 0.12), coll, M('abierto', '#FFFFFF', rough=0.4), p=10)
+    caja('letrero rojo', (dx, fondo_y - 0.15, 2.6), (0.36, 0.01, 0.07), coll, M('abierto rojo', T['acento'], rough=0.4, emission=T['acento'], emission_strength=1.2),
+         p=10)
+    planta(coll, -4.9, fondo_y - 0.6, 0, 1.1, rng)
+    planta(coll, 4.9, fondo_y - 0.8, 0, 1.0, rng, maceta=T['acento'])
+    caja('tapete', (dx, fondo_y - 0.9, 0.01), (0.7, 0.45, 0.01), coll, M('tapete', T['acento'], rough=0.95), p=10, subsurf=0)
     # Luces
-    luz_area('ventana izq', (-4.6, fondo_y - 0.6, 2.3), (-4.6, 0, 1.0), 900, 1.8, '#EAF4FF', coll, 'RECTANGLE', 1.8)
-    luz_area('ventana der', (4.2, fondo_y - 0.6, 2.3), (4.2, 0, 1.0), 900, 1.8, '#EAF4FF', coll, 'RECTANGLE', 1.8)
+    luz_area('ventana izq', (-3.75, fondo_y - 0.6, 2.3), (-3.75, 0, 1.0), 900, 1.8, '#EAF4FF', coll, 'RECTANGLE', 1.8)
+    luz_area('puerta', (3.75, fondo_y - 0.6, 2.0), (3.75, 0, 1.0), 400, 1.2, '#EAF4FF', coll, 'RECTANGLE', 1.2)
     luz_area('relleno', (0, -3.0, 3.0), (0, fondo_y, 1.5), 1600, 6.0, '#FFF0DE', coll)
     luz_area('cenital', (0, 2.0, 4.6), (0, 2.0, 0), 500, 5.0, '#FFF6EA', coll)
     return {'pizarra': pizarra}
@@ -304,8 +317,8 @@ def construir_mostrador(coll, tema):
     moldura = M('moldura mostrador', '#FFF6EA', rough=0.35, coat=0.4)
     for k in range(int(ancho / 1.1)):
         x = -ancho / 2 + 0.55 + k * 1.1
-        caja('panel', (x, -0.045, 0.52), (0.44, 0.012, 0.32), coll, M('panel frente', T['frente'], rough=0.3, coat=0.6), p=5, subsurf=1)
-        caja('filo panel', (x, -0.04, 0.52), (0.47, 0.008, 0.35), coll, moldura, p=5, subsurf=1)
+        caja('panel', (x, -0.045, 0.52), (0.44, 0.012, 0.32), coll, M('panel frente', T['frente'], rough=0.3, coat=0.6), p=10, subsurf=1)
+        caja('filo panel', (x, -0.04, 0.52), (0.47, 0.008, 0.35), coll, moldura, p=10, subsurf=1)
     caja('zócalo', (0, -0.02, 0.05), (ancho / 2, 0.03, 0.05), coll, M('zócalo', T['oscuro'], rough=0.5), p=6, subsurf=0)
     caja('borde dorado', (0, -0.12, 0.955), (ancho / 2, 0.012, 0.012), coll, M('borde dorado', '#D9A84A', rough=0.25, metallic=1), p=4, subsurf=0)
     luz_area('clave', (-3, -4, 3.5), (0, 0.3, 0.6), 1800, 5, '#FFF2E2', coll)
@@ -337,13 +350,13 @@ def construir_cocina(coll, tema):
         mat = banda if j in (7, 8) else azulejo
         for i in range(int(ancho / aw) + 2):
             x = -ancho / 2 - aw + i * aw + off
-            caja('azulejo', (x + aw / 2, fondo_y, z + ah / 2), (aw / 2 - 0.006, 0.012, ah / 2 - 0.006), coll, mat, p=5, n=3, subsurf=1)
+            caja('azulejo', (x + aw / 2, fondo_y, z + ah / 2), (aw / 2 - 0.006, 0.012, ah / 2 - 0.006), coll, mat, p=12, n=3, subsurf=1)
     plano('pared alta', [(-ancho / 2, fondo_y, 3.5), (ancho / 2, fondo_y, 3.5), (ancho / 2, fondo_y, 5), (-ancho / 2, fondo_y, 5)], coll,
           M('pared alta', T['pared'], rough=0.9))
     # Repisas de madera con frascos, ollas y matas
     madera = M('repisa madera', T['madera'], rough=0.5, wave=dict(scale=4, strength=0.1, axis='X', distortion=5))
-    for rx, rz in ((-4.6, 2.45), (4.6, 2.45), (-4.6, 3.15), (4.6, 3.15)):
-        caja('repisa', (rx, fondo_y - 0.14, rz), (1.25, 0.14, 0.025), coll, madera, p=6, subsurf=0)
+    for rx, rz in ((-2.75, 1.75), (2.75, 1.75), (-2.75, 2.45), (2.75, 2.45)):
+        caja('repisa', (rx, fondo_y - 0.14, rz), (1.25, 0.14, 0.025), coll, madera, p=10, subsurf=0)
         for s in (-1, 1):
             caja('escuadra', (rx + s * 1.0, fondo_y - 0.06, rz - 0.08), (0.02, 0.06, 0.08), coll, M('escuadra', '#3A3A3A', rough=0.4, metallic=0.6), p=4, subsurf=0)
         for k in range(5):
@@ -355,22 +368,35 @@ def construir_cocina(coll, tema):
             else:
                 planta(coll, x, fondo_y - 0.14, rz + 0.025, 0.28, rng, maceta=rng.choice(['#FFFFFF', T['acento'], '#E9E2D8']))
     # Barra de utensilios con sartenes colgando
-    caja('barra utensilios', (0, fondo_y - 0.06, 2.85), (2.2, 0.015, 0.015), coll, M('barra', '#B9C0C5', rough=0.25, metallic=1), p=4, subsurf=0)
-    for k, x in enumerate(np.linspace(-1.9, 1.9, 6)):
+    caja('barra utensilios', (0, fondo_y - 0.06, 2.55), (1.25, 0.015, 0.015), coll, M('barra', '#B9C0C5', rough=0.25, metallic=1), p=4, subsurf=0)
+    for k, x in enumerate(np.linspace(-1.05, 1.05, 6)):
         if k % 2:
-            sarten_colgado(coll, x, fondo_y - 0.08, 2.25, 0.16, ['#C77B4A', '#2A2A2C', '#D9DEE2'][k % 3])
+            sarten_colgado(coll, x, fondo_y - 0.08, 1.95, 0.16, ['#C77B4A', '#2A2A2C', '#D9DEE2'][k % 3])
         else:
-            clay.sweep('utensilio', [(x, fondo_y - 0.07, 2.85), (x, fondo_y - 0.07, 2.5)], 0.008, (1, 1), coll, M('utensilio', '#D9DEE2', rough=0.25, metallic=1),
+            clay.sweep('utensilio', [(x, fondo_y - 0.07, 2.55), (x, fondo_y - 0.07, 2.2)], 0.008, (1, 1), coll, M('utensilio', '#D9DEE2', rough=0.25, metallic=1),
                        segments=6)
-            clay.blob('cabeza utensilio', (x, fondo_y - 0.075, 2.45), (0.05, 0.012, 0.07), coll, M('utensilio', '#D9DEE2', rough=0.25, metallic=1), n=5)
+            clay.blob('cabeza utensilio', (x, fondo_y - 0.075, 2.15), (0.05, 0.012, 0.07), coll, M('utensilio', '#D9DEE2', rough=0.25, metallic=1), n=5)
     # Ventanita alta con luz
     cielo = M('cielo cocina', '#E3F4FF', rough=1.0, emission='#E8F6FF', emission_strength=2.5)
     plano('ventana', [(-0.7, fondo_y - 0.005, 3.55), (0.7, fondo_y - 0.005, 3.55), (0.7, fondo_y - 0.005, 4.3), (-0.7, fondo_y - 0.005, 4.3)], coll, cielo)
     for x in (-0.7, 0, 0.7):
         caja('marco v', (x, fondo_y - 0.03, 3.925), (0.03, 0.03, 0.4), coll, M('marco blanco', '#FFFFFF', rough=0.4), p=4, subsurf=0)
     # Letrero con el ícono del restaurante
-    caja('letrero', (0, fondo_y - 0.05, 3.2), (0.75, 0.03, 0.22), coll, M('letrero', T['oscuro'], rough=0.4), p=6)
-    caja('letrero borde', (0, fondo_y - 0.07, 3.2), (0.7, 0.01, 0.17), coll, M('letrero claro', T['acento'], rough=0.3, emission=T['acento'], emission_strength=0.6), p=6)
+    caja('letrero', (0, fondo_y - 0.05, 3.05), (0.75, 0.03, 0.22), coll, M('letrero', T['oscuro'], rough=0.4), p=14)
+    caja('letrero borde', (0, fondo_y - 0.07, 3.05), (0.7, 0.01, 0.17), coll, M('letrero claro', T['acento'], rough=0.3, emission=T['acento'], emission_strength=0.6), p=14)
+    # Reloj de pared y unos ganchos con toallas
+    clay.lathe('reloj', [(0.0, 0.0), (0.2, 0.0), (0.21, 0.03), (0.0, 0.035)], coll, M('reloj', '#FFFFFF', rough=0.3), segments=32).rotation_euler = (math.pi / 2, 0, 0)
+    for o in coll.objects:
+        if o.name.startswith('reloj'):
+            o.location = (-1.6, fondo_y - 0.01, 3.1)
+    clay.lathe('aro reloj', [(0.2, 0.0), (0.23, 0.0), (0.23, 0.04), (0.2, 0.04)], coll, M('aro reloj', T['acento'], rough=0.3), segments=32,
+               cap_top=False, cap_bottom=False).rotation_euler = (math.pi / 2, 0, 0)
+    for o in coll.objects:
+        if o.name.startswith('aro reloj'):
+            o.location = (-1.6, fondo_y - 0.005, 3.1)
+    for k, x in enumerate((1.4, 1.7)):
+        clay.blob('toalla', (x, fondo_y - 0.04, 2.95), (0.11, 0.02, 0.22), coll, M(f'toalla {k}', [T['acento'], '#FFFFFF'][k], rough=0.95,
+                  ribs=dict(scale=60, strength=0.4, axis='Z', distance=0.003)), n=6)
     # Luces de cocina
     for lx in (-3.0, 3.0):
         clay.lathe('lámpara', [(0.0, 4.2), (0.04, 4.2), (0.22, 3.98), (0.0, 3.99)], coll, M('lámpara cocina', '#2A2A2C', rough=0.4, metallic=0.5),
@@ -398,9 +424,9 @@ def construir_meson(coll, tema):
     for k in range(int(ancho / 1.0)):
         x = -ancho / 2 + 0.5 + k * 1.0
         caja('cajón', (x, -0.0, 0.68), (0.46, 0.015, 0.17), coll, M('cajón', T['frente'] if tema != 'wafles' else '#C8CED2', rough=0.3, coat=0.5,
-                                                                  metallic=0.0 if tema != 'wafles' else 0.9), p=6)
+                                                                  metallic=0.0 if tema != 'wafles' else 0.9), p=11)
         caja('puerta', (x, -0.0, 0.28), (0.46, 0.015, 0.2), coll, M('puerta meson', T['frente'] if tema != 'wafles' else '#C8CED2', rough=0.3, coat=0.5,
-                                                                    metallic=0.0 if tema != 'wafles' else 0.9), p=6)
+                                                                    metallic=0.0 if tema != 'wafles' else 0.9), p=11)
         clay.sweep('tirador', [(x - 0.12, -0.03, 0.68), (x + 0.12, -0.03, 0.68)], 0.011, (1, 1), coll, tirador, segments=8)
         clay.sweep('tirador', [(x - 0.12, -0.03, 0.42), (x + 0.12, -0.03, 0.42)], 0.011, (1, 1), coll, tirador, segments=8)
     caja('canto', (0, -0.03, 0.885), (ancho / 2, 0.02, 0.012), coll, M('canto', T['acento'], rough=0.3), p=4, subsurf=0)
@@ -438,7 +464,7 @@ def catalogo():
     for r in TEMAS:
         L.append((f'fondo_sala_{r}', lambda c, r=r: construir_sala(c, r, r), (0, -1.2, 1.55), (0, 5.2, 1.75), 24, 1800, 820, 64, False))
         L.append((f'fondo_mostrador_{r}', lambda c, r=r: construir_mostrador(c, r), (0, -3.2, 1.75), (0, 0.3, 0.6), 30, 1800, 340, 48, True))
-        L.append((f'fondo_cocina_{r}', lambda c, r=r: construir_cocina(c, r), (0, -4.2, 2.1), (0, 1.4, 2.45), 30, 1800, 700, 64, False))
+        L.append((f'fondo_cocina_{r}', lambda c, r=r: construir_cocina(c, r), (0, -4.2, 1.95), (0, 1.4, 2.15), 30, 1800, 700, 64, False))
         L.append((f'fondo_meson_{r}', lambda c, r=r: construir_meson(c, r), (0, -2.8, 2.2), (0, 0.4, 0.55), 30, 1800, 420, 48, True))
     return L
 
