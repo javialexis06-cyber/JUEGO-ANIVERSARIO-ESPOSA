@@ -317,6 +317,8 @@ export class Lavado {
     const yoJ = m.jug[yo];
     // Lo que hace este celular cuando toca algo (local o se le pide al anfitrión)
     const pedir = (msg: MensajeLavado) => c?.mandar(msg);
+    /** Pausas propias mandadas y la última que llegó del otro. */
+    let nPausa = 0, nPausaOtro = 0;
     const local = papel !== 'invitado';
     const acciones: Acciones = {
       escoger: (k) => (local ? m.escoger(yo, k) : pedir({ t: 'escoger', id: idPartida, k })),
@@ -329,7 +331,11 @@ export class Lavado {
         pausado = si;
         ui.mostrarPausa(m, si, musicaLavado.muda, silenciado(), numeros);
         musicaLavado.pausar(si);
-        if (pareja) pedir({ t: 'pausa', id: idPartida, si, de: this.o.rol });
+        // Se repite (por si la red se come uno); el número dice cuál es el último
+        if (pareja) {
+          const n = ++nPausa;
+          for (const d of [0, 350, 1100]) setTimeout(() => n === nPausa && pedir({ t: 'pausa', id: idPartida, si, de: this.o.rol, n }), d);
+        }
       },
       retirarse: () => {
         pausado = false;
@@ -456,14 +462,23 @@ export class Lavado {
     let claveInv = '';
     let tMando = 0;
     let resumenLlegado: ResumenPartida | null = null;
+    /** El invitado ya está jugando (llegó su primer mando): no hace falta repetirle que empiece. */
+    let entro = papel !== 'anfitrion';
+    let tEmpezar = 0;
+    if (c && pareja && papel === 'anfitrion') c.mandar({ t: 'empezar', id: idPartida, config });
     if (c && pareja) {
       c.alMensaje = (msg) => {
         if ('id' in msg && msg.id !== idPartida) return;
         ultimoDelOtro = performance.now();
         const otroI = 1 - yo;
         switch (msg.t) {
+          case 'unirse':
+            // No le llegó la orden de empezar: se le repite
+            if (papel === 'anfitrion') c.mandar({ t: 'empezar', id: idPartida, config });
+            break;
           case 'mando': {
             if (papel !== 'anfitrion') break;
+            entro = true;
             const j = m.jug[otroI];
             if (!j.caido) {
               j.x = msg.x;
@@ -494,6 +509,11 @@ export class Lavado {
             if (papel === 'anfitrion') m.escogerCarta(otroI, msg.c);
             break;
           case 'pausa':
+            if (msg.n !== undefined) {
+              if (msg.n <= nPausaOtro) break;
+              nPausaOtro = msg.n;
+            }
+            if (pausado === msg.si) break;
             pausado = msg.si;
             ui.mostrarPausa(m, msg.si, musicaLavado.muda, silenciado(), numeros);
             if (msg.si) ui.aviso(`${nombres[otroI]} pausó el juego`);
@@ -591,7 +611,14 @@ export class Lavado {
             pedir({ t: 'mando', id: idPartida, x: yoJ.x, y: yoJ.y, vx: yoJ.vx, vy: yoJ.vy, w: dib.vistaW, h: dib.vistaH });
           }
         }
-        // Al anfitrión le toca mandar la foto y el inventario
+        // Al anfitrión le toca mandar la foto y el inventario (y repetir «empezar» hasta que el otro entre)
+        if (papel === 'anfitrion' && c && pareja && !entro) {
+          tEmpezar += dt;
+          if (tEmpezar > 0.8) {
+            tEmpezar = 0;
+            c.mandar({ t: 'empezar', id: idPartida, config });
+          }
+        }
         if (papel === 'anfitrion' && c) {
           tFoto += dt;
           tInv += dt;
@@ -713,8 +740,32 @@ export class Lavado {
       case 'bot':
         this.bot = !!v;
         break;
+      case 'caer': {
+        // Tumba al jugador v (para probar la burbujita y el «¡Levántate, mi amor!»)
+        const q = m.jug[v];
+        if (q) {
+          q.vida = 1;
+          q.invul = 0;
+          q.revivesUsados = 99;
+          m.herirJugador(q, 1e6, null);
+        }
+        break;
+      }
+      case 'juntar': {
+        // Pone al jugador 0 al ladito del v
+        const q = m.jug[v];
+        if (q && m.jug[0] !== q) {
+          m.jug[0].x = q.x + 14;
+          m.jug[0].y = q.y;
+        }
+        break;
+      }
     }
-    return { t: m.t, nivel: m.nivel, enemigos: m.nVivos, eliminados: m.eliminados, vida: j.vida, calidad: this.dib?.calidad, pausa: m.pausa };
+    return {
+      t: m.t, nivel: m.nivel, enemigos: m.nVivos, eliminados: m.eliminados, vida: j.vida, calidad: this.dib?.calidad, pausa: m.pausa,
+      jug: m.jug.map((q) => ({ x: Math.round(q.x), y: Math.round(q.y), caido: q.caido, opciones: !!q.opciones, armas: q.armas.length })),
+      fin: m.fin,
+    };
   }
 }
 

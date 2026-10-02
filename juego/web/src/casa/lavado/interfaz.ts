@@ -296,7 +296,8 @@ export class Interfaz {
     // El otro está escogiendo
     const otro = m.jug.find((x) => x !== j);
     const espera = !!otro && !!m.pausa && !j.opciones && !j.cofre && !j.cartaOpciones;
-    if (espera !== !this.capaEspera.hidden) {
+    // (si se cortó la conexión, ese aviso manda sobre el de «está escogiendo»)
+    if (!this.cortada && espera !== !this.capaEspera.hidden) {
       this.capaEspera.hidden = !espera;
       if (espera && otro) {
         const que = otro.cofre ? 'abriendo un cofre' : otro.cartaOpciones ? 'leyendo una carta de amor' : 'escogiendo su mejora';
@@ -306,7 +307,11 @@ export class Interfaz {
     this.tenue(!!m.pausa || this.pausado);
   }
 
+  /** Se cortó la conexión con el otro (el aviso se queda hasta que vuelva). */
+  private cortada = false;
+
   conexion(texto: string | null) {
+    this.cortada = !!texto;
     if (texto) {
       this.capaEspera.hidden = false;
       this.capaEspera.innerHTML = `<div class="lv-espera"><h2>${texto}<span class="puntos"></span></h2><p>El juego quedó en pausa hasta que vuelva.</p></div>`;

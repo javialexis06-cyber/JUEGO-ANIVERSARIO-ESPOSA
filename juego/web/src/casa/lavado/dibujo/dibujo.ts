@@ -39,6 +39,8 @@ const SPRITE_PROY: Partial<Record<IdArma, string>> = {
   cepillo: 'cepillo', milCerdas: 'milCerdas', champu: 'champu', remolino: 'champu', peinilla: 'peinilla', peinillaOro: 'peinillaOro',
   botellas: 'botellas', inundacion: 'inundacion', jabon: 'jabon', jabonExplosivo: 'jabonExplosivo', ranitas: 'ranitas', ranaGlotona: 'ranaGlotona',
 };
+/** Pruebas automáticas: sin los muñecos 3D (el WebGL por software no da abasto con dos celulares). */
+const SIN_3D = typeof location !== 'undefined' && new URLSearchParams(location.search).has('sin3d');
 const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
 
@@ -170,8 +172,8 @@ export class Dibujo {
     for (const l of [this.sombras, this.pisoFx, this.objetos, this.bichos, this.proy, this.fxNormal, this.fxLuz, this.numeros]) this.escena.add(l.malla);
     this.part = new Particulas(1400, this.fx, this.fxNormal, this.fxLuz, this.pisoFx);
     this.part.cupo = this.calidad >= 3 ? 1 : this.calidad === 2 ? 0.75 : this.calidad === 1 ? 0.5 : 0.3;
-    // Él y Ella
-    await Promise.all(
+    // Él y Ella (las pruebas con ?sin3d los cambian por una burbujita: el navegador de prueba no da abasto)
+    if (!SIN_3D) await Promise.all(
       m.jug.map(async (j, i) => {
         const p = new Jugador3D(j.rol, j.disfraz);
         this.jugadores[i] = p;
@@ -551,8 +553,11 @@ export class Dibujo {
     for (let i = 0; i < m.jug.length; i++) {
       const j = m.jug[i];
       const p = this.jugadores[i];
-      if (!p) continue;
-      p.actualizar(j, dt, pausa);
+      if (!p) {
+        if (!SIN_3D) continue;
+        const b = this.fx.c.burbuja;
+        this.fxNormal.poner(j.x, j.y, 0, 34, 40, 0.5, 1, b.u0, b.v0, b.u1, b.v1, j.rol === 'ella' ? 1 : 0.5, 0.6, j.rol === 'ella' ? 0.8 : 1, 1);
+      } else p.actualizar(j, dt, pausa);
       this.sombra(j.x, j.y, 26, 0.45);
       this.barraVida(j);
       if (j.caido) this.burbujaCaido(j);

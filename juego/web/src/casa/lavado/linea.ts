@@ -52,7 +52,7 @@ export type MensajeLavado =
   | { t: 'vetar'; id: string; k: number }
   | { t: 'cofre'; id: string }
   | { t: 'carta'; id: string; c: IdCarta | null }
-  | { t: 'pausa'; id: string; si: boolean; de: Rol }
+  | { t: 'pausa'; id: string; si: boolean; de: Rol; n?: number }
   | { t: 'latido'; id: string; de: Rol }
   | { t: 'fin'; id: string; retiro: boolean; resumen?: ResumenPartida }
   | { t: 'salir'; id: string; de: Rol };
