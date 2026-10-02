@@ -319,7 +319,7 @@
 .lv-carta.evo { border-color: #ff7aa8; background: linear-gradient(180deg, #fff3f8, #ffd9e6); }
 .lv-carta.vetar { border-color: #e4574b; }
 .lv-carta:active { translate: 0 3px; }
-.lv-carta b { font: 700 14px/1.1 var(--display); }
+.lv-carta b { font: 700 14px/1.1 var(--display); color: #3d2b27; }
 .lv-carta small { font: 800 10px/1 var(--texto); color: #d9822b; text-transform: uppercase; letter-spacing: 0.05em; }
 .lv-carta em { font: 700 11px/1.25 var(--texto); font-style: normal; color: #7a625a; }
 .lv-carta .pips { display: flex; gap: 2px; margin-top: 1px; }
