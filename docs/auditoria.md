@@ -226,3 +226,41 @@ JavaScript que hay que leer antes de mostrar cada página (versión compilada):
 | Súper (`super.html`) | 1.031 kB (gzip 345) | 811 kB (gzip 225) |
 | Mesa (`mesa.html`) | 1.103 kB (gzip 355) | 886 kB (gzip 236) |
 | Modelos (`public/modelos`) | 79,8 MB | 64,4 MB |
+
+### Mediciones antes y después
+
+Versión compilada servida en local, Chromium sin tarjeta gráfica (SwiftShader: el dibujo va a 1-2 cuadros por
+segundo, así que los cuadros por segundo no sirven para comparar; se mide el trabajo de JavaScript y de la página).
+«Antes» es la rama al empezar la auditoría (`822ee9e`); «después», el final de esta rama. `scripts/_medir.mjs`
+(temporal, no se sube) con tres corridas de la casa.
+
+| Medida | Antes | Después |
+|---|---|---|
+| Casa: abrir hasta poder jugar (`__listo`), tres corridas | 4,34 / 4,32 / 4,47 s | 3,90 / 4,19 / 4,40 s |
+| Casa: memoria de JavaScript al abrir | 19,6–20,0 MB | 14,6–19,3 MB |
+| Casa: recálculos de estilo de la página en 8 s quieta | 13 | 1 |
+| Súper: maquetaciones y recálculos de estilo en 12 s de juego con el piloto | 16 y 16 | 2 y 2 |
+| Súper: tiempo de JavaScript en esos 12 s | 0,335 s | 0,303 s |
+| Súper: memoria de JavaScript jugando | 25,4 MB | 23,0 MB |
+| Cuarto de la ampliación más pesado (patio): cargar la primera vez, disco frío | 423 ms | 82 ms |
+| Memoria de video de los modelos comprimidos (vértices e índices) | patio 5,7 · juegos 3,4 · bebé 4,1 · perrito 2,3 MB | 3,3 · 1,9 · 2,4 · 1,1 MB |
+| Mesa: cuadros dibujados por segundo en un celular de verdad | 60 | 30 (la mitad de trabajo; en SwiftShader no se nota porque no alcanza ni a 30) |
+
+En un celular Android normal la diferencia de abrir debería ser mayor que aquí: este computador lee 280 kB de
+JavaScript de más en unos pocos milisegundos, un celular de gama media en 50-100 ms, y los cuartos nuevos se leen
+del almacenamiento de la APK con la mitad de memoria de video.
+
+## Pruebas (esta auditoría)
+
+Todas contra la versión compilada (la que va en la APK), en un servidor local:
+
+| Prueba | Resultado |
+|---|---|
+| `probar-segundo-plano.mjs` (casa, súper en línea, mesa en línea) | 18 de 18 |
+| `probar-linea.mjs` (casa en línea con el Supabase de mentiras) | 17 de 17 (antes fallaban 4: la prueba simulaba volver a la app sin haberse ido) |
+| `probar-casa.mjs` | Sin errores |
+| `probar-acciones.mjs` | Sin errores (estaba desactualizada: la tele en grande tapaba los botones) |
+| `probar-mesa-linea.mjs` con cajas, dados, mancala, parchís y parchís a 2 colores | Los cinco: misma partida en los dos celulares (el parchís estaba desactualizado: ahora pregunta uno o dos colores) |
+| `probar.mjs` (día 1 del súper con el piloto) | 3 estrellas, sin errores del juego |
+| `supabase/pruebas/probar_reglas.sql` + `probar_cambios.sql` (Postgres 16) | 28 de 28 y 23 de 23 |
+| Modelos comprimidos: fotos de los 10 cuartos, de cerca y del perrito con los modelos viejos y los nuevos | Iguales (solo cambian lo que se mueve: trofeos girando, el perrito, pantallas) |
