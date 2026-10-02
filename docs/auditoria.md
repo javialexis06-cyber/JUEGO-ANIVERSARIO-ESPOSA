@@ -270,5 +270,8 @@ Todas contra la versión compilada (la que va en la APK), en un servidor local:
 | `probar-acciones.mjs` | Sin errores (estaba desactualizada: la tele en grande tapaba los botones) |
 | `probar-mesa-linea.mjs` con cajas, dados, mancala, parchís y parchís a 2 colores | Los cinco: misma partida en los dos celulares (el parchís estaba desactualizado: ahora pregunta uno o dos colores) |
 | `probar.mjs` (día 1 del súper con el piloto) | 3 estrellas, sin errores del juego |
+| `estres-casa.mjs` (datos dañados, días sin abrir, textos raros, toques rapidísimos, almacenamiento lleno, 2.190 toques al azar en dos pestañas) | Todo bien; memoria 3D estable |
+| `estres-super.mjs` (partidas dañadas, 10 entradas y salidas, 667 toques al azar, días 1-25 y un legendario) | Todo bien; texturas 23 → 23 y geometrías 879 → 879 |
+| Recorrido por las cuatro páginas (casa de Él y de Ella con hojas, cuartos, ampliación y acciones; súper; los cinco juegos de mesa; Cien Puertas) recogiendo errores, avisos, excepciones y promesas rechazadas | Ninguno |
 | `supabase/pruebas/probar_reglas.sql` + `probar_cambios.sql` (Postgres 16) | 28 de 28 y 23 de 23 |
 | Modelos comprimidos: fotos de los 10 cuartos, de cerca y del perrito con los modelos viejos y los nuevos | Iguales (solo cambian lo que se mueve: trofeos girando, el perrito, pantallas) |
