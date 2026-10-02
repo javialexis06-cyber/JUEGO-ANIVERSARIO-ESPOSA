@@ -3,6 +3,7 @@
 // si la app se va a segundo plano o si se corta la conexión), el final con el progreso guardado y lo que se le
 // devuelve a la casa (higiene y monedas).
 import { activar, alternar as alternarSonido, silenciado } from '../../sonido';
+import * as fondo from '../../segundo_plano';
 import { DISFRAZ } from './disfraces';
 import { DURACION } from './escenarios';
 import { ENEMIGOS } from './enemigos';
@@ -406,16 +407,16 @@ export class Lavado {
         if ((k === 'escape' || k === 'p') && !m.pausa) acciones.pausa(!pausado);
       } else teclas.delete(k);
     };
-    const visible = () => {
-      if (document.visibilityState === 'hidden' && !pausado && !m.fin) acciones.pausa(true);
-    };
+    // Al irse el celular a segundo plano se abre la pausa (y al volver sigue ahí, esperando)
+    const quitarFondo = fondo.alPausar(() => {
+      if (!pausado && !m.fin) acciones.pausa(true);
+    });
     this.lienzo.addEventListener('pointerdown', abajo);
     window.addEventListener('pointermove', mueve);
     window.addEventListener('pointerup', arriba);
     window.addEventListener('pointercancel', arriba);
     window.addEventListener('keydown', tecla);
     window.addEventListener('keyup', tecla);
-    document.addEventListener('visibilitychange', visible);
     const redimensionar = () => dib.ajustar();
     window.addEventListener('resize', redimensionar);
     let contextoPerdido = false;
@@ -528,9 +529,9 @@ export class Lavado {
     musicaLavado.intensidad = 0;
     const resumen = await new Promise<ResumenPartida | null>((ok) => {
       terminar = ok;
-      const bucle = (ahora: number) => {
-        if (!terminar) return;
-        requestAnimationFrame(bucle);
+      // El bucle se detiene solo en segundo plano (no gasta batería escondido) y vuelve sin saltos
+      const bucle = (_: number, ahora: number) => {
+        if (!terminar) return cuadrosJuego.detener();
         // 30 cuadros por segundo como máximo (el celular no se calienta)
         if (ahora - ultimo < 1000 / 31) return;
         const dt = Math.min(0.1, (ahora - ultimo) / 1000);
@@ -642,7 +643,7 @@ export class Lavado {
           setTimeout(() => t(papel === 'invitado' ? resumenLlegado : m.resumen(yo, pareja)), 900);
         }
       };
-      requestAnimationFrame(bucle);
+      const cuadrosJuego = fondo.cuadros(bucle);
     });
 
     // ------------------------------------------------------------------ Final
@@ -652,7 +653,7 @@ export class Lavado {
     window.removeEventListener('pointercancel', arriba);
     window.removeEventListener('keydown', tecla);
     window.removeEventListener('keyup', tecla);
-    document.removeEventListener('visibilitychange', visible);
+    quitarFondo();
     window.removeEventListener('resize', redimensionar);
     joy.remove();
     // Si es invitado y no llegó el resumen, se arma uno con lo que se ve

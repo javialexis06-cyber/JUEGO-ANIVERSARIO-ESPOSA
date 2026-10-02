@@ -813,6 +813,7 @@ async function lavarse(unirse?: string) {
     // De vuelta: el velo de agua se va, la casa vuelve a verse nítida y la cámara se aleja
     lienzo.style.visibility = '';
     portal.style.display = '';
+    ondasPortal.get(portal)?.();
     pausaCasa = false;
     await pausa(450);
     portal.classList.add('sale');
@@ -854,18 +855,26 @@ function abrirPortal(rol: Rol) {
   const mapa = p.querySelector('feDisplacementMap')!;
   const borroso = p.querySelector('feGaussianBlur')!;
   const t0 = performance.now();
+  // Mientras se juega el portal está escondido: las ondas se detienen (no gastan batería) y siguen al volver
+  let id = 0;
   const paso = () => {
-    if (!p.isConnected) return;
+    id = 0;
+    if (!p.isConnected || p.style.display === 'none') return;
     const t = (performance.now() - t0) / 1000;
     const k = Math.min(1, t / 1.6);
     ruido.setAttribute('baseFrequency', `${(0.012 + Math.sin(t * 3) * 0.004).toFixed(4)} ${(0.05 + Math.sin(t * 2.2) * 0.02).toFixed(4)}`);
     mapa.setAttribute('scale', String(Math.round(k * 34 + Math.sin(t * 7) * 6 * k)));
     borroso.setAttribute('stdDeviation', (k * 2.2).toFixed(2));
-    requestAnimationFrame(paso);
+    id = requestAnimationFrame(paso);
   };
-  requestAnimationFrame(paso);
+  id = requestAnimationFrame(paso);
+  ondasPortal.set(p, () => {
+    if (!id) id = requestAnimationFrame(paso);
+  });
   return p;
 }
+/** Para volver a mover las ondas de un portal que se escondió durante el minijuego. */
+const ondasPortal = new WeakMap<HTMLElement, () => void>();
 
 /** Lo que necesita el lavado: quién juega, su progreso guardado en la casa y cómo invitar al otro. */
 function opcionesLavado(mod: typeof import('./lavado'), unirse?: string): import('./lavado').OpcionesLavado {
