@@ -506,7 +506,19 @@ class EstacionPicar implements Estacion {
       g.fill();
       texto(g, `${obra.fresas.length} / ${need} fresas`, v.x, v.y - 219, { tam: 21, color: '#fff' });
       botonBotar(g, this.rBotar());
-    } else if (obra) texto(g, '← Escoge el vaso', v.x, v.y - 100, { tam: 22, color: '#fff', borde: 'rgba(40,30,25,0.7)' });
+    } else if (obra) {
+      // El puesto vacío del vaso: silueta punteada que late
+      g.save();
+      g.globalAlpha = 0.55 + 0.25 * Math.sin(t * 4);
+      g.setLineDash([10, 8]);
+      g.strokeStyle = '#fff';
+      g.lineWidth = 3;
+      rr(g, v.x - 62, v.y - 170, 124, 170, 18);
+      g.stroke();
+      g.restore();
+      texto(g, 'Aquí va el vaso', v.x, v.y - 98, { tam: 20, color: '#fff', borde: 'rgba(40,30,25,0.7)', max: 118 });
+      texto(g, '(escógelo a la izquierda)', v.x, v.y - 68, { tam: 15, color: '#fff', borde: 'rgba(40,30,25,0.7)', max: 118 });
+    }
     if (this.volando) {
       const k = this.volando.t / 0.5;
       fresaCortada(g, p.x + (v.x - p.x) * k, p.y + (v.y - 130 - p.y) * k - Math.sin(k * Math.PI) * 130, p.r * (1 - k * 0.7), this.volando.cortes, 4);
@@ -770,7 +782,8 @@ class EstacionBatir implements Estacion {
 
   private dibujarBatidora(g: G, tz: Tazon | null, x: number, by: number, t: number, vertiendo: boolean) {
     const vib = tz?.batiendo ? Math.sin(t * 60) * 1.5 : 0;
-    const tam = 132;
+    // Que quepa entera: debajo del riel y sin meterse en el puesto de al lado (con más batidoras van más chiquitas)
+    const tam = Math.min(110, ((this.m.zona.w - 246) / this.slots.length) * 0.245);
     const bol = punto('batidora', 'bol', x, by, tam);
     const eje = punto('batidora', 'eje', x + vib, by, tam);
     const hayB = hay('batidora');

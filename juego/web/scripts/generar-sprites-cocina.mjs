@@ -45,6 +45,10 @@ const CHEF = [
 const INVITADOS = { abuelita: 'ella', ejecutivo: 'el', mama: 'ella', deportista: 'ella', adolescente: 'el', nina: 'ella',
   famoso: 'el', ladron: 'el', cajera: 'ella', reponedor: 'el', guardia: 'el', aseo: 'ella' };
 
+const CHAQUETA = { cabeza: 'gorro_chef', arriba: 'chaqueta_chef' };
+/** Mechones que atraviesan el gorro de chef (los de las sienes de Él). */
+const OCULTAR = { el: 'mechon_lado_(der|izq)_2', ella: '' };
+
 const pedidas = process.argv[2] && process.argv[2] !== 'todas' ? process.argv[2].split(',') : null;
 const puerto = process.argv[3] ?? '5174';
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
@@ -53,15 +57,15 @@ p.on('pageerror', (e) => console.log('ERR', e.message));
 await p.goto(`http://localhost:${puerto}/mesa.html?sin3d`);
 mkdirSync('public/cocina/gente', { recursive: true });
 const trabajos = [
-  ...['el', 'ella'].map((r) => ({ clave: r, salida: `${r}_chef`, pedidos: CHEF, ropa: { cabeza: 'gorro_chef', arriba: 'chaqueta_chef' }, alto: 420 })),
-  ...['el', 'ella'].map((r) => ({ clave: r, salida: `${r}_chef`, pedidos: [{ nombre: 'intro', pose: 'puno_a', cara: 'concentrado', giro: 4 }], ropa: { cabeza: 'gorro_chef', arriba: 'chaqueta_chef' }, alto: 760 })),
+  ...['el', 'ella'].map((r) => ({ clave: r, salida: `${r}_chef`, pedidos: CHEF, ropa: CHAQUETA, ocultar: OCULTAR[r], alto: 420 })),
+  ...['el', 'ella'].map((r) => ({ clave: r, salida: `${r}_chef`, pedidos: [{ nombre: 'intro', pose: 'puno_a', cara: 'concentrado', giro: 4 }], ropa: CHAQUETA, ocultar: OCULTAR[r], alto: 760 })),
   ...['el', 'ella'].map((r) => ({ clave: r, salida: `pareja_${r}`, pedidos: PAREJA, alto: 540 })),
   ...Object.entries(INVITADOS).map(([c, base]) => ({ clave: c, salida: c, pedidos: INVITADO, alto: 520, clipsDe: base })),
 ].filter((t) => !pedidas || pedidas.includes(t.salida) || pedidas.includes(t.clave));
 for (const t of trabajos) {
   const imgs = await p.evaluate(async ([t]) => {
     const m = await import('/scripts/sprites-cocina.ts');
-    return m.generar(t.clave, t.pedidos, { alto: t.alto, ropa: t.ropa, clipsDe: t.clipsDe });
+    return m.generar(t.clave, t.pedidos, { alto: t.alto, ropa: t.ropa, clipsDe: t.clipsDe, ocultar: t.ocultar || undefined });
   }, [t]);
   let total = 0;
   for (const [n, url] of Object.entries(imgs)) {

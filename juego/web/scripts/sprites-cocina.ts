@@ -17,7 +17,7 @@ export interface Pedido {
 }
 
 /** Dibuja el modelo `clave` (el, ella o un cliente del súper) en cada pose y devuelve los recortes en webp. */
-export async function generar(clave: string, pedidos: Pedido[], opciones: { alto?: number; ropa?: Ropa; clipsDe?: string } = {}): Promise<Record<string, string>> {
+export async function generar(clave: string, pedidos: Pedido[], opciones: { alto?: number; ropa?: Ropa; clipsDe?: string; ocultar?: string } = {}): Promise<Record<string, string>> {
   const alto = opciones.alto ?? 320;
   // El lienzo de render crece con el alto pedido (los recortes grandes salen nítidos, sin estirar)
   const H = Math.max(860, Math.round(alto * 1.75)), W = Math.round(H * 0.82);
@@ -41,6 +41,13 @@ export async function generar(clave: string, pedidos: Pedido[], opciones: { alto
   const p = new Personaje({ x: 0, y: 0 }, 1);
   await p.cargarPoses(clave);
   if (opciones.ropa && (clave === 'el' || clave === 'ella')) await new Vestuario(p, clave).aplicar(opciones.ropa);
+  // Mallas que se salen por encima de la prenda (p. ej. los mechones de las sienes de Él atraviesan el gorro de chef)
+  if (opciones.ocultar) {
+    const re = new RegExp(opciones.ocultar, 'i');
+    p.grupo.traverse((o) => {
+      if ((o as THREE.Mesh).isMesh && re.test(o.name)) o.visible = false;
+    });
+  }
   escena.add(p.grupo);
   // Los muñecos del súper solo traen caminar y reposo: se les prestan las poses de Él o de Ella (mismo esqueleto)
   let prestadas: { mezclador: THREE.AnimationMixer; clips: THREE.AnimationClip[] } | null = null;

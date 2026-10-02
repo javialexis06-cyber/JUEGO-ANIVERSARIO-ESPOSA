@@ -713,6 +713,10 @@ class EstacionBebidas implements Estacion {
     const xi = x0 + ((x1 - x0) - w * bs.length) / 2;
     return bs.map((b, i) => ({ id: b.id, x: xi + i * w + 4, y: RIEL + 16, w: w - 8, h: 270 }));
   }
+  /** Tamaño del tanque para que quepa entero (ancho y alto) en su espacio. */
+  private tamTanque(r: Rect) {
+    return Math.min(r.w * 0.32, r.h * 0.17, 52);
+  }
   private rHielo(): Rect {
     return { x: this.m.zona.w - 192, y: RIEL + 130, w: 176, h: 150 };
   }
@@ -809,13 +813,27 @@ class EstacionBebidas implements Estacion {
       if (!spr(g, `vaso_${r.tam}`, r.x + r.w / 2, r.y + r.h - 44, 150)) dibujarVaso(g, { tam: r.tam, sabor: null, nivel: 0, hielo: 0, mezcla: false }, r.x + r.w / 2, r.y + r.h - 44, 0.9, t);
       texto(g, TAM[r.tam].nombre, r.x + r.w / 2, r.y + r.h - 18, { tam: 15, color: '#fff', borde: 'rgba(40,30,25,0.7)', max: r.w - 4 });
     }
-    // La máquina de jugos: un tanque por sabor
+    // La máquina de jugos: un tanque por sabor, sobre su repisa de acero
     const ll = this.rLlaves();
+    if (ll.length) {
+      const a = ll[0], z = ll[ll.length - 1];
+      const ry = a.y + a.h, x0 = a.x - 14, x1 = z.x + z.w + 14;
+      for (const bx of [x0 + 26, x1 - 26]) {
+        g.fillStyle = lineal(g, bx - 7, 0, bx + 7, 0, [[0, '#8d949c'], [0.5, '#e4e8ec'], [1, '#7c838b']]);
+        g.fillRect(bx - 7, ry, 14, m.H - BARRA - 150 - ry);
+      }
+      g.fillStyle = 'rgba(40,30,25,0.18)';
+      rr(g, x0 + 4, ry + 8, x1 - x0, 16, 6);
+      g.fill();
+      g.fillStyle = lineal(g, 0, ry - 4, 0, ry + 14, [[0, '#f4f6f8'], [0.45, '#c3c9cf'], [1, '#8a9198']]);
+      rr(g, x0, ry - 4, x1 - x0, 18, 6);
+      g.fill();
+    }
     for (const r of ll) {
       const b = BEBIDA[r.id];
       const act = this.chorro === r.id;
       const cx = r.x + r.w / 2, base = r.y + r.h;
-      if (!spr(g, `tanque_${r.id}`, cx, base, Math.min(r.w * 0.48, 70))) {
+      if (!spr(g, `tanque_${r.id}`, cx, base, this.tamTanque(r))) {
         g.fillStyle = lineal(g, 0, r.y + 40, 0, r.y + 150, [[0, mezclar(b.color, '#ffffff', 0.15)], [1, b.color]]);
         rr(g, r.x + 12, r.y + 40, r.w - 24, 106, 10);
         g.fill();
@@ -837,7 +855,7 @@ class EstacionBebidas implements Estacion {
         const b = BEBIDA[this.chorro];
         const r = ll.find((x) => x.id === this.chorro);
         if (r) {
-          const boca = punto(`tanque_${r.id}`, 'boca', r.x + r.w / 2, r.y + r.h, Math.min(r.w * 0.48, 70));
+          const boca = punto(`tanque_${r.id}`, 'boca', r.x + r.w / 2, r.y + r.h, this.tamTanque(r));
           const geo = geoVaso(`vaso_${obra.vaso.tam}`, p.x, p.y, 230, TAM[obra.vaso.tam]);
           chorro(g, boca.x, boca.y, p.x, yEn(geo, zNivel(geo, obra.vaso.nivel)) - 2, b.color, 9, t);
         }

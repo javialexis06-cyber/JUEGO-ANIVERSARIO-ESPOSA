@@ -388,7 +388,8 @@ export function dibujarPedidos(m: Motor, g: G) {
   }
   const ix = W * 0.52 + 190, iy = my + 26;
   spr(g, 'impresora', ix, iy, 64);
-  const jx = W - 110;
+  // El frasco de propinas en la punta izquierda del mostrador (no tapa la fila, que va a la derecha)
+  const jx = 74;
   if (!spr(g, 'propinas', jx, my + 28, 120)) {
     g.fillStyle = 'rgba(220,240,255,0.55)';
     rr(g, jx - 30, my - 58, 60, 66, 12);
@@ -402,7 +403,8 @@ export function dibujarPedidos(m: Motor, g: G) {
   const pidiendo = s.invitados.some((x) => x.estado === 'pidiendo');
   m.botonTomar = null;
   if (e && !pidiendo && s.fase === 'jugando') {
-    const r = { x: W * 0.52 - 560, y: my - 128, w: 250, h: 72 };
+    // En el frente del mostrador, justo delante del que está pidiendo
+    const r = { x: m.puestoFila(0) - 135, y: my + 22, w: 270, h: 62 };
     m.botonTomar = r;
     const lat = 1 + Math.sin(m.reloj * 5) * 0.035;
     g.save();
@@ -529,6 +531,9 @@ function fondoRiel(m: Motor, g: G) {
   g.drawImage(rielCache.c, 0, 0, W, RIEL);
 }
 
+/** Recorte de la cara en los recortes del chef (el gorro ocupa la parte de arriba). */
+const CARA_CHEF = [0.14, 0.31, 0.72];
+
 function carita(m: Motor, g: G, src: HTMLImageElement, x: number, y: number, r: number, borde = '#fff3e4', recorte = [0.14, 0.06, 0.72]) {
   g.fillStyle = borde;
   elipse(g, x, y, r + 3, r + 3);
@@ -581,7 +586,7 @@ export function dibujarRiel(m: Motor, g: G) {
     }
     // En pareja: la carita del otro en el tiquete que tiene escogido
     if (otro && otro.act === t.id) {
-      carita(m, g, m.img(`./cocina/gente/${m.sync!.otroRol}_chef_feliz.webp`), rr2.x + 14, rr2.y + rr2.h - 26, 13, '#ff8fb8');
+      carita(m, g, m.img(`./cocina/gente/${m.sync!.otroRol}_chef_feliz.webp`), rr2.x + 14, rr2.y + rr2.h - 26, 13, '#ff8fb8', CARA_CHEF);
     }
     g.restore();
   });
@@ -594,10 +599,10 @@ export function dibujarRiel(m: Motor, g: G) {
   texto(g, `🪙 ${m.s.propinas}`, xr, 70, { tam: 22, color: '#ffd46b', alinear: 'right' });
   const pose = m.reloj < m.caraChef.hasta ? m.caraChef.pose : 'concentrado';
   const yo = m.img(`./cocina/gente/${m.rol}_chef_${pose}.webp`);
-  carita(m, g, yo, W - 142, RIEL / 2, 38, '#ffd9a8', [0.12, 0.02, 0.76]);
+  carita(m, g, yo, W - 142, RIEL / 2, 38, '#ffd9a8', CARA_CHEF);
   if (m.otro && m.sync) {
     const o2 = m.img(`./cocina/gente/${m.sync.otroRol}_chef_feliz.webp`);
-    carita(m, g, o2, W - 206, RIEL / 2 + 14, 24, '#ff8fb8', [0.12, 0.02, 0.76]);
+    carita(m, g, o2, W - 206, RIEL / 2 + 14, 24, '#ff8fb8', CARA_CHEF);
   }
 }
 
@@ -629,7 +634,7 @@ export function dibujarBarra(m: Motor, g: G) {
     rr(g, r.x, y, r.w, r.h, 16);
     g.stroke();
     const tieneIcono = hay(nombres[i].icono);
-    if (tieneIcono) spr(g, nombres[i].icono, r.x + 34, y + r.h / 2 + 2, iconoTam(nombres[i].icono));
+    if (tieneIcono) iconoEn(g, nombres[i].icono, r.x + 34, y + r.h / 2 + 2, 54, 48);
     texto(g, tieneIcono ? nombres[i].nombre : `${nombres[i].emoji} ${nombres[i].nombre}`, r.x + (tieneIcono ? 62 : r.w / 2), y + r.h / 2 + 2,
       { tam: 23, color: '#4a2a10', max: r.w - (tieneIcono ? 70 : 16), alinear: tieneIcono ? 'left' : 'center' });
     if (alerta && !act) {
@@ -639,16 +644,17 @@ export function dibujarBarra(m: Motor, g: G) {
       g.fill();
       texto(g, '!', r.x + r.w - 10, y + 9, { tam: 14, color: '#fff' });
     }
-    if (otro && otro.est === i && m.sync) carita(m, g, m.img(`./cocina/gente/${m.sync.otroRol}_chef_feliz.webp`), r.x + r.w - 14, y - 4, 15, '#ff8fb8');
+    if (otro && otro.est === i && m.sync) carita(m, g, m.img(`./cocina/gente/${m.sync.otroRol}_chef_feliz.webp`), r.x + r.w - 14, y - 4, 15, '#ff8fb8', CARA_CHEF);
   });
 }
 
 /** Tamaño de cada ícono de pestaña (para que todos se vean del mismo alto). */
-function iconoTam(id: string) {
+/** Dibuja el recorte `id` centrado en (cx, cy) y metido en una caja de an × al (el cuchillo largo no se sale). */
+export function iconoEn(g: G, id: string, cx: number, cy: number, an: number, al: number) {
   const r = recorte(id);
-  if (!r) return 30;
-  const altoPx = r.a, refPx = r.ref * r.ppm;
-  return (46 / altoPx) * refPx;
+  if (!r) return false;
+  const k = Math.min(an / r.w, al / r.a);
+  return spr(g, id, cx - (r.w / 2 - r.ax) * k, cy - (r.a / 2 - r.ay) * k, r.ref * r.ppm * k);
 }
 
 /** El tiquete escogido, grande, a la derecha de las estaciones que lo usan. */
@@ -705,7 +711,7 @@ export function dibujarManoOtro(m: Motor, g: G) {
   elipse(g, x, y, 26 * k, 26 * k);
   g.stroke();
   g.globalAlpha = 1;
-  carita(m, g, m.img(`./cocina/gente/${m.sync.otroRol}_chef_feliz.webp`), x + 26, y - 26, 16, '#ff8fb8');
+  carita(m, g, m.img(`./cocina/gente/${m.sync.otroRol}_chef_feliz.webp`), x + 26, y - 26, 16, '#ff8fb8', CARA_CHEF);
 }
 
 // ---------------------------------------------------------------------------------------------- La calificación

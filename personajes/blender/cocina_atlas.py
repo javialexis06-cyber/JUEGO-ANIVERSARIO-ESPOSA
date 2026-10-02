@@ -13,7 +13,8 @@ import json
 import os
 import sys
 
-from PIL import Image
+import numpy as np
+from PIL import Image, ImageFilter
 
 LADO = 2048
 SEP = 2
@@ -28,6 +29,47 @@ def recortar(im):
     x0, y0 = max(0, x0 - 1), max(0, y0 - 1)
     x1, y1 = min(im.width, x1 + 1), min(im.height, y1 + 1)
     return im.crop((x0, y0, x1, y1)), (x0, y0)
+
+
+def difuminar_sombra(im, clave):
+    """La sombra del render llega hasta el borde del cuadro y se ve como un rectángulo: se desvanece cerca de los bordes.
+    Solo toca lo que es sombra (oscuro y medio transparente); el objeto queda igual."""
+    if clave.startswith('rejilla'):
+        return im  # piezas que se repiten pegadas: el borde es el objeto
+    a = np.asarray(im).astype(np.float32)
+    h, w = a.shape[:2]
+    lum = a[..., :3].mean(-1)
+    margen = max(6.0, 0.22 * min(w, h))
+    yy, xx = np.mgrid[0:h, 0:w]
+    d = np.minimum(np.minimum(xx, w - 1 - xx), np.minimum(yy, h - 1 - yy)).astype(np.float32)
+    f = np.clip(d / margen, 0, 1)
+    f = f * f * (3 - 2 * f)
+    peso = np.clip((60 - lum) / 30, 0, 1) * np.clip((235 - a[..., 3]) / 60, 0, 1)
+    a[..., 3] *= 1 - peso * (1 - f)
+    return Image.fromarray(a.clip(0, 255).astype(np.uint8), 'RGBA')
+
+
+VIDRIO = ('vaso_', 'vasofresa_', 'vasofrappe_', 'licuadora_jarra', 'wafflera_tapa', 'jarra_')
+
+
+def limpiar_vidrio(im, clave):
+    """El vidrio sale del render con granito (el alfa del vidrio transparente no pasa por el quitarruido) y sobre un
+    fondo claro se ve sucio: se suaviza lo medio transparente y se aclara un poco, como vidrio limpio."""
+    if not clave.startswith(VIDRIO):
+        return im
+    a = np.asarray(im).astype(np.float32) / 255
+    alfa = a[..., 3:4]
+    pre = np.concatenate([a[..., :3] * alfa, alfa], axis=-1)
+    canales = [Image.fromarray((pre[..., i] * 255).clip(0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.6)) for i in range(4)]
+    suave = np.stack([np.asarray(c).astype(np.float32) / 255 for c in canales], axis=-1)
+    # Solo en lo medio transparente (el logo, los bordes gruesos y lo de adentro quedan nítidos)
+    peso = np.clip((0.92 - alfa) / 0.25, 0, 1)
+    pre = pre * (1 - peso) + suave * peso
+    al = pre[..., 3:4]
+    rgb = np.where(al > 1e-4, pre[..., :3] / np.maximum(al, 1e-4), 0)
+    rgb = rgb + (1 - rgb) * 0.4 * peso
+    out = np.concatenate([rgb, al], axis=-1)
+    return Image.fromarray((out * 255).clip(0, 255).astype(np.uint8), 'RGBA')
 
 
 def empacar(piezas):
@@ -78,6 +120,7 @@ def main():
             print(f'{clave}: {im.width}x{im.height} {os.path.getsize(ruta) // 1024} KB')
             continue
         esc = info.pop('escala', 1.0)
+        im = limpiar_vidrio(difuminar_sombra(im, clave), clave)
         if esc != 1.0:
             im = im.resize((max(1, round(im.width * esc)), max(1, round(im.height * esc))), Image.LANCZOS)
         im, (ox, oy) = recortar(im)

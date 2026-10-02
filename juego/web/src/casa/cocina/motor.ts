@@ -652,11 +652,13 @@ export class Motor {
     this.capa('');
     [0, 0.5, 1, 1.5].forEach((d) => nota(220 + d * 110, 0.5, d, 'sine', 0.03, 440 + d * 220));
     rumor(2.4, 300, 0.05, 0.4, 0.5, 2600);
-    setTimeout(() => {
-      if (this.vista !== 'intro') return;
-      [523, 659, 784, 1046].forEach((f, i) => nota(f, 0.3, i * 0.08, 'triangle', 0.06));
-    }, 2250);
-    setTimeout(() => this.vista === 'intro' && this.terminarIntro(), 4600);
+  }
+  /** El «modo chef» va con el reloj del juego (en un celular lento o en segundo plano no se adelanta ni se corta). */
+  private pasoIntro(dt: number) {
+    const antes = this.introT;
+    this.introT += dt;
+    if (antes < 2.25 && this.introT >= 2.25) [523, 659, 784, 1046].forEach((f, i) => nota(f, 0.3, i * 0.08, 'triangle', 0.06));
+    if (this.introT > 4.6) this.terminarIntro();
   }
   private terminarIntro() {
     if (this.vista !== 'intro') return;
@@ -826,7 +828,7 @@ export class Motor {
 
   // ------------------------------------------------------------------------------------------- Durante el día
   private paso(dt: number) {
-    if (this.vista === 'intro') this.introT += dt;
+    if (this.vista === 'intro') this.pasoIntro(dt);
     if (this.transicion) {
       this.transicion.t += dt;
       if (this.transicion.t > 0.32) this.transicion = null;
@@ -927,7 +929,7 @@ export class Motor {
     return this.W * 0.52 + (i ? 70 + i * 165 : 0);
   }
   puestoEspera(i: number) {
-    return 150 + (i % 6) * 112;
+    return 196 + (i % 6) * 104;
   }
 
   /** Qué tan bien va la espera (100 = no ha esperado de más). */
@@ -1234,14 +1236,20 @@ export class Motor {
   /** Cambia de estación con una transición suave (la anterior se desliza). */
   irA(i: number) {
     if (i === this.actual) return;
-    const c = document.createElement('canvas');
-    c.width = this.lienzo.width;
-    c.height = this.lienzo.height;
-    c.getContext('2d')!.drawImage(this.lienzo, 0, 0);
+    // Foto de cómo se veía (un solo lienzo que se reusa)
+    const c = this.fotoTransicion ?? (this.fotoTransicion = document.createElement('canvas'));
+    if (c.width !== this.lienzo.width || c.height !== this.lienzo.height) {
+      c.width = this.lienzo.width;
+      c.height = this.lienzo.height;
+    }
+    const gc = c.getContext('2d')!;
+    gc.clearRect(0, 0, c.width, c.height);
+    gc.drawImage(this.lienzo, 0, 0);
     this.transicion = { lienzo: c, t: 0, dir: i > this.actual ? 1 : -1 };
     this.actual = i;
     sonidos.clic();
   }
+  private fotoTransicion: HTMLCanvasElement | null = null;
 
   rectTicket(i: number): Rect {
     return { x: 12 + i * 114, y: 6, w: 106, h: RIEL - 14 };
@@ -1292,13 +1300,29 @@ export class Motor {
       // Si las imágenes todavía están cargando, se vuelve a pintar en el siguiente cuadro
       if (listo) this.fondos.set(this.actual, f);
     }
-    g.drawImage(f, 0, 0);
-    g.setTransform(this.k, 0, 0, this.k, 0, 0);
+    // Transición: la estación nueva entra deslizándose y la vieja se va desvaneciendo (riel y barra quietos)
+    const tr = this.transicion;
+    const ek = tr ? 1 - Math.pow(1 - Math.min(1, tr.t / 0.32), 3) : 1;
+    const dx = tr ? tr.dir * (1 - ek) * this.W * 0.22 : 0;
+    if (dx) {
+      g.fillStyle = '#2b1a10';
+      g.fillRect(0, 0, this.lienzo.width, this.lienzo.height);
+    }
+    g.drawImage(f, dx * this.k, 0);
+    g.setTransform(this.k, 0, 0, this.k, dx * this.k, 0);
     if (this.actual === 0) P.dibujarPedidos(this, g);
     else {
       const e = this.estaciones[this.actual - 1];
       e.dibujar(g, this.reloj);
       if (e.usaTicket) P.dibujarTicketGrande(this, g);
+    }
+    if (tr) {
+      const y0 = Math.floor(RIEL * this.k), y1 = Math.ceil((this.H - BARRA) * this.k);
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      g.globalAlpha = 1 - ek;
+      g.drawImage(tr.lienzo, 0, y0, tr.lienzo.width, y1 - y0, -tr.dir * ek * this.lienzo.width * 0.3, y0, tr.lienzo.width, y1 - y0);
+      g.globalAlpha = 1;
+      g.setTransform(this.k, 0, 0, this.k, 0, 0);
     }
     this.fx.dibujar(g);
     for (const fl of this.flotantes) {
@@ -1312,14 +1336,6 @@ export class Motor {
     P.dibujarBarra(this, g);
     if (this.pista && this.reloj < this.pista.hasta) P.dibujarPista(this, g, this.pista.texto);
     if (this.s.fase === 'juicio' && this.s.juicio) P.dibujarJuicio(this, g, this.s.juicio, this.reloj - this.juicioVisto.t0);
-    if (this.transicion) {
-      const k = Math.min(1, this.transicion.t / 0.32);
-      const e = 1 - Math.pow(1 - k, 3);
-      g.setTransform(1, 0, 0, 1, 0, 0);
-      g.globalAlpha = 1 - e;
-      g.drawImage(this.transicion.lienzo, -this.transicion.dir * e * this.lienzo.width * 0.35, 0);
-      g.globalAlpha = 1;
-    }
   }
 
   /** Dibuja un botón de la estación (los de las estaciones usan el mismo estilo). */
@@ -1335,8 +1351,17 @@ export class Motor {
   }
 
   /** Para las pruebas. */
-  probar(que: 'llegar' | 'tomar' | 'fin' | 'jugar' | 'intro' | 'juicio', v = 0) {
+  probar(que: 'llegar' | 'tomar' | 'fin' | 'jugar' | 'intro' | 'juicio' | 'avanzar', v = 0) {
     if (que === 'intro') this.terminarIntro();
+    // Adelanta el juego `v` segundos de una (a 30 cuadros, sin dibujar) y pinta el resultado
+    if (que === 'avanzar') {
+      for (let i = 0; i < Math.round(v * 30); i++) {
+        this.reloj += 1 / 30;
+        this.paso(1 / 30);
+      }
+      this.dibujar();
+      return;
+    }
     if (que === 'jugar') {
       this.terminarIntro();
       if (this.anfitrion) this.jugar();
