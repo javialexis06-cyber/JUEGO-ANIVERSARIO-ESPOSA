@@ -13,7 +13,15 @@ node scripts/estres-casa.mjs         # casa: datos dañados, días sin abrir, te
 node scripts/estres-super.mjs        # súper: partidas dañadas, entrar y salir, toques al azar, días completos
 node scripts/probar-casa.mjs         # casa en dos pestañas (modo local), con capturas
 psql -d <base> -f supabase/pruebas/imitar_supabase.sql -f supabase/esquema.sql -f supabase/pruebas/probar_reglas.sql
+node scripts/probar-segundo-plano.mjs casa,super,mesa http://localhost:5173   # segundo plano y pausas en línea
+node scripts/probar-mesa-linea.mjs parchis2 http://localhost:5173/mesa.html  # (cajas, dados, mancala, parchis, parchis2)
+# reglas nuevas (después de aplicar cambios-pendientes.sql):
+psql -d <base> -f supabase/pruebas/imitar_supabase.sql -f supabase/esquema.sql -f supabase/cambios-pendientes.sql \
+  -f supabase/pruebas/probar_reglas.sql -f supabase/pruebas/probar_cambios.sql
 ```
+
+Para pruebas largas conviene la versión compilada (`npx vite build` y servir `dist/`): carga en segundos y se
+comporta como la APK (así se encontró que los hilos de meshopt rompían la versión compilada).
 
 ## Fallos encontrados y corregidos
 
