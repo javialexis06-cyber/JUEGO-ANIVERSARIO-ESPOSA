@@ -1,6 +1,6 @@
 // Balance de «Lavarse la cara»: juega partidas completas con el bot (sin dibujo, en Node) y dice hasta dónde
-// llega con distintas tiendas de poderes. Uso: node scripts/balance-lavado.mjs [partidas] [escenario] [disfraz]
-import { Motor } from '../src/casa/lavado/motor';
+// llega con distintas tiendas de poderes. Uso: node scripts/balance-lavado.mjs [partidas] [escenario] [disfraces] [tiendas]
+import { Motor, ajustarTarde } from '../src/casa/lavado/motor';
 import { botPaso, inventario } from '../src/casa/lavado/bot';
 import { PODERES } from '../src/casa/lavado/tienda';
 import type { IdEscenario, Stat } from '../src/casa/lavado/tipos';
@@ -8,6 +8,7 @@ import type { IdEscenario, Stat } from '../src/casa/lavado/tipos';
 const partidas = Number(process.argv[2] ?? 4);
 const escenario = (process.argv[3] ?? 'cara') as IdEscenario;
 const disfraces = (process.argv[4] ?? 'el_panda,ella_pulga').split(',');
+const soloTiendas = (process.argv[5] ?? 'nada,media,toda').split(',');
 
 /** Tiendas: nada, la mitad (lo barato) y todo. */
 const TIENDAS: Record<string, Partial<Record<Stat, number>>> = {
@@ -16,8 +17,13 @@ const TIENDAS: Record<string, Partial<Record<Stat, number>>> = {
   toda: Object.fromEntries(PODERES.filter((p) => p.id !== 'maldicion').map((p) => [p.id, p.max])),
 };
 
+// TARDE=vida,daño prueba otra subida de los bichos después del minuto 14
+if (process.env.TARDE) {
+  const [v, d] = process.env.TARDE.split(',').map(Number);
+  ajustarTarde(v, d);
+}
 const DT = 1 / 30;
-for (const [nombre, poderes] of Object.entries(TIENDAS)) {
+for (const [nombre, poderes] of Object.entries(TIENDAS).filter(([n]) => soloTiendas.includes(n))) {
   for (const disfraz of disfraces) {
     const filas: string[] = [];
     let suma = 0;

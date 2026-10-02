@@ -13,6 +13,14 @@ import { statsVacios, type Efecto, type IdArma, type IdCarta, type IdEnemigo, ty
 import { actualizarArmas, moverProyectiles, moverZonas, pendientesGolpe } from './disparos';
 import type { ResumenPartida } from './progreso';
 
+/** Aumento de vida de los bichos por minuto después del 14, y qué parte de eso se vuelve daño. */
+export let TARDE_VIDA = 0.06;
+export let TARDE_DANO = 0.3;
+/** Para el balance (scripts/balance-lavado.ts). */
+export function ajustarTarde(vida: number, dano: number) {
+  TARDE_VIDA = vida;
+  TARDE_DANO = dano;
+}
 export const MAX_ENEMIGOS = 420;
 const POOL_EN = 520;
 const MAX_PROY = 760;
@@ -887,6 +895,11 @@ export class Motor {
   }
 
   // ------------------------------------------------------------------------------------------------- Oleadas
+  /** Cuánto más fuertes son los bichos por lo avanzada que va la lavada (1 hasta el minuto 14). */
+  tarde() {
+    return 1 + Math.max(0, this.t / 60 - 14) * TARDE_VIDA;
+  }
+
   maldicion() {
     let m = 0;
     for (const j of this.jug) m = Math.max(m, j.st.maldicion);
@@ -1016,9 +1029,12 @@ export class Motor {
     e.jefe = !!def.jefe || !!o.jefe;
     e.esc = e.elite ? 1.8 : 1;
     e.r = def.radio * e.esc;
-    let hp = def.vida * mal;
+    // Después del minuto 14 el agua se pone más mugrosa: los bichos aguantan más y pegan más duro (sin la tienda
+    // de poderes no se llega a los 30 minutos, como en el original)
+    const tarde = this.tarde();
+    let hp = def.vida * mal * tarde;
     if (def.jefe && tipo !== 'duchaHelada') hp = def.vida * Math.max(1, this.nivel) * mal;
-    if (e.elite) hp = def.vida * 16 * mal + 40 * this.nivel;
+    if (e.elite) hp = def.vida * 16 * mal * tarde + 40 * this.nivel;
     e.hp = e.hpMax = hp;
     e.cofre = o.cofre ?? (e.elite || (def.jefe && tipo !== 'duchaHelada') ? 1 : 0);
     e.luz = false;
@@ -1347,7 +1363,7 @@ export class Motor {
           const rr = e.r * 0.85 + RADIO_JUGADOR;
           if (dx * dx + dy * dy < rr * rr && e.toque <= 0) {
             e.toque = 0.5;
-            this.herirJugador(p, e.def.dano, e);
+            this.herirJugador(p, e.def.dano * (1 + (this.tarde() - 1) * TARDE_DANO), e);
           }
         }
       }
