@@ -61,6 +61,7 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
   s.innerHTML = `
     <div class="cr-tarjeta">
       <header><small>${Math.round(d.segundos)} segundos en el espacio</small><h2>${titulo}</h2></header>
+      <div class="cr-cuerpo">
       <div class="cr-datos">
         <div class="cr-dato distancia"><span>Distancia</span><b data-n="${d.metros}" data-sufijo=" m">0 m</b>${d.record ? '<em class="cr-sello">¡Récord!</em>' : `<small>Récord: ${mil(p.mejor)} m</small>`}</div>
         <div class="cr-dato rollitos"><span>Rollitos</span><b data-n="${d.rollitos + d.extraTriple}" data-rollito>0</b>${d.extraTriple ? `<small>+${mil(d.extraTriple)} por el papel triple hoja</small>` : '<small>para la tienda del retrete</small>'}</div>
@@ -68,6 +69,7 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
       </div>
       ${pareja}
       <div class="cr-misiones"><h3>Misiones <small>nivel ${d.nivelAntes + 1} · ×${d.nivelAntes + 1}</small></h3><ul>${misiones}</ul>${subio}</div>
+      </div>
       <footer>
         <button class="cb-boton" data-tienda><i class="ico-rollito"></i> Tienda del retrete <small>${mil(p.rollitos)}</small></button>
         <button class="cb-boton cb-principal" data-casa>Volver a casa</button>

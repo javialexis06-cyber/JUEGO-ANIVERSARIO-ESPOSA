@@ -380,7 +380,9 @@
   pointer-events: auto;
   width: 100%;
   max-height: 100%;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   box-sizing: border-box;
   padding: 12px 14px 12px;
   border-radius: 22px;
@@ -393,7 +395,8 @@
   scrollbar-width: none;
 }
 .cohete-resultado.abierta .cr-tarjeta { opacity: 1; translate: 0 0; }
-.cr-tarjeta header { text-align: center; margin-bottom: 8px; }
+.cr-tarjeta header { text-align: center; margin-bottom: 6px; flex: none; }
+.cr-cuerpo { flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; touch-action: pan-y; }
 .cr-tarjeta header small { font: 800 11px var(--texto); letter-spacing: 0.08em; text-transform: uppercase; color: var(--oro); }
 .cr-tarjeta h2 { margin: 2px 0 0; font: 700 22px/1.1 var(--display); }
 .cr-datos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
@@ -433,7 +436,7 @@
 .cr-misiones h3 { margin: 0 0 4px; font: 600 14px var(--display); display: flex; align-items: baseline; gap: 6px; }
 .cr-misiones h3 small { font: 800 11px var(--texto); color: var(--oro); }
 .cr-misiones ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.cr-misiones li { display: grid; grid-template-columns: 22px 1fr; gap: 7px; align-items: center; padding: 5px 8px; border-radius: 12px; background: rgba(255, 255, 255, 0.07); }
+.cr-misiones li { display: grid; grid-template-columns: 22px 1fr; gap: 7px; align-items: center; padding: 4px 8px; border-radius: 12px; background: rgba(255, 255, 255, 0.07); }
 .cr-misiones li > i {
   width: 20px;
   height: 20px;
@@ -466,7 +469,7 @@
 }
 .cr-nivel b { font: 700 18px var(--display); }
 .cr-nivel span { font: 800 12px var(--texto); }
-.cr-tarjeta footer { display: flex; gap: 8px; margin-top: 10px; }
+.cr-tarjeta footer { display: flex; gap: 8px; margin-top: 8px; flex: none; }
 .cr-tarjeta footer .cb-boton { flex: 1; padding: 11px 10px; font-size: 14.5px; }
 
 /* ---------------------------------------------------------------- Tienda del retrete */

@@ -244,7 +244,7 @@ export class Obstaculos {
   dirigir(avance: number, metros: number, tramo: number, limX: number, limY: number, vMundo: number, dt: number, enPausa: boolean) {
     this.tiempo += dt;
     if (enPausa) return;
-    const dif = Math.min(1, metros / 6000);
+    const dif = Math.min(1, metros / 8000);
     // Lluvia de meteoritos (de Marte en adelante)
     if (this.enLluvia) {
       if (Math.random() < dt * (7 + dif * 6)) this.meteoro(limX, limY, vMundo);
@@ -267,7 +267,7 @@ export class Obstaculos {
     }
     this.proximo -= avance;
     if (this.proximo > 0) return;
-    const espacio = 7.6 - 4.1 * dif;
+    const espacio = 8.2 - 3.9 * dif;
     this.proximo = espacio * rnd(0.75, 1.3);
     const x = limX + 3;
     const y = rnd(-limY, limY);
@@ -311,7 +311,7 @@ export class Obstaculos {
       const hueco = rnd(-limY * 0.4, limY * 0.4);
       this.roca(x, hueco + rnd(2.1, 2.8), rnd(0.5, 0.9), tramo, -0.5, 0);
       this.roca(x + rnd(-0.5, 0.5), hueco - rnd(2.1, 2.8), rnd(0.5, 0.9), tramo, -0.5, 0);
-    } else if (r < 0.76 && metros > 1500) {
+    } else if (r < 0.76 && metros > 2500) {
       // Muro con un hueco de por lo menos 3 de alto
       const hueco = rnd(-limY + 1.8, limY - 1.8);
       for (let yy = -limY - 0.3; yy <= limY + 0.3; yy += 1.25) {

@@ -14,7 +14,7 @@ import * as fondo from '../segundo_plano';
 import { activar as activarSonido, musica, nota, rumor } from '../sonido';
 import { CUADRO, atlasParticulas, texturaHalo } from './cohete/arte';
 import {
-  type Cuentas, type IdPoder, PODERES, type ProgresoCohete, TRAMOS, type TipoCosmetico, copiaProgreso, cuentasNuevas,
+  type Cuentas, type IdMejora, type IdPoder, PODERES, type ProgresoCohete, TRAMOS, type TipoCosmetico, copiaProgreso, cuentasNuevas,
   multiplicador, normalizarCohete, revisarMisiones, tramoDe, valorDe,
 } from './cohete/datos';
 import { Efectos, Propulsor } from './cohete/efectos';
@@ -207,6 +207,8 @@ class RetreteEspacial {
   private calidad: 'alta' | 'media' | 'baja' = 'alta';
   private bot = false;
   private multVuelo = 1;
+  /** Pruebas: nada lo tumba (para tomar fotos de todos los tramos). */
+  dios = false;
   manual = false;
   private record = 0;
   private pasoRecord = false;
@@ -542,7 +544,7 @@ class RetreteEspacial {
     this.muneco.update(dt);
     // Velocidad del mundo: sube con la distancia; el turbo la triplica y la cámara lenta la parte en dos
     const metros = this.distancia * METROS;
-    const base = 7 + 8 * (1 - Math.exp(-metros / 4000));
+    const base = 7 + 7 * (1 - Math.exp(-metros / 5000));
     let v = 0;
     if (this.fase === 'juego') v = base * (turbo ? 2.7 : 1) * lento;
     else if (this.fase === 'intro') v = base * Math.min(1, this.tFase / 2.4) * 0.6;
@@ -818,7 +820,7 @@ class RetreteEspacial {
       }
       return false;
     }
-    if (this.invulnerable > 0) return false;
+    if (this.invulnerable > 0 || this.dios) return false;
     if (this.poderes.tiene('escudo') && o.tipo !== 'agujero') {
       this.poderes.reventar();
       this.cuentas.escudos++;
@@ -835,9 +837,11 @@ class RetreteEspacial {
       this.empezarRevivir();
       return true;
     }
+    this.causa = o.tipo;
     this.chocar(false, o.tipo === 'agujero');
     return true;
   }
+  private causa = '';
 
   private destruido(o: Obst, por: 'turbo' | 'laser' | 'ambientador') {
     const mult = multiplicador(this.p) * (this.poderes.tiene('doble') ? 2 : 1);
@@ -1435,8 +1439,10 @@ class RetreteEspacial {
     const n = this.nave.position;
     const b = this.hitbox();
     let mejor = n.y, menor = Infinity;
+    const sc = this.nave.scale.y / 1.5;
+    const y0 = -L.y - 0.2 + 0.7 * sc, y1 = L.y + 0.6 - 2.1 * sc;
     for (let k = 0; k <= 16; k++) {
-      const y = -L.y + (2 * L.y * k) / 16;
+      const y = y0 + ((y1 - y0) * k) / 16;
       let peligro = Math.abs(y - n.y) * 0.08;
       for (const o of this.obst.lista) {
         if (!o.vivo || o.x < n.x - 1.5) continue;
@@ -1447,7 +1453,7 @@ class RetreteEspacial {
           continue;
         }
         if (o.tipo === 'ovni' && (o.fase === 'carga' || o.fase === 'dispara')) {
-          if (Math.abs(y + 0.4 - o.y) < 1.6) peligro += 40;
+          if (Math.abs(y + 0.38 * this.nave.scale.y - o.y) < 1.8) peligro += 40;
         }
         if (tLlega > 2.5) continue;
         const yo = o.y + o.vy * tLlega;
@@ -1490,7 +1496,7 @@ class RetreteEspacial {
     return {
       fase: this.fase, metros: Math.floor(this.distancia * METROS), puntaje: Math.floor(this.puntaje), rollitos: this.rollitosVuelo, t: this.tJuego,
       poderes: [...this.poderes?.activos.keys() ?? []], obstaculos: this.obst?.lista.length ?? 0, tramo: this.tramoActual, revivir: this.revivir,
-      progreso: this.p, cuentas: this.cuentas, calidad: this.calidad, particulas: (this.brillo?.vivas ?? 0) + (this.humo?.vivas ?? 0),
+      progreso: this.p, cuentas: this.cuentas, calidad: this.calidad, particulas: (this.brillo?.vivas ?? 0) + (this.humo?.vivas ?? 0), causa: this.causa,
     };
   }
   pruebaPoder(id: IdPoder) {
@@ -1509,6 +1515,9 @@ class RetreteEspacial {
     this.p.rollitos += n;
     void this.o.guardar?.(copiaProgreso(this.p));
     this.tienda?.repintar();
+  }
+  pruebaMejoras(m: Partial<Record<IdMejora, number>>) {
+    Object.assign(this.p.mejoras, m);
   }
   pruebaChocar() {
     if (this.fase === 'juego') this.chocar(false);
@@ -1533,6 +1542,8 @@ export const cohete: { actual: RetreteEspacial | null } = { actual: null };
   bot: (si = true) => cohete.actual?.pruebaBot(si),
   manual: (si = true) => cohete.actual && (cohete.actual.manual = si),
   chocar: () => cohete.actual?.pruebaChocar(),
+  mejoras: (m: Partial<Record<IdMejora, number>>) => cohete.actual?.pruebaMejoras(m),
+  dios: (si = true) => cohete.actual && (cohete.actual.dios = si),
   boton: (sel: string) => cohete.actual?.pruebaBoton(sel),
 };
 
