@@ -11,8 +11,13 @@ const p = await b.newPage({ viewport: { width: 960, height: 540 } });
 p.setDefaultTimeout(120000);
 const errores = [];
 p.on('pageerror', (e) => errores.push(String(e)));
+p.on('console', (m) => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && errores.push(m.text()));
+p.on('requestfailed', (r) => errores.push('falló ' + r.url()));
 await p.goto(url);
 await p.evaluate(() => localStorage.clear());
+// (lo que estaba cargando la primera página se corta al salir de ella: eso no cuenta como error)
+await p.goto('about:blank');
+errores.length = 0;
 await p.goto(`${url}?rol=el&local=1&rapido=3`);
 await p.waitForFunction(() => window.__listo === true, null, { timeout: 120000 });
 const accion = async (cuarto, boton, clave, nombre, extra) => {
@@ -25,6 +30,9 @@ const accion = async (cuarto, boton, clave, nombre, extra) => {
 };
 await accion('cocina', 'comer', '|comer|', '1-come', '[data-comer="pan"]');
 await accion('sala', 'tv', '|tv|', '2-tele');
+// La tele de YouTube queda en grande encima de todo: se apaga para volver a la casa
+await p.click('[data-tele="apagar"]');
+await p.waitForTimeout(800);
 await accion('sala', 'sofa', '|sofa|', '3-sofa');
 await accion('cuarto', 'closet', '|closet|', '4-closet');
 console.log(errores.length ? errores.join('\n') : 'sin errores');

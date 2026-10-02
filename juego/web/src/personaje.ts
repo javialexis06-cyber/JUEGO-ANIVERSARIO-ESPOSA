@@ -292,7 +292,8 @@ export class Personaje {
   }
 
   sincronizar() {
-    this.grupo.position.copy(aTres(this.pos.x, this.pos.y));
+    // (Blender x, y → Three x, 0, -y, sin crear un vector nuevo en cada cuadro)
+    this.grupo.position.set(this.pos.x, 0, -this.pos.y);
     this.grupo.rotation.y = this.rot;
   }
 

@@ -4,6 +4,7 @@
 import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 import { otro, type Rol } from '../casa/modelo';
 import { conexionPareja, eventoPareja, type SesionLinea } from '../casa/sincro';
+import { alPausar, alReanudar } from '../segundo_plano';
 import type { JuegoMesa } from './tipos';
 
 export interface Invitacion {
@@ -21,7 +22,9 @@ type Mensaje =
   | { t: 'pedir'; id: string; desde: number }
   | { t: 'salir'; id: string }
   /** Escena premium que lanzó uno de los dos (se ve en los dos celulares); k evita verla dos veces. */
-  | { t: 'escena'; id: string; escena: string; de: Rol; k: number };
+  | { t: 'escena'; id: string; escena: string; de: Rol; k: number }
+  /** Se fue a segundo plano (otra app, pantalla bloqueada) o volvió: al otro le sale «se cortó la conexión». */
+  | { t: 'fuera'; si: boolean; de: Rol };
 
 interface Avisos {
   alCambiar(): void;
@@ -29,6 +32,10 @@ interface Avisos {
   alMovimiento(id: string, n: number, m: unknown): void;
   alSalir(id: string): void;
   alEscena(id: string, escena: string, de: Rol): void;
+  /** El otro celular se fue a segundo plano (true) o volvió (false). */
+  alFuera(si: boolean): void;
+  /** Este celular volvió de segundo plano (para volver a pedir lo que se perdió). */
+  alVolver(): void;
 }
 
 /** Cuánto se espera a que el otro acepte (le llega también como aviso en la casa). */
@@ -61,6 +68,16 @@ export class Canal {
       if (c.sesion.rol !== this.yo) this.yo = c.sesion.rol;
       this.sb = c.sb;
       this.sesion = c.sesion;
+      // En segundo plano el otro lo ve desconectado de una; al volver, en línea otra vez
+      alPausar(() => {
+        this.mandar({ t: 'fuera', si: true, de: this.yo });
+        void Promise.resolve(this.canal?.untrack?.()).catch(() => undefined);
+      });
+      alReanudar(() => {
+        this.mandar({ t: 'fuera', si: false, de: this.yo });
+        void Promise.resolve(this.canal?.track({ rol: this.yo, t: Date.now() })).catch(() => undefined);
+        this.avisos.alVolver();
+      });
       this.canal = c.sb
         .channel(`mesa-${c.sesion.parejaId}`, { config: { broadcast: { self: false }, presence: { key: this.yo } } })
         .on('broadcast', { event: 'mesa' }, ({ payload }) => this.llega(payload as Mensaje))
@@ -112,6 +129,8 @@ export class Canal {
       for (let n = m.desde; n < h.length; n++) if (h[n] !== undefined) this.mandar({ t: 'mov', id: m.id, n, m: h[n] });
     } else if (m.t === 'salir') {
       this.avisos.alSalir(m.id);
+    } else if (m.t === 'fuera') {
+      if (m.de !== this.yo) this.avisos.alFuera(m.si);
     } else if (m.t === 'escena') {
       const clave = `${m.de}-${m.k}`;
       if (m.de === this.yo || this.escenasVistas.has(clave)) return;

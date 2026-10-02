@@ -22,6 +22,7 @@ import { Mandos } from './mando';
 import { Mundo } from './mundo';
 import { cargar, cargarAnimado, cargarJSON, elegirModelos, icono, Productos } from './recursos';
 import * as sonido from './sonido';
+import * as segundoPlano from './segundo_plano';
 import { liberarPropios, NOMBRE_SECCION, Tienda, TiendaDato } from './tienda';
 import { mostrar, pantallaUnica, UI } from './ui';
 
@@ -113,7 +114,20 @@ async function iniciar() {
   }
   let antes = performance.now();
   let acumulado = 0;
+  // En segundo plano el bucle se detiene del todo (ni simula ni dibuja) y al volver sigue sin salto de tiempo
+  let quieto = false;
+  segundoPlano.alReanudar(() => {
+    if (!quieto) return;
+    quieto = false;
+    antes = performance.now();
+    acumulado = 0;
+    requestAnimationFrame(bucle);
+  });
   const bucle = (ahora: number) => {
+    if (segundoPlano.enPausa()) {
+      quieto = true;
+      return;
+    }
     acumulado += Math.min((ahora - antes) / 1000, 0.1);
     antes = ahora;
     requestAnimationFrame(bucle);
@@ -594,18 +608,31 @@ function conectarBotones() {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && juego && !juego.terminado) $('btn-pausa').click();
   });
-  // Si el celular cambia de app o se apaga la pantalla, el día se pausa y la música calla
-  const alSalir = () => {
+  // Si el celular cambia de app o se apaga la pantalla, el día se pausa y la música calla (segundo_plano.ts); en
+  // línea al otro le sale «se cortó la conexión» hasta que vuelva
+  segundoPlano.alPausar(() => {
     if (juego && !juego.terminado && !pausado) $('btn-pausa').click();
-    sonido.suspender();
-  };
-  document.addEventListener('visibilitychange', () => (document.hidden ? alSalir() : sonido.activar()));
+    if (linea && canal && linea.fase !== 'invitando') canal.mandar({ t: 'fuera', id: linea.id, si: true });
+  });
+  segundoPlano.alReanudar((ms) => {
+    sonido.activar();
+    const l = linea;
+    if (!l || !canal || l.fase === 'invitando') return;
+    // Mientras estaba afuera este celular no oía al otro: se le da un rato antes de dar la conexión por perdida
+    l.ultimoDelOtro = performance.now();
+    if (ms / 1000 > LINEA_ADIOS && (l.fase === 'jugando' || l.fase === 'cargando')) {
+      canal.mandar({ t: 'salir', id: l.id });
+      void salirDeLinea('Estuviste mucho rato por fuera: la partida en línea se terminó.');
+      return;
+    }
+    canal.mandar({ t: 'fuera', id: l.id, si: false });
+    canal.mandar({ t: 'latido', id: l.id });
+  });
   // Se cierra la página (o se vuelve a la casa) en medio de una partida en línea: el otro se entera de una
   window.addEventListener('pagehide', () => {
     if (linea && canal) canal.mandar(linea.fase === 'invitando' ? { t: 'cancelar', id: linea.id } : { t: 'salir', id: linea.id });
   });
   if (Capacitor.isNativePlatform()) {
-    void App.addListener('appStateChange', ({ isActive }) => (isActive ? sonido.activar() : alSalir()));
     // Botón «atrás» de Android: pausa el día, vuelve al menú o sale de la app
     void App.addListener('backButton', () => {
       const visible = (id: string) => !$(id).hidden;
@@ -660,6 +687,8 @@ interface Linea {
   /** Quién pausó (para volver a la pausa correcta si la conexión regresa). */
   pausaPropia: boolean;
   pausaOtro: boolean;
+  /** El otro celular se fue a segundo plano (otra app, pantalla bloqueada): cuenta como conexión cortada. */
+  otroFuera: boolean;
   timers: number[];
 }
 
@@ -717,11 +746,12 @@ function nuevaLinea(id: string, anfitrion: boolean, nivel: number, leg: boolean)
   const l: Linea = {
     id, anfitrion, fase: anfitrion ? 'invitando' : 'esperando', nivel, legendario: leg, config: null, dia: null, espejo: null,
     otroListo: false, ultimoDelOtro: performance.now(), nFoto: 0, enviados: 0, relojFoto: 0, mandoRemoto: { x: 0, y: 0 },
-    mandoEnviado: { x: 0, y: 0, t: 0 }, pausaPorConexion: false, pausaPropia: false, pausaOtro: false, timers: [],
+    mandoEnviado: { x: 0, y: 0, t: 0 }, pausaPorConexion: false, pausaPropia: false, pausaOtro: false, otroFuera: false, timers: [],
   };
-  // «Sigo aquí» cada segundo mientras no viajan fotos ni joystick (esperando, cargando o en pausa)
+  // «Sigo aquí» cada segundo mientras no viajan fotos ni joystick (esperando, cargando o en pausa); en segundo plano
+  // no se manda: así el otro ve que se cortó
   l.timers.push(window.setInterval(() => {
-    if (linea === l && l.fase !== 'invitando' && (l.fase !== 'jugando' || pausado)) canal?.mandar({ t: 'latido', id: l.id });
+    if (linea === l && !segundoPlano.enPausa() && l.fase !== 'invitando' && (l.fase !== 'jugando' || pausado)) canal?.mandar({ t: 'latido', id: l.id });
   }, 1000));
   return l;
 }
@@ -993,10 +1023,10 @@ function vigilarLinea() {
     if (sin > 40) void salirDeLinea(`No se pudo empezar: se perdió la conexión con ${o}.`);
     return;
   }
-  if (sin > LINEA_PAUSA && !l.pausaPorConexion) {
+  if ((sin > LINEA_PAUSA || l.otroFuera) && !l.pausaPorConexion) {
     l.pausaPorConexion = true;
-    pausar(`Se cortó la conexión con ${o}… esperando a que vuelva.`);
-  } else if (sin < 1.5 && l.pausaPorConexion) {
+    pausar(l.otroFuera ? `Se cortó la conexión con ${o}: salió de la app… esperando a que vuelva.` : `Se cortó la conexión con ${o}… esperando a que vuelva.`);
+  } else if (sin < 1.5 && !l.otroFuera && l.pausaPorConexion) {
     l.pausaPorConexion = false;
     if (l.pausaOtro) pausar(`${o} pausó el juego.`);
     else if (l.pausaPropia) pausar();
@@ -1065,6 +1095,10 @@ function alMensaje(m: Mensaje) {
       return;
     case 'corazon':
       if (l.anfitrion && l.fase === 'jugando') l.dia?.tomarCorazon();
+      return;
+    case 'fuera':
+      l.otroFuera = m.si;
+      // (el aviso de la pausa lo pone vigilarLinea en el siguiente cuadro)
       return;
     case 'pausa':
       if (l.fase !== 'jugando') return;

@@ -75,6 +75,15 @@
 <section id="hoja" class="mesa-hoja" hidden>
   <article class="hoja-carta"><div id="hoja-cuerpo"></div><div class="fila-botones" id="hoja-botones"></div></article>
 </section>
+<!-- En línea: el otro se fue a segundo plano o se le cayó el internet -->
+<section id="pausa-linea" class="mesa-hoja pausa-linea" hidden>
+  <article class="hoja-carta">
+    <div class="pausa-linea-icono" aria-hidden="true"><i></i><i></i><i></i></div>
+    <h3>Pausa</h3>
+    <p id="pausa-linea-texto" role="status"></p>
+    <div class="fila-botones"><button id="btn-pausa-salir" class="boton boton-papel">Salir de la partida</button></div>
+  </article>
+</section>
 <div id="aviso" class="aviso" role="status" hidden></div>
 
 <script type="module" src="./src/mesa/main.ts"></script>

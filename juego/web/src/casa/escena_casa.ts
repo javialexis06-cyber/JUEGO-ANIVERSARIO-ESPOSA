@@ -9,6 +9,10 @@ import { ITEM, TipoSitio } from './catalogo';
 import { colorSeguro, Cuarto, Nota, Recuerdo } from './modelo';
 import { acomodarDato, acomodarModelo, AdornosSala } from './sala_trofeos';
 import type { SalaTrofeos } from './trofeos';
+import { fundido } from '../transiciones';
+
+/** Color con que se ve el fondo del 3D en pantalla (después del tono): de ahí sale el fundido entre cuartos. */
+const FONDO_VISTO = '#d5cac0';
 
 export interface Punto {
   x: number;
@@ -103,6 +107,8 @@ export class Casa3D {
   private cigue: { obj: THREE.Object3D; alas: THREE.Object3D[]; paquete: THREE.Object3D[]; t0: number; soltado: boolean; alSoltar: () => void; fin: () => void } | null = null;
   /** Qué cuartos puede decorar quien juega (los propios solo su dueño). */
   private puedeDecorar: (c: Cuarto) => boolean = () => true;
+  /** Ya se mostró algún cuarto (el primero no hace fundido). */
+  private mostrado = false;
 
   private constructor(private mundo: Mundo, public dato: CasaDato, private productos: Productos) {
     mundo.escena.add(this.grupo);
@@ -176,6 +182,9 @@ export class Casa3D {
   }
 
   mostrar(c: Cuarto) {
+    // Cambio de cuarto con un fundido corto desde el color del fondo (el 3D ya muestra el cuarto nuevo debajo)
+    if (c !== this.actual && this.mostrado) fundido(FONDO_VISTO);
+    this.mostrado = true;
     this.actual = c;
     for (const [k, g] of this.cuartos) g.visible = k === c;
     void this.asegurar(c);
