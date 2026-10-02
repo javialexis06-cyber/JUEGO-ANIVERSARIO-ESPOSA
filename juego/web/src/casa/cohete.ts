@@ -10,6 +10,7 @@ import { clone as clonarConEsqueleto } from 'three/examples/jsm/utils/SkeletonUt
 import './cohete.css';
 import { Muneco } from '../reacciones/muneco';
 import { cargar, cargarAnimado, liberarEsqueletos } from '../recursos';
+import * as fondo from '../segundo_plano';
 import { activar as activarSonido, musica, nota, rumor } from '../sonido';
 import { CUADRO, atlasParticulas, texturaHalo } from './cohete/arte';
 import {
@@ -199,9 +200,9 @@ class RetreteEspacial {
   private jalon = new THREE.Vector2();
   private teclas = new Set<string>();
   private arrastre: { x: number; y: number } | null = null;
-  private ultimo = 0;
   private acumulado = 0;
-  private cuadro = 0;
+  private bucleFondo: { detener: () => void } | null = null;
+  private quitarFondo: (() => void)[] = [];
   private tiempos: number[] = [];
   private calidad: 'alta' | 'media' | 'baja' = 'alta';
   private bot = false;
@@ -261,7 +262,16 @@ class RetreteEspacial {
     this.muneco = new Muneco(o.rol, 0.62);
     this.ajustar();
     window.addEventListener('resize', this.ajustar);
-    document.addEventListener('visibilitychange', this.alOcultar);
+    // En segundo plano (otra app, pantalla bloqueada) se pausa solo; al volver espera a que toque «Seguir»
+    this.quitarFondo.push(
+      fondo.alPausar(() => {
+        if (this.fase === 'juego' || this.fase === 'intro') this.pausar(true);
+        this.musica.pausar(true);
+      }),
+      fondo.alReanudar(() => {
+        if (!this.pausado) this.musica.pausar(false);
+      }),
+    );
     this.controles(lienzo);
     this.botones();
   }
@@ -286,7 +296,6 @@ class RetreteEspacial {
     this.ponerRetrete(p.puesto.retrete);
     this.propulsor.estela = p.puesto.estela;
     this.capa.querySelector('.cohete-carga')!.remove();
-    this.ultimo = performance.now();
     if (this.o.soloTienda) {
       this.entrarTaller();
     } else {
@@ -300,7 +309,8 @@ class RetreteEspacial {
       this.musica.tramo(0);
       this.aviso('¡Despegue!');
     }
-    this.cuadro = requestAnimationFrame((t) => this.bucle(t));
+    // El bucle se detiene solo en segundo plano y vuelve sin salto de tiempo
+    this.bucleFondo = fondo.cuadros((dt) => this.bucle(dt));
   }
 
   // ------------------------------------------------------------------ Armado
@@ -475,30 +485,20 @@ class RetreteEspacial {
     });
   }
 
-  /** Si la app se va a segundo plano, se pausa sola. */
-  private alOcultar = () => {
-    if (document.hidden && (this.fase === 'juego' || this.fase === 'intro')) this.pausar(true);
-    if (document.hidden) this.musica.pausar(true);
-    else if (!this.pausado) this.musica.pausar(false);
-  };
-
   private pausar(si: boolean) {
     if (si && !(this.fase === 'juego' || this.fase === 'intro')) return;
     this.pausado = si;
     this.capa.querySelector('.ch-pausa-capa')!.toggleAttribute('hidden', !si);
     this.musica.pausar(si);
     this.arrastre = null;
-    this.ultimo = performance.now();
+    this.acumulado = 0;
   }
 
   // ------------------------------------------------------------------ Bucle
-  private bucle(ms: number) {
+  private bucle(dt: number) {
     if (this.fase === 'fin') return;
-    this.cuadro = requestAnimationFrame((t) => this.bucle(t));
     // Pruebas: el tiempo lo maneja `simular` (sin tarjeta gráfica cada cuadro tarda demasiado)
     if (this.manual) return;
-    const dt = Math.min(0.1, (ms - this.ultimo) / 1000);
-    this.ultimo = ms;
     this.acumulado += dt;
     // 30 cuadros por segundo bastan (ahorra batería y no calienta)
     if (this.acumulado < 1 / 31) return;
@@ -1190,13 +1190,13 @@ class RetreteEspacial {
   private terminar() {
     if (this.fase === 'fin') return;
     this.fase = 'fin';
-    cancelAnimationFrame(this.cuadro);
+    this.bucleFondo?.detener();
+    for (const q of this.quitarFondo) q();
     this.musica.detener();
     musica.callar(false);
     window.removeEventListener('resize', this.ajustar);
     window.removeEventListener('keydown', this.tecla);
     window.removeEventListener('keyup', this.tecla);
-    document.removeEventListener('visibilitychange', this.alOcultar);
     this.capa.classList.remove('visible');
     const r: Resultado = {
       segundos: Math.round(this.tJuego * 10) / 10,

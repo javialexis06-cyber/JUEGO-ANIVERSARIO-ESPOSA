@@ -1,22 +1,36 @@
 // El motor de la cocina de chef, al estilo de los juegos de Papa's: llegan invitados, se les toma el pedido (un
-// tiquete que queda colgado arriba), se cocina en las estaciones de cada restaurante y se entrega; el invitado lo
-// prueba y califica cada parte (espera y cada estación) y deja propina. Al final del día hay puntos de chef
-// (rango: ingredientes e invitados nuevos), propinas para mejorar la cocina y el premio para la casa.
+// tiquete que sale de la impresora y queda colgado arriba), se cocina en las estaciones de cada restaurante y se
+// entrega; el invitado lo prueba y califica cada parte (espera y cada estación) y deja propina. Al final del día hay
+// puntos de chef (rango: ingredientes e invitados nuevos), propinas para mejorar la cocina y el premio para la casa.
+//
+// En pareja (linea.ts) el anfitrión lleva el día (invitados, tiquetes, reloj, calificación) y los dos cocinan: cada
+// plato y cada máquina es un objeto compartido que cualquiera de los dos cambia. Lo que se ve de cada uno (en qué
+// estación está, qué tiquete tiene, dónde tiene el dedo) viaja como presencia.
+import * as fondo from '../../segundo_plano';
 import { nota, rumor } from '../../sonido';
 import type { Rol } from '../modelo';
+import { boton, dentro, G, Rect, rr, texto } from './dibujo';
+import { Efectos } from './efectos';
 import {
-  aclarar, boton, conAlfa, dentro, elipse, G, lineal, oscurecer, particula, Particula, radial, Rect, rr, sombra, texto,
-} from './dibujo';
-import { Animo, FRASES, FRASES_PAREJA, Invitado, invitadoPareja, INVITADOS, invitadosDelDia, POSE_PAREJA } from './invitados';
-import { Desbloqueo, Mejora, nombreRango, OpcionesCocina, ProgresoCocina, rangoDe, RecetaId, ResultadoDia, umbralRango } from './tipos';
+  Animo, FRASES, frasePareja, Invitado, invitadoPareja, invitadoPorId, INVITADOS, invitadosDelDia, POSES, Pose,
+} from './invitados';
+import { ConfigCompartida, Presencia, Sincro, TransporteLocal, TransporteSupabase } from './linea';
+import * as P from './pantallas';
+import { cargarRecortes, soltarFondos } from './sprites';
+import {
+  Desbloqueo, InfoFinDia, Mejora, nombreRango, OpcionesCocina, ProgresoCocina, rangoDe, RecetaId, ResultadoDia, umbralRango,
+} from './tipos';
 
 // ---------------------------------------------------------------------------------------------- Lo que pone cada restaurante
 export interface Estacion {
   id: string;
   nombre: string;
+  /** Recorte para la pestaña (o un emoji si no hay). */
   icono: string;
+  emoji: string;
   /** Muestra el tiquete escogido a la derecha (las estaciones donde se arma el plato). */
   usaTicket?: boolean;
+  /** Fondo fijo (se pinta una vez y se guarda). */
   fondo(g: G, W: number, H: number): void;
   dibujar(g: G, t: number): void;
   /** Corre siempre (lo que se está cocinando sigue aunque se mire otra estación). */
@@ -24,12 +38,22 @@ export interface Estacion {
   toque(tipo: 'bajar' | 'mover' | 'subir', x: number, y: number): void;
   /** Algo pide atención (la pestaña titila). */
   alerta?(): boolean;
+  /** Lo que tiene en la mano (para mostrárselo al otro). */
+  enMano?(): string | null;
 }
 
 export interface Categoria {
   id: string;
   nombre: string;
   valor: number;
+}
+
+export interface Tema {
+  pared: string;
+  acento: string;
+  piso: string;
+  /** Color oscuro del restaurante (letreros, barra). */
+  oscuro: string;
 }
 
 export interface Receta<P = any, O = any> {
@@ -40,11 +64,15 @@ export interface Receta<P = any, O = any> {
   /** El plato que se lleva a la despensa. */
   plato: string;
   nombrePlato: string;
-  tema: { pared: string; acento: string; piso: string };
+  /** Recorte que lo representa (tarjetas, pestañas). */
+  icono: string;
+  tema: Tema;
   mejoras: Mejora[];
   desbloqueos: Desbloqueo[];
+  /** Las máquinas compartidas del día (waffleras, rejilla…), según las mejoras. */
+  maquinas(mejora: (id: string) => number): Record<string, unknown>;
   crearEstaciones(m: Motor): Estacion[];
-  pedido(rango: number, dia: number, azar: () => number): P;
+  pedido(rango: number, dia: number, azar: () => number, inv?: Invitado): P;
   obraNueva(p: P): O;
   /** Segundos que tomaría hacerlo bien (para saber si hizo esperar al invitado). */
   tiempoIdeal(p: P): number;
@@ -52,59 +80,76 @@ export interface Receta<P = any, O = any> {
   dibujarTicket(g: G, p: P, r: Rect, m: Motor): void;
   calificar(t: Ticket<P, O>, m: Motor): Categoria[];
   dibujarPlato(g: G, t: Ticket<P, O>, x: number, y: number, escala: number, m: Motor): void;
+  /** Después de recibir cambios del otro: arreglos (un wafle que quedó en dos partes…). */
+  reconciliar?(m: Motor): void;
 }
 
 export interface Ticket<P = any, O = any> {
   id: number;
   numero: number;
-  inv: EnDia;
+  /** Índice del invitado en el día. */
+  inv: number;
   pedido: P;
   obra: O;
   tomado: number;
 }
 
-type EstadoInv = 'fuera' | 'fila' | 'pidiendo' | 'esperando' | 'comiendo' | 'saliendo' | 'ido';
-export interface EnDia {
-  inv: Invitado;
+export type EstadoInv = 'fuera' | 'fila' | 'pidiendo' | 'esperando' | 'comiendo' | 'saliendo' | 'ido';
+export interface InvDia {
+  id: string;
   llega: number;
   estado: EstadoInv;
-  x: number;
-  meta: number;
   llegoEn: number;
   tomadoEn: number;
-  ticket?: Ticket;
-  /** Lo que pidió (mientras se escribe el tiquete). */
-  pedido?: unknown;
-  frase?: { texto: string; hasta: number };
+  /** Tiquete colgado (0 si todavía no). */
+  ticket: number;
+  /** Lo que pidió (mientras se imprime el tiquete). */
+  pedido: unknown | null;
   animo: Animo;
+  frase: { texto: string; hasta: number } | null;
+  /** Quién le tomó el pedido. */
+  tomo: Rol | null;
 }
 
-interface Flotante {
-  /** En qué estación salió (solo se ve ahí). */
-  en: number;
-  texto: string;
-  x: number;
-  y: number;
-  vida: number;
-  color: string;
-  tam: number;
-}
-
-interface Juicio {
+export interface JuicioDia {
+  n: number;
   ticket: Ticket;
   cats: Categoria[];
   total: number;
   propina: number;
-  t: number;
   frase: string;
   animo: Animo;
+  por: Rol;
 }
 
+export type Fase = 'espera' | 'jugando' | 'juicio' | 'pausa' | 'fin';
+/** El día (lo que el anfitrión lleva y le manda al otro). */
+export interface EstadoDia {
+  /** Número de día de esta sesión (cambia con cada día nuevo). */
+  n: number;
+  dia: number;
+  rango: number;
+  mejoras: Record<string, number>;
+  fase: Fase;
+  t: number;
+  invitados: InvDia[];
+  tickets: Ticket[];
+  numero: number;
+  juicio: JuicioDia | null;
+  puntajes: number[];
+  propinas: number;
+  perfectos: number;
+  xp: number;
+  resultado: ResultadoDia | null;
+  rangoAntes: number;
+  pausa: { por: Rol | 'red'; motivo: string; antes: Fase } | null;
+}
+
+/** Alto del riel de tiquetes y de la barra de estaciones (unidades del juego, 720 de alto). */
+export const RIEL = 98;
+export const BARRA = 82;
 const ALTO = 720;
 const ANCHO_MIN = 1280;
-/** Alto del riel de tiquetes y de la barra de estaciones. */
-export const RIEL = 104;
-export const BARRA = 88;
 const azarCon = (semilla: number) => () => {
   semilla |= 0;
   semilla = (semilla + 0x6d2b79f5) | 0;
@@ -113,7 +158,8 @@ const azarCon = (semilla: number) => () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 const elegir = <T,>(l: T[]) => l[Math.floor(Math.random() * l.length)];
-const genero = (rol: Rol, t: string) => t.replace(/(\p{L}+)\|(\p{L}+)/gu, (_, a, b) => (rol === 'el' ? a : b));
+export const genero = (rol: Rol, t: string) => t.replace(/(\p{L}+)\|(\p{L}+)/gu, (_, a, b) => (rol === 'el' ? a : b));
+const nombreDe = (rol: Rol) => (rol === 'el' ? 'Él' : 'Ella');
 
 // ---------------------------------------------------------------------------------------------- Sonidos
 export const sonidos = {
@@ -137,6 +183,18 @@ export const sonidos = {
   mal: () => [392, 330].forEach((f, i) => nota(f, 0.18, i * 0.12, 'triangle', 0.05)),
   clic: () => nota(1200, 0.03, 0, 'sine', 0.03),
   papel: () => rumor(0.12, 5000, 0.05, 0, 0.6),
+  impresora: () => [0, 0.09, 0.18, 0.27, 0.36, 0.45].forEach((d) => rumor(0.06, 2600, 0.03, d, 2)),
+  tic: (i = 0) => nota(880 + i * 120, 0.05, 0, 'triangle', 0.04),
+  sello: () => {
+    nota(120, 0.12, 0, 'square', 0.05, 60);
+    rumor(0.1, 800, 0.06, 0, 1);
+  },
+  acierto: () => [1318, 1760].forEach((f, i) => nota(f, 0.1, i * 0.05, 'sine', 0.045)),
+  hielo: () => [0, 0.05].forEach((d) => nota(2400 + Math.random() * 800, 0.04, d, 'triangle', 0.025)),
+  mordisco: () => {
+    nota(300, 0.05, 0, 'square', 0.03, 180);
+    nota(260, 0.05, 0.12, 'square', 0.03, 160);
+  },
 };
 
 // ---------------------------------------------------------------------------------------------- El motor
@@ -144,49 +202,67 @@ export class Motor {
   W = ANCHO_MIN;
   H = ALTO;
   /** Pixeles del lienzo por unidad virtual. */
-  private k = 1;
+  k = 1;
   private raiz: HTMLElement;
-  private lienzo: HTMLCanvasElement;
+  lienzo: HTMLCanvasElement;
   g: G;
-  private cuadro = 0;
-  private ultimo = 0;
+  private bucle: { detener(): void } | null = null;
+  private quitarFondo: (() => void)[] = [];
   private terminado = false;
-  /** Segundos de juego del día (sin contar pausas ni la calificación). */
-  t = 0;
   /** Reloj que siempre corre (animaciones). */
   reloj = 0;
-  estado: 'intro' | 'jugando' | 'juicio' | 'pausa' | 'fin' = 'intro';
+  /** Lo local de la pantalla: el «modo chef» y los letreros encima. */
+  vista: 'intro' | 'juego' = 'intro';
+  introT = 0;
   estaciones: Estacion[] = [];
+  /** Estación que se mira (0 = pedidos). */
   actual = 0;
   private fondos = new Map<number, HTMLCanvasElement>();
-  tickets: Ticket[] = [];
-  activo: Ticket | null = null;
-  invitados: EnDia[] = [];
-  private numero = 0;
-  private particulas: Particula[] = [];
-  private flotantes: Flotante[] = [];
-  private juicio: Juicio | null = null;
+  /** El día (compartido en pareja). */
+  s: EstadoDia;
+  /** Las máquinas compartidas (waffleras, rejilla, batidoras, licuadoras). */
+  maq: Record<string, any> = {};
+  /** El tiquete que tengo escogido (cada uno el suyo). */
+  activoId = 0;
+  fx = new Efectos();
+  flotantes: { en: number; texto: string; x: number; y: number; vida: number; color: string; tam: number }[] = [];
   private imgs = new Map<string, HTMLImageElement>();
   /** Cara del chef en la esquina (cambia con lo que pasa). */
-  private caraChef: { pose: string; hasta: number } = { pose: 'concentrado', hasta: 0 };
-  private pista: { texto: string; hasta: number } | null = null;
+  caraChef: { pose: string; hasta: number } = { pose: 'concentrado', hasta: 0 };
+  pista: { texto: string; hasta: number } | null = null;
   private pistasVistas = new Set<string>();
-  private dedo: { x: number; y: number } | null = null;
-  // Lo del día
-  dia: number;
-  rango: number;
+  dedo: { x: number; y: number } | null = null;
+  /** Mi progreso en este restaurante (en pareja, el invitado guarda aquí sus puntos y propinas). */
   progreso: ProgresoCocina;
-  private puntajes: number[] = [];
-  private propinasDia = 0;
-  private perfectosDia = 0;
-  private xpDia = 0;
   private azar: () => number;
+  pareja: Invitado;
+  /** Cocinar juntos. */
+  sync: Sincro | null = null;
+  nombreOtro = '';
+  /** Si soy el que lleva el día (solo o anfitrión). */
+  anfitrion = true;
+  /** En pareja: esperando a que el otro llegue o a la configuración del anfitrión. */
+  esperandoOtro = false;
+  /** Cuándo se vio por primera vez cada juicio (para animarlo en este celular). */
+  juicioVisto = { n: 0, t0: 0 };
+  /** Animación de cambiar de estación. */
+  private transicion: { lienzo: HTMLCanvasElement; t: number; dir: number } | null = null;
+  /** Tiquete que se está imprimiendo (animación) y tiquetes que acaban de colgarse (vuelan al riel). */
+  impreso: { inv: number; t0: number } | null = null;
+  colgados = new Map<number, number>();
+  /** Lo que ya se guardó (para no guardar dos veces un día). */
+  private guardadoN = -1;
+  private nJuicio = 0;
+  /** Calidad automática según cómo va el celular. */
+  private medidas = { suma: 0, n: 0 };
+  calidad = 1;
+  private entregando = 0;
 
   constructor(public receta: Receta, private o: OpcionesCocina, private alSalir: () => void) {
     this.progreso = structuredClone(o.progreso);
-    this.dia = this.progreso.dia;
-    this.rango = rangoDe(this.progreso.xp);
-    this.azar = azarCon(this.dia * 7919 + (o.rol === 'el' ? 1 : 2));
+    this.azar = azarCon(this.progreso.dia * 7919 + (o.rol === 'el' ? 1 : 2));
+    this.pareja = invitadoPareja(o.pareja.rol, o.pareja.nombre, receta.id);
+    this.nombreOtro = o.linea?.nombreOtro ?? o.pareja.nombre;
     this.raiz = document.createElement('section');
     this.raiz.className = `cocina cocina-${receta.id}`;
     this.raiz.innerHTML = `<canvas class="cocina-lienzo"></canvas>
@@ -195,7 +271,7 @@ export class Motor {
     document.body.append(this.raiz);
     this.lienzo = this.raiz.querySelector('canvas')!;
     this.g = this.lienzo.getContext('2d')!;
-    this.raiz.querySelector('.cocina-pausa')!.addEventListener('click', () => this.pausar());
+    this.raiz.querySelector('.cocina-pausa')!.addEventListener('click', () => this.pausar('mano'));
     const pos = (e: PointerEvent) => ({ x: (e.clientX * this.dpr) / this.k, y: (e.clientY * this.dpr) / this.k });
     this.lienzo.addEventListener('pointerdown', (e) => {
       this.lienzo.setPointerCapture(e.pointerId);
@@ -218,64 +294,122 @@ export class Motor {
     this.lienzo.addEventListener('pointerup', soltar);
     this.lienzo.addEventListener('pointercancel', soltar);
     this.raiz.querySelector('.cocina-capa')!.addEventListener('click', (ev) => this.clicCapa(ev));
-    this.estaciones = receta.crearEstaciones(this);
+    // El día: en pareja el invitado espera la configuración del anfitrión
+    const rango = rangoDe(this.progreso.xp);
+    this.s = this.diaVacio(this.progreso.dia, rango, { ...this.progreso.mejoras });
+    if (o.linea) this.prepararLinea(o.linea);
+    if (this.anfitrion) this.nuevoDia();
+    void cargarRecortes();
     this.cargarImagenes();
   }
 
-  private get dpr() {
-    return Math.min(2, window.devicePixelRatio || 1);
+  get dpr() {
+    return Math.min(this.calidad < 1 ? 1.5 : 2, window.devicePixelRatio || 1);
   }
   get rol() {
     return this.o.rol;
   }
-  /** Nivel de una mejora comprada. */
+  get dia() {
+    return this.s.dia;
+  }
+  get rango() {
+    return this.s.rango;
+  }
+  get t() {
+    return this.s.t;
+  }
+  get tickets() {
+    return this.s.tickets;
+  }
+  get invitados() {
+    return this.s.invitados;
+  }
+  get enPareja() {
+    return !!this.sync;
+  }
+  get juntos() {
+    return !!this.sync?.juntos;
+  }
+  /** El tiquete que tengo escogido. */
+  get activo(): Ticket | null {
+    return this.s.tickets.find((t) => t.id === this.activoId) ?? null;
+  }
+  set activo(t: Ticket | null) {
+    this.activoId = t?.id ?? 0;
+  }
+  /** Nivel de una mejora (las del restaurante de este día). */
   mejora(id: string) {
-    return this.progreso.mejoras[id] ?? 0;
+    return this.s.mejoras[id] ?? 0;
   }
   img(ruta: string) {
     let i = this.imgs.get(ruta);
     if (!i) {
       i = new Image();
+      i.decoding = 'async';
       i.src = ruta;
       this.imgs.set(ruta, i);
     }
     return i;
   }
   private cargarImagenes() {
-    for (const p of ['concentrado', 'feliz', 'celebra', 'susto', 'presume']) this.img(`./cocina/${this.rol}_chef_${p}.webp`);
+    for (const p of ['concentrado', 'feliz', 'celebra', 'susto', 'presume']) {
+      this.img(`./cocina/gente/${this.rol}_chef_${p}.webp`);
+      if (this.o.linea) this.img(`./cocina/gente/${this.o.pareja.rol}_chef_${p}.webp`);
+    }
+    this.img(`./cocina/gente/${this.rol}_chef_intro.webp`);
   }
-  private spriteDe(inv: Invitado, a: Animo) {
-    return this.img(inv.especial === 'pareja' ? `${inv.ruta}_${POSE_PAREJA[a]}.webp` : `${inv.ruta}_${a}.webp`);
+  def(e: InvDia): Invitado {
+    return invitadoPorId(e.id, this.pareja);
+  }
+  sprite(inv: Invitado, pose: Pose) {
+    return this.img(`${inv.ruta}_${pose}.webp`);
   }
 
   // ------------------------------------------------------------------------------------------- Arranque
   empezar() {
     this.ajustar();
     window.addEventListener('resize', this.ajustar);
+    // Segundo plano (otra app, pantalla bloqueada): pausa con aviso (en pareja, al otro le sale la pausa) y el bucle se
+    // detiene solo; al volver sigue sin salto de tiempo (ver segundo_plano.ts)
+    this.quitarFondo.push(
+      fondo.alPausar(() => this.pausar('fondo')),
+      fondo.alReanudar(() => {
+        this.sync?.despertar();
+        if (this.vista === 'juego') this.pintarCapa();
+      }),
+    );
     requestAnimationFrame(() => this.raiz.classList.add('visible'));
-    this.ultimo = performance.now();
-    let salto = false;
-    const bucle = (ms: number) => {
+    // A 30 cuadros como tope (el celular no se calienta): se juntan los ratos hasta completar un cuadro
+    let junto = 0;
+    this.bucle = fondo.cuadros((dt) => {
       if (this.terminado) return;
-      this.cuadro = requestAnimationFrame(bucle);
-      const dt = Math.min(0.05, (ms - this.ultimo) / 1000);
-      // Sin el dedo encima y sin nada rápido, a 30 cuadros (el celular no se calienta)
-      if (!this.dedo && this.estado !== 'juicio' && (salto = !salto)) return;
-      this.ultimo = ms;
-      this.reloj += dt;
-      if (this.estado === 'jugando') this.paso(dt);
-      else if (this.estado === 'juicio') this.pasoEfectos(dt);
-      // Con un letrero encima (el día, la pausa, el final) casi no se redibuja
-      if (this.estado === 'jugando' || this.estado === 'juicio' || this.reloj - this.dibujado > 0.5) {
-        this.dibujado = this.reloj;
-        this.dibujar();
-      }
-    };
-    this.cuadro = requestAnimationFrame(bucle);
+      junto += dt;
+      if (junto < 1 / 30 - 0.004) return;
+      const paso = Math.min(0.05, junto);
+      this.medir(junto);
+      junto = 0;
+      this.reloj += paso;
+      this.paso(paso);
+      this.dibujar();
+    });
     this.intro();
   }
 
-  private dibujado = 0;
+  /** Si el celular va lento, baja la calidad sola (menos partículas y menos resolución). */
+  private medir(dt: number) {
+    if (this.calidad < 1 || this.vista !== 'juego') return;
+    this.medidas.suma += dt;
+    this.medidas.n++;
+    if (this.medidas.n >= 90) {
+      const prom = this.medidas.suma / this.medidas.n;
+      this.medidas = { suma: 0, n: 0 };
+      if (prom > 0.05) {
+        this.calidad = 0.6;
+        this.fx.calidad = 0.5;
+        this.ajustar();
+      }
+    }
+  }
 
   private ajustar = () => {
     const d = this.dpr;
@@ -289,17 +423,217 @@ export class Motor {
     this.fondos.clear();
   };
 
-  /** El día nuevo: quiénes vienen y a qué hora. */
-  private planear() {
-    const pareja = invitadoPareja(this.o.pareja.rol, this.o.pareja.nombre);
-    const lista = invitadosDelDia(this.dia, this.rango, pareja, this.azar);
-    const intervalo = Math.max(14, 38 - this.dia * 1.6);
+  private diaVacio(dia: number, rango: number, mejoras: Record<string, number>): EstadoDia {
+    return {
+      n: 0, dia, rango, mejoras, fase: 'espera', t: 0, invitados: [], tickets: [], numero: 0, juicio: null, puntajes: [], propinas: 0, perfectos: 0, xp: 0,
+      resultado: null, rangoAntes: rango, pausa: null,
+    };
+  }
+
+  /** (Anfitrión) el día nuevo: quiénes vienen y a qué hora; máquinas limpias. */
+  private nuevoDia() {
+    const p = this.progreso;
+    const rango = rangoDe(p.xp);
+    const n = this.s.n + 1;
+    this.s = this.diaVacio(p.dia, rango, { ...p.mejoras });
+    this.s.n = n;
+    this.azar = azarCon(p.dia * 7919 + (this.rol === 'el' ? 1 : 2) + n * 31);
+    const lista = invitadosDelDia(this.s.dia, rango, this.pareja, this.azar);
+    const intervalo = Math.max(14, 38 - this.s.dia * 1.6) * (this.enPareja ? 0.8 : 1);
     let t = 1.5;
-    this.invitados = lista.map((inv, i) => {
+    this.s.invitados = lista.map((inv, i) => {
       if (i > 0) t += intervalo * (0.75 + this.azar() * 0.5);
-      return { inv, llega: t, estado: 'fuera', x: this.W + 160, meta: this.W + 160, llegoEn: 0, tomadoEn: 0, animo: 'feliz' };
+      return { id: inv.id, llega: t, estado: 'fuera', llegoEn: 0, tomadoEn: 0, ticket: 0, pedido: null, animo: 'feliz', frase: null, tomo: null };
     });
-    for (const e of this.invitados) for (const a of ['feliz', 'espera', 'bravo', 'encantado'] as Animo[]) this.spriteDe(e.inv, a);
+    this.reiniciarCocina();
+    this.cambioDia();
+    for (const e of this.s.invitados) for (const pose of POSES) this.sprite(this.def(e), pose);
+  }
+
+  /** Máquinas y estaciones del día (según las mejoras). */
+  private reiniciarCocina() {
+    this.maq = this.receta.maquinas((id) => this.mejora(id)) as Record<string, any>;
+    for (const k of Object.keys(this.maq)) this.sync?.nace(`m:${k}`);
+    this.estaciones = this.receta.crearEstaciones(this);
+    this.activoId = 0;
+    this.fondos.clear();
+    this.colgados.clear();
+    this.impreso = null;
+    this.fx.limpiar();
+    this.xs.length = 0;
+    this.metas.length = 0;
+  }
+
+  // ------------------------------------------------------------------------------------------- En pareja
+  private prepararLinea(l: NonNullable<OpcionesCocina['linea']>) {
+    this.anfitrion = l.modo === 'anfitrion';
+    this.esperandoOtro = true;
+    const tr = l.transporte === 'local' ? new TransporteLocal(this.rol) : new TransporteSupabase(this.rol);
+    this.sync = new Sincro(this.rol, this.anfitrion, l.id, tr, {
+      leer: (k) => this.leerObjeto(k),
+      escribir: (k, d) => this.escribirObjeto(k, d),
+      claves: () => ['dia', ...Object.keys(this.maq).map((k) => `m:${k}`), ...this.s.tickets.map((t) => `o:${t.id}`)],
+      accion: (a, d) => this.accionDelOtro(a, d),
+      config: (c) => this.configDelAnfitrion(c),
+      llego: () => this.llegoElOtro(),
+      salio: () => this.seFueElOtro(),
+      conexion: (bien) => this.conexion(bien),
+    }, () => ({ receta: this.receta.id, dia: this.s.dia, rango: this.s.rango, mejoras: this.s.mejoras, nombreAnfitrion: nombreDe(this.rol) }));
+    void this.sync.conectar().then((ok) => {
+      if (!ok && this.sync) {
+        this.aviso(`No se pudo conectar: ${this.sync.error || 'sin red'}`, 5);
+        if (this.vista === 'juego') this.pintarCapa();
+      }
+    });
+    // Si en un rato no llega nadie, se puede cocinar solo
+    setTimeout(() => this.vista === 'juego' && this.esperandoOtro && this.pintarCapa(), 9000);
+  }
+
+  private leerObjeto(k: string): unknown {
+    if (k === 'dia') return { ...this.s, tickets: this.s.tickets.map(({ obra: _o, ...t }) => t) };
+    if (k.startsWith('m:')) return this.maq[k.slice(2)];
+    if (k.startsWith('o:')) return this.s.tickets.find((t) => t.id === Number(k.slice(2)))?.obra;
+    return undefined;
+  }
+
+  /** Obras que llegaron antes que su tiquete. */
+  private huerfanas = new Map<number, unknown>();
+
+  private escribirObjeto(k: string, d: unknown) {
+    if (k === 'dia') return this.recibirDia(d as EstadoDia);
+    if (k.startsWith('m:')) {
+      this.maq[k.slice(2)] = d;
+      this.receta.reconciliar?.(this);
+      return;
+    }
+    if (k.startsWith('o:')) {
+      const id = Number(k.slice(2));
+      const t = this.s.tickets.find((x) => x.id === id);
+      if (t) t.obra = d;
+      else this.huerfanas.set(id, d);
+      this.receta.reconciliar?.(this);
+    }
+  }
+
+  /** (Invitado) llegó el día del anfitrión: se conserva lo que se está cocinando aquí. */
+  private recibirDia(d: EstadoDia) {
+    const antes = this.s;
+    const obras = new Map(antes.tickets.map((t) => [t.id, t.obra]));
+    const nuevoDia = d.n !== antes.n;
+    d.tickets = d.tickets.map((t) => {
+      const obra = obras.get(t.id) ?? this.huerfanas.get(t.id) ?? this.receta.obraNueva(t.pedido);
+      this.huerfanas.delete(t.id);
+      return { ...t, obra };
+    });
+    this.s = d;
+    if (nuevoDia) {
+      this.reiniciarCocina();
+      this.esperandoOtro = false;
+      for (const e of d.invitados) for (const pose of POSES) this.sprite(this.def(e), pose);
+    }
+    // Tiquetes nuevos: vuelan al riel
+    for (const t of d.tickets) if (!antes.tickets.some((x) => x.id === t.id)) this.colgados.set(t.id, this.reloj);
+    if (!d.tickets.some((t) => t.id === this.activoId)) this.activoId = d.tickets[0]?.id ?? 0;
+    this.alCambiarFase(antes, nuevoDia);
+  }
+
+  /** Lo que cambia la pantalla cuando cambia la fase (los dos celulares). */
+  private alCambiarFase(antes: EstadoDia, nuevoDia: boolean) {
+    const s = this.s;
+    if (s.juicio && s.juicio.n !== this.juicioVisto.n) this.empezarJuicio(s.juicio);
+    if (s.fase === 'fin' && s.resultado && this.guardadoN !== s.n) void this.alFinDelDia();
+    if (this.vista === 'juego' && (antes.fase !== s.fase || nuevoDia || (s.fase === 'pausa' && antes.pausa?.por !== s.pausa?.por))) this.pintarCapa();
+    // Alguien tomó un pedido: se imprime el tiquete
+    const pid = s.invitados.findIndex((e) => e.estado === 'pidiendo');
+    if (pid >= 0 && this.impreso?.inv !== pid) {
+      this.impreso = { inv: pid, t0: this.reloj };
+      sonidos.impresora();
+    }
+  }
+
+  private configDelAnfitrion(c: ConfigCompartida) {
+    // El restaurante del anfitrión (sus mejoras y su rango) para este día
+    this.s = this.diaVacio(c.dia, c.rango, c.mejoras);
+    this.s.n = -1;
+    this.reiniciarCocina();
+    this.nombreOtro = c.nombreAnfitrion;
+    this.esperandoOtro = false;
+    this.aviso(`¡Estás en la cocina de ${c.nombreAnfitrion}! 💞`, 3);
+    if (this.vista === 'juego') this.pintarCapa();
+  }
+
+  private llegoElOtro() {
+    this.esperandoOtro = false;
+    sonidos.campana();
+    this.aviso(`¡${this.nombreOtro} llegó a la cocina! 💞`, 3.5);
+    this.fx.corazones(this.W / 2, this.H / 2, 10, -1);
+    this.cambioDia();
+    if (this.vista === 'juego') this.pintarCapa();
+  }
+
+  private seFueElOtro() {
+    if (!this.sync) return;
+    const quien = this.nombreOtro;
+    this.sync = null;
+    if (this.anfitrion) {
+      this.aviso(genero(this.rol, `${quien} se fue de la cocina: sigues tú solo|sola`), 4);
+      if (this.s.fase === 'pausa' && this.s.pausa?.por !== this.rol) this.seguir();
+      else if (this.vista === 'juego') this.pintarCapa();
+    } else {
+      this.capa(`<div class="cocina-tarjeta"><h2>${quien} cerró la cocina</h2><p>El día se quedó en su restaurante. ¡Otra vez será, chef!</p>
+        <div class="botones"><button class="boton-cocina principal" data-c="salir">🏠 Volver a la casa</button></div></div>`, 'pausa');
+      this.cerrado = true;
+    }
+  }
+  private cerrado = false;
+
+  private conexion(bien: boolean) {
+    if (this.anfitrion) {
+      if (!bien && (this.s.fase === 'jugando' || this.s.fase === 'juicio')) {
+        this.s.pausa = { por: 'red', motivo: 'conexion', antes: this.s.fase };
+        this.s.fase = 'pausa';
+        this.cambioDia();
+      } else if (bien && this.s.fase === 'pausa' && this.s.pausa?.por === 'red') {
+        this.s.fase = this.s.pausa.antes;
+        this.s.pausa = null;
+        this.cambioDia();
+        this.aviso(`¡Volvió ${this.nombreOtro}! Sigan cocinando 💪`, 3);
+      }
+    } else if (bien) this.aviso('¡Volvió la conexión!', 2.5);
+    if (this.vista === 'juego') this.pintarCapa();
+  }
+
+  /** (Anfitrión) lo que pide el invitado. */
+  private accionDelOtro(a: string, d: any) {
+    const otro: Rol = this.rol === 'el' ? 'ella' : 'el';
+    if (a === 'tomar') this.tomarPedido(otro);
+    else if (a === 'entregar') {
+      const t = this.s.tickets.find((x) => x.id === d?.id);
+      if (t && this.s.fase === 'jugando') {
+        if (d.obra) t.obra = d.obra;
+        this.entregarAqui(t, otro);
+      }
+    } else if (a === 'cerrar') {
+      if (this.s.juicio?.n === d?.n) this.cerrarJuicio();
+    } else if (a === 'pausa') this.pausarAqui(otro, d?.motivo ?? 'mano');
+    else if (a === 'seguir') this.seguir();
+    else if (a === 'jugar') this.jugar();
+  }
+
+  /** El día cambió (el anfitrión se lo manda al otro). */
+  cambioDia() {
+    this.sync?.cambio('dia');
+  }
+  /** Cambié el plato del tiquete (o el de `t`). */
+  cambioObra(t: Ticket | null = this.activo) {
+    if (t) this.sync?.cambio(`o:${t.id}`);
+  }
+  cambioMaq(nombre: string) {
+    this.sync?.cambio(`m:${nombre}`);
+  }
+  /** Lo que el otro está haciendo (para dibujar su carita y su mano). */
+  get otro(): Presencia | null {
+    return this.sync?.juntos && this.sync.conectado ? this.sync.otro : null;
   }
 
   // ------------------------------------------------------------------------------------------- Capas (intro, día, pausa, fin, tienda)
@@ -313,77 +647,137 @@ export class Motor {
 
   /** «Modo chef»: se concentra muchísimo (líneas de velocidad, brillo en los ojos) y aparece la cocina profesional. */
   private intro() {
-    this.estado = 'intro';
-    this.capa(`<div class="cocina-modo-chef">
-        <div class="lineas"></div>
-        <div class="chef"><img src="./cocina/${this.rol}_chef_concentrado.webp" alt=""><i class="destello a"></i><i class="destello b"></i></div>
-        <p class="respira">${genero(this.rol, 'Respira… siente la cocina… hoy eres un|una chef profesional…')}</p>
-        <h1><span>MODO</span> <b>CHEF</b></h1>
-        <small>Toca para seguir</small>
-      </div>`, 'intro');
+    this.vista = 'intro';
+    this.introT = 0;
+    this.capa('');
     [0, 0.5, 1, 1.5].forEach((d) => nota(220 + d * 110, 0.5, d, 'sine', 0.03, 440 + d * 220));
     rumor(2.4, 300, 0.05, 0.4, 0.5, 2600);
-    setTimeout(() => {
-      if (this.estado !== 'intro') return;
-      [523, 659, 784, 1046].forEach((f, i) => nota(f, 0.3, i * 0.08, 'triangle', 0.06));
-    }, 2300);
-    this.introHasta = performance.now() + 3400;
-    this.planear();
-    setTimeout(() => {
-      if (this.estado === 'intro' && this.raiz.querySelector('.cocina-modo-chef')) this.tarjetaDia();
-    }, 4200);
   }
-  private introHasta = 0;
+  /** El «modo chef» va con el reloj del juego (en un celular lento o en segundo plano no se adelanta ni se corta). */
+  private pasoIntro(dt: number) {
+    const antes = this.introT;
+    this.introT += dt;
+    if (antes < 2.25 && this.introT >= 2.25) [523, 659, 784, 1046].forEach((f, i) => nota(f, 0.3, i * 0.08, 'triangle', 0.06));
+    if (this.introT > 4.6) this.terminarIntro();
+  }
+  private terminarIntro() {
+    if (this.vista !== 'intro') return;
+    this.vista = 'juego';
+    this.pintarCapa();
+  }
+
+  /** La tarjeta que toca según la fase del día. */
+  pintarCapa() {
+    if (this.vista !== 'juego' || this.cerrado) return;
+    const s = this.s;
+    if (this.enPareja && this.esperandoOtro) return this.tarjetaEspera();
+    if (s.fase === 'espera') return this.tarjetaDia();
+    if (s.fase === 'pausa') return this.tarjetaPausa();
+    if (s.fase === 'fin' && s.resultado) return this.pintarFin();
+    this.capa('');
+  }
+
+  private tarjetaEspera() {
+    const largo = this.reloj > 12;
+    const html = this.anfitrion
+      ? `<div class="cocina-tarjeta pareja"><p class="letrero">${this.receta.titulo(this.rol)}</p>
+          <h2>Esperando a ${this.nombreOtro}… <span class="latido">💌</span></h2>
+          <p>Le llegó la invitación a la casa: cuando la acepte, cocinan juntos el día ${this.s.dia}, cada uno en su celular.</p>
+          <div class="botones"><button class="boton-cocina" data-c="solo">${largo ? '👩‍🍳 Mejor cocino solo|sola' : 'Cocinar solo|sola'}</button></div></div>`
+      : `<div class="cocina-tarjeta pareja"><h2>Entrando a la cocina de ${this.nombreOtro}… <span class="latido">💞</span></h2>
+          <p>${this.sync?.error ? `No se pudo conectar: ${this.sync.error}` : 'Un momentico, que se está conectando.'}</p>
+          <div class="botones"><button class="boton-cocina" data-c="salir">🏠 Volver a la casa</button></div></div>`;
+    this.capa(genero(this.rol, html), 'dia');
+  }
 
   private tarjetaDia() {
-    const n = this.invitados.length;
-    const hayPareja = this.invitados.some((e) => e.inv.especial === 'pareja');
-    const critico = this.invitados.some((e) => e.inv.especial === 'critico');
+    const n = this.s.invitados.length;
+    const hayPareja = this.s.invitados.some((e) => this.def(e).especial === 'pareja');
+    const critico = this.s.invitados.some((e) => this.def(e).especial === 'critico');
+    const juntos = this.juntos;
+    const icono = P.iconoHTML(this.receta.icono, 86);
     this.capa(`<div class="cocina-tarjeta">
-        <p class="letrero">${this.receta.titulo(this.rol)}</p>
-        <h2>Día ${this.dia}</h2>
-        <p>${n} invitados vienen a comer${hayPareja ? ` · <b>¡${this.o.pareja.nombre} viene hoy!</b> 💖` : ''}${critico ? ' · <b>¡Viene el crítico famoso!</b>' : ''}</p>
-        <p class="rango">${nombreRango(this.rango)} · rango ${this.rango}</p>
-        <div class="botones"><button class="boton-cocina" data-c="tienda">🛠️ Mejoras</button><button class="boton-cocina principal" data-c="jugar">¡A cocinar!</button></div>
+        <div class="cabeza">${icono}<div><p class="letrero">${juntos && !this.anfitrion ? this.receta.titulo(this.o.pareja.rol) : this.receta.titulo(this.rol)}</p>
+        <h2>Día ${this.s.dia}</h2></div></div>
+        <p>${n} invitados vienen a comer${hayPareja ? ` · <b>¡${this.pareja.nombre} viene hoy!</b> 💖` : ''}${critico ? ' · <b>¡Viene el crítico famoso!</b> ⭐' : ''}</p>
+        ${juntos ? `<p class="juntos">👩‍❤️‍👨 Cocinan juntos: ${this.anfitrion ? `${this.nombreOtro} te ayuda hoy` : `ayudas en la cocina de ${this.nombreOtro}`}. Las propinas y los puntos del día son de los dos.</p>` : ''}
+        <p class="rango">${nombreRango(this.s.rango)} · rango ${this.s.rango}</p>
+        <div class="botones">${this.anfitrion ? '<button class="boton-cocina" data-c="tienda">🛠️ Mejoras</button>' : ''}<button class="boton-cocina principal" data-c="jugar">¡A cocinar!</button></div>
       </div>`, 'dia');
+  }
+
+  private tarjetaPausa() {
+    const p = this.s.pausa;
+    const red = p?.por === 'red';
+    const quien = p && p.por !== 'red' && p.por !== this.rol ? nombreDe(p.por as Rol) : '';
+    const motivo = p?.motivo === 'fondo' && quien ? `${quien} salió un momentico de la app` : quien ? `${quien} puso pausa` : 'La cocina te espera.';
+    const titulo = red ? `Se cortó la conexión con ${this.nombreOtro}…` : 'Pausa';
+    const solo = red && this.anfitrion ? '<button class="boton-cocina" data-c="solo">Seguir solo|sola</button>' : '';
+    this.capa(genero(this.rol, `<div class="cocina-tarjeta"><h2>${titulo}</h2><p>${red ? 'Esperando a que vuelva… (la cocina está quieta)' : motivo}</p>
+      <div class="botones"><button class="boton-cocina" data-c="salir">Volver a la casa</button>${solo}${red ? '' : '<button class="boton-cocina principal" data-c="seguir">Seguir cocinando</button>'}</div>
+      <p class="nota">${this.anfitrion ? `Si vuelves a la casa ahora, el día ${this.s.dia} se pierde (las mejoras quedan).` : `Si te vas, ${this.nombreOtro} sigue solo|sola.`}</p></div>`), 'pausa');
   }
 
   private clicCapa(ev: Event) {
     const b = (ev.target as HTMLElement).closest('[data-c]') as HTMLElement | null;
-    if (this.estado === 'intro' && !b) {
-      if (performance.now() > this.introHasta - 2600) this.tarjetaDia();
-      return;
-    }
     if (!b) return;
     sonidos.clic();
     const c = b.dataset.c!;
-    if (c === 'jugar') this.jugar();
+    if (c === 'jugar') this.anfitrion ? this.jugar() : this.sync?.pedir('jugar');
     else if (c === 'tienda') this.tienda(b.dataset.volver ?? 'dia');
     else if (c.startsWith('comprar:')) void this.comprar(c.slice(8), b.dataset.volver ?? 'dia');
-    else if (c === 'volver-dia') this.tarjetaDia();
-    else if (c === 'volver-fin') this.pintarFin();
-    else if (c === 'seguir') this.seguir();
+    else if (c === 'volver-dia' || c === 'volver-fin') this.pintarCapa();
+    else if (c === 'seguir') this.anfitrion ? this.seguir() : this.sync?.pedir('seguir');
     else if (c === 'salir') this.salir();
     else if (c === 'siguiente') this.siguienteDia();
+    else if (c === 'solo') this.cocinarSolo();
+  }
+
+  /** Deja de esperar al otro (o sigue sin él si se cortó). */
+  private cocinarSolo() {
+    this.sync?.salir();
+    this.sync = null;
+    this.esperandoOtro = false;
+    if (this.s.fase === 'pausa') this.seguir();
+    else this.pintarCapa();
   }
 
   private jugar() {
+    if (this.s.fase !== 'espera') return;
+    this.s.fase = 'jugando';
+    this.cambioDia();
     this.capa('');
-    this.estado = 'jugando';
     this.actual = 0;
-    if (this.dia === 1) this.mostrarPista('Llegan invitados al mostrador: toca «Tomar pedido»', 'inicio');
+    if (this.s.dia === 1) this.mostrarPista('Llegan invitados al mostrador: toca «Tomar pedido»', 'inicio');
   }
 
-  pausar() {
-    if (this.estado !== 'jugando') return;
-    this.estado = 'pausa';
-    this.capa(`<div class="cocina-tarjeta"><h2>Pausa</h2><p>La cocina te espera.</p>
-      <div class="botones"><button class="boton-cocina" data-c="salir">Volver a la casa</button><button class="boton-cocina principal" data-c="seguir">Seguir cocinando</button></div>
-      <p class="nota">Si vuelves a la casa ahora, el día ${this.dia} se pierde (las mejoras quedan).</p></div>`, 'pausa');
+  pausar(motivo: 'mano' | 'fondo' = 'mano') {
+    if (this.vista !== 'juego' || (this.s.fase !== 'jugando' && this.s.fase !== 'juicio')) return;
+    if (this.anfitrion) {
+      this.pausarAqui(this.rol, motivo);
+      // Al irse a segundo plano el bucle se detiene: el aviso sale ya, no en el próximo paquete
+      this.sync?.enviar(true);
+    } else this.sync?.pedir('pausa', { motivo });
+    // En este celular se ve la pausa de una (aunque el anfitrión la confirme después)
+    if (!this.anfitrion) {
+      this.s.pausa = { por: this.rol, motivo, antes: this.s.fase };
+      this.s.fase = 'pausa';
+      this.pintarCapa();
+    }
+  }
+  private pausarAqui(por: Rol, motivo: string) {
+    if (this.s.fase !== 'jugando' && this.s.fase !== 'juicio') return;
+    this.s.pausa = { por, motivo, antes: this.s.fase };
+    this.s.fase = 'pausa';
+    this.cambioDia();
+    this.pintarCapa();
   }
   private seguir() {
+    if (this.s.fase !== 'pausa') return;
+    this.s.fase = this.s.pausa?.antes === 'juicio' && this.s.juicio ? 'juicio' : 'jugando';
+    this.s.pausa = null;
+    this.cambioDia();
     this.capa('');
-    this.estado = 'jugando';
   }
 
   // ------------------------------------------------------------------------------------------- Tienda de mejoras
@@ -403,7 +797,7 @@ export class Motor {
       })
       .join('');
     this.capa(`<div class="cocina-tienda">
-        <header><h2>Mejoras de la cocina</h2><span class="saldo">🪙 ${p.propinas} en propinas</span></header>
+        <header>${P.iconoHTML(this.receta.icono, 44)}<h2>Mejoras de la cocina</h2><span class="saldo">🪙 ${p.propinas} en propinas</span></header>
         <ul>${filas}</ul>
         <div class="botones"><button class="boton-cocina principal" data-c="${volver === 'fin' ? 'volver-fin' : 'volver-dia'}">Listo</button></div>
       </div>`, 'tienda');
@@ -421,6 +815,12 @@ export class Motor {
     this.progreso.propinas -= precio;
     this.progreso.mejoras[id] = nv + 1;
     sonidos.caja();
+    // Si el día no ha empezado, la mejora se estrena hoy mismo
+    if (this.s.fase === 'espera' && this.anfitrion) {
+      this.s.mejoras = { ...this.progreso.mejoras };
+      this.reiniciarCocina();
+      this.cambioDia();
+    }
     this.fondos.clear();
     this.tienda(volver);
     await this.o.guardar(structuredClone(this.progreso)).catch(() => {});
@@ -428,176 +828,288 @@ export class Motor {
 
   // ------------------------------------------------------------------------------------------- Durante el día
   private paso(dt: number) {
-    this.t += dt;
-    const W = this.W;
-    // Llegan los invitados y caminan a su puesto
-    const fila = this.invitados.filter((e) => e.estado === 'fila' || e.estado === 'pidiendo');
-    for (const e of this.invitados) {
-      if (e.estado === 'fuera' && this.t >= e.llega) {
-        e.estado = 'fila';
-        e.llegoEn = this.t;
-        e.x = W + 120;
-        sonidos.campana();
-        e.frase = { texto: genero(this.rol, elegir(e.inv.saludos)), hasta: this.t + 3.2 };
-        if (this.actual !== 0) this.aviso(`¡Llegó ${e.inv.nombre}!`);
-      }
+    if (this.vista === 'intro') this.pasoIntro(dt);
+    if (this.transicion) {
+      this.transicion.t += dt;
+      if (this.transicion.t > 0.32) this.transicion = null;
     }
-    fila.forEach((e, i) => (e.meta = this.puestoFila(i)));
-    const esperan = this.invitados.filter((e) => e.estado === 'esperando');
-    esperan.forEach((e, i) => (e.meta = this.puestoEspera(i)));
-    for (const e of this.invitados) {
-      if (e.estado === 'saliendo') e.meta = W + 200;
-      const d = e.meta - e.x;
-      e.x += Math.sign(d) * Math.min(Math.abs(d), dt * 420);
-      if (e.estado === 'saliendo' && e.x >= W + 190) e.estado = 'ido';
-      // Ánimo: según cuánto va esperando
-      if (e.estado === 'fila' || e.estado === 'pidiendo' || e.estado === 'esperando') {
-        const v = this.puntajeEspera(e, this.t);
-        const antes = e.animo;
-        e.animo = v >= 70 ? 'feliz' : v >= 40 ? 'espera' : 'bravo';
-        if (antes !== e.animo && e.animo !== 'feliz' && !e.frase) e.frase = { texto: elegir(FRASES.apurado), hasta: this.t + 2.5 };
-      }
-      if (e.frase && this.t > e.frase.hasta) e.frase = undefined;
+    this.sync?.paso(dt);
+    if (this.sync) this.sync.presencia(this.miPresencia());
+    const s = this.s;
+    if (s.fase === 'jugando' && !this.esperandoOtro) {
+      if (this.anfitrion) this.pasoDia(dt);
+      else s.t += dt;
+      for (const e of this.estaciones) e.paso(dt);
     }
-    // Tomando el pedido: al rato queda el tiquete colgado
-    const pid = this.invitados.find((e) => e.estado === 'pidiendo');
-    if (pid && this.t - pid.tomadoEn > 2.4) this.colgarTicket(pid);
-    for (const s of this.estaciones) s.paso(dt);
-    this.pasoEfectos(dt);
-    if (this.invitados.length && this.invitados.every((e) => e.estado === 'ido')) this.finDia();
-  }
-
-  private pasoEfectos(dt: number) {
-    for (const p of this.particulas) {
-      p.x += p.vx * dt;
-      p.y += p.vy * dt;
-      if (p.tipo !== 'humo') p.vy += 600 * dt;
-      else p.vy -= 10 * dt;
-      p.vida -= dt;
-    }
-    this.particulas = this.particulas.filter((p) => p.vida > 0);
+    this.pasoVisual(dt);
+    this.fx.vista = this.actual;
+    this.fx.paso(dt);
     for (const f of this.flotantes) {
-      f.y -= 50 * dt;
+      f.y -= 46 * dt;
       f.vida -= dt;
     }
-    this.flotantes = this.flotantes.filter((f) => f.vida > 0);
-    if (this.juicio) this.juicio.t += dt;
+    if (this.flotantes.length && this.flotantes[0].vida <= 0) this.flotantes = this.flotantes.filter((f) => f.vida > 0);
+    // (Anfitrión) el juicio se cierra solo si nadie toca
+    if (this.anfitrion && s.fase === 'juicio' && s.juicio && this.reloj - this.juicioVisto.t0 > 9) this.cerrarJuicio();
+    if (this.entregando && this.reloj - this.entregando > 4) this.entregando = 0;
   }
 
-  private puestoFila(i: number) {
-    return this.W * 0.5 + (i ? 60 + i * 175 : 0);
+  private miPresencia(): Presencia {
+    const e = this.estaciones[this.actual - 1];
+    return {
+      est: this.actual, act: this.activoId, x: this.dedo ? this.dedo.x / this.W : 0.5, y: this.dedo ? this.dedo.y / this.H : 0.5, dedo: !!this.dedo,
+      herr: e?.enMano?.() ?? null,
+    };
   }
-  private puestoEspera(i: number) {
-    return 120 + (i % 5) * 105;
+
+  /** (Anfitrión) el reloj del día: llegan invitados, se impacientan, se cuelgan los tiquetes. */
+  private pasoDia(dt: number) {
+    const s = this.s;
+    s.t += dt;
+    let cambio = false;
+    for (const e of s.invitados) {
+      if (e.estado === 'fuera' && s.t >= e.llega) {
+        e.estado = 'fila';
+        e.llegoEn = s.t;
+        sonidos.campana();
+        e.frase = { texto: genero(this.rol, elegir(this.def(e).saludos)), hasta: s.t + 3.4 };
+        if (this.actual !== 0) this.aviso(`¡Llegó ${this.def(e).nombre}!`);
+        cambio = true;
+      }
+      if (e.estado === 'fila' || e.estado === 'pidiendo' || e.estado === 'esperando') {
+        const v = this.puntajeEspera(e, s.t);
+        const antes = e.animo;
+        e.animo = v >= 70 ? 'feliz' : v >= 40 ? 'espera' : 'bravo';
+        if (antes !== e.animo) {
+          cambio = true;
+          if (e.animo !== 'feliz' && !e.frase) e.frase = { texto: elegir(FRASES.apurado), hasta: s.t + 2.6 };
+        }
+      }
+      if (e.frase && s.t > e.frase.hasta) {
+        e.frase = null;
+        cambio = true;
+      }
+    }
+    const pid = s.invitados.find((e) => e.estado === 'pidiendo');
+    if (pid && s.t - pid.tomadoEn > 2.4) {
+      this.colgarTicket(pid);
+      cambio = true;
+    }
+    s.invitados.forEach((e, i) => {
+      if (e.estado === 'saliendo' && (this.xs[i] ?? 0) >= this.W + 190) {
+        e.estado = 'ido';
+        cambio = true;
+      }
+    });
+    if (cambio) this.cambioDia();
+    if (s.invitados.length && s.invitados.every((e) => e.estado === 'ido')) this.finDia();
+  }
+
+  /** Posición en pantalla de cada invitado (solo se ve: no viaja), por su índice en el día. */
+  xs: number[] = [];
+  metas: number[] = [];
+  private pasoVisual(dt: number) {
+    const s = this.s;
+    let enFila = 0, enEspera = 0;
+    for (let i = 0; i < s.invitados.length; i++) {
+      const e = s.invitados[i];
+      let meta = this.W + 200;
+      if (e.estado === 'fila' || e.estado === 'pidiendo') meta = this.puestoFila(enFila++);
+      else if (e.estado === 'esperando') meta = this.puestoEspera(enEspera++);
+      else if (e.estado === 'comiendo') meta = this.W * 0.5;
+      let x = this.xs[i] ?? this.W + 160;
+      if (e.estado === 'fuera') x = this.W + 160;
+      const d = meta - x;
+      x += Math.sign(d) * Math.min(Math.abs(d), dt * 380);
+      this.xs[i] = x;
+      this.metas[i] = meta;
+    }
+  }
+  puestoFila(i: number) {
+    return this.W * 0.52 + (i ? 70 + i * 165 : 0);
+  }
+  puestoEspera(i: number) {
+    return 196 + (i % 6) * 104;
   }
 
   /** Qué tan bien va la espera (100 = no ha esperado de más). */
-  puntajeEspera(e: EnDia, ahora: number) {
-    const pac = e.inv.paciencia * (1 + 0.15 * this.mejora('musica'));
+  puntajeEspera(e: InvDia, ahora: number) {
+    const pac = this.def(e).paciencia * (1 + 0.15 * this.mejora('musica')) * (this.enPareja ? 0.85 : 1);
     const fila = e.tomadoEn ? e.tomadoEn - e.llegoEn : ahora - e.llegoEn;
     let exceso = Math.max(0, fila - 10 * pac);
-    if (e.ticket) exceso += Math.max(0, ahora - e.tomadoEn - this.receta.tiempoIdeal(e.ticket.pedido) * pac);
+    const t = e.ticket ? this.s.tickets.find((x) => x.id === e.ticket) : null;
+    if (t) exceso += Math.max(0, ahora - e.tomadoEn - this.receta.tiempoIdeal(t.pedido) * pac);
     return Math.max(0, Math.round(100 - exceso * 1.3));
   }
 
-  private tomarPedido(e: EnDia) {
+  /** Toma el pedido del primero de la fila (el anfitrión decide qué pide). */
+  private tomarPedido(quien: Rol) {
+    const s = this.s;
+    if (s.fase !== 'jugando' || s.invitados.some((i) => i.estado === 'pidiendo')) return;
+    const e = s.invitados.find((i) => i.estado === 'fila');
+    if (!e) return;
     e.estado = 'pidiendo';
-    e.tomadoEn = this.t;
-    e.frase = undefined;
-    e.pedido = this.receta.pedido(this.rango, this.dia, this.azar);
-    sonidos.papel();
-    this.chef('feliz', 2.5);
+    e.tomadoEn = s.t;
+    e.frase = null;
+    e.tomo = quien;
+    e.pedido = this.receta.pedido(s.rango, s.dia, this.azar, this.def(e));
+    this.impreso = { inv: s.invitados.indexOf(e), t0: this.reloj };
+    sonidos.impresora();
+    if (quien === this.rol) this.chef('feliz', 2.5);
+    this.cambioDia();
     this.pistaUnaVez('pedido', 'Mira bien el tiquete: dice todo lo que quiere');
   }
 
-  private colgarTicket(e: EnDia) {
-    const p = e.pedido ?? this.receta.pedido(this.rango, this.dia, this.azar);
-    e.pedido = undefined;
-    const t: Ticket = { id: ++this.numero, numero: this.numero, inv: e, pedido: p, obra: this.receta.obraNueva(p), tomado: this.t };
-    e.ticket = t;
+  private colgarTicket(e: InvDia) {
+    const s = this.s;
+    const p = e.pedido ?? this.receta.pedido(s.rango, s.dia, this.azar, this.def(e));
+    e.pedido = null;
+    const id = ++s.numero;
+    const t: Ticket = { id, numero: id, inv: s.invitados.indexOf(e), pedido: p, obra: this.receta.obraNueva(p), tomado: s.t };
+    e.ticket = id;
     e.estado = 'esperando';
-    this.tickets.push(t);
-    this.activo ??= t;
+    s.tickets.push(t);
+    this.sync?.nace(`o:${id}`);
+    this.colgados.set(id, this.reloj);
+    if (!this.activoId) this.activoId = id;
     sonidos.papel();
-    this.pistaUnaVez('estaciones', `Ahora ve a «${this.estaciones[1]?.nombre}» (abajo) y prepara el pedido #${t.numero}`);
+    this.pistaUnaVez('estaciones', `Ahora ve a «${this.estaciones[0]?.nombre}» (abajo) y prepara el pedido #${t.numero}`);
   }
 
-  /** Se entrega el plato: el invitado lo prueba y califica. */
+  /** Se entrega el plato (en pareja, el invitado se lo pide al anfitrión). */
   entregar(t: Ticket) {
-    const e = t.inv;
-    const cats = [{ id: 'espera', nombre: 'Espera', valor: this.puntajeEspera(e, this.t) }, ...this.receta.calificar(t, this)];
+    if (this.s.fase !== 'jugando') return;
+    if (this.anfitrion) return this.entregarAqui(t, this.rol);
+    if (this.entregando) return;
+    this.entregando = this.reloj;
+    this.cambioObra(t);
+    this.sync?.pedir('entregar', { id: t.id, obra: t.obra });
+    this.aviso('¡Entregando!… 🛎️', 1.5);
+  }
+
+  /** (Anfitrión) el invitado lo prueba y califica. */
+  private entregarAqui(t: Ticket, por: Rol) {
+    const s = this.s;
+    const e = s.invitados[t.inv];
+    if (!e) return;
+    const inv = this.def(e);
+    const cats = [{ id: 'espera', nombre: 'Espera', valor: this.puntajeEspera(e, s.t) }, ...this.receta.calificar(t, this)];
     let total = Math.round(cats.reduce((a, c) => a + c.valor, 0) / cats.length);
     // El crítico es exigente: lo que no es excelente le parece regular
-    if (e.inv.especial === 'critico') total = Math.round(100 * Math.pow(total / 100, 1.5));
+    if (inv.especial === 'critico') total = Math.round(100 * Math.pow(total / 100, 1.5));
     const base = 3 + this.receta.tiempoIdeal(t.pedido) * 0.06;
-    let propina = Math.max(0, Math.round(base * (total / 100) * e.inv.propina * (1 + 0.12 * this.mejora('jarra'))));
+    let propina = Math.max(0, Math.round(base * (total / 100) * inv.propina * (1 + 0.12 * this.mejora('jarra'))));
     if (total >= 95) propina += 2;
-    this.tickets = this.tickets.filter((x) => x !== t);
-    if (this.activo === t) this.activo = this.tickets[0] ?? null;
+    s.tickets = s.tickets.filter((x) => x !== t);
     e.estado = 'comiendo';
-    e.x = this.W * 0.5;
     const animo: Animo = total >= 90 ? 'encantado' : total >= 70 ? 'feliz' : total >= 50 ? 'espera' : 'bravo';
     const tono = total >= 90 ? 'encantado' : total >= 70 ? 'feliz' : total >= 50 ? 'normal' : 'bravo';
-    const frase = genero(this.rol, elegir(e.inv.especial === 'pareja' ? FRASES_PAREJA[tono] : FRASES[tono]));
-    this.juicio = { ticket: t, cats, total, propina, t: 0, frase, animo };
-    this.estado = 'juicio';
-    this.puntajes.push(total);
-    this.propinasDia += propina;
-    this.xpDia += total;
-    if (total >= 95) this.perfectosDia++;
-    this.chef(total >= 90 ? 'celebra' : total >= 60 ? 'feliz' : 'susto', 4);
-    setTimeout(() => (total >= 70 ? sonidos.bien() : sonidos.mal()), 900);
-    setTimeout(() => sonidos.caja(), 2300);
+    const frase = inv.especial === 'pareja' ? frasePareja(this.o.pareja.rol, this.receta.id, tono) : genero(this.rol, elegir(FRASES[tono]));
+    s.juicio = { n: ++this.nJuicio + s.n * 1000, ticket: t, cats, total, propina, frase, animo, por };
+    s.fase = 'juicio';
+    s.puntajes.push(total);
+    s.propinas += propina;
+    s.xp += total;
+    if (total >= 95) s.perfectos++;
+    this.sync?.olvidar(`o:${t.id}`);
+    this.cambioDia();
+    this.empezarJuicio(s.juicio);
+  }
+
+  /** Arranca la animación del juicio en este celular. */
+  private empezarJuicio(j: JuicioDia) {
+    this.juicioVisto = { n: j.n, t0: this.reloj };
+    this.entregando = 0;
+    if (this.activoId === j.ticket.id) this.activoId = this.s.tickets[0]?.id ?? 0;
+    this.chef(j.total >= 90 ? 'celebra' : j.total >= 60 ? 'feliz' : 'susto', 5);
+    P.sonarJuicio(this, j);
   }
 
   private cerrarJuicio() {
-    const j = this.juicio;
+    const s = this.s;
+    const j = s.juicio;
     if (!j) return;
-    j.ticket.inv.estado = 'saliendo';
-    j.ticket.inv.animo = j.animo;
-    this.juicio = null;
-    this.estado = 'jugando';
-    this.actual = 0;
+    const e = s.invitados[j.ticket.inv];
+    if (e) {
+      e.estado = 'saliendo';
+      e.animo = j.animo;
+    }
+    s.juicio = null;
+    if (s.fase === 'juicio') s.fase = 'jugando';
+    this.cambioDia();
   }
 
   // ------------------------------------------------------------------------------------------- Fin del día
-  private resultado: ResultadoDia | null = null;
-  private subio: Desbloqueo[] = [];
-
   private finDia() {
-    if (this.estado === 'fin') return;
-    this.estado = 'fin';
-    const servidos = this.puntajes.length;
-    const promedio = servidos ? Math.round(this.puntajes.reduce((a, b) => a + b, 0) / servidos) : 0;
-    const xp = this.xpDia + 20;
-    const rangoAntes = this.rango;
-    const p = this.progreso;
-    p.xp += xp;
-    p.propinas += this.propinasDia;
-    p.dia = this.dia + 1;
-    p.servidos += servidos;
-    p.perfectos += this.perfectosDia;
-    p.mejor = Math.max(p.mejor, promedio);
-    this.rango = rangoDe(p.xp);
-    this.subio = [...this.receta.desbloqueos, ...INVITADOS.filter((i) => i.desde > 1).map((i) => ({ rango: i.desde, texto: `Ahora viene a comer: ${i.nombre}` }))]
-      .filter((d) => d.rango > rangoAntes && d.rango <= this.rango);
+    const s = this.s;
+    if (s.fase === 'fin') return;
+    const servidos = s.puntajes.length;
+    const promedio = servidos ? Math.round(s.puntajes.reduce((a, b) => a + b, 0) / servidos) : 0;
+    const xp = s.xp + 20;
     const monedas = Math.max(1, Math.min(20, Math.round(servidos * (promedio / 100) * 2.2)));
-    const buenos = this.puntajes.filter((v) => v >= 70).length;
+    const buenos = s.puntajes.filter((v) => v >= 70).length;
     const platos = buenos ? Math.min(4, 1 + Math.floor(buenos / 2)) : 0;
-    this.resultado = { receta: this.receta.id, dia: this.dia, servidos, promedio, propinas: this.propinasDia, perfectos: this.perfectosDia, xp, monedas, platos };
-    void this.o.guardar(structuredClone(p), this.resultado).catch(() => {});
-    [523, 659, 784, 1046, 1318].forEach((f, i) => nota(f, 0.2, i * 0.1, 'triangle', 0.05));
-    this.pintarFin(rangoAntes);
+    s.resultado = { receta: this.receta.id, dia: s.dia, servidos, promedio, propinas: s.propinas, perfectos: s.perfectos, xp, monedas, platos };
+    s.fase = 'fin';
+    this.cambioDia();
+    void this.alFinDelDia();
   }
 
-  private pintarFin(rangoAntes = this.rango) {
-    const r = this.resultado!;
+  /** Cada uno guarda lo suyo (el anfitrión el día y el premio de la casa; el invitado sus puntos y propinas). */
+  private async alFinDelDia() {
+    const s = this.s;
+    const r = s.resultado;
+    if (!r || this.guardadoN === s.n) return;
+    this.guardadoN = s.n;
     const p = this.progreso;
+    const rangoAntes = rangoDe(p.xp);
+    p.xp += r.xp;
+    p.propinas += r.propinas;
+    p.servidos += r.servidos;
+    p.perfectos += r.perfectos;
+    p.mejor = Math.max(p.mejor, r.promedio);
+    if (this.anfitrion) p.dia = s.dia + 1;
+    this.rangoAntesFin = rangoAntes;
+    const mio: ResultadoDia = this.anfitrion ? r : { ...r, monedas: 0, platos: 0 };
+    void this.o.guardar(structuredClone(p), mio).catch(() => {});
+    [523, 659, 784, 1046, 1318].forEach((f, i) => nota(f, 0.2, i * 0.1, 'triangle', 0.05));
+    // Gancho para escenas especiales (se pintan encima; la tarjeta del final sale después)
+    const info: InfoFinDia = {
+      receta: this.receta.id, rol: this.rol, enPareja: this.juntos, anfitrion: this.anfitrion, rangoAntes, rango: rangoDe(p.xp), raiz: this.raiz,
+    };
+    const ganchos = [this.o.alTerminarDia, ...ganchosFin];
+    for (const f of ganchos) {
+      if (!f) continue;
+      try {
+        await f(mio, info);
+      } catch {
+        /* una escena que falla no tumba la cocina */
+      }
+    }
+    this.pintarCapa();
+  }
+  private rangoAntesFin = 1;
+
+  private pintarFin() {
+    const r = this.s.resultado!;
+    const p = this.progreso;
+    const rango = rangoDe(p.xp);
     const estrellas = r.promedio >= 90 ? 3 : r.promedio >= 70 ? 2 : r.promedio >= 45 ? 1 : 0;
-    const desde = umbralRango(this.rango), hasta = umbralRango(this.rango + 1);
+    const desde = umbralRango(rango), hasta = umbralRango(rango + 1);
     const avance = Math.round(((p.xp - desde) / (hasta - desde)) * 100);
+    const subio = [...this.receta.desbloqueos, ...INVITADOS.filter((i) => i.desde > 1).map((i) => ({ rango: i.desde, texto: `Ahora viene a comer: ${i.nombre}` }))]
+      .filter((d) => d.rango > this.rangoAntesFin && d.rango <= rango);
+    const juntos = this.juntos;
+    const premio = this.anfitrion
+      ? `<p class="premio">Para la casa: <b>+${r.monedas} ${r.monedas === 1 ? 'moneda' : 'monedas'}</b>${r.platos ? ` y <b>${r.platos} × ${this.receta.nombrePlato}</b> a la despensa (se pueden comer o regalar)` : ''}</p>`
+      : `<p class="premio">El premio de la casa lo guardó ${this.nombreOtro}; tus puntos de chef y las propinas (🪙 ${r.propinas}) van a tu propia ${this.receta.nombre.toLowerCase()}.</p>`;
+    const botones = this.anfitrion
+      ? `<button class="boton-cocina" data-c="salir">🏠 Volver a la casa</button>
+         <button class="boton-cocina" data-c="tienda" data-volver="fin">🛠️ Mejoras (🪙 ${p.propinas})</button>
+         <button class="boton-cocina principal" data-c="siguiente">Día ${p.dia} ➜</button>`
+      : `<button class="boton-cocina" data-c="salir">🏠 Volver a la casa</button><span class="espera-otro">${this.nombreOtro} decide si siguen con otro día…</span>`;
     this.capa(`<div class="cocina-fin">
-        <h2>¡Terminó el día ${r.dia}!</h2>
+        <div class="cabeza">${P.iconoHTML(this.receta.icono, 70)}<h2>¡Terminó el día ${r.dia}!${juntos ? ' <small>en pareja 💞</small>' : ''}</h2></div>
         <div class="estrellas">${[0, 1, 2].map((i) => `<i class="${i < estrellas ? 'si' : ''}" style="--d:${0.3 + i * 0.25}s">★</i>`).join('')}</div>
         <ul class="cifras">
           <li><b>${r.servidos}</b><span>invitados atendidos</span></li>
@@ -605,41 +1117,34 @@ export class Motor {
           <li><b>🪙 ${r.propinas}</b><span>en propinas</span></li>
           <li><b>${r.perfectos}</b><span>${r.perfectos === 1 ? 'plato perfecto' : 'platos perfectos'}</span></li>
         </ul>
-        <div class="rango-barra"><span>${nombreRango(this.rango)} · rango ${this.rango}${this.rango > rangoAntes ? ' <b>¡SUBISTE!</b>' : ''}</span><i style="--v:${avance}%"></i></div>
-        ${this.subio.length ? `<div class="nuevo">${this.subio.map((d) => `<p>✨ ${d.texto}</p>`).join('')}</div>` : ''}
-        <p class="premio">Para la casa: <b>+${r.monedas} ${r.monedas === 1 ? 'moneda' : 'monedas'}</b>${r.platos ? ` y <b>${r.platos} × ${this.receta.nombrePlato}</b> a la despensa (se pueden comer o regalar)` : ''}</p>
-        <div class="botones">
-          <button class="boton-cocina" data-c="salir">🏠 Volver a la casa</button>
-          <button class="boton-cocina" data-c="tienda" data-volver="fin">🛠️ Mejoras (🪙 ${p.propinas})</button>
-          <button class="boton-cocina principal" data-c="siguiente">Día ${p.dia} ➜</button>
-        </div>
+        <div class="rango-barra"><span>${nombreRango(rango)} · rango ${rango}${rango > this.rangoAntesFin ? ' <b>¡SUBISTE!</b>' : ''}</span><i style="--v:${avance}%"></i></div>
+        ${subio.length ? `<div class="nuevo">${subio.map((d) => `<p>✨ ${d.texto}</p>`).join('')}</div>` : ''}
+        ${premio}
+        <div class="botones">${botones}</div>
       </div>`, 'fin');
   }
 
   private siguienteDia() {
-    this.dia = this.progreso.dia;
-    this.azar = azarCon(this.dia * 7919 + (this.rol === 'el' ? 1 : 2));
-    this.t = 0;
-    this.tickets = [];
-    this.activo = null;
-    this.puntajes = [];
-    this.propinasDia = 0;
-    this.perfectosDia = 0;
-    this.xpDia = 0;
-    this.particulas = [];
-    this.estaciones = this.receta.crearEstaciones(this);
-    this.fondos.clear();
-    this.planear();
-    this.tarjetaDia();
-    this.estado = 'intro';
+    if (!this.anfitrion) return;
+    this.nuevoDia();
+    this.pintarCapa();
   }
 
   private salir() {
+    if (this.terminado) return;
+    this.sync?.salir();
     this.terminado = true;
-    cancelAnimationFrame(this.cuadro);
+    this.bucle?.detener();
+    this.bucle = null;
+    for (const q of this.quitarFondo.splice(0)) q();
     window.removeEventListener('resize', this.ajustar);
     this.raiz.classList.remove('visible');
-    setTimeout(() => this.raiz.remove(), 450);
+    setTimeout(() => {
+      this.raiz.remove();
+      soltarFondos();
+      this.fondos.clear();
+      this.lienzo.width = this.lienzo.height = 1;
+    }, 450);
     this.alSalir();
   }
 
@@ -651,14 +1156,20 @@ export class Motor {
   flotar(texto: string, x: number, y: number, color = '#ffffff', tam = 30) {
     this.flotantes.push({ en: this.actual, texto, x, y, vida: 1.4, color, tam });
   }
-  chispas(x: number, y: number, color = '#ffd23f', n = 12, tipo: Particula['tipo'] = 'estrella') {
-    for (let i = 0; i < n; i++) {
-      const a = Math.random() * Math.PI * 2, v = 150 + Math.random() * 250;
-      this.particulas.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 200, vida: 0.8 + Math.random() * 0.5, max: 1.2, color, tam: 6 + Math.random() * 6, tipo });
-    }
+  chispas(x: number, y: number, color = '#ffd23f', n = 12, tipo: 'estrella' | 'chispa' | 'corazon' | 'gota' | 'confeti' = 'estrella') {
+    if (tipo === 'gota') this.fx.salpicar(x, y, color, n);
+    else if (tipo === 'corazon') this.fx.corazones(x, y, n);
+    else this.fx.chispas(x, y, color, n, tipo);
   }
-  humo(x: number, y: number, color = '#8a8a8a') {
-    this.particulas.push({ x: x + (Math.random() - 0.5) * 30, y, vx: (Math.random() - 0.5) * 20, vy: -60 - Math.random() * 40, vida: 1.4, max: 1.4, color, tam: 10 + Math.random() * 10, tipo: 'humo' });
+  /** ¡Bien hecho! (chispitas, sonido y un letrerito). */
+  acierto(x: number, y: number, texto = '¡Perfecto!') {
+    this.fx.chispas(x, y, '#ffd23f', 14, 'estrella');
+    this.fx.brillos(x, y, 50, 30, 4);
+    this.flotar(texto, x, y - 30, '#fff3c4', 28);
+    sonidos.acierto();
+  }
+  humo(x: number, y: number, negro = false) {
+    this.fx.humo(x, y, negro);
   }
   /** Mensaje arriba (se ve unos segundos). */
   aviso(texto: string, seg = 2.6) {
@@ -670,7 +1181,7 @@ export class Motor {
   }
   /** Pistas del primer día (cada una una sola vez). */
   pistaUnaVez(clave: string, texto: string) {
-    if (this.dia > 1 || this.pistasVistas.has(clave)) return;
+    if (this.s.dia > 1 || this.pistasVistas.has(clave)) return;
     this.mostrarPista(texto, clave);
   }
 
@@ -682,18 +1193,25 @@ export class Motor {
   }
   /** Dónde se dibuja el tiquete escogido en las estaciones que lo usan. */
   get cajaTicket(): Rect {
-    return { x: this.W - 254, y: RIEL + 6, w: 244, h: this.H - RIEL - BARRA - 12 };
+    return { x: this.W - 254, y: RIEL + 8, w: 244, h: this.H - RIEL - BARRA - 16 };
   }
 
   // ------------------------------------------------------------------------------------------- Toques
   private tocar(tipo: 'bajar' | 'mover' | 'subir', x: number, y: number) {
-    if (this.estado === 'juicio') {
-      if (tipo === 'bajar' && this.juicio && this.juicio.t > 2.6) this.cerrarJuicio();
+    if (this.vista === 'intro') {
+      if (tipo === 'bajar' && this.introT > 1.4) this.terminarIntro();
       return;
     }
-    if (this.estado !== 'jugando') return;
+    const s = this.s;
+    if (s.fase === 'juicio') {
+      if (tipo === 'bajar' && s.juicio && this.reloj - this.juicioVisto.t0 > 2.8) {
+        if (this.anfitrion) this.cerrarJuicio();
+        else this.sync?.pedir('cerrar', { n: s.juicio.n });
+      }
+      return;
+    }
+    if (s.fase !== 'jugando' || this.esperandoOtro) return;
     if (tipo === 'bajar') {
-      // Riel de tiquetes
       if (y < RIEL) {
         const t = this.ticketEn(x, y);
         if (t) {
@@ -702,13 +1220,9 @@ export class Motor {
         }
         return;
       }
-      // Barra de estaciones
       if (y > this.H - BARRA) {
         const i = this.pestanaEn(x);
-        if (i !== null && i !== this.actual) {
-          this.actual = i;
-          sonidos.clic();
-        }
+        if (i !== null && i !== this.actual) this.irA(i);
         return;
       }
     }
@@ -719,507 +1233,183 @@ export class Motor {
     this.estaciones[this.actual - 1].toque(tipo, x, y);
   }
 
-  private rectTicket(i: number): Rect {
-    return { x: 12 + i * 112, y: 8, w: 104, h: 88 };
+  /** Cambia de estación con una transición suave (la anterior se desliza). */
+  irA(i: number) {
+    if (i === this.actual) return;
+    // Foto de cómo se veía (un solo lienzo que se reusa)
+    const c = this.fotoTransicion ?? (this.fotoTransicion = document.createElement('canvas'));
+    if (c.width !== this.lienzo.width || c.height !== this.lienzo.height) {
+      c.width = this.lienzo.width;
+      c.height = this.lienzo.height;
+    }
+    const gc = c.getContext('2d')!;
+    gc.clearRect(0, 0, c.width, c.height);
+    gc.drawImage(this.lienzo, 0, 0);
+    this.transicion = { lienzo: c, t: 0, dir: i > this.actual ? 1 : -1 };
+    this.actual = i;
+    sonidos.clic();
+  }
+  private fotoTransicion: HTMLCanvasElement | null = null;
+
+  rectTicket(i: number): Rect {
+    return { x: 12 + i * 114, y: 6, w: 106, h: RIEL - 14 };
   }
   private ticketEn(x: number, y: number) {
-    return this.tickets.find((_, i) => dentro(this.rectTicket(i), x, y)) ?? null;
+    return this.s.tickets.find((_, i) => dentro(this.rectTicket(i), x, y)) ?? null;
   }
-  private pestanas(): Rect[] {
+  pestanas(): Rect[] {
     const n = this.estaciones.length + 1;
-    const w = Math.min(250, (this.W - 40) / n);
+    const w = Math.min(240, (this.W - 300) / n);
     const x0 = (this.W - w * n) / 2;
-    return Array.from({ length: n }, (_, i) => ({ x: x0 + i * w + 6, y: this.H - BARRA + 10, w: w - 12, h: BARRA - 18 }));
+    return Array.from({ length: n }, (_, i) => ({ x: x0 + i * w + 6, y: this.H - BARRA + 10, w: w - 12, h: BARRA - 16 }));
   }
   private pestanaEn(x: number) {
     const i = this.pestanas().findIndex((r) => x >= r.x - 6 && x <= r.x + r.w + 6);
     return i >= 0 ? i : null;
   }
 
-  private botonTomar: Rect | null = null;
+  botonTomar: Rect | null = null;
   private toquePedidos(x: number, y: number) {
-    const e = this.invitados.find((i) => i.estado === 'fila' && Math.abs(i.x - this.puestoFila(0)) < 8);
-    if (e && dentro(this.botonTomar, x, y) && !this.invitados.some((i) => i.estado === 'pidiendo')) this.tomarPedido(e);
+    if (!this.botonTomar || !dentro(this.botonTomar, x, y)) return;
+    if (this.anfitrion) this.tomarPedido(this.rol);
+    else {
+      this.sync?.pedir('tomar');
+      this.botonTomar = null;
+      sonidos.papel();
+    }
   }
 
   // ------------------------------------------------------------------------------------------- Dibujo
   private dibujar() {
     const g = this.g;
     g.setTransform(1, 0, 0, 1, 0, 0);
+    if (this.vista === 'intro') {
+      g.setTransform(this.k, 0, 0, this.k, 0, 0);
+      P.dibujarIntro(this, g, this.introT);
+      return;
+    }
     // Fondo guardado de la estación que se ve (se pinta una sola vez)
     let f = this.fondos.get(this.actual);
-    if (!f) {
+    if (!f || f.width !== this.lienzo.width || f.height !== this.lienzo.height) {
       f = document.createElement('canvas');
       f.width = this.lienzo.width;
       f.height = this.lienzo.height;
       const gf = f.getContext('2d')!;
       gf.setTransform(this.k, 0, 0, this.k, 0, 0);
-      if (this.actual === 0) this.fondoPedidos(gf);
-      else this.estaciones[this.actual - 1].fondo(gf, this.W, this.H);
-      this.fondos.set(this.actual, f);
+      const listo = this.actual === 0 ? P.fondoPedidos(this, gf) : (this.estaciones[this.actual - 1].fondo(gf, this.W, this.H), P.fondoListo(this));
+      // Si las imágenes todavía están cargando, se vuelve a pintar en el siguiente cuadro
+      if (listo) this.fondos.set(this.actual, f);
     }
-    g.drawImage(f, 0, 0);
-    g.setTransform(this.k, 0, 0, this.k, 0, 0);
-    if (this.actual === 0) this.dibujarPedidos(g);
+    // Transición: la estación nueva entra deslizándose y la vieja se va desvaneciendo (riel y barra quietos)
+    const tr = this.transicion;
+    const ek = tr ? 1 - Math.pow(1 - Math.min(1, tr.t / 0.32), 3) : 1;
+    const dx = tr ? tr.dir * (1 - ek) * this.W * 0.22 : 0;
+    if (dx) {
+      g.fillStyle = '#2b1a10';
+      g.fillRect(0, 0, this.lienzo.width, this.lienzo.height);
+    }
+    g.drawImage(f, dx * this.k, 0);
+    g.setTransform(this.k, 0, 0, this.k, dx * this.k, 0);
+    if (this.actual === 0) P.dibujarPedidos(this, g);
     else {
       const e = this.estaciones[this.actual - 1];
       e.dibujar(g, this.reloj);
-      if (e.usaTicket) this.dibujarTicketGrande(g);
+      if (e.usaTicket) P.dibujarTicketGrande(this, g);
     }
-    this.dibujarRiel(g);
-    this.dibujarBarra(g);
-    for (const p of this.particulas) particula(g, p);
+    if (tr) {
+      const y0 = Math.floor(RIEL * this.k), y1 = Math.ceil((this.H - BARRA) * this.k);
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      g.globalAlpha = 1 - ek;
+      g.drawImage(tr.lienzo, 0, y0, tr.lienzo.width, y1 - y0, -tr.dir * ek * this.lienzo.width * 0.3, y0, tr.lienzo.width, y1 - y0);
+      g.globalAlpha = 1;
+      g.setTransform(this.k, 0, 0, this.k, 0, 0);
+    }
+    this.fx.dibujar(g);
     for (const fl of this.flotantes) {
       if (fl.en !== this.actual) continue;
       g.globalAlpha = Math.min(1, fl.vida * 1.5);
       texto(g, fl.texto, fl.x, fl.y, { tam: fl.tam, color: fl.color, borde: 'rgba(40,20,10,0.85)' });
       g.globalAlpha = 1;
     }
-    if (this.pista && this.reloj < this.pista.hasta) this.dibujarPista(g, this.pista.texto);
-    if (this.juicio) this.dibujarJuicio(g, this.juicio);
+    P.dibujarManoOtro(this, g);
+    P.dibujarRiel(this, g);
+    P.dibujarBarra(this, g);
+    if (this.pista && this.reloj < this.pista.hasta) P.dibujarPista(this, g, this.pista.texto);
+    if (this.s.fase === 'juicio' && this.s.juicio) P.dibujarJuicio(this, g, this.s.juicio, this.reloj - this.juicioVisto.t0);
   }
 
-  /** Pared de cocina profesional: azulejos blancos, acero y una campana (lo usan las estaciones). */
-  fondoCocina(g: G, o: { mesa?: number } = {}) {
-    const { W, H } = this;
-    const mesa = o.mesa ?? H - BARRA - 150;
-    g.fillStyle = '#e9eef0';
-    g.fillRect(0, 0, W, H);
-    // Azulejos tipo metro
-    const aw = 64, ah = 32;
-    for (let y = 0; y < mesa; y += ah) {
-      const off = (y / ah) % 2 ? aw / 2 : 0;
-      for (let x = -aw; x < W + aw; x += aw) {
-        g.fillStyle = lineal(g, 0, y, 0, y + ah, [[0, '#ffffff'], [1, '#e3e9ec']]);
-        rr(g, x + off + 2, y + 2, aw - 4, ah - 4, 5);
-        g.fill();
-      }
-    }
-    // Franja de color del restaurante
-    g.fillStyle = this.receta.tema.acento;
-    g.fillRect(0, mesa - 86, W, 14);
-    g.fillStyle = aclarar(this.receta.tema.acento, 0.4);
-    g.fillRect(0, mesa - 72, W, 4);
-    // Mesón de acero
-    g.fillStyle = lineal(g, 0, mesa, 0, H, [[0, '#d5dadd'], [0.08, '#b9c0c4'], [0.1, '#8f979c'], [0.12, '#c7cdd1'], [1, '#9aa2a7']]);
-    g.fillRect(0, mesa, W, H - mesa);
-    g.fillStyle = 'rgba(255,255,255,0.5)';
-    g.fillRect(0, mesa + 2, W, 3);
-    for (let x = 30; x < W; x += 140) {
-      g.fillStyle = 'rgba(255,255,255,0.12)';
-      g.fillRect(x, mesa + 16, 60, H - mesa);
-    }
+  /** Dibuja un botón de la estación (los de las estaciones usan el mismo estilo). */
+  boton(r: Rect, txt: string, color = '#ffb627', o: { tam?: number; color?: string; borde?: string; apagado?: boolean } = {}) {
+    boton(this.g, r, { color, apagado: o.apagado });
+    texto(this.g, txt, r.x + r.w / 2, r.y + r.h / 2 + 2, { tam: o.tam ?? 26, color: o.color ?? '#4a2a10', borde: o.borde, max: r.w - 12 });
   }
-
-  private fondoPedidos(g: G) {
-    const { W, H } = this;
-    const tema = this.receta.tema;
-    const piso = H - BARRA - 170;
-    // Pared
-    g.fillStyle = lineal(g, 0, 0, 0, piso, [[0, aclarar(tema.pared, 0.2)], [1, tema.pared]]);
-    g.fillRect(0, 0, W, piso);
-    // Papel de colgadura con rayitas
-    g.fillStyle = conAlfa('#ffffff', 0.18);
-    for (let x = 0; x < W; x += 46) g.fillRect(x, 0, 18, piso);
-    // Ventanas con cielo y cortinas
-    for (const vx of [W * 0.12, W * 0.74]) {
-      const vw = 200, vh = 170, vy = RIEL + 60;
-      g.fillStyle = '#6a4632';
-      rr(g, vx - 10, vy - 10, vw + 20, vh + 20, 12);
-      g.fill();
-      g.fillStyle = lineal(g, 0, vy, 0, vy + vh, [[0, '#8fd3ff'], [1, '#dff4ff']]);
-      g.fillRect(vx, vy, vw, vh);
-      g.fillStyle = 'rgba(255,255,255,0.85)';
-      elipse(g, vx + 60, vy + 50, 34, 14);
-      g.fill();
-      elipse(g, vx + 140, vy + 90, 28, 11);
-      g.fill();
-      g.fillStyle = '#6a4632';
-      g.fillRect(vx + vw / 2 - 4, vy, 8, vh);
-      g.fillRect(vx, vy + vh / 2 - 4, vw, 8);
-      g.fillStyle = aclarar(tema.acento, 0.2);
-      for (const lado of [-1, 1]) {
-        g.beginPath();
-        const x0 = lado < 0 ? vx - 18 : vx + vw + 18;
-        g.moveTo(x0, vy - 14);
-        g.quadraticCurveTo(x0 - lado * 70, vy + vh * 0.5, x0 - lado * 20, vy + vh + 20);
-        g.lineTo(x0, vy + vh + 20);
-        g.closePath();
-        g.fill();
-      }
-    }
-    // Tablero del menú
-    const mx = W * 0.36, my = RIEL + 40, mw = W * 0.28, mh = 150;
-    g.fillStyle = '#7a5236';
-    rr(g, mx - 10, my - 10, mw + 20, mh + 20, 14);
-    g.fill();
-    g.fillStyle = '#2f3b36';
-    rr(g, mx, my, mw, mh, 8);
-    g.fill();
-    texto(g, this.receta.titulo(this.rol), mx + mw / 2, my + 40, { tam: 34, color: '#fff7e6', max: mw - 30 });
-    texto(g, `Día ${this.dia} · hecho con amor`, mx + mw / 2, my + 88, { tam: 22, color: '#ffd9a0', peso: 700 });
-    texto(g, '♥ ★ ♥', mx + mw / 2, my + 122, { tam: 22, color: '#ff9fb4' });
-    // Lámparas colgantes con luz
-    for (const lx of [W * 0.3, W * 0.7]) {
-      g.strokeStyle = '#3b2a22';
-      g.lineWidth = 3;
-      g.beginPath();
-      g.moveTo(lx, RIEL);
-      g.lineTo(lx, RIEL + 30);
-      g.stroke();
-      g.fillStyle = radial(g, lx, RIEL + 60, 10, 200, [[0, 'rgba(255,230,160,0.45)'], [1, 'rgba(255,230,160,0)']]);
-      g.fillRect(lx - 200, RIEL, 400, 300);
-      g.fillStyle = tema.acento;
-      g.beginPath();
-      g.moveTo(lx - 34, RIEL + 56);
-      g.quadraticCurveTo(lx, RIEL + 14, lx + 34, RIEL + 56);
-      g.closePath();
-      g.fill();
-    }
-    // Piso de baldosas
-    g.fillStyle = tema.piso;
-    g.fillRect(0, piso, W, H - piso);
-    for (let x = 0; x < W; x += 60)
-      for (let y = piso; y < H; y += 40) if (((x / 60) + (y - piso) / 40) % 2 < 1) {
-        g.fillStyle = oscurecer(tema.piso, 0.08);
-        g.fillRect(x, y, 60, 40);
-      }
-    g.fillStyle = 'rgba(0,0,0,0.12)';
-    g.fillRect(0, piso, W, 8);
-    // Mesitas de la zona de espera
-    for (let i = 0; i < 3; i++) {
-      const tx = 150 + i * 190, ty = piso + 40;
-      sombra(g, tx, ty + 60, 80, 16, 0.3);
-      g.fillStyle = '#8a5a3c';
-      g.fillRect(tx - 6, ty, 12, 60);
-      g.fillStyle = lineal(g, 0, ty - 14, 0, ty + 10, [[0, '#fff7ee'], [1, '#ead7c3']]);
-      elipse(g, tx, ty, 70, 18);
-      g.fill();
-      g.fillStyle = tema.acento;
-      elipse(g, tx, ty - 8, 10, 10);
-      g.fill();
-    }
-  }
-
-  private dibujarPedidos(g: G) {
-    const { W, H } = this;
-    const piso = H - BARRA - 170;
-    // Invitados esperando (atrás, chiquitos) y la fila (adelante)
-    const orden = [...this.invitados].filter((e) => ['fila', 'pidiendo', 'esperando', 'saliendo'].includes(e.estado)).sort((a, b) => (a.estado === 'esperando' ? 0 : 1) - (b.estado === 'esperando' ? 0 : 1));
-    const my = H - BARRA - 96;
-    for (const e of orden) {
-      const lejos = e.estado === 'esperando';
-      const primero = !lejos && Math.abs(e.x - this.puestoFila(0)) < 30;
-      this.dibujarInvitado(g, e, e.x, lejos ? piso + 70 : my + 12, lejos ? 190 : primero ? 300 : 250);
-    }
-    // Mostrador
-    g.fillStyle = lineal(g, 0, my, 0, H - BARRA, [[0, '#9a6340'], [1, '#6e4128']]);
-    g.fillRect(0, my + 18, W, H - BARRA - my);
-    g.fillStyle = lineal(g, 0, my, 0, my + 22, [[0, '#f2e4d4'], [1, '#d6c1ab']]);
-    rr(g, -10, my, W + 20, 24, 8);
-    g.fill();
-    for (let x = 40; x < W; x += 180) {
-      g.fillStyle = 'rgba(0,0,0,0.1)';
-      g.fillRect(x, my + 34, 120, 40);
-    }
-    // Campanita y frasco de propinas
-    const cx = W * 0.5 - 190;
-    g.fillStyle = '#c9a24a';
-    g.beginPath();
-    g.arc(cx, my + 4, 26, Math.PI, 0);
-    g.fill();
-    g.fillStyle = '#8a6a2a';
-    g.fillRect(cx - 32, my + 2, 64, 6);
-    const jx = W - 80;
-    g.fillStyle = 'rgba(220,240,255,0.55)';
-    rr(g, jx - 30, my - 58, 60, 66, 12);
-    g.fill();
-    const lleno = Math.min(1, this.propinasDia / 40);
-    g.fillStyle = '#f2b52a';
-    rr(g, jx - 26, my + 4 - 58 * lleno, 52, 58 * lleno, 8);
-    g.fill();
-    texto(g, `🪙 ${this.propinasDia}`, jx, my - 76, { tam: 24, color: '#fff', borde: '#6e4128' });
-    // Botón de tomar el pedido
-    const e = this.invitados.find((i) => i.estado === 'fila' && Math.abs(i.x - this.puestoFila(0)) < 8);
-    const pidiendo = this.invitados.find((i) => i.estado === 'pidiendo');
-    this.botonTomar = null;
-    if (e && !pidiendo) {
-      const r = { x: W * 0.5 - 470, y: my - 110, w: 260, h: 74 };
-      this.botonTomar = r;
-      const lat = 1 + Math.sin(this.reloj * 5) * 0.03;
-      g.save();
-      g.translate(r.x + r.w / 2, r.y + r.h / 2);
-      g.scale(lat, lat);
-      g.translate(-(r.x + r.w / 2), -(r.y + r.h / 2));
-      boton(g, r, { color: '#ffb627' });
-      texto(g, '📝 Tomar pedido', r.x + r.w / 2, r.y + r.h / 2 + 2, { tam: 30, color: '#4a2a10' });
-      g.restore();
-    }
-    // Pidiendo: el tiquete se va escribiendo en un globo
-    if (pidiendo) {
-      // Lo que pide se va escribiendo en el tiquete, de arriba abajo
-      const k = Math.min(1, (this.t - pidiendo.tomadoEn) / 0.4);
-      const r = { x: W * 0.5 + 150, y: RIEL + 14, w: 244, h: H - RIEL - BARRA - 120 };
-      g.save();
-      g.globalAlpha = k;
-      g.translate(r.x, r.y + r.h);
-      g.scale(0.6 + 0.4 * k, 0.6 + 0.4 * k);
-      g.translate(-r.x, -(r.y + r.h));
-      this.papel(g, r);
-      texto(g, `#${this.numero + 1} · ${pidiendo.inv.nombre}`, r.x + r.w / 2, r.y + 22, { tam: 19, color: '#8a4a2a', max: r.w - 16 });
-      g.beginPath();
-      g.rect(r.x, r.y + 36, r.w, (r.h - 36) * Math.min(1, (this.t - pidiendo.tomadoEn) / 1.9));
-      g.clip();
-      if (pidiendo.pedido) this.receta.dibujarTicket(g, pidiendo.pedido, { x: r.x, y: r.y + 38, w: r.w, h: r.h - 42 }, this);
-      g.restore();
-    }
-    // Globos de lo que dicen
-    for (const e2 of this.invitados) {
-      if (!e2.frase || !['fila', 'pidiendo', 'esperando'].includes(e2.estado)) continue;
-      const lejos = e2.estado === 'esperando';
-      this.globo(g, e2.frase.texto, e2.x, lejos ? piso + 70 - 200 : my + 12 - 300);
-    }
-    if (!this.invitados.some((i) => ['fila', 'pidiendo'].includes(i.estado)) && this.invitados.some((i) => i.estado === 'fuera'))
-      texto(g, 'Esperando al próximo invitado…', W * 0.5, my - 60, { tam: 26, color: '#fff', borde: 'rgba(60,30,20,0.7)' });
-  }
-
-  private globo(g: G, t: string, x: number, y: number) {
-    g.font = '800 22px Nunito, system-ui, sans-serif';
-    const w = Math.min(360, g.measureText(t).width + 36);
-    const bx = Math.max(10, Math.min(this.W - w - 10, x - w / 2));
-    g.fillStyle = 'rgba(255,255,255,0.96)';
-    rr(g, bx, y - 50, w, 48, 18);
-    g.fill();
-    g.beginPath();
-    g.moveTo(x - 10, y - 4);
-    g.lineTo(x, y + 14);
-    g.lineTo(x + 12, y - 4);
-    g.fill();
-    texto(g, t, bx + w / 2, y - 26, { tam: 22, color: '#4a2a10', max: w - 24 });
-  }
-
-  /** Dibuja a un invitado con los pies en (x, y) y alto `h`, respirando. */
-  private dibujarInvitado(g: G, e: EnDia, x: number, y: number, h: number) {
-    const img = this.spriteDe(e.inv, e.animo);
-    if (!img.complete || !img.naturalWidth) return;
-    const camina = Math.abs(e.meta - e.x) > 2;
-    const resp = camina ? Math.abs(Math.sin(this.reloj * 10)) * 10 : Math.sin(this.reloj * 2.2 + e.llega) * 3;
-    const w = (img.naturalWidth / img.naturalHeight) * h;
-    sombra(g, x, y, w * 0.42, 16, 0.3);
-    g.drawImage(img, x - w / 2, y - h - resp, w, h + resp * 0.3);
-    if (e.animo === 'bravo' && e.estado !== 'saliendo') {
-      // Vapor de la rabia
-      const k = (this.reloj * 1.5) % 1;
-      g.globalAlpha = 1 - k;
-      texto(g, '💢', x + w * 0.32, y - h * 0.92 - k * 20, { tam: 34 });
-      g.globalAlpha = 1;
-    }
-    if (e.inv.especial === 'pareja' && e.estado !== 'saliendo') texto(g, '💖', x - w * 0.34, y - h * 0.9 + Math.sin(this.reloj * 3) * 6, { tam: 30 });
-    if (e.ticket && e.estado === 'esperando') {
-      g.fillStyle = '#fff8ea';
-      rr(g, x - 24, y - h - 44, 48, 34, 10);
-      g.fill();
-      texto(g, `#${e.ticket.numero}`, x, y - h - 27, { tam: 20, color: '#8a4a2a' });
-    }
-  }
-
-  /** Hoja de tiquete (papel con muesca). */
-  papel(g: G, r: Rect, resaltado = false) {
-    g.save();
-    g.shadowColor = resaltado ? 'rgba(255,182,39,0.9)' : 'rgba(60,30,20,0.3)';
-    g.shadowBlur = resaltado ? 18 : 8;
-    g.shadowOffsetY = 3;
-    g.fillStyle = '#fffaf0';
-    rr(g, r.x, r.y, r.w, r.h, 8);
-    g.fill();
-    g.restore();
-    g.fillStyle = '#f0e4d2';
-    g.fillRect(r.x, r.y, r.w, 6);
-    g.strokeStyle = 'rgba(200,170,140,0.35)';
-    g.lineWidth = 1;
-    for (let y = r.y + 30; y < r.y + r.h - 6; y += 22) {
-      g.beginPath();
-      g.moveTo(r.x + 8, y);
-      g.lineTo(r.x + r.w - 8, y);
-      g.stroke();
-    }
-  }
-
-  private dibujarRiel(g: G) {
-    const { W } = this;
-    g.fillStyle = lineal(g, 0, 0, 0, RIEL, [[0, '#4a3a33'], [1, '#2e241f']]);
-    g.fillRect(0, 0, W, RIEL);
-    g.fillStyle = lineal(g, 0, 2, 0, 14, [[0, '#dfe5e8'], [1, '#8e979c']]);
-    g.fillRect(0, 2, W, 10);
-    this.tickets.forEach((t, i) => {
-      const r = this.rectTicket(i);
-      const sel = t === this.activo;
-      const y = r.y + (sel ? 4 : 0);
-      this.papel(g, { ...r, y }, sel);
-      g.fillStyle = '#c9ccd0';
-      g.fillRect(r.x + r.w / 2 - 12, 2, 24, 14);
-      texto(g, `#${t.numero}`, r.x + 24, y + 24, { tam: 20, color: '#8a4a2a' });
-      // Carita del invitado
-      const img = this.spriteDe(t.inv.inv, 'feliz');
-      if (img.complete && img.naturalWidth) {
-        g.save();
-        elipse(g, r.x + r.w - 28, y + 30, 22, 22);
-        g.clip();
-        const iw = img.naturalWidth, ih = img.naturalHeight;
-        const sw = iw * 0.72, sh = sw;
-        g.drawImage(img, iw * 0.14, ih * 0.1, sw, sh, r.x + r.w - 52, y + 6, 48, 48);
-        g.restore();
-      }
-      const v = this.puntajeEspera(t.inv, this.t);
-      g.fillStyle = v >= 70 ? '#5cc26a' : v >= 40 ? '#f2b52a' : '#e8434f';
-      rr(g, r.x + 10, y + r.h - 20, (r.w - 20) * (v / 100), 10, 5);
-      g.fill();
-      texto(g, t.inv.inv.nombre.split(/[ ,]/)[0], r.x + r.w / 2, y + 62, { tam: 16, color: '#6a4a3a', peso: 700, max: r.w - 12 });
-    });
-    if (!this.tickets.length) texto(g, 'Aquí se cuelgan los pedidos', 24, RIEL / 2 + 6, { tam: 20, color: 'rgba(255,255,255,0.45)', alinear: 'left', peso: 700 });
-    // Día y propinas a la derecha, junto a la carita del chef (cambia con lo que pasa)
-    const hechos = this.invitados.filter((e) => ['comiendo', 'saliendo', 'ido'].includes(e.estado)).length;
-    texto(g, `Día ${this.dia} · ${hechos}/${this.invitados.length}`, W - 190, 38, { tam: 22, color: '#fff', alinear: 'right' });
-    texto(g, `🪙 ${this.propinasDia}`, W - 190, 72, { tam: 22, color: '#ffd46b', alinear: 'right' });
-    const pose = this.reloj < this.caraChef.hasta ? this.caraChef.pose : 'concentrado';
-    const img = this.img(`./cocina/${this.rol}_chef_${pose}.webp`);
-    g.fillStyle = '#fff3e4';
-    elipse(g, W - 142, RIEL / 2, 44, 44);
-    g.fill();
-    if (img.complete && img.naturalWidth) {
-      g.save();
-      elipse(g, W - 142, RIEL / 2, 40, 40);
-      g.clip();
-      const iw = img.naturalWidth, ih = img.naturalHeight;
-      const w = 124, h = (ih / iw) * w;
-      g.drawImage(img, W - 142 - w / 2, RIEL / 2 - h * 0.5, w, h);
-      g.restore();
-    }
-  }
-
-  private dibujarBarra(g: G) {
-    const { W, H } = this;
-    g.fillStyle = lineal(g, 0, H - BARRA, 0, H, [[0, '#3a2c26'], [1, '#231a16']]);
-    g.fillRect(0, H - BARRA, W, BARRA);
-    const nombres = [{ nombre: 'Pedidos', icono: '🧾' }, ...this.estaciones.map((e) => ({ nombre: e.nombre, icono: e.icono }))];
-    const hayFila = this.invitados.some((e) => e.estado === 'fila');
-    this.pestanas().forEach((r, i) => {
-      const act = i === this.actual;
-      const alerta = i === 0 ? hayFila : !!this.estaciones[i - 1].alerta?.();
-      boton(g, r, { color: act ? '#ffb627' : '#fff3e4', hundido: act, radio: 18 });
-      texto(g, `${nombres[i].icono} ${nombres[i].nombre}`, r.x + r.w / 2, r.y + r.h / 2 + (act ? 4 : 0), { tam: 25, color: '#4a2a10', max: r.w - 16 });
-      if (alerta && !act) {
-        const k = 0.6 + 0.4 * Math.sin(this.reloj * 8);
-        g.fillStyle = `rgba(232,67,79,${k})`;
-        elipse(g, r.x + r.w - 10, r.y + 8, 11, 11);
-        g.fill();
-      }
-    });
-  }
-
-  private dibujarTicketGrande(g: G) {
-    const r = this.cajaTicket;
-    g.fillStyle = 'rgba(40,30,25,0.18)';
-    rr(g, r.x - 4, r.y - 2, r.w + 8, r.h + 6, 12);
-    g.fill();
-    if (!this.activo) {
-      this.papel(g, r);
-      texto(g, 'Toca un pedido', r.x + r.w / 2, r.y + r.h / 2 - 20, { tam: 24, color: '#9a7a68' });
-      texto(g, 'del riel de arriba', r.x + r.w / 2, r.y + r.h / 2 + 14, { tam: 24, color: '#9a7a68' });
-      return;
-    }
-    this.papel(g, r);
-    texto(g, `#${this.activo.numero} · ${this.activo.inv.inv.nombre}`, r.x + r.w / 2, r.y + 22, { tam: 19, color: '#8a4a2a', max: r.w - 16 });
-    this.receta.dibujarTicket(g, this.activo.pedido, { x: r.x, y: r.y + 38, w: r.w, h: r.h - 42 }, this);
-  }
-
-  private dibujarPista(g: G, t: string) {
-    g.font = '800 24px Nunito, system-ui, sans-serif';
-    const w = Math.min(this.W - 40, g.measureText(t).width + 50);
-    const x = (this.W - w) / 2, y = RIEL + 12;
-    g.fillStyle = 'rgba(40,24,16,0.85)';
-    rr(g, x, y, w, 46, 23);
-    g.fill();
-    texto(g, t, this.W / 2, y + 24, { tam: 24, color: '#fff3d6', max: w - 30 });
-  }
-
-  private dibujarJuicio(g: G, j: Juicio) {
-    const { W, H } = this;
-    const a = Math.min(1, j.t / 0.3);
-    g.fillStyle = `rgba(30,18,12,${0.62 * a})`;
-    g.fillRect(0, 0, W, H);
-    const pw = Math.min(W - 60, 1180), ph = H - 80;
-    const px = (W - pw) / 2, py = 40 + (1 - a) * 60;
-    g.fillStyle = lineal(g, 0, py, 0, py + ph, [[0, '#fff8ee'], [1, '#f3e2cc']]);
-    rr(g, px, py, pw, ph, 28);
-    g.fill();
-    // El plato
-    const cx = px + pw * 0.22, cy = py + ph * 0.55;
-    this.receta.dibujarPlato(g, j.ticket, cx, cy, 1, this);
-    texto(g, j.ticket.inv.inv.nombre, cx, py + 44, { tam: 28, color: '#6a3a22', max: pw * 0.4 });
-    // Las barras de cada parte
-    const bx = px + pw * 0.42, bw = pw * 0.24;
-    j.cats.forEach((c, i) => {
-      const k = Math.max(0, Math.min(1, (j.t - 0.4 - i * 0.3) / 0.5));
-      const y = py + 70 + i * 74;
-      texto(g, c.nombre, bx, y, { tam: 24, color: '#5a3a28', alinear: 'left' });
-      g.fillStyle = '#e8d8c6';
-      rr(g, bx, y + 18, bw, 24, 12);
-      g.fill();
-      const v = c.valor * k;
-      g.fillStyle = v >= 70 ? '#5cc26a' : v >= 40 ? '#f2b52a' : '#e8434f';
-      rr(g, bx, y + 18, Math.max(24, bw * (v / 100)), 24, 12);
-      g.fill();
-      texto(g, `${Math.round(v)}%`, bx + bw + 14, y + 30, { tam: 24, color: '#5a3a28', alinear: 'left' });
-    });
-    // Total y propina
-    const k = Math.max(0, Math.min(1, (j.t - 0.6 - j.cats.length * 0.3) / 0.5));
-    if (k > 0) {
-      const ty = py + ph - 80;
-      texto(g, `${Math.round(j.total * k)}%`, bx + bw * 0.3, ty, { tam: 64 * (0.8 + 0.2 * k), color: j.total >= 70 ? '#2f8a3a' : j.total >= 50 ? '#c07a10' : '#c0303c' });
-      texto(g, `🪙 +${j.propina}`, bx + bw * 0.95, ty, { tam: 40, color: '#b07a10' });
-    }
-    // El invitado reacciona
-    const img = this.spriteDe(j.ticket.inv.inv, k > 0 ? j.animo : 'espera');
-    const ix = px + pw * 0.87, iy = py + ph - 30;
-    if (img.complete && img.naturalWidth) {
-      const h = ph * 0.64 * (k > 0 && j.animo === 'encantado' ? 1 + Math.abs(Math.sin(j.t * 6)) * 0.04 : 1);
-      const w = (img.naturalWidth / img.naturalHeight) * h;
-      sombra(g, ix, iy, w * 0.4, 18, 0.3);
-      g.drawImage(img, ix - w / 2, iy - h, w, h);
-    }
-    if (k > 0) {
-      this.globo(g, j.frase, ix, py + 90);
-      if (j.t < 3.5 && j.total >= 90 && Math.random() < 0.3) this.chispas(ix, py + 200, j.ticket.inv.inv.especial === 'pareja' ? '#ff6b8f' : '#ffd23f', 2, j.ticket.inv.inv.especial === 'pareja' ? 'corazon' : 'estrella');
-    }
-    if (j.t > 2.6) texto(g, 'Toca para seguir', W / 2, py + ph - 20, { tam: 20, color: '#9a7a68', peso: 700 });
+  /** Rectángulo redondeado con relleno (atajo). */
+  caja(r: Rect, color: string, radio = 14) {
+    this.g.fillStyle = color;
+    rr(this.g, r.x, r.y, r.w, r.h, radio);
+    this.g.fill();
   }
 
   /** Para las pruebas. */
-  probar(que: 'llegar' | 'tomar' | 'fin', v = 0) {
-    if (que === 'llegar') for (const e of this.invitados) if (e.estado === 'fuera') e.llega = Math.min(e.llega, this.t + v);
+  probar(que: 'llegar' | 'tomar' | 'fin' | 'jugar' | 'intro' | 'juicio' | 'avanzar', v = 0) {
+    if (que === 'intro') this.terminarIntro();
+    // Adelanta el juego `v` segundos de una (a 30 cuadros, sin dibujar) y pinta el resultado
+    if (que === 'avanzar') {
+      for (let i = 0; i < Math.round(v * 30); i++) {
+        this.reloj += 1 / 30;
+        this.paso(1 / 30);
+      }
+      this.dibujar();
+      return;
+    }
+    if (que === 'jugar') {
+      this.terminarIntro();
+      if (this.anfitrion) this.jugar();
+      else this.sync?.pedir('jugar');
+    }
+    if (!this.anfitrion) {
+      if (que === 'tomar') this.sync?.pedir('tomar');
+      return;
+    }
+    if (que === 'llegar') for (const e of this.s.invitados) if (e.estado === 'fuera') e.llega = Math.min(e.llega, this.s.t + v);
     if (que === 'tomar') {
-      const e = this.invitados.find((i) => i.estado === 'fila');
+      const e = this.s.invitados.find((i) => i.estado === 'fila');
       if (e) {
-        e.x = this.puestoFila(0);
-        this.tomarPedido(e);
+        this.tomarPedido(this.rol);
         this.colgarTicket(e);
       }
     }
+    if (que === 'juicio' && this.s.juicio) this.cerrarJuicio();
     if (que === 'fin') {
-      for (const e of this.invitados) e.estado = 'ido';
-      if (!this.puntajes.length) this.puntajes.push(80);
+      for (const e of this.s.invitados) e.estado = 'ido';
+      if (!this.s.puntajes.length) this.s.puntajes.push(80);
+      this.finDia();
     }
   }
+
+  /** Estado para las pruebas (sin las obras). */
+  resumen() {
+    return {
+      fase: this.s.fase, n: this.s.n, dia: this.s.dia, t: Math.round(this.s.t * 10) / 10, tickets: this.s.tickets.map((t) => t.id), propinas: this.s.propinas,
+      puntajes: [...this.s.puntajes], invitados: this.s.invitados.map((e) => e.estado), juntos: this.juntos, anfitrion: this.anfitrion,
+      conectado: this.sync?.conectado ?? null, actual: this.actual, activo: this.activoId, vista: this.vista, stats: this.sync?.stats ?? null,
+    };
+  }
 }
+
+/** Escenas enganchadas al final del día (las registra otro módulo con `cocina.alTerminarDia.push(...)`). */
+const ganchosFin: NonNullable<OpcionesCocina['alTerminarDia']>[] = [];
 
 /** Abre la cocina con la receta; al volver a la casa se resuelve. */
 export function abrirCocina(receta: Receta, o: OpcionesCocina): Promise<void> {
   return new Promise((listo) => {
-    const m = new Motor(receta, o, listo);
+    const m = new Motor(receta, o, () => {
+      if (cocina.actual === m) cocina.actual = null;
+      listo();
+    });
     cocina.actual = m;
     (window as any).__cocinaMotor = m;
     m.empezar();
   });
 }
-export const cocina: { actual: Motor | null } = { actual: null };
+export const cocina: { actual: Motor | null; alTerminarDia: typeof ganchosFin } = { actual: null, alTerminarDia: ganchosFin };

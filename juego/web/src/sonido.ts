@@ -1,4 +1,5 @@
 // Efectos de sonido sintetizados (sin archivos): se activan con el primer toque, como exige el navegador.
+import { alPausar, alReanudar, enPausa } from './segundo_plano';
 let ctx: AudioContext | null = null;
 let silencio = false;
 try {
@@ -49,6 +50,11 @@ export function suspender() {
 
 export function silenciado() {
   return silencio;
+}
+
+/** El contexto de audio y la salida general (para minijuegos con su propia música, como lavarse la cara). */
+export function contextoAudio(): { ctx: AudioContext; salida: GainNode } | null {
+  return ctx && maestro ? { ctx, salida: maestro } : null;
 }
 export function alternar() {
   silencio = !silencio;
@@ -321,6 +327,38 @@ let pasoActual = 0;
 let proximo = 0;
 let bpm = 100;
 
+/** El reloj de la música: cada 30 ms programa las notas de los próximos 0,2 s. */
+function arrancarReloj() {
+  if (reloj || !ctx || !musicaPendiente || enPausa()) return;
+  proximo = ctx.currentTime + 0.1;
+  reloj = setInterval(() => {
+    if (!ctx) return;
+    const corchea = 60 / bpm / 2;
+    // Si el reloj se atrasó (celular lento o pestaña dormida), se salta lo perdido en vez de tocarlo todo junto
+    if (proximo < ctx.currentTime - 0.3) proximo = ctx.currentTime + 0.05;
+    while (proximo < ctx.currentTime + 0.2) {
+      // Un poco de swing: la corchea del contratiempo llega tarde
+      const swing = pasoActual % 2 ? corchea * 0.08 : 0;
+      if (!musicaApagada && !musicaCallada && !silencio) (cancion === 'hogar' ? tocarPasoHogar : cancion === 'mesa' ? tocarPasoMesa : tocarPaso)(pasoActual, proximo + (cancion === 'cumbia' ? swing : 0), corchea);
+      proximo += corchea;
+      pasoActual = (pasoActual + 1) % 128;
+    }
+  }, 30);
+}
+
+// En segundo plano (otra app, pantalla bloqueada) no suena nada y el reloj de la música no despierta al celular;
+// al volver, la música sigue donde iba (sin tocar de golpe lo que se perdió)
+alPausar(() => {
+  if (reloj) clearInterval(reloj);
+  reloj = null;
+  suspender();
+});
+alReanudar(() => {
+  if (!ctx) return;
+  if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
+  arrancarReloj();
+});
+
 export const musica = {
   /** Arranca (o cambia de ambiente): en el menú suena más bajito. */
   iniciar(modo: 'menu' | 'juego', tempo = 100, cual: 'cumbia' | 'hogar' | 'mesa' = 'cumbia') {
@@ -329,21 +367,7 @@ export const musica = {
     cancion = cual;
     if (!ctx || !salidaMusica) return;
     salidaMusica.gain.setTargetAtTime(volumenMusica(), ctx.currentTime, 0.4);
-    if (reloj) return;
-    proximo = ctx.currentTime + 0.1;
-    reloj = setInterval(() => {
-      if (!ctx) return;
-      const corchea = 60 / bpm / 2;
-      // Si el reloj se atrasó (celular lento o pestaña dormida), se salta lo perdido en vez de tocarlo todo junto
-      if (proximo < ctx.currentTime - 0.3) proximo = ctx.currentTime + 0.05;
-      while (proximo < ctx.currentTime + 0.2) {
-        // Un poco de swing: la corchea del contratiempo llega tarde
-        const swing = pasoActual % 2 ? corchea * 0.08 : 0;
-        if (!musicaApagada && !musicaCallada && !silencio) (cancion === 'hogar' ? tocarPasoHogar : cancion === 'mesa' ? tocarPasoMesa : tocarPaso)(pasoActual, proximo + (cancion === 'cumbia' ? swing : 0), corchea);
-        proximo += corchea;
-        pasoActual = (pasoActual + 1) % 128;
-      }
-    }, 30);
+    arrancarReloj();
   },
   /** Más rápido cuando falta poco para cerrar. */
   tempo(t: number) {

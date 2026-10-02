@@ -9,6 +9,7 @@ import { type Anclas, Efectos } from '../reacciones/efectos';
 import { Muneco } from '../reacciones/muneco';
 import type { Final, Suceso } from './tipos';
 import { vigilarContexto } from '../contexto';
+import { cuadros } from '../segundo_plano';
 
 export class Escenario {
   private renderer: THREE.WebGLRenderer;
@@ -20,7 +21,8 @@ export class Escenario {
   director: Director;
   private cargando: Promise<void> | null = null;
   private yo: Rol = 'el';
-  private ultimo = 0;
+  /** Tiempo juntado hasta el próximo cuadro (se dibuja a 30 por segundo: igual de fluido y el celular no se calienta). */
+  private acumulado = 0;
   private puntos: Record<Rol, number> = { el: 0, ella: 0 };
   private anclas: Record<Rol, Anclas>;
 
@@ -51,7 +53,8 @@ export class Escenario {
     this.anclas = { el: this.anclasDe('el'), ella: this.anclasDe('ella') };
     this.director = new Director(this.m, this.efectos, this.anclas, rapido);
     window.addEventListener('resize', () => this.ajustar());
-    requestAnimationFrame((t) => this.cuadro(t));
+    // (en segundo plano el bucle se detiene solo y vuelve sin salto de tiempo)
+    cuadros((dt) => this.cuadro(dt), 0.05);
   }
 
   private anclasDe(rol: Rol): Anclas {
@@ -126,10 +129,11 @@ export class Escenario {
     }
   }
 
-  private cuadro(ms: number) {
-    requestAnimationFrame((t) => this.cuadro(t));
-    const dt = Math.min(0.05, (ms - (this.ultimo || ms)) / 1000) * this.rapido;
-    this.ultimo = ms;
+  private cuadro(dtReal: number) {
+    this.acumulado += dtReal;
+    if (this.acumulado < 1 / 32) return;
+    const dt = Math.min(0.05, this.acumulado) * this.rapido;
+    this.acumulado = 0;
     if (!this.m.el.listo) return;
     // La actuación sigue aunque no se vea (así el final y el saludo siempre terminan)
     if (!this.congelado) this.paso(dt);

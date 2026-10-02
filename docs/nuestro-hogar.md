@@ -75,7 +75,7 @@ Cada minijuego da bronce, plata y oro con lo mejor de los dos (`src/casa/trofeos
 | Cien Puertas | 10 | 50 | 100 puertas | `cien-puertas` |
 | Juegos de mesa | 1 | 10 | 30 partidas ganadas | `nuestro-hogar-victorias` (lo cuenta `mesa.html`) |
 | Retrete espacial | 15 | 45 | 90 segundos | `casa.retrete` |
-| Lavarse la cara | 80 | 300 | 700 gérmenes en una lavada | `casa.lavado` |
+| Lavarse la cara | 10 | 20 | 30 minutos aguantados (lo mejor en cualquier escenario) | `casa.lavadoProgreso[rol].mejor` |
 | Cocina de chef | rango 3 | rango 6 | rango 9 (el mejor de los tres restaurantes) | `casa.cocina` |
 
 Al abrir la app, lo de cada celular sube a la casa (`casa.logros`, se guarda el máximo). Cada metal nuevo paga una
@@ -169,27 +169,86 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
   compartido guarda el récord de cada uno (`casa.retrete`) y se ve al terminar. Es un minijuego **secreto**:
   no tiene botón en el cuarto de juegos, solo sale cuando algo les cae pesado. Código: `src/casa/cohete.ts`.
 
-## Lavarse la cara (minijuego secreto, estilo Vampire Survivors)
+## Lavarse la cara (minijuego secreto: un Vampire Survivors completo)
 
-- En el baño, **Lavarse** (o tocar el lavamanos): camina al espejo, se mira («¿Y esos granitos?»), la cámara
-  se acerca al espejo, la casa se pone borrosa y **la cara en el espejo se deshace en ondas de agua** hasta
-  que se entra, como a otro plano, a su propia cara.
-- Ahí adentro es **Vampire Survivors**: el personaje chiquito camina sobre su cara (piel con poros, pequitas
-  y cachetes) arrastrando el dedo en cualquier parte (o con las flechas / WASD). Las armas disparan solas y
-  los enemigos llegan en oleadas cada vez más grandes: **gérmenes** verdes, **puntos negros**, **gotas de
-  grasa**, **granitos** gordos y **ácaros** rápidos (con enjambres cada 30 s), y a los 2:30 el jefe, **el
-  Espinillón** (con corona, embiste de vez en cuando).
-- Cada enemigo suelta **gotitas** (azules, verdes, rosadas) que se juntan para subir de nivel; al subir se
-  escoge **1 de 3 cartas** (como en VS): 6 armas con 5 niveles —burbujas de jabón (varita), esponja
-  giratoria (biblia), chorro de agua (látigo, luego a los dos lados), aura de espuma (ajo), toalla bumerán
-  (cruz) y charcos de agua (agua bendita)— y 6 pasivas —jabón extra fuerte (daño), agua tibia (recarga),
-  toalla grande (área), pies ligeros, imán de gotitas y crema hidratante (vida y regeneración)—. Máximo 4
-  armas y 4 pasivas. A veces caen una toallita (vida), un imán (todas las gotitas) o una ola de agua fría
-  (limpia la pantalla).
-- Se gana aguantando **3 minutos**. Premio: higiene al 100 si gana (si no, según lo que aguantó), 1 moneda
-  cada 30 s, +3 por ganar y +2 por vencer al Espinillón. El récord de gérmenes eliminados de cada uno queda
-  en `casa.lavado`. Al salir, el velo de agua se va, la casa vuelve a verse nítida y la cámara se aleja.
-  Código: `src/casa/lavado.ts` (el juego en un canvas 2D) y `lavarse()` en `src/casa/main.ts` (el espejo).
+**Cómo se entra.** En el baño, **Lavarse** (o tocar el lavamanos): camina al espejo, se mira («¿Y esos
+granitos?»), la cámara se acerca, la casa se pone borrosa y la cara del espejo se deshace en ondas de agua hasta
+que se entra a su propia cara. Mientras se juega, la casa y las ondas se esconden y se detienen (no gastan
+batería). Si el celular se va al fondo, se abre la pausa y el juego deja de dibujar.
+
+**El menú** (`src/casa/lavado/menu.ts`): «¡A lavarse!», «Jugar con Él/Ella», disfraces, escenarios, cartas de
+amor, la tienda de poderes y la colección (armas, pasivas, bestiario y logros).
+
+**La partida** (motor en `src/casa/lavado/motor.ts`, todo como el original):
+- **30 minutos**; al llegar, «¡Se acabó el agua caliente!» y sale la **Ducha Helada** (la Parca: no se le gana).
+  Pausa, retirarse y cobrar, y **modo Apurado** (todo más rápido; se abre ganando La Cara).
+- **Oleadas minuto a minuto** (mínimo de bichos, cada cuánto llegan y qué tipos), enjambres que cruzan, anillos,
+  muros, élites (con cofre) y **jefes con cofre** cada 5 minutos. Después del minuto 14 los bichos aguantan y
+  pegan un poquito más cada minuto (sin la tienda no se llega a 30).
+- **38 bichos de arcilla y felpa** renderizados en Blender (`personajes/blender/lavado_bichos.py`): gérmenes,
+  puntos negros, gotas de grasa, ácaros, granitos, caspa, bacterias, pelusas, virus, barritos, lagañas, mugre,
+  mocos, sarro, pasta seca, hongos, cucarachas, pelos, moho, jabón sucio, piojos, zancudos, pulgas, burbujas
+  sucias, babosas, espinillas… y los jefes: el Espinillón, la Reina Caspa, el Gran Moco, Don Lagaña, el Barro
+  Negro, el Señor Sarro, Doña Cucaracha, la Mota de Pelo, el Tapón, la Esponja Podrida y el Pelo del Desagüe.
+- **Experiencia como el original** (5 al nivel 2, +10 hasta el 20, +13 hasta el 40, +16 después, con los saltos
+  del 20 y el 40). Gotitas azules, verdes y rojas; las que sobran se juntan en una gotota roja.
+- **Subir de nivel**: 3 cartas (4 con suerte), **volver a tirar, saltar y vetar**. 6 armas (8 niveles) y 6 pasivas
+  (5 niveles). **19 armas** (toalla mojada = látigo, varita de burbujas = varita mágica, cepillo de dientes =
+  cuchillos, champú volador = hacha, peinilla bumerán = cruz, esponjas orbitales = biblia, secador = fuego,
+  aura de espuma = ajo, botellitas de agua = agua bendita, jabón resbaloso = runetracer, bombillo travieso =
+  relámpago, toallita desmaquillante, paticos de hule = pájaros, ranitas, chorro de la ducha, hilo dental,
+  perfume y colonia…) con **evoluciones** (arma al máximo + su pasiva + cofre después del minuto 10) y **uniones**
+  (paticos amarillo + morado, perfume + colonia). **16 pasivas** (jabón extra fuerte, gorro de baño, crema, crema
+  de noche, reloj de arena, lupa, liga del pelo, sales de baño, espejo doble, pantuflas, imán, trébol, corona,
+  alcancía, espejo roto y curita de corazón).
+- **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
+  (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
+  trébol, ají y velitas que se rompen.
+- **Cartas de amor** (los arcanos): 18 recuerdos reales de los dos (Transformice, las videollamadas de 24 horas,
+  el 25 de octubre, Cartagena, las luces de diciembre, la propuesta…). Se escoge una al empezar y salen otras en
+  los minutos 11 y 21.
+- **Pantalla final** con el daño y el DPS de cada arma, y los logros nuevos.
+
+**Gotas doradas y tienda de poderes** (`tienda.ts`): 19 poderes como los del original (vida, recuperación,
+armadura, velocidad, poder, área, duración, cantidad, recarga, suerte, crecimiento, codicia, maldición, imán,
+revivir, volver a tirar, saltar, vetar); cada compra sube el precio de todo y se puede pedir el reembolso.
+
+**Disfraces** (en vez de personajes, `disfraces.ts`): 8 de Él (panda en pijama, perro lanudo, dentista del
+barrio, Súper Jabón, leñador del champú, astronauta del retrete, bombero de la ducha, barbero de vueltiao) y 8 de
+Ella (pulga aventurera, la mejor guerrera de Dios, directora Yanbal, bata y turbante, sirena de la bañera, ranita,
+princesa del spa, estilista del secador). Cada uno trae su arma y su bono, ropa del clóset y accesorios del baño
+(`public/modelos/lavado/accesorios.glb`), y se abre con un logro o con gotas doradas. Retratos:
+`node scripts/generar-sprites-lavado.mjs` (con el servidor prendido).
+
+**Escenarios**: **La Cara** (piel con poros, pequitas y cachetes), **El Lavamanos** (un pasillo de porcelana
+con paredes de baldosín: menos bichos a la vez pero sin salida arriba ni abajo; se abre aguantando 15 min en La
+Cara) y **La Bañera** (agua con cáusticas, espuma y paticos; se abre aguantando 15 min en El Lavamanos).
+
+**En pareja** (`linea.ts`): Él o Ella invita desde el menú y la invitación le llega a la casa del otro («¡A
+lavarse la cara juntos!»); el otro entra desde su espejo con su disfraz. El anfitrión simula y manda una foto
+compacta cada 100 ms; el invitado mueve su personaje al instante (predicción) y ve lo demás interpolado. La
+experiencia es compartida pero cada uno escoge sus cartas y tiene su inventario. Si uno cae queda en una
+burbujita y el otro lo levanta quedándose a su lado («¡Levántate, mi amor!»). Si se corta la conexión, los
+dos quedan en pausa hasta que vuelva. En la casa local de prueba se usa un `BroadcastChannel` (`?red=mala`
+simula pérdidas). Prueba: `node scripts/probar-lavado-linea.mjs <url>` (Supabase de mentiras con demoras y
+pérdidas).
+
+**Gráficos y rendimiento** (`dibujo/`): three.js con cámara ortográfica inclinada; Él y Ella en 3D con su
+disfraz; los bichos, objetos y efectos son lotes de sprites con instancias (cientos a 30 cuadros), con destellos
+al golpear, sombras, números de daño chiquitos, charcos y partículas. Rejilla espacial, nada se crea en cada
+cuadro, calidad que baja sola, `forceContextLoss()` al salir. Música propia que se anima con los minutos y los
+jefes (`sonidos.ts`).
+
+**Premios en la casa**: higiene al 100 si aguantó 5 minutos (si no, según lo que aguantó); monedas de la casa
+escasas: 1 cada 2 minutos aguantados, +3 si llega a los 30 (máximo 15 por partida). El progreso de cada uno
+(gotas doradas, tienda, disfraces, logros, colección, récords) se guarda en la casa en `casa.lavadoProgreso[rol]`
+(normalizado en `modelo.ts`) y el récord de bichos en `casa.lavado`. El trofeo cuenta los **minutos
+aguantados** (10, 20 y 30).
+
+**Pruebas**: `node scripts/balance-lavado.mjs [partidas] [escenario] [disfraces] [tiendas]` (partidas enteras
+con el bot en Node); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.actual.probar(…)`
+(`tiempo`, `xp`, `cofre`, `aguante`, `arma`, `caer`, `juntar`, `fin`, `bot`); `?sin3d` cambia los muñecos por
+burbujitas (para los navegadores de prueba).
 
 ## La cocina de chef (tres minijuegos estilo Papa's)
 
@@ -235,10 +294,43 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
   de chef** a la despensa —*Wafles de chef* (+70 comida), *Fresas con crema de chef* (+55 comida, +18
   cariño) y *Frappé de chef* (+30 energía)— que no se venden en la tienda, llenan mucho más y **se pueden
   regalar** (al abrirlo, la pareja se lo come y suma 15 de cariño extra: «lo cocinó con sus propias manos»).
-- Código: `src/casa/cocina/` (motor.ts: invitados, tiquetes, calificación, día, mejoras; wafles.ts,
-  fresas.ts, frappes.ts: las estaciones; dibujo.ts y herramientas.ts: la comida dibujada y el chorrear,
-  espolvorear y poner piezas) y `cocinar()` en `src/casa/main.ts`. Los recortes de los invitados y del chef
-  salen de `scripts/generar-sprites-cocina.mjs`; los platos 3D de `personajes/blender/comidas.py`.
+- **Gráficos**: todo lo de las estaciones son recortes renderizados en Blender (Cycles, estilo plastilina):
+  wafles en 4 masas × 4 puntos de cocción, waffleras con tapa de vidrio, jarras, toppings, fresas enteras y
+  cortadas, batidora con su tazón, licuadora, botellas con bomba, vasos con su forma medida (el líquido se dibuja
+  adentro con menisco, burbujas, hielo y chorro), canecas, impresora de tiquetes, campanita y frasco de propinas,
+  más los fondos de cada restaurante (comedor, mostrador, cocina y mesón, con su color). Encima va lo vivo: salsas
+  con volumen y gotas, crema, licuado con remolino, chispitas que caen, vapor, humo, chispas, salpicaduras,
+  brillo del plato perfecto, monedas que vuelan y el tiquete que sale de la impresora. Los invitados tienen 11
+  poses (caminar, esperar, impacientarse, bravo, comer, encantado, contento, así-así) y la pareja tiene las
+  suyas, más expresivas. Las estaciones se cambian deslizándose (el riel y la barra quietos). A 30 cuadros como
+  tope; si el celular va lento, baja la calidad sola.
+- **En pareja** (botón «💞 Cocinar con…» en la hoja de restaurantes; la invitación le llega al otro a la casa):
+  cocinan el mismo restaurante y el mismo día, cada uno en su celular. El anfitrión manda (invitados, tiquetes,
+  reloj, calificación y propinas) y el otro le pide las cosas; los tiquetes son de los dos: cualquiera toma un
+  pedido o se queda en una estación, se ve la carita del otro en la estación donde está, en el tiquete que tiene
+  escogido y su mano moviendo la comida. Las propinas y el avance del día son de los dos; cada uno guarda su
+  propio rango y puntos. Si alguien pone pausa o sale de la app, al otro le sale la pausa; si se corta la red, la
+  cocina se queda quieta con «Se cortó la conexión…» y sigue sola al volver (el anfitrión puede seguir solo).
+  Va por Supabase Realtime (canal `cocina-<pareja>`, evento `cocina`) o entre pestañas (`BroadcastChannel`) en la
+  casa local. Sincronización por objetos con versión (el día, cada máquina y cada tiquete), paquetes cada
+  ~110 ms y una foto completa del anfitrión cada segundo.
+- **Gancho para escenas**: `cocina.alTerminarDia.push((dia, info) => …)` (o `alTerminarDia` en las opciones de
+  `jugarCocina`) se llama al terminar cada día con el resultado, la receta, el rol, si fue en pareja y el rango
+  antes y después. Hoy no hay escenas enganchadas.
+- Código: `src/casa/cocina/` (motor.ts: invitados, tiquetes, calificación, día, mejoras, pausa y segundo plano;
+  linea.ts: la sincronización en pareja; wafles.ts, fresas.ts, frappes.ts: las estaciones; pantallas.ts: comedor,
+  riel, barra, calificación y «modo chef»; sprites.ts, vasos.ts, efectos.ts: recortes, líquidos y partículas;
+  herramientas.ts: chorrear, espolvorear y poner piezas) y `cocinar()` en `src/casa/main.ts`.
+- Recortes: `python3.11 personajes/blender/cocina_sprites.py juego/web/modelos-crudos/cocina [claves]` y
+  `cocina_fondos.py` (necesitan `bpy` 4.2 para python3.11), luego `python3.12 personajes/blender/cocina_atlas.py
+  juego/web/modelos-crudos/cocina juego/web/public/cocina` (hojas webp + `hojas.json`). Los invitados y el chef:
+  `node scripts/generar-sprites-cocina.mjs [claves] [puerto]` con el servidor prendido. Los platos 3D de la casa
+  salen de `personajes/blender/comidas.py`.
+- Pruebas: `scripts/cocina-prueba.html` (la cocina sola, con `?rol=&receta=&xp=&dia=&mejoras=` y en pareja
+  `&linea=anfitrion|invitado&transporte=local|supabase`), ganchos `window.__cocinaMotor.probar('llegar' | 'tomar' |
+  'jugar' | 'juicio' | 'fin' | 'avanzar', segundos)` y `.resumen()`, y `node scripts/probar-cocina-linea.mjs [receta]
+  [url]` (Él y Ella con un Supabase de mentiras con demoras y pérdidas: pedidos, entregas, pausa, salir de la app,
+  corte de red y fin del día iguales en los dos).
 
 ## Recuerdos en el baño y abrazados en la cama
 
