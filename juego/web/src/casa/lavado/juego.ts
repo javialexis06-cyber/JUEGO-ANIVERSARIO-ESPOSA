@@ -335,7 +335,7 @@ export class Lavado {
         pausado = false;
         ui.mostrarPausa(m, false, false, false, numeros);
         if (papel === 'invitado') pedir({ t: 'fin', id: idPartida, retiro: true });
-        else m.terminar();
+        else m.terminar(true);
       },
       musica: () => musicaLavado.alternar(),
       sonido: () => alternarSonido(),
@@ -506,7 +506,7 @@ export class Lavado {
             if (papel === 'invitado') aplicarInventario(m, msg.jug);
             break;
           case 'fin':
-            if (papel === 'anfitrion' && msg.retiro) m.terminar();
+            if (papel === 'anfitrion' && msg.retiro) m.terminar(true);
             if (papel === 'invitado') {
               resumenLlegado = msg.resumen ?? null;
               m.fin = true;

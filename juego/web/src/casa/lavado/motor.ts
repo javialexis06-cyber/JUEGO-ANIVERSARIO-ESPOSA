@@ -724,9 +724,13 @@ export class Motor {
     if (this.jug.every((j) => j.caido)) this.terminar();
   }
 
-  terminar() {
+  /** Se retiraron desde la pausa (cobran igual, pero no los tumbaron). */
+  retiro = false;
+
+  terminar(retiro = false) {
     if (this.fin) return;
     this.fin = true;
+    this.retiro = retiro;
   }
 
   // ------------------------------------------------------------------------------------------------- Jugadores
@@ -1635,6 +1639,7 @@ export class Motor {
       escenario: this.esc.id,
       segundos: this.t,
       gano: this.gano,
+      retiro: this.retiro,
       apurado: this.apurado,
       nivel: this.nivel,
       eliminados: this.eliminados,

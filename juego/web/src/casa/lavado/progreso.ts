@@ -123,6 +123,8 @@ export interface ResumenPartida {
   disfraz: string;
   pareja: boolean;
   revivio: boolean;
+  /** Se retiró por las buenas desde la pausa (no lo tumbaron). */
+  retiro?: boolean;
   /** Daño de cada arma y cuánto tiempo la tuvo (para la pantalla final). */
   danos: { arma: IdArma; dano: number; desde: number; nivel: number }[];
 }

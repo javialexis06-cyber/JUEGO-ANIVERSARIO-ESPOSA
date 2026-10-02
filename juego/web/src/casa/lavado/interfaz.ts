@@ -454,8 +454,8 @@ export class Interfaz {
   // ------------------------------------------------------------------------------------------------- Final
   mostrarFin(r: ResumenPartida, extra: { logros: string[]; monedas: number; pareja: boolean; nombreOtro: string }): Promise<'otra' | 'menu'> {
     sfx.fin(r.gano);
-    const titulo = r.gano ? '¡Se acabó el agua caliente!' : r.segundos < 60 ? 'Otro día te lavas bien…' : 'Te ganaron los mugrosos';
-    const sub = r.gano ? 'Aguantaste hasta la Ducha Helada: ¡cara limpiecita!' : r.segundos >= 15 * 60 ? '¡Qué lavada tan buena!' : '¡Ya casi! Con la tienda de poderes se aguanta más.';
+    const titulo = r.gano ? '¡Se acabó el agua caliente!' : r.retiro ? (r.segundos < 60 ? 'Lavadita de gato' : '¡Bien lavadito!') : r.segundos < 60 ? 'Otro día te lavas bien…' : 'Te ganaron los mugrosos';
+    const sub = r.gano ? 'Aguantaste hasta la Ducha Helada: ¡cara limpiecita!' : r.retiro ? 'Te saliste a tiempo y cobraste todo lo que recogiste.' : r.segundos >= 15 * 60 ? '¡Qué lavada tan buena!' : '¡Ya casi! Con la tienda de poderes se aguanta más.';
     const total = r.danos.reduce((a, d) => a + d.dano, 0) || 1;
     const filas = r.danos
       .slice()

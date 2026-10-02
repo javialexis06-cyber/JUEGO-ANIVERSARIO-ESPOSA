@@ -469,6 +469,7 @@
   overflow: hidden;
 }
 .lv-menu[hidden] { display: none; }
+.lv-burbujas-fondo { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .lv-burbujas-fondo span {
   position: absolute;
   bottom: -60px;
@@ -503,6 +504,7 @@
   text-align: left;
 }
 .lv-elegido img, .lv-retrato { width: 62px; height: 62px; object-fit: contain; border-radius: 12px; background: linear-gradient(180deg, #e8f6ff, #ffe9f1); flex: none; }
+.lv-titulo .lv-elegido .lv-retrato { width: 86px; height: 86px; }
 .lv-elegido b { display: block; font: 700 15px/1.1 var(--display); }
 .lv-elegido small { display: block; font: 700 11px/1.25 var(--texto); color: #7a625a; }
 .lv-chips { display: flex; gap: 6px; flex-wrap: wrap; }

@@ -3230,6 +3230,7 @@ function efectos() {
   regalos: s?.casa.regalos,
   deco: s?.casa.deco,
   lavado: s?.casa.lavado,
+  lavadoProgreso: s?.casa.lavadoProgreso,
   cocina: s?.casa.cocina,
 });
 /** Progreso de prueba en un restaurante (para ver rangos altos). */
