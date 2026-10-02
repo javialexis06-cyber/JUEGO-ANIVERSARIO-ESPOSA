@@ -103,12 +103,20 @@ function brillar(raiz: THREE.Object3D) {
       (mat as any).__cohete = true;
       const n = mat.name.toLowerCase();
       if (/oro|dorad|gold/.test(n)) {
+        // Con la luz del espacio el oro se ve café: se le sube el reflejo y un brillo propio suavecito
         mat.metalness = 1;
-        mat.roughness = 0.24;
+        mat.roughness = 0.22;
+        mat.color.set('#FFD45A');
+        (mat as any).envMapIntensity = 1.8;
+        if (mat.emissive) {
+          mat.emissive.set('#5A3A00');
+          mat.emissiveIntensity = 0.55;
+        }
         mat.normalScale?.set(0.05, 0.05);
-      } else if (/cromo|acero|metal|plata/.test(n)) {
+      } else if (/cromo|acero|metal|plata|aluminio|lata/.test(n)) {
         mat.metalness = 1;
         mat.roughness = 0.2;
+        (mat as any).envMapIntensity = 1.6;
         mat.normalScale?.set(0.04, 0.04);
       } else if (/diamante|gema|cristal/.test(n)) {
         mat.metalness = 0.1;

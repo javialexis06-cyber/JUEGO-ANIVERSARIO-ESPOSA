@@ -175,7 +175,7 @@
 /* Avisos en el centro */
 .cohete-aviso {
   position: absolute;
-  top: 30%;
+  top: 42%;
   left: 0;
   right: 0;
   margin: 0;
@@ -198,7 +198,7 @@
 /* Letrero del tramo */
 .cohete-tramo {
   position: absolute;
-  top: 18%;
+  top: 14%;
   left: 50%;
   translate: -50% 0;
   display: grid;

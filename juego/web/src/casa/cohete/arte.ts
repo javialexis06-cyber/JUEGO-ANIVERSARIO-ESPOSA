@@ -53,6 +53,11 @@ function fbm(r: ReturnType<typeof ruidoPeriodico>, u: number, v: number, base: n
   return a / tot;
 }
 
+const suave01 = (a: number, b: number, x: number) => {
+  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+
 /** Pinta fila por fila soltando el hilo cada pocos milisegundos (para no trabar el juego mientras se pinta). */
 async function porFilas(H: number, fila: (y: number) => void) {
   let t0 = performance.now();
@@ -77,14 +82,17 @@ export async function texturaNebulosa(semilla = 3): Promise<THREE.DataTexture> {
     for (let x = 0; x < W; x++) {
       const u = x / W, v = y / H;
       // Torcido: el ruido grande desplaza al de los filamentos (se ven como humo)
-      const w = fbm(r3, u, v, 4, 3, 2);
-      const n1 = fbm(r1, u + w * 0.15, v + w * 0.1, 4, 5, 2);
-      const n2 = fbm(r2, u * 1 + w * 0.3, v - w * 0.2, 8, 4, 4);
-      const n3 = fbm(r3, u, v, 32, 3, 16);
+      // Nubes grandes y suaves (torcidas por otro ruido para que parezcan humo), con filamentos solo donde hay nube
+      const w = fbm(r3, u, v, 3, 3, 2);
+      const n1 = fbm(r1, u + w * 0.12, v + w * 0.08, 3, 4, 2);
+      const n2 = fbm(r2, u + w * 0.25, v - w * 0.15, 6, 3, 3);
+      const n3 = fbm(r3, u, v, 32, 2, 16);
+      const nube = suave01(0.4, 0.72, n1);
+      const filo = Math.pow(Math.max(0, 1 - Math.abs(n2 - 0.5) * 3.2), 4) * suave01(0.32, 0.62, n1);
       const i = (y * W + x) * 4;
-      datos[i] = Math.max(0, Math.min(255, (n1 - 0.32) * 2.6 * 255));
-      datos[i + 1] = Math.max(0, Math.min(255, Math.pow(Math.max(0, 1 - Math.abs(n2 - 0.5) * 4.2), 3) * 255));
-      datos[i + 2] = Math.max(0, Math.min(255, (n3 - 0.45) * 3 * 255));
+      datos[i] = Math.round(nube * 255);
+      datos[i + 1] = Math.round(filo * 255);
+      datos[i + 2] = Math.max(0, Math.min(255, (n3 - 0.5) * 3 * 255));
       datos[i + 3] = 255;
     }
   });
@@ -363,8 +371,8 @@ export function texturaNube(semilla: number): THREE.CanvasTexture {
   bolas.push([128, 88, 30], [80, 92, 22], [176, 92, 22]);
   for (const [x, y, r] of bolas) {
     const gr = g.createRadialGradient(x, y + r * 0.35, r * 0.2, x, y + r * 0.2, r);
-    gr.addColorStop(0, 'rgba(206,216,236,1)');
-    gr.addColorStop(1, 'rgba(206,216,236,0)');
+    gr.addColorStop(0, 'rgba(226,234,248,1)');
+    gr.addColorStop(1, 'rgba(226,234,248,0)');
     g.fillStyle = gr;
     g.beginPath();
     g.arc(x, y + 6, r, 0, Math.PI * 2);
@@ -416,7 +424,7 @@ export async function texturaPlaneta(cual: Planeta, W = 256, H = 128): Promise<T
           if (lat > 0.84) c = hex('#F4F8FF');
           // Nubes
           const nube = fbm(r3, u + n * 0.1, v, 8, 5, 4);
-          c = mezclar(c, [255, 255, 255], (nube - 0.52) * 3);
+          c = mezclar(c, [255, 255, 255], (nube - 0.58) * 2.4);
           break;
         }
         case 'luna':

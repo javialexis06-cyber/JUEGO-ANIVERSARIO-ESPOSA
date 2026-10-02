@@ -119,6 +119,7 @@ const TAPA_COPETE = new Set(['ducha', 'aviador', 'vikingo', 'rollo', 'astronauta
 /** Unidades del mundo → metros. */
 const METROS = 2.5;
 const EJE_Z = new THREE.Vector3(0, 0, 1);
+const ESCALA_RETRETE = 1.3;
 
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 const elegir = <T,>(l: T[]) => l[Math.floor(Math.random() * l.length)];
@@ -204,6 +205,7 @@ class RetreteEspacial {
   private tiempos: number[] = [];
   private calidad: 'alta' | 'media' | 'baja' = 'alta';
   private bot = false;
+  private multVuelo = 1;
   manual = false;
   private record = 0;
   private pasoRecord = false;
@@ -353,7 +355,9 @@ class RetreteEspacial {
   private ponerRetrete(id: string) {
     if (this.retreteObj) this.soporte.remove(this.retreteObj);
     const r = this.modelos.retrete(id);
-    r.position.y = -0.42;
+    // Un poquito más grande que el del baño: así se luce debajo del personaje
+    r.scale.setScalar(ESCALA_RETRETE);
+    r.position.y = -0.445 * ESCALA_RETRETE + 0.03;
     this.retreteObj = r;
     this.soporte.add(r);
     this.luces = [];
@@ -557,11 +561,13 @@ class RetreteEspacial {
     else if (this.fase === 'taller') this.vitrina(dt, true);
     // Fuego y estela
     this.nave.updateMatrixWorld(true);
-    const boca = this.tmp.set(0, -0.48, 0.05).applyMatrix4(this.soporte.matrixWorld);
+    const boca = this.tmp.set(0, -0.445 * ESCALA_RETRETE - 0.02, 0.05).applyMatrix4(this.soporte.matrixWorld);
     const dir = this.tmp2.set(-0.55, -1, 0).applyAxisAngle(EJE_Z, this.nave.rotation.z).normalize();
     this.propulsor.fuerza = this.fase === 'intro' ? 2.2 : turbo ? 2.6 : this.fase === 'taller' || this.fase === 'resultado' ? 0.7 : 1;
     this.propulsor.verde += ((turbo ? 1 : 0) - this.propulsor.verde) * Math.min(1, dt * 6);
-    this.propulsor.actualizar(dt, { x: boca.x, y: boca.y, dx: dir.x, dy: dir.y }, this.velocidad, this.fase !== 'choque' && this.fase !== 'resultado');
+    const prendido = this.fase !== 'choque' && this.fase !== 'resultado';
+    this.propulsor.actualizar(dt, { x: boca.x, y: boca.y, dx: dir.x, dy: dir.y }, this.velocidad, prendido);
+    this.moverLlama(boca, dir, prendido);
     const dtp = dt * (this.fase === 'juego' ? lento : 1);
     this.brillo.actualizar(dtp, this.velocidad);
     this.humo.actualizar(dtp, this.velocidad);
@@ -582,6 +588,38 @@ class RetreteEspacial {
     }
     this.globo(dt);
     if (this.debug) this.moverAros();
+  }
+
+  /** La llama del cohete: tres capas que titilan, apuntando hacia atrás y abajo. */
+  private llama: THREE.Group | null = null;
+  private matsLlama: THREE.MeshBasicMaterial[] = [];
+  private moverLlama(boca: THREE.Vector3, dir: THREE.Vector3, prendido: boolean) {
+    if (!this.llama) {
+      this.llama = new THREE.Group();
+      const perfil = [[0, 0], [0.09, 0.03], [0.13, 0.12], [0.11, 0.3], [0.07, 0.55], [0.03, 0.8], [0, 0.95]].map(([r, y]) => new THREE.Vector2(r, y));
+      const g = new THREE.LatheGeometry(perfil, 20);
+      for (const [k, col, op] of [[1, '#FF6A2A', 0.55], [0.72, '#FFB341', 0.75], [0.42, '#FFF7D6', 0.95]] as const) {
+        const m = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: op, depthWrite: false, toneMapped: false });
+        this.matsLlama.push(m);
+        const c = new THREE.Mesh(g, m);
+        c.scale.set(k * 1.6, k, k * 1.6);
+        c.renderOrder = 6 - k;
+        this.llama.add(c);
+      }
+      this.mundo.add(this.llama);
+    }
+    const l = this.llama;
+    l.visible = prendido;
+    if (!prendido) return;
+    const f = this.propulsor.fuerza;
+    const s = this.nave.scale.y / 1.5;
+    l.position.copy(boca);
+    l.rotation.z = Math.atan2(dir.y, dir.x) - Math.PI / 2;
+    const tit = 1 + Math.sin(this.t * 41) * 0.12 + Math.sin(this.t * 67) * 0.08;
+    l.scale.set(s * (1 + Math.sin(this.t * 33) * 0.06), s * (0.75 + f * 0.45) * tit, s);
+    const verde = this.propulsor.verde;
+    this.matsLlama[0].color.setRGB(1, 0.42 + verde * 0.4, 0.16 * (1 - verde));
+    this.matsLlama[1].color.setRGB(1 - verde * 0.3, 0.7 + verde * 0.25, 0.25 * (1 - verde));
   }
 
   private turboActivo() {
@@ -609,6 +647,7 @@ class RetreteEspacial {
     this.caraBase = 'nervioso';
     this.cara('nervioso', 99);
     this.revivir = valorDe(this.p, 'revivir');
+    this.multVuelo = multiplicador(this.p);
     this.pintarRecord();
     // Lo comprado para el arranque
     const arr = valorDe(this.p, 'arranque');
@@ -655,8 +694,10 @@ class RetreteEspacial {
     this.meta.x += this.jalon.x * dt;
     this.meta.y += this.jalon.y * dt;
     const L = this.limites;
+    // Que el personaje nunca se salga de la pantalla (la cabeza va 1,9 arriba del asiento)
+    const s = this.nave.scale.y / 1.5;
     this.meta.x = THREE.MathUtils.clamp(this.meta.x, -L.x + 0.8, L.x * 0.3);
-    this.meta.y = THREE.MathUtils.clamp(this.meta.y, -L.y, L.y);
+    this.meta.y = THREE.MathUtils.clamp(this.meta.y, -L.y - 0.2 + 0.7 * s, L.y + 0.6 - 2.1 * s);
     const antes = this.nave.position.y;
     const n = this.nave.position;
     n.x += (this.meta.x - n.x) * Math.min(1, dt * 10);
@@ -1012,7 +1053,7 @@ class RetreteEspacial {
     void this.o.guardar?.(copiaProgreso(p));
     this.resultado = {
       metros, puntaje: Math.floor(this.puntaje), rollitos: this.rollitosVuelo, extraTriple: extra, record, recordPuntaje,
-      segundos: this.tJuego, mult: multiplicador(p), misionesAntes: misiones, cumplidas: this.cumplidas, subio: r.subio, nivelAntes: antesNivel,
+      segundos: this.tJuego, mult: this.multVuelo, misionesAntes: misiones, cumplidas: this.cumplidas, subio: r.subio, nivelAntes: antesNivel,
       progreso: p, rol: this.o.rol, recordPareja: this.o.recordPareja ?? 0,
     };
     // Cae con un paracaídas de papel higiénico

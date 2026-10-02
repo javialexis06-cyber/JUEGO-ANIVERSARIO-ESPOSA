@@ -30,22 +30,22 @@ export const LOOKS: Look[] = [
   { arriba: '#3E8EDB', abajo: '#BFE6FF', neb1: '#FFFFFF', neb2: '#FFFFFF', nebulosa: 0, estrellas: 0, nubes: 1, sol: '#FFF4DE', solFuerza: 2.6,
     cielo: '#DCEBFF', suelo: '#8FB7D8', rocas: 0, polvo: '#FFFFFF' },
   // La órbita: casi negro, la Tierra abajo con su brillo azul
-  { arriba: '#03040F', abajo: '#10204A', neb1: '#2A3F8F', neb2: '#5B7BD6', nebulosa: 0.35, estrellas: 1, nubes: 0, sol: '#FFF6E8', solFuerza: 2.4,
+  { arriba: '#03040F', abajo: '#10204A', neb1: '#2A3F8F', neb2: '#5B7BD6', nebulosa: 0.3, estrellas: 1, nubes: 0, sol: '#FFF6E8', solFuerza: 2.4,
     cielo: '#C9D8FF', suelo: '#2A3A6A', rocas: 0, polvo: '#BFD4FF', planeta: 'tierra' },
   // La Luna: gris azulado y frío
-  { arriba: '#05050C', abajo: '#1A1A2E', neb1: '#3A3A66', neb2: '#8E8EC9', nebulosa: 0.3, estrellas: 1, nubes: 0, sol: '#F2F2FF', solFuerza: 2.3,
+  { arriba: '#05050C', abajo: '#1A1A2E', neb1: '#3A3A66', neb2: '#8E8EC9', nebulosa: 0.22, estrellas: 1, nubes: 0, sol: '#F2F2FF', solFuerza: 2.3,
     cielo: '#D6D6F0', suelo: '#2B2B3E', rocas: 0.25, polvo: '#D8D8F0', planeta: 'luna' },
   // Marte: rojizo y polvoriento
-  { arriba: '#0E0408', abajo: '#3A1212', neb1: '#8F2A1A', neb2: '#FF8A4F', nebulosa: 0.55, estrellas: 0.8, nubes: 0, sol: '#FFE2C8', solFuerza: 2.4,
+  { arriba: '#0E0408', abajo: '#3A1212', neb1: '#8F2A1A', neb2: '#FF8A4F', nebulosa: 0.45, estrellas: 0.8, nubes: 0, sol: '#FFE2C8', solFuerza: 2.4,
     cielo: '#FFC9A8', suelo: '#4A1A12', rocas: 0.35, polvo: '#FFB08A', planeta: 'marte' },
   // El cinturón: café dorado con rocas por todas partes
-  { arriba: '#0B0805', abajo: '#2E2010', neb1: '#7A5420', neb2: '#E8B45A', nebulosa: 0.45, estrellas: 0.8, nubes: 0, sol: '#FFE9C2', solFuerza: 2.5,
+  { arriba: '#0B0805', abajo: '#2E2010', neb1: '#7A5420', neb2: '#E8B45A', nebulosa: 0.38, estrellas: 0.8, nubes: 0, sol: '#FFE9C2', solFuerza: 2.5,
     cielo: '#FFE2B0', suelo: '#3A2810', rocas: 1, polvo: '#E8C48A', planeta: 'jupiter' },
   // La nebulosa: morado, fucsia y turquesa
-  { arriba: '#0A0520', abajo: '#2A0F3A', neb1: '#9B2FAE', neb2: '#2FD5C9', nebulosa: 1, estrellas: 1, nubes: 0, sol: '#F2DCFF', solFuerza: 2.4,
+  { arriba: '#0A0520', abajo: '#2A0F3A', neb1: '#9B2FAE', neb2: '#2FD5C9', nebulosa: 0.8, estrellas: 1, nubes: 0, sol: '#F2DCFF', solFuerza: 2.4,
     cielo: '#E2C8FF', suelo: '#2A1040', rocas: 0.3, polvo: '#E8B8FF', planeta: 'saturno' },
   // La galaxia del amor: rosado por todas partes
-  { arriba: '#16051A', abajo: '#4A0D35', neb1: '#E8396E', neb2: '#FFB3D1', nebulosa: 1, estrellas: 1, nubes: 0, sol: '#FFE0EC', solFuerza: 2.5,
+  { arriba: '#16051A', abajo: '#4A0D35', neb1: '#E8396E', neb2: '#FFB3D1', nebulosa: 0.7, estrellas: 1, nubes: 0, sol: '#FFE0EC', solFuerza: 2.5,
     cielo: '#FFD0E4', suelo: '#40102C', rocas: 0.2, polvo: '#FFC2DA', planeta: 'corazon' },
 ];
 
@@ -64,9 +64,9 @@ void main() {
   vec4 n = texture2D(tex, uv);
   vec4 m = texture2D(tex, uv * 1.6 + vec2(desplaz * 0.55 + 0.37, 0.21));
   float nubes = n.r * (0.55 + 0.45 * m.r);
-  col += neb1 * nubes * nebulosa * 0.85;
-  col += neb2 * m.g * nebulosa * 0.55 * (0.4 + nubes);
-  col += mix(neb1, neb2, 0.5) * n.b * nebulosa * 0.12;
+  col += neb1 * nubes * nebulosa * 0.75;
+  col += neb2 * (n.g * 0.6 + m.g * 0.4) * nebulosa * 0.45;
+  col += mix(neb1, neb2, 0.5) * n.b * nebulosa * 0.1;
   // Resplandor del horizonte (la atmósfera de la Tierra abajo)
   col += vec3(0.35, 0.6, 1.0) * horizonte * pow(1.0 - y, 6.0) * 0.6;
   gl_FragColor = vec4(col, 1.0);
@@ -245,7 +245,7 @@ export class Escenario {
     const tex = [0, 1, 2].map((k) => texturaNube(k + 1));
     for (let k = 0; k < 16; k++) {
       const frente = k >= 12;
-      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex[k % 3], transparent: true, depthWrite: false, opacity: frente ? 0.75 : 0.95 }));
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex[k % 3], transparent: true, depthWrite: false, opacity: frente ? 0.75 : 0.95, toneMapped: false }));
       const tam = frente ? 9 + Math.random() * 4 : 5 + Math.random() * 6;
       s.scale.set(tam, tam / 2, 1);
       s.position.set((Math.random() - 0.5) * 60, (Math.random() - 0.5) * 16, frente ? 5 : -6 - Math.random() * 14);
@@ -298,11 +298,11 @@ export class Escenario {
     esfera.name = 'esfera';
     grupo.add(esfera);
     // Resplandor de atmósfera en el borde
-    const colAtm = { tierra: '#6FB4FF', luna: '#B8B8D8', marte: '#FF9A6B', jupiter: '#FFD9A8', saturno: '#FFE6B0', neptuno: '#8FB8FF', corazon: '#FF8FC0' }[planeta];
+    const colAtm = { tierra: '#4F9BFF', luna: '#B8B8D8', marte: '#FF9A6B', jupiter: '#FFD9A8', saturno: '#FFE6B0', neptuno: '#8FB8FF', corazon: '#FF8FC0' }[planeta];
     const atm = new THREE.Mesh(
       new THREE.SphereGeometry(radio * 1.06, 48, 32),
       new THREE.ShaderMaterial({
-        uniforms: { color: { value: c(colAtm) }, fuerza: { value: esTierra ? 1.4 : planeta === 'luna' ? 0.35 : 0.9 } },
+        uniforms: { color: { value: c(colAtm) }, fuerza: { value: esTierra ? 0.85 : planeta === 'luna' ? 0.3 : 0.7 } },
         vertexShader: RESPLANDOR_V,
         fragmentShader: RESPLANDOR_F,
         transparent: true,
@@ -326,7 +326,8 @@ export class Escenario {
     }
     if (esTierra) {
       grupo.position.set(0, -radio - 4.2, -14);
-      grupo.rotation.x = 0.35;
+      // El polo mira a la cámara: arriba queda el ecuador y al girar en z pasan los continentes
+      esfera.rotation.x = Math.PI / 2 - 0.25;
     } else {
       grupo.position.set(60, 4 + Math.random() * 4, -38);
       grupo.rotation.z = 0.25;
@@ -480,7 +481,7 @@ export class Escenario {
         const ver = i === 0 ? k : i === 1 ? 1 - Math.max(0, k - 0.2) * 1.25 : 0;
         g.visible = cuerpo.listo && ver > 0.01;
         g.position.y = -cuerpo.radio - 4.2 - (1 - ver) * 14;
-        g.rotation.y += avance * 0.0016;
+        g.rotation.z += avance * 0.0022;
         u.horizonte.value = ver;
         continue;
       }

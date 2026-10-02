@@ -185,7 +185,7 @@ export class Propulsor {
     if (!encendido) return;
     const { brillo, humo } = this.fx;
     const f = this.fuerza;
-    this.acum += dt * 70 * Math.min(2.2, f);
+    this.acum += dt * 90 * Math.min(2.2, f);
     const vChorro = 4.5 + f * 2.5;
     while (this.acum >= 1) {
       this.acum--;
@@ -195,7 +195,7 @@ export class Propulsor {
       const medio = this.verde > 0.5 ? '#9BE05A' : '#FF9A3C';
       brillo.emitir({
         x: b.x + rnd(-0.06, 0.06), y: b.y + rnd(-0.04, 0.04), z: rnd(-0.1, 0.25), vx, vy, vida: rnd(0.16, 0.3) * (0.8 + f * 0.25),
-        tam0: rnd(0.55, 0.85) * (0.8 + f * 0.3), tam1: 0.12, color0: caliente, color1: medio, cuadro: CUADRO.llama, roce: 1.5, arrastre: 0.9,
+        tam0: rnd(0.75, 1.15) * (0.8 + f * 0.3), tam1: 0.15, color0: caliente, color1: medio, cuadro: CUADRO.llama, roce: 1.5, arrastre: 0.9,
         giro: Math.atan2(-vx, vy), alfa: 0.95,
       });
       if (Math.random() < 0.55) {
