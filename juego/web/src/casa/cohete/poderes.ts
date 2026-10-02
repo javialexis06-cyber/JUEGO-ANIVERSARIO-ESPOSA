@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { nota } from '../../sonido';
 import { CUADRO } from './arte';
-import { type IdPoder, PODERES, type ProgresoCohete, duracionPoder, poderDisponible, valorDe } from './datos';
+import { type IdPoder, MEJORA, PODERES, type ProgresoCohete, duracionPoder, poderDisponible, valorDe } from './datos';
 import type { Efectos } from './efectos';
 import type { Modelos } from './modelos';
 import type { Obst, Obstaculos } from './obstaculos';
@@ -157,7 +157,8 @@ export class Poderes {
 
   /** Prende un poder (o le suma tiempo si ya estaba). Devuelve su duración. */
   activar(id: IdPoder, segundos?: number) {
-    const total = segundos ?? duracionPoder(this.p, id);
+    // (si está bloqueado, como cuando se fuerza en las pruebas, dura lo del primer nivel)
+    const total = segundos ?? (duracionPoder(this.p, id) || MEJORA[id].valores[1] || 6);
     if (PODERES[id].instantaneo) return 0;
     const a = this.activos.get(id);
     if (a) {
@@ -173,7 +174,7 @@ export class Poderes {
   }
 
   private llamarAyudante() {
-    const o = this.modelos.cosa('ayudante', 1.1) ?? this.modelos.poder('mini');
+    const o = this.modelos.cosa('ayudante', 1.35) ?? this.modelos.poder('mini');
     this.ayudante = o;
     this.helice = o.getObjectByName('helice') ?? null;
     this.posAyudante.set(this.nave.position.x - 5, this.nave.position.y + 3);
@@ -351,7 +352,8 @@ export class Poderes {
   /** El ayudante vuela hacia `meta` (o se queda junto a la nave si no hay nada). */
   guiarAyudante(dt: number, meta: { x: number; y: number } | null) {
     if (!this.ayudante || !this.activos.has('mini')) return;
-    const mx = meta ? meta.x : this.nave.position.x - 0.6, my = meta ? meta.y : this.nave.position.y + 2.1;
+    // Sin rollitos cerca, vuela atrás y arriba del retrete (a la vista, sin tapar al personaje)
+    const mx = meta ? meta.x : this.nave.position.x - 2.2, my = meta ? meta.y : this.nave.position.y + 1.6;
     const dx = mx - this.posAyudante.x, dy = my - this.posAyudante.y;
     const d = Math.hypot(dx, dy);
     const v = Math.min(d, dt * (meta ? 13 : 8));

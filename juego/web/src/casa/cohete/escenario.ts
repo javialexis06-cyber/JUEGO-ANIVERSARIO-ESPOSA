@@ -126,6 +126,8 @@ void main() {
 }`;
 
 const c = (h: string) => new THREE.Color(h);
+/** Altura de una nube de adelante: en la franja de arriba o en la de abajo. */
+const yFrente = () => (Math.random() < 0.5 ? 1 : -1) * (5.2 + Math.random() * 1.5);
 const mezcla = (a: number, b: number, k: number) => a + (b - a) * k;
 
 interface Capa {
@@ -176,6 +178,7 @@ export class Escenario {
   /** Para el despegue: las nubes bajan en vez de ir a la izquierda. */
   subiendo = 0;
   private bajo = false;
+  private nubesFactor = 1;
 
   constructor(private camara: THREE.PerspectiveCamera, geometriaRoca: THREE.BufferGeometry, materialRoca: THREE.Material) {
     this.halo = texturaHalo();
@@ -246,9 +249,10 @@ export class Escenario {
     for (let k = 0; k < 16; k++) {
       const frente = k >= 12;
       const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex[k % 3], transparent: true, depthWrite: false, opacity: frente ? 0.75 : 0.95, toneMapped: false }));
-      const tam = frente ? 9 + Math.random() * 4 : 5 + Math.random() * 6;
+      const tam = frente ? 6 + Math.random() * 3 : 5 + Math.random() * 6;
       s.scale.set(tam, tam / 2, 1);
-      s.position.set((Math.random() - 0.5) * 60, (Math.random() - 0.5) * 16, frente ? 5 : -6 - Math.random() * 14);
+      // Las de adelante pasan por arriba y por abajo (nunca tapan al personaje)
+      s.position.set((Math.random() - 0.5) * 60, frente ? yFrente() : (Math.random() - 0.5) * 16, frente ? 5 : -6 - Math.random() * 14);
       s.renderOrder = frente ? 8 : -7;
       this.nubes.push({ s, v: frente ? 1.6 : 0.35 + Math.random() * 0.3, frente });
       this.grupo.add(s);
@@ -384,9 +388,10 @@ export class Escenario {
     const estrellas = mezcla(a.estrellas, b.estrellas, k);
     for (const capa of this.capas) capa.mat.uniforms.brillo.value = estrellas;
     const nubes = mezcla(a.nubes, b.nubes, k);
+    this.nubesFactor = nubes;
     for (const n of this.nubes) {
       n.s.visible = nubes > 0.01;
-      (n.s.material as THREE.SpriteMaterial).opacity = nubes * (n.frente ? 0.7 : 0.95);
+      (n.s.material as THREE.SpriteMaterial).opacity = nubes * (n.frente ? 0.55 : 0.95);
     }
     this.luzSol.color.copy(a.cSol).lerp(b.cSol, k);
     this.luzSol.intensity = mezcla(a.solFuerza, b.solFuerza, k);
@@ -433,12 +438,14 @@ export class Escenario {
       s.position.y -= dt * 14 * n.v * this.subiendo;
       if (s.position.x < -34) {
         s.position.x = 34 + Math.random() * 10;
-        s.position.y = (Math.random() - 0.5) * 16;
+        s.position.y = n.frente ? yFrente() : (Math.random() - 0.5) * 16;
       }
       if (s.position.y < -14) {
         s.position.y = 14 + Math.random() * 6;
         s.position.x = (Math.random() - 0.5) * 50;
       }
+      // Las de adelante se desvanecen si pasan por la franja del personaje (después del despegue)
+      if (n.frente) (s.material as THREE.SpriteMaterial).opacity = this.nubesFactor * 0.55 * Math.min(1, Math.max(this.subiendo, (Math.abs(s.position.y) - 3.2) / 1.5));
     }
     // Polvo de velocidad
     const largo = 0.15 + Math.min(4, avance / Math.max(dt, 1e-3) * 0.02) + turbo * 2.6;
