@@ -1150,8 +1150,8 @@ class RetreteEspacial {
     this.capa.querySelector('.cohete-resultado')?.remove();
     if (this.o.soloTienda) {
       this.nave.position.set(-this.limites.x * 0.52, -0.9, 0);
-      // Sin vuelo, la tienda se ve con el cielo de un tramo bonito
-      this.distancia = 0;
+      // Sin vuelo, la tienda se ve en la órbita (la Tierra girando abajo y sin nubes que tapen el retrete)
+      this.distancia = 900 / METROS;
     }
     this.cara('feliz', 99);
     this.tienda = new Tienda(this.capa, this.p, this.o.rol, {
