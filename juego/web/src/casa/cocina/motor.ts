@@ -6,6 +6,7 @@
 // En pareja (linea.ts) el anfitrión lleva el día (invitados, tiquetes, reloj, calificación) y los dos cocinan: cada
 // plato y cada máquina es un objeto compartido que cualquiera de los dos cambia. Lo que se ve de cada uno (en qué
 // estación está, qué tiquete tiene, dónde tiene el dedo) viaja como presencia.
+import * as fondo from '../../segundo_plano';
 import { nota, rumor } from '../../sonido';
 import type { Rol } from '../modelo';
 import { boton, dentro, G, Rect, rr, texto } from './dibujo';
@@ -205,8 +206,8 @@ export class Motor {
   private raiz: HTMLElement;
   lienzo: HTMLCanvasElement;
   g: G;
-  private cuadro = 0;
-  private ultimo = 0;
+  private bucle: { detener(): void } | null = null;
+  private quitarFondo: (() => void)[] = [];
   private terminado = false;
   /** Reloj que siempre corre (animaciones). */
   reloj = 0;
@@ -256,7 +257,6 @@ export class Motor {
   private medidas = { suma: 0, n: 0 };
   calidad = 1;
   private entregando = 0;
-  private visibilidad = () => this.alCambiarVisibilidad();
 
   constructor(public receta: Receta, private o: OpcionesCocina, private alSalir: () => void) {
     this.progreso = structuredClone(o.progreso);
@@ -369,24 +369,29 @@ export class Motor {
   empezar() {
     this.ajustar();
     window.addEventListener('resize', this.ajustar);
-    document.addEventListener('visibilitychange', this.visibilidad);
+    // Segundo plano (otra app, pantalla bloqueada): pausa con aviso (en pareja, al otro le sale la pausa) y el bucle se
+    // detiene solo; al volver sigue sin salto de tiempo (ver segundo_plano.ts)
+    this.quitarFondo.push(
+      fondo.alPausar(() => this.pausar('fondo')),
+      fondo.alReanudar(() => {
+        this.sync?.despertar();
+        if (this.vista === 'juego') this.pintarCapa();
+      }),
+    );
     requestAnimationFrame(() => this.raiz.classList.add('visible'));
-    this.ultimo = performance.now();
-    let salto = false;
-    const bucle = (ms: number) => {
+    // A 30 cuadros como tope (el celular no se calienta): se juntan los ratos hasta completar un cuadro
+    let junto = 0;
+    this.bucle = fondo.cuadros((dt) => {
       if (this.terminado) return;
-      this.cuadro = requestAnimationFrame(bucle);
-      const dt = Math.min(0.05, (ms - this.ultimo) / 1000);
-      // Sin el dedo encima y sin nada rápido, a 30 cuadros (el celular no se calienta)
-      const rapido = !!this.dedo || this.s.fase === 'juicio' || this.vista === 'intro' || !!this.transicion;
-      if (!rapido && (salto = !salto)) return;
-      this.ultimo = ms;
-      this.medir(dt);
-      this.reloj += dt;
-      this.paso(dt);
+      junto += dt;
+      if (junto < 1 / 30 - 0.004) return;
+      const paso = Math.min(0.05, junto);
+      this.medir(junto);
+      junto = 0;
+      this.reloj += paso;
+      this.paso(paso);
       this.dibujar();
-    };
-    this.cuadro = requestAnimationFrame(bucle);
+    });
     this.intro();
   }
 
@@ -746,8 +751,11 @@ export class Motor {
 
   pausar(motivo: 'mano' | 'fondo' = 'mano') {
     if (this.vista !== 'juego' || (this.s.fase !== 'jugando' && this.s.fase !== 'juicio')) return;
-    if (this.anfitrion) this.pausarAqui(this.rol, motivo);
-    else this.sync?.pedir('pausa', { motivo });
+    if (this.anfitrion) {
+      this.pausarAqui(this.rol, motivo);
+      // Al irse a segundo plano el bucle se detiene: el aviso sale ya, no en el próximo paquete
+      this.sync?.enviar(true);
+    } else this.sync?.pedir('pausa', { motivo });
     // En este celular se ve la pausa de una (aunque el anfitrión la confirme después)
     if (!this.anfitrion) {
       this.s.pausa = { por: this.rol, motivo, antes: this.s.fase };
@@ -768,10 +776,6 @@ export class Motor {
     this.s.pausa = null;
     this.cambioDia();
     this.capa('');
-  }
-
-  private alCambiarVisibilidad() {
-    if (document.visibilityState === 'hidden') this.pausar('fondo');
   }
 
   // ------------------------------------------------------------------------------------------- Tienda de mejoras
@@ -1128,9 +1132,10 @@ export class Motor {
     if (this.terminado) return;
     this.sync?.salir();
     this.terminado = true;
-    cancelAnimationFrame(this.cuadro);
+    this.bucle?.detener();
+    this.bucle = null;
+    for (const q of this.quitarFondo.splice(0)) q();
     window.removeEventListener('resize', this.ajustar);
-    document.removeEventListener('visibilitychange', this.visibilidad);
     this.raiz.classList.remove('visible');
     setTimeout(() => {
       this.raiz.remove();

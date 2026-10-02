@@ -225,6 +225,15 @@ export class Sincro {
     return this.vers.get(k)?.v ?? 0;
   }
 
+  /** Al volver de segundo plano: no se cuenta como corte el rato afuera, se saluda y el anfitrión manda la foto ya. */
+  despertar() {
+    if (this.cerrado) return;
+    this.ultimoDelOtro = ahora();
+    this.ultimaFoto = 0;
+    this.saludar();
+    this.enviar(true);
+  }
+
   /** (Invitado) pedirle algo al anfitrión. */
   pedir(a: string, d?: unknown) {
     const aid = nuevoId();
