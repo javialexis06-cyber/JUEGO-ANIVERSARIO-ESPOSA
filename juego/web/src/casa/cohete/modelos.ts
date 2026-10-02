@@ -257,13 +257,15 @@ export class Modelos {
     for (let k = 0; k < 4; k++) m.asteroidesChicos.push(geometriaAsteroide(k + 11, 2));
     m.matRocas = COLOR_ROCA.map((c) => new THREE.MeshStandardMaterial({ color: c, vertexColors: true, roughness: 0.93, metalness: 0.02 }));
     const [retretes, cosas] = await Promise.all([cargar('cohete_retretes.glb').catch(() => null), cargar('cohete_cosas.glb').catch(() => null)]);
+    // (si Blender repitió un nombre le pone «.001», y al cargar queda «001»)
+    const limpio = (n: string) => n.replace(/(\.\d+|\d{3})$/, '');
     if (retretes) {
       brillar(retretes);
-      for (const o of retretes.children) if (o.name.startsWith('retrete_')) m.retretes.set(o.name.slice(8), o);
+      for (const o of retretes.children) if (o.name.startsWith('retrete_')) m.retretes.set(limpio(o.name).slice(8), o);
     }
     if (cosas) {
       brillar(cosas);
-      for (const o of cosas.children) m.cosas.set(o.name, o);
+      for (const o of cosas.children) m.cosas.set(limpio(o.name), o);
     }
     // El rollito: se juntan sus mallas por material para dibujar cientos de una
     const rollo = m.cosas.get('rollito') ?? rollitoSencillo();

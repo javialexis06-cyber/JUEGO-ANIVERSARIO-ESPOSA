@@ -25,10 +25,11 @@ ICONOS = {**RETRETES, **cp.PODERES, 'rollito': cp.COSAS['rollito'], **cp.ICONOS}
 
 
 def construir(key, fn, coll):
-    before = set(coll.objects)
-    fn(coll)
+    # El vacío se crea primero: así se queda con el nombre limpio aunque alguna pieza se llame igual (el rollito)
     root = bpy.data.objects.new(key, None)
     clay.link(root, coll)
+    before = set(coll.objects)
+    fn(coll)
     for o in coll.objects:
         if o not in before and o is not root and o.parent is None:
             o.parent = root
@@ -75,7 +76,7 @@ def main(out, grupos, claves):
     if 'iconos' in grupos:
         # Íconos primero (con los materiales completos); después se exporta (simplifica los materiales)
         piezas = {k: f for k, f in ICONOS.items() if not claves or k in claves}
-        exportar_glb.exportar_iconos_piezas(os.path.join(out, 'iconos'), {f'cohete_{k}': (lambda c, k=k, f=f: construir(k, f, c)) for k, f in piezas.items()})
+        exportar_glb.exportar_iconos_piezas(os.path.join(out, 'iconos'), {f'cohete_{k}': (lambda c, k=k, f=f: construir(f'icono {k}', f, c)) for k, f in piezas.items()})
     if 'retretes' in grupos:
         exportar_grupo(RETRETES, os.path.join(out, 'cohete_retretes.glb'))
     if 'cosas' in grupos:
