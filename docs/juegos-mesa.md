@@ -28,6 +28,12 @@ Los cuatro juegos están completos y probados en los tres modos (contra la IA, l
 `node scripts/probar-mesa-linea.mjs <juego>` juega una partida completa entre dos celulares con un Supabase de
 mentiras que pierde el 8 % de los mensajes: los cuatro terminan con el mismo estado en los dos.
 
+**Si se corta la conexión** (en línea): si el otro sale de la app (otra app, pantalla bloqueada) o se le cae el
+internet, sale una pausa encima del tablero con «Ella salió de la app un momentico… esperando a que vuelva» (o «Se
+cortó la conexión con Ella…») y un botón para salir de la partida. Cuando vuelve, la pausa se quita sola («¡Ella
+volvió!») y el que estaba esperando la jugada la vuelve a pedir por si se perdió. La presencia de Supabase titila al
+reconectar: por eso, sin aviso explícito, la pausa sale a los 2,5 s. Prueba: `node scripts/probar-segundo-plano.mjs mesa`.
+
 ## Pruebas
 
 `mesa.html?juego=dados&modo=local&rol=el&empieza=el&semilla=7&rapido=4` entra directo a una partida.

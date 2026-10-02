@@ -403,8 +403,13 @@ for (let i = 0; i < 3; i++) {
 const abrazos = db.eventos.filter((e) => e.tipo === 'abrazo');
 console.log('   abrazos en el servidor:', JSON.stringify(abrazos.map((e) => ({ de: e.de, visto: e.visto }))));
 revisar(abrazos.length === 3 && abrazos.every((e) => !e.visto), 'Con Ella sin internet, los 3 abrazos esperan en el servidor');
+// Ella bloqueó el celular mientras tanto: se va a segundo plano…
+await ella.evaluate(() => {
+  Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+  document.dispatchEvent(new Event('visibilitychange'));
+});
 sinRed.delete(ella);
-// Vuelve a la app (como al desbloquear el celular)
+// …y vuelve a la app (como al desbloquear el celular)
 await ella.evaluate(() => {
   Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
   document.dispatchEvent(new Event('visibilitychange'));

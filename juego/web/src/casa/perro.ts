@@ -26,6 +26,7 @@ export type Accion =
 export type Cara = 'normal' | 'feliz' | 'dormido' | 'enojado' | 'triste';
 
 const ESCALA = 1.1;
+let GOTA: { geo: THREE.SphereGeometry; mat: THREE.Material } | null = null;
 const VELOCIDAD = 1.25;
 /** Canales de la pose (se suavizan hacia su meta cada cuadro). */
 const CANALES = [
@@ -448,7 +449,12 @@ export class Perro3D {
         this.burbujas.push(b);
       }
     } else if (!si) {
-      for (const b of this.burbujas) b.removeFromParent();
+      // (se sueltan de la tarjeta gráfica: cada baño hacía 16 esferas nuevas)
+      for (const b of this.burbujas) {
+        b.removeFromParent();
+        b.geometry.dispose();
+      }
+      (this.burbujas[0]?.material as THREE.Material | undefined)?.dispose();
       this.burbujas = [];
     }
   }
@@ -457,9 +463,10 @@ export class Perro3D {
   salpicar() {
     const padre = this.grupo.parent;
     if (!padre) return;
-    const mat = new THREE.MeshStandardMaterial({ color: '#9fd3f2', roughness: 0.1, transparent: true, opacity: 0.85 });
+    // Una sola gotita (geometría y material) para todas las sacudidas: no queda memoria suelta
+    GOTA ??= { geo: new THREE.SphereGeometry(0.018, 6, 5), mat: new THREE.MeshStandardMaterial({ color: '#9fd3f2', roughness: 0.1, transparent: true, opacity: 0.85 }) };
     for (let i = 0; i < 26; i++) {
-      const m = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 5), mat);
+      const m = new THREE.Mesh(GOTA.geo, GOTA.mat);
       m.position.copy(this.grupo.position).add(new THREE.Vector3(0, 0.3, 0));
       const a = Math.random() * Math.PI * 2;
       this.gotas.push({ m, v: new THREE.Vector3(Math.cos(a) * 1.6, 1 + Math.random() * 1.4, Math.sin(a) * 1.6), vida: 0.9 });

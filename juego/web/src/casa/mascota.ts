@@ -322,7 +322,7 @@ export class Mascota {
     const dur = a.hasta - a.desde;
     // Las acciones son cortas; ver tele dura lo que duren los videos (se alarga de a 20 min mientras está en
     // grande; si se cierra la app, a los 20 min se paran solos). Lavarse la cara dura lo que dure el minijuego.
-    if (!(dur > 0 && dur <= (a.accion === 'tv' ? 6 * 3600_000 : a.accion === 'lavar' ? 360_000 : a.accion === 'cocinar' ? 3600_000 : 120000))) return false;
+    if (!(dur > 0 && dur <= (a.accion === 'tv' ? 6 * 3600_000 : a.accion === 'lavar' ? 2400_000 : a.accion === 'cocinar' ? 3600_000 : 120000))) return false;
     let visto = this.vistas.get(a.desde);
     if (visto === undefined) {
       visto = ahora;

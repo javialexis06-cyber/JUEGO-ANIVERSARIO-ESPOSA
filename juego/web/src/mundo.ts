@@ -1,14 +1,13 @@
 // Escena, cámara isométrica (la misma de los renders), luces, sombras de contacto y controles de zoom/arrastre.
-import { N8AOPass } from 'n8ao';
 import * as THREE from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
+import type { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { vigilarContexto } from './contexto';
 import { conTono } from './tono';
 
 const AZ = THREE.MathUtils.degToRad(38);
+/** Vector de trabajo (se usa cada cuadro para los globos: así no se crea uno nuevo cada vez). */
+const TEMP = new THREE.Vector3();
 const EL = THREE.MathUtils.degToRad(38);
 const ALTO_PARED = 3.4;
 
@@ -28,9 +27,8 @@ export class Mundo {
   private base = 10;
   private zoom = 1;
   private desplazamiento = new THREE.Vector2(0, 0);
-  private composer: EffectComposer;
-  private ao: N8AOPass;
-  private smaa: SMAAPass;
+  /** Sombras de contacto, suavizado y color final (se cargan aparte: ver postpro.ts). */
+  private composer: EffectComposer | null = null;
   /** 'alta': oclusión ambiental (sombras de contacto como en los renders). 'baja': dibujo directo. */
   calidad: 'alta' | 'baja' = 'alta';
   private tiempos: number[] = [];
@@ -52,22 +50,12 @@ export class Mundo {
     this.escena.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     this.escena.environmentIntensity = 0.45;
     this.luces();
-    // Sombras de contacto (oclusión ambiental) → antialias → tono AgX
-    const w = window.innerWidth, h = window.innerHeight;
-    this.composer = new EffectComposer(this.renderer);
-    this.ao = new N8AOPass(this.escena, this.camara, w, h);
-    const c = this.ao.configuration;
-    c.gammaCorrection = false;
-    c.aoRadius = 0.7;
-    c.distanceFalloff = 0.35;
-    c.intensity = 3;
-    c.color = new THREE.Color('#2a1a14');
-    c.halfRes = true;
-    this.ao.setQualityMode('Medium');
-    this.composer.addPass(this.ao);
-    this.smaa = new SMAAPass(w, h);
-    this.composer.addPass(this.smaa);
-    this.composer.addPass(new OutputPass());
+    // Sombras de contacto (oclusión ambiental) → antialias → tono AgX: se descargan mientras cargan los modelos
+    void import('./postpro').then(({ crearComposer }) => {
+      this.composer = crearComposer(this.renderer, this.escena, this.camara, window.innerWidth, window.innerHeight);
+      this.ajustar();
+      this.sucio = true;
+    });
     window.addEventListener('resize', () => this.ajustar());
     vigilarContexto(lienzo, () => {
       this.ajustar();
@@ -199,15 +187,17 @@ export class Mundo {
 
   /** Posición en pantalla (px) de un punto del mundo, para globos y avisos. */
   aPantalla(p: THREE.Vector3): { x: number; y: number; visible: boolean } {
-    const v = p.clone().project(this.camara);
+    const v = TEMP.copy(p).project(this.camara);
     return { x: (v.x * 0.5 + 0.5) * window.innerWidth, y: (-v.y * 0.5 + 0.5) * window.innerHeight, visible: v.z < 1 };
   }
 
   /** Con partida en curso se dibuja cada cuadro; en menús solo cuando algo cambió (ahorra batería). */
   dibujar(dt = 1 / 60, continuo = true) {
     if (!continuo && !this.sucio) return;
+    // (en alta calidad, mientras llega el composer no se dibuja: debajo está la pantalla de carga)
+    if (this.calidad === 'alta' && !this.composer) return;
     this.sucio = false;
-    if (this.calidad === 'alta') this.composer.render();
+    if (this.calidad === 'alta') this.composer!.render();
     else this.renderer.render(this.escena, this.camara);
     if (continuo) this.vigilarRitmo(dt);
   }
