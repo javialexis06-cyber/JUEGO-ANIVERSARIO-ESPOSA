@@ -489,8 +489,8 @@ export class Dibujo {
   private numero(x: number, y: number, v: number, tipo: number) {
     if (v < 0.5 && tipo !== 3) return;
     const b = this.sigNum * 5;
-    this.nums[b] = x + (Math.random() - 0.5) * 10;
-    this.nums[b + 1] = y;
+    this.nums[b] = x + (Math.random() - 0.5) * 18;
+    this.nums[b + 1] = y + (Math.random() - 0.5) * 8;
     this.nums[b + 2] = Math.round(v);
     this.nums[b + 3] = 0;
     this.nums[b + 4] = tipo;
@@ -648,7 +648,7 @@ export class Dibujo {
       if (cofre) {
         const b = this.fx.c.brillo;
         const col = o.calidad >= 3 ? [1, 0.5, 0.75] : o.calidad >= 2 ? [1, 0.85, 0.4] : [0.6, 0.85, 1];
-        this.fxLuz.poner(o.x, o.y, 20, 120, 120, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, col[0], col[1], col[2], 0.35 + Math.sin(t * 4) * 0.12);
+        this.pisoFx.poner(o.x, o.y, 0.1, 110, 76, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, col[0], col[1], col[2], 0.6 + Math.sin(t * 4) * 0.15);
         if (Math.random() < 0.15) this.part.crear('chispa', CAPA_LUZ, o.x + (Math.random() - 0.5) * 40, o.y, 10, 0, 0, 60, 0.7, 12, 3, col[0], col[1], col[2], 1);
       }
     }
@@ -746,7 +746,8 @@ export class Dibujo {
       // Las élites brillan (borde dorado que palpita)
       brillo = 0.1 + Math.sin(t * 5 + e.uid) * 0.06;
       const bl = this.fx.c.brillo;
-      this.fxLuz.poner(e.x, e.y, tam * 0.35, tam * 1.5, tam * 1.2, 0.5, 0.5, bl.u0, bl.v0, bl.u1, bl.v1, 1, 0.8, 0.3, 0.35 + Math.sin(t * 5 + e.uid) * 0.12);
+      // Aura dorada en el piso, debajo (encima lo lavaría de blanco)
+      this.pisoFx.poner(e.x, e.y, 0.11, tam * 1.25, tam * 0.85, 0.5, 0.5, bl.u0, bl.v0, bl.u1, bl.v1, 1, 0.78, 0.25, 0.55 + Math.sin(t * 5 + e.uid) * 0.15);
     }
     if (e.jefe) tam *= 1;
     this.bichos.poner(e.x, e.y, alto, tam, tam, d.ancla[0], d.ancla[1], c.u0, c.v0, c.u1, c.v1, r, g, b, 1, golpe ? e.flash / 0.13 : 0, aplastar, voltear, 0, brillo);
@@ -763,8 +764,8 @@ export class Dibujo {
     this.sombra(e.x, e.y, 16, 0.35);
     const b = this.fx.c.brillo;
     const parp = 0.5 + Math.sin(t * 13 + e.fase * 20) * 0.08 + Math.sin(t * 7.3 + e.fase) * 0.06;
-    this.fxLuz.poner(e.x, e.y - 1, 30, 70, 70, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.75, 0.4, parp);
-    this.pisoFx.poner(e.x, e.y, 0.1, 110, 80, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.8, 0.5, parp * 0.5);
+    this.fxLuz.poner(e.x, e.y - 1, 34, 26, 30, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.7, 0.35, parp * 0.6);
+    this.pisoFx.poner(e.x, e.y, 0.1, 90, 62, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.82, 0.45, parp * 0.55);
   }
 
   private dibujarProyectiles(m: Motor) {
@@ -921,9 +922,9 @@ export class Dibujo {
       const caliente = this.trazos[b + 6] > 0;
       const x = this.trazos[b] + lado * (largo * 0.5 + 6);
       const crece = Math.min(1, k * 4);
-      const col = caliente ? [1, 0.55, 0.45] : [1, 0.82, 0.9];
-      this.fxNormal.poner(x, this.trazos[b + 1], 14, largo * crece, alto * 2.6, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, col[0], col[1], col[2], (1 - k) * 0.95, 0, 0, lado);
-      this.fxNormal.poner(x, this.trazos[b + 1], 16, largo * crece * 0.85, alto * 1.4, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, 1, 1, 1, (1 - k) * 0.9, 0, 0, lado);
+      const col = caliente ? [1, 0.5, 0.38] : [0.98, 0.62, 0.74];
+      this.fxNormal.poner(x, this.trazos[b + 1], 14, largo * crece, alto * 1.7, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, col[0], col[1], col[2], (1 - k) * 0.85, 0, 0, lado);
+      this.fxNormal.poner(x, this.trazos[b + 1], 16, largo * crece * 0.8, alto * 0.7, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, 1, 0.95, 0.97, (1 - k) * 0.55, 0, 0, lado);
     }
     const ry = this.fx.c.rayo;
     for (let q = 0; q < 32; q++) {
@@ -969,7 +970,8 @@ export class Dibujo {
       const tipo = this.nums[b + 4];
       const texto = String(v);
       const pop = edad < 0.1 ? 1 + (1 - edad / 0.1) * 0.6 : 1;
-      const tam = (tipo === 1 ? 22 : tipo === 2 ? 22 : 15) * pop;
+      // Chiquitos como en el original (si no, cientos de golpes tapan todo)
+      const tam = (tipo === 1 ? 15 : tipo === 2 ? 17 : tipo === 0 ? 10.5 : 12) * pop;
       const a = Math.min(1, (0.7 - edad) * 5);
       const col = tipo === 1 ? [1, 0.85, 0.25] : tipo === 2 ? [1, 0.35, 0.3] : tipo === 3 ? [0.5, 1, 0.55] : tipo === 4 ? [1, 0.82, 0.3] : [1, 1, 1];
       let w = 0;

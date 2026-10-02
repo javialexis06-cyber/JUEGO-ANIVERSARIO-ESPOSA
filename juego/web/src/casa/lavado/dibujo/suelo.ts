@@ -146,7 +146,8 @@ export class Suelo {
     const ruido = texturaRuido();
     this.texturas.push(detalle, ruido);
     const pal: Paleta = esc === 'cara' ? PIEL[rol] : esc === 'lavamanos' ? { c1: '#f4f7fa', c2: '#e2eaf1', c3: '#bfe0ee' } : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
-    const lin = (c: string) => new THREE.Color(c).convertSRGBToLinear();
+    // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
+    const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({
       vertexShader: VERT,
       fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : FRAG_BANERA,
@@ -164,6 +165,8 @@ export class Suelo {
     this.plano = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), this.mat);
     this.plano.rotation.x = -Math.PI / 2;
     this.plano.renderOrder = 0;
+    // El piso no tapa nada: los brillos y cartones centrados en el piso (velitas, explosiones) se ven enteros
+    this.mat.depthWrite = false;
     this.plano.frustumCulled = false;
     this.atlas = atlasDecor();
     this.texturas.push(this.atlas.textura);

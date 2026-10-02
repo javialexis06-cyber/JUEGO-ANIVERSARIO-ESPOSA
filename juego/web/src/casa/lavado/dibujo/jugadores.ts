@@ -18,25 +18,26 @@ export const ALTO_PERSONAJE = 50;
 
 /** Dónde va cada accesorio: hueso, posición, giro (grados) y tamaño, en las medidas del personaje. */
 const PEGAR: Record<Accesorio, { hueso: string; p: [number, number, number]; r: [number, number, number]; s: number }> = {
-  toalla_hombro: { hueso: 'torso', p: [0, 0.62, 0.02], r: [0, 0, 0], s: 1.05 },
-  espuma_cabeza: { hueso: 'cabeza', p: [0, 1.0, 0.0], r: [0, 0, 0], s: 0.85 },
-  cepillo_mano: { hueso: 'manoL', p: [0, 0.05, 0.06], r: [80, 0, -20], s: 0.75 },
-  espejo_frente: { hueso: 'cabeza', p: [0, 0.62, -0.04], r: [0, 0, 0], s: 1.0 },
-  jabon_pecho: { hueso: 'torso', p: [0, 0.38, 0.42], r: [90, 0, 0], s: 0.42 },
-  champu_mano: { hueso: 'manoL', p: [0, -0.02, 0.06], r: [0, 0, 0], s: 0.55 },
-  casco_burbuja: { hueso: 'cabeza', p: [0, 0.58, 0.0], r: [0, 0, 0], s: 1.12 },
-  casco_bombero: { hueso: 'cabeza', p: [0, 0.98, 0.0], r: [-6, 0, 0], s: 1.1 },
-  manguera: { hueso: 'torso', p: [0, 0.4, -0.45], r: [0, 0, 0], s: 1.0 },
-  hilo_mano: { hueso: 'manoL', p: [0, -0.05, 0.06], r: [0, 0, 0], s: 0.5 },
-  varita_mano: { hueso: 'manoL', p: [0, 0.0, 0.05], r: [0, 0, 0], s: 0.7 },
-  escudo: { hueso: 'manoR', p: [0, 0.0, 0.12], r: [90, 0, 0], s: 0.6 },
-  perfume_mano: { hueso: 'manoL', p: [0, -0.02, 0.06], r: [0, 0, 0], s: 0.6 },
-  turbante: { hueso: 'cabeza', p: [0, 0.82, -0.05], r: [-10, 0, 0], s: 1.25 },
-  patico_mano: { hueso: 'manoL', p: [0, -0.05, 0.1], r: [0, 0, 0], s: 0.6 },
-  ranita_cabeza: { hueso: 'cabeza', p: [0.05, 1.18, 0.05], r: [0, 0, 0], s: 0.6 },
-  esponja_mano: { hueso: 'manoL', p: [0, -0.02, 0.06], r: [0, 0, 0], s: 0.55 },
-  secador_mano: { hueso: 'manoL', p: [0, -0.05, 0.06], r: [0, 90, 0], s: 0.6 },
-  rulos: { hueso: 'cabeza', p: [0, 0.75, 0.0], r: [0, 0, 0], s: 1.2 },
+  // (el muñeco mide 2,5 de alto: la cabeza nace en el hueso a 0,98 y llega a 2,5; las manos están a 0,67)
+  toalla_hombro: { hueso: 'torso', p: [0, 0.3, 0.04], r: [0, 0, 0], s: 1.15 },
+  espuma_cabeza: { hueso: 'cabeza', p: [0, 1.36, -0.05], r: [0, 0, 0], s: 1.6 },
+  cepillo_mano: { hueso: 'manoL', p: [0, -0.02, 0.1], r: [0, 0, 15], s: 1.19 },
+  espejo_frente: { hueso: 'cabeza', p: [0, 0.95, 0.02], r: [0, 0, 0], s: 1.75 },
+  jabon_pecho: { hueso: 'torso', p: [0, -0.12, 0.36], r: [0, 0, 0], s: 0.6 },
+  champu_mano: { hueso: 'manoL', p: [0, -0.08, 0.1], r: [0, 0, 0], s: 1.05 },
+  casco_burbuja: { hueso: 'cabeza', p: [0, 0.74, 0.0], r: [0, 0, 0], s: 1.45 },
+  casco_bombero: { hueso: 'cabeza', p: [0, 1.0, -0.02], r: [-6, 0, 0], s: 1.55 },
+  manguera: { hueso: 'torso', p: [0, 0.12, -0.42], r: [0, 0, 0], s: 0.95 },
+  hilo_mano: { hueso: 'manoL', p: [-0.05, -0.08, 0.1], r: [0, 0, 0], s: 0.84 },
+  varita_mano: { hueso: 'manoL', p: [-0.05, -0.05, 0.1], r: [0, 0, 0], s: 1.05 },
+  escudo: { hueso: 'manoR', p: [0.05, 0.0, 0.16], r: [0, 0, 0], s: 1.26 },
+  perfume_mano: { hueso: 'manoL', p: [-0.05, -0.08, 0.1], r: [0, 0, 0], s: 0.84 },
+  turbante: { hueso: 'cabeza', p: [0, 0.95, -0.06], r: [-8, 0, 0], s: 1.9 },
+  patico_mano: { hueso: 'manoL', p: [0, -0.05, 0.12], r: [0, 0, 0], s: 0.98 },
+  ranita_cabeza: { hueso: 'cabeza', p: [0.15, 1.42, 0.0], r: [0, 0, 8], s: 1.0 },
+  esponja_mano: { hueso: 'manoL', p: [0, -0.06, 0.1], r: [0, 0, 0], s: 0.98 },
+  secador_mano: { hueso: 'manoL', p: [-0.05, -0.08, 0.1], r: [0, 0, 0], s: 0.91 },
+  rulos: { hueso: 'cabeza', p: [0, 0.88, -0.1], r: [-10, 0, 0], s: 2.0 },
 };
 
 let accesorios: Promise<THREE.Group | null> | null = null;
@@ -79,13 +80,19 @@ export class Jugador3D {
         const d = PEGAR[a];
         const hueso = this.p.huesos.get(d.hueso) ?? this.p.huesos.get(d.hueso.replace('.', ''));
         if (!molde || !hueso) continue;
-        const o = molde.clone(true);
+        // El nodo del GLB trae su propia escala y posición (la compresión las usa para descomprimir la malla):
+        // se respeta y el acomodo va en un grupo de afuera
+        const o = new THREE.Group();
+        o.add(molde.clone(true));
         o.position.set(...d.p);
         o.rotation.set(...(d.r.map((g) => THREE.MathUtils.degToRad(g)) as [number, number, number]));
-        // Las medidas del accesorio van en las del personaje (el hueso puede venir escalado)
-        const s = new THREE.Vector3();
+        // Las medidas del accesorio van en las del personaje (el hueso puede venir escalado respecto al muñeco;
+        // la escala del mapa, la del grupo de afuera, no cuenta)
+        const s = new THREE.Vector3(), sg = new THREE.Vector3();
+        this.raiz.updateMatrixWorld(true);
         hueso.getWorldScale(s);
-        o.scale.setScalar(d.s / Math.max(1e-3, s.x));
+        this.p.grupo.getWorldScale(sg);
+        o.scale.setScalar(d.s / Math.max(1e-3, s.x / Math.max(1e-6, sg.x)));
         o.traverse((m) => {
           const malla = m as THREE.Mesh;
           if (!malla.isMesh) return;
