@@ -126,7 +126,12 @@ const el = await celular('el');
 const ella = await celular('ella');
 await el.waitForFunction(() => /está en la mesa/.test(document.getElementById('menu-nota')?.textContent ?? ''), null, { timeout: 120000 }).catch(() => {});
 revisar(await el.evaluate(() => /está en la mesa/.test(document.getElementById('menu-nota').textContent)), 'Él ve que Ella está en la mesa');
-await el.click(`[data-juego="${juego}"]`);
+// El Parchís pregunta primero si con uno o dos colores (parchis2 no tiene carta propia en el menú)
+if (juego === 'parchis' || juego === 'parchis2') {
+  await el.click('[data-juego="parchis"]');
+  await el.waitForSelector('#hoja:not([hidden]) #hoja-botones button', { timeout: 60000 });
+  await el.click(`#hoja-botones button:nth-child(${juego === 'parchis' ? 1 : 2})`);
+} else await el.click(`[data-juego="${juego}"]`);
 await ella.waitForSelector('#hoja:not([hidden]) .boton-tomate', { timeout: 60000 });
 await ella.screenshot({ path: `${carpeta}/${juego}-invitacion.png` });
 await ella.click('#hoja:not([hidden]) .boton-tomate');
