@@ -12,8 +12,12 @@ p.setDefaultTimeout(120000);
 const errores = [];
 p.on('pageerror', (e) => errores.push(String(e)));
 p.on('console', (m) => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && errores.push(m.text()));
+p.on('requestfailed', (r) => errores.push('falló ' + r.url()));
 await p.goto(url);
 await p.evaluate(() => localStorage.clear());
+// (lo que estaba cargando la primera página se corta al salir de ella: eso no cuenta como error)
+await p.goto('about:blank');
+errores.length = 0;
 await p.goto(`${url}?rol=el&local=1&rapido=3`);
 await p.waitForFunction(() => window.__listo === true, null, { timeout: 120000 });
 const accion = async (cuarto, boton, clave, nombre, extra) => {
