@@ -195,3 +195,34 @@ respeta «reducir movimiento» del celular.
 | Nombres de animaciones CSS repetidos: `cae`, `sube` y `late` existen en `estilos.css` y en `casa.css` con movimientos distintos (en la casa ganan los de `casa.css`) | `src/estilos.css`, `src/casa/casa.css` | baja | Renombrar los de la casa (`cae-corazon`, `sube-efecto`, `late-ico`) |
 | **Campos nuevos de la casa**: `modelo.ts` ahora tiene `CAMPOS_CASA` y TypeScript obliga a listar ahí cada campo nuevo de `Casa` (si no, no compila). Así un celular con la app vieja no borra lo que guarda la nueva | `src/casa/modelo.ts` | — | Al juntar ramas que agreguen campos a `Casa` (p. ej. el tocador), agregar la clave a `CAMPOS_CASA` además de su normalización |
 | Íconos de productos en PNG (248 archivos, 6,3 MB) junto a 701 en WebP | `public/modelos/iconos` | baja | Pasarlos a WebP sin pérdida en el optimizador (ahorraría ~2-3 MB de la APK); hay rutas `.png` fijas en `recursos.ts`, `ui_casa.ts` y `main.ts` |
+
+## Rendimiento (sin bajar la calidad gráfica)
+
+Nada de bajar resolución, modelos, sombras ni efectos: lo mismo se ve igual, pero cuesta menos.
+
+| Cambio | Dónde | Efecto |
+|---|---|---|
+| Las sombras de contacto (N8AO) y el suavizado (SMAA) se descargan aparte mientras cargan los modelos (antes iban en el trozo `personaje`, que también cargaban la mesa y el súper sin necesitarlos todos) | `mundo.ts` → `postpro.ts` | Trozo `personaje`: 915 → 689 kB (gzip 307 → 184 kB) |
+| Los recuerdos flotantes (dibujos, frases y la historia de los dos) se descargan la primera vez que salen (baño o cama) | `casa/recuerdos.ts` → `recuerdos_panel.ts` | Trozo `casa`: 266 → 227 kB, y la historia (25 kB) ya no se carga al abrir |
+| 9 modelos sin comprimir (cuartos de la ampliación, patio, perrito, bebé, cigüeña): se comprimieron con meshopt igual que el resto, **sin simplificar** | `public/modelos` | 21,0 → 5,5 MB (la APK pesa ~15 MB menos); comparados foto a foto, se ven igual. Además ocupan menos memoria de video (atributos cuantizados) |
+| Los cuartos de siempre y los dos personajes empiezan a descargarse a la par con los productos | `casa/main.ts` | Menos espera en la pantalla de carga |
+| Con una hoja encima (tienda, notas…) o la tele en grande, la casa se dibuja a 16 cuadros por segundo en vez de 30 (casi no se ve; el vigilante de calidad no se confunde) | `casa/main.ts` | Mitad de trabajo de la tarjeta gráfica mientras se compra |
+| La mesa dibujaba a 60 cuadros por segundo | `mesa/escenario.ts` | 30, como todo lo demás |
+| Súper: los globos, barras, números y avisos se reescribían en cada cuadro aunque no cambiaran (cada escritura hace recalcular la página) | `ui.ts` | Solo se escribe lo que cambió |
+| Vectores nuevos en cada cuadro por personaje y por globo | `personaje.ts`, `mundo.ts`, `ui.ts` | Se reusan |
+| Un modelo que falla al cargar quedaba fallando para siempre (la promesa rota se quedaba en la caché) | `recursos.ts` | Se vuelve a intentar |
+| **Error grave encontrado al medir**: descomprimir los modelos en hilos (`MeshoptDecoder.useWorkers`) rompe la versión compilada (el hilo se arma con el nombre de una función que el minificador cambia): la casa se quedaba cargando para siempre | `recursos.ts` | Se dejó sin hilos, con el aviso escrito en el código |
+
+Choques de muchos contra muchos: en el súper hay a lo sumo unas 30 personas a la vez y los choques solo se revisan
+entre los dos jugadores; una estructura espacial no ahorraría nada. Cuartos: se cargan cuando alguien entra (o va
+caminando para allá) y no se descargan, porque los modelos quedan en la caché compartida y soltarlos obligaría a
+volver a descomprimirlos (más espera y más calor al volver).
+
+JavaScript que hay que leer antes de mostrar cada página (versión compilada):
+
+| Página | Antes | Después |
+|---|---|---|
+| Casa (`index.html`) | 1.325 kB (gzip 436) | 1.043 kB (gzip 293) |
+| Súper (`super.html`) | 1.031 kB (gzip 345) | 811 kB (gzip 225) |
+| Mesa (`mesa.html`) | 1.103 kB (gzip 355) | 886 kB (gzip 236) |
+| Modelos (`public/modelos`) | 79,8 MB | 64,4 MB |
