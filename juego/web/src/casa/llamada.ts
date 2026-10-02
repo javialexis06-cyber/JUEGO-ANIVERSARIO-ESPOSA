@@ -1,6 +1,7 @@
 // Mensajes de voz de la casa, como una llamada: quien lo regala graba hasta 30 segundos; al otro le suena el
 // teléfono (timbre y vibración), contesta y lo oye con la carita de quien llama; después queda en el buzón.
 import * as sonido from '../sonido';
+import { enPausa } from '../segundo_plano';
 import type { Rol } from './modelo';
 import { caraClase, esc } from './ui_casa';
 
@@ -109,6 +110,8 @@ let timbre = 0;
 export function sonarTimbre() {
   pararTimbre();
   const uno = () => {
+    // En segundo plano no timbra ni vibra (sigue al volver, si nadie ha contestado)
+    if (enPausa()) return;
     // Marimba de celular: dos frases cortas y vibración
     [988, 784, 988, 1175, 988, 784].forEach((f, i) => sonido.nota(f, 0.11, i * 0.13, 'triangle', 0.1));
     navigator.vibrate?.([350, 180, 350]);

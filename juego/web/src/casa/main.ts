@@ -13,8 +13,10 @@ import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import * as THREE from 'three';
 import { aTres, Mundo } from '../mundo';
-import { elegirModelos, Productos } from '../recursos';
+import { cargar, cargarAnimado, elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
+import * as fondo from '../segundo_plano';
+import { salirSuave } from '../transiciones';
 import {
   BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, COLORES_TINTE, CONCEPTOS, type Concepto, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, LE_CAE_MAL, lePasa, paraSitio,
   piezasConcepto, precioConcepto, RAREZA, RAREZAS, TINTES, TipoItem, type TipoSitio,
@@ -110,6 +112,10 @@ async function iniciar() {
   // Con el tono AgX del dibujo en alta calidad este color queda en el mismo beige cálido de la interfaz
   mundo.escena.background = new THREE.Color('#e9d3c0');
   await elegirModelos();
+  // Los cuartos de siempre y los dos personajes se empiezan a descargar de una, a la par con los productos (se
+  // descomprimen en otros hilos): la casa abre antes
+  for (const k of ['sala', 'cocina', 'bano', 'cuarto']) void cargar(`casa_${k}.glb`).catch(() => undefined);
+  for (const r of ['el', 'ella']) void cargarAnimado(`${r}.glb`).catch(() => undefined);
   productos = await Productos.cargar();
   progreso(0.2, 'Acomodando los muebles…');
   casa3d = await Casa3D.cargar(mundo, productos, (k) => progreso(0.2 + k * 0.45));
@@ -139,6 +145,7 @@ async function iniciar() {
     },
     alCambiarModo: () => pintarAcciones(),
   });
+  salirSuave($('carga'));
   mostrar('carga', false);
   const modo = leerModo();
   modoGuardado = modo;
@@ -2883,25 +2890,14 @@ function controles() {
     sonido.activar();
     tocar(e.clientX, e.clientY);
   });
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      escribir(CLAVE_VISTO(yo), Date.now());
-      sonido.suspender();
-    } else {
-      sonido.activar();
-      void alAbrir();
-    }
+  // Segundo plano (otra app, pantalla bloqueada): la casa deja de dibujarse y calla (ver segundo_plano.ts); al volver
+  // se pone al día con lo que pasó mientras tanto
+  fondo.alPausar(() => escribir(CLAVE_VISTO(yo), Date.now()));
+  fondo.alReanudar(() => {
+    sonido.activar();
+    void alAbrir();
   });
   if (Capacitor.isNativePlatform()) {
-    void App.addListener('appStateChange', ({ isActive }) => {
-      if (isActive) {
-        sonido.activar();
-        void alAbrir();
-      } else {
-        escribir(CLAVE_VISTO(yo), Date.now());
-        sonido.suspender();
-      }
-    });
     void App.addListener('backButton', () => {
       const salirLavado = document.querySelector<HTMLElement>('.lavado-fin:not([hidden]) [data-listo], .lavado-salir');
       const pausaCocina = document.querySelector<HTMLElement>('.cocina .cocina-pausa');
@@ -3051,14 +3047,30 @@ let ultimaRevision = -Infinity;
 /** ?rapido=N (pruebas): N pasos fijos de 0,1 s por cuadro, para ver las coreografías en navegadores sin tarjeta gráfica. */
 const RAPIDO = Number(params.get('rapido') ?? 0);
 
+/** En segundo plano el bucle se detiene del todo (no pide más cuadros) y vuelve solo al regresar. */
+let bucleQuieto = false;
+fondo.alReanudar(() => {
+  if (!bucleQuieto) return;
+  bucleQuieto = false;
+  ultimo = performance.now();
+  acumulado = 0;
+  requestAnimationFrame(bucle);
+});
+
 function bucle() {
+  if (fondo.enPausa()) {
+    bucleQuieto = true;
+    return;
+  }
   requestAnimationFrame(bucle);
   const ahora = performance.now();
   const dt = Math.min(0.1, (ahora - ultimo) / 1000);
   ultimo = ahora;
   acumulado += dt;
-  // 30 cuadros por segundo bastan para la casa (ahorra batería)
-  if (acumulado < 1 / 32) return;
+  // 30 cuadros por segundo bastan para la casa (ahorra batería); con una hoja encima o la tele en grande la casa
+  // casi no se ve: 16 cuadros por segundo (la mitad de trabajo para la tarjeta gráfica)
+  const tapada = casaTapada();
+  if (acumulado < (tapada ? 1 / 16 : 1 / 32)) return;
   const paso = acumulado;
   acumulado = 0;
   try {
@@ -3077,7 +3089,8 @@ function bucle() {
     }
     revisarVista();
     efectos();
-    if (!pausaCasa) mundo.dibujar(paso, true);
+    // (tapada se dibuja a la mitad a propósito: al vigilante de la calidad le cuenta como el cuadro que habría sido)
+    if (!pausaCasa) mundo.dibujar(tapada ? paso / 2 : paso, true);
   } catch (e) {
     // Un error en un cuadro no debe congelar la casa; se reporta una vez
     if (!errorReportado) console.error(e);
@@ -3085,6 +3098,8 @@ function bucle() {
   }
 }
 let errorReportado = false;
+const hojaCasa = document.getElementById('hoja');
+const casaTapada = () => (!!hojaCasa && !hojaCasa.hidden) || document.body.classList.contains('en-tele');
 let estabanJuntos = false;
 let vestidosGuardados = '';
 

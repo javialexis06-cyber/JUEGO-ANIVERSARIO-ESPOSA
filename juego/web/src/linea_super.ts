@@ -32,6 +32,8 @@ export type Mensaje =
   | { t: 'ayuda'; id: string; ayuda: string }
   | { t: 'corazon'; id: string }
   | { t: 'pausa'; id: string; si: boolean }
+  /** Se fue a segundo plano (otra app, pantalla bloqueada) o volvió: al otro le sale «se cortó la conexión». */
+  | { t: 'fuera'; id: string; si: boolean }
   | { t: 'fin'; id: string; r: Resultado }
   | { t: 'salir'; id: string };
 
