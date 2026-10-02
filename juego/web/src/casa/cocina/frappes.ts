@@ -261,8 +261,9 @@ class EstacionPreparar implements Estacion {
   }
   private rBombas(): (Rect & { id: string })[] {
     const bs = BASES.filter((b) => b.desde <= this.m.rango);
-    const x0 = 186, cols = Math.min(4, bs.length), w = 116;
-    return bs.map((b, i) => ({ id: b.id, x: x0 + (i % cols) * (w + 8), y: RIEL + 16 + Math.floor(i / cols) * 196, w, h: 186 }));
+    const x0 = 186, w = 116;
+    const cols = Math.max(1, Math.min(bs.length, Math.floor((this.m.zona.w - 330 - x0) / (w + 8))));
+    return bs.map((b, i) => ({ id: b.id, x: x0 + (i % cols) * (w + 8), y: RIEL + 16 + Math.floor(i / cols) * 184, w, h: 176 }));
   }
   private rHielo(): Rect {
     return { x: 186, y: this.m.H - BARRA - 150, w: 200, h: 136 };
@@ -372,7 +373,7 @@ class EstacionPreparar implements Estacion {
       g.fill();
       const ap = this.bombazos.find((x) => x.id === b.id);
       const hundido = ap ? Math.sin(Math.min(1, (m.reloj - ap.t) / 0.3) * Math.PI) * 6 : 0;
-      if (!spr(g, `bomba_${b.id}`, b.x + b.w / 2 + 8, b.y + b.h - 26 + hundido * 0.2, 124, { ey: 1 - hundido * 0.01 })) {
+      if (!spr(g, `bomba_${b.id}`, b.x + b.w / 2 + 8, b.y + b.h - 30 + hundido * 0.2, 100, { ey: 1 - hundido * 0.01 })) {
         g.fillStyle = base.color;
         rr(g, b.x + b.w / 2 - 30, b.y + 60, 60, 80, 12);
         g.fill();
@@ -387,7 +388,7 @@ class EstacionPreparar implements Estacion {
       }
       if (ap && o?.vaso) {
         const k = (m.reloj - ap.t) / 0.45;
-        const pico = punto(`bomba_${b.id}`, 'pico', b.x + b.w / 2 + 8, b.y + b.h - 26, 124);
+        const pico = punto(`bomba_${b.id}`, 'pico', b.x + b.w / 2 + 8, b.y + b.h - 30, 100);
         const p = this.pos();
         const v = geoDe(o.vaso.tam, p.x, p.y, 300);
         const ex = p.x, ey = yEn(v, v.alto);
@@ -427,7 +428,19 @@ class EstacionPreparar implements Estacion {
       dibujarVaso(g, o, p.x, p.y, 300, t, { raya: true });
       m.boton(this.rBotar(), '🗑 Botar', '#f0e4d8', { tam: 22, color: '#7a4a3a' });
     } else if (o && (o.licuadora >= 0 || o.licuado !== null)) texto(g, 'Ya está en la licuadora ✓', p.x - 40, p.y - 140, { tam: 22, color: '#fff', borde: '#2f8a3a' });
-    else if (o) texto(g, '← Escoge el vaso', p.x - 30, p.y - 140, { tam: 22, color: '#fff', borde: 'rgba(40,30,25,0.7)' });
+    else if (o) {
+      // El puesto vacío del vaso: silueta punteada que late
+      g.save();
+      g.globalAlpha = 0.55 + 0.25 * Math.sin(t * 4);
+      g.setLineDash([10, 8]);
+      g.strokeStyle = '#fff';
+      g.lineWidth = 3;
+      rr(g, p.x - 66, p.y - 230, 132, 226, 18);
+      g.stroke();
+      g.restore();
+      texto(g, 'Aquí va el vaso', p.x, p.y - 128, { tam: 20, color: '#fff', borde: 'rgba(40,30,25,0.7)', max: 124 });
+      texto(g, '(escógelo a la izquierda)', p.x, p.y - 98, { tam: 15, color: '#fff', borde: 'rgba(40,30,25,0.7)', max: 124 });
+    }
   }
 }
 
@@ -556,7 +569,7 @@ class EstacionLicuar implements Estacion {
       if (l) {
         const p = tk?.pedido as PedidoFrappe | undefined;
         texto(g, tk ? `Pedido #${tk.numero}` : '—', r.cx, RIEL + 26, { tam: 21, color: '#fff', borde: 'rgba(40,30,25,0.75)' });
-        medidor(g, r.cx + 124, RIEL + 70, 26, 250, l.valor, [
+        medidor(g, r.cx + 150, RIEL + 70, 26, 250, l.valor, [
           { desde: 0.28, hasta: 0.44, color: '#d8ecc0', etiqueta: p?.licuado === 'grueso' ? 'Grueso ★' : 'Grueso' },
           { desde: 0.52, hasta: 0.68, color: '#bfe8c0', etiqueta: p?.licuado === 'normal' ? 'Normal ★' : 'Normal' },
           { desde: 0.74, hasta: 0.9, color: '#8fd49a', etiqueta: p?.licuado === 'cremoso' ? 'Cremoso ★' : 'Cremoso' },
@@ -570,7 +583,7 @@ class EstacionLicuar implements Estacion {
 
   private dibujarLicuadora(g: G, x: number, by: number, l: Licuadora | null, v: Vaso | null, t: number) {
     const vib = l?.andando ? Math.sin(t * 70) * 2 : 0;
-    const tam = 280;
+    const tam = Math.min(240, ((this.m.zona.w - 32) / this.licuadoras.length) * 0.55);
     sombra(g, x, by, 120, 20, 0.3);
     if (!spr(g, 'licuadora_base', x + vib, by, tam)) {
       g.fillStyle = lineal(g, x - 80, 0, x + 80, 0, [[0, '#2e3336'], [0.5, '#5a6166'], [1, '#2a2e31']]);
@@ -781,12 +794,12 @@ class EstacionDecorar implements Estacion {
       g.fillStyle = act ? 'rgba(255,226,168,0.95)' : 'rgba(255,248,238,0.85)';
       rr(g, r.x, r.y, r.w, r.h, 14);
       g.fill();
-      if (!spr(g, `pitillo_${r.id}`, r.x + 34, r.y + r.h - 6, 60, { rot: Math.PI / 2 - 0.05 })) {
+      if (!spr(g, `pitillo_${r.id}`, r.x + 18, r.y + r.h - 8, 72, { rot: 0.95 })) {
         g.fillStyle = q.color;
         rr(g, r.x + 16, r.y + 14, 14, r.h - 28, 6);
         g.fill();
       }
-      texto(g, `Pitillo ${r.id}`, r.x + 120, r.y + r.h / 2 + 2, { tam: 18, color: '#4a2a10' });
+      texto(g, `Pitillo ${r.id}`, r.x + 128, r.y + r.h / 2 + 2, { tam: 18, color: '#4a2a10', max: 112 });
     }
     if (o.vaso) {
       const pd = m.activo!.pedido as PedidoFrappe;

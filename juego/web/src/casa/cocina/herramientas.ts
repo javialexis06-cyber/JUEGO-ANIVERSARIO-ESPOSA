@@ -587,7 +587,7 @@ export function dibujarBotonesToppings(g: G, bs: BotonTopping[], defs: Record<st
     const cy = b.y + b.h * 0.47 + (act ? -3 : 0);
     const tam = d.tipo === 'salsa' ? b.h * 0.3 : d.tipo === 'polvo' ? b.h * 0.33 : b.h * 0.34;
     if (!spr(g, id, b.x + b.w / 2, cy + (d.tipo === 'pieza' ? b.h * 0.08 : b.h * 0.24), tam)) iconoTopping(g, b.id, b.x + b.w / 2, cy - 4, 30, { color: d.color, sabor: d.sabor });
-    texto(g, d.nombre.split(' ')[0], b.x + b.w / 2, b.y + b.h - 10, { tam: 14, color: '#4a2a10', max: b.w - 6, borde: 'rgba(255,248,238,0.9)' });
+    texto(g, nombreCorto(d.nombre), b.x + b.w / 2, b.y + b.h - 10, { tam: 14, color: '#4a2a10', max: b.w - 6, borde: 'rgba(255,248,238,0.9)' });
   }
 }
 /** Una fila del tiquete con un topping (y, si son piezas, dónde van). */
@@ -676,4 +676,10 @@ export function letra(g: G, t: string, x: number, y: number, o: { tam?: number; 
   g.textBaseline = 'middle';
   g.fillStyle = o.color ?? '#3b2a22';
   g.fillText(t, x, y, o.max);
+}
+
+/** Nombre corto para el botón: «Salsa de caramelo» → «Caramelo», «Galleta triturada» → «Galleta». */
+function nombreCorto(n: string) {
+  const r = n.replace(/^(Salsa|Jugo|Crema|Polvo) de /i, '').split(' ')[0];
+  return r.charAt(0).toUpperCase() + r.slice(1);
 }
