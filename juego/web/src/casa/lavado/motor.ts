@@ -929,15 +929,17 @@ export class Motor {
     const ol = esc.oleadas[Math.min(esc.oleadas.length - 1, Math.floor(this.t / 60))];
     const mal = this.maldicion();
     const pareja = this.jug.filter((j) => !j.caido).length > 1 ? 1.4 : 1;
+    // En el pasillo del lavamanos no hay para dónde huir arriba o abajo: llegan menos a la vez
+    const densidad = esc.limites ? 0.5 : 1;
     this.tTanda -= dReloj * mal;
     let tandas = 0;
     while (this.tTanda <= 0 && tandas < 4) {
       tandas++;
       this.tTanda += ol.cada;
-      for (const tipo of ol.tipos) this.crearComun(tipo);
+      for (const tipo of ol.tipos) if (densidad >= 1 || this.az.n() < densidad) this.crearComun(tipo);
     }
     if (this.tTanda < 0) this.tTanda = 0;
-    const minimo = Math.round(ol.min * mal * pareja);
+    const minimo = Math.round(ol.min * mal * pareja * densidad);
     let k = 0;
     while (this.nComunes < minimo && this.nVivos < MAX_ENEMIGOS && k < 40) {
       this.crearComun(ol.tipos[k % ol.tipos.length]);

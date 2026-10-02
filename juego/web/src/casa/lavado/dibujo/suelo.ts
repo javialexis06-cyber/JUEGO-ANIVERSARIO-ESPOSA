@@ -56,10 +56,17 @@ const FRAG_LAVAMANOS = COMUN + /* glsl */ `
     float d1 = texture2D(uDetalle, p / 300.0).r;
     vec4 n = texture2D(uRuido, p / 1800.0);
     vec3 col = mix(uC1, uC2, smoothstep(0.3, 0.8, n.r));
-    col *= 1.0 + (d1 - 0.55) * 0.45;
+    col *= 1.0 + (d1 - 0.55) * 0.6;
+    // Charquitos mojados (más azulitos y brillantes) y el sarro amarillento de las esquinas
+    vec4 n3 = texture2D(uRuido, p / 640.0 + 0.27);
+    float mojado = smoothstep(0.62, 0.78, n3.b * 0.7 + n.g * 0.3);
+    col = mix(col, vec3(0.70, 0.82, 0.92), mojado * 0.45);
+    col += mojado * smoothstep(0.55, 0.9, d1) * 0.12;
+    float sarro = smoothstep(0.7, 0.86, n.a * 0.6 + n3.r * 0.4);
+    col = mix(col, vec3(0.86, 0.80, 0.66), sarro * 0.28);
     // Reflejos del vidriado
-    float banda = smoothstep(0.92, 1.0, sin(p.x * 0.006 + p.y * 0.003 + n.g * 4.0) * 0.5 + 0.5);
-    col += banda * 0.08;
+    float banda = smoothstep(0.9, 1.0, sin(p.x * 0.006 + p.y * 0.003 + n.g * 4.0) * 0.5 + 0.5);
+    col += banda * 0.12;
     if (uLimites.z > 0.5) {
       float fuera = max(uLimites.x - p.y, p.y - uLimites.y);
       if (fuera > 0.0) {
@@ -145,7 +152,7 @@ export class Suelo {
     detalle.needsUpdate = true;
     const ruido = texturaRuido();
     this.texturas.push(detalle, ruido);
-    const pal: Paleta = esc === 'cara' ? PIEL[rol] : esc === 'lavamanos' ? { c1: '#f4f7fa', c2: '#e2eaf1', c3: '#bfe0ee' } : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
+    const pal: Paleta = esc === 'cara' ? PIEL[rol] : esc === 'lavamanos' ? { c1: '#e6ecf2', c2: '#c9d6e2', c3: '#9fcde3' } : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
     // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
     const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({
