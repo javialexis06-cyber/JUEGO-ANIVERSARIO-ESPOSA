@@ -760,7 +760,7 @@ async function rescatado(de: Rol) {
 // ---------------------------------------------------------------------------
 let lavandose = false;
 
-async function lavarse() {
+async function lavarse(unirse?: string) {
   if (!s || lavandose || enCohete) return;
   if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
   lavandose = true;
@@ -772,7 +772,7 @@ async function lavarse() {
   // El minijuego (y los estilos del espejo) se van cargando mientras camina al espejo
   const modulo = import('./lavado');
   try {
-    await hacer('lavar', 'bano', 360, {});
+    await hacer('lavar', 'bano', 1900, {});
     // Camina hasta el espejo (si mientras tanto le mandan a hacer otra cosa, no hay minijuego)
     if (!(await esperarQue(() => !sigue() || m.escenaActual.split('|')[1] === 'lavar', 25000)) || !sigue()) return;
     const frases = ['A ver esta carita…', '¿Y esos granitos?', 'Mmm… algo raro hay aquí', '¡Uy, qué es esto!'];
@@ -790,7 +790,8 @@ async function lavarse() {
       mundo.enfocar(desde.clone().lerp(meta, e), z0 + (3.4 - z0) * e, 3.4);
     });
     m.frase = null;
-    const { jugarLavado } = await modulo;
+    const mod = await modulo;
+    const { jugarLavado } = mod;
     // La cara en el espejo se pone borrosa, con ondas… y entra a otro plano
     document.body.classList.add('lavandose');
     portal = abrirPortal(yo);
@@ -801,7 +802,7 @@ async function lavarse() {
     [0, 0.25, 0.5].forEach((d) => sonido.nota(1400 - d * 800, 0.4, d, 'sine', 0.04, 500));
     await pausa(1500);
     pausaCasa = true;
-    const juego = jugarLavado({ rol: yo });
+    const juego = jugarLavado(opcionesLavado(mod, unirse));
     // Ya con el juego encima, la casa borrosa y las ondas no se ven: se esconden (el filtro gasta batería)
     const tapar = setTimeout(() => {
       lienzo.style.visibility = 'hidden';
@@ -812,6 +813,7 @@ async function lavarse() {
     // De vuelta: el velo de agua se va, la casa vuelve a verse nítida y la cámara se aleja
     lienzo.style.visibility = '';
     portal.style.display = '';
+    ondasPortal.get(portal)?.();
     pausaCasa = false;
     await pausa(450);
     portal.classList.add('sale');
@@ -853,49 +855,84 @@ function abrirPortal(rol: Rol) {
   const mapa = p.querySelector('feDisplacementMap')!;
   const borroso = p.querySelector('feGaussianBlur')!;
   const t0 = performance.now();
+  // Mientras se juega el portal está escondido: las ondas se detienen (no gastan batería) y siguen al volver
+  let id = 0;
   const paso = () => {
-    if (!p.isConnected) return;
+    id = 0;
+    if (!p.isConnected || p.style.display === 'none') return;
     const t = (performance.now() - t0) / 1000;
     const k = Math.min(1, t / 1.6);
     ruido.setAttribute('baseFrequency', `${(0.012 + Math.sin(t * 3) * 0.004).toFixed(4)} ${(0.05 + Math.sin(t * 2.2) * 0.02).toFixed(4)}`);
     mapa.setAttribute('scale', String(Math.round(k * 34 + Math.sin(t * 7) * 6 * k)));
     borroso.setAttribute('stdDeviation', (k * 2.2).toFixed(2));
-    requestAnimationFrame(paso);
+    id = requestAnimationFrame(paso);
   };
-  requestAnimationFrame(paso);
+  id = requestAnimationFrame(paso);
+  ondasPortal.set(p, () => {
+    if (!id) id = requestAnimationFrame(paso);
+  });
   return p;
 }
+/** Para volver a mover las ondas de un portal que se escondió durante el minijuego. */
+const ondasPortal = new WeakMap<HTMLElement, () => void>();
 
-async function terminarLavado(r: { segundos: number; gano: boolean; eliminados: number; nivel: number; jefe: boolean }) {
+/** Lo que necesita el lavado: quién juega, su progreso guardado en la casa y cómo invitar al otro. */
+function opcionesLavado(mod: typeof import('./lavado'), unirse?: string): import('./lavado').OpcionesLavado {
+  const progreso = s?.casa.lavadoProgreso?.[yo] ?? mod.progresoLavadoNuevo(yo);
+  return {
+    rol: yo,
+    nombres: { el: nombre('el'), ella: nombre('ella') },
+    progreso,
+    unirse,
+    // El progreso (gotas doradas, tienda, disfraces, logros) se guarda en la casa de una vez, por persona
+    guardar: async (p) => {
+      await cambiarCasa((c) => {
+        c.lavadoProgreso = { ...(c.lavadoProgreso ?? {}), [yo]: structuredClone(p) };
+      });
+    },
+    pareja: s ? { modo: s.modo, invitar: (id) => s!.enviar('juego', { juego: 'lavado', id }) } : null,
+  };
+}
+
+async function terminarLavado(r: import('./lavado').ResultadoLavado) {
   if (!s) return;
-  const higiene = r.gano ? 100 : Math.round(15 + (r.segundos / 180) * 60);
-  const premio = Math.min(10, Math.floor(r.segundos / 30) + (r.gano ? 3 : 0) + (r.jefe ? 2 : 0));
+  if (!r.partidas) {
+    // Entró y salió sin jugar: igual se refresca un poquito
+    const ahora = Date.now();
+    await guardarYo({ ...sumar(est(yo), { higiene: 10 }, ahora), actividad: { tipo: 'nada', desde: ahora, accion: 'saludo', hasta: ahora + 2000 }, visto: ahora });
+    return;
+  }
+  // Higiene según lo aguantado: a los 5 minutos ya queda al 100
+  const higiene = r.segundos >= 300 || r.gano ? 100 : Math.round(20 + (r.segundos / 300) * 80);
+  const premio = r.monedas;
   const record = r.eliminados > (s.casa.lavado?.[yo] ?? 0);
   await cambiarCasa((c) => {
     c.lavado = { ...(c.lavado ?? {}) };
     if (r.eliminados > (c.lavado[yo] ?? 0)) c.lavado[yo] = r.eliminados;
+    c.lavadoProgreso = { ...(c.lavadoProgreso ?? {}), [yo]: structuredClone(r.progreso) };
     c.monedas += premio;
   });
   // Ya se lavó: deja el espejo con la carita fresca
   const ahora = Date.now();
   await guardarYo({ ...sumar(est(yo), { higiene }, ahora), actividad: { tipo: 'nada', desde: ahora, accion: 'saludo', hasta: ahora + 2500 }, visto: ahora });
-  mascotas[yo].frase = r.gano ? '¡Carita limpiecita! ✨' : '¡Algo es algo!';
+  mascotas[yo].frase = r.gano ? '¡Carita de porcelana! ✨' : r.segundos >= 600 ? '¡Qué lavada tan buena!' : '¡Algo es algo!';
   setTimeout(() => (mascotas[yo].frase = null), 2600);
   setTimeout(() => hojaLavado(r, record, premio, higiene), 1300);
 }
 
-/** Cómo le fue lavándose la cara y quién ha eliminado más gérmenes. */
-function hojaLavado(r: { segundos: number; gano: boolean; eliminados: number; nivel: number; jefe: boolean }, record: boolean, premio: number, higiene: number) {
-  const l = s?.casa.lavado ?? {};
-  const a = l.el ?? 0, b = l.ella ?? 0;
+/** Cómo le fue lavándose la cara y quién ha aguantado más (en minutos) y eliminado más mugrosos. */
+function hojaLavado(r: import('./lavado').ResultadoLavado, record: boolean, premio: number, higiene: number) {
+  const prog = s?.casa.lavadoProgreso ?? {};
+  const min = (q: Rol) => Math.floor(Math.max(0, ...Object.values(prog[q]?.mejor ?? {}).map((v) => v ?? 0)) / 60);
+  const a = min('el'), b = min('ella');
   const lider: Rol | null = a === b ? null : a > b ? 'el' : 'ella';
   const fila = (q: Rol) =>
-    `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${l[q] ? `${l[q]} 🦠` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
+    `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${min(q) ? `${min(q)} min` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
   const mm = `${Math.floor(r.segundos / 60)}:${String(Math.floor(r.segundos % 60)).padStart(2, '0')}`;
   abrirHoja(
-    r.gano ? '¡Carita limpia!' : 'Lavada a medias',
-    `<p class="nota-hoja">${r.gano ? `Aguantaste los 3 minutos` : `Aguantaste ${mm}`}, llegaste a nivel <b>${r.nivel}</b> y eliminaste <b>${r.eliminados}</b> gérmenes${r.jefe ? ', ¡y hasta al Espinillón!' : '.'}${record ? ' <b>¡Nuevo récord!</b>' : ''}</p>
-    <p class="nota-hoja">Higiene ${higiene >= 100 ? 'al máximo' : `+${higiene}`}${premio ? ` · +${premio} ${premio === 1 ? 'moneda' : 'monedas'}` : ''}</p>
+    r.gano ? '¡Carita de porcelana!' : 'Cara lavada',
+    `<p class="nota-hoja">${r.partidas > 1 ? `${r.partidas} lavadas: lo más que aguantaste fue ${mm}` : `Aguantaste ${mm}`}, llegaste a nivel <b>${r.nivel}</b> y eliminaste <b>${r.eliminados.toLocaleString('es-CO')}</b> mugrosos${r.gano ? ', ¡y llegaste hasta la Ducha Helada!' : r.jefe ? ', ¡y venciste a un jefe!' : '.'}${record ? ' <b>¡Nuevo récord!</b>' : ''}</p>
+    <p class="nota-hoja">Higiene ${higiene >= 100 ? 'al máximo' : `+${higiene}`}${premio ? ` · +${premio} ${premio === 1 ? 'moneda' : 'monedas'}` : ''} · Gotas doradas: ${r.progreso.oro.toLocaleString('es-CO')}</p>
     <ol class="retrete-records">${fila('el')}${fila('ella')}</ol>`,
     { saldo: s?.casa.monedas },
   );
@@ -1537,6 +1574,18 @@ function alEvento(e: Evento) {
         const url = `./super.html?unirse=${encodeURIComponent(String(e.datos.id ?? ''))}`;
         abrirHoja('¡A la tienda!', `<p class="nota-hoja">${quien} te invita a atender el súper juntos: <b>${e.datos.legendario ? 'Legendario' : 'Nivel'} ${nivel}</b>, cada uno desde su celular.</p>
           <div class="fila-botones"><a class="boton boton-tomate" href="${url}">¡Vamos!</a></div>`);
+        break;
+      }
+      // Invitación a lavarse la cara juntos (cada uno entra por su espejo a la cara del que invitó)
+      if (e.datos.juego === 'lavado') {
+        if (Date.now() - e.t > 3 * 60_000) break;
+        const idLavado = String(e.datos.id ?? '');
+        abrirHoja('¡A lavarse la cara juntos!', `<p class="nota-hoja">${quien} te invita a entrar a su cara a pelear contra los mugrosos, cada uno desde su celular.</p>
+          <div class="fila-botones"><button class="boton boton-tomate" data-lavado-unirse>¡Vamos!</button></div>`);
+        document.querySelector('[data-lavado-unirse]')?.addEventListener('click', () => {
+          cerrarHoja();
+          void lavarse(idLavado);
+        }, { once: true });
         break;
       }
       // Invitación a la mesa de juegos (vale unos minutos)
@@ -3181,6 +3230,7 @@ function efectos() {
   regalos: s?.casa.regalos,
   deco: s?.casa.deco,
   lavado: s?.casa.lavado,
+  lavadoProgreso: s?.casa.lavadoProgreso,
   cocina: s?.casa.cocina,
 });
 /** Progreso de prueba en un restaurante (para ver rangos altos). */

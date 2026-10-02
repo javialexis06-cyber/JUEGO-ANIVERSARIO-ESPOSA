@@ -51,6 +51,11 @@ export function suspender() {
 export function silenciado() {
   return silencio;
 }
+
+/** El contexto de audio y la salida general (para minijuegos con su propia música, como lavarse la cara). */
+export function contextoAudio(): { ctx: AudioContext; salida: GainNode } | null {
+  return ctx && maestro ? { ctx, salida: maestro } : null;
+}
 export function alternar() {
   silencio = !silencio;
   if (ctx && maestro) maestro.gain.setTargetAtTime(silencio ? 0 : 1, ctx.currentTime, 0.05);

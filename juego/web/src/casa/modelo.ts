@@ -1,5 +1,6 @@
 // Nuestro Hogar: datos de la pareja y reglas de las necesidades (se calculan con el reloj real).
 import { normalizarProgreso, type ProgresoCocina, RECETAS, type RecetaId } from './cocina/tipos';
+import { normalizarProgresoLavado, type ProgresoLavado } from './lavado/progreso';
 export type Rol = 'el' | 'ella';
 export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto' | 'juegos' | 'trofeos' | 'cuna' | 'cuarto_el' | 'cuarto_ella' | 'patio';
 export type Necesidad = 'hambre' | 'energia' | 'higiene' | 'carino';
@@ -201,6 +202,8 @@ export interface Casa {
   retrete?: Partial<Record<Rol, number>>;
   /** Récords de lavarse la cara: los gérmenes que más ha eliminado cada uno en una lavada. */
   lavado?: Partial<Record<Rol, number>>;
+  /** Lavarse la cara: lo de cada uno (gotas doradas, tienda de poderes, disfraces, logros, colección y récords). */
+  lavadoProgreso?: Partial<Record<Rol, ProgresoLavado>>;
   /** Cuartos construidos con «Ampliar la casa» (además de los de siempre). */
   ampliaciones?: Cuarto[];
   /** La bebé que trajo la cigüeña. */
@@ -321,7 +324,7 @@ export function casaNueva(): Casa {
  *  conservan). Al agregar un campo a `Casa`, TypeScript obliga a ponerlo aquí también. */
 const CAMPOS_CASA = {
   monedas: 1, inventario: 1, deco: 1, notas: 1, fechas: 1, regalos: 1, voces: 1, aniversario: 1, diario: 1, retrete: 1, lavado: 1,
-  ampliaciones: 1, bebe: 1, logros: 1, pintura: 1, perro: 1, cocina: 1,
+  ampliaciones: 1, bebe: 1, logros: 1, pintura: 1, perro: 1, cocina: 1, lavadoProgreso: 1,
 } satisfies Record<keyof Casa, 1>;
 
 /** La casa compartida siempre con la forma esperada (y sin valores imposibles como monedas negativas). */
@@ -373,6 +376,13 @@ export function normalizarCasa(c: unknown): Casa {
       ? {
           lavado: Object.fromEntries(
             (['el', 'ella'] as Rol[]).filter((r) => typeof c.lavado[r] === 'number' && Number.isFinite(c.lavado[r])).map((r) => [r, Math.max(0, Math.min(99999, Math.round(c.lavado[r])))]),
+          ),
+        }
+      : {}),
+    ...(esObjeto(c.lavadoProgreso)
+      ? {
+          lavadoProgreso: Object.fromEntries(
+            (['el', 'ella'] as Rol[]).filter((r) => esObjeto(c.lavadoProgreso[r])).map((r) => [r, normalizarProgresoLavado(c.lavadoProgreso[r], r)]),
           ),
         }
       : {}),
