@@ -953,18 +953,23 @@ let cocinando = false;
 function hojaCocinar() {
   if (!s) return;
   const prog = s.casa.cocina?.[yo] ?? {};
+  // Cocinar juntos, cada uno en su celular (en línea, o con las dos pestañas de la casa local)
+  const juntos = s.modo === 'linea' || s.enLinea[otro(yo)];
   const html = `<p class="nota-hoja">${conGenero(yo, 'Hoy eres un|una chef profesional en tu propia cocina: llegan invitados, cocinas lo que piden y te califican. Con las propinas mejoras la cocina; cada día te deja monedas y platos de chef para comer o regalar.')}</p>
     <ul class="restaurantes">${RESTAURANTES.map((r) => {
       const p = prog[r.id];
       const rg = p ? rangoDe(p.xp) : 1;
       return `<li><button class="restaurante" data-cocinar="${r.id}"><span class="ico-rest">${r.icono}</span><b>${r.nombre}</b><small>${r.texto}</small>
-        <em>${p ? `Día ${p.dia} · ${nombreRango(rg)}` : '¡Nuevo!'}</em>${(s!.casa.inventario[r.plato] ?? 0) ? `<i>Hay ${s!.casa.inventario[r.plato]} en la despensa</i>` : ''}</button></li>`;
+        <em>${p ? `Día ${p.dia} · ${nombreRango(rg)}` : '¡Nuevo!'}</em>${(s!.casa.inventario[r.plato] ?? 0) ? `<i>Hay ${s!.casa.inventario[r.plato]} en la despensa</i>` : ''}</button>
+        ${juntos ? `<button class="restaurante-juntos" data-cocinar-juntos="${r.id}">💞 Cocinar con ${nombre(otro(yo))}</button>` : ''}</li>`;
     }).join('')}</ul>`;
   abrirHoja(conGenero(yo, '¿Qué cocinamos, chef?'), html, { saldo: s.casa.monedas });
 }
 
-async function cocinar(receta: RecetaId) {
+async function cocinar(receta: RecetaId, linea?: { modo: 'anfitrion' | 'invitado'; id: string }) {
   if (!s || cocinando || lavandose || enCohete) return;
+  // Invitar: la invitación le llega a la casa del otro (con el enlace para entrar a la misma cocina)
+  if (linea?.modo === 'anfitrion') void s.enviar('juego', { juego: 'cocina', receta, id: linea.id }).catch(() => undefined);
   if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
   cerrarHoja();
   cocinando = true;
@@ -999,6 +1004,7 @@ async function cocinar(receta: RecetaId) {
       receta,
       progreso: s.casa.cocina?.[yo]?.[receta] ?? progresoNuevo(),
       pareja: { rol: otro(yo), nombre: nombre(otro(yo)) },
+      linea: linea ? { ...linea, transporte: s.modo === 'linea' ? 'supabase' : 'local', nombreOtro: nombre(otro(yo)) } : undefined,
       guardar: async (p, dia) => {
         await guardarCocina(receta, p, dia);
         if (dia) {
@@ -1574,6 +1580,15 @@ function alEvento(e: Evento) {
         const url = `./super.html?unirse=${encodeURIComponent(String(e.datos.id ?? ''))}`;
         abrirHoja('¡A la tienda!', `<p class="nota-hoja">${quien} te invita a atender el súper juntos: <b>${e.datos.legendario ? 'Legendario' : 'Nivel'} ${nivel}</b>, cada uno desde su celular.</p>
           <div class="fila-botones"><a class="boton boton-tomate" href="${url}">¡Vamos!</a></div>`);
+        break;
+      }
+      // Invitación a cocinar juntos en la cocina de chef
+      if (e.datos.juego === 'cocina') {
+        if (Date.now() - e.t > 3 * 60_000 || cocinando) break;
+        const r = RESTAURANTES.find((x) => x.id === e.datos.receta);
+        if (!r) break;
+        abrirHoja('¡A cocinar juntos!', `<p class="nota-hoja">${quien} te invita a su cocina de chef: <b>${r.nombre}</b> ${r.icono}. Cocinan el mismo día, cada uno en su celular.</p>
+          <div class="fila-botones"><button class="boton boton-tomate" data-cocinar-unirse="${r.id}|${String(e.datos.id ?? '')}">¡Vamos a cocinar!</button></div>`);
         break;
       }
       // Invitación a lavarse la cara juntos (cada uno entra por su espejo a la cara del que invitó)
@@ -2844,6 +2859,12 @@ function controles() {
     } else if ((b = d('[data-llevar]'))) void mandarComida(b.dataset.llevar!);
     else if ((b = d('[data-ir-tienda]'))) hojaTienda((b.dataset.irTienda || 'comida') as TipoItem);
     else if ((b = d('[data-cocinar]'))) void cocinar(b.dataset.cocinar as RecetaId);
+    else if ((b = d('[data-cocinar-juntos]'))) void cocinar(b.dataset.cocinarJuntos as RecetaId, { modo: 'anfitrion', id: `cocina-${Date.now().toString(36)}` });
+    else if ((b = d('[data-cocinar-unirse]'))) {
+      const [receta, id] = b.dataset.cocinarUnirse!.split('|');
+      cerrarHoja();
+      void cocinar(receta as RecetaId, { modo: 'invitado', id });
+    }
     else if ((b = d('[data-ir-pareja]'))) {
       cerrarHoja();
       void irACuarto(b.dataset.irPareja as Cuarto);

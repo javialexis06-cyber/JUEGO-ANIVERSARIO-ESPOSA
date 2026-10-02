@@ -294,10 +294,43 @@ burbujitas (para los navegadores de prueba).
   de chef** a la despensa —*Wafles de chef* (+70 comida), *Fresas con crema de chef* (+55 comida, +18
   cariño) y *Frappé de chef* (+30 energía)— que no se venden en la tienda, llenan mucho más y **se pueden
   regalar** (al abrirlo, la pareja se lo come y suma 15 de cariño extra: «lo cocinó con sus propias manos»).
-- Código: `src/casa/cocina/` (motor.ts: invitados, tiquetes, calificación, día, mejoras; wafles.ts,
-  fresas.ts, frappes.ts: las estaciones; dibujo.ts y herramientas.ts: la comida dibujada y el chorrear,
-  espolvorear y poner piezas) y `cocinar()` en `src/casa/main.ts`. Los recortes de los invitados y del chef
-  salen de `scripts/generar-sprites-cocina.mjs`; los platos 3D de `personajes/blender/comidas.py`.
+- **Gráficos**: todo lo de las estaciones son recortes renderizados en Blender (Cycles, estilo plastilina):
+  wafles en 4 masas × 4 puntos de cocción, waffleras con tapa de vidrio, jarras, toppings, fresas enteras y
+  cortadas, batidora con su tazón, licuadora, botellas con bomba, vasos con su forma medida (el líquido se dibuja
+  adentro con menisco, burbujas, hielo y chorro), canecas, impresora de tiquetes, campanita y frasco de propinas,
+  más los fondos de cada restaurante (comedor, mostrador, cocina y mesón, con su color). Encima va lo vivo: salsas
+  con volumen y gotas, crema, licuado con remolino, chispitas que caen, vapor, humo, chispas, salpicaduras,
+  brillo del plato perfecto, monedas que vuelan y el tiquete que sale de la impresora. Los invitados tienen 11
+  poses (caminar, esperar, impacientarse, bravo, comer, encantado, contento, así-así) y la pareja tiene las
+  suyas, más expresivas. Las estaciones se cambian deslizándose (el riel y la barra quietos). A 30 cuadros como
+  tope; si el celular va lento, baja la calidad sola.
+- **En pareja** (botón «💞 Cocinar con…» en la hoja de restaurantes; la invitación le llega al otro a la casa):
+  cocinan el mismo restaurante y el mismo día, cada uno en su celular. El anfitrión manda (invitados, tiquetes,
+  reloj, calificación y propinas) y el otro le pide las cosas; los tiquetes son de los dos: cualquiera toma un
+  pedido o se queda en una estación, se ve la carita del otro en la estación donde está, en el tiquete que tiene
+  escogido y su mano moviendo la comida. Las propinas y el avance del día son de los dos; cada uno guarda su
+  propio rango y puntos. Si alguien pone pausa o sale de la app, al otro le sale la pausa; si se corta la red, la
+  cocina se queda quieta con «Se cortó la conexión…» y sigue sola al volver (el anfitrión puede seguir solo).
+  Va por Supabase Realtime (canal `cocina-<pareja>`, evento `cocina`) o entre pestañas (`BroadcastChannel`) en la
+  casa local. Sincronización por objetos con versión (el día, cada máquina y cada tiquete), paquetes cada
+  ~110 ms y una foto completa del anfitrión cada segundo.
+- **Gancho para escenas**: `cocina.alTerminarDia.push((dia, info) => …)` (o `alTerminarDia` en las opciones de
+  `jugarCocina`) se llama al terminar cada día con el resultado, la receta, el rol, si fue en pareja y el rango
+  antes y después. Hoy no hay escenas enganchadas.
+- Código: `src/casa/cocina/` (motor.ts: invitados, tiquetes, calificación, día, mejoras, pausa y segundo plano;
+  linea.ts: la sincronización en pareja; wafles.ts, fresas.ts, frappes.ts: las estaciones; pantallas.ts: comedor,
+  riel, barra, calificación y «modo chef»; sprites.ts, vasos.ts, efectos.ts: recortes, líquidos y partículas;
+  herramientas.ts: chorrear, espolvorear y poner piezas) y `cocinar()` en `src/casa/main.ts`.
+- Recortes: `python3.11 personajes/blender/cocina_sprites.py juego/web/modelos-crudos/cocina [claves]` y
+  `cocina_fondos.py` (necesitan `bpy` 4.2 para python3.11), luego `python3.12 personajes/blender/cocina_atlas.py
+  juego/web/modelos-crudos/cocina juego/web/public/cocina` (hojas webp + `hojas.json`). Los invitados y el chef:
+  `node scripts/generar-sprites-cocina.mjs [claves] [puerto]` con el servidor prendido. Los platos 3D de la casa
+  salen de `personajes/blender/comidas.py`.
+- Pruebas: `scripts/cocina-prueba.html` (la cocina sola, con `?rol=&receta=&xp=&dia=&mejoras=` y en pareja
+  `&linea=anfitrion|invitado&transporte=local|supabase`), ganchos `window.__cocinaMotor.probar('llegar' | 'tomar' |
+  'jugar' | 'juicio' | 'fin' | 'avanzar', segundos)` y `.resumen()`, y `node scripts/probar-cocina-linea.mjs [receta]
+  [url]` (Él y Ella con un Supabase de mentiras con demoras y pérdidas: pedidos, entregas, pausa, salir de la app,
+  corte de red y fin del día iguales en los dos).
 
 ## Recuerdos en el baño y abrazados en la cama
 

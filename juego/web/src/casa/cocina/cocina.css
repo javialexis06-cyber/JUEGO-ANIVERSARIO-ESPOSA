@@ -213,16 +213,91 @@
 .cocina-tarjeta,
 .cocina-fin,
 .cocina-tienda {
-  width: min(640px, 100%);
+  position: relative;
+  width: min(660px, 100%);
   max-height: 100%;
   overflow: auto;
-  background: linear-gradient(#fff8ee, #f6e6d2);
-  border-radius: 22px;
-  padding: 14px 20px 16px;
+  /* Papel de menú con un marco de madera y una franja de mantel */
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.7), transparent 55%),
+    repeating-linear-gradient(90deg, rgba(160, 110, 70, 0.035) 0 2px, transparent 2px 7px),
+    linear-gradient(#fffaf2, #f4e2cb);
+  border: 6px solid #8a5a38;
+  outline: 2px solid rgba(255, 220, 170, 0.7);
+  outline-offset: -11px;
+  border-radius: 24px;
+  padding: 14px 22px 16px;
   text-align: center;
   color: #4a2a10;
-  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.25);
-  animation: cocina-sube 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+  box-shadow: 0 14px 0 rgba(0, 0, 0, 0.28), 0 0 0 4px rgba(255, 190, 110, 0.25), 0 20px 50px rgba(0, 0, 0, 0.45);
+  animation: cocina-sube 0.4s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.cocina-tarjeta::before,
+.cocina-fin::before,
+.cocina-tienda::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 10px;
+  background: repeating-linear-gradient(90deg, var(--acento-cocina, #e0793a) 0 14px, #fff6ea 14px 28px);
+  opacity: 0.8;
+}
+.cocina-wafles {
+  --acento-cocina: #e0793a;
+}
+.cocina-fresas {
+  --acento-cocina: #e2475d;
+}
+.cocina-frappes {
+  --acento-cocina: #2f9e8f;
+}
+.cocina .cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 4px;
+}
+.cocina .cabeza h2 {
+  margin: 0;
+}
+.cocina .cabeza small {
+  font-size: 16px;
+  color: #c0506a;
+}
+.cocina .ico-recorte {
+  display: block;
+  filter: drop-shadow(0 4px 4px rgba(60, 30, 10, 0.3));
+}
+.cocina-tarjeta .juntos {
+  background: #ffe3ec;
+  border-radius: 12px;
+  padding: 5px 10px;
+  color: #8a2a4a;
+  font-size: 14px;
+}
+.cocina-tarjeta.pareja h2 {
+  font-size: 26px;
+}
+.cocina .latido {
+  display: inline-block;
+  animation: cocina-latido 0.9s ease-in-out infinite;
+}
+@keyframes cocina-latido {
+  50% {
+    transform: scale(1.3);
+  }
+}
+.cocina .espera-otro {
+  align-self: center;
+  font-weight: 800;
+  font-size: 13px;
+  color: #9a6a4a;
+}
+.cocina-tienda header .ico-recorte {
+  height: 44px;
 }
 @keyframes cocina-sube {
   from {
@@ -366,6 +441,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  margin-top: 6px;
+}
+.cocina-tienda header h2 {
+  flex: 1;
+  text-align: left;
 }
 .cocina-tienda .saldo {
   background: #3a2c26;
