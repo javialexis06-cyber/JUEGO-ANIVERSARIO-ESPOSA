@@ -10,13 +10,14 @@ import { sfx } from './sonidos';
 import type { Jugador, Motor, Opcion } from './motor';
 import type { Efecto, IdArma, IdCarta, IdPasiva, Rol } from './tipos';
 
+/** Las acciones llevan `n`: cuántas cosas había escogido cuando se pintó la capa (un toque viejo o doble no cuenta). */
 export interface Acciones {
-  escoger(k: number): void;
-  tirar(): void;
-  saltar(): void;
-  vetar(k: number): void;
-  cerrarCofre(): void;
-  escogerCarta(c: IdCarta | null): void;
+  escoger(k: number, n: number): void;
+  tirar(n: number): void;
+  saltar(n: number): void;
+  vetar(k: number, n: number): void;
+  cerrarCofre(n: number): void;
+  escogerCarta(c: IdCarta | null, n: number): void;
   pausa(si: boolean): void;
   retirarse(): void;
   musica(): boolean;
@@ -70,6 +71,12 @@ export class Interfaz {
   private claveNivel = '';
   private claveCofre = '';
   private claveCarta = '';
+  /** Las acciones del jugador cuando se pintó cada capa (viajan con el toque). */
+  private nNivel = 0;
+  private nCofre = 0;
+  private nCarta = 0;
+  /** Cada cofre animado tiene su número: si llega otro, el viejo deja de animar. */
+  private animCofre = 0;
   private claveInv = '';
   private modoVetar = false;
   private cofreListo = false;
@@ -114,41 +121,48 @@ export class Interfaz {
       const el = ev.target as HTMLElement;
       const carta = el.closest<HTMLElement>('[data-k]');
       const boton = el.closest<HTMLElement>('[data-accion]');
+      // (la capa se cierra sola cuando el motor cambia: aquí solo se avisa qué se tocó)
+      if (this.capaNivel.classList.contains('enviado') || this.recien(this.capaNivel)) return;
       if (carta) {
         const k = Number(carta.dataset.k);
         sfx.toque();
+        carta.classList.add('tocada');
+        this.capaNivel.classList.add('enviado');
         if (this.modoVetar) {
           this.modoVetar = false;
-          this.acc.vetar(k);
-        } else this.acc.escoger(k);
-        this.claveNivel = '';
+          this.acc.vetar(k, this.nNivel);
+        } else this.acc.escoger(k, this.nNivel);
       } else if (boton) {
         sfx.toque();
         const a = boton.dataset.accion;
-        if (a === 'tirar') this.acc.tirar();
-        if (a === 'saltar') this.acc.saltar();
         if (a === 'vetar') {
           this.modoVetar = !this.modoVetar;
           this.capaNivel.querySelectorAll('.lv-carta').forEach((c) => c.classList.toggle('vetar', this.modoVetar));
           boton.classList.toggle('activo', this.modoVetar);
           return;
         }
-        this.claveNivel = '';
+        this.capaNivel.classList.add('enviado');
+        if (a === 'tirar') this.acc.tirar(this.nNivel);
+        if (a === 'saltar') this.acc.saltar(this.nNivel);
       }
+      this.desbloquearLuego(this.capaNivel);
     });
     this.capaCarta.addEventListener('click', (ev) => {
       const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-carta]');
-      if (!el) return;
+      if (!el || this.capaCarta.classList.contains('enviado') || this.recien(this.capaCarta)) return;
       sfx.carta();
-      this.acc.escogerCarta((el.dataset.carta || null) as IdCarta | null);
-      this.claveCarta = '';
+      this.capaCarta.classList.add('enviado');
+      this.acc.escogerCarta((el.dataset.carta || null) as IdCarta | null, this.nCarta);
+      this.desbloquearLuego(this.capaCarta);
     });
     this.capaCofre.addEventListener('click', (ev) => {
       const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-listo]');
       if (el && this.cofreListo) {
+        if (this.capaCofre.classList.contains('enviado')) return;
         sfx.toque();
-        this.acc.cerrarCofre();
-        this.claveCofre = '';
+        this.capaCofre.classList.add('enviado');
+        this.acc.cerrarCofre(this.nCofre);
+        this.desbloquearLuego(this.capaCofre);
       } else if (!this.cofreListo) this.saltarCofre = true;
     });
     this.capaPausa.addEventListener('click', (ev) => {
@@ -171,6 +185,23 @@ export class Interfaz {
   }
 
   private saltarCofre = false;
+
+  /** Cuándo se pintó cada capa: un doble toque rápido no escoge a ciegas en la capa que sale después. */
+  private pintada = new WeakMap<HTMLElement, number>();
+  private recien(capa: HTMLElement) {
+    return performance.now() - (this.pintada.get(capa) ?? 0) < 280;
+  }
+
+  /** Si en un ratico la capa no cambió (se perdió el mensaje en pareja), se puede volver a tocar. */
+  private desbloquearLuego(capa: HTMLElement) {
+    const html = capa.innerHTML;
+    setTimeout(() => {
+      if (capa.innerHTML === html) {
+        capa.classList.remove('enviado');
+        capa.querySelectorAll('.tocada').forEach((c) => c.classList.remove('tocada'));
+      }
+    }, 1800);
+  }
 
   // ------------------------------------------------------------------------------------------------- HUD
   actualizar(m: Motor, dt: number, otroPresente = true) {
@@ -270,29 +301,34 @@ export class Interfaz {
   revisar(m: Motor) {
     const j = m.jug[this.yo];
     // Cofre
-    const kc = j.cofre ? JSON.stringify(j.cofre) : '';
+    // (las claves llevan las acciones del jugador: después de cada toque la capa se vuelve a pintar o se cierra,
+    // aunque salgan las mismas cartas; y lo que debe estar cerrado se cierra siempre)
+    const kc = j.cofre ? JSON.stringify(j.cofre) + '#' + j.acciones : '';
     if (kc !== this.claveCofre) {
       this.claveCofre = kc;
-      if (j.cofre) void this.animarCofre(j);
-      else this.capaCofre.hidden = true;
-    }
+      if (j.cofre) {
+        this.nCofre = j.acciones;
+        void this.animarCofre(j);
+      } else this.cerrarCapa(this.capaCofre);
+    } else if (!kc && !this.capaCofre.hidden) this.cerrarCapa(this.capaCofre);
     // Carta de amor
-    const kk = j.cartaOpciones ? j.cartaOpciones.join() : '';
+    const kk = j.cartaOpciones && !j.cofre ? j.cartaOpciones.join() + '#' + j.acciones : '';
     if (kk !== this.claveCarta) {
       this.claveCarta = kk;
-      if (j.cartaOpciones && !j.cofre) this.mostrarCartas(j.cartaOpciones);
-      else this.capaCarta.hidden = true;
-    }
+      if (kk && j.cartaOpciones) {
+        this.nCarta = j.acciones;
+        this.mostrarCartas(j.cartaOpciones);
+      } else this.cerrarCapa(this.capaCarta);
+    } else if (!kk && !this.capaCarta.hidden) this.cerrarCapa(this.capaCarta);
     // Subir de nivel
-    const kn = j.opciones && !j.cofre && !j.cartaOpciones ? JSON.stringify(j.opciones) + j.quedanTirar + j.quedanSaltar + j.quedanVetar : '';
+    const kn = j.opciones && !j.cofre && !j.cartaOpciones ? JSON.stringify(j.opciones) + j.quedanTirar + j.quedanSaltar + j.quedanVetar + '#' + j.acciones : '';
     if (kn !== this.claveNivel) {
       this.claveNivel = kn;
-      if (kn && j.opciones) this.mostrarNivel(m, j, j.opciones);
-      else {
-        this.capaNivel.hidden = true;
-        this.modoVetar = false;
-      }
-    }
+      if (kn && j.opciones) {
+        this.nNivel = j.acciones;
+        this.mostrarNivel(m, j, j.opciones);
+      } else this.cerrarCapa(this.capaNivel);
+    } else if (!kn && !this.capaNivel.hidden) this.cerrarCapa(this.capaNivel);
     // El otro está escogiendo
     const otro = m.jug.find((x) => x !== j);
     const espera = !!otro && !!m.pausa && !j.opciones && !j.cofre && !j.cartaOpciones;
@@ -305,6 +341,13 @@ export class Interfaz {
       }
     }
     this.tenue(!!m.pausa || this.pausado);
+  }
+
+  private cerrarCapa(capa: HTMLElement) {
+    capa.hidden = true;
+    capa.classList.remove('enviado');
+    if (capa === this.capaNivel) this.modoVetar = false;
+    if (capa === this.capaCofre) this.animCofre++;
   }
 
   /** Se cortó la conexión con el otro (el aviso se queda hasta que vuelva). */
@@ -340,7 +383,10 @@ export class Interfaz {
         <button class="lv-boton" data-accion="saltar" ${j.quedanSaltar ? '' : 'disabled'}>⏭️ Saltar (${j.quedanSaltar})</button>
         <button class="lv-boton" data-accion="vetar" ${j.quedanVetar ? '' : 'disabled'}>🚫 Vetar (${j.quedanVetar})</button>
       </div>`;
+    this.capaNivel.classList.remove('enviado');
+    this.modoVetar = false;
     this.capaNivel.hidden = false;
+    this.pintada.set(this.capaNivel, performance.now());
   }
 
   private mostrarCartas(ids: IdCarta[]) {
@@ -352,15 +398,19 @@ export class Interfaz {
       .join('');
     this.capaCarta.innerHTML = `<h2>💌 Una carta de amor perdida<small>Escoge una: cambia toda la partida</small></h2><div class="lv-amor">${html}</div>
       <button class="lv-boton" data-carta="">Ahora no</button>`;
+    this.capaCarta.classList.remove('enviado');
     this.capaCarta.hidden = false;
+    this.pintada.set(this.capaCarta, performance.now());
     sfx.carta();
   }
 
   /** El cofre: se sacude, se abre con rayos de luz y los premios salen de un tragamonedas. */
   private async animarCofre(j: Jugador) {
     const c = j.cofre!;
+    const yo = ++this.animCofre;
     this.cofreListo = false;
     this.saltarCofre = false;
+    this.capaCofre.classList.remove('enviado');
     const n = c.premios.length;
     this.capaCofre.innerHTML = `<h2>¡Un cofre!</h2>
       <div class="lv-cofre-escena sacude"><div class="lv-rayos"></div><span class="cofre">${icono('cofre', 120)}</span>
@@ -371,14 +421,16 @@ export class Interfaz {
     this.capaCofre.hidden = false;
     const boton = $<HTMLButtonElement>(this.capaCofre, '[data-listo]');
     boton.style.visibility = 'hidden';
-    const esperar = (ms: number) => new Promise((r) => setTimeout(r, this.saltarCofre ? 0 : ms));
+    // (si ya llegó otro cofre o se cerró, esta animación se para: no marca «listo» al cofre nuevo)
+    const vieja = () => yo !== this.animCofre;
+    const esperar = (ms: number) => new Promise((r) => setTimeout(r, this.saltarCofre || vieja() ? 0 : ms));
     const escena = $(this.capaCofre, '.lv-cofre-escena');
     const ranuras = [...this.capaCofre.querySelectorAll<HTMLElement>('.lv-ranura')];
     // Todos los íconos posibles giran en las ranuras
     const posibles = [...Object.keys(ARMAS).filter((a) => !ARMAS[a as IdArma].de), ...Object.keys(PASIVAS)];
     let girando = true;
     const girar = () => {
-      if (!girando) return;
+      if (!girando || vieja()) return;
       for (const r of ranuras) if (r.classList.contains('gira')) r.innerHTML = icono(posibles[Math.floor(Math.random() * posibles.length)], 46);
       sfx.ruleta();
       setTimeout(girar, 90);
@@ -393,6 +445,7 @@ export class Interfaz {
     const premios = $(this.capaCofre, '.lv-premios');
     for (let k = 0; k < n; k++) {
       await esperar(450);
+      if (vieja()) return;
       const p = c.premios[k];
       const r = ranuras[k];
       r.classList.remove('gira');
@@ -409,7 +462,7 @@ export class Interfaz {
     const t0 = performance.now();
     await new Promise<void>((ok) => {
       const paso = () => {
-        const k = this.saltarCofre ? 1 : Math.min(1, (performance.now() - t0) / 900);
+        const k = this.saltarCofre || vieja() ? 1 : Math.min(1, (performance.now() - t0) / 900);
         cuenta.textContent = String(Math.round(c.oro * k));
         if (k < 1) {
           if (Math.random() < 0.4) sfx.moneda();
@@ -418,6 +471,7 @@ export class Interfaz {
       };
       paso();
     });
+    if (vieja()) return;
     this.cofreListo = true;
     boton.style.visibility = 'visible';
   }

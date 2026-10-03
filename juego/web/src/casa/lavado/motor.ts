@@ -260,6 +260,8 @@ export class Jugador {
   usadosTirar = 0;
   usadosSaltar = 0;
   usadosVetar = 0;
+  /** Cuántas veces ha escogido algo (cartas, cofres, cartas de amor): un toque viejo o repetido no cuenta dos veces. */
+  acciones = 0;
   vetadas = new Set<string>();
   opciones: Opcion[] | null = null;
   nivelesPend = 0;
@@ -536,10 +538,17 @@ export class Motor {
   }
 
   /** Lo que escogió al subir de nivel. */
-  escoger(ji: number, k: number) {
+  /** ¿Este toque es de lo que está en pantalla ahora? (`n` = las acciones que llevaba cuando se vio). */
+  private vigente(j: Jugador | undefined, n?: number): j is Jugador {
+    return !!j && (n === undefined || n === j.acciones);
+  }
+
+  escoger(ji: number, k: number, n?: number) {
     const j = this.jug[ji];
-    const o = j?.opciones?.[k];
-    if (!j || !o) return;
+    if (!this.vigente(j, n)) return;
+    const o = j.opciones?.[k];
+    if (!o) return;
+    j.acciones++;
     if (o.tipo === 'arma') this.darArma(j, o.id as IdArma);
     else if (o.tipo === 'pasiva') this.darPasiva(j, o.id as IdPasiva);
     else if (o.tipo === 'arepa') this.curar(j, 30);
@@ -548,25 +557,29 @@ export class Motor {
     this.siguienteOpcion(j);
   }
 
-  tirarCartas(ji: number) {
+  tirarCartas(ji: number, n?: number) {
     const j = this.jug[ji];
-    if (!j?.opciones || j.quedanTirar <= 0) return;
+    if (!this.vigente(j, n) || !j.opciones || j.quedanTirar <= 0) return;
+    j.acciones++;
     j.usadosTirar++;
     j.opciones = this.generarOpciones(j);
   }
 
-  saltarCartas(ji: number) {
+  saltarCartas(ji: number, n?: number) {
     const j = this.jug[ji];
-    if (!j?.opciones || j.quedanSaltar <= 0) return;
+    if (!this.vigente(j, n) || !j.opciones || j.quedanSaltar <= 0) return;
+    j.acciones++;
     j.usadosSaltar++;
     // Como en el original: saltar no regala nada (pero tampoco se pierde la experiencia)
     this.siguienteOpcion(j);
   }
 
-  vetar(ji: number, k: number) {
+  vetar(ji: number, k: number, n?: number) {
     const j = this.jug[ji];
-    const o = j?.opciones?.[k];
-    if (!j || !o || j.quedanVetar <= 0 || (o.tipo !== 'arma' && o.tipo !== 'pasiva')) return;
+    if (!this.vigente(j, n)) return;
+    const o = j.opciones?.[k];
+    if (!o || j.quedanVetar <= 0 || (o.tipo !== 'arma' && o.tipo !== 'pasiva')) return;
+    j.acciones++;
     j.usadosVetar++;
     j.vetadas.add(o.id);
     j.opciones = this.generarOpciones(j);
@@ -652,9 +665,10 @@ export class Motor {
     this.emitir('cofre', j.x, j.y, j.i, n);
   }
 
-  cerrarCofre(ji: number) {
+  cerrarCofre(ji: number, n?: number) {
     const j = this.jug[ji];
-    if (!j) return;
+    if (!this.vigente(j, n) || !j.cofre) return;
+    j.acciones++;
     j.cofre = null;
     const q = j.cofresPend.shift();
     if (q !== undefined) this.abrirCofreOCarta(j, q);
@@ -674,9 +688,10 @@ export class Motor {
     this.abrirCofre(j, calidad);
   }
 
-  escogerCarta(ji: number, id: IdCarta | null) {
+  escogerCarta(ji: number, id: IdCarta | null, n?: number) {
     const j = this.jug[ji];
-    if (!j?.cartaOpciones) return;
+    if (!this.vigente(j, n) || !j.cartaOpciones) return;
+    j.acciones++;
     if (id && j.cartaOpciones.includes(id) && !j.cartas.includes(id)) {
       j.cartas.push(id);
       this.aviso(`💌 ${CARTAS[id].nombre}`);

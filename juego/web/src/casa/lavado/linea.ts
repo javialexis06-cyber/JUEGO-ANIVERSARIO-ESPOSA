@@ -33,6 +33,7 @@ export interface InvJugador {
   cofre: CofreAbierto | null;
   cartaOpciones: IdCarta[] | null;
   usados: [number, number, number, number];
+  acciones: number;
   vetadas: string[];
   danos: [IdArma, number, number][];
 }
@@ -46,12 +47,12 @@ export type MensajeLavado =
   | { t: 'foto'; id: string; b: string }
   | { t: 'inventario'; id: string; jug: InvJugador[] }
   | { t: 'mando'; id: string; x: number; y: number; vx: number; vy: number; w: number; h: number }
-  | { t: 'escoger'; id: string; k: number }
-  | { t: 'tirar'; id: string }
-  | { t: 'saltar'; id: string }
-  | { t: 'vetar'; id: string; k: number }
-  | { t: 'cofre'; id: string }
-  | { t: 'carta'; id: string; c: IdCarta | null }
+  | { t: 'escoger'; id: string; k: number; n?: number }
+  | { t: 'tirar'; id: string; n?: number }
+  | { t: 'saltar'; id: string; n?: number }
+  | { t: 'vetar'; id: string; k: number; n?: number }
+  | { t: 'cofre'; id: string; n?: number }
+  | { t: 'carta'; id: string; c: IdCarta | null; n?: number }
   | { t: 'pausa'; id: string; si: boolean; de: Rol; n?: number }
   | { t: 'latido'; id: string; de: Rol }
   | { t: 'fin'; id: string; retiro: boolean; resumen?: ResumenPartida }
@@ -192,6 +193,7 @@ export function inventarioDe(m: Motor): InvJugador[] {
     cofre: j.cofre ? JSON.parse(JSON.stringify(j.cofre)) : null,
     cartaOpciones: j.cartaOpciones ? [...j.cartaOpciones] : null,
     usados: [j.usadosTirar, j.usadosSaltar, j.usadosVetar, j.revivesUsados],
+    acciones: j.acciones,
     vetadas: [...j.vetadas],
     danos: [...j.danos].map(([id, d]): [IdArma, number, number] => [id, Math.round(d.dano), d.desde]),
   }));
@@ -216,6 +218,7 @@ export function aplicarInventario(m: Motor, inv: InvJugador[]) {
     j.cofre = d.cofre;
     j.cartaOpciones = d.cartaOpciones;
     [j.usadosTirar, j.usadosSaltar, j.usadosVetar, j.revivesUsados] = d.usados;
+    j.acciones = d.acciones ?? j.acciones;
     j.vetadas = new Set(d.vetadas);
     j.danos = new Map(d.danos.map(([id, dano, desde]) => [id, { dano, desde }]));
   });
