@@ -255,7 +255,11 @@ amor, la tienda de poderes y la colección (armas, pasivas, bestiario y logros).
   Negro, el Señor Sarro, Doña Cucaracha, la Mota de Pelo, el Tapón, la Esponja Podrida y el Pelo del Desagüe.
 - **Experiencia como el original** (5 al nivel 2, +10 hasta el 20, +13 hasta el 40, +16 después, con los saltos
   del 20 y el 40). Gotitas azules, verdes y rojas; las que sobran se juntan en una gotota roja.
-- **Subir de nivel**: 3 cartas (4 con suerte), **volver a tirar, saltar y vetar**. 6 armas (8 niveles) y 6 pasivas
+- **Subir de nivel**: 3 cartas (4 con suerte), **volver a tirar, saltar y vetar**. Las capas (cartas, cofre, carta de
+  amor) se abren y se cierran solas según lo que diga el motor: cada toque lleva el número de acciones del jugador
+  (`Jugador.acciones`), así un toque viejo o un doble toque no escoge a ciegas la carta de la subida siguiente, y en
+  pareja el invitado repite lo que escogió (por si la red se lo come) sin que cuente dos veces. Las cartas no
+  aceptan toques en sus primeras décimas (mientras entran). 6 armas (8 niveles) y 6 pasivas
   (5 niveles). **19 armas** (toalla mojada = látigo, varita de burbujas = varita mágica, cepillo de dientes =
   cuchillos, champú volador = hacha, peinilla bumerán = cruz, esponjas orbitales = biblia, secador = fuego,
   aura de espuma = ajo, botellitas de agua = agua bendita, jabón resbaloso = runetracer, bombillo travieso =
@@ -280,8 +284,19 @@ revivir, volver a tirar, saltar, vetar); cada compra sube el precio de todo y se
 barrio, Súper Jabón, leñador del champú, astronauta del retrete, bombero de la ducha, barbero de vueltiao) y 8 de
 Ella (pulga aventurera, la mejor guerrera de Dios, directora Yanbal, bata y turbante, sirena de la bañera, ranita,
 princesa del spa, estilista del secador). Cada uno trae su arma y su bono, ropa del clóset y accesorios del baño
-(`public/modelos/lavado/accesorios.glb`), y se abre con un logro o con gotas doradas. Retratos:
-`node scripts/generar-sprites-lavado.mjs` (con el servidor prendido).
+(`public/modelos/lavado/accesorios.glb`), y se abre con un logro o con gotas doradas. Al empezar dice su habilidad
+(`grito`) y avisa cuando crece al subir de nivel (`alCrecer`), solo en el celular de quien la tiene.
+- Piezas propias de los disfraces (en `personajes/blender/lavado_objetos.py`, las de la cara y el pelo modeladas ya
+  en su sitio con `H()`): antifaz rojo del Súper Jabón, bigote frondoso del leñador y de manubrio del barbero,
+  corona de la guerrera, rulos de la estilista y toalla mojada del panda. Lo de la mano va grande (si no, en el
+  juego no se ve).
+- La ropa del clóset se retoca por disfraz sin tocar el clóset: `ajustes` (correr o agrandar una prenda en la pose
+  de amarre, como el vueltiao que flotaba) y `sinPelo` (los cascos y gorros esconden el pelo que se salía).
+- Exportar: `blender -b -P personajes/blender/lavado_objetos.py -- accesorios /tmp/accesorios.glb` y
+  `npx gltf-transform optimize /tmp/accesorios.glb public/modelos/lavado/accesorios.glb --compress meshopt
+  --simplify-ratio 0.15 --simplify-error 0.002 --join false --instance false --flatten false` (sin `--join false`
+  se pierden los nombres de los accesorios). Retratos: `node scripts/generar-sprites-lavado.mjs` (con el servidor
+  prendido; `PUERTO=…`).
 
 **Escenarios**: **La Cara** (piel con poros, pequitas y cachetes), **El Lavamanos** (un pasillo de porcelana
 con paredes de baldosín: menos bichos a la vez pero sin salida arriba ni abajo; se abre aguantando 15 min en La
@@ -308,10 +323,13 @@ escasas: 1 cada 2 minutos aguantados, +3 si llega a los 30 (máximo 15 por parti
 (normalizado en `modelo.ts`) y el récord de bichos en `casa.lavado`. El trofeo cuenta los **minutos
 aguantados** (10, 20 y 30).
 
-**Pruebas**: `node scripts/balance-lavado.mjs [partidas] [escenario] [disfraces] [tiendas]` (partidas enteras
-con el bot en Node); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.actual.probar(…)`
-(`tiempo`, `xp`, `cofre`, `aguante`, `arma`, `caer`, `juntar`, `fin`, `bot`); `?sin3d` cambia los muñecos por
-burbujitas (para los navegadores de prueba).
+**Pruebas**: `node scripts/balance-lavado.mjs [partidas] [escenario] [disfraces] [nada,media,toda]` (partidas
+enteras con el bot en Node); `node scripts/probar-lavado-nivel.mjs <url>` (celular táctil emulado con toques de
+verdad: 20 subidas de nivel seguidas, colas de niveles con dobles toques, volver a tirar, vetar, saltar, cofres,
+cartas de amor, pausa y segundo plano, retirarse, «Otra lavada», el menú y volver a la casa; y lo básico con el
+mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.actual.probar(…)` (`tiempo`, `xp`,
+`subir`, `cofre`, `aguante`, `arma`, `caer`, `juntar`, `fin`, `bot`); `?sin3d` cambia los muñecos por burbujitas
+(para los navegadores de prueba).
 
 ## La cocina de chef (tres minijuegos estilo Papa's)
 
