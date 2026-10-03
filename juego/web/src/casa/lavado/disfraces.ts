@@ -203,9 +203,9 @@ export const DISFRACES: DefDisfraz[] = [
   {
     id: 'ella_princesa', rol: 'ella', nombre: 'Princesa del spa', original: 'Dommario', precio: 800, logro: 'evolucionar',
     desc: 'Vestido de princesa y tiara. Sus esponjas le dan la vuelta despacito, como en un spa de lujo.',
-    especial: 'Empieza con las Esponjas orbitales. +40 % de duración y de velocidad de los proyectiles, pero camina 40 % más lento.',
+    especial: 'Empieza con las Esponjas orbitales. +40 % de duración y de velocidad de los proyectiles y 2 de armadura (el spa la deja como nueva), pero camina 15 % más lento.',
     grito: '👸 Princesa del spa: sus esponjas duran y vuelan más (pero ella va despacito)',
-    arma: 'esponjas', base: { duracion: 0.4, velocidad: 0.4, movimiento: -0.4 }, crece: [],
+    arma: 'esponjas', base: { duracion: 0.4, velocidad: 0.4, movimiento: -0.15, armadura: 2 }, crece: [],
     ropa: { arriba: 'vestido_princesa_azul', cabeza: 'tiara', pies: 'sandalias_doradas' },
     accesorios: ['esponja_mano'],
   },
