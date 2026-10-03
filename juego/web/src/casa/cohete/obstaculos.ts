@@ -580,6 +580,14 @@ export class Obstaculos {
     this.enLluvia = false;
   }
 
+  /** Otro vuelo: sin obstáculos, con los relojes en cero y las cuentas de las misiones limpias. */
+  reiniciar() {
+    this.vaciar();
+    this.proximo = 4;
+    this.lluviaHasta = this.proxLluvia = this.proxAgujero = this.proxOvni = this.tiempo = 0;
+    this.cuentas = { cometas: 0, chanclas: 0, lluvias: 0, agujeros: 0 };
+  }
+
   liberar() {
     this.matCometa.dispose();
   }

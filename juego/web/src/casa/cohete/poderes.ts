@@ -432,6 +432,14 @@ export class Poderes {
     this.doble.visible = false;
   }
 
+  /** Otro vuelo: sin poderes y el primero sale al mismo rato que en el primer vuelo. */
+  reiniciar() {
+    this.vaciar();
+    this.proximo = 7;
+    this.ultimo = null;
+    this.proxDisparo = 0;
+  }
+
   /** Recogibles a la vista (para el bot de pruebas). */
   get flotando() {
     return this.recogibles.map((r) => ({ id: r.id, x: r.x, y: r.y }));

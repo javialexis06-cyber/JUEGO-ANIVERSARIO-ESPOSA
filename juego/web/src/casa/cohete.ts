@@ -24,7 +24,7 @@ import { MusicaEspacial } from './cohete/musica';
 import { type Obst, Obstaculos } from './cohete/obstaculos';
 import { Particulas } from './cohete/particulas';
 import { Poderes } from './cohete/poderes';
-import { mostrarResultado, type DatosResultado } from './cohete/resultado';
+import { mostrarResultado, pintarPremioCasa, type DatosResultado, type PremioCasa } from './cohete/resultado';
 import { FIGURAS, Rollitos } from './cohete/rollitos';
 import { Tienda } from './cohete/tienda';
 import type { Rol, Ropa } from './modelo';
@@ -38,7 +38,13 @@ export interface Resultado {
   rollitos: number;
   /** Si voló (false: solo se abrió la tienda). */
   volo: boolean;
+  /** Cuántos vuelos se hicieron sin salir (con «Volar otra vez»). */
+  vuelos: number;
+  /** Monedas que les dio la casa por todos los vuelos (ya sumadas allá, con el tope del día). */
+  monedas: number;
 }
+
+export type { PremioCasa };
 
 interface Opciones {
   rol: Rol;
@@ -52,6 +58,10 @@ interface Opciones {
   guardar?: (p: ProgresoCohete) => Promise<unknown> | void;
   /** Solo la tienda (desde el cuarto de juegos), sin vuelo. */
   soloTienda?: boolean;
+  /** Despegue corto (ya lo había descubierto: sale del inodoro sin tanto drama). */
+  corto?: boolean;
+  /** La casa da sus monedas por cada vuelo apenas termina (con el tope del día) y dice cuántas fueron. */
+  premio?: (segundos: number) => Promise<PremioCasa>;
 }
 
 /** Lo que va diciendo en el espacio (se sabía que algún día pasaría). */
@@ -113,6 +123,11 @@ const FRASE_PODER: Record<IdPoder, Record<Rol, string>> = {
   ambientador: { el: '¡Huele a lavanda! Ya era hora.', ella: '¡Aroma a lavanda, por fin!' },
   paca: { el: '¡Papel para todo el año!', ella: '¡Papel pa’ la casa entera!' },
 };
+/** Lo que dice al volver a volar sin bajarse. */
+const OTRA_VEZ: Record<Rol, string[]> = {
+  el: ['¡Una más y ya!', 'Esta vez sí le gano a mi amor.', '¡Revancha, universo!', 'Ya le cogí el tiro a esto.'],
+  ella: ['¡Una más y ya!', 'Ahora sí voy con toda.', '¡Revancha, universo!', 'Me quedé con ganas de más.'],
+};
 const CASI = ['¡Uy, casi!', '¡Esa estuvo cerca!', '¡Ay, mi retrete!', '¡Por un pelito!', '¡Uf!', '¡Me peinó!'];
 const FIN = ['¡NOOOO!', '¡Me voooy!', '¡Mi baño!', '¡Mi retreteee!'];
 /** Cascos que tapan el copete de Él. */
@@ -121,6 +136,10 @@ const TAPA_COPETE = new Set(['ducha', 'aviador', 'vikingo', 'rollo', 'astronauta
 const METROS = 2.5;
 const EJE_Z = new THREE.Vector3(0, 0, 1);
 const ESCALA_RETRETE = 1.3;
+/** Velocidad del mundo: la de arranque, lo que sube con la distancia y en cuántos metros (unidades/s). */
+const VEL = [7, 7, 5000];
+/** El arranque tranquilo: de qué segundo a qué segundo se pasa de la velocidad suave a la normal, y qué tan suave. */
+const CALMA = [3, 30, 0.6];
 
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 const elegir = <T,>(l: T[]) => l[Math.floor(Math.random() * l.length)];
@@ -222,6 +241,11 @@ class RetreteEspacial {
   private tmp = new THREE.Vector3();
   private tmp2 = new THREE.Vector3();
   private blanco = { x: 0, y: 0, r: 0.6 };
+  /** Lo que dura el despegue (más corto al volver a volar). */
+  private durIntro = 2.6;
+  /** Vuelos de esta vez (con «Volar otra vez») y las monedas que dio la casa por ellos. */
+  private vuelosSesion = 0;
+  private monedasSesion = 0;
 
   constructor(private o: Opciones, private listo: (r: Resultado) => void) {
     cohete.actual = this;
@@ -301,15 +325,8 @@ class RetreteEspacial {
     if (this.o.soloTienda) {
       this.entrarTaller();
     } else {
-      this.fase = 'intro';
-      this.tFase = 0;
-      this.cara('sorprendido', 99);
-      rumor(2.4, 180, 0.12, 0, 0.6, 90);
-      nota(90, 2.2, 0, 'sawtooth', 0.05, 320);
-      musica.callar(true);
-      this.musica.iniciar();
-      this.musica.tramo(0);
-      this.aviso('¡Despegue!');
+      if (this.o.corto) this.durIntro = 1.8;
+      this.despegue('¡Despegue!');
     }
     // El bucle se detiene solo en segundo plano y vuelve sin salto de tiempo
     this.bucleFondo = fondo.cuadros((dt) => this.bucle(dt));
@@ -544,7 +561,7 @@ class RetreteEspacial {
     this.muneco.update(dt);
     // Velocidad del mundo: sube con la distancia; el turbo la triplica y la cámara lenta la parte en dos
     const metros = this.distancia * METROS;
-    const base = 7 + 7 * (1 - Math.exp(-metros / 5000));
+    const base = this.velocidadBase(metros);
     let v = 0;
     if (this.fase === 'juego') v = base * (turbo ? 2.7 : 1) * lento;
     else if (this.fase === 'intro') v = base * Math.min(1, this.tFase / 2.4) * 0.6;
@@ -553,7 +570,7 @@ class RetreteEspacial {
     this.velocidad += (v - this.velocidad) * Math.min(1, dt * (turbo ? 3 : 5));
     this.avance = this.velocidad * dt;
     if (this.fase === 'juego') this.distancia += this.avance;
-    this.escenario.subiendo = this.fase === 'intro' ? Math.max(0, 1 - this.tFase / 2.6) : 0;
+    this.escenario.subiendo = this.fase === 'intro' ? Math.max(0, 1 - this.tFase / this.durIntro) : 0;
     this.escenario.actualizar(dt, this.avance, this.distancia * METROS, turbo ? 1 : 0);
     if (this.fase === 'intro') this.intro(dt);
     else if (this.fase === 'juego') this.juego(dt, lento);
@@ -624,19 +641,44 @@ class RetreteEspacial {
     this.matsLlama[1].color.setRGB(1 - verde * 0.3, 0.7 + verde * 0.25, 0.25 * (1 - verde));
   }
 
+  /**
+   * Qué tan rápido va el mundo: los primeros ~25 s van tranquilos (para aprender a esquivar) y de ahí sube de a
+   * poquito con la distancia.
+   */
+  private velocidadBase(metros: number) {
+    const calma = THREE.MathUtils.smoothstep(this.tJuego, CALMA[0], CALMA[1]);
+    return (VEL[0] + VEL[1] * (1 - Math.exp(-metros / VEL[2]))) * (CALMA[2] + (1 - CALMA[2]) * calma);
+  }
+
   private turboActivo() {
     return this.poderes?.tiene('turbo') || this.turboArranque > 0;
   }
 
   // ------------------------------------------------------------------ Fases
+  /** Arranca el despegue desde abajo (el primero y cada «Volar otra vez»). */
+  private despegue(texto: string) {
+    this.fase = 'intro';
+    this.tFase = 0;
+    this.cara('sorprendido', 99);
+    rumor(this.durIntro - 0.2, 180, 0.12, 0, 0.6, 90);
+    nota(90, this.durIntro - 0.4, 0, 'sawtooth', 0.05, 320);
+    musica.callar(true);
+    this.musica.iniciar();
+    this.musica.pausar(false);
+    this.musica.prisa = 1;
+    this.musica.tramo(0);
+    this.aviso(texto);
+  }
+
   private intro(dt: number) {
     // Despega desde abajo, entre nubes que bajan, hasta su lugar
-    const k = Math.min(1, this.tFase / 2.6);
+    const k = Math.min(1, this.tFase / this.durIntro);
     const e = 1 - Math.pow(1 - k, 3);
     this.nave.position.set(-this.limites.x * 0.45, -9 + 9 * e, 0);
     this.nave.rotation.z = Math.sin(this.t * 18) * 0.04 * (1 - k) - 0.1 * e;
     this.temblor = 0.3 * (1 - k);
-    if (this.tFase > 1.3 && this.tFase - dt <= 1.3) this.aviso('¡Esquiva lo que venga!');
+    const medio = this.durIntro / 2;
+    if (this.tFase > medio && this.tFase - dt <= medio) this.aviso('¡Esquiva lo que venga!');
     if (k >= 1) this.arrancar();
   }
 
@@ -1055,11 +1097,21 @@ class RetreteEspacial {
     const recordPuntaje = this.puntaje > p.mejorPuntaje;
     if (recordPuntaje) p.mejorPuntaje = Math.floor(this.puntaje);
     void this.o.guardar?.(copiaProgreso(p));
+    this.vuelosSesion++;
     this.resultado = {
       metros, puntaje: Math.floor(this.puntaje), rollitos: this.rollitosVuelo, extraTriple: extra, record, recordPuntaje,
       segundos: this.tJuego, mult: this.multVuelo, misionesAntes: misiones, cumplidas: this.cumplidas, subio: r.subio, nivelAntes: antesNivel,
-      progreso: p, rol: this.o.rol, recordPareja: this.o.recordPareja ?? 0,
+      progreso: p, rol: this.o.rol, recordPareja: this.o.recordPareja ?? 0, casa: null,
     };
+    // Las monedas de la casa se dan apenas aterriza (si se cierra la app en la pantalla del vuelo, no se pierden)
+    const res = this.resultado;
+    void this.o.premio?.(this.tJuego)
+      .then((pc) => {
+        this.monedasSesion += pc.monedas;
+        res.casa = pc;
+        if (this.resultado === res) pintarPremioCasa(this.capa, pc);
+      })
+      .catch(() => undefined);
     // Cae con un paracaídas de papel higiénico
     this.fase = 'resultado';
     this.tFase = 0;
@@ -1079,6 +1131,7 @@ class RetreteEspacial {
     mostrarResultado(this.capa, this.resultado, {
       tienda: () => this.entrarTaller(),
       casa: () => this.terminar(),
+      otra: () => this.otraVez(),
     });
   }
 
@@ -1140,6 +1193,64 @@ class RetreteEspacial {
       this.nave.add(g);
     }
     this.paracaidas.visible = true;
+  }
+
+  /**
+   * «Volar otra vez» desde la pantalla del vuelo: todo vuelve a empezar ahí mismo (sin pasar por la casa). Se reusa lo
+   * que ya está armado (modelos, partículas, escenario y el mismo lienzo): nada se vuelve a cargar ni se acumula.
+   */
+  private otraVez() {
+    if (this.fase !== 'resultado') return;
+    this.capa.querySelector('.cohete-resultado')?.remove();
+    // Lo del vuelo
+    this.inicioMisiones = this.p.misiones.map((m) => m.avance);
+    this.cuentas = cuentasNuevas();
+    this.cumplidas = [];
+    this.record = this.p.mejor;
+    this.resultado = null;
+    this.distancia = this.puntaje = this.rollitosVuelo = this.tJuego = this.sinPoder = 0;
+    this.revivir = this.invulnerable = this.turboArranque = 0;
+    this.rachaRollitos = this.tRacha = 0;
+    this.proxFigura = 3;
+    this.proxFrase = 7;
+    this.pasoRecord = this.pasoPareja = false;
+    this.causa = '';
+    this.carasHasta = 0;
+    this.jalon.set(0, 0);
+    this.escalaHormiga = 1;
+    this.tramoActual = -1;
+    this.hudCache = { m: -1, r: -1, p: -1, mult: -1, poderes: '' };
+    for (const m of this.marcas) this.soltarMarca(m.g);
+    this.marcas = [];
+    this.obst.reiniciar();
+    this.rollos.vaciar();
+    this.poderes.reiniciar();
+    this.escenario.reiniciar();
+    // La nave vuelve abajo, sin paracaídas, lista para despegar
+    this.ponerParacaidas(false);
+    this.nave.rotation.set(0, 0, 0);
+    this.nave.scale.setScalar(1.5);
+    this.nave.position.set(-this.limites.x * 0.45, -9, 0);
+    this.soporte.rotation.y = 0.55;
+    this.soporte.visible = true;
+    this.capa.classList.remove('lenta');
+    this.capa.querySelector('.ch-poderes')!.innerHTML = '';
+    this.capa.querySelector('.ch-avisos')!.innerHTML = '';
+    (this.capa.querySelector('.ch-mision') as HTMLElement).hidden = true;
+    this.durIntro = 1.8;
+    this.despegue('¡Otra vez!');
+    this.decir(elegir(OTRA_VEZ[this.o.rol]), 2.2);
+  }
+
+  private soltarMarca(g: THREE.Group) {
+    g.removeFromParent();
+    g.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.MeshBasicMaterial | undefined;
+      mat?.map?.dispose();
+      mat?.dispose();
+    });
   }
 
   private entrarTaller() {
@@ -1207,7 +1318,9 @@ class RetreteEspacial {
       metros: Math.floor(this.distancia * METROS),
       puntaje: Math.floor(this.puntaje),
       rollitos: this.rollitosVuelo,
-      volo: !this.o.soloTienda,
+      volo: this.vuelosSesion > 0,
+      vuelos: this.vuelosSesion,
+      monedas: this.monedasSesion,
     };
     setTimeout(() => {
       this.liberar();
@@ -1229,6 +1342,8 @@ class RetreteEspacial {
     for (const m of this.cascoMallas) m.removeFromParent();
     liberarEsqueletos(...this.cascoMallas);
     liberarEsqueletos(this.muneco.p.grupo);
+    for (const m of this.marcas) this.soltarMarca(m.g);
+    this.marcas = [];
     this.atlas.dispose();
     this.texHalo.dispose();
     this.escena.environment?.dispose();
