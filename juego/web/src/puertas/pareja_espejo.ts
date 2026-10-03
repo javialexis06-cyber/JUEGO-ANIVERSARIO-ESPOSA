@@ -55,7 +55,8 @@ export class Espejo {
         const m = o as THREE.Mesh;
         if (m.isMesh)
           for (const mt of Array.isArray(m.material) ? m.material : [m.material]) {
-            if (!mt || compartido(mt)) continue;
+            // (lo que es solo adorno y se anima en cada celular por su cuenta no viaja)
+            if (!mt || compartido(mt) || mt.userData.soloAqui) continue;
             mats.add(mt);
             const ms = mt as THREE.MeshStandardMaterial;
             for (const t of [ms.map, ms.emissiveMap]) if ((t as THREE.CanvasTexture | null)?.isCanvasTexture) texs.add(t as THREE.CanvasTexture);

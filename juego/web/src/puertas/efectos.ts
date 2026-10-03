@@ -183,9 +183,9 @@ export class Efectos {
 
   constructor(private escena: Escena) {
     const suave = texturaSuave();
-    this.polvo = new Nube(90, suave, 0.07, true);
+    this.polvo = new Nube(90, suave, 0.08, true);
     this.chispas = new Nube(60, texturaEstrella(), 0.09, true);
-    this.confeti = new Nube(110, texturaFormas(), 0.11, false);
+    this.confeti = new Nube(110, texturaFormas(), 0.14, false);
     // Rayos de luz que salen de la puerta abierta (planos alargados que se abren en abanico)
     const rayo = lienzo(64, 256, (c, w, h) => {
       const g = c.createLinearGradient(0, h, 0, 0);
@@ -202,16 +202,16 @@ export class Efectos {
       c.fill();
     });
     this.rayosMat = new THREE.MeshBasicMaterial({ map: rayo, color: '#fff1c8', transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, toneMapped: false });
-    const geo = new THREE.PlaneGeometry(0.7, 3.2);
-    geo.translate(0, 1.6, 0);
-    for (let i = 0; i < 7; i++) {
+    // Un sol de rayos alrededor de la puerta abierta (sobre la pared, como si la luz se regara por el marco)
+    const geo = new THREE.PlaneGeometry(0.55, 2.4);
+    geo.translate(0, 1.2 + 0.35, 0);
+    for (let i = 0; i < 12; i++) {
       const r = new THREE.Mesh(geo, this.rayosMat);
-      r.rotation.z = (i - 3) * 0.32;
-      r.rotation.x = -0.5 - (i % 2) * 0.15;
-      r.scale.set(0.8 + (i % 3) * 0.25, 0.85 + ((i * 7) % 3) * 0.12, 1);
+      r.rotation.z = (i / 12) * Math.PI * 2 + (i % 2) * 0.12;
+      r.scale.set(0.7 + (i % 3) * 0.3, 0.75 + ((i * 7) % 4) * 0.12, 1);
       this.rayos.add(r);
     }
-    this.rayos.position.set(0, HUECO.h * 0.42, -0.25);
+    this.rayos.position.set(0, HUECO.h * 0.52, 0.06);
     this.rayos.visible = false;
     this.rayos.renderOrder = 4;
     // El corazoncito del recuerdo
@@ -238,8 +238,8 @@ export class Efectos {
     // Rayos: se prenden y se apagan suavecito, y giran despacio
     if (this.rayos.visible || this.metaRayos > 0) {
       this.luzRayos += (this.metaRayos - this.luzRayos) * Math.min(1, dt * 3);
-      this.rayosMat.opacity = this.luzRayos * (0.55 + Math.sin(this.t * 2.2) * 0.08);
-      this.rayos.rotation.z = Math.sin(this.t * 0.5) * 0.06;
+      this.rayosMat.opacity = this.luzRayos * (0.42 + Math.sin(this.t * 2.2) * 0.07);
+      this.rayos.rotation.z = this.t * 0.18;
       this.rayos.visible = this.luzRayos > 0.01;
     }
     // Polvito dorado que sale por la puerta mientras está abierta

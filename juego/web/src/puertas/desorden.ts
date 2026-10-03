@@ -571,6 +571,14 @@ export class Desorden {
     escena.escena.add(this.grupo);
     c.alSalir(() => this.quitar());
     c.cada((dt) => this.paso(dt));
+    // El aro de luz de lo encontrado late en cada celular por su cuenta (en pareja no viaja: es solo adorno)
+    this.quitarPulso = escena.cada(() => {
+      for (const b of this.conEscondido) {
+        const o = b.escondido!.obj;
+        const aro = o.userData.aro as THREE.Mesh | undefined;
+        if (aro && o.visible) (aro.material as THREE.MeshBasicMaterial).opacity = 0.28 + Math.sin(this.escena.t * 3.2) * 0.16;
+      }
+    });
   }
 
   /** Riega las cosas del capítulo donde no tapen nada. */
@@ -908,10 +916,6 @@ export class Desorden {
   // --- Física ---------------------------------------------------------------
   private paso(dt: number) {
     this.pedacitos(dt);
-    for (const p of this.papeles) {
-      const aro = p.userData.aro as THREE.Mesh | undefined;
-      if (aro) (aro.material as THREE.MeshBasicMaterial).opacity = 0.28 + Math.sin(this.escena.t * 3.2) * 0.16;
-    }
     const despiertos = this.cuerpos.filter((b) => !b.dormido && !b.roto);
     if (!despiertos.length) return;
     this.acum = Math.min(this.acum + dt, 0.5);
@@ -1202,7 +1206,10 @@ export class Desorden {
     }
   }
 
+  private quitarPulso: () => void = () => {};
+
   quitar() {
+    this.quitarPulso();
     this.escena.escena.remove(this.grupo);
     for (const p of this.pedazos) (p.m.material as THREE.Material).dispose();
     this.pedazos = [];
@@ -1251,6 +1258,7 @@ function aroDeLuz(r: number, color: string) {
     new THREE.RingGeometry(r * 0.72, r, 36),
     new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.35, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }),
   );
+  (aro.material as THREE.Material).userData.soloAqui = true;
   aro.rotation.x = -Math.PI / 2;
   aro.position.y = 0.003;
   aro.userData.propio = true;

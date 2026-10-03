@@ -48,6 +48,17 @@ export class ProbadorReal implements Probador {
       const b = this.entrada.buscar(s.x, s.y);
       if (b && (esDe(b.obj, o) || esDe(o, b.obj))) return { x: s.x, y: s.y };
     }
+    // Si aquí no está registrado (en pareja, el invitado no tiene las reglas): un punto donde se vea de primero
+    const rc = new THREE.Raycaster();
+    const ojo = this.escena.camara.getWorldPosition(new THREE.Vector3());
+    for (const p of candidatos) {
+      rc.set(ojo, p.clone().sub(ojo).normalize());
+      const hit = rc.intersectObjects(this.raiz().children, true).find((h) => (h.object as THREE.Mesh).isMesh && visible(h.object));
+      if (hit && esDe(hit.object, o)) {
+        const s = this.escena.aPantalla(p);
+        return { x: s.x, y: s.y };
+      }
+    }
     const s = this.escena.aPantalla(c);
     return { x: s.x, y: s.y };
   }
@@ -234,6 +245,13 @@ export class ProbadorReal implements Probador {
       await pausa(50);
     }
   }
+}
+
+/** Se ve: ella y sus papás visibles, y su material no es un área de toque invisible. */
+function visible(objeto: THREE.Object3D) {
+  for (let o: THREE.Object3D | null = objeto; o; o = o.parent) if (!o.visible) return false;
+  const m = (objeto as THREE.Mesh).material as THREE.Material | undefined;
+  return !m || Array.isArray(m) || m.visible !== false;
 }
 
 function esDe(hijo: THREE.Object3D, padre: THREE.Object3D) {

@@ -277,9 +277,9 @@ async function iguales(texto) {
   await Promise.all([el, ella].map((p) => esperarEn(p, () => window.__puertas.pareja()?.jugando === 8 && window.__puertas.estado().listo, null, 90000)));
   revisar((await estado(ella)).jugando === 8, 'Él saltó a la puerta 8 y Ella lo siguió');
   await tocar(ella, 'interruptor');
-  await el.waitForFunction(() => window.__puertas.luz() < 0.3, null, { timeout: 15000 }).catch(() => {});
-  await esperar(800);
-  revisar(await ella.evaluate(() => window.__puertas.luz() < 0.3), 'Ella apagó la luz y quedó oscuro en los dos celulares');
+  await el.waitForFunction(() => window.__puertas.luz() < 0.3, null, { timeout: 30000 }).catch(() => {});
+  await ella.waitForFunction(() => window.__puertas.luz() < 0.3, null, { timeout: 30000 }).catch(() => {});
+  revisar((await el.evaluate(() => window.__puertas.luz() < 0.3)) && (await ella.evaluate(() => window.__puertas.luz() < 0.3)), 'Ella apagó la luz y quedó oscuro en los dos celulares');
   await ella.screenshot({ path: `${carpeta}/5-oscuro-ella.png` });
   await tocar(ella, 'cajita fuerte');
   await ella.waitForFunction(() => window.__puertas.pareja()?.panel === 'ruedas', null, { timeout: 15000 }).catch(() => {});
