@@ -216,6 +216,37 @@ async function partida(tactil) {
   const x1 = (await estado()).jug[0].x;
   revisar(x1 - x0 > 20, `${nombre} · el personaje se mueve (${x0} → ${x1})`);
   await p.screenshot({ path: `${carpeta}/${nombre}-4-sigue.png` });
+
+  // 5. Retirarse desde la pausa, «Otra lavada», otra vez al final, al menú, la tienda, los disfraces y a la casa
+  const retirarse = async () => {
+    await tocar('.lv-pausa');
+    await esperarQue(() => visible('.lv-c-pausa'), 3000);
+    await tocar('[data-p="retirarse"]');
+    await tocar('[data-p="retirarse"]');
+    return esperarQue(() => visible('.lv-c-fin'), 8000);
+  };
+  revisar(await retirarse(), `${nombre} · retirarse y cobrar abre la pantalla final`);
+  await p.screenshot({ path: `${carpeta}/${nombre}-5-fin.png` });
+  const t0 = Date.now();
+  await tocar('[data-f="otra"]');
+  const otra = await esperarQue(async () => (await p.evaluate(() => { const m = window.__lavado?.actual?.m; return !!m && !m.fin && m.t > 0.5; })) && (await capasAbiertas()).length === 0, 30000);
+  revisar(otra, `${nombre} · «Otra lavada» arranca otra partida sin capas encima (${((Date.now() - t0) / 1000).toFixed(1)} s)`);
+  revisar(await retirarse(), `${nombre} · y se puede volver a terminar`);
+  await tocar('[data-f="menu"]');
+  revisar(await esperarQue(() => visible('.lv-menu'), 8000), `${nombre} · «Al menú» vuelve al menú`);
+  for (const [boton, texto] of [['[data-m="tienda"]', 'la tienda de poderes'], ['[data-m="disfraces"]', 'los disfraces'], ['[data-m="coleccion"]', 'la colección']]) {
+    await tocar(`.lv-menu ${boton}`);
+    const abre = await esperarQue(() => visible('.lv-pantalla'), 3000);
+    if (boton.includes('disfraces')) {
+      await tocar('.lv-pantalla [data-sel]');
+      await espera(300);
+    }
+    await tocar('.lv-pantalla [data-v="volver"]');
+    const cierra = await esperarQue(async () => !(await visible('.lv-pantalla')) && (await visible('.lv-menu')), 3000);
+    revisar(abre && cierra, `${nombre} · se abre y se cierra ${texto}`);
+  }
+  await tocar('.lv-menu [data-m="salir"]');
+  revisar(await esperarQue(() => p.evaluate(() => !!window.__resultado), 6000), `${nombre} · «Volver a la casa» sale del juego`);
   await ctx.close();
 }
 

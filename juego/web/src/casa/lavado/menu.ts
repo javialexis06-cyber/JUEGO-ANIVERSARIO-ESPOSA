@@ -328,7 +328,7 @@ export class Menu {
     if (a === 'ponerse') {
       this.p.disfraz = this.sel;
       sfx.premio();
-      await this.guardar();
+      void this.guardar();
       return this.cerrarPantalla();
     }
     if (a === 'comprar') {
@@ -338,13 +338,13 @@ export class Menu {
       this.p.comprados.push(d.id);
       this.p.disfraz = d.id;
       sfx.premio();
-      await this.guardar();
+      void this.guardar();
       this.pintarPantalla();
       return;
     }
     if (a === 'carta') {
       this.p.carta = (this.sel || '') as IdCarta | '';
-      await this.guardar();
+      void this.guardar();
       return this.cerrarPantalla();
     }
     if (a === 'comprarPoder') {
@@ -357,7 +357,7 @@ export class Menu {
       this.p.gastado += precio;
       this.p.poderes = { ...this.p.poderes, [id]: r + 1 };
       sfx.premio();
-      await this.guardar();
+      void this.guardar();
       this.pintarPantalla();
       return;
     }
@@ -365,7 +365,7 @@ export class Menu {
       this.p.oro += this.p.gastado;
       this.p.gastado = 0;
       this.p.poderes = {};
-      await this.guardar();
+      void this.guardar();
       this.pintarPantalla();
     }
   }
