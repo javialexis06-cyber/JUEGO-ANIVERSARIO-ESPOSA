@@ -105,7 +105,7 @@ export interface Nivel {
   desorden?: OpDesorden;
   /** En pareja, puerta repartida (como en los juegos de escape cooperativos): uno ve la pista (estos objetos, por
    *  nombre) y el otro tiene el candado; se turnan de una puerta a otra y se cuentan lo que ven con una notica. */
-  pareja?: { pista: string[] };
+  pareja?: { pista?: string[]; aviso?: string };
   montar(c: Ctx): void | Promise<void>;
   prueba(p: Probador): Promise<void>;
 }

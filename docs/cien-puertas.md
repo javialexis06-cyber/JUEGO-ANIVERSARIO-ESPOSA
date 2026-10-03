@@ -276,10 +276,19 @@ otras encima de un cajón o un banquito.
   pedazos saltan y se desvanecen a los tres segundos.
 - **Esconden cosas**: debajo de algunas hay una notica de amor, una cosita perdida (un arete, un botón…) o una **pista
   falsa** del capítulo (`FALSAS`: parecen claves —«Cajita: 3 · 9 · 2», «Andén 7 → Bogotá»— pero no abren nada).
+- **Los papelitos se dejan leer siempre**: son una notica doblada como carpita (la cara de adelante mira a la cámara,
+  así se ve aunque el piso quede de lado), con sombrita y un aro de luz que late; se ponen encima de lo que haya en
+  el piso (un tapete o una alfombra del acertijo: antes podían quedar debajo), tienen un área de toque generosa y
+  **prioridad de toque** (aunque algo les quede encima, el toque les llega), y al aparecer quedan protegidos: nada se
+  queda quieto encima. La nota que sale es grande, de papel de cuaderno (la pista falsa en un pos-it arrugado), con
+  cinta, firma de quien la escribió y se despliega; un segundo toque seguido ya no la cierra por error (antes un
+  doble toque la abría y la cerraba al tiempo). Por qué fallaban: quedaban debajo del tapete o de la cosa que las
+  tapaba, la cosa que se corría se robaba el toque, eran planas y casi no se veían desde la cámara, y el doble toque.
 - **Nunca tapan**: se acomodan con una rejilla de la pantalla donde se pinta la puerta con su marco, todo lo del
   acertijo (también lo que aparece después, como una llave que cae), la interfaz y donde se para el narrador. Si algo
-  lanzado queda quieto delante de la puerta, se corre solo hacia un lado. El narrador, al caminar, empuja lo que
-  tenga en los pies.
+  lanzado queda quieto tapando la puerta o algo importante (ver «Nada tapa lo importante»), salta solito al sitio libre
+  más cercano (y si no hay, vuelve a donde estaba al principio, salvo que ahí haya quedado a la vista lo que
+  escondía). El narrador, al caminar, empuja lo que tenga en los pies.
 - **Celular**: cada cosa es una sola malla con colores por vértice (una llamada de dibujo) y geometría en caché; la
   física corre a pasos fijos solo para lo que está despierto y todo se duerme al quedarse quieto.
 - Un nivel puede pedir menos cosas o ninguna con `desorden: { cuantas }` o `desorden: { nada: true }`.
@@ -293,7 +302,27 @@ faro, las olas, el piano y la caja musical de verdad, y lo que se rompe. Cada es
 (pájaros en el jardín, tazas en el café, buses en la terminal, olas y gaviotas en la playa, grillos en el bosque),
 menos en las puertas donde hay que oír y contar (el búho) o que ya tienen su propio sonido (los buses de la 37).
 
-## Nada tapa la puerta
+## Nada tapa lo importante
+
+**Zonas protegidas** (`src/puertas/protegidas.ts`). Cada puerta tiene cosas que nunca pueden quedar tapadas, y se
+deducen solas: la puerta, todo lo que se toca, se arrastra o se mantiene, los letreros, cuadros y notas pintados (ahí
+van las pistas y las claves), los papelitos y cositas que se encuentran, y lo que el nivel marca a mano con
+`c.proteger(obj)` (las estrellas de la puerta 8). Con eso:
+
+- El desorden no se riega encima ni se queda quieto encima (si cae ahí, salta al sitio libre más cercano).
+- La decoración fija del escenario que tape algo importante se quita mientras dura esa puerta (`despejar`: las piezas
+  sueltas que se tocan entre sí van juntas, como la lámpara con su cable).
+- La puerta 8 («Lo que brilla en la oscuridad»): las estrellas que forman 4-1-7 estaban arriba, detrás de la lámpara
+  del techo y del corazón de la puerta. Ahora brillan a la derecha de la puerta, encima de la cajita, con un
+  resplandor suave, donde nada las tapa (y las de adorno quedaron lejos del número).
+- Revisión con rayos (`revisarImportantes` en `revisar.ts`): desde la cámara se lanzan rayos a puntos de cada cosa
+  importante (en la vista general y en cada acercamiento que use el nivel) y se cuenta qué los tapa: la decoración, el
+  desorden, el narrador en su esquina, otra pieza del acertijo que no se toca, la interfaz (los botones, el
+  inventario con una cosa) o el borde de la pantalla. Lo que el acertijo esconde a propósito detrás de algo que se
+  toca (la llave entre los cojines), lo enterrado (los topos en su hueco), lo que se ve a través (vidrios, brillos) y el
+  piso, la arena o el mar no cuentan.
+
+Lo de siempre de la puerta:
 
 - La lámpara del techo de la casa cuelga a un lado (`LAMPARA` en `cuarto.ts`), los muebles de los acertijos están a
   los lados de la puerta, el narrador cuenta la historia desde un lado y celebra sin taparla, su globo se acomoda
@@ -304,6 +333,68 @@ menos en las puertas donde hay que oír y contar (el búho) o que ya tienen su p
   corre en 844×390, 740×360 y 1024×768 (con `?revisar=1`, sin dibujar). Lo que es parte de la puerta (las cadenas de
   la reja, el aro de luz de la compuerta, el brillo del corazón) se llama `marco…` y no cuenta.
 
+## Revisión sistemática de las 100 puertas
+
+`scripts/revisar-puertas.mjs` (con el servidor de Vite andando) recorre las puertas una por una con el desorden
+puesto y varias semillas (`?semilla=N` cambia el reguero), resuelve cada una con su prueba automática (toques y
+sensores de verdad) y registra lo que falle: la prueba no pasa o se traba, el panel no abre, la puerta no se abre,
+algo tapa la puerta o algo importante (con los rayos de arriba, también en los acercamientos), cosas que quedaron fuera
+del cuarto o con posiciones rotas, y errores de la página. Con `--revolver` antes de resolver tira todo el desorden
+por el aire y revisa otra vez cuando se queda quieto; con `--fotos` guarda una foto de cada puerta (sin fotos corre sin
+dibujar, mucho más rápido). El informe queda en `<carpeta>/informe.json`.
+
+    PUERTO=5173 node scripts/revisar-puertas.mjs 1 100 --semillas=0,1,2 --revolver [--fotos]
+
+Lo que se encontró y se arregló con esa pasada está en «Arreglos de la revisión» más abajo.
+
+## En pareja: la misma puerta, cada uno en su celular
+
+Botón «En pareja» del mapa (o la invitación que llega a la casa): se invita a la puerta que sigue o a una del mapa, y
+los dos la resuelven al tiempo, cada uno en su celular (`src/puertas/pareja*.ts`).
+
+- **Cómo viaja**: canal de Supabase Realtime de la pareja (`puertas-<pareja>`, broadcast + presencia, la misma sesión
+  de la casa). Quien invita es el **anfitrión**: aplica las reglas del acertijo; el **invitado** arma la misma puerta
+  (mismo montaje y el mismo reguero, que le llega del anfitrión porque las pantallas no miden igual) y la ve en espejo.
+- **Paquetes** cada 125 ms (si hay algo que decir) y un latido cada segundo. Los movimientos van numerados y se repiten
+  en cada paquete hasta que el otro confirma (un mensaje perdido no daña nada); lo que solo vale en su última versión
+  (la foto del cuarto, el candado abierto, las texturas pintadas) se repite hasta que el otro dice qué versión tiene.
+- **Los dedos del invitado** viajan con su cámara y su pantalla, y el anfitrión los aplica como si fueran propios
+  (`Entrada.remoto`): tocar, mantener, arrastrar, frotar, deslizar, dibujar. Lo que arrastra se mueve de una en su
+  celular (no espera la red) y el espejo no se lo quita de la mano. Los sensores del invitado (sacudir, voltear,
+  cerrar los ojos, soplar) también llegan, y su inclinación cuenta cuando el celular del anfitrión está quieto.
+- **El espejo** (`pareja_espejo.ts`): el anfitrión manda solo lo que cambia (posición, giro, tamaño y si se ve de cada
+  cosa del acertijo, del desorden y de lo pegado a la puerta; colores de los materiales propios; luces; texturas
+  pintadas, como el vidrio que se limpia; el inventario y la luz del cuarto), y cada segundo y medio todo lo que ha
+  cambiado. El invitado lo aplica suavecito. Los sonidos de los acertijos suenan en los dos (`sonido_eco.ts`).
+- **Candados y notas**: le salen a quien los tocó (el anfitrión los arma sin verse y los botones viajan). Lo mismo los
+  acercamientos de la cámara.
+- **Compartido**: el inventario (lo que uno recoge lo tienen los dos), las pistas (si uno le compra un dulce al
+  narrador, el narrador se la dice a los dos) y las monedas (la casa es una: las paga el anfitrión).
+- **Se ve dónde toca el otro**: una manito con su carita (`retratos/el.png`, `ella.png`) que se desvanece al ratico.
+- **Señas** (botón del globito con corazón): «¡Mira aquí!» (con un aro que late donde uno tocó), «¡Ya sé!», «¿Me
+  ayudas?», «¡Muak!» y **escribirle una notica** (le sale como un pos-it: sirve para dictar «4 1 7»). Las señas
+  usan cómo se dicen: Él a Ella «esposa», «pulga aventurera», «protagonista»; Ella a Él «panda», «perro lanudo»,
+  «liefje» (y «mi amor»).
+- **Puertas repartidas** (como «We Were Here»): en la 8, 25, 31, 38, 43 y 70 uno ve la pista y el otro tiene el
+  candado (se turnan de una puerta a otra). Quien no la ve tiene una nubecita rosada encima que dice «Esto lo ve Él»;
+  si toca la pista o si el que la ve intenta abrir el candado, le sale un aviso amable. Se declara en el nivel con
+  `pareja: { pista: [nombres] }`. La puerta 100 dice que cada uno ponga su pulgar en una huella (`pareja.aviso`).
+- **Pausa**: si uno se va a segundo plano (`segundo_plano.ts`) o se corta la conexión (4,5 s sin noticias), al otro le
+  sale la pausa con aviso y todo se queda quieto; al volver sigue donde iba. Si uno sale, al otro le avisan.
+- Prueba: `node scripts/probar-puertas-linea.mjs http://localhost:5173/puertas.html` (dos celulares con pantallas
+  distintas, un Supabase de mentiras con demoras y 8 % de mensajes perdidos: Ella resuelve una puerta con sus dedos,
+  Él otra con su prueba, señas, pausa por segundo plano y por corte, candado que le sale a Ella, y al final de cada
+  parte los dos estados tienen que ser idénticos).
+
+## Efectos
+
+`src/puertas/efectos.ts`: ondita al tocar (dorada si se tocó algo), la puerta se abre con rayos de luz del color del
+capítulo, polvito dorado que sale por la puerta y chispas en la cerradura; el corazoncito del recuerdo sale de la
+puerta y se va volando; confeti de corazones y estrellas por los lados (sin tapar la puerta); las estrellas ganadas
+arriba; y entre puerta y puerta la tarjeta con el número (y el capítulo cuando cambia) sobre el fundido, mientras se
+arma la siguiente, que se destapa con la cámara asentándose. Mientras la puerta se abre, la interfaz se hace a un
+lado (semitransparente). Todo con dos nubes de partículas reutilizadas.
+
 ## Técnica
 
 - Página propia `puertas.html` + `src/puertas/`: escena 3D en primera persona con el mismo estilo de plastilina
@@ -312,6 +403,10 @@ menos en las puertas donde hay que oír y contar (el búho) o que ya tienen su p
 - Cada puerta es un módulo con su montaje, su lógica, sus pistas y una **prueba** que la resuelve con toques y
   sensores simulados, para verificar que las 100 se pueden pasar.
 - Progreso en el celular (`localStorage`); las monedas llegan a la casa compartida.
-- Pruebas: `PUERTO=5174 node scripts/_puertas.mjs <carpeta> <desde> <hasta>` resuelve cada puerta con su prueba
-  (`?sinhistoria=1&rapido=4`); `scripts/_puertas_fotos.mjs` saca fotos sin resolver. `window.__puertas` tiene además
-  `tapan()`, `desorden()` (cuántas cosas hay y cuántas se rompieron), `lanzar(i, vx, vy, vz)` y `antojo()`.
+- Pruebas: `scripts/revisar-puertas.mjs` (arriba) y `scripts/probar-puertas-linea.mjs` (pareja). Parámetros:
+  `?puerta=N`, `?sinhistoria=1`, `?rapido=N`, `?semilla=N`, `?una=1` (al abrirse no sigue), `?revisar=1` (sin dibujar).
+  `window.__puertas` tiene `jugar(n)`, `probar()`, `estado()` (con `listo`), `revision()`, `revolver(s)`, `quieto()`,
+  `papelitos()`, `tapan()`, `desorden()`, `lanzar(i, vx, vy, vz)`, `antojo()`, `pareja()`, `parejaInvitar(n)` y
+  `segundoPlano(si)`.
+- El bucle de dibujo usa `cuadros()` de `src/segundo_plano.ts` (se detiene solo en segundo plano) con tope de 30
+  cuadros por segundo.

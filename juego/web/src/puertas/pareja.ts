@@ -395,9 +395,10 @@ export class Pareja {
     d.p.lerp(d.meta, 1 - Math.exp(-dt * 16));
     const quieto = performance.now() - d.visto;
     const s = this.j.escena.aPantalla(d.p);
-    d.el.hidden = quieto > 2600 || s.detras;
+    // (se queda un ratico después de soltar, y se desvanece suavecito)
+    d.el.hidden = quieto > 3800 || s.detras;
     d.el.style.transform = `translate(${s.x.toFixed(1)}px, ${s.y.toFixed(1)}px)`;
-    d.el.style.opacity = String(quieto > 1600 ? Math.max(0, 1 - (quieto - 1600) / 1000) : 1);
+    d.el.style.opacity = String(quieto > 2600 ? Math.max(0, 1 - (quieto - 2600) / 1200) : 1);
     d.el.classList.toggle('abajo', d.abajo);
   }
 

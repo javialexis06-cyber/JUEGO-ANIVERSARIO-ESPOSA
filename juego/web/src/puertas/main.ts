@@ -574,6 +574,7 @@ async function jugar(n: number, plano?: PlanoDesorden) {
   }
   void narrador.irEsquina();
   entrada.bloqueada = false;
+  if (pareja && nivel.pareja?.aviso) aviso(nivel.pareja.aviso, 6000);
   const t0 = escena.t;
   c._ultimoToque = escena.t;
   // El ambiente del escenario (pájaros, olas, grillos…)

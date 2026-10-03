@@ -220,13 +220,15 @@ async function iguales(texto) {
 {
   const c = await donde(el, 'aldaba toque');
   await el.mouse.click(c.x, c.y);
+  // La manito de Él aparece en el celular de Ella donde él tocó
+  await ella.waitForFunction(() => !document.getElementById('dedo-otro').hidden, null, { timeout: 8000 }).catch(() => {});
+  revisar(await ella.evaluate(() => !document.getElementById('dedo-otro').hidden), 'Ella ve la manito de Él donde tocó');
   await el.click('#btn-sena');
   await el.click('#senas [data-k="mira"]');
   await ella.waitForSelector('#sena-globo:not([hidden])', { timeout: 10000 }).catch(() => {});
   const texto = await ella.evaluate(() => document.getElementById('sena-globo').textContent);
   revisar(/Mira aquí/.test(texto ?? ''), `A Ella le llega la seña de Él: «${texto}»`);
   revisar(/(esposa|pulga aventurera|protagonista|mi amor)/.test(texto ?? ''), 'La seña usa cómo le dice Él a Ella');
-  revisar(await ella.evaluate(() => !document.getElementById('dedo-otro').hidden), 'Ella ve la manito de Él donde tocó');
   await ella.screenshot({ path: `${carpeta}/3-sena.png` });
 }
 

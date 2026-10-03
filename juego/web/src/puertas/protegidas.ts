@@ -44,10 +44,11 @@ const visibleTodo = (o: THREE.Object3D) => {
   return true;
 };
 
-/** Malla que se dibuja (no un área de toque invisible). `ahora`: además que no sea transparente del todo. */
+/** Malla que se dibuja (no un área de toque invisible). `ahora`: además que tape lo de atrás (un vidrio, un brillo
+ *  o algo casi transparente deja ver a través). */
 function seDibuja(m: THREE.Mesh, ahora: boolean) {
   const mats = (Array.isArray(m.material) ? m.material : [m.material]) as THREE.Material[];
-  return mats.some((mt) => mt && mt.visible !== false && (!ahora || !mt.transparent || mt.opacity > 0.08));
+  return mats.some((mt) => mt && mt.visible !== false && (!ahora || ((!mt.transparent || mt.opacity > 0.6) && mt.blending !== THREE.AdditiveBlending)));
 }
 
 /** La pieza del acertijo (hijo directo de `raiz`) a la que pertenece un objeto. */

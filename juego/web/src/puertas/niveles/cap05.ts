@@ -1,7 +1,7 @@
 // Capítulo 5 · La playa (puertas 41–50): ordenar, sacudir, guiar inclinando, cosquillas (frotar rápido),
 // memoria con la marea, soplar el velero, cocos, destellos y vibración, estrellas que se prenden y el atardecer.
 import * as THREE from 'three';
-import { cieloPlaya } from '../cuarto';
+import { cieloPlaya, palmera } from '../cuarto';
 import * as sonido from '../sonido_eco';
 import * as sfx from '../sonidos';
 import { caja, cilindro, en, esfera, estrella, grupo, letrero, mat, matNuevo, textoEn } from '../kit';
@@ -364,6 +364,8 @@ const marea: Nivel = {
     const agua = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 1.1), new THREE.MeshStandardMaterial({ color: '#4aa6d8', transparent: true, opacity: 0.88, roughness: 0.2 }));
     agua.rotation.x = -Math.PI / 2;
     agua.name = 'marea';
+    // (desde el principio en su sitio: ni un cuadro encima de la puerta)
+    agua.position.set(2.85, 0.02, -1.62);
     c.g.add(agua);
     let fase = 0;
     c.cada((dt) => {
@@ -466,9 +468,16 @@ const cocos: Nivel = {
     'Sacude el celular para tumbar los cocos y ábrelos tocándolos; solo uno trae lo que buscas.',
   ],
   montar(c) {
+    // La palmera cargada, bien a la vista (más bajita que la del fondo: los cocos no quedan debajo de los botones)
+    const pal = palmera(2.5, -0.25);
+    pal.name = 'palmera de los cocos';
+    // (sus cocos de adorno se quitan: los de verdad son los de abajo)
+    pal.children.splice(pal.children.length - 3, 3);
+    en(pal, 2.75, 0, 0.12);
+    c.g.add(pal);
     const cs = [0, 1, 2].map((i) => {
       const o = esfera(0.12, mat('#6b4a33', { rough: 0.9 }), `coco ${i}`, 14);
-      en(o, 2.75 + (i - 1) * 0.16, 2.72, 0.02 + (i % 2) * 0.1);
+      en(o, 2.5 + (i - 1) * 0.17, 2.22, 0.2 + (i % 2) * 0.09);
       o.userData.golpes = 0;
       c.g.add(o);
       return o;
@@ -492,7 +501,7 @@ const cocos: Nivel = {
     c.sensor.sacudida(tumbar);
     const palmToque = new THREE.Mesh(new THREE.BoxGeometry(1.2, 3, 0.8), new THREE.MeshBasicMaterial({ visible: false }));
     palmToque.name = 'palmera toque';
-    en(palmToque, 3.0, 1.5, -0.2);
+    en(palmToque, 2.65, 1.3, 0.12);
     c.g.add(palmToque);
     let toques = 0;
     c.tocar(palmToque, () => ++toques >= 6 && tumbar());

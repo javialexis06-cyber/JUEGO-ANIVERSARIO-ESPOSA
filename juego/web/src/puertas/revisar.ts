@@ -234,7 +234,8 @@ export function revisarImportantes(o: {
           } else if (esDe(cual, o.cuarto)) {
             // (el piso, la arena o el mar que tapan lo que está enterrado o flotando lejos es parte del acertijo)
             const u = unidad(cual, o.cuarto);
-            if (!/^(piso|arena|mar|agua|olas|pasto|suelo|nieve|cesped)/i.test(u.name) && !/^(piso|arena|mar|agua|olas)/i.test(cual.name)) quien = `cuarto: ${nombreImp(u)}`;
+            // (el marco de luz de una puerta es parte de la puerta)
+            if (!/^(piso|arena|mar|agua|olas|pasto|suelo|nieve|cesped|marco)/i.test(u.name) && !/^(piso|arena|mar|agua|olas)/i.test(cual.name)) quien = `cuarto: ${nombreImp(u)}`;
           }
         }
         if (!quien && interfaz.length) {

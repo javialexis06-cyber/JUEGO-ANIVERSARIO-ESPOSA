@@ -1051,6 +1051,7 @@ const todoJunto: Nivel = {
 const SEGUNDOS_CORAZON = 5;
 const puertaCorazon: Nivel = {
   titulo: 'La puerta del corazón',
+  pareja: { aviso: 'Esta es de los dos: cada uno pone su pulgar en una huella, al tiempo, cada quien en su celular ♥' },
   pistas: [
     'Esta puerta no tiene llave.',
     'Tiene dos huellas: una para cada uno.',
