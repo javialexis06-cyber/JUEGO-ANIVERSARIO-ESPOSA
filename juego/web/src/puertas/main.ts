@@ -419,6 +419,16 @@ function empezarPareja(papel: Papel, inv: InvPuertas) {
   terminarCtx();
   narrador.esconder();
   pareja = new Pareja(papel, inv.id, yo, canal, juegoPareja);
+  // El invitado mira de cerca lo que su dedo pidió (lo decide el anfitrión) y vuelve cuando allá se termina
+  pareja.alEnfocar = async (punto, distancia) => {
+    if (!ctx) return;
+    mostrar('btn-volver', true);
+    narrador.p.grupo.visible = false;
+    await escena.enfocar(punto, distancia);
+  };
+  pareja.alVolver = () => {
+    if (!escena.enVistaGeneral) void ctx?.volver();
+  };
   if (papel === 'invitado') {
     canal.responder(inv, true);
     mostrar('mapa', false);
