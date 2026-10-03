@@ -240,11 +240,18 @@ export class Pareja {
     this.cuenta.movs++;
     const j = this.j;
     switch (m.t) {
-      case 'puerta':
+      case 'puerta': {
         if (this.papel !== 'invitado') return;
+        // Si el anfitrión se fue a otra puerta sin abrir esta (la escogió en el mapa), se va con él de una
+        const actual = j.puerta();
+        if (actual && actual !== m.n && !this.resueltas.has(actual)) {
+          this.cola = [];
+          this.libre = true;
+        }
         this.cola.push({ n: m.n, plano: m.desorden as PlanoDesorden });
         this.siguiente();
         break;
+      }
       case 'res':
         this.resueltas.add(m.n);
         if (this.papel === 'invitado' && j.puerta() === m.n) j.resuelta(m.n);
@@ -356,17 +363,17 @@ export class Pareja {
         this.enlace.mandar({ t: 'dedo', d });
       }
     }
-    // La manito: dónde quedó el dedo en el cuarto
+    // La manito: dónde quedó el dedo en el cuarto (los movimientos, como mucho cada 90 ms: el rayo cuesta)
     this.dedoAbajo = tipo === 'abajo' || tipo === 'mueve';
+    if (tipo === 'mueve' && performance.now() - this.ultimoDedoRed < 90) return;
+    this.ultimoDedoRed = performance.now();
     const ndc = new THREE.Vector2((x / window.innerWidth) * 2 - 1, -(y / window.innerHeight) * 2 + 1);
     this.rc.setFromCamera(ndc, e.camara);
     const hit = this.rc.intersectObjects(this.j.raices(), true).find((h) => (h.object as THREE.Mesh).isMesh && h.object.visible);
     const p = hit?.point ?? this.rc.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), -0.05), new THREE.Vector3());
-    if (p) this.dedoPunto = p.clone();
-    if (p && (tipo !== 'mueve' || performance.now() - this.ultimoDedoRed > 90)) {
-      this.ultimoDedoRed = performance.now();
-      this.enlace.ponerDedo([Math.round(p.x * 100) / 100, Math.round(p.y * 100) / 100, Math.round(p.z * 100) / 100, this.dedoAbajo ? 1 : 0]);
-    }
+    if (!p) return;
+    this.dedoPunto = p.clone();
+    this.enlace.ponerDedo([Math.round(p.x * 100) / 100, Math.round(p.y * 100) / 100, Math.round(p.z * 100) / 100, this.dedoAbajo ? 1 : 0]);
   }
   private ultimoDedoRed = 0;
 

@@ -184,7 +184,9 @@ async function iguales(texto) {
   if (!ok && a && b) {
     const oa = a.o.split(';'), ob = b.o.split(';');
     const dif = oa.map((x, i) => (x !== ob[i] ? `${i}: ${x} ≠ ${ob[i]}` : '')).filter(Boolean);
-    console.log(`  (puerta ${a.puerta}/${b.puerta}, ${a.objetos}/${b.objetos} objetos, ${dif.length} distintos: ${dif.slice(0, 6).join(' | ')}; materiales ${a.m === b.m ? 'iguales' : 'distintos'}; inventario ${a.inv}/${b.inv})`);
+    const ma = a.m.split(';'), mb = b.m.split(';');
+    const difm = ma.map((x, i) => (x !== mb[i] ? `${i}: ${x} ≠ ${mb[i]}` : '')).filter(Boolean);
+    console.log(`  (puerta ${a.puerta}/${b.puerta}, ${a.objetos}/${b.objetos} objetos, ${dif.length} distintos: ${dif.slice(0, 6).join(' | ')}; materiales ${difm.slice(0, 6).join(' | ') || 'iguales'}; inventario ${a.inv}/${b.inv})`);
   }
   revisar(!!ok, texto);
 }
