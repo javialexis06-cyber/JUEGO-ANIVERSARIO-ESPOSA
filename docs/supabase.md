@@ -40,3 +40,27 @@ correr varias veces).
 | `personajes` | Necesidades (hambre, energía, higiene, cariño), qué está haciendo y en qué cuarto |
 | `eventos` | Besos, abrazos, caricias, regalos y notas que uno le manda al otro |
 | `recuerdos` | El álbum: fotos (en la carpeta privada `recuerdos`), títulos y fechas. Los mensajes de voz van en la misma carpeta (`<casa>/voces/`) |
+
+## Cambios pendientes de la base (auditoría): `supabase/cambios-pendientes.sql`
+
+La auditoría encontró puertas que la app nunca usa pero que alguien con la clave publicable podría usar mal. Para
+cerrarlas, pega **todo** [`supabase/cambios-pendientes.sql`](../supabase/cambios-pendientes.sql) en
+**SQL Editor → New query → Run** (después de `esquema.sql`; se puede correr varias veces):
+
+| Qué cierra | Antes | Después |
+|---|---|---|
+| Funciones de la pareja | Cualquiera (hasta sin sesión) podía llamarlas | Solo celulares con sesión |
+| Personajes | Ella podía reescribir el personaje de Él (y al revés) | Cada uno escribe solo el suyo; los dos ven los dos |
+| Eventos (besos, regalos, notas…) | Se podían mandar a nombre del otro, reescribir o borrar | Solo a nombre propio; de los mandados solo cambia «visto» |
+| Recuerdos | Se podían subir a nombre del otro | Solo a nombre propio |
+| Adivinar el código de la casa | Sin límite | 20 códigos equivocados por hora y se bloquea un rato |
+| Crear casas | Sin límite | Máximo 5 por celular |
+| Tamaño | Sin límite | La casa guardada hasta 1 MB; fotos y audios hasta 5 MB |
+| Eventos viejos | Se acumulaban para siempre | Los ya vistos de más de 30 días se borran solos |
+
+Con estos cambios, un código que no existe vuelve vacío en vez de error: la app (desde esta versión) lo muestra igual
+(«Ese código no existe»). Las pruebas están en `supabase/pruebas/probar_cambios.sql` (23 de 23 en Postgres 16) y las
+28 de `probar_reglas.sql` siguen pasando.
+
+**Ojo:** si algún día vuelves a correr `esquema.sql` completo, corre después otra vez `cambios-pendientes.sql`
+(el esquema viejo vuelve a abrir la regla «personajes: todo» y las demás).

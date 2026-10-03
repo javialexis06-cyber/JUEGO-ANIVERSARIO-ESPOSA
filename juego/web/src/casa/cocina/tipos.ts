@@ -87,6 +87,17 @@ export interface ResultadoDia {
   platos: number;
 }
 
+/** Cocinar en pareja, cada uno en su celular: el que invita (anfitrión) lleva la verdad del día. */
+export interface LineaCocina {
+  modo: 'anfitrion' | 'invitado';
+  /** Identificador de la invitación (el mismo en los dos celulares). */
+  id: string;
+  /** Por dónde viajan los mensajes: Supabase Realtime (la casa en línea) o entre pestañas (la casa local, pruebas). */
+  transporte: 'supabase' | 'local';
+  /** Nombre del otro (para los letreros: «Esperando a Ella…»). */
+  nombreOtro: string;
+}
+
 export interface OpcionesCocina {
   rol: Rol;
   receta: RecetaId;
@@ -95,4 +106,25 @@ export interface OpcionesCocina {
   pareja: { rol: Rol; nombre: string };
   /** Se llama al terminar cada día y al comprar mejoras: guarda en la casa. */
   guardar: (p: ProgresoCocina, dia?: ResultadoDia) => Promise<void>;
+  /** Cocinar juntos en línea (si no viene, se cocina solo). */
+  linea?: LineaCocina;
+  /**
+   * Gancho para escenas especiales al terminar cada día (antes de la tarjeta del final). Si devuelve una promesa, la
+   * cocina espera a que termine. También se pueden registrar en `cocina.alTerminarDia` (index.ts).
+   */
+  alTerminarDia?: (dia: ResultadoDia, info: InfoFinDia) => void | Promise<void>;
+}
+
+/** Lo que se le cuenta a quien engancha una escena al final del día. */
+export interface InfoFinDia {
+  receta: RecetaId;
+  rol: Rol;
+  /** Si se cocinó en pareja (y quién invitó). */
+  enPareja: boolean;
+  anfitrion: boolean;
+  /** Rango antes y después del día (para celebrar si subió). */
+  rangoAntes: number;
+  rango: number;
+  /** El lienzo de la cocina, por si la escena quiere dibujar encima. */
+  raiz: HTMLElement;
 }

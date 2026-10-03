@@ -3,6 +3,7 @@
 import { icono, RUTA } from '../recursos';
 import { Item } from './catalogo';
 import { EstadoPersonaje, Necesidad, NECESIDADES, NOMBRE_NECESIDAD, Rol } from './modelo';
+import { avisoSuave, salirSuave } from '../transiciones';
 
 export const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -74,16 +75,10 @@ export function pintarNecesidades(ul: HTMLElement, e: EstadoPersonaje) {
   }
 }
 
-let tiempoToast: ReturnType<typeof setTimeout> | null = null;
+const relojToast = { id: 0 };
+/** Aviso abajo: entra con un brinquito y se va bajando suave. */
 export function toast(texto: string, ms = 2600) {
-  const t = $('toast');
-  t.textContent = texto;
-  t.hidden = false;
-  t.classList.remove('sale');
-  void t.offsetWidth;
-  t.classList.add('sale');
-  if (tiempoToast) clearTimeout(tiempoToast);
-  tiempoToast = setTimeout(() => (t.hidden = true), ms);
+  avisoSuave($('toast'), texto, ms, relojToast);
 }
 
 export function mostrar(id: string, si = true) {
@@ -134,6 +129,7 @@ export function cuerpoHoja(html: string) {
 }
 
 export function cerrarHoja() {
+  salirSuave($('hoja'));
   mostrar('hoja', false);
   const cb = alCerrarHoja;
   alCerrarHoja = null;
@@ -146,7 +142,10 @@ export function ventana(html: string) {
   $('ventana-carta').innerHTML = html;
   mostrar('ventana');
 }
-export const cerrarVentana = () => mostrar('ventana', false);
+export const cerrarVentana = () => {
+  salirSuave($('ventana'));
+  mostrar('ventana', false);
+};
 
 // ---------------------------------------------------------------------------
 // Efectos sobre el 3D
@@ -161,6 +160,8 @@ export class Capa {
   poner(clave: string, tipo: string | null, x: number, y: number, contenido?: string) {
     let e = this.efectos.get(clave);
     if (!tipo) {
+      // El globito se desinfla en vez de desaparecer de golpe
+      if (e?.classList.contains('pensamiento')) salirSuave(e);
       e?.remove();
       this.efectos.delete(clave);
       return;
@@ -184,8 +185,14 @@ export class Capa {
       e.innerHTML = contenido ?? '';
       e.dataset.contenido = contenido ?? '';
     }
-    e.style.transform = `translate(${x}px, ${y}px)`;
+    // (solo si se movió: escribir la misma posición cada cuadro hace recalcular la página sin necesidad)
+    const pos = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+    if (this.posiciones.get(e) !== pos) {
+      this.posiciones.set(e, pos);
+      e.style.transform = pos;
+    }
   }
+  private posiciones = new WeakMap<HTMLElement, string>();
 
   quitarTodo() {
     for (const e of this.efectos.values()) e.remove();
@@ -196,17 +203,21 @@ export class Capa {
 /** Lluvia de corazones (aniversario, beso de bienvenida). */
 export function lluviaCorazones(n = 24) {
   const capa = document.createElement('div');
-  capa.className = 'lluvia-corazones';
+  capa.className = 'lluvia-corazones suave';
   for (let i = 0; i < n; i++) {
+    // Cada corazón con su tamaño, su caída, su vaivén y su giro: caen como papelitos, no en fila
     const s = document.createElement('span');
     s.innerHTML = CORAZON;
     s.style.left = `${Math.random() * 100}%`;
-    s.style.animationDelay = `${Math.random() * 1.6}s`;
-    s.style.transform = `scale(${0.7 + Math.random() * 0.8})`;
+    s.style.setProperty('--s', (0.65 + Math.random() * 0.85).toFixed(2));
+    s.style.setProperty('--x', `${Math.round((Math.random() - 0.5) * 90)}px`);
+    s.style.setProperty('--r', `${Math.round((Math.random() - 0.5) * 120)}deg`);
+    s.style.setProperty('--d', `${(2.6 + Math.random() * 1.4).toFixed(2)}s`);
+    s.style.animationDelay = `${(Math.random() * 1.6).toFixed(2)}s`;
     capa.appendChild(s);
   }
   document.body.appendChild(capa);
-  setTimeout(() => capa.remove(), 5200);
+  setTimeout(() => capa.remove(), 5800);
 }
 
 export const nombre = (r: Rol) => (r === 'el' ? 'Él' : 'Ella');

@@ -1,5 +1,7 @@
 // Nuestro Hogar: datos de la pareja y reglas de las necesidades (se calculan con el reloj real).
 import { normalizarProgreso, type ProgresoCocina, RECETAS, type RecetaId } from './cocina/tipos';
+import { normalizarCohete, type ProgresoCohete } from './cohete/datos';
+import { normalizarProgresoLavado, type ProgresoLavado } from './lavado/progreso';
 export type Rol = 'el' | 'ella';
 export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto' | 'juegos' | 'trofeos' | 'cuna' | 'cuarto_el' | 'cuarto_ella' | 'patio';
 export type Necesidad = 'hambre' | 'energia' | 'higiene' | 'carino';
@@ -76,6 +78,7 @@ export function personajeNuevo(ahora = Date.now()): EstadoPersonaje {
 const limitar = (v: number) => Math.max(0, Math.min(100, v));
 const numero = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) ? v : d);
 const esObjeto = (v: unknown): v is Record<string, any> => !!v && typeof v === 'object' && !Array.isArray(v);
+const esRol = (v: unknown): v is Rol => v === 'el' || v === 'ella';
 
 /** Estado de un personaje confiable aunque venga dañado o incompleto (almacenamiento viejo, otra versión, servidor). */
 export function normalizarPersonaje(e: unknown, ahora = Date.now()): EstadoPersonaje {
@@ -198,8 +201,12 @@ export interface Casa {
   diario: Record<string, number>;
   /** Récords del retrete espacial: los segundos que más ha durado cada uno esquivando asteroides. */
   retrete?: Partial<Record<Rol, number>>;
+  /** El retrete espacial de cada uno: rollitos, mejoras, retretes/estelas/cascos, misiones y récords (metros). */
+  cohete?: Partial<Record<Rol, ProgresoCohete>>;
   /** Récords de lavarse la cara: los gérmenes que más ha eliminado cada uno en una lavada. */
   lavado?: Partial<Record<Rol, number>>;
+  /** Lavarse la cara: lo de cada uno (gotas doradas, tienda de poderes, disfraces, logros, colección y récords). */
+  lavadoProgreso?: Partial<Record<Rol, ProgresoLavado>>;
   /** Cuartos construidos con «Ampliar la casa» (además de los de siempre). */
   ampliaciones?: Cuarto[];
   /** La bebé que trajo la cigüeña. */
@@ -316,6 +323,13 @@ export function casaNueva(): Casa {
   };
 }
 
+/** Todos los campos de la casa que esta versión conoce y normaliza (los demás vienen de una versión más nueva y se
+ *  conservan). Al agregar un campo a `Casa`, TypeScript obliga a ponerlo aquí también. */
+const CAMPOS_CASA = {
+  monedas: 1, inventario: 1, deco: 1, notas: 1, fechas: 1, regalos: 1, voces: 1, aniversario: 1, diario: 1, retrete: 1, lavado: 1,
+  ampliaciones: 1, bebe: 1, logros: 1, pintura: 1, perro: 1, cocina: 1, lavadoProgreso: 1, cohete: 1,
+} satisfies Record<keyof Casa, 1>;
+
 /** La casa compartida siempre con la forma esperada (y sin valores imposibles como monedas negativas). */
 export function normalizarCasa(c: unknown): Casa {
   const base = casaNueva();
@@ -331,13 +345,25 @@ export function normalizarCasa(c: unknown): Casa {
     return r;
   };
   const lista = <T,>(v: unknown, ok: (x: any) => boolean): T[] => (Array.isArray(v) ? (v.filter((x) => esObjeto(x) && ok(x)) as T[]) : []);
+  // Campos que trae una versión más nueva de la app (el otro celular ya actualizó y este no): se conservan tal cual,
+  // si no, cada guardado de este celular se los borraría al otro
+  const nuevos = Object.fromEntries(Object.entries(c).filter(([k]) => !(k in CAMPOS_CASA)));
   return {
+    ...nuevos,
     monedas: Math.max(0, Math.floor(numero(c.monedas, base.monedas))),
     inventario: esObjeto(c.inventario) ? cantidades(c.inventario) : base.inventario,
     deco: textos(c.deco),
-    notas: lista<Nota>(c.notas, (n) => typeof n.texto === 'string' && typeof n.id === 'string').map((n) => ({ ...n, color: colorSeguro(n.color) })),
-    fechas: lista<FechaEspecial>(c.fechas, (f) => typeof f.fecha === 'string' && typeof f.nombre === 'string'),
-    regalos: lista<RegaloRecibido>(c.regalos, (g) => typeof g.id === 'string' && typeof g.item === 'string'),
+    // (quién, cuándo y el mensaje también se revisan: un dato raro de otra versión no rompe las hojas que los pintan)
+    notas: lista<Nota>(c.notas, (n) => typeof n.texto === 'string' && typeof n.id === 'string').map((n) => ({
+      ...n, de: n.de === 'ella' ? 'ella' : 'el', color: colorSeguro(n.color), t: numero(n.t, 0),
+    })),
+    fechas: lista<FechaEspecial>(c.fechas, (f) => typeof f.fecha === 'string' && typeof f.nombre === 'string').map((f) => ({
+      ...f, id: typeof f.id === 'string' && f.id ? f.id : `f${f.fecha}${f.nombre.length}`, cadaAno: !!f.cadaAno,
+    })),
+    regalos: lista<RegaloRecibido>(c.regalos, (g) => typeof g.id === 'string' && typeof g.item === 'string' && esRol(g.de) && esRol(g.para)).map((g) => ({
+      ...g, mensaje: typeof g.mensaje === 'string' ? g.mensaje : '',
+      t: numero(g.t, 0), abierto: !!g.abierto,
+    })),
     voces: lista<NotaVoz>(c.voces, (v) => typeof v.id === 'string' && typeof v.ref === 'string' && (v.de === 'el' || v.de === 'ella') && (v.para === 'el' || v.para === 'ella'))
       .map((v) => ({ ...v, dur: Math.max(0, Math.min(60, numero(v.dur, 0))), t: numero(v.t, 0), oida: !!v.oida })),
     aniversario: typeof c.aniversario === 'string' ? c.aniversario : '',
@@ -349,10 +375,20 @@ export function normalizarCasa(c: unknown): Casa {
           ),
         }
       : {}),
+    ...(esObjeto(c.cohete)
+      ? { cohete: Object.fromEntries((['el', 'ella'] as Rol[]).filter((r) => esObjeto(c.cohete[r])).map((r) => [r, normalizarCohete(c.cohete[r])])) }
+      : {}),
     ...(esObjeto(c.lavado)
       ? {
           lavado: Object.fromEntries(
             (['el', 'ella'] as Rol[]).filter((r) => typeof c.lavado[r] === 'number' && Number.isFinite(c.lavado[r])).map((r) => [r, Math.max(0, Math.min(99999, Math.round(c.lavado[r])))]),
+          ),
+        }
+      : {}),
+    ...(esObjeto(c.lavadoProgreso)
+      ? {
+          lavadoProgreso: Object.fromEntries(
+            (['el', 'ella'] as Rol[]).filter((r) => esObjeto(c.lavadoProgreso[r])).map((r) => [r, normalizarProgresoLavado(c.lavadoProgreso[r], r)]),
           ),
         }
       : {}),

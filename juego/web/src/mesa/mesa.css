@@ -429,3 +429,23 @@ body.mesa {
 @media (orientation: landscape) {
   .partida.cine-mini .tablero { transform: translate(10px, 10px) scale(0.3); }
 }
+
+/* ---------- Pausa en línea: el otro salió de la app o se le cayó el internet ---------- */
+.pausa-linea { z-index: 45; backdrop-filter: blur(2px); }
+.pausa-linea .hoja-carta { text-align: center; }
+.pausa-linea .fila-botones { justify-content: center; }
+.pausa-linea-icono { display: flex; justify-content: center; gap: 7px; margin: 2px 0 10px; }
+.pausa-linea-icono i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--tomate);
+  animation: pausa-linea-punto 1.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+.pausa-linea-icono i:nth-child(2) { animation-delay: 0.15s; background: var(--menta-oscura); }
+.pausa-linea-icono i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes pausa-linea-punto {
+  0%, 70%, 100% { transform: translateY(0) scale(1); opacity: 0.55; }
+  35% { transform: translateY(-9px) scale(1.15); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .pausa-linea-icono i { animation: none; } }

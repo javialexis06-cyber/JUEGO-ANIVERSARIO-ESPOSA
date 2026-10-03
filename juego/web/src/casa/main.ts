@@ -13,8 +13,10 @@ import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import * as THREE from 'three';
 import { aTres, Mundo } from '../mundo';
-import { elegirModelos, Productos } from '../recursos';
+import { cargar, cargarAnimado, elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
+import * as fondo from '../segundo_plano';
+import { salirSuave } from '../transiciones';
 import {
   BONO_ANIVERSARIO, BONO_DIARIO, CATALOGO, COLORES_TINTE, CONCEPTOS, type Concepto, DISFRACES_LISTA, EFECTO_CARINO, ITEM, Item, LE_CAE_MAL, lePasa, paraSitio,
   piezasConcepto, precioConcepto, RAREZA, RAREZAS, TINTES, TipoItem, type TipoSitio,
@@ -35,6 +37,7 @@ import {
   sumar, tieneCuarto,
 } from './modelo';
 import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, salaTrofeos, TROFEOS } from './trofeos';
+import { mejorDistancia, type ProgresoCohete } from './cohete/datos';
 import { ranurasDe } from './ropa';
 import {
   configLinea, guardarConfigLinea, olvidarSesion, PersonajeOcupado, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal,
@@ -110,6 +113,10 @@ async function iniciar() {
   // Con el tono AgX del dibujo en alta calidad este color queda en el mismo beige cálido de la interfaz
   mundo.escena.background = new THREE.Color('#e9d3c0');
   await elegirModelos();
+  // Los cuartos de siempre y los dos personajes se empiezan a descargar de una, a la par con los productos (se
+  // descomprimen en otros hilos): la casa abre antes
+  for (const k of ['sala', 'cocina', 'bano', 'cuarto']) void cargar(`casa_${k}.glb`).catch(() => undefined);
+  for (const r of ['el', 'ella']) void cargarAnimado(`${r}.glb`).catch(() => undefined);
   productos = await Productos.cargar();
   progreso(0.2, 'Acomodando los muebles…');
   casa3d = await Casa3D.cargar(mundo, productos, (k) => progreso(0.2 + k * 0.45));
@@ -139,6 +146,7 @@ async function iniciar() {
     },
     alCambiarModo: () => pintarAcciones(),
   });
+  salirSuave($('carga'));
   mostrar('carga', false);
   const modo = leerModo();
   modoGuardado = modo;
@@ -514,20 +522,57 @@ async function irAlBano() {
   await hacer('inodoro', 'bano', apuro ? 90 : ev ? (ev.llama !== undefined ? 75 : 32) : 22, {}, ev?.id);
   if (!apuro) return;
   enCohete = true;
+  // El juego y sus modelos se van cargando mientras llega al inodoro
+  void import('./cohete').then((c) => c.precargarCohete());
   try {
     const m = mascotas[yo];
     if (!(await esperarQue(() => m.escenaActual.split('|')[1] === 'inodoro', 25000))) return;
     await pausa(3200);
     await despegar(m);
-    const { jugarCohete } = await import('./cohete');
-    pausaCasa = true;
-    const r = await jugarCohete({ rol: yo, ropa: s.personajes[yo].ropa, colorPelo: s.personajes[yo].colorPelo, record: s.casa.retrete });
-    pausaCasa = false;
-    await aterrizar(m);
-    await terminarCohete(r.segundos);
+    await volarCohete(m);
   } finally {
     enCohete = false;
     pausaCasa = false;
+  }
+}
+
+/** Lo que el retrete espacial necesita de la casa (y cómo guarda los rollitos, las compras y las misiones). */
+function opcionesCohete() {
+  return {
+    rol: yo,
+    ropa: s!.personajes[yo].ropa,
+    colorPelo: s!.personajes[yo].colorPelo,
+    progreso: s!.casa.cohete?.[yo],
+    recordPareja: mejorDistancia(s!.casa.cohete, s!.casa.retrete, otro(yo)),
+    guardar: (p: ProgresoCohete) => cambiarCasa((c) => (c.cohete = { ...(c.cohete ?? {}), [yo]: p })),
+  };
+}
+
+/** El vuelo: la casa se deja de dibujar mientras tanto y al volver cae al baño con el ¡KABOOM! */
+async function volarCohete(m: Mascota | null) {
+  if (!s) return;
+  const { jugarCohete } = await import('./cohete');
+  pausaCasa = true;
+  const r = await jugarCohete(opcionesCohete());
+  pausaCasa = false;
+  // Con la tele prendida, la música de la casa sigue callada
+  sonido.musica.callar(!!tele && tele.estado !== 'apagada');
+  if (m) await aterrizar(m);
+  await terminarCohete(r.segundos);
+}
+
+/** La tienda del retrete sola (desde el retrete en miniatura del cuarto de juegos). */
+async function abrirTiendaRetrete() {
+  if (!s || enCohete) return;
+  enCohete = true;
+  cerrarHoja();
+  try {
+    const { abrirTiendaCohete } = await import('./cohete');
+    pausaCasa = true;
+    await abrirTiendaCohete(opcionesCohete());
+  } finally {
+    pausaCasa = false;
+    enCohete = false;
   }
 }
 
@@ -611,39 +656,33 @@ function explosion(obj: THREE.Object3D | null, tipo: 'humo' | 'kaboom' | 'agua')
 
 async function terminarCohete(seg: number) {
   if (!s) return;
-  const antes = s.casa.retrete?.[yo] ?? 0;
-  const record = seg > antes;
+  // El récord (en metros), los rollitos y las misiones ya los guardó el vuelo; la casa da sus monedas escasas
   const premio = Math.min(3, Math.floor(seg / 15));
-  await cambiarCasa((c) => {
-    c.retrete = { ...(c.retrete ?? {}) };
-    if (seg > (c.retrete[yo] ?? 0)) c.retrete[yo] = seg;
-    c.monedas += premio;
-  });
+  if (premio) await cambiarCasa((c) => (c.monedas += premio));
   // Ya fue al baño: se le quitan las ganas y se levanta del inodoro
   const ahora = Date.now();
   const e = { ...est(yo), actividad: { tipo: 'nada' as const, desde: ahora }, visto: ahora };
   delete e.apuro;
   await guardarYo(e);
-  setTimeout(() => hojaRetrete(seg, record, premio), 1400);
+  if (premio) setTimeout(() => toast(`+${premio} ${premio === 1 ? 'moneda' : 'monedas'} para la casa por el viaje espacial`, 3000), 1400);
   const nuevos = await premiosTrofeos();
   nuevos.forEach((m, i) => setTimeout(() => toast(m, 3400), 4000 + i * 3600));
 }
 
-/** El marcador del retrete espacial: quién ha durado más en el espacio. */
-function hojaRetrete(seg?: number, record = false, premio = 0) {
-  const r = s?.casa.retrete ?? {};
-  const a = r.el ?? 0, b = r.ella ?? 0;
+/** El marcador del retrete espacial: quién ha volado más lejos (y el botón de la tienda del retrete). */
+function hojaRetrete() {
+  if (!s) return;
+  const c = s.casa;
+  const a = mejorDistancia(c.cohete, c.retrete, 'el'), b = mejorDistancia(c.cohete, c.retrete, 'ella');
   const lider: Rol | null = a === b ? null : a > b ? 'el' : 'ella';
-  const fila = (q: Rol) =>
-    `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${r[q] ? `${r[q]!.toFixed(1)} s` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
-  const html = `${
-    seg !== undefined
-      ? `<p class="nota-hoja">Duraste <b>${seg.toFixed(1)} s</b> esquivando asteroides en el retrete.${record ? ' <b>¡Nuevo récord!</b>' : ''}${premio ? ` +${premio} ${premio === 1 ? 'moneda' : 'monedas'}.` : ''}</p>`
-      : ''
-  }<ol class="retrete-records">${fila('el')}${fila('ella')}</ol>
-    <p class="nota-hoja">La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién aguanta más?</p>`;
-  abrirHoja('Retrete espacial', html, { saldo: s?.casa.monedas });
-  if (record) lluviaCorazones(14);
+  const fila = (q: Rol) => {
+    const m = q === 'el' ? a : b;
+    return `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${m ? `${m.toLocaleString('es-CO')} m` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
+  };
+  const html = `<ol class="retrete-records">${fila('el')}${fila('ella')}</ol>
+    <p class="nota-hoja">La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién vuela más lejos?</p>
+    <button class="boton" data-accion-hoja="tienda-retrete">Tienda del retrete</button>`;
+  abrirHoja('Retrete espacial', html, { saldo: c.monedas });
 }
 
 // ---------------------------------------------------------------------------
@@ -753,7 +792,7 @@ async function rescatado(de: Rol) {
 // ---------------------------------------------------------------------------
 let lavandose = false;
 
-async function lavarse() {
+async function lavarse(unirse?: string) {
   if (!s || lavandose || enCohete) return;
   if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
   lavandose = true;
@@ -765,7 +804,7 @@ async function lavarse() {
   // El minijuego (y los estilos del espejo) se van cargando mientras camina al espejo
   const modulo = import('./lavado');
   try {
-    await hacer('lavar', 'bano', 360, {});
+    await hacer('lavar', 'bano', 1900, {});
     // Camina hasta el espejo (si mientras tanto le mandan a hacer otra cosa, no hay minijuego)
     if (!(await esperarQue(() => !sigue() || m.escenaActual.split('|')[1] === 'lavar', 25000)) || !sigue()) return;
     const frases = ['A ver esta carita…', '¿Y esos granitos?', 'Mmm… algo raro hay aquí', '¡Uy, qué es esto!'];
@@ -783,7 +822,8 @@ async function lavarse() {
       mundo.enfocar(desde.clone().lerp(meta, e), z0 + (3.4 - z0) * e, 3.4);
     });
     m.frase = null;
-    const { jugarLavado } = await modulo;
+    const mod = await modulo;
+    const { jugarLavado } = mod;
     // La cara en el espejo se pone borrosa, con ondas… y entra a otro plano
     document.body.classList.add('lavandose');
     portal = abrirPortal(yo);
@@ -794,7 +834,7 @@ async function lavarse() {
     [0, 0.25, 0.5].forEach((d) => sonido.nota(1400 - d * 800, 0.4, d, 'sine', 0.04, 500));
     await pausa(1500);
     pausaCasa = true;
-    const juego = jugarLavado({ rol: yo });
+    const juego = jugarLavado(opcionesLavado(mod, unirse));
     // Ya con el juego encima, la casa borrosa y las ondas no se ven: se esconden (el filtro gasta batería)
     const tapar = setTimeout(() => {
       lienzo.style.visibility = 'hidden';
@@ -805,6 +845,7 @@ async function lavarse() {
     // De vuelta: el velo de agua se va, la casa vuelve a verse nítida y la cámara se aleja
     lienzo.style.visibility = '';
     portal.style.display = '';
+    ondasPortal.get(portal)?.();
     pausaCasa = false;
     await pausa(450);
     portal.classList.add('sale');
@@ -846,49 +887,84 @@ function abrirPortal(rol: Rol) {
   const mapa = p.querySelector('feDisplacementMap')!;
   const borroso = p.querySelector('feGaussianBlur')!;
   const t0 = performance.now();
+  // Mientras se juega el portal está escondido: las ondas se detienen (no gastan batería) y siguen al volver
+  let id = 0;
   const paso = () => {
-    if (!p.isConnected) return;
+    id = 0;
+    if (!p.isConnected || p.style.display === 'none') return;
     const t = (performance.now() - t0) / 1000;
     const k = Math.min(1, t / 1.6);
     ruido.setAttribute('baseFrequency', `${(0.012 + Math.sin(t * 3) * 0.004).toFixed(4)} ${(0.05 + Math.sin(t * 2.2) * 0.02).toFixed(4)}`);
     mapa.setAttribute('scale', String(Math.round(k * 34 + Math.sin(t * 7) * 6 * k)));
     borroso.setAttribute('stdDeviation', (k * 2.2).toFixed(2));
-    requestAnimationFrame(paso);
+    id = requestAnimationFrame(paso);
   };
-  requestAnimationFrame(paso);
+  id = requestAnimationFrame(paso);
+  ondasPortal.set(p, () => {
+    if (!id) id = requestAnimationFrame(paso);
+  });
   return p;
 }
+/** Para volver a mover las ondas de un portal que se escondió durante el minijuego. */
+const ondasPortal = new WeakMap<HTMLElement, () => void>();
 
-async function terminarLavado(r: { segundos: number; gano: boolean; eliminados: number; nivel: number; jefe: boolean }) {
+/** Lo que necesita el lavado: quién juega, su progreso guardado en la casa y cómo invitar al otro. */
+function opcionesLavado(mod: typeof import('./lavado'), unirse?: string): import('./lavado').OpcionesLavado {
+  const progreso = s?.casa.lavadoProgreso?.[yo] ?? mod.progresoLavadoNuevo(yo);
+  return {
+    rol: yo,
+    nombres: { el: nombre('el'), ella: nombre('ella') },
+    progreso,
+    unirse,
+    // El progreso (gotas doradas, tienda, disfraces, logros) se guarda en la casa de una vez, por persona
+    guardar: async (p) => {
+      await cambiarCasa((c) => {
+        c.lavadoProgreso = { ...(c.lavadoProgreso ?? {}), [yo]: structuredClone(p) };
+      });
+    },
+    pareja: s ? { modo: s.modo, invitar: (id) => s!.enviar('juego', { juego: 'lavado', id }) } : null,
+  };
+}
+
+async function terminarLavado(r: import('./lavado').ResultadoLavado) {
   if (!s) return;
-  const higiene = r.gano ? 100 : Math.round(15 + (r.segundos / 180) * 60);
-  const premio = Math.min(10, Math.floor(r.segundos / 30) + (r.gano ? 3 : 0) + (r.jefe ? 2 : 0));
+  if (!r.partidas) {
+    // Entró y salió sin jugar: igual se refresca un poquito
+    const ahora = Date.now();
+    await guardarYo({ ...sumar(est(yo), { higiene: 10 }, ahora), actividad: { tipo: 'nada', desde: ahora, accion: 'saludo', hasta: ahora + 2000 }, visto: ahora });
+    return;
+  }
+  // Higiene según lo aguantado: a los 5 minutos ya queda al 100
+  const higiene = r.segundos >= 300 || r.gano ? 100 : Math.round(20 + (r.segundos / 300) * 80);
+  const premio = r.monedas;
   const record = r.eliminados > (s.casa.lavado?.[yo] ?? 0);
   await cambiarCasa((c) => {
     c.lavado = { ...(c.lavado ?? {}) };
     if (r.eliminados > (c.lavado[yo] ?? 0)) c.lavado[yo] = r.eliminados;
+    c.lavadoProgreso = { ...(c.lavadoProgreso ?? {}), [yo]: structuredClone(r.progreso) };
     c.monedas += premio;
   });
   // Ya se lavó: deja el espejo con la carita fresca
   const ahora = Date.now();
   await guardarYo({ ...sumar(est(yo), { higiene }, ahora), actividad: { tipo: 'nada', desde: ahora, accion: 'saludo', hasta: ahora + 2500 }, visto: ahora });
-  mascotas[yo].frase = r.gano ? '¡Carita limpiecita! ✨' : '¡Algo es algo!';
+  mascotas[yo].frase = r.gano ? '¡Carita de porcelana! ✨' : r.segundos >= 600 ? '¡Qué lavada tan buena!' : '¡Algo es algo!';
   setTimeout(() => (mascotas[yo].frase = null), 2600);
   setTimeout(() => hojaLavado(r, record, premio, higiene), 1300);
 }
 
-/** Cómo le fue lavándose la cara y quién ha eliminado más gérmenes. */
-function hojaLavado(r: { segundos: number; gano: boolean; eliminados: number; nivel: number; jefe: boolean }, record: boolean, premio: number, higiene: number) {
-  const l = s?.casa.lavado ?? {};
-  const a = l.el ?? 0, b = l.ella ?? 0;
+/** Cómo le fue lavándose la cara y quién ha aguantado más (en minutos) y eliminado más mugrosos. */
+function hojaLavado(r: import('./lavado').ResultadoLavado, record: boolean, premio: number, higiene: number) {
+  const prog = s?.casa.lavadoProgreso ?? {};
+  const min = (q: Rol) => Math.floor(Math.max(0, ...Object.values(prog[q]?.mejor ?? {}).map((v) => v ?? 0)) / 60);
+  const a = min('el'), b = min('ella');
   const lider: Rol | null = a === b ? null : a > b ? 'el' : 'ella';
   const fila = (q: Rol) =>
-    `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${l[q] ? `${l[q]} 🦠` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
+    `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${min(q) ? `${min(q)} min` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
   const mm = `${Math.floor(r.segundos / 60)}:${String(Math.floor(r.segundos % 60)).padStart(2, '0')}`;
   abrirHoja(
-    r.gano ? '¡Carita limpia!' : 'Lavada a medias',
-    `<p class="nota-hoja">${r.gano ? `Aguantaste los 3 minutos` : `Aguantaste ${mm}`}, llegaste a nivel <b>${r.nivel}</b> y eliminaste <b>${r.eliminados}</b> gérmenes${r.jefe ? ', ¡y hasta al Espinillón!' : '.'}${record ? ' <b>¡Nuevo récord!</b>' : ''}</p>
-    <p class="nota-hoja">Higiene ${higiene >= 100 ? 'al máximo' : `+${higiene}`}${premio ? ` · +${premio} ${premio === 1 ? 'moneda' : 'monedas'}` : ''}</p>
+    r.gano ? '¡Carita de porcelana!' : 'Cara lavada',
+    `<p class="nota-hoja">${r.partidas > 1 ? `${r.partidas} lavadas: lo más que aguantaste fue ${mm}` : `Aguantaste ${mm}`}, llegaste a nivel <b>${r.nivel}</b> y eliminaste <b>${r.eliminados.toLocaleString('es-CO')}</b> mugrosos${r.gano ? ', ¡y llegaste hasta la Ducha Helada!' : r.jefe ? ', ¡y venciste a un jefe!' : '.'}${record ? ' <b>¡Nuevo récord!</b>' : ''}</p>
+    <p class="nota-hoja">Higiene ${higiene >= 100 ? 'al máximo' : `+${higiene}`}${premio ? ` · +${premio} ${premio === 1 ? 'moneda' : 'monedas'}` : ''} · Gotas doradas: ${r.progreso.oro.toLocaleString('es-CO')}</p>
     <ol class="retrete-records">${fila('el')}${fila('ella')}</ol>`,
     { saldo: s?.casa.monedas },
   );
@@ -909,18 +985,23 @@ let cocinando = false;
 function hojaCocinar() {
   if (!s) return;
   const prog = s.casa.cocina?.[yo] ?? {};
+  // Cocinar juntos, cada uno en su celular (en línea, o con las dos pestañas de la casa local)
+  const juntos = s.modo === 'linea' || s.enLinea[otro(yo)];
   const html = `<p class="nota-hoja">${conGenero(yo, 'Hoy eres un|una chef profesional en tu propia cocina: llegan invitados, cocinas lo que piden y te califican. Con las propinas mejoras la cocina; cada día te deja monedas y platos de chef para comer o regalar.')}</p>
     <ul class="restaurantes">${RESTAURANTES.map((r) => {
       const p = prog[r.id];
       const rg = p ? rangoDe(p.xp) : 1;
       return `<li><button class="restaurante" data-cocinar="${r.id}"><span class="ico-rest">${r.icono}</span><b>${r.nombre}</b><small>${r.texto}</small>
-        <em>${p ? `Día ${p.dia} · ${nombreRango(rg)}` : '¡Nuevo!'}</em>${(s!.casa.inventario[r.plato] ?? 0) ? `<i>Hay ${s!.casa.inventario[r.plato]} en la despensa</i>` : ''}</button></li>`;
+        <em>${p ? `Día ${p.dia} · ${nombreRango(rg)}` : '¡Nuevo!'}</em>${(s!.casa.inventario[r.plato] ?? 0) ? `<i>Hay ${s!.casa.inventario[r.plato]} en la despensa</i>` : ''}</button>
+        ${juntos ? `<button class="restaurante-juntos" data-cocinar-juntos="${r.id}">💞 Cocinar con ${nombre(otro(yo))}</button>` : ''}</li>`;
     }).join('')}</ul>`;
   abrirHoja(conGenero(yo, '¿Qué cocinamos, chef?'), html, { saldo: s.casa.monedas });
 }
 
-async function cocinar(receta: RecetaId) {
+async function cocinar(receta: RecetaId, linea?: { modo: 'anfitrion' | 'invitado'; id: string }) {
   if (!s || cocinando || lavandose || enCohete) return;
+  // Invitar: la invitación le llega a la casa del otro (con el enlace para entrar a la misma cocina)
+  if (linea?.modo === 'anfitrion') void s.enviar('juego', { juego: 'cocina', receta, id: linea.id }).catch(() => undefined);
   if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
   cerrarHoja();
   cocinando = true;
@@ -955,6 +1036,7 @@ async function cocinar(receta: RecetaId) {
       receta,
       progreso: s.casa.cocina?.[yo]?.[receta] ?? progresoNuevo(),
       pareja: { rol: otro(yo), nombre: nombre(otro(yo)) },
+      linea: linea ? { ...linea, transporte: s.modo === 'linea' ? 'supabase' : 'local', nombreOtro: nombre(otro(yo)) } : undefined,
       guardar: async (p, dia) => {
         await guardarCocina(receta, p, dia);
         if (dia) {
@@ -1532,6 +1614,27 @@ function alEvento(e: Evento) {
           <div class="fila-botones"><a class="boton boton-tomate" href="${url}">¡Vamos!</a></div>`);
         break;
       }
+      // Invitación a cocinar juntos en la cocina de chef
+      if (e.datos.juego === 'cocina') {
+        if (Date.now() - e.t > 3 * 60_000 || cocinando) break;
+        const r = RESTAURANTES.find((x) => x.id === e.datos.receta);
+        if (!r) break;
+        abrirHoja('¡A cocinar juntos!', `<p class="nota-hoja">${quien} te invita a su cocina de chef: <b>${r.nombre}</b> ${r.icono}. Cocinan el mismo día, cada uno en su celular.</p>
+          <div class="fila-botones"><button class="boton boton-tomate" data-cocinar-unirse="${r.id}|${String(e.datos.id ?? '')}">¡Vamos a cocinar!</button></div>`);
+        break;
+      }
+      // Invitación a lavarse la cara juntos (cada uno entra por su espejo a la cara del que invitó)
+      if (e.datos.juego === 'lavado') {
+        if (Date.now() - e.t > 3 * 60_000) break;
+        const idLavado = String(e.datos.id ?? '');
+        abrirHoja('¡A lavarse la cara juntos!', `<p class="nota-hoja">${quien} te invita a entrar a su cara a pelear contra los mugrosos, cada uno desde su celular.</p>
+          <div class="fila-botones"><button class="boton boton-tomate" data-lavado-unirse>¡Vamos!</button></div>`);
+        document.querySelector('[data-lavado-unirse]')?.addEventListener('click', () => {
+          cerrarHoja();
+          void lavarse(idLavado);
+        }, { once: true });
+        break;
+      }
       // Invitación a la mesa de juegos (vale unos minutos)
       const j = JUEGOS_MESA[String(e.datos.juego)];
       if (!j || Date.now() - e.t > 3 * 60_000) break;
@@ -1826,6 +1929,7 @@ function botonesCuarto(): Boton[] {
         { id: 'jugar-super', texto: 'Súper Manía', icono: '<img src="./modelos/iconos/caja_frutas.png" alt="">', principal: true },
         { id: 'jugar-puertas', texto: 'Cien Puertas', icono: ico('puerta') },
         { id: 'jugar-mesa', texto: 'Juegos de mesa', icono: '<img src="./modelos/iconos/mesa_juegos.svg" alt="">' },
+        { id: 'tienda-retrete', texto: 'Tienda del retrete', icono: '<img src="./modelos/iconos/cohete_rollito.webp" alt="">' },
       );
       break;
     case 'patio': {
@@ -1984,8 +2088,12 @@ async function alAccion(id: string) {
     case 'jugar-mesa':
       return jugar('mesa');
     case 'retrete':
-      // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse
-      return hacer('usar', 'juegos', 12, {}, 'cohete');
+      // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse,
+      // ver quién ha volado más lejos y abrir la tienda del retrete
+      void hacer('usar', 'juegos', 12, {}, 'cohete');
+      return hojaRetrete();
+    case 'tienda-retrete':
+      return abrirTiendaRetrete();
     case 'trofeos':
       return hojaTrofeos();
     case 'admirar':
@@ -2788,6 +2896,12 @@ function controles() {
     } else if ((b = d('[data-llevar]'))) void mandarComida(b.dataset.llevar!);
     else if ((b = d('[data-ir-tienda]'))) hojaTienda((b.dataset.irTienda || 'comida') as TipoItem);
     else if ((b = d('[data-cocinar]'))) void cocinar(b.dataset.cocinar as RecetaId);
+    else if ((b = d('[data-cocinar-juntos]'))) void cocinar(b.dataset.cocinarJuntos as RecetaId, { modo: 'anfitrion', id: `cocina-${Date.now().toString(36)}` });
+    else if ((b = d('[data-cocinar-unirse]'))) {
+      const [receta, id] = b.dataset.cocinarUnirse!.split('|');
+      cerrarHoja();
+      void cocinar(receta as RecetaId, { modo: 'invitado', id });
+    }
     else if ((b = d('[data-ir-pareja]'))) {
       cerrarHoja();
       void irACuarto(b.dataset.irPareja as Cuarto);
@@ -2883,25 +2997,14 @@ function controles() {
     sonido.activar();
     tocar(e.clientX, e.clientY);
   });
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      escribir(CLAVE_VISTO(yo), Date.now());
-      sonido.suspender();
-    } else {
-      sonido.activar();
-      void alAbrir();
-    }
+  // Segundo plano (otra app, pantalla bloqueada): la casa deja de dibujarse y calla (ver segundo_plano.ts); al volver
+  // se pone al día con lo que pasó mientras tanto
+  fondo.alPausar(() => escribir(CLAVE_VISTO(yo), Date.now()));
+  fondo.alReanudar(() => {
+    sonido.activar();
+    void alAbrir();
   });
   if (Capacitor.isNativePlatform()) {
-    void App.addListener('appStateChange', ({ isActive }) => {
-      if (isActive) {
-        sonido.activar();
-        void alAbrir();
-      } else {
-        escribir(CLAVE_VISTO(yo), Date.now());
-        sonido.suspender();
-      }
-    });
     void App.addListener('backButton', () => {
       const salirLavado = document.querySelector<HTMLElement>('.lavado-fin:not([hidden]) [data-listo], .lavado-salir');
       const pausaCocina = document.querySelector<HTMLElement>('.cocina .cocina-pausa');
@@ -3051,14 +3154,30 @@ let ultimaRevision = -Infinity;
 /** ?rapido=N (pruebas): N pasos fijos de 0,1 s por cuadro, para ver las coreografías en navegadores sin tarjeta gráfica. */
 const RAPIDO = Number(params.get('rapido') ?? 0);
 
+/** En segundo plano el bucle se detiene del todo (no pide más cuadros) y vuelve solo al regresar. */
+let bucleQuieto = false;
+fondo.alReanudar(() => {
+  if (!bucleQuieto) return;
+  bucleQuieto = false;
+  ultimo = performance.now();
+  acumulado = 0;
+  requestAnimationFrame(bucle);
+});
+
 function bucle() {
+  if (fondo.enPausa()) {
+    bucleQuieto = true;
+    return;
+  }
   requestAnimationFrame(bucle);
   const ahora = performance.now();
   const dt = Math.min(0.1, (ahora - ultimo) / 1000);
   ultimo = ahora;
   acumulado += dt;
-  // 30 cuadros por segundo bastan para la casa (ahorra batería)
-  if (acumulado < 1 / 32) return;
+  // 30 cuadros por segundo bastan para la casa (ahorra batería); con una hoja encima o la tele en grande la casa
+  // casi no se ve: 16 cuadros por segundo (la mitad de trabajo para la tarjeta gráfica)
+  const tapada = casaTapada();
+  if (acumulado < (tapada ? 1 / 16 : 1 / 32)) return;
   const paso = acumulado;
   acumulado = 0;
   try {
@@ -3077,7 +3196,8 @@ function bucle() {
     }
     revisarVista();
     efectos();
-    if (!pausaCasa) mundo.dibujar(paso, true);
+    // (tapada se dibuja a la mitad a propósito: al vigilante de la calidad le cuenta como el cuadro que habría sido)
+    if (!pausaCasa) mundo.dibujar(tapada ? paso / 2 : paso, true);
   } catch (e) {
     // Un error en un cuadro no debe congelar la casa; se reporta una vez
     if (!errorReportado) console.error(e);
@@ -3085,6 +3205,8 @@ function bucle() {
   }
 }
 let errorReportado = false;
+const hojaCasa = document.getElementById('hoja');
+const casaTapada = () => (!!hojaCasa && !hojaCasa.hidden) || document.body.classList.contains('en-tele');
 let estabanJuntos = false;
 let vestidosGuardados = '';
 
@@ -3166,6 +3288,7 @@ function efectos() {
   regalos: s?.casa.regalos,
   deco: s?.casa.deco,
   lavado: s?.casa.lavado,
+  lavadoProgreso: s?.casa.lavadoProgreso,
   cocina: s?.casa.cocina,
 });
 /** Progreso de prueba en un restaurante (para ver rangos altos). */
@@ -3204,6 +3327,9 @@ function efectos() {
 };
 /** Ganas urgentes de ir al baño sin comer nada (pruebas del retrete espacial). */
 (window as any).__apuro = () => s && guardarYo({ ...s.personajes[yo], apuro: Date.now() });
+/** Vuela en el retrete espacial sin pasar por el baño, y abre su tienda (pruebas). */
+(window as any).__volar = () => !enCohete && ((enCohete = true), volarCohete(null).finally(() => (enCohete = false)));
+(window as any).__tiendaRetrete = () => abrirTiendaRetrete();
 /** Posición en pantalla del aro de un sitio de decoración (pruebas). */
 (window as any).__sitio = (id: string) => {
   const d = casa3d.sitioDe(id);

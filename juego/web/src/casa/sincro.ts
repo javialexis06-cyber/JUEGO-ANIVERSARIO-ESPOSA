@@ -4,6 +4,7 @@
 // Cada personaje lo escribe solo su dueño: los mimos viajan como eventos y los aplica quien los recibe
 // (así un abrazo nunca pisa lo que el otro estaba haciendo en ese momento).
 import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
+import { alPausar, alReanudar } from '../segundo_plano';
 import { SUPABASE_CLAVE_PUBLICA, SUPABASE_URL } from './servidor';
 import {
   Casa, casaNueva, Evento, EstadoPersonaje, normalizarCasa, normalizarEvento, normalizarPersonaje, nuevoId, personajeNuevo, Recuerdo,
@@ -159,6 +160,8 @@ export class SincroLocal extends Base implements Sincro {
   private alSalir = () => this.canal?.postMessage({ tipo: 'adios', rol: this.rol });
   /** Lo último que avisó otra pestaña (o esta): el almacenamiento de esta pestaña puede ir un instante atrasado. */
   private ultimo: DatosLocales | null = null;
+  /** En segundo plano la otra pestaña lo ve desconectado; al volver, otra vez en línea. */
+  private quitarFondo = [alPausar(this.alSalir), alReanudar(() => this.canal?.postMessage({ tipo: 'hola', rol: this.rol }))];
 
   constructor(public rol: Rol) {
     super();
@@ -281,6 +284,7 @@ export class SincroLocal extends Base implements Sincro {
   cerrar() {
     this.alSalir();
     removeEventListener('pagehide', this.alSalir);
+    for (const q of this.quitarFondo) q();
     this.canal?.close();
   }
 }
@@ -341,6 +345,7 @@ function mensaje(error: { message?: string } | null | undefined, porDefecto: str
   const m = error?.message ?? '';
   if (/failed to fetch|network|fetch/i.test(m)) return 'Sin conexión con el servidor. Revisa el internet.';
   if (/no encontrado/i.test(m)) return 'Ese código no existe. Revísalo con tu pareja.';
+  if (/demasiad/i.test(m)) return m;
   if (/anonymous/i.test(m)) return 'Faltan activar las sesiones anónimas en Supabase (Authentication → Sign In / Providers).';
   if (/does not exist|could not find the function/i.test(m)) return 'Falta correr supabase/esquema.sql en el SQL Editor de Supabase.';
   return m || porDefecto;
@@ -383,6 +388,12 @@ export class SincroLinea extends Base implements Sincro {
   modo = 'linea' as const;
   private version = 0;
   private canal: RealtimeChannel | null = null;
+  /** Mi personaje que no alcanzó a guardarse (sin internet): se vuelve a intentar apenas haya conexión. */
+  private sinGuardar: EstadoPersonaje | null = null;
+  private quitarFondo: (() => void)[] = [];
+  private alVolverInternet = () => void this.reintentar();
+  /** El canal en vivo ya estuvo conectado alguna vez (para saber cuándo es una reconexión). */
+  private conectadoAntes = false;
 
   private constructor(private sb: SupabaseClient, private sesion: SesionLinea) {
     super();
@@ -411,6 +422,8 @@ export class SincroLinea extends Base implements Sincro {
     const { data, error } = await sb.rpc('unirse_pareja', { cod, mi_rol: rol, reemplazar });
     if (error && /ocupado/i.test(error.message)) throw new PersonajeOcupado();
     if (error) throw new Error(mensaje(error, 'No se pudo entrar con ese código.'));
+    // (con las reglas nuevas de la base, un código que no existe vuelve vacío en vez de error)
+    if (!data) throw new Error('Ese código no existe. Revísalo con tu pareja.');
     const s = new SincroLinea(sb, { parejaId: data as string, codigo: cod, rol });
     await s.iniciar(false);
     return s;
@@ -441,7 +454,13 @@ export class SincroLinea extends Base implements Sincro {
     if (p.error) throw new Error(mensaje(p.error, 'No se pudo leer la casa.'));
     this.casa = normalizarCasa(p.data.casa);
     this.version = Number(p.data.version) || 0;
-    for (const f of per.data ?? []) if (f.rol === 'el' || f.rol === 'ella') this.personajes[f.rol as Rol] = normalizarPersonaje(f.estado);
+    for (const f of per.data ?? []) {
+      if (f.rol !== 'el' && f.rol !== 'ella') continue;
+      const n = normalizarPersonaje(f.estado);
+      // Lo mío que no alcanzó a subir es más nuevo que lo del servidor: no se pierde
+      if (f.rol === this.rol && this.sinGuardar && this.sinGuardar.t > n.t) continue;
+      this.personajes[f.rol as Rol] = n;
+    }
     if (!ev.error) {
       const vistosAqui = new Set(this.eventos.filter((e) => e.visto).map((e) => e.id));
       this.eventos = eventosNormales(ev.data).map((e) => (vistosAqui.has(e.id) ? { ...e, visto: true } : e));
@@ -458,6 +477,19 @@ export class SincroLinea extends Base implements Sincro {
     if (nueva || casaVacia) await this.cambiarCasa(() => {});
     if (sinPersonaje) await this.guardarPersonaje(this.rol, personajeNuevo());
     this.suscribir();
+    // En segundo plano el otro lo ve desconectado enseguida (sin esperar a que se caiga el canal); al volver, en línea
+    this.quitarFondo.push(
+      alPausar(() => void Promise.resolve(this.canal?.untrack?.()).catch(() => undefined)),
+      alReanudar(() => void Promise.resolve(this.canal?.track({ rol: this.rol, t: Date.now() })).catch(() => undefined)),
+    );
+    addEventListener('online', this.alVolverInternet);
+  }
+
+  /** Sube lo que quedó pendiente por falta de internet (si sigue siendo lo último). */
+  private async reintentar() {
+    const n = this.sinGuardar;
+    if (!n || this.personajes[this.rol] !== n) return;
+    await this.guardarPersonaje(this.rol, n).catch(() => undefined);
   }
 
   async refrescar() {
@@ -469,6 +501,7 @@ export class SincroLinea extends Base implements Sincro {
       this.suscribir();
     } else void this.canal.track({ rol: this.rol, t: Date.now() });
     await this.leerTodo();
+    await this.reintentar();
     for (const e of this.eventos) this.despachados.add(e.id);
     this.avisar('casa');
     this.avisar('personaje');
@@ -524,7 +557,12 @@ export class SincroLinea extends Base implements Sincro {
         this.avisar('presencia');
       })
       .subscribe((s) => {
-        if (s === 'SUBSCRIBED') void this.canal!.track({ rol: this.rol, t: Date.now() });
+        if (s !== 'SUBSCRIBED') return;
+        void this.canal!.track({ rol: this.rol, t: Date.now() });
+        // Volvió el canal después de un corte (internet intermitente): lo que pasó mientras tanto no llegó en vivo,
+        // así que se vuelve a leer todo (los mimos pendientes se aplican una sola vez, como al abrir la app)
+        if (this.conectadoAntes) void this.refrescar().catch(() => undefined);
+        this.conectadoAntes = true;
       });
   }
 
@@ -537,8 +575,11 @@ export class SincroLinea extends Base implements Sincro {
       const { data, error } = await this.sb.rpc('guardar_casa', { p: this.id, nueva: copia, version_leida: this.version });
       if (error) throw new Error(mensaje(error, 'No se pudo guardar la casa.'));
       if (Number(data) >= 0) {
-        this.casa = copia;
-        this.version = Number(data);
+        // (si mientras tanto llegó por el canal una versión aún más nueva del otro, ya trae este cambio: se queda esa)
+        if (Number(data) > this.version) {
+          this.casa = copia;
+          this.version = Number(data);
+        }
         this.avisar('casa');
         return;
       }
@@ -558,7 +599,12 @@ export class SincroLinea extends Base implements Sincro {
     this.personajes[rol] = n;
     this.avisar('personaje', rol);
     const { error } = await this.sb.from('personajes').upsert({ pareja_id: this.id, rol, estado: n, actualizado: new Date().toISOString() });
-    if (error) throw new Error(mensaje(error, 'No se pudo guardar.'));
+    if (error) {
+      // Queda pendiente solo si sigue siendo lo último (un guardado más nuevo que sí subió no se pisa con este)
+      if (rol === this.rol && this.personajes[rol] === n) this.sinGuardar = n;
+      throw new Error(mensaje(error, 'No se pudo guardar.'));
+    }
+    if (rol === this.rol && this.sinGuardar && this.sinGuardar.t <= n.t) this.sinGuardar = null;
   }
 
   async enviar(tipo: Evento['tipo'], datos: Record<string, unknown> = {}) {
@@ -608,6 +654,8 @@ export class SincroLinea extends Base implements Sincro {
   }
 
   cerrar() {
+    for (const q of this.quitarFondo) q();
+    removeEventListener('online', this.alVolverInternet);
     if (this.canal) void this.sb.removeChannel(this.canal);
   }
 }

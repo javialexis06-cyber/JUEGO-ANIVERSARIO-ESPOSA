@@ -4,9 +4,11 @@ import { AYUDAS, BOLSA_BASURA } from './balance';
 import type { Juego, Resultado } from './juego';
 import { metaDe, textoDe } from './juego';
 import type { Jugador } from './jugador';
-import { aTres, Mundo } from './mundo';
+import * as THREE from 'three';
+import { Mundo } from './mundo';
 import type { P } from './navegacion';
 import { icono } from './recursos';
+import { avisoSuave, salirSuave } from './transiciones';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -15,6 +17,8 @@ export function mostrar(id: string, si = true) {
 }
 
 export function pantallaUnica(id: string | null) {
+  // La pantalla de carga se desvanece en vez de cortarse de golpe
+  if (id !== 'carga') salirSuave($('carga'));
   for (const p of ['carga', 'menu', 'tarjeta', 'resultado', 'mejoras', 'como', 'pausa', 'sala']) mostrar(p, p === id);
 }
 
@@ -49,6 +53,24 @@ class Capa {
     this.vivos.clear();
   }
 }
+
+/** Lo último que se escribió en cada elemento: escribir lo mismo cada cuadro (texto, posición, ancho) obliga al
+ *  navegador a recalcular estilos y repintar sin necesidad; así solo se toca lo que cambió. */
+const escrito = new WeakMap<HTMLElement, Record<string, string>>();
+function cambio(el: HTMLElement, que: string, v: string) {
+  let m = escrito.get(el);
+  if (!m) escrito.set(el, (m = {}));
+  if (m[que] === v) return false;
+  m[que] = v;
+  return true;
+}
+const texto = (el: HTMLElement, v: string) => cambio(el, '#t', v) && (el.textContent = v);
+const estilo = (el: HTMLElement, prop: 'transform' | 'width', v: string) => cambio(el, prop, v) && el.style.setProperty(prop, v);
+const dato = (el: HTMLElement, k: string, v: string) => cambio(el, `d-${k}`, v) && (el.dataset[k] = v);
+const mover = (el: HTMLElement, x: number, y: number) => estilo(el, 'transform', `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`);
+
+/** Punto de trabajo para pasar del piso a la pantalla (sin crear un vector por globo en cada cuadro). */
+const PUNTO = new THREE.Vector3();
 
 const div = (clase: string, html = '') => {
   const d = document.createElement('div');
@@ -154,40 +176,40 @@ export class UI {
   }
 
   private pos(p: P, z: number) {
-    return this.mundo.aPantalla(aTres(p.x, p.y, z));
+    return this.mundo.aPantalla(PUNTO.set(p.x, z, -p.y));
   }
 
   actualizar(j: Juego, dt: number) {
     // HUD
     const r = Math.ceil(j.restante);
     const reloj = $('hud-reloj');
-    reloj.textContent = j.cerrado ? 'Cerrado' : `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`;
+    texto(reloj, j.cerrado ? 'Cerrado' : `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`);
     reloj.classList.toggle('poco', !j.cerrado && r <= 20);
     reloj.classList.toggle('cerrado', j.cerrado);
-    $('hud-dinero').textContent = String(j.ganancia);
+    texto($('hud-dinero'), String(j.ganancia));
     if (!this.vioMugre && j.mugres.some((m) => m.tipo === 'charco' || m.tipo === 'sucio')) this.vioMugre = true;
     this.pintarHerramientas(j);
-    $('hud-atendidos').textContent = String(j.stats.atendidos);
-    $('hud-perdidos').textContent = String(j.stats.perdidos);
-    $('hud-canastas').textContent = String(j.canastas);
+    texto($('hud-atendidos'), String(j.stats.atendidos));
+    texto($('hud-perdidos'), String(j.stats.perdidos));
+    texto($('hud-canastas'), String(j.canastas));
     $('hud-canastas').parentElement!.classList.toggle('alerta', j.canastas === 0);
     const efectos: string[] = [];
     if (j.cafeActivo) efectos.push('Tinto');
     if (j.pacienciaCongelada) efectos.push('Canción');
-    $('hud-efectos').textContent = efectos.join(' · ');
-    $('hud-efectos').hidden = !efectos.length;
+    texto($('hud-efectos'), efectos.join(' · '));
+    if ($('hud-efectos').hidden !== !efectos.length) $('hud-efectos').hidden = !efectos.length;
     const chips = $('hud-objetivos').children;
     if (j.legendario && j.metaLuna) {
       const c = chips[0] as HTMLElement | undefined;
       const ml = j.metaLuna;
       if (c) c.classList.toggle('ok', j.stats.ventas >= ml.ventas && j.stats.perdidos <= ml.perdidos);
-      if (c) (c.querySelector('.chip-texto') as HTMLElement).textContent = `${j.stats.ventas}/${ml.ventas} · ${j.stats.perdidos}/${ml.perdidos} perdidos`;
+      if (c) texto(c.querySelector('.chip-texto') as HTMLElement, `${j.stats.ventas}/${ml.ventas} · ${j.stats.perdidos}/${ml.perdidos} perdidos`);
     } else
       j.nivel.estrellas.forEach((e, i) => {
         const c = chips[i] as HTMLElement;
         if (!c) return;
         c.classList.toggle('ok', j.cumple(e));
-        (c.querySelector('.chip-texto') as HTMLElement).textContent = j.progreso(e);
+        texto(c.querySelector('.chip-texto') as HTMLElement, j.progreso(e));
       });
 
     this.capa.empezar();
@@ -199,14 +221,14 @@ export class UI {
       const c = v.centro();
       const p = this.pos(c, 2.3);
       const barra = this.capa.elemento(`barra-${v.dato.id}`, () => div('barra-inventario', '<i></i>'));
-      barra.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      mover(barra, p.x, p.y);
       const i = barra.firstElementChild as HTMLElement;
-      i.style.width = `${Math.max(4, f * 100)}%`;
-      barra.dataset.nivel = f > 0.34 ? 'medio' : f > 0 ? 'bajo' : 'vacio';
+      estilo(i, 'width', `${Math.max(4, Math.round(f * 100))}%`);
+      dato(barra, 'nivel', f > 0.34 ? 'medio' : f > 0 ? 'bajo' : 'vacio');
       if (f <= 0.34) {
         const producto = v.productos[0];
         const aviso = this.capa.elemento(`aviso-${v.dato.id}`, () => div('aviso', '<b>!</b><img alt="">'));
-        aviso.style.transform = `translate(${p.x}px, ${p.y - 34}px)`;
+        mover(aviso, p.x, p.y - 34);
         aviso.classList.toggle('vacio', f === 0);
         const img = aviso.querySelector('img') as HTMLImageElement;
         if (f === 0 && img.dataset.p !== producto) {
@@ -222,13 +244,13 @@ export class UI {
       if (c.estado === 'fuera') continue;
       const p = this.mundo.aPantalla(c.cabeza());
       const g = this.capa.elemento(`cliente-${c.id}`, () => div('globo', '<img alt=""><span class="cara"></span><b class="cantidad"></b><span class="paciencia"><i></i></span>'));
-      g.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      mover(g, p.x, p.y);
       const img = g.querySelector('img') as HTMLImageElement;
       const deseo = c.deseo;
       const modo = c.estado === 'saliendo' ? (c.enojado ? 'enojado' : 'feliz') : c.esperandoCanasta ? 'canasta' : c.estado === 'enfila' || c.estado === 'afila' ? 'fila' : 'compra';
-      g.dataset.modo = modo;
+      dato(g, 'modo', modo);
       // En la fila: carita verde (contento), amarilla (impaciente) o roja (a punto de irse)
-      g.dataset.animo = modo === 'fila' ? c.animo : '';
+      dato(g, 'animo', modo === 'fila' ? c.animo : '');
       g.classList.toggle('esperando', c.estado === 'esperando' || c.esperandoCanasta);
       g.classList.toggle('famoso', c.tipo === 'famoso');
       if (modo === 'compra' && deseo && img.dataset.p !== deseo) {
@@ -237,10 +259,10 @@ export class UI {
       }
       const cant = g.querySelector('.cantidad') as HTMLElement;
       const n = c.cantidadDeseada;
-      cant.textContent = modo === 'compra' && n > 1 ? `×${n}` : '';
+      texto(cant, modo === 'compra' && n > 1 ? `×${n}` : '');
       const barra = g.querySelector('.paciencia i') as HTMLElement;
-      barra.style.width = `${Math.round(c.paciencia * 100)}%`;
-      barra.dataset.nivel = c.paciencia > 0.66 ? 'alta' : c.paciencia > 0.33 ? 'media' : 'baja';
+      estilo(barra, 'width', `${Math.round(c.paciencia * 100)}%`);
+      dato(barra, 'nivel', c.paciencia > 0.66 ? 'alta' : c.paciencia > 0.33 ? 'media' : 'baja');
     }
     // Basura, charcos y productos caídos
     for (const m of j.mugres) {
@@ -251,26 +273,26 @@ export class UI {
         return d;
       });
       e.classList.toggle('reservada', !!m.reservado);
-      if (m.tipo === 'caidos') (e.querySelector('b') as HTMLElement).textContent = String(m.unidades ?? 1);
-      e.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      if (m.tipo === 'caidos') texto(e.querySelector('b') as HTMLElement, String(m.unidades ?? 1));
+      mover(e, p.x, p.y);
     }
     for (const c of j.canastasSueltas) {
       const p = this.pos(c.pos, 0.4);
       const e = this.capa.elemento(`canasta-${c.id}`, () => div('marca-mugre marca-canasta', '<i></i>'));
-      e.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      mover(e, p.x, p.y);
     }
     // Ladrones y niña traviesa
     for (const l of j.ladrones) {
       if (!l.activo || !l.visible) continue;
       const p = this.mundo.aPantalla(l.cabeza());
       const e = this.capa.elemento(`ladron-${l.id}`, () => div('marca-alerta ladron', '!'));
-      e.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      mover(e, p.x, p.y);
     }
     for (const n of j.ninas) {
       if (!n.activo) continue;
       const p = this.mundo.aPantalla(n.cabeza());
       const e = this.capa.elemento(`nina-${n.id}`, () => div('marca-alerta nina', '!'));
-      e.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      mover(e, p.x, p.y);
     }
     // Corazón escondido: aparece quieto en su sitio; se toca o se pasa por encima. Se desvanece al final de su rato.
     if (j.corazonVisible && j.corazon) {
@@ -286,7 +308,7 @@ export class UI {
         return b;
       });
       e.classList.toggle('se-va', j.corazon.hasta - j.tiempo < 1.5);
-      e.style.transform = `translate(${Math.round(p.x)}px, ${Math.round(p.y)}px)`;
+      mover(e, Math.round(p.x), Math.round(p.y));
     }
     for (const jug of j.jugadores) this.pintarJugador(j, jug);
     this.capa.terminar();
@@ -319,23 +341,23 @@ export class UI {
       const o = jug.objetivo(t);
       const p = this.pos(o, t.tipo === 'reponer' || t.tipo === 'caja' ? 1.7 : 0.9);
       const e = this.capa.elemento(`tarea-${t.id}`, () => div(`numero-tarea tarea-${jug.rol}`));
-      e.textContent = String(k + 1);
+      texto(e, String(k + 1));
       e.classList.toggle('actual', k === 0);
-      e.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      mover(e, p.x, p.y);
     });
     const cabeza = this.mundo.aPantalla(jug.cabeza());
     if (jug.haciendo) {
       const e = this.capa.elemento(`hace-${jug.rol}`, () => div('barra-accion', '<i></i>'));
-      e.style.transform = `translate(${cabeza.x}px, ${cabeza.y}px)`;
-      (e.firstElementChild as HTMLElement).style.width = `${Math.round(jug.progresoAccion * 100)}%`;
+      mover(e, cabeza.x, cabeza.y);
+      estilo(e.firstElementChild as HTMLElement, 'width', `${Math.round(jug.progresoAccion * 100)}%`);
     }
     if (jug.atontado) {
       const e = this.capa.elemento(`mareo-${jug.rol}`, () => div('mareo', '<span><i></i><i></i><i></i></span>'));
-      e.style.transform = `translate(${cabeza.x}px, ${cabeza.y}px)`;
+      mover(e, cabeza.x, cabeza.y);
     }
     if (j.pareja) {
       const e = this.capa.elemento(`nombre-${jug.rol}`, () => div(`nombre-jugador nombre-${jug.rol}`, jug.nombre));
-      e.style.transform = `translate(${cabeza.x}px, ${cabeza.y}px)`;
+      mover(e, cabeza.x, cabeza.y);
     }
   }
 
@@ -367,15 +389,10 @@ export class UI {
     }
   }
 
+  private relojAviso = { id: 0 };
+  /** Aviso abajo: entra con un brinquito y se va bajando suave. */
   aviso(texto: string) {
-    const t = $('toast');
-    t.textContent = texto;
-    t.hidden = false;
-    t.classList.remove('sale');
-    void t.offsetWidth;
-    t.classList.add('sale');
-    clearTimeout((t as any)._h);
-    (t as any)._h = setTimeout(() => (t.hidden = true), 2400);
+    avisoSuave($('toast'), texto, 2400, this.relojAviso);
   }
 
   /** Tiquete de caja con el resultado del día. */

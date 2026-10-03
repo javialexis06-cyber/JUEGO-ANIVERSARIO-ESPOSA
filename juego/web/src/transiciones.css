@@ -1,0 +1,166 @@
+/* Transiciones de la interfaz (ver transiciones.ts): entradas con resorte y salidas suaves. */
+
+/* Casa: hojas (tienda, notas, álbum…) y ventanas (regalo, foto, confirmaciones) */
+.pantalla-hoja:not([hidden]),
+#ventana:not([hidden]) {
+  animation: velo-entra 0.24s ease-out both;
+}
+.pantalla-hoja:not([hidden]) > .hoja,
+#ventana:not([hidden]) > .ventana {
+  animation: hoja-entra 0.42s cubic-bezier(0.34, 1.42, 0.64, 1) both;
+  transform-origin: 50% 70%;
+}
+.pantalla.saliendo {
+  pointer-events: none;
+  animation: velo-sale 0.24s ease-in forwards !important;
+}
+.pantalla.saliendo > .cuaderno {
+  animation: hoja-sale 0.24s cubic-bezier(0.55, 0, 0.75, 0.2) forwards !important;
+}
+@keyframes velo-entra {
+  from { background-color: rgba(61, 43, 39, 0); }
+}
+@keyframes hoja-entra {
+  0% { opacity: 0; transform: translateY(34px) scale(0.92); }
+  45% { opacity: 1; }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes velo-sale {
+  to { background-color: rgba(61, 43, 39, 0); }
+}
+@keyframes hoja-sale {
+  to { opacity: 0; transform: translateY(26px) scale(0.95); }
+}
+
+/* Pantalla de carga: se desvanece y el logo se agranda un poquito al entrar a la casa, al súper o a la mesa */
+.pantalla-carga.saliendo {
+  pointer-events: none;
+  animation: carga-sale 0.5s cubic-bezier(0.4, 0, 0.6, 1) forwards !important;
+}
+.pantalla-carga.saliendo .logo {
+  animation: carga-logo 0.5s cubic-bezier(0.3, 0, 0.5, 1) forwards !important;
+}
+@keyframes carga-sale {
+  60% { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes carga-logo {
+  to { transform: scale(1.12); }
+}
+
+/* Casa: al cambiar de cuarto, el nuevo aparece desde el color del fondo (encima del 3D, debajo de todo lo demás) */
+.cortina-vista {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+}
+.cortina-vista.fundiendo {
+  animation: cortina-sale 0.36s cubic-bezier(0.3, 0, 0.4, 1);
+}
+@keyframes cortina-sale {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Mesa: la hoja (invitación, ayuda) se va igual de suave */
+.mesa-hoja.saliendo {
+  pointer-events: none;
+  animation: velo-sale 0.22s ease-in forwards !important;
+}
+.mesa-hoja.saliendo > .hoja-carta {
+  animation: hoja-sale 0.22s cubic-bezier(0.55, 0, 0.75, 0.2) forwards !important;
+}
+
+/* Avisos (toast) de la casa, el súper y la mesa: se van bajando en vez de desaparecer de golpe */
+#toast.se-va {
+  animation: aviso-sale 0.23s ease-in forwards;
+}
+@keyframes aviso-sale {
+  to { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.92); }
+}
+.mesa .aviso.sale {
+  animation: aviso-entra 0.32s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.mesa .aviso.se-va {
+  animation: aviso-sale 0.23s ease-in forwards;
+}
+@keyframes aviso-entra {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.75); }
+}
+
+/* Casa: los botones de acción nuevos (al cambiar de cuarto, cuando llega la pareja) entran con un saltico escalonado;
+   los que no cambian se quedan quietos (main.ts no los rehace) */
+.acciones .accion {
+  animation: boton-entra 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+.acciones .accion:nth-child(2) { animation-delay: 0.035s; }
+.acciones .accion:nth-child(3) { animation-delay: 0.07s; }
+.acciones .accion:nth-child(4) { animation-delay: 0.105s; }
+.acciones .accion:nth-child(5) { animation-delay: 0.14s; }
+.acciones .accion:nth-child(n + 6) { animation-delay: 0.175s; }
+@keyframes boton-entra {
+  from { opacity: 0; transform: translateY(12px) scale(0.82); }
+}
+
+/* Súper: las monedas y los «¡Pum!» saltan con un golpecito antes de subir (antes solo subían derechito) */
+.moneda-salta {
+  animation: moneda-sube 1.45s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+@keyframes moneda-sube {
+  0% { translate: 0 8px; scale: 0.45; opacity: 0; }
+  12% { translate: 0 -8px; scale: 1.2; opacity: 1; }
+  24% { translate: 0 -12px; scale: 1; }
+  72% { opacity: 1; }
+  100% { translate: 0 -66px; scale: 0.92; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moneda-salta { animation-timing-function: linear; }
+  .pantalla-hoja:not([hidden]),
+  #ventana:not([hidden]),
+  .pantalla-hoja:not([hidden]) > .hoja,
+  #ventana:not([hidden]) > .ventana,
+  #toast.se-va,
+  .acciones .accion,
+  .cortina-vista.fundiendo,
+  .mesa .aviso.sale,
+  .mesa .aviso.se-va {
+    animation: none;
+  }
+}
+
+/* Casa: la lluvia de corazones cae como papelitos (cada uno con su tamaño, vaivén y giro) y se desvanece abajo */
+.lluvia-corazones.suave span {
+  scale: var(--s, 1);
+  animation: corazon-cae var(--d, 3.2s) cubic-bezier(0.35, 0.05, 0.6, 1) forwards;
+}
+@keyframes corazon-cae {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; }
+  25% { transform: translate(var(--x), 22vh) rotate(calc(var(--r) * 0.4)); }
+  50% { transform: translate(calc(var(--x) * -0.6), 50vh) rotate(calc(var(--r) * -0.3)); }
+  75% { transform: translate(calc(var(--x) * 0.5), 80vh) rotate(var(--r)); opacity: 1; }
+  100% { transform: translate(0, 112vh) rotate(calc(var(--r) * 1.4)); opacity: 0; }
+}
+
+/* Casa: los globitos de pensamiento se inflan con un saltico (y se desinflan al irse) */
+.pensamiento {
+  animation: globo-entra 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both, late-globo 1.4s ease-in-out 0.38s infinite;
+}
+.pensamiento.saliendo {
+  pointer-events: none;
+  animation: globo-sale 0.2s ease-in forwards !important;
+}
+@keyframes globo-entra {
+  from { scale: 0.2; opacity: 0; }
+}
+@keyframes globo-sale {
+  to { scale: 0.3; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lluvia-corazones.suave span { animation: none; opacity: 0; }
+  .pensamiento { animation: none; }
+}
