@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { compartido } from './kit';
 
-/** Foto del cuarto: objetos [i, px, py, pz, qx, qy, qz, qw, sx, sy, sz, visible], materiales [i, color, emisivo,
+/** Foto del cuarto: objetos [i, px, py, pz, qx, qy, qz, qw, sx, sy, sz, visible, papá], materiales [i, color, emisivo,
  *  intensidad, opacidad, visible], luces [i, intensidad]. */
 export interface FotoCuarto {
   n: number;
@@ -22,6 +22,9 @@ const r4 = (v: number) => Math.round(v * 10000) / 10000;
 
 export class Espejo {
   readonly objs: THREE.Object3D[] = [];
+  /** Índice de cada objeto (para saber de quién es hijo: hay acertijos que pasan una cosa de un papá a otro, como la
+   *  llave que el caracol suelta en la piedra). */
+  private indice = new Map<THREE.Object3D, number>();
   private ultimos: (number[] | null)[] = [];
   /** Cuándo cambió cada cosa por última vez (se repite un ratico por si se pierde un paquete). */
   private cambio: number[] = [];
@@ -61,6 +64,7 @@ export class Espejo {
       });
     this.mats = [...mats];
     this.texturas.push(...texs);
+    this.objs.forEach((o, i) => this.indice.set(o, i));
     this.ultimos = this.objs.map((o) => this.estado(o));
     this.cambio = this.objs.map(() => -1e9);
     this.matUlt = this.mats.map((m) => this.firma(m));
@@ -71,7 +75,8 @@ export class Espejo {
 
   private estado(o: THREE.Object3D) {
     const p = o.position, q = o.quaternion, s = o.scale;
-    return [r3(p.x), r3(p.y), r3(p.z), r4(q.x), r4(q.y), r4(q.z), r4(q.w), r3(s.x), r3(s.y), r3(s.z), o.visible ? 1 : 0];
+    const padre = o.parent ? this.indice.get(o.parent) ?? -1 : -2;
+    return [r3(p.x), r3(p.y), r3(p.z), r4(q.x), r4(q.y), r4(q.z), r4(q.w), r3(s.x), r3(s.y), r3(s.z), o.visible ? 1 : 0, padre];
   }
 
   private firma(m: THREE.Material) {
@@ -90,7 +95,7 @@ export class Espejo {
       const e = this.estado(this.objs[i]);
       const u = this.ultimos[i];
       let distinto = !u;
-      if (u) for (let k = 0; k < 11 && !distinto; k++) distinto = u[k] !== e[k];
+      if (u) for (let k = 0; k < 12 && !distinto; k++) distinto = u[k] !== e[k];
       if (distinto) {
         this.ultimos[i] = e;
         this.cambio[i] = ahora;
@@ -145,6 +150,13 @@ export class Espejo {
       const o = this.objs[e[0]];
       if (!o) continue;
       o.visible = e[11] === 1;
+      // Cambió de papá allá: aquí también (la posición que llega es la de su nuevo papá)
+      const padre = e[12];
+      if (padre !== undefined && padre >= 0 && this.objs[padre] && o.parent !== this.objs[padre]) {
+        this.objs[padre].add(o);
+        this.metas.delete(e[0]);
+        o.position.set(e[1], e[2], e[3]);
+      }
       const meta = this.metas.get(e[0]);
       const p = new THREE.Vector3(e[1], e[2], e[3]), q = new THREE.Quaternion(e[4], e[5], e[6], e[7]), s = new THREE.Vector3(e[8], e[9], e[10]);
       if (meta) {
@@ -212,7 +224,7 @@ export class Espejo {
   huella() {
     const o = this.objs.map((x) => {
       const e = this.estado(x);
-      return [Math.round(e[0] * 50), Math.round(e[1] * 50), Math.round(e[2] * 50), e[10]].join(',');
+      return [Math.round(e[0] * 50), Math.round(e[1] * 50), Math.round(e[2] * 50), e[10], e[11]].join(',');
     });
     const m = this.mats.map((x) => this.firma(x));
     return { objetos: o.length, o: o.join(';'), m: m.join(';') };

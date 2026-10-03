@@ -743,10 +743,11 @@ const tazas: Nivel = {
         if (estado !== 'eligiendo') return;
         estado = 'listo';
         k.visible = true;
+        // (si era la buena, la llave se puede tomar de una, mientras la taza sube)
+        if (t === conLlave) llaveParaLaPuerta(c, k);
         await alzar(t, true);
         if (t === conLlave) {
           c.bien();
-          llaveParaLaPuerta(c, k);
         } else {
           c.mal();
           await alzar(conLlave, true);
@@ -762,7 +763,7 @@ const tazas: Nivel = {
     await p.esperarQue(() => !!p.obj('acertijo 28').userData.eligiendo, 120000);
     const t = [0, 1, 2].map((i) => p.obj(`taza volteada ${i}`)).find((o) => o.userData.llave)!;
     await p.tocar(t);
-    await p.esperar(1200);
+    await p.esperarQue(() => t.position.y > 0.95, 20000);
     await p.tocar('llave');
     await p.usar('llave', 'puerta toque');
   },
