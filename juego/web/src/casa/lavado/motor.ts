@@ -407,7 +407,11 @@ export class Motor {
       j.vida = j.vidaMax;
     }
     this.tTanda = 0.5;
+    this.tGrito = 1.2;
   }
+
+  /** Cuándo se dice la habilidad de cada disfraz al empezar. */
+  private tGrito = 0;
 
   // ------------------------------------------------------------------------------------------------- Efectos
   emitir(tipo: TipoEfecto, x: number, y: number, c = 0, d = 0, e = 0, f = 0, t = '') {
@@ -423,8 +427,18 @@ export class Motor {
     ef.t = t;
   }
 
-  aviso(t: string) {
-    this.emitir('aviso', 0, 0, 0, 0, 0, 0, t);
+  /** Un aviso en pantalla (`de`: solo para ese jugador; si no, para los dos). */
+  aviso(t: string, de = -1) {
+    this.emitir('aviso', 0, 0, de + 1, 0, 0, 0, t);
+  }
+
+  /** ¿La habilidad del disfraz crece justo en este nivel? (las de cada nivel se avisan de 10 en 10) */
+  private crecioEn(j: Jugador, n: number) {
+    return j.disfraz.crece.some((c) => {
+      const desde = c.desde ?? c.cada;
+      if (n < desde || n > c.hasta || (n - desde) % c.cada !== 0) return false;
+      return c.cada > 1 || n % 10 === 0;
+    });
   }
 
   // ------------------------------------------------------------------------------------------------- Estadísticas
@@ -725,6 +739,7 @@ export class Motor {
       if (!j.opciones && !j.cofre && !j.cartaOpciones && j.cofresPend.length) this.abrirCofreOCarta(j, j.cofresPend.shift()!);
     }
     if (this.pausa) return;
+    if (this.tGrito > 0 && (this.tGrito -= dt) <= 0) for (const j of this.jug) this.aviso(j.disfraz.grito, j.i);
     this.tReal += dt;
     const dReloj = dt * (this.apurado ? 2 : 1);
     const minAntes = Math.floor(this.t / 60);
@@ -803,6 +818,7 @@ export class Motor {
       j.quieto = Math.hypot(j.vx, j.vy) > 10 ? 0 : j.quieto + dt;
       // Recuperación (la de la carta de psicología cura el doble)
       if (j.st.recuperacion > 0 && j.vida < j.vidaMax) j.vida = Math.min(j.vidaMax, j.vida + j.st.recuperacion * dt * (j.tieneCarta('psicologia') ? 2 : 1));
+      if (j.arranque > 0 && j.arranque - dt <= 0) this.aviso('🚀 Se acabó el arranque de cohete: ¡a pelear normal!', j.i);
       j.arranque = Math.max(0, j.arranque - dt);
       if (j.aji > 0) {
         j.aji -= dt;
@@ -1638,7 +1654,11 @@ export class Motor {
       this.xp -= xpPara(this.nivel);
       this.nivel++;
       subio = true;
-      for (const j of this.jug) j.nivelesPend++;
+      for (const j of this.jug) {
+        j.nivelesPend++;
+        // La habilidad del disfraz se nota: aviso cuando crece
+        if (j.disfraz.alCrecer && this.crecioEn(j, this.nivel)) this.aviso(j.disfraz.alCrecer, j.i);
+      }
     }
     if (!subio) return;
     this.emitir('nivel', 0, 0, this.nivel);

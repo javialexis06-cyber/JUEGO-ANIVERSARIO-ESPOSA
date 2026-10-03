@@ -93,6 +93,11 @@ export class Vestuario {
     if (this.bano) this.ponerBano(true);
   }
 
+  /** Las mallas de lo que está puesto en una ranura (para retocarlas, como en los disfraces del lavado). */
+  mallasDe(r: Ranura): THREE.Object3D[] {
+    return this.puestos.get(r)?.mallas ?? [];
+  }
+
   /** En la tina: en ropa interior (sin la ropa comprada, salvo el peinado). Al salir se vuelve a vestir. */
   enBano(si: boolean) {
     if (si === this.bano) return;

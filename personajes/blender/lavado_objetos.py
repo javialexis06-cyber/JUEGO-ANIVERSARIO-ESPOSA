@@ -484,6 +484,8 @@ def perfume(p, color='#F2A5B8', tapa='#F2C14E', alto=0.42, corazon_forma=False):
         corazon(p, (0, 0, 0.28), 0.42, v, 0.5)
     else:
         p.caja((0, 0, alto / 2), (0.16, 0.1, alto / 2), v, p=3.2)
+        # El perfume adentro (se ve por el vidrio, también en el celular)
+        p.caja((0, 0, alto * 0.4), (0.12, 0.07, alto * 0.33), M(color, rough=0.2, coat=0.6, sss=0.3, ruido=0.0), p=3.2)
         # Facetas
         p.caja((0, -0.105, alto / 2), (0.1, 0.01, alto * 0.32), M('#FFFFFF', 0.05, coat=1.0, transmision=0.3, ruido=0.0), p=3.0)
     z = (0.55 if corazon_forma else alto)
@@ -913,6 +915,128 @@ def espuma_cabeza(p):
     burbuja(p, (0.25, -0.1, 0.2), 0.06)
 
 
+# Las piezas de la cara y del pelo se modelan ya en su sitio, en medidas de la cabeza del muñeco (el hueso «cabeza»
+# en el origen; en el juego: x a la derecha, y arriba, z hacia adelante). H() las pasa a Blender (z arriba, -y adelante).
+def H(x, y, z):
+    return (x, -z, y)
+
+
+def frente_cara(x, extra=0.0):
+    """Qué tan adelante queda la cara a esa altura de x (la cabeza es un cubito redondeado)."""
+    return 0.53 * (1 - np.clip(np.abs(x) / 0.68, 0, 0.999) ** 4) ** 0.25 + extra
+
+
+def antifaz_heroe(p):
+    """Antifaz de superhéroe (rojo, con los huecos para los ojos), pegadito a la cara del Súper Jabón."""
+    import sdf
+
+    def f(P):
+        x, y, z = P[:, 0], P[:, 2], -P[:, 1]
+
+        def elipse(cx, cy, rx, ry):
+            return (np.sqrt(((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2) - 1) * min(rx, ry)
+        ojos = np.minimum(elipse(-0.33, 0.5, 0.31, 0.24), elipse(0.33, 0.5, 0.31, 0.24))
+        puente = np.maximum(np.abs(x) - 0.16, np.abs(y - 0.55) - 0.09)
+        alas = np.minimum(elipse(-0.56, 0.62, 0.16, 0.09), elipse(0.56, 0.62, 0.16, 0.09))
+        forma = sdf.smin(sdf.smin(ojos, puente, 0.05), alas, 0.06)
+        huecos = np.minimum(elipse(-0.34, 0.49, 0.13, 0.155), elipse(0.34, 0.49, 0.13, 0.155))
+        plano = np.maximum(forma, -huecos)
+        capa = np.abs(z - frente_cara(x, 0.022)) - 0.02
+        return sdf.smax(plano, capa, 0.012)
+    p.add(sdf.to_mesh(p.nom(), f, (-0.78, -0.68, 0.2), (0.78, -0.25, 0.82), voxel=0.006, coll=p.coll, material=M('#E4392B', rough=0.45, coat=0.4)))
+    # Los nudos y las colitas de atrás
+    m = tela('#E4392B', '#FF8A80')
+    for sx in (-1, 1):
+        p.tubo([H(sx * 0.62, 0.6, 0.25), H(sx * 0.7, 0.62, -0.05), H(sx * 0.66, 0.6, -0.3)], 0.03, m, perfil=(1.6, 0.5), seg=8)
+    p.blob(H(0, 0.62, -0.62), (0.07, 0.06, 0.06), m, n=8)
+    for sx in (-1, 1):
+        p.tubo([H(0, 0.62, -0.62), H(sx * 0.12, 0.45, -0.68), H(sx * 0.18, 0.3, -0.66)], [0.035, 0.02], m, perfil=(1.8, 0.5), seg=8)
+
+
+def bigote_grueso(p, color='#3A2C25', rizado=False):
+    """Bigote de verdad (el del clóset casi no se ve en el juego): frondoso de leñador o de manubrio de barbero."""
+    import sdf
+    m = M(color, rough=0.85, fuzz=0.5, pelusa='#6B5446')
+    lados = []
+    for sx in (-1, 1):
+        if rizado:
+            pts = [(0.0, 0.47), (0.1, 0.455), (0.19, 0.43), (0.25, 0.42), (0.28, 0.46), (0.255, 0.49)]
+            rad = [0.04, 0.038, 0.03, 0.022, 0.016, 0.012]
+        else:
+            pts = [(0.0, 0.475), (0.09, 0.47), (0.17, 0.44), (0.23, 0.39), (0.25, 0.35)]
+            rad = [0.058, 0.06, 0.052, 0.04, 0.026]
+        puntos = [H(sx * x, y, frente_cara(x, 0.02)) for x, y in pts]
+        lados.append(sdf.stroke(puntos, rad, samples=6))
+    f = sdf.union(*lados, k=0.03)
+    p.add(sdf.to_mesh(p.nom(), f, (-0.36, -0.68, 0.25), (0.36, -0.4, 0.58), voxel=0.005, coll=p.coll, material=m))
+
+
+def rulos_cabeza(p):
+    """Rulos de colores enrollados en el pelo de la estilista (arriba, atrás y a los lados), con sus pinzas."""
+    colores = ['#F59AAE', '#7DB7E8', '#F7D046', '#B8A6F0', '#8ED8B0']
+    # (punto del pelo en medidas de la cabeza, eje del rulo)
+    sitios = [
+        ((0.0, 1.5, 0.14), 'x'), ((0.0, 1.47, -0.22), 'x'), ((0.0, 1.3, -0.56), 'x'),
+        ((-0.38, 1.41, 0.04), 'x'), ((0.38, 1.41, 0.04), 'x'), ((-0.36, 1.33, -0.38), 'x'), ((0.36, 1.33, -0.38), 'x'),
+        ((-0.83, 1.08, -0.12), 'z'), ((0.83, 1.08, -0.12), 'z'), ((-0.81, 0.84, -0.34), 'z'), ((0.81, 0.84, -0.34), 'z'),
+    ]
+    rejilla = M('#FFFFFF', rough=0.4, coat=0.3)
+    for k, ((x, y, z), eje) in enumerate(sitios):
+        m = M(colores[k % len(colores)], 0.4, coat=0.35)
+        largo = 0.15
+        if eje == 'x':
+            a, b = H(x - largo, y, z), H(x + largo, y, z)
+        else:
+            a, b = H(x, y, z + largo), H(x, y, z - largo)
+        p.tubo([a, b], 0.09, m, seg=12, caps=('flat', 'flat'))
+        # Los huequitos del rulo (aros más claros) y la pinza que lo sostiene
+        for t in (0.25, 0.75):
+            c = tuple(a[i] + (b[i] - a[i]) * t for i in range(3))
+            if eje == 'x':
+                p.tubo([(c[0] - 0.012, c[1], c[2]), (c[0] + 0.012, c[1], c[2])], 0.095, rejilla, seg=12, caps=('flat', 'flat'))
+            else:
+                p.tubo([(c[0], c[1] - 0.012, c[2]), (c[0], c[1] + 0.012, c[2])], 0.095, rejilla, seg=12, caps=('flat', 'flat'))
+
+
+def corona_guerrera(p):
+    """Corona de la mejor guerrera de Dios: dorada, con corazones y perlitas, bien puesta encima del pelo."""
+    k0 = len(p.objs)
+    m = oro()
+    r, alto = 0.36, 0.36
+    p.torno([(r, 0), (r * 1.04, alto * 0.42), (r * 0.92, alto * 0.42), (r * 0.9, 0)], m, seg=28, tapas=(False, False))
+    for k in range(7):
+        a = k / 7 * TAU + math.pi / 2
+        x, y = math.cos(a) * r, math.sin(a) * r
+        p.blob((x, y, alto * 0.62), (r * 0.15, r * 0.15, alto * 0.34), m, n=6, shaper=lambda v: v * (1 - 0.7 * np.clip(v[:, 2:3], 0, 1)))
+        p.blob((x * 1.02, y * 1.02, alto * 1.0), (0.032,) * 3, M('#FFF6E8', rough=0.2, coat=1.0), n=6)
+    rubi = M('#E4395F', rough=0.12, coat=1.0)
+    corazon(p, (0, -r * 1.02, alto * 0.24), 0.13, rubi, 0.5)
+    for sx in (-1, 1):
+        a = math.pi / 2 + sx * 0.9
+        p.blob((math.cos(a) * r * 1.03, -abs(math.sin(a)) * r * 1.03, alto * 0.22), (0.035, 0.02, 0.035), M('#7DB7E8', rough=0.12, coat=1.0), n=6)
+    p.girar(p.desde(k0), rx=-0.18)
+    for o in p.desde(k0):
+        o.location = (o.location[0], o.location[1] + 0.06, o.location[2] + 1.38)
+    bpy.context.view_layer.update()
+
+
+def toalla_mano(p):
+    """La toalla mojada enrollada, colgando de la mano lista para el toallazo (el arma del panda)."""
+    m = tela('#F39AB0', '#FFD1DC')
+    r = tela('#FFFFFF')
+    # (cuelga hacia afuera del cuerpo y un poquito adelante: la mano izquierda queda a -x)
+    pts = [(0.0, -0.05, 0.16), (-0.03, -0.1, -0.02), (-0.1, -0.14, -0.2), (-0.2, -0.16, -0.33), (-0.33, -0.14, -0.4), (-0.44, -0.1, -0.37)]
+    p.tubo(pts, [0.065, 0.07, 0.065, 0.06, 0.055, 0.05], m, perfil=(1.3, 0.85), seg=12)
+    # Rayas blancas de la toalla, enrolladas
+    for (x, y, z) in [(-0.07, -0.125, -0.12), (-0.15, -0.155, -0.27), (-0.26, -0.155, -0.37)]:
+        p.blob((x, y, z), (0.055, 0.078, 0.028), r, n=8)
+    # Flecos y gotas
+    for j in range(5):
+        p.tubo([(-0.44, -0.1, -0.4 + j * 0.02), (-0.51, -0.1 + (j - 2) * 0.012, -0.42 + j * 0.025)], 0.011, m, seg=5)
+    gotas(p, (-0.36, -0.16, -0.6), 3, 0.03)
+    gotas(p, (-0.12, -0.18, -0.42), 2, 0.025)
+
+
 # ----------------------------------------------------------------------------------------------------- Catálogo
 ICONOS = {
     # Armas
@@ -953,8 +1077,10 @@ ACCESORIOS = {
     'toalla_hombro': toalla_hombro, 'espuma_cabeza': espuma_cabeza, 'cepillo_mano': lambda p: cepillo(p), 'espejo_frente': espejo_frente,
     'jabon_pecho': lambda p: jabon(p), 'champu_mano': lambda p: champu(p), 'casco_burbuja': casco_burbuja, 'casco_bombero': casco_bombero,
     'manguera': manguera, 'hilo_mano': lambda p: hilo(p), 'varita_mano': lambda p: varita(p), 'escudo': escudo,
-    'perfume_mano': lambda p: perfume(p), 'turbante': turbante, 'patico_mano': lambda p: pato(p), 'ranita_cabeza': lambda p: rana(p),
+    'perfume_mano': lambda p: perfume(p, '#D6336C'), 'turbante': turbante, 'patico_mano': lambda p: pato(p), 'ranita_cabeza': lambda p: rana(p),
     'esponja_mano': lambda p: esponja(p), 'secador_mano': lambda p: secador(p), 'rulos': rulos,
+    'antifaz_heroe': antifaz_heroe, 'bigote_lenador': lambda p: bigote_grueso(p), 'bigote_barbero': lambda p: bigote_grueso(p, '#2E2420', rizado=True),
+    'rulos_cabeza': rulos_cabeza, 'corona_guerrera': corona_guerrera, 'toalla_mano': toalla_mano,
 }
 
 

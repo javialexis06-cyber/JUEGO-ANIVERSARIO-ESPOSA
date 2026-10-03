@@ -289,11 +289,14 @@ export class Interfaz {
       const v = this.raiz.querySelector('.lv-velo-luz')!;
       v.classList.add('si');
       setTimeout(() => v.classList.remove('si'), 60);
-    } else if (e.tipo === 'aviso' && e.t) this.aviso(e.t);
+    } else if (e.tipo === 'aviso' && e.t) {
+      // (c: 0 = para los dos; si no, solo para ese jugador, como la habilidad de su disfraz)
+      if (!e.c || e.c - 1 === this.yo) this.aviso(e.t, e.c ? 3 : 2.4);
+    }
     else if (e.tipo === 'jefe') this.jefe(ENEMIGOS[Object.keys(ENEMIGOS)[e.c] as keyof typeof ENEMIGOS]?.nombre ?? '¡Un jefe!');
     else if (e.tipo === 'cae' && e.c !== this.yo) this.aviso(`¡${this.nombres[e.c]} cayó! Quédate a su ladito para levantarl${m.jug[e.c]?.rol === 'el' ? 'o' : 'a'}`, 3);
     else if (e.tipo === 'levanta') this.aviso(e.c === this.yo ? '¡Me levantaste! 💖' : '¡Levántate, mi amor! 💖', 2.4);
-    else if (e.tipo === 'revive' && e.c === this.yo) this.aviso('¡A seguir! La curita de corazón te levantó', 2.4);
+    else if (e.tipo === 'revive' && e.c === this.yo) this.aviso('¡A seguir! Te volviste a parar 💖', 2.4);
   }
 
   // ------------------------------------------------------------------------------------------------- Pausas
