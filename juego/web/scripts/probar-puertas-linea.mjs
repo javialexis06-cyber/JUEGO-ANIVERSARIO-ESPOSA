@@ -127,20 +127,32 @@ const revisar = (ok, texto) => {
 };
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
 const estado = (p) => p.evaluate(() => window.__puertas.pareja());
+/** Espera a que se cumpla algo en una página; si no, cuenta cómo estaba cada una (para entender qué pasó). */
+async function esperarEn(p, fn, arg, ms = 90000) {
+  try {
+    await p.waitForFunction(fn, arg, { timeout: ms, polling: 250 });
+    return true;
+  } catch {
+    for (const q of [el, ella]) {
+      const e = await q.evaluate(() => ({ pareja: window.__puertas.pareja(), estado: { ...window.__puertas.estado(), progreso: undefined } })).catch((x) => String(x));
+      console.log(`  (${q.rol}: ${JSON.stringify(e).slice(0, 600)})`);
+    }
+    return false;
+  }
+}
 
 // Él en un celular «normal» y Ella en uno más ancho (las pantallas de los dos no son iguales)
 const el = await celular('el', { width: 844, height: 390 });
 const ella = await celular('ella', { width: 915, height: 412 });
 
 // --- Invitación ----------------------------------------------------------------
-await el.waitForFunction(() => document.querySelector('#btn-pareja.en-linea'), null, { timeout: 60000 }).catch(() => {});
+await el.waitForFunction(() => document.querySelector('#btn-pareja.en-linea'), null, 60000);
 revisar(await el.evaluate(() => !!document.querySelector('#btn-pareja.en-linea')), 'Él ve que Ella está en Cien Puertas');
 await el.evaluate(() => window.__puertas.parejaInvitar(1));
 await ella.waitForSelector('#hoja-pareja:not([hidden]) .boton-tomate', { timeout: 60000 });
 await ella.screenshot({ path: `${carpeta}/1-invitacion.png` });
 await ella.click('#hoja-pareja:not([hidden]) .boton-tomate');
-await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 1 && window.__puertas.estado().listo, null, { timeout: 90000 })));
-revisar(true, 'Los dos entran a la puerta 1');
+revisar((await Promise.all([el, ella].map((p) => esperarEn(p, () => window.__puertas.pareja()?.jugando === 1 && window.__puertas.estado().listo)))).every(Boolean), 'Los dos entran a la puerta 1');
 revisar((await estado(el)).papel === 'anfitrion' && (await estado(ella)).papel === 'invitado', 'Él es el anfitrión y Ella la invitada');
 
 /** Pantalla (en el celular de `p`) de un objeto por nombre. */
@@ -188,11 +200,11 @@ async function iguales(texto) {
   const posElla = await ella.evaluate(() => window.__puertas.posicion('tapete'));
   revisar(Math.hypot(posEl[0] - posElla[0], posEl[2] - posElla[2]) < 0.05 && Math.abs(posEl[0] - 0.05) > 0.3, `El tapete que movió Ella se movió también donde Él (${posEl.map((v) => v.toFixed(2))} / ${posElla.map((v) => v.toFixed(2))})`);
   await tocar(ella, 'abrigo');
-  await ella.waitForFunction(() => window.__puertas.visible('llave'), null, { timeout: 15000 }).catch(() => {});
+  await ella.waitForFunction(() => window.__puertas.visible('llave'), null, 15000);
   revisar(await ella.evaluate(() => window.__puertas.visible('llave')), 'La llave que soltó el abrigo se ve donde Ella');
   await esperar(500);
   await tocar(ella, 'llave');
-  await ella.waitForFunction(() => window.__puertas.pareja()?.items.includes('llave'), null, { timeout: 15000 }).catch(() => {});
+  await ella.waitForFunction(() => window.__puertas.pareja()?.items.includes('llave'), null, 15000);
   revisar(await el.evaluate(() => window.__puertas.pareja()?.items.includes('llave')), 'La llave que recogió Ella está en el inventario de Él (compartido)');
   revisar(await ella.evaluate(() => window.__puertas.pareja()?.items.includes('llave')), '…y en el de Ella');
   await iguales('Puerta 1 a medio camino: los dos ven lo mismo');
@@ -200,7 +212,7 @@ async function iguales(texto) {
   await ella.click('#inventario [data-item="llave"]');
   await esperar(150);
   await tocar(ella, 'puerta toque');
-  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 2 && window.__puertas.estado().listo, null, { timeout: 90000 }).catch(() => {})));
+  await Promise.all([el, ella].map((p) => esperarEn(p, () => window.__puertas.pareja()?.jugando === 2 && window.__puertas.estado().listo, null, 90000)));
   revisar((await estado(el)).jugando === 2 && (await estado(ella)).jugando === 2, 'Ella abrió la puerta 1 y los dos pasaron a la 2');
 }
 
@@ -222,25 +234,25 @@ async function iguales(texto) {
 {
   const r = await el.evaluate(() => window.__puertas.probar().then(() => 'ok', (e) => String(e)));
   revisar(r === 'ok', `Él resolvió la puerta 2 con su prueba (${r})`);
-  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 3, null, { timeout: 90000 }).catch(() => {})));
+  await Promise.all([el, ella].map((p) => esperarEn(p, () => window.__puertas.pareja()?.jugando === 3, null, 90000)));
   revisar((await estado(ella)).jugando === 3, 'A Ella se le abrió la puerta 2 también y pasó a la 3');
-  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.estado().listo, null, { timeout: 60000 }).catch(() => {})));
+  await Promise.all([el, ella].map((p) => esperarEn(p, () => window.__puertas.estado().listo, null, 60000)));
 }
 
 // --- Pausa: Ella se va a segundo plano y luego se corta la conexión -----------------------------
 {
   await ella.evaluate(() => window.__puertas.segundoPlano(true));
-  await el.waitForFunction(() => window.__puertas.pareja()?.pausada, null, { timeout: 10000 }).catch(() => {});
+  await el.waitForFunction(() => window.__puertas.pareja()?.pausada, null, 10000);
   revisar(await el.evaluate(() => window.__puertas.pareja()?.pausada && !document.getElementById('pareja-pausa').hidden), 'Ella se fue a segundo plano: Él ve la pausa con aviso');
   await el.screenshot({ path: `${carpeta}/4-pausa.png` });
   await ella.evaluate(() => window.__puertas.segundoPlano(false));
-  await el.waitForFunction(() => !window.__puertas.pareja()?.pausada, null, { timeout: 10000 }).catch(() => {});
+  await el.waitForFunction(() => !window.__puertas.pareja()?.pausada, null, 10000);
   revisar(await el.evaluate(() => !window.__puertas.pareja()?.pausada), 'Ella volvió: se quita la pausa');
   cortado.add('ella');
-  await el.waitForFunction(() => window.__puertas.pareja()?.conectado === false, null, { timeout: 15000 }).catch(() => {});
+  await el.waitForFunction(() => window.__puertas.pareja()?.conectado === false, null, 15000);
   revisar(await el.evaluate(() => window.__puertas.pareja()?.conectado === false && window.__puertas.pareja()?.pausada), 'Se cortó la conexión de Ella: Él queda en pausa');
   cortado.delete('ella');
-  await el.waitForFunction(() => window.__puertas.pareja()?.conectado && !window.__puertas.pareja()?.pausada, null, { timeout: 15000 }).catch(() => {});
+  await el.waitForFunction(() => window.__puertas.pareja()?.conectado && !window.__puertas.pareja()?.pausada, null, 15000);
   revisar(await el.evaluate(() => window.__puertas.pareja()?.conectado && !window.__puertas.pareja()?.pausada), 'Volvió la conexión: siguen jugando');
 }
 
@@ -248,7 +260,7 @@ async function iguales(texto) {
 {
   const r = await el.evaluate(() => window.__puertas.probar().then(() => 'ok', (e) => String(e)));
   revisar(r === 'ok', `Él resolvió la puerta 3 (${r})`);
-  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 4 && window.__puertas.estado().listo, null, { timeout: 90000 }).catch(() => {})));
+  await Promise.all([el, ella].map((p) => esperarEn(p, () => window.__puertas.pareja()?.jugando === 4 && window.__puertas.estado().listo, null, 90000)));
   revisar((await estado(ella)).jugando === 4, 'Los dos pasaron a la puerta 4');
   await iguales('Puerta 4 al empezar: los dos ven lo mismo (mismo desorden en pantallas distintas)');
 }
@@ -256,15 +268,15 @@ async function iguales(texto) {
 // --- Puerta 8 (candado): Ella abre la cajita fuerte; el candado le sale a ella ---------------------
 {
   await el.evaluate(() => window.__puertas.jugar(8));
-  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 8 && window.__puertas.estado().listo, null, { timeout: 90000 }).catch(() => {})));
+  await Promise.all([el, ella].map((p) => esperarEn(p, () => window.__puertas.pareja()?.jugando === 8 && window.__puertas.estado().listo, null, 90000)));
   revisar((await estado(ella)).jugando === 8, 'Él saltó a la puerta 8 y Ella lo siguió');
   await tocar(ella, 'interruptor');
-  await el.waitForFunction(() => window.__puertas.luz() < 0.3, null, { timeout: 15000 }).catch(() => {});
+  await el.waitForFunction(() => window.__puertas.luz() < 0.3, null, 15000);
   await esperar(800);
   revisar(await ella.evaluate(() => window.__puertas.luz() < 0.3), 'Ella apagó la luz y quedó oscuro en los dos celulares');
   await ella.screenshot({ path: `${carpeta}/5-oscuro-ella.png` });
   await tocar(ella, 'cajita fuerte');
-  await ella.waitForFunction(() => window.__puertas.pareja()?.panel === 'ruedas', null, { timeout: 15000 }).catch(() => {});
+  await ella.waitForFunction(() => window.__puertas.pareja()?.panel === 'ruedas', null, 15000);
   revisar(await ella.evaluate(() => window.__puertas.pareja()?.panel === 'ruedas'), 'El candado le salió a Ella (que lo tocó)');
   revisar(await el.evaluate(() => !window.__puertas.pareja()?.panel), '…y no le tapa la pantalla a Él');
   // Gira las ruedas: 4, 1, 7 (cada clic va al celular de Él, que dice si abrió)
@@ -275,16 +287,16 @@ async function iguales(texto) {
       await esperar(260);
     }
   await ella.screenshot({ path: `${carpeta}/6-candado-ella.png` });
-  await el.waitForFunction(() => window.__puertas.visible('llave'), null, { timeout: 20000 }).catch(() => {});
+  await el.waitForFunction(() => window.__puertas.visible('llave'), null, 20000);
   revisar(await el.evaluate(() => window.__puertas.visible('llave')), 'Ella abrió la cajita con 4-1-7 y la llave apareció donde Él');
   await esperar(1200);
   await tocar(ella, 'llave');
-  await ella.waitForFunction(() => window.__puertas.pareja()?.items.includes('llave'), null, { timeout: 15000 }).catch(() => {});
+  await ella.waitForFunction(() => window.__puertas.pareja()?.items.includes('llave'), null, 15000);
   await iguales('Puerta 8 con la llave en el bolsillo: los dos ven lo mismo');
   await el.click('#inventario [data-item="llave"]');
   await esperar(150);
   await tocar(el, 'puerta toque');
-  await Promise.all([el, ella].map((p) => p.waitForFunction(() => window.__puertas.pareja()?.jugando === 9, null, { timeout: 90000 }).catch(() => {})));
+  await Promise.all([el, ella].map((p) => esperarEn(p, () => window.__puertas.pareja()?.jugando === 9, null, 90000)));
   revisar((await estado(ella)).jugando === 9, 'Él usó la llave que recogió Ella: los dos pasaron a la 9');
 }
 
@@ -293,7 +305,7 @@ async function iguales(texto) {
   const enviados = await el.evaluate(() => window.__puertas.pareja()?.cuenta);
   console.log(`  (Él recibió ${enviados.fotos} fotos y ${enviados.movs} movimientos)`);
   await ella.click('#btn-mapa');
-  await el.waitForFunction(() => !window.__puertas.pareja(), null, { timeout: 15000 }).catch(() => {});
+  await el.waitForFunction(() => !window.__puertas.pareja(), null, 15000);
   revisar(await el.evaluate(() => !window.__puertas.pareja() && !document.getElementById('mapa').hidden), 'Ella salió: a Él le avisan y vuelve al mapa');
 }
 
