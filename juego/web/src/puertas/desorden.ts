@@ -13,6 +13,7 @@ import { OJO } from './escena';
 import { estrellaForma, lienzo, matNuevo, textoEn, FUENTE } from './kit';
 import type { Ctx } from './nivel';
 import { HUECO } from './puerta';
+import { primeroDelante } from './protegidas';
 import { Mascara, pintar, rectDeCaja } from './revision';
 import * as sfx from './sonidos';
 import { esc } from './ui';
@@ -779,6 +780,7 @@ export class Desorden {
   /** Altura de lo que hay en el piso en (x, z): un tapete, una alfombra… (lo que esté bajito). */
   private alturaPiso(x: number, z: number) {
     const rc = new THREE.Raycaster(new THREE.Vector3(x, 0.6, z), new THREE.Vector3(0, -1, 0), 0, 0.8);
+    rc.camera = this.escena.camara;
     const raices: THREE.Object3D[] = [this.c.g];
     const cuarto = this.escena.escena.getObjectByName('cuarto');
     if (cuarto) raices.push(cuarto);
@@ -987,6 +989,12 @@ export class Desorden {
       }
       if (eje === 'y' && s === 1) apoyo = true;
     }
+    // (un mueble no lo puede hundir en el piso)
+    if (p.y < h.y) {
+      p.y = h.y;
+      if (v.y < 0) v.y = 0;
+      apoyo = true;
+    }
     if (golpe > 1.1) this.choque(b, golpe);
     if (b.roto) return;
     // Al caer de un saltico se queda ahí (sin resbalar)
@@ -1035,12 +1043,47 @@ export class Desorden {
         }
         b.empujes = 0;
         b.dormido = true;
+        this.asomarPapeles();
         b.obj.quaternion.setFromEuler(new THREE.Euler(0, b.yaw, 0));
       }
     } else b.quieto = 0;
   }
 
   private protegidaCache: { t: number; m: Mascara | null } | null = null;
+
+  /** Si algo quedó encima de un papelito encontrado (y no hubo dónde correrlo), el papelito se asoma hacia adelante
+   *  hasta que se vea. */
+  private asomarPapeles() {
+    if (!this.vista) return;
+    for (const o of this.papeles) {
+      if (!o.visible || o.userData.asomando) continue;
+      const tapado = () => {
+        o.updateWorldMatrix(true, true);
+        const c = o.getWorldPosition(new THREE.Vector3());
+        let n = 0;
+        const puntos = [[0, 0.05, 0], [0.09, 0.03, 0.03], [-0.09, 0.03, 0.03], [0, 0.03, 0.06], [0, 0.07, -0.02]];
+        for (const [dx, dy, dz] of puntos) if (primeroDelante(this.vista!, c.clone().add(new THREE.Vector3(dx, dy, dz)), [this.grupo], [o]).cual) n++;
+        return n / puntos.length;
+      };
+      if (tapado() < 0.4) continue;
+      const desde = o.position.clone();
+      let destino: THREE.Vector3 | null = null;
+      for (let k = 1; k <= 10 && !destino; k++) {
+        o.position.set(desde.x, this.alturaPiso(desde.x, desde.z + k * 0.12) + 0.004, Math.min(2.2, desde.z + k * 0.12));
+        if (tapado() < 0.2) destino = o.position.clone();
+      }
+      o.position.copy(desde);
+      if (!destino) continue;
+      const fin = destino;
+      o.userData.asomando = true;
+      void this.escena.animar(450, (k) => {
+        o.position.lerpVectors(desde, fin, k);
+        o.position.y = desde.y + (fin.y - desde.y) * k + Math.sin(k * Math.PI) * 0.12;
+        if (k >= 1) o.userData.asomando = false;
+      });
+      this.protegidaCache = null;
+    }
+  }
 
   /** Lo que no se puede tapar (lo importante y la puerta) en la pantalla de la vista general. */
   private prohibida() {

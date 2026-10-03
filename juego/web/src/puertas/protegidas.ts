@@ -159,6 +159,7 @@ export function primeroDelante(cam: THREE.Camera, p: THREE.Vector3, raices: THRE
   const d = dir.length();
   if (d < 1e-4) return { cual: null as THREE.Mesh | null, propio: false };
   rc.set(ojo, dir.divideScalar(d));
+  rc.camera = cam;
   rc.near = 0.05;
   rc.far = d - 0.02;
   const hits = rc.intersectObjects(raices, true);

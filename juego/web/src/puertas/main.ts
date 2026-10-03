@@ -487,8 +487,8 @@ async function pistaQueLlega(nivel: number) {
   aviso(`${nombreDe(otro(yo))} le compró ${a.nombre.toLowerCase()} a cambio de una pista`, 2600);
   await narrador.comer();
   if (jugando !== n) return;
-  await narrador.decir([nv.pistas[nivel - 1]]);
-  void narrador.irEsquina();
+  // (aquí no se detiene el juego: la pista sale en el globito que se va solo)
+  narrador.globo.susurrar(nv.pistas[nivel - 1], 8000);
 }
 
 // ---------------------------------------------------------------------------

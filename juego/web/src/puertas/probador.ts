@@ -50,6 +50,7 @@ export class ProbadorReal implements Probador {
     }
     // Si aquí no está registrado (en pareja, el invitado no tiene las reglas): un punto donde se vea de primero
     const rc = new THREE.Raycaster();
+    rc.camera = this.escena.camara;
     const ojo = this.escena.camara.getWorldPosition(new THREE.Vector3());
     for (const p of candidatos) {
       rc.set(ojo, p.clone().sub(ojo).normalize());
