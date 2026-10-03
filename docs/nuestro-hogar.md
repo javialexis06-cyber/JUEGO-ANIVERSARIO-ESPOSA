@@ -55,7 +55,7 @@ con `CASA_SOLO=juegos,trofeos,cuna,cuarto_el,cuarto_ella,bebe,ciguena python3 ex
 
 | Cuarto | Precio | Qué tiene y qué se hace |
 |---|---|---|
-| Juegos | gratis (viene con la casa) | Los **minijuegos ya no están en el menú**: arcade de Súper Manía (con la pantalla prendida), la **puerta 100** morada de Cien Puertas y la mesa con el parchís servido (dos pufs). El personaje camina al arcade, a la puerta o se sienta en el puf, y de ahí se entra al juego. También un retrete espacial en miniatura de adorno (se sientan en él). Los minijuegos **secretos** (retrete espacial, lavarse la cara) no están aquí: salen solos con lo que les pasa |
+| Juegos | gratis (viene con la casa) | Los **minijuegos ya no están en el menú**: arcade de Súper Manía (con la pantalla prendida), la **puerta 100** morada de Cien Puertas y la mesa con el parchís servido (dos pufs). El personaje camina al arcade, a la puerta o se sienta en el puf, y de ahí se entra al juego. También un retrete espacial en miniatura (se sientan en él y sale quién ha volado más lejos) y el botón **Tienda del retrete**. Los minijuegos **secretos** (retrete espacial, lavarse la cara) no se juegan desde aquí: salen solos con lo que les pasa |
 | Trofeos | 50 | Seis pedestales de mármol con los trofeos de cada minijuego y su **placa con el título** encima, el **cuadro de honor** con el título de cada uno en cada juego, la vitrina con los trofeos chiquitos de cada uno, alfombra roja y el podio de la **copa del amor**. «Admirar»: aplaude frente al mejor trofeo |
 | Bebé | 150 | Cuna de barrotes con móvil de estrellas, mecedora, cómoda con cambiador y juguetes. **Pedir a la cigüeña**: se escoge el nombre (Katherine, como dice Él, o Lexy Katherine, como dice Ella, u otro) y la cigüeña entra volando por la ventana con la bebé en un pañuelo y la deja en la cuna (`casa.bebe`). Luego: arrullarla (la cuna se mece, suena una nanita), la mecedora (se mece de verdad) y tocarla (se ríe) |
 | Cuarto de Él | 80 | Escritorio con computador (la pantalla escribe código), silla gamer, sillón, repisa y balón |
@@ -74,7 +74,7 @@ Cada minijuego da bronce, plata y oro con lo mejor de los dos (`src/casa/trofeos
 | Súper Manía | 5 | 25 | 60 estrellas (lunas incluidas) | `supermania-jugable1` |
 | Cien Puertas | 10 | 50 | 100 puertas | `cien-puertas` |
 | Juegos de mesa | 1 | 10 | 30 partidas ganadas | `nuestro-hogar-victorias` (lo cuenta `mesa.html`) |
-| Retrete espacial | 15 | 45 | 90 segundos | `casa.retrete` |
+| Retrete espacial | 500 | 2000 | 5000 metros de vuelo | `casa.cohete[rol].mejor` (los récords viejos en segundos de `casa.retrete` se pasan a metros: 15 s → 500, 45 s → 2000, 90 s → 5000) |
 | Lavarse la cara | 10 | 20 | 30 minutos aguantados (lo mejor en cualquier escenario) | `casa.lavadoProgreso[rol].mejor` |
 | Cocina de chef | rango 3 | rango 6 | rango 9 (el mejor de los tres restaurantes) | `casa.cocina` |
 
@@ -160,14 +160,77 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
 - **Lo que les cae pesado**: a Ella la leche (vaso de leche, yogur, arroz con leche) y a Él el picante
   (empanada con ají, tacos), comido por uno mismo o llevado por la pareja. Le sale un globito con un
   inodoro que tiembla y el botón «Ir al baño» se pone en rojo.
-- Con esas ganas, en el inodoro todo tiembla, echa humo y **sale disparado por el techo al espacio**: un
-  minijuego de esquivar asteroides arrastrando el dedo (el personaje de verdad, vestido como está, sentado
-  en el inodoro con fuego de cohete). Mientras vuela dice cosas («Siempre supe que algún día saldría como
-  un cohete del baño», «Intolerante a la lactosa… y ahora astronauta»…). Se gana por el tiempo que aguante
-  (1 moneda cada 15 s, hasta 3).
-- Al chocar, cae dando vueltas y **aterriza en el baño con un ¡KABOOM!** (humo, sacudón). El marcador
-  compartido guarda el récord de cada uno (`casa.retrete`) y se ve al terminar. Es un minijuego **secreto**:
-  no tiene botón en el cuarto de juegos, solo sale cuando algo les cae pesado. Código: `src/casa/cohete.ts`.
+- Con esas ganas, en el inodoro todo tiembla, echa humo y **sale disparado por el techo al espacio** (el
+  personaje de verdad, vestido como está y con su casco, sentado en el retrete que tenga puesto, con llama de
+  cohete y su estela). Se arrastra el dedo en cualquier parte para esquivar; el juego va a 30 cuadros por
+  segundo y baja la resolución y las partículas solo si el celular no da. Mientras vuela dice cosas («Siempre supe
+  que algún día saldría como un cohete del baño», «Esto está más lleno que el metro de Medellín en hora pico»…).
+
+### El vuelo (estilo Jetpack Joyride)
+
+- **Tramos**, cada uno con su cielo, luz, planeta y música (sintetizada, bajita): el cielo del barrio (nubes de
+  algodón, pájaros, aviones con aviso y **la chancla voladora de la mamá**), la órbita (la Tierra abajo girando,
+  satélites, inodoros viejos, latas), la Luna (rocas con cráteres, ovnis que siguen al retrete y disparan un rayo
+  avisado con una franja), Marte (cometas con aviso «!» en el borde y **lluvias de meteoritos**), el cinturón de
+  asteroides (campos de piedritas, muros con hueco, **agujeros negros** que jalan), la nebulosa y la galaxia del
+  amor (todo rosado, con más corazones de rollitos). Al pasar de uno al otro sale el letrero del tramo.
+- **Rollitos de papel dorados** en hileras y figuras: corazones (vacíos y llenos), «ÉL ♥ ELLA», «TE AMO», «TQM»,
+  flechas, olas, estrellas, una carita, un retrete… Recoger una figura completa da +10. Son la moneda de la tienda
+  del retrete (no de la casa).
+- **Poderes** que salen en su burbuja con el ícono 3D brillando (más seguido con la mejora de suerte): **burbuja de
+  jabón** (aguanta un golpe), **imán de rollitos**, **turbo de frijoles** (velocidad loca, invencible, revienta lo
+  que toque y deja nube verde), **cámara lenta**, **puntaje doble** (×2 flotando), y los que se desbloquean en la
+  tienda: **desatascador láser** (cañón que dispara solo), **mini-retrete ayudante** (vuela recogiendo rollitos),
+  **pastilla encogedora**, **ambientador de lavanda** (vuelve flores todo lo que hay en pantalla) y **paca de 12
+  rollos** (lluvia de rollitos). Los activos se ven abajo a la izquierda con su reloj.
+- Distancia en metros, puntaje (metros + rollitos + «¡por un pelito!» + lo destruido) por el **multiplicador** de
+  misiones. En el camino salen las banderitas de **tu récord** y del **récord de la pareja** («¡Te pasé, mi amor!»).
+- Pausa con el botón, y sola si la app se va a segundo plano (`src/segundo_plano.ts`).
+- Al chocar (o al revivir con la mejora) explota, cae con un **paracaídas de papel higiénico** y sale la pantalla
+  del vuelo: distancia, rollitos, puntaje, récords, las tres misiones con su barrita y, si se cumplieron, el nivel
+  nuevo con su cofre. De ahí, **Tienda del retrete** o **Volver a casa** (aterriza en el baño con el ¡KABOOM!).
+- Premio para la casa: igual de escaso que antes (1 moneda cada 15 s, hasta 3). Los rollitos son para su tienda.
+
+### Misiones y multiplicador
+
+Tres misiones a la vez (recoger rollitos en un vuelo o en total, volar tantos metros, esquivar por un pelito, usar
+turbos, agarrar poderes, destapar asteroides con el láser, esquivar cometas y chanclas, llegar a un tramo, figuras
+completas, un corazón entero, tumbar ovnis, sobrevivir lluvias, escapar de agujeros negros, comprar en la tienda…).
+Cada una paga rollitos; con las tres se sube de nivel: **el multiplicador del puntaje sube a ×(nivel + 1)** y llega
+un cofre. Las metas crecen con el nivel (hasta el 30).
+
+### Tienda del retrete
+
+Se abre al terminar el vuelo y desde el cuarto de juegos (botón «Tienda del retrete» o tocando el retrete en
+miniatura: sale el marcador y el botón). A la izquierda, el personaje en su retrete dando vueltas: lo que se toca se
+**prueba encima** antes de comprarlo.
+
+| Pestaña | Qué hay |
+|---|---|
+| Mejoras | Duración de cada poder (5 niveles; láser, ayudante y pastilla se desbloquean con el primero), ambientador y paca (desbloquear), imán más fuerte, burbuja de arranque, **segunda oportunidad** (revivir 1 vez, con burbuja, o 2 veces), **arranque con frijoles** (300/600/1000 m de turbo), poderes más seguidos, **papel triple hoja** (+15/30/50 % rollitos) y **taza aerodinámica** (el retrete ocupa menos). Precios de 100 a 3200 por nivel |
+| Retretes | Porcelana de la casa (con forro peludo), letrina de finca (con tusa), baño portátil de concierto, retrete chiva (parrilla, plátanos y gallina), nave espacial, princesa, gamer RGB (luces que cambian), trono dorado y oro con diamantes (300 a 3500) |
+| Estelas | Fuego, nube de frijoles, burbujas, corazones, chispitas, notas de cumbia, confeti tricolor, pétalos, arcoíris y estrellitas (250 a 1100) |
+| Cascos | Desatascador en la frente, gorro de baño con patitos, sombrero de rollo, antenas de marciano, gorro de aviador, casco vikingo, casco de astronauta y corona galáctica (250 a 1600), hechos sobre la cabeza de Él y de Ella |
+| Misiones | Las tres misiones, el nivel y los números de cada uno |
+
+Sin mejoras un vuelo dura unos 30 a 60 s (500 a 1000 m); con buenas compras se pasa de 2000 m.
+
+### Datos y código
+
+- `casa.cohete[rol]` (`ProgresoCohete`, normalizado en `src/casa/cohete/datos.ts`): rollitos, mejoras, cosméticos
+  comprados y puestos, nivel y misiones, mejor distancia y puntaje, vuelos. Se guarda al terminar cada vuelo y en
+  cada compra.
+- Código: `src/casa/cohete.ts` (el juego) y `src/casa/cohete/` (datos y catálogos, escenario y tramos, obstáculos,
+  poderes, rollitos y figuras, partículas, efectos, música, tienda, pantalla del vuelo). `volarCohete()`,
+  `abrirTiendaRetrete()` y `terminarCohete()` en `main.ts`.
+- Modelos: `personajes/blender/cohete_piezas.py` (retretes, poderes, rollito, basura espacial, ovni, avión, pájaro,
+  ayudante e íconos), exportados con `blender -b -P cohete_exportar.py -- juego/web/modelos-crudos` a
+  `cohete_retretes.glb` y `cohete_cosas.glb`; los cascos con `cohete_cascos.py` (maquinaria de la ropa) a
+  `ropa/cohete_<casco>_<rol>.glb`. Se optimizan con `gltf-transform optimize … --compress meshopt` (no con `npm run
+  optimizar`, que reescribe el catálogo de ropa) y los íconos pasan a `iconos/cohete_*.webp`. Los asteroides, los
+  planetas, las nebulosas y las nubes se pintan en el juego.
+- Pruebas: `__volar()` (vuela sin ir al baño), `__tiendaRetrete()`, y durante el vuelo `__cohete.manual()`,
+  `.simular(seg)`, `.bot()`, `.dios()`, `.dar(n)`, `.saltar(m)`, `.poder(id)`, `.mejoras({...})`, `.estado()`.
 
 ## Lavarse la cara (minijuego secreto: un Vampire Survivors completo)
 
