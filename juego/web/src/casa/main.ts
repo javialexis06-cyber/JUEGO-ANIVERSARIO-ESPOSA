@@ -3004,20 +3004,22 @@ function controles() {
     sonido.activar();
     void alAbrir();
   });
-  if (Capacitor.isNativePlatform()) {
-    void App.addListener('backButton', () => {
-      const salirLavado = document.querySelector<HTMLElement>('.lavado-fin:not([hidden]) [data-listo], .lavado-salir');
-      const pausaCocina = document.querySelector<HTMLElement>('.cocina .cocina-pausa');
-      if (salirLavado) salirLavado.click();
-      else if (pausaCocina) pausaCocina.click();
-      else if (!$('ventana').hidden) cerrarVentana();
-      else if (hojaAbierta()) cerrarHoja();
-      else if (!$('codigo').hidden) mostrar('codigo', false);
-      else if (patio.activo) patio.salir();
-      else if (decorando) void alAccion('decorar');
-      else void App.exitApp();
-    });
-  }
+  // Botón «atrás» de Android (en el computador, la tecla Esc): cierra lo que esté abierto encima
+  const atras = () => {
+    const aLaVista = (sel: string) => [...document.querySelectorAll<HTMLElement>(sel)].find((b) => b.offsetParent !== null);
+    const salirLavado = aLaVista('.lv-pausa') ?? aLaVista('.lv-menu [data-v="volver"]') ?? aLaVista('.lv-menu [data-m="salir"]');
+    const pausaCocina = document.querySelector<HTMLElement>('.cocina .cocina-pausa');
+    if (salirLavado) salirLavado.click();
+    else if (pausaCocina) pausaCocina.click();
+    else if (!$('ventana').hidden) cerrarVentana();
+    else if (hojaAbierta()) cerrarHoja();
+    else if (!$('codigo').hidden) mostrar('codigo', false);
+    else if (patio.activo) patio.salir();
+    else if (decorando) void alAccion('decorar');
+    else if (Capacitor.isNativePlatform()) void App.exitApp();
+  };
+  if (Capacitor.isNativePlatform()) void App.addListener('backButton', atras);
+  else document.addEventListener('keydown', (e) => e.key === 'Escape' && !e.repeat && atras());
 }
 
 function tocar(x: number, y: number) {

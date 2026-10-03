@@ -1,10 +1,11 @@
-# Compila la app de Android (APK de prueba) de Nuestro Hogar (con el minijuego Súper Manía) y la deja en Releases.
+# Compila la app de Android (APK de prueba) y el instalador para computador (Windows) de Nuestro Hogar y los deja
+# en Releases, en la misma versión.
 name: APK Android
 
 on:
   push:
     branches: [claude/supermarket-mania-minigame-xn2it8]
-    paths: ['juego/web/**', '.github/workflows/apk.yml']
+    paths: ['juego/web/**', 'juego/escritorio/**', '.github/workflows/apk.yml']
   workflow_dispatch:
 
 permissions:
@@ -80,4 +81,57 @@ jobs:
             mimos, regalos, notas en la nevera, álbum de fotos y fechas especiales) con el minijuego Súper Manía.
 
             Para instalar en Android: descarga NuestroHogar.apk, ábrela y permite «instalar apps de fuentes desconocidas» cuando el celular lo pida.
+            Para el computador (Windows 10 u 11): descarga NuestroHogar.exe (aparece unos minutos después que la APK) y ábrelo; si Windows
+            dice «Windows protegió su PC», toca «Más información» y «Ejecutar de todas formas». F11: pantalla completa; Esc: atrás.
             Se instala encima de la versión anterior (Súper Manía) sin perder el progreso del súper.
+
+  # El mismo juego para computador: Electron con el juego compilado adentro; se sube a la misma versión de la APK
+  exe:
+    needs: apk
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: juego/web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: juego/web/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar el juego web
+        env:
+          VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          VITE_SUPABASE_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+        run: npm run build
+
+      - name: Copiar el juego al programa de escritorio
+        run: |
+          rm -rf dist/modelos-plano ../escritorio/juego
+          cp -r dist ../escritorio/juego
+
+      - name: Armar el instalador de Windows
+        working-directory: juego/escritorio
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          npm install --no-audit --no-fund
+          npm pkg set version=1.0.${{ github.run_number }}
+          npx electron-builder --win nsis --x64 --publish never
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NuestroHogar-exe
+          path: juego/escritorio/salida/NuestroHogar.exe
+
+      - name: Publicar en Releases (junto a la APK)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-${{ github.run_number }}
+          files: juego/escritorio/salida/NuestroHogar.exe

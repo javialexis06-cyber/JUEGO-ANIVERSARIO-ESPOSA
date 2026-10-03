@@ -610,14 +610,15 @@ document.addEventListener('click', (ev) => {
   }
 });
 
-if (Capacitor.isNativePlatform()) {
-  void App.addListener('backButton', () => {
-    if (!$('hoja').hidden) $('hoja').hidden = true;
-    else if (!$('partida').hidden) $('btn-salir').click();
-    else if (!$('final').hidden) $('btn-menu').click();
-    else location.href = './index.html';
-  });
-}
+// Botón «atrás» de Android (en el computador, la tecla Esc)
+const atras = () => {
+  if (!$('hoja').hidden) $('hoja').hidden = true;
+  else if (!$('partida').hidden) $('btn-salir').click();
+  else if (!$('final').hidden) $('btn-menu').click();
+  else location.href = './index.html';
+};
+if (Capacitor.isNativePlatform()) void App.addListener('backButton', atras);
+else document.addEventListener('keydown', (e) => e.key === 'Escape' && !e.repeat && atras());
 
 // ---------------------------------------------------------------------------
 // Arranque

@@ -632,18 +632,18 @@ function conectarBotones() {
   window.addEventListener('pagehide', () => {
     if (linea && canal) canal.mandar(linea.fase === 'invitando' ? { t: 'cancelar', id: linea.id } : { t: 'salir', id: linea.id });
   });
-  if (Capacitor.isNativePlatform()) {
-    // Botón «atrás» de Android: pausa el día, vuelve al menú o sale de la app
-    void App.addListener('backButton', () => {
-      const visible = (id: string) => !$(id).hidden;
-      if (juego && !juego.terminado && !pausado) $('btn-pausa').click();
-      else if (visible('sala')) $('btn-sala-no').click();
-      else if (visible('pausa')) $('btn-continuar').click();
-      else if (visible('resultado')) $('btn-rmenu').click();
-      else if (visible('tarjeta') || visible('mejoras') || visible('como')) abrirMenu();
-      else location.href = './index.html';
-    });
-  }
+  // Botón «atrás» de Android (en el computador, la tecla Esc): pausa el día, vuelve al menú o sale a la casa
+  const atras = () => {
+    const visible = (id: string) => !$(id).hidden;
+    if (juego && !juego.terminado && !pausado) $('btn-pausa').click();
+    else if (visible('sala')) $('btn-sala-no').click();
+    else if (visible('pausa')) $('btn-continuar').click();
+    else if (visible('resultado')) $('btn-rmenu').click();
+    else if (visible('tarjeta') || visible('mejoras') || visible('como')) abrirMenu();
+    else location.href = './index.html';
+  };
+  if (Capacitor.isNativePlatform()) void App.addListener('backButton', atras);
+  else document.addEventListener('keydown', (e) => e.key === 'Escape' && !e.repeat && atras());
 }
 
 // ---------------------------------------------------------------------------------------------------------------
