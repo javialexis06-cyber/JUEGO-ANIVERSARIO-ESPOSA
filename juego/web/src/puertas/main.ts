@@ -15,6 +15,7 @@ import { otro, type Rol } from '../casa/modelo';
 import { sesionGuardada } from '../casa/sincro';
 import { elegirModelos, liberarEsqueletos } from '../recursos';
 import * as sonido from '../sonido';
+import * as fondo from '../segundo_plano';
 import { tema } from './cuarto';
 import { Desorden, esquinaNarrador, zonasNarrador } from './desorden';
 import { Entrada } from './entrada';
@@ -154,15 +155,17 @@ async function iniciar() {
     if (tamPuerta !== `${window.innerWidth}x${window.innerHeight}`) ubicarPuerta();
   });
   barra(1, 'Listo');
-  let antes = performance.now();
-  const bucle = (t: number) => {
-    const dt = (t - antes) / 1000;
-    antes = t;
+  // El bucle de dibujo se detiene solo en segundo plano (y vuelve sin saltos); a lo sumo 30 cuadros por segundo para
+  // que el celular no se caliente
+  let acumulado = 0;
+  fondo.cuadros((dt) => {
+    acumulado += dt;
+    if (acumulado < 1 / 31) return;
+    const paso = Math.min(acumulado, 0.1);
+    acumulado = 0;
     sensores.actualizar();
-    escena.cuadro(dt);
-    requestAnimationFrame(bucle);
-  };
-  requestAnimationFrame(bucle);
+    escena.cuadro(paso);
+  });
   controles();
   mostrar('carga', false);
   const n = Number(params.get('puerta'));

@@ -1635,6 +1635,15 @@ function alEvento(e: Evento) {
         }, { once: true });
         break;
       }
+      // Invitación a abrir juntos una puerta de Cien Puertas (cada uno en su celular)
+      if (e.datos.juego === 'puertas') {
+        if (Date.now() - e.t > 3 * 60_000) break;
+        const puerta = Math.min(100, Math.max(1, Number(e.datos.puerta) || 1));
+        const url = `./puertas.html?unirse=${encodeURIComponent(String(e.datos.id ?? ''))}&puerta=${puerta}`;
+        abrirHoja('¡A las puertas!', `<p class="nota-hoja">${quien} te invita a abrir juntos la <b>puerta ${puerta}</b> de Cien Puertas, cada uno desde su celular.</p>
+          <div class="fila-botones"><a class="boton boton-tomate" href="${url}">¡Vamos!</a></div>`);
+        break;
+      }
       // Invitación a la mesa de juegos (vale unos minutos)
       const j = JUEGOS_MESA[String(e.datos.juego)];
       if (!j || Date.now() - e.t > 3 * 60_000) break;

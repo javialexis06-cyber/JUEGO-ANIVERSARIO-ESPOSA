@@ -1,7 +1,6 @@
 // Sensores del celular para los acertijos: inclinar, sacudir, boca abajo, voltear, apagar la pantalla, quieto,
 // soplar (micrófono) y vibrar. Todo se puede simular (teclado y window.__puertas) para probar sin celular.
-import { App } from '@capacitor/app';
-import { Capacitor } from '@capacitor/core';
+import * as fondo from '../segundo_plano';
 
 type Evento = 'sacudida' | 'volteo' | 'pantalla' | 'soplido';
 type Oyente = (dato: number) => void;
@@ -45,10 +44,9 @@ export class Sensores {
     };
     screen.orientation?.addEventListener?.('change', cambio);
     window.addEventListener('orientationchange', () => setTimeout(cambio, 50));
-    document.addEventListener('visibilitychange', () => (document.hidden ? this.apagar() : this.prender()));
-    if (Capacitor.isNativePlatform()) {
-      void App.addListener('appStateChange', ({ isActive }) => (isActive ? this.prender() : this.apagar()));
-    }
+    // Cerrar los ojos (apagar la pantalla, irse a otra app): el aviso común de segundo plano de toda la app
+    fondo.alPausar(() => this.apagar());
+    fondo.alReanudar(() => this.prender());
   }
 
   on(e: Evento, fn: Oyente) {

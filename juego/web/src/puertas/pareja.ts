@@ -9,6 +9,7 @@ import { otro, type Rol } from '../casa/modelo';
 import retratoEl from '../casa/retratos/el.png';
 import retratoElla from '../casa/retratos/ella.png';
 import * as sonido from '../sonido';
+import * as fondo from '../segundo_plano';
 import type { PlanoDesorden } from './desorden';
 import type { DedoRed, Entrada } from './entrada';
 import type { Escena } from './escena';
@@ -144,10 +145,10 @@ export class Pareja {
     this.quitar.push(() => clearInterval(timer));
     // Cada cuadro: el espejo suavecito y la manito del otro
     this.quitar.push(this.j.escena.cada((dt) => this.cuadro(dt)));
-    // Segundo plano: el otro ve la pausa
-    const vis = () => this.enlace.ponerFuera(document.hidden);
-    document.addEventListener('visibilitychange', vis);
-    this.quitar.push(() => document.removeEventListener('visibilitychange', vis));
+    // Segundo plano: al otro le sale la pausa (y al volver sigue donde iba)
+    this.quitar.push(fondo.alPausar(() => this.enlace.ponerFuera(true)));
+    this.quitar.push(fondo.alReanudar(() => this.enlace.ponerFuera(false)));
+    if (fondo.enPausa()) this.enlace.ponerFuera(true);
     this.pintarChip();
     this.pintarEstado();
   }
