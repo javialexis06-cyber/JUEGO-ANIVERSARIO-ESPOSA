@@ -228,6 +228,8 @@ const escogerTodo = async () => {
 await escogerTodo();
 const tras = await estado(el);
 revisar(!tras.jug[1].opciones && !tras.jug[0].opciones, 'Los dos escogieron y el juego sigue');
+const sinCapas = (p) => p.evaluate(() => [...document.querySelectorAll('.lv-c-nivel, .lv-c-cofre, .lv-c-carta, .lv-c-espera')].every((c) => c.hidden));
+revisar(await esperarQue(async () => (await sinCapas(el)) && (await sinCapas(ella)), 6000), 'A los dos se les cierran las cartas (no queda nada tapando el juego)');
 revisar(tras.jug[1].armas >= armasAntes, `El inventario de Ella es suyo (${armasAntes} → ${tras.jug[1].armas} armas)`);
 await probar(el, 'bot', 1);
 

@@ -13,7 +13,7 @@ const POSE: Record<string, [string, Cara, number]> = {
   el_dentista: ['pulgares_a', 'guino', 16],
   el_heroe: ['jarras', 'presumido', 14],
   el_lenador: ['celebrar', 'carcajada', 20],
-  el_astronauta: ['senalar_arriba', 'feliz', 18],
+  el_astronauta: ['pulgares_a', 'feliz', 18],
   el_bombero: ['pulgares_a', 'feliz', 18],
   el_barbero: ['jarras', 'guino', 18],
   ella_pulga: ['saludo_a', 'feliz', -18],

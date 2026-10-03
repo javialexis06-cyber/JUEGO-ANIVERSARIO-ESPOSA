@@ -726,3 +726,7 @@ body.lavandose .hud-arriba-der { opacity: 0; pointer-events: none; transition: o
 .lavado-portal.entra .velo { opacity: 1; transition-delay: 0.8s; }
 .lavado-portal.sale .velo { opacity: 0; transition-delay: 0s; }
 .lavado-portal.sale .lavado-espejo { display: none; }
+
+/* Lo que se tocó se marca al instante (mientras el juego responde, sobre todo en pareja) */
+.lv-carta.tocada, .lv-sobre.tocada { outline: 3px solid #fff; scale: 1.05; }
+.lv-capa.enviado .lv-carta:not(.tocada) { opacity: 0.6; }

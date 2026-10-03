@@ -12,7 +12,7 @@ import { cargarIconos } from './iconos';
 import { Interfaz, type Acciones } from './interfaz';
 import { CanalLavado, Espejo, aplicarInventario, inventarioDe, tomarFoto, type ConfigPartida, type MensajeLavado } from './linea';
 import { Menu } from './menu';
-import { Motor, VEL_JUGADOR, type OpcionesJugador } from './motor';
+import { Motor, VEL_JUGADOR, xpPara, type OpcionesJugador } from './motor';
 import { cartasDe, SECRETO_LOGRO, secretoAbierto, sumarPartida, type ProgresoLavado, type ResumenPartida } from './progreso';
 import { musicaLavado, sonarEfecto } from './sonidos';
 import { botPaso } from './bot';
@@ -317,16 +317,20 @@ export class Lavado {
     const yoJ = m.jug[yo];
     // Lo que hace este celular cuando toca algo (local o se le pide al anfitrión)
     const pedir = (msg: MensajeLavado) => c?.mandar(msg);
+    const pedirVarias = (msg: MensajeLavado) => {
+      for (const d of [0, 300, 900]) setTimeout(() => pedir(msg), d);
+    };
     /** Pausas propias mandadas y la última que llegó del otro. */
     let nPausa = 0, nPausaOtro = 0;
     const local = papel !== 'invitado';
     const acciones: Acciones = {
-      escoger: (k) => (local ? m.escoger(yo, k) : pedir({ t: 'escoger', id: idPartida, k })),
-      tirar: () => (local ? m.tirarCartas(yo) : pedir({ t: 'tirar', id: idPartida })),
-      saltar: () => (local ? m.saltarCartas(yo) : pedir({ t: 'saltar', id: idPartida })),
-      vetar: (k) => (local ? m.vetar(yo, k) : pedir({ t: 'vetar', id: idPartida, k })),
-      cerrarCofre: () => (local ? m.cerrarCofre(yo) : pedir({ t: 'cofre', id: idPartida })),
-      escogerCarta: (cc) => (local ? m.escogerCarta(yo, cc) : pedir({ t: 'carta', id: idPartida, c: cc })),
+      // (el invitado lo repite por si la red se come uno: con el número de acciones, el anfitrión lo cuenta una vez)
+      escoger: (k, n) => (local ? m.escoger(yo, k, n) : pedirVarias({ t: 'escoger', id: idPartida, k, n })),
+      tirar: (n) => (local ? m.tirarCartas(yo, n) : pedirVarias({ t: 'tirar', id: idPartida, n })),
+      saltar: (n) => (local ? m.saltarCartas(yo, n) : pedirVarias({ t: 'saltar', id: idPartida, n })),
+      vetar: (k, n) => (local ? m.vetar(yo, k, n) : pedirVarias({ t: 'vetar', id: idPartida, k, n })),
+      cerrarCofre: (n) => (local ? m.cerrarCofre(yo, n) : pedirVarias({ t: 'cofre', id: idPartida, n })),
+      escogerCarta: (cc, n) => (local ? m.escogerCarta(yo, cc, n) : pedirVarias({ t: 'carta', id: idPartida, c: cc, n })),
       pausa: (si) => {
         pausado = si;
         ui.mostrarPausa(m, si, musicaLavado.muda, silenciado(), numeros);
@@ -340,7 +344,7 @@ export class Lavado {
       retirarse: () => {
         pausado = false;
         ui.mostrarPausa(m, false, false, false, numeros);
-        if (papel === 'invitado') pedir({ t: 'fin', id: idPartida, retiro: true });
+        if (papel === 'invitado') pedirVarias({ t: 'fin', id: idPartida, retiro: true });
         else m.terminar(true);
       },
       musica: () => musicaLavado.alternar(),
@@ -491,22 +495,22 @@ export class Lavado {
             break;
           }
           case 'escoger':
-            if (papel === 'anfitrion') m.escoger(otroI, msg.k);
+            if (papel === 'anfitrion') m.escoger(otroI, msg.k, msg.n);
             break;
           case 'tirar':
-            if (papel === 'anfitrion') m.tirarCartas(otroI);
+            if (papel === 'anfitrion') m.tirarCartas(otroI, msg.n);
             break;
           case 'saltar':
-            if (papel === 'anfitrion') m.saltarCartas(otroI);
+            if (papel === 'anfitrion') m.saltarCartas(otroI, msg.n);
             break;
           case 'vetar':
-            if (papel === 'anfitrion') m.vetar(otroI, msg.k);
+            if (papel === 'anfitrion') m.vetar(otroI, msg.k, msg.n);
             break;
           case 'cofre':
-            if (papel === 'anfitrion') m.cerrarCofre(otroI);
+            if (papel === 'anfitrion') m.cerrarCofre(otroI, msg.n);
             break;
           case 'carta':
-            if (papel === 'anfitrion') m.escogerCarta(otroI, msg.c);
+            if (papel === 'anfitrion') m.escogerCarta(otroI, msg.c, msg.n);
             break;
           case 'pausa':
             if (msg.n !== undefined) {
@@ -725,6 +729,10 @@ export class Lavado {
       case 'xp':
         m.xp += v;
         break;
+      case 'subir':
+        // Justo lo que falta para subir un nivel
+        m.xp = Math.max(m.xp, xpPara(m.nivel));
+        break;
       case 'cofre':
         m.soltar('cofre', j.x + 30, j.y, v || 2);
         break;
@@ -763,7 +771,10 @@ export class Lavado {
     }
     return {
       t: m.t, nivel: m.nivel, enemigos: m.nVivos, eliminados: m.eliminados, vida: j.vida, calidad: this.dib?.calidad, pausa: m.pausa,
-      jug: m.jug.map((q) => ({ x: Math.round(q.x), y: Math.round(q.y), caido: q.caido, opciones: !!q.opciones, armas: q.armas.length })),
+      jug: m.jug.map((q) => ({
+        x: Math.round(q.x), y: Math.round(q.y), caido: q.caido, opciones: !!q.opciones, armas: q.armas.length,
+        cofre: !!q.cofre, carta: !!q.cartaOpciones, pend: q.nivelesPend + q.cofresPend.length, acciones: q.acciones,
+      })),
       fin: m.fin,
     };
   }

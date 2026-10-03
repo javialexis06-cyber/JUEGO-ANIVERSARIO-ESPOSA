@@ -260,6 +260,8 @@ export class Jugador {
   usadosTirar = 0;
   usadosSaltar = 0;
   usadosVetar = 0;
+  /** Cuántas veces ha escogido algo (cartas, cofres, cartas de amor): un toque viejo o repetido no cuenta dos veces. */
+  acciones = 0;
   vetadas = new Set<string>();
   opciones: Opcion[] | null = null;
   nivelesPend = 0;
@@ -405,7 +407,11 @@ export class Motor {
       j.vida = j.vidaMax;
     }
     this.tTanda = 0.5;
+    this.tGrito = 1.2;
   }
+
+  /** Cuándo se dice la habilidad de cada disfraz al empezar. */
+  private tGrito = 0;
 
   // ------------------------------------------------------------------------------------------------- Efectos
   emitir(tipo: TipoEfecto, x: number, y: number, c = 0, d = 0, e = 0, f = 0, t = '') {
@@ -421,8 +427,18 @@ export class Motor {
     ef.t = t;
   }
 
-  aviso(t: string) {
-    this.emitir('aviso', 0, 0, 0, 0, 0, 0, t);
+  /** Un aviso en pantalla (`de`: solo para ese jugador; si no, para los dos). */
+  aviso(t: string, de = -1) {
+    this.emitir('aviso', 0, 0, de + 1, 0, 0, 0, t);
+  }
+
+  /** ¿La habilidad del disfraz crece justo en este nivel? (las de cada nivel se avisan de 10 en 10) */
+  private crecioEn(j: Jugador, n: number) {
+    return j.disfraz.crece.some((c) => {
+      const desde = c.desde ?? c.cada;
+      if (n < desde || n > c.hasta || (n - desde) % c.cada !== 0) return false;
+      return c.cada > 1 || n % 10 === 0;
+    });
   }
 
   // ------------------------------------------------------------------------------------------------- Estadísticas
@@ -536,10 +552,17 @@ export class Motor {
   }
 
   /** Lo que escogió al subir de nivel. */
-  escoger(ji: number, k: number) {
+  /** ¿Este toque es de lo que está en pantalla ahora? (`n` = las acciones que llevaba cuando se vio). */
+  private vigente(j: Jugador | undefined, n?: number): j is Jugador {
+    return !!j && (n === undefined || n === j.acciones);
+  }
+
+  escoger(ji: number, k: number, n?: number) {
     const j = this.jug[ji];
-    const o = j?.opciones?.[k];
-    if (!j || !o) return;
+    if (!this.vigente(j, n)) return;
+    const o = j.opciones?.[k];
+    if (!o) return;
+    j.acciones++;
     if (o.tipo === 'arma') this.darArma(j, o.id as IdArma);
     else if (o.tipo === 'pasiva') this.darPasiva(j, o.id as IdPasiva);
     else if (o.tipo === 'arepa') this.curar(j, 30);
@@ -548,25 +571,29 @@ export class Motor {
     this.siguienteOpcion(j);
   }
 
-  tirarCartas(ji: number) {
+  tirarCartas(ji: number, n?: number) {
     const j = this.jug[ji];
-    if (!j?.opciones || j.quedanTirar <= 0) return;
+    if (!this.vigente(j, n) || !j.opciones || j.quedanTirar <= 0) return;
+    j.acciones++;
     j.usadosTirar++;
     j.opciones = this.generarOpciones(j);
   }
 
-  saltarCartas(ji: number) {
+  saltarCartas(ji: number, n?: number) {
     const j = this.jug[ji];
-    if (!j?.opciones || j.quedanSaltar <= 0) return;
+    if (!this.vigente(j, n) || !j.opciones || j.quedanSaltar <= 0) return;
+    j.acciones++;
     j.usadosSaltar++;
     // Como en el original: saltar no regala nada (pero tampoco se pierde la experiencia)
     this.siguienteOpcion(j);
   }
 
-  vetar(ji: number, k: number) {
+  vetar(ji: number, k: number, n?: number) {
     const j = this.jug[ji];
-    const o = j?.opciones?.[k];
-    if (!j || !o || j.quedanVetar <= 0 || (o.tipo !== 'arma' && o.tipo !== 'pasiva')) return;
+    if (!this.vigente(j, n)) return;
+    const o = j.opciones?.[k];
+    if (!o || j.quedanVetar <= 0 || (o.tipo !== 'arma' && o.tipo !== 'pasiva')) return;
+    j.acciones++;
     j.usadosVetar++;
     j.vetadas.add(o.id);
     j.opciones = this.generarOpciones(j);
@@ -652,9 +679,10 @@ export class Motor {
     this.emitir('cofre', j.x, j.y, j.i, n);
   }
 
-  cerrarCofre(ji: number) {
+  cerrarCofre(ji: number, n?: number) {
     const j = this.jug[ji];
-    if (!j) return;
+    if (!this.vigente(j, n) || !j.cofre) return;
+    j.acciones++;
     j.cofre = null;
     const q = j.cofresPend.shift();
     if (q !== undefined) this.abrirCofreOCarta(j, q);
@@ -674,9 +702,10 @@ export class Motor {
     this.abrirCofre(j, calidad);
   }
 
-  escogerCarta(ji: number, id: IdCarta | null) {
+  escogerCarta(ji: number, id: IdCarta | null, n?: number) {
     const j = this.jug[ji];
-    if (!j?.cartaOpciones) return;
+    if (!this.vigente(j, n) || !j.cartaOpciones) return;
+    j.acciones++;
     if (id && j.cartaOpciones.includes(id) && !j.cartas.includes(id)) {
       j.cartas.push(id);
       this.aviso(`💌 ${CARTAS[id].nombre}`);
@@ -710,6 +739,7 @@ export class Motor {
       if (!j.opciones && !j.cofre && !j.cartaOpciones && j.cofresPend.length) this.abrirCofreOCarta(j, j.cofresPend.shift()!);
     }
     if (this.pausa) return;
+    if (this.tGrito > 0 && (this.tGrito -= dt) <= 0) for (const j of this.jug) this.aviso(j.disfraz.grito, j.i);
     this.tReal += dt;
     const dReloj = dt * (this.apurado ? 2 : 1);
     const minAntes = Math.floor(this.t / 60);
@@ -788,6 +818,7 @@ export class Motor {
       j.quieto = Math.hypot(j.vx, j.vy) > 10 ? 0 : j.quieto + dt;
       // Recuperación (la de la carta de psicología cura el doble)
       if (j.st.recuperacion > 0 && j.vida < j.vidaMax) j.vida = Math.min(j.vidaMax, j.vida + j.st.recuperacion * dt * (j.tieneCarta('psicologia') ? 2 : 1));
+      if (j.arranque > 0 && j.arranque - dt <= 0) this.aviso('🚀 Se acabó el arranque de cohete: ¡a pelear normal!', j.i);
       j.arranque = Math.max(0, j.arranque - dt);
       if (j.aji > 0) {
         j.aji -= dt;
@@ -1623,7 +1654,11 @@ export class Motor {
       this.xp -= xpPara(this.nivel);
       this.nivel++;
       subio = true;
-      for (const j of this.jug) j.nivelesPend++;
+      for (const j of this.jug) {
+        j.nivelesPend++;
+        // La habilidad del disfraz se nota: aviso cuando crece
+        if (j.disfraz.alCrecer && this.crecioEn(j, this.nivel)) this.aviso(j.disfraz.alCrecer, j.i);
+      }
     }
     if (!subio) return;
     this.emitir('nivel', 0, 0, this.nivel);
