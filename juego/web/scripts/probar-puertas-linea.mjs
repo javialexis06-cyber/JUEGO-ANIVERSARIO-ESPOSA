@@ -203,8 +203,8 @@ async function iguales(texto) {
   await tocar(ella, 'abrigo');
   await ella.waitForFunction(() => window.__puertas.visible('llave'), null, { timeout: 15000 }).catch(() => {});
   revisar(await ella.evaluate(() => window.__puertas.visible('llave')), 'La llave que soltó el abrigo se ve donde Ella');
-  await esperar(500);
-  console.log(`  (la llave en la pantalla de Ella: ${JSON.stringify(await donde(ella, 'llave'))})`);
+  // (en las pruebas sin pantalla los cuadros van lentos: se espera a que la llave termine de caer donde Ella)
+  await ella.waitForFunction(() => window.__puertas.posicion('llave')[1] < 0.05, null, { timeout: 60000, polling: 300 }).catch(() => {});
   await tocar(ella, 'llave');
   await ella.waitForFunction(() => window.__puertas.pareja()?.items.includes('llave'), null, { timeout: 15000 }).catch(() => {});
   revisar(await el.evaluate(() => window.__puertas.pareja()?.items.includes('llave')), 'La llave que recogió Ella está en el inventario de Él (compartido)');
@@ -291,9 +291,10 @@ async function iguales(texto) {
       await esperar(260);
     }
   await ella.screenshot({ path: `${carpeta}/6-candado-ella.png` });
-  await el.waitForFunction(() => window.__puertas.visible('llave'), null, { timeout: 20000 }).catch(() => {});
+  await el.waitForFunction(() => window.__puertas.visible('llave'), null, { timeout: 60000 }).catch(() => {});
   revisar(await el.evaluate(() => window.__puertas.visible('llave')), 'Ella abrió la cajita con 4-1-7 y la llave apareció donde Él');
-  await esperar(1200);
+  // (que la puertica de la cajita termine de abrirse donde Ella)
+  await ella.waitForFunction(() => window.__puertas.giro('puertita') < -1.8, null, { timeout: 60000, polling: 300 }).catch(() => {});
   await tocar(ella, 'llave');
   await ella.waitForFunction(() => window.__puertas.pareja()?.items.includes('llave'), null, { timeout: 15000 }).catch(() => {});
   await iguales('Puerta 8 con la llave en el bolsillo: los dos ven lo mismo');

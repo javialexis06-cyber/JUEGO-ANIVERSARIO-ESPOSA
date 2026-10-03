@@ -1224,6 +1224,8 @@ const probador = () => new ProbadorReal(() => escena.escena, escena, entrada, pa
     return true;
   },
   luz: () => escena.nivelLuz,
+  tiempo: () => escena.t,
+  giro: (nombre: string) => probador().obj(nombre).rotation.y,
   /** Cuántas cosas hay regadas y cuántas se rompieron (pruebas). */
   desorden: () => ({
     cosas: ctx?._desorden?.cuerpos.length ?? 0,
