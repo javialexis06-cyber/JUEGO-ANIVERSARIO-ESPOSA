@@ -53,10 +53,8 @@ const PASOS: Paso[] = [
     titulo: '¡Subiste de nivel!',
     texto: () => 'Escoge una mejora: un arma nueva, subirle el nivel a una que ya tienes o una pasiva que te ayuda en todo.',
     lado: true,
-    listo: (t, _m, j) => {
-      if (j.opciones) t.vioNivel = true;
-      return t.vioNivel && !j.opciones && !j.nivelesPend;
-    },
+    // (puede que ya la haya escogido antes de que saliera este globo: basta con haber subido y ya no tener cartas)
+    listo: (_t, m, j) => m.nivel >= 2 && !j.opciones && !j.nivelesPend,
   },
   {
     titulo: 'Los cofres',
