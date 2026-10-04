@@ -386,7 +386,19 @@ def malla_sdf(f, bmin, bmax, voxel=0.02, tris=None, suavizar=1, chunk=300000):
     V, F, _, _ = marching_cubes(vol, 0.0, spacing=(voxel, voxel, voxel))
     V = V + bmin
     F = F.astype(np.int64)  # (skimage ya las deja hacia afuera: lo negativo es adentro)
+    V, F = soldar(V, F)
     return reducir(V, F, tris, suavizar)
+
+
+def soldar(V, F, tol=1e-7):
+    """Une vértices repetidos (marching cubes los duplica en caras alineadas con la rejilla y la reducción no
+    puede colapsar esas costuras) y quita los triángulos que quedan degenerados."""
+    _, idx, inv = np.unique(np.round(V / tol).astype(np.int64), axis=0, return_index=True, return_inverse=True)
+    inv = inv.reshape(-1)
+    V2 = V[idx]
+    F2 = inv[F]
+    ok = (F2[:, 0] != F2[:, 1]) & (F2[:, 1] != F2[:, 2]) & (F2[:, 0] != F2[:, 2])
+    return V2, F2[ok]
 
 
 def malla_obj(obj, borrar=True):
@@ -565,8 +577,8 @@ MATERIALES = {
     'sangre': (0.18, 0.0, None, 0.0, False),
     'fuego': (0.6, 0.0, '#FF9A30', 2.2, False),
     'brasa': (0.8, 0.0, '#FF4A12', 1.6, False),
-    'lava': (0.5, 0.0, '#FF5A14', 2.2, False),
-    'cristal_sangre': (0.18, 0.0, '#FF1A2E', 0.9, False),
+    'lava': (0.5, 0.0, '#FF5A14', 1.4, False),
+    'cristal_sangre': (0.18, 0.0, '#FF1A2E', 0.6, False),
     'hierro_negro': (0.35, 0.8, '#5A6CFF', 0.12, False),
     'oro_veta': (0.3, 0.95, '#FFB830', 0.35, False),
     'alma': (0.3, 0.0, '#7FC8FF', 1.2, False),

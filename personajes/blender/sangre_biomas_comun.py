@@ -740,3 +740,8 @@ def piedritas_techo(pieza, semilla, pintor, n=3, tam=(0.025, 0.055), alto=1.45, 
                                R=B.rot_euler(rng.uniform(-0.3, 0.3), rng.uniform(-0.3, 0.3), rng.uniform(0, 6.28))), r * 0.15, 1 / r, 2, semilla + k)
         m = r * 1.6
         pieza.sdf(f, c - m, c + m, r / 5, 40, mat, pintor)
+
+
+def interior_piso(P, a=0.85, b=0.6):
+    """1 en el centro de una baldosa de piso de 2 × 2 m, 0 cerca de su borde."""
+    return suave(a, b, np.maximum(np.abs(P[:, 0]), np.abs(P[:, 1])))
