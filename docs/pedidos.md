@@ -27,9 +27,13 @@ probado y subido.
 - La lista de mejoras solo muestra las que están desbloqueadas (aunque no alcance la plata).
 
 **Lavarse la cara (Vampire Survivors)**
-- El chorro de agua menos invasivo: más translúcido.
-- Ataque manual o automático a escoger en todos los personajes; los de área (perro lanudo, bombero, astronauta)
-  siguen automáticos.
+- (En obra con las salas) El chorro de agua más translúcido; ataque manual o automático a escoger (los de área
+  —perro lanudo, bombero, astronauta— siguen automáticos); tutorial.
+- Un **panel de combinaciones**: ver qué tengo y con qué se combina para evolucionar y hacer combos (como la guía
+  de evoluciones del original), también a mitad de partida.
+- **Logros y recompensas por avanzar con cada personaje/disfraz** (maestría de cada uno).
+- Seguir mejorando el minijuego con lo mejor de otros juegos del género, **sin chocar con Sangre y Ceniza** (que se
+  queda con lo oscuro, las cuevas excavables, las expediciones por etapas y las clases serias).
 
 ## Después
 - Sótano tétrico con contraseña y juego de terror estilo *No, I'm Not a Human* (estudio del género, historia
