@@ -203,6 +203,8 @@ export interface Casa {
   retrete?: Partial<Record<Rol, number>>;
   /** El retrete espacial de cada uno: rollitos, mejoras, retretes/estelas/cascos, misiones y récords (metros). */
   cohete?: Partial<Record<Rol, ProgresoCohete>>;
+  /** Cuándo descubrió cada uno el retrete espacial (después de eso puede volar cada vez que se sienta en el inodoro). */
+  coheteVisto?: Partial<Record<Rol, number>>;
   /** Récords de lavarse la cara: los gérmenes que más ha eliminado cada uno en una lavada. */
   lavado?: Partial<Record<Rol, number>>;
   /** Lavarse la cara: lo de cada uno (gotas doradas, tienda de poderes, disfraces, logros, colección y récords). */
@@ -327,7 +329,7 @@ export function casaNueva(): Casa {
  *  conservan). Al agregar un campo a `Casa`, TypeScript obliga a ponerlo aquí también. */
 const CAMPOS_CASA = {
   monedas: 1, inventario: 1, deco: 1, notas: 1, fechas: 1, regalos: 1, voces: 1, aniversario: 1, diario: 1, retrete: 1, lavado: 1,
-  ampliaciones: 1, bebe: 1, logros: 1, pintura: 1, perro: 1, cocina: 1, lavadoProgreso: 1, cohete: 1,
+  ampliaciones: 1, bebe: 1, logros: 1, pintura: 1, perro: 1, cocina: 1, lavadoProgreso: 1, cohete: 1, coheteVisto: 1,
 } satisfies Record<keyof Casa, 1>;
 
 /** La casa compartida siempre con la forma esperada (y sin valores imposibles como monedas negativas). */
@@ -377,6 +379,13 @@ export function normalizarCasa(c: unknown): Casa {
       : {}),
     ...(esObjeto(c.cohete)
       ? { cohete: Object.fromEntries((['el', 'ella'] as Rol[]).filter((r) => esObjeto(c.cohete[r])).map((r) => [r, normalizarCohete(c.cohete[r])])) }
+      : {}),
+    ...(esObjeto(c.coheteVisto)
+      ? {
+          coheteVisto: Object.fromEntries(
+            (['el', 'ella'] as Rol[]).filter((r) => typeof c.coheteVisto[r] === 'number' && Number.isFinite(c.coheteVisto[r]) && c.coheteVisto[r] > 0).map((r) => [r, Math.floor(c.coheteVisto[r])]),
+          ),
+        }
       : {}),
     ...(esObjeto(c.lavado)
       ? {

@@ -37,7 +37,7 @@ import {
   sumar, tieneCuarto,
 } from './modelo';
 import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, salaTrofeos, TROFEOS } from './trofeos';
-import { mejorDistancia, type ProgresoCohete } from './cohete/datos';
+import { mejorDistancia, monedasVuelo, TOPE_MONEDAS_DIA, yaDescubrio, type ProgresoCohete } from './cohete/datos';
 import { ranurasDe } from './ropa';
 import {
   configLinea, guardarConfigLinea, olvidarSesion, PersonajeOcupado, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal,
@@ -502,6 +502,8 @@ async function despertar(auto = false) {
 // El retrete espacial: la leche (Ella) o el picante (Él) mandan el inodoro al espacio
 // ---------------------------------------------------------------------------
 let enCohete = false;
+/** Sentado en el inodoro con el retrete espacial ya descubierto (sale el botón «🚀 Volar en el retrete»). */
+let sentadoParaVolar = false;
 /** Mientras se juega en el espacio no se dibuja la casa (ahorra batería). */
 let pausaCasa = false;
 const pausa = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -528,11 +530,46 @@ async function irAlBano() {
     const m = mascotas[yo];
     if (!(await esperarQue(() => m.escenaActual.split('|')[1] === 'inodoro', 25000))) return;
     await pausa(3200);
+    // Ya lo descubrió: de aquí en adelante puede volar cada vez que se siente en el inodoro
+    if (!yaDescubrio(s.casa, yo)) void cambiarCasa((c) => (c.coheteVisto = { ...(c.coheteVisto ?? {}), [yo]: Date.now() }));
     await despegar(m);
     await volarCohete(m);
   } finally {
     enCohete = false;
     pausaCasa = false;
+  }
+}
+
+/** ¿Está sentado en el inodoro (o junto al retrete en miniatura del cuarto de juegos) y ya sabe volar? */
+function puedeVolar(donde: 'bano' | 'juegos' = 'bano') {
+  if (!s || enCohete || dormido(yo) || s.personajes[yo].apuro || !yaDescubrio(s.casa, yo)) return false;
+  const a = s.personajes[yo].actividad;
+  const escena = mascotas[yo]?.escenaActual.split('|') ?? [];
+  if (donde === 'bano') return a.accion === 'inodoro' && (a.hasta ?? 0) > Date.now() && escena[1] === 'inodoro';
+  return a.accion === 'usar' && a.item === 'cohete' && escena[1] === 'usar' && escena[2] === 'cohete';
+}
+
+/** «🚀 Volar en el retrete»: ya descubierto, sale del inodoro con un despegue corto (sin comer nada) y a jugar. */
+async function volarEnRetrete(donde: 'bano' | 'juegos') {
+  if (!s || enCohete || !yaDescubrio(s.casa, yo)) return;
+  cerrarHoja();
+  enCohete = true;
+  void import('./cohete').then((c) => c.precargarCohete());
+  pintarAcciones();
+  try {
+    const m = mascotas[yo];
+    // Desde el cuarto de juegos camina primero al retrete en miniatura
+    if (donde === 'juegos' && !puedeVolar('juegos')) {
+      await hacer('usar', 'juegos', 40, {}, 'cohete');
+      await esperarQue(() => m.escenaActual.split('|')[2] === 'cohete', 15000);
+      await pausa(700);
+    }
+    await despegar(m, true, PLATAFORMA[donde]);
+    await volarCohete(m, true, PLATAFORMA[donde]);
+  } finally {
+    enCohete = false;
+    pausaCasa = false;
+    pintarAcciones();
   }
 }
 
@@ -545,20 +582,41 @@ function opcionesCohete() {
     progreso: s!.casa.cohete?.[yo],
     recordPareja: mejorDistancia(s!.casa.cohete, s!.casa.retrete, otro(yo)),
     guardar: (p: ProgresoCohete) => cambiarCasa((c) => (c.cohete = { ...(c.cohete ?? {}), [yo]: p })),
+    premio: premioVuelo,
   };
 }
 
-/** El vuelo: la casa se deja de dibujar mientras tanto y al volver cae al baño con el ¡KABOOM! */
-async function volarCohete(m: Mascota | null) {
+/**
+ * Las monedas de la casa por un vuelo (1 cada 15 s, hasta 3) apenas aterriza. Como ahora se puede volver a volar sin
+ * salir, hay un tope por persona y por día (queda anotado en la casa: no se repite en el otro celular).
+ */
+async function premioVuelo(segundos: number) {
+  const quiere = monedasVuelo(segundos);
+  const clave = `${hoy()}|${yo}|retrete`;
+  let dadas = 0, tope = false;
+  if (!s || !quiere) return { monedas: 0, tope: false };
+  const ok = await cambiarCasa((c) => {
+    const ya = c.diario[clave] ?? 0;
+    dadas = Math.max(0, Math.min(quiere, TOPE_MONEDAS_DIA - ya));
+    tope = ya + dadas >= TOPE_MONEDAS_DIA;
+    if (!dadas) return;
+    c.diario[clave] = ya + dadas;
+    c.monedas += dadas;
+  });
+  return ok ? { monedas: dadas, tope } : { monedas: 0, tope: false };
+}
+
+/** El vuelo: la casa se deja de dibujar mientras tanto y al volver cae al baño (o al cuarto de juegos) con el ¡KABOOM! */
+async function volarCohete(m: Mascota | null, corto = false, pl: Plataforma = PLATAFORMA.bano) {
   if (!s) return;
   const { jugarCohete } = await import('./cohete');
   pausaCasa = true;
-  const r = await jugarCohete(opcionesCohete());
+  const r = await jugarCohete({ ...opcionesCohete(), corto });
   pausaCasa = false;
   // Con la tele prendida, la música de la casa sigue callada
   sonido.musica.callar(!!tele && tele.estado !== 'apagada');
-  if (m) await aterrizar(m);
-  await terminarCohete(r.segundos);
+  if (m) await aterrizar(m, pl);
+  await terminarCohete(r);
 }
 
 /** La tienda del retrete sola (desde el retrete en miniatura del cuarto de juegos). */
@@ -590,22 +648,31 @@ function animar(seg: number, fn: (k: number) => void) {
   });
 }
 
-/** Tiembla, echa humo y sale disparado por el techo con el inodoro. */
-async function despegar(m: Mascota) {
-  verCuarto('bano');
-  const inodoro = casa3d.inodoro();
-  const y0 = inodoro?.position.y ?? 0;
-  m.frase = '¡¿Qué está pasando?!';
-  sonido.rumor(1.4, 160, 0.1, 0, 0.6, 80);
-  await animar(1.3, (k) => {
+/** De dónde despega: el inodoro del baño o el retrete en miniatura del cuarto de juegos. */
+type Plataforma = { cuarto: Cuarto; obj: () => THREE.Object3D | null };
+const PLATAFORMA: Record<'bano' | 'juegos', Plataforma> = {
+  bano: { cuarto: 'bano', obj: () => casa3d.inodoro() },
+  juegos: { cuarto: 'juegos', obj: () => casa3d.objeto('juegos', 'inodoro_cohete') },
+};
+/** La altura de siempre del inodoro (para volver a ponerlo en su sitio al aterrizar). */
+const alturaBase = (o: THREE.Object3D) => (o.userData.alturaBase ??= o.position.y) as number;
+
+/** Tiembla, echa humo y sale disparado por el techo con el inodoro (corto: ya sabe lo que viene). */
+async function despegar(m: Mascota, corto = false, pl: Plataforma = PLATAFORMA.bano) {
+  verCuarto(pl.cuarto);
+  const inodoro = pl.obj();
+  const y0 = inodoro ? alturaBase(inodoro) : 0;
+  m.frase = corto ? (yo === 'el' ? '¡Agárrense, que me voy!' : '¡Allá voy otra vez!') : '¡¿Qué está pasando?!';
+  sonido.rumor(corto ? 0.7 : 1.4, 160, 0.1, 0, 0.6, 80);
+  await animar(corto ? 0.6 : 1.3, (k) => {
     m.temblor = 0.02 + k * 0.05;
     if (inodoro) inodoro.rotation.z = (Math.random() - 0.5) * 0.08 * k;
   });
-  m.frase = '¡AAAAAH!';
-  sonido.nota(90, 1.4, 0, 'sawtooth', 0.06, 420);
-  sonido.rumor(1.4, 400, 0.14, 0, 0.5, 2000);
+  m.frase = corto ? '¡3, 2, 1… DESPEGUE!' : '¡AAAAAH!';
+  sonido.nota(90, corto ? 1 : 1.4, 0, 'sawtooth', 0.06, 420);
+  sonido.rumor(corto ? 1 : 1.4, 400, 0.14, 0, 0.5, 2000);
   explosion(inodoro, 'humo');
-  await animar(1.4, (k) => {
+  await animar(corto ? 0.9 : 1.4, (k) => {
     const h = k * k * 9;
     m.vuelo = h;
     m.temblor = 0.04 * (1 - k);
@@ -615,19 +682,20 @@ async function despegar(m: Mascota) {
   m.frase = null;
 }
 
-/** Cae del cielo con el inodoro y el baño explota. */
-async function aterrizar(m: Mascota) {
-  verCuarto('bano');
-  const inodoro = casa3d.inodoro();
+/** Cae del cielo con el inodoro y el baño (o el cuarto de juegos) explota. */
+async function aterrizar(m: Mascota, pl: Plataforma = PLATAFORMA.bano) {
+  verCuarto(pl.cuarto);
+  const inodoro = pl.obj();
+  const y0 = inodoro ? alturaBase(inodoro) : 0;
   m.frase = '¡Me voooy!';
   await animar(0.8, (k) => {
     const h = (1 - k * k) * 9;
     m.vuelo = h;
-    if (inodoro) inodoro.position.y = h;
+    if (inodoro) inodoro.position.y = y0 + h;
   });
   m.vuelo = 0;
   if (inodoro) {
-    inodoro.position.y = 0;
+    inodoro.position.y = y0;
     inodoro.rotation.z = 0;
   }
   explosion(inodoro, 'kaboom');
@@ -654,17 +722,16 @@ function explosion(obj: THREE.Object3D | null, tipo: 'humo' | 'kaboom' | 'agua')
   setTimeout(() => e.remove(), 1800);
 }
 
-async function terminarCohete(seg: number) {
+async function terminarCohete(r: import('./cohete').Resultado) {
   if (!s) return;
-  // El récord (en metros), los rollitos y las misiones ya los guardó el vuelo; la casa da sus monedas escasas
-  const premio = Math.min(3, Math.floor(seg / 15));
-  if (premio) await cambiarCasa((c) => (c.monedas += premio));
+  // El récord (en metros), los rollitos, las misiones y las monedas escasas de la casa ya los guardó cada vuelo
+  const premio = r.monedas;
   // Ya fue al baño: se le quitan las ganas y se levanta del inodoro
   const ahora = Date.now();
   const e = { ...est(yo), actividad: { tipo: 'nada' as const, desde: ahora }, visto: ahora };
   delete e.apuro;
   await guardarYo(e);
-  if (premio) setTimeout(() => toast(`+${premio} ${premio === 1 ? 'moneda' : 'monedas'} para la casa por el viaje espacial`, 3000), 1400);
+  if (premio) setTimeout(() => toast(`+${premio} ${premio === 1 ? 'moneda' : 'monedas'} para la casa por ${r.vuelos > 1 ? `los ${r.vuelos} viajes espaciales` : 'el viaje espacial'}`, 3000), 1400);
   const nuevos = await premiosTrofeos();
   nuevos.forEach((m, i) => setTimeout(() => toast(m, 3400), 4000 + i * 3600));
 }
@@ -679,9 +746,12 @@ function hojaRetrete() {
     const m = q === 'el' ? a : b;
     return `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${m ? `${m.toLocaleString('es-CO')} m` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
   };
+  const sabe = yaDescubrio(c, yo);
   const html = `<ol class="retrete-records">${fila('el')}${fila('ella')}</ol>
-    <p class="nota-hoja">La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién vuela más lejos?</p>
-    <button class="boton" data-accion-hoja="tienda-retrete">Tienda del retrete</button>`;
+    <p class="nota-hoja">${sabe
+      ? 'Ya conoces el secreto: cada vez que te sientes en el inodoro (o aquí, en el retrete en miniatura) puedes salir volando. ¿Quién vuela más lejos?'
+      : 'La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién vuela más lejos?'}</p>
+    <div class="fila-botones">${sabe ? '<button class="boton boton-tomate" data-accion-hoja="volar-juegos">🚀 Volar en el retrete</button>' : ''}<button class="boton" data-accion-hoja="tienda-retrete">Tienda del retrete</button></div>`;
   abrirHoja('Retrete espacial', html, { saldo: c.monedas });
 }
 
@@ -1916,10 +1986,12 @@ function botonesCuarto(): Boton[] {
       break;
     case 'bano':
       b.push(
-        { id: 'banar', texto: 'Bañarse', icono: ico('tina'), principal: !s.personajes[yo].apuro },
+        { id: 'banar', texto: 'Bañarse', icono: ico('tina'), principal: !s.personajes[yo].apuro && !sentadoParaVolar },
         { id: 'lavar', texto: 'Lavarse', icono: ico('lavar') },
         { id: 'inodoro', texto: 'Ir al baño', icono: ico('inodoro'), principal: !!s.personajes[yo].apuro },
       );
+      // Ya sentado en el inodoro (y con el secreto descubierto): sale la opción de volar
+      if (sentadoParaVolar) b.unshift({ id: 'volar-bano', texto: 'Volar en el retrete', icono: '<span class="ico ico-emoji">🚀</span>', principal: true });
       break;
     case 'cuarto':
       b.push({ id: 'dormir', texto: 'Dormir', icono: ico('luna'), principal: true }, { id: 'closet', texto: 'Cambiarse', icono: ico('closet') });
@@ -2094,6 +2166,10 @@ async function alAccion(id: string) {
       return hojaRetrete();
     case 'tienda-retrete':
       return abrirTiendaRetrete();
+    case 'volar-bano':
+      return volarEnRetrete('bano');
+    case 'volar-juegos':
+      return volarEnRetrete('juegos');
     case 'trofeos':
       return hojaTrofeos();
     case 'admirar':
@@ -3232,6 +3308,12 @@ function revisar() {
   guardarVestidos();
   // El botón de la pareja aparece y se va en vivo cuando uno de los dos entra o sale del cuarto
   const j = juntos();
+  // «🚀 Volar en el retrete» sale apenas se sienta en el inodoro (y se va al pararse)
+  const v = puedeVolar('bano');
+  if (v !== sentadoParaVolar) {
+    sentadoParaVolar = v;
+    pintarAcciones();
+  }
   if (j !== estabanJuntos) {
     estabanJuntos = j;
     pintarAcciones();
@@ -3292,6 +3374,9 @@ function efectos() {
   lavado: s?.casa.lavado,
   lavadoProgreso: s?.casa.lavadoProgreso,
   cocina: s?.casa.cocina,
+  cohete: s?.casa.cohete,
+  coheteVisto: s?.casa.coheteVisto,
+  diario: s?.casa.diario,
 });
 /** Progreso de prueba en un restaurante (para ver rangos altos). */
 (window as any).__cocinaXp = (receta: RecetaId, xp: number, dia = 6, propinas = 300) =>

@@ -507,6 +507,11 @@ export class Escenario {
     }
   }
 
+  /** Otro vuelo desde el barrio: los planetas que iban pasando se esconden (cada uno vuelve a salir en su tramo). */
+  reiniciar() {
+    for (const cuerpo of this.cuerpos) if (cuerpo !== this.tierra) cuerpo.grupo.visible = false;
+  }
+
   liberar() {
     this.grupo.traverse((o) => {
       const m = o as THREE.Mesh;

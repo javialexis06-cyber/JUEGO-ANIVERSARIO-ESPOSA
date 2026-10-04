@@ -483,3 +483,20 @@ export function segundosAMetros(s: number) {
 export function mejorDistancia(cohete: Partial<Record<Rol, ProgresoCohete>> | undefined, segundos: Partial<Record<Rol, number>> | undefined, r: Rol) {
   return Math.max(cohete?.[r]?.mejor ?? 0, segundosAMetros(Math.max(0, segundos?.[r] ?? 0)));
 }
+
+/**
+ * ¿Ya descubrió el retrete espacial? (la primera vez hay que comerse la leche o el picante; después vuela cada vez que
+ * se sienta en el inodoro). Quien ya tenga récord, vuelos o compras del retrete cuenta como que ya lo descubrió.
+ */
+export function yaDescubrio(
+  c: { cohete?: Partial<Record<Rol, ProgresoCohete>>; retrete?: Partial<Record<Rol, number>>; coheteVisto?: Partial<Record<Rol, number>> },
+  r: Rol,
+) {
+  const p = c.cohete?.[r];
+  return !!c.coheteVisto?.[r] || (c.retrete?.[r] ?? 0) > 0 || !!p && (p.vuelos > 0 || p.mejor > 0 || p.ganados > 0 || p.tengo.length > 0);
+}
+
+/** Monedas de la casa que da el retrete por persona y por día (volver a volar no es una mina de oro). */
+export const TOPE_MONEDAS_DIA = 6;
+/** Monedas de la casa por un vuelo: 1 cada 15 s, hasta 3. */
+export const monedasVuelo = (segundos: number) => Math.max(0, Math.min(3, Math.floor(segundos / 15)));

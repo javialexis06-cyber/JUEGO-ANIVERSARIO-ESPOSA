@@ -5,6 +5,12 @@ import { nota } from '../../sonido';
 import { type Mision, type ProgresoCohete, esDeVuelo, premioMision, textoMision } from './datos';
 import type { Rol } from '../modelo';
 
+/** Lo que la casa dio por un vuelo: sus monedas y si ya se llegó al tope del día. */
+export interface PremioCasa {
+  monedas: number;
+  tope: boolean;
+}
+
 export interface DatosResultado {
   metros: number;
   puntaje: number;
@@ -21,6 +27,8 @@ export interface DatosResultado {
   progreso: ProgresoCohete;
   rol: Rol;
   recordPareja: number;
+  /** Monedas de la casa por este vuelo (null mientras la casa responde). */
+  casa: PremioCasa | null;
 }
 
 const mil = (v: number) => Math.round(v).toLocaleString('es-CO');
@@ -33,7 +41,18 @@ const TITULOS = {
 };
 const elegir = <T,>(l: T[]) => l[Math.floor(Math.random() * l.length)];
 
-export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tienda: () => void; casa: () => void }) {
+/** La línea de las monedas de la casa (llega cuando la casa responde). */
+export function pintarPremioCasa(capa: HTMLElement, pc: PremioCasa) {
+  const el = capa.querySelector<HTMLElement>('.cr-casa');
+  if (!el) return;
+  el.hidden = !pc.monedas && !pc.tope;
+  el.classList.toggle('tope', !pc.monedas);
+  el.innerHTML = pc.monedas
+    ? `<i class="cr-moneda"></i>+${pc.monedas} ${pc.monedas === 1 ? 'moneda' : 'monedas'} para la casa${pc.tope ? ' <small>(ya van todas las de hoy)</small>' : ''}`
+    : 'Por hoy el retrete ya dio sus monedas para la casa. ¡Los rollitos sí siguen!';
+}
+
+export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tienda: () => void; casa: () => void; otra: () => void }) {
   capa.querySelector('.cohete-resultado')?.remove();
   const p = d.progreso;
   const titulo = d.record ? elegir(TITULOS.record) : d.metros > 600 ? elegir(TITULOS.bien) : elegir(TITULOS.corto);
@@ -60,7 +79,7 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
   s.className = 'cohete-resultado';
   s.innerHTML = `
     <div class="cr-tarjeta">
-      <header><small>${Math.round(d.segundos)} segundos en el espacio</small><h2>${titulo}</h2></header>
+      <header><small>${Math.round(d.segundos)} ${Math.round(d.segundos) === 1 ? 'segundo' : 'segundos'} en el espacio</small><h2>${titulo}</h2></header>
       <div class="cr-cuerpo">
       <div class="cr-datos">
         <div class="cr-dato distancia"><span>Distancia</span><b data-n="${d.metros}" data-sufijo=" m">0 m</b>${d.record ? '<em class="cr-sello">¡Récord!</em>' : `<small>Récord: ${mil(p.mejor)} m</small>`}</div>
@@ -68,14 +87,17 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
         <div class="cr-dato puntos"><span>Puntaje <em>×${d.mult}</em></span><b data-n="${d.puntaje}">0</b>${d.recordPuntaje ? '<em class="cr-sello">¡Mejor puntaje!</em>' : `<small>Mejor: ${mil(p.mejorPuntaje)}</small>`}</div>
       </div>
       ${pareja}
+      <p class="cr-casa" hidden></p>
       <div class="cr-misiones"><h3>Misiones <small>nivel ${d.nivelAntes + 1} · ×${d.nivelAntes + 1}</small></h3><ul>${misiones}</ul>${subio}</div>
       </div>
       <footer>
-        <button class="cb-boton" data-tienda><i class="ico-rollito"></i> Tienda del retrete <small>${mil(p.rollitos)}</small></button>
-        <button class="cb-boton cb-principal" data-casa>Volver a casa</button>
+        <button class="cb-boton" data-tienda><i class="ico-rollito"></i> Tienda <small>${mil(p.rollitos)}</small></button>
+        <button class="cb-boton" data-casa>Volver a casa</button>
+        <button class="cb-boton cb-principal cr-otra" data-otra>🚀 Volar otra vez</button>
       </footer>
     </div>`;
   capa.append(s);
+  if (d.casa) pintarPremioCasa(capa, d.casa);
   requestAnimationFrame(() => s.classList.add('abierta'));
   // Los números cuentan uno detrás del otro, con su sonidito
   const nums = [...s.querySelectorAll<HTMLElement>('[data-n]')];
@@ -109,15 +131,27 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
     requestAnimationFrame(paso);
   };
   setTimeout(contar, 450);
+  // (un solo toque cuenta: si el dedo rebota no se sale dos veces)
+  let hecho = false;
   s.querySelector('[data-tienda]')!.addEventListener('click', () => {
+    if (hecho) return;
+    hecho = true;
     nota(880, 0.06, 0, 'triangle', 0.05);
     s.classList.remove('abierta');
     setTimeout(() => s.remove(), 250);
     al.tienda();
   });
   s.querySelector('[data-casa]')!.addEventListener('click', () => {
+    if (hecho) return;
+    hecho = true;
     nota(660, 0.08, 0, 'triangle', 0.05);
     s.classList.remove('abierta');
     al.casa();
+  });
+  s.querySelector('[data-otra]')!.addEventListener('click', () => {
+    if (hecho) return;
+    hecho = true;
+    [523, 784, 1046].forEach((f, k) => nota(f, 0.1, k * 0.06, 'triangle', 0.05));
+    al.otra();
   });
 }
