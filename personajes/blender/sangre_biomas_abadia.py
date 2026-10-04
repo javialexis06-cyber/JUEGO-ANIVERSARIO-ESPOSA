@@ -19,8 +19,8 @@ SILLAR_OSC = '#6E6452'
 HOLLIN = '#1E1A18'
 CARBON = '#221A16'
 CENIZA = '#7A7470'
-MARMOL_A = '#B8B0A2'
-MARMOL_B = '#4A4440'
+MARMOL_A = '#9C9488'
+MARMOL_B = '#4E4844'
 TERCIOPELO = '#6A1A1E'
 ORO = '#B8903A'
 
@@ -266,7 +266,7 @@ def piso_ajedrez(semilla, cosas, peso=1.0):
             vet = suave(0.8, 0.95, 1 - np.abs(C.ruido_piso(P, 3, 900 + semilla)))
             col = base * (1 - 0.25 * vet)[:, None] * (1 + 0.1 * C.fbm_piso(P, 4, 2, 901))[:, None]
             hollin = suave(0.0, 0.5, C.fbm_piso(P, 2, 3, 902) + 0.1)
-            col = mezclar(col, hx(HOLLIN), hollin * 0.6)
+            col = mezclar(col, hx(HOLLIN), hollin * 0.7)
             ceniza = suave(0.25, 0.55, C.fbm_piso(P, 3, 2, 903))
             col = mezclar(col, hx(CENIZA), ceniza * 0.45)
             junta = suave(-0.008, -0.016, z)
@@ -472,7 +472,7 @@ def campana():
     p = Pieza('deco_campana_caida', 'deco', huella=[1, 1], alto=0.9, lugar='libre', solido=True)
     perf = [(0.0, 0.72), (0.12, 0.72), (0.2, 0.66), (0.24, 0.5), (0.27, 0.3), (0.33, 0.12), (0.4, 0.03), (0.42, 0.0), (0.38, 0.0), (0.35, 0.04),
             (0.29, 0.12), (0.23, 0.3), (0.2, 0.5), (0.16, 0.64), (0.0, 0.67)]
-    V, F = B.torno_m(perf, seg=20)
+    V, F = B.torno_m(perf[::-1], seg=20)
     ang = np.arctan2(V[:, 1], V[:, 0])
     V[:, 0] *= 1 + 0.0
     raja = (np.abs(ang - 0.6) < 0.06) & (V[:, 2] < 0.35)
@@ -669,12 +669,12 @@ def luz_vela():
     p.parte(V, F, 'hierro', met)
     rng = B.azar(1412)
     C.charco_cera(p, (0.0, 0.05, 0.735), 0.2, 1413)
-    for k in range(7):
-        x = -0.26 + k * 0.087
-        C.vela(p, (x, 0.07, 0.735), rng.uniform(0.04, 0.12), 0.018, 1414 + k, color='#D8CCB0')
     for k in range(5):
         x = -0.24 + k * 0.12
-        C.vela(p, (x, -0.06, 0.832), rng.uniform(0.04, 0.1), 0.016, 1430 + k, color='#D8CCB0')
+        C.vela(p, (x, 0.07, 0.735), rng.uniform(0.05, 0.12), 0.02, 1414 + k, color='#A89878', llama=k % 2 == 0)
+    for k in range(3):
+        x = -0.18 + k * 0.18
+        C.vela(p, (x, -0.06, 0.832), rng.uniform(0.04, 0.09), 0.018, 1430 + k, color='#A89878', llama=k == 1)
     return p
 
 
