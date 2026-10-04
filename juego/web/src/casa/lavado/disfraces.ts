@@ -220,6 +220,13 @@ export const DISFRACES: DefDisfraz[] = [
   },
 ];
 
+/**
+ * Los disfraces «de área» (su gracia es lo que pega alrededor solo: espuma, ducha, bombillo, charcos, paticos,
+ * esponjas, hilo, ranitas) siempre disparan solos; los demás se pueden manejar a mano (segundo dedo o mouse).
+ */
+export const DISFRAZ_AREA = new Set(['el_perro', 'el_bombero', 'el_astronauta', 'el_barbero', 'ella_turbante', 'ella_sirena', 'ella_princesa', 'ella_ranita']);
+export const puedeApuntar = (id: string) => !DISFRAZ_AREA.has(id);
+
 export const DISFRAZ = Object.fromEntries(DISFRACES.map((d) => [d.id, d])) as Record<string, DefDisfraz>;
 export const disfracesDe = (r: Rol) => DISFRACES.filter((d) => d.rol === r);
 export const disfrazInicial = (r: Rol) => DISFRACES.find((d) => d.rol === r && d.inicial)!;

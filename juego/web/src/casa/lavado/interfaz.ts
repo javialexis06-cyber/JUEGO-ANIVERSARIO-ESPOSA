@@ -2,8 +2,8 @@
 // doradas, las cartas al subir de nivel (con volver a tirar, saltar y vetar), el cofre con su tragamonedas, las
 // cartas de amor, la pausa con las estadísticas y la pantalla final con el daño de cada arma.
 import { ARMAS, PASIVAS, MAX_RANURAS, maxNivelArma } from './armas';
-import { CARTAS } from './cartas';
 import { ENEMIGOS } from './enemigos';
+import { FRASES, cartaVista, logroVisto } from './textos';
 import { icono } from './iconos';
 import { LOGRO, type ResumenPartida } from './progreso';
 import { sfx } from './sonidos';
@@ -25,6 +25,7 @@ export interface Acciones {
   numeros(): boolean;
 }
 
+const esc = (t: string) => t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 const miles = (n: number) => Math.round(n).toLocaleString('es-CO');
 const $ = <T extends HTMLElement = HTMLElement>(r: ParentNode, s: string) => r.querySelector(s) as T;
@@ -83,7 +84,12 @@ export class Interfaz {
   private tHud = 0;
   pausado = false;
 
-  constructor(private raiz: HTMLElement, private yo: number, private nombres: string[], private acc: Acciones) {
+  /** Los demás: su chip (nombre, vida, estado), la flecha cuando no se ven y su nombre encima. */
+  private otros: { i: number; chip: HTMLElement; flecha: HTMLElement; nombre: HTMLElement; clave: string }[] = [];
+  private reloj: HTMLElement;
+
+  constructor(private raiz: HTMLElement, private yo: number, private nombres: string[], private acc: Acciones, private colores: string[] = [], private anfitrion = true) {
+    const otros = nombres.map((_, i) => i).filter((i) => i !== yo);
     raiz.insertAdjacentHTML(
       'beforeend',
       `<div class="lv-hud">
@@ -91,8 +97,9 @@ export class Interfaz {
         <div class="lv-tiempo">0:00</div>
         <div class="lv-inv"></div>
         <div class="lv-cuenta"><b class="bajas">🦠 0</b><b class="oro">${icono('moneda', 18)}0</b></div>
-        <div class="lv-pareja"><span></span><i><u></u></i></div>
-        <div class="lv-flecha">💞</div>
+        <div class="lv-equipo">${otros.map((i) => `<div class="lv-compa" data-i="${i}" style="--c:${colores[i] ?? '#fff'}"><span></span><i><u></u></i></div>`).join('')}</div>
+        ${otros.map((i) => `<div class="lv-flecha" data-i="${i}" style="--c:${colores[i] ?? '#fff'}"><b>${esc((nombres[i] ?? '?').slice(0, 1).toUpperCase())}</b></div>`).join('')}
+        ${otros.map((i) => `<div class="lv-etiqueta" data-i="${i}" style="--c:${colores[i] ?? '#fff'}">${esc(nombres[i] ?? '')}</div>`).join('')}
         <div class="lv-aviso"></div>
         <div class="lv-jefe"></div>
       </div>
@@ -103,8 +110,10 @@ export class Interfaz {
       <div class="lv-capa lv-c-carta" hidden></div>
       <div class="lv-capa lv-c-pausa" hidden></div>
       <div class="lv-capa lv-c-espera" hidden></div>
-      <div class="lv-capa lv-c-fin" hidden></div>`,
+      <div class="lv-capa lv-c-fin" hidden></div>
+      <div class="lv-reloj" hidden><i></i><span></span></div>`,
     );
+    this.reloj = $(raiz, '.lv-reloj');
     this.hud = $(raiz, '.lv-hud');
     this.capaNivel = $(raiz, '.lv-c-nivel');
     this.capaCofre = $(raiz, '.lv-c-cofre');
@@ -112,6 +121,9 @@ export class Interfaz {
     this.capaPausa = $(raiz, '.lv-c-pausa');
     this.capaFin = $(raiz, '.lv-c-fin');
     this.capaEspera = $(raiz, '.lv-c-espera');
+    this.otros = otros.map((i) => ({
+      i, chip: $(this.hud, `.lv-compa[data-i="${i}"]`), flecha: $(this.hud, `.lv-flecha[data-i="${i}"]`), nombre: $(this.hud, `.lv-etiqueta[data-i="${i}"]`), clave: '',
+    }));
     $(raiz, '.lv-pausa').addEventListener('click', (e) => {
       e.stopPropagation();
       sfx.toque();
@@ -204,7 +216,7 @@ export class Interfaz {
   }
 
   // ------------------------------------------------------------------------------------------------- HUD
-  actualizar(m: Motor, dt: number, otroPresente = true) {
+  actualizar(m: Motor, dt: number, conectado: (i: number) => boolean = () => true) {
     this.tHud += dt;
     if (this.tHud < 0.1) return;
     this.tHud = 0;
@@ -236,25 +248,51 @@ export class Interfaz {
       }
       $(this.hud, '.lv-inv').innerHTML = celdas.join('');
     }
-    // El otro (en pareja)
-    const otro = m.jug.find((x) => x !== j);
-    const chip = $(this.hud, '.lv-pareja');
-    chip.classList.toggle('si', !!otro);
-    if (otro) {
-      $(chip, 'span').textContent = !otroPresente ? `${this.nombres[otro.i]}: sin conexión` : otro.caido ? `¡${this.nombres[otro.i]} cayó! Ve por ella` : this.nombres[otro.i];
-      if (otro.caido && otro.rol === 'el') $(chip, 'span').textContent = `¡${this.nombres[otro.i]} cayó! Ve por él`;
-      $(chip, 'u').style.width = `${Math.max(0, (otro.vida / otro.vidaMax) * 100)}%`;
+    // Los demás (en pareja o con amigos): nombre, vida y cómo van
+    for (const o of this.otros) {
+      const q = m.jug[o.i];
+      if (!q) continue;
+      const nombre = this.nombres[o.i] ?? '';
+      const estado = q.fuera ? (conectado(o.i) ? 'fuera' : 'corte') : !conectado(o.i) ? 'corte' : q.caido ? 'caido' : 'bien';
+      const texto = estado === 'fuera' ? `${nombre}: se salió` : estado === 'corte' ? `${nombre}: sin conexión` : estado === 'caido' ? `¡${nombre} cayó! Ve a levantarle` : nombre;
+      if (o.clave !== texto) {
+        o.clave = texto;
+        $(o.chip, 'span').textContent = texto;
+        o.chip.dataset.estado = estado;
+      }
+      $(o.chip, 'u').style.width = `${Math.max(0, (q.vida / Math.max(1, q.vidaMax)) * 100)}%`;
     }
     this.raiz.querySelector('.lv-velo-hielo')!.classList.toggle('si', m.hielo > 0);
   }
 
-  /** Flecha hacia el otro cuando no se ve (x, y en píxeles de pantalla). */
-  flecha(x: number | null, y = 0) {
-    const f = $(this.hud, '.lv-flecha');
-    f.classList.toggle('si', x !== null);
-    if (x !== null) {
-      f.style.left = `${x}px`;
-      f.style.top = `${y}px`;
+  /**
+   * Dónde están los demás en la pantalla: si se ven, su nombre encima de la cabeza; si no, una flecha de su color
+   * en el borde, apuntando hacia ellos. `aPantalla` convierte del mapa a píxeles.
+   */
+  companeros(m: Motor, aPantalla: (x: number, y: number) => [number, number]) {
+    if (!this.otros.length) return;
+    const w = this.raiz.clientWidth, h = this.raiz.clientHeight;
+    for (const o of this.otros) {
+      const q = m.jug[o.i];
+      if (!q || q.fuera) {
+        o.flecha.classList.remove('si');
+        o.nombre.classList.remove('si');
+        continue;
+      }
+      const [px, py] = aPantalla(q.x, q.y);
+      const fuera = px < 0 || py < 0 || px > w || py > h;
+      o.flecha.classList.toggle('si', fuera);
+      o.nombre.classList.toggle('si', !fuera);
+      if (fuera) {
+        const x = Math.max(22, Math.min(w - 22, px)), y = Math.max(64, Math.min(h - 22, py));
+        o.flecha.style.transform = `translate(${x}px, ${y}px)`;
+        const ang = Math.atan2(py - y, px - x);
+        o.flecha.style.setProperty('--a', `${ang}rad`);
+        o.flecha.classList.toggle('caido', q.caido);
+      } else {
+        o.nombre.style.transform = `translate(${px}px, ${py - 66}px)`;
+        o.nombre.classList.toggle('caido', q.caido);
+      }
     }
   }
 
@@ -294,9 +332,9 @@ export class Interfaz {
       if (!e.c || e.c - 1 === this.yo) this.aviso(e.t, e.c ? 3 : 2.4);
     }
     else if (e.tipo === 'jefe') this.jefe(ENEMIGOS[Object.keys(ENEMIGOS)[e.c] as keyof typeof ENEMIGOS]?.nombre ?? '¡Un jefe!');
-    else if (e.tipo === 'cae' && e.c !== this.yo) this.aviso(`¡${this.nombres[e.c]} cayó! Quédate a su ladito para levantarl${m.jug[e.c]?.rol === 'el' ? 'o' : 'a'}`, 3);
-    else if (e.tipo === 'levanta') this.aviso(e.c === this.yo ? '¡Me levantaste! 💖' : '¡Levántate, mi amor! 💖', 2.4);
-    else if (e.tipo === 'revive' && e.c === this.yo) this.aviso('¡A seguir! Te volviste a parar 💖', 2.4);
+    else if (e.tipo === 'cae' && e.c !== this.yo) this.aviso(FRASES.cayo(this.nombres[e.c] ?? ''), 3);
+    else if (e.tipo === 'levanta') this.aviso(FRASES.levanta(this.nombres[e.c] ?? '', e.c === this.yo), 2.4);
+    else if (e.tipo === 'revive' && e.c === this.yo) this.aviso(FRASES.revive(), 2.4);
   }
 
   // ------------------------------------------------------------------------------------------------- Pausas
@@ -332,19 +370,43 @@ export class Interfaz {
         this.mostrarNivel(m, j, j.opciones);
       } else this.cerrarCapa(this.capaNivel);
     } else if (!kn && !this.capaNivel.hidden) this.cerrarCapa(this.capaNivel);
-    // El otro está escogiendo
-    const otro = m.jug.find((x) => x !== j);
-    const espera = !!otro && !!m.pausa && !j.opciones && !j.cofre && !j.cartaOpciones;
+    // Los demás están escogiendo (con varios, cada uno con su reloj: después se escoge solo)
+    const varios = m.jug.length > 1;
+    const yoEscojo = !!(j.opciones || j.cofre || j.cartaOpciones);
+    const escogiendo = varios && m.pausa && !yoEscojo ? m.jug.filter((x) => x !== j && !x.fuera && (x.opciones || x.cofre || x.cartaOpciones)) : [];
+    const espera = escogiendo.length > 0;
     // (si se cortó la conexión, ese aviso manda sobre el de «está escogiendo»)
-    if (!this.cortada && espera !== !this.capaEspera.hidden) {
-      this.capaEspera.hidden = !espera;
-      if (espera && otro) {
-        const que = otro.cofre ? 'abriendo un cofre' : otro.cartaOpciones ? 'leyendo una carta de amor' : 'escogiendo su mejora';
-        this.capaEspera.innerHTML = `<div class="lv-espera"><h2>${this.nombres[otro.i]} está ${que}<span class="puntos"></span></h2><p>Un momentico, ya siguen.</p></div>`;
-      }
+    if (!this.cortada) {
+      if (espera !== !this.capaEspera.hidden) this.capaEspera.hidden = !espera;
+      if (espera) {
+        const filas = escogiendo
+          .map((x) => {
+            const que = x.cofre ? 'abre un cofre' : x.cartaOpciones ? FRASES.leyendoCarta().replace(/^escogiendo/, 'escoge').replace(/^leyendo/, 'lee') : 'escoge su mejora';
+            const resta = Math.ceil(this.restante(m, x));
+            return `<li style="--c:${this.colores[x.i] ?? '#fff'}"><b>${esc(this.nombres[x.i] ?? '')}</b> ${que}<em>${resta > 0 ? `${resta} s` : ''}</em></li>`;
+          })
+          .join('');
+        const html = `<div class="lv-espera"><h2>Un momentico<span class="puntos"></span></h2><ul class="lv-escogen">${filas}</ul><p>Si se demoran, se escoge solo lo mejor.</p></div>`;
+        if (html !== this.htmlEspera) {
+          this.htmlEspera = html;
+          this.capaEspera.innerHTML = html;
+        }
+      } else this.htmlEspera = '';
+    }
+    // Mi reloj (con varios): cuánto me queda antes de que se escoja solo
+    const resto = varios && yoEscojo ? this.restante(m, j) : -1;
+    this.reloj.hidden = resto < 0;
+    if (resto >= 0) {
+      const lim = j.cofre ? 9 : 15;
+      (this.reloj.firstChild as HTMLElement).style.width = `${Math.max(0, Math.min(100, (resto / lim) * 100))}%`;
+      (this.reloj.lastChild as HTMLElement).textContent = resto > 0.2 ? `Se escoge solo en ${Math.ceil(resto)} s` : '¡Escogiendo!';
+      this.reloj.classList.toggle('apurate', resto < 5);
     }
     this.tenue(!!m.pausa || this.pausado);
   }
+  private htmlEspera = '';
+  /** Cuánto le queda a alguien para escoger (lo pone el juego: en el anfitrión lo sabe el motor; en los demás, la foto). */
+  restante: (m: Motor, j: Jugador) => number = (m, j) => m.restanteEscoger(j);
 
   private cerrarCapa(capa: HTMLElement) {
     capa.hidden = true;
@@ -395,11 +457,11 @@ export class Interfaz {
   private mostrarCartas(ids: IdCarta[]) {
     const html = ids
       .map((id) => {
-        const c = CARTAS[id];
+        const c = cartaVista(id);
         return `<button class="lv-sobre" style="--c:${c.color}" data-carta="${id}"><span class="num">${c.numero}</span><b>${c.nombre}</b><q>${c.recuerdo}</q><em>${c.efecto}</em></button>`;
       })
       .join('');
-    this.capaCarta.innerHTML = `<h2>💌 Una carta de amor perdida<small>Escoge una: cambia toda la partida</small></h2><div class="lv-amor">${html}</div>
+    this.capaCarta.innerHTML = `<h2>${FRASES.cartaPerdida()}<small>Escoge una: cambia toda la partida</small></h2><div class="lv-amor">${html}</div>
       <button class="lv-boton" data-carta="">Ahora no</button>`;
     this.capaCarta.classList.remove('enviado');
     this.capaCarta.hidden = false;
@@ -496,7 +558,7 @@ export class Interfaz {
     const inv = [
       ...j.armas.map((a) => `<div class="lv-logro">${icono(a.id, 30)}<span><b>${ARMAS[a.id].nombre}</b>${ARMAS[a.id].de ? 'Evolucionada' : `Nivel ${a.nivel}`}</span></div>`),
       ...[...j.pasivas].map(([id, n]) => `<div class="lv-logro">${icono(id, 30)}<span><b>${PASIVAS[id].nombre}</b>Nivel ${n} · ${PASIVAS[id].desc}</span></div>`),
-      ...j.cartas.map((c) => `<div class="lv-logro">💌<span><b>${CARTAS[c].nombre}</b>${CARTAS[c].efecto}</span></div>`),
+      ...j.cartas.map((c) => `<div class="lv-logro">${FRASES.iconoCarta()}<span><b>${cartaVista(c).nombre}</b>${cartaVista(c).efecto}</span></div>`),
     ].join('');
     this.capaPausa.innerHTML = `<div class="lv-panel">
       <h2>Pausa · ${mmss(m.t)} · Nivel ${m.nivel}</h2>
@@ -509,12 +571,12 @@ export class Interfaz {
         <button class="lv-boton" data-p="musica">${musicaMuda ? '🔇' : '🎵'} Música</button>
         <button class="lv-boton" data-p="sonido">${sonidoMudo ? '🔈' : '🔊'} Sonido</button>
         <button class="lv-boton" data-p="numeros">🔢 Números: ${numeros ? 'sí' : 'no'}</button>
-        <button class="lv-boton rosa" data-p="retirarse">Retirarse y cobrar</button>
+        <button class="lv-boton rosa" data-p="retirarse">${m.jug.length > 1 ? (this.anfitrion ? 'Terminar para todos' : 'Retirarme y cobrar') : 'Retirarse y cobrar'}</button>
       </div></div>`;
   }
 
   // ------------------------------------------------------------------------------------------------- Final
-  mostrarFin(r: ResumenPartida, extra: { logros: string[]; monedas: number; pareja: boolean; nombreOtro: string }): Promise<'otra' | 'menu'> {
+  mostrarFin(r: ResumenPartida, extra: { logros: string[]; monedas: number; pareja: boolean; nombreOtro: string; nota?: string }): Promise<'otra' | 'menu'> {
     sfx.fin(r.gano);
     const titulo = r.gano ? '¡Se acabó el agua caliente!' : r.retiro ? (r.segundos < 60 ? 'Lavadita de gato' : '¡Bien lavadito!') : r.segundos < 60 ? 'Otro día te lavas bien…' : 'Te ganaron los mugrosos';
     const sub = r.gano ? 'Aguantaste hasta la Ducha Helada: ¡cara limpiecita!' : r.retiro ? 'Te saliste a tiempo y cobraste todo lo que recogiste.' : r.segundos >= 15 * 60 ? '¡Qué lavada tan buena!' : '¡Ya casi! Con la tienda de poderes se aguanta más.';
@@ -530,13 +592,14 @@ export class Interfaz {
     const logros = extra.logros
       .map((id) => LOGRO[id])
       .filter(Boolean)
+      .map(logroVisto)
       .map((l) => `<div class="lv-logro">🏆<span><b>${l.nombre}</b>${l.premio}</span></div>`)
       .join('');
     this.capaFin.innerHTML = `<div class="lv-panel">
-      <h2>${titulo}<small style="color:#7a625a">${sub}</small></h2>
+      <h2>${titulo}<small style="color:#7a625a">${extra.nota ? `${esc(extra.nota)} · ` : ''}${sub}</small></h2>
       <div class="lv-resumen">
         <span><b>${mmss(r.segundos)}</b>tiempo</span><span><b>${r.nivel}</b>nivel</span><span><b>${miles(r.eliminados)}</b>mugrosos</span>
-        <span><b>${miles(r.oro)}</b>gotas doradas</span>${extra.monedas ? `<span><b>+${extra.monedas}</b>monedas de la casa</span>` : ''}
+        <span><b>${miles(r.oro)}</b>${extra.pareja ? 'gotas doradas tuyas' : 'gotas doradas'}</span>${extra.monedas ? `<span><b>+${extra.monedas}</b>monedas de la casa</span>` : ''}
       </div>
       <div class="cuerpo">
         <div class="col"><table class="lv-tabla"><tr><th>Arma</th><th>Nv</th><th>Daño</th><th>%</th><th>DPS</th></tr>${filas}</table></div>

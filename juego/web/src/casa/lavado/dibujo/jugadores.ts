@@ -10,7 +10,19 @@ import type { Accesorio, Ajuste, DefDisfraz } from '../disfraces';
 import type { Ranura } from '../../modelo';
 import type { Jugador } from '../motor';
 import type { Rol } from '../tipos';
+import type { AspectoJugador } from '../../../salas/tipos';
 import { ELEVACION } from './sprites';
+
+/** Qué partes del muñeco toman cada color del perfil de amigo (por el nombre del material). */
+const TINTES: [RegExp, (a: AspectoJugador) => string | undefined, number][] = [
+  [/piel/i, (a) => a.piel, 1],
+  [/interior oreja/i, (a) => a.piel, 0.85],
+  [/cabello|\bpelo\b|mechon/i, (a) => a.pelo, 1],
+  [/cejas/i, (a) => a.pelo, 0.7],
+  [/camiseta|chaleco/i, (a) => a.detalles?.ropa, 1],
+  [/pantalon|shorts|medias/i, (a) => a.detalles?.ropa2, 1],
+  [/tenis|cordones/i, (a) => a.detalles?.zapatos, 1],
+];
 
 /** Ángulo al que se ven los sprites de los mugrosos (el personaje se inclina para verse igual). */
 const VISTA_SPRITE = THREE.MathUtils.degToRad(30);
@@ -99,7 +111,10 @@ export class Jugador3D {
   private escala: number;
   listo = false;
 
-  constructor(readonly rol: Rol, readonly disfraz: DefDisfraz) {
+  /** Materiales propios (los del modelo los comparten todos: el tinte de un amigo no se le pega a nadie). */
+  private propios: THREE.Material[] = [];
+
+  constructor(readonly rol: Rol, readonly disfraz: DefDisfraz, readonly aspecto?: AspectoJugador) {
     this.escala = ALTO_PERSONAJE / 2.6;
     this.p = new Personaje({ x: 0, y: 0 }, 1);
     this.p.suavidad = 12;
@@ -156,9 +171,34 @@ export class Jugador3D {
       const que = this.disfraz.sinPelo === 'todo' ? /^(mechon|cabello)/ : /^mechon/;
       for (const [n, l] of this.p.partes) if (que.test(n)) for (const o of l) o.visible = false;
     }
+    if (this.aspecto) this.teñir(this.aspecto);
     this.p.pose('reposo', true);
     this.p.sincronizar();
     this.listo = true;
+  }
+
+  /** Los colores del perfil de amigo: piel, pelo, camiseta, pantalón y zapatos (en copias de los materiales). */
+  private teñir(a: AspectoJugador) {
+    const copias = new Map<THREE.Material, THREE.Material>();
+    this.p.modelo?.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (!m.isMesh) return;
+      const cambiar = (mat: THREE.Material) => {
+        const regla = TINTES.find(([rx]) => rx.test(mat.name));
+        const color = regla?.[1](a);
+        if (!regla || !color) return mat;
+        let c = copias.get(mat);
+        if (!c) {
+          c = mat.clone();
+          const std = c as THREE.MeshStandardMaterial;
+          if (std.color) std.color.set(color).multiplyScalar(regla[2]);
+          copias.set(mat, c);
+          this.propios.push(c);
+        }
+        return c;
+      };
+      m.material = Array.isArray(m.material) ? m.material.map(cambiar) : cambiar(m.material);
+    });
   }
 
   /** Lo que pasó: golpe, celebración (al subir de nivel) o lo que sea con cara propia. */
@@ -226,6 +266,8 @@ export class Jugador3D {
 
   liberar() {
     this.vest.liberar();
+    for (const m of this.propios) m.dispose();
+    this.propios = [];
     this.raiz.removeFromParent();
   }
 }
