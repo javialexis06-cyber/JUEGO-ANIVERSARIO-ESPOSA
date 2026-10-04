@@ -266,8 +266,20 @@ granitos?»), la cámara se acerca, la casa se pone borrosa y la cara del espejo
 que se entra a su propia cara. Mientras se juega, la casa y las ondas se esconden y se detienen (no gastan
 batería). Si el celular se va al fondo, se abre la pausa y el juego deja de dibujar.
 
-**El menú** (`src/casa/lavado/menu.ts`): «¡A lavarse!», «Jugar con Él/Ella», disfraces, escenarios, cartas de
-amor, la tienda de poderes y la colección (armas, pasivas, bestiario y logros).
+**El menú** (`src/casa/lavado/menu.ts`): «¡A lavarse!», «Jugar con Javier/Laura», «👥 Con amigos» y «🔑 Unirme con
+código» (salas de hasta 4), disfraces, escenarios, cartas de amor, el ataque (🎯 solito o a mano), la tienda de
+poderes, la colección (armas, pasivas, bestiario y logros) y «🎓 Cómo se juega».
+
+**Tutorial** (`tutorial.ts`): la primera vez que se toca «¡A lavarse!» (y cuando se quiera, desde «Cómo se juega») se
+juega una partidita guiada sin oleadas y sin caerse: caminar, las armas que disparan solas, recoger gotitas, subir de
+nivel, los cofres, la evolución (le deja un arma al máximo con su pasiva y un cofre) y apuntar a mano. Cada paso
+espera a que se haga; se puede saltar. Queda marcado en el progreso (`tutorial`).
+
+**Ataque solito o a mano**: con «a mano», en el celular se camina con un dedo en la mitad izquierda y se apunta con
+otro en la mitad derecha (joystick dorado); en el computador, las armas apuntan al mouse. Apuntan a mano la toalla, la
+varita, el cepillo, el champú, la peinilla, el secador, el jabón y el perfume/colonia (mira de puntitos en el piso).
+Los **disfraces de área** (perrito, bombero, astronauta, barbero, bata y turbante, sirena, princesa, ranita) siempre
+disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y se guarda (`manual`).
 
 **La partida** (motor en `src/casa/lavado/motor.ts`, todo como el original):
 - **30 minutos**; al llegar, «¡Se acabó el agua caliente!» y sale la **Ducha Helada** (la Parca: no se le gana).
@@ -329,14 +341,37 @@ princesa del spa, estilista del secador). Cada uno trae su arma y su bono, ropa 
 con paredes de baldosín: menos bichos a la vez pero sin salida arriba ni abajo; se abre aguantando 15 min en La
 Cara) y **La Bañera** (agua con cáusticas, espuma y paticos; se abre aguantando 15 min en El Lavamanos).
 
-**En pareja** (`linea.ts`): Él o Ella invita desde el menú y la invitación le llega a la casa del otro («¡A
-lavarse la cara juntos!»); el otro entra desde su espejo con su disfraz. El anfitrión simula y manda una foto
-compacta cada 100 ms; el invitado mueve su personaje al instante (predicción) y ve lo demás interpolado. La
-experiencia es compartida pero cada uno escoge sus cartas y tiene su inventario. Si uno cae queda en una
-burbujita y el otro lo levanta quedándose a su lado («¡Levántate, mi amor!»). Si se corta la conexión, los
-dos quedan en pausa hasta que vuelva. En la casa local de prueba se usa un `BroadcastChannel` (`?red=mala`
-simula pérdidas). Prueba: `node scripts/probar-lavado-linea.mjs <url>` (Supabase de mentiras con demoras y
-pérdidas).
+**De 2 a 4: pareja y amigos** (`linea.ts`, `juego.ts`, sobre las salas de `src/salas/`, ver `docs/salas.md`): Javier
+o Laura invitan desde el menú (abre una sala y la invitación con el código le llega a la casa del otro: «¡A lavarse
+la cara juntos!»; entra desde su espejo), o cualquiera abre una sala «Con amigos» y los demás entran con el código.
+En la **sala de espera** cada uno escoge disfraz y ataque y toca «Estoy listo»; el anfitrión empieza (se juega en
+**su** cara: si es un amigo, con su tono de piel). El anfitrión simula y manda **una sola foto** cada 100 ms para
+todos (lo que ve cualquiera, anclado al jugador que lo ve); cada uno mueve su personaje al instante (predicción) y
+le cuenta al anfitrión dónde está y hacia dónde apunta. La experiencia es compartida, cada uno escoge sus cartas y
+tiene su inventario; mientras alguien escoge, el juego espera, pero **cada quien tiene 15 s** (9 en el cofre): si se
+demora, se le escoge lo que escogería el bot, y los demás ven quién está escogiendo con su cuenta regresiva.
+- **Dificultad por jugador** (`POR_JUGADORES` en `motor.ts`): mugrosos a la vez ×1 / 1,4 / 1,75 / 2,05; vida ×1 / 1 /
+  1,15 / 1,3; jefes ×1 / 1 / 1,3 / 1,6; eventos ×1 / 1,3 / 1,55 / 1,8; élites extra con cofre cada 150 / 95 / 70 s
+  (pareja / tres / cuatro); con tres o cuatro hace falta 30 / 50 % más experiencia por nivel (para no pausar a cada
+  rato). En pareja queda como estaba, salvo el élite extra.
+- **Premios repartidos**: el cofre de cada jefe sale **uno para cada jugador** (brilla con su color y solo lo coge su
+  dueño); las gotas doradas son de quien las recoge + la cuarta parte de las de los demás.
+- Cualquiera **levanta** a quien caiga quedándose a su lado (dos al lado, más rápido). Cada uno tiene su color
+  (anillo en el piso, chip con su vida arriba a la derecha, su nombre encima y una flecha de su color cuando no se ve).
+- **Cortes**: si alguien se queda sin conexión (o se va a segundo plano), todos quedan en pausa con aviso; a los 20 s
+  se sigue sin él, y apenas vuelve entra de una al lado de alguien. Si un invitado se retira, los demás siguen; si el
+  anfitrión termina o se va, se acaba para todos con aviso. Al final, «Volver a la sala» los deja otra vez en la sala
+  de espera. En la casa local de prueba (sin internet) las salas van entre pestañas (`?red=mala` simula pérdidas).
+- **Modo neutro** (`textos.ts`): si juega un amigo o hay amigos en la sala, nada personal: las cartas de amor son
+  **cartas mágicas** (mismos efectos, nombres y frases sin recuerdos), los disfraces con apodos o recuerdos cambian de
+  nombre (Osito en pijama, Perrito peludo, Pulguita saltarina, Guerrera del escudo, Diva del perfume…), sin «¡Levántate,
+  mi amor!» ni corazones, y los logros nombran lo neutro. Los amigos se ven con su cuerpo y sus colores.
+- La ducha (Chorro de la ducha y Diluvio) es mucho más transparente: una franja clarita y hilos de agua con brillitos
+  que no tapan a nadie.
+- Pruebas: `node scripts/probar-lavado-salas.mjs <url>` (Javier, Laura y dos amigos en cuatro celulares con un
+  Supabase de mentiras: sala, caminar, cartas, escoger solo, carta mágica, cortes corto y largo, caída y levantada,
+  final, volver a la sala, el anfitrión que se va, y que nadie vea nada personal) y `node scripts/probar-amigos.mjs`.
+  (La prueba vieja de pareja, `probar-lavado-linea.mjs`, quedó por fuera: era del canal de dos que ya no existe.)
 
 **Gráficos y rendimiento** (`dibujo/`): three.js con cámara ortográfica inclinada; Él y Ella en 3D con su
 disfraz; los bichos, objetos y efectos son lotes de sprites con instancias (cientos a 30 cuadros), con destellos
