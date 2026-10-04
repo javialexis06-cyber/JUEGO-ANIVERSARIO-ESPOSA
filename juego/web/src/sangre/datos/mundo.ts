@@ -245,6 +245,6 @@ export const MUTADORES: Record<IdMutador, { nombre: string; desc: string; recomp
 };
 
 /** Cuánto dura cada etapa (s) y la cuenta de la campana de extracción. */
-export const DURACION_ETAPA = 300;
+export const DURACION_ETAPA = 270;
 export const CUENTA_EXTRACCION = 40;
 export const ETAPAS = 4;

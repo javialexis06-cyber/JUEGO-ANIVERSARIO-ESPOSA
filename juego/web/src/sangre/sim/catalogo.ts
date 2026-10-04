@@ -7,7 +7,7 @@ export const TIPO_ALTAR = ENEMIGOS_LISTA.length;
 export const TIPO_JEFE = TIPO_ALTAR + 1;
 
 const ALTAR: DefEnemigo = {
-  id: 'altar', nombre: 'Altar de sangre', vida: 380, vel: 0, dano: 0, radio: 0.8, xp: 12, conducta: 'quieto', masa: 1, alto: 1.6, vivo: true,
+  id: 'altar', nombre: 'Altar de sangre', vida: 500, vel: 0, dano: 0, radio: 0.8, xp: 12, conducta: 'quieto', masa: 1, alto: 1.6, vivo: true,
   color: ['#5a2a2a', '#c02a2a'],
 };
 

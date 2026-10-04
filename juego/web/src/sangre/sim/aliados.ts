@@ -4,7 +4,8 @@
 import { TIPOS, esJefe } from './catalogo';
 import { ALI, MOV, S, ZONA, type Aliado } from './estado';
 import { BIT_ETQ } from './jugador';
-import { Golpe, type Sim } from './sim';
+import { Golpe } from './golpe';
+import type { Sim } from './sim';
 
 const G = new Golpe();
 const LISTA: number[] = [];

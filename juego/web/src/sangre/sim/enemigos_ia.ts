@@ -9,7 +9,8 @@ import { ENT, EST, S } from './estado';
 import { RADIO_JUGADOR } from './jugador';
 import { moverJefe } from './jefes';
 import * as mec from './mecanicas';
-import { Golpe, type Sim } from './sim';
+import { Golpe } from './golpe';
+import type { Sim } from './sim';
 
 const DIR = { x: 0, y: 0 };
 const GE = new Golpe();

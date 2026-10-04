@@ -17,6 +17,8 @@ import * as mec from './mecanicas';
 import { prepararObjetivos, actualizarObjetivos, llamarCampana } from './objetivos';
 import { encolarNivel, encolarSobrecarga } from './opciones';
 import { jefeMuerto } from './jefes';
+import { Golpe } from './golpe';
+export { Golpe };
 
 export const MAX_ENEMIGOS = 720;
 const CANDIDATOS: number[] = [];
@@ -44,50 +46,6 @@ export interface FinEtapa {
   prisioneros: number;
 }
 
-/** Lo que hace falta saber de un golpe (se reutiliza: nada de crear objetos por golpe). */
-export class Golpe {
-  j = -1;
-  ranura = -1;
-  etq = 0;
-  critico = 0;
-  empuje = 0;
-  dx = 0;
-  dy = 0;
-  quema = 0;
-  veneno = 0;
-  sangrado = 0;
-  lento = 0;
-  aturde = 0;
-  maldicion = 0;
-  flags = 0;
-  /** Viene de un aliado (no roba vida, no cuenta para el arma). */
-  aliado = false;
-  /** Viene de la habilidad activa. */
-  habilidad = false;
-  /** Sustancias del alquimista (1 ácido/veneno, 2 fuego, 4 hielo, 8 sagrado). */
-  sustancia = 0;
-  /** Umbral de ejecución extra (tajo del verdugo). */
-  ejecutaExtra = 0;
-  /** No muestra número. */
-  callado = false;
-  reset() {
-    this.j = -1;
-    this.ranura = -1;
-    this.etq = 0;
-    this.critico = 0;
-    this.empuje = 0;
-    this.dx = this.dy = 0;
-    this.quema = this.veneno = this.sangrado = this.lento = this.aturde = this.maldicion = 0;
-    this.flags = 0;
-    this.aliado = false;
-    this.habilidad = false;
-    this.sustancia = 0;
-    this.ejecutaExtra = 0;
-    this.callado = false;
-    return this;
-  }
-}
-
 export class Sim {
   az: Azar;
   cfg: ConfigEtapa;
@@ -107,6 +65,8 @@ export class Sim {
   rej = new Rejilla(MAX_ENEMIGOS, 2, 2048);
   /** Segundos de la etapa. */
   t = 0;
+  /** Cuándo baja la campana (o sale el jefe): al final del reloj, o un minuto después de cumplir el objetivo. */
+  limite = DURACION_ETAPA;
   fase: 'juego' | 'extraccion' | 'jefe' = 'juego';
   campana: Entidad | null = null;
   obj = { tipo: 'hierro' as IdObjetivo, meta: 1, prog: 0, hecho: false, fallo: false, texto: '' };
@@ -167,7 +127,7 @@ export class Sim {
     };
     this.mapa = generarMapa({
       bioma: this.bioma, semilla: cfg.exp.semilla * 31 + cfg.etapa * 977, jugadores: n, rocaDura: mut('roca_dura'), sinAntorchas: mut('sin_antorchas'),
-      vetasHierro: cfg.objetivo === 'hierro' ? 6 + n : 2, carreta: cfg.objetivo === 'carreta', tutorial: cfg.exp.tutorial,
+      vetasHierro: cfg.objetivo === 'hierro' ? 10 + 2 * n : 2, carreta: cfg.objetivo === 'carreta', tutorial: cfg.exp.tutorial,
     });
     this.flujo = new CampoFlujo(this.mapa);
     for (let k = 0; k < MAX_PROY; k++) this.P.push(new Proyectil());
@@ -570,7 +530,7 @@ export class Sim {
     }
     // Reliquias y bendiciones de todos (los de cualquier jugador cerca)
     mec.alMorirCualquiera(this, i, g);
-    if (E.marcadoObj[i]) {
+    if (E.marcadoObj[i] === 1) {
       this.obj.prog = this.obj.meta;
       this.aviso(4);
     }
@@ -1139,7 +1099,7 @@ export class Sim {
 
   /** Tiempo que le queda a la etapa antes de que la campana baje sola. */
   get quedan() {
-    return Math.max(0, DURACION_ETAPA - this.t);
+    return Math.max(0, this.limite - this.t);
   }
   get cuentaExtraccion() {
     return CUENTA_EXTRACCION;

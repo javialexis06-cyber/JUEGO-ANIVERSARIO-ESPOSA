@@ -6,7 +6,8 @@ import { esJefe } from './catalogo';
 import { ALI, MOV, Proyectil, S, ZONA, type Zona } from './estado';
 import { BIT_ETQ, RADIO_JUGADOR, type ArmaJ, type Jugador } from './jugador';
 import * as mec from './mecanicas';
-import { Golpe, type Sim } from './sim';
+import { Golpe } from './golpe';
+import type { Sim } from './sim';
 
 export const INDICE_ARMA: Record<string, number> = Object.fromEntries(ARMAS_LISTA.map((a, i) => [a.id, i]));
 

@@ -1,7 +1,7 @@
 // Los objetivos de cada etapa (como en Deep Rock Galactic: Survivor): el principal (hierro negro, altares, prisioneros,
 // carreta, campana o cacería), el secundario (huevos, frascos, cofres de reliquias), los santuarios de las bendiciones
 // y la Campana de Extracción con su cuenta regresiva. En la última etapa, cumplido el objetivo sale el jefe.
-import { DURACION_ETAPA, CUENTA_EXTRACCION } from '../datos/mundo';
+import { CUENTA_EXTRACCION } from '../datos/mundo';
 import { C } from '../tipos';
 import { TIPO, TIPO_ALTAR } from './catalogo';
 import { aparecerEnemigo, modsElite } from './enemigos_ia';
@@ -57,17 +57,17 @@ export function prepararObjetivos(sim: Sim) {
   }
   switch (cfg.objetivo) {
     case 'hierro':
-      sim.obj.meta = 24 + 6 * (n - 1);
+      sim.obj.meta = 60 + 15 * (n - 1);
       break;
     case 'altares': {
-      const meta = 3 + Math.floor(n / 2);
-      const ps = lugares(sim, meta, 14, 12);
+      const meta = 4 + Math.floor(n / 2);
+      const ps = lugares(sim, meta, 14, 13);
       sim.obj.meta = ps.length;
       for (const p of ps) aparecerEnemigo(sim, TIPO_ALTAR, p.x, p.y);
       break;
     }
     case 'prisioneros': {
-      const ps = lugares(sim, 3, 10, 10);
+      const ps = lugares(sim, 4 + (n > 2 ? 1 : 0), 12, 14);
       sim.obj.meta = ps.length;
       for (const p of ps) nuevaEntidad(sim, ENT.PRISIONERO, p.x, p.y);
       break;
@@ -98,7 +98,7 @@ export function prepararObjetivos(sim: Sim) {
       sim.obj.meta = 1;
       break;
   }
-  if (sim.obj.tipo === 'hierro') sim.obj.meta = 24 + 6 * (n - 1);
+  if (sim.obj.tipo === 'hierro') sim.obj.meta = 60 + 15 * (n - 1);
   // Secundario
   switch (cfg.secundario) {
     case 'huevos': {
@@ -161,22 +161,27 @@ export function actualizarObjetivos(sim: Sim, dt: number) {
   if (!o.hecho && o.prog >= o.meta && o.meta > 0) {
     o.hecho = true;
     sim.aviso(1);
-    if (sim.cfg.final && !sim.cfg.exp.tutorial) aparecerJefe(sim);
-    else llamarCampana(sim);
+    // Premio: un cofre a los pies de quien esté más cerca del centro de la acción y la campana en un minuto
+    const ref = sim.vivos()[0];
+    if (ref && !sim.cfg.exp.tutorial) sim.soltar(REC.COFRE, ref.x, ref.y, 1);
+    if (sim.cfg.exp.tutorial) llamarCampana(sim);
+    else sim.limite = Math.min(sim.limite, sim.t + 60);
   }
-  // Se acabó el tiempo
-  if (sim.fase === 'juego' && sim.t >= DURACION_ETAPA && !sim.sinReloj) {
+  // Se acabó el reloj: baja la campana (en la última etapa, sale el jefe)
+  if (sim.fase === 'juego' && sim.t >= sim.limite && !sim.sinReloj) {
     sim.aviso(2);
     if (sim.cfg.final) aparecerJefe(sim);
     else llamarCampana(sim);
   }
-  // La cacería: el élite marcado sale al rato
-  if (o.tipo === 'elite' && !o.hecho && !sim.ent.some((e) => e.dato === 'caceria') && sim.t >= 12) {
+  // La cacería: el élite marcado sale al rato (uno de los fuertes del bioma, más duro en las etapas finales)
+  if (o.tipo === 'elite' && !o.hecho && !sim.ent.some((e) => e.dato === 'caceria') && sim.t >= 35) {
     const p = lugaresCerca(sim);
     if (p) {
-      const fuertes = sim.bioma.enemigos.filter((e) => e.desde >= 60).map((e) => e.id);
-      const tipo = TIPO[fuertes.includes('caballero_muerte') ? 'caballero_muerte' : sim.az.uno(fuertes.length ? fuertes : ['caballero_muerte'])];
-      const i = aparecerEnemigo(sim, tipo, p.x, p.y, { elite: modsElite(sim) | modsElite(sim), marcado: 1, vida: 1.7 });
+      const orden = [...sim.bioma.enemigos].filter((e) => e.id !== 'caballero_muerte').sort((a, b) => b.desde - a.desde);
+      const etapa = sim.cfg.etapa;
+      const id = etapa >= 3 ? 'caballero_muerte' : orden[Math.min(orden.length - 1, 2 - Math.min(2, etapa - 1))]?.id ?? 'zombi_gordo';
+      const mods = etapa >= 3 ? modsElite(sim) | modsElite(sim) : modsElite(sim);
+      const i = aparecerEnemigo(sim, TIPO[id], p.x, p.y, { elite: mods, marcado: 1, vida: 0.8 + 0.2 * etapa });
       const e = nuevaEntidad(sim, -1, p.x, p.y);
       e.vivo = false;
       e.dato = 'caceria';
@@ -234,7 +239,7 @@ function prisionero(sim: Sim, e: Entidad, dt: number) {
   if (e.est === 0) {
     const j = jugadorA(sim, e.x, e.y, 1.7);
     if (j) {
-      e.prog += dt / 2.5;
+      e.prog += dt / 4;
       if (e.prog >= 1) {
         e.est = 1;
         e.quien = j.i;
@@ -308,7 +313,7 @@ function carreta(sim: Sim, e: Entidad, dt: number) {
   e.dato = '';
   const dx = p.x - e.x, dy = p.y - e.y;
   const d = Math.hypot(dx, dy);
-  const v = 1.25 * dt;
+  const v = 0.95 * dt;
   if (d <= v) {
     e.x = p.x;
     e.y = p.y;
@@ -327,7 +332,7 @@ function campanaDefensa(sim: Sim, e: Entidad, dt: number) {
   e.cuenta = j ? 1 : 0;
   sim.presionExtra = sim.evento ? sim.presionExtra : 1.35;
   if (j) {
-    e.prog = Math.min(1, e.prog + dt / 70);
+    e.prog = Math.min(1, e.prog + dt / 100);
     sim.obj.prog = e.prog;
     if (e.prog >= 1) {
       e.est = 2;

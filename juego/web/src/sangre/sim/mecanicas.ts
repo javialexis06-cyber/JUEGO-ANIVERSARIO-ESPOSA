@@ -7,7 +7,8 @@ import { TIPO, TIPOS, TIPO_ALTAR, esJefe } from './catalogo';
 import { ALI, ENT, Entidad, MOV, type Proyectil, S, ZONA } from './estado';
 import { BIT_ETQ, RADIO_JUGADOR, type Jugador } from './jugador';
 import { encolarCofre, encolarEquipo } from './opciones';
-import { Golpe, type Sim } from './sim';
+import { Golpe } from './golpe';
+import type { Sim } from './sim';
 
 const LISTA: number[] = [];
 
