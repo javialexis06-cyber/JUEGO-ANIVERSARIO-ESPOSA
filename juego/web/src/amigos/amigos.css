@@ -167,7 +167,8 @@ body.amigos {
   -webkit-user-select: text;
   user-select: text;
 }
-.am-codigo .boton { padding: 9px 16px; }
+.am-codigo .boton { padding: 9px 16px; background: linear-gradient(180deg, #a9e6cc, #6cc6a0); color: #1f3d33; box-shadow: 0 3px 0 #3e9a72; }
+.am-codigo .boton:disabled { opacity: 0.7; }
 .am-no-soy {
   align-self: flex-end;
   border: 0;

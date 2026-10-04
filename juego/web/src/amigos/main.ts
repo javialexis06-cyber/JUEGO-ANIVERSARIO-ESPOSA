@@ -58,7 +58,7 @@ function ponerMuneco(lienzo: HTMLCanvasElement) {
 // ---------------------------------------------------------------------------------------------------- Creador
 function filaColores(campo: 'piel' | 'pelo' | 'ropa' | 'ropa2' | 'zapatos', titulo: string, lista: string[]) {
   return `<div class="am-fila" role="radiogroup" aria-label="${titulo}"><span>${titulo}</span><div class="am-muestras">${lista
-    .map((c) => `<button class="am-muestra ${perfil[campo] === c ? 'si' : ''}" data-campo="${campo}" data-color="${c}" style="--m:${c}" aria-label="${titulo} ${c}" role="radio" aria-checked="${perfil[campo] === c}"></button>`)
+    .map((c) => `<button type="button" class="am-muestra ${perfil[campo] === c ? 'si' : ''}" data-campo="${campo}" data-color="${c}" style="--m:${c}" aria-label="${titulo} ${c}" role="radio" aria-checked="${perfil[campo] === c}"></button>`)
     .join('')}</div></div>`;
 }
 
@@ -90,7 +90,10 @@ function creador() {
   ponerMuneco(raiz.querySelector('canvas')!);
   const form = raiz.querySelector('form')!;
   const input = form.querySelector<HTMLInputElement>('input[name="nombre"]')!;
-  input.addEventListener('input', () => (perfil.nombre = input.value));
+  input.addEventListener('input', () => {
+    perfil.nombre = input.value;
+    form.querySelector('.am-error')!.textContent = '';
+  });
   const refrescar = () => {
     form.querySelectorAll<HTMLElement>('.am-muestra').forEach((b) => {
       const si = perfil[b.dataset.campo as 'piel'] === b.dataset.color;
