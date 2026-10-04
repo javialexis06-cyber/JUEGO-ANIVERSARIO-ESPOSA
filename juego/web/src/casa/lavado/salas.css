@@ -260,3 +260,8 @@
   .lv-tuto-texto p { font-size: 11px; }
   .lv-tuto-globo { top: calc(env(safe-area-inset-top, 0px) + 40px); }
 }
+
+/* Las cartas (de amor o mágicas): el nombre se veía blanco sobre el papel claro (los botones heredaban el blanco
+   de la capa) */
+.lv .lv-sobre { color: var(--lv-cacao); }
+.lv .lv-sobre b { color: var(--lv-cacao); }
