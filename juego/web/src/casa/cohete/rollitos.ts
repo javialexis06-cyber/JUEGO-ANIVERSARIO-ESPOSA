@@ -2,6 +2,7 @@
 // (corazones, «ÉL ♥ ELLA», «TE AMO», flechas, olas, estrellas, un retrete…). Si se recoge una figura completa,
 // paga un premio.
 import * as THREE from 'three';
+import { Auras, Borde, DORADO } from './resaltar';
 
 /** Letras de 5 × 7 (filas de arriba a abajo). */
 const LETRAS: Record<string, string[]> = {
@@ -146,11 +147,16 @@ export class Rollitos {
   private sigFigura = 1;
   private dummy = new THREE.Object3D();
   private t = 0;
+  /** Lo bueno brilla en dorado: un resplandor detrás de cada rollito y el borde dorado encendido. */
+  private auras: Auras;
+  private borde = new Borde(DORADO, 0.7, 2.4, 'oro');
 
   constructor(partes: { geo: THREE.BufferGeometry; mat: THREE.Material }[], max = 260) {
     this.max = max;
+    this.auras = new Auras(DORADO, max, { borde: false, aditiva: false, opacidad: 0.7 });
+    this.grupo.add(this.auras.malla);
     for (const p of partes) {
-      const m = new THREE.InstancedMesh(p.geo, p.mat, max);
+      const m = new THREE.InstancedMesh(p.geo, this.borde.material(p.mat), max);
       m.count = 0;
       m.frustumCulled = false;
       m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -264,15 +270,22 @@ export class Rollitos {
       for (const id of this.figuras.keys()) if (!vivas.has(id)) this.figuras.delete(id);
     }
     // Dibujar
+    this.borde.latir(this.t);
+    this.auras.empezar();
     for (let i = 0; i < this.lista.length; i++) {
       const r = this.lista[i];
       const brillo = 1 + 0.08 * Math.sin(this.t * 6 + r.x);
-      this.dummy.position.set(r.x, r.y + Math.sin(this.t * 3 + r.x * 0.7) * 0.06, 0);
+      const y = r.y + Math.sin(this.t * 3 + r.x * 0.7) * 0.06;
+      const tam = brillo * (r.valor > 1 ? 2.4 : 1);
+      this.dummy.position.set(r.x, y, 0);
       this.dummy.rotation.set(0.35, r.giro, 0.5);
-      this.dummy.scale.setScalar(brillo * (r.valor > 1 ? 2.4 : 1));
+      this.dummy.scale.setScalar(tam);
       this.dummy.updateMatrix();
       for (const m of this.mallas) m.setMatrixAt(i, this.dummy.matrix);
+      const a = 1.05 * tam * (1 + 0.12 * Math.sin(this.t * 7 + r.x * 1.3));
+      this.auras.poner(r.x, y, -0.3, a, a);
     }
+    this.auras.terminar();
     for (const m of this.mallas) {
       m.count = this.lista.length;
       m.instanceMatrix.needsUpdate = true;
@@ -288,9 +301,13 @@ export class Rollitos {
     this.lista.length = 0;
     this.figuras.clear();
     for (const m of this.mallas) m.count = 0;
+    this.auras.empezar();
+    this.auras.terminar();
   }
 
   liberar() {
     for (const m of this.mallas) m.dispose();
+    this.auras.liberar();
+    this.borde.liberar();
   }
 }

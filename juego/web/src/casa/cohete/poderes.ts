@@ -8,6 +8,7 @@ import { type IdPoder, MEJORA, PODERES, type ProgresoCohete, duracionPoder, pode
 import type { Efectos } from './efectos';
 import type { Modelos } from './modelos';
 import type { Obst, Obstaculos } from './obstaculos';
+import { DORADO } from './resaltar';
 
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 
@@ -74,6 +75,37 @@ function letrero(texto: string, color: string) {
   return s;
 }
 
+/** Aro de luz con destellos (se ve como un anillo dorado que gira alrededor de la burbuja). */
+function texturaAroDorado() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const g = c.getContext('2d')!;
+  const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(255,255,255,0)');
+  gr.addColorStop(0.72, 'rgba(255,255,255,0)');
+  gr.addColorStop(0.82, 'rgba(255,255,255,0.95)');
+  gr.addColorStop(0.9, 'rgba(255,255,255,0.35)');
+  gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr;
+  g.fillRect(0, 0, 128, 128);
+  // Cuatro destellos en cruz sobre el aro
+  g.fillStyle = '#fff';
+  for (let k = 0; k < 4; k++) {
+    const a = (k * Math.PI) / 2 + 0.4;
+    const x = 64 + Math.cos(a) * 52, y = 64 + Math.sin(a) * 52;
+    g.beginPath();
+    g.moveTo(x, y - 10);
+    g.quadraticCurveTo(x, y, x + 10, y);
+    g.quadraticCurveTo(x, y, x, y + 10);
+    g.quadraticCurveTo(x, y, x - 10, y);
+    g.quadraticCurveTo(x, y, x, y - 10);
+    g.fill();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
 interface Recogible {
   id: IdPoder;
   obj: THREE.Group;
@@ -115,6 +147,9 @@ export class Poderes {
   /** Para la burbuja chiquita de cada recogible. */
   private matBurbujaChica: THREE.ShaderMaterial;
   private geoBurbuja = new THREE.SphereGeometry(1, 32, 20);
+  /** Lo bueno brilla en dorado: un aro de luz dorada que gira alrededor de cada poder (uno solo para todos). */
+  private texAro = texturaAroDorado();
+  private matAro = new THREE.SpriteMaterial({ map: this.texAro, color: DORADO, transparent: true, depthWrite: false, opacity: 0.95, toneMapped: false });
 
   constructor(
     private mundo: THREE.Group,
@@ -218,10 +253,17 @@ export class Poderes {
     burbuja.scale.setScalar(0.78);
     burbuja.renderOrder = 9;
     g.add(burbuja);
-    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.halo, color: PODERES[id].color, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.8 }));
-    halo.scale.setScalar(2.6);
+    // Resplandor dorado (con un toque del color del poder en el centro) y el aro dorado que gira
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.halo, color: new THREE.Color(DORADO).lerp(new THREE.Color(PODERES[id].color), 0.25), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.9 }));
+    halo.scale.setScalar(2.9);
     halo.renderOrder = 4;
     g.add(halo);
+    const aro = new THREE.Sprite(this.matAro);
+    aro.name = 'aro';
+    aro.userData.compartido = true;
+    aro.scale.setScalar(2.05);
+    aro.renderOrder = 10;
+    g.add(aro);
     g.position.set(x, y, 0);
     this.mundo.add(g);
     this.recogibles.push({ id, obj: g, x, y, t: Math.random() * 5, vivo: true });
@@ -243,9 +285,9 @@ export class Poderes {
       }
       const s = 1 + Math.sin(r.t * 5) * 0.04;
       r.obj.scale.setScalar(s);
-      if (Math.random() < dt * 6) {
+      if (Math.random() < dt * 8) {
         const a = Math.random() * Math.PI * 2;
-        this.fx.brillo.emitir({ x: r.x + Math.cos(a) * 0.75, y: y + Math.sin(a) * 0.75, z: 0.3, vida: 0.6, tam0: 0.3, tam1: 0.05, color0: '#FFFFFF', color1: PODERES[r.id].color, cuadro: CUADRO.chispa, arrastre: 1, giro: a });
+        this.fx.brillo.emitir({ x: r.x + Math.cos(a) * 0.85, y: y + Math.sin(a) * 0.85, z: 0.3, vida: 0.6, tam0: 0.34, tam1: 0.05, color0: '#FFFFFF', color1: Math.random() < 0.7 ? DORADO : PODERES[r.id].color, cuadro: CUADRO.chispa, arrastre: 1, giro: a });
       }
       if (!agarrado && Math.hypot(r.x - nx, y - ny) < radio + 0.8) {
         agarrado = r.id;
@@ -269,7 +311,7 @@ export class Poderes {
   private soltarRecogible(r: Recogible) {
     r.obj.traverse((o) => {
       const s = o as THREE.Sprite;
-      if (s.isSprite) (s.material as THREE.Material).dispose();
+      if (s.isSprite && !s.userData.compartido) (s.material as THREE.Material).dispose();
     });
   }
 
@@ -292,6 +334,8 @@ export class Poderes {
     this.burbuja.visible = !!esc && (esc.resta > 2 || Math.sin(this.t * 22) > -0.2);
     this.matBurbuja.uniforms.tiempo.value = this.t;
     this.matBurbujaChica.uniforms.tiempo.value = this.t;
+    this.matAro.rotation = this.t * 1.4;
+    this.matAro.opacity = 0.8 + 0.2 * Math.sin(this.t * 6);
     this.burbuja.scale.setScalar(0.95 + Math.sin(this.t * 3) * 0.025);
     // Imán: con ondas que salen
     const im = this.activos.get('iman');
@@ -449,6 +493,8 @@ export class Poderes {
     this.vaciar();
     this.matBurbuja.dispose();
     this.matBurbujaChica.dispose();
+    this.matAro.dispose();
+    this.texAro.dispose();
     this.geoBurbuja.dispose();
     (this.doble.material.map as THREE.Texture).dispose();
     this.doble.material.dispose();
