@@ -560,7 +560,7 @@ MATERIALES = {
     'musgo': (0.95, 0.0, None, 0.0, True),
     'agua': (0.08, 0.0, None, 0.0, False),
     'sangre': (0.18, 0.0, None, 0.0, False),
-    'fuego': (0.6, 0.0, '#FFB24A', 3.0, False),
+    'fuego': (0.6, 0.0, '#FF9A30', 2.2, False),
     'brasa': (0.8, 0.0, '#FF4A12', 1.6, False),
     'lava': (0.5, 0.0, '#FF5A14', 2.2, False),
     'cristal_sangre': (0.18, 0.0, '#FF1A2E', 0.9, False),
@@ -798,7 +798,7 @@ class Pieza:
         V = V * tam
         V[:, 2] += 0
         self.parte(transformar(V, (pos[0], pos[1], pos[2] - 0.04 * tam)), F, 'fuego',
-                   degradado_z('#FF7A1A', '#FFE9A8', pos[2] - 0.04 * tam, pos[2] + 0.06 * tam), ao=False)
+                   degradado_z('#E0480C', '#FFD27A', pos[2] - 0.04 * tam, pos[2] + 0.07 * tam), ao=False)
         return self
 
     def tris(self):

@@ -41,7 +41,7 @@ def ruido_libre(P, escala, octavas=3, semilla=0):
     return B.fbm(P, escala, octavas, semilla)
 
 
-def techo_comun(P, alto=1.45, semilla=None, amp=0.03, amp_var=0.05, domo=0.5):
+def techo_comun(P, alto=1.45, semilla=None, amp=0.03, amp_var=0.05, domo=3.0):
     """Altura del techo de un bloque: en la franja del borde un ruido que se repite cada metro (igual en todas las
     variantes); en el centro, el ruido propio de la variante. El domo suave deja la superficie de cada bloque un
     poco más alta que la del vecino dentro de su propia celda (sin parpadeo donde se solapan)."""
@@ -51,7 +51,8 @@ def techo_comun(P, alto=1.45, semilla=None, amp=0.03, amp_var=0.05, domo=0.5):
         Q = P.copy()
         Q[:, 2] = 0
         h = h + amp_var * B.fbm(Q, 2.5, 3, semilla) * w
-    d = domo * (np.maximum(0, np.abs(P[:, 0]) - 0.35) ** 2 + np.maximum(0, np.abs(P[:, 1]) - 0.35) ** 2)
+    # el domo arranca justo en la frontera (pendiente cero ahí: sin pliegue visible entre bloques)
+    d = domo * (np.maximum(0, np.abs(P[:, 0]) - 0.5) ** 2 + np.maximum(0, np.abs(P[:, 1]) - 0.5) ** 2)
     return alto + h - d
 
 
@@ -92,11 +93,12 @@ def campo_roca(semilla, alto=1.45, rug=0.05, estratos=0.018, rocas=3, angular=0.
     return g
 
 
-def pintor_techo(fabrica):
-    """Pintor del techo de un bloque que encaja con el vecino: fabrica(ruido) -> pintor, donde ruido(P, escala,
-    octavas, semilla) es ruido_metro en la franja del borde y ruido_libre en el centro."""
-    per = fabrica(ruido_metro)
-    lib = fabrica(ruido_libre)
+def pintor_techo(fabrica, semilla):
+    """Pintor del techo de un bloque que encaja con el vecino: fabrica(ruido, semilla) -> pintor, donde
+    ruido(P, escala, octavas, semilla) es ruido_metro (con la misma semilla en todas las variantes) en la franja del
+    borde y ruido_libre (con la semilla de la variante) en el centro."""
+    per = fabrica(ruido_metro, 0)
+    lib = fabrica(ruido_libre, semilla)
 
     def p(P, N):
         return mezclar(per(P, N), lib(P, N), interior(P))
@@ -286,7 +288,7 @@ def hueso_m(largo=0.3, r=0.022, tris=120):
     return B.malla_sdf(f, (-m, -0.06, -0.05), (m, 0.06, 0.05), 0.008, tris, suavizar=1)
 
 
-def vela(pieza, pos, alto=0.18, r=0.032, semilla=0, llama=True, color='#D9CBA8'):
+def vela(pieza, pos, alto=0.18, r=0.032, semilla=0, llama=True, color='#BFAE8C'):
     """Vela con cera chorreada y su llama (el vacío `llama` arriba)."""
     rng = B.azar(semilla)
     x, y, z = pos
@@ -310,7 +312,7 @@ def vela(pieza, pos, alto=0.18, r=0.032, semilla=0, llama=True, color='#D9CBA8')
     return pieza
 
 
-def charco_cera(pieza, c, r=0.12, semilla=0, color='#CDBE9A'):
+def charco_cera(pieza, c, r=0.12, semilla=0, color='#A8977A'):
     rng = B.azar(semilla)
     blobs = [B.elipsoide((c[0] + rng.uniform(-r, r) * 0.6, c[1] + rng.uniform(-r, r) * 0.6, c[2]),
                          (r * rng.uniform(0.4, 0.7), r * rng.uniform(0.4, 0.7), 0.012)) for _ in range(5)]
@@ -422,8 +424,9 @@ def pasto(pieza, c, radio=0.15, n=9, alto=0.12, color='#4C5A2C', seco='#6A6236',
 # Vetas: el mineral sale de la roca del bioma (el mismo estilo de mineral en los cinco biomas)
 # --------------------------------------------------------------------------
 
-def puntos_superficie(V, N, n, semilla, zmin=0.15, zmax=1.42, lados=True, arriba=True, sep=0.2):
-    """Escoge n puntos de la malla separados entre sí (en los lados y/o el techo)."""
+def puntos_superficie(V, N, n, semilla, zmin=0.15, zmax=1.42, lados=True, arriba=True, sep=0.2, centro=0.36):
+    """Escoge n puntos de la malla separados entre sí (en los lados y/o el techo). En el techo solo en el centro
+    del bloque (centro = medio ancho permitido), para no tapar ni romper la franja que encaja con el vecino."""
     rng = B.azar(semilla)
     ok = (V[:, 2] > zmin) & (V[:, 2] < zmax + 0.2)
     if not lados:
@@ -432,6 +435,8 @@ def puntos_superficie(V, N, n, semilla, zmin=0.15, zmax=1.42, lados=True, arriba
         ok &= N[:, 2] < 0.5
     # nada en los bordes de la celda que tocan al vecino (quedaría enterrado)
     ok &= (np.abs(V[:, 0]) < 0.66) & (np.abs(V[:, 1]) < 0.66)
+    techo = N[:, 2] > 0.6
+    ok &= ~techo | (np.maximum(np.abs(V[:, 0]), np.abs(V[:, 1])) < centro)
     idx = np.flatnonzero(ok)
     rng.shuffle(idx)
     elegidos = []
@@ -531,9 +536,21 @@ def veta(base_fn, tipo, semilla, n=None):
 # Tierra y montículos
 # --------------------------------------------------------------------------
 
-def monticulo(pieza, c, r, alto, semilla=0, pintor=None, tris=260):
-    """Montículo de tierra (tumba removida, escombros) apoyado en el piso."""
-    f = B.desplazar(B.elipsoide((c[0], c[1], 0.0), (r[0], r[1], alto)), 0.015, 8, 3, semilla)
+def monticulo(pieza, c, r, alto, semilla=0, pintor=None, tris=260, terrones=0, hueco=0.0):
+    """Montículo de tierra (tumba removida, escombros) apoyado en el piso, con terrones sueltos.
+    hueco > 0 lo vuelve una orilla (anillo) dejando libre el centro."""
+    rng = B.azar(semilla + 3)
+    partes = [B.elipsoide((c[0], c[1], 0.0), (r[0], r[1], alto))]
+    for k in range(terrones):
+        a = rng.uniform(0, 6.28)
+        d = rng.uniform(0.3, 0.9)
+        q = (c[0] + math.cos(a) * r[0] * d, c[1] + math.sin(a) * r[1] * d, alto * (1 - d) * 0.8)
+        partes.append(B.esfera(q, min(r) * rng.uniform(0.12, 0.22)))
+    f = B.desplazar(B.union(*partes, k=0.03), min(0.012 + alto * 0.08, 0.04), 9, 3, semilla)
+    if hueco > 0:
+        f0 = f
+        dentro = B.elipsoide((c[0], c[1], 0.0), (r[0] * hueco, r[1] * hueco, alto * 3))
+        f = lambda P: np.maximum(f0(P), -dentro(P))
     f2 = lambda P: np.maximum(f(P), -(P[:, 2] + 0.02))
     m = max(r) * 1.2
     pieza.sdf(f2, (c[0] - m, c[1] - m, -0.03), (c[0] + m, c[1] + m, alto + 0.05), max(min(r) / 12, 0.012), tris,
@@ -541,7 +558,7 @@ def monticulo(pieza, c, r, alto, semilla=0, pintor=None, tris=260):
 
 
 def raiz(pieza, puntos, r0=0.025, r1=0.006, color='#5A4634', semilla=0):
-    V, F = B.tubo_m(puntos, [r0, (r0 + r1) / 2, r1], seg=6, muestras=4)
+    V, F = B.tubo_m(puntos, [r0, (r0 + r1) / 2, r1], seg=5, muestras=3)
     pieza.parte(V, F, 'madera', B.madera(color, '#2E2218', eje=2, podrida=0.4, semilla=semilla))
 
 

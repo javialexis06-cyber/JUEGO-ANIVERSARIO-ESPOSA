@@ -51,16 +51,33 @@ def p_tierra(semilla):
 
 
 def p_pasto(semilla):
+    """Pasto del techo de los barrancos (encaja con el bloque vecino, ver C.pintor_techo)."""
+    def fabrica(rn, s):
+        def p(P, N):
+            n = rn(P, 3, 3, s + 20)
+            col = mezclar(hx(PASTO) * 0.78, hx(PASTO) * 1.05, np.clip(0.5 + 0.8 * n, 0, 1))
+            seco = suave(0.15, 0.55, rn(P, 2, 2, s + 21))
+            col = mezclar(col, hx(PASTO_SECO), seco * 0.55)
+            tierra = suave(0.38, 0.65, rn(P, 4, 3, s + 22))
+            col = mezclar(col, hx(TIERRA), tierra * 0.7)
+            hojas = suave(0.55, 0.7, rn(P, 18, 1, s + 24))
+            col = mezclar(col, hx('#8A5A2E'), hojas * 0.5)
+            return col * (1 + 0.1 * rn(P, 24, 1, s + 23))[:, None]
+        return p
+    return C.pintor_techo(fabrica, semilla)
+
+
+def p_suelta(semilla, base=None, oscuro=None):
+    """Tierra removida: terrones oscuros, piedritas y raicillas."""
+    B1, O = hx(base or '#6A5442'), hx(oscuro or '#3C2E22')
+
     def p(P, N):
-        n = B.fbm(P, 3, 3, semilla + 20)
-        col = mezclar(hx(PASTO) * 0.78, hx(PASTO) * 1.05, np.clip(0.5 + 0.8 * n, 0, 1))
-        seco = suave(0.15, 0.55, B.ruido(P, 2.2, semilla + 21))
-        col = mezclar(col, hx(PASTO_SECO), seco * 0.55)
-        tierra = suave(0.38, 0.65, B.fbm(P, 4, 3, semilla + 22))
-        col = mezclar(col, hx(TIERRA), tierra * 0.7)
-        hojas = suave(0.6, 0.75, B.ruido(P, 18, semilla + 24))
-        col = mezclar(col, hx('#8A5A2E'), hojas * 0.5)
-        return col * (1 + 0.1 * B.ruido(P, 24, semilla + 23))[:, None]
+        col = mezclar(O, B1, np.clip(0.5 + 0.8 * B.fbm(P, 7, 3, semilla), 0, 1))
+        piedritas = suave(0.62, 0.7, B.ruido(P, 22, semilla + 1))
+        col = mezclar(col, hx('#8A857C'), piedritas * 0.8)
+        terron = suave(0.3, 0.6, B.ruido(P, 11, semilla + 2))
+        col = mezclar(col, O * 0.8, terron * 0.5)
+        return col * (0.8 + 0.2 * suave(-0.5, 0.8, N[:, 2]))[:, None]
     return p
 
 
@@ -108,11 +125,11 @@ def _piedras(p, V, N, semilla, n=4, r=(0.06, 0.12), lados=True, arriba=True):
         p.sdf(f, c - m, c + m, rr / 6, 70, 'piedra', p_piedrita(semilla + k))
 
 
-def tierra_base(semilla, tris=850, rocas=3):
+def tierra_base(semilla, tris=760, rocas=3):
     """Barranco de tierra con pasto: la roca blanda del cementerio (también la base de las vetas)."""
     def fn():
         p = Pieza('pared_blanda', 'pared', dureza='blanda', huella=[1, 1], alto=1.5)
-        f = C.campo_roca(semilla, rug=0.055, estratos=0.03, rocas=rocas)
+        f = C.campo_roca(semilla, rug=0.055, estratos=0.02, rocas=rocas)
         V, F = C.malla_pared(f, tris)
         p.parte(V, F, 'tierra', C.pintor_pared(p_tierra(semilla), p_pasto(semilla)))
         return p
@@ -124,7 +141,7 @@ def pared_blanda(semilla, extra):
         p = tierra_base(semilla)()
         V, F = p.partes[0]['V'], p.partes[0]['F']
         N = B.normales(V, F)
-        _pasto_arriba(p, V, N, semilla, 4)
+        _pasto_arriba(p, V, N, semilla, 3)
         _piedras(p, V, N, semilla, 3)
         rng = B.azar(semilla + 7)
         if extra == 'raices':
@@ -134,7 +151,7 @@ def pared_blanda(semilla, extra):
                 L = rng.uniform(0.4, 0.8)
                 pts = [q - lado * 0.02, q + lado * 0.05 + (0, 0, -L * 0.3), q + lado * 0.07 + (rng.uniform(-.1, .1), rng.uniform(-.1, .1), -L * 0.7),
                        q + lado * 0.04 + (rng.uniform(-.1, .1), rng.uniform(-.1, .1), -L)]
-                C.raiz(p, pts, 0.022, 0.005, semilla=semilla + k)
+                C.raiz(p, pts, 0.026, 0.006, semilla=semilla + k)
         elif extra == 'huesos':
             for k, (q, nq) in enumerate(C.puntos_superficie(V, N, 3, semilla + 9, zmin=0.3, zmax=1.1, arriba=False, sep=0.35)):
                 nh = np.array([nq[0], nq[1], 0.15])
@@ -147,7 +164,7 @@ def pared_blanda(semilla, extra):
                     R = C.orientar(nh) @ B.rot_euler(0, 0, math.pi / 2 + rng.uniform(-0.5, 0.5))
                     p.parte(B.transformar(Vh, q - nq * 0.02, R @ B.rot_euler(0, rng.uniform(-0.6, 0.6), 0)), Fh, 'hueso', B.hueso(semilla=semilla + k))
         elif extra == 'hongos':
-            for k, (q, nq) in enumerate(C.puntos_superficie(V, N, 3, semilla + 10, zmin=0.1, zmax=0.6, arriba=False, sep=0.3)):
+            for k, (q, nq) in enumerate(C.puntos_superficie(V, N, 2, semilla + 10, zmin=0.1, zmax=0.6, arriba=False, sep=0.4)):
                 hongos(p, q - nq * 0.02, nq, semilla + k, 0.8)
         return p
     return fn
@@ -221,11 +238,19 @@ def piso_lodo(semilla, cosas, hojas=0.0, peso=1.0):
         p = Pieza('piso', 'piso', huella=[2, 2], peso=peso)
         p.ao = dict(rayos=8, dist=0.12, fuerza=0.6, suelo=False)
         p.bordes = dict(claro=0.15, oscuro=0.15, escala=2.0)
+        rng = B.azar(semilla)
+        cc = (rng.uniform(-0.3, 0.3), rng.uniform(-0.3, 0.3)) if 'charco' in cosas else None
+
+        def alto(P):
+            z = alto_lodo(P)
+            if cc is not None:
+                e = ((P[:, 0] - cc[0]) / 0.6) ** 2 + ((P[:, 1] - cc[1]) / 0.46) ** 2
+                z = z - 0.06 * suave(1.0, 0.45, e)
+            return z
         if 'losas' in cosas:
             losas_rotas(p, semilla)
         else:
-            C.piso_campo(p, alto_lodo, p_lodo(semilla, hojas), 22)
-        rng = B.azar(semilla)
+            C.piso_campo(p, alto, p_lodo(semilla, hojas), 22)
         for k in range(rng.integers(2, 4)):
             C.pasto(p, (rng.uniform(-0.75, 0.75), rng.uniform(-0.75, 0.75), 0.0), 0.12, 6, 0.1, PASTO, PASTO_SECO, semilla + k)
         if 'piedras' in cosas:
@@ -235,8 +260,8 @@ def piso_lodo(semilla, cosas, hojas=0.0, peso=1.0):
                 Vh, Fh = C.hueso_m(rng.uniform(0.18, 0.28), 0.018)
                 c = (rng.uniform(-0.6, 0.6), rng.uniform(-0.6, 0.6), 0.012)
                 p.parte(B.transformar(Vh, c, B.rot_euler(0, 0, rng.uniform(0, 6))), Fh, 'hueso', B.hueso(semilla=semilla + k))
-        if 'charco' in cosas:
-            charco(p, (rng.uniform(-0.3, 0.3), rng.uniform(-0.3, 0.3)), (0.45, 0.32), semilla)
+        if cc is not None:
+            charco(p, cc, (0.45, 0.32), semilla, z_agua=-0.012)
         if 'hojas' in cosas:
             hojarasca(p, semilla, 14)
         return p
@@ -245,10 +270,10 @@ def piso_lodo(semilla, cosas, hojas=0.0, peso=1.0):
 
 def losas_rotas(p, semilla):
     """Camino viejo de losas hundidas en el lodo (las juntas exteriores caen en el borde)."""
-    rects = C.losas_fila(semilla, filas=(0.5, 0.5, 0.5, 0.5), anchos=(0.45, 0.8))
+    # losas solo en el centro (hasta 0,8 m del centro): la franja del borde es el mismo lodo de los otros pisos
+    rects = [tuple(v * 0.8 for v in r) for r in C.losas_fila(semilla, filas=(0.5, 0.5, 0.5, 0.5), anchos=(0.45, 0.8))]
     rng = B.azar(semilla + 1)
-    faltan = set(rng.choice(len(rects), size=max(1, len(rects) // 4), replace=False).tolist())
-    keep = [r for i, r in enumerate(rects) if i not in faltan]
+    keep = [r for r in rects if rng.random() > 0.2]
     f = C.alto_losas(keep, semilla, junta=0.05, hundir=0.025, bisel=0.035, desnivel=0.015, inclina=0.015)
     lodo = p_lodo(semilla, 0.3, pasto=0.6)
     piedra = B.piedra('#8C877F', '#55514B', musgo=MUSGO, musgo_cant=0.4, escala=3, humedad=0.0, semilla=semilla,
@@ -256,17 +281,18 @@ def losas_rotas(p, semilla):
 
     def alto(P):
         z, _ = f(P)
-        # donde no hay losa: lodo (en los bordes de la baldosa el lodo baja a la misma altura que la junta)
-        return np.maximum(z, -0.025 + 0.4 * (alto_lodo(P) + 0.03) * 0.5)
+        lodo_z = alto_lodo(P)
+        w = suave(0.92, 0.82, np.maximum(np.abs(P[:, 0]), np.abs(P[:, 1])))
+        return lodo_z * (1 - w) + w * np.maximum(z + 0.01, lodo_z - 0.015)
 
     def pint(P, N):
         z, idx = f(P)
-        en_losa = suave(-0.02, -0.005, z)
+        en_losa = suave(-0.02, -0.005, z) * (idx >= 0)
         return mezclar(lodo(P, N), piedra(P, N), en_losa)
-    C.piso_campo(p, alto, pint, 32)
+    C.piso_campo(p, alto, pint, 30)
 
 
-def charco(p, c, r, semilla):
+def charco(p, c, r, semilla, z_agua=0.012):
     """Charco de agua negra (material `agua`, brilla con las antorchas)."""
     rng = B.azar(semilla + 77)
     pts = []
@@ -274,12 +300,13 @@ def charco(p, c, r, semilla):
     for k in range(n):
         a = 2 * np.pi * k / n
         rr = 1 + 0.25 * math.sin(a * 3 + rng.uniform(0, 6)) + 0.1 * rng.uniform(-1, 1)
-        pts.append((c[0] + math.cos(a) * r[0] * rr, c[1] + math.sin(a) * r[1] * rr, 0.012))
-    V = np.array([(c[0], c[1], 0.012)] + pts)
+        pts.append((c[0] + math.cos(a) * r[0] * rr, c[1] + math.sin(a) * r[1] * rr, z_agua))
+    V = np.array([(c[0], c[1], z_agua)] + pts)
     F = np.array([(0, 1 + k, 1 + (k + 1) % n) for k in range(n)])
     p.parte(V, F, 'agua', lambda P, N: np.tile(hx('#1A1E26'), (len(P), 1)), ao=False)
-    # orilla de lodo
-    C.monticulo(p, (c[0], c[1], 0), (r[0] * 1.15, r[1] * 1.15), 0.025, semilla, B.manchado(LODO, LODO_OSC, 5, semilla=semilla), 180)
+    # orilla de lodo (anillo: el agua queda a la vista)
+    C.monticulo(p, (c[0], c[1], 0), (r[0] * 1.25, r[1] * 1.25), z_agua + 0.02, semilla, B.manchado(LODO, LODO_OSC, 5, semilla=semilla),
+                220, terrones=4, hueco=0.82)
 
 
 def hojarasca(p, semilla, n=12, area=0.85):
@@ -356,7 +383,7 @@ def lapida_pieza(nombre, forma, ancho, alto, grosor, semilla, incl=(0.12, 0.08),
         p.sdf(lambda P: np.maximum(g(P), -(P[:, 2] + 0.02)), (-m, -m, -0.04), (m, m, alto + 0.08), 0.011, 1400, 'piedra',
               p_lapida(semilla))
         # tierra removida delante y pasto alrededor
-        C.monticulo(p, (0, -0.32, 0), (ancho * 0.55, 0.32), 0.06, semilla, B.manchado(TIERRA, TIERRA_OSC, 6, semilla=semilla), 220)
+        C.monticulo(p, (0, -0.32, 0), (ancho * 0.55, 0.32), 0.06, semilla, p_suelta(semilla), 260, terrones=5)
         C.pasto(p, (ancho * 0.45, 0.05, 0), 0.1, 6, 0.12, PASTO, PASTO_SECO, semilla + 1)
         C.pasto(p, (-ancho * 0.5, 0.0, 0), 0.08, 5, 0.1, PASTO, PASTO_SECO, semilla + 2)
         return p
@@ -413,7 +440,7 @@ def lapidas_grupo():
         g = B.mover_f(f, (x, 0.1, -0.05), R)
         p.sdf(lambda P, g=g: np.maximum(g(P), -(P[:, 2] + 0.02)), (x - 0.4, -0.35, -0.04), (x + 0.4, 0.45, h + 0.1), 0.011, 800,
               'piedra', p_lapida(50 + k))
-        C.monticulo(p, (x, -0.22, 0), (0.22, 0.2), 0.05, 60 + k, B.manchado(TIERRA, TIERRA_OSC, 6, semilla=60 + k), 150)
+        C.monticulo(p, (x, -0.22, 0), (0.22, 0.2), 0.05, 60 + k, p_suelta(60 + k), 170, terrones=3)
     for k in range(4):
         C.pasto(p, (-0.9 + 0.6 * k, 0.3, 0), 0.08, 5, 0.1, PASTO, PASTO_SECO, 70 + k)
     return p
@@ -460,7 +487,7 @@ def cruz_torcida():
     gt = B.mover_f(trapo, t0, B.rot_euler(0.05, 0.1, 0.25))
     p.sdf(gt, t0 + np.array([-0.2, -0.15, -0.45]), t0 + np.array([0.2, 0.15, 0.05]), 0.008, 260, 'tela',
           B.manchado('#5A2A26', '#2A1412', escala=10, semilla=93))
-    C.monticulo(p, (0, 0, 0), (0.28, 0.25), 0.08, 94, B.manchado(TIERRA, TIERRA_OSC, 6, semilla=94), 200)
+    C.monticulo(p, (0, 0, 0), (0.28, 0.25), 0.08, 94, p_suelta(94), 220, terrones=4)
     C.escombros(p, (0.0, 0.0, 0.03), 0.22, 4, 95, pintor=p_piedrita(95), tam=(0.03, 0.05))
     return p
 
@@ -637,7 +664,7 @@ def arbol_seco():
         q = np.array([rng.uniform(-0.5, 0.5), rng.uniform(-0.5, 0.5), rng.uniform(1.4, 1.8)])
         Vm, Fm = B.tubo_m([q, q + (0.02, 0, -0.15), q + (-0.01, 0.02, -0.3)], [0.02, 0.012, 0.003], seg=4, muestras=3)
         p.parte(Vm, Fm, 'musgo', B.manchado('#6E7A48', '#3E4A28', 10, semilla=130 + k))
-    C.monticulo(p, (0, 0, 0), (0.35, 0.35), 0.06, 122, B.manchado(TIERRA, TIERRA_OSC, 6, semilla=122), 200)
+    C.monticulo(p, (0, 0, 0), (0.35, 0.35), 0.06, 122, p_suelta(122), 240, terrones=5)
     hojarasca(p, 123, 10, 0.45)
     return p
 
@@ -710,21 +737,43 @@ def ataud():
 
 
 def fosa():
-    """Tumba recién abierta: hueco oscuro con su borde de tierra, montón de tierra y una pala clavada (1 × 2 m)."""
+    """Tumba recién abierta: hueco oscuro con orilla irregular, montón de tierra, tablas atravesadas y una pala
+    clavada (1 × 2 m)."""
     p = Pieza('deco_fosa', 'deco', huella=[1, 2], alto=0.55, lugar='libre', solido=True)
-    borde = B.desplazar(lambda P: np.maximum(np.maximum(np.abs(P[:, 0]) - 0.42, np.abs(P[:, 1]) - 0.85) - 0.06,
-                                              -np.maximum(np.abs(P[:, 0]) - 0.28, np.abs(P[:, 1]) - 0.7)), 0.015, 8, 3, 161)
-    borde_z = lambda P: np.maximum(borde(P), np.abs(P[:, 2] - 0.02) - 0.07)
-    p.sdf(lambda P: np.maximum(borde_z(P), -(P[:, 2] + 0.01)), (-0.6, -1.0, -0.02), (0.6, 1.0, 0.15), 0.014, 900, 'tierra',
-          B.manchado(TIERRA, TIERRA_OSC, 6, semilla=161))
-    # el hueco: un fondo casi negro con paredes que bajan
-    V = np.array([(-0.3, -0.72, 0.004), (0.3, -0.72, 0.004), (0.3, 0.72, 0.004), (-0.3, 0.72, 0.004)])
-    F = np.array([(0, 1, 2), (0, 2, 3)])
-    p.parte(V, F, 'tierra', lambda P, N: np.tile(hx('#0E0B09'), (len(P), 1)), ao=False)
-    C.monticulo(p, (0.55, 0.45, 0), (0.32, 0.45), 0.32, 162, B.manchado(TIERRA, TIERRA_OSC, 6, semilla=162), 500)
+
+    def rect(P, a, b):
+        return np.maximum(np.abs(P[:, 0]) - a, np.abs(P[:, 1]) - b)
+    rng = B.azar(161)
+    alto_orilla = lambda P: 0.035 + 0.05 * np.clip(0.5 + B.fbm(P, 3, 2, 166), 0, 1) + 0.04 * suave(0.0, 0.3, P[:, 0])
+    orilla = lambda P: np.maximum(np.maximum(rect(P, 0.36, 0.78) - 0.035 * (1 + B.ruido(P, 5, 167)), -rect(P, 0.27, 0.68)),
+                                  P[:, 2] - alto_orilla(P))
+    terrones = [B.esfera((rng.choice([-1, 1]) * rng.uniform(0.28, 0.38), rng.uniform(-0.75, 0.75), 0.04), rng.uniform(0.03, 0.06)) for _ in range(9)]
+    f = B.desplazar(B.union(orilla, *terrones, k=0.025), 0.01, 10, 3, 161)
+    p.sdf(lambda P: np.maximum(f(P), -(P[:, 2] + 0.01)), (-0.55, -0.95, -0.02), (0.55, 0.95, 0.2), 0.012, 1000, 'tierra', p_suelta(161))
+    # el hueco: rejilla con un degradado de profundidad (oscuro en el centro)
+    nx, ny = 6, 12
+    xs, ys = np.linspace(-0.3, 0.3, nx + 1), np.linspace(-0.71, 0.71, ny + 1)
+    X, Y = np.meshgrid(xs, ys, indexing='ij')
+    V = np.stack([X.ravel(), Y.ravel(), np.full(X.size, 0.006)], 1)
+    F = []
+    for i in range(nx):
+        for j in range(ny):
+            a, b = i * (ny + 1) + j, (i + 1) * (ny + 1) + j
+            F += [(a, b, b + 1), (a, b + 1, a + 1)]
+
+    def hondo(P, N):
+        d = np.minimum((0.3 - np.abs(P[:, 0])) / 0.3, (0.71 - np.abs(P[:, 1])) / 0.71)
+        return mezclar(hx('#3A2C20'), hx('#060504'), suave(0.0, 0.45, d))
+    p.parte(V, np.array(F), 'tierra', hondo, ao=False)
+    # tablas atravesadas
+    for k, (y, a) in enumerate([(-0.35, 0.08), (0.22, -0.12)]):
+        tabla = B.desplazar(B.caja((0, y, 0.07), (0.44, 0.07, 0.014), r=0.006, R=B.rot_euler(0.0, 0.04 * (k * 2 - 1), a)), 0.003, 25, 2, 168 + k)
+        p.sdf(tabla, (-0.55, y - 0.25, 0.0), (0.55, y + 0.25, 0.13), 0.009, 160, 'madera', B.madera('#7A6450', '#3A2C20', eje=0, podrida=0.4, semilla=168 + k))
+    C.monticulo(p, (0.62, 0.45, 0), (0.28, 0.42), 0.34, 162, p_suelta(162), 700, terrones=9)
+    C.escombros(p, (0.52, -0.05, 0), 0.2, 4, 165, pintor=p_piedrita(165), tam=(0.03, 0.05))
     # pala clavada en el montón
     R = B.rot_euler(0.25, -0.3, 0.4)
-    o = np.array([0.6, 0.45, 0.2])
+    o = np.array([0.66, 0.45, 0.2])
     Vm, Fm = B.cilindro_m((0, 0, 0), (0, 0, 0.8), 0.018, seg=6)
     p.parte(Vm @ R.T + o, Fm, 'madera', B.madera('#7A6450', '#3E3024', eje=2, semilla=163))
     Vp, Fp = B.malla_sdf(B.union(B.caja((0, 0, -0.12), (0.1, 0.012, 0.12), r=0.01), B.cilindro((0, 0, 0), (0, 0, 0.05), 0.025)),
@@ -833,14 +882,16 @@ def raices():
         d = np.array([math.cos(a), math.sin(a), 0])
         t = np.array([-d[1], d[0], 0])
         o = t * rng.uniform(-0.2, 0.2)
-        pts = [o - d * 0.42 + (0, 0, -0.05), o - d * 0.2 + (0, 0, 0.1), o + t * 0.05 + (0, 0, 0.14), o + d * 0.22 + (0, 0, 0.06), o + d * 0.4 + (0, 0, -0.05)]
-        C.raiz(p, pts, 0.035, 0.015, color='#5E4A36', semilla=241 + k)
+        pts = [o - d * 0.44 + (0, 0, -0.06), o - d * 0.22 + (0, 0, 0.05), o + t * 0.06 + (0, 0, 0.08), o + d * 0.2 + (0, 0, 0.03), o + d * 0.42 + (0, 0, -0.06)]
+        C.raiz(p, pts, 0.05, 0.02, color='#5E4A36', semilla=241 + k)
+        for e in (o - d * 0.44, o + d * 0.42):
+            C.monticulo(p, (e[0], e[1], 0), (0.09, 0.09), 0.035, 245 + k, p_suelta(245 + k), 60, terrones=2)
     return p
 
 
 def deco_charco():
     p = Pieza('deco_charco', 'deco', huella=[1, 1], alto=0.03, lugar='suelo', solido=False)
-    charco(p, (0, 0), (0.42, 0.3), 251)
+    charco(p, (0, 0), (0.42, 0.3), 251, z_agua=0.035)
     C.pasto(p, (0.38, 0.25, 0), 0.08, 5, 0.08, PASTO, PASTO_SECO, 252)
     return p
 
