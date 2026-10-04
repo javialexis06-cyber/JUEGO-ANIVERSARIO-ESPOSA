@@ -87,7 +87,7 @@ def emblema(u, v):
     return np.where(murcielago, 1.0, np.where(gota, 0.45, 0.0))
 
 
-def tela(p, ancho, alto, nx, ny, origen, R, color_fn, pliegue=0.03, semilla=0, caida=None, mat='tela'):
+def tela(p, ancho, alto, nx, ny, origen, R, color_fn, pliegue=0.03, semilla=0, caida=None, mat='tela', dos_caras=True):
     """Tela de dos caras (tapiz, cortina, estandarte, mantel): rejilla en (u, v) con pliegues.
     color_fn(u, v) -> color sRGB (u, v en -1..1). caida(u, v) -> desplazamiento extra en z (cola de golondrina, flecos)."""
     us = np.linspace(-1, 1, nx + 1)
@@ -114,6 +114,9 @@ def tela(p, ancho, alto, nx, ny, origen, R, color_fn, pliegue=0.03, semilla=0, c
     if np.dot(n0, frente) < 0:
         F = F[:, ::-1]
     nv = len(W)
+    if not dos_caras:
+        p.parte(W, F, mat, lambda P, N, cols=cols: cols if len(P) == len(cols) else np.tile(cols.mean(0), (len(P), 1)))
+        return
     Wf = W + (np.asarray(R, float) @ np.array([0, -0.002, 0]))
     Wb = W + (np.asarray(R, float) @ np.array([0, 0.002, 0]))
     Vall = np.vstack([Wf, Wb])
@@ -246,13 +249,12 @@ def piso_marmol(semilla, cosas, peso=1.0):
             # cada losa: rombo rojo dentro de mármol negro, con vetas
             u = (P[:, 0] + 1) % 1.0 - 0.5
             v = (P[:, 1] + 1) % 1.0 - 0.5
-            rombo = (np.abs(u) + np.abs(v)) < 0.36
-            base = np.where(rombo[:, None], hx(MARMOL_R), hx(MARMOL_N))
+            rombo = (np.abs(u) + np.abs(v)) < 0.34
+            base = np.where(rombo[:, None], hx('#3E161C'), hx(MARMOL_N))
             vet = suave(0.82, 0.96, 1 - np.abs(C.ruido_piso(P, 3, 1600 + semilla) + 0.3 * C.ruido_piso(P, 9, 1601)))
-            col = mezclar(base, hx('#8A8088'), vet * 0.55)
-            filete = np.abs((np.abs(u) + np.abs(v)) - 0.36) < 0.018
-            marco = (np.abs(np.maximum(np.abs(u), np.abs(v)) - 0.44) < 0.012)
-            col = np.where((filete | marco)[:, None], hx(ORO), col)
+            col = mezclar(base, hx('#7A7078'), vet * 0.5)
+            filete = np.abs((np.abs(u) + np.abs(v)) - 0.34) < 0.012
+            col = np.where(filete[:, None], hx('#8A6A2E'), col)
             if 'escudo' in cosas:
                 e = emblema(P[:, 0] / 0.55, P[:, 1] / 0.55)
                 circ = np.abs(np.hypot(P[:, 0], P[:, 1]) - 0.62) < 0.02
@@ -492,7 +494,7 @@ def alfombra():
         col = np.where((borde | fil)[:, None], hx(ORO) * 0.85, col)
         col = np.where(rombos[:, None], hx(ROJO_OSC), col)
         return col
-    tela(p, 0.95, 2.0, 10, 20, (0.0, -1.0, 0.012), B.rot_x(-math.pi / 2), color, pliegue=0.0, semilla=1782)
+    tela(p, 0.95, 2.0, 10, 20, (0.0, -1.0, 0.012), B.rot_x(-math.pi / 2), color, pliegue=0.0, semilla=1782, dos_caras=False)
     q = p.partes[-1]
     q['V'][:, 2] = 0.012 + 0.006 * np.sin(q['V'][:, 0] * 9) * np.sin(q['V'][:, 1] * 3)
     return p
@@ -653,12 +655,13 @@ def fuente_sangre():
 
 def columna_marmol():
     p = Pieza('deco_columna_marmol', 'deco', huella=[1, 1], alto=2.3, lugar='borde', solido=True)
-    V, F = B.torno_m([(0.0, 0.0), (0.3, 0.0), (0.3, 0.1), (0.26, 0.14), (0.24, 0.2), (0.2, 0.24), (0.18, 2.0), (0.24, 2.05), (0.3, 2.18), (0.3, 2.28), (0.0, 2.28)], seg=14)
+    V, F = B.torno_m([(0.0, 0.0), (0.27, 0.0), (0.27, 0.08), (0.23, 0.12), (0.21, 0.18), (0.18, 0.22), (0.16, 2.02), (0.19, 2.06), (0.22, 2.16), (0.25, 2.2),
+                      (0.25, 2.28), (0.0, 2.28)], seg=14)
     mar = B.piedra(MARMOL_N, '#0E0A0C', claro='#5A4E54', escala=3, humedad=0, semilla=1861, vetas=0.6, color_vetas='#8A7E86')
 
     def pint(P, N):
         col = mar(P, N)
-        oro = (P[:, 2] < 0.24) | (P[:, 2] > 2.0)
+        oro = ((P[:, 2] > 0.1) & (P[:, 2] < 0.2)) | ((P[:, 2] > 2.02) & (P[:, 2] < 2.18))
         return np.where(oro[:, None], hx(ORO) * (0.8 + 0.2 * np.clip(0.5 + B.ruido(P, 20, 3), 0, 1))[:, None], col)
     p.parte(V, F, 'piedra', pint)
     return p
