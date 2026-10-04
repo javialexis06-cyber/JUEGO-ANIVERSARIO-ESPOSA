@@ -19,7 +19,8 @@ export const PRECIO_CUARTO: Partial<Record<Cuarto, number>> = { trofeos: 50, cua
 /** Los cuartos propios: solo su dueño los decora y les pinta las paredes. */
 export const DUENO: Partial<Record<Cuarto, Rol>> = { cuarto_el: 'el', cuarto_ella: 'ella' };
 export const tieneCuarto = (c: Pick<Casa, 'ampliaciones'>, k: Cuarto) => CUARTOS_BASE.includes(k) || !!c.ampliaciones?.includes(k);
-export const NOMBRE_ROL: Record<Rol, string> = { el: 'Él', ella: 'Ella' };
+/** Cómo se llaman (lo que se muestra en pantalla; por dentro siguen siendo 'el' y 'ella'). */
+export const NOMBRE_ROL: Record<Rol, string> = { el: 'Javier', ella: 'Laura' };
 export const otro = (r: Rol): Rol => (r === 'el' ? 'ella' : 'el');
 
 /** Puntos que se pierden por hora (despierto). Dormido: la energía sube y la comida baja a la mitad. */

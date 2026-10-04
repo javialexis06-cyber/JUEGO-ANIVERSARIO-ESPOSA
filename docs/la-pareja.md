@@ -4,6 +4,11 @@ Lo que Él contó para que los textos, las escenas y los minijuegos se sientan d
 historia y los 20 recuerdos de [`cien-puertas.md`](cien-puertas.md) y el guion de [`guion-voces.md`](guion-voces.md).
 Es una sorpresa: nada de esto se le pregunta a Ella.
 
+## Cómo se llaman
+
+**Javier** (Él) y **Laura** (Ella, su esposa). En pantalla se usan sus nombres en vez de «Él» y «Ella»
+(`NOMBRE_ROL` en `src/casa/modelo.ts`); por dentro el código sigue usando los roles `el` y `ella`.
+
 ## Cómo se dicen
 
 | Quién | A quién | Cómo |
