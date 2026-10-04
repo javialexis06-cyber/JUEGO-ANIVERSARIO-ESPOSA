@@ -517,8 +517,7 @@ def veta(base_fn, tipo, semilla, n=None):
     def fn():
         p = base_fn()
         p.extras.update(tipo='veta', dureza='veta', mineral=tipo)
-        V, F = p.partes[0]['V'], p.partes[0]['F']
-        N = B.normales(V, F)
+        V, N = malla_base(p)
         cant = n or dict(hierro=9, sangre=7, oro=8)[tipo]
         for k, (q, nq) in enumerate(puntos_superficie(V, N, cant, semilla, sep=0.22)):
             q = q - nq * 0.02
@@ -620,7 +619,7 @@ def altura_techo(P, alto=1.45, semilla=0, amp=0.015, amp_var=0.04):
 
 
 def bloque_roca(pieza, semilla, pintor_lado, pintor_arriba, alto=1.45, mat='piedra', rug=0.045, estratos=0.018,
-                angular=0.0, bulto=0.07, amp_var=0.04, sep=0.085, nx=12, ny=8, filas=9, escala_rug=3.0):
+                angular=0.0, bulto=0.07, amp_var=0.04, sep=0.085, nx=12, ny=8, filas=9, escala_rug=3.0, aplanar=None):
     """Bloque de pared de 1 × 1 m que encaja con sus vecinos como baldosas de terreno.
 
     - Techo: rejilla exacta sobre la celda (los vértices del borde coinciden con los del vecino: mismas posiciones,
@@ -672,7 +671,7 @@ def bloque_roca(pieza, semilla, pintor_lado, pintor_arriba, alto=1.45, mat='pied
     Vs = []
     for r in range(filas):
         if r < 3:
-            off = [0.003, 0.035, 0.07][r]
+            off = [0.0, 0.035, 0.07][r]
             z = hb - [0.0, 0.03, 0.09][r]
             q = np.concatenate([bp + bn * off, z[:, None]], 1)
         else:
@@ -683,11 +682,12 @@ def bloque_roca(pieza, semilla, pintor_lado, pintor_arriba, alto=1.45, mat='pied
                 n3 = n3 * (1 - angular) + angular * (1 - 2 * np.abs(B.ruido(q0, escala_rug * 0.9, semilla + 2)))
             capa = np.sin(z * 2 * np.pi * 2.4 + 2.2 * B.fbm(q0, 1.2, 2, semilla + 3))
             base = bulto * (1 - suave(0.0, 0.45, z)) * (0.6 + 0.8 * np.clip(0.5 + B.ruido(q0, 2.5, semilla + 4), 0, 1))
-            off = sep + rug * n3 + estratos * capa + base
+            plano = aplanar(q0) if aplanar is not None else 0.0
+            off = sep + (rug * n3 + estratos * capa) * (1 - plano) + base * (1 - plano)
             # que el costado no se meta debajo del bisel más de la cuenta
             off = np.maximum(off, 0.03)
             q = np.concatenate([bp + bn * off[:, None], z[:, None]], 1)
-            q[:, 2] += 0.02 * B.ruido(q0, 6, semilla + 6)
+            q[:, 2] += 0.02 * B.ruido(q0, 6, semilla + 6) * (1 - plano)
         Vs.append(q)
     Vs = np.concatenate(Vs)
     Fs = []
@@ -717,3 +717,26 @@ def roca_base(pieza, semilla, pintor, n=3, lado=None, alto_max=0.3, tam=(0.1, 0.
                                R=B.rot_euler(rng.uniform(-0.5, 0.5), rng.uniform(-0.5, 0.5), rng.uniform(0, 6.28))), r * 0.12, 1 / r, 3, semilla + k)
         m = r * 1.6
         pieza.sdf(lambda P, f=f: np.maximum(f(P), -(P[:, 2] + 0.03)), c - m, c + m, r / 7, 80, 'piedra', pintor)
+
+
+def malla_base(p, partes=2):
+    """Vértices y normales de las primeras partes de una pieza (el cuerpo del bloque: techo y faldón)."""
+    Vs, Ns = [], []
+    for q in p.partes[:partes]:
+        Vs.append(q['V'])
+        Ns.append(B.normales(q['V'], q['F']))
+    return np.concatenate(Vs), np.concatenate(Ns)
+
+
+def piedritas_techo(pieza, semilla, pintor, n=3, tam=(0.025, 0.055), alto=1.45, amp_var=0.04, mat='piedra'):
+    """Piedritas sueltas en el centro del techo de un bloque (lejos de la franja que encaja con el vecino)."""
+    rng = B.azar(semilla + 21)
+    for k in range(n):
+        r = rng.uniform(*tam)
+        x, y = rng.uniform(-0.3, 0.3), rng.uniform(-0.3, 0.3)
+        z = altura_techo(np.array([[x, y, 0.0]]), alto, semilla, amp_var=amp_var)[0]
+        c = np.array([x, y, z + r * 0.2])
+        f = B.desplazar(B.caja(c, (r, r * rng.uniform(0.6, 1.0), r * rng.uniform(0.5, 0.7)), r=r * 0.5,
+                               R=B.rot_euler(rng.uniform(-0.3, 0.3), rng.uniform(-0.3, 0.3), rng.uniform(0, 6.28))), r * 0.15, 1 / r, 2, semilla + k)
+        m = r * 1.6
+        pieza.sdf(f, c - m, c + m, r / 5, 40, mat, pintor)

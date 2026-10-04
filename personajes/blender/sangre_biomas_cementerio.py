@@ -62,6 +62,8 @@ def p_pasto(semilla):
             col = mezclar(col, hx(TIERRA), tierra * 0.7)
             hojas = suave(0.55, 0.7, rn(P, 18, 1, s + 24))
             col = mezclar(col, hx('#8A5A2E'), hojas * 0.5)
+            grieta = suave(0.9, 0.975, 1 - np.abs(rn(P, 2, 2, s + 27)))
+            col = mezclar(col, hx(TIERRA_OSC), grieta * 0.6)
             return col * (1 + 0.1 * rn(P, 24, 1, s + 23))[:, None]
         return p
     return C.pintor_techo(fabrica, semilla)
@@ -125,13 +127,14 @@ def _piedras(p, V, N, semilla, n=4, r=(0.06, 0.12), lados=True, arriba=True):
         p.sdf(f, c - m, c + m, rr / 6, 70, 'piedra', p_piedrita(semilla + k))
 
 
-def tierra_base(semilla, tris=760, rocas=3):
+def tierra_base(semilla, rocas=2):
     """Barranco de tierra con pasto: la roca blanda del cementerio (también la base de las vetas)."""
     def fn():
         p = Pieza('pared_blanda', 'pared', dureza='blanda', huella=[1, 1], alto=1.5)
-        f = C.campo_roca(semilla, rug=0.055, estratos=0.02, rocas=rocas)
-        V, F = C.malla_pared(f, tris)
-        p.parte(V, F, 'tierra', C.pintor_pared(p_tierra(semilla), p_pasto(semilla)))
+        arriba = p_pasto(semilla)
+        C.bloque_roca(p, semilla, C.pintor_pared(p_tierra(semilla), arriba), arriba, rug=0.05, estratos=0.022, amp_var=0.035)
+        if rocas:
+            C.roca_base(p, semilla, p_piedrita(semilla), n=rocas, tam=(0.08, 0.14))
         return p
     return fn
 
@@ -139,8 +142,7 @@ def tierra_base(semilla, tris=760, rocas=3):
 def pared_blanda(semilla, extra):
     def fn():
         p = tierra_base(semilla)()
-        V, F = p.partes[0]['V'], p.partes[0]['F']
-        N = B.normales(V, F)
+        V, N = C.malla_base(p)
         _pasto_arriba(p, V, N, semilla, 3)
         _piedras(p, V, N, semilla, 3)
         rng = B.azar(semilla + 7)
@@ -202,9 +204,9 @@ def borde_cementerio(semilla):
     """Roca imposible del borde: granito oscuro, grande y agrietado."""
     def fn():
         p = Pieza('pared_borde', 'pared', dureza='borde', huella=[1, 1], alto=1.6)
-        f = C.campo_roca(semilla, alto=1.55, rug=0.07, estratos=0.0, rocas=4, angular=0.6, escala_rug=2.2, redondeo=0.12)
-        V, F = C.malla_pared(f, 900)
-        p.parte(V, F, 'piedra', p_granito(semilla))
+        pint = p_granito(semilla)
+        C.bloque_roca(p, semilla, pint, pint, alto=1.55, rug=0.06, estratos=0.0, angular=0.6, escala_rug=2.2, amp_var=0.05)
+        C.roca_base(p, semilla, pint, n=3, tam=(0.1, 0.18))
         return p
     return fn
 

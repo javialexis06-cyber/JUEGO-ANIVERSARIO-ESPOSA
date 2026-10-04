@@ -63,6 +63,8 @@ def p_techo_toba():
             col = mezclar(col, hx('#C8BEA8'), suave(0.2, 0.6, rn(P, 2, 2, s + 2)) * 0.5)
             grava = suave(0.55, 0.7, rn(P, 16, 1, s + 3))
             col = mezclar(col, hx('#6E6454'), grava * 0.6)
+            grieta = suave(0.9, 0.975, 1 - np.abs(rn(P, 2, 2, s + 7)))
+            col = col * (1 - 0.45 * grieta)[:, None]
             return col * (1 + 0.08 * rn(P, 24, 1, s + 4))[:, None]
         return p
     return C.pintor_techo(fabrica, 0)
@@ -91,36 +93,57 @@ def p_hueso(semilla, sucio=0.5):
 # Paredes
 # --------------------------------------------------------------------------
 
-def toba_base(semilla, tris=760, extra_sdf=None):
+def toba_base(semilla, aplanar=None, rocas=2):
+    """Bloque de toba (la roca blanda de las catacumbas, también la base de las vetas)."""
     def fn():
         p = Pieza('pared_blanda', 'pared', dureza='blanda', huella=[1, 1], alto=1.5)
-        f = C.campo_roca(semilla, rug=0.04, estratos=0.012, rocas=2, escala_rug=3.5, redondeo=0.12, amp_var=0.02)
-        if extra_sdf is not None:
-            f = extra_sdf(f)
-        V, F = C.malla_pared(f, tris)
-        p.parte(V, F, 'piedra', C.pintor_pared(p_toba(semilla), p_techo_toba()))
+        C.bloque_roca(p, semilla, C.pintor_pared(p_toba(semilla), p_techo_toba()), p_techo_toba(), rug=0.04, estratos=0.014,
+                      amp_var=0.02, escala_rug=3.5, aplanar=aplanar)
+        if rocas:
+            C.roca_base(p, semilla, p_toba(semilla + 1), n=rocas, tam=(0.08, 0.15))
+        C.piedritas_techo(p, semilla, p_toba(semilla + 2, polvo=0.6), n=3, amp_var=0.02)
         return p
     return fn
 
 
-def panel_huesos(p, semilla, x0=-0.56, x1=0.56, z0=0.06, z1=1.36, y=-0.6):
-    """Pared de osario en la cara -Y: hileras de cabezas de fémur y una franja de calaveras."""
-    rng = B.azar(semilla)
-    fila_cal = 0.78
+def frente_plano(x0, x1, z0, z1):
+    """Aplana la cara -Y entre x0..x1 y z0..z1 (para paneles y nichos)."""
+    def f(q):
+        return (q[:, 1] < -0.3) * suave(0.06, 0.0, np.maximum(np.maximum(x0 - q[:, 0], q[:, 0] - x1), np.maximum(z0 - q[:, 2], q[:, 2] - z1)))
+    return f
 
-    def f(P):
-        u, v = P[:, 0], P[:, 2]
-        filas = np.floor((v - z0) / 0.075)
-        cu = ((u - x0 + (filas % 2) * 0.045) % 0.09) - 0.045
-        cv = ((v - z0) % 0.075) - 0.0375
-        dy = P[:, 1] - (y - 0.015 + 0.012 * B.ruido(np.stack([u, filas, 0 * u], 1), 3.0, semilla))
-        knob = np.sqrt(cu ** 2 + (np.maximum(dy, 0) * 1.6) ** 2 + cv ** 2) - 0.034
-        losa = np.maximum(np.maximum(P[:, 1] - (y + 0.08), (y - 0.0) - P[:, 1]), np.maximum(np.abs(u) - 0.6, np.maximum(z0 - v, v - z1)))
-        franja = np.abs(v - fila_cal) < 0.11
-        d = np.minimum(np.where(franja, 9.0, knob), losa)
-        return np.maximum(d, np.maximum(np.abs(u) - 0.6, np.maximum(z0 - 0.02 - v, v - z1 - 0.02)))
-    V, F = B.malla_sdf(f, (x0 - 0.08, y - 0.08, z0 - 0.05), (x1 + 0.08, y + 0.1, z1 + 0.05), 0.0095, 1300, suavizar=1)
-    p.parte(V, F, 'hueso', p_hueso(semilla, 0.55))
+
+def panel_huesos(p, semilla, x0=-0.56, x1=0.56, z0=0.04, z1=1.3, y=-0.6, fila_cal=0.78):
+    """Pared de osario en la cara -Y: hileras de cabezas de fémur (cúpulas de 6 triángulos con sombreado suave)
+    sobre un fondo oscuro, y una franja de calaveras."""
+    rng = B.azar(semilla)
+    fondo = np.array([(x0, y + 0.004, z0), (x1, y + 0.004, z0), (x1, y + 0.004, z1), (x0, y + 0.004, z1)])
+    p.parte(fondo, np.array([(0, 1, 2), (0, 2, 3)]), 'hueso', lambda P, N: np.tile(hx('#2A241C'), (len(P), 1)), ao=False)
+    dx, dz = 0.08, 0.068
+    Vs, Fs, b = [], [], 0
+    ang = np.linspace(0, 2 * np.pi, 7)[:-1]
+    fila = 0
+    z = z0 + dz / 2
+    while z < z1 - dz / 2 + 1e-6:
+        if abs(z - fila_cal) > 0.12:
+            x = x0 + dx / 2 + (fila % 2) * dx / 2
+            while x < x1 - dx / 4:
+                r = rng.uniform(0.037, 0.043)
+                h = r * rng.uniform(0.8, 1.05)
+                c = np.array([x + rng.uniform(-0.006, 0.006), y, z + rng.uniform(-0.006, 0.006)])
+                anillo = c + np.stack([np.cos(ang) * r, np.zeros(6), np.sin(ang) * r], 1)
+                apice = c + np.array([rng.uniform(-0.005, 0.005), -h, rng.uniform(-0.005, 0.005)])
+                Vs.append(np.vstack([anillo, apice[None]]))
+                Fs.append(np.array([(6, k, (k + 1) % 6) for k in range(6)]) + b)
+                b += 7
+                x += dx
+        fila += 1
+        z += dz
+    pint_h = p_hueso(semilla, 0.5)
+
+    def pint(P, N):
+        return pint_h(P, N) * (0.55 + 0.45 * np.clip(-N[:, 1], 0, 1))[:, None]
+    p.parte(np.concatenate(Vs), np.concatenate(Fs), 'hueso', pint)
     Vc, Fc = C.calavera(1.1, 220)
     for k, x in enumerate(np.linspace(x0 + 0.1, x1 - 0.1, 4)):
         R = B.rot_euler(rng.uniform(-0.15, 0.15), 0, rng.uniform(-0.25, 0.25))
@@ -129,32 +152,35 @@ def panel_huesos(p, semilla, x0=-0.56, x1=0.56, z0=0.06, z1=1.36, y=-0.6):
 
 def pared_osario(semilla):
     def fn():
-        p = toba_base(semilla, 600)()
+        p = toba_base(semilla, frente_plano(-0.6, 0.6, 0.0, 1.32), rocas=0)()
         p.extras['peso'] = 0.5
-        panel_huesos(p, semilla + 1)
+        panel_huesos(p, semilla + 1, y=-0.57)
         return p
     return fn
 
 
 def pared_nicho(semilla):
-    """Toba con un nicho funerario tallado en el frente: calavera, huesos y un cabo de vela."""
-    def hueco(f):
-        caja = B.caja((0.05, -0.58, 0.72), (0.27, 0.32, 0.17), r=0.03)
-        arco = B.cilindro((0.05, -0.95, 0.89), (0.05, -0.25, 0.89), 0.27)
-        arco = B.cortar(arco, lambda P: 0.89 - P[:, 2])
-        arco = lambda P, a=arco: np.maximum(a(P), (P[:, 2] - 1.0))
-        return B.restar(f, B.union(caja, arco), k=0.02)
-
+    """Toba con un nicho funerario en el frente: marco de piedra en arco, calavera, huesos y un cabo de vela."""
     def fn():
-        p = toba_base(semilla, 820, hueco)()
+        p = toba_base(semilla, frente_plano(-0.35, 0.45, 0.4, 1.15), rocas=1)()
         p.extras['peso'] = 0.7
-        Vc, Fc = C.calavera(1.15, 260)
-        p.parte(B.transformar(Vc, (0.1, -0.42, 0.55), B.rot_euler(0, 0, 0.25)), Fc, 'hueso', p_hueso(semilla))
-        for k, (x, a) in enumerate([(-0.08, 0.3), (0.2, -0.2)]):
-            Vh, Fh = C.hueso_m(0.22, 0.016, 90)
-            p.parte(B.transformar(Vh, (x, -0.35, 0.57), B.rot_euler(0, 0, a)), Fh, 'hueso', p_hueso(semilla + k))
-        C.vela(p, (-0.12, -0.45, 0.55), 0.06, 0.02, semilla, llama=False)
-        C.charco_cera(p, (-0.12, -0.45, 0.555), 0.05, semilla)
+        y = -0.585
+        cx, z0, z1, w = 0.05, 0.52, 0.86, 0.27
+        marco_ext = B.union(B.caja((cx, y, (z0 + z1) / 2 - 0.02), (w + 0.07, 0.04, (z1 - z0) / 2 + 0.06), r=0.015),
+                            B.cortar(B.cilindro((cx, y - 0.04, z1), (cx, y + 0.04, z1), w + 0.07, borde=0.012), lambda P: z1 - P[:, 2]))
+        hueco = B.union(B.caja((cx, y, (z0 + z1) / 2), (w, 0.2, (z1 - z0) / 2)),
+                        B.cortar(B.cilindro((cx, y - 0.2, z1), (cx, y + 0.2, z1), w), lambda P: z1 - P[:, 2]))
+        marco = B.desplazar(B.restar(marco_ext, hueco), 0.004, 14, 3, semilla)
+        p.sdf(marco, (cx - w - 0.12, y - 0.08, z0 - 0.12), (cx + w + 0.12, y + 0.08, z1 + w + 0.12), 0.011, 700, 'piedra', p_caliza(semilla))
+        # fondo oscuro del nicho y su piso
+        fondo = np.array([(cx - w, y + 0.03, z0), (cx + w, y + 0.03, z0), (cx + w, y + 0.03, z1 + w * 0.9), (cx - w, y + 0.03, z1 + w * 0.9)])
+        p.parte(fondo, np.array([(0, 1, 2), (0, 2, 3)]), 'piedra', lambda P, N: mezclar(hx('#1C1814'), hx('#0A0807'), suave(z0, z1, P[:, 2])), ao=False)
+        Vc, Fc = C.calavera(1.05, 240)
+        p.parte(B.transformar(Vc, (cx + 0.06, y - 0.01, z0 + 0.0), B.rot_euler(0, 0, 0.25)), Fc, 'hueso', p_hueso(semilla))
+        for k, (x, a) in enumerate([(-0.12, 0.3), (0.17, -0.2)]):
+            Vh, Fh = C.hueso_m(0.2, 0.015, 80)
+            p.parte(B.transformar(Vh, (cx + x, y - 0.02, z0 + 0.015), B.rot_euler(0, 0, a)), Fh, 'hueso', p_hueso(semilla + k))
+        C.vela(p, (cx - 0.15, y - 0.06, z0), 0.06, 0.02, semilla, llama=False)
         return p
     return fn
 
@@ -162,16 +188,14 @@ def pared_nicho(semilla):
 def pared_toba(semilla):
     def fn():
         p = toba_base(semilla)()
-        V, F = p.partes[0]['V'], p.partes[0]['F']
-        N = B.normales(V, F)
+        V, N = C.malla_base(p)
         rng = B.azar(semilla)
-        # piedras sueltas y algún hueso que asoma
-        for k, (q, nq) in enumerate(C.puntos_superficie(V, N, 3, semilla + 2, zmin=0.2, zmax=1.2, arriba=False, sep=0.35)):
-            if k == 0:
-                Vh, Fh = C.hueso_m(0.24, 0.018, 90)
-                R = C.orientar(np.array([nq[0], nq[1], 0.1])) @ B.rot_euler(0, rng.uniform(-0.5, 0.5), math.pi / 2)
-                p.parte(B.transformar(Vh, q - nq * 0.03, R), Fh, 'hueso', p_hueso(semilla))
-        C.escombros(p, (0.0, -0.66, 0.0), 0.18, 4, semilla + 3, pintor=p_toba(semilla + 3), tam=(0.03, 0.06))
+        # algún hueso que asoma del costado
+        for k, (q, nq) in enumerate(C.puntos_superficie(V, N, 1, semilla + 2, zmin=0.25, zmax=1.1, arriba=False, sep=0.35)):
+            Vh, Fh = C.hueso_m(0.24, 0.018, 90)
+            R = C.orientar(np.array([nq[0], nq[1], 0.1])) @ B.rot_euler(0, rng.uniform(-0.5, 0.5), math.pi / 2)
+            p.parte(B.transformar(Vh, q - nq * 0.03, R), Fh, 'hueso', p_hueso(semilla))
+        C.escombros(p, (0.0, -0.7, 0.0), 0.16, 4, semilla + 3, pintor=p_toba(semilla + 3), tam=(0.03, 0.06))
         return p
     return fn
 
@@ -198,9 +222,9 @@ def pared_sillar(semilla, argolla=False):
 def pared_borde(semilla):
     def fn():
         p = Pieza('pared_borde', 'pared', dureza='borde', huella=[1, 1], alto=1.6)
-        f = C.campo_roca(semilla, alto=1.55, rug=0.065, estratos=0.0, rocas=4, angular=0.65, escala_rug=2.4, redondeo=0.12)
-        V, F = C.malla_pared(f, 900)
-        p.parte(V, F, 'piedra', p_basalto(semilla))
+        pint = p_basalto(semilla)
+        C.bloque_roca(p, semilla, pint, pint, alto=1.55, rug=0.06, estratos=0.0, angular=0.65, escala_rug=2.4, amp_var=0.05)
+        C.roca_base(p, semilla, pint, n=3, tam=(0.1, 0.18))
         return p
     return fn
 
