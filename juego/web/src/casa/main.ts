@@ -1986,7 +1986,7 @@ function botonesCuarto(): Boton[] {
       break;
     case 'bano':
       b.push(
-        { id: 'banar', texto: 'Bañarse', icono: ico('tina'), principal: !s.personajes[yo].apuro },
+        { id: 'banar', texto: 'Bañarse', icono: ico('tina'), principal: !s.personajes[yo].apuro && !sentadoParaVolar },
         { id: 'lavar', texto: 'Lavarse', icono: ico('lavar') },
         { id: 'inodoro', texto: 'Ir al baño', icono: ico('inodoro'), principal: !!s.personajes[yo].apuro },
       );
@@ -3374,6 +3374,9 @@ function efectos() {
   lavado: s?.casa.lavado,
   lavadoProgreso: s?.casa.lavadoProgreso,
   cocina: s?.casa.cocina,
+  cohete: s?.casa.cohete,
+  coheteVisto: s?.casa.coheteVisto,
+  diario: s?.casa.diario,
 });
 /** Progreso de prueba en un restaurante (para ver rangos altos). */
 (window as any).__cocinaXp = (receta: RecetaId, xp: number, dia = 6, propinas = 300) =>

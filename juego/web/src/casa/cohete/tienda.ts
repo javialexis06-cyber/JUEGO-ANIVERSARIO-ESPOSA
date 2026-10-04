@@ -84,7 +84,11 @@ export class Tienda {
     }
   }
 
+  private cerrada = false;
   private cerrar() {
+    // (un toque doble en la ✕ no cierra dos veces)
+    if (this.cerrada) return;
+    this.cerrada = true;
     this.raiz.classList.remove('abierta');
     nota(660, 0.08, 0, 'triangle', 0.04);
     setTimeout(() => this.raiz.remove(), 280);

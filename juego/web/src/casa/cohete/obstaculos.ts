@@ -186,7 +186,8 @@ export class Obstaculos {
   }
 
   private bandada(limX: number, y: number) {
-    const n = 3 + Math.floor(Math.random() * 3);
+    // (al principio, mientras se aprende, las bandadas son más pequeñas)
+    const n = (this.tiempo < 15 ? 2 : 3) + Math.floor(Math.random() * 3);
     for (let k = 0; k < n; k++) {
       const fila = Math.ceil(k / 2), lado = k % 2 ? 1 : -1;
       const o = this.basura('pajaro', 0, 0);
@@ -276,7 +277,8 @@ export class Obstaculos {
     }
     this.proximo -= avance;
     if (this.proximo > 0) return;
-    const espacio = 8.2 - 3.9 * dif;
+    // (los primeros ~25 s, mientras se aprende, salen más separados)
+    const espacio = (8.2 - 3.9 * dif) * (1.35 - 0.35 * Math.min(1, this.tiempo / 25));
     this.proximo = espacio * rnd(0.75, 1.3);
     const x = limX + 3;
     const y = rnd(-limY, limY);
@@ -286,7 +288,8 @@ export class Obstaculos {
         if (metros < 60) return;
         if (r < 0.45) this.bandada(limX, rnd(-limY * 0.8, limY * 0.8));
         else if (r < 0.7) this.chatarra('chancla', x, y);
-        else if (r < 0.85 && metros > 150) this.avion(limX, rnd(-limY * 0.7, limY * 0.7));
+        // Los aviones salen cuando ya pasó el arranque tranquilo
+        else if (r < 0.85 && metros > 150 && this.tiempo > 20) this.avion(limX, rnd(-limY * 0.7, limY * 0.7));
         else this.chatarra(Math.random() < 0.5 ? 'inodoro' : 'lata', x, y);
         return;
       case 1:
