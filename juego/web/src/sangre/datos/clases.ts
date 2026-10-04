@@ -54,7 +54,7 @@ export const CLASES: Record<IdClase, DefClase> = {
     specs: [
       { id: 'tirano', nombre: 'Tirano', desc: 'Los caballeros cuestan 20 de oro y llegan de a dos (hasta 5), pero solo duran 25 s. El grito asusta el doble de lejos.' },
       { id: 'rey_guerrero', nombre: 'Rey guerrero', desc: 'Sin caballeros: cada 40 de oro te da +3 % de daño hasta el final. +20 % de área cuerpo a cuerpo y el grito te cura.', mod: { area: 0.2 } },
-      { id: 'mecenas', nombre: 'Mecenas', desc: 'El oro vale +30 % para todo el grupo, la Forja te cobra 20 % menos y tus caballeros son ballesteros.', mod: { oro: 0.3 } },
+      { id: 'mecenas', nombre: 'Mecenas', desc: 'El oro vale +30 % para todo el grupo, la Forja te cobra 20 % menos y tus caballeros son ballesteros.' },
     ],
     dones: [
       { id: 'leva', nombre: 'Leva forzosa', desc: '+1 caballero máximo.', max: 3, glifo: 'yelmo' },

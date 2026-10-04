@@ -260,6 +260,12 @@ export class Proyectil {
   etq = 0;
   /** Proyectil de un aliado (torreta, esqueleto arquero de los nuestros). */
   aliado = false;
+  /** Enemigo al que persigue (teledirigidos) o -1. */
+  blanco = -1;
+  /** Libre (bumerán: distancia máxima; caída: ya pegó). */
+  ref = 0;
+  /** Proyectil chiquito (de una división): no se vuelve a dividir. */
+  mini = false;
 
   yaGolpeo(uid: number, t: number) {
     for (let k = 0; k < 8; k++) if (this.gid[k] === uid && this.gt[k] > t) return true;
@@ -299,6 +305,14 @@ export class Zona {
   sigue = -1;
   etq = 0;
   id = 0;
+  /** Aviso antes de pegar (s): mientras tanto solo se ve la sombra en el piso. */
+  retraso = 0;
+  /** Pega una sola vez al cumplirse el retraso (huesos que caen, golpes del jefe). */
+  unico = false;
+  hecho = false;
+  /** Para el dibujo: de qué arma viene (índice) o −1. */
+  arma = -1;
+  tickT = 0;
 }
 
 // ------------------------------------------------------------------------------------------------- Recogibles
@@ -325,7 +339,7 @@ export class Recogible {
 }
 
 // ------------------------------------------------------------------------------------------------- Aliados
-export const ALI = { CABALLERO: 0, BALLESTERO: 1, ESQUELETO: 2, ESPIRITU: 3, TORRETA: 4, TRAMPA: 5, CUERVO: 6, ANIMA: 7, PRISIONERO: 8, TOTEM: 9, ESPIGA: 10 } as const;
+export const ALI = { CABALLERO: 0, BALLESTERO: 1, ESQUELETO: 2, ESPIRITU: 3, TORRETA: 4, TRAMPA: 5, CUERVO: 6, ANIMA: 7, PRISIONERO: 8, TOTEM: 9, ESPIGA: 10, ENCANTADO: 11 } as const;
 
 export class Aliado {
   vivo = false;

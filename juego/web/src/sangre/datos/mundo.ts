@@ -13,7 +13,9 @@ export type Conducta =
   | 'cargador' // toma impulso y embiste en línea recta
   | 'teletransporte' // desaparece y aparece al lado
   | 'encantador' // jala al jugador hacia ella
-  | 'excavador'; // sale de las paredes
+  | 'excavador' // sale de las paredes
+  | 'quieto' // altares y cosas que no se mueven
+  | 'jefe'; // cada jefe tiene su propia cabeza (sim/jefes.ts)
 
 export interface DefEnemigo {
   id: string;
