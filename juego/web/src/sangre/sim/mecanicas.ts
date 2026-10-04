@@ -893,6 +893,7 @@ export function habilidad(sim: Sim, j: Jugador) {
     monarca: 24, campesino: 11, prisionero: 14, caballero: 9, cazador: 6, herrero: 16, alquimista: 15, sepulturero: 24, inquisidor: 13, verdugo: 12, bruja: 18, juglar: 22,
   };
   j.habT = recarga(j, RECARGAS[j.clase]);
+  j.m.habMax = j.habT;
   const ang = Math.atan2(j.fy, j.fx);
   sim.suc.push(S.HABILIDAD, j.i, j.x, j.y, ang, 0);
   const E = sim.E;

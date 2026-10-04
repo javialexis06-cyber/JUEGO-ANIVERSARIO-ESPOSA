@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0a0809">
+<title>Sangre y Ceniza</title>
+<link rel="icon" href="data:,">
+</head>
+<body class="sangre">
+<canvas id="lienzo" aria-hidden="true"></canvas>
+<div id="vineta" aria-hidden="true"></div>
+<canvas id="superpuesto" aria-hidden="true"></canvas>
+<div id="velo-dano" aria-hidden="true"></div>
+<div id="zona-joystick" hidden></div>
+<div class="joystick" id="joystick" aria-hidden="true"><i></i></div>
+<div id="hud" hidden></div>
+<div id="avisos" aria-live="polite"></div>
+<div id="pantallas"></div>
+<div id="eleccion" hidden></div>
+<div id="hojas"></div>
+<div id="carga">
+  <div class="carga-centro">
+    <div class="carga-logo">Sangre y Ceniza</div>
+    <div class="carga-frase" id="carga-frase">Encendiendo las antorchas…</div>
+    <div class="carga-barra"><i id="carga-barra"></i></div>
+  </div>
+</div>
+<script type="module" src="./src/sangre/main.ts"></script>
+</body>
+</html>

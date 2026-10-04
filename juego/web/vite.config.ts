@@ -10,7 +10,7 @@ export default defineConfig({
     assetsInlineLimit: 0,
     chunkSizeWarningLimit: 2000,
     modulePreload: { polyfill: false },
-    rollupOptions: { input: { casa: resolve(__dirname, 'index.html'), super: resolve(__dirname, 'super.html'), puertas: resolve(__dirname, 'puertas.html'), mesa: resolve(__dirname, 'mesa.html') } },
+    rollupOptions: { input: { casa: resolve(__dirname, 'index.html'), super: resolve(__dirname, 'super.html'), puertas: resolve(__dirname, 'puertas.html'), mesa: resolve(__dirname, 'mesa.html'), sangre: resolve(__dirname, 'sangre.html') } },
   },
   server: { host: true },
 });
