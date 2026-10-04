@@ -23,7 +23,7 @@ MEDIO = 0.6       # medio ancho del bloque (la celda mide 0,5): se sale 10 cm pa
 CAJA_PARED = ((-0.78, -0.78, -0.06), (0.78, 0.78, 1.72))
 
 
-def interior(P, a=0.42, b=0.28):
+def interior(P, a=0.49, b=0.36):
     """1 en el centro del bloque, 0 cerca del borde de la celda (donde toca al vecino)."""
     cheb = np.maximum(np.abs(P[:, 0]), np.abs(P[:, 1]))
     return suave(a, b, cheb)
@@ -41,7 +41,7 @@ def ruido_libre(P, escala, octavas=3, semilla=0):
     return B.fbm(P, escala, octavas, semilla)
 
 
-def techo_comun(P, alto=1.45, semilla=None, amp=0.03, amp_var=0.05, domo=3.0):
+def techo_comun(P, alto=1.45, semilla=None, amp=0.03, amp_var=0.05, domo=10.0):
     """Altura del techo de un bloque: en la franja del borde un ruido que se repite cada metro (igual en todas las
     variantes); en el centro, el ruido propio de la variante. El domo suave deja la superficie de cada bloque un
     poco más alta que la del vecino dentro de su propia celda (sin parpadeo donde se solapan)."""
@@ -343,7 +343,7 @@ def cadena(pieza, puntos, eslabon=0.05, grosor=0.009, color='#3A3634', oxido=0.5
         n1 /= np.linalg.norm(n1)
         if k % 2:
             n1 = np.cross(d, n1)
-        V, F = B.toro_m((0, 0, 0), eslabon * 0.32, grosor, seg=8, seg2=4, eje=(0, 0, 1))
+        V, F = B.toro_m((0, 0, 0), eslabon * 0.32, grosor, seg=6, seg2=4, eje=(0, 0, 1))
         V[:, 0] *= 1.45
         M = np.stack([d, np.cross(n1, d), n1], 1)  # x local -> d, y local -> ..., z local (eje del toro) -> n1
         V = V @ M.T + p
@@ -592,3 +592,128 @@ def juntas(P, alto_hilada=0.28, largo=0.42, ancho=0.012, prof=0.012, eje='x', z0
     du = np.abs((u2 % largo) - largo / 2) - (largo / 2 - ancho)
     w = np.maximum(dz, du)
     return prof * suave(-ancho * 0.2, ancho * 0.8, w)
+
+
+def huesos_suelo(pieza, c, radio, n, semilla, pintor=None):
+    """Huesos regados en el piso alrededor de c."""
+    rng = B.azar(semilla)
+    for k in range(n):
+        a = rng.uniform(0, 6.28)
+        d = radio * math.sqrt(rng.random())
+        V, F = hueso_m(rng.uniform(0.14, 0.26), rng.uniform(0.013, 0.018), 80)
+        q = (c[0] + math.cos(a) * d, c[1] + math.sin(a) * d, 0.012)
+        pieza.parte(B.transformar(V, q, B.rot_euler(0, rng.uniform(-0.1, 0.1), rng.uniform(0, 6.28))), F, 'hueso',
+                    pintor or B.hueso(semilla=semilla + k))
+
+
+# --------------------------------------------------------------------------
+# Bloque de roca con malla controlada (techo en rejilla exacta + faldón)
+# --------------------------------------------------------------------------
+
+def altura_techo(P, alto=1.45, semilla=0, amp=0.015, amp_var=0.04):
+    """Techo de un bloque: en la franja del borde ruido que se repite cada metro (igual en todas las variantes),
+    en el centro el relieve propio de la variante."""
+    w = interior(P)
+    Q = P.copy()
+    Q[:, 2] = 0
+    return alto + amp * ruido_metro(P, 3, 3, 900) * (1 - w) + amp_var * B.fbm(Q, 2.5, 3, semilla + 5) * w
+
+
+def bloque_roca(pieza, semilla, pintor_lado, pintor_arriba, alto=1.45, mat='piedra', rug=0.045, estratos=0.018,
+                angular=0.0, bulto=0.07, amp_var=0.04, sep=0.085, nx=12, ny=8, filas=9, escala_rug=3.0):
+    """Bloque de pared de 1 × 1 m que encaja con sus vecinos como baldosas de terreno.
+
+    - Techo: rejilla exacta sobre la celda (los vértices del borde coinciden con los del vecino: mismas posiciones,
+      alturas y colores).
+    - Faldón: bisel de 45° que arranca en la frontera (siempre por debajo del techo vecino) y el costado que baja
+      hasta el piso con estratos, rugosidad y un abultamiento en la base. Esquinas redondeadas.
+    nx: divisiones en x (caras ±Y; la -Y es la que ve la cámara), ny: divisiones en y (caras ±X)."""
+    xs = np.linspace(-0.5, 0.5, nx + 1)
+    ys = np.linspace(-0.5, 0.5, ny + 1)
+    X, Y = np.meshgrid(xs, ys, indexing='ij')
+    Vt = np.stack([X.ravel(), Y.ravel(), np.zeros(X.size)], 1)
+    Vt[:, 2] = altura_techo(Vt, alto, semilla, amp_var=amp_var)
+    Ft = []
+    for i in range(nx):
+        for j in range(ny):
+            a = i * (ny + 1) + j
+            b = (i + 1) * (ny + 1) + j
+            if (i + j) % 2:
+                Ft += [(a, b, b + 1), (a, b + 1, a + 1)]
+            else:
+                Ft += [(a, b, a + 1), (b, b + 1, a + 1)]
+    pieza.parte(Vt, np.array(Ft, np.int64), mat, pintor_arriba)
+
+    # Perímetro (en sentido antihorario visto desde arriba): punto del borde y normal hacia afuera
+    per = []
+    for x in xs[:-1]:
+        per.append(((x, -0.5), (0.0, -1.0)))
+    for a in (-60, -30):
+        per.append(((0.5, -0.5), (math.cos(math.radians(a)), math.sin(math.radians(a)))))
+    for y in ys[:-1]:
+        per.append(((0.5, y), (1.0, 0.0)))
+    for a in (30, 60):
+        per.append(((0.5, 0.5), (math.cos(math.radians(a)), math.sin(math.radians(a)))))
+    for x in xs[::-1][:-1]:
+        per.append(((x, 0.5), (0.0, 1.0)))
+    for a in (120, 150):
+        per.append(((-0.5, 0.5), (math.cos(math.radians(a)), math.sin(math.radians(a)))))
+    for y in ys[::-1][:-1]:
+        per.append(((-0.5, y), (-1.0, 0.0)))
+    for a in (210, 240):
+        per.append(((-0.5, -0.5), (math.cos(math.radians(a)), math.sin(math.radians(a)))))
+    # en las esquinas el punto (x, y) del borde cae justo en la esquina: el normal promedio redondea
+    bp = np.array([p for p, _ in per], float)
+    bn = np.array([n for _, n in per], float)
+    ncol = len(per)
+    hb = altura_techo(np.concatenate([bp, np.zeros((ncol, 1))], 1), alto, semilla, amp_var=amp_var)
+    # filas: bisel (3) y costado
+    zs_lado = np.linspace(alto - 0.16, -0.05, filas - 3)
+    Vs = []
+    for r in range(filas):
+        if r < 3:
+            off = [0.003, 0.035, 0.07][r]
+            z = hb - [0.0, 0.03, 0.09][r]
+            q = np.concatenate([bp + bn * off, z[:, None]], 1)
+        else:
+            z = np.full(ncol, zs_lado[r - 3])
+            q0 = np.concatenate([bp + bn * sep, z[:, None]], 1)
+            n3 = B.fbm(q0, escala_rug, 4, semilla + 1)
+            if angular > 0:
+                n3 = n3 * (1 - angular) + angular * (1 - 2 * np.abs(B.ruido(q0, escala_rug * 0.9, semilla + 2)))
+            capa = np.sin(z * 2 * np.pi * 2.4 + 2.2 * B.fbm(q0, 1.2, 2, semilla + 3))
+            base = bulto * (1 - suave(0.0, 0.45, z)) * (0.6 + 0.8 * np.clip(0.5 + B.ruido(q0, 2.5, semilla + 4), 0, 1))
+            off = sep + rug * n3 + estratos * capa + base
+            # que el costado no se meta debajo del bisel más de la cuenta
+            off = np.maximum(off, 0.03)
+            q = np.concatenate([bp + bn * off[:, None], z[:, None]], 1)
+            q[:, 2] += 0.02 * B.ruido(q0, 6, semilla + 6)
+        Vs.append(q)
+    Vs = np.concatenate(Vs)
+    Fs = []
+    for r in range(filas - 1):
+        for c in range(ncol):
+            c2 = (c + 1) % ncol
+            a, b = r * ncol + c, r * ncol + c2
+            a2, b2 = (r + 1) * ncol + c, (r + 1) * ncol + c2
+            Fs += [(a, a2, b2), (a, b2, b)]
+    pieza.parte(Vs, np.array(Fs, np.int64), mat, pintor_lado)
+    return Vt, Vs
+
+
+def roca_base(pieza, semilla, pintor, n=3, lado=None, alto_max=0.3, tam=(0.1, 0.2)):
+    """Rocas sueltas pegadas a la base del bloque (rompen la línea del pie de la pared)."""
+    rng = B.azar(semilla + 11)
+    for k in range(n):
+        if lado is None:
+            a = rng.uniform(0, 2 * np.pi)
+        else:
+            a = lado + rng.uniform(-0.6, 0.6)
+        r = rng.uniform(*tam)
+        d = 0.55 + rng.uniform(0.0, 0.08)
+        c = np.array([math.cos(a) * d, math.sin(a) * d, rng.uniform(0.0, alto_max * 0.5)])
+        c[:2] = np.clip(c[:2], -0.62, 0.62)
+        f = B.desplazar(B.caja(c, (r, r * rng.uniform(0.7, 1.0), r * rng.uniform(0.55, 0.85)), r=r * 0.55,
+                               R=B.rot_euler(rng.uniform(-0.5, 0.5), rng.uniform(-0.5, 0.5), rng.uniform(0, 6.28))), r * 0.12, 1 / r, 3, semilla + k)
+        m = r * 1.6
+        pieza.sdf(lambda P, f=f: np.maximum(f(P), -(P[:, 2] + 0.03)), c - m, c + m, r / 7, 80, 'piedra', pintor)

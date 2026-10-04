@@ -82,6 +82,9 @@ def _envolver(i, periodo, eje):
 def ruido(P, escala=1.0, semilla=0, periodo=None):
     """Ruido de gradiente 3D en [-1, 1] aprox. periodo (en celdas de la red) lo hace repetible."""
     Q = np.atleast_2d(np.asarray(P, float)) * escala
+    # desfase de una fracción de celda por semilla: el ruido de gradiente vale 0 en los nodos de la red y sin esto
+    # los dibujos tipo 1 - |ruido| salen como puntos en cuadrícula (sigue siendo periódico: el desfase es fijo)
+    Q = Q + np.array([(semilla * 0.6180339) % 1, (semilla * 0.4142135) % 1, (semilla * 0.7320508) % 1]) * 0.8 + 0.1
     i0 = np.floor(Q).astype(np.int64)
     f = Q - i0
     u = f * f * f * (f * (f * 6 - 15) + 10)
@@ -773,6 +776,9 @@ class Pieza:
         self.ao = dict(rayos=12, dist=0.35, fuerza=0.75, suelo=True)
         # Bordes gastados: lo convexo se aclara y lo cóncavo se oscurece (se lee la forma aun con poca luz)
         self.bordes = dict(claro=0.35, oscuro=0.25, escala=2.5)
+        # Bloques de pared: en la franja del techo que toca al vecino no se hornean bordes ni oclusión (las dos
+        # superficies casi coinciden ahí y deben verse idénticas gane la que gane la profundidad)
+        self.franja_techo = tipo in ('pared', 'veta')
 
     def parte(self, V, F, mat, pintor, ao=True, brillo=1.0):
         """Agrega una malla con su material y su pintor (ao=False para lo que brilla)."""
@@ -823,14 +829,19 @@ class Pieza:
         F = np.concatenate(Fs)
         C = np.concatenate(Cs)
         conao = np.concatenate([np.full(len(p['V']), p['ao']) for p in self.partes])
+        efecto = np.ones(len(V))
+        if self.franja_techo:
+            Nf = normales(V, F)
+            cheb = np.maximum(np.abs(V[:, 0]), np.abs(V[:, 1]))
+            efecto = 1 - suave(0.4, 0.47, cheb) * suave(0.2, 0.5, Nf[:, 2]) * suave(1.1, 1.3, V[:, 2])
         if self.ao and self.ao.get('fuerza', 0) > 0:
             N = normales(V, F)
             ao = oclusion(V, N, F, self.ao['rayos'], self.ao['dist'], self.ao['suelo'])
-            k = 1 - self.ao['fuerza'] * (1 - ao)
+            k = 1 - self.ao['fuerza'] * (1 - ao) * efecto
             C = np.where(conao[:, None], C * k[:, None], C)
         if self.bordes and self.bordes.get('claro', 0) + self.bordes.get('oscuro', 0) > 0:
             cv = convexidad(V, F, normales(V, F)) * self.bordes.get('escala', 2.5)
-            k = 1 + np.where(cv > 0, self.bordes['claro'] * np.clip(cv, 0, 1), self.bordes['oscuro'] * np.clip(cv, -1, 0))
+            k = 1 + efecto * np.where(cv > 0, self.bordes['claro'] * np.clip(cv, 0, 1), self.bordes['oscuro'] * np.clip(cv, -1, 0))
             C = np.where(conao[:, None], C * k[:, None], C)
         lin = a_lineal(C)
         me = bpy.data.meshes.new(self.nombre + '_malla')
