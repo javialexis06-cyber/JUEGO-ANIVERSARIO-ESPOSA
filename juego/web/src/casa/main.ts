@@ -36,6 +36,7 @@ import {
   NECESIDADES, NOMBRE_CUARTO, NOMBRE_NECESIDAD, NOMBRE_RANURA, nuevoId, otro, personajeNuevo, PRECIO_CUARTO, Ranura, RANURAS, Rol, Ropa,
   sumar, tieneCuarto,
 } from './modelo';
+import { NOMBRE_ROL } from './modelo';
 import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, salaTrofeos, TROFEOS } from './trofeos';
 import { mejorDistancia, monedasVuelo, TOPE_MONEDAS_DIA, yaDescubrio, type ProgresoCohete } from './cohete/datos';
 import { ranurasDe } from './ropa';
@@ -2884,7 +2885,15 @@ async function quitarDeco(sitio: string) {
 // Controles (botones, formularios y toques sobre la casa)
 // ---------------------------------------------------------------------------
 function controles() {
-  for (const b of Array.from(document.querySelectorAll<HTMLElement>('.rol-carta'))) b.onclick = () => elegirRol(b.dataset.rol as Rol);
+  for (const b of Array.from(document.querySelectorAll<HTMLElement>('.rol-carta'))) {
+    const r = b.dataset.rol;
+    // Los amigos no entran a la casa: van a su sala de juegos (amigos.html), sin nada de la pareja
+    if (r === 'amigo') b.onclick = () => location.replace('./amigos.html?perfil');
+    else {
+      b.querySelector('b')!.textContent = `Soy ${NOMBRE_ROL[r as Rol]}`;
+      b.onclick = () => elegirRol(r as Rol);
+    }
+  }
   $('btn-local').onclick = () => rolElegido && void entrar({ modo: 'local', rol: rolElegido });
   $('btn-crear').onclick = async () => {
     if (!rolElegido) return;

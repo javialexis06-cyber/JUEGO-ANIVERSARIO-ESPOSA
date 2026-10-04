@@ -82,7 +82,7 @@ type Cable =
   | { k: 'ok'; de: string; s: string; para: string; ps: string; hasta: number }
   | { k: 'entrar'; de: string; s: string; j: JugadorSala; juego: string }
   | { k: 'lista'; de: string; s: string; v: number; js: JugadorSala[]; dv: Record<string, number>; cerrada: boolean; max: number; juego: string }
-  | { k: 'no'; de: string; s: string; para: string; motivo: 'llena' | 'cerrada' | 'juego' }
+  | { k: 'no'; de: string; s: string; para: string; motivo: 'llena' | 'cerrada' | 'juego'; juego?: string }
   | { k: 'l'; de: string; s: string; fondo?: boolean }
   | { k: 'adios'; de: string; s: string };
 
@@ -254,7 +254,7 @@ class SalaReal implements Sala {
   private acabada = false;
   private quitarFondo: (() => void)[] = [];
   /** Para unirse: lo que contesta el anfitrión. */
-  alEntrar: ((r: { ok: true } | { ok: false; motivo: 'llena' | 'cerrada' | 'juego' }) => void) | null = null;
+  alEntrar: ((r: { ok: true } | { ok: false; motivo: 'llena' | 'cerrada' | 'juego'; juego?: string }) => void) | null = null;
 
   constructor(codigo: string, juego: string, yo: JugadorSala, max: number, anfitrion: boolean) {
     this.codigo = codigo;
@@ -448,7 +448,7 @@ class SalaReal implements Sala {
         this.llegaLista(m);
         break;
       case 'no':
-        if (m.para === this.yo.id) this.alEntrar?.({ ok: false, motivo: m.motivo });
+        if (m.para === this.yo.id) this.alEntrar?.({ ok: false, motivo: m.motivo, juego: m.juego });
         break;
     }
   }
@@ -496,7 +496,7 @@ class SalaReal implements Sala {
 
   private pideEntrar(m: Extract<Cable, { k: 'entrar' }>) {
     if (!this.soyAnfitrion) return;
-    const no = (motivo: 'llena' | 'cerrada' | 'juego') => this.cable({ k: 'no', de: this.yo.id, s: this.s, para: m.de, motivo });
+    const no = (motivo: 'llena' | 'cerrada' | 'juego') => this.cable({ k: 'no', de: this.yo.id, s: this.s, para: m.de, motivo, juego: this.juego });
     if (m.juego !== this.juego) return no('juego');
     const ya = this.lista.find((j) => j.id === m.de);
     if (ya) {
@@ -734,3 +734,29 @@ export async function unirseSala(codigo: string, juego: string, yo?: OpcionesSal
 }
 
 export const salas: ApiSalas = { crearSala, unirseSala, yoMismo };
+
+/**
+ * ¿De qué juego es esta sala? (para «Unirme con un código» de la sala de juegos de amigos, que no sabe a qué juego
+ * va). Pregunta sin entrar: el anfitrión contesta con el nombre del juego. null si no la encuentra.
+ */
+export async function averiguarJuego(codigo: string): Promise<string | null> {
+  const cod = normalizarCodigo(codigo);
+  if (cod.length !== LARGO_CODIGO) return null;
+  const s = new SalaReal(cod, '¿?', yoCon(), 4, false);
+  await s.conectar();
+  const r = await new Promise<string | null>((ok) => {
+    let repetir = 0;
+    const listo = (x: string | null) => {
+      clearInterval(repetir);
+      clearTimeout(limite);
+      ok(x);
+    };
+    s.alEntrar = (x) => listo(!x.ok && x.juego ? x.juego : null);
+    s.pedirEntrar();
+    repetir = window.setInterval(() => s.pedirEntrar(), 800);
+    const limite = setTimeout(() => listo(null), 10000);
+  });
+  s.alEntrar = null;
+  s.salir();
+  return r;
+}
