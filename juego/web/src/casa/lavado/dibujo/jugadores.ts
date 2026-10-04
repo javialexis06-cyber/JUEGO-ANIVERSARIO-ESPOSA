@@ -11,18 +11,10 @@ import type { Ranura } from '../../modelo';
 import type { Jugador } from '../motor';
 import type { Rol } from '../tipos';
 import type { AspectoJugador } from '../../../salas/tipos';
+import { teñirModelo } from '../../../salas/tinte';
 import { ELEVACION } from './sprites';
 
-/** Qué partes del muñeco toman cada color del perfil de amigo (por el nombre del material). */
-const TINTES: [RegExp, (a: AspectoJugador) => string | undefined, number][] = [
-  [/piel/i, (a) => a.piel, 1],
-  [/interior oreja/i, (a) => a.piel, 0.85],
-  [/cabello|\bpelo\b|mechon/i, (a) => a.pelo, 1],
-  [/cejas/i, (a) => a.pelo, 0.7],
-  [/camiseta|chaleco/i, (a) => a.detalles?.ropa, 1],
-  [/pantalon|shorts|medias/i, (a) => a.detalles?.ropa2, 1],
-  [/tenis|cordones/i, (a) => a.detalles?.zapatos, 1],
-];
+
 
 /** Ángulo al que se ven los sprites de los mugrosos (el personaje se inclina para verse igual). */
 const VISTA_SPRITE = THREE.MathUtils.degToRad(30);
@@ -179,26 +171,7 @@ export class Jugador3D {
 
   /** Los colores del perfil de amigo: piel, pelo, camiseta, pantalón y zapatos (en copias de los materiales). */
   private teñir(a: AspectoJugador) {
-    const copias = new Map<THREE.Material, THREE.Material>();
-    this.p.modelo?.traverse((o) => {
-      const m = o as THREE.Mesh;
-      if (!m.isMesh) return;
-      const cambiar = (mat: THREE.Material) => {
-        const regla = TINTES.find(([rx]) => rx.test(mat.name));
-        const color = regla?.[1](a);
-        if (!regla || !color) return mat;
-        let c = copias.get(mat);
-        if (!c) {
-          c = mat.clone();
-          const std = c as THREE.MeshStandardMaterial;
-          if (std.color) std.color.set(color).multiplyScalar(regla[2]);
-          copias.set(mat, c);
-          this.propios.push(c);
-        }
-        return c;
-      };
-      m.material = Array.isArray(m.material) ? m.material.map(cambiar) : cambiar(m.material);
-    });
+    if (this.p.modelo) this.propios.push(...teñirModelo(this.p.modelo, a));
   }
 
   /** Lo que pasó: golpe, celebración (al subir de nivel) o lo que sea con cara propia. */
