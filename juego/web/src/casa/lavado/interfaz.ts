@@ -3,6 +3,7 @@
 // cartas de amor, la pausa con las estadísticas y la pantalla final con el daño de cada arma.
 import { ARMAS, PASIVAS, MAX_RANURAS, maxNivelArma } from './armas';
 import { ENEMIGOS } from './enemigos';
+import { puedeApuntar } from './disfraces';
 import { FRASES, cartaVista, logroVisto } from './textos';
 import { icono } from './iconos';
 import { LOGRO, type ResumenPartida } from './progreso';
@@ -23,6 +24,8 @@ export interface Acciones {
   musica(): boolean;
   sonido(): boolean;
   numeros(): boolean;
+  /** Cambia entre apuntar a mano y que las armas busquen solas (devuelve si quedó a mano). */
+  ataque?(): boolean;
 }
 
 const esc = (t: string) => t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -193,6 +196,7 @@ export class Interfaz {
       if (p === 'musica') el.textContent = this.acc.musica() ? '🔇 Música' : '🎵 Música';
       if (p === 'sonido') el.textContent = this.acc.sonido() ? '🔈 Sonido' : '🔊 Sonido';
       if (p === 'numeros') el.textContent = this.acc.numeros() ? '🔢 Números: sí' : '🔢 Números: no';
+      if (p === 'ataque' && this.acc.ataque) el.textContent = this.acc.ataque() ? '🎯 Ataque: a mano' : '🎯 Ataque: solito';
     });
   }
 
@@ -418,13 +422,23 @@ export class Interfaz {
   /** Se cortó la conexión con el otro (el aviso se queda hasta que vuelva). */
   private cortada = false;
 
-  conexion(texto: string | null) {
+  conexion(texto: string | null, sub = 'El juego quedó en pausa hasta que vuelva.') {
+    const antes = this.cortada;
     this.cortada = !!texto;
     if (texto) {
+      const html = `<div class="lv-espera lv-corte"><h2>${esc(texto)}<span class="puntos"></span></h2><p>${esc(sub)}</p></div>`;
+      if (html !== this.htmlCorte) {
+        this.htmlCorte = html;
+        this.capaEspera.innerHTML = html;
+      }
       this.capaEspera.hidden = false;
-      this.capaEspera.innerHTML = `<div class="lv-espera"><h2>${texto}<span class="puntos"></span></h2><p>El juego quedó en pausa hasta que vuelva.</p></div>`;
-    } else if (this.capaEspera.innerHTML.includes('conexión')) this.capaEspera.hidden = true;
+    } else if (antes) {
+      this.htmlCorte = '';
+      this.htmlEspera = '';
+      this.capaEspera.hidden = true;
+    }
   }
+  private htmlCorte = '';
 
   private mostrarNivel(m: Motor, j: Jugador, ops: Opcion[]) {
     const cartas = ops
@@ -571,6 +585,7 @@ export class Interfaz {
         <button class="lv-boton" data-p="musica">${musicaMuda ? '🔇' : '🎵'} Música</button>
         <button class="lv-boton" data-p="sonido">${sonidoMudo ? '🔈' : '🔊'} Sonido</button>
         <button class="lv-boton" data-p="numeros">🔢 Números: ${numeros ? 'sí' : 'no'}</button>
+        ${this.acc.ataque && puedeApuntar(j.disfraz.id) ? `<button class="lv-boton" data-p="ataque">🎯 Ataque: ${j.manual ? 'a mano' : 'solito'}</button>` : ''}
         <button class="lv-boton rosa" data-p="retirarse">${m.jug.length > 1 ? (this.anfitrion ? 'Terminar para todos' : 'Retirarme y cobrar') : 'Retirarse y cobrar'}</button>
       </div></div>`;
   }

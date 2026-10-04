@@ -145,12 +145,13 @@ export class Tutorial {
     readonly tactil: boolean,
     readonly puedeApuntar: boolean,
     private manualAntes: boolean,
-    private alTerminar: (saltado: boolean) => void,
+    /** Cómo terminó: jugar ya («¡A lavarse!»), saltado a la mitad o de vuelta al menú (al final). */
+    private alTerminar: (como: 'jugar' | 'saltar' | 'menu') => void,
   ) {
     this.el = document.createElement('div');
     this.el.className = 'lv-tuto';
     this.el.innerHTML = `<div class="lv-tuto-globo"><span class="lv-tuto-ico">🧼</span><div class="lv-tuto-texto"><b></b><p></p><span class="lv-tuto-pasos">${PASOS.map(() => '<i></i>').join('')}</span></div>
-      <div class="lv-tuto-botones"><button class="lv-boton rosa" data-t="listo" hidden>🫧 ¡A lavarse!</button><button class="lv-boton" data-t="saltar">Saltar</button></div></div>
+      <div class="lv-tuto-botones"><button class="lv-boton rosa" data-t="jugar" hidden>🫧 ¡A lavarse!</button><button class="lv-boton" data-t="saltar">Saltar</button></div></div>
       <div class="lv-tuto-mano" aria-hidden="true">👆</div>`;
     raiz.append(this.el);
     this.el.addEventListener('click', (e) => {
@@ -158,7 +159,7 @@ export class Tutorial {
       if (!b) return;
       e.stopPropagation();
       sfx.toque();
-      this.terminar(b.dataset.t === 'saltar');
+      this.terminar(b.dataset.t as 'jugar' | 'saltar' | 'menu');
     });
   }
 
@@ -204,18 +205,20 @@ export class Tutorial {
     this.el.dataset.mano = p.mano && (p.mano !== 'apuntar' || (this.puedeApuntar && this.tactil)) ? p.mano : '';
     this.el.querySelectorAll('.lv-tuto-pasos i').forEach((x, q) => x.classList.toggle('si', q <= this.paso));
     const ultimo = this.paso === PASOS.length - 1;
-    this.el.querySelector<HTMLElement>('[data-t="listo"]')!.hidden = !ultimo;
-    this.el.querySelector<HTMLElement>('[data-t="saltar"]')!.textContent = ultimo ? 'Al menú' : 'Saltar';
+    this.el.querySelector<HTMLElement>('[data-t="jugar"]')!.hidden = !ultimo;
+    const salir = this.el.querySelector<HTMLElement>('[data-t="saltar"], [data-t="menu"]')!;
+    salir.textContent = ultimo ? 'Al menú' : 'Saltar';
+    salir.dataset.t = ultimo ? 'menu' : 'saltar';
     this.el.classList.remove('entra');
     void this.el.offsetWidth;
     this.el.classList.add('entra');
   }
 
-  terminar(saltado: boolean) {
+  terminar(como: 'jugar' | 'saltar' | 'menu') {
     if (this.acabado) return;
     this.acabado = true;
     this.el.remove();
-    this.alTerminar(saltado);
+    this.alTerminar(como);
   }
 
   quitar() {

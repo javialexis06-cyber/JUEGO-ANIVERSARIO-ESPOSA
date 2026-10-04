@@ -32,6 +32,14 @@ const REENVIO_MS = 450;
 
 const params = typeof location !== 'undefined' ? new URLSearchParams(location.search) : new URLSearchParams();
 const MODO_LOCAL = params.get('salas') === 'local';
+let local = MODO_LOCAL;
+/**
+ * Salas entre pestañas del mismo navegador (sin internet): la casa local de prueba de Javier y Laura las usa. Con
+ * `?salas=local` en la dirección quedan así siempre.
+ */
+export function usarSalasLocales(si: boolean) {
+  local = si || MODO_LOCAL;
+}
 const RED_MALA = params.get('red') === 'mala';
 
 export function codigoNuevo(): string {
@@ -195,7 +203,7 @@ class TransporteSupabase implements Transporte {
   }
 }
 
-const transporte = (codigo: string, yo: string): Transporte => (MODO_LOCAL ? new TransporteLocal(codigo, yo) : new TransporteSupabase(codigo, yo));
+const transporte = (codigo: string, yo: string): Transporte => (local ? new TransporteLocal(codigo, yo) : new TransporteSupabase(codigo, yo));
 
 // ---------------------------------------------------------------------------------------------------- La sala
 interface Pendiente {
@@ -684,7 +692,7 @@ export async function crearSala(o: OpcionesSala): Promise<Sala> {
     const s = new SalaReal(codigoNuevo(), o.juego, yo, o.max ?? 4, true);
     await s.conectar();
     // Un momentico para ver si el código ya lo está usando alguien (casi nunca pasa)
-    await new Promise((r) => setTimeout(r, MODO_LOCAL ? 1200 : 900));
+    await new Promise((r) => setTimeout(r, local ? 1200 : 900));
     if (!s.ocupado()) return s;
     s.salir();
   }
