@@ -84,7 +84,7 @@ export function esperarEnSala(o: OpcionesEspera) {
     <div class="se-izq">
       <h2>${esc(o.titulo)}</h2>
       ${o.subtitulo ? `<p class="se-sub">${esc(o.subtitulo)}</p>` : ''}
-      <ol class="se-pasos"><li><b>1</b>Comparte el código</li><li><b>2</b>Cada uno toca «Estoy listo»</li><li><b>3</b>${sala.soyAnfitrion ? 'Tú' : 'Quien tiene la sala'} arranca la partida</li></ol>
+      <ol class="se-pasos"><li><b>1</b>Comparte el código</li><li><b>2</b>Cada uno toca «Estoy listo»</li><li><b>3</b>${sala.soyAnfitrion ? 'Tú arrancas la partida' : 'Quien tiene la sala la arranca'}</li></ol>
       <div class="se-codigo-caja">
         <small>Código de la sala</small>
         <div class="se-codigo" aria-label="Código ${sala.codigo.split('').join(' ')}">${codigo}</div>
@@ -117,7 +117,7 @@ export function esperarEnSala(o: OpcionesEspera) {
   function puesto(j: JugadorSala | undefined, k: number) {
     const color = COLOR_PUESTO[k] ?? '#999';
     if (!j) {
-      return `<li class="se-puesto vacio" style="--c:${color}"><b class="se-num">${k + 1}</b><span class="se-retrato"><i class="se-puntos"><u></u><u></u><u></u></i></span>
+      return `<li class="se-puesto vacio" data-k="libre${k}" style="--c:${color}"><b class="se-num">${k + 1}</b><span class="se-retrato"><i class="se-puntos"><u></u><u></u><u></u></i></span>
         <span class="se-info"><span class="se-nombre">Esperando…</span><span class="se-estado">Puesto libre</span></span></li>`;
     }
     const yo = j.id === sala.yo.id;
@@ -127,7 +127,7 @@ export function esperarEnSala(o: OpcionesEspera) {
     const det = o.detalle?.(j) ?? '';
     const marcas = `${j.puesto === 0 ? '<em class="se-marca corona">👑 Anfitrión</em>' : ''}${yo ? '<em class="se-marca tu">Tú</em>' : ''}`;
     const estado = !conectado ? '📶 Sin conexión…' : j.puesto === 0 ? 'Arranca la partida' : esListo ? '✓ ¡Listo!' : 'Alistándose…';
-    return `<li class="se-puesto ${esListo ? 'listo' : ''} ${conectado ? '' : 'cortado'} ${yo ? 'yo' : ''}" style="--c:${color}">
+    return `<li class="se-puesto ${esListo ? 'listo' : ''} ${conectado ? '' : 'cortado'} ${yo ? 'yo' : ''}" data-k="${esc(j.id)}" style="--c:${color}">
       <b class="se-num">${k + 1}</b><span class="se-retrato">${retrato}</span>
       <span class="se-info"><span class="se-nombre">${esc(j.nombre)}</span>${marcas ? `<span class="se-marcas">${marcas}</span>` : ''}
       ${det ? `<span class="se-detalle">${det}</span>` : ''}
@@ -142,7 +142,20 @@ export function esperarEnSala(o: OpcionesEspera) {
     const usados = new Set(ocupados.map((j) => j.puesto));
     const libres = [0, 1, 2, 3].slice(0, sala.max).filter((k) => !usados.has(k)).slice(0, Math.max(0, sala.max - ocupados.length));
     const filas = [...ocupados.map((j) => puesto(j, j.puesto)), ...libres.map((k) => puesto(undefined, k))];
-    raiz.querySelector('.se-puestos')!.innerHTML = filas.join('');
+    // Solo cambia lo que cambió (y solo entra con animación quien acaba de llegar)
+    const ul = raiz.querySelector('.se-puestos')!;
+    const antes = new Map([...ul.children].map((li) => [(li as HTMLElement).dataset.k ?? '', li as HTMLElement]));
+    const molde = document.createElement('template');
+    const nuevos = filas.map((html) => {
+      molde.innerHTML = html.trim();
+      const li = molde.content.firstElementChild as HTMLElement;
+      const viejo = antes.get(li.dataset.k ?? '');
+      if (!viejo) return li;
+      li.classList.add('quieto');
+      viejo.classList.add('quieto');
+      return viejo.outerHTML === li.outerHTML ? viejo : li;
+    });
+    if (nuevos.length !== ul.children.length || nuevos.some((li, k) => ul.children[k] !== li)) ul.replaceChildren(...nuevos);
     const b = raiz.querySelector<HTMLButtonElement>('[data-a="principal"]')!;
     if (sala.soyAnfitrion) {
       const otros = js.filter((j) => j.id !== sala.yo.id);

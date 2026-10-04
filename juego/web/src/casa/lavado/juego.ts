@@ -126,6 +126,8 @@ export class Lavado {
   /** La sala en la que está (si está jugando con otros). */
   sala: Sala | null = null;
   tuto: Tutorial | null = null;
+  /** Para las pruebas: por qué está quieto el juego en este celular. */
+  red: Record<string, unknown> = {};
   /** Las pruebas pueden poner el bot a jugar. */
   bot = params.has('botlavado');
   /** Un amigo juega siempre en modo neutro; Javier y Laura, solo cuando hay amigos en la sala. */
@@ -818,7 +820,12 @@ export class Lavado {
           else ui.conexion(null);
         }
         const quieto = pausado || esperaCorte || cargando || contextoPerdido;
+
         const [mx, my] = entrada();
+        this.red = {
+          yo, pausado, esperaCorte, cargando, foto: espejo ? Math.round(ahora - espejo.ultimaFoto) : -1, banderas: espejo?.banderas ?? 0, cargados: [...cargados].join(','),
+          pausa: m.pausa, mx, my, caido: yoJ.caido, fuera: yoJ.fuera, fin: m.fin,
+        };
         apuntar();
         if (papel !== 'invitado') {
           if (this.bot) botPaso(m);
@@ -991,7 +998,7 @@ export class Lavado {
         break;
       case 'subir':
         // Justo lo que falta para subir un nivel
-        m.xp = Math.max(m.xp, xpPara(m.nivel));
+        m.xp = Math.max(m.xp, m.xpReq());
         break;
       case 'cofre':
         m.soltar('cofre', j.x + 30, j.y, v || 2);

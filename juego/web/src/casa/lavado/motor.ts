@@ -36,6 +36,8 @@ export const POR_JUGADORES = {
   evento: [1, 1.3, 1.55, 1.8],
   /** Cada cuántos segundos del reloj sale un élite extra con cofre (además de los del escenario). */
   elite: [0, 150, 95, 70],
+  /** Experiencia para subir: con tres o cuatro llegan muchas más gotitas; así no se pausa a cada ratico para escoger. */
+  xp: [1, 1, 1.3, 1.5],
 };
 /** Segundos para escoger cuando hay más de uno (después se escoge solo lo mejor, para no frenar a los demás). */
 export const LIMITE_ESCOGER = 15;
@@ -1801,10 +1803,15 @@ export class Motor {
     }
   }
 
+  /** Lo que falta para el siguiente nivel con los que están jugando (la barra de arriba usa lo mismo). */
+  xpReq() {
+    return xpPara(this.nivel) * POR_JUGADORES.xp[Math.max(0, Math.min(3, this.jug.length - 1))];
+  }
+
   private subirNivel() {
     let subio = false;
-    while (this.xp >= xpPara(this.nivel)) {
-      this.xp -= xpPara(this.nivel);
+    while (this.xp >= this.xpReq()) {
+      this.xp -= this.xpReq();
       this.nivel++;
       subio = true;
       for (const j of this.jug) {

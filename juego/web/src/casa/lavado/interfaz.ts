@@ -225,7 +225,7 @@ export class Interfaz {
     if (this.tHud < 0.1) return;
     this.tHud = 0;
     const j = m.jug[this.yo];
-    const req = xpParaHud(m.nivel);
+    const req = m.xpReq();
     $(this.hud, '.lv-xp i').style.width = `${Math.min(100, (m.xp / req) * 100)}%`;
     $(this.hud, '.lv-xp b').textContent = `Nv ${m.nivel}`;
     const t = $(this.hud, '.lv-tiempo');

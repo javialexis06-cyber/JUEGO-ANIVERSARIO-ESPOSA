@@ -540,6 +540,10 @@ class SalaReal implements Sala {
     this.yo = { ...this.yo, puesto: mio.puesto };
     for (const j of this.lista) if (!this.oido.has(j.id)) this.oido.set(j.id, performance.now());
     if (nuevo) this.alEntrar?.({ ok: true });
+    // (el anfitrión repite la lista de vez en cuando: si no cambió nada, no se molesta a nadie)
+    const clave = JSON.stringify([this.lista, this.cerrada]);
+    if (clave === this.claveLista && !nuevo) return;
+    this.claveLista = clave;
     this.avisarCambio();
   }
 
@@ -593,6 +597,7 @@ class SalaReal implements Sala {
     this.reenviar(false);
   }
   private tLista = 0;
+  private claveLista = '';
 
   /** Lo que no han confirmado se vuelve a mandar (juntando destinatarios del mismo mensaje). */
   private reenviar(ya: boolean) {

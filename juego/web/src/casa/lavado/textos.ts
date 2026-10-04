@@ -52,7 +52,11 @@ export function cartaVista(id: IdCarta): DefCarta {
 
 /** Los disfraces con apodos o recuerdos de la pareja, en versión para todos. */
 const DISFRACES_NEUTROS: Record<string, Partial<Pick<DefDisfraz, 'nombre' | 'desc' | 'especial' | 'grito' | 'alCrecer'>>> = {
-  el_panda: { desc: 'Enterizo de panda, pantuflas de garra y la toalla mojada al hombro, listo para el toallazo.' },
+  // (el panda es un apodo de la pareja: para los amigos es un osito)
+  el_panda: {
+    nombre: 'Osito en pijama', desc: 'Enterizo de osito blanco y negro, pantuflas de garra y la toalla mojada al hombro, listo para el toallazo.',
+    grito: '🧸 ¡Toallazo de osito! Cada 10 niveles pega más duro', alCrecer: '🧸 ¡El osito se puso bravo! +10 % de daño',
+  },
   el_perro: {
     nombre: 'Perrito peludo', desc: 'Tan peludo que la espuma se le enreda en el pelo. Recoge todo de lejos (pero es un poquito más frágil).',
     grito: '🐶 Perrito peludo: todo se le pega al pelo (imán +25 %)', alCrecer: '🐶 El pelo jala más: imán +10 %',

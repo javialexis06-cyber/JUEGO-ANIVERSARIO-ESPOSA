@@ -177,6 +177,7 @@
   animation: se-entra 0.35s ease both;
 }
 @keyframes se-entra { from { transform: scale(0.92); opacity: 0; } }
+.se-puesto.quieto { animation: none; }
 .se-num {
   position: absolute;
   right: 10px;
