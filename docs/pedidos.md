@@ -29,6 +29,7 @@ probado y subido.
 **Lavarse la cara (Vampire Survivors)**
 - (En obra con las salas) El chorro de agua más translúcido; ataque manual o automático a escoger (los de área
   —perro lanudo, bombero, astronauta— siguen automáticos); tutorial.
+- **Íconos de poderes, armas y mejoras**: en el celular salen vacíos; renderizarlos y revisar que carguen en la APK.
 - Un **panel de combinaciones**: ver qué tengo y con qué se combina para evolucionar y hacer combos (como la guía
   de evoluciones del original), también a mitad de partida.
 - **Logros y recompensas por avanzar con cada personaje/disfraz** (maestría de cada uno).
