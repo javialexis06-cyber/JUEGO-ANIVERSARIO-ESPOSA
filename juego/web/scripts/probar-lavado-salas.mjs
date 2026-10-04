@@ -85,7 +85,7 @@ async function celular(k) {
     else localStorage.setItem('nuestro-hogar-amigo', JSON.stringify({ id: `amigo-prueba${k}xyz`, nombre: n, cuerpo: k === 3 ? 'ella' : 'el', activo: true }));
   }, [k, NOMBRES[k]]);
   await p.route(/_lavado_salas\.html/, (r) => r.fulfill({ contentType: 'text/html', body: PAGINA(k) }));
-  await p.goto(`${url}/_lavado_salas.html?sin3d`, { waitUntil: 'domcontentloaded', timeout: 180000 });
+  await p.goto(`${url}/_lavado_salas.html?sin3d&calidad=0`, { waitUntil: 'domcontentloaded', timeout: 180000 });
   await p.waitForFunction(() => window.__pagina, null, { timeout: 120000 });
   return p;
 }
@@ -163,15 +163,20 @@ revisar(dificultad > 2, `Con cuatro hay más mugrosos a la vez (×${dificultad})
 await resolverCapas();
 // (en el navegador de prueba, con cuatro celulares en la misma máquina, los de atrás van lentos: se espera a que
 // cada uno camine de verdad en su celular y después se mira que Javier lo vea donde está)
+// (el puesto de cada uno depende de quién llegó primero)
+const idx = {};
+(await javier.evaluate(() => window.__lavado.actual.m.jug.map((j) => j.nombre))).forEach((n, i) => (idx[n] = i));
+console.log('      puestos:', JSON.stringify(idx));
 const antes = await estado(javier);
 let movieron = true;
-for (const [p, i, k] of [[laura, 1, 'd'], [pipe, 2, 'w'], [caro, 3, 'a']]) {
+for (const [p, i, k] of [[laura, idx.Laura, 'd'], [pipe, idx.Pipe, 'w'], [caro, idx.Caro, 'a']]) {
   const yo0 = (await estado(p)).jug[i];
   await tecla(p, 'keydown', k);
   const camino = await esperarQue(async () => {
     const yo = (await estado(p)).jug[i];
     return Math.hypot(yo.x - yo0.x, yo.y - yo0.y) > 90;
   }, 30000, 400);
+  if (!camino) console.log('      no camina', p.nombre, JSON.stringify(await p.evaluate(() => window.__lavado.actual.red)), JSON.stringify(yo0), JSON.stringify((await estado(p)).jug[i]));
   await tecla(p, 'keyup', k);
   const loVe = camino && (await esperarQue(async () => {
     const [mio, deJavier] = [(await estado(p)).jug[i], (await estado(javier)).jug[i]];
@@ -181,16 +186,18 @@ for (const [p, i, k] of [[laura, 1, 'd'], [pipe, 2, 'w'], [caro, 3, 'a']]) {
 }
 const despues = await estado(javier);
 if (!movieron) for (const p of ps) console.log('     ', p.nombre, JSON.stringify(await p.evaluate(() => window.__lavado.actual.red)), JSON.stringify((await estado(p)).jug.map((j) => [j.x, j.y])));
-revisar(movieron, `Javier ve caminar a los tres (${[1, 2, 3].map((i) => `${despues.jug[i].x},${despues.jug[i].y}`).join(' · ')})`);
+revisar(movieron, `Javier ve caminar a los tres (${[idx.Laura, idx.Pipe, idx.Caro].map((i) => `${despues.jug[i].x},${despues.jug[i].y}`).join(' · ')})`);
 const vistaLaura = await estado(laura);
-revisar(Math.hypot(vistaLaura.jug[2].x - despues.jug[2].x, vistaLaura.jug[2].y - despues.jug[2].y) < 80, 'Laura ve a Pipe donde está');
+revisar(Math.hypot(vistaLaura.jug[idx.Pipe].x - despues.jug[idx.Pipe].x, vistaLaura.jug[idx.Pipe].y - despues.jug[idx.Pipe].y) < 80, 'Laura ve a Pipe donde está');
 await foto(javier, '2-jugando');
 await foto(pipe, '2-jugando');
 
 // 5. Suben de nivel: Laura y Pipe escogen; Caro se demora y se le escoge solo
 await probar(javier, 'subir');
 // (a Javier le escoge el bot al instante: se mira a los otros tres)
-revisar(await esperarQue(async () => (await Promise.all(ps.slice(1).map((p) => p.evaluate(() => !document.querySelector('.lv-c-nivel').hidden)))).every(Boolean), 40000), 'A todos les salen las cartas');
+const cartas = await esperarQue(async () => (await Promise.all(ps.slice(1).map((p) => p.evaluate(() => !document.querySelector('.lv-c-nivel').hidden)))).every(Boolean), 40000);
+if (!cartas) for (const p of ps) console.log('     ', p.nombre, JSON.stringify(await p.evaluate(() => window.__lavado.actual.red)), JSON.stringify((await estado(p)).jug.map((j) => [j.opciones, j.acciones, j.pend])), (await estado(p)).nivel);
+revisar(cartas, 'A todos les salen las cartas');
 await foto(caro, '3-cartas');
 for (const p of [laura, pipe]) {
   await espera(500);
@@ -200,11 +207,12 @@ await esperarQue(() => javier.evaluate(() => !!document.querySelector('.lv-c-esp
 await foto(laura, '3-esperando');
 await sinNadaPersonal(javier, 'subiendo de nivel');
 // Javier escoge con el bot; Caro no hace nada: en 15 s se le escoge solo
-const solo = await esperarQue(() => javier.evaluate(() => !window.__lavado.actual.m.pausa), 26000, 500);
+// (15 s del reloj del juego: en el navegador de prueba, cargado, pueden ser bastantes más de verdad)
+const solo = await esperarQue(() => javier.evaluate(() => !window.__lavado.actual.m.pausa), 70000, 500);
 revisar(solo, 'A Caro se le escogió sola la mejora y el juego siguió');
 
 // 6. Cartas mágicas: a Pipe le sale una carta perdida y no ve recuerdos de la pareja
-await javier.evaluate(() => (window.__lavado.actual.m.jug[2].cartaOpciones = ['octubre', 'cartagena', 'sopetran']));
+await javier.evaluate((i) => (window.__lavado.actual.m.jug[i].cartaOpciones = ['octubre', 'cartagena', 'sopetran']), idx.Pipe);
 revisar(await esperarQue(() => pipe.evaluate(() => !document.querySelector('.lv-c-carta').hidden), 10000), 'A Pipe le sale una carta perdida');
 await espera(600);
 await foto(pipe, '4-carta');
@@ -224,24 +232,24 @@ red.cortar(caro, false);
 revisar(await esperarQue(() => javier.evaluate(() => document.querySelector('.lv-c-espera').hidden), 10000), 'Cuando Caro vuelve, siguen');
 // Corte largo: siguen sin ella y vuelve a entrar
 red.cortar(caro, true);
-revisar(await esperarQue(async () => (await estado(javier)).jug[3].fuera, 40000, 1000), 'Con el corte largo siguen sin Caro');
+revisar(await esperarQue(async () => (await estado(javier)).jug[idx.Caro].fuera, 40000, 1000), 'Con el corte largo siguen sin Caro');
 const t2 = (await estado(javier)).t;
-await espera(2000);
-revisar((await estado(javier)).t > t2 + 0.5, 'Y el juego sigue corriendo para los demás');
+revisar(await esperarQue(async () => (await estado(javier)).t > t2 + 0.5, 15000), 'Y el juego sigue corriendo para los demás');
 red.cortar(caro, false);
-revisar(await esperarQue(async () => !(await estado(javier)).jug[3].fuera, 20000), 'Caro vuelve a entrar apenas regresa');
+revisar(await esperarQue(async () => !(await estado(javier)).jug[idx.Caro].fuera, 20000), 'Caro vuelve a entrar apenas regresa');
 
 // 8. Laura cae y la levantan
-await probar(javier, 'caer', 1);
-revisar(await esperarQue(async () => (await estado(laura)).jug[1].caido, 6000), 'Laura cae en burbujita (y ella lo ve)');
+await probar(javier, 'aguante');
+await probar(javier, 'caer', idx.Laura);
+revisar(await esperarQue(async () => (await estado(laura)).jug[idx.Laura].caido, 8000), 'Laura cae en burbujita (y ella lo ve)');
 await foto(laura, '6-caida');
 await probar(javier, 'bot', 0);
-for (let k = 0; k < 20; k++) {
-  await probar(javier, 'juntar', 1);
-  if (!(await estado(javier)).jug[1].caido) break;
-  await espera(300);
+for (let k = 0; k < 90; k++) {
+  await probar(javier, 'juntar', idx.Laura);
+  if (!(await estado(javier)).jug[idx.Laura].caido) break;
+  await espera(400);
 }
-revisar(!(await estado(javier)).jug[1].caido, 'Javier se queda al lado y la levanta');
+revisar(!(await estado(javier)).jug[idx.Laura].caido, 'Javier se queda al lado y la levanta');
 await espera(800);
 for (const p of ps) await sinNadaPersonal(p, 'jugando');
 

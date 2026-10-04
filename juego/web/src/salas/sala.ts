@@ -12,7 +12,7 @@
 // - Mensajes fiables numerados por destinatario, con confirmación acumulada y reenvío (llegan una vez y en orden);
 //   los `rapido` van sin garantía (las fotos del anfitrión, el joystick).
 // - Latido cada segundo: si alguien no se oye en 3,5 s (o avisa que se fue a segundo plano) sale `alCorte`; si no
-//   vuelve en 25 s, se da por ido. Si el que se va es el anfitrión, la sala se acaba (`alFin`).
+//   vuelve en un minuto, se da por ido. Si el que se va es el anfitrión, la sala se acaba (`alFin`).
 import * as fondo from '../segundo_plano';
 import { NOMBRE_ROL } from '../casa/modelo';
 import { SUPABASE_CLAVE_PUBLICA, SUPABASE_URL } from '../casa/servidor';
@@ -26,7 +26,8 @@ export const LARGO_CODIGO = 5;
 export const COLOR_PUESTO = ['#ff7aa8', '#4fb3ff', '#ffc24d', '#6fd39a'];
 
 const CORTE_MS = 3500;
-const IDO_MS = 25_000;
+/** Sin oírlo tanto tiempo, se da por ido (un celular que perdió la señal un rato todavía alcanza a volver). */
+const IDO_MS = 60_000;
 const LATIDO_MS = 1000;
 const REENVIO_MS = 450;
 
@@ -361,7 +362,11 @@ class SalaReal implements Sala {
 
   salir() {
     if (this.acabada) return;
-    this.cable({ k: 'adios', de: this.yo.id, s: this.s });
+    // (el adiós va tres veces: si la red se come uno, los demás no se quedan esperando un minuto)
+    const adios = () => this.t.enviar({ k: 'adios', de: this.yo.id, s: this.s });
+    adios();
+    setTimeout(adios, 150);
+    setTimeout(adios, 400);
     this.terminar();
   }
 
@@ -658,7 +663,7 @@ class SalaReal implements Sala {
     this.quitarFondo = [];
     removeEventListener('pagehide', this.alCerrarPagina);
     // (un respiro para que alcance a salir el «adiós»)
-    setTimeout(() => this.t.cerrar(), 200);
+    setTimeout(() => this.t.cerrar(), 700);
   }
 
   /** Para unirse: le pide la entrada al anfitrión (se repite hasta que conteste). */

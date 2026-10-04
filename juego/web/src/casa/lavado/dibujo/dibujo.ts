@@ -41,6 +41,8 @@ const SPRITE_PROY: Partial<Record<IdArma, string>> = {
 };
 /** Pruebas automáticas: sin los muñecos 3D (el WebGL por software no da abasto con dos celulares). */
 const SIN_3D = typeof location !== 'undefined' && new URLSearchParams(location.search).has('sin3d');
+/** Pruebas con varios celulares en la misma máquina: empezar en la calidad más baja (`?calidad=0`). */
+const CALIDAD = typeof location !== 'undefined' ? Number(new URLSearchParams(location.search).get('calidad') ?? 3) : 3;
 const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
 
@@ -131,7 +133,7 @@ export class Dibujo {
     const borde = new THREE.DirectionalLight('#ffd6e4', 1.0);
     borde.position.set(400, 300, -600);
     this.escena.add(borde);
-    this.ajustarCalidad(3);
+    this.ajustarCalidad(Number.isFinite(CALIDAD) ? CALIDAD : 3);
   }
 
   /** `piel`: el tono del anfitrión si es un amigo (la cara del escenario es la suya). */

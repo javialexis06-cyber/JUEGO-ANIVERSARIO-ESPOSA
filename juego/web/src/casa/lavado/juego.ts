@@ -777,6 +777,7 @@ export class Lavado {
     let acumulado = 0;
     let tJefe = 0;
     let tFinEspera = 0;
+    let nCuadros = 0;
     musicaLavado.jefe = false;
     musicaLavado.intensidad = 0;
     const resumen = await new Promise<ResumenPartida | null>((ok) => {
@@ -824,7 +825,7 @@ export class Lavado {
         const [mx, my] = entrada();
         this.red = {
           yo, pausado, esperaCorte, cargando, foto: espejo ? Math.round(ahora - espejo.ultimaFoto) : -1, banderas: espejo?.banderas ?? 0, cargados: [...cargados].join(','),
-          pausa: m.pausa, mx, my, caido: yoJ.caido, fuera: yoJ.fuera, fin: m.fin,
+          pausa: m.pausa, mx, my, caido: yoJ.caido, fuera: yoJ.fuera, fin: m.fin, cuadros: ++nCuadros,
         };
         apuntar();
         if (papel !== 'invitado') {
