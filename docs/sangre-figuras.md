@@ -64,13 +64,33 @@ blanco) y agrándala 1,25×. Así cada élite se distingue de lejos sin otro mod
 - `cola`: mecer alrededor del eje Z de Blender (Y de three.js).
 - Morir: soltar las piezas (cada una ya tiene su pivote) o tumbar la raíz.
 
+## Trajes de las clases
+
+`public/modelos/ropa/sangre_<clase>_{el,ella}.glb` traen el **mismo esqueleto que la ropa de la casa**: se cargan y
+se amarran a los huesos del muñeco igual que `Vestuario.cargar` (`src/casa/ropa.ts`) o `ponerCasco` del retrete
+(`src/casa/cohete.ts`): `cargarAnimado`, `SkeletonUtils.clone`, y `m.bind(...)` con los huesos del personaje por
+nombre. Cada traje es un solo archivo con todo (camisa, pantalón o falda, botas, capa, corona o sombrero, grilletes…).
+
+`public/modelos/sangre/trajes.json` dice, por clase, qué partes de fábrica **tapa** (`oculta`: `arriba`, `abajo`,
+`pies`, `copete`, `medias`): son las claves de `TAPA` de `src/casa/ropa.ts`, así que basta juntar esos prefijos y
+llamar `personaje.tapar(prefijos)`. También trae los triángulos de cada versión.
+
+La mugre (oclusión, barro abajo, manchas y sangre seca según la clase) viene en los colores de los vértices y
+multiplica el color de cada material; los materiales son los de la ropa (`userData.fieltro` para el relieve).
+
+Hechos: monarca (corona abollada con una punta rota, manto raído con huecos, jubón de terciopelo con bordados y
+cadena de mando; la reina con falda larga), campesino (sombrero de paja deshilachado, camisa de lino remangada,
+chaleco remendado, polainas de tela; ella con falda y delantal) y prisionero (túnica de costal hecha jirones,
+grilletes con la cadena rota, collar de hierro, pies vendados y la bola de hierro arrastrando del tobillo izquierdo).
+
 ## Cómo se regeneran
 
 ```bash
 # figuras (uno a la vez: la máquina es compartida)
 blender -b -P personajes/blender/sangre_exportar.py -- juego/web/modelos-crudos enemigos
 blender -b -P personajes/blender/sangre_exportar.py -- juego/web/modelos-crudos enemigos zombi,cuervo --hoja /tmp/hoja.png --sin-glb   # revisar
-cd juego/web && node scripts/optimizar-sangre.mjs        # SOLO='enemigos' para uno
+blender -b -P personajes/blender/sangre_trajes.py -- juego/web/modelos-crudos ambos monarca,campesino --hoja /tmp/trajes.png
+cd juego/web && node scripts/optimizar-sangre.mjs        # SOLO='enemigos' o SOLO='sangre_monarca' para uno
 ```
 
 `optimizar-sangre.mjs` comprime con meshopt **sin juntar ni aplanar nodos** y no toca los JSON ni los íconos de

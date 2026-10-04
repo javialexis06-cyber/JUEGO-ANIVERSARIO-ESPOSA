@@ -1,0 +1,46 @@
+{
+ "monarca": {
+  "nombre": "Monarca",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_monarca",
+  "tris": {
+   "ella": 39972,
+   "el": 40550
+  }
+ },
+ "campesino": {
+  "nombre": "Campesino",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_campesino",
+  "tris": {
+   "ella": 33124,
+   "el": 31934
+  }
+ },
+ "prisionero": {
+  "nombre": "Prisionero",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "medias"
+  ],
+  "modelo": "sangre_prisionero",
+  "tris": {
+   "ella": 39171,
+   "el": 40360
+  }
+ }
+}
