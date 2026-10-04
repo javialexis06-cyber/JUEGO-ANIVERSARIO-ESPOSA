@@ -79,7 +79,7 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
   s.className = 'cohete-resultado';
   s.innerHTML = `
     <div class="cr-tarjeta">
-      <header><small>${Math.round(d.segundos)} segundos en el espacio</small><h2>${titulo}</h2></header>
+      <header><small>${Math.round(d.segundos)} ${Math.round(d.segundos) === 1 ? 'segundo' : 'segundos'} en el espacio</small><h2>${titulo}</h2></header>
       <div class="cr-cuerpo">
       <div class="cr-datos">
         <div class="cr-dato distancia"><span>Distancia</span><b data-n="${d.metros}" data-sufijo=" m">0 m</b>${d.record ? '<em class="cr-sello">¡Récord!</em>' : `<small>Récord: ${mil(p.mejor)} m</small>`}</div>
