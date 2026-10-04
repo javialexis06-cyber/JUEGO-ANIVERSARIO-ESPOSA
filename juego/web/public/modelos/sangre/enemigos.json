@@ -1,0 +1,379 @@
+{
+ "enemigo_zombi": {
+  "altura": 1.13,
+  "radio": 0.301,
+  "alcance": 0.671,
+  "tris": 4038,
+  "bioma": "cementerio",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.48
+    ],
+    "tris": 1398
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.17,
+     0.81
+    ],
+    "tris": 900
+   },
+   "mandibula": {
+    "pivote": [
+     -0.014,
+     0.257,
+     0.872
+    ],
+    "tris": 360
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.215,
+     0.11,
+     0.78
+    ],
+    "tris": 360
+   },
+   "brazo_der": {
+    "pivote": [
+     0.215,
+     0.11,
+     0.78
+    ],
+    "tris": 360
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.09,
+     0.0,
+     0.47
+    ],
+    "tris": 330
+   },
+   "pierna_der": {
+    "pivote": [
+     0.09,
+     0.0,
+     0.47
+    ],
+    "tris": 330
+   }
+  }
+ },
+ "enemigo_esqueleto": {
+  "altura": 1.102,
+  "radio": 0.149,
+  "alcance": 0.575,
+  "tris": 4390,
+  "bioma": "cementerio",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.44
+    ],
+    "tris": 1150
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.82
+    ],
+    "tris": 1396
+   },
+   "mandibula": {
+    "pivote": [
+     0.01,
+     0.067,
+     0.838
+    ],
+    "tris": 456
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.17,
+     0.03,
+     0.78
+    ],
+    "tris": 408
+   },
+   "brazo_der": {
+    "pivote": [
+     0.17,
+     0.03,
+     0.78
+    ],
+    "tris": 380
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.075,
+     0.0,
+     0.42
+    ],
+    "tris": 300
+   },
+   "pierna_der": {
+    "pivote": [
+     0.075,
+     0.0,
+     0.42
+    ],
+    "tris": 300
+   }
+  }
+ },
+ "enemigo_esqueleto_arquero": {
+  "altura": 1.127,
+  "radio": 0.221,
+  "alcance": 0.466,
+  "tris": 3693,
+  "bioma": "cementerio",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.44
+    ],
+    "tris": 1142
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.82
+    ],
+    "tris": 736
+   },
+   "mandibula": {
+    "pivote": [
+     0.01,
+     0.067,
+     0.838
+    ],
+    "tris": 456
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.17,
+     0.03,
+     0.78
+    ],
+    "tris": 380
+   },
+   "brazo_der": {
+    "pivote": [
+     0.17,
+     0.03,
+     0.78
+    ],
+    "tris": 379
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.075,
+     0.0,
+     0.42
+    ],
+    "tris": 300
+   },
+   "pierna_der": {
+    "pivote": [
+     0.075,
+     0.0,
+     0.42
+    ],
+    "tris": 300
+   }
+  }
+ },
+ "enemigo_cuervo": {
+  "altura": 1.08,
+  "radio": 0.142,
+  "alcance": 0.564,
+  "tris": 3076,
+  "vuela": 1,
+  "bioma": "cementerio",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.95
+    ],
+    "tris": 520
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.1,
+     0.97
+    ],
+    "tris": 380
+   },
+   "ala_izq": {
+    "pivote": [
+     -0.06,
+     0.03,
+     0.975
+    ],
+    "tris": 780
+   },
+   "ala_der": {
+    "pivote": [
+     0.06,
+     0.03,
+     0.975
+    ],
+    "tris": 780
+   },
+   "cola": {
+    "pivote": [
+     0.0,
+     -0.15,
+     0.965
+    ],
+    "tris": 264
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.03,
+     -0.01,
+     0.895
+    ],
+    "tris": 176
+   },
+   "pierna_der": {
+    "pivote": [
+     0.03,
+     -0.01,
+     0.895
+    ],
+    "tris": 176
+   }
+  }
+ },
+ "enemigo_murcielago": {
+  "altura": 1.28,
+  "radio": 0.07,
+  "alcance": 0.45,
+  "tris": 1827,
+  "vuela": 1,
+  "bioma": "castillo",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     1.02
+    ],
+    "tris": 380
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.02,
+     1.08
+    ],
+    "tris": 420
+   },
+   "ala_izq": {
+    "pivote": [
+     -0.05,
+     0.01,
+     1.05
+    ],
+    "tris": 515
+   },
+   "ala_der": {
+    "pivote": [
+     0.05,
+     0.01,
+     1.05
+    ],
+    "tris": 512
+   }
+  }
+ },
+ "enemigo_perro_huesos": {
+  "altura": 0.726,
+  "radio": 0.284,
+  "alcance": 0.604,
+  "tris": 3390,
+  "bioma": "cementerio",
+  "cuadrupedo": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.45
+    ],
+    "tris": 1000
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.27,
+     0.53
+    ],
+    "tris": 650
+   },
+   "mandibula": {
+    "pivote": [
+     0.0,
+     0.36,
+     0.55
+    ],
+    "tris": 240
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.08,
+     0.17,
+     0.44
+    ],
+    "tris": 300
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.08,
+     -0.24,
+     0.45
+    ],
+    "tris": 320
+   },
+   "brazo_der": {
+    "pivote": [
+     0.08,
+     0.17,
+     0.44
+    ],
+    "tris": 300
+   },
+   "pierna_der": {
+    "pivote": [
+     0.08,
+     -0.24,
+     0.45
+    ],
+    "tris": 320
+   },
+   "cola": {
+    "pivote": [
+     0.0,
+     -0.3,
+     0.5
+    ],
+    "tris": 260
+   }
+  }
+ }
+}
