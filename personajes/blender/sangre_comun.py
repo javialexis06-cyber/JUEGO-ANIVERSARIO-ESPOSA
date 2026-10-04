@@ -573,7 +573,12 @@ class Figura:
         self.voxel, self.suelo, self.ao, self.alcance_ao = voxel, suelo, ao, alcance_ao
         self.piezas = {}
         self.extras = {}
+        self.marcas = {}
         self.root = None
+
+    def marca(self, nombre, pos):
+        """Vacío con nombre colgado de la raíz (dónde va la luz de una llama, la punta de un arma…)."""
+        self.marcas[nombre] = np.asarray(pos, float)
 
     def pieza(self, nombre, pivote, tris=900, voxel=None):
         p = Pieza(self, nombre, pivote, tris, voxel)
@@ -631,6 +636,14 @@ class Figura:
         root['tris'] = tris_total
         for k, v in self.extras.items():
             root[k] = v
+        coll = root.users_collection[0]
+        for nombre, pos in self.marcas.items():
+            e = bpy.data.objects.new(f'{self.nodo}~{nombre}', None)
+            e.empty_display_size = 0.05
+            clay.link(e, coll)
+            e.location = tuple(pos)
+            e.parent = root
+            e['marca'] = nombre
         return root
 
     def _colorear(self, p, bvh, alcance, dirs, altura):
@@ -912,7 +925,8 @@ def manifiesto(figs):
         out[f.nodo] = dict(
             altura=round(float(f.hi[2]), 3), radio=round(f.radio, 3), alcance=round(f.alcance, 3),
             tris=int(f.tris), **{k: v for k, v in f.extras.items() if not k.startswith('icono')},
-            piezas={n: dict(pivote=[round(float(x), 3) for x in p.pivote], tris=int(p.n_tris), **p.extras) for n, p in f.piezas.items()})
+            piezas={n: dict(pivote=[round(float(x), 3) for x in p.pivote], tris=int(p.n_tris), **p.extras) for n, p in f.piezas.items()},
+            **({'marcas': {n: [round(float(x), 3) for x in q] for n, q in f.marcas.items()}} if f.marcas else {}))
     return out
 
 

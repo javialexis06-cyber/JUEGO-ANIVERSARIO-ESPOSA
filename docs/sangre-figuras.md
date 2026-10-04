@@ -64,6 +64,22 @@ blanco) y agrándala 1,25×. Así cada élite se distingue de lejos sin otro mod
 - `cola`: mecer alrededor del eje Z de Blender (Y de three.js).
 - Morir: soltar las piezas (cada una ya tiene su pivote) o tumbar la raíz.
 
+## Armas y proyectiles
+
+- `arma_<id>`: la pieza `cuerpo` con el **origen en la empuñadura** (donde va la mano). El arma crece hacia **+Z
+  de Blender (+Y de three.js)** y el filo o la cara mira a +Y de Blender; la ballesta y el arco apuntan a +Y (hacia
+  adelante). Medidas para un muñeco de ≈1 m (la espada mide 0,74 m, la lanza 1,24 m).
+- Lo que se mece va aparte: `extra_bola` del mangual (pivote en la punta del mango) y `extra_incensario` (cuelga
+  del aro de la mano).
+- Marcas (vacíos hijos de la raíz, con `userData.marca`): `punta` (de donde sale el golpe, el disparo o el
+  chorro) y `llama` (antorcha, incensario, bomba: ahí va una `PointLight`). También están en `armas.json`.
+- Hechas: espada_larga, horca, grillete, maza, escudo, ballesta, martillo, frasco, pala, incensario,
+  hacha_verdugo, baston_cuervos, laud, guadana, antorcha, estaca, lanza, mangual, daga, arco, y además cetro, hoz,
+  pico, bomba, agua_bendita, grimorio y cuchillo_carnicero.
+- `p_<id>` (proyectiles): centrados en el origen y volando hacia +Y de Blender; muy livianos (56 a 360
+  triángulos): virote, flecha, estaca, frasco_roto, nota_musical, pluma_cuervo, hueso, bola_fuego (marca
+  `llama`), rayo_sagrado, cadena_eslabon.
+
 ## Trajes de las clases
 
 `public/modelos/ropa/sangre_<clase>_{el,ella}.glb` traen el **mismo esqueleto que la ropa de la casa**: se cargan y

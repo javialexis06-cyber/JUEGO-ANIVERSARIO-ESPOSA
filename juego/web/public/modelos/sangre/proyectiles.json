@@ -1,0 +1,176 @@
+{
+ "p_virote": {
+  "altura": 0.016,
+  "radio": 0.13,
+  "alcance": 0.16,
+  "tris": 122,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 122
+   }
+  }
+ },
+ "p_flecha": {
+  "altura": 0.014,
+  "radio": 0.2,
+  "alcance": 0.22,
+  "tris": 166,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 166
+   }
+  }
+ },
+ "p_estaca": {
+  "altura": 0.018,
+  "radio": 0.121,
+  "alcance": 0.16,
+  "tris": 70,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 70
+   }
+  }
+ },
+ "p_frasco_roto": {
+  "altura": 0.095,
+  "radio": 0.049,
+  "alcance": 0.047,
+  "tris": 204,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 204
+   }
+  }
+ },
+ "p_nota_musical": {
+  "altura": 0.076,
+  "radio": 0.067,
+  "alcance": 0.073,
+  "tris": 104,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 104
+   }
+  }
+ },
+ "p_pluma_cuervo": {
+  "altura": 0.005,
+  "radio": 0.12,
+  "alcance": 0.12,
+  "tris": 56,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 56
+   }
+  }
+ },
+ "p_hueso": {
+  "altura": 0.025,
+  "radio": 0.079,
+  "alcance": 0.08,
+  "tris": 360,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 360
+   }
+  }
+ },
+ "p_bola_fuego": {
+  "altura": 0.073,
+  "radio": 0.126,
+  "alcance": 0.14,
+  "tris": 198,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 198
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "p_rayo_sagrado": {
+  "altura": 0.045,
+  "radio": 0.311,
+  "alcance": 0.312,
+  "tris": 156,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 156
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "p_cadena_eslabon": {
+  "altura": 0.011,
+  "radio": 0.065,
+  "alcance": 0.065,
+  "tris": 144,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 144
+   }
+  }
+ }
+}
