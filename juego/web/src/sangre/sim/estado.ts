@@ -5,7 +5,7 @@
 // ------------------------------------------------------------------------------------------------- Sucesos
 export const S = {
   GOLPE: 1, // x, y, daño, crítico, etiqueta
-  MUERTE: 2, // x, y, tipo, uid, élite, ángulo
+  MUERTE: 2, // x, y, tipo, uid, escala (élite si > 1), giro
   TAJO: 3, // x, y, ángulo, radio, arco, arma
   ESTOCADA: 4, // x, y, ángulo, largo, ancho, arma
   CONO: 5, // x, y, ángulo, largo, arco, arma

@@ -490,8 +490,7 @@ export class Sim {
     const x = E.x[i], y = E.y[i];
     const elite = E.elite[i];
     const j = g.j >= 0 ? this.J[g.j] : null;
-    const angulo = Math.atan2(g.dy, g.dx);
-    this.suc.push(S.MUERTE, x, y, t, E.uid[i], elite ? 1 : 0, angulo);
+    this.suc.push(S.MUERTE, x, y, t, E.uid[i], E.esc[i], E.rot[i]);
     E.hp[i] = 0;
     // Botín
     if (t === TIPO_ALTAR) {

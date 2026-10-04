@@ -9,7 +9,8 @@ import type { Mapa } from '../sim/mapa';
 import { conLuz, type FuenteLuz } from './luz';
 import type { Biblioteca } from './modelos';
 import { DECO_LUZ, LLAMAS_VELAS, type ModeloFijo, type ModelosPared } from './reemplazos_mapa';
-import { texturaFuego } from './texturas';
+import { ESCALA_PUNTOS, texturaFuego } from './texturas';
+export { ESCALA_PUNTOS };
 
 const TROZO = 8;
 const M = new THREE.Matrix4();
@@ -576,8 +577,6 @@ function llamasPuntos(pos: number[], tam: number[], fase: number[], tiempo: { va
   return p;
 }
 
-/** Escala de los puntos (depende del alto de la pantalla en píxeles): la ajusta la escena al cambiar de tamaño. */
-export const ESCALA_PUNTOS = { value: 800 };
 
 function materialLiquido(lava: boolean, tiempo: { value: number }) {
   return new THREE.ShaderMaterial({

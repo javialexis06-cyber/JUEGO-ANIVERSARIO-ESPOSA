@@ -2,6 +2,9 @@
 // partículas, y la llama de las antorchas. Si el frente de figuras deja `sangre/particulas/*.webp`, se usan esas.
 import * as THREE from 'three';
 
+/** Escala de los puntos (depende del alto de la pantalla en píxeles): la ajusta la escena al cambiar de tamaño. */
+export const ESCALA_PUNTOS = { value: 800 };
+
 let fuego: THREE.Texture | null = null;
 
 /** Una llama: núcleo blanco amarillo, cuerpo naranja y punta que se pierde en rojo. */
