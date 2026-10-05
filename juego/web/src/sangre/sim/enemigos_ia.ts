@@ -88,7 +88,8 @@ export function dirigirHorda(sim: Sim, dt: number) {
     const tipo = elegirTipo(sim);
     const def = TIPOS[tipo];
     const enjambre = def.conducta === 'enjambre' || def.conducta === 'volador';
-    const grupo = enjambre ? sim.az.entero(3, 7) : sim.az.entero(1, 4);
+    // Los enjambres empiezan chicos y crecen con el reloj
+    const grupo = enjambre ? sim.az.entero(2, 3 + Math.round(4 * u)) : sim.az.entero(1, 4);
     sim.hordaAcum -= grupo * (enjambre ? 0.6 : 1);
     aparecerGrupo(sim, tipo, grupo);
   }

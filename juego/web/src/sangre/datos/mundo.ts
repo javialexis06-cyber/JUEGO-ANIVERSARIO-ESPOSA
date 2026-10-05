@@ -60,7 +60,7 @@ export const ENEMIGOS_LISTA: DefEnemigo[] = [
   D({ id: 'inquisidor_muerto', nombre: 'Inquisidor no muerto', vida: 36, vel: 1.6, dano: 10, radio: 0.45, xp: 3, conducta: 'arquero', masa: 0.3, alto: 1.2,
     proyectil: { tipo: 'fuego', dano: 10, vel: 7, cada: 3.0, alcance: 7.5 }, color: ['#5a1a1a', '#c8a040'] }),
   D({ id: 'nigromante', nombre: 'Nigromante', vida: 32, vel: 1.4, dano: 6, radio: 0.45, xp: 5, conducta: 'invocador', masa: 0.2, alto: 1.2, color: ['#2a2238', '#7a5ab8'] }),
-  D({ id: 'vampiro', nombre: 'Vampiro menor', vida: 40, vel: 2.6, dano: 12, radio: 0.42, xp: 4, conducta: 'teletransporte', masa: 0.3, alto: 1.15, vampiro: true, color: ['#1e1a22', '#8a1a2a'] }),
+  D({ id: 'vampiro', nombre: 'Vampiro menor', vida: 40, vel: 2.6, dano: 9, radio: 0.42, xp: 4, conducta: 'teletransporte', masa: 0.3, alto: 1.15, vampiro: true, color: ['#1e1a22', '#8a1a2a'] }),
   D({ id: 'novia_vampira', nombre: 'Novia del Conde', vida: 34, vel: 2.0, dano: 8, radio: 0.42, xp: 4, conducta: 'encantador', masa: 0.2, alto: 1.15, vampiro: true, color: ['#e8e0e8', '#7a1a2a'] }),
   D({ id: 'hombre_lobo', nombre: 'Hombre lobo', vida: 95, vel: 2.5, dano: 16, radio: 0.6, xp: 8, conducta: 'cargador', masa: 0.6, alto: 1.5, vivo: true, color: ['#4a3e34', '#8a7a6a'] }),
   D({ id: 'murcielago', nombre: 'Murciélago', vida: 5, vel: 4.0, dano: 3, radio: 0.26, xp: 1, conducta: 'volador', masa: 0, alto: 0.35, vuela: true, vivo: true, color: ['#2a2024', '#5a3a40'] }),
@@ -179,7 +179,7 @@ export const BIOMAS: Record<IdBioma, DefBioma> = {
     id: 'castillo', nombre: 'El Castillo del Conde', desc: 'Salones con tapices, candelabros y sangre en las alfombras. Aquí espera el Conde Sangrevil.',
     estilo: 'ruinas', jefe: 'conde', antorchas: 2.0, glifo: 'castillo', color: '#8a1a2a',
     enemigos: [
-      { id: 'murcielago', desde: 0, peso: 8 }, { id: 'vampiro', desde: 10, peso: 5 }, { id: 'esqueleto', desde: 0, peso: 5 },
+      { id: 'esqueleto', desde: 0, peso: 7 }, { id: 'murcielago', desde: 30, peso: 6 }, { id: 'vampiro', desde: 40, peso: 4 },
       { id: 'novia_vampira', desde: 60, peso: 3 }, { id: 'hombre_lobo', desde: 100, peso: 1.5 }, { id: 'esqueleto_arquero', desde: 120, peso: 2 },
       { id: 'nigromante', desde: 160, peso: 1 }, { id: 'caballero_muerte', desde: 200, peso: 0.6 },
     ],
