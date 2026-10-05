@@ -168,12 +168,15 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
 - `node scripts/balance-sangre.mjs [partidas] [clases|todas] [bioma] [peligro] [jugadores]`: el bot juega
   expediciones completas en Node (miles de pasos por segundo). Hoy: en peligro 1 el bot gana casi siempre; en
   peligro 2, más o menos la mitad.
+- `node scripts/probar-sangre.mjs <url> [carpeta] [grupo,extraccion,celular,tutorial]`: en el navegador, dos pestañas
+  en grupo (sala, Forja esperando a todos, etapa 2, resultados y vuelta a la sala), la extracción con el bot, la
+  pausa y abandonar, el joystick con el dedo y el tutorial completo.
 - Parámetros: `sangre.html?prueba=1` (entra directo; `&clase=`, `&bioma=`, `&peligro=`, `&spec=`, `&semilla=`,
-  `&bot=1`, `&rapido=N`), `?prueba=tutorial`, `?calidad=baja|media|alta`, `?limpio=1` (progreso nuevo),
+  `&bot=1`, `&rapido=N`, `&etapa=4` para el jefe), `?prueba=tutorial`, `?calidad=baja|media|alta`, `?limpio=1` (progreso nuevo),
   `?salas=local` (salas entre pestañas), `?rol=el|ella`, `?amigo=Nombre&id=x`, `?sinanim=1`.
 - Ganchos: `__sangre()` (la simulación o el espejo), `__sangrePartida()`, `__sangreEscena()`, `__sangreProgreso()`,
   `__sangrePantalla()`, `__sangreInfo()` (llamadas, triángulos, ms), `__sangreDar(ceniza)`, `__sangreAbrirTodo()`,
-  `__sangreForja()` (salta a la Forja).
+  `__sangreForja()` (salta a la Forja), `__sangreReloj(s)` (adelanta el reloj de la etapa).
 
 ## Contrato de arte (lo que el código espera encontrar)
 
