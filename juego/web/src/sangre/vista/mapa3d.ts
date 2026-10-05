@@ -7,7 +7,7 @@ import type { DefBioma } from '../datos/mundo';
 import { C, VIDA_CELDA, esSolida } from '../tipos';
 import type { Mapa } from '../sim/mapa';
 import { conLuz, type FuenteLuz } from './luz';
-import type { Biblioteca } from './modelos';
+import { FUEGOS, type Biblioteca } from './modelos';
 import { DECO_LUZ, LLAMAS_VELAS, type ModeloFijo, type ModelosPared } from './reemplazos_mapa';
 import { ESCALA_PUNTOS, texturaFuego } from './texturas';
 export { ESCALA_PUNTOS };
@@ -37,6 +37,12 @@ export class Mapa3D {
   private copia: Uint8Array;
   private version = -1;
   private paredes: ModelosPared;
+  /** Losas modeladas del bioma (2 × 2 m) con su peso, o vacío si se usa la textura. */
+  private pisosM: { mod: ModeloFijo; peso: number }[] = [];
+  private pesoPisos = 0;
+  /** Paredes del GLB: no se giran ni cambian de alto (los techos encajan con los vecinos). */
+  private modelado: boolean;
+  private sombraAO: THREE.Mesh | null = null;
   private piso!: THREE.Mesh;
   private ao!: { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; img: ImageData; tex: THREE.CanvasTexture };
   private llamas!: THREE.Points;
@@ -46,11 +52,16 @@ export class Mapa3D {
   /** Hay que rehacer la luz fija (se rompió una pared). */
   luzSucia = true;
 
-  constructor(private m: Mapa, private bioma: DefBioma, private bib: Biblioteca, private colorAntorcha: THREE.Color) {
+  constructor(private m: Mapa, private bioma: DefBioma, private bib: Biblioteca, private colorAntorcha: THREE.Color, pisoModelado = true) {
     this.tw = Math.ceil(m.w / TROZO);
     this.th = Math.ceil(m.h / TROZO);
     this.copia = m.c.slice();
     this.paredes = bib.paredes();
+    this.modelado = bib.escenarioModelado;
+    if (this.modelado && pisoModelado) {
+      this.pisosM = bib.pisos().map((mod) => ({ mod, peso: Number(mod.datos?.peso) || 1 }));
+      this.pesoPisos = this.pisosM.reduce((a, b) => a + b.peso, 0);
+    }
     this.hacerPiso();
     for (let ty = 0; ty < this.th; ty++)
       for (let tx = 0; tx < this.tw; tx++) {
@@ -91,6 +102,21 @@ export class Mapa3D {
     this.piso = new THREE.Mesh(geo, matPiso);
     this.piso.receiveShadow = true;
     this.grupo.add(this.piso);
+    if (this.pisosM.length) {
+      // Con losas modeladas, el plano solo queda como sombra de contacto al pie de las paredes (encima de las losas)
+      this.piso.visible = false;
+      const sombra = new THREE.ShaderMaterial({
+        uniforms: { uAO: { value: aoTex } },
+        vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+        fragmentShader: 'uniform sampler2D uAO; varying vec2 vUv; void main(){ float a = 1.0 - texture2D(uAO, vec2(vUv.x, 1.0 - vUv.y)).g; gl_FragColor = vec4(0.0, 0.0, 0.0, a * 0.85); }',
+        transparent: true, depthWrite: false,
+      });
+      const g2 = geo.clone();
+      g2.translate(0, 0.025, 0);
+      this.sombraAO = new THREE.Mesh(g2, sombra);
+      this.sombraAO.renderOrder = 1;
+      this.grupo.add(this.sombraAO);
+    }
   }
 
   /** Oscurece el piso al pie de las paredes (en la región dada, en celdas). */
@@ -157,6 +183,38 @@ export class Mapa3D {
         if (!lst || !lst.length) continue;
         lista(lst[v % lst.length]).push(i);
       }
+    // Losas del piso (de a 2 × 2 celdas): solo donde alguna celda está abierta (las demás quedan bajo la roca)
+    const losas = new Map<ModeloFijo, number[]>();
+    if (this.pisosM.length) {
+      for (let cy = t.cy * TROZO; cy < Math.min(m.h, (t.cy + 1) * TROZO); cy += 2)
+        for (let cx = t.cx * TROZO; cx < Math.min(m.w, (t.cx + 1) * TROZO); cx += 2) {
+          if (esSolida(m.get(cx, cy)) && esSolida(m.get(cx + 1, cy)) && esSolida(m.get(cx, cy + 1)) && esSolida(m.get(cx + 1, cy + 1))) continue;
+          let r = hash2(cx, cy, 17) * this.pesoPisos;
+          let mod = this.pisosM[0].mod;
+          for (const x of this.pisosM) {
+            r -= x.peso;
+            if (r <= 0) {
+              mod = x.mod;
+              break;
+            }
+          }
+          const l = losas.get(mod) ?? [];
+          l.push(cx, cy);
+          losas.set(mod, l);
+        }
+    }
+    for (const [mod, celdas] of losas) {
+      const malla = new THREE.InstancedMesh(mod.geo, mod.mats, celdas.length / 2);
+      malla.receiveShadow = true;
+      for (let k = 0; k < celdas.length; k += 2) {
+        M.makeTranslation(celdas[k] + 1, 0, celdas[k + 1] + 1);
+        malla.setMatrixAt(k / 2, M);
+      }
+      malla.instanceMatrix.needsUpdate = true;
+      malla.computeBoundingSphere();
+      t.grupo.add(malla);
+      t.mallas.push(malla);
+    }
     for (const [mod, celdas] of porModelo) {
       const malla = new THREE.InstancedMesh(mod.geo, mod.mats, celdas.length);
       malla.castShadow = true;
@@ -185,14 +243,15 @@ export class Mapa3D {
     const cx = i % m.w, cy = (i / m.w) | 0;
     const t = m.c[i];
     const v = m.v[i];
-    let rot = (v % 4) * (Math.PI / 2);
-    if (t === C.HIERRO || t === C.SANGRE || t === C.ORO || t === C.HUEVO) {
+    const fijaGLB = this.modelado && t !== C.HUEVO && t !== C.ESCOMBRO;
+    let rot = fijaGLB ? 0 : (v % 4) * (Math.PI / 2);
+    if (!fijaGLB && (t === C.HIERRO || t === C.SANGRE || t === C.ORO || t === C.HUEVO)) {
       // Que los cristales miren a lo abierto (prefiere abajo, hacia la cámara)
       const dirs: [number, number][] = [[0, 1], [1, 0], [-1, 0], [0, -1]];
       const d = dirs.find(([dx, dy]) => !esSolida(m.get(cx + dx, cy + dy)));
       if (d) rot = Math.atan2(d[0], d[1]) + Math.PI;
     }
-    const alto = t === C.BORDE ? 1 : 0.92 + (v / 255) * 0.2;
+    const alto = t === C.BORDE || fijaGLB ? 1 : 0.92 + (v / 255) * 0.2;
     Q.setFromAxisAngle(Y, rot);
     P.set(cx + 0.5 + (temblor ? (Math.random() - 0.5) * temblor : 0), 0, cy + 0.5 + (temblor ? (Math.random() - 0.5) * temblor : 0));
     S.set(encoge, alto * encoge, encoge);
@@ -265,8 +324,10 @@ export class Mapa3D {
         S.setScalar(1);
         M.compose(P, Q, S);
         malla.setMatrixAt(k, M);
-        for (const [x, z, h] of LLAMAS_VELAS) {
-          const ll = new THREE.Vector3(x, h + 0.04, z).applyQuaternion(Q).add(P);
+        const llamasV = vel.llamas?.length ? vel.llamas : LLAMAS_VELAS.map(([x, z, h]) => new THREE.Vector3(x, h + 0.04, z));
+        for (const l0 of llamasV) {
+          const x = l0.x;
+          const ll = l0.clone().applyQuaternion(Q).add(P);
           puntos.push(ll.x, ll.y, ll.z);
           tam.push(0.16);
           fase.push(hash2(a.cx * 7 + x * 10, a.cy, 9) * 10);
@@ -289,6 +350,8 @@ export class Mapa3D {
       porTipo.set(d.tipo, l);
     }
     const llamas: number[] = [];
+    const tam: number[] = [];
+    const fase: number[] = [];
     for (const [tipo, lista] of porTipo) {
       const mod = this.bib.fijo('deco', tipo);
       const malla = new THREE.InstancedMesh(mod.geo, mod.mats, lista.length);
@@ -298,15 +361,24 @@ export class Mapa3D {
         S.setScalar(d.esc);
         M.compose(P, Q, S);
         malla.setMatrixAt(k, M);
+        const luzG = mod.datos?.luz as { color: string; intensidad: number; alcance: number; particulas?: string } | undefined;
         const luz = DECO_LUZ[tipo];
-        if (luz) this.fijas.push({ x: d.x, y: d.y, r: luz[2], color: new THREE.Color(luz[0]), fuerza: luz[1] });
-        void llamas;
+        if (luzG) this.fijas.push({ x: d.x, y: d.y, r: luzG.alcance, color: new THREE.Color(luzG.color), fuerza: Math.min(1.3, luzG.intensidad * 0.9) });
+        else if (luz) this.fijas.push({ x: d.x, y: d.y, r: luz[2], color: new THREE.Color(luz[0]), fuerza: luz[1] });
+        if (luzG?.particulas === 'fuego' && mod.llamas)
+          for (const l0 of mod.llamas) {
+            const ll = l0.clone().multiplyScalar(d.esc).applyQuaternion(Q).add(P);
+            llamas.push(ll.x, ll.y, ll.z);
+            tam.push(l0.y > 0.8 ? 0.4 : 0.16);
+            fase.push(hash2(d.x * 13, d.y * 7, 5) * 10);
+          }
       });
       malla.castShadow = true;
       malla.receiveShadow = true;
       malla.computeBoundingSphere();
       this.grupo.add(malla);
     }
+    if (llamas.length) this.grupo.add(llamasPuntos(llamas, tam, fase, this.tiempoLlamas));
   }
 
   // ----------------------------------------------------------------------------------------------- Agua y lava
@@ -367,6 +439,9 @@ export class Mapa3D {
   /** Rehace los trozos cuyas celdas cambiaron y hace temblar las que se excavan. */
   actualizar(t: number, excavando: number[]) {
     this.tiempoLlamas.value = t;
+    // Las llamas modeladas titilan todas juntas (el material «fuego» de los GLB)
+    const f = 0.82 + Math.sin(t * 11.3) * 0.1 + Math.sin(t * 23.7 + 1.3) * 0.07;
+    for (const m of FUEGOS) m.emissiveIntensity = (m.userData.emisionBase ?? 1) * f;
     if (this.m.version !== this.version) {
       this.version = this.m.version;
       const c = this.m.c;

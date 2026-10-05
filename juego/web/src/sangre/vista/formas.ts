@@ -74,3 +74,26 @@ export function mat(color: string, o: { rug?: number; met?: number; e?: string; 
 
 /** Junta varias geometrías en una sola (para piezas con varias partes del mismo material). */
 export { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+
+/**
+ * Copia de una geometría con todos sus atributos en Float32 (los GLB comprimidos traen posiciones y colores
+ * cuantizados en enteros normalizados: si se les aplica una matriz así, se recortan a ±1). Los colores quedan RGB.
+ */
+export function geoFloat(g0: THREE.BufferGeometry): THREE.BufferGeometry {
+  const g = new THREE.BufferGeometry();
+  if (g0.index) g.setIndex(Array.from(g0.index.array as ArrayLike<number>));
+  for (const [n, a0] of Object.entries(g0.attributes)) {
+    const a = a0 as THREE.BufferAttribute | THREE.InterleavedBufferAttribute;
+    const tam = n === 'color' ? 3 : a.itemSize;
+    const out = new Float32Array(a.count * tam);
+    for (let i = 0; i < a.count; i++) {
+      out[i * tam] = a.getX(i);
+      if (tam > 1) out[i * tam + 1] = a.getY(i);
+      if (tam > 2) out[i * tam + 2] = a.getZ(i);
+      if (tam > 3) out[i * tam + 3] = a.getW(i);
+    }
+    g.setAttribute(n, new THREE.BufferAttribute(out, tam));
+  }
+  for (const gr of g0.groups) g.addGroup(gr.start, gr.count, gr.materialIndex);
+  return g;
+}

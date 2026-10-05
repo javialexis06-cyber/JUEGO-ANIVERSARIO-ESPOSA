@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { cargar } from '../../recursos';
 import { BIOMAS } from '../datos/mundo';
 import type { IdBioma } from '../tipos';
+import { geoFloat } from './formas';
 import { conLuz } from './luz';
 import { modeloDeNodo, PIEZA, type ModeloPiezas } from './piezas';
 import { reemplazo } from './reemplazos';
@@ -28,6 +29,11 @@ export class Biblioteca {
 
   /** Lee los GLB que haya (los que falten se reemplazan). */
   async cargar(bioma: IdBioma) {
+    if (bioma !== this.bioma) {
+      // Lo del escenario es de cada bioma
+      this.paredesB = null;
+      for (const k of [...this.fijos.keys()]) if (k.startsWith('deco:') || k === 'antorcha' || k === 'velas') this.fijos.delete(k);
+    }
     this.bioma = bioma;
     const nombres = ['enemigos', 'jefes', 'armas', 'proyectiles', 'cosas', `bioma_${bioma}`];
     await Promise.all(nombres.map(async (n) => {
@@ -77,8 +83,9 @@ export class Biblioteca {
     if (m) return m;
     const archivo = tipo === 'arma' ? 'armas' : tipo === 'proyectil' ? 'proyectiles' : tipo === 'cosa' ? 'cosas' : `bioma_${this.bioma}`;
     const prefijo = tipo === 'arma' ? 'arma_' : tipo === 'proyectil' ? 'p_' : tipo === 'cosa' ? 'c_' : 'deco_';
-    const n = this.nodo(archivo, prefijo + id);
-    if (n) m = deNodo(n);
+    // (las luces de piso del bioma, como el farol o el brasero, entran como decoración con «__»)
+    const n = this.nodo(archivo, id.startsWith('__') ? id.slice(2) : prefijo + id);
+    if (n) m = deNodo(n, tipo === 'deco');
     else if (tipo === 'arma') m = armaReemplazo(id);
     else if (tipo === 'proyectil') m = proyectilReemplazo(id);
     else if (tipo === 'cosa') m = cosaReemplazo(id);
@@ -94,7 +101,7 @@ export class Biblioteca {
     const r = paredesReemplazo(BIOMAS[this.bioma]);
     const b = `bioma_${this.bioma}`;
     const variantes = (claves: string[], antes: ModeloFijo[]) => {
-      const l = claves.map((c) => this.nodo(b, c)).filter((x): x is THREE.Object3D => !!x).map(deNodo);
+      const l = claves.map((c) => this.nodo(b, c)).filter((x): x is THREE.Object3D => !!x).map((x) => deNodo(x, false));
       return l.length ? l : antes;
     };
     const p: ModelosPared = {
@@ -117,7 +124,7 @@ export class Biblioteca {
     let m = this.fijos.get(k);
     if (!m) {
       const n = this.nodo(`bioma_${this.bioma}`, 'luz_antorcha');
-      m = iluminar(n ? deNodo(n) : antorchaReemplazo());
+      m = iluminar(n ? deNodo(n, true) : antorchaReemplazo());
       this.fijos.set(k, m);
     }
     return m;
@@ -128,7 +135,7 @@ export class Biblioteca {
     let m = this.fijos.get(k);
     if (!m) {
       const n = this.nodo(`bioma_${this.bioma}`, 'luz_vela');
-      m = iluminar(n ? deNodo(n) : velasReemplazo());
+      m = iluminar(n ? deNodo(n, true) : velasReemplazo());
       this.fijos.set(k, m);
     }
     return m;
@@ -136,14 +143,15 @@ export class Biblioteca {
 
   /** Dónde va la llama de la antorcha del GLB (nodo vacío «llama»); por defecto, la del reemplazo. */
   llamaAntorcha(): THREE.Vector3 {
-    const n = this.nodo(`bioma_${this.bioma}`, 'luz_antorcha');
-    const ll = n?.getObjectByName('llama');
-    if (n && ll) {
-      n.updateMatrixWorld(true);
-      return new THREE.Vector3().setFromMatrixPosition(new THREE.Matrix4().multiplyMatrices(new THREE.Matrix4().copy(n.matrixWorld).invert(), ll.matrixWorld));
-    }
-    return new THREE.Vector3(0, 1.38, -0.24);
+    return this.antorcha().llamas?.[0]?.clone() ?? new THREE.Vector3(0, 1.38, -0.24);
   }
+
+  /** ¿Las paredes y pisos son los modelados (no se giran) o los reemplazos? */
+  get escenarioModelado() {
+    return this.tiene(`bioma_${this.bioma}`);
+  }
+
+
 
   /** Losas del piso del bioma (si llegaron): bloques de 2 × 2 m. */
   pisos(): ModeloFijo[] {
@@ -151,34 +159,57 @@ export class Biblioteca {
     if (!g) return [];
     const l: ModeloFijo[] = [];
     g.traverse((o) => {
-      if (/^piso_/.test(o.name) && o.parent === g) l.push(iluminar(deNodo(o)));
+      if (/^piso_/.test(o.name) && o.parent === g) l.push(iluminar(deNodo(o, false)));
     });
     return l;
   }
 }
 
-/** Junta las mallas de un nodo (en su propio espacio) en un modelo fijo. */
-function deNodo(n: THREE.Object3D): ModeloFijo {
+const MEDIA_VUELTA = new THREE.Matrix4().makeRotationY(Math.PI);
+
+/**
+ * Junta las mallas de un nodo (en su propio espacio) en un modelo fijo, con sus datos (userData) y sus llamas.
+ * `girar`: media vuelta para que el frente quede hacia −Z como en los reemplazos (decoración y luces; las paredes y
+ * los pisos de los biomas no se giran nunca).
+ */
+function deNodo(n: THREE.Object3D, girar: boolean): ModeloFijo {
   n.updateMatrixWorld(true);
   const inv = new THREE.Matrix4().copy(n.matrixWorld).invert();
+  if (girar) inv.premultiply(MEDIA_VUELTA);
   const partes: [THREE.BufferGeometry, THREE.Material][] = [];
+  const llamas: THREE.Vector3[] = [];
   n.traverse((o) => {
+    if (o !== n && o.name.startsWith('llama')) llamas.push(new THREE.Vector3().setFromMatrixPosition(new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld)));
     const m = o as THREE.Mesh;
     if (!m.isMesh) return;
-    const g = m.geometry.clone();
+    const g = geoFloat(m.geometry);
     g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, m.matrixWorld));
     const mats = Array.isArray(m.material) ? m.material : [m.material];
     partes.push([g, mats[0]]);
   });
   if (!partes.length) return fijo([[new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial()]]);
-  return fijo(partes);
+  const r = fijo(partes);
+  r.datos = { ...n.userData };
+  r.llamas = llamas;
+  return r;
 }
+
+/** Materiales de fuego ya iluminados (todas las llamas modeladas titilan juntas). */
+export const FUEGOS: THREE.MeshStandardMaterial[] = [];
 
 /** Copia los materiales y les pone la rejilla de luz. */
 function iluminar(m: ModeloFijo): ModeloFijo {
   if ((m as any).__luz) return m;
-  const mats = m.mats.map((x) => conLuz(x.clone()));
-  const r = { geo: m.geo, mats };
+  const mats = m.mats.map((x) => {
+    const c = conLuz(x.clone());
+    if (/^(fuego|brasa|lava)/.test(x.name) && (c as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
+      const s = c as THREE.MeshStandardMaterial;
+      s.userData.emisionBase = s.emissiveIntensity;
+      FUEGOS.push(s);
+    }
+    return c;
+  });
+  const r: ModeloFijo = { geo: m.geo, mats, datos: m.datos, llamas: m.llamas };
   (r as any).__luz = true;
   return r;
 }

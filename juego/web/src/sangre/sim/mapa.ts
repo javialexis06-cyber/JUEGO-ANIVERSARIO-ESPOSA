@@ -547,26 +547,88 @@ function antorchas(m: Mapa, az: Azar, densidad: number) {
   m.antorchas = puestas;
 }
 
-const DECO_BIOMA: Record<string, [string, number][]> = {
-  cementerio: [['lapida', 6], ['cruz', 4], ['lapida_rota', 3], ['huesos', 2], ['calabaza', 0.5], ['tumba', 2], ['arbol_muerto', 1.2], ['farol', 0.6]],
-  catacumbas: [['calaveras', 5], ['huesos', 4], ['velas', 3], ['cadenas', 2], ['urna', 2], ['sarcofago', 1]],
-  minas: [['vagoneta', 1], ['cristal', 3], ['huesos', 2], ['barril', 2], ['pico_roto', 1.5], ['viga', 2]],
-  abadia: [['banca', 4], ['vitral', 1.5], ['candelabro', 2], ['libro', 2], ['escombro', 4], ['estatua', 1]],
-  castillo: [['tapiz', 2], ['candelabro', 3], ['armadura', 2], ['barril', 1.5], ['mesa', 1.5], ['alfombra', 2], ['jaula', 1]],
+/**
+ * La decoración de cada bioma (los nombres de `bioma_<id>.glb` sin «deco_»): [id, lugar, peso, ancho, fondo].
+ * `pared`: de espaldas a un muro; `borde`: alto, pegado a las paredes; `libre`: bajo, en cualquier parte (cerca de
+ * las paredes casi siempre); `suelo`: plano, se camina encima.
+ */
+type Lugar = 'pared' | 'borde' | 'libre' | 'suelo';
+const DECO_BIOMA: Record<string, [string, Lugar, number, number, number][]> = {
+  cementerio: [
+    ['lapida_redonda', 'libre', 3, 1, 1], ['lapida_gotica', 'libre', 3, 1, 1], ['lapida_recta', 'libre', 3, 1, 1], ['lapida_cruz', 'borde', 2, 1, 1], ['lapida_rota', 'libre', 2, 1, 1],
+    ['lapidas_grupo', 'libre', 1.5, 2, 1], ['tumba_losa', 'suelo', 1.5, 1, 2], ['cruz_torcida', 'borde', 1.5, 1, 1], ['mausoleo', 'pared', 0.5, 2, 2], ['angel', 'pared', 0.8, 1, 1],
+    ['arbol_seco', 'borde', 1, 1, 1], ['reja', 'pared', 0.8, 2, 1], ['ataud', 'libre', 0.8, 1, 2], ['fosa', 'libre', 0.8, 1, 2], ['huesos', 'suelo', 2, 1, 1], ['calaveras', 'libre', 1.5, 1, 1],
+    ['florero', 'libre', 1, 1, 1], ['banca', 'libre', 0.6, 2, 1], ['hongos', 'suelo', 1.5, 1, 1], ['raices', 'suelo', 1.5, 1, 1], ['charco', 'suelo', 1, 1, 1],
+    ['__luz_farol', 'borde', 0.7, 1, 1], ['__luz_tumba_velas', 'libre', 1, 1, 1],
+  ],
+  catacumbas: [
+    ['nicho_calaveras', 'pared', 3, 1, 1], ['osario', 'borde', 2, 1, 1], ['columna', 'borde', 1.2, 1, 1], ['columna_rota', 'libre', 1, 1, 1], ['sarcofago', 'libre', 1, 1, 2],
+    ['sarcofago_abierto', 'libre', 0.8, 1, 2], ['cadenas', 'pared', 2, 1, 1], ['grilletes', 'suelo', 1.5, 1, 1], ['jaula', 'borde', 0.6, 1, 1], ['urnas', 'libre', 1.5, 1, 1],
+    ['agua_negra', 'libre', 0.6, 2, 2], ['reja_cripta', 'pared', 0.8, 2, 1], ['estatua_monje', 'pared', 0.8, 1, 1], ['escombros', 'libre', 1.5, 1, 1], ['huesos', 'suelo', 2.5, 1, 1],
+    ['calaveras', 'libre', 2, 1, 1], ['__luz_candelabro', 'borde', 0.8, 1, 1], ['__luz_altar_huesos', 'pared', 0.5, 1, 1],
+  ],
+  minas: [
+    ['vagoneta', 'libre', 0.8, 1, 1], ['vagoneta_volcada', 'libre', 0.6, 1, 2], ['puntal', 'pared', 2.5, 2, 1], ['cristal_grande', 'borde', 1, 1, 1], ['cristal_chico', 'libre', 2, 1, 1],
+    ['lava_grieta', 'suelo', 1, 1, 1], ['lava_charco', 'libre', 0.6, 1, 1], ['pico', 'libre', 1, 1, 1], ['barriles', 'libre', 1.5, 1, 1], ['cajas_dinamita', 'libre', 1, 1, 1],
+    ['carretilla', 'libre', 0.8, 1, 1], ['polea', 'borde', 0.6, 1, 1], ['escalera', 'pared', 0.8, 1, 1], ['esqueleto_minero', 'suelo', 1, 1, 1], ['sacos', 'libre', 1.2, 1, 1],
+    ['mesa_minero', 'pared', 0.5, 2, 1], ['__luz_lampara', 'borde', 0.8, 1, 1], ['__luz_brasero', 'libre', 0.5, 1, 1],
+  ],
+  abadia: [
+    ['banca_quemada', 'libre', 2, 2, 1], ['banca_rota', 'libre', 2, 2, 1], ['vitral_roto', 'pared', 1.2, 1, 1], ['columna_rota', 'libre', 1, 1, 1], ['altar', 'pared', 0.5, 2, 1],
+    ['pulpito', 'pared', 0.5, 1, 1], ['campana_caida', 'libre', 0.4, 1, 1], ['estatua_santo', 'pared', 0.8, 1, 1], ['vigas_ardiendo', 'libre', 0.8, 2, 1], ['atril', 'libre', 0.8, 1, 1],
+    ['cruz_procesional', 'borde', 0.8, 1, 1], ['escombros', 'libre', 2, 1, 1], ['cenizas', 'suelo', 2, 1, 1], ['organo', 'pared', 0.3, 2, 1], ['confesionario', 'pared', 0.4, 2, 1],
+    ['pila_bautismal', 'libre', 0.4, 1, 1], ['vidrios', 'suelo', 1.5, 1, 1], ['__luz_candelabro', 'borde', 0.8, 1, 1], ['__luz_brasero', 'libre', 0.5, 1, 1], ['__luz_hoguera', 'libre', 0.3, 1, 1],
+  ],
+  castillo: [
+    ['tapiz', 'pared', 2, 1, 1], ['armadura', 'pared', 1.5, 1, 1], ['retrato', 'pared', 1.5, 1, 1], ['mesa_banquete', 'libre', 0.5, 2, 1], ['trono', 'pared', 0.3, 1, 1],
+    ['ataud_conde', 'libre', 0.4, 1, 2], ['alfombra', 'suelo', 1.5, 1, 2], ['estandarte', 'borde', 1.2, 1, 1], ['reloj', 'pared', 0.4, 1, 1], ['espejo_roto', 'pared', 0.8, 1, 1],
+    ['jarron', 'libre', 1.5, 1, 1], ['gargola', 'borde', 0.8, 1, 1], ['fuente_sangre', 'libre', 0.3, 2, 2], ['columna_marmol', 'borde', 1, 1, 1], ['sillas_rotas', 'libre', 1.5, 1, 1],
+    ['__luz_candelabro', 'borde', 1, 1, 1], ['__luz_chimenea', 'pared', 0.3, 2, 1],
+  ],
 };
+
+const DIRS4: [number, number][] = [[0, -1], [-1, 0], [1, 0], [0, 1]];
 
 function decorar(m: Mapa, az: Azar, b: DefBioma) {
   const lista = DECO_BIOMA[b.id] ?? [];
-  const n = Math.round(abiertas(m) / 22);
-  for (let k = 0; k < n * 4 && m.deco.length < n; k++) {
-    const x = az.entero(2, m.w - 3), y = az.entero(2, m.h - 3);
-    if (m.c[m.idx(x, y)] !== C.VACIO) continue;
-    if (Math.hypot(x + 0.5 - m.inicio.x, y + 0.5 - m.inicio.y) < 3) continue;
-    // Cerca de las paredes casi siempre (no en medio del camino)
-    if (!m.cercaPared(x, y) && az.n() < 0.7) continue;
-    const t = az.pesado(lista, ([, p]) => p);
+  if (!lista.length) return;
+  const n = Math.round(abiertas(m) / 16);
+  const ocupada = new Uint8Array(m.c.length);
+  for (const a of m.antorchas) ocupada[m.idx(a.cx + a.dx, a.cy + a.dy)] = 1;
+  const libreDeco = (x: number, y: number) => m.c[m.idx(x, y)] === C.VACIO && !ocupada[m.idx(x, y)] && Math.hypot(x + 0.5 - m.inicio.x, y + 0.5 - m.inicio.y) > 3.2;
+  for (let k = 0; k < n * 6 && m.deco.length < n; k++) {
+    const x = az.entero(2, m.w - 4), y = az.entero(2, m.h - 4);
+    if (!libreDeco(x, y)) continue;
+    const t = az.pesado(lista, (d) => d[2]);
     if (!t) continue;
-    m.deco.push({ tipo: t[0], x: x + az.entre(0.25, 0.75), y: y + az.entre(0.25, 0.75), rot: az.entre(0, Math.PI * 2), esc: az.entre(0.85, 1.15) });
+    const [id, lugar, , hx, hy] = t;
+    // Pared de al lado (preferida la de arriba: lo que va contra ella se ve de frente)
+    const muro = DIRS4.find(([dx, dy]) => esSolida(m.get(x + dx, y + dy)));
+    if ((lugar === 'pared' || lugar === 'borde') && !muro) continue;
+    if (lugar === 'libre' && !muro && az.n() < 0.6) continue;
+    let rot: number;
+    let ancho = hx, fondo = hy;
+    if (lugar === 'pared' || (lugar === 'borde' && muro)) {
+      // De espaldas al muro: el frente (−Z del modelo) hacia lo abierto
+      const [dx, dy] = muro!;
+      rot = Math.atan2(-dx, -dy) + Math.PI;
+      if (dx !== 0) [ancho, fondo] = [fondo, ancho];
+    } else {
+      const q = az.entero(0, 3);
+      rot = (q * Math.PI) / 2 + (hx === hy ? az.entre(-0.3, 0.3) : 0);
+      if (q % 2) [ancho, fondo] = [fondo, ancho];
+    }
+    // Las celdas que ocupa (las piezas de 2 m van centradas en el borde entre dos celdas)
+    const celdas: [number, number][] = [];
+    for (let j = 0; j < fondo; j++) for (let i = 0; i < ancho; i++) celdas.push([x + i, y + j]);
+    if (!celdas.every(([cx, cy]) => libreDeco(cx, cy))) continue;
+    if (lugar === 'pared' && muro && !celdas.every(([cx, cy]) => esSolida(m.get(cx + muro[0], cy + muro[1])))) continue;
+    for (const [cx, cy] of celdas) ocupada[m.idx(cx, cy)] = 1;
+    const cx = x + ancho / 2, cy = y + fondo / 2;
+    m.deco.push({
+      tipo: id, x: cx, y: cy, rot,
+      esc: lugar === 'suelo' || lugar === 'libre' ? az.entre(0.9, 1.1) : 1,
+    });
   }
 }
 

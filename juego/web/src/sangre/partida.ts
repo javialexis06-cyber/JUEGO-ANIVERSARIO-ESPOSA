@@ -34,6 +34,10 @@ export interface OpcionesPartida {
   alPausa: (p: Partida) => void;
   /** Gancho para la red (anfitrión): cada paso de la simulación. */
   alPaso?: (sim: Sim, suc: Sucesos) => void;
+  /** La etapa quedó armada (la red avisa a los invitados). */
+  alEtapa?: (p: Partida, sim: Sim) => void;
+  /** Terminó una etapa (antes de la Forja o del final). */
+  alFinEtapa?: (p: Partida) => void;
   /** Gancho para el tutorial. */
   alCuadro?: (p: Partida, dt: number) => void;
   /** Sonidos de los sucesos. */
@@ -93,6 +97,7 @@ export class Partida {
     this.o.mando.activo = true;
     this.finT = 0;
     this.acc = 0;
+    this.o.alEtapa?.(this, sim);
     this.arrancar();
   }
 
@@ -218,6 +223,7 @@ export class Partida {
     this.detener();
     this.eleccion.cerrar();
     this.exp.terminarEtapa();
+    this.o.alFinEtapa?.(this);
     this.o.mando.mostrarZona(false);
     if (this.exp.fase === 'forja') {
       this.hud.esconder();

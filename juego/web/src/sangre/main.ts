@@ -14,8 +14,14 @@ import { EQUIPO, POZO, precioPozo } from './datos/botin';
 import { Expedicion } from './expedicion';
 import { Guardado, ponerPreferencia, preferencia } from './guardado';
 import { quienSoy } from './identidad';
+import { esModoAmigo } from '../salas/perfil';
 import { LOGROS, aplicarDesbloqueos, revisarLogros, type DefLogro } from './logros';
-import { Partida } from './partida';
+import { DT, Partida } from './partida';
+import { Anfitrion } from './red/anfitrion';
+import { PartidaInvitado, type DatosFin } from './red/invitado';
+import { MSJ, aplicarJugador, serializarJugador, type DatosJugador } from './red/protocolo';
+import { esperarEnSala } from '../salas/espera';
+import type { JugadorSala, Sala } from '../salas/tipos';
 import {
   armasDisponibles, nivelMaestria, progresoNuevo, peligroPermitido, perfilDe, recompensaMaestria, specsDisponibles, tituloMaestria, xpMaestria, type ProgresoSangre,
 } from './progreso';
@@ -82,9 +88,12 @@ escena.alCambiarCalidad = (c) => {
 };
 const mando = new Mando();
 mando.alZoom = (f) => (escena.zoom = Math.max(0.7, Math.min(1.35, escena.zoom * f)));
-let partida: Partida | null = null;
+type PartidaComun = Partida | PartidaInvitado;
+let partida: PartidaComun | null = null;
+/** La sala del grupo (si se juega con otros). */
+let sala: Sala | null = null;
 let tutorial: Tutorial | null = null;
-let pantalla: 'carga' | 'titulo' | 'clases' | 'expedicion' | 'pozo' | 'logros' | 'juego' | 'forja' | 'resultado' = 'carga';
+let pantalla: 'carga' | 'titulo' | 'clases' | 'expedicion' | 'pozo' | 'logros' | 'juego' | 'forja' | 'resultado' | 'grupo' | 'sala' = 'carga';
 const eleccionMenu = new VistaEleccion();
 
 const perfilVista = () => ({ i: 0, cuerpo: yo.cuerpo, clase: sel.clase, piel: yo.piel, pelo: yo.pelo });
@@ -203,6 +212,7 @@ function titulo() {
     <p class="lema">Cayó la Noche Eterna sobre Valdemora. Baja, junta lo que puedas y sal viva por la campana.</p>
     <div class="menu-titulo">
       <button class="boton boton-sangre" data-a="jugar">${glifo('espada')}Expedición</button>
+      <button class="boton" data-a="grupo">${glifo('mano')}Jugar en grupo <small>hasta 4</small></button>
       <button class="boton" data-a="tutorial">${glifo('libro')}${p.tutorial ? 'Repetir el tutorial' : 'Aprender a jugar'}</button>
       <button class="boton" data-a="pozo">${glifo('caliz')}Pozo de las Almas</button>
       <button class="boton" data-a="logros">${glifo('corona')}Logros <small>${p.logros.length}/${LOGROS.length}</small></button>
@@ -221,7 +231,8 @@ function titulo() {
     if (a === 'jugar') {
       if (!P().tutorial) return confirmar('¿Primera vez?', 'El tutorial enseña a moverse, excavar, cumplir el objetivo y salir en la campana. Toma unos tres minutos.', 'Hacer el tutorial', 'Ya sé jugar', (si) => (si ? empezarTutorial() : escogerClase()));
       escogerClase();
-    } else if (a === 'tutorial') empezarTutorial();
+    } else if (a === 'grupo') grupo();
+    else if (a === 'tutorial') empezarTutorial();
     else if (a === 'pozo') pozo();
     else if (a === 'logros') logros();
     else if (a === 'salir') salirDelJuego();
@@ -236,7 +247,7 @@ function titulo() {
   });
 }
 
-function escogerClase() {
+function escogerClase(alListo?: () => void) {
   pantalla = 'clases';
   if (escena.vitrina) escena.vitrina.lado = -0.95;
   const p = P();
@@ -302,10 +313,12 @@ function escogerClase() {
       pintar();
     } else if (a === 'seguir') {
       efectos.boton();
-      escogerExpedicion();
+      if (alListo) alListo();
+      else escogerExpedicion();
     } else if (a === 'atras') {
       efectos.boton();
-      titulo();
+      if (alListo) alListo();
+      else titulo();
     }
   });
 }
@@ -315,7 +328,7 @@ function retrato(k: IdClase) {
   return `<img src="./sangre/retratos/${k}_${yo.cuerpo}.webp" alt="" onerror="this.remove()">${glifo(d.glifo)}`;
 }
 
-function escogerExpedicion() {
+function escogerExpedicion(alListo?: () => void) {
   pantalla = 'expedicion';
   if (escena.vitrina) escena.vitrina.lado = -1.25;
   const p = P();
@@ -383,11 +396,13 @@ function escogerExpedicion() {
     } else if (a === 'empezar') {
       efectos.boton();
       guardarUltima();
+      if (alListo) return alListo();
       const cfg: ConfigExpedicion = { bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], semilla: semilla() };
       void empezar(cfg, [perfilLocal()], 0);
       return;
     } else if (a === 'atras') {
       efectos.boton();
+      if (alListo) return alListo();
       escogerClase();
       return;
     } else return;
@@ -500,7 +515,8 @@ function pausa() {
   if (!partida || hojaPausa) return;
   const pt = partida;
   const solo = pt.o.perfiles.length === 1;
-  if (solo) pt.pausar(true);
+  pt.pausar(solo);
+  if (!solo) pt.hud.tenue(true);
   const pintar = () => {
     const j = pt.local;
     hojaPausa!.querySelector('.hoja-carta')!.innerHTML = `<h2>Pausa</h2>
@@ -543,11 +559,14 @@ function pausa() {
 function cerrarPausa() {
   hojaPausa?.remove();
   hojaPausa = null;
-  if (partida && !partida.terminada) partida.pausar(false);
+  if (partida && !partida.terminada) {
+    partida.pausar(false);
+    partida.hud.tenue(false);
+  }
 }
 
 // ------------------------------------------------------------------------------------------------- La expedición
-async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: number, extra: { bots?: number[] } = {}) {
+async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: number, extra: { bots?: number[]; sala?: Sala } = {}) {
   pantalla = 'juego';
   carga(true, undefined, 0.15);
   pantallas.replaceChildren();
@@ -567,8 +586,15 @@ async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: 
       const j = sim.J[local];
       if (j) musica.tension = Math.min(1, sim.E.vivos / 160 + (sim.fase !== 'juego' ? 0.4 : 0));
     },
-    alCuadro: (p, dt) => tutorial?.cuadro(p, dt),
+    alCuadro: (p, dt) => {
+      tutorial?.cuadro(p, dt);
+      red?.cuadro(p, dt);
+    },
+    alPaso: (sim) => red?.anf.alPaso(sim, DT),
+    alEtapa: (_p, sim) => red?.etapa(sim),
+    alFinEtapa: (p) => red?.finEtapa(p),
   });
+  const red = extra.sala ? redAnfitrion(extra.sala, pt, perfiles, local) : null;
   partida = pt;
   mando.alPausar = atras;
   try {
@@ -581,7 +607,7 @@ async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: 
   tutorial?.alEmpezar(pt);
 }
 
-function abrirForja(p: Partida, seguir: () => void) {
+function abrirForja(p: PartidaComun, seguir: () => void, esperando?: () => string | null) {
   pantalla = 'forja';
   const j = p.exp.J[p.o.local];
   const sim = p.exp.sim!;
@@ -589,29 +615,51 @@ function abrirForja(p: Partida, seguir: () => void) {
     efectos.campana();
   }
   const f = mostrarForja({
-    exp: p.exp, j, sim, eleccion: p.eleccion,
+    exp: p.exp, j, sim, eleccion: p.eleccion, esperando,
     pista: tutorial ? tutorial.pistaForja() : undefined,
     alListo: () => {
+      if (esperando?.()) {
+        // En grupo: se queda en la Forja hasta que todos estén
+        const revisar = setInterval(() => {
+          f.refrescar();
+          if (esperando()) return;
+          clearInterval(revisar);
+          f.cerrar();
+          pantalla = 'juego';
+          seguir();
+        }, 400);
+        return;
+      }
       f.cerrar();
       pantalla = 'juego';
-      carga(true, `Etapa ${p.exp.etapa + 1}…`, 0.3);
+      if (!(p instanceof PartidaInvitado)) carga(true, `Etapa ${p.exp.etapa + 1}…`, 0.3);
       seguir();
-      setTimeout(() => carga(false), 400);
+      if (!(p instanceof PartidaInvitado)) setTimeout(() => carga(false), 400);
     },
   });
+  forjaAbierta = f;
 }
 
-function abandonar() {
+let forjaAbierta: { cerrar(): void; refrescar(): void } | null = null;
+
+function abandonar(motivo?: string) {
   if (!partida) return;
   const p = partida;
   p.terminada = true;
   p.liberar();
   partida = null;
+  forjaAbierta?.cerrar();
+  forjaAbierta = null;
   tutorial?.cerrar();
   tutorial = null;
+  quitarRed();
   // Lo de las etapas ya extraídas sí cuenta
   if (p.exp.resultados.some((r) => r.fin.exito)) cobrar(p, false);
-  void volverAlMenu();
+  if (motivo) aviso(motivo, 'peligro', 3500);
+  if (sala) {
+    sala.mandar(MSJ.SALIR, {});
+    void volverALaSala();
+  } else void volverAlMenu();
 }
 
 interface Cobro {
@@ -625,7 +673,7 @@ interface Cobro {
 }
 
 /** Lo que se gana al terminar (ceniza, maestría, logros, cifras, monedas de la casa). */
-function cobrar(p: Partida, exito: boolean): Cobro {
+function cobrar(p: PartidaComun, exito: boolean): Cobro {
   const pr = P();
   const j = p.exp.J[p.o.local];
   const antes = { clases: [...pr.clases], biomas: [...pr.biomas] };
@@ -669,7 +717,7 @@ function cobrar(p: Partida, exito: boolean): Cobro {
   };
 }
 
-function terminar(p: Partida) {
+function terminar(p: PartidaComun) {
   const exito = p.exp.exito;
   if (p.exp.cfg.tutorial && tutorial) {
     // El tutorial termina mostrando la Forja de mentiras y luego los resultados
@@ -698,7 +746,7 @@ function terminar(p: Partida) {
   resultados(p, cb, exito);
 }
 
-function resultados(p: Partida, cb: Cobro, exito: boolean) {
+function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
   pantalla = 'resultado';
   musica.cambiar('menu');
   const j = p.exp.J[p.o.local];
@@ -735,7 +783,7 @@ function resultados(p: Partida, cb: Cobro, exito: boolean) {
           ${ofrecibles.length && !ofrecida ? `<h3 class="titulo-grabado">Ofrecer al Pozo (una)</h3><div class="ofrendas">${ofrecibles.map((o) => `<button class="boton boton-chico" data-o="${o}" title="${EQUIPO[o].desc}">${glifo(EQUIPO[o].ranura)}${EQUIPO[o].nombre}</button>`).join('')}</div>` : ''}
         </div>
       </div>
-      <footer class="fila-botones"><button class="boton" data-a="menu">${glifo('atras')}Menú</button>${p.exp.cfg.tutorial ? '' : `<button class="boton boton-sangre" data-a="otra">${glifo('espada')}Otra expedición</button>`}</footer>`;
+      <footer class="fila-botones">${sala ? `<button class="boton boton-sangre" data-a="sala">${glifo('mano')}Volver a la sala</button>` : `<button class="boton" data-a="menu">${glifo('atras')}Menú</button>${p.exp.cfg.tutorial ? '' : `<button class="boton boton-sangre" data-a="otra">${glifo('espada')}Otra expedición</button>`}`}</footer>`;
   };
   pintar();
   s.addEventListener('click', (e) => {
@@ -749,11 +797,13 @@ function resultados(p: Partida, cb: Cobro, exito: boolean) {
       efectos.campana();
       aviso(`${EQUIPO[o].nombre} queda en el Pozo para siempre.`, '', 2200);
       pintar();
-    } else if (a === 'menu' || a === 'otra') {
+    } else if (a === 'menu' || a === 'otra' || a === 'sala') {
       efectos.boton();
       p.liberar();
       partida = null;
-      if (a === 'otra') {
+      quitarRed();
+      if (a === 'sala') void volverALaSala();
+      else if (a === 'otra') {
         corregirSeleccion();
         void empezar({ bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], semilla: semilla() }, [perfilLocal()], 0);
       } else void volverAlMenu(p.exp.cfg.tutorial ? 'clases' : 'titulo');
@@ -761,7 +811,7 @@ function resultados(p: Partida, cb: Cobro, exito: boolean) {
   });
 }
 
-async function volverAlMenu(a: 'titulo' | 'clases' = 'titulo') {
+async function volverAlMenu(a: 'titulo' | 'clases' | 'nada' = 'titulo') {
   pantalla = 'carga';
   carga(true, 'Subiendo a la superficie…', 0.5);
   pantallas.replaceChildren();
@@ -769,7 +819,276 @@ async function volverAlMenu(a: 'titulo' | 'clases' = 'titulo') {
   await campamento();
   carga(false);
   if (a === 'clases') escogerClase();
-  else titulo();
+  else if (a === 'titulo') titulo();
+}
+
+
+// ------------------------------------------------------------------------------------------------- En grupo (hasta 4)
+let quitarSala: (() => void)[] = [];
+function quitarRed() {
+  for (const q of quitarSala) q();
+  quitarSala = [];
+  document.querySelector('.pausa-red')?.remove();
+}
+
+/** Aviso grande de conexión cortada (el anfitrión pausa a todos). */
+function avisoRed(texto: string | null) {
+  let el = document.querySelector<HTMLElement>('.pausa-red');
+  if (!texto) {
+    el?.remove();
+    return;
+  }
+  if (!el) {
+    el = document.createElement('div');
+    el.className = 'pausa-red placa';
+    document.body.append(el);
+  }
+  el.innerHTML = `<b>${glifo('reloj')}Pausa</b><span>${esc(texto)}</span>`;
+}
+
+/** Lo del anfitrión: fotos, cartas de cada uno, etapas y la Forja de todos. */
+function redAnfitrion(s: Sala, pt: Partida, perfiles: PerfilJugador[], local: number) {
+  const anf = new Anfitrion(s, perfiles.map((x) => x.id), local);
+  const forjaLista = new Set<string>();
+  let esperandoT = 0;
+  let cortados = new Set<string>();
+  const nombreDe = (id: string) => perfiles.find((x) => x.id === id)?.nombre ?? 'alguien';
+  quitarSala.push(
+    () => anf.liberar(),
+    s.al(MSJ.FORJA_LISTA, (d, de) => {
+      const x = d as { etapa: number; j: DatosJugador };
+      const i = perfiles.findIndex((q) => q.id === de.id);
+      if (i < 0 || x.etapa !== pt.exp.etapa) return;
+      aplicarJugador(pt.exp.J[i], x.j);
+      forjaLista.add(de.id);
+      forjaAbierta?.refrescar();
+    }),
+    s.alCorte((cortado, quien) => {
+      if (cortado) cortados.add(quien.id);
+      else cortados.delete(quien.id);
+      pt.pausaExterna = cortados.size > 0;
+      avisoRed(cortados.size ? `Se cortó la conexión de ${[...cortados].map(nombreDe).join(' y ')}. Esperando a que vuelva…` : null);
+    }),
+    s.alCambiar((js) => {
+      // El que se fue del todo queda afuera de la expedición (no se queda quieto para que lo maten)
+      const sim = pt.sim;
+      perfiles.forEach((pf, i) => {
+        if (i === local || js.some((j) => j.id === pf.id)) return;
+        cortados.delete(pf.id);
+        forjaLista.add(pf.id);
+        if (sim?.J[i] && sim.J[i].estado !== 3) sim.J[i].estado = 2;
+      });
+      pt.pausaExterna = cortados.size > 0;
+      if (!cortados.size) avisoRed(null);
+    }),
+  );
+  return {
+    anf,
+    etapa(sim: Sim) {
+      anf.nuevaEtapa(sim);
+      forjaLista.clear();
+      esperandoT = 0;
+      pt.pausaExterna = true;
+    },
+    cuadro(p: Partida, dt: number) {
+      const sim = p.sim;
+      if (!sim) return;
+      // Al empezar cada etapa se espera a que todos la tengan armada (máximo 25 s)
+      if (esperandoT >= 0) {
+        esperandoT += dt;
+        const faltan = anf.faltan.filter((i) => s.jugadores.some((j) => j.id === perfiles[i].id));
+        if (!faltan.length || esperandoT > 25) {
+          esperandoT = -1;
+          if (!cortados.size) pt.pausaExterna = false;
+          avisoRed(null);
+        } else if (esperandoT > 2) avisoRed(`Esperando a que ${faltan.map((i) => perfiles[i].nombre).join(' y ')} termine de bajar…`);
+      }
+      anf.alCuadro(sim, dt);
+    },
+    finEtapa(p: Partida) {
+      const exp = p.exp;
+      const d: DatosFin = { etapa: exp.etapa, fase: exp.fase, exito: exp.exito, J: exp.J.map((j) => serializarJugador(j)), resultados: exp.resultados, tiempo: exp.tiempo };
+      s.mandar(MSJ.FIN_ETAPA, d);
+      if (exp.fase === 'forja') {
+        // La Forja del anfitrión espera a que todos estén listos
+        const original = p.o.alForja;
+        p.o.alForja = (pp, seguir) => {
+          p.o.alForja = original;
+          abrirForja(pp, seguir, () => {
+            const faltan = perfiles.filter((pf, i) => i !== local && s.jugadores.some((j) => j.id === pf.id) && !forjaLista.has(pf.id));
+            return faltan.length ? `Esperando a ${faltan.map((x) => x.nombre).join(' y ')} en la Forja…` : null;
+          });
+        };
+      }
+    },
+  };
+}
+
+/** Pantalla para jugar en grupo: crear una sala o entrar con un código. */
+function grupo() {
+  pantalla = 'grupo';
+  const s = seccion('pantalla-grupo con-fondo', `${cabeza('Jugar en grupo', false)}
+    <div class="grupo placa">
+      <p>Hasta cuatro, cada uno en su celular. La horda crece con cada uno: más muertos, más élites… y más botín para repartir.</p>
+      <button class="boton boton-sangre" data-a="crear">${glifo('antorcha')}Crear una sala</button>
+      <form class="unirse" autocomplete="off"><input name="c" maxlength="7" placeholder="CÓDIGO" aria-label="Código de la sala" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
+        <button class="boton">${glifo('llave')}Unirme</button></form>
+    </div>`);
+  const input = s.querySelector<HTMLInputElement>('input')!;
+  input.addEventListener('input', () => (input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5)));
+  s.querySelector('form')!.addEventListener('submit', (e) => {
+    e.preventDefault();
+    void entrarSala(input.value);
+  });
+  s.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLElement>('[data-a]')?.dataset.a;
+    if (a === 'crear') void entrarSala();
+    else if (a === 'atras') titulo();
+  });
+}
+
+async function entrarSala(codigo?: string) {
+  carga(true, codigo ? 'Buscando la sala…' : 'Abriendo la sala…', 0.3);
+  try {
+    const api = await import('../salas/sala');
+    if (params.get('salas') === 'local') api.usarSalasLocales(true);
+    sala = codigo ? await api.unirseSala(codigo, 'sangre') : await api.crearSala({ juego: 'sangre', max: 4 });
+  } catch (e) {
+    carga(false);
+    aviso(e instanceof Error ? e.message : 'No hay conexión.', 'peligro', 3500);
+    if (pantalla !== 'grupo') titulo();
+    return;
+  }
+  carga(false);
+  const s = sala;
+  s.alFin((_m, texto) => {
+    if (sala !== s) return;
+    sala = null;
+    if (partida) abandonar(texto);
+    else {
+      aviso(texto, 'peligro', 3500);
+      titulo();
+    }
+  });
+  void lobby();
+}
+
+function datosSala() {
+  return { clase: sel.clase, spec: sel.spec, perfil: perfilLocal(sala?.yo.puesto ?? 0) };
+}
+
+async function lobby() {
+  const s = sala;
+  if (!s) return titulo();
+  pantalla = 'sala';
+  pantallas.replaceChildren();
+  if (escena.vitrina) escena.vitrina.lado = -1.1;
+  s.ponerDatos({ ...datosSala(), jugando: false });
+  const retratoSala = (j: JugadorSala) => {
+    const c = (j.datos?.clase as IdClase) ?? 'monarca';
+    return CLASES[c] ? `<span class="retrato-sala" style="--c1:${CLASES[c].colores[0]}"><img src="./sangre/retratos/${c}_${j.aspecto.cuerpo}.webp" alt="" onerror="this.remove()">${glifo(CLASES[c].glifo)}</span>` : '';
+  };
+  const detalle = (j: JugadorSala) => {
+    const c = j.datos?.clase as IdClase | undefined;
+    if (!c || !CLASES[c]) return '';
+    const sp = Number(j.datos?.spec) || 0;
+    return `${nombreClase(c, j.aspecto.cuerpo)} · ${CLASES[c].specs[sp]?.nombre ?? ''}`;
+  };
+  const resumenExp = () => `${BIOMAS[sel.bioma].nombre} · peligro ${sel.peligro}${sel.mutadores.length ? ` · ${sel.mutadores.length} mutador${sel.mutadores.length > 1 ? 'es' : ''}` : ''}`;
+  let e: ReturnType<typeof esperarEnSala>;
+  const esconder = (si: boolean) => e.raiz.classList.toggle('escondida', si);
+  e = esperarEnSala({
+    sala: s, titulo: 'Sangre y Ceniza', tema: 'oscuro', subtitulo: s.soyAnfitrion ? resumenExp() : 'Escoge tu clase mientras arrancan',
+    retrato: retratoSala, detalle,
+    extras: [
+      { id: 'clase', texto: '⚔️ Mi clase', alTocar: () => {
+        esconder(true);
+        escogerClase(() => {
+          pantallas.replaceChildren();
+          s.ponerDatos(datosSala());
+          esconder(false);
+          e.repintar();
+        });
+      } },
+      ...(s.soyAnfitrion ? [{ id: 'exp', texto: '🗺️ Expedición', alTocar: () => {
+        esconder(true);
+        escogerExpedicion(() => {
+          pantallas.replaceChildren();
+          esconder(false);
+          const sub = e.raiz.querySelector('.se-sub');
+          if (sub) sub.textContent = resumenExp();
+        });
+      } }] : []),
+    ],
+    alEmpezar: () => {
+      guardarUltima();
+      const cfg: ConfigExpedicion = { bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], semilla: semilla() };
+      const perfiles = s.jugadores.map((j, k) => {
+        const pf = (j.datos?.perfil as PerfilJugador | undefined) ?? perfilLocal(k);
+        return { ...pf, id: j.id, nombre: j.nombre, puesto: j.puesto, cuerpo: j.aspecto.cuerpo, tipo: j.tipo, piel: j.aspecto.piel ?? pf.piel, pelo: j.aspecto.pelo ?? pf.pelo };
+      });
+      return { cfg, perfiles };
+    },
+  });
+  const r = await e.resultado;
+  if (r.que === 'salir') {
+    if (sala === s) {
+      s.salir();
+      sala = null;
+    }
+    if (r.motivo) aviso(r.motivo, 'peligro', 3000);
+    titulo();
+    return;
+  }
+  const d = r.datos as { cfg: ConfigExpedicion; perfiles: PerfilJugador[] };
+  s.ponerDatos({ jugando: true, listo: false });
+  const local = Math.max(0, d.perfiles.findIndex((x) => x.id === s.yo.id));
+  if (s.soyAnfitrion) void empezar(d.cfg, d.perfiles, local, { sala: s });
+  else void empezarInvitado(d.cfg, d.perfiles, local, s);
+}
+
+async function volverALaSala() {
+  await volverAlMenu('nada');
+  void lobby();
+}
+
+async function empezarInvitado(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: number, s: Sala) {
+  pantalla = 'juego';
+  carga(true, 'Bajando con los demás…', 0.15);
+  pantallas.replaceChildren();
+  cerrarCampamento();
+  musica.cambiar('juego');
+  const pt: PartidaInvitado = new PartidaInvitado({
+    sala: s, cfg, perfiles, local, escena, mando,
+    nombre: (i) => perfiles[i]?.nombre ?? `Jugador ${i + 1}`,
+    alForja: (p, seguir) => abrirForja(p, seguir),
+    alTerminar: (p) => terminar(p),
+    alPausa: () => pausa(),
+    alSucesos: (p) => {
+      const sim = p.sim;
+      if (!sim) return;
+      sonarSucesos(sim.suc, sim, local);
+      musica.tension = Math.min(1, sim.E.vivos / 160 + (sim.fase !== 'juego' ? 0.4 : 0));
+    },
+    alCarga: (si, texto) => carga(si, texto, 0.4),
+  });
+  partida = pt;
+  mando.alPausar = atras;
+  let cortados = new Set<string>();
+  quitarSala.push(
+    s.alCorte((cortado, quien) => {
+      if (cortado) cortados.add(quien.id);
+      else cortados.delete(quien.id);
+      avisoRed(cortados.size ? `Se cortó la conexión de ${[...cortados].map((id) => perfiles.find((x) => x.id === id)?.nombre ?? 'alguien').join(' y ')}. Esperando…` : null);
+    }),
+    s.al(MSJ.SALIR, () => {
+      if (partida === pt && !pt.terminada) abandonar('Quien tenía la sala terminó la expedición.');
+    }),
+  );
+  // El anfitrión ya pudo haber mandado la etapa 1 (si no, llega enseguida)
+  setTimeout(() => {
+    if (partida === pt && !pt.sim) carga(true, 'Esperando a que arranque la expedición…', 0.3);
+  }, 1500);
 }
 
 // ------------------------------------------------------------------------------------------------- Tutorial
@@ -785,7 +1104,7 @@ function salirDelJuego() {
   cerrarCampamento();
   partida?.liberar();
   escena.liberar();
-  location.href = './index.html';
+  location.href = esModoAmigo() ? './amigos.html' : './index.html';
 }
 
 function atras() {
@@ -801,6 +1120,7 @@ function atras() {
     case 'clases':
     case 'pozo':
     case 'logros':
+    case 'grupo':
       return titulo();
     case 'expedicion':
       return escogerClase();
@@ -878,6 +1198,10 @@ async function arrancar() {
   carga(false);
   titulo();
   w.__listo = true;
+  // Desde la sala de juegos de amigos: ./sangre.html?unirse=CÓDIGO
+  const unirse = params.get('unirse');
+  if (unirse) void entrarSala(unirse);
+  else if (params.has('sala')) void entrarSala();
 }
 
 void arrancar();

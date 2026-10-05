@@ -198,7 +198,7 @@ export class Escena3D {
     UNI_LUZ.uAmbiente.value.set(l.ambiente).multiplyScalar(0.55);
     colorContraluz(new THREE.Color(l.luna).multiplyScalar(0.35));
     this.luz = new LuzRejilla(mapa);
-    this.mapa3d = new Mapa3D(mapa, bioma, this.bib, this.colorAntorcha);
+    this.mapa3d = new Mapa3D(mapa, bioma, this.bib, this.colorAntorcha, this.calidad !== 'baja');
     this.actores = new Actores(this.bib);
     this.actores.sombraReal = this.calidad === 'alta';
     this.particulas = new Particulas(this.etapa);
@@ -397,7 +397,7 @@ export class Escena3D {
     const ancho = asp >= 1.6 ? 17 : asp >= 1 ? 15 : 12;
     const tan = Math.tan(THREE.MathUtils.degToRad(this.camara.fov / 2));
     const D = Math.max(9, Math.min(26, ancho / (2 * tan * asp))) * this.zoom;
-    const el = THREE.MathUtils.degToRad(57);
+    const el = THREE.MathUtils.degToRad(52);
     const s = this.sacudida;
     this.sacudida = Math.max(0, s - dt * 2.4);
     const sx = (Math.random() - 0.5) * s * 0.35, sy = (Math.random() - 0.5) * s * 0.35;
@@ -428,6 +428,8 @@ export class Escena3D {
 
   dibujar() {
     const a = performance.now();
+    this.renderer.info.autoReset = false;
+    this.renderer.info.reset();
     if (this.composer) this.composer.render();
     else this.renderer.render(this.escena, this.camara);
     const ms = performance.now() - a;

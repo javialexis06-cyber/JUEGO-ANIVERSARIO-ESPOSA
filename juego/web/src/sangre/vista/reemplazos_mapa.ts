@@ -10,16 +10,24 @@ import { bola, caja, capsula, cil, cono, hueso, mat, toro } from './formas';
 export interface ModeloFijo {
   geo: THREE.BufferGeometry;
   mats: THREE.Material[];
+  /** Datos del modelo del GLB (userData: tipo, huella, alto, lugar, luz…). */
+  datos?: Record<string, any>;
+  /** Dónde van las llamas (vacíos «llama» del GLB), en el espacio del modelo. */
+  llamas?: THREE.Vector3[];
 }
 
 /** Junta partes [geometría, material] en un modelo fijo con un grupo por material. */
 export function fijo(partes: [THREE.BufferGeometry, THREE.Material][]): ModeloFijo {
   const porMat = new Map<THREE.Material, THREE.BufferGeometry[]>();
+  // Color en los vértices (los GLB de los biomas lo traen horneado): si alguno lo trae, todos lo llevan
+  const conColor = partes.some(([g]) => !!g.getAttribute('color'));
   for (const [g0, m] of partes) {
     let g = g0.index ? g0.toNonIndexed() : g0;
     if (!g.getAttribute('uv')) g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(g.getAttribute('position').count * 2), 2));
     if (!g.getAttribute('normal')) g.computeVertexNormals();
-    for (const n of Object.keys(g.attributes)) if (!['position', 'normal', 'uv'].includes(n)) g = (g.deleteAttribute(n), g);
+    if (conColor && !g.getAttribute('color')) g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(g.getAttribute('position').count * 3).fill(1), 3));
+    const quedan = conColor ? ['position', 'normal', 'uv', 'color'] : ['position', 'normal', 'uv'];
+    for (const n of Object.keys(g.attributes)) if (!quedan.includes(n)) g = (g.deleteAttribute(n), g);
     const l = porMat.get(m) ?? [];
     l.push(g);
     porMat.set(m, l);
