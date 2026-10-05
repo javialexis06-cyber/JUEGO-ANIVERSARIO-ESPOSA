@@ -6,6 +6,7 @@ import { metaDe, textoDe } from './juego';
 import type { Jugador } from './jugador';
 import * as THREE from 'three';
 import { Mundo } from './mundo';
+import { escHtml, esNeutro } from './neutro';
 import type { P } from './navegacion';
 import { icono } from './recursos';
 import { avisoSuave, salirSuave } from './transiciones';
@@ -89,7 +90,8 @@ export class UI {
 
   constructor(private mundo: Mundo) {}
 
-  empezarNivel(j: Juego, ayudas: Record<string, number>) {
+  /** `yo`: en una sala, el personaje de este celular (su tira va a la izquierda y la de los demás a la derecha). */
+  empezarNivel(j: Juego, ayudas: Record<string, number>, yo?: Jugador) {
     this.capa.limpiar();
     this.ultimoEvento = 0;
     $('hud-nivel').textContent = `${j.legendario ? 'Legendario' : 'Nivel'} ${j.nivel.numero}`;
@@ -106,9 +108,21 @@ export class UI {
     // Una tira de herramientas por personaje (en pareja, cada una en la esquina de su joystick)
     const herr = $('herramientas');
     herr.innerHTML = '';
-    herr.classList.toggle('pareja', j.pareja);
+    herr.classList.toggle('pareja', j.pareja && !j.enSala);
+    herr.classList.toggle('sala', j.enSala);
     this.clavesHerr = j.jugadores.map(() => '');
-    for (const p of j.jugadores) herr.appendChild(div(`herr herr-${p.rol}`));
+    let derecha = 0;
+    for (const p of j.jugadores) {
+      const d = div(`herr herr-${p.rol}`);
+      if (j.enSala) {
+        // La mía arriba a la izquierda (como siempre); las de los demás, en fila arriba a la derecha y más pequeñas
+        const mia = p === (yo ?? j.jugadores[0]);
+        d.classList.add(mia ? 'herr-mia' : 'herr-otro');
+        if (!mia) d.style.setProperty('--fila', String(derecha++));
+        if (p.color) d.style.setProperty('--c', p.color);
+      }
+      herr.appendChild(d);
+    }
     document.body.classList.toggle('en-pareja', j.pareja);
     mostrar('hud');
     mostrar('alertas');
@@ -138,7 +152,7 @@ export class UI {
       if (conBolsa || p.bolsa > 0)
         partes.push(`<span class="herr-item herr-bolsa${p.bolsa >= BOLSA_BASURA ? ' lleno' : ''}" title="Bolsa de basura: se vacía en la caneca"><i class="ico" aria-hidden="true"></i><b>${p.bolsa}/${BOLSA_BASURA}</b></span>`);
       if (p.canastasEnMano > 0) partes.push(`<span class="herr-item herr-canastas" title="Canastas para devolver a la entrada"><i class="ico" aria-hidden="true"></i><b>${p.canastasEnMano}</b></span>`);
-      tira.innerHTML = (j.pareja ? `<span class="herr-nombre">${p.nombre}</span>` : '') + partes.join('');
+      tira.innerHTML = (j.pareja ? `<span class="herr-nombre">${escHtml(p.nombre)}</span>` : '') + partes.join('');
     });
   }
   /** Ya salió mugre por trapear hoy (aunque no sea día de derrames): desde ahí se ve el trapero. */
@@ -300,7 +314,7 @@ export class UI {
       const e = this.capa.elemento('corazon', () => {
         const b = document.createElement('button');
         b.className = 'corazon-escondido';
-        b.setAttribute('aria-label', 'Corazón escondido');
+        b.setAttribute('aria-label', esNeutro() ? 'Trébol de la suerte' : 'Corazón escondido');
         b.addEventListener('pointerdown', (ev) => {
           ev.stopPropagation();
           this.alTomarCorazon?.();
@@ -340,23 +354,34 @@ export class UI {
     jug.fila.forEach((t, k) => {
       const o = jug.objetivo(t);
       const p = this.pos(o, t.tipo === 'reponer' || t.tipo === 'caja' ? 1.7 : 0.9);
-      const e = this.capa.elemento(`tarea-${t.id}`, () => div(`numero-tarea tarea-${jug.rol}`));
+      const e = this.capa.elemento(`tarea-${t.id}`, () => {
+        const d = div(`numero-tarea tarea-${jug.rol}`);
+        if (j.enSala && jug.color) d.style.setProperty('--c', jug.color);
+        return d;
+      });
       texto(e, String(k + 1));
       e.classList.toggle('actual', k === 0);
       mover(e, p.x, p.y);
     });
     const cabeza = this.mundo.aPantalla(jug.cabeza());
     if (jug.haciendo) {
-      const e = this.capa.elemento(`hace-${jug.rol}`, () => div('barra-accion', '<i></i>'));
+      const e = this.capa.elemento(`hace-${jug.id}`, () => div('barra-accion', '<i></i>'));
       mover(e, cabeza.x, cabeza.y);
       estilo(e.firstElementChild as HTMLElement, 'width', `${Math.round(jug.progresoAccion * 100)}%`);
     }
     if (jug.atontado) {
-      const e = this.capa.elemento(`mareo-${jug.rol}`, () => div('mareo', '<span><i></i><i></i><i></i></span>'));
+      const e = this.capa.elemento(`mareo-${jug.id}`, () => div('mareo', '<span><i></i><i></i><i></i></span>'));
       mover(e, cabeza.x, cabeza.y);
     }
     if (j.pareja) {
-      const e = this.capa.elemento(`nombre-${jug.rol}`, () => div(`nombre-jugador nombre-${jug.rol}`, jug.nombre));
+      const e = this.capa.elemento(`nombre-${jug.id}`, () => {
+        const d = div(`nombre-jugador nombre-${jug.rol}`, escHtml(jug.nombre));
+        if (j.enSala && jug.color) {
+          d.classList.add('con-color');
+          d.style.setProperty('--c', jug.color);
+        }
+        return d;
+      });
       mover(e, cabeza.x, cabeza.y);
     }
   }
@@ -430,10 +455,10 @@ export class UI {
     if (j.problemas.includes('derrames')) lineas.push(['Resbalones', `${s.resbalones}`]);
     if (j.problemas.includes('ladron')) lineas.push(['Ladrones atrapados / robos', `${s.atrapados} / ${s.robos}`]);
     if (j.pareja) {
-      lineas.push(['Combos en pareja', `${s.combosPareja}`]);
+      lineas.push([`Combos ${j.textoEquipo}`, `${s.combosPareja}`]);
       if (s.choques) lineas.push(['Choques / estantes tumbados', `${s.choques} / ${s.tumbados}`]);
     }
-    if (r.corazon) lineas.push(['Corazón escondido', 'Encontrado']);
+    if (r.corazon) lineas.push([esNeutro() ? 'Trébol de la suerte' : 'Corazón escondido', 'Encontrado']);
     $('rec-lineas').innerHTML = lineas.map(([a, b]) => `<div><span>${a}</span><span>${b}</span></div>`).join('');
     $('rec-total').textContent = String(r.ganancia);
     const pasa = j.legendario ? true : r.estrellas[0];
