@@ -204,7 +204,7 @@ export class Hud {
     const falta = j.habT > 0 ? Math.min(1, j.habT / Math.max(0.1, j.m.habMax || j.habT)) : 0;
     this.poner('habR', (falta * 100).toFixed(0), (el, x) => el.style.setProperty('--falta', `${x}%`));
     this.texto('habT', j.habT > 0 ? Math.ceil(j.habT) : '');
-    this.poner('hab!', j.habT <= 0 ? '1' : '0', (el, x) => el.classList.toggle('lista', x === '1'));
+    this.poner('hab!', j.habT <= 0 ? '1' : '0', (el, x) => el.classList.toggle('preparada', x === '1'));
     // Armas
     const armas = j.armas.map((a) => `${a.id}:${a.nivel}:${a.sobrecargas.length}:${Math.floor((a.xp / xpArma(a.nivel)) * 10)}`).join('|');
     this.poner('armas', armas, (el) => {

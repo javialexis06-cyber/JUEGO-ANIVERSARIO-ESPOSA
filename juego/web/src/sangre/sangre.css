@@ -565,7 +565,7 @@ svg {
   text-shadow: var(--sombra-texto);
   pointer-events: none;
 }
-.hud-habilidad.lista {
+.hud-habilidad.preparada {
   animation: brillo-hab 1.6s infinite;
 }
 .hud-habilidad .tecla {
@@ -2138,4 +2138,24 @@ svg {
   animation-duration: 0s !important;
   animation-delay: 0s !important;
   transition: none !important;
+}
+/* El botón de la habilidad: el ícono siempre al centro (sin pistas de rejilla que lo empujen) */
+.hud-habilidad {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hud-habilidad svg {
+  flex: none;
+}
+.hud-habilidad .tecla {
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.hud-extraccion {
+  top: 98px;
+}
+.hoja-carta .etiqueta {
+  color: var(--tinta-2);
 }
