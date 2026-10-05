@@ -953,7 +953,9 @@ async function entrarSala(codigo?: string) {
   try {
     const api = await import('../salas/sala');
     if (params.get('salas') === 'local') api.usarSalasLocales(true);
-    sala = codigo ? await api.unirseSala(codigo, 'sangre') : await api.crearSala({ juego: 'sangre', max: 4 });
+    // (con ?rol o ?amigo en la dirección, quien juega es el de la dirección: pruebas en un mismo navegador)
+    const yoSala = params.has('amigo') || params.has('rol') ? { id: yo.id, nombre: yo.nombre, tipo: yo.tipo, aspecto: { cuerpo: yo.cuerpo, piel: yo.piel, pelo: yo.pelo } } : undefined;
+    sala = codigo ? await api.unirseSala(codigo, 'sangre', yoSala) : await api.crearSala({ juego: 'sangre', max: 4, yo: yoSala });
   } catch (e) {
     carga(false);
     aviso(e instanceof Error ? e.message : 'No hay conexión.', 'peligro', 3500);

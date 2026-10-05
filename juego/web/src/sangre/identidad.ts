@@ -68,7 +68,7 @@ export function quienSoy(params = new URLSearchParams(location.search)): Yo {
     };
   }
   const rol = rolDeLaCasa(params);
-  if (rol) return { id: `${rol}-${idAparato()}`, nombre: NOMBRE_ROL[rol], tipo: rol, cuerpo: rol };
+  if (rol) return { id: `${rol}-${params.get('id') ?? idAparato()}`, nombre: NOMBRE_ROL[rol], tipo: rol, cuerpo: rol };
   // Nadie configurado: un viajero (se guarda en el aparato como un amigo sin nombre)
   return { id: `amigo-${idAparato()}`, nombre: 'Viajero', tipo: 'amigo', cuerpo: 'el' };
 }
