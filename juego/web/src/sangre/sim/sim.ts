@@ -556,7 +556,24 @@ export class Sim {
   }
 
   /** Explosión de un jugador: daña en área. */
+  private profExplosion = 0;
+  /** Explosiones que provocó otra explosión (en cadena): se hacen en el paso siguiente, no anidadas. */
+  private diferidas: { x: number; y: number; r: number; dano: number; g: Golpe; clase: number }[] = [];
+
   explosion(x: number, y: number, r: number, dano: number, g: Golpe, clase = 0) {
+    if (this.profExplosion >= 2) {
+      if (this.diferidas.length < 160) this.diferidas.push({ x, y, r, dano, g: Object.assign(new Golpe(), g), clase });
+      return;
+    }
+    this.profExplosion++;
+    try {
+      this.explotar(x, y, r, dano, g, clase);
+    } finally {
+      this.profExplosion--;
+    }
+  }
+
+  private explotar(x: number, y: number, r: number, dano: number, g: Golpe, clase: number) {
     this.suc.push(S.EXPLOSION, x, y, r, clase);
     // (lista propia: una muerte dentro puede provocar otra explosión)
     const lista: number[] = [];
@@ -719,6 +736,8 @@ export class Sim {
       actualizarArmas(this, j, dt);
     }
     this.levantarCaidos(dt);
+    // Las explosiones en cadena que quedaron pendientes
+    if (this.diferidas.length) for (const d of this.diferidas.splice(0, 40)) this.explosion(d.x, d.y, d.r, d.dano, d.g, d.clase);
     // Campo de flujo (unas 4 veces por segundo, o ya si se excavó)
     this.flujoT -= dt;
     if (this.flujoT <= 0 || this.mapa.cambios.length > 0 && this.flujoT < 0.15) this.calcularFlujo();

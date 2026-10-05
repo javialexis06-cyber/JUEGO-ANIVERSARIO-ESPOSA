@@ -355,8 +355,9 @@ class Muneco3D {
           break;
       }
     } else if (this.estilo === 'distancia') e.set(Math.PI / 2 - 0.15 + Math.sin(t * 2) * 0.03, 0, 0);
-    else if (this.estilo === 'magia') e.set(0.15 + Math.sin(t * 1.7) * 0.05, 0, -0.1);
-    else e.set(0.55 + Math.sin(t * 1.5) * 0.04, 0, -0.25);
+    else if (this.estilo === 'magia') e.set(0.35 + Math.sin(t * 1.7) * 0.05, 0, -0.5);
+    // Cuerpo a cuerpo: el arma lista, hacia adelante y afuera (que no le atraviese la cabeza)
+    else e.set(1.05 + Math.sin(t * 1.5) * 0.04, 0, -0.7);
     this.sostener.quaternion.setFromEuler(e);
     this.sostener.position.z += avance;
     this.sostener.scale.setScalar(1);

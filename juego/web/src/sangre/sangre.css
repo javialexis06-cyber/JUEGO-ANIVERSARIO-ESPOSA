@@ -2131,3 +2131,11 @@ svg {
     margin-top: 6px;
   }
 }
+/* Pruebas (?sinanim): sin animaciones de entrada */
+.sin-animaciones *,
+.sin-animaciones *::before,
+.sin-animaciones *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition: none !important;
+}

@@ -38,6 +38,7 @@ import { Mando } from './ui/mando';
 import { Escena3D, type Calidad } from './vista/escena';
 
 const params = new URLSearchParams(location.search);
+if (params.has('sinanim')) document.body.classList.add('sin-animaciones');
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const pantallas = $('pantallas');
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -775,7 +776,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
           <div class="arsenal">${j.armas.map((a) => `<span class="arma-mini" title="${a.def.nombre} · nivel ${a.nivel}">${icono(a.def.glifo, a.def.id)}</span>`).join('')}</div>
         </div>
         <div class="placa premios">
-          <div class="premio"><span>${glifo('alma', '#d8d0c8')}+${cb.ceniza} ceniza</span><span>${glifo('corona', '#f0d488')}+${cb.maestria} maestría</span>${cb.monedas ? `<span>${glifo('oro', '#f0d488')}+${cb.monedas} monedas de la casa</span>` : ''}</div>
+          <div class="premio"><span>${glifo('alma', '#d8d0c8')}+${cb.ceniza} ceniza</span><span>${glifo('corona', '#f0d488')}+${cb.maestria} maestría</span>${cb.monedas ? `<span>${glifo('oro', '#f0d488')}+${cb.monedas} moneda${cb.monedas > 1 ? 's' : ''} de la casa</span>` : ''}</div>
           ${cb.subio.map((n) => `<div class="desbloqueo">Maestría ${n} de ${nombreClase(j.clase, j.cuerpo)}: ${recompensaMaestria(n)}</div>`).join('')}
           ${cb.clasesNuevas.map((k) => `<div class="desbloqueo">${glifo(CLASES[k].glifo)} Nueva clase: ${nombreClase(k, yo.cuerpo)}</div>`).join('')}
           ${cb.biomasNuevos.map((b) => `<div class="desbloqueo">${glifo(BIOMAS[b].glifo)} Nuevo bioma: ${BIOMAS[b].nombre}</div>`).join('')}
