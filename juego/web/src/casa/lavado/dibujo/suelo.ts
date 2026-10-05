@@ -129,6 +129,16 @@ const PIEL: Record<Rol, Paleta> = {
   ella: { c1: '#f0c3a8', c2: '#f8d7c2', c3: '#f4a0a8' },
 };
 
+/** La piel de la cara en el tono de quien juega: un poquito más clara y un poquito más oscura, y su rubor. */
+function paletaDe(piel: string): Paleta {
+  const c = new THREE.Color(piel);
+  const hsl = { h: 0, s: 0, l: 0 };
+  c.getHSL(hsl);
+  const tono = (dl: number, ds = 0) => new THREE.Color().setHSL(hsl.h, Math.min(1, hsl.s + ds), Math.max(0.05, Math.min(0.95, hsl.l + dl))).getHexString();
+  const rubor = new THREE.Color().setHSL(0.99, Math.min(0.75, hsl.s + 0.25), Math.max(0.25, Math.min(0.75, hsl.l + 0.02)));
+  return { c1: `#${tono(-0.04)}`, c2: `#${tono(0.06, -0.05)}`, c3: `#${rubor.getHexString()}` };
+}
+
 /** Qué decoración sale en cada escenario (con su peso, tamaño y si va parada o acostada). */
 const DECOR: Record<IdEscenario, [IdDecor, number, number][]> = {
   cara: [['pecas', 4, 90], ['vellos', 3, 80], ['poroGrande', 3, 70], ['lunar', 1.2, 46], ['brilloGrasa', 2, 160], ['cicatriz', 0.8, 70], ['ceja', 0.25, 260]],
@@ -145,14 +155,15 @@ export class Suelo {
   private tablaDecor: [IdDecor, number, number][];
   private pesoTotal = 0;
 
-  constructor(private esc: IdEscenario, rol: Rol, limites: { yMin: number; yMax: number } | null) {
+  /** `piel`: el color de piel del anfitrión cuando es un amigo con su propio tono (la cara es la suya). */
+  constructor(private esc: IdEscenario, rol: Rol, limites: { yMin: number; yMax: number } | null, piel?: string) {
     const detalle = esc === 'cara' ? detalleCara() : esc === 'lavamanos' ? detalleLavamanos() : detalleBanera();
     // El detalle es un dato (gris), no un color: se lee tal cual
     detalle.colorSpace = THREE.NoColorSpace;
     detalle.needsUpdate = true;
     const ruido = texturaRuido();
     this.texturas.push(detalle, ruido);
-    const pal: Paleta = esc === 'cara' ? PIEL[rol] : esc === 'lavamanos' ? { c1: '#e6ecf2', c2: '#c9d6e2', c3: '#9fcde3' } : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
+    const pal: Paleta = esc === 'cara' ? (piel ? paletaDe(piel) : PIEL[rol]) : esc === 'lavamanos' ? { c1: '#e6ecf2', c2: '#c9d6e2', c3: '#9fcde3' } : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
     // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
     const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({

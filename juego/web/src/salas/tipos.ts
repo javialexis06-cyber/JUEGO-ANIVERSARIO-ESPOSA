@@ -48,18 +48,34 @@ export interface Sala {
   /** El anfitrión cierra la entrada (la partida empezó) o la vuelve a abrir. */
   cerrarEntrada(cerrada: boolean): void;
   salir(): void;
+
+  // ------------------------------------------------------------------ Agregado con la implementación (docs/salas.md)
+  /** Máximo de jugadores de esta sala (2 a 4). */
+  readonly max: number;
+  /** La entrada está cerrada (ya empezó la partida): nadie nuevo puede entrar (quien ya estaba sí puede volver). */
+  readonly cerrada: boolean;
+  /** ¿Hay conexión con ese jugador ahora mismo? (false mientras está cortado o en segundo plano). */
+  conectado(id: string): boolean;
+  /**
+   * La sala se acabó para este aparato: el anfitrión se fue (`anfitrion`), lo sacaron por estar cortado demasiado
+   * tiempo (`fuera`) o se cayó el servidor (`error`). Si ningún juego escucha, la sala muestra un aviso y ya.
+   */
+  alFin(fn: (motivo: 'anfitrion' | 'fuera' | 'error', texto: string) => void): () => void;
 }
 
 export interface OpcionesSala {
   juego: string;
   /** Máximo de jugadores (hasta 4). */
   max?: number;
+  /** Quién soy, si el juego ya lo sabe mejor que `yoMismo()` (por ejemplo, la casa local de prueba). */
+  yo?: Partial<Pick<JugadorSala, 'id' | 'nombre' | 'tipo' | 'aspecto' | 'datos'>>;
 }
 
 /** Lo que exporta `src/salas/sala.ts`. */
 export interface ApiSalas {
   crearSala(o: OpcionesSala): Promise<Sala>;
-  unirseSala(codigo: string, juego: string): Promise<Sala>;
+  /** Falla con un Error de texto amable: «La sala está llena», «Esa partida ya empezó», «No encontramos esa sala…». */
+  unirseSala(codigo: string, juego: string, yo?: OpcionesSala['yo']): Promise<Sala>;
   /** Quién soy en este aparato (Él, Ella o el perfil de amigo). */
   yoMismo(): JugadorSala;
 }

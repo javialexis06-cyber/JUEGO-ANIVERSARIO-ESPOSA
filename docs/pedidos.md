@@ -3,7 +3,13 @@
 Lo que Javier pidió y todavía falta, en el orden en que se va a hacer. Se tacha (se borra) cuando queda hecho,
 probado y subido.
 
-## Ronda 2 de arreglos (después de Sangre y Ceniza y las salas)
+## Siguiente, apenas termine Sangre y Ceniza: amigos como invitados
+
+Creador de personajes para los amigos y acceso a la APK y al .exe como invitado, para que los amigos prueben y
+testeen los juegos **sin acceso a nada personal ni romántico de la pareja** (ni recuerdos, ni notas, ni la casa,
+ni frases de amor, ni apodos). Parte de la base ya la hace el frente de salas («Soy un amigo» básico).
+
+## Ronda 2 de arreglos (después de lo de amigos)
 
 **Retrete espacial**
 - Consumibles como la patineta de Subway Surfers: se activan cada cierto tiempo y protegen de 1 choque.
@@ -27,15 +33,19 @@ probado y subido.
 - La lista de mejoras solo muestra las que están desbloqueadas (aunque no alcance la plata).
 
 **Lavarse la cara (Vampire Survivors)**
-- El chorro de agua menos invasivo: más translúcido.
-- Ataque manual o automático a escoger en todos los personajes; los de área (perro lanudo, bombero, astronauta)
-  siguen automáticos.
+- (En obra con las salas) El chorro de agua más translúcido; ataque manual o automático a escoger (los de área
+  —perro lanudo, bombero, astronauta— siguen automáticos); tutorial.
+- **Íconos de poderes, armas y mejoras**: en el celular salen vacíos; renderizarlos y revisar que carguen en la APK.
+- Un **panel de combinaciones**: ver qué tengo y con qué se combina para evolucionar y hacer combos (como la guía
+  de evoluciones del original), también a mitad de partida.
+- **Logros y recompensas por avanzar con cada personaje/disfraz** (maestría de cada uno).
+- Seguir mejorando el minijuego con lo mejor de otros juegos del género, **sin chocar con Sangre y Ceniza** (que se
+  queda con lo oscuro, las cuevas excavables, las expediciones por etapas y las clases serias).
 
 ## Después
 - Sótano tétrico con contraseña y juego de terror estilo *No, I'm Not a Human* (estudio del género, historia
   profunda).
 - Juego de resolver crímenes: 10 casos revisando el celular de la víctima (apps parecidas a las reales, personas
   ficticias).
-- Creador de personajes para amigos (sin acceso a nada personal de la pareja).
 - Lo acumulado: Cien Puertas (en obra), Show de Nosotros (en obra), tele compartida, tocador de Laura, escenas
   premium y diseños premium.

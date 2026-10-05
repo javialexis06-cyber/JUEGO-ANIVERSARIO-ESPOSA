@@ -41,13 +41,17 @@ export interface ProgresoLavado {
   apurado: boolean;
   escenario: IdEscenario;
   carta: IdCarta | '';
+  /** Apuntar a mano (segundo dedo o mouse) en vez de que las armas busquen solas. */
+  manual: boolean;
+  /** Ya vio (o se saltó) el tutorial de la primera vez. */
+  tutorial: boolean;
 }
 
 export function progresoNuevo(rol: Rol): ProgresoLavado {
   return {
     oro: 0, gastado: 0, poderes: {}, comprados: [], disfraz: rol === 'el' ? 'el_panda' : 'ella_pulga', logros: [], armas: [], pasivas: [],
     bestiario: {}, mejor: {}, ganados: [], mejorNivel: 0, mejorBajas: 0, partidas: 0, eliminados: 0, velitas: 0, cofres: 0, arepas: 0,
-    oroTotal: 0, segundos: 0, apurado: false, escenario: 'cara', carta: '',
+    oroTotal: 0, segundos: 0, apurado: false, escenario: 'cara', carta: '', manual: false, tutorial: false,
   };
 }
 
@@ -99,6 +103,9 @@ export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
     apurado: !!x.apurado,
     escenario: ESCENARIOS.includes(x.escenario) ? x.escenario : 'cara',
     carta: typeof x.carta === 'string' && x.carta in CARTAS ? (x.carta as IdCarta) : '',
+    manual: !!x.manual,
+    // (quien ya jugó antes no necesita el tutorial a la fuerza: lo puede ver desde el menú)
+    tutorial: !!x.tutorial || entero(x.partidas) > 0,
   };
 }
 

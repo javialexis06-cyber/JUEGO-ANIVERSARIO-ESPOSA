@@ -6,7 +6,7 @@ import type { ArmaJ, Enemigo, Jugador, Motor, Proyectil, Zona } from './motor';
 import type { IdArma } from './tipos';
 
 /** Ranuras de «ya le pegó» en cada enemigo (por jugador: + índice del jugador). */
-const HZ_AURA = 0, HZ_ESPONJAS = 2, HZ_LASER = 4, HZ_COLUMNA = 6, HZ_CHARCO = 8;
+const HZ_AURA = 0, HZ_ESPONJAS = 4, HZ_LASER = 8, HZ_COLUMNA = 12, HZ_CHARCO = 16;
 const TAU = Math.PI * 2;
 /** Armas de zona (para la carta del planetario). */
 const ZONA = new Set<IdArma>(['espuma', 'espumaDevoradora', 'botellas', 'inundacion', 'ducha', 'diluvio', 'esponjas', 'esponjasEternas', 'patoAmarillo', 'patoMorado', 'patosEnamorados']);
@@ -113,6 +113,11 @@ function alAzarEnVista(m: Motor, j: Jugador): Enemigo | null {
   return masCercano(m, j.x, j.y, 400);
 }
 
+/** Apuntar a mano: el ángulo hacia donde apunta el jugador (null si sus armas buscan solas). */
+function aMano(j: Jugador): number | null {
+  return j.manual ? Math.atan2(j.ay, j.ax) : null;
+}
+
 function golpe(m: Motor, j: Jugador, slot: number, e: Enemigo, dano: number, crit: number, critX: number, kx: number, ky: number, arma: IdArma) {
   const c = crit > 0 && m.az.n() < crit;
   m.herir(e, c ? dano * critX : dano, j.i, slot, kx, ky, c, arma);
@@ -169,7 +174,9 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
   const def = ARMAS[a.id];
   switch (def.comp) {
     case 'latigo': {
-      const lado = idx % 2 === 0 ? j.mira : -j.mira;
+      // (a mano, el primer toallazo va hacia donde apunta)
+      const frente = j.manual ? (j.ax >= 0 ? 1 : -1) : j.mira;
+      const lado = idx % 2 === 0 ? frente : -frente;
       const largo = 150 * E.area;
       const alto = E.radio * 2 * E.area;
       const yo = j.y - 8 + Math.floor(idx / 2) * 14 * (idx % 2 ? 1 : -1);
@@ -187,14 +194,15 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       break;
     }
     case 'varita': {
-      const e = masCercano(m, j.x, j.y, 520);
-      const ang = e ? Math.atan2(e.y - j.y, e.x - j.x) + (idx % 3 - 1) * 0.05 : Math.atan2(j.dy, j.dx);
+      const mano = aMano(j);
+      const e = mano === null ? masCercano(m, j.x, j.y, 520) : null;
+      const ang = mano !== null ? mano + (idx % 3 - 1) * 0.07 : e ? Math.atan2(e.y - j.y, e.x - j.x) + (idx % 3 - 1) * 0.05 : Math.atan2(j.dy, j.dx);
       const v = E.rapidez * E.vel;
       nuevoProy(m, j, slot, a.id, 0, j.x, j.y - 6, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
       break;
     }
     case 'cuchillo': {
-      const base = Math.atan2(j.dy, j.dx);
+      const base = aMano(j) ?? Math.atan2(j.dy, j.dx);
       const ang = base + (m.az.n() - 0.5) * 0.12;
       const lado = (idx % 2 ? 1 : -1) * Math.ceil(idx / 2) * 7;
       const v = E.rapidez * E.vel;
@@ -202,7 +210,7 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       break;
     }
     case 'hacha': {
-      const lado = idx % 2 === 0 ? 1 : -1;
+      const lado = (idx % 2 === 0 ? 1 : -1) * (j.manual && j.ax < 0 ? -1 : 1);
       const vx = lado * m.az.entre(30, 110) * (1 + idx * 0.15) + j.vx * 0.3;
       const vy = -E.rapidez * E.vel * m.az.entre(0.92, 1.08);
       const p = nuevoProy(m, j, slot, a.id, 1, j.x, j.y - 10, vx, vy, E.radio * E.area, E.dur);
@@ -224,8 +232,9 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       break;
     }
     case 'cruz': {
-      const e = idx === 0 ? masCercano(m, j.x, j.y, 500) : alAzarEnVista(m, j);
-      const ang = e ? Math.atan2(e.y - j.y, e.x - j.x) : Math.atan2(j.dy, j.dx) + idx * 0.6;
+      const mano = aMano(j);
+      const e = mano !== null ? null : idx === 0 ? masCercano(m, j.x, j.y, 500) : alAzarEnVista(m, j);
+      const ang = mano !== null ? mano + (idx % 2 ? 1 : -1) * Math.ceil(idx / 2) * 0.22 : e ? Math.atan2(e.y - j.y, e.x - j.x) : Math.atan2(j.dy, j.dx) + idx * 0.6;
       const v = E.rapidez * E.vel;
       const p = nuevoProy(m, j, slot, a.id, 2, j.x, j.y - 6, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
       if (p) {
@@ -238,8 +247,9 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
     }
     case 'fuego': {
       if (idx === 0) {
-        const e = alAzarEnVista(m, j);
-        a.ang = e ? Math.atan2(e.y - j.y, e.x - j.x) : m.az.n() * TAU;
+        const mano = aMano(j);
+        const e = mano === null ? alAzarEnVista(m, j) : null;
+        a.ang = mano ?? (e ? Math.atan2(e.y - j.y, e.x - j.x) : m.az.n() * TAU);
       }
       const ang = a.ang + (idx - (a.total - 1) / 2) * 0.16;
       const v = E.rapidez * E.vel;
@@ -266,7 +276,8 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       break;
     }
     case 'runa': {
-      const ang = m.az.n() * TAU;
+      const mano = aMano(j);
+      const ang = mano !== null ? mano + (m.az.n() - 0.5) * 0.3 : m.az.n() * TAU;
       const v = E.rapidez * E.vel;
       const p = nuevoProy(m, j, slot, a.id, 3, j.x, j.y - 6, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
       if (p) p.giro = 6;
@@ -363,7 +374,7 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       break;
     }
     case 'pistola': {
-      const diag = a.id === 'colonia' ? Math.PI / 4 : 0;
+      const diag = (a.id === 'colonia' ? Math.PI / 4 : 0) + (aMano(j) ?? 0);
       const v = E.rapidez * E.vel;
       for (let q = 0; q < 4; q++) {
         const ang = diag + q * (Math.PI / 2) + (m.az.n() - 0.5) * 0.05;
