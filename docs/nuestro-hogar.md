@@ -55,7 +55,7 @@ con `CASA_SOLO=juegos,trofeos,cuna,cuarto_el,cuarto_ella,bebe,ciguena python3 ex
 
 | Cuarto | Precio | Qué tiene y qué se hace |
 |---|---|---|
-| Juegos | gratis (viene con la casa) | Los **minijuegos ya no están en el menú**: arcade de Súper Manía (con la pantalla prendida), la **puerta 100** morada de Cien Puertas y la mesa con el parchís servido (dos pufs). El personaje camina al arcade, a la puerta o se sienta en el puf, y de ahí se entra al juego. También un retrete espacial en miniatura (se sientan en él y sale quién ha volado más lejos) y el botón **Tienda del retrete**. Los minijuegos **secretos** (retrete espacial, lavarse la cara) se descubren solos con lo que les pasa; ya descubierto, el retrete en miniatura también trae **🚀 Volar en el retrete** |
+| Juegos | gratis (viene con la casa) | Los **minijuegos ya no están en el menú**: arcade de Súper Manía (con la pantalla prendida), la **puerta 100** morada de Cien Puertas la mesa con el parchís servido (dos pufs) y el botón **⚔️ Sangre y Ceniza** (el survivors oscuro de hasta 4, ver `docs/sangre-y-ceniza.md`; el personaje camina al arcade). El personaje camina al arcade, a la puerta o se sienta en el puf, y de ahí se entra al juego. También un retrete espacial en miniatura (se sientan en él y sale quién ha volado más lejos) y el botón **Tienda del retrete**. Los minijuegos **secretos** (retrete espacial, lavarse la cara) se descubren solos con lo que les pasa; ya descubierto, el retrete en miniatura también trae **🚀 Volar en el retrete** |
 | Trofeos | 50 | Seis pedestales de mármol con los trofeos de cada minijuego y su **placa con el título** encima, el **cuadro de honor** con el título de cada uno en cada juego, la vitrina con los trofeos chiquitos de cada uno, alfombra roja y el podio de la **copa del amor**. «Admirar»: aplaude frente al mejor trofeo |
 | Bebé | 150 | Cuna de barrotes con móvil de estrellas, mecedora, cómoda con cambiador y juguetes. **Pedir a la cigüeña**: se escoge el nombre (Katherine, como dice Él, o Lexy Katherine, como dice Ella, u otro) y la cigüeña entra volando por la ventana con la bebé en un pañuelo y la deja en la cuna (`casa.bebe`). Luego: arrullarla (la cuna se mece, suena una nanita), la mecedora (se mece de verdad) y tocarla (se ríe) |
 | Cuarto de Él | 80 | Escritorio con computador (la pantalla escribe código), silla gamer, sillón, repisa y balón |
@@ -572,7 +572,7 @@ Se ganan poco y despacio (se bajó a la cuarta parte: con lo de antes se comprab
 | Bono del día (al abrir la app) | +5 para cada uno (antes 20) |
 | Aniversario | +13 una vez al año (antes 50) |
 | Mimos, saludos y demás con la pareja | nada (antes 5 a 10 los primeros del día) |
-| Minijuegos (súper, Cien Puertas, juegos de mesa) | lo que pague cada juego (cada uno paga la cuarta parte de antes); llega por `nuestro-hogar-sueldo` y la casa lo suma tal cual, sin volver a dividirlo |
+| Minijuegos (súper, Cien Puertas, juegos de mesa, Sangre y Ceniza) | lo que pague cada juego (cada uno paga la cuarta parte de antes); llega por `nuestro-hogar-sueldo` y la casa lo suma tal cual, sin volver a dividirlo |
 | Trofeos | 5 / 10 / 20 por bronce, plata y oro de cada juego (una vez); la copa del amor, el triple |
 | Cocina de chef | 1 a 20 por día cocinado (invitados × calificación) y hasta 4 platos de chef a la despensa |
 | Casa nueva | empieza con 40 (antes 120) |

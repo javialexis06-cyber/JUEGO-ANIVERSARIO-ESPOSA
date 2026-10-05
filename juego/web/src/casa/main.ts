@@ -1279,6 +1279,7 @@ const JUEGOS = {
   super: { punto: 'arcade', url: './super.html', nombre: 'Súper Manía' },
   puertas: { punto: 'cien', url: './puertas.html', nombre: 'Cien Puertas' },
   mesa: { punto: 'mesa', url: './mesa.html', nombre: 'los juegos de mesa' },
+  sangre: { punto: 'arcade', url: './sangre.html', nombre: 'Sangre y Ceniza' },
 } as const;
 let yendoAJugar = false;
 
@@ -2002,6 +2003,7 @@ function botonesCuarto(): Boton[] {
         { id: 'jugar-super', texto: 'Súper Manía', icono: '<img src="./modelos/iconos/caja_frutas.png" alt="">', principal: true },
         { id: 'jugar-puertas', texto: 'Cien Puertas', icono: ico('puerta') },
         { id: 'jugar-mesa', texto: 'Juegos de mesa', icono: '<img src="./modelos/iconos/mesa_juegos.svg" alt="">' },
+        { id: 'jugar-sangre', texto: 'Sangre y Ceniza', icono: '<span class="ico ico-emoji">⚔️</span>' },
         { id: 'tienda-retrete', texto: 'Tienda del retrete', icono: '<img src="./modelos/iconos/cohete_rollito.webp" alt="">' },
       );
       break;
@@ -2160,6 +2162,8 @@ async function alAccion(id: string) {
       return jugar('puertas');
     case 'jugar-mesa':
       return jugar('mesa');
+    case 'jugar-sangre':
+      return jugar('sangre');
     case 'retrete':
       // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse,
       // ver quién ha volado más lejos y abrir la tienda del retrete

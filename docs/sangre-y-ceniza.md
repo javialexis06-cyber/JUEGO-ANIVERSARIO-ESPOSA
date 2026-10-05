@@ -109,6 +109,75 @@ apagada. Los personajes siguen siendo los muñecos del proyecto, pero con trajes
 contraluz). Partículas: chispas, brasas, polvo al excavar, almas que flotan, sangre en neblina (sin gore
 exagerado). Interfaz sobria (hierro, pergamino quemado, sello rojo). Música lúgubre y sonidos con peso.
 
+## Cómo quedó el juego (código, decisiones y pruebas)
+
+**Dónde está**: `juego/web/sangre.html` → `src/sangre/` (entrada en `vite.config.ts`). Desde la casa: cuarto de
+juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.html` y `./sangre.html?unirse=CÓDIGO`. Atrás
+(Android) o Esc: pausa en la partida, un paso atrás en los menús y, desde el título, vuelve a la casa (o a
+`amigos.html` si el aparato es de un amigo).
+
+| Carpeta / archivo | Qué hace |
+|---|---|
+| `tipos.ts`, `datos/` | Clases (12, con 3 especializaciones, dones y arsenal de 4), 66 armas (con 3 sobrecargas cada una y 14 evoluciones), mejoras, objetos con contrapartida, equipo (36), reliquias (18), santos y bendiciones, Pozo, enemigos (22), jefes (5), biomas, peligros y mutadores |
+| `sim/` | La simulación a paso fijo (30 por segundo), sin dibujo: mapa al azar con paredes que se excavan, campo de flujo para cientos de enemigos, armas, mecánicas de cada clase, objetivos, jefes por fases, aliados, elecciones. Corre en Node (bot y balance) |
+| `expedicion.ts` | Cuatro etapas + la Forja entre etapas + la recompensa final |
+| `vista/` | three.js: rejilla de luz de antorchas (todos los materiales la leen), enemigos instanciados por piezas animadas en el shader, partículas, efectos, muñecos con el traje de la clase y el arma en la mano, posprocesado y calidad que baja sola |
+| `ui/` | HUD, cartas, mando (joystick que aparece donde se toca, WASD), Forja, íconos SVG de reemplazo |
+| `partida.ts`, `main.ts` | El bucle (30 cuadros), los menús, la pausa, el tutorial y las pantallas |
+| `progreso.ts`, `guardado.ts`, `logros.ts`, `identidad.ts` | Lo permanente y dónde se guarda |
+| `red/` | Partidas en grupo (anfitrión, espejo del invitado, protocolo) |
+| `sonidos.ts` | Efectos sintetizados con peso y la música lúgubre |
+
+**Decisiones**
+- **Etapas con reloj (como DRG: Survivor)**: cada etapa dura 4:30 como máximo; al cumplir el objetivo cae un cofre y
+  el reloj baja a un minuto; al acabarse baja la campana (40 s de cuenta, la horda enloquece). En la cuarta etapa, en
+  vez de campana sale el jefe del bioma y después la extracción. Si todos los vivos están en la campana, sale en 3 s.
+- **La horda** arranca con unos cuantos y a los 4 minutos son cientos (tope 260 + 70 por jugador extra). Por cada
+  jugador extra: +38 % de vida, +60 % de enemigos, +30 % de élites y el botín se reparte.
+- **Experiencia compartida** en grupo; cada uno escoge sus cartas. Solo, el juego espera mientras escoge; en grupo
+  sigue y quien escoge queda protegido (13 s, si no, se escoge la primera).
+- **La Forja**: cinco ofertas (armas, objetos, equipo, vendas), renovar (3 + 3 por vez + etapa de oro), guardar una
+  oferta con el candado, yunque (4 + 2 × nivel de hierro negro → +1 nivel), altar de sangre (6 + 6 × sobrecargas de
+  sangre → una sobrecarga antes de tiempo, una por arma y visita) y vender objetos a la mitad.
+- **Progreso permanente** (`ProgresoSangre`): ceniza (moneda del Pozo de las Almas), 13 mejoras del Pozo, equipo
+  ofrecido al Pozo (se escoge antes de bajar), maestría por clase (15 niveles: 2.ª especialización en el 1, 3.ª arma
+  en el 2, 3.ª especialización en el 3, 4.ª arma en el 4, títulos y bonos después), clases, biomas y armas comunes
+  desbloqueadas, peligro ganado por bioma (se abre hasta uno más que el máximo ganado), 34 logros y cifras.
+  - Javier y Laura: en la casa compartida (`casa.sangre[rol]`, con su normalización en `modelo.ts`) y en el aparato;
+    las dos copias se juntan sin perder nada (lo que se acumula, el máximo; lo desbloqueado, la unión).
+  - Amigos: solo en su aparato (`sangre-progreso-<id>`). Nada personal de la pareja en el juego.
+  - Monedas de la casa (escasas, solo Javier y Laura): una por etapa extraída y 2 (+1 por peligro sobre 2) por ganar.
+- **Desbloqueos**: se empieza con Monarca, Campesino(a) y Prisionero(a); las otras nueve clases con logros (primera
+  extracción, nivel 20, excavar 600, 12 frascos, 1 000 muertos en una expedición, 20 altares, 40 élites, 10
+  bendiciones, 12 prisioneros). Biomas: Cementerio y Catacumbas; ganar el Cementerio abre las Minas, ganar las
+  Catacumbas abre la Abadía y ganar ambas abre el Castillo.
+- **Tutorial** la primera vez (y desde el título, «Repetir el tutorial»): un mapa hecho a mano sin horda ni reloj, con
+  globos que esperan a que se haga cada cosa: moverse, armas solas, almas y mejoras, la habilidad, excavar, el
+  objetivo, la campana y la Forja.
+- **En grupo** (`src/salas/`): el anfitrión simula; manda una foto 8 veces por segundo (enteros de 16 bits en
+  base64: enemigos, proyectiles, recogibles, aliados, zonas, objetivos y sucesos para efectos y sonidos), las paredes
+  que cambian (fiable) y el detalle de cada jugador cada segundo. El invitado arma el mismo mapa con la misma semilla,
+  se mueve en su aparato sin esperar y manda su posición y su joystick 15 veces por segundo. Si se corta alguien, el
+  anfitrión pausa con aviso; si se va, queda fuera de la expedición. Entre etapas cada uno hace su Forja y se baja
+  cuando todos están listos.
+- **Rendimiento**: 30 cuadros, la roca maciza se dibuja como techo plano (solo las paredes que se ven tienen el
+  modelo completo), todo instanciado por trozos de 8 × 8 celdas, calidad baja (sin sombras ni posprocesado, variante
+  más liviana de cada pared) y la calidad baja sola si un cuadro tarda más de 36 ms durante 4 s.
+
+**Pruebas**
+- `node scripts/balance-sangre.mjs [partidas] [clases|todas] [bioma] [peligro] [jugadores]`: el bot juega
+  expediciones completas en Node (miles de pasos por segundo). Hoy: en peligro 1 el bot gana casi siempre; en
+  peligro 2, más o menos la mitad.
+- `node scripts/probar-sangre.mjs <url> [carpeta] [grupo,extraccion,celular,tutorial]`: en el navegador, dos pestañas
+  en grupo (sala, Forja esperando a todos, etapa 2, resultados y vuelta a la sala), la extracción con el bot, la
+  pausa y abandonar, el joystick con el dedo y el tutorial completo.
+- Parámetros: `sangre.html?prueba=1` (entra directo; `&clase=`, `&bioma=`, `&peligro=`, `&spec=`, `&semilla=`,
+  `&bot=1`, `&rapido=N`, `&etapa=4` para el jefe), `?prueba=tutorial`, `?calidad=baja|media|alta`, `?limpio=1` (progreso nuevo),
+  `?salas=local` (salas entre pestañas), `?rol=el|ella`, `?amigo=Nombre&id=x`, `?sinanim=1`.
+- Ganchos: `__sangre()` (la simulación o el espejo), `__sangrePartida()`, `__sangreEscena()`, `__sangreProgreso()`,
+  `__sangrePantalla()`, `__sangreInfo()` (llamadas, triángulos, ms), `__sangreDar(ceniza)`, `__sangreAbrirTodo()`,
+  `__sangreForja()` (salta a la Forja), `__sangreReloj(s)` (adelanta el reloj de la etapa).
+
 ## Contrato de arte (lo que el código espera encontrar)
 
 El juego y los modelos se hacen en paralelo; estos nombres son el acuerdo. Todo en `juego/web/public/modelos/sangre/`
