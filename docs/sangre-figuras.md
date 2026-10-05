@@ -76,6 +76,21 @@ piedra), inquisidor_muerto (máscara de hierro, hierro de marcar al rojo: marca 
 calavera y llama verde: marca `llama`), vampiro (capa de cuello alto), novia_vampira (velo y rosa marchita),
 hombre_lobo (mandíbula y cola), caballero_muerte (élite común, `elite: 1`, mandoble en la mano derecha).
 
+## Jefes (`jefes.glb`)
+
+- `jefe_golem_osarios` (3,2 m): gigante de tierra de tumba, huesos y calaveras con un alma verde en el pecho
+  (marca `luz`); puños de calaveras; `mandibula`.
+- `jefe_abadesa` (2,7 m, flota, `sg_espectro`): monja banshee con la boca abierta (`mandibula`), brazos larguísimos y
+  `cola` de jirones.
+- `jefe_gusano_sangre` (4 m, `sale_del_suelo: 1`): el `cuerpo` es el tramo que sale del cráter (con las rocas); la
+  `cabeza` se dobla desde el cuello y la `mandibula` son los cinco pétalos de la boca (abrir = escalar o girar hacia
+  afuera); `extra_tentaculo_izq/der`. Marca `luz` en la garganta.
+- `jefe_obispo_hueco` (2,7 m): mitra dorada, casulla carmesí quemada, el pecho abierto con un corazón en llamas
+  (marca `luz`) y el báculo encendido en la mano derecha.
+- `jefe_conde` (2,8 m, `fases: 2`): señor vampiro con corona de púas, espada de sangre (marca `punta`),
+  `extra_capa` (pivote en los hombros: mecerla) y `extra_alas` (alas de murciélago enormes): **escóndelas en la fase 1
+  y muéstralas en la fase 2**.
+
 ## Cosas (`cosas.glb`)
 
 - Recogibles (livianos): `c_alma_azul`, `c_alma_verde`, `c_alma_roja` (flotan; marca `luz`), `c_oro`, `c_hierro_negro`,
