@@ -11,7 +11,7 @@ import type { Rol } from '../modelo';
 import { chefAmigoListo, imagenChefAmigo, prepararChefAmigo } from './chef_amigo';
 import { jugarCocina } from './index';
 import { cargarRecortes } from './sprites';
-import { iconoHTML } from './pantallas';
+import { iconoRestaurante } from './pantallas';
 import {
   type ConfigCocina, esReceta, type JugadorCocina, nombreRango, type ProgresoCocina, rangoDe, type RecetaId, RESTAURANTES, type ResultadoDia,
 } from './tipos';
@@ -98,7 +98,7 @@ export async function elegirRestaurante(progresoDe: (r: RecetaId) => ProgresoCoc
     c.innerHTML = `<div class="cocina-capa"><div class="cocina-tarjeta"><h2>¿Qué restaurante abrimos?</h2>
       <ul class="cz-restaurantes">${RESTAURANTES.map((r) => {
         const p = progresoDe(r.id);
-        return `<li><button class="cz-restaurante ${r.id === actual ? 'si' : ''}" data-r="${r.id}">${iconoHTML(r.icono, 54) || `<span class="cz-emoji">${r.emoji}</span>`}
+        return `<li><button class="cz-restaurante ${r.id === actual ? 'si' : ''}" data-r="${r.id}">${iconoRestaurante(r.id, 54) || `<span class="cz-emoji">${r.emoji}</span>`}
           <b>${r.nombre}</b><small>Día ${p.dia} · ${nombreRango(rangoDe(p.xp))}</small></button></li>`;
       }).join('')}</ul>
       <div class="botones"><button class="boton-cocina" data-r="">Cancelar</button></div></div></div>`;

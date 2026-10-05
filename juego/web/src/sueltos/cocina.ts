@@ -56,7 +56,7 @@ async function arrancar() {
   }
   carga?.classList.add('fuera');
   setTimeout(() => carga?.remove(), 600);
-  const { iconoHTML } = await import('../casa/cocina/pantallas');
+  const { iconoRestaurante } = await import('../casa/cocina/pantallas');
   // (los recortes del chef del amigo se van haciendo desde ya: así el «modo chef» sale con su muñeco)
   void import('../casa/cocina/chef_amigo').then((m) => m.prepararChefAmigo(amigo.aspecto));
 
@@ -95,7 +95,7 @@ async function arrancar() {
       avisoSuelto('Algo falló en la cocina. Intenta otra vez.');
     }
     ocupado = false;
-    pintarMenu(amigo, T, iconoHTML, hacer, solo, enSala, sala);
+    pintarMenu(amigo, T, iconoRestaurante, hacer, solo, enSala, sala);
   };
 
   alAtras(() => {
@@ -114,7 +114,7 @@ async function arrancar() {
   const directa = params.get('receta');
   if (unirse.length === 5) await hacer(() => enSala('wafles', unirse));
   else if (T.esReceta(directa)) await hacer(() => solo(directa));
-  else pintarMenu(amigo, T, iconoHTML, hacer, solo, enSala, sala);
+  else pintarMenu(amigo, T, iconoRestaurante, hacer, solo, enSala, sala);
 }
 
 let menu: HTMLElement | null = null;
@@ -123,7 +123,7 @@ let menu: HTMLElement | null = null;
 function pintarMenu(
   amigo: AmigoJugando,
   T: ModuloTipos,
-  iconoHTML: (id: string, tam: number) => string,
+  icono: (id: RecetaId, tam: number) => string,
   hacer: (fn: () => Promise<void>) => Promise<void>,
   solo: (r: RecetaId) => Promise<void>,
   enSala: (r: RecetaId, unirse?: string) => Promise<void>,
@@ -139,7 +139,7 @@ function pintarMenu(
       const guardado = leerAparato(CLAVE_COCINA) as Record<string, unknown> | null;
       const nuevo = !guardado || typeof guardado !== 'object' || !guardado[r.id];
       const p = progresoDe(T, r.id);
-      return `<li><button class="cz-carta" data-r="${r.id}" style="--acento-cocina:${acento[r.id]}">${iconoHTML(r.icono, 110) || `<span class="cz-emoji">${r.emoji}</span>`}
+      return `<li><button class="cz-carta" data-r="${r.id}" style="--acento-cocina:${acento[r.id]}">${icono(r.id, 110) || `<span class="cz-emoji">${r.emoji}</span>`}
         <b>${r.nombre}</b><small>${r.texto}</small><em class="${nuevo ? 'nuevo' : ''}">${nuevo ? '¡Nuevo!' : `Día ${p.dia} · ${T.nombreRango(T.rangoDe(p.xp))}`}</em></button></li>`;
     }).join('')}</ul>
     <footer>

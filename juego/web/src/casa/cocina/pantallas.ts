@@ -95,6 +95,72 @@ export function iconoHTML(id: string, tam: number) {
   return `<img class="ico-recorte" src="${url}" style="height:${tam}px" alt="">`;
 }
 
+/**
+ * El ícono de cada restaurante para los menús, armado con los recortes: el wafle con fresa y crema; el vaso de
+ * fresas con crema lleno, con crema batida y fresas encima; y el frappé con crema, cereza y pitillo.
+ */
+const iconosRest = new Map<string, string>();
+export function iconoRestaurante(receta: 'wafles' | 'fresas' | 'frappes', tam: number) {
+  const clave = `${receta}@${tam}`;
+  let url = iconosRest.get(clave);
+  if (!url) {
+    const W = Math.round(tam * 2.4), H = Math.round(tam * 2.4);
+    const c = document.createElement('canvas');
+    c.width = W;
+    c.height = H;
+    const g = c.getContext('2d')!;
+    const caja = (id: string, cx: number, cy: number, an: number, al: number) => iconoEn(g, id, cx * W, cy * H, an * W, al * H);
+    let ok = true;
+    if (receta === 'wafles') {
+      ok = caja('wafle_clasica_1', 0.5, 0.6, 0.96, 0.7);
+      caja('top_mantequilla', 0.5, 0.5, 0.22, 0.16);
+      caja('top_fresa_entera', 0.3, 0.42, 0.3, 0.3);
+      caja('top_chantilly', 0.62, 0.42, 0.34, 0.28);
+      caja('top_fresa_mitad', 0.72, 0.56, 0.22, 0.22);
+    } else {
+      const vaso = receta === 'fresas' ? 'vasofresa_M' : 'vasofrappe_M';
+      const r = recorte(vaso);
+      if (r) {
+        // El vaso lleno (lo de adentro va detrás del vidrio)
+        const k = Math.min((0.62 * W) / r.w, (0.8 * H) / r.a);
+        const w = r.w * k, h = r.a * k, x = (W - w) / 2, y = H * 0.18;
+        g.save();
+        g.beginPath();
+        g.moveTo(x + w * 0.1, y + h * 0.12);
+        g.lineTo(x + w * 0.9, y + h * 0.12);
+        g.lineTo(x + w * 0.82, y + h * 0.95);
+        g.lineTo(x + w * 0.18, y + h * 0.95);
+        g.closePath();
+        g.clip();
+        g.fillStyle = lineal(g, 0, y, 0, y + h, receta === 'fresas'
+          ? [[0, '#fff4ea'], [0.55, '#ffe0e4'], [1, '#f6b9c4']]
+          : [[0, '#f3dcc0'], [0.5, '#c99a6e'], [1, '#8e5c3d']]);
+        g.fillRect(x, y, w, h);
+        if (receta === 'fresas') {
+          for (let i = 0; i < 9; i++) {
+            const fx = x + w * (0.25 + ((i * 37) % 50) / 100), fy = y + h * (0.35 + ((i * 53) % 55) / 100);
+            caja('top_fresa_cuarto', fx / W, fy / H, 0.13, 0.13);
+          }
+        } else {
+          g.fillStyle = 'rgba(255,255,255,0.18)';
+          for (let i = 0; i < 6; i++) g.fillRect(x + w * (0.2 + i * 0.11), y + h * 0.25, w * 0.03, h * 0.65);
+        }
+        g.restore();
+        iconoEn(g, vaso, W / 2, y + h / 2, w, h);
+        if (receta === 'frappes') caja('pitillo_rosado', 0.62, 0.2, 0.12, 0.36);
+        caja('top_chantilly', 0.5, 0.19, 0.6, 0.3);
+        caja(receta === 'fresas' ? 'top_fresa_entera' : 'top_cereza', 0.52, 0.1, 0.24, 0.22);
+        if (receta === 'fresas') caja('top_fresa_mitad', 0.32, 0.2, 0.18, 0.18);
+      } else ok = false;
+    }
+    if (!ok) return iconoHTML(RECETA_ICONO[receta], tam);
+    url = c.toDataURL('image/png');
+    iconosRest.set(clave, url);
+  }
+  return `<img class="ico-recorte" src="${url}" style="height:${tam}px" alt="">`;
+}
+const RECETA_ICONO = { wafles: 'wafle_clasica_1', fresas: 'vasofresa_M', frappes: 'vasofrappe_M' } as const;
+
 // ---------------------------------------------------------------------------------------------- Fondos de las estaciones
 /** Dibuja una imagen de fondo cubriendo un rectángulo (anclada abajo o arriba). */
 function cubrir(g: G, img: HTMLImageElement, x: number, y: number, w: number, h: number, ancla: 'arriba' | 'abajo' | 'centro' = 'centro') {

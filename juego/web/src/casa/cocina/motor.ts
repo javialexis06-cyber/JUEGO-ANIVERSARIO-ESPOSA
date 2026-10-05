@@ -764,7 +764,7 @@ export class Motor {
     const pareja = this.pareja && this.s.invitados.some((e) => this.def(e).especial === 'pareja') ? this.pareja : null;
     const critico = this.s.invitados.some((e) => this.def(e).especial === 'critico');
     const juntos = this.juntos;
-    const icono = P.iconoHTML(this.receta.icono, 86);
+    const icono = P.iconoRestaurante(this.receta.id, 86);
     const otros = this.sync?.companeros.map((j) => esc(j.nombre)) ?? [];
     const conQuien = this.anfitrion ? `${this.lista(otros)} ${otros.length === 1 ? 'te ayuda' : 'te ayudan'} hoy` : `ayudas en la cocina de ${esc(this.duenoCocina.nombre)}`;
     const iconoJuntos = this.neutro ? '👥' : '👩‍❤️‍👨';
@@ -874,7 +874,7 @@ export class Motor {
       })
       .join('');
     this.capa(`<div class="cocina-tienda">
-        <header>${P.iconoHTML(this.receta.icono, 44)}<h2>Mejoras de la cocina</h2><span class="saldo">🪙 ${p.propinas} en propinas</span></header>
+        <header>${P.iconoRestaurante(this.receta.id, 44)}<h2>Mejoras de la cocina</h2><span class="saldo">🪙 ${p.propinas} en propinas</span></header>
         <ul>${filas}</ul>
         <div class="botones"><button class="boton-cocina principal" data-c="${volver === 'fin' ? 'volver-fin' : 'volver-dia'}">Listo</button></div>
       </div>`, 'tienda');
@@ -1204,7 +1204,7 @@ export class Motor {
       : `<button class="boton-cocina" data-c="salir">${this.textoSalir}</button><span class="espera-otro">${esc(dueno.nombre)} decide si siguen con otro día…</span>`;
     const etiqueta = juntos ? (this.neutro ? ' <small>en equipo 👥</small>' : ' <small>en pareja 💞</small>') : '';
     this.capa(`<div class="cocina-fin">
-        <div class="cabeza">${P.iconoHTML(this.receta.icono, 70)}<h2>¡Terminó el día ${r.dia}!${etiqueta}</h2></div>
+        <div class="cabeza">${P.iconoRestaurante(this.receta.id, 70)}<h2>¡Terminó el día ${r.dia}!${etiqueta}</h2></div>
         <div class="estrellas">${[0, 1, 2].map((i) => `<i class="${i < estrellas ? 'si' : ''}" style="--d:${0.3 + i * 0.25}s">★</i>`).join('')}</div>
         <ul class="cifras">
           <li><b>${r.servidos}</b><span>invitados atendidos</span></li>
