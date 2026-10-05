@@ -1,5 +1,6 @@
-// Súper Manía en Pareja · jugable 1 (la tiendita completa: 25 días, solo con Él, los dos en el mismo celular o en
-// línea, cada uno en su celular).
+// Súper Manía en Pareja · jugable 1 (la tiendita completa: 25 días, solo con Él, los dos en el mismo celular, en
+// línea cada uno en su celular o en una sala con código de 2 a 4 con amigos). Con amigos (o en el aparato de un
+// amigo) todo va en modo neutro: nada personal de la pareja (neutro.ts).
 // Letras empacadas con el juego (funciona sin internet, también en la app de Android)
 import '@fontsource/courier-prime/latin-400.css';
 import '@fontsource/courier-prime/latin-700.css';
@@ -16,7 +17,7 @@ import { AYUDAS, AYUDAS_MAX, CLIENTES, GrupoMejora, MEJORAS, TipoCliente } from 
 import * as guardado from './guardado';
 import { aplicarOrden, Espejo, tomarFoto, type Orden } from './espejo';
 import { Juego, NivelDato, Resultado, textoDe } from './juego';
-import type { Jugador, Rol } from './jugador';
+import type { InfoJugador, Jugador, Rol } from './jugador';
 import { CanalSuper, type ConfigDia, type Mensaje } from './linea_super';
 import { Mandos } from './mando';
 import { Mundo } from './mundo';
@@ -25,6 +26,8 @@ import * as sonido from './sonido';
 import * as segundoPlano from './segundo_plano';
 import { liberarPropios, NOMBRE_SECCION, Tienda, TiendaDato } from './tienda';
 import { mostrar, pantallaUnica, UI } from './ui';
+import { alNeutro, amigoDeAqui, escHtml, esNeutro, modoAmigo, paginaDeSalida, ponerNeutro } from './neutro';
+import type { AspectoJugador, JugadorSala, Sala } from './salas/tipos';
 
 const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
 /** Parte de la ganancia del día que llega a la casa como sueldo: un tercio, dividido entre 4 (la casa se paga con calma). */
@@ -57,16 +60,62 @@ let pausado = false;
 let nivelElegido = 1;
 let legendario = false;
 let mandos: Mandos;
-/** Solo (Él), los dos en el mismo celular (dos joysticks) o en línea (cada uno en su celular). */
-type Modo = 'solo' | 'pareja' | 'linea';
+/** Solo (Él), los dos en el mismo celular (dos joysticks), en línea (cada uno en su celular, por la casa) o en una
+ *  sala con código (de 2 a 4: Javier, Laura y amigos). Un amigo no tiene casa: no juega «en línea». */
+type Modo = 'solo' | 'pareja' | 'linea' | 'sala';
 let modo: Modo = (() => {
   try {
     const m = localStorage.getItem(CLAVE_MODO);
-    return m === 'pareja' || m === 'linea' ? m : 'solo';
+    if (m === 'linea' && modoAmigo()) return 'solo';
+    return m === 'pareja' || m === 'linea' || m === 'sala' ? m : 'solo';
   } catch {
     return 'solo';
   }
 })();
+
+// ---------------------------------------------------------------------------------------------------------------
+// Modo neutro: un amigo juega aquí, o hay amigos en la sala. Se esconden los textos de la pareja (los que tienen
+// `data-neutro` en super.html traen su versión neutra) y el corazón escondido pasa a ser un trébol.
+// ---------------------------------------------------------------------------------------------------------------
+function pintarNeutro() {
+  const n = esNeutro();
+  document.body.classList.toggle('neutro', n);
+  document.body.classList.toggle('modo-amigo', modoAmigo());
+  document.title = n ? 'Súper Manía' : 'Súper Manía en Pareja';
+  for (const el of document.querySelectorAll<HTMLElement>('[data-neutro]')) {
+    el.dataset.normal ??= el.innerHTML;
+    el.innerHTML = n ? el.dataset.neutro! : el.dataset.normal;
+  }
+  for (const el of document.querySelectorAll<HTMLElement>('[data-neutro-title]')) {
+    el.dataset.normalTitulo ??= el.title;
+    el.title = n ? el.dataset.neutroTitle! : el.dataset.normalTitulo;
+  }
+  const casa = document.getElementById('btn-casa') as HTMLAnchorElement | null;
+  if (casa) {
+    casa.href = paginaDeSalida();
+    casa.textContent = modoAmigo() ? 'Volver a la sala de juegos' : 'Volver a la casa';
+  }
+  const linea = document.getElementById('btn-modo-linea');
+  if (linea) linea.hidden = modoAmigo();
+  document.querySelector('.modo-juego')?.classList.toggle('cuatro', !modoAmigo());
+}
+alNeutro(pintarNeutro);
+
+/** Colores del «Jugador 2» de un amigo en el mismo celular (nada de los muñecos de fábrica de la pareja). */
+const INVITADO: Record<Rol, AspectoJugador> = {
+  el: { cuerpo: 'el', piel: '#c27f52', pelo: '#3b2418', detalles: { ropa: '#f2c94c', ropa2: '#4a4a52', zapatos: '#f4efe6' } },
+  ella: { cuerpo: 'ella', piel: '#f6c8a4', pelo: '#9a6233', detalles: { ropa: '#3fb5a3', ropa2: '#1d1d24', zapatos: '#e85d5d' } },
+};
+
+/** En el aparato de un amigo, quién juega (solo o con un «Jugador 2» en el mismo celular): su nombre y su muñeco. */
+function equipoLocal(enPareja: boolean): InfoJugador[] | null {
+  const a = amigoDeAqui();
+  if (!a) return null;
+  const yo: InfoJugador = { id: 'el', cuerpo: a.aspecto.cuerpo, nombre: a.nombre, aspecto: a.aspecto, color: '#3f8fd6' };
+  if (!enPareja) return [yo];
+  const otro: Rol = a.aspecto.cuerpo === 'el' ? 'ella' : 'el';
+  return [yo, { id: 'ella', cuerpo: otro, nombre: 'Jugador 2', aspecto: INVITADO[otro], color: '#e8577a' }];
+}
 
 async function iniciar() {
   mundo = new Mundo($('lienzo') as HTMLCanvasElement);
@@ -99,7 +148,11 @@ async function iniciar() {
   partida = guardado.cargar(tiendaDato);
   await montarFondo();
   conectarBotones();
+  pintarNeutro();
   abrirMenu();
+  // Entrar directo a la sala de alguien (desde «Unirme con un código» de la sala de juegos de amigos)
+  const codigoSala = params.get('sala');
+  if (codigoSala) void unirseConCodigo(codigoSala);
   // En línea: se escuchan invitaciones si se entró por el aviso de la casa o si el último modo fue en línea
   if (unirse) {
     sala('Conectando…', 'Entrando a la tienda de tu pareja…', { esperando: true, no: 'Cancelar' });
@@ -155,9 +208,10 @@ async function iniciar() {
     } else if (juego && !espejo && !pausado && !juego.terminado) {
       // En pruebas (?bot&rapido=N) se simulan N pasos fijos de 0,1 s por cuadro
       const pasos = BOT ? RAPIDO : 1;
-      if (linea && canal) {
-        // En línea: el joystick de este celular mueve al personaje propio y el del otro llega por el canal
-        for (const p of juego.jugadores) p.mando = p.rol === canal.yo ? mandos.leer(0) : linea.mandoRemoto;
+      const l = linea;
+      if (l) {
+        // En línea: el joystick de este celular mueve al personaje propio y el de los demás llega por el canal (o la sala)
+        for (const p of juego.jugadores) p.mando = p.id === l.yo ? mandos.leer(0) : l.remotos.find((r) => r.id === p.id)?.mando ?? { x: 0, y: 0 };
       } else if (!BOT) juego.jugadores.forEach((p, i) => (p.mando = mandos.leer(i)));
       for (let k = 0; k < pasos && !juego.terminado; k++) {
         if (BOT) piloto(juego);
@@ -264,6 +318,7 @@ function abrirTarjeta(n: number) {
   $('btn-modo-solo').setAttribute('aria-pressed', String(modo === 'solo'));
   $('btn-modo-pareja').setAttribute('aria-pressed', String(modo === 'pareja'));
   $('btn-modo-linea').setAttribute('aria-pressed', String(modo === 'linea'));
+  $('btn-modo-sala').setAttribute('aria-pressed', String(modo === 'sala'));
   pintarNotaModo();
   if (modo === 'linea') void asegurarCanal().then(pintarNotaModo);
   $('tarjeta-novedad').textContent = legendario
@@ -288,7 +343,7 @@ function abrirTarjeta(n: number) {
     ul.innerHTML = `<li class="${partida.lunas[n] ? 'hecha' : ''} luna"><span class="sello-mini"></span>${nv.legendario.luna.texto.solitario}</li>`;
   } else {
     const previas = partida.estrellas[n] ?? [];
-    ul.innerHTML = nv.estrellas.map((e, i) => `<li class="${previas[i] ? 'hecha' : ''}"><span class="sello-mini"></span>${textoDe(e.texto)}${i === 0 ? ' <em>(obligatoria)</em>' : ''}</li>`).join('');
+    ul.innerHTML = nv.estrellas.map((e, i) => `<li class="${previas[i] ? 'hecha' : ''}"><span class="sello-mini"></span>${textoNeutro(textoDe(e.texto))}${i === 0 ? ' <em>(obligatoria)</em>' : ''}</li>`).join('');
   }
   const bl = $('btn-legendario');
   bl.hidden = !tres || !nv.legendario;
@@ -296,20 +351,40 @@ function abrirTarjeta(n: number) {
   bl.setAttribute('aria-pressed', String(legendario));
 }
 
-/** Copia del nivel con las reglas del modo legendario y, en pareja, con los clientes y las metas de los dos
- *  (puestos donde el juego lee las de uno solo). */
-function nivelDeJuego(n: number, pareja = modo !== 'solo'): NivelDato {
+/** Cuántos juegan con el modo de la tarjeta (en una sala lo dice la sala). */
+const jugadoresDelModo = () => (modo === 'solo' ? 1 : 2);
+
+/** Con amigos los textos dicen «en equipo» (no «en pareja»). */
+const textoNeutro = (t: string) => (esNeutro() ? t.replace(/en pareja/gi, 'en equipo') : t);
+
+/**
+ * Copia del nivel con las reglas del modo legendario y, con más de uno, con los clientes y las metas de todos
+ * (puestas donde el juego lee las de uno solo). De a dos se usa la columna «pareja» de niveles.json; de a tres o
+ * cuatro, un 15 % más de clientes por cada uno (la caja es una sola: más gente la ahogaría) y las metas en
+ * proporción (los combos en equipo salen mucho más seguido entre cuatro).
+ */
+function nivelDeJuego(n: number, jugadores = jugadoresDelModo()): NivelDato {
   const base = niveles[n - 1];
   let nv: NivelDato = base;
   if (legendario && base.legendario) nv = { ...base, clientes: base.legendario.clientes, paciencia: base.legendario.paciencia };
-  if (!pareja) return nv;
-  const x = nv.clientes.pareja / Math.max(1, nv.clientes.solitario);
+  if (jugadores <= 1) return { ...nv, estrellas: nv.estrellas.map((e) => ({ ...e, texto: textoNeutro(textoDe(e.texto)) })) };
+  const k = 1 + 0.15 * Math.max(0, Math.min(4, jugadores) - 2);
+  const clientes = Math.round(nv.clientes.pareja * k);
+  const x = clientes / Math.max(1, nv.clientes.solitario);
   const par = <T,>(v: T | { solitario: T; pareja: T }): T => (typeof v === 'object' && v !== null && 'pareja' in (v as object) ? (v as { pareja: T }).pareja : v as T);
+  const escalar = (e: NivelDato['estrellas'][number]) => {
+    const m = par(e.meta);
+    const t = par(e.texto);
+    if (k === 1) return { ...e, texto: textoNeutro(t), meta: m };
+    const f = e.clave === 'equipo' ? 1 + 0.5 * (jugadores - 2) : ['ventas', 'propinas', 'perdidos'].includes(e.clave) ? k : 1;
+    const nueva = f === 1 || m === 0 ? m : Math.round(m * f);
+    return { ...e, meta: nueva, texto: textoNeutro((nueva === m ? t : t.replace(/\d+/, String(nueva))).replace(/en pareja/gi, 'en equipo')) };
+  };
   const l = nv.legendario;
   return {
     ...nv,
-    clientes: { solitario: nv.clientes.pareja, pareja: nv.clientes.pareja },
-    estrellas: nv.estrellas.map((e) => ({ ...e, texto: par(e.texto), meta: par(e.meta) })),
+    clientes: { solitario: clientes, pareja: clientes },
+    estrellas: nv.estrellas.map(escalar),
     legendario: l && {
       ...l,
       luna: {
@@ -336,7 +411,7 @@ async function jugar(n: number) {
   // El día empieza a correr solo cuando todo está cargado
   juego = null;
   const enPareja = modo === 'pareja';
-  const nuevo = new Juego(mundo, nivelDeJuego(n, enPareja), productos, tiendaDato, partida.sitios, escalas, partida.mejoras, legendario, enPareja);
+  const nuevo = new Juego(mundo, nivelDeJuego(n, enPareja ? 2 : 1), productos, tiendaDato, partida.sitios, escalas, partida.mejoras, legendario, enPareja, equipoLocal(enPareja));
   await nuevo.preparar();
   juego = nuevo;
   $('cargando-nivel').hidden = true;
@@ -359,9 +434,12 @@ async function jugar(n: number) {
   pausado = false;
 }
 
-/** Fin del día: estrellas, monedas y el sueldo para la casa (en línea, el sueldo lo pone solo el que invitó, porque
- *  la casa es una sola). */
-function terminarDia(j: Juego, n: number, r: Resultado, sueldoDe: Rol | null = null) {
+/**
+ * Fin del día: estrellas, monedas y el sueldo para la casa. La casa es una sola: en línea lo pone solo el que invitó
+ * (`sueldoDe` es el nombre del otro cuando le toca a él); en una sala, el primero de la pareja que esté en ella. A
+ * un amigo no se le paga nada a ninguna casa (`sueldoDe` = '' esconde la línea).
+ */
+function terminarDia(j: Juego, n: number, r: Resultado, sueldoDe: string | null = null) {
   const antes = partida.estrellas[n] ?? [false, false, false];
   const fichasAntes = guardado.fichasGanadas(partida);
   if (!j.legendario) partida.estrellas[n] = antes.map((e, i) => e || r.estrellas[i]);
@@ -373,8 +451,8 @@ function terminarDia(j: Juego, n: number, r: Resultado, sueldoDe: Rol | null = n
   partida.dinero += r.ganancia;
   guardado.guardar(partida);
   // Una parte de lo ganado pasa a la casa (Nuestro Hogar) como sueldo (al menos 1 moneda si se ganó algo)
-  const sueldo = r.ganancia > 0 ? Math.max(1, Math.round(r.ganancia * SUELDO_FRACCION)) : 0;
-  if (!sueldoDe) {
+  const sueldo = r.ganancia > 0 && !modoAmigo() && sueldoDe !== '' ? Math.max(1, Math.round(r.ganancia * SUELDO_FRACCION)) : 0;
+  if (!sueldoDe && sueldo) {
     try {
       localStorage.setItem(CLAVE_SUELDO, String((Number(localStorage.getItem(CLAVE_SUELDO)) || 0) + sueldo));
     } catch {
@@ -383,11 +461,16 @@ function terminarDia(j: Juego, n: number, r: Resultado, sueldoDe: Rol | null = n
   }
   $('rec-sueldo').hidden = sueldo <= 0;
   $('rec-sueldo').textContent = sueldoDe
-    ? `Sueldo para la casa: +${sueldo} monedas (llegan por el celular de ${NOMBRE[sueldoDe]})`
+    ? `Sueldo para la casa: +${sueldo} monedas (llegan por el celular de ${sueldoDe})`
     : `Sueldo para la casa: +${sueldo} monedas`;
   ui.terminarNivel();
   mandos.mostrar(false);
   ui.resultado(j, r, antes);
+  // En una sala: todos vuelven a la sala de espera (el anfitrión escoge el día que sigue)
+  const enSala = !!salaActual;
+  for (const id of ['btn-siguiente', 'btn-repetir', 'btn-rmejoras', 'btn-rmenu']) $(id).classList.toggle('oculto-sala', enSala);
+  $('btn-rsala').hidden = !enSala;
+  $('btn-rsalir').hidden = !enSala;
   pantallaUnica('resultado');
   (window as any).__resultado = r;
 }
@@ -472,7 +555,7 @@ function pintarMejoras() {
 }
 
 function conectarBotones() {
-  $('btn-abrir').addEventListener('click', () => void (modo === 'linea' ? invitar() : jugar(nivelElegido)));
+  $('btn-abrir').addEventListener('click', () => void (modo === 'linea' ? invitar() : modo === 'sala' ? abrirSala() : jugar(nivelElegido)));
   $('btn-tarjeta-volver').addEventListener('click', abrirMenu);
   const elegirModo = (m: Modo) => {
     modo = m;
@@ -486,6 +569,8 @@ function conectarBotones() {
   $('btn-modo-solo').addEventListener('click', () => elegirModo('solo'));
   $('btn-modo-pareja').addEventListener('click', () => elegirModo('pareja'));
   $('btn-modo-linea').addEventListener('click', () => elegirModo('linea'));
+  $('btn-modo-sala').addEventListener('click', () => elegirModo('sala'));
+  $('btn-unirme').addEventListener('click', () => void unirseConCodigo());
   $('btn-sala-si').addEventListener('click', () => {
     if (invitacionVista) aceptar(invitacionVista);
   });
@@ -524,23 +609,29 @@ function conectarBotones() {
   }, { once: true });
   $('btn-pausa').addEventListener('click', () => {
     pausar();
-    // En línea se pausan los dos celulares
-    if (linea?.fase === 'jugando') {
-      linea.pausaPropia = true;
-      canal?.mandar({ t: 'pausa', id: linea.id, si: true });
+    // En línea (y en la sala) se pausan todos los celulares
+    const l = linea;
+    if (l?.fase === 'jugando') {
+      l.pausaPropia = true;
+      enviar(l, { t: 'pausa', id: l.id, si: true });
     }
   });
   $('btn-continuar').addEventListener('click', () => {
-    if (linea?.pausaPorConexion) return;
+    const l = linea;
+    if (l?.pausaPorConexion) return;
     seguir();
-    if (linea?.fase === 'jugando') {
-      linea.pausaPropia = linea.pausaOtro = false;
-      canal?.mandar({ t: 'pausa', id: linea.id, si: false });
+    if (l?.fase === 'jugando') {
+      l.pausaPropia = false;
+      for (const r of l.remotos) r.pausa = false;
+      enviar(l, { t: 'pausa', id: l.id, si: false });
     }
   });
   $('btn-salir').addEventListener('click', async () => {
-    if (linea) {
-      canal?.mandar({ t: 'salir', id: linea.id });
+    const l = linea;
+    if (l) {
+      enviar(l, { t: 'salir', id: l.id });
+      // (en una sala, salir del día es salir de la sala: si era el anfitrión, la sala se acaba para todos)
+      if (l.sala) return void salirDeLinea('');
       cerrarLinea();
     }
     pausado = false;
@@ -566,6 +657,9 @@ function conectarBotones() {
     await montarFondo();
     abrirMenu();
   });
+  // En una sala, después del tiquete todos vuelven a la sala de espera (o se salen)
+  $('btn-rsala').addEventListener('click', () => terminarDiaSala('sala'));
+  $('btn-rsalir').addEventListener('click', () => terminarDiaSala('salir'));
   $('btn-borrar').addEventListener('click', async () => {
     const b = $('btn-borrar');
     if (b.dataset.confirmar !== '1') {
@@ -580,6 +674,21 @@ function conectarBotones() {
     await montarFondo();
     abrirMenu();
   });
+  $('codigo-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const c = normalizar($<HTMLInputElement>('codigo-input').value);
+    if (c.length !== 5) {
+      $('codigo-error').textContent = 'El código tiene 5 letras y números.';
+      return;
+    }
+    pedirCodigoListo?.(c);
+  });
+  $<HTMLInputElement>('codigo-input').addEventListener('input', () => {
+    const i = $<HTMLInputElement>('codigo-input');
+    i.value = normalizar(i.value);
+    $('codigo-error').textContent = '';
+  });
+  $('btn-codigo-no').addEventListener('click', () => pedirCodigoListo?.(null));
   const lienzo = $('lienzo');
   let inicio = { x: 0, y: 0 };
   lienzo.addEventListener('pointerdown', (e) => {
@@ -590,17 +699,18 @@ function conectarBotones() {
     if (!juego || pausado || juego.terminado) return;
     if (Math.hypot(e.clientX - inicio.x, e.clientY - inicio.y) > 12) return;
     // En línea, el invitado le manda al anfitrión lo que tocó (y cada uno toca solo para su personaje)
-    if (linea?.espejo && canal) {
-      const o = linea.espejo.orden(e.clientX, e.clientY);
+    const l = linea;
+    if (l?.espejo) {
+      const o = l.espejo.orden(e.clientX, e.clientY);
       if (!o) return;
       if (typeof o === 'string') avisoToque(o);
       else {
-        canal.mandar({ t: 'orden', id: linea.id, o });
+        enviarAlAnfitrion(l, { t: 'orden', id: l.id, o });
         sonido.toque();
       }
       return;
     }
-    const yo = linea && canal ? juego.jugadores.find((p) => p.rol === canal!.yo) : undefined;
+    const yo = l ? juego.jugadores.find((p) => p.id === l.yo) : undefined;
     const r = juego.tocar(e.clientX, e.clientY, yo);
     avisoToque(r);
     if (r && r !== 'ya' && r !== 'otro') sonido.toque();
@@ -609,46 +719,64 @@ function conectarBotones() {
     if (e.key === 'Escape' && juego && !juego.terminado) $('btn-pausa').click();
   });
   // Si el celular cambia de app o se apaga la pantalla, el día se pausa y la música calla (segundo_plano.ts); en
-  // línea al otro le sale «se cortó la conexión» hasta que vuelva
+  // línea al otro le sale «se cortó la conexión» hasta que vuelva (en una sala eso lo avisa la sala sola)
   segundoPlano.alPausar(() => {
     if (juego && !juego.terminado && !pausado) $('btn-pausa').click();
-    if (linea && canal && linea.fase !== 'invitando') canal.mandar({ t: 'fuera', id: linea.id, si: true });
+    const l = linea;
+    if (l && !l.sala && l.fase !== 'invitando') enviar(l, { t: 'fuera', id: l.id, si: true });
   });
   segundoPlano.alReanudar((ms) => {
     sonido.activar();
     const l = linea;
-    if (!l || !canal || l.fase === 'invitando') return;
-    // Mientras estaba afuera este celular no oía al otro: se le da un rato antes de dar la conexión por perdida
-    l.ultimoDelOtro = performance.now();
+    if (!l || l.fase === 'invitando') return;
+    // Mientras estaba afuera este celular no oía a los demás: se les da un rato antes de dar la conexión por perdida
+    for (const r of l.remotos) r.ultimo = performance.now();
     if (ms / 1000 > LINEA_ADIOS && (l.fase === 'jugando' || l.fase === 'cargando')) {
-      canal.mandar({ t: 'salir', id: l.id });
+      enviar(l, { t: 'salir', id: l.id });
       void salirDeLinea('Estuviste mucho rato por fuera: la partida en línea se terminó.');
       return;
     }
-    canal.mandar({ t: 'fuera', id: l.id, si: false });
-    canal.mandar({ t: 'latido', id: l.id });
+    if (l.sala) return;
+    enviar(l, { t: 'fuera', id: l.id, si: false });
+    enviar(l, { t: 'latido', id: l.id });
   });
-  // Se cierra la página (o se vuelve a la casa) en medio de una partida en línea: el otro se entera de una
+  // Se cierra la página (o se vuelve a la casa) en medio de una partida en línea: el otro se entera de una (en una
+  // sala, la sala manda su propio «adiós»)
   window.addEventListener('pagehide', () => {
-    if (linea && canal) canal.mandar(linea.fase === 'invitando' ? { t: 'cancelar', id: linea.id } : { t: 'salir', id: linea.id });
+    const l = linea;
+    if (l && !l.sala) enviar(l, l.fase === 'invitando' ? { t: 'cancelar', id: l.id } : { t: 'salir', id: l.id });
   });
-  // Botón «atrás» de Android (en el computador, la tecla Esc): pausa el día, vuelve al menú o sale a la casa
+  // Botón «atrás» de Android (en el computador, la tecla Esc): pausa el día, vuelve al menú o sale (a la casa, o a la
+  // sala de juegos de amigos)
   const atras = () => {
     const visible = (id: string) => !$(id).hidden;
-    if (juego && !juego.terminado && !pausado) $('btn-pausa').click();
+    const espera = document.querySelector<HTMLElement>('.sala-espera.visible [data-a="salir"]');
+    const dia = document.querySelector<HTMLElement>('.dia-sala [data-cerrar]');
+    if (dia) dia.click();
+    else if (espera) espera.click();
+    else if (juego && !juego.terminado && !pausado) $('btn-pausa').click();
+    else if (visible('codigo')) $('btn-codigo-no').click();
     else if (visible('sala')) $('btn-sala-no').click();
     else if (visible('pausa')) $('btn-continuar').click();
-    else if (visible('resultado')) $('btn-rmenu').click();
+    else if (visible('resultado')) $(salaActual ? 'btn-rsala' : 'btn-rmenu').click();
     else if (visible('tarjeta') || visible('mejoras') || visible('como')) abrirMenu();
-    else location.href = './index.html';
+    else location.href = paginaDeSalida();
   };
   if (Capacitor.isNativePlatform()) void App.addListener('backButton', atras);
   else document.addEventListener('keydown', (e) => e.key === 'Escape' && !e.repeat && atras());
 }
 
+/** Lo que alguien escribió → un código de sala (mayúsculas, sin I, L, O, 0 ni 1; como `normalizarCodigo` de las salas). */
+const normalizar = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, '').split('').filter((c) => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'.includes(c)).join('').slice(0, 5);
+
 // ---------------------------------------------------------------------------------------------------------------
-// En línea: Él en Bucaramanga y Ella en Medellín, cada uno en su celular. El que abre la tienda (anfitrión) invita,
-// simula el día con sus vitrinas y mejoras y manda fotos; el otro (invitado) manda su joystick y sus toques.
+// En línea, cada uno en su celular. Dos maneras:
+// - Él y Ella por el canal de la pareja (linea_super.ts): el que abre la tienda invita y al otro le llega el aviso en
+//   la casa.
+// - Una sala con código (src/salas/): de 2 a 4, Javier, Laura y amigos; uno abre la sala y los demás entran con el
+//   código de 5 letras. Con amigos adentro todo va en modo neutro.
+// En las dos, el anfitrión simula el día con sus vitrinas y mejoras y manda fotos; los demás mandan su joystick y sus
+// toques. Los mensajes del día son los mismos (`Mensaje` de linea_super.ts).
 // ---------------------------------------------------------------------------------------------------------------
 const NOMBRE: Record<Rol, string> = { el: 'Él', ella: 'Ella' };
 const otroRol = (r: Rol): Rol => (r === 'el' ? 'ella' : 'el');
@@ -658,12 +786,31 @@ const r2 = (v: number) => Math.round(v * 100) / 100;
 /** Sin noticias del otro celular por estos segundos: se pausa; por más de LINEA_ADIOS, se acaba la partida. */
 const LINEA_PAUSA = 5;
 const LINEA_ADIOS = 150;
+/** Mensajes del súper dentro de una sala (todos van con este tipo; adentro va el `Mensaje` de siempre). */
+const MSJ_SALA = 'super';
 
 interface Invitacion {
   id: string;
   nivel: number;
   legendario: boolean;
   de: Rol;
+}
+/** Otro jugador del día (en pareja hay uno solo; en una sala, hasta tres). */
+interface Remoto {
+  /** Su id del día («el»/«ella» entre la pareja; «j1»… en una sala). */
+  id: string;
+  nombre: string;
+  /** Su id en la sala (para mandarle algo solo a él). */
+  salaId?: string;
+  anfitrion: boolean;
+  mando: { x: number; y: number };
+  listo: boolean;
+  /** Última vez que se supo de él (pareja: cualquier mensaje). */
+  ultimo: number;
+  /** Se fue a segundo plano (pareja: lo avisa él; en la sala lo dice la sala). */
+  fuera: boolean;
+  /** Pausó el juego. */
+  pausa: boolean;
 }
 interface Linea {
   id: string;
@@ -675,20 +822,21 @@ interface Linea {
   /** El día ya montado en este celular (se vuelve `juego` al arrancar). */
   dia: Juego | null;
   espejo: Espejo | null;
-  otroListo: boolean;
-  ultimoDelOtro: number;
+  /** Mi id del día. */
+  yo: string;
+  remotos: Remoto[];
+  /** La sala por la que viaja todo (null: el canal de la pareja). */
+  sala: Sala | null;
+  /** Desde cuándo está cargando (para no esperar para siempre a alguien que no carga). */
+  desde: number;
   nFoto: number;
   /** Eventos del día ya mandados en alguna foto. */
   enviados: number;
   relojFoto: number;
-  mandoRemoto: { x: number; y: number };
   mandoEnviado: { x: number; y: number; t: number };
   pausaPorConexion: boolean;
-  /** Quién pausó (para volver a la pausa correcta si la conexión regresa). */
+  /** Este celular pausó (para volver a la pausa correcta si la conexión regresa). */
   pausaPropia: boolean;
-  pausaOtro: boolean;
-  /** El otro celular se fue a segundo plano (otra app, pantalla bloqueada): cuenta como conexión cortada. */
-  otroFuera: boolean;
   timers: number[];
 }
 
@@ -702,13 +850,27 @@ const avisadas = new Set<string>();
 /** Enlace del aviso de la casa (super.html?unirse=...): esa invitación se acepta sola. */
 const unirse = params.get('unirse');
 
+/** Manda un mensaje del día a todos (o a uno). Las fotos y el joystick van «rápidos» (sin reenvío). */
+function enviar(l: Linea, m: Mensaje, a?: Remoto) {
+  if (!l.sala) {
+    canal?.mandar(m);
+    return;
+  }
+  const rapido = m.t === 'foto' || m.t === 'mando';
+  l.sala.mandar(MSJ_SALA, m, { rapido, ...(a?.salaId ? { a: a.salaId } : {}) });
+}
+/** Lo que solo le importa al anfitrión (joystick, toques, ayudas). */
+function enviarAlAnfitrion(l: Linea, m: Mensaje) {
+  enviar(l, m, l.remotos.find((r) => r.anfitrion));
+}
+
 function asegurarCanal(): Promise<boolean> {
   if (canal?.listo) return Promise.resolve(true);
   if (conectando) return conectando;
   if (canal) canal.cerrar();
   const c = new CanalSuper('el');
   canal = c;
-  c.alMensaje = alMensaje;
+  c.alMensaje = (m) => alMensaje(m);
   c.alCambiar = () => {
     if (!$('tarjeta').hidden) pintarNotaModo();
   };
@@ -719,9 +881,15 @@ function asegurarCanal(): Promise<boolean> {
 function pintarNotaModo() {
   const n = $('modo-nota');
   n.classList.remove('en-linea-si');
-  if (modo === 'solo') n.textContent = 'Él solo, con el joystick de la izquierda.';
-  else if (modo === 'pareja') n.textContent = 'Él con el joystick de la izquierda y Ella con el de la derecha. Vienen más clientes. ¡Cuidado con chocarse!';
-  else if (!canal || conectando) n.textContent = 'Conectando con la casa en línea…';
+  const amigo = amigoDeAqui();
+  if (modo === 'solo') n.textContent = amigo ? 'Tú solo, con el joystick de la izquierda.' : 'Él solo, con el joystick de la izquierda.';
+  else if (modo === 'pareja') {
+    n.textContent = amigo
+      ? 'Tú con el joystick de la izquierda y el Jugador 2 con el de la derecha. Vienen más clientes. ¡Cuidado con chocarse!'
+      : 'Él con el joystick de la izquierda y Ella con el de la derecha. Vienen más clientes. ¡Cuidado con chocarse!';
+  } else if (modo === 'sala') {
+    n.textContent = 'Abres una sala y les pasas el código: de 2 a 4, cada uno en su celular, con tus vitrinas y mejoras. Los demás entran con «Unirme con código».';
+  } else if (!canal || conectando) n.textContent = 'Conectando con la casa en línea…';
   else if (!canal.listo) n.textContent = canal.error || 'No se pudo conectar. Revisa el internet e intenta otra vez.';
   else {
     const o = otroRol(canal.yo);
@@ -742,18 +910,26 @@ function sala(titulo: string, texto: string, o: { esperando?: boolean; no?: stri
   $('btn-sala-si').textContent = o.si ?? '';
 }
 
-function nuevaLinea(id: string, anfitrion: boolean, nivel: number, leg: boolean): Linea {
+function nuevaLinea(id: string, anfitrion: boolean, nivel: number, leg: boolean, yo: string, remotos: Remoto[], s: Sala | null = null): Linea {
   const l: Linea = {
-    id, anfitrion, fase: anfitrion ? 'invitando' : 'esperando', nivel, legendario: leg, config: null, dia: null, espejo: null,
-    otroListo: false, ultimoDelOtro: performance.now(), nFoto: 0, enviados: 0, relojFoto: 0, mandoRemoto: { x: 0, y: 0 },
-    mandoEnviado: { x: 0, y: 0, t: 0 }, pausaPorConexion: false, pausaPropia: false, pausaOtro: false, otroFuera: false, timers: [],
+    id, anfitrion, fase: s ? 'cargando' : anfitrion ? 'invitando' : 'esperando', nivel, legendario: leg, config: null, dia: null, espejo: null,
+    yo, remotos, sala: s, desde: performance.now(), nFoto: 0, enviados: 0, relojFoto: 0, mandoEnviado: { x: 0, y: 0, t: 0 },
+    pausaPorConexion: false, pausaPropia: false, timers: [],
   };
   // «Sigo aquí» cada segundo mientras no viajan fotos ni joystick (esperando, cargando o en pausa); en segundo plano
-  // no se manda: así el otro ve que se cortó
-  l.timers.push(window.setInterval(() => {
-    if (linea === l && !segundoPlano.enPausa() && l.fase !== 'invitando' && (l.fase !== 'jugando' || pausado)) canal?.mandar({ t: 'latido', id: l.id });
-  }, 1000));
+  // no se manda: así el otro ve que se cortó (en una sala el latido lo lleva la sala)
+  if (!s) {
+    l.timers.push(window.setInterval(() => {
+      if (linea === l && !segundoPlano.enPausa() && l.fase !== 'invitando' && (l.fase !== 'jugando' || pausado)) enviar(l, { t: 'latido', id: l.id });
+    }, 1000));
+  }
   return l;
+}
+
+/** El otro de la pareja, como «remoto» del día. */
+function remotoPareja(yo: Rol, anfitrion: boolean): Remoto {
+  const o = otroRol(yo);
+  return { id: o, nombre: NOMBRE[o], anfitrion, mando: { x: 0, y: 0 }, listo: false, ultimo: performance.now(), fuera: false, pausa: false };
 }
 
 function cerrarLinea() {
@@ -769,16 +945,22 @@ function cerrarLinea() {
   $('cargando-nivel').hidden = true;
 }
 
-/** Deja la partida en línea y vuelve al menú con un aviso. */
+/** Deja la partida en línea y vuelve al menú con un aviso (en una sala, también deja la sala). */
 async function salirDeLinea(aviso: string) {
+  const enSala = !!linea?.sala || !!salaActual;
   cerrarLinea();
   pausado = false;
   $('pausa-nota').hidden = true;
   juego?.destruir();
   juego = null;
+  if (enSala && finDiaSala) {
+    avisoAlSalir = aviso;
+    terminarDiaSala('salir');
+    return;
+  }
   await montarFondo();
   abrirMenu();
-  ui.aviso(aviso);
+  if (aviso) ui.aviso(aviso);
 }
 
 /** El anfitrión abre la tienda e invita al otro (por el canal y, si no está en el súper, por la casa). */
@@ -793,7 +975,7 @@ async function invitar() {
   const c = canal!;
   const o = otroRol(c.yo);
   const id = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
-  const l = nuevaLinea(id, true, nivelElegido, legendario);
+  const l = nuevaLinea(id, true, nivelElegido, legendario, c.yo, [remotoPareja(c.yo, false)]);
   linea = l;
   const inv: Mensaje = { t: 'inv', id, nivel: nivelElegido, legendario, de: c.yo };
   c.mandar(inv);
@@ -814,7 +996,7 @@ async function invitar() {
 
 function llegaInvitacion(m: Invitacion) {
   const c = canal!;
-  if (m.de === c.yo) return;
+  if (m.de === c.yo || salaActual) return;
   if (linea) {
     // Ya aceptada (la respuesta se perdió): se repite
     if (!linea.anfitrion && linea.id === m.id && linea.fase === 'esperando') c.mandar({ t: 'resp', id: m.id, si: true });
@@ -847,7 +1029,7 @@ function aceptar(inv: Invitacion) {
     juego.destruir();
     juego = null;
   }
-  const l = nuevaLinea(inv.id, false, inv.nivel, inv.legendario);
+  const l = nuevaLinea(inv.id, false, inv.nivel, inv.legendario, c.yo, [remotoPareja(c.yo, true)]);
   linea = l;
   c.mandar({ t: 'resp', id: inv.id, si: true });
   sala('¡Listo!', `Esperando a que ${NOMBRE[inv.de]} abra la tienda…`, { esperando: true, no: 'Cancelar' });
@@ -859,11 +1041,27 @@ function aceptar(inv: Invitacion) {
 }
 
 async function cancelarSala() {
+  // Abriendo o buscando una sala con código: se cancela (lo que estaba en camino se suelta al llegar)
+  if (turnoAbrir.abriendo) {
+    turnoAbrir.abriendo = false;
+    turnoAbrir.n++;
+    await montarFondo();
+    if (modo === 'sala' && !turnoAbrir.uniendo) abrirTarjeta(nivelElegido);
+    else abrirMenu();
+    return;
+  }
+  // Cargando el día de la sala: se sale de la sala
+  if (salaActual) {
+    const l = linea;
+    if (l) enviar(l, { t: 'salir', id: l.id });
+    await salirDeLinea('');
+    return;
+  }
   const l = linea;
   if (invitacionVista && canal) canal.mandar({ t: 'resp', id: invitacionVista.id, si: false });
   invitacionVista = null;
   if (l) {
-    canal?.mandar(l.fase === 'invitando' ? { t: 'cancelar', id: l.id } : { t: 'salir', id: l.id });
+    enviar(l, l.fase === 'invitando' ? { t: 'cancelar', id: l.id } : { t: 'salir', id: l.id });
     cerrarLinea();
   }
   if (juego) return;
@@ -872,7 +1070,7 @@ async function cancelarSala() {
   else abrirMenu();
 }
 
-/** Monta el día en este celular (el anfitrión, para simularlo; el invitado, como espejo). */
+/** Monta el día en este celular (el anfitrión, para simularlo; los demás, como espejo). */
 async function cargarDia(l: Linea): Promise<boolean> {
   const cfg = l.config!;
   nivelElegido = cfg.nivel;
@@ -885,56 +1083,61 @@ async function cargarDia(l: Linea): Promise<boolean> {
     liberarPropios(fondo.grupo);
     fondo = null;
   }
-  const nuevo = new Juego(mundo, nivelDeJuego(cfg.nivel, true), productos, tiendaDato, cfg.sitios, escalas, cfg.mejoras, cfg.legendario, true);
+  const equipo = cfg.equipo?.length ? cfg.equipo : null;
+  const nuevo = new Juego(mundo, nivelDeJuego(cfg.nivel, equipo?.length ?? 2), productos, tiendaDato, cfg.sitios, escalas, cfg.mejoras, cfg.legendario, true, equipo);
   await nuevo.preparar(!l.anfitrion);
   if (linea !== l) {
     nuevo.destruir();
     return false;
   }
   l.dia = nuevo;
-  if (!l.anfitrion) l.espejo = new Espejo(nuevo, canal!.yo);
+  if (!l.anfitrion) l.espejo = new Espejo(nuevo, l.yo);
   return true;
 }
 
 async function empezarAnfitrion(l: Linea) {
-  const c = canal!;
   l.fase = 'cargando';
+  l.desde = performance.now();
   l.config = { nivel: l.nivel, legendario: l.legendario, sitios: { ...partida.sitios }, mejoras: { ...partida.mejoras } };
   const inicio: Mensaje = { t: 'inicio', id: l.id, config: l.config };
-  c.mandar(inicio);
-  l.timers.push(window.setInterval(() => linea === l && !l.otroListo && c.mandar(inicio), 3000));
+  enviar(l, inicio);
+  l.timers.push(window.setInterval(() => linea === l && !l.remotos.every((r) => r.listo) && enviar(l, inicio), 3000));
   sala('¡Aceptó!', 'Acomodando la tienda en los dos celulares…', { esperando: true, no: 'Cancelar' });
   if (await cargarDia(l)) intentarArrancar();
 }
 
 async function empezarInvitado(l: Linea, config: ConfigDia) {
   l.fase = 'cargando';
+  l.desde = performance.now();
   l.config = config;
   sala('¡A trabajar!', 'Acomodando la tienda…', { esperando: true, no: 'Cancelar' });
-  if (await cargarDia(l)) canal?.mandar({ t: 'listo', id: l.id });
+  if (await cargarDia(l)) enviar(l, { t: 'listo', id: l.id });
 }
 
-function intentarArrancar() {
+/** El anfitrión arranca cuando todos los demás tienen la tienda lista (en la sala, los que sigan en ella). */
+function intentarArrancar(aunque = false) {
   const l = linea;
-  if (!l || !l.anfitrion || !l.dia || !l.otroListo || l.fase !== 'cargando') return;
+  if (!l || !l.anfitrion || !l.dia || l.fase !== 'cargando') return;
+  const presentes = l.sala ? new Set(l.sala.jugadores.map((j) => j.id)) : null;
+  const faltan = l.remotos.filter((r) => !r.listo && (!presentes || presentes.has(r.salaId ?? '')));
+  if (faltan.length && !aunque) return;
   arrancarDia(l);
   enviarFoto(l);
 }
 
 function arrancarDia(l: Linea) {
-  const c = canal!;
   const j = l.dia!;
   l.fase = 'jugando';
-  l.ultimoDelOtro = performance.now();
+  for (const r of l.remotos) r.ultimo = performance.now();
   juego = j;
   pausado = false;
   pantallaUnica(null);
   sonido.activar();
   sonido.musica.iniciar('juego', j.legendario ? 112 : 100);
-  ui.empezarNivel(j, partida.ayudas);
+  const yo = j.jugadores.find((p) => p.id === l.yo) ?? j.jugador;
+  ui.empezarNivel(j, partida.ayudas, yo);
   mandos.mostrar(true, false);
-  const yo = j.jugadores.find((p) => p.rol === c.yo) ?? j.jugador;
-  const ordenar = (o: Orden) => c.mandar({ t: 'orden', id: l.id, o });
+  const ordenar = (o: Orden) => enviarAlAnfitrion(l, { t: 'orden', id: l.id, o });
   ui.alTocarAlerta = (id) => {
     if (!l.anfitrion) return ordenar({ tipo: 'reponer', vitrina: id });
     const v = j.tienda.vitrinas.find((x) => x.dato.id === id);
@@ -944,31 +1147,44 @@ function arrancarDia(l: Linea) {
     if ((partida.ayudas[id] ?? 0) <= 0) return;
     if (l.anfitrion) {
       if (!j.usarAyuda(id)) return;
-    } else c.mandar({ t: 'ayuda', id: l.id, ayuda: id });
+    } else enviarAlAnfitrion(l, { t: 'ayuda', id: l.id, ayuda: id });
     partida.ayudas[id]--;
     guardado.guardar(partida);
     ui.pintarAyudas(partida.ayudas, j);
   };
-  ui.alTomarCorazon = () => (l.anfitrion ? j.tomarCorazon() : c.mandar({ t: 'corazon', id: l.id }));
+  ui.alTomarCorazon = () => (l.anfitrion ? j.tomarCorazon() : enviarAlAnfitrion(l, { t: 'corazon', id: l.id }));
   if (l.anfitrion) {
     j.alTerminar = (r) => {
       enviarFoto(l);
       const fin: Mensaje = { t: 'fin', id: l.id, r };
-      c.mandar(fin);
-      window.setTimeout(() => c.mandar(fin), 800);
+      enviar(l, fin);
+      // (por el canal de la pareja se repite; en la sala ya va fiable)
+      if (!l.sala) window.setTimeout(() => enviar(l, fin), 800);
       l.fase = 'fin';
       cerrarLinea();
-      terminarDia(j, l.nivel, r);
+      terminarDia(j, l.nivel, r, sueldoDe(l));
     };
   }
 }
 
+/**
+ * ¿Quién pone el sueldo de este día en la casa? null: este celular; un nombre: el de ese jugador; '': nadie (un
+ * amigo, o una sala sin Javier ni Laura).
+ */
+function sueldoDe(l: Linea): string | null {
+  if (modoAmigo()) return '';
+  if (!l.sala) return l.anfitrion ? null : l.remotos[0]?.nombre ?? '';
+  const primero = l.config?.equipo?.find((q) => q.casa);
+  if (!primero) return '';
+  return primero.id === l.yo ? null : primero.nombre;
+}
+
 function enviarFoto(l: Linea) {
   const j = l.dia;
-  if (!j || !canal) return;
+  if (!j) return;
   const f = tomarFoto(j, ++l.nFoto, l.enviados);
   l.enviados = j.eventos.length;
-  canal.mandar({ t: 'foto', id: l.id, f });
+  enviar(l, { t: 'foto', id: l.id, f });
 }
 
 /** El invitado manda su joystick cuando cambia (hasta ~10 veces por segundo) y al soltarlo. */
@@ -980,7 +1196,7 @@ function mandarMando(l: Linea, m: { x: number; y: number }) {
   if (!solto && !(Math.hypot(m.x - e.x, m.y - e.y) > 0.08 && ahora - e.t > 90) && ahora - e.t < 1000) return;
   const v = quieto(m) ? { x: 0, y: 0 } : { x: r2(m.x), y: r2(m.y) };
   l.mandoEnviado = { ...v, t: ahora };
-  canal?.mandar({ t: 'mando', id: l.id, ...v });
+  enviarAlAnfitrion(l, { t: 'mando', id: l.id, ...v });
 }
 
 const AVISOS_TOQUE: Record<string, string> = {
@@ -992,8 +1208,10 @@ const AVISOS_TOQUE: Record<string, string> = {
 };
 function avisoToque(r: string | null) {
   if (!r) return;
-  if (r === 'otro' && canal) ui.aviso(`${NOMBRE[otroRol(canal.yo)]} ya va para allá`);
-  else if (AVISOS_TOQUE[r]) ui.aviso(AVISOS_TOQUE[r]);
+  if (r === 'otro') {
+    const l = linea;
+    ui.aviso(l && l.remotos.length === 1 ? `${l.remotos[0].nombre} ya va para allá` : 'Alguien del equipo ya va para allá');
+  } else if (AVISOS_TOQUE[r]) ui.aviso(AVISOS_TOQUE[r]);
 }
 
 function pausar(nota = '') {
@@ -1013,78 +1231,112 @@ function seguir() {
   pantallaUnica(null);
 }
 
-/** Si el otro celular deja de hablar, se pausa (y vuelve solo cuando regresa); si no vuelve, se acaba. */
+/** La conexión volvió: queda en la pausa que corresponda (alguien había pausado) o sigue el juego. */
+function reanudarSegunPausas(l: Linea) {
+  const quien = l.remotos.find((r) => r.pausa);
+  if (quien) pausar(`${quien.nombre} pausó el juego.`);
+  else if (l.pausaPropia) pausar();
+  else seguir();
+}
+
+/** Si otro celular deja de hablar, se pausa (y vuelve solo cuando regresa); si no vuelve, se acaba. */
 function vigilarLinea() {
   const l = linea!;
   if (l.fase !== 'jugando' && l.fase !== 'cargando') return;
-  const sin = (performance.now() - l.ultimoDelOtro) / 1000;
-  const o = NOMBRE[otroRol(canal?.yo ?? 'el')];
+  if (l.sala) return vigilarSala(l, l.sala);
+  const r = l.remotos[0];
+  const sin = (performance.now() - r.ultimo) / 1000;
+  const o = r.nombre;
   if (l.fase === 'cargando') {
     if (sin > 40) void salirDeLinea(`No se pudo empezar: se perdió la conexión con ${o}.`);
     return;
   }
-  if ((sin > LINEA_PAUSA || l.otroFuera) && !l.pausaPorConexion) {
+  if ((sin > LINEA_PAUSA || r.fuera) && !l.pausaPorConexion) {
     l.pausaPorConexion = true;
-    pausar(l.otroFuera ? `Se cortó la conexión con ${o}: salió de la app… esperando a que vuelva.` : `Se cortó la conexión con ${o}… esperando a que vuelva.`);
-  } else if (sin < 1.5 && !l.otroFuera && l.pausaPorConexion) {
+    pausar(r.fuera ? `Se cortó la conexión con ${o}: salió de la app… esperando a que vuelva.` : `Se cortó la conexión con ${o}… esperando a que vuelva.`);
+  } else if (sin < 1.5 && !r.fuera && l.pausaPorConexion) {
     l.pausaPorConexion = false;
-    if (l.pausaOtro) pausar(`${o} pausó el juego.`);
-    else if (l.pausaPropia) pausar();
-    else seguir();
+    reanudarSegunPausas(l);
   } else if (sin > LINEA_ADIOS) void salirDeLinea(`Se perdió la conexión con ${o}.`);
 }
 
-function alMensaje(m: Mensaje) {
+/** En una sala: la sala sabe quién está conectado (latidos y segundo plano) y quién ya se fue. */
+function vigilarSala(l: Linea, s: Sala) {
+  const presentes = new Set(s.jugadores.map((j) => j.id));
+  const siguen = l.remotos.filter((r) => presentes.has(r.salaId ?? ''));
+  if (l.fase === 'cargando') {
+    const espera = performance.now() - l.desde;
+    // El anfitrión no espera para siempre a quien no termina de cargar (entra cuando le llegue la primera foto)
+    if (l.anfitrion && l.dia && espera > 40_000) intentarArrancar(true);
+    else if (!l.anfitrion && espera > 60_000) void salirDeLinea('No llegó la tienda del anfitrión. Revisen el internet e inténtenlo otra vez.');
+    return;
+  }
+  const cortados = siguen.filter((r) => !s.conectado(r.salaId ?? ''));
+  if (cortados.length) {
+    const nota = `Se cortó la conexión con ${cortados.map((r) => r.nombre).join(' y ')} (o salió de la app)… esperando a que vuelva.`;
+    if (!l.pausaPorConexion || $('pausa-nota').textContent !== nota) {
+      l.pausaPorConexion = true;
+      pausar(nota);
+    }
+  } else if (l.pausaPorConexion) {
+    l.pausaPorConexion = false;
+    reanudarSegunPausas(l);
+  }
+}
+
+function alMensaje(m: Mensaje, de?: Remoto) {
   if (m.t === 'hola') return;
   if (m.t === 'inv') return llegaInvitacion(m);
   const l = linea;
   if (!l || m.id !== l.id) {
     // Cancelaron la invitación que se estaba mostrando
     if (m.t === 'cancelar' && invitacionVista?.id === m.id) {
-      const de = invitacionVista.de;
+      const quien = invitacionVista.de;
       invitacionVista = null;
-      if (!$('sala').hidden) sala('Invitación cancelada', `${NOMBRE[de]} ya no va a abrir la tienda.`, { no: 'Volver' });
+      if (!$('sala').hidden) sala('Invitación cancelada', `${NOMBRE[quien]} ya no va a abrir la tienda.`, { no: 'Volver' });
     }
     return;
   }
-  l.ultimoDelOtro = performance.now();
-  const o = otroRol(canal!.yo);
+  const r = de ?? (l.sala ? undefined : l.remotos[0]);
+  if (!r) return;
+  r.ultimo = performance.now();
+  const o = r.nombre;
   switch (m.t) {
     case 'resp':
       if (!l.anfitrion || l.fase !== 'invitando') return;
       if (m.si) void empezarAnfitrion(l);
       else {
         cerrarLinea();
-        sala(`${NOMBRE[o]} no puede ahora`, 'Será en otro momento. Pueden jugar solos o en el mismo celular.', { no: 'Volver' });
+        sala(`${o} no puede ahora`, 'Será en otro momento. Pueden jugar solos o en el mismo celular.', { no: 'Volver' });
       }
       return;
     case 'cancelar':
       if (l.anfitrion) return;
       cerrarLinea();
-      if (!juego) sala('Invitación cancelada', `${NOMBRE[o]} ya no va a abrir la tienda.`, { no: 'Volver' });
+      if (!juego) sala('Invitación cancelada', `${o} ya no va a abrir la tienda.`, { no: 'Volver' });
       return;
     case 'inicio':
-      if (l.anfitrion) return;
+      if (l.anfitrion || l.sala) return;
       if (l.fase === 'esperando') void empezarInvitado(l, m.config);
-      else if (l.dia && l.fase === 'cargando') canal!.mandar({ t: 'listo', id: l.id });
+      else if (l.dia && l.fase === 'cargando') enviar(l, { t: 'listo', id: l.id });
       return;
     case 'listo':
       if (!l.anfitrion) return;
-      l.otroListo = true;
+      r.listo = true;
       intentarArrancar();
       return;
     case 'foto':
-      if (!l.espejo) return;
+      if (!l.espejo || !r.anfitrion) return;
       l.espejo.aplicar(m.f);
       if (l.fase === 'cargando') arrancarDia(l);
       return;
     case 'mando':
-      l.mandoRemoto = { x: m.x, y: m.y };
+      r.mando = { x: m.x, y: m.y };
       return;
     case 'orden': {
       if (!l.anfitrion || !l.dia || l.fase !== 'jugando') return;
-      const suyo = l.dia.jugadores.find((p) => p.rol === o);
-      if (suyo) canal!.mandar({ t: 'res', id: l.id, r: aplicarOrden(l.dia, suyo, m.o) });
+      const suyo = l.dia.jugadores.find((p) => p.id === r.id);
+      if (suyo) enviar(l, { t: 'res', id: l.id, r: aplicarOrden(l.dia, suyo, m.o) }, r);
       return;
     }
     case 'res':
@@ -1097,35 +1349,319 @@ function alMensaje(m: Mensaje) {
       if (l.anfitrion && l.fase === 'jugando') l.dia?.tomarCorazon();
       return;
     case 'fuera':
-      l.otroFuera = m.si;
+      r.fuera = m.si;
       // (el aviso de la pausa lo pone vigilarLinea en el siguiente cuadro)
       return;
     case 'pausa':
       if (l.fase !== 'jugando') return;
-      l.pausaOtro = m.si;
-      if (!m.si) l.pausaPropia = false;
+      r.pausa = m.si;
+      if (!m.si) {
+        l.pausaPropia = false;
+        for (const x of l.remotos) x.pausa = false;
+      }
       if (l.pausaPorConexion) return;
-      if (m.si) pausar(`${NOMBRE[o]} pausó el juego.`);
+      if (m.si) pausar(`${o} pausó el juego.`);
       else if (pausado) seguir();
       return;
     case 'fin': {
-      if (l.anfitrion || l.fase !== 'jugando' || !l.dia) return;
+      if (l.anfitrion || !r.anfitrion || l.fase !== 'jugando' || !l.dia) return;
       const j = l.dia;
       l.fase = 'fin';
       j.terminado = true;
       cerrarLinea();
       pausado = false;
       $('pausa-nota').hidden = true;
-      terminarDia(j, l.nivel, m.r, o);
+      terminarDia(j, l.nivel, m.r, sueldoDe(l));
       return;
     }
     case 'salir':
+      if (l.sala) {
+        // En la sala: si se fue el anfitrión se acaba (también lo avisa la sala); si no, se sigue sin él
+        if (r.anfitrion) void salirDeLinea(`${o} cerró la tienda.`);
+        else ui.aviso(`${o} salió del juego`);
+        return;
+      }
       if (l.fase === 'invitando' || l.fase === 'esperando') {
         cerrarLinea();
-        sala(`${NOMBRE[o]} se salió`, 'La partida en línea se canceló.', { no: 'Volver' });
-      } else void salirDeLinea(`${NOMBRE[o]} salió del juego`);
+        sala(`${o} se salió`, 'La partida en línea se canceló.', { no: 'Volver' });
+      } else void salirDeLinea(`${o} salió del juego`);
       return;
   }
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Sala con código (de 2 a 4: Javier, Laura y amigos)
+// ---------------------------------------------------------------------------------------------------------------
+/** La sala en la que está este celular (si está en una). */
+let salaActual: Sala | null = null;
+/** El día de la sala que está en curso (o su tiquete): cómo seguir. */
+let finDiaSala: ((que: 'sala' | 'salir') => void) | null = null;
+/** Aviso para cuando se vuelva al menú (la sala se acabó). */
+let avisoAlSalir = '';
+/** Abrir o buscar una sala toma un rato: si se cancela, lo que llegue tarde se suelta. */
+const turnoAbrir = { n: 0, abriendo: false, uniendo: false };
+let pedirCodigoListo: ((c: string | null) => void) | null = null;
+
+/** Pide el código de una sala (5 letras y números). */
+function pedirCodigo(): Promise<string | null> {
+  pantallaUnica('codigo');
+  const i = $<HTMLInputElement>('codigo-input');
+  i.value = '';
+  $('codigo-error').textContent = '';
+  setTimeout(() => i.focus(), 60);
+  return new Promise((ok) => {
+    pedirCodigoListo = (c) => {
+      pedirCodigoListo = null;
+      ok(c);
+    };
+  });
+}
+
+/** El anfitrión abre una sala nueva (desde la tarjeta del día, con el modo «Sala con código»). */
+async function abrirSala() {
+  if (salaActual || linea) return;
+  const turno = ++turnoAbrir.n;
+  Object.assign(turnoAbrir, { abriendo: true, uniendo: false });
+  sala('Abriendo la sala…', 'Un momentico: ya te damos el código para tus amigos.', { esperando: true, no: 'Cancelar' });
+  try {
+    const { crearSala } = await import('./salas/sala');
+    const s = await crearSala({ juego: 'super', max: 4 });
+    if (turno !== turnoAbrir.n) return s.salir();
+    turnoAbrir.abriendo = false;
+    void cicloSala(s);
+  } catch (e) {
+    if (turno !== turnoAbrir.n) return;
+    turnoAbrir.abriendo = false;
+    sala('No se pudo abrir la sala', e instanceof Error ? e.message : 'Revisa el internet e intenta otra vez.', { no: 'Volver' });
+  }
+}
+
+/** Entrar a la sala de otro con su código (botón del menú, o super.html?sala=CÓDIGO). */
+async function unirseConCodigo(codigo?: string) {
+  if (salaActual || linea) return;
+  const c = codigo ? normalizar(codigo) : await pedirCodigo();
+  if (!c) return abrirMenu();
+  const turno = ++turnoAbrir.n;
+  Object.assign(turnoAbrir, { abriendo: true, uniendo: true });
+  sala('Buscando la sala…', `Entrando a la sala ${c.split('').join(' ')}`, { esperando: true, no: 'Cancelar' });
+  try {
+    const { unirseSala } = await import('./salas/sala');
+    const s = await unirseSala(c, 'super');
+    if (turno !== turnoAbrir.n) return s.salir();
+    turnoAbrir.abriendo = false;
+    void cicloSala(s);
+  } catch (e) {
+    if (turno !== turnoAbrir.n) return;
+    turnoAbrir.abriendo = false;
+    sala('No se pudo entrar', e instanceof Error ? e.message : 'Revisa el código e intenta otra vez.', { no: 'Volver' });
+  }
+}
+
+/** El día que va a abrir el anfitrión, en palabras (para la sala de espera). */
+function textoDia(): string {
+  const nv = niveles[nivelElegido - 1];
+  const extra = nv?.evento ?? (nv?.noticia ? 'día con noticia' : `día ${nv?.dia ?? nivelElegido}`);
+  return `${legendario ? 'Legendario' : 'Nivel'} ${nivelElegido} · ${extra}`;
+}
+
+/** Sala de espera → día → tiquete → sala de espera…, hasta que se salgan (o el anfitrión cierre la sala). */
+async function cicloSala(s: Sala) {
+  salaActual = s;
+  avisoAlSalir = '';
+  const { esperarEnSala } = await import('./salas/espera');
+  const neutro = () => ponerNeutro(s.hayAmigos);
+  neutro();
+  const quitar = [
+    s.alCambiar(neutro),
+    s.al(MSJ_SALA, (d, de) => alMensajeSala(s, d, de)),
+    s.alFin((_m, texto) => {
+      // Si están jugando o cargando, se sale ya; si están viendo el tiquete, al tocar «Volver a la sala»
+      if (linea?.sala === s) void salirDeLinea(texto);
+      else avisoAlSalir = texto;
+    }),
+  ];
+  try {
+    for (;;) {
+      pantallaUnica(null);
+      mandos.mostrar(false);
+      sonido.musica.iniciar('menu');
+      s.ponerDatos({ jugando: false, dia: textoDia() });
+      const e = esperarEnSala({
+        sala: s,
+        titulo: 'Súper Manía',
+        subtitulo: s.soyAnfitrion
+          ? `${textoDia()}: con tus vitrinas y mejoras. De 2 a 4 en la misma tienda.`
+          : 'Se juega con las vitrinas y mejoras de quien abrió la sala.',
+        tema: 'casa',
+        detalle: (j) => (j.puesto === 0 && j.datos?.dia ? `🗓️ ${escHtml(String(j.datos.dia))}` : ''),
+        extras: s.soyAnfitrion ? [{ id: 'dia', texto: '🗓️ Escoger día', alTocar: () => escogerDiaSala(s, e.raiz) }] : [],
+        minimo: 2,
+        alEmpezar: () => configSala(s),
+        invitacion: (c) => `¡Ven a atender la tienda conmigo en Súper Manía! Abre «Nuestro Hogar», toca «Soy un amigo / una amiga», «Unirme con un código» y escribe: ${c}`,
+      });
+      const r = await e.resultado;
+      document.querySelector('.dia-sala')?.remove();
+      if (r.que !== 'empezar') {
+        if (r.motivo) avisoAlSalir = r.motivo;
+        break;
+      }
+      const cfg = configSegura(r.datos, s);
+      if (!cfg) {
+        avisoAlSalir = 'No se pudo entrar al día. Intenten otra vez.';
+        break;
+      }
+      const que = await diaEnSala(s, cfg);
+      juego?.destruir();
+      juego = null;
+      if (que === 'salir' || avisoAlSalir) break;
+    }
+  } finally {
+    for (const q of quitar) q();
+    s.salir();
+    if (linea?.sala === s) cerrarLinea();
+    salaActual = null;
+    finDiaSala = null;
+    ponerNeutro(false);
+    pausado = false;
+    juego?.destruir();
+    juego = null;
+  }
+  await montarFondo();
+  abrirMenu();
+  if (avisoAlSalir) ui.aviso(avisoAlSalir);
+  avisoAlSalir = '';
+}
+
+/** Los mensajes del día que llegan por la sala (de quién vienen lo dice la sala). */
+function alMensajeSala(s: Sala, d: unknown, de: JugadorSala) {
+  const m = d as Mensaje;
+  if (!m || typeof m !== 'object' || typeof m.t !== 'string') return;
+  const l = linea;
+  if (!l || l.sala !== s) return;
+  const r = l.remotos.find((x) => x.salaId === de.id);
+  if (r) alMensaje(m, r);
+}
+
+/** La configuración que arma el anfitrión: el día, sus vitrinas y mejoras y quién juega (en el orden de los puestos). */
+function configSala(s: Sala): ConfigDia {
+  const js = s.jugadores.filter((j) => j.puesto >= 0).slice(0, 4);
+  return {
+    id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`,
+    nivel: nivelElegido,
+    legendario,
+    sitios: { ...partida.sitios },
+    mejoras: { ...partida.mejoras },
+    equipo: js.map((j, i) => ({
+      id: `j${i}`,
+      salaId: j.id,
+      cuerpo: j.aspecto?.cuerpo === 'ella' ? 'ella' : 'el',
+      nombre: String(j.nombre ?? '').slice(0, 16) || 'Jugador',
+      color: COLORES_SALA[j.puesto] ?? COLORES_SALA[i],
+      aspecto: j.tipo === 'amigo' ? j.aspecto : undefined,
+      casa: j.tipo !== 'amigo',
+    })),
+  };
+}
+/** Los colores de los puestos de la sala (los mismos de `COLOR_PUESTO` en salas/sala.ts). */
+const COLORES_SALA = ['#ff7aa8', '#4fb3ff', '#ffc24d', '#6fd39a'];
+
+/** Revisa lo que mandó el anfitrión (nunca se confía a ciegas en lo que llega de otro celular). */
+function configSegura(x: unknown, s: Sala): ConfigDia | null {
+  const c = x as Partial<ConfigDia> | null;
+  if (!c || typeof c !== 'object' || !Array.isArray(c.equipo) || c.equipo.length < 1 || c.equipo.length > 4) return null;
+  const nivel = Math.round(Number(c.nivel));
+  if (!(nivel >= 1 && nivel <= NIVELES_JUGABLES)) return null;
+  const numeros = (o: unknown) => {
+    const r: Record<string, number> = {};
+    if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) if (typeof v === 'number' && Number.isFinite(v)) r[k] = Math.max(0, Math.min(9, Math.floor(v)));
+    return r;
+  };
+  const color = (v: unknown) => (typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v) ? v : undefined);
+  const equipo = c.equipo.map((q, i) => ({
+    id: `j${i}`,
+    salaId: typeof q?.salaId === 'string' ? q.salaId : '',
+    cuerpo: (q?.cuerpo === 'ella' ? 'ella' : 'el') as Rol,
+    nombre: typeof q?.nombre === 'string' ? q.nombre.replace(/[<>&"'`\\]/g, '').slice(0, 16) || 'Jugador' : 'Jugador',
+    color: color(q?.color),
+    aspecto: q?.aspecto && typeof q.aspecto === 'object'
+      ? { cuerpo: (q.cuerpo === 'ella' ? 'ella' : 'el') as Rol, piel: color(q.aspecto.piel), pelo: color(q.aspecto.pelo), detalles: { ropa: color(q.aspecto.detalles?.ropa) ?? '', ropa2: color(q.aspecto.detalles?.ropa2) ?? '', zapatos: color(q.aspecto.detalles?.zapatos) ?? '' } }
+      : undefined,
+    casa: !!q?.casa,
+  }));
+  if (!equipo.some((q) => q.salaId === s.yo.id)) return null;
+  return { id: typeof c.id === 'string' ? c.id.slice(0, 24) : 'sala', nivel, legendario: !!c.legendario, sitios: numeros(c.sitios), mejoras: numeros(c.mejoras), equipo };
+}
+
+/** Un día jugado en la sala: carga, juega y espera a que tocar «Volver a la sala» (o salir). */
+function diaEnSala(s: Sala, cfg: ConfigDia): Promise<'sala' | 'salir'> {
+  return new Promise((listo) => {
+    finDiaSala = listo;
+    const yo = cfg.equipo!.find((q) => q.salaId === s.yo.id)!;
+    const anfitrion = cfg.equipo![0]?.salaId === s.yo.id;
+    const remotos: Remoto[] = cfg.equipo!
+      .filter((q) => q.salaId !== s.yo.id)
+      .map((q) => ({ id: q.id, nombre: q.nombre, salaId: q.salaId, anfitrion: q.salaId === cfg.equipo![0].salaId, mando: { x: 0, y: 0 }, listo: false, ultimo: performance.now(), fuera: false, pausa: false }));
+    const l = nuevaLinea(cfg.id ?? 'sala', anfitrion, cfg.nivel, cfg.legendario, yo.id, remotos, s);
+    l.config = cfg;
+    linea = l;
+    s.ponerDatos({ jugando: true, listo: false });
+    sala('¡A trabajar!', anfitrion ? 'Acomodando la tienda en todos los celulares…' : 'Acomodando la tienda…', { esperando: true, no: 'Salir' });
+    void cargarDia(l).then((ok) => {
+      if (!ok || linea !== l) return;
+      if (anfitrion) intentarArrancar();
+      else enviarAlAnfitrion(l, { t: 'listo', id: l.id });
+    });
+  });
+}
+
+/** Tiquete de la sala: volver a la sala de espera o salirse. */
+function terminarDiaSala(que: 'sala' | 'salir') {
+  const f = finDiaSala;
+  finDiaSala = null;
+  f?.(avisoAlSalir ? 'salir' : que);
+}
+
+/** El anfitrión escoge en la sala de espera qué día abrir (de los que ya tiene abiertos). */
+function escogerDiaSala(s: Sala, raiz: HTMLElement) {
+  document.querySelector('.dia-sala')?.remove();
+  const capa = document.createElement('div');
+  capa.className = 'dia-sala';
+  const pintar = () => {
+    const tres = (partida.estrellas[nivelElegido] ?? []).filter(Boolean).length === 3 && !!niveles[nivelElegido - 1]?.legendario;
+    if (!tres) legendario = false;
+    capa.innerHTML = `<div class="dia-sala-caja" role="dialog" aria-label="Escoger día"><h3>¿Qué día abrimos?</h3>
+      <div class="dia-sala-lista">${Array.from({ length: NIVELES_JUGABLES }, (_, k) => {
+        const n = k + 1;
+        const libre = nivelDesbloqueado(n);
+        const est = (partida.estrellas[n] ?? []).filter(Boolean).length;
+        const nv = niveles[n - 1];
+        return `<button class="dia-sala-n${n === nivelElegido ? ' si' : ''}${nv?.evento || nv?.noticia ? ' evento' : ''}" data-n="${n}" ${libre ? '' : 'disabled'}>
+          <b>${n}</b><small>${'★'.repeat(est)}${'☆'.repeat(3 - est)}</small></button>`;
+      }).join('')}</div>
+      <p class="dia-sala-texto">${escHtml(textoDia())}</p>
+      <div class="fila-botones">${tres ? `<button class="boton boton-luna" data-leg aria-pressed="${legendario}">${legendario ? 'Modo normal' : '🌙 Legendario'}</button>` : ''}
+      <button class="boton boton-tomate" data-cerrar>Listo</button></div></div>`;
+  };
+  pintar();
+  capa.addEventListener('click', (ev) => {
+    const b = (ev.target as HTMLElement).closest<HTMLElement>('button');
+    if (!b && ev.target !== capa) return;
+    sonido.toque();
+    if (b?.dataset.n) {
+      nivelElegido = Number(b.dataset.n);
+      legendario = false;
+      pintar();
+    } else if (b?.dataset.leg !== undefined && b) {
+      legendario = !legendario;
+      pintar();
+    } else {
+      capa.remove();
+      s.ponerDatos({ dia: textoDia() });
+      const sub = raiz.querySelector('.se-sub');
+      if (sub) sub.textContent = `${textoDia()}: con tus vitrinas y mejoras. De 2 a 4 en la misma tienda.`;
+    }
+  });
+  document.body.append(capa);
 }
 
 /** Piloto automático para pruebas (?bot): juega como alguien atento (con toques). Atrapa, cobra cuando hay fila,

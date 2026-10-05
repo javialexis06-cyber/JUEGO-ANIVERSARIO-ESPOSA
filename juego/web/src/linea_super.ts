@@ -1,9 +1,10 @@
-// Súper Manía en línea: Él en Bucaramanga y Ella en Medellín, cada uno en su celular. El que invita (anfitrión)
-// simula el día entero y le manda al otro una foto de la tienda 10 veces por segundo; el invitado manda su joystick
-// y sus toques. Viaja por un canal de Supabase Realtime (el mismo de la casa) o, en las pruebas, por un
-// BroadcastChannel entre dos pestañas (?linea=local&rol=el|ella).
+// Súper Manía en línea: Él y Ella, cada uno en su celular. El que invita (anfitrión) simula el día entero y le manda
+// al otro una foto de la tienda 10 veces por segundo; el invitado manda su joystick y sus toques. Viaja por un canal
+// de Supabase Realtime (el mismo de la casa) o, en las pruebas, por un BroadcastChannel entre dos pestañas
+// (?linea=local&rol=el|ella). Con amigos (o de a tres y cuatro) los mismos mensajes viajan por una sala con código
+// (src/salas/): ver la sección «En línea» de main.ts.
 import type { RealtimeChannel } from '@supabase/supabase-js';
-import type { Rol } from './jugador';
+import type { InfoJugador, Rol } from './jugador';
 import type { Resultado } from './juego';
 import type { Foto, Orden } from './espejo';
 
@@ -13,6 +14,10 @@ export interface ConfigDia {
   legendario: boolean;
   sitios: Record<number, number>;
   mejoras: Record<string, number>;
+  /** En una sala: quiénes juegan (en el orden de los puestos), con su id del día y su id en la sala. */
+  equipo?: (InfoJugador & { salaId: string; casa: boolean })[];
+  /** En una sala: el id de esta partida (los mensajes de otra se ignoran). */
+  id?: string;
 }
 
 export type Mensaje =
