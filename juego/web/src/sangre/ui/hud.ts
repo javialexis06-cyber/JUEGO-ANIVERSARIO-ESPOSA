@@ -153,7 +153,8 @@ export class Hud {
   private poner(clave: string, valor: string, fn: (el: HTMLElement, v: string) => void) {
     if (this.cache.get(clave) === valor) return;
     this.cache.set(clave, valor);
-    const el = this.els[clave];
+    // (las claves con «!» o «?» al final son otra propiedad del mismo elemento)
+    const el = this.els[clave] ?? this.els[clave.replace(/[!?]$/, '')];
     if (el) fn(el, valor);
   }
   private texto(clave: string, v: string | number) {
@@ -166,7 +167,11 @@ export class Hud {
     this.poner(clave, h, (el, x) => (el.innerHTML = x));
   }
   private ver(clave: string, si: boolean) {
-    this.poner(clave + '?', si ? '1' : '0', () => (this.els[clave].hidden = !si));
+    const k = clave + '?', v = si ? '1' : '0';
+    if (this.cache.get(k) === v) return;
+    this.cache.set(k, v);
+    const el = this.els[clave];
+    if (el) el.hidden = !si;
   }
 
   actualizar(dt: number, est: EstadoHud) {

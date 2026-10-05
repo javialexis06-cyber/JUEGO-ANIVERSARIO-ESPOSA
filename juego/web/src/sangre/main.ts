@@ -598,6 +598,9 @@ async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: 
   const red = extra.sala ? redAnfitrion(extra.sala, pt, perfiles, local) : null;
   partida = pt;
   mando.alPausar = atras;
+  // Pruebas: arrancar en otra etapa (?etapa=4 para el jefe)
+  const etapaPrueba = Number(params.get('etapa'));
+  if (params.has('prueba') && etapaPrueba > 1) pt.exp.etapa = Math.min(3, etapaPrueba - 1);
   try {
     await pt.empezar();
   } catch (e) {
@@ -1165,6 +1168,10 @@ w.__sangreAbrirTodo = () => {
   p.biomas = [...BIOMAS_ORDEN];
   for (const b of BIOMAS_ORDEN) p.ganado[b] = 5;
   guardado.guardar();
+};
+w.__sangreReloj = (seg: number) => {
+  const sim = partida?.sim;
+  if (sim) sim.limite = sim.t + seg;
 };
 w.__sangreForja = () => {
   // Salta a la Forja con la etapa ganada (pruebas)
