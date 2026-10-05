@@ -255,3 +255,5 @@ sangre_mancha (en el piso), niebla, luz (halo), destello (golpe), rayo (rayo sag
 humo_atlas y llama_atlas (4 × 4, de izquierda a derecha y de arriba abajo; la llama en bucle), polvo_atlas y
 sangre_atlas (2 × 2, cuatro variantes). Las de luz y fuego son para mezcla aditiva; humo y niebla vienen casi
 blancas para teñirlas.
+
+La guía de las figuras (piezas, materiales, alias y cómo regenerarlas) está en [`sangre-figuras.md`](sangre-figuras.md).
