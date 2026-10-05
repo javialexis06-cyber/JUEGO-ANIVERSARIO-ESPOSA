@@ -122,8 +122,9 @@ export class Partida {
   private cuadro(dt: number, ahora: number) {
     const sim = this.sim;
     if (!sim || this.terminada) return;
-    // 30 cuadros por segundo (el celular no se calienta)
-    if (this.ultimoDibujo && ahora - this.ultimoDibujo < 30) return;
+    // 30 cuadros por segundo (el celular no se calienta); en pausa, 8 (casi nada se mueve)
+    const minimo = this.pausado || this.pausaExterna ? 120 : 30;
+    if (this.ultimoDibujo && ahora - this.ultimoDibujo < minimo) return;
     const dtReal = this.ultimoDibujo ? Math.min(0.1, (ahora - this.ultimoDibujo) / 1000) : DT;
     this.ultimoDibujo = ahora;
     const t0 = performance.now();

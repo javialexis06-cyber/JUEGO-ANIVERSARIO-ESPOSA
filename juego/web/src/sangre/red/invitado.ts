@@ -135,7 +135,7 @@ export class PartidaInvitado {
   private cuadro(ahora: number) {
     const esp = this.espejo;
     if (!esp || this.terminada) return;
-    if (this.ultimoDibujo && ahora - this.ultimoDibujo < 30) return;
+    if (this.ultimoDibujo && ahora - this.ultimoDibujo < (this.pausado ? 120 : 30)) return;
     const dt = this.ultimoDibujo ? Math.min(0.1, (ahora - this.ultimoDibujo) / 1000) : 1 / 30;
     this.ultimoDibujo = ahora;
     const t0 = performance.now();
