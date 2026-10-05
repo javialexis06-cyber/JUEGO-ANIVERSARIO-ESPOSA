@@ -105,9 +105,12 @@ export const FRASES: Record<'encantado' | 'feliz' | 'normal' | 'bravo' | 'apurad
   apurado: ['¿Ya casi?', 'Tengo hambre…', '¿Se demora mucho?', 'Mmm…', 'Uy, ¿y mi pedido?', 'Se me va a hacer tarde…'],
 };
 
-/** Los invitados de un día: más a medida que suben los días, y los nuevos aparecen con el rango. */
-export function invitadosDelDia(dia: number, rango: number, pareja: Invitado, azar: () => number): Invitado[] {
-  const n = Math.min(10, 2 + Math.ceil(dia * 0.55));
+/**
+ * Los invitados de un día: más a medida que suben los días, y los nuevos aparecen con el rango. `extra`: cocinando de
+ * a tres o cuatro vienen más. La pareja (si viene: solo Javier y Laura sin amigos) llega cada tres días.
+ */
+export function invitadosDelDia(dia: number, rango: number, pareja: Invitado | null, azar: () => number, extra = 0): Invitado[] {
+  const n = Math.min(10 + extra, 2 + Math.ceil(dia * 0.55) + extra);
   const posibles = INVITADOS.filter((i) => i.desde <= rango && !i.especial);
   // Sin repetir hasta que ya hayan venido todos (y nunca el mismo dos veces seguidas)
   const lista: Invitado[] = [];
@@ -120,11 +123,11 @@ export function invitadosDelDia(dia: number, rango: number, pareja: Invitado, az
   // El crítico llega cada cinco días (cuando ya se lo ganó) y la pareja cada tres, de últimos
   const critico = INVITADOS.find((i) => i.especial === 'critico')!;
   if (rango >= critico.desde && dia % 5 === 0) lista[lista.length - 1] = critico;
-  if (dia % 3 === 0 || dia === 2) lista.splice(Math.max(1, lista.length - 1), 0, pareja);
+  if (pareja && (dia % 3 === 0 || dia === 2)) lista.splice(Math.max(1, lista.length - 1), 0, pareja);
   return lista;
 }
 
 /** El invitado por su id (también la pareja). */
-export function invitadoPorId(id: string, pareja: Invitado): Invitado {
-  return id === pareja.id ? pareja : INVITADOS.find((i) => i.id === id) ?? INVITADOS[0];
+export function invitadoPorId(id: string, pareja: Invitado | null): Invitado {
+  return pareja && id === pareja.id ? pareja : INVITADOS.find((i) => i.id === id) ?? INVITADOS[0];
 }

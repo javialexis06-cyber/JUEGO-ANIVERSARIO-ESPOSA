@@ -1,8 +1,17 @@
 // La cocina de chef: lo que comparten los tres restaurantes (waflería, fresería y frappés) y el progreso guardado.
 import type { Rol } from '../modelo';
+import type { AspectoJugador, Sala } from '../../salas/tipos';
 
 export type RecetaId = 'wafles' | 'fresas' | 'frappes';
 export const RECETAS: RecetaId[] = ['wafles', 'fresas', 'frappes'];
+
+/** Los tres restaurantes como se presentan en los menús (la hoja de la casa, la cocina de amigos y la sala). */
+export const RESTAURANTES: { id: RecetaId; nombre: string; emoji: string; texto: string; plato: string; icono: string }[] = [
+  { id: 'wafles', nombre: 'La Waflería', emoji: '🧇', texto: 'Wafles en la plancha, toppings y jugos', plato: 'wafle_chef', icono: 'wafle_clasica_1' },
+  { id: 'fresas', nombre: 'La Fresería', emoji: '🍓', texto: 'Fresas picadas, crema batida y queso', plato: 'fresas_chef', icono: 'vasofresa_M' },
+  { id: 'frappes', nombre: 'La Frapería', emoji: '🥤', texto: 'Frappés licuados con crema y salsas', plato: 'frape_chef', icono: 'vasofrappe_M' },
+];
+export const esReceta = (v: unknown): v is RecetaId => typeof v === 'string' && (RECETAS as string[]).includes(v);
 
 /** Lo que se lleva de cada restaurante (en la casa compartida, uno por cada uno). */
 export interface ProgresoCocina {
@@ -87,26 +96,56 @@ export interface ResultadoDia {
   platos: number;
 }
 
-/** Cocinar en pareja, cada uno en su celular: el que invita (anfitrión) lleva la verdad del día. */
-export interface LineaCocina {
-  modo: 'anfitrion' | 'invitado';
-  /** Identificador de la invitación (el mismo en los dos celulares). */
+/** Quién cocina: Javier, Laura o un amigo (con su muñeco: el de Javier o el de Laura como base, y sus colores). */
+export interface JugadorCocina {
+  /** El id de la sala (o el rol, cocinando solo). */
   id: string;
-  /** Por dónde viajan los mensajes: Supabase Realtime (la casa en línea) o entre pestañas (la casa local, pruebas). */
-  transporte: 'supabase' | 'local';
-  /** Nombre del otro (para los letreros: «Esperando a Ella…»). */
-  nombreOtro: string;
+  nombre: string;
+  tipo: 'el' | 'ella' | 'amigo';
+  /** El muñeco de base (para los recortes del chef y las frases con «mijo|mija»). */
+  rol: Rol;
+  /** Los colores del amigo (Javier y Laura usan los suyos de siempre). */
+  aspecto?: AspectoJugador;
+  /** Su puesto en la sala (0 = anfitrión): su color. */
+  puesto: number;
 }
 
+/** Lo que el anfitrión les manda a todos al empezar: su restaurante (receta, día, rango y mejoras) y quién cocina. */
+export interface ConfigCocina {
+  receta: RecetaId;
+  dia: number;
+  rango: number;
+  mejoras: Record<string, number>;
+  jugadores: JugadorCocina[];
+}
+
+/** Cocinar juntos (de 2 a 4, cada uno en su celular) en una sala: el anfitrión lleva la verdad del día. */
+export interface LineaCocina {
+  sala: Sala;
+  config: ConfigCocina;
+}
+
+/** Cómo se cerró la cocina: se salió del todo o se volvió a la sala de espera (para cocinar otra vez). */
+export type SalidaCocina = 'salir' | 'sala';
+
 export interface OpcionesCocina {
+  /** El muñeco de base de quien cocina (Javier, Laura o el que escogió el amigo). */
   rol: Rol;
   receta: RecetaId;
   progreso: ProgresoCocina;
-  /** Cómo se llama la pareja (llega a comer como invitada especial). */
-  pareja: { rol: Rol; nombre: string };
-  /** Se llama al terminar cada día y al comprar mejoras: guarda en la casa. */
+  /** Quién cocina (si no viene: Javier o Laura, por su rol). */
+  yo?: JugadorCocina;
+  /** La pareja que llega a comer como invitada especial (solo Javier y Laura, sin amigos de por medio). */
+  pareja?: { rol: Rol; nombre: string } | null;
+  /** Modo neutro: juega un amigo o hay amigos en la sala (nada personal ni romántico de la pareja). */
+  neutro?: boolean;
+  /** El día deja monedas y platos de chef para la casa (Javier y Laura, en su casa). */
+  premioCasa?: boolean;
+  /** El botón de salir (volver a la casa o a la sala de juegos de amigos). */
+  textoSalir?: string;
+  /** Se llama al terminar cada día y al comprar mejoras: guarda (en la casa o, un amigo, en el aparato). */
   guardar: (p: ProgresoCocina, dia?: ResultadoDia) => Promise<void>;
-  /** Cocinar juntos en línea (si no viene, se cocina solo). */
+  /** Cocinar juntos en una sala (si no viene, se cocina solo). */
   linea?: LineaCocina;
   /**
    * Gancho para escenas especiales al terminar cada día (antes de la tarjeta del final). Si devuelve una promesa, la
@@ -119,8 +158,10 @@ export interface OpcionesCocina {
 export interface InfoFinDia {
   receta: RecetaId;
   rol: Rol;
-  /** Si se cocinó en pareja (y quién invitó). */
+  /** Si se cocinó con alguien más (y quién abrió la sala). */
   enPareja: boolean;
+  /** Quiénes cocinaron (solo, o los de la sala). */
+  jugadores: JugadorCocina[];
   anfitrion: boolean;
   /** Rango antes y después del día (para celebrar si subió). */
   rangoAntes: number;

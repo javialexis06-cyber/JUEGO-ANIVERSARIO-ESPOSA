@@ -241,9 +241,9 @@ function salaRespaldo(m: Motor, g: G) {
   g.fillStyle = '#2f3b36';
   rr(g, mx, my, mw, mh, 8);
   g.fill();
-  texto(g, m.receta.titulo(m.rol), mx + mw / 2, my + 44, { tam: 34, color: '#fff7e6', max: mw - 30 });
-  texto(g, `Día ${m.dia} · hecho con amor`, mx + mw / 2, my + 92, { tam: 22, color: '#ffd9a0', peso: 700 });
-  texto(g, '♥ ★ ♥', mx + mw / 2, my + 128, { tam: 22, color: '#ff9fb4' });
+  texto(g, m.receta.titulo(m.duenoCocina.nombre), mx + mw / 2, my + 44, { tam: 34, color: '#fff7e6', max: mw - 30 });
+  texto(g, `Día ${m.dia} · ${m.neutro ? 'hecho con sazón' : 'hecho con amor'}`, mx + mw / 2, my + 92, { tam: 22, color: '#ffd9a0', peso: 700 });
+  texto(g, m.neutro ? '★ ★ ★' : '♥ ★ ♥', mx + mw / 2, my + 128, { tam: 22, color: m.neutro ? '#ffd46b' : '#ff9fb4' });
   // Piso
   g.fillStyle = tema.piso;
   g.fillRect(0, piso, W, mostradorY(m) + 40 - piso);
@@ -553,7 +553,7 @@ function carita(m: Motor, g: G, src: HTMLImageElement, x: number, y: number, r: 
 export function dibujarRiel(m: Motor, g: G) {
   const { W } = m;
   fondoRiel(m, g);
-  const otro = m.otro;
+  const otros = m.otros();
   m.s.tickets.forEach((t, i) => {
     const r = m.rectTicket(i);
     const sel = t.id === m.activoId;
@@ -584,26 +584,23 @@ export function dibujarRiel(m: Motor, g: G) {
       rr(g, rr2.x + 9, rr2.y + rr2.h - 17, (rr2.w - 18) * (v / 100), 9, 4.5);
       g.fill();
     }
-    // En pareja: la carita del otro en el tiquete que tiene escogido
-    if (otro && otro.act === t.id) {
-      carita(m, g, m.img(`./cocina/gente/${m.sync!.otroRol}_chef_feliz.webp`), rr2.x + 14, rr2.y + rr2.h - 26, 13, '#ff8fb8', CARA_CHEF);
-    }
+    // Juntos: la carita de cada uno en el tiquete que tiene escogido
+    otros.filter((o) => o.p.act === t.id).forEach((o, k) => {
+      carita(m, g, m.imgChef(o.j, 'feliz'), rr2.x + 14 + k * 18, rr2.y + rr2.h - 26, 13, o.color, CARA_CHEF);
+    });
     g.restore();
   });
   if (!m.s.tickets.length)
     texto(g, 'Aquí se cuelgan los pedidos', 24, RIEL / 2 + 6, { tam: 20, color: 'rgba(255,240,220,0.5)', alinear: 'left', peso: 700 });
-  // Día, invitados atendidos y propinas, con la carita del chef (y la del otro en pareja)
+  // Día, invitados atendidos y propinas, con la carita del chef (y la de los demás cuando cocinan juntos)
   const hechos = m.s.invitados.filter((e) => e.estado === 'comiendo' || e.estado === 'saliendo' || e.estado === 'ido').length;
-  const xr = W - (m.otro ? 250 : 190);
+  const xr = W - 190 - Math.min(3, otros.length) * 52;
   texto(g, `Día ${m.dia} · ${hechos}/${m.s.invitados.length}`, xr, 36, { tam: 22, color: '#fff3e0', alinear: 'right' });
   texto(g, `🪙 ${m.s.propinas}`, xr, 70, { tam: 22, color: '#ffd46b', alinear: 'right' });
   const pose = m.reloj < m.caraChef.hasta ? m.caraChef.pose : 'concentrado';
-  const yo = m.img(`./cocina/gente/${m.rol}_chef_${pose}.webp`);
+  const yo = m.imgChef(m.yo, pose);
   carita(m, g, yo, W - 142, RIEL / 2, 38, '#ffd9a8', CARA_CHEF);
-  if (m.otro && m.sync) {
-    const o2 = m.img(`./cocina/gente/${m.sync.otroRol}_chef_feliz.webp`);
-    carita(m, g, o2, W - 206, RIEL / 2 + 14, 24, '#ff8fb8', CARA_CHEF);
-  }
+  otros.slice(0, 3).forEach((o, k) => carita(m, g, m.imgChef(o.j, 'feliz'), W - 206 - k * 52, RIEL / 2 + 14, 24, o.color, CARA_CHEF));
 }
 
 export function dibujarBarra(m: Motor, g: G) {
@@ -615,7 +612,7 @@ export function dibujarBarra(m: Motor, g: G) {
   g.fillRect(0, H - BARRA, W, 3);
   const nombres = [{ nombre: 'Pedidos', icono: 'campanita', emoji: '🧾' }, ...m.estaciones.map((e) => ({ nombre: e.nombre, icono: e.icono, emoji: e.emoji }))];
   const hayFila = m.s.invitados.some((e) => e.estado === 'fila');
-  const otro = m.otro;
+  const otros = m.otros();
   m.pestanas().forEach((r, i) => {
     const act = i === m.actual;
     const alerta = i === 0 ? hayFila : !!m.estaciones[i - 1].alerta?.();
@@ -644,7 +641,7 @@ export function dibujarBarra(m: Motor, g: G) {
       g.fill();
       texto(g, '!', r.x + r.w - 10, y + 9, { tam: 14, color: '#fff' });
     }
-    if (otro && otro.est === i && m.sync) carita(m, g, m.img(`./cocina/gente/${m.sync.otroRol}_chef_feliz.webp`), r.x + r.w - 14, y - 4, 15, '#ff8fb8', CARA_CHEF);
+    otros.filter((o) => o.p.est === i).forEach((o, k) => carita(m, g, m.imgChef(o.j, 'feliz'), r.x + r.w - 14 - k * 26, y - 4, 15, o.color, CARA_CHEF));
   });
 }
 
@@ -698,20 +695,20 @@ export function dibujarPista(m: Motor, g: G, t: string) {
   texto(g, t, m.W / 2, y + 24, { tam: 23, color: '#fff3d6', max: w - 30 });
 }
 
-/** En pareja: la mano del otro cuando está en la misma estación. */
+/** Juntos: la mano de cada uno de los demás cuando está en la misma estación (un aro de su color y su carita). */
 export function dibujarManoOtro(m: Motor, g: G) {
-  const o = m.otro;
-  if (!o || o.est !== m.actual || !m.sync) return;
-  const x = o.x * m.W, y = o.y * m.H;
-  if (!o.dedo) return;
-  const k = 1 + Math.sin(m.reloj * 8) * 0.08;
-  g.globalAlpha = 0.85;
-  g.strokeStyle = '#ff8fb8';
-  g.lineWidth = 4;
-  elipse(g, x, y, 26 * k, 26 * k);
-  g.stroke();
-  g.globalAlpha = 1;
-  carita(m, g, m.img(`./cocina/gente/${m.sync.otroRol}_chef_feliz.webp`), x + 26, y - 26, 16, '#ff8fb8', CARA_CHEF);
+  for (const { j, p: o, color } of m.otros()) {
+    if (o.est !== m.actual || !o.dedo) continue;
+    const x = o.x * m.W, y = o.y * m.H;
+    const k = 1 + Math.sin(m.reloj * 8 + j.puesto) * 0.08;
+    g.globalAlpha = 0.85;
+    g.strokeStyle = color;
+    g.lineWidth = 4;
+    elipse(g, x, y, 26 * k, 26 * k);
+    g.stroke();
+    g.globalAlpha = 1;
+    carita(m, g, m.imgChef(j, 'feliz'), x + 26, y - 26, 16, color, CARA_CHEF);
+  }
 }
 
 // ---------------------------------------------------------------------------------------------- La calificación
@@ -773,7 +770,7 @@ export function dibujarJuicio(m: Motor, g: G, j: JuicioDia, t: number) {
   const e = m.s.invitados[j.ticket.inv];
   const inv = e ? m.def(e) : null;
   texto(g, inv?.nombre ?? '', cx, py + 40, { tam: 28, color: '#6a3a22', max: pw * 0.4 });
-  if (j.por !== m.rol && m.enPareja) texto(g, `(lo entregó ${j.por === 'el' ? 'Él' : 'Ella'})`, cx, py + 72, { tam: 18, color: '#9a6a4a', peso: 700 });
+  if (j.por !== m.yo.id && m.enPareja) texto(g, `(lo entregó ${m.nombreJugador(j.por)})`, cx, py + 72, { tam: 18, color: '#9a6a4a', peso: 700 });
   // Las barras de cada parte
   const bx = px + pw * 0.43, bw = pw * 0.22;
   j.cats.forEach((c, i) => {
@@ -912,8 +909,8 @@ export function dibujarIntro(m: Motor, g: G, t: number) {
     g.globalAlpha = 1;
   });
   // El chef: se acerca, tiembla de concentración y le brillan los ojos
-  const img = m.img(`./cocina/gente/${m.rol}_chef_intro.webp`);
-  const alt = m.img(`./cocina/gente/${m.rol}_chef_concentrado.webp`);
+  const img = m.imgChef(m.yo, 'intro');
+  const alt = m.imgChef(m.yo, 'concentrado');
   const chef = img.complete && img.naturalWidth ? img : alt;
   if (chef.complete && chef.naturalWidth) {
     const k = Math.min(1, t / 2.0);
@@ -953,7 +950,9 @@ export function dibujarIntro(m: Motor, g: G, t: number) {
     g.globalAlpha = 1;
   });
   // Lo que se dice a sí mismo (se va escribiendo)
-  const frase = m.rol === 'el' ? 'Respira… siente la cocina… hoy eres un chef profesional…' : 'Respira… siente la cocina… hoy eres una chef profesional…';
+  const frase = m.yo.tipo === 'amigo'
+    ? 'Respira… siente la cocina… hoy cocinas como chef profesional…'
+    : m.rol === 'el' ? 'Respira… siente la cocina… hoy eres un chef profesional…' : 'Respira… siente la cocina… hoy eres una chef profesional…';
   const nletras = Math.floor(Math.min(1, Math.max(0, t - 0.2) / 1.8) * frase.length);
   texto(g, frase.slice(0, nletras), cx, 52, { tam: 26, color: '#ffe4c0', peso: 700 });
   // «MODO CHEF» cae con un golpe

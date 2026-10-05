@@ -510,3 +510,237 @@
   padding: 8px 12px;
   font-size: 15px;
 }
+
+/* ------------------------------------------------------------------ Cocinar juntos: menús de la sala (sala.ts) */
+.cocina-aviso,
+.cocina-codigo,
+.cocina-elegir,
+.cocina-carga {
+  z-index: 130;
+  background: rgba(35, 26, 22, 0.55);
+}
+.cocina-codigo input {
+  display: block;
+  margin: 8px auto 2px;
+  width: min(260px, 90%);
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 3px solid #c9a98c;
+  background: #fffaf2;
+  color: #4a2a10;
+  font: 900 30px/1 'Courier Prime', 'Courier New', monospace;
+  letter-spacing: 0.3em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.cocina-codigo input:focus {
+  outline: none;
+  border-color: #ffb627;
+}
+.cocina-codigo .error {
+  min-height: 1.2em;
+  color: #c0303c;
+  font-size: 14px;
+}
+.cz-restaurantes {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.cz-restaurante {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 10px 6px 9px;
+  border: 3px solid transparent;
+  border-radius: 18px;
+  background: #fff6ea;
+  color: #4a2a10;
+  font: inherit;
+  box-shadow: 0 4px 0 #c9a98c;
+  cursor: pointer;
+}
+.cz-restaurante.si {
+  border-color: #ffb627;
+  background: #fff1cf;
+}
+.cz-restaurante:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #c9a98c;
+}
+.cz-restaurante b {
+  font-size: 16px;
+  font-weight: 900;
+}
+.cz-restaurante small {
+  font-size: 12px;
+  font-weight: 800;
+  color: #9a6a4a;
+}
+.cz-restaurante .ico-recorte {
+  height: 54px;
+  width: auto;
+}
+.cz-emoji {
+  font-size: 40px;
+  line-height: 54px;
+}
+
+/* La sala de espera de la cocina: mantel de cuadritos y olor a cocina */
+.sala-espera.cocina-espera {
+  --se-fondo:
+    radial-gradient(120% 90% at 20% 0%, rgba(255, 250, 240, 0.85), rgba(255, 250, 240, 0) 60%),
+    repeating-linear-gradient(0deg, rgba(224, 121, 58, 0.13) 0 22px, transparent 22px 44px),
+    repeating-linear-gradient(90deg, rgba(224, 121, 58, 0.13) 0 22px, transparent 22px 44px),
+    linear-gradient(#fff3e2, #f4d9bd);
+  --se-acento: #e0793a;
+  --se-acento-osc: #b4561f;
+}
+
+/* ------------------------------------------------------------------ La cocina de los amigos (cocina.html) */
+.cz-menu {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 8px;
+  padding: max(10px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  color: #fff3d6;
+  font-family: Nunito, system-ui, sans-serif;
+  background:
+    radial-gradient(90% 70% at 50% 0%, rgba(255, 182, 39, 0.28), transparent 70%),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.07) 0 3px, transparent 3px 90px),
+    linear-gradient(#5a3a26, #2b1a10);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.cz-menu header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cz-menu header h1 {
+  margin: 0;
+  font: 900 clamp(22px, 7vh, 32px) / 1 Fredoka, Nunito, system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+}
+.cz-menu header p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffd9a0;
+}
+.cz-menu .cz-yo {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 999px;
+  background: rgba(255, 243, 214, 0.12);
+  font-weight: 900;
+}
+.cz-menu .cz-yo svg {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #fff3e4;
+}
+.cz-menu .cz-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(8px, 2vw, 16px);
+  min-height: 0;
+}
+.cz-menu .cz-carta {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto auto auto;
+  justify-items: center;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 10px 12px;
+  border: 5px solid #8a5a38;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.85), transparent 60%),
+    linear-gradient(#fffaf2, #f4e2cb);
+  color: #4a2a10;
+  font: inherit;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3), 0 16px 30px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  overflow: hidden;
+  animation: cocina-sube 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.cz-menu .cz-carta::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 12px;
+  background: repeating-linear-gradient(90deg, var(--acento-cocina) 0 14px, #fff6ea 14px 28px);
+}
+.cz-menu li:nth-child(2) .cz-carta {
+  animation-delay: 0.07s;
+}
+.cz-menu li:nth-child(3) .cz-carta {
+  animation-delay: 0.14s;
+}
+.cz-menu .cz-carta:active {
+  transform: translateY(4px);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+}
+.cz-menu .cz-carta .ico-recorte {
+  height: clamp(54px, 24vh, 110px);
+  width: auto;
+  animation: cz-flota 3s ease-in-out infinite;
+}
+@keyframes cz-flota {
+  50% {
+    transform: translateY(-5px) rotate(-2deg);
+  }
+}
+.cz-menu .cz-carta b {
+  font: 900 clamp(17px, 5vh, 23px) / 1.05 Fredoka, Nunito, system-ui, sans-serif;
+}
+.cz-menu .cz-carta small {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #7a5a48;
+  text-align: center;
+}
+.cz-menu .cz-carta em {
+  font-style: normal;
+  font-size: 12.5px;
+  font-weight: 900;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #3a2c26;
+  color: #ffe4c0;
+}
+.cz-menu .cz-carta em.nuevo {
+  background: #ffb627;
+  color: #4a2a10;
+}
+.cz-menu footer {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.cz-menu footer .boton-cocina {
+  font-size: 15px;
+  padding: 9px 16px;
+}
