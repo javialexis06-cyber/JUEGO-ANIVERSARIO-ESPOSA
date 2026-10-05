@@ -1,0 +1,508 @@
+{
+ "p_virote": {
+  "altura": 0.016,
+  "radio": 0.13,
+  "alcance": 0.16,
+  "tris": 122,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 122
+   }
+  }
+ },
+ "p_flecha": {
+  "altura": 0.014,
+  "radio": 0.2,
+  "alcance": 0.22,
+  "tris": 166,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 166
+   }
+  }
+ },
+ "p_estaca": {
+  "altura": 0.018,
+  "radio": 0.121,
+  "alcance": 0.16,
+  "tris": 70,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 70
+   }
+  }
+ },
+ "p_frasco_roto": {
+  "altura": 0.095,
+  "radio": 0.049,
+  "alcance": 0.047,
+  "tris": 204,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 204
+   }
+  }
+ },
+ "p_nota_musical": {
+  "altura": 0.076,
+  "radio": 0.067,
+  "alcance": 0.073,
+  "tris": 104,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 104
+   }
+  }
+ },
+ "p_pluma_cuervo": {
+  "altura": 0.005,
+  "radio": 0.12,
+  "alcance": 0.12,
+  "tris": 56,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 56
+   }
+  }
+ },
+ "p_hueso": {
+  "altura": 0.025,
+  "radio": 0.079,
+  "alcance": 0.08,
+  "tris": 360,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 360
+   }
+  }
+ },
+ "p_bola_fuego": {
+  "altura": 0.073,
+  "radio": 0.126,
+  "alcance": 0.14,
+  "tris": 198,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 198
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "p_rayo_sagrado": {
+  "altura": 0.045,
+  "radio": 0.311,
+  "alcance": 0.312,
+  "tris": 156,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 156
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "p_cadena_eslabon": {
+  "altura": 0.011,
+  "radio": 0.065,
+  "alcance": 0.065,
+  "tris": 144,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 144
+   }
+  }
+ },
+ "p_alma": {
+  "altura": 0.04,
+  "radio": 0.083,
+  "alcance": 0.16,
+  "tris": 66,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 66
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.02,
+    0.0
+   ]
+  }
+ },
+ "p_bola_hierro": {
+  "altura": 0.066,
+  "radio": 0.156,
+  "alcance": 0.16,
+  "tris": 252,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 252
+   }
+  }
+ },
+ "p_bola_puas": {
+  "altura": 0.087,
+  "radio": 0.083,
+  "alcance": 0.091,
+  "tris": 216,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 216
+   }
+  }
+ },
+ "p_bomba": {
+  "altura": 0.102,
+  "radio": 0.055,
+  "alcance": 0.055,
+  "tris": 114,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 114
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.02,
+    -0.03,
+    0.095
+   ]
+  }
+ },
+ "p_cruz": {
+  "altura": 0.008,
+  "radio": 0.076,
+  "alcance": 0.075,
+  "tris": 72,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 72
+   }
+  }
+ },
+ "p_daga": {
+  "altura": 0.02,
+  "radio": 0.071,
+  "alcance": 0.13,
+  "tris": 42,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 42
+   }
+  }
+ },
+ "p_escudo": {
+  "altura": 0.035,
+  "radio": 0.13,
+  "alcance": 0.13,
+  "tris": 132,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 132
+   }
+  }
+ },
+ "p_frasco_agua": {
+  "altura": 0.09,
+  "radio": 0.05,
+  "alcance": 0.05,
+  "tris": 144,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 144
+   }
+  }
+ },
+ "p_frasco_fuego": {
+  "altura": 0.09,
+  "radio": 0.05,
+  "alcance": 0.05,
+  "tris": 144,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 144
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "p_frasco_hielo": {
+  "altura": 0.09,
+  "radio": 0.05,
+  "alcance": 0.05,
+  "tris": 144,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 144
+   }
+  }
+ },
+ "p_gancho": {
+  "altura": 0.077,
+  "radio": 0.093,
+  "alcance": 0.098,
+  "tris": 90,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 90
+   }
+  }
+ },
+ "p_guillotina": {
+  "altura": 0.167,
+  "radio": 0.1,
+  "alcance": 0.1,
+  "tris": 24,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 24
+   }
+  }
+ },
+ "p_hacha": {
+  "altura": 0.01,
+  "radio": 0.15,
+  "alcance": 0.12,
+  "tris": 32,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 32
+   }
+  }
+ },
+ "p_pagina": {
+  "altura": 0.011,
+  "radio": 0.086,
+  "alcance": 0.07,
+  "tris": 80,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 80
+   }
+  }
+ },
+ "p_pico": {
+  "altura": 0.016,
+  "radio": 0.126,
+  "alcance": 0.121,
+  "tris": 66,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 66
+   }
+  }
+ },
+ "p_piedra": {
+  "altura": 0.028,
+  "radio": 0.035,
+  "alcance": 0.035,
+  "tris": 48,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 48
+   }
+  }
+ },
+ "p_sierra": {
+  "altura": 0.012,
+  "radio": 0.1,
+  "alcance": 0.1,
+  "tris": 164,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 164
+   }
+  }
+ },
+ "p_yunque": {
+  "altura": 0.065,
+  "radio": 0.135,
+  "alcance": 0.17,
+  "tris": 162,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 162
+   }
+  }
+ },
+ "p_rayo": {
+  "altura": 0.045,
+  "radio": 0.311,
+  "alcance": 0.312,
+  "tris": 156,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 156
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ }
+}

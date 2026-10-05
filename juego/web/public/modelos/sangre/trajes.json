@@ -1,0 +1,180 @@
+{
+ "monarca": {
+  "nombre": "Monarca",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_monarca",
+  "tris": {
+   "ella": 39972,
+   "el": 40550
+  }
+ },
+ "campesino": {
+  "nombre": "Campesino",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_campesino",
+  "tris": {
+   "ella": 33124,
+   "el": 31934
+  }
+ },
+ "prisionero": {
+  "nombre": "Prisionero",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "medias"
+  ],
+  "modelo": "sangre_prisionero",
+  "tris": {
+   "ella": 39171,
+   "el": 40360
+  }
+ },
+ "caballero": {
+  "nombre": "Caballero",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_caballero",
+  "tris": {
+   "el": 38174,
+   "ella": 40376
+  }
+ },
+ "cazador": {
+  "nombre": "Cazador de vampiros",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_cazador",
+  "tris": {
+   "el": 32244,
+   "ella": 31744
+  }
+ },
+ "herrero": {
+  "nombre": "Herrero",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "medias"
+  ],
+  "modelo": "sangre_herrero",
+  "tris": {
+   "el": 36436,
+   "ella": 37525
+  }
+ },
+ "alquimista": {
+  "nombre": "Alquimista",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_alquimista",
+  "tris": {
+   "el": 34346,
+   "ella": 36428
+  }
+ },
+ "sepulturero": {
+  "nombre": "Sepulturero",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_sepulturero",
+  "tris": {
+   "el": 34797,
+   "ella": 34480
+  }
+ },
+ "inquisidor": {
+  "nombre": "Inquisidor",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_inquisidor",
+  "tris": {
+   "el": 39341,
+   "ella": 39974
+  }
+ },
+ "verdugo": {
+  "nombre": "Verdugo",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_verdugo",
+  "tris": {
+   "el": 41071,
+   "ella": 40927
+  }
+ },
+ "bruja": {
+  "nombre": "Bruja",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_bruja",
+  "tris": {
+   "el": 30198,
+   "ella": 30762
+  }
+ },
+ "juglar": {
+  "nombre": "Juglar",
+  "oculta": [
+   "arriba",
+   "abajo",
+   "pies",
+   "copete",
+   "medias"
+  ],
+  "modelo": "sangre_juglar",
+  "tris": {
+   "el": 31895,
+   "ella": 32994
+  }
+ }
+}
