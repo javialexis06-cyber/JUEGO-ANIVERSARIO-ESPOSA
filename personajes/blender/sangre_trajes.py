@@ -895,9 +895,9 @@ def render_hoja(ctx, clave, carpeta, ocultos):
     rutas = []
     for k, az in enumerate((-25, 155)):
         a = math.radians(az)
-        cam = escena.camera(f'cam traje {k}', (math.sin(a) * 6, -math.cos(a) * 6, 1.15 + 6 * math.tan(math.radians(22))), (0, 0, 1.15), 50)
+        cam = escena.camera(f'cam traje {k}', (math.sin(a) * 6, -math.cos(a) * 6, 1.4 + 6 * math.tan(math.radians(22))), (0, 0, 1.4), 50)
         cam.data.type = 'ORTHO'
-        cam.data.ortho_scale = 3.05
+        cam.data.ortho_scale = 3.5
         p = os.path.join(carpeta, f'{clave}_{ctx.rol}_{k}.png')
         sc.render(scene, cam, p)
         bpy.data.objects.remove(cam, do_unlink=True)
@@ -907,7 +907,66 @@ def render_hoja(ctx, clave, carpeta, ocultos):
     return rutas
 
 
-def main(out, roles, claves, hoja=None, glb=True):
+ARMA_CLASE = {'monarca': 'espada_larga', 'campesino': 'horca', 'prisionero': 'grillete', 'caballero': 'maza', 'cazador': 'ballesta', 'herrero': 'martillo',
+              'alquimista': 'frasco', 'sepulturero': 'pala', 'inquisidor': 'incensario', 'verdugo': 'hacha_verdugo', 'bruja': 'baston_cuervos', 'juglar': 'laud'}
+
+
+def retrato(ctx, clave, carpeta, ocultos, res=(384, 480)):
+    """Retrato de cuerpo entero (para escoger clase): luz dramática, fondo transparente y el arma de la clase en la mano."""
+    import sangre_armas
+    from PIL import Image
+    scene = bpy.context.scene
+    viejo = (scene.render.resolution_x, scene.render.resolution_y, scene.render.film_transparent)
+    for o in ocultos:
+        o.hide_render = True
+    neutras = bpy.data.collections.get('SG luces trajes')
+    if neutras:
+        neutras.hide_render = True
+    luces = clay.collection('SG luces retrato')
+    for o in list(luces.objects):
+        bpy.data.objects.remove(o, do_unlink=True)
+    sc.luces_dramaticas(luces, centro=(0, 0, 1.25), escala=2.4)
+    luces.hide_render = False
+    # arma en la mano derecha (el muñeco mide ~2,2 en Blender; las armas están hechas para 1 m)
+    coll_a = clay.collection(f'SG arma retrato {clave}')
+    arma = None
+    try:
+        F = sangre_armas.ARMAS[ARMA_CLASE[clave]](coll_a)
+        F.construir(coll_a)
+        arma = F.root
+        mano = np.array(ctx.B['arm']['hand']) * np.array([1, 1, 1]) + np.array([0.02, -0.04, 0.02])
+        arma.location = tuple(mano)
+        arma.rotation_euler = (math.radians(-12), math.radians(14), math.radians(180))
+        arma.scale = (2.0, 2.0, 2.0)
+        sc.solo_visible([], [])
+    except Exception as e:  # sin arma, igual sale el retrato
+        print('sin arma en el retrato', clave, e, flush=True)
+    scene.render.resolution_x, scene.render.resolution_y = res
+    scene.render.film_transparent = True
+    a = math.radians(-24)
+    cam = escena.camera(f'cam retrato {clave}', (math.sin(a) * 7, -math.cos(a) * 7, 1.25 + 7 * math.tan(math.radians(9))), (0, 0, 1.3), 50)
+    cam.data.type = 'ORTHO'
+    cam.data.ortho_scale = 3.3
+    png = os.path.join(carpeta, f'_{clave}_{ctx.rol}.png')
+    sc.render(scene, cam, png)
+    bpy.data.objects.remove(cam, do_unlink=True)
+    Image.open(png).convert('RGBA').save(os.path.join(carpeta, f'{clave}_{ctx.rol}.webp'), 'WEBP', quality=88, method=6)
+    os.remove(png)
+    if arma is not None:
+        for o in sc.arbol(arma):
+            bpy.data.objects.remove(o, do_unlink=True)
+    luces.hide_render = True
+    if neutras:
+        neutras.hide_render = False
+    scene.render.resolution_x, scene.render.resolution_y, scene.render.film_transparent = viejo
+    for o in ocultos:
+        o.hide_render = False
+
+
+def main(out, roles, claves, hoja=None, glb=True, retratos=None):
+    import importlib
+    if os.path.exists(os.path.join(HERE, 'sangre_trajes2.py')):
+        importlib.import_module('sangre_trajes2')
     t0 = time.time()
     scene = clay.reset_scene()
     sc.preparar_render(scene, 420, 20, transparente=False, fondo='#5A5550')
@@ -939,8 +998,12 @@ def main(out, roles, claves, hoja=None, glb=True):
                 ropa.exportar(arm, objs, os.path.join(out, 'ropa', f'sangre_{clave}_{rol}.glb'))
             previos = datos.get(clave, {}).get('tris', {})
             datos[clave] = dict(nombre=info['nombre'], oculta=list(info['oculta']), modelo=f'sangre_{clave}', tris=dict(previos, **{rol: n}))
-            if hoja:
+            if hoja or retratos:
                 mugre_en_render(objs)
+            if retratos:
+                os.makedirs(retratos, exist_ok=True)
+                retrato(ctx, clave, retratos, ocu)
+            if hoja:
                 filas.append(render_hoja(ctx, clave, tmp, ocu))
                 etiquetas.append(f'sangre_{clave}_{rol}  {n} tris')
             print(f'traje {clave} {rol}: {n} triángulos, {time.time() - t1:.1f} s', flush=True)
@@ -966,7 +1029,11 @@ if __name__ == '__main__':
     if '--hoja' in args:
         hoja = args[args.index('--hoja') + 1]
         pos = [a for a in pos if a != hoja]
+    retratos = None
+    if '--retratos' in args:
+        retratos = args[args.index('--retratos') + 1]
+        pos = [a for a in pos if a != retratos]
     roles = {'el': ['el'], 'ella': ['ella'], 'ambos': ['el', 'ella']}[pos[1] if len(pos) > 1 else 'ambos']
     claves = pos[2].split(',') if len(pos) > 2 else None
     import sangre_trajes as _st
-    _st.main(pos[0], roles, claves, hoja, glb='--sin-glb' not in opc)
+    _st.main(pos[0], roles, claves, hoja, glb='--sin-glb' not in opc, retratos=retratos)
