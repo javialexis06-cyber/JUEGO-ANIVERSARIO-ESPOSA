@@ -27,6 +27,7 @@ import '/src/estilos.css';
 const L = await import('/src/casa/lavado.ts');
 const prog = L.progresoLavadoNuevo('ella');
 prog.poderes = { tirar: 5, saltar: 5, vetar: 5 };
+prog.tutorial = true; // (el tutorial tiene su propia prueba: aquí se va directo a jugar)
 window.__arrancar = () => L.jugarLavado({ rol: 'ella', nombres: { el: 'Él', ella: 'Ella' }, progreso: prog, guardar: async () => {}, pareja: null })
   .then((r) => (window.__resultado = r));
 window.__pagina = true;

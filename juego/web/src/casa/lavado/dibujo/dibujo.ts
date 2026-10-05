@@ -41,6 +41,8 @@ const SPRITE_PROY: Partial<Record<IdArma, string>> = {
 };
 /** Pruebas automáticas: sin los muñecos 3D (el WebGL por software no da abasto con dos celulares). */
 const SIN_3D = typeof location !== 'undefined' && new URLSearchParams(location.search).has('sin3d');
+/** Pruebas con varios celulares en la misma máquina: empezar en la calidad más baja (`?calidad=0`). */
+const CALIDAD = typeof location !== 'undefined' ? Number(new URLSearchParams(location.search).get('calidad') ?? 3) : 3;
 const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
 
@@ -52,6 +54,8 @@ const rgb = (hex: string): [number, number, number] => {
 export interface Opciones {
   lienzo: HTMLCanvasElement;
   yo: number;
+  /** El color de cada jugador (anillo en el piso, cofres propios) cuando juegan varios. */
+  colores?: string[];
 }
 
 export class Dibujo {
@@ -110,6 +114,7 @@ export class Dibujo {
   /** Lo que la interfaz quiere saber de lo que pasó (sonidos y avisos se manejan afuera). */
   alEfecto: (e: Efecto) => void = () => undefined;
   numerosVisibles = true;
+  private coloresRgb: [number, number, number][] = [];
 
   constructor(private o: Opciones) {
     this.renderer = new THREE.WebGLRenderer({ canvas: o.lienzo, antialias: true, powerPreference: 'high-performance' });
@@ -128,10 +133,11 @@ export class Dibujo {
     const borde = new THREE.DirectionalLight('#ffd6e4', 1.0);
     borde.position.set(400, 300, -600);
     this.escena.add(borde);
-    this.ajustarCalidad(3);
+    this.ajustarCalidad(Number.isFinite(CALIDAD) ? CALIDAD : 3);
   }
 
-  async cargar(m: Motor, rolPiel: 'el' | 'ella') {
+  /** `piel`: el tono del anfitrión si es un amigo (la cara del escenario es la suya). */
+  async cargar(m: Motor, rolPiel: 'el' | 'ella', piel?: string) {
     const cargador = new THREE.TextureLoader();
     const tex = (ruta: string) =>
       new Promise<THREE.Texture>((ok, mal) =>
@@ -159,7 +165,8 @@ export class Dibujo {
     this.fx = atlasFx();
     this.num = atlasNumeros();
     this.texturas.push(this.fx.textura, this.num.textura);
-    this.suelo = new Suelo(m.esc.id, rolPiel, m.esc.limites);
+    this.suelo = new Suelo(m.esc.id, rolPiel, m.esc.limites, piel);
+    this.coloresRgb = (this.o.colores ?? []).map(rgb);
     this.escena.add(this.suelo.plano, this.suelo.decor.malla);
     this.sombras = new LoteSprites({ max: 700, mapa: this.fx.textura, piso: true, orden: 2 });
     this.pisoFx = new LoteSprites({ max: 500, mapa: this.fx.textura, piso: true, orden: 3 });
@@ -175,7 +182,7 @@ export class Dibujo {
     // Él y Ella (las pruebas con ?sin3d los cambian por una burbujita: el navegador de prueba no da abasto)
     if (!SIN_3D) await Promise.all(
       m.jug.map(async (j, i) => {
-        const p = new Jugador3D(j.rol, j.disfraz);
+        const p = new Jugador3D(j.rol, j.disfraz, j.aspecto);
         this.jugadores[i] = p;
         await p.cargar();
         this.escena.add(p.raiz);
@@ -549,22 +556,51 @@ export class Dibujo {
     this.part.actualizar(dtv);
     this.part.dibujar();
     this.dibujarNumeros(dtv);
-    // Personajes
+    // Personajes (con varios, cada uno con el anillo de su color en el piso; los que se fueron no se ven)
+    const varios = m.jug.length > 1;
     for (let i = 0; i < m.jug.length; i++) {
       const j = m.jug[i];
       const p = this.jugadores[i];
+      if (p) p.raiz.visible = !j.fuera;
+      if (j.fuera) continue;
       if (!p) {
         if (!SIN_3D) continue;
         const b = this.fx.c.burbuja;
-        this.fxNormal.poner(j.x, j.y, 0, 34, 40, 0.5, 1, b.u0, b.v0, b.u1, b.v1, j.rol === 'ella' ? 1 : 0.5, 0.6, j.rol === 'ella' ? 0.8 : 1, 1);
+        const c = this.coloresRgb[i] ?? (j.rol === 'ella' ? [1, 0.6, 0.8] : [0.5, 0.6, 1]);
+        this.fxNormal.poner(j.x, j.y, 0, 34, 40, 0.5, 1, b.u0, b.v0, b.u1, b.v1, c[0], c[1], c[2], 1);
       } else p.actualizar(j, dt, pausa);
       this.sombra(j.x, j.y, 26, 0.45);
+      if (varios) this.anilloJugador(j, i);
+      if (j.manual && !j.caido) this.mira(j, i === this.o.yo);
       this.barraVida(j);
       if (j.caido) this.burbujaCaido(j);
     }
     for (const l of [this.sombras, this.pisoFx, this.objetos, this.bichos, this.proy, this.fxNormal, this.fxLuz, this.numeros]) l.terminar();
     this.renderer.render(this.escena, this.camara);
     if (!pausa) this.medir(performance.now() - t0 + (dt * 1000 > 34 ? dt * 1000 - 33 : 0));
+  }
+
+  /** El anillo de color de cada jugador (para saber quién es quién de un vistazo). */
+  private anilloJugador(j: Jugador, i: number) {
+    const c = this.coloresRgb[i];
+    if (!c) return;
+    const o = this.fx.c.anillo;
+    const pulso = i === this.o.yo ? 1 : 0.8;
+    this.pisoFx.poner(j.x, j.y, 0.04, 58, 40, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, c[0], c[1], c[2], 0.75 * pulso);
+  }
+
+  /** Apuntar a mano: tres puntitos y una mira hacia donde apunta (la propia más clara). */
+  private mira(j: Jugador, propia: boolean) {
+    const b = this.fx.c.brillo, o = this.fx.c.anillo;
+    const l = Math.hypot(j.ax, j.ay) || 1;
+    const ux = j.ax / l, uy = j.ay / l;
+    const a = propia ? 0.9 : 0.45;
+    for (let k = 0; k < 3; k++) {
+      const d = 34 + k * 18;
+      this.pisoFx.poner(j.x + ux * d, j.y + uy * d * 0.9, 0.13, 12 - k * 2, 9 - k * 1.5, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.95, 0.75, a * (1 - k * 0.2));
+    }
+    const pul = 1 + Math.sin(this.t * 6) * 0.08;
+    this.pisoFx.poner(j.x + ux * 104, j.y + uy * 104 * 0.9, 0.14, 30 * pul, 22 * pul, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 1, 0.85, 0.55, a);
   }
 
   private sombra(x: number, y: number, r: number, a: number) {
@@ -605,15 +641,18 @@ export class Dibujo {
         if (Math.random() < 0.2 * this.part.cupo) this.part.crear('burbuja', CAPA_NORMAL, z.x + (Math.random() - 0.5) * z.r * 1.4, z.y + (Math.random() - 0.5) * z.r, 2, 0, 0, 25, 0.8, 4, 10, 1, 1, 1, 0.9);
         if (dorada && Math.random() < 0.3) this.part.crear('gota', CAPA_NORMAL, z.x + (Math.random() - 0.5) * z.r * 1.6, z.y + (Math.random() - 0.5) * z.r, 4, 0, 0, 80, 0.5, 7, 4, 0.5, 0.8, 1, 1, 300);
       } else {
-        // La ducha: franja de agua en el piso, chorros que caen y salpicadas
+        // La ducha: una franja de agua clarita en el piso, hilos de agua transparentes que caen (con brillitos) y
+        // salpicadas; translúcida para que no tape a los mugrosos ni al personaje
         const diluvio = z.arma === 'diluvio';
         const c = this.fx.c.chorro;
-        this.pisoFx.poner(z.x, z.y, 0.09, z.w, z.h, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 0.8, 0.95, 1, 0.55 * vida);
-        const paso = 70;
+        const br = this.fx.c.brillo;
+        this.pisoFx.poner(z.x, z.y, 0.09, z.w, z.h, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 0.82, 0.95, 1, 0.2 * vida);
+        const paso = 92;
         const y0 = Math.floor((this.cy - this.vistaH / 2) / paso) * paso;
         for (let y = y0; y < this.cy + this.vistaH / 2 + paso; y += paso) {
           const ox = Math.sin(y * 0.13 + t * 3) * z.w * 0.15;
-          this.fxNormal.poner(z.x + ox, y, 0, z.w * 0.55, 130, 0.5, 1, c.u0, c.v0, c.u1, c.v1, 0.8, 0.95, 1, 0.5 * vida);
+          this.fxLuz.poner(z.x + ox, y, 0, z.w * 0.4, 130, 0.5, 1, c.u0, c.v0, c.u1, c.v1, 0.55, 0.75, 0.9, 0.16 * vida);
+          this.fxLuz.poner(z.x + ox * 0.6, y - ((t * 340 + y) % paso), 40, 5, 26, 0.5, 0.5, br.u0, br.v0, br.u1, br.v1, 0.85, 0.95, 1, 0.35 * vida);
           if (Math.random() < 0.12 * this.part.cupo) {
             this.part.crear('gota', CAPA_NORMAL, z.x + (Math.random() - 0.5) * z.w, y, 4, (Math.random() - 0.5) * 70, 0, 70, 0.4, 6, 3, 0.7, 0.9, 1, 1, 380);
           }
@@ -652,7 +691,8 @@ export class Dibujo {
       this.sombra(o.x, o.y, tam * 0.4, 0.35);
       if (cofre) {
         const b = this.fx.c.brillo;
-        const col = o.calidad >= 3 ? [1, 0.5, 0.75] : o.calidad >= 2 ? [1, 0.85, 0.4] : [0.6, 0.85, 1];
+        // (el cofre de jefe que es de uno solo brilla con el color de su dueño)
+        const col = o.dueno >= 0 && this.coloresRgb[o.dueno] ? this.coloresRgb[o.dueno] : o.calidad >= 3 ? [1, 0.5, 0.75] : o.calidad >= 2 ? [1, 0.85, 0.4] : [0.6, 0.85, 1];
         this.pisoFx.poner(o.x, o.y, 0.1, 110, 76, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, col[0], col[1], col[2], 0.6 + Math.sin(t * 4) * 0.15);
         if (Math.random() < 0.15) this.part.crear('chispa', CAPA_LUZ, o.x + (Math.random() - 0.5) * 40, o.y, 10, 0, 0, 60, 0.7, 12, 3, col[0], col[1], col[2], 1);
       }

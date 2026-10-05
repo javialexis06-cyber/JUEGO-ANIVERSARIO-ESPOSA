@@ -1,0 +1,273 @@
+/* La sala de juegos de amigos (amigos.html): una feria de noche cálida, con guirnalda de bombillos, el muñeco en
+   su pedestal y las tarjetas de los juegos. Celular en horizontal (844 × 390) y también computador. */
+body.amigos {
+  margin: 0;
+  background:
+    radial-gradient(120% 90% at 22% 105%, rgba(255, 166, 120, 0.4), transparent 55%),
+    radial-gradient(90% 80% at 85% -10%, rgba(156, 120, 230, 0.45), transparent 60%),
+    linear-gradient(170deg, #3a2347 0%, #2a1a37 55%, #1f1428 100%);
+  color: #fff8ee;
+  overflow: hidden;
+}
+#amigos { position: fixed; inset: 0; }
+#amigos.tapado { visibility: hidden; }
+.am-sala, .am-creador {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  gap: 14px;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) calc(env(safe-area-inset-right, 0px) + 14px) 10px calc(env(safe-area-inset-left, 0px) + 10px);
+  box-sizing: border-box;
+}
+
+/* ---------------------------------------------------------------- El escenario del muñeco */
+.am-escenario {
+  position: relative;
+  flex: 0 0 clamp(200px, 34%, 340px);
+  border-radius: 26px;
+  background:
+    radial-gradient(60% 45% at 50% 30%, rgba(255, 236, 200, 0.55), transparent 70%),
+    radial-gradient(80% 50% at 50% 100%, rgba(242, 165, 184, 0.35), transparent 70%),
+    linear-gradient(180deg, #4b2e5c, #3a2347);
+  box-shadow: inset 0 0 0 3px rgba(255, 214, 120, 0.35), 0 10px 28px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.am-lienzo { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+.am-carita-grande { position: absolute; inset: 0; display: grid; place-items: center; }
+/* Guirnalda de bombillos que titilan */
+.am-luces {
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  top: 6px;
+  height: 34px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 2px solid rgba(255, 240, 210, 0.35);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+.am-luces i {
+  width: 9px;
+  height: 12px;
+  margin-top: calc(var(--y, 0) * 1px);
+  border-radius: 50% 50% 45% 45%;
+  background: #ffd36e;
+  box-shadow: 0 0 10px #ffc04d, 0 0 18px rgba(255, 192, 77, 0.6);
+  animation: am-titila 2.2s ease-in-out infinite;
+}
+.am-luces i:nth-child(3n) { background: #ff8fb1; box-shadow: 0 0 10px #ff7aa8, 0 0 18px rgba(255, 122, 168, 0.6); animation-delay: 0.4s; }
+.am-luces i:nth-child(3n + 1) { background: #8fd3f2; box-shadow: 0 0 10px #6cc4f0, 0 0 18px rgba(108, 196, 240, 0.6); animation-delay: 0.9s; }
+.am-luces i:nth-child(1), .am-luces i:nth-child(14) { --y: 0; }
+.am-luces i:nth-child(2), .am-luces i:nth-child(13) { --y: 8; }
+.am-luces i:nth-child(3), .am-luces i:nth-child(12) { --y: 14; }
+.am-luces i:nth-child(4), .am-luces i:nth-child(11) { --y: 19; }
+.am-luces i:nth-child(5), .am-luces i:nth-child(10) { --y: 22; }
+.am-luces i:nth-child(n + 6):nth-child(-n + 9) { --y: 24; }
+@keyframes am-titila { 50% { opacity: 0.55; filter: brightness(0.8); } }
+.am-placa {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px 5px 14px;
+  border-radius: 999px;
+  background: rgba(255, 248, 238, 0.95);
+  color: #3d2b27;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+}
+.am-placa b { font: 700 17px/1 var(--display); }
+.am-editar {
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #f2a5b8;
+  color: #fff;
+  font: 700 12px/1 var(--display);
+  box-shadow: 0 2px 0 #b45c75;
+}
+.am-pista { position: absolute; left: 0; right: 0; bottom: 6px; margin: 0; text-align: center; font: 700 11px/1.2 var(--texto); color: rgba(255, 248, 238, 0.7); pointer-events: none; }
+
+/* ---------------------------------------------------------------- La sala de juegos */
+.am-lado { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.am-lado header h1 {
+  margin: 0;
+  font: 700 clamp(24px, 6vh + 4px, 34px)/1 var(--display);
+  color: #fff;
+  text-shadow: 0 3px 0 #b45c75, 0 0 18px rgba(255, 122, 168, 0.45);
+  letter-spacing: 0.01em;
+}
+.am-lado header p { margin: 4px 0 0; font: 700 12.5px/1.3 var(--texto); color: rgba(255, 248, 238, 0.8); }
+.am-juegos { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 0; }
+.am-juego {
+  position: relative;
+  border: 0;
+  padding: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  color: #fff;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.35), 0 12px 26px rgba(0, 0, 0, 0.3);
+  transition: transform 0.12s ease;
+  min-height: 0;
+}
+.am-juego:active { transform: translateY(3px) scale(0.99); }
+.am-juego .arte { flex: 1; min-height: 0; display: block; }
+.am-juego .arte svg { width: 100%; height: 100%; display: block; }
+.am-juego .txt { padding: 8px 12px 10px; display: flex; flex-direction: column; gap: 2px; }
+.am-juego .txt b { font: 700 19px/1.05 var(--display); }
+.am-juego .txt small { font: 700 11.5px/1.25 var(--texto); opacity: 0.85; }
+.am-juego .estado {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font: 700 13px/1.2 var(--display);
+  font-style: normal;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+.am-juego.sangre { background: linear-gradient(180deg, #2a1416, #120a0b); box-shadow: 0 5px 0 #000, 0 0 0 2px rgba(176, 141, 87, 0.45), 0 12px 26px rgba(0, 0, 0, 0.4); }
+.am-juego.sangre .txt b { font-family: 'Georgia', serif; letter-spacing: 0.04em; text-transform: uppercase; color: #ead9b8; font-size: 17px; }
+.am-juego.sangre .estado { background: linear-gradient(180deg, #a52323, #6e1212); color: #fff3df; }
+.am-juego.sangre.pronto .estado { background: rgba(255, 248, 238, 0.18); color: #ead9b8; }
+.am-juego.sangre.pronto .arte { filter: saturate(0.6) brightness(0.8); }
+.am-juego.lavado { background: linear-gradient(180deg, #fff8ee, #ffe3ec); color: #3d2b27; }
+.am-juego.lavado .txt b { color: #b0506d; }
+.am-juego.lavado .estado { background: linear-gradient(180deg, #f8b6c7, #e7839f); color: #fff; }
+.am-codigo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 12px;
+  border-radius: 16px;
+  background: rgba(255, 248, 238, 0.1);
+  box-shadow: inset 0 0 0 2px rgba(255, 248, 238, 0.18);
+}
+.am-codigo span { font: 700 13px/1.2 var(--display); white-space: nowrap; }
+.am-codigo input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff8ee;
+  color: #3d2b27;
+  font: 700 20px/1.1 var(--display);
+  letter-spacing: 0.3em;
+  text-align: center;
+  text-transform: uppercase;
+  -webkit-user-select: text;
+  user-select: text;
+}
+.am-codigo .boton { padding: 9px 16px; background: linear-gradient(180deg, #a9e6cc, #6cc6a0); color: #1f3d33; box-shadow: 0 3px 0 #3e9a72; }
+.am-codigo .boton:disabled { opacity: 0.7; }
+.am-no-soy {
+  align-self: flex-end;
+  border: 0;
+  background: none;
+  color: rgba(255, 248, 238, 0.45);
+  font: 700 11px/1.2 var(--texto);
+  text-decoration: underline;
+  padding: 2px 4px;
+}
+
+/* ---------------------------------------------------------------- El creador del muñeco */
+.am-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 14px;
+  border-radius: 22px;
+  background: rgba(255, 248, 238, 0.97);
+  color: #3d2b27;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.am-panel h1 { margin: 0; font: 700 20px/1.1 var(--display); color: #b0506d; }
+.am-nombre { display: flex; align-items: center; gap: 8px; }
+.am-nombre span, .am-fila > span { flex: 0 0 72px; font: 700 12.5px/1.2 var(--display); color: #7a625a; }
+.am-nombre input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 2px solid #f2a5b8;
+  border-radius: 12px;
+  font: 700 17px/1.1 var(--display);
+  color: #3d2b27;
+  background: #fff;
+  -webkit-user-select: text;
+  user-select: text;
+}
+.am-nombre input:focus { outline: none; border-color: #d7708d; box-shadow: 0 0 0 3px rgba(215, 112, 141, 0.2); }
+.am-fila { display: flex; align-items: center; gap: 8px; }
+.am-cuerpos { display: flex; gap: 6px; }
+.am-cuerpo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px 3px 4px;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: #fde9d4;
+  font: 700 13px/1 var(--display);
+}
+.am-cuerpo svg { border-radius: 10px; background: #fff; }
+.am-cuerpo.si { border-color: #d7708d; background: #ffe3ec; box-shadow: 0 2px 0 #d7708d; }
+.am-muestras { display: flex; flex-wrap: wrap; gap: 4px; }
+.am-muestra {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--m);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.15), 0 0 0 1.5px rgba(61, 43, 39, 0.18);
+  transition: transform 0.1s ease;
+}
+.am-muestra.si { transform: scale(1.18); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.15), 0 0 0 2.5px #fff, 0 0 0 4.5px #d7708d; }
+.am-error { margin: 0; min-height: 15px; font: 700 12px/1.2 var(--texto); color: #c0392b; }
+.am-botones { display: flex; gap: 8px; justify-content: flex-end; margin-top: auto; }
+.am-botones .boton { padding: 9px 14px; font-size: 15px; }
+
+/* ---------------------------------------------------------------- Avisos y diálogos */
+.am-aviso {
+  position: fixed;
+  left: 50%;
+  top: 14px;
+  translate: -50% 0;
+  z-index: 200;
+  max-width: 80vw;
+  padding: 9px 18px;
+  border-radius: 14px;
+  background: rgba(30, 18, 28, 0.92);
+  color: #fff;
+  font: 700 13.5px/1.3 var(--texto);
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  animation: am-aviso 3.2s ease both;
+}
+@keyframes am-aviso { 0% { opacity: 0; transform: translateY(-8px); } 10%, 85% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+.am-capa { position: fixed; inset: 0; z-index: 150; display: grid; place-items: center; background: rgba(20, 12, 20, 0.6); }
+.am-dialogo { max-width: min(460px, 86vw); padding: 16px 18px; border-radius: 20px; background: #fff8ee; color: #3d2b27; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+.am-dialogo h2 { margin: 0 0 6px; font: 700 20px/1.1 var(--display); color: #b0506d; }
+.am-dialogo p { margin: 0 0 12px; font: 700 13px/1.35 var(--texto); }
+
+@media (max-aspect-ratio: 1/1) {
+  .am-sala, .am-creador { flex-direction: column; overflow-y: auto; }
+  .am-escenario { flex: 0 0 38vh; }
+  .am-juegos { grid-template-columns: 1fr; grid-auto-rows: 160px; }
+}
+@media (max-height: 340px) {
+  .am-lado header p { display: none; }
+  .am-muestra { width: 19px; height: 19px; }
+}

@@ -10,7 +10,11 @@ import type { Accesorio, Ajuste, DefDisfraz } from '../disfraces';
 import type { Ranura } from '../../modelo';
 import type { Jugador } from '../motor';
 import type { Rol } from '../tipos';
+import type { AspectoJugador } from '../../../salas/tipos';
+import { teñirModelo } from '../../../salas/tinte';
 import { ELEVACION } from './sprites';
+
+
 
 /** Ángulo al que se ven los sprites de los mugrosos (el personaje se inclina para verse igual). */
 const VISTA_SPRITE = THREE.MathUtils.degToRad(30);
@@ -99,7 +103,10 @@ export class Jugador3D {
   private escala: number;
   listo = false;
 
-  constructor(readonly rol: Rol, readonly disfraz: DefDisfraz) {
+  /** Materiales propios (los del modelo los comparten todos: el tinte de un amigo no se le pega a nadie). */
+  private propios: THREE.Material[] = [];
+
+  constructor(readonly rol: Rol, readonly disfraz: DefDisfraz, readonly aspecto?: AspectoJugador) {
     this.escala = ALTO_PERSONAJE / 2.6;
     this.p = new Personaje({ x: 0, y: 0 }, 1);
     this.p.suavidad = 12;
@@ -156,9 +163,15 @@ export class Jugador3D {
       const que = this.disfraz.sinPelo === 'todo' ? /^(mechon|cabello)/ : /^mechon/;
       for (const [n, l] of this.p.partes) if (que.test(n)) for (const o of l) o.visible = false;
     }
+    if (this.aspecto) this.teñir(this.aspecto);
     this.p.pose('reposo', true);
     this.p.sincronizar();
     this.listo = true;
+  }
+
+  /** Los colores del perfil de amigo: piel, pelo, camiseta, pantalón y zapatos (en copias de los materiales). */
+  private teñir(a: AspectoJugador) {
+    if (this.p.modelo) this.propios.push(...teñirModelo(this.p.modelo, a));
   }
 
   /** Lo que pasó: golpe, celebración (al subir de nivel) o lo que sea con cara propia. */
@@ -226,6 +239,8 @@ export class Jugador3D {
 
   liberar() {
     this.vest.liberar();
+    for (const m of this.propios) m.dispose();
+    this.propios = [];
     this.raiz.removeFromParent();
   }
 }

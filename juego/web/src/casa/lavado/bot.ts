@@ -172,7 +172,8 @@ export function botMover(m: Motor, j: Jugador) {
 
 /** Un paso completo con el bot: elige si está en pausa y se mueve. */
 export function botPaso(m: Motor) {
-  for (const j of m.jug) botEscoger(m, j);
+  // (en línea, a los demás no se les escoge: escogen ellos en su celular)
+  for (const j of m.jug) if (!j.remoto) botEscoger(m, j);
   for (const j of m.jug) if (!j.remoto) botMover(m, j);
 }
 
