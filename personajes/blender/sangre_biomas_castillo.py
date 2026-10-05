@@ -26,10 +26,10 @@ ROJO_OSC = '#3A060C'
 MADERA_OSC = '#3A2418'
 SANGRE = '#4A060A'
 
-LUZ_VELA = dict(color='#FFB866', intensidad=0.8, alcance=4.0)
-LUZ_CANDELABRO = dict(color='#FFB060', intensidad=1.1, alcance=5.5)
-LUZ_FUEGO = dict(color='#FF8A3A', intensidad=1.6, alcance=7.0)
-LUZ_ANTORCHA = dict(color='#FF9A45', intensidad=1.2, alcance=6.0)
+LUZ_VELA = dict(color='#FFB866', intensidad=0.8, alcance=4.0, particulas='fuego')
+LUZ_CANDELABRO = dict(color='#FFB060', intensidad=1.1, alcance=5.5, particulas='fuego')
+LUZ_FUEGO = dict(color='#FF8A3A', intensidad=1.6, alcance=7.0, particulas='fuego')
+LUZ_ANTORCHA = dict(color='#FF9A45', intensidad=1.2, alcance=6.0, particulas='fuego')
 
 
 # --------------------------------------------------------------------------

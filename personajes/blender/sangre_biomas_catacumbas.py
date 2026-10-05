@@ -26,9 +26,9 @@ LOSA = '#8E8676'
 LOSA_OSC = '#5C564A'
 JUNTA = '#2E2A24'
 
-LUZ_ANTORCHA = dict(color='#FF9A45', intensidad=1.2, alcance=6.0)
-LUZ_VELA = dict(color='#FFB866', intensidad=0.7, alcance=3.5)
-LUZ_CANDELABRO = dict(color='#FFB060', intensidad=1.1, alcance=5.5)
+LUZ_ANTORCHA = dict(color='#FF9A45', intensidad=1.2, alcance=6.0, particulas='fuego')
+LUZ_VELA = dict(color='#FFB866', intensidad=0.7, alcance=3.5, particulas='fuego')
+LUZ_CANDELABRO = dict(color='#FFB060', intensidad=1.1, alcance=5.5, particulas='fuego')
 
 
 # --------------------------------------------------------------------------

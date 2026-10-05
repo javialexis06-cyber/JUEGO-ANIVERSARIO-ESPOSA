@@ -24,10 +24,10 @@ MARMOL_B = '#4E4844'
 TERCIOPELO = '#6A1A1E'
 ORO = '#B8903A'
 
-LUZ_ANTORCHA = dict(color='#FF9A45', intensidad=1.2, alcance=6.0)
-LUZ_VELA = dict(color='#FFB866', intensidad=0.8, alcance=4.0)
-LUZ_FUEGO = dict(color='#FF7A30', intensidad=1.6, alcance=7.0)
-LUZ_CANDELABRO = dict(color='#FFB060', intensidad=1.1, alcance=5.5)
+LUZ_ANTORCHA = dict(color='#FF9A45', intensidad=1.2, alcance=6.0, particulas='fuego')
+LUZ_VELA = dict(color='#FFB866', intensidad=0.8, alcance=4.0, particulas='fuego')
+LUZ_FUEGO = dict(color='#FF7A30', intensidad=1.6, alcance=7.0, particulas='fuego')
+LUZ_CANDELABRO = dict(color='#FFB060', intensidad=1.1, alcance=5.5, particulas='fuego')
 
 
 # --------------------------------------------------------------------------
@@ -365,7 +365,7 @@ def banca(quemada=True, rota=False):
 
 def vitral_roto():
     """Ventana gótica en pie (contra la pared) con el vitral medio roto y vidrios en el piso."""
-    p = Pieza('deco_vitral_roto', 'deco', huella=[1, 1], alto=2.3, lugar='pared', solido=True, luz=dict(color='#C8A0FF', intensidad=0.5, alcance=3.0))
+    p = Pieza('deco_vitral_roto', 'deco', huella=[1, 1], alto=2.3, lugar='pared', solido=True, luz=dict(color='#C8A0FF', intensidad=0.5, alcance=3.0, particulas='ninguna'))
     w, zb, zt = 0.36, 0.25, 1.55
     marco_ext = B.union(B.caja((0, 0.3, (zb + zt) / 2), (w + 0.12, 0.12, (zt - zb) / 2 + 0.1), r=0.02),
                         B.cortar(B.cortar(B.cilindro((-w * 0.35, 0.18, zt), (-w * 0.35, 0.42, zt), (w + 0.12) * 1.35, borde=0.01),
@@ -381,6 +381,7 @@ def vitral_roto():
     p.sdf(lambda P: np.maximum(f(P), -(P[:, 2] + 0.01)), (-0.62, 0.12, -0.02), (0.62, 0.5, 2.3), 0.013, 2400, 'piedra', p_sillar(1211, 0.6))
     for s in (-1, 1):
         vitral(p, (s * w / 2, 0.3, zb), w / 2 - 0.025, zt - zb + w * 0.6, 1212 + s, roto=0.35)
+    p.vacio('llama', (0, 0.3, 1.1))
     vidrios(p, (0, -0.1), 0.35, 12, 1215)
     C.escombros(p, (0.2, -0.05, 0), 0.25, 4, 1216, pintor=p_sillar(1216), tam=(0.03, 0.06))
     return p

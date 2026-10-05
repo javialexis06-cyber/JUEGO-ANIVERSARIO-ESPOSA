@@ -25,9 +25,9 @@ LAPIDA_OSC = '#55524D'
 GRANITO = '#5C5862'
 GRANITO_OSC = '#34313A'
 
-LUZ_ANTORCHA = dict(color='#FF9A45', intensidad=1.2, alcance=6.0)
-LUZ_VELA = dict(color='#FFB866', intensidad=0.7, alcance=3.5)
-LUZ_FAROL = dict(color='#FFC07A', intensidad=1.0, alcance=5.0)
+LUZ_ANTORCHA = dict(color='#FF9A45', intensidad=1.2, alcance=6.0, particulas='fuego')
+LUZ_VELA = dict(color='#FFB866', intensidad=0.7, alcance=3.5, particulas='fuego')
+LUZ_FAROL = dict(color='#FFC07A', intensidad=1.0, alcance=5.0, particulas='fuego')
 
 
 # --------------------------------------------------------------------------

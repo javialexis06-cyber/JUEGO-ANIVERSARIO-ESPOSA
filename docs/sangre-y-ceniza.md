@@ -136,3 +136,53 @@ renderizados de los modelos, 128 px), `particulas/*.webp` (brasa, chispa, humo, 
 y `retratos/<clase>_{el,ella}.webp` (cuerpo entero con el traje, para la pantalla de clases).
 
 Si un archivo todavía no existe, el juego dibuja un reemplazo sencillo y sigue (para poder avanzar en paralelo).
+
+## Biomas: lo que trae cada `bioma_<id>.glb` (hecho)
+
+Cinco archivos en `juego/web/public/modelos/sangre/` (cementerio, catacumbas, minas, abadia, castillo; ~0,5-0,65 MB
+cada uno). Se generan con `blender -b -P personajes/blender/sangre_biomas.py -- juego/web/modelos-crudos/sangre
+[biomas] [piezas]` (código en `personajes/blender/sangre_biomas_*.py`) y se comprimen con
+`node scripts/optimizar-biomas.mjs` (meshopt, sin juntar ni aplanar). Junto al crudo sale `bioma_<id>.json` con las
+medidas y los triángulos de cada pieza.
+
+**Cómo viene cada pieza**
+- Un nodo raíz con el nombre del contrato, en el origen y sin transformación; la malla es su hija (al comprimir, la
+  escala real queda en el nodo de la malla: para instanciar, usar la matriz de la malla relativa a la raíz). El
+  origen es el centro de la base (piso en z = 0 de Blender). El frente mira a -Y; lo que va contra una pared tiene
+  la espalda hacia +Y (girarlo para que la espalda quede contra el muro vecino).
+- Materiales blancos y pocos, compartidos por todo el bioma (`piedra`, `tierra`, `madera`, `hierro`, `hueso`, `tela`,
+  `cera`, `oro`, `agua`, `sangre`, `musgo`, `fuego`, `brasa`, `lava`, `cristal_sangre`, `hierro_negro`, `oro_veta`,
+  `hongo`, `vidrio_luz`, `vitral_*`): el color va en los vértices (`COLOR_0`, ya horneado con musgo, humedad,
+  hollín, oclusión y bordes gastados). Los que brillan traen emisión; `fuego` sirve para hacer titilar todas las
+  llamas a la vez cambiando su `emissiveIntensity`.
+- Vacíos `llama` (three.js los renombra `llama_1`, `llama_2`…: buscar los que **empiezan** por `llama`) donde va la
+  luz puntual. Cualquier pieza puede traerlos (las `luz_*` siempre; también altar, mesa de banquete, vigas
+  ardiendo, cristal grande, lava, vitral).
+- Extras de la raíz (`userData`): `tipo` (piso, pared, veta, deco, luz), `huella` [ancho x, fondo y] en metros,
+  `alto`, `lugar`, `solido`, `peso` (frecuencia relativa al escoger al azar), `tris`, y en las que alumbran
+  `luz: {color, intensidad, alcance, particulas}` con `particulas` = `fuego`, `brasas` o `ninguna`.
+  - `lugar`: `libre` (bajo, en cualquier parte), `suelo` (plano, se camina encima), `pared` (contra un muro,
+    espalda a +Y), `borde` (alto: pegado a las paredes, nunca en medio para no tapar a los personajes).
+  - En las paredes: `dureza` (`blanda`, `dura`, `borde`, `veta`) y en las vetas `mineral` (hierro, sangre, oro).
+  - Los rieles de las minas traen `riel: true` y `girar: false`.
+
+**Rejilla**
+- `piso_a`…`piso_e`: baldosas de 2 × 2 m centradas en su origen. Encajan con cualquier otra variante **sin girarlas**
+  (el ruido del borde se repite cada 2 m; las juntas de las losas caen en el borde). Escoger por `peso`.
+- `pared_blanda_a/b/c`, `pared_dura_a/b`, `pared_borde`, `veta_hierro/sangre/oro`: bloques de 1 × 1 × 1,5 m centrados
+  en su celda. **No girarlos**: el techo de cada bloque encaja exacto con el del vecino y el bisel del costado solo se
+  ve donde la celda de al lado está vacía, así que las paredes forman cuevas y muros continuos. La cara -Y es la que
+  ve la cámara (ahí va el detalle: osario, nicho, entibado, estandarte, ventana gótica).
+- Rieles (`deco_riel_recto`, `_curva`, `_fin`, `_roto`): piezas de 1 × 1 m; la recta va a lo largo de Y; la curva une
+  el centro del borde -Y con el centro del borde +X; el tope cierra en +Y. Girar de a 90° para armar el recorrido.
+
+**Peso**: paredes ~1.000-2.500 triángulos, pisos ~1.300-2.600, decoración ~200-6.500 (el mausoleo es la más
+pesada). Un mapa de 30 × 20 celdas completo son ~0,8-1 millón de triángulos: conviene dibujar por trozos (una
+InstancedMesh por pieza y por trozo de mapa) para que la cámara descarte lo que no ve.
+
+**Partículas** (`juego/web/public/sangre/particulas/*.webp`, ~150 KB en total, `scripts/sangre-particulas.py`):
+brasa, chispa (alargada, orientarla con la velocidad), humo, polvo, alma, alma_estela, sangre (neblina),
+sangre_mancha (en el piso), niebla, luz (halo), destello (golpe), rayo (rayo sagrado), llama, ceniza, onda; atlas
+humo_atlas y llama_atlas (4 × 4, de izquierda a derecha y de arriba abajo; la llama en bucle), polvo_atlas y
+sangre_atlas (2 × 2, cuatro variantes). Las de luz y fuego son para mezcla aditiva; humo y niebla vienen casi
+blancas para teñirlas.

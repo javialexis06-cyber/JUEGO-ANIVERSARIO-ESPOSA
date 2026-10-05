@@ -24,11 +24,11 @@ TIERRA_OSC = '#3A2620'
 VOLCAN = '#3A3236'
 VOLCAN_OSC = '#1A1618'
 
-LUZ_ANTORCHA = dict(color='#FF9A45', intensidad=1.2, alcance=6.0)
-LUZ_VELA = dict(color='#FFB866', intensidad=0.7, alcance=3.5)
-LUZ_LAMPARA = dict(color='#FFC27A', intensidad=1.1, alcance=5.5)
-LUZ_BRASERO = dict(color='#FF7A30', intensidad=1.4, alcance=6.5)
-LUZ_LAVA = dict(color='#FF5A20', intensidad=1.3, alcance=5.0)
+LUZ_ANTORCHA = dict(color='#FF9A45', intensidad=1.2, alcance=6.0, particulas='fuego')
+LUZ_VELA = dict(color='#FFB866', intensidad=0.7, alcance=3.5, particulas='fuego')
+LUZ_LAMPARA = dict(color='#FFC27A', intensidad=1.1, alcance=5.5, particulas='fuego')
+LUZ_BRASERO = dict(color='#FF7A30', intensidad=1.4, alcance=6.5, particulas='fuego')
+LUZ_LAVA = dict(color='#FF5A20', intensidad=1.3, alcance=5.0, particulas='brasas')
 
 
 # --------------------------------------------------------------------------
@@ -484,7 +484,7 @@ def puntal():
 
 
 def cristal_grande():
-    p = Pieza('deco_cristal_grande', 'deco', huella=[1, 1], alto=1.3, lugar='borde', solido=True, luz=dict(color='#FF2A3A', intensidad=0.8, alcance=4.0))
+    p = Pieza('deco_cristal_grande', 'deco', huella=[1, 1], alto=1.3, lugar='borde', solido=True, luz=dict(color='#FF2A3A', intensidad=0.8, alcance=4.0, particulas='ninguna'))
     C.monticulo(p, (0, 0, 0), (0.42, 0.38), 0.18, 851, p_roca(851), 400, terrones=6)
     rng = B.azar(852)
     tam = [1.1, 0.85, 0.6, 0.5, 0.42, 0.35, 0.3, 0.25, 0.2, 0.18]
