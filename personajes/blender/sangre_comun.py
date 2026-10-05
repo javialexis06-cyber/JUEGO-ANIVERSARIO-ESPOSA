@@ -576,6 +576,26 @@ class Figura:
         self.marcas = {}
         self.root = None
 
+    def alias(self, nuevo_id, coll):
+        """La misma figura con otro nombre (el juego la pide así): las piezas comparten la malla, no pesa más."""
+        import copy as _copy
+        G = _copy.copy(self)
+        G.id = nuevo_id
+        G.nodo = f'{self.prefijo}_{nuevo_id}' if self.prefijo else nuevo_id
+        G.es_alias = True
+        root = bpy.data.objects.new(G.nodo, None)
+        clay.link(root, coll)
+        for o in list(self.root.children):
+            n = o.copy()
+            n.name = f'{G.nodo}~{o.name.split("~", 1)[1]}'
+            clay.link(n, coll)
+            n.parent = root
+            n.matrix_parent_inverse = o.matrix_parent_inverse.copy()
+        for k, v in self.root.items():
+            root[k] = v
+        G.root = root
+        return G
+
     def marca(self, nombre, pos):
         """Vacío con nombre colgado de la raíz (dónde va la luz de una llama, la punta de un arma…)."""
         self.marcas[nombre] = np.asarray(pos, float)

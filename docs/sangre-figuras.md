@@ -143,6 +143,32 @@ cadena de mando; la reina con falda larga), campesino (sombrero de paja deshilac
 chaleco remendado, polainas de tela; ella con falda y delantal) y prisionero (túnica de costal hecha jirones,
 grilletes con la cadena rota, collar de hierro, pies vendados y la bola de hierro arrastrando del tobillo izquierdo).
 
+## Nombres que pide el juego (alias)
+
+Para que el código de `src/sangre/` encuentre todo con sus propios nombres, algunos nodos vienen repetidos con otro
+nombre (son **alias**: comparten la misma malla, no pesan más):
+
+- Armas (`datos/armas.ts → modelo`): `arma_baston` = bastón de cuervos, `arma_libro` = grimorio; y además armas
+  propias para `estandarte`, `honda`, `bola_hierro` (con `extra_bola`), `punos`, `lanza_justa`, `trabuco`,
+  `linterna` (marca `llama`), `campana_mano`, `cruz`, `gancho`, `soga`, `vudu`, `flauta`, `tambor`, `sierra` y `hacha`.
+- Proyectiles: `p_rayo` = rayo sagrado; y `alma`, `bola_hierro`, `bola_puas`, `bomba`, `cruz`, `daga`, `escudo`,
+  `frasco_agua`, `frasco_fuego`, `frasco_hielo`, `gancho`, `guillotina`, `hacha`, `pagina`, `pico`, `piedra`,
+  `sierra`, `yunque`.
+- Cosas por piezas: `c_prisionero` = prisionero encadenado, `c_campana` = campana de extracción, `c_torreta` =
+  torreta de ballesta, `c_totem` = tótem de maleficio, `c_aliado_caballero` = guardia real; y además
+  `c_aliado_ballestero`, `c_santuario` (santa encapuchada, velas y runas violetas) y `c_cofre_maldito` (cadenas y ojo
+  violeta, con `extra_tapa`).
+
+## Íconos y retratos
+
+- `public/sangre/iconos/<id>.webp` (128 px, transparentes): uno por cada id de arma de `datos/armas.ts` (68), hechos
+  del modelo que mejor lo representa (los frascos con su color, la torreta, el yunque…), en diagonal si el arma es
+  larga y con un halo suave del color del arma; las evoluciones llevan halo dorado con destellos.
+  Se regeneran con `blender -b -P personajes/blender/sangre_iconos.py -- juego/web/public/sangre/iconos`.
+- `public/sangre/retratos/<clase>_{el,ella}.webp` (384 × 480, transparentes): el muñeco con el traje, luz
+  dramática y el arma inicial de la clase en la mano. Se hacen con
+  `sangre_trajes.py -- <salida> ambos --retratos juego/web/public/sangre/retratos`.
+
 ## Cómo se regeneran
 
 ```bash

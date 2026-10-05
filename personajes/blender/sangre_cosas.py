@@ -685,3 +685,84 @@ def bengala(coll):
     c.malla(sc.punta('chispa', (0, 0, 0.22), (0, 0, 0.3), 0.025, coll, seg=5), brillo('rojo', '#FF2A1A'))
     F.marca('luz', (0, 0, 0.26))
     return F
+
+
+# ---------------------------------------------------------------------------
+# Lo que pide el juego con su propio nombre
+# ---------------------------------------------------------------------------
+
+@cosa('santuario')
+def santuario(coll):
+    """Santuario de los tres santos oscuros (las bendiciones): nicho de piedra con una santa encapuchada, velas y runas."""
+    F = nueva('santuario', voxel=0.018)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=3400)
+    base = sf.union(sdf.round_box((0, 0, 0.1), (0.55, 0.4, 0.1), 0.03), sdf.round_box((0, -0.05, 0.85), (0.42, 0.3, 0.75), 0.04), k=0.02)
+    nicho = sf.union(sdf.round_box((0, 0.2, 0.85), (0.28, 0.3, 0.5), 0.02), sdf.round_cone((0, 0.2, 1.3), (0, 0.2, 1.31), 0.28, 0.28), k=0.0)
+    arco = sf.restar(sf.union(base, sdf.round_cone((0, -0.05, 1.55), (0, -0.05, 1.56), 0.42, 0.42)), nicho)
+    c.sdf(sc.sdf_ruido(arco, 0.012, 9, 1), (-0.7, -0.6, -0.05), (0.7, 0.5, 2.05), piedra(1, '#5A5652', 0.7))
+    # la santa encapuchada (estatua) con las manos juntas
+    st = sf.union(sdf.round_cone((0, 0.05, 0.25), (0, 0.05, 0.95), 0.2, 0.13), sdf.ellipsoid((0, 0.06, 1.08), (0.13, 0.13, 0.15)), k=0.05)
+    st = sf.restar(st, sdf.ellipsoid((0, 0.18, 1.06), (0.08, 0.06, 0.09)), 0.02)
+    c.sdf(st, (-0.3, -0.25, 0.15), (0.3, 0.35, 1.3), piedra(2, '#6E6A64', 0.4))
+    c.bola((0, 0.17, 0.75), (0.06, 0.05, 0.08), piedra(3, '#6E6A64', 0.2), 0.02)
+    ojos(c, [(-0.035, 0.14, 1.07), (0.035, 0.14, 1.07)], 0.018, brillo('violeta', '#C46BFF'), coll)
+    for k, (x, y) in enumerate(((-0.42, 0.3), (0.42, 0.3), (-0.3, 0.38), (0.32, 0.36))):
+        h = 0.1 + 0.05 * (k % 2)
+        c.cono((x, y, 0.2), (x, y, 0.2 + h), 0.03, 0.026, P_('#D8CCAA', 'cera', semilla=k), 0.0)
+        c.malla(sc.punta(f'llama {k}', (x, y, 0.21 + h), (x, y, 0.27 + h), 0.016, coll, seg=5), brillo('ambar', '#FFAA33'))
+    # círculo de runas en el piso
+    for k in range(12):
+        a = 2 * math.pi * k / 12
+        p = np.array([math.cos(a) * 0.75, 0.35 + math.sin(a) * 0.55, 0.01])
+        c.malla(sc.tubo(f'runa piso {k}', [p, p + np.array([math.cos(a + 1.6) * 0.08, math.sin(a + 1.6) * 0.06, 0])], 0.012, coll, segmentos=4, muestras=1),
+                brillo('violeta', '#C46BFF'))
+    F.marca('luz', (0, 0.3, 1.0))
+    return F
+
+
+@cosa('cofre_maldito')
+def cofre_maldito(coll):
+    F = nueva('cofre_maldito', voxel=0.008)
+
+    def cerradura(c, lock):
+        c.bola(lock + np.array([0, 0.012, 0.0]), (0.04, 0.02, 0.045), hueso_pt(5), 0.0)
+        c.malla(sc.bolita('ojo maldito', lock + np.array([0, 0.035, 0.005]), (0.022, 0.01, 0.016), coll, n=2), brillo('violeta', '#C46BFF'))
+
+    def adornos(c, t):
+        for k, z in enumerate((0.06, 0.13)):
+            ring = [(math.cos(a) * 0.32, math.sin(a) * 0.235, z + 0.02 * math.sin(a * 2)) for a in np.linspace(0, 2 * math.pi, 18, endpoint=False)]
+            sf.cuerda_anillo(c, f'cadena cofre {k}', ring, 0.014, hierro(7 + k, '#3A3C42'), coll)
+        t.malla(sc.tubo('grieta tapa', [(-0.28, 0.05, 0.36), (-0.1, 0.12, 0.38), (0.05, 0.08, 0.39), (0.25, 0.14, 0.36)], 0.008, coll, segmentos=4, muestras=1),
+                brillo('violeta', '#C46BFF'))
+    _cofre(F, coll, ancho=0.3, fondo=0.21, alto=0.2, madera_pt=madera(3, '#2A2228', eje='x'), metal=hierro(4, '#3A3C42'), adornos=adornos, cerradura=cerradura)
+    F.marca('luz', (0, 0, 0.25))
+    return F
+
+
+@cosa('aliado_ballestero')
+def aliado_ballestero(coll):
+    """Ballestero aliado: capacete de hierro, gambesón y ballesta en las manos."""
+    F = nueva('aliado_ballestero', voxel=0.01, aliado=1)
+    piel = P_('#C8A88A', 'carne', color2='#8A6A5A')
+    gambeson = P_('#6A5A3A', 'tela', semilla=2)
+    pantalon = P_('#3A3434', 'tela', semilla=3, barro=0.6)
+    acero = hierro(4, '#8A8C92')
+    ojo = P_('#FFD36B', 'brillo', mat='brillo_oro')
+
+    def capacete(h, hc):
+        h.malla(sc.torno('capacete', [(0.0, 0.17), (0.12, 0.165), (0.16, 0.12), (0.17, 0.04), (0.26, 0.0), (0.27, -0.015), (0.0, -0.01)], coll, segmentos=18,
+                         centro=tuple(hc + np.array([0, 0, 0.08])), eje=(0, 0, 1)), acero)
+    _bipedo(F, coll, piel, gambeson, pantalon, P_('#3A2A20', 'pelo'), ojo, alto=1.0, botas_pt=P_('#2A1C14', 'cuero'), cabeza_extra=capacete)
+    a = F.piezas['brazo_der']
+    md = madera(5, '#4E3420', eje='y')
+    b = np.array([0.15, 0.3, 0.55])
+    a.caja(b + np.array([0, 0.08, 0]), (0.025, 0.2, 0.025), 0.01, md, 0.0)
+    a.trazo([b + np.array([-0.2, 0.22, 0.02]), b + np.array([0, 0.27, 0.02]), b + np.array([0.2, 0.22, 0.02])], [0.008, 0.012, 0.008], acero, 0.0)
+    a.malla(sc.tubo('cuerda ballesta', [b + np.array([-0.2, 0.22, 0.03]), b + np.array([0, 0.1, 0.03]), b + np.array([0.2, 0.22, 0.03])], 0.003, coll,
+                    segmentos=3, muestras=1), P_('#C9B88A', 'cuero'))
+    return F
+
+
+# alias: el juego busca estos nombres (comparten la malla con la cosa original)
+COSAS.update({'prisionero': 'prisionero_cadenas', 'campana': 'campana_extraccion', 'torreta': 'torreta_ballesta', 'totem': 'totem_maleficio',
+              'aliado_caballero': 'guardia_real'})

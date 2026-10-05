@@ -47,13 +47,27 @@ def registro(grupo):
 
 def construir(reg, ids):
     figs = []
+    hechas = {}
     t0 = time.time()
-    for i in ids:
+
+    def hacer(i):
+        if i in hechas:
+            return hechas[i]
         coll = clay.collection(f'SG {i}')
-        t = time.time()
         F = reg[i](coll)
         F.construir(coll)
         F.coll = coll
+        hechas[i] = F
+        return F
+    for i in ids:
+        t = time.time()
+        if isinstance(reg[i], str):
+            base = hacer(reg[i])
+            F = base.alias(i, base.coll)
+            figs.append(F)
+            print(f'alias {F.nodo} = {base.nodo}', flush=True)
+            continue
+        F = hacer(i)
         figs.append(F)
         print(f'figura {F.nodo}: {F.tris} triángulos, alto {F.hi[2]:.2f} m, {time.time() - t:.1f} s ·',
               ', '.join(f'{n} {p.n_tris}' for n, p in F.piezas.items()), flush=True)
@@ -68,6 +82,7 @@ def hoja(figs, path, angulos=(32, 205)):
     os.makedirs(tmp, exist_ok=True)
     luces = clay.collection('SG luces hoja')
     raices = [f.root for f in figs]
+    figs = [f for f in figs if not getattr(f, 'es_alias', False)]
     filas, etiquetas = [], []
     for F in figs:
         sc.solo_visible([F.root], raices)

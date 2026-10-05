@@ -73,7 +73,7 @@
  },
  "arma_maza": {
   "altura": 0.6,
-  "radio": 0.092,
+  "radio": 0.093,
   "alcance": 0.094,
   "tris": 1500,
   "clase": "caballero",
@@ -97,7 +97,7 @@
  },
  "arma_escudo": {
   "altura": 0.267,
-  "radio": 0.195,
+  "radio": 0.198,
   "alcance": 0.218,
   "tris": 1700,
   "clase": "caballero",
@@ -193,7 +193,7 @@
  },
  "arma_pala": {
   "altura": 0.96,
-  "radio": 0.109,
+  "radio": 0.11,
   "alcance": 0.116,
   "tris": 1300,
   "clase": "sepulturero",
@@ -675,6 +675,451 @@
     0.0,
     0.1,
     0.25
+   ]
+  }
+ },
+ "arma_estandarte": {
+  "altura": 1.16,
+  "radio": 0.421,
+  "alcance": 0.434,
+  "tris": 1300,
+  "clase": "monarca",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1300
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.2,
+    0.8
+   ]
+  }
+ },
+ "arma_honda": {
+  "altura": 0.425,
+  "radio": 0.059,
+  "alcance": 0.066,
+  "tris": 600,
+  "clase": "campesino",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 600
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.39
+   ]
+  }
+ },
+ "arma_bola_hierro": {
+  "altura": 0.63,
+  "radio": 0.061,
+  "alcance": 0.11,
+  "tris": 1144,
+  "clase": "prisionero",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 144
+   },
+   "extra_bola": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.02
+    ],
+    "tris": 1000
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.52
+   ]
+  }
+ },
+ "arma_punos": {
+  "altura": 0.06,
+  "radio": 0.121,
+  "alcance": 0.135,
+  "tris": 900,
+  "clase": "prisionero",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 900
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.12,
+    0.03
+   ]
+  }
+ },
+ "arma_lanza_justa": {
+  "altura": 1.38,
+  "radio": 0.14,
+  "alcance": 0.15,
+  "tris": 1198,
+  "clase": "caballero",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1198
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    1.38
+   ]
+  }
+ },
+ "arma_trabuco": {
+  "altura": 0.119,
+  "radio": 0.42,
+  "alcance": 0.43,
+  "tris": 1300,
+  "clase": "cazador",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1300
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.44,
+    0.07
+   ]
+  }
+ },
+ "arma_linterna": {
+  "altura": 0.067,
+  "radio": 0.065,
+  "alcance": 0.066,
+  "tris": 1100,
+  "clase": "sepulturero",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1100
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.0,
+    -0.22
+   ],
+   "punta": [
+    0.0,
+    0.0,
+    -0.22
+   ]
+  }
+ },
+ "arma_campana_mano": {
+  "altura": 0.32,
+  "radio": 0.11,
+  "alcance": 0.115,
+  "tris": 898,
+  "clase": "sepulturero",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 898
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.2
+   ]
+  }
+ },
+ "arma_cruz": {
+  "altura": 0.522,
+  "radio": 0.168,
+  "alcance": 0.172,
+  "tris": 800,
+  "clase": "inquisidor",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 800
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.5
+   ]
+  }
+ },
+ "arma_gancho": {
+  "altura": 0.513,
+  "radio": 0.131,
+  "alcance": 0.138,
+  "tris": 1000,
+  "clase": "verdugo",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1000
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.13,
+    0.38
+   ]
+  }
+ },
+ "arma_soga": {
+  "altura": 0.664,
+  "radio": 0.115,
+  "alcance": 0.124,
+  "tris": 780,
+  "clase": "verdugo",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 780
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.53
+   ]
+  }
+ },
+ "arma_vudu": {
+  "altura": 0.3,
+  "radio": 0.111,
+  "alcance": 0.115,
+  "tris": 1100,
+  "clase": "bruja",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1100
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.2
+   ]
+  }
+ },
+ "arma_flauta": {
+  "altura": 0.333,
+  "radio": 0.018,
+  "alcance": 0.042,
+  "tris": 700,
+  "clase": "juglar",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 700
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.33
+   ]
+  }
+ },
+ "arma_tambor": {
+  "altura": 0.257,
+  "radio": 0.147,
+  "alcance": 0.147,
+  "tris": 1200,
+  "clase": "juglar",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1200
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.1
+   ]
+  }
+ },
+ "arma_sierra": {
+  "altura": 0.016,
+  "radio": 0.17,
+  "alcance": 0.167,
+  "tris": 304,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 304
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.17,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "arma_hacha": {
+  "altura": 0.377,
+  "radio": 0.133,
+  "alcance": 0.139,
+  "tris": 900,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 900
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.18,
+    0.28
+   ]
+  }
+ },
+ "arma_baston": {
+  "altura": 0.923,
+  "radio": 0.068,
+  "alcance": 0.085,
+  "tris": 1800,
+  "clase": "bruja",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1800
+   }
+  },
+  "marcas": {
+   "punta": [
+    -0.014,
+    -0.022,
+    0.89
+   ]
+  }
+ },
+ "arma_libro": {
+  "altura": 0.148,
+  "radio": 0.136,
+  "alcance": 0.141,
+  "tris": 1000,
+  "clase": "inquisidor",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1000
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    -0.05,
+    0.0
    ]
   }
  }
