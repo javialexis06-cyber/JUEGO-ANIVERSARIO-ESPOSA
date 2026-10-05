@@ -76,6 +76,23 @@ piedra), inquisidor_muerto (máscara de hierro, hierro de marcar al rojo: marca 
 calavera y llama verde: marca `llama`), vampiro (capa de cuello alto), novia_vampira (velo y rosa marchita),
 hombre_lobo (mandíbula y cola), caballero_muerte (élite común, `elite: 1`, mandoble en la mano derecha).
 
+## Cosas (`cosas.glb`)
+
+- Recogibles (livianos): `c_alma_azul`, `c_alma_verde`, `c_alma_roja` (flotan; marca `luz`), `c_oro`, `c_hierro_negro`,
+  `c_sangre_cristal`, `c_pierna_pollo`, `c_llave`.
+- Cofres: `c_cofre` y `c_cofre_reliquia` con la tapa aparte (`extra_tapa`, pivote en la bisagra de atrás: abrir = girar
+  en X hacia atrás).
+- `c_campana_extraccion`: campana de bronce de 3,5 m con runas rojas; `extra_cadenas` (suben al cielo: bajarla todo
+  junto) y `extra_badajo` (mecerlo al sonar). Marca `luz` adentro.
+- `c_altar_sangre` (cristal de sangre clavado, velas y sangre), `c_carreta` (para los rieles, con
+  `extra_rueda_del` y `extra_rueda_tras` que giran en X), `c_pozo_almas`, `c_forja` (marca `llama`).
+- `c_prisionero_cadenas`: persona por piezas (cuerpo, cabeza, brazos, piernas) + `extra_poste` con las cadenas: al
+  liberarlo se esconde el poste y camina detrás. `c_guardia_real`: caballero aliado del monarca, por piezas.
+- Construcciones: `c_torreta_ballesta` (`extra_arco` gira en Z; marca `punta`), `c_trampa` (`extra_quijada_a/b`
+  se cierran girando en X), `c_totem_maleficio`, `c_plataforma`; y `c_tumba_abierta` (sepulturero).
+- Objetivos secundarios: `c_huevo_dragon`, `c_frasco_alquimia`; y además `c_espiga` (las espigas que curan del
+  campesino) y `c_bengala`.
+
 ## Armas y proyectiles
 
 - `arma_<id>`: la pieza `cuerpo` con el **origen en la empuñadura** (donde va la mano). El arma crece hacia **+Z

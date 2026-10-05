@@ -1,0 +1,722 @@
+{
+ "c_alma_azul": {
+  "altura": 0.425,
+  "radio": 0.061,
+  "alcance": 0.075,
+  "tris": 504,
+  "flota": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.35
+    ],
+    "tris": 504
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.35
+   ]
+  }
+ },
+ "c_alma_verde": {
+  "altura": 0.425,
+  "radio": 0.061,
+  "alcance": 0.075,
+  "tris": 504,
+  "flota": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.35
+    ],
+    "tris": 504
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.35
+   ]
+  }
+ },
+ "c_alma_roja": {
+  "altura": 0.425,
+  "radio": 0.061,
+  "alcance": 0.075,
+  "tris": 504,
+  "flota": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.35
+    ],
+    "tris": 504
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.35
+   ]
+  }
+ },
+ "c_oro": {
+  "altura": 0.056,
+  "radio": 0.062,
+  "alcance": 0.06,
+  "tris": 360,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 360
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.05
+   ]
+  }
+ },
+ "c_hierro_negro": {
+  "altura": 0.146,
+  "radio": 0.113,
+  "alcance": 0.12,
+  "tris": 500,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 500
+   }
+  }
+ },
+ "c_sangre_cristal": {
+  "altura": 0.22,
+  "radio": 0.079,
+  "alcance": 0.08,
+  "tris": 400,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 400
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.1
+   ]
+  }
+ },
+ "c_pierna_pollo": {
+  "altura": 0.107,
+  "radio": 0.146,
+  "alcance": 0.151,
+  "tris": 498,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 498
+   }
+  }
+ },
+ "c_cofre": {
+  "altura": 0.381,
+  "radio": 0.323,
+  "alcance": 0.272,
+  "tris": 2200,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1300
+   },
+   "extra_tapa": {
+    "pivote": [
+     0.0,
+     -0.18,
+     0.17
+    ],
+    "tris": 900
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.2
+   ]
+  }
+ },
+ "c_cofre_reliquia": {
+  "altura": 0.431,
+  "radio": 0.37,
+  "alcance": 0.312,
+  "tris": 2200,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1300
+   },
+   "extra_tapa": {
+    "pivote": [
+     0.0,
+     -0.2,
+     0.2
+    ],
+    "tris": 900
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.25
+   ]
+  }
+ },
+ "c_llave": {
+  "altura": 0.335,
+  "radio": 0.123,
+  "alcance": 0.128,
+  "tris": 498,
+  "flota": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.3
+    ],
+    "tris": 498
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.3
+   ]
+  }
+ },
+ "c_campana_extraccion": {
+  "altura": 3.474,
+  "radio": 1.053,
+  "alcance": 1.08,
+  "tris": 3858,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 2598
+   },
+   "extra_cadenas": {
+    "pivote": [
+     0.0,
+     0.0,
+     2.0
+    ],
+    "tris": 960
+   },
+   "extra_badajo": {
+    "pivote": [
+     0.0,
+     0.0,
+     1.5
+    ],
+    "tris": 300
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.6
+   ]
+  }
+ },
+ "c_altar_sangre": {
+  "altura": 1.25,
+  "radio": 0.672,
+  "alcance": 0.606,
+  "tris": 3197,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 3197
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    1.0
+   ]
+  }
+ },
+ "c_carreta": {
+  "altura": 0.89,
+  "radio": 0.836,
+  "alcance": 0.878,
+  "tris": 3600,
+  "carril": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 2400
+   },
+   "extra_rueda_del": {
+    "pivote": [
+     0.0,
+     0.38,
+     0.2
+    ],
+    "tris": 600
+   },
+   "extra_rueda_tras": {
+    "pivote": [
+     0.0,
+     -0.38,
+     0.2
+    ],
+    "tris": 600
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    -0.05,
+    0.8
+   ]
+  }
+ },
+ "c_prisionero_cadenas": {
+  "altura": 1.37,
+  "radio": 0.207,
+  "alcance": 0.39,
+  "tris": 3817,
+  "sigue": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.44
+    ],
+    "tris": 899
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.03,
+     0.8
+    ],
+    "tris": 700
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.2,
+     0.02,
+     0.76
+    ],
+    "tris": 300
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.08,
+     0.0,
+     0.42
+    ],
+    "tris": 260
+   },
+   "brazo_der": {
+    "pivote": [
+     0.2,
+     0.02,
+     0.76
+    ],
+    "tris": 300
+   },
+   "pierna_der": {
+    "pivote": [
+     0.08,
+     0.0,
+     0.42
+    ],
+    "tris": 260
+   },
+   "extra_poste": {
+    "pivote": [
+     0.0,
+     -0.3,
+     0.0
+    ],
+    "tris": 1098
+   }
+  }
+ },
+ "c_guardia_real": {
+  "altura": 1.208,
+  "radio": 0.207,
+  "alcance": 0.36,
+  "tris": 2717,
+  "aliado": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.44
+    ],
+    "tris": 899
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.03,
+     0.8
+    ],
+    "tris": 700
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.2,
+     0.02,
+     0.76
+    ],
+    "tris": 298
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.08,
+     0.0,
+     0.42
+    ],
+    "tris": 260
+   },
+   "brazo_der": {
+    "pivote": [
+     0.2,
+     0.02,
+     0.76
+    ],
+    "tris": 300
+   },
+   "pierna_der": {
+    "pivote": [
+     0.08,
+     0.0,
+     0.42
+    ],
+    "tris": 260
+   }
+  }
+ },
+ "c_pozo_almas": {
+  "altura": 2.016,
+  "radio": 0.948,
+  "alcance": 0.951,
+  "tris": 3000,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 3000
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.6
+   ]
+  }
+ },
+ "c_forja": {
+  "altura": 2.293,
+  "radio": 0.825,
+  "alcance": 0.99,
+  "tris": 3522,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 3522
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.1,
+    0.9
+   ]
+  }
+ },
+ "c_torreta_ballesta": {
+  "altura": 0.726,
+  "radio": 0.377,
+  "alcance": 0.6,
+  "tris": 2500,
+  "construccion": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1200
+   },
+   "extra_arco": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.62
+    ],
+    "tris": 1300
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.62,
+    0.71
+   ]
+  }
+ },
+ "c_trampa": {
+  "altura": 0.07,
+  "radio": 0.35,
+  "alcance": 0.359,
+  "tris": 1500,
+  "construccion": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 500
+   },
+   "extra_quijada_a": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.02
+    ],
+    "tris": 500
+   },
+   "extra_quijada_b": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.02
+    ],
+    "tris": 500
+   }
+  }
+ },
+ "c_tumba_abierta": {
+  "altura": 0.823,
+  "radio": 0.932,
+  "alcance": 0.926,
+  "tris": 2600,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 2600
+   }
+  }
+ },
+ "c_totem_maleficio": {
+  "altura": 1.701,
+  "radio": 0.231,
+  "alcance": 0.302,
+  "tris": 2400,
+  "construccion": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 2400
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.1,
+    1.3
+   ]
+  }
+ },
+ "c_huevo_dragon": {
+  "altura": 0.522,
+  "radio": 0.191,
+  "alcance": 0.209,
+  "tris": 1199,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1199
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.3
+   ]
+  }
+ },
+ "c_frasco_alquimia": {
+  "altura": 0.642,
+  "radio": 0.16,
+  "alcance": 0.16,
+  "tris": 1100,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1100
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.2
+   ]
+  }
+ },
+ "c_espiga": {
+  "altura": 0.548,
+  "radio": 0.118,
+  "alcance": 0.121,
+  "tris": 1926,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1926
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.42
+   ]
+  }
+ },
+ "c_plataforma": {
+  "altura": 0.45,
+  "radio": 0.717,
+  "alcance": 0.55,
+  "tris": 1400,
+  "construccion": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1400
+   }
+  }
+ },
+ "c_bengala": {
+  "altura": 0.3,
+  "radio": 0.018,
+  "alcance": 0.025,
+  "tris": 400,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 400
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.26
+   ]
+  }
+ }
+}
