@@ -30,6 +30,8 @@ export interface EstadoHud {
   eclipse: number;
   mapa: { rieles: { x: number; y: number }[] };
   cfg: { etapa: number; final: boolean };
+  /** Sin reloj (tutorial). */
+  sinReloj?: boolean;
 }
 
 interface Numero {
@@ -217,7 +219,7 @@ export class Hud {
     this.texto('etapa', `Etapa ${est.cfg.etapa}${est.cfg.final ? ' · final' : ''} de 4`);
     const quedan = Math.max(0, est.limite - est.t);
     const enJefe = est.fase === 'jefe';
-    this.texto('reloj', enJefe ? '' : est.fase === 'extraccion' ? '' : `${Math.floor(quedan / 60)}:${String(Math.floor(quedan % 60)).padStart(2, '0')}`);
+    this.texto('reloj', enJefe || est.sinReloj ? '' : est.fase === 'extraccion' ? '' : `${Math.floor(quedan / 60)}:${String(Math.floor(quedan % 60)).padStart(2, '0')}`);
     this.poner('reloj!', quedan < 20 && est.fase === 'juego' ? '1' : '0', (el, x) => el.classList.toggle('urgente', x === '1'));
     const o = est.obj;
     const defO = OBJETIVOS[o.tipo];

@@ -23,6 +23,8 @@ export interface OpcionesForja {
   esperando?: () => string | null;
   /** Pista del tutorial arriba. */
   pista?: string;
+  /** Texto del botón para seguir (por defecto «Bajar a la etapa N»). */
+  textoListo?: string;
 }
 
 const $p = () => document.getElementById('pantallas')!;
@@ -91,7 +93,7 @@ export function mostrarForja(o: OpcionesForja) {
       </div>
       <footer class="fila-botones">
         ${espera ? `<span class="espera">${espera}</span>` : ''}
-        <button class="boton boton-sangre boton-grande" data-a="listo" ${listo ? 'disabled' : ''}>${listo ? 'Esperando…' : `Bajar a la etapa ${exp.etapa + 1}`}</button>
+        <button class="boton boton-sangre boton-grande" data-a="listo" ${listo ? 'disabled' : ''}>${listo ? 'Esperando…' : o.textoListo ?? `Bajar a la etapa ${exp.etapa + 1}`}</button>
       </footer>`;
   };
 

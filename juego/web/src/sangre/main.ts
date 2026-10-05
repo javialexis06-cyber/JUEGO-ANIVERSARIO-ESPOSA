@@ -618,6 +618,7 @@ function abrirForja(p: PartidaComun, seguir: () => void, esperando?: () => strin
   const f = mostrarForja({
     exp: p.exp, j, sim, eleccion: p.eleccion, esperando,
     pista: tutorial ? tutorial.pistaForja() : undefined,
+    textoListo: p.exp.cfg.tutorial ? 'Terminar el tutorial' : undefined,
     alListo: () => {
       if (esperando?.()) {
         // En grupo: se queda en la Forja hasta que todos estén
@@ -633,9 +634,10 @@ function abrirForja(p: PartidaComun, seguir: () => void, esperando?: () => strin
       }
       f.cerrar();
       pantalla = 'juego';
-      if (!(p instanceof PartidaInvitado)) carga(true, `Etapa ${p.exp.etapa + 1}…`, 0.3);
+      const conCarga = !(p instanceof PartidaInvitado) && !p.exp.cfg.tutorial;
+      if (conCarga) carga(true, `Etapa ${p.exp.etapa + 1}…`, 0.3);
       seguir();
-      if (!(p instanceof PartidaInvitado)) setTimeout(() => carga(false), 400);
+      if (conCarga) setTimeout(() => carga(false), 400);
     },
   });
   forjaAbierta = f;
@@ -722,6 +724,7 @@ function terminar(p: PartidaComun) {
   const exito = p.exp.exito;
   if (p.exp.cfg.tutorial && tutorial) {
     // El tutorial termina mostrando la Forja de mentiras y luego los resultados
+    tutorial.cerrar();
     if (exito) {
       p.exp.fase = 'forja';
       p.exp.forja.clear();
