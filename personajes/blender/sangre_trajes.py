@@ -925,7 +925,12 @@ def retrato(ctx, clave, carpeta, ocultos, res=(384, 480)):
     luces = clay.collection('SG luces retrato')
     for o in list(luces.objects):
         bpy.data.objects.remove(o, do_unlink=True)
-    sc.luces_dramaticas(luces, centro=(0, 0, 1.25), escala=2.4)
+    # personajes de frente (miran a -Y): la luz clave viene de adelante a la izquierda y el contraluz rojo de atrás
+    c = (0, 0, 1.25)
+    escena.area_light('SG r clave', (-2.6, -5.2, 4.2), c, 1500, 3.0, '#FFE6CC', luces)
+    escena.area_light('SG r relleno', (4.5, -3.5, 1.5), c, 350, 4.0, '#9FB8FF', luces)
+    escena.area_light('SG r contra', (3.0, 4.5, 3.5), c, 1300, 2.0, '#FF5A3A', luces)
+    escena.area_light('SG r contra2', (-3.2, 4.0, 2.5), c, 600, 2.0, '#FFB070', luces)
     luces.hide_render = False
     # arma en la mano derecha (el muñeco mide ~2,2 en Blender; las armas están hechas para 1 m)
     coll_a = clay.collection(f'SG arma retrato {clave}')
@@ -934,19 +939,20 @@ def retrato(ctx, clave, carpeta, ocultos, res=(384, 480)):
         F = sangre_armas.ARMAS[ARMA_CLASE[clave]](coll_a)
         F.construir(coll_a)
         arma = F.root
-        mano = np.array(ctx.B['arm']['hand']) * np.array([1, 1, 1]) + np.array([0.02, -0.04, 0.02])
+        mano = np.array(ctx.B['arm']['hand']) * np.array([1, 1, 1]) + np.array([0.04, -0.06, 0.02])
         arma.location = tuple(mano)
-        arma.rotation_euler = (math.radians(-12), math.radians(14), math.radians(180))
+        # girada para que el filo mire adelante (-Y) e inclinada hacia afuera para que no se meta en la cabeza
+        arma.rotation_mode = 'ZYX'
+        arma.rotation_euler = (math.radians(8), math.radians(42), math.radians(180))
         arma.scale = (2.0, 2.0, 2.0)
-        sc.solo_visible([], [])
     except Exception as e:  # sin arma, igual sale el retrato
         print('sin arma en el retrato', clave, e, flush=True)
     scene.render.resolution_x, scene.render.resolution_y = res
     scene.render.film_transparent = True
     a = math.radians(-24)
-    cam = escena.camera(f'cam retrato {clave}', (math.sin(a) * 7, -math.cos(a) * 7, 1.25 + 7 * math.tan(math.radians(9))), (0, 0, 1.3), 50)
+    cam = escena.camera(f'cam retrato {clave}', (0.15 + math.sin(a) * 7, -math.cos(a) * 7, 1.25 + 7 * math.tan(math.radians(9))), (0.15, 0, 1.3), 50)
     cam.data.type = 'ORTHO'
-    cam.data.ortho_scale = 3.3
+    cam.data.ortho_scale = 3.55
     png = os.path.join(carpeta, f'_{clave}_{ctx.rol}.png')
     sc.render(scene, cam, png)
     bpy.data.objects.remove(cam, do_unlink=True)
