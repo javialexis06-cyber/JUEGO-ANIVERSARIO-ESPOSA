@@ -4,6 +4,7 @@
 // campana de extracción y, al salir, la Forja.
 import { aparecerEnemigo } from './sim/enemigos_ia';
 import { TIPO } from './sim/catalogo';
+import { xpPara } from './sim/jugador';
 import type { Partida } from './partida';
 import type { Mando } from './ui/mando';
 
@@ -22,6 +23,7 @@ export class Tutorial {
   private t = 0;
   private inicio = { x: 0, y: 0 };
   private oleadaT = 0;
+  private atraidas = false;
 
   constructor(private mando: Mando) {}
 
@@ -61,7 +63,12 @@ export class Tutorial {
         const j = p.local!;
         const sim = p.sim!;
         // Si ya recogió todo y no le alcanzó, una ayudita
-        if (j.nivel < 2 && !sim.R.some((r) => r.vivo && r.tipo <= 2) && this.t > 3) sim.ganarXp(12);
+        if (j.nivel < 2 && this.t > 7 && !this.atraidas) {
+          // Si se demora, las almas vuelan solas hacia ella (y se ve cómo se recogen)
+          this.atraidas = true;
+          sim.atraerTodo(j);
+        }
+        if (j.nivel < 2 && this.t > 12) sim.ganarXp(xpPara(j.nivel) - j.xp + 1);
         return j.nivel >= 2 && j.cola.length === 0;
       },
     },
