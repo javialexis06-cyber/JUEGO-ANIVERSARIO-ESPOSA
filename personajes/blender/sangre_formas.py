@@ -25,6 +25,10 @@ def restar(f, g, k=0.0):
     return sdf.subtract(f, g, k)
 
 
+def intersect(f, g, k=0.0):
+    return sdf.intersect(f, g, k)
+
+
 def cortar(f, o, n, amp=0.02, esc=18.0, sem=0, dientes=0.0, esc_dientes=60.0):
     """Deja solo el lado +n del plano (o, n), con el borde rasgado (ruido + dientes de tela rota)."""
     o = np.asarray(o, float)

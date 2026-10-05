@@ -323,7 +323,7 @@ def simplificar_para_gltf(mats):
             m['fieltro'] = 1
         m['relieve'] = 1
         if m.name == 'sg_espectro':
-            b.inputs['Emission Color'].default_value = (0.35, 0.45, 0.5, 1)
+            b.inputs['Emission Color'].default_value = (0.16, 0.22, 0.26, 1)
             b.inputs['Emission Strength'].default_value = 1.0
 
 
@@ -859,16 +859,17 @@ def exportar_glb(raices, path):
     for m in mats:
         c = m.copy()
         copias[m] = c
+    # primero los nombres (la simplificación decide por nombre: fieltro de sg_base, emisivo de sg_espectro)
+    for m, c in copias.items():
+        nombre = m.name
+        m.name = nombre + '_render'
+        c.name = nombre
     simplificar_para_gltf(list(copias.values()))
     for o in objs:
         if o.type == 'MESH':
             for s in o.material_slots:
                 if s.material in copias:
                     s.material = copias[s.material]
-    for m, c in copias.items():
-        nombre = m.name
-        m.name = nombre + '_render'
-        c.name = nombre
     bpy.ops.object.select_all(action='DESELECT')
     for o in objs:
         o.hide_set(False)

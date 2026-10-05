@@ -130,10 +130,10 @@
   }
  },
  "enemigo_esqueleto_arquero": {
-  "altura": 1.127,
+  "altura": 1.105,
   "radio": 0.221,
   "alcance": 0.466,
-  "tris": 3693,
+  "tris": 3698,
   "bioma": "cementerio",
   "piezas": {
    "cuerpo": {
@@ -150,7 +150,7 @@
      0.0,
      0.82
     ],
-    "tris": 736
+    "tris": 741
    },
    "mandibula": {
     "pivote": [
@@ -373,6 +373,1009 @@
      0.5
     ],
     "tris": 260
+   }
+  }
+ },
+ "enemigo_zombi_gordo": {
+  "altura": 1.119,
+  "radio": 0.392,
+  "alcance": 0.497,
+  "tris": 3223,
+  "bioma": "cementerio",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.42
+    ],
+    "tris": 1133
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.12,
+     0.93
+    ],
+    "tris": 650
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.3,
+     0.05,
+     0.86
+    ],
+    "tris": 420
+   },
+   "brazo_der": {
+    "pivote": [
+     0.3,
+     0.05,
+     0.86
+    ],
+    "tris": 420
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.15,
+     0.0,
+     0.42
+    ],
+    "tris": 300
+   },
+   "pierna_der": {
+    "pivote": [
+     0.15,
+     0.0,
+     0.42
+    ],
+    "tris": 300
+   }
+  }
+ },
+ "enemigo_ghoul": {
+  "altura": 0.849,
+  "radio": 0.287,
+  "alcance": 0.553,
+  "tris": 3639,
+  "bioma": "catacumbas",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.42
+    ],
+    "tris": 1100
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.2,
+     0.68
+    ],
+    "tris": 799
+   },
+   "mandibula": {
+    "pivote": [
+     0.0,
+     0.32,
+     0.67
+    ],
+    "tris": 260
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.19,
+     0.12,
+     0.67
+    ],
+    "tris": 420
+   },
+   "brazo_der": {
+    "pivote": [
+     0.19,
+     0.12,
+     0.67
+    ],
+    "tris": 420
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.09,
+     -0.02,
+     0.42
+    ],
+    "tris": 320
+   },
+   "pierna_der": {
+    "pivote": [
+     0.09,
+     -0.02,
+     0.42
+    ],
+    "tris": 320
+   }
+  }
+ },
+ "enemigo_arana_cripta": {
+  "altura": 0.65,
+  "radio": 0.517,
+  "alcance": 0.618,
+  "tris": 3404,
+  "bioma": "catacumbas",
+  "cuadrupedo": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.32
+    ],
+    "tris": 1300
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.2,
+     0.3
+    ],
+    "tris": 504
+   },
+   "mandibula": {
+    "pivote": [
+     0.0,
+     0.32,
+     0.26
+    ],
+    "tris": 200
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.1,
+     0.08,
+     0.3
+    ],
+    "tris": 700
+   },
+   "pierna_der": {
+    "pivote": [
+     0.1,
+     0.08,
+     0.3
+    ],
+    "tris": 700
+   }
+  }
+ },
+ "enemigo_espectro": {
+  "altura": 1.211,
+  "radio": 0.302,
+  "alcance": 0.441,
+  "tris": 2235,
+  "vuela": 1,
+  "bioma": "catacumbas",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.8
+    ],
+    "tris": 898
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.95
+    ],
+    "tris": 500
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.15,
+     0.02,
+     0.9
+    ],
+    "tris": 420
+   },
+   "brazo_der": {
+    "pivote": [
+     0.15,
+     0.02,
+     0.9
+    ],
+    "tris": 417
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.03,
+    1.07
+   ]
+  }
+ },
+ "enemigo_minero_maldito": {
+  "altura": 1.22,
+  "radio": 0.266,
+  "alcance": 0.579,
+  "tris": 3520,
+  "bioma": "minas",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.45
+    ],
+    "tris": 1200
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.08,
+     0.82
+    ],
+    "tris": 900
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.24,
+     0.05,
+     0.76
+    ],
+    "tris": 330
+   },
+   "brazo_der": {
+    "pivote": [
+     0.24,
+     0.05,
+     0.76
+    ],
+    "tris": 450
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.1,
+     0.0,
+     0.44
+    ],
+    "tris": 320
+   },
+   "pierna_der": {
+    "pivote": [
+     0.1,
+     0.0,
+     0.44
+    ],
+    "tris": 320
+   }
+  },
+  "marcas": {
+   "llama": [
+    -0.2,
+    0.1,
+    0.4
+   ],
+   "vela": [
+    0.0,
+    0.22,
+    1.18
+   ]
+  }
+ },
+ "enemigo_rata_peste": {
+  "altura": 0.476,
+  "radio": 0.28,
+  "alcance": 0.752,
+  "tris": 2520,
+  "bioma": "minas",
+  "cuadrupedo": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.25
+    ],
+    "tris": 900
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.22,
+     0.3
+    ],
+    "tris": 520
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.09,
+     0.13,
+     0.22
+    ],
+    "tris": 200
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.1,
+     -0.18,
+     0.24
+    ],
+    "tris": 240
+   },
+   "brazo_der": {
+    "pivote": [
+     0.09,
+     0.13,
+     0.22
+    ],
+    "tris": 200
+   },
+   "pierna_der": {
+    "pivote": [
+     0.1,
+     -0.18,
+     0.24
+    ],
+    "tris": 240
+   },
+   "cola": {
+    "pivote": [
+     0.0,
+     -0.3,
+     0.22
+    ],
+    "tris": 220
+   }
+  }
+ },
+ "enemigo_abominacion": {
+  "altura": 1.567,
+  "radio": 0.444,
+  "alcance": 0.847,
+  "tris": 5220,
+  "bioma": "minas",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.6
+    ],
+    "tris": 1800
+   },
+   "cabeza": {
+    "pivote": [
+     -0.12,
+     0.08,
+     1.28
+    ],
+    "tris": 982
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.42,
+     0.05,
+     1.1
+    ],
+    "tris": 650
+   },
+   "brazo_der": {
+    "pivote": [
+     0.42,
+     0.05,
+     1.0
+    ],
+    "tris": 650
+   },
+   "extra_brazo": {
+    "pivote": [
+     0.25,
+     -0.1,
+     1.25
+    ],
+    "tris": 378
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.2,
+     0.05,
+     0.58
+    ],
+    "tris": 380
+   },
+   "pierna_der": {
+    "pivote": [
+     0.2,
+     0.05,
+     0.58
+    ],
+    "tris": 380
+   }
+  }
+ },
+ "enemigo_lacayo_explosivo": {
+  "altura": 0.87,
+  "radio": 0.347,
+  "alcance": 0.368,
+  "tris": 2706,
+  "bioma": "minas",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.3
+    ],
+    "tris": 1150
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.12,
+     0.52
+    ],
+    "tris": 600
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.15,
+     0.03,
+     0.5
+    ],
+    "tris": 260
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.07,
+     0.0,
+     0.29
+    ],
+    "tris": 220
+   },
+   "brazo_der": {
+    "pivote": [
+     0.15,
+     0.03,
+     0.5
+    ],
+    "tris": 258
+   },
+   "pierna_der": {
+    "pivote": [
+     0.07,
+     0.0,
+     0.29
+    ],
+    "tris": 218
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.075,
+    -0.2,
+    0.85
+   ]
+  }
+ },
+ "enemigo_monje_caido": {
+  "altura": 1.098,
+  "radio": 0.293,
+  "alcance": 0.488,
+  "tris": 3498,
+  "bioma": "abadia",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.45
+    ],
+    "tris": 1261
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.08,
+     0.82
+    ],
+    "tris": 798
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.22,
+     0.03,
+     0.78
+    ],
+    "tris": 520
+   },
+   "brazo_der": {
+    "pivote": [
+     0.22,
+     0.03,
+     0.78
+    ],
+    "tris": 519
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.09,
+     0.0,
+     0.45
+    ],
+    "tris": 200
+   },
+   "pierna_der": {
+    "pivote": [
+     0.09,
+     0.0,
+     0.45
+    ],
+    "tris": 200
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.2,
+    0.41,
+    0.77
+   ]
+  }
+ },
+ "enemigo_gargola": {
+  "altura": 1.317,
+  "radio": 0.3,
+  "alcance": 0.849,
+  "tris": 5160,
+  "bioma": "abadia",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.5
+    ],
+    "tris": 1300
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.18,
+     0.88
+    ],
+    "tris": 900
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.24,
+     0.1,
+     0.82
+    ],
+    "tris": 420
+   },
+   "ala_izq": {
+    "pivote": [
+     -0.12,
+     -0.1,
+     0.86
+    ],
+    "tris": 520
+   },
+   "brazo_der": {
+    "pivote": [
+     0.24,
+     0.1,
+     0.82
+    ],
+    "tris": 420
+   },
+   "ala_der": {
+    "pivote": [
+     0.12,
+     -0.1,
+     0.86
+    ],
+    "tris": 520
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.13,
+     -0.02,
+     0.5
+    ],
+    "tris": 380
+   },
+   "pierna_der": {
+    "pivote": [
+     0.13,
+     -0.02,
+     0.5
+    ],
+    "tris": 380
+   },
+   "cola": {
+    "pivote": [
+     0.0,
+     -0.18,
+     0.5
+    ],
+    "tris": 320
+   }
+  }
+ },
+ "enemigo_inquisidor_muerto": {
+  "altura": 1.16,
+  "radio": 0.298,
+  "alcance": 0.591,
+  "tris": 3560,
+  "bioma": "abadia",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.48
+    ],
+    "tris": 1392
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.06,
+     0.88
+    ],
+    "tris": 689
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.22,
+     0.02,
+     0.8
+    ],
+    "tris": 519
+   },
+   "brazo_der": {
+    "pivote": [
+     0.22,
+     0.02,
+     0.8
+    ],
+    "tris": 520
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.09,
+     0.0,
+     0.47
+    ],
+    "tris": 220
+   },
+   "pierna_der": {
+    "pivote": [
+     0.09,
+     0.0,
+     0.47
+    ],
+    "tris": 220
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.22,
+    0.57,
+    0.97
+   ]
+  }
+ },
+ "enemigo_nigromante": {
+  "altura": 1.36,
+  "radio": 0.324,
+  "alcance": 0.44,
+  "tris": 4130,
+  "bioma": "abadia",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.5
+    ],
+    "tris": 1398
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.05,
+     0.9
+    ],
+    "tris": 1264
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.21,
+     0.01,
+     0.84
+    ],
+    "tris": 420
+   },
+   "brazo_der": {
+    "pivote": [
+     0.21,
+     0.01,
+     0.84
+    ],
+    "tris": 648
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.08,
+     0.0,
+     0.48
+    ],
+    "tris": 200
+   },
+   "pierna_der": {
+    "pivote": [
+     0.08,
+     0.0,
+     0.48
+    ],
+    "tris": 200
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.25,
+    0.33,
+    1.24
+   ]
+  }
+ },
+ "enemigo_vampiro": {
+  "altura": 1.16,
+  "radio": 0.402,
+  "alcance": 0.48,
+  "tris": 3518,
+  "bioma": "castillo",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.5
+    ],
+    "tris": 1398
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.04,
+     0.88
+    ],
+    "tris": 800
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.2,
+     0.01,
+     0.81
+    ],
+    "tris": 420
+   },
+   "brazo_der": {
+    "pivote": [
+     0.2,
+     0.01,
+     0.81
+    ],
+    "tris": 420
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.08,
+     0.0,
+     0.48
+    ],
+    "tris": 240
+   },
+   "pierna_der": {
+    "pivote": [
+     0.08,
+     0.0,
+     0.48
+    ],
+    "tris": 240
+   }
+  }
+ },
+ "enemigo_novia_vampira": {
+  "altura": 1.124,
+  "radio": 0.398,
+  "alcance": 0.419,
+  "tris": 3555,
+  "bioma": "castillo",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.55
+    ],
+    "tris": 1498
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.03,
+     0.86
+    ],
+    "tris": 900
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.15,
+     0.02,
+     0.79
+    ],
+    "tris": 419
+   },
+   "brazo_der": {
+    "pivote": [
+     0.15,
+     0.02,
+     0.79
+    ],
+    "tris": 420
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.07,
+     0.0,
+     0.53
+    ],
+    "tris": 160
+   },
+   "pierna_der": {
+    "pivote": [
+     0.07,
+     0.0,
+     0.53
+    ],
+    "tris": 158
+   }
+  }
+ },
+ "enemigo_hombre_lobo": {
+  "altura": 1.472,
+  "radio": 0.374,
+  "alcance": 0.706,
+  "tris": 5317,
+  "bioma": "castillo",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.62
+    ],
+    "tris": 1700
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.28,
+     1.15
+    ],
+    "tris": 999
+   },
+   "mandibula": {
+    "pivote": [
+     0.0,
+     0.42,
+     1.14
+    ],
+    "tris": 280
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.32,
+     0.1,
+     1.1
+    ],
+    "tris": 600
+   },
+   "brazo_der": {
+    "pivote": [
+     0.32,
+     0.1,
+     1.1
+    ],
+    "tris": 598
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.15,
+     0.0,
+     0.62
+    ],
+    "tris": 440
+   },
+   "pierna_der": {
+    "pivote": [
+     0.15,
+     0.0,
+     0.62
+    ],
+    "tris": 440
+   },
+   "cola": {
+    "pivote": [
+     0.0,
+     -0.2,
+     0.68
+    ],
+    "tris": 260
+   }
+  }
+ },
+ "enemigo_caballero_muerte": {
+  "altura": 1.613,
+  "radio": 0.451,
+  "alcance": 0.503,
+  "tris": 4756,
+  "bioma": "todos",
+  "elite": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.62
+    ],
+    "tris": 1798
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.04,
+     1.08
+    ],
+    "tris": 898
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.3,
+     0.02,
+     1.0
+    ],
+    "tris": 520
+   },
+   "brazo_der": {
+    "pivote": [
+     0.3,
+     0.02,
+     1.0
+    ],
+    "tris": 700
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.13,
+     0.0,
+     0.6
+    ],
+    "tris": 420
+   },
+   "pierna_der": {
+    "pivote": [
+     0.13,
+     0.0,
+     0.6
+    ],
+    "tris": 420
    }
   }
  }

@@ -351,7 +351,7 @@ def _esqueleto(coll, id_, arquero=False):
     H = _craneo(h, hc, hueso, ojo, coll, dientes_pt, R, grieta=not arquero)
     if arquero:
         cap = sdf.round_box(hc + np.array([0, -0.015, 0.02]), (0.165, 0.155, 0.14), 0.11, rot=R)
-        cap = sf.union(cap, sdf.round_cone(H((0, -0.1, 0.1)), H((0, -0.22, 0.2)), 0.07, 0.008), k=0.04)
+        cap = sf.union(cap, sdf.round_cone(H((0, -0.1, 0.02)), H((0, -0.2, -0.14)), 0.09, 0.03), k=0.05)
         cap = sf.restar(cap, sdf.round_box(hc + np.array([0, -0.01, 0.0]), (0.143, 0.14, 0.125), 0.09, rot=R), 0.0)
         cap = sf.restar(cap, sdf.ellipsoid(H((0, 0.17, -0.03)), (0.12, 0.12, 0.13)), 0.02)
         cap = sf.cortar(cap, H((0, 0, -0.12)), (0, 0, 1), amp=0.02, esc=14, sem=5, dientes=0.012)

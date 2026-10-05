@@ -73,7 +73,7 @@
  },
  "arma_maza": {
   "altura": 0.6,
-  "radio": 0.093,
+  "radio": 0.092,
   "alcance": 0.094,
   "tris": 1500,
   "clase": "caballero",

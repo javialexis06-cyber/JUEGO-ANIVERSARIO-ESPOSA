@@ -64,6 +64,18 @@ blanco) y agrándala 1,25×. Así cada élite se distingue de lejos sin otro mod
 - `cola`: mecer alrededor del eje Z de Blender (Y de three.js).
 - Morir: soltar las piezas (cada una ya tiene su pivote) o tumbar la raíz.
 
+## Los 22 enemigos
+
+zombi, zombi_gordo (panza cosida con bilis verde), esqueleto (casco y espada), esqueleto_arquero (capucha, arco y
+carcaj), cuervo, perro_huesos, ghoul (agachado, brazos largos, mandíbula), arana_cripta (8 patas: las 4 de cada lado
+en `pierna_izq` / `pierna_der`; quelíceros en `mandibula`), espectro (translúcido, `sg_espectro`, flota),
+minero_maldito (casco con vela, farol al cinto con marca `llama`, pico, cristales de sangre), rata_peste (cuadrúpeda,
+cola), abominacion (tercer brazo `extra_brazo`, cuchilla en la mano derecha), lacayo_explosivo (barril de pólvora
+con la mecha encendida: marca `llama`), monje_caido (vela en la mano: marca `llama`), gargola (alas y cola de
+piedra), inquisidor_muerto (máscara de hierro, hierro de marcar al rojo: marca `llama`), nigromante (bastón con
+calavera y llama verde: marca `llama`), vampiro (capa de cuello alto), novia_vampira (velo y rosa marchita),
+hombre_lobo (mandíbula y cola), caballero_muerte (élite común, `elite: 1`, mandoble en la mano derecha).
+
 ## Armas y proyectiles
 
 - `arma_<id>`: la pieza `cuerpo` con el **origen en la empuñadura** (donde va la mano). El arma crece hacia **+Z
