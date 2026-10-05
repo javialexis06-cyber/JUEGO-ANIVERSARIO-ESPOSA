@@ -332,7 +332,7 @@ function retrato(k: IdClase) {
 
 function escogerExpedicion(alListo?: () => void) {
   pantalla = 'expedicion';
-  if (escena.vitrina) Object.assign(escena.vitrina, { lado: 1.6, alto: 0.3 });
+  if (escena.vitrina) Object.assign(escena.vitrina, { lado: 1.6, alto: 1.7 });
   const p = P();
   const s = seccion('pantalla-expedicion con-fondo', '');
   const pintar = () => {
