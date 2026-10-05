@@ -77,6 +77,8 @@ export class Escena3D {
   private foco = new THREE.Vector3();
   private focoListo = false;
   zoom = 1;
+  /** Cámara de vitrina para los menús: cerca del muñeco, baja y de frente, con el muñeco a un lado de la pantalla. */
+  vitrina: { lado: number; dist: number } | null = null;
   private sacudida = 0;
   private tiempo = 0;
   private colorAntorcha = new THREE.Color('#ff9a4a');
@@ -197,20 +199,28 @@ export class Escena3D {
     this.efectos = new Efectos();
     this.etapa.add(this.mapa3d.grupo, this.actores.grupo, this.cosas.grupo, this.efectos.grupo);
     this.actores.precargar(precargar);
-    // Muñecos (se cargan una vez; si cambió la clase se vuelven a vestir)
-    const faltan = perfiles.filter((p) => {
-      const m = this.jugadores.de(p.i);
-      return !m || m.perfil.clase !== p.clase || m.perfil.cuerpo !== p.cuerpo;
-    });
-    if (faltan.length) {
-      for (const p of faltan) {
-        this.jugadores.de(p.i)?.liberar();
-        this.jugadores.munecos.delete(p.i);
-      }
-      await this.jugadores.preparar(faltan);
-    }
+    await this.prepararMunecos(perfiles);
     this.focoListo = false;
     this.flashes.length = 0;
+  }
+
+  /** Muñecos (se cargan una vez; si cambió la clase o el cuerpo se vuelven a vestir; los que sobran se van). */
+  async prepararMunecos(perfiles: PerfilVista[]) {
+    for (const [i, m] of [...this.jugadores.munecos]) {
+      if (perfiles.some((p) => p.i === i)) continue;
+      m.liberar();
+      this.jugadores.munecos.delete(i);
+    }
+    const faltan = perfiles.filter((p) => {
+      const m = this.jugadores.de(p.i);
+      return !m || m.perfil.clase !== p.clase || m.perfil.cuerpo !== p.cuerpo || m.perfil.piel !== p.piel || m.perfil.pelo !== p.pelo;
+    });
+    if (!faltan.length) return;
+    for (const p of faltan) {
+      this.jugadores.de(p.i)?.liberar();
+      this.jugadores.munecos.delete(p.i);
+    }
+    await this.jugadores.preparar(faltan);
   }
 
   limpiarEtapa() {
@@ -354,6 +364,21 @@ export class Escena3D {
       this.focoListo = true;
     }
     this.foco.lerp(meta, Math.min(1, dt * 5));
+    if (this.vitrina) {
+      const v = this.vitrina;
+      const az = Math.sin(this.tiempo * 0.13) * 0.32 + 0.18;
+      const el = THREE.MathUtils.degToRad(16);
+      const D = v.dist;
+      const cx = seguido.x, cz = seguido.y;
+      // A la derecha de la cámara (en el piso): (cos az, -sin az)
+      const rx = Math.cos(az), rz = -Math.sin(az);
+      const tx = cx - rx * v.lado, tz = cz - rz * v.lado;
+      this.camara.position.set(tx + Math.sin(az) * Math.cos(el) * D, 0.85 + Math.sin(el) * D, tz + Math.cos(az) * Math.cos(el) * D);
+      this.camara.lookAt(tx, 0.85, tz);
+      this.luna.position.set(cx - 7, 16, cz - 5);
+      this.luna.target.position.set(cx, 0, cz);
+      return;
+    }
     // Distancia según la pantalla: que se vean unos 20 m a lo ancho en el celular acostado
     const asp = this.camara.aspect;
     const ancho = asp >= 1.6 ? 20 : asp >= 1 ? 17 : 13;
