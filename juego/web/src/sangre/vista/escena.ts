@@ -153,11 +153,20 @@ export class Escena3D {
     this.ajustar();
   }
 
+  /** Sin sombras (calidad baja) la luna lo aclara todo: se baja para que siga siendo de noche. */
+  private ajustarLuna() {
+    const l = this.bioma.luz;
+    const sinSombra = this.calidad === 'baja';
+    this.luna.intensity = l.fuerzaLuna * 1.2 * (sinSombra ? 0.4 : 1);
+    this.hemi.intensity = (0.32 + l.fuerzaLuna * 0.25) * (sinSombra ? 0.7 : 1);
+  }
+
   /** Cambia la calidad (lo pide el jugador o la baja sola el medidor). */
   ponerCalidad(c: Calidad) {
     if (c === this.calidad) return;
     this.calidad = c;
     this.aplicarCalidad();
+    this.ajustarLuna();
     if (this.particulas) this.particulas.cupo = c === 'baja' ? 0.45 : c === 'media' ? 0.75 : 1;
     if (this.actores) this.actores.sombraReal = c === 'alta';
     this.alCambiarCalidad(c);
@@ -184,9 +193,8 @@ export class Escena3D {
     this.escena.fog = new THREE.FogExp2(new THREE.Color(l.niebla).getHex(), l.densidadNiebla * 0.9);
     this.hemi.color.set(l.luna).multiplyScalar(0.6);
     this.hemi.groundColor.set(l.niebla);
-    this.hemi.intensity = 0.32 + l.fuerzaLuna * 0.25;
     this.luna.color.set(l.luna);
-    this.luna.intensity = l.fuerzaLuna * 1.2;
+    this.ajustarLuna();
     UNI_LUZ.uAmbiente.value.set(l.ambiente).multiplyScalar(0.55);
     colorContraluz(new THREE.Color(l.luna).multiplyScalar(0.35));
     this.luz = new LuzRejilla(mapa);
@@ -323,10 +331,15 @@ export class Escena3D {
       mv.push({ x: f.x, y: f.y, r: f.r, color: f.c, fuerza: f.f * (1 - u) });
     }
     // Linterna del jugador propio (luz de verdad: modela los relieves y los muñecos)
-    if (local && (local.estado === 0 || local.estado === 1)) {
-      this.linterna.position.set(local.x + local.fx * 0.3, 1.9, local.y + local.fy * 0.3 + 0.4);
+    if (local && this.vitrina) {
+      // En los menús: luz cálida de lado, suave (que no queme la cara)
+      this.linterna.position.set(local.x + 1.3, 2.3, local.y + 1.8);
+      this.linterna.intensity = 2.4 * (0.94 + Math.sin(this.tiempo * 7.1) * 0.04 + Math.sin(this.tiempo * 17.3) * 0.02);
+      this.linterna.distance = 8;
+    } else if (local && (local.estado === 0 || local.estado === 1)) {
+      this.linterna.position.set(local.x + local.fx * 0.6, 3.1, local.y + local.fy * 0.6 + 0.9);
       const parp = 0.92 + Math.sin(this.tiempo * 9.3) * 0.04 + Math.sin(this.tiempo * 23.1) * 0.03;
-      this.linterna.intensity = 5.2 * parp * (est.eclipse > 0 ? 0.6 : 1);
+      this.linterna.intensity = 3.4 * parp * (est.eclipse > 0 ? 0.6 : 1);
       this.linterna.distance = local.radioLuz * 1.4;
     } else this.linterna.intensity = 0;
     if (this.fogonazoT > 0) {
@@ -381,7 +394,7 @@ export class Escena3D {
     }
     // Distancia según la pantalla: que se vean unos 20 m a lo ancho en el celular acostado
     const asp = this.camara.aspect;
-    const ancho = asp >= 1.6 ? 20 : asp >= 1 ? 17 : 13;
+    const ancho = asp >= 1.6 ? 17 : asp >= 1 ? 15 : 12;
     const tan = Math.tan(THREE.MathUtils.degToRad(this.camara.fov / 2));
     const D = Math.max(9, Math.min(26, ancho / (2 * tan * asp))) * this.zoom;
     const el = THREE.MathUtils.degToRad(57);
