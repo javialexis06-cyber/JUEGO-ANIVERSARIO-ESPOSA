@@ -78,7 +78,7 @@ export class Escena3D {
   private focoListo = false;
   zoom = 1;
   /** Cámara de vitrina para los menús: cerca del muñeco, baja y de frente, con el muñeco a un lado de la pantalla. */
-  vitrina: { lado: number; dist: number } | null = null;
+  vitrina: { lado: number; dist: number; alto?: number } | null = null;
   private sacudida = 0;
   private tiempo = 0;
   private colorAntorcha = new THREE.Color('#ff9a4a');
@@ -343,8 +343,8 @@ export class Escena3D {
     // Linterna del jugador propio (luz de verdad: modela los relieves y los muñecos)
     if (local && this.vitrina) {
       // En los menús: luz cálida de lado, suave (que no queme la cara)
-      this.linterna.position.set(local.x + 1.3, 2.3, local.y + 1.8);
-      this.linterna.intensity = 1.5 * (0.94 + Math.sin(this.tiempo * 7.1) * 0.04 + Math.sin(this.tiempo * 17.3) * 0.02);
+      this.linterna.position.set(local.x + 1.8, 2.8, local.y + 2.4);
+      this.linterna.intensity = 1.1 * (0.94 + Math.sin(this.tiempo * 7.1) * 0.04 + Math.sin(this.tiempo * 17.3) * 0.02);
       this.linterna.distance = 8;
     } else if (local && (local.estado === 0 || local.estado === 1)) {
       this.linterna.position.set(local.x + local.fx * 0.6, 3.1, local.y + local.fy * 0.6 + 0.9);
@@ -396,8 +396,9 @@ export class Escena3D {
       // A la derecha de la cámara (en el piso): (cos az, -sin az)
       const rx = Math.cos(az), rz = -Math.sin(az);
       const tx = cx - rx * v.lado, tz = cz - rz * v.lado;
-      this.camara.position.set(tx + Math.sin(az) * Math.cos(el) * D, 0.85 + Math.sin(el) * D, tz + Math.cos(az) * Math.cos(el) * D);
-      this.camara.lookAt(tx, 0.85, tz);
+      const h = v.alto ?? 0.85;
+      this.camara.position.set(tx + Math.sin(az) * Math.cos(el) * D, h + Math.sin(el) * D, tz + Math.cos(az) * Math.cos(el) * D);
+      this.camara.lookAt(tx, h, tz);
       this.luna.position.set(cx - 7, 16, cz - 5);
       this.luna.target.position.set(cx, 0, cz);
       return;

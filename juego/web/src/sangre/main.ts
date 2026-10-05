@@ -205,7 +205,7 @@ function seccion(clase: string, html: string) {
 function titulo() {
   pantalla = 'titulo';
   musica.cambiar('menu');
-  if (escena.vitrina) escena.vitrina.lado = 0.95;
+  if (escena.vitrina) Object.assign(escena.vitrina, { lado: 0.95, alto: 0.85, dist: 4.4 });
   const p = P();
   const nv = nivelMaestria(p.maestria[sel.clase] ?? 0).nivel;
   const s = seccion('titulo con-fondo', `
@@ -250,7 +250,8 @@ function titulo() {
 
 function escogerClase(alListo?: () => void) {
   pantalla = 'clases';
-  if (escena.vitrina) escena.vitrina.lado = -0.95;
+  // El muñeco a la derecha (la ficha va a la izquierda) y un poco arriba (abajo van las tarjetas)
+  if (escena.vitrina) Object.assign(escena.vitrina, { lado: 1.5, alto: 0.12, dist: 5 });
   const p = P();
   const pintar = () => {
     const c = CLASES[sel.clase];
@@ -331,7 +332,7 @@ function retrato(k: IdClase) {
 
 function escogerExpedicion(alListo?: () => void) {
   pantalla = 'expedicion';
-  if (escena.vitrina) escena.vitrina.lado = -1.25;
+  if (escena.vitrina) Object.assign(escena.vitrina, { lado: 1.6, alto: 0.3 });
   const p = P();
   const s = seccion('pantalla-expedicion con-fondo', '');
   const pintar = () => {
@@ -991,7 +992,7 @@ async function lobby() {
   if (!s) return titulo();
   pantalla = 'sala';
   pantallas.replaceChildren();
-  if (escena.vitrina) escena.vitrina.lado = -1.1;
+  if (escena.vitrina) Object.assign(escena.vitrina, { lado: -1.1, alto: 0.85 });
   s.ponerDatos({ ...datosSala(), jugando: false });
   const retratoSala = (j: JugadorSala) => {
     const c = (j.datos?.clase as IdClase) ?? 'monarca';

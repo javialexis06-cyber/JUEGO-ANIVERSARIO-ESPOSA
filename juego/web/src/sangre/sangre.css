@@ -2159,3 +2159,8 @@ svg {
 .hoja-carta .etiqueta {
   color: var(--tinta-2);
 }
+/* Con el retrato de verdad, el glifo de reemplazo se esconde (si la imagen falla, se quita y vuelve el glifo) */
+.tarjeta-clase .retrato img ~ svg,
+.retrato-sala img ~ svg {
+  display: none;
+}
