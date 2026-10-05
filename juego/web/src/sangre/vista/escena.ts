@@ -198,7 +198,7 @@ export class Escena3D {
     UNI_LUZ.uAmbiente.value.set(l.ambiente).multiplyScalar(0.55);
     colorContraluz(new THREE.Color(l.luna).multiplyScalar(0.35));
     this.luz = new LuzRejilla(mapa);
-    this.mapa3d = new Mapa3D(mapa, bioma, this.bib, this.colorAntorcha, this.calidad !== 'baja');
+    this.mapa3d = new Mapa3D(mapa, bioma, this.bib, this.colorAntorcha, this.calidad !== 'baja', this.calidad === 'alta');
     this.actores = new Actores(this.bib);
     this.actores.sombraReal = this.calidad === 'alta';
     this.particulas = new Particulas(this.etapa);

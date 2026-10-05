@@ -43,6 +43,10 @@ export class Mapa3D {
   /** Paredes del GLB: no se giran ni cambian de alto (los techos encajan con los vecinos). */
   private modelado: boolean;
   private sombraAO: THREE.Mesh | null = null;
+  /** Tapa plana para la roca de adentro (la que no toca ninguna celda abierta): solo se le ve el techo. */
+  private tapa: { geo: THREE.BufferGeometry; mat: THREE.Material } | null = null;
+  /** Las paredes hacen sombra (solo en calidad alta: es lo que más pesa). */
+  sombraParedes = false;
   private piso!: THREE.Mesh;
   private ao!: { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; img: ImageData; tex: THREE.CanvasTexture };
   private llamas!: THREE.Points;
@@ -52,17 +56,31 @@ export class Mapa3D {
   /** Hay que rehacer la luz fija (se rompió una pared). */
   luzSucia = true;
 
-  constructor(private m: Mapa, private bioma: DefBioma, private bib: Biblioteca, private colorAntorcha: THREE.Color, pisoModelado = true) {
+  constructor(private m: Mapa, private bioma: DefBioma, private bib: Biblioteca, private colorAntorcha: THREE.Color, pisoModelado = true, sombraParedes = false) {
+    this.sombraParedes = sombraParedes;
     this.tw = Math.ceil(m.w / TROZO);
     this.th = Math.ceil(m.h / TROZO);
     this.copia = m.c.slice();
     this.paredes = bib.paredes();
+    if (!pisoModelado) {
+      // Calidad baja: de cada pared, la variante más liviana
+      const p = { ...this.paredes };
+      const tri = (x: ModeloFijo) => (x.geo.index ? x.geo.index.count : x.geo.getAttribute('position').count);
+      for (const k of Object.keys(p) as (keyof ModelosPared)[]) if (p[k].length > 1) p[k] = [p[k].reduce((a, b) => (tri(b) < tri(a) ? b : a))];
+      this.paredes = p;
+    }
     this.modelado = bib.escenarioModelado;
     if (this.modelado && pisoModelado) {
       this.pisosM = bib.pisos().map((mod) => ({ mod, peso: Number(mod.datos?.peso) || 1 }));
       this.pesoPisos = this.pisosM.reduce((a, b) => a + b.peso, 0);
     }
     this.hacerPiso();
+    if (this.modelado) {
+      const geo = new THREE.PlaneGeometry(1, 1);
+      geo.rotateX(-Math.PI / 2);
+      geo.translate(0, 1.5, 0);
+      this.tapa = { geo, mat: conLuz(new THREE.MeshStandardMaterial({ map: texturaTecho(bioma), roughness: 1, metalness: 0 })) };
+    }
     for (let ty = 0; ty < this.th; ty++)
       for (let tx = 0; tx < this.tw; tx++) {
         const g = new THREE.Group();
@@ -162,6 +180,7 @@ export class Mapa3D {
       return l;
     };
     const { m } = this;
+    const tapas: number[] = [];
     for (let cy = t.cy * TROZO; cy < Math.min(m.h, (t.cy + 1) * TROZO); cy++)
       for (let cx = t.cx * TROZO; cx < Math.min(m.w, (t.cx + 1) * TROZO); cx++) {
         const i = cy * m.w + cx;
@@ -181,8 +200,25 @@ export class Mapa3D {
         else if (tipo === C.HUEVO) lst = p.huevo;
         else if (tipo === C.ESCOMBRO) lst = p.escombro;
         if (!lst || !lst.length) continue;
+        // La roca de adentro (sin ninguna celda abierta alrededor) solo muestra el techo: una tapa plana
+        if (this.tapa && tipo !== C.HUEVO && !this.tocaAbierta(cx, cy)) {
+          tapas.push(i);
+          continue;
+        }
         lista(lst[v % lst.length]).push(i);
       }
+    if (tapas.length && this.tapa) {
+      const malla = new THREE.InstancedMesh(this.tapa.geo, this.tapa.mat, tapas.length);
+      malla.receiveShadow = true;
+      tapas.forEach((i, k) => {
+        M.makeTranslation((i % m.w) + 0.5, 0, ((i / m.w) | 0) + 0.5);
+        malla.setMatrixAt(k, M);
+      });
+      malla.instanceMatrix.needsUpdate = true;
+      malla.computeBoundingSphere();
+      t.grupo.add(malla);
+      t.mallas.push(malla);
+    }
     // Losas del piso (de a 2 × 2 celdas): solo donde alguna celda está abierta (las demás quedan bajo la roca)
     const losas = new Map<ModeloFijo, number[]>();
     if (this.pisosM.length) {
@@ -217,7 +253,7 @@ export class Mapa3D {
     }
     for (const [mod, celdas] of porModelo) {
       const malla = new THREE.InstancedMesh(mod.geo, mod.mats, celdas.length);
-      malla.castShadow = true;
+      malla.castShadow = this.sombraParedes || !this.modelado;
       malla.receiveShadow = true;
       celdas.forEach((i, k) => {
         this.matrizCelda(i, M);
@@ -230,6 +266,15 @@ export class Mapa3D {
       t.mallas.push(malla);
     }
     t.sucio = false;
+  }
+
+  /**
+   * ¿Se le ve algún costado a esta pared? La cámara mira desde el sur y desde arriba: se ven la cara de abajo (+y) y
+   * las de los lados (también si lo abierto está en diagonal hacia abajo); la de atrás (−y) nunca. Si no, basta el techo.
+   */
+  private tocaAbierta(cx: number, cy: number) {
+    const ab = (dx: number, dy: number) => !esSolida(this.m.get(cx + dx, cy + dy));
+    return ab(0, 1) || ab(1, 0) || ab(-1, 0) || ab(1, 1) || ab(-1, 1);
   }
 
   private cercaDeAbierta(cx: number, cy: number) {
@@ -296,34 +341,32 @@ export class Mapa3D {
     const tam: number[] = [];
     const fase: number[] = [];
     if (deAntorcha.length) {
-      const malla = new THREE.InstancedMesh(ant.geo, ant.mats, deAntorcha.length);
-      deAntorcha.forEach((a, k) => {
+      const items: { x: number; y: number; m: THREE.Matrix4 }[] = [];
+      deAntorcha.forEach((a) => {
         // En la cara de la pared que mira a lo abierto
         const rot = Math.atan2(a.dx, a.dy) + Math.PI;
         Q.setFromAxisAngle(Y, rot);
         P.set(a.cx + 0.5 + a.dx * 0.5, 0, a.cy + 0.5 + a.dy * 0.5);
         S.setScalar(1);
         M.compose(P, Q, S);
-        malla.setMatrixAt(k, M);
+        items.push({ x: P.x, y: P.z, m: M.clone() });
         const ll = llamaLocal.clone().applyQuaternion(Q).add(P);
         puntos.push(ll.x, ll.y, ll.z);
         tam.push(0.55);
         fase.push(hash2(a.cx, a.cy, 9) * 10);
         this.fijas.push({ x: ll.x + a.dx * 0.6, y: ll.z + a.dy * 0.6, r: 7.5, color: this.colorAntorcha, fuerza: 1.15 });
       });
-      malla.castShadow = false;
-      malla.computeBoundingSphere();
-      this.grupo.add(malla);
+      this.porTrozos(ant, items, false);
     }
     if (deVela.length) {
-      const malla = new THREE.InstancedMesh(vel.geo, vel.mats, deVela.length);
-      deVela.forEach((a, k) => {
+      const items: { x: number; y: number; m: THREE.Matrix4 }[] = [];
+      deVela.forEach((a) => {
         const rot = hash2(a.cx, a.cy, 3) * Math.PI * 2;
         Q.setFromAxisAngle(Y, rot);
         P.set(a.cx + 0.5, 0, a.cy + 0.5);
         S.setScalar(1);
         M.compose(P, Q, S);
-        malla.setMatrixAt(k, M);
+        items.push({ x: P.x, y: P.z, m: M.clone() });
         const llamasV = vel.llamas?.length ? vel.llamas : LLAMAS_VELAS.map(([x, z, h]) => new THREE.Vector3(x, h + 0.04, z));
         for (const l0 of llamasV) {
           const x = l0.x;
@@ -334,8 +377,7 @@ export class Mapa3D {
         }
         this.fijas.push({ x: a.cx + 0.5, y: a.cy + 0.5, r: 4, color: this.colorAntorcha, fuerza: 0.65 });
       });
-      malla.computeBoundingSphere();
-      this.grupo.add(malla);
+      this.porTrozos(vel, items, false);
     }
     this.llamas = llamasPuntos(puntos, tam, fase, this.tiempoLlamas);
     this.grupo.add(this.llamas);
@@ -354,13 +396,13 @@ export class Mapa3D {
     const fase: number[] = [];
     for (const [tipo, lista] of porTipo) {
       const mod = this.bib.fijo('deco', tipo);
-      const malla = new THREE.InstancedMesh(mod.geo, mod.mats, lista.length);
-      lista.forEach((d, k) => {
+      const items: { x: number; y: number; m: THREE.Matrix4 }[] = [];
+      lista.forEach((d) => {
         Q.setFromAxisAngle(Y, d.rot);
         P.set(d.x, 0, d.y);
         S.setScalar(d.esc);
         M.compose(P, Q, S);
-        malla.setMatrixAt(k, M);
+        items.push({ x: d.x, y: d.y, m: M.clone() });
         const luzG = mod.datos?.luz as { color: string; intensidad: number; alcance: number; particulas?: string } | undefined;
         const luz = DECO_LUZ[tipo];
         if (luzG) this.fijas.push({ x: d.x, y: d.y, r: luzG.alcance, color: new THREE.Color(luzG.color), fuerza: Math.min(1.3, luzG.intensidad * 0.9) });
@@ -373,12 +415,29 @@ export class Mapa3D {
             fase.push(hash2(d.x * 13, d.y * 7, 5) * 10);
           }
       });
-      malla.castShadow = true;
+      this.porTrozos(mod, items, this.sombraParedes);
+    }
+    if (llamas.length) this.grupo.add(llamasPuntos(llamas, tam, fase, this.tiempoLlamas));
+  }
+
+  /** Instancias agrupadas por trozo del mapa (así la cámara descarta las que no ve). */
+  private porTrozos(mod: ModeloFijo, items: { x: number; y: number; m: THREE.Matrix4 }[], sombra: boolean) {
+    const grupos = new Map<number, THREE.Matrix4[]>();
+    for (const it of items) {
+      const k = Math.floor(it.y / TROZO) * 1000 + Math.floor(it.x / TROZO);
+      const l = grupos.get(k) ?? [];
+      l.push(it.m);
+      grupos.set(k, l);
+    }
+    for (const l of grupos.values()) {
+      const malla = new THREE.InstancedMesh(mod.geo, mod.mats, l.length);
+      l.forEach((m, k) => malla.setMatrixAt(k, m));
+      malla.castShadow = sombra;
       malla.receiveShadow = true;
+      malla.instanceMatrix.needsUpdate = true;
       malla.computeBoundingSphere();
       this.grupo.add(malla);
     }
-    if (llamas.length) this.grupo.add(llamasPuntos(llamas, tam, fase, this.tiempoLlamas));
   }
 
   // ----------------------------------------------------------------------------------------------- Agua y lava
@@ -573,6 +632,46 @@ function texturaPiso(b: DefBioma): THREE.CanvasTexture {
 }
 
 let normalPiso: THREE.Texture | null = null;
+/** El techo de la roca maciza: piedra oscura con grietas (se ve de lejos y casi siempre en penumbra). */
+const texturasTecho = new Map<string, THREE.CanvasTexture>();
+function texturaTecho(b: DefBioma): THREE.CanvasTexture {
+  const c0 = texturasTecho.get(b.id);
+  if (c0) return c0;
+  const n = 128;
+  const c = document.createElement('canvas');
+  c.width = c.height = n;
+  const g = c.getContext('2d')!;
+  const [r0, r1, r2] = b.roca;
+  g.fillStyle = new THREE.Color(r1).multiplyScalar(0.85).getStyle();
+  g.fillRect(0, 0, n, n);
+  let sd = 7;
+  const az = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
+  for (let k = 0; k < 40; k++) {
+    g.fillStyle = az() < 0.5 ? r0 : r2;
+    g.globalAlpha = 0.18 + az() * 0.2;
+    const x = az() * n, y = az() * n, r = 6 + az() * 18;
+    g.beginPath();
+    g.ellipse(x, y, r, r * (0.5 + az() * 0.5), az() * 3, 0, Math.PI * 2);
+    g.fill();
+  }
+  g.globalAlpha = 0.5;
+  g.strokeStyle = '#000';
+  g.lineWidth = 1.5;
+  for (let k = 0; k < 6; k++) {
+    g.beginPath();
+    let x = az() * n, y = az() * n;
+    g.moveTo(x, y);
+    for (let s2 = 0; s2 < 4; s2++) g.lineTo((x += (az() - 0.5) * 40), (y += (az() - 0.5) * 40));
+    g.stroke();
+  }
+  g.globalAlpha = 1;
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  texturasTecho.set(b.id, t);
+  return t;
+}
+
 function texturaNormalPiso() {
   if (normalPiso) return normalPiso;
   // Relieve de piedra: ruido grueso + fino
