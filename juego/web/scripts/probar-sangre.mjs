@@ -107,6 +107,8 @@ if (cuales.includes('extraccion')) {
   const ok = okGlobal;
   await p.goto(`${base}/sangre.html?prueba=1&calidad=baja&bioma=minas&bot=1&rapido=4&semilla=12&sinanim=1&limpio=1`);
   await p.waitForFunction(() => window.__listo && window.__sangre(), null, { timeout: 120000 });
+  // (inmortal: lo que se prueba es la extracción, no si el bot aguanta)
+  await p.evaluate(() => { window.__sangre().inmortales = true; });
   await p.waitForTimeout(8000);
   await p.evaluate(() => window.__sangreReloj(2));
   await p.waitForFunction(() => !!window.__sangre().campana, null, { timeout: 120000 });
@@ -200,6 +202,7 @@ if (cuales.includes('tutorial')) {
   };
   await p.goto(`${base}/sangre.html?calidad=baja&sinanim=1&limpio=1&rol=ella&rapido=3`);
   await p.waitForFunction(() => window.__listo, null, { timeout: 90000 });
+  await p.waitForSelector('[data-a="tutorial"]', { timeout: 90000 });
   await p.click('[data-a="tutorial"]');
   ok(await esperarGlobo('La Noche Eterna'), 'globo de bienvenida');
   await p.screenshot({ path: `${dir}/tu_1.png` });
