@@ -16,7 +16,8 @@
 import * as fondo from '../segundo_plano';
 import { NOMBRE_ROL } from '../casa/modelo';
 import { SUPABASE_CLAVE_PUBLICA, SUPABASE_URL } from '../casa/servidor';
-import { aspectoDe, idAparato, perfilAmigo } from './perfil';
+import { aspectoDe, idAparato, limpiarNombre, perfilAmigo } from './perfil';
+import { normalizarDetalles } from './prendas';
 import type { ApiSalas, JugadorSala, OpcionesSala, Sala } from './tipos';
 
 /** Letras y números que no se confunden al dictarlos (sin I, L, O, 0 ni 1). */
@@ -73,6 +74,25 @@ export function yoMismo(): JugadorSala {
   if (amigo?.activo) return { id: amigo.id, nombre: amigo.nombre, tipo: 'amigo', aspecto: aspectoDe(amigo), puesto: 0 };
   const rol = rolDeLaCasa() ?? 'el';
   return { id: `${rol}-${idAparato()}`, nombre: NOMBRE_ROL[rol], tipo: rol, aspecto: { cuerpo: rol }, puesto: 0 };
+}
+
+/**
+ * Un jugador que llegó por la red, limpio: nombre corto sin etiquetas, tipo y cuerpo conocidos, colores de verdad y
+ * solo prendas que existen (lo que manda un aparato ajeno se pinta en HTML, en SVG y carga modelos).
+ */
+export function jugadorSeguro(j: JugadorSala): JugadorSala {
+  const a = (j?.aspecto ?? {}) as Partial<JugadorSala['aspecto']>;
+  const cuerpo = a.cuerpo === 'ella' ? 'ella' : 'el';
+  const hex = (v: unknown) => (typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v) ? v : undefined);
+  const tipo = j?.tipo === 'el' || j?.tipo === 'ella' ? j.tipo : 'amigo';
+  return {
+    ...j,
+    id: String(j?.id ?? '').slice(0, 40),
+    nombre: limpiarNombre(String(j?.nombre ?? '')) || 'Amigo',
+    tipo,
+    aspecto: { cuerpo, ...(hex(a.piel) ? { piel: hex(a.piel) } : {}), ...(hex(a.pelo) ? { pelo: hex(a.pelo) } : {}), detalles: normalizarDetalles(a.detalles, cuerpo) },
+    puesto: Number.isInteger(j?.puesto) ? j.puesto : -1,
+  };
 }
 
 // ---------------------------------------------------------------------------------------------------- Lo que viaja
@@ -496,6 +516,7 @@ class SalaReal implements Sala {
 
   private pideEntrar(m: Extract<Cable, { k: 'entrar' }>) {
     if (!this.soyAnfitrion) return;
+    m = { ...m, j: { ...jugadorSeguro(m.j), id: m.de } };
     const no = (motivo: 'llena' | 'cerrada' | 'juego') => this.cable({ k: 'no', de: this.yo.id, s: this.s, para: m.de, motivo, juego: this.juego });
     if (m.juego !== this.juego) return no('juego');
     const ya = this.lista.find((j) => j.id === m.de);
@@ -519,6 +540,7 @@ class SalaReal implements Sala {
 
   private llegaLista(m: Extract<Cable, { k: 'lista' }>) {
     if (this.soyAnfitrion || m.v <= this.v) return;
+    m = { ...m, js: (Array.isArray(m.js) ? m.js : []).map((j) => (j.id === this.yo.id ? j : jugadorSeguro(j))) };
     const anfitrion = m.js.find((j) => j.puesto === 0);
     if (!anfitrion || anfitrion.id !== m.de) return;
     this.v = m.v;
