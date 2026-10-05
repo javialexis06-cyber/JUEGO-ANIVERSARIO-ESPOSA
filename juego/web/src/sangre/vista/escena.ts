@@ -78,7 +78,7 @@ export class Escena3D {
   private focoListo = false;
   zoom = 1;
   /** Cámara de vitrina para los menús: cerca del muñeco, baja y de frente, con el muñeco a un lado de la pantalla. */
-  vitrina: { lado: number; dist: number } | null = null;
+  vitrina: { lado: number; dist: number; alto?: number } | null = null;
   private sacudida = 0;
   private tiempo = 0;
   private colorAntorcha = new THREE.Color('#ff9a4a');
@@ -97,14 +97,18 @@ export class Escena3D {
 
   constructor(public lienzo: HTMLCanvasElement, calidad: Calidad) {
     this.calidad = calidad;
-    this.renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: calidad === 'baja', powerPreference: 'high-performance', stencil: false });
+    this.renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: false, powerPreference: 'high-performance', stencil: false });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-    this.renderer.shadowMap.enabled = calidad !== 'baja';
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // Las sombras quedan siempre prendidas y todo pasa siempre por el compositor (con el tono AgX): así cambiar la
+    // calidad no obliga a recompilar los sombreadores de todos los materiales (en el celular sería un congelón).
+    // Lo que cambia es la resolución, si la sombra se vuelve a dibujar, su intensidad y los efectos.
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
+    this.renderer.toneMapping = THREE.NoToneMapping;
     this.escena.add(this.etapa, this.jugadores.grupo);
     this.hemi = new THREE.HemisphereLight('#3a4a6a', '#120c0a', 0.5);
     this.luna = new THREE.DirectionalLight('#9ab8e8', 0.6);
-    this.luna.castShadow = calidad !== 'baja';
+    this.luna.castShadow = true;
     this.luna.shadow.mapSize.set(calidad === 'alta' ? 2048 : 1024, calidad === 'alta' ? 2048 : 1024);
     this.luna.shadow.bias = -0.0006;
     this.luna.shadow.normalBias = 0.03;
@@ -124,32 +128,32 @@ export class Escena3D {
     const c = this.calidad;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.renderer.setPixelRatio(c === 'alta' ? Math.min(dpr, 1.6) : c === 'media' ? Math.min(dpr, 1.2) : Math.min(dpr, 0.85));
-    this.renderer.shadowMap.enabled = c !== 'baja';
-    this.luna.castShadow = c !== 'baja';
-    this.composer?.dispose();
-    this.composer = null;
-    this.bloom = null;
-    if (c === 'baja') {
-      this.renderer.toneMapping = THREE.AgXToneMapping;
-      this.renderer.toneMappingExposure = 1.15;
-      document.body.classList.add('sangre-vineta-css');
-    } else {
-      this.renderer.toneMapping = THREE.NoToneMapping;
-      document.body.classList.remove('sangre-vineta-css');
-      const comp = new EffectComposer(this.renderer, { frameBufferType: THREE.HalfFloatType, multisampling: c === 'alta' ? 4 : 0 });
-      comp.addPass(new RenderPass(this.escena, this.camara));
-      this.bloom = new BloomEffect({ mipmapBlur: true, intensity: 1.1, luminanceThreshold: 0.88, luminanceSmoothing: 0.18, radius: 0.7 });
-      const vineta = new VignetteEffect({ darkness: 0.62, offset: 0.28 });
-      const tono = new ToneMappingEffect({ mode: ToneMappingMode.AGX });
-      const efectos: (BloomEffect | VignetteEffect | ToneMappingEffect | NoiseEffect)[] = [this.bloom, tono, vineta];
-      if (c === 'alta') {
-        const ruido = new NoiseEffect({ blendFunction: BlendFunction.SOFT_LIGHT, premultiply: false });
-        ruido.blendMode.opacity.value = 0.18;
-        efectos.push(ruido);
-      }
-      comp.addPass(new EffectPass(this.camara, ...efectos));
-      this.composer = comp;
+    // Sombras: en baja no se vuelven a dibujar y no oscurecen (el mismo sombreador, sin costo de la pasada)
+    const sh = this.renderer.shadowMap;
+    sh.autoUpdate = c !== 'baja';
+    sh.needsUpdate = true;
+    this.luna.shadow.intensity = c === 'baja' ? 0 : 1;
+    const tam = c === 'alta' ? 2048 : 1024;
+    if (this.luna.shadow.mapSize.x !== tam) {
+      this.luna.shadow.mapSize.set(tam, tam);
+      this.luna.shadow.map?.dispose();
+      this.luna.shadow.map = null;
     }
+    document.body.classList.remove('sangre-vineta-css');
+    this.composer?.dispose();
+    const comp = new EffectComposer(this.renderer, { frameBufferType: THREE.HalfFloatType, multisampling: c === 'alta' ? 4 : 0 });
+    comp.addPass(new RenderPass(this.escena, this.camara));
+    this.bloom = c === 'baja' ? null : new BloomEffect({ mipmapBlur: true, intensity: 1.1, luminanceThreshold: 0.88, luminanceSmoothing: 0.18, radius: 0.7 });
+    const vineta = new VignetteEffect({ darkness: 0.62, offset: 0.28 });
+    const tono = new ToneMappingEffect({ mode: ToneMappingMode.AGX });
+    const efectos: (BloomEffect | VignetteEffect | ToneMappingEffect | NoiseEffect)[] = this.bloom ? [this.bloom, tono, vineta] : [tono, vineta];
+    if (c === 'alta') {
+      const ruido = new NoiseEffect({ blendFunction: BlendFunction.SOFT_LIGHT, premultiply: false });
+      ruido.blendMode.opacity.value = 0.18;
+      efectos.push(ruido);
+    }
+    comp.addPass(new EffectPass(this.camara, ...efectos));
+    this.composer = comp;
     this.ajustar();
   }
 
@@ -209,6 +213,12 @@ export class Escena3D {
     this.actores.precargar(precargar);
     await this.prepararMunecos(perfiles);
     this.focoListo = false;
+    // Todos los sombreadores de la etapa se compilan ahora (detrás de la pantalla de carga), no en pleno juego
+    try {
+      await this.renderer.compileAsync(this.escena, this.camara);
+    } catch {
+      /* si el navegador no puede compilar en paralelo, se compilan al dibujar */
+    }
     this.flashes.length = 0;
   }
 
@@ -333,8 +343,8 @@ export class Escena3D {
     // Linterna del jugador propio (luz de verdad: modela los relieves y los muñecos)
     if (local && this.vitrina) {
       // En los menús: luz cálida de lado, suave (que no queme la cara)
-      this.linterna.position.set(local.x + 1.3, 2.3, local.y + 1.8);
-      this.linterna.intensity = 1.5 * (0.94 + Math.sin(this.tiempo * 7.1) * 0.04 + Math.sin(this.tiempo * 17.3) * 0.02);
+      this.linterna.position.set(local.x + 1.8, 2.8, local.y + 2.4);
+      this.linterna.intensity = 1.1 * (0.94 + Math.sin(this.tiempo * 7.1) * 0.04 + Math.sin(this.tiempo * 17.3) * 0.02);
       this.linterna.distance = 8;
     } else if (local && (local.estado === 0 || local.estado === 1)) {
       this.linterna.position.set(local.x + local.fx * 0.6, 3.1, local.y + local.fy * 0.6 + 0.9);
@@ -386,8 +396,9 @@ export class Escena3D {
       // A la derecha de la cámara (en el piso): (cos az, -sin az)
       const rx = Math.cos(az), rz = -Math.sin(az);
       const tx = cx - rx * v.lado, tz = cz - rz * v.lado;
-      this.camara.position.set(tx + Math.sin(az) * Math.cos(el) * D, 0.85 + Math.sin(el) * D, tz + Math.cos(az) * Math.cos(el) * D);
-      this.camara.lookAt(tx, 0.85, tz);
+      const h = v.alto ?? 0.85;
+      this.camara.position.set(tx + Math.sin(az) * Math.cos(el) * D, h + Math.sin(el) * D, tz + Math.cos(az) * Math.cos(el) * D);
+      this.camara.lookAt(tx, h, tz);
       this.luna.position.set(cx - 7, 16, cz - 5);
       this.luna.target.position.set(cx, 0, cz);
       return;

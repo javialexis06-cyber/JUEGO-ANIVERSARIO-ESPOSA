@@ -171,8 +171,10 @@ if (cuales.includes('celular')) {
   ok(x1 > x0 + 1, `el joystick mueve a la derecha (${x0.toFixed(1)} → ${x1.toFixed(1)})`);
   await p.waitForTimeout(800);
   const v = await p.evaluate(() => Math.hypot(window.__sangre().J[0].vx, window.__sangre().J[0].vy));
-  console.log(await p.evaluate(() => JSON.stringify({ mx: window.__sangrePartida().o.mando.mx, vx: window.__sangre().J[0].vx, joy: document.getElementById('joystick').className })));
-  ok(v < 0.5, 'al soltar se detiene');
+  // (si justo subió de nivel, el juego está esperando la carta: lo que importa es que el mando se soltó)
+  const suelto = await p.evaluate(() => ({ mx: window.__sangrePartida().o.mando.mx, carta: !document.getElementById('eleccion').hidden }));
+  ok(suelto.mx === 0 && (v < 0.5 || suelto.carta), 'al soltar se detiene');
+  if (suelto.carta) await p.locator('#eleccion .carta').first().tap();
   await p.locator('[data-e="hab"]').tap();
   await p.waitForTimeout(1500);
   ok(await p.evaluate(() => window.__sangre().J[0].habT > 0), 'el botón usa la habilidad');

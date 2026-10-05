@@ -2159,3 +2159,25 @@ svg {
 .hoja-carta .etiqueta {
   color: var(--tinta-2);
 }
+/* Con el retrato de verdad, el glifo de reemplazo se esconde (si la imagen falla, se quita y vuelve el glifo) */
+.tarjeta-clase .retrato img ~ svg,
+.retrato-sala img ~ svg {
+  display: none;
+}
+/* Los íconos renderizados (armas, objetos) siempre dentro de su caja */
+img.ico-render {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.arsenal .arma-mini {
+  overflow: hidden;
+}
+/* Los renders oscuros (hierro, cuero) necesitan un halo para leerse sobre el hierro del HUD */
+.arma .ico,
+.arma-forja .ico,
+.arsenal .arma-mini {
+  background: radial-gradient(circle at 50% 45%, rgba(255, 226, 180, 0.22), transparent 70%);
+  border-radius: 4px;
+}

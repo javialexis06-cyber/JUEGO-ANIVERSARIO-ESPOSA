@@ -87,7 +87,7 @@ export class Partida {
     const sim = this.exp.iniciarEtapa();
     this.sim = sim;
     const bioma = BIOMAS[this.o.cfg.bioma];
-    const precarga = [...new Set(bioma.enemigos.map((e) => e.id))];
+    const precarga = [...new Set([...bioma.enemigos.map((e) => e.id), 'altar', bioma.jefe, ...(bioma.jefe === 'conde' ? ['conde_alas'] : [])])];
     await this.o.escena.prepararEtapa(sim.mapa, bioma, this.o.perfiles.map((p, i) => ({ i, cuerpo: p.cuerpo, clase: p.clase, piel: p.piel, pelo: p.pelo })), precarga);
     const v = Object.create(sim) as EstadoVista;
     (v as { suc: Sucesos }).suc = this.acum;
@@ -144,8 +144,7 @@ export class Partida {
     if (!quieto && !sim.fin) {
       // Mando del jugador local (o el bot)
       if (j) {
-        if (bots.includes(this.o.local)) botPaso(sim, j);
-        else {
+        if (!bots.includes(this.o.local)) {
           j.mx = this.o.mando.mx;
           j.my = this.o.mando.my;
           if (this.o.mando.tomarHabilidad()) j.pideHabilidad = true;
@@ -156,10 +155,11 @@ export class Partida {
           j.mx = j.my = 0;
         }
       }
-      for (const b of bots) if (b !== this.o.local && sim.J[b]) botPaso(sim, sim.J[b]);
       this.acc += dtReal * rapido;
       let pasos = 0;
       while (this.acc >= DT && pasos < 3 * rapido) {
+        // El bot decide en cada paso (no una vez por cuadro: a cuadros lentos se pasaba de largo en las esquinas)
+        for (const b of bots) if (sim.J[b]) botPaso(sim, sim.J[b]);
         sim.paso(DT);
         this.copiarSucesos(sim.suc);
         this.o.alPaso?.(sim, sim.suc);
