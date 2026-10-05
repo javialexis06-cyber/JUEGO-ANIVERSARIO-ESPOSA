@@ -138,7 +138,7 @@ export class Escena3D {
       document.body.classList.remove('sangre-vineta-css');
       const comp = new EffectComposer(this.renderer, { frameBufferType: THREE.HalfFloatType, multisampling: c === 'alta' ? 4 : 0 });
       comp.addPass(new RenderPass(this.escena, this.camara));
-      this.bloom = new BloomEffect({ mipmapBlur: true, intensity: 1.15, luminanceThreshold: 0.72, luminanceSmoothing: 0.25, radius: 0.72 });
+      this.bloom = new BloomEffect({ mipmapBlur: true, intensity: 1.1, luminanceThreshold: 0.88, luminanceSmoothing: 0.18, radius: 0.7 });
       const vineta = new VignetteEffect({ darkness: 0.62, offset: 0.28 });
       const tono = new ToneMappingEffect({ mode: ToneMappingMode.AGX });
       const efectos: (BloomEffect | VignetteEffect | ToneMappingEffect | NoiseEffect)[] = [this.bloom, tono, vineta];
@@ -334,7 +334,7 @@ export class Escena3D {
     if (local && this.vitrina) {
       // En los menús: luz cálida de lado, suave (que no queme la cara)
       this.linterna.position.set(local.x + 1.3, 2.3, local.y + 1.8);
-      this.linterna.intensity = 2.4 * (0.94 + Math.sin(this.tiempo * 7.1) * 0.04 + Math.sin(this.tiempo * 17.3) * 0.02);
+      this.linterna.intensity = 1.5 * (0.94 + Math.sin(this.tiempo * 7.1) * 0.04 + Math.sin(this.tiempo * 17.3) * 0.02);
       this.linterna.distance = 8;
     } else if (local && (local.estado === 0 || local.estado === 1)) {
       this.linterna.position.set(local.x + local.fx * 0.6, 3.1, local.y + local.fy * 0.6 + 0.9);

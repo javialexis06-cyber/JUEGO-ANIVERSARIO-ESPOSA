@@ -79,7 +79,10 @@ export class Mapa3D {
       const geo = new THREE.PlaneGeometry(1, 1);
       geo.rotateX(-Math.PI / 2);
       geo.translate(0, 1.5, 0);
-      this.tapa = { geo, mat: conLuz(new THREE.MeshStandardMaterial({ map: texturaTecho(bioma), roughness: 1, metalness: 0 })) };
+      // Del color del techo de las paredes modeladas (sus triángulos que miran arriba), para que empalmen
+      const ref = this.paredes.dura[0] ?? this.paredes.blanda[0];
+      const col = ref ? colorTecho(ref.geo) : null;
+      this.tapa = { geo, mat: conLuz(new THREE.MeshStandardMaterial({ map: texturaTecho(), color: col ?? new THREE.Color(bioma.roca[1]), roughness: 1, metalness: 0 })) };
     }
     for (let ty = 0; ty < this.th; ty++)
       for (let tx = 0; tx < this.tw; tx++) {
@@ -632,30 +635,43 @@ function texturaPiso(b: DefBioma): THREE.CanvasTexture {
 }
 
 let normalPiso: THREE.Texture | null = null;
-/** El techo de la roca maciza: piedra oscura con grietas (se ve de lejos y casi siempre en penumbra). */
-const texturasTecho = new Map<string, THREE.CanvasTexture>();
-function texturaTecho(b: DefBioma): THREE.CanvasTexture {
-  const c0 = texturasTecho.get(b.id);
-  if (c0) return c0;
+/** Color medio de lo que mira hacia arriba en una geometría con color en los vértices (el techo de una pared). */
+function colorTecho(g: THREE.BufferGeometry): THREE.Color | null {
+  const c = g.getAttribute('color'), n = g.getAttribute('normal'), p = g.getAttribute('position');
+  if (!c || !n || !p) return null;
+  let r = 0, gg = 0, b = 0, k = 0;
+  for (let i = 0; i < c.count; i++) {
+    if (n.getY(i) < 0.8 || p.getY(i) < 1.2) continue;
+    r += c.getX(i);
+    gg += c.getY(i);
+    b += c.getZ(i);
+    k++;
+  }
+  return k ? new THREE.Color(r / k, gg / k, b / k).multiplyScalar(0.9) : null;
+}
+
+/** El techo de la roca maciza: piedra gris con grietas (se tiñe con el color del techo de las paredes). */
+let techo: THREE.CanvasTexture | null = null;
+function texturaTecho(): THREE.CanvasTexture {
+  if (techo) return techo;
   const n = 128;
   const c = document.createElement('canvas');
   c.width = c.height = n;
   const g = c.getContext('2d')!;
-  const [r0, r1, r2] = b.roca;
-  g.fillStyle = new THREE.Color(r1).multiplyScalar(0.85).getStyle();
+  g.fillStyle = '#d8d8d8';
   g.fillRect(0, 0, n, n);
   let sd = 7;
   const az = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
   for (let k = 0; k < 40; k++) {
-    g.fillStyle = az() < 0.5 ? r0 : r2;
-    g.globalAlpha = 0.18 + az() * 0.2;
+    g.fillStyle = az() < 0.5 ? '#ffffff' : '#9a9a9a';
+    g.globalAlpha = 0.2 + az() * 0.25;
     const x = az() * n, y = az() * n, r = 6 + az() * 18;
     g.beginPath();
     g.ellipse(x, y, r, r * (0.5 + az() * 0.5), az() * 3, 0, Math.PI * 2);
     g.fill();
   }
-  g.globalAlpha = 0.5;
-  g.strokeStyle = '#000';
+  g.globalAlpha = 0.45;
+  g.strokeStyle = '#3a3a3a';
   g.lineWidth = 1.5;
   for (let k = 0; k < 6; k++) {
     g.beginPath();
@@ -665,11 +681,10 @@ function texturaTecho(b: DefBioma): THREE.CanvasTexture {
     g.stroke();
   }
   g.globalAlpha = 1;
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  texturasTecho.set(b.id, t);
-  return t;
+  techo = new THREE.CanvasTexture(c);
+  techo.colorSpace = THREE.SRGBColorSpace;
+  techo.wrapS = techo.wrapT = THREE.RepeatWrapping;
+  return techo;
 }
 
 function texturaNormalPiso() {

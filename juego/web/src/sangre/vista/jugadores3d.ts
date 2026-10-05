@@ -22,8 +22,23 @@ const TAPA: Record<'el' | 'ella', string[]> = {
   ella: ['torso camiseta', 'cuello camiseta', 'ribete manga', 'pespunte camiseta', 'chaleco', 'solapa', 'tapa bolsillo', 'pespunte chaleco', 'suciedad ropa', 'pantalon',
     'dobladillo short', 'pespunte shorts', 'tenis', 'suela', 'cordon', 'media', 'puño media'],
 };
-const PELO = ['cabello base', 'mechon'];
-const TAPA_CABEZA = /casco|capucha|corona|sombrero|yelmo|mitra|velo|gorro|capirote/i;
+/** Lo que tapa cada parte que el traje dice ocultar (`trajes.json` de las figuras), como en el clóset de la casa. */
+const TAPA_RANURA: Record<'el' | 'ella', Record<string, string[]>> = {
+  el: {
+    copete: ['mechon copete', 'mechon flequillo'], arriba: ['torso camiseta', 'cuello camiseta', 'ribete', 'pespunte camiseta', 'suciedad ropa'],
+    abajo: ['pantalon', 'pespunte pantalon'], pies: ['tenis', 'suela'], pelo: ['cabello base', 'mechon'], medias: [],
+  },
+  ella: {
+    copete: [], arriba: ['torso camiseta', 'cuello camiseta', 'ribete manga', 'pespunte camiseta', 'chaleco', 'solapa', 'tapa bolsillo', 'pespunte chaleco', 'suciedad ropa'],
+    abajo: ['pantalon', 'dobladillo short', 'pespunte shorts'], pies: ['tenis', 'suela', 'cordon'], pelo: ['cabello base', 'mechon'], medias: ['media', 'puño media'],
+  },
+};
+/** Qué oculta cada traje (lo lee de `modelos/sangre/trajes.json`; si no está, lo de siempre: ropa y zapatos). */
+let ocultaTrajes: Promise<Record<string, { oculta?: string[] }>> | null = null;
+function trajes() {
+  ocultaTrajes ??= fetch('./modelos/sangre/trajes.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
+  return ocultaTrajes;
+}
 
 type Estilo = 'mele' | 'distancia' | 'magia';
 function estiloDe(tipo: string): Estilo {
@@ -110,10 +125,11 @@ class Muneco3D {
     const { clase, cuerpo } = this.perfil;
     let tapa = [...TAPA[cuerpo]];
     try {
+      const oculta = (await trajes())[clase]?.oculta;
+      if (oculta) tapa = oculta.flatMap((k) => TAPA_RANURA[cuerpo][k] ?? []);
       const { escena } = await cargarAnimado(`ropa/sangre_${clase}_${cuerpo}.glb`);
       const copia = clonarConEsqueleto(escena);
       const raiz = this.p.raizMallas;
-      let tapaPelo = false;
       copia.traverse((o) => {
         const m = o as THREE.SkinnedMesh;
         if (!m.isSkinnedMesh) return;
@@ -122,7 +138,6 @@ class Muneco3D {
         m.bind(new THREE.Skeleton(huesos as THREE.Bone[], m.skeleton.boneInverses), m.bindMatrix);
         m.frustumCulled = false;
         m.castShadow = true;
-        if (TAPA_CABEZA.test(m.name) || TAPA_CABEZA.test((m.material as THREE.Material)?.name ?? '')) tapaPelo = true;
         this.traje.push(m);
       });
       if (raiz) for (const m of this.traje) raiz.add(m);
@@ -131,7 +146,6 @@ class Muneco3D {
         const mm = o as THREE.Mesh;
         if (mm.isMesh) for (const x of Array.isArray(mm.material) ? mm.material : [mm.material]) this.mats.push(x as THREE.MeshStandardMaterial);
       });
-      if (tapaPelo) tapa = [...tapa, ...PELO];
       if (!this.traje.length) throw new Error('sin mallas');
     } catch {
       // Reemplazo: ropa de fábrica teñida con los colores de la clase + capa y tocado

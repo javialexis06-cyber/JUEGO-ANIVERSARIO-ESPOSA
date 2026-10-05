@@ -4,6 +4,7 @@
 // morir desintegrándose, destellar al recibir un golpe) con los datos de cada instancia. Así cientos de muertos
 // vivientes cuestan unas pocas llamadas de dibujo.
 import * as THREE from 'three';
+import { geoFloat } from './formas';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { conLuz } from './luz';
 
@@ -166,8 +167,9 @@ export function colorContraluz(c: THREE.ColorRepresentation) {
 /** Junta las piezas sueltas en una geometría con grupos por material. */
 export function modeloDePiezas(piezas: PiezaSuelta[], pivotes: Partial<Record<number, THREE.Vector3>>, mats: Record<string, THREE.MeshStandardMaterial>, mov = new THREE.Vector4(1, 1, 1, 1)): ModeloPiezas {
   const porMat = new Map<string, THREE.BufferGeometry[]>();
+  const conColor = piezas.some((p) => !!p.geo.getAttribute('color'));
   for (const p of piezas) {
-    const g = normalizarGeo(p.geo);
+    const g = normalizarGeo(p.geo, conColor);
     const n = g.getAttribute('position').count;
     g.setAttribute('aPieza', new THREE.BufferAttribute(new Float32Array(n).fill(p.pieza), 1));
     const l = porMat.get(p.mat) ?? [];
@@ -181,17 +183,24 @@ export function modeloDePiezas(piezas: PiezaSuelta[], pivotes: Partial<Record<nu
   geo.computeBoundingSphere();
   const piv = PIEZAS.map((_, i) => pivotes[i]?.clone() ?? new THREE.Vector3());
   const alto = geo.boundingBox ? geo.boundingBox.max.y : 1;
-  const materiales = claves.map((k) => materialPiezas(mats[k].clone(), piv, mov));
+  const materiales = claves.map((k) => {
+    const m = mats[k].clone();
+    m.vertexColors = conColor;
+    return materialPiezas(m, piv, mov);
+  });
   for (const g of juntas) g.dispose();
   return { geo, mats: materiales, piv, alto, mov };
 }
 
 /** Deja la geometría con los mismos atributos (posición, normal, uv) y sin índice para poder unirla. */
-function normalizarGeo(g0: THREE.BufferGeometry): THREE.BufferGeometry {
+function normalizarGeo(g0: THREE.BufferGeometry, conColor = false): THREE.BufferGeometry {
   let g = g0.index ? g0.toNonIndexed() : g0.clone();
   if (!g.getAttribute('normal')) g.computeVertexNormals();
   if (!g.getAttribute('uv')) g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(g.getAttribute('position').count * 2), 2));
-  for (const n of Object.keys(g.attributes)) if (!['position', 'normal', 'uv'].includes(n)) g.deleteAttribute(n);
+  // Color en los vértices (los modelos de figuras lo traen horneado): todas las partes lo llevan o ninguna
+  if (conColor && !g.getAttribute('color')) g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(g.getAttribute('position').count * 3).fill(1), 3));
+  const quedan = conColor ? ['position', 'normal', 'uv', 'color'] : ['position', 'normal', 'uv'];
+  for (const n of Object.keys(g.attributes)) if (!quedan.includes(n)) g.deleteAttribute(n);
   g.morphAttributes = {};
   g = g;
   return g;
@@ -220,7 +229,7 @@ export function modeloDeNodo(nodo: THREE.Object3D, mov?: THREE.Vector4): ModeloP
     const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as THREE.MeshStandardMaterial;
     const clave = mat.uuid;
     mats[clave] = mat;
-    const g = m.geometry.clone();
+    const g = geoFloat(m.geometry);
     g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, m.matrixWorld));
     piezas.push({ pieza: p, geo: g, mat: clave });
   });

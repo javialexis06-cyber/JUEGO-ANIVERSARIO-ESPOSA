@@ -32,8 +32,14 @@ export function fijo(partes: [THREE.BufferGeometry, THREE.Material][]): ModeloFi
     l.push(g);
     porMat.set(m, l);
   }
-  const mats = [...porMat.keys()];
-  const juntas = mats.map((m) => mergeGeometries(porMat.get(m)!, false)!);
+  const mats = [...porMat.keys()].map((m) => {
+    if (!conColor || (m as THREE.MeshStandardMaterial).vertexColors) return m;
+    const c = m.clone();
+    (c as THREE.MeshStandardMaterial).vertexColors = true;
+    return c;
+  });
+  const claves = [...porMat.keys()];
+  const juntas = claves.map((m) => mergeGeometries(porMat.get(m)!, false)!);
   const geo = mergeGeometries(juntas, true)!;
   geo.computeBoundingSphere();
   return { geo, mats };
