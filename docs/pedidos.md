@@ -9,6 +9,46 @@ Creador de personajes para los amigos y acceso a la APK y al .exe como invitado,
 testeen los juegos **sin acceso a nada personal ni romántico de la pareja** (ni recuerdos, ni notas, ni la casa,
 ni frases de amor, ni apodos). Parte de la base ya la hace el frente de salas («Soy un amigo» básico).
 
+## Cuentas: el mismo progreso desde cualquier aparato (pedido de Javier, prioridad alta)
+
+«Quiero que el progreso de cuenta se guarde: solo una persona puede ser Él y solo una Ella, y que desde cualquier
+dispositivo que entre con la contraseña pueda jugar con los mismos datos, la misma casa, los mismos avances; que no
+se pierda el progreso.»
+- Hoy se entra con el código de la casa de 6 letras y se escoge Él o Ella; cada celular es una sesión anónima de
+  Supabase (`miembros`). Hace falta una **cuenta por persona con contraseña** (Supabase Auth con correo o usuario +
+  contraseña), **un solo dueño por rol** en cada casa (Él y Ella exclusivos: el segundo aparato que quiera ser Él debe
+  iniciar sesión como Él, no crear otro), y que al entrar desde otro celular o el computador cargue la misma casa.
+- **Todo el progreso en la nube**, no en el aparato: revisar cada minijuego que guarda en `localStorage`
+  (súper, Cien Puertas, mesa, lavado, retrete, cocina, Sangre y Ceniza, tele, escenas compradas, ajustes) y pasarlo
+  al estado de la casa o a tablas propias, con migración de lo que ya hay en el celular de cada uno.
+- Los cambios de SQL los aplica Javier en el panel de Supabase (no hay clave de servicio aquí); dejarlos en
+  `supabase/cambios-pendientes.sql` con instrucciones claras. No poner nunca la clave de servicio en la app.
+
+## Sangre y Ceniza: correcciones y mejoras (pedido de Javier tras probarlo)
+
+Textual: «Mejorar calidad de mapa; mejorar movilidad, se siente tosca, los ojos se cansan o se abruman por la
+velocidad, se siente raro…»
+- **Calidad**: mapas, enemigos, personajes «y todo lo demás»; «los sprites están muy básicos, falta mucho trabajo de
+  texturas».
+- **Movimiento y cámara**: se siente tosco y cansa la vista (velocidad, sacudidas, cámara que salta): suavizar
+  aceleración/frenado, cámara con amortiguación, menos parpadeo de efectos.
+- **Visión astral** (un modo de ver en gris o similar, con un botón) que deje identificar lo del piso: menas, cofres,
+  campana, objetos. **Que nada salga señalado en el mapa salvo la campana de extracción.**
+- **La campana**: revisar si está fallando (sale la flecha que guía pero al llegar no se ve la campana; eso puede
+  impedir pasar de nivel). Hacer mucho más visible el haz de luz; **más tiempo para llegar** (hoy, si estás lejos, es
+  imposible). Javier dice que en algunos niveles «de repente baja la campana»: si no es error, explicárselo (pasa
+  cuando se cumple el objetivo o se acaba el tiempo de la etapa); si es error, arreglarlo.
+- **Recoger objetos**: en computador, con clic del mouse; en celular, pasando por encima. **Áreas de recolección más
+  grandes** (no el dibujo, solo el área) y una barrita o animación de que se está recogiendo/interactuando.
+- **La Forja**: al mejorar algo no debe devolver al principio de la lista (que se quede donde estabas). Revisar el
+  **aura dorada de subir de nivel**, que no sale (parece error).
+- **Más Deep Rock Galactic**: mapas más grandes, más importancia a la minería, partidas más largas.
+- **Balance**: la dificultad de los primeros segundos se pierde a los 2 minutos y después de la primera etapa es
+  prácticamente morir. Que siga siendo jugable y divertido, pero con una progresión de dificultad más pareja y la
+  minería más importante.
+- **Modo infinito**: expediciones sin fin con enemigos cada vez más difíciles.
+- **Mejoras de minería**: bombas de minería, picar en área y cosas así.
+
 ## Ronda 2 de arreglos (después de lo de amigos)
 
 **Retrete espacial**
