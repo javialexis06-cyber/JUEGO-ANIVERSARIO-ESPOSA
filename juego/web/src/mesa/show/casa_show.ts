@@ -18,6 +18,9 @@ export interface DatosCasa {
 
 type Casa = Record<string, any> & { show?: ShowCasa };
 
+/** La conexión con la casa en línea se abre una vez por visita a la mesa (no en cada guardado). */
+let conexion: Promise<Awaited<ReturnType<typeof import('../../casa/sincro').conexionPareja>>> | null = null;
+
 function modo(): { modo: 'local' | 'linea'; rol: Rol } | null {
   try {
     const m = JSON.parse(localStorage.getItem(CLAVE_MODO) ?? 'null') as { modo?: string; rol?: string } | null;
@@ -71,7 +74,11 @@ export async function casaShow(cambio?: (s: ShowCasa, c: Casa) => void): Promise
     if (m?.modo === 'linea') {
       const sincro = await import('../../casa/sincro');
       const { normalizarCasa } = await import('../../casa/modelo');
-      const con = await sincro.conexionPareja();
+      conexion ??= sincro.conexionPareja().catch((e) => {
+        conexion = null;
+        throw e;
+      });
+      const con = await conexion;
       if (con) {
         const { sb, sesion } = con;
         for (let intento = 0; intento < 6; intento++) {

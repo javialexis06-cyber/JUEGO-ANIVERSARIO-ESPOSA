@@ -177,7 +177,7 @@ revisar(await el.evaluate(() => /está en la mesa/.test(document.getElementById(
 await el.click('[data-juego="show"]');
 await el.waitForSelector('.cabina .cabina-empezar', { timeout: 30000 });
 await el.screenshot({ path: `${carpeta}/cabina.png` });
-await el.click('.cabina-empezar');
+await el.evaluate(() => document.querySelector('.cabina-empezar').click());
 await ella.waitForSelector('#hoja:not([hidden]) .boton-tomate', { timeout: 60000 });
 await ella.screenshot({ path: `${carpeta}/invitacion.png` });
 await ella.click('#hoja:not([hidden]) .boton-tomate');
