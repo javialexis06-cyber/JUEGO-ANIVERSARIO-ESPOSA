@@ -18,7 +18,7 @@ export const LUZ_BASE = 6.5;
 export const BIT_ETQ: Record<Etiqueta, number> = Object.fromEntries(ETIQUETAS.map((e, i) => [e, 1 << i])) as Record<Etiqueta, number>;
 
 /** Experiencia para pasar del nivel n al n+1. */
-export const xpPara = (n: number) => Math.round(9 + 7.5 * (n - 1) + 0.55 * (n - 1) ** 2);
+export const xpPara = (n: number) => Math.round(7 + 5 * (n - 1) + 0.32 * (n - 1) ** 2);
 
 /** Comportamientos en los que «cantidad» es cuántos proyectiles salen (en los demás da más área). */
 const CUENTA: Record<string, boolean> = { proyectil: true, lanzado: true, bumeran: true, orbita: true, rayo: true, cadena: true, torreta: true };

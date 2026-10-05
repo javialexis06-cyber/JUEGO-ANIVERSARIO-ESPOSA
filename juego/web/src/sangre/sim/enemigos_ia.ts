@@ -78,8 +78,8 @@ export function dirigirHorda(sim: Sim, dt: number) {
   if (sim.E.vivos >= tope) return;
   const u = Math.min(1.25, sim.t / DURACION_ETAPA);
   // Horda de verdad: arranca con unos cuantos y a los 4 minutos son cientos
-  let presion = 2.3 * (1 + 3.2 * Math.pow(u, 1.25)) * sim.esc.cantidad * sim.presionExtra;
-  if (sim.fase === 'extraccion') presion *= 1.9;
+  let presion = 1.8 * (1 + 2.8 * Math.pow(u, 1.3)) * sim.esc.cantidad * sim.presionExtra;
+  if (sim.fase === 'extraccion') presion *= 1.55;
   if (sim.fase === 'jefe') presion *= 0.5;
   if (sim.cfg.exp.mutadores.includes('enjambres')) presion *= 1.2;
   sim.hordaAcum += presion * dt;
