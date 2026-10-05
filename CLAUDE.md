@@ -20,8 +20,16 @@ línea (Supabase): cada uno ve lo que hace el otro en vivo.
 
 ## 2. Reglas de trabajo (no negociables)
 
-- **Rama**: todo se trabaja y se sube en `claude/supermarket-mania-minigame-xn2it8`. No abras PR ni cambies de rama
-  sin que él lo pida.
+- **Rama**: la APK y el instalador se compilan desde `claude/supermarket-mania-minigame-xn2it8` (Javier dio
+  permiso explícito para subir ahí). Si la sesión te asigna otra rama, trabaja en ella y sube a las dos
+  (`git push origin HEAD:claude/supermarket-mania-minigame-xn2it8`). No abras PR sin que él lo pida.
+- **Varios frentes a la vez**: cuando él lo autoriza («haz en paralelo lo de la misma tarea»), cada agente trabaja en
+  su propio worktree (`.wt/<frente>`, rama `trabajo/<frente>`, `node_modules` enlazado, puerto de Vite propio) y el
+  coordinador junta las ramas, prueba todo junto y sube. Los límites de uso cortan a los agentes cada pocas horas:
+  que hagan commit cada vez que algo compile y respalda las ramas `trabajo/*` en GitHub.
+- **Instalador para computador**: el mismo workflow arma `NuestroHogar.exe` (Electron, `juego/escritorio/`) y lo
+  sube a la misma versión que la APK:
+  `https://github.com/javialexis06-cyber/juego-aniversario-esposa/releases/latest/download/NuestroHogar.exe`.
 - **Commit y push al terminar cada cosa** (hay un hook que no deja cerrar con cambios sin subir). Cada push que
   toque `juego/web/` compila la APK en GitHub Actions (`.github/workflows/apk.yml`) y la publica en Releases.
   Él prueba **descargando la APK** en su celular:
@@ -227,28 +235,23 @@ npm run dev                    # http://localhost:5173 (casa), /super.html, /pue
 
 ## 9. Estado actual y pendientes
 
-Todo lo pedido hasta ahora está hecho, probado y subido: casa completa (cuartos, ampliación, bebé, mascota y
-patio, tele con YouTube y cola, baño con recuerdos, dormir abrazados, notas de voz, ropa y clóset, 20 conceptos de
-decoración, cocina de chef, lavarse la cara, retrete espacial, nalgada, sala de trofeos con títulos y cuadro de
-honor), Súper Manía (100 niveles, lunas, mejoras, en línea cada uno en su celular), Cien Puertas y los juegos de
-mesa. Las APK compilan en verde.
+Hecho, probado y subido (además de todo lo de antes: casa, súper, Cien Puertas, mesa, cocina, retrete, lavado…):
+- **Auditoría** completa, segundo plano (la app se duerme y calla al salir), modelos comprimidos
+  (`docs/auditoria.md`). `supabase/cambios-pendientes.sql` lo tiene que pegar Javier en el SQL Editor de Supabase.
+- **Lavarse la cara** = Vampire Survivors completo (30 min, oleadas por minuto, evoluciones, cofres, tienda,
+  disfraces, tres escenarios), hasta 4 jugadores con salas, ataque a mano o solito, tutorial, modo neutro con amigos.
+- **Retrete espacial** con tramos, poderes, misiones, tienda, rojo/dorado, «Volar otra vez» y volar al sentarse.
+- **Cocina** con gráficos renderizados y en pareja.
+- **Salas de hasta 4** (`src/salas/`, `docs/salas.md`) y **modo amigo** básico (`amigos.html`): los amigos nunca
+  ven la casa ni nada personal (`scripts/probar-amigos.mjs` lo verifica).
+- **Sangre y Ceniza** (`sangre.html`, `src/sangre/`, `docs/sangre-y-ceniza.md`, `docs/sangre-figuras.md`): el
+  survivors oscuro de expediciones estilo Deep Rock Galactic, 12 clases, 5 biomas, hasta 4 jugadores.
+- **Versión de computador** (`juego/escritorio/`, Esc = atrás, F11 = pantalla completa).
+- Los nombres son **Javier** y **Laura** (`NOMBRE_ROL`); apodos y anécdotas en `docs/la-pareja.md`.
 
-**Pendientes, en este orden** (él decide cuándo arrancar cada uno; uno a la vez):
+**Pendientes**: la lista viva, en orden, está en **`docs/pedidos.md`** (lo siguiente: el creador de personajes y la
+entrada como invitado para los amigos; luego la ronda 2 de arreglos, el sótano de terror, el juego de crímenes y lo
+acumulado: Cien Puertas en obra en `.wt/puertas`, Show de Nosotros en obra en `.wt/show`, tele compartida, tocador
+de Laura, escenas premium). Las voces con IA siguen esperando la clave de ElevenLabs.
 
-1. **Tocador de Ella: minijuego de maquillaje y accesorios.** Lo que pidió, textual: «Que en el cuarto de ella
-   cuando le de al tocador y maquillarse que salga un minijuego de maquillaje donde ella pueda maquillarse,
-   ponerse aretes y muchos tipos de accesorios distintos tipo vestir muñecas». Hoy el tocador (`cuarto_ella`,
-   mueble `tocador`/`taburete`, acción `tocador` en `main.ts` y `mascota.ts`) solo hace la animación de
-   arreglarse. Idea: al sentarse, la cámara se acerca al espejo (como en «lavarse la cara», `lavado.ts`) y se abre
-   un vestidor con la cara de Ella en grande: base, rubor, sombras, delineador, pestañas, labial y cejas con
-   paletas de color, y muchísimos accesorios (aretes, collares, moños, diademas, tiaras, gafas, pinzas,
-   piercings, stickers de cara); lo que escoja se guarda en la casa y se le ve puesto en el 3D. Calidad alta:
-   que parezca un juego de vestir muñecas de verdad, con mucho catálogo.
-2. **Animaciones premium (EN PAUSA hasta que él diga).** Ver `docs/escenas-premium.md`: escenarios propios,
-   grandes y blancos, para que no parezca que dan vueltas en un cuarto diminuto; luego la pestaña «Escenas» en la
-   tienda para comprarlas. También quedó pendiente, junto con esto, **diseños premium de paredes, pisos y
-   decoración** para los cuartos con 5-6 veces más detalle que los de ahora.
-3. **Voces con IA (espera a ElevenLabs).** Todo listo en `docs/voces-ia.md` y `scripts/voces-ia.mjs`. Falta que él
-   cree las dos voces clonadas y ponga la clave en la variable de entorno.
-
-Cuando termines algo nuevo, actualiza esta sección y el documento de `docs/` que corresponda.
+Cuando termines algo nuevo, actualiza esta sección, `docs/pedidos.md` y el documento de `docs/` que corresponda.
