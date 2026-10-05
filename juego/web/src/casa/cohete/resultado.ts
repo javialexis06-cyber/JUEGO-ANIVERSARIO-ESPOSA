@@ -29,6 +29,8 @@ export interface DatosResultado {
   recordPareja: number;
   /** Monedas de la casa por este vuelo (null mientras la casa responde). */
   casa: PremioCasa | null;
+  /** El botón de salir (sin casa, un amigo vuelve a su sala de juegos). */
+  textoSalir?: string;
 }
 
 const mil = (v: number) => Math.round(v).toLocaleString('es-CO');
@@ -92,7 +94,7 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
       </div>
       <footer>
         <button class="cb-boton" data-tienda><i class="ico-rollito"></i> Tienda <small>${mil(p.rollitos)}</small></button>
-        <button class="cb-boton" data-casa>Volver a casa</button>
+        <button class="cb-boton" data-casa>${esc(d.textoSalir ?? 'Volver a casa')}</button>
         <button class="cb-boton cb-principal cr-otra" data-otra>🚀 Volar otra vez</button>
       </footer>
     </div>`;

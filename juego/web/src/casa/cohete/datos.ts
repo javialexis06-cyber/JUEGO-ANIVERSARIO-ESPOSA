@@ -182,6 +182,25 @@ export const TRAMOS: InfoTramo[] = [
   { id: 'nebulosa', nombre: 'La nebulosa', desde: 4800 },
   { id: 'amor', nombre: 'La galaxia del amor', desde: 6500 },
 ];
+/**
+ * Modo neutro: juega un amigo (sin casa). Nada de la pareja: la galaxia del amor se vuelve la galaxia de chicle y los
+ * textos de los cosméticos románticos cambian. Lo prende el retrete al empezar y lo apaga al terminar.
+ */
+let neutro = false;
+export function ponerNeutroCohete(si: boolean) {
+  neutro = si;
+}
+export const esNeutroCohete = () => neutro;
+const TRAMO_NEUTRO: Record<string, string> = { amor: 'La galaxia de chicle' };
+/** El nombre del tramo que se ve (en modo neutro, sin nada romántico). */
+export const nombreTramo = (i: number) => (neutro && TRAMO_NEUTRO[TRAMOS[i]?.id]) || TRAMOS[i]?.nombre || '';
+const COSMETICO_NEUTRO: Record<string, string> = {
+  'estela:corazones': 'Vas regando buena vibra por donde pasas',
+  'estela:petalos': 'Elegante hasta en el baño',
+};
+/** La descripción de un cosmético que se ve (en modo neutro, sin nada romántico). */
+export const textoCosmetico = (t: TipoCosmetico, c: Cosmetico) => (neutro && COSMETICO_NEUTRO[`${t}:${c.id}`]) || c.texto;
+
 export const tramoDe = (m: number) => {
   let i = 0;
   while (i + 1 < TRAMOS.length && m >= TRAMOS[i + 1].desde) i++;
@@ -265,7 +284,7 @@ const DEF_MISIONES: DefMision[] = [
   { tipo: 'laser_total', cuenta: 'laser', vuelo: false, meta: (n) => tope(6 + 2 * n, 60), texto: (m) => `Destapa ${m} asteroides con el desatascador`, requiere: (p) => nivelDe(p, 'laser') > 0 },
   { tipo: 'escudos_total', cuenta: 'escudos', vuelo: false, meta: (n) => tope(2 + n / 3, 10), texto: (m) => `Revienta ${m} burbujas de jabón chocando` },
   { tipo: 'cometas_total', cuenta: 'cometas', vuelo: false, meta: (n) => tope(3 + n / 2, 15), texto: (m) => `Esquiva ${m} cometas`, desde: 2 },
-  { tipo: 'tramo_vuelo', cuenta: 'tramo', vuelo: true, meta: (n) => Math.min(TRAMOS.length - 1, 1 + Math.floor(n / 3)), texto: (m) => `Llega hasta ${TRAMOS[m]?.nombre.replace(/^(El|La) /, (x) => x.toLowerCase()) ?? 'lejos'}` },
+  { tipo: 'tramo_vuelo', cuenta: 'tramo', vuelo: true, meta: (n) => Math.min(TRAMOS.length - 1, 1 + Math.floor(n / 3)), texto: (m) => (TRAMOS[m] ? `Llega hasta ${nombreTramo(m).replace(/^(El|La) /, (x) => x.toLowerCase())}` : 'Llega lejos') },
   { tipo: 'figuras_vuelo', cuenta: 'figuras', vuelo: true, meta: (n) => tope(1 + n / 4, 6), texto: (m) => (m === 1 ? 'Recoge una figura de rollitos completa' : `Recoge ${m} figuras de rollitos completas`) },
   { tipo: 'corazon_vuelo', cuenta: 'corazon', vuelo: true, meta: () => 1, texto: () => 'Recoge completico un corazón de rollitos' },
   { tipo: 'compras_total', cuenta: 'compras', vuelo: false, meta: (n) => tope(1 + n / 6, 3), texto: (m) => (m === 1 ? 'Compra algo en la tienda del retrete' : `Compra ${m} cosas en la tienda del retrete`) },
