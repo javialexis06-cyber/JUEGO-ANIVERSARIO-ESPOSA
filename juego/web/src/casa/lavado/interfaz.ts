@@ -472,7 +472,7 @@ export class Interfaz {
     const html = ids
       .map((id) => {
         const c = cartaVista(id);
-        return `<button class="lv-sobre" style="--c:${c.color}" data-carta="${id}"><span class="num">${c.numero}</span><b>${c.nombre}</b><q>${c.recuerdo}</q><em>${c.efecto}</em></button>`;
+        return `<button class="lv-sobre" style="--c:${c.color}" data-carta="${id}"><span class="num">${c.numero}</span><b>${c.nombre}</b><q>${c.frase}</q><em>${c.efecto}</em></button>`;
       })
       .join('');
     this.capaCarta.innerHTML = `<h2>${FRASES.cartaPerdida()}<small>Escoge una: cambia toda la partida</small></h2><div class="lv-amor">${html}</div>

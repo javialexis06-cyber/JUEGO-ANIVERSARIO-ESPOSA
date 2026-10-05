@@ -97,15 +97,15 @@ await p.evaluate(() => {
 await p.tap('.am-juego.lavado');
 await p.waitForSelector('.lv-menu:not([hidden]) [data-m="jugar"]', { timeout: 90000 });
 personal = await p.evaluate(async () => {
-  const { CARTAS } = await import('/src/casa/lavado/cartas.ts');
-  const { DISFRACES } = await import('/src/casa/lavado/disfraces.ts');
-  const T = await import('/src/casa/lavado/textos.ts');
-  // (el juego ya está en modo neutro: lo que cambiaría sin él es lo personal)
-  T.ponerNeutro(true);
-  return [
-    ...Object.values(CARTAS).flatMap((c) => [c.nombre, c.recuerdo].filter((x, k) => x !== [T.cartaVista(c.id).nombre, T.cartaVista(c.id).recuerdo][k])),
-    ...DISFRACES.flatMap((d) => [d.nombre, d.desc, d.grito].filter((x, k) => x !== [T.disfrazVisto(d).nombre, T.disfrazVisto(d).desc, T.disfrazVisto(d).grito][k])),
-  ];
+  // Todo lo personal del lavado vive en pareja.ts (lo que la versión para amigos ni compila)
+  const { PAREJA } = await import('/src/casa/lavado/pareja.ts');
+  const textos = [];
+  const juntar = (v) => {
+    if (typeof v === 'string') textos.push(v.replace(/^\P{L}+/u, '').trim());
+    else if (v && typeof v === 'object' && !(v instanceof RegExp)) Object.values(v).forEach(juntar);
+  };
+  juntar([PAREJA.cartas, PAREJA.disfraces, PAREJA.logros, PAREJA.enemigos]);
+  return [...new Set(textos.filter((t) => t.length > 5))];
 });
 revisar(personal.length > 20, `Se sabe qué es personal (${personal.length} textos de cartas y disfraces)`);
 await espera(800);
@@ -145,7 +145,7 @@ await p.evaluate(() => {
   L.probar('aguante');
   L.probar('tiempo', 655);
   // Una carta mágica perdida para él
-  L.m.jug[0].cartaOpciones = ['octubre', 'cartagena', 'propuesta'];
+  L.m.jug[0].cartaOpciones = ['comienzo', 'solPlaya', 'diamante'];
 });
 await p.waitForSelector('.lv-c-carta:not([hidden]) .lv-sobre', { timeout: 30000 });
 await espera(700);

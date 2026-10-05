@@ -75,8 +75,8 @@ export type IdObjeto =
   | 'cofre';
 
 export type IdCarta =
-  | 'transformice' | 'matematicas' | 'buscarte' | 'octubre' | 'videollamadas' | 'estudio' | 'psicologia' | 'primeraVez' | 'metaDiciembre'
-  | 'cartagena' | 'lucesMedellin' | 'sopetran' | 'halloween' | 'reina' | 'planetario' | 'hogar' | 'propuesta' | 'paraSiempre';
+  | 'oroBrillante' | 'certero' | 'silbato' | 'comienzo' | 'maraton' | 'dobleTurno' | 'curitaMagica' | 'relojQuieto' | 'ruedaFortuna'
+  | 'solPlaya' | 'lucesFeria' | 'viajeLargo' | 'fiestaDisfraces' | 'coronaHierro' | 'estrellas' | 'conLoJusto' | 'diamante' | 'reboteSinFin';
 
 export type IdPoder = Stat;
 

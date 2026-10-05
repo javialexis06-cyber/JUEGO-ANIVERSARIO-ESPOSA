@@ -63,13 +63,13 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   // ------------------------------------------------------------------------------------------------ La Bañera
   piojo: E({ id: 'piojo', nombre: 'Piojo', desc: 'Salta de cabeza en cabeza. Ahora salta hacia ti.', vida: 24, vel: 82, dano: 9, xp: 1, radio: 11, tam: 36, comp: 'saltar' }),
   mosquito: E({ id: 'mosquito', nombre: 'Mosquito', desc: 'Zumba en la oreja a las tres de la mañana. Viene en escuadrón.', vida: 7, vel: 122, dano: 3, xp: 1, radio: 10, tam: 34, comp: 'enjambre' }),
-  pulga: E({ id: 'pulga', nombre: 'Pulga', desc: 'Chiquita y brincona. (No confundir con la pulga aventurera.)', vida: 9, vel: 90, dano: 7, xp: 1, radio: 9, tam: 30, comp: 'saltar' }),
+  pulga: E({ id: 'pulga', nombre: 'Pulga', desc: 'Chiquita y brincona. Salta cuando menos lo esperas.', vida: 9, vel: 90, dano: 7, xp: 1, radio: 9, tam: 30, comp: 'saltar' }),
   burbujaSucia: E({ id: 'burbujaSucia', nombre: 'Burbuja sucia', desc: 'Una burbuja con mugre adentro. Flota bravísima.', vida: 200, vel: 46, dano: 17, xp: 3, radio: 15, tam: 48, comp: 'flotar' }),
   babosa: E({ id: 'babosa', nombre: 'Babosa', desc: 'Deja un caminito brillante. Lenta pero tiene mucha vida.', vida: 1700, vel: 32, dano: 28, xp: 5, radio: 19, tam: 56, retro: 0.2 }),
   espinilla: E({ id: 'espinilla', nombre: 'Espinilla', desc: 'Con punta blanca y actitud. La élite del cutis.', vida: 460, vel: 52, dano: 23, xp: 3, radio: 16, tam: 48 }),
   // ------------------------------------------------------------------------------------------------ Jefes (vida × nivel)
   espinillon: E({ id: 'espinillon', nombre: 'El Espinillón', desc: 'El rey de los granitos, con corona y todo. Embiste cuando se enoja.', vida: 420, vel: 56, dano: 30, xp: 120, radio: 40, tam: 130, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
-  reinaCaspa: E({ id: 'reinaCaspa', nombre: 'La Reina Caspa', desc: 'Llega nevando. Guarda una carta de amor perdida.', vida: 300, vel: 72, dano: 24, xp: 120, radio: 34, tam: 118, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
+  reinaCaspa: E({ id: 'reinaCaspa', nombre: 'La Reina Caspa', desc: 'Llega nevando. Guarda una carta mágica perdida.', vida: 300, vel: 72, dano: 24, xp: 120, radio: 34, tam: 118, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
   granMoco: E({ id: 'granMoco', nombre: 'El Gran Moco', desc: 'Un moco del tamaño de una arepa grande. Baboso y orgulloso.', vida: 560, vel: 50, dano: 34, xp: 150, radio: 42, tam: 136, retro: 0, jefe: true, congelable: false }),
   senorLagana: E({ id: 'senorLagana', nombre: 'Don Lagaña', desc: 'Madruga más que el gallo y no se lava nunca.', vida: 700, vel: 48, dano: 38, xp: 160, radio: 42, tam: 136, retro: 0, jefe: true, congelable: false }),
   barroNegro: E({ id: 'barroNegro', nombre: 'El Barro Negro', desc: 'Mugre de una semana de paseo. Hace temblar el piso.', vida: 900, vel: 46, dano: 44, xp: 200, radio: 48, tam: 150, retro: 0, comp: 'embestir', jefe: true, congelable: false }),

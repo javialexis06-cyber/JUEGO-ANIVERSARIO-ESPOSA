@@ -13,7 +13,7 @@ import { statsVacios, type Efecto, type IdArma, type IdCarta, type IdEnemigo, ty
 import { actualizarArmas, moverProyectiles, moverZonas, pendientesGolpe } from './disparos';
 import type { ResumenPartida } from './progreso';
 import { valorOpcion } from './bot';
-import { cartaVista, disfrazVisto, neutralizar } from './textos';
+import { cartaVista, disfrazVisto, personalizar } from './textos';
 import type { AspectoJugador } from '../../salas/tipos';
 
 /** Aumento de vida de los bichos por minuto después del 14, y qué parte de eso se vuelve daño. */
@@ -319,7 +319,7 @@ export class Jugador {
   arranque = 0;
   /** Contadores de algunas cartas. */
   eliminadosCarta = 0;
-  bonoVideollamadas = 0;
+  bonoMaraton = 0;
   quieto = 0;
   curado = 0;
   /** El trebolito suma suerte por el resto de la partida. */
@@ -454,7 +454,7 @@ export class Motor {
       if (oj(o, j.i)?.carta) j.cartas.push(oj(o, j.i)!.carta as IdCarta);
       this.darArma(j, j.disfraz.arma);
       if (j.disfraz.arma2) this.darArma(j, j.disfraz.arma2);
-      if (j.tieneCarta('octubre')) {
+      if (j.tieneCarta('comienzo')) {
         const extra = this.az.pesado(BASICAS.filter((a) => !j.armas.some((x) => x.id === a) && this.disponible(j, a)), (a) => ARMAS[a].rareza);
         if (extra) this.darArma(j, extra);
       }
@@ -485,7 +485,7 @@ export class Motor {
 
   /** Un aviso en pantalla (`de`: solo para ese jugador; si no, para todos). En modo neutro, sin nada de la pareja. */
   aviso(t: string, de = -1) {
-    this.emitir('aviso', 0, 0, de + 1, 0, 0, 0, neutralizar(t));
+    this.emitir('aviso', 0, 0, de + 1, 0, 0, 0, personalizar(t));
   }
 
   /** Cuántos están jugando (los que se fueron no cuentan para la dificultad). */
@@ -534,16 +534,16 @@ export class Motor {
     }
     // Cartas
     s.suerte += j.bonoSuerte;
-    if (j.tieneCarta('octubre')) s.cantidad += 1;
-    if (j.tieneCarta('videollamadas')) {
+    if (j.tieneCarta('comienzo')) s.cantidad += 1;
+    if (j.tieneCarta('maraton')) {
       s.duracion += 0.6;
-      s.poder += j.bonoVideollamadas;
+      s.poder += j.bonoMaraton;
     }
-    if (j.tieneCarta('metaDiciembre')) {
+    if (j.tieneCarta('ruedaFortuna')) {
       const k = (['crecimiento', 'suerte', 'codicia', 'maldicion'] as Stat[])[Math.floor(this.t / 60) % 4];
       s[k] += 0.5;
     }
-    if (j.tieneCarta('hogar')) {
+    if (j.tieneCarta('conLoJusto')) {
       const vacias = MAX_RANURAS - j.armas.length;
       s.poder += 0.1 * vacias;
       s.enfriamiento += 0.05 * vacias;
@@ -551,7 +551,7 @@ export class Motor {
     }
     const antes = j.vidaMax;
     j.vidaMax = Math.max(10, Math.round((100 + (j.disfraz.base.vida ?? 0)) * (1 + vidaPct)));
-    if (j.tieneCarta('reina')) s.poder += j.vidaMax / 1000 + s.armadura * 0.05;
+    if (j.tieneCarta('coronaHierro')) s.poder += j.vidaMax / 1000 + s.armadura * 0.05;
     s.vida = j.vidaMax;
     s.enfriamiento = Math.min(0.75, s.enfriamiento);
     j.st = s;
@@ -742,7 +742,7 @@ export class Motor {
       }
     }
     // Además, un chorrito de gotas doradas que salta del cofre
-    const extra = Math.round((10 + this.t / 20) * (calidad >= 2 ? 2 : 1) * (1 + j.st.codicia) * (j.tieneCarta('transformice') ? 2 : 1));
+    const extra = Math.round((10 + this.t / 20) * (calidad >= 2 ? 2 : 1) * (1 + j.st.codicia) * (j.tieneCarta('oroBrillante') ? 2 : 1));
     oro += extra;
     this.oro += oro;
     j.oro += oro;
@@ -783,8 +783,8 @@ export class Motor {
     j.tEscoger = 0;
     if (id && j.cartaOpciones.includes(id) && !j.cartas.includes(id)) {
       j.cartas.push(id);
-      this.aviso(`💌 ${cartaVista(id).nombre}`);
-      if (id === 'octubre') {
+      this.aviso(`🃏 ${cartaVista(id).nombre}`);
+      if (id === 'comienzo') {
         const extra = this.az.pesado(BASICAS.filter((a) => !j.armas.some((x) => x.id === a) && this.disponible(j, a)), (a) => ARMAS[a].rareza);
         if (extra && j.armas.length < MAX_RANURAS) this.darArma(j, extra);
       }
@@ -822,7 +822,7 @@ export class Motor {
     const dReloj = dt * (this.apurado ? 2 : 1);
     const minAntes = Math.floor(this.t / 60);
     this.t += dReloj;
-    if (Math.floor(this.t / 60) !== minAntes) for (const j of this.jug) if (j.tieneCarta('metaDiciembre')) this.recalcular(j);
+    if (Math.floor(this.t / 60) !== minAntes) for (const j of this.jug) if (j.tieneCarta('ruedaFortuna')) this.recalcular(j);
     this.hielo = Math.max(0, this.hielo - dt);
     this.moverJugadores(dt);
     this.cartasTiempo(dt);
@@ -953,7 +953,7 @@ export class Motor {
       if (lim) j.y = Math.max(lim.yMin + 18, Math.min(lim.yMax - 18, j.y));
       j.quieto = Math.hypot(j.vx, j.vy) > 10 ? 0 : j.quieto + dt;
       // Recuperación (la de la carta de psicología cura el doble)
-      if (j.st.recuperacion > 0 && j.vida < j.vidaMax) j.vida = Math.min(j.vidaMax, j.vida + j.st.recuperacion * dt * (j.tieneCarta('psicologia') ? 2 : 1));
+      if (j.st.recuperacion > 0 && j.vida < j.vidaMax) j.vida = Math.min(j.vidaMax, j.vida + j.st.recuperacion * dt * (j.tieneCarta('curitaMagica') ? 2 : 1));
       if (j.arranque > 0 && j.arranque - dt <= 0) this.aviso('🚀 Se acabó el arranque de cohete: ¡a pelear normal!', j.i);
       j.arranque = Math.max(0, j.arranque - dt);
       if (j.aji > 0) {
@@ -965,13 +965,13 @@ export class Motor {
 
   curar(j: Jugador, cuanto: number) {
     if (j.caido) return;
-    const k = j.tieneCarta('psicologia') ? 2 : 1;
+    const k = j.tieneCarta('curitaMagica') ? 2 : 1;
     const antes = j.vida;
     j.vida = Math.min(j.vidaMax, j.vida + cuanto * k);
     const curo = j.vida - antes;
     if (curo > 0.5) this.emitir('curar', j.x, j.y, curo, j.i);
     // Psicología: la curita revienta en espuma alrededor
-    if (j.tieneCarta('psicologia') && cuanto >= 1) this.explotar(j.i, -1, 'cremaNoche', j.x, j.y, 90, cuanto * 12 * (1 + j.st.poder), 2);
+    if (j.tieneCarta('curitaMagica') && cuanto >= 1) this.explotar(j.i, -1, 'cremaNoche', j.x, j.y, 90, cuanto * 12 * (1 + j.st.poder), 2);
   }
 
   herirJugador(j: Jugador, dano: number, e: Enemigo | null) {
@@ -983,7 +983,7 @@ export class Motor {
     if (this.tutorial) j.vida = Math.max(j.vidaMax * 0.25, j.vida);
     this.emitir('herido', j.x, j.y, j.i, d);
     // Un cumpleaños de reina: el que pega recibe su merecido
-    if (e && j.tieneCarta('reina')) this.herir(e, 20 + j.st.armadura * 10, j.i, -1, 0, 0, false, 'gorro');
+    if (e && j.tieneCarta('coronaHierro')) this.herir(e, 20 + j.st.armadura * 10, j.i, -1, 0, 0, false, 'gorro');
     if (j.vida > 0) return;
     if (j.revivesQuedan > 0) {
       j.revivesUsados++;
@@ -1028,12 +1028,12 @@ export class Motor {
   // ------------------------------------------------------------------------------------------------- Cartas que pasan con el tiempo
   private cartasTiempo(dt: number) {
     const algun = (c: IdCarta) => this.jug.some((j) => j.tieneCarta(c) && !j.caido);
-    if (algun('buscarte')) {
+    if (algun('silbato')) {
       this.tLlamado -= dt;
       if (this.tLlamado <= 0) {
         this.tLlamado = 120;
-        const j = this.jug.find((x) => x.tieneCarta('buscarte'))!;
-        this.aviso('💞 ¡Te busqué por todos lados!');
+        const j = this.jug.find((x) => x.tieneCarta('silbato'))!;
+        this.aviso('✨ ¡Todos para acá!');
         for (let k = 0; k < this.nVivos; k++) {
           const e = this.en[this.vivos[k]];
           if (e.luz) {
@@ -1044,7 +1044,7 @@ export class Motor {
         }
       }
     }
-    if (algun('primeraVez')) {
+    if (algun('relojQuieto')) {
       this.tTiempo -= dt;
       if (this.tTiempo <= 0) {
         this.tTiempo = 60;
@@ -1054,10 +1054,10 @@ export class Motor {
       }
     }
     for (const j of this.jug) {
-      if (!j.tieneCarta('videollamadas')) continue;
+      if (!j.tieneCarta('maraton')) continue;
       const b = Math.floor(this.tReal / 360) * 0.1;
-      if (b !== j.bonoVideollamadas) {
-        j.bonoVideollamadas = b;
+      if (b !== j.bonoMaraton) {
+        j.bonoMaraton = b;
         this.recalcular(j);
       }
     }
@@ -1358,7 +1358,7 @@ export class Motor {
     const suerte = 1 + (j?.st.suerte ?? 0);
     const tipo = this.az.pesado(SUELTA_LUZ, (x) => x[1] * (x[2] ? suerte : 1))![0];
     this.soltar(tipo, e.x, e.y);
-    if (this.jug.some((x) => x.tieneCarta('cartagena'))) this.explotar(ji, -1, 'aji', e.x, e.y, 130, 240 * (1 + (j?.st.poder ?? 0)), 1);
+    if (this.jug.some((x) => x.tieneCarta('solPlaya'))) this.explotar(ji, -1, 'aji', e.x, e.y, 130, 240 * (1 + (j?.st.poder ?? 0)), 1);
   }
 
   soltar(tipo: IdObjeto, x: number, y: number, calidad = 0): Objeto | null {
@@ -1577,7 +1577,7 @@ export class Motor {
     }
     const j = this.jug[ji];
     let d = dano;
-    if (j && (e.congelado > 0 || this.hielo > 0) && j.tieneCarta('primeraVez')) d *= 1.5;
+    if (j && (e.congelado > 0 || this.hielo > 0) && j.tieneCarta('relojQuieto')) d *= 1.5;
     e.hp -= d;
     e.flash = 0.13;
     if (j && slot >= 0) {
@@ -1624,7 +1624,7 @@ export class Motor {
     if (j) {
       // Espuma devoradora: crece con cada uno que se traga
       for (const a of j.armas) if (a.id === 'espumaDevoradora') a.k = Math.min(70, a.k + 0.4);
-      if (j.tieneCarta('cartagena')) {
+      if (j.tieneCarta('solPlaya')) {
         j.eliminadosCarta++;
         if (j.eliminadosCarta % 10 === 0) this.explotar(ji, -1, 'aji', e.x, e.y, 70, 35 * (1 + j.st.poder), 1);
       }
@@ -1682,7 +1682,7 @@ export class Motor {
   }
 
   sumarOro(n: number, j: Jugador | null) {
-    const k = j?.tieneCarta('transformice') ? 2 : 1;
+    const k = j?.tieneCarta('oroBrillante') ? 2 : 1;
     const g = Math.round(n * (1 + (j?.st.codicia ?? 0)) * k);
     this.oro += g;
     if (j) j.oro += g;
@@ -1784,7 +1784,7 @@ export class Motor {
       case 'frasco': {
         const n = this.sumarOro(o.tipo === 'moneda' ? 1 : o.tipo === 'bolsa' ? 10 : 25, j);
         this.emitir('moneda', o.x, o.y, n, j.i);
-        if (j.tieneCarta('transformice')) this.curar(j, o.tipo === 'moneda' ? 1 : 4);
+        if (j.tieneCarta('oroBrillante')) this.curar(j, o.tipo === 'moneda' ? 1 : 4);
         break;
       }
       case 'trebolito':

@@ -18,7 +18,7 @@ const POSE: Record<string, [string, Cara, number]> = {
   el_barbero: ['jarras', 'guino', 18],
   ella_pulga: ['saludo_a', 'feliz', -18],
   ella_guerrera: ['jarras', 'presumido', -16],
-  ella_yanbal: ['beso', 'beso', -18],
+  ella_diva: ['beso', 'beso', -18],
   ella_turbante: ['reposo', 'feliz', -14],
   ella_sirena: ['celebrar', 'carcajada', -18],
   ella_ranita: ['baile_a', 'carcajada', -16],
