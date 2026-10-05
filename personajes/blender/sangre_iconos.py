@@ -51,6 +51,13 @@ ICONOS = {
 }
 
 
+# giros a mano para los que quedan de canto (modo de Euler, grados x, y, z)
+GIRO = {
+    'hoz': ('XYZ', (0, 0, 65)), 'pico_robado': ('ZYX', (0, -45, 90)), 'ballesta': ('XYZ', (0, 0, -70)), 'ballesta_cazanoche': ('XYZ', (0, 0, -70)),
+    'trabuco': ('XYZ', (0, 0, -70)), 'sierra': ('XYZ', (70, 0, 0)), 'torreta_ballesta': ('XYZ', (0, 0, -50)),
+}
+
+
 def registro(grupo):
     import sangre_exportar
     return sangre_exportar.registro(grupo)
@@ -114,7 +121,11 @@ def main(out, ids=None, hoja=None):
         lo, hi = sc.caja_mundo(F.root)
         ext = hi - lo
         largo = ext[2] > 1.8 * max(ext[0], ext[1])
-        if largo:
+        if i in GIRO:
+            modo, ang = GIRO[i]
+            F.root.rotation_mode = modo
+            F.root.rotation_euler = tuple(math.radians(v) for v in ang)
+        elif largo:
             F.root.rotation_euler = (0, math.radians(-45), math.radians(18))
         else:
             F.root.rotation_euler = (0, 0, math.radians(-25))
@@ -128,6 +139,7 @@ def main(out, ids=None, hoja=None):
         png = os.path.join(tmp, f'{i}.png')
         sc.render(scene, cam, png)
         bpy.data.objects.remove(cam, do_unlink=True)
+        F.root.rotation_mode = 'XYZ'
         F.root.rotation_euler = (0, 0, 0)
         halo(png, color, evo).save(os.path.join(out, f'{i}.webp'), 'WEBP', quality=90, method=6)
         hechos.append(i)
