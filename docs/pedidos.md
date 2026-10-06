@@ -3,12 +3,37 @@
 Lo que Javier pidió y todavía falta, en el orden en que se va a hacer. Se tacha (se borra) cuando queda hecho,
 probado y subido.
 
+## Ahora
+
+Javier: «por ahora vamos a concentrarnos en crear el tipo Clue, terminar de pulir los juegos que ya tenemos y dejar
+pulido el repositorio».
+
+1. **Clue clásico en la mesa** (siguiente): leer las reglas del Clue original (sospechosos, armas, habitaciones, el
+   sobre con la solución, mover con dados, sugerencias y refutaciones, acusación final, pasadizos secretos) y hacerlo
+   con nuestra forma de diseñar: tablero de la casa con muchas habitaciones detalladas, armas y sospechosos en 3D de
+   fieltro, cuaderno de detective, IA que deduce, en pareja (cada uno en su celular) y con amigos en sala (modo neutro).
+   Ojo: a Laura se le ocurrió que su boda tenga «un crimen por mesa que deban solucionar».
+2. **Pulir lo que ya hay** (ver «Sangre y Ceniza» y «Ronda 2» abajo). Lo que Javier recalcó:
+   - Lavarse la cara: las **mejoras no tienen imagen ni ícono** (en el celular salen vacías) y falta el **panel de lo
+     que se tiene** (armas y mejoras, con qué evoluciona cada una) para hacer las evoluciones bien.
+   - Sangre y Ceniza: mapas **mucho más detallados** en calidad alta (para el S24 Ultra de Laura y el computador de
+     Javier); la calidad de hoy queda como «baja» para celulares menos potentes.
+3. **Repositorio pulido** en GitHub: sin cosas obsoletas, README y CLAUDE.md al día (se hizo una primera limpieza; se
+   sigue cuidando en cada cambio).
+
+## Sótano de la casa nueva (zona con varios juegos)
+
+Javier tenía una lista de juegos para un sótano (zona nueva de la casa). Lo único que quedó escrito es el juego de
+terror y el de crímenes (abajo, en «Después»): **falta que Javier pase las demás ideas** para documentarlas aquí.
+
 ## Sangre y Ceniza: correcciones y mejoras (pedido de Javier tras probarlo)
 
 Textual: «Mejorar calidad de mapa; mejorar movilidad, se siente tosca, los ojos se cansan o se abruman por la
 velocidad, se siente raro…»
 - **Calidad**: mapas, enemigos, personajes «y todo lo demás»; «los sprites están muy básicos, falta mucho trabajo de
   texturas».
+- **Dos niveles de calidad**: la de hoy como «baja» (celulares menos potentes) y una «alta» con mapas mucho más
+  detallados para el S24 Ultra y el computador.
 
 ## Ronda 2 de arreglos
 
