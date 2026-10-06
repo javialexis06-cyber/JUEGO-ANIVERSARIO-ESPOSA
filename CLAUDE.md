@@ -255,3 +255,37 @@ acumulado: Cien Puertas en obra en `.wt/puertas`, Show de Nosotros en obra en `.
 de Laura, escenas premium). Las voces con IA siguen esperando la clave de ElevenLabs.
 
 Cuando termines algo nuevo, actualiza esta sección, `docs/pedidos.md` y el documento de `docs/` que corresponda.
+
+## 10. Entrega al siguiente Claude (dónde quedó cada cosa)
+
+Javier pidió parar después del frente de amigos y dejar todo apuntado. Así quedó:
+
+**Ramas**
+- `claude/compassionate-thompson-33ekiu` es la rama de integración y `claude/supermarket-mania-minigame-xn2it8` (la
+  de la APK) va igual. Todo lo terminado está ahí.
+- Hay dos frentes **a medias**, respaldados en GitHub y sin juntar con la principal:
+  - `trabajo/puertas` — **Cien Puertas: arreglos y modo pareja**. Ya hecho: papelitos del piso legibles y con
+    prioridad de toque, zonas protegidas (nada tapa la puerta ni lo importante; las estrellas de la puerta 8
+    quedaron a la vista), revisión con rayos y `scripts/revisar-puertas.mjs` (las 100 puertas con semillas y
+    `--revolver`), modo pareja completo (cada uno en su celular, anfitrión/invitado, invitación en la casa,
+    acercamientos, brillos, pausa) con `scripts/probar-puertas-linea.mjs`. Falta: juntar la rama principal en
+    ella (`git merge`), correr `revisar-puertas.mjs 1 100 --semillas=0,1,2 --revolver` y `probar-puertas-linea.mjs`,
+    mirar fotos de varias puertas, juntar y subir. Todo está explicado en `docs/cien-puertas.md`.
+  - `trabajo/show` — **El Show de Nosotros** (concurso de preguntas de pareja tipo programa de televisión, en la
+    mesa: `mesa.html?juego=show`). Ya hecho: estudio 3D (`personajes/blender/show.py` → `show_estudio.glb`), luces,
+    pantallas, público, presentador perrito, cámara con planos, seis tipos de preguntas, pregunta del día en la
+    nevera, el libro de nosotros, en línea con su prueba. El último commit (`ab7d01a`, «avance en obra») guardó
+    cambios que quedaron sin revisar cuando se pausó. Falta: revisar ese commit, correr `probar-show.mjs` y
+    `probar-show-linea.mjs`, mirar capturas del estudio (que se vean Javier y Laura en la tarima, el texto de las
+    pantallas al derecho), juntar con la principal y subir. Diseño en `docs/show.md`.
+- Para retomar uno: `git fetch origin trabajo/<frente> && git worktree add .wt/<frente> trabajo/<frente>` y
+  `ln -s "$PWD/juego/web/node_modules" .wt/<frente>/juego/web/node_modules`.
+- Las demás ramas `trabajo/*` (auditoria, lavado, cocina, retrete2, salas, sangre, sangre-biomas, sangre-figuras,
+  arreglos, cohete) ya están juntadas: se pueden borrar.
+
+**Lo que sigue**, en orden: `docs/pedidos.md`. Lo primero que Javier marcó como prioridad alta son las **cuentas con
+contraseña** (el mismo progreso desde cualquier aparato, un solo Javier y una sola Laura) y las **correcciones de
+Sangre y Ceniza**; luego la ronda 2 de arreglos, el sótano de terror, el juego de crímenes y lo acumulado.
+
+**Para Javier** (no lo puede hacer Claude): pegar `supabase/cambios-pendientes.sql` en el SQL Editor de Supabase y,
+para las voces, poner `ELEVENLABS_API_KEY` en el entorno y permitir `api.elevenlabs.io`.
