@@ -393,8 +393,9 @@ export function llamarCampana(sim: Sim) {
     let libre = true;
     for (let dy = -1; dy <= 1 && libre; dy++) for (let dx = -1; dx <= 1; dx++) if (m.get(x + dx, y + dy) !== C.VACIO) libre = false;
     if (!libre) continue;
-    if (di >= 13 && di <= 24) cand.push(i);
-    if (di > ld && di <= 30) {
+    // (ni encima ni al otro lado del mapa: con 60 s se llega caminando aunque la horda estorbe)
+    if (di >= 10 && di <= 20) cand.push(i);
+    if (di > ld && di <= 24) {
       ld = di;
       lejos = i;
     }

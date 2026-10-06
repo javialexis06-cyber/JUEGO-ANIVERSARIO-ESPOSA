@@ -6,12 +6,13 @@ import { BlendFunction, BloomEffect, EffectComposer, EffectPass, NoiseEffect, Re
 import * as THREE from 'three';
 import { vigilarContexto } from '../../contexto';
 import { ARMAS_LISTA } from '../datos/armas';
-import { BIOMAS, type DefBioma } from '../datos/mundo';
+import { BIOMAS, CUENTA_EXTRACCION, type DefBioma } from '../datos/mundo';
 import { C } from '../tipos';
 import { TIPOS, esJefe } from '../sim/catalogo';
 import { ENT, MOV, S, type Aliado, type Entidad, type Enemigos, type Proyectil, type Recogible, type Sucesos, type Zona } from '../sim/estado';
 import type { Jugador } from '../sim/jugador';
 import type { Mapa } from '../sim/mapa';
+import { RADIO_CAMPANA } from '../sim/objetivos';
 import { Actores } from './actores';
 import { Cosas3D } from './cosas3d';
 import { Efectos } from './efectos';
@@ -282,6 +283,9 @@ export class Escena3D {
     this.actores.actualizar(dt, { E: est.E, A: est.A, ent: est.ent, jefeFase: est.jefeFase, t: this.tiempo, rieles: est.mapa.rieles });
     this.cosas.actualizar(this.tiempo, est.P, est.R);
     this.efectos.zonasDe(est.Z, COLOR_ZONA);
+    // La Campana de Extracción: haz de luz que no se apaga y el círculo donde hay que pararse, con la cuenta
+    const c = est.campana;
+    this.efectos.marcaCampana(c, RADIO_CAMPANA, c && c.est === 1 ? c.cuenta / CUENTA_EXTRACCION : 1, !!c && c.est === 1 && c.cuenta < 10);
     this.efectos.actualizar(dt, this.tiempo);
     // Jugadores
     for (const j of est.J) {

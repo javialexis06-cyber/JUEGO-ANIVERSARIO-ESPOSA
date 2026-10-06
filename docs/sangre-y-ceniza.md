@@ -32,7 +32,7 @@ la noche, y a salir vivos en la **Campana de Extracción** antes de que la horda
   - **Cazar al élite** marcado.
   - Secundarios: huevos de dragón de piedra, frascos de alquimia, cofres de reliquias cerrados con llave.
 - Cada etapa dura unos **5 minutos**; la horda sube con el reloj. Al cumplir el objetivo (o al acabar el tiempo) baja
-  la **Campana de Extracción** en un punto del mapa: hay 40 segundos para llegar todos mientras la horda enloquece
+  la **Campana de Extracción** en un punto del mapa: hay 60 segundos para llegar todos mientras la horda enloquece
   (si alguien no llega, pierde lo que llevaba de esa etapa).
 - **Entre etapas**: la **Forja** (como la tienda de Brotato): con el **oro** se compran armas y objetos; con el
   **hierro negro** se mejoran armas; con la **sangre cristalizada** se ponen **sobrecargas** (los overclocks).
@@ -130,8 +130,14 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
 
 **Decisiones**
 - **Etapas con reloj (como DRG: Survivor)**: cada etapa dura 4:30 como máximo; al cumplir el objetivo cae un cofre y
-  el reloj baja a un minuto; al acabarse baja la campana (40 s de cuenta, la horda enloquece). En la cuarta etapa, en
-  vez de campana sale el jefe del bioma y después la extracción. Si todos los vivos están en la campana, sale en 3 s.
+  el reloj baja a un minuto; al acabarse baja la campana (60 s de cuenta, la horda enloquece). El reloj de arriba
+  dice «Campana en m:ss» (o «Jefe en» en la etapa final): por eso la campana «baja de repente» cuando llega a cero o
+  un minuto después de cumplir el objetivo. En la cuarta etapa, en vez de campana sale el jefe del bioma y después la
+  extracción. Si todos los vivos están en la campana, sale en 3 s.
+- **Cómo se ve la campana**: baja del cielo por un haz de luz dorado que no se apaga y queda colgando sobre un círculo
+  en el piso (el radio de extracción, 3,2 m) con la cuenta como un arco que se vacía (rojo los últimos 10 s); cae
+  entre 10 y 20 casillas de camino de los jugadores. (Antes no se dibujaba nada después de caer: la flecha llevaba
+  a un punto vacío y no se sabía dónde pararse.)
 - **La horda** arranca con unos cuantos y a los 4 minutos son cientos (tope 260 + 70 por jugador extra). Por cada
   jugador extra: +38 % de vida, +60 % de enemigos, +30 % de élites y el botín se reparte.
 - **Experiencia compartida** en grupo; cada uno escoge sus cartas. Solo, el juego espera mientras escoge; en grupo

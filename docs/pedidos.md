@@ -19,10 +19,6 @@ velocidad, se siente raro…»
   aceleración/frenado, cámara con amortiguación, menos parpadeo de efectos.
 - **Visión astral** (un modo de ver en gris o similar, con un botón) que deje identificar lo del piso: menas, cofres,
   campana, objetos. **Que nada salga señalado en el mapa salvo la campana de extracción.**
-- **La campana**: revisar si está fallando (sale la flecha que guía pero al llegar no se ve la campana; eso puede
-  impedir pasar de nivel). Hacer mucho más visible el haz de luz; **más tiempo para llegar** (hoy, si estás lejos, es
-  imposible). Javier dice que en algunos niveles «de repente baja la campana»: si no es error, explicárselo (pasa
-  cuando se cumple el objetivo o se acaba el tiempo de la etapa); si es error, arreglarlo.
 - **Recoger objetos**: en computador, con clic del mouse; en celular, pasando por encima. **Áreas de recolección más
   grandes** (no el dibujo, solo el área) y una barrita o animación de que se está recogiendo/interactuando.
 - **La Forja**: al mejorar algo no debe devolver al principio de la lista (que se quede donde estabas). Revisar el

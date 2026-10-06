@@ -46,10 +46,10 @@ interface Numero {
 
 const AVISOS: Record<number, (a: number, b: number, nombre: (i: number) => string) => [string, string?]> = {
   1: () => ['¡Objetivo cumplido! La campana baja en un minuto.', 'grande'],
-  2: () => ['Se acabó el tiempo.'],
+  2: () => ['Se acabó el tiempo: ¡baja la campana!'],
   3: (a, b) => [`Altar destruido (${a}/${b}): ¡viene una oleada!`, 'peligro'],
   4: () => ['¡El élite marcado cayó!', 'grande'],
-  5: () => ['¡Baja la Campana de Extracción! Corran hacia ella.', 'grande'],
+  5: () => ['¡Baja la Campana de Extracción! Corran al círculo de luz.', 'grande'],
   6: (a, b) => [`Prisionero liberado (${a}/${b}). Te sigue hasta la campana.`],
   7: (a, _b, n) => [`${n(a)} se quedó en la oscuridad.`, 'peligro'],
   8: () => ['¡Todos adentro! La campana sube.', 'grande'],
@@ -224,7 +224,8 @@ export class Hud {
     this.texto('etapa', `Etapa ${est.cfg.etapa}${est.cfg.final ? ' · final' : ''} de 4`);
     const quedan = Math.max(0, est.limite - est.t);
     const enJefe = est.fase === 'jefe';
-    this.texto('reloj', enJefe || est.sinReloj ? '' : est.fase === 'extraccion' ? '' : `${Math.floor(quedan / 60)}:${String(Math.floor(quedan % 60)).padStart(2, '0')}`);
+    // (el reloj dice para qué es: cuando llega a cero baja la campana; en la etapa final, sale el jefe)
+    this.texto('reloj', enJefe || est.sinReloj ? '' : est.fase === 'extraccion' ? '' : `${est.cfg.final ? 'Jefe en' : 'Campana en'} ${Math.floor(quedan / 60)}:${String(Math.floor(quedan % 60)).padStart(2, '0')}`);
     this.poner('reloj!', quedan < 20 && est.fase === 'juego' ? '1' : '0', (el, x) => el.classList.toggle('urgente', x === '1'));
     const o = est.obj;
     const defO = OBJETIVOS[o.tipo];

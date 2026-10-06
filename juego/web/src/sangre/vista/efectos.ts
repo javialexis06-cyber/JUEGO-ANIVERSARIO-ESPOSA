@@ -138,6 +138,44 @@ const FRAG_COLUMNA = /* glsl */ `
   }
 `;
 
+/** El haz de la Campana de Extracción: una columna alta que no se apaga mientras la campana está abajo. */
+const FRAG_HAZ = /* glsl */ `
+  uniform vec3 uColor; uniform float uTiempo; uniform float uFuerza;
+  varying vec2 vUv;
+  ${RUIDO}
+  void main() {
+    float y = vUv.y;
+    float n = nE( vec2( vUv.x * 14.0, y * 5.0 - uTiempo * 1.4 ) );
+    // Más fuerte abajo y en el centro del cilindro (los bordes se ven de canto: se apagan para no hacer una pared blanca)
+    float canto = 0.35 + 0.65 * pow( abs( sin( vUv.x * 3.14159265 * 2.0 ) ), 0.5 );
+    float alfa = pow( 1.0 - y, 2.0 ) * ( 0.35 + 0.45 * n ) * uFuerza * canto * ( 0.85 + 0.15 * sin( uTiempo * 2.6 ) );
+    gl_FragColor = vec4( uColor * 1.3, alfa );
+    ${FIN}
+  }
+`;
+
+/** El círculo de la campana en el piso: borde que late, relleno suave, ondas que suben hacia el centro y la cuenta
+ *  regresiva como un arco que se va vaciando (rojo cuando quedan pocos segundos). */
+const FRAG_ANILLO = /* glsl */ `
+  uniform vec3 uColor; uniform float uTiempo; uniform float uResto; uniform float uUrge;
+  varying vec2 vUv;
+  void main() {
+    vec2 p = vUv * 2.0 - 1.0;
+    float r = length( p );
+    if ( r > 1.0 ) discard;
+    vec3 col = mix( uColor, vec3( 1.0, 0.25, 0.15 ), uUrge );
+    float pulso = 0.5 + 0.5 * sin( uTiempo * mix( 3.0, 10.0, uUrge ) );
+    float borde = smoothstep( 0.84, 0.92, r ) * ( 1.0 - smoothstep( 0.96, 1.0, r ) );
+    float a = atan( p.x, -p.y ) / 6.2831853 + 0.5;
+    float queda = step( a, uResto );
+    float arco = smoothstep( 0.74, 0.79, r ) * ( 1.0 - smoothstep( 0.81, 0.86, r ) ) * queda;
+    float onda = smoothstep( 0.035, 0.0, abs( r - ( 1.0 - fract( uTiempo * 0.45 ) ) ) ) * 0.45;
+    float alfa = borde * ( 0.6 + 0.4 * pulso ) + arco * 0.85 + onda * 0.6 + 0.04;
+    gl_FragColor = vec4( col * 1.25, alfa * 0.85 );
+    ${FIN}
+  }
+`;
+
 const FRAG_RAYO = /* glsl */ `
   uniform float uProg; uniform vec3 uColor;
   varying vec2 vUv;
@@ -216,6 +254,8 @@ export class Efectos {
   private columnas: Piscina;
   private rayos: Piscina;
   private zonas = new Map<number, THREE.Mesh>();
+  /** El haz (adentro y su halo) y el círculo de la campana: uno solo, se crea la primera vez. */
+  private campanaMallas: { haz: THREE.Mesh; halo: THREE.Mesh; anillo: THREE.Mesh } | null = null;
   private zonasLibres: THREE.Mesh[] = [];
   private hacerZona: () => THREE.Mesh;
   private tiempo = { value: 0 };
@@ -345,6 +385,40 @@ export class Efectos {
       this.zonasLibres.push(m);
       this.zonas.delete(id);
     }
+  }
+
+  /** La marca de la Campana de Extracción mientras está abajo (null o est 2: se quita). `resto` va de 1 a 0. */
+  marcaCampana(c: { x: number; y: number; est: number } | null, radio: number, resto: number, urge: boolean) {
+    if (!c || c.est >= 2) {
+      if (this.campanaMallas) for (const m of Object.values(this.campanaMallas)) m.visible = false;
+      return;
+    }
+    if (!this.campanaMallas) {
+      const u = () => ({ uColor: { value: new THREE.Color('#ffd890') }, uTiempo: { value: 0 }, uFuerza: { value: 1 }, uResto: { value: 1 }, uUrge: { value: 0 } });
+      const haz = sombreador(FRAG_HAZ, u(), COLUMNA, 9)();
+      const halo = sombreador(FRAG_HAZ, u(), COLUMNA, 8)();
+      const anillo = sombreador(FRAG_ANILLO, u(), PLANO, 3)();
+      // (todas leen el mismo reloj de los efectos)
+      for (const m of [haz, halo, anillo]) (m.material as THREE.ShaderMaterial).uniforms.uTiempo = this.tiempo;
+      this.campanaMallas = { haz, halo, anillo };
+      this.grupo.add(haz, halo, anillo);
+    }
+    const { haz, halo, anillo } = this.campanaMallas;
+    for (const m of [haz, halo, anillo]) m.visible = true;
+    // Mientras baja, el haz es más fuerte (se ve desde lejos); después se queda encendido
+    // (no muy alto: con la cámara inclinada, una columna altísima se viene encima de la pantalla y tapa todo)
+    const fuerza = c.est === 0 ? 1.15 : 0.85;
+    haz.position.set(c.x, 0, c.y);
+    haz.scale.set(0.75, 16, 0.75);
+    (haz.material as THREE.ShaderMaterial).uniforms.uFuerza.value = fuerza;
+    halo.position.set(c.x, 0, c.y);
+    halo.scale.set(1.5, 11, 1.5);
+    (halo.material as THREE.ShaderMaterial).uniforms.uFuerza.value = fuerza * 0.3;
+    anillo.position.set(c.x, 0.06, c.y);
+    anillo.scale.setScalar(radio);
+    const ua = (anillo.material as THREE.ShaderMaterial).uniforms;
+    ua.uResto.value = Math.max(0, Math.min(1, resto));
+    ua.uUrge.value = urge ? 1 : 0;
   }
 
   actualizar(dt: number, t: number) {

@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { COLOR_MOD } from '../datos/mundo';
 import { TIPOS, esJefe } from '../sim/catalogo';
 import { ALI, ENT, type Aliado, type Entidad, type Enemigos } from '../sim/estado';
+import { BAJADA_CAMPANA } from '../sim/objetivos';
 import type { Biblioteca } from './modelos';
 import { LotePiezas } from './piezas';
 import type { ModeloFijo } from './reemplazos_mapa';
@@ -214,7 +215,24 @@ export class Actores {
         this.sombra(e.x, e.y, 0.35);
         continue;
       }
-      if (e.tipo === ENT.EXTRACCION) continue;
+      if (e.tipo === ENT.EXTRACCION) {
+        // La Campana de Extracción baja del cielo por su haz de luz y se queda colgando sobre el círculo
+        vistas.add(e.id);
+        let o = this.cosas.get(e.id);
+        if (!o) {
+          o = mallaFija(this.bib.fijo('cosa', 'campana_extraccion'));
+          o.castShadow = false;
+          this.grupo.add(o);
+          this.cosas.set(e.id, o);
+        }
+        const bajada = e.est === 0 ? Math.min(1, e.t / BAJADA_CAMPANA) : 1;
+        const suave = 1 - (1 - bajada) ** 3;
+        o.position.set(e.x, 1.6 + (1 - suave) * 20 + (e.est === 1 ? Math.sin(v.t * 1.3) * 0.08 : 0), e.y);
+        o.rotation.z = e.est === 1 ? Math.sin(v.t * 1.1) * 0.05 : 0;
+        o.rotation.x = e.est === 1 ? Math.sin(v.t * 0.9 + 1) * 0.04 : 0;
+        this.sombra(e.x, e.y, 0.4 + suave * 0.9, 0.5 + suave * 0.5);
+        continue;
+      }
       const clave = e.tipo === ENT.CARRETA ? 'carreta' : e.tipo === ENT.CAMPANA_DEF ? 'campana' : e.tipo === ENT.COFRE_RELIQUIA ? 'cofre_reliquia' : e.tipo === ENT.SANTUARIO ? 'santuario' : e.tipo === ENT.COFRE_MALDITO ? 'cofre_maldito' : '';
       if (!clave) continue;
       vistas.add(e.id);
