@@ -323,7 +323,10 @@ await p.waitForURL(/amigos\.html/, { timeout: 20000 }).catch(() => undefined);
 revisar(/amigos\.html/.test(p.url()), 'Al salir de la cocina vuelve a su sala de juegos');
 
 // ================================================================================================ 4. Sin modo amigo, a la casa
-const r = await (await navegador.newContext({ viewport: { width: 844, height: 390 } })).newPage();
+const ctxCasa = await navegador.newContext({ viewport: { width: 844, height: 390 } });
+// (la casa de verdad no hace falta: solo se mira que la página mande allá)
+await ctxCasa.route(/\/index\.html/, (ruta) => ruta.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Nuestro Hogar</title>' }));
+const r = await ctxCasa.newPage();
 await r.goto(`${url}/retrete.html`, { waitUntil: 'domcontentloaded' });
 await r.waitForURL(/index\.html/, { timeout: 15000 }).catch(() => undefined);
 revisar(/index\.html/.test(r.url()), 'Un celular que no es de amigo no abre retrete.html: va a la casa');
