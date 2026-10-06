@@ -496,6 +496,23 @@ async function elegirJuego(id: string, colores?: 1 | 2) {
     ]);
     return;
   }
+  // Con cartas secretas no se puede compartir el celular: contra la máquina, en línea o en sala
+  if (prefs.modo === 'local' && entrada.secreto) {
+    hoja(`<h3>${entrada.nombre}</h3><p>Aquí cada uno tiene <b>cartas secretas</b>, así que no se puede jugar pasándose el mismo celular. ¿Contra la máquina o en línea, cada uno en su celular?</p>`, [
+      { texto: 'Contra la máquina', alTocar: () => void jugar(entrada, 'ia') },
+      {
+        texto: 'En línea',
+        clase: 'boton-tomate',
+        alTocar: () => {
+          prefs.modo = modoAmigo() ? 'sala' : 'linea';
+          if (prefs.modo === 'linea') iniciarCanal();
+          pintarMenu();
+          void elegirJuego(id, colores);
+        },
+      },
+    ]);
+    return;
+  }
   if (prefs.modo === 'sala') return abrirSalaMesa(entrada.id);
   if (prefs.modo !== 'linea') return jugar(entrada, prefs.modo);
   // En línea: invitar al otro y esperar a que acepte
@@ -1114,7 +1131,7 @@ if (unirse && directo) {
     pintarMenu();
   } else if (prefs.modo === 'sala') {
     if (entrada) void abrirSalaMesa(entrada.id);
-  } else if (entrada) void jugar(entrada, prefs.modo, em === 'el' || em === 'ella' ? { empieza: em } : {});
+  } else if (entrada) void jugar(entrada, prefs.modo === 'local' && entrada.secreto ? 'ia' : prefs.modo, em === 'el' || em === 'ella' ? { empieza: em } : {});
 } else if (!params.has('vitrina') && guardada && JUEGOS.some((j) => j.id === guardada.juego)) {
   const entrada = JUEGOS.find((j) => j.id === guardada.juego)!;
   prefs.nivel = guardada.nivel;

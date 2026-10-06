@@ -46,7 +46,7 @@ const VIGILAR = () => {
       if (m.type === 'characterData') guardar(m.target.textContent);
       for (const n of m.addedNodes) guardar(n.textContent);
     }
-  }).observe(document.documentElement, { subtree: true, childList: true, characterData: true });
+  }).observe(document, { subtree: true, childList: true, characterData: true });
   const orig = CanvasRenderingContext2D.prototype.fillText;
   CanvasRenderingContext2D.prototype.fillText = function (t, ...r) {
     guardar(String(t));

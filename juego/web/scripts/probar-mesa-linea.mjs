@@ -146,6 +146,8 @@ while (!fin && Date.now() - t0 < 15 * 60_000) {
   for (const p of [el, ella]) {
     await p
       .evaluate(() => {
+        // ¿Quién fue?: las cartas del reparto y las que se voltean se cierran con «¡Anotado!»
+        document.querySelector('.clue-capa:not([hidden]) :is(.clue-hoja-cartas, .clue-hoja-revela) [data-ok]')?.click();
         const m = window.__mesa;
         const pt = m.partida;
         if (!pt || !pt.esperando) return;
