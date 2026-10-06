@@ -2,7 +2,6 @@
 // llega en las fotos, mueve a su propio personaje sin esperar y le manda al anfitrión dónde está, su joystick, la
 // habilidad y las cartas que escoge. Entre etapas hace su Forja aquí mismo y manda cómo quedó.
 import * as fondo from '../../segundo_plano';
-import { BIOMAS } from '../datos/mundo';
 import { Expedicion } from '../expedicion';
 import type { Sala } from '../../salas/tipos';
 import type { ConfigExpedicion, Eleccion, PerfilJugador } from '../tipos';
@@ -111,7 +110,7 @@ export class PartidaInvitado {
       this.espejo?.liberar();
       this.espejo = new Espejo(sim, this.o.local);
       for (const j of sim.J) j.remoto = true;
-      const bioma = BIOMAS[this.o.cfg.bioma];
+      const bioma = sim.bioma;
       await this.o.escena.prepararEtapa(sim.mapa, bioma, this.o.perfiles.map((p, i) => ({ i, cuerpo: p.cuerpo, clase: p.clase, piel: p.piel, pelo: p.pelo })), [...new Set([...bioma.enemigos.map((e) => e.id), 'altar', bioma.jefe, ...(bioma.jefe === 'conde' ? ['conde_alas'] : [])])]);
       this.hud.construir(sim.J[this.o.local], this.o.local);
       this.armando = false;

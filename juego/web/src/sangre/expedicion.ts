@@ -7,7 +7,7 @@ import { ETAPAS, MUTADORES, PELIGROS } from './datos/mundo';
 import { Sim, type FinEtapa } from './sim/sim';
 import { ArmaJ, Jugador } from './sim/jugador';
 import { encolarSobrecarga } from './sim/opciones';
-import type { ConfigExpedicion, IdObjetivo, IdSecundario, PerfilJugador, Rareza } from './tipos';
+import type { ConfigExpedicion, IdBioma, IdObjetivo, IdSecundario, PerfilJugador, Rareza } from './tipos';
 
 export interface ResultadoEtapa {
   etapa: number;
@@ -69,14 +69,32 @@ export class Expedicion {
   }
 
   get ultima() {
+    // (el modo infinito no tiene última: se acaba al caer)
+    if (this.cfg.infinito && !this.cfg.tutorial) return false;
     return this.etapa >= (this.cfg.tutorial ? 1 : ETAPAS);
+  }
+
+  /** ¿Esta etapa termina con jefe? (la cuarta; en el modo infinito, cada cuatro) */
+  esFinal(etapa = this.etapa) {
+    return this.cfg.infinito ? etapa % ETAPAS === 0 : etapa >= ETAPAS;
+  }
+
+  /** El bioma de la etapa (en el modo infinito cambia cada cuatro, por los biomas que trae la rotación). */
+  biomaDe(etapa = this.etapa): IdBioma {
+    const r = this.cfg.infinito && this.cfg.rotacion?.length ? this.cfg.rotacion : null;
+    return r ? r[Math.floor((etapa - 1) / ETAPAS) % r.length] : this.cfg.bioma;
   }
 
   /** Arranca la etapa siguiente. */
   iniciarEtapa(): Sim {
     this.etapa++;
+    // Modo infinito: el plan se alarga solo (sin repetir el objetivo de la etapa anterior)
+    while (this.cfg.infinito && this.plan.length < this.etapa) {
+      const antes = this.plan[this.plan.length - 1]?.objetivo;
+      this.plan.push({ objetivo: this.az.uno(OBJETIVOS_LISTA.filter((o) => o !== antes)), secundario: this.az.uno(SECUNDARIOS_LISTA) });
+    }
     const p = this.plan[this.etapa - 1] ?? this.plan[this.plan.length - 1];
-    this.sim = new Sim({ exp: this.cfg, etapa: this.etapa, objetivo: p.objetivo, secundario: p.secundario, final: this.etapa >= ETAPAS }, this.J);
+    this.sim = new Sim({ exp: this.cfg, etapa: this.etapa, objetivo: p.objetivo, secundario: p.secundario, final: this.esFinal(), bioma: this.biomaDe() }, this.J);
     if (this.cfg.tutorial) {
       this.sim.sinHorda = true;
       this.sim.sinReloj = true;

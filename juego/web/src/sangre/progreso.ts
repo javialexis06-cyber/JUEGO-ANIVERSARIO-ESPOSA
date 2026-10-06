@@ -31,10 +31,12 @@ export interface CifrasSangre {
   levantados: number;
   caidas: number;
   nivelMax: number;
+  /** La etapa más honda a la que se llegó en el modo infinito. */
+  infinitoMax: number;
   segundos: number;
   enGrupo: number;
 }
-const CIFRAS: (keyof CifrasSangre)[] = ['expediciones', 'victorias', 'etapas', 'muertes', 'elites', 'jefes', 'excavadas', 'oro', 'almas', 'frascos', 'altares', 'prisioneros', 'bendiciones', 'ejecuciones', 'levantados', 'caidas', 'nivelMax', 'segundos', 'enGrupo'];
+const CIFRAS: (keyof CifrasSangre)[] = ['expediciones', 'victorias', 'etapas', 'muertes', 'elites', 'jefes', 'excavadas', 'oro', 'almas', 'frascos', 'altares', 'prisioneros', 'bendiciones', 'ejecuciones', 'levantados', 'caidas', 'nivelMax', 'segundos', 'enGrupo', 'infinitoMax'];
 
 export interface UltimaEleccion {
   clase: IdClase;
@@ -43,6 +45,7 @@ export interface UltimaEleccion {
   peligro: number;
   mutadores: IdMutador[];
   equipo: Partial<Record<RanuraEquipo, string>>;
+  infinito?: boolean;
 }
 
 export interface ProgresoSangre {
@@ -108,7 +111,7 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
     if (esObj(u.equipo)) for (const r of RANURAS) if (typeof u.equipo[r] === 'string' && /^[a-z0-9_]{1,40}$/.test(u.equipo[r] as string)) eq[r] = u.equipo[r] as string;
     p.ultima = {
       clase: u.clase as IdClase, spec: Math.floor(num(u.spec, 0, 2)), bioma: u.bioma as IdBioma, peligro: Math.max(1, Math.floor(num(u.peligro, 1, 5))),
-      mutadores: lista(u.mutadores, MUTADORES_TODOS), equipo: eq,
+      mutadores: lista(u.mutadores, MUTADORES_TODOS), equipo: eq, infinito: u.infinito === true,
     };
   }
   return p;

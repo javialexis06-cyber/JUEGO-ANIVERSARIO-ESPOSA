@@ -58,6 +58,8 @@ interface Seleccion {
   peligro: number;
   mutadores: IdMutador[];
   equipo: Partial<Record<RanuraEquipo, string>>;
+  /** Modo infinito (se abre al ganar la primera expedición). */
+  infinito?: boolean;
 }
 const sel: Seleccion = {
   clase: 'monarca', spec: 0, bioma: 'cementerio', peligro: 1, mutadores: [], equipo: {},
@@ -71,7 +73,23 @@ const corregirSeleccion = () => {
   sel.peligro = Math.max(1, Math.min(peligroPermitido(p), sel.peligro));
   if (sel.peligro < 3) sel.mutadores = [];
   for (const r of RANURAS_EQUIPO) if (sel.equipo[r] && !p.ofrendas.includes(sel.equipo[r]!)) delete sel.equipo[r];
+  if (!infinitoAbierto(p)) sel.infinito = false;
 };
+/** El modo infinito se abre al ganar una expedición (en cualquier bioma). */
+function infinitoAbierto(p: ProgresoSangre) {
+  return Object.values(p.ganado).some((v) => (v ?? 0) > 0);
+}
+/** La expedición con lo escogido (en el modo infinito, los biomas abiertos se turnan cada cuatro etapas). */
+function cfgDeSeleccion(): ConfigExpedicion {
+  const cfg: ConfigExpedicion = { bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], semilla: semilla() };
+  if (sel.infinito && infinitoAbierto(P())) {
+    const abiertos = BIOMAS_ORDEN.filter((b) => P().biomas.includes(b));
+    const k = Math.max(0, abiertos.indexOf(sel.bioma));
+    cfg.infinito = true;
+    cfg.rotacion = [...abiertos.slice(k), ...abiertos.slice(0, k)];
+  }
+  return cfg;
+}
 corregirSeleccion();
 
 function autoCalidad(): Calidad {
@@ -358,10 +376,15 @@ function escogerExpedicion(alListo?: () => void) {
       return `<button class="ranura-equipo${id ? ' si' : ''}" data-r="${r}" ${hay ? '' : 'disabled'} title="${id ? EQUIPO[id].desc : hay ? 'Toca para escoger' : 'Ofrece equipo al Pozo para usarlo aquí'}"><span class="ico">${glifo(r)}</span><small>${id ? EQUIPO[id].nombre : hay ? 'Nada' : '—'}</small></button>`;
     }).join('');
     const extra = sel.mutadores.reduce((x, m) => x + MUTADORES[m].recompensa, 0);
+    const infAbierto = infinitoAbierto(p);
+    const modos = `<button class="mutador${!sel.infinito ? ' si' : ''}" data-modo="normal"><span class="ico">${glifo('campana')}</span>Cuatro etapas</button>
+      <button class="mutador${sel.infinito ? ' si' : ''}${infAbierto ? '' : ' bloqueado'}" data-modo="infinito" title="Etapas sin fin, cada vez más duras; jefe cada cuatro y los biomas se turnan"><span class="ico">${glifo(infAbierto ? 'luna' : 'candado')}</span>Infinito</button>
+      <small>${infAbierto ? (p.cifras.infinitoMax ? `Récord: etapa ${p.cifras.infinitoMax}` : 'Sin fin: hasta donde aguantes') : 'Gana una expedición para abrirlo'}</small>`;
     s.innerHTML = `${cabeza('La expedición')}
       <div class="carrusel carrusel-biomas">${biomas}</div>
       <div class="opciones-exp placa">
         <div class="fila"><span class="etiqueta">Peligro</span><div class="peligros">${peligros}</div><span class="desc-peligro"><b>${pel.nombre}</b> · ${pel.desc} <em>×${(pel.recompensa * (1 + extra)).toFixed(2)} de ceniza</em></span></div>
+        <div class="fila"><span class="etiqueta">Modo</span><div class="mutadores">${modos}</div></div>
         <div class="fila"><span class="etiqueta">Mutadores</span><div class="mutadores">${mutadores}</div></div>
         <div class="fila"><span class="etiqueta">Equipo</span><div class="equipo-pozo">${equipo}</div></div>
       </div>
@@ -376,7 +399,12 @@ function escogerExpedicion(alListo?: () => void) {
     const m = t.closest<HTMLElement>('[data-m]')?.dataset.m as IdMutador | undefined;
     const r = t.closest<HTMLElement>('[data-r]')?.dataset.r as RanuraEquipo | undefined;
     const a = t.closest<HTMLElement>('[data-a]')?.dataset.a;
-    if (b) {
+    const modo = t.closest<HTMLElement>('[data-modo]')?.dataset.modo;
+    if (modo) {
+      efectos.boton();
+      if (modo === 'infinito' && !infinitoAbierto(p)) return aviso('Gana una expedición para abrir el modo infinito.', '', 2200);
+      sel.infinito = modo === 'infinito';
+    } else if (b) {
       efectos.carta();
       if (!p.biomas.includes(b)) return aviso(desbloqueoBioma(b), '', 2200);
       if (b !== sel.bioma) {
@@ -401,8 +429,7 @@ function escogerExpedicion(alListo?: () => void) {
       efectos.boton();
       guardarUltima();
       if (alListo) return alListo();
-      const cfg: ConfigExpedicion = { bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], semilla: semilla() };
-      void empezar(cfg, [perfilLocal()], 0);
+      void empezar(cfgDeSeleccion(), [perfilLocal()], 0);
       return;
     } else if (a === 'atras') {
       efectos.boton();
@@ -424,7 +451,7 @@ function desbloqueoBioma(b: IdBioma) {
 const semilla = () => (params.get('semilla') ? Number(params.get('semilla')) : Math.floor(Math.random() * 1e9));
 
 function guardarUltima() {
-  P().ultima = { clase: sel.clase, spec: sel.spec, bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], equipo: { ...sel.equipo } };
+  P().ultima = { clase: sel.clase, spec: sel.spec, bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], equipo: { ...sel.equipo }, infinito: !!sel.infinito };
   guardado.guardar();
 }
 
@@ -686,6 +713,8 @@ interface Cobro {
   monedas: number;
   clasesNuevas: IdClase[];
   biomasNuevos: IdBioma[];
+  /** Modo infinito: ¿llegó más hondo que nunca? */
+  record: boolean;
 }
 
 /** Lo que se gana al terminar (ceniza, maestría, logros, cifras, monedas de la casa). */
@@ -717,6 +746,8 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
   c.levantados += rs.levantados;
   c.caidas += rs.caidas;
   c.nivelMax = Math.max(c.nivelMax, j.nivel);
+  const recordInfinito = !!p.exp.cfg.infinito && p.exp.etapa > c.infinitoMax;
+  if (p.exp.cfg.infinito) c.infinitoMax = Math.max(c.infinitoMax, p.exp.etapa);
   c.segundos += Math.round(p.exp.tiempo);
   if (p.o.perfiles.length > 1) c.enGrupo++;
   if (exito && !p.exp.cfg.tutorial) pr.ganado[p.exp.cfg.bioma] = Math.max(pr.ganado[p.exp.cfg.bioma] ?? 0, p.exp.cfg.peligro);
@@ -724,11 +755,13 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
   const nuevos = p.exp.cfg.tutorial ? [] : revisarLogros({ p: pr, exp: p.exp, j, exito, jugadores: p.o.perfiles.length });
   aplicarDesbloqueos(pr);
   // Monedas de la casa (escasas): una por etapa extraída y un poquito más por ganar
-  const monedas = p.exp.cfg.tutorial ? 0 : r.etapas + (exito ? 2 + Math.max(0, p.exp.cfg.peligro - 2) : 0);
+  // (en el modo infinito, máximo 4: las monedas de la casa son escasas)
+  const monedas = p.exp.cfg.tutorial ? 0 : p.exp.cfg.infinito ? Math.min(4, r.etapas) : r.etapas + (exito ? 2 + Math.max(0, p.exp.cfg.peligro - 2) : 0);
   guardado.pagarCasa(monedas);
   guardado.guardar();
   return {
     ceniza: r.ceniza, maestria: r.maestria, subio: Array.from({ length: nvDespues - nvAntes }, (_, k) => nvAntes + k + 1), logros: nuevos,
+    record: recordInfinito,
     monedas: yo.tipo === 'amigo' ? 0 : monedas, clasesNuevas: pr.clases.filter((k) => !antes.clases.includes(k)), biomasNuevos: pr.biomas.filter((b) => !antes.biomas.includes(b)),
   };
 }
@@ -774,11 +807,13 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
   let ofrecida = false;
   const s = seccion('pantalla-resultado opaca', '');
   const pintar = () => {
-    s.innerHTML = `<header class="cabeza"><h2 class="${exito ? 'gano' : 'perdio'}">${p.exp.cfg.tutorial ? 'Tutorial completo' : exito ? `Sobreviviste a la noche` : 'La noche te consumió'}</h2></header>
+    const inf = !!p.exp.cfg.infinito;
+    const titulo = p.exp.cfg.tutorial ? 'Tutorial completo' : inf ? `Hasta la etapa ${p.exp.etapa}${cb.record ? ' · ¡récord!' : ''}` : exito ? 'Sobreviviste a la noche' : 'La noche te consumió';
+    s.innerHTML = `<header class="cabeza"><h2 class="${exito || cb.record ? 'gano' : 'perdio'}">${titulo}</h2></header>
       <div class="resultado">
         <div class="pergamino ficha-texto">
           <h3>${esc(j.nombre)} · ${nombreClase(j.clase, j.cuerpo)}</h3>
-          <p class="lema-clase">${BIOMAS[p.exp.cfg.bioma].nombre} · peligro ${p.exp.cfg.peligro} · ${p.exp.resultados.filter((r) => r.fin.exito).length} de ${p.exp.cfg.tutorial ? 1 : 4} etapas</p>
+          <p class="lema-clase">${BIOMAS[p.exp.cfg.bioma].nombre} · peligro ${p.exp.cfg.peligro} · ${inf ? `modo infinito · ${p.exp.resultados.filter((r) => r.fin.exito).length} etapas superadas · récord: etapa ${pr.cifras.infinitoMax}` : `${p.exp.resultados.filter((r) => r.fin.exito).length} de ${p.exp.cfg.tutorial ? 1 : 4} etapas`}</p>
           <div class="cifras">
             <span>Tiempo</span><b>${min}:${String(seg).padStart(2, '0')}</b>
             <span>Nivel</span><b>${j.nivel}</b>
@@ -822,7 +857,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
       if (a === 'sala') void volverALaSala();
       else if (a === 'otra') {
         corregirSeleccion();
-        void empezar({ bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], semilla: semilla() }, [perfilLocal()], 0);
+        void empezar(cfgDeSeleccion(), [perfilLocal()], 0);
       } else void volverAlMenu(p.exp.cfg.tutorial ? 'clases' : 'titulo');
     }
   });
@@ -1041,7 +1076,7 @@ async function lobby() {
     ],
     alEmpezar: () => {
       guardarUltima();
-      const cfg: ConfigExpedicion = { bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], semilla: semilla() };
+      const cfg = cfgDeSeleccion();
       const perfiles = s.jugadores.map((j, k) => {
         const pf = (j.datos?.perfil as PerfilJugador | undefined) ?? perfilLocal(k);
         return { ...pf, id: j.id, nombre: j.nombre, puesto: j.puesto, cuerpo: j.aspecto.cuerpo, tipo: j.tipo, piel: j.aspecto.piel ?? pf.piel, pelo: j.aspecto.pelo ?? pf.pelo };
@@ -1212,7 +1247,8 @@ async function arrancar() {
     }
     const perfil = perfilLocal();
     perfil.spec = sel.spec;
-    await empezar({ bioma: sel.bioma, peligro: sel.peligro, mutadores: [], semilla: semilla() }, [perfil], 0);
+    // (?infinito: prueba del modo infinito, con ?etapa=N para empezar más hondo)
+    await empezar({ bioma: sel.bioma, peligro: sel.peligro, mutadores: [], semilla: semilla(), ...(params.has('infinito') ? { infinito: true, rotacion: [...BIOMAS_ORDEN] } : {}) }, [perfil], 0);
     w.__listo = true;
     return;
   }

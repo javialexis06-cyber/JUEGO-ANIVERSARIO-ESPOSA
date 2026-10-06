@@ -30,7 +30,7 @@ export interface EstadoHud {
   suc: Sucesos;
   eclipse: number;
   mapa: { rieles: { x: number; y: number }[] };
-  cfg: { etapa: number; final: boolean };
+  cfg: { etapa: number; final: boolean; exp: { infinito?: boolean } };
   /** Sin reloj (tutorial). */
   sinReloj?: boolean;
 }
@@ -255,7 +255,7 @@ export class Hud {
       el.innerHTML = comp.map((o) => `<div class="companero${o.estado === 1 ? ' caido' : ''}"><span>${esc(this.nombre(o.i))}${o.estado === 1 ? ' · caído' : o.estado === 2 ? ' · fuera' : ''}</span><div class="barra"><i style="width:${Math.max(0, (o.hp / o.hpMax) * 100).toFixed(0)}%"></i></div></div>`).join('');
     });
     // Etapa, reloj y objetivo
-    this.texto('etapa', `Etapa ${est.cfg.etapa}${est.cfg.final ? ' · final' : ''} de 4`);
+    this.texto('etapa', est.cfg.exp.infinito ? `Etapa ${est.cfg.etapa} · infinito${est.cfg.final ? ' · jefe' : ''}` : `Etapa ${est.cfg.etapa}${est.cfg.final ? ' · final' : ''} de 4`);
     const quedan = Math.max(0, est.limite - est.t);
     const enJefe = est.fase === 'jefe';
     // (el reloj dice para qué es: cuando llega a cero baja la campana; en la etapa final, sale el jefe)

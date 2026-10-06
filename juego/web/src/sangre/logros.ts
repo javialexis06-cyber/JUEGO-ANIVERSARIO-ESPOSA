@@ -65,6 +65,11 @@ export const LOGROS: DefLogro[] = [
   // ---- Armas comunes
   { id: 'primer_jefe', nombre: 'Matagigantes', desc: 'Derrota a tu primer jefe.', glifo: 'corona', ceniza: 40, premio: 'Desbloquea la sierra',
     hecho: (d) => d.exito },
+  // ---- Modo infinito
+  { id: 'infinito_8', nombre: 'Sin fondo', desc: 'Llega a la etapa 8 en el modo infinito.', glifo: 'calavera', ceniza: 80,
+    hecho: (d) => !!d.exp.cfg.infinito && d.exp.etapa >= 8, avance: (p) => Math.min(1, c(p).infinitoMax / 8) },
+  { id: 'infinito_16', nombre: 'La noche eterna', desc: 'Llega a la etapa 16 en el modo infinito.', glifo: 'luna', ceniza: 200,
+    hecho: (d) => !!d.exp.cfg.infinito && d.exp.etapa >= 16, avance: (p) => Math.min(1, c(p).infinitoMax / 16) },
   // ---- Solo gloria
   { id: 'peligro3', nombre: 'Sin miedo', desc: 'Gana una expedición en peligro 3 o más.', glifo: 'calavera', ceniza: 80, hecho: (d) => d.exito && d.exp.cfg.peligro >= 3 },
   { id: 'peligro5', nombre: 'Noche sin fin', desc: 'Gana una expedición en peligro 5.', glifo: 'luna', ceniza: 200, hecho: (d) => d.exito && d.exp.cfg.peligro >= 5 },

@@ -252,6 +252,10 @@ export interface ConfigExpedicion {
   semilla: number;
   /** Prueba guiada (mapa fijo y pasos). */
   tutorial?: boolean;
+  /** Modo infinito: etapas sin fin, cada vez más duras, con jefe cada 4 (termina al caer). */
+  infinito?: boolean;
+  /** En el modo infinito, los biomas por los que se pasa cada 4 etapas (los abiertos del anfitrión, desde el escogido). */
+  rotacion?: IdBioma[];
 }
 
 /** Lo que trae cada jugador al empezar (clase, especialización, equipo inicial del Pozo y lo permanente). */

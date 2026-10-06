@@ -15,6 +15,8 @@ const jugadores = Number(process.argv[6] ?? 1);
 const DT = 1 / 30;
 // TORPE=1: juega como una persona que empieza (esquiva menos y en la Forja compra una cosa, sin yunque ni altar)
 const torpe = !!process.env.TORPE;
+// INFINITO=1: el modo infinito (los cinco biomas turnándose; se corta en la etapa 30)
+const infinito = !!process.env.INFINITO;
 if (torpe) NIVEL_BOT.miedo = 0.4;
 
 function perfil(clase: IdClase, i: number): PerfilJugador {
@@ -29,9 +31,9 @@ for (const clase of clases) {
   for (let k = 0; k < partidas; k++) {
     const t0 = Date.now();
     const perfiles = Array.from({ length: jugadores }, (_, i) => perfil(i === 0 ? clase : CLASES_ORDEN[(CLASES_ORDEN.indexOf(clase) + i * 5) % 12], i));
-    const exp = new Expedicion({ bioma, peligro, mutadores: [], semilla: 1000 + k * 77 + clase.length }, perfiles);
+    const exp = new Expedicion({ bioma, peligro, mutadores: [], semilla: 1000 + k * 77 + clase.length, ...(infinito ? { infinito: true, rotacion: ['cementerio', 'catacumbas', 'minas', 'abadia', 'castillo'] as IdBioma[] } : {}) }, perfiles);
     let pasos = 0, maxEnemigos = 0, msMax = 0;
-    while (exp.fase !== 'fin') {
+    while (exp.fase !== 'fin' && exp.etapa < 30) {
       const sim = exp.iniciarEtapa();
       let seg = 0;
       // La curva de dificultad: daño recibido por minuto, la vida más baja y con cuánta vida empezó
@@ -56,7 +58,7 @@ for (const clase of clases) {
       }
       if (!sim.fin) sim.fin = { exito: false, extraidos: [], motivo: 'abandono', objetivo: false, secundario: 0, prisioneros: 0 };
       const j0 = sim.J[0];
-      console.log(`  etapa ${exp.etapa} ${sim.obj.tipo.padEnd(11)} obj=${sim.obj.prog.toFixed(0)}/${sim.obj.meta} ${sim.fin.motivo.padEnd(10)} t=${sim.t.toFixed(0)}s nivel=${j0.nivel} vida=${Math.round(j0.hp)}/${j0.hpMax} muertes=${j0.resumen.muertes} armas=${j0.armas.map((a) => `${a.id}:${a.nivel}`).join(',')} oro=${Math.round(j0.oroSeguro + j0.oro)} hierro=${Math.round(j0.hierroSeguro + j0.hierro)} enemigos max=${maxEnemigos}`);
+      console.log(`  etapa ${exp.etapa} ${sim.bioma.id.slice(0, 5)}${sim.cfg.final ? '+jefe' : '     '} ${sim.obj.tipo.padEnd(11)} obj=${sim.obj.prog.toFixed(0)}/${sim.obj.meta} ${sim.fin.motivo.padEnd(10)} t=${sim.t.toFixed(0)}s nivel=${j0.nivel} vida=${Math.round(j0.hp)}/${j0.hpMax} muertes=${j0.resumen.muertes} armas=${j0.armas.map((a) => `${a.id}:${a.nivel}`).join(',')} oro=${Math.round(j0.oroSeguro + j0.oro)} hierro=${Math.round(j0.hierroSeguro + j0.hierro)} enemigos max=${maxEnemigos}`);
       console.log(`      daño/min=[${Array.from(danoMin, (x) => Math.round(x ?? 0)).join(',')}] vida al empezar=${Math.round(vidaInicio * 100)}% más baja=${Math.round(vidaMin * 100)}% excavadas=${j0.resumen.excavadas}`);
       exp.terminarEtapa();
       if (exp.fase === 'forja') {

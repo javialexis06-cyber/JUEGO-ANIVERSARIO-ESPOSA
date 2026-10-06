@@ -2,7 +2,6 @@
 // mando, las elecciones (en solitario el juego espera; en grupo sigue y quien escoge queda protegido un momento),
 // la pausa, el paso entre etapas y la Forja. La red (anfitrión e invitados) se engancha con `RedPartida`.
 import * as fondo from '../segundo_plano';
-import { BIOMAS } from './datos/mundo';
 import { botEscoger, botPaso } from './bot';
 import { Expedicion } from './expedicion';
 import { Sucesos } from './sim/estado';
@@ -92,7 +91,8 @@ export class Partida {
   private async etapaNueva() {
     const sim = this.exp.iniciarEtapa();
     this.sim = sim;
-    const bioma = BIOMAS[this.o.cfg.bioma];
+    // (el bioma de la etapa: en el modo infinito cambia cada cuatro)
+    const bioma = sim.bioma;
     const precarga = [...new Set([...bioma.enemigos.map((e) => e.id), 'altar', bioma.jefe, ...(bioma.jefe === 'conde' ? ['conde_alas'] : [])])];
     await this.o.escena.prepararEtapa(sim.mapa, bioma, this.o.perfiles.map((p, i) => ({ i, cuerpo: p.cuerpo, clase: p.clase, piel: p.piel, pelo: p.pelo })), precarga);
     const v = Object.create(sim) as EstadoVista;

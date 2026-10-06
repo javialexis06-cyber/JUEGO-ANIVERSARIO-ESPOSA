@@ -15,7 +15,6 @@ Textual: «Mejorar calidad de mapa; mejorar movilidad, se siente tosca, los ojos
 velocidad, se siente raro…»
 - **Calidad**: mapas, enemigos, personajes «y todo lo demás»; «los sprites están muy básicos, falta mucho trabajo de
   texturas».
-- **Modo infinito**: expediciones sin fin con enemigos cada vez más difíciles.
 
 ## Ronda 2 de arreglos (después de lo de amigos)
 

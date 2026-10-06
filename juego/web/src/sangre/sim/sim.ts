@@ -4,7 +4,7 @@
 import { Azar } from '../../casa/lavado/azar';
 import { Rejilla } from '../../casa/lavado/rejilla';
 import { BIOMAS, CUENTA_EXTRACCION, DESCANSO, DURACION_ETAPA, MOD_ELITE, PELIGROS, type DefBioma, type DefEnemigo } from '../datos/mundo';
-import { C, esExcavable, esSolida, type ConfigExpedicion, type IdObjetivo, type IdSecundario } from '../tipos';
+import { C, esExcavable, esSolida, type ConfigExpedicion, type IdBioma, type IdObjetivo, type IdSecundario } from '../tipos';
 import { TIPOS, TIPO_ALTAR, esJefe } from './catalogo';
 import { Aliado, ENT, Entidad, Enemigos, Proyectil, REC, Recogible, S, Sucesos, Zona } from './estado';
 import { CampoFlujo } from './flujo';
@@ -34,6 +34,8 @@ export interface ConfigEtapa {
   secundario: IdSecundario;
   /** La última etapa: después del objetivo sale el jefe. */
   final: boolean;
+  /** El bioma de esta etapa (en el modo infinito cambia cada 4; si no, el de la expedición). */
+  bioma?: IdBioma;
 }
 
 export interface FinEtapa {
@@ -76,7 +78,7 @@ export class Sim {
   jefeFase = 0;
   jefeVisto = false;
   /** Escala de la horda según el peligro, la etapa y cuántos juegan. */
-  esc = { vida: 1, dano: 1, cantidad: 1, elites: 1, botin: 1 };
+  esc = { vida: 1, dano: 1, cantidad: 1, elites: 1, botin: 1, xp: 1 };
   /** Revienta un cartucho de minero ahora mismo (para que no encadene otro dentro de la misma explosión). */
   private enCartucho = false;
   /** Mientras revienta una explosión minera: a quién le vuela el botín de las vetas (−1 nadie). */
@@ -117,19 +119,27 @@ export class Sim {
   constructor(cfg: ConfigEtapa, jugadores: Jugador[]) {
     this.cfg = cfg;
     this.az = new Azar(cfg.exp.semilla * 7 + cfg.etapa * 131);
-    this.bioma = BIOMAS[cfg.exp.bioma];
+    this.bioma = BIOMAS[cfg.bioma ?? cfg.exp.bioma];
     this.J = jugadores;
     const n = jugadores.length;
     const pel = PELIGROS[Math.max(0, Math.min(4, cfg.exp.peligro - 1))];
     const mut = (m: string) => cfg.exp.mutadores.includes(m as never);
+    // Modo infinito: después de la cuarta etapa, cada una bastante más dura que la anterior (crece más rápido que el
+    // jugador, que se estanca con las armas al máximo: tarde o temprano la noche gana)
+    const inf = cfg.exp.infinito ? Math.max(0, cfg.etapa - 4) : 0;
     this.esc = {
       // (el salto entre etapas es suave: dentro de cada etapa los enemigos ya se endurecen con el reloj)
-      vida: pel.vida * (1 + 0.42 * (cfg.etapa - 1)) * (1 + 0.38 * (n - 1)) * (mut('codicia') ? 1.25 : 1) * (mut('fragiles') ? 0.75 : 1),
-      dano: (1 + 0.15 * (cfg.etapa - 1)) * (1 + 0.1 * (pel.n - 1)) * (mut('sangrienta') ? 1.3 : 1),
-      cantidad: pel.cantidad * (1 + 0.6 * (n - 1)) * (1 + 0.12 * (cfg.etapa - 1)),
-      elites: pel.elites * (1 + 0.3 * (n - 1)) * (mut('elites_dobles') ? 2 : 1),
+      vida: pel.vida * (1 + 0.42 * (cfg.etapa - 1)) * (1 + 0.38 * (n - 1)) * (mut('codicia') ? 1.25 : 1) * (mut('fragiles') ? 0.75 : 1) * 1.3 ** inf,
+      dano: (1 + 0.15 * (cfg.etapa - 1)) * (1 + 0.1 * (pel.n - 1)) * (mut('sangrienta') ? 1.3 : 1) * 1.1 ** inf,
+      cantidad: pel.cantidad * (1 + 0.6 * (n - 1)) * (1 + 0.12 * (cfg.etapa - 1)) * (1 + 0.05 * inf),
+      elites: pel.elites * (1 + 0.3 * (n - 1)) * (mut('elites_dobles') ? 2 : 1) * (1 + 0.12 * inf),
       botin: 1 / (1 + 0.45 * (n - 1)),
+      xp: 1,
     };
+    // (las almas valen según la vida de la etapa, pero sin el extra del infinito: si no, el jugador sube de nivel tan
+    // rápido como se endurecen los enemigos y la noche nunca gana)
+    // En el infinito, después de la cuarta etapa las almas ya no valen más (el poder del jugador se estanca)
+    this.esc.xp = inf ? (this.esc.vida / 1.3 ** inf) * ((1 + 0.42 * 3) / (1 + 0.42 * (cfg.etapa - 1))) : this.esc.vida;
     this.mapa = generarMapa({
       bioma: this.bioma, semilla: cfg.exp.semilla * 31 + cfg.etapa * 977, jugadores: n, rocaDura: mut('roca_dura'), sinAntorchas: mut('sin_antorchas'),
       vetasHierro: cfg.objetivo === 'hierro' ? 10 + 2 * n : 2, carreta: cfg.objetivo === 'carreta', tutorial: cfg.exp.tutorial,
@@ -505,7 +515,7 @@ export class Sim {
     E.hp[i] = 0;
     // Botín
     if (t === TIPO_ALTAR) {
-      this.soltarAlmas(x, y, Math.round(def.xp * this.esc.vida));
+      this.soltarAlmas(x, y, Math.round(def.xp * this.esc.xp));
       this.soltar(REC.ORO, x, y, 6 + this.az.entero(0, 6));
       if (this.az.n() < 0.5) this.soltar(REC.SANGRE, x, y, 2);
     } else if (esJefe(t)) {

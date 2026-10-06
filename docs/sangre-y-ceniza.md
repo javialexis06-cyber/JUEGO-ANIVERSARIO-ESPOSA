@@ -194,6 +194,14 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
     (cada 6 paredes rotas, la siguiente revienta: rompe roca y vetas y lastima alrededor).
   - Nueva estadística `vetas` (cuánto más dan las vetas): carta de subir de nivel «Olfato de minero» (+15 %) y mejora
     del Pozo «Ojo de minero» (+10 % por nivel, hasta 5).
+- **Modo infinito** (en la expedición, «Modo: Cuatro etapas / Infinito»; se abre al ganar la primera expedición):
+  etapas sin fin con jefe cada cuatro, y los biomas abiertos se turnan cada cuatro etapas desde el escogido
+  (`cfg.rotacion`, la arma el anfitrión: en grupo todos van igual). Desde la quinta etapa cada una es mucho más dura
+  (vida ×1,3, daño ×1,1, más horda y más élites por etapa) y las almas ya no valen más: el poder del jugador se
+  estanca y la noche termina ganando. Se acaba al caer; el récord queda en `cifras.infinitoMax` (lo muestran la
+  expedición y los resultados) y hay dos logros (etapa 8 y etapa 16). Ceniza y maestría según las etapas; monedas de
+  la casa, máximo 4. Con el bot (`INFINITO=1 node scripts/balance-sangre.mjs …`, peligro 2): el que juega como quien
+  empieza llega a las etapas 12-24; el bueno, 12-30. Para probar: `sangre.html?prueba=1&infinito=1`.
 - **La horda** arranca con unos cuantos y a los 4 minutos son cientos (tope 260 + 70 por jugador extra). Por cada
   jugador extra: +38 % de vida, +60 % de enemigos, +30 % de élites y el botín se reparte.
 - **Experiencia compartida** en grupo; cada uno escoge sus cartas. Solo, el juego espera mientras escoge; en grupo

@@ -77,7 +77,7 @@ export function mostrarForja(o: OpcionesForja) {
     const espera = listo ? o.esperando?.() ?? null : null;
     raiz.innerHTML = `
       <header class="cabeza">
-        <h2>La Forja · antes de la etapa ${exp.etapa + 1} de ${ETAPAS}</h2>
+        <h2>La Forja · antes de la etapa ${exp.etapa + 1}${exp.cfg.infinito ? (exp.esFinal(exp.etapa + 1) ? ' · jefe' : '') : ` de ${ETAPAS}`}</h2>
         <div class="saldo"><span class="r-oro"><span class="ico">${glifo('oro')}</span>${b.oro}</span><span class="r-hierro"><span class="ico">${glifo('hierro')}</span>${b.hierro}</span><span class="r-sangre"><span class="ico">${glifo('gota')}</span>${b.sangre}</span></div>
       </header>
       ${o.pista ? `<p class="pista-forja">${o.pista}</p>` : ''}
