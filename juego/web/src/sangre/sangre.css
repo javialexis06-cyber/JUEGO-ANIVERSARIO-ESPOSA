@@ -1462,6 +1462,21 @@ body.mano #zona-joystick {
 .puntitos i.si {
   background: var(--oro);
 }
+/* Lo que se acaba de mejorar (yunque, altar de sangre, Pozo): un aura dorada que late una vez */
+.subio {
+  animation: aura-dorada 1.2s ease-out;
+}
+@keyframes aura-dorada {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 214, 120, 0.95), inset 0 0 22px rgba(255, 214, 120, 0.75);
+  }
+  45% {
+    box-shadow: 0 0 18px 4px rgba(255, 200, 90, 0.6), inset 0 0 12px rgba(255, 214, 120, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 200, 90, 0), inset 0 0 0 rgba(255, 214, 120, 0);
+  }
+}
 /* Hoja modal (pausa, ayuda, confirmaciones) */
 .hoja {
   position: fixed;

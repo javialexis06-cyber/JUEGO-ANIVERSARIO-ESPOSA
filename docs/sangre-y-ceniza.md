@@ -153,6 +153,13 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   («Rezando…», «Abriendo…», «Liberando…», «Rompiendo el sello…»), el cofre tiembla y el prisionero forcejea. El
   progreso se pierde despacio si toca alejarse. En grupo, el toque del invitado viaja en su mando y el anfitrión lo
   aplica. Los paneles del HUD que solo informan dejan pasar el toque (solo los botones lo reciben).
+- **La Forja y el Pozo sin saltos**: al comprar o mejorar, la pantalla se repinta pero cada lista se queda donde
+  estabas (`ui/repintar.ts`, `sinSaltar`), y lo que se mejoró (el arma en el yunque o el altar, la mejora del Pozo)
+  late una vez con un aura dorada (`brillar`, clase `.subio`).
+- **Subir de nivel**: un aura dorada que sube por el personaje (brilla en el contorno y deja verlo por el medio),
+  con onda y chispas doradas, y lo acompaña mientras camina. En solitario la carta sale de una vez y el juego (y los
+  efectos) se detienen, así que el aura se ve completa al escoger. (Antes era un destello azul pálido de menos de un
+  segundo que casi no se notaba: por eso «no salía».)
 - **La horda** arranca con unos cuantos y a los 4 minutos son cientos (tope 260 + 70 por jugador extra). Por cada
   jugador extra: +38 % de vida, +60 % de enemigos, +30 % de élites y el botín se reparte.
 - **Experiencia compartida** en grupo; cada uno escoge sus cartas. Solo, el juego espera mientras escoge; en grupo

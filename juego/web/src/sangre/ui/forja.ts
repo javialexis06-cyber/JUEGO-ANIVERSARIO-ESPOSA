@@ -12,6 +12,7 @@ import { RAREZA_COLOR, glifo, icono } from './iconos';
 import type { VistaEleccion } from './eleccion';
 import { aviso } from './hud';
 import { efectos } from '../sonidos';
+import { brillar, sinSaltar } from './repintar';
 
 export interface OpcionesForja {
   exp: Expedicion;
@@ -38,7 +39,9 @@ export function mostrarForja(o: OpcionesForja) {
   $p().replaceChildren(raiz);
   let listo = false;
 
-  const pintar = () => {
+  // (al comprar o mejorar, la lista se queda donde estabas)
+  const pintar = () => sinSaltar(raiz, dibujar);
+  const dibujar = () => {
     const f = exp.forja.get(j.i);
     if (!f) return;
     const b = exp.bolsa(j);
@@ -97,10 +100,12 @@ export function mostrarForja(o: OpcionesForja) {
       </footer>`;
   };
 
-  const tras = (err: string | null, bien: () => void) => {
+  /** Después de una compra o mejora: avisa si no se pudo; si sí, lo mejorado late con el aura dorada. */
+  const tras = (err: string | null, bien: () => void, mejorado?: string) => {
     if (err) aviso(err, 'peligro', 1800);
     else bien();
     pintar();
+    if (!err && mejorado) brillar(raiz.querySelector(mejorado));
     revisarCola();
   };
 
@@ -137,9 +142,9 @@ export function mostrarForja(o: OpcionesForja) {
     const of = t.closest<HTMLElement>('[data-o]');
     if (of) return tras(exp.comprar(j, of.dataset.o!), () => efectos.compra());
     const y = t.closest<HTMLElement>('[data-y]');
-    if (y) return tras(exp.yunque(j, Number(y.dataset.y)), () => efectos.yunque());
+    if (y) return tras(exp.yunque(j, Number(y.dataset.y)), () => efectos.yunque(), `.arma-forja:nth-child(${Number(y.dataset.y) + 1})`);
     const s = t.closest<HTMLElement>('[data-s]');
-    if (s) return tras(exp.altarSangre(j, Number(s.dataset.s)), () => efectos.sobrecarga());
+    if (s) return tras(exp.altarSangre(j, Number(s.dataset.s)), () => efectos.sobrecarga(), `.arma-forja:nth-child(${Number(s.dataset.s) + 1})`);
     const v = t.closest<HTMLElement>('[data-v]');
     if (v) return tras(exp.vender(j, v.dataset.v!), () => efectos.compra());
     const a = t.closest<HTMLElement>('[data-a]')?.dataset.a;

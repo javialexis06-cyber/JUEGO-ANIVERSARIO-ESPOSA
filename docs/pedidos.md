@@ -17,8 +17,6 @@ velocidad, se siente raro…»
   texturas».
 - **Visión astral** (un modo de ver en gris o similar, con un botón) que deje identificar lo del piso: menas, cofres,
   campana, objetos. **Que nada salga señalado en el mapa salvo la campana de extracción.**
-- **La Forja**: al mejorar algo no debe devolver al principio de la lista (que se quede donde estabas). Revisar el
-  **aura dorada de subir de nivel**, que no sale (parece error).
 - **Más Deep Rock Galactic**: mapas más grandes, más importancia a la minería, partidas más largas.
 - **Balance**: la dificultad de los primeros segundos se pierde a los 2 minutos y después de la primera etapa es
   prácticamente morir. Que siga siendo jugable y divertido, pero con una progresión de dificultad más pareja y la

@@ -641,11 +641,17 @@ export class Escena3D {
           break;
         }
         case S.NIVEL: {
+          // Subir de nivel: aura dorada que sube por el personaje y lo acompaña un momento, onda y chispas doradas
           const j = est.J[x];
           if (!j) break;
-          F.onda(j.x, j.y, 3.5, '#8fe3ff', 0.7);
-          F.columna(j.x, j.y, 0.7, 4, '#8fe3ff', 0.8);
-          for (let e = 0; e < 3; e++) P.alma(j.x, 0.3, j.y, '#8fe3ff');
+          const i = x;
+          F.aura(j.x, j.y, () => {
+            const o = est.J[i];
+            return o && o.estado === 0 ? { x: o.x, z: o.y } : null;
+          });
+          F.onda(j.x, j.y, 2.8, '#ffd36a', 0.7);
+          P.chispas(j.x, 0.5, j.y, '#ffd860', 16, 3);
+          for (let e = 0; e < 4; e++) P.alma(j.x, 0.3, j.y, '#ffe08a');
           break;
         }
         case S.HERIDO: {

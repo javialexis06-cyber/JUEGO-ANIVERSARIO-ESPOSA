@@ -6,6 +6,8 @@ import * as THREE from 'three';
 const PLANO = new THREE.PlaneGeometry(2, 2).rotateX(-Math.PI / 2);
 const RAYA = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2).translate(0.5, 0, 0);
 const COLUMNA = new THREE.CylinderGeometry(1, 1, 1, 16, 1, true).translate(0, 0.5, 0);
+/** El aura: un poco más ancha arriba (como una llama que se abre) y con más lados (el contorno se ve liso). */
+const AURA = new THREE.CylinderGeometry(1.15, 0.85, 1, 28, 1, true).translate(0, 0.5, 0);
 
 const FIN = /* glsl */ `
   #include <tonemapping_fragment>
@@ -134,6 +136,40 @@ const FRAG_COLUMNA = /* glsl */ `
   void main() {
     float alfa = ( 1.0 - vUv.y ) * ( 1.0 - uProg ) * ( 0.55 + 0.45 * sin( vUv.x * 40.0 + uProg * 20.0 ) );
     gl_FragColor = vec4( uColor * 2.5, alfa );
+    ${FIN}
+  }
+`;
+
+/** El aura dorada de subir de nivel: un manto de luz que sube por el personaje con vetas que corren hacia arriba, entra
+ *  rápido y se apaga despacio (lo acompaña mientras camina). */
+const VERT_AURA = /* glsl */ `
+  varying vec2 vUv; varying float vBorde;
+  void main() {
+    vUv = uv;
+    vec4 mv = modelViewMatrix * vec4( position, 1.0 );
+    vec3 n = normalize( normalMatrix * normal );
+    // Brilla en el contorno (de canto a la cámara) y deja ver al personaje por el medio
+    vBorde = 1.0 - abs( dot( n, normalize( -mv.xyz ) ) );
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+const FRAG_AURA = /* glsl */ `
+  uniform float uProg; uniform vec3 uColor; uniform float uTiempo;
+  varying vec2 vUv; varying float vBorde;
+  ${RUIDO}
+  void main() {
+    float y = vUv.y;
+    float entra = smoothstep( 0.0, 0.08, uProg );
+    float sale = 1.0 - smoothstep( 0.4, 1.0, uProg );
+    // La luz sube: la parte de arriba aparece un poco después que la de abajo
+    float sube = smoothstep( y - 0.3, y + 0.02, uProg * 2.4 );
+    // Vetas que corren hacia arriba (llamitas de luz)
+    float n = nE( vec2( vUv.x * 22.0, y * 4.0 - uTiempo * 3.2 ) );
+    float vetas = smoothstep( 0.35, 0.85, n );
+    float contorno = pow( vBorde, 1.6 );
+    float alfa = pow( 1.0 - y, 1.2 ) * ( 0.1 + 0.9 * contorno ) * ( 0.35 + 0.65 * vetas ) * entra * sale * sube;
+    vec3 col = mix( uColor, vec3( 1.0, 0.96, 0.8 ), 0.35 * ( 1.0 - y ) * vetas );
+    gl_FragColor = vec4( col * 1.9, alfa );
     ${FIN}
   }
 `;
@@ -278,6 +314,7 @@ export class Efectos {
   private ondas: Piscina;
   private columnas: Piscina;
   private rayos: Piscina;
+  private auras: Piscina;
   private zonas = new Map<number, THREE.Mesh>();
   /** El haz (adentro y su halo) y el círculo de la campana: uno solo, se crea la primera vez. */
   private campanaMallas: { haz: THREE.Mesh; halo: THREE.Mesh; anillo: THREE.Mesh } | null = null;
@@ -293,6 +330,13 @@ export class Efectos {
     this.rayas = new Piscina(sombreador(FRAG_RAYA, U_BASE, RAYA, 9), this.grupo);
     this.ondas = new Piscina(sombreador(FRAG_ONDA, U_BASE, PLANO, 6), this.grupo);
     this.columnas = new Piscina(sombreador(FRAG_COLUMNA, U_BASE, COLUMNA, 9), this.grupo);
+    this.auras = new Piscina(() => {
+      const m = sombreador(FRAG_AURA, { ...U_BASE, uTiempo: { value: 0 } }, AURA, 9)();
+      const mat = m.material as THREE.ShaderMaterial;
+      mat.vertexShader = VERT_AURA;
+      mat.uniforms.uTiempo = this.tiempo;
+      return m;
+    }, this.grupo);
     this.rayos = new Piscina(() => {
       const geo = new THREE.BufferGeometry();
       geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(14 * 2 * 3), 3));
@@ -354,6 +398,15 @@ export class Efectos {
     (a.malla.material as THREE.ShaderMaterial).uniforms.uColor.value.set(color);
     a.malla.position.set(x, 0, z);
     a.malla.scale.set(radio, alto, radio);
+  }
+
+  /** Aura dorada de subir de nivel alrededor de (x, z); `sigue` la lleva con el personaje mientras dura. */
+  aura(x: number, z: number, sigue: () => { x: number; z: number } | null, color: THREE.ColorRepresentation = '#ffd36a', dur = 1.5) {
+    const a = this.auras.sacar(dur);
+    (a.malla.material as THREE.ShaderMaterial).uniforms.uColor.value.set(color);
+    a.malla.position.set(x, 0, z);
+    a.malla.scale.set(0.7, 2.2, 0.7);
+    a.sigue = sigue;
   }
 
   /** Rayo quebrado entre dos puntos. */
@@ -489,10 +542,11 @@ export class Efectos {
     this.ondas.actualizar(dt);
     this.columnas.actualizar(dt);
     this.rayos.actualizar(dt);
+    this.auras.actualizar(dt);
   }
 
   limpiar() {
-    for (const p of [this.arcos, this.rayas, this.ondas, this.columnas, this.rayos]) for (const a of p.activos) a.t = a.dur;
+    for (const p of [this.arcos, this.rayas, this.ondas, this.columnas, this.rayos, this.auras]) for (const a of p.activos) a.t = a.dur;
     this.actualizar(0, this.tiempo.value);
   }
 }

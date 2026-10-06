@@ -27,6 +27,7 @@ import {
 } from './progreso';
 import { ArmaJ, Jugador } from './sim/jugador';
 import type { Sim } from './sim/sim';
+import { brillar, sinSaltar } from './ui/repintar';
 import { efectos, musica, sonarSucesos } from './sonidos';
 import { BIOMAS_ORDEN, CLASES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdBioma, type IdClase, type IdMutador, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
 import { Tutorial } from './tutorial';
@@ -431,7 +432,9 @@ function pozo() {
   pantalla = 'pozo';
   const p = P();
   const s = seccion('pantalla-pozo opaca', '');
-  const pintar = () => {
+  // (al comprar, la lista se queda donde estabas y la mejora late con el aura dorada)
+  const pintar = () => sinSaltar(s, dibujar);
+  const dibujar = () => {
     const mejoras = POZO.map((d) => {
       const n = p.pozo[d.id] ?? 0;
       const precio = precioPozo(d, n);
@@ -472,6 +475,7 @@ function pozo() {
     guardado.guardar();
     efectos.compra();
     pintar();
+    brillar(s.querySelector(`[data-z="${z}"]`));
   });
 }
 
