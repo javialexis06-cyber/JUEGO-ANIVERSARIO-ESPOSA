@@ -538,7 +538,7 @@ mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.act
 - **Dormir** se puede aunque no tengan sueño (una siesta: se despiertan solos con la energía llena y
   después de media hora, o con «Despertar»). Si los dos duermen, se abrazan: boca arriba juntitos o en
   cucharita (el mismo en los dos celulares), y la burbuja mezcla recuerdos, **discusiones bobas** («¿treinta
-  días o cuarenta?», «¿Katherine o Lexy Katherine?»…) y **deseos a futuro**. Código: `src/casa/recuerdos.ts`.
+  días o cuarenta?», «¿Katherine o Lexy Katherine?», «¿Muak o betito?», «¿Y la racha?»…) y **deseos a futuro**. Código: `src/casa/recuerdos.ts`.
 
 ## La tele (YouTube)
 
@@ -581,6 +581,17 @@ estrellitas, la manito marcada y sacudón de pantalla. Ella pega un brinco («¡
 llorando y pataleando de berrinche («¡Me dolióoo! 😭») mientras él da dos vueltitas muerto de la risa, y al final ella
 se levanta de brazos cruzados («¡Ya verás! 😤») y él presume («Esa nalguita es mía 😎»). En el celular de ella se ve
 igual (evento `nalgada`).
+
+**Cada mimo sale distinto** (`src/casa/mimos.ts`): hay 17 besos, 17 abrazos y 16 caricias (cada uno con unos de
+los dos y otros solo de Él o solo de Ella), con su pose, la reacción del otro y lo que se dicen en globitos, con
+las palabras de su chat de verdad: el «muak» tronado, la ráfaga de betitos, el beso volado que el otro atrapa
+aplaudiendo, el abrazo de oso («No respiro… pero no me sueltes»), el de las nueve horas de bus, el de la cotita
+más hermota, la mimilona que se pone brava si no hay más mimos, «¿Ya hiciste el Duolingo? 🦉», «Hi baby»,
+«Te amodoro»… Quien lo da lo saca de su bolsa (no se repite hasta que salgan todos, ni el mismo dos veces seguidas)
+y lo manda con el evento (`datos.v`), así en los dos celulares sale el mismo; el aviso dice cuál fue («Laura te dio
+un abrazo de panda»). Quien da habla primero y se calla; quien recibe contesta después, para que los dos globitos
+(que quedan muy cerca) no se pisen. Una versión vieja que no manda la variante hace el mimo de siempre. **Saludar** también dice algo de lo de todos los días («¿Cómo amaneció el amor de mi
+vida?», «Hi baby 👋», «Dime esposa :3»…), con globito en los dos celulares y en el aviso.
 
 Los mimos no dan monedas. Se hacen **estando los dos en el mismo cuarto**: el botón con el nombre de la pareja solo
 aparece entonces (y aparece o se va en vivo cuando uno entra o sale). Tocar su carita de arriba abre igual su hoja:

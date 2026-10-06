@@ -28,6 +28,12 @@ const DISCUSIONES: Vineta[] = [
   { titulo: '¿Estudiábamos o explicabas?', dibujo: 'lapiz', lineas: [['ella', 'Para el ICFES estudiábamos juntos.'], ['el', 'Yo explicaba.'], ['ella', 'Y yo te miraba explicar. Eso también es estudiar.']] },
   { titulo: '¿Quién pagó?', dibujo: 'copa', lineas: [['ella', 'Ese restaurante de súper lujo… ¿quién lo pagó?'], ['el', 'Mejor hablemos de otra cosa.'], ['ella', 'Jajaja, ¡cobarde!']] },
   { titulo: '¿Las luces o tus ojos?', dibujo: 'luces', lineas: [['el', 'Las luces de diciembre estaban lindas.'], ['ella', '¿Más que yo?'], ['el', 'Yo solo te miraba a ti.']] },
+  { titulo: '¿Muak o betito?', dibujo: 'charla', lineas: [['el', 'Un muak no es lo mismo que un betito.'], ['ella', '¿Y cuál es la diferencia?'], ['el', 'El betito es en persona.'], ['ella', 'Entonces ven y dame uno.']] },
+  { titulo: '¿Casi o se quemó?', dibujo: 'casa', lineas: [['el', 'La base de Minecraft casi se quema toda.'], ['ella', 'Se quemó.'], ['el', 'CASI.'], ['ella', 'Quedó un hueco negro, mor.']] },
+  { titulo: '¿Y la racha?', dibujo: 'lapiz', lineas: [['ella', '¿Hiciste el Duolingo?'], ['el', 'Shi.'], ['ella', '¿Y la racha?'], ['el', '…mañana hago dos.']] },
+  { titulo: '¿Fotito o no fotito?', dibujo: 'ojos', lineas: [['el', 'Mándame una fotito.'], ['ella', 'Ahorita no, estoy fea.'], ['el', 'Eso no existe.'], ['ella', '…bueno, una.']] },
+  { titulo: '¿Para qué la video silenciosa?', dibujo: 'videollamada', lineas: [['ella', '¿Video silenciosa?'], ['el', '¿Y para qué, si no me hablas?'], ['ella', 'Para tenerte ahí.'], ['el', '…bueno, eso sí.']] },
+  { titulo: '¿Te amo o te amodoro?', dibujo: 'charla', lineas: [['el', 'Te amodoro.'], ['ella', 'Eso no existe.'], ['el', 'Ahora sí: lo inventé para ti.'], ['ella', 'Ay deos… yo también te amodoro.']] },
 ];
 
 /** Deseos a futuro (lo que sueñan los dos). */
@@ -39,6 +45,12 @@ const DESEOS: Vineta[] = [
   { titulo: 'Algún día…', sub: 'Sin distancia', dibujo: 'bus', lineas: [['ella', 'Que ya no haya que contar horas de bus.'], ['el', 'Que el único viaje sea de la cama a la cocina.'], ['ella', 'Juntos, todos los días.']] },
   { titulo: 'Algún día…', sub: 'Todos los diciembres', dibujo: 'luces', lineas: [['el', 'Ver las luces de diciembre cada año.'], ['ella', 'Y tomarnos la misma foto, año tras año.']] },
   { titulo: 'Algún día…', sub: 'Viejitos', dibujo: 'casa', lineas: [['ella', 'Viejitos, jugando parchís en el patio.'], ['el', 'Y yo dejándote ganar.'], ['ella', '¡Tú nunca me dejas ganar!']] },
+  { titulo: 'Algún día…', sub: 'Una boda con misterio', dibujo: 'lupa', lineas: [['ella', 'Que la boda tenga un juego: un crimen por mesa que los invitados tengan que resolver.'], ['el', '¿Y quién es el culpable?'], ['ella', 'Tú. Por robarme el corazón.']] },
+  { titulo: 'Algún día…', sub: 'La lonchera', dibujo: 'casa', lineas: [['el', 'Cuando nos casemos te hago la lonchera todos los días.'], ['ella', '¿Con wafle?'], ['el', 'Con wafle y una notica.']] },
+  { titulo: 'Algún día…', sub: 'Almorzar en la casa', dibujo: 'casa', lineas: [['el', 'Cuando vivamos juntos voy a ir a la casa a almorzar.'], ['ella', 'Y yo te espero con un frappé.'], ['el', 'Y betitos de postre.']] },
+  { titulo: 'Algún día…', sub: 'La casa grande y vieja', dibujo: 'casa', lineas: [['el', 'Una casa grande y vieja, llena de cosas nuestras.'], ['ella', 'Y un cuarto para Kat.'], ['el', 'Lleno de dulces.']] },
+  { titulo: 'Algún día…', sub: 'Todas las noches', dibujo: 'estrellas', lineas: [['el', 'Cuando vivamos juntitos: betitos todas las noches.'], ['ella', '¿Y en las mañanas?'], ['el', 'También. Y al mediodía.']] },
+  { titulo: 'Algún día…', sub: 'Heladitos en el parque', dibujo: 'flor', lineas: [['el', 'Firmamos y nos vamos a comer heladitos al parque.'], ['ella', '¿Así no más?'], ['el', 'Así. Y después la fiesta, con todo.']] },
 ];
 
 const MEMORIAS: Vineta[] = RECUERDOS.map((r) => ({ titulo: r.titulo, sub: r.fecha, dibujo: r.icono, lineas: r.dialogo }));

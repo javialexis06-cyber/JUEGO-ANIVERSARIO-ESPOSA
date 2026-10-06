@@ -26,6 +26,7 @@ import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
 import { Mascota } from './mascota';
 import { conGenero, EVENTOS_BANO, type EventoBano, eventoDe } from './bano_frases';
+import { escogerMimo, escogerSaludo, mimoDe, SALUDOS, type TipoCarino, type VarianteMimo } from './mimos';
 import { Bichos } from './bichos';
 import { nombreRango, progresoNuevo, rangoDe, RESTAURANTES, type ProgresoCocina, type RecetaId, type ResultadoDia } from './cocina/tipos';
 import { idAparato } from '../salas/perfil';
@@ -1578,11 +1579,11 @@ function renovarTele() {
 // ---------------------------------------------------------------------------
 // Con la pareja
 // ---------------------------------------------------------------------------
-function coreografia(tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nalgada', de: Rol, item?: string) {
+function coreografia(tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nalgada', de: Rol, item?: string, variante?: VarianteMimo) {
   const para = otro(de);
   // Primero quien recibe (se levanta de donde esté), así quien lo hace llega a su lado
-  mascotas[para].interactuar(tipo, mascotas[de], de, item);
-  mascotas[de].interactuar(tipo, mascotas[para], de, item);
+  mascotas[para].interactuar(tipo, mascotas[de], de, item, variante);
+  mascotas[de].interactuar(tipo, mascotas[para], de, item, variante);
   vistaPendiente = null;
   verCuarto(mascotas[para].cuarto);
   // (la nalgada suena justo cuando la mano llega: ¡PLAF!)
@@ -1653,11 +1654,13 @@ async function carino(tipo: 'caricia' | 'abrazo' | 'beso') {
   const ef = EFECTO_CARINO[tipo];
   const ahora = Date.now();
   const cuarto = s.personajes[par].cuarto;
-  coreografia(tipo, yo);
+  // Cada mimo sale distinto (de la bolsa de quien lo da) y va con el evento, así los dos ven el mismo
+  const v = escogerMimo(tipo, yo);
+  coreografia(tipo, yo, undefined, v);
   await guardarYo({ ...sumar(s.personajes[yo], { carino: ef.mio }, ahora), cuarto, actividad: { tipo: 'nada', desde: ahora }, visto: ahora });
   // El cariño de la pareja lo suma su propio celular al recibir el evento (así no se pisa lo que está haciendo)
   try {
-    await s.enviar(tipo);
+    await s.enviar(tipo, { v: v.id });
   } catch (err) {
     fallo(err);
   }
@@ -1708,12 +1711,29 @@ async function mandarComida(id: string) {
 async function saludar() {
   if (!s) return;
   cerrarHoja();
+  const f = escogerSaludo(yo);
   await hacer('saludo', s.personajes[yo].cuarto, 3, {});
+  decirSaludo(yo, f);
   try {
-    await s.enviar('saludo');
+    await s.enviar('saludo', { f });
   } catch (err) {
     fallo(err);
   }
+}
+
+/** El globito con lo que dice al saludar, unos 3 s (se sostiene aunque el saludo, al empezar, limpie los globos; si
+ *  ya está diciendo otra cosa, no la tapa). */
+function decirSaludo(rol: Rol, f: unknown) {
+  const texto = typeof f === 'number' ? SALUDOS[rol][f] : undefined;
+  if (!texto) return;
+  const m = mascotas[rol];
+  const hasta = Date.now() + 3400;
+  const t = setInterval(() => {
+    if (Date.now() > hasta) {
+      clearInterval(t);
+      if (m.frase === texto) m.frase = null;
+    } else if (!m.frase) m.frase = texto;
+  }, 150);
 }
 
 /** Lo que llega del otro celular. */
@@ -1727,10 +1747,13 @@ function alEvento(e: Evento) {
   switch (e.tipo) {
     case 'caricia':
     case 'abrazo':
-    case 'beso':
-      coreografia(e.tipo, e.de);
-      toast(e.tipo === 'caricia' ? `${quien} te hizo una caricia` : e.tipo === 'abrazo' ? `${quien} te dio un abrazo` : `${quien} te dio un beso`);
+    case 'beso': {
+      // (de una versión vieja llega sin variante: el mimo de siempre)
+      const v = mimoDe(e.tipo as TipoCarino, e.datos.v);
+      coreografia(e.tipo, e.de, undefined, v ?? undefined);
+      toast(v ? `${quien} te dio ${v.nombre}` : e.tipo === 'caricia' ? `${quien} te hizo una caricia` : e.tipo === 'abrazo' ? `${quien} te dio un abrazo` : `${quien} te dio un beso`, 3000);
       break;
+    }
     case 'regalo':
       coreografia('regalo', e.de, item);
       toast(`¡${quien} te trajo un regalo! Tócalo para abrirlo.`, 3400);
@@ -1755,9 +1778,12 @@ function alEvento(e: Evento) {
       toast(`¡${quien} vino a rescatarte! 💖`, 3200);
       void rescatado(e.de);
       break;
-    case 'saludo':
-      toast(`${quien} te está saludando`);
+    case 'saludo': {
+      const texto = typeof e.datos.f === 'number' ? SALUDOS[e.de][e.datos.f] : undefined;
+      decirSaludo(e.de, e.datos.f);
+      toast(texto ? `${quien} te saluda: «${texto}»` : `${quien} te está saludando`);
       break;
+    }
     case 'voz':
       // Suena como una llamada si la app está a la vista y no se está en medio de algo
       if (document.visibilityState === 'visible' && !hojaAbierta() && $('llamada')?.hidden !== false) void contestarVoz(String(e.datos.voz ?? ''), true);

@@ -6,6 +6,8 @@ export const PALABRAS_PAREJA = [
   'Sopetrán', 'Bucaramanga', 'wafle', 'frappé', 'fresas con crema', 'Yanbal', 'directora', 'iPhone', 'pulelo', 'Transformice', 'Cartagena',
   'videollamada', 'Medellín', 'Halloween', 'propuesta', 'planetario', 'Parque Explora', 'Katherine', 'Lexy', '25 de octubre', 'aniversario',
   'carta de amor', 'cartas de amor', 'recuerdo', '💌', '💞',
+  // (de su chat: cómo se dicen)
+  'mimilona', 'cotita', 'betito', 'betitos', 'esposha', 'amodoro', 'Duolingo',
 ];
 
 const plano = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
