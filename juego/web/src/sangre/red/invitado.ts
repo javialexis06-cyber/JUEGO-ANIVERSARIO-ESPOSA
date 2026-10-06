@@ -61,6 +61,9 @@ export class PartidaInvitado {
     this.hud.nombre = o.nombre;
     this.hud.alHabilidad = () => o.mando.pedirHabilidad();
     this.hud.alPausa = () => o.alPausa(this);
+    this.hud.alAstral = () => o.escena.alternarAstral();
+    o.mando.alAstral = () => o.escena.alternarAstral();
+    o.escena.apagarAstral();
     o.mando.alNumero = (n) => {
       if (this.eleccion.abierta) this.eleccion.tecla(n);
     };

@@ -16,6 +16,7 @@ import { RADIO_ABRIR, RADIO_CAMPANA, RADIO_LIBERAR, esTocable } from '../sim/obj
 import { Actores } from './actores';
 import { Cosas3D } from './cosas3d';
 import { Efectos } from './efectos';
+import { RADIO_ASTRAL, VisionAstral } from './astral';
 import { Jugadores3D, type PerfilVista } from './jugadores3d';
 import { LuzRejilla, UNI_LUZ, type FuenteLuz } from './luz';
 import { Mapa3D } from './mapa3d';
@@ -79,6 +80,11 @@ export class Escena3D {
   cosas: Cosas3D | null = null;
   particulas: Particulas | null = null;
   efectos: Efectos | null = null;
+  /** La visión astral (se arma con cada etapa; si estaba prendida, sigue prendida). */
+  astral: VisionAstral | null = null;
+  private astralPedida = false;
+  /** Dónde está el jugador local (para la onda al prender la visión astral). */
+  private yo = { x: 0, y: 0 };
   jugadores = new Jugadores3D(this.bib);
   private etapa = new THREE.Group();
   // Cámara
@@ -222,7 +228,9 @@ export class Escena3D {
     this.particulas.cupo = this.calidad === 'baja' ? 0.45 : this.calidad === 'media' ? 0.75 : 1;
     this.cosas = new Cosas3D(this.bib, this.particulas);
     this.efectos = new Efectos();
-    this.etapa.add(this.mapa3d.grupo, this.actores.grupo, this.cosas.grupo, this.efectos.grupo);
+    this.astral = new VisionAstral(UNI_LUZ.uTiempo);
+    this.astral.activa = this.astralPedida;
+    this.etapa.add(this.mapa3d.grupo, this.actores.grupo, this.cosas.grupo, this.efectos.grupo, this.astral.grupo);
     this.actores.precargar(precargar);
     await this.prepararMunecos(perfiles);
     this.focoListo = false;
@@ -264,7 +272,28 @@ export class Escena3D {
     this.cosas = null;
     this.particulas = null;
     this.efectos = null;
+    this.astral?.liberar();
+    this.astral = null;
     this.luz = null;
+  }
+
+  /** Prende o apaga la visión astral (con una onda que sale del jugador al prenderla). Devuelve si quedó prendida. */
+  alternarAstral() {
+    this.astralPedida = !this.astralPedida;
+    if (this.astral) this.astral.activa = this.astralPedida;
+    if (this.astralPedida) this.efectos?.onda(this.yo.x, this.yo.y, RADIO_ASTRAL * 0.6, '#9cc4ee', 0.9);
+    return this.astralPedida;
+  }
+
+  /** Apaga la visión astral (al empezar otra expedición). */
+  apagarAstral() {
+    this.astralPedida = false;
+    if (this.astral) this.astral.activa = false;
+  }
+
+  /** Qué tanto se ve la visión astral ahora (0-1). */
+  get astralFuerza() {
+    return this.astral?.fuerza ?? 0;
   }
 
   sacudir(f: number) {
@@ -311,6 +340,11 @@ export class Escena3D {
     }
     this.efectos.marcasUso(usos);
     this.efectos.actualizar(dt, this.tiempo);
+    if (yo) {
+      this.yo.x = yo.x;
+      this.yo.y = yo.y;
+    }
+    this.astral?.actualizar(dt, est, this.local);
     // Jugadores
     for (const j of est.J) {
       const m = this.jugadores.de(j.i);

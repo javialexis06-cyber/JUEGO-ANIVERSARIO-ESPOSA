@@ -1,5 +1,6 @@
 // El mando: en el celular, un joystick transparente que aparece donde se toca (mitad izquierda) y el botón de la
-// habilidad; en el computador, WASD o las flechas, espacio para la habilidad, Esc para pausar y la rueda para el zoom.
+// habilidad; en el computador, WASD o las flechas, espacio para la habilidad, Q o V para la visión astral, Esc para
+// pausar y la rueda para el zoom.
 // Tocar algo del mundo (clic del mouse, o el dedo fuera del joystick) lo recoge o lo abre: si está lejos, el
 // personaje camina hasta tenerlo al alcance de la mano (mover el joystick o las teclas cancela).
 const $ = (id: string) => document.getElementById(id)!;
@@ -20,6 +21,8 @@ export class Mando {
   /** Teclas numéricas (para escoger cartas con el teclado). */
   alNumero: (n: number) => void = () => undefined;
   alTecla: (k: string) => void = () => undefined;
+  /** Prender o apagar la visión astral (Q o V). */
+  alAstral: () => void = () => undefined;
   /** Tocó el mundo en (px, py) de la pantalla (quien juega busca qué hay ahí y llama a `ir`). */
   alTocar: (px: number, py: number) => void = () => undefined;
   /** ¿Hay algo para tocar bajo el puntero? (para la manito del mouse) */
@@ -113,6 +116,7 @@ export class Mando {
         if (this.activo) this.habilidad = true;
         e.preventDefault();
       }
+      if ((k === 'q' || k === 'v') && !e.repeat && this.activo) this.alAstral();
       if (/^[1-4]$/.test(k)) this.alNumero(Number(k));
       this.alTecla(k);
       this.teclas.add(k);

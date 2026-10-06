@@ -23,6 +23,8 @@ export const UNI_LUZ = {
   /** 0 = normal, 1 = eclipse (todo más oscuro). */
   uOscuro: { value: 0 },
   uAmbiente: { value: new THREE.Color('#202838') },
+  /** 0 = normal, 1 = visión astral (todo gris azulado; lo importante brilla aparte, ver astral.ts). */
+  uAstral: { value: 0 },
 };
 
 export class LuzRejilla {
@@ -156,6 +158,7 @@ uniform float uLuzFuerza;
 uniform float uTiempo;
 uniform float uOscuro;
 uniform vec3 uAmbiente;
+uniform float uAstral;
 float hashLuz( vec2 p ) { return fract( sin( dot( p, vec2( 12.9898, 78.233 ) ) ) * 43758.5453 ); }
 vec3 luzRejilla( vec3 p ) {
   vec3 l = texture2D( uLuzMapa, p.xz / uLuzTam ).rgb;
@@ -172,6 +175,13 @@ vec3 luzRejilla( vec3 p ) {
 const FRAG_CUERPO = /* glsl */ `
 reflectedLight.indirectDiffuse += diffuseColor.rgb * ( luzRejilla( vMundoLuz ) + uAmbiente * ( 1.0 - uOscuro * 0.6 ) );
 `;
+/** Visión astral: el color se vuelve gris azulado y un poco más oscuro (antes del tono de la cámara). */
+const FRAG_ASTRAL = /* glsl */ `
+if ( uAstral > 0.0 ) {
+  float grisAstral = dot( gl_FragColor.rgb, vec3( 0.299, 0.587, 0.114 ) );
+  gl_FragColor.rgb = mix( gl_FragColor.rgb, vec3( grisAstral ) * vec3( 0.72, 0.8, 0.98 ) * 0.85, uAstral );
+}
+`;
 
 /** Le enseña a un material a leer la rejilla de luz (se puede encadenar con otro onBeforeCompile). */
 export function conLuz<T extends THREE.Material>(mat: T, extra?: (s: THREE.WebGLProgramParametersWithUniforms) => void, clave = ''): T {
@@ -182,7 +192,8 @@ export function conLuz<T extends THREE.Material>(mat: T, extra?: (s: THREE.WebGL
     s.vertexShader = s.vertexShader.replace('#include <common>', `#include <common>\n${VERT_DECL}`).replace('#include <project_vertex>', `#include <project_vertex>\n${VERT_CUERPO}`);
     s.fragmentShader = s.fragmentShader
       .replace('#include <common>', `#include <common>\n${FRAG_DECL}`)
-      .replace('#include <lights_fragment_end>', `#include <lights_fragment_end>\n${FRAG_CUERPO}`);
+      .replace('#include <lights_fragment_end>', `#include <lights_fragment_end>\n${FRAG_CUERPO}`)
+      .replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${FRAG_ASTRAL}`);
     extra?.(s);
   };
   const clavePrev = mat.customProgramCacheKey?.bind(mat);

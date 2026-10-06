@@ -15,8 +15,6 @@ Textual: «Mejorar calidad de mapa; mejorar movilidad, se siente tosca, los ojos
 velocidad, se siente raro…»
 - **Calidad**: mapas, enemigos, personajes «y todo lo demás»; «los sprites están muy básicos, falta mucho trabajo de
   texturas».
-- **Visión astral** (un modo de ver en gris o similar, con un botón) que deje identificar lo del piso: menas, cofres,
-  campana, objetos. **Que nada salga señalado en el mapa salvo la campana de extracción.**
 - **Más Deep Rock Galactic**: mapas más grandes, más importancia a la minería, partidas más largas.
 - **Balance**: la dificultad de los primeros segundos se pierde a los 2 minutos y después de la primera etapa es
   prácticamente morir. Que siga siendo jugable y divertido, pero con una progresión de dificultad más pareja y la

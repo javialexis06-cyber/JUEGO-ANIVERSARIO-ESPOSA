@@ -160,6 +160,15 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   con onda y chispas doradas, y lo acompaña mientras camina. En solitario la carta sale de una vez y el juego (y los
   efectos) se detienen, así que el aura se ve completa al escoger. (Antes era un destello azul pálido de menos de un
   segundo que casi no se notaba: por eso «no salía».)
+- **Visión astral y nada señalado** (pedido de Javier): en el mapa solo se señala la Campana de Extracción (las
+  flechas a prisioneros, carreta, santuarios, reliquias, altares y élites ya no salen; las de los compañeros sí,
+  porque son personas). Para encontrar lo demás está la **visión astral** (`vista/astral.ts`): el botón del ojo encima
+  de la habilidad, o Q / V en el computador. El mundo se vuelve gris azulado (cada material con `uAstral`, en
+  `luz.ts`: sirve en las tres calidades y sin filtros CSS, que parpadean en Android) y hasta 20 m alrededor brilla por
+  encima de todo, aunque lo tape una pared: las vetas como cristales en rombo (hierro azul acero, oro dorado, sangre
+  roja, huevos verdes) y con aros el botín del piso, los santuarios, las reliquias, los prisioneros, el objetivo
+  (altares, carreta, campana que se defiende, el élite marcado) y la campana. Sale una leyenda de colores abajo. Se
+  apaga sola al empezar otra expedición y sigue prendida entre etapas.
 - **La horda** arranca con unos cuantos y a los 4 minutos son cientos (tope 260 + 70 por jugador extra). Por cada
   jugador extra: +38 % de vida, +60 % de enemigos, +30 % de élites y el botín se reparte.
 - **Experiencia compartida** en grupo; cada uno escoge sus cartas. Solo, el juego espera mientras escoge; en grupo

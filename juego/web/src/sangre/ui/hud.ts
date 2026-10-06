@@ -9,6 +9,7 @@ import { ENT, S, type Entidad, type Enemigos, type Sucesos } from '../sim/estado
 import { xpPara, type Jugador } from '../sim/jugador';
 import type { IdObjetivo, IdSecundario } from '../tipos';
 import type { Escena3D } from '../vista/escena';
+import { COLOR_ASTRAL } from '../vista/astral';
 import { glifo, icono } from './iconos';
 
 const $ = (id: string) => document.getElementById(id)!;
@@ -66,6 +67,19 @@ const AVISOS: Record<number, (a: number, b: number, nombre: (i: number) => strin
   20: (a) => [EVENTOS[(['enjambre', 'cerco', 'lluvia_huesos', 'eclipse', 'marea', 'cofre_maldito'] as IdEvento[])[a]]?.aviso ?? '', 'peligro'],
 };
 
+/** La leyenda de la visión astral: qué es cada color. */
+const LEYENDA: [string, string][] = [
+  [COLOR_ASTRAL.hierro, 'Hierro'],
+  [COLOR_ASTRAL.oro, 'Oro'],
+  [COLOR_ASTRAL.sangre, 'Sangre'],
+  [COLOR_ASTRAL.huevo, 'Huevos y comida'],
+  [COLOR_ASTRAL.botin, 'Botín'],
+  [COLOR_ASTRAL.santo, 'Santuario'],
+  [COLOR_ASTRAL.reliquia, 'Reliquias'],
+  [COLOR_ASTRAL.prisionero, 'Prisioneros'],
+  [COLOR_ASTRAL.objetivo, 'Objetivo'],
+];
+
 /** La barrita de lo que se abre o se libera: qué dice y de qué color. */
 const USO: Record<number, { texto: string; color: string; alto: number }> = {
   [ENT.PRISIONERO]: { texto: 'Liberando…', color: '#f0e4c8', alto: 2 },
@@ -85,6 +99,7 @@ export class Hud {
   private local = 0;
   alHabilidad: () => void = () => undefined;
   alPausa: () => void = () => undefined;
+  alAstral: () => void = () => undefined;
   /** Nombre de cada jugador (Javier, Laura o el del amigo). */
   nombre: (i: number) => string = (i) => `Jugador ${i + 1}`;
   private veloDano = $('velo-dano');
@@ -135,6 +150,8 @@ export class Hud {
         <button class="boton boton-redondo boton-pausa" data-e="pausa" aria-label="Pausa">${glifo('pausa')}</button>
       </div>
       <div class="hud-armas" data-e="armas"></div>
+      <button class="hud-astral" data-e="astral" aria-label="Visión astral" title="Visión astral (Q)">${glifo('ojo')}<span class="tecla">Q</span></button>
+      <div class="hud-leyenda" data-e="leyenda" hidden>${LEYENDA.map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>
       <button class="hud-habilidad" data-e="hab" aria-label="${def.habilidad.nombre}">${glifo(def.habilidad.glifo)}<span class="recarga" data-e="habR"></span><b data-e="habT"></b><span class="tecla">Espacio</span></button>`;
     this.els = {};
     for (const el of this.raiz.querySelectorAll<HTMLElement>('[data-e]')) this.els[el.dataset.e!] = el;
@@ -145,6 +162,11 @@ export class Hud {
       this.alHabilidad();
     });
     this.els.pausa.addEventListener('click', () => this.alPausa());
+    this.els.astral.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.alAstral();
+    });
     this.raiz.hidden = false;
   }
 
@@ -191,6 +213,10 @@ export class Hud {
     this.texto('vidaT', `${Math.ceil(Math.max(0, j.hp))} / ${j.hpMax}`);
     this.ancho('xp', j.xp / xpPara(j.nivel));
     this.texto('nivel', j.nivel);
+    // Visión astral: el botón prendido y la leyenda de colores
+    const astral = this.escena.astralFuerza > 0.5 ? 'si' : '';
+    this.poner('astral?', astral, (el, v) => el.classList.toggle('activo', !!v));
+    this.poner('leyenda', astral, (el, v) => (el.hidden = !v));
     // Escudo del caballero o lo que haya de la mecánica
     const mec = this.textoMecanica(j);
     this.texto('mec', mec);
@@ -392,7 +418,6 @@ export class Hud {
       if (!E.vivo[i] || (!E.elite[i] && !E.marcadoObj[i]) || E.marcadoObj[i] === 2 || esJefe(E.tipo[i])) continue;
       this.escena.aPantalla(E.x[i], TIPOS[E.tipo[i]].alto * E.esc[i] + 0.35, E.y[i], P);
       if (!P.visible) {
-        if (E.marcadoObj[i] === 1) this.flecha(E.x[i], E.y[i], '#ff3030', est);
         continue;
       }
       g.fillStyle = 'rgba(0,0,0,0.75)';
@@ -427,19 +452,8 @@ export class Hud {
       g.fillStyle = '#f2e8d2';
       g.fillText(u.texto, P.x * r, (y0 - 9) * r);
     }
-    // Flechas a lo importante: campana, objetivo, prisioneros, carreta, santuarios
+    // Lo único que se señala en el mapa es la Campana de Extracción (lo demás se busca con la visión astral)
     if (est.campana && est.campana.est < 2) this.flecha(est.campana.x, est.campana.y, '#ffd890', est, true);
-    for (const e of est.ent) {
-      if (!e.vivo) continue;
-      if (e.tipo === ENT.PRISIONERO && e.est === 0) this.flecha(e.x, e.y, '#e8dfcc', est);
-      else if (e.tipo === ENT.CARRETA && e.est === 1) this.flecha(e.x, e.y, '#ff6060', est);
-      else if (e.tipo === ENT.CAMPANA_DEF && e.est === 1) this.flecha(e.x, e.y, '#ffd890', est);
-      else if (e.tipo === ENT.SANTUARIO && e.est === 0) this.flecha(e.x, e.y, '#a8c8ff', est, false, 0.55);
-      else if (e.tipo === ENT.COFRE_RELIQUIA && e.est === 0) this.flecha(e.x, e.y, '#c080ff', est, false, 0.55);
-    }
-    if (est.obj.tipo === 'altares' && !est.obj.hecho) {
-      for (let i = 0; i < E.max; i++) if (E.vivo[i] && TIPOS[E.tipo[i]].id === 'altar') this.flecha(E.x[i], E.y[i], '#ff4040', est);
-    }
   }
 
   /** Una flecha en el borde de la pantalla apuntando a algo que no se ve. */

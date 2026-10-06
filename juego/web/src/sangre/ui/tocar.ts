@@ -24,5 +24,6 @@ export function engancharToque(mando: Mando, escena: Escena3D, estado: () => Pic
 export function soltarToque(mando: Mando) {
   mando.alTocar = () => undefined;
   mando.alSobre = () => false;
+  mando.alAstral = () => undefined;
   document.body.classList.remove('mano');
 }
