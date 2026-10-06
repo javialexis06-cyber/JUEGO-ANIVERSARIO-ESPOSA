@@ -86,6 +86,16 @@ async function partida(semilla, nivel, acusarYo) {
   p.on('console', (m) => m.type() === 'error' && !/Failed to load resource|WebGL|GPU/.test(m.text()) && errores.push(`${semilla}: ${m.text()}`));
   await p.goto(`${url}/mesa.html?juego=clue&modo=ia&nivel=${nivel}&rol=el&empieza=el&semilla=${semilla}&rapido=4&sin3d`);
   const vistas = new Set();
+  // El arte renderizado: el tablero de Blender carga (el dibujo de respaldo se quita) y las figuritas tienen su imagen
+  await p.waitForSelector('.clue-svg', { state: 'attached', timeout: 90000 });
+  await p.waitForFunction(() => !document.querySelector('.clue-dibujo'), null, { timeout: 30000 }).catch(() => {});
+  const arte = await p.evaluate(async () => {
+    const urls = [...document.querySelectorAll('.clue-fig image')].map((i) => i.getAttribute('href'));
+    const ok = await Promise.all(urls.map((u) => fetch(u).then((r) => r.ok && (r.headers.get('content-type') || '').includes('image')).catch(() => false)));
+    return { tablero: !document.querySelector('.clue-dibujo') && !!document.querySelector('.clue-render'), figuras: ok.filter(Boolean).length, total: urls.length };
+  });
+  revisar(arte.tablero, `Partida ${semilla}: se ve el tablero renderizado en Blender`);
+  revisar(arte.total === 12 && arte.figuras === 12, `Partida ${semilla}: las 12 figuritas (6 sospechosos y 6 armas) tienen su imagen (${arte.figuras}/${arte.total})`);
   const t0 = Date.now();
   let acuse = false;
   let ultimo = '';
@@ -147,11 +157,16 @@ async function partida(semilla, nivel, acusarYo) {
         return 21 - sabe.size;
       });
       const puede = await p.evaluate(() => !document.querySelector('[data-b="acusar"]').disabled);
-      if (acusarYo && puede && quedan <= 3 && !acuse) {
+      // 'trampa': mira el sobre y acusa de una (para probar la acusación por la pantalla aunque la máquina sea rápida)
+      if (acusarYo && puede && (quedan <= 3 || acusarYo === 'trampa') && !acuse) {
         acuse = true;
         await p.evaluate(() => document.querySelector('[data-b="acusar"]').click());
         await p.waitForTimeout(400);
-        await p.evaluate(() => ['s', 'a', 'c'].forEach((f) => document.querySelector(`[data-fila="${f}"] .clue-carta:not(.clue-sabida)`).click()));
+        await p.evaluate((trampa) => {
+          const sobre = window.__mesa.partida.e.sobre;
+          ['s', 'a', 'c'].forEach((f) =>
+            document.querySelector(trampa ? `[data-fila="${f}"] .clue-carta[data-carta="${sobre[f]}"]` : `[data-fila="${f}"] .clue-carta:not(.clue-sabida)`).click());
+        }, acusarYo === 'trampa');
         await p.screenshot({ path: `${carpeta}/${semilla}-acusar.png` });
         await p.evaluate(() => document.querySelector('.clue-hoja-acusar [data-ok]').click());
         await p.waitForTimeout(300);
@@ -188,13 +203,15 @@ async function partida(semilla, nivel, acusarYo) {
   await p.screenshot({ path: `${carpeta}/${semilla}-final.png` });
   revisar(!!fin.ganador, `Partida ${semilla} (${nivel}): termina en ${fin.turnos} turnos con ${fin.sospechas} sospechas — «${fin.titulo}»`);
   if (acuse) revisar(fin.acusacion?.quien === 'el' && fin.acusacion.acerto && fin.ganador === 'el', `Partida ${semilla}: la persona acusa por la pantalla y acierta`);
-  revisar(['cartas', 'sospecha'].every((v) => vistas.has(v)) && vistas.has('Tirar'), `Partida ${semilla}: salieron las cartas, los dados y la hoja de sospechar`);
+  if (acusarYo !== 'trampa')
+    revisar(['cartas', 'sospecha'].every((v) => vistas.has(v)) && vistas.has('Tirar'), `Partida ${semilla}: salieron las cartas, los dados y la hoja de sospechar`);
   await ctx.close();
   return { acuse, vistas };
 }
 
 const a = await partida(5, 'facil', true);
 const b = await partida(11, 'dificil', false);
+await partida(7, 'normal', 'trampa');
 revisar(a.vistas.has('mostrar') || b.vistas.has('mostrar'), 'La persona tuvo que mostrarle una carta a la máquina');
 revisar(errores.length === 0, `Sin errores en la página${errores.length ? `:\n  ${errores.join('\n  ')}` : ''}`);
 await navegador.close();

@@ -76,11 +76,24 @@ de baldosa a cuadros, la escalera en el centro, fichas de colores para los sospe
 - **Acusación**: una sola, en su turno, desde donde esté. Se mira el sobre: si acierta, gana; si se equivoca, pierde
   (con dos jugadores, el otro gana el caso).
 
+### Por qué así el reparto con dos (revisado con Javier)
+
+Javier leyó que «con dos se reparten 4 cartas a cada uno y el resto quedan ocultas». Revisando las reglas oficiales:
+
+- **Clue de Hasbro 2023** (el del tablero de su foto) trae la variante oficial para dos: se ponen **4 cartas boca
+  abajo en cuatro cuartos** («para un juego más rápido, en los de las esquinas»), quien entra a un cuarto con carta la
+  mira en secreto antes de sospechar, y **las demás se reparten** (7 y 7). Es lo que hace el juego.
+- El Cluedo inglés tiene otra variante para dos: 4 cartas boca abajo como una «tercera mano» que nadie juega; cuando
+  el otro no puede desmentir, quien preguntó mira una de esas cartas. Se puede agregar como opción si Javier la quiere.
+- Repartir solo 4 a cada uno y dejar 10 ocultas para siempre no tiene solución: al final quedan 13 cartas sin ver y
+  no hay forma de saber cuáles 3 están en el sobre y cuáles 10 están escondidas.
+- Con **3 o más** jugadores (cuando la mesa los tenga): todas las cartas se reparten parejo y **las que sobran se
+  ponen boca arriba** para que todos las vean (regla de la edición 2011; la de 2023 deja que unos tengan una más).
+
 ## Cómo se ve y se juega (celular en horizontal)
 
-- **Tablero renderizado** en Blender visto desde arriba: cada cuarto lleno de muebles de fieltro (la cocina con su
-  estufa y las ollas, el salón con la bola de discoteca, el patio con matas y la manguera…), pasillos de baldosa y el
-  sótano con la escalera y el sobre. Encima, en SVG, las casillas que se pueden pisar, las puertas y las fichas.
+- **Tablero renderizado** en Blender visto desde arriba (ver «Técnica»). Encima, en SVG, las casillas a donde se
+  puede ir, los nombres y las fichas.
 - **Fichas**: los detectives son los muñequitos de cada uno (o del amigo); los sospechosos, figuritas de fieltro de
   su color; las armas, objetos de fieltro chiquitos que se mudan de cuarto con cada sospecha.
 - Al tirar, se marcan las casillas y los cuartos a donde se puede llegar: se toca un cuarto (blanco grande) o una
@@ -103,9 +116,24 @@ Difícil: también saca lo que implica que el otro no pueda desmentir.
 ## Técnica
 
 - `src/mesa/clue/`: `reglas.ts` (estado JSON, movimientos puros; el reparto viaja en la primera jugada, tirado por
-  quien empieza), `tablero.ts` (la casona en casillas), `ia.ts`, `vista.ts`, `clue.css`.
+  quien empieza), `tablero.ts` (la casona en casillas), `ia.ts`, `vista.ts` (SVG, hojas, animaciones), `arte.ts`
+  (el dibujo vectorial de respaldo), `clue.css`.
 - El turno de mostrar carta es del que desmiente (`turno(e)` = quien muestra): así la mesa, la IA y el en línea no
-  cambian.
-- Modelos y render: `personajes/blender/clue.py` → `public/modelos/clue/` (tablero renderizado, sospechosos, armas e
-  íconos de las cartas).
-- Pruebas: `scripts/probar-clue.mjs` (reglas, IA contra IA muchas partidas, la vista y en línea).
+  cambian. En la mesa, `secreto: true` en `juegos.ts` impide «los dos aquí» (cartas secretas).
+- **Arte renderizado** (`personajes/blender/clue.py`, Cycles):
+  - `tablero.webp`: la casona entera vista desde arriba (80 px por casilla, 2040 × 1400; cuadra exacto con el viewBox
+    del SVG, de -0.75 a 24.75). Cada cuarto amoblado con fieltro (la cocina con sancocho y arepas en la paila, el
+    salón con piano, pista de baile, DJ, torta y globos, el patio con fuente, hamaca, manguera y enano, el billar y el
+    arcade, los libreros, el comedor servido, la sala de TV con crispetas, el recibidor de ajedrez), pasillos de
+    baldosa, tapetes rojos en cada puerta, trampillas de los pasadizos, marco de madera con esquineros y el sótano
+    con la escalera, la silueta de tiza de Don Cuervo, el sobre lacrado, velas y telarañas.
+  - `s_<id>.webp`: los seis sospechosos con el generador de los clientes del súper (mismo estilo de Él y Ella).
+  - `a_<id>.webp`: las seis armas.
+  - Los muebles van en la parte de arriba de cada cuarto: la de abajo queda para las figuritas (la vista las pone en
+    dos filas abajo a la izquierda y a los detectives a la derecha). Los nombres, las flechas de los pasadizos, las
+    cartas boca abajo y las casillas a donde se puede ir se pintan encima en SVG.
+  - Las cartas de los cuartos salen recortadas del mismo `tablero.webp`. Si una imagen no carga, queda el dibujo.
+  - Uso: `python3.11 personajes/blender/clue.py <salida> [tablero] [sospechosos[:id,...]] [armas[:id,...]] [--rapido]`
+    (al final pasa todo a webp en `public/modelos/clue/`). El tablero tarda ~15 min en 4 núcleos.
+- Pruebas: `scripts/probar-clue.mjs` (reglas, IA contra IA cientos de partidas, una partida tocando la pantalla) y
+  `scripts/probar-mesa-linea.mjs clue` (en línea, los dos celulares llegan al mismo estado).

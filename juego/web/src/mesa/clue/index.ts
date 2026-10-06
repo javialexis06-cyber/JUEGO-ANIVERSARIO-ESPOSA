@@ -1,5 +1,5 @@
 // ¿Quién fue? · El misterio de la casona: el Clue clásico en su variante oficial para dos (diseño en
-// docs/en-obra/clue.md). Seis sospechosos, seis armas y nueve cuartos; el sobre en el sótano.
+// docs/sistemas/clue.md). Seis sospechosos, seis armas y nueve cuartos; el sobre en el sótano.
 import type { JuegoMesa } from '../tipos';
 import { ia } from './ia';
 import { reglas, type EstadoClue, type MovClue } from './reglas';

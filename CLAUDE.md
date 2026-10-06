@@ -84,11 +84,12 @@ acceso a `javialexis06-cyber/juego-aniversario-esposa` y la red abierta a npm, P
 ```
 CLAUDE.md                este archivo
 docs/                    README.md (índice), pedidos.md (la cola), la-pareja.md
-  sistemas/              cómo funciona lo terminado (casa, súper, mesa, salas, Sangre y Ceniza, Supabase)
+  sistemas/              cómo funciona lo terminado (casa, súper, mesa y su Clue, salas, Sangre y Ceniza, Supabase)
   en-obra/               Cien Puertas, escenas premium, voces
   archivo/               estudios y decisiones viejas
 archivo/renders/         renders aprobados de referencia (personajes, súper, casa)
 personajes/blender/      todo el modelado por código (Blender + Python) y los exportadores
+                         (clue.py renderiza el tablero, los sospechosos y las armas del Clue a public/modelos/clue/)
 supabase/                esquema, cambios pendientes y pruebas SQL
 juego/web/               el juego (Vite + TypeScript + three.js + Capacitor)
   index.html → src/casa/   la casa         super.html → src/*.ts   Súper Manía

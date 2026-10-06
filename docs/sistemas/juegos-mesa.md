@@ -1,6 +1,6 @@
 # Juegos de Mesa
 
-Página `mesa.html` (código en `juego/web/src/mesa/`). Él contra Ella en cuatro juegos al estilo de Plato,
+Página `mesa.html` (código en `juego/web/src/mesa/`). Él contra Ella en cinco juegos al estilo de Plato,
 con los dos muñequitos arriba reaccionando a cada jugada.
 
 ## Modos
@@ -16,7 +16,7 @@ según la dificultad si ganas (2 si pierdes, 4 empate); los dos aquí 10; en lí
 
 ## Estado
 
-Los cuatro juegos están completos y probados en los tres modos (contra la IA, los dos aquí y en línea).
+Los cinco juegos están completos y probados en sus modos (contra la IA, los dos aquí y en línea; el Clue sin «los dos aquí»).
 
 | Juego | IA difícil contra la fácil | Detalles |
 |---|---|---|
@@ -24,6 +24,7 @@ Los cuatro juegos están completos y probados en los tres modos (contra la IA, l
 | Mancala | gana 99,8 % | Alfa-beta con turnos extra y final exacto |
 | Puntos y Cajas | gana 99,8 % | Jugada maestra (regalar las dos últimas de una cadena) y final resuelto |
 | Parchís | gana 95 % | Expectimax sobre el dado del otro (el parchís es mucha suerte) |
+| ¿Quién fue? (Clue) | gana 97 % | Cuaderno de verdad: enumera los tríos posibles, usa lo que el otro no pudo desmentir, camina a los cuartos que le sirven y acusa solo cuando está segura. No tiene «los dos aquí» (cartas secretas). Todo en [`clue.md`](clue.md) |
 
 `node scripts/probar-mesa-linea.mjs <juego>` juega una partida completa entre dos celulares con un Supabase de
 mentiras que pierde el 8 % de los mensajes: los cuatro terminan con el mismo estado en los dos.

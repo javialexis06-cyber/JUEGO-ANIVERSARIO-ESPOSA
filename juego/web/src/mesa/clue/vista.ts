@@ -109,8 +109,8 @@ function puntoDetective(l: Lugar, r: Rol): Pt {
 function puntosFiguras(e: EstadoClue): Map<string, Pt> {
   const m = new Map<string, Pt>();
   for (const c of CUARTOS) {
-    IDS_SOSPECHOSOS.filter((s) => e.sospechosos[s] === c.id).forEach((s, k) => m.set(`s:${s}`, { x: c.x + 0.6 + k * 0.78, y: c.y + c.h - 1.27 }));
-    IDS_ARMAS.filter((a) => e.armas[a] === c.id).forEach((a, k) => m.set(`a:${a}`, { x: c.x + 0.6 + k * 0.78, y: c.y + c.h - 0.43 }));
+    IDS_SOSPECHOSOS.filter((s) => e.sospechosos[s] === c.id).forEach((s, k) => m.set(`s:${s}`, { x: c.x + 0.62 + k * 0.82, y: c.y + c.h - 1.25 }));
+    IDS_ARMAS.filter((a) => e.armas[a] === c.id).forEach((a, k) => m.set(`a:${a}`, { x: c.x + 0.62 + k * 0.82, y: c.y + c.h - 0.44 }));
   }
   return m;
 }
@@ -126,12 +126,19 @@ function detective(r: Rol): string {
     <g class="clue-salto">
       ${pelo}
       <path d="M-0.34 0 q0 -0.54 0.34 -0.54 q0.34 0 0.34 0.54 q-0.34 0.1 -0.68 0z" fill="${c.base}" stroke="#3d2b27" stroke-width="0.05"/>
+      <path d="M0.3 -0.02 q0 -0.4 -0.22 -0.48 q0.12 0.2 0.1 0.5z" fill="${c.oscuro}" opacity="0.45"/>
+      <ellipse cx="-0.15" cy="-0.3" rx="0.07" ry="0.14" fill="#fff" opacity="0.32"/>
+      <path d="M-0.27 -0.06 q0.27 0.07 0.54 0" fill="none" stroke="#fff" stroke-width="0.022" stroke-dasharray="0.05 0.04" opacity="0.7"/>
       <path d="M0 -0.5 v0.46 M-0.12 -0.46 l0.12 0.14 l0.12 -0.14" fill="none" stroke="${c.oscuro}" stroke-width="0.045"/>
+      <circle cx="0" cy="-0.3" r="0.025" fill="#f6cf5a"/><circle cx="0" cy="-0.18" r="0.025" fill="#f6cf5a"/>
       <rect x="-0.27" y="-0.98" width="0.54" height="0.48" rx="0.17" fill="${c.piel}" stroke="#3d2b27" stroke-width="0.05"/>
       <circle cx="-0.1" cy="-0.72" r="0.04" fill="#2a1a10"/><circle cx="0.1" cy="-0.72" r="0.04" fill="#2a1a10"/>
       <ellipse cx="-0.17" cy="-0.63" rx="0.05" ry="0.03" fill="#f07a85" opacity="0.7"/><ellipse cx="0.17" cy="-0.63" rx="0.05" ry="0.03" fill="#f07a85" opacity="0.7"/>
       <path d="M-0.29 -0.86 q0.02 -0.32 0.29 -0.32 q0.27 0 0.29 0.32z" fill="${c.oscuro}" stroke="#3d2b27" stroke-width="0.045"/>
+      <path d="M-0.27 -0.92 q0.27 -0.05 0.54 0" fill="none" stroke="${c.suave}" stroke-width="0.06"/>
+      <ellipse cx="-0.1" cy="-1.06" rx="0.07" ry="0.04" fill="#fff" opacity="0.35"/>
       <path d="M-0.4 -0.86 h0.8" stroke="#3d2b27" stroke-width="0.075" stroke-linecap="round"/>
+      <ellipse cx="-0.13" cy="-0.82" rx="0.06" ry="0.035" fill="#fff" opacity="0.35"/>
       <circle cx="0.38" cy="-0.36" r="0.14" fill="rgba(200,230,255,0.65)" stroke="#c99a1e" stroke-width="0.05"/>
       <path d="M0.28 -0.26 l-0.13 0.15" stroke="#5b3a29" stroke-width="0.07" stroke-linecap="round"/>
     </g>`;
@@ -171,7 +178,7 @@ function dibujarCasona(): string {
       <path d="M-0.85 -0.55 L0 0.12 L0.85 -0.55" fill="#ead2a0" stroke="#3d2b27" stroke-width="0.05" stroke-linejoin="round"/>
       <circle cx="0" cy="0.1" r="0.26" fill="#c2354a" stroke="#7a1f2b" stroke-width="0.05"/>
       <text x="0" y="0.22" class="clue-sello" font-size="0.34">?</text></g>
-    <text x="3" y="0.62" class="clue-nombre clue-nombre-sotano" font-size="0.5">Sótano</text>`;
+`;
   s += `<g transform="translate(${SOTANO.x} ${SOTANO.y})"><g clip-path="url(#clue-c-sotano)">${sot}</g>
     <rect width="${SOTANO.w}" height="${SOTANO.h}" rx="0.2" fill="none" stroke="#2a1a10" stroke-width="0.14"/></g>`;
   // Los cuartos: piso, muebles y paredes
@@ -191,20 +198,31 @@ function dibujarCasona(): string {
         <rect x="${px + 0.13}" y="${py + 0.13}" width="0.74" height="0.74" rx="0.12" fill="#b8574a" opacity="0.78"/>
         <rect x="${px + 0.22}" y="${py + 0.22}" width="0.56" height="0.56" rx="0.08" fill="none" stroke="#f6cf5a" stroke-width="0.04" stroke-dasharray="0.08 0.06"/>`;
     }
-  // Las trampillas de los pasadizos (con la flecha hacia el otro lado)
+  // Las trampillas de los pasadizos
+  for (const c of CUARTOS) {
+    if (!c.pasadizo) continue;
+    const p = puntoPasadizo(c.id);
+    s += `<g class="clue-trampilla" transform="translate(${p.x} ${p.y})">
+      <rect x="-0.34" y="-0.34" width="0.68" height="0.68" rx="0.08" fill="#5b3a29" stroke="#2a1a10" stroke-width="0.05"/>
+      ${[-0.17, 0, 0.17].map((y) => `<path d="M-0.26 ${y} h0.52" stroke="#3d2b27" stroke-width="0.05"/>`).join('')}</g>`;
+  }
+  return s;
+}
+
+/** Lo que va encima del tablero (dibujado o renderizado): nombres, la flecha de cada pasadizo y las salidas. */
+function dibujarEncima(): string {
+  let s = '';
   for (const c of CUARTOS) {
     if (!c.pasadizo) continue;
     const p = puntoPasadizo(c.id);
     const d = CUARTO[c.pasadizo];
     const ang = (Math.atan2(d.y + d.h / 2 - (c.y + c.h / 2), d.x + d.w / 2 - (c.x + c.w / 2)) * 180) / Math.PI;
-    s += `<g class="clue-trampilla" transform="translate(${p.x} ${p.y})">
-      <rect x="-0.34" y="-0.34" width="0.68" height="0.68" rx="0.08" fill="#5b3a29" stroke="#2a1a10" stroke-width="0.05"/>
-      ${[-0.17, 0, 0.17].map((y) => `<path d="M-0.26 ${y} h0.52" stroke="#3d2b27" stroke-width="0.05"/>`).join('')}
-      <g transform="rotate(${ang.toFixed(1)})"><path d="M-0.16 0 h0.3 M0.06 -0.12 l0.12 0.12 l-0.12 0.12" fill="none" stroke="#f6cf5a" stroke-width="0.075" stroke-linecap="round" stroke-linejoin="round"/></g></g>`;
+    s += `<g class="clue-flecha" transform="translate(${p.x} ${p.y}) rotate(${ang.toFixed(1)})">
+      <path d="M-0.18 0 h0.32 M0.06 -0.13 l0.13 0.13 l-0.13 0.13" fill="none" stroke="#3d2b27" stroke-width="0.16" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+      <path d="M-0.18 0 h0.32 M0.06 -0.13 l0.13 0.13 l-0.13 0.13" fill="none" stroke="#f6cf5a" stroke-width="0.08" stroke-linecap="round" stroke-linejoin="round"/></g>`;
   }
-  // Nombres de los cuartos
-  for (const c of CUARTOS) s += `<text class="clue-nombre" x="${c.x + c.w / 2}" y="${c.y + 0.78}" font-size="0.56">${CORTO[c.id]}</text>`;
-  // Dónde arranca cada detective
+  for (const c of CUARTOS) s += `<text class="clue-nombre" x="${c.x + c.w / 2}" y="${c.y + 0.74}" font-size="0.56">${CORTO[c.id]}</text>`;
+  s += `<text x="${SOTANO.x + 3}" y="${SOTANO.y + 3.78}" class="clue-nombre clue-nombre-sotano" font-size="0.46">Sótano</text>`;
   for (const r of ROLES) {
     const [x, y] = INICIO[r];
     s += `<circle cx="${x + 0.5}" cy="${y + 0.5}" r="0.36" fill="none" stroke="${COLOR[r].base}" stroke-width="0.08" stroke-dasharray="0.15 0.1"/>`;
@@ -212,13 +230,26 @@ function dibujarCasona(): string {
   return s;
 }
 
+/** Las imágenes renderizadas en Blender (personajes/blender/clue.py → public/modelos/clue/). */
+const RUTA = './modelos/clue/';
+const TABLERO_IMG = `${RUTA}tablero.webp`;
+const imgCarta = (c: Carta) => `${RUTA}${tipoDe(c) === 'sospechoso' ? 's' : 'a'}_${c}.webp`;
+/** El tablero renderizado puesto en el sistema de casillas (para el fondo y para recortar los cuartos). */
+const imagenTablero = `<image href="${TABLERO_IMG}" x="-0.75" y="-0.75" width="${ANCHO + 1.5}" height="${ALTO + 1.5}" preserveAspectRatio="none"/>`;
+
 /** El arte de una carta (para las hojas). */
 function arteCarta(c: Carta): string {
   const t = tipoDe(c);
-  if (t === 'sospechoso') return `<svg viewBox="-0.6 -1.06 1.2 1.6" aria-hidden="true">${figurita(c as IdSospechoso)}</svg>`;
-  if (t === 'arma') return `<svg viewBox="-0.62 -0.62 1.24 1.24" aria-hidden="true">${arma(c as IdArma)}</svg>`;
-  const q = CUARTO[c as IdCuarto];
-  return `<svg viewBox="0 0 ${q.w} ${q.h}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${dibujoCuarto(q.id, q.w, q.h)}</svg>`;
+  if (t === 'cuarto') {
+    // El cuarto recortado del tablero renderizado (con el dibujo debajo por si no carga)
+    const q = CUARTO[c as IdCuarto];
+    return `<svg viewBox="${q.x + 0.1} ${q.y + 0.1} ${q.w - 0.2} ${q.h - 0.2}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <g transform="translate(${q.x} ${q.y})">${dibujoCuarto(q.id, q.w, q.h)}</g>${imagenTablero}</svg>`;
+  }
+  const vector = t === 'sospechoso'
+    ? `<svg viewBox="-0.6 -1.06 1.2 1.6" aria-hidden="true">${figurita(c as IdSospechoso)}</svg>`
+    : `<svg viewBox="-0.62 -0.62 1.24 1.24" aria-hidden="true">${arma(c as IdArma)}</svg>`;
+  return `${vector}<img src="${imgCarta(c)}" alt="" draggable="false" onload="this.previousElementSibling&&this.previousElementSibling.remove()" onerror="this.remove()">`;
 }
 const tinte = (c: Carta) => {
   const t = tipoDe(c);
@@ -308,7 +339,9 @@ class VistaClue implements Vista<EstadoClue, MovClue> {
       <div class="clue">
         <div class="clue-tablero">
           <svg class="clue-svg" viewBox="-0.75 -0.75 ${ANCHO + 1.5} ${ALTO + 1.5}" preserveAspectRatio="xMidYMid meet" aria-label="La casona">
-            ${dibujarCasona()}
+            <g class="clue-dibujo">${dibujarCasona()}</g>
+            <image class="clue-render" href="${TABLERO_IMG}" x="-0.75" y="-0.75" width="${ANCHO + 1.5}" height="${ALTO + 1.5}" preserveAspectRatio="none"/>
+            <g class="clue-encima">${dibujarEncima()}</g>
             <g class="clue-marcas"></g><g class="clue-pistas"></g><g class="clue-figuras"></g><g class="clue-detectives"></g><g class="clue-vuelo"></g>
           </svg>
           <div class="clue-aviso" hidden></div>
@@ -348,8 +381,12 @@ class VistaClue implements Vista<EstadoClue, MovClue> {
       this.capaDetectives.append(g);
       this.detectives[r] = g;
     }
-    for (const s of IDS_SOSPECHOSOS) this.crearFigura(`s:${s}`, figurita(s), 0.78);
-    for (const a of IDS_ARMAS) this.crearFigura(`a:${a}`, arma(a), 0.68);
+    for (const s of IDS_SOSPECHOSOS) this.crearFigura(`s:${s}`, s, figurita(s), 0.78);
+    for (const a of IDS_ARMAS) this.crearFigura(`a:${a}`, a, arma(a), 0.68);
+    // Si el tablero renderizado carga, el dibujo de respaldo sobra (la página queda más liviana)
+    const render = raiz.querySelector<SVGImageElement>('.clue-render')!;
+    render.addEventListener('load', () => raiz.querySelector('.clue-dibujo')?.remove(), { once: true });
+    render.addEventListener('error', () => render.remove(), { once: true });
     raiz.querySelectorAll<HTMLElement>('.clue-dado').forEach((d) => {
       const dd: Dado = { el: d, cubo: d.querySelector('.clue-cubo')!, rx: 0, ry: 0 };
       this.dados.push(dd);
@@ -374,12 +411,21 @@ class VistaClue implements Vista<EstadoClue, MovClue> {
     this.svg.addEventListener('pointerdown', this.alTocar);
   }
 
-  private crearFigura(clave: string, cuerpo: string, escala: number) {
+  /** Una figurita del tablero: la imagen renderizada (sospechoso de cuerpo entero o arma) con su sombrita. */
+  private crearFigura(clave: string, carta: Carta, vector: string, escalaVector: number) {
     const g = document.createElementNS(NS, 'g');
     g.setAttribute('class', 'clue-fig');
     g.dataset.clave = clave;
-    g.dataset.escala = String(escala);
-    g.innerHTML = `<g class="clue-fig-in">${cuerpo}</g>`;
+    g.dataset.escala = '1';
+    const persona = tipoDe(carta) === 'sospechoso';
+    const [w, h] = persona ? [1.08, 1.42] : [0.84, 0.84];
+    const y = persona ? -h + 0.36 : -h / 2;
+    g.innerHTML = `<ellipse cx="0" cy="${persona ? 0.33 : 0.27}" rx="${persona ? 0.34 : 0.32}" ry="0.1" fill="rgba(61,43,39,0.3)"/>
+      <g class="clue-fig-in"><image href="${imgCarta(carta)}" x="${-w / 2}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidY${persona ? 'Max' : 'Mid'} meet"/></g>`;
+    const img = g.querySelector('image')!;
+    img.addEventListener('error', () => {
+      g.querySelector('.clue-fig-in')!.innerHTML = `<g transform="scale(${escalaVector})">${vector}</g>`;
+    }, { once: true });
     this.capaFiguras.append(g);
     this.figuras.set(clave, g);
   }
@@ -593,7 +639,9 @@ class VistaClue implements Vista<EstadoClue, MovClue> {
       s += `<g class="clue-boca${vista ? ' clue-vista' : ''}" transform="translate(${p.x} ${p.y}) rotate(${AFUERA[c] === 'izq' ? 8 : -8})">`;
       s += vista
         ? `<rect x="-0.31" y="-0.42" width="0.62" height="0.84" rx="0.08" fill="${tinte(carta)}" stroke="#3d2b27" stroke-width="0.045"/>
-           <g transform="translate(0 ${tipoDe(carta) === 'sospechoso' ? 0.12 : 0}) scale(${tipoDe(carta) === 'cuarto' ? 0.1 : 0.42})">${tipoDe(carta) === 'sospechoso' ? figurita(carta as IdSospechoso) : tipoDe(carta) === 'arma' ? arma(carta as IdArma) : `<g transform="translate(${-CUARTO[carta as IdCuarto].w / 2} ${-CUARTO[carta as IdCuarto].h / 2})">${dibujoCuarto(carta as IdCuarto, CUARTO[carta as IdCuarto].w, CUARTO[carta as IdCuarto].h)}</g>`}</g>`
+           ${tipoDe(carta) === 'cuarto'
+             ? `<svg x="-0.26" y="-0.36" width="0.52" height="0.72" viewBox="${CUARTO[carta as IdCuarto].x + 1} ${CUARTO[carta as IdCuarto].y} ${CUARTO[carta as IdCuarto].w - 2} ${CUARTO[carta as IdCuarto].h}" preserveAspectRatio="xMidYMid slice">${imagenTablero}</svg>`
+             : `<image href="${imgCarta(carta)}" x="-0.27" y="-0.37" width="0.54" height="0.74" preserveAspectRatio="xMidYMid meet"/>`}`
         : dorso();
       s += `</g>`;
     }
@@ -642,26 +690,28 @@ class VistaClue implements Vista<EstadoClue, MovClue> {
     if (f) return f.ganador === this.yo ? '¡Resolviste el caso!' : `${this.otroNom()} resolvió el caso`;
     const t = reglas.turno(e);
     const mio = this.mio();
-    const n = this.nom(t);
+    // Mientras corre una animación el turno puede ser de este celular sin estar habilitado todavía
+    const yo = t === this.yo;
+    const n = this.ctx.nombres[t];
     switch (e.fase) {
       case 'repartir':
         return 'Repartiendo las cartas…';
       case 'turno': {
-        if (!mio) return `${n} va a tirar…`;
+        if (!mio) return yo ? 'Te toca…' : `${n} va a tirar…`;
         const p = e.pos[this.yo];
         return enCuarto(p) && CUARTO[p.c].pasadizo ? 'Tira los dados o toma el pasadizo' : 'Tira los dados';
       }
       case 'mover':
-        if (!mio) return `${n} está caminando…`;
+        if (!mio) return yo ? 'Caminando…' : `${n} está caminando…`;
         return this.sel ? '¿Vas para allá? Toca «Ir aquí»' : `Sacaste ${suma(e.dados)}: toca a dónde vas`;
       case 'sospechar': {
         const p = e.pos[e.activo];
-        return mio ? `Estás ${enCuarto(p) ? EN[p.c] : ''}: ¿de quién sospechas?` : `${n} está sospechando…`;
+        return mio ? `Estás ${enCuarto(p) ? EN[p.c] : ''}: ¿de quién sospechas?` : yo ? 'Sospechando…' : `${n} está sospechando…`;
       }
       case 'mostrar':
-        return mio ? 'Escoge qué carta mostrar' : `${n} busca qué carta mostrarte…`;
+        return mio || yo ? 'Escoge qué carta mostrar' : `${n} busca qué carta mostrarte…`;
       case 'despues':
-        return mio ? 'Puedes acusar o terminar tu turno' : `${n} está pensando…`;
+        return mio ? 'Puedes acusar o terminar tu turno' : yo ? 'Pensando…' : `${n} está pensando…`;
     }
   }
 

@@ -14,6 +14,7 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | [`nuestro-hogar.md`](sistemas/nuestro-hogar.md) | La casa: cuartos, mimos, tienda, ampliación, patio, baño y retrete espacial, Lavarse la cara, cocina, tele, ropa… |
 | [`mecanicas.md`](sistemas/mecanicas.md), [`niveles.md`](sistemas/niveles.md), [`logros.md`](sistemas/logros.md) | Súper Manía: reglas, balance, los 100 niveles, logros. |
 | [`juegos-mesa.md`](sistemas/juegos-mesa.md), [`reacciones.md`](sistemas/reacciones.md) | Juegos de mesa y las reacciones de los muñequitos. |
+| [`clue.md`](sistemas/clue.md) | «¿Quién fue?», el Clue de la casona: reglas para dos, IA, cuaderno y el tablero renderizado en Blender. |
 | [`salas.md`](sistemas/salas.md) | Salas de hasta 4, modo amigo y la app «Sala de Juegos» para amigos. |
 | [`sangre-y-ceniza.md`](sistemas/sangre-y-ceniza.md), [`sangre-figuras.md`](sistemas/sangre-figuras.md) | El survivors oscuro: diseño, código, contrato de arte y figuras. |
 | [`supabase.md`](sistemas/supabase.md) | La base en línea: tablas, cuentas con contraseña, cambios pendientes, latido. |

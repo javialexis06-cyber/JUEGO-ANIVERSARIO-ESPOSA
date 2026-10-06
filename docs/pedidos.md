@@ -8,11 +8,9 @@ probado y subido.
 Javier: «por ahora vamos a concentrarnos en crear el tipo Clue, terminar de pulir los juegos que ya tenemos y dejar
 pulido el repositorio».
 
-1. **Clue clásico en la mesa** (siguiente): leer las reglas del Clue original (sospechosos, armas, habitaciones, el
-   sobre con la solución, mover con dados, sugerencias y refutaciones, acusación final, pasadizos secretos) y hacerlo
-   con nuestra forma de diseñar: tablero de la casa con muchas habitaciones detalladas, armas y sospechosos en 3D de
-   fieltro, cuaderno de detective, IA que deduce, en pareja (cada uno en su celular) y con amigos en sala (modo neutro).
-   Ojo: a Laura se le ocurrió que su boda tenga «un crimen por mesa que deban solucionar».
+1. ~~**Clue clásico en la mesa**~~ **hecho**: «¿Quién fue?» (`mesa.html?juego=clue`, diseño en `docs/sistemas/clue.md`).
+   Queda pendiente solo lo que Javier pida al probarlo. Idea de Laura para guardar: que su boda tenga «un crimen por
+   mesa que deban solucionar».
 2. **Pulir lo que ya hay** (ver «Sangre y Ceniza» y «Ronda 2» abajo). Lo que Javier recalcó:
    - Lavarse la cara: las **mejoras no tienen imagen ni ícono** (en el celular salen vacías) y falta el **panel de lo
      que se tiene** (armas y mejoras, con qué evoluciona cada una) para hacer las evoluciones bien.
