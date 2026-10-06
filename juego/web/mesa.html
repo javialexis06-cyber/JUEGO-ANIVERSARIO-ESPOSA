@@ -17,7 +17,7 @@
     <a class="boton-redondo boton-casa" href="./index.html" aria-label="Volver a la casa"></a>
     <div class="logo logo-mesa">
       <span class="logo-linea">Juegos de Mesa</span>
-      <span class="logo-pareja">Él contra Ella, sin trampa (casi)</span>
+      <span class="logo-pareja" data-neutro="Tú contra todos, sin trampa (casi)">Él contra Ella, sin trampa (casi)</span>
     </div>
     <div class="mesa-cabeza-botones">
       <button class="boton-redondo boton-musica" aria-label="Música">♪</button>
@@ -26,9 +26,11 @@
   </header>
   <div class="mesa-modos" role="radiogroup" aria-label="Con quién">
     <button class="modo" data-modo="ia" aria-pressed="true"><b>Contra <span data-otro>Ella</span></b><small>Un jugador: juega el celular</small></button>
-    <button class="modo" data-modo="local" aria-pressed="false"><b>Los dos aquí</b><small>Se turnan el mismo celular</small></button>
+    <button class="modo" data-modo="local" aria-pressed="false"><b data-neutro="Dos aquí">Los dos aquí</b><small>Se turnan el mismo celular</small></button>
     <button class="modo" data-modo="linea" aria-pressed="false"><b>En línea</b><small>Cada uno en su celular</small></button>
+    <button class="modo" data-modo="sala" aria-pressed="false"><b>Sala con código</b><small data-neutro="Con un amigo, cada uno en su celular">Con amigos, cada uno en su celular</small></button>
   </div>
+  <button id="btn-unirme" class="boton boton-papel mesa-unirme">🔑 Unirme con código</button>
   <div class="mesa-nivel" id="mesa-nivel" role="radiogroup" aria-label="Dificultad">
     <span>Dificultad</span>
     <button data-nivel="facil" aria-pressed="false">Suave</button>
