@@ -7,6 +7,8 @@
 const { app, BrowserWindow, Menu, shell } = require('electron');
 const path = require('node:path');
 const { servir } = require('./servidor.cjs');
+// (la versión para amigos cambia el nombre en package.json al armarse: «Sala de Juegos»)
+const { productName = 'Nuestro Hogar' } = require('./package.json');
 
 /** Alto de la pantalla del juego en píxeles CSS (como un celular acostado). */
 const ALTO_CSS = 420;
@@ -25,7 +27,7 @@ function abrir(puerto) {
     minWidth: 760,
     minHeight: 400,
     backgroundColor: '#f6e3dd',
-    title: 'Nuestro Hogar',
+    title: productName,
     icon: path.join(__dirname, 'build', 'icon.png'),
     autoHideMenuBar: true,
     show: false,

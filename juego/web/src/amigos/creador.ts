@@ -48,7 +48,7 @@ const ICONO_JOYA: Record<string, string> = {
   boton: '🔘', perla: '⚪', argolla: '⭕', argolla_grande: '🟡', corazon: '❤️', estrella: '⭐', luna: '🌙', gota: '💧', flor: '🌸', cereza: '🍒', rayo: '⚡',
   diamante: '💎', perlas: '📿', cadena: '⛓️', gema: '🔮', gargantilla: '🎀', flores: '🌺', medalla: '🏅', bolitas: '🔵',
 };
-const NOMBRE_VISTA: Record<Ambiente | 'sala', string> = { estudio: '📷 Estudio', sala: '👥 En las salas', lavado: '🫧 Lavado', sangre: '🌙 Sangre' };
+const NOMBRE_VISTA: Record<Ambiente | 'sala', string> = { estudio: '📷 Estudio', sala: '👥 Salas', lavado: '🫧 Lavado', sangre: '🌙 Sangre' };
 
 export interface OpcionesCreador {
   raiz: HTMLElement;
@@ -87,8 +87,8 @@ export function abrirCreador(o: OpcionesCreador): Creador {
       <p class="am-pie-vista" hidden></p>
       <div class="am-herr">
         <button type="button" data-h="azar" title="Al azar">🎲<span>Al azar</span></button>
-        <button type="button" data-h="deshacer" title="Deshacer" disabled>↶<span>Deshacer</span></button>
-        <button type="button" data-h="pose" title="Una pose">💃<span>Pose</span></button>
+        <button type="button" data-h="deshacer" title="Deshacer" aria-label="Deshacer" disabled>↶</button>
+        <button type="button" data-h="pose" title="Una pose" aria-label="Una pose">💃</button>
         <button type="button" data-h="mas" title="Acercar">＋</button>
         <button type="button" data-h="menos" title="Alejar">－</button>
       </div>

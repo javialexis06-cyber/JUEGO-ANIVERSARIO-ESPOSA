@@ -21,10 +21,10 @@ const ALTO = 1.6;
 /** Altura y distancia de la cámara para cada encuadre (el muñeco mide ALTO). */
 const ENCUADRES: Record<Encuadre, { y: number; d: number }> = {
   cuerpo: { y: 0.82, d: 5.1 },
-  cara: { y: 1.18, d: 2.75 },
-  arriba: { y: 0.95, d: 3.4 },
-  abajo: { y: 0.5, d: 3.3 },
-  pies: { y: 0.28, d: 2.7 },
+  cara: { y: 1.12, d: 3.5 },
+  arriba: { y: 0.92, d: 3.9 },
+  abajo: { y: 0.5, d: 3.7 },
+  pies: { y: 0.3, d: 3.1 },
 };
 
 /** Poses para el botón «Pose»: [pose a, pose b (vaivén) o null, cara]. */

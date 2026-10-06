@@ -680,6 +680,7 @@ class SalaReal implements Sala {
 
   private terminar() {
     this.acabada = true;
+    anotarSalaAbierta(this.codigo, null);
     clearInterval(this.reloj);
     for (const q of this.quitarFondo) q();
     this.quitarFondo = [];
@@ -725,7 +726,10 @@ export async function crearSala(o: OpcionesSala): Promise<Sala> {
     await s.conectar();
     // Un momentico para ver si el código ya lo está usando alguien (casi nunca pasa)
     await new Promise((r) => setTimeout(r, local ? 1200 : 900));
-    if (!s.ocupado()) return s;
+    if (!s.ocupado()) {
+      anotarSalaAbierta(s.codigo, s.juego);
+      return s;
+    }
     s.salir();
   }
   throw new Error('No se pudo abrir una sala ahora. Intenta otra vez.');
@@ -749,13 +753,38 @@ export async function unirseSala(codigo: string, juego: string, yo?: OpcionesSal
     const limite = setTimeout(() => listo(null), 12000);
   });
   s.alEntrar = null;
-  if (r?.ok) return s;
+  if (r?.ok) {
+    anotarSalaAbierta(s.codigo, s.juego);
+    return s;
+  }
   s.salir();
   if (!r) throw new Error('No encontramos esa sala. Revisa el código (y que quien la creó siga adentro).');
   throw new Error(r.motivo === 'llena' ? 'La sala está llena (ya son 4).' : r.motivo === 'cerrada' ? 'Esa partida ya empezó: espera a que vuelvan a la sala.' : 'Ese código es de otro juego.');
 }
 
 export const salas: ApiSalas = { crearSala, unirseSala, yoMismo };
+
+const CLAVE_ABIERTA = 'salas-abierta';
+/** Anota (o borra, con juego null) la sala en la que está este aparato: «Invitar amigos» manda su código. */
+function anotarSalaAbierta(codigo: string, juego: string | null) {
+  try {
+    if (juego) localStorage.setItem(CLAVE_ABIERTA, JSON.stringify({ codigo, juego, t: Date.now() }));
+    else if (JSON.parse(localStorage.getItem(CLAVE_ABIERTA) ?? 'null')?.codigo === codigo) localStorage.removeItem(CLAVE_ABIERTA);
+  } catch {
+    /* sin almacenamiento */
+  }
+}
+
+/** La sala abierta en este aparato (de las últimas 3 horas), si hay. */
+export function salaAbierta(): { codigo: string; juego: string } | null {
+  try {
+    const v = JSON.parse(localStorage.getItem(CLAVE_ABIERTA) ?? 'null') as { codigo?: string; juego?: string; t?: number } | null;
+    if (v?.codigo && v.juego && Date.now() - (v.t ?? 0) < 3 * 3600e3) return { codigo: v.codigo, juego: v.juego };
+  } catch {
+    /* nada */
+  }
+  return null;
+}
 
 /**
  * ¿De qué juego es esta sala? (para «Unirme con un código» de la sala de juegos de amigos, que no sabe a qué juego
