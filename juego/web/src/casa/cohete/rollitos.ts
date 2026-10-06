@@ -1,7 +1,8 @@
 // Los rollitos de papel higiénico dorados: cientos dibujados de una sola vez (instancias), en hileras y figuras
 // (corazones, «ÉL ♥ ELLA», «TE AMO», flechas, olas, estrellas, un retrete…). Si se recoge una figura completa,
-// paga un premio.
+// paga un premio. Con un amigo (modo neutro) las palabras de la pareja se cambian por «WOW», «GOL» y «TOP».
 import * as THREE from 'three';
+import { esNeutroCohete } from './datos';
 import { Auras, Borde, DORADO } from './resaltar';
 
 /** Letras de 5 × 7 (filas de arriba a abajo). */
@@ -14,6 +15,9 @@ const LETRAS: Record<string, string[]> = {
   M: ['#...#', '##.##', '#.#.#', '#.#.#', '#...#', '#...#', '#...#'],
   O: ['.###.', '#...#', '#...#', '#...#', '#...#', '#...#', '.###.'],
   Q: ['.###.', '#...#', '#...#', '#...#', '#.#.#', '#..#.', '.##.#'],
+  G: ['.###.', '#...#', '#....', '#.###', '#...#', '#...#', '.###.'],
+  W: ['#...#', '#...#', '#...#', '#.#.#', '#.#.#', '##.##', '#...#'],
+  P: ['####.', '#...#', '#...#', '####.', '#....', '#....', '#....'],
   '♥': ['.....', '.#.#.', '#####', '#####', '.###.', '..#..', '.....'],
   ' ': ['.....', '.....', '.....', '.....', '.....', '.....', '.....'],
 };
@@ -114,6 +118,18 @@ export const FIGURAS: (() => Figura)[] = [
   () => ({ nombre: 'zigzag', puntos: Array.from({ length: 24 }, (_, i) => [i * PASO * 0.75, ((i % 8) < 4 ? i % 4 : 4 - (i % 4)) * 0.6 - 1.2] as [number, number]) }),
   () => ({ nombre: 'cuadrito', puntos: Array.from({ length: 25 }, (_, i) => [(i % 5) * PASO, Math.floor(i / 5) * PASO - 1.2] as [number, number]) }),
 ];
+
+/** Las figuras con palabras de la pareja y lo que sale en su lugar cuando juega un amigo. */
+const NEUTRAS: Record<number, () => Figura> = {
+  6: () => ({ nombre: 'WOW', puntos: texto('WOW', 0.42) }),
+  7: () => ({ nombre: 'GOL', puntos: texto('GOL', 0.45) }),
+  8: () => ({ nombre: 'TOP', puntos: texto('TOP', 0.45) }),
+};
+
+/** La figura `i` (en modo neutro, sin las palabras de la pareja). */
+export function figura(i: number): Figura {
+  return ((esNeutroCohete() && NEUTRAS[i]) || FIGURAS[i])();
+}
 
 interface Rollo {
   x: number;

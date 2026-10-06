@@ -27,7 +27,8 @@ import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } fro
 import { Mascota } from './mascota';
 import { conGenero, EVENTOS_BANO, type EventoBano, eventoDe } from './bano_frases';
 import { Bichos } from './bichos';
-import { nombreRango, progresoNuevo, rangoDe, type ProgresoCocina, type RecetaId, type ResultadoDia } from './cocina/tipos';
+import { nombreRango, progresoNuevo, rangoDe, RESTAURANTES, type ProgresoCocina, type RecetaId, type ResultadoDia } from './cocina/tipos';
+import { idAparato } from '../salas/perfil';
 import { type EstadoTele, Tele } from './tele';
 import { Patio } from './patio';
 import { PanelRecuerdos } from './recuerdos';
@@ -1100,14 +1101,13 @@ function hojaLavado(r: import('./lavado').ResultadoLavado, record: boolean, prem
 
 // ---------------------------------------------------------------------------
 // Cocinar: camina a la estufa, se concentra como un chef profesional y la cocina se vuelve un restaurante (tres
-// minijuegos al estilo de Papa's: waflería, fresas con crema y frappés). Cada uno lleva su propio progreso.
+// minijuegos al estilo de Papa's: waflería, fresas con crema y frappés). Cada uno lleva su propio progreso. Juntos
+// se cocina en una sala de hasta 4 (src/casa/cocina/sala.ts): con la pareja (la invitación le llega a la casa con el
+// código) o con amigos (comparten el código).
 // ---------------------------------------------------------------------------
-const RESTAURANTES: { id: RecetaId; nombre: string; icono: string; plato: string; texto: string }[] = [
-  { id: 'wafles', nombre: 'La Waflería', icono: '🧇', plato: 'wafle_chef', texto: 'Wafles en la plancha, toppings y jugos' },
-  { id: 'fresas', nombre: 'La Fresería', icono: '🍓', plato: 'fresas_chef', texto: 'Fresas picadas, crema batida y queso' },
-  { id: 'frappes', nombre: 'La Frapería', icono: '🥤', plato: 'frape_chef', texto: 'Frappés licuados con crema y salsas' },
-];
 let cocinando = false;
+/** Cocinar en una sala: invitando a la pareja, abriendo una para amigos o entrando a la de otro con su código. */
+type SalaCocina = { sala: 'pareja' | 'amigos' } | { sala: 'unirse'; codigo: string };
 
 function hojaCocinar() {
   if (!s) return;
@@ -1118,17 +1118,16 @@ function hojaCocinar() {
     <ul class="restaurantes">${RESTAURANTES.map((r) => {
       const p = prog[r.id];
       const rg = p ? rangoDe(p.xp) : 1;
-      return `<li><button class="restaurante" data-cocinar="${r.id}"><span class="ico-rest">${r.icono}</span><b>${r.nombre}</b><small>${r.texto}</small>
+      return `<li><button class="restaurante" data-cocinar="${r.id}"><span class="ico-rest">${r.emoji}</span><b>${r.nombre}</b><small>${r.texto}</small>
         <em>${p ? `Día ${p.dia} · ${nombreRango(rg)}` : '¡Nuevo!'}</em>${(s!.casa.inventario[r.plato] ?? 0) ? `<i>Hay ${s!.casa.inventario[r.plato]} en la despensa</i>` : ''}</button>
         ${juntos ? `<button class="restaurante-juntos" data-cocinar-juntos="${r.id}">💞 Cocinar con ${nombre(otro(yo))}</button>` : ''}</li>`;
-    }).join('')}</ul>`;
+    }).join('')}</ul>
+    <div class="fila-botones"><button class="boton boton-papel" data-cocinar-amigos>👥 Cocinar con amigos</button><button class="boton boton-papel" data-cocinar-codigo>🔑 Unirme con un código</button></div>`;
   abrirHoja(conGenero(yo, '¿Qué cocinamos, chef?'), html, { saldo: s.casa.monedas });
 }
 
-async function cocinar(receta: RecetaId, linea?: { modo: 'anfitrion' | 'invitado'; id: string }) {
+async function cocinar(receta: RecetaId, juntos?: SalaCocina) {
   if (!s || cocinando || lavandose || enCohete) return;
-  // Invitar: la invitación le llega a la casa del otro (con el enlace para entrar a la misma cocina)
-  if (linea?.modo === 'anfitrion') void s.enviar('juego', { juego: 'cocina', receta, id: linea.id }).catch(() => undefined);
   if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
   cerrarHoja();
   cocinando = true;
@@ -1158,21 +1157,38 @@ async function cocinar(receta: RecetaId, linea?: { modo: 'anfitrion' | 'invitado
     const { jugarCocina } = await modulo;
     pausaCasa = true;
     const tapar = setTimeout(() => (lienzo.style.visibility = 'hidden'), 700);
-    await jugarCocina({
-      rol: yo,
-      receta,
-      progreso: s.casa.cocina?.[yo]?.[receta] ?? progresoNuevo(),
-      pareja: { rol: otro(yo), nombre: nombre(otro(yo)) },
-      linea: linea ? { ...linea, transporte: s.modo === 'linea' ? 'supabase' : 'local', nombreOtro: nombre(otro(yo)) } : undefined,
-      guardar: async (p, dia) => {
-        await guardarCocina(receta, p, dia);
-        if (dia) {
-          ganado.monedas += dia.monedas;
-          ganado.platos += dia.platos;
-          ganado.dias++;
-        }
-      },
-    });
+    const guardar = async (r: RecetaId, p: ProgresoCocina, dia?: ResultadoDia) => {
+      await guardarCocina(r, p, dia);
+      if (dia) {
+        ganado.monedas += dia.monedas;
+        ganado.platos += dia.platos;
+        ganado.dias++;
+      }
+    };
+    const pareja = { rol: otro(yo), nombre: nombre(otro(yo)) };
+    if (!juntos) {
+      await jugarCocina({
+        rol: yo, receta, progreso: s.casa.cocina?.[yo]?.[receta] ?? progresoNuevo(), pareja, premioCasa: true, guardar: (p, dia) => guardar(receta, p, dia),
+      });
+    } else {
+      const { cocinarEnSala } = await import('./cocina/sala');
+      const sesion = s;
+      await cocinarEnSala({
+        yo: { tipo: yo, id: `${yo}-${idAparato()}`, nombre: nombre(yo), aspecto: { cuerpo: yo } },
+        rol: yo,
+        receta,
+        unirse: juntos.sala === 'unirse' ? juntos.codigo : undefined,
+        // Con la pareja: la invitación le llega a su casa con el código de la sala
+        invitar: juntos.sala === 'pareja' ? (codigo, r) => sesion.enviar('juego', { juego: 'cocina', receta: r, id: codigo }) : undefined,
+        invitado: nombre(otro(yo)),
+        progresoDe: (r) => sesion.casa.cocina?.[yo]?.[r] ?? progresoNuevo(),
+        guardar,
+        pareja,
+        premioCasa: true,
+        textoSalir: '🏠 Volver a la casa',
+        local: sesion.modo !== 'linea',
+      });
+    }
     clearTimeout(tapar);
   } finally {
     cocinando = false;
@@ -1192,7 +1208,7 @@ async function cocinar(receta: RecetaId, linea?: { modo: 'anfitrion' | 'invitado
   }
   if (ganado.dias) {
     const r = RESTAURANTES.find((x) => x.id === receta)!;
-    toast(`¡Qué chef! +${ganado.monedas} monedas${ganado.platos ? ` y ${ganado.platos} × ${ITEM[r.plato].nombre.toLowerCase()} en la despensa` : ''}`);
+    toast(`¡Qué chef! +${ganado.monedas} monedas${ganado.platos ? ` y ${ganado.platos} × ${ITEM[r.plato]?.nombre.toLowerCase() ?? 'platos de chef'} en la despensa` : ''}`);
     mascotas[yo].frase = conGenero(yo, '¡Soy todo|toda un|una chef!');
     setTimeout(() => (mascotas[yo].frase = null), 3000);
     lluviaCorazones(10);
@@ -1762,7 +1778,7 @@ function alEvento(e: Evento) {
         if (Date.now() - e.t > 3 * 60_000 || cocinando) break;
         const r = RESTAURANTES.find((x) => x.id === e.datos.receta);
         if (!r) break;
-        abrirHoja('¡A cocinar juntos!', `<p class="nota-hoja">${quien} te invita a su cocina de chef: <b>${r.nombre}</b> ${r.icono}. Cocinan el mismo día, cada uno en su celular.</p>
+        abrirHoja('¡A cocinar juntos!', `<p class="nota-hoja">${quien} te invita a su cocina de chef: <b>${r.nombre}</b> ${r.emoji}. Cocinan el mismo día, cada uno en su celular.</p>
           <div class="fila-botones"><button class="boton boton-tomate" data-cocinar-unirse="${r.id}|${String(e.datos.id ?? '')}">¡Vamos a cocinar!</button></div>`);
         break;
       }
@@ -3190,11 +3206,22 @@ function controles() {
     } else if ((b = d('[data-llevar]'))) void mandarComida(b.dataset.llevar!);
     else if ((b = d('[data-ir-tienda]'))) hojaTienda((b.dataset.irTienda || 'comida') as TipoItem);
     else if ((b = d('[data-cocinar]'))) void cocinar(b.dataset.cocinar as RecetaId);
-    else if ((b = d('[data-cocinar-juntos]'))) void cocinar(b.dataset.cocinarJuntos as RecetaId, { modo: 'anfitrion', id: `cocina-${Date.now().toString(36)}` });
+    else if ((b = d('[data-cocinar-juntos]'))) void cocinar(b.dataset.cocinarJuntos as RecetaId, { sala: 'pareja' });
     else if ((b = d('[data-cocinar-unirse]'))) {
       const [receta, id] = b.dataset.cocinarUnirse!.split('|');
       cerrarHoja();
-      void cocinar(receta as RecetaId, { modo: 'invitado', id });
+      void cocinar(receta as RecetaId, { sala: 'unirse', codigo: id });
+    } else if (d('[data-cocinar-amigos]')) {
+      // Abre una cocina para amigos: primero se escoge el restaurante (en la sala de espera se puede cambiar)
+      void import('./cocina/sala').then(async (m) => {
+        const r = await m.elegirRestaurante((x) => s?.casa.cocina?.[yo]?.[x] ?? progresoNuevo());
+        if (r) void cocinar(r, { sala: 'amigos' });
+      });
+    } else if (d('[data-cocinar-codigo]')) {
+      void import('./cocina/sala').then(async (m) => {
+        const c = await m.pedirCodigoCocina();
+        if (c) void cocinar('wafles', { sala: 'unirse', codigo: c });
+      });
     }
     else if ((b = d('[data-ir-pareja]'))) {
       cerrarHoja();

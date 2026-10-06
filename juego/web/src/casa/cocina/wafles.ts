@@ -2,7 +2,6 @@
 // se sacan doraditos o tostaditos; en «Armar» se ponen en el plato y se decoran (mantequilla, miel, arequipe,
 // frutas donde van, chispitas…) y, desde el rango 3, en «Bebidas» se sirve el jugo hasta la rayita con su hielo.
 // En pareja las waffleras y la rejilla son de los dos (uno puede estar en la plancha y el otro armando).
-import type { Rol } from '../modelo';
 import { colorCoccion, dentro, elipse, G, lineal, Masa, mezclar, oscurecer, radial, Rect, rr, sombra, texto, wafle as wafleDibujado } from './dibujo';
 import {
   Aplicador, aUV, botonBotar, botonEntregar, botonesToppings, calificarToppings, dibujarBotonesToppings, dibujarEnMano, dibujarGuia, dibujarSuperficie,
@@ -134,7 +133,8 @@ function pedido(rango: number, _dia: number, azar: () => number, inv?: Invitado)
 }
 
 let contador = 0;
-const idWafle = (rol: Rol) => (rol === 'el' ? 1 : 2) * 100000000 + ((Date.now() % 1000000) * 100 + (contador++ % 100));
+/** Ids que no chocan entre los que cocinan juntos (cada puesto de la sala con su propio rango de números). */
+const idWafle = (puesto: number) => (puesto + 1) * 100000000 + ((Date.now() % 1000000) * 100 + (contador++ % 100));
 
 // ---------------------------------------------------------------------------------------------- El wafle dibujado
 const ETAPAS = [0, 0.5, 0.72, 1];
@@ -355,7 +355,7 @@ class EstacionPlancha implements Estacion {
         m.pistaUnaVez('sacar', 'Y cuando el otro lado llegue a la rayita, tócala otra vez para sacarlo');
       } else if (p.fase === 'cocinando' && p.lado === 'b') {
         if (c.rejilla.length >= 8) return m.aviso('La rejilla está llena: bota o usa algún wafle');
-        const w: WafleHecho = { id: idWafle(m.rol), masa: p.masa!, a: Math.round(Math.min(1, p.a) * 1000) / 1000, b: Math.round(Math.min(1, p.b) * 1000) / 1000 };
+        const w: WafleHecho = { id: idWafle(m.puesto), masa: p.masa!, a: Math.round(Math.min(1, p.a) * 1000) / 1000, b: Math.round(Math.min(1, p.b) * 1000) / 1000 };
         c.rejilla.push(w);
         c.vuelos.push({ id: w.id, x: r.cx, y: r.cy, t0: m.reloj });
         Object.assign(p, planchaVacia());
@@ -980,7 +980,7 @@ function reconciliar(m: Motor) {
 export const WAFLES = {
   id: 'wafles',
   nombre: 'Waflería',
-  titulo: (rol) => `La Waflería de ${rol === 'el' ? 'Él' : 'Ella'}`,
+  titulo: (nombre) => `La Waflería de ${nombre}`,
   plato: 'wafle_chef',
   nombrePlato: 'Wafles de chef',
   icono: 'wafle_clasica_1',

@@ -4,6 +4,8 @@
 // frijoles, cámara lenta, ×2, desatascador láser, ayudante…). El viaje pasa por tramos con su propio cielo y
 // música. Al chocar cae con un paracaídas de papel y sale la pantalla del vuelo; con los rollitos se compran
 // mejoras, retretes, estelas y cascos en la tienda del retrete (que también se abre desde el cuarto de juegos).
+// Un amigo lo juega sin la casa (retrete.html): con su muñeco y sus colores, y todo en modo neutro (nada de la pareja:
+// ni la leche y el picante, ni apodos, ni recuerdos, ni banderitas de «¡Te pasé, mi amor!»).
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { clone as clonarConEsqueleto } from 'three/examples/jsm/utils/SkeletonUtils.js';
@@ -14,8 +16,8 @@ import * as fondo from '../segundo_plano';
 import { activar as activarSonido, musica, nota, rumor } from '../sonido';
 import { CUADRO, atlasParticulas, texturaHalo } from './cohete/arte';
 import {
-  type Cuentas, type IdMejora, type IdPoder, PODERES, type ProgresoCohete, TRAMOS, type TipoCosmetico, copiaProgreso, cuentasNuevas,
-  multiplicador, normalizarCohete, revisarMisiones, tramoDe, valorDe,
+  type Cuentas, type IdMejora, type IdPoder, PODERES, type ProgresoCohete, type TipoCosmetico, copiaProgreso, cuentasNuevas, multiplicador,
+  nombreTramo, normalizarCohete, ponerNeutroCohete, revisarMisiones, tramoDe, valorDe,
 } from './cohete/datos';
 import { Efectos, Propulsor } from './cohete/efectos';
 import { Escenario } from './cohete/escenario';
@@ -25,10 +27,12 @@ import { type Obst, Obstaculos } from './cohete/obstaculos';
 import { Particulas } from './cohete/particulas';
 import { Poderes } from './cohete/poderes';
 import { mostrarResultado, pintarPremioCasa, type DatosResultado, type PremioCasa } from './cohete/resultado';
-import { FIGURAS, Rollitos } from './cohete/rollitos';
+import { FIGURAS, Rollitos, figura } from './cohete/rollitos';
 import { Tienda } from './cohete/tienda';
 import type { Rol, Ropa } from './modelo';
 import { Vestuario } from './ropa';
+import { teñirModelo } from '../salas/tinte';
+import type { AspectoJugador } from '../salas/tipos';
 
 export interface Resultado {
   /** Segundos que duró el vuelo (para el récord viejo y las monedas de la casa). */
@@ -47,6 +51,7 @@ export interface Resultado {
 export type { PremioCasa };
 
 interface Opciones {
+  /** Javier o Laura; para un amigo, el cuerpo de su muñeco (el de Javier o el de Laura como base). */
   rol: Rol;
   ropa?: Ropa;
   colorPelo?: string;
@@ -62,6 +67,10 @@ interface Opciones {
   corto?: boolean;
   /** La casa da sus monedas por cada vuelo apenas termina (con el tope del día) y dice cuántas fueron. */
   premio?: (segundos: number) => Promise<PremioCasa>;
+  /** Juega un amigo (sin casa, en modo neutro): su nombre y cómo se ve. */
+  amigo?: { nombre: string; aspecto: AspectoJugador };
+  /** El botón de salir de la pantalla del vuelo (volver a la casa o a la sala de juegos). */
+  textoSalir?: string;
 }
 
 /** Lo que va diciendo en el espacio (se sabía que algún día pasaría). */
@@ -127,6 +136,41 @@ const FRASE_PODER: Record<IdPoder, Record<Rol, string>> = {
 const OTRA_VEZ: Record<Rol, string[]> = {
   el: ['¡Una más y ya!', 'Esta vez sí le gano a mi amor.', '¡Revancha, universo!', 'Ya le cogí el tiro a esto.'],
   ella: ['¡Una más y ya!', 'Ahora sí voy con toda.', '¡Revancha, universo!', 'Me quedé con ganas de más.'],
+};
+/**
+ * Modo neutro (juega un amigo): lo mismo, sin la leche, el picante, los apodos ni los recuerdos de la pareja, y sin
+ * «liviano|liviana» (no sabemos cómo le gusta que le digan).
+ */
+const NEUTRO = {
+  frases: [
+    '¡¿Qué le echaron a ese almuerzo?!',
+    'Siempre supe que algún día saldría como un cohete del baño.',
+    '¡Houston, tenemos un problema… estomacal!',
+    '¿Esto cuenta como viaje espacial? Quiero el certificado.',
+    'Nunca más el corrientazo de la esquina. NUNCA.',
+    '¿Alguien tiene papel higiénico en el espacio?',
+    '¡Qué vista tan bonita… qué vergüenza tan grande!',
+    'Si esto sale en las noticias, no me conocen.',
+    'Esto no estaba en el presupuesto del mes.',
+    '¡Guárdenme la comida, ya vuelvo! Creo.',
+    '¡Mamá, mírame! Sin manos… y sin dignidad.',
+    'Esa bandeja paisa venía con propulsión incluida.',
+  ],
+  tramo: [
+    '¡Chao, barrio! ¡Que nadie me vea!',
+    'Desde aquí la Tierra se ve chiquitica… como mi dignidad.',
+    '¿La Luna es de queso? Mejor no la pruebo, por si acaso.',
+    '¿Habrá baños en Marte? Pregunto por un amigo.',
+    'Esto está más lleno que el TransMilenio en hora pico.',
+    '¡Qué colores! Parece una discoteca espacial.',
+    '¡Todo rosado! Esto parece un algodón de azúcar gigante.',
+  ],
+  poder: {
+    escudo: '¡Burbujita protectora!', iman: '¡Vengan, rollitos!', turbo: '¡Esos frijoles no perdonan!', lenta: 'Todo va como internet de pueblo…',
+    doble: '¡Todo me sale doble!', laser: '¡Desatascador láser, a la orden!', mini: '¡Un retretico ayudante!', hormiga: '¡Modo chiquitico!',
+    ambientador: '¡Aroma a lavanda, por fin!', paca: '¡Papel para todo el año!',
+  } as Record<IdPoder, string>,
+  otraVez: ['¡Una más y ya!', '¡Revancha, universo!', 'Ya le cogí el tiro a esto.', 'Ahora sí voy con toda.', 'Me quedé con ganas de más.'],
 };
 const CASI = ['¡Uy, casi!', '¡Esa estuvo cerca!', '¡Ay, mi retrete!', '¡Por un pelito!', '¡Uf!', '¡Me peinó!'];
 const FIN = ['¡NOOOO!', '¡Me voooy!', '¡Mi baño!', '¡Mi retreteee!'];
@@ -247,8 +291,15 @@ class RetreteEspacial {
   private vuelosSesion = 0;
   private monedasSesion = 0;
 
+  /** Juega un amigo: nada de la pareja (frases, banderitas, figuras ni la galaxia del amor). */
+  private readonly neutro: boolean;
+  /** Los materiales con los colores del amigo (se sueltan al final). */
+  private tintes: THREE.Material[] = [];
+
   constructor(private o: Opciones, private listo: (r: Resultado) => void) {
     cohete.actual = this;
+    this.neutro = !!o.amigo;
+    ponerNeutroCohete(this.neutro);
     this.p = copiaProgreso(normalizarCohete(o.progreso));
     this.inicioMisiones = this.p.misiones.map((m) => m.avance);
     this.record = this.p.mejor;
@@ -316,6 +367,8 @@ class RetreteEspacial {
       if (p.puesto.casco !== 'ninguno') delete ropa.cabeza;
       await this.vestuario.aplicar(ropa, this.o.colorPelo).catch(() => undefined);
     }
+    // El amigo con sus colores (piel, pelo, camiseta, pantalón y zapatos) sobre el muñeco que escogió
+    if (this.o.amigo && this.muneco.p.modelo) this.tintes = teñirModelo(this.muneco.p.modelo, this.o.amigo.aspecto);
     this.soporte.add(this.muneco.p.grupo);
     this.muneco.ponerEn(0, 0.02, 0);
     await this.ponerCasco(p.puesto.casco);
@@ -346,7 +399,7 @@ class RetreteEspacial {
       lluvia: (si) => {
         if (si) {
           this.aviso('¡Lluvia de meteoritos!');
-          this.decir(this.o.rol === 'el' ? '¡Está lloviendo piedra!' : '¡Ay no, granizo espacial!', 2.4);
+          this.decir(this.neutro || this.o.rol === 'el' ? '¡Está lloviendo piedra!' : '¡Ay no, granizo espacial!', 2.4);
           rumor(1.2, 600, 0.06, 0, 0.7, 200);
         } else this.decir('¡Sobreviví a la lluvia!', 1.8);
       },
@@ -687,7 +740,7 @@ class RetreteEspacial {
     this.tFase = 0;
     this.meta.set(this.nave.position.x, this.nave.position.y);
     this.capa.querySelector('.cohete-hud')!.removeAttribute('hidden');
-    this.decir(elegir(FRASES[this.o.rol]), 3.2);
+    this.decir(this.frase(), 3.2);
     this.caraBase = 'nervioso';
     this.cara('nervioso', 99);
     this.revivir = valorDe(this.p, 'revivir');
@@ -711,7 +764,7 @@ class RetreteEspacial {
     this.mostrarTramo(0);
     // Las marcas del récord propio y de la pareja
     if (this.record > 150) this.marca(this.record, 'Tu récord', '#FFD23F');
-    if ((this.o.recordPareja ?? 0) > 150) this.marca(this.o.recordPareja!, this.o.rol === 'el' ? 'Récord de Ella' : 'Récord de Él', '#FF7FB0');
+    if (!this.neutro && (this.o.recordPareja ?? 0) > 150) this.marca(this.o.recordPareja!, this.o.rol === 'el' ? 'Récord de Ella' : 'Récord de Él', '#FF7FB0');
   }
 
   private juego(dt: number, lento: number) {
@@ -808,7 +861,7 @@ class RetreteEspacial {
       [784, 988, 1175, 1568].forEach((f, i) => nota(f, 0.2, i * 0.08, 'triangle', 0.06));
     }
     const rp = this.o.recordPareja ?? 0;
-    if (!this.pasoPareja && rp > 150 && metros > rp) {
+    if (!this.neutro && !this.pasoPareja && rp > 150 && metros > rp) {
       this.pasoPareja = true;
       this.decir(this.o.rol === 'el' ? '¡Te pasé, mi amor! 😏' : '¡Chao, mi amor! Te dejé atrás 💅', 2.6);
       this.fx.estallido(n.x, n.y + 1, CUADRO.corazon, ['#FF4F7E', '#FF8FB1'], 18, 5, 0.45);
@@ -819,7 +872,7 @@ class RetreteEspacial {
     // Frases de vez en cuando
     this.proxFrase -= dt;
     if (this.proxFrase <= 0) {
-      this.decir(elegir(FRASES[this.o.rol]), 3);
+      this.decir(this.frase(), 3);
       this.proxFrase = rnd(9, 14);
     }
     if (this.carasHasta > 0 && this.t > this.carasHasta) {
@@ -831,10 +884,10 @@ class RetreteEspacial {
 
   private figuraAlAzar(tramo: number) {
     // En la galaxia del amor salen más corazones y mensajes
-    if (tramo >= 6 && Math.random() < 0.5) return FIGURAS[elegir([4, 5, 6, 7, 8])]();
+    if (tramo >= 6 && Math.random() < 0.5) return figura(elegir([4, 5, 6, 7, 8]));
     const r = Math.random();
-    if (r < 0.45) return FIGURAS[Math.floor(Math.random() * 4)]();
-    return FIGURAS[Math.floor(Math.random() * FIGURAS.length)]();
+    if (r < 0.45) return figura(Math.floor(Math.random() * 4));
+    return figura(Math.floor(Math.random() * FIGURAS.length));
   }
 
   /** Dónde está la nave para los choques (un círculo en el centro del personaje sentado en el retrete). */
@@ -907,7 +960,7 @@ class RetreteEspacial {
     }
     if (o.tipo === 'cometa' && !this.turboActivo()) this.decir('¡Esquivé el cometa!', 1.5);
     if (o.tipo === 'agujero') {
-      this.decir(this.o.rol === 'el' ? '¡Casi me espaguetifico!' : '¡Me salvé del agujero negro!', 2);
+      this.decir(this.o.rol === 'el' || this.neutro ? '¡Casi me espaguetifico!' : '¡Me salvé del agujero negro!', 2);
       this.texto3d('¡Te escapaste del agujero negro!', '#C3A6FF');
     }
   }
@@ -945,7 +998,7 @@ class RetreteEspacial {
     this.cuentas.poderes++;
     this.sinPoder = 0;
     this.aviso(info.grito);
-    this.decir(FRASE_PODER[id][this.o.rol], 2);
+    this.decir(this.neutro ? NEUTRO.poder[id] : FRASE_PODER[id][this.o.rol], 2);
     [784, 988, 1318, 1568].forEach((f, i) => nota(f, 0.14, i * 0.05, 'triangle', 0.05));
     const n = this.nave.position;
     switch (id) {
@@ -1101,7 +1154,7 @@ class RetreteEspacial {
     this.resultado = {
       metros, puntaje: Math.floor(this.puntaje), rollitos: this.rollitosVuelo, extraTriple: extra, record, recordPuntaje,
       segundos: this.tJuego, mult: this.multVuelo, misionesAntes: misiones, cumplidas: this.cumplidas, subio: r.subio, nivelAntes: antesNivel,
-      progreso: p, rol: this.o.rol, recordPareja: this.o.recordPareja ?? 0, casa: null,
+      progreso: p, rol: this.o.rol, recordPareja: this.neutro ? 0 : this.o.recordPareja ?? 0, casa: null, textoSalir: this.o.textoSalir,
     };
     // Las monedas de la casa se dan apenas aterriza (si se cierra la app en la pantalla del vuelo, no se pierden)
     const res = this.resultado;
@@ -1239,7 +1292,7 @@ class RetreteEspacial {
     (this.capa.querySelector('.ch-mision') as HTMLElement).hidden = true;
     this.durIntro = 1.8;
     this.despegue('¡Otra vez!');
-    this.decir(elegir(OTRA_VEZ[this.o.rol]), 2.2);
+    this.decir(elegir(this.neutro ? NEUTRO.otraVez : OTRA_VEZ[this.o.rol]), 2.2);
   }
 
   private soltarMarca(g: THREE.Group) {
@@ -1309,6 +1362,7 @@ class RetreteEspacial {
     for (const q of this.quitarFondo) q();
     this.musica.detener();
     musica.callar(false);
+    ponerNeutroCohete(false);
     window.removeEventListener('resize', this.ajustar);
     window.removeEventListener('keydown', this.tecla);
     window.removeEventListener('keyup', this.tecla);
@@ -1339,6 +1393,8 @@ class RetreteEspacial {
     this.escenario?.liberar();
     this.modelos?.liberar();
     this.vestuario?.liberar();
+    for (const m of this.tintes) m.dispose();
+    this.tintes = [];
     for (const m of this.cascoMallas) m.removeFromParent();
     liberarEsqueletos(...this.cascoMallas);
     liberarEsqueletos(this.muneco.p.grupo);
@@ -1451,12 +1507,12 @@ class RetreteEspacial {
     this.musica.tramo(i);
     const t = this.capa.querySelector('.cohete-tramo') as HTMLElement;
     t.querySelector('small')!.textContent = i === 0 ? 'Despegando de' : `Tramo ${i + 1}`;
-    t.querySelector('b')!.textContent = TRAMOS[i].nombre;
+    t.querySelector('b')!.textContent = nombreTramo(i);
     t.classList.remove('sale');
     void t.offsetWidth;
     t.classList.add('sale');
     if (anterior >= 0) {
-      this.decir(FRASES_TRAMO[this.o.rol][i], 3);
+      this.decir((this.neutro ? NEUTRO.tramo : FRASES_TRAMO[this.o.rol])[i], 3);
       this.proxFrase = 8;
       nota(523, 0.3, 0, 'sine', 0.05);
       nota(784, 0.4, 0.12, 'sine', 0.05);
@@ -1511,6 +1567,11 @@ class RetreteEspacial {
       bucle: true,
     });
     this.carasHasta = seg < 90 ? this.t + seg : 0;
+  }
+
+  /** Una frase al azar para el vuelo (la del modo neutro si juega un amigo). */
+  private frase() {
+    return elegir(this.neutro ? NEUTRO.frases : FRASES[this.o.rol]);
   }
 
   private tGlobo = 0;
@@ -1661,6 +1722,19 @@ export const cohete: { actual: RetreteEspacial | null } = { actual: null };
   dios: (si = true) => cohete.actual && (cohete.actual.dios = si),
   boton: (sel: string) => cohete.actual?.pruebaBoton(sel),
 };
+
+/**
+ * Para las pruebas de amigos: todo lo de la pareja que el modo neutro esconde (las frases propias de Javier y Laura,
+ * las palabras de las figuras, la galaxia del amor y las banderitas de la pareja). Un amigo no debe ver nada de esto.
+ */
+export function textosDeLaPareja(): string[] {
+  const neutras = new Set<string>([...NEUTRO.frases, ...NEUTRO.tramo, ...Object.values(NEUTRO.poder), ...NEUTRO.otraVez]);
+  const todas = [
+    ...FRASES.el, ...FRASES.ella, ...FRASES_TRAMO.el, ...FRASES_TRAMO.ella, ...OTRA_VEZ.el, ...OTRA_VEZ.ella,
+    ...Object.values(FRASE_PODER).flatMap((f) => [f.el, f.ella]),
+  ];
+  return [...new Set(todas.filter((t) => !neutras.has(t))), 'ÉL ♥ ELLA', 'TE AMO', 'TQM', 'La galaxia del amor', 'Récord de Ella', 'Récord de Él', 'Le ganaste'];
+}
 
 /** Empieza a cargar los modelos del vuelo (mientras el personaje va al baño). */
 export function precargarCohete() {

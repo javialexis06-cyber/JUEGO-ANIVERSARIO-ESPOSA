@@ -97,6 +97,15 @@ export function frasePareja(rol: Rol, receta: RecetaId, tono: Tono, azar = Math.
   return l[Math.floor(azar() * l.length)];
 }
 
+/** Para las pruebas de amigos: todo lo que dice la pareja cuando llega a comer (un amigo no debe ver nada de esto). */
+export function textosDeLaPareja(): string[] {
+  const l = (r: Record<string, string[]>) => Object.values(r).flat();
+  return [
+    ...Object.values(SALUDOS_PAREJA).flatMap(l), ...Object.values(REACCIONES_PAREJA).flatMap(l),
+    ...Object.values(FAVORITO).flatMap((f) => Object.values(f ?? {})), 'hecho con amor', 'en pareja',
+  ];
+}
+
 export const FRASES: Record<'encantado' | 'feliz' | 'normal' | 'bravo' | 'apurado', string[]> = {
   encantado: ['¡Uy, qué delicia!', '¡Esto sí es de chef!', '¡Me quedó sonando!', '¡Diez de diez!', '¡Está buenísimo, parce!', '¡Qué cosa tan rica!', '¡Vuelvo mañana!', '¡Ave María, qué belleza!'],
   feliz: ['¡Muy rico, gracias!', 'Rico, rico', 'Me gustó mucho', '¡Qué bueno!', 'Muy bien hecho', '¡Bien sabroso!'],
@@ -105,9 +114,12 @@ export const FRASES: Record<'encantado' | 'feliz' | 'normal' | 'bravo' | 'apurad
   apurado: ['¿Ya casi?', 'Tengo hambre…', '¿Se demora mucho?', 'Mmm…', 'Uy, ¿y mi pedido?', 'Se me va a hacer tarde…'],
 };
 
-/** Los invitados de un día: más a medida que suben los días, y los nuevos aparecen con el rango. */
-export function invitadosDelDia(dia: number, rango: number, pareja: Invitado, azar: () => number): Invitado[] {
-  const n = Math.min(10, 2 + Math.ceil(dia * 0.55));
+/**
+ * Los invitados de un día: más a medida que suben los días, y los nuevos aparecen con el rango. `extra`: cocinando de
+ * a tres o cuatro vienen más. La pareja (si viene: solo Javier y Laura sin amigos) llega cada tres días.
+ */
+export function invitadosDelDia(dia: number, rango: number, pareja: Invitado | null, azar: () => number, extra = 0): Invitado[] {
+  const n = Math.min(10 + extra, 2 + Math.ceil(dia * 0.55) + extra);
   const posibles = INVITADOS.filter((i) => i.desde <= rango && !i.especial);
   // Sin repetir hasta que ya hayan venido todos (y nunca el mismo dos veces seguidas)
   const lista: Invitado[] = [];
@@ -120,11 +132,11 @@ export function invitadosDelDia(dia: number, rango: number, pareja: Invitado, az
   // El crítico llega cada cinco días (cuando ya se lo ganó) y la pareja cada tres, de últimos
   const critico = INVITADOS.find((i) => i.especial === 'critico')!;
   if (rango >= critico.desde && dia % 5 === 0) lista[lista.length - 1] = critico;
-  if (dia % 3 === 0 || dia === 2) lista.splice(Math.max(1, lista.length - 1), 0, pareja);
+  if (pareja && (dia % 3 === 0 || dia === 2)) lista.splice(Math.max(1, lista.length - 1), 0, pareja);
   return lista;
 }
 
 /** El invitado por su id (también la pareja). */
-export function invitadoPorId(id: string, pareja: Invitado): Invitado {
-  return id === pareja.id ? pareja : INVITADOS.find((i) => i.id === id) ?? INVITADOS[0];
+export function invitadoPorId(id: string, pareja: Invitado | null): Invitado {
+  return pareja && id === pareja.id ? pareja : INVITADOS.find((i) => i.id === id) ?? INVITADOS[0];
 }

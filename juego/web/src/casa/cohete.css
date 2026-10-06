@@ -471,7 +471,7 @@
 .cr-nivel b { font: 700 18px var(--display); }
 .cr-nivel span { font: 800 12px var(--texto); }
 .cr-tarjeta footer { display: flex; gap: 7px; margin-top: 8px; flex: none; }
-.cr-tarjeta footer .cb-boton { flex: 1 1 0; min-width: 0; padding: 11px 8px; font-size: 14px; white-space: nowrap; }
+.cr-tarjeta footer .cb-boton { flex: 1 1 0; min-width: 0; padding: 11px 8px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cr-tarjeta footer .cr-otra { flex-grow: 1.45; font-size: 15px; animation: cr-otra 1.6s ease-in-out infinite 2.4s; }
 @keyframes cr-otra { 0%, 70%, 100% { scale: 1; } 80% { scale: 1.06; } 90% { scale: 0.98; } }
 /* Las monedas de la casa por el vuelo (escasas: con tope por día) */

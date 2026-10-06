@@ -1,0 +1,74 @@
+/* Lo común de los juegos que se abren sin la casa (retrete.html y cocina.html). */
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+body.suelto-retrete {
+  background: radial-gradient(120% 90% at 30% 100%, #2b2f7a 0%, #14163a 55%, #090a1e 100%);
+}
+body.suelto-cocina {
+  background: #231a16;
+}
+
+/* Pantalla de carga propia (antes de que el juego ponga la suya) */
+.suelto-carga {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 14px;
+  color: #fff3d6;
+  font: 700 18px var(--texto, 'Nunito', system-ui, sans-serif);
+  z-index: 1;
+  transition: opacity 0.4s;
+}
+.suelto-carga b {
+  font: 600 34px var(--display, 'Fredoka', system-ui, sans-serif);
+  letter-spacing: 0.02em;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+}
+.suelto-carga i {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 5px solid rgba(255, 243, 214, 0.25);
+  border-top-color: #ffd23f;
+  animation: suelto-gira 0.9s linear infinite;
+}
+.suelto-carga.fuera {
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes suelto-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.suelto-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  max-width: min(92vw, 560px);
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(30, 20, 14, 0.92);
+  color: #fff3d6;
+  font: 800 15px var(--texto, 'Nunito', system-ui, sans-serif);
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 100;
+  animation: suelto-aviso 0.3s ease-out;
+}
+@keyframes suelto-aviso {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+}

@@ -19,7 +19,8 @@
     <!--
       Página de pruebas de la cocina de chef (solo en desarrollo: no entra a la APK).
       /scripts/cocina-prueba.html?rol=el&receta=wafles&xp=0&dia=1
-      En pareja: &linea=anfitrion|invitado&id=prueba&transporte=local|supabase
+      Juntos en una sala: &sala=crear (abre una; el código queda en window.__codigo) o &sala=ABCDE (entra a esa).
+      Con &salas=local las salas van entre pestañas; si no, por el Supabase (en las pruebas, el de mentiras).
       Lo que se guarda queda en window.__guardados.
     -->
     <script type="module">
@@ -28,33 +29,56 @@
       import '@fontsource/nunito/latin-800.css';
       import { activar } from '/src/sonido';
       import { jugarCocina } from '/src/casa/cocina/index';
+      import { cocinarEnSala } from '/src/casa/cocina/sala';
       import { progresoNuevo } from '/src/casa/cocina/tipos';
 
       const q = new URLSearchParams(location.search);
       const rol = q.get('rol') === 'ella' ? 'ella' : 'el';
       const otro = rol === 'el' ? 'ella' : 'el';
+      const nombres = { el: 'Javier', ella: 'Laura' };
       const receta = q.get('receta') ?? 'wafles';
       const progreso = { ...progresoNuevo(), xp: Number(q.get('xp') ?? 0), dia: Number(q.get('dia') ?? 1), propinas: Number(q.get('propinas') ?? 0) };
       if (q.get('mejoras')) for (const par of q.get('mejoras').split(',')) {
         const [k, v] = par.split(':');
         progreso.mejoras[k] = Number(v);
       }
+      const progresos = {};
       window.__guardados = [];
       addEventListener('pointerdown', () => activar(), { once: true });
-      const modo = q.get('linea');
       window.__cocinaCerrada = false;
-      jugarCocina({
-        rol,
-        receta,
-        progreso,
-        pareja: { rol: otro, nombre: otro === 'el' ? 'Él' : 'Ella' },
-        guardar: async (p, dia) => {
-          window.__guardados.push({ p, dia });
-        },
-        linea: modo === 'anfitrion' || modo === 'invitado'
-          ? { modo, id: q.get('id') ?? 'prueba', transporte: q.get('transporte') === 'supabase' ? 'supabase' : 'local', nombreOtro: otro === 'el' ? 'Él' : 'Ella' }
-          : undefined,
-      }).then(() => (window.__cocinaCerrada = true));
+      const sala = q.get('sala');
+      // (el código de la sala, para que la prueba se lo pase al otro celular)
+      new MutationObserver(() => {
+        const c = document.querySelector('.se-codigo')?.getAttribute('aria-label');
+        if (c) window.__codigo = c.replace(/^Código /, '').replace(/ /g, '');
+      }).observe(document.body, { childList: true, subtree: true });
+      const fin = sala
+        ? cocinarEnSala({
+            yo: { tipo: rol, id: `${rol}-prueba`, nombre: nombres[rol], aspecto: { cuerpo: rol } },
+            rol,
+            receta,
+            unirse: sala === 'crear' ? undefined : sala,
+            progresoDe: (r) => progresos[r] ?? (r === receta ? progreso : progresoNuevo()),
+            guardar: async (r, p, dia) => {
+              progresos[r] = p;
+              window.__guardados.push({ r, p, dia });
+            },
+            pareja: { rol: otro, nombre: nombres[otro] },
+            premioCasa: true,
+            textoSalir: '🏠 Volver a la casa',
+            local: q.get('salas') === 'local',
+          })
+        : jugarCocina({
+            rol,
+            receta,
+            progreso,
+            pareja: { rol: otro, nombre: nombres[otro] },
+            premioCasa: true,
+            guardar: async (p, dia) => {
+              window.__guardados.push({ p, dia });
+            },
+          });
+      fin.then(() => (window.__cocinaCerrada = true));
     </script>
   </body>
 </html>

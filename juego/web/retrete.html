@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#14163a">
+<title>Retrete espacial</title>
+<!-- Página de la sala de juegos de amigos: el retrete espacial sin la casa. Javier y Laura lo juegan desde la casa
+     (con su progreso de verdad): si este aparato no está en modo amigo, se va a la casa (src/salas/perfil.ts) -->
+<script>try{var a=JSON.parse(localStorage.getItem('nuestro-hogar-amigo')||'null');if(!(a&&a.activo!==false&&a.nombre))location.replace('./index.html')}catch(e){location.replace('./index.html')}</script>
+</head>
+<body class="suelto-retrete">
+<div class="suelto-carga" aria-live="polite"><i></i><b>Retrete espacial</b><span>Prendiendo motores…</span></div>
+<script type="module" src="./src/sueltos/retrete.ts"></script>
+</body>
+</html>

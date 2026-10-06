@@ -109,9 +109,10 @@ export default defineConfig(({ mode, command }) => {
         input: amigos
           ? Object.fromEntries(PAGINAS_AMIGOS.map((p) => [p.replace(/\.html$/, ''), resolve(raiz, p)]))
           : {
-            // La casa (index.html, el juego principal) y los minijuegos con página propia
+            // La casa (index.html, el juego principal), los minijuegos con página propia y los que se abren sin la casa
+            // desde la sala de juegos de amigos (retrete.html, cocina.html)
             casa: resolve(raiz, 'index.html'), super: resolve(raiz, 'super.html'), puertas: resolve(raiz, 'puertas.html'), mesa: resolve(raiz, 'mesa.html'),
-            amigos: resolve(raiz, 'amigos.html'), sangre: resolve(raiz, 'sangre.html'),
+            amigos: resolve(raiz, 'amigos.html'), sangre: resolve(raiz, 'sangre.html'), retrete: resolve(raiz, 'retrete.html'), cocina: resolve(raiz, 'cocina.html'),
           },
       },
     },
