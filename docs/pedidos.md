@@ -18,6 +18,15 @@ pulido el repositorio».
      que se tiene** (armas y mejoras, con qué evoluciona cada una) para hacer las evoluciones bien.
    - Sangre y Ceniza: mapas **mucho más detallados** en calidad alta (para el S24 Ultra de Laura y el computador de
      Javier); la calidad de hoy queda como «baja» para celulares menos potentes.
+   - **Súper Manía, volver a algo más parecido al original** (Javier: «siento que dañé el juego»):
+     - sin los estantes «de cara y cara» (de dos caras);
+     - al subir de nivel no se pierde nada: el súper conserva los estantes y todo lo del primero y se vuelve más
+       grande (se amplía el mismo local en vez de empezar en otro);
+     - dificultad parecida a la del juego original;
+     - en ciertos días se desbloquean recuerdos románticos (cartas hablando del pasado y demás).
+   - **Que nada romántico se repita entre juegos**: revisar todas las cartas, recuerdos y eventos (Cien Puertas, la
+     bañera y la cama, las cartas de amor de Lavarse la cara, el súper, los mimos, la mesa…) para que cada juego tenga
+     situaciones distintas. Si se acaban las ideas, pedirle a Javier más historias (él ofreció contar más).
 3. **Repositorio pulido** en GitHub: sin cosas obsoletas, README y CLAUDE.md al día (se hizo una primera limpieza; se
    sigue cuidando en cada cambio).
 
