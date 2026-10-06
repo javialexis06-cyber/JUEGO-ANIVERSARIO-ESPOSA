@@ -1,7 +1,7 @@
 # La pareja: apodos, gustos y anécdotas
 
 Lo que Él contó para que los textos, las escenas y los minijuegos se sientan de ellos. Se usa junto con la
-historia y los 20 recuerdos de [`cien-puertas.md`](cien-puertas.md) y el guion de [`guion-voces.md`](guion-voces.md).
+historia y los 20 recuerdos de [`cien-puertas.md`](en-obra/cien-puertas.md) y el guion de [`guion-voces.md`](en-obra/guion-voces.md).
 Es una sorpresa: nada de esto se le pregunta a Ella.
 
 ## Cómo se llaman

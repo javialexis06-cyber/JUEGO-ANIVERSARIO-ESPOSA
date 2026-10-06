@@ -1,4 +1,4 @@
-// Cocinar juntos, de 2 a 4, cada uno en su celular, sobre las salas (src/salas/, docs/salas.md): Javier y Laura,
+// Cocinar juntos, de 2 a 4, cada uno en su celular, sobre las salas (src/salas/, docs/sistemas/salas.md): Javier y Laura,
 // o con amigos. El anfitrión (quien abrió la sala) lleva la verdad del día: los invitados, los tiquetes, el reloj,
 // las calificaciones y las propinas. Lo que se cocina (cada plato de un tiquete y cada máquina: waffleras, rejilla,
 // batidoras, licuadoras) es un «objeto» con versión que cualquiera puede cambiar: el que lo cambia sube la versión

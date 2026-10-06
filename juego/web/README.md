@@ -1,63 +1,44 @@
-# Nuestro Hogar (con el minijuego Súper Manía) · web y Android
+# Nuestro Hogar · el juego (web, Android y computador)
 
-Dos páginas hechas con Three.js a partir de los modelos de Blender:
+Vite + TypeScript + three.js, empacado con Capacitor (Android) y Electron (`../escritorio/`). Las reglas de trabajo,
+cómo se prueba y las trampas conocidas están en el [`CLAUDE.md`](../../CLAUDE.md) de la raíz; cómo funciona cada parte, en
+[`docs/sistemas/`](../../docs/sistemas/).
 
-- **`index.html` → Nuestro Hogar**, el juego principal: la mascota de pareja (ver [`docs/nuestro-hogar.md`](../../docs/nuestro-hogar.md)).
-  Código en `src/casa/`: `modelo.ts` (necesidades y datos), `catalogo.ts` (tienda), `sincro.ts` (Supabase o local),
-  `escena_casa.ts` (cuartos y decoración), `mascota.ts` (Él y Ella: acciones, caras y mimos), `ui_casa.ts` y `main.ts`.
-- **`super.html` → Súper Manía en Pareja**, el minijuego de la tiendita (25 días). Un tercio de la ganancia de cada día
-  pasa a la casa como sueldo.
+## Páginas
 
-Del minijuego:
+| Página | Código | Qué es |
+|---|---|---|
+| `index.html` | `src/casa/` | La casa (el juego principal). Con un perfil de amigo, manda a `amigos.html`. |
+| `super.html` | `src/*.ts` | Súper Manía (en pareja, en sala de hasta 4 o con amigos). |
+| `puertas.html` | `src/puertas/` | Cien Puertas. |
+| `mesa.html` | `src/mesa/` | Juegos de mesa (Dados, Mancala, Puntos y Cajas, Parchís). |
+| `sangre.html` | `src/sangre/` | Sangre y Ceniza. |
+| `amigos.html` | `src/amigos/` | La sala de juegos de los amigos (creador de personajes y salas). |
+| `retrete.html`, `cocina.html` | `src/sueltos/` | El retrete espacial y la cocina sin la casa (para amigos). |
 
-- Números de balance: `src/balance.ts` (capacidades, tiempos, clientes, mejoras, ayudas).
-- Problemas del día: `src/problemas.ts` (ladrón, niña traviesa, basura, charcos, productos caídos).
-- Ayudantes: `src/ayudantes.ts` (cajera, reponedor, aseo, guardia).
-- Música y efectos sintetizados: `src/sonido.ts`.
-- Noticias del Diario del Barrio y metas: `juego/datos/generar_niveles.py` → `public/datos/niveles.json`.
+## Comandos
 
 ```bash
-npm install
-npm run dev                         # casa en http://localhost:5173 y súper en /super.html
-npm run build                       # revisa tipos y arma dist/
-node scripts/empaquetar-artefacto.mjs   # versión para publicar como enlace (artefacto/)
-node scripts/probar.mjs [url/super.html] [nivel] [carpeta] [ancho]x[alto] [partida.json]   # partida automática del súper (usa ?bot)
-node scripts/probar-casa.mjs [url] [carpeta] [ancho]x[alto]   # la casa con Él y Ella en dos pestañas (modo local)
-node scripts/probar-acciones.mjs [url] [carpeta]              # comer, tele, sofá y clóset, con capturas
+npm ci
+npm run dev              # http://localhost:5173 y las demás páginas
+npx tsc --noEmit -p .    # tipos
+npx vite build           # versión de la pareja → dist/
+npm run build:amigos     # versión para amigos («Sala de Juegos») → dist-amigos/, revisada con verificar-amigos.mjs
+npm run optimizar        # modelos de modelos-crudos/ → public/modelos/
 ```
 
-En la casa, `?rol=el|ella&local=1` entra directo sin la bienvenida y `&rapido=N` acelera los pasos (pruebas).
+Las pruebas con Playwright están en `scripts/probar-*.mjs` (cada una dice arriba cómo se usa).
 
+## Versiones que se publican
 
-## Modelos
+GitHub Actions (`.github/workflows/apk.yml`) compila en cada cambio de `juego/web/` y publica en Releases:
+`NuestroHogar.apk` y `NuestroHogar.exe` (la pareja) y `NuestroHogar-Amigos.apk` y `NuestroHogar-Amigos.exe` (amigos,
+con `android-amigos/` y `../escritorio/build-amigos/`). La más reciente siempre está en
+`https://github.com/javialexis06-cyber/juego-aniversario-esposa/releases/latest/download/<archivo>`.
 
-1. Exportar desde Blender: `python3 personajes/blender/exportar_glb.py juego/web/modelos-crudos animados,animados2,productos,vitrinas,letreros,utileria,utileria2,tienda,iconos`
-   y para la casa `pareja,casa,regalos` (Él y Ella con las poses de mascota y sus caras, los cuatro cuartos con `casa.json`,
-   regalos y decoración con sus íconos). Los personajes van con esqueleto y una animación por pose.
-2. Optimizar: `npm run optimizar` → `public/modelos/` (meshopt, simplificación guiada por el error máximo, sin porcentaje fijo).
-   `SOLO='^(casa_|regalo_|deco_)' npm run optimizar` optimiza solo esos archivos.
-   `PLANO=1 npm run optimizar` genera `public/modelos-plano/`, la copia sin meshopt para navegadores que bloquean WebAssembly.
-
-`modelos-crudos/` y `public/modelos-plano/` no se suben al repositorio (se regeneran).
-
-## Aspecto
-
-- Luz de ambiente (RoomEnvironment), sombras suaves y oclusión ambiental (N8AO) para acercarse a Cycles.
-- Tono AgX + `saturate/contrast` en el lienzo para parecerse al «AgX Medium High Contrast» de los renders.
-- El piso de baldosas se redibuja en el juego con los datos del material de Blender (`extras.baldosa`) y los colores medidos en el render.
-- Si el celular no sostiene ~30 cuadros por segundo, se apaga la oclusión y se baja la resolución solo.
-
-## App de Android (APK)
-
-El proyecto de Android está en `android/` (Capacitor: el mismo juego web dentro de una app).
-GitHub Actions (`.github/workflows/apk.yml`) compila la APK en cada cambio de `juego/web/` y la publica en
-**Releases**; la más reciente siempre está en
-`https://github.com/javialexis06-cyber/juego-aniversario-esposa/releases/latest/download/NuestroHogar.apk`.
-
-- La app abre la casa; desde Menú → Minijuegos se entra al súper y el botón «atrás» del menú del súper vuelve a la casa.
-- La app va en horizontal, a pantalla completa y sin apagar la pantalla; en el súper el botón «atrás» pausa el día.
-- El servidor de la pareja (Supabase) se pone en `src/casa/servidor.ts`, en las variables del repositorio
-  `SUPABASE_URL` y `SUPABASE_ANON_KEY` (las usa la compilación), o dentro de la app en Menú → Ajustes.
-- Se firma con la clave de depuración estándar de Android (`android/app/debug.keystore`, pública por diseño) para que
-  cada versión se instale encima de la anterior sin perder el progreso. Para Play Store se usaría otra clave, privada.
-- Compilar a mano (con Android SDK): `npm run build && npx cap sync android && cd android && ./gradlew assembleDebug`.
+- La app va en horizontal, a pantalla completa y sin apagar la pantalla.
+- El servidor (Supabase) va en `src/casa/servidor.ts` o en las variables del repositorio `SUPABASE_URL` y
+  `SUPABASE_ANON_KEY`.
+- Se firma con la clave de depuración de Android (`android/app/debug.keystore`, pública por diseño) para que cada
+  versión se instale encima de la anterior sin perder el progreso.
+- A mano (con Android SDK): `npm run build && npx cap sync android && cd android && ./gradlew assembleDebug`.

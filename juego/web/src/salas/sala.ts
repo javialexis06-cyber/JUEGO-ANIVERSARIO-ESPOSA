@@ -1,5 +1,5 @@
 // Salas de juego de hasta 4 (Javier, Laura y amigos), cada uno en su celular o computador, conectados con un código
-// corto. Implementa el contrato de `tipos.ts` (cómo se usa: docs/salas.md).
+// corto. Implementa el contrato de `tipos.ts` (cómo se usa: docs/sistemas/salas.md).
 //
 // Por debajo es un canal de Supabase Realtime (`sala-<CÓDIGO>`, difusión + presencia) con la clave publicable y sin
 // sesión de la casa: los amigos no tienen casa y nada de esto toca los datos de la pareja. Para las pruebas hay un

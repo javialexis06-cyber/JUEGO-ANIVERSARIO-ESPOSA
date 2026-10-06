@@ -758,7 +758,7 @@ def reloj(coll):
 
 
 # --------------------------------------------------------------------------
-# Reacciones de los muñequitos (docs/reacciones.md): se cuelgan de un hueso en el juego.
+# Reacciones de los muñequitos (docs/sistemas/reacciones.md): se cuelgan de un hueso en el juego.
 # Origen en el punto donde se agarra (la corona: el centro de la base); Z arriba (Y en el GLB).
 # --------------------------------------------------------------------------
 

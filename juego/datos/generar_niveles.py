@@ -15,7 +15,7 @@ Si se cumple la meta legendaria, se gana una Luna (100 en total).
 
 Salidas:
   juego/datos/niveles.json · para el juego
-  docs/niveles.md          · tabla para leer
+  docs/sistemas/niveles.md          · tabla para leer
 
 Uso: python3 generar_niveles.py
 """
@@ -312,5 +312,5 @@ if __name__ == '__main__':
     niveles = generar()
     with open(os.path.join(AQUI, 'niveles.json'), 'w', encoding='utf-8') as f:
         json.dump(niveles, f, ensure_ascii=False, indent=1)
-    escribir_md(niveles, os.path.join(RAIZ, 'docs', 'niveles.md'))
+    escribir_md(niveles, os.path.join(RAIZ, 'docs', 'sistemas', 'niveles.md'))
     print(len(niveles), 'niveles ·', sum(len(n['estrellas']) for n in niveles), 'estrellas en total')

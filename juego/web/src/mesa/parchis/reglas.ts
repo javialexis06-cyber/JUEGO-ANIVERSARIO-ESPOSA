@@ -1,4 +1,4 @@
-// Parchís para dos tal cual está en docs/juegos-mesa.md: la vuelta clásica de 68 casillas con 12 seguros, pasillo
+// Parchís para dos tal cual está en docs/sistemas/juegos-mesa.md: la vuelta clásica de 68 casillas con 12 seguros, pasillo
 // de 7 casillas y la meta. Se juega de dos maneras:
 // - Un color cada uno: 4 fichas en esquinas opuestas y un dado (el 6 repite, tres seises castigan).
 // - Dos colores cada uno: 8 fichas (Él azul y amarillo, Ella rosado y verde) y dos dados que caen al centro;

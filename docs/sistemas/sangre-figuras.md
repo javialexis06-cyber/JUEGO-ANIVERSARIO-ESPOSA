@@ -1,7 +1,7 @@
 # Sangre y Ceniza · las figuras (guía para el programador)
 
 Todo lo de aquí se hace por código en Blender (`personajes/blender/sangre_*.py`) y sigue el «Contrato de arte» de
-`docs/sangre-y-ceniza.md`. Esta guía dice cómo vienen los archivos por dentro para usarlos sin adivinar.
+`docs/sistemas/sangre-y-ceniza.md`. Esta guía dice cómo vienen los archivos por dentro para usarlos sin adivinar.
 
 ## Dónde está cada cosa
 

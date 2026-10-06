@@ -2,7 +2,7 @@
 -- Pégalo completo en Supabase → SQL Editor → New query → Run, DESPUÉS de esquema.sql. Se puede correr varias veces.
 -- Nada de esto cambia cómo se juega: cierra puertas que la app nunca usa y que alguien podría usar mal.
 --
--- Qué arregla (detalle en docs/auditoria.md, sección «Base de datos»):
+-- Qué arregla (detalle en docs/archivo/auditoria.md, sección «Base de datos»):
 --   1. Las funciones de la pareja quedaban abiertas a cualquiera (Postgres da permiso a «public» por defecto):
 --      ahora solo las llaman celulares con sesión.
 --   2. Cada personaje solo lo escribe su dueño: Ella no puede cambiar el personaje de Él ni al revés

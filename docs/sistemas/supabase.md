@@ -11,7 +11,7 @@ y tiempo real. Así, lo que hace uno le llega al otro al instante, de Medellín 
    - Pon una contraseña de base de datos y guárdala.
 2. Cuando el proyecto esté listo, ve a **Authentication → Sign In / Providers** y activa **Allow anonymous sign-ins**.
    Cada celular entra con una sesión anónima; no hay que crear usuarios ni correos.
-3. Ve a **SQL Editor → New query**, pega todo el contenido de [`supabase/esquema.sql`](../supabase/esquema.sql)
+3. Ve a **SQL Editor → New query**, pega todo el contenido de [`supabase/esquema.sql`](../../supabase/esquema.sql)
    y toca **Run**. Debe decir *Success*.
 4. Ve a **Project Settings → API** (o **Data API / API Keys**) y copia:
    - **Project URL** (algo como `https://abcd1234.supabase.co`);
@@ -21,7 +21,7 @@ y tiempo real. Así, lo que hace uno le llega al otro al instante, de Medellín 
    (También se pueden escribir directo en la app: Menú → Ajustes → «Servidor para conectar los dos celulares».)
 
 **Estado:** listo. El proyecto `nuestro-hogar` (São Paulo) ya tiene el esquema y los accesos anónimos, y su dirección y
-clave publicable están en [`juego/web/src/casa/servidor.ts`](../juego/web/src/casa/servidor.ts): la APK ya entra en línea
+clave publicable están en [`juego/web/src/casa/servidor.ts`](../../juego/web/src/casa/servidor.ts): la APK ya entra en línea
 sin escribir nada. Si algún día se cambia el esquema, hay que volver a correr `supabase/esquema.sql` completo (se puede
 correr varias veces).
 
@@ -54,7 +54,7 @@ correr varias veces).
 ## Cambios pendientes de la base (auditoría): `supabase/cambios-pendientes.sql`
 
 La auditoría encontró puertas que la app nunca usa pero que alguien con la clave publicable podría usar mal. Para
-cerrarlas, pega **todo** [`supabase/cambios-pendientes.sql`](../supabase/cambios-pendientes.sql) en
+cerrarlas, pega **todo** [`supabase/cambios-pendientes.sql`](../../supabase/cambios-pendientes.sql) en
 **SQL Editor → New query → Run** (después de `esquema.sql`; se puede correr varias veces):
 
 | Qué cierra | Antes | Después |

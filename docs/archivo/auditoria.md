@@ -140,7 +140,7 @@ el súper en línea y la mesa en línea muestran la pausa de conexión y retoman
 
 Revisión de `supabase/esquema.sql`. Las reglas ya impedían que una pareja viera o cambiara la casa de otra (las 28
 pruebas de `probar_reglas.sql` siguen pasando), pero dentro de la API quedaban puertas abiertas. Los cambios están
-en **`supabase/cambios-pendientes.sql`** (el dueño lo pega en el SQL Editor; ver `docs/supabase.md`) con 23 pruebas
+en **`supabase/cambios-pendientes.sql`** (el dueño lo pega en el SQL Editor; ver `docs/sistemas/supabase.md`) con 23 pruebas
 nuevas en `supabase/pruebas/probar_cambios.sql`, todas bien en Postgres 16.
 
 | Hallazgo | Gravedad | Arreglo (pendiente de aplicar) |

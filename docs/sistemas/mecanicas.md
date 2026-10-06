@@ -7,7 +7,7 @@ Este documento explica, paso a paso, cómo se juega un día en la tienda. Cubre:
 - cómo juegan Él y Ella juntos;
 - cómo avanza la partida.
 
-Las láminas `16a-estados-vitrina.png` y `16b-como-se-repone.png` (en `supermercado/renders/`) muestran lo más importante.
+Las láminas `16a-estados-vitrina.png` y `16b-como-se-repone.png` (en `archivo/renders/supermercado/`) muestran lo más importante.
 
 ---
 

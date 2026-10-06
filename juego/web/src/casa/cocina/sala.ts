@@ -1,4 +1,4 @@
-// Cocinar juntos de 2 a 4 en una sala (src/salas/, docs/salas.md): Javier y Laura (la invitación le llega a la casa
+// Cocinar juntos de 2 a 4 en una sala (src/salas/, docs/sistemas/salas.md): Javier y Laura (la invitación le llega a la casa
 // del otro con el código) o con amigos (comparten el código). Quien abre la sala es el dueño de la cocina: escoge el
 // restaurante en la sala de espera y su día, su rango y sus mejoras son los de todos. Cada uno toca «Estoy listo»,
 // el anfitrión arranca y se cocina el mismo día cada uno en su celular (linea.ts). Al final el anfitrión puede

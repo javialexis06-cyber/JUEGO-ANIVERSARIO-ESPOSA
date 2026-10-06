@@ -215,7 +215,7 @@ POSES_MASCOTA = {
     'saludo_a': 'saludo', 'saludo_b': 'saludo_b', 'sentado': 'sentado', 'pensando': 'pensando',
     'comer_sentado_a': 'comer_sentado_a', 'comer_sentado_b': 'comer_sentado_b', 'sentado_feliz': 'sentado_feliz',
 }
-# Reacciones de los minijuegos (docs/reacciones.md): una pose fija por reacción, con el mismo nombre
+# Reacciones de los minijuegos (docs/sistemas/reacciones.md): una pose fija por reacción, con el mismo nombre
 POSES_REACCION = {n: n for n in (
     'presumir_a', 'presumir_b', 'pulgares_a', 'pulgares_b', 'baile_a', 'baile_b', 'preparar_salto', 'salto', 'puno_a', 'puno_b',
     'musculo', 'jarras', 'puchero', 'facepalm', 'rascarse', 'triste_b', 'encogerse', 'llorar_a', 'llorar_b', 'rodillas_a',

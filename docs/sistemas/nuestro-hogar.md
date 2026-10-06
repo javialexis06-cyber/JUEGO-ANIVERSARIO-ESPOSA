@@ -55,7 +55,7 @@ con `CASA_SOLO=juegos,trofeos,cuna,cuarto_el,cuarto_ella,bebe,ciguena python3 ex
 
 | Cuarto | Precio | Qué tiene y qué se hace |
 |---|---|---|
-| Juegos | gratis (viene con la casa) | Los **minijuegos ya no están en el menú**: arcade de Súper Manía (con la pantalla prendida), la **puerta 100** morada de Cien Puertas la mesa con el parchís servido (dos pufs) y el botón **⚔️ Sangre y Ceniza** (el survivors oscuro de hasta 4, ver `docs/sangre-y-ceniza.md`; el personaje camina al arcade). El personaje camina al arcade, a la puerta o se sienta en el puf, y de ahí se entra al juego. También un retrete espacial en miniatura (se sientan en él y sale quién ha volado más lejos) y el botón **Tienda del retrete**. Los minijuegos **secretos** (retrete espacial, lavarse la cara) se descubren solos con lo que les pasa; ya descubierto, el retrete en miniatura también trae **🚀 Volar en el retrete** |
+| Juegos | gratis (viene con la casa) | Los **minijuegos ya no están en el menú**: arcade de Súper Manía (con la pantalla prendida), la **puerta 100** morada de Cien Puertas la mesa con el parchís servido (dos pufs) y el botón **⚔️ Sangre y Ceniza** (el survivors oscuro de hasta 4, ver `docs/sistemas/sangre-y-ceniza.md`; el personaje camina al arcade). El personaje camina al arcade, a la puerta o se sienta en el puf, y de ahí se entra al juego. También un retrete espacial en miniatura (se sientan en él y sale quién ha volado más lejos) y el botón **Tienda del retrete**. Los minijuegos **secretos** (retrete espacial, lavarse la cara) se descubren solos con lo que les pasa; ya descubierto, el retrete en miniatura también trae **🚀 Volar en el retrete** |
 | Trofeos | 50 | Seis pedestales de mármol con los trofeos de cada minijuego y su **placa con el título** encima, el **cuadro de honor** con el título de cada uno en cada juego, la vitrina con los trofeos chiquitos de cada uno, alfombra roja y el podio de la **copa del amor**. «Admirar»: aplaude frente al mejor trofeo |
 | Bebé | 150 | Cuna de barrotes con móvil de estrellas, mecedora, cómoda con cambiador y juguetes. **Pedir a la cigüeña**: se escoge el nombre (Katherine, como dice Él, o Lexy Katherine, como dice Ella, u otro) y la cigüeña entra volando por la ventana con la bebé en un pañuelo y la deja en la cuna (`casa.bebe`). Luego: arrullarla (la cuna se mece, suena una nanita), la mecedora (se mece de verdad) y tocarla (se ríe) |
 | Cuarto de Él | 80 | Escritorio con computador (la pantalla escribe código), silla gamer, sillón, repisa y balón |
@@ -363,7 +363,7 @@ princesa del spa, estilista del secador). Cada uno trae su arma y su bono, ropa 
 con paredes de baldosín: menos bichos a la vez pero sin salida arriba ni abajo; se abre aguantando 15 min en La
 Cara) y **La Bañera** (agua con cáusticas, espuma y paticos; se abre aguantando 15 min en El Lavamanos).
 
-**De 2 a 4: pareja y amigos** (`linea.ts`, `juego.ts`, sobre las salas de `src/salas/`, ver `docs/salas.md`): Javier
+**De 2 a 4: pareja y amigos** (`linea.ts`, `juego.ts`, sobre las salas de `src/salas/`, ver `docs/sistemas/salas.md`): Javier
 o Laura invitan desde el menú (abre una sala y la invitación con el código le llega a la casa del otro: «¡A lavarse
 la cara juntos!»; entra desde su espejo), o cualquiera abre una sala «Con amigos» y los demás entran con el código.
 En la **sala de espera** cada uno escoge disfraz y ataque y toca «Estoy listo»; el anfitrión empieza (se juega en
@@ -472,7 +472,7 @@ mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.act
   suyas, más expresivas. Las estaciones se cambian deslizándose (el riel y la barra quietos). A 30 cuadros como
   tope; si el celular va lento, baja la calidad sola.
 - **Juntos, de 2 a 4, en una sala** (`src/casa/cocina/sala.ts` sobre las salas de `src/salas/`, ver
-  `docs/salas.md`): en la hoja de restaurantes, «💞 Cocinar con Laura/Javier» abre una sala y la invitación le llega
+  `docs/sistemas/salas.md`): en la hoja de restaurantes, «💞 Cocinar con Laura/Javier» abre una sala y la invitación le llega
   al otro a la casa con el código («¡Vamos a cocinar!» entra a esa sala); «👥 Cocinar con amigos» abre una sala para
   compartir el código y «🔑 Unirme con un código» entra a la de otro. En la **sala de espera** (con mantel de
   cuadritos y el chef de cada uno) el anfitrión escoge el restaurante («🍳 Restaurante»), cada uno toca «Estoy

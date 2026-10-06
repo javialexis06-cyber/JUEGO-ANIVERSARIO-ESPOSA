@@ -1,4 +1,4 @@
-// Dados Party: cinco dados, tres tiros y trece casillas (reglas en docs/juegos-mesa.md).
+// Dados Party: cinco dados, tres tiros y trece casillas (reglas en docs/sistemas/juegos-mesa.md).
 import type { JuegoMesa } from '../tipos';
 import { iaDados } from './ia';
 import { type EstadoDados, type MovDados, reglas } from './reglas';

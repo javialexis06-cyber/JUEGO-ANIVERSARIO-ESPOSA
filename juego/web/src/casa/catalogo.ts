@@ -552,7 +552,7 @@ export const EFECTO_CARINO: Record<string, { mio: number; suyo: number }> = {
   // (la nalgada: a él le da risa; a ella, después del berrinche, también un poquito)
   nalgada: { mio: 8, suyo: 5 },
 };
-// Economía (ver docs/nuestro-hogar.md, «Monedas»): se gana poco y despacio; los mimos no dan monedas.
+// Economía (ver docs/sistemas/nuestro-hogar.md, «Monedas»): se gana poco y despacio; los mimos no dan monedas.
 /** Bono por abrir la app, uno por persona y por día. */
 export const BONO_DIARIO = 5;
 /** El día del aniversario, una vez al año. */

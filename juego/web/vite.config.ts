@@ -10,7 +10,7 @@ import { defineConfig, type Plugin } from 'vite';
 //   juegos aptos para ellos, SIN NADA de la pareja adentro (ni la casa, ni Cien Puertas, ni recuerdos, ni apodos):
 //   los archivos con lo personal se cambian por versiones vacías (SUSTITUTOS), nada de la casa entra si no está en
 //   PERMITIDOS y de `public/` solo se copia lo que esos juegos usan. `scripts/verificar-amigos.mjs` revisa después
-//   que en dist-amigos no quede ni una palabra de la pareja (docs/salas.md, «Versión para amigos»).
+//   que en dist-amigos no quede ni una palabra de la pareja (docs/sistemas/salas.md, «Versión para amigos»).
 
 /** Páginas de la versión para amigos. Un juego nuevo para amigos se agrega aquí (y en la lista de `src/amigos/juegos.ts`). */
 export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html'];

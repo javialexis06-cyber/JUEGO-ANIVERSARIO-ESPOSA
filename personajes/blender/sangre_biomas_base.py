@@ -9,7 +9,7 @@ Cómo se arma una pieza:
 - Al final se calcula la oclusión ambiental (rayos contra la misma pieza y el piso) y se multiplica en los colores:
   las grietas y las juntas quedan oscuras aunque el juego solo tenga luces puntuales.
 
-Convenciones (las mismas del contrato de `docs/sangre-y-ceniza.md`):
+Convenciones (las mismas del contrato de `docs/sistemas/sangre-y-ceniza.md`):
 - Metros, z arriba, el piso en z = 0. Cada pieza en el ORIGEN: el origen es el centro de su base.
 - Lo que va contra una pared tiene la espalda hacia +Y y mira hacia -Y.
 - La raíz es un vacío con el nombre del contrato (transformación identidad) y la malla es su hija; los vacíos

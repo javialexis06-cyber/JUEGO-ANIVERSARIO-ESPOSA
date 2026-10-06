@@ -101,7 +101,7 @@ POSES['sentado_feliz'] = dict(POSES['sentado'], cabeza=(4, 0, 8), torso=(0, 0, 3
 
 
 # --------------------------------------------------------------------------
-# Reacciones de los minijuegos (docs/reacciones.md). «Derecho» = .L (la derecha del personaje).
+# Reacciones de los minijuegos (docs/sistemas/reacciones.md). «Derecho» = .L (la derecha del personaje).
 # --------------------------------------------------------------------------
 
 def espejo(pose):

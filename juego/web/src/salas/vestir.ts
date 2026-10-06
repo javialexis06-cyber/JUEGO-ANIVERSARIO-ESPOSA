@@ -2,7 +2,7 @@
 // creador de personajes: peinado, ropa, zapatos y accesorios del clóset genérico (`prendas.ts`), con los colores que
 // escogió en cada prenda, y su cara (piel, pelo, ojos, cejas, rubor) y sus joyas (aretes y collares, `joyas.ts`).
 // Lo usan el creador, la sala de juegos, Lavarse la cara y Sangre y Ceniza: un solo lugar para vestir a un amigo
-// «tal cual» lo hizo (docs/salas.md).
+// «tal cual» lo hizo (docs/sistemas/salas.md).
 import * as THREE from 'three';
 import { clone as clonarConEsqueleto } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { Personaje } from '../personaje';

@@ -49,7 +49,7 @@ export interface Sala {
   cerrarEntrada(cerrada: boolean): void;
   salir(): void;
 
-  // ------------------------------------------------------------------ Agregado con la implementación (docs/salas.md)
+  // ------------------------------------------------------------------ Agregado con la implementación (docs/sistemas/salas.md)
   /** Máximo de jugadores de esta sala (2 a 4). */
   readonly max: number;
   /** La entrada está cerrada (ya empezó la partida): nadie nuevo puede entrar (quien ya estaba sí puede volver). */

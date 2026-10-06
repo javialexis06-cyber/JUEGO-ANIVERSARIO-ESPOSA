@@ -107,7 +107,7 @@ Para pasarle el juego a amigos sin que se lleven nada de la pareja hay una **com
   que usan esos juegos (`PUBLICOS_AMIGOS`, más la ropa del clóset genérico).
 - Después, `scripts/verificar-amigos.mjs` revisa **todo** `dist-amigos` (JavaScript, HTML, CSS, JSON, SVG y los
   nombres de mallas y materiales de los GLB) contra `scripts/palabras-pareja.mjs` (apodos, lugares, chistes) y los
-  recuerdos de docs/cien-puertas.md y del lavado. Si encuentra algo, falla y GitHub Actions no publica.
+  recuerdos de docs/en-obra/cien-puertas.md y del lavado. Si encuentra algo, falla y GitHub Actions no publica.
 - **App de Android** «Sala de Juegos» (`com.javialexis.salajuegos`, se instala al lado de Nuestro Hogar): el job
   `apk-amigos` del workflow compila la versión para amigos, corre `scripts/android-amigos.mjs` (cambia id, nombre,
   ícono y pantalla de arranque con los de `android-amigos/res`, que dibuja `scripts/iconos-amigos.mjs`) y
@@ -142,7 +142,7 @@ aparato, volver a `./amigos.html`, el botón atrás).
 - `node scripts/probar-salas.mjs <url>`: cinco celulares (Supabase de mentiras con pérdidas): crear, entrar tres, el
   quinto «llena», 60 fiables de cada uno a cada uno en orden, rápidos, cortes, segundo plano, empezar con la entrada
   cerrada y el anfitrión que se va.
-- `node scripts/probar-lavado-salas.mjs <url>`: Lavarse la cara de a cuatro (ver docs/nuestro-hogar.md).
+- `node scripts/probar-lavado-salas.mjs <url>`: Lavarse la cara de a cuatro (ver docs/sistemas/nuestro-hogar.md).
 - `node scripts/probar-amigos.mjs <url>`: el modo amigo de punta a punta (creador por pestañas, sala, guardias) y que
   no vea nada personal.
 - `node scripts/probar-amigos-juegos.mjs <url>`: el retrete y la cocina sin la casa (la cocina también en sala con
