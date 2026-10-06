@@ -259,6 +259,21 @@ cinco). Con mejoras de nivel medio (burbuja, segunda oportunidad, arranque, imá
 - Pruebas: `__volar()` (vuela sin ir al baño), `__tiendaRetrete()`, y durante el vuelo `__cohete.manual()`,
   `.simular(seg)`, `.bot()`, `.dios()`, `.dar(n)`, `.saltar(m)`, `.poder(id)`, `.mejoras({...})`, `.estado()`.
 
+### Los amigos, sin la casa (`retrete.html`)
+
+- Desde su sala de juegos un amigo abre **`retrete.html`** (o `retrete.html?tienda` para solo la tienda): despega de
+  una, sin pasar por la casa, con **su muñeco y sus colores** (el de Javier o el de Laura como base, teñido con
+  `teñirModelo` de `src/salas/tinte.ts`; los cascos se ponen sobre ese muñeco). Volar otra vez, la tienda, las
+  misiones y la pausa funcionan igual. Su progreso va en el aparato (`amigo-retrete-progreso`) y al salir («🎮 Mis
+  juegos» o atrás) vuelve a `./amigos.html`. Si el aparato no está en modo amigo, la página manda a la casa: Javier y
+  Laura lo juegan desde el baño, con su progreso de verdad.
+- **Modo neutro** (opción `amigo` de `jugarCohete`): frases propias sin la leche ni el picante, sin apodos, recuerdos
+  ni «liviano|liviana»; sin banderitas ni récord de la pareja («¡Te pasé, mi amor!», «Le ganaste a…»); las figuras
+  de rollitos «ÉL ♥ ELLA», «TE AMO» y «TQM» salen como «WOW», «GOL» y «TOP»; la galaxia del amor se llama **la
+  galaxia de chicle**; las estelas de corazones y pétalos tienen otra descripción; no hay monedas de la casa.
+  `textosDeLaPareja()` (en `cohete.ts`) dice todo lo que el modo neutro esconde, para las pruebas.
+- Prueba: `node scripts/probar-amigos-juegos.mjs <url>` (ver la cocina).
+
 ## Lavarse la cara (minijuego secreto: un Vampire Survivors completo)
 
 **Cómo se entra.** En el baño, **Lavarse** (o tocar el lavamanos): camina al espejo, se mira («¿Y esos
@@ -447,16 +462,37 @@ mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.act
   poses (caminar, esperar, impacientarse, bravo, comer, encantado, contento, así-así) y la pareja tiene las
   suyas, más expresivas. Las estaciones se cambian deslizándose (el riel y la barra quietos). A 30 cuadros como
   tope; si el celular va lento, baja la calidad sola.
-- **En pareja** (botón «💞 Cocinar con…» en la hoja de restaurantes; la invitación le llega al otro a la casa):
-  cocinan el mismo restaurante y el mismo día, cada uno en su celular. El anfitrión manda (invitados, tiquetes,
-  reloj, calificación y propinas) y el otro le pide las cosas; los tiquetes son de los dos: cualquiera toma un
-  pedido o se queda en una estación, se ve la carita del otro en la estación donde está, en el tiquete que tiene
-  escogido y su mano moviendo la comida. Las propinas y el avance del día son de los dos; cada uno guarda su
-  propio rango y puntos. Si alguien pone pausa o sale de la app, al otro le sale la pausa; si se corta la red, la
-  cocina se queda quieta con «Se cortó la conexión…» y sigue sola al volver (el anfitrión puede seguir solo).
-  Va por Supabase Realtime (canal `cocina-<pareja>`, evento `cocina`) o entre pestañas (`BroadcastChannel`) en la
-  casa local. Sincronización por objetos con versión (el día, cada máquina y cada tiquete), paquetes cada
-  ~110 ms y una foto completa del anfitrión cada segundo.
+- **Juntos, de 2 a 4, en una sala** (`src/casa/cocina/sala.ts` sobre las salas de `src/salas/`, ver
+  `docs/salas.md`): en la hoja de restaurantes, «💞 Cocinar con Laura/Javier» abre una sala y la invitación le llega
+  al otro a la casa con el código («¡Vamos a cocinar!» entra a esa sala); «👥 Cocinar con amigos» abre una sala para
+  compartir el código y «🔑 Unirme con un código» entra a la de otro. En la **sala de espera** (con mantel de
+  cuadritos y el chef de cada uno) el anfitrión escoge el restaurante («🍳 Restaurante»), cada uno toca «Estoy
+  listo» y el anfitrión arranca. Se cocina en el restaurante del anfitrión (su día, su rango y sus mejoras), cada
+  uno en su celular: el anfitrión manda (invitados, tiquetes, reloj, calificación y propinas) y los demás le piden
+  las cosas (mensajes fiables de la sala); los tiquetes son de todos: cualquiera toma un pedido o se queda en una
+  estación, y se ve la carita de cada uno (con el color de su puesto) en la estación donde está, en el tiquete que
+  tiene escogido y su mano moviendo la comida. Las propinas y el avance del día son de todos; cada uno guarda su
+  propio rango y puntos en su restaurante; las monedas y los platos de chef de la casa son del anfitrión (si es
+  Javier o Laura). Si alguien pone pausa o sale de la app, a todos les sale la pausa con su nombre; si se le corta
+  la red a alguien, la cocina se queda quieta con «Se cortó la conexión con…» y sigue sola al volver (el anfitrión
+  puede «Seguir sin…»); si alguien se va, los demás siguen; si se va el anfitrión, a los demás les sale el aviso. Al
+  final del día el anfitrión sigue con otro día o vuelve con todos a la sala de espera («👥 A la sala»).
+- **Dificultad por cocineros** (`POR_COCINEROS` en `motor.ts`): cada cuánto llegan ×1 / 0,8 / 0,7 / 0,62, paciencia
+  ×1 / 0,85 / 0,8 / 0,75 e invitados extra por día 0 / 0 / 2 / 4.
+- Sincronización (`linea.ts`): objetos con versión (el día, cada máquina y cada tiquete), paquetes rápidos cada
+  ~110 ms y una foto completa del anfitrión cada segundo; gana la versión más alta y, si empatan, la del anfitrión.
+  Los cortes, el segundo plano y quién se fue los avisa la sala. Las ids de los wafles van por puesto (no chocan).
+- **Modo neutro** (si cocina un amigo o hay amigos en la sala): la pareja no llega a comer (ni sus frases, apodos y
+  corazones), los invitados no dicen «mijo|mija», el tablero dice «hecho con sazón» con estrellas, nada de 💞 ni
+  «en pareja», y la tarjeta del final no habla de regalar platos. El letrero del restaurante lleva el nombre de su
+  dueño («La Waflería de Javier», «… de Pipe»).
+- **Los amigos, sin la casa (`cocina.html`)**: el menú de los tres restaurantes (con su plato servido, el día y el
+  rango de cada uno), «👥 Cocinar con amigos», «🔑 Unirme con un código» y «🎮 Mis juegos». Su chef es **su muñeco con
+  sus colores**, renderizado ahí mismo con el gorro y la chaqueta de chef en las mismas poses de los recortes de
+  Javier y Laura (`chef_amigo.ts`; mientras tanto, su carita con gorro). Su progreso va en el aparato
+  (`amigo-cocina-progreso`, uno por restaurante). `cocina.html?unirse=CÓDIGO` entra directo a una sala (lo usa
+  «Unirme con un código» de la sala de juegos) y `cocina.html?receta=wafles` abre ese restaurante. Si el aparato
+  no está en modo amigo, la página manda a la casa.
 - **Gancho para escenas**: `cocina.alTerminarDia.push((dia, info) => …)` (o `alTerminarDia` en las opciones de
   `jugarCocina`) se llama al terminar cada día con el resultado, la receta, el rol, si fue en pareja y el rango
   antes y después. Hoy no hay escenas enganchadas.
@@ -469,11 +505,15 @@ mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.act
   juego/web/modelos-crudos/cocina juego/web/public/cocina` (hojas webp + `hojas.json`). Los invitados y el chef:
   `node scripts/generar-sprites-cocina.mjs [claves] [puerto]` con el servidor prendido. Los platos 3D de la casa
   salen de `personajes/blender/comidas.py`.
-- Pruebas: `scripts/cocina-prueba.html` (la cocina sola, con `?rol=&receta=&xp=&dia=&mejoras=` y en pareja
-  `&linea=anfitrion|invitado&transporte=local|supabase`), ganchos `window.__cocinaMotor.probar('llegar' | 'tomar' |
-  'jugar' | 'juicio' | 'fin' | 'avanzar', segundos)` y `.resumen()`, y `node scripts/probar-cocina-linea.mjs [receta]
-  [url]` (Él y Ella con un Supabase de mentiras con demoras y pérdidas: pedidos, entregas, pausa, salir de la app,
-  corte de red y fin del día iguales en los dos).
+- Pruebas: `scripts/cocina-prueba.html` (la cocina sola, con `?rol=&receta=&xp=&dia=&mejoras=`, y juntos con
+  `&sala=crear` o `&sala=CÓDIGO`, más `&salas=local` para ir entre pestañas), ganchos `window.__cocinaMotor.probar('llegar'
+  | 'tomar' | 'jugar' | 'juicio' | 'fin' | 'avanzar', segundos)`, `.resumen()` y `.otros()`; `node
+  scripts/probar-cocina-linea.mjs [receta] [url]` (Javier y Laura en una sala con un Supabase de mentiras con demoras
+  y pérdidas: sala de espera, pedidos, entregas, pausa, salir de la app, corte de red, fin del día iguales en los
+  dos, el premio de la casa del anfitrión, «A la sala» y el anfitrión que se va) y `node
+  scripts/probar-amigos-juegos.mjs [url]` (un amigo vuela el retrete por todos los tramos, la tienda y volar otra vez;
+  cocina dos días solo y uno en sala con otra amiga; nunca ve nada de la pareja —pantalla, avisos que pasan y textos
+  dibujados en los lienzos— ni se pide nada de la casa, y el progreso queda en el celular).
 
 ## Recuerdos en el baño y abrazados en la cama
 

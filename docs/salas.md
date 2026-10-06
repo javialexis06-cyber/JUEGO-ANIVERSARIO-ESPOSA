@@ -1,7 +1,8 @@
 # Salas: jugar de 2 a 4 (Javier, Laura y amigos)
 
 Las salas conectan hasta 4 celulares o computadores con un **código corto** para jugar juntos: Javier, Laura y
-amigos. Las usan **Lavarse la cara** (ya) y **Sangre y Ceniza** (el juego nuevo). Código en `juego/web/src/salas/`.
+amigos. Las usan **Lavarse la cara**, **Sangre y Ceniza** y la **cocina de chef** (juego `cocina`,
+`src/casa/cocina/sala.ts`). Código en `juego/web/src/salas/`.
 
 | Archivo | Qué es |
 |---|---|
@@ -87,6 +88,20 @@ Reglas para los juegos:
   sala cierra la app. Si Javier o Laura tocaron el botón por error: «¿Eres Javier o Laura?» (abajo, pequeñito) pide
   confirmar y vuelve al inicio.
 
+## Juegos de amigos sin la casa
+
+Páginas propias que un amigo abre desde su sala de juegos (si el aparato no está en modo amigo, mandan a la casa):
+
+| Juego | Dirección | Progreso en el aparato |
+|---|---|---|
+| Retrete espacial | `./retrete.html` (`?tienda`: solo la tienda) | `amigo-retrete-progreso` |
+| Cocina de chef | `./cocina.html` (`?unirse=CÓDIGO`: entra a esa sala; `?receta=wafles`: abre ese restaurante) | `amigo-cocina-progreso` |
+| Lavarse la cara | dentro de `amigos.html` | `amigo-lavado-progreso` |
+
+«Unirme con un código» de la sala de juegos: si `averiguarJuego(código)` dice `cocina`, va a
+`./cocina.html?unirse=CÓDIGO`. Lo común de estas páginas está en `src/sueltos/comun.ts` (quién juega, guardar en el
+aparato, volver a `./amigos.html`, el botón atrás).
+
 ## Pruebas
 
 - `node scripts/probar-salas.mjs <url>`: cinco celulares (Supabase de mentiras con pérdidas): crear, entrar tres, el
@@ -94,6 +109,9 @@ Reglas para los juegos:
   cerrada y el anfitrión que se va.
 - `node scripts/probar-lavado-salas.mjs <url>`: Lavarse la cara de a cuatro (ver docs/nuestro-hogar.md).
 - `node scripts/probar-amigos.mjs <url>`: el modo amigo de punta a punta y que no vea nada personal.
+- `node scripts/probar-amigos-juegos.mjs <url>`: el retrete y la cocina sin la casa (la cocina también en sala con
+  otro amigo) sin nada personal, ni en la pantalla ni en lo dibujado. `node scripts/probar-cocina-linea.mjs` prueba la
+  cocina de Javier y Laura en sala.
 - `scripts/supabase-falso.mjs` (el Supabase de mentiras reutilizable) y `scripts/palabras-pareja.mjs` (lo que un amigo
   nunca debe ver).
 - En la máquina de pruebas, con cuatro navegadores a la vez, los celulares de atrás van muy lentos: las pruebas
