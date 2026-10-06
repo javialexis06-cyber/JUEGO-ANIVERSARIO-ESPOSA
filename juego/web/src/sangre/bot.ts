@@ -83,7 +83,17 @@ export function botPaso(sim: Sim, j: Jugador) {
       fy += (dy / (d || 1)) * 4;
     }
   }
-  const miedo = 0.8 + (1 - j.hp / j.hpMax) * 2.2;
+  let miedo = 0.8 + (1 - j.hp / j.hpMax) * 2.2;
+  // Con la campana abajo lo que importa es llegar y quedarse adentro: huye menos y no se sale del círculo
+  const cam = sim.campana;
+  if (cam && cam.est === 1) {
+    const dc = Math.hypot(cam.x - j.x, cam.y - j.y);
+    miedo *= dc > RADIO_CAMPANA - 0.6 ? 0.25 : 0.6;
+    if (dc > RADIO_CAMPANA - 1.2) {
+      gx += ((cam.x - j.x) / (dc || 1)) * 0.6;
+      gy += ((cam.y - j.y) / (dc || 1)) * 0.6;
+    }
+  }
   let mx = gx + fx * miedo, my = gy + fy * miedo;
   const l = Math.hypot(mx, my);
   if (l > 1e-3) {

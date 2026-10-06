@@ -76,7 +76,12 @@ export class Escena3D {
   private etapa = new THREE.Group();
   // Cámara
   private foco = new THREE.Vector3();
+  /** Velocidad de la cámara (resorte amortiguado) y la anticipación suavizada hacia donde se camina. */
+  private focoVel = new THREE.Vector3();
+  private adelanto = new THREE.Vector3();
   private focoListo = false;
+  /** Sacudidas de la cámara (se apagan en la pausa: a algunos les cansa la vista). */
+  sacudidas = true;
   zoom = 1;
   /** Cámara de vitrina para los menús: cerca del muñeco, baja y de frente, con el muñeco a un lado de la pantalla. */
   vitrina: { lado: number; dist: number; alto?: number } | null = null;
@@ -256,7 +261,8 @@ export class Escena3D {
   }
 
   sacudir(f: number) {
-    this.sacudida = Math.min(1.2, this.sacudida + f);
+    if (!this.sacudidas) return;
+    this.sacudida = Math.min(0.8, this.sacudida + f * 0.7);
   }
 
   /** Destello de luz en el mundo (explosiones, rayos): ilumina la rejilla y la luz de fogonazo. */
@@ -266,7 +272,8 @@ export class Escena3D {
     this.fogonazo.position.set(x, 1.4, y);
     this.fogonazo.color.set(color);
     this.fogonazoT = 0.25;
-    this.fogonazo.intensity = Math.max(this.fogonazo.intensity, fuerza * 6);
+    // (destellos más suaves: muchos seguidos encandilan)
+    this.fogonazo.intensity = Math.max(this.fogonazo.intensity, Math.min(5, fuerza * 3.5));
   }
 
   // ----------------------------------------------------------------------------------------------- Cada cuadro
@@ -352,7 +359,8 @@ export class Escena3D {
       this.linterna.distance = 8;
     } else if (local && (local.estado === 0 || local.estado === 1)) {
       this.linterna.position.set(local.x + local.fx * 0.6, 3.1, local.y + local.fy * 0.6 + 0.9);
-      const parp = 0.92 + Math.sin(this.tiempo * 9.3) * 0.04 + Math.sin(this.tiempo * 23.1) * 0.03;
+      // (titila poquito y despacio: un parpadeo rápido de la luz propia cansa la vista)
+      const parp = 0.96 + Math.sin(this.tiempo * 4.1) * 0.025 + Math.sin(this.tiempo * 9.7) * 0.012;
       this.linterna.intensity = 3.4 * parp * (est.eclipse > 0 ? 0.6 : 1);
       this.linterna.distance = local.radioLuz * 1.4;
     } else this.linterna.intensity = 0;
@@ -385,12 +393,28 @@ export class Escena3D {
     if (!j) return;
     // Si el propio está fuera, sigue a un compañero en pie
     const seguido = j.estado === 0 || j.estado === 1 ? j : est.J.find((o) => o.estado === 0) ?? j;
-    const meta = new THREE.Vector3(seguido.x + seguido.vx * 0.32, 0, seguido.y + seguido.vy * 0.32);
+    // Un poquito por delante de hacia donde se camina, pero la anticipación cambia despacio (si no, al voltear la
+    // cámara salta de un lado al otro)
+    this.adelanto.lerp(new THREE.Vector3(seguido.vx * 0.18, 0, seguido.vy * 0.18), Math.min(1, dt * 1.8));
+    const meta = new THREE.Vector3(seguido.x + this.adelanto.x, 0, seguido.y + this.adelanto.z);
     if (!this.focoListo) {
       this.foco.copy(meta);
+      this.focoVel.set(0, 0, 0);
       this.focoListo = true;
     }
-    this.foco.lerp(meta, Math.min(1, dt * 5));
+    // Resorte con amortiguación crítica (sigue sin tirones ni rebotes)
+    const w = 7.5, dtc = Math.min(dt, 0.05);
+    const dx = this.foco.x - meta.x, dz = this.foco.z - meta.z;
+    const ax = -w * w * dx - 2 * w * this.focoVel.x, az0 = -w * w * dz - 2 * w * this.focoVel.z;
+    this.focoVel.x += ax * dtc;
+    this.focoVel.z += az0 * dtc;
+    this.foco.x += this.focoVel.x * dtc;
+    this.foco.z += this.focoVel.z * dtc;
+    if (Math.hypot(dx, dz) > 12) {
+      // (teletransporte o reaparición: no se arrastra la cámara por todo el mapa)
+      this.foco.copy(meta);
+      this.focoVel.set(0, 0, 0);
+    }
     if (this.vitrina) {
       const v = this.vitrina;
       const az = Math.sin(this.tiempo * 0.13) * 0.32 + 0.18;
@@ -413,9 +437,11 @@ export class Escena3D {
     const tan = Math.tan(THREE.MathUtils.degToRad(this.camara.fov / 2));
     const D = Math.max(9, Math.min(26, ancho / (2 * tan * asp))) * this.zoom;
     const el = THREE.MathUtils.degToRad(52);
+    // Sacudida suave (ondas, no ruido al azar en cada cuadro, que cansa la vista) y que se apaga rápido
     const s = this.sacudida;
-    this.sacudida = Math.max(0, s - dt * 2.4);
-    const sx = (Math.random() - 0.5) * s * 0.35, sy = (Math.random() - 0.5) * s * 0.35;
+    this.sacudida = Math.max(0, s - dt * 3.2);
+    const tt = this.tiempo;
+    const sx = (Math.sin(tt * 31) + Math.sin(tt * 17.3) * 0.6) * s * 0.11, sy = (Math.cos(tt * 27.1) + Math.sin(tt * 13.7) * 0.6) * s * 0.11;
     this.camara.position.set(this.foco.x + sx, Math.sin(el) * D, this.foco.z + Math.cos(el) * D + sy);
     this.camara.lookAt(this.foco.x + sx * 0.5, 0, this.foco.z + sy * 0.5);
     // La luna sigue a la cámara (sombras nítidas donde se juega)

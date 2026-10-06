@@ -15,8 +15,6 @@ Textual: «Mejorar calidad de mapa; mejorar movilidad, se siente tosca, los ojos
 velocidad, se siente raro…»
 - **Calidad**: mapas, enemigos, personajes «y todo lo demás»; «los sprites están muy básicos, falta mucho trabajo de
   texturas».
-- **Movimiento y cámara**: se siente tosco y cansa la vista (velocidad, sacudidas, cámara que salta): suavizar
-  aceleración/frenado, cámara con amortiguación, menos parpadeo de efectos.
 - **Visión astral** (un modo de ver en gris o similar, con un botón) que deje identificar lo del piso: menas, cofres,
   campana, objetos. **Que nada salga señalado en el mapa salvo la campana de extracción.**
 - **Recoger objetos**: en computador, con clic del mouse; en celular, pasando por encima. **Áreas de recolección más

@@ -138,6 +138,11 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   en el piso (el radio de extracción, 3,2 m) con la cuenta como un arco que se vacía (rojo los últimos 10 s); cae
   entre 10 y 20 casillas de camino de los jugadores. (Antes no se dibujaba nada después de caer: la flecha llevaba
   a un punto vacío y no se sabía dónde pararse.)
+- **Movimiento y cámara suaves** (Javier dijo que se sentía tosco y cansaba la vista): el personaje acelera y frena
+  en unas décimas (no arranca ni para en seco) y gira la mirada sin saltos; la cámara sigue con un resorte
+  amortiguado y se adelanta un poquito hacia donde uno camina; las sacudidas son ondas suaves y cortas (no
+  temblor), con tope, y se pueden apagar en la pausa («Sacudidas: sí/no», se guarda en el aparato); la linterna
+  titila apenas. El piloto automático, con la campana abajo, huye menos y se queda adentro del círculo.
 - **La horda** arranca con unos cuantos y a los 4 minutos son cientos (tope 260 + 70 por jugador extra). Por cada
   jugador extra: +38 % de vida, +60 % de enemigos, +30 % de élites y el botín se reparte.
 - **Experiencia compartida** en grupo; cada uno escoge sus cartas. Solo, el juego espera mientras escoge; en grupo

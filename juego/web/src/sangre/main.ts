@@ -84,6 +84,7 @@ const calidadPedida = params.get('calidad');
 const calidad: Calidad = calidadPedida === 'alta' || calidadPedida === 'media' || calidadPedida === 'baja' ? calidadPedida : preferencia<Calidad>('calidad', autoCalidad());
 
 const escena = new Escena3D($('lienzo') as unknown as HTMLCanvasElement, calidad);
+escena.sacudidas = preferencia<boolean>('sacudidas', true);
 escena.alCambiarCalidad = (c) => {
   if (!calidadPedida) ponerPreferencia('calidad', c);
 };
@@ -526,7 +527,7 @@ function pausa() {
       <div class="menu-pausa">
         <button class="boton boton-sangre" data-p="seguir">${glifo('espada')}Seguir</button>
         <div class="fila"><span class="etiqueta">Calidad</span>${(['baja', 'media', 'alta'] as Calidad[]).map((c) => `<button class="boton boton-chico${escena.calidad === c ? ' boton-oro' : ''}" data-c="${c}">${c[0].toUpperCase() + c.slice(1)}</button>`).join('')}</div>
-        <div class="fila"><button class="boton boton-chico" data-p="sonido">${glifo('sonido')}Sonido: ${sonido.silenciado() ? 'no' : 'sí'}</button><button class="boton boton-chico" data-p="musica">${glifo('musica')}Música: ${sonido.musica.apagada() ? 'no' : 'sí'}</button></div>
+        <div class="fila"><button class="boton boton-chico" data-p="sonido">${glifo('sonido')}Sonido: ${sonido.silenciado() ? 'no' : 'sí'}</button><button class="boton boton-chico" data-p="musica">${glifo('musica')}Música: ${sonido.musica.apagada() ? 'no' : 'sí'}</button><button class="boton boton-chico" data-p="sacudidas">Sacudidas: ${escena.sacudidas ? 'sí' : 'no'}</button></div>
         <button class="boton" data-p="abandonar">${glifo('atras')}Abandonar la expedición</button>
       </div>`;
   };
@@ -548,6 +549,10 @@ function pausa() {
     } else if (a === 'musica') {
       sonido.musica.alternar();
       musica.despertar();
+      pintar();
+    } else if (a === 'sacudidas') {
+      escena.sacudidas = !escena.sacudidas;
+      ponerPreferencia('sacudidas', escena.sacudidas);
       pintar();
     } else if (a === 'abandonar') {
       confirmar('¿Abandonar?', 'Se pierde lo de esta expedición (la ceniza y la maestría que ya ganaste en etapas anteriores sí quedan).', 'Abandonar', 'Seguir jugando', (si) => {

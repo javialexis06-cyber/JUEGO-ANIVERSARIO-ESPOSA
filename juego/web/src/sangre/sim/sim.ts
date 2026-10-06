@@ -822,13 +822,16 @@ export class Sim {
       mec.moverEmbestida(this, j, dt);
       return;
     }
-    // Aceleración suave (se siente con peso, pero responde rápido)
-    const k = Math.min(1, dt * 14);
+    // Aceleración y frenado suaves: arranca con algo de peso y frena deslizando un poquito (antes era casi instantáneo
+    // y se sentía tosco: cada toque del joystick era un tirón)
+    const k = Math.min(1, dt * (l > 0.05 ? 9 : 7));
     j.vx += (mx * vel - j.vx) * k;
     j.vy += (my * vel - j.vy) * k;
     if (l > 0.15) {
-      j.fx = mx / Math.max(l, 1e-3);
-      j.fy = my / Math.max(l, 1e-3);
+      // Gira hacia donde va en vez de voltearse de golpe
+      const kf = Math.min(1, dt * 16);
+      j.fx += (mx / Math.max(l, 1e-3) - j.fx) * kf;
+      j.fy += (my / Math.max(l, 1e-3) - j.fy) * kf;
       const lf = Math.hypot(j.fx, j.fy) || 1;
       j.fx /= lf;
       j.fy /= lf;
