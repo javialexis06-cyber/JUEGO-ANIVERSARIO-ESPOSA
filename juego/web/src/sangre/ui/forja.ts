@@ -7,7 +7,7 @@ import type { Expedicion, OfertaForja } from '../expedicion';
 import { escoger } from '../sim/opciones';
 import type { Jugador } from '../sim/jugador';
 import type { Sim } from '../sim/sim';
-import { ETAPAS } from '../datos/mundo';
+import { DESCANSO, ETAPAS } from '../datos/mundo';
 import { RAREZA_COLOR, glifo, icono } from './iconos';
 import type { VistaEleccion } from './eleccion';
 import { aviso } from './hud';
@@ -85,7 +85,7 @@ export function mostrarForja(o: OpcionesForja) {
         <div class="forja-columna placa mercader">
           <h3>El mercader <small>· toca para comprar; el candado la guarda</small></h3>
           <div class="ofertas">${ofertas}</div>
-          <div class="fila-botones"><span class="vida-forja">Vida ${Math.ceil(j.hp)}/${Math.ceil(j.hpMax)}</span><button class="boton" data-a="renovar" ${b.oro < exp.precioRenovar(j) ? 'disabled' : ''}>${glifo('dado')}Renovar · ${exp.precioRenovar(j)}</button></div>
+          <div class="fila-botones"><span class="vida-forja">Vida ${Math.ceil(j.hp)}/${Math.ceil(j.hpMax)}${j.hp < j.hpMax ? ` <small>· al bajar descansas: +${Math.round(DESCANSO * 100)} %</small>` : ''}</span><button class="boton" data-a="renovar" ${b.oro < exp.precioRenovar(j) ? 'disabled' : ''}>${glifo('dado')}Renovar · ${exp.precioRenovar(j)}</button></div>
         </div>
         <div class="forja-columna placa yunque-col">
           <h3>Yunque y altar de sangre</h3>

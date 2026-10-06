@@ -3,7 +3,7 @@
 // en el anfitrión de una partida de hasta 4 y en Node con el bot. Cada `paso(dt)` deja lo que pasó en `suc`.
 import { Azar } from '../../casa/lavado/azar';
 import { Rejilla } from '../../casa/lavado/rejilla';
-import { BIOMAS, CUENTA_EXTRACCION, DURACION_ETAPA, MOD_ELITE, PELIGROS, type DefBioma, type DefEnemigo } from '../datos/mundo';
+import { BIOMAS, CUENTA_EXTRACCION, DESCANSO, DURACION_ETAPA, MOD_ELITE, PELIGROS, type DefBioma, type DefEnemigo } from '../datos/mundo';
 import { C, esExcavable, esSolida, type ConfigExpedicion, type IdObjetivo, type IdSecundario } from '../tipos';
 import { TIPOS, TIPO_ALTAR, esJefe } from './catalogo';
 import { Aliado, ENT, Entidad, Enemigos, Proyectil, REC, Recogible, S, Sucesos, Zona } from './estado';
@@ -119,8 +119,9 @@ export class Sim {
     const pel = PELIGROS[Math.max(0, Math.min(4, cfg.exp.peligro - 1))];
     const mut = (m: string) => cfg.exp.mutadores.includes(m as never);
     this.esc = {
-      vida: pel.vida * (1 + 0.55 * (cfg.etapa - 1)) * (1 + 0.38 * (n - 1)) * (mut('codicia') ? 1.25 : 1) * (mut('fragiles') ? 0.75 : 1),
-      dano: (1 + 0.22 * (cfg.etapa - 1)) * (1 + 0.1 * (pel.n - 1)) * (mut('sangrienta') ? 1.3 : 1),
+      // (el salto entre etapas es suave: dentro de cada etapa los enemigos ya se endurecen con el reloj)
+      vida: pel.vida * (1 + 0.42 * (cfg.etapa - 1)) * (1 + 0.38 * (n - 1)) * (mut('codicia') ? 1.25 : 1) * (mut('fragiles') ? 0.75 : 1),
+      dano: (1 + 0.15 * (cfg.etapa - 1)) * (1 + 0.1 * (pel.n - 1)) * (mut('sangrienta') ? 1.3 : 1),
       cantidad: pel.cantidad * (1 + 0.6 * (n - 1)) * (1 + 0.12 * (cfg.etapa - 1)),
       elites: pel.elites * (1 + 0.3 * (n - 1)) * (mut('elites_dobles') ? 2 : 1),
       botin: 1 / (1 + 0.45 * (n - 1)),
@@ -141,11 +142,14 @@ export class Sim {
       j.x = p.x;
       j.y = p.y;
       j.vx = j.vy = 0;
+      const seQuedo = j.estado === 2;
       if (j.estado === 2 || j.estado === 3 || j.estado === 1) {
         // Vuelve a la expedición (el que se quedó afuera llega con media vida)
         if (j.estado === 2) j.hp = Math.max(1, Math.round(j.hpMax * 0.5));
         j.estado = 0;
       }
+      // Descanso en la Forja: el que salió en la campana recupera un tercio de la vida (no baja medio muerto)
+      if (cfg.etapa > 1 && !seQuedo) j.hp = Math.min(j.hpMax, j.hp + j.hpMax * DESCANSO);
       j.caidoT = 0;
       j.levantar = 0;
       j.usa = -1;
@@ -933,9 +937,10 @@ export class Sim {
     this.suc.push(S.ROTO, cx, cy, tipo);
     const x = cx + 0.5, y = cy + 0.5;
     const vetas = 1 + (j ? mec.extraVetas(j) : 0);
-    if (tipo === C.HIERRO) this.soltar(REC.HIERRO, x, y, Math.round(this.az.entero(2, 3) * vetas));
-    else if (tipo === C.SANGRE) this.soltar(REC.SANGRE, x, y, Math.round(this.az.entero(2, 3) * vetas));
-    else if (tipo === C.ORO) this.soltar(REC.ORO, x, y, Math.round(this.az.entero(4, 7) * vetas));
+    // (la minería paga bien: con eso se compra en la Forja y se suben las armas en el yunque)
+    if (tipo === C.HIERRO) this.soltar(REC.HIERRO, x, y, Math.round(this.az.entero(3, 4) * vetas));
+    else if (tipo === C.SANGRE) this.soltar(REC.SANGRE, x, y, Math.round(this.az.entero(2, 4) * vetas));
+    else if (tipo === C.ORO) this.soltar(REC.ORO, x, y, Math.round(this.az.entero(6, 10) * vetas));
     else if (tipo === C.HUEVO) this.soltar(REC.HUEVO, x, y, 1);
     if (j) {
       j.resumen.excavadas++;

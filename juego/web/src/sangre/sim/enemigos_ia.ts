@@ -31,7 +31,8 @@ export function aparecerEnemigo(sim: Sim, tipo: number, x: number, y: number, o:
   const i = E.nuevo();
   if (i < 0) return -1;
   const def = TIPOS[tipo];
-  const reloj = 1 + 0.9 * Math.min(1.3, sim.t / DURACION_ETAPA);
+  // Se endurecen con el reloj de la etapa (así a los dos minutos la cosa no se vuelve fácil)
+  const reloj = 1 + 1.1 * Math.min(1.3, sim.t / DURACION_ETAPA);
   let vida = def.vida * sim.esc.vida * (esJefe(tipo) || def.conducta === 'quieto' ? 1 : reloj) * (o.vida ?? 1);
   const elite = o.elite ?? 0;
   let esc = 1;
@@ -96,7 +97,7 @@ export function dirigirHorda(sim: Sim, dt: number) {
 }
 
 function elegirTipo(sim: Sim): number {
-  const desdeEf = 1 + 0.4 * (sim.cfg.etapa - 1);
+  const desdeEf = 1 + 0.28 * (sim.cfg.etapa - 1);
   const lista = sim.bioma.enemigos.filter((e) => e.desde / desdeEf <= sim.t);
   const enj = sim.cfg.exp.mutadores.includes('enjambres');
   const e = sim.az.pesado(lista, (x) => x.peso * (enj && (TIPOS[TIPO[x.id]].conducta === 'enjambre' || TIPOS[TIPO[x.id]].conducta === 'volador') ? 2.5 : 1));

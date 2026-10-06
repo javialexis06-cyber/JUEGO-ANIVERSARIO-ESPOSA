@@ -169,6 +169,21 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   roja, huevos verdes) y con aros el botín del piso, los santuarios, las reliquias, los prisioneros, el objetivo
   (altares, carreta, campana que se defiende, el élite marcado) y la campana. Sale una leyenda de colores abajo. Se
   apaga sola al empezar otra expedición y sigue prendida entre etapas.
+- **Curva de dificultad pareja** (Javier: «lo difícil del principio se pierde a los 2 minutos y después de la
+  primera etapa es prácticamente morir»):
+  - Dentro de cada etapa los enemigos se endurecen con el reloj (vida ×1 al empezar → ×2,1 al final de los 4:30),
+    así no se vuelve fácil a mitad de etapa.
+  - Entre etapas el salto es suave (+42 % de vida y +15 % de daño por etapa, antes +55 % y +22 %; los bichos
+    fuertes aparecen un poco más tarde): cada etapa empieza con un respiro y sube.
+  - **Descanso**: al bajar a la etapa siguiente se recupera el 35 % de la vida (`DESCANSO`; el que se quedó afuera
+    llega con media vida, sin descanso). La Forja lo avisa junto a la vida.
+  - La cacería del élite ya no trae doble modificador antes del peligro 3 (era el pico que mataba de una).
+  - **Minería**: más vetas (hierro +2, oro +2, sangre +1) y pagan más (oro 6-10, hierro 3-4, sangre 2-4): con eso se
+    compra en la Forja y se suben armas en el yunque.
+  - Medido con el bot (`balance-sangre.mjs`, 30 expediciones): peligro 3 pasa de 17 a 24 victorias, con menos
+    muertes en la primera y la última etapa; con `TORPE=1` (esquiva menos y casi no usa la Forja, como quien empieza)
+    peligro 2 pasa de 23 a 25 y peligro 3 de 22 a 24. El script ahora muestra el daño recibido por minuto, la vida
+    más baja y con cuánta vida empezó cada etapa.
 - **La horda** arranca con unos cuantos y a los 4 minutos son cientos (tope 260 + 70 por jugador extra). Por cada
   jugador extra: +38 % de vida, +60 % de enemigos, +30 % de élites y el botín se reparte.
 - **Experiencia compartida** en grupo; cada uno escoge sus cartas. Solo, el juego espera mientras escoge; en grupo
@@ -202,7 +217,8 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   más liviana de cada pared) y la calidad baja sola si un cuadro tarda más de 36 ms durante 4 s.
 
 **Pruebas**
-- `node scripts/balance-sangre.mjs [partidas] [clases|todas] [bioma] [peligro] [jugadores]`: el bot juega
+- `node scripts/balance-sangre.mjs [partidas] [clases|todas] [bioma] [peligro] [jugadores]` (con `TORPE=1`, un bot que
+  juega como quien empieza): el bot juega
   expediciones completas en Node (miles de pasos por segundo). Hoy: en peligro 1 el bot gana casi siempre; en
   peligro 2, más o menos la mitad.
 - `node scripts/probar-sangre.mjs <url> [carpeta] [grupo,extraccion,celular,tutorial]`: en el navegador, dos pestañas

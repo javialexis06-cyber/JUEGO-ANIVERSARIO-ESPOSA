@@ -16,6 +16,8 @@ interface Memoria {
   clave: string;
 }
 const MEM = new WeakMap<Jugador, Memoria>();
+/** Qué tan bien juega (para el balance: `miedo` < 1 esquiva peor, como una persona que todavía no conoce el juego). */
+export const NIVEL_BOT = { miedo: 1 };
 
 /** Decide el mando del jugador j para este cuadro. */
 export function botPaso(sim: Sim, j: Jugador) {
@@ -83,7 +85,7 @@ export function botPaso(sim: Sim, j: Jugador) {
       fy += (dy / (d || 1)) * 4;
     }
   }
-  let miedo = 0.8 + (1 - j.hp / j.hpMax) * 2.2;
+  let miedo = (0.8 + (1 - j.hp / j.hpMax) * 2.2) * NIVEL_BOT.miedo;
   // Con la campana abajo lo que importa es llegar y quedarse adentro: huye menos y no se sale del círculo
   const cam = sim.campana;
   if (cam && cam.est === 1) {

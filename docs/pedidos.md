@@ -16,9 +16,6 @@ velocidad, se siente raro…»
 - **Calidad**: mapas, enemigos, personajes «y todo lo demás»; «los sprites están muy básicos, falta mucho trabajo de
   texturas».
 - **Más Deep Rock Galactic**: mapas más grandes, más importancia a la minería, partidas más largas.
-- **Balance**: la dificultad de los primeros segundos se pierde a los 2 minutos y después de la primera etapa es
-  prácticamente morir. Que siga siendo jugable y divertido, pero con una progresión de dificultad más pareja y la
-  minería más importante.
 - **Modo infinito**: expediciones sin fin con enemigos cada vez más difíciles.
 - **Mejoras de minería**: bombas de minería, picar en área y cosas así.
 

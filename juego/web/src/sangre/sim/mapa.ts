@@ -214,9 +214,10 @@ export function generarMapa(o: OpcionesMapa): Mapa {
   if (o.carreta) rieles(m, az);
   // 7. Vetas
   const n = abiertas(m);
-  vetas(m, az, C.HIERRO, o.vetasHierro + 4, 3, 5, 9);
-  vetas(m, az, C.SANGRE, 3 + Math.floor(n / 600), 2, 4, 7);
-  vetas(m, az, C.ORO, 4 + Math.floor(n / 500), 2, 4, 6);
+  // (más vetas: la minería es la que paga la Forja y el yunque)
+  vetas(m, az, C.HIERRO, o.vetasHierro + 6, 3, 5, 8);
+  vetas(m, az, C.SANGRE, 4 + Math.floor(n / 600), 2, 4, 7);
+  vetas(m, az, C.ORO, 6 + Math.floor(n / 450), 2, 5, 6);
   // Vida de cada celda según su tipo
   for (let i = 0; i < m.c.length; i++) m.hp[i] = VIDA_CELDA[m.c[i]] ?? 0;
   // 8. Antorchas y decoración

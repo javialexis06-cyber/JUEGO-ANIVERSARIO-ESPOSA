@@ -189,8 +189,9 @@ export function actualizarObjetivos(sim: Sim, dt: number) {
       const orden = [...sim.bioma.enemigos].filter((e) => e.id !== 'caballero_muerte').sort((a, b) => b.desde - a.desde);
       const etapa = sim.cfg.etapa;
       const id = etapa >= 3 ? 'caballero_muerte' : orden[Math.min(orden.length - 1, 2 - Math.min(2, etapa - 1))]?.id ?? 'zombi_gordo';
-      const mods = etapa >= 3 ? modsElite(sim) | modsElite(sim) : modsElite(sim);
-      const i = aparecerEnemigo(sim, TIPO[id], p.x, p.y, { elite: mods, marcado: 1, vida: 0.8 + 0.2 * etapa });
+      // (doble modificador solo desde el peligro 3: en los primeros peligros era el golpe que mataba de una)
+      const mods = etapa >= 3 && sim.cfg.exp.peligro >= 3 ? modsElite(sim) | modsElite(sim) : modsElite(sim);
+      const i = aparecerEnemigo(sim, TIPO[id], p.x, p.y, { elite: mods, marcado: 1, vida: 0.7 + 0.15 * etapa });
       const e = nuevaEntidad(sim, -1, p.x, p.y);
       e.vivo = false;
       e.dato = 'caceria';

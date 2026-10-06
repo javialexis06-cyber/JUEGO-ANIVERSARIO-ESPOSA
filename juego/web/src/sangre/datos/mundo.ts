@@ -246,5 +246,7 @@ export const MUTADORES: Record<IdMutador, { nombre: string; desc: string; recomp
 
 /** Cuánto dura cada etapa (s) y la cuenta de la campana de extracción. */
 export const DURACION_ETAPA = 270;
+/** Lo que se recupera de vida al bajar a la etapa siguiente (descanso junto al yunque), sobre la vida máxima. */
+export const DESCANSO = 0.35;
 export const CUENTA_EXTRACCION = 60;
 export const ETAPAS = 4;
