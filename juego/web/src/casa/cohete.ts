@@ -1723,6 +1723,19 @@ export const cohete: { actual: RetreteEspacial | null } = { actual: null };
   boton: (sel: string) => cohete.actual?.pruebaBoton(sel),
 };
 
+/**
+ * Para las pruebas de amigos: todo lo de la pareja que el modo neutro esconde (las frases propias de Javier y Laura,
+ * las palabras de las figuras, la galaxia del amor y las banderitas de la pareja). Un amigo no debe ver nada de esto.
+ */
+export function textosDeLaPareja(): string[] {
+  const neutras = new Set<string>([...NEUTRO.frases, ...NEUTRO.tramo, ...Object.values(NEUTRO.poder), ...NEUTRO.otraVez]);
+  const todas = [
+    ...FRASES.el, ...FRASES.ella, ...FRASES_TRAMO.el, ...FRASES_TRAMO.ella, ...OTRA_VEZ.el, ...OTRA_VEZ.ella,
+    ...Object.values(FRASE_PODER).flatMap((f) => [f.el, f.ella]),
+  ];
+  return [...new Set(todas.filter((t) => !neutras.has(t))), 'ÉL ♥ ELLA', 'TE AMO', 'TQM', 'La galaxia del amor', 'Récord de Ella', 'Récord de Él', 'Le ganaste'];
+}
+
 /** Empieza a cargar los modelos del vuelo (mientras el personaje va al baño). */
 export function precargarCohete() {
   void cargar('cohete_retretes.glb').catch(() => null);

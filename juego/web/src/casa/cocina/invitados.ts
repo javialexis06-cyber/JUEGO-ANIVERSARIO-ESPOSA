@@ -97,6 +97,15 @@ export function frasePareja(rol: Rol, receta: RecetaId, tono: Tono, azar = Math.
   return l[Math.floor(azar() * l.length)];
 }
 
+/** Para las pruebas de amigos: todo lo que dice la pareja cuando llega a comer (un amigo no debe ver nada de esto). */
+export function textosDeLaPareja(): string[] {
+  const l = (r: Record<string, string[]>) => Object.values(r).flat();
+  return [
+    ...Object.values(SALUDOS_PAREJA).flatMap(l), ...Object.values(REACCIONES_PAREJA).flatMap(l),
+    ...Object.values(FAVORITO).flatMap((f) => Object.values(f ?? {})), 'hecho con amor', 'en pareja',
+  ];
+}
+
 export const FRASES: Record<'encantado' | 'feliz' | 'normal' | 'bravo' | 'apurado', string[]> = {
   encantado: ['¡Uy, qué delicia!', '¡Esto sí es de chef!', '¡Me quedó sonando!', '¡Diez de diez!', '¡Está buenísimo, parce!', '¡Qué cosa tan rica!', '¡Vuelvo mañana!', '¡Ave María, qué belleza!'],
   feliz: ['¡Muy rico, gracias!', 'Rico, rico', 'Me gustó mucho', '¡Qué bueno!', 'Muy bien hecho', '¡Bien sabroso!'],

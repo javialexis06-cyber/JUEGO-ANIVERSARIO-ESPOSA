@@ -48,9 +48,9 @@ const codigo = await el.evaluate(() => window.__codigo);
 const ella = await celular('ella', codigo);
 revisar(await esperar(ella, () => document.querySelectorAll('.sala-espera .se-puesto:not(.vacio)').length === 2, null, 120000), `Laura entra a la sala ${codigo}`);
 await foto(ella, '0-sala');
-await ella.click('.sala-espera [data-a="principal"]');
+await ella.click('.sala-espera [data-a="principal"]', { force: true });
 revisar(await esperar(el, () => !document.querySelector('.sala-espera [data-a="principal"]')?.disabled, null, 30000), 'Javier ve a Laura lista');
-await el.click('.sala-espera [data-a="principal"]');
+await el.click('.sala-espera [data-a="principal"]', { force: true });
 
 // 1) Se encuentran en la misma cocina
 revisar(await esperar(el, () => window.__cocinaMotor?.resumen().juntos, null, 60000), 'Javier ve que Laura está en su cocina');
