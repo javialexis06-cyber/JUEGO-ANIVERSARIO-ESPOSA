@@ -8,7 +8,7 @@ import { FRASES, cartaVista, logroVisto } from './textos';
 import { icono } from './iconos';
 import { LOGRO, type ResumenPartida } from './progreso';
 import { sfx } from './sonidos';
-import type { Jugador, Motor, Opcion } from './motor';
+import { ORO_X, type Jugador, type Motor, type Opcion } from './motor';
 import type { Efecto, IdArma, IdCarta, IdPasiva, Rol } from './tipos';
 
 /** Las acciones llevan `n`: cuántas cosas había escogido cuando se pintó la capa (un toque viejo o doble no cuenta). */
@@ -40,7 +40,7 @@ export function nombreItem(id: string) {
 /** La descripción de lo que da el siguiente nivel de una carta. */
 export function descOpcion(o: Opcion): string {
   if (o.tipo === 'arepa') return 'Una arepa con queso calientita: recuperas 30 de vida.';
-  if (o.tipo === 'oro') return '25 gotas doradas para la tienda.';
+  if (o.tipo === 'oro') return `${Math.round(25 * ORO_X)} gotas doradas para la tienda.`;
   if (o.tipo === 'arma') {
     const a = ARMAS[o.id as IdArma];
     return o.nueva ? a.desc : a.niveles[o.nivel - 2]?.txt ?? a.desc;
@@ -614,7 +614,7 @@ export class Interfaz {
       <h2>${titulo}<small style="color:#7a625a">${extra.nota ? `${esc(extra.nota)} · ` : ''}${sub}</small></h2>
       <div class="lv-resumen">
         <span><b>${mmss(r.segundos)}</b>tiempo</span><span><b>${r.nivel}</b>nivel</span><span><b>${miles(r.eliminados)}</b>mugrosos</span>
-        <span><b>${miles(r.oro)}</b>${extra.pareja ? 'gotas doradas tuyas' : 'gotas doradas'}</span>${extra.monedas ? `<span><b>+${extra.monedas}</b>monedas de la casa</span>` : ''}
+        <span><b>${miles(r.oro)}</b>${extra.pareja ? 'gotas doradas tuyas' : 'gotas doradas'}${r.jornal ? `<small>${miles(r.jornal)} por aguantar</small>` : ''}</span>${extra.monedas ? `<span><b>+${extra.monedas}</b>monedas de la casa</span>` : ''}
       </div>
       <div class="cuerpo">
         <div class="col"><table class="lv-tabla"><tr><th>Arma</th><th>Nv</th><th>Daño</th><th>%</th><th>DPS</th></tr>${filas}</table></div>

@@ -730,3 +730,4 @@ body.lavandose .hud-arriba-der { opacity: 0; pointer-events: none; transition: o
 /* Lo que se tocó se marca al instante (mientras el juego responde, sobre todo en pareja) */
 .lv-carta.tocada, .lv-sobre.tocada { outline: 3px solid #fff; scale: 1.05; }
 .lv-capa.enviado .lv-carta:not(.tocada) { opacity: 0.6; }
+.lv-resumen span small { display: block; margin-top: 2px; font: 700 11px/1.2 var(--texto); color: #b8862f; }

@@ -317,7 +317,14 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
 
 **Gotas doradas y tienda de poderes** (`tienda.ts`): 19 poderes como los del original (vida, recuperación,
 armadura, velocidad, poder, área, duración, cantidad, recarga, suerte, crecimiento, codicia, maldición, imán,
-revivir, volver a tirar, saltar, vetar); cada compra sube el precio de todo y se puede pedir el reembolso.
+revivir, volver a tirar, saltar, vetar); cada compra sube el precio de todo un 5 % y se puede pedir el reembolso.
+Para que el progreso no sea eterno (pedido de Javier: «en casi 20 partidas no paso del minuto 18»): las gotas que se
+recogen rinden 2,5 veces (`ORO_X` en `motor.ts`), cada partida paga además un **jornal por aguantar**
+(20 por minuto + 1,6 × minutos², +600 si llega al final: unas 360 en 10 minutos, 880 en 18 y 2.600 en 30), Cantidad
+y Revivir cuestan 1.500 y 2.500, la subida de los bichos después del minuto 14 es más suave (vida +4,5 % y daño
++1 % por minuto) y en la cara el muro de lagañas (18:00), el anillo de virus (19:00) y la manada de grasa (9:00)
+traen menos bichos. Con el piloto (`scripts/progresion-lavado.mjs`, desde cero comprando con lo que gana): unas 24
+mejoras en 12 partidas (antes 11 en 14) y la primera vez a los 30 minutos entre la partida 3 y la 11.
 
 **Disfraces** (en vez de personajes, `disfraces.ts`): 8 de Él (panda en pijama, perro lanudo, dentista del
 barrio, Súper Jabón, leñador del champú, astronauta del retrete, bombero de la ducha, barbero de vueltiao) y 8 de
@@ -386,7 +393,9 @@ escasas: 1 cada 2 minutos aguantados, +3 si llega a los 30 (máximo 15 por parti
 aguantados** (10, 20 y 30).
 
 **Pruebas**: `node scripts/balance-lavado.mjs [partidas] [escenario] [disfraces] [nada,media,toda]` (partidas
-enteras con el bot en Node); `node scripts/probar-lavado-nivel.mjs <url>` (celular táctil emulado con toques de
+enteras con el bot en Node); `node scripts/progresion-lavado.mjs [partidas] [escenario] [disfraz] [semilla]` (el
+progreso desde cero: el bot juega, compra en la tienda y se ve en qué partida pasa los 30 minutos;
+`TARDE=vida,daño,oro` prueba otros valores); `node scripts/probar-lavado-nivel.mjs <url>` (celular táctil emulado con toques de
 verdad: 20 subidas de nivel seguidas, colas de niveles con dobles toques, volver a tirar, vetar, saltar, cofres,
 cartas de amor, pausa y segundo plano, retirarse, «Otra lavada», el menú y volver a la casa; y lo básico con el
 mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.actual.probar(…)` (`tiempo`, `xp`,

@@ -17,12 +17,22 @@ import { cartaVista, disfrazVisto, neutralizar } from './textos';
 import type { AspectoJugador } from '../../salas/tipos';
 
 /** Aumento de vida de los bichos por minuto después del 14, y qué parte de eso se vuelve daño. */
-export let TARDE_VIDA = 0.06;
-export let TARDE_DANO = 0.3;
+export let TARDE_VIDA = 0.045;
+export let TARDE_DANO = 0.22;
+/** Cuánto rinden las gotas doradas que se recogen (monedas, bolsas, frascos y cofres). Antes 1: con la tienda del
+ *  original había que jugar decenas de partidas para mejorar algo. */
+export let ORO_X = 2.5;
+/** Lo que se gana por aguantar (además de lo recogido): más cuanto más dura la lavada, y un premio por llegar al
+ *  final. Así hasta una partida corta deja para algo en la tienda. */
+export function jornal(segundos: number, gano: boolean) {
+  const m = Math.max(0, segundos) / 60;
+  return Math.round(20 * m + 1.6 * m * m) + (gano ? 600 : 0);
+}
 /** Para el balance (scripts/balance-lavado.ts). */
-export function ajustarTarde(vida: number, dano: number) {
+export function ajustarTarde(vida: number, dano: number, oro = ORO_X) {
   TARDE_VIDA = vida;
   TARDE_DANO = dano;
+  ORO_X = oro;
 }
 export const MAX_ENEMIGOS = 420;
 /**
@@ -730,7 +740,7 @@ export class Motor {
       ];
       const x = subibles.length ? this.az.uno(subibles) : null;
       if (!x) {
-        const g = Math.round((12 + this.t / 30) * (1 + j.st.codicia));
+        const g = Math.round((12 + this.t / 30) * ORO_X * (1 + j.st.codicia));
         oro += g;
         premios.push({ tipo: 'oro', id: 'oro', nivel: g });
       } else if (x[0] === 'arma') {
@@ -742,7 +752,7 @@ export class Motor {
       }
     }
     // Además, un chorrito de gotas doradas que salta del cofre
-    const extra = Math.round((10 + this.t / 20) * (calidad >= 2 ? 2 : 1) * (1 + j.st.codicia) * (j.tieneCarta('transformice') ? 2 : 1));
+    const extra = Math.round((10 + this.t / 20) * ORO_X * (calidad >= 2 ? 2 : 1) * (1 + j.st.codicia) * (j.tieneCarta('transformice') ? 2 : 1));
     oro += extra;
     this.oro += oro;
     j.oro += oro;
@@ -1683,7 +1693,7 @@ export class Motor {
 
   sumarOro(n: number, j: Jugador | null) {
     const k = j?.tieneCarta('transformice') ? 2 : 1;
-    const g = Math.round(n * (1 + (j?.st.codicia ?? 0)) * k);
+    const g = Math.round(n * ORO_X * (1 + (j?.st.codicia ?? 0)) * k);
     this.oro += g;
     if (j) j.oro += g;
     return g;
@@ -1846,11 +1856,17 @@ export class Motor {
   }
 
   // ------------------------------------------------------------------------------------------------- Final
-  /** Las gotas doradas que se lleva cada uno: solo, todas; con más, lo suyo + la cuarta parte de lo de los demás. */
+  /** Las gotas doradas que se lleva cada uno: solo, todas; con más, lo suyo + la cuarta parte de lo de los demás.
+   *  Más el jornal por aguantar (cada uno el suyo completo). */
   oroDe(ji: number) {
     const j = this.jug[ji];
-    if (!j || this.jug.length < 2) return this.oro;
-    return Math.round(j.oro + Math.max(0, this.oro - j.oro) * 0.25);
+    const recogido = !j || this.jug.length < 2 ? this.oro : Math.round(j.oro + Math.max(0, this.oro - j.oro) * 0.25);
+    return recogido + this.jornalDe(ji);
+  }
+
+  /** Lo que se gana por aguantar (la codicia también lo sube). */
+  jornalDe(ji: number) {
+    return Math.round(jornal(this.t, this.gano) * (1 + (this.jug[ji]?.st.codicia ?? 0)));
   }
 
   resumen(ji = 0, pareja = false): ResumenPartida {
@@ -1864,6 +1880,7 @@ export class Motor {
       nivel: this.nivel,
       eliminados: this.eliminados,
       oro: this.oroDe(ji),
+      jornal: this.jornalDe(ji),
       cofres: this.cofres,
       velitas: this.velitas,
       arepas: this.arepas,

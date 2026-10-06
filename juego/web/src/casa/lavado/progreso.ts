@@ -119,6 +119,8 @@ export interface ResumenPartida {
   nivel: number;
   eliminados: number;
   oro: number;
+  /** De esas gotas, las que se ganaron por aguantar. */
+  jornal?: number;
   cofres: number;
   velitas: number;
   arepas: number;

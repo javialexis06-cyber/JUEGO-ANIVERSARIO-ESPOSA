@@ -290,9 +290,9 @@ Javier pidió parar después del frente de amigos y dejar todo apuntado. Así qu
 - Las demás ramas `trabajo/*` (auditoria, lavado, cocina, retrete2, salas, sangre, sangre-biomas, sangre-figuras,
   arreglos, cohete) ya están juntadas: se pueden borrar.
 
-**Lo que sigue**, en orden: `docs/pedidos.md`. Las cuentas con contraseña ya quedaron; lo siguiente es **ajustar el progreso
-de Lavarse la cara** (comprar mejoras es muy lento) y las **correcciones de Sangre y Ceniza**; luego la ronda 2 de
-arreglos, el sótano de terror, el juego de crímenes y lo acumulado.
+**Lo que sigue**, en orden: `docs/pedidos.md`. Las cuentas con contraseña y el progreso más rápido de Lavarse la cara ya
+quedaron; lo siguiente son las **correcciones de Sangre y Ceniza**; luego la ronda 2 de arreglos, el sótano de terror,
+el juego de crímenes y lo acumulado.
 
 **Para Javier** (no lo puede hacer Claude): pegar `supabase/cambios-pendientes.sql` en el SQL Editor de Supabase y,
 para las voces, poner `ELEVENLABS_API_KEY` en el entorno y permitir `api.elevenlabs.io`.
