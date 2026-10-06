@@ -24,6 +24,15 @@ se pierda el progreso.»
 - Los cambios de SQL los aplica Javier en el panel de Supabase (no hay clave de servicio aquí); dejarlos en
   `supabase/cambios-pendientes.sql` con instrucciones claras. No poner nunca la clave de servicio en la app.
 
+## Lavarse la cara: el progreso es muy lento (pedido de Javier, después de las cuentas)
+
+«Comprar las mejoras es demasiado lento, peca justo de lo contrario de Sangre y Ceniza (que se termina en 4 o 5
+runs): en casi 20 no logro todavía pasar del minuto 18. No sé si es por la demora de adquirir las distintas mejoras o
+si el juego está demasiado difícil para pasar.»
+- Medir con el piloto (`src/casa/lavado/bot.ts`) cuánto se gana por partida y cuánto cuesta la tienda; ver si el
+  muro está en la plata o en la dificultad de los minutos 15-20 (o en las dos).
+- Meta: que en unas 8-10 partidas buenas se llegue a pasar los 30 minutos, con mejoras que se sientan.
+
 ## Sangre y Ceniza: correcciones y mejoras (pedido de Javier tras probarlo)
 
 Textual: «Mejorar calidad de mapa; mejorar movilidad, se siente tosca, los ojos se cansan o se abruman por la
