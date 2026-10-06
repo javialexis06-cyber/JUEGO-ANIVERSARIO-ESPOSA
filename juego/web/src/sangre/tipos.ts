@@ -45,12 +45,13 @@ export interface Stats {
   alcance: number; // % de alcance para buscar blanco
   curacion: number; // % de curación recibida
   invocaciones: number; // % de daño y vida de lo invocado
+  vetas: number; // % más de lo que dan las vetas al romperlas
 }
 
 export const STATS_CERO: Stats = {
   vida: 0, regen: 0, armadura: 0, esquiva: 0, velocidad: 0, dano: 0, cadencia: 0, area: 0, cantidad: 0, velProy: 0, duracion: 0,
   critico: 0, danoCritico: 0, iman: 0, suerte: 0, experiencia: 0, oro: 0, excavar: 0, roboVida: 0, enfriamiento: 0, luz: 0,
-  espinas: 0, danoElite: 0, alcance: 0, curacion: 0, invocaciones: 0,
+  espinas: 0, danoElite: 0, alcance: 0, curacion: 0, invocaciones: 0, vetas: 0,
 };
 export type Stat = keyof Stats;
 export const nuevasStats = (): Stats => ({ ...STATS_CERO });
@@ -83,7 +84,8 @@ export type Comportamiento =
   | 'invocar'; // llama aliados que pelean
 
 /** Hacia dónde apunta un arma. */
-export type Apunte = 'cercano' | 'mira' | 'azar' | 'denso' | 'fuerte';
+/** veta: a la veta más cercana (minería; si no hay, al montón). */
+export type Apunte = 'cercano' | 'mira' | 'azar' | 'denso' | 'fuerte' | 'veta';
 
 /** Banderas de comportamiento (las sobrecargas las prenden). */
 export const F = {
@@ -113,6 +115,7 @@ export const F = {
   SANGRA: 1 << 23, // hace sangrar
   ENCANTA: 1 << 24, // el enemigo pelea un rato del lado de uno
   ORO: 1 << 25, // los muertos sueltan más oro
+  MINA: 1 << 26, // la explosión también rompe las vetas (y suelta lo que tienen)
 } as const;
 
 export interface ParamsArma {

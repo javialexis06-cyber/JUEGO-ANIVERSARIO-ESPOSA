@@ -559,6 +559,17 @@ export const ARMAS_LISTA: DefArma[] = [
     evoluciona: { con: 'barril_polvora', a: 'polvorin' },
   },
   {
+    // La minería con pólvora: busca la veta más cercana y la revienta (el hierro, el oro y la sangre saltan al piso)
+    id: 'carga_minera', nombre: 'Carga minera', clase: 'comun', tipo: 'lanzado', apunta: 'veta', etiquetas: ['fuego', 'area'],
+    base: P({ dano: 14, cadencia: 3.2, area: 2, alcance: 7.5, empuje: 3, flags: F.EXPLOTA | F.EXCAVA | F.MINA }),
+    desc: 'Vuela a la veta más cercana y la revienta con todo lo que tiene; si no hay vetas, cae sobre el montón.', modelo: 'bomba', proyectil: 'bomba', color: '#e8c070', glifo: 'pico',
+    sobrecargas: [
+      S('doble_carga', 'Doble carga', 'Lanza dos cargas.', { mas: { cantidad: 1 } }),
+      S('carga_pesada', 'Carga pesada', '+40 % de área y +30 % de daño.', { por: { area: 1.4, dano: 1.3 } }),
+      S('mecha_minera', 'Mecha de minero', 'Revienta un 35 % más seguido.', { por: { cadencia: 0.65 } }),
+    ],
+  },
+  {
     id: 'sierra', nombre: 'Hojas de sierra', clase: 'comun', tipo: 'orbita', apunta: 'cercano', etiquetas: ['fisico'],
     base: P({ dano: 8, cadencia: 0.45, cantidad: 3, area: 1.4, vel: 4, empuje: 1 }),
     desc: 'Tres hojas de sierra giran pegadas a ti.', modelo: 'sierra', proyectil: 'sierra', color: '#c8ccd2', glifo: 'sierra',

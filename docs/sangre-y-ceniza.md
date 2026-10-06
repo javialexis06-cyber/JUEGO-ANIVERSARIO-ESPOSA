@@ -129,7 +129,7 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
 | `sonidos.ts` | Efectos sintetizados con peso y la música lúgubre |
 
 **Decisiones**
-- **Etapas con reloj (como DRG: Survivor)**: cada etapa dura 4:30 como máximo; al cumplir el objetivo cae un cofre y
+- **Etapas con reloj (como DRG: Survivor)**: cada etapa dura 5:30 como máximo; al cumplir el objetivo cae un cofre y
   el reloj baja a un minuto; al acabarse baja la campana (60 s de cuenta, la horda enloquece). El reloj de arriba
   dice «Campana en m:ss» (o «Jefe en» en la etapa final): por eso la campana «baja de repente» cuando llega a cero o
   un minuto después de cumplir el objetivo. En la cuarta etapa, en vez de campana sale el jefe del bioma y después la
@@ -171,7 +171,7 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   apaga sola al empezar otra expedición y sigue prendida entre etapas.
 - **Curva de dificultad pareja** (Javier: «lo difícil del principio se pierde a los 2 minutos y después de la
   primera etapa es prácticamente morir»):
-  - Dentro de cada etapa los enemigos se endurecen con el reloj (vida ×1 al empezar → ×2,1 al final de los 4:30),
+  - Dentro de cada etapa los enemigos se endurecen con el reloj (vida ×1 al empezar → ×2,1 al final de los 5:30),
     así no se vuelve fácil a mitad de etapa.
   - Entre etapas el salto es suave (+42 % de vida y +15 % de daño por etapa, antes +55 % y +22 %; los bichos
     fuertes aparecen un poco más tarde): cada etapa empieza con un respiro y sube.
@@ -184,6 +184,16 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
     muertes en la primera y la última etapa; con `TORPE=1` (esquiva menos y casi no usa la Forja, como quien empieza)
     peligro 2 pasa de 23 a 25 y peligro 3 de 22 a 24. El script ahora muestra el daño recibido por minuto, la vida
     más baja y con cuánta vida empezó cada etapa.
+- **Más Deep Rock** (Javier: mapas más grandes, más minería, partidas más largas):
+  - Mapas de 68 × 68 (antes 58; +6 por jugador extra) y etapas de 5:30 (antes 4:30); la horda es un poco menos densa
+    para compensar lo que hay que caminar.
+  - **Carga minera** (arma común, desde el principio): vuela a la veta más cercana con un lado abierto y la revienta
+    (bandera `F.MINA`: rompe también las vetas); el hierro, el oro y la sangre le llegan solos al que la tiró, como en
+    Deep Rock. Si no hay vetas cerca, cae sobre el montón. Sobrecargas: doble carga, carga pesada, mecha de minero.
+  - En la Forja: **Pico ancho** (al excavar también pica las paredes de los lados al 60 %) y **Cartuchos de minero**
+    (cada 6 paredes rotas, la siguiente revienta: rompe roca y vetas y lastima alrededor).
+  - Nueva estadística `vetas` (cuánto más dan las vetas): carta de subir de nivel «Olfato de minero» (+15 %) y mejora
+    del Pozo «Ojo de minero» (+10 % por nivel, hasta 5).
 - **La horda** arranca con unos cuantos y a los 4 minutos son cientos (tope 260 + 70 por jugador extra). Por cada
   jugador extra: +38 % de vida, +60 % de enemigos, +30 % de élites y el botín se reparte.
 - **Experiencia compartida** en grupo; cada uno escoge sus cartas. Solo, el juego espera mientras escoge; en grupo

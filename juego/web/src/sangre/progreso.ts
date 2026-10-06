@@ -6,10 +6,10 @@ import type { IdBioma, IdClase, IdMutador, PerfilJugador, RanuraEquipo, Stats } 
 
 export const CLASES_INICIALES: IdClase[] = ['monarca', 'campesino', 'prisionero'];
 export const BIOMAS_INICIALES: IdBioma[] = ['cementerio', 'catacumbas'];
-export const COMUNES_INICIALES = ['daga', 'hacha_arrojadiza', 'bomba'];
+export const COMUNES_INICIALES = ['daga', 'hacha_arrojadiza', 'bomba', 'carga_minera'];
 const CLASES_TODAS: IdClase[] = ['monarca', 'campesino', 'prisionero', 'caballero', 'cazador', 'herrero', 'alquimista', 'sepulturero', 'inquisidor', 'verdugo', 'bruja', 'juglar'];
 const BIOMAS_TODOS: IdBioma[] = ['cementerio', 'catacumbas', 'minas', 'abadia', 'castillo'];
-const COMUNES_TODAS = ['daga', 'arco_largo', 'hacha_arrojadiza', 'bomba', 'sierra', 'ira_cielo'];
+const COMUNES_TODAS = ['daga', 'arco_largo', 'hacha_arrojadiza', 'bomba', 'carga_minera', 'sierra', 'ira_cielo'];
 const MUTADORES_TODOS: IdMutador[] = ['sangrienta', 'sin_antorchas', 'elites_dobles', 'plaga', 'roca_dura', 'codicia', 'eclipse', 'fragiles', 'enjambres', 'velocidad'];
 const RANURAS: RanuraEquipo[] = ['casco', 'armadura', 'guantes', 'botas', 'amuleto', 'anillo'];
 

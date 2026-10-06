@@ -125,7 +125,7 @@ function atacar(sim: Sim, j: Jugador, a: ArmaJ, k: number, eco: boolean): boolea
 
 /** Dirección hacia el blanco (o hacia donde mira). Devuelve el ángulo o null si no hay blanco. */
 function apuntar(sim: Sim, j: Jugador, a: ArmaJ, alcance: number): { ang: number; i: number; x: number; y: number } | null {
-  const i = sim.blanco(j.x, j.y, alcance, a.def.apunta, j.fx, j.fy);
+  const i = sim.blanco(j.x, j.y, alcance, a.def.apunta === 'veta' ? 'denso' : a.def.apunta, j.fx, j.fy);
   if (i < 0) {
     if (a.def.apunta === 'mira' && (Math.abs(j.vx) + Math.abs(j.vy) > 0.4)) return { ang: Math.atan2(j.fy, j.fx), i: -1, x: j.x + j.fx * 4, y: j.y + j.fy * 4 };
     return null;
@@ -364,9 +364,27 @@ function bumeran(sim: Sim, j: Jugador, a: ArmaJ, k: number): boolean {
   return true;
 }
 
+/** La veta (hierro, oro, sangre) más cercana con un lado abierto, a menos de `alcance` (o null). */
+function vetaCercana(sim: Sim, j: Jugador, alcance: number): { ang: number; i: number; x: number; y: number } | null {
+  const m = sim.mapa;
+  let mejor: { x: number; y: number } | null = null, md = alcance * alcance;
+  const x0 = Math.floor(j.x - alcance), x1 = Math.ceil(j.x + alcance), y0 = Math.floor(j.y - alcance), y1 = Math.ceil(j.y + alcance);
+  for (let cy = y0; cy <= y1; cy++)
+    for (let cx = x0; cx <= x1; cx++) {
+      const t = m.get(cx, cy);
+      if (t !== C.HIERRO && t !== C.ORO && t !== C.SANGRE) continue;
+      const d = (cx + 0.5 - j.x) ** 2 + (cy + 0.5 - j.y) ** 2;
+      if (d >= md || !m.expuesta(cx, cy)) continue;
+      md = d;
+      mejor = { x: cx + 0.5, y: cy + 0.5 };
+    }
+  return mejor ? { ang: Math.atan2(mejor.y - j.y, mejor.x - j.x), i: -1, x: mejor.x, y: mejor.y } : null;
+}
+
 function lanzado(sim: Sim, j: Jugador, a: ArmaJ, k: number): boolean {
   const p = a.p;
-  const b = apuntar(sim, j, a, p.alcance);
+  // (la carga minera va a la veta; si no hay ninguna cerca, al montón de enemigos)
+  const b = (a.def.apunta === 'veta' ? vetaCercana(sim, j, p.alcance) : null) ?? apuntar(sim, j, a, p.alcance);
   if (!b) return false;
   for (let s = 0; s < p.cantidad; s++) {
     const pr = salirProyectil(sim, j, a, k, b.ang, MOV.LANZADO);
@@ -762,7 +780,7 @@ function explotar(sim: Sim, pr: Proyectil) {
   golpeProyectil(sim, pr, GP, 0, 0);
   GP.empuje = Math.max(GP.empuje, 3);
   sim.explosion(x, y, r, pr.dano, GP, claseExplosion(pr.etq));
-  if (pr.flags & F.EXCAVA || (j && j.clase === 'alquimista' && j.spec === 1)) sim.romperParedes(x, y, r * 0.75, j);
+  if (pr.flags & F.EXCAVA || (j && j.clase === 'alquimista' && j.spec === 1)) sim.romperParedes(x, y, r * 0.75, j, false, !!(pr.flags & F.MINA));
 }
 
 function dividir(sim: Sim, pr: Proyectil) {

@@ -77,6 +77,10 @@ export class Sim {
   jefeVisto = false;
   /** Escala de la horda según el peligro, la etapa y cuántos juegan. */
   esc = { vida: 1, dano: 1, cantidad: 1, elites: 1, botin: 1 };
+  /** Revienta un cartucho de minero ahora mismo (para que no encadene otro dentro de la misma explosión). */
+  private enCartucho = false;
+  /** Mientras revienta una explosión minera: a quién le vuela el botín de las vetas (−1 nadie). */
+  private atraerA = -1;
   fin: FinEtapa | null = null;
   /** Efecto de eclipse en curso (s): menos luz, enemigos más rápidos. */
   eclipse = 0;
@@ -351,7 +355,8 @@ export class Sim {
     r.vy = Math.sin(a) * v;
     r.vz = volar ? this.az.entre(2.5, 4) : 0;
     r.valor = valor;
-    r.hacia = -1;
+    // (lo que revienta la carga minera o un cartucho le llega solo al que la tiró, como en Deep Rock)
+    r.hacia = this.atraerA >= 0 && (tipo === REC.ORO || tipo === REC.HIERRO || tipo === REC.SANGRE) ? this.atraerA : -1;
     r.t = 0;
     r.dato = dato;
     r.id = this.id();
@@ -606,18 +611,22 @@ export class Sim {
     for (const a of this.A) if (a.vivo && a.hpMax > 1 && (a.x - x) ** 2 + (a.y - y) ** 2 < r * r) a.hp -= dano;
   }
 
-  /** Rompe las paredes blandas (y escombros) a menos de r (explosiones del explosivista, la bomba). */
-  romperParedes(x: number, y: number, r: number, j: Jugador | null, tambienDuras = false) {
+  /** Rompe las paredes blandas (y escombros) a menos de r (explosiones del explosivista, la bomba); con `vetas`, también
+   *  las vetas, que sueltan lo que tienen (la carga minera, los cartuchos). */
+  romperParedes(x: number, y: number, r: number, j: Jugador | null, tambienDuras = false, vetas = false) {
     const m = this.mapa;
+    const antes = this.atraerA;
+    if (vetas && j) this.atraerA = j.i;
     for (let cy = Math.floor(y - r); cy <= Math.ceil(y + r); cy++)
       for (let cx = Math.floor(x - r); cx <= Math.ceil(x + r); cx++) {
         if ((cx + 0.5 - x) ** 2 + (cy + 0.5 - y) ** 2 > r * r) continue;
         const t = m.get(cx, cy);
-        if (t === C.BLANDA || t === C.ESCOMBRO || (tambienDuras && t === C.DURA)) {
+        if (t === C.BLANDA || t === C.ESCOMBRO || (tambienDuras && t === C.DURA) || (vetas && (t === C.HIERRO || t === C.ORO || t === C.SANGRE || t === C.HUEVO))) {
           const roto = m.excavar(cx, cy, 99);
           if (roto >= 0) this.alRomper(cx, cy, roto, j);
         }
       }
+    this.atraerA = antes;
   }
 
   // ----------------------------------------------------------------------------------------------- Jugadores
@@ -930,13 +939,22 @@ export class Sim {
       j.excavando = -1;
       this.alRomper(cx, cy, roto, j);
     }
+    // Pico ancho: también pica las dos paredes de los lados
+    if (j.objeto('pico_ancho')) {
+      const lados = Math.abs(ux) > Math.abs(uy) ? [[0, 1], [0, -1]] : [[1, 0], [-1, 0]];
+      for (const [dx, dy] of lados) {
+        if (!esExcavable(this.mapa.get(cx + dx, cy + dy))) continue;
+        const r2 = this.mapa.excavar(cx + dx, cy + dy, fuerza * dt * 0.6);
+        if (r2 >= 0) this.alRomper(cx + dx, cy + dy, r2, j);
+      }
+    }
   }
 
   /** Se rompió una pared: botín de las vetas, mecánicas y sucesos. */
   alRomper(cx: number, cy: number, tipo: number, j: Jugador | null) {
     this.suc.push(S.ROTO, cx, cy, tipo);
     const x = cx + 0.5, y = cy + 0.5;
-    const vetas = 1 + (j ? mec.extraVetas(j) : 0);
+    const vetas = 1 + (j ? mec.extraVetas(j) + j.st.vetas : 0);
     // (la minería paga bien: con eso se compra en la Forja y se suben las armas en el yunque)
     if (tipo === C.HIERRO) this.soltar(REC.HIERRO, x, y, Math.round(this.az.entero(3, 4) * vetas));
     else if (tipo === C.SANGRE) this.soltar(REC.SANGRE, x, y, Math.round(this.az.entero(2, 4) * vetas));
@@ -946,6 +964,20 @@ export class Sim {
       j.resumen.excavadas++;
       mec.alExcavar(this, j, cx, cy, tipo);
       if (j.tiene('excavar_almas')) this.soltar(REC.ALMA_AZUL, x, y, 1);
+      // Cartuchos de minero: cada 6 paredes rotas, la siguiente revienta (rompe roca y vetas, lastima alrededor)
+      if (j.objeto('cartuchos_minero') && !this.enCartucho) {
+        j.m.cartuchos = (j.m.cartuchos ?? 0) + 1;
+        if (j.m.cartuchos >= 6) {
+          j.m.cartuchos = 0;
+          this.enCartucho = true;
+          const g = this.G.reset();
+          g.j = j.i;
+          g.empuje = 4;
+          this.explosion(x, y, 1.8, 20 * (1 + j.st.dano), g, 0);
+          this.romperParedes(x, y, 1.6, j, false, true);
+          this.enCartucho = false;
+        }
+      }
     }
     this.flujoT = Math.min(this.flujoT, 0.05);
   }

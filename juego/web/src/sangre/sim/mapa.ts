@@ -187,7 +187,8 @@ export interface OpcionesMapa {
 export function generarMapa(o: OpcionesMapa): Mapa {
   if (o.tutorial) return mapaTutorial(o);
   const az = new Azar(o.semilla);
-  const lado = 58 + 5 * Math.max(0, o.jugadores - 1);
+  // (mapas grandes, como Deep Rock: más cuevas que recorrer y más vetas que encontrar)
+  const lado = 68 + 6 * Math.max(0, o.jugadores - 1);
   const m = new Mapa(lado, lado);
   const s = o.semilla % 9973;
   // 1. Todo es roca: dura donde el ruido lo dice (y en el borde, imposible)
