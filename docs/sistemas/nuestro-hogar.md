@@ -299,6 +299,13 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
 **La partida** (motor en `src/casa/lavado/motor.ts`, todo como el original):
 - **30 minutos**; al llegar, «¡Se acabó el agua caliente!» y sale la **Ducha Helada** (la Parca: no se le gana).
   Pausa, retirarse y cobrar, y **modo Apurado** (todo más rápido; se abre ganando La Cara).
+- **La pausa tiene tres pestañas** (`interfaz.ts`, recetas en `evoluciones.ts`): **Mochila** (cada arma con su receta
+  de evolución, sellos ✓ / ✗ / 6/8 y qué le falta en palabras; cada pasiva con el arma que hace evolucionar),
+  **Evoluciones** (las 17 recetas, las más cerca primero) y **Estadísticas**. Tocar las armas de arriba abre la pausa
+  en la Mochila. Las cartas de subir de nivel dicen con qué evoluciona cada cosa aunque todavía no se tenga (gris) y
+  en dorado cuando ya se tiene la pareja. La colección del menú también tiene la pestaña **Evoluciones**.
+- Los íconos salen del atlas `public/lavado/objetos.webp` con su dirección completa: una `url()` relativa dentro de
+  una variable de CSS se resuelve contra la hoja de estilos empacada (`assets/`) y en la APK salían vacíos.
 - **Oleadas minuto a minuto** (mínimo de bichos, cada cuánto llegan y qué tipos), enjambres que cruzan, anillos,
   muros, élites (con cofre) y **jefes con cofre** cada 5 minutos. Después del minuto 14 los bichos aguantan y
   pegan un poquito más cada minuto (sin la tienda no se llega a 30).

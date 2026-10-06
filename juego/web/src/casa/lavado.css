@@ -92,6 +92,10 @@
   display: grid;
   grid-template-columns: repeat(6, 28px);
   gap: 3px;
+  /* Se toca para ver la mochila (el resto del HUD deja pasar los toques al juego) */
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 .lv-inv span {
   position: relative;
@@ -326,6 +330,7 @@
 .lv-carta .pips u { width: 7px; height: 7px; border-radius: 50%; background: rgba(61, 43, 39, 0.18); }
 .lv-carta .pips u.si { background: var(--lv-oro); box-shadow: 0 0 0 1px var(--lv-oro-osc); }
 .lv-carta .pista { font: 700 9.5px/1.2 var(--texto); color: #c2557a; }
+.lv-carta .pista.gris { color: #8a7a74; font-weight: 600; }
 @keyframes lv-carta { from { opacity: 0; translate: 0 40px; scale: 0.8; } }
 
 /* Cofre */
@@ -561,6 +566,9 @@
   padding: 2px 2px 8px;
 }
 .lv-lista.anchos { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.lv-lista:has(> .lv-recetas-menu) { display: block; }
+.lv-recetas.lv-recetas-menu { grid-template-columns: 1fr; }
+.lv-recetas-menu .lv-rec { background: rgba(255, 248, 238, 0.95); }
 .lv-item {
   position: relative;
   border: 0;
@@ -731,3 +739,92 @@ body.lavandose .hud-arriba-der { opacity: 0; pointer-events: none; transition: o
 .lv-carta.tocada, .lv-sobre.tocada { outline: 3px solid #fff; scale: 1.05; }
 .lv-capa.enviado .lv-carta:not(.tocada) { opacity: 0.6; }
 .lv-resumen span small { display: block; margin-top: 2px; font: 700 11px/1.2 var(--texto); color: #b8862f; }
+
+/* ---------------------------------------------------------------- Pausa: mochila y evoluciones */
+.lv-pestanas-pausa { justify-content: center; margin-bottom: -6px; }
+.lv-pestanas-pausa button { padding: 5px 12px; font-size: 12.5px; }
+.lv-panel-pausa .cuerpo { background: rgba(255, 248, 238, 0.9); border-radius: 12px; padding: 6px 8px; }
+.lv-panel-pausa h2 { font-size: 18px; margin: 0; }
+.lv-panel-pausa .lv-fila { gap: 5px; flex-wrap: nowrap; justify-content: center; }
+.lv-panel-pausa .lv-fila .lv-boton { padding: 6px 9px; font-size: 12.5px !important; white-space: nowrap; }
+.lv-panel-pausa .lv-fila .lv-boton.grande { padding: 7px 14px; font-size: 15px !important; }
+.lv-panel-pausa h4 { margin: 2px 0 4px; font: 700 12px/1.2 var(--display); color: #a4566e; text-transform: uppercase; letter-spacing: 0.04em; }
+.lv-panel-pausa .vacio { margin: 0 0 6px; font: 700 11px/1.2 var(--texto); color: #8a7a74; }
+.lv-mo {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  padding: 5px 7px;
+  margin-bottom: 4px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 0 rgba(61, 43, 39, 0.1);
+  font: 700 11px/1.25 var(--texto);
+}
+.lv-mo > div { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.lv-mo b { font: 700 13px/1.1 var(--display); }
+.lv-mo small { color: #7a625a; font-weight: 700; }
+.lv-mo small.ok { color: #2f8f68; }
+.lv-mo.lista { background: linear-gradient(90deg, #fff1c2, #fff); box-shadow: 0 0 0 2px var(--lv-oro), 0 2px 0 rgba(61, 43, 39, 0.1); }
+.lv-mo.evo { background: linear-gradient(90deg, #fff1c2, #ffe3ec); }
+.lv-mo.pas { background: #f1f9ff; }
+.lv-mo .pips { display: flex; gap: 2px; }
+.lv-mo .pips u { width: 7px; height: 7px; border-radius: 50%; background: rgba(61, 43, 39, 0.18); }
+.lv-mo .pips u.si { background: var(--lv-oro); box-shadow: 0 0 0 1px var(--lv-oro-osc); }
+.lv-mo .para { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.lv-para { display: inline-flex; align-items: center; gap: 2px; padding: 0 5px 0 1px; border-radius: 999px; background: rgba(61, 43, 39, 0.07); color: #7a625a; }
+.lv-para.si { background: #dff3ea; color: #2f8f68; }
+.lv-receta { display: inline-flex; align-items: center; gap: 2px; flex-wrap: nowrap; }
+.lv-receta b.mas, .lv-receta b.flecha { font: 700 12px/1 var(--display); color: #a4566e; }
+.lv-receta b.flecha { margin: 0 2px; }
+.lv-paso { position: relative; display: inline-grid; place-items: center; padding: 2px; border-radius: 9px; background: rgba(61, 43, 39, 0.06); }
+.lv-paso.no .lv-ico { filter: grayscale(0.85) opacity(0.55); }
+.lv-paso em.marca {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  min-width: 13px;
+  padding: 0 2px;
+  border-radius: 7px;
+  font: 700 8.5px/13px var(--texto);
+  font-style: normal;
+  text-align: center;
+  color: #fff;
+  background: #c9506b;
+}
+.lv-paso em.marca { background: var(--lv-cacao); }
+.lv-paso.no em.marca { background: #c9506b; }
+.lv-paso.si em.marca { background: #2f8f68; }
+.lv-paso.medio em.marca { background: var(--lv-oro-osc); }
+.lv-paso.fin { background: linear-gradient(135deg, #fff1c2, #f2c14e); box-shadow: 0 0 0 1.5px var(--lv-oro-osc); }
+.lv-paso.fin.lista { animation: lv-brilla-evo 1.2s ease-in-out infinite; }
+.lv-paso.fin.si { box-shadow: 0 0 0 2px #2f8f68; }
+@keyframes lv-brilla-evo {
+  0%, 100% { box-shadow: 0 0 0 1.5px var(--lv-oro-osc), 0 0 0 0 rgba(242, 193, 78, 0.8); }
+  50% { box-shadow: 0 0 0 1.5px var(--lv-oro-osc), 0 0 10px 3px rgba(242, 193, 78, 0.9); }
+}
+.lv-recetas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 8px; align-content: start; }
+.lv-rec {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  padding: 5px 7px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 0 rgba(61, 43, 39, 0.1);
+  font: 700 10.5px/1.2 var(--texto);
+  opacity: 0.8;
+}
+.lv-rec > div { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.lv-rec b { font: 700 12px/1.1 var(--display); }
+.lv-rec small { color: #7a625a; }
+.lv-rec.cerca { opacity: 1; }
+.lv-rec.lista { opacity: 1; background: linear-gradient(90deg, #fff1c2, #fff); box-shadow: 0 0 0 2px var(--lv-oro); }
+.lv-rec.lista small { color: #2f8f68; }
+.lv-rec.hecha { opacity: 1; background: #e9f7f0; }
+@media (max-width: 700px) {
+  .lv-recetas { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lv-paso.fin.lista { animation: none; }
+}

@@ -7,6 +7,7 @@ import { DISFRAZ, disfracesDe, puedeApuntar, type DefDisfraz } from './disfraces
 import { ENEMIGOS, ID_ENEMIGOS } from './enemigos';
 import { ESCENARIOS, ID_ESCENARIOS } from './escenarios';
 import { icono, iconoBicho } from './iconos';
+import { MINUTO_EVOLUCION, RECETAS } from './evoluciones';
 import {
   CARTA_LOGRO, ESCENARIO_LOGRO, LOGRO, LOGROS, apuradoAbierto, cartasDe, disfrazAbierto, escenarioAbierto, type ProgresoLavado,
 } from './progreso';
@@ -285,7 +286,7 @@ export class Menu {
   }
 
   private htmlColeccion() {
-    const tabs = ['armas', 'pasivas', 'mugrosos', 'logros']
+    const tabs = ['armas', 'pasivas', 'evoluciones', 'mugrosos', 'logros']
       .map((t) => `<button class="${this.pestana === t ? 'sel' : ''}" data-tab="${t}">${t[0].toUpperCase() + t.slice(1)}</button>`)
       .join('');
     let lista = '';
@@ -309,6 +310,21 @@ export class Menu {
       }).join('');
       const p = PASIVAS[this.sel as keyof typeof PASIVAS];
       if (p) det = this.p.pasivas.includes(p.id) ? `<h3>${p.nombre}</h3><p>Como ${p.original} en el original.</p><p class="esp">${p.desc} (hasta ${p.max} niveles)</p>` : '<h3>¿Qué será?</h3>';
+    } else if (this.pestana === 'evoluciones') {
+      // Todas las recetas: qué arma, qué pide y en qué se convierte (lo que ya se tuvo, con su nombre)
+      lista = `<div class="lv-recetas lv-recetas-menu">${RECETAS.map((r) => {
+        const ya = this.p.armas.includes(r.a);
+        const piezas = [
+          ...r.de.map((id) => `<span class="lv-paso" title="${ARMAS[id].nombre}">${icono(id, 26)}<em class="marca">8</em></span>`),
+          ...r.pasivas.map((id) => `<span class="lv-paso" title="${PASIVAS[id].nombre}">${icono(id, 26)}</span>`),
+        ].join('<b class="mas">+</b>');
+        const nombres = [...r.de.map((id) => `${ARMAS[id].nombre} (nivel 8)`), ...r.pasivas.map((id) => PASIVAS[id].nombre)].join(' + ');
+        return `<div class="lv-rec ${ya ? 'hecha' : 'cerca'}"><span class="lv-receta">${piezas}<b class="flecha">➜</b><span class="lv-paso fin ${ya ? 'si' : ''}">${icono(r.a, 30, ya ? '' : 'silueta')}</span></span>
+          <div><b>${ya ? ARMAS[r.a].nombre : '¿Qué saldrá?'}</b><small>${nombres}</small></div></div>`;
+      }).join('')}</div>`;
+      det = `<h3>Cómo se evoluciona</h3><p>Sube el arma hasta el <b>nivel 8</b>, ten en la mochila la pasiva que pide (con un nivel basta) y abre un <b>cofre</b> después del <b>minuto ${MINUTO_EVOLUCION}</b> (los sueltan los élites y los jefes).</p>
+        <p>Las <b>uniones</b> juntan dos armas en nivel 8: los dos patos, o el perfume y la colonia (esa pide además la curita de corazón).</p>
+        <p class="esp">En la partida, en la pausa (o tocando tus armas de arriba), la pestaña «Mochila» te dice qué le falta a cada una.</p>`;
     } else if (this.pestana === 'mugrosos') {
       lista = ID_ENEMIGOS.map((id) => {
         const n = this.p.bestiario[id] ?? 0;

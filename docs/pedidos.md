@@ -12,8 +12,8 @@ pulido el repositorio».
    Queda pendiente solo lo que Javier pida al probarlo. Idea de Laura para guardar: que su boda tenga «un crimen por
    mesa que deban solucionar».
 2. **Pulir lo que ya hay** (ver «Sangre y Ceniza» y «Ronda 2» abajo). Lo que Javier recalcó:
-   - Lavarse la cara: las **mejoras no tienen imagen ni ícono** (en el celular salen vacías) y falta el **panel de lo
-     que se tiene** (armas y mejoras, con qué evoluciona cada una) para hacer las evoluciones bien.
+   - ~~Lavarse la cara: íconos y panel de lo que se tiene~~ **hecho** (los íconos salían vacíos en la APK; la pausa
+     tiene «Mochila» y «Evoluciones», ver `docs/sistemas/nuestro-hogar.md`).
    - Sangre y Ceniza: mapas **mucho más detallados** en calidad alta (para el S24 Ultra de Laura y el computador de
      Javier); la calidad de hoy queda como «baja» para celulares menos potentes.
    - **Súper Manía, volver a algo más parecido al original** (Javier: «siento que dañé el juego»):

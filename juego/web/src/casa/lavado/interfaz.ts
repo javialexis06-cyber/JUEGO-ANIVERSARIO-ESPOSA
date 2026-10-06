@@ -4,8 +4,9 @@
 import { ARMAS, PASIVAS, MAX_RANURAS, maxNivelArma } from './armas';
 import { ENEMIGOS } from './enemigos';
 import { puedeApuntar } from './disfraces';
-import { FRASES, cartaVista, logroVisto } from './textos';
+import { FRASES, cartaVista, logroVisto, personalizar } from './textos';
 import { icono } from './iconos';
+import { RECETAS, estadoReceta, recetaDeArma, recetasDePasiva, type EstadoReceta } from './evoluciones';
 import { LOGRO, type ResumenPartida } from './progreso';
 import { sfx } from './sonidos';
 import { ORO_X, type Jugador, type Motor, type Opcion } from './motor';
@@ -49,19 +50,35 @@ export function descOpcion(o: Opcion): string {
 }
 
 /** Pista de evolución para la carta (como en el original, cuando ya tiene una de las dos piezas). */
-function pista(j: Jugador, o: Opcion): string {
+/** La pista de evolución de una carta: dorada si ya tiene la pareja, gris (para ir planeando) si no. */
+function pista(j: Jugador, o: Opcion): { texto: string; oro: boolean } | null {
   if (o.tipo === 'arma') {
     const evo = ARMAS[o.id as IdArma].evo;
-    if (!evo) return '';
+    if (!evo) return null;
     const con = evo.pasiva ? PASIVAS[evo.pasiva].nombre : evo.arma ? ARMAS[evo.arma].nombre : '';
     const tiene = evo.pasiva ? j.pasivas.has(evo.pasiva) : evo.arma ? j.armas.some((a) => a.id === evo.arma) : false;
-    return tiene ? `✨ Con ${con} evoluciona en ${ARMAS[evo.a].nombre}` : '';
+    return tiene ? { texto: `✨ Con ${con} evoluciona en ${ARMAS[evo.a].nombre}`, oro: true } : { texto: `Evoluciona con ${con}`, oro: false };
   }
   if (o.tipo === 'pasiva') {
-    const a = j.armas.find((x) => ARMAS[x.id].evo?.pasiva === o.id);
-    return a ? `✨ Evoluciona ${ARMAS[a.id].nombre}` : '';
+    const recetas = recetasDePasiva(o.id as IdPasiva);
+    if (!recetas.length) return null;
+    const a = j.armas.find((x) => recetas.some((r) => r.de.includes(x.id)));
+    if (a) return { texto: `✨ Evoluciona ${ARMAS[a.id].nombre}`, oro: true };
+    return { texto: `Sirve para evolucionar ${recetas.map((r) => ARMAS[r.de[0]].nombre).join(' o ')}`, oro: false };
   }
-  return '';
+  return null;
+}
+
+/** El paso de una receta (arma o pasiva) con su chulito o su equis. */
+function pasoHtml(p: EstadoReceta['pasos'][number], tam = 26): string {
+  const titulo = p.tipo === 'arma' ? ARMAS[p.id as IdArma].nombre : PASIVAS[p.id as IdPasiva].nombre;
+  const marca = p.listo ? '✓' : p.tiene ? `${p.nivel}/${p.max}` : '✗';
+  return `<span class="lv-paso ${p.listo ? 'si' : p.tiene ? 'medio' : 'no'}" title="${titulo}">${icono(p.id, tam)}<em class="marca">${marca}</em></span>`;
+}
+
+/** Una receta entera: los pasos, la flecha y en qué se convierte. */
+function recetaHtml(e: EstadoReceta, tam = 26): string {
+  return `<span class="lv-receta">${e.pasos.map((p) => pasoHtml(p, tam)).join('<b class="mas">+</b>')}<b class="flecha">➜</b><span class="lv-paso fin ${e.hecha ? 'si' : e.lista ? 'lista' : ''}">${icono(e.receta.a, tam + 4)}</span></span>`;
 }
 
 export class Interfaz {
@@ -86,6 +103,9 @@ export class Interfaz {
   private cofreListo = false;
   private tHud = 0;
   pausado = false;
+  /** La pestaña de la pausa (tocar las armas de arriba la abre en la mochila). */
+  private pestanaPausa: 'mochila' | 'evoluciones' | 'stats' = 'mochila';
+  private ultimaPausa: [Motor, boolean, boolean, boolean] | null = null;
 
   /** Los demás: su chip (nombre, vida, estado), la flecha cuando no se ven y su nombre encima. */
   private otros: { i: number; chip: HTMLElement; flecha: HTMLElement; nombre: HTMLElement; clave: string }[] = [];
@@ -130,6 +150,14 @@ export class Interfaz {
     $(raiz, '.lv-pausa').addEventListener('click', (e) => {
       e.stopPropagation();
       sfx.toque();
+      this.acc.pausa(true);
+    });
+    // Tocar las armas y pasivas de arriba abre la pausa en la mochila (qué se tiene y qué falta para evolucionar)
+    $(this.hud, '.lv-inv').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (this.pausado) return;
+      sfx.toque();
+      this.pestanaPausa = 'mochila';
       this.acc.pausa(true);
     });
     this.capaNivel.addEventListener('click', (ev) => {
@@ -185,6 +213,12 @@ export class Interfaz {
       if (!el) return;
       sfx.toque();
       const p = el.dataset.p;
+      if (p === 'pestana') {
+        this.pestanaPausa = el.dataset.t as 'mochila';
+        const u = this.ultimaPausa;
+        if (u) this.mostrarPausa(u[0], true, u[1], u[2], u[3]);
+        return;
+      }
       if (p === 'seguir') this.acc.pausa(false);
       if (p === 'retirarse') {
         if (el.dataset.confirma) this.acc.retirarse();
@@ -193,9 +227,22 @@ export class Interfaz {
           el.textContent = '¿Seguro? Toca otra vez';
         }
       }
-      if (p === 'musica') el.textContent = this.acc.musica() ? '🔇 Música' : '🎵 Música';
-      if (p === 'sonido') el.textContent = this.acc.sonido() ? '🔈 Sonido' : '🔊 Sonido';
-      if (p === 'numeros') el.textContent = this.acc.numeros() ? '🔢 Números: sí' : '🔢 Números: no';
+      const u = this.ultimaPausa;
+      if (p === 'musica') {
+        const muda = this.acc.musica();
+        el.textContent = muda ? '🔇 Música' : '🎵 Música';
+        if (u) u[1] = muda;
+      }
+      if (p === 'sonido') {
+        const mudo = this.acc.sonido();
+        el.textContent = mudo ? '🔈 Sonido' : '🔊 Sonido';
+        if (u) u[2] = mudo;
+      }
+      if (p === 'numeros') {
+        const si = this.acc.numeros();
+        el.textContent = si ? '🔢 Números: sí' : '🔢 Números: no';
+        if (u) u[3] = si;
+      }
       if (p === 'ataque' && this.acc.ataque) el.textContent = this.acc.ataque() ? '🎯 Ataque: a mano' : '🎯 Ataque: solito';
     });
   }
@@ -448,11 +495,11 @@ export class Interfaz {
         const pips = max ? `<span class="pips">${Array.from({ length: max }, (_, i) => `<u class="${i < o.nivel ? 'si' : ''}"></u>`).join('')}</span>` : '';
         const p = pista(j, o);
         const ico = o.tipo === 'arepa' ? 'arepa' : o.tipo === 'oro' ? 'bolsa' : o.id;
-        return `<button class="lv-carta ${nueva ? 'nueva' : ''} ${p ? 'evo' : ''}" data-k="${k}">
+        return `<button class="lv-carta ${nueva ? 'nueva' : ''} ${p?.oro ? 'evo' : ''}" data-k="${k}">
           ${icono(ico, 54)}
           <small>${o.tipo === 'arepa' || o.tipo === 'oro' ? 'Regalito' : nueva ? '¡Nueva!' : `Nivel ${o.nivel}`}</small>
           <b>${o.tipo === 'arepa' ? 'Arepa con queso' : o.tipo === 'oro' ? 'Gotas doradas' : nombreItem(o.id)}</b>
-          ${pips}<em>${descOpcion(o)}</em>${p ? `<span class="pista">${p}</span>` : ''}</button>`;
+          ${pips}<em>${descOpcion(o)}</em>${p ? `<span class="pista ${p.oro ? '' : 'gris'}">${p.texto}</span>` : ''}</button>`;
       })
       .join('');
     this.capaNivel.innerHTML = `<h2>¡Nivel ${m.nivel}!<small>Escoge una mejora</small></h2>
@@ -560,6 +607,7 @@ export class Interfaz {
     this.pausado = si;
     this.capaPausa.hidden = !si;
     if (!si) return;
+    this.ultimaPausa = [m, musicaMuda, sonidoMudo, numeros];
     const j = m.jug[this.yo];
     const s = j.st;
     const pct = (v: number) => `${v >= 0 ? '+' : ''}${Math.round(v * 100)} %`;
@@ -569,17 +617,48 @@ export class Interfaz {
       ['Cantidad', `+${s.cantidad}`], ['Recarga', pct(-s.enfriamiento)], ['Suerte', pct(s.suerte)], ['Crecimiento', pct(s.crecimiento)],
       ['Codicia', pct(s.codicia)], ['Maldición', pct(s.maldicion)], ['Imán', pct(s.iman)], ['Revivir', String(j.revivesQuedan)],
     ];
-    const inv = [
-      ...j.armas.map((a) => `<div class="lv-logro">${icono(a.id, 30)}<span><b>${ARMAS[a.id].nombre}</b>${ARMAS[a.id].de ? 'Evolucionada' : `Nivel ${a.nivel}`}</span></div>`),
-      ...[...j.pasivas].map(([id, n]) => `<div class="lv-logro">${icono(id, 30)}<span><b>${PASIVAS[id].nombre}</b>Nivel ${n} · ${PASIVAS[id].desc}</span></div>`),
-      ...j.cartas.map((c) => `<div class="lv-logro">${FRASES.iconoCarta()}<span><b>${cartaVista(c).nombre}</b>${cartaVista(c).efecto}</span></div>`),
-    ].join('');
-    this.capaPausa.innerHTML = `<div class="lv-panel">
+    const pips = (n: number, max: number) => `<span class="pips">${Array.from({ length: max }, (_, i) => `<u class="${i < n ? 'si' : ''}"></u>`).join('')}</span>`;
+    let cuerpo = '';
+    if (this.pestanaPausa === 'mochila') {
+      // Cada arma con su evolución y lo que le falta; cada pasiva con el arma que hace evolucionar
+      const armas = j.armas.map((a) => {
+        const def = ARMAS[a.id];
+        if (def.de) return `<div class="lv-mo evo">${icono(a.id, 36)}<div><b>${def.nombre}</b><small class="ok">✨ Evolución de ${def.de.map((x) => ARMAS[x].nombre).join(' + ')}</small></div></div>`;
+        const r = recetaDeArma(a.id);
+        const e = r ? estadoReceta(r, j, m.t) : null;
+        return `<div class="lv-mo ${e?.lista ? 'lista' : ''}">${icono(a.id, 36)}<div><b>${def.nombre}</b>${pips(a.nivel, maxNivelArma(a.id))}
+          ${e ? `${recetaHtml(e, 22)}<small class="${e.lista ? 'ok' : ''}">${e.falta}</small>` : '<small>No evoluciona</small>'}</div></div>`;
+      });
+      const pasivas = [...j.pasivas].map(([id, n]) => {
+        const def = PASIVAS[id];
+        const recetas = recetasDePasiva(id);
+        const para = recetas.length
+          ? recetas.map((r) => {
+              const la = j.armas.find((x) => r.de.includes(x.id) || x.id === r.a);
+              return `<span class="lv-para ${la ? 'si' : ''}">${icono(r.de[0], 18)}${ARMAS[r.de[0]].nombre}${la ? ' ✓' : ''}</span>`;
+            }).join(' ')
+          : '';
+        return `<div class="lv-mo pas">${icono(id, 32)}<div><b>${def.nombre}</b>${pips(n, def.max)}<small>${def.desc}</small>${para ? `<small class="para">Hace evolucionar: ${para}</small>` : ''}</div></div>`;
+      });
+      const cartas = j.cartas.map((c) => `<div class="lv-mo carta">${FRASES.iconoCarta()}<div><b>${cartaVista(c).nombre}</b><small>${cartaVista(c).efecto}</small></div></div>`);
+      cuerpo = `<div class="col"><h4>Armas (${j.armas.length}/${MAX_RANURAS})</h4>${armas.join('') || '<p class="vacio">Todavía nada</p>'}</div>
+        <div class="col"><h4>Pasivas (${j.pasivas.size}/${MAX_RANURAS})</h4>${pasivas.join('') || '<p class="vacio">Todavía nada</p>'}${cartas.length ? `<h4>${personalizar('Cartas mágicas')}</h4>${cartas.join('')}` : ''}</div>`;
+    } else if (this.pestanaPausa === 'evoluciones') {
+      // Todas las recetas, las que tiene más cerca primero
+      const estados = RECETAS.map((r) => estadoReceta(r, j, m.t)).sort((a, b) => Number(b.lista) - Number(a.lista) || Number(a.hecha) - Number(b.hecha) || b.avance - a.avance);
+      cuerpo = `<div class="col lv-recetas">${estados
+        .map((e) => `<div class="lv-rec ${e.hecha ? 'hecha' : e.lista ? 'lista' : e.avance > 0 ? 'cerca' : ''}">${recetaHtml(e, 24)}<div><b>${ARMAS[e.receta.a].nombre}</b><small>${e.avance > 0 || e.hecha ? e.falta : `${e.receta.de.map((x) => ARMAS[x].nombre).join(' + ')} al nivel ${maxNivelArma(e.receta.de[0])} + ${e.receta.pasivas.map((x) => PASIVAS[x].nombre).join(' + ') || 'nada más'}`}</small></div></div>`)
+        .join('')}</div>`;
+    } else {
+      cuerpo = `<div class="col"><div class="lv-stats">${filas.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('')}</div></div>`;
+    }
+    const tabs = (['mochila', 'evoluciones', 'stats'] as const)
+      .map((t) => `<button class="${this.pestanaPausa === t ? 'sel' : ''}" data-p="pestana" data-t="${t}">${t === 'mochila' ? '🎒 Mochila' : t === 'evoluciones' ? '✨ Evoluciones' : '📊 Estadísticas'}</button>`)
+      .join('');
+    this.capaPausa.innerHTML = `<div class="lv-panel lv-panel-pausa">
       <h2>Pausa · ${mmss(m.t)} · Nivel ${m.nivel}</h2>
-      <div class="cuerpo">
-        <div class="col"><div class="lv-stats">${filas.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('')}</div></div>
-        <div class="col">${inv}</div>
-      </div>
+      <div class="lv-pestanas lv-pestanas-pausa">${tabs}</div>
+      <div class="cuerpo">${cuerpo}</div>
       <div class="lv-fila">
         <button class="lv-boton menta grande" data-p="seguir">▶ Seguir</button>
         <button class="lv-boton" data-p="musica">${musicaMuda ? '🔇' : '🎵'} Música</button>
