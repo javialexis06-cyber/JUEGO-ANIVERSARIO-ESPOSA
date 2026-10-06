@@ -135,7 +135,8 @@ if (juego === 'parchis' || juego === 'parchis2') {
 await ella.waitForSelector('#hoja:not([hidden]) .boton-tomate', { timeout: 60000 });
 await ella.screenshot({ path: `${carpeta}/${juego}-invitacion.png` });
 await ella.click('#hoja:not([hidden]) .boton-tomate');
-await Promise.all([el, ella].map((p) => p.waitForSelector('#partida:not([hidden])', { timeout: 60000 })));
+// (attached: con dos celulares en 3D por software casi no llegan cuadros y la espera de «visible» se vence sola)
+await Promise.all([el, ella].map((p) => p.waitForSelector('#partida:not([hidden])', { state: 'attached', timeout: 90000 })));
 revisar(true, 'Los dos entran a la partida');
 
 // Juegan con la IA de cada lado haciendo el movimiento por la partida (como si tocaran el tablero)

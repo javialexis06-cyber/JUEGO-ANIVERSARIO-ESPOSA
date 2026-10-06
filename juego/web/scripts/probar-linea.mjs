@@ -316,11 +316,20 @@ const revisar = (ok, texto) => {
 const el = await celular('Él');
 const ella = await celular('Ella');
 /** Tocar el personaje y escribir la contraseña de base (este servidor de mentiras no tiene cuentas: es la primera vez). */
+/** Tocar y escribir directo en la página: con dos casas en 3D por software, la otra página casi no recibe cuadros y
+ *  las esperas de Playwright («visible y quieto») se vencen aunque el botón esté ahí, a la vista. */
+const tocar = (p, sel) => p.evaluate((s) => document.querySelector(s).click(), sel);
+const escribir = (p, sel, v) => p.evaluate(([s, t]) => {
+  const i = document.querySelector(s);
+  i.value = t;
+  i.dispatchEvent(new Event('input', { bubbles: true }));
+}, [sel, v]);
 const conClave = async (p, rol) => {
-  await p.click(`.rol-carta[data-rol="${rol}"]`);
-  await p.fill('#inp-contrasena', 'TEAMO');
-  await p.click('#form-cuenta button[type="submit"]');
-  await p.waitForSelector('#bienv-conexion:not([hidden])', { timeout: 30000 });
+  await tocar(p, `.rol-carta[data-rol="${rol}"]`);
+  await p.waitForSelector('#form-cuenta:not([hidden])', { state: 'attached', timeout: 60000 });
+  await escribir(p, '#inp-contrasena', 'TEAMO');
+  await tocar(p, '#form-cuenta button[type="submit"]');
+  await p.waitForSelector('#bienv-conexion:not([hidden])', { state: 'attached', timeout: 60000 });
 };
 
 // Él crea la casa

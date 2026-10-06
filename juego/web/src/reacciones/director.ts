@@ -2,6 +2,7 @@
 // Quien hace la jugada reacciona a lo suyo y el otro le responde (celos, burla, alivio...), con su frase.
 import { otro, type Rol } from '../casa/modelo';
 import type { Anclas, Efectos } from './efectos';
+import { esNeutro } from '../neutro';
 import { frase, type Situacion } from './frases';
 import type { Muneco } from './muneco';
 
@@ -85,6 +86,12 @@ export class Director {
     rapido = 1,
   ) {
     this.rapido = rapido;
+    this.conectar();
+  }
+
+  /** Une a los dos muñecos (quién es el otro, efectos y globitos). Se repite si se cambia un muñeco (un amigo). */
+  conectar() {
+    const { m, efectos, anclas } = this;
     for (const rol of ['el', 'ella'] as Rol[]) {
       m[rol].otro = m[otro(rol)];
       m[rol].alEfecto = (fx) => efectos.lanzar(fx, anclas[rol], anclas[otro(rol)]);
@@ -186,10 +193,12 @@ export class Director {
   async final(ganador: Rol | null): Promise<void> {
     this.turnoDe = null;
     for (const r of ['el', 'ella'] as Rol[]) this.m[r].esperar('nada');
+    // Con amigos no hay abrazos ni besitos: choque de manos, bailecito y pulgares
+    const neutro = esNeutro();
     if (!ganador) {
       await Promise.all([this.hacer('el', 'chocar_cinco', 'empate'), this.hacer('ella', 'chocar_cinco', 'empate')]);
-      void this.hacer('el', 'abrazo');
-      void this.hacer('ella', 'abrazo', 'empate');
+      void this.hacer('el', neutro ? 'bailecito' : 'abrazo');
+      void this.hacer('ella', neutro ? 'pulgares' : 'abrazo', 'empate');
       return;
     }
     const p = otro(ganador);
@@ -198,7 +207,7 @@ export class Director {
     const lloro = this.hacer(p, drama, 'perder', 0.4);
     await fiesta;
     // Lo que sigue pasa con la tarjeta del final ya en pantalla
-    void this.hacer(ganador, Math.random() < 0.5 ? 'corona' : 'baile_final', 'ganar').then(() => this.hacer(ganador, 'beso_volado', 'beso'));
+    void this.hacer(ganador, Math.random() < 0.5 ? 'corona' : 'baile_final', 'ganar').then(() => this.hacer(ganador, neutro ? 'pulgares' : 'beso_volado', neutro ? 'bien' : 'beso'));
     void lloro.then(() => this.hacer(p, 'otra', 'otra'));
   }
 

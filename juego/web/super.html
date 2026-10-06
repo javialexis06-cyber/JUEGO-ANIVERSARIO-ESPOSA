@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Súper Manía en Pareja</title>
-<!-- Modo amigo: esta página es de la pareja; un aparato de amigo va a su sala de juegos -->
-<script>try{var a=JSON.parse(localStorage.getItem('nuestro-hogar-amigo')||'null');if(a&&a.activo!==false&&a.nombre)location.replace('./amigos.html')}catch(e){}</script>
+<!-- Modo amigo: un aparato de amigo solo entra con ?amigo (desde su sala de juegos; aquí todo va en modo neutro).
+     Sin eso (un enlace viejo de la casa, atrás), vuelve a su sala de juegos -->
+<script>try{var a=JSON.parse(localStorage.getItem('nuestro-hogar-amigo')||'null');if(a&&a.activo!==false&&a.nombre&&!/[?&]amigo(=|&|$)/.test(location.search))location.replace('./amigos.html')}catch(e){}</script>
 </head>
 <body>
 <canvas id="lienzo" aria-label="La tienda"></canvas>
@@ -15,7 +16,7 @@
 <section id="carga" class="pantalla pantalla-carga">
   <div class="logo">
     <span class="logo-linea">Súper Manía</span>
-    <span class="logo-pareja">en Pareja</span>
+    <span class="logo-pareja" data-neutro="con Amigos">en Pareja</span>
   </div>
   <div class="carga-riel" role="progressbar" aria-label="Cargando la tienda"><i id="carga-barra"></i></div>
   <p id="carga-texto">Abriendo la tiendita…</p>
@@ -26,14 +27,14 @@
   <header class="menu-cabeza">
     <div class="logo logo-chico">
       <span class="logo-linea">Súper Manía</span>
-      <span class="logo-pareja">en Pareja</span>
+      <span class="logo-pareja" data-neutro="con Amigos">en Pareja</span>
     </div>
     <div class="menu-saldos">
       <span class="saldo"><i class="moneda" aria-hidden="true"></i><b id="menu-dinero">0</b></span>
       <span class="saldo" title="Estrellas para mejorar la tienda"><i class="ficha" aria-hidden="true"></i><b id="menu-fichas">0</b></span>
       <span class="saldo"><i class="estrella" aria-hidden="true"></i><b id="menu-estrellas">0</b></span>
       <span class="saldo" title="Lunas del modo legendario"><i class="luna-icono" aria-hidden="true"></i><b id="menu-lunas">0</b></span>
-      <span class="saldo" title="Corazones escondidos"><i class="corazon-icono" aria-hidden="true"></i><b id="menu-corazones">0</b></span>
+      <span class="saldo" title="Corazones escondidos" data-neutro-title="Tréboles de la suerte"><i class="corazon-icono" aria-hidden="true"></i><b id="menu-corazones">0</b></span>
     </div>
   </header>
   <div class="riel">
@@ -43,6 +44,7 @@
   <nav class="menu-botones">
     <a id="btn-casa" class="boton boton-papel" href="./index.html">Volver a la casa</a>
     <button id="btn-mejoras" class="boton boton-tomate">Mejorar la tienda</button>
+    <button id="btn-unirme" class="boton boton-papel">🔑 Unirme con código</button>
     <button id="btn-como" class="boton boton-papel">Cómo se juega</button>
     <button id="btn-musica-menu" class="boton boton-papel boton-chico">Música: sonando</button>
   </nav>
@@ -67,8 +69,9 @@
     <ul id="tarjeta-objetivos" class="lista-objetivos"></ul>
     <div class="modo-juego" role="group" aria-label="Quién juega">
       <button id="btn-modo-solo" class="modo-boton" aria-pressed="true"><i class="modo-ico solo" aria-hidden="true"></i>Jugar solo</button>
-      <button id="btn-modo-pareja" class="modo-boton" aria-pressed="false"><i class="modo-ico pareja" aria-hidden="true"></i>Los dos en este celular</button>
+      <button id="btn-modo-pareja" class="modo-boton" aria-pressed="false"><i class="modo-ico pareja" aria-hidden="true"></i><span data-neutro="Dos en este celular">Los dos en este celular</span></button>
       <button id="btn-modo-linea" class="modo-boton" aria-pressed="false"><i class="modo-ico linea" aria-hidden="true"></i>En línea, cada uno en el suyo</button>
+      <button id="btn-modo-sala" class="modo-boton" aria-pressed="false"><i class="modo-ico sala" aria-hidden="true"></i>Sala con código (2 a 4)</button>
     </div>
     <p id="modo-nota" class="modo-nota"></p>
     <div class="fila-botones">
@@ -82,19 +85,23 @@
 <!-- Resultado: tiquete de caja -->
 <section id="resultado" class="pantalla pantalla-centro" hidden>
   <article class="tiquete">
-    <p class="tiquete-negocio">TIENDITA DE BARRIO<br><span>Bucaramanga · Medellín</span></p>
+    <p class="tiquete-negocio">TIENDITA DE BARRIO<br><span data-neutro="Barrio La Alegría · Local 3">Bucaramanga · Medellín</span></p>
     <p class="tiquete-titulo" id="rec-titulo">Nivel 1</p>
     <ul id="rec-estrellas" class="tiquete-estrellas"></ul>
     <div id="rec-lineas" class="tiquete-lineas"></div>
     <div class="tiquete-total"><span>GANANCIA DEL DÍA</span><span><i class="moneda" aria-hidden="true"></i><b id="rec-total">0</b></span></div>
-    <p id="rec-pasa" class="tiquete-pasa"></p>
-    <p id="rec-fichas" class="tiquete-pasa tiquete-fichas" hidden></p>
-    <p id="rec-sueldo" class="tiquete-pasa" hidden></p>
+    <div class="tiquete-notas">
+      <p id="rec-pasa" class="tiquete-pasa"></p>
+      <p id="rec-fichas" class="tiquete-pasa tiquete-fichas" hidden></p>
+      <p id="rec-sueldo" class="tiquete-pasa" hidden></p>
+    </div>
     <div class="tiquete-botones">
       <button id="btn-siguiente" class="boton boton-tomate">Siguiente día</button>
       <button id="btn-repetir" class="boton boton-papel">Repetir</button>
       <button id="btn-rmejoras" class="boton boton-papel">Mejorar la tienda</button>
       <button id="btn-rmenu" class="boton boton-papel">Menú</button>
+      <button id="btn-rsalir" class="boton boton-papel" hidden>Salir de la sala</button>
+      <button id="btn-rsala" class="boton boton-tomate" hidden>Volver a la sala</button>
     </div>
   </article>
 </section>
@@ -124,11 +131,12 @@
       <li><b>También puedes tocar</b> una vitrina, la caja o una mugre: el personaje va solo, y cada toque se suma a su lista con un número (otro toque lo cancela). Si mueves el joystick, la lista se borra.</li>
       <li><b>Basura</b> (día 6): pasa por encima para echarla a la bolsa (caben 4) y vacíala en la caneca. <b>Charcos</b> (día 8): quédate encima para trapearlos; el <b>trapero</b> aguanta 4 manchas y luego hay que lavarlo en el balde.</li>
       <li><b>Canastas:</b> sin canastas en la entrada no entra nadie. Pasa por encima de las tiradas (hasta 3) y llévalas a la entrada.</li>
-      <li><b>Los dos en este celular:</b> Él con el joystick de la izquierda y Ella con el de la derecha. Si se chocan de frente y rápido quedan mareados; si uno sale volando contra un estante, lo tumba (se vacía y ensucia el piso), y un carrito lleno se riega. Si terminan cosas casi a la vez hacen <b>combos en pareja</b>.</li>
-      <li><b>En línea, cada uno en su celular:</b> los dos celulares tienen que estar en la casa en línea (Nuestro Hogar). El que abre la tienda invita al otro (le llega el aviso en la casa) y se juega con las vitrinas y mejoras del que invita. Cada uno mueve su personaje con su joystick y toca lo que quiere hacer; los dos ganan las estrellas y las monedas del día.</li>
+      <li data-neutro="&lt;b&gt;Dos en este celular:&lt;/b&gt; uno con el joystick de la izquierda y el otro con el de la derecha. Si se chocan de frente y rápido quedan mareados; si uno sale volando contra un estante, lo tumba (se vacía y ensucia el piso), y un carrito lleno se riega. Si terminan cosas casi a la vez hacen &lt;b&gt;combos en equipo&lt;/b&gt;."><b>Los dos en este celular:</b> Él con el joystick de la izquierda y Ella con el de la derecha. Si se chocan de frente y rápido quedan mareados; si uno sale volando contra un estante, lo tumba (se vacía y ensucia el piso), y un carrito lleno se riega. Si terminan cosas casi a la vez hacen <b>combos en pareja</b>.</li>
+      <li data-neutro="&lt;b&gt;Sala con código (de 2 a 4):&lt;/b&gt; uno abre la tienda y les pasa el código de 5 letras; los demás entran con «Unirme con código». Se juega con las vitrinas y mejoras de quien abrió la sala. Cada uno mueve su muñeco con su joystick y toca lo que quiere hacer; todos ganan las estrellas del día en su celular."><b>En línea, cada uno en su celular:</b> los dos celulares tienen que estar en la casa en línea (Nuestro Hogar). El que abre la tienda invita al otro (le llega el aviso en la casa) y se juega con las vitrinas y mejoras del que invita. Cada uno mueve su personaje con su joystick y toca lo que quiere hacer; los dos ganan las estrellas y las monedas del día.</li>
       <li><b>Ladrón</b> (día 12): tócalo antes de que llegue a la puerta. <b>Niña traviesa</b> (día 14): tócala para calmarla y recoge lo que tumbó. <b>Famoso</b> (día 18): todos se quedan mirándolo.</li>
       <li><b>Entre días</b> compra vitrinas con monedas y <b>mejoras con estrellas</b> (1 por cada estrella nueva, 5 por cada luna): tenis, carrito grande, estantes más fáciles, ayudantes, capacitación, segunda caja… Los últimos días no se pasan sin mejorar: si te trabas, repite días por las estrellas que te faltan. Las <b>ayudas</b> (tinto, canción, limpieza) se usan con los botones de la izquierda.</li>
-      <li>Con 3 estrellas se abre el <b>modo legendario</b> de ese día: gana una Luna. Y en cada día hay un <b>corazón escondido</b> que aparece un momento.</li>
+      <li data-neutro="Con 3 estrellas se abre el &lt;b&gt;modo legendario&lt;/b&gt; de ese día: gana una Luna. Y en cada día hay un &lt;b&gt;trébol de la suerte&lt;/b&gt; escondido que aparece un momento.">Con 3 estrellas se abre el <b>modo legendario</b> de ese día: gana una Luna. Y en cada día hay un <b>corazón escondido</b> que aparece un momento.</li>
+      <li class="solo-pareja"><b>Sala con código (de 2 a 4):</b> para jugar con amigos (o entre los dos sin la casa). Uno abre la tienda y les pasa el código; los demás entran con «Unirme con código». Con amigos en la sala no sale nada de ustedes dos.</li>
     </ol>
     <p class="como-nota">Con dos dedos acercas la cámara. Juega con el celular acostado para ver mejor la tienda.</p>
     <div class="fila-botones">
@@ -149,6 +157,21 @@
       <button id="btn-sala-si" class="boton boton-tomate" hidden>¡Vamos!</button>
     </div>
   </article>
+</section>
+
+<!-- Unirse a la sala de otro con su código -->
+<section id="codigo" class="pantalla pantalla-centro" hidden>
+  <form id="codigo-form" class="lista-mercado sala codigo-sala" autocomplete="off">
+    <i class="sala-ico" aria-hidden="true"></i>
+    <h2>Unirme con código</h2>
+    <p class="sala-texto">Quien abrió la sala te pasa el código: 5 letras y números.</p>
+    <input id="codigo-input" class="codigo-input" maxlength="7" placeholder="ABCDE" aria-label="Código de la sala" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
+    <p id="codigo-error" class="codigo-error" role="status"></p>
+    <div class="fila-botones">
+      <button type="button" id="btn-codigo-no" class="boton boton-papel">Volver</button>
+      <button class="boton boton-tomate">Entrar</button>
+    </div>
+  </form>
 </section>
 
 <!-- Pausa -->

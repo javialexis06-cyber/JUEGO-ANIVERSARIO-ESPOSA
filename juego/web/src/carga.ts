@@ -2,6 +2,7 @@
 // persiguen con la chancla, globos de agua, pastel en la cara, cosquillas, baile loco, sustos…). Son escenitas
 // dibujadas en un canvas con los recortes de los dos (public/carga) y cosas volando; cada vez sale una distinta.
 import recortes from './carga_recortes.json';
+import { esModoAmigo } from './salas/perfil';
 
 type Rol = 'el' | 'ella';
 const R = recortes as unknown as Record<string, [number, number, number, number]>;
@@ -642,8 +643,12 @@ const ESCENAS: Escena[] = [
 ];
 
 // ---------------------------------------------------------------------------------------------- Arranque
+/** Las escenitas de amor (besos, «Te amo»): en el aparato de un amigo no salen (modo neutro). */
+const ROMANTICAS = new Set(['Avioncito de papel', 'Beso robado', 'Selfie']);
+const permitidas = () => (esModoAmigo() ? ESCENAS.filter((e) => !ROMANTICAS.has(e.nombre)) : ESCENAS);
+
 function elegir(sin: string | null) {
-  const opciones = ESCENAS.filter((e) => e.nombre !== sin);
+  const opciones = permitidas().filter((e) => e.nombre !== sin);
   return opciones[Math.floor(Math.random() * opciones.length)];
 }
 
@@ -666,7 +671,7 @@ export function escenasDeCarga(seccion: HTMLElement | null = document.getElement
   }
   // ?escena=N pone una escena fija (pruebas)
   const forzada = Number(new URLSearchParams(location.search).get('escena'));
-  let escena = forzada >= 1 && forzada <= ESCENAS.length ? ESCENAS[forzada - 1] : elegir(ultima);
+  let escena = forzada >= 1 && forzada <= ESCENAS.length && permitidas().includes(ESCENAS[forzada - 1]) ? ESCENAS[forzada - 1] : elegir(ultima);
   const cargar = (e: Escena) => e.poses.forEach(img);
   cargar(escena);
   const poner = (e: Escena) => {

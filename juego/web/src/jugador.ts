@@ -13,8 +13,27 @@ import type { CanastaSuelta, Mugre, Perseguible } from './problemas';
 import { cargar, copia, Productos } from './recursos';
 import * as sonido from './sonido';
 import { CAJA_SECCION, Vitrina } from './tienda';
+import { vestirAmigo } from './neutro';
+import type { AspectoJugador } from './salas/tipos';
 
 export type Rol = 'el' | 'ella';
+
+/**
+ * Quién maneja a este personaje. Con Él y Ella (solo, los dos en un celular o en línea entre ellos) basta el rol;
+ * en una sala (de 2 a 4: Javier, Laura y amigos) cada uno trae su id del día, su nombre, su color y, si es un
+ * amigo, los colores de su muñeco.
+ */
+export interface InfoJugador {
+  /** Identificador del día: «el»/«ella» entre la pareja, «j0»…«j3» en una sala (marca lo que cada uno reservó). */
+  id: string;
+  /** El muñeco base: el de Javier (pelo corto) o el de Laura (pelo largo). */
+  cuerpo: Rol;
+  nombre: string;
+  /** Color de su nombre, su tira de herramientas y sus números (el de su puesto en la sala). */
+  color?: string;
+  /** Colores del amigo (piel, pelo, ropa); sin esto, el muñeco de fábrica. */
+  aspecto?: AspectoJugador;
+}
 
 export type Tarea =
   | { id: number; tipo: 'reponer'; vitrina: Vitrina }
@@ -75,14 +94,28 @@ export class Jugador extends Personaje {
   private repuestasEnViaje = 0;
   private repensar = 0;
 
-  constructor(pos: P, escala: number, private juego: Juego, public rol: Rol = 'el') {
+  /** Identificador del día (lo que reserva queda a su nombre). */
+  readonly id: string;
+  /** Color de su puesto en la sala (en pareja, el azul de Él y el rosado de Ella van por CSS). */
+  readonly color: string | undefined;
+  private readonly nombrePropio: string | undefined;
+  private readonly aspecto: AspectoJugador | undefined;
+  /** Materiales propios del amigo (sus colores), para soltarlos al final del día. */
+  propios: THREE.Material[] = [];
+
+  /** `rol` es el muñeco base (el de Él o el de Ella); `info` lo que trae cada uno en una sala. */
+  constructor(pos: P, escala: number, private juego: Juego, public rol: Rol = 'el', info?: InfoJugador) {
     super(pos, escala);
     this.poseCaminar = ['carrito_a', 'carrito_b'];
     this.poseQuieto = 'carrito_a';
+    this.id = info?.id ?? rol;
+    this.color = info?.color;
+    this.nombrePropio = info?.nombre;
+    this.aspecto = info?.aspecto;
   }
 
   get nombre() {
-    return this.rol === 'el' ? 'Él' : 'Ella';
+    return this.nombrePropio ?? (this.rol === 'el' ? 'Él' : 'Ella');
   }
   private get mejoras() {
     return this.juego.mejoras;
@@ -120,6 +153,8 @@ export class Jugador extends Personaje {
 
   async preparar(productos: Productos) {
     await this.cargarPoses(this.rol);
+    // Un amigo con sus colores (piel, pelo, camiseta, pantalón y zapatos)
+    this.propios = vestirAmigo(this.modelo, this.aspecto);
     const modelo = copia(await cargar('carrito_1.glb'));
     modelo.traverse((o) => {
       if (o.userData?.producto) this.huecosCarrito.push(o);
@@ -155,10 +190,10 @@ export class Jugador extends Personaje {
     if (this.tiene(t)) return false;
     this.porToques = true;
     const nueva = { ...t, id: siguienteId++ } as Tarea;
-    if (t.tipo === 'mugre') t.mugre.reservado = this.rol;
-    if (t.tipo === 'canasta') t.canasta.reservado = this.rol;
+    if (t.tipo === 'mugre') t.mugre.reservado = this.id;
+    if (t.tipo === 'canasta') t.canasta.reservado = this.id;
     if (t.tipo === 'atrapar') {
-      t.objetivo.reservado = this.rol;
+      t.objetivo.reservado = this.id;
       this.tareas.unshift(nueva);
     } else this.tareas.push(nueva);
     return true;
@@ -174,9 +209,9 @@ export class Jugador extends Personaje {
   }
 
   private soltarReserva(x: Tarea) {
-    if (x.tipo === 'mugre' && x.mugre.reservado === this.rol) x.mugre.reservado = undefined;
-    if (x.tipo === 'canasta' && x.canasta.reservado === this.rol) x.canasta.reservado = undefined;
-    if (x.tipo === 'atrapar' && x.objetivo.reservado === this.rol) x.objetivo.reservado = undefined;
+    if (x.tipo === 'mugre' && x.mugre.reservado === this.id) x.mugre.reservado = undefined;
+    if (x.tipo === 'canasta' && x.canasta.reservado === this.id) x.canasta.reservado = undefined;
+    if (x.tipo === 'atrapar' && x.objetivo.reservado === this.id) x.objetivo.reservado = undefined;
   }
 
   /** Todas las acciones pendientes, en orden (la actual primero). */
@@ -207,7 +242,7 @@ export class Jugador extends Personaje {
     this.alTerminarAccion = null;
     this.cargandoBodega = false;
     this.lavando = false;
-    if (this.reservadaCerca?.reservado === this.rol) this.reservadaCerca.reservado = undefined;
+    if (this.reservadaCerca?.reservado === this.id) this.reservadaCerca.reservado = undefined;
     this.reservadaCerca = null;
   }
 
@@ -539,7 +574,7 @@ export class Jugador extends Personaje {
   private alPasar() {
     const j = this.juego;
     const t = j.tienda;
-    const mio = (r?: string) => !r || r === this.rol;
+    const mio = (r?: string) => !r || r === this.id;
     for (const c of [...j.canastasSueltas]) {
       if (this.canastasEnMano >= CANASTAS_EN_MANO || !mio(c.reservado) || distancia(this.pos, c.pos) > CERCA.recoger) continue;
       j.quitarCanasta(c);
@@ -578,19 +613,19 @@ export class Jugador extends Personaje {
     // 1) La caja: si hay fila y nadie cobra, cobra
     if (!j.cajera && j.fila.length && distancia(this.pos, t.caja.puestoCajero()) < CERCA.caja) {
       if (!j.otroCobrando(this)) return this.empezarCobro();
-      this.avisar('caja', `${j.jugadores.find((o) => o !== this)?.nombre ?? 'Alguien'} ya está cobrando`);
+      this.avisar('caja', `${j.jugadores.find((o) => o !== this && o.estaCobrando)?.nombre ?? 'Alguien'} ya está cobrando`);
     }
     // 2) Mugre a los pies
     const m = j.mugres
-      .filter((x) => (!x.reservado || x.reservado === this.rol) && distancia(this.pos, x.pos) < CERCA.mugre)
+      .filter((x) => (!x.reservado || x.reservado === this.id) && distancia(this.pos, x.pos) < CERCA.mugre)
       .sort((a, b) => distancia(this.pos, a.pos) - distancia(this.pos, b.pos))[0];
     if (m) {
       const puede = trapeable(m) ? !this.traperoLleno : m.tipo === 'basura' ? this.bolsa < BOLSA_BASURA : this.espacioCarrito > 0;
       if (puede) {
-        m.reservado = this.rol;
+        m.reservado = this.id;
         this.reservadaCerca = m;
         return this.limpiar(m, () => {
-          if (m.reservado === this.rol) m.reservado = undefined;
+          if (m.reservado === this.id) m.reservado = undefined;
           this.reservadaCerca = null;
           listo();
         });

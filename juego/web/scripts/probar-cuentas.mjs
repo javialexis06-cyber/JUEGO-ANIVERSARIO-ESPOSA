@@ -373,11 +373,19 @@ const SUPER_CEL = JSON.stringify({ dinero: 40, sitios: {}, estrellas: { 1: [true
 const el = await celular('Él', { 'supermania-jugable1': SUPER_CEL, 'cien-puertas': JSON.stringify({ hasta: 12, estrellas: { 3: 2 }, vioInicio: true }), 'nuestro-hogar-victorias': '4' });
 const ella = await celular('Ella');
 const deAqui = (p) => p.evaluate(() => ({ super: localStorage.getItem('supermania-jugable1'), puertas: localStorage.getItem('cien-puertas'), victorias: localStorage.getItem('nuestro-hogar-victorias') }));
+/** Tocar y escribir directo en la página: con dos casas en 3D por software, la otra página casi no recibe cuadros y
+ *  las esperas de Playwright («visible y quieto») se vencen aunque el botón esté ahí, a la vista. */
+const tocar = (p, sel) => p.evaluate((s) => document.querySelector(s).click(), sel);
+const escribir = (p, sel, v) => p.evaluate(([s, t]) => {
+  const i = document.querySelector(s);
+  i.value = t;
+  i.dispatchEvent(new Event('input', { bubbles: true }));
+}, [sel, v]);
 const conClave = async (p, rol, clave) => {
-  await p.click(`.rol-carta[data-rol="${rol}"]`);
-  await p.waitForSelector('#form-cuenta:not([hidden])', { timeout: 20000 });
-  await p.fill('#inp-contrasena', clave);
-  await p.click('#form-cuenta button[type="submit"]');
+  await tocar(p, `.rol-carta[data-rol="${rol}"]`);
+  await p.waitForSelector('#form-cuenta:not([hidden])', { state: 'attached', timeout: 60000 });
+  await escribir(p, '#inp-contrasena', clave);
+  await tocar(p, '#form-cuenta button[type="submit"]');
 };
 const avisoClave = (p) => p.evaluate(() => document.querySelector('#cuenta-aviso')?.textContent ?? '');
 

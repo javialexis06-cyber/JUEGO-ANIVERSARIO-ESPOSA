@@ -16,7 +16,12 @@ export interface Partida {
   gastadas: number;
 }
 
-const CLAVE = 'supermania-jugable1';
+import { modoAmigo } from './neutro';
+
+/** La partida de Javier y Laura; la de un amigo va aparte en su aparato (nunca se mezclan). */
+const CLAVE_PAREJA = 'supermania-jugable1';
+const CLAVE_AMIGO = 'amigo-supermania';
+const clave = () => (modoAmigo() ? CLAVE_AMIGO : CLAVE_PAREJA);
 
 export function nueva(t: TiendaDato): Partida {
   const sitios: Record<number, number> = {};
@@ -65,7 +70,7 @@ export function normalizar(raw: unknown, t: TiendaDato): Partida {
 
 export function cargar(t: TiendaDato): Partida {
   try {
-    const raw = localStorage.getItem(CLAVE);
+    const raw = localStorage.getItem(clave());
     if (raw) return normalizar(JSON.parse(raw), t);
   } catch {
     /* sin almacenamiento o datos ilegibles: partida nueva */
@@ -75,7 +80,7 @@ export function cargar(t: TiendaDato): Partida {
 
 export function guardar(p: Partida) {
   try {
-    localStorage.setItem(CLAVE, JSON.stringify(p));
+    localStorage.setItem(clave(), JSON.stringify(p));
   } catch {
     /* navegador sin almacenamiento: se juega igual, sin guardar */
   }
@@ -83,7 +88,7 @@ export function guardar(p: Partida) {
 
 export function borrar() {
   try {
-    localStorage.removeItem(CLAVE);
+    localStorage.removeItem(clave());
   } catch {
     /* nada que borrar */
   }
