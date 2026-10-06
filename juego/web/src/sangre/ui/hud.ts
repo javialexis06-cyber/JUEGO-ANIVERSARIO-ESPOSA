@@ -176,6 +176,11 @@ export class Hud {
     $('avisos').innerHTML = '';
   }
 
+  /** Mientras se escogen las cartas el HUD casi desaparece (si no, sus letreros se cruzan con el título de la elección). */
+  eligiendo(si: boolean) {
+    this.raiz.classList.toggle('eligiendo', si);
+  }
+
   tenue(si: boolean) {
     this.raiz.classList.toggle('tenue', si);
   }

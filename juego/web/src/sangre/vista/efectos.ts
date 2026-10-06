@@ -267,6 +267,14 @@ class Piscina {
     this.activos.push(a);
     return a;
   }
+  /** Deja una lista (escondida) para que su sombreador se compile detrás de la pantalla de carga. */
+  precalentar() {
+    if (this.libres.length || this.activos.length) return;
+    const m = this.hacer();
+    m.visible = false;
+    this.padre.add(m);
+    this.libres.push(m);
+  }
   actualizar(dt: number, cada?: (a: Activo, u: number) => void) {
     for (let k = this.activos.length - 1; k >= 0; k--) {
       const a = this.activos[k];
@@ -543,6 +551,23 @@ export class Efectos {
     this.columnas.actualizar(dt);
     this.rayos.actualizar(dt);
     this.auras.actualizar(dt);
+  }
+
+  /** Un ejemplar escondido de cada efecto, para compilar todos los sombreadores antes de jugar: si no, el primer
+   *  uso de cada uno (el aura de subir de nivel, el haz de la campana, los anillos de abrir) congela el cuadro y en
+   *  algunos celulares la pantalla queda negra mientras tanto. */
+  precalentar() {
+    for (const p of [this.arcos, this.rayas, this.ondas, this.columnas, this.rayos, this.auras]) p.precalentar();
+    if (!this.zonasLibres.length && !this.zonas.size) {
+      const z = this.hacerZona();
+      z.visible = false;
+      this.grupo.add(z);
+      this.zonasLibres.push(z);
+    }
+    this.marcaCampana({ x: 0, y: 0, est: 0 }, 1, 1, false);
+    this.marcaCampana(null, 1, 1, false);
+    this.marcasUso([{ id: -1, x: 0, y: 0, r: 1, lleno: 0, fuerza: 1, color: new THREE.Color() }]);
+    this.marcasUso([]);
   }
 
   limpiar() {

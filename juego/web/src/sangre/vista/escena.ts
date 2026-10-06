@@ -235,6 +235,8 @@ export class Escena3D {
     await this.prepararMunecos(perfiles);
     this.focoListo = false;
     // Todos los sombreadores de la etapa se compilan ahora (detrás de la pantalla de carga), no en pleno juego
+    // (también los de los efectos, que se crean la primera vez que hacen falta)
+    this.efectos.precalentar();
     try {
       await this.renderer.compileAsync(this.escena, this.camara);
     } catch {

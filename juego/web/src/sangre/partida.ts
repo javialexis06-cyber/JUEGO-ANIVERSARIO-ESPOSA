@@ -141,6 +141,7 @@ export class Partida {
     const bots = this.o.bots ?? [];
     for (const b of bots) if (sim.J[b]?.cola.length) botEscoger(sim, sim.J[b]);
     const eligiendo = !!j && j.cola.length > 0 && !bots.includes(this.o.local);
+    this.hud.eligiendo(eligiendo);
     if (eligiendo) this.mostrarEleccion(sim, dtReal, solo);
     else if (this.eleccion.abierta) {
       this.eleccion.cerrar();

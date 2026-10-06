@@ -126,10 +126,11 @@ svg {
   inset: 0;
   pointer-events: none;
   border-radius: inherit;
+  /* (manchas de quemado sin mix-blend-mode: sobre el lienzo 3D, en Android, la mezcla obliga a recomponer toda la
+     pantalla y se veía negra un momento) */
   background:
-    radial-gradient(circle at 12% 88%, rgba(60, 25, 5, 0.35) 0 6px, transparent 14px),
-    radial-gradient(circle at 92% 14%, rgba(60, 25, 5, 0.3) 0 5px, transparent 12px);
-  mix-blend-mode: multiply;
+    radial-gradient(circle at 12% 88%, rgba(60, 25, 5, 0.28) 0 6px, transparent 14px),
+    radial-gradient(circle at 92% 14%, rgba(60, 25, 5, 0.24) 0 5px, transparent 12px);
 }
 .titulo-grabado {
   font: 700 15px/1.1 var(--serif);
@@ -224,6 +225,9 @@ svg {
 }
 #hud.tenue {
   opacity: 0.35;
+}
+#hud.eligiendo {
+  opacity: 0.12;
 }
 #hud > * {
   pointer-events: auto;
@@ -834,7 +838,8 @@ body.mano #zona-joystick {
   justify-content: center;
   gap: 10px;
   padding: 10px max(14px, env(safe-area-inset-right)) 10px max(14px, env(safe-area-inset-left));
-  background: radial-gradient(ellipse at center, rgba(20, 8, 10, 0.72), rgba(0, 0, 0, 0.88));
+  /* (el juego se sigue viendo detrás: con el velo casi opaco, en una cueva oscura la pantalla parecía negra) */
+  background: radial-gradient(ellipse at center, rgba(20, 8, 10, 0.42), rgba(0, 0, 0, 0.7));
   animation: fundir-entra 0.2s both;
 }
 #eleccion h2 {
