@@ -171,11 +171,12 @@ create trigger limpiar_eventos after insert on public.eventos for each row execu
 -- ===============================================================================================================
 -- 9. CUENTAS CON CONTRASEÑA: el mismo Javier y la misma Laura desde cualquier aparato
 -- ===============================================================================================================
--- Cada uno se hace una cuenta (usuario + contraseña) desde un aparato que ya está en la casa. Después, en otro
--- celular o en el computador, «Ya tengo cuenta» → usuario y contraseña → entra a la misma casa como el mismo
--- personaje, con todo su progreso. Un personaje con cuenta ya no se puede tomar con el código: solo con su cuenta.
--- Cada persona puede tener varios aparatos a la vez (celular y computador). La contraseña se guarda cifrada
--- (bcrypt); nadie la puede leer, ni desde la app ni desde aquí.
+-- Cada celular que ya está en la casa le crea solo su cuenta a su personaje (usuario «javier» o «laura», contraseña
+-- de base TEAMO, que se puede cambiar en Ajustes). En otro celular o en el computador: «Soy Javier» o «Soy Laura» →
+-- la contraseña → entra a la misma casa como el mismo personaje, con todo su progreso, y queda abierto para siempre.
+-- Así los amigos que tengan la app no pueden entrar como ellos. Un personaje con cuenta ya no se puede tomar con el
+-- código: solo con su contraseña. Cada persona puede tener varios aparatos a la vez (celular y computador). La
+-- contraseña no distingue mayúsculas y se guarda cifrada (bcrypt): nadie la puede leer, ni desde la app ni desde aquí.
 create extension if not exists pgcrypto;
 
 create table if not exists public.cuentas (
@@ -289,23 +290,24 @@ begin
   if u !~ '^[a-z0-9_.-]{3,24}$' then
     raise exception 'El usuario debe tener de 3 a 24 letras o números, sin espacios ni tildes';
   end if;
-  if char_length(coalesce(contrasena, '')) < 6 or char_length(contrasena) > 72 then
-    raise exception 'La contraseña debe tener al menos 6 caracteres';
+  if char_length(trim(coalesce(contrasena, ''))) < 4 or char_length(contrasena) > 72 then
+    raise exception 'La contraseña debe tener al menos 4 caracteres';
   end if;
   if exists (select 1 from cuentas where pareja_id = p and rol = mi_rol) then
     raise exception 'Este personaje ya tiene cuenta';
   end if;
   if exists (select 1 from cuentas where usuario = u) then raise exception 'Ese usuario ya existe: escoge otro'; end if;
-  insert into cuentas (pareja_id, rol, usuario, clave) values (p, mi_rol, u, crypt(contrasena, gen_salt('bf', 10)));
+  insert into cuentas (pareja_id, rol, usuario, clave) values (p, mi_rol, u, crypt(lower(trim(contrasena)), gen_salt('bf', 10)));
   insert into aparatos (pareja_id, rol, usuario) values (p, mi_rol, auth.uid())
   on conflict (pareja_id, usuario) do update set rol = excluded.rol, visto = now();
 end $$;
 revoke execute on function public.crear_cuenta(uuid, text, text, text) from public, anon;
 grant execute on function public.crear_cuenta(uuid, text, text, text) to authenticated;
 
--- Iniciar sesión en un aparato nuevo. Devuelve la casa y el personaje, o nada si el usuario o la contraseña no son
--- (con un error no quedaría anotado el intento). 10 errores por aparato en una hora o 8 por usuario en 15 minutos
--- bloquean un rato.
+-- Iniciar sesión en un aparato nuevo. Devuelve la casa y el personaje, o nada si la contraseña no es (con un error no
+-- quedaría anotado el intento). Si el usuario todavía no existe, avisa «Cuenta no existe» (la app ofrece entonces
+-- crear la casa o unirse con el código, como la primera vez). 10 errores por aparato en una hora o 8 por usuario en
+-- 15 minutos bloquean un rato.
 create or replace function public.entrar_cuenta(nombre text, contrasena text)
 returns table (pareja uuid, papel text, codigo_casa text)
 language plpgsql security definer set search_path = public, extensions as $$
@@ -319,7 +321,8 @@ begin
     raise exception 'Demasiados intentos. Espera un rato y vuelve a intentar.';
   end if;
   select cu.pareja_id, cu.rol, cu.clave into c from cuentas cu where cu.usuario = u;
-  if c.pareja_id is null or c.clave <> crypt(coalesce(contrasena, ''), c.clave) then
+  if c.pareja_id is null then raise exception 'Cuenta no existe'; end if;
+  if c.clave <> crypt(lower(trim(coalesce(contrasena, ''))), c.clave) then
     insert into intentos_cuenta (quien) values (auth.uid()::text), ('u:' || u);
     delete from intentos_cuenta i where i.t < now() - interval '1 day';
     return;
@@ -337,10 +340,10 @@ language plpgsql security definer set search_path = public, extensions as $$
 begin
   if auth.uid() is null then raise exception 'Sin sesión'; end if;
   if mi_rol not in ('el', 'ella') or not es_rol(p, mi_rol) then raise exception 'No autorizado'; end if;
-  if char_length(coalesce(nueva, '')) < 6 or char_length(nueva) > 72 then
-    raise exception 'La contraseña debe tener al menos 6 caracteres';
+  if char_length(trim(coalesce(nueva, ''))) < 4 or char_length(nueva) > 72 then
+    raise exception 'La contraseña debe tener al menos 4 caracteres';
   end if;
-  update cuentas set clave = crypt(nueva, gen_salt('bf', 10)) where pareja_id = p and rol = mi_rol;
+  update cuentas set clave = crypt(lower(trim(nueva)), gen_salt('bf', 10)) where pareja_id = p and rol = mi_rol;
   if not found then raise exception 'Este personaje todavía no tiene cuenta'; end if;
 end $$;
 revoke execute on function public.cambiar_contrasena(uuid, text, text) from public, anon;

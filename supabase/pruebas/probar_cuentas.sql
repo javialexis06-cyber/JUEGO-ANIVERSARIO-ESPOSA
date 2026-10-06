@@ -36,17 +36,17 @@ select pg_temp.ver(unirse_pareja(current_setting('prueba.cod'), 'ella') = curren
 -- Javier se hace la cuenta
 select pg_temp.como(:'J1');
 select pg_temp.falla($$select crear_cuenta(current_setting('prueba.p')::uuid, 'el', 'ja', 'secreto1')$$, 'usuario', 'usuario muy corto no');
-select pg_temp.falla($$select crear_cuenta(current_setting('prueba.p')::uuid, 'el', 'javier', '123')$$, 'contraseña', 'contraseña muy corta no');
+select pg_temp.falla($$select crear_cuenta(current_setting('prueba.p')::uuid, 'el', 'javier', '123')$$, 'contraseña', 'contraseña muy corta (menos de 4) no');
 select pg_temp.falla($$select crear_cuenta(current_setting('prueba.p')::uuid, 'ella', 'javier', 'secreto1')$$, 'autorizado', 'Javier no hace la cuenta de Laura');
-select crear_cuenta(current_setting('prueba.p')::uuid, 'el', '  Javier ', 'secreto1');
-select pg_temp.ver(true, 'Javier se hace la cuenta «javier»');
-select pg_temp.falla($$select crear_cuenta(current_setting('prueba.p')::uuid, 'el', 'javier2', 'secreto1')$$, 'ya tiene cuenta', 'no se hace otra cuenta para Javier');
+select crear_cuenta(current_setting('prueba.p')::uuid, 'el', '  Javier ', 'TEAMO');
+select pg_temp.ver(true, 'Javier se hace la cuenta «javier» con la contraseña de base TEAMO');
+select pg_temp.falla($$select crear_cuenta(current_setting('prueba.p')::uuid, 'el', 'javier2', 'TEAMO')$$, 'ya tiene cuenta', 'no se hace otra cuenta para Javier');
 select pg_temp.ver((select count(*) from cuentas_de(current_setting('prueba.p')::uuid)) = 1, 'la casa ve que Javier tiene cuenta');
 
 -- Laura no puede usar el mismo usuario
 select pg_temp.como(:'L1');
 select pg_temp.falla($$select crear_cuenta(current_setting('prueba.p')::uuid, 'ella', 'javier', 'otra123')$$, 'ya existe', 'el usuario es único');
-select crear_cuenta(current_setting('prueba.p')::uuid, 'ella', 'laura', 'flores22');
+select crear_cuenta(current_setting('prueba.p')::uuid, 'ella', 'laura', 'TEAMO');
 select pg_temp.ver(true, 'Laura se hace la cuenta «laura»');
 
 -- Nadie ve las contraseñas
@@ -59,8 +59,9 @@ select pg_temp.falla($$select unirse_pareja(current_setting('prueba.cod'), 'el',
 select pg_temp.falla($$select volver_a_casa(current_setting('prueba.cod'), 'el')$$, 'cuenta requerida', 'volver a la casa tampoco');
 select pg_temp.ver((select count(*) from entrar_cuenta('javier', 'mala-clave')) = 0, 'contraseña equivocada: no entra');
 select pg_temp.ver(not es_miembro(current_setting('prueba.p')::uuid), 'y no queda en la casa');
+select pg_temp.falla($$select entrar_cuenta('pedro', 'TEAMO')$$, 'no existe', 'un usuario que no existe avisa «Cuenta no existe»');
 select pg_temp.ver((select papel = 'el' and pareja = current_setting('prueba.p')::uuid and codigo_casa = current_setting('prueba.cod')
-  from entrar_cuenta('JAVIER', 'secreto1')), 'con usuario y contraseña entra como Javier (sin importar mayúsculas)');
+  from entrar_cuenta('JAVIER', ' teamo ')), 'con TEAMO entra como Javier (sin importar mayúsculas ni espacios)');
 select pg_temp.ver(es_rol(current_setting('prueba.p')::uuid, 'el'), 'el computador ya es Javier');
 select pg_temp.ver(volver_a_casa(current_setting('prueba.cod'), 'el') = current_setting('prueba.p')::uuid, 'y al volver a abrir entra solo');
 select pg_temp.ver((select count(*) from parejas where id = current_setting('prueba.p')::uuid) = 1, 'el computador lee la casa');
@@ -83,7 +84,7 @@ select pg_temp.ver((select count(*) from personajes where pareja_id = current_se
 
 -- Adivinar contraseñas: se bloquea
 select pg_temp.ver((select count(*) from (select entrar_cuenta('laura', 'intento' || g) from generate_series(1, 8) g) t) = 0, '8 contraseñas inventadas no entran');
-select pg_temp.falla($$select entrar_cuenta('laura', 'flores22')$$, 'demasiados intentos', 'después se bloquea un rato (aunque ahora acierte)');
+select pg_temp.falla($$select entrar_cuenta('laura', 'TEAMO')$$, 'demasiados intentos', 'después se bloquea un rato (aunque ahora acierte)');
 
 -- Cambiar la contraseña desde un aparato que ya es Javier
 select pg_temp.como(:'J2');
@@ -94,8 +95,8 @@ select pg_temp.falla($$select cambiar_contrasena(current_setting('prueba.p')::uu
 -- Cerrar sesión en el computador
 select salir_de_casa(current_setting('prueba.p')::uuid);
 select pg_temp.ver(not es_miembro(current_setting('prueba.p')::uuid), 'al cerrar sesión el computador ya no es de la casa');
-select pg_temp.ver((select count(*) from entrar_cuenta('javier', 'secreto1')) = 0, 'la contraseña vieja ya no sirve');
-select pg_temp.ver((select count(*) from entrar_cuenta('javier', 'nueva-clave')) = 1, 'la nueva sí');
+select pg_temp.ver((select count(*) from entrar_cuenta('javier', 'TEAMO')) = 0, 'la contraseña vieja ya no sirve');
+select pg_temp.ver((select count(*) from entrar_cuenta('javier', 'Nueva-Clave')) = 1, 'la nueva sí');
 
 -- Una casa sin cuentas sigue funcionando como antes
 select pg_temp.como(:'X');

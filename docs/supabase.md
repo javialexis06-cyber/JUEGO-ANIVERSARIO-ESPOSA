@@ -25,11 +25,21 @@ clave publicable están en [`juego/web/src/casa/servidor.ts`](../juego/web/src/c
 sin escribir nada. Si algún día se cambia el esquema, hay que volver a correr `supabase/esquema.sql` completo (se puede
 correr varias veces).
 
-## Cómo se emparejan en la app
+## Cómo se entra en la app (con contraseña)
 
-- Uno abre la app, elige **Soy Él** o **Soy Ella** y toca **Crear nuestra casa**: aparece un código de 6 letras.
-- El otro elige su personaje, toca **Unirme** y escribe el código.
-- Si se reinstala la app o se cambia de celular, se vuelve a entrar con el mismo código.
+- Al tocar **Soy Javier** o **Soy Laura** en un aparato nuevo, la app pide la **contraseña** de ese personaje. La de
+  base es **TEAMO** (no distingue mayúsculas); cada uno la puede cambiar en Ajustes → Mi cuenta. Sin ella nadie entra
+  como ellos: los amigos que tengan la app entran por «Soy un amigo / una amiga».
+- Con la contraseña, el aparato entra directo a la casa de los dos (sin código) y **queda abierto para siempre**: no
+  la vuelve a pedir (salvo que se borren los datos de la app o se cierre la sesión en Ajustes).
+- La primera vez de todas (antes de que exista la cuenta), con TEAMO aparecen **Crear nuestra casa** (da un código de 6
+  letras) y **Unirme** con ese código, como antes. Cada aparato que ya está en la casa le crea solo la cuenta a su
+  personaje (usuario `javier` o `laura`, contraseña TEAMO).
+- Un personaje con cuenta ya no se puede tomar con el código: solo con su contraseña. Cada uno puede tener varios
+  aparatos abiertos (celular y computador) con el mismo progreso.
+- El progreso de los minijuegos que se guardaba solo en el aparato (súper, Cien Puertas, victorias de la mesa,
+  escenas compradas) ahora también va en la casa (`casa.progreso`), así que llega a cualquier aparato donde entren; la
+  cocina, Lavarse la cara, el retrete y Sangre y Ceniza ya estaban en la casa.
 
 ## Qué se guarda
 
@@ -64,3 +74,21 @@ Con estos cambios, un código que no existe vuelve vacío en vez de error: la ap
 
 **Ojo:** si algún día vuelves a correr `esquema.sql` completo, corre después otra vez `cambios-pendientes.sql`
 (el esquema viejo vuelve a abrir la regla «personajes: todo» y las demás).
+
+El mismo archivo trae además (secciones 9 y 10):
+
+| Qué | Para qué |
+|---|---|
+| Cuentas (`cuentas`, `aparatos`, `crear_cuenta`, `entrar_cuenta`, `cambiar_contrasena`, `volver_a_casa`…) | La contraseña de Javier y de Laura y sus aparatos. La contraseña va cifrada (bcrypt) y nadie la puede leer. 10 contraseñas equivocadas por aparato en una hora (u 8 para un mismo usuario en 15 minutos) bloquean un rato |
+| `latido()` | La consulta del «Latido de Supabase» (abajo) |
+
+Pruebas: `supabase/pruebas/probar_cuentas.sql` (36 de 36). Mientras no se pegue, la app sigue funcionando como antes
+(entra con el código y pide la contraseña TEAMO solo en el aparato).
+
+## Que no se pause (latido)
+
+Supabase gratis **pausa el proyecto si pasa 7 días sin uso** (la app deja de conectar y GitHub ni siquiera encuentra la
+dirección). El trabajo **Latido de Supabase** de GitHub Actions (`.github/workflows/latido-supabase.yml`) le hace una
+consulta pequeñita cada 3 días, así nunca se duerme. Se puede correr a mano en GitHub → Actions → «Latido de
+Supabase» → Run workflow. Si alguna vez sale en rojo es que el proyecto quedó en pausa: entrar a supabase.com, abrir
+`nuestro-hogar` y tocar **Restore project** (después de 90 días en pausa ya no se puede restaurar).

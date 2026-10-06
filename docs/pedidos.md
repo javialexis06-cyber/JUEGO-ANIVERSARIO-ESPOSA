@@ -9,21 +9,6 @@ Creador de personajes para los amigos y acceso a la APK y al .exe como invitado,
 testeen los juegos **sin acceso a nada personal ni romántico de la pareja** (ni recuerdos, ni notas, ni la casa,
 ni frases de amor, ni apodos). Parte de la base ya la hace el frente de salas («Soy un amigo» básico).
 
-## Cuentas: el mismo progreso desde cualquier aparato (pedido de Javier, prioridad alta)
-
-«Quiero que el progreso de cuenta se guarde: solo una persona puede ser Él y solo una Ella, y que desde cualquier
-dispositivo que entre con la contraseña pueda jugar con los mismos datos, la misma casa, los mismos avances; que no
-se pierda el progreso.»
-- Hoy se entra con el código de la casa de 6 letras y se escoge Él o Ella; cada celular es una sesión anónima de
-  Supabase (`miembros`). Hace falta una **cuenta por persona con contraseña** (Supabase Auth con correo o usuario +
-  contraseña), **un solo dueño por rol** en cada casa (Él y Ella exclusivos: el segundo aparato que quiera ser Él debe
-  iniciar sesión como Él, no crear otro), y que al entrar desde otro celular o el computador cargue la misma casa.
-- **Todo el progreso en la nube**, no en el aparato: revisar cada minijuego que guarda en `localStorage`
-  (súper, Cien Puertas, mesa, lavado, retrete, cocina, Sangre y Ceniza, tele, escenas compradas, ajustes) y pasarlo
-  al estado de la casa o a tablas propias, con migración de lo que ya hay en el celular de cada uno.
-- Los cambios de SQL los aplica Javier en el panel de Supabase (no hay clave de servicio aquí); dejarlos en
-  `supabase/cambios-pendientes.sql` con instrucciones claras. No poner nunca la clave de servicio en la app.
-
 ## Lavarse la cara: el progreso es muy lento (pedido de Javier, después de las cuentas)
 
 «Comprar las mejoras es demasiado lento, peca justo de lo contrario de Sangre y Ceniza (que se termina en 4 o 5

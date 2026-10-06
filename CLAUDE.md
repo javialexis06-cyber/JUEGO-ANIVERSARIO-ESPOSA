@@ -248,6 +248,13 @@ Hecho, probado y subido (además de todo lo de antes: casa, súper, Cien Puertas
   survivors oscuro de expediciones estilo Deep Rock Galactic, 12 clases, 5 biomas, hasta 4 jugadores.
 - **Versión de computador** (`juego/escritorio/`, Esc = atrás, F11 = pantalla completa).
 - Los nombres son **Javier** y **Laura** (`NOMBRE_ROL`); apodos y anécdotas en `docs/la-pareja.md`.
+- **Contraseña para entrar**: «Soy Javier» / «Soy Laura» en un aparato nuevo pide la contraseña (de base **TEAMO**, no
+  distingue mayúsculas; se cambia en Ajustes → Mi cuenta) y el aparato queda abierto para siempre. Las cuentas se crean
+  solas (usuarios `javier` y `laura`), varios aparatos por persona, y el progreso de los minijuegos que vivía en el
+  aparato también va en la casa (`casa.progreso`, `src/casa/progreso_nube.ts`). Base: secciones 9 y 10 de
+  `supabase/cambios-pendientes.sql`; prueba: `scripts/probar-cuentas.mjs` y `supabase/pruebas/probar_cuentas.sql`.
+- **Latido de Supabase** (`.github/workflows/latido-supabase.yml`): cada 3 días una consulta para que el proyecto gratis
+  no se pause por 7 días sin uso (ya pasó una vez; si sale en rojo, Javier toca «Restore project» en supabase.com).
 
 **Pendientes**: la lista viva, en orden, está en **`docs/pedidos.md`** (lo siguiente: el creador de personajes y la
 entrada como invitado para los amigos; luego la ronda 2 de arreglos, el sótano de terror, el juego de crímenes y lo
@@ -283,9 +290,9 @@ Javier pidió parar después del frente de amigos y dejar todo apuntado. Así qu
 - Las demás ramas `trabajo/*` (auditoria, lavado, cocina, retrete2, salas, sangre, sangre-biomas, sangre-figuras,
   arreglos, cohete) ya están juntadas: se pueden borrar.
 
-**Lo que sigue**, en orden: `docs/pedidos.md`. Lo primero que Javier marcó como prioridad alta son las **cuentas con
-contraseña** (el mismo progreso desde cualquier aparato, un solo Javier y una sola Laura) y las **correcciones de
-Sangre y Ceniza**; luego la ronda 2 de arreglos, el sótano de terror, el juego de crímenes y lo acumulado.
+**Lo que sigue**, en orden: `docs/pedidos.md`. Las cuentas con contraseña ya quedaron; lo siguiente es **ajustar el progreso
+de Lavarse la cara** (comprar mejoras es muy lento) y las **correcciones de Sangre y Ceniza**; luego la ronda 2 de
+arreglos, el sótano de terror, el juego de crímenes y lo acumulado.
 
 **Para Javier** (no lo puede hacer Claude): pegar `supabase/cambios-pendientes.sql` en el SQL Editor de Supabase y,
 para las voces, poner `ELEVENLABS_API_KEY` en el entorno y permitir `api.elevenlabs.io`.

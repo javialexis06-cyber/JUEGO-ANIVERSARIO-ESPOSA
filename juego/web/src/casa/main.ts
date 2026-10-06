@@ -41,8 +41,10 @@ import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, salaTro
 import { mejorDistancia, monedasVuelo, TOPE_MONEDAS_DIA, yaDescubrio, type ProgresoCohete } from './cohete/datos';
 import { ranurasDe } from './ropa';
 import {
-  configLinea, guardarConfigLinea, olvidarSesion, PersonajeOcupado, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal,
+  CLAVE_DE_BASE, configLinea, CuentaRequerida, esClaveDeBase, guardarConfigLinea, normalizarUsuario, olvidarSesion, PersonajeOcupado, QueCambio,
+  sesionGuardada, SinCuentaTodavia, Sincro, SincroLinea, SincroLocal,
 } from './sincro';
+import { juntarProgreso } from './progreso_nube';
 import {
   $, abrirHoja, Capa, caraClase, cerrarHoja, cerrarVentana, cuerpoHoja, esc, hojaAbierta, ico, iconoItem, iconoRopa, lluviaCorazones,
   mostrar, nombre, pintarNecesidades, SVG, toast, ventana,
@@ -167,13 +169,18 @@ function leerModo(): Modo | null {
 
 let entrando = false;
 
-type Como = 'crear' | { codigo: string; reemplazar?: boolean };
+type Como = 'crear' | { codigo: string; reemplazar?: boolean } | { usuario: string; contrasena: string };
+/** Este aparato tiene que iniciar sesión (el personaje tiene cuenta): la bienvenida abre el formulario de la cuenta. */
+let pedirCuenta = '';
+/** El personaje para el que ya se escribió bien la contraseña de base (la primera vez: crear la casa o unirse). */
+let claveBien: Rol | null = null;
 
 async function entrar(m: Modo, como?: Como): Promise<boolean> {
   // Un doble toque en «Crear» o «Unirme» no crea dos casas ni conecta dos veces
   if (entrando || s) return !!s;
   entrando = true;
   const botones = ['btn-crear', 'btn-local', 'btn-reintentar'].map((id) => $(id) as HTMLButtonElement | null);
+  botones.push($('form-cuenta').querySelector('button'));
   const unirse = $('form-unirse').querySelector('button') as HTMLButtonElement;
   const antes = [...botones.map((b) => b?.disabled ?? false), unirse.disabled];
   for (const b of [...botones, unirse]) if (b) b.disabled = true;
@@ -195,14 +202,39 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
       if (!cfg) throw new Error('Falta conectar el servidor.');
       aviso.textContent = 'Conectando…';
       if (como === 'crear') s = await SincroLinea.crear(cfg, m.rol);
-      else if (como) s = await SincroLinea.unirse(cfg, como.codigo, m.rol, como.reemplazar);
+      else if (como && 'usuario' in como) {
+        $('cuenta-aviso').textContent = 'Entrando…';
+        s = await SincroLinea.conCuenta(cfg, como.usuario, como.contrasena);
+        // La cuenta dice quién es: Javier o Laura
+        m = { modo: 'linea', rol: s.rol };
+      } else if (como) s = await SincroLinea.unirse(cfg, como.codigo, m.rol, como.reemplazar);
       else s = await SincroLinea.reanudar(cfg, sesionGuardada()!);
     }
   } catch (e) {
     s = null;
-    if (e instanceof PersonajeOcupado && como && como !== 'crear') {
+    if (e instanceof PersonajeOcupado && como && como !== 'crear' && 'codigo' in como) {
       aviso.textContent = '';
       confirmarReemplazo(m, como.codigo);
+      return false;
+    }
+    if (como && como !== 'crear' && 'usuario' in como) {
+      aviso.textContent = '';
+      if (e instanceof SinCuentaTodavia && esClaveDeBase(como.contrasena)) {
+        // Primera vez (todavía no hay cuenta para este personaje): con la contraseña de base se crea la casa o se une
+        $('cuenta-aviso').textContent = '';
+        claveBien = m.rol;
+        $('form-cuenta').hidden = true;
+        mostrar('bienv-conexion');
+        aviso.textContent = 'Primera vez: creen su casa o entra con el código que te mande tu pareja.';
+      } else $('cuenta-aviso').textContent = e instanceof SinCuentaTodavia ? 'Contraseña equivocada.' : e instanceof Error ? e.message : 'No se pudo entrar.';
+      return false;
+    }
+    if (e instanceof CuentaRequerida) {
+      // Personaje con cuenta: en este aparato hay que escribir su contraseña
+      aviso.textContent = '';
+      pedirCuenta = `Para entrar en este aparato, escribe la contraseña de ${NOMBRE_ROL[m.rol]}.`;
+      rolElegido = m.rol;
+      abrirFormCuenta(m.rol, pedirCuenta);
       return false;
     }
     aviso.textContent = e instanceof Error ? e.message : 'No se pudo entrar a la casa.';
@@ -211,8 +243,11 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
     return false;
   }
   aviso.textContent = '';
+  $('cuenta-aviso').textContent = '';
+  pedirCuenta = '';
   $('btn-reintentar').hidden = true;
   yo = m.rol;
+  modoGuardado = m;
   if (!params.get('rol')) escribir(CLAVE_MODO, m);
   s.alCambiar(alCambiar);
   s.alEvento(alEvento);
@@ -236,6 +271,7 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
   pintarTodo();
   sonido.musica.iniciar('menu', 76, 'hogar');
   (window as any).__listo = true;
+  if (s.modo === 'linea') void asegurarCuenta();
   return true;
 }
 
@@ -265,13 +301,31 @@ function bienvenida() {
   ($('btn-crear') as HTMLButtonElement).disabled = sinServidor;
   ($('form-unirse').querySelector('button') as HTMLButtonElement).disabled = sinServidor;
   $('btn-bienv-config').hidden = !sinServidor;
+  ($('form-cuenta').querySelector('button') as HTMLButtonElement).disabled = sinServidor;
   if (sinServidor) $('bienv-aviso').textContent = 'Para jugar entre los dos celulares falta conectar el servidor.';
+  if (pedirCuenta && rolElegido) abrirFormCuenta(rolElegido, pedirCuenta);
+}
+
+/** La contraseña del personaje: sin ella nadie entra como Javier o Laura en un aparato nuevo (los amigos, por «Soy un
+ *  amigo»). Una vez adentro, el aparato queda con la sesión abierta para siempre. */
+function abrirFormCuenta(r: Rol, aviso = '') {
+  for (const b of Array.from(document.querySelectorAll<HTMLElement>('.rol-carta'))) b.setAttribute('aria-checked', String(b.dataset.rol === r));
+  $('cuenta-titulo').textContent = `Contraseña de ${NOMBRE_ROL[r]}`;
+  $('form-cuenta').hidden = false;
+  mostrar('bienv-conexion', claveBien === r);
+  $('cuenta-aviso').textContent = aviso;
+  const inp = $('inp-contrasena') as HTMLInputElement;
+  inp.value = '';
+  // En el celular acostado el formulario queda abajo: la tarjeta baja hasta él
+  requestAnimationFrame(() => $('form-cuenta').scrollIntoView({ behavior: 'smooth', block: 'end' }));
+  inp.focus({ preventScroll: true });
 }
 
 function elegirRol(r: Rol) {
   rolElegido = r;
-  for (const b of Array.from(document.querySelectorAll<HTMLElement>('.rol-carta'))) b.setAttribute('aria-checked', String(b.dataset.rol === r));
-  mostrar('bienv-conexion');
+  if (claveBien !== r) claveBien = null;
+  $('bienv-aviso').textContent = '';
+  abrirFormCuenta(r);
   sonido.activar();
   sonido.toque();
 }
@@ -376,6 +430,8 @@ async function abrirDeVerdad() {
     }
     mensajes.push(`Llegaron monedas de los minijuegos: +${sueldo}`);
   }
+  // El progreso de los minijuegos de este aparato se junta con el de la nube (el mismo en cualquier aparato)
+  await juntarConNube();
   // Lo que se logró en los minijuegos de este celular sube a la casa (para los trofeos) y se cobran los trofeos nuevos
   await subirLogros();
   mensajes.push(...(await premiosTrofeos()));
@@ -1187,6 +1243,21 @@ function sincronizarAmpliacion() {
     bebeVisto = clave;
     if (llego && !cigueñaEnCamino) void traerBebe(false);
     else if (!cigueñaEnCamino) casa3d.ponerBebe(!!c.bebe);
+  }
+}
+
+/** El súper, Cien Puertas, la mesa y las escenas: lo del aparato y lo de la nube quedan iguales (progreso_nube.ts). */
+async function juntarConNube() {
+  if (!s || s.modo !== 'linea') return;
+  const { subir, listo } = juntarProgreso(s.casa.progreso?.[yo], yo);
+  if (!subir) return listo();
+  try {
+    await s.cambiarCasa((c) => {
+      c.progreso = { ...(c.progreso ?? {}), [yo]: { ...(c.progreso?.[yo] ?? {}), ...subir } };
+    });
+    listo();
+  } catch {
+    /* sin internet: se vuelve a intentar la próxima vez que se abra la casa, sin perder lo del aparato */
   }
 }
 
@@ -2806,6 +2877,7 @@ function hojaAjustes() {
       <button class="boton boton-papel boton-chico" data-musica>Música: ${sonido.musica.apagada() ? 'apagada' : 'sonando'}</button>
       <button class="boton boton-papel boton-chico" data-sonido>Sonido: ${sonido.silenciado() ? 'apagado' : 'prendido'}</button>
     </div>
+    ${enLinea ? '<section class="mi-cuenta" id="mi-cuenta"><h3>Mi cuenta</h3><p class="nota-hoja">Revisando tu cuenta…</p></section>' : ''}
     <form class="form-config" id="form-config" style="margin-top:12px">
       <p class="nota-hoja">Servidor para conectar los dos celulares (Supabase). Solo la dirección del proyecto y la clave pública «anon».</p>
       <label class="campo">Dirección (Project URL)<input id="cfg-url" inputmode="url" placeholder="https://xxxx.supabase.co" value="${esc(cfg?.url ?? '')}"></label>
@@ -2816,6 +2888,122 @@ function hojaAjustes() {
       <button class="boton boton-papel boton-chico" data-salir>Salir de esta casa</button>
     </div>` : ''}`;
   abrirHoja('Ajustes', html);
+  if (enLinea) void pintarMiCuenta();
+}
+
+/** Mi usuario en este aparato (undefined: todavía no se sabe; null: no tiene cuenta). */
+let miCuenta: string | null | undefined;
+
+/** «Mi cuenta» en Ajustes: crearla, o ver el usuario, cambiar la contraseña y cerrar sesión en este aparato. */
+async function pintarMiCuenta() {
+  if (!(s instanceof SincroLinea)) return;
+  const caja = () => document.getElementById('mi-cuenta');
+  let cuentas: Partial<Record<Rol, string>> | null;
+  try {
+    cuentas = await s.cuentas();
+  } catch (e) {
+    const c = caja();
+    if (c) c.innerHTML = `<h3>Mi cuenta</h3><p class="nota-hoja">${esc(e instanceof Error ? e.message : 'No se pudo revisar la cuenta.')}</p>`;
+    return;
+  }
+  const c = caja();
+  if (!c) return;
+  if (!cuentas) {
+    c.innerHTML = `<h3>Mi cuenta</h3><p class="nota-hoja">Las cuentas con usuario y contraseña todavía no están activadas en el servidor
+      (falta pegar <b>supabase/cambios-pendientes.sql</b> en el SQL Editor de Supabase).</p>`;
+    return;
+  }
+  miCuenta = cuentas[yo] ?? null;
+  const pareja = otro(yo);
+  const deLaPareja = `<p class="nota-hoja">${NOMBRE_ROL[pareja]}: ${cuentas[pareja] ? 'ya tiene su cuenta.' : 'todavía no tiene cuenta (se la hace en su celular, en Ajustes).'}</p>`;
+  c.innerHTML = miCuenta
+    ? `<h3>Mi cuenta</h3>
+      <p class="nota-hoja">${NOMBRE_ROL[yo]} está protegido con contraseña (usuario <span class="usuario-chico">${esc(miCuenta)}</span>). En otro celular o en el
+        computador: «Soy ${NOMBRE_ROL[yo]}» y tu contraseña, y tienes la misma casa y todo tu progreso; este aparato queda con la sesión abierta.
+        Sin la contraseña nadie más puede entrar como ${NOMBRE_ROL[yo]}.</p>
+      <form id="form-cambiar-contrasena">
+        <input id="cta-nueva" type="password" autocomplete="new-password" placeholder="Contraseña nueva" aria-label="Contraseña nueva">
+        <input id="cta-nueva2" type="password" autocomplete="new-password" placeholder="Repítela" aria-label="Repite la contraseña nueva">
+        <button class="boton boton-menta boton-chico" type="submit">Cambiar contraseña</button>
+      </form>
+      ${deLaPareja}
+      <div class="fila-botones" style="justify-content:flex-start"><button class="boton boton-papel boton-chico" data-cerrar-sesion>Cerrar sesión en este aparato</button></div>`
+    : `<h3>Protege a ${NOMBRE_ROL[yo]}</h3>
+      <p class="nota-hoja">Ponle contraseña a ${NOMBRE_ROL[yo]}: así entras desde cualquier celular o el computador con la misma casa y todo tu
+        progreso (súper, puertas, cocina, lavado, retrete, Sangre y Ceniza…), y nadie más puede entrar como ${NOMBRE_ROL[yo]}.</p>
+      <form id="form-crear-cuenta">
+        <input id="cta-usuario" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Usuario (ej: ${esc(normalizarUsuario(NOMBRE_ROL[yo]))})"
+          aria-label="Usuario" value="${esc(normalizarUsuario(NOMBRE_ROL[yo]))}">
+        <input id="cta-clave" type="password" autocomplete="new-password" placeholder="Contraseña (4 o más)" aria-label="Contraseña">
+        <input id="cta-clave2" type="password" autocomplete="new-password" placeholder="Repítela" aria-label="Repite la contraseña">
+        <button class="boton boton-tomate boton-chico" type="submit">Crear mi cuenta</button>
+      </form>
+      ${deLaPareja}`;
+}
+
+async function crearMiCuenta() {
+  if (!(s instanceof SincroLinea)) return;
+  const v = (id: string) => ($(id) as HTMLInputElement | null)?.value ?? '';
+  const usuario = normalizarUsuario(v('cta-usuario'));
+  if (usuario.length < 3) return toast('El usuario debe tener al menos 3 letras o números (sin espacios ni tildes).', 3600);
+  if (v('cta-clave').trim().length < 4) return toast('La contraseña debe tener al menos 4 caracteres.', 3200);
+  if (v('cta-clave') !== v('cta-clave2')) return toast('Las dos contraseñas no son iguales.', 3000);
+  try {
+    await s.crearCuenta(usuario, v('cta-clave'));
+  } catch (e) {
+    return toast(e instanceof Error ? e.message : 'No se pudo crear la cuenta.', 4000);
+  }
+  miCuenta = usuario;
+  sonido.aviso();
+  lluviaCorazones(14);
+  toast(`¡Listo! Tu usuario es «${usuario}». Guárdalo junto con la contraseña.`, 5000);
+  void pintarMiCuenta();
+}
+
+async function cambiarMiContrasena() {
+  if (!(s instanceof SincroLinea)) return;
+  const v = (id: string) => ($(id) as HTMLInputElement | null)?.value ?? '';
+  if (v('cta-nueva').trim().length < 4) return toast('La contraseña debe tener al menos 4 caracteres.', 3200);
+  if (v('cta-nueva') !== v('cta-nueva2')) return toast('Las dos contraseñas no son iguales.', 3000);
+  try {
+    await s.cambiarContrasena(v('cta-nueva'));
+  } catch (e) {
+    return toast(e instanceof Error ? e.message : 'No se pudo cambiar la contraseña.', 4000);
+  }
+  toast('Contraseña cambiada. Es la que se escribe al entrar en un aparato nuevo (los que ya entraron siguen abiertos).', 4500);
+  void pintarMiCuenta();
+}
+
+function cerrarSesion() {
+  ventana(`<h2>¿Cerrar sesión en este aparato?</h2><p class="nota-hoja">La casa y tu progreso quedan guardados en la nube. Para volver a entrar
+      aquí: «Soy ${NOMBRE_ROL[yo]}» y tu contraseña.</p>
+    <div class="fila-botones" style="justify-content:center"><button class="boton boton-papel" data-cerrar>Cancelar</button><button class="boton boton-tomate" id="btn-si-cerrar-sesion">Cerrar sesión</button></div>`);
+  $('btn-si-cerrar-sesion').onclick = async () => {
+    if (s instanceof SincroLinea) await s.salirDelAparato().catch(() => undefined);
+    olvidarSesion();
+    try {
+      localStorage.removeItem(CLAVE_MODO);
+    } catch {
+      /* nada */
+    }
+    location.href = location.pathname;
+  };
+}
+
+/** Cada aparato que ya está en la casa le crea la cuenta a su personaje si todavía no la tiene (usuario «javier» o
+ *  «laura», contraseña de base): desde ese momento, en un aparato nuevo hay que escribir la contraseña. */
+async function asegurarCuenta() {
+  if (!(s instanceof SincroLinea)) return;
+  try {
+    const cuentas = await s.cuentas();
+    if (!cuentas) return;
+    if (cuentas[yo]) return void (miCuenta = cuentas[yo]);
+    const usuario = normalizarUsuario(NOMBRE_ROL[yo]);
+    await s.crearCuenta(usuario, CLAVE_DE_BASE);
+    miCuenta = usuario;
+  } catch {
+    /* sin internet o el usuario ya lo tomó otra casa: queda para «Mi cuenta» en Ajustes */
+  }
 }
 
 function hojaDecorar(sitio: Sitio) {
@@ -2898,9 +3086,9 @@ function controles() {
       b.onclick = () => elegirRol(r as Rol);
     }
   }
-  $('btn-local').onclick = () => rolElegido && void entrar({ modo: 'local', rol: rolElegido });
+  $('btn-local').onclick = () => rolElegido && claveBien === rolElegido && void entrar({ modo: 'local', rol: rolElegido });
   $('btn-crear').onclick = async () => {
-    if (!rolElegido) return;
+    if (!rolElegido || claveBien !== rolElegido) return;
     if (await entrar({ modo: 'linea', rol: rolElegido }, 'crear')) {
       $('codigo-texto').textContent = s!.codigo;
       mostrar('codigo');
@@ -2909,10 +3097,26 @@ function controles() {
   $('form-unirse').onsubmit = (ev) => {
     ev.preventDefault();
     const cod = ($('inp-codigo') as HTMLInputElement).value.trim().toUpperCase();
-    if (!rolElegido || cod.length < 6) return ($('bienv-aviso').textContent = 'Escribe el código de 6 letras que te mandó tu pareja.');
+    if (!rolElegido || claveBien !== rolElegido) return;
+    if (cod.length < 6) return ($('bienv-aviso').textContent = 'Escribe el código de 6 letras que te mandó tu pareja.');
     void entrar({ modo: 'linea', rol: rolElegido }, { codigo: cod });
   };
   $('btn-bienv-config').onclick = () => hojaAjustes();
+  $('form-cuenta').onsubmit = (ev) => {
+    ev.preventDefault();
+    const r = rolElegido;
+    const contrasena = ($('inp-contrasena') as HTMLInputElement).value;
+    if (!r) return;
+    if (!contrasena.trim()) return ($('cuenta-aviso').textContent = 'Escribe la contraseña.');
+    // Sin servidor solo se puede jugar en este aparato, y también con la contraseña
+    if (!configLinea()) {
+      if (!esClaveDeBase(contrasena)) return ($('cuenta-aviso').textContent = 'Contraseña equivocada.');
+      claveBien = r;
+      $('form-cuenta').hidden = true;
+      return mostrar('bienv-conexion');
+    }
+    void entrar({ modo: 'linea', rol: r }, { usuario: normalizarUsuario(NOMBRE_ROL[r]), contrasena });
+  };
   $('btn-reintentar').onclick = () => modoGuardado && void entrar(modoGuardado);
   $('btn-codigo-listo').onclick = () => mostrar('codigo', false);
   $('btn-codigo-compartir').onclick = () => compartirCodigo();
@@ -3047,12 +3251,15 @@ function controles() {
       sonido.alternar();
       hojaAjustes();
     } else if (d('[data-salir]')) salir();
+    else if (d('[data-cerrar-sesion]')) cerrarSesion();
   });
   cuerpo.addEventListener('submit', (ev) => {
     ev.preventDefault();
     const f = ev.target as HTMLFormElement;
     const val = (id: string) => ($(id) as HTMLInputElement).value;
     if (f.id === 'form-nota') void unaSolaVez(f.id, () => pegarNota(val('nota-texto')));
+    else if (f.id === 'form-crear-cuenta') void unaSolaVez(f.id, crearMiCuenta);
+    else if (f.id === 'form-cambiar-contrasena') void unaSolaVez(f.id, cambiarMiContrasena);
     else if (f.id === 'form-regalo' && regaloElegido) void unaSolaVez(f.id, () => regalar(regaloElegido!, val('regalo-mensaje')));
     else if (f.id === 'form-recuerdo') void unaSolaVez(f.id, guardarRecuerdo);
     else if (f.id === 'form-bebe') {
@@ -3224,7 +3431,9 @@ function compartirCodigo() {
 function salir() {
   ventana(`<h2>¿Salir de esta casa?</h2><p class="nota-hoja">La casa no se borra: pueden volver a entrar con el mismo código.</p>
     <div class="fila-botones" style="justify-content:center"><button class="boton boton-papel" data-cerrar>Cancelar</button><button class="boton boton-tomate" id="btn-si-salir">Salir</button></div>`);
-  $('btn-si-salir').onclick = () => {
+  $('btn-si-salir').onclick = async () => {
+    // Con cuenta, el aparato además suelta su permiso (para volver: usuario y contraseña)
+    if (s instanceof SincroLinea && miCuenta) await s.salirDelAparato().catch(() => undefined);
     s?.cerrar();
     olvidarSesion();
     try {

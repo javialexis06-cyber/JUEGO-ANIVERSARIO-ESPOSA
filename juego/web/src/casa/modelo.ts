@@ -3,6 +3,7 @@ import { normalizarProgreso, type ProgresoCocina, RECETAS, type RecetaId } from 
 import { normalizarCohete, type ProgresoCohete } from './cohete/datos';
 import { normalizarProgresoLavado, type ProgresoLavado } from './lavado/progreso';
 import { normalizarProgresoSangre, type ProgresoSangre } from '../sangre/progreso';
+import { normalizarProgresoNube, type CopiaNube } from './progreso_nube';
 export type Rol = 'el' | 'ella';
 export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto' | 'juegos' | 'trofeos' | 'cuna' | 'cuarto_el' | 'cuarto_ella' | 'patio';
 export type Necesidad = 'hambre' | 'energia' | 'higiene' | 'carino';
@@ -225,6 +226,9 @@ export interface Casa {
   cocina?: Partial<Record<Rol, Partial<Record<RecetaId, ProgresoCocina>>>>;
   /** Sangre y Ceniza: el progreso permanente de cada uno (ceniza, Pozo de las Almas, maestrías, logros). */
   sangre?: Partial<Record<Rol, ProgresoSangre>>;
+  /** El progreso de los minijuegos que guardan en el aparato (súper, Cien Puertas, mesa, escenas), para tenerlo en
+   *  cualquier aparato donde se entre con la cuenta (progreso_nube.ts). */
+  progreso?: Partial<Record<Rol, Record<string, CopiaNube>>>;
 }
 
 // ---------------------------------------------------------------------------
@@ -334,6 +338,7 @@ export function casaNueva(): Casa {
 const CAMPOS_CASA = {
   monedas: 1, inventario: 1, deco: 1, notas: 1, fechas: 1, regalos: 1, voces: 1, aniversario: 1, diario: 1, retrete: 1, lavado: 1,
   ampliaciones: 1, bebe: 1, logros: 1, pintura: 1, perro: 1, cocina: 1, lavadoProgreso: 1, cohete: 1, coheteVisto: 1, sangre: 1,
+  progreso: 1,
 } satisfies Record<keyof Casa, 1>;
 
 /** La casa compartida siempre con la forma esperada (y sin valores imposibles como monedas negativas). */
@@ -400,6 +405,9 @@ export function normalizarCasa(c: unknown): Casa {
       : {}),
     ...(esObjeto(c.sangre)
       ? { sangre: Object.fromEntries((['el', 'ella'] as Rol[]).filter((r) => esObjeto(c.sangre[r])).map((r) => [r, normalizarProgresoSangre(c.sangre[r])])) }
+      : {}),
+    ...(esObjeto(c.progreso)
+      ? { progreso: Object.fromEntries((['el', 'ella'] as Rol[]).filter((r) => esObjeto(c.progreso[r])).map((r) => [r, normalizarProgresoNube(c.progreso[r])])) }
       : {}),
     ...(esObjeto(c.lavadoProgreso)
       ? {

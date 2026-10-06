@@ -1,26 +1,34 @@
-// Prueba del modo en línea con dos «celulares» (dos navegadores separados) y un Supabase de mentiras que corre aquí,
-// con las mismas reglas que supabase/esquema.sql: membresía, versión de la casa, eventos, tiempo real y presencia.
-// Simula demoras de red al azar y cortes de internet para buscar choques y pérdidas.
-// Uso: node scripts/probar-linea.mjs [url] [carpeta]
+// Prueba de las cuentas con contraseña: la primera vez «Soy Javier» + la contraseña de base (TEAMO) deja crear la casa
+// y la cuenta se crea sola; Laura igual con el código; un amigo sin la contraseña no entra como ellos; el «computador»
+// de Javier entra con la contraseña y le llega su progreso; el celular sigue abierto sin pedir nada; dos aparatos que
+// avanzaron por separado juntan su progreso; cambiar la contraseña y cerrar sesión.
+// Usa el mismo Supabase de mentiras de probar-linea.mjs, con las reglas de supabase/cambios-pendientes.sql (sección 9).
+// Uso: node scripts/probar-cuentas.mjs [url] [carpeta]
 import { chromium } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync } from 'node:fs';
 
 const url = process.argv[2] ?? 'http://localhost:5173/index.html';
-const carpeta = process.argv[3] ?? 'test-results/linea';
+const carpeta = process.argv[3] ?? 'test-results/cuentas';
 mkdirSync(carpeta, { recursive: true });
 const RAPIDO = process.env.RAPIDO ?? 3;
 
 // ---------------------------------------------------------------------------
 // Servidor de mentiras
 // ---------------------------------------------------------------------------
-const db = { parejas: [], miembros: [], personajes: [], eventos: [], recuerdos: [], fotos: new Set() };
+const db = { parejas: [], miembros: [], personajes: [], eventos: [], recuerdos: [], fotos: new Set(), cuentas: [], aparatos: [] };
 let idEvento = 0, idRecuerdo = 0;
 const canales = new Map(); // id → { pagina, uid, nombre, subs }
 const presencia = new Map(); // nombre → Map(canalId → { clave, datos })
 const sinRed = new Set(); // páginas sin internet
 const errores = [];
-const esMiembro = (uid, p) => db.miembros.some((m) => m.pareja_id === p && m.usuario === uid);
+const esMiembro = (uid, p) => db.miembros.some((m) => m.pareja_id === p && m.usuario === uid) || db.aparatos.some((m) => m.pareja_id === p && m.usuario === uid);
+const esRol = (uid, p, r) => db.miembros.some((m) => m.pareja_id === p && m.rol === r && m.usuario === uid) || db.aparatos.some((m) => m.pareja_id === p && m.rol === r && m.usuario === uid);
+const cuentaDe = (p, r) => db.cuentas.find((c) => c.pareja_id === p && c.rol === r);
+const ponerAparato = (p, r, uid) => {
+  db.aparatos = db.aparatos.filter((a) => !(a.pareja_id === p && a.usuario === uid));
+  db.aparatos.push({ pareja_id: p, rol: r, usuario: uid });
+};
 const LETRAS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const demora = () => new Promise((ok) => setTimeout(ok, 20 + Math.random() * 180));
 
@@ -78,15 +86,52 @@ async function atender(pagina, uid, a) {
       db.miembros.push({ pareja_id: p.id, rol: x.mi_rol, usuario: uid });
       return { data: [{ pareja: p.id, codigo: c }], error: null };
     }
-    if (a.fn === 'unirse_pareja') {
+    if (a.fn === 'unirse_pareja' || a.fn === 'volver_a_casa') {
       if (!['el', 'ella'].includes(x.mi_rol)) throw new Error('Rol inválido');
       const p = db.parejas.find((q) => q.codigo === String(x.cod).trim().toUpperCase());
-      if (!p) throw new Error('Código no encontrado');
+      if (!p) return { data: null, error: null };
+      if (esRol(uid, p.id, x.mi_rol)) return { data: p.id, error: null };
+      if (cuentaDe(p.id, x.mi_rol)) throw new Error('Cuenta requerida: este personaje tiene usuario y contraseña');
+      if (a.fn === 'volver_a_casa') x.reemplazar = true;
       const m = db.miembros.find((q) => q.pareja_id === p.id && q.rol === x.mi_rol);
       if (m && m.usuario !== uid && !x.reemplazar) throw new Error('Personaje ocupado');
       if (m) m.usuario = uid;
       else db.miembros.push({ pareja_id: p.id, rol: x.mi_rol, usuario: uid });
       return { data: p.id, error: null };
+    }
+    if (a.fn === 'crear_cuenta') {
+      const u = String(x.nombre).trim().toLowerCase();
+      if (!esRol(uid, x.p, x.mi_rol)) throw new Error('No autorizado');
+      if (!/^[a-z0-9_.-]{3,24}$/.test(u)) throw new Error('El usuario debe tener de 3 a 24 letras o números, sin espacios ni tildes');
+      if (String(x.contrasena ?? '').trim().length < 4) throw new Error('La contraseña debe tener al menos 4 caracteres');
+      if (cuentaDe(x.p, x.mi_rol)) throw new Error('Este personaje ya tiene cuenta');
+      if (db.cuentas.some((c) => c.usuario === u)) throw new Error('Ese usuario ya existe: escoge otro');
+      db.cuentas.push({ pareja_id: x.p, rol: x.mi_rol, usuario: u, clave: String(x.contrasena).trim().toLowerCase() });
+      ponerAparato(x.p, x.mi_rol, uid);
+      return { data: null, error: null };
+    }
+    if (a.fn === 'entrar_cuenta') {
+      const c = db.cuentas.find((q) => q.usuario === String(x.nombre).trim().toLowerCase());
+      if (!c) throw new Error('Cuenta no existe');
+      if (c.clave !== String(x.contrasena ?? '').trim().toLowerCase()) return { data: [], error: null };
+      ponerAparato(c.pareja_id, c.rol, uid);
+      return { data: [{ pareja: c.pareja_id, papel: c.rol, codigo_casa: db.parejas.find((p) => p.id === c.pareja_id).codigo }], error: null };
+    }
+    if (a.fn === 'cuentas_de') {
+      if (!esMiembro(uid, x.p)) throw new Error('No autorizado');
+      return { data: db.cuentas.filter((c) => c.pareja_id === x.p).map((c) => ({ papel: c.rol, usuario: c.usuario })), error: null };
+    }
+    if (a.fn === 'cambiar_contrasena') {
+      if (!esRol(uid, x.p, x.mi_rol)) throw new Error('No autorizado');
+      const c = cuentaDe(x.p, x.mi_rol);
+      if (!c) throw new Error('Este personaje todavía no tiene cuenta');
+      c.clave = String(x.nueva).trim().toLowerCase();
+      return { data: null, error: null };
+    }
+    if (a.fn === 'salir_de_casa') {
+      db.aparatos = db.aparatos.filter((q) => !(q.pareja_id === x.p && q.usuario === uid));
+      db.miembros = db.miembros.filter((q) => !(q.pareja_id === x.p && q.usuario === uid && cuentaDe(x.p, q.rol)));
+      return { data: null, error: null };
     }
     if (a.fn === 'guardar_casa') {
       if (!esMiembro(uid, x.p)) throw new Error('No autorizado');
@@ -265,6 +310,11 @@ const CLIENTE = () => {
           localStorage.setItem('uid-de-mentiras', cliente.uid);
           return { error: null };
         },
+        async signOut() {
+          cliente.uid = null;
+          localStorage.removeItem('uid-de-mentiras');
+          return { error: null };
+        },
       },
       rpc: (fn, args) => srv('rpc', { fn, args }),
       from: (tabla) => new Consulta(tabla),
@@ -285,16 +335,21 @@ const navegador = await chromium.launch({
   executablePath: existsSync(PRE) ? PRE : undefined,
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 });
-async function celular(nombre) {
-  const ctx = await navegador.newContext({ viewport: { width: 960, height: 540 }, deviceScaleFactor: 1 });
+async function celular(nombre, guardado = {}) {
+  const ctx = await navegador.newContext({ viewport: { width: 844, height: 390 }, deviceScaleFactor: 1 });
   const p = await ctx.newPage();
+  await p.addInitScript((g) => {
+    if (sessionStorage.getItem('sembrado')) return;
+    sessionStorage.setItem('sembrado', '1');
+    for (const [k, v] of Object.entries(g)) localStorage.setItem(k, v);
+  }, guardado);
   p.nombre = nombre;
   p.on('pageerror', (e) => errores.push(`${nombre}: ${e}`));
   p.on('console', (m) => m.type() === 'error' && !/Failed to load resource|No se pudo guardar|Failed to fetch/.test(m.text()) && errores.push(`${nombre}: ${m.text()}`));
   await p.exposeFunction('__srv', (a) => servidor(p, a));
   await p.addInitScript(CLIENTE);
   await p.goto(`${url}?rapido=${RAPIDO}`, { waitUntil: 'domcontentloaded', timeout: 180000 });
-  await p.waitForSelector('#bienvenida:not([hidden])', { timeout: 180000 });
+  await p.waitForSelector('#bienvenida:not([hidden])', { timeout: 300000 });
   return p;
 }
 const estado = (p) => p.evaluate(() => window.__casa());
@@ -313,170 +368,127 @@ const revisar = (ok, texto) => {
   if (!ok) errores.push(texto);
 };
 
-const el = await celular('Él');
-const ella = await celular('Ella');
-/** Tocar el personaje y escribir la contraseña de base (este servidor de mentiras no tiene cuentas: es la primera vez). */
-const conClave = async (p, rol) => {
-  await p.click(`.rol-carta[data-rol="${rol}"]`);
-  await p.fill('#inp-contrasena', 'TEAMO');
-  await p.click('#form-cuenta button[type="submit"]');
-  await p.waitForSelector('#bienv-conexion:not([hidden])', { timeout: 30000 });
-};
 
-// Él crea la casa
-await conClave(el, 'el');
+const SUPER_CEL = JSON.stringify({ dinero: 40, sitios: {}, estrellas: { 1: [true, true, true], 2: [true, false, false] }, mejoras: { carrito: 2 }, ayudas: {}, corazones: {}, lunas: {}, gastadas: 1 });
+const el = await celular('Él', { 'supermania-jugable1': SUPER_CEL, 'cien-puertas': JSON.stringify({ hasta: 12, estrellas: { 3: 2 }, vioInicio: true }), 'nuestro-hogar-victorias': '4' });
+const ella = await celular('Ella');
+const deAqui = (p) => p.evaluate(() => ({ super: localStorage.getItem('supermania-jugable1'), puertas: localStorage.getItem('cien-puertas'), victorias: localStorage.getItem('nuestro-hogar-victorias') }));
+const conClave = async (p, rol, clave) => {
+  await p.click(`.rol-carta[data-rol="${rol}"]`);
+  await p.waitForSelector('#form-cuenta:not([hidden])', { timeout: 20000 });
+  await p.fill('#inp-contrasena', clave);
+  await p.click('#form-cuenta button[type="submit"]');
+};
+const avisoClave = (p) => p.evaluate(() => document.querySelector('#cuenta-aviso')?.textContent ?? '');
+
+// Él, la primera vez: sin la contraseña no aparece «Crear nuestra casa»
+await el.click('.rol-carta[data-rol="el"]');
+revisar(await el.evaluate(() => document.querySelector('#bienv-conexion').hidden && !document.querySelector('#form-cuenta').hidden), 'al tocar «Soy Javier» pide la contraseña (sin ella no hay crear ni unirse)');
+await foto(el, '00-pide-contrasena');
+await conClave(el, 'el', 'hola');
+await esperar(el, () => /equivocada/i.test(document.querySelector('#cuenta-aviso')?.textContent ?? ''), null, 30000, 'contraseña equivocada la primera vez');
+revisar(await el.evaluate(() => document.querySelector('#bienv-conexion').hidden), 'con otra contraseña tampoco');
+await conClave(el, 'el', 'TEAMO');
+await el.waitForSelector('#bienv-conexion:not([hidden])', { timeout: 30000 });
+revisar(true, 'con TEAMO (la primera vez) deja crear la casa o unirse');
 await el.click('#btn-crear');
 await el.waitForSelector('#codigo:not([hidden])', { timeout: 60000 });
 const codigo = (await el.textContent('#codigo-texto')).trim();
-revisar(/^[A-Z0-9]{6}$/.test(codigo), `Él crea la casa y recibe el código ${codigo}`);
 await el.click('#btn-codigo-listo');
-await esperar(el, () => window.__listo === true, null, 60000, 'casa lista');
+await esperar(el, () => window.__listo === true, null, 60000, 'casa de Él lista');
+await el.waitForTimeout(3000);
+revisar(db.cuentas.some((c) => c.usuario === 'javier' && c.rol === 'el' && c.clave === 'teamo'), 'la cuenta de Javier se crea sola con la contraseña de base');
 
-// Ella se equivoca: toca «Soy Él» con el código → debe preguntar
-await conClave(ella, 'el');
-await ella.fill('#inp-codigo', codigo.toLowerCase());
-await ella.click('#form-unirse button');
-const pregunto = await esperar(ella, () => !document.getElementById('ventana').hidden, null, 30000, 'aviso de personaje ocupado');
-revisar(pregunto, 'Si Ella toca «Soy Él» por error, la app pregunta en vez de sacar a Él');
-await foto(ella, '01-personaje-ocupado');
-await ella.click('#ventana [data-cerrar]');
-revisar(db.miembros.find((m) => m.rol === 'el').usuario === (await el.evaluate(() => localStorage.getItem('uid-de-mentiras'))), 'Él sigue en su personaje');
-
-// Ahora sí como Ella
-await conClave(ella, 'ella');
+// Ella entra con el código (también con la contraseña)
+await conClave(ella, 'ella', 'teamo');
+await ella.waitForSelector('#bienv-conexion:not([hidden])', { timeout: 30000 });
 await ella.fill('#inp-codigo', codigo);
 await ella.click('#form-unirse button');
-await esperar(ella, () => window.__listo === true, null, 60000, 'Ella entra');
-await esperar(el, () => document.getElementById('pareja-linea').classList.contains('si'), null, 30000, 'Él ve a Ella en línea');
-revisar(await el.evaluate(() => document.getElementById('pareja-linea').classList.contains('si')), 'Él ve a Ella en línea');
-await foto(ella, '02-ella-entra');
+await esperar(ella, () => window.__listo === true, null, 60000, 'casa de Ella lista');
+await ella.waitForTimeout(3000);
+revisar(db.cuentas.some((c) => c.usuario === 'laura' && c.rol === 'ella'), 'la cuenta de Laura también se crea sola');
+const nube = () => db.parejas[0].casa.progreso ?? {};
+revisar(nube().el?.['supermania-jugable1']?.v === SUPER_CEL, 'el progreso del súper del celular de Javier sube a la nube');
+revisar(nube().el?.['cien-puertas'] && nube().el?.['nuestro-hogar-victorias']?.v === '4', 'y también Cien Puertas y las victorias de la mesa');
 
-// Monedas: cada uno recibió su bono
-let e1 = await estado(el);
-revisar(e1.monedas === 50, `Bonos de los dos: 40 + 5 + 5 = ${e1.monedas}`);
+// Un amigo con la app no puede entrar como Laura
+const amigo = await celular('Amigo');
+await conClave(amigo, 'ella', 'laura123');
+await esperar(amigo, () => /equivocada/i.test(document.querySelector('#cuenta-aviso')?.textContent ?? ''), null, 30000, 'el amigo ve contraseña equivocada');
+revisar(await amigo.evaluate(() => document.querySelector('#bienv-conexion').hidden && !window.__listo), 'un amigo sin la contraseña no entra como Laura (ni puede crear casa)');
+await foto(amigo, '01-amigo-sin-clave');
+// (sin tarjeta gráfica, cuatro casas en 3D a la vez ahogan la máquina de pruebas: lo que ya no se usa se cierra)
+await amigo.context().close();
+await ella.context().close();
 
-// Compras a la vez desde los dos celulares (choques de versión)
-const precio = { manzana: 1, pan: 2, galletas: 2 };
-const antes = (await estado(el)).monedas;
-const inv0 = { ...(await estado(el)).inventario };
-const compras = [];
-for (let i = 0; i < 6; i++) {
-  compras.push(el.evaluate(() => document.querySelector('[data-accion="tienda"]')?.click()));
-  compras.push(ella.evaluate(() => document.querySelector('[data-accion="tienda"]')?.click()));
-}
-await Promise.all(compras);
-await el.waitForSelector('[data-comprar="manzana"]');
-await ella.waitForSelector('[data-comprar="pan"]');
-const clics = [];
-for (let i = 0; i < 5; i++) {
-  clics.push(el.click('[data-comprar="manzana"]').catch(() => {}));
-  clics.push(ella.click('[data-comprar="pan"]').catch(() => {}));
-}
-await Promise.all(clics);
-await el.waitForTimeout(6000);
-const d = db.parejas[0].casa;
-const gastado = antes - d.monedas;
-const manzanas = (d.inventario.manzana ?? 0) - (inv0.manzana ?? 0);
-const panes = (d.inventario.pan ?? 0) - (inv0.pan ?? 0);
-revisar(gastado === manzanas * precio.manzana + panes * precio.pan && manzanas > 0 && panes > 0,
-  `Compras a la vez: ${manzanas} manzanas y ${panes} panes, gastaron ${gastado} (cuadra con los precios)`);
-const e2 = await estado(el), e3 = await estado(ella);
-revisar(e2.monedas === d.monedas && e3.monedas === d.monedas, `Los dos celulares ven las mismas monedas (${e2.monedas} / ${e3.monedas} / servidor ${d.monedas})`);
-await el.click('#hoja-cerrar');
-await ella.click('#hoja-cerrar');
+// El computador de Javier: «Soy Javier» y la contraseña → su casa y su progreso
+const pc = await celular('Computador');
+await conClave(pc, 'el', 'TeAmO');
+await esperar(pc, () => window.__listo === true, null, 90000, 'el computador entra a la casa');
+revisar((await pc.evaluate(() => window.__casa().yo)) === 'el', 'el computador entra como Javier a la misma casa (sin código)');
+await pc.waitForTimeout(2500);
+const enPc = await deAqui(pc);
+revisar(enPc.super === SUPER_CEL && JSON.parse(enPc.puertas ?? '{}').hasta === 12 && enPc.victorias === '4', 'y le llega el progreso del súper, Cien Puertas y la mesa');
+await foto(pc, '02-pc-en-la-casa');
 
-// Beso en vivo: el cariño de Ella lo sube su celular
-const carinoAntes = (await estado(ella)).personajes.ella.carino;
-await el.evaluate(() => document.getElementById('chip-pareja').click());
-await el.click('[data-mimo="beso"]');
-await esperar(ella, (c) => window.__casa().personajes.ella.carino > c + 10, carinoAntes, 30000, 'cariño de Ella sube con el beso');
-const carinoDespues = (await estado(ella)).personajes.ella.carino;
-revisar(carinoDespues > carinoAntes + 10, `Beso en vivo: cariño de Ella ${carinoAntes.toFixed(1)} → ${carinoDespues.toFixed(1)}`);
-await el.waitForTimeout(1500);
-revisar(db.eventos.filter((e) => e.tipo === 'beso').every((e) => e.visto), 'El beso quedó marcado como visto');
-await foto(ella, '03-beso-visto-por-ella');
+// Queda abierto para siempre: al volver a abrir no pide nada
+await pc.reload({ waitUntil: 'domcontentloaded', timeout: 240000 });
+await esperar(pc, () => window.__listo === true, null, 90000, 'el computador vuelve a abrir solo');
+revisar(await pc.evaluate(() => document.querySelector('#bienvenida').hidden), 'al volver a abrir el computador entra solo (no pide contraseña)');
+await el.reload({ waitUntil: 'domcontentloaded', timeout: 240000 });
+await esperar(el, () => window.__listo === true, null, 90000, 'el celular vuelve a entrar');
+revisar(true, 'el celular de Javier sigue abierto a la vez (varios aparatos por persona)');
 
-// Ella sin internet: Él le manda besos y un regalo; al volver le llega todo una sola vez
-await esperar(el, () => !window.__casa || !document.querySelector('.accion') || true, null, 1000);
-await el.waitForFunction(() => !window.__fase('el') && !window.__fase('ella'), null, { timeout: 90000 }).catch(() => {}); // termina el beso
-sinRed.add(ella);
-const cOff = (await estado(ella)).personajes.ella.carino;
-for (let i = 0; i < 3; i++) {
-  await el.waitForFunction(() => !window.__fase('el') && !window.__fase('ella'), null, { timeout: 90000 }).catch(() => {});
-  await el.evaluate(() => document.getElementById('chip-pareja').click());
-  await el.click('[data-mimo="abrazo"]');
-  await el.waitForFunction(() => !window.__fase('el') && !window.__fase('ella'), null, { timeout: 60000 }).catch(() => {});
-  await el.waitForTimeout(400);
-}
-const abrazos = db.eventos.filter((e) => e.tipo === 'abrazo');
-console.log('   abrazos en el servidor:', JSON.stringify(abrazos.map((e) => ({ de: e.de, visto: e.visto }))));
-revisar(abrazos.length === 3 && abrazos.every((e) => !e.visto), 'Con Ella sin internet, los 3 abrazos esperan en el servidor');
-// Ella bloqueó el celular mientras tanto: se va a segundo plano…
-await ella.evaluate(() => {
-  Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
-  document.dispatchEvent(new Event('visibilitychange'));
+// Los dos aparatos avanzan por separado y se juntan sin perder nada
+await pc.evaluate(() => {
+  const p = JSON.parse(localStorage.getItem('supermania-jugable1'));
+  p.estrellas[5] = [true, true, false];
+  p.lunas = { 1: true };
+  localStorage.setItem('supermania-jugable1', JSON.stringify(p));
+  localStorage.setItem('cien-puertas', JSON.stringify({ ...JSON.parse(localStorage.getItem('cien-puertas')), hasta: 20 }));
 });
-sinRed.delete(ella);
-// …y vuelve a la app (como al desbloquear el celular)
-await ella.evaluate(() => {
-  Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
-  document.dispatchEvent(new Event('visibilitychange'));
+await el.evaluate(() => {
+  const p = JSON.parse(localStorage.getItem('supermania-jugable1'));
+  p.estrellas[2] = [true, true, true];
+  p.mejoras.zapatos = 1;
+  localStorage.setItem('supermania-jugable1', JSON.stringify(p));
+  localStorage.setItem('nuestro-hogar-victorias', '6');
 });
-await esperar(ella, (c) => window.__casa().personajes.ella.carino >= Math.min(99, c + 44), cOff, 30000, 'abrazos pendientes aplicados');
-const cOn = (await estado(ella)).personajes.ella.carino;
-revisar(cOn >= Math.min(99, cOff + 44), `Al volver, los 3 abrazos suben el cariño una vez: ${cOff.toFixed(1)} → ${cOn.toFixed(1)}`);
-await ella.waitForTimeout(1500);
-revisar(db.eventos.filter((e) => e.tipo === 'abrazo').every((e) => e.visto), 'Los abrazos quedaron vistos');
-await foto(ella, '04-ella-vuelve');
-
-// Recargar la app de Ella no repite nada
-registrar = true;
-const registro = [];
-ella.on('console', (m) => registro.push(`${m.type()}: ${m.text().slice(0, 300)}`));
-await ella.reload({ waitUntil: 'domcontentloaded', timeout: 180000 });
-if (!(await esperar(ella, () => window.__listo === true, null, 240000, 'Ella recarga'))) {
-  console.log('   consola de Ella al recargar:\n   ' + registro.slice(-15).join('\n   '));
-  console.log('   aviso:', await ella.textContent('#bienv-aviso'), '| bienvenida visible:', await ella.isVisible('#bienvenida'));
-  await foto(ella, '99-recarga');
-}
-await ella.waitForTimeout(2000);
-const cRe = (await estado(ella)).personajes.ella.carino;
-revisar(Math.abs(cRe - cOn) < 1, `Recargar no repite los abrazos (${cOn.toFixed(1)} → ${cRe.toFixed(1)})`);
-
-// Notas: las dos a la vez
-await Promise.all([
-  (async () => {
-    await el.click('[data-cuarto="cocina"]');
-    await el.click('[data-accion="notas"]');
-    await el.fill('#nota-texto', 'Nota de Él');
-    await el.click('#form-nota button[type="submit"]');
-  })(),
-  (async () => {
-    await ella.click('[data-cuarto="cocina"]');
-    await ella.click('[data-accion="notas"]');
-    await ella.fill('#nota-texto', '<img src=x onerror=alert(1)> Nota de Ella');
-    await ella.click('#form-nota button[type="submit"]');
-  })(),
-]);
-await el.waitForTimeout(4000);
-revisar(db.parejas[0].casa.notas.length === 2, `Dos notas al mismo tiempo: quedan las dos (${db.parejas[0].casa.notas.length})`);
-const inyectado = await el.evaluate(() => !!document.querySelector('.nota-adhesiva img'));
-revisar(!inyectado, 'Un texto con HTML en una nota se muestra como texto (no se ejecuta)');
-await foto(el, '05-notas');
-await el.click('#hoja-cerrar');
-await ella.click('#hoja-cerrar');
-
-// Foto en el álbum (en línea)
-await ella.click('#btn-menu');
-await ella.click('[data-hoja="album"]');
-await ella.setInputFiles('#rec-foto', { name: 'foto.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64') });
-await ella.fill('#rec-titulo', 'Nuestra primera cita');
-await ella.click('#form-recuerdo button[type="submit"]');
-for (let i = 0; i < 30 && !db.recuerdos.length; i++) await ella.waitForTimeout(1000);
-const avisoFoto = await ella.textContent('#rec-aviso').catch(() => '(sin hoja)');
-revisar(db.recuerdos.length === 1 && db.fotos.size === 1, `Ella sube una foto y queda en el álbum de los dos (aviso: «${(avisoFoto ?? '').trim()}»)`);
+await pc.reload({ waitUntil: 'domcontentloaded', timeout: 240000 });
+await esperar(pc, () => window.__listo === true, null, 90000, 'el computador abre otra vez');
+await pc.waitForTimeout(2000);
+await el.reload({ waitUntil: 'domcontentloaded', timeout: 240000 });
+await esperar(el, () => window.__listo === true, null, 90000, 'el celular abre otra vez');
 await el.waitForTimeout(2000);
-revisar((await estado(el)) && (await el.evaluate(() => window.__casa())) !== null, 'Él recibe el recuerdo');
+const juntado = JSON.parse((await deAqui(el)).super);
+revisar(
+  juntado.estrellas[5]?.[1] === true && juntado.estrellas[2]?.[2] === true && juntado.lunas[1] === true && juntado.mejoras.zapatos === 1,
+  'lo que avanzó cada aparato se junta: las estrellas del computador y las del celular',
+);
+revisar(JSON.parse((await deAqui(el)).puertas).hasta === 20 && (await deAqui(el)).victorias === '6', 'la puerta más lejana y las victorias también');
+revisar(!nube().ella?.['supermania-jugable1'], 'el progreso de Laura va aparte');
+
+// Mi cuenta: cambiar la contraseña desde el computador
+await pc.click('#btn-menu');
+await pc.click('[data-hoja="ajustes"]');
+await esperar(pc, () => !!document.querySelector('#form-cambiar-contrasena'), null, 20000, 'sección Mi cuenta');
+await foto(pc, '03-mi-cuenta');
+await pc.fill('#cta-nueva', 'Girasol');
+await pc.fill('#cta-nueva2', 'Girasol');
+await pc.click('#form-cambiar-contrasena button[type="submit"]');
+for (let i = 0; i < 20 && db.cuentas.find((c) => c.usuario === 'javier').clave !== 'girasol'; i++) await pc.waitForTimeout(500);
+revisar(db.cuentas.find((c) => c.usuario === 'javier').clave === 'girasol', 'Javier cambia su contraseña en Ajustes');
+
+// Cerrar sesión en el computador: ya no entra con la vieja, sí con la nueva
+await pc.click('[data-cerrar-sesion]');
+await pc.click('#btn-si-cerrar-sesion');
+await pc.waitForSelector('#bienvenida:not([hidden])', { timeout: 240000 });
+revisar(db.aparatos.filter((a) => a.rol === 'el').length === 1, 'al cerrar sesión el computador suelta su permiso');
+await conClave(pc, 'el', 'teamo');
+await esperar(pc, () => /equivocada/i.test(document.querySelector('#cuenta-aviso')?.textContent ?? ''), null, 30000, 'la contraseña vieja ya no sirve');
+await conClave(pc, 'el', 'girasol');
+await esperar(pc, () => window.__listo === true, null, 90000, 'entra con la nueva');
+revisar(true, 'con la contraseña nueva vuelve a entrar');
 
 console.log(errores.length ? `\nERRORES:\n${errores.join('\n')}` : '\nsin errores');
 await navegador.close();
