@@ -355,7 +355,7 @@ function abrirTarjeta(n: number) {
 const jugadoresDelModo = () => (modo === 'solo' ? 1 : 2);
 
 /** Con amigos los textos dicen «en equipo» (no «en pareja»). */
-const textoNeutro = (t: string) => (esNeutro() ? t.replace(/en pareja/gi, 'en equipo') : t);
+const textoNeutro = (t: string) => (esNeutro() ? t.replace(/en pareja/gi, 'en equipo') : t).replace(/^1 combos/, '1 combo');
 
 /**
  * Copia del nivel con las reglas del modo legendario y, con más de uno, con los clientes y las metas de todos
@@ -681,6 +681,8 @@ function conectarBotones() {
       $('codigo-error').textContent = 'El código tiene 5 letras y números.';
       return;
     }
+    // (sin esto el teclado se queda escribiendo en la cajita y WASD no mueve al muñeco en el computador)
+    $<HTMLInputElement>('codigo-input').blur();
     pedirCodigoListo?.(c);
   });
   $<HTMLInputElement>('codigo-input').addEventListener('input', () => {
@@ -1667,7 +1669,9 @@ function escogerDiaSala(s: Sala, raiz: HTMLElement) {
 /** Piloto automático para pruebas (?bot): juega como alguien atento (con toques). Atrapa, cobra cuando hay fila,
  *  llena varias vitrinas por viaje y limpia cuando le queda tiempo. En pareja, Él cuida la caja y Ella repone. */
 function piloto(j: Juego) {
-  j.jugadores.forEach((jug, i) => pilotoDe(j, jug, !j.pareja || i === 0));
+  // (las pruebas de la sala pueden dejarle los demás a su joystick: `__soloAnfitrion`)
+  const solo = !!(window as { __soloAnfitrion?: boolean }).__soloAnfitrion;
+  j.jugadores.forEach((jug, i) => (!solo || i === 0) && pilotoDe(j, jug, !j.pareja || i === 0));
 }
 
 function pilotoDe(j: Juego, jug: Jugador, cuidaCaja: boolean) {

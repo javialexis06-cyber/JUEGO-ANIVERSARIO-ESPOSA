@@ -109,7 +109,7 @@ export class UI {
     const herr = $('herramientas');
     herr.innerHTML = '';
     herr.classList.toggle('pareja', j.pareja && !j.enSala);
-    herr.classList.toggle('sala', j.enSala);
+    herr.classList.toggle('en-sala', j.enSala);
     this.clavesHerr = j.jugadores.map(() => '');
     let derecha = 0;
     for (const p of j.jugadores) {

@@ -1039,7 +1039,8 @@ button:focus-visible {
   .tiquete-estrellas { grid-area: estrellas; }
   .tiquete-lineas { grid-area: lineas; border-top: 0; padding-top: 0; }
   .tiquete-total { grid-area: total; }
-  .tiquete-pasa { grid-area: pasa; margin: 6px 0; font-size: 13px; }
+  .tiquete-notas { grid-area: pasa; margin: 6px 0; }
+  .tiquete-notas .tiquete-pasa { margin: 0 0 3px; font-size: 13px; }
   .tiquete-botones { grid-area: botones; }
   .lista-mercado { padding-block: 16px 12px; }
   .lista-mercado h3 { margin-top: 8px; }
@@ -1589,8 +1590,8 @@ button:focus-visible {
 .numero-tarea.tarea-ella.actual { background: #e8577a; color: #fff; }
 
 /* En una sala (de 2 a 4: Javier, Laura y amigos): cada uno con el color de su puesto */
-.herramientas.sala .herr-nombre { background: var(--c, #3f8fd6); text-shadow: 0 1px 1px rgba(61, 43, 39, 0.35); }
-.herramientas.sala .herr-otro {
+.herramientas.en-sala .herr-nombre { background: var(--c, #3f8fd6); text-shadow: 0 1px 1px rgba(61, 43, 39, 0.35); }
+.herramientas.en-sala .herr-otro {
   left: auto;
   right: calc(env(safe-area-inset-right, 0px) + 10px);
   top: calc(env(safe-area-inset-top, 0px) + 54px + var(--fila, 0) * 34px);
@@ -1600,8 +1601,8 @@ button:focus-visible {
   scale: 0.82;
   box-shadow: 0 3px 0 rgba(61, 43, 39, 0.2), inset 0 0 0 2px var(--c, transparent);
 }
-.herramientas.sala .herr-otro .medidor { width: 22px; }
-.herramientas.sala .herr-mia { box-shadow: 0 3px 0 rgba(61, 43, 39, 0.2), inset 0 0 0 2px var(--c, transparent); }
+.herramientas.en-sala .herr-otro .medidor { width: 22px; }
+.herramientas.en-sala .herr-mia { box-shadow: 0 3px 0 rgba(61, 43, 39, 0.2), inset 0 0 0 2px var(--c, transparent); }
 .nombre-jugador.con-color { background: var(--c); text-shadow: 0 1px 1px rgba(61, 43, 39, 0.4); }
 .numero-tarea[style*='--c'] { border-color: var(--c); color: var(--cacao); }
 .numero-tarea[style*='--c'].actual { background: var(--c); color: #fff; }
