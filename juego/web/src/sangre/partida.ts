@@ -88,7 +88,7 @@ export class Partida {
     this.sim = sim;
     const bioma = BIOMAS[this.o.cfg.bioma];
     const precarga = [...new Set([...bioma.enemigos.map((e) => e.id), 'altar', bioma.jefe, ...(bioma.jefe === 'conde' ? ['conde_alas'] : [])])];
-    await this.o.escena.prepararEtapa(sim.mapa, bioma, this.o.perfiles.map((p, i) => ({ i, cuerpo: p.cuerpo, clase: p.clase, piel: p.piel, pelo: p.pelo })), precarga);
+    await this.o.escena.prepararEtapa(sim.mapa, bioma, this.o.perfiles.map((p, i) => ({ i, cuerpo: p.cuerpo, clase: p.clase, piel: p.piel, pelo: p.pelo, detalles: p.detalles })), precarga);
     const v = Object.create(sim) as EstadoVista;
     (v as { suc: Sucesos }).suc = this.acum;
     this.vista = v;

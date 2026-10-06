@@ -316,7 +316,7 @@ function colgar(o: THREE.Object3D, ancla: Ancla, punto: THREE.Vector3, tam: numb
 }
 
 /** Cuelga los aretes y el collar del muñeco; devuelve cómo quitarlos. */
-export function ponerJoyas(p: Personaje, j: Joyas): { quitar(): void } {
+export function ponerJoyas(p: Personaje, j: Joyas): { quitar(): void; objetos: THREE.Object3D[] } {
   const puestos: THREE.Object3D[] = [];
   const mats: THREE.Material[] = [];
   if (j.aretes && ARETES[j.aretes.tipo]) {
@@ -347,6 +347,7 @@ export function ponerJoyas(p: Personaje, j: Joyas): { quitar(): void } {
     }
   }
   return {
+    objetos: puestos,
     quitar() {
       for (const o of puestos) {
         o.removeFromParent();

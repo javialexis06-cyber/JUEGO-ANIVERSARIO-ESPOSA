@@ -53,6 +53,8 @@ export interface OpcionesLavado {
   pareja: null | { modo: 'local' | 'linea'; invitar: (codigo: string) => Promise<void> };
   /** Llegó por una invitación: el código de la sala de quien invitó. */
   unirse?: string;
+  /** Abrir de una la sala con amigos («Crear sala» de la sala de juegos de amigos). */
+  crear?: boolean;
   /** Juega un amigo (sin casa, en modo neutro): su nombre y cómo se ve. */
   amigo?: { nombre: string; aspecto: AspectoJugador };
   /** El botón de salir del menú (volver a la casa o a la sala de juegos de amigos). */
@@ -164,6 +166,7 @@ export class Lavado {
     musicaLavado.iniciar();
     try {
       if (this.o.unirse) await this.enSala(() => unirseSala(this.o.unirse!, 'lavado', this.yoEnSala()));
+      else if (this.o.crear) await this.enSala(() => crearSala({ juego: 'lavado', max: 4, yo: this.yoEnSala() }));
       for (;;) {
         const a = await this.menu.abrir();
         if (a === 'salir') break;

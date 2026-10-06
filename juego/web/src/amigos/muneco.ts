@@ -16,13 +16,15 @@ import type { AspectoJugador } from '../salas/tipos';
 export type Encuadre = 'cuerpo' | 'cara' | 'arriba' | 'abajo' | 'pies';
 export type Ambiente = 'estudio' | 'lavado' | 'sangre';
 
-/** Altura y distancia de la cámara para cada encuadre (el muñeco mide ~1,6). */
+/** Lo que mide el muñeco en el estudio (con el pelo). */
+const ALTO = 1.6;
+/** Altura y distancia de la cámara para cada encuadre (el muñeco mide ALTO). */
 const ENCUADRES: Record<Encuadre, { y: number; d: number }> = {
-  cuerpo: { y: 0.8, d: 4.4 },
-  cara: { y: 1.3, d: 1.75 },
-  arriba: { y: 1.02, d: 2.7 },
-  abajo: { y: 0.5, d: 2.7 },
-  pies: { y: 0.2, d: 2.1 },
+  cuerpo: { y: 0.82, d: 5.1 },
+  cara: { y: 1.18, d: 2.75 },
+  arriba: { y: 0.95, d: 3.4 },
+  abajo: { y: 0.5, d: 3.3 },
+  pies: { y: 0.28, d: 2.7 },
 };
 
 /** Poses para el botón «Pose»: [pose a, pose b (vaivén) o null, cara]. */
@@ -420,11 +422,29 @@ export class Muneco {
     this.zoom = THREE.MathUtils.clamp(this.zoom * factor, 0.45, 1.45);
   }
 
+  /** Se da la vuelta para mostrar la espalda (alas, capas, colitas) y se queda así un rato. */
+  mirarAtras() {
+    const vueltas = Math.round(this.giro / (Math.PI * 2));
+    this.giro = vueltas * Math.PI * 2 + Math.PI;
+    this.girando = false;
+    this.gesto = null;
+    clearTimeout(this.volverAGirar);
+    this.volverAGirar = setTimeout(() => (this.girando = true), 6000);
+  }
+  private volverAGirar: ReturnType<typeof setTimeout> | undefined;
+
   /** A qué parte mira la cámara (la cara al escoger peinado, los pies al escoger zapatos…). */
   enfocar(e: Encuadre) {
     if (e === this.encuadre) return;
     this.encuadre = e;
     this.zoom = 1;
+    // De cerca se queda de frente un ratico (para ver bien la cara o los zapatos)
+    if (e !== 'cuerpo') {
+      this.giro = Math.round(this.giro / (Math.PI * 2)) * Math.PI * 2 + 0.3;
+      this.girando = false;
+      clearTimeout(this.volverAGirar);
+      this.volverAGirar = setTimeout(() => (this.girando = true), 5000);
+    }
   }
 
   // ---------------------------------------------------------------------------------------------- El muñeco
@@ -441,8 +461,11 @@ export class Muneco {
       this.p = p;
       this.cuerpo = a.cuerpo;
       p.suavidad = 8;
-      // (el muñeco mide ~2,55: a ~1,6 para que quepa con el pedestal)
-      p.grupo.scale.setScalar(0.62);
+      // Medido de verdad (con el pelo) y llevado a 1,6 de alto, para que quepa con el pedestal en cualquier molde
+      p.grupo.updateMatrixWorld(true);
+      const caja = new THREE.Box3().setFromObject(p.cuerpo);
+      const alto = caja.max.y - caja.min.y;
+      p.grupo.scale.setScalar(alto > 0.1 ? ALTO / alto : 0.62);
       p.grupo.traverse((o) => {
         if ((o as THREE.Mesh).isMesh) o.castShadow = true;
       });
@@ -546,7 +569,9 @@ export class Muneco {
     // Cámara: el encuadre que toca, con el zoom del usuario; en la vista previa, desde arriba como en los juegos
     const e = ENCUADRES[this.encuadre];
     const yMeta = amb === 'estudio' ? e.y : 0.62;
-    const dMeta = amb === 'estudio' ? e.d * this.zoom : 5.2;
+    // (en un lienzo angosto se aleja: el muñeco tiene que caber a lo ancho también)
+    const angosto = Math.max(1, 0.95 / Math.max(0.3, this.camara.aspect));
+    const dMeta = (amb === 'estudio' ? e.d * this.zoom : 5.2) * (this.encuadre === 'cuerpo' || amb !== 'estudio' ? angosto : Math.sqrt(angosto));
     const k = Math.min(1, dt * 4);
     this.camY += (yMeta - this.camY) * k;
     this.camD += (dMeta - this.camD) * k;

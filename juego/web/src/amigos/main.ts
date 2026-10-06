@@ -1,9 +1,10 @@
-// La sala de juegos de amigos (amigos.html): lo que ve quien entra con «Soy un amigo / una amiga». Su muñeco en 3D
-// con sus colores, los juegos permitidos (Sangre y Ceniza y Lavarse la cara en modo neutro) y «Unirme con un
-// código». NUNCA carga la casa, ni el Supabase de la pareja, ni recuerdos, ni notas, ni nada personal: solo el
-// perfil del amigo (guardado en el aparato) y las salas de juego. index.html manda aquí directo mientras el perfil
-// esté activo (también al recargar o con el botón atrás), y desde aquí no hay enlace a la casa: solo «¿Eres Javier
-// o Laura?», que pide confirmar y apaga el modo amigo.
+// La sala de juegos de amigos (amigos.html): lo que ve quien entra con «Soy un amigo / una amiga» (o abre la app para
+// amigos). Su muñeco en 3D tal cual lo armó en el creador de personajes, los juegos aptos para amigos
+// (`juegos.ts`), «Crear sala», «Unirme con un código» y «Editar mi personaje». NUNCA carga la casa, ni el Supabase
+// de la pareja, ni recuerdos, ni notas, ni nada personal: solo el perfil del amigo (guardado en el aparato) y las
+// salas de juego. En la versión de la pareja, index.html manda aquí mientras el perfil esté activo y «¿Eres Javier
+// o Laura?» pide confirmar y apaga el modo amigo; en la versión para amigos (`--mode amigos`) la app arranca aquí y
+// no hay casa a la cual volver.
 import '@fontsource/fredoka/latin-500.css';
 import '@fontsource/fredoka/latin-600.css';
 import '@fontsource/fredoka/latin-700.css';
@@ -15,22 +16,23 @@ import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import * as sonido from '../sonido';
 import { caritaSvg } from '../salas/carita';
-import {
-  PELOS, PIELES, ROPAS, aspectoDe, dejarModoAmigo, guardarPerfilAmigo, limpiarNombre, perfilAmigo, perfilNuevo, type PerfilAmigo,
-} from '../salas/perfil';
+import { aspectoDe, dejarModoAmigo, perfilAmigo, perfilNuevo, type PerfilAmigo } from '../salas/perfil';
 import { averiguarJuego, normalizarCodigo } from '../salas/sala';
+import { abrirCreador, type Creador } from './creador';
+import { JUEGOS, disponible, type JuegoAmigos } from './juegos';
 import { Muneco } from './muneco';
 
+/** Esta es la app aparte para amigos (no hay casa ni «¿Eres Javier o Laura?»). */
+const SOLO_AMIGOS = import.meta.env.MODE === 'amigos';
 const raiz = document.getElementById('amigos')!;
 const params = new URLSearchParams(location.search);
 const esc = (t: string) => t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 const CLAVE_LAVADO = 'amigo-lavado-progreso';
 
-let perfil: PerfilAmigo = perfilAmigo() ?? perfilNuevo();
+let perfil: PerfilAmigo = perfilAmigo() ?? perfilNuevo(Math.random() < 0.5 ? 'el' : 'ella');
 let muneco: Muneco | null = null;
+let creador: Creador | null = null;
 let pantalla: 'creador' | 'sala' | 'juego' = 'creador';
-/** ¿Ya existe Sangre y Ceniza en esta versión? (la hace otro frente: mientras tanto, «Muy pronto») */
-let haySangre: boolean | null = null;
 
 function aviso(texto: string) {
   const a = document.createElement('div');
@@ -40,172 +42,79 @@ function aviso(texto: string) {
   setTimeout(() => a.remove(), 3200);
 }
 
-// ---------------------------------------------------------------------------------------------------- El muñeco
-function ponerMuneco(lienzo: HTMLCanvasElement) {
+function soltar() {
+  creador?.liberar();
+  creador = null;
   muneco?.liberar();
   muneco = null;
-  try {
-    muneco = new Muneco(lienzo);
-    void muneco.poner(aspectoDe(perfil)).catch((e) => console.error(e));
-    muneco.arrancar();
-  } catch (e) {
-    // (sin WebGL: queda la carita)
-    console.error(e);
-    lienzo.insertAdjacentHTML('afterend', `<div class="am-carita-grande">${caritaSvg(aspectoDe(perfil), 180, 'feliz')}</div>`);
-  }
 }
 
 // ---------------------------------------------------------------------------------------------------- Creador
-function filaColores(campo: 'piel' | 'pelo' | 'ropa' | 'ropa2' | 'zapatos', titulo: string, lista: string[]) {
-  return `<div class="am-fila" role="radiogroup" aria-label="${titulo}"><span>${titulo}</span><div class="am-muestras">${lista
-    .map((c) => `<button type="button" class="am-muestra ${perfil[campo] === c ? 'si' : ''}" data-campo="${campo}" data-color="${c}" style="--m:${c}" aria-label="${titulo} ${c}" role="radio" aria-checked="${perfil[campo] === c}"></button>`)
-    .join('')}</div></div>`;
-}
-
-function creador() {
+function abrirElCreador() {
+  soltar();
   pantalla = 'creador';
   const yaEra = !!perfilAmigo()?.activo;
-  raiz.innerHTML = `<section class="am-creador">
-    <div class="am-escenario"><div class="am-luces" aria-hidden="true">${'<i></i>'.repeat(14)}</div><canvas class="am-lienzo" aria-label="Tu muñeco"></canvas>
-      <p class="am-pista">Arrástralo para darle la vuelta</p></div>
-    <form class="am-panel" autocomplete="off">
-      <h1>${yaEra ? 'Tu muñeco' : '¡Bienvenido a la sala de juegos!'}</h1>
-      <label class="am-nombre"><span>¿Cómo te llamas?</span><input name="nombre" maxlength="16" placeholder="Tu nombre" value="${esc(perfil.nombre === 'Amigo' && !yaEra ? '' : perfil.nombre)}" enterkeyhint="done"></label>
-      <div class="am-fila"><span>Muñeco</span><div class="am-cuerpos">
-        <button type="button" class="am-cuerpo ${perfil.cuerpo === 'el' ? 'si' : ''}" data-cuerpo="el">${caritaSvg({ ...aspectoDe(perfil), cuerpo: 'el' }, 34)}<b>Pelo corto</b></button>
-        <button type="button" class="am-cuerpo ${perfil.cuerpo === 'ella' ? 'si' : ''}" data-cuerpo="ella">${caritaSvg({ ...aspectoDe(perfil), cuerpo: 'ella' }, 34)}<b>Pelo largo</b></button>
-      </div></div>
-      ${filaColores('piel', 'Piel', PIELES)}
-      ${filaColores('pelo', 'Pelo', PELOS)}
-      ${filaColores('ropa', 'Camiseta', ROPAS)}
-      ${filaColores('ropa2', 'Pantalón', ROPAS)}
-      ${filaColores('zapatos', 'Zapatos', ROPAS)}
-      <p class="am-error" role="status"></p>
-      <div class="am-botones">
-        <button type="button" class="boton boton-papel" data-a="volver">← ${yaEra ? 'Volver' : 'Atrás'}</button>
-        <button type="button" class="boton boton-papel" data-a="azar">🎲 Al azar</button>
-        <button type="submit" class="boton boton-tomate">¡Listo!</button>
-      </div>
-    </form></section>`;
-  ponerMuneco(raiz.querySelector('canvas')!);
-  const form = raiz.querySelector('form')!;
-  const input = form.querySelector<HTMLInputElement>('input[name="nombre"]')!;
-  input.addEventListener('input', () => {
-    perfil.nombre = input.value;
-    form.querySelector('.am-error')!.textContent = '';
-  });
-  const refrescar = () => {
-    form.querySelectorAll<HTMLElement>('.am-muestra').forEach((b) => {
-      const si = perfil[b.dataset.campo as 'piel'] === b.dataset.color;
-      b.classList.toggle('si', si);
-      b.setAttribute('aria-checked', String(si));
-    });
-    form.querySelectorAll<HTMLElement>('.am-cuerpo').forEach((b) => {
-      b.classList.toggle('si', b.dataset.cuerpo === perfil.cuerpo);
-      b.querySelector('svg')!.outerHTML = caritaSvg({ ...aspectoDe(perfil), cuerpo: b.dataset.cuerpo as 'el' | 'ella' }, 34);
-    });
-    void muneco?.poner(aspectoDe(perfil)).catch(() => undefined);
-  };
-  form.addEventListener('click', (e) => {
-    const t = e.target as HTMLElement;
-    const m = t.closest<HTMLElement>('.am-muestra');
-    const c = t.closest<HTMLElement>('.am-cuerpo');
-    const a = t.closest<HTMLElement>('[data-a]');
-    sonido.activar();
-    if (m) {
-      (perfil as unknown as Record<string, string>)[m.dataset.campo!] = m.dataset.color!;
-      sonido.nota(660, 0.08, 0, 'sine', 0.05);
-      refrescar();
-    } else if (c) {
-      perfil.cuerpo = c.dataset.cuerpo as 'el' | 'ella';
-      sonido.nota(520, 0.1, 0, 'triangle', 0.05);
-      refrescar();
-    } else if (a?.dataset.a === 'azar') {
-      const nuevo = perfilNuevo(Math.random() < 0.5 ? 'el' : 'ella');
-      perfil = { ...perfil, cuerpo: nuevo.cuerpo, piel: nuevo.piel, pelo: nuevo.pelo, ropa: nuevo.ropa, ropa2: nuevo.ropa2, zapatos: nuevo.zapatos };
-      refrescar();
-    } else if (a?.dataset.a === 'volver') {
+  creador = abrirCreador({
+    raiz,
+    perfil,
+    yaEra,
+    puedeVolver: !SOLO_AMIGOS,
+    alListo: (p) => {
+      perfil = p;
+      sala();
+    },
+    alVolver: () => {
       if (yaEra) {
         perfil = perfilAmigo() ?? perfil;
         sala();
-      } else location.replace('./index.html');
-    }
-  });
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const nombre = limpiarNombre(input.value);
-    if (!nombre) {
-      form.querySelector('.am-error')!.textContent = '¿Cómo te llamas? Así te ven los demás en las salas.';
-      input.focus();
-      return;
-    }
-    perfil = { ...perfil, nombre, activo: true };
-    guardarPerfilAmigo(perfil);
-    sonido.nota(784, 0.12, 0, 'triangle', 0.06);
-    sala();
+      } else if (!SOLO_AMIGOS) location.replace('./index.html');
+    },
   });
 }
 
 // ---------------------------------------------------------------------------------------------------- La sala de juegos
-const ARTE_SANGRE = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
-  <defs><radialGradient id="sl" cx="70%" cy="30%" r="60%"><stop offset="0" stop-color="#5a1418"/><stop offset="1" stop-color="#0d0709"/></radialGradient>
-  <linearGradient id="sn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8e1b1b" stop-opacity="0"/><stop offset="1" stop-color="#8e1b1b" stop-opacity=".55"/></linearGradient></defs>
-  <rect width="200" height="110" fill="url(#sl)"/>
-  <circle cx="150" cy="30" r="17" fill="#f2e3c4"/><circle cx="144" cy="26" r="16" fill="#3a0f12" opacity=".35"/>
-  <path d="M0 110 V84 L14 84 L14 70 L20 64 L26 70 L26 84 L44 84 L44 58 L52 50 L60 58 L60 84 L72 84 L72 40 L78 30 L84 40 L84 84 L98 84 L98 62 L106 54 L114 62 L114 84 L130 84 L130 74 L140 74 L140 84 L160 84 L160 66 L168 58 L176 66 L176 84 L200 84 V110 Z" fill="#050304"/>
-  <rect x="77" y="52" width="3" height="5" fill="#ffb347"/><rect x="104" y="68" width="3" height="4" fill="#ffb347"/><rect x="166" y="70" width="3" height="4" fill="#ff8a3d"/>
-  <path d="M30 30 q4 -4 8 0 q4 -4 8 0 q-4 1 -8 4 q-4 -3 -8 -4z M118 18 q3 -3 6 0 q3 -3 6 0 q-3 1 -6 3 q-3 -2 -6 -3z M60 16 q2.5 -2.5 5 0 q2.5 -2.5 5 0 q-2.5 1 -5 2.5 q-2.5 -1.5 -5 -2.5z" fill="#050304"/>
-  <rect y="70" width="200" height="40" fill="url(#sn)"/></svg>`;
-
-const ARTE_LAVADO = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
-  <defs><linearGradient id="lf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c8ecff"/><stop offset="1" stop-color="#ffd3e0"/></linearGradient>
-  <radialGradient id="lb" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".55" stop-color="#d9f2ff" stop-opacity=".25"/><stop offset="1" stop-color="#ffc4dd" stop-opacity=".45"/></radialGradient></defs>
-  <rect width="200" height="110" fill="url(#lf)"/>
-  ${[[30, 30, 14], [168, 22, 10], [150, 80, 18], [20, 85, 9], [110, 18, 7], [60, 92, 6], [188, 60, 7]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="url(#lb)" stroke="#fff" stroke-width="1.4"/>`).join('')}
-  <g transform="translate(92 62)">
-    ${Array.from({ length: 12 }, (_, k) => `<circle cx="${Math.cos((k / 12) * Math.PI * 2) * 25}" cy="${Math.sin((k / 12) * Math.PI * 2) * 25}" r="6" fill="#7ccf6b"/>`).join('')}
-    <circle r="23" fill="#8fdb7c"/><circle r="23" fill="#5aa94c" opacity=".25" transform="translate(4 5)"/>
-    <ellipse cx="-8" cy="-3" rx="5" ry="6.5" fill="#fff"/><ellipse cx="8" cy="-3" rx="5" ry="6.5" fill="#fff"/>
-    <circle cx="-7" cy="-2" r="3" fill="#1d1d24"/><circle cx="9" cy="-2" r="3" fill="#1d1d24"/>
-    <path d="M-8 9 q8 6 16 0" stroke="#2c5a24" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-    <path d="M-15 -12 l6 3 M15 -12 l-6 3" stroke="#2c5a24" stroke-width="2.2" stroke-linecap="round"/></g>
-  <g transform="translate(150 50) rotate(-14)"><rect x="-20" y="-11" width="40" height="22" rx="8" fill="#f8b6c7"/><rect x="-20" y="-11" width="40" height="9" rx="6" fill="#fff" opacity=".45"/></g></svg>`;
-
-async function revisarSangre() {
-  if (haySangre !== null) return haySangre;
-  try {
-    const r = await fetch('./sangre.html', { cache: 'no-store' });
-    // (el servidor de desarrollo contesta la casa cuando no existe: se mira que el título sea el del juego)
-    haySangre = r.ok && /<title>[^<]*sangre/i.test(await r.text());
-  } catch {
-    haySangre = false;
-  }
-  return haySangre;
+function tarjeta(j: JuegoAmigos) {
+  return `<button class="am-juego ${j.tema} pronto" data-j="${j.id}"><span class="arte">${j.arte}</span>
+    <span class="txt"><b>${j.nombre}</b><small>${j.desc}</small></span><em class="estado">…</em></button>`;
 }
 
 function sala() {
+  soltar();
   pantalla = 'sala';
+  const hola = ['¡Hola', '¡Quiubo', '¡Bienvenido', '¡Qué más'][Math.floor(Math.random() * 4)];
   raiz.innerHTML = `<section class="am-sala">
-    <div class="am-escenario"><div class="am-luces" aria-hidden="true">${'<i></i>'.repeat(14)}</div><canvas class="am-lienzo" aria-label="Tu muñeco"></canvas>
-      <div class="am-placa"><b>${esc(perfil.nombre)}</b><button class="am-editar" data-a="editar">✏️ Mi muñeco</button></div></div>
+    <div class="am-escenario"><canvas class="am-lienzo" aria-label="Tu muñeco"></canvas>
+      <div class="am-placa"><span class="cara">${caritaSvg(aspectoDe(perfil), 30, 'feliz')}</span><b>${esc(perfil.nombre)}</b>
+        <button class="am-editar" data-a="editar">✏️ Editar mi personaje</button></div></div>
     <div class="am-lado">
-      <header><h1>Sala de juegos</h1><p>¡Hola, ${esc(perfil.nombre)}! Escoge un juego o entra a la sala de tus amigos.</p></header>
-      <div class="am-juegos">
-        <button class="am-juego sangre" data-j="sangre"><span class="arte">${ARTE_SANGRE}</span><span class="txt"><b>Sangre y Ceniza</b><small>Sobrevive la noche eterna · hasta 4</small></span><em class="estado">…</em></button>
-        <button class="am-juego lavado" data-j="lavado"><span class="arte">${ARTE_LAVADO}</span><span class="txt"><b>Lavarse la cara</b><small>Mugrosos sin fin · hasta 4</small></span><em class="estado">Jugar</em></button>
+      <header><h1>Sala de juegos</h1><p>${hola}, ${esc(perfil.nombre)}! Escoge un juego, arma una sala o entra a la de tus amigos.</p></header>
+      <div class="am-acciones">
+        <button class="am-crear" data-a="crear"><i>➕</i><span><b>Crear sala</b><small>Juega con tus amigos</small></span></button>
+        <form class="am-codigo" autocomplete="off"><span>🔑 Unirme con un código</span>
+          <input name="c" maxlength="7" placeholder="ABCDE" aria-label="Código de la sala" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
+          <button class="boton boton-menta">Entrar</button></form>
       </div>
-      <form class="am-codigo" autocomplete="off"><span>🔑 Unirme con un código</span>
-        <input name="c" maxlength="7" placeholder="ABCDE" aria-label="Código de la sala" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
-        <button class="boton boton-menta">Entrar</button></form>
-      <button class="am-no-soy" data-a="pareja">¿Eres Javier o Laura?</button>
+      <div class="am-juegos">${JUEGOS.map(tarjeta).join('')}</div>
+      ${SOLO_AMIGOS ? '' : '<button class="am-no-soy" data-a="pareja">¿Eres Javier o Laura?</button>'}
     </div></section>`;
-  ponerMuneco(raiz.querySelector('canvas')!);
-  void revisarSangre().then((si) => {
-    const e = raiz.querySelector<HTMLElement>('.am-juego.sangre .estado');
-    if (!e) return;
-    e.textContent = si ? 'Jugar' : 'Muy pronto';
-    raiz.querySelector('.am-juego.sangre')!.classList.toggle('pronto', !si);
-  });
+  const lienzo = raiz.querySelector<HTMLCanvasElement>('canvas')!;
+  try {
+    muneco = new Muneco(lienzo);
+    muneco.alTocar = () => muneco?.siguientePose();
+    void muneco.poner(aspectoDe(perfil), false).catch((e) => console.error(e));
+    muneco.arrancar();
+  } catch (e) {
+    console.error(e);
+    lienzo.insertAdjacentHTML('afterend', `<div class="am-carita-grande">${caritaSvg(aspectoDe(perfil), 160, 'feliz')}</div>`);
+  }
+  for (const j of JUEGOS) {
+    void disponible(j).then((si) => {
+      const b = raiz.querySelector<HTMLElement>(`.am-juego[data-j="${j.id}"]`);
+      if (!b) return;
+      b.classList.toggle('pronto', !si);
+      b.querySelector('.estado')!.textContent = si ? 'Jugar' : 'Muy pronto';
+    });
+  }
   const input = raiz.querySelector<HTMLInputElement>('.am-codigo input')!;
   input.addEventListener('input', () => (input.value = normalizarCodigo(input.value)));
   raiz.querySelector('.am-codigo')!.addEventListener('submit', (e) => {
@@ -217,12 +126,46 @@ function sala() {
     const j = t.closest<HTMLElement>('[data-j]');
     const a = t.closest<HTMLElement>('[data-a]');
     sonido.activar();
-    if (j?.dataset.j === 'lavado') void lavarse();
-    else if (j?.dataset.j === 'sangre') {
-      if (haySangre) location.href = './sangre.html';
-      else aviso('Sangre y Ceniza llega muy pronto. ¡Mientras tanto, a lavarse la cara!');
-    } else if (a?.dataset.a === 'editar') creador();
+    if (j) void jugar(JUEGOS.find((x) => x.id === j.dataset.j)!);
+    else if (a?.dataset.a === 'editar') abrirElCreador();
+    else if (a?.dataset.a === 'crear') void crearSala();
     else if (a?.dataset.a === 'pareja') noSoyAmigo();
+  });
+}
+
+async function jugar(j: JuegoAmigos, como: { crear?: boolean; unirse?: string } = {}) {
+  if (!(await disponible(j))) return aviso(`${j.nombre} llega muy pronto. ¡Mientras tanto, a lavarse la cara!`);
+  sonido.nota(660, 0.08, 0, 'triangle', 0.05);
+  if (j.id === 'lavado') return lavarse(como);
+  if (!j.url) return;
+  location.href = como.unirse ? j.urlUnirse?.(como.unirse) ?? `${j.url}${j.url.includes('?') ? '&' : '?'}unirse=${encodeURIComponent(como.unirse)}`
+    : como.crear ? j.urlCrear ?? `${j.url}${j.url.includes('?') ? '&' : '?'}sala` : j.url;
+}
+
+/** «Crear sala»: escoge el juego y abre su sala (el código sale ahí para pasárselo a los amigos). */
+async function crearSala() {
+  const conSala = JUEGOS.filter((j) => j.sala);
+  const capa = document.createElement('div');
+  capa.className = 'am-capa';
+  capa.innerHTML = `<div class="am-dialogo am-escoger"><h2>¿A qué juegan?</h2><p>Se abre la sala con su código para pasárselo a tus amigos (hasta 4).</p>
+    <div class="am-juegos chicas">${conSala.map(tarjeta).join('')}</div>
+    <div class="am-botones"><button class="boton boton-papel" data-r="no">Cancelar</button></div></div>`;
+  document.body.append(capa);
+  for (const j of conSala) {
+    void disponible(j).then((si) => {
+      const b = capa.querySelector<HTMLElement>(`[data-j="${j.id}"]`);
+      if (!b) return;
+      b.classList.toggle('pronto', !si);
+      b.querySelector('.estado')!.textContent = si ? 'Crear' : 'Muy pronto';
+    });
+  }
+  capa.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const j = t.closest<HTMLElement>('[data-j]');
+    if (j) {
+      capa.remove();
+      void jugar(JUEGOS.find((x) => x.id === j.dataset.j)!, { crear: true });
+    } else if (t.closest('[data-r="no"]') || t === capa) capa.remove();
   });
 }
 
@@ -263,20 +206,18 @@ async function unirse(codigo: string) {
     boton.disabled = false;
     boton.textContent = 'Entrar';
   }
-  if (juego === 'lavado') return lavarse(c);
-  if (juego === 'sangre') {
-    location.href = `./sangre.html?unirse=${encodeURIComponent(c)}`;
-    return;
-  }
+  const j = JUEGOS.find((x) => x.sala && x.sala === juego);
+  if (j) return jugar(j, { unirse: c });
   if (juego) return aviso('Esa sala es de un juego que todavía no está aquí.');
   aviso('No encontramos esa sala. Revisa el código (y que quien la creó siga adentro).');
 }
 
 // ---------------------------------------------------------------------------------------------------- Lavarse la cara
-async function lavarse(unirseA?: string) {
+async function lavarse(como: { crear?: boolean; unirse?: string } = {}) {
   if (pantalla === 'juego') return;
   pantalla = 'juego';
-  muneco?.detener();
+  // (el juego tiene su propio WebGL: el del muñeco se suelta para no tener dos prendidos en el celular)
+  soltar();
   raiz.classList.add('tapado');
   try {
     const L = await import('../casa/lavado');
@@ -303,13 +244,15 @@ async function lavarse(unirseA?: string) {
       pareja: null,
       amigo: { nombre: perfil.nombre, aspecto: aspectoDe(perfil) },
       textoSalir: '🎮 Volver a la sala de juegos',
-      unirse: unirseA,
+      unirse: como.unirse,
+      crear: como.crear,
     });
   } catch (e) {
     console.error(e);
     aviso('No se pudo abrir el juego. Intenta otra vez.');
   }
   raiz.classList.remove('tapado');
+  pantalla = 'sala';
   sala();
 }
 
@@ -320,7 +263,10 @@ function atras() {
   const capa = document.querySelector<HTMLElement>('.am-capa');
   if (enLavado) enLavado.click();
   else if (capa) capa.remove();
-  else if (pantalla === 'creador' && perfilAmigo()?.activo) sala();
+  else if (pantalla === 'creador' && perfilAmigo()?.activo) {
+    perfil = perfilAmigo() ?? perfil;
+    sala();
+  }
   // (nunca hacia la casa: atrás desde la sala de juegos cierra la app)
   else if (Capacitor.isNativePlatform()) void App.exitApp();
 }
@@ -329,5 +275,5 @@ else document.addEventListener('keydown', (e) => e.key === 'Escape' && !e.repeat
 
 const activo = perfilAmigo()?.activo;
 if (activo && !params.has('perfil')) sala();
-else creador();
-(window as unknown as { __amigos: unknown }).__amigos = { perfil: () => perfil, pantalla: () => pantalla, lavarse, unirse };
+else abrirElCreador();
+(window as unknown as { __amigos: unknown }).__amigos = { perfil: () => creador?.perfil() ?? perfil, pantalla: () => pantalla, lavarse, unirse, creador: () => creador };

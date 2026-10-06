@@ -13,6 +13,24 @@ import { joyasDe, trajeDe, type Cuerpo, type Pieza, type RanuraAmigo } from './p
 import { teñirMallas } from './tinte';
 import type { AspectoJugador } from './tipos';
 
+/** Carga una prenda del clóset y amarra sus mallas a los huesos del muñeco (como el clóset de la casa). */
+export async function cargarPrenda(p: Personaje, modelo: string, cuerpo: Cuerpo): Promise<THREE.SkinnedMesh[] | null> {
+  const { escena } = await cargarAnimado(`ropa/${modelo}_${cuerpo}.glb`);
+  const copia = clonarConEsqueleto(escena);
+  const mallas: THREE.SkinnedMesh[] = [];
+  copia.traverse((o) => {
+    const m = o as THREE.SkinnedMesh;
+    if (!m.isSkinnedMesh) return;
+    const huesos = m.skeleton.bones.map((b) => p.huesos.get(b.name));
+    if (huesos.some((h) => !h)) return;
+    m.bind(new THREE.Skeleton(huesos as THREE.Bone[], m.skeleton.boneInverses), m.bindMatrix);
+    m.frustumCulled = false;
+    m.castShadow = true;
+    mallas.push(m);
+  });
+  return mallas;
+}
+
 interface Puesta {
   pieza: Pieza;
   mallas: THREE.SkinnedMesh[];
@@ -86,22 +104,8 @@ export class Vestidor {
     return false;
   }
 
-  /** Carga la prenda y amarra sus mallas a los huesos del muñeco (como el clóset de la casa). */
-  private async cargar(modelo: string): Promise<THREE.SkinnedMesh[] | null> {
-    const { escena } = await cargarAnimado(`ropa/${modelo}_${this.cuerpo}.glb`);
-    const copia = clonarConEsqueleto(escena);
-    const mallas: THREE.SkinnedMesh[] = [];
-    copia.traverse((o) => {
-      const m = o as THREE.SkinnedMesh;
-      if (!m.isSkinnedMesh) return;
-      const huesos = m.skeleton.bones.map((b) => this.p.huesos.get(b.name));
-      if (huesos.some((h) => !h)) return;
-      m.bind(new THREE.Skeleton(huesos as THREE.Bone[], m.skeleton.boneInverses), m.bindMatrix);
-      m.frustumCulled = false;
-      m.castShadow = true;
-      mallas.push(m);
-    });
-    return mallas;
+  private cargar(modelo: string) {
+    return cargarPrenda(this.p, modelo, this.cuerpo);
   }
 
   /** La piel, el pelo, los ojos, las cejas, el rubor y la ropa de fábrica (en copias de los materiales). */

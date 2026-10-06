@@ -97,7 +97,7 @@ let tutorial: Tutorial | null = null;
 let pantalla: 'carga' | 'titulo' | 'clases' | 'expedicion' | 'pozo' | 'logros' | 'juego' | 'forja' | 'resultado' | 'grupo' | 'sala' = 'carga';
 const eleccionMenu = new VistaEleccion();
 
-const perfilVista = () => ({ i: 0, cuerpo: yo.cuerpo, clase: sel.clase, piel: yo.piel, pelo: yo.pelo });
+const perfilVista = () => ({ i: 0, cuerpo: yo.cuerpo, clase: sel.clase, piel: yo.piel, pelo: yo.pelo, detalles: yo.detalles });
 
 function pozoStats(niv: Record<string, number>) {
   const meta: Partial<Stats> = {};
@@ -111,7 +111,7 @@ function pozoStats(niv: Record<string, number>) {
 function perfilLocal(puesto = 0): PerfilJugador {
   return perfilDe(
     P(),
-    { id: yo.id, nombre: yo.nombre, puesto, clase: sel.clase, spec: sel.spec, equipo: sel.equipo, cuerpo: yo.cuerpo, tipo: yo.tipo, piel: yo.piel, pelo: yo.pelo },
+    { id: yo.id, nombre: yo.nombre, puesto, clase: sel.clase, spec: sel.spec, equipo: sel.equipo, cuerpo: yo.cuerpo, tipo: yo.tipo, piel: yo.piel, pelo: yo.pelo, detalles: yo.detalles },
     CLASES[sel.clase].arsenal,
     pozoStats,
   );
@@ -961,7 +961,7 @@ async function entrarSala(codigo?: string) {
     const api = await import('../salas/sala');
     if (params.get('salas') === 'local') api.usarSalasLocales(true);
     // (con ?rol o ?amigo en la dirección, quien juega es el de la dirección: pruebas en un mismo navegador)
-    const yoSala = params.has('amigo') || params.has('rol') ? { id: yo.id, nombre: yo.nombre, tipo: yo.tipo, aspecto: { cuerpo: yo.cuerpo, piel: yo.piel, pelo: yo.pelo } } : undefined;
+    const yoSala = params.has('amigo') || params.has('rol') ? { id: yo.id, nombre: yo.nombre, tipo: yo.tipo, aspecto: { cuerpo: yo.cuerpo, piel: yo.piel, pelo: yo.pelo, detalles: yo.detalles } } : undefined;
     sala = codigo ? await api.unirseSala(codigo, 'sangre', yoSala) : await api.crearSala({ juego: 'sangre', max: 4, yo: yoSala });
   } catch (e) {
     carga(false);
@@ -1035,7 +1035,7 @@ async function lobby() {
       const cfg: ConfigExpedicion = { bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], semilla: semilla() };
       const perfiles = s.jugadores.map((j, k) => {
         const pf = (j.datos?.perfil as PerfilJugador | undefined) ?? perfilLocal(k);
-        return { ...pf, id: j.id, nombre: j.nombre, puesto: j.puesto, cuerpo: j.aspecto.cuerpo, tipo: j.tipo, piel: j.aspecto.piel ?? pf.piel, pelo: j.aspecto.pelo ?? pf.pelo };
+        return { ...pf, id: j.id, nombre: j.nombre, puesto: j.puesto, cuerpo: j.aspecto.cuerpo, tipo: j.tipo, piel: j.aspecto.piel ?? pf.piel, pelo: j.aspecto.pelo ?? pf.pelo, detalles: j.aspecto.detalles ?? pf.detalles };
       });
       return { cfg, perfiles };
     },
