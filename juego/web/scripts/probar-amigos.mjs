@@ -60,9 +60,13 @@ await p.tap('.am-creador [type="submit"]');
 revisar(/Cómo te llamas/.test(await p.textContent('.am-error')), 'Sin nombre no lo deja seguir');
 await p.fill('.am-nombre input', 'Pipe');
 await p.tap('.am-cuerpo[data-cuerpo="ella"]');
-await p.tap('.am-muestra[data-campo="piel"][data-color="#a5653d"]');
-await p.tap('.am-muestra[data-campo="pelo"][data-color="#d76b9a"]');
-await p.tap('.am-muestra[data-campo="ropa"][data-color="#3fb5a3"]');
+// (el creador va por pestañas: piel en «Cuerpo», color de pelo en «Peinado», la camiseta básica en «Arriba»)
+await p.tap('.am-muestra[data-k="piel"][data-c="#a5653d"]');
+await p.tap('.am-tabs [data-tab="pelo"]');
+await p.tap('.am-muestra[data-k="pelo"][data-c="#d76b9a"]');
+await p.tap('.am-tabs [data-tab="arriba"]');
+await p.tap('.am-prenda.nada[data-r="arriba"]');
+await p.tap('.am-muestra[data-k="ropa"][data-c="#3fb5a3"]');
 await espera(1800);
 await foto('2-creador-colores');
 await p.tap('.am-creador [type="submit"]');
@@ -97,15 +101,15 @@ await p.evaluate(() => {
 await p.tap('.am-juego.lavado');
 await p.waitForSelector('.lv-menu:not([hidden]) [data-m="jugar"]', { timeout: 90000 });
 personal = await p.evaluate(async () => {
-  const { CARTAS } = await import('/src/casa/lavado/cartas.ts');
-  const { DISFRACES } = await import('/src/casa/lavado/disfraces.ts');
-  const T = await import('/src/casa/lavado/textos.ts');
-  // (el juego ya está en modo neutro: lo que cambiaría sin él es lo personal)
-  T.ponerNeutro(true);
-  return [
-    ...Object.values(CARTAS).flatMap((c) => [c.nombre, c.recuerdo].filter((x, k) => x !== [T.cartaVista(c.id).nombre, T.cartaVista(c.id).recuerdo][k])),
-    ...DISFRACES.flatMap((d) => [d.nombre, d.desc, d.grito].filter((x, k) => x !== [T.disfrazVisto(d).nombre, T.disfrazVisto(d).desc, T.disfrazVisto(d).grito][k])),
-  ];
+  // Todo lo personal del lavado vive en pareja.ts (lo que la versión para amigos ni compila)
+  const { PAREJA } = await import('/src/casa/lavado/pareja.ts');
+  const textos = [];
+  const juntar = (v) => {
+    if (typeof v === 'string') textos.push(v.replace(/^\P{L}+/u, '').trim());
+    else if (v && typeof v === 'object' && !(v instanceof RegExp)) Object.values(v).forEach(juntar);
+  };
+  juntar([PAREJA.cartas, PAREJA.disfraces, PAREJA.logros, PAREJA.enemigos]);
+  return [...new Set(textos.filter((t) => t.length > 5))];
 });
 revisar(personal.length > 20, `Se sabe qué es personal (${personal.length} textos de cartas y disfraces)`);
 await espera(800);
@@ -145,7 +149,7 @@ await p.evaluate(() => {
   L.probar('aguante');
   L.probar('tiempo', 655);
   // Una carta mágica perdida para él
-  L.m.jug[0].cartaOpciones = ['octubre', 'cartagena', 'propuesta'];
+  L.m.jug[0].cartaOpciones = ['comienzo', 'solPlaya', 'diamante'];
 });
 await p.waitForSelector('.lv-c-carta:not([hidden]) .lv-sobre', { timeout: 30000 });
 await espera(700);

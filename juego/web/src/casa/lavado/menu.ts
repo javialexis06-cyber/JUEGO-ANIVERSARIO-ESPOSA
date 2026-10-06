@@ -129,7 +129,7 @@ export class Menu {
       </div>
       <div class="lv-acciones">
         <button class="lv-boton grande rosa" data-m="jugar">🫧 ¡A lavarse!</button>
-        ${this.o.puedePareja ? `<button class="lv-boton menta" data-m="pareja">💞 Jugar con ${this.o.nombreOtro}</button>` : ''}
+        ${this.o.puedePareja ? `<button class="lv-boton menta" data-m="pareja">${FRASES.iconoPareja()} Jugar con ${this.o.nombreOtro}</button>` : ''}
         ${this.o.puedeSalas ? `<div class="lv-fila-salas"><button class="lv-boton menta" data-m="amigos">👥 Con amigos</button><button class="lv-boton" data-m="codigo">🔑 Unirme con código</button></div>` : ''}
         <div class="lv-rejilla">
           <button class="lv-boton" data-m="disfraces">${icono(d.arma, 30)}Disfraces</button>
@@ -257,7 +257,7 @@ export class Menu {
     const ab = c && abiertas.includes(c.id);
     const logro = c ? logroVisto(LOGRO[CARTA_LOGRO[c.id]]) : null;
     const det = c
-      ? `<h3 style="color:${c.color}">${c.numero} · ${ab ? c.nombre : 'Carta guardada'}</h3>${ab ? `<p><i>${c.recuerdo}</i></p><p class="esp">${c.efecto}</p>` : `<p>🔒 ${logro?.desc}</p>`}`
+      ? `<h3 style="color:${c.color}">${c.numero} · ${ab ? c.nombre : 'Carta guardada'}</h3>${ab ? `<p><i>${c.frase}</i></p><p class="esp">${c.efecto}</p>` : `<p>🔒 ${logro?.desc}</p>`}`
       : `<h3>Sin carta</h3><p>Una partida normalita, sin ${FRASES.tituloCartas().toLowerCase()}. Igual en los minutos 11 y 21 pueden salir cartas perdidas.</p>`;
     return `<div class="cuerpo"><div class="lv-lista">
         <button class="lv-item ${!this.sel ? 'sel' : ''}" data-sel=""><span style="font-size:20px">✉️</span><span>Sin carta</span></button>${lista}</div>

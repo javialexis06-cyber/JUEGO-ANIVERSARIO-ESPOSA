@@ -1,5 +1,6 @@
 // Los disfraces (los personajes desbloqueables del original, pero de Él y de Ella): ocho para cada uno. Solo
-// existen dentro de este juego. Cada uno trae su arma inicial, sus bonos y su crecimiento por nivel, como Antonio,
+// existen dentro de este juego. Aquí van en su versión para todos; los apodos y chistes de la pareja van aparte, en
+// `pareja.ts` (la versión para amigos ni lo compila). Cada uno trae su arma inicial, sus bonos y su crecimiento por nivel, como Antonio,
 // Imelda, Gennaro, Krochi o Poe, y un look que se reconoce (ropa del clóset + un accesorio del baño en la mano o en
 // la cabeza).
 import type { Ranura, Ropa } from '../modelo';
@@ -46,7 +47,7 @@ export interface DefDisfraz {
   grito: string;
   alCrecer?: string;
   arma: IdArma;
-  /** Arma extra con la que empieza (la Directora Yanbal trae perfume y colonia). */
+  /** Arma extra con la que empieza (la diva trae perfume y colonia). */
   arma2?: IdArma;
   base: Partial<Stats>;
   crece: Crecimiento[];
@@ -67,19 +68,19 @@ export interface DefDisfraz {
 export const DISFRACES: DefDisfraz[] = [
   // ------------------------------------------------------------------------------------------------ Él
   {
-    id: 'el_panda', rol: 'el', nombre: 'Panda en pijama', original: 'Antonio', inicial: true, precio: 0,
-    desc: 'Así le dice ella. Enterizo de panda, pantuflas de garra y la toalla mojada al hombro, listo para el toallazo.',
+    id: 'el_panda', rol: 'el', nombre: 'Osito en pijama', original: 'Antonio', inicial: true, precio: 0,
+    desc: 'Enterizo de osito blanco y negro, pantuflas de garra y la toalla mojada al hombro, listo para el toallazo.',
     especial: '+20 de vida y 1 de armadura. Cada 10 niveles pega 10 % más duro (hasta +50 %).',
-    grito: '🐼 ¡Toallazo de panda! Cada 10 niveles pega más duro', alCrecer: '🐼 ¡El panda se puso bravo! +10 % de daño',
+    grito: '🧸 ¡Toallazo de osito! Cada 10 niveles pega más duro', alCrecer: '🧸 ¡El osito se puso bravo! +10 % de daño',
     arma: 'toalla', base: { vida: 20, armadura: 1 }, crece: [{ cada: 10, stat: 'poder', paso: 0.1, hasta: 50 }],
     ropa: { arriba: 'enterizo_panda', cabeza: 'capucha_panda_bambu', pies: 'pantuflas_panda_garra', espalda: 'mochila_bambu' },
     accesorios: ['toalla_mano'],
   },
   {
-    id: 'el_perro', rol: 'el', nombre: 'Perro lanudo', original: 'Poe Ratcho', precio: 600, logro: 'sobrevivir5',
-    desc: 'Tan lanudo que la espuma se le enreda en el pelo. Recoge todo de lejos (pero es un poquito más frágil).',
+    id: 'el_perro', rol: 'el', nombre: 'Perrito peludo', original: 'Poe Ratcho', precio: 600, logro: 'sobrevivir5',
+    desc: 'Tan peludo que la espuma se le enreda en el pelo. Recoge todo de lejos (pero es un poquito más frágil).',
     especial: 'Empieza con el Aura de espuma. Imán +25 %, pero 30 de vida menos.',
-    grito: '🐶 Perro lanudo: todo se le pega al pelo (imán +25 %)', alCrecer: '🐶 El pelo lanudo jala más: imán +10 %',
+    grito: '🐶 Perrito peludo: todo se le pega al pelo (imán +25 %)', alCrecer: '🐶 El pelo jala más: imán +10 %',
     arma: 'espuma', base: { iman: 0.25, vida: -30 }, crece: [{ cada: 1, stat: 'iman', paso: 0.01, hasta: 30 }],
     ropa: { arriba: 'enterizo_perrito', cabeza: 'capucha_perrito', cola: 'cola_perrito', pies: 'pantuflas_perrito' },
     accesorios: ['espuma_cabeza'],
@@ -117,7 +118,7 @@ export const DISFRACES: DefDisfraz[] = [
   },
   {
     id: 'el_astronauta', rol: 'el', nombre: 'Astronauta del retrete', original: 'Porta Ladonna', precio: 1200, logro: 'ganarCara',
-    desc: 'El mismo que salió volando del baño después del picante. Ahora con casco y un bombillo con corriente.',
+    desc: 'Casco de burbuja, traje espacial y un bombillo con corriente. Listo para despegar.',
     especial: 'Empieza con el Bombillo travieso. +30 % de área y al principio todo se recarga rapidísimo.',
     grito: '🚀 ¡Despegue! Al principio todo se recarga rapidísimo',
     arma: 'bombillo', base: { area: 0.3 }, crece: [], arranque: 25,
@@ -136,7 +137,7 @@ export const DISFRACES: DefDisfraz[] = [
   },
   {
     id: 'el_barbero', rol: 'el', nombre: 'Barbero de vueltiao', original: 'Concetta Caciotta', precio: 900, logro: 'velitas50',
-    desc: 'Sombrero vueltiao, chaleco y bigote. Depila cejas con hilo como un profesional… (peinar a su esposa ya es otra historia).',
+    desc: 'Sombrero vueltiao, chaleco y bigote. Depila cejas con hilo como todo un profesional.',
     especial: 'Empieza con el Hilo dental. +1 % de velocidad al caminar por nivel (hasta +40 %).',
     grito: '💈 Barbero de vueltiao: cada nivel camina más ligero', alCrecer: '💈 ¡Qué paso tan sabroso! +10 % al caminar',
     arma: 'hilo', base: { movimiento: 0.05 }, crece: [{ cada: 1, stat: 'movimiento', paso: 0.01, hasta: 40 }],
@@ -146,35 +147,35 @@ export const DISFRACES: DefDisfraz[] = [
   },
   // ------------------------------------------------------------------------------------------------ Ella
   {
-    id: 'ella_pulga', rol: 'ella', nombre: 'Pulga aventurera', original: 'Imelda Belpaese', inicial: true, precio: 0,
-    desc: 'Así le dice él. Enterizo de pulga, patitas de más y una varita que hace burbujas. Aprende rapidísimo.',
+    id: 'ella_pulga', rol: 'ella', nombre: 'Pulguita saltarina', original: 'Imelda Belpaese', inicial: true, precio: 0,
+    desc: 'Enterizo de pulga, patitas de más y una varita que hace burbujas. Aprende rapidísimo.',
     especial: '+10 % de experiencia y +5 % más en los niveles 5, 10 y 15.',
-    grito: '🐜 Pulga aventurera: aprende rapidísimo (+10 % de experiencia)', alCrecer: '🐜 ¡Pulga pila! +5 % de experiencia',
+    grito: '🐜 Pulguita saltarina: aprende rapidísimo (+10 % de experiencia)', alCrecer: '🐜 ¡Pulguita pila! +5 % de experiencia',
     arma: 'burbujas', base: { crecimiento: 0.1 }, crece: [{ cada: 5, stat: 'crecimiento', paso: 0.05, hasta: 15 }],
     ropa: { arriba: 'enterizo_pulga', cabeza: 'capucha_pulga', espalda: 'patitas_pulga', pies: 'pantuflas_pulga' },
     accesorios: ['varita_mano'],
   },
   {
-    id: 'ella_guerrera', rol: 'ella', nombre: 'La mejor guerrera de Dios', original: 'Krochi Freetto', precio: 900, logro: 'sobrevivir5',
-    desc: 'Le ha pasado de todo y siempre se vuelve a parar. Capa, corona y un escudo de corazón.',
+    id: 'ella_guerrera', rol: 'ella', nombre: 'Guerrera del escudo', original: 'Krochi Freetto', precio: 900, logro: 'sobrevivir5',
+    desc: 'Siempre se vuelve a parar. Capa, corona y un escudo de corazón.',
     especial: 'Empieza con la Peinilla bumerán, 1 vida extra (y otra al nivel 33) y +30 % de velocidad.',
-    grito: '👑 La mejor guerrera de Dios: si cae, se vuelve a parar', alCrecer: '👑 ¡Otra vida extra! La guerrera no se rinde',
+    grito: '👑 Guerrera del escudo: si cae, se vuelve a parar', alCrecer: '👑 ¡Otra vida extra! La guerrera no se rinde',
     arma: 'peinilla', base: { revivir: 1, movimiento: 0.3 }, crece: [{ cada: 33, stat: 'revivir', paso: 1, hasta: 33, desde: 33 }],
     ropa: { arriba: 'vestido_rojo', espalda: 'capa_morada', pies: 'botas_negras' },
     accesorios: ['escudo', 'corona_guerrera'],
   },
   {
-    id: 'ella_yanbal', rol: 'ella', nombre: 'Directora Yanbal', original: 'Pugnala Provola', precio: 1000, logro: 'nivel20',
-    desc: 'Vestido negro, gafas de sol y el perfume de la marca. Llegó a directora y no la para nadie.',
+    id: 'ella_diva', rol: 'ella', nombre: 'Diva del perfume', original: 'Pugnala Provola', precio: 1000, logro: 'nivel20',
+    desc: 'Vestido negro, gafas de sol y su perfume favorito. No la para nadie.',
     especial: 'Empieza con el Perfume y la Colonia. +1 % de daño por nivel (hasta +60 %).',
-    grito: '💄 Directora Yanbal: cada nivel, más poder', alCrecer: '💄 ¡Ascenso! +10 % de daño',
+    grito: '💄 Diva del perfume: cada nivel, más poder', alCrecer: '💄 ¡Más glamur! +10 % de daño',
     arma: 'perfume', arma2: 'colonia', base: {}, crece: [{ cada: 1, stat: 'poder', paso: 0.01, hasta: 60 }],
     ropa: { arriba: 'vestido_negro', cara: 'gafas_sol', pies: 'tacones_negros' },
     accesorios: ['perfume_mano'],
   },
   {
     id: 'ella_turbante', rol: 'ella', nombre: 'Bata y turbante', original: 'Suor Clerici', precio: 500, logro: 'eliminar1000',
-    desc: 'Recién bañada, con el turbante de toalla y las pantuflas de conejo. Se va a demorar horas arreglándose.',
+    desc: 'Recién bañada, con el turbante de toalla y las pantuflas de conejo. Se cura solita.',
     especial: 'Empieza con las Botellitas de agua. Recupera 0,5 de vida por segundo y +25 % de área, pero 20 de vida menos.',
     grito: '🧖 Bata y turbante: se cura solita y llena más pantalla', alCrecer: '🧖 El turbante crece: +10 % de área',
     arma: 'botellas', base: { recuperacion: 0.5, area: 0.25, vida: -20 }, crece: [{ cada: 1, stat: 'area', paso: 0.01, hasta: 15 }],

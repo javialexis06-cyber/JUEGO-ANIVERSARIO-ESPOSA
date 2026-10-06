@@ -16,7 +16,8 @@
 import * as fondo from '../segundo_plano';
 import { NOMBRE_ROL } from '../casa/modelo';
 import { SUPABASE_CLAVE_PUBLICA, SUPABASE_URL } from '../casa/servidor';
-import { aspectoDe, idAparato, perfilAmigo } from './perfil';
+import { aspectoDe, idAparato, limpiarNombre, perfilAmigo } from './perfil';
+import { normalizarDetalles } from './prendas';
 import type { ApiSalas, JugadorSala, OpcionesSala, Sala } from './tipos';
 
 /** Letras y números que no se confunden al dictarlos (sin I, L, O, 0 ni 1). */
@@ -73,6 +74,25 @@ export function yoMismo(): JugadorSala {
   if (amigo?.activo) return { id: amigo.id, nombre: amigo.nombre, tipo: 'amigo', aspecto: aspectoDe(amigo), puesto: 0 };
   const rol = rolDeLaCasa() ?? 'el';
   return { id: `${rol}-${idAparato()}`, nombre: NOMBRE_ROL[rol], tipo: rol, aspecto: { cuerpo: rol }, puesto: 0 };
+}
+
+/**
+ * Un jugador que llegó por la red, limpio: nombre corto sin etiquetas, tipo y cuerpo conocidos, colores de verdad y
+ * solo prendas que existen (lo que manda un aparato ajeno se pinta en HTML, en SVG y carga modelos).
+ */
+export function jugadorSeguro(j: JugadorSala): JugadorSala {
+  const a = (j?.aspecto ?? {}) as Partial<JugadorSala['aspecto']>;
+  const cuerpo = a.cuerpo === 'ella' ? 'ella' : 'el';
+  const hex = (v: unknown) => (typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v) ? v : undefined);
+  const tipo = j?.tipo === 'el' || j?.tipo === 'ella' ? j.tipo : 'amigo';
+  return {
+    ...j,
+    id: String(j?.id ?? '').slice(0, 40),
+    nombre: limpiarNombre(String(j?.nombre ?? '')) || 'Amigo',
+    tipo,
+    aspecto: { cuerpo, ...(hex(a.piel) ? { piel: hex(a.piel) } : {}), ...(hex(a.pelo) ? { pelo: hex(a.pelo) } : {}), detalles: normalizarDetalles(a.detalles, cuerpo) },
+    puesto: Number.isInteger(j?.puesto) ? j.puesto : -1,
+  };
 }
 
 // ---------------------------------------------------------------------------------------------------- Lo que viaja
@@ -496,6 +516,7 @@ class SalaReal implements Sala {
 
   private pideEntrar(m: Extract<Cable, { k: 'entrar' }>) {
     if (!this.soyAnfitrion) return;
+    m = { ...m, j: { ...jugadorSeguro(m.j), id: m.de } };
     const no = (motivo: 'llena' | 'cerrada' | 'juego') => this.cable({ k: 'no', de: this.yo.id, s: this.s, para: m.de, motivo, juego: this.juego });
     if (m.juego !== this.juego) return no('juego');
     const ya = this.lista.find((j) => j.id === m.de);
@@ -519,6 +540,7 @@ class SalaReal implements Sala {
 
   private llegaLista(m: Extract<Cable, { k: 'lista' }>) {
     if (this.soyAnfitrion || m.v <= this.v) return;
+    m = { ...m, js: (Array.isArray(m.js) ? m.js : []).map((j) => (j.id === this.yo.id ? j : jugadorSeguro(j))) };
     const anfitrion = m.js.find((j) => j.puesto === 0);
     if (!anfitrion || anfitrion.id !== m.de) return;
     this.v = m.v;
@@ -658,6 +680,7 @@ class SalaReal implements Sala {
 
   private terminar() {
     this.acabada = true;
+    anotarSalaAbierta(this.codigo, null);
     clearInterval(this.reloj);
     for (const q of this.quitarFondo) q();
     this.quitarFondo = [];
@@ -703,7 +726,10 @@ export async function crearSala(o: OpcionesSala): Promise<Sala> {
     await s.conectar();
     // Un momentico para ver si el código ya lo está usando alguien (casi nunca pasa)
     await new Promise((r) => setTimeout(r, local ? 1200 : 900));
-    if (!s.ocupado()) return s;
+    if (!s.ocupado()) {
+      anotarSalaAbierta(s.codigo, s.juego);
+      return s;
+    }
     s.salir();
   }
   throw new Error('No se pudo abrir una sala ahora. Intenta otra vez.');
@@ -727,13 +753,38 @@ export async function unirseSala(codigo: string, juego: string, yo?: OpcionesSal
     const limite = setTimeout(() => listo(null), 12000);
   });
   s.alEntrar = null;
-  if (r?.ok) return s;
+  if (r?.ok) {
+    anotarSalaAbierta(s.codigo, s.juego);
+    return s;
+  }
   s.salir();
   if (!r) throw new Error('No encontramos esa sala. Revisa el código (y que quien la creó siga adentro).');
   throw new Error(r.motivo === 'llena' ? 'La sala está llena (ya son 4).' : r.motivo === 'cerrada' ? 'Esa partida ya empezó: espera a que vuelvan a la sala.' : 'Ese código es de otro juego.');
 }
 
 export const salas: ApiSalas = { crearSala, unirseSala, yoMismo };
+
+const CLAVE_ABIERTA = 'salas-abierta';
+/** Anota (o borra, con juego null) la sala en la que está este aparato: «Invitar amigos» manda su código. */
+function anotarSalaAbierta(codigo: string, juego: string | null) {
+  try {
+    if (juego) localStorage.setItem(CLAVE_ABIERTA, JSON.stringify({ codigo, juego, t: Date.now() }));
+    else if (JSON.parse(localStorage.getItem(CLAVE_ABIERTA) ?? 'null')?.codigo === codigo) localStorage.removeItem(CLAVE_ABIERTA);
+  } catch {
+    /* sin almacenamiento */
+  }
+}
+
+/** La sala abierta en este aparato (de las últimas 3 horas), si hay. */
+export function salaAbierta(): { codigo: string; juego: string } | null {
+  try {
+    const v = JSON.parse(localStorage.getItem(CLAVE_ABIERTA) ?? 'null') as { codigo?: string; juego?: string; t?: number } | null;
+    if (v?.codigo && v.juego && Date.now() - (v.t ?? 0) < 3 * 3600e3) return { codigo: v.codigo, juego: v.juego };
+  } catch {
+    /* nada */
+  }
+  return null;
+}
 
 /**
  * ¿De qué juego es esta sala? (para «Unirme con un código» de la sala de juegos de amigos, que no sabe a qué juego

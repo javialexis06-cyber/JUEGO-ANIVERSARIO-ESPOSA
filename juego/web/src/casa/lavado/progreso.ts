@@ -7,6 +7,7 @@ import { CARTAS } from './cartas';
 import { DISFRACES } from './disfraces';
 import { ENEMIGOS } from './enemigos';
 import { PODER } from './tienda';
+import { cartaGuardada, disfrazGuardado } from './textos';
 import type { IdArma, IdCarta, IdEnemigo, IdEscenario, IdPasiva, Rol, Stat } from './tipos';
 
 export interface ProgresoLavado {
@@ -79,12 +80,13 @@ export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
   const mejor: Partial<Record<IdEscenario, number>> = {};
   if (esObjeto(x.mejor)) for (const k of ESCENARIOS) if (typeof x.mejor[k] === 'number') mejor[k] = entero(x.mejor[k], 24 * 3600);
   const disfraces = DISFRACES.filter((d) => d.rol === rol).map((d) => d.id);
+  const disfraz = disfrazGuardado(x.disfraz);
   return {
     oro: entero(x.oro),
     gastado: entero(x.gastado),
     poderes,
-    comprados: listaDe(x.comprados, disfraces),
-    disfraz: typeof x.disfraz === 'string' && disfraces.includes(x.disfraz) ? x.disfraz : b.disfraz,
+    comprados: listaDe(Array.isArray(x.comprados) ? x.comprados.map(disfrazGuardado) : x.comprados, disfraces),
+    disfraz: typeof disfraz === 'string' && disfraces.includes(disfraz) ? disfraz : b.disfraz,
     logros: listaDe(x.logros, LOGROS.map((l) => l.id)),
     armas: listaDe(x.armas, Object.keys(ARMAS)),
     pasivas: listaDe(x.pasivas, Object.keys(PASIVAS)),
@@ -102,7 +104,7 @@ export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
     segundos: entero(x.segundos),
     apurado: !!x.apurado,
     escenario: ESCENARIOS.includes(x.escenario) ? x.escenario : 'cara',
-    carta: typeof x.carta === 'string' && x.carta in CARTAS ? (x.carta as IdCarta) : '',
+    carta: cartaGuardada(x.carta),
     manual: !!x.manual,
     // (quien ya jugó antes no necesita el tutorial a la fuerza: lo puede ver desde el menú)
     tutorial: !!x.tutorial || entero(x.partidas) > 0,
@@ -151,34 +153,34 @@ export interface DefLogro {
 const minutosEn = (p: ProgresoLavado, e?: IdEscenario) => Math.floor((e ? p.mejor[e] ?? 0 : Math.max(0, ...Object.values(p.mejor).map((v) => v ?? 0))) / 60);
 
 export const LOGROS: DefLogro[] = [
-  { id: 'sobrevivir5', nombre: 'Cinco minuticos', desc: 'Aguanta 5 minutos en cualquier escenario', premio: 'Disfraces: Perro lanudo y La mejor guerrera de Dios · Carta «El 25 de octubre»', cumple: (p) => minutosEn(p) >= 5 },
-  { id: 'eliminar1000', nombre: 'Mil mugrosos', desc: 'Elimina 1.000 mugrosos en total', premio: 'Disfraces: Dentista del barrio y Bata y turbante · Carta «Matemáticas y filosofía»', cumple: (p) => p.eliminados >= 1000 },
-  { id: 'nivel20', nombre: 'Nivel 20', desc: 'Llega a nivel 20 en una partida', premio: 'Disfraces: Súper Jabón y Directora Yanbal · Carta «Compañeros de estudio»', cumple: (p) => p.mejorNivel >= 20 },
-  { id: 'evolucionar', nombre: '¡Evolucionó!', desc: 'Evoluciona cualquier arma', premio: 'Disfraces: Leñador del champú y Princesa del spa · Carta «Las luces de diciembre»', cumple: (p) => p.armas.some((a) => !!ARMAS[a].de) },
-  { id: 'cofres5', nombre: 'Cofres y más cofres', desc: 'Abre 5 cofres en total', premio: 'Disfraces: Bombero de la ducha y Sirena de la bañera · Carta «La villa de Transformice»', cumple: (p) => p.cofres >= 5 },
-  { id: 'velitas50', nombre: 'Apaga velitas', desc: 'Rompe 50 velitas en total', premio: 'Disfraces: Barbero de vueltiao y Estilista del secador · Carta «Cartagena»', cumple: (p) => p.velitas >= 50 },
-  { id: 'sobrevivir10', nombre: 'Diez minutos', desc: 'Aguanta 10 minutos', premio: 'Arma: Patico morado · Carta «Te busqué por todos lados»', cumple: (p) => minutosEn(p) >= 10 },
-  { id: 'cara15', nombre: 'Media lavada', desc: 'Aguanta 15 minutos en La Cara', premio: 'Escenario: El Lavamanos · Carta «De Sopetrán a Bucaramanga»', cumple: (p) => minutosEn(p, 'cara') >= 15 },
-  { id: 'lavamanos15', nombre: 'Porcelana brillante', desc: 'Aguanta 15 minutos en El Lavamanos', premio: 'Escenario: La Bañera · Carta «Halloween elegante»', cumple: (p) => minutosEn(p, 'lavamanos') >= 15 },
-  { id: 'ganarCara', nombre: '¡Carita de porcelana!', desc: 'Llega a los 30:00 en La Cara', premio: 'Disfraces: Astronauta del retrete y Ranita de la bañera · Modo Apurado · Carta «Para siempre»', cumple: (p) => p.ganados.includes('cara') },
-  { id: 'ganarLavamanos', nombre: 'Lavamanos reluciente', desc: 'Llega a los 30:00 en El Lavamanos', premio: 'Carta «La propuesta»', cumple: (p) => p.ganados.includes('lavamanos') },
-  { id: 'ganarBanera', nombre: 'Bañera de espuma', desc: 'Llega a los 30:00 en La Bañera', premio: 'Carta «Mi hogar eres tú»', cumple: (p) => p.ganados.includes('banera') },
-  { id: 'espinillon', nombre: 'Adiós, Espinillón', desc: 'Vence al Espinillón', premio: 'Carta «La primera vez que nos vimos»', cumple: (p) => (p.bestiario.espinillon ?? 0) > 0 },
-  { id: 'nivel40', nombre: 'Nivel 40', desc: 'Llega a nivel 40 en una partida', premio: 'Pasiva: Espejo roto · Carta «La meta de diciembre»', cumple: (p) => p.mejorNivel >= 40 },
-  { id: 'eliminar10000', nombre: 'Diez mil', desc: 'Elimina 10.000 mugrosos en total', premio: 'Arma: Colonia · Carta «El planetario»', cumple: (p) => p.eliminados >= 10000 },
-  { id: 'evoluciones3', nombre: 'Coleccionista', desc: 'Ten 3 armas evolucionadas distintas en la colección', premio: 'Arma: Toallita desmaquillante · Carta «Un cumpleaños de reina»', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 3 },
-  { id: 'arepas20', nombre: 'Barriga llena', desc: 'Cómete 20 arepas con queso en total', premio: 'Pasiva: Curita de corazón · Carta «Psicología»', cumple: (p) => p.arepas >= 20 },
-  { id: 'veinticuatro', nombre: 'Videollamada eterna', desc: 'Juega 24 minutos en una sola partida', premio: 'Carta «Videollamadas de 24 horas»', cumple: (p, r) => !!r && r.segundos >= 24 * 60 },
+  { id: 'sobrevivir5', nombre: 'Cinco minuticos', desc: 'Aguanta 5 minutos en cualquier escenario', premio: 'Disfraces: Perrito peludo y Guerrera del escudo · Carta «El comienzo»', cumple: (p) => minutosEn(p) >= 5 },
+  { id: 'eliminar1000', nombre: 'Mil mugrosos', desc: 'Elimina 1.000 mugrosos en total', premio: 'Disfraces: Dentista del barrio y Bata y turbante · Carta «El golpe certero»', cumple: (p) => p.eliminados >= 1000 },
+  { id: 'nivel20', nombre: 'Nivel 20', desc: 'Llega a nivel 20 en una partida', premio: 'Disfraces: Súper Jabón y Diva del perfume · Carta «El doble turno»', cumple: (p) => p.mejorNivel >= 20 },
+  { id: 'evolucionar', nombre: '¡Evolucionó!', desc: 'Evoluciona cualquier arma', premio: 'Disfraces: Leñador del champú y Princesa del spa · Carta «Luces de feria»', cumple: (p) => p.armas.some((a) => !!ARMAS[a].de) },
+  { id: 'cofres5', nombre: 'Cofres y más cofres', desc: 'Abre 5 cofres en total', premio: 'Disfraces: Bombero de la ducha y Sirena de la bañera · Carta «La alcancía de oro»', cumple: (p) => p.cofres >= 5 },
+  { id: 'velitas50', nombre: 'Apaga velitas', desc: 'Rompe 50 velitas en total', premio: 'Disfraces: Barbero de vueltiao y Estilista del secador · Carta «Sol de playa»', cumple: (p) => p.velitas >= 50 },
+  { id: 'sobrevivir10', nombre: 'Diez minutos', desc: 'Aguanta 10 minutos', premio: 'Arma: Patico morado · Carta «El silbato»', cumple: (p) => minutosEn(p) >= 10 },
+  { id: 'cara15', nombre: 'Media lavada', desc: 'Aguanta 15 minutos en La Cara', premio: 'Escenario: El Lavamanos · Carta «El viaje largo»', cumple: (p) => minutosEn(p, 'cara') >= 15 },
+  { id: 'lavamanos15', nombre: 'Porcelana brillante', desc: 'Aguanta 15 minutos en El Lavamanos', premio: 'Escenario: La Bañera · Carta «Fiesta de disfraces»', cumple: (p) => minutosEn(p, 'lavamanos') >= 15 },
+  { id: 'ganarCara', nombre: '¡Carita de porcelana!', desc: 'Llega a los 30:00 en La Cara', premio: 'Disfraces: Astronauta del retrete y Ranita de la bañera · Modo Apurado · Carta «Rebote sin fin»', cumple: (p) => p.ganados.includes('cara') },
+  { id: 'ganarLavamanos', nombre: 'Lavamanos reluciente', desc: 'Llega a los 30:00 en El Lavamanos', premio: 'Carta «El diamante»', cumple: (p) => p.ganados.includes('lavamanos') },
+  { id: 'ganarBanera', nombre: 'Bañera de espuma', desc: 'Llega a los 30:00 en La Bañera', premio: 'Carta «Con lo justo»', cumple: (p) => p.ganados.includes('banera') },
+  { id: 'espinillon', nombre: 'Adiós, Espinillón', desc: 'Vence al Espinillón', premio: 'Carta «El reloj quieto»', cumple: (p) => (p.bestiario.espinillon ?? 0) > 0 },
+  { id: 'nivel40', nombre: 'Nivel 40', desc: 'Llega a nivel 40 en una partida', premio: 'Pasiva: Espejo roto · Carta «La rueda de la fortuna»', cumple: (p) => p.mejorNivel >= 40 },
+  { id: 'eliminar10000', nombre: 'Diez mil', desc: 'Elimina 10.000 mugrosos en total', premio: 'Arma: Colonia · Carta «Las estrellas»', cumple: (p) => p.eliminados >= 10000 },
+  { id: 'evoluciones3', nombre: 'Coleccionista', desc: 'Ten 3 armas evolucionadas distintas en la colección', premio: 'Arma: Toallita desmaquillante · Carta «La corona de hierro»', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 3 },
+  { id: 'arepas20', nombre: 'Barriga llena', desc: 'Cómete 20 arepas con queso en total', premio: 'Pasiva: Curita de corazón · Carta «La curita mágica»', cumple: (p) => p.arepas >= 20 },
+  { id: 'veinticuatro', nombre: 'Maratón de lavado', desc: 'Juega 24 minutos en una sola partida', premio: 'Carta «La maratón»', cumple: (p, r) => !!r && r.segundos >= 24 * 60 },
 ];
 
 export const LOGRO = Object.fromEntries(LOGROS.map((l) => [l.id, l])) as Record<string, DefLogro>;
 
 /** Qué logro desbloquea cada carta. */
 export const CARTA_LOGRO: Record<IdCarta, string> = {
-  octubre: 'sobrevivir5', matematicas: 'eliminar1000', estudio: 'nivel20', lucesMedellin: 'evolucionar', transformice: 'cofres5',
-  cartagena: 'velitas50', buscarte: 'sobrevivir10', sopetran: 'cara15', halloween: 'lavamanos15', paraSiempre: 'ganarCara',
-  propuesta: 'ganarLavamanos', hogar: 'ganarBanera', primeraVez: 'espinillon', metaDiciembre: 'nivel40', planetario: 'eliminar10000',
-  reina: 'evoluciones3', psicologia: 'arepas20', videollamadas: 'veinticuatro',
+  comienzo: 'sobrevivir5', certero: 'eliminar1000', dobleTurno: 'nivel20', lucesFeria: 'evolucionar', oroBrillante: 'cofres5',
+  solPlaya: 'velitas50', silbato: 'sobrevivir10', viajeLargo: 'cara15', fiestaDisfraces: 'lavamanos15', reboteSinFin: 'ganarCara',
+  diamante: 'ganarLavamanos', conLoJusto: 'ganarBanera', relojQuieto: 'espinillon', ruedaFortuna: 'nivel40', estrellas: 'eliminar10000',
+  coronaHierro: 'evoluciones3', curitaMagica: 'arepas20', maraton: 'veinticuatro',
 };
 /** Las armas y pasivas secretas (no salen en las cartas hasta su logro). */
 export const SECRETO_LOGRO: Partial<Record<IdArma | IdPasiva, string>> = {

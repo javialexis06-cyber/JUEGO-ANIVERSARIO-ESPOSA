@@ -203,7 +203,7 @@ export function statsMaestria(nivel: number): Partial<Stats> {
 }
 
 /** El perfil con que un jugador entra a la expedición (permanentes del Pozo + maestría de la clase). */
-export function perfilDe(p: ProgresoSangre, datos: { id: string; nombre: string; puesto: number; clase: IdClase; spec: number; equipo: Partial<Record<RanuraEquipo, string>>; cuerpo: 'el' | 'ella'; tipo: 'el' | 'ella' | 'amigo'; piel?: string; pelo?: string }, arsenal: [string, string, string, string], pozoStats: (nivel: Record<string, number>) => { meta: Partial<Stats>; tiradas: number; vetos: number }): PerfilJugador {
+export function perfilDe(p: ProgresoSangre, datos: { id: string; nombre: string; puesto: number; clase: IdClase; spec: number; equipo: Partial<Record<RanuraEquipo, string>>; cuerpo: 'el' | 'ella'; tipo: 'el' | 'ella' | 'amigo'; piel?: string; pelo?: string; detalles?: Record<string, string> }, arsenal: [string, string, string, string], pozoStats: (nivel: Record<string, number>) => { meta: Partial<Stats>; tiradas: number; vetos: number }): PerfilJugador {
   const nv = nivelMaestria(p.maestria[datos.clase] ?? 0).nivel;
   const { meta, tiradas, vetos } = pozoStats(p.pozo);
   const sm = statsMaestria(nv);
@@ -215,7 +215,7 @@ export function perfilDe(p: ProgresoSangre, datos: { id: string; nombre: string;
   return {
     id: datos.id, nombre: datos.nombre, puesto: datos.puesto, clase: datos.clase, spec: Math.min(datos.spec, specsDisponibles(nv) - 1), meta: total, equipo,
     arsenal: arsenal.slice(0, armasDisponibles(nv)), comunes: [...p.comunes], tiradas: 1 + tiradas, vetos: vetos, cuerpo: datos.cuerpo, tipo: datos.tipo,
-    piel: datos.piel, pelo: datos.pelo,
+    piel: datos.piel, pelo: datos.pelo, ...(datos.detalles ? { detalles: datos.detalles } : {}),
   };
 }
 

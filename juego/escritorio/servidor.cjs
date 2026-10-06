@@ -6,7 +6,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 /** Si el primero está ocupado por otro programa se prueba el siguiente. */
-const PUERTOS = [47615, 47616, 47617, 47618];
+// (la versión para amigos usa otros, en package.json: así las dos apps pueden estar abiertas a la vez sin cambiar
+// de dirección ni perder lo guardado)
+const PUERTOS = require('./package.json').puertos ?? [47615, 47616, 47617, 47618];
 
 const TIPOS = {
   '.html': 'text/html; charset=utf-8',

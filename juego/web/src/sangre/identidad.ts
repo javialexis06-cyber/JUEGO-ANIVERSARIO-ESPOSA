@@ -2,6 +2,7 @@
 // un amigo con su perfil de la sala de juegos de amigos. Lee las mismas claves que las salas (`src/salas/`), así el
 // mismo aparato es la misma persona en todos lados.
 import { NOMBRE_ROL } from '../casa/modelo';
+import { aspectoDe, perfilAmigo } from '../salas/perfil';
 
 export type TipoYo = 'el' | 'ella' | 'amigo';
 
@@ -12,6 +13,8 @@ export interface Yo {
   cuerpo: 'el' | 'ella';
   piel?: string;
   pelo?: string;
+  /** Lo del creador de personajes (solo los amigos). */
+  detalles?: Record<string, string>;
 }
 
 const CLAVE_AMIGO = 'nuestro-hogar-amigo';
@@ -65,6 +68,10 @@ export function quienSoy(params = new URLSearchParams(location.search)): Yo {
     return {
       id: typeof amigo.id === 'string' ? amigo.id : `amigo-${idAparato()}`, nombre: limpiarNombre(amigo.nombre) || 'Amigo', tipo: 'amigo',
       cuerpo: amigo.cuerpo === 'ella' ? 'ella' : 'el', piel: color(amigo.piel), pelo: color(amigo.pelo),
+      detalles: (() => {
+        const pa = perfilAmigo();
+        return pa ? aspectoDe(pa).detalles : undefined;
+      })(),
     };
   }
   const rol = rolDeLaCasa(params);

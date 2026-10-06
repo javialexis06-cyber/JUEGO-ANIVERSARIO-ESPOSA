@@ -11,7 +11,8 @@ import type { Ranura } from '../../modelo';
 import type { Jugador } from '../motor';
 import type { Rol } from '../tipos';
 import type { AspectoJugador } from '../../../salas/tipos';
-import { teñirModelo } from '../../../salas/tinte';
+import { piezaDeItem, trajeDe, type Pieza, type RanuraAmigo } from '../../../salas/prendas';
+import { Vestidor } from '../../../salas/vestir';
 import { ELEVACION } from './sprites';
 
 
@@ -103,8 +104,8 @@ export class Jugador3D {
   private escala: number;
   listo = false;
 
-  /** Materiales propios (los del modelo los comparten todos: el tinte de un amigo no se le pega a nadie). */
-  private propios: THREE.Material[] = [];
+  /** El vestidor de los amigos: su cara, su pelo y (con el disfraz inicial) su ropa, tal cual los armó. */
+  private vestAmigo: Vestidor | null = null;
 
   constructor(readonly rol: Rol, readonly disfraz: DefDisfraz, readonly aspecto?: AspectoJugador) {
     this.escala = ALTO_PERSONAJE / 2.6;
@@ -120,8 +121,14 @@ export class Jugador3D {
 
   async cargar() {
     await this.p.cargarPoses(this.rol);
-    await this.vest.aplicar(this.disfraz.ropa).catch(() => undefined);
-    for (const [r, a] of Object.entries(this.disfraz.ajustes ?? {}) as [Ranura, Ajuste][]) for (const m of this.vest.mallasDe(r)) retocar(m as THREE.SkinnedMesh, a);
+    const propia = this.aspecto ? await this.vestirAmigo(this.aspecto).catch(() => false) : false;
+    if (!this.aspecto) await this.vest.aplicar(this.disfraz.ropa).catch(() => undefined);
+    // (los retoques son para las prendas del disfraz; con la ropa propia del amigo no hacen falta)
+    if (!propia) {
+      for (const [r, a] of Object.entries(this.disfraz.ajustes ?? {}) as [Ranura, Ajuste][]) {
+        for (const m of this.vestAmigo?.mallasDe(r) ?? this.vest.mallasDe(r)) retocar(m as THREE.SkinnedMesh, a);
+      }
+    }
     const lib = await cargarAccesorios();
     if (lib) {
       for (const a of this.disfraz.accesorios) {
@@ -163,15 +170,31 @@ export class Jugador3D {
       const que = this.disfraz.sinPelo === 'todo' ? /^(mechon|cabello)/ : /^mechon/;
       for (const [n, l] of this.p.partes) if (que.test(n)) for (const o of l) o.visible = false;
     }
-    if (this.aspecto) this.teñir(this.aspecto);
     this.p.pose('reposo', true);
     this.p.sincronizar();
     this.listo = true;
   }
 
-  /** Los colores del perfil de amigo: piel, pelo, camiseta, pantalón y zapatos (en copias de los materiales). */
-  private teñir(a: AspectoJugador) {
-    if (this.p.modelo) this.propios.push(...teñirModelo(this.p.modelo, a));
+  /**
+   * Un amigo, tal cual lo armó en el creador: con el disfraz inicial va con SU ropa (y el accesorio del disfraz en la
+   * mano); con los demás, el disfraz encima y su peinado si el disfraz no trae nada en la cabeza. Su piel, su pelo,
+   * sus ojos, sus cejas, su rubor y sus joyas, siempre. Devuelve si quedó con su ropa propia.
+   */
+  private async vestirAmigo(a: AspectoJugador): Promise<boolean> {
+    const propio = trajeDe(a);
+    const conPropia = !!this.disfraz.inicial;
+    let piezas: Partial<Record<RanuraAmigo, Pieza>> = propio;
+    if (!conPropia) {
+      piezas = {};
+      for (const [r, id] of Object.entries(this.disfraz.ropa) as [RanuraAmigo, string][]) {
+        const pz = id ? piezaDeItem(id, this.rol) : null;
+        if (pz) piezas[r] = pz;
+      }
+      if (propio.pelo && !piezas.cabeza && !piezas.pelo && !this.disfraz.sinPelo) piezas.pelo = propio.pelo;
+    }
+    this.vestAmigo = new Vestidor(this.p, this.rol);
+    await this.vestAmigo.aplicar(a, piezas);
+    return conPropia;
   }
 
   /** Lo que pasó: golpe, celebración (al subir de nivel) o lo que sea con cara propia. */
@@ -239,8 +262,8 @@ export class Jugador3D {
 
   liberar() {
     this.vest.liberar();
-    for (const m of this.propios) m.dispose();
-    this.propios = [];
+    this.vestAmigo?.liberar();
+    this.vestAmigo = null;
     this.raiz.removeFromParent();
   }
 }

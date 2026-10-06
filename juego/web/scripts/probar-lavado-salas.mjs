@@ -52,7 +52,7 @@ const rol = ${k === 1 ? "'ella'" : k === 3 ? "'ella'" : "'el'"};
 const prog = L.progresoLavadoNuevo(rol);
 prog.tutorial = true;
 // (los de la pareja con disfraces y carta de amor que dirían cosas personales si no estuviera el modo neutro)
-if (!amigo) { prog.disfraz = rol === 'el' ? 'el_panda' : 'ella_pulga'; prog.carta = 'octubre'; prog.logros = ['sobrevivir5']; }
+if (!amigo) { prog.disfraz = rol === 'el' ? 'el_panda' : 'ella_pulga'; prog.carta = 'comienzo'; prog.logros = ['sobrevivir5']; }
 window.__avisos = [];
 new MutationObserver(() => document.querySelectorAll('.lv-aviso, .lv-jefe').forEach((a) => a.textContent && window.__avisos.push(a.textContent))).observe(document.body, { subtree: true, childList: true, characterData: true });
 window.__arrancar = (unirse) => L.jugarLavado({
@@ -212,7 +212,7 @@ const solo = await esperarQue(() => javier.evaluate(() => !window.__lavado.actua
 revisar(solo, 'A Caro se le escogió sola la mejora y el juego siguió');
 
 // 6. Cartas mágicas: a Pipe le sale una carta perdida y no ve recuerdos de la pareja
-await javier.evaluate((i) => (window.__lavado.actual.m.jug[i].cartaOpciones = ['octubre', 'cartagena', 'sopetran']), idx.Pipe);
+await javier.evaluate((i) => (window.__lavado.actual.m.jug[i].cartaOpciones = ['comienzo', 'solPlaya', 'viajeLargo']), idx.Pipe);
 revisar(await esperarQue(() => pipe.evaluate(() => !document.querySelector('.lv-c-carta').hidden), 10000), 'A Pipe le sale una carta perdida');
 await espera(600);
 await foto(pipe, '4-carta');

@@ -6,6 +6,9 @@ import * as THREE from 'three';
 import { clone as clonarConEsqueleto } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { Personaje } from '../../personaje';
 import { cargarAnimado, liberarEsqueletos } from '../../recursos';
+import { ponerJoyas } from '../../salas/joyas';
+import { joyasDe, piezaDe } from '../../salas/prendas';
+import { cargarPrenda } from '../../salas/vestir';
 import { ARMAS } from '../datos/armas';
 import { CLASES } from '../datos/clases';
 import type { IdClase } from '../tipos';
@@ -53,6 +56,8 @@ export interface PerfilVista {
   clase: IdClase;
   piel?: string;
   pelo?: string;
+  /** Lo del creador de personajes de los amigos (peinado, ojos, cejas, rubor, joyas). */
+  detalles?: Record<string, string>;
 }
 
 class Muneco3D {
@@ -105,14 +110,64 @@ class Muneco3D {
     this.listo = true;
   }
 
-  /** Piel y pelo de los amigos (Él y Ella usan los suyos). */
+  /** Piel, pelo, ojos, cejas y rubor de los amigos, tal cual en su creador (Él y Ella usan los suyos). */
   private teñir() {
-    const { piel, pelo } = this.perfil;
+    const { piel, pelo, detalles: d = {} } = this.perfil;
+    const hex = (v: string | undefined) => (v && /^#[0-9a-f]{6}$/i.test(v) ? v : undefined);
     for (const m of this.mats) {
       const n = m.name.toLowerCase();
       if (piel && /piel/.test(n)) m.color.set(piel);
-      if (pelo && /cabello|pelo/.test(n)) m.color.set(pelo);
+      if (pelo && /cabello|\bpelo\b|mechon/.test(n)) m.color.set(pelo);
+      if (/cejas/.test(n)) {
+        if (d.cejas === 'no') m.visible = false;
+        else if (hex(d.cejas)) m.color.set(d.cejas);
+        else if (pelo) m.color.set(pelo).multiplyScalar(0.7);
+      }
+      if (/ojos charol/.test(n) && hex(d.ojos)) m.color.set(d.ojos);
+      if (/rubor/.test(n)) {
+        if (d.rubor === 'no') m.visible = false;
+        else if (hex(d.rubor) && !/brillo/.test(n)) m.color.set(d.rubor);
+      }
     }
+  }
+
+  /** El peinado del creador (si el traje de la clase deja ver el pelo) y las joyas. */
+  private joyas: { quitar(): void } | null = null;
+  private async peinadoYJoyas(tapa: string[]): Promise<string[]> {
+    const { cuerpo, detalles: d } = this.perfil;
+    this.joyas?.quitar();
+    this.joyas = null;
+    if (!d) return tapa;
+    const pieza = piezaDe(d.peinado, 'pelo', cuerpo);
+    const tapaPelo = TAPA_RANURA[cuerpo].pelo;
+    if (pieza && !tapaPelo.some((x) => tapa.includes(x))) {
+      const mallas = await cargarPrenda(this.p, pieza.modelo, cuerpo).catch(() => null);
+      const raiz = this.p.raizMallas;
+      if (mallas?.length && raiz) {
+        for (const m of mallas) {
+          iluminarObjeto(m, true);
+          for (const x of Array.isArray(m.material) ? m.material : [m.material]) {
+            const mat = x as THREE.MeshStandardMaterial;
+            if (/\bpelo\b/.test(mat.name) && this.perfil.pelo) mat.color.set(this.perfil.pelo);
+            else if (pieza.colores[mat.name.slice(pieza.modelo.length + 1).split(' ')[0]]) mat.color.set(pieza.colores[mat.name.slice(pieza.modelo.length + 1).split(' ')[0]]);
+            this.mats.push(mat);
+          }
+          raiz.add(m);
+          this.traje.push(m);
+        }
+        tapa = [...tapa, ...tapaPelo];
+      }
+    }
+    const j = ponerJoyas(this.p, joyasDe({ cuerpo, detalles: d }));
+    for (const o of j.objetos) {
+      iluminarObjeto(o, false);
+      o.traverse((x) => {
+        const m = x as THREE.Mesh;
+        if (m.isMesh) for (const y of Array.isArray(m.material) ? m.material : [m.material]) this.mats.push(y as THREE.MeshStandardMaterial);
+      });
+    }
+    this.joyas = j;
+    return tapa;
   }
 
   /** El traje de la clase: el de verdad si existe, si no la ropa teñida con capa y tocado. */
@@ -152,6 +207,7 @@ class Muneco3D {
       tapa = [];
       this.trajeReemplazo();
     }
+    tapa = await this.peinadoYJoyas(tapa);
     this.p.tapar(tapa);
   }
 

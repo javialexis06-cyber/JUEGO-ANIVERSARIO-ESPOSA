@@ -75,17 +75,52 @@ Reglas para los juegos:
 
 ## El modo amigo
 
-- En «¿Quién eres?» (index.html) está **«Soy un amigo / una amiga»**: lleva a `amigos.html?perfil`, donde pone su
-  nombre, escoge muñeco (el de Javier, «pelo corto», o el de Laura, «pelo largo») y colores de piel, pelo, camiseta,
-  pantalón y zapatos, con el muñeco en 3D girando en un pedestal (`src/amigos/muneco.ts`). Se guarda en el aparato
-  (`nuestro-hogar-amigo`) con un id propio (`amigo-…`) y se puede cambiar cuando quiera («✏️ Mi muñeco»).
-- La **sala de juegos de amigos** (`amigos.html`, `src/amigos/`): su muñeco, **Sangre y Ceniza** (abre
-  `./sangre.html`; si todavía no existe dice «Muy pronto»), **Lavarse la cara** en modo neutro (con su progreso
-  guardado en el aparato, `amigo-lavado-progreso`) y **Unirme con un código** (averigua el juego y entra).
+- En «¿Quién eres?» (index.html) está **«Soy un amigo / una amiga»**: lleva a `amigos.html?perfil`, el **creador de
+  personajes** (`src/amigos/creador.ts`): el muñeco grande en su **estudio de fotos** (`muneco.ts`: fondo curvo,
+  pedestal de felpa, lámparas; se gira arrastrando, zoom con la rueda o pellizcando, poses, saluda y presume lo que
+  estrena) y el **vestidor** con pestañas: cuerpo y piel (molde de Javier o de Laura), peinado y color, cara (ojos,
+  cejas, rubor, medias), arriba, abajo, zapatos, gorros, complementos (gafas, espalda, colitas), **joyas** (aretes y
+  collares) y **conjuntos** completos (`conjuntos.ts`), cada prenda con sus colores, «al azar» y deshacer. La vista
+  previa enseña cómo se verá en la sala, en Lavarse la cara y en Sangre y Ceniza. Todo sale del **clóset genérico**
+  (`src/salas/prendas.ts` y `vestir.ts`), nada de la pareja. El **perfil** se guarda en el aparato
+  (`nuestro-hogar-amigo`, id propio `amigo-…`) y se cambia cuando quiera («Editar mi personaje»).
+- La **sala de juegos de amigos** (`amigos.html`, `src/amigos/main.ts`): su muñeco, los juegos aptos (`juegos.ts`:
+  solo los que tienen `<meta name="apto-amigos" content="si">`; los demás salen «Muy pronto»), «Crear sala» y
+  «Unirme con un código». **Sangre y Ceniza** usa el muñeco del amigo tal cual lo vistió.
 - **Nunca carga la casa**: index.html, puertas.html, mesa.html y super.html tienen una guardia en el `<head>` que
   manda a `amigos.html` mientras el perfil esté activo (también al recargar o con atrás). En Android, atrás desde su
   sala cierra la app. Si Javier o Laura tocaron el botón por error: «¿Eres Javier o Laura?» (abajo, pequeñito) pide
   confirmar y vuelve al inicio.
+- Lo que llega de otro aparato por la sala se limpia antes de pintarlo (`jugadorSeguro` en `sala.ts`: nombre corto,
+  colores de verdad, solo prendas que existen).
+
+## Versión para amigos (app aparte «Sala de Juegos»)
+
+Para pasarle el juego a amigos sin que se lleven nada de la pareja hay una **compilación aparte**:
+
+- `npm run build:amigos` (`vite build --mode amigos`, carpeta `dist-amigos`): solo las páginas de `PAGINAS_AMIGOS`
+  (`amigos.html` y `sangre.html`; un juego nuevo para amigos se agrega ahí y en `src/amigos/juegos.ts`). De `src/`
+  solo entra lo de `PERMITIDOS_AMIGOS` (si algo más se cuela, la compilación falla con el nombre del archivo) y lo
+  personal se cambia por su versión vacía (`src/amigos/sin_pareja/`: el modelo, la sincronización y el catálogo de
+  la casa, y lo personal del lavado, que vive aparte en `src/casa/lavado/pareja.ts`). De `public/` solo se copia lo
+  que usan esos juegos (`PUBLICOS_AMIGOS`, más la ropa del clóset genérico).
+- Después, `scripts/verificar-amigos.mjs` revisa **todo** `dist-amigos` (JavaScript, HTML, CSS, JSON, SVG y los
+  nombres de mallas y materiales de los GLB) contra `scripts/palabras-pareja.mjs` (apodos, lugares, chistes) y los
+  recuerdos de docs/cien-puertas.md y del lavado. Si encuentra algo, falla y GitHub Actions no publica.
+- **App de Android** «Sala de Juegos» (`com.javialexis.salajuegos`, se instala al lado de Nuestro Hogar): el job
+  `apk-amigos` del workflow compila la versión para amigos, corre `scripts/android-amigos.mjs` (cambia id, nombre,
+  ícono y pantalla de arranque con los de `android-amigos/res`, que dibuja `scripts/iconos-amigos.mjs`) y
+  `NH_AMIGOS=1 npx cap sync android` (`capacitor.config.ts` toma `dist-amigos`). Publica
+  **NuestroHogar-Amigos.apk** en la misma versión de Releases que la de la pareja.
+- **Programa de computador**: el job `exe-amigos` arma el mismo Electron (`juego/escritorio`) con `dist-amigos`
+  adentro, el ícono de `build-amigos`, el nombre «Sala de Juegos» y otros puertos (47625-47628: las dos apps pueden
+  estar abiertas a la vez sin mezclar lo guardado) y publica **NuestroHogar-Amigos.exe**.
+- Los dos jobs van después de la APK de la pareja (`needs: apk`) y no la tocan: si la versión para amigos falla,
+  la de la pareja igual sale.
+- **«Invitar amigos»** (menú de la casa, solo en la versión de la pareja; `src/amigos/invitar.ts`): comparte por
+  WhatsApp (o copia, o muestra para copiar) un mensaje con los dos enlaces de descarga
+  (`releases/latest/download/NuestroHogar-Amigos.apk` y `.exe`) y, si hay una sala abierta en el aparato, su código.
+  Ojo: los enlaces llevan el nombre del repositorio, y el repositorio es público.
 
 ## Pruebas
 
@@ -93,7 +128,9 @@ Reglas para los juegos:
   quinto «llena», 60 fiables de cada uno a cada uno en orden, rápidos, cortes, segundo plano, empezar con la entrada
   cerrada y el anfitrión que se va.
 - `node scripts/probar-lavado-salas.mjs <url>`: Lavarse la cara de a cuatro (ver docs/nuestro-hogar.md).
-- `node scripts/probar-amigos.mjs <url>`: el modo amigo de punta a punta y que no vea nada personal.
+- `node scripts/probar-amigos.mjs <url>`: el modo amigo de punta a punta (creador por pestañas, sala, guardias) y que
+  no vea nada personal.
+- `npm run build:amigos`: compila la versión para amigos y la revisa con `verificar-amigos.mjs`.
 - `scripts/supabase-falso.mjs` (el Supabase de mentiras reutilizable) y `scripts/palabras-pareja.mjs` (lo que un amigo
   nunca debe ver).
 - En la máquina de pruebas, con cuatro navegadores a la vez, los celulares de atrás van muy lentos: las pruebas

@@ -2859,6 +2859,7 @@ function hojaMenu() {
       <button class="accion" data-hoja="plano">${ico('casa')}<span>Ampliar la casa</span></button>
       <button class="accion" data-hoja="trofeos">${ico('trofeo')}<span>Trofeos</span></button>
       <button class="accion" data-hoja="tienda">${ico('tienda')}<span>Tienda</span></button>
+      <button class="accion" data-invitar>${ico('juegos')}<span>Invitar amigos</span></button>
       <button class="accion" data-hoja="ajustes">${ico('ajustes')}<span>Ajustes</span></button>
     </div>`;
   abrirHoja('Nuestro Hogar', html, { saldo: s?.casa.monedas });
@@ -3244,6 +3245,8 @@ function controles() {
     } else if ((b = d('[data-poner]'))) void ponerDeco(b.dataset.poner!, b.dataset.sitio!);
     else if ((b = d('[data-quitar-deco]'))) void quitarDeco(b.dataset.quitarDeco!);
     else if (d('[data-compartir]')) compartirCodigo();
+    // Los enlaces de la versión para amigos (sin nada de la pareja) y el código de la sala abierta, si hay
+    else if (d('[data-invitar]')) void import('../amigos/invitar').then((m) => m.invitarAmigos());
     else if (d('[data-musica]')) {
       sonido.musica.alternar();
       hojaAjustes();

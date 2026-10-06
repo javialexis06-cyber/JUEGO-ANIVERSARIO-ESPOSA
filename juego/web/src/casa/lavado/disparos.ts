@@ -16,7 +16,7 @@ const E = { dano: 0, area: 0, vel: 0, cant: 0, dur: 0, enfr: 0, perfora: 0, crit
 
 function calcular(j: Jugador, a: ArmaJ) {
   const b = a.b;
-  const zona = ZONA.has(a.id) && j.tieneCarta('planetario');
+  const zona = ZONA.has(a.id) && j.tieneCarta('estrellas');
   E.dano = b.dano * (1 + j.st.poder) * (zona ? 1.5 : 1);
   E.area = b.area * Math.max(0.3, 1 + j.st.area) * (zona ? 1 + 0.5 * Math.max(0, j.st.poder) : 1);
   E.vel = b.vel * Math.max(0.3, 1 + j.st.velocidad);
@@ -24,7 +24,7 @@ function calcular(j: Jugador, a: ArmaJ) {
   E.dur = b.dur * Math.max(0.3, 1 + j.st.duracion);
   E.enfr = Math.max(0.05, b.enfr * (1 - j.st.enfriamiento));
   E.perfora = b.perfora;
-  const mat = j.tieneCarta('matematicas');
+  const mat = j.tieneCarta('certero');
   E.crit = (b.crit + (mat ? 0.1 : 0)) * (1 + j.st.suerte);
   E.critX = b.critX || 2;
   E.golpeCada = Math.max(0.12, b.golpeCada);
@@ -129,7 +129,7 @@ function golpe(m: Motor, j: Jugador, slot: number, e: Enemigo, dano: number, cri
 export function actualizarArmas(m: Motor, j: Jugador, dt: number) {
   const moviendo = Math.hypot(j.vx, j.vy) > 20;
   let ritmo = 1;
-  if (j.tieneCarta('sopetran') && moviendo) ritmo *= 1.3;
+  if (j.tieneCarta('viajeLargo') && moviendo) ritmo *= 1.3;
   if (j.arranque > 0) ritmo *= 1 + 6 * (j.arranque / Math.max(1, j.disfraz.arranque ?? 1));
   for (let slot = 0; slot < j.armas.length; slot++) {
     const a = j.armas[slot];
@@ -153,7 +153,7 @@ export function actualizarArmas(m: Motor, j: Jugador, dt: number) {
     if (a.rafaga <= 0 && a.t <= 0) {
       a.total = E.cant;
       // Compañeros de estudio: a veces la tarea se hace dos veces
-      if (j.tieneCarta('estudio') && m.az.n() < 0.25) a.total *= 2;
+      if (j.tieneCarta('dobleTurno') && m.az.n() < 0.25) a.total *= 2;
       a.rafaga = a.total;
       a.tr = 0;
       a.t = E.enfr;
@@ -588,7 +588,7 @@ export function moverProyectiles(m: Motor, dt: number) {
     }
     if (p.vida <= 0) {
       p.vivo = false;
-      if (j && !p.mini && COMP_LUCES.has(p.comp) && j.tieneCarta('lucesMedellin')) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
+      if (j && !p.mini && COMP_LUCES.has(p.comp) && j.tieneCarta('lucesFeria')) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
       continue;
     }
     if (!j) continue;
@@ -617,8 +617,8 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
     if (luz) continue;
     // Rana glotona: lo que se traga lo escupe en gotas doradas
     if (!e.vivo && p.arma === 'ranaGlotona' && m.az.n() < 0.3) m.soltar('moneda', e.x, e.y);
-    if (j.tieneCarta('propuesta') && e.vivo && m.az.n() < 0.12) e.congelado = Math.max(e.congelado, 1.5);
-    if (j.tieneCarta('halloween') && !p.mini && m.az.n() < 0.2 && (p.comp === 0 || p.comp === 2)) {
+    if (j.tieneCarta('diamante') && e.vivo && m.az.n() < 0.12) e.congelado = Math.max(e.congelado, 1.5);
+    if (j.tieneCarta('fiestaDisfraces') && !p.mini && m.az.n() < 0.2 && (p.comp === 0 || p.comp === 2)) {
       const c = libre(m);
       if (c) {
         c.vivo = true;
@@ -633,7 +633,7 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
       p.perfora--;
       if (p.perfora <= 0) {
         // Para siempre: rebota a otro
-        if (j.tieneCarta('paraSiempre') && p.n < 2 && (p.comp === 0)) {
+        if (j.tieneCarta('reboteSinFin') && p.n < 2 && (p.comp === 0)) {
           const o = masCercano(m, p.x, p.y, 260, e.uid);
           if (o) {
             const v = Math.hypot(p.vx, p.vy);
@@ -648,7 +648,7 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
           }
         }
         p.vivo = false;
-        if (!p.mini && j.tieneCarta('lucesMedellin') && COMP_LUCES.has(p.comp)) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
+        if (!p.mini && j.tieneCarta('lucesFeria') && COMP_LUCES.has(p.comp)) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
       }
     }
   }

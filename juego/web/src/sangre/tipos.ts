@@ -278,5 +278,7 @@ export interface PerfilJugador {
   cuerpo: 'el' | 'ella';
   piel?: string;
   pelo?: string;
+  /** Lo del creador de personajes de los amigos (peinado, ojos, cejas, rubor, joyas…; ver src/salas/prendas.ts). */
+  detalles?: Record<string, string>;
   tipo: 'el' | 'ella' | 'amigo';
 }
