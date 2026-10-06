@@ -1,5 +1,7 @@
 // El mando: en el celular, un joystick transparente que aparece donde se toca (mitad izquierda) y el botón de la
 // habilidad; en el computador, WASD o las flechas, espacio para la habilidad, Esc para pausar y la rueda para el zoom.
+// Tocar algo del mundo (clic del mouse, o el dedo fuera del joystick) lo recoge o lo abre: si está lejos, el
+// personaje camina hasta tenerlo al alcance de la mano (mover el joystick o las teclas cancela).
 const $ = (id: string) => document.getElementById(id)!;
 
 export class Mando {
@@ -18,6 +20,15 @@ export class Mando {
   /** Teclas numéricas (para escoger cartas con el teclado). */
   alNumero: (n: number) => void = () => undefined;
   alTecla: (k: string) => void = () => undefined;
+  /** Tocó el mundo en (px, py) de la pantalla (quien juega busca qué hay ahí y llama a `ir`). */
+  alTocar: (px: number, py: number) => void = () => undefined;
+  /** ¿Hay algo para tocar bajo el puntero? (para la manito del mouse) */
+  alSobre: (px: number, py: number) => boolean = () => false;
+  /** Hacia dónde camina solo (lo que se tocó) y cuánto lleva sin acercarse. */
+  private meta: { x: number; y: number; t: number; mejor: number; quieto: number } | null = null;
+  private guiando = false;
+  private pedido: { x: number; y: number } | null = null;
+  private sobreT = 0;
   private quitar: (() => void)[] = [];
 
   constructor() {
@@ -29,6 +40,7 @@ export class Mando {
     const abajo = (e: PointerEvent) => {
       if (!this.activo || this.dedo !== null) return;
       if (e.pointerType === 'mouse' && !this.tactil) return;
+      this.cancelarMeta();
       this.dedo = e.pointerId;
       this.ox = e.clientX;
       this.oy = e.clientY;
@@ -68,6 +80,24 @@ export class Mando {
       this.mx = this.my = 0;
       joy.classList.remove('activo');
     };
+    // Tocar el mundo: el mouse en cualquier parte del juego; el dedo, fuera de la zona del joystick
+    const tocar = (e: PointerEvent) => {
+      if (!this.activo || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      const id = (e.target as HTMLElement | null)?.id;
+      if (id !== 'lienzo' && !(id === 'zona-joystick' && e.pointerType === 'mouse' && !this.tactil)) return;
+      this.alTocar(e.clientX, e.clientY);
+    };
+    const sobre = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse' || !this.activo) return;
+      const ahora = performance.now();
+      if (ahora - this.sobreT < 90) return;
+      this.sobreT = ahora;
+      const id = (e.target as HTMLElement | null)?.id;
+      document.body.classList.toggle('mano', (id === 'lienzo' || id === 'zona-joystick') && this.alSobre(e.clientX, e.clientY));
+    };
+    addEventListener('pointerdown', tocar);
+    addEventListener('pointermove', sobre, { passive: true });
+    this.quitar.push(() => removeEventListener('pointerdown', tocar), () => removeEventListener('pointermove', sobre));
     zona.addEventListener('pointerdown', abajo);
     zona.addEventListener('pointermove', mover);
     zona.addEventListener('pointerup', arriba);
@@ -113,8 +143,54 @@ export class Mando {
     if (t.has('w') || t.has('arrowup')) y -= 1;
     if (t.has('s') || t.has('arrowdown')) y += 1;
     const l = Math.hypot(x, y);
+    if (l) this.cancelarMeta();
+    else if (this.guiando) return;
     this.mx = l ? x / l : 0;
     this.my = l ? y / l : 0;
+  }
+
+  /** Caminar solo hasta (x, y) del mundo para tomar lo que hay ahí. */
+  ir(x: number, y: number) {
+    if (!this.activo) return;
+    this.meta = { x, y, t: 0, mejor: Infinity, quieto: 0 };
+  }
+
+  private cancelarMeta() {
+    this.meta = null;
+    if (this.guiando) {
+      this.guiando = false;
+      if (this.dedo === null) this.mx = this.my = 0;
+    }
+  }
+
+  /** Cada cuadro, antes de leer mx/my: si va caminando solo hacia algo, lo lleva; al tenerlo al alcance de la mano
+   *  deja el pedido de tomarlo. Se rinde si se atasca (una pared en medio) o tarda mucho. */
+  guiar(dt: number, jx: number, jy: number, alcance: number) {
+    const m = this.meta;
+    if (!m) return;
+    if (this.dedo !== null) return this.cancelarMeta();
+    const dx = m.x - jx, dy = m.y - jy;
+    const d = Math.hypot(dx, dy);
+    if (d <= alcance - 0.3) {
+      this.pedido = { x: m.x, y: m.y };
+      return this.cancelarMeta();
+    }
+    m.t += dt;
+    if (d < m.mejor - 0.25) {
+      m.mejor = d;
+      m.quieto = 0;
+    } else m.quieto += dt;
+    if (m.t > 7 || m.quieto > 1.2) return this.cancelarMeta();
+    this.guiando = true;
+    this.mx = dx / d;
+    this.my = dy / d;
+  }
+
+  /** ¿Hay algo tocado para tomar? (se consume) */
+  tomarPedido() {
+    const p = this.pedido;
+    this.pedido = null;
+    return p;
   }
 
   /** El botón de la habilidad (del HUD). */
@@ -131,6 +207,9 @@ export class Mando {
 
   /** Suelta todo (al abrir un menú o pausar). */
   soltar() {
+    this.meta = null;
+    this.guiando = false;
+    this.pedido = null;
     this.mx = this.my = 0;
     this.dedo = null;
     this.teclas.clear();
@@ -143,6 +222,7 @@ export class Mando {
   }
 
   liberar() {
+    document.body.classList.remove('mano');
     for (const q of this.quitar) q();
   }
 }

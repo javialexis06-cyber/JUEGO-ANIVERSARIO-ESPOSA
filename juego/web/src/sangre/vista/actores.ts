@@ -211,7 +211,9 @@ export class Actores {
         a.x = e.x;
         a.y = e.y;
         this.antes.set(e.id, a);
-        this.lote('prisionero').poner(e.x, e.y, a.rot, encadenado ? 0.9 : 1, encadenado ? 0 : e.t * 3, 0, 0, 0, 0, encadenado ? 0 : C_ALIADO.r, encadenado ? 0 : C_ALIADO.g, encadenado ? 0 : C_ALIADO.b, encadenado ? 0 : 0.35);
+        // (mientras lo liberan forcejea con las cadenas, más fuerte a medida que se sueltan)
+        const forcejeo = encadenado && e.prog > 0.01 ? Math.sin(v.t * 21) * 0.18 * (0.4 + e.prog) : 0;
+        this.lote('prisionero').poner(e.x, e.y, a.rot + forcejeo, encadenado ? 0.9 : 1, encadenado ? 0 : e.t * 3, 0, 0, 0, 0, encadenado ? 0 : C_ALIADO.r, encadenado ? 0 : C_ALIADO.g, encadenado ? 0 : C_ALIADO.b, encadenado ? 0 : 0.35);
         this.sombra(e.x, e.y, 0.35);
         continue;
       }
@@ -250,6 +252,12 @@ export class Actores {
         o.position.y = Math.abs(Math.sin(v.t * 9)) * 0.02 * (e.cuenta ? 1 : 0);
       }
       if (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.SANTUARIO) o.visible = true;
+      // Mientras lo abren: el cofre tiembla y salta cada vez más; el santuario late
+      if (e.est === 0 && e.prog > 0.01 && (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.COFRE_MALDITO)) {
+        o.rotation.z = Math.sin(v.t * 38) * 0.05 * e.prog;
+        o.position.y = Math.abs(Math.sin(v.t * 19)) * 0.05 * e.prog;
+      } else if (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.COFRE_MALDITO) o.rotation.z = 0;
+      if (e.est === 0 && e.tipo === ENT.SANTUARIO) o.scale.setScalar(1 + (e.prog > 0.01 ? Math.sin(v.t * 9) * 0.03 * e.prog : 0));
       if (e.est === 2 && (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.SANTUARIO)) o.scale.setScalar(Math.max(0.001, o.scale.x - dt * 2));
       this.sombra(e.x, e.y, e.tipo === ENT.CARRETA ? 1 : 0.6);
     }

@@ -12,7 +12,7 @@ import { TIPOS, esJefe } from '../sim/catalogo';
 import { ENT, MOV, S, type Aliado, type Entidad, type Enemigos, type Proyectil, type Recogible, type Sucesos, type Zona } from '../sim/estado';
 import type { Jugador } from '../sim/jugador';
 import type { Mapa } from '../sim/mapa';
-import { RADIO_CAMPANA } from '../sim/objetivos';
+import { RADIO_ABRIR, RADIO_CAMPANA, RADIO_LIBERAR, esTocable } from '../sim/objetivos';
 import { Actores } from './actores';
 import { Cosas3D } from './cosas3d';
 import { Efectos } from './efectos';
@@ -48,6 +48,13 @@ const COLOR_ZONA: Record<number, THREE.Color> = {
   0: new THREE.Color('#7ad040'), 1: new THREE.Color('#ff6a1a'), 2: new THREE.Color('#9fe0ff'), 3: new THREE.Color('#ffe8a0'), 4: new THREE.Color('#7aa040'),
   5: new THREE.Color('#4a7a3a'), 6: new THREE.Color('#888888'), 7: new THREE.Color('#a01020'), 8: new THREE.Color('#6a3aa0'), 9: new THREE.Color('#9a5aff'),
   10: new THREE.Color('#fff0c0'), 11: new THREE.Color('#ff2010'),
+};
+/** Color del anillo de cada cosa que se abre o se libera. */
+const COLOR_USO: Record<number, THREE.Color> = {
+  [ENT.PRISIONERO]: new THREE.Color('#f0e4c8'),
+  [ENT.SANTUARIO]: new THREE.Color('#a8c8ff'),
+  [ENT.COFRE_RELIQUIA]: new THREE.Color('#c890ff'),
+  [ENT.COFRE_MALDITO]: new THREE.Color('#ff6a5a'),
 };
 const COLOR_EXPLOSION = ['#ff7a2a', '#fff0a0', '#8aff4a', '#a8f0ff', '#d01828', '#a060ff', '#a89880'];
 
@@ -293,6 +300,16 @@ export class Escena3D {
     // La Campana de Extracción: haz de luz que no se apaga y el círculo donde hay que pararse, con la cuenta
     const c = est.campana;
     this.efectos.marcaCampana(c, RADIO_CAMPANA, c && c.est === 1 ? c.cuenta / CUENTA_EXTRACCION : 1, !!c && c.est === 1 && c.cuenta < 10);
+    // El área de lo que se abre o se libera: aparece al acercarse y se llena mientras alguien lo usa
+    const yo = est.J[this.local];
+    const usos: Parameters<Efectos['marcasUso']>[0] = [];
+    for (const e of est.ent) {
+      if (!esTocable(e)) continue;
+      const r = e.tipo === ENT.PRISIONERO ? RADIO_LIBERAR : RADIO_ABRIR;
+      const d = yo ? Math.hypot(yo.x - e.x, yo.y - e.y) : 99;
+      usos.push({ id: e.id, x: e.x, y: e.y, r, lleno: e.prog, fuerza: Math.max(0, Math.min(1, 1 - (d - r) / 4)), color: COLOR_USO[e.tipo] });
+    }
+    this.efectos.marcasUso(usos);
     this.efectos.actualizar(dt, this.tiempo);
     // Jugadores
     for (const j of est.J) {
@@ -458,7 +475,12 @@ export class Escena3D {
     return out;
   }
 
-  /** Del punto de la pantalla al piso (para apuntar con el ratón). */
+  /** Se tocó algo para recogerlo: una onda pequeña donde está (para saber que el toque sirvió). */
+  marcarToque(x: number, y: number) {
+    this.efectos?.onda(x, y, 0.9, '#ffe8a0', 0.35);
+  }
+
+  /** Del punto de la pantalla al piso (para tocar cosas con el mouse o el dedo). */
   alPiso(px: number, py: number): { x: number; y: number } | null {
     const v = new THREE.Vector3((px / this.lienzo.clientWidth) * 2 - 1, -(py / this.lienzo.clientHeight) * 2 + 1, 0.5).unproject(this.camara);
     const d = v.sub(this.camara.position).normalize();

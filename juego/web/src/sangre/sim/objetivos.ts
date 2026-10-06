@@ -5,10 +5,10 @@ import { CUENTA_EXTRACCION } from '../datos/mundo';
 import { C } from '../tipos';
 import { TIPO, TIPO_ALTAR } from './catalogo';
 import { aparecerEnemigo, modsElite } from './enemigos_ia';
-import { ENT, type Entidad, REC, S } from './estado';
+import { ENT, type Entidad, REC, type Recogible, S } from './estado';
 import { CampoFlujo } from './flujo';
 import { aparecerJefe } from './jefes';
-import { RADIO_JUGADOR } from './jugador';
+import { type Jugador, RADIO_JUGADOR } from './jugador';
 import { nuevaEntidad } from './mecanicas';
 import { encolarBendicion, encolarCofre, encolarReliquia } from './opciones';
 import type { Sim } from './sim';
@@ -17,6 +17,15 @@ import type { Sim } from './sim';
 export const RADIO_CAMPANA = 3.2;
 /** Lo que tarda en bajar (s). */
 export const BAJADA_CAMPANA = 5;
+/** Áreas para abrir (cofres de reliquias, santuarios, cofres malditos) y liberar prisioneros: más grandes que el
+ *  dibujo, para que baste con pasar cerca (el anillo del piso las muestra). */
+export const RADIO_ABRIR = 2.1;
+export const RADIO_LIBERAR = 2.3;
+/** Área para recoger los cofres y el equipo que sueltan los élites, y las llaves. */
+export const RADIO_GRANDE = 1.5;
+export const RADIO_LLAVE = 1.7;
+/** Hasta dónde llega la mano al tocar algo con el mouse o el dedo (más lejos, el personaje camina hasta allá). */
+export const ALCANCE_MANO = 4.5;
 
 /** Celdas abiertas lejos del inicio, separadas entre sí, con espacio alrededor. */
 function lugares(sim: Sim, n: number, min: number, sep: number, max = 999): { x: number; y: number }[] {
@@ -235,12 +244,29 @@ function jugadorA(sim: Sim, x: number, y: number, r: number) {
   return mejor;
 }
 
+/** Quién está abriendo o liberando `e`: el que está dentro del área o el que lo tocó y sigue al alcance de la mano. */
+function quienUsa(sim: Sim, e: Entidad, radio: number) {
+  const j = jugadorA(sim, e.x, e.y, radio);
+  if (j) return j;
+  for (const o of sim.J) {
+    if (o.usa !== e.id) continue;
+    if (o.estado === 0 && (o.x - e.x) ** 2 + (o.y - e.y) ** 2 < (ALCANCE_MANO + 0.8) ** 2) return o;
+    o.usa = -1;
+  }
+  return null;
+}
+/** Ya terminó con `e`: nadie lo sigue usando. */
+function soltarUso(sim: Sim, e: Entidad) {
+  for (const o of sim.J) if (o.usa === e.id) o.usa = -1;
+}
+
 function prisionero(sim: Sim, e: Entidad, dt: number) {
   if (e.est === 0) {
-    const j = jugadorA(sim, e.x, e.y, 1.7);
+    const j = quienUsa(sim, e, RADIO_LIBERAR);
     if (j) {
       e.prog += dt / 4;
       if (e.prog >= 1) {
+        soltarUso(sim, e);
         e.est = 1;
         e.quien = j.i;
         sim.obj.prog++;
@@ -344,10 +370,11 @@ function campanaDefensa(sim: Sim, e: Entidad, dt: number) {
 
 function abrible(sim: Sim, e: Entidad, dt: number) {
   if (e.est !== 0) return;
-  const j = jugadorA(sim, e.x, e.y, 1.5);
+  const j = quienUsa(sim, e, RADIO_ABRIR);
   if (e.t > 0) e.t -= dt;
   if (!j) {
-    e.prog = Math.max(0, e.prog - dt);
+    // (se pierde despacio: si la horda obliga a salir un momento, al volver sigue casi donde iba)
+    e.prog = Math.max(0, e.prog - dt * 0.35);
     return;
   }
   if (e.tipo === ENT.COFRE_RELIQUIA && !(j.m.llaves > 0) && !j.tiene('llave_oro')) {
@@ -359,6 +386,7 @@ function abrible(sim: Sim, e: Entidad, dt: number) {
   }
   e.prog += dt / (e.tipo === ENT.SANTUARIO ? 1.5 : 1.2);
   if (e.prog < 1) return;
+  soltarUso(sim, e);
   e.est = 2;
   e.quien = j.i;
   if (e.tipo === ENT.COFRE_RELIQUIA) {
@@ -454,6 +482,57 @@ function extraccion(sim: Sim, e: Entidad, dt: number) {
     secundario: sim.sec.prog,
     prisioneros,
   };
+}
+
+// ------------------------------------------------------------------------------------------------- Con la mano
+/** ¿Se abre o se libera tocándolo? (cofres de reliquias, santuarios, cofres malditos y prisioneros encadenados) */
+export function esTocable(e: Entidad) {
+  return e.vivo && e.est === 0 && (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.SANTUARIO || e.tipo === ENT.COFRE_MALDITO || e.tipo === ENT.PRISIONERO);
+}
+
+/** Lo que hay para recoger o abrir donde se tocó (lo más cercano al punto), o null. Lo usan el aparato (para caminar
+ *  hasta allá) y la simulación (para tomarlo). */
+export function buscarTocable(est: { R: Recogible[]; ent: Entidad[] }, x: number, y: number): { x: number; y: number; ent: number } | null {
+  let mejor: { x: number; y: number; ent: number } | null = null;
+  let md = Infinity;
+  for (const r of est.R) {
+    if (!r.vivo || r.hacia >= 0) continue;
+    const d = (r.x - x) ** 2 + (r.y - y) ** 2;
+    if (d < 1.4 * 1.4 && d < md) {
+      md = d;
+      mejor = { x: r.x, y: r.y, ent: -1 };
+    }
+  }
+  for (const e of est.ent) {
+    if (!esTocable(e)) continue;
+    // (las cosas grandes se tocan desde un poco más lejos y ganan si el toque cae entre las dos)
+    const d = (e.x - x) ** 2 + (e.y - y) ** 2 - 0.6;
+    if (d < 1.9 * 1.9 && d < md) {
+      md = d;
+      mejor = { x: e.x, y: e.y, ent: e.id };
+    }
+  }
+  return mejor;
+}
+
+/** El jugador tocó (x, y): si hay algo al alcance de la mano, lo atrae (botín) o empieza a abrirlo (cofres, santuarios,
+ *  prisioneros). Lo que está cerca del punto tocado viene todo junto (un montón de oro se recoge de un toque). */
+export function tomarConMano(sim: Sim, j: Jugador, x: number, y: number) {
+  if (j.estado !== 0) return;
+  const alcance2 = ALCANCE_MANO * ALCANCE_MANO;
+  const b = buscarTocable(sim, x, y);
+  if (!b) return;
+  if ((b.x - j.x) ** 2 + (b.y - j.y) ** 2 > (ALCANCE_MANO + 0.6) ** 2) return;
+  if (b.ent >= 0) {
+    j.usa = b.ent;
+    return;
+  }
+  for (const r of sim.R) {
+    if (!r.vivo || r.hacia >= 0) continue;
+    if ((r.x - b.x) ** 2 + (r.y - b.y) ** 2 > 1.6 * 1.6 || (r.x - j.x) ** 2 + (r.y - j.y) ** 2 > alcance2 + 4) continue;
+    r.hacia = j.i;
+    r.espera = 0;
+  }
 }
 
 export { RADIO_JUGADOR };

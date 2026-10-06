@@ -143,6 +143,16 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   amortiguado y se adelanta un poquito hacia donde uno camina; las sacudidas son ondas suaves y cortas (no
   temblor), con tope, y se pueden apagar en la pausa («Sacudidas: sí/no», se guarda en el aparato); la linterna
   titila apenas. El piloto automático, con la campana abajo, huye menos y se queda adentro del círculo.
+- **Recoger y abrir** (Javier pidió áreas más grandes, clic y una barrita): las áreas son más grandes que el dibujo
+  (cofres y equipo de los élites 1,5 m, llaves 1,7 m, cofres de reliquias / santuarios / cofres malditos 2,1 m,
+  prisioneros 2,3 m), así que en el celular basta con pasar cerca. Tocar algo (clic del mouse, o el dedo fuera del
+  joystick) lo toma con la mano hasta 4,5 m: el botín viene volando (un montón de oro de un toque) y lo que se abre se
+  abre desde ahí; si está más lejos, el personaje camina solo hasta tenerlo a la mano (mover el joystick o las teclas
+  cancela; se rinde si una pared estorba). En el computador sale la manito encima de lo que se puede tocar. Mientras
+  se abre o se libera: un anillo en el piso que muestra el área y se llena como un reloj, una barrita encima
+  («Rezando…», «Abriendo…», «Liberando…», «Rompiendo el sello…»), el cofre tiembla y el prisionero forcejea. El
+  progreso se pierde despacio si toca alejarse. En grupo, el toque del invitado viaja en su mando y el anfitrión lo
+  aplica. Los paneles del HUD que solo informan dejan pasar el toque (solo los botones lo reciben).
 - **La horda** arranca con unos cuantos y a los 4 minutos son cientos (tope 260 + 70 por jugador extra). Por cada
   jugador extra: +38 % de vida, +60 % de enemigos, +30 % de élites y el botín se reparte.
 - **Experiencia compartida** en grupo; cada uno escoge sus cartas. Solo, el juego espera mientras escoge; en grupo

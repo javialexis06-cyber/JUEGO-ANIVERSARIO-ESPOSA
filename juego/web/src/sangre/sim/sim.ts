@@ -14,7 +14,7 @@ import { actualizarArmas, moverProyectiles, moverZonas } from './armas';
 import { dirigirHorda, moverEnemigos, aparecerEnemigo } from './enemigos_ia';
 import { moverAliados } from './aliados';
 import * as mec from './mecanicas';
-import { prepararObjetivos, actualizarObjetivos, llamarCampana } from './objetivos';
+import { prepararObjetivos, actualizarObjetivos, llamarCampana, tomarConMano, RADIO_GRANDE, RADIO_LLAVE } from './objetivos';
 import { encolarNivel, encolarSobrecarga } from './opciones';
 import { jefeMuerto } from './jefes';
 import { Golpe } from './golpe';
@@ -148,6 +148,8 @@ export class Sim {
       }
       j.caidoT = 0;
       j.levantar = 0;
+      j.usa = -1;
+      j.pideTomar = null;
       j.invul = 2;
       j.habT = Math.min(j.habT, 3);
       j.cola = j.cola.filter((e) => e.motivo !== 'bendicion');
@@ -733,6 +735,10 @@ export class Sim {
         j.pideHabilidad = false;
         if (j.habT <= 0) mec.habilidad(this, j);
       }
+      if (j.pideTomar) {
+        tomarConMano(this, j, j.pideTomar.x, j.pideTomar.y);
+        j.pideTomar = null;
+      }
       actualizarArmas(this, j, dt);
     }
     this.levantarCaidos(dt);
@@ -1002,7 +1008,8 @@ export class Sim {
         const grande = r.tipo === REC.COFRE || r.tipo === REC.EQUIPO;
         for (const j of this.J) {
           if (j.estado !== 0) continue;
-          const rad = grande ? 0.9 : r.tipo === REC.LLAVE ? 1.2 : j.radioIman;
+          // (el área de recoger es más grande que el dibujo: basta con pasar cerca)
+          const rad = grande ? RADIO_GRANDE : r.tipo === REC.LLAVE ? RADIO_LLAVE : j.radioIman;
           if ((j.x - r.x) ** 2 + (j.y - r.y) ** 2 < rad * rad) {
             r.hacia = j.i;
             break;

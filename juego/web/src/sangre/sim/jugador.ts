@@ -150,6 +150,10 @@ export class Jugador {
   mx = 0;
   my = 0;
   pideHabilidad = false;
+  /** Tocó algo con el mouse o el dedo para recogerlo (punto del piso; se consume en el paso). */
+  pideTomar: { x: number; y: number } | null = null;
+  /** El cofre, santuario o prisionero que está abriendo desde lejos por tocarlo (id, −1 ninguno). */
+  usa = -1;
   /** Lo controla otro aparato: la posición la manda él (el anfitrión no lo mueve). */
   remoto = false;
   hp = 100;

@@ -10,6 +10,8 @@ import type { Escena3D } from '../vista/escena';
 import { Hud } from '../ui/hud';
 import { VistaEleccion } from '../ui/eleccion';
 import type { Mando } from '../ui/mando';
+import { engancharToque, soltarToque } from '../ui/tocar';
+import { ALCANCE_MANO } from '../sim/objetivos';
 import { Espejo } from './espejo';
 import { MSJ, aplicarJugador, serializarJugador, type DatosJugador, type Foto } from './protocolo';
 import type { FinEtapa } from '../sim/sim';
@@ -42,6 +44,9 @@ export class PartidaInvitado {
   private ultimoDibujo = 0;
   private mandoT = 0;
   private habCuenta = 0;
+  /** Lo último que tocó para recoger y cuántas veces (el anfitrión toma el pedido cuando la cuenta sube). */
+  private toma: [number, number] = [0, 0];
+  private tomaCuenta = 0;
   private quitar: (() => void)[] = [];
   private pendiente: { e: Eleccion | null; tiradas: number; vetos: number; t: number; llego: number } | null = null;
   private armando = false;
@@ -60,6 +65,7 @@ export class PartidaInvitado {
       if (this.eleccion.abierta) this.eleccion.tecla(n);
     };
     o.escena.local = o.local;
+    engancharToque(o.mando, o.escena, () => this.espejo?.sim ?? null);
     const s = o.sala;
     this.quitar.push(
       s.al(MSJ.FOTO, (d) => {
@@ -141,6 +147,13 @@ export class PartidaInvitado {
     const t0 = performance.now();
     const m = this.o.mando;
     const eligiendo = !!this.pendiente?.e;
+    const yo = esp.yo;
+    if (yo && !eligiendo && !this.pausado && !this.pausaExterna) m.guiar(dt, yo.x, yo.y, ALCANCE_MANO);
+    const toma = m.tomarPedido();
+    if (toma && !eligiendo) {
+      this.toma = [toma.x, toma.y];
+      this.tomaCuenta++;
+    }
     const mx = eligiendo || this.pausado || this.pausaExterna ? 0 : m.mx, my = eligiendo || this.pausado || this.pausaExterna ? 0 : m.my;
     if (m.tomarHabilidad() && !eligiendo) this.habCuenta++;
     esp.avanzar(dt, mx, my);
@@ -149,7 +162,7 @@ export class PartidaInvitado {
     const j = esp.yo;
     if (this.mandoT >= 1 / 15 && j) {
       this.mandoT = 0;
-      this.o.sala.mandar(MSJ.MANDO, [+j.x.toFixed(2), +j.y.toFixed(2), +j.vx.toFixed(2), +j.vy.toFixed(2), +j.fx.toFixed(2), +j.fy.toFixed(2), +mx.toFixed(2), +my.toFixed(2), this.habCuenta], { rapido: true });
+      this.o.sala.mandar(MSJ.MANDO, [+j.x.toFixed(2), +j.y.toFixed(2), +j.vx.toFixed(2), +j.vy.toFixed(2), +j.fx.toFixed(2), +j.fy.toFixed(2), +mx.toFixed(2), +my.toFixed(2), this.habCuenta, +this.toma[0].toFixed(2), +this.toma[1].toFixed(2), this.tomaCuenta], { rapido: true });
     }
     // Cartas
     const p = this.pendiente;
@@ -218,6 +231,7 @@ export class PartidaInvitado {
     this.eleccion.cerrar();
     this.hud.esconder();
     this.hud.liberar();
+    soltarToque(this.o.mando);
     this.espejo?.liberar();
   }
 }

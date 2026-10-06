@@ -13,6 +13,8 @@ import type { Escena3D, EstadoVista } from './vista/escena';
 import { Hud } from './ui/hud';
 import { VistaEleccion } from './ui/eleccion';
 import type { Mando } from './ui/mando';
+import { engancharToque, soltarToque } from './ui/tocar';
+import { ALCANCE_MANO } from './sim/objetivos';
 
 export const DT = 1 / 30;
 
@@ -73,6 +75,7 @@ export class Partida {
       if (this.eleccion.abierta) this.eleccion.tecla(n);
     };
     o.escena.local = o.local;
+    engancharToque(o.mando, o.escena, () => this.sim);
   }
 
   get local() {
@@ -145,6 +148,11 @@ export class Partida {
       // Mando del jugador local (o el bot)
       if (j) {
         if (!bots.includes(this.o.local)) {
+          // (si tocó algo lejos, el mando lo lleva caminando hasta tenerlo a la mano)
+          // (con el tiempo del juego, no el del reloj: en un aparato lento no se rinde antes de tiempo)
+          this.o.mando.guiar(Math.min(dtReal * rapido, 3 * rapido * DT), j.x, j.y, ALCANCE_MANO);
+          const toma = this.o.mando.tomarPedido();
+          if (toma) j.pideTomar = toma;
           j.mx = this.o.mando.mx;
           j.my = this.o.mando.my;
           if (this.o.mando.tomarHabilidad()) j.pideHabilidad = true;
@@ -244,5 +252,6 @@ export class Partida {
     this.eleccion.cerrar();
     this.hud.esconder();
     this.hud.liberar();
+    soltarToque(this.o.mando);
   }
 }

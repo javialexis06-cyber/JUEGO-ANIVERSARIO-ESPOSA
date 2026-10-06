@@ -15,6 +15,8 @@ interface Remoto {
   i: number;
   id: string;
   hab: number;
+  /** Cuántas veces ha tocado algo para recogerlo (para no repetir el pedido). */
+  toma: number;
   eligiendoT: number;
   claveEleccion: string;
   ultimo: number;
@@ -39,7 +41,7 @@ export class Anfitrion {
 
   constructor(private sala: Sala, ids: string[], private local: number) {
     ids.forEach((id, i) => {
-      if (i !== local) this.remotos.set(id, { i, id, hab: 0, eligiendoT: 0, claveEleccion: '', ultimo: 0 });
+      if (i !== local) this.remotos.set(id, { i, id, hab: 0, toma: 0, eligiendoT: 0, claveEleccion: '', ultimo: 0 });
     });
     this.quitar.push(
       sala.al(MSJ.MANDO, (d, de) => this.alMando(d as number[], de.id)),
@@ -73,7 +75,7 @@ export class Anfitrion {
     const r = this.remotos.get(id);
     const j = r && this.sim?.J[r.i];
     if (!r || !j) return;
-    const [x, y, vx, vy, fx, fy, mx, my, hab] = d;
+    const [x, y, vx, vy, fx, fy, mx, my, hab, tx, ty, toma] = d;
     r.ultimo = performance.now();
     // Si el anfitrión lo está moviendo (embestida, encanto), manda el anfitrión
     if (j.estado === 0 && !mec.embistiendo(j) && j.encantoT <= 0 && this.sim!.mapa.libre(Math.floor(x), Math.floor(y))) {
@@ -91,6 +93,11 @@ export class Anfitrion {
     if (hab > r.hab) {
       r.hab = hab;
       j.pideHabilidad = true;
+    }
+    // (los invitados de antes no mandan el toque: llega undefined)
+    if (typeof toma === 'number' && toma > r.toma) {
+      r.toma = toma;
+      j.pideTomar = { x: tx, y: ty };
     }
   }
 

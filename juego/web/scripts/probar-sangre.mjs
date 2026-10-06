@@ -169,11 +169,12 @@ if (cuales.includes('celular')) {
   const x1 = await p.evaluate(() => window.__sangre().J[0].x);
   await toque('touchEnd', 0, 0);
   ok(x1 > x0 + 1, `el joystick mueve a la derecha (${x0.toFixed(1)} → ${x1.toFixed(1)})`);
-  await p.waitForTimeout(800);
+  // (frena en unas décimas del juego, no en seco: se espera a que pare, sin tardar más de unos segundos de reloj)
+  await p.waitForFunction(() => Math.hypot(window.__sangre().J[0].vx, window.__sangre().J[0].vy) < 0.5 || !document.getElementById('eleccion').hidden, null, { timeout: 8000, polling: 100 }).catch(() => undefined);
   const v = await p.evaluate(() => Math.hypot(window.__sangre().J[0].vx, window.__sangre().J[0].vy));
   // (si justo subió de nivel, el juego está esperando la carta: lo que importa es que el mando se soltó)
   const suelto = await p.evaluate(() => ({ mx: window.__sangrePartida().o.mando.mx, carta: !document.getElementById('eleccion').hidden }));
-  ok(suelto.mx === 0 && (v < 0.5 || suelto.carta), 'al soltar se detiene');
+  ok(suelto.mx === 0 && (v < 0.5 || suelto.carta), `al soltar se detiene (mando ${suelto.mx}, velocidad ${v.toFixed(2)})`);
   if (suelto.carta) await p.locator('#eleccion .carta').first().tap();
   await p.locator('[data-e="hab"]').tap();
   await p.waitForTimeout(1500);

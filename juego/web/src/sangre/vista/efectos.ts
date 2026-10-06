@@ -176,6 +176,31 @@ const FRAG_ANILLO = /* glsl */ `
   }
 `;
 
+/** El área de lo que se abre o se libera (cofres, santuarios, prisioneros): un borde punteado que gira despacio y,
+ *  mientras alguien lo usa, un arco grueso que se va llenando (la barrita de progreso en el piso). */
+const FRAG_USO = /* glsl */ `
+  uniform vec3 uColor; uniform float uTiempo; uniform float uLleno; uniform float uFuerza;
+  varying vec2 vUv;
+  void main() {
+    vec2 p = vUv * 2.0 - 1.0;
+    float r = length( p );
+    if ( r > 1.0 ) discard;
+    // (empieza arriba y se llena como las agujas del reloj, visto desde la cámara)
+    float a = atan( -p.x, -p.y ) / 6.2831853 + 0.5;
+    float trazo = step( 0.42, fract( a * 26.0 - uTiempo * 0.3 ) );
+    float borde = smoothstep( 0.89, 0.93, r ) * ( 1.0 - smoothstep( 0.97, 1.0, r ) ) * ( 0.3 + 0.7 * trazo );
+    float banda = smoothstep( 0.71, 0.75, r ) * ( 1.0 - smoothstep( 0.84, 0.88, r ) );
+    float usando = step( 0.001, uLleno );
+    float arco = banda * step( a, uLleno );
+    // La punta del arco brilla más (se ve avanzar)
+    float punta = banda * smoothstep( 0.05, 0.0, uLleno - a ) * step( a, uLleno );
+    float brillo = 0.85 + 0.15 * sin( uTiempo * 8.0 );
+    float alfa = borde * uFuerza * ( 0.32 + 0.38 * usando ) + arco * brillo + punta * 0.6 + banda * usando * 0.07 + usando * 0.04;
+    gl_FragColor = vec4( mix( uColor, vec3( 1.0 ), punta * 0.6 ) * 1.15, alfa );
+    ${FIN}
+  }
+`;
+
 const FRAG_RAYO = /* glsl */ `
   uniform float uProg; uniform vec3 uColor;
   varying vec2 vUv;
@@ -257,6 +282,9 @@ export class Efectos {
   /** El haz (adentro y su halo) y el círculo de la campana: uno solo, se crea la primera vez. */
   private campanaMallas: { haz: THREE.Mesh; halo: THREE.Mesh; anillo: THREE.Mesh } | null = null;
   private zonasLibres: THREE.Mesh[] = [];
+  /** Los anillos de lo que se abre o se libera (por id de la entidad). */
+  private usos = new Map<number, THREE.Mesh>();
+  private usosLibres: THREE.Mesh[] = [];
   private hacerZona: () => THREE.Mesh;
   private tiempo = { value: 0 };
 
@@ -419,6 +447,39 @@ export class Efectos {
     const ua = (anillo.material as THREE.ShaderMaterial).uniforms;
     ua.uResto.value = Math.max(0, Math.min(1, resto));
     ua.uUrge.value = urge ? 1 : 0;
+  }
+
+  /** Los anillos de las cosas que se abren o se liberan cerca: `lleno` 0-1 (0 = nadie lo usa), `fuerza` según lo
+   *  cerca que esté el jugador (lejos no se dibuja). */
+  marcasUso(lista: { id: number; x: number; y: number; r: number; lleno: number; fuerza: number; color: THREE.Color }[]) {
+    const vistas = new Set<number>();
+    for (const u of lista) {
+      if (u.fuerza <= 0.01 && u.lleno <= 0) continue;
+      vistas.add(u.id);
+      let m = this.usos.get(u.id);
+      if (!m) {
+        m = this.usosLibres.pop();
+        if (!m) {
+          m = sombreador(FRAG_USO, { uColor: { value: new THREE.Color() }, uTiempo: { value: 0 }, uLleno: { value: 0 }, uFuerza: { value: 1 } }, PLANO, 3)();
+          (m.material as THREE.ShaderMaterial).uniforms.uTiempo = this.tiempo;
+          this.grupo.add(m);
+        }
+        m.visible = true;
+        this.usos.set(u.id, m);
+      }
+      m.position.set(u.x, 0.05, u.y);
+      m.scale.setScalar(u.r);
+      const un = (m.material as THREE.ShaderMaterial).uniforms;
+      un.uColor.value.copy(u.color);
+      un.uLleno.value = Math.min(1, u.lleno);
+      un.uFuerza.value = u.fuerza;
+    }
+    for (const [id, m] of this.usos) {
+      if (vistas.has(id)) continue;
+      m.visible = false;
+      this.usosLibres.push(m);
+      this.usos.delete(id);
+    }
   }
 
   actualizar(dt: number, t: number) {

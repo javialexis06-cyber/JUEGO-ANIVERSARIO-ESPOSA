@@ -66,6 +66,14 @@ const AVISOS: Record<number, (a: number, b: number, nombre: (i: number) => strin
   20: (a) => [EVENTOS[(['enjambre', 'cerco', 'lluvia_huesos', 'eclipse', 'marea', 'cofre_maldito'] as IdEvento[])[a]]?.aviso ?? '', 'peligro'],
 };
 
+/** La barrita de lo que se abre o se libera: qué dice y de qué color. */
+const USO: Record<number, { texto: string; color: string; alto: number }> = {
+  [ENT.PRISIONERO]: { texto: 'Liberando…', color: '#f0e4c8', alto: 2 },
+  [ENT.SANTUARIO]: { texto: 'Rezando…', color: '#a8c8ff', alto: 2.35 },
+  [ENT.COFRE_RELIQUIA]: { texto: 'Abriendo…', color: '#c890ff', alto: 1.3 },
+  [ENT.COFRE_MALDITO]: { texto: 'Rompiendo el sello…', color: '#ff6a5a', alto: 1.3 },
+};
+
 export class Hud {
   private raiz = $('hud');
   private lienzo = $('superpuesto') as HTMLCanvasElement;
@@ -395,6 +403,29 @@ export class Hud {
         g.fillStyle = '#9ab8ff';
         g.fillRect((P.x - 22) * r, (P.y - 3) * r, 44 * r * Math.min(1, E.escudo[i] / (E.hpMax[i] * 0.5)), 2 * r);
       }
+    }
+    // Barrita de lo que se está abriendo o liberando (encima de la cosa, además del anillo del piso)
+    for (const e of est.ent) {
+      if (!e.vivo || e.est !== 0 || e.prog <= 0.01 || !(e.tipo in USO)) continue;
+      const u = USO[e.tipo];
+      // (encima del dibujo, sin taparlo)
+      this.escena.aPantalla(e.x, u.alto, e.y, P);
+      if (!P.visible) continue;
+      const w = 54, h = 7, x0 = P.x - w / 2, y0 = P.y;
+      g.fillStyle = 'rgba(0,0,0,0.78)';
+      g.fillRect((x0 - 2) * r, (y0 - 2) * r, (w + 4) * r, (h + 4) * r);
+      g.fillStyle = 'rgba(255,255,255,0.08)';
+      g.fillRect(x0 * r, y0 * r, w * r, h * r);
+      g.fillStyle = u.color;
+      g.fillRect(x0 * r, y0 * r, w * r * Math.min(1, e.prog), h * r);
+      g.fillStyle = 'rgba(255,255,255,0.35)';
+      g.fillRect(x0 * r, y0 * r, w * r * Math.min(1, e.prog), 2 * r);
+      g.font = `700 ${Math.round(10 * r)}px Georgia, serif`;
+      g.lineWidth = 3 * r;
+      g.strokeStyle = 'rgba(0,0,0,0.9)';
+      g.strokeText(u.texto, P.x * r, (y0 - 9) * r);
+      g.fillStyle = '#f2e8d2';
+      g.fillText(u.texto, P.x * r, (y0 - 9) * r);
     }
     // Flechas a lo importante: campana, objetivo, prisioneros, carreta, santuarios
     if (est.campana && est.campana.est < 2) this.flecha(est.campana.x, est.campana.y, '#ffd890', est, true);

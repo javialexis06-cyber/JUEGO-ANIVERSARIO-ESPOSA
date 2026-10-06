@@ -17,8 +17,6 @@ velocidad, se siente raro…»
   texturas».
 - **Visión astral** (un modo de ver en gris o similar, con un botón) que deje identificar lo del piso: menas, cofres,
   campana, objetos. **Que nada salga señalado en el mapa salvo la campana de extracción.**
-- **Recoger objetos**: en computador, con clic del mouse; en celular, pasando por encima. **Áreas de recolección más
-  grandes** (no el dibujo, solo el área) y una barrita o animación de que se está recogiendo/interactuando.
 - **La Forja**: al mejorar algo no debe devolver al principio de la lista (que se quede donde estabas). Revisar el
   **aura dorada de subir de nivel**, que no sale (parece error).
 - **Más Deep Rock Galactic**: mapas más grandes, más importancia a la minería, partidas más largas.
