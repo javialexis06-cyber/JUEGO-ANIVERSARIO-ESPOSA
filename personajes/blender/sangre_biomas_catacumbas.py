@@ -241,7 +241,7 @@ def p_losas(f, semilla, polvo=0.4, agua=None):
         n = C.fbm_piso(P, 3, 3, 500)
         col = base * (1 + 0.2 * n)[:, None]
         col = col * (1 + 0.07 * C.ruido_piso(P, 20, 501))[:, None]
-        grietas = suave(0.88, 0.97, 1 - np.abs(C.ruido_piso(P, 4, 502 + semilla)))
+        grietas = C.grieta_piso(P, 4, 502 + semilla)
         col = col * (1 - 0.45 * grietas)[:, None]
         col = mezclar(col, hx('#BCB29C'), suave(0.15, 0.55, C.fbm_piso(P, 2, 3, 503)) * polvo)
         junta = suave(-0.012, -0.022, z)

@@ -262,6 +262,20 @@ export class Particulas {
     this.luz.crear(x, 0.3 + az() * 1.8, z, (az() - 0.5) * 0.15, (az() - 0.5) * 0.1, (az() - 0.5) * 0.15, 3 + az() * 3, 0.03, 0.03, COL.r * 0.6, COL.g * 0.6, COL.b * 0.6, 0.6, CUADRO.BRASA, 0, 0);
   }
 
+  /** Ceniza o polvo que cae despacio (calidad alta); `brilla`: chispita dorada o brasa que se apaga cayendo. */
+  caida(x: number, z: number, color: THREE.ColorRepresentation, brilla = false) {
+    COL.set(color);
+    const capa = brilla ? this.luz : this.sombra;
+    capa.crear(x, 1.6 + az() * 1.2, z, (az() - 0.5) * 0.25, -0.16 - az() * 0.14, (az() - 0.5) * 0.25, 6 + az() * 4, brilla ? 0.035 : 0.05, 0.03,
+      COL.r * (brilla ? 1.6 : 1), COL.g * (brilla ? 1.6 : 1), COL.b * (brilla ? 1.6 : 1), brilla ? 0.8 : 0.55, brilla ? CUADRO.BRASA : CUADRO.POLVO, 0, 0);
+  }
+
+  /** Luciérnagas: puntitos que brillan y se mueven de a poquito (calidad alta, cementerio). */
+  luciernaga(x: number, z: number, color: THREE.ColorRepresentation) {
+    COL.set(color);
+    this.luz.crear(x, 0.3 + az() * 1.1, z, (az() - 0.5) * 0.5, (az() - 0.3) * 0.25, (az() - 0.5) * 0.5, 2.5 + az() * 3, 0.07, 0.02, COL.r * 1.8, COL.g * 1.8, COL.b * 1.8, 1, CUADRO.BRASA, 0, 0.3);
+  }
+
   get cuantas() {
     return this.luz.n + this.sombra.n;
   }

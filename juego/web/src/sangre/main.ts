@@ -92,20 +92,24 @@ function cfgDeSeleccion(): ConfigExpedicion {
 }
 corregirSeleccion();
 
+/** La calidad con la que arranca un aparato nuevo (si el cuadro va lento, baja sola y se recuerda). */
 function autoCalidad(): Calidad {
   const nav = navigator as Navigator & { deviceMemory?: number };
   const nucleos = navigator.hardwareConcurrency || 4;
   const memoria = nav.deviceMemory ?? 4;
-  if (Capacitor.isNativePlatform()) return nucleos >= 8 && memoria >= 6 ? 'media' : 'baja';
+  // (el navegador del celular dice 8 GB como mucho: un S24 Ultra o un celular de gama alta arranca en alta)
+  if (Capacitor.isNativePlatform()) return nucleos >= 8 && memoria >= 8 ? 'alta' : nucleos >= 8 && memoria >= 6 ? 'media' : 'baja';
   return nucleos >= 8 ? 'alta' : 'media';
 }
 const calidadPedida = params.get('calidad');
-const calidad: Calidad = calidadPedida === 'alta' || calidadPedida === 'media' || calidadPedida === 'baja' ? calidadPedida : preferencia<Calidad>('calidad', autoCalidad());
+// «calidad-v2»: cuando llegaron los mapas detallados de la calidad alta, cada aparato vuelve a escoger una vez
+const CLAVE_CALIDAD = 'calidad-v2';
+const calidad: Calidad = calidadPedida === 'alta' || calidadPedida === 'media' || calidadPedida === 'baja' ? calidadPedida : preferencia<Calidad>(CLAVE_CALIDAD, autoCalidad());
 
 const escena = new Escena3D($('lienzo') as unknown as HTMLCanvasElement, calidad);
 escena.sacudidas = preferencia<boolean>('sacudidas', true);
 escena.alCambiarCalidad = (c) => {
-  if (!calidadPedida) ponerPreferencia('calidad', c);
+  if (!calidadPedida) ponerPreferencia(CLAVE_CALIDAD, c);
 };
 const mando = new Mando();
 mando.alZoom = (f) => (escena.zoom = Math.max(0.7, Math.min(1.35, escena.zoom * f)));
@@ -571,7 +575,7 @@ function pausa() {
     if (e.target === hojaPausa) return cerrarPausa();
     if (c) {
       escena.ponerCalidad(c);
-      ponerPreferencia('calidad', c);
+      ponerPreferencia(CLAVE_CALIDAD, c);
       pintar();
     } else if (a === 'seguir') cerrarPausa();
     else if (a === 'sonido') {

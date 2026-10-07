@@ -192,6 +192,8 @@ export class Escena3D {
     this.ajustarLuna();
     if (this.particulas) this.particulas.cupo = c === 'baja' ? 0.45 : c === 'media' ? 0.75 : 1;
     if (this.actores) this.actores.sombraReal = c === 'alta';
+    // El detalle de la calidad alta se arma al empezar la etapa; si la calidad baja en plena etapa, se esconde
+    this.mapa3d?.mostrarDetalle(c === 'alta');
     this.alCambiarCalidad(c);
   }
 
@@ -209,7 +211,7 @@ export class Escena3D {
   async prepararEtapa(mapa: Mapa, bioma: DefBioma, perfiles: PerfilVista[], precargar: string[] = []) {
     this.limpiarEtapa();
     this.bioma = bioma;
-    await this.bib.cargar(bioma.id);
+    await this.bib.cargar(bioma.id, this.calidad === 'alta');
     const l = bioma.luz;
     this.colorAntorcha.set(l.antorcha);
     this.escena.background = new THREE.Color(l.niebla).multiplyScalar(0.6);
@@ -221,7 +223,7 @@ export class Escena3D {
     UNI_LUZ.uAmbiente.value.set(l.ambiente).multiplyScalar(0.55);
     colorContraluz(new THREE.Color(l.luna).multiplyScalar(0.35));
     this.luz = new LuzRejilla(mapa);
-    this.mapa3d = new Mapa3D(mapa, bioma, this.bib, this.colorAntorcha, this.calidad !== 'baja', this.calidad === 'alta');
+    this.mapa3d = new Mapa3D(mapa, bioma, this.bib, this.colorAntorcha, this.calidad !== 'baja', this.calidad === 'alta', this.calidad === 'alta');
     this.actores = new Actores(this.bib);
     this.actores.sombraReal = this.calidad === 'alta';
     this.particulas = new Particulas(this.etapa);
@@ -438,6 +440,31 @@ export class Escena3D {
       p.brasas(a.cx + 0.5 + a.dx * 0.75, 1.45, a.cy + 0.5 + a.dy * 0.75, 1, 0.1, this.bioma.luz.antorcha);
     }
     if (this.bioma.id === 'minas') for (let k = 0; k < 2; k++) p.brasas(f.x + (Math.random() - 0.5) * 20, 0.1, f.z + (Math.random() - 0.5) * 14, 1, 1, '#ff5a1a');
+    if (this.calidad !== 'alta') return;
+    // Calidad alta: el aire de cada bioma
+    const rx = () => f.x + (Math.random() - 0.5) * 18, rz = () => f.z + (Math.random() - 0.5) * 11;
+    switch (this.bioma.id) {
+      case 'cementerio':
+        p.luciernaga(rx(), rz(), '#c8f070');
+        if (Math.random() < 0.5) p.niebla(rx(), rz(), '#4a5a6a');
+        break;
+      case 'catacumbas':
+        p.caida(rx(), rz(), '#cfc2a4');
+        p.caida(rx(), rz(), '#cfc2a4');
+        break;
+      case 'minas':
+        p.caida(rx(), rz(), '#6a6460');
+        p.brasas(rx(), 0.1, rz(), 1, 1, '#ff6a2a');
+        break;
+      case 'abadia':
+        p.caida(rx(), rz(), '#8a8682');
+        p.caida(rx(), rz(), '#ffa040', true);
+        break;
+      case 'castillo':
+        p.motas(rx(), rz(), '#ff5050');
+        p.caida(rx(), rz(), '#e8c070', true);
+        break;
+    }
   }
 
   // ----------------------------------------------------------------------------------------------- Cámara

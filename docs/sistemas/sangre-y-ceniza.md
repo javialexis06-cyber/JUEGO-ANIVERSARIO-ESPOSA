@@ -233,6 +233,28 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
 - **Rendimiento**: 30 cuadros, la roca maciza se dibuja como techo plano (solo las paredes que se ven tienen el
   modelo completo), todo instanciado por trozos de 8 × 8 celdas, calidad baja (sin sombras ni posprocesado, variante
   más liviana de cada pared) y la calidad baja sola si un cuadro tarda más de 36 ms durante 4 s.
+- **Tres calidades** (Pausa → Calidad, o `?calidad=`): **baja** (celulares modestos), **media** (lo de antes: losas y
+  paredes modeladas con el color en los vértices) y **alta** (S24 Ultra, computador), que además carga
+  `bioma_<id>_alta.glb` y `modelos/sangre/alta/`:
+  - **Pisos nítidos**: las mismas losas de 2 × 2 m, pero el color del campo va en una textura de 512 px (≈ 4 mm por
+    texel) con su mapa de relieve, horneada del mismo dibujo de Blender más lo fino que la rejilla de vértices nunca
+    mostró (piedritas torcidas, grano, grietas quebradas, barro seco, ceniza, rayones en el mármol). En los vértices
+    queda solo la oclusión (`textura_escala` la devuelve a 1). Encima, la sombra de contacto oscurece a manchas
+    grandes en el mundo para que no se note que las losas se repiten.
+  - **Paredes con textura de roca de su bioma** (`<bioma>_roca.webp`: R alto, G oscuro, B claro; un cuadro de 1 m)
+    proyectada desde los tres ejes en el sombreador (`vista/roca.ts`): estratos, piedritas y raíces en el cementerio,
+    poros y cincel en las catacumbas, capas y fracturas en las minas, hollín en la abadía, granito moteado en el
+    castillo. La decoración de piedra lleva un grano genérico.
+  - **Detalle regado** (`det_*`): 12-13 piezas por bioma (piedritas, huesos, hojas, velas apagadas, monedas, pétalos,
+    vidrios, páginas, clavos, astillas… en el piso; escombro, raíces, tablas, sacos, libros al pie de las paredes;
+    hiedra, cadenas, cuerdas, escudos, cruces colgadas). Se escogen con un azar fijo por celda solo en la vista (no
+    cambia nada del juego ni de la red), nunca encima de decoración, rieles o velas, y se juntan en **una malla por
+    trozo** (un grupo por clase de material: mate, metal, liso), que se rehace con el trozo cuando se excava.
+  - **Aire de cada bioma**: luciérnagas y neblina en el cementerio, polvo que cae en las catacumbas, ceniza y brasas
+    en las minas y la abadía, motas rojas y polvito dorado en el castillo.
+  - Si la calidad baja sola en plena etapa, el detalle regado se esconde; lo demás cambia en la etapa siguiente. Un
+    celular de 8 núcleos que dice 8 GB arranca en alta (la preferencia es `sangre-calidad-v2`: todos vuelven a
+    escoger una vez cuando llegó esto).
 
 **Pruebas**
 - `node scripts/balance-sangre.mjs [partidas] [clases|todas] [bioma] [peligro] [jugadores]` (con `TORPE=1`, un bot que
@@ -280,7 +302,12 @@ Si un archivo todavía no existe, el juego dibuja un reemplazo sencillo y sigue 
 ## Biomas: lo que trae cada `bioma_<id>.glb` (hecho)
 
 Cinco archivos en `juego/web/public/modelos/sangre/` (cementerio, catacumbas, minas, abadia, castillo; ~0,5-0,65 MB
-cada uno). Se generan con `blender -b -P personajes/blender/sangre_biomas.py -- juego/web/modelos-crudos/sangre
+cada uno), más los de la calidad alta: `bioma_<id>_alta.glb` (~0,15 MB: las losas con su textura y las piezas `det_*`
+con su `lugar` = `suelo`, `pie` o `muro` y su `peso`) y en `alta/` las texturas de las losas y de la roca (~2,8 MB los
+cinco biomas). Se generan con `python3.11 personajes/blender/sangre_biomas_alta.py juego/web/modelos-crudos/sangre
+juego/web/public/modelos/sangre/alta [biomas]` (piezas en `sangre_biomas_detalle.py`) y
+`python3.11 personajes/blender/sangre_roca_alta.py juego/web/public/modelos/sangre/alta [biomas]`, y se comprimen con
+el mismo `optimizar-biomas.mjs`. Se generan con `blender -b -P personajes/blender/sangre_biomas.py -- juego/web/modelos-crudos/sangre
 [biomas] [piezas]` (código en `personajes/blender/sangre_biomas_*.py`) y se comprimen con
 `node scripts/optimizar-biomas.mjs` (meshopt, sin juntar ni aplanar). Junto al crudo sale `bioma_<id>.json` con las
 medidas y los triángulos de cada pieza.

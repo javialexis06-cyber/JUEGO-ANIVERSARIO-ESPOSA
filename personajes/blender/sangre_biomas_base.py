@@ -980,8 +980,15 @@ def exportar(raices, ruta):
         o.hide_set(False)
         o.select_set(True)
     bpy.context.view_layer.objects.active = objs[0]
-    bpy.ops.export_scene.gltf(filepath=ruta, export_format='GLB', use_selection=True, export_apply=True,
-                              export_yup=True, export_extras=True, export_colors=True, export_animations=False,
-                              export_skins=False, export_morph=False, export_cameras=False, export_lights=False,
-                              export_normals=True, export_texcoords=False)
+    opciones = dict(filepath=ruta, export_format='GLB', use_selection=True, export_apply=True, export_yup=True,
+                    export_extras=True, export_animations=False, export_skins=False, export_morph=False,
+                    export_cameras=False, export_lights=False, export_normals=True, export_texcoords=False)
+    # (Blender 4.0 se llama export_colors; desde 4.2, export_vertex_color: 'ACTIVE' saca COLOR_0 aunque el material
+    # ya no lo use)
+    props = {p.identifier for p in bpy.ops.export_scene.gltf.get_rna_type().properties}
+    if 'export_colors' in props:
+        opciones['export_colors'] = True
+    else:
+        opciones['export_vertex_color'] = 'ACTIVE'
+    bpy.ops.export_scene.gltf(**opciones)
     print('GLB', ruta, round(__import__('os').path.getsize(ruta) / 1e6, 2), 'MB', flush=True)
