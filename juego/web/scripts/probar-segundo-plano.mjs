@@ -134,14 +134,14 @@ if (partes.includes('super')) {
   await el.waitForFunction(() => !document.getElementById('pausa').hidden && /salió de la app/.test(document.getElementById('pausa-nota').textContent), null, { timeout: 30000 })
     .catch(() => {});
   const nota = await el.evaluate(() => document.getElementById('pausa-nota').textContent);
-  revisar(/Se cortó la conexión con Ella: salió de la app/.test(nota), `a Él le sale la pausa de conexión («${nota}»)`);
+  revisar(/Se cortó la conexión con Laura: salió de la app/.test(nota), `a Él le sale la pausa de conexión («${nota}»)`);
   revisar(await el.evaluate(() => document.getElementById('btn-continuar').disabled), 'Él no puede seguir sin Ella');
   await el.screenshot({ path: `${carpeta}/super-el-espera.png` });
   // Ella vuelve
   await ella.evaluate(() => window.__esconder(false));
   await el.waitForFunction(() => !/salió de la app/.test(document.getElementById('pausa-nota').textContent), null, { timeout: 30000 }).catch(() => {});
   const nota2 = await el.evaluate(() => document.getElementById('pausa-nota').textContent);
-  revisar(/Ella pausó el juego/.test(nota2), `al volver Ella, Él ve que ella pausó («${nota2}»)`);
+  revisar(/Laura pausó el juego/.test(nota2), `al volver Ella, Él ve que ella pausó («${nota2}»)`);
   await ella.bringToFront();
   await ella.waitForSelector('#pausa:not([hidden]) #btn-continuar:not([disabled])', { timeout: 30000 });
   await ella.click('#btn-continuar');
