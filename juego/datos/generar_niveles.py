@@ -46,8 +46,9 @@ META_EXPERTA = {1: 0.8, 2: 0.85}                    # ⭐ 2 (3 o más: 0.95)
 def factor_meta(s, d, experta, evento=None):
     largo = lista_max(s, d)
     f = META_EXPERTA.get(largo, 0.95) if experta else META.get(largo, 0.6)
-    # El gran día y el final arrancan con los estantes casi vacíos y con 30 % más de gente: el piloto vende menos
-    return f * (0.82 if evento in ('Gran día', 'Gran final') else 1)
+    # El gran día, el final y la hora pico arrancan con los estantes casi vacíos y con 30 % más de gente: el piloto
+    # vende menos
+    return f * (0.82 if evento in ('Gran día', 'Gran final') else 0.86 if evento == 'Hora pico' else 1)
 ESPERA_CAJA = {1: 12, 2: 11, 3: 10, 4: 9}          # segundos máximos de espera promedio en caja
 VACIA_MAX = {1: 25, 2: 22, 3: 20, 4: 18}           # segundos máximos que una vitrina puede quedar vacía
 
