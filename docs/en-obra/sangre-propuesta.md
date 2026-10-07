@@ -7,7 +7,8 @@ historia, minijuegos, logros de «tal mapa con tal personaje») y el **modo infi
 más se baja. Nada de esto se ha programado todavía: primero se pule aquí.
 
 Fuente: la transcripción de la wiki oficial que hizo Javier (deeprockgalactic.wiki.gg, páginas «Survivor:», 134
-páginas, octubre de 2026), más las notas de la actualización del modo infinito (abril de 2026).
+páginas, octubre de 2026; guardada en [`docs/referencias/drg-survivor/wiki.md`](../referencias/drg-survivor/wiki.md)),
+más las notas de la actualización del modo infinito (abril de 2026).
 
 ---
 

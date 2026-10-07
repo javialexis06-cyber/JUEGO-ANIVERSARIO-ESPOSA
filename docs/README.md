@@ -30,6 +30,11 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 
 El Show de Nosotros está en la rama `trabajo/show` (con su `docs/show.md` allá).
 
+## `referencias/` · wikis de otros juegos (solo para consultar)
+
+Transcripciones de la wiki de **Deep Rock Galactic: Survivor** y de la de **Vampire Survivors** (8 archivos por tema),
+para estudiarlas sin salir a internet. Índice y cómo buscar en [`referencias/README.md`](referencias/README.md).
+
 ## `archivo/` · historia (no hace falta leerlo)
 
 Decisiones ya tomadas y estudios de arranque: el estudio de Supermarket Mania (`diseno-juego.md`), la viabilidad del
