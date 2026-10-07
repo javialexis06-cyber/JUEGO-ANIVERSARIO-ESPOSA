@@ -2,7 +2,7 @@
 // salen los números contando (distancia, rollitos, puntaje con el multiplicador), las misiones con su barrita y,
 // si se completaron las tres, el nivel nuevo con su cofre. Abajo: la tienda del retrete o volver a casa.
 import { nota } from '../../sonido';
-import { type Mision, type ProgresoCohete, esDeVuelo, premioMision, textoMision } from './datos';
+import { type Cosmetico, type Mision, type ProgresoCohete, RAREZA, type TipoCosmetico, esDeVuelo, premioMision, textoMision, textoReto } from './datos';
 import type { Rol } from '../modelo';
 
 /** Lo que la casa dio por un vuelo: sus monedas y si ya se llegó al tope del día. */
@@ -31,6 +31,8 @@ export interface DatosResultado {
   casa: PremioCasa | null;
   /** El botón de salir (sin casa, un amigo vuelve a su sala de juegos). */
   textoSalir?: string;
+  /** Retretes, estelas y cascos que se ganó en este vuelo (con su reto cumplido). */
+  cosmeticos?: { tipo: TipoCosmetico; c: Cosmetico }[];
 }
 
 const mil = (v: number) => Math.round(v).toLocaleString('es-CO');
@@ -77,6 +79,12 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
   const subio = d.subio
     ? `<div class="cr-nivel"><b>¡Nivel ${d.subio.nivel + 1}!</b><span>Multiplicador ×${d.subio.nivel + 1} · cofre de +${mil(d.subio.premio)} <i class="ico-rollito"></i></span></div>`
     : '';
+  // Lo que se ganó con los retos (los retretes, estelas y cascos ya no se compran)
+  const QUE: Record<TipoCosmetico, string> = { retrete: 'Retrete', estela: 'Estela', casco: 'Casco' };
+  const ganados = (d.cosmeticos ?? [])
+    .map(({ tipo, c }) => `<li class="rareza-${c.rareza}"><b>${QUE[tipo]} nuevo: ${esc(c.nombre)}</b><small>${esc(RAREZA[c.rareza].nombre)} · ${esc(textoReto(c.reto!))}</small></li>`)
+    .join('');
+  const premios = ganados ? `<div class="cr-ganados"><h3>¡Te lo ganaste!</h3><ul>${ganados}</ul><small>Póntelo en la tienda del retrete.</small></div>` : '';
   const s = document.createElement('section');
   s.className = 'cohete-resultado';
   s.innerHTML = `
@@ -90,6 +98,7 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
       </div>
       ${pareja}
       <p class="cr-casa" hidden></p>
+      ${premios}
       <div class="cr-misiones"><h3>Misiones <small>nivel ${d.nivelAntes + 1} · ×${d.nivelAntes + 1}</small></h3><ul>${misiones}</ul>${subio}</div>
       </div>
       <footer>
@@ -108,7 +117,7 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
     const el = nums[i++];
     if (!el) {
       s.classList.add('contado');
-      if (d.record || d.subio) [523, 659, 784, 1046, 1318].forEach((f, k) => nota(f, 0.22, k * 0.1, 'triangle', 0.06));
+      if (d.record || d.subio || d.cosmeticos?.length) [523, 659, 784, 1046, 1318].forEach((f, k) => nota(f, 0.22, k * 0.1, 'triangle', 0.06));
       return;
     }
     const meta = Number(el.dataset.n), suf = el.dataset.sufijo ?? '';

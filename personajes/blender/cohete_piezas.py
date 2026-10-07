@@ -797,8 +797,37 @@ def obst_pajaro(coll):
     colocar(clay.blob('cola pájaro', (0, 0, 0), (0.07, 0.06, 0.015), coll, laca('ala pájaro', '#3E7FD0', 0.4), n=5), (0.17, 0, 0.04), (0, -0.4, 0))
 
 
+def patico(coll):
+    """Flotador inflable de patico (el salvavidas del vuelo, como la patineta de Subway Surfers): aro amarillo brillante
+    con la cabeza del pato grandota adelante (-y), alitas a los lados, la colita atrás y la válvula. Acostado en el plano
+    xy, del tamaño de la cintura del retrete."""
+    amarillo = laca('patico amarillo', '#FFB400', 0.22)
+    claro = laca('patico claro', '#FFD24A', 0.22)
+    naranja = laca('patico pico', '#FF6A00', 0.25)
+    negro = laca('patico ojo', '#1E1A18', 0.15)
+    R, tubo = 0.4, 0.11
+    aro_z('aro patico', (0, 0, 0), R, R, tubo, coll, amarillo, n=40)
+    # Alitas pegadas al aro y la válvula
+    for sx in (-1, 1):
+        colocar(clay.blob(f'ala patico {sx}', (0, 0, 0), (0.05, 0.13, 0.03), coll, claro, n=6), (sx * (R + tubo * 0.75), -0.04, 0.05), (0.2, sx * 0.5, 0))
+    clay.blob('válvula patico', (R * 0.72, R * 0.62, tubo * 0.95), (0.022, 0.022, 0.03), coll, laca('válvula patico', '#FFFFFF', 0.25), n=6)
+    # Cabeza grandota con pico, ojos con brillo y cachetes
+    cy = -R - 0.05
+    clay.blob('cuello patico', (0, cy + 0.03, 0.1), (0.12, 0.11, 0.12), coll, amarillo, n=8)
+    clay.blob('cabeza patico', (0, cy - 0.01, 0.26), (0.16, 0.15, 0.15), coll, amarillo, n=10)
+    clay.blob('pico patico', (0, cy - 0.18, 0.23), (0.1, 0.075, 0.04), coll, naranja, n=8)
+    clay.blob('pico abajo patico', (0, cy - 0.15, 0.2), (0.08, 0.06, 0.025), coll, naranja, n=6)
+    for sx in (-1, 1):
+        clay.blob(f'ojo patico {sx}', (sx * 0.065, cy - 0.13, 0.31), (0.03, 0.018, 0.036), coll, negro, n=6)
+        clay.blob(f'brillo ojo patico {sx}', (sx * 0.057, cy - 0.147, 0.324), (0.01, 0.005, 0.011), coll, luz('brillo patico', '#FFFFFF', 2.0), n=3)
+        clay.blob(f'cachete patico {sx}', (sx * 0.1, cy - 0.1, 0.24), (0.03, 0.012, 0.02), coll, laca('cachete patico', '#FF7F9A', 0.4), n=5)
+    # Copete y colita
+    colocar(clay.blob('copete patico', (0, 0, 0), (0.025, 0.05, 0.04), coll, amarillo, n=5), (0.0, cy, 0.42), (0.5, 0, 0))
+    colocar(clay.blob('colita patico', (0, 0, 0), (0.08, 0.06, 0.04), coll, amarillo, n=6), (0, R + 0.08, 0.08), (-0.7, 0, 0))
+
+
 COSAS = {
-    'rollito': rollito, 'iman_nave': iman_nave, 'canon_nave': canon_nave, 'ayudante': ayudante,
+    'rollito': rollito, 'patico': patico, 'iman_nave': iman_nave, 'canon_nave': canon_nave, 'ayudante': ayudante,
     'obst_satelite': obst_satelite, 'obst_inodoro': obst_inodoro, 'obst_chancla': obst_chancla, 'obst_lata': obst_lata, 'obst_ovni': obst_ovni,
     'obst_avion': obst_avion, 'obst_pajaro': obst_pajaro,
 }
@@ -857,4 +886,4 @@ def icono_burbuja_inicio(coll):
 
 
 ICONOS = {'icono_revivir': icono_revivir, 'icono_suerte': icono_suerte, 'icono_triple': icono_triple, 'icono_aero': icono_aero,
-          'icono_burbuja_inicio': icono_burbuja_inicio}
+          'icono_burbuja_inicio': icono_burbuja_inicio, 'patico': patico}

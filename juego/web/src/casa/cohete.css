@@ -138,6 +138,59 @@
 .ch-poder::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: rgba(20, 22, 58, 0.85); }
 .ch-poder img { position: relative; width: 34px; height: 34px; object-fit: contain; }
 .ch-poder.acaba { animation: ch-parpadea 0.25s steps(2) infinite; }
+
+/* El patico salvavidas: abajo a la derecha, con su reloj (puesto: lo que le queda; espera: lo que falta) */
+.ch-patico {
+  --k: 1;
+  position: absolute;
+  right: calc(env(safe-area-inset-right, 0px) + 12px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: conic-gradient(var(--c, #ffc93c) calc(var(--k) * 360deg), rgba(255, 255, 255, 0.14) 0);
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  touch-action: manipulation;
+  cursor: pointer;
+  box-shadow: 0 0 16px color-mix(in srgb, var(--c, #ffc93c) 55%, transparent), 0 4px 0 rgba(0, 0, 0, 0.25);
+  animation: ch-entra 0.35s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+.ch-patico[hidden] { display: none; }
+/* (adentro, agüita de bañera para que el patico amarillo resalte) */
+.ch-patico::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: radial-gradient(circle at 50% 30%, #e8fbff, #8fd8f2 55%, #3f9ccc); box-shadow: inset 0 -3px 6px rgba(20, 60, 110, 0.35); }
+.ch-patico img { position: relative; width: 70px; height: 70px; object-fit: contain; pointer-events: none; transition: scale 0.2s, filter 0.2s; }
+.ch-patico b {
+  position: absolute;
+  right: -4px;
+  top: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: #fff;
+  color: #4a2f00;
+  font: 700 12px/20px var(--display);
+  text-align: center;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+}
+.ch-patico i { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; }
+.ch-patico[data-estado='listo'] { animation: ch-entra 0.35s cubic-bezier(0.2, 1.5, 0.4, 1) both, ch-patico 1.6s ease-in-out infinite 0.4s; }
+.ch-patico[data-estado='listo'] i { box-shadow: 0 0 0 0 rgba(255, 201, 60, 0.6); animation: ch-onda 1.6s ease-out infinite; }
+.ch-patico[data-estado='puesto'] { --c: #7fe0ff; }
+.ch-patico[data-estado='puesto'] img { scale: 0.86; }
+.ch-patico[data-estado='espera'] { --c: #b9b3d9; cursor: default; }
+.ch-patico[data-estado='espera'] img, .ch-patico[data-estado='vacio'] img { filter: grayscale(0.85) brightness(0.75); scale: 0.86; }
+.ch-patico[data-estado='vacio'] { --c: transparent; opacity: 0.6; }
+@keyframes ch-patico { 50% { scale: 1.07; } }
+@keyframes ch-onda { to { box-shadow: 0 0 0 12px rgba(255, 201, 60, 0); } }
+@media (prefers-reduced-motion: reduce) {
+  .ch-patico[data-estado='listo'], .ch-patico[data-estado='listo'] i { animation: none; }
+}
 @keyframes ch-entra { from { scale: 0.2; opacity: 0; } }
 @keyframes ch-parpadea { 50% { opacity: 0.45; } }
 
@@ -455,6 +508,18 @@
 .cr-misiones li s { display: block; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.15); overflow: hidden; }
 .cr-misiones li u { display: block; height: 100%; width: calc(var(--k) * 100%); border-radius: 3px; background: linear-gradient(90deg, #8fd3b6, #4fb477); transform-origin: left; animation: cr-barra 1.2s ease both 1.8s; }
 @keyframes cr-barra { from { scale: 0 1; } }
+/* Cosméticos ganados en este vuelo */
+.cr-ganados { margin-top: 8px; padding: 8px 10px; border-radius: 16px; background: linear-gradient(180deg, rgba(255, 210, 63, 0.22), rgba(255, 210, 63, 0.06)); animation: cr-sello 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) both 2.4s; }
+.cr-ganados h3 { margin: 0 0 5px; font: 700 15px var(--display); color: var(--oro); text-align: center; }
+.cr-ganados ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.cr-ganados li { display: grid; gap: 1px; padding: 5px 9px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); border-left: 4px solid #d8cfc6; }
+.cr-ganados li b { font: 600 13px/1.2 var(--display); }
+.cr-ganados li small { font: 700 10px/1.2 var(--texto); opacity: 0.8; }
+.cr-ganados li.rareza-verde { border-color: #6cc47a; }
+.cr-ganados li.rareza-azul { border-color: #5b9be6; box-shadow: inset 0 0 12px rgba(91, 155, 230, 0.25); }
+.cr-ganados li.rareza-morado { border-color: #a46ae6; box-shadow: inset 0 0 14px rgba(164, 106, 230, 0.3); }
+.cr-ganados li.rareza-dorado { border-color: #e9b93a; background: linear-gradient(90deg, rgba(233, 185, 58, 0.35), rgba(255, 255, 255, 0.08)); }
+.cr-ganados > small { display: block; margin-top: 5px; text-align: center; font: 800 10.5px var(--texto); opacity: 0.8; }
 .cr-misiones li small { font: 700 10px var(--texto); opacity: 0.75; }
 .cr-nivel {
   margin-top: 6px;
@@ -620,6 +685,53 @@
 .ct-tarjeta.probando { box-shadow: 0 0 0 3px var(--oro), 0 6px 14px rgba(0, 0, 0, 0.22); }
 .ct-puesto { margin-top: 3px; font: 600 12px var(--display); color: #2f8f68; }
 .ct-usar { margin-top: 3px; padding: 5px 14px; border: 0; border-radius: 10px; background: #4fb477; color: #fff; font: 600 13px var(--display); box-shadow: 0 2px 0 #2f8f68; cursor: pointer; }
+/* Rareza de los cosméticos: blanco (común), verde, azul, morado y dorado (con su brillo) */
+.ct-tarjeta.cosmetico { padding-top: 20px; overflow: hidden; }
+.ct-rareza {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 3px 4px 2px;
+  font: 800 9.5px/1 var(--texto);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8f8075;
+  background: rgba(61, 43, 39, 0.06);
+}
+.ct-tarjeta.rareza-verde { box-shadow: 0 0 0 2px #6cc47a, 0 6px 14px rgba(0, 0, 0, 0.22); background: linear-gradient(180deg, #ecf9ea, #fff8ee 55%); }
+.ct-tarjeta.rareza-verde .ct-rareza { color: #fff; background: linear-gradient(90deg, #6cc47a, #3f9a4f); }
+.ct-tarjeta.rareza-azul { box-shadow: 0 0 0 2px #5b9be6, 0 0 12px rgba(91, 155, 230, 0.45), 0 6px 14px rgba(0, 0, 0, 0.22); background: linear-gradient(180deg, #e8f1ff, #fff8ee 55%); }
+.ct-tarjeta.rareza-azul .ct-rareza { color: #fff; background: linear-gradient(90deg, #5b9be6, #2f6fc0); }
+.ct-tarjeta.rareza-morado { box-shadow: 0 0 0 2.5px #a46ae6, 0 0 16px rgba(164, 106, 230, 0.55), 0 6px 14px rgba(0, 0, 0, 0.22); background: linear-gradient(180deg, #f3e9ff, #fff8ee 60%); }
+.ct-tarjeta.rareza-morado .ct-rareza { color: #fff; background: linear-gradient(90deg, #a46ae6, #7a3fc4); }
+.ct-tarjeta.rareza-dorado { box-shadow: 0 0 0 3px #e9b93a, 0 0 20px rgba(245, 194, 70, 0.7), 0 6px 14px rgba(0, 0, 0, 0.22); background: linear-gradient(180deg, #fff3c9, #fffaf0 60%); }
+.ct-tarjeta.rareza-dorado .ct-rareza { color: #5a3a00; background: linear-gradient(90deg, #ffe27a, #e9b93a, #ffe27a); }
+.ct-tarjeta.rareza-dorado::after {
+  content: '';
+  position: absolute;
+  inset: -20% auto -20% -40%;
+  width: 30%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  transform: skewX(-18deg);
+  animation: ct-brillo 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes ct-brillo { 0%, 60% { left: -40%; } 100% { left: 130%; } }
+/* Lo que todavía no se gana: el dibujo en sombra y el reto con su barrita */
+.ct-tarjeta.bloqueado img { filter: grayscale(0.55) brightness(0.7) contrast(0.9); opacity: 0.8; }
+.ct-tarjeta.bloqueado.probando img { filter: none; opacity: 1; }
+.ct-tarjeta.puesto.rareza-verde, .ct-tarjeta.puesto.rareza-azul, .ct-tarjeta.puesto.rareza-morado, .ct-tarjeta.puesto.rareza-dorado { outline: 3px solid #4fb477; outline-offset: 2px; }
+.ct-tarjeta.probando.rareza-verde, .ct-tarjeta.probando.rareza-azul, .ct-tarjeta.probando.rareza-morado, .ct-tarjeta.probando.rareza-dorado { outline: 3px solid var(--oro); outline-offset: 2px; }
+.ct-reto { display: grid; gap: 3px; width: 100%; margin-top: 3px; padding: 5px 6px; box-sizing: border-box; border-radius: 10px; background: rgba(61, 43, 39, 0.08); }
+.ct-reto small { min-height: 0; font: 800 10px/1.2 var(--texto); color: var(--cacao); }
+.ct-reto .ct-barra { height: 5px; background: rgba(61, 43, 39, 0.15); }
+.ct-reto .ct-barra i { background: linear-gradient(90deg, #ffd23f, #f5a900); }
+.ct-reto em { font: 800 9.5px var(--texto); font-style: normal; color: var(--cacao-suave); font-variant-numeric: tabular-nums; }
+.ct-tarjeta.patico { background: linear-gradient(180deg, #fff6d6, #ffe9a8); }
+/* (el dibujo del patico es ancho y bajito: se agranda para que llene su cuadro) */
+.ct-tarjeta.patico img { scale: 1.6; }
+@media (prefers-reduced-motion: reduce) { .ct-tarjeta.rareza-dorado::after { animation: none; display: none; } }
 .ct-nivel { display: flex; align-items: center; gap: 12px; margin: 6px 2px 8px; padding: 9px 12px; border-radius: 16px; background: linear-gradient(90deg, rgba(255, 210, 63, 0.22), rgba(255, 210, 63, 0.06)); }
 .ct-nivel > b { font: 700 30px/1 var(--display); color: var(--oro); }
 .ct-nivel strong { display: block; font: 600 15px var(--display); }

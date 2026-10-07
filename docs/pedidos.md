@@ -55,11 +55,6 @@ velocidad, se siente raro…»
 
 ## Ronda 2 de arreglos
 
-**Retrete espacial**
-- Consumibles como la patineta de Subway Surfers: se activan cada cierto tiempo y protegen de 1 choque.
-- Los cascos, retretes y estelas se consiguen **cumpliendo misiones** según su calidad (rareza).
-- Estelas de mejor calidad, más nítidas; las premium mucho más fluidas.
-
 **Cocina**
 - Ver el pedido en todo momento después de tomarlo (hoy toca ir hasta la última estación para recordarlo).
 - Chantilly y demás con textura y grosor: que se puedan hacer montañas.

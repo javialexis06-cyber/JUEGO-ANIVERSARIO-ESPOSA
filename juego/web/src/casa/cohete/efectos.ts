@@ -17,7 +17,7 @@ export class Efectos {
   constructor(
     readonly brillo: Particulas,
     readonly humo: Particulas,
-    private grupo: THREE.Group,
+    readonly grupo: THREE.Group,
     private geoEscombro: THREE.BufferGeometry,
     private matEscombro: THREE.Material,
     private texAro: THREE.Texture,
@@ -171,17 +171,25 @@ const ESTELA: Record<string, { cuadros: number[]; colores: string[]; aditivo: bo
 export class Propulsor {
   private acum = 0;
   private acumEstela = 0;
-  private arco = 0;
   estela = 'fuego';
   /** 1 normal; más con el turbo. */
   fuerza = 1;
   /** El turbo de frijoles pinta el fuego de verde. */
   verde = 0;
+  /** La cinta suave de las estelas especiales (las de más rareza llevan más capas). */
+  readonly cinta: Cinta;
 
-  constructor(private fx: Efectos) {}
+  constructor(private fx: Efectos) {
+    this.cinta = new Cinta(fx.grupo);
+  }
+
+  liberar() {
+    this.cinta.liberar();
+  }
 
   /** Sale fuego (y la estela comprada) de la boca del retrete. `mundo` es la velocidad del mundo. */
   actualizar(dt: number, b: Boca, mundo: number, encendido: boolean) {
+    this.cinta.actualizar(dt, b, mundo, encendido, this.estela);
     if (!encendido) return;
     const { brillo, humo } = this.fx;
     const f = this.fuerza;
@@ -217,16 +225,13 @@ export class Propulsor {
     const e = ESTELA[this.estela];
     if (!e) return;
     if (this.estela === 'arcoiris') {
-      // Seis bandas que salen de la boca como una cinta
-      this.acumEstela += dt * 40;
-      this.arco += dt * 9;
+      // La cinta hace las bandas; de vez en cuando sale una chispita de colores
+      this.acumEstela += dt * 7;
       while (this.acumEstela >= 1) {
         this.acumEstela--;
-        e.colores.forEach((col, k) => {
-          brillo.emitir({
-            x: b.x - 0.1, y: b.y + 0.55 - k * 0.2 + Math.sin(this.arco) * 0.08, z: -0.2, vx: -mundo * 0.15 - 1, vy: 0, vida: 0.9, tam0: 0.34, tam1: 0.3,
-            color0: col, cuadro: CUADRO.cuadrado, arrastre: 1, alfa: 0.55,
-          });
+        brillo.emitir({
+          x: b.x + rnd(-0.3, 0.1), y: b.y + rnd(-0.5, 0.3), z: 0.05, vx: b.dx * 1.5 + rnd(-0.5, 0.5), vy: b.dy * 1.5 + rnd(-0.5, 0.5), vida: rnd(0.5, 0.8),
+          tam0: 0.36, tam1: 0.06, color0: '#FFFFFF', color1: elegir(e.colores), cuadro: CUADRO.estrella, roce: 1.2, arrastre: 1, giro: rnd(-0.5, 0.5), vgiro: rnd(-3, 3),
         });
       }
       return;
@@ -236,10 +241,275 @@ export class Propulsor {
       this.acumEstela--;
       const p = e.aditivo ? brillo : humo;
       p.emitir({
-        x: b.x + rnd(-0.15, 0.15), y: b.y + rnd(-0.15, 0.15), z: rnd(-0.4, 0.4), vx: b.dx * 2.5 + rnd(-0.8, 0.8), vy: b.dy * 2.5 + rnd(-0.8, 0.8),
-        vida: rnd(0.8, 1.4), tam0: e.tam[0] * rnd(0.8, 1.2), tam1: e.tam[1], color0: elegir(e.colores), cuadro: elegir(e.cuadros), roce: 1.2,
-        gravedad: e.gravedad ?? 0, giro: rnd(-0.5, 0.5), vgiro: rnd(-2, 2), arrastre: 1, alfa: 0.95,
+        x: b.x + rnd(-0.15, 0.15), y: b.y + rnd(-0.15, 0.15), z: rnd(-0.08, 0.2), vx: b.dx * 2.5 + rnd(-0.8, 0.8), vy: b.dy * 2.5 + rnd(-0.8, 0.8),
+        vida: rnd(0.8, 1.4), tam0: e.tam[0] * rnd(0.9, 1.15), tam1: e.tam[1], color0: elegir(e.colores), cuadro: elegir(e.cuadros), roce: 1.2,
+        gravedad: e.gravedad ?? 0, giro: rnd(-0.5, 0.5), vgiro: rnd(-2, 2), arrastre: 1, alfa: 1,
       });
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// La cinta: una franja suave que sale de la boca y se queda flotando atrás (como la del gatito del arcoíris)
+// ---------------------------------------------------------------------------
+interface CapaCinta {
+  /** Ancho en unidades del mundo. */
+  ancho: number;
+  /** Colores de la cabeza a la cola. */
+  colores: string[];
+  alfa: number;
+  aditivo?: boolean;
+  /** Corrida a un lado (para las bandas del arcoíris y de la bandera). */
+  lado?: number;
+  /** Cuánto se ondula. */
+  onda?: number;
+  /** Bordes nítidos (bandas) en vez de difuminados (luz). */
+  nitida?: boolean;
+  /** El ancho no se adelgaza hacia la cola. */
+  pareja?: boolean;
+}
+interface EstiloCinta {
+  /** Segundos que dura cada pedacito. */
+  vida: number;
+  capas: CapaCinta[];
+}
+/** Más rareza, más capas y más suave. Las comunes (fuego, frijoles, burbujas) no llevan cinta: son puras partículas. */
+const CINTAS: Record<string, EstiloCinta> = {
+  corazones: {
+    vida: 0.65,
+    capas: [
+      { ancho: 0.78, colores: ['#FF9EB8', '#FF4F7E'], alfa: 0.62 },
+      { ancho: 0.13, colores: ['#FFFFFF', '#FF7FA3'], alfa: 0.9, nitida: true },
+    ],
+  },
+  chispitas: {
+    vida: 0.65,
+    capas: [
+      { ancho: 0.72, colores: ['#FFD23F', '#FF9A1F'], alfa: 0.68 },
+      { ancho: 0.12, colores: ['#FFFFFF', '#FFD23F'], alfa: 0.95, nitida: true },
+    ],
+  },
+  // Un pentagrama que se ondula (las notas salen encima)
+  notas: {
+    vida: 0.9,
+    capas: [0, 1, 2, 3, 4].map((k) => ({
+      ancho: 0.04, colores: ['#FFFFFF', '#E9DDFF'], alfa: 0.9, lado: 0.24 - k * 0.12, nitida: true, pareja: true, onda: 0.2,
+    })),
+  },
+  // La bandera: mitad amarillo, un cuarto azul y un cuarto rojo
+  confeti: {
+    vida: 0.9,
+    capas: [
+      { ancho: 0.3, colores: ['#FCD116'], alfa: 0.95, lado: 0.15, nitida: true, pareja: true, onda: 0.1 },
+      { ancho: 0.15, colores: ['#2456C9'], alfa: 0.95, lado: -0.075, nitida: true, pareja: true, onda: 0.1 },
+      { ancho: 0.15, colores: ['#CE1126'], alfa: 0.95, lado: -0.225, nitida: true, pareja: true, onda: 0.1 },
+    ],
+  },
+  petalos: {
+    vida: 1.05,
+    capas: [
+      { ancho: 1.35, colores: ['#FFB3C6', '#FF6F91'], alfa: 0.5, onda: 0.24 },
+      { ancho: 0.62, colores: ['#FF7FA0', '#E8395B'], alfa: 0.8, onda: 0.24 },
+      { ancho: 0.13, colores: ['#FFFFFF', '#FFD3DE'], alfa: 0.95, onda: 0.24, nitida: true },
+    ],
+  },
+  arcoiris: {
+    vida: 1.1,
+    capas: ['#FF4B4B', '#FF9F1C', '#FFE66D', '#5BD46B', '#4AA8FF', '#9B6BFF'].map((c, k) => ({
+      ancho: 0.15, colores: [c], alfa: 0.95, lado: 0.375 - k * 0.15, nitida: true, pareja: true, onda: 0.07,
+    })),
+  },
+  estrellas: {
+    vida: 1.25,
+    capas: [
+      { ancho: 1.5, colores: ['#CFE6FF', '#FFC9EF', '#B9A2FF'], alfa: 0.5, onda: 0.14 },
+      { ancho: 0.7, colores: ['#FFE680', '#9FD3FF', '#FFB8E8'], alfa: 0.82, onda: 0.14 },
+      { ancho: 0.17, colores: ['#FFFFFF', '#FFF8D6'], alfa: 1, aditivo: true, onda: 0.14, nitida: true },
+    ],
+  },
+};
+const MAX_CAPAS = 6;
+const PUNTOS = 64;
+/** Cada cuánto queda un punto (en segundos): con eso la cinta sale lisa aunque el celular vaya a 30 cuadros. */
+const PASO = 1 / 60;
+
+/** Textura de una sola columna: cuánto se ve de un borde al otro de la cinta. */
+function texturaBorde(nitida: boolean) {
+  const n = 64;
+  const datos = new Uint8Array(n * 4);
+  for (let i = 0; i < n; i++) {
+    const v = Math.abs((i + 0.5) / n * 2 - 1);
+    // (la suave es llena en el centro y se desvanece solo en el borde: si no, a la luz del día no se ve)
+    const a = nitida ? THREE.MathUtils.smoothstep(1 - v, 0, 0.12) : 1 - Math.pow(v, 2.4);
+    datos.set([255, 255, 255, Math.round(a * 255)], i * 4);
+  }
+  const t = new THREE.DataTexture(datos, 1, n);
+  t.magFilter = t.minFilter = THREE.LinearFilter;
+  t.needsUpdate = true;
+  return t;
+}
+
+class Cinta {
+  // Los puntos, del más nuevo (0) al más viejo
+  private x = new Float32Array(PUNTOS);
+  private y = new Float32Array(PUNTOS);
+  private vx = new Float32Array(PUNTOS);
+  private vy = new Float32Array(PUNTOS);
+  private edad = new Float32Array(PUNTOS);
+  private fase = new Float32Array(PUNTOS);
+  private n = 0;
+  private acum = 0;
+  private t = 0;
+  private antes: { x: number; y: number } | null = null;
+  private mallas: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>[] = [];
+  private texSuave = texturaBorde(false);
+  private texNitida = texturaBorde(true);
+  private estilo = '';
+  private color = new THREE.Color();
+  private c1 = new THREE.Color();
+
+  constructor(private grupo: THREE.Group) {
+    // Todas las capas se arman desde el principio (vacías): así el sombreador ya está listo cuando se estrena una estela
+    const vert = (PUNTOS + 1) * 2;
+    const indices: number[] = [];
+    for (let i = 0; i < PUNTOS; i++) {
+      const a = i * 2;
+      indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+    }
+    for (let k = 0; k < MAX_CAPAS; k++) {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vert * 3), 3).setUsage(THREE.DynamicDrawUsage));
+      geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(vert * 4), 4).setUsage(THREE.DynamicDrawUsage));
+      const uv = new Float32Array(vert * 2);
+      for (let i = 0; i < vert; i++) uv.set([0.5, i % 2], i * 2);
+      geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+      geo.setIndex(indices);
+      geo.setDrawRange(0, 0);
+      const m = new THREE.Mesh(
+        geo,
+        new THREE.MeshBasicMaterial({ map: this.texSuave, vertexColors: true, transparent: true, depthWrite: false, side: THREE.DoubleSide }),
+      );
+      m.frustumCulled = false;
+      m.renderOrder = 2;
+      grupo.add(m);
+      this.mallas.push(m);
+    }
+  }
+
+  actualizar(dt: number, b: Boca, mundo: number, encendido: boolean, estela: string) {
+    const e = CINTAS[estela];
+    if (estela !== this.estilo) {
+      this.estilo = estela;
+      this.n = 0;
+      this.antes = null;
+      this.mallas.forEach((m, k) => {
+        const c = e?.capas[k];
+        m.visible = !!c;
+        if (!c) return;
+        m.material.map = c.nitida ? this.texNitida : this.texSuave;
+        m.material.blending = c.aditivo ? THREE.AdditiveBlending : THREE.NormalBlending;
+        m.material.needsUpdate = true;
+      });
+    }
+    if (!e) return;
+    this.t += dt;
+    // Lo que ya salió se queda atrás (el mundo corre) y se va frenando
+    for (let i = 0; i < this.n; i++) {
+      this.edad[i] += dt;
+      this.x[i] += (this.vx[i] - mundo) * dt;
+      this.y[i] += this.vy[i] * dt;
+      const f = Math.max(0, 1 - dt * 2.5);
+      this.vx[i] *= f;
+      this.vy[i] *= f;
+    }
+    while (this.n > 0 && this.edad[this.n - 1] > e.vida) this.n--;
+    // La cabeza, un poquito detrás del fuego
+    const hx = b.x + b.dx * 0.32, hy = b.y + b.dy * 0.32;
+    if (encendido) {
+      const desde = this.antes ?? { x: hx, y: hy };
+      this.acum += dt;
+      const nuevos = Math.min(PUNTOS, Math.floor(this.acum / PASO));
+      this.acum -= nuevos * PASO;
+      for (let j = nuevos - 1; j >= 0; j--) {
+        // Repartidos entre donde estaba la boca el cuadro pasado y donde está ahora
+        const k = 1 - j / Math.max(1, nuevos);
+        this.meter(desde.x + (hx - desde.x) * k, desde.y + (hy - desde.y) * k, b, j * PASO, mundo);
+      }
+      this.antes = { x: hx, y: hy };
+    } else this.antes = null;
+    this.dibujar(e, encendido ? hx : null, hy);
+  }
+
+  private meter(x: number, y: number, b: Boca, edad: number, mundo: number) {
+    const n = Math.min(this.n + 1, PUNTOS);
+    for (let i = n - 1; i > 0; i--) {
+      this.x[i] = this.x[i - 1];
+      this.y[i] = this.y[i - 1];
+      this.vx[i] = this.vx[i - 1];
+      this.vy[i] = this.vy[i - 1];
+      this.edad[i] = this.edad[i - 1];
+      this.fase[i] = this.fase[i - 1];
+    }
+    this.n = n;
+    this.x[0] = x - mundo * edad;
+    this.y[0] = y;
+    this.vx[0] = b.dx * 1.6;
+    this.vy[0] = b.dy * 0.9;
+    this.edad[0] = edad;
+    this.fase[0] = (this.t - edad) * 7.5;
+  }
+
+  private dibujar(e: EstiloCinta, hx: number | null, hy: number) {
+    // Los puntos que se dibujan: la cabeza pegada a la boca (si está prendido) y los que van quedando
+    const cuantos = this.n + (hx !== null ? 1 : 0);
+    const px = (i: number) => (hx !== null ? (i === 0 ? hx : this.x[i - 1]) : this.x[i]);
+    const py = (i: number) => (hx !== null ? (i === 0 ? hy : this.y[i - 1]) : this.y[i]);
+    const pe = (i: number) => (hx !== null ? (i === 0 ? 0 : this.edad[i - 1]) : this.edad[i]);
+    const pf = (i: number) => (hx !== null ? (i === 0 ? this.t * 7.5 : this.fase[i - 1]) : this.fase[i]);
+    e.capas.forEach((c, k) => {
+      const m = this.mallas[k];
+      const pos = m.geometry.attributes.position as THREE.BufferAttribute;
+      const col = m.geometry.attributes.color as THREE.BufferAttribute;
+      if (cuantos < 2) {
+        m.geometry.setDrawRange(0, 0);
+        return;
+      }
+      const P = pos.array as Float32Array, C = col.array as Float32Array;
+      for (let i = 0; i < cuantos; i++) {
+        // Hacia dónde va la cinta en este punto (con los vecinos) y su perpendicular
+        const a = Math.max(0, i - 1), z = Math.min(cuantos - 1, i + 1);
+        let tx = px(z) - px(a), ty = py(z) - py(a);
+        const l = Math.hypot(tx, ty) || 1;
+        tx /= l;
+        ty /= l;
+        const nx = -ty, ny = tx;
+        const t = Math.min(1, pe(i) / e.vida);
+        const w = c.ancho * 0.5 * (c.pareja ? 1 : 1 - t * 0.55) * Math.min(1, 0.45 + pe(i) * 14);
+        const off = (c.lado ?? 0) + (c.onda ?? 0) * Math.sin(pf(i)) * Math.min(1, pe(i) * 6);
+        const cx = px(i) + nx * off, cy = py(i) + ny * off;
+        P.set([cx + nx * w, cy + ny * w, -0.25 - k * 0.002, cx - nx * w, cy - ny * w, -0.25 - k * 0.002], i * 6);
+        // Color: de la cabeza a la cola por la lista de colores
+        const u = t * (c.colores.length - 1);
+        const j = Math.min(c.colores.length - 1, Math.floor(u));
+        this.color.set(c.colores[j]);
+        if (j + 1 < c.colores.length) this.color.lerp(this.c1.set(c.colores[j + 1]), u - j);
+        const alfa = c.alfa * Math.pow(1 - t, c.pareja ? 0.6 : 1.3) * Math.min(1, 0.2 + pe(i) * 20);
+        C.set([this.color.r, this.color.g, this.color.b, alfa, this.color.r, this.color.g, this.color.b, alfa], i * 8);
+      }
+      pos.needsUpdate = true;
+      col.needsUpdate = true;
+      m.geometry.setDrawRange(0, (cuantos - 1) * 6);
+    });
+  }
+
+  liberar() {
+    for (const m of this.mallas) {
+      m.removeFromParent();
+      m.geometry.dispose();
+      m.material.dispose();
+    }
+    this.mallas = [];
+    this.texSuave.dispose();
+    this.texNitida.dispose();
   }
 }

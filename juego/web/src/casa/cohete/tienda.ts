@@ -1,11 +1,13 @@
 // La tienda del retrete: se paga con los rollitos dorados del vuelo. Mejoras por niveles (lo que dura cada poder,
-// imán más fuerte, burbuja de arranque, segunda oportunidad, arranque con frijoles…), retretes, estelas y cascos
-// (se prueban en el modelo 3D de la izquierda antes de comprarlos) y las misiones con el multiplicador.
+// imán más fuerte, burbuja de arranque, segunda oportunidad, arranque con frijoles…) y los paticos salvavidas;
+// retretes, estelas y cascos no se compran: se ganan con retos según su rareza (se prueban en el modelo 3D de la
+// izquierda aunque no se tengan) y las misiones con el multiplicador.
 import { nota } from '../../sonido';
 import { iconoEstela } from './arte';
 import {
-  CASCOS, COSMETICOS, ESTELAS, type IdMejora, MEJORAS, type ProgresoCohete, RETRETES, type TipoCosmetico, comprar, cuentasNuevas,
-  esDeVuelo, multiplicador, nivelDe, precioMejora, premioMision, premioNivel, revisarMisiones, textoCosmetico, textoMision, tieneCosmetico, valorDe,
+  CASCOS, COSMETICOS, DURA_PATICO, ESPERA_PATICO, ESTELAS, type IdMejora, MAX_PATICOS, MEJORAS, PRECIO_PATICO, type ProgresoCohete, RAREZA,
+  RETRETES, type TipoCosmetico, comprar, cuentasNuevas, esDeVuelo, multiplicador, nivelDe, precioMejora, premioMision, premioNivel, revisarMisiones,
+  textoCosmetico, textoMision, textoReto, tieneCosmetico, valorDe, valorReto,
 } from './datos';
 import type { Rol } from '../modelo';
 
@@ -62,10 +64,7 @@ export class Tienda {
       return this.repintar(true);
     }
     if ((el = b('[data-mejora]'))) return this.comprarMejora(el.dataset.mejora as IdMejora, el);
-    if ((el = b('[data-comprar]'))) {
-      const [tipo, id] = el.dataset.comprar!.split(':') as [TipoCosmetico, string];
-      return this.comprarCosmetico(tipo, id, el);
-    }
+    if ((el = b('[data-patico]'))) return this.comprarPatico(el);
     if ((el = b('[data-usar]'))) {
       const [tipo, id] = el.dataset.usar!.split(':') as [TipoCosmetico, string];
       this.p.puesto[tipo] = id;
@@ -131,13 +130,12 @@ export class Tienda {
     this.raiz.querySelector(`[data-tarjeta="m-${id}"]`)?.classList.add('recien');
   }
 
-  private comprarCosmetico(tipo: TipoCosmetico, id: string, boton: HTMLElement) {
-    if (!comprar(this.p, { tipo, id })) return this.sinPlata(boton);
-    delete this.probando[tipo];
-    this.al.probar(tipo, id);
+  private comprarPatico(boton: HTMLElement) {
+    if (!comprar(this.p, { patico: true })) return this.sinPlata(boton);
+    nota(1568, 0.06, 0.2, 'square', 0.03, 2400);
     this.pagado(boton);
     this.repintar();
-    this.raiz.querySelector(`[data-tarjeta="${tipo}-${id}"]`)?.classList.add('recien');
+    this.raiz.querySelector('[data-tarjeta="patico"]')?.classList.add('recien');
   }
 
   /** Vuelve a dibujar la lista (y el saldo). */
@@ -191,7 +189,16 @@ export class Tienda {
           </article>`;
         })
         .join('');
-    return grupo('poder', 'Poderes del vuelo') + grupo('vuelo', 'Mejoras del retrete');
+    const p = this.p;
+    const patico = `<h3 class="ct-titulo">Para llevar</h3>
+      <article class="ct-tarjeta mejora patico" data-tarjeta="patico">
+        <img src="${ico('patico')}" alt="" onerror="this.style.visibility='hidden'">
+        <div class="ct-info"><b>Patico salvavidas</b><small>Se suelta con su botón en pleno vuelo: aguanta un choque durante ${DURA_PATICO} s.
+          Después hay que esperar ${ESPERA_PATICO} s para soltar el siguiente. También llega uno en cada cofre de misiones.</small>
+          <span class="ct-valor">Tienes <em>${mil(p.paticos)}</em></span></div>
+        ${p.paticos < MAX_PATICOS ? this.boton(PRECIO_PATICO, 'data-patico', 'Uno más') : '<span class="ct-listo">¡Lleno!</span>'}
+      </article>`;
+    return patico + grupo('poder', 'Poderes del vuelo') + grupo('vuelo', 'Mejoras del retrete');
   }
 
   private iconoCosmetico(tipo: TipoCosmetico, id: string) {
@@ -210,22 +217,27 @@ export class Tienda {
   private htmlCosmeticos(tipo: TipoCosmetico) {
     const lista = tipo === 'retrete' ? RETRETES : tipo === 'estela' ? ESTELAS : CASCOS;
     const intro = {
-      retrete: 'El trono con el que vuelas. Toca uno para verlo en la vitrina.',
-      estela: 'Lo que vas dejando atrás (además del fuego).',
-      casco: 'Para proteger la cabeza… o el peinado.',
+      retrete: 'El trono con el que vuelas. No se compran: se ganan con retos, más difíciles mientras más raros. Toca uno para verlo en la vitrina.',
+      estela: 'Lo que vas dejando atrás (además del fuego). Las más raras dejan una cinta de luz más larga y suavecita.',
+      casco: 'Para proteger la cabeza… o el peinado. Cada uno tiene su reto.',
     }[tipo];
-    return `<p class="ct-nota">${intro}</p><div class="ct-rejilla">` + lista
+    const ganados = lista.filter((c) => tieneCosmetico(this.p, tipo, c.id)).length;
+    return `<p class="ct-nota">${intro} <b>${ganados} de ${lista.length}</b></p><div class="ct-rejilla">` + lista
       .map((c) => {
         const tiene = tieneCosmetico(this.p, tipo, c.id);
         const puesto = this.p.puesto[tipo] === c.id;
         const probando = this.probando[tipo] === c.id;
-        const accion = puesto
-          ? '<span class="ct-puesto">Puesto ✓</span>'
-          : tiene
-            ? `<button class="ct-usar" data-usar="${tipo}:${c.id}">Usar</button>`
-            : this.boton(c.precio, `data-comprar="${tipo}:${c.id}"`);
-        return `<article class="ct-tarjeta cosmetico${puesto ? ' puesto' : ''}${probando ? ' probando' : ''}${tiene ? '' : ' nuevo'}" data-tarjeta="${tipo}-${c.id}" data-probar="${tipo}:${c.id}">
-          <img src="${this.iconoCosmetico(tipo, c.id)}" alt="" onerror="this.style.visibility='hidden'">
+        const r = RAREZA[c.rareza];
+        const sello = `<span class="ct-rareza">${r.estrellas ? '★'.repeat(r.estrellas) + ' ' : ''}${r.nombre}</span>`;
+        let accion: string;
+        if (puesto) accion = '<span class="ct-puesto">Puesto ✓</span>';
+        else if (tiene) accion = `<button class="ct-usar" data-usar="${tipo}:${c.id}">Usar</button>`;
+        else {
+          const v = Math.min(c.reto!.meta, valorReto(this.p, c.reto!));
+          accion = `<span class="ct-reto"><small>${esc(textoReto(c.reto!))}</small><span class="ct-barra"><i style="width:${(v / c.reto!.meta) * 100}%"></i></span><em>${mil(v)} / ${mil(c.reto!.meta)}</em></span>`;
+        }
+        return `<article class="ct-tarjeta cosmetico rareza-${c.rareza}${puesto ? ' puesto' : ''}${probando ? ' probando' : ''}${tiene ? '' : ' bloqueado'}" data-tarjeta="${tipo}-${c.id}" data-probar="${tipo}:${c.id}">
+          ${sello}<img src="${this.iconoCosmetico(tipo, c.id)}" alt="" onerror="this.style.visibility='hidden'">
           <b>${esc(c.nombre)}</b><small>${esc(textoCosmetico(tipo, c))}</small>${accion}
         </article>`;
       })
@@ -255,6 +267,7 @@ export class Tienda {
         <span><b>${mil(p.mejorPuntaje)}</b><small>Mejor puntaje</small></span>
         <span><b>${mil(p.vuelos)}</b><small>Vuelos</small></span>
         <span><b>${mil(p.ganados)}</b><small>Rollitos ganados</small></span>
+        <span><b>${mil(p.paticos)}</b><small>Paticos salvavidas</small></span>
       </div>`;
   }
 }

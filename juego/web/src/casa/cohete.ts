@@ -16,8 +16,9 @@ import * as fondo from '../segundo_plano';
 import { activar as activarSonido, musica, nota, rumor } from '../sonido';
 import { CUADRO, atlasParticulas, texturaHalo } from './cohete/arte';
 import {
-  type Cuentas, type IdMejora, type IdPoder, PODERES, type ProgresoCohete, type TipoCosmetico, copiaProgreso, cuentasNuevas, multiplicador,
-  nombreTramo, normalizarCohete, ponerNeutroCohete, revisarMisiones, tramoDe, valorDe,
+  type Cuentas, DURA_PATICO, ESPERA_PATICO, type IdMejora, type IdPoder, PODERES, type ProgresoCohete, type TipoCosmetico, copiaProgreso,
+  cuentasNuevas, ganarCosmeticos, multiplicador, nombreTramo, normalizarCohete, ponerNeutroCohete, registrarVuelo, revisarMisiones, tramoDe,
+  valorDe,
 } from './cohete/datos';
 import { Efectos, Propulsor } from './cohete/efectos';
 import { Escenario } from './cohete/escenario';
@@ -314,6 +315,7 @@ class RetreteEspacial {
         <div class="ch-der"><span class="ch-puntos"><em>×${multiplicador(this.p)}</em><b>0</b></span><button class="ch-pausa" aria-label="Pausa"><i></i><i></i></button></div>
       </div>
       <div class="ch-poderes"></div>
+      <button class="ch-patico" hidden aria-label="Soltar un patico salvavidas"><img src="./modelos/iconos/cohete_patico.webp" alt=""><b>0</b><i></i></button>
       <div class="ch-avisos"></div>
       <p class="cohete-aviso"></p>
       <div class="cohete-tramo"><small></small><b></b></div>
@@ -546,10 +548,12 @@ class RetreteEspacial {
     if (e.type === 'keydown') this.teclas.add(e.key.toLowerCase());
     else this.teclas.delete(e.key.toLowerCase());
     if (e.type === 'keydown' && (e.key === 'p' || e.key === 'Escape')) this.pausar(!this.pausado);
+    if (e.type === 'keydown' && e.key === ' ' && !e.repeat) this.soltarPatico();
   };
 
   private botones() {
     this.capa.querySelector('.ch-pausa')!.addEventListener('click', () => this.pausar(true));
+    this.capa.querySelector('.ch-patico')!.addEventListener('click', () => this.soltarPatico());
     this.capa.querySelector('[data-seguir]')!.addEventListener('click', () => this.pausar(false));
     this.capa.querySelector('[data-rendirse]')!.addEventListener('click', () => {
       this.pausar(false);
@@ -745,6 +749,9 @@ class RetreteEspacial {
     this.cara('nervioso', 99);
     this.revivir = valorDe(this.p, 'revivir');
     this.multVuelo = multiplicador(this.p);
+    this.quitarPatico(false);
+    this.esperaPatico = 0;
+    this.pintarPatico();
     this.pintarRecord();
     // Lo comprado para el arranque
     const arr = valorDe(this.p, 'arranque');
@@ -779,6 +786,7 @@ class RetreteEspacial {
       }
     }
     this.invulnerable = Math.max(0, this.invulnerable - dt);
+    this.pasoPatico(dt);
     const metros = this.distancia * METROS;
     this.cuentas.metros = metros;
     // Teclado (pruebas en el computador) y piloto automático
@@ -793,7 +801,8 @@ class RetreteEspacial {
     const L = this.limites;
     // Que el personaje nunca se salga de la pantalla (la cabeza va 1,9 arriba del asiento)
     const s = this.nave.scale.y / 1.5;
-    this.meta.x = THREE.MathUtils.clamp(this.meta.x, -L.x + 0.8, L.x * 0.3);
+    // (de lado a lado de lo que se ve: antes había una pared invisible al 30 % de la pantalla)
+    this.meta.x = THREE.MathUtils.clamp(this.meta.x, -L.x + 0.8, L.x - 0.9);
     this.meta.y = THREE.MathUtils.clamp(this.meta.y, -L.y - 0.2 + 0.7 * s, L.y + 0.6 - 2.1 * s);
     const antes = this.nave.position.y;
     const n = this.nave.position;
@@ -925,6 +934,15 @@ class RetreteEspacial {
       this.decir('¡Plop! Se reventó la burbuja.', 1.6);
       this.cara('enojado', 0.9);
       nota(600, 0.15, 0, 'sine', 0.08, 1400);
+      return false;
+    }
+    if (this.patico > 0 && o.tipo !== 'agujero') {
+      this.reventarPatico();
+      if (o.destruible) this.obst.destruir(o);
+      this.invulnerable = 1.3;
+      this.temblor = 0.45;
+      this.decir(elegir(['¡Cuac! El patico me salvó.', '¡Gracias, patico!', 'Patico: 1, asteroide: 0']), 1.6);
+      this.cara('sorprendido', 0.9);
       return false;
     }
     if (this.revivir > 0 && o.tipo !== 'agujero') {
@@ -1120,6 +1138,108 @@ class RetreteEspacial {
     if (this.tFase > 1.9) this.terminarVuelo();
   }
 
+  // ------------------------------------------------------------------ Patico salvavidas
+  /** Segundos que le quedan al patico puesto (0: no hay) y la espera para soltar otro. */
+  private patico = 0;
+  private esperaPatico = 0;
+  private paticoObj: THREE.Object3D | null = null;
+  private paticoAnim = 0;
+  private paticoHud = '';
+
+  /** Suelta un patico (si tiene, no hay uno puesto y ya pasó la espera). */
+  private soltarPatico() {
+    if (this.fase !== 'juego' || this.pausado || this.p.paticos <= 0 || this.patico > 0 || this.esperaPatico > 0) {
+      nota(220, 0.12, 0, 'triangle', 0.04);
+      return;
+    }
+    this.p.paticos--;
+    this.cuentas.paticos++;
+    this.patico = DURA_PATICO;
+    if (!this.paticoObj && this.modelos?.tiene('patico')) {
+      this.paticoObj = this.modelos.cosa('patico', 1.15);
+      // A la cintura del retrete, acostado, con la cabeza del pato hacia adelante
+      this.paticoObj?.position.set(0, -0.22 * ESCALA_RETRETE, 0.02);
+    }
+    if (this.paticoObj) {
+      this.soporte.add(this.paticoObj);
+      this.paticoObj.visible = true;
+    }
+    this.paticoAnim = 0;
+    // ¡Cuac cuac! y se infla
+    [1245, 1480].forEach((f, k) => nota(f, 0.09, k * 0.12, 'square', 0.035, f * 1.35));
+    rumor(0.35, 1800, 0.05, 0, 0.6, 900);
+    this.aviso('¡Patico salvavidas!');
+    this.decir(elegir(['¡Al agua, patico!', 'Con mi patico no me pasa nada', '¡Cuac! Protegido por 30 segundos']), 1.8);
+    this.pintarPatico();
+  }
+
+  /** El patico aguantó el golpe: se revienta en plumitas y empieza la espera. */
+  private reventarPatico() {
+    const o = this.paticoObj;
+    if (o) {
+      const w = o.getWorldPosition(this.tmp);
+      for (let k = 0; k < 26; k++) {
+        const a = Math.random() * Math.PI * 2, v = 2 + Math.random() * 4;
+        this.brillo.emitir({
+          x: w.x, y: w.y, z: 0.3, vx: Math.cos(a) * v, vy: Math.sin(a) * v, vida: 0.5 + Math.random() * 0.5, tam0: 0.5, tam1: 0.1,
+          color0: k % 3 ? '#FFD23F' : '#FFFFFF', color1: '#FF9A1F', cuadro: CUADRO.chispa, roce: 2, arrastre: 0.6,
+        });
+      }
+    }
+    [880, 660, 440].forEach((f, k) => nota(f, 0.12, k * 0.07, 'square', 0.04, f * 0.7));
+    this.quitarPatico(true);
+  }
+
+  /** Se acaba (o se revienta): desaparece y corre la espera para el siguiente. */
+  private quitarPatico(espera: boolean) {
+    this.patico = 0;
+    if (espera) this.esperaPatico = ESPERA_PATICO;
+    if (this.paticoObj) {
+      this.paticoObj.visible = false;
+      this.paticoObj.removeFromParent();
+    }
+    this.pintarPatico();
+  }
+
+  private pasoPatico(dt: number) {
+    if (this.esperaPatico > 0) this.esperaPatico = Math.max(0, this.esperaPatico - dt);
+    if (this.patico > 0) {
+      this.patico -= dt;
+      const o = this.paticoObj;
+      if (o) {
+        // Se infla al ponerlo, se mece y en los últimos segundos titila (se está desinflando)
+        this.paticoAnim = Math.min(1, this.paticoAnim + dt * 4);
+        const k = this.paticoAnim;
+        const infla = k < 1 ? 1 - Math.pow(1 - k, 3) * Math.cos(k * 9) : 1;
+        const des = this.patico < 3 ? 0.85 + 0.15 * Math.max(0, this.patico / 3) : 1;
+        o.scale.setScalar(Math.max(0.01, infla * des));
+        // (el modelo trae la cabeza hacia atrás del retrete: media vuelta para que mire a la cámara)
+        o.rotation.set(Math.sin(this.t * 3) * 0.08, Math.PI + Math.sin(this.t * 1.7) * 0.25, Math.sin(this.t * 2.3) * 0.06);
+        o.visible = this.patico > 3 || Math.sin(this.t * 22) > -0.4;
+      }
+      if (this.patico <= 0) {
+        nota(520, 0.25, 0, 'sine', 0.04, 260);
+        this.quitarPatico(true);
+      }
+    }
+    this.pintarPatico();
+  }
+
+  /** El botón: cuántos quedan, si está puesto (con su tiempo) o esperando (con el reloj). */
+  private pintarPatico() {
+    const b = this.capa?.querySelector<HTMLElement>('.ch-patico');
+    if (!b || !this.p) return;
+    const estado = this.patico > 0 ? 'puesto' : this.esperaPatico > 0 ? 'espera' : this.p.paticos > 0 ? 'listo' : 'vacio';
+    const k = this.patico > 0 ? this.patico / DURA_PATICO : this.esperaPatico > 0 ? 1 - this.esperaPatico / ESPERA_PATICO : 1;
+    const clave = `${this.fase}|${estado}|${this.p.paticos}|${Math.round(k * 40)}`;
+    if (clave === this.paticoHud) return;
+    this.paticoHud = clave;
+    b.hidden = this.fase !== 'juego' || (this.p.paticos <= 0 && this.patico <= 0 && this.esperaPatico <= 0);
+    b.dataset.estado = estado;
+    b.style.setProperty('--k', k.toFixed(3));
+    b.querySelector('b')!.textContent = String(this.p.paticos);
+  }
+
   // ------------------------------------------------------------------ Fin del vuelo
   private cumplidas: { texto: string; premio: number }[] = [];
   private revisarMisiones(cerrar: boolean) {
@@ -1145,6 +1265,10 @@ class RetreteEspacial {
     p.rollitos += ganados;
     p.ganados += ganados;
     p.vuelos++;
+    // Lo de este vuelo cuenta para los retos de los retretes, estelas y cascos
+    this.cuentas.metros = Math.max(this.cuentas.metros, metros);
+    registrarVuelo(p, this.cuentas);
+    const cosmeticos = ganarCosmeticos(p);
     const record = metros > p.mejor;
     if (record) p.mejor = metros;
     const recordPuntaje = this.puntaje > p.mejorPuntaje;
@@ -1155,6 +1279,7 @@ class RetreteEspacial {
       metros, puntaje: Math.floor(this.puntaje), rollitos: this.rollitosVuelo, extraTriple: extra, record, recordPuntaje,
       segundos: this.tJuego, mult: this.multVuelo, misionesAntes: misiones, cumplidas: this.cumplidas, subio: r.subio, nivelAntes: antesNivel,
       progreso: p, rol: this.o.rol, recordPareja: this.neutro ? 0 : this.o.recordPareja ?? 0, casa: null, textoSalir: this.o.textoSalir,
+      cosmeticos,
     };
     // Las monedas de la casa se dan apenas aterriza (si se cierra la app en la pantalla del vuelo, no se pierden)
     const res = this.resultado;
@@ -1263,6 +1388,8 @@ class RetreteEspacial {
     this.resultado = null;
     this.distancia = this.puntaje = this.rollitosVuelo = this.tJuego = this.sinPoder = 0;
     this.revivir = this.invulnerable = this.turboArranque = 0;
+    this.quitarPatico(false);
+    this.esperaPatico = 0;
     this.rachaRollitos = this.tRacha = 0;
     this.proxFigura = 3;
     this.proxFrase = 7;
@@ -1721,6 +1848,7 @@ export const cohete: { actual: RetreteEspacial | null } = { actual: null };
   mejoras: (m: Partial<Record<IdMejora, number>>) => cohete.actual?.pruebaMejoras(m),
   dios: (si = true) => cohete.actual && (cohete.actual.dios = si),
   boton: (sel: string) => cohete.actual?.pruebaBoton(sel),
+  patico: () => cohete.actual?.pruebaBoton('.ch-patico'),
 };
 
 /**

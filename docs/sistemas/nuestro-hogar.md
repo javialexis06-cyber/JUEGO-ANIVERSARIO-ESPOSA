@@ -169,7 +169,8 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
   (leche o picante) sigue despegando solo, con el susto completo.
 - Con esas ganas, en el inodoro todo tiembla, echa humo y **sale disparado por el techo al espacio** (el
   personaje de verdad, vestido como está y con su casco, sentado en el retrete que tenga puesto, con llama de
-  cohete y su estela). Se arrastra el dedo en cualquier parte para esquivar; el juego va a 30 cuadros por
+  cohete y su estela). Se arrastra el dedo en cualquier parte para esquivar (el retrete llega a todo lo que se ve,
+  también hasta el borde derecho); el juego va a 30 cuadros por
   segundo y baja la resolución y las partículas solo si el celular no da. Mientras vuela dice cosas («Siempre supe
   que algún día saldría como un cohete del baño», «Esto está más lleno que el metro de Medellín en hora pico»…).
 
@@ -202,10 +203,22 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
   rollos** (lluvia de rollitos). Los activos se ven abajo a la izquierda con su reloj.
 - Distancia en metros, puntaje (metros + rollitos + «¡por un pelito!» + lo destruido) por el **multiplicador** de
   misiones. En el camino salen las banderitas de **tu récord** y del **récord de la pareja** («¡Te pasé, mi amor!»).
+- **Patico salvavidas** (como la patineta de Subway Surfers): botón redondo abajo a la derecha con cuántos quedan.
+  Se suelta en pleno vuelo (o con la barra espaciadora) y el retrete queda montado en un flotador de patico inflable
+  (con su cabeza de pato mirando a la cámara) durante 30 s: **aguanta un choque** (se revienta en plumitas, «¡Cuac!
+  El patico me salvó») y en los últimos 3 s titila. Después hay que esperar 20 s para soltar otro (el reloj se ve en
+  el botón). Se empieza con 2, llega uno en cada cofre de misiones y se compran a 250 rollitos (hasta 99). No sirve
+  contra los agujeros negros. Modelo `patico` en `cohete_cosas.glb` (`personajes/blender/cohete_piezas.py`).
+- **Estelas con cinta**: además de las partículas, las estelas especiales dejan una cinta suave que sigue el camino
+  del retrete (una franja por capas que se ondula y se desvanece, con un punto cada 1/60 s aunque el celular vaya a
+  30 cuadros). Más rareza, más capas: las comunes son solo partículas (más nítidas que antes), las especiales una
+  luz con su centro blanco, las raras van en bandas (el pentagrama de la cumbia, la bandera de Colombia), las épicas
+  en tres capas (pétalos) o seis bandas (arcoíris) y la legendaria (estrellitas) en tres capas con el centro que
+  brilla (`Cinta` en `src/casa/cohete/efectos.ts`).
 - Pausa con el botón, y sola si la app se va a segundo plano (`src/segundo_plano.ts`).
 - Al chocar (o al revivir con la mejora) explota, cae con un **paracaídas de papel higiénico** y sale la pantalla
-  del vuelo: distancia, rollitos, puntaje, récords, las tres misiones con su barrita y, si se cumplieron, el nivel
-  nuevo con su cofre. De ahí, **🚀 Volar otra vez** (el vuelo vuelve a empezar ahí mismo, sin pasar por la casa:
+  del vuelo: distancia, rollitos, puntaje, récords, **lo que se ganó en ese vuelo** («¡Te lo ganaste!», con el color
+  de su rareza), las tres misiones con su barrita y, si se cumplieron, el nivel nuevo con su cofre. De ahí, **🚀 Volar otra vez** (el vuelo vuelve a empezar ahí mismo, sin pasar por la casa:
   se reusan los modelos, las partículas y el mismo lienzo 3D, así que repetir no gasta más memoria), **Tienda** o
   **Volver a casa** (aterriza en el baño, o en el cuarto de juegos, con el ¡KABOOM!).
 - Premio para la casa: igual de escaso que antes (1 moneda cada 15 s, hasta 3 por vuelo), pero se da **apenas
@@ -230,9 +243,11 @@ miniatura: sale el marcador y el botón). A la izquierda, el personaje en su ret
 | Pestaña | Qué hay |
 |---|---|
 | Mejoras | Duración de cada poder (5 niveles; láser, ayudante y pastilla se desbloquean con el primero), ambientador y paca (desbloquear), imán más fuerte, burbuja de arranque, **segunda oportunidad** (revivir 1 vez, con burbuja, o 2 veces), **arranque con frijoles** (300/600/1000 m de turbo), poderes más seguidos, **papel triple hoja** (+15/30/50 % rollitos) y **taza aerodinámica** (el retrete ocupa menos). Precios de 100 a 3200 por nivel |
-| Retretes | Porcelana de la casa (con forro peludo), letrina de finca (con tusa), baño portátil de concierto, retrete chiva (parrilla, plátanos y gallina), nave espacial, princesa, gamer RGB (luces que cambian), trono dorado y oro con diamantes (300 a 3500) |
-| Estelas | Fuego, nube de frijoles, burbujas, corazones, chispitas, notas de cumbia, confeti tricolor, pétalos, arcoíris y estrellitas (250 a 1100) |
-| Cascos | Desatascador en la frente, gorro de baño con patitos, sombrero de rollo, antenas de marciano, gorro de aviador, casco vikingo, casco de astronauta y corona galáctica (250 a 1600), hechos sobre la cabeza de Él y de Ella |
+| Mejoras | (arriba) **Patico salvavidas** «Para llevar», 250 rollitos cada uno |
+| Retretes, Estelas y Cascos | **No se compran: se ganan con retos**, según su rareza (común blanco, especial verde, raro azul, épico morado y legendario dorado con un brillo que cruza la tarjeta). Lo que falta sale en sombra con su reto y la barrita (p. ej. «Vuela 5 veces», «Esquiva 15 chanclas voladoras», «Llega a la Luna (1.200 m en un vuelo)», «Tumba 5 ovnis», «Llega al nivel 8 de misiones», «Escápate de 5 agujeros negros»; la legendaria de los retretes, oro con diamantes, pide llegar hasta la galaxia del amor). Lo que ya se tenía comprado de antes se queda. Se gana solo al terminar el vuelo en que se cumple. Se puede **probar encima** aunque no se tenga |
+| Retretes | Porcelana de la casa, letrina de finca, baño portátil de concierto, retrete chiva, nave espacial, princesa, gamer RGB, trono dorado y oro con diamantes |
+| Estelas | Fuego, nube de frijoles, burbujas (comunes), corazones, chispitas (especiales), notas de cumbia, confeti tricolor (raras), pétalos, arcoíris (épicas) y estrellitas fugaces (legendaria) |
+| Cascos | Desatascador en la frente, gorro de baño con patitos, sombrero de rollo, antenas de marciano, gorro de aviador, casco vikingo, casco de astronauta y corona galáctica, hechos sobre la cabeza de Él y de Ella |
 | Misiones | Las tres misiones, el nivel y los números de cada uno |
 
 Balance con el piloto automático (48 vuelos sin mejoras): mitad de los vuelos pasan de 40 s y 600 m (uno de cada
@@ -243,7 +258,8 @@ cinco). Con mejoras de nivel medio (burbuja, segunda oportunidad, arranque, imá
 ### Datos y código
 
 - `casa.cohete[rol]` (`ProgresoCohete`, normalizado en `src/casa/cohete/datos.ts`): rollitos, mejoras, cosméticos
-  comprados y puestos, nivel y misiones, mejor distancia y puntaje, vuelos. Se guarda al terminar cada vuelo y en
+  ganados y puestos, nivel y misiones, mejor distancia y puntaje, vuelos, paticos, y para los retos `totales` (lo
+  que se ha hecho sumando todos los vuelos) y `maximos` (lo más en un solo vuelo). Se guarda al terminar cada vuelo y en
   cada compra. `casa.coheteVisto[rol]`: cuándo lo descubrió (`yaDescubrio()` en `cohete/datos.ts`).
 - Código: `src/casa/cohete.ts` (el juego, `otraVez()` para volver a volar) y `src/casa/cohete/` (datos y catálogos,
   escenario y tramos, obstáculos, poderes, rollitos y figuras, partículas, efectos, música, tienda, pantalla del

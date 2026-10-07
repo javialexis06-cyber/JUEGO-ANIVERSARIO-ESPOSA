@@ -117,49 +117,72 @@ export const MEJORAS: Mejora[] = [
 export const MEJORA = Object.fromEntries(MEJORAS.map((m) => [m.id, m])) as Record<IdMejora, Mejora>;
 
 // ---------------------------------------------------------------------------
-// Cosméticos: retretes, estelas y cascos
+// Cosméticos: retretes, estelas y cascos. No se compran: se ganan con retos, más difíciles mientras más raros
+// (las mismas rarezas y colores de los disfraces de la casa)
 // ---------------------------------------------------------------------------
 export type TipoCosmetico = 'retrete' | 'estela' | 'casco';
+export type Rareza = 'blanco' | 'verde' | 'azul' | 'morado' | 'dorado';
+export const RAREZA: Record<Rareza, { nombre: string; estrellas: number }> = {
+  blanco: { nombre: 'Común', estrellas: 0 },
+  verde: { nombre: 'Especial', estrellas: 1 },
+  azul: { nombre: 'Raro', estrellas: 2 },
+  morado: { nombre: 'Épico', estrellas: 3 },
+  dorado: { nombre: 'Legendario', estrellas: 4 },
+};
+/**
+ * Lo que hay que lograr para ganarse un cosmético: `total` suma todos los vuelos, `vuelo` es lo mejor de un solo vuelo,
+ * y `vuelos`, `nivel` y `ganados` son esos números del progreso.
+ */
+export interface Reto {
+  de: 'total' | 'vuelo' | 'vuelos' | 'nivel' | 'ganados';
+  cuenta?: keyof Cuentas;
+  meta: number;
+  /** Cómo se dice (con {n} para la meta). */
+  texto: string;
+}
 export interface Cosmetico {
   id: string;
   nombre: string;
   texto: string;
-  precio: number;
+  rareza: Rareza;
+  /** Sin reto: viene con el retrete. */
+  reto?: Reto;
 }
+const reto = (de: Reto['de'], meta: number, texto: string, cuenta?: keyof Cuentas): Reto => ({ de, meta, texto, cuenta });
 
 export const RETRETES: Cosmetico[] = [
-  { id: 'porcelana', nombre: 'Porcelana de la casa', texto: 'El de siempre: blanquito y con fe', precio: 0 },
-  { id: 'madera', nombre: 'Letrina de finca', texto: 'Tabla de madera, balde y tusa de repuesto', precio: 300 },
-  { id: 'portatil', nombre: 'Baño portátil de concierto', texto: 'Azul, con lunita en la puerta', precio: 700 },
-  { id: 'chiva', nombre: 'Retrete chiva', texto: 'Pintado como chiva de pueblo, con parrilla y todo', precio: 900 },
-  { id: 'nave', nombre: 'Nave espacial', texto: 'Cromado, con aletas, ventanilla y antena', precio: 1200 },
-  { id: 'princesa', nombre: 'Retrete de princesa', texto: 'Rosadito, con corazones y tiara', precio: 1200 },
-  { id: 'gamer', nombre: 'Retrete gamer RGB', texto: 'Luces de colores y portavasos', precio: 1500 },
-  { id: 'trono', nombre: 'Trono dorado', texto: 'Oro y terciopelo: digno de la realeza', precio: 2000 },
-  { id: 'diamantes', nombre: 'Oro con diamantes', texto: 'Para ir al baño como millonario', precio: 3500 },
+  { id: 'porcelana', nombre: 'Porcelana de la casa', texto: 'El de siempre: blanquito y con fe', rareza: 'blanco' },
+  { id: 'madera', nombre: 'Letrina de finca', texto: 'Tabla de madera, balde y tusa de repuesto', rareza: 'blanco', reto: reto('vuelos', 5, 'Vuela {n} veces') },
+  { id: 'portatil', nombre: 'Baño portátil de concierto', texto: 'Azul, con lunita en la puerta', rareza: 'verde', reto: reto('ganados', 800, 'Recoge {n} rollitos en total') },
+  { id: 'chiva', nombre: 'Retrete chiva', texto: 'Pintado como chiva de pueblo, con parrilla y todo', rareza: 'verde', reto: reto('total', 15, 'Esquiva {n} chanclas voladoras', 'chanclas') },
+  { id: 'nave', nombre: 'Nave espacial', texto: 'Cromado, con aletas, ventanilla y antena', rareza: 'azul', reto: reto('vuelo', 1200, 'Llega a la Luna ({n} m en un vuelo)', 'metros') },
+  { id: 'princesa', nombre: 'Retrete de princesa', texto: 'Rosadito, con corazones y tiara', rareza: 'azul', reto: reto('total', 3, 'Recoge {n} corazones de rollitos completos', 'corazon') },
+  { id: 'gamer', nombre: 'Retrete gamer RGB', texto: 'Luces de colores y portavasos', rareza: 'morado', reto: reto('total', 5, 'Tumba {n} ovnis (con turbo o con láser)', 'ovnis') },
+  { id: 'trono', nombre: 'Trono dorado', texto: 'Oro y terciopelo: digno de la realeza', rareza: 'morado', reto: reto('nivel', 8, 'Llega al nivel {n} de misiones') },
+  { id: 'diamantes', nombre: 'Oro con diamantes', texto: 'Para ir al baño como millonario', rareza: 'dorado', reto: reto('vuelo', 6500, 'Llega hasta {tramo:amor} ({n} m en un vuelo)', 'metros') },
 ];
 export const ESTELAS: Cosmetico[] = [
-  { id: 'fuego', nombre: 'Fuego de cohete', texto: 'El clásico: candela y humito', precio: 0 },
-  { id: 'frijoles', nombre: 'Nube de frijoles', texto: 'Verdecita y… aromática', precio: 250 },
-  { id: 'burbujas', nombre: 'Burbujas de jabón', texto: 'Limpiecito hasta en el espacio', precio: 400 },
-  { id: 'corazones', nombre: 'Corazones', texto: 'Para que sepan que vas enamorado', precio: 450 },
-  { id: 'chispitas', nombre: 'Chispitas doradas', texto: 'Brillas por donde pasas', precio: 550 },
-  { id: 'notas', nombre: 'Notas de cumbia', texto: 'Vas volando y bailando', precio: 600 },
-  { id: 'confeti', nombre: 'Confeti tricolor', texto: 'Amarillo, azul y rojo: ¡Colombia en el espacio!', precio: 650 },
-  { id: 'petalos', nombre: 'Pétalos de rosa', texto: 'Romántico hasta en el baño', precio: 800 },
-  { id: 'arcoiris', nombre: 'Arcoíris', texto: 'Como gatito de internet', precio: 900 },
-  { id: 'estrellas', nombre: 'Estrellitas fugaces', texto: 'Pide un deseo cuando pases', precio: 1100 },
+  { id: 'fuego', nombre: 'Fuego de cohete', texto: 'El clásico: candela y humito', rareza: 'blanco' },
+  { id: 'frijoles', nombre: 'Nube de frijoles', texto: 'Verdecita y… aromática', rareza: 'blanco', reto: reto('total', 3, 'Usa {n} turbos de frijoles', 'turbos') },
+  { id: 'burbujas', nombre: 'Burbujas de jabón', texto: 'Limpiecito hasta en el espacio', rareza: 'blanco', reto: reto('total', 3, 'Revienta {n} burbujas de jabón chocando', 'escudos') },
+  { id: 'corazones', nombre: 'Corazones', texto: 'Para que sepan que vas enamorado', rareza: 'verde', reto: reto('total', 1, 'Recoge completico un corazón de rollitos', 'corazon') },
+  { id: 'chispitas', nombre: 'Chispitas doradas', texto: 'Brillas por donde pasas', rareza: 'verde', reto: reto('total', 25, 'Agarra {n} poderes', 'poderes') },
+  { id: 'notas', nombre: 'Notas de cumbia', texto: 'Vas volando y bailando', rareza: 'azul', reto: reto('total', 30, 'Esquiva {n} cosas por un pelito', 'casi') },
+  { id: 'confeti', nombre: 'Confeti tricolor', texto: 'Amarillo, azul y rojo: ¡Colombia en el espacio!', rareza: 'azul', reto: reto('total', 20, 'Recoge {n} figuras de rollitos completas', 'figuras') },
+  { id: 'petalos', nombre: 'Pétalos de rosa', texto: 'Romántico hasta en el baño', rareza: 'morado', reto: reto('vuelo', 2500, 'Vuela {n} m sin agarrar ningún poder', 'sinpoder') },
+  { id: 'arcoiris', nombre: 'Arcoíris', texto: 'Como gatito de internet', rareza: 'morado', reto: reto('total', 5, 'Sobrevive a {n} lluvias de meteoritos', 'lluvias') },
+  { id: 'estrellas', nombre: 'Estrellitas fugaces', texto: 'Pide un deseo cuando pases', rareza: 'dorado', reto: reto('total', 5, 'Escápate de {n} agujeros negros', 'agujeros') },
 ];
 export const CASCOS: Cosmetico[] = [
-  { id: 'ninguno', nombre: 'Sin casco', texto: 'Al natural, con el pelo al viento', precio: 0 },
-  { id: 'desatascador', nombre: 'Desatascador en la frente', texto: 'Se pegó y no hubo forma de quitarlo', precio: 250 },
-  { id: 'ducha', nombre: 'Gorro de baño con patitos', texto: 'Para no mojarse el peinado', precio: 300 },
-  { id: 'rollo', nombre: 'Sombrero de rollo', texto: 'Papel higiénico de gala', precio: 400 },
-  { id: 'antenas', nombre: 'Antenas de marciano', texto: 'Para hacer amigos en Marte', precio: 450 },
-  { id: 'aviador', nombre: 'Gorro de aviador', texto: 'Con gafas de piloto de verdad', precio: 700 },
-  { id: 'vikingo', nombre: 'Casco vikingo', texto: 'Cuernos y barba de guerrero del baño', precio: 900 },
-  { id: 'astronauta', nombre: 'Casco de astronauta', texto: 'Burbuja de vidrio: ya era hora', precio: 1100 },
-  { id: 'galactica', nombre: 'Corona galáctica', texto: 'Planeticas y estrellas dándote vueltas', precio: 1600 },
+  { id: 'ninguno', nombre: 'Sin casco', texto: 'Al natural, con el pelo al viento', rareza: 'blanco' },
+  { id: 'desatascador', nombre: 'Desatascador en la frente', texto: 'Se pegó y no hubo forma de quitarlo', rareza: 'blanco', reto: reto('total', 3000, 'Vuela {n} m sumando todos tus vuelos', 'metros') },
+  { id: 'ducha', nombre: 'Gorro de baño con patitos', texto: 'Para no mojarse el peinado', rareza: 'blanco', reto: reto('total', 3, 'Usa {n} paticos salvavidas', 'paticos') },
+  { id: 'rollo', nombre: 'Sombrero de rollo', texto: 'Papel higiénico de gala', rareza: 'verde', reto: reto('vuelo', 150, 'Recoge {n} rollitos en un solo vuelo', 'rollitos') },
+  { id: 'antenas', nombre: 'Antenas de marciano', texto: 'Para hacer amigos en Marte', rareza: 'verde', reto: reto('total', 1, 'Tumba un ovni (con turbo o con láser)', 'ovnis') },
+  { id: 'aviador', nombre: 'Gorro de aviador', texto: 'Con gafas de piloto de verdad', rareza: 'azul', reto: reto('total', 10, 'Esquiva {n} cometas', 'cometas') },
+  { id: 'vikingo', nombre: 'Casco vikingo', texto: 'Cuernos y barba de guerrero del baño', rareza: 'azul', reto: reto('total', 60, 'Destruye {n} cosas con turbo, láser o ambientador', 'destruidos') },
+  { id: 'astronauta', nombre: 'Casco de astronauta', texto: 'Burbuja de vidrio: ya era hora', rareza: 'morado', reto: reto('vuelo', 3400, 'Llega al cinturón de asteroides ({n} m en un vuelo)', 'metros') },
+  { id: 'galactica', nombre: 'Corona galáctica', texto: 'Planeticas y estrellas dándote vueltas', rareza: 'dorado', reto: reto('nivel', 15, 'Llega al nivel {n} de misiones') },
 ];
 export const COSMETICOS: Record<TipoCosmetico, Cosmetico[]> = { retrete: RETRETES, estela: ESTELAS, casco: CASCOS };
 export const GRATIS: Record<TipoCosmetico, string> = { retrete: 'porcelana', estela: 'fuego', casco: 'ninguno' };
@@ -253,11 +276,14 @@ export interface Cuentas {
   lluvias: number;
   agujeros: number;
   destruidos: number;
+  /** Paticos salvavidas usados. */
+  paticos: number;
 }
 export const cuentasNuevas = (): Cuentas => ({
   rollitos: 0, metros: 0, casi: 0, turbos: 0, poderes: 0, laser: 0, escudos: 0, cometas: 0, tramo: 0, figuras: 0, corazon: 0, compras: 0,
-  sinpoder: 0, ovnis: 0, chanclas: 0, puntaje: 0, lluvias: 0, agujeros: 0, destruidos: 0,
+  sinpoder: 0, ovnis: 0, chanclas: 0, puntaje: 0, lluvias: 0, agujeros: 0, destruidos: 0, paticos: 0,
 });
+const CLAVES_CUENTAS = Object.keys(cuentasNuevas()) as (keyof Cuentas)[];
 
 interface DefMision {
   tipo: TipoMision;
@@ -357,11 +383,17 @@ export interface ProgresoCohete {
   mejor: number;
   mejorPuntaje: number;
   vuelos: number;
+  /** Lo que se ha contado sumando todos los vuelos y lo mejor de un solo vuelo (para los retos de los cosméticos). */
+  totales: Partial<Record<keyof Cuentas, number>>;
+  maximos: Partial<Record<keyof Cuentas, number>>;
+  /** Paticos salvavidas guardados (como la patineta de Subway Surfers: aguantan un choque). */
+  paticos: number;
 }
 
 export function progresoNuevo(): ProgresoCohete {
   const p: ProgresoCohete = {
     rollitos: 0, ganados: 0, mejoras: {}, tengo: [], puesto: { ...GRATIS }, nivel: 0, misiones: [], mejor: 0, mejorPuntaje: 0, vuelos: 0,
+    totales: {}, maximos: {}, paticos: PATICOS_REGALO,
   };
   // Las primeras son fáciles y siempre las mismas: se aprende jugando
   p.misiones = [
@@ -401,6 +433,14 @@ export function normalizarCohete(p: unknown): ProgresoCohete {
         .slice(0, 3)
         .map((m: any) => ({ tipo: m.tipo as TipoMision, meta: num(m.meta, 1, 1, 1e7), avance: num(m.avance, 0, 0, 1e9), hecha: !!m.hecha }))
     : [];
+  const cifras = (v: unknown) => {
+    const o: Partial<Record<keyof Cuentas, number>> = {};
+    if (esObj(v)) for (const k of CLAVES_CUENTAS) {
+      const x = num(v[k], 0, 0, 1e9);
+      if (x > 0) o[k] = x;
+    }
+    return o;
+  };
   return {
     rollitos: num(p.rollitos, 0, 0, 1e8),
     ganados: num(p.ganados, 0, 0, 1e9),
@@ -412,6 +452,10 @@ export function normalizarCohete(p: unknown): ProgresoCohete {
     mejor: num(p.mejor, 0, 0, 1e7),
     mejorPuntaje: num(p.mejorPuntaje, 0, 0, 1e9),
     vuelos: num(p.vuelos, 0, 0, 1e6),
+    totales: cifras(p.totales),
+    maximos: cifras(p.maximos),
+    // (quien ya tenía progreso de antes de los paticos también recibe los de regalo)
+    paticos: num(p.paticos, PATICOS_REGALO, 0, 99),
   };
 }
 
@@ -429,19 +473,30 @@ export const multiplicador = (p: ProgresoCohete) => 1 + Math.min(MAX_NIVEL, p.ni
 export const precioMejora = (p: ProgresoCohete, id: IdMejora): number | null => MEJORA[id].precios[nivelDe(p, id)] ?? null;
 export const tieneCosmetico = (p: ProgresoCohete, t: TipoCosmetico, id: string) => id === GRATIS[t] || p.tengo.includes(`${t}:${id}`);
 
-/** Compra el siguiente nivel de una mejora o un cosmético (devuelve false si no alcanza o ya lo tiene). */
-export function comprar(p: ProgresoCohete, que: { mejora: IdMejora } | { tipo: TipoCosmetico; id: string }): boolean {
+// ---------------------------------------------------------------------------
+// Paticos salvavidas: se guardan y se usan en el vuelo con su botón; aguantan un choque mientras duran y después
+// hay que esperar un ratico para soltar el siguiente
+// ---------------------------------------------------------------------------
+/** Los que se regalan al empezar. */
+export const PATICOS_REGALO = 2;
+export const PRECIO_PATICO = 250;
+export const MAX_PATICOS = 99;
+/** Segundos que dura puesto (si no choca antes). */
+export const DURA_PATICO = 30;
+/** Segundos que hay que esperar después de que se acaba (o se revienta) para soltar otro. */
+export const ESPERA_PATICO = 20;
+
+/** Compra el siguiente nivel de una mejora o un patico (devuelve false si no alcanza o ya está al máximo). */
+export function comprar(p: ProgresoCohete, que: { mejora: IdMejora } | { patico: true }): boolean {
   if ('mejora' in que) {
     const precio = precioMejora(p, que.mejora);
     if (precio === null || p.rollitos < precio) return false;
     p.rollitos -= precio;
     p.mejoras[que.mejora] = nivelDe(p, que.mejora) + 1;
   } else {
-    const c = COSMETICOS[que.tipo].find((x) => x.id === que.id);
-    if (!c || tieneCosmetico(p, que.tipo, que.id) || p.rollitos < c.precio) return false;
-    p.rollitos -= c.precio;
-    p.tengo.push(`${que.tipo}:${que.id}`);
-    p.puesto[que.tipo] = que.id;
+    if (p.rollitos < PRECIO_PATICO || p.paticos >= MAX_PATICOS) return false;
+    p.rollitos -= PRECIO_PATICO;
+    p.paticos++;
   }
   // La compra cuenta para las misiones de la tienda
   for (const m of p.misiones) if (!m.hecha && m.tipo === 'compras_total') m.avance++;
@@ -478,14 +533,62 @@ export function revisarMisiones(p: ProgresoCohete, c: Cuentas, inicio: number[],
   return r;
 }
 
-/** Con las tres misiones hechas: un nivel más (multiplicador) y tres misiones nuevas. */
+/** Con las tres misiones hechas: un nivel más (multiplicador), un patico en el cofre y tres misiones nuevas. */
 export function subirNivel(p: ProgresoCohete, azar = Math.random): { nivel: number; premio: number } | undefined {
   if (!p.misiones.length || !p.misiones.every((m) => m.hecha)) return undefined;
   const premio = premioNivel(p.nivel);
   p.rollitos += premio;
+  p.paticos = Math.min(MAX_PATICOS, p.paticos + 1);
   p.nivel = Math.min(MAX_NIVEL, p.nivel + 1);
   p.misiones = nuevasMisiones(p, azar);
   return { nivel: p.nivel, premio };
+}
+
+// ---------------------------------------------------------------------------
+// Retos de los cosméticos
+// ---------------------------------------------------------------------------
+/** Al terminar un vuelo: suma lo contado y guarda lo mejor de un vuelo. */
+export function registrarVuelo(p: ProgresoCohete, c: Cuentas) {
+  for (const k of CLAVES_CUENTAS) {
+    const v = Math.max(0, Math.floor(c[k] || 0));
+    if (!v) continue;
+    p.totales[k] = (p.totales[k] ?? 0) + v;
+    p.maximos[k] = Math.max(p.maximos[k] ?? 0, v);
+  }
+}
+
+/** Cuánto lleva de un reto. */
+export function valorReto(p: ProgresoCohete, r: Reto): number {
+  switch (r.de) {
+    case 'vuelos':
+      return p.vuelos;
+    case 'nivel':
+      return p.nivel;
+    case 'ganados':
+      return p.ganados;
+    case 'vuelo':
+      // (los metros de antes ya estaban en el récord)
+      return Math.max(p.maximos[r.cuenta!] ?? 0, r.cuenta === 'metros' ? p.mejor : 0);
+    default:
+      return p.totales[r.cuenta!] ?? 0;
+  }
+}
+
+/** Cómo se dice un reto (en modo neutro, sin la galaxia del amor). */
+export function textoReto(r: Reto) {
+  return r.texto.replace('{n}', mil(r.meta)).replace(/\{tramo:(\w+)\}/, (_, id: string) => nombreTramo(TRAMOS.findIndex((t) => t.id === id)).replace(/^(El|La) /, (x) => x.toLowerCase()));
+}
+
+/** Los cosméticos que ya se ganó y todavía no tenía: quedan en `tengo` (y se devuelven para contarlo). */
+export function ganarCosmeticos(p: ProgresoCohete): { tipo: TipoCosmetico; c: Cosmetico }[] {
+  const nuevos: { tipo: TipoCosmetico; c: Cosmetico }[] = [];
+  for (const tipo of Object.keys(COSMETICOS) as TipoCosmetico[])
+    for (const c of COSMETICOS[tipo]) {
+      if (!c.reto || tieneCosmetico(p, tipo, c.id) || valorReto(p, c.reto) < c.reto.meta) continue;
+      p.tengo.push(`${tipo}:${c.id}`);
+      nuevos.push({ tipo, c });
+    }
+  return nuevos;
 }
 
 /**
