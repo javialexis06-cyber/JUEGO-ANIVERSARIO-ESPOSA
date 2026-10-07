@@ -2037,24 +2037,24 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Meta: vender 325 monedas",
-     "pareja": "Meta: vender 495 monedas"
+     "solitario": "Meta: vender 270 monedas",
+     "pareja": "Meta: vender 405 monedas"
     },
     "meta": {
-     "solitario": 325,
-     "pareja": 495
+     "solitario": 270,
+     "pareja": 405
     }
    },
    {
     "numero": 2,
     "clave": "experta",
     "texto": {
-     "solitario": "Meta experta: vender 515 monedas",
-     "pareja": "Meta experta: vender 785 monedas"
+     "solitario": "Meta experta: vender 425 monedas",
+     "pareja": "Meta experta: vender 645 monedas"
     },
     "meta": {
-     "solitario": 515,
-     "pareja": 785
+     "solitario": 425,
+     "pareja": 645
     }
    },
    {
@@ -4153,24 +4153,24 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Meta: vender 460 monedas",
-     "pareja": "Meta: vender 700 monedas"
+     "solitario": "Meta: vender 375 monedas",
+     "pareja": "Meta: vender 570 monedas"
     },
     "meta": {
-     "solitario": 460,
-     "pareja": 700
+     "solitario": 375,
+     "pareja": 570
     }
    },
    {
     "numero": 2,
     "clave": "experta",
     "texto": {
-     "solitario": "Meta experta: vender 730 monedas",
-     "pareja": "Meta experta: vender 1105 monedas"
+     "solitario": "Meta experta: vender 600 monedas",
+     "pareja": "Meta experta: vender 905 monedas"
     },
     "meta": {
-     "solitario": 730,
-     "pareja": 1105
+     "solitario": 600,
+     "pareja": 905
     }
    },
    {
@@ -6244,24 +6244,24 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Meta: vender 585 monedas",
-     "pareja": "Meta: vender 880 monedas"
+     "solitario": "Meta: vender 480 monedas",
+     "pareja": "Meta: vender 720 monedas"
     },
     "meta": {
-     "solitario": 585,
-     "pareja": 880
+     "solitario": 480,
+     "pareja": 720
     }
    },
    {
     "numero": 2,
     "clave": "experta",
     "texto": {
-     "solitario": "Meta experta: vender 925 monedas",
-     "pareja": "Meta experta: vender 1390 monedas"
+     "solitario": "Meta experta: vender 760 monedas",
+     "pareja": "Meta experta: vender 1140 monedas"
     },
     "meta": {
-     "solitario": 925,
-     "pareja": 1390
+     "solitario": 760,
+     "pareja": 1140
     }
    },
    {
@@ -8340,24 +8340,24 @@
     "numero": 1,
     "clave": "ventas",
     "texto": {
-     "solitario": "Meta: vender 840 monedas",
-     "pareja": "Meta: vender 1245 monedas"
+     "solitario": "Meta: vender 685 monedas",
+     "pareja": "Meta: vender 1025 monedas"
     },
     "meta": {
-     "solitario": 840,
-     "pareja": 1245
+     "solitario": 685,
+     "pareja": 1025
     }
    },
    {
     "numero": 2,
     "clave": "experta",
     "texto": {
-     "solitario": "Meta experta: vender 1325 monedas",
-     "pareja": "Meta experta: vender 1975 monedas"
+     "solitario": "Meta experta: vender 1085 monedas",
+     "pareja": "Meta experta: vender 1620 monedas"
     },
     "meta": {
-     "solitario": 1325,
-     "pareja": 1975
+     "solitario": 1085,
+     "pareja": 1620
     }
    },
    {

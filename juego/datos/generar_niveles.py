@@ -43,9 +43,11 @@ META = {1: 0.5, 2: 0.55}                            # ⭐ 1 según el largo de l
 META_EXPERTA = {1: 0.8, 2: 0.85}                    # ⭐ 2 (3 o más: 0.95)
 
 
-def factor_meta(s, d, experta):
+def factor_meta(s, d, experta, evento=None):
     largo = lista_max(s, d)
-    return (META_EXPERTA.get(largo, 0.95) if experta else META.get(largo, 0.6))
+    f = META_EXPERTA.get(largo, 0.95) if experta else META.get(largo, 0.6)
+    # El gran día y el final arrancan con los estantes casi vacíos y con 30 % más de gente: el piloto vende menos
+    return f * (0.82 if evento in ('Gran día', 'Gran final') else 1)
 ESPERA_CAJA = {1: 12, 2: 11, 3: 10, 4: 9}          # segundos máximos de espera promedio en caja
 VACIA_MAX = {1: 25, 2: 22, 3: 20, 4: 18}           # segundos máximos que una vitrina puede quedar vacía
 
@@ -175,10 +177,10 @@ def objetivo(clave, s, d, n, evento):
     modos = ('solitario', 'pareja')
     f = 1.2 if evento == 'Día de ofertas' else 1.0
     if clave == 'ventas':
-        meta = {m: redondo(n[m] * ticket(s, d, evento) * factor_meta(s, d, False) * f) for m in modos}
+        meta = {m: redondo(n[m] * ticket(s, d, evento) * factor_meta(s, d, False, evento) * f) for m in modos}
         return clave, {m: f'Meta: vender {meta[m]} monedas' for m in modos}, meta
     if clave == 'experta':
-        meta = {m: redondo(n[m] * ticket(s, d, evento) * factor_meta(s, d, True) * f) for m in modos}
+        meta = {m: redondo(n[m] * ticket(s, d, evento) * factor_meta(s, d, True, evento) * f) for m in modos}
         return clave, {m: f'Meta experta: vender {meta[m]} monedas' for m in modos}, meta
     if clave == 'propinas':
         meta = {m: round(n[m] * 1.0 * (1 + 0.08 * (s - 1))) for m in modos}

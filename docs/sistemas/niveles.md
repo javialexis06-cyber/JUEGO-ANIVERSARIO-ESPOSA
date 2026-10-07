@@ -42,7 +42,7 @@ Abierta desde el inicio.
 | 22 | Noticia: Ola de calor en el barrio | 20 / 30 | 4 |  | Meta: vender 260 / 390 monedas | Meta experta: vender 415 / 620 monedas | 82 % de clientes felices / 3 combos en pareja | 40 / 60 clientes · Vender 520 monedas con máximo 5 clientes perdidos / Vender 785 monedas con máximo 7 clientes perdidos |
 | 23 | Noticia: ¡Hoy juega la Selección! | 18 / 27 | 4 |  | Meta: vender 235 / 350 monedas | Meta experta: vender 370 / 560 monedas | Recolectar 18 / 27 monedas de propina | 36 / 54 clientes · Vender 470 monedas con máximo 4 clientes perdidos / Vender 705 monedas con máximo 6 clientes perdidos |
 | 24 | Noticia: ¡Llegó la quincena! | 21 / 32 | 4 |  | Meta: vender 365 / 555 monedas | Meta experta: vender 580 / 880 monedas | Ninguna vitrina vacía por más de 25 s | 42 / 64 clientes · Vender 730 monedas con máximo 5 clientes perdidos / Vender 1115 monedas con máximo 8 clientes perdidos |
-| 25 | Gran día | 25 / 38 | 4 |  | Meta: vender 325 / 495 monedas | Meta experta: vender 515 / 785 monedas | Máximo 1 cliente perdido por demora / Máximo 3 clientes perdidos por demora | 50 / 76 clientes · Vender 650 monedas con máximo 6 clientes perdidos / Vender 990 monedas con máximo 9 clientes perdidos |
+| 25 | Gran día | 25 / 38 | 4 |  | Meta: vender 270 / 405 monedas | Meta experta: vender 425 / 645 monedas | Máximo 1 cliente perdido por demora / Máximo 3 clientes perdidos por demora | 50 / 76 clientes · Vender 650 monedas con máximo 6 clientes perdidos / Vender 990 monedas con máximo 9 clientes perdidos |
 
 ## Días 26-50 · Minimercado
 
@@ -74,7 +74,7 @@ El local crece al abrirse el primer día de este tamaño (pasando la meta del d�
 | 47 |  | 24 / 36 | 4 |  | Meta: vender 335 / 500 monedas | Meta experta: vender 530 / 795 monedas | Ningún charco ni basura por más de 20 s | 48 / 72 clientes · Vender 670 monedas con máximo 6 clientes perdidos / Vender 1005 monedas con máximo 9 clientes perdidos |
 | 48 |  | 24 / 36 | 4 |  | Meta: vender 335 / 500 monedas | Meta experta: vender 530 / 795 monedas | Máximo 1 cliente perdido por demora / Máximo 2 clientes perdidos por demora | 48 / 72 clientes · Vender 670 monedas con máximo 6 clientes perdidos / Vender 1005 monedas con máximo 9 clientes perdidos |
 | 49 | Noticia: Se acerca el Día de la Madre | 27 / 40 | 4 |  | Meta: vender 375 / 560 monedas | Meta experta: vender 595 / 885 monedas | 84 % de clientes felices / 5 combos en pareja | 54 / 80 clientes · Vender 755 monedas con máximo 6 clientes perdidos / Vender 1115 monedas con máximo 10 clientes perdidos |
-| 50 | Gran día | 33 / 50 | 4 |  | Meta: vender 460 / 700 monedas | Meta experta: vender 730 / 1105 monedas | Máximo 2 / 4 clientes perdidos por demora | 66 / 100 clientes · Vender 920 monedas con máximo 8 clientes perdidos / Vender 1395 monedas con máximo 12 clientes perdidos |
+| 50 | Gran día | 33 / 50 | 4 |  | Meta: vender 375 / 570 monedas | Meta experta: vender 600 / 905 monedas | Máximo 2 / 4 clientes perdidos por demora | 66 / 100 clientes · Vender 920 monedas con máximo 8 clientes perdidos / Vender 1395 monedas con máximo 12 clientes perdidos |
 
 ## Días 51-75 · Supermercado
 
@@ -106,7 +106,7 @@ El local crece al abrirse el primer día de este tamaño (pasando la meta del d�
 | 72 |  | 29 / 44 | 4 |  | Meta: vender 425 / 645 monedas | Meta experta: vender 670 / 1020 monedas | Ningún robo | 58 / 88 clientes · Vender 850 monedas con máximo 7 clientes perdidos / Vender 1285 monedas con máximo 11 clientes perdidos |
 | 73 |  | 30 / 45 | 4 |  | Meta: vender 440 / 660 monedas | Meta experta: vender 695 / 1040 monedas | Espera promedio en caja de 10 s o menos | 60 / 90 clientes · Vender 880 monedas con máximo 7 clientes perdidos / Vender 1315 monedas con máximo 11 clientes perdidos |
 | 74 | Noticia: ¡Hoy juega la Selección! | 30 / 45 | 4 |  | Meta: vender 440 / 660 monedas | Meta experta: vender 695 / 1040 monedas | Ningún charco ni basura por más de 20 s | 60 / 90 clientes · Vender 880 monedas con máximo 7 clientes perdidos / Vender 1315 monedas con máximo 11 clientes perdidos |
-| 75 | Gran día | 40 / 60 | 4 |  | Meta: vender 585 / 880 monedas | Meta experta: vender 925 / 1390 monedas | Máximo 3 / 5 clientes perdidos por demora | 80 / 120 clientes · Vender 1170 monedas con máximo 10 clientes perdidos / Vender 1755 monedas con máximo 14 clientes perdidos |
+| 75 | Gran día | 40 / 60 | 4 |  | Meta: vender 480 / 720 monedas | Meta experta: vender 760 / 1140 monedas | Máximo 3 / 5 clientes perdidos por demora | 80 / 120 clientes · Vender 1170 monedas con máximo 10 clientes perdidos / Vender 1755 monedas con máximo 14 clientes perdidos |
 
 ## Días 76-100 · Hipermercado
 
@@ -138,4 +138,4 @@ El local crece al abrirse el primer día de este tamaño (pasando la meta del d�
 | 97 | Noticia: Ola de calor en el barrio | 39 / 58 | 5 |  | Meta: vender 695 / 1035 monedas | Meta experta: vender 1100 / 1635 monedas | Recolectar 48 / 72 monedas de propina | 78 / 116 clientes · Vender 1390 monedas con máximo 9 clientes perdidos / Vender 2065 monedas con máximo 14 clientes perdidos |
 | 98 |  | 36 / 54 | 5 |  | Meta: vender 640 / 960 monedas | Meta experta: vender 1015 / 1525 monedas | Ninguna vitrina vacía por más de 18 s | 72 / 108 clientes · Vender 1285 monedas con máximo 9 clientes perdidos / Vender 1925 monedas con máximo 13 clientes perdidos |
 | 99 |  | 36 / 54 | 5 |  | Meta: vender 640 / 960 monedas | Meta experta: vender 1015 / 1525 monedas | Ningún robo | 72 / 108 clientes · Vender 1285 monedas con máximo 9 clientes perdidos / Vender 1925 monedas con máximo 13 clientes perdidos |
-| 100 | Gran final | 47 / 70 | 5 |  | Meta: vender 840 / 1245 monedas | Meta experta: vender 1325 / 1975 monedas | 85 % de clientes felices / 7 combos en pareja | 94 / 140 clientes · Vender 1675 monedas con máximo 11 clientes perdidos / Vender 2495 monedas con máximo 17 clientes perdidos |
+| 100 | Gran final | 47 / 70 | 5 |  | Meta: vender 685 / 1025 monedas | Meta experta: vender 1085 / 1620 monedas | 85 % de clientes felices / 7 combos en pareja | 94 / 140 clientes · Vender 1675 monedas con máximo 11 clientes perdidos / Vender 2495 monedas con máximo 17 clientes perdidos |
