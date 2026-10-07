@@ -1,13 +1,15 @@
 // El escenario en 3D: el piso (textura del bioma + sombras de contacto al pie de las paredes), las paredes en trozos
 // de 8 × 8 celdas con instancias (tiemblan y se encogen mientras las excavan, se rehacen al romperse), las antorchas
-// y velas con sus llamas, la decoración, el agua negra, la lava y los rieles de la carreta.
+// y velas con sus llamas, la decoración, el agua negra, la lava y los rieles de la carreta. En calidad alta, además,
+// el detalle: piedritas, huesos, hojas, velas, cadenas… regados con un azar fijo por celda (solo en la vista: no
+// cambia nada del juego ni de lo que se sincroniza), juntados en una sola malla por trozo.
 import * as THREE from 'three';
 import { hash2 } from '../../casa/lavado/azar';
 import type { DefBioma } from '../datos/mundo';
 import { C, VIDA_CELDA, esSolida } from '../tipos';
 import type { Mapa } from '../sim/mapa';
 import { conLuz, type FuenteLuz } from './luz';
-import { FUEGOS, type Biblioteca } from './modelos';
+import { FUEGOS, type Biblioteca, type Detalle } from './modelos';
 import { DECO_LUZ, LLAMAS_VELAS, type ModeloFijo, type ModelosPared } from './reemplazos_mapa';
 import { ESCALA_PUNTOS, texturaFuego } from './texturas';
 export { ESCALA_PUNTOS };
@@ -27,7 +29,24 @@ interface Trozo {
   /** Celda → [malla, índice] (para hacerla temblar). */
   donde: Map<number, [THREE.InstancedMesh, number]>;
   sucio: boolean;
+  /** El detalle de la calidad alta de este trozo (una malla, un grupo por clase de material). */
+  detalle?: THREE.Mesh;
 }
+
+/** Vértices de una pieza de detalle por clase de material (0 mate, 1 metal, 2 lisa). */
+interface ParteDetalle {
+  pos: Float32Array;
+  nor: Float32Array;
+  col: Float32Array;
+}
+interface ModeloDetalle {
+  lugar: Detalle['lugar'];
+  peso: number;
+  clases: (ParteDetalle | null)[];
+}
+const claseMaterial = (nombre: string) => (/^(hierro|oro)/.test(nombre) ? 1 : /^(cera|sangre|agua)/.test(nombre) ? 2 : 0);
+/** Qué tan seguido sale cada cosa: en el piso abierto (una y a veces dos por celda), al pie y colgada de las paredes. */
+const DENSIDAD = { suelo: 0.6, suelo2: 0.28, pie: 0.62, muro: 0.42 };
 
 export class Mapa3D {
   grupo = new THREE.Group();
@@ -55,9 +74,16 @@ export class Mapa3D {
   fijas: FuenteLuz[] = [];
   /** Hay que rehacer la luz fija (se rompió una pared). */
   luzSucia = true;
+  /** Detalle de la calidad alta (vacío si no se pidió): las piezas por lugar, sus materiales y dónde no va nada. */
+  private dets: Record<Detalle['lugar'], ModeloDetalle[]> = { suelo: [], pie: [], muro: [] };
+  private matsDetalle: THREE.Material[] = [];
+  private sinDetalle = new Set<number>();
+  private conAntorcha = new Set<number>();
+  private verDetalle = true;
 
-  constructor(private m: Mapa, private bioma: DefBioma, private bib: Biblioteca, private colorAntorcha: THREE.Color, pisoModelado = true, sombraParedes = false) {
+  constructor(private m: Mapa, private bioma: DefBioma, private bib: Biblioteca, private colorAntorcha: THREE.Color, pisoModelado = true, sombraParedes = false, detalle = false) {
     this.sombraParedes = sombraParedes;
+    if (detalle) this.prepararDetalle(bib.detalles());
     this.tw = Math.ceil(m.w / TROZO);
     this.th = Math.ceil(m.h / TROZO);
     this.copia = m.c.slice();
@@ -74,7 +100,7 @@ export class Mapa3D {
       this.pisosM = bib.pisos().map((mod) => ({ mod, peso: Number(mod.datos?.peso) || 1 }));
       this.pesoPisos = this.pisosM.reduce((a, b) => a + b.peso, 0);
     }
-    this.hacerPiso();
+    this.hacerPiso(detalle);
     if (this.modelado) {
       const geo = new THREE.PlaneGeometry(1, 1);
       geo.rotateX(-Math.PI / 2);
@@ -82,7 +108,8 @@ export class Mapa3D {
       // Del color del techo de las paredes modeladas (sus triángulos que miran arriba), para que empalmen
       const ref = this.paredes.dura[0] ?? this.paredes.blanda[0];
       const col = ref ? colorTecho(ref.geo) : null;
-      this.tapa = { geo, mat: conLuz(new THREE.MeshStandardMaterial({ map: texturaTecho(), color: col ?? new THREE.Color(bioma.roca[1]), roughness: 1, metalness: 0 })) };
+      const mat = new THREE.MeshStandardMaterial({ map: texturaTecho(), color: col ?? new THREE.Color(bioma.roca[1]), roughness: 1, metalness: 0 });
+      this.tapa = { geo, mat: detalle ? conLuz(mat, bib.rocaParedes, 'roca') : conLuz(mat) };
     }
     for (let ty = 0; ty < this.th; ty++)
       for (let tx = 0; tx < this.tw; tx++) {
@@ -98,7 +125,7 @@ export class Mapa3D {
   }
 
   // ----------------------------------------------------------------------------------------------- Piso
-  private hacerPiso() {
+  private hacerPiso(alta = false) {
     const { w, h } = this.m;
     const geo = new THREE.PlaneGeometry(w, h, 1, 1);
     geo.rotateX(-Math.PI / 2);
@@ -124,12 +151,27 @@ export class Mapa3D {
     this.piso.receiveShadow = true;
     this.grupo.add(this.piso);
     if (this.pisosM.length) {
-      // Con losas modeladas, el plano solo queda como sombra de contacto al pie de las paredes (encima de las losas)
+      // Con losas modeladas, el plano solo queda como sombra de contacto al pie de las paredes (encima de las losas).
+      // En calidad alta también oscurece a manchas grandes (humedad, mugre) en el mundo: así no se nota que las losas
+      // de 2 × 2 m se repiten.
       this.piso.visible = false;
       const sombra = new THREE.ShaderMaterial({
         uniforms: { uAO: { value: aoTex } },
-        vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-        fragmentShader: 'uniform sampler2D uAO; varying vec2 vUv; void main(){ float a = 1.0 - texture2D(uAO, vec2(vUv.x, 1.0 - vUv.y)).g; gl_FragColor = vec4(0.0, 0.0, 0.0, a * 0.85); }',
+        vertexShader: 'varying vec2 vUv; varying vec2 vP; void main(){ vUv = uv; vP = position.xz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+        fragmentShader: /* glsl */ `
+          uniform sampler2D uAO;
+          varying vec2 vUv;
+          varying vec2 vP;
+          float hs( vec2 p ) { return fract( sin( dot( p, vec2( 127.1, 311.7 ) ) ) * 43758.5453 ); }
+          float vn( vec2 p ) { vec2 i = floor( p ), f = fract( p ); f = f * f * ( 3.0 - 2.0 * f );
+            return mix( mix( hs( i ), hs( i + vec2( 1, 0 ) ), f.x ), mix( hs( i + vec2( 0, 1 ) ), hs( i + vec2( 1, 1 ) ), f.x ), f.y ); }
+          void main() {
+            float a = 1.0 - texture2D( uAO, vec2( vUv.x, 1.0 - vUv.y ) ).g;
+            a *= 0.85;
+            ${alta ? `float m = vn( vP * 0.21 ) * 0.6 + vn( vP * 0.53 + 7.3 ) * 0.3 + vn( vP * 1.7 + 3.1 ) * 0.1;
+            a = 1.0 - ( 1.0 - a ) * ( 1.0 - smoothstep( 0.42, 0.8, m ) * 0.38 );` : ''}
+            gl_FragColor = vec4( 0.0, 0.0, 0.0, a );
+          }`,
         transparent: true, depthWrite: false,
       });
       const g2 = geo.clone();
@@ -268,7 +310,143 @@ export class Mapa3D {
       t.grupo.add(malla);
       t.mallas.push(malla);
     }
+    this.construirDetalle(t);
     t.sucio = false;
+  }
+
+  // ----------------------------------------------------------------------------------------------- Detalle (alta)
+  private prepararDetalle(lista: Detalle[]) {
+    if (!lista.length) return;
+    const crear = (rugosidad: number, metal: number) =>
+      conLuz(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: rugosidad, metalness: metal }));
+    this.matsDetalle = [crear(0.92, 0), crear(0.42, 0.7), crear(0.32, 0)];
+    for (const d of lista) {
+      const g = d.mod.geo;
+      const p = g.getAttribute('position'), n = g.getAttribute('normal'), c = g.getAttribute('color');
+      const grupos = g.groups.length ? g.groups : [{ start: 0, count: p.count, materialIndex: 0 }];
+      const rangos: [number, number][][] = [[], [], []];
+      for (const gr of grupos) rangos[claseMaterial(d.mod.mats[gr.materialIndex ?? 0]?.name ?? '')].push([gr.start, gr.count]);
+      const clases = rangos.map((r) => {
+        const total = r.reduce((a, [, k]) => a + k, 0);
+        if (!total) return null;
+        const parte: ParteDetalle = { pos: new Float32Array(total * 3), nor: new Float32Array(total * 3), col: new Float32Array(total * 3).fill(1) };
+        let o = 0;
+        for (const [ini, k] of r)
+          for (let i = ini; i < ini + k; i++, o += 3) {
+            parte.pos[o] = p.getX(i); parte.pos[o + 1] = p.getY(i); parte.pos[o + 2] = p.getZ(i);
+            parte.nor[o] = n.getX(i); parte.nor[o + 1] = n.getY(i); parte.nor[o + 2] = n.getZ(i);
+            if (c) (parte.col[o] = c.getX(i), parte.col[o + 1] = c.getY(i), parte.col[o + 2] = c.getZ(i));
+          }
+        return parte;
+      });
+      this.dets[d.lugar].push({ lugar: d.lugar, peso: d.peso, clases });
+    }
+    // Donde ya hay algo del juego (decoración, rieles, velas de piso) no se riega nada
+    const { m } = this;
+    for (const d of m.deco) this.sinDetalle.add(Math.floor(d.y) * m.w + Math.floor(d.x));
+    for (const r of m.rieles) this.sinDetalle.add(Math.floor(r.y) * m.w + Math.floor(r.x));
+    for (const a of m.antorchas) {
+      if (a.vela) this.sinDetalle.add(a.cy * m.w + a.cx);
+      else if (a.dx === 0 && a.dy === 1) this.conAntorcha.add(a.cy * m.w + a.cx);
+    }
+  }
+
+  private escoger(lista: ModeloDetalle[], r: number) {
+    let total = 0;
+    for (const d of lista) total += d.peso;
+    r *= total;
+    for (const d of lista) if ((r -= d.peso) <= 0) return d;
+    return lista[lista.length - 1];
+  }
+
+  /** Riega el detalle del trozo (con un azar fijo por celda: sale igual cada vez que se rehace). */
+  private construirDetalle(t: Trozo) {
+    if (t.detalle) {
+      t.grupo.remove(t.detalle);
+      t.detalle.geometry.dispose();
+      t.detalle = undefined;
+    }
+    if (!this.matsDetalle.length) return;
+    const { m } = this;
+    const pon: [ModeloDetalle, number, number, number, number][] = [];
+    const abierta = (c: number) => !esSolida(c) && c !== C.AGUA;
+    const pared = (c: number) => c === C.BLANDA || c === C.DURA || c === C.BORDE || c === C.ESCOMBRO;
+    const { suelo, pie, muro } = this.dets;
+    for (let cy = t.cy * TROZO; cy < Math.min(m.h, (t.cy + 1) * TROZO); cy++)
+      for (let cx = t.cx * TROZO; cx < Math.min(m.w, (t.cx + 1) * TROZO); cx++) {
+        const i = cy * m.w + cx;
+        const c = m.c[i];
+        if (abierta(c)) {
+          if (this.sinDetalle.has(i)) continue;
+          // En el piso: una cosita (y a veces otra) en un punto al azar de la celda
+          if (suelo.length)
+            for (const [k, dens] of [[0, DENSIDAD.suelo], [1, DENSIDAD.suelo2]] as const) {
+              if (hash2(cx, cy, 101 + k) >= dens) continue;
+              pon.push([this.escoger(suelo, hash2(cx, cy, 111 + k)), cx + 0.2 + 0.6 * hash2(cx, cy, 121 + k), cy + 0.2 + 0.6 * hash2(cx, cy, 131 + k),
+                hash2(cx, cy, 141 + k) * Math.PI * 2, 0.85 + 0.3 * hash2(cx, cy, 151 + k)]);
+            }
+          // Al pie de las paredes de atrás y de los lados (de frente a lo abierto)
+          if (pie.length)
+            for (const [dx, dy, rot, k] of [[0, -1, 0, 0], [-1, 0, Math.PI / 2, 1], [1, 0, -Math.PI / 2, 2]] as const) {
+              if (!pared(m.get(cx + dx, cy + dy)) || hash2(cx, cy, 201 + k) >= DENSIDAD.pie) continue;
+              const a = (hash2(cx, cy, 211 + k) - 0.5) * 0.36;
+              const x = dx ? cx + (dx < 0 ? 0 : 1) : cx + 0.5 + a;
+              const y = dy ? cy : cy + 0.5 + a;
+              pon.push([this.escoger(pie, hash2(cx, cy, 221 + k)), x, y, rot + (hash2(cx, cy, 231 + k) - 0.5) * 0.3, 0.85 + 0.3 * hash2(cx, cy, 241 + k)]);
+            }
+        } else if (muro.length && (c === C.BLANDA || c === C.DURA || c === C.BORDE) && abierta(m.get(cx, cy + 1)) && !this.conAntorcha.has(i)) {
+          // Colgada en la cara de la pared que ve la cámara
+          if (hash2(cx, cy, 301) >= DENSIDAD.muro) continue;
+          pon.push([this.escoger(muro, hash2(cx, cy, 311)), cx + 0.5 + (hash2(cx, cy, 321) - 0.5) * 0.4, cy + 1, 0, 0.9 + 0.2 * hash2(cx, cy, 331)]);
+        }
+      }
+    if (!pon.length) return;
+    const tot = [0, 0, 0];
+    for (const [d] of pon) for (let k = 0; k < 3; k++) tot[k] += d.clases[k]?.pos.length ?? 0;
+    const suma = tot[0] + tot[1] + tot[2];
+    const pos = new Float32Array(suma), nor = new Float32Array(suma), col = new Float32Array(suma);
+    const off = [0, tot[0], tot[0] + tot[1]];
+    for (const [d, x, y, rot, esc] of pon) {
+      const co = Math.cos(rot), si = Math.sin(rot);
+      for (let k = 0; k < 3; k++) {
+        const pa = d.clases[k];
+        if (!pa) continue;
+        let o = off[k];
+        const P = pa.pos, N = pa.nor;
+        for (let j = 0; j < P.length; j += 3, o += 3) {
+          const px = P[j], pz = P[j + 2], nx = N[j], nz = N[j + 2];
+          pos[o] = (px * co + pz * si) * esc + x;
+          pos[o + 1] = P[j + 1] * esc;
+          pos[o + 2] = (-px * si + pz * co) * esc + y;
+          nor[o] = nx * co + nz * si;
+          nor[o + 1] = N[j + 1];
+          nor[o + 2] = -nx * si + nz * co;
+        }
+        col.set(pa.col, off[k]);
+        off[k] = o;
+      }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    let ini = 0;
+    for (let k = 0; k < 3; k++) {
+      if (tot[k]) geo.addGroup(ini / 3, tot[k] / 3, k);
+      ini += tot[k];
+    }
+    geo.computeBoundingSphere();
+    const malla = new THREE.Mesh(geo, this.matsDetalle);
+    malla.receiveShadow = true;
+    malla.visible = this.verDetalle;
+    t.grupo.add(malla);
+    t.detalle = malla;
+  }
+
+  /** Prende o apaga el detalle (si la calidad baja sola en plena etapa). */
+  mostrarDetalle(v: boolean) {
+    this.verDetalle = v;
+    for (const t of this.trozos) if (t.detalle) t.detalle.visible = v;
   }
 
   /**
@@ -532,6 +710,7 @@ export class Mapa3D {
   }
 
   liberar() {
+    for (const t of this.trozos) t.detalle?.geometry.dispose();
     this.grupo.traverse((o) => {
       const m = o as THREE.Mesh;
       if (m.isMesh || (o as THREE.Points).isPoints) {

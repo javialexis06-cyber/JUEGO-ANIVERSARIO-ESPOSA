@@ -263,7 +263,7 @@ def piso_ajedrez(semilla, cosas, peso=1.0):
             jj = np.floor((P[:, 1] + 1) * n / 2).astype(int)
             claro = ((ii + jj) % 2 == 0)
             base = np.where(claro[:, None], hx(MARMOL_A), hx(MARMOL_B))
-            vet = suave(0.8, 0.95, 1 - np.abs(C.ruido_piso(P, 3, 900 + semilla)))
+            vet = C.grieta_piso(P, 3, 900 + semilla, (0.8, 0.95))
             col = base * (1 - 0.25 * vet)[:, None] * (1 + 0.1 * C.fbm_piso(P, 4, 2, 901))[:, None]
             hollin = suave(0.0, 0.5, C.fbm_piso(P, 2, 3, 902) + 0.1)
             col = mezclar(col, hx(HOLLIN), hollin * 0.7)

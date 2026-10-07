@@ -196,10 +196,29 @@ def ruido_piso(P, escala, semilla=0):
     return B.ruido(Q, escala, semilla, periodo=per(escala))
 
 
+# Calidad alta: las losas se hornean en textura a ~4 mm por texel (sangre_biomas_alta.py pone ALTA = True). Ahí las
+# líneas suaves de ruido que en los vértices se veían como grietas parecen garabatos: grieta_piso las vuelve finas,
+# quebradas y a ratos (con ALTA = False da exactamente lo mismo de siempre).
+ALTA = False
+
+
+def grieta_piso(P, escala, semilla, umbral=(0.88, 0.97)):
+    if not ALTA:
+        return suave(umbral[0], umbral[1], 1 - np.abs(ruido_piso(P, escala, semilla)))
+    Q = P.copy()
+    Q[:, 0] += 0.03 * ruido_piso(P, 16, semilla + 31) + 0.01 * ruido_piso(P, 48, semilla + 33)
+    Q[:, 1] += 0.03 * ruido_piso(P, 16, semilla + 32) + 0.01 * ruido_piso(P, 48, semilla + 34)
+    v = np.abs(ruido_piso(Q, escala, semilla))
+    corte = suave(0.0, 0.3, ruido_piso(P, 2, semilla + 35) + 0.05)
+    return (1 - suave(0.015, 0.045, v)) * corte
+
+
 def piso_campo(pieza, alto_fn, pintor, n=28):
     """Campo de alturas de 2 × 2 m. alto_fn(P) -> z (debe repetirse cada 2 m en los bordes)."""
     V, F = rejilla(n)
     V[:, 2] = alto_fn(V)
+    # (la calidad alta hornea el mismo campo en textura: sangre_biomas_alta.py)
+    pieza.campo = dict(parte=len(pieza.partes), alto=alto_fn, pintor=pintor)
     pieza.parte(V, F, 'tierra', pintor)
     return pieza
 

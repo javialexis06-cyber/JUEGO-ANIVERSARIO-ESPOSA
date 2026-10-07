@@ -14,8 +14,9 @@ pulido el repositorio».
 2. **Pulir lo que ya hay** (ver «Sangre y Ceniza» y «Ronda 2» abajo). Lo que Javier recalcó:
    - ~~Lavarse la cara: íconos y panel de lo que se tiene~~ **hecho** (los íconos salían vacíos en la APK; la pausa
      tiene «Mochila» y «Evoluciones», ver `docs/sistemas/nuestro-hogar.md`).
-   - Sangre y Ceniza: mapas **mucho más detallados** en calidad alta (para el S24 Ultra de Laura y el computador de
-     Javier); la calidad de hoy queda como «baja» para celulares menos potentes.
+   - ~~Sangre y Ceniza: mapas mucho más detallados en calidad alta~~ **hecho** (pisos con textura nítida, roca de
+     cada bioma en las paredes, detalle regado y aire de cada bioma; baja y media quedan como estaban; ver
+     `docs/sistemas/sangre-y-ceniza.md`, «Tres calidades»).
    - **Súper Manía, volver a algo más parecido al original** (Javier: «siento que dañé el juego»):
      - sin los estantes «de cara y cara» (de dos caras);
      - al subir de nivel no se pierde nada: el súper conserva los estantes y todo lo del primero y se vuelve más
