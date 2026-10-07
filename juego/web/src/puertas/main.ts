@@ -1217,7 +1217,7 @@ const probador = () => new ProbadorReal(() => escena.escena, escena, entrada, pa
   papelitos: () => {
     const d = ctx?._desorden;
     if (!d) return [];
-    return d.cuerpos.filter((b) => b.escondido).map((b) => ({ cosa: b.id, tipo: b.escondido!.tipo, visto: b.escondido!.visto, en: escena.aPantalla(b.escondido!.obj.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 0.04, 0))), cuerpo: escena.aPantalla(b.pos) }));
+    return d.cuerpos.filter((b) => b.escondido).map((b) => ({ cosa: b.id, tipo: b.escondido!.tipo, visto: b.escondido!.visto, en: escena.aPantalla(b.escondido!.obj.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 0.04, 0))), cuerpo: escena.aPantalla(b.pos), mundo: b.escondido!.obj.getWorldPosition(new THREE.Vector3()).toArray().map((v) => Math.round(v * 1000) / 1000) }));
   },
   /** Pareja (pruebas): invitar a una puerta, cómo va la partida y simular irse a segundo plano. */
   parejaInvitar: (n: number) => void invitar(n),
@@ -1240,7 +1240,7 @@ const probador = () => new ProbadorReal(() => escena.escena, escena, entrada, pa
   desorden: () => ({
     cosas: ctx?._desorden?.cuerpos.length ?? 0,
     rotas: ctx?._desorden?.cuerpos.filter((b) => b.roto).length ?? 0,
-    lista: ctx?._desorden?.cuerpos.map((b) => `${b.id} ${b.pos.toArray().map((v) => v.toFixed(2)).join(',')} desde ${b.origen.toArray().map((v) => v.toFixed(2)).join(',')}`),
+    lista: ctx?._desorden?.cuerpos.map((b) => `${b.id} ${b.pos.toArray().map((v) => v.toFixed(2)).join(',')} desde ${b.origen.toArray().map((v) => v.toFixed(2)).join(',')} e${b.empujes}${b.dormido ? '' : ' despierto'}${b.colgado ? ' colgado' : ''}`),
   }),
   /** Tira una cosa del desorden con cierta velocidad (pruebas de la física). */
   lanzar: (i: number, vx: number, vy: number, vz: number) => ctx?._desorden?.lanzar(i, new THREE.Vector3(vx, vy, vz)),

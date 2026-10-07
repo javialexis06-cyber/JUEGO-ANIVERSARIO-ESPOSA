@@ -218,7 +218,12 @@ body.puertas { background: #1d2340; }
   pointer-events: none;
 }
 .item-volando svg { width: 100%; height: 100%; }
-.aviso {
+/* (con el id: el .aviso de la casa —las burbujitas de las necesidades, de 34 px— también se carga aquí y lo
+   dejaba en una columnita de una palabra por línea) */
+#aviso.aviso {
+  display: block;
+  width: auto;
+  margin: 0;
   position: fixed;
   z-index: 40;
   /* Abajo a la izquierda: nunca encima de la puerta */

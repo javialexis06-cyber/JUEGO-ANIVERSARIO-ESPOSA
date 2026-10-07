@@ -676,7 +676,7 @@ const banda: Nivel = {
     'Toca nuestra maleta cuando pase por delante en la banda; las otras no sirven.',
   ],
   montar(c) {
-    const cx0 = 2.1, cz0 = 1.0, rx = 1.2, rz = 0.35;
+    const cx0 = 1.85, cz0 = 1.0, rx = 1.0, rz = 0.35;
     const cinta = new THREE.Mesh(new THREE.TorusGeometry(1, 0.1, 8, 48), mat('#3d4450', { rough: 0.6 }));
     cinta.rotation.x = Math.PI / 2;
     cinta.scale.set(rx, rz, 1);

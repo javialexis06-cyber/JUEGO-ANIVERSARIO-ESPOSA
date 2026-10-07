@@ -204,6 +204,8 @@ const botella: Nivel = {
     papel.rotation.z = Math.PI / 2;
     b.add(vidrio, corcho, papel, new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 6), new THREE.MeshBasicMaterial({ visible: false })));
     const inicio = new THREE.Vector3(4.1, 0.06, -4.8);
+    // (va y viene entre las rocas: que una roca la tape un momento es parte del juego)
+    b.userData.seMueve = true;
     b.position.copy(inicio);
     b.scale.setScalar(1.4);
     c.g.add(b);
@@ -314,7 +316,8 @@ const cangrejo: Nivel = {
     let solto = false;
     c.frotar(cr, (_hit, px) => {
       if (solto) return;
-      const t = c.escena.t;
+      // (reloj de verdad: lo rápido que se frota es del dedo, no de la escena, que en las pruebas va acelerada)
+      const t = performance.now() / 1000;
       golpes.push([t, px]);
       while (golpes.length && t - golpes[0][0] > 1.2) golpes.shift();
       const total = golpes.reduce((a, [, x]) => a + x, 0);

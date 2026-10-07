@@ -107,7 +107,7 @@ Para pasarle el juego a amigos sin que se lleven nada de la pareja hay una **com
   que usan esos juegos (`PUBLICOS_AMIGOS`, más la ropa del clóset genérico).
 - Después, `scripts/verificar-amigos.mjs` revisa **todo** `dist-amigos` (JavaScript, HTML, CSS, JSON, SVG y los
   nombres de mallas y materiales de los GLB) contra `scripts/palabras-pareja.mjs` (apodos, lugares, chistes) y los
-  recuerdos de docs/en-obra/cien-puertas.md y del lavado. Si encuentra algo, falla y GitHub Actions no publica.
+  recuerdos de docs/sistemas/cien-puertas.md y del lavado. Si encuentra algo, falla y GitHub Actions no publica.
 - **App de Android** «Sala de Juegos» (`com.javialexis.salajuegos`, se instala al lado de Nuestro Hogar): el job
   `apk-amigos` del workflow compila la versión para amigos, corre `scripts/android-amigos.mjs` (cambia id, nombre,
   ícono y pantalla de arranque con los de `android-amigos/res`, que dibuja `scripts/iconos-amigos.mjs`) y

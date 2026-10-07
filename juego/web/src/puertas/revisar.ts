@@ -136,6 +136,12 @@ export interface Tapado {
   vista: string;
 }
 
+/** ¿Esto (o algo que lo lleva) se mueve solo por el cuarto? */
+function seMueve(o: THREE.Object3D) {
+  for (let x: THREE.Object3D | null = o; x; x = x.parent) if (x.userData.seMueve) return true;
+  return false;
+}
+
 /** Rectángulos de la interfaz que siempre están durante una puerta (con el inventario lleno a tres cosas). */
 function interfazFija() {
   const out: { que: string; x0: number; y0: number; x1: number; y1: number }[] = [];
@@ -230,7 +236,8 @@ export function revisarImportantes(o: {
           else if (esDe(cual, o.puerta.grupo)) quien = 'la puerta';
           else if (esDe(cual, o.g)) {
             const u = unidad(cual, o.g);
-            if (!tocables.has(u)) quien = `acertijo: ${nombreImp(u)}`;
+            // (lo que va de un lado a otro, como la botella entre las rocas o el carrusel, se tapa y se destapa solo)
+            if (!tocables.has(u) && !u.userData.tapaAdrede && !seMueve(imp.obj)) quien = `acertijo: ${nombreImp(u)}`;
           } else if (esDe(cual, o.cuarto)) {
             // (el piso, la arena o el mar que tapan lo que está enterrado o flotando lejos es parte del acertijo)
             const u = unidad(cual, o.cuarto);

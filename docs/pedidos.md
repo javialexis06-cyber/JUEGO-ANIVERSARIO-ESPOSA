@@ -94,11 +94,6 @@ velocidad, se siente raro…»
 
 ## Lo acumulado (en orden)
 
-- **Cien Puertas: arreglos y modo pareja** (rama `trabajo/puertas`, sin juntar). Hecho: papelitos legibles, zonas
-  protegidas (nada tapa la puerta), revisión con rayos (`scripts/revisar-puertas.mjs`), modo pareja completo con
-  `scripts/probar-puertas-linea.mjs`. Falta: juntar la rama principal en ella, correr
-  `revisar-puertas.mjs 1 100 --semillas=0,1,2 --revolver` y `probar-puertas-linea.mjs`, mirar fotos de varias puertas,
-  juntar y subir. Detalles en `docs/en-obra/cien-puertas.md`.
 - **El Show de Nosotros** (rama `trabajo/show`, sin juntar; `mesa.html?juego=show`): concurso de preguntas de pareja
   con estudio 3D, presentador perrito, seis tipos de preguntas, pregunta del día en la nevera, el libro de nosotros y en
   línea. El último commit (`ab7d01a`, «avance en obra») quedó sin revisar. Falta: revisarlo, correr `probar-show.mjs` y

@@ -10,7 +10,7 @@ esposa): una casa tipo mascota virtual de pareja (Tamagotchi / Pou / Talking Tom
 minijuegos adentro. Cada uno juega en su celular Android y la casa está siempre en línea (Supabase).
 
 - Textos de la pareja: apodos y anécdotas en `docs/la-pareja.md`; la historia y los recuerdos en
-  `docs/en-obra/cien-puertas.md` («La historia» y «Los recuerdos»).
+  `docs/sistemas/cien-puertas.md` («La historia» y «Los recuerdos»).
 - **Es una sorpresa.** Ella no debe enterarse del contenido antes de tiempo (por eso las voces se clonan con IA a
   partir de frases sueltas: `docs/en-obra/voces-ia.md`).
 - Todo en **español colombiano cálido**: juego, comentarios, commits, documentos y lo que le respondes. Al usuario se
@@ -84,8 +84,10 @@ acceso a `javialexis06-cyber/juego-aniversario-esposa` y la red abierta a npm, P
 ```
 CLAUDE.md                este archivo
 docs/                    README.md (índice), pedidos.md (la cola), la-pareja.md
-  sistemas/              cómo funciona lo terminado (casa, súper, mesa y su Clue, salas, Sangre y Ceniza, Supabase)
-  en-obra/               Cien Puertas, escenas premium, voces
+  sistemas/              cómo funciona lo terminado (casa, súper, mesa y su Clue, Cien Puertas, salas, Sangre y
+                         Ceniza, Supabase)
+  en-obra/               propuesta de Sangre y Ceniza 2, escenas premium, voces
+  referencias/           wikis de otros juegos transcritas (Deep Rock Galactic: Survivor, Vampire Survivors)
   archivo/               estudios y decisiones viejas
 archivo/renders/         renders aprobados de referencia (personajes, súper, casa)
 personajes/blender/      todo el modelado por código (Blender + Python) y los exportadores
@@ -156,11 +158,10 @@ npm run dev                    # http://localhost:5173 (casa), /super.html, /pue
 
 ## 9. Estado
 
-Lo hecho está descrito en `docs/sistemas/`; lo que falta, en orden, en **`docs/pedidos.md`**. Frentes a medias en
-GitHub, sin juntar: `trabajo/puertas` (Cien Puertas: arreglos y modo pareja) y `trabajo/show` (El Show de
-Nosotros). Para retomar uno: `git fetch origin trabajo/<frente> && git worktree add .wt/<frente> trabajo/<frente>` y
-`ln -s "$PWD/juego/web/node_modules" .wt/<frente>/juego/web/node_modules`; lo que falta de cada uno está al final de
-su documento.
+Lo hecho está descrito en `docs/sistemas/`; lo que falta, en orden, en **`docs/pedidos.md`**. Frente a medias en
+GitHub, sin juntar: `trabajo/show` (El Show de Nosotros). Para retomarlo:
+`git fetch origin trabajo/show && git worktree add .wt/show trabajo/show` y
+`ln -s "$PWD/juego/web/node_modules" .wt/show/juego/web/node_modules`; lo que falta está al final de su documento.
 
 **Para Javier** (no lo puede hacer Claude): pegar `supabase/cambios-pendientes.sql` en el SQL Editor de Supabase y,
 para las voces, poner `ELEVENLABS_API_KEY` en el entorno y permitir `api.elevenlabs.io`.

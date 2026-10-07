@@ -227,6 +227,8 @@ const topos: Nivel = {
       tierra.scale.y = 0.7;
       en(tierra, x, 0.02, z);
       const topo = grupo(`topo ${i}`);
+      // (sale y se esconde en su hueco: que el borde lo tape un momento es parte del juego)
+      topo.userData.seMueve = true;
       topo.add(en(esfera(0.16, mat('#8a6a55')), 0, 0, 0));
       (topo.children[0] as THREE.Mesh).scale.set(1, 1.2, 0.9);
       topo.add(en(esfera(0.035, mat('#f4b6c2')), 0, 0.02, 0.15), en(esfera(0.02, mat('#1e1a18')), -0.05, 0.08, 0.13), en(esfera(0.02, mat('#1e1a18')), 0.05, 0.08, 0.13));
@@ -331,6 +333,9 @@ const arbol: Nivel = {
       copa.add(en(esfera(r, mat('#5f9e4f', { rough: 1 }), undefined, 18), x, y, z));
     }
     arbolG.add(copa);
+    // (un poco más bajito, para que la copa quepa entera en la pantalla)
+    const ALTO = 0.82;
+    arbolG.scale.setScalar(ALTO);
     en(arbolG, 2.2, 0, 0.7);
     c.g.add(arbolG);
     // Manzanas escondidas dentro de la copa
@@ -340,7 +345,7 @@ const arbol: Nivel = {
     for (const [col, n] of MANZANAS)
       for (let i = 0; i < n; i++) {
         const m = esfera(0.075, mat(col, { rough: 0.45 }), 'manzana', 14);
-        en(m, 2.2 + (r() - 0.5) * 0.9, 2.2 + (r() - 0.5) * 0.5, 0.7 + (r() - 0.5) * 0.3);
+        en(m, 2.2 + (r() - 0.5) * 0.9 * ALTO, (2.2 + (r() - 0.5) * 0.5) * ALTO, 0.7 + (r() - 0.5) * 0.3 * ALTO);
         c.g.add(m);
         todas.push(m);
       }

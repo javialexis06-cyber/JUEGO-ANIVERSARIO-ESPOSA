@@ -1,5 +1,5 @@
 // Las palabras que un amigo NUNCA debe ver: apodos, lugares, recuerdos y chistes de la pareja (docs/la-pareja.md,
-// los recuerdos de docs/en-obra/cien-puertas.md y las cartas de amor del lavado). Las pruebas de amigos buscan esto en la
+// los recuerdos de docs/sistemas/cien-puertas.md y las cartas de amor del lavado). Las pruebas de amigos buscan esto en la
 // pantalla y en los avisos. (Los nombres Javier y Laura sí se ven: son jugadores como cualquiera.)
 export const PALABRAS_PAREJA = [
   'esposa', 'esposo', 'pulga aventurera', 'protagonista', 'guerrera de Dios', 'panda', 'perro lanudo', 'liefje', 'liefte', 'mi amor',

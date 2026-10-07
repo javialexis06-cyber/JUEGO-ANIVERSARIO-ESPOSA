@@ -752,9 +752,9 @@ const cajaMusical: Nivel = {
     k.scale.setScalar(0.7);
     k.visible = false;
     c.g.add(k);
-    let progreso = 0, activo = false, previo: number | null = null, tPrevio = 0, hecho = false, avisado = 0;
+    let progreso = 0, activo = false, previo: number | null = null, hecho = false, avisado = 0;
     let centro = { x: 0, y: 0 };
-    let vel = 0;
+    const ventana: [number, number][] = [];
     area.userData.progreso = () => progreso;
     c.mantener(area, () => {
       if (hecho) return;
@@ -767,18 +767,21 @@ const cajaMusical: Nivel = {
     c.gesto.mover((x, y, abajo) => {
       if (!abajo || !activo || hecho) return;
       const a = Math.atan2(y - centro.y, x - centro.x);
-      // Reloj del juego (en el celular es el de verdad; en las pruebas aceleradas va al ritmo de la escena)
-      const ahora = c.escena.t;
+      // Reloj de verdad (el ritmo es del dedo, no de la escena) y la velocidad medida en una ventanita, no entre
+      // dos movimientos: si el celular se atasca un momento y los toques llegan juntos, no cuenta como «muy rápido»
+      const ahora = performance.now() / 1000;
       if (previo === null) {
         previo = a;
-        tPrevio = ahora;
+        ventana.length = 0;
+        ventana.push([ahora, 0]);
         return;
       }
       const d = Math.abs(difAng(a, previo));
-      const dt = Math.max(1 / 60, ahora - tPrevio);
       previo = a;
-      tPrevio = ahora;
-      vel = vel * 0.6 + (d / dt) * 0.4;
+      ventana.push([ahora, d]);
+      while (ventana.length > 2 && ahora - ventana[1][0] > 0.4) ventana.shift();
+      // (el primero es solo la marca de inicio: lo girado cuenta desde ahí)
+      const vel = ventana.reduce((s, [, x], i) => (i ? s + x : s), 0) / Math.max(0.15, ahora - ventana[0][0]);
       manivela.rotation.x += d;
       if (vel > 11) {
         progreso = Math.max(0, progreso - d / (Math.PI * 2) / 2);
@@ -817,13 +820,13 @@ const cajaMusical: Nivel = {
     const s = p.pantalla('caja toque');
     const pts: [number, number][] = [[s.x / innerWidth, s.y / innerHeight]];
     const r = 32;
-    // Un movimiento por cuadro, de a 45° (la prueba corre con el tiempo acelerado: queda dentro del ritmo pedido)
-    const N = 8;
-    for (let i = 0; i <= 6.5 * N; i++) {
+    // Círculos parejos a una vuelta por segundo (el ritmo se mide con el reloj de verdad)
+    const N = 12;
+    for (let i = 0; i <= 6 * N; i++) {
       const a = (i / N) * Math.PI * 2;
       pts.push([(s.x + Math.cos(a) * r) / innerWidth, (s.y + Math.sin(a) * r) / innerHeight]);
     }
-    await p.trazarPorCuadro(pts);
+    await p.trazar(pts, 6000);
     await p.esperarQue(() => !!p.obj('caja toque').userData.lista, 10000);
     await p.tocar('llave');
     await p.esperarQue(() => !!document.querySelector('#inventario [data-item="llave"]'), 20000);

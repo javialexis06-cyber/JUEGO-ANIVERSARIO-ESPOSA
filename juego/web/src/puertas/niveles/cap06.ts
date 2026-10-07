@@ -376,11 +376,13 @@ const equilibrio: Nivel = {
       const meta = dedoX !== null ? dedoX : sin ? THREE.MathUtils.clamp(c.sensores.inclinacion.x * 0.6, -0.35, 0.35) : 0;
       tabla.rotation.z += (-meta - tabla.rotation.z) * Math.min(1, dt * 6);
       const viento = Math.sin(t * 0.7) * 0.25 + Math.sin(t * 1.9) * 0.12;
-      const pasos = 4;
+      // (pasitos de 8 ms como mucho: si un cuadro se demora, la pelota no salta de golpe)
+      const pasos = Math.max(4, Math.ceil(dt / 0.008));
       for (let i = 0; i < pasos; i++) {
         const h = dt / pasos;
         v += (-Math.sin(tabla.rotation.z) * 9.8 * 0.7 + viento) * h;
-        v *= 0.995;
+        // (el mismo roce por segundo con cualquier número de pasitos)
+        v *= Math.pow(0.995, h * 240);
         x += v * h;
       }
       if (Math.abs(x) > 0.86) {
@@ -416,10 +418,14 @@ const equilibrio: Nivel = {
   },
   async prueba(p) {
     const b = p.obj('pelota');
-    for (let i = 0; i < 4000 && !b.userData.hecho; i++) {
+    // Corrige una vez por cuadro, como la mano (con temporizadores, si el computador se ocupa, la corrección llega
+    // tarde y la pelota se va)
+    const cuadro = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+    const t0 = performance.now();
+    while (!b.userData.hecho && performance.now() - t0 < 100000) {
       const x = (b.userData.x as number) ?? 0, v = (b.userData.v as number) ?? 0;
       p.sensor.inclinar(-THREE.MathUtils.clamp((x * 2.2 + v * 0.8) / 0.6, -0.58, 0.58), 0.8);
-      await p.esperar(30);
+      await cuadro();
     }
     p.sensor.soltar();
   },
@@ -688,9 +694,11 @@ const adivinanza: Nivel = {
     const libro = caja(0.2, 0.05, 0.14, mat('#3c7a62'), 0.01, 'libro');
     const cosas: THREE.Object3D[] = [reloj, pina, alfiletero, libro];
     const puestos: [number, number][] = [[-0.22, 0.1], [0.12, -0.18], [0.22, 0.12], [-0.08, -0.2]];
+    // (la altura de cada una para que quede apoyada sobre el tocón, que termina en 0,561)
+    const alturas = [0.574, 0.666, 0.641, 0.586];
     cosas.forEach((o, i) => {
       o.add(new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 6), new THREE.MeshBasicMaterial({ visible: false })));
-      en(o, 1.3 + puestos[i][0], 0.61, 1.0 + puestos[i][1]);
+      en(o, 1.3 + puestos[i][0], alturas[i], 1.0 + puestos[i][1]);
       c.g.add(o);
       c.tocar(o, () => {
         if (o === reloj) {

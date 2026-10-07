@@ -970,11 +970,11 @@ const globos: Nivel = {
     const lista = letras.map((l, i) => {
       const g = grupo(`globo ${i}`);
       const b = esfera(0.16, matNuevo(colores[i % colores.length], { rough: 0.35 }), undefined, 18);
-      b.scale.set(1, 1.18, 1);
-      const nudo = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.05, 8), mat(colores[i % colores.length]));
-      en(nudo, 0, -0.2, 0);
-      const hilo = cilindro(0.003, 0.003, 0.25, mat('#fff3e0'));
-      en(hilo, 0, -0.34, 0);
+      b.scale.set(0.94, 1.1, 0.94);
+      const nudo = new THREE.Mesh(new THREE.ConeGeometry(0.028, 0.045, 8), mat(colores[i % colores.length]));
+      en(nudo, 0, -0.19, 0);
+      const hilo = cilindro(0.003, 0.003, 0.12, mat('#fff3e0'));
+      en(hilo, 0, -0.27, 0);
       const letra = letrero(0.18, 0.18, (cv, w, h) => {
         cv.font = `700 ${h * 0.85}px 'Fredoka', system-ui, sans-serif`;
         cv.textAlign = 'center';
@@ -987,7 +987,7 @@ const globos: Nivel = {
       }, undefined, { transparente: true });
       en(letra, 0, 0.01, 0.17);
       g.add(b, nudo, hilo, letra);
-      en(g, 1.35 + (i % 3) * 0.45, 1.02 + Math.floor(i / 3) * 0.44, 0.2);
+      en(g, 1.35 + (i % 3) * 0.45, 1.13 + Math.floor(i / 3) * 0.4, 0.2);
       g.userData.letra = l;
       c.g.add(g);
       return g;
@@ -1082,7 +1082,7 @@ function caballito(nombre: string, color: string) {
   return g;
 }
 
-const CARRUSEL = { x: 1.95, z: 0.9, r: 0.55, vuelta: 8, sube: 2.4 };
+const CARRUSEL = { x: 1.72, z: 0.75, r: 0.55, vuelta: 8, sube: 2.4 };
 const carrusel: Nivel = {
   titulo: 'El carrusel',
   pistas: [
@@ -1103,6 +1103,8 @@ const carrusel: Nivel = {
     en(base, K.x, 0, K.z);
     c.g.add(base);
     const giro = grupo();
+    // (da vueltas: que el caballo de la llave quede un momento detrás de la columna es parte del juego)
+    giro.userData.seMueve = true;
     giro.position.copy(base.position);
     c.g.add(giro);
     const colores = ['#F7C948', '#F59FC0', '#8EC5F0', '#fff3e0', '#b48ef0', '#8FD6B9'];

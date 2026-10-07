@@ -286,9 +286,16 @@ otras encima de un cajón o un banquito.
   tapaba, la cosa que se corría se robaba el toque, eran planas y casi no se veían desde la cámara, y el doble toque.
 - **Nunca tapan**: se acomodan con una rejilla de la pantalla donde se pinta la puerta con su marco, todo lo del
   acertijo (también lo que aparece después, como una llave que cae), la interfaz y donde se para el narrador. Si algo
-  lanzado queda quieto tapando la puerta o algo importante (ver «Nada tapa lo importante»), salta solito al sitio libre
-  más cercano (y si no hay, vuelve a donde estaba al principio, salvo que ahí haya quedado a la vista lo que
-  escondía). El narrador, al caminar, empuja lo que tenga en los pies.
+  lanzado queda quieto tapando la puerta o algo importante (ver «Nada tapa lo importante»), o medio fuera de la
+  pantalla (cerca de la cámara el cuarto es más ancho que lo que se ve), salta solito al sitio libre más cercano: uno
+  al que el saltico llegue sin chocar (se sigue la misma parábola del salto contra los muebles y las otras cosas: si
+  no, rebotaba en el marco de la puerta o en el borde de la mesa y volvía a caer donde estaba); si cerca no hay, busca
+  en todo el cuarto; si tampoco, da un salto alto por encima de las cosas chiquitas; y si nada, vuelve a donde estaba
+  al principio (si ahí quedó a la vista lo que escondía, el papelito se asoma solo). Hasta 6 intentos. El narrador,
+  al caminar, empuja lo que tenga en los pies.
+- **Los papelitos se asoman**: si algo les queda encima o delante, o quedaron detrás del narrador en su esquina (se
+  mide con rayos a puntos de todo el papelito), se corren hacia adelante, a los lados o hacia atrás, a un sitio de la
+  pantalla que no esté debajo de un mueble, hasta que se vean.
 - **Celular**: cada cosa es una sola malla con colores por vértice (una llamada de dibujo) y geometría en caché; la
   física corre a pasos fijos solo para lo que está despierto y todo se duerme al quedarse quieto.
 - Un nivel puede pedir menos cosas o ninguna con `desorden: { cuantas }` o `desorden: { nada: true }`.
@@ -345,7 +352,29 @@ dibujar, mucho más rápido). El informe queda en `<carpeta>/informe.json`.
 
     PUERTO=5173 node scripts/revisar-puertas.mjs 1 100 --semillas=0,1,2 --revolver [--fotos]
 
-Lo que se encontró y se arregló con esa pasada está en «Arreglos de la revisión» más abajo.
+La revisión mira cuando todo quedó quieto (y otra vez medio segundo después, porque el narrador al caminar a su
+esquina puede empujar algo). Lo que va y viene solo (la botella entre las rocas, el carrusel) se marca con
+`userData.seMueve` y lo que tapa a propósito (la tapa con ventanita del letrero giratorio) con `userData.tapaAdrede`:
+eso no cuenta como tapado. Con `DEPURAR=1` imprime dónde quedó cada cosa del reguero cuando algo tapa la puerta.
+
+### Arreglos de la revisión (octubre de 2026)
+
+Pasada completa con `--semillas=0,1,2 --revolver` (300 puertas): de 46 fallas a 0. Lo que salió y cómo quedó:
+
+- **Puerta 44 (el cangrejo)**: lo rápido que se frota se mide con el reloj de verdad (lo rápido es del dedo, no de la
+  escena). **Puerta 97 (la caja musical)**: el ritmo de los círculos también va con el reloj de verdad y se mide en una
+  ventanita de 0,4 s: si el celular se atasca un momento y los toques llegan juntos, ya no cuenta como «muy rápido» y
+  la cuerda no se devuelve. **Puerta 56 (el equilibrio)**: la pelota avanza en pasitos de 8 ms como mucho, así un
+  cuadro lento no la hace saltar de golpe (el roce es el mismo por segundo).
+- **El desorden** que tapaba la puerta o los papelitos después de revolverlo todo (puertas 4, 19, 21, 24, 29, 44, 71,
+  74, 79, 86, 91, 96, 97 y 99): ver «Nunca tapan» y «Los papelitos se asoman» arriba.
+- **Los avisos de abajo** salían en una columnita de una palabra por línea: el `.aviso` de la casa (las burbujitas de
+  las necesidades, de 34 px) también se carga en Cien Puertas. Ahora el de las puertas va con su id y manda.
+- **Puerta 14**: el árbol de manzanas, un poco más bajito para que la copa quepa entera. **Puerta 23**: los platillos
+  de la balanza ya están colgados desde el principio (antes, hasta el primer cuadro, quedaban en el piso frente a la
+  puerta). **Puerta 39**: la banda de las maletas entera en la pantalla. **Puerta 60**: las cosas del tocón apoyadas
+  encima (la piña estaba medio hundida). **Puerta 67**: los globos de abajo ya no quedan detrás del mostrador.
+  **Puerta 68**: el carrusel corrido para no meterse debajo de los botones.
 
 ## En pareja: la misma puerta, cada uno en su celular
 

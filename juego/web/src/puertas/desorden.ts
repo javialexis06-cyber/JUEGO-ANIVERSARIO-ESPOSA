@@ -13,7 +13,7 @@ import { OJO } from './escena';
 import { estrellaForma, lienzo, matNuevo, textoEn, FUENTE } from './kit';
 import type { Ctx } from './nivel';
 import { HUECO } from './puerta';
-import { primeroDelante } from './protegidas';
+import { muestras, primeroDelante } from './protegidas';
 import { Mascara, pintar, rectDeCaja } from './revision';
 import * as sfx from './sonidos';
 import { esc } from './ui';
@@ -372,6 +372,11 @@ const OTROS = ['#8EC5F0', '#f4b6c2', '#F7C948', '#8FD6B9', '#c9b6ea', '#F59F6A',
 let matBase: THREE.MeshStandardMaterial | null = null;
 let matLuz: THREE.MeshBasicMaterial | null = null;
 const geos = new Map<string, { cuerpo: THREE.BufferGeometry; luz: THREE.BufferGeometry | null; medio: THREE.Vector3; color: string }>();
+
+/** Veces que algo que quedó estorbando se corre solo antes de rendirse (las últimas, buscando en todo el cuarto). */
+const MAX_EMPUJES = 6;
+/** Cuánto sube el salto alto (por encima de las cosas chiquitas del reguero, no de los muebles). */
+const ARCO_ALTO = 0.7;
 
 function color(c: string) {
   return new THREE.Color(c).convertSRGBToLinear();
@@ -997,10 +1002,10 @@ export class Desorden {
     }
     if (golpe > 1.1) this.choque(b, golpe);
     if (b.roto) return;
-    // Al caer de un saltico se queda ahí (sin resbalar)
-    if (apoyo && b.salto && v.y <= 0) {
-      v.x = 0;
-      v.z = 0;
+    // Al caer de un saltico se queda ahí (sin resbalar ni rebotar: la pelota, con su rebote, se pasaba de largo)
+    // (el golpe contra el piso ya le volteó la velocidad hacia arriba: por eso se mira también el golpe)
+    if (apoyo && b.salto && (v.y <= 0 || golpe > 0.3)) {
+      v.set(0, 0, 0);
       b.salto = null;
     }
     // Roce y giro
@@ -1024,15 +1029,21 @@ export class Desorden {
         v.set(0, 0, 0);
         // Que no quede tapando la puerta ni nada importante: se corre hacia un lado (y si no hay caso, vuelve a
         // donde estaba al principio, que era un sitio libre)
-        if (b.empujes < 4 && this.estorba(b, b.pos)) {
+        if (b.empujes < MAX_EMPUJES && (this.estorba(b, b.pos) || this.fueraDeVista(b))) {
           b.empujes++;
           b.quieto = 0;
-          // Un saltico hasta el sitio libre más cercano; si no hay, a donde estaba al principio (era libre… salvo que
-          // ahí haya quedado a la vista lo que escondía)
-          const destino = this.sitioLibre(b, b.empujes >= 3);
-          if (destino) this.saltar(b, destino);
-          else if (b.escondido?.visto) b.empujes = 4;
+          // Un saltico hasta el sitio libre más cercano (y si cerca no hay, en todo el cuarto)
+          let alto = false;
+          let destino = this.sitioLibre(b, b.empujes >= 3) ?? (b.empujes < 3 ? this.sitioLibre(b, true) : null);
+          // (si todo camino recto choca con otra cosa del reguero, un salto alto por encima de las cosas chiquitas)
+          if (!destino) {
+            destino = this.sitioLibre(b, true, true);
+            alto = true;
+          }
+          if (destino) this.saltar(b, destino, alto);
           else {
+            // Si no hay caso, vuelve a donde estaba al principio (era libre); si ahí quedó a la vista lo que
+            // escondía, el papelito se asoma solo por debajo (asomarPapeles)
             p.copy(b.origen);
             p.y += 0.25;
             v.set(0, 0.4, 0);
@@ -1057,21 +1068,50 @@ export class Desorden {
     if (!this.vista) return;
     for (const o of this.papeles) {
       if (!o.visible || o.userData.asomando) continue;
+      // Cuánto se tapa (de 0 a 1): con rayos desde la cámara a puntos de todo el papelito, contra el desorden, las
+      // piezas del acertijo y los muebles del cuarto (con la cámara tan baja, hasta el borde de un charco de 2 cm tapa
+      // lo que está justo detrás), y contra el narrador parado en su esquina (un poco más ancho que sus pies: la
+      // cabeza es grandota)
+      const cuarto = this.escena.escena.getObjectByName('cuarto');
+      const raices = [this.grupo, this.c.g, ...(cuarto ? [cuarto] : [])];
+      const ojo = this.vista.getWorldPosition(new THREE.Vector3());
+      const rayo = new THREE.Ray();
+      const choque = new THREE.Vector3();
+      const narrador = this.zonas.narrador[0]?.clone().expandByVector(new THREE.Vector3(0.2, 0, 0.1));
       const tapado = () => {
         o.updateWorldMatrix(true, true);
-        const c = o.getWorldPosition(new THREE.Vector3());
+        const ps = muestras(o, 16);
+        if (!ps.length) return 0;
         let n = 0;
-        const puntos = [[0, 0.05, 0], [0.09, 0.03, 0.03], [-0.09, 0.03, 0.03], [0, 0.03, 0.06], [0, 0.07, -0.02]];
-        for (const [dx, dy, dz] of puntos) if (primeroDelante(this.vista!, c.clone().add(new THREE.Vector3(dx, dy, dz)), [this.grupo], [o]).cual) n++;
-        return n / puntos.length;
+        for (const p of ps) {
+          if (primeroDelante(this.vista!, p, raices, [o]).cual) n++;
+          else if (narrador) {
+            rayo.set(ojo, p.clone().sub(ojo).normalize());
+            if (narrador.containsPoint(p) || (rayo.intersectBox(narrador, choque) && choque.distanceTo(ojo) < p.distanceTo(ojo))) n++;
+          }
+        }
+        return n / ps.length;
       };
-      if (tapado() < 0.4) continue;
+      if (tapado() < 0.1) continue;
       const desde = o.position.clone();
       let destino: THREE.Vector3 | null = null;
-      for (let k = 1; k <= 10 && !destino; k++) {
-        o.position.set(desde.x, this.alturaPiso(desde.x, desde.z + k * 0.12) + 0.004, Math.min(2.2, desde.z + k * 0.12));
-        if (tapado() < 0.2) destino = o.position.clone();
-      }
+      // Hacia adelante primero; si lo que lo tapa está adelante (entre el papelito y la cámara), a los lados o atrás
+      const W = window.innerWidth, H = window.innerHeight;
+      const dirs = [[0, 1], [1, 0], [-1, 0], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+      for (let k = 1; k <= 10 && !destino; k++)
+        for (const [dx, dz] of dirs) {
+          const x = desde.x + dx * k * 0.12, z = THREE.MathUtils.clamp(desde.z + dz * k * 0.12, this.Z0 + 0.08, 2.2);
+          if (x < this.X0 + 0.1 || x > this.X1 - 0.1) continue;
+          const aqui = new THREE.Box3(new THREE.Vector3(x - 0.1, 0, z - 0.1), new THREE.Vector3(x + 0.1, 0.1, z + 0.1));
+          if (this.muebles.some((m) => m.intersectsBox(aqui))) continue;
+          const r = rectDeCaja(aqui, this.vista, W, H);
+          if (!isFinite(r.x0) || r.x0 < 8 || r.x1 > W - 8 || r.y0 < 8 || r.y1 > H - 8) continue;
+          o.position.set(x, this.alturaPiso(x, z) + 0.004, z);
+          if (tapado() < 0.05) {
+            destino = o.position.clone();
+            break;
+          }
+        }
       o.position.copy(desde);
       if (!destino) continue;
       const fin = destino;
@@ -1113,20 +1153,36 @@ export class Desorden {
     return m.cruce(prot) >= 3;
   }
 
+  /** ¿Quedó (casi) fuera de lo que se ve? (al borde de abajo, cerca de la cámara, el cuarto es más ancho que la
+   *  pantalla: ahí no se alcanza a tocar). */
+  private fueraDeVista(b: Cuerpo) {
+    if (!this.vista || b.colgado) return false;
+    const W = window.innerWidth, H = window.innerHeight;
+    const r = rectDeCaja(new THREE.Box3(b.pos.clone().sub(b.h), b.pos.clone().add(b.h)), this.vista, W, H);
+    if (!isFinite(r.x0)) return true;
+    const w = r.x1 - r.x0, h = r.y1 - r.y0;
+    const ix = Math.min(r.x1, W) - Math.max(r.x0, 0), iy = Math.min(r.y1, H) - Math.max(r.y0, 0);
+    return ix < w * 0.6 || iy < h * 0.6;
+  }
+
   /** El sitio libre más cercano en el piso (a los lados primero, luego más adelante o más atrás). `lejos`: busca en
    *  todo el cuarto. */
-  private sitioLibre(b: Cuerpo, lejos = false): THREE.Vector3 | null {
-    const p = b.pos;
+  private sitioLibre(b: Cuerpo, lejos = false, alto = false): THREE.Vector3 | null {
+    // (desde un punto que se ve: lo que quedó pegado a la cámara busca más adentro del cuarto)
+    const p = b.pos.clone();
+    p.z = THREE.MathUtils.clamp(p.z, this.Z0 + b.h.z, 1.75);
     const otros = this.cuerpos.filter((o) => o !== b && !o.roto).map((o) => new THREE.Box3(o.pos.clone().sub(o.h), o.pos.clone().add(o.h)));
     const W = window.innerWidth, H = window.innerHeight;
     const prueba = new THREE.Vector3();
-    for (const dz of lejos ? [0, -0.3, 0.3, -0.6, 0.6, 0.9, -0.9] : [0, -0.3, 0.3, -0.6]) {
+    for (const dz of lejos ? [0, -0.3, 0.3, -0.6, 0.6, -0.9, 0.9, -1.2, -1.5] : [0, -0.3, 0.3, -0.6]) {
       for (let k = 1; k <= (lejos ? 44 : 16); k++) {
         for (const lado of [1, -1]) {
           prueba.set(p.x + lado * k * 0.16, b.h.y, THREE.MathUtils.clamp(p.z + dz, this.Z0 + b.h.z, 2.1));
           if (prueba.x - b.h.x < this.X0 || prueba.x + b.h.x > this.X1) continue;
           const caja = new THREE.Box3(prueba.clone().sub(b.h), prueba.clone().add(b.h)).expandByScalar(0.02);
           if (this.muebles.some((m) => m.intersectsBox(caja)) || otros.some((o) => o.intersectsBox(caja))) continue;
+          // (que el saltico llegue: si en el camino hay un mueble, como el marco de la puerta, rebota y vuelve)
+          if (!this.caminoLibre(b, prueba, alto ? [] : otros, alto)) continue;
           if (this.zonas.narrador.some((z) => z.intersectsBox(caja))) continue;
           const r = rectDeCaja(caja, this.vista!, W, H);
           if (!isFinite(r.x0) || r.x0 < 4 || r.x1 > W - 4 || r.y0 < 4 || r.y1 > H - 4) continue;
@@ -1137,10 +1193,33 @@ export class Desorden {
     return null;
   }
 
+  /** ¿Se puede saltar en línea recta hasta `destino` sin chocar con un mueble ni con otra cosa del reguero? */
+  private caminoLibre(b: Cuerpo, destino: THREE.Vector3, otros: THREE.Box3[] = [], alto = false) {
+    const caja = new THREE.Box3();
+    const q = new THREE.Vector3();
+    // (la misma parábola que hará `saltar`: desde encima de una mesa, la caída al piso puede chocar con el borde)
+    const T = this.tiempoSalto(b, destino, alto);
+    const vy = (destino.y - b.pos.y + 0.5 * G * T * T) / T;
+    const n = Math.max(2, Math.ceil(b.pos.distanceTo(destino) / 0.06));
+    for (let i = 1; i < n; i++) {
+      const t = (i / n) * T;
+      q.lerpVectors(b.pos, destino, i / n);
+      q.y = b.pos.y + vy * t - 0.5 * G * t * t;
+      caja.set(q.clone().sub(b.h), q.clone().add(b.h)).expandByScalar(-0.01);
+      if (this.muebles.some((m) => m.intersectsBox(caja)) || otros.some((o) => o.intersectsBox(caja))) return false;
+    }
+    return true;
+  }
+
   /** Saltico hasta `destino` (llega ahí y se queda: sin resbalar). */
-  private saltar(b: Cuerpo, destino: THREE.Vector3) {
+  /** Cuánto dura el saltico (el alto sube unos ARCO_ALTO por encima de la salida: medio vuelo = T / 2). */
+  private tiempoSalto(b: Cuerpo, destino: THREE.Vector3, alto = false) {
     const d = Math.hypot(destino.x - b.pos.x, destino.z - b.pos.z);
-    const T = 0.38 + Math.min(0.3, d * 0.12);
+    return alto ? Math.max(0.5, 2 * Math.sqrt((2 * (ARCO_ALTO + 0.08)) / G)) : 0.38 + Math.min(0.3, d * 0.12);
+  }
+
+  private saltar(b: Cuerpo, destino: THREE.Vector3, alto = false) {
+    const T = this.tiempoSalto(b, destino, alto);
     b.vel.set((destino.x - b.pos.x) / T, (destino.y - b.pos.y + 0.5 * G * T * T) / T, (destino.z - b.pos.z) / T);
     b.giro.set(0, (this.azar() - 0.5) * 4, 0);
     b.salto = destino.clone();

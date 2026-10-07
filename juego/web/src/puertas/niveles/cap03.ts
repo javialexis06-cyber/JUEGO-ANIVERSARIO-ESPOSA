@@ -317,13 +317,19 @@ const balanza: Nivel = {
       }
     };
     viga.userData.meta = 0.3;
-    c.cada((dt) => {
-      viga.rotation.z += ((viga.userData.meta as number) - viga.rotation.z) * Math.min(1, dt * 4);
+    const colgar = () => {
       const a = viga.rotation.z;
       platillos.forEach((pl, i) => {
         const lado = i ? 1 : -1;
         pl.position.set(bx + Math.cos(a) * 0.45 * lado, by + 0.62 + Math.sin(a) * 0.45 * lado - 0.38, bz);
       });
+    };
+    // (ya colgados desde el principio: si no, hasta el primer cuadro quedaban en el piso, frente a la puerta)
+    viga.rotation.z = 0.3;
+    colgar();
+    c.cada((dt) => {
+      viga.rotation.z += ((viga.userData.meta as number) - viga.rotation.z) * Math.min(1, dt * 4);
+      colgar();
     });
     const planoMesa = planoPiso(0.79);
     for (const cj of cajas) {
@@ -808,6 +814,7 @@ const letreroGira: Nivel = {
       textoEn(cx, 'EL SÍMBOLO CORRECTO', w / 2, h * 0.63, w * 0.055, '#fff8ee', 700);
     }, 'tapa rueda', { transparente: true });
     tapa.scale.setScalar(1.3);
+    tapa.userData.tapaAdrede = true;
     en(tapa, x0, y0, 0.07);
     c.g.add(tapa);
     const toque = new THREE.Mesh(new THREE.CircleGeometry(0.65, 32), new THREE.MeshBasicMaterial({ visible: false }));

@@ -1,5 +1,5 @@
 // Revisa que la versión para amigos (dist-amigos, de `npm run build:amigos`) no tenga NADA de la pareja adentro:
-// ni las palabras de `palabras-pareja.mjs`, ni los recuerdos (los títulos y frases de docs/en-obra/cien-puertas.md y todo lo
+// ni las palabras de `palabras-pareja.mjs`, ni los recuerdos (los títulos y frases de docs/sistemas/cien-puertas.md y todo lo
 // de `src/casa/lavado/pareja.ts`), ni archivos de la casa, de Cien Puertas, de los recuerdos o de las voces. Busca
 // en todo el texto (JavaScript, HTML, CSS, JSON, SVG) y dentro de los modelos GLB (nombres de mallas y materiales).
 // Si encuentra algo, falla (así GitHub Actions no publica la APK ni el .exe de los amigos).
@@ -15,9 +15,9 @@ if (!existsSync(carpeta)) {
 }
 
 // ------------------------------------------------------------------------------------------ Lo que no puede estar
-/** Los recuerdos: títulos y frases de la tabla de docs/en-obra/cien-puertas.md («Los recuerdos (de verdad)»). */
+/** Los recuerdos: títulos y frases de la tabla de docs/sistemas/cien-puertas.md («Los recuerdos (de verdad)»). */
 function recuerdosDelDocumento() {
-  const ruta = '../../docs/en-obra/cien-puertas.md';
+  const ruta = '../../docs/sistemas/cien-puertas.md';
   if (!existsSync(ruta)) return [];
   const md = readFileSync(ruta, 'utf8');
   const i = md.indexOf('## Los recuerdos');

@@ -43,6 +43,10 @@ export class ProbadorReal implements Probador {
     for (const [a, b] of [[0.25, 0.25], [-0.25, 0.25], [0.25, -0.25], [-0.25, -0.25], [0, 0.35], [0, -0.35], [0.35, 0], [-0.35, 0]]) {
       candidatos.push(c.clone().add(new THREE.Vector3(a * t.x, b * t.y, 0)));
     }
+    // (lo que está acostado en el piso, como una concha, casi no cambia de alto: también hacia adelante y atrás)
+    for (const [a, b] of [[0, 0.3], [0, -0.3], [0.25, 0.25], [-0.25, 0.25], [0.25, -0.25], [-0.25, -0.25]]) {
+      candidatos.push(c.clone().add(new THREE.Vector3(a * t.x, 0, b * t.z)));
+    }
     for (const p of candidatos) {
       const s = this.escena.aPantalla(p);
       const b = this.entrada.buscar(s.x, s.y);

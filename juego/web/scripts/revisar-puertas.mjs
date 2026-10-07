@@ -68,10 +68,17 @@ for (const semilla of semillas) {
     try {
       await pagina.evaluate((n) => void window.__puertas.jugar(n), n);
       await pagina.waitForFunction((n) => window.__puertas.estado().jugando === n && window.__puertas.estado().listo, n, { timeout: 90000 });
-      await pagina.waitForTimeout(500);
+      // (lo que todavía va rodando o saltando a un sitio libre no cuenta: se mira cuando todo queda quieto, y otra
+      // vez después de medio segundo, porque el narrador al caminar a su esquina puede empujar algo)
+      for (let k = 0; k < 2; k++) {
+        await pagina.waitForFunction(() => window.__puertas.quieto(), null, { timeout: 30000, polling: 250 }).catch(() => {});
+        await pagina.waitForTimeout(500);
+      }
+      await pagina.waitForFunction(() => window.__puertas.quieto(), null, { timeout: 30000, polling: 250 }).catch(() => {});
       const rev = await pagina.evaluate(() => window.__puertas.revision());
       r.revision = rev;
       for (const t of rev.puerta) anotar(r, `tapa la puerta: ${t.que} (${t.celdas} celdas)`);
+      if (rev.puerta.length && process.env.DEPURAR) console.log((await pagina.evaluate(() => window.__puertas.desorden())).lista.join('\n'));
       for (const t of resumenTapados(rev.tapados)) anotar(r, `tapado: ${t}`);
       for (const f of rev.fuera) anotar(r, `fuera del cuarto: ${f}`);
       if (FOTOS) await pagina.screenshot({ path: `${carpeta}/p${String(n).padStart(3, '0')}-s${semilla}.png` });
@@ -84,6 +91,7 @@ for (const semilla of semillas) {
         const rev2 = await pagina.evaluate(() => window.__puertas.revision());
         r.revuelto = rev2;
         for (const t of rev2.puerta) anotar(r, `revuelto, tapa la puerta: ${t.que}`);
+        if (rev2.puerta.length && process.env.DEPURAR) console.log((await pagina.evaluate(() => window.__puertas.desorden())).lista.join('\n'));
         for (const t of resumenTapados(rev2.tapados.filter((x) => /desorden/.test(x.por)))) anotar(r, `revuelto, tapado: ${t}`);
         for (const f of rev2.fuera) anotar(r, `revuelto, fuera del cuarto: ${f}`);
         if (FOTOS) await pagina.screenshot({ path: `${carpeta}/p${String(n).padStart(3, '0')}-s${semilla}-revuelto.png` });
