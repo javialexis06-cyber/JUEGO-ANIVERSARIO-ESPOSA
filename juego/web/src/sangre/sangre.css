@@ -163,7 +163,6 @@ svg {
 }
 .boton:disabled {
   opacity: 0.45;
-  filter: grayscale(0.7);
 }
 .boton .ico,
 .boton svg {
@@ -211,9 +210,10 @@ svg {
 }
 .ico-render {
   object-fit: contain;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.8));
 }
 
+/* (Nada de `filter` ni `mix-blend-mode` en lo que va encima del lienzo 3D: en Android obliga a recomponer toda la
+   pantalla y puede quedar negra unos segundos, sobre todo al cerrar las cartas de subir de nivel) */
 /* ---------- HUD ---------- */
 #hud {
   position: fixed;
@@ -567,7 +567,6 @@ svg {
 .hud-habilidad svg {
   width: 34px;
   height: 34px;
-  filter: drop-shadow(0 1px 1px #000);
 }
 /* Visión astral: el botón del ojo encima del de la habilidad y la leyenda de colores abajo al centro */
 .hud-astral {
@@ -900,8 +899,7 @@ body.mano #zona-joystick {
   font: 800 9.5px/1 var(--serif);
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--rareza, #6a645a);
-  filter: brightness(0.75);
+  color: color-mix(in srgb, var(--rareza, #6a645a) 75%, #000);
 }
 .carta .ico-carta {
   width: 58px;
@@ -1091,7 +1089,7 @@ body.mano #zona-joystick {
   overflow: hidden;
 }
 .tarjeta.bloqueada {
-  filter: grayscale(0.9) brightness(0.6);
+  opacity: 0.5;
 }
 .tarjeta.elegida {
   outline: 2px solid var(--oro);
@@ -1122,7 +1120,6 @@ body.mano #zona-joystick {
 .tarjeta-clase .retrato svg {
   width: 52px;
   height: 52px;
-  filter: drop-shadow(0 2px 4px #000);
 }
 .tarjeta-clase .pie {
   padding: 6px 8px 8px;
@@ -1672,7 +1669,6 @@ body.mano #zona-joystick {
   width: 34px;
   height: 34px;
   color: var(--oro-claro);
-  filter: drop-shadow(0 0 6px rgba(201, 160, 70, 0.8));
   animation: rebote 0.8s infinite alternate;
   pointer-events: none;
 }

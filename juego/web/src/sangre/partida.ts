@@ -189,7 +189,7 @@ export class Partida {
     this.hud.actualizar(dtReal, sim);
     this.acum.limpiar();
     this.o.escena.dibujar();
-    this.o.escena.medir(performance.now() - t0, dtReal);
+    this.o.escena.medir(performance.now() - t0, dtReal, quieto || eligiendo);
     // Fin de la etapa
     if (sim.fin && !this.terminada) {
       this.finT += dtReal;

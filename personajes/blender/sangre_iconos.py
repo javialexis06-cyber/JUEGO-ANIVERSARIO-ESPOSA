@@ -39,7 +39,7 @@ ICONOS = {
     'plumas_negras': ('proyectiles', 'pluma_cuervo', '#7a5bb8'), 'laud': ('armas', 'laud', '#ffd9a0'),
     'cuchillos_malabar': ('armas', 'cuchillo_carnicero', '#e0e6ee'), 'flauta': ('armas', 'flauta', '#ffe08a'), 'tambor_guerra': ('armas', 'tambor', '#e8c08a'),
     'daga': ('armas', 'daga', '#e0e6ee'), 'arco_largo': ('armas', 'arco', '#d8c8a8'), 'hacha_arrojadiza': ('armas', 'hacha', '#d0c8b8'),
-    'bomba': ('armas', 'bomba', '#ffb05a'), 'sierra': ('armas', 'sierra', '#c8ccd2'), 'ira_cielo': ('proyectiles', 'rayo_sagrado', '#bfe4ff'),
+    'bomba': ('armas', 'bomba', '#ffb05a'), 'carga_minera': ('armas', 'carga_minera', '#ff8a3a'), 'sierra': ('armas', 'sierra', '#c8ccd2'), 'ira_cielo': ('proyectiles', 'rayo_sagrado', '#bfe4ff'),
     # evoluciones: el arma de base con halo dorado
     'hoja_rey_caido': ('armas', 'espada_larga', '#ffd76a', True), 'horca_cosecha': ('armas', 'horca', '#ffd76a', True),
     'cadenas_libertad': ('armas', 'grillete', '#ff6a6a', True), 'maza_juicio': ('armas', 'maza', '#ffe9a0', True),
