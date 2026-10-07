@@ -36,6 +36,12 @@ terror y el de crímenes (abajo, en «Después»): **falta que Javier pase las d
 
 ## Sangre y Ceniza: correcciones y mejoras (pedido de Javier tras probarlo)
 
+**Versión 2 (propuesta entregada, falta pulirla con Javier)**: misiones que llenen la etapa (se ganan matando al
+Guardián, la Noche se impacienta), más tipos de misión, dificultad y precios que suben, seis minerales para el Pozo,
+mapa de la Noche con historia y retos por bioma y clase, maestrías, contratos, infinito con mapa que crece y refugio
+con minijuegos: [`docs/en-obra/sangre-propuesta.md`](en-obra/sangre-propuesta.md) (preguntas al final). Los íconos
+más elaborados de las mejoras van con esto (llegan muchas cosas nuevas).
+
 Textual: «Mejorar calidad de mapa; mejorar movilidad, se siente tosca, los ojos se cansan o se abruman por la
 velocidad, se siente raro…»
 - **Calidad**: mapas, enemigos, personajes «y todo lo demás»; «los sprites están muy básicos, falta mucho trabajo de

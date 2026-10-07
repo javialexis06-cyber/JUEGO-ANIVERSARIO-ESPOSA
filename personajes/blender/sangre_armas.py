@@ -740,6 +740,35 @@ def bomba(coll):
     return F
 
 
+@arma('carga_minera')
+def carga_minera(coll):
+    """Tres cartuchos de dinamita amarrados con cuerda, la mecha encendida y una plaquita de hierro con el pico."""
+    F = nueva('carga_minera', clase='minero', icono_vista=(25, 22))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1400)
+    rojo = P_('#A8281E', 'tela', semilla=6, polvo=0.5)
+    for k, (x, y) in enumerate(((-0.024, 0.0), (0.024, 0.0), (0.0, 0.036))):
+        c.trazo([(x, y, -0.075), (x, y, 0.075)], [0.023, 0.023], rojo, 0.0)
+        # las puntas de papel encerado, más claras
+        c.trazo([(x, y, 0.072), (x, y, 0.082)], [0.021, 0.018], P_('#D8C49A', 'tela', semilla=7 + k), 0.0)
+        c.trazo([(x, y, -0.082), (x, y, -0.072)], [0.018, 0.021], P_('#D8C49A', 'tela', semilla=9 + k), 0.0)
+    for z in (-0.04, 0.035):
+        ring = [(math.cos(t) * 0.052, 0.012 + math.sin(t) * 0.046, z) for t in np.linspace(0, 2 * math.pi, 18, endpoint=False)]
+        c.malla(sf.sc.clay.sweep(f'cuerda carga {z}', ring, 0.006, (1, 1), coll, None, segments=4, samples=1, closed=True, subsurf=0),
+                cuero(5, '#9A8058'))
+    # la plaquita de hierro con el pico grabado, amarrada al frente
+    c.sdf(sdf.round_box((0, -0.03, -0.005), (0.026, 0.004, 0.022), 0.004), (-0.04, -0.05, -0.04), (0.04, -0.01, 0.03),
+          P_('#5A5C62', 'hierro', semilla=8, polvo=0.4))
+    c.trazo([(-0.014, -0.036, -0.016), (0.012, -0.036, 0.01)], 0.0035, oro(4), 0.0)
+    c.trazo([(0.002, -0.036, 0.016), (0.016, -0.036, 0.008), (0.02, -0.036, -0.004)], [0.003, 0.0045, 0.003], oro(4), 0.0)
+    # mecha torcida con la chispa
+    c.malla(sc.tubo('mecha carga', [(0.0, 0.036, 0.08), (0.012, 0.03, 0.11), (0.032, 0.02, 0.125), (0.05, 0.02, 0.14)], 0.004, coll,
+                    segmentos=4, muestras=3), cuero(4, '#3A2E22'))
+    c.bola((0.052, 0.02, 0.142), 0.011, brillo('fuego', '#FF7A1A'), 0.0)
+    F.marca('llama', (0.052, 0.02, 0.142))
+    F.marca('punta', (0, 0, 0))
+    return F
+
+
 @arma('agua_bendita')
 def agua_bendita(coll):
     F = nueva('agua_bendita', clase='cazador', icono_vista=(30, 10))

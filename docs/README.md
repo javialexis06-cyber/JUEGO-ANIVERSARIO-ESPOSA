@@ -24,10 +24,16 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 
 | Archivo | Estado |
 |---|---|
+| [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor, para pulirla con Javier. |
 | [`escenas-premium.md`](en-obra/escenas-premium.md) | Escenas pagas: en pausa. |
 | [`voces-ia.md`](en-obra/voces-ia.md), [`guion-voces.md`](en-obra/guion-voces.md) | Voces clonadas: esperan la clave de ElevenLabs. |
 
 El Show de Nosotros está en la rama `trabajo/show` (con su `docs/show.md` allá).
+
+## `referencias/` · wikis de otros juegos (solo para consultar)
+
+Transcripciones de la wiki de **Deep Rock Galactic: Survivor** y de la de **Vampire Survivors** (8 archivos por tema),
+para estudiarlas sin salir a internet. Índice y cómo buscar en [`referencias/README.md`](referencias/README.md).
 
 ## `archivo/` · historia (no hace falta leerlo)
 

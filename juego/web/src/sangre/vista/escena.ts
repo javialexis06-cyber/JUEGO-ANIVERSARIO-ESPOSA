@@ -109,6 +109,10 @@ export class Escena3D {
   /** Tiempos de dibujo (para bajar la calidad sola). */
   private msMedio = 16;
   private lento = 0;
+  /** Segundos sin medir (después de una pausa o de escoger cartas). */
+  private calma = 0;
+  /** La calidad bajó sola en plena etapa: el posprocesado se rehace al empezar la siguiente. */
+  private componerPendiente = false;
   alCambiarCalidad: (c: Calidad) => void = () => undefined;
   /** Sonidos: la pantalla de juego conecta aquí sus efectos. */
   alSuceso: (tipo: number, d: Float32Array, k: number, cerca: number) => void = () => undefined;
@@ -143,7 +147,9 @@ export class Escena3D {
     this.ajustar();
   }
 
-  private aplicarCalidad() {
+  /** `componer`: rehacer el posprocesado (compila sus sombreadores: en el celular es un congelón que puede dejar la
+   *  pantalla negra un rato; si la calidad baja sola en plena etapa, eso se deja para la etapa siguiente). */
+  private aplicarCalidad(componer = true) {
     const c = this.calidad;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.renderer.setPixelRatio(c === 'alta' ? Math.min(dpr, 1.6) : c === 'media' ? Math.min(dpr, 1.2) : Math.min(dpr, 0.85));
@@ -159,6 +165,12 @@ export class Escena3D {
       this.luna.shadow.map = null;
     }
     document.body.classList.remove('sangre-vineta-css');
+    if (!componer && this.composer) {
+      this.componerPendiente = true;
+      this.ajustar();
+      return;
+    }
+    this.componerPendiente = false;
     this.composer?.dispose();
     const comp = new EffectComposer(this.renderer, { frameBufferType: THREE.HalfFloatType, multisampling: c === 'alta' ? 4 : 0 });
     comp.addPass(new RenderPass(this.escena, this.camara));
@@ -184,11 +196,11 @@ export class Escena3D {
     this.hemi.intensity = (0.32 + l.fuerzaLuna * 0.25) * (sinSombra ? 0.7 : 1);
   }
 
-  /** Cambia la calidad (lo pide el jugador o la baja sola el medidor). */
-  ponerCalidad(c: Calidad) {
+  /** Cambia la calidad (lo pide el jugador o la baja sola el medidor: `sola`, en plena etapa). */
+  ponerCalidad(c: Calidad, sola = false) {
     if (c === this.calidad) return;
     this.calidad = c;
-    this.aplicarCalidad();
+    this.aplicarCalidad(!sola);
     this.ajustarLuna();
     if (this.particulas) this.particulas.cupo = c === 'baja' ? 0.45 : c === 'media' ? 0.75 : 1;
     if (this.actores) this.actores.sombraReal = c === 'alta';
@@ -211,6 +223,8 @@ export class Escena3D {
   async prepararEtapa(mapa: Mapa, bioma: DefBioma, perfiles: PerfilVista[], precargar: string[] = []) {
     this.limpiarEtapa();
     this.bioma = bioma;
+    if (this.componerPendiente) this.aplicarCalidad();
+    this.calma = 2;
     await this.bib.cargar(bioma.id, this.calidad === 'alta');
     const l = bioma.luz;
     this.colorAntorcha.set(l.antorcha);
@@ -562,14 +576,24 @@ export class Escena3D {
     this.msMedio = this.msMedio * 0.95 + ms * 0.05;
   }
 
-  /** Medidor: si el cuadro completo tarda mucho seguido, baja la calidad. */
-  medir(msCuadro: number, dt: number) {
+  /** Medidor: si el cuadro completo tarda mucho seguido, baja la calidad. No cuenta mientras se escogen cartas o en
+   *  pausa (`quieto`), ni el segundo de después (lo que se armó al escoger no es lentitud del aparato). */
+  medir(msCuadro: number, dt: number, quieto = false) {
+    if (quieto) {
+      this.lento = 0;
+      this.calma = 1.2;
+      return;
+    }
+    if (this.calma > 0) {
+      this.calma -= dt;
+      return;
+    }
     if (msCuadro > 36) this.lento += dt;
     else this.lento = Math.max(0, this.lento - dt * 0.5);
     if (this.lento > 4) {
       this.lento = 0;
-      if (this.calidad === 'alta') this.ponerCalidad('media');
-      else if (this.calidad === 'media') this.ponerCalidad('baja');
+      if (this.calidad === 'alta') this.ponerCalidad('media', true);
+      else if (this.calidad === 'media') this.ponerCalidad('baja', true);
     }
   }
 

@@ -233,6 +233,10 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
 - **Rendimiento**: 30 cuadros, la roca maciza se dibuja como techo plano (solo las paredes que se ven tienen el
   modelo completo), todo instanciado por trozos de 8 × 8 celdas, calidad baja (sin sombras ni posprocesado, variante
   más liviana de cada pared) y la calidad baja sola si un cuadro tarda más de 36 ms durante 4 s.
+- **Pantalla negra al subir de nivel** (Android): el medidor no cuenta mientras se escogen cartas o en pausa ni el
+  segundo de después; si la calidad baja sola en plena etapa solo cambia lo barato (resolución, sombras, detalle) y el
+  posprocesado (que compila sombreadores) se rehace al empezar la etapa siguiente; y nada de `filter` ni
+  `mix-blend-mode` en lo que va encima del lienzo (íconos del HUD, cartas, flecha del tutorial).
 - **Tres calidades** (Pausa → Calidad, o `?calidad=`): **baja** (celulares modestos), **media** (lo de antes: losas y
   paredes modeladas con el color en los vértices) y **alta** (S24 Ultra, computador), que además carga
   `bioma_<id>_alta.glb` y `modelos/sangre/alta/`:
