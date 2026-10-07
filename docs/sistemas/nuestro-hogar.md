@@ -458,16 +458,23 @@ mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.act
   Rosa, la Tía Marta, el Primo Santi, Vale la del gym, la Sobrinita Luci, Doña Rubi, Pacho el del colegio, el
   vecino misterioso, Don Jairo el portero, Nelly, Don Hernán (apurado) y **el crítico famoso** (exigente, cada
   5 días), sacados de los muñecos del súper con las poses de Él y Ella— y **la pareja** llega a comer cada
-  3 días (paciente, con corazones, doble propina y frases de amor). Se toca «Tomar pedido», el tiquete se
-  escribe y queda colgado en el riel de arriba; se escoge un tiquete y se cocina en las estaciones de abajo.
+  3 días (paciente, con corazones, doble propina y frases de amor). Se toca «Tomar pedido» y el invitado **dicta**
+  («Mmm… a ver…», «Eso, y también…»): se demora según lo que pide y lo despacio que habla (de 3 a 9 s; la abuela
+  y la vecina chismosa se toman su tiempo, el primo y Don Hernán van de afán) y mientras tanto la impresora va
+  sacando el tiquete renglón por renglón; **no se puede ir a las estaciones hasta que termine** («Escucha el pedido
+  hasta el final 👂»; ese rato no cuenta como espera). Luego el tiquete queda colgado en el riel de arriba; se
+  escoge y se cocina en las estaciones de abajo, y **el tiquete escogido se ve al lado en todas las estaciones**
+  (también en la plancha).
   Al entregar, el invitado califica **Espera** y cada estación (barras), da el total y la propina, y
   reacciona (encantado, contento, así-así o bravo con vapor 💢).
 - **Waflería**: *Plancha* (jarras de masa: clásica, chocolate, red velvet, avena; se sirve en las
   waffleras, se voltea cuando la flecha llega a la rayita **D**oradito o **T**ostadito y se saca a la
   rejilla; si se pasa, humo y se quema), *Armar* (los wafles al plato y los toppings: mantequilla, miel,
-  arequipe, chocolate, leche condensada se **chorrean** arrastrando; chispitas y azúcar glas se
-  **espolvorean**; fresas, banano, arándanos, crema chantilly, helado, masmelos y kiwi se **ponen donde dice
-  el dibujito** del tiquete) y desde el rango 3 *Bebidas* (vaso P/M/G, jugo de naranja, mora, lulo, café con
+  arequipe, chocolate, leche condensada se **chorrean** arrastrando; la **crema chantilly** sale de la manga
+  pastelera mientras se mantiene apretado: el copo crece con sus estrías de boquilla de estrella y, con harta, se
+  hacen montañas (o un cordón si se arrastra); chispitas y azúcar glas se **espolvorean**; mantequilla (1 o 2,
+  con su número en el tiquete), fresas, banano, arándanos, helado, masmelos y kiwi se **ponen donde dice el
+  dibujito** del tiquete) y desde el rango 3 *Bebidas* (vaso P/M/G, jugo de naranja, mora, lulo, café con
   leche o chocolate hasta la rayita, y el hielo que pida).
 - **Fresería** (fresas con crema a la colombiana): *Picar* (el vaso y las fresas: se cortan **deslizando el
   dedo** en mitades, cuartos o láminas; se califica qué tan derechito y centrado quedó cada corte), *Batir*
@@ -479,6 +486,11 @@ mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.act
   caramelo, galleta, maracuyá, matcha—, las cucharadas de hielo y la leche hasta la rayita), *Licuar*
   (hasta **grueso**, **normal** o **cremoso**, sin que se agüe) y *Decorar* (crema chantilly a la altura
   que pide, salsas, toppings, cereza y el pitillo del color que pide).
+- **Sencillo o doble**: las salsas y la chantilly se piden sencillas o dobles (las dobles desde el rango 3). Mientras
+  se echan, al lado del dedo sale una **ruedita** que se va llenando: naranja mientras falta, verde con ✓ y un
+  «¡ding!» cuando ya está (en la doble, con la rayita de la mitad) y roja si se pasa; si no lo pidió, sale gris
+  («no lo pidió»). Se califica la cantidad (con un 18 % de margen) y, en las salsas, que quede repartida. La salsa
+  se mide por lo largo del chorro y la crema por el tiempo apretando (`cantidadTopping` en `herramientas.ts`).
 - **Progreso como en Papa's**: puntos de chef por cada plato (el % de la calificación) suben el **rango**
   (Aprendiz, Ayudante de cocina… Leyenda de la cocina) y cada rango trae masas, bases, toppings, bebidas,
   cortes e invitados nuevos. Cada día vienen más invitados (3 el primero, hasta 10), más seguido y pidiendo

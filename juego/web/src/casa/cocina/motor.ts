@@ -114,6 +114,8 @@ export interface InvDia {
   frase: { texto: string; hasta: number } | null;
   /** Quién le tomó el pedido (id del jugador). */
   tomo: string | null;
+  /** Segundos que se demora dictando el pedido (según lo que pide y lo despacio que habla). */
+  dicta?: number;
 }
 
 export interface JuicioDia {
@@ -192,7 +194,10 @@ export const sonidos = {
   mal: () => [392, 330].forEach((f, i) => nota(f, 0.18, i * 0.12, 'triangle', 0.05)),
   clic: () => nota(1200, 0.03, 0, 'sine', 0.03),
   papel: () => rumor(0.12, 5000, 0.05, 0, 0.6),
-  impresora: () => [0, 0.09, 0.18, 0.27, 0.36, 0.45].forEach((d) => rumor(0.06, 2600, 0.03, d, 2)),
+  /** La impresora de tiquetes: un renglón cada vez que el invitado dice algo (a lo largo de lo que dura el pedido). */
+  impresora: (dur = 0.5) => {
+    for (let r = 0; r <= Math.max(0, dur - 0.4); r += 0.9) [0, 0.09, 0.18].forEach((d) => rumor(0.06, 2600, 0.03, r + d, 2));
+  },
   tic: (i = 0) => nota(880 + i * 120, 0.05, 0, 'triangle', 0.04),
   sello: () => {
     nota(120, 0.12, 0, 'square', 0.05, 60);
@@ -607,7 +612,7 @@ export class Motor {
     const pid = s.invitados.findIndex((e) => e.estado === 'pidiendo');
     if (pid >= 0 && this.impreso?.inv !== pid) {
       this.impreso = { inv: pid, t0: this.reloj };
-      sonidos.impresora();
+      sonidos.impresora(s.invitados[pid].dicta);
     }
   }
 
@@ -634,6 +639,8 @@ export class Motor {
       <div class="botones"><button class="boton-cocina principal" data-c="salir">${esc(this.o.textoSalir ?? '🏠 Volver a la casa')}</button></div></div>`, 'pausa');
   }
 
+  /** Pausas de irse al fondo ya atendidas (llegan repetidas por los dos canales). */
+  private pausasVistas = new Set<string>();
   /** ¿El anfitrión está sin conexión? (los demás se quedan quietos esperándolo) */
   private anfitrionCortado = false;
 
@@ -675,6 +682,12 @@ export class Motor {
     } else if (a === 'cerrar') {
       if (this.s.juicio?.n === d?.n) this.cerrarJuicio();
     } else if (a === 'pausa') {
+      // (la de irse al fondo llega repetida: la misma se atiende una sola vez)
+      if (d?.n) {
+        const clave = `${de}:${d.n}`;
+        if (this.pausasVistas.has(clave)) return;
+        this.pausasVistas.add(clave);
+      }
       const motivo = d?.motivo === 'fondo' ? 'fondo' : 'mano';
       // (si ya estaba quieta porque la sala lo vio irse al fondo, la pausa queda a su nombre: «salió un momentico»)
       if (this.s.fase === 'pausa' && this.s.pausa?.por === 'red') {
@@ -834,7 +847,8 @@ export class Motor {
       this.pausarAqui(this.yo.id, motivo);
       // Al irse a segundo plano el bucle se detiene: el aviso sale ya, no en el próximo paquete
       this.sync?.enviar(true);
-    } else this.sync?.pedir('pausa', { motivo });
+    } else if (motivo === 'fondo') this.sync?.pedirYa('pausa', { motivo, n: `${Date.now()}${Math.floor(Math.random() * 1000)}` });
+    else this.sync?.pedir('pausa', { motivo });
     // En este celular se ve la pausa de una (aunque el anfitrión la confirme después)
     if (!this.anfitrion) {
       this.s.pausa = { por: this.yo.id, motivo, antes: this.s.fase };
@@ -968,7 +982,7 @@ export class Motor {
       }
     }
     const pid = s.invitados.find((e) => e.estado === 'pidiendo');
-    if (pid && s.t - pid.tomadoEn > 2.4) {
+    if (pid && s.t - pid.tomadoEn > (pid.dicta ?? 2.4)) {
       this.colgarTicket(pid);
       cambio = true;
     }
@@ -1024,7 +1038,7 @@ export class Motor {
     const fila = e.tomadoEn ? e.tomadoEn - e.llegoEn : ahora - e.llegoEn;
     let exceso = Math.max(0, fila - 10 * pac);
     const t = e.ticket ? this.s.tickets.find((x) => x.id === e.ticket) : null;
-    if (t) exceso += Math.max(0, ahora - e.tomadoEn - this.receta.tiempoIdeal(t.pedido) * pac);
+    if (t) exceso += Math.max(0, ahora - e.tomadoEn - (e.dicta ?? 0) - this.receta.tiempoIdeal(t.pedido) * pac);
     return Math.max(0, Math.round(100 - exceso * 1.3));
   }
 
@@ -1039,11 +1053,27 @@ export class Motor {
     e.frase = null;
     e.tomo = quien;
     e.pedido = this.receta.pedido(s.rango, s.dia, this.azar, this.def(e));
+    e.dicta = this.duracionPedido(e.pedido, this.def(e));
+    e.frase = { texto: elegir(FRASES.pide), hasta: s.t + Math.min(2.6, e.dicta * 0.5) };
     this.impreso = { inv: s.invitados.indexOf(e), t0: this.reloj };
-    sonidos.impresora();
+    sonidos.impresora(e.dicta);
     if (quien === this.yo.id) this.chef('feliz', 2.5);
     this.cambioDia();
     this.pistaUnaVez('pedido', 'Mira bien el tiquete: dice todo lo que quiere');
+  }
+
+  /**
+   * Cuánto se demora dictando: un poquito por cada cosa que pide (masa, punto, cada topping, la bebida…) y según
+   * lo despacio que habla. Mientras dicta, quien le toma el pedido se queda escuchando (no puede irse a las estaciones).
+   */
+  private duracionPedido(p: unknown, inv: Invitado) {
+    let cosas = 0;
+    for (const v of Object.values((p ?? {}) as Record<string, unknown>)) cosas += Array.isArray(v) ? v.length : v === null || v === undefined ? 0 : 1;
+    return Math.round(Math.max(3.2, Math.min(9.5, (2.6 + cosas * 0.5) * (inv.habla ?? 1))) * 10) / 10;
+  }
+  /** Este celular le está tomando el pedido a alguien (y lo está escuchando). */
+  tomandoYo() {
+    return this.s.invitados.some((e) => e.estado === 'pidiendo' && e.tomo === this.yo.id);
   }
 
   private colgarTicket(e: InvDia) {
@@ -1323,7 +1353,14 @@ export class Motor {
       }
       if (y > this.H - BARRA) {
         const i = this.pestanaEn(x);
-        if (i !== null && i !== this.actual) this.irA(i);
+        if (i !== null && i !== this.actual) {
+          // Mientras dicta el pedido, se le pone atención hasta el final
+          if (this.tomandoYo()) {
+            sonidos.clic();
+            return this.aviso('Escucha el pedido hasta el final 👂', 1.6);
+          }
+          this.irA(i);
+        }
         return;
       }
     }

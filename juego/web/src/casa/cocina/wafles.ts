@@ -4,8 +4,8 @@
 // En pareja las waffleras y la rejilla son de los dos (uno puede estar en la plancha y el otro armando).
 import { colorCoccion, dentro, elipse, G, lineal, Masa, mezclar, oscurecer, radial, Rect, rr, sombra, texto, wafle as wafleDibujado } from './dibujo';
 import {
-  Aplicador, aUV, botonBotar, botonEntregar, botonesToppings, calificarToppings, dibujarBotonesToppings, dibujarEnMano, dibujarGuia, dibujarSuperficie,
-  filaTopping, letra, Ovalo, puntajeCuenta, puntajeNivel, puntajeZona, rayita, separador, Superficie, superficieNueva, ToppingDef, ToppingPedido,
+  acumula, Aplicador, aUV, botonBotar, botonEntregar, botonesToppings, calificarToppings, dibujarBotonesToppings, dibujarEnMano, dibujarGuia, dibujarSuperficie,
+  filaTopping, letra, Ovalo, puntajeCuenta, puntajeNivel, puntajeZona, rayita, rueditaEnMano, separador, Superficie, superficieNueva, ToppingDef, ToppingPedido,
 } from './herramientas';
 import type { Invitado } from './invitados';
 import { BARRA, Categoria, Estacion, Motor, Receta, RIEL, sonidos, Ticket } from './motor';
@@ -33,7 +33,7 @@ const TOPS: ToppingDef[] = [
   { id: 'miel', nombre: 'Miel', tipo: 'salsa', color: '#eaa51f', desde: 1 },
   { id: 'fresa', nombre: 'Fresas', tipo: 'pieza', desde: 1, tam: 0.14 },
   { id: 'arequipe', nombre: 'Arequipe', tipo: 'salsa', color: '#b8712c', desde: 2 },
-  { id: 'chantilly', nombre: 'Crema chantilly', tipo: 'pieza', desde: 2, tam: 0.19 },
+  { id: 'chantilly', nombre: 'Crema chantilly', tipo: 'crema', color: '#fffaf2', desde: 2 },
   { id: 'banano', nombre: 'Banano', tipo: 'pieza', desde: 3, tam: 0.13 },
   { id: 'chocolate', nombre: 'Chocolate', tipo: 'salsa', color: '#55301f', desde: 3 },
   { id: 'chispitas', nombre: 'Chispitas', tipo: 'polvo', desde: 4 },
@@ -47,7 +47,7 @@ const TOPS: ToppingDef[] = [
 const TOP = Object.fromEntries(TOPS.map((t) => [t.id, t]));
 /** Cuántas piezas puede pedir de cada una. */
 const CUANTAS: Record<string, [number, number]> = {
-  mantequilla: [1, 1], helado: [1, 1], chantilly: [1, 5], fresa: [3, 6], banano: [3, 6], arandano: [4, 8], masmelo: [3, 6], kiwi: [3, 5],
+  mantequilla: [1, 2], helado: [1, 1], fresa: [3, 6], banano: [3, 6], arandano: [4, 8], masmelo: [3, 6], kiwi: [3, 5],
 };
 
 const BEBIDAS = [
@@ -121,6 +121,8 @@ function pedido(rango: number, _dia: number, azar: () => number, inv?: Invitado)
   // La mantequilla va primero y el helado de último (como se sirve de verdad)
   elegidos.sort((a, b) => (a.id === 'mantequilla' ? -1 : b.id === 'mantequilla' ? 1 : 0) || (a.id === 'helado' ? 1 : b.id === 'helado' ? -1 : 0));
   const toppings = elegidos.slice(0, Math.max(k, elegidos.length)).map((t): ToppingPedido => {
+    // Salsas y chantilly: sencillo o doble (el doble desde el rango 3)
+    if (acumula(t)) return rango >= 3 && azar() < 0.3 + (pareja ? 0.2 : 0) ? { id: t.id, n: 2 } : { id: t.id };
     if (t.tipo !== 'pieza') return { id: t.id };
     const [a, b] = CUANTAS[t.id] ?? [1, 1];
     return { id: t.id, n: a + Math.floor(azar() * (b - a + 1)) };
@@ -247,6 +249,8 @@ class EstacionPlancha implements Estacion {
   nombre = 'Plancha';
   icono = 'wafflera';
   emoji = '🧇';
+  // (el pedido se ve también aquí: qué masa y qué punto, sin tener que ir a «Armar» a mirarlo)
+  usaTicket = true;
   private sonando = 0;
   private vapor = 0;
   constructor(private c: Cocina, private m: Motor) {}
@@ -590,7 +594,16 @@ class EstacionArmar implements Estacion {
   fondo(g: G) {
     fondoEstacion(this.m, g, RIEL + 230);
   }
-  paso() {}
+  /** La crema sale mientras se aprieta la manga (el copo crece aunque el dedo esté quieto). */
+  private avisoCrema = 0;
+  paso(dt: number) {
+    if (!this.aplicando || !this.obra || !this.aplicador.paso(dt)) return;
+    this.avisoCrema += dt;
+    if (this.avisoCrema > 0.15) {
+      this.avisoCrema = 0;
+      this.m.cambioObra();
+    }
+  }
 
   toque(tipo: 'bajar' | 'mover' | 'subir', x: number, y: number) {
     const m = this.m, c = this.c;
@@ -654,7 +667,7 @@ class EstacionArmar implements Estacion {
         m.cambioObra();
         this.aplicando = r !== 'pieza';
         if (r === 'pieza') sonidos.pop();
-        else if (r === 'salsa') sonidos.vertir(0.3);
+        else if (r === 'salsa' || r === 'crema') sonidos.vertir(0.3);
         else sonidos.papel();
       }
     } else if (this.herramienta && Math.hypot((x - o.x) / o.rx, (y - o.y) / o.ry) < 1) m.aviso('Primero pon un wafle en el plato');
@@ -678,9 +691,12 @@ class EstacionArmar implements Estacion {
     }
     if (this.herramienta) {
       const d = TOP[this.herramienta];
-      texto(g, `En la mano: ${d.nombre}${d.tipo === 'salsa' ? ' (arrastra para chorrear)' : d.tipo === 'polvo' ? ' (arrastra para espolvorear)' : ' (toca donde va)'}`, o.x, RIEL + 26,
+      texto(g, `En la mano: ${d.nombre}${d.tipo === 'salsa' ? ' (arrastra para chorrear)' : d.tipo === 'polvo' ? ' (arrastra para espolvorear)' : d.tipo === 'crema' ? ' (mantén apretado: la montañita crece)' : ' (toca donde va)'}`, o.x, RIEL + 26,
         { tam: 20, color: '#fff', borde: 'rgba(40,30,25,0.85)', max: m.zona.w - 340 });
-      if (m.dedo && this.aplicador.enUso) dibujarEnMano(g, d, m.dedo.x, m.dedo.y, t);
+      if (m.dedo && this.aplicador.enUso) {
+        dibujarEnMano(g, d, m.dedo.x, m.dedo.y, t);
+        if (obra) rueditaEnMano(g, obra.sup, (m.activo!.pedido as PedidoWafles).toppings, TOP, d.id, m.dedo.x, m.dedo.y, t, sonidos.acierto);
+      }
     }
     dibujarRejilla(g, this.c, m, 320);
   }

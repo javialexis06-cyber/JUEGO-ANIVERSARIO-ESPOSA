@@ -23,10 +23,17 @@ export interface Invitado {
   especial?: 'pareja' | 'critico';
   /** Ruta de sus recortes: `${ruta}_${pose}.webp`. */
   ruta: string;
+  /** Qué tan despacio dicta el pedido (1 normal; la abuela se toma su tiempo, Don Hernán va de afán). */
+  habla?: number;
 }
 
+/** Lo despacio que dicta cada uno (la abuela cuenta la vida, la vecina mete chisme, el primo y Don Hernán van rápido). */
+const HABLA: Record<string, number> = {
+  abuelita: 1.55, mama: 1.2, adolescente: 0.8, deportista: 0.95, nina: 1.3, cajera: 1.4, reponedor: 1.05, ladron: 0.85, guardia: 1.15,
+  aseo: 1.1, ejecutivo: 0.65, famoso: 1.35,
+};
 const I = (id: string, nombre: string, desde: number, paciencia: number, propina: number, saludos: string[], especial?: Invitado['especial']): Invitado =>
-  ({ id, nombre, desde, paciencia, propina, saludos, especial, ruta: `./cocina/gente/${id}` });
+  ({ id, nombre, desde, paciencia, propina, saludos, especial, ruta: `./cocina/gente/${id}`, habla: HABLA[id] ?? 1 });
 
 export const INVITADOS: Invitado[] = [
   I('abuelita', 'Abuela Rosa', 1, 1.35, 1.2, ['¡Mijo|Mija, qué olorcito tan rico!', 'Vengo con un hambre de viaje…', 'A ver qué me tiene hoy, mi chef', 'Ay, ¡qué cocina tan bonita, mijo|mija!']),
@@ -85,7 +92,7 @@ const FAVORITO: Partial<Record<Rol, Partial<Record<RecetaId, string>>>> = {
 /** La pareja como invitada (rol = quién llega a comer). */
 export function invitadoPareja(rol: Rol, nombre: string, receta: RecetaId = 'wafles'): Invitado {
   return {
-    id: `pareja_${rol}`, nombre, desde: 1, paciencia: 1.6, propina: 2, especial: 'pareja', ruta: `./cocina/gente/pareja_${rol}`,
+    id: `pareja_${rol}`, nombre, desde: 1, paciencia: 1.6, propina: 2, especial: 'pareja', ruta: `./cocina/gente/pareja_${rol}`, habla: 1.25,
     saludos: SALUDOS_PAREJA[rol][receta],
   };
 }
@@ -106,7 +113,8 @@ export function textosDeLaPareja(): string[] {
   ];
 }
 
-export const FRASES: Record<'encantado' | 'feliz' | 'normal' | 'bravo' | 'apurado', string[]> = {
+export const FRASES: Record<'encantado' | 'feliz' | 'normal' | 'bravo' | 'apurado' | 'pide', string[]> = {
+  pide: ['Mmm… a ver…', 'Apunte, pues…', 'Déjeme pensar…', 'Quiero… eh…', 'Eso, y también…', '¡Ah! Y no se le olvide…', 'Bueno, mire…'],
   encantado: ['¡Uy, qué delicia!', '¡Esto sí es de chef!', '¡Me quedó sonando!', '¡Diez de diez!', '¡Está buenísimo, parce!', '¡Qué cosa tan rica!', '¡Vuelvo mañana!', '¡Ave María, qué belleza!'],
   feliz: ['¡Muy rico, gracias!', 'Rico, rico', 'Me gustó mucho', '¡Qué bueno!', 'Muy bien hecho', '¡Bien sabroso!'],
   normal: ['Está bien…', 'Normalito', 'Le faltó un poquito', 'Mmm… pasable', 'Ahí va, ahí va'],

@@ -55,14 +55,6 @@ velocidad, se siente raro…»
 
 ## Ronda 2 de arreglos
 
-**Cocina**
-- Ver el pedido en todo momento después de tomarlo (hoy toca ir hasta la última estación para recordarlo).
-- Chantilly y demás con textura y grosor: que se puedan hacer montañas.
-- La mantequilla con número (1, 2) en vez de puntitos.
-- Lo que se acumula (chantilly, miel…) con una ruedita pequeña de cantidad que avise cuándo cumple el pedido
-  (sencillo, doble).
-- Tomar el pedido más lento, con velocidad según el cliente, y sin poder cambiar de estación mientras se toma.
-
 **Nombres**: Javier y Laura en vez de «Él» y «Ella» en todas las pantallas (`NOMBRE_ROL`).
 
 **Tutoriales** para Lavarse la cara (Vampire Survivors), Súper Manía, Cien Puertas y los juegos más complejos.

@@ -8,7 +8,8 @@ import {
 } from './dibujo';
 import { hay, spr } from './sprites';
 
-export type TipoTopping = 'salsa' | 'pieza' | 'polvo';
+/** `crema`: se acumula mientras se aprieta (la chantilly: montañitas que crecen y se pueden apilar). */
+export type TipoTopping = 'salsa' | 'pieza' | 'polvo' | 'crema';
 export interface ToppingDef {
   id: string;
   nombre: string;
@@ -23,9 +24,11 @@ export interface ToppingDef {
 }
 export interface ToppingPedido {
   id: string;
-  /** Cuántas piezas (solo las piezas). */
+  /** Piezas: cuántas. Salsas y crema: la cantidad, 1 sencillo o 2 doble (sin número, sencillo). */
   n?: number;
 }
+/** Lo que se acumula (salsas y crema) lleva cantidad: sencillo o doble. */
+export const acumula = (d: ToppingDef | undefined) => d?.tipo === 'salsa' || d?.tipo === 'crema';
 
 export interface Punto {
   u: number;
@@ -39,6 +42,8 @@ export interface Capa {
   piezas: (Punto & { rot: number; t: number })[];
   /** Gotas de salsa que se escurren por el borde (u, v del borde, cuándo empezó y cuánto baja). */
   gotas?: (Punto & { t: number; l: number })[];
+  /** Crema: los copos que se van haciendo con la manga (cuánta crema tiene cada uno). */
+  copos?: (Punto & { vol: number; t: number })[];
 }
 export interface Superficie {
   capas: Capa[];
@@ -88,7 +93,7 @@ export class Aplicador {
   constructor(private defs: Record<string, ToppingDef>) {}
 
   /** Toca la superficie con el topping escogido. Devuelve qué pasó (para el sonido). */
-  bajar(s: Superficie, id: string, p: Punto, t: number): 'pieza' | 'salsa' | 'polvo' | null {
+  bajar(s: Superficie, id: string, p: Punto, t: number): TipoTopping | null {
     const d = this.defs[id];
     if (!d || Math.hypot(p.u, p.v) > 1.12) return null;
     const ult = s.capas[s.capas.length - 1];
@@ -106,11 +111,28 @@ export class Aplicador {
     }
     this.enUso = { id, tipo: d.tipo };
     if (d.tipo === 'salsa') this.capa.trazos.push([red(limitar(p, 1.08))]);
+    else if (d.tipo === 'crema') this.nuevoCopo(p, t);
     else this.espolvorear(p, 4);
     this.ultimo = p;
     return d.tipo;
   }
   private reloj = 0;
+
+  /** Mientras se aprieta la manga, la crema sale y el copo crece (aunque el dedo esté quieto). */
+  paso(dt: number): boolean {
+    const c = this.capa;
+    if (!c || c.tipo !== 'crema' || !this.enUso) return false;
+    const q = c.copos?.[c.copos.length - 1];
+    if (!q) return false;
+    q.vol = Math.round(Math.min(3, q.vol + dt * CREMA_POR_SEGUNDO) * 1000) / 1000;
+    return true;
+  }
+  private nuevoCopo(p: Punto, t: number) {
+    const c = this.capa!;
+    c.copos ??= [];
+    if (c.copos.length >= 180) return;
+    c.copos.push({ ...red(limitar(p, 0.95)), vol: 0, t });
+  }
 
   /** Arrastra: más salsa o más polvo. Devuelve true si cambió algo. */
   mover(p: Punto, t = this.reloj): boolean {
@@ -118,6 +140,13 @@ export class Aplicador {
     this.reloj = t;
     if (!c || !this.ultimo) return false;
     const d = Math.hypot(p.u - this.ultimo.u, p.v - this.ultimo.v);
+    if (c.tipo === 'crema') {
+      // Al mover la manga sale un cordón de copitos (la crema que sale se reparte por donde pasa)
+      if (d < 0.085) return false;
+      this.nuevoCopo(p, t);
+      this.ultimo = p;
+      return true;
+    }
     if (c.tipo === 'salsa') {
       if (d < 0.03) return false;
       const tr = c.trazos[c.trazos.length - 1];
@@ -277,6 +306,168 @@ function gotaSalsa(g: G, x: number, y: number, largo: number, ancho: number, col
   g.fill();
 }
 
+/** Cuánta crema sale de la manga por segundo apretado (1 = la porción sencilla). */
+export const CREMA_POR_SEGUNDO = 0.85;
+/** Largo de chorro (en radios del plato) que da la porción sencilla de salsa. */
+const LARGO_SALSA = 5;
+
+/**
+ * Un copo de crema chantilly hecho con la boquilla de estrella: base ancha, anillos que se van cerrando (con las
+ * estrías de la boquilla) y la puntica doblada. Mientras más crema, más alto: con harta se hacen montañas.
+ */
+export function copoCrema(g: G, x: number, y: number, escala: number, vol: number, color = '#fffaf2') {
+  if (vol <= 0.004) return;
+  const k = Math.sqrt(vol);
+  // (la porción sencilla en un solo copo es un copete grande; la doble, una montaña)
+  const r = escala * 0.2 * (0.35 + 0.65 * Math.min(1.5, k));
+  const alto = escala * 0.36 * Math.min(1.9, k * 1.1);
+  const anillos = Math.max(2, Math.min(6, Math.round(1.5 + k * 3)));
+  const sombra = oscurecer(color, 0.16), hondo = oscurecer(color, 0.3);
+  // Sombrita en la comida
+  g.fillStyle = 'rgba(60,30,15,0.18)';
+  elipse(g, x + r * 0.15, y + r * 0.18, r * 1.12, r * 0.5);
+  g.fill();
+  for (let i = 0; i < anillos; i++) {
+    const f = i / anillos;
+    const ri = r * (1 - f * 0.78);
+    const yi = y - alto * (f + 0.5 / anillos) * 0.92;
+    const ry = ri * 0.62;
+    // Cuerpo del anillo con luz de arriba a la izquierda
+    g.fillStyle = radialSuave(g, x - ri * 0.35, yi - ry * 0.5, ri * 1.6, color, sombra);
+    elipse(g, x, yi, ri, ry);
+    g.fill();
+    // Estrías de la boquilla (rayitas curvas que dan la textura)
+    g.strokeStyle = conAlfa(hondo, 0.45);
+    g.lineWidth = Math.max(1, ri * 0.07);
+    for (let e = -2; e <= 2; e++) {
+      const a = e * 0.55;
+      g.beginPath();
+      g.moveTo(x + Math.sin(a) * ri * 0.92, yi - ry * 0.15);
+      g.quadraticCurveTo(x + Math.sin(a) * ri * 1.02, yi + ry * 0.45, x + Math.sin(a) * ri * 0.82, yi + ry * 0.8);
+      g.stroke();
+    }
+    // Brillo
+    g.fillStyle = 'rgba(255,255,255,0.75)';
+    elipse(g, x - ri * 0.38, yi - ry * 0.3, ri * 0.22, ry * 0.2);
+    g.fill();
+  }
+  // La puntica doblada
+  const yt = y - alto * 0.98;
+  const rt = r * 0.26;
+  g.fillStyle = color;
+  g.beginPath();
+  g.moveTo(x - rt, yt + rt * 0.4);
+  g.quadraticCurveTo(x - rt * 0.2, yt - rt * 2.2, x + rt * 1.3, yt - rt * 1.6);
+  g.quadraticCurveTo(x + rt * 0.4, yt - rt * 0.9, x + rt, yt + rt * 0.4);
+  g.closePath();
+  g.fill();
+  g.strokeStyle = conAlfa(hondo, 0.35);
+  g.lineWidth = 1;
+  g.stroke();
+}
+function radialSuave(g: G, x: number, y: number, r: number, claro: string, oscuro: string) {
+  const gr = g.createRadialGradient(x, y, r * 0.05, x, y, r);
+  gr.addColorStop(0, aclarar(claro, 0.08));
+  gr.addColorStop(0.55, claro);
+  gr.addColorStop(1, oscuro);
+  return gr;
+}
+
+/** Cuánto lleva de una salsa o de la crema, en porciones (1 = sencillo, 2 = doble). */
+export function cantidadTopping(s: Superficie, id: string, d: ToppingDef): number {
+  const capas = s.capas.filter((c) => c.id === id);
+  if (d.tipo === 'crema') return capas.reduce((a, c) => a + (c.copos ?? []).reduce((b, q) => b + q.vol, 0), 0);
+  if (d.tipo === 'salsa') {
+    let largo = 0;
+    for (const c of capas)
+      for (const tr of c.trazos)
+        for (let i = 1; i < tr.length; i++) largo += Math.hypot(tr[i].u - tr[i - 1].u, tr[i].v - tr[i - 1].v);
+    return largo / LARGO_SALSA;
+  }
+  return 0;
+}
+
+/** Qué tan cerca quedó una cantidad de lo pedido (0-1): con un 18 % de más o de menos todavía está perfecta. */
+const puntajeCantidad = (v: number, meta: number) => Math.max(0, Math.min(1, 1 - Math.max(0, Math.abs(v - meta) / meta - 0.18) / 0.55));
+
+/**
+ * La ruedita de cantidad junto al dedo mientras se echa una salsa o la crema: se va llenando hasta la porción
+ * pedida (sencillo: una vuelta; doble: con la rayita de la mitad), se pone verde con ✓ cuando ya está y roja si
+ * se pasa. Si no lo pidió, sale gris.
+ */
+export function dibujarRuedita(g: G, x: number, y: number, valor: number, meta: number, t: number) {
+  const R = 21;
+  g.save();
+  g.shadowColor = 'rgba(0,0,0,0.3)';
+  g.shadowBlur = 6;
+  g.fillStyle = 'rgba(40,26,18,0.82)';
+  elipse(g, x, y, R + 7, R + 7);
+  g.fill();
+  g.restore();
+  g.lineCap = 'round';
+  g.lineWidth = 7;
+  g.strokeStyle = 'rgba(255,255,255,0.18)';
+  g.beginPath();
+  g.arc(x, y, R, 0, Math.PI * 2);
+  g.stroke();
+  if (!meta) {
+    texto(g, '✕', x, y + 1, { tam: 18, color: '#d8c8bc' });
+    texto(g, 'no lo pidió', x, y + R + 18, { tam: 13, color: '#fff', borde: 'rgba(40,26,18,0.9)' });
+    return;
+  }
+  const k = valor / meta;
+  const listo = Math.abs(k - 1) <= 0.18, pasado = k > 1.18;
+  const color = pasado ? '#e8434f' : listo ? '#5cc26a' : '#ffb627';
+  g.strokeStyle = color;
+  g.beginPath();
+  g.arc(x, y, R, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, k));
+  g.stroke();
+  // Lo que se pasó, en una segunda vuelta roja por dentro
+  if (k > 1) {
+    g.lineWidth = 4;
+    g.strokeStyle = '#e8434f';
+    g.beginPath();
+    g.arc(x, y, R - 8, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, k - 1));
+    g.stroke();
+  }
+  // En el doble, la rayita de la mitad (ahí va el sencillo)
+  if (meta === 2) {
+    g.strokeStyle = 'rgba(255,255,255,0.85)';
+    g.lineWidth = 2.5;
+    g.beginPath();
+    g.moveTo(x, y + R - 6);
+    g.lineTo(x, y + R + 6);
+    g.stroke();
+  }
+  const latido = listo ? 1 + Math.sin(t * 10) * 0.08 : 1;
+  texto(g, listo ? '✓' : pasado ? '!' : meta === 2 ? '×2' : '×1', x, y + 1, { tam: (listo || pasado ? 22 : 15) * latido, color });
+  texto(g, listo ? '¡Listo!' : pasado ? '¡Mucho!' : meta === 2 ? 'doble' : 'sencillo', x, y + R + 18, { tam: 13, color: '#fff', borde: 'rgba(40,26,18,0.9)' });
+}
+
+/** Las rueditas ya avisadas (para el «¡ding!» una sola vez por topping y plato). */
+const avisadas = new WeakMap<Superficie, Set<string>>();
+/**
+ * La ruedita del topping que se está echando (si es salsa o crema), al lado del dedo. Llama `alCumplir` la primera
+ * vez que llega a lo pedido.
+ */
+export function rueditaEnMano(g: G, s: Superficie, pedidos: ToppingPedido[], defs: Record<string, ToppingDef>, id: string, x: number, y: number, t: number, alCumplir?: () => void) {
+  const d = defs[id];
+  if (!acumula(d)) return;
+  const pedido = pedidos.find((p) => p.id === id);
+  const meta = pedido ? (pedido.n === 2 ? 2 : 1) : 0;
+  const v = cantidadTopping(s, id, d);
+  const cx = Math.max(40, x - 64), cy = Math.max(110, y - 70);
+  dibujarRuedita(g, cx, cy, v, meta, t);
+  if (meta && Math.abs(v / meta - 1) <= 0.18) {
+    let ya = avisadas.get(s);
+    if (!ya) avisadas.set(s, (ya = new Set()));
+    if (!ya.has(id)) {
+      ya.add(id);
+      alCumplir?.();
+    }
+  }
+}
+
 const COLOR_GRANO: Record<string, string> = { queso: '#f6dd8a', azucar: '#ffffff', canela: '#94501f', galleta: '#2d1c16', coco: '#fffdf6' };
 
 /** Todos los toppings puestos, en el orden en que se pusieron. `ahora` anima lo que acaba de caer. */
@@ -303,6 +494,12 @@ export function dibujarSuperficie(g: G, s: Superficie, o: Ovalo, defs: Record<st
         trazoSalsa(g, pts, col, o.rx * 0.085);
       }
       g.restore();
+    } else if (c.tipo === 'crema') {
+      const copos = [...(c.copos ?? [])].sort((a, b) => a.v - b.v);
+      for (const q of copos) {
+        const p = deUV(o, q);
+        copoCrema(g, p.x, p.y, o.rx, q.vol, d.color ?? '#fffaf2');
+      }
     } else if (c.tipo === 'polvo') {
       const tam = o.rx * 0.028;
       const tipo = d.id === 'galleta_triturada' ? 'galleta' : d.id;
@@ -353,7 +550,51 @@ export function dibujarEnMano(g: G, def: ToppingDef, x: number, y: number, t: nu
     const id = recorteBandeja(def);
     const sacude = Math.sin(t * 30) * 6;
     spr(g, id, x + 10 + sacude, y - 70, 44, { rot: -2.6 });
+  } else if (def.tipo === 'crema') {
+    mangaPastelera(g, x, y - 6, t);
   }
+}
+
+/** La manga pastelera apretada (tela blanca con la crema adentro y la boquilla de estrella metálica). */
+function mangaPastelera(g: G, x: number, y: number, t: number) {
+  const aprieta = 1 + Math.sin(t * 9) * 0.03;
+  g.save();
+  g.translate(x, y);
+  g.rotate(0.35);
+  g.scale(aprieta, 1);
+  // Boquilla
+  g.fillStyle = lineal(g, -9, 0, 9, 0, [[0, '#8a949c'], [0.45, '#f1f4f6'], [1, '#7d868e']]);
+  g.beginPath();
+  g.moveTo(-5, -4);
+  g.lineTo(5, -4);
+  g.lineTo(10, -26);
+  g.lineTo(-10, -26);
+  g.closePath();
+  g.fill();
+  // Bolsa
+  g.fillStyle = lineal(g, -34, 0, 34, 0, [[0, '#e9e1d6'], [0.4, '#fffdf8'], [1, '#d9cfc2']]);
+  g.beginPath();
+  g.moveTo(-11, -26);
+  g.quadraticCurveTo(-40, -70, -30, -112);
+  g.quadraticCurveTo(0, -124, 30, -112);
+  g.quadraticCurveTo(40, -70, 11, -26);
+  g.closePath();
+  g.fill();
+  g.strokeStyle = 'rgba(120,100,80,0.35)';
+  g.lineWidth = 1.5;
+  g.stroke();
+  // Pliegues y la crema que se asoma arriba
+  g.strokeStyle = 'rgba(150,130,110,0.3)';
+  for (const dx of [-14, 2, 16]) {
+    g.beginPath();
+    g.moveTo(dx * 0.4, -32);
+    g.quadraticCurveTo(dx, -70, dx * 1.4, -106);
+    g.stroke();
+  }
+  g.fillStyle = '#fffaf2';
+  elipse(g, 0, -114, 26, 8);
+  g.fill();
+  g.restore();
 }
 
 // ---------------------------------------------------------------------------------------------- Calificar
@@ -426,10 +667,23 @@ export function calificarToppings(s: Superficie, pedidos: ToppingPedido[], defs:
         id: t.id, valor: v,
         nota: puestas.length !== n ? `${d.nombre}: eran ${n} y hay ${puestas.length}` : lugar < 0.75 ? `${d.nombre} mal repartidos` : `${d.nombre} perfectos`,
       });
+    } else if (acumula(d)) {
+      // Salsas y crema: la cantidad pedida (sencillo o doble) y, la salsa, bien repartida
+      const meta = t.n === 2 ? 2 : 1;
+      const v = cantidadTopping(s, t.id, d);
+      const cant = puntajeCantidad(v, meta);
+      let reparto = 1;
+      if (d.tipo === 'salsa') reparto = Math.min(1, cobertura(capas.flatMap((c) => c.trazos.flatMap(densos)), 0.13) / (0.3 + 0.12 * (meta - 1)));
+      const valor = v < 0.08 ? 0 : Math.round(100 * (d.tipo === 'salsa' ? 0.72 * cant + 0.28 * reparto : cant));
+      const nombre = d.nombre.toLowerCase();
+      detalle.push({
+        id: t.id, valor,
+        nota: v < meta * 0.82 ? `Poquit${d.tipo === 'crema' ? 'a' : 'o'} ${nombre}` : v > meta * 1.18 ? `Demasiad${d.tipo === 'crema' ? 'a' : 'o'} ${nombre}` : reparto < 0.7 ? `${d.nombre} todo en un solo lado` : `${d.nombre} en su punto`,
+      });
     } else {
-      const pts = d.tipo === 'salsa' ? capas.flatMap((c) => c.trazos.flatMap(densos)) : capas.flatMap((c) => c.granos);
-      const cob = cobertura(pts, d.tipo === 'salsa' ? 0.13 : 0.1);
-      const meta = d.tipo === 'salsa' ? 0.5 : 0.55;
+      const pts = capas.flatMap((c) => c.granos);
+      const cob = cobertura(pts, 0.1);
+      const meta = 0.55;
       const v = cob < 0.04 ? 0 : Math.round(100 * Math.max(0, Math.min(1, 1 - Math.max(0, Math.abs(cob - meta) - 0.17) / 0.35)));
       detalle.push({ id: t.id, valor: v, nota: cob < meta - 0.17 ? `Poquito ${d.nombre.toLowerCase()}` : cob > meta + 0.17 ? `Demasiado ${d.nombre.toLowerCase()}` : `${d.nombre} en su punto` });
     }
@@ -595,10 +849,12 @@ export function filaTopping(g: G, t: ToppingPedido, d: ToppingDef, x: number, w:
   const id = d.tipo === 'pieza' ? recortePieza(d) : recorteBandeja(d);
   if (!spr(g, id, x + 30, y + (d.tipo === 'pieza' ? 22 : 30), d.tipo === 'pieza' ? 15 : 16)) iconoTopping(g, t.id, x + 30, y + 18, 20, { color: d.color, sabor: d.sabor });
   texto(g, d.nombre, x + 56, y + 18, { tam: 17, color: '#3b2a22', alinear: 'left', max: 112, peso: 700 });
-  if (d.tipo === 'pieza' && (t.n ?? 1) > 1) {
-    const cx = x + w - 42, cy = y + 18;
+  const cx = x + w - 42, cy = y + 18;
+  if (d.tipo === 'pieza') {
+    // Dónde van (el dibujito) y cuántas, con su número bien grande
+    const n = t.n ?? 1;
     g.fillStyle = '#f1e6d6';
-    elipse(g, cx, cy, 30, 19);
+    elipse(g, cx - 6, cy, 24, 17);
     g.fill();
     g.strokeStyle = 'rgba(160,120,90,0.5)';
     g.lineWidth = 1.2;
@@ -606,28 +862,40 @@ export function filaTopping(g: G, t: ToppingPedido, d: ToppingDef, x: number, w:
     g.fillStyle = COLOR_PIEZA[d.id] ?? '#e5243b';
     g.strokeStyle = 'rgba(0,0,0,0.25)';
     g.lineWidth = 1;
-    for (const q of patron(t.n!)) {
-      elipse(g, cx + q.u * 24, cy + q.v * 15, 5, 4);
+    for (const q of patron(n)) {
+      elipse(g, cx - 6 + q.u * 19, cy + q.v * 13, 4.5, 3.6);
       g.fill();
       g.stroke();
     }
-    texto(g, `×${t.n}`, x + w - 8, y + 34, { tam: 13, color: '#8a6a58', alinear: 'right', peso: 800 });
-  } else {
-    // Salsa: un zigzag; polvo: puntitos (cómo se pone)
-    const cx = x + w - 42, cy = y + 18;
-    g.strokeStyle = d.tipo === 'salsa' ? (d.color ?? '#8a6a58') : '#8a6a58';
-    g.lineWidth = d.tipo === 'salsa' ? 4 : 1;
-    g.lineCap = 'round';
+    texto(g, `${n}`, x + w - 8, cy + 1, { tam: 24, color: '#8a4a2a', alinear: 'right', peso: 900 });
+  } else if (acumula(d)) {
+    // Salsa (zigzag) o crema (copito), y la ruedita chiquita de sencillo o doble
+    const doble = t.n === 2;
     if (d.tipo === 'salsa') {
+      g.strokeStyle = d.color ?? '#8a6a58';
+      g.lineWidth = 4;
+      g.lineCap = 'round';
       g.beginPath();
-      for (let i = 0; i <= 6; i++) g.lineTo(cx - 24 + i * 8, cy + (i % 2 ? -7 : 7));
+      for (let i = 0; i <= 4; i++) g.lineTo(cx - 34 + i * 7, cy + (i % 2 ? -7 : 7));
       g.stroke();
-    } else {
-      g.fillStyle = d.id === 'chispitas' ? '#ff5d8f' : (COLOR_GRANO[d.id === 'galleta_triturada' ? 'galleta' : d.id] ?? '#8a6a58');
-      for (let i = 0; i < 9; i++) {
-        elipse(g, cx - 18 + (i % 3) * 18 + (Math.floor(i / 3) % 2) * 6, cy - 9 + Math.floor(i / 3) * 9, 2.6, 2.6);
-        g.fill();
-      }
+    } else copoCrema(g, cx - 20, cy + 12, 46, doble ? 1.4 : 0.8, d.color ?? '#fffaf2');
+    g.lineWidth = 4;
+    g.strokeStyle = '#e4d6c2';
+    g.beginPath();
+    g.arc(cx + 18, cy, 11, 0, Math.PI * 2);
+    g.stroke();
+    g.strokeStyle = doble ? '#e8434f' : '#ffb627';
+    g.beginPath();
+    g.arc(cx + 18, cy, 11, -Math.PI / 2, doble ? Math.PI * 1.5 : Math.PI * 0.5);
+    g.stroke();
+    texto(g, doble ? '2' : '1', cx + 18, cy + 1, { tam: 12, color: '#8a4a2a', peso: 900 });
+    texto(g, doble ? 'doble' : 'sencillo', x + w - 8, y + 36, { tam: 12, color: doble ? '#c0303c' : '#8a6a58', alinear: 'right', peso: 800 });
+  } else {
+    // Polvo: puntitos (cómo se pone)
+    g.fillStyle = d.id === 'chispitas' ? '#ff5d8f' : (COLOR_GRANO[d.id === 'galleta_triturada' ? 'galleta' : d.id] ?? '#8a6a58');
+    for (let i = 0; i < 9; i++) {
+      elipse(g, cx - 18 + (i % 3) * 18 + (Math.floor(i / 3) % 2) * 6, cy - 9 + Math.floor(i / 3) * 9, 2.6, 2.6);
+      g.fill();
     }
   }
 }

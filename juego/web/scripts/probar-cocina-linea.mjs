@@ -70,7 +70,8 @@ await el.waitForTimeout(3500);
 
 // 3) Laura toma un pedido: el tiquete lo cuelga el anfitrión y les sale a los dos
 await ella.evaluate(() => window.__cocinaMotor.probar('tomar'));
-revisar(await esperar(el, () => window.__cocinaMotor.resumen().tickets.length >= 1), 'El pedido que tomó Laura queda colgado donde Javier');
+// (el invitado se demora dictando: de 3 a 9 s de juego según lo que pide y quién es; sin pantalla va más lento)
+revisar(await esperar(el, () => window.__cocinaMotor.resumen().tickets.length >= 1, null, 120000), 'El pedido que tomó Laura queda colgado donde Javier');
 revisar(await esperar(ella, () => window.__cocinaMotor.resumen().tickets.length >= 1), 'Laura ve el tiquete en su riel');
 await el.waitForTimeout(1500);
 await foto(ella, '2-tiquete');

@@ -497,19 +497,21 @@ function dibujarImpresion(m: Motor, g: G, ix: number, iy: number) {
   const imp = m.impreso!;
   const e = m.s.invitados[imp.inv];
   const t = m.reloj - imp.t0;
-  if (!e || t > 3.2) {
+  // Se imprime al ritmo en que el invitado dicta (unos hablan más despacio que otros)
+  const dicta = e?.dicta ?? 2.4;
+  if (!e || t > dicta + 0.8) {
     m.impreso = null;
     return;
   }
   const pedido = e.pedido ?? m.s.tickets.find((x) => x.id === e.ticket)?.pedido;
   if (!pedido) return;
   const w = 244, hTotal = m.H - RIEL - BARRA - 120;
-  const sale = Math.min(1, t / 2.2);
+  const sale = Math.min(1, t / (dicta - 0.2));
   const h = 40 + (hTotal - 40) * sale;
   let x = ix - w / 2, y = iy - 30 - h;
   // Al final vuela al riel (arriba a la izquierda) encogiéndose
-  if (t > 2.4) {
-    const k = Math.min(1, (t - 2.4) / 0.6);
+  if (t > dicta) {
+    const k = Math.min(1, (t - dicta) / 0.6);
     const e2 = k * k * (3 - 2 * k);
     const dx = m.rectTicket(Math.max(0, m.s.tickets.length - 1)).x - x;
     g.save();
@@ -528,7 +530,7 @@ function dibujarImpresion(m: Motor, g: G, ix: number, iy: number) {
   m.receta.dibujarTicket(g, pedido as never, { x, y: y + 38, w, h: hTotal - 42 }, m);
   g.restore();
   // La ranura tapa el papel que todavía está adentro
-  if (t <= 2.4) spr(g, 'impresora', ix, iy, 64);
+  if (t <= dicta) spr(g, 'impresora', ix, iy, 64);
 }
 
 export function pildora(g: G, t: string, x: number, y: number, fondoC: string, color: string, tam = 22) {

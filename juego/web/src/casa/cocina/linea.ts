@@ -174,6 +174,18 @@ export class Sincro {
     this.mandar(MSJ_COCINA.accion, { a, d }, false, this.idAnfitrion);
   }
 
+  /**
+   * Lo que se pide justo antes de que el celular se congele (irse a otra app): el bucle se detiene y no habría
+   * reenvíos si el mensaje fiable se pierde, así que también va dos veces por el canal rápido (el anfitrión ignora
+   * las copias por su número).
+   */
+  pedirYa(a: string, d?: unknown) {
+    if (this.anfitrion) return;
+    this.mandar(MSJ_COCINA.accion, { a, d }, true, this.idAnfitrion);
+    this.mandar(MSJ_COCINA.accion, { a, d }, true, this.idAnfitrion);
+    this.mandar(MSJ_COCINA.accion, { a, d }, false, this.idAnfitrion);
+  }
+
   /** (Anfitrión) todos de vuelta a la sala de espera. */
   volverTodosALaSala() {
     if (this.anfitrion) this.mandar(MSJ_COCINA.sala, {}, false);

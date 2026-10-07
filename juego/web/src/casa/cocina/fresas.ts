@@ -5,8 +5,8 @@
 // En pareja las batidoras son de los dos; cada uno tiene su tabla de picar.
 import { aclarar, dentro, elipse, fresa, G, lineal, mezclar, oscurecer, Rect, rr, sombra, texto } from './dibujo';
 import {
-  Aplicador, aUV, botonBotar, botonEntregar, botonesToppings, calificarToppings, dibujarBotonesToppings, dibujarEnMano, dibujarGuia, dibujarSuperficie,
-  filaTopping, letra, medidor, Ovalo, puntajeCuenta, puntajeNivel, puntajeZona, rayita, separador, Superficie, superficieNueva, ToppingDef, ToppingPedido,
+  acumula, Aplicador, aUV, botonBotar, botonEntregar, botonesToppings, calificarToppings, dibujarBotonesToppings, dibujarEnMano, dibujarGuia, dibujarSuperficie,
+  filaTopping, letra, medidor, Ovalo, puntajeCuenta, puntajeNivel, puntajeZona, rayita, rueditaEnMano, separador, Superficie, superficieNueva, ToppingDef, ToppingPedido,
 } from './herramientas';
 import type { Invitado } from './invitados';
 import { BARRA, Categoria, Estacion, Motor, Receta, RIEL, sonidos, Ticket } from './motor';
@@ -110,7 +110,9 @@ function pedido(rango: number, _dia: number, azar: () => number, inv?: Invitado)
     punto: rango >= 2 && azar() < 0.45 ? 'firme' : 'suave',
     dulce: 1 + Math.floor(azar() * (rango >= 3 ? 3 : 2)),
     sabor: sabores.length && azar() < 0.35 ? tomar(sabores).id : null,
-    toppings: elegidos.map((t) => {
+    toppings: elegidos.map((t): ToppingPedido => {
+      // Las salsas: sencillas o dobles (las dobles desde el rango 3)
+      if (acumula(t)) return rango >= 3 && azar() < 0.3 ? { id: t.id, n: 2 } : { id: t.id };
       if (t.tipo !== 'pieza') return { id: t.id };
       const [a, b] = CUANTAS[t.id] ?? [1, 1];
       return { id: t.id, n: a + Math.floor(azar() * (b - a + 1)) };
@@ -1022,7 +1024,10 @@ class EstacionServir implements Estacion {
     if (this.herramienta) {
       const d = TOP[this.herramienta];
       texto(g, `En la mano: ${d.nombre}`, p.x, RIEL + 26, { tam: 20, color: '#fff', borde: 'rgba(40,30,25,0.85)' });
-      if (m.dedo && this.aplicador.enUso) dibujarEnMano(g, d, m.dedo.x, m.dedo.y, t);
+      if (m.dedo && this.aplicador.enUso) {
+        dibujarEnMano(g, d, m.dedo.x, m.dedo.y, t);
+        if (o && m.activo) rueditaEnMano(g, o.sup, (m.activo.pedido as PedidoFresas).toppings, TOP, d.id, m.dedo.x, m.dedo.y, t, sonidos.acierto);
+      }
     }
   }
 }
