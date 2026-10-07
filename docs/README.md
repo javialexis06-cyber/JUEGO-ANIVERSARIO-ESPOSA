@@ -24,6 +24,7 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | Archivo | Estado |
 |---|---|
 | [`cien-puertas.md`](en-obra/cien-puertas.md) | Cien Puertas (arreglos y modo pareja en la rama `trabajo/puertas`). Tiene **la historia y los recuerdos de verdad**. |
+| [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor, para pulirla con Javier. |
 | [`escenas-premium.md`](en-obra/escenas-premium.md) | Escenas pagas: en pausa. |
 | [`voces-ia.md`](en-obra/voces-ia.md), [`guion-voces.md`](en-obra/guion-voces.md) | Voces clonadas: esperan la clave de ElevenLabs. |
 
