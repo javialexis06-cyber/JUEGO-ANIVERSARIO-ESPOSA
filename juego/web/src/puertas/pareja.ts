@@ -5,7 +5,7 @@
 // (una manito con su carita) y se pueden mandar señas rápidas. Si uno se va a segundo plano o se corta la conexión,
 // todo se queda quieto con un aviso hasta que vuelva.
 import * as THREE from 'three';
-import { otro, type Rol } from '../casa/modelo';
+import { NOMBRE_ROL, otro, type Rol } from '../casa/modelo';
 import retratoEl from '../casa/retratos/el.png';
 import retratoElla from '../casa/retratos/ella.png';
 import * as sonido from '../sonido';
@@ -21,7 +21,7 @@ import { $, aviso, esc, Paneles, type Inventario } from './ui';
 
 export type Papel = 'anfitrion' | 'invitado';
 
-export const nombreDe = (r: Rol) => (r === 'el' ? 'Él' : 'Ella');
+export const nombreDe = (r: Rol) => NOMBRE_ROL[r];
 export const retrato = (r: Rol) => (r === 'el' ? retratoEl : retratoElla);
 
 /** Cómo le dice cada uno al otro (lo que sale en las señas que llegan). */

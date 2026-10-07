@@ -16,12 +16,12 @@ export const EMOJI: Record<Cuarto, string> = {
   sala: '🛋️', cocina: '🍳', bano: '🛁', cuarto: '🛏️', juegos: '🕹️', trofeos: '🏆', cuna: '🍼', cuarto_el: '💙', cuarto_ella: '💗', patio: '🐶',
 };
 /** Nombre corto para las pestañas de abajo. */
-export const CORTO: Partial<Record<Cuarto, string>> = { cuarto_el: 'De Él', cuarto_ella: 'De Ella' };
+export const CORTO: Partial<Record<Cuarto, string>> = { cuarto_el: 'De Javier', cuarto_ella: 'De Laura' };
 const PARA_QUE: Partial<Record<Cuarto, string>> = {
   trofeos: 'Pedestales con los trofeos que ganen en los minijuegos.',
   cuna: 'Una cuna con móvil de estrellas… y la cigüeña trae a la bebé.',
-  cuarto_el: 'Solo de Él: computador, sillón y paredes del color que quiera.',
-  cuarto_ella: 'Solo de Ella: tocador con espejo de luces, escritorio y sillón.',
+  cuarto_el: 'Solo de Javier: computador, sillón y paredes del color que quiera.',
+  cuarto_ella: 'Solo de Laura: tocador con espejo de luces, escritorio y sillón.',
 };
 
 export function htmlPlano(c: Casa, vista: Cuarto, donde: Record<Rol, Cuarto>) {
@@ -120,8 +120,8 @@ export function htmlBebe(c: Casa) {
     <form id="form-bebe" class="form-bebe">
       <p class="nota-hoja"><b>¿Cómo se va a llamar?</b></p>
       <div class="nombres-bebe">
-        <label><input type="radio" name="bebe-nombre" value="Katherine" checked><span>Katherine<small>como dice Él</small></span></label>
-        <label><input type="radio" name="bebe-nombre" value="Lexy Katherine"><span>Lexy Katherine<small>como dice Ella</small></span></label>
+        <label><input type="radio" name="bebe-nombre" value="Katherine" checked><span>Katherine<small>como dice Javier</small></span></label>
+        <label><input type="radio" name="bebe-nombre" value="Lexy Katherine"><span>Lexy Katherine<small>como dice Laura</small></span></label>
       </div>
       <label class="campo">O escriban otro nombre<input id="bebe-otro" maxlength="30" placeholder="Opcional"></label>
       <button class="boton boton-rosa" type="submit">Pedírsela a la cigüeña</button>

@@ -8,14 +8,14 @@ export const SALA: Escena[] = [
   {
     id: 'persecucion-beso',
     nombre: 'La persecución del beso',
-    descripcion: 'Él la persigue por la sala para darle un beso; ella corre, él se cae y llora… y ella vuelve a consolarlo.',
+    descripcion: 'Javier persigue a Laura por la sala para darle un beso; ella corre, él se cae y llora… y ella vuelve a consolarlo.',
     precio: 40,
     lugar: 'sala',
     dur: 13.5,
     de: 'el',
     inicio: { A: [-1.5, -0.7, 70], B: [0.5, -0.7, -70] },
     guion: [
-      { t: 0, camara: 'general', sub: 'Él tiene muchas ganas de un beso…' },
+      { t: 0, camara: 'general', sub: 'Javier tiene muchas ganas de un beso…' },
       { t: 0.4, A: 'beso_volado', dice: ['A', 'Mi amor… ¿un besito?'] },
       { t: 1.6, B: { pasos: [{ dur: 0.5, pose: 'boca_abierta', cara: 'sorprendido', mov: [{ tipo: 'salto', alto: 0.08 }] }] }, dice: ['B', '¡Ni lo sueñes!'], sub: '' },
       { t: 2.1, B: { ir: [1.8, -1.5], vel: 2.3, pasos: [{ dur: 5, cara: 'carcajada' }] }, sonido: 'huida' },
@@ -76,7 +76,7 @@ export const SALA: Escena[] = [
   {
     id: 'serenata',
     nombre: 'Serenata',
-    descripcion: 'Él saca la guitarra y le canta en la sala; ella, sentada en el sofá, se derrite entre corazones.',
+    descripcion: 'Javier saca la guitarra y le canta a Laura en la sala; ella, sentada en el sofá, se derrite entre corazones.',
     precio: 45,
     lugar: 'sala',
     dur: 13,

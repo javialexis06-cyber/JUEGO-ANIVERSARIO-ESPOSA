@@ -3,7 +3,7 @@
 // si se completaron las tres, el nivel nuevo con su cofre. Abajo: la tienda del retrete o volver a casa.
 import { nota } from '../../sonido';
 import { type Cosmetico, type Mision, type ProgresoCohete, RAREZA, type TipoCosmetico, esDeVuelo, premioMision, textoMision, textoReto } from './datos';
-import type { Rol } from '../modelo';
+import { NOMBRE_ROL, otro, type Rol } from '../modelo';
 
 /** Lo que la casa dio por un vuelo: sus monedas y si ya se llegó al tope del día. */
 export interface PremioCasa {
@@ -62,8 +62,8 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
   const titulo = d.record ? elegir(TITULOS.record) : d.metros > 600 ? elegir(TITULOS.bien) : elegir(TITULOS.corto);
   const pareja = d.recordPareja > 0
     ? d.metros > d.recordPareja
-      ? `<p class="cr-pareja gana">Le ganaste a ${d.rol === 'el' ? 'Ella' : 'Él'} (${mil(d.recordPareja)} m) 😏</p>`
-      : `<p class="cr-pareja">Récord de ${d.rol === 'el' ? 'Ella' : 'Él'}: ${mil(d.recordPareja)} m · te faltaron ${mil(d.recordPareja - d.metros)} m</p>`
+      ? `<p class="cr-pareja gana">Le ganaste a ${NOMBRE_ROL[otro(d.rol)]} (${mil(d.recordPareja)} m) 😏</p>`
+      : `<p class="cr-pareja">Récord de ${NOMBRE_ROL[otro(d.rol)]}: ${mil(d.recordPareja)} m · te faltaron ${mil(d.recordPareja - d.metros)} m</p>`
     : '';
   // Las misiones como estaban al empezar, con lo de ahora (para ver la barrita llenarse)
   const misiones = (d.subio ? d.misionesAntes : p.misiones)

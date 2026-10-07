@@ -7,7 +7,10 @@ Es una sorpresa: nada de esto se le pregunta a Ella.
 ## Cómo se llaman
 
 **Javier** (Él) y **Laura** (Ella, su esposa). En pantalla se usan sus nombres en vez de «Él» y «Ella»
-(`NOMBRE_ROL` en `src/casa/modelo.ts`); por dentro el código sigue usando los roles `el` y `ella`.
+(`NOMBRE_ROL` en `src/casa/modelo.ts`, que sale de `src/nombres.ts` para que el súper y la mesa no carguen la casa);
+por dentro el código sigue usando los roles `el` y `ella`. Ya no queda ningún «Él»/«Ella» a la vista: entrada («Soy
+Javier»), chips de la casa, cuartos propios, disfraces, frases del baño, retrete («Récord de Laura», la figura
+«J ♥ L»), súper, mesa y Cien Puertas.
 
 ## Cómo se dicen
 

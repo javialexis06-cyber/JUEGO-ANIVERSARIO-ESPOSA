@@ -125,7 +125,7 @@ async function iniciar() {
   productos = await Productos.cargar();
   progreso(0.2, 'Acomodando los muebles…');
   casa3d = await Casa3D.cargar(mundo, productos, (k) => progreso(0.2 + k * 0.45));
-  progreso(0.7, 'Despertando a Él y a Ella…');
+  progreso(0.7, 'Despertando a Javier y a Laura…');
   mascotas = { el: new Mascota('el', casa3d, productos), ella: new Mascota('ella', casa3d, productos) };
   mascotas.el.alNalgada = () => plaf(mascotas.ella);
   bichos = new Bichos(() => casa3d.cuarto('bano'));
@@ -809,7 +809,7 @@ function hojaRetrete() {
   const html = `<ol class="retrete-records">${fila('el')}${fila('ella')}</ol>
     <p class="nota-hoja">${sabe
       ? 'Ya conoces el secreto: cada vez que te sientes en el inodoro (o aquí, en el retrete en miniatura) puedes salir volando. ¿Quién vuela más lejos?'
-      : 'La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién vuela más lejos?'}</p>
+      : 'La leche le cae pesado a Laura y el picante a Javier: si se los dan, el inodoro los manda al espacio. ¿Quién vuela más lejos?'}</p>
     <div class="fila-botones">${sabe ? '<button class="boton boton-tomate" data-accion-hoja="volar-juegos">🚀 Volar en el retrete</button>' : ''}<button class="boton" data-accion-hoja="tienda-retrete">Tienda del retrete</button></div>`;
   abrirHoja('Retrete espacial', html, { saldo: c.monedas });
 }
@@ -1322,8 +1322,8 @@ function hojaPlano() {
 const AL_CONSTRUIR: Partial<Record<Cuarto, string>> = {
   trofeos: '¡Sala de trofeos lista! Los que ganen en los minijuegos brillan en los pedestales.',
   cuna: '¡Cuarto del bebé listo! Ahora pueden pedirle una bebé a la cigüeña.',
-  cuarto_el: '¡Cuarto de Él listo! Solo Él lo decora y le escoge el color.',
-  cuarto_ella: '¡Cuarto de Ella listo! Solo Ella lo decora y le escoge el color.',
+  cuarto_el: '¡Cuarto de Javier listo! Solo Javier lo decora y le escoge el color.',
+  cuarto_ella: '¡Cuarto de Laura listo! Solo Laura lo decora y le escoge el color.',
 };
 
 async function construir(k: Cuarto) {
@@ -2540,7 +2540,7 @@ function tarjetaRopa(it: Item, rol: Rol, pie: string) {
     ? `<span class="muestra-tinte" style="background:${colorSeguro(it.tinte, '#6B4A33')}"></span>`
     : `<img src="${iconoRopa(it, rol)}" alt="" loading="lazy">`;
   const detalle = it.tinte ? 'Color de pelo para los dos' : `${it.ranura ? NOMBRE_RANURA[it.ranura] : ''}${it.tambien?.length ? ' y abajo' : ''} · ${
-    it.para?.length === 2 ? 'Él y Ella' : nombre(it.para![0])}`;
+    it.para?.length === 2 ? 'Javier y Laura' : nombre(it.para![0])}`;
   return `<li class="item${puesto(it.id) ? ' puesto' : ''}">${img}<b>${esc(it.nombre)}</b><small>${esc(detalle)}</small><div class="fila-item">${pie}</div></li>`;
 }
 
@@ -2892,7 +2892,7 @@ function hojaFechas() {
       <button class="boton boton-rosa" type="submit">Guardar aniversario</button>
     </form>
     <form class="form-fecha" id="form-fecha" style="margin-top:12px">
-      <label class="campo">Otra fecha especial<input id="fecha-nombre" maxlength="40" placeholder="Cumpleaños de Ella" required></label>
+      <label class="campo">Otra fecha especial<input id="fecha-nombre" maxlength="40" placeholder="Cumpleaños de Laura" required></label>
       <label class="campo">Día<input id="fecha-dia" type="date" required></label>
       <label class="chequeo"><input id="fecha-anual" type="checkbox" checked> Se repite cada año</label>
       <button class="boton boton-tomate" type="submit">Agregar fecha</button>

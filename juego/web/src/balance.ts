@@ -138,7 +138,7 @@ export const MEJORAS: Mejora[] = [
   { id: 'globos', grupo: 'Tienda', nombre: 'Globos de fiesta', desde: 10, niveles: [{ precio: 4, texto: 'Otro 10 % más de paciencia' }] },
   { id: 'camara', grupo: 'Tienda', nombre: 'Cámara de seguridad', desde: 12, niveles: [{ precio: 5, texto: 'El ladrón se ve desde que entra y corre más lento' }] },
   { id: 'caja2', grupo: 'Tienda', nombre: 'Segunda caja', desde: 12, niveles: [{ precio: 12, texto: 'Otra caja con su propio cajero: cada cliente hace la fila más corta' }] },
-  { id: 'cajera', grupo: 'Ayudantes', nombre: 'Cajera', desde: 7, niveles: [{ precio: 8, texto: 'Cobra sola en la caja, aunque más despacio que Él' }] },
+  { id: 'cajera', grupo: 'Ayudantes', nombre: 'Cajera', desde: 7, niveles: [{ precio: 8, texto: 'Cobra sola en la caja, aunque más despacio que ustedes' }] },
   { id: 'aseo', grupo: 'Ayudantes', nombre: 'Aseo', desde: 9, niveles: [{ precio: 6, texto: 'Recoge basura, trapea charcos (y lava su trapero) y levanta productos caídos' }] },
   { id: 'reponedor', grupo: 'Ayudantes', nombre: 'Reponedor', desde: 10, niveles: [{ precio: 8, texto: 'Repone solo las vitrinas que están por acabarse' }] },
   { id: 'capacitacion', grupo: 'Ayudantes', nombre: 'Capacitación del equipo', desde: 11, niveles: [

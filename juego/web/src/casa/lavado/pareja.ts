@@ -35,7 +35,7 @@ export const PAREJA: TextosPareja | null = {
     },
     silbato: {
       nombre: 'Te busqué por todos lados',
-      frase: 'Ella lo buscó por todo el juego… ¿y él de verdad la buscaba?',
+      frase: 'Laura lo buscó por todo el juego… ¿y Javier de verdad la buscaba?',
     },
     comienzo: {
       nombre: 'El 25 de octubre',
@@ -52,7 +52,7 @@ export const PAREJA: TextosPareja | null = {
     },
     curitaMagica: {
       nombre: 'Psicología',
-      frase: '¿Insistente o persistente? Él la convenció.',
+      frase: '¿Insistente o persistente? Javier la convenció.',
     },
     relojQuieto: {
       nombre: 'La primera vez que nos vimos',
@@ -64,7 +64,7 @@ export const PAREJA: TextosPareja | null = {
     },
     solPlaya: {
       nombre: 'Cartagena',
-      frase: 'Ella en una banca del aeropuerto, él en un hotel cinco estrellas. La moto acuática y el castillo.',
+      frase: 'Laura en una banca del aeropuerto, Javier en un hotel cinco estrellas. La moto acuática y el castillo.',
       efecto: 'Las velitas explotan al romperse y uno de cada diez mugrosos revienta como el sol de Cartagena.',
     },
     lucesFeria: {

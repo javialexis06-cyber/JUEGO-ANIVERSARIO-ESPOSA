@@ -12,7 +12,7 @@ import '../estilos.css';
 import './mesa.css';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
-import { otro, type Rol } from '../casa/modelo';
+import { NOMBRE_ROL, otro, type Rol } from '../casa/modelo';
 import { leer } from '../casa/sincro';
 import * as sonido from '../sonido';
 import { enPausa } from '../segundo_plano';
@@ -53,7 +53,7 @@ const RIVAL: Record<Rol, AspectoJugador> = {
  */
 function ladosBase(modo: Modo = prefs.modo === 'local' ? 'local' : 'ia'): Record<Rol, Lado> {
   const a = amigoDeAqui();
-  if (!a) return { el: { nombre: 'Él', cuerpo: 'el', vestir: true }, ella: { nombre: 'Ella', cuerpo: 'ella', vestir: true } };
+  if (!a) return { el: { nombre: NOMBRE_ROL.el, cuerpo: 'el', vestir: true }, ella: { nombre: NOMBRE_ROL.ella, cuerpo: 'ella', vestir: true } };
   const otroCuerpo: Rol = a.aspecto.cuerpo === 'el' ? 'ella' : 'el';
   const rival = modo === 'local' ? 'Jugador 2' : otroCuerpo === 'el' ? 'Toto' : 'Lulú';
   return { el: { nombre: a.nombre, cuerpo: a.aspecto.cuerpo, aspecto: a.aspecto }, ella: { nombre: rival, cuerpo: otroCuerpo, aspecto: RIVAL[otroCuerpo] } };

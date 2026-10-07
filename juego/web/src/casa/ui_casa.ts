@@ -2,7 +2,7 @@
 // avisos y efectos que flotan sobre Él y Ella.
 import { icono, RUTA } from '../recursos';
 import { Item } from './catalogo';
-import { EstadoPersonaje, Necesidad, NECESIDADES, NOMBRE_NECESIDAD, Rol } from './modelo';
+import { EstadoPersonaje, Necesidad, NECESIDADES, NOMBRE_NECESIDAD, NOMBRE_ROL, Rol } from './modelo';
 import { avisoSuave, salirSuave } from '../transiciones';
 
 export const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -220,5 +220,5 @@ export function lluviaCorazones(n = 24) {
   setTimeout(() => capa.remove(), 5800);
 }
 
-export const nombre = (r: Rol) => (r === 'el' ? 'Él' : 'Ella');
+export const nombre = (r: Rol) => NOMBRE_ROL[r];
 export const caraClase = (r: Rol) => `cara-${r}`;

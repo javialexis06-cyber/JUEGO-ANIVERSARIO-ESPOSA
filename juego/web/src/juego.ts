@@ -13,6 +13,7 @@ import { cargar, cargarAnimado, copia, liberarEsqueletos, Productos } from './re
 import { esNeutro } from './neutro';
 import * as sonido from './sonido';
 import { liberarPropios, Tienda, TiendaDato, Vitrina } from './tienda';
+import { NOMBRE_PAREJA } from './nombres';
 
 export interface Estrella {
   numero: number;
@@ -210,7 +211,7 @@ export class Juego {
     // Arrancan junto a la bodega (Él y Ella en sus puestos de siempre; en una sala, hasta cuatro en dos filas)
     const quienes: InfoJugador[] = this.equipo?.length
       ? this.equipo.slice(0, 4)
-      : [{ id: 'el', cuerpo: 'el', nombre: 'Él' }, ...(this.pareja ? [{ id: 'ella', cuerpo: 'ella', nombre: 'Ella' } as InfoJugador] : [])];
+      : [{ id: 'el', cuerpo: 'el', nombre: NOMBRE_PAREJA.el }, ...(this.pareja ? [{ id: 'ella', cuerpo: 'ella', nombre: NOMBRE_PAREJA.ella } as InfoJugador] : [])];
     const puestos: P[] = [{ x: b.x - 1.2, y: b.y - 1.2 }, { x: b.x - 2.4, y: b.y - 1.0 }, { x: b.x - 1.3, y: b.y - 2.3 }, { x: b.x - 2.5, y: b.y - 2.1 }];
     for (let i = 0; i < quienes.length; i++) {
       const q = quienes[i];

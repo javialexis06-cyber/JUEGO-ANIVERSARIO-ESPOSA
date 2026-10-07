@@ -11,7 +11,7 @@ import './puertas.css';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import * as THREE from 'three';
-import { otro, type Rol } from '../casa/modelo';
+import { NOMBRE_ROL, otro, type Rol } from '../casa/modelo';
 import { sesionGuardada } from '../casa/sincro';
 import { elegirModelos, liberarEsqueletos } from '../recursos';
 import * as sonido from '../sonido';
@@ -286,7 +286,7 @@ function mapa() {
   $('capitulos').querySelector('.siguiente')?.scrollIntoView({ block: 'center' });
 }
 
-const nombreDe = (r: Rol) => (r === 'el' ? 'Él' : 'Ella');
+const nombreDe = (r: Rol) => NOMBRE_ROL[r];
 
 /** Los recuerdos recuperados, para volver a leerlos. */
 function album() {

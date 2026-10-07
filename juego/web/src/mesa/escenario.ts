@@ -14,6 +14,7 @@ import { vigilarContexto } from '../contexto';
 import { cuadros } from '../segundo_plano';
 import { vestirAmigo } from '../neutro';
 import type { AspectoJugador } from '../salas/tipos';
+import { NOMBRE_PAREJA } from '../nombres';
 
 /** Quién va en un lado del escenario: su nombre, su muñeco base y (si es un amigo) sus colores. */
 export interface Lado {
@@ -23,7 +24,7 @@ export interface Lado {
   /** Ponerle la ropa que tiene en la casa (solo Javier y Laura en su propio lado). */
   vestir?: boolean;
 }
-const LADOS_PAREJA: Record<Rol, Lado> = { el: { nombre: 'Él', cuerpo: 'el', vestir: true }, ella: { nombre: 'Ella', cuerpo: 'ella', vestir: true } };
+const LADOS_PAREJA: Record<Rol, Lado> = { el: { nombre: NOMBRE_PAREJA.el, cuerpo: 'el', vestir: true }, ella: { nombre: NOMBRE_PAREJA.ella, cuerpo: 'ella', vestir: true } };
 
 export class Escenario {
   private renderer: THREE.WebGLRenderer;

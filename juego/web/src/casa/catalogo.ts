@@ -115,7 +115,7 @@ const DISFRACES: Item[] = [
   disfraz('piratas', 'Piratas', ambos('sombrero_pirata', 'parche', 'camiseta_rayas_roja', 'botas_negras'), 'Sombrero, parche, rayas y botas'),
   disfraz('magos', 'Brujita y brujo', { el: ['sombrero_bruja_negro', 'capa_negra'], ella: ['sombrero_bruja', 'capa_morada'] }, 'Sombrero de punta y capa'),
   disfraz('angel_diablo', 'Angelito y diablito', { el: ['cuernos', 'cola_diablo', 'alas_diablito'], ella: ['aureola', 'alas_angel', 'vestido_novia'] },
-    'Él de diablito y Ella de angelito'),
+    'Javier de diablito y Laura de angelito'),
   disfraz('abejitas', 'Abejitas', ambos('antenas_abeja', 'alas_abeja', 'camiseta_abeja'), 'Antenas, alitas y rayas'),
   disfraz('chefs', 'Chefs', ambos('gorro_chef', 'chaqueta_chef'), 'Gorro y chaqueta de chef'),
   disfraz('novios', 'Novios', { el: ['saco_novio', 'sombrero_copa', 'zapatos_negros'], ella: ['vestido_novia', 'velo_novia', 'tacones_dorados'] },
@@ -148,7 +148,7 @@ const DISFRACES: Item[] = [
   disfraz('perrito_pulga', 'El perrito y la pulguita', {
     el: ['enterizo_perrito', 'capucha_perrito', 'cola_perrito', 'pantuflas_perrito'],
     ella: ['enterizo_pulga', 'capucha_pulga', 'patitas_pulga', 'pantuflas_pulga'],
-  }, 'Él de perrito con collar y placa; Ella de pulguita con antenas, ojazos y patitas de más', 'morado'),
+  }, 'Javier de perrito con collar y placa; Laura de pulguita con antenas, ojazos y patitas de más', 'morado'),
   disfraz('sirena_triton', 'Sirena y tritón', {
     el: ['corona_triton', 'chaleco_escamas', 'pantalon_escamas', 'tridente'],
     ella: ['corona_conchas', 'top_conchas', 'cola_sirena'],
@@ -156,12 +156,12 @@ const DISFRACES: Item[] = [
   disfraz('zorritos', 'Zorritos del bosque', ambos('enterizo_zorro', 'capucha_zorro', 'cola_zorro_esponjosa', 'pantuflas_zorro'),
     'Pecho blanco, orejas de punta, cola esponjosa y coronita de hojas', 'morado'),
   disfraz('arepa_chocolate', 'Arepa y chocolatico', { el: ['traje_arepa', 'gorro_mantequilla'], ella: ['traje_chocolate', 'gorro_espuma'] },
-    'Él de arepa con queso derretido; Ella de taza de chocolate con espuma y malvaviscos', 'morado'),
+    'Javier de arepa con queso derretido; Laura de taza de chocolate con espuma y malvaviscos', 'morado'),
   disfraz('ratoncitos', 'Ratoncitos de Transformice', ambos('enterizo_raton', 'capucha_raton', 'cola_raton', 'queso_espalda'),
     'Como cuando se conocieron: orejotas, bigotes, colita y un queso a la espalda', 'morado'),
   // --- Azules (el triple) ---
   disfraz('lilo_stitch', 'Lilo y Stitch', { el: ['diadema_stitch', 'camiseta_stitch', 'bermuda_caqui', 'sandalias_cafe'], ella: ['vestido_lilo', 'flor_pelo_roja', 'sandalias_cafe'] },
-    'Él con orejas de Stitch y su camiseta; Ella con el vestido rojo de hojas y collar de flores', 'azul'),
+    'Javier con orejas de Stitch y su camiseta; Laura con el vestido rojo de hojas y collar de flores', 'azul'),
   disfraz('ranitas', 'Ranitas', ambos('enterizo_rana', 'capucha_rana', 'pantuflas_rana'), 'Ojos saltones, panza con pintas y patas de rana', 'azul'),
   disfraz('vaquitas', 'Vaquitas', ambos('enterizo_vaca', 'capucha_vaca', 'cola_vaca'), 'Manchas, cachitos, orejas y campanita', 'azul'),
   disfraz('pollitos', 'Pollitos', ambos('enterizo_pollito', 'capucha_cascaron', 'pantuflas_pollito'), 'Plumitas amarillas, cascarón en la cabeza y patas', 'azul'),

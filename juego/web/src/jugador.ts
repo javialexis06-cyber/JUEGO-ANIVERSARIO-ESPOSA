@@ -14,6 +14,7 @@ import { cargar, copia, Productos } from './recursos';
 import * as sonido from './sonido';
 import { CAJA_SECCION, Vitrina } from './tienda';
 import { vestirAmigo } from './neutro';
+import { NOMBRE_PAREJA } from './nombres';
 import type { AspectoJugador } from './salas/tipos';
 
 export type Rol = 'el' | 'ella';
@@ -115,7 +116,7 @@ export class Jugador extends Personaje {
   }
 
   get nombre() {
-    return this.nombrePropio ?? (this.rol === 'el' ? 'Él' : 'Ella');
+    return this.nombrePropio ?? NOMBRE_PAREJA[this.rol];
   }
   private get mejoras() {
     return this.juego.mejoras;

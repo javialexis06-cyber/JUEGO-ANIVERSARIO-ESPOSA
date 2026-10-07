@@ -27,6 +27,7 @@ import * as segundoPlano from './segundo_plano';
 import { liberarPropios, NOMBRE_SECCION, Tienda, TiendaDato } from './tienda';
 import { mostrar, pantallaUnica, UI } from './ui';
 import { alNeutro, amigoDeAqui, escHtml, esNeutro, modoAmigo, paginaDeSalida, ponerNeutro } from './neutro';
+import { NOMBRE_PAREJA } from './nombres';
 import type { AspectoJugador, JugadorSala, Sala } from './salas/tipos';
 
 const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
@@ -532,7 +533,7 @@ function pintarMejoras() {
   if (alTope) fila(`${alTope} vitrina${alTope > 1 ? 's' : ''} al tope`, 'Ya están en el nivel máximo de esta tienda', 0, () => {}, 'listo');
   const grupos: GrupoMejora[] = ['Él', 'Bodega', 'Tienda', 'Ayudantes'];
   for (const g of grupos) {
-    titulo(g === 'Él' ? 'Para Él y Ella' : g);
+    titulo(g === 'Él' ? (esNeutro() ? 'Para ustedes' : 'Para Javier y Laura') : g);
     for (const m of MEJORAS.filter((x) => x.grupo === g)) {
       const base = m.id === 'carrito' ? 1 : 0;
       const nivel = partida.mejoras[m.id] ?? base;
@@ -780,7 +781,7 @@ const normalizar = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, '').spli
 // En las dos, el anfitrión simula el día con sus vitrinas y mejoras y manda fotos; los demás mandan su joystick y sus
 // toques. Los mensajes del día son los mismos (`Mensaje` de linea_super.ts).
 // ---------------------------------------------------------------------------------------------------------------
-const NOMBRE: Record<Rol, string> = { el: 'Él', ella: 'Ella' };
+const NOMBRE: Record<Rol, string> = { ...NOMBRE_PAREJA };
 const otroRol = (r: Rol): Rol => (r === 'el' ? 'ella' : 'el');
 /** «a» u «o» según quién sea (conectada/conectado). */
 const ao = (r: Rol) => (r === 'ella' ? 'a' : 'o');
@@ -884,11 +885,11 @@ function pintarNotaModo() {
   const n = $('modo-nota');
   n.classList.remove('en-linea-si');
   const amigo = amigoDeAqui();
-  if (modo === 'solo') n.textContent = amigo ? 'Tú solo, con el joystick de la izquierda.' : 'Él solo, con el joystick de la izquierda.';
+  if (modo === 'solo') n.textContent = amigo ? 'Tú solo, con el joystick de la izquierda.' : 'Javier solo, con el joystick de la izquierda.';
   else if (modo === 'pareja') {
     n.textContent = amigo
       ? 'Tú con el joystick de la izquierda y el Jugador 2 con el de la derecha. Vienen más clientes. ¡Cuidado con chocarse!'
-      : 'Él con el joystick de la izquierda y Ella con el de la derecha. Vienen más clientes. ¡Cuidado con chocarse!';
+      : 'Javier con el joystick de la izquierda y Laura con el de la derecha. Vienen más clientes. ¡Cuidado con chocarse!';
   } else if (modo === 'sala') {
     n.textContent = 'Abres una sala y les pasas el código: de 2 a 4, cada uno en su celular, con tus vitrinas y mejoras. Los demás entran con «Unirme con código».';
   } else if (!canal || conectando) n.textContent = 'Conectando con la casa en línea…';

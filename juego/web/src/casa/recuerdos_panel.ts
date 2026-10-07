@@ -4,6 +4,7 @@
 import './recuerdos.css';
 import { type Dicho, RECUERDOS } from '../puertas/historia';
 import { ESCENAS, H, Movimiento, Pose, ponerReacciones, precargar, W } from './recuerdos_arte';
+import { NOMBRE_ROL } from './modelo';
 import { esc } from './ui_casa';
 
 export type ModoRecuerdos = 'bano' | 'cama';
@@ -208,7 +209,7 @@ export class PanelRecuerdos {
     if (f && k < this.fin) {
       const n = Math.min(f.texto.length, Math.floor((k - f.desde) / POR_LETRA));
       const escribiendo = n < f.texto.length;
-      html = `<span class="quien-${f.quien}">${f.quien === 'el' ? 'Él' : 'Ella'}</span>${esc(f.texto.slice(0, n))}${escribiendo ? '<i class="cursor"></i>' : ''}`;
+      html = `<span class="quien-${f.quien}">${NOMBRE_ROL[f.quien === 'el' ? 'el' : 'ella']}</span>${esc(f.texto.slice(0, n))}${escribiendo ? '<i class="cursor"></i>' : ''}`;
       // Reacciones: quien habla y quien escucha, toda la frase
       const e = emocion(f.texto);
       const otro = f.quien === 'el' ? 'ella' : 'el';

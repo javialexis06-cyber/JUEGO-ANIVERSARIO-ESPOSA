@@ -1,5 +1,5 @@
 // Los rollitos de papel higiénico dorados: cientos dibujados de una sola vez (instancias), en hileras y figuras
-// (corazones, «ÉL ♥ ELLA», «TE AMO», flechas, olas, estrellas, un retrete…). Si se recoge una figura completa,
+// (corazones, «J ♥ L», «TE AMO», flechas, olas, estrellas, un retrete…). Si se recoge una figura completa,
 // paga un premio. Con un amigo (modo neutro) las palabras de la pareja se cambian por «WOW», «GOL» y «TOP».
 import * as THREE from 'three';
 import { esNeutroCohete } from './datos';
@@ -9,6 +9,7 @@ import { Auras, Borde, DORADO } from './resaltar';
 const LETRAS: Record<string, string[]> = {
   E: ['#####', '#....', '#....', '####.', '#....', '#....', '#####'],
   É: ['...#.', '#####', '#....', '####.', '#....', '#....', '#####'],
+  J: ['..###', '...#.', '...#.', '...#.', '#..#.', '#..#.', '.##..'],
   L: ['#....', '#....', '#....', '#....', '#....', '#....', '#####'],
   A: ['.###.', '#...#', '#...#', '#####', '#...#', '#...#', '#...#'],
   T: ['#####', '..#..', '..#..', '..#..', '..#..', '..#..', '..#..'],
@@ -69,7 +70,7 @@ export const FIGURAS: (() => Figura)[] = [
   () => ({ nombre: 'subida', puntos: Array.from({ length: 14 }, (_, i) => [i * PASO, (i - 7) * 0.32] as [number, number]) }),
   () => ({ nombre: 'corazón', puntos: corazon(1.6, false), corazon: true }),
   () => ({ nombre: 'corazón lleno', puntos: corazon(1.25, true), corazon: true }),
-  () => ({ nombre: 'ÉL ♥ ELLA', puntos: texto('ÉL♥ELLA', 0.42) }),
+  () => ({ nombre: 'J ♥ L', puntos: texto('J ♥ L', 0.45) }),
   () => ({ nombre: 'TE AMO', puntos: texto('TE AMO', 0.42) }),
   () => ({ nombre: 'TQM', puntos: texto('TQM', 0.45) }),
   () => ({

@@ -30,7 +30,7 @@ import { Poderes } from './cohete/poderes';
 import { mostrarResultado, pintarPremioCasa, type DatosResultado, type PremioCasa } from './cohete/resultado';
 import { FIGURAS, Rollitos, figura } from './cohete/rollitos';
 import { Tienda } from './cohete/tienda';
-import type { Rol, Ropa } from './modelo';
+import { NOMBRE_ROL, otro, type Rol, type Ropa } from './modelo';
 import { Vestuario } from './ropa';
 import { teñirModelo } from '../salas/tinte';
 import type { AspectoJugador } from '../salas/tipos';
@@ -771,7 +771,7 @@ class RetreteEspacial {
     this.mostrarTramo(0);
     // Las marcas del récord propio y de la pareja
     if (this.record > 150) this.marca(this.record, 'Tu récord', '#FFD23F');
-    if (!this.neutro && (this.o.recordPareja ?? 0) > 150) this.marca(this.o.recordPareja!, this.o.rol === 'el' ? 'Récord de Ella' : 'Récord de Él', '#FF7FB0');
+    if (!this.neutro && (this.o.recordPareja ?? 0) > 150) this.marca(this.o.recordPareja!, `Récord de ${NOMBRE_ROL[otro(this.o.rol)]}`, '#FF7FB0');
   }
 
   private juego(dt: number, lento: number) {
@@ -1861,7 +1861,7 @@ export function textosDeLaPareja(): string[] {
     ...FRASES.el, ...FRASES.ella, ...FRASES_TRAMO.el, ...FRASES_TRAMO.ella, ...OTRA_VEZ.el, ...OTRA_VEZ.ella,
     ...Object.values(FRASE_PODER).flatMap((f) => [f.el, f.ella]),
   ];
-  return [...new Set(todas.filter((t) => !neutras.has(t))), 'ÉL ♥ ELLA', 'TE AMO', 'TQM', 'La galaxia del amor', 'Récord de Ella', 'Récord de Él', 'Le ganaste'];
+  return [...new Set(todas.filter((t) => !neutras.has(t))), 'J ♥ L', 'TE AMO', 'TQM', 'La galaxia del amor', 'Récord de Laura', 'Récord de Javier', 'Le ganaste'];
 }
 
 /** Empieza a cargar los modelos del vuelo (mientras el personaje va al baño). */

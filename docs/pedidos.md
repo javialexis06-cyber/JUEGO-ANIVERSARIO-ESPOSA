@@ -55,8 +55,6 @@ velocidad, se siente raro…»
 
 ## Ronda 2 de arreglos
 
-**Nombres**: Javier y Laura en vez de «Él» y «Ella» en todas las pantallas (`NOMBRE_ROL`).
-
 **Tutoriales** para Lavarse la cara (Vampire Survivors), Súper Manía, Cien Puertas y los juegos más complejos.
 
 **Súper Manía**

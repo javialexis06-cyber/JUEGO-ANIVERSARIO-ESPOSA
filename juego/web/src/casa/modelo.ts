@@ -1,4 +1,5 @@
 // Nuestro Hogar: datos de la pareja y reglas de las necesidades (se calculan con el reloj real).
+import { NOMBRE_PAREJA } from '../nombres';
 import { normalizarProgreso, type ProgresoCocina, RECETAS, type RecetaId } from './cocina/tipos';
 import { normalizarCohete, type ProgresoCohete } from './cohete/datos';
 import { normalizarProgresoLavado, type ProgresoLavado } from './lavado/progreso';
@@ -12,8 +13,8 @@ export const NECESIDADES: Necesidad[] = ['hambre', 'energia', 'higiene', 'carino
 export const NOMBRE_NECESIDAD: Record<Necesidad, string> = { hambre: 'Comida', energia: 'Energía', higiene: 'Higiene', carino: 'Cariño' };
 export const CUARTOS: Cuarto[] = ['sala', 'cocina', 'bano', 'cuarto', 'patio', 'juegos', 'trofeos', 'cuna', 'cuarto_el', 'cuarto_ella'];
 export const NOMBRE_CUARTO: Record<Cuarto, string> = {
-  sala: 'Sala', cocina: 'Cocina', bano: 'Baño', cuarto: 'Cuarto', juegos: 'Juegos', trofeos: 'Trofeos', cuna: 'Bebé', cuarto_el: 'Cuarto de Él',
-  cuarto_ella: 'Cuarto de Ella', patio: 'Patio',
+  sala: 'Sala', cocina: 'Cocina', bano: 'Baño', cuarto: 'Cuarto', juegos: 'Juegos', trofeos: 'Trofeos', cuna: 'Bebé', cuarto_el: 'Cuarto de Javier',
+  cuarto_ella: 'Cuarto de Laura', patio: 'Patio',
 };
 /** Con los que empieza la casa; los demás se construyen con monedas en «Ampliar la casa». */
 export const CUARTOS_BASE: Cuarto[] = ['sala', 'cocina', 'bano', 'cuarto', 'patio', 'juegos'];
@@ -22,7 +23,7 @@ export const PRECIO_CUARTO: Partial<Record<Cuarto, number>> = { trofeos: 50, cua
 export const DUENO: Partial<Record<Cuarto, Rol>> = { cuarto_el: 'el', cuarto_ella: 'ella' };
 export const tieneCuarto = (c: Pick<Casa, 'ampliaciones'>, k: Cuarto) => CUARTOS_BASE.includes(k) || !!c.ampliaciones?.includes(k);
 /** Cómo se llaman (lo que se muestra en pantalla; por dentro siguen siendo 'el' y 'ella'). */
-export const NOMBRE_ROL: Record<Rol, string> = { el: 'Javier', ella: 'Laura' };
+export const NOMBRE_ROL: Record<Rol, string> = { ...NOMBRE_PAREJA };
 export const otro = (r: Rol): Rol => (r === 'el' ? 'ella' : 'el');
 
 /** Puntos que se pierden por hora (despierto). Dormido: la energía sube y la comida baja a la mitad. */
