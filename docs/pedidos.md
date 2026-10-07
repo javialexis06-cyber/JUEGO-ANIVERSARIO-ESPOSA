@@ -55,8 +55,6 @@ velocidad, se siente raro…»
 
 ## Ronda 2 de arreglos
 
-**Tutoriales** para Lavarse la cara (Vampire Survivors), Súper Manía, Cien Puertas y los juegos más complejos.
-
 **Súper Manía**
 - La mitad de estantes de cada tipo por tienda (hay demasiados).
 - La lista de mejoras solo muestra las que están desbloqueadas (aunque no alcance la plata).

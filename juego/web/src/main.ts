@@ -17,6 +17,7 @@ import { AYUDAS, AYUDAS_MAX, CLIENTES, GrupoMejora, MEJORAS, TipoCliente } from 
 import * as guardado from './guardado';
 import { aplicarOrden, Espejo, tomarFoto, type Orden } from './espejo';
 import { Juego, NivelDato, Resultado, textoDe } from './juego';
+import { TutorialSuper, tutorialVisto } from './tutorial_super';
 import type { InfoJugador, Jugador, Rol } from './jugador';
 import { CanalSuper, type ConfigDia, type Mensaje } from './linea_super';
 import { Mandos } from './mando';
@@ -58,6 +59,9 @@ let partida: guardado.Partida;
 let juego: Juego | null = null;
 let fondo: Tienda | null = null;
 let pausado = false;
+/** El tutorial guiado (la primera vez en el día 1, o cuando se pide desde «Cómo se juega»). */
+let tutorial: TutorialSuper | null = null;
+let pedirTutorial = false;
 let nivelElegido = 1;
 let legendario = false;
 let mandos: Mandos;
@@ -198,6 +202,12 @@ async function iniciar() {
   };
   const paso = (dt: number) => {
     if (linea) vigilarLinea();
+    // (si la partida del tutorial se acabó o se salió, el globo se va)
+    if (tutorial && (juego !== tutorial.j || juego.terminado)) {
+      tutorial.quitar();
+      tutorial = null;
+    }
+    tutorial?.ocultar(pausado);
     // En línea, el invitado no simula: copia las fotos del anfitrión y mueve su personaje con el joystick
     const espejo = linea?.fase === 'jugando' ? linea.espejo : null;
     if (juego && espejo && !pausado && !juego.terminado) {
@@ -218,6 +228,7 @@ async function iniciar() {
         if (BOT) piloto(juego);
         juego.update(BOT ? 0.1 : dt);
       }
+      tutorial?.paso(dt);
       if (!juego.terminado) ui.actualizar(juego, BOT ? 0.1 * RAPIDO : dt);
       // La música se apura cuando falta poco para cerrar
       sonido.musica.tempo((juego.legendario ? 112 : 100) + (!juego.cerrado && juego.restante < 25 ? 14 : 0));
@@ -433,6 +444,17 @@ async function jugar(n: number) {
   ui.alTomarCorazon = () => juego?.tomarCorazon();
   juego.alTerminar = (r) => terminarDia(juego!, n, r);
   pausado = false;
+  // La primera vez (día 1, en este celular) se aprende jugando con el reloj quieto
+  tutorial?.quitar();
+  tutorial = null;
+  if (!BOT && !params.has('sintutorial') && (modo === 'solo' || modo === 'pareja') && n === 1 && (pedirTutorial || !tutorialVisto())) {
+    tutorial = new TutorialSuper(juego, mundo, () => {
+      tutorial = null;
+      sonido.campana();
+      ui.aviso('¡Abrió la tienda! Ahora sí corre el reloj 🛒');
+    });
+  }
+  pedirTutorial = false;
 }
 
 /**
@@ -583,6 +605,12 @@ function conectarBotones() {
   $('btn-mejoras').addEventListener('click', abrirMejoras);
   $('btn-mej-cerrar').addEventListener('click', abrirMenu);
   $('btn-como').addEventListener('click', () => pantallaUnica('como'));
+  $('btn-tutorial').addEventListener('click', () => {
+    pedirTutorial = true;
+    if (modo !== 'solo' && modo !== 'pareja') modo = 'solo';
+    nivelElegido = 1;
+    void jugar(1);
+  });
   $('btn-como-cerrar').addEventListener('click', abrirMenu);
   const pintarSonido = () => {
     $('btn-sonido').classList.toggle('apagado', sonido.silenciado());

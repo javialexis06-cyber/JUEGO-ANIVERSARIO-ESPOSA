@@ -26,6 +26,7 @@ import { Narrador } from './narrador';
 import type { Ctx, Nivel } from './nivel';
 import { NIVELES } from './niveles';
 import { ProbadorReal } from './probador';
+import { TutorialPuertas, tutorialVisto } from './tutorial';
 import { Puerta } from './puerta';
 import { Sensores } from './sensores';
 import { idRecuerdo } from './voces';
@@ -584,6 +585,27 @@ async function jugar(n: number, plano?: PlanoDesorden) {
   }
   void narrador.irEsquina();
   entrada.bloqueada = false;
+  // La primera vez, la puerta 1 se juega con el tutorial (solo; en las pruebas no sale)
+  if (n === 1 && papel === 'solo' && !SIN_HISTORIA && !params.has('sintutorial') && !tutorialVisto()) {
+    let resuelta = false;
+    void c._resuelto.then(() => (resuelta = true));
+    const pr = probador();
+    const tut = new TutorialPuertas({
+      donde: (nombre) => {
+        const o = escena.escena.getObjectByName(nombre);
+        if (!o || !o.visible) return null;
+        const p = pr.pantalla(o);
+        return { x: p.x, y: p.y };
+      },
+      obj: (nombre) => escena.escena.getObjectByName(nombre) ?? null,
+      items: () => inv.items,
+      elegido: () => inv.elegido,
+      panelAbierto: () => !$('panel').hidden,
+      resuelta: () => resuelta,
+    });
+    c.alSalir(escena.cada(() => tut.paso()));
+    c.alSalir(() => tut.quitar());
+  }
   if (pareja && nivel.pareja?.aviso) aviso(nivel.pareja.aviso, 6000);
   const t0 = escena.t;
   c._ultimoToque = escena.t;

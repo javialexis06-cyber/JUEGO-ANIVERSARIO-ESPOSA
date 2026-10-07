@@ -112,6 +112,8 @@ export class Juego {
   ayudantes: Ayudante[] = [];
   tiempo = 0;
   terminado = false;
+  /** Con el tutorial el reloj del día se queda quieto (no llegan clientes ni problemas solos). */
+  congelado = false;
   stats: Stats = {
     ventas: 0, propinas: 0, bonos: 0, perdidos: 0, atendidos: 0, felices: 0, esperas: [], vaciaMax: 0, basuraMax: 0,
     robos: 0, atrapados: 0, calmadas: 0, resbalones: 0, combos: 0, combosPareja: 0, choques: 0, tumbados: 0,
@@ -340,6 +342,11 @@ export class Juego {
 
   /** Ya se salió del día: lo que termine de cargar después no debe aparecer en la tienda del menú. */
   private destruido = false;
+
+  /** Un cliente ya (el tutorial lo trae para practicar el cobro). */
+  traerCliente(tipo: TipoCliente) {
+    void this.nuevoCliente(tipo);
+  }
 
   private async nuevoCliente(tipo: TipoCliente) {
     const e = this.tienda.entrada;
@@ -771,8 +778,10 @@ export class Juego {
 
   update(dt: number) {
     if (this.terminado) return;
-    this.tiempo += dt;
-    if (!this.cerrado) {
+    if (!this.congelado) this.tiempo += dt;
+    if (this.congelado) {
+      // (con el tutorial no llega nadie solo)
+    } else if (!this.cerrado) {
       while (this.creados < this.llegadas.length && this.tiempo >= this.llegadas[this.creados].t) void this.nuevoCliente(this.llegadas[this.creados++].tipo);
       while (this.programados.length && this.tiempo >= this.programados[0].t) {
         const p = this.programados.shift()!;

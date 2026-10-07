@@ -25,6 +25,16 @@ Tu trabajo, y el de ella, es que **nunca falte producto**, que **nadie espere mu
 
 ---
 
+### El tutorial (la primera vez)
+La primera vez que se abre el **día 1** en un celular (solo o los dos en el mismo celular), el reloj se queda quieto y un
+globo guía paso a paso, con una flecha que señala en la tienda: caminar con el joystick (con la manito que lo muestra),
+llenar el carrito en la bodega, reponer un estante que se vacía para la práctica, cobrarle a una clienta que llega,
+mandar al personaje con un toque y «¡Abrir la tienda!» (ahí arranca el reloj). Cada paso espera a que se haga y se
+puede saltar. Se repite desde «Cómo se juega» → «🎓 Practicar». Queda anotado en el aparato (`supermania-tutorial`);
+código en `src/tutorial_super.ts` (`Juego.congelado` frena el reloj y las llegadas; `Juego.traerCliente`).
+
+---
+
 ## 2. Las vitrinas: cómo se vacían y cómo avisan
 
 ### Lo que ves es lo que hay

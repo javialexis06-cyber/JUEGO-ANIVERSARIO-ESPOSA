@@ -230,6 +230,14 @@ la explica), para que nadie se quede trabado.
 | 99 | Todo junto: inclinar, sacudir y tocar | combinado |
 | 100 | La puerta del corazón: los dos pulgares juntos cinco segundos | dos dedos + mantener |
 
+## El tutorial (la primera vez, en la puerta 1)
+
+Después de la narradora, la puerta 1 se juega con un globo y una flecha que señalan qué hacer: arrastrar el tapete, leer
+la notica, tocar el abrigo, guardar la llave en el bolsillo y usarla en la puerta (y que el dulce 🍬 de arriba se cambia
+por pistas). Cada paso espera a que se haga; se puede saltar. Con un candado o una nota abierta el globo se esconde.
+Solo jugando solo; no sale con `?sinhistoria=1` ni `?sintutorial` (las pruebas). Queda anotado en el aparato
+(`cien-puertas-tutorial`); código en `src/puertas/tutorial.ts`.
+
 ## Recompensas
 
 - Primera vez que se abre una puerta: +1 moneda para la casa (pasa como el sueldo del súper). Terminar un
