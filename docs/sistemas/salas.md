@@ -100,11 +100,17 @@ Reglas para los juegos:
 Para pasarle el juego a amigos sin que se lleven nada de la pareja hay una **compilación aparte**:
 
 - `npm run build:amigos` (`vite build --mode amigos`, carpeta `dist-amigos`): solo las páginas de `PAGINAS_AMIGOS`
-  (`amigos.html` y `sangre.html`; un juego nuevo para amigos se agrega ahí y en `src/amigos/juegos.ts`). De `src/`
+  (`amigos.html`, `sangre.html` y `super.html`; un juego nuevo para amigos se agrega ahí y en `src/amigos/juegos.ts`, y su
+  página lleva `<meta name="apto-amigos" content="si">`). De `src/`
   solo entra lo de `PERMITIDOS_AMIGOS` (si algo más se cuela, la compilación falla con el nombre del archivo) y lo
   personal se cambia por su versión vacía (`src/amigos/sin_pareja/`: el modelo, la sincronización y el catálogo de
   la casa, y lo personal del lavado, que vive aparte en `src/casa/lavado/pareja.ts`). De `public/` solo se copia lo
-  que usan esos juegos (`PUBLICOS_AMIGOS`, más la ropa del clóset genérico).
+  que usan esos juegos (`PUBLICOS_AMIGOS`, `MODELOS_SUPER`, los íconos de los productos y la ropa del clóset genérico).
+- **Súper Manía en la app de amigos**: `super.html` sale con sus textos neutros de una vez (el build cambia lo de cada
+  `data-neutro` y quita lo `solo-pareja`), las cartas del súper (`src/recuerdos_super.ts`) se cambian por una lista
+  vacía y el día 100 se llama «Gran final». El amigo guarda su partida aparte (`amigo-supermania`) y su local crece
+  igual que el de la pareja. «Wafle» sí puede estar (es una sección del súper): lo que no puede estar es la anécdota
+  (`PLATOS_DEL_JUEGO` en `verificar-amigos.mjs`).
 - Después, `scripts/verificar-amigos.mjs` revisa **todo** `dist-amigos` (JavaScript, HTML, CSS, JSON, SVG y los
   nombres de mallas y materiales de los GLB) contra `scripts/palabras-pareja.mjs` (apodos, lugares, chistes) y los
   recuerdos de docs/sistemas/cien-puertas.md y del lavado. Si encuentra algo, falla y GitHub Actions no publica.

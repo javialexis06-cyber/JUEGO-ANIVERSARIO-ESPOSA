@@ -13,7 +13,7 @@ import { defineConfig, type Plugin } from 'vite';
 //   que en dist-amigos no quede ni una palabra de la pareja (docs/sistemas/salas.md, «Versión para amigos»).
 
 /** Páginas de la versión para amigos. Un juego nuevo para amigos se agrega aquí (y en la lista de `src/amigos/juegos.ts`). */
-export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html'];
+export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html'];
 
 /** Lo que se cambia, en la versión para amigos, por su versión vacía o sin nada personal. */
 const SUSTITUTOS: Record<string, string> = {
@@ -21,6 +21,7 @@ const SUSTITUTOS: Record<string, string> = {
   'src/casa/modelo.ts': 'src/amigos/sin_pareja/modelo.ts',
   'src/casa/sincro.ts': 'src/amigos/sin_pareja/sincro.ts',
   'src/casa/catalogo.ts': 'src/amigos/sin_pareja/catalogo.ts',
+  'src/recuerdos_super.ts': 'src/amigos/sin_pareja/recuerdos_super.ts',
 };
 
 /**
@@ -34,7 +35,12 @@ export const PERMITIDOS_AMIGOS = [
 ];
 
 /** Lo de `public/` que va en la versión para amigos (carpetas que terminan en «/» o archivos), además de la ropa. */
-export const PUBLICOS_AMIGOS = ['modelos/el.glb', 'modelos/ella.glb', 'modelos/lavado/', 'lavado/', 'modelos/sangre/', 'sangre/'];
+export const PUBLICOS_AMIGOS = ['modelos/el.glb', 'modelos/ella.glb', 'modelos/lavado/', 'lavado/', 'modelos/sangre/', 'sangre/', 'datos/niveles.json',
+  'modelos/manifest_export.json'];
+
+/** Lo de Súper Manía en `modelos/` (y en `modelos-plano/`, la copia para celulares sin WebAssembly): el local en sus
+ *  4 tamaños, vitrinas, letreros, productos, utilería y la gente; y los íconos de los productos. */
+const MODELOS_SUPER = /^(tienda\d(_base\.glb|\.json)|vitrina_\w+\.glb|letrero_\w+\.glb|productos\.glb|boton_comprar\.glb|carrito_\d\.glb|canasta\.glb|caneca\.glb|basura\.glb|charco\.glb|planta\.glb|parlante\.glb|globos\.glb|camara\.glb|trapero_balde\.glb|(abuelita|mama|adolescente|ejecutivo|deportista|famoso|ladron|nina|cajera|reponedor|aseo|guardia)\.glb)$/;
 
 const raiz = __dirname;
 const rel = (id: string) => relative(raiz, id.split('?')[0]).split(sep).join('/');
@@ -46,6 +52,15 @@ function versionAmigos(): Plugin {
     enforce: 'pre',
     configResolved(c) {
       salida = c.build.outDir;
+    },
+    // Las páginas de la pareja que también juegan los amigos (super.html) salen con sus textos neutros de una vez
+    // (`data-neutro`) y sin lo que es solo de los dos (`solo-pareja`): así ni el HTML trae nada de la pareja
+    transformIndexHtml(html) {
+      const des = (t: string) => t.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+      return html
+        .replace(/<(\w+)([^>]*?\sdata-neutro="([^"]*)"[^>]*)>[\s\S]*?<\/\1>/g, (_m, tag, attrs, neutro) => `<${tag}${attrs}>${des(neutro)}</${tag}>`)
+        .replace(/(\stitle=")[^"]*("[^>]*?\sdata-neutro-title="([^"]*)")/g, (_m, a, b, t) => `${a}${t}${b}`)
+        .replace(/<(\w+)[^>]*\bclass="[^"]*\bsolo-pareja\b[^"]*"[^>]*>[\s\S]*?<\/\1>\s*/g, '');
     },
     async resolveId(fuente, importador, opciones) {
       if (!importador || fuente.startsWith('\0')) return null;
@@ -70,6 +85,12 @@ function versionAmigos(): Plugin {
         cpSync(de, resolve(salida, r), { recursive: true });
       };
       for (const r of PUBLICOS_AMIGOS) copiar(r);
+      for (const d of ['modelos', 'modelos-plano']) {
+        if (!existsSync(resolve(pub, d))) continue;
+        for (const f of readdirSync(resolve(pub, d))) if (MODELOS_SUPER.test(f)) copiar(`${d}/${f}`);
+      }
+      // Íconos de los productos y de las cajas de la bodega (los demás .png son de la casa: deco_, comida_, regalo_…)
+      for (const f of readdirSync(resolve(pub, 'modelos/iconos'))) if (/^(?!deco_|comida_|regalo_)[a-z_]+\.png$/.test(f)) copiar(`modelos/iconos/${f}`);
       const prendas = JSON.parse(readFileSync(resolve(raiz, 'src/salas/prendas.json'), 'utf8')) as {
         modelos: { m: string; para: string[]; i: string }[];
         items: Record<string, { modelo: string; para: string[] }>;

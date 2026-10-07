@@ -1,5 +1,5 @@
-// Progreso guardado en el navegador (partida en solitario de la tiendita).
-import { FICHAS } from './balance';
+// Progreso guardado en el navegador (la partida del súper: el mismo local que va creciendo).
+import { FICHAS, PRECIO_COMPRA, PRECIO_MEJORA_VITRINA } from './balance';
 import type { TiendaDato } from './tienda';
 
 export interface Partida {
@@ -14,7 +14,14 @@ export interface Partida {
   lunas: Record<number, boolean>;
   /** Estrellas ya gastadas en mejoras (las ganadas salen de las estrellas y lunas conseguidas). */
   gastadas: number;
+  /** Tamaño del local que ya se estrenó (1 Tiendita … 4 Hipermercado): al crecer se regala la sección nueva. */
+  tamano: number;
+  /** 2: el local que crece (antes la Tiendita tenía 3 estantes, 2 neveras de bebidas y una isla de dos caras). */
+  version: number;
 }
+
+/** Sitios de la Tiendita vieja que ya no existen (tercer estante, segunda nevera de bebidas e isla de dos caras). */
+const SITIOS_VIEJOS: Record<number, string> = { 3: 'abarrotes', 8: 'bebidas', 10: 'abarrotes', 11: 'abarrotes' };
 
 import { modoAmigo } from './neutro';
 
@@ -23,10 +30,27 @@ const CLAVE_PAREJA = 'supermania-jugable1';
 const CLAVE_AMIGO = 'amigo-supermania';
 const clave = () => (modoAmigo() ? CLAVE_AMIGO : CLAVE_PAREJA);
 
+/** `t`: el local en su tamaño más grande (trae todos los sitios); al empezar solo vienen los de la Tiendita. */
 export function nueva(t: TiendaDato): Partida {
   const sitios: Record<number, number> = {};
-  for (const s of t.sitios) sitios[s.id] = s.inicio ? 1 : 0;
-  return { dinero: 0, sitios, estrellas: {}, mejoras: { carrito: 1 }, ayudas: {}, corazones: {}, lunas: {}, gastadas: 0 };
+  for (const s of t.sitios) sitios[s.id] = s.inicio && (s.tamano ?? 1) <= 1 ? 1 : 0;
+  return { dinero: 0, sitios, estrellas: {}, mejoras: { carrito: 1 }, ayudas: {}, corazones: {}, lunas: {}, gastadas: 0, tamano: 1, version: 2 };
+}
+
+/** Al estrenar un tamaño del local llega de regalo su sección nueva (y lo que venga comprado de ese tamaño).
+ *  Devuelve los nombres de las secciones regaladas (vacío si no había nada que estrenar). */
+export function estrenar(p: Partida, t: TiendaDato, tamano: number): string[] {
+  if (tamano <= p.tamano) return [];
+  const regalos: string[] = [];
+  for (const s of t.sitios) {
+    const desde = s.tamano ?? 1;
+    if (s.inicio && desde > p.tamano && desde <= tamano && !p.sitios[s.id]) {
+      p.sitios[s.id] = 1;
+      regalos.push(s.seccion);
+    }
+  }
+  p.tamano = tamano;
+  return regalos;
 }
 
 const esObjeto = (v: unknown): v is Record<string, any> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -55,11 +79,23 @@ export function normalizar(raw: unknown, t: TiendaDato): Partida {
     corazones: banderas(raw.corazones),
     lunas: banderas(raw.lunas),
     gastadas: entero(raw.gastadas),
+    tamano: Math.max(1, Math.min(4, entero(raw.tamano, 1))),
+    version: 2,
   };
+  // Partidas de antes del local que crece: se devuelve lo pagado por los sitios que ya no existen
+  if (entero(raw.version) < 2) {
+    for (const [id, seccion] of Object.entries(SITIOS_VIEJOS)) {
+      const nivel = p.sitios[Number(id)] ?? 0;
+      if (nivel > 0) p.dinero += (PRECIO_COMPRA[seccion] ?? 40) + (nivel - 1) * PRECIO_MEJORA_VITRINA;
+    }
+  }
   // Partidas de la primera versión: el carrito estaba suelto
   if (!esObjeto(raw.mejoras)) p.mejoras = { carrito: entero(raw.carrito, 1) || 1 };
   p.mejoras.carrito = Math.max(1, p.mejoras.carrito ?? 1);
-  for (const s of t.sitios) p.sitios[s.id] = Math.min(p.sitios[s.id] ?? 0, t.tope ?? 2);
+  // Solo quedan los sitios que existen en el local (al nivel máximo del tamaño más grande)
+  const sitios: Record<number, number> = {};
+  for (const s of t.sitios) sitios[s.id] = Math.min(p.sitios[s.id] ?? 0, t.tope ?? 3);
+  p.sitios = sitios;
   if (esObjeto(raw.estrellas)) {
     for (const [k, v] of Object.entries(raw.estrellas)) {
       if (Array.isArray(v)) p.estrellas[Number(k)] = [0, 1, 2].map((i) => v[i] === true);

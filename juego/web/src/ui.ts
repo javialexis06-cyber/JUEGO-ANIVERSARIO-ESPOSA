@@ -20,7 +20,7 @@ export function mostrar(id: string, si = true) {
 export function pantallaUnica(id: string | null) {
   // La pantalla de carga se desvanece en vez de cortarse de golpe
   if (id !== 'carga') salirSuave($('carga'));
-  for (const p of ['carga', 'menu', 'tarjeta', 'resultado', 'mejoras', 'como', 'pausa', 'sala', 'codigo']) mostrar(p, p === id);
+  for (const p of ['carga', 'menu', 'tarjeta', 'resultado', 'mejoras', 'como', 'pausa', 'sala', 'codigo', 'carta']) mostrar(p, p === id);
 }
 
 /** Elementos anclados al mundo 3D, reciclados cuadro a cuadro. */
@@ -228,7 +228,7 @@ export class UI {
 
     this.capa.empezar();
     // Avisos de vitrinas y barra de inventario
-    const alertas: { id: number; producto: string; vacia: boolean }[] = [];
+    const alertas: { id: number; producto: string; vacia: boolean; f: number }[] = [];
     for (const v of j.tienda.enVenta) {
       const f = v.fraccion;
       if (f >= 0.67) continue;
@@ -249,10 +249,12 @@ export class UI {
           img.src = icono(producto);
           img.dataset.p = producto;
         }
-        alertas.push({ id: v.dato.id, producto, vacia: f === 0 });
+        alertas.push({ id: v.dato.id, producto, vacia: f === 0, f });
       }
     }
-    this.pintarAlertas(alertas);
+    // Abajo solo caben las más urgentes en una fila (en el local grande eran tantas que tapaban la caja)
+    // (se escogen las 5 más vacías y se muestran en orden fijo para no repintarlas a cada rato)
+    this.pintarAlertas([...alertas].sort((x, y) => x.f - y.f).slice(0, 5).sort((x, y) => x.id - y.id));
     // Globos de los clientes
     for (const c of j.clientes) {
       if (c.estado === 'fuera') continue;

@@ -31,6 +31,10 @@ export interface NivelDato {
   duracion_s: number;
   paciencia: number;
   clientes: { solitario: number; pareja: number };
+  /** Cuántos productos puede llevar un cliente (se sortea de 1 a este número). */
+  lista_max?: number;
+  /** Día dentro del tamaño del local (1 a 25). */
+  dia_tienda?: number;
   problemas: string[];
   estrellas: Estrella[];
   noticia?: {
@@ -282,7 +286,7 @@ export class Juego {
       this.llegadas.push({ t, tipo: azar(disponibles) });
     }
     const hay = (p: string) => nv.problemas.includes(p);
-    const gran = nv.evento === 'Gran día';
+    const gran = nv.evento === 'Gran día' || nv.evento === 'Gran final';
     const cuantos = (base: number) => Math.max(1, Math.round((base + (gran ? 1 : 0)) * this.problemasX));
     if (hay('famoso')) this.llegadas.push({ t: dur * (0.35 + Math.random() * 0.2), tipo: 'famoso' });
     this.llegadas.sort((a, b) => a.t - b.t);
@@ -313,7 +317,7 @@ export class Juego {
   private listaPara(tipo: TipoCliente) {
     const opciones = this.tienda.enVenta;
     const d = this.nivel.dia;
-    const max = (d <= 1 ? 1 : d < 8 ? 2 : d < 20 ? 3 : 4) + (this.nivel.tienda - 1);
+    const max = this.nivel.lista_max ?? (d <= 1 ? 1 : d < 8 ? 2 : d < 20 ? 3 : 4);
     const k = Math.min(tipo === 'famoso' ? 3 : 1 + Math.floor(Math.random() * max), opciones.length);
     const prefiere = CLIENTES[tipo].prefiere;
     const hoy = this.efectos.preferir ?? [];
@@ -843,7 +847,8 @@ export class Juego {
     const m = metaDe(e.meta);
     const esperaProm = s.esperas.length ? s.esperas.reduce((a, b) => a + b, 0) / s.esperas.length : 0;
     switch (e.clave) {
-      case 'ventas': return s.ventas >= m;
+      case 'ventas':
+      case 'experta': return s.ventas >= m;
       case 'propinas': return s.propinas >= m;
       case 'perdidos': return s.perdidos <= m;
       case 'espera_caja': return esperaProm <= m;
@@ -864,7 +869,8 @@ export class Juego {
     const s = this.stats;
     const m = metaDe(e.meta);
     switch (e.clave) {
-      case 'ventas': return `${s.ventas}/${m}`;
+      case 'ventas':
+      case 'experta': return `${s.ventas}/${m}`;
       case 'propinas': return `${s.propinas}/${m}`;
       case 'perdidos': return `${s.perdidos}/${m} máx`;
       case 'espera_caja': {

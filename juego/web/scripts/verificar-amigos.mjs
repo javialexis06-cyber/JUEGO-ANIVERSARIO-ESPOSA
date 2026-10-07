@@ -45,7 +45,10 @@ function textosDelLavado() {
 const COMUNES = new Set(['Para siempre']);
 
 const FRASES = [...new Set([...recuerdosDelDocumento(), ...textosDelLavado()].filter((t) => t.length >= 8 && !COMUNES.has(t)))];
-const LISTA = [...PALABRAS_PAREJA, ...FRASES];
+/** Platos que son parte de los juegos de los amigos (el kiosco de wafles del súper, sus productos): el plato solo no
+ *  delata nada; lo personal es la anécdota («wafles cada vez que quieras»), que sí se busca. */
+const PLATOS_DEL_JUEGO = new Set(['wafle']);
+const LISTA = [...PALABRAS_PAREJA.filter((p) => !PLATOS_DEL_JUEGO.has(p)), ...FRASES];
 
 /** Archivos que delatan la casa o lo personal (por su ruta). */
 const RUTAS_PROHIBIDAS = [

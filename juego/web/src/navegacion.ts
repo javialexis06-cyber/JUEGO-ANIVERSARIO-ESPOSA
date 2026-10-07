@@ -76,17 +76,17 @@ export class Navegacion {
     const f = new Float32Array(n).fill(Infinity);
     const de = new Int32Array(n).fill(-1);
     const cerrado = new Uint8Array(n);
-    const abiertos: number[] = [];
+    // Montículo de abiertos (el de menor f arriba): en el local grande hay el triple de casillas y mucha más gente
+    const abiertos = new Monticulo(f);
     const h = (i: number, j: number) => Math.hypot(i - gi, j - gj);
     const s = this.idx(si, sj);
     g[s] = 0;
     f[s] = h(si, sj);
-    abiertos.push(s);
+    abiertos.poner(s);
     const meta = this.idx(gi, gj);
-    while (abiertos.length) {
-      let mejor = 0;
-      for (let k = 1; k < abiertos.length; k++) if (f[abiertos[k]] < f[abiertos[mejor]]) mejor = k;
-      const c = abiertos.splice(mejor, 1)[0];
+    while (abiertos.largo) {
+      const c = abiertos.sacar();
+      if (cerrado[c]) continue;
       if (c === meta) break;
       cerrado[c] = 1;
       const ci = c % this.nx, cj = Math.floor(c / this.nx);
@@ -103,7 +103,7 @@ export class Navegacion {
             g[nn] = ng;
             f[nn] = ng + h(ni, nj);
             de[nn] = c;
-            if (!abiertos.includes(nn)) abiertos.push(nn);
+            abiertos.poner(nn);
           }
         }
     }
@@ -127,5 +127,53 @@ export class Navegacion {
       k = lejos + 1;
     }
     return out;
+  }
+}
+
+/** Montículo binario de casillas por su f al momento de entrar (una casilla puede quedar repetida: la vieja se salta
+ *  al sacarla, porque ya está cerrada). */
+class Monticulo {
+  private c: number[] = [];
+  private k: number[] = [];
+  constructor(private f: Float32Array) {}
+  get largo() {
+    return this.c.length;
+  }
+  private cambiar(i: number, j: number) {
+    const { c, k } = this;
+    [c[i], c[j]] = [c[j], c[i]];
+    [k[i], k[j]] = [k[j], k[i]];
+  }
+  poner(x: number) {
+    const { c, k } = this;
+    c.push(x);
+    k.push(this.f[x]);
+    let i = c.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (k[p] <= k[i]) break;
+      this.cambiar(p, i);
+      i = p;
+    }
+  }
+  sacar(): number {
+    const { c, k } = this;
+    const top = c[0];
+    const uc = c.pop()!, uk = k.pop()!;
+    if (c.length) {
+      c[0] = uc;
+      k[0] = uk;
+      let i = 0;
+      for (;;) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < c.length && k[l] < k[m]) m = l;
+        if (r < c.length && k[r] < k[m]) m = r;
+        if (m === i) break;
+        this.cambiar(m, i);
+        i = m;
+      }
+    }
+    return top;
   }
 }

@@ -85,7 +85,7 @@ const menu = await anfitrion.evaluate(() => ({ casa: document.getElementById('bt
 revisar(/sala de juegos/.test(menu.casa) && menu.linea, `El amigo no ve «En línea» ni la casa («${menu.casa}»)`);
 
 // 2. El anfitrión abre la sala desde la tarjeta del día
-await anfitrion.click('#niveles .etiqueta:nth-child(1)');
+await anfitrion.click('#niveles .etiqueta:nth-of-type(1)');
 await anfitrion.click('#btn-modo-sala');
 await anfitrion.screenshot({ path: `${carpeta}/1-tarjeta-sala.png` });
 await anfitrion.click('#btn-abrir');

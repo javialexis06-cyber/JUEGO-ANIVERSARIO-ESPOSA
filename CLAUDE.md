@@ -112,7 +112,9 @@ mimos), `catalogo.ts`, `main.ts` (flujo e interfaz), `ampliacion.ts`, `trofeos.t
 1. Se hacen por código en `personajes/blender/*.py` (primitivas, SDF + marching cubes, materiales de fieltro).
 2. Exportar: `python3 personajes/blender/exportar_glb.py juego/web/modelos-crudos <partes>` (o con `blender -b -P`;
    partes: `productos, vitrinas, letreros, utileria, tienda, iconos, animados, pareja, casa, regalos…`; cuartos
-   sueltos con `CASA_SOLO=trofeos,cuna`); comida y decoración: `exportar_tienda_casa.py`.
+   sueltos con `CASA_SOLO=trofeos,cuna`); comida y decoración: `exportar_tienda_casa.py`. El local del súper (4
+   tamaños, los sitios con el mismo número en todos) vive en `local_super.py`; `revisar_local.py <carpeta>` dibuja los
+   planos y revisa caminos antes de exportar (`tienda`, con `TIENDA_SOLO=2,3` para unos solos).
 3. Optimizar: `cd juego/web && npm run optimizar` (o `SOLO='^deco_x\.glb$' node scripts/optimizar-modelos.mjs`).
    Revisa `git status` después: el optimizador también copia JSON e íconos.
 4. **Trampa**: el origen de cada objeto queda en el origen del mundo; construye en el origen y mueve después.

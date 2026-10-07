@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apto-amigos" content="si">
 <title>Súper Manía en Pareja</title>
+<link rel="icon" href="data:,">
 <!-- Modo amigo: un aparato de amigo solo entra con ?amigo (desde su sala de juegos; aquí todo va en modo neutro).
      Sin eso (un enlace viejo de la casa, atrás), vuelve a su sala de juegos -->
 <script>try{var a=JSON.parse(localStorage.getItem('nuestro-hogar-amigo')||'null');if(a&&a.activo!==false&&a.nombre&&!/[?&]amigo(=|&|$)/.test(location.search))location.replace('./amigos.html')}catch(e){}</script>
@@ -38,13 +40,14 @@
     </div>
   </header>
   <div class="riel">
-    <p class="riel-titulo">Tiendita de barrio · 25 días · desliza para ver más</p>
+    <p id="riel-titulo" class="riel-titulo">Tiendita de barrio · desliza para ver más</p>
     <div id="niveles" class="riel-etiquetas"></div>
   </div>
   <nav class="menu-botones">
     <a id="btn-casa" class="boton boton-papel" href="./index.html">Volver a la casa</a>
     <button id="btn-mejoras" class="boton boton-tomate">Mejorar la tienda</button>
     <button id="btn-unirme" class="boton boton-papel">🔑 Unirme con código</button>
+    <button id="btn-recuerdos" class="boton boton-papel" hidden></button>
     <button id="btn-como" class="boton boton-papel">Cómo se juega</button>
     <button id="btn-musica-menu" class="boton boton-papel boton-chico">Música: sonando</button>
   </nav>
@@ -85,7 +88,7 @@
 <!-- Resultado: tiquete de caja -->
 <section id="resultado" class="pantalla pantalla-centro" hidden>
   <article class="tiquete">
-    <p class="tiquete-negocio">TIENDITA DE BARRIO<br><span data-neutro="Barrio La Alegría · Local 3">Bucaramanga · Medellín</span></p>
+    <p class="tiquete-negocio"><span id="rec-local">TIENDITA DE BARRIO</span><br><span data-neutro="Barrio La Alegría · Local 3">Bucaramanga · Medellín</span></p>
     <p class="tiquete-titulo" id="rec-titulo">Nivel 1</p>
     <ul id="rec-estrellas" class="tiquete-estrellas"></ul>
     <div id="rec-lineas" class="tiquete-lineas"></div>
@@ -96,12 +99,28 @@
       <p id="rec-sueldo" class="tiquete-pasa" hidden></p>
     </div>
     <div class="tiquete-botones">
+      <button id="btn-rcarta" class="boton boton-carta" hidden></button>
       <button id="btn-siguiente" class="boton boton-tomate">Siguiente día</button>
       <button id="btn-repetir" class="boton boton-papel">Repetir</button>
       <button id="btn-rmejoras" class="boton boton-papel">Mejorar la tienda</button>
       <button id="btn-rmenu" class="boton boton-papel">Menú</button>
       <button id="btn-rsalir" class="boton boton-papel" hidden>Salir de la sala</button>
       <button id="btn-rsala" class="boton boton-tomate" hidden>Volver a la sala</button>
+    </div>
+  </article>
+</section>
+
+<!-- Una carta: el local que crece y los recuerdos que se abren en ciertos días -->
+<section id="carta" class="pantalla pantalla-centro" hidden>
+  <article class="carta-super">
+    <p id="carta-sello" class="carta-sello" aria-hidden="true"></p>
+    <p id="carta-fecha" class="carta-fecha"></p>
+    <h2 id="carta-titulo"></h2>
+    <p id="carta-texto" class="carta-texto"></p>
+    <p id="carta-firma" class="carta-firma"></p>
+    <ul id="carta-lista" class="carta-lista" hidden></ul>
+    <div class="fila-botones">
+      <button id="btn-carta" class="boton boton-tomate">¡Qué bonito!</button>
     </div>
   </article>
 </section>
@@ -126,13 +145,14 @@
     <h2>Cómo se juega</h2>
     <ol class="pasos">
       <li><b>Muévete con el joystick</b> de la esquina de abajo a la izquierda (en el computador, con WASD o las flechas). <b>Quédate quieto junto a algo y se hace solo:</b> en la bodega se llena el carrito, junto a un estante se repone, detrás de la caja se cobra y en el balde azul se lava el trapero.</li>
-      <li><b>El carrito</b> se llena en la bodega y alcanza para <b>2 estantes por viaje</b> (más con la mejora «Carrito grande»): cada reposición deja lleno <b>cualquier estante</b>. Mira cuántas le quedan arriba a la izquierda. Llenar varios estantes en un viaje da <b>combos</b>.</li>
+      <li><b>El carrito</b> se llena en la bodega y alcanza para <b>5 estantes por viaje</b> (hasta 7 con la mejora «Carrito grande»): cada reposición deja lleno <b>cualquier estante</b>. Mira cuántas le quedan arriba a la izquierda. Llenar varios estantes en un viaje da <b>combos</b>.</li>
       <li><b>La caja:</b> quédate detrás de ella cuando haya fila. Las caritas de la fila dicen cómo van: <b>verde</b> contentos, <b>amarilla</b> impacientes y <b>roja</b> a punto de irse bravos (y se van desde la fila).</li>
       <li><b>También puedes tocar</b> una vitrina, la caja o una mugre: el personaje va solo, y cada toque se suma a su lista con un número (otro toque lo cancela). Si mueves el joystick, la lista se borra.</li>
       <li><b>Basura</b> (día 6): pasa por encima para echarla a la bolsa (caben 4) y vacíala en la caneca. <b>Charcos</b> (día 8): quédate encima para trapearlos; el <b>trapero</b> aguanta 4 manchas y luego hay que lavarlo en el balde.</li>
       <li><b>Canastas:</b> sin canastas en la entrada no entra nadie. Pasa por encima de las tiradas (hasta 3) y llévalas a la entrada.</li>
       <li data-neutro="&lt;b&gt;Dos en este celular:&lt;/b&gt; uno con el joystick de la izquierda y el otro con el de la derecha. Si se chocan de frente y rápido quedan mareados; si uno sale volando contra un estante, lo tumba (se vacía y ensucia el piso), y un carrito lleno se riega. Si terminan cosas casi a la vez hacen &lt;b&gt;combos en equipo&lt;/b&gt;."><b>Los dos en este celular:</b> Javier con el joystick de la izquierda y Laura con el de la derecha. Si se chocan de frente y rápido quedan mareados; si uno sale volando contra un estante, lo tumba (se vacía y ensucia el piso), y un carrito lleno se riega. Si terminan cosas casi a la vez hacen <b>combos en pareja</b>.</li>
       <li data-neutro="&lt;b&gt;Sala con código (de 2 a 4):&lt;/b&gt; uno abre la tienda y les pasa el código de 5 letras; los demás entran con «Unirme con código». Se juega con las vitrinas y mejoras de quien abrió la sala. Cada uno mueve su muñeco con su joystick y toca lo que quiere hacer; todos ganan las estrellas del día en su celular."><b>En línea, cada uno en su celular:</b> los dos celulares tienen que estar en la casa en línea (Nuestro Hogar). El que abre la tienda invita al otro (le llega el aviso en la casa) y se juega con las vitrinas y mejoras del que invita. Cada uno mueve su personaje con su joystick y toca lo que quiere hacer; los dos ganan las estrellas y las monedas del día.</li>
+      <li><b>Cada día tiene su meta</b> (obligatoria para seguir) y una <b>meta experta</b> para los mejores; la tercera estrella es un reto que cambia. <b>El local crece</b> en el día 26 (Minimercado), el 51 (Supermercado) y el 76 (Hipermercado): todo lo que tenían se queda, llega una sección nueva de regalo y aparecen sitios para comprar.</li>
       <li><b>Ladrón</b> (día 12): tócalo antes de que llegue a la puerta. <b>Niña traviesa</b> (día 14): tócala para calmarla y recoge lo que tumbó. <b>Famoso</b> (día 18): todos se quedan mirándolo.</li>
       <li><b>Entre días</b> compra vitrinas con monedas y <b>mejoras con estrellas</b> (1 por cada estrella nueva, 5 por cada luna): tenis, carrito grande, estantes más fáciles, ayudantes, capacitación, segunda caja… Los últimos días no se pasan sin mejorar: si te trabas, repite días por las estrellas que te faltan. Las <b>ayudas</b> (tinto, canción, limpieza) se usan con los botones de la izquierda.</li>
       <li data-neutro="Con 3 estrellas se abre el &lt;b&gt;modo legendario&lt;/b&gt; de ese día: gana una Luna. Y en cada día hay un &lt;b&gt;trébol de la suerte&lt;/b&gt; escondido que aparece un momento.">Con 3 estrellas se abre el <b>modo legendario</b> de ese día: gana una Luna. Y en cada día hay un <b>corazón escondido</b> que aparece un momento.</li>

@@ -33,7 +33,7 @@ await pagina.waitForSelector('#menu:not([hidden])', { timeout: 120000 });
 console.log('menú listo en', ((Date.now() - t0) / 1000).toFixed(1), 's');
 await pagina.waitForTimeout(800);
 await pagina.screenshot({ path: `${carpeta}/1-menu.png` });
-await pagina.click(`#niveles .etiqueta:nth-child(${nivel})`);
+await pagina.click(`#niveles .etiqueta:nth-of-type(${nivel})`);
 await pagina.waitForTimeout(500);
 await pagina.screenshot({ path: `${carpeta}/2-tarjeta.png` });
 if (process.env.LEGENDARIO) await pagina.click('#btn-legendario');

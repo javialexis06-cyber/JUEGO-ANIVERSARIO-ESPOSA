@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { aTres } from './mundo';
 import { Navegacion, P } from './navegacion';
-import { CAPACIDAD, COBRO, PUNTOS_TIENDA } from './balance';
+import { CAPACIDAD, COBRO } from './balance';
 import { cargar, copia, Productos } from './recursos';
 
 export interface SitioDato {
@@ -11,6 +11,8 @@ export interface SitioDato {
   tipo: string;
   inicio: boolean;
   letrero: boolean;
+  /** Tamaño del local en que aparece este sitio (1 Tiendita … 4 Hipermercado). */
+  tamano?: number;
   isla?: boolean;
   posicion: Record<string, { x: number; y: number; rot: number }>;
   huella: Record<string, number[]>;
@@ -26,16 +28,26 @@ export interface TiendaDato {
   bodega: P;
   entrada: P;
   sitios: SitioDato[];
+  /** Puntos fijos de este tamaño del local (canecas, canastas, guardia, balde y adornos comprados). */
+  puntos?: PuntosTienda;
+  /** Utilería fija del cascarón que estorba el paso (islas de oferta, pilas de mercancía, materas). */
+  obstaculos?: [number, number, number, number][];
+  /** Dónde va la segunda caja (mejora «Segunda caja»). */
+  caja2_x?: number;
+}
+export interface PuntosTienda {
+  caneca: P; caneca2: P; canastas: P; guardia: P; lavadero: P;
+  decoracion: Record<string, { p: P; rot: number; escala: number; obstaculo?: [number, number, number, number] }>;
 }
 
 export { CAPACIDAD, PRECIO } from './balance';
 export const NOMBRE_SECCION: Record<string, string> = {
   frutas: 'Frutas', lacteos: 'Lácteos', abarrotes: 'Abarrotes', bebidas: 'Bebidas', panaderia: 'Panadería', congelados: 'Congelados',
-  carnes: 'Carnes', caja: 'Caja',
+  carnes: 'Carnes', wafles: 'Wafles', arepas: 'Arepas', caja: 'Caja',
 };
 export const CAJA_SECCION: Record<string, string> = {
   frutas: 'caja frutas', lacteos: 'caja lacteos', abarrotes: 'caja abarrotes', bebidas: 'caja bebidas', panaderia: 'caja panaderia',
-  congelados: 'caja congelados', carnes: 'caja carnes',
+  congelados: 'caja congelados', carnes: 'caja carnes', wafles: 'caja wafles', arepas: 'caja arepas',
 };
 const GIRO_LETRERO = THREE.MathUtils.degToRad(38);
 
@@ -291,11 +303,6 @@ export class Caja {
   }
 }
 
-// Obstáculos fijos del cascarón de la tiendita (pilas de mercancía, planta, puesto de canastas)
-const OBSTACULOS: Record<number, [number, number, number, number][]> = {
-  1: [[4.2, -3.9, 5.8, -2.6], [1.3, 3.0, 2.9, 4.5], [-5.9, -4.4, -5.2, -3.7], [-5.8, -4.0, -5.0, -3.3]],
-};
-
 /** Libera la geometría y el material hechos a mano para esta tienda (tapetes y punteados); lo cargado de los .glb
  *  se comparte entre copias y se queda. Sin esto, cada día jugado dejaba memoria de la tarjeta gráfica sin soltar. */
 export function liberarPropios(raiz: THREE.Object3D) {
@@ -339,8 +346,6 @@ function balde(): THREE.Group {
   return g;
 }
 
-/** Dónde va la segunda caja (se compra con la mejora «Segunda caja»), por tienda. */
-const CAJA2_X: Record<number, number> = { 1: 0.3 };
 export const ID_CAJA2 = 90;
 
 export class Tienda {
@@ -394,21 +399,23 @@ export class Tienda {
     const niv = { ...niveles };
     const cajaSitio = this.dato.sitios.find((x) => x.seccion === 'caja');
     if (mejoras.caja2 && cajaSitio) {
-      const x2 = CAJA2_X[this.dato.nivel] ?? 0;
+      const x2 = this.dato.caja2_x ?? 0;
       const posicion = Object.fromEntries(Object.entries(cajaSitio.posicion).map(([k, p]) => [k, { ...p, x: x2 }]));
       sitios.push({ ...cajaSitio, id: ID_CAJA2, posicion, letrero: false, inicio: true });
       niv[ID_CAJA2] = niveles[cajaSitio.id] ?? 1;
     }
+    // (en un día de un local más chico, las vitrinas se ven al tope de ese tamaño)
+    const tope = this.dato.tope ?? 3;
     for (const s of sitios) {
       const v = new Vitrina(s);
-      await v.montar(niv[s.id] ?? 0, this.productos, botonesComprar);
+      await v.montar(Math.min(niv[s.id] ?? 0, tope), this.productos, botonesComprar);
       this.vitrinas.push(v);
       this.grupo.add(v.grupo);
       if (s.seccion === 'caja') this.cajas.push(new Caja(v));
     }
     this.caja = this.cajas[0];
     // Canecas, canastas y adornos comprados
-    const pt = PUNTOS_TIENDA[this.dato.nivel];
+    const pt = this.dato.puntos;
     if (pt) {
       const caja = (p: P, r: number): [number, number, number, number] => [p.x - r, p.y - r, p.x + r, p.y + r];
       this.canecas = [pt.caneca];
@@ -457,7 +464,7 @@ export class Tienda {
   armarCaminos() {
     this.nav = new Navegacion(this.dato.W, this.dato.D);
     for (const v of this.vitrinas) if (v.nivel) this.nav.bloquear(...v.rect());
-    for (const r of OBSTACULOS[this.dato.nivel] ?? []) this.nav.bloquear(...r);
+    for (const r of this.dato.obstaculos ?? []) this.nav.bloquear(...r);
     for (const r of this.obstaculosExtra) this.nav.bloquear(...r);
   }
 

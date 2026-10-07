@@ -459,25 +459,59 @@ def exportar_personaje_animado(key, poses_map):
     return escala
 
 
-def exportar_tienda(level):
-    """Cascarón de la tienda (sin sitios, vitrinas ni personajes) + datos de los sitios en JSON."""
-    T = tiendas.TIENDAS[level]
-    W, D = T['W'], T['D']
-    coll = clay.collection(f'Export tienda {level}')
+def _desplazar(objs, dx, dy):
+    """Mueve lo construido en coordenadas del local a las del tamaño (solo lo que no cuelga de otro objeto)."""
+    for o in objs:
+        if o.parent is None:
+            o.location.x += dx
+            o.location.y += dy
+
+
+def exportar_tienda(t):
+    """Cascarón del local en el tamaño t (sin sitios, vitrinas ni personajes) + datos de los sitios en JSON.
+    El local es el mismo en los 4 tamaños: la pared izquierda y la del fondo no se mueven y crece hacia la derecha y
+    hacia el frente (ver local_super.py)."""
+    import local_super as LS
+    T1 = tiendas.TIENDAS[1]
+    W, D = LS.TAMANOS[t]['W'], LS.TAMANOS[t]['D']
+    cx, cy = LS.centro(t)
+    coll = clay.collection(f'Export tienda {t}')
     before = set(bpy.data.objects)
+    # Lo que ya viene centrado: piso, paredes, muros bajos y lámparas
+    tiendas.shell(coll, W, D, tiendas._floor(T1['floor']), T1['wall'])
+    tiendas.knee_walls(coll, W, D, T1['knee'])
+    tiendas.lamps(coll, W, D, t)
+    centrados = set(bpy.data.objects)
+    # Lo demás se arma en coordenadas del local y se corre al final
     U = lambda name, fn, x, y, r=0.0, s=1.0: utileria.build(name, fn, coll, (x, y, 0), r, s)
-    tiendas.shell(coll, W, D, tiendas._floor(T['floor']), T['wall'])
-    tiendas.knee_walls(coll, W, D, T['knee'])
-    for x, z, h, awning in T['windows']:
-        tiendas.window(coll, x, D / 2 - 0.01, z, 2.4, h, awning=awning)
-    tiendas.stockroom(coll, T['stock'], D / 2, 1)
-    tiendas.entrance(coll, -W / 2, T['entr'], level)
-    tiendas.lamps(coll, W, D, level)
-    cx, cz = {1: (-0.2, 2.75), 2: (0.6, 3.0), 3: (-6.0, 3.0), 4: (-7.4, 3.0)}[level]
-    tiendas.clock(coll, cx, D / 2 - 0.02, cz)
-    U('planta', utileria.planta, -W / 2 + 0.6, -D / 2 + 0.5)
-    tiendas.pila_bodega(coll, W / 2 - 1.0, -D / 2 + 0.7, level)
-    tiendas.pila_bodega(coll, T['stock'] - 2.2, D / 2 - 1.1, level + 3)
+    F = LS.FONDO
+    tiendas.window(coll, 2.55, F - 0.01, 1.9, 2.4, 1.3, awning=True)
+    if t >= 3:
+        tiendas.window(coll, LS.derecha(t) - 1.6, F - 0.01, 2.75, 1.6, 0.8)
+    tiendas.stockroom(coll, LS.BODEGA_X, F, 1)
+    tiendas.entrance(coll, LS.IZQ, LS.entrada_y(t), t, torniquete=False)
+    tiendas.clock(coll, LS.IZQ + 0.02, 0.8, 2.75, on_left=True)
+    colores = ('rojo', 'amarillo', 'azul', 'verde', 'rosa')
+    xd = LS.derecha(t)
+    tiendas.garland(coll, (LS.IZQ + 0.05, F - 0.05, 3.2), (xd - 0.2, F - 0.05, 3.2), n=int(W * 1.3), colors=colores)
+    tiendas.garland(coll, (LS.IZQ + 0.05, LS.frente(t) + 0.3, 3.2), (LS.IZQ + 0.05, F - 0.05, 3.2), n=int(D * 1.3), colors=colores)
+    ey = LS.entrada_y(t)
+    tiendas.poster(coll, LS.IZQ + 0.05, ey - LS.ancho_puerta(t) / 2 - 1.5, 1.9, 'pan', 'amarillo', on_left=True, size=0.4)
+    tiendas.poster(coll, LS.IZQ + 0.05, ey + 1.25, 2.3, 'manzana', 'verde', on_left=True, size=0.32)
+    islas = [('naranja', 'amarillo'), ('gaseosa', 'celeste'), ('enlatado', 'coral'), ('manzana', 'menta')]
+    k_isla = k_pila = 0
+    for que, x, y, _r in LS.utileria(t):
+        if que == 'isla':
+            item, color = islas[(k_isla + t) % len(islas)]
+            tiendas.promo_island(coll, x, y, item, 3, color)
+            k_isla += 1
+        elif que == 'pila':
+            tiendas.pila_bodega(coll, x, y, t + k_pila * 3)
+            k_pila += 1
+        elif que == 'matera':
+            U('planta', utileria.planta, x, y, 0.0, 1.2)
+    nuevos_local = [o for o in bpy.data.objects if o not in centrados]
+    _desplazar(nuevos_local, -cx, -cy)
     nuevos = [o for o in bpy.data.objects if o not in before]
     # Las cajas de la bodega son copias de productos: se hacen reales para el cascarón
     for o in nuevos:
@@ -485,46 +519,14 @@ def exportar_tienda(level):
             o['producto'] = o.instance_collection.name.replace('Producto | ', '')
             o.instance_type = 'NONE'
             o.instance_collection = None
-    exportar(nuevos, os.path.join(OUT, f'tienda{level}_base.glb'))
-    # Sitios: posición por nivel de vitrina (el anclaje a la pared depende de la profundidad)
-    sitios = []
-    k = 0
-    for spec in T['slots']:
-        if spec.get('gondola') or spec.get('machine'):
-            continue
-        kind = tiendas.SECCIONES[spec['section']][0]
-        pos = {}
-        for lvl in (1, 2, 3):
-            y1 = tiendas.HUELLA[(kind, lvl)][3]
-            if spec['back'] is not None:
-                x, y, rot = spec['back'], D / 2 - 0.1 - y1, 0.0
-            elif spec['left'] is not None:
-                x, y, rot = -W / 2 + 0.1 + y1, spec['left'], math.pi / 2
-            else:
-                (x, y), rot = spec['at'], spec['rot']
-            pos[lvl] = dict(x=round(x, 3), y=round(y, 3), rot=round(rot, 4))
-        sitios.append(dict(id=k, seccion=spec['section'], tipo=kind, inicio=bool(spec['start']), letrero=bool(spec['sign']),
-                           posicion=pos, huella={lvl: tiendas.HUELLA[(kind, lvl)] for lvl in (1, 2, 3)},
-                           color_tapete=tiendas.SECCIONES[spec['section']][2]))
-        k += 1
-    for spec in T['slots']:
-        if spec.get('gondola'):
-            x0, x1, y0, y1 = tiendas.HUELLA[('estante', tiendas.TOPE[level])]
-            w, d = x1 - x0, y1 - y0
-            for i in range(spec['n']):
-                xx = spec['x'] + (i - (spec['n'] - 1) / 2) * (w + 0.05)
-                for yy, rot in ((spec['y'], 0.0), (spec['y'] + d + 0.02, math.pi)):
-                    pos = {lvl: dict(x=round(xx, 3), y=round(yy, 3), rot=rot) for lvl in (1, 2, 3)}
-                    sitios.append(dict(id=k, seccion='abarrotes', tipo='estante', inicio=False, letrero=False, posicion=pos,
-                                       huella={lvl: tiendas.HUELLA[('estante', lvl)] for lvl in (1, 2, 3)},
-                                       color_tapete=tiendas.SECCIONES['abarrotes'][2], isla=True))
-                    k += 1
-    datos = dict(nivel=level, nombre=T['name'], W=W, D=D, tope=tiendas.TOPE[level], escala_personas=tiendas.PERSON_SCALE,
-                 bodega=dict(x=T['stock'], y=D / 2 - 0.9), entrada=dict(x=-W / 2 + 0.9, y=T['entr']), sitios=sitios,
-                 coordenadas='Blender: x a la derecha, y hacia el fondo, z arriba. En Three.js: (x, 0, -y) y rotación y = rot.')
-    with open(os.path.join(OUT, f'tienda{level}.json'), 'w', encoding='utf-8') as f:
+    exportar(nuevos, os.path.join(OUT, f'tienda{t}_base.glb'))
+    for o in nuevos:
+        o.hide_set(True)
+        o.hide_render = True
+    datos = LS.datos_json(t)
+    with open(os.path.join(OUT, f'tienda{t}.json'), 'w', encoding='utf-8') as f:
         json.dump(datos, f, ensure_ascii=False, indent=1)
-    print('JSON', f'tienda{level}.json', len(sitios), 'sitios', flush=True)
+    print('JSON', f'tienda{t}.json', len(datos['sitios']), 'sitios', flush=True)
 
 
 def exportar_iconos(out_iconos, nombres):
@@ -612,11 +614,19 @@ if __name__ == '__main__':
         tiendas.exclude_sources()
         exportar_iconos(os.path.join(OUT, 'iconos'), [n for n, _ in prod.CATALOGO] + [n for n, _, _ in prod.CAJAS])
     if 'tienda' in PARTES:
-        exportar_tienda(1)
+        solo = [int(k) for k in os.environ.get('TIENDA_SOLO', '1,2,3,4').split(',') if k]
+        for t in solo:
+            exportar_tienda(t)
     if 'vitrinas' in PARTES:
         manifest['vitrinas'] = exportar_vitrinas(['estante', 'frutas', 'nevera', 'bebidas', 'panaderia', 'congelador', 'caja'], [1, 2])
+    if 'vitrinas_nuevas' in PARTES:
+        # Nivel 3 de todas (Supermercado e Hipermercado) y las secciones que llegan al ampliarse el local
+        manifest['vitrinas3'] = exportar_vitrinas(['estante', 'frutas', 'nevera', 'bebidas', 'panaderia', 'congelador', 'caja'], [3])
+        manifest['vitrinas_nuevas'] = exportar_vitrinas(['vitrina', 'wafles', 'arepas'], [1, 2, 3])
     if 'letreros' in PARTES:
-        exportar_letreros(['frutas', 'abarrotes', 'lacteos', 'panaderia', 'bebidas', 'congelados'])
+        exportar_letreros(['frutas', 'abarrotes', 'lacteos', 'panaderia', 'bebidas', 'congelados', 'carnes', 'wafles', 'arepas'])
+    if 'letreros_nuevos' in PARTES:
+        exportar_letreros(['carnes', 'wafles', 'arepas'])
     if 'utileria' in PARTES:
         exportar_utileria()
     if 'productos' in PARTES:

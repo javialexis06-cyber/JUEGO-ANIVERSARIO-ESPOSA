@@ -13,7 +13,7 @@ import '@fontsource/nunito/latin-800.css';
 import './estilos.css';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
-import { AYUDAS, AYUDAS_MAX, CLIENTES, GrupoMejora, MEJORAS, TipoCliente } from './balance';
+import { AYUDAS, AYUDAS_MAX, CAPACIDAD, CLIENTES, GrupoMejora, MEJORAS, PRECIO_COMPRA, PRECIO_MEJORA_CAJA, PRECIO_MEJORA_VITRINA, TipoCliente } from './balance';
 import * as guardado from './guardado';
 import { aplicarOrden, Espejo, tomarFoto, type Orden } from './espejo';
 import { Juego, NivelDato, Resultado, textoDe } from './juego';
@@ -29,6 +29,7 @@ import { liberarPropios, NOMBRE_SECCION, Tienda, TiendaDato } from './tienda';
 import { mostrar, pantallaUnica, UI } from './ui';
 import { alNeutro, amigoDeAqui, escHtml, esNeutro, modoAmigo, paginaDeSalida, ponerNeutro } from './neutro';
 import { NOMBRE_PAREJA } from './nombres';
+import { DIA_FINAL, RECUERDOS_SUPER, TEXTOS_CARTAS, type RecuerdoSuper } from './recuerdos_super';
 import type { AspectoJugador, JugadorSala, Sala } from './salas/tipos';
 
 const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
@@ -37,13 +38,13 @@ const SUELDO_FRACCION = 1 / 12;
 const CLAVE_MODO = 'supermania-modo';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
-const NIVELES_JUGABLES = 25;
-// (los días duran la mitad que antes y se gana menos por día: todo cuesta un 30 % menos)
-const PRECIO_COMPRA: Record<string, number> = { frutas: 40, abarrotes: 40, bebidas: 40, lacteos: 55, panaderia: 55, congelados: 70, carnes: 70 };
-const PRECIO_MEJORA_VITRINA = 65;
-const PRECIO_MEJORA_CAJA = 85;
+/** Los 100 días: 25 en cada tamaño del local (Tiendita, Minimercado, Supermercado e Hipermercado). */
+let NIVELES_JUGABLES = 100;
 /** Producto de muestra por sección (para los íconos de «qué prefiere cada cliente»). */
-const MUESTRA: Record<string, string> = { frutas: 'manzana', lacteos: 'leche', abarrotes: 'enlatado', bebidas: 'gaseosa', panaderia: 'pan', congelados: 'helado', carnes: 'pollo' };
+const MUESTRA: Record<string, string> = {
+  frutas: 'manzana', lacteos: 'leche', abarrotes: 'enlatado', bebidas: 'gaseosa', panaderia: 'pan', congelados: 'helado', carnes: 'pollo',
+  wafles: 'wafle', arepas: 'arepa',
+};
 
 const params = new URLSearchParams(location.search);
 const BOT = params.has('bot');
@@ -52,7 +53,13 @@ const RAPIDO = Number(params.get('rapido') ?? 1) || 1;
 let mundo: Mundo;
 let ui: UI;
 let productos: Productos;
-let tiendaDato: TiendaDato;
+/** El local en cada tamaño (1 Tiendita … 4 Hipermercado); el 4 trae todos los sitios (la partida los usa todos). */
+const locales: Record<number, TiendaDato> = {};
+const catalogo = () => locales[4];
+/** El local en el tamaño de un día. */
+const localDe = (n: number) => locales[niveles[n - 1]?.tienda ?? 1] ?? locales[1];
+/** El tamaño del local hasta donde han llegado (el que se ve en el menú y en las mejoras). */
+const localActual = () => localDe(diaAlcanzado());
 let niveles: NivelDato[];
 let escalas: Record<string, number> = {};
 let partida: guardado.Partida;
@@ -130,14 +137,22 @@ async function iniciar() {
   const barra = $('carga-barra');
   const pasos: (() => Promise<unknown>)[] = [
     elegirModelos,
-    async () => (tiendaDato = await cargarJSON<TiendaDato>('tienda1.json')),
-    async () => (niveles = await cargarJSON<NivelDato[]>('niveles.json', './datos/')),
+    async () => {
+      for (const t of [1, 2, 3, 4]) locales[t] = await cargarJSON<TiendaDato>(`tienda${t}.json`);
+    },
+    async () => {
+      niveles = await cargarJSON<NivelDato[]>('niveles.json', './datos/');
+      NIVELES_JUGABLES = niveles.length;
+    },
     async () => {
       const m = await cargarJSON<any>('manifest_export.json');
       escalas = m?.personajes?.escalas ?? {};
     },
     async () => (productos = await Productos.cargar()),
-    () => cargar('tienda1_base.glb'),
+    async () => {
+      partida = guardado.cargar(catalogo());
+      await cargar(`tienda${localActual().nivel}_base.glb`);
+    },
     () => cargar('boton_comprar.glb'),
     ...['estante', 'frutas', 'nevera', 'caja'].map((k) => () => cargar(`vitrina_${k}_1.glb`)),
     () => cargarAnimado('el.glb'),
@@ -150,7 +165,6 @@ async function iniciar() {
     await pasos[i]();
     barra.style.width = `${((i + 1) / pasos.length) * 100}%`;
   }
-  partida = guardado.cargar(tiendaDato);
   await montarFondo();
   conectarBotones();
   pintarNeutro();
@@ -256,7 +270,8 @@ async function montarFondo() {
     liberarPropios(fondo.grupo);
     fondo = null;
   }
-  const nueva = new Tienda(tiendaDato, productos);
+  const dato = localActual();
+  const nueva = new Tienda(dato, productos);
   await nueva.montar(partida.sitios, partida.mejoras);
   if (turno !== turnoFondo || juego) {
     liberarPropios(nueva.grupo);
@@ -264,7 +279,7 @@ async function montarFondo() {
   }
   fondo = nueva;
   mundo.escena.add(fondo.grupo);
-  mundo.encuadrar(tiendaDato.W, tiendaDato.D);
+  mundo.encuadrar(dato.W, dato.D);
   mundo.sucio = true;
 }
 
@@ -282,7 +297,31 @@ function abrirMenu() {
   ui.terminarNivel();
   mandos.mostrar(false);
   sonido.musica.iniciar('menu');
+  // ¿Se abrió el primer día de un tamaño nuevo? El local crece (con todo lo que tenía) y llega su sección de regalo
+  const local = localActual();
+  if (local.nivel > partida.tamano) {
+    const regalos = guardado.estrenar(partida, catalogo(), local.nivel);
+    guardado.guardar(partida);
+    void montarFondo();
+    mostrarCarta({
+      sello: '🎉',
+      fecha: `Día ${(local.nivel - 1) * 25 + 1}`,
+      titulo: `¡El local creció! Ahora es un ${local.nombre}`,
+      texto: `Tumbamos una pared y el local quedó más grande: todo lo que tenían sigue en su sitio (vitrinas, mejoras, ayudantes y la plata).
+`
+        + (regalos.length ? `De regalo llegó la sección de ${regalos.map((r) => NOMBRE_SECCION[r] ?? r).join(' y ')}. ` : '')
+        + `Hay sitios nuevos para comprar${local.tope >= 3 ? ' y ahora las vitrinas se pueden mejorar hasta el nivel 3' : ''}. También llega más gente: ¡a atenderla!`,
+      firma: '',
+      boton: '¡A trabajar!',
+      alCerrar: abrirMenu,
+    });
+    return;
+  }
   pantallaUnica('menu');
+  $('riel-titulo').textContent = `${local.nombre} · desliza para ver los ${NIVELES_JUGABLES} días`;
+  const cartas = recuerdosVisibles();
+  $('btn-recuerdos').hidden = !cartas.length;
+  $('btn-recuerdos').textContent = TEXTOS_CARTAS.boton(cartas.filter((r) => recuerdoAbierto(r)).length, cartas.length);
   $('menu-dinero').textContent = String(partida.dinero);
   $('menu-fichas').textContent = String(guardado.fichas(partida));
   $('menu-estrellas').textContent = `${guardado.totalEstrellas(partida)} / ${NIVELES_JUGABLES * 3}`;
@@ -293,6 +332,13 @@ function abrirMenu() {
   let ultimo: HTMLElement | null = null;
   for (let n = 1; n <= NIVELES_JUGABLES; n++) {
     const nv = niveles[n - 1];
+    // Cada tamaño del local arranca con su nombre en el riel
+    if (n === 1 || niveles[n - 2]?.tienda !== nv.tienda) {
+      const r = document.createElement('span');
+      r.className = 'riel-tienda';
+      r.textContent = locales[nv.tienda]?.nombre ?? '';
+      lista.appendChild(r);
+    }
     const est = partida.estrellas[n] ?? [false, false, false];
     const libre = nivelDesbloqueado(n);
     const b = document.createElement('button');
@@ -300,7 +346,7 @@ function abrirMenu() {
     b.disabled = !libre;
     b.innerHTML = `<span class="etiqueta-hueco" aria-hidden="true"></span>
       <span class="etiqueta-num">${n}</span>
-      <span class="etiqueta-dia">${nv.evento ?? (nv.noticia ? 'Noticia' : `Día ${nv.dia}`)}</span>
+      <span class="etiqueta-dia">${eventoDe(nv) ?? (nv.noticia ? 'Noticia' : `Día ${nv.dia}`)}</span>
       <span class="etiqueta-estrellas">${est.map((e) => `<i class="${e ? 'si' : ''}"></i>`).join('')}</span>
       <span class="etiqueta-extras">${partida.lunas[n] ? '<i class="luna" title="Luna"></i>' : ''}${partida.corazones[n] ? '<i class="corazon" title="Corazón"></i>' : ''}</span>`;
     b.setAttribute('aria-label', `Nivel ${n}${libre ? '' : ' (bloqueado)'}`);
@@ -311,6 +357,10 @@ function abrirMenu() {
   // El riel arranca mostrando el último día abierto
   ultimo?.scrollIntoView({ inline: 'center', block: 'nearest' });
 }
+
+/** El día 100, para la pareja, es su aniversario (los amigos y las salas con amigos ven «Gran final»). */
+const esFinal = (nv: NivelDato) => nv.numero === NIVELES_JUGABLES && !esNeutro();
+const eventoDe = (nv: NivelDato) => (esFinal(nv) && DIA_FINAL ? DIA_FINAL.evento : nv.evento);
 
 function tiposDelDia(nv: NivelDato): TipoCliente[] {
   const t = (Object.keys(CLIENTES) as TipoCliente[]).filter((k) => CLIENTES[k].desde <= nv.dia);
@@ -325,7 +375,7 @@ function abrirTarjeta(n: number) {
   const nv = nivelDeJuego(n);
   pantallaUnica('tarjeta');
   $('tarjeta-titulo').textContent = `${legendario ? 'Legendario' : 'Nivel'} ${n}`;
-  $('tarjeta-sub').textContent = `${tiendaDato.nombre} · Día ${nv.dia} · ${nv.clientes.solitario} clientes`;
+  $('tarjeta-sub').textContent = `${localDe(n).nombre} · Día ${nv.dia} · ${nv.clientes.solitario} clientes`;
   // Solo (Él), los dos en este celular (Él con el joystick de la izquierda, Ella con el de la derecha) o en línea
   $('btn-modo-solo').setAttribute('aria-pressed', String(modo === 'solo'));
   $('btn-modo-pareja').setAttribute('aria-pressed', String(modo === 'pareja'));
@@ -335,8 +385,8 @@ function abrirTarjeta(n: number) {
   if (modo === 'linea') void asegurarCanal().then(pintarNotaModo);
   $('tarjeta-novedad').textContent = legendario
     ? 'El doble de clientes, la mitad de paciencia y más problemas. Se juega con todas tus mejoras.'
-    : nv.descripcion_evento ?? nv.novedad ?? 'Atiende bien a todos y no dejes vitrinas vacías.';
-  $('tarjeta-evento').textContent = legendario ? 'Modo legendario' : nv.evento ?? (nv.noticia ? 'Día con noticia' : 'Día normal');
+    : (esFinal(nv) && DIA_FINAL ? DIA_FINAL.texto : nv.descripcion_evento) ?? nv.novedad ?? 'Atiende bien a todos y no dejes vitrinas vacías.';
+  $('tarjeta-evento').textContent = legendario ? 'Modo legendario' : eventoDe(nv) ?? (nv.noticia ? 'Día con noticia' : 'Día normal');
   // Recorte del Diario del Barrio
   const nt = !legendario ? nv.noticia : null;
   $('tarjeta-noticia').hidden = !nt;
@@ -388,7 +438,7 @@ function nivelDeJuego(n: number, jugadores = jugadoresDelModo()): NivelDato {
     const m = par(e.meta);
     const t = par(e.texto);
     if (k === 1) return { ...e, texto: textoNeutro(t), meta: m };
-    const f = e.clave === 'equipo' ? 1 + 0.5 * (jugadores - 2) : ['ventas', 'propinas', 'perdidos'].includes(e.clave) ? k : 1;
+    const f = e.clave === 'equipo' ? 1 + 0.5 * (jugadores - 2) : ['ventas', 'experta', 'propinas', 'perdidos'].includes(e.clave) ? k : 1;
     const nueva = f === 1 || m === 0 ? m : Math.round(m * f);
     return { ...e, meta: nueva, texto: textoNeutro((nueva === m ? t : t.replace(/\d+/, String(nueva))).replace(/en pareja/gi, 'en equipo')) };
   };
@@ -409,6 +459,7 @@ function nivelDeJuego(n: number, jugadores = jugadoresDelModo()): NivelDato {
 }
 
 async function jugar(n: number) {
+  estrenarCallado();
   sonido.activar();
   sonido.musica.iniciar('juego', legendario ? 112 : 100);
   pantallaUnica(null);
@@ -423,7 +474,7 @@ async function jugar(n: number) {
   // El día empieza a correr solo cuando todo está cargado
   juego = null;
   const enPareja = modo === 'pareja';
-  const nuevo = new Juego(mundo, nivelDeJuego(n, enPareja ? 2 : 1), productos, tiendaDato, partida.sitios, escalas, partida.mejoras, legendario, enPareja, equipoLocal(enPareja));
+  const nuevo = new Juego(mundo, nivelDeJuego(n, enPareja ? 2 : 1), productos, localDe(n), partida.sitios, escalas, partida.mejoras, legendario, enPareja, equipoLocal(enPareja));
   await nuevo.preparar();
   juego = nuevo;
   $('cargando-nivel').hidden = true;
@@ -471,6 +522,12 @@ function terminarDia(j: Juego, n: number, r: Resultado, sueldoDe: string | null 
   $('rec-fichas').hidden = fichasNuevas <= 0;
   $('rec-fichas').textContent = `+${fichasNuevas} ${fichasNuevas === 1 ? 'estrella' : 'estrellas'} para mejorar la tienda (tienes ${guardado.fichas(partida)})`;
   if (r.corazon) partida.corazones[n] = true;
+  // Un recuerdo se abre la primera vez que se pasa su día
+  const carta = !antes[0] && r.estrellas[0] && !j.legendario ? recuerdosVisibles().find((x) => x.dia === n) : undefined;
+  $('btn-rcarta').hidden = !carta;
+  $('btn-rcarta').textContent = TEXTOS_CARTAS.nueva;
+  if (carta) $('btn-rcarta').onclick = () => leerRecuerdo(carta, () => pantallaUnica('resultado'));
+  $('rec-local').textContent = localDe(n).nombre.toUpperCase();
   partida.dinero += r.ganancia;
   guardado.guardar(partida);
   // Una parte de lo ganado pasa a la casa (Nuestro Hogar) como sueldo (al menos 1 moneda si se ganó algo)
@@ -496,6 +553,59 @@ function terminarDia(j: Juego, n: number, r: Resultado, sueldoDe: string | null 
   $('btn-rsalir').hidden = !enSala;
   pantallaUnica('resultado');
   (window as any).__resultado = r;
+}
+
+/** Si ya llegaron a un tamaño nuevo del local sin pasar por el menú (en línea, en una sala), se estrena sin la
+ *  tarjeta: igual llega la sección de regalo. */
+function estrenarCallado() {
+  const t = localActual().nivel;
+  if (t <= partida.tamano) return;
+  guardado.estrenar(partida, catalogo(), t);
+  guardado.guardar(partida);
+}
+
+/** Las cartas del súper (con amigos no salen: son de la pareja). */
+const recuerdosVisibles = (): RecuerdoSuper[] => (esNeutro() ? [] : RECUERDOS_SUPER.filter((r) => r.dia <= NIVELES_JUGABLES));
+const recuerdoAbierto = (r: RecuerdoSuper) => !!partida.estrellas[r.dia]?.[0];
+
+let alCerrarCarta: (() => void) | null = null;
+function mostrarCarta(c: { sello: string; fecha: string; titulo: string; texto: string; firma: string; boton?: string; alCerrar: () => void; lista?: HTMLElement[] }) {
+  pantallaUnica('carta');
+  $('carta-sello').textContent = c.sello;
+  $('carta-fecha').textContent = c.fecha;
+  $('carta-titulo').textContent = c.titulo;
+  $('carta-texto').textContent = c.texto;
+  $('carta-texto').hidden = !c.texto;
+  $('carta-firma').textContent = c.firma ? `— ${c.firma}` : '';
+  $('carta-firma').hidden = !c.firma;
+  const ul = $('carta-lista');
+  ul.replaceChildren(...(c.lista ?? []));
+  ul.hidden = !c.lista;
+  $('btn-carta').textContent = c.boton ?? '¡Qué bonito!';
+  alCerrarCarta = c.alCerrar;
+  sonido.campana();
+}
+
+function leerRecuerdo(r: RecuerdoSuper, volver: () => void) {
+  mostrarCarta({ sello: TEXTOS_CARTAS.sello, fecha: TEXTOS_CARTAS.fecha(r.dia), titulo: r.titulo, texto: r.texto, firma: r.firma, alCerrar: volver });
+}
+
+/** Las cartas abiertas para volver a leerlas (las que faltan dicen en qué día se abren). */
+function abrirRecuerdos() {
+  const lista = recuerdosVisibles().map((r) => {
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    const abierto = recuerdoAbierto(r);
+    b.disabled = !abierto;
+    b.innerHTML = abierto ? `${TEXTOS_CARTAS.sello} ${escHtml(r.titulo)}<small>Día ${r.dia}</small>` : `🔒 Se abre en el día ${r.dia}<small>Pasa ese día para leerla</small>`;
+    if (abierto) b.addEventListener('click', () => leerRecuerdo(r, abrirRecuerdos));
+    li.append(b);
+    return li;
+  });
+  mostrarCarta({
+    sello: TEXTOS_CARTAS.sello, ...TEXTOS_CARTAS.lista, firma: '',
+    boton: 'Volver', alCerrar: abrirMenu, lista,
+  });
 }
 
 function abrirMejoras() {
@@ -539,24 +649,27 @@ function pintarMejoras() {
     li.appendChild(b);
     lista.appendChild(li);
   };
-  titulo('Vitrinas');
+  // (solo se muestra lo que ya está desbloqueado, aunque todavía no alcance la plata)
+  const local = localActual();
+  if (dia >= 3) titulo(`Vitrinas · ${local.nombre}`);
   let alTope = 0;
-  for (const s of tiendaDato.sitios) {
+  for (const s of dia >= 3 ? local.sitios : []) {
     const nv = partida.sitios[s.id] ?? 0;
     const nombre = NOMBRE_SECCION[s.seccion] ?? s.seccion;
-    if (!nv) fila(`Comprar ${nombre}`, s.isla ? 'Góndola en la isla del centro' : 'Vitrina nueva de nivel 1', PRECIO_COMPRA[s.seccion] ?? 80,
-      () => (partida.sitios[s.id] = 1), dia >= 3 ? 'comprar' : 'bloqueado', 'Desde el día 3');
-    else if (nv < tiendaDato.tope) {
-      const caja = s.seccion === 'caja';
-      fila(caja ? 'Mejorar la caja' : `Mejorar ${nombre}`, caja ? 'Banda: cobra 40 % más rápido' : 'Nivel 2: el doble de capacidad',
-        caja ? PRECIO_MEJORA_CAJA : PRECIO_MEJORA_VITRINA, () => (partida.sitios[s.id] = nv + 1), dia >= 4 ? 'comprar' : 'bloqueado', 'Desde el día 4');
-    } else alTope++;
+    const caja = s.seccion === 'caja';
+    if (!nv) fila(`Comprar ${nombre}`, 'Vitrina nueva de nivel 1', PRECIO_COMPRA[s.seccion] ?? 80, () => (partida.sitios[s.id] = 1));
+    else if (nv < local.tope && dia >= 4) {
+      const texto = caja ? (nv === 1 ? 'Banda: cobra 40 % más rápido' : 'Doble banda: cobra mucho más rápido') : `Nivel ${nv + 1}: le caben ${CAPACIDAD[s.tipo]?.[nv + 1] ?? 'más'} unidades`;
+      fila(caja ? 'Mejorar la caja' : `Mejorar ${nombre}`, texto, caja ? PRECIO_MEJORA_CAJA : PRECIO_MEJORA_VITRINA, () => (partida.sitios[s.id] = nv + 1));
+    } else if (nv >= local.tope) alTope++;
   }
-  if (alTope) fila(`${alTope} vitrina${alTope > 1 ? 's' : ''} al tope`, 'Ya están en el nivel máximo de esta tienda', 0, () => {}, 'listo');
+  if (alTope) fila(`${alTope} vitrina${alTope > 1 ? 's' : ''} al tope`, local.tope < 3 ? 'Cuando el local crezca se podrán mejorar más' : 'Ya están en el nivel máximo', 0, () => {}, 'listo');
   const grupos: GrupoMejora[] = ['Él', 'Bodega', 'Tienda', 'Ayudantes'];
   for (const g of grupos) {
+    const delGrupo = MEJORAS.filter((x) => x.grupo === g && dia >= x.desde);
+    if (!delGrupo.length) continue;
     titulo(g === 'Él' ? (esNeutro() ? 'Para ustedes' : 'Para Javier y Laura') : g);
-    for (const m of MEJORAS.filter((x) => x.grupo === g)) {
+    for (const m of delGrupo) {
       const base = m.id === 'carrito' ? 1 : 0;
       const nivel = partida.mejoras[m.id] ?? base;
       const k = nivel - base;
@@ -566,14 +679,20 @@ function pintarMejoras() {
       }
       const sig = m.niveles[k];
       const nombre = m.niveles.length > 1 ? `${m.nombre} · nivel ${k + 1}` : m.nombre;
-      fila(nombre, sig.texto, sig.precio, () => (partida.mejoras[m.id] = nivel + 1), dia >= m.desde ? 'comprar' : 'bloqueado', `Desde el día ${m.desde}`, true);
+      fila(nombre, sig.texto, sig.precio, () => (partida.mejoras[m.id] = nivel + 1), 'comprar', '', true);
     }
   }
-  titulo('Ayudas para un día');
-  for (const a of AYUDAS) {
+  const ayudas = AYUDAS.filter((a) => dia >= a.desde);
+  if (ayudas.length) titulo('Ayudas para un día');
+  for (const a of ayudas) {
     const n = partida.ayudas[a.id] ?? 0;
-    fila(`${a.nombre} (tienes ${n})`, a.texto, a.precio, () => (partida.ayudas[a.id] = n + 1),
-      dia < a.desde ? 'bloqueado' : n >= AYUDAS_MAX ? 'listo' : 'comprar', `Desde el día ${a.desde}`);
+    fila(`${a.nombre} (tienes ${n})`, a.texto, a.precio, () => (partida.ayudas[a.id] = n + 1), n >= AYUDAS_MAX ? 'listo' : 'comprar');
+  }
+  if (!lista.children.length) {
+    const li = document.createElement('li');
+    li.className = 'catalogo-grupo';
+    li.textContent = 'Desde el día 2 se abren las primeras mejoras';
+    lista.appendChild(li);
   }
 }
 
@@ -603,6 +722,12 @@ function conectarBotones() {
     abrirTarjeta(nivelElegido);
   });
   $('btn-mejoras').addEventListener('click', abrirMejoras);
+  $('btn-recuerdos').addEventListener('click', abrirRecuerdos);
+  $('btn-carta').addEventListener('click', () => {
+    const f = alCerrarCarta;
+    alCerrarCarta = null;
+    (f ?? abrirMenu)();
+  });
   $('btn-mej-cerrar').addEventListener('click', abrirMenu);
   $('btn-como').addEventListener('click', () => pantallaUnica('como'));
   $('btn-tutorial').addEventListener('click', () => {
@@ -669,8 +794,15 @@ function conectarBotones() {
     await montarFondo();
     abrirMenu();
   });
-  $('btn-siguiente').addEventListener('click', () => {
+  $('btn-siguiente').addEventListener('click', async () => {
     legendario = false;
+    // Al pasar al primer día de un local más grande se ve primero la tarjeta de la ampliación (desde el menú)
+    if (localActual().nivel > partida.tamano) {
+      juego?.destruir();
+      juego = null;
+      await montarFondo();
+      return abrirMenu();
+    }
     abrirTarjeta(Math.min(nivelElegido + 1, NIVELES_JUGABLES));
   });
   $('btn-repetir').addEventListener('click', () => abrirTarjeta(nivelElegido));
@@ -697,7 +829,7 @@ function conectarBotones() {
       return;
     }
     guardado.borrar();
-    partida = guardado.nueva(tiendaDato);
+    partida = guardado.nueva(catalogo());
     b.dataset.confirmar = '';
     b.textContent = 'Empezar de cero';
     await montarFondo();
@@ -1115,7 +1247,7 @@ async function cargarDia(l: Linea): Promise<boolean> {
     fondo = null;
   }
   const equipo = cfg.equipo?.length ? cfg.equipo : null;
-  const nuevo = new Juego(mundo, nivelDeJuego(cfg.nivel, equipo?.length ?? 2), productos, tiendaDato, cfg.sitios, escalas, cfg.mejoras, cfg.legendario, true, equipo);
+  const nuevo = new Juego(mundo, nivelDeJuego(cfg.nivel, equipo?.length ?? 2), productos, localDe(cfg.nivel), cfg.sitios, escalas, cfg.mejoras, cfg.legendario, true, equipo);
   await nuevo.preparar(!l.anfitrion);
   if (linea !== l) {
     nuevo.destruir();
@@ -1129,6 +1261,7 @@ async function cargarDia(l: Linea): Promise<boolean> {
 async function empezarAnfitrion(l: Linea) {
   l.fase = 'cargando';
   l.desde = performance.now();
+  estrenarCallado();
   l.config = { nivel: l.nivel, legendario: l.legendario, sitios: { ...partida.sitios }, mejoras: { ...partida.mejoras } };
   const inicio: Mensaje = { t: 'inicio', id: l.id, config: l.config };
   enviar(l, inicio);
@@ -1580,7 +1713,7 @@ function configSala(s: Sala): ConfigDia {
     id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`,
     nivel: nivelElegido,
     legendario,
-    sitios: { ...partida.sitios },
+    sitios: (estrenarCallado(), { ...partida.sitios }),
     mejoras: { ...partida.mejoras },
     equipo: js.map((j, i) => ({
       id: `j${i}`,
@@ -1661,7 +1794,7 @@ function escogerDiaSala(s: Sala, raiz: HTMLElement) {
     const tres = (partida.estrellas[nivelElegido] ?? []).filter(Boolean).length === 3 && !!niveles[nivelElegido - 1]?.legendario;
     if (!tres) legendario = false;
     capa.innerHTML = `<div class="dia-sala-caja" role="dialog" aria-label="Escoger día"><h3>¿Qué día abrimos?</h3>
-      <div class="dia-sala-lista">${Array.from({ length: NIVELES_JUGABLES }, (_, k) => {
+      <div class="dia-sala-lista">${Array.from({ length: diaAlcanzado() }, (_, k) => {
         const n = k + 1;
         const libre = nivelDesbloqueado(n);
         const est = (partida.estrellas[n] ?? []).filter(Boolean).length;

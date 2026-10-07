@@ -17,12 +17,11 @@ pulido el repositorio».
    - ~~Sangre y Ceniza: mapas mucho más detallados en calidad alta~~ **hecho** (pisos con textura nítida, roca de
      cada bioma en las paredes, detalle regado y aire de cada bioma; baja y media quedan como estaban; ver
      `docs/sistemas/sangre-y-ceniza.md`, «Tres calidades»).
-   - **Súper Manía, volver a algo más parecido al original** (Javier: «siento que dañé el juego»):
-     - sin los estantes «de cara y cara» (de dos caras);
-     - al subir de nivel no se pierde nada: el súper conserva los estantes y todo lo del primero y se vuelve más
-       grande (se amplía el mismo local en vez de empezar en otro);
-     - dificultad parecida a la del juego original;
-     - en ciertos días se desbloquean recuerdos románticos (cartas hablando del pasado y demás).
+   - ~~Súper Manía, volver a algo más parecido al original~~ **hecho** (tanda única): sin estantes de dos caras y la
+     mitad de cada tipo, el mismo local crece en 4 tamaños sin perder nada (días 1-100), dificultad del original
+     (carrito de 5, meta y meta experta), 12 cartas en ciertos días, mejoras solo desbloqueadas y el súper en la app
+     de amigos. Ver `docs/sistemas/mecanicas.md` (punto 9). Las cartas del súper se pueden cambiar por anécdotas
+     reales si Javier quiere contar más del mercado en Sopetrán (`src/recuerdos_super.ts`).
    - **Que nada romántico se repita entre juegos**: revisar todas las cartas, recuerdos y eventos (Cien Puertas, la
      bañera y la cama, las cartas de amor de Lavarse la cara, el súper, los mimos, la mesa…) para que cada juego tenga
      situaciones distintas. Si se acaban las ideas, pedirle a Javier más historias (él ofreció contar más).
@@ -55,10 +54,6 @@ velocidad, se siente raro…»
 
 ## Ronda 2 de arreglos
 
-**Súper Manía**
-- La mitad de estantes de cada tipo por tienda (hay demasiados).
-- La lista de mejoras solo muestra las que están desbloqueadas (aunque no alcance la plata).
-
 **Lavarse la cara (Vampire Survivors)**
 - (En obra con las salas) El chorro de agua más translúcido; ataque manual o automático a escoger (los de área
   —perro lanudo, bombero, astronauta— siguen automáticos); tutorial.
@@ -71,7 +66,7 @@ velocidad, se siente raro…»
 
 ## Amigos: lo que sigue
 
-- La app «Sala de Juegos» (NuestroHogar-Amigos) hoy trae Sangre y Ceniza y Lavarse la cara. Súper Manía, los juegos
+- La app «Sala de Juegos» (NuestroHogar-Amigos) hoy trae Sangre y Ceniza, Lavarse la cara y Súper Manía. Los juegos
   de mesa, el retrete y la cocina con amigos ya funcionan desde «Soy un amigo» en la app de la pareja; falta llevarlos
   también a la app de amigos (agregar sus páginas a `PAGINAS_AMIGOS`, permitir su código en `vite.config.ts` y dejar
   `verificar-amigos.mjs` limpio: las frases de pareja de la mesa y las escenas premium no pueden ir adentro).

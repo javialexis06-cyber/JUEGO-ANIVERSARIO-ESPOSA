@@ -87,10 +87,10 @@ La paciencia sube un poco con la **decoración**: plantas, música, globos, letr
 ### El carrito: reposiciones para cualquier estante
 1. En la **bodega** se llena el carrito hasta el tope (tarda 1 s + 0,3 s por reposición, menos con la «Bodega ordenada»).
 2. Cada **reposición deja lleno un estante**, el que sea (frutas, lácteos o bebidas: no importa cuál).
-3. Cuántas caben depende del **Carrito grande**: **2** estantes por viaje (nivel 1), **3** (nivel 2), **5** (nivel 3) y **7** (nivel 4). Al principio hay que ir seguido a la bodega; con las mejoras se hacen viajes más largos.
+3. Como en el original, un carrito lleno alcanza para **5 estantes** por viaje; con el **Carrito grande**, 6 y luego **7**.
 4. **Combo de reposición:** llenar 2 o más estantes con la misma carga da +2 monedas por cada estante después del primero.
 5. Los **productos caídos** (de la niña traviesa o de un estante tumbado) se suben al carrito como una reposición si cabe; si el carrito va lleno, se devuelven a mano a su estante.
-6. El HUD (arriba a la izquierda) muestra el carrito con su barrita y las reposiciones que le quedan (por ejemplo, 1/2). Con toques, si el carrito está vacío, primero pasa por la bodega.
+6. El HUD (arriba a la izquierda) muestra el carrito con su barrita y las reposiciones que le quedan (por ejemplo, 3/5). Con toques, si el carrito está vacío, primero pasa por la bodega.
 7. **Los estantes arrancan a medio llenar** («¡Llegó el camión!»): 80 % el primer día, 55 % los días 2 y 3, 40 % después y 30 % en la hora pico, el gran día y los días legendarios. Quedarse en la caja todo el día ya no alcanza: sin reponer se acaba todo y los clientes se van.
 8. Los botones verdes de los sitios «por comprar» solo salen en el menú y en las mejoras, no mientras se juega.
 
@@ -131,22 +131,19 @@ El HUD muestra cada una con su barrita; cuando el trapero se llena dice **«¡L�
 
 ---
 
-## 5. Zonas especiales: wafles y arepas
+## 5. Las secciones que llegan al crecer el local
 
-Funcionan como la panadería, pero con un **paso de cocina**:
-1. Algunos clientes piden **«un wafle»** o **«una arepa»**, con su globo mostrando el producto.
-2. Si la vitrina de la zona tiene producto listo, lo toman como de cualquier vitrina.
-3. Si no hay, alguien debe **cocinar**:
-   - toca la **waflera** o la **plancha** (usa masa de la caja de la zona);
-   - espera el **temporizador**, unos 5 segundos;
-   - lleva el producto a la vitrina de la zona o **directo al cliente** que lo pidió, que deja más propina.
-4. Si se deja mucho tiempo, **se quema**: sale humo y hay que botarlo a la caneca.
+Cada ampliación trae una sección nueva **de regalo** (ya comprada, en nivel 1), que se repone desde la bodega como
+cualquier vitrina:
 
-**En pareja:** uno cocina y el otro entrega. Si lo hacen seguido, se activa el **combo en equipo**.
+| Llega con | Sección | Vende | Precio por unidad |
+|---|---|---|---|
+| Minimercado (día 26) | **Carnes** (vitrina refrigerada) | pollo, pescado, salchichas, queso | 9 |
+| Supermercado (día 51) | **Kiosco de wafles** | wafles | 10 |
+| Hipermercado (día 76) | **Puesto de arepas** | arepas | 9 |
 
-Las **máquinas** (malteadas, café, jugos y pizza) funcionan igual: poner, esperar y entregar.
-
----
+Algunos clientes las prefieren (la mamá y la deportista, las carnes; el adolescente y el famoso, los wafles; la
+abuelita y el ejecutivo, las arepas). Las máquinas de malteadas, café, jugos y pizza del diseño viejo no se hicieron.
 
 ## 6. Problemas del día
 
@@ -211,14 +208,15 @@ La tarjeta de cada día muestra quién viene y qué prefiere, como en Supermarke
 
 | Vitrina | Capacidad nivel 1 | Nivel 2 | Nivel 3 |
 |---|---|---|---|
-| Estante de abarrotes, frutas, bebidas | 3 | 6 | 10 |
-| Nevera de lácteos | 3 | 6 | 9 |
-| Congelador, panadería | 3 | 5 | 8 |
-| Vitrina de carnes | 2 | 4 | 7 |
+| Estante de abarrotes, frutas, bebidas | 8 | 12 | 16 |
+| Nevera de lácteos | 8 | 12 | 15 |
+| Congelador, panadería | 7 | 10 | 14 |
+| Vitrina de carnes | 6 | 9 | 13 |
+| Kiosco de wafles, puesto de arepas | 6 | 9 | 12 |
 
-- **Una vitrina de nivel 1 alcanza para uno o dos clientes**: desde el día 3 cada cliente lleva 1 o 2 unidades de cada producto. Al vaciarse, las piezas desaparecen de la vitrina en proporción.
+- **Como en el original, una vitrina llena aguanta varios clientes** (desde el día 3 cada cliente lleva 1 o 2 unidades de cada producto). Al vaciarse, las piezas desaparecen de la vitrina en proporción. El nivel 3 solo existe desde el Supermercado.
 - **Tiempos de Él y Ella:** caminan a 2,6 m/s (hasta 3,7 con tenis); cargar el carrito toma 1 s + 0,07 s por unidad; llenar una vitrina, 1,4 s; trapear, 1,6 s; lavar el trapero, 1,3 s.
-- **Carrito:** 8, 14 o 20 unidades. **Trapero:** 4, 6 o 9 manchas. **Bolsa:** 4 basuras. **Canastas en la mano:** 3.
+- **Carrito:** 5, 6 o 7 estantes por viaje. **Trapero:** 4, 6 o 9 manchas. **Bolsa:** 4 basuras. **Canastas en la mano:** 3.
 - **Choques (en pareja):** cada uno a más de 1,4 m/s hacia el otro; empujón de 3,2 m/s por 0,26 s; mareo 0,8 s; carrito regado desde el 75 % (`CHOQUE` en `balance.ts`).
 - **Sueldo para la casa:** una doceava parte de la ganancia del día (un tercio dividido entre 4), mínimo 1 moneda.
 - **Paciencia** (segundos de espera): abuelita 62, mamá 46, adolescente 36, ejecutivo 27, deportista 38. Baja a ritmo 1 esperando producto, 1.3 en la fila, 1.7 si es el primero y nadie cobra, 0.25 caminando y +0.45 cerca de basura.
@@ -227,21 +225,24 @@ La tarjeta de cada día muestra quién viene y qué prefiere, como en Supermarke
 ### Mejoras que se compran entre días
 | Grupo | Mejora | Niveles | Efecto | Desde el día |
 |---|---|---|---|---|
-| Vitrinas | Comprar sitios «+» / subir a nivel 2 | | Más vitrinas y el doble de capacidad | 3 / 4 |
+| Vitrinas | Comprar sitios «+» / subir de nivel | | Más vitrinas y más capacidad (nivel 3 desde el Supermercado) | 3 / 4 |
 | Caja | Banda | 1 | Cobra 40 % más rápido | 4 |
 | Él y Ella | Tenis nuevos | 3 | Caminan 15 %, 30 % y 47 % más rápido | 2 |
-| Él y Ella | Carrito grande | 2 | 14 y 20 unidades (empieza en 8) | 3 |
+| Él y Ella | Carrito grande | 2 | 6 y 7 estantes por viaje (empieza en 5) | 5 |
 | Él y Ella | Trapero grande | 2 | 6 y 9 manchas antes de lavarlo (empieza en 4) | 8 |
 | Bodega | Bodega ordenada | 3 | Carga 28 %, 48 % y 64 % más rápido | 2 |
 | Bodega | Reposición rápida | 3 | Llena vitrinas 28 %, 48 % y 64 % más rápido | 3 |
 | Tienda | Matera, música y globos | 1 c/u | Cada uno: −10 % en la pérdida de paciencia | 3, 6 y 10 |
-| Tienda | Más canastas | 1 | 9 canastas en vez de 6 | 6 |
+| Tienda | Más canastas | 1 | 11 canastas en vez de 8 | 6 |
 | Tienda | Segunda caneca | 1 | Menos camino para botar basura | 7 |
 | Tienda | Cámara de seguridad | 1 | El ladrón se ve desde que entra y corre más lento | 12 |
 | Ayudantes | Cajera | 1 | Cobra sola (70 % más lenta que Él) | 7 |
 | Ayudantes | Aseo | 1 | Basura, charcos y productos caídos (lava su trapero en el balde) | 9 |
 | Ayudantes | Reponedor | 1 | Repone las vitrinas que bajan del 34 % | 10 |
 | Ayudantes | Guardia | 1 | Atrapa ladrones y calma a la niña | 13 |
+
+La lista de «Mejorar la tienda» **solo muestra lo que ya está desbloqueado** (aunque todavía no alcance la plata o
+las estrellas): lo que se abre más adelante no aparece hasta su día.
 
 ### Ayudas de un día (se compran y se usan con un botón)
 - **Tinto** (día 4): Él corre 40 % más rápido por 20 s.
@@ -252,42 +253,69 @@ La tarjeta de cada día muestra quién viene y qué prefiere, como en Supermarke
 - Música de fondo sintetizada en el juego: una cumbia suave de tienda de barrio. En el menú suena más bajo y se acelera cuando faltan 25 s para cerrar.
 - Efectos: caja registradora, vitrina vacía, combo, alarma del ladrón, resbalón y corazón encontrado.
 
-## 9. Progresión: 100 niveles con 3 estrellas cada uno
+## 9. Progresión: 100 días en el mismo local que crece
 
-Son **100 niveles**: 4 tiendas de **25 días** cada una. La tabla completa, con los clientes y las metas de cada nivel, está en [`niveles.md`](niveles.md). La genera `juego/datos/generar_niveles.py`, que también produce `juego/datos/niveles.json` para el juego.
+Son **100 días** en **un solo local** que se va ampliando: 25 días de **Tiendita**, 25 de **Minimercado**, 25 de
+**Supermercado** y 25 de **Hipermercado**. La tabla completa, con los clientes y las metas de cada día, está en
+[`niveles.md`](niveles.md); la genera `juego/datos/generar_niveles.py`, que también copia `niveles.json` al juego.
 
-### Las 3 estrellas de cada nivel
+### Las 3 estrellas de cada día (como el original)
 | Estrella | Qué premia | ¿Obligatoria? |
 |---|---|---|
-| ⭐ 1 · **Ventas** | Llegar a la meta de monedas del día | **Sí**: sin ella se repite el nivel |
-| ⭐ 2 · **Objetivo del día** | Rota entre los objetivos de la lista de abajo | No |
-| ⭐ 3 · **Objetivo del día** | Otro distinto de la misma lista | No |
+| ⭐ 1 · **Meta** | Vender cierta plata en el día (la «Goal» del original) | **Sí**: sin ella no se abre el día siguiente |
+| ⭐ 2 · **Meta experta** | Vender bastante más: alrededor de 1,5 veces la meta (la «Expert Goal») | No |
+| ⭐ 3 · **Reto del día** | Uno que rota de la lista de abajo | No |
 
-**Objetivos que rotan en las estrellas 2 y 3:**
-- **Propinas**: recolectar al menos *X* monedas de propina. Premia atender rápido y hacer combos.
-- **Clientes perdidos**: que se vayan como máximo *X* clientes sin comprar por demora. En los niveles altos, ninguno.
+**Los retos que rotan en la estrella 3:**
+- **Propinas**: recolectar al menos *X* monedas de propina.
+- **Clientes perdidos**: que se vayan como máximo *X* clientes sin comprar por demora.
 - **Espera en la caja**: que la espera promedio en la fila sea de *X* segundos o menos.
 - **Vitrinas vacías**: que ninguna vitrina quede vacía más de *X* segundos seguidos.
-- **Limpieza**: que ningún charco ni basura quede más de *X* segundos (aparece cuando ya existen basura y derrames).
-- **Robos**: ningún robo en el día (aparece desde que llega el ladrón).
-- **Productos preparados**: vender *X* wafles, arepas, malteadas…
-- **Equipo**: en **pareja**, hacer *X* combos en equipo; en **solitario**, que el *X* % de los clientes salga feliz.
+- **Limpieza**: que ningún charco ni basura quede más de *X* segundos (desde que existen basura y derrames).
+- **Robos**: ningún robo en el día (desde que llega el ladrón).
+- **Equipo**: en **pareja**, *X* combos en equipo; en **solitario**, que el *X* % de los clientes salga feliz.
 
-**Cómo se ve:**
-- Antes de empezar, la tarjeta del nivel muestra los 3 objetivos con sus metas.
-- Durante el día se ven como 3 mini-íconos arriba, que se llenan en vivo. Por ejemplo, el contador de propinas sube, y los clientes perdidos se ven como caritas tachadas.
-- Al cerrar, las estrellas se encienden una por una.
-- **Se puede repetir cualquier nivel** para sacar las estrellas que faltaron. Al repetir, se juega con las mejoras que ya se tienen en esa tienda.
+**Cómo se ve:** la tarjeta del día muestra las 3 metas; durante el día van arriba como 3 mini-íconos que se llenan
+en vivo; al cerrar, las estrellas se encienden una por una. **Se puede repetir cualquier día** para sacar las que
+faltaron: un día de un tamaño más chico se juega en ese tamaño del local, con las vitrinas hasta el nivel máximo de
+ese tamaño.
+
+### El local que crece
+- Al abrirse el **día 26** (pasando la meta del 25), el local se amplía a **Minimercado**; en el **51**, a
+  **Supermercado**, y en el **76**, a **Hipermercado**. Sale una tarjeta «¡El local creció!» la primera vez.
+- **No se pierde nada**: las vitrinas compradas y mejoradas, las mejoras, los ayudantes, la plata y las estrellas
+  siguen. Llega de regalo la sección nueva (ver punto 5) y aparecen **sitios «+» nuevos** para comprar.
+- **Las paredes de la izquierda (con la puerta de la calle) y del fondo (con la bodega) no se mueven**: el local
+  crece hacia la derecha y hacia el frente, y al crecer se reacomodan un poco los muebles para que quepan los de
+  nivel 3. La puerta de la calle y la caja se corren hacia el nuevo frente.
+
+  | Tamaño | Días | Medidas | Vitrinas para vender | Nivel máximo |
+  |---|---|---|---|---|
+  | Tiendita de barrio | 1-25 | 12 × 9 m | 7 (nevera, 2 estantes, bebidas, frutas, panadería, congelador) | 2 |
+  | Minimercado | 26-50 | 15 × 10 m | 10 (+ carnes, estante, bebidas) | 2 |
+  | Supermercado | 51-75 | 18 × 11 m | 14 (+ wafles, nevera, frutas, congelador) | 3 |
+  | Hipermercado | 76-100 | 21 × 12 m | 19 (+ arepas, estante, bebidas, carnes, panadería) | 3 |
+
+- Ya no hay estantes «de cara y cara» (la isla de dos caras del centro) y hay la mitad de vitrinas de cada tipo que
+  antes. A quien había comprado la isla, el tercer estante o la segunda nevera de bebidas de la tiendita vieja se le
+  devuelve lo que pagó (partidas de antes, `guardado.ts`).
+- Por dentro: los datos del local están en `personajes/blender/local_super.py` (los sitios conservan su número en
+  los 4 tamaños); `exportar_glb.py … tienda` saca `tiendaN_base.glb` y `tiendaN.json` de cada tamaño (con sus puntos
+  fijos y obstáculos), y `revisar_local.py` dibuja el plano de los 4 y revisa que nada se monte y todo tenga camino.
+
+### Recuerdos del súper (solo la pareja)
+En ciertos días (7, 15, 25, 33, 42, 50, 60, 66, 75, 85, 92 y 100), al pasar la meta por primera vez sale en el
+tiquete «💌 Se abrió un recuerdo»: una carta de Javier para Laura sobre lo que es de este juego (el mercado que hacen
+juntos cuando él va a Sopetrán, cocinar juntitos después, el local que crece como lo de ellos). Se vuelven a leer en
+«💌 Recuerdos» del menú. Con amigos no salen y la versión para amigos ni las trae (`src/recuerdos_super.ts`).
 
 ### Días especiales
-- **Cada 5 días hay un evento con estrellas propias:**
-  - **Hora pico** (días 5, 30, 55 y 80): clientes en oleadas. Estrellas por clientes perdidos y espera en la caja.
-  - **Día de ofertas** (días 10, 35, 60 y 85): más clientes y más ventas. Estrellas por propinas y vitrinas vacías.
-  - **Día lluvioso** (días 15, 40, 65 y 90): el doble de derrames. Estrellas por limpieza y clientes perdidos.
-  - **Visita especial** (días 20, 45, 70 y 95): inspección, y la limpieza cuenta doble. Estrellas por limpieza y equipo.
-- **Gran día** (niveles 25, 50 y 75): el final de cada tienda, con todo junto y la meta más alta.
-- **Nivel 100 · Nuestro aniversario**: la tienda decorada, música especial y un mensaje final para los dos.
-- **Noticias del Diario del Barrio** (días 3, 7, 9, 12, 13, 17, 19, 22, 23 y 24 de cada tienda): la tarjeta del día trae un recorte de periódico y la noticia cambia el día:
+- **Cada 5 días hay un evento** con su reto: **Hora pico** (días 5, 30, 55 y 80), **Día de ofertas** (10, 35, 60 y
+  85), **Día lluvioso** (15, 40, 65 y 90) y **Visita especial** (20, 45, 70 y 95).
+- **Gran día** (días 25, 50 y 75): el último de cada tamaño, con todo junto y la meta más alta.
+- **Día 100 · Nuestro aniversario** (los amigos lo ven como «Gran final»): la meta más alta y la última carta.
+- **Noticias del Diario del Barrio**: algunos días traen un recorte de periódico que cambia el día (en cada tamaño
+  caen en fechas distintas):
   | Noticia | Qué pasa |
   |---|---|
   | Se acerca el Día de la Madre | Más mamás y abuelitas, un poco más de paciencia y +1 de propina |
@@ -297,22 +325,15 @@ Son **100 niveles**: 4 tiendas de **25 días** cada una. La tabla completa, con 
   | Concierto gratis en el parque | +20 % de clientes, muchos adolescentes y el doble de basura |
   | Feria del barrio en la cuadra | +40 % de clientes |
   | Paro de buses en la ciudad | −15 % de clientes, pero paciencia −40 % y caminan 20 % más rápido |
-  Las metas de ventas de esos días ya cuentan la noticia.
+  Las metas de esos días ya cuentan la noticia.
 
-### Dificultad
-- Cada día llegan más clientes: por ejemplo, 8 el primer día de la tiendita y 32 el último del hipermercado, jugando en solitario.
-- La paciencia baja poco a poco.
-- Las listas pasan de 1 a 4 productos.
-- Van apareciendo clientes y problemas nuevos. Cada novedad llega sola y con un aviso corto de cómo se resuelve.
-
-### Pasar de tienda
-- Para abrir la siguiente tienda hay que **terminar el día 25** y tener un mínimo de estrellas de esa tienda. El mínimo sube con cada tienda, así que a veces conviene volver a sacar estrellas:
-  - **Tiendita → Minimercado:** 70 %, es decir 53 de 75 estrellas.
-  - **Minimercado → Supermercado:** 80 %, es decir 60 de 75.
-  - **Supermercado → Hipermercado:** 90 %, es decir 68 de 75.
-- En la tienda nueva **se empieza de cero**: vitrinas de nivel 1, lo mínimo para funcionar y el carrito de nivel 1.
-- Las **monedas** son de cada tienda: se gastan en sitios y mejoras y no pasan a la siguiente.
-- Las **estrellas** son para siempre y desbloquean recompensas.
+### Dificultad (como el original)
+- Carrito para 5 estantes, vitrinas que guardan bastante y **más clientes**: 9 el primer día y unos 19 el día 24 en la
+  Tiendita; 15→25 en el Minimercado, 20→31 en el Supermercado y 25→36 en el Hipermercado (en solitario; en pareja
+  ×1,5; los eventos y el gran día suben más).
+- Las listas pasan de 1 a 4 productos en la Tiendita, 3-4 en el Minimercado, 4 en el Supermercado y hasta 5 en el
+  Hipermercado. La paciencia baja poco a poco.
+- Van apareciendo clientes y problemas nuevos, cada uno con su aviso.
 
 ### 🌙 Modo legendario: las Lunas
 - **Cuándo se abre:** cuando se sacan las 3 estrellas de un nivel, se abre su **versión legendaria**.

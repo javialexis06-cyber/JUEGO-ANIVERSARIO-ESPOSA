@@ -8,6 +8,8 @@ export const PALABRAS_PAREJA = [
   'carta de amor', 'cartas de amor', 'recuerdo', '💌', '💞',
   // (de su chat: cómo se dicen)
   'mimilona', 'cotita', 'betito', 'betitos', 'esposha', 'amodoro', 'Duolingo',
+  // (la anécdota de los wafles: el plato solo no delata nada, la promesa sí)
+  'wafles cada vez', 'mis wafles',
 ];
 
 const plano = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();

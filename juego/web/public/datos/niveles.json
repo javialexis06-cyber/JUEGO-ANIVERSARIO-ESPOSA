@@ -1,1 +1,8399 @@
-[{"numero": 1, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 1, "evento": null, "descripcion_evento": null, "novedad": "Aprender a reponer desde la bodega y a cobrar en la caja", "duracion_s": 90, "paciencia": 1.0, "noticia": null, "clientes": {"solitario": 6, "pareja": 9}, "problemas": [], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 20 monedas", "pareja": "Vender 35 monedas"}, "meta": {"solitario": 20, "pareja": 35}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 7 monedas de propina", "pareja": "Recolectar 10 monedas de propina"}, "meta": {"solitario": 7, "pareja": 10}}, {"numero": 3, "clave": "equipo", "texto": {"solitario": "66 % de clientes felices", "pareja": "1 combos en pareja"}, "meta": {"solitario": 66, "pareja": 1}}], "legendario": {"clientes": {"solitario": 12, "pareja": 18}, "paciencia": 0.5, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 55, "pareja": 80}, "perdidos_max": {"solitario": 1, "pareja": 2}, "texto": {"solitario": "Vender 55 monedas con máximo 1 clientes perdidos", "pareja": "Vender 80 monedas con máximo 2 clientes perdidos"}}}}, {"numero": 2, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 2, "evento": null, "descripcion_evento": null, "novedad": "Clientes con listas de 2 productos", "duracion_s": 90, "paciencia": 0.992, "noticia": null, "clientes": {"solitario": 6, "pareja": 9}, "problemas": [], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 35 monedas", "pareja": "Vender 50 monedas"}, "meta": {"solitario": 35, "pareja": 50}}, {"numero": 2, "clave": "perdidos", "texto": {"solitario": "Máximo 1 cliente perdido por demora", "pareja": "Máximo 1 cliente perdido por demora"}, "meta": {"solitario": 1, "pareja": 1}}, {"numero": 3, "clave": "sin_vacias", "texto": "Ninguna vitrina vacía por más de 25 s", "meta": 25}], "legendario": {"clientes": {"solitario": 12, "pareja": 18}, "paciencia": 0.496, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 80, "pareja": 120}, "perdidos_max": {"solitario": 1, "pareja": 2}, "texto": {"solitario": "Vender 80 monedas con máximo 1 clientes perdidos", "pareja": "Vender 120 monedas con máximo 2 clientes perdidos"}}}}, {"numero": 3, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 3, "evento": null, "descripcion_evento": null, "novedad": "Comprar sitios «+» entre días", "duracion_s": 90, "paciencia": 1.082, "noticia": {"id": "madres", "titular": "Se acerca el Día de la Madre", "texto": "Llegan muchas mamás y abuelitas. Son pacientes y dejan mejor propina.", "efectos": {"tipos": {"mama": 3, "abuelita": 3}, "propina_extra": 1}}, "clientes": {"solitario": 7, "pareja": 10}, "problemas": [], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 55 monedas", "pareja": "Vender 80 monedas"}, "meta": {"solitario": 55, "pareja": 80}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 8 monedas de propina", "pareja": "Recolectar 11 monedas de propina"}, "meta": {"solitario": 8, "pareja": 11}}, {"numero": 3, "clave": "espera_caja", "texto": "Espera promedio en caja de 12 s o menos", "meta": 12}], "legendario": {"clientes": {"solitario": 14, "pareja": 20}, "paciencia": 0.541, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 140, "pareja": 200}, "perdidos_max": {"solitario": 2, "pareja": 2}, "texto": {"solitario": "Vender 140 monedas con máximo 2 clientes perdidos", "pareja": "Vender 200 monedas con máximo 2 clientes perdidos"}}}}, {"numero": 4, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 4, "evento": null, "descripcion_evento": null, "novedad": "Primera mejora de vitrina (nivel 2)", "duracion_s": 90, "paciencia": 0.976, "noticia": null, "clientes": {"solitario": 7, "pareja": 10}, "problemas": [], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 55 monedas", "pareja": "Vender 80 monedas"}, "meta": {"solitario": 55, "pareja": 80}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 8 monedas de propina", "pareja": "Recolectar 11 monedas de propina"}, "meta": {"solitario": 8, "pareja": 11}}, {"numero": 3, "clave": "perdidos", "texto": {"solitario": "Máximo 1 cliente perdido por demora", "pareja": "Máximo 2 clientes perdidos por demora"}, "meta": {"solitario": 1, "pareja": 2}}], "legendario": {"clientes": {"solitario": 14, "pareja": 20}, "paciencia": 0.488, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 140, "pareja": 200}, "perdidos_max": {"solitario": 2, "pareja": 2}, "texto": {"solitario": "Vender 140 monedas con máximo 2 clientes perdidos", "pareja": "Vender 200 monedas con máximo 2 clientes perdidos"}}}}, {"numero": 5, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 5, "evento": "Hora pico", "descripcion_evento": "Los clientes llegan en oleadas: +30 % de clientes", "novedad": null, "duracion_s": 113, "paciencia": 0.968, "noticia": null, "clientes": {"solitario": 9, "pareja": 14}, "problemas": [], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 75 monedas", "pareja": "Vender 115 monedas"}, "meta": {"solitario": 75, "pareja": 115}}, {"numero": 2, "clave": "perdidos", "texto": {"solitario": "Máximo 1 cliente perdido por demora", "pareja": "Máximo 2 clientes perdidos por demora"}, "meta": {"solitario": 1, "pareja": 2}}, {"numero": 3, "clave": "espera_caja", "texto": "Espera promedio en caja de 12 s o menos", "meta": 12}], "legendario": {"clientes": {"solitario": 18, "pareja": 28}, "paciencia": 0.484, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 180, "pareja": 280}, "perdidos_max": {"solitario": 2, "pareja": 3}, "texto": {"solitario": "Vender 180 monedas con máximo 2 clientes perdidos", "pareja": "Vender 280 monedas con máximo 3 clientes perdidos"}}}}, {"numero": 6, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 6, "evento": null, "descripcion_evento": null, "novedad": "Llega el adolescente: deja basura", "duracion_s": 93, "paciencia": 0.96, "noticia": null, "clientes": {"solitario": 7, "pareja": 10}, "problemas": ["basura"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 55 monedas", "pareja": "Vender 80 monedas"}, "meta": {"solitario": 55, "pareja": 80}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 8 monedas de propina", "pareja": "Recolectar 11 monedas de propina"}, "meta": {"solitario": 8, "pareja": 11}}, {"numero": 3, "clave": "equipo", "texto": {"solitario": "71 % de clientes felices", "pareja": "1 combos en pareja"}, "meta": {"solitario": 71, "pareja": 1}}], "legendario": {"clientes": {"solitario": 14, "pareja": 20}, "paciencia": 0.48, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 140, "pareja": 200}, "perdidos_max": {"solitario": 2, "pareja": 2}, "texto": {"solitario": "Vender 140 monedas con máximo 2 clientes perdidos", "pareja": "Vender 200 monedas con máximo 2 clientes perdidos"}}}}, {"numero": 7, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 7, "evento": null, "descripcion_evento": null, "novedad": "Se puede contratar a la cajera", "duracion_s": 93, "paciencia": 0.685, "noticia": {"id": "partido", "titular": "¡Hoy juega la Selección!", "texto": "Todos quieren llegar a ver el partido: la gente está impaciente y lleva gaseosa y paquetes.", "efectos": {"preferir": ["bebidas", "abarrotes"]}}, "clientes": {"solitario": 7, "pareja": 10}, "problemas": ["basura"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 55 monedas", "pareja": "Vender 80 monedas"}, "meta": {"solitario": 55, "pareja": 80}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 8 monedas de propina", "pareja": "Recolectar 11 monedas de propina"}, "meta": {"solitario": 8, "pareja": 11}}, {"numero": 3, "clave": "espera_caja", "texto": "Espera promedio en caja de 12 s o menos", "meta": 12}], "legendario": {"clientes": {"solitario": 14, "pareja": 20}, "paciencia": 0.343, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 140, "pareja": 200}, "perdidos_max": {"solitario": 2, "pareja": 2}, "texto": {"solitario": "Vender 140 monedas con máximo 2 clientes perdidos", "pareja": "Vender 200 monedas con máximo 2 clientes perdidos"}}}}, {"numero": 8, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 8, "evento": null, "descripcion_evento": null, "novedad": "Listas de 3 productos y derrames: toca el charco para trapearlo", "duracion_s": 93, "paciencia": 0.944, "noticia": null, "clientes": {"solitario": 8, "pareja": 12}, "problemas": ["basura", "derrames"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 85 monedas", "pareja": "Vender 130 monedas"}, "meta": {"solitario": 85, "pareja": 130}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 9 monedas de propina", "pareja": "Recolectar 13 monedas de propina"}, "meta": {"solitario": 9, "pareja": 13}}, {"numero": 3, "clave": "perdidos", "texto": {"solitario": "Que ningún cliente se vaya sin comprar", "pareja": "Máximo 1 cliente perdido por demora"}, "meta": {"solitario": 0, "pareja": 1}}], "legendario": {"clientes": {"solitario": 16, "pareja": 24}, "paciencia": 0.472, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 215, "pareja": 325}, "perdidos_max": {"solitario": 2, "pareja": 3}, "texto": {"solitario": "Vender 215 monedas con máximo 2 clientes perdidos", "pareja": "Vender 325 monedas con máximo 3 clientes perdidos"}}}}, {"numero": 9, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 9, "evento": null, "descripcion_evento": null, "novedad": null, "duracion_s": 93, "paciencia": 0.796, "noticia": {"id": "calor", "titular": "Ola de calor en el barrio", "texto": "Todos buscan bebidas y helados, y el calor los pone de mal genio.", "efectos": {"preferir": ["bebidas", "congelados"]}}, "clientes": {"solitario": 9, "pareja": 14}, "problemas": ["basura", "derrames"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 100 monedas", "pareja": "Vender 155 monedas"}, "meta": {"solitario": 100, "pareja": 155}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 10 monedas de propina", "pareja": "Recolectar 15 monedas de propina"}, "meta": {"solitario": 10, "pareja": 15}}, {"numero": 3, "clave": "equipo", "texto": {"solitario": "74 % de clientes felices", "pareja": "2 combos en pareja"}, "meta": {"solitario": 74, "pareja": 2}}], "legendario": {"clientes": {"solitario": 18, "pareja": 28}, "paciencia": 0.398, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 240, "pareja": 375}, "perdidos_max": {"solitario": 2, "pareja": 3}, "texto": {"solitario": "Vender 240 monedas con máximo 2 clientes perdidos", "pareja": "Vender 375 monedas con máximo 3 clientes perdidos"}}}}, {"numero": 10, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 10, "evento": "Día de ofertas", "descripcion_evento": "Las islas de oferta atraen clientes: +20 % de ventas y de clientes", "novedad": null, "duracion_s": 116, "paciencia": 0.928, "noticia": null, "clientes": {"solitario": 10, "pareja": 15}, "problemas": ["basura", "derrames"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 130 monedas", "pareja": "Vender 195 monedas"}, "meta": {"solitario": 130, "pareja": 195}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 11 monedas de propina", "pareja": "Recolectar 16 monedas de propina"}, "meta": {"solitario": 11, "pareja": 16}}, {"numero": 3, "clave": "sin_vacias", "texto": "Ninguna vitrina vacía por más de 25 s", "meta": 25}], "legendario": {"clientes": {"solitario": 20, "pareja": 30}, "paciencia": 0.464, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 270, "pareja": 405}, "perdidos_max": {"solitario": 2, "pareja": 4}, "texto": {"solitario": "Vender 270 monedas con máximo 2 clientes perdidos", "pareja": "Vender 405 monedas con máximo 4 clientes perdidos"}}}}, {"numero": 11, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 11, "evento": null, "descripcion_evento": null, "novedad": "Llega el ejecutivo apurado (poca paciencia)", "duracion_s": 96, "paciencia": 0.92, "noticia": null, "clientes": {"solitario": 9, "pareja": 14}, "problemas": ["basura", "derrames"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 100 monedas", "pareja": "Vender 155 monedas"}, "meta": {"solitario": 100, "pareja": 155}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 10 monedas de propina", "pareja": "Recolectar 15 monedas de propina"}, "meta": {"solitario": 10, "pareja": 15}}, {"numero": 3, "clave": "equipo", "texto": {"solitario": "76 % de clientes felices", "pareja": "2 combos en pareja"}, "meta": {"solitario": 76, "pareja": 2}}], "legendario": {"clientes": {"solitario": 18, "pareja": 28}, "paciencia": 0.46, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 240, "pareja": 375}, "perdidos_max": {"solitario": 2, "pareja": 3}, "texto": {"solitario": "Vender 240 monedas con máximo 2 clientes perdidos", "pareja": "Vender 375 monedas con máximo 3 clientes perdidos"}}}}, {"numero": 12, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 12, "evento": null, "descripcion_evento": null, "novedad": "Aparece el ladrón: tócalo antes de que llegue a la puerta", "duracion_s": 96, "paciencia": 0.912, "noticia": {"id": "quincena", "titular": "¡Llegó la quincena!", "texto": "La gente cobró: cada cliente lleva una unidad más de cada producto.", "efectos": {"unidades_extra": 1}}, "clientes": {"solitario": 10, "pareja": 15}, "problemas": ["basura", "derrames", "ladron"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 145 monedas", "pareja": "Vender 220 monedas"}, "meta": {"solitario": 145, "pareja": 220}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 11 monedas de propina", "pareja": "Recolectar 16 monedas de propina"}, "meta": {"solitario": 11, "pareja": 16}}, {"numero": 3, "clave": "espera_caja", "texto": "Espera promedio en caja de 12 s o menos", "meta": 12}], "legendario": {"clientes": {"solitario": 20, "pareja": 30}, "paciencia": 0.456, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 360, "pareja": 540}, "perdidos_max": {"solitario": 2, "pareja": 4}, "texto": {"solitario": "Vender 360 monedas con máximo 2 clientes perdidos", "pareja": "Vender 540 monedas con máximo 4 clientes perdidos"}}}}, {"numero": 13, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 13, "evento": null, "descripcion_evento": null, "novedad": null, "duracion_s": 96, "paciencia": 0.814, "noticia": {"id": "concierto", "titular": "Concierto gratis en el parque", "texto": "Los adolescentes pasan antes del concierto: más clientes y el doble de basura.", "efectos": {"tipos": {"adolescente": 4}, "basura_x": 2}}, "clientes": {"solitario": 11, "pareja": 16}, "problemas": ["basura", "derrames", "ladron"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 120 monedas", "pareja": "Vender 175 monedas"}, "meta": {"solitario": 120, "pareja": 175}}, {"numero": 2, "clave": "limpieza", "texto": "Ningún charco ni basura por más de 20 s", "meta": 20}, {"numero": 3, "clave": "propinas", "texto": {"solitario": "Recolectar 12 monedas de propina", "pareja": "Recolectar 18 monedas de propina"}, "meta": {"solitario": 12, "pareja": 18}}], "legendario": {"clientes": {"solitario": 22, "pareja": 32}, "paciencia": 0.407, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 295, "pareja": 430}, "perdidos_max": {"solitario": 3, "pareja": 4}, "texto": {"solitario": "Vender 295 monedas con máximo 3 clientes perdidos", "pareja": "Vender 430 monedas con máximo 4 clientes perdidos"}}}}, {"numero": 14, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 14, "evento": null, "descripcion_evento": null, "novedad": "Llega la niña traviesa: tumba productos, tócala para calmarla", "duracion_s": 96, "paciencia": 0.896, "noticia": null, "clientes": {"solitario": 10, "pareja": 15}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 110 monedas", "pareja": "Vender 165 monedas"}, "meta": {"solitario": 110, "pareja": 165}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 11 monedas de propina", "pareja": "Recolectar 16 monedas de propina"}, "meta": {"solitario": 11, "pareja": 16}}, {"numero": 3, "clave": "perdidos", "texto": {"solitario": "Máximo 1 cliente perdido por demora", "pareja": "Máximo 1 cliente perdido por demora"}, "meta": {"solitario": 1, "pareja": 1}}], "legendario": {"clientes": {"solitario": 20, "pareja": 30}, "paciencia": 0.448, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 270, "pareja": 405}, "perdidos_max": {"solitario": 2, "pareja": 4}, "texto": {"solitario": "Vender 270 monedas con máximo 2 clientes perdidos", "pareja": "Vender 405 monedas con máximo 4 clientes perdidos"}}}}, {"numero": 15, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 15, "evento": "Día lluvioso", "descripcion_evento": "Entra agua por la puerta: el doble de derrames", "novedad": null, "duracion_s": 119, "paciencia": 0.888, "noticia": null, "clientes": {"solitario": 10, "pareja": 15}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 110 monedas", "pareja": "Vender 165 monedas"}, "meta": {"solitario": 110, "pareja": 165}}, {"numero": 2, "clave": "limpieza", "texto": "Ningún charco ni basura por más de 20 s", "meta": 20}, {"numero": 3, "clave": "perdidos", "texto": {"solitario": "Máximo 1 cliente perdido por demora", "pareja": "Máximo 1 cliente perdido por demora"}, "meta": {"solitario": 1, "pareja": 1}}], "legendario": {"clientes": {"solitario": 20, "pareja": 30}, "paciencia": 0.444, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 270, "pareja": 405}, "perdidos_max": {"solitario": 2, "pareja": 4}, "texto": {"solitario": "Vender 270 monedas con máximo 2 clientes perdidos", "pareja": "Vender 405 monedas con máximo 4 clientes perdidos"}}}}, {"numero": 16, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 16, "evento": null, "descripcion_evento": null, "novedad": "Llega la chica deportista (frutas y bebidas)", "duracion_s": 99, "paciencia": 0.88, "noticia": null, "clientes": {"solitario": 10, "pareja": 15}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 110 monedas", "pareja": "Vender 165 monedas"}, "meta": {"solitario": 110, "pareja": 165}}, {"numero": 2, "clave": "robos", "texto": "Ningún robo", "meta": 0}, {"numero": 3, "clave": "perdidos", "texto": {"solitario": "Que ningún cliente se vaya sin comprar", "pareja": "Que ningún cliente se vaya sin comprar"}, "meta": {"solitario": 0, "pareja": 0}}], "legendario": {"clientes": {"solitario": 20, "pareja": 30}, "paciencia": 0.44, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 270, "pareja": 405}, "perdidos_max": {"solitario": 2, "pareja": 4}, "texto": {"solitario": "Vender 270 monedas con máximo 2 clientes perdidos", "pareja": "Vender 405 monedas con máximo 4 clientes perdidos"}}}}, {"numero": 17, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 17, "evento": null, "descripcion_evento": null, "novedad": null, "duracion_s": 99, "paciencia": 0.828, "noticia": {"id": "feria", "titular": "Feria del barrio en la cuadra", "texto": "Llega mucha más gente de lo normal. Prepara las vitrinas desde temprano.", "efectos": {}}, "clientes": {"solitario": 15, "pareja": 22}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 165 monedas", "pareja": "Vender 240 monedas"}, "meta": {"solitario": 165, "pareja": 240}}, {"numero": 2, "clave": "perdidos", "texto": {"solitario": "Que ningún cliente se vaya sin comprar", "pareja": "Máximo 1 cliente perdido por demora"}, "meta": {"solitario": 0, "pareja": 1}}, {"numero": 3, "clave": "sin_vacias", "texto": "Ninguna vitrina vacía por más de 25 s", "meta": 25}], "legendario": {"clientes": {"solitario": 30, "pareja": 44}, "paciencia": 0.414, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 405, "pareja": 590}, "perdidos_max": {"solitario": 4, "pareja": 5}, "texto": {"solitario": "Vender 405 monedas con máximo 4 clientes perdidos", "pareja": "Vender 590 monedas con máximo 5 clientes perdidos"}}}}, {"numero": 18, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 18, "evento": null, "descripcion_evento": null, "novedad": "Visita del famoso: todos se detienen a mirarlo, atiéndelo rápido", "duracion_s": 99, "paciencia": 0.864, "noticia": null, "clientes": {"solitario": 11, "pareja": 16}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa", "famoso"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 120 monedas", "pareja": "Vender 175 monedas"}, "meta": {"solitario": 120, "pareja": 175}}, {"numero": 2, "clave": "limpieza", "texto": "Ningún charco ni basura por más de 20 s", "meta": 20}, {"numero": 3, "clave": "perdidos", "texto": {"solitario": "Que ningún cliente se vaya sin comprar", "pareja": "Que ningún cliente se vaya sin comprar"}, "meta": {"solitario": 0, "pareja": 0}}], "legendario": {"clientes": {"solitario": 22, "pareja": 32}, "paciencia": 0.432, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 295, "pareja": 430}, "perdidos_max": {"solitario": 3, "pareja": 4}, "texto": {"solitario": "Vender 295 monedas con máximo 3 clientes perdidos", "pareja": "Vender 430 monedas con máximo 4 clientes perdidos"}}}}, {"numero": 19, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 19, "evento": null, "descripcion_evento": null, "novedad": null, "duracion_s": 99, "paciencia": 0.514, "noticia": {"id": "paro", "titular": "Paro de buses en la ciudad", "texto": "Llega menos gente, pero todos van de afán: caminan rápido y se cansan de esperar.", "efectos": {"velocidad_x": 1.2}}, "clientes": {"solitario": 10, "pareja": 15}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa", "famoso"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 110 monedas", "pareja": "Vender 165 monedas"}, "meta": {"solitario": 110, "pareja": 165}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 11 monedas de propina", "pareja": "Recolectar 16 monedas de propina"}, "meta": {"solitario": 11, "pareja": 16}}, {"numero": 3, "clave": "espera_caja", "texto": "Espera promedio en caja de 12 s o menos", "meta": 12}], "legendario": {"clientes": {"solitario": 20, "pareja": 30}, "paciencia": 0.257, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 270, "pareja": 405}, "perdidos_max": {"solitario": 2, "pareja": 4}, "texto": {"solitario": "Vender 270 monedas con máximo 2 clientes perdidos", "pareja": "Vender 405 monedas con máximo 4 clientes perdidos"}}}}, {"numero": 20, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 20, "evento": "Visita especial", "descripcion_evento": "Inspección: la limpieza cuenta doble", "novedad": "Listas de 4 productos", "duracion_s": 122, "paciencia": 0.848, "noticia": null, "clientes": {"solitario": 12, "pareja": 18}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa", "famoso"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 165 monedas", "pareja": "Vender 245 monedas"}, "meta": {"solitario": 165, "pareja": 245}}, {"numero": 2, "clave": "limpieza", "texto": "Ningún charco ni basura por más de 12 s", "meta": 12}, {"numero": 3, "clave": "equipo", "texto": {"solitario": "85 % de clientes felices", "pareja": "3 combos en pareja"}, "meta": {"solitario": 85, "pareja": 3}}], "legendario": {"clientes": {"solitario": 24, "pareja": 36}, "paciencia": 0.424, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 405, "pareja": 605}, "perdidos_max": {"solitario": 3, "pareja": 4}, "texto": {"solitario": "Vender 405 monedas con máximo 3 clientes perdidos", "pareja": "Vender 605 monedas con máximo 4 clientes perdidos"}}}}, {"numero": 21, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 21, "evento": null, "descripcion_evento": null, "novedad": null, "duracion_s": 102, "paciencia": 0.84, "noticia": null, "clientes": {"solitario": 12, "pareja": 18}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa", "famoso"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 165 monedas", "pareja": "Vender 245 monedas"}, "meta": {"solitario": 165, "pareja": 245}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 13 monedas de propina", "pareja": "Recolectar 20 monedas de propina"}, "meta": {"solitario": 13, "pareja": 20}}, {"numero": 3, "clave": "perdidos", "texto": {"solitario": "Que ningún cliente se vaya sin comprar", "pareja": "Máximo 1 cliente perdido por demora"}, "meta": {"solitario": 0, "pareja": 1}}], "legendario": {"clientes": {"solitario": 24, "pareja": 36}, "paciencia": 0.42, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 405, "pareja": 605}, "perdidos_max": {"solitario": 3, "pareja": 4}, "texto": {"solitario": "Vender 405 monedas con máximo 3 clientes perdidos", "pareja": "Vender 605 monedas con máximo 4 clientes perdidos"}}}}, {"numero": 22, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 22, "evento": null, "descripcion_evento": null, "novedad": null, "duracion_s": 102, "paciencia": 0.707, "noticia": {"id": "calor", "titular": "Ola de calor en el barrio", "texto": "Todos buscan bebidas y helados, y el calor los pone de mal genio.", "efectos": {"preferir": ["bebidas", "congelados"]}}, "clientes": {"solitario": 13, "pareja": 20}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa", "famoso"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 175 monedas", "pareja": "Vender 275 monedas"}, "meta": {"solitario": 175, "pareja": 275}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 14 monedas de propina", "pareja": "Recolectar 22 monedas de propina"}, "meta": {"solitario": 14, "pareja": 22}}, {"numero": 3, "clave": "equipo", "texto": {"solitario": "87 % de clientes felices", "pareja": "3 combos en pareja"}, "meta": {"solitario": 87, "pareja": 3}}], "legendario": {"clientes": {"solitario": 26, "pareja": 40}, "paciencia": 0.353, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 435, "pareja": 670}, "perdidos_max": {"solitario": 3, "pareja": 5}, "texto": {"solitario": "Vender 435 monedas con máximo 3 clientes perdidos", "pareja": "Vender 670 monedas con máximo 5 clientes perdidos"}}}}, {"numero": 23, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 23, "evento": null, "descripcion_evento": null, "novedad": null, "duracion_s": 102, "paciencia": 0.593, "noticia": {"id": "partido", "titular": "¡Hoy juega la Selección!", "texto": "Todos quieren llegar a ver el partido: la gente está impaciente y lleva gaseosa y paquetes.", "efectos": {"preferir": ["bebidas", "abarrotes"]}}, "clientes": {"solitario": 13, "pareja": 20}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa", "famoso"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 175 monedas", "pareja": "Vender 275 monedas"}, "meta": {"solitario": 175, "pareja": 275}}, {"numero": 2, "clave": "robos", "texto": "Ningún robo", "meta": 0}, {"numero": 3, "clave": "perdidos", "texto": {"solitario": "Que ningún cliente se vaya sin comprar", "pareja": "Máximo 1 cliente perdido por demora"}, "meta": {"solitario": 0, "pareja": 1}}], "legendario": {"clientes": {"solitario": 26, "pareja": 40}, "paciencia": 0.296, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 435, "pareja": 670}, "perdidos_max": {"solitario": 3, "pareja": 5}, "texto": {"solitario": "Vender 435 monedas con máximo 3 clientes perdidos", "pareja": "Vender 670 monedas con máximo 5 clientes perdidos"}}}}, {"numero": 24, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 24, "evento": null, "descripcion_evento": null, "novedad": null, "duracion_s": 102, "paciencia": 0.816, "noticia": {"id": "quincena", "titular": "¡Llegó la quincena!", "texto": "La gente cobró: cada cliente lleva una unidad más de cada producto.", "efectos": {"unidades_extra": 1}}, "clientes": {"solitario": 14, "pareja": 21}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa", "famoso"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 255 monedas", "pareja": "Vender 380 monedas"}, "meta": {"solitario": 255, "pareja": 380}}, {"numero": 2, "clave": "perdidos", "texto": {"solitario": "Que ningún cliente se vaya sin comprar", "pareja": "Que ningún cliente se vaya sin comprar"}, "meta": {"solitario": 0, "pareja": 0}}, {"numero": 3, "clave": "sin_vacias", "texto": "Ninguna vitrina vacía por más de 25 s", "meta": 25}], "legendario": {"clientes": {"solitario": 28, "pareja": 42}, "paciencia": 0.408, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 625, "pareja": 940}, "perdidos_max": {"solitario": 3, "pareja": 5}, "texto": {"solitario": "Vender 625 monedas con máximo 3 clientes perdidos", "pareja": "Vender 940 monedas con máximo 5 clientes perdidos"}}}}, {"numero": 25, "tienda": 1, "nombre_tienda": "Tiendita de barrio", "dia": 25, "evento": "Gran día", "descripcion_evento": "Final de la tienda: todo junto y la meta más alta", "novedad": null, "duracion_s": 155, "paciencia": 0.808, "noticia": null, "clientes": {"solitario": 18, "pareja": 27}, "problemas": ["basura", "derrames", "ladron", "nina_traviesa", "famoso"], "estrellas": [{"numero": 1, "clave": "ventas", "texto": {"solitario": "Vender 245 monedas", "pareja": "Vender 370 monedas"}, "meta": {"solitario": 245, "pareja": 370}}, {"numero": 2, "clave": "propinas", "texto": {"solitario": "Recolectar 20 monedas de propina", "pareja": "Recolectar 30 monedas de propina"}, "meta": {"solitario": 20, "pareja": 30}}, {"numero": 3, "clave": "perdidos", "texto": {"solitario": "Que ningún cliente se vaya sin comprar", "pareja": "Máximo 1 cliente perdido por demora"}, "meta": {"solitario": 0, "pareja": 1}}], "legendario": {"clientes": {"solitario": 36, "pareja": 54}, "paciencia": 0.404, "problemas_x": 1.5, "luna": {"ventas": {"solitario": 605, "pareja": 905}, "perdidos_max": {"solitario": 4, "pareja": 6}, "texto": {"solitario": "Vender 605 monedas con máximo 4 clientes perdidos", "pareja": "Vender 905 monedas con máximo 6 clientes perdidos"}}}}]
+[
+ {
+  "numero": 1,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 1,
+  "dia_tienda": 1,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Aprender a reponer desde la bodega y a cobrar en la caja",
+  "duracion_s": 90,
+  "paciencia": 1.0,
+  "lista_max": 1,
+  "noticia": null,
+  "clientes": {
+   "solitario": 9,
+   "pareja": 14
+  },
+  "problemas": [],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 25 monedas",
+     "pareja": "Meta: vender 40 monedas"
+    },
+    "meta": {
+     "solitario": 25,
+     "pareja": 40
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 40 monedas",
+     "pareja": "Meta experta: vender 65 monedas"
+    },
+    "meta": {
+     "solitario": 40,
+     "pareja": 65
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "61 % de clientes felices",
+     "pareja": "1 combos en pareja"
+    },
+    "meta": {
+     "solitario": 61,
+     "pareja": 1
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 18,
+    "pareja": 28
+   },
+   "paciencia": 0.5,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 65,
+     "pareja": 95
+    },
+    "perdidos_max": {
+     "solitario": 2,
+     "pareja": 3
+    },
+    "texto": {
+     "solitario": "Vender 65 monedas con máximo 2 clientes perdidos",
+     "pareja": "Vender 95 monedas con máximo 3 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 2,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 2,
+  "dia_tienda": 2,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Clientes con listas de 2 productos",
+  "duracion_s": 90,
+  "paciencia": 0.992,
+  "lista_max": 2,
+  "noticia": null,
+  "clientes": {
+   "solitario": 9,
+   "pareja": 14
+  },
+  "problemas": [],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 45 monedas",
+     "pareja": "Meta: vender 65 monedas"
+    },
+    "meta": {
+     "solitario": 45,
+     "pareja": 65
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 65 monedas",
+     "pareja": "Meta experta: vender 105 monedas"
+    },
+    "meta": {
+     "solitario": 65,
+     "pareja": 105
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 12 s o menos",
+    "meta": 12
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 18,
+    "pareja": 28
+   },
+   "paciencia": 0.496,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 95,
+     "pareja": 145
+    },
+    "perdidos_max": {
+     "solitario": 2,
+     "pareja": 3
+    },
+    "texto": {
+     "solitario": "Vender 95 monedas con máximo 2 clientes perdidos",
+     "pareja": "Vender 145 monedas con máximo 3 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 3,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 3,
+  "dia_tienda": 3,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Comprar sitios «+» entre días",
+  "duracion_s": 90,
+  "paciencia": 1.082,
+  "lista_max": 2,
+  "noticia": {
+   "id": "madres",
+   "titular": "Se acerca el Día de la Madre",
+   "texto": "Llegan muchas mamás y abuelitas. Son pacientes y dejan mejor propina.",
+   "efectos": {
+    "tipos": {
+     "mama": 3,
+     "abuelita": 3
+    },
+    "propina_extra": 1
+   }
+  },
+  "clientes": {
+   "solitario": 11,
+   "pareja": 16
+  },
+  "problemas": [],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 80 monedas",
+     "pareja": "Meta: vender 115 monedas"
+    },
+    "meta": {
+     "solitario": 80,
+     "pareja": 115
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 120 monedas",
+     "pareja": "Meta experta: vender 175 monedas"
+    },
+    "meta": {
+     "solitario": 120,
+     "pareja": 175
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 11 monedas de propina",
+     "pareja": "Recolectar 16 monedas de propina"
+    },
+    "meta": {
+     "solitario": 11,
+     "pareja": 16
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 22,
+    "pareja": 32
+   },
+   "paciencia": 0.541,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 170,
+     "pareja": 250
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 4
+    },
+    "texto": {
+     "solitario": "Vender 170 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 250 monedas con máximo 4 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 4,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 4,
+  "dia_tienda": 4,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Primera mejora de vitrina (nivel 2)",
+  "duracion_s": 90,
+  "paciencia": 0.976,
+  "lista_max": 2,
+  "noticia": null,
+  "clientes": {
+   "solitario": 10,
+   "pareja": 15
+  },
+  "problemas": [],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 70 monedas",
+     "pareja": "Meta: vender 110 monedas"
+    },
+    "meta": {
+     "solitario": 70,
+     "pareja": 110
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 110 monedas",
+     "pareja": "Meta experta: vender 165 monedas"
+    },
+    "meta": {
+     "solitario": 110,
+     "pareja": 165
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 25 s",
+    "meta": 25
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 20,
+    "pareja": 30
+   },
+   "paciencia": 0.488,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 155,
+     "pareja": 235
+    },
+    "perdidos_max": {
+     "solitario": 2,
+     "pareja": 4
+    },
+    "texto": {
+     "solitario": "Vender 155 monedas con máximo 2 clientes perdidos",
+     "pareja": "Vender 235 monedas con máximo 4 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 5,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 5,
+  "dia_tienda": 5,
+  "evento": "Hora pico",
+  "descripcion_evento": "Los clientes llegan en oleadas: +30 % de clientes",
+  "novedad": null,
+  "duracion_s": 113,
+  "paciencia": 0.968,
+  "lista_max": 2,
+  "noticia": null,
+  "clientes": {
+   "solitario": 14,
+   "pareja": 21
+  },
+  "problemas": [],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 100 monedas",
+     "pareja": "Meta: vender 150 monedas"
+    },
+    "meta": {
+     "solitario": 100,
+     "pareja": 150
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 155 monedas",
+     "pareja": "Meta experta: vender 235 monedas"
+    },
+    "meta": {
+     "solitario": 155,
+     "pareja": 235
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 28,
+    "pareja": 42
+   },
+   "paciencia": 0.484,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 220,
+     "pareja": 330
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 220 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 330 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 6,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 6,
+  "dia_tienda": 6,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Llega el adolescente: deja basura",
+  "duracion_s": 93,
+  "paciencia": 0.96,
+  "lista_max": 2,
+  "noticia": null,
+  "clientes": {
+   "solitario": 11,
+   "pareja": 16
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 80 monedas",
+     "pareja": "Meta: vender 115 monedas"
+    },
+    "meta": {
+     "solitario": 80,
+     "pareja": 115
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 120 monedas",
+     "pareja": "Meta experta: vender 175 monedas"
+    },
+    "meta": {
+     "solitario": 120,
+     "pareja": 175
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 22,
+    "pareja": 32
+   },
+   "paciencia": 0.48,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 170,
+     "pareja": 250
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 4
+    },
+    "texto": {
+     "solitario": "Vender 170 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 250 monedas con máximo 4 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 7,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 7,
+  "dia_tienda": 7,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Se puede contratar a la cajera",
+  "duracion_s": 93,
+  "paciencia": 0.685,
+  "lista_max": 2,
+  "noticia": {
+   "id": "partido",
+   "titular": "¡Hoy juega la Selección!",
+   "texto": "Todos quieren llegar a ver el partido: la gente está impaciente y lleva gaseosa y paquetes.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "abarrotes"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 12,
+   "pareja": 18
+  },
+  "problemas": [
+   "basura"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 85 monedas",
+     "pareja": "Meta: vender 130 monedas"
+    },
+    "meta": {
+     "solitario": 85,
+     "pareja": 130
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 135 monedas",
+     "pareja": "Meta experta: vender 200 monedas"
+    },
+    "meta": {
+     "solitario": 135,
+     "pareja": 200
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "67 % de clientes felices",
+     "pareja": "1 combos en pareja"
+    },
+    "meta": {
+     "solitario": 67,
+     "pareja": 1
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 24,
+    "pareja": 36
+   },
+   "paciencia": 0.343,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 190,
+     "pareja": 280
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 4
+    },
+    "texto": {
+     "solitario": "Vender 190 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 280 monedas con máximo 4 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 8,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 8,
+  "dia_tienda": 8,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Listas de 3 productos y derrames: toca el charco para trapearlo",
+  "duracion_s": 93,
+  "paciencia": 0.944,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 12,
+   "pareja": 18
+  },
+  "problemas": [
+   "basura",
+   "derrames"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 125 monedas",
+     "pareja": "Meta: vender 190 monedas"
+    },
+    "meta": {
+     "solitario": 125,
+     "pareja": 190
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 200 monedas",
+     "pareja": "Meta experta: vender 300 monedas"
+    },
+    "meta": {
+     "solitario": 200,
+     "pareja": 300
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 24,
+    "pareja": 36
+   },
+   "paciencia": 0.472,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 250,
+     "pareja": 375
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 4
+    },
+    "texto": {
+     "solitario": "Vender 250 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 375 monedas con máximo 4 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 9,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 9,
+  "dia_tienda": 9,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.796,
+  "lista_max": 3,
+  "noticia": {
+   "id": "calor",
+   "titular": "Ola de calor en el barrio",
+   "texto": "Todos buscan bebidas y helados, y el calor los pone de mal genio.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "congelados"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 14,
+   "pareja": 21
+  },
+  "problemas": [
+   "basura",
+   "derrames"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 145 monedas",
+     "pareja": "Meta: vender 220 monedas"
+    },
+    "meta": {
+     "solitario": 145,
+     "pareja": 220
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 230 monedas",
+     "pareja": "Meta experta: vender 345 monedas"
+    },
+    "meta": {
+     "solitario": 230,
+     "pareja": 345
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "69 % de clientes felices",
+     "pareja": "2 combos en pareja"
+    },
+    "meta": {
+     "solitario": 69,
+     "pareja": 2
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 28,
+    "pareja": 42
+   },
+   "paciencia": 0.398,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 290,
+     "pareja": 440
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 290 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 440 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 10,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 10,
+  "dia_tienda": 10,
+  "evento": "Día de ofertas",
+  "descripcion_evento": "Las islas de oferta atraen clientes: +20 % de ventas y de clientes",
+  "novedad": null,
+  "duracion_s": 116,
+  "paciencia": 0.928,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 15,
+   "pareja": 22
+  },
+  "problemas": [
+   "basura",
+   "derrames"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 190 monedas",
+     "pareja": "Meta: vender 275 monedas"
+    },
+    "meta": {
+     "solitario": 190,
+     "pareja": 275
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 300 monedas",
+     "pareja": "Meta experta: vender 435 monedas"
+    },
+    "meta": {
+     "solitario": 300,
+     "pareja": 435
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 15 monedas de propina",
+     "pareja": "Recolectar 22 monedas de propina"
+    },
+    "meta": {
+     "solitario": 15,
+     "pareja": 22
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 30,
+    "pareja": 44
+   },
+   "paciencia": 0.464,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 315,
+     "pareja": 460
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 315 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 460 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 11,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 11,
+  "dia_tienda": 11,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Llega el ejecutivo apurado (poca paciencia)",
+  "duracion_s": 96,
+  "paciencia": 0.92,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 13,
+   "pareja": 20
+  },
+  "problemas": [
+   "basura",
+   "derrames"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 135 monedas",
+     "pareja": "Meta: vender 210 monedas"
+    },
+    "meta": {
+     "solitario": 135,
+     "pareja": 210
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 215 monedas",
+     "pareja": "Meta experta: vender 330 monedas"
+    },
+    "meta": {
+     "solitario": 215,
+     "pareja": 330
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "71 % de clientes felices",
+     "pareja": "2 combos en pareja"
+    },
+    "meta": {
+     "solitario": 71,
+     "pareja": 2
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 26,
+    "pareja": 40
+   },
+   "paciencia": 0.46,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 270,
+     "pareja": 420
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 270 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 420 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 12,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 12,
+  "dia_tienda": 12,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Aparece el ladrón: tócalo antes de que llegue a la puerta",
+  "duracion_s": 96,
+  "paciencia": 0.912,
+  "lista_max": 3,
+  "noticia": {
+   "id": "quincena",
+   "titular": "¡Llegó la quincena!",
+   "texto": "La gente cobró: cada cliente lleva una unidad más de cada producto.",
+   "efectos": {
+    "unidades_extra": 1
+   }
+  },
+  "clientes": {
+   "solitario": 15,
+   "pareja": 22
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 210 monedas",
+     "pareja": "Meta: vender 305 monedas"
+    },
+    "meta": {
+     "solitario": 210,
+     "pareja": 305
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 330 monedas",
+     "pareja": "Meta experta: vender 485 monedas"
+    },
+    "meta": {
+     "solitario": 330,
+     "pareja": 485
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 12 s o menos",
+    "meta": 12
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 30,
+    "pareja": 44
+   },
+   "paciencia": 0.456,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 420,
+     "pareja": 610
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 420 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 610 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 13,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 13,
+  "dia_tienda": 13,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.814,
+  "lista_max": 3,
+  "noticia": {
+   "id": "concierto",
+   "titular": "Concierto gratis en el parque",
+   "texto": "Los adolescentes pasan antes del concierto: más clientes y el doble de basura.",
+   "efectos": {
+    "tipos": {
+     "adolescente": 4
+    },
+    "basura_x": 2
+   }
+  },
+  "clientes": {
+   "solitario": 17,
+   "pareja": 26
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 175 monedas",
+     "pareja": "Meta: vender 270 monedas"
+    },
+    "meta": {
+     "solitario": 175,
+     "pareja": 270
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 280 monedas",
+     "pareja": "Meta experta: vender 430 monedas"
+    },
+    "meta": {
+     "solitario": 280,
+     "pareja": 430
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 34,
+    "pareja": 52
+   },
+   "paciencia": 0.407,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 355,
+     "pareja": 545
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 355 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 545 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 14,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 14,
+  "dia_tienda": 14,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Llega la niña traviesa: tumba productos, tócala para calmarla",
+  "duracion_s": 96,
+  "paciencia": 0.896,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 14,
+   "pareja": 21
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 145 monedas",
+     "pareja": "Meta: vender 220 monedas"
+    },
+    "meta": {
+     "solitario": 145,
+     "pareja": 220
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 230 monedas",
+     "pareja": "Meta experta: vender 345 monedas"
+    },
+    "meta": {
+     "solitario": 230,
+     "pareja": 345
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 28,
+    "pareja": 42
+   },
+   "paciencia": 0.448,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 290,
+     "pareja": 440
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 290 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 440 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 15,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 15,
+  "dia_tienda": 15,
+  "evento": "Día lluvioso",
+  "descripcion_evento": "Entra agua por la puerta: el doble de derrames",
+  "novedad": null,
+  "duracion_s": 119,
+  "paciencia": 0.888,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 15,
+   "pareja": 22
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 155 monedas",
+     "pareja": "Meta: vender 230 monedas"
+    },
+    "meta": {
+     "solitario": 155,
+     "pareja": 230
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 250 monedas",
+     "pareja": "Meta experta: vender 365 monedas"
+    },
+    "meta": {
+     "solitario": 250,
+     "pareja": 365
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 30,
+    "pareja": 44
+   },
+   "paciencia": 0.444,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 315,
+     "pareja": 460
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 315 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 460 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 16,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 16,
+  "dia_tienda": 16,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Llega la chica deportista (frutas y bebidas)",
+  "duracion_s": 99,
+  "paciencia": 0.88,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 15,
+   "pareja": 22
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 155 monedas",
+     "pareja": "Meta: vender 230 monedas"
+    },
+    "meta": {
+     "solitario": 155,
+     "pareja": 230
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 250 monedas",
+     "pareja": "Meta experta: vender 365 monedas"
+    },
+    "meta": {
+     "solitario": 250,
+     "pareja": 365
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 15 monedas de propina",
+     "pareja": "Recolectar 22 monedas de propina"
+    },
+    "meta": {
+     "solitario": 15,
+     "pareja": 22
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 30,
+    "pareja": 44
+   },
+   "paciencia": 0.44,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 315,
+     "pareja": 460
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 315 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 460 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 17,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 17,
+  "dia_tienda": 17,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.828,
+  "lista_max": 3,
+  "noticia": {
+   "id": "feria",
+   "titular": "Feria del barrio en la cuadra",
+   "texto": "Llega mucha más gente de lo normal. Prepara las vitrinas desde temprano.",
+   "efectos": {}
+  },
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 230 monedas",
+     "pareja": "Meta: vender 345 monedas"
+    },
+    "meta": {
+     "solitario": 230,
+     "pareja": 345
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 365 monedas",
+     "pareja": "Meta experta: vender 545 monedas"
+    },
+    "meta": {
+     "solitario": 365,
+     "pareja": 545
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 25 s",
+    "meta": 25
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.414,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 460,
+     "pareja": 690
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 460 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 690 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 18,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 18,
+  "dia_tienda": 18,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Visita del famoso: todos se detienen a mirarlo, atiéndelo rápido",
+  "duracion_s": 99,
+  "paciencia": 0.864,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 16,
+   "pareja": 24
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 165 monedas",
+     "pareja": "Meta: vender 250 monedas"
+    },
+    "meta": {
+     "solitario": 165,
+     "pareja": 250
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 265 monedas",
+     "pareja": "Meta experta: vender 395 monedas"
+    },
+    "meta": {
+     "solitario": 265,
+     "pareja": 395
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 32,
+    "pareja": 48
+   },
+   "paciencia": 0.432,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 335,
+     "pareja": 500
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 335 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 500 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 19,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 19,
+  "dia_tienda": 19,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.514,
+  "lista_max": 3,
+  "noticia": {
+   "id": "paro",
+   "titular": "Paro de buses en la ciudad",
+   "texto": "Llega menos gente, pero todos van de afán: caminan rápido y se cansan de esperar.",
+   "efectos": {
+    "velocidad_x": 1.2
+   }
+  },
+  "clientes": {
+   "solitario": 14,
+   "pareja": 21
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 145 monedas",
+     "pareja": "Meta: vender 220 monedas"
+    },
+    "meta": {
+     "solitario": 145,
+     "pareja": 220
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 230 monedas",
+     "pareja": "Meta experta: vender 345 monedas"
+    },
+    "meta": {
+     "solitario": 230,
+     "pareja": 345
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 12 s o menos",
+    "meta": 12
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 28,
+    "pareja": 42
+   },
+   "paciencia": 0.257,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 290,
+     "pareja": 440
+    },
+    "perdidos_max": {
+     "solitario": 3,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 290 monedas con máximo 3 clientes perdidos",
+     "pareja": "Vender 440 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 20,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 20,
+  "dia_tienda": 20,
+  "evento": "Visita especial",
+  "descripcion_evento": "Inspección: la limpieza cuenta doble",
+  "novedad": "Listas de 4 productos",
+  "duracion_s": 122,
+  "paciencia": 0.848,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 17,
+   "pareja": 26
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 220 monedas",
+     "pareja": "Meta: vender 340 monedas"
+    },
+    "meta": {
+     "solitario": 220,
+     "pareja": 340
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 350 monedas",
+     "pareja": "Meta experta: vender 535 monedas"
+    },
+    "meta": {
+     "solitario": 350,
+     "pareja": 535
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 12 s",
+    "meta": 12
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 34,
+    "pareja": 52
+   },
+   "paciencia": 0.424,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 445,
+     "pareja": 680
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 445 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 680 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 21,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 21,
+  "dia_tienda": 21,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.84,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 17,
+   "pareja": 26
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 220 monedas",
+     "pareja": "Meta: vender 340 monedas"
+    },
+    "meta": {
+     "solitario": 220,
+     "pareja": 340
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 350 monedas",
+     "pareja": "Meta experta: vender 535 monedas"
+    },
+    "meta": {
+     "solitario": 350,
+     "pareja": 535
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Que ningún cliente se vaya sin comprar",
+     "pareja": "Máximo 1 cliente perdido por demora"
+    },
+    "meta": {
+     "solitario": 0,
+     "pareja": 1
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 34,
+    "pareja": 52
+   },
+   "paciencia": 0.42,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 445,
+     "pareja": 680
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 445 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 680 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 22,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 22,
+  "dia_tienda": 22,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.707,
+  "lista_max": 4,
+  "noticia": {
+   "id": "calor",
+   "titular": "Ola de calor en el barrio",
+   "texto": "Todos buscan bebidas y helados, y el calor los pone de mal genio.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "congelados"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 260 monedas",
+     "pareja": "Meta: vender 390 monedas"
+    },
+    "meta": {
+     "solitario": 260,
+     "pareja": 390
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 415 monedas",
+     "pareja": "Meta experta: vender 620 monedas"
+    },
+    "meta": {
+     "solitario": 415,
+     "pareja": 620
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "82 % de clientes felices",
+     "pareja": "3 combos en pareja"
+    },
+    "meta": {
+     "solitario": 82,
+     "pareja": 3
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.353,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 520,
+     "pareja": 785
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 7
+    },
+    "texto": {
+     "solitario": "Vender 520 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 785 monedas con máximo 7 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 23,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 23,
+  "dia_tienda": 23,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.593,
+  "lista_max": 4,
+  "noticia": {
+   "id": "partido",
+   "titular": "¡Hoy juega la Selección!",
+   "texto": "Todos quieren llegar a ver el partido: la gente está impaciente y lleva gaseosa y paquetes.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "abarrotes"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 235 monedas",
+     "pareja": "Meta: vender 350 monedas"
+    },
+    "meta": {
+     "solitario": 235,
+     "pareja": 350
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 370 monedas",
+     "pareja": "Meta experta: vender 560 monedas"
+    },
+    "meta": {
+     "solitario": 370,
+     "pareja": 560
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 18 monedas de propina",
+     "pareja": "Recolectar 27 monedas de propina"
+    },
+    "meta": {
+     "solitario": 18,
+     "pareja": 27
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.296,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 470,
+     "pareja": 705
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 470 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 705 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 24,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 24,
+  "dia_tienda": 24,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.816,
+  "lista_max": 4,
+  "noticia": {
+   "id": "quincena",
+   "titular": "¡Llegó la quincena!",
+   "texto": "La gente cobró: cada cliente lleva una unidad más de cada producto.",
+   "efectos": {
+    "unidades_extra": 1
+   }
+  },
+  "clientes": {
+   "solitario": 21,
+   "pareja": 32
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 365 monedas",
+     "pareja": "Meta: vender 555 monedas"
+    },
+    "meta": {
+     "solitario": 365,
+     "pareja": 555
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 580 monedas",
+     "pareja": "Meta experta: vender 880 monedas"
+    },
+    "meta": {
+     "solitario": 580,
+     "pareja": 880
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 25 s",
+    "meta": 25
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 42,
+    "pareja": 64
+   },
+   "paciencia": 0.408,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 730,
+     "pareja": 1115
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 730 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 1115 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 25,
+  "tienda": 1,
+  "nombre_tienda": "Tiendita de barrio",
+  "dia": 25,
+  "dia_tienda": 25,
+  "evento": "Gran día",
+  "descripcion_evento": "El último día de este tamaño del local: todo junto y la meta más alta",
+  "novedad": null,
+  "duracion_s": 155,
+  "paciencia": 0.808,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 25,
+   "pareja": 38
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 325 monedas",
+     "pareja": "Meta: vender 495 monedas"
+    },
+    "meta": {
+     "solitario": 325,
+     "pareja": 495
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 515 monedas",
+     "pareja": "Meta experta: vender 785 monedas"
+    },
+    "meta": {
+     "solitario": 515,
+     "pareja": 785
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 3
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 50,
+    "pareja": 76
+   },
+   "paciencia": 0.404,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 650,
+     "pareja": 990
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 650 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 990 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 26,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 26,
+  "dia_tienda": 1,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "¡El local creció! Minimercado: la sección de carnes de regalo y sitios nuevos para comprar",
+  "duracion_s": 90,
+  "paciencia": 0.97,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 15,
+   "pareja": 22
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 165 monedas",
+     "pareja": "Meta: vender 245 monedas"
+    },
+    "meta": {
+     "solitario": 165,
+     "pareja": 245
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 265 monedas",
+     "pareja": "Meta experta: vender 390 monedas"
+    },
+    "meta": {
+     "solitario": 265,
+     "pareja": 390
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 30,
+    "pareja": 44
+   },
+   "paciencia": 0.485,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 335,
+     "pareja": 490
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 335 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 490 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 27,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 27,
+  "dia_tienda": 2,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 90,
+  "paciencia": 0.962,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 15,
+   "pareja": 22
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 165 monedas",
+     "pareja": "Meta: vender 245 monedas"
+    },
+    "meta": {
+     "solitario": 165,
+     "pareja": 245
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 265 monedas",
+     "pareja": "Meta experta: vender 390 monedas"
+    },
+    "meta": {
+     "solitario": 265,
+     "pareja": 390
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 30,
+    "pareja": 44
+   },
+   "paciencia": 0.481,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 335,
+     "pareja": 490
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 5
+    },
+    "texto": {
+     "solitario": "Vender 335 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 490 monedas con máximo 5 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 28,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 28,
+  "dia_tienda": 3,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 90,
+  "paciencia": 0.687,
+  "lista_max": 3,
+  "noticia": {
+   "id": "partido",
+   "titular": "¡Hoy juega la Selección!",
+   "texto": "Todos quieren llegar a ver el partido: la gente está impaciente y lleva gaseosa y paquetes.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "abarrotes"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 16,
+   "pareja": 24
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 180 monedas",
+     "pareja": "Meta: vender 270 monedas"
+    },
+    "meta": {
+     "solitario": 180,
+     "pareja": 270
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 285 monedas",
+     "pareja": "Meta experta: vender 425 monedas"
+    },
+    "meta": {
+     "solitario": 285,
+     "pareja": 425
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "63 % de clientes felices",
+     "pareja": "2 combos en pareja"
+    },
+    "meta": {
+     "solitario": 63,
+     "pareja": 2
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 32,
+    "pareja": 48
+   },
+   "paciencia": 0.344,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 355,
+     "pareja": 535
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 355 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 535 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 29,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 29,
+  "dia_tienda": 4,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 90,
+  "paciencia": 0.946,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 16,
+   "pareja": 24
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 180 monedas",
+     "pareja": "Meta: vender 270 monedas"
+    },
+    "meta": {
+     "solitario": 180,
+     "pareja": 270
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 285 monedas",
+     "pareja": "Meta experta: vender 425 monedas"
+    },
+    "meta": {
+     "solitario": 285,
+     "pareja": 425
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 17 monedas de propina",
+     "pareja": "Recolectar 26 monedas de propina"
+    },
+    "meta": {
+     "solitario": 17,
+     "pareja": 26
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 32,
+    "pareja": 48
+   },
+   "paciencia": 0.473,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 355,
+     "pareja": 535
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 355 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 535 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 30,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 30,
+  "dia_tienda": 5,
+  "evento": "Hora pico",
+  "descripcion_evento": "Los clientes llegan en oleadas: +30 % de clientes",
+  "novedad": null,
+  "duracion_s": 113,
+  "paciencia": 0.938,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 245 monedas",
+     "pareja": "Meta: vender 370 monedas"
+    },
+    "meta": {
+     "solitario": 245,
+     "pareja": 370
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 390 monedas",
+     "pareja": "Meta experta: vender 585 monedas"
+    },
+    "meta": {
+     "solitario": 390,
+     "pareja": 585
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 4
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.469,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 490,
+     "pareja": 735
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 490 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 735 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 31,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 31,
+  "dia_tienda": 6,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.93,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 17,
+   "pareja": 26
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 190 monedas",
+     "pareja": "Meta: vender 290 monedas"
+    },
+    "meta": {
+     "solitario": 190,
+     "pareja": 290
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 300 monedas",
+     "pareja": "Meta experta: vender 460 monedas"
+    },
+    "meta": {
+     "solitario": 300,
+     "pareja": 460
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 34,
+    "pareja": 52
+   },
+   "paciencia": 0.465,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 380,
+     "pareja": 580
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 380 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 580 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 32,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 32,
+  "dia_tienda": 7,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.922,
+  "lista_max": 3,
+  "noticia": null,
+  "clientes": {
+   "solitario": 18,
+   "pareja": 27
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 200 monedas",
+     "pareja": "Meta: vender 300 monedas"
+    },
+    "meta": {
+     "solitario": 200,
+     "pareja": 300
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 320 monedas",
+     "pareja": "Meta experta: vender 475 monedas"
+    },
+    "meta": {
+     "solitario": 320,
+     "pareja": 475
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 11 s o menos",
+    "meta": 11
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 36,
+    "pareja": 54
+   },
+   "paciencia": 0.461,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 400,
+     "pareja": 605
+    },
+    "perdidos_max": {
+     "solitario": 4,
+     "pareja": 6
+    },
+    "texto": {
+     "solitario": "Vender 400 monedas con máximo 4 clientes perdidos",
+     "pareja": "Vender 605 monedas con máximo 6 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 33,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 33,
+  "dia_tienda": 8,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.914,
+  "lista_max": 3,
+  "noticia": {
+   "id": "quincena",
+   "titular": "¡Llegó la quincena!",
+   "texto": "La gente cobró: cada cliente lleva una unidad más de cada producto.",
+   "efectos": {
+    "unidades_extra": 1
+   }
+  },
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 300 monedas",
+     "pareja": "Meta: vender 445 monedas"
+    },
+    "meta": {
+     "solitario": 300,
+     "pareja": 445
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 470 monedas",
+     "pareja": "Meta experta: vender 705 monedas"
+    },
+    "meta": {
+     "solitario": 470,
+     "pareja": 705
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.457,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 595,
+     "pareja": 895
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 7
+    },
+    "texto": {
+     "solitario": "Vender 595 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 895 monedas con máximo 7 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 34,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 34,
+  "dia_tienda": 9,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.815,
+  "lista_max": 3,
+  "noticia": {
+   "id": "concierto",
+   "titular": "Concierto gratis en el parque",
+   "texto": "Los adolescentes pasan antes del concierto: más clientes y el doble de basura.",
+   "efectos": {
+    "tipos": {
+     "adolescente": 4
+    },
+    "basura_x": 2
+   }
+  },
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 245 monedas",
+     "pareja": "Meta: vender 370 monedas"
+    },
+    "meta": {
+     "solitario": 245,
+     "pareja": 370
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 390 monedas",
+     "pareja": "Meta experta: vender 585 monedas"
+    },
+    "meta": {
+     "solitario": 390,
+     "pareja": 585
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 4
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.407,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 490,
+     "pareja": 735
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 490 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 735 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 35,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 35,
+  "dia_tienda": 10,
+  "evento": "Día de ofertas",
+  "descripcion_evento": "Las islas de oferta atraen clientes: +20 % de ventas y de clientes",
+  "novedad": "Listas más largas: la gente del Minimercado compra de todo",
+  "duracion_s": 116,
+  "paciencia": 0.898,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 385 monedas",
+     "pareja": "Meta: vender 570 monedas"
+    },
+    "meta": {
+     "solitario": 385,
+     "pareja": 570
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 610 monedas",
+     "pareja": "Meta experta: vender 900 monedas"
+    },
+    "meta": {
+     "solitario": 610,
+     "pareja": 900
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 25 monedas de propina",
+     "pareja": "Recolectar 37 monedas de propina"
+    },
+    "meta": {
+     "solitario": 25,
+     "pareja": 37
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.449,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 640,
+     "pareja": 950
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 640 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 950 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 36,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 36,
+  "dia_tienda": 11,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.89,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 19,
+   "pareja": 28
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 265 monedas",
+     "pareja": "Meta: vender 390 monedas"
+    },
+    "meta": {
+     "solitario": 265,
+     "pareja": 390
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 420 monedas",
+     "pareja": "Meta experta: vender 620 monedas"
+    },
+    "meta": {
+     "solitario": 420,
+     "pareja": 620
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 21 monedas de propina",
+     "pareja": "Recolectar 30 monedas de propina"
+    },
+    "meta": {
+     "solitario": 21,
+     "pareja": 30
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 38,
+    "pareja": 56
+   },
+   "paciencia": 0.445,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 530,
+     "pareja": 780
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 7
+    },
+    "texto": {
+     "solitario": "Vender 530 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 780 monedas con máximo 7 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 37,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 37,
+  "dia_tienda": 12,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.882,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 280 monedas",
+     "pareja": "Meta: vender 420 monedas"
+    },
+    "meta": {
+     "solitario": 280,
+     "pareja": 420
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 440 monedas",
+     "pareja": "Meta experta: vender 665 monedas"
+    },
+    "meta": {
+     "solitario": 440,
+     "pareja": 665
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 22 s",
+    "meta": 22
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.441,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 560,
+     "pareja": 835
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 7
+    },
+    "texto": {
+     "solitario": "Vender 560 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 835 monedas con máximo 7 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 38,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 38,
+  "dia_tienda": 13,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.83,
+  "lista_max": 4,
+  "noticia": {
+   "id": "feria",
+   "titular": "Feria del barrio en la cuadra",
+   "texto": "Llega mucha más gente de lo normal. Prepara las vitrinas desde temprano.",
+   "efectos": {}
+  },
+  "clientes": {
+   "solitario": 28,
+   "pareja": 42
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 390 monedas",
+     "pareja": "Meta: vender 585 monedas"
+    },
+    "meta": {
+     "solitario": 390,
+     "pareja": 585
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 620 monedas",
+     "pareja": "Meta experta: vender 930 monedas"
+    },
+    "meta": {
+     "solitario": 620,
+     "pareja": 930
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 56,
+    "pareja": 84
+   },
+   "paciencia": 0.415,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 780,
+     "pareja": 1170
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 780 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1170 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 39,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 39,
+  "dia_tienda": 14,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.866,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 280 monedas",
+     "pareja": "Meta: vender 420 monedas"
+    },
+    "meta": {
+     "solitario": 280,
+     "pareja": 420
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 440 monedas",
+     "pareja": "Meta experta: vender 665 monedas"
+    },
+    "meta": {
+     "solitario": 440,
+     "pareja": 665
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 11 s o menos",
+    "meta": 11
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.433,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 560,
+     "pareja": 835
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 7
+    },
+    "texto": {
+     "solitario": "Vender 560 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 835 monedas con máximo 7 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 40,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 40,
+  "dia_tienda": 15,
+  "evento": "Día lluvioso",
+  "descripcion_evento": "Entra agua por la puerta: el doble de derrames",
+  "novedad": null,
+  "duracion_s": 119,
+  "paciencia": 0.858,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 21,
+   "pareja": 32
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 295 monedas",
+     "pareja": "Meta: vender 445 monedas"
+    },
+    "meta": {
+     "solitario": 295,
+     "pareja": 445
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 465 monedas",
+     "pareja": "Meta experta: vender 705 monedas"
+    },
+    "meta": {
+     "solitario": 465,
+     "pareja": 705
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 42,
+    "pareja": 64
+   },
+   "paciencia": 0.429,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 585,
+     "pareja": 895
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 585 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 895 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 41,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 41,
+  "dia_tienda": 16,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.85,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 21,
+   "pareja": 32
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 295 monedas",
+     "pareja": "Meta: vender 445 monedas"
+    },
+    "meta": {
+     "solitario": 295,
+     "pareja": 445
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 465 monedas",
+     "pareja": "Meta experta: vender 705 monedas"
+    },
+    "meta": {
+     "solitario": 465,
+     "pareja": 705
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 42,
+    "pareja": 64
+   },
+   "paciencia": 0.425,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 585,
+     "pareja": 895
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 585 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 895 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 42,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 42,
+  "dia_tienda": 17,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.842,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 305 monedas",
+     "pareja": "Meta: vender 460 monedas"
+    },
+    "meta": {
+     "solitario": 305,
+     "pareja": 460
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 485 monedas",
+     "pareja": "Meta experta: vender 730 monedas"
+    },
+    "meta": {
+     "solitario": 485,
+     "pareja": 730
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "77 % de clientes felices",
+     "pareja": "4 combos en pareja"
+    },
+    "meta": {
+     "solitario": 77,
+     "pareja": 4
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.421,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 615,
+     "pareja": 920
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 615 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 920 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 43,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 43,
+  "dia_tienda": 18,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.709,
+  "lista_max": 4,
+  "noticia": {
+   "id": "calor",
+   "titular": "Ola de calor en el barrio",
+   "texto": "Todos buscan bebidas y helados, y el calor los pone de mal genio.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "congelados"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 24,
+   "pareja": 36
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 335 monedas",
+     "pareja": "Meta: vender 500 monedas"
+    },
+    "meta": {
+     "solitario": 335,
+     "pareja": 500
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 530 monedas",
+     "pareja": "Meta experta: vender 795 monedas"
+    },
+    "meta": {
+     "solitario": 530,
+     "pareja": 795
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 26 monedas de propina",
+     "pareja": "Recolectar 39 monedas de propina"
+    },
+    "meta": {
+     "solitario": 26,
+     "pareja": 39
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 48,
+    "pareja": 72
+   },
+   "paciencia": 0.354,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 670,
+     "pareja": 1005
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 670 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1005 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 44,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 44,
+  "dia_tienda": 19,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.595,
+  "lista_max": 4,
+  "noticia": {
+   "id": "partido",
+   "titular": "¡Hoy juega la Selección!",
+   "texto": "Todos quieren llegar a ver el partido: la gente está impaciente y lleva gaseosa y paquetes.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "abarrotes"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 320 monedas",
+     "pareja": "Meta: vender 475 monedas"
+    },
+    "meta": {
+     "solitario": 320,
+     "pareja": 475
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 510 monedas",
+     "pareja": "Meta experta: vender 750 monedas"
+    },
+    "meta": {
+     "solitario": 510,
+     "pareja": 750
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 22 s",
+    "meta": 22
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.297,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 640,
+     "pareja": 950
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 640 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 950 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 45,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 45,
+  "dia_tienda": 20,
+  "evento": "Visita especial",
+  "descripcion_evento": "Inspección: la limpieza cuenta doble",
+  "novedad": null,
+  "duracion_s": 122,
+  "paciencia": 0.818,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 320 monedas",
+     "pareja": "Meta: vender 475 monedas"
+    },
+    "meta": {
+     "solitario": 320,
+     "pareja": 475
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 510 monedas",
+     "pareja": "Meta experta: vender 750 monedas"
+    },
+    "meta": {
+     "solitario": 510,
+     "pareja": 750
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 12 s",
+    "meta": 12
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.409,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 640,
+     "pareja": 950
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 640 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 950 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 46,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 46,
+  "dia_tienda": 21,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.81,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 320 monedas",
+     "pareja": "Meta: vender 475 monedas"
+    },
+    "meta": {
+     "solitario": 320,
+     "pareja": 475
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 510 monedas",
+     "pareja": "Meta experta: vender 750 monedas"
+    },
+    "meta": {
+     "solitario": 510,
+     "pareja": 750
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 11 s o menos",
+    "meta": 11
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.405,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 640,
+     "pareja": 950
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 640 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 950 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 47,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 47,
+  "dia_tienda": 22,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.802,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 24,
+   "pareja": 36
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 335 monedas",
+     "pareja": "Meta: vender 500 monedas"
+    },
+    "meta": {
+     "solitario": 335,
+     "pareja": 500
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 530 monedas",
+     "pareja": "Meta experta: vender 795 monedas"
+    },
+    "meta": {
+     "solitario": 530,
+     "pareja": 795
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 48,
+    "pareja": 72
+   },
+   "paciencia": 0.401,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 670,
+     "pareja": 1005
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 670 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1005 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 48,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 48,
+  "dia_tienda": 23,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.794,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 24,
+   "pareja": 36
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 335 monedas",
+     "pareja": "Meta: vender 500 monedas"
+    },
+    "meta": {
+     "solitario": 335,
+     "pareja": 500
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 530 monedas",
+     "pareja": "Meta experta: vender 795 monedas"
+    },
+    "meta": {
+     "solitario": 530,
+     "pareja": 795
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 1 cliente perdido por demora",
+     "pareja": "Máximo 2 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 1,
+     "pareja": 2
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 48,
+    "pareja": 72
+   },
+   "paciencia": 0.397,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 670,
+     "pareja": 1005
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 670 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1005 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 49,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 49,
+  "dia_tienda": 24,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.865,
+  "lista_max": 4,
+  "noticia": {
+   "id": "madres",
+   "titular": "Se acerca el Día de la Madre",
+   "texto": "Llegan muchas mamás y abuelitas. Son pacientes y dejan mejor propina.",
+   "efectos": {
+    "tipos": {
+     "mama": 3,
+     "abuelita": 3
+    },
+    "propina_extra": 1
+   }
+  },
+  "clientes": {
+   "solitario": 27,
+   "pareja": 40
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 375 monedas",
+     "pareja": "Meta: vender 560 monedas"
+    },
+    "meta": {
+     "solitario": 375,
+     "pareja": 560
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 595 monedas",
+     "pareja": "Meta experta: vender 885 monedas"
+    },
+    "meta": {
+     "solitario": 595,
+     "pareja": 885
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "84 % de clientes felices",
+     "pareja": "5 combos en pareja"
+    },
+    "meta": {
+     "solitario": 84,
+     "pareja": 5
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 54,
+    "pareja": 80
+   },
+   "paciencia": 0.432,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 755,
+     "pareja": 1115
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 755 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1115 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 50,
+  "tienda": 2,
+  "nombre_tienda": "Minimercado",
+  "dia": 50,
+  "dia_tienda": 25,
+  "evento": "Gran día",
+  "descripcion_evento": "El último día de este tamaño del local: todo junto y la meta más alta",
+  "novedad": null,
+  "duracion_s": 155,
+  "paciencia": 0.778,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 33,
+   "pareja": 50
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 460 monedas",
+     "pareja": "Meta: vender 700 monedas"
+    },
+    "meta": {
+     "solitario": 460,
+     "pareja": 700
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 730 monedas",
+     "pareja": "Meta experta: vender 1105 monedas"
+    },
+    "meta": {
+     "solitario": 730,
+     "pareja": 1105
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 4
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 66,
+    "pareja": 100
+   },
+   "paciencia": 0.389,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 920,
+     "pareja": 1395
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 920 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1395 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 51,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 51,
+  "dia_tienda": 1,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "¡El local creció! Supermercado: el kiosco de wafles de regalo y vitrinas hasta nivel 3",
+  "duracion_s": 90,
+  "paciencia": 0.799,
+  "lista_max": 4,
+  "noticia": {
+   "id": "calor",
+   "titular": "Ola de calor en el barrio",
+   "texto": "Todos buscan bebidas y helados, y el calor los pone de mal genio.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "congelados"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 320 monedas",
+     "pareja": "Meta: vender 485 monedas"
+    },
+    "meta": {
+     "solitario": 320,
+     "pareja": 485
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 510 monedas",
+     "pareja": "Meta experta: vender 765 monedas"
+    },
+    "meta": {
+     "solitario": 510,
+     "pareja": 765
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.4,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 645,
+     "pareja": 965
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 645 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 965 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 52,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 52,
+  "dia_tienda": 2,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 90,
+  "paciencia": 0.932,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 20,
+   "pareja": 30
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 290 monedas",
+     "pareja": "Meta: vender 440 monedas"
+    },
+    "meta": {
+     "solitario": 290,
+     "pareja": 440
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 465 monedas",
+     "pareja": "Meta experta: vender 695 monedas"
+    },
+    "meta": {
+     "solitario": 465,
+     "pareja": 695
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 10 s o menos",
+    "meta": 10
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 40,
+    "pareja": 60
+   },
+   "paciencia": 0.466,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 585,
+     "pareja": 880
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 7
+    },
+    "texto": {
+     "solitario": "Vender 585 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 880 monedas con máximo 7 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 53,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 53,
+  "dia_tienda": 3,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 90,
+  "paciencia": 0.924,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 21,
+   "pareja": 32
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 305 monedas",
+     "pareja": "Meta: vender 470 monedas"
+    },
+    "meta": {
+     "solitario": 305,
+     "pareja": 470
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 485 monedas",
+     "pareja": "Meta experta: vender 740 monedas"
+    },
+    "meta": {
+     "solitario": 485,
+     "pareja": 740
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 42,
+    "pareja": 64
+   },
+   "paciencia": 0.462,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 615,
+     "pareja": 935
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 615 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 935 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 54,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 54,
+  "dia_tienda": 4,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 90,
+  "paciencia": 0.916,
+  "lista_max": 4,
+  "noticia": {
+   "id": "quincena",
+   "titular": "¡Llegó la quincena!",
+   "texto": "La gente cobró: cada cliente lleva una unidad más de cada producto.",
+   "efectos": {
+    "unidades_extra": 1
+   }
+  },
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 450 monedas",
+     "pareja": "Meta: vender 665 monedas"
+    },
+    "meta": {
+     "solitario": 450,
+     "pareja": 665
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 710 monedas",
+     "pareja": "Meta experta: vender 1050 monedas"
+    },
+    "meta": {
+     "solitario": 710,
+     "pareja": 1050
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 4
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.458,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 895,
+     "pareja": 1325
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 895 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1325 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 55,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 55,
+  "dia_tienda": 5,
+  "evento": "Hora pico",
+  "descripcion_evento": "Los clientes llegan en oleadas: +30 % de clientes",
+  "novedad": null,
+  "duracion_s": 113,
+  "paciencia": 0.908,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 28,
+   "pareja": 42
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 410 monedas",
+     "pareja": "Meta: vender 615 monedas"
+    },
+    "meta": {
+     "solitario": 410,
+     "pareja": 615
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 650 monedas",
+     "pareja": "Meta experta: vender 975 monedas"
+    },
+    "meta": {
+     "solitario": 650,
+     "pareja": 975
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 5 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 5
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 56,
+    "pareja": 84
+   },
+   "paciencia": 0.454,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 820,
+     "pareja": 1230
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 820 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1230 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 56,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 56,
+  "dia_tienda": 6,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.9,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 22,
+   "pareja": 33
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 320 monedas",
+     "pareja": "Meta: vender 485 monedas"
+    },
+    "meta": {
+     "solitario": 320,
+     "pareja": 485
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 510 monedas",
+     "pareja": "Meta experta: vender 765 monedas"
+    },
+    "meta": {
+     "solitario": 510,
+     "pareja": 765
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 26 monedas de propina",
+     "pareja": "Recolectar 38 monedas de propina"
+    },
+    "meta": {
+     "solitario": 26,
+     "pareja": 38
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 44,
+    "pareja": 66
+   },
+   "paciencia": 0.45,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 645,
+     "pareja": 965
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 645 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 965 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 57,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 57,
+  "dia_tienda": 7,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.892,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 335 monedas",
+     "pareja": "Meta: vender 495 monedas"
+    },
+    "meta": {
+     "solitario": 335,
+     "pareja": 495
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 535 monedas",
+     "pareja": "Meta experta: vender 785 monedas"
+    },
+    "meta": {
+     "solitario": 535,
+     "pareja": 785
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.446,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 675,
+     "pareja": 995
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 675 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 995 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 58,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 58,
+  "dia_tienda": 8,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.884,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 23,
+   "pareja": 34
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 335 monedas",
+     "pareja": "Meta: vender 495 monedas"
+    },
+    "meta": {
+     "solitario": 335,
+     "pareja": 495
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 535 monedas",
+     "pareja": "Meta experta: vender 785 monedas"
+    },
+    "meta": {
+     "solitario": 535,
+     "pareja": 785
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 46,
+    "pareja": 68
+   },
+   "paciencia": 0.442,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 675,
+     "pareja": 995
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 675 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 995 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 59,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 59,
+  "dia_tienda": 9,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.832,
+  "lista_max": 4,
+  "noticia": {
+   "id": "feria",
+   "titular": "Feria del barrio en la cuadra",
+   "texto": "Llega mucha más gente de lo normal. Prepara las vitrinas desde temprano.",
+   "efectos": {}
+  },
+  "clientes": {
+   "solitario": 33,
+   "pareja": 50
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 485 monedas",
+     "pareja": "Meta: vender 730 monedas"
+    },
+    "meta": {
+     "solitario": 485,
+     "pareja": 730
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 765 monedas",
+     "pareja": "Meta experta: vender 1160 monedas"
+    },
+    "meta": {
+     "solitario": 765,
+     "pareja": 1160
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 10 s o menos",
+    "meta": 10
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 66,
+    "pareja": 100
+   },
+   "paciencia": 0.416,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 965,
+     "pareja": 1460
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 965 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1460 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 60,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 60,
+  "dia_tienda": 10,
+  "evento": "Día de ofertas",
+  "descripcion_evento": "Las islas de oferta atraen clientes: +20 % de ventas y de clientes",
+  "novedad": null,
+  "duracion_s": 116,
+  "paciencia": 0.868,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 29,
+   "pareja": 44
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 510 monedas",
+     "pareja": "Meta: vender 770 monedas"
+    },
+    "meta": {
+     "solitario": 510,
+     "pareja": 770
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 805 monedas",
+     "pareja": "Meta experta: vender 1225 monedas"
+    },
+    "meta": {
+     "solitario": 805,
+     "pareja": 1225
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 34 monedas de propina",
+     "pareja": "Recolectar 51 monedas de propina"
+    },
+    "meta": {
+     "solitario": 34,
+     "pareja": 51
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 58,
+    "pareja": 88
+   },
+   "paciencia": 0.434,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 850,
+     "pareja": 1285
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 850 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1285 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 61,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 61,
+  "dia_tienda": 11,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.516,
+  "lista_max": 4,
+  "noticia": {
+   "id": "paro",
+   "titular": "Paro de buses en la ciudad",
+   "texto": "Llega menos gente, pero todos van de afán: caminan rápido y se cansan de esperar.",
+   "efectos": {
+    "velocidad_x": 1.2
+   }
+  },
+  "clientes": {
+   "solitario": 21,
+   "pareja": 32
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 305 monedas",
+     "pareja": "Meta: vender 470 monedas"
+    },
+    "meta": {
+     "solitario": 305,
+     "pareja": 470
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 485 monedas",
+     "pareja": "Meta experta: vender 740 monedas"
+    },
+    "meta": {
+     "solitario": 485,
+     "pareja": 740
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 3 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 3
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 42,
+    "pareja": 64
+   },
+   "paciencia": 0.258,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 615,
+     "pareja": 935
+    },
+    "perdidos_max": {
+     "solitario": 5,
+     "pareja": 8
+    },
+    "texto": {
+     "solitario": "Vender 615 monedas con máximo 5 clientes perdidos",
+     "pareja": "Vender 935 monedas con máximo 8 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 62,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 62,
+  "dia_tienda": 12,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.852,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 25,
+   "pareja": 38
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 365 monedas",
+     "pareja": "Meta: vender 555 monedas"
+    },
+    "meta": {
+     "solitario": 365,
+     "pareja": 555
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 580 monedas",
+     "pareja": "Meta experta: vender 880 monedas"
+    },
+    "meta": {
+     "solitario": 580,
+     "pareja": 880
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "72 % de clientes felices",
+     "pareja": "4 combos en pareja"
+    },
+    "meta": {
+     "solitario": 72,
+     "pareja": 4
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 50,
+    "pareja": 76
+   },
+   "paciencia": 0.426,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 730,
+     "pareja": 1110
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 730 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1110 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 63,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 63,
+  "dia_tienda": 13,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.844,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 25,
+   "pareja": 38
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 365 monedas",
+     "pareja": "Meta: vender 555 monedas"
+    },
+    "meta": {
+     "solitario": 365,
+     "pareja": 555
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 580 monedas",
+     "pareja": "Meta experta: vender 880 monedas"
+    },
+    "meta": {
+     "solitario": 580,
+     "pareja": 880
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 29 monedas de propina",
+     "pareja": "Recolectar 44 monedas de propina"
+    },
+    "meta": {
+     "solitario": 29,
+     "pareja": 44
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 50,
+    "pareja": 76
+   },
+   "paciencia": 0.422,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 730,
+     "pareja": 1110
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 730 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1110 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 64,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 64,
+  "dia_tienda": 14,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.711,
+  "lista_max": 4,
+  "noticia": {
+   "id": "calor",
+   "titular": "Ola de calor en el barrio",
+   "texto": "Todos buscan bebidas y helados, y el calor los pone de mal genio.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "congelados"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 28,
+   "pareja": 42
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 410 monedas",
+     "pareja": "Meta: vender 615 monedas"
+    },
+    "meta": {
+     "solitario": 410,
+     "pareja": 615
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 650 monedas",
+     "pareja": "Meta experta: vender 975 monedas"
+    },
+    "meta": {
+     "solitario": 650,
+     "pareja": 975
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 56,
+    "pareja": 84
+   },
+   "paciencia": 0.355,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 820,
+     "pareja": 1230
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 820 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1230 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 65,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 65,
+  "dia_tienda": 15,
+  "evento": "Día lluvioso",
+  "descripcion_evento": "Entra agua por la puerta: el doble de derrames",
+  "novedad": null,
+  "duracion_s": 119,
+  "paciencia": 0.828,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 26,
+   "pareja": 39
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 380 monedas",
+     "pareja": "Meta: vender 570 monedas"
+    },
+    "meta": {
+     "solitario": 380,
+     "pareja": 570
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 600 monedas",
+     "pareja": "Meta experta: vender 905 monedas"
+    },
+    "meta": {
+     "solitario": 600,
+     "pareja": 905
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 52,
+    "pareja": 78
+   },
+   "paciencia": 0.414,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 760,
+     "pareja": 1140
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 760 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1140 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 66,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 66,
+  "dia_tienda": 16,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.82,
+  "lista_max": 4,
+  "noticia": {
+   "id": "quincena",
+   "titular": "¡Llegó la quincena!",
+   "texto": "La gente cobró: cada cliente lleva una unidad más de cada producto.",
+   "efectos": {
+    "unidades_extra": 1
+   }
+  },
+  "clientes": {
+   "solitario": 29,
+   "pareja": 44
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 565 monedas",
+     "pareja": "Meta: vender 860 monedas"
+    },
+    "meta": {
+     "solitario": 565,
+     "pareja": 860
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 895 monedas",
+     "pareja": "Meta experta: vender 1360 monedas"
+    },
+    "meta": {
+     "solitario": 895,
+     "pareja": 1360
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 10 s o menos",
+    "meta": 10
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 58,
+    "pareja": 88
+   },
+   "paciencia": 0.41,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1130,
+     "pareja": 1715
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 1130 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1715 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 67,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 67,
+  "dia_tienda": 17,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.812,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 27,
+   "pareja": 40
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 395 monedas",
+     "pareja": "Meta: vender 585 monedas"
+    },
+    "meta": {
+     "solitario": 395,
+     "pareja": 585
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 625 monedas",
+     "pareja": "Meta experta: vender 925 monedas"
+    },
+    "meta": {
+     "solitario": 625,
+     "pareja": 925
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 54,
+    "pareja": 80
+   },
+   "paciencia": 0.406,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 790,
+     "pareja": 1170
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 790 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1170 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 68,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 68,
+  "dia_tienda": 18,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.804,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 28,
+   "pareja": 42
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 410 monedas",
+     "pareja": "Meta: vender 615 monedas"
+    },
+    "meta": {
+     "solitario": 410,
+     "pareja": 615
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 650 monedas",
+     "pareja": "Meta experta: vender 975 monedas"
+    },
+    "meta": {
+     "solitario": 650,
+     "pareja": 975
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 2 clientes perdidos por demora",
+     "pareja": "Máximo 4 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 2,
+     "pareja": 4
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 56,
+    "pareja": 84
+   },
+   "paciencia": 0.402,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 820,
+     "pareja": 1230
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 820 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1230 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 69,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 69,
+  "dia_tienda": 19,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.796,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 28,
+   "pareja": 42
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 410 monedas",
+     "pareja": "Meta: vender 615 monedas"
+    },
+    "meta": {
+     "solitario": 410,
+     "pareja": 615
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 650 monedas",
+     "pareja": "Meta experta: vender 975 monedas"
+    },
+    "meta": {
+     "solitario": 650,
+     "pareja": 975
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "79 % de clientes felices",
+     "pareja": "5 combos en pareja"
+    },
+    "meta": {
+     "solitario": 79,
+     "pareja": 5
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 56,
+    "pareja": 84
+   },
+   "paciencia": 0.398,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 820,
+     "pareja": 1230
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 820 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1230 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 70,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 70,
+  "dia_tienda": 20,
+  "evento": "Visita especial",
+  "descripcion_evento": "Inspección: la limpieza cuenta doble",
+  "novedad": null,
+  "duracion_s": 122,
+  "paciencia": 0.788,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 29,
+   "pareja": 44
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 425 monedas",
+     "pareja": "Meta: vender 645 monedas"
+    },
+    "meta": {
+     "solitario": 425,
+     "pareja": 645
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 670 monedas",
+     "pareja": "Meta experta: vender 1020 monedas"
+    },
+    "meta": {
+     "solitario": 670,
+     "pareja": 1020
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 12 s",
+    "meta": 12
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 58,
+    "pareja": 88
+   },
+   "paciencia": 0.394,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 850,
+     "pareja": 1285
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 850 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1285 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 71,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 71,
+  "dia_tienda": 21,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.78,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 29,
+   "pareja": 44
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 425 monedas",
+     "pareja": "Meta: vender 645 monedas"
+    },
+    "meta": {
+     "solitario": 425,
+     "pareja": 645
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 670 monedas",
+     "pareja": "Meta experta: vender 1020 monedas"
+    },
+    "meta": {
+     "solitario": 670,
+     "pareja": 1020
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 58,
+    "pareja": 88
+   },
+   "paciencia": 0.39,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 850,
+     "pareja": 1285
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 850 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1285 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 72,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 72,
+  "dia_tienda": 22,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.772,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 29,
+   "pareja": 44
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 425 monedas",
+     "pareja": "Meta: vender 645 monedas"
+    },
+    "meta": {
+     "solitario": 425,
+     "pareja": 645
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 670 monedas",
+     "pareja": "Meta experta: vender 1020 monedas"
+    },
+    "meta": {
+     "solitario": 670,
+     "pareja": 1020
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 58,
+    "pareja": 88
+   },
+   "paciencia": 0.386,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 850,
+     "pareja": 1285
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 850 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1285 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 73,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 73,
+  "dia_tienda": 23,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.764,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 30,
+   "pareja": 45
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 440 monedas",
+     "pareja": "Meta: vender 660 monedas"
+    },
+    "meta": {
+     "solitario": 440,
+     "pareja": 660
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 695 monedas",
+     "pareja": "Meta experta: vender 1040 monedas"
+    },
+    "meta": {
+     "solitario": 695,
+     "pareja": 1040
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 10 s o menos",
+    "meta": 10
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 60,
+    "pareja": 90
+   },
+   "paciencia": 0.382,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 880,
+     "pareja": 1315
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 880 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1315 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 74,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 74,
+  "dia_tienda": 24,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.544,
+  "lista_max": 4,
+  "noticia": {
+   "id": "partido",
+   "titular": "¡Hoy juega la Selección!",
+   "texto": "Todos quieren llegar a ver el partido: la gente está impaciente y lleva gaseosa y paquetes.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "abarrotes"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 30,
+   "pareja": 45
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 440 monedas",
+     "pareja": "Meta: vender 660 monedas"
+    },
+    "meta": {
+     "solitario": 440,
+     "pareja": 660
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 695 monedas",
+     "pareja": "Meta experta: vender 1040 monedas"
+    },
+    "meta": {
+     "solitario": 695,
+     "pareja": 1040
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 60,
+    "pareja": 90
+   },
+   "paciencia": 0.272,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 880,
+     "pareja": 1315
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 880 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1315 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 75,
+  "tienda": 3,
+  "nombre_tienda": "Supermercado",
+  "dia": 75,
+  "dia_tienda": 25,
+  "evento": "Gran día",
+  "descripcion_evento": "El último día de este tamaño del local: todo junto y la meta más alta",
+  "novedad": null,
+  "duracion_s": 155,
+  "paciencia": 0.748,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 40,
+   "pareja": 60
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 585 monedas",
+     "pareja": "Meta: vender 880 monedas"
+    },
+    "meta": {
+     "solitario": 585,
+     "pareja": 880
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 925 monedas",
+     "pareja": "Meta experta: vender 1390 monedas"
+    },
+    "meta": {
+     "solitario": 925,
+     "pareja": 1390
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 5 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 5
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 80,
+    "pareja": 120
+   },
+   "paciencia": 0.374,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1170,
+     "pareja": 1755
+    },
+    "perdidos_max": {
+     "solitario": 10,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 1170 monedas con máximo 10 clientes perdidos",
+     "pareja": "Vender 1755 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 76,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 76,
+  "dia_tienda": 1,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "¡El local creció! Hipermercado: el puesto de arepas de regalo y la tienda más grande",
+  "duracion_s": 90,
+  "paciencia": 0.819,
+  "lista_max": 4,
+  "noticia": {
+   "id": "concierto",
+   "titular": "Concierto gratis en el parque",
+   "texto": "Los adolescentes pasan antes del concierto: más clientes y el doble de basura.",
+   "efectos": {
+    "tipos": {
+     "adolescente": 4
+    },
+    "basura_x": 2
+   }
+  },
+  "clientes": {
+   "solitario": 30,
+   "pareja": 45
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 445 monedas",
+     "pareja": "Meta: vender 670 monedas"
+    },
+    "meta": {
+     "solitario": 445,
+     "pareja": 670
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 705 monedas",
+     "pareja": "Meta experta: vender 1060 monedas"
+    },
+    "meta": {
+     "solitario": 705,
+     "pareja": 1060
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 37 monedas de propina",
+     "pareja": "Recolectar 56 monedas de propina"
+    },
+    "meta": {
+     "solitario": 37,
+     "pareja": 56
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 60,
+    "pareja": 90
+   },
+   "paciencia": 0.409,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 890,
+     "pareja": 1335
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 890 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1335 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 77,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 77,
+  "dia_tienda": 2,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 90,
+  "paciencia": 0.902,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 25,
+   "pareja": 38
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 370 monedas",
+     "pareja": "Meta: vender 565 monedas"
+    },
+    "meta": {
+     "solitario": 370,
+     "pareja": 565
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 590 monedas",
+     "pareja": "Meta experta: vender 895 monedas"
+    },
+    "meta": {
+     "solitario": 590,
+     "pareja": 895
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 18 s",
+    "meta": 18
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 50,
+    "pareja": 76
+   },
+   "paciencia": 0.451,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 740,
+     "pareja": 1130
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 740 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1130 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 78,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 78,
+  "dia_tienda": 3,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 90,
+  "paciencia": 0.894,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 26,
+   "pareja": 39
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 385 monedas",
+     "pareja": "Meta: vender 580 monedas"
+    },
+    "meta": {
+     "solitario": 385,
+     "pareja": 580
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 610 monedas",
+     "pareja": "Meta experta: vender 915 monedas"
+    },
+    "meta": {
+     "solitario": 610,
+     "pareja": 915
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 52,
+    "pareja": 78
+   },
+   "paciencia": 0.447,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 770,
+     "pareja": 1160
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 770 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1160 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 79,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 79,
+  "dia_tienda": 4,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 90,
+  "paciencia": 0.886,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 26,
+   "pareja": 39
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 385 monedas",
+     "pareja": "Meta: vender 580 monedas"
+    },
+    "meta": {
+     "solitario": 385,
+     "pareja": 580
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 610 monedas",
+     "pareja": "Meta experta: vender 915 monedas"
+    },
+    "meta": {
+     "solitario": 610,
+     "pareja": 915
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 9 s o menos",
+    "meta": 9
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 52,
+    "pareja": 78
+   },
+   "paciencia": 0.443,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 770,
+     "pareja": 1160
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 770 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1160 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 80,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 80,
+  "dia_tienda": 5,
+  "evento": "Hora pico",
+  "descripcion_evento": "Los clientes llegan en oleadas: +30 % de clientes",
+  "novedad": null,
+  "duracion_s": 113,
+  "paciencia": 0.878,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 35,
+   "pareja": 52
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 520 monedas",
+     "pareja": "Meta: vender 770 monedas"
+    },
+    "meta": {
+     "solitario": 520,
+     "pareja": 770
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 825 monedas",
+     "pareja": "Meta experta: vender 1225 monedas"
+    },
+    "meta": {
+     "solitario": 825,
+     "pareja": 1225
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 4 clientes perdidos por demora",
+     "pareja": "Máximo 6 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 4,
+     "pareja": 6
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 70,
+    "pareja": 104
+   },
+   "paciencia": 0.439,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1040,
+     "pareja": 1545
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 1040 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1545 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 81,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 81,
+  "dia_tienda": 6,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.87,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 27,
+   "pareja": 40
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 400 monedas",
+     "pareja": "Meta: vender 595 monedas"
+    },
+    "meta": {
+     "solitario": 400,
+     "pareja": 595
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 635 monedas",
+     "pareja": "Meta experta: vender 940 monedas"
+    },
+    "meta": {
+     "solitario": 635,
+     "pareja": 940
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 5 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 5
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 54,
+    "pareja": 80
+   },
+   "paciencia": 0.435,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 800,
+     "pareja": 1190
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 800 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1190 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 82,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 82,
+  "dia_tienda": 7,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.517,
+  "lista_max": 4,
+  "noticia": {
+   "id": "paro",
+   "titular": "Paro de buses en la ciudad",
+   "texto": "Llega menos gente, pero todos van de afán: caminan rápido y se cansan de esperar.",
+   "efectos": {
+    "velocidad_x": 1.2
+   }
+  },
+  "clientes": {
+   "solitario": 24,
+   "pareja": 36
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 355 monedas",
+     "pareja": "Meta: vender 535 monedas"
+    },
+    "meta": {
+     "solitario": 355,
+     "pareja": 535
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 565 monedas",
+     "pareja": "Meta experta: vender 845 monedas"
+    },
+    "meta": {
+     "solitario": 565,
+     "pareja": 845
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "67 % de clientes felices",
+     "pareja": "4 combos en pareja"
+    },
+    "meta": {
+     "solitario": 67,
+     "pareja": 4
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 48,
+    "pareja": 72
+   },
+   "paciencia": 0.259,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 715,
+     "pareja": 1070
+    },
+    "perdidos_max": {
+     "solitario": 6,
+     "pareja": 9
+    },
+    "texto": {
+     "solitario": "Vender 715 monedas con máximo 6 clientes perdidos",
+     "pareja": "Vender 1070 monedas con máximo 9 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 83,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 83,
+  "dia_tienda": 8,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.854,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 28,
+   "pareja": 42
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 415 monedas",
+     "pareja": "Meta: vender 625 monedas"
+    },
+    "meta": {
+     "solitario": 415,
+     "pareja": 625
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 660 monedas",
+     "pareja": "Meta experta: vender 990 monedas"
+    },
+    "meta": {
+     "solitario": 660,
+     "pareja": 990
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 35 monedas de propina",
+     "pareja": "Recolectar 52 monedas de propina"
+    },
+    "meta": {
+     "solitario": 35,
+     "pareja": 52
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 56,
+    "pareja": 84
+   },
+   "paciencia": 0.427,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 830,
+     "pareja": 1245
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 10
+    },
+    "texto": {
+     "solitario": "Vender 830 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1245 monedas con máximo 10 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 84,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 84,
+  "dia_tienda": 9,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 93,
+  "paciencia": 0.846,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 29,
+   "pareja": 44
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 430 monedas",
+     "pareja": "Meta: vender 655 monedas"
+    },
+    "meta": {
+     "solitario": 430,
+     "pareja": 655
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 680 monedas",
+     "pareja": "Meta experta: vender 1035 monedas"
+    },
+    "meta": {
+     "solitario": 680,
+     "pareja": 1035
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 18 s",
+    "meta": 18
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 58,
+    "pareja": 88
+   },
+   "paciencia": 0.423,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 860,
+     "pareja": 1305
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 860 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1305 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 85,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 85,
+  "dia_tienda": 10,
+  "evento": "Día de ofertas",
+  "descripcion_evento": "Las islas de oferta atraen clientes: +20 % de ventas y de clientes",
+  "novedad": null,
+  "duracion_s": 116,
+  "paciencia": 0.838,
+  "lista_max": 4,
+  "noticia": null,
+  "clientes": {
+   "solitario": 35,
+   "pareja": 52
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 625 monedas",
+     "pareja": "Meta: vender 925 monedas"
+    },
+    "meta": {
+     "solitario": 625,
+     "pareja": 925
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 990 monedas",
+     "pareja": "Meta experta: vender 1465 monedas"
+    },
+    "meta": {
+     "solitario": 990,
+     "pareja": 1465
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 43 monedas de propina",
+     "pareja": "Recolectar 64 monedas de propina"
+    },
+    "meta": {
+     "solitario": 43,
+     "pareja": 64
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 70,
+    "pareja": 104
+   },
+   "paciencia": 0.419,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1040,
+     "pareja": 1545
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 1040 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1545 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 86,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 86,
+  "dia_tienda": 11,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.598,
+  "lista_max": 4,
+  "noticia": {
+   "id": "partido",
+   "titular": "¡Hoy juega la Selección!",
+   "texto": "Todos quieren llegar a ver el partido: la gente está impaciente y lleva gaseosa y paquetes.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "abarrotes"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 30,
+   "pareja": 45
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 445 monedas",
+     "pareja": "Meta: vender 670 monedas"
+    },
+    "meta": {
+     "solitario": 445,
+     "pareja": 670
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 705 monedas",
+     "pareja": "Meta experta: vender 1060 monedas"
+    },
+    "meta": {
+     "solitario": 705,
+     "pareja": 1060
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 9 s o menos",
+    "meta": 9
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 60,
+    "pareja": 90
+   },
+   "paciencia": 0.299,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 890,
+     "pareja": 1335
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 890 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1335 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 87,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 87,
+  "dia_tienda": 12,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.822,
+  "lista_max": 4,
+  "noticia": {
+   "id": "quincena",
+   "titular": "¡Llegó la quincena!",
+   "texto": "La gente cobró: cada cliente lleva una unidad más de cada producto.",
+   "efectos": {
+    "unidades_extra": 1
+   }
+  },
+  "clientes": {
+   "solitario": 33,
+   "pareja": 50
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 655 monedas",
+     "pareja": "Meta: vender 990 monedas"
+    },
+    "meta": {
+     "solitario": 655,
+     "pareja": 990
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 1035 monedas",
+     "pareja": "Meta experta: vender 1570 monedas"
+    },
+    "meta": {
+     "solitario": 1035,
+     "pareja": 1570
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 66,
+    "pareja": 100
+   },
+   "paciencia": 0.411,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1305,
+     "pareja": 1980
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 1305 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1980 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 88,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 88,
+  "dia_tienda": 13,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": "Listas de hasta 5 productos",
+  "duracion_s": 96,
+  "paciencia": 0.814,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 31,
+   "pareja": 46
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 550 monedas",
+     "pareja": "Meta: vender 820 monedas"
+    },
+    "meta": {
+     "solitario": 550,
+     "pareja": 820
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 875 monedas",
+     "pareja": "Meta experta: vender 1300 monedas"
+    },
+    "meta": {
+     "solitario": 875,
+     "pareja": 1300
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "perdidos",
+    "texto": {
+     "solitario": "Máximo 3 clientes perdidos por demora",
+     "pareja": "Máximo 5 clientes perdidos por demora"
+    },
+    "meta": {
+     "solitario": 3,
+     "pareja": 5
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 62,
+    "pareja": 92
+   },
+   "paciencia": 0.407,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1105,
+     "pareja": 1640
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 1105 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1640 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 89,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 89,
+  "dia_tienda": 14,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 96,
+  "paciencia": 0.806,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 31,
+   "pareja": 46
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 550 monedas",
+     "pareja": "Meta: vender 820 monedas"
+    },
+    "meta": {
+     "solitario": 550,
+     "pareja": 820
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 875 monedas",
+     "pareja": "Meta experta: vender 1300 monedas"
+    },
+    "meta": {
+     "solitario": 875,
+     "pareja": 1300
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "74 % de clientes felices",
+     "pareja": "5 combos en pareja"
+    },
+    "meta": {
+     "solitario": 74,
+     "pareja": 5
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 62,
+    "pareja": 92
+   },
+   "paciencia": 0.403,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1105,
+     "pareja": 1640
+    },
+    "perdidos_max": {
+     "solitario": 7,
+     "pareja": 11
+    },
+    "texto": {
+     "solitario": "Vender 1105 monedas con máximo 7 clientes perdidos",
+     "pareja": "Vender 1640 monedas con máximo 11 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 90,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 90,
+  "dia_tienda": 15,
+  "evento": "Día lluvioso",
+  "descripcion_evento": "Entra agua por la puerta: el doble de derrames",
+  "novedad": null,
+  "duracion_s": 119,
+  "paciencia": 0.798,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 32,
+   "pareja": 48
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 570 monedas",
+     "pareja": "Meta: vender 855 monedas"
+    },
+    "meta": {
+     "solitario": 570,
+     "pareja": 855
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 905 monedas",
+     "pareja": "Meta experta: vender 1355 monedas"
+    },
+    "meta": {
+     "solitario": 905,
+     "pareja": 1355
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 64,
+    "pareja": 96
+   },
+   "paciencia": 0.399,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1140,
+     "pareja": 1710
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 1140 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1710 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 91,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 91,
+  "dia_tienda": 16,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.869,
+  "lista_max": 5,
+  "noticia": {
+   "id": "madres",
+   "titular": "Se acerca el Día de la Madre",
+   "texto": "Llegan muchas mamás y abuelitas. Son pacientes y dejan mejor propina.",
+   "efectos": {
+    "tipos": {
+     "mama": 3,
+     "abuelita": 3
+    },
+    "propina_extra": 1
+   }
+  },
+  "clientes": {
+   "solitario": 35,
+   "pareja": 52
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 625 monedas",
+     "pareja": "Meta: vender 925 monedas"
+    },
+    "meta": {
+     "solitario": 625,
+     "pareja": 925
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 990 monedas",
+     "pareja": "Meta experta: vender 1465 monedas"
+    },
+    "meta": {
+     "solitario": 990,
+     "pareja": 1465
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 18 s",
+    "meta": 18
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 70,
+    "pareja": 104
+   },
+   "paciencia": 0.434,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1245,
+     "pareja": 1855
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 1245 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1855 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 92,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 92,
+  "dia_tienda": 17,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.782,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 33,
+   "pareja": 50
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 590 monedas",
+     "pareja": "Meta: vender 890 monedas"
+    },
+    "meta": {
+     "solitario": 590,
+     "pareja": 890
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 930 monedas",
+     "pareja": "Meta experta: vender 1410 monedas"
+    },
+    "meta": {
+     "solitario": 930,
+     "pareja": 1410
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 66,
+    "pareja": 100
+   },
+   "paciencia": 0.391,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1175,
+     "pareja": 1780
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 1175 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1780 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 93,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 93,
+  "dia_tienda": 18,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.774,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 33,
+   "pareja": 50
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 590 monedas",
+     "pareja": "Meta: vender 890 monedas"
+    },
+    "meta": {
+     "solitario": 590,
+     "pareja": 890
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 930 monedas",
+     "pareja": "Meta experta: vender 1410 monedas"
+    },
+    "meta": {
+     "solitario": 930,
+     "pareja": 1410
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "espera_caja",
+    "texto": "Espera promedio en caja de 9 s o menos",
+    "meta": 9
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 66,
+    "pareja": 100
+   },
+   "paciencia": 0.387,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1175,
+     "pareja": 1780
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 1175 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1780 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 94,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 94,
+  "dia_tienda": 19,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 99,
+  "paciencia": 0.766,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 34,
+   "pareja": 51
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 605 monedas",
+     "pareja": "Meta: vender 910 monedas"
+    },
+    "meta": {
+     "solitario": 605,
+     "pareja": 910
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 960 monedas",
+     "pareja": "Meta experta: vender 1440 monedas"
+    },
+    "meta": {
+     "solitario": 960,
+     "pareja": 1440
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 20 s",
+    "meta": 20
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 68,
+    "pareja": 102
+   },
+   "paciencia": 0.383,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1210,
+     "pareja": 1820
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 1210 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1820 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 95,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 95,
+  "dia_tienda": 20,
+  "evento": "Visita especial",
+  "descripcion_evento": "Inspección: la limpieza cuenta doble",
+  "novedad": null,
+  "duracion_s": 122,
+  "paciencia": 0.758,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 34,
+   "pareja": 51
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 605 monedas",
+     "pareja": "Meta: vender 910 monedas"
+    },
+    "meta": {
+     "solitario": 605,
+     "pareja": 910
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 960 monedas",
+     "pareja": "Meta experta: vender 1440 monedas"
+    },
+    "meta": {
+     "solitario": 960,
+     "pareja": 1440
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "limpieza",
+    "texto": "Ningún charco ni basura por más de 12 s",
+    "meta": 12
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 68,
+    "pareja": 102
+   },
+   "paciencia": 0.379,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1210,
+     "pareja": 1820
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 1210 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1820 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 96,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 96,
+  "dia_tienda": 21,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.75,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 35,
+   "pareja": 52
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 625 monedas",
+     "pareja": "Meta: vender 925 monedas"
+    },
+    "meta": {
+     "solitario": 625,
+     "pareja": 925
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 990 monedas",
+     "pareja": "Meta experta: vender 1465 monedas"
+    },
+    "meta": {
+     "solitario": 990,
+     "pareja": 1465
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "81 % de clientes felices",
+     "pareja": "6 combos en pareja"
+    },
+    "meta": {
+     "solitario": 81,
+     "pareja": 6
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 70,
+    "pareja": 104
+   },
+   "paciencia": 0.375,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1245,
+     "pareja": 1855
+    },
+    "perdidos_max": {
+     "solitario": 8,
+     "pareja": 12
+    },
+    "texto": {
+     "solitario": "Vender 1245 monedas con máximo 8 clientes perdidos",
+     "pareja": "Vender 1855 monedas con máximo 12 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 97,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 97,
+  "dia_tienda": 22,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.631,
+  "lista_max": 5,
+  "noticia": {
+   "id": "calor",
+   "titular": "Ola de calor en el barrio",
+   "texto": "Todos buscan bebidas y helados, y el calor los pone de mal genio.",
+   "efectos": {
+    "preferir": [
+     "bebidas",
+     "congelados"
+    ]
+   }
+  },
+  "clientes": {
+   "solitario": 39,
+   "pareja": 58
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 695 monedas",
+     "pareja": "Meta: vender 1035 monedas"
+    },
+    "meta": {
+     "solitario": 695,
+     "pareja": 1035
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 1100 monedas",
+     "pareja": "Meta experta: vender 1635 monedas"
+    },
+    "meta": {
+     "solitario": 1100,
+     "pareja": 1635
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "propinas",
+    "texto": {
+     "solitario": "Recolectar 48 monedas de propina",
+     "pareja": "Recolectar 72 monedas de propina"
+    },
+    "meta": {
+     "solitario": 48,
+     "pareja": 72
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 78,
+    "pareja": 116
+   },
+   "paciencia": 0.316,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1390,
+     "pareja": 2065
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 14
+    },
+    "texto": {
+     "solitario": "Vender 1390 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 2065 monedas con máximo 14 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 98,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 98,
+  "dia_tienda": 23,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.734,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 36,
+   "pareja": 54
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 640 monedas",
+     "pareja": "Meta: vender 960 monedas"
+    },
+    "meta": {
+     "solitario": 640,
+     "pareja": 960
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 1015 monedas",
+     "pareja": "Meta experta: vender 1525 monedas"
+    },
+    "meta": {
+     "solitario": 1015,
+     "pareja": 1525
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "sin_vacias",
+    "texto": "Ninguna vitrina vacía por más de 18 s",
+    "meta": 18
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 72,
+    "pareja": 108
+   },
+   "paciencia": 0.367,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1285,
+     "pareja": 1925
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 1285 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 1925 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 99,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 99,
+  "dia_tienda": 24,
+  "evento": null,
+  "descripcion_evento": null,
+  "novedad": null,
+  "duracion_s": 102,
+  "paciencia": 0.726,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 36,
+   "pareja": 54
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 640 monedas",
+     "pareja": "Meta: vender 960 monedas"
+    },
+    "meta": {
+     "solitario": 640,
+     "pareja": 960
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 1015 monedas",
+     "pareja": "Meta experta: vender 1525 monedas"
+    },
+    "meta": {
+     "solitario": 1015,
+     "pareja": 1525
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "robos",
+    "texto": "Ningún robo",
+    "meta": 0
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 72,
+    "pareja": 108
+   },
+   "paciencia": 0.363,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1285,
+     "pareja": 1925
+    },
+    "perdidos_max": {
+     "solitario": 9,
+     "pareja": 13
+    },
+    "texto": {
+     "solitario": "Vender 1285 monedas con máximo 9 clientes perdidos",
+     "pareja": "Vender 1925 monedas con máximo 13 clientes perdidos"
+    }
+   }
+  }
+ },
+ {
+  "numero": 100,
+  "tienda": 4,
+  "nombre_tienda": "Hipermercado",
+  "dia": 100,
+  "dia_tienda": 25,
+  "evento": "Gran final",
+  "descripcion_evento": "El último de los 100 días: el local lleno, todo junto y la meta más alta",
+  "novedad": null,
+  "duracion_s": 155,
+  "paciencia": 0.718,
+  "lista_max": 5,
+  "noticia": null,
+  "clientes": {
+   "solitario": 47,
+   "pareja": 70
+  },
+  "problemas": [
+   "basura",
+   "derrames",
+   "ladron",
+   "nina_traviesa",
+   "famoso"
+  ],
+  "estrellas": [
+   {
+    "numero": 1,
+    "clave": "ventas",
+    "texto": {
+     "solitario": "Meta: vender 840 monedas",
+     "pareja": "Meta: vender 1245 monedas"
+    },
+    "meta": {
+     "solitario": 840,
+     "pareja": 1245
+    }
+   },
+   {
+    "numero": 2,
+    "clave": "experta",
+    "texto": {
+     "solitario": "Meta experta: vender 1325 monedas",
+     "pareja": "Meta experta: vender 1975 monedas"
+    },
+    "meta": {
+     "solitario": 1325,
+     "pareja": 1975
+    }
+   },
+   {
+    "numero": 3,
+    "clave": "equipo",
+    "texto": {
+     "solitario": "85 % de clientes felices",
+     "pareja": "7 combos en pareja"
+    },
+    "meta": {
+     "solitario": 85,
+     "pareja": 7
+    }
+   }
+  ],
+  "legendario": {
+   "clientes": {
+    "solitario": 94,
+    "pareja": 140
+   },
+   "paciencia": 0.359,
+   "problemas_x": 1.5,
+   "luna": {
+    "ventas": {
+     "solitario": 1675,
+     "pareja": 2495
+    },
+    "perdidos_max": {
+     "solitario": 11,
+     "pareja": 17
+    },
+    "texto": {
+     "solitario": "Vender 1675 monedas con máximo 11 clientes perdidos",
+     "pareja": "Vender 2495 monedas con máximo 17 clientes perdidos"
+    }
+   }
+  }
+ }
+]

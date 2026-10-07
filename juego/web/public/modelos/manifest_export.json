@@ -114,5 +114,169 @@
    "chocar_cinco",
    "senalar_arriba"
   ]
+ },
+ "vitrinas3": {
+  "estante_3": {
+   "archivo": "vitrina_estante_3.glb",
+   "huecos": 27,
+   "huella": [
+    -0.89,
+    0.89,
+    -0.35,
+    0.36
+   ]
+  },
+  "frutas_3": {
+   "archivo": "vitrina_frutas_3.glb",
+   "huecos": 45,
+   "huella": [
+    -0.99,
+    1.22,
+    -0.5,
+    0.55
+   ]
+  },
+  "nevera_3": {
+   "archivo": "vitrina_nevera_3.glb",
+   "huecos": 21,
+   "huella": [
+    -0.94,
+    0.94,
+    -0.46,
+    0.56
+   ]
+  },
+  "bebidas_3": {
+   "archivo": "vitrina_bebidas_3.glb",
+   "huecos": 29,
+   "huella": [
+    -0.92,
+    1.34,
+    -0.46,
+    0.45
+   ]
+  },
+  "panaderia_3": {
+   "archivo": "vitrina_panaderia_3.glb",
+   "huecos": 7,
+   "huella": [
+    -0.92,
+    0.92,
+    -0.42,
+    1.05
+   ]
+  },
+  "congelador_3": {
+   "archivo": "vitrina_congelador_3.glb",
+   "huecos": 19,
+   "huella": [
+    -0.97,
+    0.97,
+    -0.52,
+    0.52
+   ]
+  },
+  "caja_3": {
+   "archivo": "vitrina_caja_3.glb",
+   "huecos": 6,
+   "huella": [
+    -1.44,
+    1.0,
+    -0.38,
+    0.38
+   ]
+  }
+ },
+ "vitrinas_nuevas": {
+  "vitrina_1": {
+   "archivo": "vitrina_vitrina_1.glb",
+   "huecos": 4,
+   "huella": [
+    -0.5,
+    0.5,
+    -0.33,
+    0.32
+   ]
+  },
+  "vitrina_2": {
+   "archivo": "vitrina_vitrina_2.glb",
+   "huecos": 6,
+   "huella": [
+    -0.8,
+    0.8,
+    -0.37,
+    0.36
+   ]
+  },
+  "vitrina_3": {
+   "archivo": "vitrina_vitrina_3.glb",
+   "huecos": 12,
+   "huella": [
+    -0.97,
+    0.97,
+    -0.52,
+    0.52
+   ]
+  },
+  "wafles_1": {
+   "archivo": "vitrina_wafles_1.glb",
+   "huecos": 2,
+   "huella": [
+    -1.02,
+    0.5,
+    -0.44,
+    0.84
+   ]
+  },
+  "wafles_2": {
+   "archivo": "vitrina_wafles_2.glb",
+   "huecos": 4,
+   "huella": [
+    -0.77,
+    0.77,
+    -0.34,
+    0.34
+   ]
+  },
+  "wafles_3": {
+   "archivo": "vitrina_wafles_3.glb",
+   "huecos": 4,
+   "huella": [
+    -1.01,
+    1.01,
+    -0.39,
+    1.05
+   ]
+  },
+  "arepas_1": {
+   "archivo": "vitrina_arepas_1.glb",
+   "huecos": 3,
+   "huella": [
+    -0.47,
+    0.98,
+    -0.46,
+    0.82
+   ]
+  },
+  "arepas_2": {
+   "archivo": "vitrina_arepas_2.glb",
+   "huecos": 9,
+   "huella": [
+    -0.77,
+    0.77,
+    -0.34,
+    0.34
+   ]
+  },
+  "arepas_3": {
+   "archivo": "vitrina_arepas_3.glb",
+   "huecos": 11,
+   "huella": [
+    -1.01,
+    1.01,
+    -0.39,
+    1.05
+   ]
+  }
  }
 }

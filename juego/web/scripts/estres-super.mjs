@@ -34,10 +34,13 @@ async function pagina(partida, extra = '') {
   return p;
 }
 
-// Partida con todo comprado y los 25 días abiertos (para días avanzados y el legendario)
+// Partida con todo comprado y los 25 días de la tiendita abiertos (para días avanzados y el legendario); el local ya
+// es Minimercado (tamano 2), así el menú no abre con la tarjeta de la ampliación
 const MEJOR = JSON.stringify({
   dinero: 3000,
-  sitios: Object.fromEntries(Array.from({ length: 12 }, (_, i) => [i, 2])),
+  tamano: 2,
+  version: 2,
+  sitios: Object.fromEntries(Array.from({ length: 24 }, (_, i) => [i, 2])),
   estrellas: Object.fromEntries(Array.from({ length: 25 }, (_, i) => [i + 1, [true, true, true]])),
   mejoras: { zapatos: 3, carrito: 3, bodega: 3, alacena: 3, planta: 1, parlante: 1, canastas: 1, caneca2: 1, globos: 1, camara: 1, cajera: 1, aseo: 1, reponedor: 1, guardia: 1 },
   ayudas: { cafe: 3, musica: 3, limpieza: 3 },
@@ -63,8 +66,8 @@ if (partes.includes('1')) {
     if (!p.falla) {
       const n = await p.$$eval('#niveles .etiqueta', (l) => l.length);
       const dinero = await p.textContent('#menu-dinero');
-      ok = ok && n === 25 && /^\d+$/.test(dinero.trim());
-      detalle = ` (25 días: ${n === 25}, monedas «${dinero.trim()}»)`;
+      ok = ok && n === 100 && /^\d+$/.test(dinero.trim());
+      detalle = ` (100 días: ${n === 100}, monedas «${dinero.trim()}»)`;
       await p.context().close();
     }
     revisar(ok, `Partida «${nombre}»: el menú abre${detalle}${p.errores.length ? ` · errores: ${p.errores.slice(0, 2).join(' | ')}` : ''}`);
@@ -81,7 +84,7 @@ if (partes.includes('2')) {
       return { geometrias: r.geometries, texturas: r.textures, heap: Math.round((performance.memory?.usedJSHeapSize ?? 0) / 1e6) };
     });
   const ciclo = async (n) => {
-    await p.click(`#niveles .etiqueta:nth-child(${n})`);
+    await p.click(`#niveles .etiqueta:nth-of-type(${n})`);
     await p.click('#btn-abrir');
     await p.waitForSelector('#hud:not([hidden])', { timeout: 120000 });
     await p.waitForTimeout(1500);
@@ -117,7 +120,7 @@ if (partes.includes('3')) {
   console.log('\n3. Un día con el piloto y toques al azar encima');
   // Sin tarjeta gráfica el día 14 va a ~0,2 cuadros por segundo: con 4 s de juego por cuadro alcanza a cerrar
   const p = await pagina(MEJOR, '&rapido=40');
-  await p.click('#niveles .etiqueta:nth-child(14)');
+  await p.click('#niveles .etiqueta:nth-of-type(14)');
   await p.click('#btn-abrir');
   await p.waitForSelector('#hud:not([hidden])', { timeout: 120000 });
   let toques = 0;
@@ -177,7 +180,7 @@ if (partes.includes('4')) {
   const dias = (process.env.DIAS ?? '1,6,8,12,16,20,25').split(',').map(Number);
   const p = await pagina(MEJOR, '&rapido=40');
   const jugar = async (n, legendario = false) => {
-    await p.click(`#niveles .etiqueta:nth-child(${n})`);
+    await p.click(`#niveles .etiqueta:nth-of-type(${n})`);
     if (legendario) await p.click('#btn-legendario');
     await p.click('#btn-abrir');
     await p.waitForSelector('#hud:not([hidden])', { timeout: 120000 });

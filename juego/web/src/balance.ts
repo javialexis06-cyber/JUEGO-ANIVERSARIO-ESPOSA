@@ -1,14 +1,21 @@
 // Números del juego en un solo lugar (se ajustan probando). Coordenadas en metros de Blender.
-import type { P } from './navegacion';
 
 // ---------- Vitrinas ----------
-/** Unidades por tipo de vitrina y nivel. */
+/** Unidades por tipo de vitrina y nivel (como en el original: un estante lleno aguanta varios clientes). */
 export const CAPACIDAD: Record<string, number[]> = {
-  estante: [0, 5, 8, 12], frutas: [0, 5, 8, 12], nevera: [0, 5, 8, 11], vitrina: [0, 4, 6, 9],
-  congelador: [0, 5, 7, 10], panaderia: [0, 5, 7, 10], bebidas: [0, 5, 8, 12],
+  estante: [0, 8, 12, 16], frutas: [0, 8, 12, 16], nevera: [0, 8, 12, 15], vitrina: [0, 6, 9, 13],
+  congelador: [0, 7, 10, 14], panaderia: [0, 7, 10, 14], bebidas: [0, 8, 12, 16], wafles: [0, 6, 9, 12], arepas: [0, 6, 9, 12],
 };
+/** Lo que cuesta comprar un sitio vacío (vitrina de nivel 1) y mejorar una vitrina o la caja (con monedas). */
+export const PRECIO_COMPRA: Record<string, number> = {
+  frutas: 40, abarrotes: 40, bebidas: 40, lacteos: 55, panaderia: 55, congelados: 70, carnes: 70, wafles: 80, arepas: 80,
+};
+export const PRECIO_MEJORA_VITRINA = 65;
+export const PRECIO_MEJORA_CAJA = 85;
 /** Monedas por unidad vendida. */
-export const PRECIO: Record<string, number> = { frutas: 5, lacteos: 6, abarrotes: 6, bebidas: 5, panaderia: 6, congelados: 8, carnes: 9 };
+export const PRECIO: Record<string, number> = {
+  frutas: 5, lacteos: 6, abarrotes: 6, bebidas: 5, panaderia: 6, congelados: 8, carnes: 9, wafles: 10, arepas: 9,
+};
 
 // ---------- Él, Ella y las mejoras que los aceleran ----------
 // (todo va más rápido que al principio: los días duran 1:30)
@@ -16,8 +23,9 @@ export const VELOCIDAD_EL = [2.6, 2.95, 3.3, 3.7]; // m/s según «zapatos»
 /** Cargar el carrito en la bodega: base + un poquito por cada reposición que le cabe, × «bodega». */
 export const CARGA_BODEGA = { base: 1.0, porUnidad: 0.3, mejora: [1, 0.72, 0.52, 0.36] }; // s
 export const REPONER = { base: 1.4, mejora: [1, 0.72, 0.52, 0.36] }; // s por vitrina, × «alacena»
-/** Reposiciones que lleva el carrito según «carrito»: cada una deja lleno un estante (el que sea). */
-export const CARRITO_UNIDADES = [0, 2, 3, 5, 7];
+/** Reposiciones que lleva el carrito según «carrito»: cada una deja lleno un estante (el que sea). Como en el
+ *  original: un carrito lleno alcanza para unos 5 estantes y con la mejora para 7 (el último es de partidas viejas). */
+export const CARRITO_UNIDADES = [0, 5, 6, 7, 7];
 /** Manchas que limpia el trapero antes de tener que lavarlo, según «trapero» (0, 1, 2). */
 export const TRAPERO = [4, 6, 9];
 /** Segundos para lavar el trapero en el balde. */
@@ -50,12 +58,12 @@ export interface DatosCliente {
   desde: number; // día de la tiendita en que aparece
 }
 export const CLIENTES: Record<TipoCliente, DatosCliente> = {
-  abuelita: { nombre: 'Abuelita', velocidad: 1.15, paciencia: 63, basura: 0, propinaExtra: 0, prefiere: ['panaderia', 'lacteos', 'frutas'], desde: 1 },
-  mama: { nombre: 'Mamá', velocidad: 1.5, paciencia: 50, basura: 0, propinaExtra: 0, prefiere: ['lacteos', 'frutas', 'abarrotes'], desde: 1 },
-  adolescente: { nombre: 'Adolescente', velocidad: 1.8, paciencia: 38, basura: 0.5, propinaExtra: 0, prefiere: ['bebidas', 'abarrotes', 'congelados'], desde: 6 },
-  ejecutivo: { nombre: 'Ejecutivo apurado', velocidad: 2.0, paciencia: 29, basura: 0, propinaExtra: 3, prefiere: ['bebidas', 'congelados', 'abarrotes'], desde: 11 },
-  deportista: { nombre: 'Chica deportista', velocidad: 1.95, paciencia: 40, basura: 0, propinaExtra: 1, prefiere: ['frutas', 'bebidas'], desde: 16 },
-  famoso: { nombre: 'Famoso', velocidad: 1.35, paciencia: 32, basura: 0, propinaExtra: 12, prefiere: ['bebidas', 'panaderia', 'frutas'], desde: 99 },
+  abuelita: { nombre: 'Abuelita', velocidad: 1.15, paciencia: 63, basura: 0, propinaExtra: 0, prefiere: ['panaderia', 'lacteos', 'frutas', 'arepas'], desde: 1 },
+  mama: { nombre: 'Mamá', velocidad: 1.5, paciencia: 50, basura: 0, propinaExtra: 0, prefiere: ['lacteos', 'frutas', 'abarrotes', 'carnes'], desde: 1 },
+  adolescente: { nombre: 'Adolescente', velocidad: 1.8, paciencia: 38, basura: 0.5, propinaExtra: 0, prefiere: ['bebidas', 'abarrotes', 'congelados', 'wafles'], desde: 6 },
+  ejecutivo: { nombre: 'Ejecutivo apurado', velocidad: 2.0, paciencia: 29, basura: 0, propinaExtra: 3, prefiere: ['bebidas', 'congelados', 'abarrotes', 'arepas'], desde: 11 },
+  deportista: { nombre: 'Chica deportista', velocidad: 1.95, paciencia: 40, basura: 0, propinaExtra: 1, prefiere: ['frutas', 'bebidas', 'carnes'], desde: 16 },
+  famoso: { nombre: 'Famoso', velocidad: 1.35, paciencia: 32, basura: 0, propinaExtra: 12, prefiere: ['bebidas', 'panaderia', 'frutas', 'wafles'], desde: 999 },
 };
 /** Ritmo al que baja la paciencia según lo que esté haciendo el cliente. */
 export const RITMO_PACIENCIA = {
@@ -83,30 +91,10 @@ export const CANASTAS_INICIO = 8;
 export function stockInicial(dia: number, evento: string | null, legendario: boolean) {
   if (legendario) return 0.3;
   if (dia <= 1) return 0.8;
-  if (evento === 'Hora pico' || evento === 'Gran día') return 0.3;
+  if (evento === 'Hora pico' || evento === 'Gran día' || evento === 'Gran final') return 0.3;
   return dia <= 3 ? 0.55 : 0.4;
 }
 export const CANASTA_ABANDONO = { enojado: 0.3, normal: 0.05 };
-
-// ---------- Tiendita: puntos fijos ----------
-export const PUNTOS_TIENDA: Record<number, {
-  caneca: P; caneca2: P; canastas: P; guardia: P; lavadero: P;
-  decoracion: Record<string, { p: P; rot: number; escala: number; obstaculo?: [number, number, number, number] }>;
-}> = {
-  1: {
-    caneca: { x: 3.3, y: -3.95 },
-    caneca2: { x: 5.45, y: 2.5 },
-    canastas: { x: -5.4, y: -3.65 },
-    guardia: { x: -4.3, y: -1.5 },
-    lavadero: { x: -5.62, y: -1.55 }, // contra la pared, junto a la puerta (donde más llueve)
-    decoracion: {
-      planta: { p: { x: 5.5, y: 0.0 }, rot: 0, escala: 1.1, obstaculo: [5.1, -0.4, 5.9, 0.4] },
-      parlante: { p: { x: 5.5, y: -1.1 }, rot: -Math.PI / 2, escala: 1.0, obstaculo: [5.2, -1.4, 5.8, -0.8] },
-      globos: { p: { x: -4.6, y: -4.05 }, rot: 0, escala: 1.0, obstaculo: [-4.9, -4.35, -4.3, -3.75] },
-      camara: { p: { x: -5.95, y: 0.4 }, rot: -Math.PI / 2, escala: 1.0 },
-    },
-  },
-};
 
 // ---------- Mejoras que se compran entre días ----------
 export type GrupoMejora = 'Él' | 'Bodega' | 'Tienda' | 'Ayudantes';
@@ -122,9 +110,9 @@ export const FICHAS = { estrella: 1, luna: 5 };
 export const MEJORAS: Mejora[] = [
   { id: 'zapatos', grupo: 'Él', nombre: 'Tenis nuevos', desde: 2, niveles: [
     { precio: 3, texto: 'Caminan 15 % más rápido' }, { precio: 6, texto: 'Caminan 30 % más rápido' }, { precio: 10, texto: 'Caminan 47 % más rápido' }] },
-  { id: 'carrito', grupo: 'Él', nombre: 'Carrito grande', desde: 3, niveles: [
-    { precio: 4, texto: `Alcanza para ${CARRITO_UNIDADES[2]} estantes por viaje (ahora ${CARRITO_UNIDADES[1]})` },
-    { precio: 8, texto: `Alcanza para ${CARRITO_UNIDADES[3]} estantes por viaje` }, { precio: 14, texto: `Alcanza para ${CARRITO_UNIDADES[4]} estantes por viaje` }] },
+  { id: 'carrito', grupo: 'Él', nombre: 'Carrito grande', desde: 5, niveles: [
+    { precio: 6, texto: `Alcanza para ${CARRITO_UNIDADES[2]} estantes por viaje (ahora ${CARRITO_UNIDADES[1]})` },
+    { precio: 12, texto: `Alcanza para ${CARRITO_UNIDADES[3]} estantes por viaje` }] },
   { id: 'trapero', grupo: 'Él', nombre: 'Trapero grande', desde: 8, niveles: [
     { precio: 3, texto: `Limpia ${TRAPERO[1]} manchas antes de lavarlo (ahora ${TRAPERO[0]})` }, { precio: 6, texto: `Limpia ${TRAPERO[2]} manchas antes de lavarlo` }] },
   { id: 'bodega', grupo: 'Bodega', nombre: 'Bodega ordenada', desde: 2, niveles: [

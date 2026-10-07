@@ -222,7 +222,7 @@ def stockroom(coll, x, y, level):
         prod.instance('caja bebidas', (x + 0.8, y - 1.4, 0.5), -0.1, 0.9, coll)
 
 
-def entrance(coll, x, y, level):
+def entrance(coll, x, y, level, torniquete=True):
     """Entrada en la pared izquierda: puerta de vidrio, torniquetes y puesto de canastas."""
     glass = vitrinas.m('vidrio')
     frame = vitrinas.m('acero') if level >= 2 else vitrinas.m('madera oscura')
@@ -233,7 +233,7 @@ def entrance(coll, x, y, level):
         clay.rbox('hoja puerta', (x + 0.05, y + s * w / 4, 1.1), (0.02, w / 4 - 0.02, 1.1), coll, glass, p=10, n=4)
         clay.rbox('marco puerta', (x + 0.05, y + s * w / 2, 1.15), (0.05, 0.05, 1.15), coll, frame, p=10, n=4)
     clay.rbox('dintel', (x + 0.05, y, 2.35), (0.06, w / 2 + 0.05, 0.08), coll, frame, p=10, n=4)
-    if level >= 2:
+    if level >= 2 and torniquete:
         utileria.build('torniquete', utileria.torniquete, coll, (x + 1.1, y, 0), math.pi / 2, 1.0)
     utileria.build('puesto canastas', utileria.puesto_canastas, coll, (x + 0.6, y - w / 2 - 0.7, 0), math.pi / 2, 1.0)
     sign_m = {1: 'amarillo', 2: 'menta', 3: 'coral', 4: 'lila'}[level]
@@ -242,10 +242,8 @@ def entrance(coll, x, y, level):
 
 def lamps(coll, W, D, level):
     """Lámparas colgantes (bombillos en la tiendita, campanas en las demás)."""
-    if level >= 3:
-        return
     lamp = vitrinas.m('luz')
-    nx, ny = {1: (3, 2), 2: (4, 3)}[level]
+    nx, ny = {1: (3, 2), 2: (4, 3), 3: (5, 3), 4: (6, 3)}[level]
     shade = {1: None, 2: 'menta', 3: 'amarillo', 4: 'coral'}[level]
     for ix in range(nx):
         for iy in range(ny):
