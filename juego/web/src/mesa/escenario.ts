@@ -1,5 +1,7 @@
 // Escenario de la mesa: los dos muñequitos arriba del tablero (el de este celular a la izquierda) y sus
-// marcadores en el medio; reaccionan a cada jugada con sus poses, caras, efectos y frases.
+// marcadores en el medio; reaccionan a cada jugada con sus poses, caras, efectos y frases. Cada lado («el» o «ella»
+// es solo el puesto en el tablero) puede ser Javier o Laura con su ropa de la casa, o un amigo con su muñeco y sus
+// colores (`Lado`).
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { otro, type Rol, type Ropa } from '../casa/modelo';
@@ -10,6 +12,18 @@ import { Muneco } from '../reacciones/muneco';
 import type { Final, Suceso } from './tipos';
 import { vigilarContexto } from '../contexto';
 import { cuadros } from '../segundo_plano';
+import { vestirAmigo } from '../neutro';
+import type { AspectoJugador } from '../salas/tipos';
+
+/** Quién va en un lado del escenario: su nombre, su muñeco base y (si es un amigo) sus colores. */
+export interface Lado {
+  nombre: string;
+  cuerpo: Rol;
+  aspecto?: AspectoJugador | null;
+  /** Ponerle la ropa que tiene en la casa (solo Javier y Laura en su propio lado). */
+  vestir?: boolean;
+}
+const LADOS_PAREJA: Record<Rol, Lado> = { el: { nombre: 'Él', cuerpo: 'el', vestir: true }, ella: { nombre: 'Ella', cuerpo: 'ella', vestir: true } };
 
 export class Escenario {
   private renderer: THREE.WebGLRenderer;
@@ -74,33 +88,61 @@ export class Escenario {
     };
   }
 
-  /** Carga a los dos (una vez), los viste como en la casa y los pone en su lado. */
-  async preparar(yo: Rol) {
+  /** Cómo está armado cada lado ahora (si no cambia, no se vuelve a cargar nada). */
+  private claves: Record<Rol, string> = { el: '', ella: '' };
+  private propios: Record<Rol, THREE.Material[]> = { el: [], ella: [] };
+
+  /**
+   * Pone a los dos en su lado (el de este celular a la izquierda): Javier y Laura con su ropa de la casa, o un amigo
+   * con su muñeco y sus colores. Solo carga lo que cambió desde la última partida.
+   */
+  async preparar(yo: Rol, lados: Record<Rol, Lado> = LADOS_PAREJA) {
     this.yo = yo;
-    this.cargando ??= (async () => {
-      await Promise.all((['el', 'ella'] as Rol[]).map((r) => this.m[r].cargar()));
-      let vestidos: Record<Rol, { ropa?: Ropa; colorPelo?: string }> | null = null;
-      try {
-        vestidos = JSON.parse(localStorage.getItem('nuestro-hogar-vestidos') ?? 'null');
-      } catch {
-        /* sin ropa guardada */
-      }
-      for (const r of ['el', 'ella'] as Rol[]) {
-        this.escena.add(this.m[r].p.grupo);
-        const v = vestidos?.[r];
-        if (v?.ropa || v?.colorPelo) await new Vestuario(this.m[r].p, r).aplicar(v.ropa, v.colorPelo).catch(() => undefined);
-      }
-    })();
-    await this.cargando;
+    const turno = (this.cargando ?? Promise.resolve()).then(() => this.ponerLados(lados));
+    this.cargando = turno.catch(() => undefined);
+    await turno;
     this.director.limpiar();
     const marc = document.querySelectorAll<HTMLElement>('.marcador');
     const izq = yo, der = otro(yo);
     marc[0].dataset.quien = izq;
     marc[1].dataset.quien = der;
-    marc[0].querySelector('.marcador-nombre')!.textContent = izq === 'el' ? 'Él' : 'Ella';
-    marc[1].querySelector('.marcador-nombre')!.textContent = der === 'el' ? 'Él' : 'Ella';
+    marc[0].querySelector('.marcador-nombre')!.textContent = lados[izq].nombre;
+    marc[1].querySelector('.marcador-nombre')!.textContent = lados[der].nombre;
     this.puntos = { el: 0, ella: 0 };
     this.ajustar();
+  }
+
+  private async ponerLados(lados: Record<Rol, Lado>) {
+    let vestidos: Record<Rol, { ropa?: Ropa; colorPelo?: string }> | null = null;
+    try {
+      vestidos = JSON.parse(localStorage.getItem('nuestro-hogar-vestidos') ?? 'null');
+    } catch {
+      /* sin ropa guardada */
+    }
+    let cambio = false;
+    await Promise.all((['el', 'ella'] as Rol[]).map(async (r) => {
+      const l = lados[r];
+      const clave = JSON.stringify([l.cuerpo, l.aspecto ?? null, !!l.vestir]);
+      if (clave === this.claves[r] && this.m[r].listo) return;
+      cambio = true;
+      // Un muñeco nuevo para este lado (el de antes se suelta)
+      const viejo = this.m[r];
+      const nuevo = this.claves[r] === '' && viejo.rol === l.cuerpo && !viejo.listo ? viejo : new Muneco(l.cuerpo, 1);
+      await nuevo.cargar();
+      if (nuevo !== viejo) {
+        this.escena.remove(viejo.p.grupo);
+        viejo.p.grupo.traverse((o) => (o as THREE.SkinnedMesh).isSkinnedMesh && (o as THREE.SkinnedMesh).skeleton.dispose());
+      }
+      for (const mat of this.propios[r]) mat.dispose();
+      this.propios[r] = vestirAmigo(nuevo.p.modelo, l.aspecto);
+      const v = l.vestir ? vestidos?.[l.cuerpo] : null;
+      if (v?.ropa || v?.colorPelo) await new Vestuario(nuevo.p, l.cuerpo).aplicar(v.ropa, v.colorPelo).catch(() => undefined);
+      this.m[r] = nuevo;
+      this.anclas[r] = this.anclasDe(r);
+      this.escena.add(nuevo.p.grupo);
+      this.claves[r] = clave;
+    }));
+    if (cambio) this.director.conectar();
   }
 
   /** Encuadre: los dos de cuerpo entero con aire arriba para saltar, a un lado y al otro del escenario. */

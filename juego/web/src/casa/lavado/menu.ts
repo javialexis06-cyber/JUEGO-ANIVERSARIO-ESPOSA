@@ -3,23 +3,26 @@
 // Todo lo que se compra o se escoge se guarda en el progreso de quien juega (en la casa compartida).
 import { ARMAS, ID_ARMAS, ID_PASIVAS, PASIVAS } from './armas';
 import { CARTAS, ID_CARTAS } from './cartas';
-import { DISFRAZ, disfracesDe, type DefDisfraz } from './disfraces';
+import { DISFRAZ, disfracesDe, puedeApuntar, type DefDisfraz } from './disfraces';
 import { ENEMIGOS, ID_ENEMIGOS } from './enemigos';
 import { ESCENARIOS, ID_ESCENARIOS } from './escenarios';
 import { icono, iconoBicho } from './iconos';
+import { MINUTO_EVOLUCION, RECETAS } from './evoluciones';
 import {
   CARTA_LOGRO, ESCENARIO_LOGRO, LOGRO, LOGROS, apuradoAbierto, cartasDe, disfrazAbierto, escenarioAbierto, type ProgresoLavado,
 } from './progreso';
 import { sfx } from './sonidos';
 import { PODER, PODERES, precioPoder } from './tienda';
+import { FRASES, cartaVista, disfrazVisto, enemigoVisto, logroVisto } from './textos';
 import type { IdCarta, IdEscenario, Rol, Stat } from './tipos';
 
-export type AccionMenu = 'jugar' | 'pareja' | 'salir';
+export type AccionMenu = 'jugar' | 'pareja' | 'amigos' | 'codigo' | 'tutorial' | 'salir';
 
 const miles = (n: number) => Math.round(n).toLocaleString('es-CO');
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
 export function retrato(d: DefDisfraz, clase = 'lv-retrato') {
+  d = disfrazVisto(d);
   return `<img class="${clase}" src="./lavado/disfraces/${d.id}.webp" alt="" loading="lazy">`;
 }
 
@@ -31,6 +34,10 @@ export interface OpcionesMenu {
   guardar: (p: ProgresoLavado) => Promise<void>;
   /** Hay con quién jugar en pareja (la casa está en línea o en dos pestañas). */
   puedePareja: boolean;
+  /** Se puede jugar con amigos en una sala (crearla o entrar con un código). */
+  puedeSalas: boolean;
+  /** Lo que dice el botón de salir (volver a la casa o a la sala de juegos de amigos). */
+  textoSalir: string;
 }
 
 export class Menu {
@@ -73,8 +80,21 @@ export class Menu {
   }
 
   private get disfraz() {
-    return DISFRAZ[this.p.disfraz] ?? disfracesDe(this.o.rol)[0];
+    return disfrazVisto(DISFRAZ[this.p.disfraz] ?? disfracesDe(this.o.rol)[0]);
   }
+
+  /**
+   * Abre una pantalla suelta (los disfraces desde la sala de espera, por ejemplo) y avisa cuando se cierra. Va
+   * encima de todo, sin el menú de inicio.
+   */
+  pantallaSuelta(cual: 'disfraces' | 'tienda' | 'cartas'): Promise<void> {
+    this.suelta = true;
+    this.pantalla.classList.add('lv-suelta');
+    this.abrirPantalla(cual);
+    return new Promise((ok) => (this.alCerrarSuelta = ok));
+  }
+  private suelta = false;
+  private alCerrarSuelta: (() => void) | null = null;
 
   private async guardar() {
     try {
@@ -88,7 +108,8 @@ export class Menu {
   private pintarInicio() {
     const d = this.disfraz;
     const esc = ESCENARIOS[this.p.escenario];
-    const carta = this.p.carta ? CARTAS[this.p.carta] : null;
+    const carta = this.p.carta ? cartaVista(this.p.carta) : null;
+    const apunta = puedeApuntar(d.id);
     const burbujas = Array.from({ length: 14 }, (_, k) => {
       const t = 14 + ((k * 37) % 40);
       return `<span style="left:${(k * 7.3) % 100}%;width:${t}px;height:${t}px;--d:${7 + (k % 5) * 1.6}s;--r:-${(k * 1.3) % 9}s;--x:${((k % 3) - 1) * 40}px"></span>`;
@@ -101,19 +122,23 @@ export class Menu {
         <button class="lv-elegido" data-m="disfraces">${retrato(d)}<span><b>${d.nombre}</b><small>${d.especial}</small></span></button>
         <div class="lv-chips">
           <button class="lv-chip" data-m="escenarios">🗺️ ${esc.nombre}${this.p.apurado ? ' · ¡Apurado!' : ''}</button>
-          <button class="lv-chip" data-m="cartas">💌 ${carta ? carta.nombre : 'Sin carta de amor'}</button>
+          <button class="lv-chip" data-m="cartas">${FRASES.iconoCarta()} ${carta ? carta.nombre : FRASES.sinCarta()}</button>
+          <button class="lv-chip lv-chip-ataque ${apunta && this.p.manual ? 'si' : ''}" data-m="ataque" ${apunta ? '' : 'disabled'}
+            title="${apunta ? 'Toca para cambiar' : 'Los disfraces de área siempre disparan solos'}">🎯 Ataque: ${apunta ? (this.p.manual ? 'a mano' : 'solito') : 'solito (de área)'}</button>
           ${this.p.mejor[this.p.escenario] ? `<span class="lv-chip">🏆 ${mmss(this.p.mejor[this.p.escenario]!)}</span>` : ''}
         </div>
       </div>
       <div class="lv-acciones">
         <button class="lv-boton grande rosa" data-m="jugar">🫧 ¡A lavarse!</button>
-        ${this.o.puedePareja ? `<button class="lv-boton menta" data-m="pareja">💞 Jugar con ${this.o.nombreOtro}</button>` : ''}
+        ${this.o.puedePareja ? `<button class="lv-boton menta" data-m="pareja">${FRASES.iconoPareja()} Jugar con ${this.o.nombreOtro}</button>` : ''}
+        ${this.o.puedeSalas ? `<div class="lv-fila-salas"><button class="lv-boton menta" data-m="amigos">👥 Con amigos</button><button class="lv-boton" data-m="codigo">🔑 Unirme con código</button></div>` : ''}
         <div class="lv-rejilla">
           <button class="lv-boton" data-m="disfraces">${icono(d.arma, 30)}Disfraces</button>
           <button class="lv-boton" data-m="tienda">${icono('alcancia', 30)}Poderes</button>
           <button class="lv-boton" data-m="coleccion">${icono('lupa', 30)}Colección</button>
+          <button class="lv-boton" data-m="tutorial"><span class="lv-ico-txt">🎓</span>Cómo se juega</button>
         </div>
-        <button class="lv-boton" data-m="salir">🏠 Volver a la casa</button>
+        <button class="lv-boton" data-m="salir">${this.o.textoSalir}</button>
       </div>`;
   }
 
@@ -122,7 +147,14 @@ export class Menu {
     if (!el) return;
     sfx.toque();
     const m = el.dataset.m!;
-    if (m === 'jugar' || m === 'pareja' || m === 'salir') {
+    if (m === 'ataque') {
+      if (!puedeApuntar(this.p.disfraz)) return;
+      this.p.manual = !this.p.manual;
+      void this.guardar();
+      this.pintarInicio();
+      return;
+    }
+    if (m === 'jugar' || m === 'pareja' || m === 'salir' || m === 'amigos' || m === 'codigo' || m === 'tutorial') {
       this.resolver?.(m);
       this.resolver = null;
       return;
@@ -144,12 +176,20 @@ export class Menu {
 
   private cerrarPantalla() {
     this.pantalla.hidden = true;
+    if (this.suelta) {
+      this.suelta = false;
+      this.pantalla.classList.remove('lv-suelta');
+      const fn = this.alCerrarSuelta;
+      this.alCerrarSuelta = null;
+      fn?.();
+      return;
+    }
     this.pintarInicio();
   }
 
   private pintarPantalla() {
     const titulo: Record<string, string> = {
-      disfraces: 'Disfraces', escenarios: '¿Dónde nos lavamos?', cartas: 'Cartas de amor', tienda: 'Poderes para siempre', coleccion: 'Colección',
+      disfraces: 'Disfraces', escenarios: '¿Dónde nos lavamos?', cartas: FRASES.tituloCartas(), tienda: 'Poderes para siempre', coleccion: 'Colección',
     };
     const cab = `<header><button class="lv-boton" data-v="volver">← Volver</button><h2>${titulo[this.actual]}</h2>
       <div class="lv-saldo" style="position:static">${icono('moneda', 22)}${miles(this.p.oro)}</div></header>`;
@@ -164,14 +204,15 @@ export class Menu {
 
   private htmlDisfraces() {
     const lista = disfracesDe(this.o.rol)
+      .map(disfrazVisto)
       .map((d) => {
         const abierto = disfrazAbierto(this.p, d.id);
         return `<button class="lv-item ${this.sel === d.id ? 'sel' : ''} ${abierto ? '' : 'bloq'}" data-sel="${d.id}">${retrato(d)}<span>${d.nombre}</span></button>`;
       })
       .join('');
-    const d = DISFRAZ[this.sel] ?? this.disfraz;
+    const d = disfrazVisto(DISFRAZ[this.sel] ?? this.disfraz);
     const abierto = disfrazAbierto(this.p, d.id);
-    const logro = d.logro ? LOGRO[d.logro] : null;
+    const logro = d.logro ? logroVisto(LOGRO[d.logro]) : null;
     const boton = abierto
       ? this.p.disfraz === d.id
         ? '<button class="lv-boton" disabled>Ya lo tienes puesto</button>'
@@ -181,6 +222,7 @@ export class Menu {
       <div class="lv-detalle"><div class="gran">${retrato(d, '')}<div><h3>${d.nombre}</h3><p>Como ${d.original} en el original</p></div></div>
         <p>${d.desc}</p>
         <p class="esp">${icono(d.arma, 22)} ${d.especial}</p>
+        <p class="lv-apunta">${puedeApuntar(d.id) ? '🎯 Se puede manejar a mano (segundo dedo o mouse)' : '🌀 Disfraz de área: sus armas pegan solitas alrededor'}</p>
         ${!abierto && logro ? `<p>🔒 Se gana con el logro <b>«${logro.nombre}»</b>: ${logro.desc}. O cómpralo ya.</p>` : ''}
         ${boton}</div></div>`;
   }
@@ -190,7 +232,7 @@ export class Menu {
       const e = ESCENARIOS[id];
       const abierto = escenarioAbierto(this.p, id);
       const mejor = this.p.mejor[id];
-      const logro = ESCENARIO_LOGRO[id] ? LOGRO[ESCENARIO_LOGRO[id]!] : null;
+      const logro = ESCENARIO_LOGRO[id] ? logroVisto(LOGRO[ESCENARIO_LOGRO[id]!]) : null;
       return `<button class="lv-escenario ${this.sel === id ? 'sel' : ''} ${abierto ? '' : 'bloq'}" data-sel="${id}">
         <div class="vista ${id}"></div><b>${e.nombre}${this.p.ganados.includes(id) ? ' ✨' : ''}</b>
         <em>${abierto ? e.desc : `🔒 ${logro?.desc ?? e.desbloqueo}`}</em>
@@ -207,17 +249,17 @@ export class Menu {
   private htmlCartas() {
     const abiertas = cartasDe(this.p);
     const lista = ID_CARTAS.map((id) => {
-      const c = CARTAS[id];
+      const c = cartaVista(id);
       const ab = abiertas.includes(id);
       return `<button class="lv-item ${this.sel === id ? 'sel' : ''} ${ab ? '' : 'bloq'}" data-sel="${id}" style="border:2px solid ${c.color}">
         <span style="font:700 16px var(--display);color:${c.color}">${c.numero}</span><span>${ab ? c.nombre : '¿?'}</span></button>`;
     }).join('');
-    const c = this.sel ? CARTAS[this.sel as IdCarta] : null;
+    const c = this.sel ? cartaVista(this.sel as IdCarta) : null;
     const ab = c && abiertas.includes(c.id);
-    const logro = c ? LOGRO[CARTA_LOGRO[c.id]] : null;
+    const logro = c ? logroVisto(LOGRO[CARTA_LOGRO[c.id]]) : null;
     const det = c
-      ? `<h3 style="color:${c.color}">${c.numero} · ${ab ? c.nombre : 'Carta guardada'}</h3>${ab ? `<p><i>${c.recuerdo}</i></p><p class="esp">${c.efecto}</p>` : `<p>🔒 ${logro?.desc}</p>`}`
-      : '<h3>Sin carta</h3><p>Una partida normalita, sin cartas de amor. Igual en los minutos 11 y 21 pueden salir cartas perdidas.</p>';
+      ? `<h3 style="color:${c.color}">${c.numero} · ${ab ? c.nombre : 'Carta guardada'}</h3>${ab ? `<p><i>${c.frase}</i></p><p class="esp">${c.efecto}</p>` : `<p>🔒 ${logro?.desc}</p>`}`
+      : `<h3>Sin carta</h3><p>Una partida normalita, sin ${FRASES.tituloCartas().toLowerCase()}. Igual en los minutos 11 y 21 pueden salir cartas perdidas.</p>`;
     return `<div class="cuerpo"><div class="lv-lista">
         <button class="lv-item ${!this.sel ? 'sel' : ''}" data-sel=""><span style="font-size:20px">✉️</span><span>Sin carta</span></button>${lista}</div>
       <div class="lv-detalle">${det}<p style="margin-top:auto">Se escoge una al empezar. Los que traen cartas perdidas (minutos 11 y 21) dejan escoger otra.</p>
@@ -244,7 +286,7 @@ export class Menu {
   }
 
   private htmlColeccion() {
-    const tabs = ['armas', 'pasivas', 'mugrosos', 'logros']
+    const tabs = ['armas', 'pasivas', 'evoluciones', 'mugrosos', 'logros']
       .map((t) => `<button class="${this.pestana === t ? 'sel' : ''}" data-tab="${t}">${t[0].toUpperCase() + t.slice(1)}</button>`)
       .join('');
     let lista = '';
@@ -268,22 +310,38 @@ export class Menu {
       }).join('');
       const p = PASIVAS[this.sel as keyof typeof PASIVAS];
       if (p) det = this.p.pasivas.includes(p.id) ? `<h3>${p.nombre}</h3><p>Como ${p.original} en el original.</p><p class="esp">${p.desc} (hasta ${p.max} niveles)</p>` : '<h3>¿Qué será?</h3>';
+    } else if (this.pestana === 'evoluciones') {
+      // Todas las recetas: qué arma, qué pide y en qué se convierte (lo que ya se tuvo, con su nombre)
+      lista = `<div class="lv-recetas lv-recetas-menu">${RECETAS.map((r) => {
+        const ya = this.p.armas.includes(r.a);
+        const piezas = [
+          ...r.de.map((id) => `<span class="lv-paso" title="${ARMAS[id].nombre}">${icono(id, 26)}<em class="marca">8</em></span>`),
+          ...r.pasivas.map((id) => `<span class="lv-paso" title="${PASIVAS[id].nombre}">${icono(id, 26)}</span>`),
+        ].join('<b class="mas">+</b>');
+        const nombres = [...r.de.map((id) => `${ARMAS[id].nombre} (nivel 8)`), ...r.pasivas.map((id) => PASIVAS[id].nombre)].join(' + ');
+        return `<div class="lv-rec ${ya ? 'hecha' : 'cerca'}"><span class="lv-receta">${piezas}<b class="flecha">➜</b><span class="lv-paso fin ${ya ? 'si' : ''}">${icono(r.a, 30, ya ? '' : 'silueta')}</span></span>
+          <div><b>${ya ? ARMAS[r.a].nombre : '¿Qué saldrá?'}</b><small>${nombres}</small></div></div>`;
+      }).join('')}</div>`;
+      det = `<h3>Cómo se evoluciona</h3><p>Sube el arma hasta el <b>nivel 8</b>, ten en la mochila la pasiva que pide (con un nivel basta) y abre un <b>cofre</b> después del <b>minuto ${MINUTO_EVOLUCION}</b> (los sueltan los élites y los jefes).</p>
+        <p>Las <b>uniones</b> juntan dos armas en nivel 8: los dos patos, o el perfume y la colonia (esa pide además la curita de corazón).</p>
+        <p class="esp">En la partida, en la pausa (o tocando tus armas de arriba), la pestaña «Mochila» te dice qué le falta a cada una.</p>`;
     } else if (this.pestana === 'mugrosos') {
       lista = ID_ENEMIGOS.map((id) => {
         const n = this.p.bestiario[id] ?? 0;
         return `<button class="lv-item ${this.sel === id ? 'sel' : ''}" data-sel="${id}">${iconoBicho(id, 44, n ? '' : 'silueta')}<span>${n ? ENEMIGOS[id].nombre : '¿?'}</span></button>`;
       }).join('');
-      const e = ENEMIGOS[this.sel as keyof typeof ENEMIGOS];
+      const e0 = ENEMIGOS[this.sel as keyof typeof ENEMIGOS];
+      const e = e0 ? enemigoVisto(e0) : e0;
       if (e) {
         const n = this.p.bestiario[e.id] ?? 0;
         det = n ? `<h3>${e.nombre}</h3><p>${e.desc}</p><p class="esp">Eliminados: ${miles(n)}</p><p>Vida ${e.jefe ? `${e.vida} × tu nivel` : e.vida} · daño ${e.dano}</p>` : '<h3>¿Quién será?</h3><p>Todavía no lo has eliminado.</p>';
       }
     } else {
-      lista = LOGROS.map((l) => {
+      lista = LOGROS.map(logroVisto).map((l) => {
         const si = this.p.logros.includes(l.id);
         return `<button class="lv-item ${this.sel === l.id ? 'sel' : ''} ${si ? '' : 'bloq'}" data-sel="${l.id}"><span style="font-size:22px">${si ? '🏆' : '🔒'}</span><span>${l.nombre}</span></button>`;
       }).join('');
-      const l = LOGRO[this.sel];
+      const l = LOGRO[this.sel] ? logroVisto(LOGRO[this.sel]) : null;
       if (l) det = `<h3>${l.nombre}</h3><p>${l.desc}</p><p class="esp">Premio: ${l.premio}</p>`;
     }
     const resumen = `<p>Partidas: ${miles(this.p.partidas)} · Mugrosos: ${miles(this.p.eliminados)} · Velitas: ${miles(this.p.velitas)} · Cofres: ${miles(this.p.cofres)} · Gotas doradas ganadas: ${miles(this.p.oroTotal)}</p>`;
@@ -327,8 +385,10 @@ export class Menu {
     if (a === 'volver') return this.cerrarPantalla();
     if (a === 'ponerse') {
       this.p.disfraz = this.sel;
+      // (los disfraces de área siempre disparan solos)
+      if (!puedeApuntar(this.sel)) this.p.manual = false;
       sfx.premio();
-      await this.guardar();
+      void this.guardar();
       return this.cerrarPantalla();
     }
     if (a === 'comprar') {
@@ -338,13 +398,13 @@ export class Menu {
       this.p.comprados.push(d.id);
       this.p.disfraz = d.id;
       sfx.premio();
-      await this.guardar();
+      void this.guardar();
       this.pintarPantalla();
       return;
     }
     if (a === 'carta') {
       this.p.carta = (this.sel || '') as IdCarta | '';
-      await this.guardar();
+      void this.guardar();
       return this.cerrarPantalla();
     }
     if (a === 'comprarPoder') {
@@ -357,7 +417,7 @@ export class Menu {
       this.p.gastado += precio;
       this.p.poderes = { ...this.p.poderes, [id]: r + 1 };
       sfx.premio();
-      await this.guardar();
+      void this.guardar();
       this.pintarPantalla();
       return;
     }
@@ -365,7 +425,7 @@ export class Menu {
       this.p.oro += this.p.gastado;
       this.p.gastado = 0;
       this.p.poderes = {};
-      await this.guardar();
+      void this.guardar();
       this.pintarPantalla();
     }
   }

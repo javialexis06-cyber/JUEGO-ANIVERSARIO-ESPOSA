@@ -899,7 +899,7 @@ const DESBLOQUEOS: Desbloqueo[] = [
 export const FRAPPES = {
   id: 'frappes',
   nombre: 'Frapería',
-  titulo: (rol) => `La Frapería de ${rol === 'el' ? 'Él' : 'Ella'}`,
+  titulo: (nombre) => `La Frapería de ${nombre}`,
   plato: 'frape_chef',
   nombrePlato: 'Frappés de chef',
   icono: 'vasofrappe_M',

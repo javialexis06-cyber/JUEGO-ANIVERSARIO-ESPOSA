@@ -7,6 +7,7 @@ import { otro, type Rol } from '../../casa/modelo';
 import * as sonido from '../../sonido';
 import type { CtxVista, Suceso, Vista } from '../tipos';
 import { type EstadoCajas, type MovCajas, geo, haySegura, listas, regalo, reglas } from './reglas';
+import { esNeutro } from '../../neutro';
 
 const NS = 'http://www.w3.org/2000/svg';
 /** Lado de una caja y margen alrededor de los puntos, en unidades del dibujo. */
@@ -36,7 +37,9 @@ const ESTRELLA = (() => {
   }
   return d + 'Z';
 })();
-const simbolo = (q: Rol) => (q === 'el' ? ESTRELLA : CORAZON);
+/** Rayo para las cajas del otro lado cuando hay amigos (modo neutro: nada de corazones). */
+const RAYO = 'M7-29L-17 3H-3L-9 29L17-5H3Z';
+const simbolo = (q: Rol) => (q === 'el' ? ESTRELLA : esNeutro() ? RAYO : CORAZON);
 const LAPIZ = `<svg class="cajas-lapiz" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4.6L15.8 4.8a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z" fill="#f6cf5a" stroke="#3d2b27" stroke-width="2" stroke-linejoin="round"/><path d="M14 6.6l3.4 3.4" stroke="#3d2b27" stroke-width="2"/><path d="M4 20l1.2-4.6 3.4 3.4z" fill="#3d2b27"/></svg>`;
 
 function el<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, string | number>, padre?: Element): SVGElementTagNameMap[K] {

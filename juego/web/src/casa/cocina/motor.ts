@@ -3,22 +3,27 @@
 // entrega; el invitado lo prueba y califica cada parte (espera y cada estación) y deja propina. Al final del día hay
 // puntos de chef (rango: ingredientes e invitados nuevos), propinas para mejorar la cocina y el premio para la casa.
 //
-// En pareja (linea.ts) el anfitrión lleva el día (invitados, tiquetes, reloj, calificación) y los dos cocinan: cada
-// plato y cada máquina es un objeto compartido que cualquiera de los dos cambia. Lo que se ve de cada uno (en qué
-// estación está, qué tiquete tiene, dónde tiene el dedo) viaja como presencia.
+// Juntos, de 2 a 4 en una sala (linea.ts), el anfitrión lleva el día (invitados, tiquetes, reloj, calificación) y
+// todos cocinan: cada plato y cada máquina es un objeto compartido que cualquiera cambia. Lo que se ve de cada uno
+// (en qué estación está, qué tiquete tiene, dónde tiene el dedo) viaja como presencia. Con amigos (o si cocina un
+// amigo) todo va en modo neutro: la pareja no llega a comer y no hay frases de amor, apodos ni premios de la casa.
 import * as fondo from '../../segundo_plano';
 import { nota, rumor } from '../../sonido';
-import type { Rol } from '../modelo';
+import { COLOR_PUESTO } from '../../salas/sala';
+import type { JugadorSala } from '../../salas/tipos';
+import { NOMBRE_ROL, type Rol } from '../modelo';
+import { imagenChefAmigo, chefAmigoListo, prepararChefAmigo, type PoseChef } from './chef_amigo';
 import { boton, dentro, G, Rect, rr, texto } from './dibujo';
 import { Efectos } from './efectos';
 import {
   Animo, FRASES, frasePareja, Invitado, invitadoPareja, invitadoPorId, INVITADOS, invitadosDelDia, POSES, Pose,
 } from './invitados';
-import { ConfigCompartida, Presencia, Sincro, TransporteLocal, TransporteSupabase } from './linea';
+import { Presencia, Sincro } from './linea';
 import * as P from './pantallas';
 import { cargarRecortes, soltarFondos } from './sprites';
 import {
-  Desbloqueo, InfoFinDia, Mejora, nombreRango, OpcionesCocina, ProgresoCocina, rangoDe, RecetaId, ResultadoDia, umbralRango,
+  Desbloqueo, InfoFinDia, JugadorCocina, Mejora, nombreRango, OpcionesCocina, ProgresoCocina, rangoDe, RecetaId, ResultadoDia, SalidaCocina,
+  umbralRango,
 } from './tipos';
 
 // ---------------------------------------------------------------------------------------------- Lo que pone cada restaurante
@@ -59,8 +64,8 @@ export interface Tema {
 export interface Receta<P = any, O = any> {
   id: RecetaId;
   nombre: string;
-  /** Lo que dice el letrero (con el nombre de quién cocina). */
-  titulo(rol: Rol): string;
+  /** Lo que dice el letrero (con el nombre de quién es la cocina). */
+  titulo(nombre: string): string;
   /** El plato que se lleva a la despensa. */
   plato: string;
   nombrePlato: string;
@@ -107,8 +112,8 @@ export interface InvDia {
   pedido: unknown | null;
   animo: Animo;
   frase: { texto: string; hasta: number } | null;
-  /** Quién le tomó el pedido. */
-  tomo: Rol | null;
+  /** Quién le tomó el pedido (id del jugador). */
+  tomo: string | null;
 }
 
 export interface JuicioDia {
@@ -119,7 +124,8 @@ export interface JuicioDia {
   propina: number;
   frase: string;
   animo: Animo;
-  por: Rol;
+  /** Quién lo entregó (id del jugador). */
+  por: string;
 }
 
 export type Fase = 'espera' | 'jugando' | 'juicio' | 'pausa' | 'fin';
@@ -142,7 +148,8 @@ export interface EstadoDia {
   xp: number;
   resultado: ResultadoDia | null;
   rangoAntes: number;
-  pausa: { por: Rol | 'red'; motivo: string; antes: Fase } | null;
+  /** Quién la puso (id del jugador) o «red» si se cortó la conexión con alguien. */
+  pausa: { por: string; motivo: string; antes: Fase } | null;
 }
 
 /** Alto del riel de tiquetes y de la barra de estaciones (unidades del juego, 720 de alto). */
@@ -158,8 +165,10 @@ const azarCon = (semilla: number) => () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 const elegir = <T,>(l: T[]) => l[Math.floor(Math.random() * l.length)];
+const esc = (t: string) => t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 export const genero = (rol: Rol, t: string) => t.replace(/(\p{L}+)\|(\p{L}+)/gu, (_, a, b) => (rol === 'el' ? a : b));
-const nombreDe = (rol: Rol) => (rol === 'el' ? 'Él' : 'Ella');
+/** Dificultad según cuántos cocinan: cada cuánto llegan, cuánta paciencia traen y cuántos invitados más vienen. */
+const POR_COCINEROS = { intervalo: [1, 0.8, 0.7, 0.62], paciencia: [1, 0.85, 0.8, 0.75], extra: [0, 0, 2, 4] };
 
 // ---------------------------------------------------------------------------------------------- Sonidos
 export const sonidos = {
@@ -228,21 +237,29 @@ export class Motor {
   flotantes: { en: number; texto: string; x: number; y: number; vida: number; color: string; tam: number }[] = [];
   private imgs = new Map<string, HTMLImageElement>();
   /** Cara del chef en la esquina (cambia con lo que pasa). */
-  caraChef: { pose: string; hasta: number } = { pose: 'concentrado', hasta: 0 };
+  caraChef: { pose: PoseChef; hasta: number } = { pose: 'concentrado', hasta: 0 };
   pista: { texto: string; hasta: number } | null = null;
   private pistasVistas = new Set<string>();
   dedo: { x: number; y: number } | null = null;
-  /** Mi progreso en este restaurante (en pareja, el invitado guarda aquí sus puntos y propinas). */
+  /** Mi progreso en este restaurante (juntos, los demás guardan aquí sus puntos y propinas). */
   progreso: ProgresoCocina;
   private azar: () => number;
-  pareja: Invitado;
-  /** Cocinar juntos. */
+  /** La pareja que llega a comer (solo Javier y Laura, sin amigos). */
+  pareja: Invitado | null;
+  /** Quién cocina en este celular y todos los que cocinan (solo: nada más yo). */
+  yo: JugadorCocina;
+  jugadores: JugadorCocina[];
+  /** Modo neutro: cocina un amigo o hay amigos (nada personal ni romántico de la pareja). */
+  readonly neutro: boolean;
+  /** Cocinar juntos (en una sala). */
   sync: Sincro | null = null;
-  nombreOtro = '';
   /** Si soy el que lleva el día (solo o anfitrión). */
   anfitrion = true;
-  /** En pareja: esperando a que el otro llegue o a la configuración del anfitrión. */
+  /** Juntos: esperando la primera foto del día del anfitrión. */
   esperandoOtro = false;
+  /** Cuánto se lleva esperando que estén los recortes del chef de un amigo (el «modo chef» espera un ratico). */
+  private esperaChef = 0;
+  private quitarSala: (() => void)[] = [];
   /** Cuándo se vio por primera vez cada juicio (para animarlo en este celular). */
   juicioVisto = { n: 0, t0: 0 };
   /** Animación de cambiar de estación. */
@@ -258,11 +275,15 @@ export class Motor {
   calidad = 1;
   private entregando = 0;
 
-  constructor(public receta: Receta, private o: OpcionesCocina, private alSalir: () => void) {
+  constructor(public receta: Receta, private o: OpcionesCocina, private alSalir: (s: SalidaCocina) => void) {
     this.progreso = structuredClone(o.progreso);
-    this.azar = azarCon(this.progreso.dia * 7919 + (o.rol === 'el' ? 1 : 2));
-    this.pareja = invitadoPareja(o.pareja.rol, o.pareja.nombre, receta.id);
-    this.nombreOtro = o.linea?.nombreOtro ?? o.pareja.nombre;
+    this.yo = o.yo ?? { id: o.rol, nombre: NOMBRE_ROL[o.rol], tipo: o.rol, rol: o.rol, puesto: 0 };
+    this.jugadores = o.linea ? o.linea.config.jugadores : [this.yo];
+    this.neutro = !!o.neutro || this.yo.tipo === 'amigo' || this.jugadores.some((j) => j.tipo === 'amigo');
+    this.azar = azarCon(this.progreso.dia * 7919 + this.yo.puesto + 1);
+    this.pareja = !this.neutro && o.pareja ? invitadoPareja(o.pareja.rol, o.pareja.nombre, receta.id) : null;
+    // Los recortes del chef de cada amigo se van haciendo desde ya
+    for (const j of this.jugadores) if (j.tipo === 'amigo' && j.aspecto) void prepararChefAmigo(j.aspecto);
     this.raiz = document.createElement('section');
     this.raiz.className = `cocina cocina-${receta.id}`;
     this.raiz.innerHTML = `<canvas class="cocina-lienzo"></canvas>
@@ -294,11 +315,15 @@ export class Motor {
     this.lienzo.addEventListener('pointerup', soltar);
     this.lienzo.addEventListener('pointercancel', soltar);
     this.raiz.querySelector('.cocina-capa')!.addEventListener('click', (ev) => this.clicCapa(ev));
-    // El día: en pareja el invitado espera la configuración del anfitrión
-    const rango = rangoDe(this.progreso.xp);
-    this.s = this.diaVacio(this.progreso.dia, rango, { ...this.progreso.mejoras });
+    // El día: juntos, el restaurante es el del anfitrión (su día, su rango y sus mejoras) y los demás esperan su foto
+    const c = o.linea?.config;
+    this.s = c ? this.diaVacio(c.dia, c.rango, { ...c.mejoras }) : this.diaVacio(this.progreso.dia, rangoDe(this.progreso.xp), { ...this.progreso.mejoras });
     if (o.linea) this.prepararLinea(o.linea);
     if (this.anfitrion) this.nuevoDia();
+    else {
+      this.s.n = -1;
+      this.reiniciarCocina();
+    }
     void cargarRecortes();
     this.cargarImagenes();
   }
@@ -324,11 +349,48 @@ export class Motor {
   get invitados() {
     return this.s.invitados;
   }
+  /** Cocinando con alguien más (en una sala). */
   get enPareja() {
     return !!this.sync;
   }
+  /** Hay alguien más cocinando ahora mismo. */
   get juntos() {
-    return !!this.sync?.juntos;
+    return !!this.sync && this.sync.companeros.length > 0;
+  }
+  /** Cuántos cocinan (para la dificultad). */
+  get cocineros() {
+    return Math.max(1, Math.min(4, this.sync ? this.sync.sala.jugadores.length : 1));
+  }
+  /** Mi puesto (0 = anfitrión o solo): los ids de lo que hago no chocan con los de los demás. */
+  get puesto() {
+    return this.yo.puesto;
+  }
+  /** El que lleva el día (el dueño del restaurante). */
+  get duenoCocina(): JugadorCocina {
+    return this.jugadores.find((j) => j.puesto === 0) ?? this.yo;
+  }
+  /** El nombre de un jugador por su id (o «alguien»). */
+  nombreJugador(id: string) {
+    return this.jugadores.find((j) => j.id === id)?.nombre ?? 'Alguien';
+  }
+  /** El color de cada uno (el de su puesto en la sala). */
+  colorDe(j: JugadorCocina) {
+    return COLOR_PUESTO[j.puesto] ?? '#ff8fb8';
+  }
+  /** La carita del chef de un jugador en esa pose (Javier y Laura: sus recortes; un amigo: el suyo, hecho aquí). */
+  imgChef(j: JugadorCocina, pose: PoseChef) {
+    if (j.tipo === 'amigo' && j.aspecto) return imagenChefAmigo(j.aspecto, pose);
+    return this.img(`./cocina/gente/${j.rol}_chef_${pose}.webp`);
+  }
+  /** Los demás que están cocinando ahora (con conexión), con dónde están y su color. */
+  otros(): { j: JugadorCocina; p: Presencia; color: string }[] {
+    if (!this.sync) return [];
+    const out: { j: JugadorCocina; p: Presencia; color: string }[] = [];
+    for (const [id, p] of this.sync.otros) {
+      const j = this.jugadores.find((x) => x.id === id);
+      if (j && this.sync.sala.conectado(id)) out.push({ j, p, color: this.colorDe(j) });
+    }
+    return out;
   }
   /** El tiquete que tengo escogido. */
   get activo(): Ticket | null {
@@ -352,11 +414,8 @@ export class Motor {
     return i;
   }
   private cargarImagenes() {
-    for (const p of ['concentrado', 'feliz', 'celebra', 'susto', 'presume']) {
-      this.img(`./cocina/gente/${this.rol}_chef_${p}.webp`);
-      if (this.o.linea) this.img(`./cocina/gente/${this.o.pareja.rol}_chef_${p}.webp`);
-    }
-    this.img(`./cocina/gente/${this.rol}_chef_intro.webp`);
+    for (const j of this.jugadores) for (const p of ['concentrado', 'feliz', 'celebra', 'susto', 'presume'] as PoseChef[]) this.imgChef(j, p);
+    this.imgChef(this.yo, 'intro');
   }
   def(e: InvDia): Invitado {
     return invitadoPorId(e.id, this.pareja);
@@ -437,9 +496,10 @@ export class Motor {
     const n = this.s.n + 1;
     this.s = this.diaVacio(p.dia, rango, { ...p.mejoras });
     this.s.n = n;
-    this.azar = azarCon(p.dia * 7919 + (this.rol === 'el' ? 1 : 2) + n * 31);
-    const lista = invitadosDelDia(this.s.dia, rango, this.pareja, this.azar);
-    const intervalo = Math.max(14, 38 - this.s.dia * 1.6) * (this.enPareja ? 0.8 : 1);
+    this.azar = azarCon(p.dia * 7919 + this.yo.puesto + 1 + n * 31);
+    const k = this.cocineros - 1;
+    const lista = invitadosDelDia(this.s.dia, rango, this.pareja, this.azar, POR_COCINEROS.extra[k]);
+    const intervalo = Math.max(14, 38 - this.s.dia * 1.6) * POR_COCINEROS.intervalo[k];
     let t = 1.5;
     this.s.invitados = lista.map((inv, i) => {
       if (i > 0) t += intervalo * (0.75 + this.azar() * 0.5);
@@ -464,29 +524,21 @@ export class Motor {
     this.metas.length = 0;
   }
 
-  // ------------------------------------------------------------------------------------------- En pareja
+  // ------------------------------------------------------------------------------------------- Juntos (en una sala)
   private prepararLinea(l: NonNullable<OpcionesCocina['linea']>) {
-    this.anfitrion = l.modo === 'anfitrion';
-    this.esperandoOtro = true;
-    const tr = l.transporte === 'local' ? new TransporteLocal(this.rol) : new TransporteSupabase(this.rol);
-    this.sync = new Sincro(this.rol, this.anfitrion, l.id, tr, {
+    this.anfitrion = l.sala.soyAnfitrion;
+    this.esperandoOtro = !this.anfitrion;
+    this.sync = new Sincro(l.sala, this.anfitrion, {
       leer: (k) => this.leerObjeto(k),
       escribir: (k, d) => this.escribirObjeto(k, d),
       claves: () => ['dia', ...Object.keys(this.maq).map((k) => `m:${k}`), ...this.s.tickets.map((t) => `o:${t.id}`)],
-      accion: (a, d) => this.accionDelOtro(a, d),
-      config: (c) => this.configDelAnfitrion(c),
-      llego: () => this.llegoElOtro(),
-      salio: () => this.seFueElOtro(),
-      conexion: (bien) => this.conexion(bien),
-    }, () => ({ receta: this.receta.id, dia: this.s.dia, rango: this.s.rango, mejoras: this.s.mejoras, nombreAnfitrion: nombreDe(this.rol) }));
-    void this.sync.conectar().then((ok) => {
-      if (!ok && this.sync) {
-        this.aviso(`No se pudo conectar: ${this.sync.error || 'sin red'}`, 5);
-        if (this.vista === 'juego') this.pintarCapa();
-      }
+      accion: (a, d, de) => this.accionDe(a, d, de),
+      salio: (j) => this.seFue(j),
+      conexion: (cortados) => this.conexion(cortados),
+      aLaSala: () => this.salir('sala', false),
     });
-    // Si en un rato no llega nadie, se puede cocinar solo
-    setTimeout(() => this.vista === 'juego' && this.esperandoOtro && this.pintarCapa(), 9000);
+    // Si el anfitrión se va (o se cae la sala), la cocina se cierra para los demás con aviso
+    this.quitarSala.push(l.sala.alFin((_motivo, texto) => this.salaAcabada(texto)));
   }
 
   private leerObjeto(k: string): unknown {
@@ -515,7 +567,7 @@ export class Motor {
     }
   }
 
-  /** (Invitado) llegó el día del anfitrión: se conserva lo que se está cocinando aquí. */
+  /** (Los demás) llegó el día del anfitrión: se conserva lo que se está cocinando aquí. */
   private recibirDia(d: EstadoDia) {
     const antes = this.s;
     const obras = new Map(antes.tickets.map((t) => [t.id, t.obra]));
@@ -525,10 +577,18 @@ export class Motor {
       this.huerfanas.delete(t.id);
       return { ...t, obra };
     });
+    // (si el anfitrión está sin conexión, aquí la cocina se queda quieta hasta que vuelva)
+    if (this.anfitrionCortado && (d.fase === 'jugando' || d.fase === 'juicio')) {
+      d.pausa = { por: 'red', motivo: 'conexion', antes: d.fase };
+      d.fase = 'pausa';
+    }
     this.s = d;
     if (nuevoDia) {
       this.reiniciarCocina();
-      this.esperandoOtro = false;
+      if (this.esperandoOtro) {
+        this.esperandoOtro = false;
+        this.aviso(`¡Estás en la cocina de ${this.duenoCocina.nombre}! ${this.neutro ? '👨‍🍳' : '💞'}`, 3);
+      }
       for (const e of d.invitados) for (const pose of POSES) this.sprite(this.def(e), pose);
     }
     // Tiquetes nuevos: vuelan al riel
@@ -537,7 +597,7 @@ export class Motor {
     this.alCambiarFase(antes, nuevoDia);
   }
 
-  /** Lo que cambia la pantalla cuando cambia la fase (los dos celulares). */
+  /** Lo que cambia la pantalla cuando cambia la fase (en todos los celulares). */
   private alCambiarFase(antes: EstadoDia, nuevoDia: boolean) {
     const s = this.s;
     if (s.juicio && s.juicio.n !== this.juicioVisto.n) this.empezarJuicio(s.juicio);
@@ -551,71 +611,78 @@ export class Motor {
     }
   }
 
-  private configDelAnfitrion(c: ConfigCompartida) {
-    // El restaurante del anfitrión (sus mejoras y su rango) para este día
-    this.s = this.diaVacio(c.dia, c.rango, c.mejoras);
-    this.s.n = -1;
-    this.reiniciarCocina();
-    this.nombreOtro = c.nombreAnfitrion;
-    this.esperandoOtro = false;
-    this.aviso(`¡Estás en la cocina de ${c.nombreAnfitrion}! 💞`, 3);
-    if (this.vista === 'juego') this.pintarCapa();
-  }
-
-  private llegoElOtro() {
-    this.esperandoOtro = false;
-    sonidos.campana();
-    this.aviso(`¡${this.nombreOtro} llegó a la cocina! 💞`, 3.5);
-    this.fx.corazones(this.W / 2, this.H / 2, 10, -1);
-    this.cambioDia();
-    if (this.vista === 'juego') this.pintarCapa();
-  }
-
-  private seFueElOtro() {
-    if (!this.sync) return;
-    const quien = this.nombreOtro;
-    this.sync = null;
-    if (this.anfitrion) {
-      this.aviso(genero(this.rol, `${quien} se fue de la cocina: sigues tú solo|sola`), 4);
-      if (this.s.fase === 'pausa' && this.s.pausa?.por !== this.rol) this.seguir();
-      else if (this.vista === 'juego') this.pintarCapa();
-    } else {
-      this.capa(`<div class="cocina-tarjeta"><h2>${quien} cerró la cocina</h2><p>El día se quedó en su restaurante. ¡Otra vez será, chef!</p>
-        <div class="botones"><button class="boton-cocina principal" data-c="salir">🏠 Volver a la casa</button></div></div>`, 'pausa');
-      this.cerrado = true;
-    }
+  /** Alguien se fue de la sala (y de la cocina). */
+  private seFue(j: JugadorSala) {
+    if (!this.sync || this.cerrado) return;
+    if (j.id === this.sync.idAnfitrion) return; // (eso lo avisa la sala: «… cerró la sala»)
+    sonidos.mal();
+    const solo = this.sync.companeros.length === 0;
+    this.aviso(`${j.nombre} se fue de la cocina${solo ? ': sigues cocinando tú' : ''}`, 4);
+    if (this.anfitrion && this.s.fase === 'pausa' && this.s.pausa?.por === 'red' && this.sync.conectado) this.seguir();
+    else if (this.anfitrion && this.s.fase === 'pausa' && this.s.pausa?.por === j.id) this.seguir();
+    else if (this.vista === 'juego') this.pintarCapa();
   }
   private cerrado = false;
 
-  private conexion(bien: boolean) {
+  /** (Los demás) el anfitrión se fue: la cocina se acaba aquí con aviso. */
+  private salaAcabada(texto: string) {
+    if (this.terminado || this.cerrado) return;
+    this.cerrado = true;
+    this.sync?.cerrar();
+    sonidos.mal();
+    this.capa(`<div class="cocina-tarjeta"><h2>${esc(texto)}</h2><p>El día se quedó en su restaurante. ¡Otra vez será, chef!</p>
+      <div class="botones"><button class="boton-cocina principal" data-c="salir">${esc(this.o.textoSalir ?? '🏠 Volver a la casa')}</button></div></div>`, 'pausa');
+  }
+
+  /** ¿El anfitrión está sin conexión? (los demás se quedan quietos esperándolo) */
+  private anfitrionCortado = false;
+
+  private conexion(cortados: JugadorSala[]) {
+    if (!this.sync) return;
     if (this.anfitrion) {
-      if (!bien && (this.s.fase === 'jugando' || this.s.fase === 'juicio')) {
+      const s = this.s;
+      if (cortados.length && (s.fase === 'jugando' || s.fase === 'juicio')) {
+        s.pausa = { por: 'red', motivo: 'conexion', antes: s.fase };
+        s.fase = 'pausa';
+        this.cambioDia();
+      } else if (!cortados.length && s.fase === 'pausa' && s.pausa?.por === 'red') {
+        s.fase = s.pausa.antes;
+        s.pausa = null;
+        this.cambioDia();
+        this.aviso('¡Volvieron todos! Sigan cocinando 💪', 3);
+      }
+    } else {
+      const cortado = cortados.some((j) => j.id === this.sync!.idAnfitrion);
+      if (cortado && !this.anfitrionCortado && (this.s.fase === 'jugando' || this.s.fase === 'juicio')) {
         this.s.pausa = { por: 'red', motivo: 'conexion', antes: this.s.fase };
         this.s.fase = 'pausa';
-        this.cambioDia();
-      } else if (bien && this.s.fase === 'pausa' && this.s.pausa?.por === 'red') {
-        this.s.fase = this.s.pausa.antes;
-        this.s.pausa = null;
-        this.cambioDia();
-        this.aviso(`¡Volvió ${this.nombreOtro}! Sigan cocinando 💪`, 3);
-      }
-    } else if (bien) this.aviso('¡Volvió la conexión!', 2.5);
+      } else if (!cortado && this.anfitrionCortado) this.aviso('¡Volvió la conexión!', 2.5);
+      this.anfitrionCortado = cortado;
+    }
     if (this.vista === 'juego') this.pintarCapa();
   }
 
-  /** (Anfitrión) lo que pide el invitado. */
-  private accionDelOtro(a: string, d: any) {
-    const otro: Rol = this.rol === 'el' ? 'ella' : 'el';
-    if (a === 'tomar') this.tomarPedido(otro);
+  /** (Anfitrión) lo que piden los demás. */
+  private accionDe(a: string, d: any, de: string) {
+    if (!this.jugadores.some((j) => j.id === de)) return;
+    if (a === 'tomar') this.tomarPedido(de);
     else if (a === 'entregar') {
       const t = this.s.tickets.find((x) => x.id === d?.id);
       if (t && this.s.fase === 'jugando') {
         if (d.obra) t.obra = d.obra;
-        this.entregarAqui(t, otro);
+        this.entregarAqui(t, de);
       }
     } else if (a === 'cerrar') {
       if (this.s.juicio?.n === d?.n) this.cerrarJuicio();
-    } else if (a === 'pausa') this.pausarAqui(otro, d?.motivo ?? 'mano');
+    } else if (a === 'pausa') {
+      const motivo = d?.motivo === 'fondo' ? 'fondo' : 'mano';
+      // (si ya estaba quieta porque la sala lo vio irse al fondo, la pausa queda a su nombre: «salió un momentico»)
+      if (this.s.fase === 'pausa' && this.s.pausa?.por === 'red') {
+        this.s.pausa = { ...this.s.pausa, por: de, motivo };
+        this.cambioDia();
+        if (this.vista === 'juego') this.pintarCapa();
+      } else this.pausarAqui(de, motivo);
+    }
     else if (a === 'seguir') this.seguir();
     else if (a === 'jugar') this.jugar();
   }
@@ -631,11 +698,6 @@ export class Motor {
   cambioMaq(nombre: string) {
     this.sync?.cambio(`m:${nombre}`);
   }
-  /** Lo que el otro está haciendo (para dibujar su carita y su mano). */
-  get otro(): Presencia | null {
-    return this.sync?.juntos && this.sync.conectado ? this.sync.otro : null;
-  }
-
   // ------------------------------------------------------------------------------------------- Capas (intro, día, pausa, fin, tienda)
   private capa(html: string, clase = '') {
     const c = this.raiz.querySelector('.cocina-capa') as HTMLElement;
@@ -655,6 +717,11 @@ export class Motor {
   }
   /** El «modo chef» va con el reloj del juego (en un celular lento o en segundo plano no se adelanta ni se corta). */
   private pasoIntro(dt: number) {
+    // Un amigo: se espera un ratico a que esté su chef renderizado (si no, sale su carita con gorro)
+    if (this.introT === 0 && this.yo.aspecto && this.yo.tipo === 'amigo' && !chefAmigoListo(this.yo.aspecto) && this.esperaChef < 6) {
+      this.esperaChef += dt;
+      return;
+    }
     const antes = this.introT;
     this.introT += dt;
     if (antes < 2.25 && this.introT >= 2.25) [523, 659, 784, 1046].forEach((f, i) => nota(f, 0.3, i * 0.08, 'triangle', 0.06));
@@ -677,30 +744,35 @@ export class Motor {
     this.capa('');
   }
 
+  /** El botón de salir de las tarjetas (volver a la casa o a la sala de juegos). */
+  private get textoSalir() {
+    return esc(this.o.textoSalir ?? '🏠 Volver a la casa');
+  }
+  /** Los nombres en una lista bonita: «Pipe», «Pipe y Laura», «Pipe, Laura y Caro». */
+  private lista(nombres: string[]) {
+    return nombres.length <= 1 ? nombres.join('') : `${nombres.slice(0, -1).join(', ')} y ${nombres[nombres.length - 1]}`;
+  }
+
   private tarjetaEspera() {
-    const largo = this.reloj > 12;
-    const html = this.anfitrion
-      ? `<div class="cocina-tarjeta pareja"><p class="letrero">${this.receta.titulo(this.rol)}</p>
-          <h2>Esperando a ${this.nombreOtro}… <span class="latido">💌</span></h2>
-          <p>Le llegó la invitación a la casa: cuando la acepte, cocinan juntos el día ${this.s.dia}, cada uno en su celular.</p>
-          <div class="botones"><button class="boton-cocina" data-c="solo">${largo ? '👩‍🍳 Mejor cocino solo|sola' : 'Cocinar solo|sola'}</button></div></div>`
-      : `<div class="cocina-tarjeta pareja"><h2>Entrando a la cocina de ${this.nombreOtro}… <span class="latido">💞</span></h2>
-          <p>${this.sync?.error ? `No se pudo conectar: ${this.sync.error}` : 'Un momentico, que se está conectando.'}</p>
-          <div class="botones"><button class="boton-cocina" data-c="salir">🏠 Volver a la casa</button></div></div>`;
-    this.capa(genero(this.rol, html), 'dia');
+    this.capa(`<div class="cocina-tarjeta pareja"><h2>Entrando a la cocina de ${esc(this.duenoCocina.nombre)}… <span class="latido">${this.neutro ? '👨‍🍳' : '💞'}</span></h2>
+        <p>Un momentico, que se está conectando.</p>
+        <div class="botones"><button class="boton-cocina" data-c="salir">${this.textoSalir}</button></div></div>`, 'dia');
   }
 
   private tarjetaDia() {
     const n = this.s.invitados.length;
-    const hayPareja = this.s.invitados.some((e) => this.def(e).especial === 'pareja');
+    const pareja = this.pareja && this.s.invitados.some((e) => this.def(e).especial === 'pareja') ? this.pareja : null;
     const critico = this.s.invitados.some((e) => this.def(e).especial === 'critico');
     const juntos = this.juntos;
-    const icono = P.iconoHTML(this.receta.icono, 86);
+    const icono = P.iconoRestaurante(this.receta.id, 86);
+    const otros = this.sync?.companeros.map((j) => esc(j.nombre)) ?? [];
+    const conQuien = this.anfitrion ? `${this.lista(otros)} ${otros.length === 1 ? 'te ayuda' : 'te ayudan'} hoy` : `ayudas en la cocina de ${esc(this.duenoCocina.nombre)}`;
+    const iconoJuntos = this.neutro ? '👥' : '👩‍❤️‍👨';
     this.capa(`<div class="cocina-tarjeta">
-        <div class="cabeza">${icono}<div><p class="letrero">${juntos && !this.anfitrion ? this.receta.titulo(this.o.pareja.rol) : this.receta.titulo(this.rol)}</p>
+        <div class="cabeza">${icono}<div><p class="letrero">${esc(this.receta.titulo(this.duenoCocina.nombre))}</p>
         <h2>Día ${this.s.dia}</h2></div></div>
-        <p>${n} invitados vienen a comer${hayPareja ? ` · <b>¡${this.pareja.nombre} viene hoy!</b> 💖` : ''}${critico ? ' · <b>¡Viene el crítico famoso!</b> ⭐' : ''}</p>
-        ${juntos ? `<p class="juntos">👩‍❤️‍👨 Cocinan juntos: ${this.anfitrion ? `${this.nombreOtro} te ayuda hoy` : `ayudas en la cocina de ${this.nombreOtro}`}. Las propinas y los puntos del día son de los dos.</p>` : ''}
+        <p>${n} invitados vienen a comer${pareja ? ` · <b>¡${esc(pareja.nombre)} viene hoy!</b> 💖` : ''}${critico ? ' · <b>¡Viene el crítico famoso!</b> ⭐' : ''}</p>
+        ${juntos ? `<p class="juntos">${iconoJuntos} Cocinan juntos: ${conQuien}. Las propinas y los puntos del día son de ${otros.length > 1 ? 'todos' : 'los dos'}.</p>` : ''}
         <p class="rango">${nombreRango(this.s.rango)} · rango ${this.s.rango}</p>
         <div class="botones">${this.anfitrion ? '<button class="boton-cocina" data-c="tienda">🛠️ Mejoras</button>' : ''}<button class="boton-cocina principal" data-c="jugar">¡A cocinar!</button></div>
       </div>`, 'dia');
@@ -709,13 +781,19 @@ export class Motor {
   private tarjetaPausa() {
     const p = this.s.pausa;
     const red = p?.por === 'red';
-    const quien = p && p.por !== 'red' && p.por !== this.rol ? nombreDe(p.por as Rol) : '';
+    const quien = p && !red && p.por !== this.yo.id ? esc(this.nombreJugador(p.por)) : '';
     const motivo = p?.motivo === 'fondo' && quien ? `${quien} salió un momentico de la app` : quien ? `${quien} puso pausa` : 'La cocina te espera.';
-    const titulo = red ? `Se cortó la conexión con ${this.nombreOtro}…` : 'Pausa';
-    const solo = red && this.anfitrion ? '<button class="boton-cocina" data-c="solo">Seguir solo|sola</button>' : '';
-    this.capa(genero(this.rol, `<div class="cocina-tarjeta"><h2>${titulo}</h2><p>${red ? 'Esperando a que vuelva… (la cocina está quieta)' : motivo}</p>
-      <div class="botones"><button class="boton-cocina" data-c="salir">Volver a la casa</button>${solo}${red ? '' : '<button class="boton-cocina principal" data-c="seguir">Seguir cocinando</button>'}</div>
-      <p class="nota">${this.anfitrion ? `Si vuelves a la casa ahora, el día ${this.s.dia} se pierde (las mejoras quedan).` : `Si te vas, ${this.nombreOtro} sigue solo|sola.`}</p></div>`), 'pausa');
+    const cortados = red ? (this.anfitrion ? this.sync?.listaCortados() ?? [] : this.jugadores.filter((j) => j.id === this.sync?.idAnfitrion)) : [];
+    const nombres = this.lista(cortados.map((j) => esc(j.nombre))) || 'los demás';
+    const titulo = red ? `Se cortó la conexión con ${nombres}…` : 'Pausa';
+    const sigo = red && this.anfitrion ? `<button class="boton-cocina" data-c="solo">Seguir sin ${cortados.length === 1 ? nombres : 'esperar'}</button>` : '';
+    const quedan = this.sync?.companeros.filter((j) => j.id !== this.sync?.idAnfitrion).length ?? 0;
+    const nota = this.anfitrion
+      ? this.juntos ? `Si sales ahora, se acaba el día ${this.s.dia} para todos (las mejoras quedan).` : `Si sales ahora, el día ${this.s.dia} se pierde (las mejoras quedan).`
+      : `Si te vas, ${esc(this.duenoCocina.nombre)}${quedan ? ' y los demás siguen' : ' sigue'} cocinando.`;
+    this.capa(`<div class="cocina-tarjeta"><h2>${titulo}</h2><p>${red ? 'Esperando a que vuelva… (la cocina está quieta)' : motivo}</p>
+      <div class="botones"><button class="boton-cocina" data-c="salir">${this.textoSalir}</button>${sigo}${red ? '' : '<button class="boton-cocina principal" data-c="seguir">Seguir cocinando</button>'}</div>
+      <p class="nota">${nota}</p></div>`, 'pausa');
   }
 
   private clicCapa(ev: Event) {
@@ -728,16 +806,15 @@ export class Motor {
     else if (c.startsWith('comprar:')) void this.comprar(c.slice(8), b.dataset.volver ?? 'dia');
     else if (c === 'volver-dia' || c === 'volver-fin') this.pintarCapa();
     else if (c === 'seguir') this.anfitrion ? this.seguir() : this.sync?.pedir('seguir');
-    else if (c === 'salir') this.salir();
+    else if (c === 'salir') this.salir('salir');
+    else if (c === 'sala') this.salir('sala');
     else if (c === 'siguiente') this.siguienteDia();
-    else if (c === 'solo') this.cocinarSolo();
+    else if (c === 'solo') this.seguirSinLosCortados();
   }
 
-  /** Deja de esperar al otro (o sigue sin él si se cortó). */
-  private cocinarSolo() {
-    this.sync?.salir();
-    this.sync = null;
-    this.esperandoOtro = false;
+  /** (Anfitrión) no esperar más a los que se cortaron: se sigue sin ellos (si vuelven, entran de una). */
+  private seguirSinLosCortados() {
+    for (const j of this.sync?.listaCortados() ?? []) this.sync?.olvidarCorte(j.id);
     if (this.s.fase === 'pausa') this.seguir();
     else this.pintarCapa();
   }
@@ -754,18 +831,18 @@ export class Motor {
   pausar(motivo: 'mano' | 'fondo' = 'mano') {
     if (this.vista !== 'juego' || (this.s.fase !== 'jugando' && this.s.fase !== 'juicio')) return;
     if (this.anfitrion) {
-      this.pausarAqui(this.rol, motivo);
+      this.pausarAqui(this.yo.id, motivo);
       // Al irse a segundo plano el bucle se detiene: el aviso sale ya, no en el próximo paquete
       this.sync?.enviar(true);
     } else this.sync?.pedir('pausa', { motivo });
     // En este celular se ve la pausa de una (aunque el anfitrión la confirme después)
     if (!this.anfitrion) {
-      this.s.pausa = { por: this.rol, motivo, antes: this.s.fase };
+      this.s.pausa = { por: this.yo.id, motivo, antes: this.s.fase };
       this.s.fase = 'pausa';
       this.pintarCapa();
     }
   }
-  private pausarAqui(por: Rol, motivo: string) {
+  private pausarAqui(por: string, motivo: string) {
     if (this.s.fase !== 'jugando' && this.s.fase !== 'juicio') return;
     this.s.pausa = { por, motivo, antes: this.s.fase };
     this.s.fase = 'pausa';
@@ -797,7 +874,7 @@ export class Motor {
       })
       .join('');
     this.capa(`<div class="cocina-tienda">
-        <header>${P.iconoHTML(this.receta.icono, 44)}<h2>Mejoras de la cocina</h2><span class="saldo">🪙 ${p.propinas} en propinas</span></header>
+        <header>${P.iconoRestaurante(this.receta.id, 44)}<h2>Mejoras de la cocina</h2><span class="saldo">🪙 ${p.propinas} en propinas</span></header>
         <ul>${filas}</ul>
         <div class="botones"><button class="boton-cocina principal" data-c="${volver === 'fin' ? 'volver-fin' : 'volver-dia'}">Listo</button></div>
       </div>`, 'tienda');
@@ -872,7 +949,7 @@ export class Motor {
         e.estado = 'fila';
         e.llegoEn = s.t;
         sonidos.campana();
-        e.frase = { texto: genero(this.rol, elegir(this.def(e).saludos)), hasta: s.t + 3.4 };
+        e.frase = { texto: this.saludo(this.def(e)), hasta: s.t + 3.4 };
         if (this.actual !== 0) this.aviso(`¡Llegó ${this.def(e).nombre}!`);
         cambio = true;
       }
@@ -905,6 +982,15 @@ export class Motor {
     if (s.invitados.length && s.invitados.every((e) => e.estado === 'ido')) this.finDia();
   }
 
+  /**
+   * Lo que dice el invitado al llegar. Las frases con «mijo|mija» van con la forma de quien cocina (Javier o Laura);
+   * con amigos no se supone nada: se escoge entre las que no tienen forma.
+   */
+  private saludo(inv: Invitado) {
+    const sinForma = inv.saludos.filter((x) => !x.includes('|'));
+    return genero(this.rol, elegir(this.neutro && sinForma.length ? sinForma : inv.saludos));
+  }
+
   /** Posición en pantalla de cada invitado (solo se ve: no viaja), por su índice en el día. */
   xs: number[] = [];
   metas: number[] = [];
@@ -934,7 +1020,7 @@ export class Motor {
 
   /** Qué tan bien va la espera (100 = no ha esperado de más). */
   puntajeEspera(e: InvDia, ahora: number) {
-    const pac = this.def(e).paciencia * (1 + 0.15 * this.mejora('musica')) * (this.enPareja ? 0.85 : 1);
+    const pac = this.def(e).paciencia * (1 + 0.15 * this.mejora('musica')) * POR_COCINEROS.paciencia[this.cocineros - 1];
     const fila = e.tomadoEn ? e.tomadoEn - e.llegoEn : ahora - e.llegoEn;
     let exceso = Math.max(0, fila - 10 * pac);
     const t = e.ticket ? this.s.tickets.find((x) => x.id === e.ticket) : null;
@@ -943,7 +1029,7 @@ export class Motor {
   }
 
   /** Toma el pedido del primero de la fila (el anfitrión decide qué pide). */
-  private tomarPedido(quien: Rol) {
+  private tomarPedido(quien: string) {
     const s = this.s;
     if (s.fase !== 'jugando' || s.invitados.some((i) => i.estado === 'pidiendo')) return;
     const e = s.invitados.find((i) => i.estado === 'fila');
@@ -955,7 +1041,7 @@ export class Motor {
     e.pedido = this.receta.pedido(s.rango, s.dia, this.azar, this.def(e));
     this.impreso = { inv: s.invitados.indexOf(e), t0: this.reloj };
     sonidos.impresora();
-    if (quien === this.rol) this.chef('feliz', 2.5);
+    if (quien === this.yo.id) this.chef('feliz', 2.5);
     this.cambioDia();
     this.pistaUnaVez('pedido', 'Mira bien el tiquete: dice todo lo que quiere');
   }
@@ -979,7 +1065,7 @@ export class Motor {
   /** Se entrega el plato (en pareja, el invitado se lo pide al anfitrión). */
   entregar(t: Ticket) {
     if (this.s.fase !== 'jugando') return;
-    if (this.anfitrion) return this.entregarAqui(t, this.rol);
+    if (this.anfitrion) return this.entregarAqui(t, this.yo.id);
     if (this.entregando) return;
     this.entregando = this.reloj;
     this.cambioObra(t);
@@ -988,7 +1074,7 @@ export class Motor {
   }
 
   /** (Anfitrión) el invitado lo prueba y califica. */
-  private entregarAqui(t: Ticket, por: Rol) {
+  private entregarAqui(t: Ticket, por: string) {
     const s = this.s;
     const e = s.invitados[t.inv];
     if (!e) return;
@@ -1004,7 +1090,7 @@ export class Motor {
     e.estado = 'comiendo';
     const animo: Animo = total >= 90 ? 'encantado' : total >= 70 ? 'feliz' : total >= 50 ? 'espera' : 'bravo';
     const tono = total >= 90 ? 'encantado' : total >= 70 ? 'feliz' : total >= 50 ? 'normal' : 'bravo';
-    const frase = inv.especial === 'pareja' ? frasePareja(this.o.pareja.rol, this.receta.id, tono) : genero(this.rol, elegir(FRASES[tono]));
+    const frase = inv.especial === 'pareja' && this.o.pareja ? frasePareja(this.o.pareja.rol, this.receta.id, tono) : genero(this.rol, elegir(FRASES[tono]));
     s.juicio = { n: ++this.nJuicio + s.n * 1000, ticket: t, cats, total, propina, frase, animo, por };
     s.fase = 'juicio';
     s.puntajes.push(total);
@@ -1070,12 +1156,14 @@ export class Motor {
     p.mejor = Math.max(p.mejor, r.promedio);
     if (this.anfitrion) p.dia = s.dia + 1;
     this.rangoAntesFin = rangoAntes;
-    const mio: ResultadoDia = this.anfitrion ? r : { ...r, monedas: 0, platos: 0 };
+    // El premio de la casa es del dueño de la cocina (y solo si es Javier o Laura en su casa)
+    const mio: ResultadoDia = this.anfitrion && this.o.premioCasa ? r : { ...r, monedas: 0, platos: 0 };
     void this.o.guardar(structuredClone(p), mio).catch(() => {});
     [523, 659, 784, 1046, 1318].forEach((f, i) => nota(f, 0.2, i * 0.1, 'triangle', 0.05));
     // Gancho para escenas especiales (se pintan encima; la tarjeta del final sale después)
     const info: InfoFinDia = {
-      receta: this.receta.id, rol: this.rol, enPareja: this.juntos, anfitrion: this.anfitrion, rangoAntes, rango: rangoDe(p.xp), raiz: this.raiz,
+      receta: this.receta.id, rol: this.rol, enPareja: this.juntos, jugadores: this.jugadores, anfitrion: this.anfitrion, rangoAntes, rango: rangoDe(p.xp),
+      raiz: this.raiz,
     };
     const ganchos = [this.o.alTerminarDia, ...ganchosFin];
     for (const f of ganchos) {
@@ -1100,16 +1188,23 @@ export class Motor {
     const subio = [...this.receta.desbloqueos, ...INVITADOS.filter((i) => i.desde > 1).map((i) => ({ rango: i.desde, texto: `Ahora viene a comer: ${i.nombre}` }))]
       .filter((d) => d.rango > this.rangoAntesFin && d.rango <= rango);
     const juntos = this.juntos;
-    const premio = this.anfitrion
-      ? `<p class="premio">Para la casa: <b>+${r.monedas} ${r.monedas === 1 ? 'moneda' : 'monedas'}</b>${r.platos ? ` y <b>${r.platos} × ${this.receta.nombrePlato}</b> a la despensa (se pueden comer o regalar)` : ''}</p>`
-      : `<p class="premio">El premio de la casa lo guardó ${this.nombreOtro}; tus puntos de chef y las propinas (🪙 ${r.propinas}) van a tu propia ${this.receta.nombre.toLowerCase()}.</p>`;
+    const dueno = this.duenoCocina;
+    const tuya = this.receta.nombre.toLowerCase();
+    const premio = this.anfitrion && this.o.premioCasa
+      ? `<p class="premio">Para la casa: <b>+${r.monedas} ${r.monedas === 1 ? 'moneda' : 'monedas'}</b>${r.platos ? ` y <b>${r.platos} × ${this.receta.nombrePlato}</b> a la despensa${this.neutro ? '' : ' (se pueden comer o regalar)'}` : ''}</p>`
+      : !this.anfitrion
+        ? `<p class="premio">${!this.neutro && dueno.tipo !== 'amigo' ? `El premio de la casa lo guardó ${esc(dueno.nombre)}; tus` : 'Tus'} puntos de chef y las propinas (🪙 ${r.propinas}) van a tu propia ${tuya}.</p>`
+        : this.yo.tipo === 'amigo'
+          ? '<p class="premio">Tus puntos de chef y las propinas quedan guardados en este celular: vuelve cuando quieras a seguir subiendo de rango.</p>'
+          : '';
     const botones = this.anfitrion
-      ? `<button class="boton-cocina" data-c="salir">🏠 Volver a la casa</button>
+      ? `${this.enPareja ? '<button class="boton-cocina" data-c="sala">👥 A la sala</button>' : `<button class="boton-cocina" data-c="salir">${this.textoSalir}</button>`}
          <button class="boton-cocina" data-c="tienda" data-volver="fin">🛠️ Mejoras (🪙 ${p.propinas})</button>
          <button class="boton-cocina principal" data-c="siguiente">Día ${p.dia} ➜</button>`
-      : `<button class="boton-cocina" data-c="salir">🏠 Volver a la casa</button><span class="espera-otro">${this.nombreOtro} decide si siguen con otro día…</span>`;
+      : `<button class="boton-cocina" data-c="salir">${this.textoSalir}</button><span class="espera-otro">${esc(dueno.nombre)} decide si siguen con otro día…</span>`;
+    const etiqueta = juntos ? (this.neutro ? ' <small>en equipo 👥</small>' : ' <small>en pareja 💞</small>') : '';
     this.capa(`<div class="cocina-fin">
-        <div class="cabeza">${P.iconoHTML(this.receta.icono, 70)}<h2>¡Terminó el día ${r.dia}!${juntos ? ' <small>en pareja 💞</small>' : ''}</h2></div>
+        <div class="cabeza">${P.iconoRestaurante(this.receta.id, 70)}<h2>¡Terminó el día ${r.dia}!${etiqueta}</h2></div>
         <div class="estrellas">${[0, 1, 2].map((i) => `<i class="${i < estrellas ? 'si' : ''}" style="--d:${0.3 + i * 0.25}s">★</i>`).join('')}</div>
         <ul class="cifras">
           <li><b>${r.servidos}</b><span>invitados atendidos</span></li>
@@ -1130,9 +1225,15 @@ export class Motor {
     this.pintarCapa();
   }
 
-  private salir() {
+  /**
+   * Se cierra la cocina: `salir` (a la casa o a la sala de juegos; quien la abrió decide qué pasa con la sala) o `sala`
+   * (de vuelta a la sala de espera; si lo decide el anfitrión, se van todos con él).
+   */
+  private salir(como: SalidaCocina = 'salir', avisar = true) {
     if (this.terminado) return;
-    this.sync?.salir();
+    if (como === 'sala' && avisar && this.anfitrion) this.sync?.volverTodosALaSala();
+    this.sync?.cerrar();
+    for (const q of this.quitarSala.splice(0)) q();
     this.terminado = true;
     this.bucle?.detener();
     this.bucle = null;
@@ -1145,7 +1246,7 @@ export class Motor {
       this.fondos.clear();
       this.lienzo.width = this.lienzo.height = 1;
     }, 450);
-    this.alSalir();
+    this.alSalir(como);
   }
 
   // ------------------------------------------------------------------------------------------- Ayudas para las estaciones
@@ -1271,7 +1372,7 @@ export class Motor {
   botonTomar: Rect | null = null;
   private toquePedidos(x: number, y: number) {
     if (!this.botonTomar || !dentro(this.botonTomar, x, y)) return;
-    if (this.anfitrion) this.tomarPedido(this.rol);
+    if (this.anfitrion) this.tomarPedido(this.yo.id);
     else {
       this.sync?.pedir('tomar');
       this.botonTomar = null;
@@ -1375,7 +1476,7 @@ export class Motor {
     if (que === 'tomar') {
       const e = this.s.invitados.find((i) => i.estado === 'fila');
       if (e) {
-        this.tomarPedido(this.rol);
+        this.tomarPedido(this.yo.id);
         this.colgarTicket(e);
       }
     }
@@ -1400,12 +1501,12 @@ export class Motor {
 /** Escenas enganchadas al final del día (las registra otro módulo con `cocina.alTerminarDia.push(...)`). */
 const ganchosFin: NonNullable<OpcionesCocina['alTerminarDia']>[] = [];
 
-/** Abre la cocina con la receta; al volver a la casa se resuelve. */
-export function abrirCocina(receta: Receta, o: OpcionesCocina): Promise<void> {
+/** Abre la cocina con la receta; al cerrarla dice si se salió del todo o se vuelve a la sala de espera. */
+export function abrirCocina(receta: Receta, o: OpcionesCocina): Promise<SalidaCocina> {
   return new Promise((listo) => {
-    const m = new Motor(receta, o, () => {
+    const m = new Motor(receta, o, (como) => {
       if (cocina.actual === m) cocina.actual = null;
-      listo();
+      listo(como);
     });
     cocina.actual = m;
     (window as any).__cocinaMotor = m;

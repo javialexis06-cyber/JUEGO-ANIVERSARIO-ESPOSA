@@ -5,11 +5,12 @@ import {
   AYUDAS, CANASTAS_INICIO, CHOQUE, CLIENTES, COMBO, PROBLEMAS, stockInicial, TipoCliente, UNIDADES_MAX,
 } from './balance';
 import { Cliente } from './cliente';
-import { Jugador, NuevaTarea, Rol } from './jugador';
+import { InfoJugador, Jugador, NuevaTarea } from './jugador';
 import { aTres, Mundo } from './mundo';
 import { P } from './navegacion';
 import { CanastaSuelta, Ladron, Mugre, Nina, Perseguible } from './problemas';
 import { cargar, cargarAnimado, copia, liberarEsqueletos, Productos } from './recursos';
+import { esNeutro } from './neutro';
 import * as sonido from './sonido';
 import { liberarPropios, Tienda, TiendaDato, Vitrina } from './tienda';
 
@@ -128,11 +129,16 @@ export class Juego {
   private raycaster = new THREE.Raycaster();
   private problemasX: number;
 
+  /**
+   * `pareja`: Él y Ella (en el mismo celular o en línea). `equipo`: los de una sala (de 2 a 4, cada uno con su id,
+   * nombre, color y muñeco); si viene, manda sobre `pareja`.
+   */
   constructor(public mundo: Mundo, public nivel: NivelDato, private productos: Productos, private tiendaDato: TiendaDato,
     private sitios: Record<number, number>, private escalas: Record<string, number>, public mejoras: Record<string, number>,
-    public legendario = false, public pareja = false) {
+    public legendario = false, public pareja = false, private equipo: InfoJugador[] | null = null) {
     this.problemasX = legendario ? nivel.legendario?.problemas_x ?? 1.5 : 1;
     if (mejoras.canastas) this.canastas += 3;
+    if (equipo?.length) this.pareja = equipo.length > 1;
   }
 
   /** El primer personaje (Él): el del joystick de la izquierda. */
@@ -201,10 +207,17 @@ export class Juego {
     this.mundo.encuadrar(this.tiendaDato.W, this.tiendaDato.D);
     const esc = this.tiendaDato.escala_personas;
     const b = this.tienda.bodega;
-    const roles: [Rol, P][] = [['el', { x: b.x - 1.2, y: b.y - 1.2 }]];
-    if (this.pareja) roles.push(['ella', { x: b.x - 2.4, y: b.y - 1.0 }]);
-    for (const [rol, pos] of roles) {
-      const p = new Jugador(pos, esc * (this.escalas[rol] ?? 1), this, rol);
+    // Arrancan junto a la bodega (Él y Ella en sus puestos de siempre; en una sala, hasta cuatro en dos filas)
+    const quienes: InfoJugador[] = this.equipo?.length
+      ? this.equipo.slice(0, 4)
+      : [{ id: 'el', cuerpo: 'el', nombre: 'Él' }, ...(this.pareja ? [{ id: 'ella', cuerpo: 'ella', nombre: 'Ella' } as InfoJugador] : [])];
+    const puestos: P[] = [{ x: b.x - 1.2, y: b.y - 1.2 }, { x: b.x - 2.4, y: b.y - 1.0 }, { x: b.x - 1.3, y: b.y - 2.3 }, { x: b.x - 2.5, y: b.y - 2.1 }];
+    for (let i = 0; i < quienes.length; i++) {
+      const q = quienes[i];
+      let pos = puestos[i];
+      const [ci, cj] = this.tienda.nav.aCelda(pos);
+      if (!this.tienda.nav.esLibre(ci, cj)) pos = this.puntoLibre(b);
+      const p = new Jugador(pos, esc * (this.escalas[q.cuerpo] ?? 1), this, q.cuerpo, this.equipo?.length ? q : undefined);
       await p.preparar(this.productos);
       this.jugadores.push(p);
       this.mundo.escena.add(p.grupo);
@@ -485,28 +498,43 @@ export class Juego {
     if (quien) this.trabajoHecho(quien, v.centro());
   }
 
-  private ultimoTrabajo: { rol: Rol; t: number } | null = null;
-  /** En pareja: si los dos terminan algo útil casi al mismo tiempo (uno repone y el otro cobra…), es combo en equipo. */
+  private ultimoTrabajo: { id: string; t: number } | null = null;
+  /** En pareja (o en equipo): si dos terminan algo útil casi al mismo tiempo (uno repone y el otro cobra…), es combo. */
   trabajoHecho(quien: Jugador, pos: P) {
     if (!this.pareja) return;
     const u = this.ultimoTrabajo;
-    if (u && u.rol !== quien.rol && this.tiempo - u.t <= COMBO.parejaVentana) {
+    if (u && u.id !== quien.id && this.tiempo - u.t <= COMBO.parejaVentana) {
       this.ultimoTrabajo = null;
       this.stats.combosPareja++;
       this.stats.bonos += COMBO.pareja;
       sonido.corazon();
-      this.eventos.push({ t: this.tiempo, tipo: 'pop', texto: `¡Combo en pareja! +${COMBO.pareja}`, pos: { ...pos }, data: { clase: 'corazon' } });
+      this.eventos.push({ t: this.tiempo, tipo: 'pop', texto: `¡Combo ${this.textoEquipo}! +${COMBO.pareja}`, pos: { ...pos }, data: { clase: 'corazon' } });
       return;
     }
-    this.ultimoTrabajo = { rol: quien.rol, t: this.tiempo };
+    this.ultimoTrabajo = { id: quien.id, t: this.tiempo };
   }
 
-  // ---------- Choques entre Él y Ella ----------
+  /** Se juega en una sala (de 2 a 4, cada uno con su nombre y su color). */
+  get enSala() {
+    return !!this.equipo?.length;
+  }
 
-  /** Revisa si los dos se chocaron de frente (y rápido); si no, apenas se apartan para no quedar uno encima del otro. */
+  /** «en pareja» entre Él y Ella; «en equipo» con amigos (modo neutro) o de a tres o cuatro. */
+  get textoEquipo() {
+    return esNeutro() || this.jugadores.length > 2 ? 'en equipo' : 'en pareja';
+  }
+
+  // ---------- Choques entre Él y Ella (o entre todos los de la sala) ----------
+
+  /** Cada par de jugadores: si se chocaron de frente (y rápido) salen volando; si no, apenas se apartan. */
   private choques() {
-    const [a, b] = this.jugadores;
-    if (!a || !b || a.atontado || b.atontado) return;
+    const js = this.jugadores;
+    for (let i = 0; i < js.length; i++) for (let k = i + 1; k < js.length; k++) this.choquePar(js[i], js[k]);
+  }
+
+  /** Revisa si estos dos se chocaron de frente (y rápido); si no, apenas se apartan para no quedar uno encima del otro. */
+  private choquePar(a: Jugador, b: Jugador) {
+    if (a.atontado || b.atontado) return;
     const dx = b.pos.x - a.pos.x, dy = b.pos.y - a.pos.y;
     const d = Math.hypot(dx, dy);
     if (d >= CHOQUE.radio * 2 || d < 1e-4) return;
@@ -647,7 +675,7 @@ export class Juego {
     if (!this.corazon || this.corazon.tomado) return;
     this.corazon.tomado = true;
     sonido.corazon();
-    this.eventos.push({ t: this.tiempo, tipo: 'pop', texto: '¡Corazón escondido!', pos: { ...this.corazon.pos }, data: { clase: 'corazon' } });
+    this.eventos.push({ t: this.tiempo, tipo: 'pop', texto: esNeutro() ? '¡Trébol de la suerte!' : '¡Corazón escondido!', pos: { ...this.corazon.pos }, data: { clase: 'corazon' } });
   }
 
   get corazonVisible() {
@@ -867,5 +895,6 @@ export class Juego {
       ...this.ayudantes.map((a) => a.grupo)];
     this.mundo.escena.remove(this.tienda.grupo, ...personas, ...this.mugres.map((b) => b.obj), ...this.canastasSueltas.map((c) => c.obj));
     liberarEsqueletos(...personas);
+    for (const p of this.jugadores) for (const m of p.propios) m.dispose();
   }
 }

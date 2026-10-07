@@ -135,7 +135,8 @@ if (juego === 'parchis' || juego === 'parchis2') {
 await ella.waitForSelector('#hoja:not([hidden]) .boton-tomate', { timeout: 60000 });
 await ella.screenshot({ path: `${carpeta}/${juego}-invitacion.png` });
 await ella.click('#hoja:not([hidden]) .boton-tomate');
-await Promise.all([el, ella].map((p) => p.waitForSelector('#partida:not([hidden])', { timeout: 60000 })));
+// (attached: con dos celulares en 3D por software casi no llegan cuadros y la espera de «visible» se vence sola)
+await Promise.all([el, ella].map((p) => p.waitForSelector('#partida:not([hidden])', { state: 'attached', timeout: 90000 })));
 revisar(true, 'Los dos entran a la partida');
 
 // Juegan con la IA de cada lado haciendo el movimiento por la partida (como si tocaran el tablero)
@@ -145,6 +146,8 @@ while (!fin && Date.now() - t0 < 15 * 60_000) {
   for (const p of [el, ella]) {
     await p
       .evaluate(() => {
+        // ¿Quién fue?: las cartas del reparto y las que se voltean se cierran con «¡Anotado!»
+        document.querySelector('.clue-capa:not([hidden]) :is(.clue-hoja-cartas, .clue-hoja-revela) [data-ok]')?.click();
         const m = window.__mesa;
         const pt = m.partida;
         if (!pt || !pt.esperando) return;

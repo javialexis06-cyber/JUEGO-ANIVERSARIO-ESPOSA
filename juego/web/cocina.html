@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#2b1a10">
+<title>Cocina de chef</title>
+<!-- Página de la sala de juegos de amigos: la cocina de chef sin la casa (sola o con amigos en una sala). Javier y
+     Laura cocinan desde la casa (con su progreso de verdad): si este aparato no está en modo amigo, se va a la casa -->
+<script>try{var a=JSON.parse(localStorage.getItem('nuestro-hogar-amigo')||'null');if(!(a&&a.activo!==false&&a.nombre))location.replace('./index.html')}catch(e){location.replace('./index.html')}</script>
+</head>
+<body class="suelto-cocina">
+<div class="suelto-carga" aria-live="polite"><i></i><b>Cocina de chef</b><span>Prendiendo los fogones…</span></div>
+<script type="module" src="./src/sueltos/cocina.ts"></script>
+</body>
+</html>

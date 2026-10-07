@@ -6,6 +6,7 @@ import { nota, rumor } from '../../sonido';
 import { CUADRO } from './arte';
 import type { Efectos } from './efectos';
 import type { Modelos, TipoBasura } from './modelos';
+import { Auras, Borde, ROJO_PELIGRO, ladoAura } from './resaltar';
 
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 
@@ -87,6 +88,9 @@ export class Obstaculos {
   cuentas = { cometas: 0, chanclas: 0, lluvias: 0, agujeros: 0 };
   /** Mientras dura un evento (lluvia) no salen obstáculos normales. */
   enLluvia = false;
+  /** Lo que hace perder se ve rojo: borde encendido en el material y un aura alrededor. */
+  private borde = new Borde(ROJO_PELIGRO, 2.2, 1.6, 'peligro');
+  private auras = new Auras(ROJO_PELIGRO, 220, { borde: true, aditiva: false, opacidad: 0.8 });
 
   constructor(
     private grupo: THREE.Group,
@@ -97,6 +101,7 @@ export class Obstaculos {
   ) {
     this.texHalo = texHalo;
     this.matCometa = new THREE.MeshStandardMaterial({ color: '#CFEFFF', vertexColors: true, roughness: 0.4, emissive: '#7FD8FF', emissiveIntensity: 0.45 });
+    this.grupo.add(this.auras.malla);
   }
 
   // ------------------------------------------------------------------ Piezas
@@ -133,7 +138,7 @@ export class Obstaculos {
     const k = Math.floor(Math.random() * formas.length);
     const mat = this.modelos.matRocas[Math.min(tramo, this.modelos.matRocas.length - 1)];
     const m = this.pedir(`roca${chica ? 'c' : 'g'}${k}`, () => new THREE.Mesh(formas[k], mat)) as THREE.Mesh;
-    m.material = mat;
+    m.material = this.borde.material(mat);
     m.scale.setScalar(r);
     m.rotation.set(Math.random() * 6, Math.random() * 6, 0);
     return this.nuevo('roca', m, x, y, r * 0.86, { vx, vy, giro: new THREE.Vector3(rnd(-1.5, 1.5), rnd(-1.5, 1.5), rnd(-0.6, 0.6)), puntos: Math.round(15 + r * 20) });
@@ -141,7 +146,11 @@ export class Obstaculos {
 
   private basura(tipo: TipoBasura, x: number, y: number) {
     const lado = { satelite: 3.6, inodoro: 1.5, chancla: 1.1, lata: 0.7, ovni: 2.6, avion: 5.2, pajaro: 0.75 }[tipo];
-    const o = this.pedir(`b-${tipo}`, () => this.modelos.basura(tipo, lado));
+    const o = this.pedir(`b-${tipo}`, () => {
+      const b = this.modelos.basura(tipo, lado);
+      this.borde.aplicar(b);
+      return b;
+    });
     o.rotation.set(0, 0, 0);
     return o;
   }
@@ -177,7 +186,8 @@ export class Obstaculos {
   }
 
   private bandada(limX: number, y: number) {
-    const n = 3 + Math.floor(Math.random() * 3);
+    // (al principio, mientras se aprende, las bandadas son más pequeñas)
+    const n = (this.tiempo < 15 ? 2 : 3) + Math.floor(Math.random() * 3);
     for (let k = 0; k < n; k++) {
       const fila = Math.ceil(k / 2), lado = k % 2 ? 1 : -1;
       const o = this.basura('pajaro', 0, 0);
@@ -194,8 +204,8 @@ export class Obstaculos {
     const k = Math.floor(Math.random() * this.modelos.asteroidesChicos.length);
     const m = this.pedir(`cometa${k}`, () => {
       const g = new THREE.Group();
-      g.add(new THREE.Mesh(this.modelos.asteroidesChicos[k], this.matCometa));
-      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.texHalo, color: '#9FE7FF', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+      g.add(new THREE.Mesh(this.modelos.asteroidesChicos[k], this.borde.material(this.matCometa)));
+      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.texHalo, color: '#FF9A7A', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
       halo.scale.setScalar(2.6);
       g.add(halo);
       return g;
@@ -221,7 +231,7 @@ export class Obstaculos {
       const sombra = new THREE.Mesh(new THREE.SphereGeometry(0.85, 32, 20), new THREE.MeshBasicMaterial({ color: '#000000' }));
       const lente = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.texHalo, color: '#8A5CFF', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.55 }));
       lente.scale.setScalar(4.2);
-      const anillo = new THREE.Mesh(new THREE.TorusGeometry(0.95, 0.05, 8, 64), new THREE.MeshBasicMaterial({ color: '#FFD9A0', toneMapped: false }));
+      const anillo = new THREE.Mesh(new THREE.TorusGeometry(0.95, 0.06, 8, 64), new THREE.MeshBasicMaterial({ color: '#FF4A36', toneMapped: false }));
       grupo.add(lente, disco, sombra, anillo);
       return grupo;
     });
@@ -267,7 +277,8 @@ export class Obstaculos {
     }
     this.proximo -= avance;
     if (this.proximo > 0) return;
-    const espacio = 8.2 - 3.9 * dif;
+    // (los primeros ~25 s, mientras se aprende, salen más separados)
+    const espacio = (8.2 - 3.9 * dif) * (1.35 - 0.35 * Math.min(1, this.tiempo / 25));
     this.proximo = espacio * rnd(0.75, 1.3);
     const x = limX + 3;
     const y = rnd(-limY, limY);
@@ -277,7 +288,8 @@ export class Obstaculos {
         if (metros < 60) return;
         if (r < 0.45) this.bandada(limX, rnd(-limY * 0.8, limY * 0.8));
         else if (r < 0.7) this.chatarra('chancla', x, y);
-        else if (r < 0.85 && metros > 150) this.avion(limX, rnd(-limY * 0.7, limY * 0.7));
+        // Los aviones salen cuando ya pasó el arranque tranquilo
+        else if (r < 0.85 && metros > 150 && this.tiempo > 20) this.avion(limX, rnd(-limY * 0.7, limY * 0.7));
         else this.chatarra(Math.random() < 0.5 ? 'inodoro' : 'lata', x, y);
         return;
       case 1:
@@ -418,6 +430,25 @@ export class Obstaculos {
       if (o.x < -limX - 8 || o.y < -limY - 6 || o.y > limY + 7 || o.x > limX + 30) this.quitar(o);
     }
     this.limpiar();
+    this.resaltar();
+  }
+
+  /** El aura roja de cada uno (todas de una sola vez) y el latido del borde. */
+  private resaltar() {
+    this.borde.latir(this.tiempo);
+    const a = this.auras;
+    a.empezar();
+    for (const o of this.lista) {
+      if (!o.vivo || !o.obj.visible || o.tipo === 'rayo') continue;
+      // Un brillo por cada círculo de choque: abraza la forma de lo que de verdad tumba (las alas del satélite, el avión…)
+      const c = Math.cos(o.rot), s = Math.sin(o.rot);
+      const crece = o.tipo === 'roca' || o.tipo === 'meteoro' ? 1.16 : o.tipo === 'agujero' ? 1.12 : 1.08;
+      for (const [cx, cy, r] of o.circulos) {
+        const lado = ladoAura(r * crece + 0.06);
+        a.poner(o.x + cx * c - cy * s, o.y + cx * s + cy * c, -0.9, lado, lado);
+      }
+    }
+    a.terminar(0.75 + 0.15 * Math.sin(this.tiempo * 6.5));
   }
 
   private moverOvni(o: Obst, dt: number, limX: number, nave: Blanco) {
@@ -473,7 +504,7 @@ export class Obstaculos {
       const grupo = new THREE.Group();
       const nucleo = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 1, 10, 1, true), new THREE.MeshBasicMaterial({ color: '#FFFFFF', toneMapped: false, transparent: true }));
       nucleo.rotation.z = Math.PI / 2;
-      const halo = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 1, 12, 1, true), new THREE.MeshBasicMaterial({ color: '#FF3FA4', toneMapped: false, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false }));
+      const halo = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 1, 12, 1, true), new THREE.MeshBasicMaterial({ color: '#FF2A1F', toneMapped: false, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
       halo.rotation.z = Math.PI / 2;
       grupo.add(halo, nucleo);
       return grupo;
@@ -578,9 +609,21 @@ export class Obstaculos {
     for (const o of this.lista) this.quitar(o);
     this.lista.length = 0;
     this.enLluvia = false;
+    this.auras.empezar();
+    this.auras.terminar();
+  }
+
+  /** Otro vuelo: sin obstáculos, con los relojes en cero y las cuentas de las misiones limpias. */
+  reiniciar() {
+    this.vaciar();
+    this.proximo = 4;
+    this.lluviaHasta = this.proxLluvia = this.proxAgujero = this.proxOvni = this.tiempo = 0;
+    this.cuentas = { cometas: 0, chanclas: 0, lluvias: 0, agujeros: 0 };
   }
 
   liberar() {
+    this.borde.liberar();
+    this.auras.liberar();
     this.matCometa.dispose();
   }
 }

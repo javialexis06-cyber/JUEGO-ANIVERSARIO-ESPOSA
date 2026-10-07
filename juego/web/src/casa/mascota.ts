@@ -7,7 +7,8 @@ import { copia, Productos } from '../recursos';
 import type { Casa3D, Punto } from './escena_casa';
 import { modeloItem } from './escena_casa';
 import { ITEM } from './catalogo';
-import { EVENTOS_BANO, type EventoBano, type PasoBano, pasosEvento, rutinaInodoro } from './bano_frases';
+import { conGenero, EVENTOS_BANO, type EventoBano, type PasoBano, pasosEvento, rutinaInodoro } from './bano_frases';
+import { DUR_MIMO, type PasoMimo, type VarianteMimo } from './mimos';
 import { Actividad, alDia, animo, Cuarto, EstadoPersonaje, Rol } from './modelo';
 import { Vestuario } from './ropa';
 
@@ -85,6 +86,8 @@ interface Coreo {
   otra: Mascota;
   yo: boolean;
   item?: string;
+  /** Cuál caricia, abrazo o beso es (con su pose, su reacción y lo que se dicen); sin ella, el mimo de siempre. */
+  variante?: VarianteMimo;
   /** ir: camina hacia el otro · esperar: aguarda a que llegue · pose: el mimo · dormido: sonríe dormido */
   fase: 'ir' | 'esperar' | 'pose' | 'dormido';
   /** Cuarto donde se hace el mimo (un estado nuevo en otro cuarto o con otra acción lo corta). */
@@ -606,23 +609,23 @@ export class Mascota {
 
   /** Coreografía con el otro personaje: caricia, abrazo, beso o regalo. `quien` = el que la hace.
    *  Todo se mide con el reloj del juego: quien recibe espera a que el otro llegue y posan juntos. */
-  interactuar(tipo: TipoMimo, otra: Mascota, quien: Rol, item?: string) {
+  interactuar(tipo: TipoMimo, otra: Mascota, quien: Rol, item?: string, variante?: VarianteMimo) {
     const yo = this.rol === quien;
     const dormido = this.escena.includes('|dormir|') || otra.escena.includes('|dormir|');
-    const dur = tipo === 'nalgada' ? 7.6 : 3.4;
+    const dur = tipo === 'nalgada' ? 7.6 : variante ? DUR_MIMO : 3.4;
     // Si ya estaba en otro mimo, ese termina aquí (una orden nueva corta la anterior)
     if (this.coreo) this.cortarCoreo();
     const cuarto = yo ? otra.cuarto : this.cuarto;
     if (dormido && !yo) {
       // Quien duerme sigue dormido: solo sonríe entre sueños
-      this.coreo = { tipo, otra, yo, item, fase: 'dormido', cuarto, t: 0, dur, total: 0 };
+      this.coreo = { tipo, otra, yo, item, variante, fase: 'dormido', cuarto, t: 0, dur, total: 0 };
       this.p.cara('feliz');
       this.efecto = 'corazones';
       return;
     }
     this.soltar();
     this.pasos = [];
-    this.coreo = { tipo, otra, yo, item, fase: yo ? 'ir' : 'esperar', cuarto, t: 0, dur, total: 0 };
+    this.coreo = { tipo, otra, yo, item, variante, fase: yo ? 'ir' : 'esperar', cuarto, t: 0, dur, total: 0 };
     if (!yo) {
       // Quien recibe deja lo que hacía: si estaba sentado (o en la tina) se levanta y sale del mueble; si caminaba, para
       const sal = this.salida;
@@ -672,6 +675,7 @@ export class Mascota {
     c.t = 0;
     const { tipo, yo } = c;
     if (tipo === 'nalgada') return this.posarNalgada(c);
+    if (c.variante) return this.posarVariante(c, c.variante);
     let pose: string;
     let cara: Cara = 'feliz';
     if (tipo === 'caricia') pose = yo ? 'acariciar' : 'recibir_caricia';
@@ -686,6 +690,32 @@ export class Mascota {
     this.tPaso = 0;
     this.p.cara(cara);
     this.efecto = tipo === 'regalo' ? 'brillos' : 'corazones';
+    // Quien espera arranca justo cuando llega el otro
+    const o = c.otra.coreo;
+    if (o && o.fase === 'esperar' && o.otra === this) c.otra.posar();
+  }
+
+  /** Un mimo con su escena propia: quien lo da habla primero; quien lo recibe espera en su pose y contesta. */
+  private posarVariante(c: Coreo, v: VarianteMimo) {
+    const brazo = this.rol === 'el' ? 'abrazo_izq' : 'abrazo_der';
+    const pose = (p: string | undefined) => (p === 'ABRAZO' ? brazo : p);
+    const paso = (m: PasoMimo): Paso => ({
+      pose: pose(m.pose)!,
+      pose2: pose(m.pose2),
+      ritmo: m.ritmo,
+      dur: m.dur,
+      cara: m.cara,
+      salto: m.salto,
+      giro: m.giro,
+      temblor: m.temblor,
+      // (lo que dice va con su género: «dormido|dormida»)
+      alEmpezar: m.dice === undefined ? undefined : () => (this.frase = m.dice ? conGenero(this.rol, m.dice) : null),
+    });
+    this.p.mirarA(c.otra.p.pos);
+    this.pasos = (c.yo ? v.da : v.recibe).map(paso);
+    this.tPaso = 0;
+    this.empezarPaso(this.pasos[0]);
+    this.efecto = v.efecto ?? 'corazones';
     // Quien espera arranca justo cuando llega el otro
     const o = c.otra.coreo;
     if (o && o.fase === 'esperar' && o.otra === this) c.otra.posar();
@@ -749,7 +779,7 @@ export class Mascota {
     this.efecto = null;
     this.escena = '';
     this.p.cara(this.caraReposo);
-    if (c?.tipo === 'nalgada') {
+    if (c?.tipo === 'nalgada' || c?.variante) {
       this.frase = null;
       this.metaTumbado = 0;
       this.metaAlto = 0;

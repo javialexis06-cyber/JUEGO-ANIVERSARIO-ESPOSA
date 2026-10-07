@@ -5,7 +5,7 @@ import { nota } from '../../sonido';
 import { iconoEstela } from './arte';
 import {
   CASCOS, COSMETICOS, ESTELAS, type IdMejora, MEJORAS, type ProgresoCohete, RETRETES, type TipoCosmetico, comprar, cuentasNuevas,
-  esDeVuelo, multiplicador, nivelDe, precioMejora, premioMision, premioNivel, revisarMisiones, textoMision, tieneCosmetico, valorDe,
+  esDeVuelo, multiplicador, nivelDe, precioMejora, premioMision, premioNivel, revisarMisiones, textoCosmetico, textoMision, tieneCosmetico, valorDe,
 } from './datos';
 import type { Rol } from '../modelo';
 
@@ -84,7 +84,11 @@ export class Tienda {
     }
   }
 
+  private cerrada = false;
   private cerrar() {
+    // (un toque doble en la ✕ no cierra dos veces)
+    if (this.cerrada) return;
+    this.cerrada = true;
     this.raiz.classList.remove('abierta');
     nota(660, 0.08, 0, 'triangle', 0.04);
     setTimeout(() => this.raiz.remove(), 280);
@@ -155,7 +159,7 @@ export class Tienda {
     const c = tipo && id ? COSMETICOS[tipo].find((x) => x.id === id) : null;
     v.querySelector('small')!.textContent = tipo && this.probando[tipo] ? 'Probándote' : 'Tienes puesto';
     v.querySelector('b')!.textContent = c ? c.nombre : `${RETRETES.find((x) => x.id === this.p.puesto.retrete)?.nombre ?? ''}`;
-    v.querySelector('span')!.textContent = c ? c.texto : `${mil(this.p.mejor)} m de récord · ${mil(this.p.ganados)} rollitos en total`;
+    v.querySelector('span')!.textContent = c && tipo ? textoCosmetico(tipo, c) : `${mil(this.p.mejor)} m de récord · ${mil(this.p.ganados)} rollitos en total`;
   }
 
   private pips(n: number, max: number) {
@@ -222,7 +226,7 @@ export class Tienda {
             : this.boton(c.precio, `data-comprar="${tipo}:${c.id}"`);
         return `<article class="ct-tarjeta cosmetico${puesto ? ' puesto' : ''}${probando ? ' probando' : ''}${tiene ? '' : ' nuevo'}" data-tarjeta="${tipo}-${c.id}" data-probar="${tipo}:${c.id}">
           <img src="${this.iconoCosmetico(tipo, c.id)}" alt="" onerror="this.style.visibility='hidden'">
-          <b>${esc(c.nombre)}</b><small>${esc(c.texto)}</small>${accion}
+          <b>${esc(c.nombre)}</b><small>${esc(textoCosmetico(tipo, c))}</small>${accion}
         </article>`;
       })
       .join('') + '</div>';

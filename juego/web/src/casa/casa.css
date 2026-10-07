@@ -128,6 +128,55 @@ body.hogar {
 .bienv-conexion {
   margin-top: 8px;
 }
+.bienv-tengo-cuenta {
+  display: block;
+  margin: 10px auto 0;
+}
+.bienv-cuenta {
+  margin-top: 8px;
+}
+.cuenta-campos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cuenta-campos input, .mi-cuenta input {
+  flex: 1 1 140px;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 2px solid #e6d8c8;
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px 12px;
+  font: 700 16px var(--texto);
+  color: var(--cacao);
+  user-select: text;
+  -webkit-user-select: text;
+}
+.cuenta-campos input:focus, .mi-cuenta input:focus {
+  outline: none;
+  border-color: var(--cielo);
+}
+.mi-cuenta {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #fff;
+}
+.mi-cuenta h3 {
+  margin: 0 0 6px;
+  font: 600 17px var(--display);
+}
+.mi-cuenta form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.mi-cuenta .usuario-chico {
+  font: 700 15px var(--display);
+  color: var(--rosa-fuerte);
+}
 .bienv-opciones {
   display: grid;
   gap: 10px;

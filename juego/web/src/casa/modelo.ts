@@ -2,6 +2,8 @@
 import { normalizarProgreso, type ProgresoCocina, RECETAS, type RecetaId } from './cocina/tipos';
 import { normalizarCohete, type ProgresoCohete } from './cohete/datos';
 import { normalizarProgresoLavado, type ProgresoLavado } from './lavado/progreso';
+import { normalizarProgresoSangre, type ProgresoSangre } from '../sangre/progreso';
+import { normalizarProgresoNube, type CopiaNube } from './progreso_nube';
 export type Rol = 'el' | 'ella';
 export type Cuarto = 'sala' | 'cocina' | 'bano' | 'cuarto' | 'juegos' | 'trofeos' | 'cuna' | 'cuarto_el' | 'cuarto_ella' | 'patio';
 export type Necesidad = 'hambre' | 'energia' | 'higiene' | 'carino';
@@ -19,7 +21,8 @@ export const PRECIO_CUARTO: Partial<Record<Cuarto, number>> = { trofeos: 50, cua
 /** Los cuartos propios: solo su dueño los decora y les pinta las paredes. */
 export const DUENO: Partial<Record<Cuarto, Rol>> = { cuarto_el: 'el', cuarto_ella: 'ella' };
 export const tieneCuarto = (c: Pick<Casa, 'ampliaciones'>, k: Cuarto) => CUARTOS_BASE.includes(k) || !!c.ampliaciones?.includes(k);
-export const NOMBRE_ROL: Record<Rol, string> = { el: 'Él', ella: 'Ella' };
+/** Cómo se llaman (lo que se muestra en pantalla; por dentro siguen siendo 'el' y 'ella'). */
+export const NOMBRE_ROL: Record<Rol, string> = { el: 'Javier', ella: 'Laura' };
 export const otro = (r: Rol): Rol => (r === 'el' ? 'ella' : 'el');
 
 /** Puntos que se pierden por hora (despierto). Dormido: la energía sube y la comida baja a la mitad. */
@@ -203,6 +206,8 @@ export interface Casa {
   retrete?: Partial<Record<Rol, number>>;
   /** El retrete espacial de cada uno: rollitos, mejoras, retretes/estelas/cascos, misiones y récords (metros). */
   cohete?: Partial<Record<Rol, ProgresoCohete>>;
+  /** Cuándo descubrió cada uno el retrete espacial (después de eso puede volar cada vez que se sienta en el inodoro). */
+  coheteVisto?: Partial<Record<Rol, number>>;
   /** Récords de lavarse la cara: los gérmenes que más ha eliminado cada uno en una lavada. */
   lavado?: Partial<Record<Rol, number>>;
   /** Lavarse la cara: lo de cada uno (gotas doradas, tienda de poderes, disfraces, logros, colección y récords). */
@@ -219,6 +224,11 @@ export interface Casa {
   perro?: Perrito;
   /** La cocina de chef: el progreso de cada uno en cada restaurante (día, rango, propinas y mejoras). */
   cocina?: Partial<Record<Rol, Partial<Record<RecetaId, ProgresoCocina>>>>;
+  /** Sangre y Ceniza: el progreso permanente de cada uno (ceniza, Pozo de las Almas, maestrías, logros). */
+  sangre?: Partial<Record<Rol, ProgresoSangre>>;
+  /** El progreso de los minijuegos que guardan en el aparato (súper, Cien Puertas, mesa, escenas), para tenerlo en
+   *  cualquier aparato donde se entre con la cuenta (progreso_nube.ts). */
+  progreso?: Partial<Record<Rol, Record<string, CopiaNube>>>;
 }
 
 // ---------------------------------------------------------------------------
@@ -327,7 +337,8 @@ export function casaNueva(): Casa {
  *  conservan). Al agregar un campo a `Casa`, TypeScript obliga a ponerlo aquí también. */
 const CAMPOS_CASA = {
   monedas: 1, inventario: 1, deco: 1, notas: 1, fechas: 1, regalos: 1, voces: 1, aniversario: 1, diario: 1, retrete: 1, lavado: 1,
-  ampliaciones: 1, bebe: 1, logros: 1, pintura: 1, perro: 1, cocina: 1, lavadoProgreso: 1, cohete: 1,
+  ampliaciones: 1, bebe: 1, logros: 1, pintura: 1, perro: 1, cocina: 1, lavadoProgreso: 1, cohete: 1, coheteVisto: 1, sangre: 1,
+  progreso: 1,
 } satisfies Record<keyof Casa, 1>;
 
 /** La casa compartida siempre con la forma esperada (y sin valores imposibles como monedas negativas). */
@@ -378,12 +389,25 @@ export function normalizarCasa(c: unknown): Casa {
     ...(esObjeto(c.cohete)
       ? { cohete: Object.fromEntries((['el', 'ella'] as Rol[]).filter((r) => esObjeto(c.cohete[r])).map((r) => [r, normalizarCohete(c.cohete[r])])) }
       : {}),
+    ...(esObjeto(c.coheteVisto)
+      ? {
+          coheteVisto: Object.fromEntries(
+            (['el', 'ella'] as Rol[]).filter((r) => typeof c.coheteVisto[r] === 'number' && Number.isFinite(c.coheteVisto[r]) && c.coheteVisto[r] > 0).map((r) => [r, Math.floor(c.coheteVisto[r])]),
+          ),
+        }
+      : {}),
     ...(esObjeto(c.lavado)
       ? {
           lavado: Object.fromEntries(
             (['el', 'ella'] as Rol[]).filter((r) => typeof c.lavado[r] === 'number' && Number.isFinite(c.lavado[r])).map((r) => [r, Math.max(0, Math.min(99999, Math.round(c.lavado[r])))]),
           ),
         }
+      : {}),
+    ...(esObjeto(c.sangre)
+      ? { sangre: Object.fromEntries((['el', 'ella'] as Rol[]).filter((r) => esObjeto(c.sangre[r])).map((r) => [r, normalizarProgresoSangre(c.sangre[r])])) }
+      : {}),
+    ...(esObjeto(c.progreso)
+      ? { progreso: Object.fromEntries((['el', 'ella'] as Rol[]).filter((r) => esObjeto(c.progreso[r])).map((r) => [r, normalizarProgresoNube(c.progreso[r])])) }
       : {}),
     ...(esObjeto(c.lavadoProgreso)
       ? {

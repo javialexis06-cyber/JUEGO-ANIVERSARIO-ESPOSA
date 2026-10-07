@@ -1,4 +1,4 @@
-// Mancala (Kalah) tal cual está en docs/juegos-mesa.md: 6 hoyos por lado, un almacén en cada extremo,
+// Mancala (Kalah) tal cual está en docs/sistemas/juegos-mesa.md: 6 hoyos por lado, un almacén en cada extremo,
 // 4 semillas por hoyo y siembra en sentido antihorario.
 import { otro, type Rol } from '../../casa/modelo';
 import type { Final, Reglas } from '../tipos';

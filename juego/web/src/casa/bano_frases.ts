@@ -206,6 +206,12 @@ const SUYO: Record<Rol, string[]> = {
     'Soy un guerrero. Un guerrero del inodoro.',
     'Cuando salga le doy un beso a Ella.',
     'Dame fuerza, Bucaramanga.',
+    'Te amodoro, inodoro… no, eso era para la esposa.',
+    'Apenas salga, le pido una fotito.',
+    '¿La esposa habrá hecho el Duolingo? Yo no…',
+    'Mi mimilona me debe tres betitos. Los voy a cobrar.',
+    'Si salgo vivo, betito de recompensa.',
+    'Pensando en nuestra casa grande y vieja…',
   ],
   ella: [
     'Ojalá Él no haya visto que me traje el celular.',
@@ -218,6 +224,12 @@ const SUYO: Record<Rol, string[]> = {
     'Ni se les ocurra tocar la puerta.',
     'Cuando salga le pido a Él un abrazo.',
     'Dame fuerza, Medellín.',
+    'Mi niño me va a pedir fotito… desde aquí no, señor.',
+    'Ay deoz, se me olvidó el Duolingo.',
+    'Okis, ya casi… pera, pera.',
+    'Cuando salga le mando un heladito a mi bb.',
+    'Mi perro lanudo ya me debe estar extrañando.',
+    'Pensando en Kat… va a comer dulces, seguro.',
   ],
 };
 

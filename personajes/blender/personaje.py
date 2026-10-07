@@ -222,7 +222,7 @@ def parche(name, surf, contorno, alto, coll, material, anillos=5, hundir=0.004, 
 
 
 def build_reacciones(coll, head, P, mats, name, face):
-    """Caras de las reacciones de los minijuegos (docs/reacciones.md): cejas de enojo, tristes, arriba y serias;
+    """Caras de las reacciones de los minijuegos (docs/sistemas/reacciones.md): cejas de enojo, tristes, arriba y serias;
     ojos apretados (> <), cerrados (líneas) y párpados a media asta; bocas de enojo con dientes, puchero, O,
     llanto, carcajada, recta, ladeada y ondulada; lágrimas a chorro. Todo oculto: el juego arma la cara."""
     M = clay.material

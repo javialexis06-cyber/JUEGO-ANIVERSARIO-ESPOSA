@@ -7,6 +7,12 @@ interface AtlasJson {
 }
 
 let objetos: (AtlasJson & { objetos: Record<string, [number, number, number, number]> }) | null = null;
+/**
+ * La dirección completa de cada atlas. Va dentro de una variable de CSS (--img) y una url() relativa en una
+ * variable se resuelve contra la hoja de estilos donde se usa: en la APK (CSS empacado en assets/) quedaba
+ * apuntando a assets/lavado/… y los íconos salían vacíos. Con la dirección completa sale igual en todas partes.
+ */
+const ATLAS = { objetos: new URL('./lavado/objetos.webp', document.baseURI).href, bichos: new URL('./lavado/bichos.webp', document.baseURI).href };
 let bichos: (AtlasJson & { bichos: Record<string, { cuadros: [number, number, number, number][] }> }) | null = null;
 
 export async function cargarIconos() {
@@ -24,7 +30,7 @@ export function icono(nombre: string, tam = 40, clase = ''): string {
   const r = objetos?.objetos[nombre];
   if (!objetos || !r) return `<i class="lv-ico ${clase}" style="--t:${tam}px"></i>`;
   const k = tam / r[2];
-  return `<i class="lv-ico ${clase}" style="--t:${tam}px;--img:url(./lavado/objetos.webp);--bs:${objetos.ancho * k}px ${objetos.alto * k}px;--bp:-${r[0] * k}px -${r[1] * k}px"></i>`;
+  return `<i class="lv-ico ${clase}" style="--t:${tam}px;--img:url(${ATLAS.objetos});--bs:${objetos.ancho * k}px ${objetos.alto * k}px;--bp:-${r[0] * k}px -${r[1] * k}px"></i>`;
 }
 
 /** Un mugroso (su cuadro normal) para el bestiario. */
@@ -33,5 +39,5 @@ export function iconoBicho(id: string, tam = 48, clase = ''): string {
   if (!bichos || !d) return `<i class="lv-ico ${clase}" style="--t:${tam}px"></i>`;
   const [x, y, w] = d.cuadros[0];
   const k = tam / w;
-  return `<i class="lv-ico ${clase}" style="--t:${tam}px;--img:url(./lavado/bichos.webp);--bs:${bichos.ancho * k}px ${bichos.alto * k}px;--bp:-${x * k}px -${y * k}px"></i>`;
+  return `<i class="lv-ico ${clase}" style="--t:${tam}px;--img:url(${ATLAS.bichos});--bs:${bichos.ancho * k}px ${bichos.alto * k}px;--bp:-${x * k}px -${y * k}px"></i>`;
 }

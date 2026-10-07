@@ -1,0 +1,42 @@
+name: Latido de Supabase
+
+# Supabase gratis pausa el proyecto si pasa 7 días sin que nadie lo use (y entonces la casa en línea no abre).
+# Cada 3 días este trabajo le hace una consulta pequeñita a la base, como si alguien abriera la app, así nunca se
+# duerme aunque no jueguen en una semana. También se puede correr a mano: Actions → «Latido de Supabase» → Run.
+on:
+  schedule:
+    - cron: '23 14 */3 * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  latido:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Despertar la base
+        env:
+          # La dirección del proyecto y su clave publicable (son públicas por diseño, las mismas de la app)
+          URL: ${{ vars.SUPABASE_URL || 'https://ytjzddtlgowuxtzplgyg.supabase.co' }}
+          CLAVE: ${{ vars.SUPABASE_ANON_KEY || 'sb_publishable_yicraDf-kQcEsw-cIJTODw_YEoPwdUU' }}
+        run: |
+          llamar() {
+            curl -sS -m 30 -o respuesta.txt -w '%{http_code}' "$@" -H "apikey: $CLAVE" -H 'Content-Type: application/json' || echo 000
+          }
+          for intento in 1 2 3; do
+            # La función latido() (cambios-pendientes.sql, sección 10); si todavía no está, una consulta a una tabla
+            codigo=$(llamar -X POST "$URL/rest/v1/rpc/latido" -d '{}')
+            if [ "$codigo" = "404" ]; then codigo=$(llamar "$URL/rest/v1/parejas?select=id&limit=1"); fi
+            echo "Intento $intento: HTTP $codigo"
+            head -c 300 respuesta.txt 2>/dev/null || true
+            echo
+            # Cualquier respuesta de la base (aunque sea «no autorizado») quiere decir que está despierta
+            if [ "$codigo" -ge 200 ] 2>/dev/null && [ "$codigo" -lt 500 ]; then
+              echo "La base está despierta."
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "::error::Supabase no respondió. Si el proyecto quedó en pausa: entrar a supabase.com, abrir el proyecto nuestro-hogar y tocar «Restore project»."
+          exit 1

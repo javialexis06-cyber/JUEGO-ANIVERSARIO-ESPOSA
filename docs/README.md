@@ -1,0 +1,36 @@
+# Documentos
+
+Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en su carpeta.
+
+| Archivo | Para qué |
+|---|---|
+| [`pedidos.md`](pedidos.md) | **La cola de Javier**, en orden. Lo primero que se lee. |
+| [`la-pareja.md`](la-pareja.md) | Apodos, gustos, anécdotas y cómo se hablan (para cualquier texto romántico o chistoso). |
+
+## `sistemas/` · lo que ya funciona (consultar solo si se toca esa parte)
+
+| Archivo | Qué explica |
+|---|---|
+| [`nuestro-hogar.md`](sistemas/nuestro-hogar.md) | La casa: cuartos, mimos, tienda, ampliación, patio, baño y retrete espacial, Lavarse la cara, cocina, tele, ropa… |
+| [`mecanicas.md`](sistemas/mecanicas.md), [`niveles.md`](sistemas/niveles.md), [`logros.md`](sistemas/logros.md) | Súper Manía: reglas, balance, los 100 niveles, logros. |
+| [`juegos-mesa.md`](sistemas/juegos-mesa.md), [`reacciones.md`](sistemas/reacciones.md) | Juegos de mesa y las reacciones de los muñequitos. |
+| [`clue.md`](sistemas/clue.md) | «¿Quién fue?», el Clue de la casona: reglas para dos, IA, cuaderno y el tablero renderizado en Blender. |
+| [`salas.md`](sistemas/salas.md) | Salas de hasta 4, modo amigo y la app «Sala de Juegos» para amigos. |
+| [`sangre-y-ceniza.md`](sistemas/sangre-y-ceniza.md), [`sangre-figuras.md`](sistemas/sangre-figuras.md) | El survivors oscuro: diseño, código, contrato de arte y figuras. |
+| [`supabase.md`](sistemas/supabase.md) | La base en línea: tablas, cuentas con contraseña, cambios pendientes, latido. |
+
+## `en-obra/` · frentes a medias o en pausa
+
+| Archivo | Estado |
+|---|---|
+| [`cien-puertas.md`](en-obra/cien-puertas.md) | Cien Puertas (arreglos y modo pareja en la rama `trabajo/puertas`). Tiene **la historia y los recuerdos de verdad**. |
+| [`escenas-premium.md`](en-obra/escenas-premium.md) | Escenas pagas: en pausa. |
+| [`voces-ia.md`](en-obra/voces-ia.md), [`guion-voces.md`](en-obra/guion-voces.md) | Voces clonadas: esperan la clave de ElevenLabs. |
+
+El Show de Nosotros está en la rama `trabajo/show` (con su `docs/show.md` allá).
+
+## `archivo/` · historia (no hace falta leerlo)
+
+Decisiones ya tomadas y estudios de arranque: el estudio de Supermarket Mania (`diseno-juego.md`), la viabilidad del
+juego en línea entre Sopetrán y Bucaramanga y la auditoría completa con sus pruebas de estrés. Los renders aprobados
+de referencia (personajes, súper y casa) están en [`archivo/renders/`](../archivo/renders/).

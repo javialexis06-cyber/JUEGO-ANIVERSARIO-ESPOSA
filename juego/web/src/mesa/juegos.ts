@@ -11,6 +11,8 @@ export interface Entrada {
   cargar: () => Promise<JuegoMesa | null>;
   /** No sale como tarjeta en el menú (se llega a él desde otro: el Parchís a 2 colores sale del Parchís). */
   oculto?: boolean;
+  /** Tiene cartas secretas: no se juega «los dos aquí» en el mismo celular. */
+  secreto?: boolean;
 }
 
 const svg = (cuerpo: string) => `<svg viewBox="0 0 64 64" aria-hidden="true">${cuerpo}</svg>`;
@@ -60,6 +62,20 @@ export const JUEGOS: Entrada[] = [
       <rect x="8" y="36" width="20" height="20" rx="4" fill="#f6cf5a"/><rect x="36" y="36" width="20" height="20" rx="4" fill="#8fd3b6"/>
       <path d="M32 24L40 32L32 40L24 32Z" fill="#3d2b27"/>`),
     cargar: async () => (await import('./parchis')).JUEGO as JuegoMesa | null,
+  },
+  {
+    id: 'clue',
+    nombre: '¿Quién fue?',
+    resumen: 'El Clue de la casona: ¿quién le dio a Don Cuervo, con qué y dónde?',
+    color: '#d9c8f0',
+    icono: svg(`<rect x="8" y="16" width="40" height="28" rx="4" fill="#f4e2bd" stroke="#3d2b27" stroke-width="3"/>
+      <path d="M8 16L28 32L48 16" fill="#ead2a0" stroke="#3d2b27" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="28" cy="31" r="6" fill="#c2354a" stroke="#7a1f2b" stroke-width="2"/>
+      <circle cx="42" cy="38" r="11" fill="#cfe2f7" fill-opacity=".85" stroke="#c99a1e" stroke-width="3.5"/>
+      <path d="M50 46L58 55" stroke="#5b3a29" stroke-width="5" stroke-linecap="round"/>
+      <path d="M37 34q3-3 6 0" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`),
+    secreto: true,
+    cargar: async () => (await import('./clue')).JUEGO as JuegoMesa | null,
   },
   {
     id: 'parchis2',

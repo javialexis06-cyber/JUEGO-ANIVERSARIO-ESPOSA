@@ -1,0 +1,36 @@
+{
+  "name": "nuestro-hogar-escritorio",
+  "productName": "Nuestro Hogar",
+  "version": "1.0.0",
+  "description": "Nuestro Hogar para computador",
+  "author": "Nuestro Hogar",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "abrir": "electron .",
+    "exe": "electron-builder --win nsis --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.javialexis.nuestrohogar",
+    "productName": "Nuestro Hogar",
+    "files": ["main.cjs", "servidor.cjs", "build/icon.png", "juego/**/*"],
+    "directories": { "output": "salida", "buildResources": "build" },
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Nuestro Hogar",
+      "artifactName": "NuestroHogar.exe",
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

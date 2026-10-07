@@ -14,7 +14,7 @@ export type Cara = 'normal' | 'feliz' | 'hablar' | 'beso' | 'triste' | 'dormido'
 
 /** Ojo de un lado: abierto, ^ (feliz), > < (apretado), línea (cerrado) o con el párpado a media asta. */
 type Ojo = 'abierto' | 'feliz' | 'apretado' | 'cerrado' | 'medio';
-/** Cómo se arma cada cara (docs/reacciones.md): ojos y cejas [izq, der] (izq = izquierda de la pantalla), boca y lágrimas. */
+/** Cómo se arma cada cara (docs/sistemas/reacciones.md): ojos y cejas [izq, der] (izq = izquierda de la pantalla), boca y lágrimas. */
 interface Rostro { ojos: [Ojo, Ojo]; cejas?: [string, string]; boca: string; lagrimas?: boolean }
 const AB: [Ojo, Ojo] = ['abierto', 'abierto'];
 const ROSTROS: Record<Cara, Rostro> = {

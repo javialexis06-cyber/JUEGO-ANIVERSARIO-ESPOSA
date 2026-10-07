@@ -1,0 +1,346 @@
+{
+ "jefe_golem_osarios": {
+  "altura": 3.179,
+  "radio": 0.802,
+  "alcance": 1.359,
+  "tris": 14889,
+  "bioma": "cementerio",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     1.25
+    ],
+    "tris": 5189
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.2,
+     2.35
+    ],
+    "tris": 1600
+   },
+   "mandibula": {
+    "pivote": [
+     0.0,
+     0.35,
+     2.42
+    ],
+    "tris": 500
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.78,
+     0.05,
+     2.05
+    ],
+    "tris": 2200
+   },
+   "brazo_der": {
+    "pivote": [
+     0.78,
+     0.05,
+     2.05
+    ],
+    "tris": 2200
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.42,
+     0.0,
+     1.2
+    ],
+    "tris": 1600
+   },
+   "pierna_der": {
+    "pivote": [
+     0.42,
+     0.0,
+     1.2
+    ],
+    "tris": 1600
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.4,
+    1.75
+   ]
+  }
+ },
+ "jefe_abadesa": {
+  "altura": 2.683,
+  "radio": 0.709,
+  "alcance": 1.202,
+  "tris": 8671,
+  "vuela": 1,
+  "bioma": "catacumbas",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     1.6
+    ],
+    "tris": 3199
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.05,
+     2.05
+    ],
+    "tris": 1883
+   },
+   "mandibula": {
+    "pivote": [
+     0.0,
+     0.2,
+     2.18
+    ],
+    "tris": 500
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.44,
+     0.02,
+     1.95
+    ],
+    "tris": 1273
+   },
+   "brazo_der": {
+    "pivote": [
+     0.44,
+     0.02,
+     1.95
+    ],
+    "tris": 1276
+   },
+   "cola": {
+    "pivote": [
+     0.0,
+     -0.1,
+     0.6
+    ],
+    "tris": 540
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.35,
+    2.3
+   ]
+  }
+ },
+ "jefe_gusano_sangre": {
+  "altura": 4.154,
+  "radio": 1.546,
+  "alcance": 1.703,
+  "tris": 8591,
+  "bioma": "minas",
+  "sale_del_suelo": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 3591
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     -0.1,
+     1.9
+    ],
+    "tris": 3000
+   },
+   "mandibula": {
+    "pivote": [
+     0.0,
+     0.7,
+     3.05
+    ],
+    "tris": 1000
+   },
+   "extra_tentaculo_izq": {
+    "pivote": [
+     -0.6,
+     0.1,
+     2.3
+    ],
+    "tris": 500
+   },
+   "extra_tentaculo_der": {
+    "pivote": [
+     0.6,
+     0.1,
+     2.3
+    ],
+    "tris": 500
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.7,
+    3.05
+   ]
+  }
+ },
+ "jefe_obispo_hueco": {
+  "altura": 2.72,
+  "radio": 0.614,
+  "alcance": 1.054,
+  "tris": 8966,
+  "bioma": "abadia",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "tris": 3783
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.04,
+     1.78
+    ],
+    "tris": 1600
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.52,
+     0.02,
+     1.68
+    ],
+    "tris": 1391
+   },
+   "brazo_der": {
+    "pivote": [
+     0.52,
+     0.02,
+     1.68
+    ],
+    "tris": 1392
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.2,
+     0.0,
+     0.95
+    ],
+    "tris": 400
+   },
+   "pierna_der": {
+    "pivote": [
+     0.2,
+     0.0,
+     0.95
+    ],
+    "tris": 400
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.3,
+    1.45
+   ]
+  }
+ },
+ "jefe_conde": {
+  "altura": 2.807,
+  "radio": 0.525,
+  "alcance": 2.223,
+  "tris": 13080,
+  "bioma": "castillo",
+  "fases": 2,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     1.05
+    ],
+    "tris": 3597
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.04,
+     1.85
+    ],
+    "tris": 1800
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.48,
+     0.02,
+     1.7
+    ],
+    "tris": 1100
+   },
+   "brazo_der": {
+    "pivote": [
+     0.48,
+     0.02,
+     1.7
+    ],
+    "tris": 1500
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.18,
+     0.0,
+     1.0
+    ],
+    "tris": 600
+   },
+   "pierna_der": {
+    "pivote": [
+     0.18,
+     0.0,
+     1.0
+    ],
+    "tris": 600
+   },
+   "extra_capa": {
+    "pivote": [
+     0.0,
+     -0.25,
+     1.85
+    ],
+    "tris": 1284
+   },
+   "extra_alas": {
+    "pivote": [
+     0.0,
+     -0.3,
+     1.75
+    ],
+    "tris": 2599
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.534,
+    0.77,
+    2.44
+   ],
+   "luz": [
+    0.0,
+    0.28,
+    2.08
+   ]
+  }
+ }
+}

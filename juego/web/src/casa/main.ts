@@ -26,8 +26,10 @@ import { Casa3D, Sitio } from './escena_casa';
 import { CARINO_VOZ, enLlamada, grabarMensaje, llamadaEntrante, PRECIO_VOZ } from './llamada';
 import { Mascota } from './mascota';
 import { conGenero, EVENTOS_BANO, type EventoBano, eventoDe } from './bano_frases';
+import { escogerMimo, escogerSaludo, mimoDe, SALUDOS, type TipoCarino, type VarianteMimo } from './mimos';
 import { Bichos } from './bichos';
-import { nombreRango, progresoNuevo, rangoDe, type ProgresoCocina, type RecetaId, type ResultadoDia } from './cocina/tipos';
+import { nombreRango, progresoNuevo, rangoDe, RESTAURANTES, type ProgresoCocina, type RecetaId, type ResultadoDia } from './cocina/tipos';
+import { idAparato } from '../salas/perfil';
 import { type EstadoTele, Tele } from './tele';
 import { Patio } from './patio';
 import { PanelRecuerdos } from './recuerdos';
@@ -36,12 +38,15 @@ import {
   NECESIDADES, NOMBRE_CUARTO, NOMBRE_NECESIDAD, NOMBRE_RANURA, nuevoId, otro, personajeNuevo, PRECIO_CUARTO, Ranura, RANURAS, Rol, Ropa,
   sumar, tieneCuarto,
 } from './modelo';
+import { NOMBRE_ROL } from './modelo';
 import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, salaTrofeos, TROFEOS } from './trofeos';
-import { mejorDistancia, type ProgresoCohete } from './cohete/datos';
+import { mejorDistancia, monedasVuelo, TOPE_MONEDAS_DIA, yaDescubrio, type ProgresoCohete } from './cohete/datos';
 import { ranurasDe } from './ropa';
 import {
-  configLinea, guardarConfigLinea, olvidarSesion, PersonajeOcupado, QueCambio, sesionGuardada, Sincro, SincroLinea, SincroLocal,
+  CLAVE_DE_BASE, configLinea, CuentaRequerida, esClaveDeBase, guardarConfigLinea, normalizarUsuario, olvidarSesion, PersonajeOcupado, QueCambio,
+  sesionGuardada, SinCuentaTodavia, Sincro, SincroLinea, SincroLocal,
 } from './sincro';
+import { juntarProgreso } from './progreso_nube';
 import {
   $, abrirHoja, Capa, caraClase, cerrarHoja, cerrarVentana, cuerpoHoja, esc, hojaAbierta, ico, iconoItem, iconoRopa, lluviaCorazones,
   mostrar, nombre, pintarNecesidades, SVG, toast, ventana,
@@ -166,13 +171,18 @@ function leerModo(): Modo | null {
 
 let entrando = false;
 
-type Como = 'crear' | { codigo: string; reemplazar?: boolean };
+type Como = 'crear' | { codigo: string; reemplazar?: boolean } | { usuario: string; contrasena: string };
+/** Este aparato tiene que iniciar sesión (el personaje tiene cuenta): la bienvenida abre el formulario de la cuenta. */
+let pedirCuenta = '';
+/** El personaje para el que ya se escribió bien la contraseña de base (la primera vez: crear la casa o unirse). */
+let claveBien: Rol | null = null;
 
 async function entrar(m: Modo, como?: Como): Promise<boolean> {
   // Un doble toque en «Crear» o «Unirme» no crea dos casas ni conecta dos veces
   if (entrando || s) return !!s;
   entrando = true;
   const botones = ['btn-crear', 'btn-local', 'btn-reintentar'].map((id) => $(id) as HTMLButtonElement | null);
+  botones.push($('form-cuenta').querySelector('button'));
   const unirse = $('form-unirse').querySelector('button') as HTMLButtonElement;
   const antes = [...botones.map((b) => b?.disabled ?? false), unirse.disabled];
   for (const b of [...botones, unirse]) if (b) b.disabled = true;
@@ -194,14 +204,39 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
       if (!cfg) throw new Error('Falta conectar el servidor.');
       aviso.textContent = 'Conectando…';
       if (como === 'crear') s = await SincroLinea.crear(cfg, m.rol);
-      else if (como) s = await SincroLinea.unirse(cfg, como.codigo, m.rol, como.reemplazar);
+      else if (como && 'usuario' in como) {
+        $('cuenta-aviso').textContent = 'Entrando…';
+        s = await SincroLinea.conCuenta(cfg, como.usuario, como.contrasena);
+        // La cuenta dice quién es: Javier o Laura
+        m = { modo: 'linea', rol: s.rol };
+      } else if (como) s = await SincroLinea.unirse(cfg, como.codigo, m.rol, como.reemplazar);
       else s = await SincroLinea.reanudar(cfg, sesionGuardada()!);
     }
   } catch (e) {
     s = null;
-    if (e instanceof PersonajeOcupado && como && como !== 'crear') {
+    if (e instanceof PersonajeOcupado && como && como !== 'crear' && 'codigo' in como) {
       aviso.textContent = '';
       confirmarReemplazo(m, como.codigo);
+      return false;
+    }
+    if (como && como !== 'crear' && 'usuario' in como) {
+      aviso.textContent = '';
+      if (e instanceof SinCuentaTodavia && esClaveDeBase(como.contrasena)) {
+        // Primera vez (todavía no hay cuenta para este personaje): con la contraseña de base se crea la casa o se une
+        $('cuenta-aviso').textContent = '';
+        claveBien = m.rol;
+        $('form-cuenta').hidden = true;
+        mostrar('bienv-conexion');
+        aviso.textContent = 'Primera vez: creen su casa o entra con el código que te mande tu pareja.';
+      } else $('cuenta-aviso').textContent = e instanceof SinCuentaTodavia ? 'Contraseña equivocada.' : e instanceof Error ? e.message : 'No se pudo entrar.';
+      return false;
+    }
+    if (e instanceof CuentaRequerida) {
+      // Personaje con cuenta: en este aparato hay que escribir su contraseña
+      aviso.textContent = '';
+      pedirCuenta = `Para entrar en este aparato, escribe la contraseña de ${NOMBRE_ROL[m.rol]}.`;
+      rolElegido = m.rol;
+      abrirFormCuenta(m.rol, pedirCuenta);
       return false;
     }
     aviso.textContent = e instanceof Error ? e.message : 'No se pudo entrar a la casa.';
@@ -210,8 +245,11 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
     return false;
   }
   aviso.textContent = '';
+  $('cuenta-aviso').textContent = '';
+  pedirCuenta = '';
   $('btn-reintentar').hidden = true;
   yo = m.rol;
+  modoGuardado = m;
   if (!params.get('rol')) escribir(CLAVE_MODO, m);
   s.alCambiar(alCambiar);
   s.alEvento(alEvento);
@@ -235,6 +273,7 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
   pintarTodo();
   sonido.musica.iniciar('menu', 76, 'hogar');
   (window as any).__listo = true;
+  if (s.modo === 'linea') void asegurarCuenta();
   return true;
 }
 
@@ -264,13 +303,31 @@ function bienvenida() {
   ($('btn-crear') as HTMLButtonElement).disabled = sinServidor;
   ($('form-unirse').querySelector('button') as HTMLButtonElement).disabled = sinServidor;
   $('btn-bienv-config').hidden = !sinServidor;
+  ($('form-cuenta').querySelector('button') as HTMLButtonElement).disabled = sinServidor;
   if (sinServidor) $('bienv-aviso').textContent = 'Para jugar entre los dos celulares falta conectar el servidor.';
+  if (pedirCuenta && rolElegido) abrirFormCuenta(rolElegido, pedirCuenta);
+}
+
+/** La contraseña del personaje: sin ella nadie entra como Javier o Laura en un aparato nuevo (los amigos, por «Soy un
+ *  amigo»). Una vez adentro, el aparato queda con la sesión abierta para siempre. */
+function abrirFormCuenta(r: Rol, aviso = '') {
+  for (const b of Array.from(document.querySelectorAll<HTMLElement>('.rol-carta'))) b.setAttribute('aria-checked', String(b.dataset.rol === r));
+  $('cuenta-titulo').textContent = `Contraseña de ${NOMBRE_ROL[r]}`;
+  $('form-cuenta').hidden = false;
+  mostrar('bienv-conexion', claveBien === r);
+  $('cuenta-aviso').textContent = aviso;
+  const inp = $('inp-contrasena') as HTMLInputElement;
+  inp.value = '';
+  // En el celular acostado el formulario queda abajo: la tarjeta baja hasta él
+  requestAnimationFrame(() => $('form-cuenta').scrollIntoView({ behavior: 'smooth', block: 'end' }));
+  inp.focus({ preventScroll: true });
 }
 
 function elegirRol(r: Rol) {
   rolElegido = r;
-  for (const b of Array.from(document.querySelectorAll<HTMLElement>('.rol-carta'))) b.setAttribute('aria-checked', String(b.dataset.rol === r));
-  mostrar('bienv-conexion');
+  if (claveBien !== r) claveBien = null;
+  $('bienv-aviso').textContent = '';
+  abrirFormCuenta(r);
   sonido.activar();
   sonido.toque();
 }
@@ -375,6 +432,8 @@ async function abrirDeVerdad() {
     }
     mensajes.push(`Llegaron monedas de los minijuegos: +${sueldo}`);
   }
+  // El progreso de los minijuegos de este aparato se junta con el de la nube (el mismo en cualquier aparato)
+  await juntarConNube();
   // Lo que se logró en los minijuegos de este celular sube a la casa (para los trofeos) y se cobran los trofeos nuevos
   await subirLogros();
   mensajes.push(...(await premiosTrofeos()));
@@ -502,6 +561,8 @@ async function despertar(auto = false) {
 // El retrete espacial: la leche (Ella) o el picante (Él) mandan el inodoro al espacio
 // ---------------------------------------------------------------------------
 let enCohete = false;
+/** Sentado en el inodoro con el retrete espacial ya descubierto (sale el botón «🚀 Volar en el retrete»). */
+let sentadoParaVolar = false;
 /** Mientras se juega en el espacio no se dibuja la casa (ahorra batería). */
 let pausaCasa = false;
 const pausa = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -528,11 +589,46 @@ async function irAlBano() {
     const m = mascotas[yo];
     if (!(await esperarQue(() => m.escenaActual.split('|')[1] === 'inodoro', 25000))) return;
     await pausa(3200);
+    // Ya lo descubrió: de aquí en adelante puede volar cada vez que se siente en el inodoro
+    if (!yaDescubrio(s.casa, yo)) void cambiarCasa((c) => (c.coheteVisto = { ...(c.coheteVisto ?? {}), [yo]: Date.now() }));
     await despegar(m);
     await volarCohete(m);
   } finally {
     enCohete = false;
     pausaCasa = false;
+  }
+}
+
+/** ¿Está sentado en el inodoro (o junto al retrete en miniatura del cuarto de juegos) y ya sabe volar? */
+function puedeVolar(donde: 'bano' | 'juegos' = 'bano') {
+  if (!s || enCohete || dormido(yo) || s.personajes[yo].apuro || !yaDescubrio(s.casa, yo)) return false;
+  const a = s.personajes[yo].actividad;
+  const escena = mascotas[yo]?.escenaActual.split('|') ?? [];
+  if (donde === 'bano') return a.accion === 'inodoro' && (a.hasta ?? 0) > Date.now() && escena[1] === 'inodoro';
+  return a.accion === 'usar' && a.item === 'cohete' && escena[1] === 'usar' && escena[2] === 'cohete';
+}
+
+/** «🚀 Volar en el retrete»: ya descubierto, sale del inodoro con un despegue corto (sin comer nada) y a jugar. */
+async function volarEnRetrete(donde: 'bano' | 'juegos') {
+  if (!s || enCohete || !yaDescubrio(s.casa, yo)) return;
+  cerrarHoja();
+  enCohete = true;
+  void import('./cohete').then((c) => c.precargarCohete());
+  pintarAcciones();
+  try {
+    const m = mascotas[yo];
+    // Desde el cuarto de juegos camina primero al retrete en miniatura
+    if (donde === 'juegos' && !puedeVolar('juegos')) {
+      await hacer('usar', 'juegos', 40, {}, 'cohete');
+      await esperarQue(() => m.escenaActual.split('|')[2] === 'cohete', 15000);
+      await pausa(700);
+    }
+    await despegar(m, true, PLATAFORMA[donde]);
+    await volarCohete(m, true, PLATAFORMA[donde]);
+  } finally {
+    enCohete = false;
+    pausaCasa = false;
+    pintarAcciones();
   }
 }
 
@@ -545,20 +641,41 @@ function opcionesCohete() {
     progreso: s!.casa.cohete?.[yo],
     recordPareja: mejorDistancia(s!.casa.cohete, s!.casa.retrete, otro(yo)),
     guardar: (p: ProgresoCohete) => cambiarCasa((c) => (c.cohete = { ...(c.cohete ?? {}), [yo]: p })),
+    premio: premioVuelo,
   };
 }
 
-/** El vuelo: la casa se deja de dibujar mientras tanto y al volver cae al baño con el ¡KABOOM! */
-async function volarCohete(m: Mascota | null) {
+/**
+ * Las monedas de la casa por un vuelo (1 cada 15 s, hasta 3) apenas aterriza. Como ahora se puede volver a volar sin
+ * salir, hay un tope por persona y por día (queda anotado en la casa: no se repite en el otro celular).
+ */
+async function premioVuelo(segundos: number) {
+  const quiere = monedasVuelo(segundos);
+  const clave = `${hoy()}|${yo}|retrete`;
+  let dadas = 0, tope = false;
+  if (!s || !quiere) return { monedas: 0, tope: false };
+  const ok = await cambiarCasa((c) => {
+    const ya = c.diario[clave] ?? 0;
+    dadas = Math.max(0, Math.min(quiere, TOPE_MONEDAS_DIA - ya));
+    tope = ya + dadas >= TOPE_MONEDAS_DIA;
+    if (!dadas) return;
+    c.diario[clave] = ya + dadas;
+    c.monedas += dadas;
+  });
+  return ok ? { monedas: dadas, tope } : { monedas: 0, tope: false };
+}
+
+/** El vuelo: la casa se deja de dibujar mientras tanto y al volver cae al baño (o al cuarto de juegos) con el ¡KABOOM! */
+async function volarCohete(m: Mascota | null, corto = false, pl: Plataforma = PLATAFORMA.bano) {
   if (!s) return;
   const { jugarCohete } = await import('./cohete');
   pausaCasa = true;
-  const r = await jugarCohete(opcionesCohete());
+  const r = await jugarCohete({ ...opcionesCohete(), corto });
   pausaCasa = false;
   // Con la tele prendida, la música de la casa sigue callada
   sonido.musica.callar(!!tele && tele.estado !== 'apagada');
-  if (m) await aterrizar(m);
-  await terminarCohete(r.segundos);
+  if (m) await aterrizar(m, pl);
+  await terminarCohete(r);
 }
 
 /** La tienda del retrete sola (desde el retrete en miniatura del cuarto de juegos). */
@@ -590,22 +707,31 @@ function animar(seg: number, fn: (k: number) => void) {
   });
 }
 
-/** Tiembla, echa humo y sale disparado por el techo con el inodoro. */
-async function despegar(m: Mascota) {
-  verCuarto('bano');
-  const inodoro = casa3d.inodoro();
-  const y0 = inodoro?.position.y ?? 0;
-  m.frase = '¡¿Qué está pasando?!';
-  sonido.rumor(1.4, 160, 0.1, 0, 0.6, 80);
-  await animar(1.3, (k) => {
+/** De dónde despega: el inodoro del baño o el retrete en miniatura del cuarto de juegos. */
+type Plataforma = { cuarto: Cuarto; obj: () => THREE.Object3D | null };
+const PLATAFORMA: Record<'bano' | 'juegos', Plataforma> = {
+  bano: { cuarto: 'bano', obj: () => casa3d.inodoro() },
+  juegos: { cuarto: 'juegos', obj: () => casa3d.objeto('juegos', 'inodoro_cohete') },
+};
+/** La altura de siempre del inodoro (para volver a ponerlo en su sitio al aterrizar). */
+const alturaBase = (o: THREE.Object3D) => (o.userData.alturaBase ??= o.position.y) as number;
+
+/** Tiembla, echa humo y sale disparado por el techo con el inodoro (corto: ya sabe lo que viene). */
+async function despegar(m: Mascota, corto = false, pl: Plataforma = PLATAFORMA.bano) {
+  verCuarto(pl.cuarto);
+  const inodoro = pl.obj();
+  const y0 = inodoro ? alturaBase(inodoro) : 0;
+  m.frase = corto ? (yo === 'el' ? '¡Agárrense, que me voy!' : '¡Allá voy otra vez!') : '¡¿Qué está pasando?!';
+  sonido.rumor(corto ? 0.7 : 1.4, 160, 0.1, 0, 0.6, 80);
+  await animar(corto ? 0.6 : 1.3, (k) => {
     m.temblor = 0.02 + k * 0.05;
     if (inodoro) inodoro.rotation.z = (Math.random() - 0.5) * 0.08 * k;
   });
-  m.frase = '¡AAAAAH!';
-  sonido.nota(90, 1.4, 0, 'sawtooth', 0.06, 420);
-  sonido.rumor(1.4, 400, 0.14, 0, 0.5, 2000);
+  m.frase = corto ? '¡3, 2, 1… DESPEGUE!' : '¡AAAAAH!';
+  sonido.nota(90, corto ? 1 : 1.4, 0, 'sawtooth', 0.06, 420);
+  sonido.rumor(corto ? 1 : 1.4, 400, 0.14, 0, 0.5, 2000);
   explosion(inodoro, 'humo');
-  await animar(1.4, (k) => {
+  await animar(corto ? 0.9 : 1.4, (k) => {
     const h = k * k * 9;
     m.vuelo = h;
     m.temblor = 0.04 * (1 - k);
@@ -615,19 +741,20 @@ async function despegar(m: Mascota) {
   m.frase = null;
 }
 
-/** Cae del cielo con el inodoro y el baño explota. */
-async function aterrizar(m: Mascota) {
-  verCuarto('bano');
-  const inodoro = casa3d.inodoro();
+/** Cae del cielo con el inodoro y el baño (o el cuarto de juegos) explota. */
+async function aterrizar(m: Mascota, pl: Plataforma = PLATAFORMA.bano) {
+  verCuarto(pl.cuarto);
+  const inodoro = pl.obj();
+  const y0 = inodoro ? alturaBase(inodoro) : 0;
   m.frase = '¡Me voooy!';
   await animar(0.8, (k) => {
     const h = (1 - k * k) * 9;
     m.vuelo = h;
-    if (inodoro) inodoro.position.y = h;
+    if (inodoro) inodoro.position.y = y0 + h;
   });
   m.vuelo = 0;
   if (inodoro) {
-    inodoro.position.y = 0;
+    inodoro.position.y = y0;
     inodoro.rotation.z = 0;
   }
   explosion(inodoro, 'kaboom');
@@ -654,17 +781,16 @@ function explosion(obj: THREE.Object3D | null, tipo: 'humo' | 'kaboom' | 'agua')
   setTimeout(() => e.remove(), 1800);
 }
 
-async function terminarCohete(seg: number) {
+async function terminarCohete(r: import('./cohete').Resultado) {
   if (!s) return;
-  // El récord (en metros), los rollitos y las misiones ya los guardó el vuelo; la casa da sus monedas escasas
-  const premio = Math.min(3, Math.floor(seg / 15));
-  if (premio) await cambiarCasa((c) => (c.monedas += premio));
+  // El récord (en metros), los rollitos, las misiones y las monedas escasas de la casa ya los guardó cada vuelo
+  const premio = r.monedas;
   // Ya fue al baño: se le quitan las ganas y se levanta del inodoro
   const ahora = Date.now();
   const e = { ...est(yo), actividad: { tipo: 'nada' as const, desde: ahora }, visto: ahora };
   delete e.apuro;
   await guardarYo(e);
-  if (premio) setTimeout(() => toast(`+${premio} ${premio === 1 ? 'moneda' : 'monedas'} para la casa por el viaje espacial`, 3000), 1400);
+  if (premio) setTimeout(() => toast(`+${premio} ${premio === 1 ? 'moneda' : 'monedas'} para la casa por ${r.vuelos > 1 ? `los ${r.vuelos} viajes espaciales` : 'el viaje espacial'}`, 3000), 1400);
   const nuevos = await premiosTrofeos();
   nuevos.forEach((m, i) => setTimeout(() => toast(m, 3400), 4000 + i * 3600));
 }
@@ -679,9 +805,12 @@ function hojaRetrete() {
     const m = q === 'el' ? a : b;
     return `<li class="${lider === q ? 'lider' : ''}"><span class="${caraClase(q)}"></span><b>${nombre(q)}</b><em>${m ? `${m.toLocaleString('es-CO')} m` : '—'}</em>${lider === q ? '<i>👑</i>' : ''}</li>`;
   };
+  const sabe = yaDescubrio(c, yo);
   const html = `<ol class="retrete-records">${fila('el')}${fila('ella')}</ol>
-    <p class="nota-hoja">La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién vuela más lejos?</p>
-    <button class="boton" data-accion-hoja="tienda-retrete">Tienda del retrete</button>`;
+    <p class="nota-hoja">${sabe
+      ? 'Ya conoces el secreto: cada vez que te sientes en el inodoro (o aquí, en el retrete en miniatura) puedes salir volando. ¿Quién vuela más lejos?'
+      : 'La leche le cae pesado a Ella y el picante a Él: si se los dan, el inodoro los manda al espacio. ¿Quién vuela más lejos?'}</p>
+    <div class="fila-botones">${sabe ? '<button class="boton boton-tomate" data-accion-hoja="volar-juegos">🚀 Volar en el retrete</button>' : ''}<button class="boton" data-accion-hoja="tienda-retrete">Tienda del retrete</button></div>`;
   abrirHoja('Retrete espacial', html, { saldo: c.monedas });
 }
 
@@ -973,14 +1102,13 @@ function hojaLavado(r: import('./lavado').ResultadoLavado, record: boolean, prem
 
 // ---------------------------------------------------------------------------
 // Cocinar: camina a la estufa, se concentra como un chef profesional y la cocina se vuelve un restaurante (tres
-// minijuegos al estilo de Papa's: waflería, fresas con crema y frappés). Cada uno lleva su propio progreso.
+// minijuegos al estilo de Papa's: waflería, fresas con crema y frappés). Cada uno lleva su propio progreso. Juntos
+// se cocina en una sala de hasta 4 (src/casa/cocina/sala.ts): con la pareja (la invitación le llega a la casa con el
+// código) o con amigos (comparten el código).
 // ---------------------------------------------------------------------------
-const RESTAURANTES: { id: RecetaId; nombre: string; icono: string; plato: string; texto: string }[] = [
-  { id: 'wafles', nombre: 'La Waflería', icono: '🧇', plato: 'wafle_chef', texto: 'Wafles en la plancha, toppings y jugos' },
-  { id: 'fresas', nombre: 'La Fresería', icono: '🍓', plato: 'fresas_chef', texto: 'Fresas picadas, crema batida y queso' },
-  { id: 'frappes', nombre: 'La Frapería', icono: '🥤', plato: 'frape_chef', texto: 'Frappés licuados con crema y salsas' },
-];
 let cocinando = false;
+/** Cocinar en una sala: invitando a la pareja, abriendo una para amigos o entrando a la de otro con su código. */
+type SalaCocina = { sala: 'pareja' | 'amigos' } | { sala: 'unirse'; codigo: string };
 
 function hojaCocinar() {
   if (!s) return;
@@ -991,17 +1119,16 @@ function hojaCocinar() {
     <ul class="restaurantes">${RESTAURANTES.map((r) => {
       const p = prog[r.id];
       const rg = p ? rangoDe(p.xp) : 1;
-      return `<li><button class="restaurante" data-cocinar="${r.id}"><span class="ico-rest">${r.icono}</span><b>${r.nombre}</b><small>${r.texto}</small>
+      return `<li><button class="restaurante" data-cocinar="${r.id}"><span class="ico-rest">${r.emoji}</span><b>${r.nombre}</b><small>${r.texto}</small>
         <em>${p ? `Día ${p.dia} · ${nombreRango(rg)}` : '¡Nuevo!'}</em>${(s!.casa.inventario[r.plato] ?? 0) ? `<i>Hay ${s!.casa.inventario[r.plato]} en la despensa</i>` : ''}</button>
         ${juntos ? `<button class="restaurante-juntos" data-cocinar-juntos="${r.id}">💞 Cocinar con ${nombre(otro(yo))}</button>` : ''}</li>`;
-    }).join('')}</ul>`;
+    }).join('')}</ul>
+    <div class="fila-botones"><button class="boton boton-papel" data-cocinar-amigos>👥 Cocinar con amigos</button><button class="boton boton-papel" data-cocinar-codigo>🔑 Unirme con un código</button></div>`;
   abrirHoja(conGenero(yo, '¿Qué cocinamos, chef?'), html, { saldo: s.casa.monedas });
 }
 
-async function cocinar(receta: RecetaId, linea?: { modo: 'anfitrion' | 'invitado'; id: string }) {
+async function cocinar(receta: RecetaId, juntos?: SalaCocina) {
   if (!s || cocinando || lavandose || enCohete) return;
-  // Invitar: la invitación le llega a la casa del otro (con el enlace para entrar a la misma cocina)
-  if (linea?.modo === 'anfitrion') void s.enviar('juego', { juego: 'cocina', receta, id: linea.id }).catch(() => undefined);
   if (dormido(yo)) return toast(`${nombre(yo)} está durmiendo. Despiértalo primero.`);
   cerrarHoja();
   cocinando = true;
@@ -1031,21 +1158,38 @@ async function cocinar(receta: RecetaId, linea?: { modo: 'anfitrion' | 'invitado
     const { jugarCocina } = await modulo;
     pausaCasa = true;
     const tapar = setTimeout(() => (lienzo.style.visibility = 'hidden'), 700);
-    await jugarCocina({
-      rol: yo,
-      receta,
-      progreso: s.casa.cocina?.[yo]?.[receta] ?? progresoNuevo(),
-      pareja: { rol: otro(yo), nombre: nombre(otro(yo)) },
-      linea: linea ? { ...linea, transporte: s.modo === 'linea' ? 'supabase' : 'local', nombreOtro: nombre(otro(yo)) } : undefined,
-      guardar: async (p, dia) => {
-        await guardarCocina(receta, p, dia);
-        if (dia) {
-          ganado.monedas += dia.monedas;
-          ganado.platos += dia.platos;
-          ganado.dias++;
-        }
-      },
-    });
+    const guardar = async (r: RecetaId, p: ProgresoCocina, dia?: ResultadoDia) => {
+      await guardarCocina(r, p, dia);
+      if (dia) {
+        ganado.monedas += dia.monedas;
+        ganado.platos += dia.platos;
+        ganado.dias++;
+      }
+    };
+    const pareja = { rol: otro(yo), nombre: nombre(otro(yo)) };
+    if (!juntos) {
+      await jugarCocina({
+        rol: yo, receta, progreso: s.casa.cocina?.[yo]?.[receta] ?? progresoNuevo(), pareja, premioCasa: true, guardar: (p, dia) => guardar(receta, p, dia),
+      });
+    } else {
+      const { cocinarEnSala } = await import('./cocina/sala');
+      const sesion = s;
+      await cocinarEnSala({
+        yo: { tipo: yo, id: `${yo}-${idAparato()}`, nombre: nombre(yo), aspecto: { cuerpo: yo } },
+        rol: yo,
+        receta,
+        unirse: juntos.sala === 'unirse' ? juntos.codigo : undefined,
+        // Con la pareja: la invitación le llega a su casa con el código de la sala
+        invitar: juntos.sala === 'pareja' ? (codigo, r) => sesion.enviar('juego', { juego: 'cocina', receta: r, id: codigo }) : undefined,
+        invitado: nombre(otro(yo)),
+        progresoDe: (r) => sesion.casa.cocina?.[yo]?.[r] ?? progresoNuevo(),
+        guardar,
+        pareja,
+        premioCasa: true,
+        textoSalir: '🏠 Volver a la casa',
+        local: sesion.modo !== 'linea',
+      });
+    }
     clearTimeout(tapar);
   } finally {
     cocinando = false;
@@ -1065,7 +1209,7 @@ async function cocinar(receta: RecetaId, linea?: { modo: 'anfitrion' | 'invitado
   }
   if (ganado.dias) {
     const r = RESTAURANTES.find((x) => x.id === receta)!;
-    toast(`¡Qué chef! +${ganado.monedas} monedas${ganado.platos ? ` y ${ganado.platos} × ${ITEM[r.plato].nombre.toLowerCase()} en la despensa` : ''}`);
+    toast(`¡Qué chef! +${ganado.monedas} monedas${ganado.platos ? ` y ${ganado.platos} × ${ITEM[r.plato]?.nombre.toLowerCase() ?? 'platos de chef'} en la despensa` : ''}`);
     mascotas[yo].frase = conGenero(yo, '¡Soy todo|toda un|una chef!');
     setTimeout(() => (mascotas[yo].frase = null), 3000);
     lluviaCorazones(10);
@@ -1116,6 +1260,21 @@ function sincronizarAmpliacion() {
     bebeVisto = clave;
     if (llego && !cigueñaEnCamino) void traerBebe(false);
     else if (!cigueñaEnCamino) casa3d.ponerBebe(!!c.bebe);
+  }
+}
+
+/** El súper, Cien Puertas, la mesa y las escenas: lo del aparato y lo de la nube quedan iguales (progreso_nube.ts). */
+async function juntarConNube() {
+  if (!s || s.modo !== 'linea') return;
+  const { subir, listo } = juntarProgreso(s.casa.progreso?.[yo], yo);
+  if (!subir) return listo();
+  try {
+    await s.cambiarCasa((c) => {
+      c.progreso = { ...(c.progreso ?? {}), [yo]: { ...(c.progreso?.[yo] ?? {}), ...subir } };
+    });
+    listo();
+  } catch {
+    /* sin internet: se vuelve a intentar la próxima vez que se abra la casa, sin perder lo del aparato */
   }
 }
 
@@ -1208,6 +1367,7 @@ const JUEGOS = {
   super: { punto: 'arcade', url: './super.html', nombre: 'Súper Manía' },
   puertas: { punto: 'cien', url: './puertas.html', nombre: 'Cien Puertas' },
   mesa: { punto: 'mesa', url: './mesa.html', nombre: 'los juegos de mesa' },
+  sangre: { punto: 'arcade', url: './sangre.html', nombre: 'Sangre y Ceniza' },
 } as const;
 let yendoAJugar = false;
 
@@ -1419,11 +1579,11 @@ function renovarTele() {
 // ---------------------------------------------------------------------------
 // Con la pareja
 // ---------------------------------------------------------------------------
-function coreografia(tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nalgada', de: Rol, item?: string) {
+function coreografia(tipo: 'caricia' | 'abrazo' | 'beso' | 'regalo' | 'nalgada', de: Rol, item?: string, variante?: VarianteMimo) {
   const para = otro(de);
   // Primero quien recibe (se levanta de donde esté), así quien lo hace llega a su lado
-  mascotas[para].interactuar(tipo, mascotas[de], de, item);
-  mascotas[de].interactuar(tipo, mascotas[para], de, item);
+  mascotas[para].interactuar(tipo, mascotas[de], de, item, variante);
+  mascotas[de].interactuar(tipo, mascotas[para], de, item, variante);
   vistaPendiente = null;
   verCuarto(mascotas[para].cuarto);
   // (la nalgada suena justo cuando la mano llega: ¡PLAF!)
@@ -1494,11 +1654,13 @@ async function carino(tipo: 'caricia' | 'abrazo' | 'beso') {
   const ef = EFECTO_CARINO[tipo];
   const ahora = Date.now();
   const cuarto = s.personajes[par].cuarto;
-  coreografia(tipo, yo);
+  // Cada mimo sale distinto (de la bolsa de quien lo da) y va con el evento, así los dos ven el mismo
+  const v = escogerMimo(tipo, yo);
+  coreografia(tipo, yo, undefined, v);
   await guardarYo({ ...sumar(s.personajes[yo], { carino: ef.mio }, ahora), cuarto, actividad: { tipo: 'nada', desde: ahora }, visto: ahora });
   // El cariño de la pareja lo suma su propio celular al recibir el evento (así no se pisa lo que está haciendo)
   try {
-    await s.enviar(tipo);
+    await s.enviar(tipo, { v: v.id });
   } catch (err) {
     fallo(err);
   }
@@ -1549,12 +1711,29 @@ async function mandarComida(id: string) {
 async function saludar() {
   if (!s) return;
   cerrarHoja();
+  const f = escogerSaludo(yo);
   await hacer('saludo', s.personajes[yo].cuarto, 3, {});
+  decirSaludo(yo, f);
   try {
-    await s.enviar('saludo');
+    await s.enviar('saludo', { f });
   } catch (err) {
     fallo(err);
   }
+}
+
+/** El globito con lo que dice al saludar, unos 3 s (se sostiene aunque el saludo, al empezar, limpie los globos; si
+ *  ya está diciendo otra cosa, no la tapa). */
+function decirSaludo(rol: Rol, f: unknown) {
+  const texto = typeof f === 'number' ? SALUDOS[rol][f] : undefined;
+  if (!texto) return;
+  const m = mascotas[rol];
+  const hasta = Date.now() + 3400;
+  const t = setInterval(() => {
+    if (Date.now() > hasta) {
+      clearInterval(t);
+      if (m.frase === texto) m.frase = null;
+    } else if (!m.frase) m.frase = texto;
+  }, 150);
 }
 
 /** Lo que llega del otro celular. */
@@ -1568,10 +1747,13 @@ function alEvento(e: Evento) {
   switch (e.tipo) {
     case 'caricia':
     case 'abrazo':
-    case 'beso':
-      coreografia(e.tipo, e.de);
-      toast(e.tipo === 'caricia' ? `${quien} te hizo una caricia` : e.tipo === 'abrazo' ? `${quien} te dio un abrazo` : `${quien} te dio un beso`);
+    case 'beso': {
+      // (de una versión vieja llega sin variante: el mimo de siempre)
+      const v = mimoDe(e.tipo as TipoCarino, e.datos.v);
+      coreografia(e.tipo, e.de, undefined, v ?? undefined);
+      toast(v ? `${quien} te dio ${v.nombre}` : e.tipo === 'caricia' ? `${quien} te hizo una caricia` : e.tipo === 'abrazo' ? `${quien} te dio un abrazo` : `${quien} te dio un beso`, 3000);
       break;
+    }
     case 'regalo':
       coreografia('regalo', e.de, item);
       toast(`¡${quien} te trajo un regalo! Tócalo para abrirlo.`, 3400);
@@ -1596,9 +1778,12 @@ function alEvento(e: Evento) {
       toast(`¡${quien} vino a rescatarte! 💖`, 3200);
       void rescatado(e.de);
       break;
-    case 'saludo':
-      toast(`${quien} te está saludando`);
+    case 'saludo': {
+      const texto = typeof e.datos.f === 'number' ? SALUDOS[e.de][e.datos.f] : undefined;
+      decirSaludo(e.de, e.datos.f);
+      toast(texto ? `${quien} te saluda: «${texto}»` : `${quien} te está saludando`);
       break;
+    }
     case 'voz':
       // Suena como una llamada si la app está a la vista y no se está en medio de algo
       if (document.visibilityState === 'visible' && !hojaAbierta() && $('llamada')?.hidden !== false) void contestarVoz(String(e.datos.voz ?? ''), true);
@@ -1619,7 +1804,7 @@ function alEvento(e: Evento) {
         if (Date.now() - e.t > 3 * 60_000 || cocinando) break;
         const r = RESTAURANTES.find((x) => x.id === e.datos.receta);
         if (!r) break;
-        abrirHoja('¡A cocinar juntos!', `<p class="nota-hoja">${quien} te invita a su cocina de chef: <b>${r.nombre}</b> ${r.icono}. Cocinan el mismo día, cada uno en su celular.</p>
+        abrirHoja('¡A cocinar juntos!', `<p class="nota-hoja">${quien} te invita a su cocina de chef: <b>${r.nombre}</b> ${r.emoji}. Cocinan el mismo día, cada uno en su celular.</p>
           <div class="fila-botones"><button class="boton boton-tomate" data-cocinar-unirse="${r.id}|${String(e.datos.id ?? '')}">¡Vamos a cocinar!</button></div>`);
         break;
       }
@@ -1925,10 +2110,12 @@ function botonesCuarto(): Boton[] {
       break;
     case 'bano':
       b.push(
-        { id: 'banar', texto: 'Bañarse', icono: ico('tina'), principal: !s.personajes[yo].apuro },
+        { id: 'banar', texto: 'Bañarse', icono: ico('tina'), principal: !s.personajes[yo].apuro && !sentadoParaVolar },
         { id: 'lavar', texto: 'Lavarse', icono: ico('lavar') },
         { id: 'inodoro', texto: 'Ir al baño', icono: ico('inodoro'), principal: !!s.personajes[yo].apuro },
       );
+      // Ya sentado en el inodoro (y con el secreto descubierto): sale la opción de volar
+      if (sentadoParaVolar) b.unshift({ id: 'volar-bano', texto: 'Volar en el retrete', icono: '<span class="ico ico-emoji">🚀</span>', principal: true });
       break;
     case 'cuarto':
       b.push({ id: 'dormir', texto: 'Dormir', icono: ico('luna'), principal: true }, { id: 'closet', texto: 'Cambiarse', icono: ico('closet') });
@@ -1938,6 +2125,7 @@ function botonesCuarto(): Boton[] {
         { id: 'jugar-super', texto: 'Súper Manía', icono: '<img src="./modelos/iconos/caja_frutas.png" alt="">', principal: true },
         { id: 'jugar-puertas', texto: 'Cien Puertas', icono: ico('puerta') },
         { id: 'jugar-mesa', texto: 'Juegos de mesa', icono: '<img src="./modelos/iconos/mesa_juegos.svg" alt="">' },
+        { id: 'jugar-sangre', texto: 'Sangre y Ceniza', icono: '<span class="ico ico-emoji">⚔️</span>' },
         { id: 'tienda-retrete', texto: 'Tienda del retrete', icono: '<img src="./modelos/iconos/cohete_rollito.webp" alt="">' },
       );
       break;
@@ -2096,6 +2284,8 @@ async function alAccion(id: string) {
       return jugar('puertas');
     case 'jugar-mesa':
       return jugar('mesa');
+    case 'jugar-sangre':
+      return jugar('sangre');
     case 'retrete':
       // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse,
       // ver quién ha volado más lejos y abrir la tienda del retrete
@@ -2103,6 +2293,10 @@ async function alAccion(id: string) {
       return hojaRetrete();
     case 'tienda-retrete':
       return abrirTiendaRetrete();
+    case 'volar-bano':
+      return volarEnRetrete('bano');
+    case 'volar-juegos':
+      return volarEnRetrete('juegos');
     case 'trofeos':
       return hojaTrofeos();
     case 'admirar':
@@ -2716,6 +2910,7 @@ function hojaMenu() {
       <button class="accion" data-hoja="plano">${ico('casa')}<span>Ampliar la casa</span></button>
       <button class="accion" data-hoja="trofeos">${ico('trofeo')}<span>Trofeos</span></button>
       <button class="accion" data-hoja="tienda">${ico('tienda')}<span>Tienda</span></button>
+      <button class="accion" data-invitar>${ico('juegos')}<span>Invitar amigos</span></button>
       <button class="accion" data-hoja="ajustes">${ico('ajustes')}<span>Ajustes</span></button>
     </div>`;
   abrirHoja('Nuestro Hogar', html, { saldo: s?.casa.monedas });
@@ -2734,6 +2929,7 @@ function hojaAjustes() {
       <button class="boton boton-papel boton-chico" data-musica>Música: ${sonido.musica.apagada() ? 'apagada' : 'sonando'}</button>
       <button class="boton boton-papel boton-chico" data-sonido>Sonido: ${sonido.silenciado() ? 'apagado' : 'prendido'}</button>
     </div>
+    ${enLinea ? '<section class="mi-cuenta" id="mi-cuenta"><h3>Mi cuenta</h3><p class="nota-hoja">Revisando tu cuenta…</p></section>' : ''}
     <form class="form-config" id="form-config" style="margin-top:12px">
       <p class="nota-hoja">Servidor para conectar los dos celulares (Supabase). Solo la dirección del proyecto y la clave pública «anon».</p>
       <label class="campo">Dirección (Project URL)<input id="cfg-url" inputmode="url" placeholder="https://xxxx.supabase.co" value="${esc(cfg?.url ?? '')}"></label>
@@ -2744,6 +2940,122 @@ function hojaAjustes() {
       <button class="boton boton-papel boton-chico" data-salir>Salir de esta casa</button>
     </div>` : ''}`;
   abrirHoja('Ajustes', html);
+  if (enLinea) void pintarMiCuenta();
+}
+
+/** Mi usuario en este aparato (undefined: todavía no se sabe; null: no tiene cuenta). */
+let miCuenta: string | null | undefined;
+
+/** «Mi cuenta» en Ajustes: crearla, o ver el usuario, cambiar la contraseña y cerrar sesión en este aparato. */
+async function pintarMiCuenta() {
+  if (!(s instanceof SincroLinea)) return;
+  const caja = () => document.getElementById('mi-cuenta');
+  let cuentas: Partial<Record<Rol, string>> | null;
+  try {
+    cuentas = await s.cuentas();
+  } catch (e) {
+    const c = caja();
+    if (c) c.innerHTML = `<h3>Mi cuenta</h3><p class="nota-hoja">${esc(e instanceof Error ? e.message : 'No se pudo revisar la cuenta.')}</p>`;
+    return;
+  }
+  const c = caja();
+  if (!c) return;
+  if (!cuentas) {
+    c.innerHTML = `<h3>Mi cuenta</h3><p class="nota-hoja">Las cuentas con usuario y contraseña todavía no están activadas en el servidor
+      (falta pegar <b>supabase/cambios-pendientes.sql</b> en el SQL Editor de Supabase).</p>`;
+    return;
+  }
+  miCuenta = cuentas[yo] ?? null;
+  const pareja = otro(yo);
+  const deLaPareja = `<p class="nota-hoja">${NOMBRE_ROL[pareja]}: ${cuentas[pareja] ? 'ya tiene su cuenta.' : 'todavía no tiene cuenta (se la hace en su celular, en Ajustes).'}</p>`;
+  c.innerHTML = miCuenta
+    ? `<h3>Mi cuenta</h3>
+      <p class="nota-hoja">${NOMBRE_ROL[yo]} está protegido con contraseña (usuario <span class="usuario-chico">${esc(miCuenta)}</span>). En otro celular o en el
+        computador: «Soy ${NOMBRE_ROL[yo]}» y tu contraseña, y tienes la misma casa y todo tu progreso; este aparato queda con la sesión abierta.
+        Sin la contraseña nadie más puede entrar como ${NOMBRE_ROL[yo]}.</p>
+      <form id="form-cambiar-contrasena">
+        <input id="cta-nueva" type="password" autocomplete="new-password" placeholder="Contraseña nueva" aria-label="Contraseña nueva">
+        <input id="cta-nueva2" type="password" autocomplete="new-password" placeholder="Repítela" aria-label="Repite la contraseña nueva">
+        <button class="boton boton-menta boton-chico" type="submit">Cambiar contraseña</button>
+      </form>
+      ${deLaPareja}
+      <div class="fila-botones" style="justify-content:flex-start"><button class="boton boton-papel boton-chico" data-cerrar-sesion>Cerrar sesión en este aparato</button></div>`
+    : `<h3>Protege a ${NOMBRE_ROL[yo]}</h3>
+      <p class="nota-hoja">Ponle contraseña a ${NOMBRE_ROL[yo]}: así entras desde cualquier celular o el computador con la misma casa y todo tu
+        progreso (súper, puertas, cocina, lavado, retrete, Sangre y Ceniza…), y nadie más puede entrar como ${NOMBRE_ROL[yo]}.</p>
+      <form id="form-crear-cuenta">
+        <input id="cta-usuario" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Usuario (ej: ${esc(normalizarUsuario(NOMBRE_ROL[yo]))})"
+          aria-label="Usuario" value="${esc(normalizarUsuario(NOMBRE_ROL[yo]))}">
+        <input id="cta-clave" type="password" autocomplete="new-password" placeholder="Contraseña (4 o más)" aria-label="Contraseña">
+        <input id="cta-clave2" type="password" autocomplete="new-password" placeholder="Repítela" aria-label="Repite la contraseña">
+        <button class="boton boton-tomate boton-chico" type="submit">Crear mi cuenta</button>
+      </form>
+      ${deLaPareja}`;
+}
+
+async function crearMiCuenta() {
+  if (!(s instanceof SincroLinea)) return;
+  const v = (id: string) => ($(id) as HTMLInputElement | null)?.value ?? '';
+  const usuario = normalizarUsuario(v('cta-usuario'));
+  if (usuario.length < 3) return toast('El usuario debe tener al menos 3 letras o números (sin espacios ni tildes).', 3600);
+  if (v('cta-clave').trim().length < 4) return toast('La contraseña debe tener al menos 4 caracteres.', 3200);
+  if (v('cta-clave') !== v('cta-clave2')) return toast('Las dos contraseñas no son iguales.', 3000);
+  try {
+    await s.crearCuenta(usuario, v('cta-clave'));
+  } catch (e) {
+    return toast(e instanceof Error ? e.message : 'No se pudo crear la cuenta.', 4000);
+  }
+  miCuenta = usuario;
+  sonido.aviso();
+  lluviaCorazones(14);
+  toast(`¡Listo! Tu usuario es «${usuario}». Guárdalo junto con la contraseña.`, 5000);
+  void pintarMiCuenta();
+}
+
+async function cambiarMiContrasena() {
+  if (!(s instanceof SincroLinea)) return;
+  const v = (id: string) => ($(id) as HTMLInputElement | null)?.value ?? '';
+  if (v('cta-nueva').trim().length < 4) return toast('La contraseña debe tener al menos 4 caracteres.', 3200);
+  if (v('cta-nueva') !== v('cta-nueva2')) return toast('Las dos contraseñas no son iguales.', 3000);
+  try {
+    await s.cambiarContrasena(v('cta-nueva'));
+  } catch (e) {
+    return toast(e instanceof Error ? e.message : 'No se pudo cambiar la contraseña.', 4000);
+  }
+  toast('Contraseña cambiada. Es la que se escribe al entrar en un aparato nuevo (los que ya entraron siguen abiertos).', 4500);
+  void pintarMiCuenta();
+}
+
+function cerrarSesion() {
+  ventana(`<h2>¿Cerrar sesión en este aparato?</h2><p class="nota-hoja">La casa y tu progreso quedan guardados en la nube. Para volver a entrar
+      aquí: «Soy ${NOMBRE_ROL[yo]}» y tu contraseña.</p>
+    <div class="fila-botones" style="justify-content:center"><button class="boton boton-papel" data-cerrar>Cancelar</button><button class="boton boton-tomate" id="btn-si-cerrar-sesion">Cerrar sesión</button></div>`);
+  $('btn-si-cerrar-sesion').onclick = async () => {
+    if (s instanceof SincroLinea) await s.salirDelAparato().catch(() => undefined);
+    olvidarSesion();
+    try {
+      localStorage.removeItem(CLAVE_MODO);
+    } catch {
+      /* nada */
+    }
+    location.href = location.pathname;
+  };
+}
+
+/** Cada aparato que ya está en la casa le crea la cuenta a su personaje si todavía no la tiene (usuario «javier» o
+ *  «laura», contraseña de base): desde ese momento, en un aparato nuevo hay que escribir la contraseña. */
+async function asegurarCuenta() {
+  if (!(s instanceof SincroLinea)) return;
+  try {
+    const cuentas = await s.cuentas();
+    if (!cuentas) return;
+    if (cuentas[yo]) return void (miCuenta = cuentas[yo]);
+    const usuario = normalizarUsuario(NOMBRE_ROL[yo]);
+    await s.crearCuenta(usuario, CLAVE_DE_BASE);
+    miCuenta = usuario;
+  } catch {
+    /* sin internet o el usuario ya lo tomó otra casa: queda para «Mi cuenta» en Ajustes */
+  }
 }
 
 function hojaDecorar(sitio: Sitio) {
@@ -2817,10 +3129,18 @@ async function quitarDeco(sitio: string) {
 // Controles (botones, formularios y toques sobre la casa)
 // ---------------------------------------------------------------------------
 function controles() {
-  for (const b of Array.from(document.querySelectorAll<HTMLElement>('.rol-carta'))) b.onclick = () => elegirRol(b.dataset.rol as Rol);
-  $('btn-local').onclick = () => rolElegido && void entrar({ modo: 'local', rol: rolElegido });
+  for (const b of Array.from(document.querySelectorAll<HTMLElement>('.rol-carta'))) {
+    const r = b.dataset.rol;
+    // Los amigos no entran a la casa: van a su sala de juegos (amigos.html), sin nada de la pareja
+    if (r === 'amigo') b.onclick = () => location.replace('./amigos.html?perfil');
+    else {
+      b.querySelector('b')!.textContent = `Soy ${NOMBRE_ROL[r as Rol]}`;
+      b.onclick = () => elegirRol(r as Rol);
+    }
+  }
+  $('btn-local').onclick = () => rolElegido && claveBien === rolElegido && void entrar({ modo: 'local', rol: rolElegido });
   $('btn-crear').onclick = async () => {
-    if (!rolElegido) return;
+    if (!rolElegido || claveBien !== rolElegido) return;
     if (await entrar({ modo: 'linea', rol: rolElegido }, 'crear')) {
       $('codigo-texto').textContent = s!.codigo;
       mostrar('codigo');
@@ -2829,10 +3149,26 @@ function controles() {
   $('form-unirse').onsubmit = (ev) => {
     ev.preventDefault();
     const cod = ($('inp-codigo') as HTMLInputElement).value.trim().toUpperCase();
-    if (!rolElegido || cod.length < 6) return ($('bienv-aviso').textContent = 'Escribe el código de 6 letras que te mandó tu pareja.');
+    if (!rolElegido || claveBien !== rolElegido) return;
+    if (cod.length < 6) return ($('bienv-aviso').textContent = 'Escribe el código de 6 letras que te mandó tu pareja.');
     void entrar({ modo: 'linea', rol: rolElegido }, { codigo: cod });
   };
   $('btn-bienv-config').onclick = () => hojaAjustes();
+  $('form-cuenta').onsubmit = (ev) => {
+    ev.preventDefault();
+    const r = rolElegido;
+    const contrasena = ($('inp-contrasena') as HTMLInputElement).value;
+    if (!r) return;
+    if (!contrasena.trim()) return ($('cuenta-aviso').textContent = 'Escribe la contraseña.');
+    // Sin servidor solo se puede jugar en este aparato, y también con la contraseña
+    if (!configLinea()) {
+      if (!esClaveDeBase(contrasena)) return ($('cuenta-aviso').textContent = 'Contraseña equivocada.');
+      claveBien = r;
+      $('form-cuenta').hidden = true;
+      return mostrar('bienv-conexion');
+    }
+    void entrar({ modo: 'linea', rol: r }, { usuario: normalizarUsuario(NOMBRE_ROL[r]), contrasena });
+  };
   $('btn-reintentar').onclick = () => modoGuardado && void entrar(modoGuardado);
   $('btn-codigo-listo').onclick = () => mostrar('codigo', false);
   $('btn-codigo-compartir').onclick = () => compartirCodigo();
@@ -2905,11 +3241,22 @@ function controles() {
     } else if ((b = d('[data-llevar]'))) void mandarComida(b.dataset.llevar!);
     else if ((b = d('[data-ir-tienda]'))) hojaTienda((b.dataset.irTienda || 'comida') as TipoItem);
     else if ((b = d('[data-cocinar]'))) void cocinar(b.dataset.cocinar as RecetaId);
-    else if ((b = d('[data-cocinar-juntos]'))) void cocinar(b.dataset.cocinarJuntos as RecetaId, { modo: 'anfitrion', id: `cocina-${Date.now().toString(36)}` });
+    else if ((b = d('[data-cocinar-juntos]'))) void cocinar(b.dataset.cocinarJuntos as RecetaId, { sala: 'pareja' });
     else if ((b = d('[data-cocinar-unirse]'))) {
       const [receta, id] = b.dataset.cocinarUnirse!.split('|');
       cerrarHoja();
-      void cocinar(receta as RecetaId, { modo: 'invitado', id });
+      void cocinar(receta as RecetaId, { sala: 'unirse', codigo: id });
+    } else if (d('[data-cocinar-amigos]')) {
+      // Abre una cocina para amigos: primero se escoge el restaurante (en la sala de espera se puede cambiar)
+      void import('./cocina/sala').then(async (m) => {
+        const r = await m.elegirRestaurante((x) => s?.casa.cocina?.[yo]?.[x] ?? progresoNuevo());
+        if (r) void cocinar(r, { sala: 'amigos' });
+      });
+    } else if (d('[data-cocinar-codigo]')) {
+      void import('./cocina/sala').then(async (m) => {
+        const c = await m.pedirCodigoCocina();
+        if (c) void cocinar('wafles', { sala: 'unirse', codigo: c });
+      });
     }
     else if ((b = d('[data-ir-pareja]'))) {
       cerrarHoja();
@@ -2960,6 +3307,8 @@ function controles() {
     } else if ((b = d('[data-poner]'))) void ponerDeco(b.dataset.poner!, b.dataset.sitio!);
     else if ((b = d('[data-quitar-deco]'))) void quitarDeco(b.dataset.quitarDeco!);
     else if (d('[data-compartir]')) compartirCodigo();
+    // Los enlaces de la versión para amigos (sin nada de la pareja) y el código de la sala abierta, si hay
+    else if (d('[data-invitar]')) void import('../amigos/invitar').then((m) => m.invitarAmigos());
     else if (d('[data-musica]')) {
       sonido.musica.alternar();
       hojaAjustes();
@@ -2967,12 +3316,15 @@ function controles() {
       sonido.alternar();
       hojaAjustes();
     } else if (d('[data-salir]')) salir();
+    else if (d('[data-cerrar-sesion]')) cerrarSesion();
   });
   cuerpo.addEventListener('submit', (ev) => {
     ev.preventDefault();
     const f = ev.target as HTMLFormElement;
     const val = (id: string) => ($(id) as HTMLInputElement).value;
     if (f.id === 'form-nota') void unaSolaVez(f.id, () => pegarNota(val('nota-texto')));
+    else if (f.id === 'form-crear-cuenta') void unaSolaVez(f.id, crearMiCuenta);
+    else if (f.id === 'form-cambiar-contrasena') void unaSolaVez(f.id, cambiarMiContrasena);
     else if (f.id === 'form-regalo' && regaloElegido) void unaSolaVez(f.id, () => regalar(regaloElegido!, val('regalo-mensaje')));
     else if (f.id === 'form-recuerdo') void unaSolaVez(f.id, guardarRecuerdo);
     else if (f.id === 'form-bebe') {
@@ -3013,20 +3365,22 @@ function controles() {
     sonido.activar();
     void alAbrir();
   });
-  if (Capacitor.isNativePlatform()) {
-    void App.addListener('backButton', () => {
-      const salirLavado = document.querySelector<HTMLElement>('.lavado-fin:not([hidden]) [data-listo], .lavado-salir');
-      const pausaCocina = document.querySelector<HTMLElement>('.cocina .cocina-pausa');
-      if (salirLavado) salirLavado.click();
-      else if (pausaCocina) pausaCocina.click();
-      else if (!$('ventana').hidden) cerrarVentana();
-      else if (hojaAbierta()) cerrarHoja();
-      else if (!$('codigo').hidden) mostrar('codigo', false);
-      else if (patio.activo) patio.salir();
-      else if (decorando) void alAccion('decorar');
-      else void App.exitApp();
-    });
-  }
+  // Botón «atrás» de Android (en el computador, la tecla Esc): cierra lo que esté abierto encima
+  const atras = () => {
+    const aLaVista = (sel: string) => [...document.querySelectorAll<HTMLElement>(sel)].find((b) => b.offsetParent !== null);
+    const salirLavado = aLaVista('.lv-pausa') ?? aLaVista('.lv-menu [data-v="volver"]') ?? aLaVista('.lv-menu [data-m="salir"]');
+    const pausaCocina = document.querySelector<HTMLElement>('.cocina .cocina-pausa');
+    if (salirLavado) salirLavado.click();
+    else if (pausaCocina) pausaCocina.click();
+    else if (!$('ventana').hidden) cerrarVentana();
+    else if (hojaAbierta()) cerrarHoja();
+    else if (!$('codigo').hidden) mostrar('codigo', false);
+    else if (patio.activo) patio.salir();
+    else if (decorando) void alAccion('decorar');
+    else if (Capacitor.isNativePlatform()) void App.exitApp();
+  };
+  if (Capacitor.isNativePlatform()) void App.addListener('backButton', atras);
+  else document.addEventListener('keydown', (e) => e.key === 'Escape' && !e.repeat && atras());
 }
 
 function tocar(x: number, y: number) {
@@ -3142,7 +3496,9 @@ function compartirCodigo() {
 function salir() {
   ventana(`<h2>¿Salir de esta casa?</h2><p class="nota-hoja">La casa no se borra: pueden volver a entrar con el mismo código.</p>
     <div class="fila-botones" style="justify-content:center"><button class="boton boton-papel" data-cerrar>Cancelar</button><button class="boton boton-tomate" id="btn-si-salir">Salir</button></div>`);
-  $('btn-si-salir').onclick = () => {
+  $('btn-si-salir').onclick = async () => {
+    // Con cuenta, el aparato además suelta su permiso (para volver: usuario y contraseña)
+    if (s instanceof SincroLinea && miCuenta) await s.salirDelAparato().catch(() => undefined);
     s?.cerrar();
     olvidarSesion();
     try {
@@ -3239,6 +3595,12 @@ function revisar() {
   guardarVestidos();
   // El botón de la pareja aparece y se va en vivo cuando uno de los dos entra o sale del cuarto
   const j = juntos();
+  // «🚀 Volar en el retrete» sale apenas se sienta en el inodoro (y se va al pararse)
+  const v = puedeVolar('bano');
+  if (v !== sentadoParaVolar) {
+    sentadoParaVolar = v;
+    pintarAcciones();
+  }
   if (j !== estabanJuntos) {
     estabanJuntos = j;
     pintarAcciones();
@@ -3299,6 +3661,9 @@ function efectos() {
   lavado: s?.casa.lavado,
   lavadoProgreso: s?.casa.lavadoProgreso,
   cocina: s?.casa.cocina,
+  cohete: s?.casa.cohete,
+  coheteVisto: s?.casa.coheteVisto,
+  diario: s?.casa.diario,
 });
 /** Progreso de prueba en un restaurante (para ver rangos altos). */
 (window as any).__cocinaXp = (receta: RecetaId, xp: number, dia = 6, propinas = 300) =>

@@ -7,25 +7,7 @@ import type { Personaje } from '../personaje';
 import { cargarAnimado, liberarEsqueletos } from '../recursos';
 import { ITEM, type Item } from './catalogo';
 import { RANURAS, type Rol, type Ropa, type Ranura } from './modelo';
-
-/** Partes de fábrica que tapa cada ranura (prefijos del nombre de la malla). */
-const TAPA: Record<Rol, Partial<Record<Ranura | 'medias' | 'copete', string[]>>> = {
-  el: {
-    copete: ['mechon copete', 'mechon flequillo'],
-    arriba: ['torso camiseta', 'cuello camiseta', 'ribete', 'pespunte camiseta', 'suciedad ropa'],
-    abajo: ['pantalon', 'pespunte pantalon'],
-    pies: ['tenis', 'suela'],
-    pelo: ['cabello base', 'mechon'],
-  },
-  ella: {
-    arriba: ['torso camiseta', 'cuello camiseta', 'ribete manga', 'pespunte camiseta', 'chaleco', 'solapa', 'tapa bolsillo', 'pespunte chaleco',
-      'suciedad ropa'],
-    abajo: ['pantalon', 'dobladillo short', 'pespunte shorts'],
-    pies: ['tenis', 'suela', 'cordon'],
-    pelo: ['cabello base', 'mechon'],
-    medias: ['media', 'puño media'],
-  },
-};
+import { TAPA } from './ropa_tapa';
 
 /** En la tina quedan en ropa interior: se esconden los zapatos, el chaleco y los detalles de la ropa… */
 const BANO_TAPA: Record<Rol, string[]> = {
@@ -91,6 +73,11 @@ export class Vestuario {
     this.taparFabrica();
     this.teñir(colorPelo);
     if (this.bano) this.ponerBano(true);
+  }
+
+  /** Las mallas de lo que está puesto en una ranura (para retocarlas, como en los disfraces del lavado). */
+  mallasDe(r: Ranura): THREE.Object3D[] {
+    return this.puestos.get(r)?.mallas ?? [];
   }
 
   /** En la tina: en ropa interior (sin la ropa comprada, salvo el peinado). Al salir se vuelve a vestir. */

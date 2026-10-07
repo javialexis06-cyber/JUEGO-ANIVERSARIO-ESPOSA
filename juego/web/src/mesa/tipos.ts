@@ -1,4 +1,4 @@
-// Contrato común de los juegos de mesa (Dados, Mancala, Puntos y Cajas, Parchís).
+// Contrato común de los juegos de mesa (Dados, Mancala, Puntos y Cajas, Parchís, ¿Quién fue?).
 // Cada juego da sus reglas (puras, sin azar escondido), su IA y su vista; la mesa se encarga de los turnos,
 // del modo (contra la IA, los dos en el mismo celular o en línea), de los muñequitos y de sus reacciones.
 import type { Rol } from '../casa/modelo';
@@ -89,7 +89,7 @@ export interface Vista<E, M> {
 }
 
 export interface JuegoMesa<E = unknown, M = unknown> {
-  id: 'dados' | 'mancala' | 'cajas' | 'parchis' | 'parchis2';
+  id: 'dados' | 'mancala' | 'cajas' | 'parchis' | 'parchis2' | 'clue';
   nombre: string;
   /** Una línea para el menú. */
   resumen: string;

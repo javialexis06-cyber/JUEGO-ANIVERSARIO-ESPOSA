@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "build:amigos": "tsc --noEmit && vite build --mode amigos && node scripts/verificar-amigos.mjs",
     "preview": "vite preview",
     "optimizar": "node scripts/optimizar-modelos.mjs"
   },

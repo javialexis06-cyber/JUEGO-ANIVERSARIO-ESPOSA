@@ -6,7 +6,7 @@ import type { ArmaJ, Enemigo, Jugador, Motor, Proyectil, Zona } from './motor';
 import type { IdArma } from './tipos';
 
 /** Ranuras de «ya le pegó» en cada enemigo (por jugador: + índice del jugador). */
-const HZ_AURA = 0, HZ_ESPONJAS = 2, HZ_LASER = 4, HZ_COLUMNA = 6, HZ_CHARCO = 8;
+const HZ_AURA = 0, HZ_ESPONJAS = 4, HZ_LASER = 8, HZ_COLUMNA = 12, HZ_CHARCO = 16;
 const TAU = Math.PI * 2;
 /** Armas de zona (para la carta del planetario). */
 const ZONA = new Set<IdArma>(['espuma', 'espumaDevoradora', 'botellas', 'inundacion', 'ducha', 'diluvio', 'esponjas', 'esponjasEternas', 'patoAmarillo', 'patoMorado', 'patosEnamorados']);
@@ -16,7 +16,7 @@ const E = { dano: 0, area: 0, vel: 0, cant: 0, dur: 0, enfr: 0, perfora: 0, crit
 
 function calcular(j: Jugador, a: ArmaJ) {
   const b = a.b;
-  const zona = ZONA.has(a.id) && j.tieneCarta('planetario');
+  const zona = ZONA.has(a.id) && j.tieneCarta('estrellas');
   E.dano = b.dano * (1 + j.st.poder) * (zona ? 1.5 : 1);
   E.area = b.area * Math.max(0.3, 1 + j.st.area) * (zona ? 1 + 0.5 * Math.max(0, j.st.poder) : 1);
   E.vel = b.vel * Math.max(0.3, 1 + j.st.velocidad);
@@ -24,7 +24,7 @@ function calcular(j: Jugador, a: ArmaJ) {
   E.dur = b.dur * Math.max(0.3, 1 + j.st.duracion);
   E.enfr = Math.max(0.05, b.enfr * (1 - j.st.enfriamiento));
   E.perfora = b.perfora;
-  const mat = j.tieneCarta('matematicas');
+  const mat = j.tieneCarta('certero');
   E.crit = (b.crit + (mat ? 0.1 : 0)) * (1 + j.st.suerte);
   E.critX = b.critX || 2;
   E.golpeCada = Math.max(0.12, b.golpeCada);
@@ -113,6 +113,11 @@ function alAzarEnVista(m: Motor, j: Jugador): Enemigo | null {
   return masCercano(m, j.x, j.y, 400);
 }
 
+/** Apuntar a mano: el ángulo hacia donde apunta el jugador (null si sus armas buscan solas). */
+function aMano(j: Jugador): number | null {
+  return j.manual ? Math.atan2(j.ay, j.ax) : null;
+}
+
 function golpe(m: Motor, j: Jugador, slot: number, e: Enemigo, dano: number, crit: number, critX: number, kx: number, ky: number, arma: IdArma) {
   const c = crit > 0 && m.az.n() < crit;
   m.herir(e, c ? dano * critX : dano, j.i, slot, kx, ky, c, arma);
@@ -124,7 +129,7 @@ function golpe(m: Motor, j: Jugador, slot: number, e: Enemigo, dano: number, cri
 export function actualizarArmas(m: Motor, j: Jugador, dt: number) {
   const moviendo = Math.hypot(j.vx, j.vy) > 20;
   let ritmo = 1;
-  if (j.tieneCarta('sopetran') && moviendo) ritmo *= 1.3;
+  if (j.tieneCarta('viajeLargo') && moviendo) ritmo *= 1.3;
   if (j.arranque > 0) ritmo *= 1 + 6 * (j.arranque / Math.max(1, j.disfraz.arranque ?? 1));
   for (let slot = 0; slot < j.armas.length; slot++) {
     const a = j.armas[slot];
@@ -148,7 +153,7 @@ export function actualizarArmas(m: Motor, j: Jugador, dt: number) {
     if (a.rafaga <= 0 && a.t <= 0) {
       a.total = E.cant;
       // Compañeros de estudio: a veces la tarea se hace dos veces
-      if (j.tieneCarta('estudio') && m.az.n() < 0.25) a.total *= 2;
+      if (j.tieneCarta('dobleTurno') && m.az.n() < 0.25) a.total *= 2;
       a.rafaga = a.total;
       a.tr = 0;
       a.t = E.enfr;
@@ -169,7 +174,9 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
   const def = ARMAS[a.id];
   switch (def.comp) {
     case 'latigo': {
-      const lado = idx % 2 === 0 ? j.mira : -j.mira;
+      // (a mano, el primer toallazo va hacia donde apunta)
+      const frente = j.manual ? (j.ax >= 0 ? 1 : -1) : j.mira;
+      const lado = idx % 2 === 0 ? frente : -frente;
       const largo = 150 * E.area;
       const alto = E.radio * 2 * E.area;
       const yo = j.y - 8 + Math.floor(idx / 2) * 14 * (idx % 2 ? 1 : -1);
@@ -187,14 +194,15 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       break;
     }
     case 'varita': {
-      const e = masCercano(m, j.x, j.y, 520);
-      const ang = e ? Math.atan2(e.y - j.y, e.x - j.x) + (idx % 3 - 1) * 0.05 : Math.atan2(j.dy, j.dx);
+      const mano = aMano(j);
+      const e = mano === null ? masCercano(m, j.x, j.y, 520) : null;
+      const ang = mano !== null ? mano + (idx % 3 - 1) * 0.07 : e ? Math.atan2(e.y - j.y, e.x - j.x) + (idx % 3 - 1) * 0.05 : Math.atan2(j.dy, j.dx);
       const v = E.rapidez * E.vel;
       nuevoProy(m, j, slot, a.id, 0, j.x, j.y - 6, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
       break;
     }
     case 'cuchillo': {
-      const base = Math.atan2(j.dy, j.dx);
+      const base = aMano(j) ?? Math.atan2(j.dy, j.dx);
       const ang = base + (m.az.n() - 0.5) * 0.12;
       const lado = (idx % 2 ? 1 : -1) * Math.ceil(idx / 2) * 7;
       const v = E.rapidez * E.vel;
@@ -202,7 +210,7 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       break;
     }
     case 'hacha': {
-      const lado = idx % 2 === 0 ? 1 : -1;
+      const lado = (idx % 2 === 0 ? 1 : -1) * (j.manual && j.ax < 0 ? -1 : 1);
       const vx = lado * m.az.entre(30, 110) * (1 + idx * 0.15) + j.vx * 0.3;
       const vy = -E.rapidez * E.vel * m.az.entre(0.92, 1.08);
       const p = nuevoProy(m, j, slot, a.id, 1, j.x, j.y - 10, vx, vy, E.radio * E.area, E.dur);
@@ -224,8 +232,9 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       break;
     }
     case 'cruz': {
-      const e = idx === 0 ? masCercano(m, j.x, j.y, 500) : alAzarEnVista(m, j);
-      const ang = e ? Math.atan2(e.y - j.y, e.x - j.x) : Math.atan2(j.dy, j.dx) + idx * 0.6;
+      const mano = aMano(j);
+      const e = mano !== null ? null : idx === 0 ? masCercano(m, j.x, j.y, 500) : alAzarEnVista(m, j);
+      const ang = mano !== null ? mano + (idx % 2 ? 1 : -1) * Math.ceil(idx / 2) * 0.22 : e ? Math.atan2(e.y - j.y, e.x - j.x) : Math.atan2(j.dy, j.dx) + idx * 0.6;
       const v = E.rapidez * E.vel;
       const p = nuevoProy(m, j, slot, a.id, 2, j.x, j.y - 6, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
       if (p) {
@@ -238,8 +247,9 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
     }
     case 'fuego': {
       if (idx === 0) {
-        const e = alAzarEnVista(m, j);
-        a.ang = e ? Math.atan2(e.y - j.y, e.x - j.x) : m.az.n() * TAU;
+        const mano = aMano(j);
+        const e = mano === null ? alAzarEnVista(m, j) : null;
+        a.ang = mano ?? (e ? Math.atan2(e.y - j.y, e.x - j.x) : m.az.n() * TAU);
       }
       const ang = a.ang + (idx - (a.total - 1) / 2) * 0.16;
       const v = E.rapidez * E.vel;
@@ -266,7 +276,8 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       break;
     }
     case 'runa': {
-      const ang = m.az.n() * TAU;
+      const mano = aMano(j);
+      const ang = mano !== null ? mano + (m.az.n() - 0.5) * 0.3 : m.az.n() * TAU;
       const v = E.rapidez * E.vel;
       const p = nuevoProy(m, j, slot, a.id, 3, j.x, j.y - 6, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
       if (p) p.giro = 6;
@@ -363,7 +374,7 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       break;
     }
     case 'pistola': {
-      const diag = a.id === 'colonia' ? Math.PI / 4 : 0;
+      const diag = (a.id === 'colonia' ? Math.PI / 4 : 0) + (aMano(j) ?? 0);
       const v = E.rapidez * E.vel;
       for (let q = 0; q < 4; q++) {
         const ang = diag + q * (Math.PI / 2) + (m.az.n() - 0.5) * 0.05;
@@ -577,7 +588,7 @@ export function moverProyectiles(m: Motor, dt: number) {
     }
     if (p.vida <= 0) {
       p.vivo = false;
-      if (j && !p.mini && COMP_LUCES.has(p.comp) && j.tieneCarta('lucesMedellin')) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
+      if (j && !p.mini && COMP_LUCES.has(p.comp) && j.tieneCarta('lucesFeria')) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
       continue;
     }
     if (!j) continue;
@@ -606,8 +617,8 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
     if (luz) continue;
     // Rana glotona: lo que se traga lo escupe en gotas doradas
     if (!e.vivo && p.arma === 'ranaGlotona' && m.az.n() < 0.3) m.soltar('moneda', e.x, e.y);
-    if (j.tieneCarta('propuesta') && e.vivo && m.az.n() < 0.12) e.congelado = Math.max(e.congelado, 1.5);
-    if (j.tieneCarta('halloween') && !p.mini && m.az.n() < 0.2 && (p.comp === 0 || p.comp === 2)) {
+    if (j.tieneCarta('diamante') && e.vivo && m.az.n() < 0.12) e.congelado = Math.max(e.congelado, 1.5);
+    if (j.tieneCarta('fiestaDisfraces') && !p.mini && m.az.n() < 0.2 && (p.comp === 0 || p.comp === 2)) {
       const c = libre(m);
       if (c) {
         c.vivo = true;
@@ -622,7 +633,7 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
       p.perfora--;
       if (p.perfora <= 0) {
         // Para siempre: rebota a otro
-        if (j.tieneCarta('paraSiempre') && p.n < 2 && (p.comp === 0)) {
+        if (j.tieneCarta('reboteSinFin') && p.n < 2 && (p.comp === 0)) {
           const o = masCercano(m, p.x, p.y, 260, e.uid);
           if (o) {
             const v = Math.hypot(p.vx, p.vy);
@@ -637,7 +648,7 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
           }
         }
         p.vivo = false;
-        if (!p.mini && j.tieneCarta('lucesMedellin') && COMP_LUCES.has(p.comp)) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
+        if (!p.mini && j.tieneCarta('lucesFeria') && COMP_LUCES.has(p.comp)) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
       }
     }
   }

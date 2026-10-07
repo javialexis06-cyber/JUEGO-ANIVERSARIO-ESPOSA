@@ -6,10 +6,16 @@ import * as THREE from 'three';
 import { Personaje, type Cara } from '../../../personaje';
 import { cargar } from '../../../recursos';
 import { Vestuario } from '../../ropa';
-import type { Accesorio, DefDisfraz } from '../disfraces';
+import type { Accesorio, Ajuste, DefDisfraz } from '../disfraces';
+import type { Ranura } from '../../modelo';
 import type { Jugador } from '../motor';
 import type { Rol } from '../tipos';
+import type { AspectoJugador } from '../../../salas/tipos';
+import { piezaDeItem, trajeDe, type Pieza, type RanuraAmigo } from '../../../salas/prendas';
+import { Vestidor } from '../../../salas/vestir';
 import { ELEVACION } from './sprites';
+
+
 
 /** Ángulo al que se ven los sprites de los mugrosos (el personaje se inclina para verse igual). */
 const VISTA_SPRITE = THREE.MathUtils.degToRad(30);
@@ -17,28 +23,68 @@ const VISTA_SPRITE = THREE.MathUtils.degToRad(30);
 export const ALTO_PERSONAJE = 50;
 
 /** Dónde va cada accesorio: hueso, posición, giro (grados) y tamaño, en las medidas del personaje. */
-const PEGAR: Record<Accesorio, { hueso: string; p: [number, number, number]; r: [number, number, number]; s: number }> = {
+export const PEGAR: Record<Accesorio, { hueso: string; p: [number, number, number]; r: [number, number, number]; s: number }> = {
   // (el muñeco mide 2,5 de alto: la cabeza nace en el hueso a 0,98 y llega a 2,5; las manos están a 0,67)
-  toalla_hombro: { hueso: 'torso', p: [0, 0.3, 0.04], r: [0, 0, 0], s: 1.15 },
-  espuma_cabeza: { hueso: 'cabeza', p: [0, 1.36, -0.05], r: [0, 0, 0], s: 1.6 },
-  cepillo_mano: { hueso: 'manoL', p: [0, -0.02, 0.1], r: [0, 0, 15], s: 1.19 },
+  // Lo de la mano va grande (en el juego el personaje mide 50 puntos y si no, no se ve)
+  toalla_hombro: { hueso: 'torso', p: [0, 0.36, 0.1], r: [0, 0, 0], s: 1.5 },
+  toalla_mano: { hueso: 'manoL', p: [0, -0.04, 0.1], r: [0, 0, 0], s: 1.35 },
+  espuma_cabeza: { hueso: 'cabeza', p: [0, 1.75, -0.05], r: [0, 0, 0], s: 1.6 },
+  cepillo_mano: { hueso: 'manoL', p: [0, 0.02, 0.1], r: [0, -90, 105], s: 1.55 },
   espejo_frente: { hueso: 'cabeza', p: [0, 0.95, 0.02], r: [0, 0, 0], s: 1.75 },
-  jabon_pecho: { hueso: 'torso', p: [0, -0.12, 0.36], r: [0, 0, 0], s: 0.6 },
-  champu_mano: { hueso: 'manoL', p: [0, -0.08, 0.1], r: [0, 0, 0], s: 1.05 },
-  casco_burbuja: { hueso: 'cabeza', p: [0, 0.74, 0.0], r: [0, 0, 0], s: 1.45 },
-  casco_bombero: { hueso: 'cabeza', p: [0, 1.0, -0.02], r: [-6, 0, 0], s: 1.55 },
-  manguera: { hueso: 'torso', p: [0, 0.12, -0.42], r: [0, 0, 0], s: 0.95 },
-  hilo_mano: { hueso: 'manoL', p: [-0.05, -0.08, 0.1], r: [0, 0, 0], s: 0.84 },
-  varita_mano: { hueso: 'manoL', p: [-0.05, -0.05, 0.1], r: [0, 0, 0], s: 1.05 },
+  jabon_pecho: { hueso: 'torso', p: [0, -0.12, 0.36], r: [0, 0, 0], s: 0.75 },
+  champu_mano: { hueso: 'manoL', p: [0, -0.08, 0.1], r: [0, 0, 0], s: 1.55 },
+  casco_burbuja: { hueso: 'cabeza', p: [0, 0.86, 0.0], r: [0, 0, 0], s: 1.75 },
+  casco_bombero: { hueso: 'cabeza', p: [0, 0.93, -0.02], r: [-6, 0, 0], s: 1.62 },
+  manguera: { hueso: 'torso', p: [0, 0.12, -0.42], r: [0, 0, 0], s: 1.05 },
+  hilo_mano: { hueso: 'manoL', p: [-0.05, -0.08, 0.1], r: [0, 0, 0], s: 1.45 },
+  varita_mano: { hueso: 'manoL', p: [-0.05, -0.05, 0.1], r: [0, 0, 0], s: 1.6 },
   escudo: { hueso: 'manoR', p: [0.05, 0.0, 0.16], r: [0, 0, 0], s: 1.26 },
-  perfume_mano: { hueso: 'manoL', p: [-0.05, -0.08, 0.1], r: [0, 0, 0], s: 0.84 },
+  perfume_mano: { hueso: 'manoL', p: [-0.05, -0.08, 0.1], r: [0, 0, 0], s: 1.55 },
   turbante: { hueso: 'cabeza', p: [0, 0.95, -0.06], r: [-8, 0, 0], s: 1.9 },
-  patico_mano: { hueso: 'manoL', p: [0, -0.05, 0.12], r: [0, 0, 0], s: 0.98 },
+  patico_mano: { hueso: 'manoL', p: [0, -0.05, 0.12], r: [0, 0, 0], s: 1.25 },
   ranita_cabeza: { hueso: 'cabeza', p: [0.15, 1.42, 0.0], r: [0, 0, 8], s: 1.0 },
-  esponja_mano: { hueso: 'manoL', p: [0, -0.06, 0.1], r: [0, 0, 0], s: 0.98 },
-  secador_mano: { hueso: 'manoL', p: [-0.05, -0.08, 0.1], r: [0, 0, 0], s: 0.91 },
+  esponja_mano: { hueso: 'manoL', p: [0, -0.06, 0.1], r: [0, 0, 0], s: 1.4 },
+  secador_mano: { hueso: 'manoL', p: [-0.05, -0.08, 0.1], r: [0, 0, 0], s: 1.4 },
   rulos: { hueso: 'cabeza', p: [0, 0.88, -0.1], r: [-10, 0, 0], s: 2.0 },
+  // Las de la cara y el pelo vienen modeladas en su sitio (en medidas de la cabeza)
+  antifaz_heroe: { hueso: 'cabeza', p: [0, 0, 0], r: [0, 0, 0], s: 1 },
+  bigote_lenador: { hueso: 'cabeza', p: [0, 0, 0], r: [0, 0, 0], s: 1 },
+  bigote_barbero: { hueso: 'cabeza', p: [0, 0, 0], r: [0, 0, 0], s: 1 },
+  rulos_cabeza: { hueso: 'cabeza', p: [0, 0, 0], r: [0, 0, 0], s: 1 },
+  corona_guerrera: { hueso: 'cabeza', p: [0, 0, 0], r: [0, 0, 0], s: 1 },
 };
+
+/**
+ * Retoca una prenda con esqueleto: la corre o la agranda en la pose de amarre, alrededor de su centro, así sigue
+ * todas las poses igual. La geometría se copia (la del clóset la comparten todos) y pasa a números de verdad
+ * (viene cuantizada para pesar menos).
+ */
+function retocar(m: THREE.SkinnedMesh, a: Ajuste) {
+  if (!m.isSkinnedMesh) return;
+  const g = m.geometry.clone();
+  for (const nombre of ['position', 'normal']) {
+    const at = g.getAttribute(nombre) as THREE.BufferAttribute | undefined;
+    if (!at) continue;
+    const f = new Float32Array(at.count * 3);
+    for (let i = 0; i < at.count; i++) {
+      f[i * 3] = at.getX(i);
+      f[i * 3 + 1] = at.getY(i);
+      f[i * 3 + 2] = at.getZ(i);
+    }
+    g.setAttribute(nombre, new THREE.BufferAttribute(f, 3));
+  }
+  // (se agranda alrededor de su propio centro, en la pose de amarre)
+  g.computeBoundingBox();
+  const pivote = g.boundingBox!.getCenter(new THREE.Vector3()).applyMatrix4(m.bindMatrix);
+  const s = a.s ?? 1, sxz = a.sxz ?? 1;
+  const T = new THREE.Matrix4()
+    .makeTranslation(pivote.x + (a.x ?? 0), pivote.y + (a.y ?? 0), pivote.z + (a.z ?? 0))
+    .multiply(new THREE.Matrix4().makeScale(s * sxz, s, s * sxz))
+    .multiply(new THREE.Matrix4().makeTranslation(-pivote.x, -pivote.y, -pivote.z));
+  g.applyMatrix4(new THREE.Matrix4().copy(m.bindMatrixInverse).multiply(T).multiply(m.bindMatrix));
+  g.computeBoundingSphere();
+  m.geometry = g;
+}
 
 let accesorios: Promise<THREE.Group | null> | null = null;
 function cargarAccesorios() {
@@ -58,7 +104,10 @@ export class Jugador3D {
   private escala: number;
   listo = false;
 
-  constructor(readonly rol: Rol, readonly disfraz: DefDisfraz) {
+  /** El vestidor de los amigos: su cara, su pelo y (con el disfraz inicial) su ropa, tal cual los armó. */
+  private vestAmigo: Vestidor | null = null;
+
+  constructor(readonly rol: Rol, readonly disfraz: DefDisfraz, readonly aspecto?: AspectoJugador) {
     this.escala = ALTO_PERSONAJE / 2.6;
     this.p = new Personaje({ x: 0, y: 0 }, 1);
     this.p.suavidad = 12;
@@ -72,7 +121,14 @@ export class Jugador3D {
 
   async cargar() {
     await this.p.cargarPoses(this.rol);
-    await this.vest.aplicar(this.disfraz.ropa).catch(() => undefined);
+    const propia = this.aspecto ? await this.vestirAmigo(this.aspecto).catch(() => false) : false;
+    if (!this.aspecto) await this.vest.aplicar(this.disfraz.ropa).catch(() => undefined);
+    // (los retoques son para las prendas del disfraz; con la ropa propia del amigo no hacen falta)
+    if (!propia) {
+      for (const [r, a] of Object.entries(this.disfraz.ajustes ?? {}) as [Ranura, Ajuste][]) {
+        for (const m of this.vestAmigo?.mallasDe(r) ?? this.vest.mallasDe(r)) retocar(m as THREE.SkinnedMesh, a);
+      }
+    }
     const lib = await cargarAccesorios();
     if (lib) {
       for (const a of this.disfraz.accesorios) {
@@ -99,20 +155,46 @@ export class Jugador3D {
           malla.frustumCulled = false;
           // El vidrio con transmisión obliga a dibujar la escena dos veces: en el celular, transparente sencillo
           const mat = malla.material as THREE.MeshPhysicalMaterial;
+          // (el vidrio clarito, como el casco de burbuja, casi no se ve; un frasco de perfume sí deja ver su color)
           if (mat && mat.transmission > 0) {
-            malla.material = new THREE.MeshStandardMaterial({ color: mat.color, roughness: 0.1, metalness: 0.1, transparent: true, opacity: 0.32, depthWrite: false });
+            const claro = mat.color.r + mat.color.g + mat.color.b > 2.4;
+            const opacidad = claro ? 0.26 : THREE.MathUtils.clamp(1 - mat.transmission * 0.8, 0.3, 0.85);
+            malla.material = new THREE.MeshStandardMaterial({ color: mat.color, roughness: 0.1, metalness: 0.1, transparent: true, opacity: opacidad, depthWrite: false });
           }
         });
         hueso.add(o);
       }
-      // El turbante y los cascos tapan el pelo
-      if (this.disfraz.accesorios.some((a) => a === 'turbante' || a === 'casco_bombero')) {
-        for (const [n, l] of this.p.partes) if (/^mechon/.test(n)) for (const o of l) o.visible = false;
-      }
+    }
+    // Los gorros, cascos y el turbante tapan el pelo (así no se sale por encima)
+    if (this.disfraz.sinPelo) {
+      const que = this.disfraz.sinPelo === 'todo' ? /^(mechon|cabello)/ : /^mechon/;
+      for (const [n, l] of this.p.partes) if (que.test(n)) for (const o of l) o.visible = false;
     }
     this.p.pose('reposo', true);
     this.p.sincronizar();
     this.listo = true;
+  }
+
+  /**
+   * Un amigo, tal cual lo armó en el creador: con el disfraz inicial va con SU ropa (y el accesorio del disfraz en la
+   * mano); con los demás, el disfraz encima y su peinado si el disfraz no trae nada en la cabeza. Su piel, su pelo,
+   * sus ojos, sus cejas, su rubor y sus joyas, siempre. Devuelve si quedó con su ropa propia.
+   */
+  private async vestirAmigo(a: AspectoJugador): Promise<boolean> {
+    const propio = trajeDe(a);
+    const conPropia = !!this.disfraz.inicial;
+    let piezas: Partial<Record<RanuraAmigo, Pieza>> = propio;
+    if (!conPropia) {
+      piezas = {};
+      for (const [r, id] of Object.entries(this.disfraz.ropa) as [RanuraAmigo, string][]) {
+        const pz = id ? piezaDeItem(id, this.rol) : null;
+        if (pz) piezas[r] = pz;
+      }
+      if (propio.pelo && !piezas.cabeza && !piezas.pelo && !this.disfraz.sinPelo) piezas.pelo = propio.pelo;
+    }
+    this.vestAmigo = new Vestidor(this.p, this.rol);
+    await this.vestAmigo.aplicar(a, piezas);
+    return conPropia;
   }
 
   /** Lo que pasó: golpe, celebración (al subir de nivel) o lo que sea con cara propia. */
@@ -180,6 +262,8 @@ export class Jugador3D {
 
   liberar() {
     this.vest.liberar();
+    this.vestAmigo?.liberar();
+    this.vestAmigo = null;
     this.raiz.removeFromParent();
   }
 }

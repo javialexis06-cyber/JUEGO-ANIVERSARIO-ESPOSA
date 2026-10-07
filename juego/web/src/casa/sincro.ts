@@ -325,6 +325,10 @@ export const sesionGuardada = (): SesionLinea | null => {
   const s = leer<SesionLinea>(CLAVE_SESION);
   return s && typeof s.parejaId === 'string' && typeof s.codigo === 'string' && (s.rol === 'el' || s.rol === 'ella') ? s : null;
 };
+/** El usuario como lo guarda el servidor: minúsculas, sin tildes ni espacios («Laura Ñ» → «laurañ» → «lauran»). */
+export const normalizarUsuario = (u: string) =>
+  u.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9_.-]/g, '');
+
 export const olvidarSesion = () => {
   try {
     localStorage.removeItem(CLAVE_SESION);
@@ -340,11 +344,35 @@ export class PersonajeOcupado extends Error {
   }
 }
 
+/** El personaje tiene usuario y contraseña: en este aparato hay que iniciar sesión (no basta el código). */
+export class CuentaRequerida extends Error {
+  constructor() {
+    super('Este personaje tiene usuario y contraseña: entra con «Ya tengo cuenta».');
+  }
+}
+
+/** Ese personaje todavía no tiene cuenta en el servidor (o el servidor todavía no tiene cuentas): es la primera vez,
+ *  y con la contraseña de base se ofrece crear la casa o unirse con el código. */
+export class SinCuentaTodavia extends Error {
+  constructor() {
+    super('Todavía no hay cuenta para este personaje.');
+  }
+}
+
+/** La contraseña con la que nacen las cuentas de Javier y Laura (se puede cambiar en Ajustes). No distingue mayúsculas. */
+export const CLAVE_DE_BASE = 'teamo';
+export const esClaveDeBase = (c: string) => c.trim().toLowerCase() === CLAVE_DE_BASE;
+
+/** El servidor todavía no tiene las funciones nuevas (falta pegar supabase/cambios-pendientes.sql). */
+const faltaFuncion = (e: { message?: string } | null | undefined) => /could not find the function|does not exist|PGRST202/i.test(e?.message ?? '');
+export const SIN_CUENTAS = 'Las cuentas todavía no están activadas en el servidor: falta pegar supabase/cambios-pendientes.sql en Supabase.';
+
 /** Mensajes del servidor en palabras de la casa. */
 function mensaje(error: { message?: string } | null | undefined, porDefecto: string) {
   const m = error?.message ?? '';
   if (/failed to fetch|network|fetch/i.test(m)) return 'Sin conexión con el servidor. Revisa el internet.';
   if (/no encontrado/i.test(m)) return 'Ese código no existe. Revísalo con tu pareja.';
+  if (/cuenta requerida/i.test(m)) return 'Ese personaje tiene usuario y contraseña: entra con «Ya tengo cuenta».';
   if (/demasiad/i.test(m)) return m;
   if (/anonymous/i.test(m)) return 'Faltan activar las sesiones anónimas en Supabase (Authentication → Sign In / Providers).';
   if (/does not exist|could not find the function/i.test(m)) return 'Falta correr supabase/esquema.sql en el SQL Editor de Supabase.';
@@ -365,16 +393,34 @@ async function cliente(cfg: ConfigLinea): Promise<SupabaseClient> {
 }
 
 /**
+ * Asegura que este aparato siga siendo de la casa. Si ya lo es, entra; si se borraron los datos y el personaje no
+ * tiene cuenta, vuelve a quedarse con él como siempre; si tiene cuenta, hay que iniciar sesión (CuentaRequerida).
+ */
+async function volverACasa(sb: SupabaseClient, sesion: SesionLinea) {
+  const { error } = await sb.rpc('volver_a_casa', { cod: sesion.codigo, mi_rol: sesion.rol });
+  if (!error) return;
+  if (/cuenta requerida/i.test(error.message)) throw new CuentaRequerida();
+  if (!faltaFuncion(error)) throw new Error(mensaje(error, 'No se pudo entrar a la casa.'));
+  // Servidor de antes de las cuentas: como siempre
+  const r = await sb.rpc('unirse_pareja', { cod: sesion.codigo, mi_rol: sesion.rol, reemplazar: true });
+  if (r.error) throw new Error(mensaje(r.error, 'No se pudo entrar a la casa.'));
+}
+
+/**
  * Conexión liviana para los minijuegos en línea (la mesa de juegos): la misma sesión de la casa,
- * sin cargar la casa. null si este celular no está en una casa en línea.
+ * sin cargar la casa. null si este celular no está en una casa en línea (o si tiene que iniciar sesión).
  */
 export async function conexionPareja(): Promise<{ sb: SupabaseClient; sesion: SesionLinea } | null> {
   const cfg = configLinea();
   const sesion = sesionGuardada();
   if (!cfg || !sesion) return null;
   const sb = await cliente(cfg);
-  const { error } = await sb.rpc('unirse_pareja', { cod: sesion.codigo, mi_rol: sesion.rol, reemplazar: true });
-  if (error) throw new Error(mensaje(error, 'No se pudo entrar a la casa.'));
+  try {
+    await volverACasa(sb, sesion);
+  } catch (e) {
+    if (e instanceof CuentaRequerida) return null;
+    throw e;
+  }
   return { sb, sesion };
 }
 
@@ -421,6 +467,7 @@ export class SincroLinea extends Base implements Sincro {
     const cod = codigo.trim().toUpperCase();
     const { data, error } = await sb.rpc('unirse_pareja', { cod, mi_rol: rol, reemplazar });
     if (error && /ocupado/i.test(error.message)) throw new PersonajeOcupado();
+    if (error && /cuenta requerida/i.test(error.message)) throw new CuentaRequerida();
     if (error) throw new Error(mensaje(error, 'No se pudo entrar con ese código.'));
     // (con las reglas nuevas de la base, un código que no existe vuelve vacío en vez de error)
     if (!data) throw new Error('Ese código no existe. Revísalo con tu pareja.');
@@ -431,13 +478,57 @@ export class SincroLinea extends Base implements Sincro {
 
   static async reanudar(cfg: ConfigLinea, sesion: SesionLinea): Promise<SincroLinea> {
     const sb = await cliente(cfg);
-    // Volver a unirse asegura la membresía si la sesión anónima cambió (reinstalación, datos borrados)
-    // (es el mismo celular que ya estaba en la casa: si su sesión cambió, se queda con su personaje)
-    const { error } = await sb.rpc('unirse_pareja', { cod: sesion.codigo, mi_rol: sesion.rol, reemplazar: true });
-    if (error) throw new Error(mensaje(error, 'No se pudo volver a entrar a la casa.'));
+    // Volver a entrar asegura la membresía si la sesión anónima cambió (reinstalación, datos borrados): sin cuenta,
+    // el mismo celular se queda con su personaje; con cuenta, hay que iniciar sesión otra vez
+    await volverACasa(sb, sesion);
     const s = new SincroLinea(sb, sesion);
     await s.iniciar(false);
     return s;
+  }
+
+  /** Entrar desde cualquier aparato con el usuario y la contraseña: la misma casa, el mismo personaje. */
+  static async conCuenta(cfg: ConfigLinea, usuario: string, contrasena: string): Promise<SincroLinea> {
+    const sb = await cliente(cfg);
+    const { data, error } = await sb.rpc('entrar_cuenta', { nombre: normalizarUsuario(usuario), contrasena });
+    if (error && (faltaFuncion(error) || /cuenta no existe/i.test(error.message))) throw new SinCuentaTodavia();
+    if (error) throw new Error(mensaje(error, 'No se pudo iniciar sesión.'));
+    const fila = (data as { pareja: string; papel: string; codigo_casa: string }[] | null)?.[0];
+    if (!fila) throw new Error('Contraseña equivocada.');
+    const rol: Rol = fila.papel === 'ella' ? 'ella' : 'el';
+    const s = new SincroLinea(sb, { parejaId: fila.pareja, codigo: fila.codigo_casa, rol });
+    await s.iniciar(false);
+    return s;
+  }
+
+  /** Quién de la casa ya tiene cuenta y con qué usuario (null si el servidor todavía no tiene cuentas). */
+  async cuentas(): Promise<Partial<Record<Rol, string>> | null> {
+    const { data, error } = await this.sb.rpc('cuentas_de', { p: this.id });
+    if (error) {
+      if (faltaFuncion(error)) return null;
+      throw new Error(mensaje(error, 'No se pudo ver la cuenta.'));
+    }
+    const r: Partial<Record<Rol, string>> = {};
+    for (const f of (data as { papel: string; usuario: string }[] | null) ?? []) if (f.papel === 'el' || f.papel === 'ella') r[f.papel] = f.usuario;
+    return r;
+  }
+
+  async crearCuenta(usuario: string, contrasena: string) {
+    const { error } = await this.sb.rpc('crear_cuenta', { p: this.id, mi_rol: this.rol, nombre: normalizarUsuario(usuario), contrasena });
+    if (error) throw new Error(faltaFuncion(error) ? SIN_CUENTAS : mensaje(error, 'No se pudo crear la cuenta.'));
+  }
+
+  async cambiarContrasena(nueva: string) {
+    const { error } = await this.sb.rpc('cambiar_contrasena', { p: this.id, mi_rol: this.rol, nueva });
+    if (error) throw new Error(faltaFuncion(error) ? SIN_CUENTAS : mensaje(error, 'No se pudo cambiar la contraseña.'));
+  }
+
+  /** Cierra la sesión de este aparato (la casa y la cuenta siguen; se vuelve a entrar con usuario y contraseña). */
+  async salirDelAparato() {
+    const { error } = await this.sb.rpc('salir_de_casa', { p: this.id });
+    if (error && !faltaFuncion(error)) throw new Error(mensaje(error, 'No se pudo cerrar la sesión.'));
+    this.cerrar();
+    // Una sesión nueva la próxima vez: este aparato ya no queda con permiso a nada de la casa
+    await this.sb.auth.signOut().catch(() => undefined);
   }
 
   private get id() {

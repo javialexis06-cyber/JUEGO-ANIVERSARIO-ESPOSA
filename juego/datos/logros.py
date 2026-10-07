@@ -1,6 +1,6 @@
 """Logros y coleccionables de Súper Manía en Pareja.
 
-Salidas: juego/datos/logros.json (para el juego) y docs/logros.md (para leer).
+Salidas: juego/datos/logros.json (para el juego) y docs/sistemas/logros.md (para leer).
 Uso: python3 logros.py
 """
 import json
@@ -124,6 +124,6 @@ if __name__ == '__main__':
     data = generar()
     with open(os.path.join(AQUI, 'logros.json'), 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
-    escribir_md(data, os.path.join(RAIZ, 'docs', 'logros.md'))
+    escribir_md(data, os.path.join(RAIZ, 'docs', 'sistemas', 'logros.md'))
     n_rangos = sum(len(g['rangos']) for g in data['logros'])
     print(len(data['logros']), 'logros ·', n_rangos, 'medallas ·', sum(c['total'] for c in data['coleccionables']), 'coleccionables')

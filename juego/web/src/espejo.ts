@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { VELOCIDAD_EL } from './balance';
 import { Cliente } from './cliente';
 import type { Evento, Juego, Stats } from './juego';
-import type { Jugador, NuevaTarea, Rol, Tarea } from './jugador';
+import type { Jugador, NuevaTarea, Tarea } from './jugador';
 import { aTres, dePantalla } from './mundo';
 import type { P } from './navegacion';
 import { Personaje } from './personaje';
@@ -135,8 +135,9 @@ export class Espejo {
   sinFoto = 0;
   private cerrado = false;
 
-  constructor(private j: Juego, rolYo: Rol) {
-    this.yo = j.jugadores.find((p) => p.rol === rolYo) ?? j.jugadores[1] ?? j.jugadores[0];
+  /** `yoId`: el id del personaje de este celular («el»/«ella» entre la pareja, «j1»… en una sala). */
+  constructor(private j: Juego, yoId: string) {
+    this.yo = j.jugadores.find((p) => p.id === yoId) ?? j.jugadores[1] ?? j.jugadores[0];
   }
 
   aplicar(f: Foto) {
