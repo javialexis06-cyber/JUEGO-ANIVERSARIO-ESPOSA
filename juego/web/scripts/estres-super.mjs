@@ -30,6 +30,9 @@ async function pagina(partida, extra = '') {
   p.on('console', (m) => m.type() === 'error' && !m.text().startsWith('Failed to load resource') && p.errores.push(m.text()));
   if (partida !== undefined) await p.addInitScript((v) => localStorage.setItem('supermania-jugable1', v), partida);
   await p.goto(`${url}?bot${extra}`, { waitUntil: 'domcontentloaded', timeout: 180000 });
+  // (una partida que ya pasó el día 25 abre primero la tarjeta de «¡El local creció!»)
+  await p.waitForFunction(() => !document.querySelector('#menu').hidden || !document.querySelector('#carta').hidden, null, { timeout: 180000 });
+  if (await p.$eval('#carta', (e) => !e.hidden)) await p.click('#btn-carta');
   await p.waitForSelector('#menu:not([hidden])', { timeout: 180000 });
   return p;
 }
