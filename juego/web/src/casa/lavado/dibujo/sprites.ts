@@ -53,9 +53,11 @@ const FRAG = /* glsl */ `
     c += vExtra.y * t.a;
     float a = t.a * vCol.a;
     if (a < 0.015) discard;
-    if (uAditivo > 0.5) gl_FragColor = vec4(c * a, a);
-    else gl_FragColor = vec4(c, a);
+    gl_FragColor = vec4(c, a);
     #include <colorspace_fragment>
+    // Lo que suma luz se multiplica por su transparencia DESPUÉS de pasar al color de la pantalla: antes se hacía al
+    // revés y la conversión inflaba lo tenue (un 3 % quedaba como un 19 %), así que lo casi transparente salía blanco
+    if (uAditivo > 0.5) gl_FragColor.rgb *= gl_FragColor.a;
   }
 `;
 

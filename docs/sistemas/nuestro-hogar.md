@@ -395,8 +395,14 @@ demora, se le escoge lo que escogería el bot, y los demás ven quién está esc
   **cartas mágicas** (mismos efectos, nombres y frases sin recuerdos), los disfraces con apodos o recuerdos cambian de
   nombre (Osito en pijama, Perrito peludo, Pulguita saltarina, Guerrera del escudo, Diva del perfume…), sin «¡Levántate,
   mi amor!» ni corazones, y los logros nombran lo neutro. Los amigos se ven con su cuerpo y sus colores.
-- La ducha (Chorro de la ducha y Diluvio) es mucho más transparente: una franja clarita y hilos de agua con brillitos
-  que no tapan a nadie.
+- La ducha (Chorro de la ducha y Diluvio) es casi invisible: una franja apenas insinuada y hilos muy tenues. Ojo con
+  los efectos que suman luz (`LoteSprites` aditivo, `dibujo/sprites.ts`): la transparencia se aplica *después* de pasar
+  al color de la pantalla; al revés, la conversión inflaba lo tenue y lo casi transparente salía blanco (por eso la
+  ducha se veía como bloques blancos aunque se le bajara el alfa).
+- Gotitas de experiencia: tope de 320 en el piso. Pasado el tope, la gotita que quedó más lejos de todos (la de atrás,
+  por donde se huyó) se suma a la gota roja grande y su puesto queda para la nueva, así cerca del personaje siempre
+  siguen saliendo (antes todo se iba a la roja, que se quedaba lejos, y no salía nada hasta la aspiradora).
+- Las botellitas de agua vuelan de su tamaño (el charco que van a dejar viaja aparte en el proyectil).
 - Pruebas: `node scripts/probar-lavado-salas.mjs <url>` (Javier, Laura y dos amigos en cuatro celulares con un
   Supabase de mentiras: sala, caminar, cartas, escoger solo, carta mágica, cortes corto y largo, caída y levantada,
   final, volver a la sala, el anfitrión que se va, y que nadie vea nada personal) y `node scripts/probar-amigos.mjs`.

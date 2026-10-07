@@ -399,7 +399,7 @@ export class Dibujo {
         break;
       }
       case 'columna': {
-        for (let q = 0; q < 10; q++) P.crear('gota', CAPA_NORMAL, e.x + (az() - 0.5) * e.c, e.y + (az() - 0.5) * e.d * 0.8, 6, (az() - 0.5) * 80, 0, 80 + az() * 80, 0.45, 7, 4, 0.65, 0.88, 1, 1, 400);
+        for (let q = 0; q < 4; q++) P.crear('gota', CAPA_NORMAL, e.x + (az() - 0.5) * e.c, e.y + (az() - 0.5) * e.d * 0.8, 6, (az() - 0.5) * 80, 0, 80 + az() * 80, 0.45, 5, 3, 0.65, 0.88, 1, 0.45, 400);
         break;
       }
       case 'gema': {
@@ -641,20 +641,20 @@ export class Dibujo {
         if (Math.random() < 0.2 * this.part.cupo) this.part.crear('burbuja', CAPA_NORMAL, z.x + (Math.random() - 0.5) * z.r * 1.4, z.y + (Math.random() - 0.5) * z.r, 2, 0, 0, 25, 0.8, 4, 10, 1, 1, 1, 0.9);
         if (dorada && Math.random() < 0.3) this.part.crear('gota', CAPA_NORMAL, z.x + (Math.random() - 0.5) * z.r * 1.6, z.y + (Math.random() - 0.5) * z.r, 4, 0, 0, 80, 0.5, 7, 4, 0.5, 0.8, 1, 1, 300);
       } else {
-        // La ducha: una franja de agua clarita en el piso, hilos de agua transparentes que caen (con brillitos) y
-        // salpicadas; translúcida para que no tape a los mugrosos ni al personaje
+        // La ducha: casi invisible (Javier: que no estorbe al jugar): una franja de agua apenas insinuada en el piso,
+        // hilos que caen muy tenues y unas poquitas gotas; se nota que está, pero no tapa a los mugrosos ni al personaje
         const diluvio = z.arma === 'diluvio';
         const c = this.fx.c.chorro;
         const br = this.fx.c.brillo;
-        this.pisoFx.poner(z.x, z.y, 0.09, z.w, z.h, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 0.82, 0.95, 1, 0.2 * vida);
+        this.pisoFx.poner(z.x, z.y, 0.09, z.w, z.h, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 0.82, 0.95, 1, 0.07 * vida);
         const paso = 92;
         const y0 = Math.floor((this.cy - this.vistaH / 2) / paso) * paso;
         for (let y = y0; y < this.cy + this.vistaH / 2 + paso; y += paso) {
           const ox = Math.sin(y * 0.13 + t * 3) * z.w * 0.15;
-          this.fxLuz.poner(z.x + ox, y, 0, z.w * 0.4, 130, 0.5, 1, c.u0, c.v0, c.u1, c.v1, 0.55, 0.75, 0.9, 0.16 * vida);
-          this.fxLuz.poner(z.x + ox * 0.6, y - ((t * 340 + y) % paso), 40, 5, 26, 0.5, 0.5, br.u0, br.v0, br.u1, br.v1, 0.85, 0.95, 1, 0.35 * vida);
-          if (Math.random() < 0.12 * this.part.cupo) {
-            this.part.crear('gota', CAPA_NORMAL, z.x + (Math.random() - 0.5) * z.w, y, 4, (Math.random() - 0.5) * 70, 0, 70, 0.4, 6, 3, 0.7, 0.9, 1, 1, 380);
+          this.fxLuz.poner(z.x + ox, y, 0, z.w * 0.4, 130, 0.5, 1, c.u0, c.v0, c.u1, c.v1, 0.55, 0.75, 0.9, 0.045 * vida);
+          this.fxLuz.poner(z.x + ox * 0.6, y - ((t * 340 + y) % paso), 40, 4, 22, 0.5, 0.5, br.u0, br.v0, br.u1, br.v1, 0.85, 0.95, 1, 0.12 * vida);
+          if (Math.random() < 0.035 * this.part.cupo) {
+            this.part.crear('gota', CAPA_NORMAL, z.x + (Math.random() - 0.5) * z.w, y, 4, (Math.random() - 0.5) * 70, 0, 70, 0.4, 5, 2, 0.7, 0.9, 1, 0.45, 380);
           }
         }
         if (diluvio && Math.random() < 0.3) this.part.crear('onda', CAPA_PISO, z.x + (Math.random() - 0.5) * z.w, z.y + (Math.random() - 0.5) * z.h * 0.6, 0, 0, 0, 0, 0.6, 6, 40, 1, 1, 1, 0.8);
@@ -823,7 +823,8 @@ export class Dibujo {
       if (sprite) {
         const c = this.cuadrosObj.get(sprite);
         if (!c) continue;
-        const tam = Math.max(22, p.r * 2.8) * mini;
+        // (la botellita que vuela trae en `r` el tamaño del charco que va a dejar: ella misma es chiquita)
+        const tam = (p.comp === 6 ? 24 : Math.max(22, p.r * 2.8)) * mini;
         let giro = 0, alto = 10;
         if (p.comp === 0) giro = -Math.atan2(p.vy, p.vx);
         else if (p.comp === 5) {

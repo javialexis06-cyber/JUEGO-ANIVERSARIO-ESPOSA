@@ -1657,23 +1657,15 @@ export class Motor {
   // ------------------------------------------------------------------------------------------------- Gotitas y cosas del piso
   gema(x: number, y: number, xp: number) {
     if (this.nGemas >= MAX_GEMAS) {
-      // Demasiadas: todo va a la gema roja grande
-      const g = this.gemaGrande >= 0 ? this.gemas[this.gemaGrande] : null;
-      if (g && g.vivo && g.tipo === 3) {
-        g.xp += xp;
-        return;
-      }
-      const libre = this.gemas[MAX_GEMAS];
-      libre.vivo = true;
-      libre.x = x;
-      libre.y = y;
-      libre.xp = xp;
-      libre.tipo = 3;
-      libre.jalada = -1;
-      libre.v = 0;
-      libre.t = 0;
-      this.gemaGrande = MAX_GEMAS;
-      return;
+      // Demasiadas: la que quedó más lejos de todos (atrás, por donde se huyó) se va a la gema roja grande y su
+      // puesto queda para esta. Así cerca del personaje siempre siguen saliendo gotitas (antes todo se iba a la roja,
+      // que se quedaba donde se llenó, y lejos ya no salía nada hasta la aspiradora).
+      const i = this.gemaMasLejos();
+      if (i < 0) return this.aGemaGrande(x, y, xp);
+      const vieja = this.gemas[i];
+      vieja.vivo = false;
+      this.nGemas--;
+      this.aGemaGrande(vieja.x, vieja.y, vieja.xp);
     }
     for (let i = 0; i < MAX_GEMAS; i++) {
       const g = this.gemas[i];
@@ -1689,6 +1681,38 @@ export class Motor {
       this.nGemas++;
       return;
     }
+  }
+
+  /** La gotita (que nadie está jalando) más lejos de todos los jugadores. */
+  private gemaMasLejos() {
+    let mejor = -1, lejos = -1;
+    for (let i = 0; i < MAX_GEMAS; i++) {
+      const g = this.gemas[i];
+      if (!g.vivo || g.jalada >= 0) continue;
+      let d = Infinity;
+      for (const j of this.jug) if (j.activo) d = Math.min(d, (j.x - g.x) ** 2 + (j.y - g.y) ** 2);
+      if (d > lejos) (lejos = d), (mejor = i);
+    }
+    return mejor;
+  }
+
+  /** Suma a la gema roja grande (si no hay, aparece donde estaba lo que se juntó). */
+  private aGemaGrande(x: number, y: number, xp: number) {
+    const g = this.gemaGrande >= 0 ? this.gemas[this.gemaGrande] : null;
+    if (g && g.vivo && g.tipo === 3) {
+      g.xp += xp;
+      return;
+    }
+    const libre = this.gemas[MAX_GEMAS];
+    libre.vivo = true;
+    libre.x = x;
+    libre.y = y;
+    libre.xp = xp;
+    libre.tipo = 3;
+    libre.jalada = -1;
+    libre.v = 0;
+    libre.t = 0;
+    this.gemaGrande = MAX_GEMAS;
   }
 
   sumarOro(n: number, j: Jugador | null) {
