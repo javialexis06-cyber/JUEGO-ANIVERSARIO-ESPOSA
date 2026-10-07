@@ -96,6 +96,8 @@ export class CanalPuertas {
   private avisarCasa: ((datos: Record<string, unknown>) => Promise<void>) | null = null;
   private respuestas = new Map<string, (si: boolean) => void>();
   private pendientes = new Map<string, InvPuertas>();
+  /** Invitaciones ya contestadas: si el otro la repite (no le llegó la respuesta), se le contesta otra vez. */
+  private contestadas = new Map<string, boolean>();
   /** El enlace de la partida en curso. */
   enlace: Enlace | null = null;
 
@@ -151,6 +153,8 @@ export class CanalPuertas {
   private llega(m: Mensaje) {
     if (m.t === 'inv') {
       if (m.inv.de === this.yo) return;
+      const si = this.contestadas.get(m.inv.id);
+      if (si !== undefined) return this.mandar({ t: 'resp', id: m.inv.id, si });
       this.pendientes.set(m.inv.id, m.inv);
       this.avisos.alInvitacion(m.inv);
     } else if (m.t === 'resp') this.respuestas.get(m.id)?.(m.si);
@@ -185,6 +189,7 @@ export class CanalPuertas {
 
   responder(inv: InvPuertas, si: boolean) {
     this.pendientes.delete(inv.id);
+    this.contestadas.set(inv.id, si);
     this.mandar({ t: 'resp', id: inv.id, si });
   }
 

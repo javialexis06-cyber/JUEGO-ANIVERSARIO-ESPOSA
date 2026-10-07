@@ -96,6 +96,8 @@ for (const semilla of semillas) {
         for (const f of rev2.fuera) anotar(r, `revuelto, fuera del cuarto: ${f}`);
         if (FOTOS) await pagina.screenshot({ path: `${carpeta}/p${String(n).padStart(3, '0')}-s${semilla}-revuelto.png` });
       }
+      // (una puerta que se abre sin que nadie haga nada es un acertijo roto)
+      if (await pagina.evaluate(() => !!window.__puertas.estado().abierta)) anotar(r, 'se abrió sola, sin que nadie hiciera nada');
       const res = await pagina.evaluate(
         (ms) => Promise.race([window.__puertas.probar().then(() => 'ok', (e) => `error: ${e?.message ?? e}`), new Promise((r) => setTimeout(() => r('se trabó (no terminó a tiempo)'), ms))]),
         ESPERA_PRUEBA,

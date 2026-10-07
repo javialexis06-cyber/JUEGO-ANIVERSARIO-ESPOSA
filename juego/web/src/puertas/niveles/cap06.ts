@@ -370,11 +370,18 @@ const equilibrio: Nivel = {
     en(barra, cx0 - 0.5, y0 + 0.45, z0);
     c.g.add(barra, en(caja(1.04, 0.08, 0.02, mat('#3d2b27'), 0.02), cx0, y0 + 0.45, z0 - 0.01));
     let x = 0, v = 0, lleno = 0, hecho = false, dedoX: number | null = null;
+    // Cuándo se movió el celular (o el dedo) por última vez: la barra solo se llena si alguien está equilibrando
+    let metaAntes = 0, movido = -99;
     c.cada((dt, t) => {
       if (hecho) return;
       const sin = c.sensores.hayMovimiento;
       const meta = dedoX !== null ? dedoX : sin ? THREE.MathUtils.clamp(c.sensores.inclinacion.x * 0.6, -0.35, 0.35) : 0;
-      tabla.rotation.z += (-meta - tabla.rotation.z) * Math.min(1, dt * 6);
+      // La tabla es inestable de verdad: se ladea sola despacito, así que sin nadie que la corrija la pelota se va (antes
+      // con la tabla quieta la pelota se quedaba en el centro y la puerta se abría sola)
+      const ladeo = Math.sin(t * 0.37 + 0.6) * 0.14 + Math.sin(t * 0.83) * 0.07;
+      if (Math.abs(meta - metaAntes) > 0.0015) movido = t;
+      metaAntes = meta;
+      tabla.rotation.z += (ladeo - meta - tabla.rotation.z) * Math.min(1, dt * 6);
       const viento = Math.sin(t * 0.7) * 0.25 + Math.sin(t * 1.9) * 0.12;
       // (pasitos de 8 ms como mucho: si un cuadro se demora, la pelota no salta de golpe)
       const pasos = Math.max(4, Math.ceil(dt / 0.008));
@@ -389,10 +396,12 @@ const equilibrio: Nivel = {
         c.mal();
         x = 0;
         v = 0;
-        lleno = Math.max(0, lleno - 1);
+        lleno = Math.max(0, lleno - 1.5);
       }
       bola.position.set(cx0 + Math.cos(tabla.rotation.z) * x, y0 + 0.095 + Math.sin(tabla.rotation.z) * x, z0);
-      if (Math.abs(x) < 0.25) lleno += dt;
+      if (Math.abs(x) < 0.25) {
+        if (t - movido < 1.5) lleno += dt;
+      } else lleno = Math.max(0, lleno - dt * 0.8);
       barra.scale.x = 1 + (lleno / 4) * 50;
       barra.position.x = cx0 - 0.5 + ((lleno / 4) * 1.0) / 2;
       bola.userData.x = x;

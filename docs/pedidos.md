@@ -28,6 +28,10 @@ pulido el repositorio».
      situaciones distintas. Si se acaban las ideas, pedirle a Javier más historias (él ofreció contar más).
 3. **Repositorio pulido** en GitHub: sin cosas obsoletas, README y CLAUDE.md al día (se hizo una primera limpieza; se
    sigue cuidando en cada cambio).
+4. **Cien Puertas con mucho más amor y diseño** (para lo último, después de Sangre y Ceniza y lo urgente). Javier:
+   «las puertas están muy simples, ya sabes cómo me gustan las cosas». Ya funcionan todas (revisión completa y prueba
+   en pareja en verde, `docs/sistemas/cien-puertas.md`); falta subirles el detalle: cuartos llenos, objetos con más
+   piezas, materiales y adornos, nada vacío y nada que tape lo importante.
 
 ## Sótano de la casa nueva (zona con varios juegos)
 

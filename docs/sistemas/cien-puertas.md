@@ -359,13 +359,19 @@ eso no cuenta como tapado. Con `DEPURAR=1` imprime dónde quedó cada cosa del r
 
 ### Arreglos de la revisión (octubre de 2026)
 
-Pasada completa con `--semillas=0,1,2 --revolver` (300 puertas): de 46 fallas a 0. Lo que salió y cómo quedó:
+Pasada completa con `--semillas=0,1,2 --revolver` (300 puertas): de 46 fallas a 0 (y la prueba en pareja,
+`probar-puertas-linea.mjs`, toda bien). Lo que salió y cómo quedó:
 
 - **Puerta 44 (el cangrejo)**: lo rápido que se frota se mide con el reloj de verdad (lo rápido es del dedo, no de la
   escena). **Puerta 97 (la caja musical)**: el ritmo de los círculos también va con el reloj de verdad y se mide en una
   ventanita de 0,4 s: si el celular se atasca un momento y los toques llegan juntos, ya no cuenta como «muy rápido» y
   la cuerda no se devuelve. **Puerta 56 (el equilibrio)**: la pelota avanza en pasitos de 8 ms como mucho, así un
-  cuadro lento no la hace saltar de golpe (el roce es el mismo por segundo).
+  cuadro lento no la hace saltar de golpe (el roce es el mismo por segundo). Además se abría sola si nadie tocaba
+  nada (la pelota se quedaba quieta en el centro): ahora la tabla se mece sola un poquito y la barrita solo se llena
+  mientras uno la está equilibrando; al caerse se pierde más.
+- **Puerta 8 (la cajita fuerte)**: era un bloque macizo y la llave aparecía *adentro* del bloque: no se veía y, en
+  pareja, el toque se quedaba en la caja. Ahora la cajita es hueca, con forro oscuro, bisagras y un cojincito rojo
+  donde está la llave.
 - **El desorden** que tapaba la puerta o los papelitos después de revolverlo todo (puertas 4, 19, 21, 24, 29, 44, 71,
   74, 79, 86, 91, 96, 97 y 99): ver «Nunca tapan» y «Los papelitos se asoman» arriba.
 - **Los avisos de abajo** salían en una columnita de una palabra por línea: el `.aviso` de la casa (las burbujitas de
@@ -384,6 +390,8 @@ los dos la resuelven al tiempo, cada uno en su celular (`src/puertas/pareja*.ts`
 - **Cómo viaja**: canal de Supabase Realtime de la pareja (`puertas-<pareja>`, broadcast + presencia, la misma sesión
   de la casa). Quien invita es el **anfitrión**: aplica las reglas del acertijo; el **invitado** arma la misma puerta
   (mismo montaje y el mismo reguero, que le llega del anfitrión porque las pantallas no miden igual) y la ve en espejo.
+- **La invitación** se repite cada 4 s hasta que llega la respuesta; si el «¡Vamos!» se pierde en el camino, el
+  invitado lo vuelve a contestar cuando le llega la invitación repetida (antes Él se quedaba esperando).
 - **Paquetes** cada 125 ms (si hay algo que decir) y un latido cada segundo. Los movimientos van numerados y se repiten
   en cada paquete hasta que el otro confirma (un mensaje perdido no daña nada); lo que solo vale en su última versión
   (la foto del cuarto, el candado abierto, las texturas pintadas) se repite hasta que el otro dice qué versión tiene.

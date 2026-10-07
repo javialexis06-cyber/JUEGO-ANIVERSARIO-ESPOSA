@@ -699,8 +699,19 @@ const oscuridad: Nivel = {
     // Cajita fuerte con candado de tres ruedas
     const m = mesa(0.8, 0.5, 0.7, '#c49468', 'mesita');
     en(m, 2.2, 0, 0.6);
+    // Hueca: al abrirla se ve la llave adentro, sobre un cojincito (y el toque le llega por la boca)
     const caja3 = grupo('cajita fuerte');
-    caja3.add(caja(0.5, 0.4, 0.4, mat('#6b7680', { metal: 0.5, rough: 0.45 }), 0.04));
+    const acero = mat('#6b7680', { metal: 0.5, rough: 0.45 });
+    const W = 0.5, H = 0.4, D = 0.4, E = 0.04;
+    caja3.add(en(caja(W, H, E, acero, 0.015), 0, 0, -D / 2 + E / 2));
+    for (const s of [-1, 1]) {
+      caja3.add(en(caja(W, E, D, acero, 0.015), 0, s * (H / 2 - E / 2), 0));
+      caja3.add(en(caja(E, H, D, acero, 0.015), s * (W / 2 - E / 2), 0, 0));
+    }
+    caja3.add(en(caja(W - 2 * E, H - 2 * E, 0.006, mat('#2b2f36', { rough: 0.9 }), 0), 0, 0, -D / 2 + E + 0.004));
+    caja3.add(en(caja(0.32, 0.035, 0.24, mat('#b3263a', { rough: 0.85 }), 0.015), 0, -H / 2 + E + 0.018, 0.02));
+    // Bisagras
+    for (const y of [-0.11, 0.11]) caja3.add(en(cilindro(0.014, 0.014, 0.07, mat('#d9b25a', { metal: 0.7, rough: 0.3 })), -W / 2 + 0.02, y, D / 2 + 0.012));
     const puertita = grupo('puertita');
     puertita.add(en(caja(0.42, 0.32, 0.03, mat('#8a949e', { metal: 0.5, rough: 0.4 }), 0.02), 0.21, 0, 0));
     puertita.add(en(cilindro(0.05, 0.05, 0.03, mat('#d9b25a', { metal: 0.7, rough: 0.3 })), 0.3, 0, 0.03));
@@ -710,7 +721,7 @@ const oscuridad: Nivel = {
     en(caja3, 2.2, 0.9, 0.6);
     c.g.add(m, caja3);
     const k = llave('llave', '#f2c75c', true);
-    en(k, 2.2, 0.73, 0.62);
+    en(k, 2.2, 0.79, 0.62);
     k.visible = false;
     c.g.add(k);
     let abierta = false;

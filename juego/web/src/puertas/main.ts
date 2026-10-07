@@ -1158,9 +1158,11 @@ const probador = () => new ProbadorReal(() => escena.escena, escena, entrada, pa
     const n = jugando;
     const nivel = NIVELES[n] ?? pendiente(n);
     await new Promise<void>((r) => {
-      const esperar = () => (!entrada.bloqueada ? r() : setTimeout(esperar, 50));
+      const esperar = () => (!entrada.bloqueada || puerta?.abierta ? r() : setTimeout(esperar, 50));
       esperar();
     });
+    // (si ya se abrió, no hay nada que resolver)
+    if (puerta?.abierta) return;
     await nivel.prueba(probador());
   },
   sensores: () => sensores.simular,
@@ -1235,7 +1237,12 @@ const probador = () => new ProbadorReal(() => escena.escena, escena, entrada, pa
   },
   luz: () => escena.nivelLuz,
   tiempo: () => escena.t,
-  giro: (nombre: string) => probador().obj(nombre).rotation.y,
+  /** Giro alrededor del eje vertical (sale del cuaternión: en el espejo de la pareja los ángulos pueden venir de otra forma). */
+  giro: (nombre: string) => {
+    const q = probador().obj(nombre).quaternion;
+    const a = 2 * Math.atan2(q.y, q.w);
+    return a > Math.PI ? a - 2 * Math.PI : a < -Math.PI ? a + 2 * Math.PI : a;
+  },
   /** Cuántas cosas hay regadas y cuántas se rompieron (pruebas). */
   desorden: () => ({
     cosas: ctx?._desorden?.cuerpos.length ?? 0,
