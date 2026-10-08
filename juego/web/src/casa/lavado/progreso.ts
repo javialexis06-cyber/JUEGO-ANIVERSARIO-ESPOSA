@@ -6,6 +6,7 @@ import { ARMAS, PASIVAS } from './armas';
 import { CARTAS } from './cartas';
 import { DISFRACES } from './disfraces';
 import { ENEMIGOS } from './enemigos';
+import { nivelMaestria, PREMIOS_MAESTRIA, puntosDePartida, type SubidaMaestria } from './maestria';
 import { PODER } from './tienda';
 import { cartaGuardada, disfrazGuardado } from './textos';
 import type { IdArma, IdCarta, IdEnemigo, IdEscenario, IdPasiva, Rol, Stat } from './tipos';
@@ -46,13 +47,15 @@ export interface ProgresoLavado {
   manual: boolean;
   /** Ya vio (o se saltó) el tutorial de la primera vez. */
   tutorial: boolean;
+  /** Puntos de maestría de cada disfraz (ver maestria.ts). */
+  maestria: Record<string, number>;
 }
 
 export function progresoNuevo(rol: Rol): ProgresoLavado {
   return {
     oro: 0, gastado: 0, poderes: {}, comprados: [], disfraz: rol === 'el' ? 'el_panda' : 'ella_pulga', logros: [], armas: [], pasivas: [],
     bestiario: {}, mejor: {}, ganados: [], mejorNivel: 0, mejorBajas: 0, partidas: 0, eliminados: 0, velitas: 0, cofres: 0, arepas: 0,
-    oroTotal: 0, segundos: 0, apurado: false, escenario: 'cara', carta: '', manual: false, tutorial: false,
+    oroTotal: 0, segundos: 0, apurado: false, escenario: 'cara', carta: '', manual: false, tutorial: false, maestria: {},
   };
 }
 
@@ -81,6 +84,12 @@ export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
   if (esObjeto(x.mejor)) for (const k of ESCENARIOS) if (typeof x.mejor[k] === 'number') mejor[k] = entero(x.mejor[k], 24 * 3600);
   const disfraces = DISFRACES.filter((d) => d.rol === rol).map((d) => d.id);
   const disfraz = disfrazGuardado(x.disfraz);
+  const maestria: Record<string, number> = {};
+  if (esObjeto(x.maestria)) for (const [k, v] of Object.entries(x.maestria)) {
+    const id = disfrazGuardado(k);
+    const n = entero(v, 1e6);
+    if (typeof id === 'string' && disfraces.includes(id) && n) maestria[id] = Math.max(maestria[id] ?? 0, n);
+  }
   return {
     oro: entero(x.oro),
     gastado: entero(x.gastado),
@@ -108,6 +117,7 @@ export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
     manual: !!x.manual,
     // (quien ya jugó antes no necesita el tutorial a la fuerza: lo puede ver desde el menú)
     tutorial: !!x.tutorial || entero(x.partidas) > 0,
+    maestria,
   };
 }
 
@@ -225,6 +235,22 @@ export function sumarPartida(p: ProgresoLavado, r: ResumenPartida): string[] {
   }
   return nuevos;
 }
+
+/** Suma los puntos de maestría del disfraz con que se jugó y paga las gotas de los niveles nuevos. */
+export function sumarMaestria(p: ProgresoLavado, r: ResumenPartida): SubidaMaestria {
+  const puntos = puntosDePartida(r);
+  const total0 = p.maestria[r.disfraz] ?? 0;
+  const antes = nivelMaestria(total0);
+  const total = total0 + puntos;
+  if (puntos) p.maestria[r.disfraz] = total;
+  const despues = nivelMaestria(total);
+  const premios = PREMIOS_MAESTRIA.filter((x) => x.nivel > antes && x.nivel <= despues);
+  for (const x of premios) if (x.oro) p.oro += x.oro;
+  return { disfraz: r.disfraz, puntos, antes, despues, total, premios };
+}
+
+/** Nivel de maestría de un disfraz. */
+export const maestriaDe = (p: ProgresoLavado, disfraz: string) => nivelMaestria(p.maestria[disfraz] ?? 0);
 
 /** Récord para el trofeo: los minutos que más ha aguantado en una partida (cualquier escenario). */
 export const minutosRecord = (p: ProgresoLavado | undefined) => (p ? Math.floor(Math.max(0, ...Object.values(p.mejor).map((v) => v ?? 0)) / 60) : 0);

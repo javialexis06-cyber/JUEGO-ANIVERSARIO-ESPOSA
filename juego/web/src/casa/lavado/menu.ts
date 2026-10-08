@@ -8,8 +8,9 @@ import { ENEMIGOS, ID_ENEMIGOS } from './enemigos';
 import { ESCENARIOS, ID_ESCENARIOS } from './escenarios';
 import { icono, iconoBicho } from './iconos';
 import { MINUTO_EVOLUCION, RECETAS } from './evoluciones';
+import { barraMaestria, marcoDe, MAESTRIA_MAX, PREMIOS_MAESTRIA, tituloMaestria } from './maestria';
 import {
-  CARTA_LOGRO, ESCENARIO_LOGRO, LOGRO, LOGROS, apuradoAbierto, cartasDe, disfrazAbierto, escenarioAbierto, type ProgresoLavado,
+  CARTA_LOGRO, ESCENARIO_LOGRO, LOGRO, LOGROS, apuradoAbierto, cartasDe, disfrazAbierto, escenarioAbierto, maestriaDe, type ProgresoLavado,
 } from './progreso';
 import { sfx } from './sonidos';
 import { PODER, PODERES, precioPoder } from './tienda';
@@ -21,9 +22,10 @@ export type AccionMenu = 'jugar' | 'pareja' | 'amigos' | 'codigo' | 'tutorial' |
 const miles = (n: number) => Math.round(n).toLocaleString('es-CO');
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
-export function retrato(d: DefDisfraz, clase = 'lv-retrato') {
+export function retrato(d: DefDisfraz, clase = 'lv-retrato', nivelMaestria = 0) {
   d = disfrazVisto(d);
-  return `<img class="${clase}" src="./lavado/disfraces/${d.id}.webp" alt="" loading="lazy">`;
+  const marco = marcoDe(nivelMaestria);
+  return `<img class="${clase}${marco ? ` lv-marco-${marco}` : ''}" src="./lavado/disfraces/${d.id}.webp" alt="" loading="lazy">`;
 }
 
 export interface OpcionesMenu {
@@ -119,7 +121,9 @@ export class Menu {
       <div class="lv-titulo">
         <h1>Lavarse<br>la cara</h1>
         <p>Adentro de tu propia carita. ¡Que no quede ni un mugroso!</p>
-        <button class="lv-elegido" data-m="disfraces">${retrato(d)}<span><b>${d.nombre}</b><small>${d.especial}</small></span></button>
+        <button class="lv-elegido" data-m="disfraces">${retrato(d, 'lv-retrato', maestriaDe(this.p, d.id))}<span><b>${d.nombre}</b><small>${d.especial}</small>${
+          this.p.maestria[d.id] ? `<em class="lv-maestria-chip">⭐ Maestría ${maestriaDe(this.p, d.id)}/${MAESTRIA_MAX}</em>` : ''
+        }</span></button>
         <div class="lv-chips">
           <button class="lv-chip" data-m="escenarios">🗺️ ${esc.nombre}${this.p.apurado ? ' · ¡Apurado!' : ''}</button>
           <button class="lv-chip" data-m="cartas">${FRASES.iconoCarta()} ${carta ? carta.nombre : FRASES.sinCarta()}</button>
@@ -207,7 +211,10 @@ export class Menu {
       .map(disfrazVisto)
       .map((d) => {
         const abierto = disfrazAbierto(this.p, d.id);
-        return `<button class="lv-item ${this.sel === d.id ? 'sel' : ''} ${abierto ? '' : 'bloq'}" data-sel="${d.id}">${retrato(d)}<span>${d.nombre}</span></button>`;
+        const nm = maestriaDe(this.p, d.id);
+        return `<button class="lv-item ${this.sel === d.id ? 'sel' : ''} ${abierto ? '' : 'bloq'}" data-sel="${d.id}">${retrato(d, 'lv-retrato', nm)}<span>${d.nombre}</span>${
+          nm ? `<span class="lv-estrellas-m" title="Maestría ${nm}">${'★'.repeat(Math.ceil(nm / 2))}</span>` : ''
+        }</button>`;
       })
       .join('');
     const d = disfrazVisto(DISFRAZ[this.sel] ?? this.disfraz);
@@ -219,12 +226,33 @@ export class Menu {
         : `<button class="lv-boton rosa" data-v="ponerse">¡Ponérmelo!</button>`
       : `<button class="lv-boton oro" data-v="comprar" ${this.p.oro >= d.precio ? '' : 'disabled'}>Comprar por ${miles(d.precio)} ${icono('moneda', 16)}</button>`;
     return `<div class="cuerpo"><div class="lv-lista">${lista}</div>
-      <div class="lv-detalle"><div class="gran">${retrato(d, '')}<div><h3>${d.nombre}</h3><p>Como ${d.original} en el original</p></div></div>
+      <div class="lv-detalle"><div class="gran">${retrato(d, '', maestriaDe(this.p, d.id))}<div><h3>${d.nombre}</h3><p>Como ${d.original} en el original</p></div></div>
         <p>${d.desc}</p>
         <p class="esp">${icono(d.arma, 22)} ${d.especial}</p>
         <p class="lv-apunta">${puedeApuntar(d.id) ? '🎯 Se puede manejar a mano (segundo dedo o mouse)' : '🌀 Disfraz de área: sus armas pegan solitas alrededor'}</p>
         ${!abierto && logro ? `<p>🔒 Se gana con el logro <b>«${logro.nombre}»</b>: ${logro.desc}. O cómpralo ya.</p>` : ''}
-        ${boton}</div></div>`;
+        ${boton}
+        ${this.htmlMaestria(d)}</div></div>`;
+  }
+
+  /** La maestría del disfraz: nivel, barrita y los diez premios (los ganados en verde, el siguiente resaltado). */
+  private htmlMaestria(d: DefDisfraz) {
+    const puntos = this.p.maestria[d.id] ?? 0;
+    const b = barraMaestria(puntos);
+    const premios = PREMIOS_MAESTRIA.map((x) => {
+      const clase = x.nivel <= b.nivel ? 'si' : x.nivel === b.nivel + 1 ? 'sigue' : '';
+      const marca = x.marco ? `<i class="lv-mini-marco ${x.marco}"></i>` : '';
+      return `<li class="${clase}" title="${x.texto}"><b>${x.nivel}</b>${x.oro ? icono('moneda', 13) : ''}${x.corto}${marca}</li>`;
+    }).join('');
+    const pie = b.nivel >= MAESTRIA_MAX
+      ? '¡Maestría completa! Este disfraz ya lo da todo.'
+      : `${puntos} puntos · faltan ${b.faltan} para el nivel ${b.nivel + 1}. Se ganan jugando con este disfraz: 1 por minuto, 1 por cada 500 mugrosos, 1 por evolución, 1 por jefe y 5 por ganar.`;
+    return `<div class="lv-maestria">
+      <h4>⭐ Maestría ${b.nivel}/${MAESTRIA_MAX} · ${tituloMaestria(b.nivel, d.rol)}</h4>
+      <div class="lv-barra-maestria"><i style="width:${Math.round(b.parte * 100)}%"></i></div>
+      <ol>${premios}</ol>
+      <p>${pie} Los bonos son solo para este disfraz.</p>
+    </div>`;
   }
 
   private htmlEscenarios() {

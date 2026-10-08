@@ -23,7 +23,8 @@ import {
 } from './linea';
 import { Menu, retrato } from './menu';
 import { Motor, VEL_JUGADOR, xpPara, type OpcionesJugador } from './motor';
-import { cartasDe, SECRETO_LOGRO, secretoAbierto, sumarPartida, type ProgresoLavado, type ResumenPartida } from './progreso';
+import { cartasDe, maestriaDe, SECRETO_LOGRO, secretoAbierto, sumarMaestria, sumarPartida, type ProgresoLavado, type ResumenPartida } from './progreso';
+import { MAESTRIA_MAX } from './maestria';
 import { musicaLavado, sonarEfecto } from './sonidos';
 import { botPaso } from './bot';
 import { disfrazVisto, ponerNeutro } from './textos';
@@ -85,6 +86,7 @@ export function opcionesJugador(rol: Rol, p: ProgresoLavado): OpcionesJugador {
     secretos: (Object.keys(SECRETO_LOGRO) as (IdArma | IdPasiva)[]).filter((id) => secretoAbierto(p, id)),
     cartas: cartasDe(p),
     manual: p.manual && puedeApuntar(disfraz),
+    maestria: maestriaDe(p, disfraz),
   };
 }
 
@@ -100,6 +102,7 @@ function opcionesSeguras(x: unknown, rol: Rol): OpcionesJugador {
   return {
     rol, disfraz, poderes, carta, secretos: lista(o.secretos), cartas: lista(o.cartas).filter((c) => c in CARTAS) as IdCarta[],
     manual: !!o.manual && puedeApuntar(disfraz),
+    maestria: Math.max(0, Math.min(MAESTRIA_MAX, Math.floor(Number(o.maestria) || 0))),
   };
 }
 
@@ -958,6 +961,8 @@ export class Lavado {
       // Si es invitado y no llegó el resumen, se arma uno con lo que se ve
       const r: ResumenPartida = resumen ?? m.resumen(yo, varios);
       const logros = sumarPartida(this.p, r);
+      // (la maestría es del disfraz de quien juega en este celular: en pareja, cada uno suma la suya)
+      const maestria = sumarMaestria(this.p, r);
       const monedas = monedasPorPartida(r.segundos, r.gano);
       this.resultado.partidas++;
       this.resultado.segundos = Math.max(this.resultado.segundos, Math.round(Math.min(r.segundos, DURACION + 600)));
@@ -967,7 +972,7 @@ export class Lavado {
       this.resultado.jefe ||= r.jefes.some((j) => ENEMIGOS[j].jefe && j !== 'duchaHelada');
       this.resultado.monedas += monedas;
       void this.o.guardar(this.p).catch(() => undefined);
-      que = await ui.mostrarFin(r, { logros, monedas: this.o.amigo ? 0 : monedas, pareja: varios, nombreOtro: nombres[1 - yo] ?? '', nota: notaFin });
+      que = await ui.mostrarFin(r, { logros, maestria, monedas: this.o.amigo ? 0 : monedas, pareja: varios, nombreOtro: nombres[1 - yo] ?? '', nota: notaFin });
     }
     // Se suelta todo lo de la partida (y el contexto WebGL)
     this.lienzo.removeEventListener('webglcontextlost', perdido);

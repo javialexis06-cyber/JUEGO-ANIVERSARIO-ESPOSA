@@ -7,6 +7,7 @@ import { CARTAS } from './cartas';
 import { DISFRAZ, type DefDisfraz } from './disfraces';
 import { ENEMIGOS, INDICE_ENEMIGO, type DefEnemigo } from './enemigos';
 import { DURACION, ESCENARIOS, type DefEscenario, type EventoOleada } from './escenarios';
+import { bonosMaestria, MAESTRIA_MAX } from './maestria';
 import { Rejilla } from './rejilla';
 import { PODER } from './tienda';
 import { statsVacios, type Efecto, type IdArma, type IdCarta, type IdEnemigo, type IdEscenario, type IdObjeto, type IdPasiva, type Rol, type Stat, type Stats, type TipoEfecto } from './tipos';
@@ -257,6 +258,8 @@ export interface OpcionesJugador {
   aspecto?: AspectoJugador;
   /** Apunta a mano (segundo dedo o mouse) en vez de que las armas busquen solas. */
   manual?: boolean;
+  /** Nivel de maestría de su disfraz (0 a 10): trae bonos que solo tiene ese disfraz. */
+  maestria?: number;
 }
 
 export interface OpcionesMotor {
@@ -303,6 +306,8 @@ export class Jugador {
   armas: ArmaJ[] = [];
   pasivas = new Map<IdPasiva, number>();
   poderes: Partial<Record<Stat, number>>;
+  /** Nivel de maestría del disfraz (0 a 10). */
+  maestria: number;
   cartas: IdCarta[] = [];
   cartasLibres: IdCarta[];
   secretos: Set<string>;
@@ -343,6 +348,7 @@ export class Jugador {
     this.aspecto = o.aspecto;
     this.manual = !!o.manual;
     this.poderes = { ...o.poderes };
+    this.maestria = Math.max(0, Math.min(MAESTRIA_MAX, Math.floor(Number(o.maestria) || 0)));
     this.secretos = new Set(o.secretos ?? []);
     this.cartasLibres = [...(o.cartas ?? [])];
   }
@@ -531,6 +537,9 @@ export class Motor {
       if (k === 'vida') vidaPct += p.paso * rango;
       else s[k] += p.paso * rango;
     }
+    const m = bonosMaestria(j.maestria);
+    for (const [k, v] of Object.entries(m.stats) as [Stat, number][]) s[k] += v;
+    vidaPct += m.vidaPct;
     for (const [id, n] of j.pasivas) {
       const p = PASIVAS[id];
       if (p.stat === 'vida') vidaPct += p.paso * n;

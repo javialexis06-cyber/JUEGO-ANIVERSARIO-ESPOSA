@@ -3,8 +3,9 @@
 // cartas de amor, la pausa con las estadísticas y la pantalla final con el daño de cada arma.
 import { ARMAS, PASIVAS, MAX_RANURAS, maxNivelArma } from './armas';
 import { ENEMIGOS } from './enemigos';
-import { puedeApuntar } from './disfraces';
-import { FRASES, cartaVista, logroVisto, personalizar } from './textos';
+import { DISFRAZ, puedeApuntar } from './disfraces';
+import { FRASES, cartaVista, disfrazVisto, logroVisto, personalizar } from './textos';
+import { barraMaestria, MAESTRIA_MAX, tituloMaestria, type SubidaMaestria } from './maestria';
 import { icono } from './iconos';
 import { RECETAS, estadoReceta, recetaDeArma, recetasDePasiva, type EstadoReceta } from './evoluciones';
 import { LOGRO, type ResumenPartida } from './progreso';
@@ -670,7 +671,7 @@ export class Interfaz {
   }
 
   // ------------------------------------------------------------------------------------------------- Final
-  mostrarFin(r: ResumenPartida, extra: { logros: string[]; monedas: number; pareja: boolean; nombreOtro: string; nota?: string }): Promise<'otra' | 'menu'> {
+  mostrarFin(r: ResumenPartida, extra: { logros: string[]; maestria?: SubidaMaestria; monedas: number; pareja: boolean; nombreOtro: string; nota?: string }): Promise<'otra' | 'menu'> {
     sfx.fin(r.gano);
     const titulo = r.gano ? '¡Se acabó el agua caliente!' : r.retiro ? (r.segundos < 60 ? 'Lavadita de gato' : '¡Bien lavadito!') : r.segundos < 60 ? 'Otro día te lavas bien…' : 'Te ganaron los mugrosos';
     const sub = r.gano ? 'Aguantaste hasta la Ducha Helada: ¡cara limpiecita!' : r.retiro ? 'Te saliste a tiempo y cobraste todo lo que recogiste.' : r.segundos >= 15 * 60 ? '¡Qué lavada tan buena!' : '¡Ya casi! Con la tienda de poderes se aguanta más.';
@@ -689,6 +690,7 @@ export class Interfaz {
       .map(logroVisto)
       .map((l) => `<div class="lv-logro">🏆<span><b>${l.nombre}</b>${l.premio}</span></div>`)
       .join('');
+    const maestria = extra.maestria ? htmlMaestriaFin(extra.maestria) : '';
     this.capaFin.innerHTML = `<div class="lv-panel">
       <h2>${titulo}<small style="color:#7a625a">${extra.nota ? `${esc(extra.nota)} · ` : ''}${sub}</small></h2>
       <div class="lv-resumen">
@@ -697,7 +699,7 @@ export class Interfaz {
       </div>
       <div class="cuerpo">
         <div class="col"><table class="lv-tabla"><tr><th>Arma</th><th>Nv</th><th>Daño</th><th>%</th><th>DPS</th></tr>${filas}</table></div>
-        ${logros ? `<div class="col">${logros}</div>` : ''}
+        ${logros || maestria ? `<div class="col">${maestria}${logros}</div>` : ''}
       </div>
       <div class="lv-fila">
         <button class="lv-boton menta grande" data-f="otra">${extra.pareja ? 'Volver a la sala' : 'Otra lavada'}</button>
@@ -714,6 +716,24 @@ export class Interfaz {
       });
     });
   }
+}
+
+/** La maestría del disfraz en la pantalla final: los puntos ganados, la barrita y los premios de los niveles nuevos. */
+function htmlMaestriaFin(m: SubidaMaestria): string {
+  const def = DISFRAZ[m.disfraz];
+  if (!def) return '';
+  const d = disfrazVisto(def);
+  const b = barraMaestria(m.total);
+  const subio = m.despues > m.antes;
+  const premios = m.premios.map((p) => `<li>Nivel ${p.nivel}: ${p.oro ? `${icono('moneda', 14)} ` : ''}${p.texto}</li>`).join('');
+  const pie = b.nivel >= MAESTRIA_MAX ? '¡Maestría completa!' : `Faltan ${b.faltan} para el nivel ${b.nivel + 1}`;
+  return `<div class="lv-maestria-fin ${subio ? 'subio' : ''}">
+    <div class="cab"><img src="./lavado/disfraces/${d.id}.webp" alt="" class="lv-marco-${b.nivel >= 10 ? 'oro' : b.nivel >= 5 ? 'plata' : 'no'}">
+      <span><b>${subio ? `¡Maestría ${m.despues}!` : `Maestría ${b.nivel}/${MAESTRIA_MAX}`} · ${tituloMaestria(b.nivel, d.rol)}</b>${esc(d.nombre)}: +${m.puntos} puntos</span></div>
+    <div class="lv-barra-maestria"><i style="width:${Math.round(b.parte * 100)}%"></i></div>
+    <small>${pie}</small>
+    ${premios ? `<ul>${premios}</ul>` : ''}
+  </div>`;
 }
 
 /** La misma curva del motor (aquí para no importar el motor entero en la interfaz). */

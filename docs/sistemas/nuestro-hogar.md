@@ -373,6 +373,17 @@ Ella (pulga aventurera, la mejor guerrera de Dios, directora Yanbal, bata y turb
 princesa del spa, estilista del secador). Cada uno trae su arma y su bono, ropa del clóset y accesorios del baño
 (`public/modelos/lavado/accesorios.glb`), y se abre con un logro o con gotas doradas. Al empezar dice su habilidad
 (`grito`) y avisa cuando crece al subir de nivel (`alCrecer`), solo en el celular de quien la tiene.
+- **Maestría de cada disfraz** (`maestria.ts`, como la de las clases de Deep Rock Galactic: Survivor): cada partida
+  le suma puntos al disfraz con que se jugó (1 por minuto aguantado, 1 por cada 500 mugrosos, 1 por arma
+  evolucionada, 1 por jefe y 5 por llegar a los 30:00; una partida de 15 minutos da unos 22) y hay 10 niveles (10,
+  25, 45, 70, 100, 140, 190, 250, 320 y 400 puntos). Premios: gotas doradas en los niveles 1, 3, 6 y 9 (100, 200,
+  300 y 500) y bonos que tiene **solo ese disfraz** en los demás (+5 % de experiencia, +5 % de daño, +1 para volver a
+  tirar, +5 % de área, +10 % de vida y +1 de armadura); el 5 le pone marco de plata al retrato y el 10, marco de
+  oro que brilla (Aprendiz → Experto/a → Maestro/a). Se ve en la tarjeta del disfraz del menú (barrita y los diez
+  premios), en la lista (estrellitas), en el inicio («⭐ Maestría 3/10») y en la pantalla final (puntos ganados y
+  lo que se desbloqueó). Se guarda en `maestria` del progreso (puntos por disfraz, normalizado) y viaja con las
+  opciones del jugador (`OpcionesJugador.maestria`) para que en pareja y con amigos cada uno lleve sus bonos. Prueba:
+  `scripts/_maestria.mjs` (temporal).
 - Piezas propias de los disfraces (en `personajes/blender/lavado_objetos.py`, las de la cara y el pelo modeladas ya
   en su sitio con `H()`): antifaz rojo del Súper Jabón, bigote frondoso del leñador y de manubrio del barbero,
   corona de la guerrera, rulos de la estilista y toalla mojada del panda. Lo de la mano va grande (si no, en el

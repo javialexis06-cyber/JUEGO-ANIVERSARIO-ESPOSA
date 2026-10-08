@@ -57,12 +57,10 @@ velocidad, se siente raro…»
 ## Ronda 2 de arreglos
 
 **Lavarse la cara (Vampire Survivors)**
-- (En obra con las salas) El chorro de agua más translúcido; ataque manual o automático a escoger (los de área
-  —perro lanudo, bombero, astronauta— siguen automáticos); tutorial.
-- **Íconos de poderes, armas y mejoras**: en el celular salen vacíos; renderizarlos y revisar que carguen en la APK.
-- Un **panel de combinaciones**: ver qué tengo y con qué se combina para evolucionar y hacer combos (como la guía
-  de evoluciones del original), también a mitad de partida.
-- **Logros y recompensas por avanzar con cada personaje/disfraz** (maestría de cada uno).
+- ~~Chorro más translúcido, ataque a mano o solito, tutorial, íconos y panel de combinaciones~~ **hechos** (ver
+  `docs/sistemas/nuestro-hogar.md`).
+- ~~Logros y recompensas por avanzar con cada personaje/disfraz~~ **hecho**: maestría de 10 niveles por disfraz con
+  gotas, bonos propios y marcos de plata y oro (ver `docs/sistemas/nuestro-hogar.md`).
 - Seguir mejorando el minijuego con lo mejor de otros juegos del género, **sin chocar con Sangre y Ceniza** (que se
   queda con lo oscuro, las cuevas excavables, las expediciones por etapas y las clases serias).
 
