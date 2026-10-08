@@ -24,7 +24,8 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 
 | Archivo | Estado |
 |---|---|
-| [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor, para pulirla con Javier. |
+| [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor (misiones, minerales, mapa de la Noche y, en L, armas, sobrecargas, reliquias y el familiar), para pulirla con Javier. |
+| [`lavado-propuesta.md`](en-obra/lavado-propuesta.md) | Lavarse la cara 2: lo que le falta frente a Vampire Survivors (24 armas, cartas, modos, tesoros, mercader, escenarios, disfraces), para pulirla con Javier. |
 | [`escenas-premium.md`](en-obra/escenas-premium.md) | Escenas pagas: en pausa. |
 | [`voces-ia.md`](en-obra/voces-ia.md), [`guion-voces.md`](en-obra/guion-voces.md) | Voces clonadas: esperan la clave de ElevenLabs. |
 

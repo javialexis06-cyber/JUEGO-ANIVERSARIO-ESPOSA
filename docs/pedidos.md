@@ -13,8 +13,13 @@ disfraces de Lavarse la cara. Lo siguiente que se puede hacer sin esperar a Javi
 3. **Lavarse la cara: seguir mejorándolo** con ideas del género (abajo, «Ronda 2»), sin chocar con Sangre y Ceniza.
 4. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.
 
-Esperan a Javier (no se empiezan solos): las respuestas de la propuesta de Sangre y Ceniza 2 (las preguntas están al
-final de `docs/en-obra/sangre-propuesta.md`; los íconos nuevos de sus mejoras van con eso), las ideas del sótano, la
+Lavarse la cara y Sangre y Ceniza ya están estudiados contra las dos wikis (octubre de 2026): lo que le falta a cada
+uno quedó en `docs/en-obra/lavado-propuesta.md` (Vampire Survivors) y en `docs/en-obra/sangre-propuesta.md` (Deep Rock,
+con la sección L nueva de armas, sobrecargas, reliquias y el familiar). Se empiezan cuando Javier responda las
+preguntas del final de cada una.
+
+Esperan a Javier (no se empiezan solos): las respuestas de las propuestas de Sangre y Ceniza 2 y de Lavarse la cara 2
+(los íconos nuevos de las mejoras van con eso), las ideas del sótano, la
 clave de ElevenLabs para las voces, pegar `supabase/cambios-pendientes.sql`, y si quiere el repositorio privado.
 Si cuenta anécdotas nuevas: van primero a las cartas de amor de Lavarse la cara y a las cartas del súper (hoy
 inventadas), mirando «Quién cuenta qué» en `docs/la-pareja.md`.
@@ -60,8 +65,10 @@ terror y el de crímenes (abajo, en «Después»): **falta que Javier pase las d
 **Versión 2 (propuesta entregada, falta pulirla con Javier)**: misiones que llenen la etapa (se ganan matando al
 Guardián, la Noche se impacienta), más tipos de misión, dificultad y precios que suben, seis minerales para el Pozo,
 mapa de la Noche con historia y retos por bioma y clase, maestrías, contratos, infinito con mapa que crece y refugio
-con minijuegos: [`docs/en-obra/sangre-propuesta.md`](en-obra/sangre-propuesta.md) (preguntas al final). Los íconos
-más elaborados de las mejoras van con esto (llegan muchas cosas nuevas).
+con minijuegos, y (sección L) seis sobrecargas por arma con etiquetas especiales, evolución para todas las armas y
+uniones, 13 armas comunes nuevas, reliquias por hitos y el familiar que acompaña:
+[`docs/en-obra/sangre-propuesta.md`](en-obra/sangre-propuesta.md) (preguntas al final). Los íconos más elaborados de
+las mejoras van con esto (llegan muchas cosas nuevas).
 
 Textual: «Mejorar calidad de mapa; mejorar movilidad, se siente tosca, los ojos se cansan o se abruman por la
 velocidad, se siente raro…»
@@ -78,7 +85,10 @@ velocidad, se siente raro…»
 - ~~Logros y recompensas por avanzar con cada personaje/disfraz~~ **hecho**: maestría de 10 niveles por disfraz con
   gotas, bonos propios y marcos de plata y oro (ver `docs/sistemas/nuestro-hogar.md`).
 - Seguir mejorando el minijuego con lo mejor de otros juegos del género, **sin chocar con Sangre y Ceniza** (que se
-  queda con lo oscuro, las cuevas excavables, las expediciones por etapas y las clases serias).
+  queda con lo oscuro, las cuevas excavables, las expediciones por etapas y las clases serias). **Propuesta entregada**
+  (falta pulirla con Javier): [`docs/en-obra/lavado-propuesta.md`](en-obra/lavado-propuesta.md), con las 24 armas del
+  juego base que faltan, 7 pasivas, cartas, recogibles, poderes, escenarios, modos, tesoros, mercader, cajitas
+  sorpresa, disfraces con transformación y logros.
 
 ## Amigos: lo que sigue
 

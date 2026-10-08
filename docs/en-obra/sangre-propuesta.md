@@ -227,6 +227,91 @@ comunidad en Discord.
   matar un élite», «+30 % de velocidad al salir de la campana», «10 % de que salga una rata dorada»), cae seguro del
   jefe y sube de nivel con los hitos de la cuenta.
 
+**L. Armas, sobrecargas, reliquias y el familiar (segunda lectura de la wiki, octubre de 2026)**
+
+Lo que hay hoy en el código: 12 clases × 4 armas + 7 comunes = **55 armas**; **3 sobrecargas por arma** (en el nivel 6
+se escoge 1 de 3, en el 12 1 de 2 y en el 18 sale la que queda: al final todas las tienen todas, sin escoger de
+verdad); **14 evoluciones** (solo la primera arma de cada clase, las Dagas y la Bomba); 12 etiquetas, y las mejoras de
+etiqueta salen aunque se tenga una sola arma de esa etiqueta (solo pesan más); 18 reliquias; ningún compañero.
+
+Lo que hace Deep Rock Galactic: Survivor (páginas «Weapons», «Overclock», «Level-up improvements», «Artifacts», «Class
+Mods», «Gear» y «Bosco»):
+- ~50 armas con **cuatro grupos de etiquetas** (tipo de daño, familia, tipo y forma de disparo).
+- Por arma, **4-6 sobrecargas balanceadas** (en el 6 y el 12 se escoge 1 de 3) y **2-3 inestables** (en el 18, 1 de 2-3):
+  muy fuertes con contra, o cambian cómo dispara. Algunas **cambian el elemento** («Balas de batería»: la escopeta pasa
+  a eléctrica).
+- **Cuatro etiquetas especiales** que solo dan las sobrecargas: *Akimbo* (dispara también hacia atrás), *Sidearm* (el
+  arma pega menos y las demás +25 %), *The Favourite* (+100 % a esta, −30 % a las demás) y *Thick Boy* (todos los
+  proyectiles en uno solo enorme). Con dos armas de la misma etiqueta especial salen sus mejoras.
+- Las **mejoras de etiqueta solo salen con dos armas de esa etiqueta**: eso es lo que arma las «builds».
+- Las **subclases abren todas las armas de una etiqueta** («todas las de fuego y ácido», «todas las arrojadizas»).
+- **Artefactos** que se abren con proezas («esquiva 100 veces», «muere 3 veces», «haz 1 337 de un golpe»).
+- **Bosco**, el dron que acompaña y dispara solo; su ataque cambia con el «chip» del equipo.
+- Torretas que se ponen **quedándose quieto**, minas, drones, granadas de racimo, rayos que rebotan en las paredes.
+
+Propuesta:
+1. **Seis sobrecargas por arma** (hoy 3): 4 **templadas** (en el 6 y el 12 se escoge 1 de 3) y 2 **malditas** (en el
+   18, 1 de 2: muy fuertes con su contra). Las malditas traen las etiquetas especiales, en versión de Valdemora: **A dos
+   manos** (Akimbo), **De cinto** (Sidearm), **La consentida** (The Favourite) y **Bala gorda** (Thick Boy), con sus
+   mejoras cuando dos armas la comparten. Algunas templadas **cambian el elemento** (virotes de plata: la ballesta pasa
+   a sagrada; hoja envenenada; martillo al rojo). Son ~165 sobrecargas nuevas, casi todas con las banderas que ya
+   existen (`F.DETRAS`, `F.DOBLE`, `F.GIRA`…).
+2. **Evoluciones para todas las armas** (hoy 14 de 55): cada arma con su objeto pareja en la Forja, más **uniones** de
+   Vampire Survivors (dos armas al máximo se vuelven una sola y **liberan un espacio**, que con solo 4 espacios vale
+   oro): Agua bendita + Cruz de plata, Estacas + Ballesta, Huesos + Campana fúnebre, Plumas negras + Bastón de
+   cuervos… Cada evolución nueva lleva su ícono renderizado.
+3. **Trece armas comunes nuevas** (hoy 7) para llegar a 20, lo de DRG en versión medieval: **Frasco de aceite
+   hirviendo** (fuego en el piso), **Frasco de escarcha**, **Humo de azufre** (veneno en nube), **Bomba de racimo**,
+   **Abrojos** y **Cepos** (minas), **Ballesta de pie** (torreta que se pone quedándose quieto), **Cuervos cazadores** y
+   **Murciélagos guardianes** (drones), **Látigo de espinas** (hacia atrás, como la Subata), **Rayo de sangre** (un haz
+   que rebota en las paredes, como el plasma), **Lanza de fuego giratoria** (como el lanzallamas) y **Perdigonera**
+   (escopeta de cerca). Cada una con su modelo en `armas.glb` y su ícono.
+4. **Potencia y daño de estados**: dos estadísticas nuevas (cuántas cargas de quema, veneno, sangrado o frío pone
+   cada golpe, y cuánto pegan esas cargas), con sus mejoras de nivel, de la Forja y del Pozo (D), y la regla de DRG:
+   las mejoras de etiqueta solo salen con **dos armas** de esa etiqueta.
+5. **Especializaciones que abren armas**: además de lo que hacen hoy, cada especialización suma a lo que se encuentra
+   todas las armas de una etiqueta (Pirómano → todas las de fuego; Nigromante → las de invocación; Ingeniero → las de
+   construcción; Francotirador → las de distancia; Envenenador → las de veneno…).
+6. **Reliquias por hitos**: de 18 a ~43, y las nuevas se abren con proezas de la cuenta (como los artefactos de DRG):
+
+   | Reliquia | Qué hace | Se abre con |
+   |---|---|---|
+   | Libro de rencores | +10 % de experiencia y experiencia al recibir daño | desde el comienzo |
+   | Corazón confitado | cada corazón de vela sube +3 la vida máxima | desde el comienzo |
+   | Herradura vieja | +15 de suerte; al volver a tirar, +20 más por 5 s | escoger suerte 5 veces en una expedición |
+   | Bandolera | +50 % de velocidad de ataque, −15 % de velocidad | llegar a +75 % de velocidad de ataque |
+   | Grimorio olvidado | ganas 3 niveles | nivel 50 en una expedición |
+   | Grasa de armadura | +5 % de velocidad; caminando, la esquiva sube | esquivar 100 golpes en una expedición |
+   | Tasajo y pan duro | +80 de vida y +2 de vida por segundo | llegar a 300 de vida máxima |
+   | Cinto de brasas / de escarcha | +15 % fuego / hielo; al recibir un golpe, anillo de fuego / de frío | 250 000 de daño de fuego / de hielo |
+   | Estuche del boticario | +15 % de potencia y de daño de estados | 2,5 millones de daño de estados en una expedición |
+   | Imán del gremio | al final de cada etapa recoge la mitad de las almas | recoger 25 imanes |
+   | Diario del difunto | +10 % de daño y de cadencia, +5 % de crítico, +15 % de daño crítico | morir 3 veces |
+   | Bula del obispo | la Forja cobra 20 % menos | gastar 2 500 de oro |
+   | Varita de zahorí | a veces sale oro al picar roca | recoger 250 de oro |
+   | Queso podrido | atrae ladrones de tumbas (bichos del botín) | tumbar 3 ladrones en una expedición |
+   | Botas de salto | al recibir un golpe, das un salto para escapar (cada 20 s) | romper 200 rocas en una expedición |
+   | Navaja multiusos | −25 % de cadencia, +5 % por cada etiqueta distinta | hacer 5 tipos de daño en una expedición |
+   | Dado del tahúr | +2,5 % de daño cada vez que vuelves a tirar algo | gastar 20 000 de oro |
+   | Pico largo | más alcance al excavar | excavar toda la roca de una etapa |
+   | Hierro en salmuera | +2 % de daño y −0,5 % de velocidad por cada hierro en el bolsillo | hacer 1 337 de daño de un golpe |
+   | Puntas de acero | +50 % de perforación | disparar 150 000 proyectiles |
+   | Trípode | quieto, +2 % de cadencia por segundo (hasta 15) | 15 000 muertos sin moverse |
+   | Costra | +1 de armadura por cada 2 % de vida que falta | llegar a 50 de armadura |
+   | Monóculo | +30 % de crítico y +100 % de daño crítico, −30 % de daño | llegar a 75 % de crítico |
+   | Galleta de monje | al bajar a la etapa siguiente te cura la mitad | curar 500 en una etapa |
+   | Cicatriz | +1 % de daño por cada 1 % de vida que falta | matar al jefe con menos de 30 de vida |
+   | Engranaje del relojero | +3 % de daño y de cadencia por cada sobrecarga | 10 sobrecargas en una expedición |
+
+7. **El familiar** (el Bosco de DRG): un compañero que sigue al jugador y ataca solo. Una ranura nueva de equipo, el
+   **familiar**, define cuál: cuervo (picotazos, el de siempre), linterna de ánimas (sombra; recoge almas cerca),
+   sapo de la bruja (veneno; charcos), salamandra (fuego; tira brasas), lechuza de escarcha (hielo; frasco helado),
+   perro de huesos (físico; excava lo que pisa) y campanita de plata (no pega, pero suma dos etiquetas al azar a lo que
+   se encuentra, como el «Support Chip»). Cae de los jefes con rareza, como el resto del equipo (K).
+8. **Forja con tres mostradores** (como la tienda de DRG): mejoras de un arma con hierro negro, de etiqueta con oro y
+   del personaje con oro, con precio por rareza (común, poco común, rara, épica, legendaria), y **curar 50 %** con oro
+   que sube cada vez.
+
 ---
 
 ## 4. En qué orden lo haría
@@ -234,11 +319,15 @@ comunidad en Discord.
 1. **Fase 1 (lo que más se siente, ~1-2 sesiones)**: A (etapas que se ganan peleando, Guardián, la Noche se
    impacienta, 5 etapas), E (precios que suben, vetas más pobres, ratas del tesoro, mini-élites) y los secundarios
    nuevos. Medir con el bot hasta llegar a las metas de E.
-2. **Fase 2**: D (seis minerales y el Pozo con materiales), C (cofre de suministros) y F (reglas de cada bioma).
-3. **Fase 3**: G (mapa de la Noche con historia y los retos por bioma y clase) y los logros en la Sala de Trofeos.
-4. **Fase 4**: B (La Procesión y La Cría), H (maestrías, anómalas, contratos y mutadores) e I (infinito que crece).
-5. **Fase 5**: J (refugio con minijuegos) y K (equipo con rarezas especiales). Y los íconos más elaborados de las
-   mejoras (pedido aparte, que va con esto porque llegan muchas cosas nuevas).
+2. **Fase 2**: D (seis minerales y el Pozo con materiales), C (cofre de suministros), F (reglas de cada bioma) y de L
+   las sobrecargas nuevas, la potencia y la regla de las dos armas (L1 y L4).
+3. **Fase 3**: G (mapa de la Noche con historia y los retos por bioma y clase) y los logros en la Sala de Trofeos; de
+   L, las evoluciones y uniones, las armas comunes nuevas y las especializaciones que abren armas (L2, L3 y L5).
+4. **Fase 4**: B (La Procesión y La Cría), H (maestrías, anómalas, contratos y mutadores), I (infinito que crece) y las
+   reliquias por hitos (L6).
+5. **Fase 5**: J (refugio con minijuegos), K (equipo con rarezas especiales), el familiar y la Forja con tres
+   mostradores (L7 y L8). Y los íconos más elaborados de las mejoras (pedido aparte, que va con esto porque llegan
+   muchas cosas nuevas).
 
 ---
 
@@ -253,3 +342,5 @@ comunidad en Discord.
 5. **Dificultad**: ¿la meta de E te parece bien (peligro 2 = la primera vez se pierde más o menos la mitad)?
 6. **Refugio**: ¿esos tres minijuegos o tienes otros en mente?
 7. ¿Algo de DRG que no esté aquí y quieras sí o sí (equipo con rarezas, el dron que acompaña, los gemelos jefes…)?
+8. **Armas** (L): ¿todo (6 sobrecargas por arma, evolución para todas, 13 comunes nuevas) o una parte?
+9. **El familiar** (L7): ¿lo metemos?

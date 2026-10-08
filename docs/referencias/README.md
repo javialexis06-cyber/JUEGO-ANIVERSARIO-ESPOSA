@@ -11,7 +11,7 @@ separa las páginas.
 | Carpeta | Qué es | Para qué |
 |---|---|---|
 | [`drg-survivor/wiki.md`](drg-survivor/wiki.md) | Deep Rock Galactic: Survivor (deeprockgalactic.wiki.gg, páginas «Survivor:», 134 páginas) | Sangre y Ceniza 2 (`docs/en-obra/sangre-propuesta.md`) |
-| [`vampire-survivors/`](vampire-survivors/) | Vampire Survivors (vampire.survivors.wiki, ~1 870 páginas en 8 archivos) | Javier dirá para qué (Lavarse la cara, Sangre y Ceniza…) |
+| [`vampire-survivors/`](vampire-survivors/) | Vampire Survivors (vampire.survivors.wiki, ~1 870 páginas en 8 archivos) | Lavarse la cara 2 (`docs/en-obra/lavado-propuesta.md`) y las uniones de Sangre y Ceniza |
 
 Los de Vampire Survivors, por tema:
 
