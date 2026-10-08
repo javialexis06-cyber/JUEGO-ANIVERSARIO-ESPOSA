@@ -3,6 +3,22 @@
 Lo que Javier pidió y todavía falta, en el orden en que se va a hacer. Se tacha (se borra) cuando queda hecho,
 probado y subido.
 
+## Por dónde seguir (nota para el próximo Claude)
+
+Último trabajo subido: la tanda del súper, «Quién cuenta qué» (lo romántico sin repetirse) y la maestría de los
+disfraces de Lavarse la cara. Lo siguiente que se puede hacer sin esperar a Javier, en este orden:
+
+1. **Amigos: mesa, retrete y cocina en la app de amigos** (abajo, en «Amigos: lo que sigue», con lo que ya se revisó).
+2. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
+3. **Lavarse la cara: seguir mejorándolo** con ideas del género (abajo, «Ronda 2»), sin chocar con Sangre y Ceniza.
+4. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.
+
+Esperan a Javier (no se empiezan solos): las respuestas de la propuesta de Sangre y Ceniza 2 (las preguntas están al
+final de `docs/en-obra/sangre-propuesta.md`; los íconos nuevos de sus mejoras van con eso), las ideas del sótano, la
+clave de ElevenLabs para las voces, pegar `supabase/cambios-pendientes.sql`, y si quiere el repositorio privado.
+Si cuenta anécdotas nuevas: van primero a las cartas de amor de Lavarse la cara y a las cartas del súper (hoy
+inventadas), mirando «Quién cuenta qué» en `docs/la-pareja.md`.
+
 ## Ahora
 
 Javier: «por ahora vamos a concentrarnos en crear el tipo Clue, terminar de pulir los juegos que ya tenemos y dejar
@@ -70,6 +86,23 @@ velocidad, se siente raro…»
   de mesa, el retrete y la cocina con amigos ya funcionan desde «Soy un amigo» en la app de la pareja; falta llevarlos
   también a la app de amigos (agregar sus páginas a `PAGINAS_AMIGOS`, permitir su código en `vite.config.ts` y dejar
   `verificar-amigos.mjs` limpio: las frases de pareja de la mesa y las escenas premium no pueden ir adentro).
+  Lo que ya se revisó para hacerlo:
+  - Las páginas ya existen y dejan entrar a un amigo: `retrete.html` y `cocina.html` (código en `src/sueltos/`, con
+    guardia en el `<head>`) y `mesa.html?amigo`; en `src/amigos/juegos.ts` ya están las tarjetas (salen «Muy pronto»
+    hasta que la página tenga `<meta name="apto-amigos" content="si">`).
+  - El retrete (`src/casa/cohete.ts` y `src/casa/cohete/`) esconde lo de la pareja en modo neutro, pero los textos
+    están compilados adentro (frases, banderitas, récord de la pareja, «galaxia del amor»): hay que sacarlos a un
+    archivo de pareja con su sustituto vacío, como `lavado/pareja.ts`. Usa `casa/modelo`, `casa/ropa`,
+    `reacciones/muneco`, `salas/*`, `recursos` y `sonido`.
+  - La cocina (`src/casa/cocina/`) usa `casa/modelo`, `casa/ropa`, `salas/*`, `personaje`, `recursos` y `sonido`;
+    revisar sus textos (invitados, pantallas) con `verificar-amigos`.
+  - La mesa (`src/mesa/`) usa `casa/modelo`, `casa/sincro` (ya tienen sustituto), `escenas/catalogo` y
+    `escenas/cine` (las escenas premium son de la pareja: sustituto vacío) y `reacciones/frases.ts` (tiene frases de
+    la pareja: sacarlas a un archivo aparte con sustituto neutro); el Clue y el Show (si ya se juntó) también se
+    revisan.
+  - Copiar a `dist-amigos` solo los modelos que usan (agregar a `PUBLICOS_AMIGOS` o un filtro como `MODELOS_SUPER`).
+  - Probar: `npm run build:amigos` (que `verificar-amigos` diga «Limpia»), `vite preview --mode amigos` y adaptar
+    `scripts/probar-amigos-juegos.mjs` para que entre desde `amigos.html` de dist-amigos a los tres juegos.
 - **El repositorio es público**: los enlaces de «Invitar amigos» llevan el nombre del repositorio y cualquiera puede
   leer los documentos de la pareja. Opciones para Javier: volverlo privado y publicar las APK en otro repositorio
   público solo de descargas, o dejarlo así.

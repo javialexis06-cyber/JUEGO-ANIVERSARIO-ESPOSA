@@ -143,6 +143,20 @@ npm run dev                    # http://localhost:5173 (casa), /super.html, /pue
   `probar-cocina-linea`, `probar-sangre`, `estres-casa`, `estres-super`, `verificar-amigos`.
 - **Mira las capturas** (lee los PNG): la mayoría de errores de este proyecto son visuales.
 - Las pestañas en segundo plano van lentas: si una prueba de varias pestañas falla por tiempos, puede ser la prueba.
+  Ej.: `probar-lavado-salas` a veces falla solo en «Javier ve caminar a los tres» (a Laura no le llega la primera
+  tecla); se repite UNA vez y, si pasa, era la prueba.
+- Servidor de pruebas sin recarga (en el scratchpad, se pierde entre sesiones): un `vite-pruebas.config.mjs` con
+  `import base from '<repo>/juego/web/vite.config.ts'; export default { ...base, root: '<repo>/juego/web',
+  server: { host: true, hmr: false } }` y `npx vite --config <ese archivo> --port 5176`. Amigos:
+  `npm run build:amigos && npx vite preview --mode amigos --port 5181`.
+- Para probar una pantalla suelta sin la casa: una página falsa con `p.route(/_x\.html/, …)` que importa el módulo
+  (ver `scripts/_lavado_mochila.mjs`); escenas premium: `mesa.html?escena=<id>&rol=el&congelar` y
+  `__mesa.cine().simular(segundos)`.
+- Pruebas largas: la salida a un archivo de log (nunca `| tail`, que no muestra nada hasta el final) y en segundo
+  plano. Nunca `pkill -f "<texto>"` con un texto que aparece en tu propio comando (te matas a ti mismo, sale 144):
+  usa el truco del corchete, `pkill -f "_balanc[e]2"`.
+- Esperar la APK sin mirar a cada rato (en segundo plano):
+  `until s=$(gh api "repos/javialexis06-cyber/juego-aniversario-esposa/actions/runs?branch=claude/supermarket-mania-minigame-xn2it8&per_page=1" --jq '.workflow_runs[0] | "\(.head_sha[0:7]) \(.status) \(.conclusion)"'); echo "$s" | grep -q "^<sha> completed"; do sleep 30; done; echo "$s"`
 
 ## 8. Cosas que ya se aprendieron
 
@@ -157,10 +171,20 @@ npm run dev                    # http://localhost:5173 (casa), /super.html, /pue
 - Filtros CSS y `mix-blend-mode` sobre el lienzo hacen parpadear (o ver negro) en Android: usar un velo encima.
 - Sombreadores: todo lo que se crea en pleno juego (efectos, marcas) se precalienta antes de `compileAsync`, si no el
   primer uso congela el cuadro.
+- Nada se pierde de lo guardado: si cambias el nombre o el contenido de algo comprable, deja el mismo `id` (con un
+  comentario de por qué) o pon la equivalencia vieja → nueva (`cartasViejas`, `disfracesViejos` en
+  `src/casa/lavado/pareja.ts`); los ids desconocidos se descartan sin romper.
+- Lo romántico tiene dueño: antes de escribir un recuerdo, carta, mimo o frase, mira «Quién cuenta qué» en
+  `docs/la-pareja.md`. Nunca se repite un recuerdo de otro juego; si se acaban las ideas, se le piden historias a
+  Javier.
+- Todo texto de la pareja en un juego que también ven los amigos va en un archivo aparte con su versión vacía en
+  `src/amigos/sin_pareja/` (SUSTITUTOS en `vite.config.ts`), como `lavado/pareja.ts` o `recuerdos_super.ts`. Si
+  `verificar-amigos` marca una frase que es común (p. ej. «La suerte»), va a `COMUNES` en ese script.
 
 ## 9. Estado
 
-Lo hecho está descrito en `docs/sistemas/`; lo que falta, en orden, en **`docs/pedidos.md`**. Frente a medias en
+Lo hecho está descrito en `docs/sistemas/`; lo que falta, en orden, en **`docs/pedidos.md`** (arriba de todo,
+«Por dónde seguir», dice cuál es el siguiente y qué espera a Javier). Frente a medias en
 GitHub, sin juntar: `trabajo/show` (El Show de Nosotros). Para retomarlo:
 `git fetch origin trabajo/show && git worktree add .wt/show trabajo/show` y
 `ln -s "$PWD/juego/web/node_modules" .wt/show/juego/web/node_modules`; lo que falta está al final de su documento.
@@ -169,3 +193,24 @@ GitHub, sin juntar: `trabajo/show` (El Show de Nosotros). Para retomarlo:
 para las voces, poner `ELEVENLABS_API_KEY` en el entorno y permitir `api.elevenlabs.io`.
 
 Cuando termines algo, actualiza `docs/pedidos.md` y el documento de `docs/sistemas/` que corresponda.
+
+## 10. Cómo trabaja Javier (lo aprendido en las sesiones)
+
+- «**Sigue con lo que haga falta en la lista**»: toma el siguiente punto de `docs/pedidos.md` en orden, saltando lo
+  que espera algo de él (está marcado). Por cada punto: hacerlo completo, probarlo (capturas incluidas), commit, push,
+  APK en verde, tacharlo en `pedidos.md` con «**hecho**» y una línea de qué quedó, actualizar `docs/sistemas/`,
+  contarle en 3-6 líneas qué cambió y cómo probarlo en el celular, y seguir con el siguiente sin preguntar.
+- «**Revisa todas las tareas que he dicho de X para que no apliques cambios 1 x 1**»: junta todo lo que ha pedido de
+  ese juego (pedidos, docs, el chat) y hazlo en una sola tanda. Antes, pregúntale SOLO las decisiones que cambian el
+  resultado, con opciones cortas y la recomendada primero (así decidió el súper: «Como el original», «Abarrotes 2,
+  bebidas 1», «Todo de una vez»).
+- «**Continúa**» (también después de que se le acaba el uso): sigue exactamente donde ibas, sin resumir.
+- Mientras trabajas, cuéntale en una línea qué estás haciendo cada tanto (no le gusta el silencio largo), pero sin
+  narrar cada paso.
+- Quiere calidad de juego comercial: si algo se ve pobre en la captura, se arregla antes de subir (ver §3). Prefiere
+  que propongas y decidas tú lo razonable; se queda con lo que mejor se vea y se juegue.
+- Pide mucho «como el original» (Supermarket Mania, Vampire Survivors, Deep Rock Galactic: Survivor): estudia las
+  wikis de `docs/referencias/` antes de inventar.
+- Las anécdotas reales las cuenta él; lo inventado (cartas del súper, cartas de amor) se marca para cambiarlo cuando
+  él cuente más.
+
