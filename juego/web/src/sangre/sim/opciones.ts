@@ -54,13 +54,26 @@ function candidatosNivel(j: Jugador): Candidato[] {
   });
   // Dones de la clase
   for (const d of CLASES[j.clase].dones) if (j.don(d.id) < d.max && !vet.has(d.id)) c.push({ tipo: 'don', id: d.id, peso: 1.9 });
-  // Mejoras de estadísticas (las de etiqueta pesan más si alguna arma la tiene)
-  let etqArmas = 0;
-  for (const a of j.armas) etqArmas |= a.etq || a.def.etiquetas.reduce((s, e) => s | BIT_ETQ[e], 0);
+  // Mejoras de estadísticas. Las de etiqueta, como en Deep Rock, solo salen con DOS armas de esa etiqueta (eso arma
+  // las combinaciones) y pesan más con tres o cuatro; la potencia y el daño de estados, si algo pone estados.
+  const porEtq = new Map<number, number>();
+  let estados = false;
+  for (const a of j.armas) {
+    const bits = a.etq || a.def.etiquetas.reduce((s, e) => s | BIT_ETQ[e], 0);
+    for (const b of Object.values(BIT_ETQ)) if (bits & b) porEtq.set(b, (porEtq.get(b) ?? 0) + 1);
+    const p = a.p ?? a.def.base;
+    if (p.quema > 0 || p.veneno > 0 || p.sangrado > 0 || p.lento > 0) estados = true;
+  }
+  if (j.bend('herida_abierta') || j.bend('pira') || j.bend('escarcha')) estados = true;
   for (const m of MEJORAS) {
     if (vet.has(m.id)) continue;
     let peso = 1;
-    if (m.etiqueta) peso = etqArmas & BIT_ETQ[m.etiqueta] ? 0.9 : 0.15;
+    if (m.etiqueta) {
+      const n = porEtq.get(BIT_ETQ[m.etiqueta]) ?? 0;
+      if (n < 2) continue;
+      peso = 0.9 + 0.35 * (n - 2);
+    }
+    if (m.id === 'potencia' || m.id === 'estados') peso = estados ? 0.8 : 0.08;
     if (m.id === 'cantidad') peso = 0.35;
     if (m.id === 'excavar' && j.st.excavar > 2) peso = 0.4;
     c.push({ tipo: 'stat', id: m.id, peso });
@@ -125,13 +138,34 @@ export function encolarSobrecarga(sim: Sim, j: Jugador, ranura: number) {
   const a = j.armas[ranura];
   if (!a || !a.debeSobrecarga) return;
   a.pedidas++;
-  const restantes = a.def.sobrecargas.filter((s) => !a.sobrecargas.includes(s.id));
-  if (!restantes.length) return;
-  j.cola.push({
-    motivo: 'sobrecarga', ranura, titulo: `Sobrecarga · ${a.def.nombre} Nv ${a.nivel}`,
-    opciones: restantes.map((s) => ({ tipo: 'sobrecarga' as const, id: s.id, rareza: 3 as Rareza, ranura, nombre: s.nombre, desc: s.desc, glifo: a.def.glifo, icono: a.def.id })),
-  });
+  const e = eleccionSobrecarga(sim.az, a, ranura, `Nv ${a.nivel}`);
+  if (!e) return;
+  j.cola.push(e);
   sim.suc.push(S.SOBRECARGA, j.i, ranura);
+}
+
+/** Lo que se ofrece en el siguiente escalón de sobrecargas de un arma (como en Deep Rock): las dos primeras veces, 3
+ *  de las templadas que quedan; la tercera, las dos malditas (si el arma las tiene). */
+export function eleccionSobrecarga(az: { n(): number }, a: ArmaJ, ranura: number, cola: string): Eleccion | null {
+  const libres = a.def.sobrecargas.filter((s) => !a.sobrecargas.includes(s.id));
+  const templadas = libres.filter((s) => !s.maldita);
+  const malditas = libres.filter((s) => s.maldita);
+  const yaMaldita = a.def.sobrecargas.some((s) => s.maldita && a.sobrecargas.includes(s.id));
+  const tocaMaldita = a.sobrecargas.length >= 2 && malditas.length > 0 && !yaMaldita;
+  let lista = tocaMaldita ? malditas : templadas;
+  if (!lista.length) lista = libres;
+  if (!lista.length) return null;
+  // (3 al azar de las que quedan, sin repetir)
+  const mezcla = [...lista];
+  for (let k = mezcla.length - 1; k > 0; k--) {
+    const r = Math.floor(az.n() * (k + 1));
+    [mezcla[k], mezcla[r]] = [mezcla[r], mezcla[k]];
+  }
+  const ofrecidas = mezcla.slice(0, 3);
+  return {
+    motivo: 'sobrecarga', ranura, titulo: `${tocaMaldita ? 'Sobrecarga maldita' : 'Sobrecarga'} · ${a.def.nombre} ${cola}`,
+    opciones: ofrecidas.map((s) => ({ tipo: 'sobrecarga' as const, id: s.id, rareza: (s.maldita ? 4 : 3) as Rareza, ranura, nombre: s.nombre, desc: s.desc, glifo: a.def.glifo, icono: a.def.id })),
+  };
 }
 
 // ------------------------------------------------------------------------------------------------- Cofres
@@ -313,7 +347,8 @@ export function aplicar(sim: Sim, j: Jugador, op: Opcion) {
       const a = j.armas[op.ranura ?? -1];
       if (a && !a.sobrecargas.includes(op.id)) {
         a.sobrecargas.push(op.id);
-        a.sucio = true;
+        // (todas: una maldita de cinto o consentida les cambia el daño a las otras)
+        for (const b of j.armas) b.sucio = true;
       }
       break;
     }

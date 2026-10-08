@@ -11,6 +11,7 @@ import { ARMAS } from './datos/armas';
 import { CLASES, nombreClase } from './datos/clases';
 import { BIOMAS, ETAPAS, MUTADORES, PELIGROS, SECUNDARIOS } from './datos/mundo';
 import { EQUIPO, POZO, precioPozo } from './datos/botin';
+import { MINERALES, precioMineral } from './datos/minerales';
 import { Expedicion } from './expedicion';
 import { Guardado, ponerPreferencia, preferencia } from './guardado';
 import { quienSoy } from './identidad';
@@ -26,10 +27,11 @@ import {
   armasDisponibles, nivelMaestria, progresoNuevo, peligroPermitido, perfilDe, recompensaMaestria, specsDisponibles, tituloMaestria, xpMaestria, type ProgresoSangre,
 } from './progreso';
 import { ArmaJ, Jugador } from './sim/jugador';
+import { encolarSobrecarga } from './sim/opciones';
 import type { Sim } from './sim/sim';
 import { brillar, sinSaltar } from './ui/repintar';
 import { efectos, musica, sonarSucesos } from './sonidos';
-import { BIOMAS_ORDEN, CLASES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdBioma, type IdClase, type IdMutador, type IdSecundario, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
+import { BIOMAS_ORDEN, CLASES_ORDEN, MINERALES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdBioma, type IdClase, type IdMineral, type IdMutador, type IdSecundario, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
 import { Tutorial } from './tutorial';
 import { VistaEleccion } from './ui/eleccion';
 import { mostrarForja } from './ui/forja';
@@ -463,27 +465,49 @@ function pozo() {
   pantalla = 'pozo';
   const p = P();
   const s = seccion('pantalla-pozo opaca', '');
+  const cambio: { de: IdMineral; a: IdMineral } = { de: 'plata', a: 'chispa' };
   // (al comprar, la lista se queda donde estabas y la mejora late con el aura dorada)
   const pintar = () => sinSaltar(s, dibujar);
   const dibujar = () => {
-    const mejoras = POZO.map((d) => {
-      const n = p.pozo[d.id] ?? 0;
-      const precio = precioPozo(d, n);
-      const max = n >= d.max;
-      return `<button class="renglon${max ? ' hecho' : ''}${!max && p.ceniza < precio ? ' no' : ''}" data-z="${d.id}" ${max ? 'disabled' : ''}>
+    // Las mejoras van agrupadas por el mineral que piden (cada nivel: ceniza + mineral)
+    const mejoras = MINERALES_ORDEN.map((idm) => {
+      const mi = MINERALES[idm];
+      const filas = POZO.filter((d) => d.mineral === idm).map((d) => {
+        const n = p.pozo[d.id] ?? 0;
+        const precio = precioPozo(d, n);
+        const pm = precioMineral(n);
+        const max = n >= d.max;
+        const falta = !max && (p.ceniza < precio || (p.minerales[idm] ?? 0) < pm);
+        return `<button class="renglon${max ? ' hecho' : ''}${falta ? ' no' : ''}" data-z="${d.id}" ${max ? 'disabled' : ''}>
         <span class="ico">${glifo(d.glifo)}</span><span><b>${d.nombre}</b><small>${d.desc}</small><span class="puntitos">${Array.from({ length: d.max }, (_, k) => `<i class="${k < n ? 'si' : ''}"></i>`).join('')}</span></span>
-        <span class="nivel">${max ? 'Completo' : `${glifo('alma')} ${precio}`}</span></button>`;
+        <span class="nivel">${max ? 'Completo' : `${glifo('alma')} ${precio}<br><span class="precio-mineral" style="--mc:${mi.brillo}">${glifo(mi.glifo, mi.brillo)} ${pm}</span>`}</span></button>`;
+      }).join('');
+      return `<h3 class="titulo-mineral" style="--mc:${mi.brillo}">${glifo(mi.glifo, mi.brillo)} ${mi.nombre} <b>${p.minerales[idm] ?? 0}</b><small>${mi.origen} Abunda en: ${mi.ricos.map((b) => BIOMAS[b].nombre).join(' y ')}.</small></h3>${filas}`;
     }).join('');
+    // El mercader cambia 2 de un mineral por 1 de otro (para no quedarse trabado)
+    const opcionesMin = (sel: IdMineral) => MINERALES_ORDEN.map((k) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${MINERALES[k].nombre} (${p.minerales[k] ?? 0})</option>`).join('');
+    const mercader = `<div class="mercader"><span>Doy 2 de</span><select data-m="de">${opcionesMin(cambio.de)}</select><span>por 1 de</span><select data-m="a">${opcionesMin(cambio.a)}</select>
+      <button class="boton boton-chico" data-a="cambiar" ${(p.minerales[cambio.de] ?? 0) < 2 || cambio.de === cambio.a ? 'disabled' : ''}>${glifo('mano')}Cambiar</button></div>`;
     const ofrendas = p.ofrendas.length
       ? p.ofrendas.filter((o) => EQUIPO[o]).map((o) => `<div class="renglon hecho"><span class="ico">${glifo(EQUIPO[o].ranura)}</span><span><b>${EQUIPO[o].nombre}</b><small>${EQUIPO[o].desc}</small></span></div>`).join('')
-      : '<small class="vacio">Al terminar una expedición puedes ofrecer al Pozo una pieza del equipo que llevabas: queda tuya para siempre y la escoges antes de bajar.</small>';
+      : '<small class="vacio ancho">Al terminar una expedición puedes ofrecer al Pozo una pieza del equipo que llevabas: queda tuya para siempre y la escoges antes de bajar.</small>';
     s.innerHTML = `${cabeza('El Pozo de las Almas')}
-      <p class="sub-pozo">La ceniza de cada expedición alimenta el Pozo. Lo que compres aquí te acompaña en todas las clases.</p>
-      <div class="lista">${mejoras}</div>
-      <h3 class="titulo-grabado">Ofrendas</h3>
-      <div class="lista lista-ofrendas">${ofrendas}</div>`;
+      <p class="sub-pozo">La ceniza y los minerales de cada expedición alimentan el Pozo. Lo que compres aquí te acompaña en todas las clases.</p>
+      <div class="lista">${mejoras}
+        <h3 class="titulo-grabado ancho">El mercader de la frontera</h3>
+        <div class="ancho">${mercader}</div>
+        <h3 class="titulo-grabado ancho">Ofrendas</h3>
+        ${ofrendas}
+      </div>`;
   };
   pintar();
+  s.addEventListener('change', (e) => {
+    const t = e.target as HTMLSelectElement;
+    if (t.dataset.m === 'de' || t.dataset.m === 'a') {
+      cambio[t.dataset.m] = t.value as IdMineral;
+      pintar();
+    }
+  });
   s.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
     const z = t.closest<HTMLElement>('[data-z]')?.dataset.z;
@@ -492,16 +516,31 @@ function pozo() {
       efectos.boton();
       return titulo();
     }
+    if (a === 'cambiar') {
+      if ((p.minerales[cambio.de] ?? 0) < 2 || cambio.de === cambio.a) return;
+      p.minerales[cambio.de] = (p.minerales[cambio.de] ?? 0) - 2;
+      p.minerales[cambio.a] = (p.minerales[cambio.a] ?? 0) + 1;
+      guardado.guardar();
+      efectos.compra();
+      pintar();
+      return;
+    }
     if (!z) return;
     const d = POZO.find((x) => x.id === z)!;
     const n = p.pozo[z] ?? 0;
     const precio = precioPozo(d, n);
+    const pm = precioMineral(n);
     if (n >= d.max) return;
     if (p.ceniza < precio) {
       aviso('Te falta ceniza: baja otra vez.', 'peligro', 1600);
       return;
     }
+    if ((p.minerales[d.mineral] ?? 0) < pm) {
+      aviso(`Te falta ${MINERALES[d.mineral].nombre}: abunda en ${MINERALES[d.mineral].ricos.map((b) => BIOMAS[b].nombre).join(' y ')}.`, 'peligro', 2200);
+      return;
+    }
     p.ceniza -= precio;
+    p.minerales[d.mineral] = (p.minerales[d.mineral] ?? 0) - pm;
     p.pozo[z] = n + 1;
     guardado.guardar();
     efectos.compra();
@@ -722,6 +761,8 @@ interface Cobro {
   biomasNuevos: IdBioma[];
   /** Modo infinito: ¿llegó más hondo que nunca? */
   record: boolean;
+  /** Los minerales que se trajo a casa. */
+  minerales: { id: IdMineral; n: number }[];
 }
 
 /** Lo que se gana al terminar (ceniza, maestría, logros, cifras, monedas de la casa). */
@@ -733,6 +774,9 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
   const nvAntes = nivelMaestria(pr.maestria[j.clase] ?? 0).nivel;
   pr.ceniza += r.ceniza;
   pr.cenizaTotal += r.ceniza;
+  // Los minerales que llegaron a la campana se van al Pozo
+  const minerales = MINERALES_ORDEN.map((k, i) => [k, Math.floor(j.mineralesSeguro[i] ?? 0)] as const).filter(([, n]) => n > 0);
+  for (const [k, n] of minerales) pr.minerales[k] = (pr.minerales[k] ?? 0) + n;
   pr.maestria[j.clase] = (pr.maestria[j.clase] ?? 0) + r.maestria;
   const nvDespues = nivelMaestria(pr.maestria[j.clase]!).nivel;
   const c = pr.cifras;
@@ -768,7 +812,7 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
   guardado.guardar();
   return {
     ceniza: r.ceniza, maestria: r.maestria, subio: Array.from({ length: nvDespues - nvAntes }, (_, k) => nvAntes + k + 1), logros: nuevos,
-    record: recordInfinito,
+    record: recordInfinito, minerales: minerales.map(([k, n]) => ({ id: k, n })),
     monedas: yo.tipo === 'amigo' ? 0 : monedas, clasesNuevas: pr.clases.filter((k) => !antes.clases.includes(k)), biomasNuevos: pr.biomas.filter((b) => !antes.biomas.includes(b)),
   };
 }
@@ -834,7 +878,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
           <div class="arsenal">${j.armas.map((a) => `<span class="arma-mini" title="${a.def.nombre} · nivel ${a.nivel}">${icono(a.def.glifo, a.def.id)}</span>`).join('')}</div>
         </div>
         <div class="placa premios">
-          <div class="premio"><span>${glifo('alma', '#d8d0c8')}+${cb.ceniza} ceniza</span><span>${glifo('corona', '#f0d488')}+${cb.maestria} maestría</span>${cb.monedas ? `<span>${glifo('oro', '#f0d488')}+${cb.monedas} moneda${cb.monedas > 1 ? 's' : ''} de la casa</span>` : ''}</div>
+          <div class="premio"><span>${glifo('alma', '#d8d0c8')}+${cb.ceniza} ceniza</span>${cb.minerales.map((m) => `<span>${glifo(MINERALES[m.id].glifo, MINERALES[m.id].brillo)}+${m.n} ${MINERALES[m.id].nombre}</span>`).join('')}<span>${glifo('corona', '#f0d488')}+${cb.maestria} maestría</span>${cb.monedas ? `<span>${glifo('oro', '#f0d488')}+${cb.monedas} moneda${cb.monedas > 1 ? 's' : ''} de la casa</span>` : ''}</div>
           ${cb.subio.map((n) => `<div class="desbloqueo">Maestría ${n} de ${nombreClase(j.clase, j.cuerpo)}: ${recompensaMaestria(n)}</div>`).join('')}
           ${cb.clasesNuevas.map((k) => `<div class="desbloqueo">${glifo(CLASES[k].glifo)} Nueva clase: ${nombreClase(k, yo.cuerpo)}</div>`).join('')}
           ${cb.biomasNuevos.map((b) => `<div class="desbloqueo">${glifo(BIOMAS[b].glifo)} Nuevo bioma: ${BIOMAS[b].nombre}</div>`).join('')}
@@ -1210,6 +1254,12 @@ w.__sangreEscena = () => escena;
 w.__sangreProgreso = () => P();
 w.__sangrePantalla = () => pantalla;
 w.__sangreInfo = () => ({ ...escena.infoDibujo, calidad: escena.calidad, msSim: partida?.msSim ?? 0, enemigos: partida?.sim?.E.vivos ?? 0, pantalla });
+// Pruebas: pide la siguiente sobrecarga del arma de esa ranura (si le toca)
+w.__sangreSobrecarga = (ranura: number) => {
+  const sim = partida?.sim;
+  const j = sim?.J[partida!.o.local];
+  if (sim && j) encolarSobrecarga(sim, j, ranura);
+};
 w.__sangreDar = (ceniza: number) => {
   P().ceniza += ceniza;
   guardado.guardar();

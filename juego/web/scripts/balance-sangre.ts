@@ -1,7 +1,7 @@
 // Balance de Sangre y Ceniza: juega expediciones completas con el bot (sin dibujo, en Node) y dice hasta dónde llega
 // cada clase. Uso: node scripts/balance-sangre.mjs [partidas] [clases|todas] [bioma] [peligro] [jugadores]
 import { Expedicion } from '../src/sangre/expedicion';
-import { NIVEL_BOT, botEscoger, botPaso } from '../src/sangre/bot';
+import { NIVEL_BOT, botEscoger, elegirMeta as botMeta, botPaso } from '../src/sangre/bot';
 import { CLASES } from '../src/sangre/datos/clases';
 import { ARMAS_COMUNES } from '../src/sangre/datos/armas';
 import { CLASES_ORDEN, type IdBioma, type IdClase, type PerfilJugador } from '../src/sangre/tipos';
@@ -17,6 +17,7 @@ const DT = 1 / 30;
 const torpe = !!process.env.TORPE;
 // INFINITO=1: el modo infinito (los cinco biomas turnándose; se corta en la etapa 30)
 const infinito = !!process.env.INFINITO;
+const depurar = !!process.env.DEPURAR;
 if (torpe) NIVEL_BOT.miedo = 0.4;
 
 function perfil(clase: IdClase, i: number): PerfilJugador {
@@ -55,6 +56,13 @@ for (const clase of clases) {
         for (let k = 0; k < sim.suc.n; k++) if (d[k * 7] === S.HERIDO && d[k * 7 + 1] === 0) danoMin[Math.floor(sim.t / 60)] = (danoMin[Math.floor(sim.t / 60)] ?? 0) + d[k * 7 + 2];
         if (sim.J[0].estado === 0) vidaMin = Math.min(vidaMin, sim.J[0].hp / sim.J[0].hpMax);
         if (sim.E.vivos > maxEnemigos) maxEnemigos = sim.E.vivos;
+        // DEPURAR=1: si la etapa se alarga, cada 30 s cómo va (para encontrar dónde se traba)
+        if (depurar && sim.t > 400 && Math.floor(sim.t / 30) !== Math.floor((sim.t - DT) / 30)) {
+          const j = sim.J[0];
+          const g = sim.guardian >= 0 && sim.E.vivo[sim.guardian] ? `guardián (${sim.E.x[sim.guardian].toFixed(0)},${sim.E.y[sim.guardian].toFixed(0)}) vida ${Math.round(sim.E.hp[sim.guardian])}` : `sin guardián (visto ${sim.guardianVisto})`;
+          const sum = sim.ent.find((e) => e.tipo === 9);
+          console.log(`    t=${sim.t.toFixed(0)} fase=${sim.fase} avance=${sim.avance.toFixed(2)} ${g} jefe=${sim.jefe} campana=${sim.campana ? sim.campana.est : '-'} yo=(${j.x.toFixed(0)},${j.y.toFixed(0)}) est=${j.estado} obj=${sim.obj.prog}/${sim.obj.meta} suministro=${sum ? `${sum.est}/${sum.prog.toFixed(2)}` : '-'} meta=${JSON.stringify(botMeta(sim, j))}`);
+        }
       }
       if (!sim.fin) sim.fin = { exito: false, extraidos: [], motivo: 'abandono', objetivo: false, secundario: 0, prisioneros: 0 };
       const j0 = sim.J[0];

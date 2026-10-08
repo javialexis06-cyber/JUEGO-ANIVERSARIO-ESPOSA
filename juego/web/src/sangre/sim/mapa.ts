@@ -2,7 +2,8 @@
 // según el bioma: cuevas orgánicas (autómata celular), ruinas de salones y pasillos, o campo abierto con montículos.
 // Las paredes se excavan caminando contra ellas; cada cambio queda anotado para el dibujo y para la red.
 import { Azar, hash2 } from '../../casa/lavado/azar';
-import { C, VIDA_CELDA, esExcavable, esSolida, tapaLuz } from '../tipos';
+import { C, MINERALES_ORDEN, VIDA_CELDA, esExcavable, esSolida, tapaLuz, type IdBioma } from '../tipos';
+import { vetasDe } from '../datos/minerales';
 import type { DefBioma } from '../datos/mundo';
 
 export interface Antorcha {
@@ -219,6 +220,11 @@ export function generarMapa(o: OpcionesMapa): Mapa {
   vetas(m, az, C.HIERRO, o.vetasHierro + 6, 3, 5, 8);
   vetas(m, az, C.SANGRE, 4 + Math.floor(n / 600), 2, 4, 7);
   vetas(m, az, C.ORO, 6 + Math.floor(n / 450), 2, 5, 6);
+  // Los minerales del Pozo: vetas sueltas de una casilla (cuál, en la variante de la celda)
+  minerales(m, az, o.bioma.id);
+  // Las reglas del bioma que van en la roca: bolsas de grisú (minas) y columnas de hueso (catacumbas)
+  if (o.bioma.id === 'minas') sueltas(m, az, C.GRISU, 10 + Math.floor(az.n() * 4), true);
+  if (o.bioma.id === 'catacumbas') sueltas(m, az, C.COLUMNA, 9 + Math.floor(az.n() * 4), false);
   // Vida de cada celda según su tipo
   for (let i = 0; i < m.c.length; i++) m.hp[i] = VIDA_CELDA[m.c[i]] ?? 0;
   // 8. Antorchas y decoración
@@ -468,6 +474,49 @@ function vetas(m: Mapa, az: Azar, tipo: number, cuantas: number, min: number, ma
       }
     }
     puestas.push({ x, y });
+  }
+}
+
+/** Vetas sueltas de los seis minerales: muchas de los que abundan en el bioma, una que otra de los demás. Casi
+ *  siempre a la vista (en una pared que toca lo abierto); algunas, adentro de la roca. */
+function minerales(m: Mapa, az: Azar, bioma: IdBioma) {
+  const puestas: number[] = [];
+  MINERALES_ORDEN.forEach((id, k) => {
+    const cuantas = vetasDe(bioma, id, () => az.n());
+    for (let t = 0, hechas = 0; t < cuantas * 80 && hechas < cuantas; t++) {
+      const x = az.entero(3, m.w - 4), y = az.entero(3, m.h - 4);
+      const i = m.idx(x, y);
+      if (m.c[i] !== C.BLANDA && m.c[i] !== C.DURA) continue;
+      if (!m.expuesta(x, y) && az.n() < 0.8) continue;
+      if (Math.hypot(x - m.inicio.x, y - m.inicio.y) < 8) continue;
+      if (puestas.some((j) => Math.hypot((j % m.w) - x, ((j / m.w) | 0) - y) < 4)) continue;
+      m.c[i] = C.MINERAL;
+      m.v[i] = k;
+      puestas.push(i);
+      hechas++;
+    }
+  });
+}
+
+/** Celdas sueltas de un tipo: en la roca a la vista (grisú) o en medio de un salón abierto (columnas). */
+function sueltas(m: Mapa, az: Azar, tipo: number, cuantas: number, enRoca: boolean) {
+  const puestas: number[] = [];
+  for (let t = 0; t < cuantas * 100 && puestas.length < cuantas; t++) {
+    const x = az.entero(4, m.w - 5), y = az.entero(4, m.h - 5);
+    const i = m.idx(x, y);
+    if (Math.hypot(x - m.inicio.x, y - m.inicio.y) < 9) continue;
+    if (puestas.some((j) => Math.hypot((j % m.w) - x, ((j / m.w) | 0) - y) < 6)) continue;
+    if (enRoca) {
+      if ((m.c[i] !== C.BLANDA && m.c[i] !== C.DURA) || !m.expuesta(x, y)) continue;
+    } else {
+      // (una columna en un salón: abierta con las ocho vecinas abiertas, para no tapar pasillos)
+      if (m.c[i] !== C.VACIO) continue;
+      let libre = true;
+      for (let dy = -1; dy <= 1 && libre; dy++) for (let dx = -1; dx <= 1; dx++) if (m.get(x + dx, y + dy) !== C.VACIO) libre = false;
+      if (!libre) continue;
+    }
+    m.c[i] = tipo;
+    puestas.push(i);
   }
 }
 

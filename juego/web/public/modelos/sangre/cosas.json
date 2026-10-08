@@ -460,9 +460,9 @@
   }
  },
  "c_pozo_almas": {
-  "altura": 2.016,
-  "radio": 0.945,
-  "alcance": 0.95,
+  "altura": 2.015,
+  "radio": 0.95,
+  "alcance": 0.952,
   "tris": 3000,
   "piezas": {
    "cuerpo": {
@@ -484,7 +484,7 @@
  },
  "c_forja": {
   "altura": 2.293,
-  "radio": 0.821,
+  "radio": 0.825,
   "alcance": 0.99,
   "tris": 3522,
   "piezas": {
@@ -1160,6 +1160,406 @@
      0.42
     ],
     "tris": 260
+   }
+  }
+ },
+ "c_veta_plata": {
+  "altura": 1.838,
+  "radio": 0.692,
+  "alcance": 1.035,
+  "tris": 1900,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1900
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.6,
+    0.7
+   ]
+  }
+ },
+ "c_mineral_plata": {
+  "altura": 0.215,
+  "radio": 0.08,
+  "alcance": 0.088,
+  "tris": 700,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 700
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.1
+   ]
+  }
+ },
+ "c_veta_chispa": {
+  "altura": 1.84,
+  "radio": 0.69,
+  "alcance": 1.034,
+  "tris": 1900,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1900
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.6,
+    0.7
+   ]
+  }
+ },
+ "c_mineral_chispa": {
+  "altura": 0.215,
+  "radio": 0.079,
+  "alcance": 0.099,
+  "tris": 700,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 700
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.1
+   ]
+  }
+ },
+ "c_veta_gema": {
+  "altura": 1.852,
+  "radio": 0.702,
+  "alcance": 1.04,
+  "tris": 1900,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1900
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.6,
+    0.7
+   ]
+  }
+ },
+ "c_mineral_gema": {
+  "altura": 0.215,
+  "radio": 0.079,
+  "alcance": 0.081,
+  "tris": 700,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 700
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.1
+   ]
+  }
+ },
+ "c_veta_escarcha": {
+  "altura": 1.838,
+  "radio": 0.69,
+  "alcance": 1.018,
+  "tris": 1900,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1900
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.6,
+    0.7
+   ]
+  }
+ },
+ "c_mineral_escarcha": {
+  "altura": 0.215,
+  "radio": 0.079,
+  "alcance": 0.083,
+  "tris": 700,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 700
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.1
+   ]
+  }
+ },
+ "c_veta_polvo": {
+  "altura": 1.838,
+  "radio": 0.692,
+  "alcance": 1.035,
+  "tris": 1900,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1900
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.6,
+    0.7
+   ]
+  }
+ },
+ "c_mineral_polvo": {
+  "altura": 0.215,
+  "radio": 0.08,
+  "alcance": 0.088,
+  "tris": 700,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 700
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.1
+   ]
+  }
+ },
+ "c_veta_esmeralda": {
+  "altura": 1.838,
+  "radio": 0.677,
+  "alcance": 1.037,
+  "tris": 1900,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1900
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.6,
+    0.7
+   ]
+  }
+ },
+ "c_mineral_esmeralda": {
+  "altura": 0.215,
+  "radio": 0.079,
+  "alcance": 0.081,
+  "tris": 700,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 700
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.1
+   ]
+  }
+ },
+ "c_ataud_suministros": {
+  "altura": 2.749,
+  "radio": 0.611,
+  "alcance": 0.626,
+  "tris": 9389,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 9389
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.5
+   ]
+  }
+ },
+ "c_ataud_abierto": {
+  "altura": 0.513,
+  "radio": 0.86,
+  "alcance": 0.901,
+  "tris": 4554,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 4554
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.5
+   ]
+  }
+ },
+ "c_veta_grisu": {
+  "altura": 1.588,
+  "radio": 0.636,
+  "alcance": 0.633,
+  "tris": 1300,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1300
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.6,
+    0.6
+   ]
+  }
+ },
+ "c_columna_hueso": {
+  "altura": 1.86,
+  "radio": 0.529,
+  "alcance": 0.498,
+  "tris": 4195,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 4195
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    1.0
+   ]
+  }
+ },
+ "c_pinchos_placa": {
+  "altura": 0.042,
+  "radio": 0.681,
+  "alcance": 0.49,
+  "tris": 1200,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1200
+   }
+  }
+ },
+ "c_pinchos_puas": {
+  "altura": 0.42,
+  "radio": 0.532,
+  "alcance": 0.392,
+  "tris": 224,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 224
    }
   }
  }

@@ -5,6 +5,8 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { hash2 } from '../../casa/lavado/azar';
 import type { DefBioma } from '../datos/mundo';
+import { MINERALES } from '../datos/minerales';
+import { MINERALES_ORDEN } from '../tipos';
 import { bola, caja, capsula, cil, cono, hueso, mat, toro } from './formas';
 
 export interface ModeloFijo {
@@ -82,6 +84,13 @@ export interface ModelosPared {
   oro: ModeloFijo[];
   huevo: ModeloFijo[];
   escombro: ModeloFijo[];
+  /** Los cristales de los seis minerales (uno por mineral, en el orden de MINERALES_ORDEN): van encima de una pared
+   *  blanda, en la cara que da a lo abierto. */
+  minerales: ModeloFijo[];
+  /** La bolsa de grisú de las minas (va encima de una pared blanda, como los cristales). */
+  grisu: ModeloFijo[];
+  /** La columna de hueso de las catacumbas (sola, sin roca). */
+  columna: ModeloFijo[];
 }
 
 export function paredesReemplazo(b: DefBioma): ModelosPared {
@@ -117,6 +126,20 @@ export function paredesReemplazo(b: DefBioma): ModelosPared {
     sangre: [8, 9].map((s) => vetas(s * 7, dura, cristal, 6, 1.3)),
     oro: [10].map((s) => fijo([[bloqueRoca(s * 7, 1.45), blanda], ...Array.from({ length: 6 }, (_, k): [THREE.BufferGeometry, THREE.Material] => [bola(0.06 + hash2(k, s, 1) * 0.04, { x: -0.3 + hash2(k, s, 2) * 0.6, y: 0.3 + hash2(k, s, 3) * 1.0, z: -0.52 }, 6), oro])])),
     huevo: [fijo([[bloqueRoca(91, 1.45), blanda], [bola(0.32, { y: 0.55, z: -0.4, sy: 1.3 }), huevo], [toro(0.3, 0.02, { y: 0.6, z: -0.4, rx: 0.3 }), huevoBrillo]])],
+    grisu: [fijo(Array.from({ length: 5 }, (_, k): [THREE.BufferGeometry, THREE.Material] => [bola(0.08 + hash2(k, 3, 1) * 0.06, { x: -0.3 + hash2(k, 3, 2) * 0.6, y: 0.3 + hash2(k, 3, 3) * 0.9, z: -0.5, sz: 0.6 }, 8), mat('#3a5a1a', { e: '#7cff4a', ei: 1.4, relieve: 0 })]))],
+    columna: [fijo([
+      [cil(0.42, 0.48, 0.18, { y: 0.09 }, 10), dura], [cil(0.3, 0.3, 1.5, { y: 0.9 }, 10), mat('#3a332a', { rug: 0.9 })], [cil(0.5, 0.4, 0.18, { y: 1.71 }, 10), dura],
+      ...Array.from({ length: 16 }, (_, k): [THREE.BufferGeometry, THREE.Material] => {
+        const a = (k % 4) * (Math.PI / 2) + Math.floor(k / 4) * 0.6;
+        return [bola(0.1, { x: Math.cos(a) * 0.31, y: 0.38 + Math.floor(k / 4) * 0.34, z: Math.sin(a) * 0.31 }, 8), mat('#d3c6a2', { rug: 0.7 })];
+      }),
+    ])],
+    // (solo los cristales: la roca la pone la pared blanda de abajo)
+    minerales: MINERALES_ORDEN.map((id, k) => {
+      const mi = MINERALES[id];
+      const c = mat(mi.color, { rug: 0.2, met: id === 'plata' ? 0.8 : 0.1, e: mi.brillo, ei: 1.6, relieve: 0 });
+      return fijo(cristales(200 + k * 3, 7, c, 1.5));
+    }),
     escombro: [fijo([
       [bloqueRoca(55, 0.7, 1.4), tierra],
       [caja(0.5, 0.3, 0.4, 0.08, { x: 0.2, y: 0.75, z: -0.1, ry: 0.5 }), tierra],

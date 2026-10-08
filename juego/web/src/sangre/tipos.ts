@@ -13,9 +13,19 @@ export const CLASES_ORDEN: IdClase[] = [
 export type IdBioma = 'cementerio' | 'catacumbas' | 'minas' | 'abadia' | 'castillo';
 export const BIOMAS_ORDEN: IdBioma[] = ['cementerio', 'catacumbas', 'minas', 'abadia', 'castillo'];
 
+/** Los seis minerales del Pozo (nombres del mito de Astra): se excavan y se llevan a casa. El orden es el índice que
+ *  usan las vetas y los recogibles (no cambiarlo: está en lo guardado por id, pero el mapa usa la posición). */
+export type IdMineral = 'plata' | 'chispa' | 'gema' | 'escarcha' | 'polvo' | 'esmeralda';
+export const MINERALES_ORDEN: IdMineral[] = ['plata', 'chispa', 'gema', 'escarcha', 'polvo', 'esmeralda'];
+
 /** Etiquetas de daño y de forma: las mejoras y las bendiciones suben las que nombran. */
-export type Etiqueta = 'fisico' | 'fuego' | 'sagrado' | 'veneno' | 'sangre' | 'sombra' | 'hielo' | 'cuerpo' | 'distancia' | 'area' | 'invocacion' | 'construccion';
-export const ETIQUETAS: Etiqueta[] = ['fisico', 'fuego', 'sagrado', 'veneno', 'sangre', 'sombra', 'hielo', 'cuerpo', 'distancia', 'area', 'invocacion', 'construccion'];
+/** Las cuatro últimas solo las dan las sobrecargas malditas (las «especiales» de Deep Rock: Akimbo, Sidearm, The
+ *  Favourite y Thick Boy, en versión de Valdemora); con dos armas de la misma salen sus mejoras, como las demás. */
+export type Etiqueta = 'fisico' | 'fuego' | 'sagrado' | 'veneno' | 'sangre' | 'sombra' | 'hielo' | 'cuerpo' | 'distancia' | 'area' | 'invocacion' | 'construccion'
+  | 'dos_manos' | 'cinto' | 'consentida' | 'gorda';
+export const ETIQUETAS: Etiqueta[] = ['fisico', 'fuego', 'sagrado', 'veneno', 'sangre', 'sombra', 'hielo', 'cuerpo', 'distancia', 'area', 'invocacion', 'construccion',
+  'dos_manos', 'cinto', 'consentida', 'gorda'];
+export const ETIQUETAS_ESPECIALES: Etiqueta[] = ['dos_manos', 'cinto', 'consentida', 'gorda'];
 
 /** Estadísticas del personaje. Las de porcentaje van en fracción (0,25 = +25 %). */
 export interface Stats {
@@ -46,12 +56,14 @@ export interface Stats {
   curacion: number; // % de curación recibida
   invocaciones: number; // % de daño y vida de lo invocado
   vetas: number; // % más de lo que dan las vetas al romperlas
+  potencia: number; // % más de cargas de estado (quema, veneno, sangrado, frío) que pone cada golpe
+  estados: number; // % de daño de los estados (lo que pegan esas cargas)
 }
 
 export const STATS_CERO: Stats = {
   vida: 0, regen: 0, armadura: 0, esquiva: 0, velocidad: 0, dano: 0, cadencia: 0, area: 0, cantidad: 0, velProy: 0, duracion: 0,
   critico: 0, danoCritico: 0, iman: 0, suerte: 0, experiencia: 0, oro: 0, excavar: 0, roboVida: 0, enfriamiento: 0, luz: 0,
-  espinas: 0, danoElite: 0, alcance: 0, curacion: 0, invocaciones: 0, vetas: 0,
+  espinas: 0, danoElite: 0, alcance: 0, curacion: 0, invocaciones: 0, vetas: 0, potencia: 0, estados: 0,
 };
 export type Stat = keyof Stats;
 export const nuevasStats = (): Stats => ({ ...STATS_CERO });
@@ -116,6 +128,7 @@ export const F = {
   ENCANTA: 1 << 24, // el enemigo pelea un rato del lado de uno
   ORO: 1 << 25, // los muertos sueltan más oro
   MINA: 1 << 26, // la explosión también rompe las vetas (y suelta lo que tienen)
+  GORDA: 1 << 27, // un solo proyectil enorme (la sobrecarga maldita «Bala gorda»)
 } as const;
 
 export interface ParamsArma {
@@ -153,6 +166,8 @@ export interface DefSobrecarga {
   flags?: number;
   /** Etiqueta que se agrega (el fuego de «Hoja ardiente»). */
   etiqueta?: Etiqueta;
+  /** Maldita: muy fuerte con su contra; sale como tercera sobrecarga (1 de 2), como las inestables de Deep Rock. */
+  maldita?: boolean;
 }
 
 export interface DefArma {
@@ -225,12 +240,15 @@ export const C = {
   ESCOMBRO: 8, // tapa los rieles de la carreta (blanda)
   AGUA: 9, // se camina lento
   LAVA: 10, // no se pisa, alumbra
+  MINERAL: 11, // veta suelta de uno de los seis minerales (cuál: la variante de la celda, mapa.v % 6)
+  GRISU: 12, // bolsa de gas de las minas: revienta al romperla
+  COLUMNA: 13, // columna de hueso de las catacumbas: al romperla se viene el techo encima
 } as const;
 export type Celda = (typeof C)[keyof typeof C];
 
 /** Vida de cada tipo de pared (segundos de excavar con velocidad 1). */
 export const VIDA_CELDA: Record<number, number> = {
-  [C.BLANDA]: 0.55, [C.DURA]: 1.7, [C.HIERRO]: 1.3, [C.SANGRE]: 2.1, [C.ORO]: 1.1, [C.HUEVO]: 2.6, [C.ESCOMBRO]: 0.8,
+  [C.BLANDA]: 0.55, [C.DURA]: 1.7, [C.HIERRO]: 1.3, [C.SANGRE]: 2.1, [C.ORO]: 1.1, [C.HUEVO]: 2.6, [C.ESCOMBRO]: 0.8, [C.MINERAL]: 1.5, [C.GRISU]: 0.9, [C.COLUMNA]: 1.2,
 };
 export const esSolida = (c: number) => c !== C.VACIO && c !== C.AGUA;
 export const esExcavable = (c: number) => c !== C.VACIO && c !== C.BORDE && c !== C.AGUA && c !== C.LAVA;

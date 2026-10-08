@@ -823,6 +823,8 @@ body.mano #zona-joystick {
   position: fixed;
   left: 50%;
   top: 30%;
+  /* (ancho fijo: con left 50 % el contenedor se encogía y un aviso largo salía palabra por palabra) */
+  width: min(92vw, 660px);
   transform: translateX(-50%);
   z-index: 6;
   display: flex;
@@ -2011,6 +2013,89 @@ body.mano #zona-joystick {
 .lista-ofrendas {
   flex: none;
   max-height: 30%;
+}
+/* Lo que va a lo ancho dentro de una lista en rejilla (el mercader y las ofrendas del Pozo) */
+.lista > .ancho {
+  grid-column: 1 / -1;
+}
+/* El Pozo agrupado por mineral: el título del grupo ocupa toda la fila y lleva el color del mineral */
+.titulo-mineral {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin: 6px 0 0;
+  padding-bottom: 3px;
+  border-bottom: 1px solid color-mix(in srgb, var(--mc) 45%, transparent);
+  font: 700 13px/1.1 var(--serif);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mc);
+  text-shadow: 0 1px 0 #000, 0 0 8px color-mix(in srgb, var(--mc) 40%, transparent);
+}
+.titulo-mineral .ico,
+.titulo-mineral svg {
+  width: 18px;
+  height: 18px;
+}
+.titulo-mineral b {
+  margin-left: 2px;
+  color: #fff;
+  font-size: 14px;
+}
+.titulo-mineral small {
+  flex-basis: 100%;
+  font: italic 400 11px/1.2 var(--serif);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ceniza);
+  text-shadow: none;
+}
+.precio-mineral {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 3px;
+  color: var(--mc);
+}
+.precio-mineral svg {
+  width: 12px;
+  height: 12px;
+}
+.mercader {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 10px;
+  font: 400 12px/1 var(--serif);
+  color: var(--ceniza);
+}
+.mercader select {
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid #3e383e;
+  background: #1a1719;
+  color: var(--oro-claro);
+  font: inherit;
+}
+/* Minerales que se llevan en el bolsillo (HUD, debajo de los recursos) */
+.r-minerales {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 150px;
+}
+.r-minerales:empty {
+  display: none;
+}
+.r-minerales span {
+  color: #fff;
+}
+.r-minerales .ico {
+  color: var(--mc);
 }
 .barra-logro {
   display: block;

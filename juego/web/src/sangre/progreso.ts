@@ -2,7 +2,7 @@
 // el equipo ofrecido al Pozo, la maestría de cada clase, las clases, biomas, peligros y armas desbloqueadas, los
 // logros y las cifras. Liviano y sin dependencias pesadas: lo importa también la casa para normalizarlo.
 // Javier y Laura lo guardan en la casa compartida (casa.sangre[rol]); los amigos, en su aparato.
-import type { IdBioma, IdClase, IdMutador, PerfilJugador, RanuraEquipo, Stats } from './tipos';
+import { MINERALES_ORDEN, type IdBioma, type IdClase, type IdMineral, type IdMutador, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
 
 export const CLASES_INICIALES: IdClase[] = ['monarca', 'campesino', 'prisionero'];
 export const BIOMAS_INICIALES: IdBioma[] = ['cementerio', 'catacumbas'];
@@ -64,6 +64,8 @@ export interface ProgresoSangre {
   cifras: CifrasSangre;
   ultima: UltimaEleccion | null;
   tutorial: boolean;
+  /** Los seis minerales del Pozo que se trajeron a casa (se gastan en el Pozo, junto con la ceniza). */
+  minerales: Partial<Record<IdMineral, number>>;
   /** Para fusionar copias de dos aparatos (la más reciente gana en lo que no se suma). */
   t: number;
 }
@@ -71,7 +73,8 @@ export interface ProgresoSangre {
 export function progresoNuevo(): ProgresoSangre {
   return {
     v: 1, ceniza: 0, cenizaTotal: 0, pozo: {}, ofrendas: [], maestria: {}, clases: [...CLASES_INICIALES], biomas: [...BIOMAS_INICIALES], ganado: {},
-    comunes: [...COMUNES_INICIALES], logros: [], cifras: Object.fromEntries(CIFRAS.map((k) => [k, 0])) as unknown as CifrasSangre, ultima: null, tutorial: false, t: 0,
+    comunes: [...COMUNES_INICIALES], logros: [], cifras: Object.fromEntries(CIFRAS.map((k) => [k, 0])) as unknown as CifrasSangre, ultima: null, tutorial: false,
+    minerales: {}, t: 0,
   };
 }
 
@@ -99,8 +102,10 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
     cifras: { ...b.cifras },
     ultima: null,
     tutorial: !!x.tutorial,
+    minerales: {},
     t: num(x.t),
   };
+  if (esObj(x.minerales)) for (const k of MINERALES_ORDEN) if (x.minerales[k] !== undefined) p.minerales[k] = Math.floor(num(x.minerales[k], 0, 1e6));
   if (esObj(x.pozo)) for (const [k, v] of Object.entries(x.pozo)) if (/^[a-z_]{1,30}$/.test(k)) p.pozo[k] = Math.floor(num(v, 0, 20));
   if (esObj(x.maestria)) for (const c of CLASES_TODAS) if (x.maestria[c] !== undefined) p.maestria[c] = Math.floor(num(x.maestria[c]));
   if (esObj(x.ganado)) for (const bi of BIOMAS_TODOS) if (x.ganado[bi] !== undefined) p.ganado[bi] = Math.floor(num(x.ganado[bi], 0, 5));
@@ -123,6 +128,8 @@ export function fusionarProgreso(a: ProgresoSangre, b: ProgresoSangre): Progreso
   const otro = a.t >= b.t ? b : a;
   r.cenizaTotal = Math.max(a.cenizaTotal, b.cenizaTotal);
   r.ceniza = a.t >= b.t ? a.ceniza : b.ceniza;
+  // (los minerales se gastan como la ceniza: manda la copia más reciente)
+  r.minerales = { ...(a.t >= b.t ? a : b).minerales };
   for (const k of new Set([...Object.keys(a.pozo), ...Object.keys(b.pozo)])) r.pozo[k] = Math.max(a.pozo[k] ?? 0, b.pozo[k] ?? 0);
   r.ofrendas = [...new Set([...a.ofrendas, ...b.ofrendas])];
   for (const c of CLASES_TODAS) {

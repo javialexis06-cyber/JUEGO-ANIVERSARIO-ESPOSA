@@ -5,7 +5,7 @@
 // despierta el Guardián (un élite enorme) y la Noche se impacienta hasta que cae. Al caer él, baja la campana. En la
 // etapa final, en vez del Guardián hay cuatro sepulcros con un custodio cada uno; caídos los custodios, sale el jefe.
 import { AVANCE_SOLO, CUENTA_EXTRACCION, GUARDIANES, IMPACIENCIA_CADA, PELIGROS, SEPULCROS } from '../datos/mundo';
-import { C } from '../tipos';
+import { C, esSolida } from '../tipos';
 import { TIPO, TIPOS, TIPO_ALTAR } from './catalogo';
 import { aparecerEnemigo, modsElite } from './enemigos_ia';
 import { ENT, EST, type Entidad, REC, type Recogible, S } from './estado';
@@ -20,6 +20,9 @@ import type { Sim } from './sim';
 export const RADIO_CAMPANA = 3.2;
 /** Lo que tarda en bajar (s). */
 export const BAJADA_CAMPANA = 5;
+/** El cofre de suministros: radio del círculo que hay que excavar y lo que se demora en bajar el ataúd. */
+export const RADIO_SUMINISTRO = 2.2;
+export const BAJADA_ATAUD = 4;
 /** Áreas para abrir (cofres de reliquias, santuarios, cofres malditos) y liberar prisioneros: más grandes que el
  *  dibujo, para que baste con pasar cerca (el anillo del piso las muestra). */
 export const RADIO_ABRIR = 2.1;
@@ -279,8 +282,13 @@ export function actualizarObjetivos(sim: Sim, dt: number) {
       case ENT.SEPULCRO:
         sepulcro(sim, e, dt);
         break;
+      case ENT.SUMINISTRO:
+        suministro(sim, e, dt);
+        break;
     }
   }
+  // A la mitad de la barra llega el cofre de suministros (no en la etapa final ni en el tutorial)
+  if (!sim.suministroVisto && !sim.cfg.final && !sim.cfg.exp.tutorial && sim.fase === 'juego' && sim.avance >= 0.45) marcarSuministro(sim);
   if (sim.campana) extraccion(sim, sim.campana, dt);
 }
 
@@ -390,17 +398,20 @@ function traerImportantes(sim: Sim, dt: number) {
     vistos.add(uid);
     let d = Infinity;
     for (const j of vivos) d = Math.min(d, Math.hypot(j.x - E.x[i], j.y - E.y[i]));
-    const sinCamino = sim.flujo.distEn(E.x[i], E.y[i]) === 65535;
+    const camino = sim.flujo.distEn(E.x[i], E.y[i]);
+    const sinCamino = camino === 65535;
+    // (cerca en línea recta pero con roca en medio: el camino da una vuelta enorme)
+    const rodeo = !sinCamino && d < 16 && camino > d * 2.2 + 8;
     const m = sim.atascos.get(uid) ?? { d, t: 0 };
     // (se cuenta el tiempo que lleva lejos sin acercarse de verdad)
-    if (sinCamino || (d > 16 && d > m.d - 1.5)) m.t += 1;
+    if (sinCamino || rodeo || (d > 16 && d > m.d - 1.5)) m.t += 1;
     else {
       m.t = 0;
       m.d = d;
     }
     if (d < m.d) m.d = d;
     sim.atascos.set(uid, m);
-    if (m.t < (sinCamino ? 3 : 8)) continue;
+    if (m.t < (sinCamino ? 3 : rodeo ? 6 : 8)) continue;
     const p = lugarDeEntrada(sim, 8);
     E.x[i] = p.x;
     E.y[i] = p.y;
@@ -514,6 +525,105 @@ export function guardianMuerto(sim: Sim, i: number) {
   llamarCampana(sim);
 }
 
+// ------------------------------------------------------------------------------------------------- Suministros
+/** El cofre de suministros (como el de Deep Rock): se marca un círculo de roca cerca de alguien; al excavarlo entero
+ *  baja un ataúd colgado de cadenas, y al abrirlo cada uno escoge una reliquia (y se cura un poco). */
+function marcarSuministro(sim: Sim) {
+  const m = sim.mapa;
+  const vivos = sim.vivos();
+  if (!vivos.length) return;
+  const r = RADIO_SUMINISTRO;
+  for (let k = 0; k < 120; k++) {
+    const j = vivos[k % vivos.length];
+    const a = sim.az.n() * Math.PI * 2, d = sim.az.entre(5, 11);
+    const cx = Math.floor(j.x + Math.cos(a) * d), cy = Math.floor(j.y + Math.sin(a) * d);
+    if (cx < 5 || cy < 5 || cx >= m.w - 5 || cy >= m.h - 5) continue;
+    // Que tenga roca para excavar y que se llegue: al menos 7 celdas de roca y alguna abierta con camino al lado
+    let roca = 0, malas = 0, llega = false;
+    for (let y = cy - 3; y <= cy + 3; y++)
+      for (let x = cx - 3; x <= cx + 3; x++) {
+        if ((x + 0.5 - cx - 0.5) ** 2 + (y + 0.5 - cy - 0.5) ** 2 > r * r) continue;
+        const t = m.get(x, y);
+        if (t === C.BORDE || t === C.LAVA || t === C.AGUA) malas++;
+        else if (esSolida(t)) roca++;
+        else if (sim.flujo.distEn(x + 0.5, y + 0.5) < 40) llega = true;
+      }
+    if (malas || roca < 7 || !llega) continue;
+    // La roca del círculo se vuelve tierra blanda (que se excava rápido); las vetas se quedan
+    let total = 0;
+    for (let y = cy - 3; y <= cy + 3; y++)
+      for (let x = cx - 3; x <= cx + 3; x++) {
+        if ((x + 0.5 - cx - 0.5) ** 2 + (y + 0.5 - cy - 0.5) ** 2 > r * r) continue;
+        const t = m.get(x, y);
+        if (t === C.DURA) m.poner(x, y, C.BLANDA);
+        if (esSolida(m.get(x, y))) total++;
+      }
+    const e = nuevaEntidad(sim, ENT.SUMINISTRO, cx + 0.5, cy + 0.5);
+    e.k = total;
+    sim.suministroVisto = true;
+    sim.aviso(34);
+    return;
+  }
+  // (si no se encontró dónde, se vuelve a intentar en un rato)
+  sim.suministroVisto = sim.az.n() < 0.02;
+}
+
+/** Cuánta roca queda en el círculo del cofre de suministros. */
+function rocaEnCirculo(sim: Sim, e: Entidad) {
+  const m = sim.mapa;
+  const r = RADIO_SUMINISTRO;
+  const cx = Math.floor(e.x), cy = Math.floor(e.y);
+  let n = 0;
+  for (let y = cy - 3; y <= cy + 3; y++)
+    for (let x = cx - 3; x <= cx + 3; x++) if ((x + 0.5 - e.x) ** 2 + (y + 0.5 - e.y) ** 2 <= r * r && esSolida(m.get(x, y))) n++;
+  return n;
+}
+
+function suministro(sim: Sim, e: Entidad, dt: number) {
+  switch (e.est) {
+    case 0: {
+      const quedan = rocaEnCirculo(sim, e);
+      e.prog = e.k > 0 ? 1 - quedan / e.k : 1;
+      if (quedan === 0) {
+        e.est = 1;
+        e.t = 0;
+        e.prog = 0;
+        sim.aviso(35);
+        sim.suc.push(S.CAMPANA, 0, e.x, e.y);
+      }
+      break;
+    }
+    case 1:
+      e.t += dt;
+      if (e.t >= BAJADA_ATAUD) {
+        e.est = 2;
+        e.prog = 0;
+        sim.suc.push(S.CAMPANA, 1, e.x, e.y);
+        sim.aviso(36);
+      }
+      break;
+    case 2: {
+      const j = quienUsa(sim, e, RADIO_ABRIR);
+      if (!j) {
+        e.prog = Math.max(0, e.prog - dt * 0.35);
+        return;
+      }
+      e.prog += dt / 2;
+      if (e.prog < 1) return;
+      soltarUso(sim, e);
+      e.est = 3;
+      // Una reliquia para cada uno (las del ataúd son de todos) y un respiro
+      for (const o of sim.J) {
+        if (o.estado !== 0 && o.estado !== 1) continue;
+        encolarReliquia(sim, o);
+        if (o.estado === 0) sim.curar(o, o.hpMax * 0.25);
+      }
+      sim.suc.push(S.LIBERA, e.x, e.y, e.id);
+      break;
+    }
+  }
+}
+
 /** Abrir un sepulcro a mano (quedándose al lado, como un cofre). */
 function sepulcro(sim: Sim, e: Entidad, dt: number) {
   if (e.est !== 0) return;
@@ -578,7 +688,7 @@ function jugadorA(sim: Sim, x: number, y: number, r: number) {
 }
 
 /** Quién está abriendo o liberando `e`: el que está dentro del área o el que lo tocó y sigue al alcance de la mano. */
-function quienUsa(sim: Sim, e: Entidad, radio: number) {
+export function quienUsa(sim: Sim, e: Entidad, radio: number) {
   const j = jugadorA(sim, e.x, e.y, radio);
   if (j) return j;
   for (const o of sim.J) {
@@ -589,7 +699,7 @@ function quienUsa(sim: Sim, e: Entidad, radio: number) {
   return null;
 }
 /** Ya terminó con `e`: nadie lo sigue usando. */
-function soltarUso(sim: Sim, e: Entidad) {
+export function soltarUso(sim: Sim, e: Entidad) {
   for (const o of sim.J) if (o.usa === e.id) o.usa = -1;
 }
 
@@ -817,7 +927,8 @@ function extraccion(sim: Sim, e: Entidad, dt: number) {
 // ------------------------------------------------------------------------------------------------- Con la mano
 /** ¿Se abre o se libera tocándolo? (cofres de reliquias, santuarios, cofres malditos, sepulcros y prisioneros) */
 export function esTocable(e: Entidad) {
-  return e.vivo && e.est === 0 && (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.SANTUARIO || e.tipo === ENT.COFRE_MALDITO || e.tipo === ENT.PRISIONERO || e.tipo === ENT.SEPULCRO);
+  return e.vivo && ((e.est === 0 && (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.SANTUARIO || e.tipo === ENT.COFRE_MALDITO || e.tipo === ENT.PRISIONERO || e.tipo === ENT.SEPULCRO))
+    || (e.tipo === ENT.SUMINISTRO && e.est === 2) || (e.tipo === ENT.CAMPANARIO && e.est === 0));
 }
 
 /** Lo que hay para recoger o abrir donde se tocó (lo más cercano al punto), o null. Lo usan el aparato (para caminar

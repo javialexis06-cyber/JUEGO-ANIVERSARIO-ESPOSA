@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { COLOR_MOD } from '../datos/mundo';
 import { TIPOS, esJefe } from '../sim/catalogo';
 import { ALI, ENT, type Aliado, type Entidad, type Enemigos } from '../sim/estado';
-import { BAJADA_CAMPANA } from '../sim/objetivos';
+import { BAJADA_ATAUD, BAJADA_CAMPANA } from '../sim/objetivos';
 import type { Biblioteca } from './modelos';
 import { LotePiezas } from './piezas';
 import type { ModeloFijo } from './reemplazos_mapa';
@@ -235,7 +235,9 @@ export class Actores {
         this.sombra(e.x, e.y, 0.4 + suave * 0.9, 0.5 + suave * 0.5);
         continue;
       }
-      const clave = e.tipo === ENT.CARRETA ? 'carreta' : e.tipo === ENT.CAMPANA_DEF ? 'campana' : e.tipo === ENT.COFRE_RELIQUIA ? 'cofre_reliquia' : e.tipo === ENT.SANTUARIO ? 'santuario' : e.tipo === ENT.COFRE_MALDITO ? 'cofre_maldito' : e.tipo === ENT.SEPULCRO ? (e.est >= 1 ? 'sepulcro_abierto' : 'sepulcro') : '';
+      const clave = e.tipo === ENT.CARRETA ? 'carreta' : e.tipo === ENT.CAMPANA_DEF ? 'campana' : e.tipo === ENT.COFRE_RELIQUIA ? 'cofre_reliquia' : e.tipo === ENT.SANTUARIO ? 'santuario' : e.tipo === ENT.COFRE_MALDITO ? 'cofre_maldito' : e.tipo === ENT.SEPULCRO ? (e.est >= 1 ? 'sepulcro_abierto' : 'sepulcro')
+        : e.tipo === ENT.SUMINISTRO && e.est >= 1 ? (e.est >= 3 ? 'ataud_abierto' : 'ataud_suministros')
+        : e.tipo === ENT.VAGONETA ? 'carreta' : e.tipo === ENT.ARMADURA ? 'guardia_real' : e.tipo === ENT.CAMPANARIO ? 'campana' : e.tipo === ENT.PINCHOS ? 'pinchos' : '';
       if (!clave) continue;
       vistas.add(e.id);
       let o = this.cosas.get(e.id);
@@ -246,13 +248,44 @@ export class Actores {
         o = undefined;
       }
       if (!o) {
-        o = mallaFija(this.bib.fijo('cosa', clave));
+        if (clave === 'pinchos') {
+          // (la reja y las púas aparte: las púas suben y bajan)
+          o = new THREE.Group();
+          const placa = mallaFija(this.bib.fijo('cosa', 'pinchos_placa'));
+          const puas = mallaFija(this.bib.fijo('cosa', 'pinchos_puas'));
+          puas.name = 'puas';
+          o.add(placa, puas);
+        } else o = mallaFija(this.bib.fijo('cosa', clave));
         o.userData.clave = clave;
-        if (e.tipo === ENT.CAMPANA_DEF) o.scale.setScalar(0.55);
+        if (e.tipo === ENT.CAMPANA_DEF || e.tipo === ENT.CAMPANARIO) o.scale.setScalar(e.tipo === ENT.CAMPANARIO ? 0.75 : 0.55);
         this.grupo.add(o);
         this.cosas.set(e.id, o);
       }
       o.position.set(e.x, 0, e.y);
+      // El ataúd de suministros baja del cielo colgado de sus cadenas (y se mece un poquito al bajar)
+      if (e.tipo === ENT.SUMINISTRO && e.est === 1) {
+        const b = Math.min(1, e.t / BAJADA_ATAUD);
+        const suave = 1 - (1 - b) ** 3;
+        o.position.y = (1 - suave) * 16;
+        o.rotation.z = Math.sin(v.t * 2.3) * 0.06 * (1 - b);
+        this.sombra(e.x, e.y, 0.3 + suave * 0.5, 0.4 + suave * 0.5);
+        continue;
+      }
+      if (e.tipo === ENT.SUMINISTRO) o.rotation.z = e.est === 2 && e.prog > 0.01 ? Math.sin(v.t * 30) * 0.03 * e.prog : 0;
+      // La vagoneta suelta: mira hacia donde rueda y traquetea antes de arrancar
+      if (e.tipo === ENT.VAGONETA) {
+        const d = [[1, 0], [-1, 0], [0, 1], [0, -1]][e.k] ?? [1, 0];
+        o.rotation.y = Math.atan2(d[0], d[1]) + Math.PI;
+        o.position.y = Math.abs(Math.sin(v.t * (e.est === 0 ? 30 : 14))) * (e.est === 0 ? 0.03 : 0.05);
+      }
+      // Las púas: escondidas, asomándose (el aviso) o arriba
+      if (e.tipo === ENT.PINCHOS) {
+        const puas = o.getObjectByName('puas');
+        if (puas) puas.position.y += ((e.est === 2 ? 0 : e.est === 1 ? -0.3 + Math.sin(v.t * 40) * 0.02 : -0.46) - puas.position.y) * Math.min(1, dt * (e.est === 2 ? 30 : 8));
+      }
+      if (e.tipo === ENT.ARMADURA) o.rotation.y = (e.k * Math.PI) / 2;
+      // El campanario: se mece mientras llama la oleada
+      if (e.tipo === ENT.CAMPANARIO) o.rotation.z = e.est === 1 ? Math.sin(v.t * 3) * 0.12 : e.prog > 0.01 ? Math.sin(v.t * 20) * 0.02 * e.prog : 0;
       if (e.tipo === ENT.CARRETA) {
         const r0 = v.rieles[Math.max(0, e.k - 1)], r1 = v.rieles[Math.min(v.rieles.length - 1, e.k)];
         if (r0 && r1 && (r0.x !== r1.x || r0.y !== r1.y)) o.rotation.y = Math.atan2(r1.x - r0.x, r1.y - r0.y) + Math.PI;
@@ -266,7 +299,7 @@ export class Actores {
       } else if (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.COFRE_MALDITO) o.rotation.z = 0;
       if (e.est === 0 && e.tipo === ENT.SANTUARIO) o.scale.setScalar(1 + (e.prog > 0.01 ? Math.sin(v.t * 9) * 0.03 * e.prog : 0));
       if (e.est === 2 && (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.SANTUARIO)) o.scale.setScalar(Math.max(0.001, o.scale.x - dt * 2));
-      this.sombra(e.x, e.y, e.tipo === ENT.CARRETA ? 1 : 0.6);
+      if (e.tipo !== ENT.PINCHOS) this.sombra(e.x, e.y, e.tipo === ENT.CARRETA || e.tipo === ENT.VAGONETA ? 1 : 0.6);
     }
     for (const [id, o] of this.cosas) {
       if (vistas.has(id)) continue;

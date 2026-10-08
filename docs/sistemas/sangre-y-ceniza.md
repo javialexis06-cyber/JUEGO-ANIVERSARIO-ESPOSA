@@ -44,6 +44,47 @@ la noche, y a salir vivos en la **Campana de Extracción** antes de que la horda
 - **La quinta etapa**: 4 **sepulcros** regados por el mapa se abren solos a medida que se llena la barra (o antes, a
   mano, quedándose al lado 2,5 s: empuja un poquito la barra); de cada uno sale su **custodio**. Con la barra llena y
   los cuatro custodios muertos sale el **jefe del bioma**, y después la extracción.
+- **El cofre de suministros** (fase 2): a la mitad de la barra las Santas marcan un **círculo** sobre la roca cerca
+  de alguien (se ve desde lejos y se va llenando a medida que se excava); despejado del todo, baja del cielo un
+  **ataúd de suministros** colgado de cadenas (4 s) y, al abrirlo (quedarse al lado 2 s), **cada uno escoge una
+  reliquia** (1 de 3) y se cura un 25 %. Uno por etapa, menos en la final.
+- **Los seis minerales del Pozo** (fase 2, con nombres del mito de Astra): **Plata del velo**, **Chispa de Aura**,
+  **Gema de dragón**, **Escarcha del alba**, **Polvo de estrellas** y **Esmeralda de Celia**. Salen en vetas sueltas
+  de una casilla (cristales de su color que brillan en la pared y en la visión astral); cada bioma es rico en dos o tres
+  (6-8 vetas de cada uno) y los demás salen poquito. No se gastan en la partida: se llevan a casa al llegar a la
+  campana (los de la etapa en que se cae, se pierden) y en grupo cada uno se lleva lo que recoja cualquiera. El HUD los
+  muestra debajo de los recursos y los resultados dicen cuántos se trajo.
+- **Reglas de cada bioma** (fase 2), dos por bioma; lo que revienta le pega a todos (enemigos y jugadores):
+  - **Cementerio**: cada 30-40 s **se abren tumbas** cerca de alguien (la tierra avisa 1,4 s y salen 3-5 muertos de
+    cada una); cada 70-95 s **baja la niebla del pantano** 16 s (todo se oscurece y se espesa la niebla).
+  - **Catacumbas**: **columnas de hueso** en medio de los salones: si alguien las rompe (picando o con algo que
+    excave), a 1,1 s **se viene el techo** encima (radio 3, aturde y le pega duro a la horda); y el **agua negra**
+    frena (la de siempre).
+  - **Minas**: **bolsas de grisú** (ampollas verdes en la pared): al romperlas silban y a 0,55 s **revientan** (y
+    rompen la roca alrededor: una puede reventar a otra); cada 40-55 s una **vagoneta suelta** rueda por un pasillo
+    largo que pasa por donde está alguien (1,2 s de traqueteo de aviso) y atropella a todo lo que encuentre.
+  - **Abadía**: cada 40-55 s **se caen los vitrales** 8 s (sombras en el piso, como los huesos); y un **campanario**:
+    al tocarlo llama una **oleada grande**; si se aguanta, suelta dos cofres y oro.
+  - **Castillo**: **trampas de pinchos** en los pasillos (suben cada 3 s, con un segundo de aviso; pinchan y hacen
+    sangrar a todos, enemigos incluidos); y **armaduras** de adorno que **despiertan** como caballeros de la muerte
+    cuando alguien pasa cerca.
+- **Sobrecargas de Sangre y Ceniza 2** (fase 2): cada arma base tiene **seis** (antes tres): las cuatro **templadas**
+  (las tres de antes y una nueva; varias cambian el elemento) y dos **malditas**. En el nivel 6 y en el 12 se escoge
+  **1 de 3 templadas** (al azar entre las que quedan); en el 18, **1 de las 2 malditas**: muy fuertes con su contra y
+  con una **etiqueta especial** (como las de Deep Rock):
+  - **A dos manos**: también ataca hacia atrás (todas las armas que apuntan, también los proyectiles, los lanzados y
+    los bumeranes), con −15 % de daño.
+  - **De cinto**: esta arma pega 40 % menos y 30 % más seguido; las demás, +20 % de daño.
+  - **La consentida**: esta arma +100 %; las demás, −30 %.
+  - **Bala gorda**: todos los proyectiles en uno solo enorme (daño × cantidad × 1,15, +50 % de área, atraviesa 3 más,
+    se ve más grande); en las armas sin proyectiles, un golpe enorme y más lento.
+  Cada arma lleva máximo tres. El altar de sangre de la Forja ofrece el mismo escalón que tocaría.
+- **Regla de las dos armas** (fase 2, la de Deep Rock): las mejoras de etiqueta al subir de nivel (fuego, sagrado,
+  cuerpo a cuerpo… y las especiales: Ambidiestro, Funda de cuero, Mimos de armero, Pólvora doble) **solo salen si dos
+  armas comparten esa etiqueta**, y pesan más con tres o cuatro. Eso es lo que arma las combinaciones.
+- **Potencia y daño de estados** (fase 2): dos estadísticas nuevas. La **potencia** pone más carga de quema, veneno,
+  sangrado y frío en cada golpe; el **daño de estados** sube lo que pegan esas cargas. Salen al subir de nivel (Mano de
+  boticario, Saña; pesan solo si algo pone estados), en la Forja (Estuche del boticario, Sal amarga) y en el Pozo.
 
 ## Cómo se pelea (lo mejor del género)
 
@@ -240,6 +281,13 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   toda la expedición), guardar una oferta con el candado, yunque ((5 + 3 × nivel) de hierro negro, +12 % por etapa →
   +1 nivel), altar de sangre ((8 + 8 × sobrecargas) de sangre, +12 % por etapa → una sobrecarga antes de tiempo, una
   por arma y visita) y vender objetos a la mitad.
+- **El Pozo con minerales** (fase 2): 18 mejoras agrupadas por el mineral que piden (cada nivel cuesta ceniza **y** su
+  mineral: 2, 4, 7, 10, 14, 18, 23, 28, 34, 40): Plata del velo (vida, armadura, aliento), Chispa de Aura (daño,
+  velocidad de ataque, crítico), Gema de dragón (oro, vetas, excavar), Escarcha del alba (recarga, potencia, daño de
+  estados), Polvo de estrellas (velocidad, recoger, experiencia) y Esmeralda de Celia (suerte, dados, tijeras). Los
+  ids de siempre se quedan (lo comprado antes sigue igual). Abajo, **el mercader de la frontera** cambia 2 de un
+  mineral por 1 de otro. Los minerales van en `ProgresoSangre.minerales` (normalizados; entre dos aparatos manda la copia
+  más reciente, como la ceniza).
 - **Progreso permanente** (`ProgresoSangre`): ceniza (moneda del Pozo de las Almas), 13 mejoras del Pozo, equipo
   ofrecido al Pozo (se escoge antes de bajar), maestría por clase (15 niveles: 2.ª especialización en el 1, 3.ª arma
   en el 2, 3.ª especialización en el 3, 4.ª arma en el 4, títulos y bonos después), clases, biomas y armas comunes
@@ -305,7 +353,8 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
 - Ganchos: `__sangre()` (la simulación o el espejo), `__sangrePartida()`, `__sangreEscena()`, `__sangreProgreso()`,
   `__sangrePantalla()`, `__sangreInfo()` (llamadas, triángulos, ms), `__sangreDar(ceniza)`, `__sangreAbrirTodo()`,
   `__sangreForja()` (salta a la Forja), `__sangreReloj(s)` (llena la barra hasta que falten `s` segundos),
-  `__sangreDebil()` (deja al Guardián o al jefe con un golpe de vida).
+  `__sangreDebil()` (deja al Guardián o al jefe con un golpe de vida), `__sangreSobrecarga(ranura)` (pide la siguiente
+  sobrecarga de esa arma, si le toca).
 
 ## Contrato de arte (lo que el código espera encontrar)
 
@@ -325,7 +374,7 @@ atacar, morir). Mirando hacia +Y de Blender. Altura de un zombi ≈ 1,1 m (los p
 | `jefes.glb` | `jefe_<id>` | golem_osarios, abadesa, gusano_sangre, obispo_hueco, conde (con capa `extra_capa` y fase 2 `extra_alas`) |
 | `armas.glb` | `arma_<id>` | espada_larga, horca, grillete, maza, escudo, ballesta, martillo, frasco, pala, incensario, hacha_verdugo, baston_cuervos, laud, guadana, antorcha, estaca, lanza, mangual, daga, arco (y las que hagan falta), con origen en el mango |
 | `proyectiles.glb` | `p_<id>` | virote, flecha, estaca, frasco_roto, nota_musical, pluma_cuervo, hueso, bola_fuego, rayo_sagrado, cadena_eslabon |
-| `cosas.glb` | `c_<id>` | alma_azul, alma_verde, alma_roja, oro, hierro_negro, sangre_cristal, pierna_pollo, cofre, cofre_reliquia, llave, campana_extraccion, altar_sangre, carreta, prisionero_cadenas, pozo_almas, forja, torreta_ballesta, trampa, tumba_abierta, totem_maleficio, frasco_alquimia, huevo_dragon, sepulcro, sepulcro_abierto, rosa_velo, pluma_grifo, hongo_tumba |
+| `cosas.glb` | `c_<id>` | alma_azul, alma_verde, alma_roja, oro, hierro_negro, sangre_cristal, pierna_pollo, cofre, cofre_reliquia, llave, campana_extraccion, altar_sangre, carreta, prisionero_cadenas, pozo_almas, forja, torreta_ballesta, trampa, tumba_abierta, totem_maleficio, frasco_alquimia, huevo_dragon, sepulcro, sepulcro_abierto, rosa_velo, pluma_grifo, hongo_tumba, ataud_suministros, ataud_abierto, veta_<mineral> y mineral_<mineral> (los seis), veta_grisu, columna_hueso, pinchos_placa, pinchos_puas |
 | `bioma_<id>.glb` | `piso_*`, `pared_*`, `veta_*`, `deco_*`, `luz_*` | cementerio, catacumbas, minas, abadia, castillo: losas/tierra de piso en bloques de 2×2 m, **bloques de pared excavables** de 1×1×1,5 m (`pared_blanda_a/b/c`, `pared_dura_a/b`, `pared_borde`), vetas (`veta_hierro`, `veta_sangre`, `veta_oro`), y decoración (lápidas, mausoleos, cruces, nichos con calaveras, cadenas, rieles, vagonetas, vitrales, bancas, candelabros, tapices…), `luz_antorcha`/`luz_vela` con un nodo vacío `llama` donde va la luz |
 | `../ropa/sangre_<clase>_{el,ella}.glb` | igual que la ropa de la casa | el traje serio de cada clase para el cuerpo de Él y el de Ella, con el esqueleto de la ropa (`ropa*.py`): monarca, campesino, prisionero, caballero, cazador, herrero, alquimista, sepulturero, inquisidor, verdugo, bruja, juglar |
 

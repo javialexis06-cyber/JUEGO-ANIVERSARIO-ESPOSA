@@ -44,6 +44,7 @@ export class Espejo {
     Object.assign(sim.sec, f.sec);
     sim.jefeFase = f.jefeFase;
     sim.eclipse = f.ecl;
+    sim.niebla = f.nie ?? 0;
     // Enemigos
     const E = sim.E;
     const de = new Int16Array(deB64(f.e));

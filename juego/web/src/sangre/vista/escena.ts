@@ -7,12 +7,13 @@ import * as THREE from 'three';
 import { vigilarContexto } from '../../contexto';
 import { ARMAS_LISTA } from '../datos/armas';
 import { BIOMAS, CUENTA_EXTRACCION, type DefBioma } from '../datos/mundo';
-import { C } from '../tipos';
+import { C, MINERALES_ORDEN } from '../tipos';
+import { MINERALES } from '../datos/minerales';
 import { TIPOS, esJefe } from '../sim/catalogo';
 import { ENT, MOV, S, type Aliado, type Entidad, type Enemigos, type Proyectil, type Recogible, type Sucesos, type Zona } from '../sim/estado';
 import type { Jugador } from '../sim/jugador';
 import type { Mapa } from '../sim/mapa';
-import { RADIO_ABRIR, RADIO_CAMPANA, RADIO_LIBERAR, esTocable } from '../sim/objetivos';
+import { RADIO_ABRIR, RADIO_CAMPANA, RADIO_LIBERAR, RADIO_SUMINISTRO, esTocable } from '../sim/objetivos';
 import { Actores } from './actores';
 import { Cosas3D } from './cosas3d';
 import { Efectos } from './efectos';
@@ -40,6 +41,8 @@ export interface EstadoVista {
   suc: Sucesos;
   t: number;
   eclipse: number;
+  /** La niebla del cementerio (segundos que le quedan). */
+  niebla?: number;
   jefe: number;
   jefeFase: number;
   campana: Entidad | null;
@@ -57,6 +60,8 @@ const COLOR_USO: Record<number, THREE.Color> = {
   [ENT.COFRE_RELIQUIA]: new THREE.Color('#c890ff'),
   [ENT.COFRE_MALDITO]: new THREE.Color('#ff6a5a'),
   [ENT.SEPULCRO]: new THREE.Color('#ff4a3a'),
+  [ENT.SUMINISTRO]: new THREE.Color('#ffc060'),
+  [ENT.CAMPANARIO]: new THREE.Color('#ff8a4a'),
 };
 const COLOR_EXPLOSION = ['#ff7a2a', '#fff0a0', '#8aff4a', '#a8f0ff', '#d01828', '#a060ff', '#a89880'];
 
@@ -73,6 +78,8 @@ export class Escena3D {
   private linterna: THREE.PointLight;
   private fogonazo: THREE.PointLight;
   private fogonazoT = 0;
+  private densidadNiebla = 0.02;
+  private hazSuministro = -99;
   bioma: DefBioma = BIOMAS.cementerio;
   // Por etapa
   mapa3d: Mapa3D | null = null;
@@ -231,6 +238,7 @@ export class Escena3D {
     this.colorAntorcha.set(l.antorcha);
     this.escena.background = new THREE.Color(l.niebla).multiplyScalar(0.6);
     this.escena.fog = new THREE.FogExp2(new THREE.Color(l.niebla).getHex(), l.densidadNiebla * 0.9);
+    this.densidadNiebla = l.densidadNiebla * 0.9;
     this.hemi.color.set(l.luna).multiplyScalar(0.6);
     this.hemi.groundColor.set(l.niebla);
     this.luna.color.set(l.luna);
@@ -336,7 +344,12 @@ export class Escena3D {
     if (!this.mapa3d || !this.actores || !this.cosas || !this.particulas || !this.efectos || !this.luz) return;
     this.tiempo += dt;
     UNI_LUZ.uTiempo.value = this.tiempo;
-    UNI_LUZ.uOscuro.value += ((est.eclipse > 0 ? 1 : 0) - UNI_LUZ.uOscuro.value) * Math.min(1, dt * 2);
+    UNI_LUZ.uOscuro.value += ((est.eclipse > 0 ? 1 : (est.niebla ?? 0) > 0 ? 0.55 : 0) - UNI_LUZ.uOscuro.value) * Math.min(1, dt * 2);
+    // La niebla del cementerio: más espesa (y la linterna de cada uno importa)
+    if (this.escena.fog instanceof THREE.FogExp2) {
+      const meta = this.densidadNiebla * ((est.niebla ?? 0) > 0 ? 2.4 : 1);
+      this.escena.fog.density += (meta - this.escena.fog.density) * Math.min(1, dt * 1.5);
+    }
     this.procesarSucesos(est);
     // Paredes que se excavan
     const excavando: number[] = [];
@@ -352,6 +365,17 @@ export class Escena3D {
     const yo = est.J[this.local];
     const usos: Parameters<Efectos['marcasUso']>[0] = [];
     for (const e of est.ent) {
+      // (el círculo del cofre de suministros: se ve desde lejos y se llena a medida que se excava)
+      if (e.vivo && e.tipo === ENT.SUMINISTRO && e.est <= 1) {
+        const d = yo ? Math.hypot(yo.x - e.x, yo.y - e.y) : 99;
+        // (el círculo queda bajo la roca: un haz dorado que se ve por encima de las paredes marca dónde excavar)
+        if (e.est === 0 && this.tiempo - this.hazSuministro > 2.6) {
+          this.hazSuministro = this.tiempo;
+          this.efectos.columna(e.x, e.y, 1.1, 9, '#ffc060', 3);
+        }
+        usos.push({ id: e.id, x: e.x, y: e.y, r: RADIO_SUMINISTRO, lleno: e.est === 1 ? 1 : e.prog, fuerza: Math.max(0.35, Math.min(1, 1 - (d - 6) / 10)), color: COLOR_USO[ENT.SUMINISTRO] });
+        continue;
+      }
       if (!esTocable(e)) continue;
       const r = e.tipo === ENT.PRISIONERO ? RADIO_LIBERAR : RADIO_ABRIR;
       const d = yo ? Math.hypot(yo.x - e.x, yo.y - e.y) : 99;
@@ -384,6 +408,9 @@ export class Escena3D {
         const t = est.mapa.c[i];
         if (t === C.SANGRE) fijas.push({ x: (i % est.mapa.w) + 0.5, y: ((i / est.mapa.w) | 0) + 0.5, r: 2.6, color: new THREE.Color('#ff2030'), fuerza: 0.32 });
         else if (t === C.HUEVO) fijas.push({ x: (i % est.mapa.w) + 0.5, y: ((i / est.mapa.w) | 0) + 0.5, r: 2.2, color: new THREE.Color('#ffb040'), fuerza: 0.4 });
+        // (el grisú alumbra verde enfermo; los minerales, un brillito de su color)
+        else if (t === C.GRISU) fijas.push({ x: (i % est.mapa.w) + 0.5, y: ((i / est.mapa.w) | 0) + 0.5, r: 2.4, color: new THREE.Color('#7cff4a'), fuerza: 0.35 });
+        else if (t === C.MINERAL) fijas.push({ x: (i % est.mapa.w) + 0.5, y: ((i / est.mapa.w) | 0) + 0.5, r: 2.0, color: new THREE.Color(MINERALES[MINERALES_ORDEN[est.mapa.v[i] % 6]].brillo), fuerza: 0.3 });
       }
       this.luz.rehacerEstatica(fijas);
     }
@@ -411,6 +438,8 @@ export class Escena3D {
       else if (e.tipo === ENT.CAMPANA_DEF && e.est === 1) mv.push({ x: e.x, y: e.y, r: 5, color: LUZ_CAMPANA, fuerza: 0.7 });
       // (los sepulcros: velas rojas cerrados; abiertos, la brasa del hueco)
       else if (e.tipo === ENT.SEPULCRO) mv.push({ x: e.x, y: e.y, r: e.est === 0 ? 3.5 : 3, color: e.est === 0 ? LUZ_SANGRE : LUZ_FUEGO, fuerza: e.est === 0 ? 0.5 : 0.7 });
+      // (el cofre de suministros: el círculo alumbra dorado; abierto, la reliquia brilla morada)
+      else if (e.tipo === ENT.SUMINISTRO) mv.push({ x: e.x, y: e.y, r: e.est >= 3 ? 3 : 4, color: e.est >= 3 ? LUZ_RELIQUIA : LUZ_CAMPANA, fuerza: e.est === 0 ? 0.35 : 0.65 });
     }
     for (let i = 0; i < est.E.max; i++) if (est.E.vivo[i] && (est.E.tipo[i] === TIPO_ALTAR_V || esJefe(est.E.tipo[i]))) mv.push({ x: est.E.x[i], y: est.E.y[i], r: 4, color: LUZ_SANGRE, fuerza: 0.55 });
     for (let k = this.flashes.length - 1; k >= 0; k--) {
@@ -706,6 +735,7 @@ export class Escena3D {
           const t = d[k + 3];
           const col = t === C.HIERRO ? '#5a6070' : t === C.SANGRE ? '#a01828' : t === C.ORO ? '#c8a040' : this.bioma.roca[0];
           const jx = d[k + 4] >= 0 ? est.J[d[k + 4]] : null;
+          if (t === C.MINERAL) P.chispas(x + 0.5, 0.8, y + 0.5, MINERALES[MINERALES_ORDEN[est.mapa.v[y * est.mapa.w + x] % 6]].brillo, 2, 2);
           const px = jx ? (x + 0.5 + jx.x) / 2 : x + 0.5, pz = jx ? (y + 0.5 + jx.y) / 2 : y + 0.5;
           P.polvo(px, 0.1, pz, col, 3, 2);
           if (t === C.SANGRE || t === C.ORO) P.chispas(px, 0.8, pz, t === C.ORO ? '#ffe080' : '#ff3040', 2, 2);
@@ -719,6 +749,7 @@ export class Escena3D {
           if (t === C.SANGRE) P.chispas(x + 0.5, 0.8, y + 0.5, '#ff2040', 10, 4);
           if (t === C.ORO) P.chispas(x + 0.5, 0.8, y + 0.5, '#ffd060', 10, 4);
           if (t === C.HIERRO) P.chispas(x + 0.5, 0.8, y + 0.5, '#a8b8d8', 8, 4);
+          if (t === C.MINERAL) P.chispas(x + 0.5, 0.8, y + 0.5, MINERALES[MINERALES_ORDEN[est.mapa.v[y * est.mapa.w + x] % 6]].brillo, 14, 5);
           if (cerca < 6) this.sacudir(0.12);
           break;
         }
@@ -839,6 +870,8 @@ export class Escena3D {
           if (d[k + 3] === 1) F.onda(x, y, 1.6, '#ffd060', 0.5);
           break;
         case S.MARCA:
+          // (4: el grisú silba antes de reventar)
+          if (d[k + 3] === 4) P.chispas(x, 0.6, y, '#a0ff40', 14, 3);
           if (d[k + 3] === 1) F.rayo(x, y, est.E.x[d[k + 4]] ?? x, est.E.y[d[k + 4]] ?? y, '#ff4080', 0.06, 0.5, 0.9);
           break;
         case S.DISPARO_E:

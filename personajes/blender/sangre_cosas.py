@@ -1006,3 +1006,269 @@ def aliado_ballestero(coll):
 # alias: el juego busca estos nombres (comparten la malla con la cosa original)
 COSAS.update({'prisionero': 'prisionero_cadenas', 'campana': 'campana_extraccion', 'torreta': 'torreta_ballesta', 'totem': 'totem_maleficio',
               'aliado_caballero': 'guardia_real'})
+
+
+# ------------------------------------------------------------------------------------------------- Minerales
+# Los seis minerales del Pozo (nombres del mito de Astra): se excavan de vetas sueltas y se llevan a casa.
+# `c_veta_<id>` es el racimo de cristales que sale de la cara de una pared (crece hacia +Y, que el juego gira hacia lo
+# abierto); `c_mineral_<id>` es el pedazo suelto que se recoge.
+MINERALES = {
+    # id: (cristal, brillo, nombre del brillo, cuerpo metálico)
+    'plata': ('#C9D3E8', '#C4DAFF', 'plata', True),
+    'chispa': ('#E0782A', '#FFAA33', 'ambar', False),
+    'gema': ('#4A1A6E', '#C46BFF', 'violeta', False),
+    'escarcha': ('#BFEFFF', '#8AF0FF', 'hielo', False),
+    'polvo': ('#F2D9B0', '#FFE6B8', 'estrella', False),
+    'esmeralda': ('#1E8A4E', '#3AFF8A', 'esmeralda', False),
+}
+
+
+def _cristal_pt(id_, k):
+    col, bri, nom, metal = MINERALES[id_]
+    if metal:
+        return P_(col, 'hierro', semilla=k, var=0.4) if k % 3 else brillo(nom, bri)
+    return brillo(nom, bri) if k % 2 == 0 else P_(col, 'vidrio', mat='espectro')
+
+
+def _racimo(c, coll, id_, base, eje, n, largo, grosor, sem=0):
+    """Racimo de cristales de seis caras que salen de `base` alrededor de `eje` (abiertos en abanico)."""
+    eje = _unit(eje)
+    u = _unit(np.cross(eje, [0.31, 0.17, 0.93] if abs(eje[2]) < 0.9 else [1, 0, 0]))
+    w = np.cross(eje, u)
+    rng = np.random.default_rng(sem)
+    for k in range(n):
+        a = 2 * math.pi * k / n + rng.uniform(-0.4, 0.4)
+        abre = 0.25 + 0.55 * rng.uniform() * (k > 0)
+        d = _unit(eje + (u * math.cos(a) + w * math.sin(a)) * abre)
+        L = largo * (1.0 if k == 0 else rng.uniform(0.45, 0.85))
+        r = grosor * (1.0 if k == 0 else rng.uniform(0.5, 0.8))
+        b = np.asarray(base, float) + (u * math.cos(a) + w * math.sin(a)) * grosor * 0.6 * (k > 0)
+        c.malla(sc.punta(f'cristal {sem} {k}', b - d * r * 0.4, b + d * L, r, coll, seg=6, medio=0.8), _cristal_pt(id_, k + sem))
+
+
+def _veta_mineral(id_, coll):
+    F = nueva(f'veta_{id_}', voxel=0.01)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1900)
+    col = MINERALES[id_][0]
+    # tres racimos grandes sobre la cara de la pared (y ≈ 0.45, metidos en la roca), a distintas alturas, y vetitas del
+    # color del mineral regadas por la cara
+    for k, (x, z, n, L, g) in enumerate(((-0.2, 0.4, 6, 0.6, 0.11), (0.22, 0.78, 5, 0.5, 0.095), (-0.04, 1.12, 5, 0.42, 0.085))):
+        base = np.array([x, 0.5, z])
+        c.bola(base, (0.15, 0.05, 0.13), piedra(20 + k, '#3A3632', 0.0), 0.0, ruido_amp=0.01)
+        # (inclinados hacia arriba: desde la cámara se ven las puntas, no solo el canto)
+        _racimo(c, coll, id_, base, (x * 0.8, 1.0, 0.75), n, L, g, sem=k * 7 + len(id_))
+    # Y un racimo grande encima de la pared: es lo que más se ve desde arriba
+    _racimo(c, coll, id_, np.array([0.0, 0.25, 1.42]), (0.0, 0.35, 1.0), 7, 0.5, 0.11, sem=40 + len(id_))
+    for k in range(8):
+        a = k * 1.1
+        c.bola((math.cos(a) * 0.36, 0.47, 0.25 + 0.12 * k), (0.035, 0.02, 0.035), _cristal_pt(id_, 2 * k), 0.0)
+    F.marca('luz', (0, 0.6, 0.7))
+    return F
+
+
+def _mineral_suelto(id_, coll):
+    F = nueva(f'mineral_{id_}', voxel=0.005)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=700)
+    c.sdf(sc.sdf_ruido(sdf.ellipsoid((0, 0, 0.03), (0.08, 0.065, 0.04)), 0.008, 20, 3), (-0.12, -0.12, -0.02), (0.12, 0.12, 0.09), piedra(40, '#3A3632', 0.0))
+    _racimo(c, coll, id_, np.array([0.0, 0.0, 0.05]), (0, 0, 1), 6, 0.17, 0.04, sem=len(id_) * 3)
+    F.marca('luz', (0, 0, 0.1))
+    return F
+
+
+for _id in MINERALES:
+    COSAS[f'veta_{_id}'] = (lambda i: lambda coll: _veta_mineral(i, coll))(_id)
+    COSAS[f'mineral_{_id}'] = (lambda i: lambda coll: _mineral_suelto(i, coll))(_id)
+
+
+# ------------------------------------------------------------------------------------------------- Cofre de suministros
+def _hexataud(lo_z, hi_z, esc=1.0, off=(0.0, 0.0)):
+    """El contorno de un ataúd (angosto en los pies, ancho en los hombros) como sdf de prisma."""
+    pts = [(-0.17, -0.6), (0.17, -0.6), (0.27, 0.22), (0.2, 0.6), (-0.2, 0.6), (-0.27, 0.22)]
+    pts = [(x * esc + off[0], y * esc + off[1]) for x, y in pts]
+    f = sdf.plane((0, 0, hi_z), (0, 0, 1))
+    f = sf.intersect(f, sdf.plane((0, 0, lo_z), (0, 0, -1)))
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:] + pts[:1]):
+        n = np.array([y1 - y0, -(x1 - x0), 0.0])
+        n /= np.linalg.norm(n)
+        f = sf.intersect(f, sdf.plane((x0, y0, 0), tuple(n)))
+    return f
+
+
+def _ataud(F, coll, abierto):
+    """El ataúd de suministros que las Santas bajan con cadenas cuando se despeja el círculo: madera negra con flejes,
+    la campanita dorada de las Santas en la tapa y lacres rojos. Abierto, la tapa queda tirada a un lado y adentro brilla
+    la reliquia entre la paja."""
+    # (cerrado lleva las cuatro cadenas largas: si el tope es chico, la simplificación se come la caja)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=4600 if abierto else 9500)
+    md = madera(11, '#3A281A', eje='y')
+    mt = hierro(12, '#4A4A50')
+    dorado = oro(13)
+    lacre = P_('#8A1418', 'cera', semilla=14)
+    caja = sf.restar(_hexataud(0.04, 0.44), _hexataud(0.1, 0.6, 0.86)) if abierto else _hexataud(0.04, 0.44)
+    c.sdf(sc.sdf_ruido(caja, 0.004, 30, 2), (-0.32, -0.66, 0.0), (0.32, 0.66, 0.5), md)
+    # Flejes de hierro y remaches
+    for y in (-0.42, -0.05, 0.38):
+        ancho = 0.2 + (0.27 - 0.2) * (1 - abs(y - 0.22) / 0.8)
+        c.caja((0, y, 0.24), (ancho + 0.015, 0.025, 0.205), 0.004, mt, 0.0)
+        for s in (-1, 1):
+            c.malla(sc.bolita(f'remache {y} {s}', (s * (ancho + 0.018), y, 0.36), 0.012, coll, n=1), mt)
+    # Asas de argolla a los lados
+    for s in (-1, 1):
+        for y in (-0.3, 0.2):
+            sf.cuerda_anillo(c, f'asa {s} {y}', [(s * (0.28 + 0.02 + 0.03 * (1 + math.cos(a)) / 2), y + 0.05 * math.sin(a), 0.22 + 0.04 * math.cos(a))
+                                                for a in np.linspace(0, 2 * math.pi, 10, endpoint=False)], 0.008, mt, coll)
+    # Paja que se sale por las rendijas
+    rng = np.random.default_rng(5)
+    for k in range(10):
+        b = np.array([rng.uniform(-0.2, 0.2), rng.uniform(-0.45, 0.45), 0.44 if abierto else 0.43])
+        d = np.array([rng.uniform(-1, 1), rng.uniform(-1, 1), rng.uniform(0.2, 0.8)])
+        c.trazo([b, b + d / np.linalg.norm(d) * 0.09], 0.004, P_('#C8A050', 'tela', semilla=20 + k), 0.0)
+    if not abierto:
+        tapa = _hexataud(0.44, 0.5, 1.04)
+        c.sdf(sc.sdf_ruido(tapa, 0.003, 30, 4), (-0.32, -0.66, 0.4), (0.32, 0.66, 0.56), madera(15, '#2E2016', eje='y'))
+        # La campanita de las Santas en la tapa, con su cruz de flejes dorados
+        c.caja((0, 0.05, 0.505), (0.02, 0.42, 0.006), 0.003, dorado, 0.0)
+        c.caja((0, 0.22, 0.505), (0.17, 0.02, 0.006), 0.003, dorado, 0.0)
+        c.malla(sc.torno('campanita', [(0.0, 0.0), (0.075, 0.0), (0.07, 0.015), (0.05, 0.06), (0.042, 0.1), (0.02, 0.115), (0.0, 0.118)], coll, segmentos=14,
+                         centro=(0, 0.22, 0.508)), dorado)
+        for s in (-1, 1):
+            c.bola((s * 0.12, -0.3, 0.505), (0.035, 0.035, 0.01), lacre, 0.0)
+            c.malla(sc.bolita(f'sello {s}', (s * 0.12, -0.3, 0.516), (0.018, 0.018, 0.004), coll, n=1), brillo('rojo', '#C0141A'))
+        # Cadenas de las cuatro esquinas que suben a la argolla (bajó del cielo colgada de ellas)
+        arriba = np.array([0.0, 0.0, 2.6])
+        for k, (x, y) in enumerate(((-0.17, -0.55), (0.17, -0.55), (-0.19, 0.55), (0.19, 0.55))):
+            _eslabones(c, f'cadena {k}', [(x, y, 0.5), arriba], 0.01, coll, hierro(30 + k), largo=0.12)
+        sf.cuerda_anillo(c, 'argolla', [(math.cos(a) * 0.09, 0, 2.66 + math.sin(a) * 0.07) for a in np.linspace(0, 2 * math.pi, 12, endpoint=False)], 0.02,
+                         mt, coll)
+    else:
+        # La tapa tirada al lado, de canto contra el piso
+        tapa = _hexataud(0.0, 0.06, 1.04, off=(0.62, 0.08))
+        c.sdf(sc.sdf_ruido(tapa, 0.003, 30, 6), (0.3, -0.62, -0.02), (0.95, 0.75, 0.1), madera(15, '#2E2016', eje='y'))
+        c.malla(sc.torno('campanita caida', [(0.0, 0.0), (0.075, 0.0), (0.07, 0.015), (0.05, 0.06), (0.042, 0.1), (0.02, 0.115), (0.0, 0.118)], coll,
+                         segmentos=14, centro=(0.62, 0.3, 0.06)), dorado)
+        # Adentro: paja y la reliquia que brilla
+        c.sdf(sc.sdf_ruido(sdf.ellipsoid((0, 0, 0.18), (0.2, 0.5, 0.1)), 0.02, 18, 7), (-0.25, -0.58, 0.05), (0.25, 0.58, 0.32), P_('#B89048', 'tela', semilla=40))
+        c.bola((0, 0.05, 0.33), 0.07, brillo('violeta', '#C46BFF'), 0.0)
+        for k in range(6):
+            a = k * 1.05
+            c.malla(sc.punta(f'rayo reliquia {k}', (math.cos(a) * 0.04, 0.05 + math.sin(a) * 0.04, 0.33), (math.cos(a) * 0.12, 0.05 + math.sin(a) * 0.12, 0.4),
+                             0.012, coll, seg=4), brillo('violeta', '#C46BFF'))
+        # Cadenas rotas tiradas
+        for k, (x, y) in enumerate(((-0.4, -0.5), (0.0, 0.75), (-0.45, 0.4))):
+            _eslabones(c, f'cadena rota {k}', [(x, y, 0.02), (x + 0.25, y + 0.1, 0.02), (x + 0.4, y - 0.1, 0.03)], 0.009, coll, hierro(30 + k), largo=0.09)
+    F.marca('luz', (0, 0, 0.5))
+    return F
+
+
+@cosa('ataud_suministros')
+def ataud_suministros(coll):
+    return _ataud(nueva('ataud_suministros', voxel=0.008), coll, False)
+
+
+@cosa('ataud_abierto')
+def ataud_abierto(coll):
+    return _ataud(nueva('ataud_abierto', voxel=0.008), coll, True)
+
+
+# ------------------------------------------------------------------------------------------------- Reglas de los biomas
+@cosa('veta_grisu')
+def veta_grisu(coll):
+    """Bolsa de grisú de las minas (va sobre la cara de una pared blanda, crece hacia +Y): ampollas de gas verde que
+    brillan, grietas que soplan y la cruz de aviso que rayaron los mineros."""
+    F = nueva('veta_grisu', voxel=0.01)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1300)
+    gas = brillo('verde', '#7CFF4A')
+    for k, (x, z, r) in enumerate(((-0.15, 0.45, 0.16), (0.18, 0.7, 0.13), (-0.05, 0.95, 0.12), (0.25, 0.35, 0.1), (-0.28, 0.8, 0.1))):
+        c.bola((x, 0.52, z), (r, r * 0.6, r), P_('#5A6A3A', 'cera', semilla=50 + k), 0.0, ruido_amp=0.006)
+        c.bola((x, 0.52 + r * 0.5, z), (r * 0.45, r * 0.2, r * 0.45), gas, 0.0)
+    # Ampollas encima de la pared (lo que se ve desde arriba) y el gas que sale
+    for k, (x, y, r) in enumerate(((-0.15, 0.1, 0.17), (0.2, 0.25, 0.13), (0.05, -0.15, 0.12))):
+        c.bola((x, y, 1.45), (r, r, r * 0.7), P_('#5A6A3A', 'cera', semilla=55 + k), 0.0, ruido_amp=0.006)
+        c.bola((x, y, 1.45 + r * 0.55), (r * 0.5, r * 0.5, r * 0.25), gas, 0.0)
+    for k in range(4):
+        a = k * 1.4
+        pts = [(math.cos(a) * 0.1 + 0.05 * q * math.sin(k + q), 0.5, 0.6 + math.sin(a) * 0.1 + 0.12 * q) for q in range(4)]
+        c.malla(sc.tubo(f'grieta {k}', pts, 0.012, coll, segmentos=4, muestras=1), gas)
+    # La cruz de aviso, rayada con cal
+    cal = P_('#E8E0C8', 'cera', semilla=60)
+    c.trazo([(-0.12, 0.5, 1.2), (0.12, 0.5, 1.0)], 0.015, cal, 0.0)
+    c.trazo([(0.12, 0.5, 1.2), (-0.12, 0.5, 1.0)], 0.015, cal, 0.0)
+    F.marca('luz', (0, 0.6, 0.6))
+    return F
+
+
+@cosa('columna_hueso')
+def columna_hueso(coll):
+    """Columna de hueso de las catacumbas: calaveras apiladas y fémures amarrados que sostienen el techo. Si se rompe,
+    se viene todo abajo."""
+    F = nueva('columna_hueso', voxel=0.012)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=4200)
+    piedra_b = piedra(70, '#5A5244', 0.2)
+    # (basa y capitel cuadrados de piedra; el fuste, un cilindro recto)
+    c.caja((0, 0, 0.09), (0.44, 0.44, 0.09), 0.025, piedra_b, 0.0)
+    c.caja((0, 0, 0.21), (0.38, 0.38, 0.04), 0.015, piedra_b, 0.0)
+    c.caja((0, 0, 1.66), (0.38, 0.38, 0.04), 0.015, piedra_b, 0.0)
+    c.caja((0, 0, 1.78), (0.46, 0.46, 0.08), 0.025, piedra_b, 0.0)
+    c.sdf(sdf.capped_cylinder((0, 0, 0.2), (0, 0, 1.68), 0.29) if hasattr(sdf, 'capped_cylinder') else sdf.round_box((0, 0, 0.94), (0.27, 0.27, 0.74), 0.06),
+          (-0.36, -0.36, 0.15), (0.36, 0.36, 1.72), P_('#3A332A', 'piedra', semilla=71, musgo=0.1))
+    # Anillos de calaveras alrededor del fuste
+    n_anillo = 7
+    for fila, z in enumerate((0.38, 0.72, 1.06, 1.4)):
+        for k in range(n_anillo):
+            a = 2 * math.pi * k / n_anillo + fila * 0.45
+            u = np.array([math.cos(a), math.sin(a), 0.0])
+            p = u * 0.31 + np.array([0, 0, z])
+            c.bola(p, (0.1, 0.1, 0.11), hueso_pt(fila * 10 + k), 0.0, ruido_amp=0.004)
+            for s in (-1, 1):
+                o = p + u * 0.085 + np.cross([0, 0, 1], u) * 0.04 * s + np.array([0, 0, 0.015])
+                c.bola(o, (0.026, 0.026, 0.03), P_('#16120E', 'liso'), 0.0)
+            c.bola(p + u * 0.09 - np.array([0, 0, 0.05]), (0.022, 0.015, 0.02), P_('#16120E', 'liso'), 0.0)
+        # Fémures cruzados entre fila y fila
+        if fila < 3:
+            for k in range(n_anillo):
+                a = 2 * math.pi * (k + 0.5) / n_anillo + fila * 0.45
+                u = np.array([math.cos(a), math.sin(a), 0.0])
+                w = np.cross([0, 0, 1], u)
+                b = u * 0.33 + np.array([0, 0, z + 0.17])
+                sf.hueso_largo(c, b - w * 0.09 - np.array([0, 0, 0.08]), b + w * 0.09 + np.array([0, 0, 0.08]), 0.018, hueso_pt(40 + k))
+    # Grietas que avisan que no aguanta mucho
+    for k in range(3):
+        a = k * 2.1
+        pts = [(math.cos(a) * 0.43, math.sin(a) * 0.43, 1.66 + 0.04 * q) for q in range(3)]
+        c.malla(sc.tubo(f'grieta {k}', [(p[0] + 0.03 * q, p[1], p[2]) for q, p in enumerate(pts)], 0.01, coll, segmentos=4, muestras=1), P_('#0A0806', 'liso'))
+    F.marca('luz', (0, 0, 1.0))
+    return F
+
+
+@cosa('pinchos_placa')
+def pinchos_placa(coll):
+    """Trampa de pinchos del castillo: la reja del piso (1 × 1 m) con sus agujeros y los bordes de hierro."""
+    F = nueva('pinchos_placa', voxel=0.006)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1200)
+    mt = hierro(80, '#3A3A40')
+    c.caja((0, 0, 0.015), (0.46, 0.46, 0.015), 0.006, mt, 0.0)
+    for k in range(4):
+        x = -0.36 + 0.24 * k
+        for q in range(4):
+            y = -0.36 + 0.24 * q
+            c.bola((x, y, 0.032), (0.035, 0.035, 0.006), P_('#0A0808', 'liso'), 0.0)
+    for s in (-1, 1):
+        c.caja((s * 0.47, 0, 0.02), (0.02, 0.48, 0.022), 0.005, hierro(81, '#5A4A3A'), 0.0)
+        c.caja((0, s * 0.47, 0.02), (0.48, 0.02, 0.022), 0.005, hierro(81, '#5A4A3A'), 0.0)
+    # Manchas de sangre vieja
+    for k in range(3):
+        c.bola((0.2 * math.cos(k * 2), 0.2 * math.sin(k * 2), 0.03), (0.08, 0.06, 0.004), P_('#4A0E10', 'liso'), 0.0)
+    return F
+
+
+@cosa('pinchos_puas')
+def pinchos_puas(coll):
+    """Las púas de la trampa (suben por los agujeros de la reja)."""
+    F = nueva('pinchos_puas', voxel=0.006)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=900)
+    for k in range(4):
+        x = -0.36 + 0.24 * k
+        for q in range(4):
+            y = -0.36 + 0.24 * q
+            c.malla(sc.punta(f'pua {k} {q}', (x, y, -0.05), (x, y, 0.42), 0.032, coll, seg=4, medio=0.5), hierro(82 + k, '#7A7A84'))
+    return F

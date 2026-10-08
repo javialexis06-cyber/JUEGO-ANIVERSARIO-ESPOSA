@@ -2,6 +2,7 @@
 // Cada arma es un comportamiento (barrido, proyectil, órbita…) con sus números; las sobrecargas (niveles 6, 12 y 18
 // del arma) le cambian el comportamiento prendiendo banderas o multiplicando parámetros.
 import { F, type DefArma, type DefSobrecarga, type ParamsArma } from '../tipos';
+import { SOBRECARGAS_NUEVAS } from './sobrecargas';
 
 const BASE: ParamsArma = {
   dano: 10, cadencia: 1, cantidad: 1, area: 1, alcance: 6, vel: 12, perfora: 1, duracion: 0, rebotes: 0, empuje: 2, critico: 0,
@@ -662,11 +663,19 @@ export const ARMAS_LISTA: DefArma[] = [
   },
 ];
 
+// Sangre y Ceniza 2: a cada arma base se le suman una templada y dos malditas (datos/sobrecargas.ts)
+for (const a of ARMAS_LISTA) {
+  const nuevas = SOBRECARGAS_NUEVAS[a.id];
+  if (nuevas) a.sobrecargas.push(...nuevas.filter((n) => !a.sobrecargas.some((x) => x.id === n.id)));
+}
+
 export const ARMAS: Record<string, DefArma> = Object.fromEntries(ARMAS_LISTA.map((a) => [a.id, a]));
 export const ARMAS_COMUNES = ARMAS_LISTA.filter((a) => a.clase === 'comun' && !a.evolucion).map((a) => a.id);
 /** Nivel máximo de un arma; las sobrecargas salen en estos niveles. */
 export const NIVEL_MAX_ARMA = 18;
 export const NIVELES_SOBRECARGA = [6, 12, 18];
+/** Sobrecargas que lleva cada arma como máximo (de las seis que tiene: dos templadas y una maldita). */
+export const MAX_SOBRECARGAS = 3;
 /** Nivel del arma que pide la evolución (además de su objeto pareja). */
 export const NIVEL_EVOLUCION = 12;
 /** Ranuras de armas por jugador. */

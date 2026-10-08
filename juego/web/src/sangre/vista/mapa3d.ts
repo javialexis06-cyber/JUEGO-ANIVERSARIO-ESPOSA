@@ -92,7 +92,8 @@ export class Mapa3D {
       // Calidad baja: de cada pared, la variante más liviana
       const p = { ...this.paredes };
       const tri = (x: ModeloFijo) => (x.geo.index ? x.geo.index.count : x.geo.getAttribute('position').count);
-      for (const k of Object.keys(p) as (keyof ModelosPared)[]) if (p[k].length > 1) p[k] = [p[k].reduce((a, b) => (tri(b) < tri(a) ? b : a))];
+      // (los minerales no son variantes: uno por mineral)
+      for (const k of Object.keys(p) as (keyof ModelosPared)[]) if (k !== 'minerales' && p[k].length > 1) p[k] = [p[k].reduce((a, b) => (tri(b) < tri(a) ? b : a))];
       this.paredes = p;
     }
     this.modelado = bib.escenarioModelado;
@@ -226,6 +227,7 @@ export class Mapa3D {
     };
     const { m } = this;
     const tapas: number[] = [];
+    const cristales = new Map<ModeloFijo, number[]>();
     for (let cy = t.cy * TROZO; cy < Math.min(m.h, (t.cy + 1) * TROZO); cy++)
       for (let cx = t.cx * TROZO; cx < Math.min(m.w, (t.cx + 1) * TROZO); cx++) {
         const i = cy * m.w + cx;
@@ -244,6 +246,8 @@ export class Mapa3D {
         else if (tipo === C.ORO) lst = p.oro;
         else if (tipo === C.HUEVO) lst = p.huevo;
         else if (tipo === C.ESCOMBRO) lst = p.escombro;
+        else if (tipo === C.MINERAL || tipo === C.GRISU) lst = p.blanda;
+        else if (tipo === C.COLUMNA) lst = p.columna;
         if (!lst || !lst.length) continue;
         // La roca de adentro (sin ninguna celda abierta alrededor) solo muestra el techo: una tapa plana
         if (this.tapa && tipo !== C.HUEVO && !this.tocaAbierta(cx, cy)) {
@@ -251,7 +255,27 @@ export class Mapa3D {
           continue;
         }
         lista(lst[v % lst.length]).push(i);
+        // Veta de mineral: además de la roca, sus cristales en la cara que da a lo abierto
+        if (tipo === C.MINERAL || tipo === C.GRISU) {
+          const mod = tipo === C.GRISU ? p.grisu[0] : p.minerales[v % 6];
+          if (mod) {
+            let l = cristales.get(mod);
+            if (!l) cristales.set(mod, (l = []));
+            l.push(i);
+          }
+        }
       }
+    for (const [mod, celdas] of cristales) {
+      const malla = new THREE.InstancedMesh(mod.geo, mod.mats, celdas.length);
+      celdas.forEach((i, k) => {
+        this.matrizCristal(i, M);
+        malla.setMatrixAt(k, M);
+      });
+      malla.instanceMatrix.needsUpdate = true;
+      malla.computeBoundingSphere();
+      t.grupo.add(malla);
+      t.mallas.push(malla);
+    }
     if (tapas.length && this.tapa) {
       const malla = new THREE.InstancedMesh(this.tapa.geo, this.tapa.mat, tapas.length);
       malla.receiveShadow = true;
@@ -477,10 +501,22 @@ export class Mapa3D {
       const d = dirs.find(([dx, dy]) => !esSolida(m.get(cx + dx, cy + dy)));
       if (d) rot = Math.atan2(d[0], d[1]) + Math.PI;
     }
-    const alto = t === C.BORDE || fijaGLB ? 1 : 0.92 + (v / 255) * 0.2;
+    const alto = t === C.BORDE || t === C.COLUMNA || fijaGLB ? 1 : 0.92 + (v / 255) * 0.2;
     Q.setFromAxisAngle(Y, rot);
     P.set(cx + 0.5 + (temblor ? (Math.random() - 0.5) * temblor : 0), 0, cy + 0.5 + (temblor ? (Math.random() - 0.5) * temblor : 0));
     S.set(encoge, alto * encoge, encoge);
+    out.compose(P, Q, S);
+  }
+
+  /** Los cristales de una veta de mineral: en el centro de la celda, mirando a lo abierto (prefiere hacia la cámara). */
+  private matrizCristal(i: number, out: THREE.Matrix4) {
+    const m = this.m;
+    const cx = i % m.w, cy = (i / m.w) | 0;
+    const dirs: [number, number][] = [[0, 1], [1, 0], [-1, 0], [0, -1]];
+    const d = dirs.find(([dx, dy]) => !esSolida(m.get(cx + dx, cy + dy)));
+    Q.setFromAxisAngle(Y, d ? Math.atan2(d[0], d[1]) + Math.PI : 0);
+    P.set(cx + 0.5, 0, cy + 0.5);
+    S.set(1, 1, 1);
     out.compose(P, Q, S);
   }
 

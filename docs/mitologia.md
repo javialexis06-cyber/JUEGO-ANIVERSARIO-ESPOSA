@@ -216,7 +216,8 @@ frontera: **la que arde** = Aura (fuego), **la que no está** = Lara (velo, frí
 
 **Los seis minerales del Pozo** (D de la propuesta), con nombres del mito en vez de los genéricos: **Plata del velo**
 (Lara), **Chispa de Aura**, **Gema de dragón**, **Escarcha del alba** (unicornios), **Polvo de estrellas** (grifos) y
-**Esmeralda de Celia** (la luna de la mina).
+**Esmeralda de Celia** (la luna de la mina). **Ya están en el juego** (fase 2 de Sangre y Ceniza 2; ver
+`docs/sistemas/sangre-y-ceniza.md`, «Los seis minerales del Pozo»).
 
 **El mapa de la Noche, sector por sector (con escenas cortas)**
 

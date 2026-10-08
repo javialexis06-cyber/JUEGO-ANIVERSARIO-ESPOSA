@@ -327,8 +327,13 @@ Propuesta:
    ganan peleando» y «Curva de dificultad pareja» en `docs/sistemas/sangre-y-ceniza.md`. Quedaron para después: los
    centinelas del peligro 3, los demás secundarios (mercurio, campanitas de plata) y bajar más el oro de los élites
    si al jugar sobra.
-2. **Fase 2**: D (seis minerales y el Pozo con materiales), C (cofre de suministros), F (reglas de cada bioma) y de L
-   las sobrecargas nuevas, la potencia y la regla de las dos armas (L1 y L4).
+2. ~~**Fase 2**~~ **hecha** (8 de octubre): D (los seis minerales con los nombres del mito y el Pozo que los pide, con
+   el mercader 2 por 1), C (cofre de suministros: círculo que se excava, ataúd que baja y una reliquia para cada uno),
+   F (dos reglas por bioma) y de L las 165 sobrecargas nuevas (templadas y malditas con las cuatro etiquetas
+   especiales), la potencia, el daño de estados y la regla de las dos armas (L1 y L4). Cómo quedó: «El cofre de
+   suministros», «Los seis minerales», «Reglas de cada bioma», «Sobrecargas de Sangre y Ceniza 2» y «El Pozo con
+   minerales» en `docs/sistemas/sangre-y-ceniza.md`. Quedaron para después: los espejos que duplican vampiros (castillo)
+   y el piso en llamas (abadía).
 3. **Fase 3**: G (mapa de la Noche con historia y los retos por bioma y clase) y los logros en la Sala de Trofeos; de
    L, las evoluciones y uniones, las armas comunes nuevas y las especializaciones que abren armas (L2, L3 y L5).
 4. **Fase 4**: B (La Procesión y La Cría), H (maestrías, anómalas, contratos y mutadores), I (infinito que crece) y las

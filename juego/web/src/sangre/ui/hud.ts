@@ -7,7 +7,8 @@ import { NIVEL_MAX_ARMA, xpArma } from '../datos/armas';
 import { TIPOS, esJefe } from '../sim/catalogo';
 import { ENT, S, type Entidad, type Enemigos, type Sucesos } from '../sim/estado';
 import { xpPara, type Jugador } from '../sim/jugador';
-import type { IdObjetivo, IdSecundario } from '../tipos';
+import { MINERALES_ORDEN, type IdObjetivo, type IdSecundario } from '../tipos';
+import { MINERALES } from '../datos/minerales';
 import type { Escena3D } from '../vista/escena';
 import { COLOR_ASTRAL } from '../vista/astral';
 import { glifo, icono } from './iconos';
@@ -84,6 +85,18 @@ const AVISOS: Record<number, (a: number, b: number, nombre: (i: number) => strin
   31: (a, b) => [`Rosa del velo (${a}/${b}): un poco de calma.`],
   32: (a, b) => [`Pluma de grifo (${a}/${b}): ¡el viento te empuja!`],
   33: (a, b) => [`Hongos de tumba (${a}/${b})`],
+  34: () => ['¡Las Santas mandan un cofre de suministros! Excava el círculo marcado para que baje.', 'grande'],
+  35: () => ['¡Despejado! El ataúd de suministros viene bajando…'],
+  36: () => ['Llegó el ataúd: ábranlo, hay una reliquia para cada uno.', 'grande'],
+  37: () => ['¡Las tumbas se abren! Donde se mueve la tierra, salen muertos.', 'peligro'],
+  38: () => ['Baja la niebla del pantano: no se ve casi nada.', 'peligro'],
+  39: () => ['¡Grisú! Las bolsas verdes revientan al picarlas (y le pegan a todos).', 'peligro'],
+  40: () => ['¡Se viene el techo! Las columnas de hueso sostienen la catacumba: rómpelas con la horda debajo.', 'peligro'],
+  41: () => ['¡Se caen los vitrales! Fíjate en las sombras del piso.', 'peligro'],
+  42: () => ['¡Una vagoneta suelta viene rodando! Quítate… o deja que atropelle a la horda.', 'peligro'],
+  43: () => ['¡El campanario llama a los muertos! Aguanta la oleada y paga.', 'grande'],
+  44: () => ['El campanario calla: dejó dos cofres y oro.', 'grande'],
+  45: () => ['¡Las armaduras del castillo despiertan cuando pasas cerca!', 'peligro'],
 };
 
 /** La leyenda de la visión astral: qué es cada color. */
@@ -92,6 +105,7 @@ const LEYENDA: [string, string][] = [
   [COLOR_ASTRAL.oro, 'Oro'],
   [COLOR_ASTRAL.sangre, 'Sangre'],
   [COLOR_ASTRAL.huevo, 'Huevos y comida'],
+  [COLOR_ASTRAL.mineral, 'Minerales (cada uno de su color)'],
   [COLOR_ASTRAL.botin, 'Botín'],
   [COLOR_ASTRAL.santo, 'Santuario'],
   [COLOR_ASTRAL.reliquia, 'Reliquias'],
@@ -169,6 +183,7 @@ export class Hud {
           <span class="r-hierro"><span data-e="hierro">0</span><span class="ico">${glifo('hierro')}</span></span>
           <span class="r-sangre"><span data-e="sangre">0</span><span class="ico">${glifo('cristal')}</span></span>
           <span class="r-muertes"><span data-e="muertes">0</span><span class="ico">${glifo('calavera')}</span></span>
+          <span class="r-minerales" data-e="minerales"></span>
         </div>
         <button class="boton boton-redondo boton-pausa" data-e="pausa" aria-label="Pausa">${glifo('pausa')}</button>
       </div>
@@ -262,6 +277,11 @@ export class Hud {
     this.texto('hierro', Math.floor(j.hierro + j.hierroSeguro));
     this.texto('sangre', Math.floor(j.sangre + j.sangreSeguro));
     this.texto('muertes', j.resumen.muertes);
+    // Los minerales (solo los que lleva, en el bolsillo o ya a salvo)
+    const mins = MINERALES_ORDEN.map((k, i) => [k, Math.floor((j.minerales?.[i] ?? 0) + (j.mineralesSeguro?.[i] ?? 0))] as const).filter(([, n]) => n > 0);
+    this.poner('minerales', mins.map(([k, n]) => `${k}${n}`).join(','), (el) => {
+      el.innerHTML = mins.map(([k, n]) => `<span style="--mc:${MINERALES[k].brillo}" title="${MINERALES[k].nombre}">${n}<span class="ico">${glifo(MINERALES[k].glifo)}</span></span>`).join('');
+    });
     // Habilidad
     const falta = j.habT > 0 ? Math.min(1, j.habT / Math.max(0.1, j.m.habMax || j.habT)) : 0;
     this.poner('habR', (falta * 100).toFixed(0), (el, x) => el.style.setProperty('--falta', `${x}%`));

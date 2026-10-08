@@ -42,6 +42,8 @@ export interface DatosJugador {
   oroS: number;
   hierroS: number;
   sangreS: number;
+  min?: number[];
+  minS?: number[];
   tiradas: number;
   vetos: number;
   vetadas: string[];
@@ -58,6 +60,7 @@ export function serializarJugador(j: Jugador): DatosJugador {
     dones: { ...j.dones }, extra: { ...j.extra }, extraEtq: { ...(j.extraEtq as Record<string, number>) }, objetos: [...j.objetos],
     equipo: { ...(j.equipo as Record<string, string>) }, reliquias: [...j.reliquias], bendiciones: { ...j.bendiciones }, milagros: [...j.milagros],
     oro: j.oro, hierro: j.hierro, sangre: j.sangre, oroS: j.oroSeguro, hierroS: j.hierroSeguro, sangreS: j.sangreSeguro,
+    min: [...j.minerales], minS: [...j.mineralesSeguro],
     tiradas: j.tiradas, vetos: j.vetos, vetadas: [...j.vetadas], usados: { ...j.usados }, resumen: { ...j.resumen }, m: { ...j.m }, cola: j.cola.slice(0, 6),
   };
 }
@@ -93,6 +96,9 @@ export function aplicarJugador(j: Jugador, d: DatosJugador, conCola = true) {
   j.oroSeguro = d.oroS;
   j.hierroSeguro = d.hierroS;
   j.sangreSeguro = d.sangreS;
+  // (los minerales llegaron después: un aparato viejo no los manda)
+  if (Array.isArray(d.min) && d.min.length === 6) j.minerales = d.min.map((x) => Number(x) || 0);
+  if (Array.isArray(d.minS) && d.minS.length === 6) j.mineralesSeguro = d.minS.map((x) => Number(x) || 0);
   j.tiradas = d.tiradas;
   j.vetos = d.vetos;
   j.vetadas = [...d.vetadas];
@@ -163,6 +169,8 @@ export interface Foto {
   jefe: number;
   jefeFase: number;
   ecl: number;
+  /** Niebla del cementerio (segundos). */
+  nie?: number;
   J: LuzJugador[];
   /** Enemigos: 12 enteros cada uno. */
   e: string;

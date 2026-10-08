@@ -51,7 +51,7 @@ export class VistaEleccion {
         <span class="ico ico-carta">${icono(op.glifo, op.icono)}</span>
         <h3>${op.nombre}</h3>
         <p>${op.desc}</p>
-        <span class="tipo">${TIPO_TXT[op.tipo] ?? ''}</span>
+        <span class="tipo">${op.tipo === 'sobrecarga' && op.rareza === 4 ? 'Sobrecarga maldita' : TIPO_TXT[op.tipo] ?? ''}</span>
         ${this.vetando && e.motivo === 'nivel' && op.tipo !== 'oro' && op.tipo !== 'vida' ? `<span class="vetar">${glifo('tijeras')}</span>` : ''}
       </button>`;
     }).join('');

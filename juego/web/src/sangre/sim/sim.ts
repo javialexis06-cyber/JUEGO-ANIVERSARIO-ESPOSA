@@ -15,6 +15,7 @@ import { dirigirHorda, moverEnemigos, aparecerEnemigo } from './enemigos_ia';
 import { moverAliados } from './aliados';
 import * as mec from './mecanicas';
 import { prepararObjetivos, actualizarObjetivos, llamarCampana, tomarConMano, guardianMuerto, RADIO_GRANDE, RADIO_LLAVE } from './objetivos';
+import { actualizarBioma, alRomperBioma, prepararBioma, type Reventon } from './biomas';
 import { encolarNivel, encolarSobrecarga } from './opciones';
 import { jefeMuerto } from './jefes';
 import { Golpe } from './golpe';
@@ -86,6 +87,20 @@ export class Sim {
   impacienciaT = 0;
   /** Cuándo sale cada bicho del botín en esta etapa (ordenado). */
   botinPlan: { t: number; id: string }[] = [];
+  /** Reglas del bioma (sim/biomas.ts): relojes, lo que revienta después, niebla, vitrales y avisos de la primera vez. */
+  biomaT = 0;
+  biomaT2 = 0;
+  reventones: Reventon[] = [];
+  niebla = 0;
+  vitrales = 0;
+  vitralT = 0;
+  avisoGrisu = false;
+  avisoColumna = false;
+  avisoTumbas = false;
+  avisoArmadura = false;
+  vagGolpes = new Map<number, Set<number>>();
+  /** Ya se marcó el cofre de suministros de esta etapa. */
+  suministroVisto = false;
   /** Plumas de grifo: cuánto falta para que caiga la siguiente. */
   plumaT = 0;
   /** Los importantes que se quedaron lejos (uid → distancia más corta y segundos sin acercarse). */
@@ -204,6 +219,7 @@ export class Sim {
       mec.alEmpezarEtapa(this, j);
     });
     prepararObjetivos(this);
+    prepararBioma(this);
     // Las oleadas, repartidas a lo largo de la barra (la etapa final no tiene: tiene los sepulcros)
     const nOl = cfg.final || cfg.exp.tutorial ? 0 : OLEADAS[Math.min(OLEADAS.length - 1, cfg.etapa - 1)];
     for (let k = 0; k < nOl; k++) this.oleadas.push(((k + 1) / (nOl + 1)) * 0.92);
@@ -489,22 +505,23 @@ export class Sim {
       E.kx[i] += g.dx * k;
       E.ky[i] += g.dy * k;
     }
-    // Estados alterados
+    // Estados alterados (la potencia pone más carga de cada uno)
     const durMult = j ? 1 + j.st.duracion : 1;
+    const pot = j ? Math.max(0.2, 1 + j.st.potencia) : 1;
     if (g.quema > 0) {
-      E.quema[i] = Math.max(E.quema[i], g.quema);
+      E.quema[i] = Math.max(E.quema[i], g.quema * pot);
       E.quemaT[i] = 3 * durMult;
     }
     if (g.veneno > 0) {
-      E.veneno[i] = Math.min(E.veneno[i] + g.veneno * 0.5, g.veneno * 4);
+      E.veneno[i] = Math.min(E.veneno[i] + g.veneno * 0.5 * pot, g.veneno * 4 * pot);
       E.venenoT[i] = 4 * durMult;
     }
     if (g.sangrado > 0) {
-      E.sangrado[i] = Math.max(E.sangrado[i], g.sangrado);
+      E.sangrado[i] = Math.max(E.sangrado[i], g.sangrado * pot);
       E.sangradoT[i] = 4 * durMult;
     }
     if (g.lento > 0) {
-      E.lento[i] = Math.max(E.lento[i], Math.min(0.85, g.lento));
+      E.lento[i] = Math.max(E.lento[i], Math.min(0.85, g.lento * (1 + (pot - 1) * 0.5)));
       E.lentoT[i] = 2 * durMult;
     }
     if (g.aturde > 0 && !esJefe(t)) E.aturdido[i] = Math.max(E.aturdido[i], g.aturde * (E.elite[i] ? 0.5 : 1));
@@ -557,7 +574,9 @@ export class Sim {
     g.j = E.ultimo[i];
     g.etq = BIT_ETQ[etq as keyof typeof BIT_ETQ] ?? 0;
     g.callado = this.az.n() > 0.15;
-    this.danar(i, d, g);
+    // (el daño de estados del que lo puso)
+    const j = g.j >= 0 ? this.J[g.j] : null;
+    this.danar(i, d * (j ? Math.max(0.2, 1 + j.st.estados) : 1), g);
   }
 
   /** Mata al enemigo i (botín, mecánicas, objetivos). */
@@ -711,7 +730,7 @@ export class Sim {
       for (let cx = Math.floor(x - r); cx <= Math.ceil(x + r); cx++) {
         if ((cx + 0.5 - x) ** 2 + (cy + 0.5 - y) ** 2 > r * r) continue;
         const t = m.get(cx, cy);
-        if (t === C.BLANDA || t === C.ESCOMBRO || (tambienDuras && t === C.DURA) || (vetas && (t === C.HIERRO || t === C.ORO || t === C.SANGRE || t === C.HUEVO))) {
+        if (t === C.BLANDA || t === C.ESCOMBRO || (tambienDuras && t === C.DURA) || (vetas && (t === C.HIERRO || t === C.ORO || t === C.SANGRE || t === C.HUEVO || t === C.MINERAL))) {
           const roto = m.excavar(cx, cy, 99);
           if (roto >= 0) this.alRomper(cx, cy, roto, j);
         }
@@ -862,6 +881,7 @@ export class Sim {
     moverZonas(this, dt);
     this.recoger(dt);
     actualizarObjetivos(this, dt);
+    actualizarBioma(this, dt);
     // Fin por derrota: nadie queda en pie
     if (!this.fin && !this.J.some((j) => j.estado === 0)) {
       this.fin = { exito: false, extraidos: [], motivo: 'derrota', objetivo: this.obj.hecho, secundario: this.sec.prog, prisioneros: 0 };
@@ -1052,6 +1072,8 @@ export class Sim {
     else if (tipo === C.SANGRE) this.soltar(REC.SANGRE, x, y, Math.round(this.az.entero(1, 3) * vetas));
     else if (tipo === C.ORO) this.soltar(REC.ORO, x, y, Math.round(this.az.entero(4, 7) * vetas));
     else if (tipo === C.HUEVO) this.soltar(REC.HUEVO, x, y, 1);
+    else if (tipo === C.GRISU || tipo === C.COLUMNA) alRomperBioma(this, cx, cy, tipo);
+    else if (tipo === C.MINERAL) this.soltar(REC.MINERAL + (this.mapa.v[this.mapa.idx(cx, cy)] % 6), x, y, Math.max(1, Math.round(this.az.entero(1, 2) * vetas)));
     if (j) {
       j.resumen.excavadas++;
       mec.alExcavar(this, j, cx, cy, tipo);
@@ -1215,6 +1237,16 @@ export class Sim {
         if (this.sec.tipo === 'huevos') this.sec.prog++;
         this.aviso(11, this.sec.prog, this.sec.meta);
         break;
+      case REC.MINERAL:
+      case REC.MINERAL + 1:
+      case REC.MINERAL + 2:
+      case REC.MINERAL + 3:
+      case REC.MINERAL + 4:
+      case REC.MINERAL + 5:
+        // (los minerales son de todos: cada uno se lleva la cantidad completa a su Pozo)
+        for (const o of this.J) if (o.estado === 0 || o.estado === 1) o.minerales[r.tipo - REC.MINERAL] += r.valor;
+        j.resumen.minerales = (j.resumen.minerales ?? 0) + r.valor;
+        break;
       case REC.ROSA:
         if (this.sec.tipo === 'rosas') this.sec.prog++;
         this.curar(j, j.hpMax * 0.06);
@@ -1249,7 +1281,9 @@ export class Sim {
 
   /** ¿Qué tan oscuro está? (para el dibujo) 0 normal, 1 eclipse total. */
   get oscuridad() {
-    return this.eclipse > 0 ? Math.min(1, this.eclipse / 2, (20 - Math.max(0, 20 - this.eclipse)) / 2 + 0.3) : 0;
+    if (this.eclipse > 0) return Math.min(1, this.eclipse / 2, (20 - Math.max(0, 20 - this.eclipse)) / 2 + 0.3);
+    // (la niebla del cementerio: oscurece menos que el eclipse)
+    return this.niebla > 0 ? 0.55 * Math.min(1, this.niebla / 2, (16 - this.niebla) / 2 + 0.2) : 0;
   }
 
   /** Para pruebas y para el bot: la entrada de un jugador. */

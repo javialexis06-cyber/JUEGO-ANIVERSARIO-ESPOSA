@@ -259,7 +259,7 @@ export class Anfitrion {
     return {
       n: ++this.nFoto, etapa: sim.cfg.etapa, t: +sim.t.toFixed(2), av: +sim.avance.toFixed(4), ol: sim.oleadasHechas,
       g: sim.guardian >= 0 && E.vivo[sim.guardian] ? E.uid[sim.guardian] : -1, gv: sim.guardianVisto ? 1 : 0, imp: sim.impaciencia, fase: sim.fase, obj: { ...sim.obj }, sec: { ...sim.sec },
-      jefe: sim.jefe >= 0 && E.vivo[sim.jefe] ? E.uid[sim.jefe] : -1, jefeFase: sim.jefeFase, ecl: +sim.eclipse.toFixed(2), J,
+      jefe: sim.jefe >= 0 && E.vivo[sim.jefe] ? E.uid[sim.jefe] : -1, jefeFase: sim.jefeFase, ecl: +sim.eclipse.toFixed(2), nie: +sim.niebla.toFixed(1), J,
       e: aB64(be.subarray(0, idx.length * TAM_E)), p: aB64(bp.subarray(0, np * TAM_P)), r: aB64(br.subarray(0, rec.length * TAM_R)), a: aB64(ba.subarray(0, na * TAM_A)),
       z: sim.Z.filter((z) => z.vivo).slice(0, 80).map((z) => [z.id, z.tipo, +z.x.toFixed(2), +z.y.toFixed(2), +z.r.toFixed(2), +z.vida.toFixed(2), +z.total.toFixed(2), +z.retraso.toFixed(2), z.enemiga ? 1 : 0, z.arma, z.sigue]),
       ent: sim.ent.map((e) => [e.id, e.tipo, +e.x.toFixed(2), +e.y.toFixed(2), Math.round(e.hp), Math.round(e.hpMax), +e.prog.toFixed(3), e.est, e.quien, +e.cuenta.toFixed(1), e.k, e.vivo ? 1 : 0, e.dato, +e.t.toFixed(2)]),

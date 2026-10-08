@@ -4,9 +4,10 @@
 // cofres de reliquias y malditos, prisioneros), el objetivo (altares, carreta, campana que se defiende, el élite
 // marcado) y la Campana de Extracción. Fuera de la visión astral nada se señala en el mapa salvo la campana.
 import * as THREE from 'three';
-import { C } from '../tipos';
+import { C, MINERALES_ORDEN } from '../tipos';
+import { MINERALES } from '../datos/minerales';
 import { TIPOS, TIPO_ALTAR } from '../sim/catalogo';
-import { ENT, REC } from '../sim/estado';
+import { ENT, REC, esMineral } from '../sim/estado';
 import type { EstadoVista } from './escena';
 import { UNI_LUZ } from './luz';
 
@@ -20,6 +21,7 @@ export const COLOR_ASTRAL = {
   oro: '#ffd34a',
   sangre: '#ff3a3a',
   huevo: '#7ad06a',
+  mineral: '#c8e8ff',
   botin: '#ffb04a',
   santo: '#a8c8ff',
   reliquia: '#c890ff',
@@ -28,6 +30,8 @@ export const COLOR_ASTRAL = {
   campana: '#ffe8a0',
 } as const;
 const COL = Object.fromEntries(Object.entries(COLOR_ASTRAL).map(([k, v]) => [k, new THREE.Color(v)])) as Record<keyof typeof COLOR_ASTRAL, THREE.Color>;
+/** Cada mineral brilla de su color (en el orden de MINERALES_ORDEN). */
+const COL_MINERAL = MINERALES_ORDEN.map((id) => new THREE.Color(MINERALES[id].brillo));
 
 const VERT = /* glsl */ `
   varying vec2 vUv; varying vec3 vCol; varying float vFase;
@@ -168,6 +172,7 @@ export class VisionAstral {
       else if (e.tipo === ENT.PRISIONERO && e.est === 0) poner(e.x, e.y, 0.2, 1, COL.prisionero);
       else if ((e.tipo === ENT.CARRETA || e.tipo === ENT.CAMPANA_DEF) && e.est === 1) poner(e.x, e.y, 0.2, 1.3, COL.objetivo);
       else if (e.tipo === ENT.SEPULCRO && e.est === 0) poner(e.x, e.y, 0.2, 1.4, COL.objetivo);
+      else if (e.tipo === ENT.SUMINISTRO && e.est <= 2) poner(e.x, e.y, 0.2, 2.2, COL.reliquia);
     }
     const E = est.E;
     for (let i = 0; i < E.max; i++) {
@@ -184,6 +189,7 @@ export class VisionAstral {
       else if (t === REC.HUEVO) poner(r.x, r.y, 0.15, 0.6, COL.huevo);
       else if (t === REC.COMIDA) poner(r.x, r.y, 0.15, 0.5, COL.huevo);
       else if (t === REC.ORO && r.valor >= 5) poner(r.x, r.y, 0.15, 0.45, COL.oro);
+      else if (esMineral(t)) poner(r.x, r.y, 0.15, 0.5, COL_MINERAL[t - REC.MINERAL]);
     }
     // Las vetas en las paredes (encima de la roca)
     const m = est.mapa;
@@ -192,7 +198,7 @@ export class VisionAstral {
     for (let cy = y0; cy <= y1; cy++)
       for (let cx = x0; cx <= x1; cx++) {
         const c = m.c[cy * m.w + cx];
-        const col = c === C.HIERRO ? COL.hierro : c === C.ORO ? COL.oro : c === C.SANGRE ? COL.sangre : c === C.HUEVO ? COL.huevo : null;
+        const col = c === C.HIERRO ? COL.hierro : c === C.ORO ? COL.oro : c === C.SANGRE ? COL.sangre : c === C.HUEVO ? COL.huevo : c === C.MINERAL ? COL_MINERAL[m.v[cy * m.w + cx] % 6] : null;
         if (!col || !cerca(cx + 0.5, cy + 0.5)) continue;
         poner(cx + 0.5, cy + 0.5, 1.2, 0.42, col, true);
       }

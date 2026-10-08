@@ -1,6 +1,6 @@
 // Un jugador dentro de la expedición: posición, vida, nivel, armas, mejoras, objetos, equipo, reliquias,
 // bendiciones, dones de su clase y el estado de su mecánica. Sus estadísticas finales se recalculan cuando algo cambia.
-import { ARMAS, NIVELES_SOBRECARGA, NIVEL_MAX_ARMA, xpArma } from '../datos/armas';
+import { ARMAS, MAX_SOBRECARGAS, NIVELES_SOBRECARGA, NIVEL_MAX_ARMA, xpArma } from '../datos/armas';
 import { BENDICION, EQUIPO, OBJETO } from '../datos/botin';
 import { CLASES } from '../datos/clases';
 import {
@@ -48,8 +48,19 @@ export class ArmaJ {
     this.def = ARMAS[id];
   }
 
-  /** Recalcula los parámetros con el nivel, las sobrecargas y las estadísticas del jugador. */
-  calcular(st: Stats) {
+  /** Las etiquetas especiales que le dieron sus sobrecargas malditas (a dos manos, de cinto, consentida, gorda). */
+  get especiales(): Etiqueta[] {
+    const r: Etiqueta[] = [];
+    for (const id of this.sobrecargas) {
+      const s = this.def.sobrecargas.find((x) => x.id === id);
+      if (s?.maldita && s.etiqueta) r.push(s.etiqueta);
+    }
+    return r;
+  }
+
+  /** Recalcula los parámetros con el nivel, las sobrecargas y las estadísticas del jugador. `otras` multiplica el daño
+   *  por lo que le hacen las demás armas (las de cinto suben a las otras; la consentida las baja). */
+  calcular(st: Stats, otras = 1) {
     const d = this.def;
     const p: ParamsArma = { ...d.base };
     const L = this.nivel;
@@ -85,6 +96,21 @@ export class ArmaJ {
     p.alcance *= 1 + st.alcance;
     p.critico += st.critico;
     p.cadencia = Math.max(0.08, p.cadencia / Math.max(0.3, 1 + st.cadencia));
+    p.dano *= otras;
+    // Bala gorda: todo en uno solo, enorme (sin proyectiles: un golpe enorme y más lento)
+    if (etq & BIT_ETQ.gorda) {
+      if (CUENTA[d.tipo]) {
+        p.dano *= Math.max(1, p.cantidad) * 1.15;
+        p.area *= 1.5;
+        p.cantidad = 1;
+        p.perfora += 3;
+        p.flags |= F.GORDA;
+      } else {
+        p.area *= 1.5;
+        p.dano *= 1.4;
+        p.cadencia *= 1.35;
+      }
+    }
     this.p = p;
     this.etq = etq;
     this.sucio = false;
@@ -107,7 +133,7 @@ export class ArmaJ {
   /** ¿Le toca escoger una sobrecarga? (llegó a un hito que no ha pedido) */
   get debeSobrecarga() {
     const alcanzados = NIVELES_SOBRECARGA.filter((n) => this.nivel >= n).length;
-    return alcanzados > this.pedidas && this.sobrecargas.length < this.def.sobrecargas.length;
+    return alcanzados > this.pedidas && this.sobrecargas.length < Math.min(MAX_SOBRECARGAS, this.def.sobrecargas.length);
   }
 }
 
@@ -129,6 +155,8 @@ export interface ResumenJugador {
   caidas: number;
   /** Bichos del botín tumbados (ratas del tesoro, ratas doradas, ladrones de tumbas). */
   botin?: number;
+  /** Minerales recogidos (los seis juntos). */
+  minerales?: number;
 }
 
 export class Jugador {
@@ -186,6 +214,9 @@ export class Jugador {
   oroSeguro = 0;
   hierroSeguro = 0;
   sangreSeguro = 0;
+  /** Los seis minerales del Pozo (índice de MINERALES_ORDEN): en el bolsillo y ya a salvo (se llevan a casa). */
+  minerales = [0, 0, 0, 0, 0, 0];
+  mineralesSeguro = [0, 0, 0, 0, 0, 0];
   habT = 0;
   habActiva = 0;
   /** Estado de la mecánica de la clase (números libres). */
@@ -256,6 +287,18 @@ export class Jugador {
   }
   objeto(id: string) {
     return this.objetos.includes(id);
+  }
+  /** Lo que las demás armas le hacen al daño de la de la ranura k (De cinto: +20 % a las otras; La consentida: −30 %). */
+  multOtras(k: number) {
+    let m = 1;
+    this.armas.forEach((b, i) => {
+      if (i === k) return;
+      for (const e of b.especiales) {
+        if (e === 'cinto') m *= 1.2;
+        else if (e === 'consentida') m *= 0.7;
+      }
+    });
+    return m;
   }
   get vivo() {
     return this.estado === 0;
@@ -358,6 +401,8 @@ export class Jugador {
     this.hierroSeguro += this.hierro;
     this.sangreSeguro += this.sangre;
     this.oro = this.hierro = this.sangre = 0;
+    for (let k = 0; k < 6; k++) this.mineralesSeguro[k] += this.minerales[k];
+    this.minerales.fill(0);
   }
 
   /** Datos para la siguiente etapa (o para guardar el resultado). */

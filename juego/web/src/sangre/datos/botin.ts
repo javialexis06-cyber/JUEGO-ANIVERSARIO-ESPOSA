@@ -1,7 +1,7 @@
 // Todo lo que se consigue en una expedición además de las armas: mejoras al subir de nivel (con rareza), objetos de
 // la Forja con su contrapartida (como Brotato), equipo que cae de élites y cofres (como Halls of Torment), reliquias
 // que cambian la partida (como Army of Ruin) y las bendiciones de los tres santos oscuros (como Death Must Die).
-import type { Etiqueta, RanuraEquipo, Stat, Stats } from '../tipos';
+import type { Etiqueta, IdMineral, RanuraEquipo, Stat, Stats } from '../tipos';
 
 // ------------------------------------------------------------------------------------------------- Mejoras
 export interface DefMejora {
@@ -38,6 +38,9 @@ export const MEJORAS: DefMejora[] = [
   { id: 'oro', nombre: 'Codicia', stat: 'oro', base: 0.08, fmt: '%', texto: 'de oro', glifo: 'oro' },
   { id: 'excavar', nombre: 'Pico de hierro', stat: 'excavar', base: 0.15, fmt: '%', texto: 'de velocidad de excavar', glifo: 'pico' },
   { id: 'vetas', nombre: 'Olfato de minero', stat: 'vetas', base: 0.15, fmt: '%', texto: 'de lo que dan las vetas', glifo: 'hierro' },
+  // (la potencia y el daño de estados solo pesan si alguna arma pone quema, veneno, sangrado o frío)
+  { id: 'potencia', nombre: 'Mano de boticario', stat: 'potencia', base: 0.1, fmt: '%', texto: 'de potencia (cargas de quema, veneno, sangrado y frío)', glifo: 'frasco' },
+  { id: 'estados', nombre: 'Saña', stat: 'estados', base: 0.1, fmt: '%', texto: 'de daño de los estados', glifo: 'gota' },
   { id: 'roboVida', nombre: 'Colmillo', stat: 'roboVida', base: 0.008, fmt: '%', texto: 'de robo de vida', glifo: 'colmillo' },
   { id: 'enfriamiento', nombre: 'Concentración', stat: 'enfriamiento', base: 0.05, fmt: '%', texto: 'menos de recarga de la habilidad', glifo: 'reloj' },
   { id: 'luz', nombre: 'Farol', stat: 'luz', base: 0.12, fmt: '%', texto: 'de luz', glifo: 'vela' },
@@ -58,6 +61,11 @@ export const MEJORAS: DefMejora[] = [
   { id: 'e_area', nombre: 'Estruendo', etiqueta: 'area', base: 0.09, fmt: '%', texto: 'de daño en área', glifo: 'area' },
   { id: 'e_invocacion', nombre: 'Pacto', etiqueta: 'invocacion', base: 0.12, fmt: '%', texto: 'de daño de invocaciones', glifo: 'calavera' },
   { id: 'e_construccion', nombre: 'Planos', etiqueta: 'construccion', base: 0.12, fmt: '%', texto: 'de daño de construcciones', glifo: 'engranaje' },
+  // (las de las sobrecargas malditas: solo salen con dos armas de la misma)
+  { id: 'e_dos_manos', nombre: 'Ambidiestro', etiqueta: 'dos_manos', base: 0.14, fmt: '%', texto: 'de daño de las armas a dos manos', glifo: 'mano' },
+  { id: 'e_cinto', nombre: 'Funda de cuero', etiqueta: 'cinto', base: 0.14, fmt: '%', texto: 'de daño de las armas de cinto', glifo: 'daga' },
+  { id: 'e_consentida', nombre: 'Mimos de armero', etiqueta: 'consentida', base: 0.14, fmt: '%', texto: 'de daño de las consentidas', glifo: 'corazon' },
+  { id: 'e_gorda', nombre: 'Pólvora doble', etiqueta: 'gorda', base: 0.14, fmt: '%', texto: 'de daño de las balas gordas', glifo: 'bomba' },
 ];
 export const MEJORA: Record<string, DefMejora> = Object.fromEntries(MEJORAS.map((m) => [m.id, m]));
 
@@ -104,6 +112,8 @@ export const OBJETOS: DefObjeto[] = [
   { id: 'carcaj', nombre: 'Carcaj', desc: '+20 % de daño a distancia, −10 % de daño cuerpo a cuerpo.', precio: 28, rareza: 1, etq: { distancia: 0.2, cuerpo: -0.1 }, glifo: 'arco', repetible: true },
   { id: 'huesos_santo', nombre: 'Huesos de santo', desc: '+30 % de daño de invocaciones.', precio: 32, rareza: 1, etq: { invocacion: 0.3 }, glifo: 'hueso', repetible: true },
   { id: 'plano_maestro', nombre: 'Plano maestro', desc: '+30 % de daño de construcciones.', precio: 32, rareza: 1, etq: { construccion: 0.3 }, glifo: 'engranaje', repetible: true },
+  { id: 'estuche_boticario', nombre: 'Estuche del boticario', desc: '+25 % de potencia, −5 % de daño.', precio: 30, rareza: 1, mod: { potencia: 0.25, dano: -0.05 }, glifo: 'frasco', repetible: true },
+  { id: 'sal_amarga', nombre: 'Sal amarga', desc: '+30 % de daño de los estados, −8 % de velocidad de ataque.', precio: 30, rareza: 1, mod: { estados: 0.3, cadencia: -0.08 }, glifo: 'gota', repetible: true },
   // Especiales (sin repetir)
   { id: 'segunda_piel', nombre: 'Segunda piel', desc: 'Una vez por expedición, al caer te levantas con la mitad de la vida.', precio: 70, rareza: 3, especial: 'segunda_piel', glifo: 'corazon' },
   { id: 'saco_avaro', nombre: 'Saco del avaro', desc: 'Cada 100 de oro que tengas: +3 % de daño.', precio: 45, rareza: 2, especial: 'saco_avaro', glifo: 'oro' },
@@ -267,7 +277,7 @@ export const BENDICIONES: DefBendicion[] = [
 export const BENDICION: Record<string, DefBendicion> = Object.fromEntries(BENDICIONES.map((b) => [b.id, b]));
 
 // ------------------------------------------------------------------------------------------------- Pozo de las Almas
-/** Mejoras permanentes que se compran con ceniza. */
+/** Mejoras permanentes que se compran con ceniza y uno de los seis minerales (como el de Deep Rock). */
 export interface DefPozo {
   id: string;
   nombre: string;
@@ -275,25 +285,38 @@ export interface DefPozo {
   stat?: Stat;
   por: number;
   max: number;
-  /** Precio del primer nivel (sube con cada uno). */
+  /** Precio en ceniza del primer nivel (sube con cada uno). */
   precio: number;
+  /** El mineral que pide cada nivel (además de la ceniza). */
+  mineral: IdMineral;
   glifo: string;
 }
+// (los ids de siempre se quedan: lo comprado antes de los minerales sigue igual)
 export const POZO: DefPozo[] = [
-  { id: 'vida', nombre: 'Carne dura', desc: '+6 de vida máxima', stat: 'vida', por: 6, max: 10, precio: 40, glifo: 'corazon' },
-  { id: 'dano', nombre: 'Rencor', desc: '+3 % de daño', stat: 'dano', por: 0.03, max: 10, precio: 50, glifo: 'puno' },
-  { id: 'armadura', nombre: 'Cuero viejo', desc: '+1 de armadura', stat: 'armadura', por: 1, max: 5, precio: 60, glifo: 'armadura' },
-  { id: 'velocidad', nombre: 'Prisa', desc: '+2 % de velocidad', stat: 'velocidad', por: 0.02, max: 5, precio: 45, glifo: 'bota' },
-  { id: 'regen', nombre: 'Aliento', desc: '+0,1 de vida por segundo', stat: 'regen', por: 0.1, max: 5, precio: 50, glifo: 'gota' },
-  { id: 'excavar', nombre: 'Uñas de topo', desc: '+10 % de excavar', stat: 'excavar', por: 0.1, max: 5, precio: 30, glifo: 'pico' },
-  { id: 'vetas', nombre: 'Ojo de minero', desc: '+10 % de lo que dan las vetas', stat: 'vetas', por: 0.1, max: 5, precio: 35, glifo: 'hierro' },
-  { id: 'iman', nombre: 'Atracción', desc: '+10 % para recoger', stat: 'iman', por: 0.1, max: 5, precio: 30, glifo: 'iman' },
-  { id: 'suerte', nombre: 'Buena estrella', desc: '+3 de suerte', stat: 'suerte', por: 3, max: 5, precio: 60, glifo: 'trebol' },
-  { id: 'experiencia', nombre: 'Memoria', desc: '+3 % de experiencia', stat: 'experiencia', por: 0.03, max: 5, precio: 55, glifo: 'alma' },
-  { id: 'oro', nombre: 'Bolsillos hondos', desc: '+5 % de oro', stat: 'oro', por: 0.05, max: 5, precio: 40, glifo: 'oro' },
-  { id: 'enfriamiento', nombre: 'Temple', desc: '−3 % de recarga', stat: 'enfriamiento', por: 0.03, max: 5, precio: 55, glifo: 'reloj' },
-  { id: 'tiradas', nombre: 'Dados', desc: '+1 volver a tirar por expedición', por: 1, max: 3, precio: 80, glifo: 'dado' },
-  { id: 'vetos', nombre: 'Tijeras', desc: '+1 descartar por expedición', por: 1, max: 3, precio: 80, glifo: 'tijeras' },
+  // Plata del velo: el cuerpo
+  { id: 'vida', nombre: 'Carne dura', desc: '+6 de vida máxima', stat: 'vida', por: 6, max: 10, precio: 40, mineral: 'plata', glifo: 'corazon' },
+  { id: 'armadura', nombre: 'Cuero viejo', desc: '+1 de armadura', stat: 'armadura', por: 1, max: 5, precio: 60, mineral: 'plata', glifo: 'armadura' },
+  { id: 'regen', nombre: 'Aliento', desc: '+0,1 de vida por segundo', stat: 'regen', por: 0.1, max: 5, precio: 50, mineral: 'plata', glifo: 'gota' },
+  // Chispa de Aura: el golpe
+  { id: 'dano', nombre: 'Rencor', desc: '+3 % de daño', stat: 'dano', por: 0.03, max: 10, precio: 50, mineral: 'chispa', glifo: 'puno' },
+  { id: 'cadencia', nombre: 'Pulso de Aura', desc: '+2 % de velocidad de ataque', stat: 'cadencia', por: 0.02, max: 5, precio: 55, mineral: 'chispa', glifo: 'mano' },
+  { id: 'critico', nombre: 'Ojo de brasa', desc: '+2 % de crítico', stat: 'critico', por: 0.02, max: 5, precio: 55, mineral: 'chispa', glifo: 'ojo' },
+  // Gema de dragón: la riqueza
+  { id: 'oro', nombre: 'Bolsillos hondos', desc: '+5 % de oro', stat: 'oro', por: 0.05, max: 5, precio: 40, mineral: 'gema', glifo: 'oro' },
+  { id: 'vetas', nombre: 'Ojo de minero', desc: '+10 % de lo que dan las vetas', stat: 'vetas', por: 0.1, max: 5, precio: 35, mineral: 'gema', glifo: 'hierro' },
+  { id: 'excavar', nombre: 'Uñas de topo', desc: '+10 % de excavar', stat: 'excavar', por: 0.1, max: 5, precio: 30, mineral: 'gema', glifo: 'pico' },
+  // Escarcha del alba: lo que se templa
+  { id: 'enfriamiento', nombre: 'Temple', desc: '−3 % de recarga', stat: 'enfriamiento', por: 0.03, max: 5, precio: 55, mineral: 'escarcha', glifo: 'reloj' },
+  { id: 'potencia', nombre: 'Agua del alba', desc: '+6 % de potencia (más cargas de quema, veneno, sangrado y frío)', stat: 'potencia', por: 0.06, max: 5, precio: 50, mineral: 'escarcha', glifo: 'frasco' },
+  { id: 'estados', nombre: 'Escarcha amarga', desc: '+6 % de daño de los estados', stat: 'estados', por: 0.06, max: 5, precio: 50, mineral: 'escarcha', glifo: 'copo' },
+  // Polvo de estrellas: alas
+  { id: 'velocidad', nombre: 'Prisa', desc: '+2 % de velocidad', stat: 'velocidad', por: 0.02, max: 5, precio: 45, mineral: 'polvo', glifo: 'bota' },
+  { id: 'iman', nombre: 'Atracción', desc: '+10 % para recoger', stat: 'iman', por: 0.1, max: 5, precio: 30, mineral: 'polvo', glifo: 'iman' },
+  { id: 'experiencia', nombre: 'Memoria', desc: '+3 % de experiencia', stat: 'experiencia', por: 0.03, max: 5, precio: 55, mineral: 'polvo', glifo: 'alma' },
+  // Esmeralda de Celia: la suerte
+  { id: 'suerte', nombre: 'Buena estrella', desc: '+3 de suerte', stat: 'suerte', por: 3, max: 5, precio: 60, mineral: 'esmeralda', glifo: 'trebol' },
+  { id: 'tiradas', nombre: 'Dados', desc: '+1 volver a tirar por expedición', por: 1, max: 3, precio: 80, mineral: 'esmeralda', glifo: 'dado' },
+  { id: 'vetos', nombre: 'Tijeras', desc: '+1 descartar por expedición', por: 1, max: 3, precio: 80, mineral: 'esmeralda', glifo: 'tijeras' },
 ];
 export const POZO_ID: Record<string, DefPozo> = Object.fromEntries(POZO.map((p) => [p.id, p]));
 export const precioPozo = (p: DefPozo, nivel: number) => Math.round(p.precio * Math.pow(1.45, nivel));

@@ -228,6 +228,8 @@ def pintar(pt, P, N, cav, cvx, altura=1.0):
 BRILLOS = {
     'rojo': '#FF2A1A', 'ambar': '#FFAA33', 'verde': '#7CFF4A', 'azul': '#5ED8FF', 'violeta': '#C46BFF', 'blanco': '#FFF4DA',
     'oro': '#FFD36B', 'fuego': '#FF6A1A',
+    # (los minerales del Pozo)
+    'plata': '#C4DAFF', 'hielo': '#8AF0FF', 'estrella': '#FFE6B8', 'esmeralda': '#3AFF8A',
 }
 
 

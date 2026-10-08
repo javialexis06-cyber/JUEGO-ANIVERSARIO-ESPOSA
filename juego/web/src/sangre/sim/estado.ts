@@ -316,7 +316,9 @@ export class Zona {
 }
 
 // ------------------------------------------------------------------------------------------------- Recogibles
-export const REC = { ALMA_AZUL: 0, ALMA_VERDE: 1, ALMA_ROJA: 2, ORO: 3, HIERRO: 4, SANGRE: 5, COMIDA: 6, COFRE: 7, LLAVE: 8, FRASCO: 9, EQUIPO: 10, HUEVO: 11, GOTA: 12, IMAN: 13, ROSA: 14, PLUMA: 15, HONGO: 16 } as const;
+export const REC = { ALMA_AZUL: 0, ALMA_VERDE: 1, ALMA_ROJA: 2, ORO: 3, HIERRO: 4, SANGRE: 5, COMIDA: 6, COFRE: 7, LLAVE: 8, FRASCO: 9, EQUIPO: 10, HUEVO: 11, GOTA: 12, IMAN: 13, ROSA: 14, PLUMA: 15, HONGO: 16, MINERAL: 17 } as const;
+/** Los minerales son seis recogibles seguidos: REC.MINERAL + índice del mineral (MINERALES_ORDEN). */
+export const esMineral = (t: number) => t >= REC.MINERAL && t < REC.MINERAL + 6;
 
 export class Recogible {
   vivo = false;
@@ -370,7 +372,7 @@ export class Aliado {
 }
 
 // ------------------------------------------------------------------------------------------------- Entidades de objetivo
-export const ENT = { ALTAR: 0, PRISIONERO: 1, CARRETA: 2, CAMPANA_DEF: 3, COFRE_RELIQUIA: 4, SANTUARIO: 5, EXTRACCION: 6, COFRE_MALDITO: 7, SEPULCRO: 8 } as const;
+export const ENT = { ALTAR: 0, PRISIONERO: 1, CARRETA: 2, CAMPANA_DEF: 3, COFRE_RELIQUIA: 4, SANTUARIO: 5, EXTRACCION: 6, COFRE_MALDITO: 7, SEPULCRO: 8, SUMINISTRO: 9, VAGONETA: 10, PINCHOS: 11, ARMADURA: 12, CAMPANARIO: 13 } as const;
 
 export class Entidad {
   vivo = true;

@@ -58,7 +58,7 @@ export function actualizarArmas(sim: Sim, j: Jugador, dt: number) {
   const cad = 1 + j.buffCad + mec.cadenciaExtra(sim, j);
   for (let k = 0; k < j.armas.length; k++) {
     const a = j.armas[k];
-    if (a.sucio) a.calcular(j.st);
+    if (a.sucio) a.calcular(j.st, j.multOtras(k));
     const tipo = a.def.tipo;
     if (tipo === 'orbita') {
       orbitar(sim, j, a, k, dt);
@@ -305,7 +305,7 @@ function salirProyectil(sim: Sim, j: Jugador, a: ArmaJ, k: number, ang: number, 
   pr.ang = ang;
   pr.vx = Math.cos(ang) * p.vel;
   pr.vy = Math.sin(ang) * p.vel;
-  pr.r = 0.22 + (a.def.tipo === 'bumeran' ? 0.15 : 0);
+  pr.r = (0.22 + (a.def.tipo === 'bumeran' ? 0.15 : 0)) * (p.flags & F.GORDA ? 2.2 : 1);
   pr.dano = p.dano;
   pr.perfora = p.perfora;
   pr.rebotes = p.rebotes + (j.tiene('rebote') ? 1 : 0);
@@ -340,10 +340,13 @@ function proyectil(sim: Sim, j: Jugador, a: ArmaJ, k: number): boolean {
     return true;
   }
   const abanico = n > 1 ? Math.min(p.arco, 0.16 * (n - 1) + 0.12) : 0;
-  for (let s = 0; s < n; s++) {
-    const ang = b!.ang + (n > 1 ? -abanico / 2 + (abanico * s) / (n - 1) : 0);
-    const pr = salirProyectil(sim, j, a, k, ang, MOV.RECTO);
-    if (pr && p.flags & F.TELEDIRIGIDO) pr.blanco = b!.i;
+  // (a dos manos: la misma ráfaga sale también hacia atrás)
+  for (const atras of p.flags & F.DETRAS ? [0, Math.PI] : [0]) {
+    for (let s = 0; s < n; s++) {
+      const ang = b!.ang + atras + (n > 1 ? -abanico / 2 + (abanico * s) / (n - 1) : 0);
+      const pr = salirProyectil(sim, j, a, k, ang, MOV.RECTO);
+      if (pr && p.flags & F.TELEDIRIGIDO && !atras) pr.blanco = b!.i;
+    }
   }
   return true;
 }
@@ -352,8 +355,12 @@ function bumeran(sim: Sim, j: Jugador, a: ArmaJ, k: number): boolean {
   const p = a.p;
   const b = apuntar(sim, j, a, p.alcance);
   if (!b) return false;
-  for (let s = 0; s < p.cantidad; s++) {
-    const pr = salirProyectil(sim, j, a, k, b.ang + (s - (p.cantidad - 1) / 2) * 0.4, MOV.BUMERAN);
+  // (a dos manos: otra tanda hacia atrás)
+  const n = p.cantidad * (p.flags & F.DETRAS ? 2 : 1);
+  for (let s = 0; s < n; s++) {
+    const atras = s >= p.cantidad ? Math.PI : 0;
+    const q = s % p.cantidad;
+    const pr = salirProyectil(sim, j, a, k, b.ang + atras + (q - (p.cantidad - 1) / 2) * 0.4, MOV.BUMERAN);
     if (!pr) break;
     pr.perfora = 999;
     pr.ref = p.alcance;
@@ -372,7 +379,7 @@ function vetaCercana(sim: Sim, j: Jugador, alcance: number): { ang: number; i: n
   for (let cy = y0; cy <= y1; cy++)
     for (let cx = x0; cx <= x1; cx++) {
       const t = m.get(cx, cy);
-      if (t !== C.HIERRO && t !== C.ORO && t !== C.SANGRE) continue;
+      if (t !== C.HIERRO && t !== C.ORO && t !== C.SANGRE && t !== C.MINERAL) continue;
       const d = (cx + 0.5 - j.x) ** 2 + (cy + 0.5 - j.y) ** 2;
       if (d >= md || !m.expuesta(cx, cy)) continue;
       md = d;
@@ -386,17 +393,21 @@ function lanzado(sim: Sim, j: Jugador, a: ArmaJ, k: number): boolean {
   // (la carga minera va a la veta; si no hay ninguna cerca, al montón de enemigos)
   const b = (a.def.apunta === 'veta' ? vetaCercana(sim, j, p.alcance) : null) ?? apuntar(sim, j, a, p.alcance);
   if (!b) return false;
-  for (let s = 0; s < p.cantidad; s++) {
-    const pr = salirProyectil(sim, j, a, k, b.ang, MOV.LANZADO);
+  // (a dos manos: la misma tanda cae también del otro lado, a la misma distancia)
+  const n = p.cantidad * (p.flags & F.DETRAS ? 2 : 1);
+  for (let s = 0; s < n; s++) {
+    const atras = s >= p.cantidad;
+    const bx = atras ? 2 * j.x - b.x : b.x, by = atras ? 2 * j.y - b.y : b.y;
+    const pr = salirProyectil(sim, j, a, k, atras ? b.ang + Math.PI : b.ang, MOV.LANZADO);
     if (!pr) break;
-    const dispersion = s === 0 ? 0 : 1.2 + p.area * 0.4;
+    const dispersion = s % p.cantidad === 0 ? 0 : 1.2 + p.area * 0.4;
     const ax = sim.az.entre(-1, 1) * dispersion, ay = sim.az.entre(-1, 1) * dispersion;
     pr.x0 = j.x;
     pr.y0 = j.y;
-    pr.x1 = b.x + ax;
-    pr.y1 = b.y + ay;
+    pr.x1 = bx + ax;
+    pr.y1 = by + ay;
     const dist = Math.hypot(pr.x1 - j.x, pr.y1 - j.y);
-    pr.vida = Math.min(0.85, Math.max(0.35, dist / 10)) + s * 0.08;
+    pr.vida = Math.min(0.85, Math.max(0.35, dist / 10)) + (s % p.cantidad) * 0.08;
   }
   return true;
 }

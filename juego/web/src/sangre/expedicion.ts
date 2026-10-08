@@ -1,12 +1,12 @@
 // Una expedición: cinco etapas en el mismo bioma (la última con los sepulcros y el jefe) y la Forja entre etapas. No dibuja nada:
 // la usan la pantalla de juego, el anfitrión de una partida en grupo y las pruebas del bot en Node.
 import { Azar } from '../casa/lavado/azar';
-import { ARMAS, MAX_ARMAS, NIVEL_EVOLUCION, NIVEL_MAX_ARMA } from './datos/armas';
+import { ARMAS, MAX_ARMAS, MAX_SOBRECARGAS, NIVEL_EVOLUCION, NIVEL_MAX_ARMA } from './datos/armas';
 import { EQUIPOS, EQUIPO, OBJETO, OBJETOS, PAREJA_EVOLUCION } from './datos/botin';
 import { ETAPAS, MUTADORES, PELIGROS } from './datos/mundo';
 import { Sim, type FinEtapa } from './sim/sim';
 import { ArmaJ, Jugador } from './sim/jugador';
-import { encolarSobrecarga } from './sim/opciones';
+import { eleccionSobrecarga, encolarSobrecarga } from './sim/opciones';
 import type { ConfigExpedicion, IdBioma, IdObjetivo, IdSecundario, PerfilJugador, Rareza } from './tipos';
 
 export interface ResultadoEtapa {
@@ -264,16 +264,14 @@ export class Expedicion {
     const f = this.forja.get(j.i);
     if (!a || !f) return null;
     if (f.sangreUsada[ranura]) return 'El altar ya bendijo esta arma en esta visita.';
-    const restantes = a.def.sobrecargas.filter((s) => !a.sobrecargas.includes(s.id));
-    if (!restantes.length) return 'No le quedan sobrecargas.';
+    if (a.sobrecargas.length >= Math.min(MAX_SOBRECARGAS, a.def.sobrecargas.length)) return 'No le quedan sobrecargas.';
+    const e = eleccionSobrecarga(this.az, a, ranura, '(altar de sangre)');
+    if (!e) return 'No le quedan sobrecargas.';
     const p = this.precioSangre(j, ranura);
     if (j.sangreSeguro < p) return 'Falta sangre cristalizada.';
     j.sangreSeguro -= p;
     f.sangreUsada[ranura] = true;
-    j.cola.push({
-      motivo: 'sobrecarga', ranura, titulo: `Altar de sangre · ${a.def.nombre}`,
-      opciones: restantes.map((s) => ({ tipo: 'sobrecarga' as const, id: s.id, rareza: 3 as Rareza, ranura, nombre: s.nombre, desc: s.desc, glifo: a.def.glifo, icono: a.def.id })),
-    });
+    j.cola.push(e);
     a.pedidas = Math.max(a.pedidas, a.sobrecargas.length + 1);
     return null;
   }

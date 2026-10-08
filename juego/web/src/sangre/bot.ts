@@ -1,8 +1,8 @@
 // El piloto automático: juega como un jugador decente (para probar el balance de clases y peligros en Node, y para
 // las pruebas del navegador con ?bot). Huye de la horda, va por el objetivo, excava vetas, levanta a los caídos,
 // corre a la campana, usa la habilidad cuando lo rodean y escoge mejoras con algo de criterio.
-import { C } from './tipos';
-import { ENT, REC } from './sim/estado';
+import { C, esSolida } from './tipos';
+import { ENT, REC, esMineral } from './sim/estado';
 import { TIPOS, TIPO_ALTAR } from './sim/catalogo';
 import type { Jugador } from './sim/jugador';
 import type { Sim } from './sim/sim';
@@ -133,7 +133,8 @@ function bajar(sim: Sim, d: Uint16Array, x: number, y: number) {
   return { x: tx / l, y: ty / l };
 }
 
-function elegirMeta(sim: Sim, j: Jugador): { x: number; y: number; cava: boolean } | null {
+/** (exportada para el diagnóstico del balance: a dónde quiere ir el bot) */
+export function elegirMeta(sim: Sim, j: Jugador): { x: number; y: number; cava: boolean } | null {
   // Campana de extracción
   if (sim.campana) return { x: sim.campana.x, y: sim.campana.y, cava: false };
   // Levantar a un caído
@@ -164,12 +165,30 @@ function elegirMeta(sim: Sim, j: Jugador): { x: number; y: number; cava: boolean
       imp = i;
     }
   }
-  if (imp >= 0) return di > 7 ? { x: E.x[imp], y: E.y[imp], cava: false } : null;
+  // (excavando si hace falta: si hay roca en medio, el bot se quedaba pegado a la pared)
+  if (imp >= 0) return di > 7 ? { x: E.x[imp], y: E.y[imp], cava: true } : null;
   // Los bichos del botín cercanos: perseguirlos si va bien de vida
   if (j.hp > j.hpMax * 0.5)
     for (let i = 0; i < E.max; i++) if (E.vivo[i] && TIPOS[E.tipo[i]].conducta === 'ladron' && Math.hypot(E.x[i] - j.x, E.y[i] - j.y) < 12) return { x: E.x[i], y: E.y[i], cava: false };
   // Los sepulcros de la etapa final: abrir los cercanos si va bien de vida
   if (j.hp > j.hpMax * 0.6) for (const e of sim.ent) if (e.vivo && e.tipo === ENT.SEPULCRO && e.est === 0 && Math.hypot(e.x - j.x, e.y - j.y) < 12) return { x: e.x, y: e.y, cava: false };
+  // El cofre de suministros: a excavar el círculo y después a abrirlo
+  for (const e of sim.ent) {
+    if (!e.vivo || e.tipo !== ENT.SUMINISTRO || e.est === 1 || e.est >= 3 || Math.hypot(e.x - j.x, e.y - j.y) > 20) continue;
+    if (e.est === 2) return { x: e.x, y: e.y, cava: false };
+    // (la celda de roca del círculo más cercana)
+    let mejor: { x: number; y: number } | null = null, md = Infinity;
+    for (let y = Math.floor(e.y) - 3; y <= Math.floor(e.y) + 3; y++)
+      for (let x = Math.floor(e.x) - 3; x <= Math.floor(e.x) + 3; x++) {
+        if ((x + 0.5 - e.x) ** 2 + (y + 0.5 - e.y) ** 2 > 2.2 * 2.2 || !esSolida(sim.mapa.get(x, y))) continue;
+        const d = (x + 0.5 - j.x) ** 2 + (y + 0.5 - j.y) ** 2;
+        if (d < md) {
+          md = d;
+          mejor = { x: x + 0.5, y: y + 0.5 };
+        }
+      }
+    if (mejor) return { ...mejor, cava: true };
+  }
   // Objetivo
   const o = sim.obj;
   if (!o.hecho) {
@@ -223,10 +242,11 @@ function elegirMeta(sim: Sim, j: Jugador): { x: number; y: number; cava: boolean
     const v = veta(sim, j, C.HUEVO);
     if (v && Math.hypot(v.x - j.x, v.y - j.y) < 18) return v;
   }
-  const f = cercano(sim, j, (r) => r.tipo === REC.FRASCO || r.tipo === REC.HUEVO || r.tipo === REC.ROSA || r.tipo === REC.PLUMA || r.tipo === REC.HONGO, 20);
+  const f = cercano(sim, j, (r) => r.tipo === REC.FRASCO || r.tipo === REC.HUEVO || r.tipo === REC.ROSA || r.tipo === REC.PLUMA || r.tipo === REC.HONGO || esMineral(r.tipo), 20);
   if (f) return { x: f.x, y: f.y, cava: true };
   // Vetas de oro y sangre cerca
-  const v = veta(sim, j, C.ORO) ?? veta(sim, j, C.SANGRE);
+  // (la más cercana de las vetas que pagan: minerales, oro o sangre)
+  const v = [veta(sim, j, C.MINERAL), veta(sim, j, C.ORO), veta(sim, j, C.SANGRE)].filter((x) => !!x).sort((a, b) => Math.hypot(a!.x - j.x, a!.y - j.y) - Math.hypot(b!.x - j.x, b!.y - j.y))[0];
   if (v && Math.hypot(v.x - j.x, v.y - j.y) < 10) return v;
   return null;
 }

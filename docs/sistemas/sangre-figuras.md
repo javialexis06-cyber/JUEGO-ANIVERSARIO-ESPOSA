@@ -119,6 +119,20 @@ costal con candelabro y cáliz).
   columnas torcidas y runas de ceniza; el cerrado con la tapa tallada, la efigie de un caballero, cadenas de eslabones
   y candado, y grietas de fuego; el abierto con la tapa partida, cama de brasas, huesos y cadenas rotas. El juego
   cambia uno por otro al abrirse (y le pone luz roja o de fuego).
+- `c_ataud_suministros` y `c_ataud_abierto` (el cofre de suministros): ataúd de madera negra (contorno de ataúd de
+  verdad, angosto en los pies) con flejes, asas de argolla, la campanita dorada de las Santas y su cruz en la tapa, dos
+  lacres rojos y las cuatro cadenas de eslabones que suben a una argolla (baja colgado de ellas); abierto, la tapa tirada
+  al lado, la paja y la reliquia que brilla morada, y las cadenas rotas en el piso.
+- Minerales (`MINERALES` en `sangre_cosas.py`): `c_veta_<id>` son tres racimos de cristales de seis caras metidos en la
+  cara de la pared (crecen hacia +Y de Blender, que el juego gira hacia lo abierto; la roca la pone la pared blanda) y
+  `c_mineral_<id>` el pedazo suelto (piedrita con su racimo; el juego lo dibuja ×1,7). Ids: plata, chispa, gema,
+  escarcha, polvo, esmeralda; los brillos `plata`, `ambar`, `violeta`, `hielo`, `estrella` y `esmeralda` están en
+  `BRILLOS` de `sangre_comun.py`.
+- Reglas de los biomas: `c_veta_grisu` (ampollas de gas verde, grietas que brillan y la cruz de cal de los mineros; va
+  sobre la pared como los cristales), `c_columna_hueso` (basa y capitel de piedra, fuste con cuatro anillos de calaveras
+  y fémures cruzados, grietas arriba; ocupa la celda sola), `c_pinchos_placa` y `c_pinchos_puas` (la reja de 1 × 1 m con
+  sus agujeros y las 16 púas aparte, que el juego sube y baja). Las armaduras del castillo usan `c_guardia_real`; el
+  campanario, la campana de la defensa (`c_campana`); la vagoneta suelta, la carreta.
 
 ## Armas y proyectiles
 

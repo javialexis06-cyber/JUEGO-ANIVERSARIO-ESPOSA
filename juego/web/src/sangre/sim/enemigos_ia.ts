@@ -335,7 +335,8 @@ export function moverEnemigos(sim: Sim, dt: number) {
         sim.danoEstado(i, E.sangrado[i] * 0.25 * mov, 'sangre');
         if (!E.vivo[i]) continue;
       }
-      if (E.elite[i] & MOD_ELITE.REGENERA) E.hp[i] = Math.min(E.hpMax[i], E.hp[i] + E.hpMax[i] * 0.03 * 0.25);
+      // (el Guardián, los custodios y el jefe se regeneran mucho más despacio: con 3 % por segundo no se morían nunca)
+      if (E.elite[i] & MOD_ELITE.REGENERA) E.hp[i] = Math.min(E.hpMax[i], E.hp[i] + E.hpMax[i] * (E.marcadoObj[i] >= 3 ? 0.006 : 0.03) * 0.25);
       if (E.condenaT[i] > 0) {
         E.condenaT[i] -= 0.25;
         if (E.condenaT[i] <= 0) mec.condenar(sim, i);

@@ -5,6 +5,8 @@ import * as THREE from 'three';
 import { ARMAS_LISTA } from '../datos/armas';
 import { TIPOS } from '../sim/catalogo';
 import { MOV, REC, type Proyectil, type Recogible } from '../sim/estado';
+import { MINERALES_ORDEN } from '../tipos';
+import { MINERALES } from '../datos/minerales';
 import type { Biblioteca } from './modelos';
 import type { Particulas } from './particulas';
 import type { ModeloFijo } from './reemplazos_mapa';
@@ -85,13 +87,17 @@ const MODELO_REC: Record<number, string> = {
   [REC.ORO]: 'oro', [REC.HIERRO]: 'hierro_negro', [REC.SANGRE]: 'sangre_cristal', [REC.COMIDA]: 'pierna_pollo', [REC.COFRE]: 'cofre', [REC.LLAVE]: 'llave',
   [REC.FRASCO]: 'frasco_alquimia', [REC.EQUIPO]: 'equipo', [REC.HUEVO]: 'huevo_dragon', [REC.GOTA]: 'gota',
   [REC.ROSA]: 'rosa_velo', [REC.PLUMA]: 'pluma_grifo', [REC.HONGO]: 'hongo_tumba',
+  ...Object.fromEntries(MINERALES_ORDEN.map((id, k) => [REC.MINERAL + k, `mineral_${id}`])),
 };
 /** Los del secundario se dibujan más grandes que su modelo (si no, entre la horda no se ven). */
-const ESCALA_REC: Record<number, number> = { [REC.ROSA]: 2.3, [REC.PLUMA]: 1.8, [REC.HONGO]: 2 };
+const ESCALA_REC: Record<number, number> = {
+  [REC.ROSA]: 2.3, [REC.PLUMA]: 1.8, [REC.HONGO]: 2, ...Object.fromEntries(MINERALES_ORDEN.map((_, k) => [REC.MINERAL + k, 1.7])),
+};
 /** Lo del secundario brilla de su color (para que se vea entre la horda). */
 const BRILLO_REC: Record<number, string> = {
   [REC.COFRE]: '#ffd060', [REC.LLAVE]: '#ffd060', [REC.EQUIPO]: '#ffd060', [REC.HUEVO]: '#ffd060', [REC.FRASCO]: '#8aff6a',
   [REC.ROSA]: '#ff5a7a', [REC.PLUMA]: '#ffe08a', [REC.HONGO]: '#9affc8',
+  ...Object.fromEntries(MINERALES_ORDEN.map((id, k) => [REC.MINERAL + k, MINERALES[id].brillo])),
 };
 
 export class Cosas3D {

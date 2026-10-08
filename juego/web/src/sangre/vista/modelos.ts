@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { cargar } from '../../recursos';
 import { BIOMAS } from '../datos/mundo';
-import type { IdBioma } from '../tipos';
+import { MINERALES_ORDEN, type IdBioma } from '../tipos';
 import { geoFloat } from './formas';
 import { conLuz } from './luz';
 import { conRoca, esRoca, inyectarRoca, prepararTextura, type InyectorRoca } from './roca';
@@ -179,6 +179,20 @@ export class Biblioteca {
       oro: variantes(['veta_oro'], r.oro),
       huevo: r.huevo,
       escombro: variantes(['pared_escombro'], r.escombro),
+      // (lo de las reglas de los biomas también viene en cosas.glb)
+      grisu: (() => {
+        const n = this.nodo('cosas', 'c_veta_grisu');
+        return n ? [deNodo(n, false)] : r.grisu;
+      })(),
+      columna: (() => {
+        const n = this.nodo('cosas', 'c_columna_hueso');
+        return n ? [deNodo(n, false)] : r.columna;
+      })(),
+      // (los cristales de los minerales vienen en cosas.glb, iguales en todos los biomas)
+      minerales: MINERALES_ORDEN.map((id, k) => {
+        const n = this.nodo('cosas', `c_veta_${id}`);
+        return n ? deNodo(n, false) : r.minerales[k];
+      }),
     };
     const roca = this.hayAlta ? this.rocaParedes : undefined;
     for (const k of Object.keys(p) as (keyof ModelosPared)[]) p[k] = p[k].map((m) => iluminar(m, roca));
