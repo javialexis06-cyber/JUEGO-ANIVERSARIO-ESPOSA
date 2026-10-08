@@ -18,7 +18,7 @@ export const LUZ_BASE = 6.5;
 export const BIT_ETQ: Record<Etiqueta, number> = Object.fromEntries(ETIQUETAS.map((e, i) => [e, 1 << i])) as Record<Etiqueta, number>;
 
 /** Experiencia para pasar del nivel n al n+1. */
-export const xpPara = (n: number) => Math.round(7 + 5 * (n - 1) + 0.32 * (n - 1) ** 2);
+export const xpPara = (n: number) => Math.round(7 + 6 * (n - 1) + 0.42 * (n - 1) ** 2);
 
 /** Comportamientos en los que «cantidad» es cuántos proyectiles salen (en los demás da más área). */
 const CUENTA: Record<string, boolean> = { proyectil: true, lanzado: true, bumeran: true, orbita: true, rayo: true, cadena: true, torreta: true };
@@ -127,6 +127,8 @@ export interface ResumenJugador {
   prisioneros: number;
   bendiciones: number;
   caidas: number;
+  /** Bichos del botín tumbados (ratas del tesoro, ratas doradas, ladrones de tumbas). */
+  botin?: number;
 }
 
 export class Jugador {
@@ -220,7 +222,7 @@ export class Jugador {
   almasEscudo = 0;
   resumen: ResumenJugador = {
     muertes: 0, elites: 0, dano: 0, excavadas: 0, oro: 0, hierro: 0, sangre: 0, almas: 0, ejecuciones: 0, levantados: 0, frascos: 0, altares: 0,
-    prisioneros: 0, bendiciones: 0, caidas: 0,
+    prisioneros: 0, bendiciones: 0, caidas: 0, botin: 0,
   };
   /** Para mostrar el número al pegar: hasta cuándo no se vuelve a mostrar el de este jugador. */
   ultimoNumero = 0;

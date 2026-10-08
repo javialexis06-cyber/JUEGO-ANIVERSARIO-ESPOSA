@@ -151,7 +151,12 @@ export interface Foto {
   n: number;
   etapa: number;
   t: number;
-  lim: number;
+  /** Barra de avance, oleadas que han salido, el Guardián (uid o −1), si ya salió y la impaciencia. */
+  av: number;
+  ol: number;
+  g: number;
+  gv: number;
+  imp: number;
   fase: 'juego' | 'extraccion' | 'jefe';
   obj: { tipo: string; meta: number; prog: number; hecho: boolean; fallo: boolean; texto: string };
   sec: { tipo: string; meta: number; prog: number };

@@ -1,11 +1,14 @@
 // Los objetivos de cada etapa (como en Deep Rock Galactic: Survivor): el principal (hierro negro, altares, prisioneros,
 // carreta, campana o cacería), el secundario (huevos, frascos, cofres de reliquias), los santuarios de las bendiciones
-// y la Campana de Extracción con su cuenta regresiva. En la última etapa, cumplido el objetivo sale el jefe.
-import { CUENTA_EXTRACCION } from '../datos/mundo';
+// y la Campana de Extracción con su cuenta regresiva.
+// La etapa se gana peleando: una barra de avance que llenan el tiempo y el objetivo, con oleadas en el camino; llena,
+// despierta el Guardián (un élite enorme) y la Noche se impacienta hasta que cae. Al caer él, baja la campana. En la
+// etapa final, en vez del Guardián hay cuatro sepulcros con un custodio cada uno; caídos los custodios, sale el jefe.
+import { AVANCE_SOLO, CUENTA_EXTRACCION, GUARDIANES, IMPACIENCIA_CADA, PELIGROS, SEPULCROS } from '../datos/mundo';
 import { C } from '../tipos';
-import { TIPO, TIPO_ALTAR } from './catalogo';
+import { TIPO, TIPOS, TIPO_ALTAR } from './catalogo';
 import { aparecerEnemigo, modsElite } from './enemigos_ia';
-import { ENT, type Entidad, REC, type Recogible, S } from './estado';
+import { ENT, EST, type Entidad, REC, type Recogible, S } from './estado';
 import { CampoFlujo } from './flujo';
 import { aparecerJefe } from './jefes';
 import { type Jugador, RADIO_JUGADOR } from './jugador';
@@ -26,6 +29,40 @@ export const RADIO_GRANDE = 1.5;
 export const RADIO_LLAVE = 1.7;
 /** Hasta dónde llega la mano al tocar algo con el mouse o el dedo (más lejos, el personaje camina hasta allá). */
 export const ALCANCE_MANO = 4.5;
+
+/** Celdas sueltas en los bolsillos cerrados (a los que se llega excavando). */
+function enBolsillo(sim: Sim, n: number): { x: number; y: number }[] {
+  const m = sim.mapa;
+  const d = m.distancias(m.inicio.x, m.inicio.y);
+  const r: { x: number; y: number }[] = [];
+  for (let k = 0; k < 2000 && r.length < n; k++) {
+    const i = Math.floor(sim.az.n() * m.c.length);
+    if (m.c[i] === C.VACIO && d[i] === 65535) r.push({ x: (i % m.w) + 0.5, y: ((i / m.w) | 0) + 0.5 });
+  }
+  return r;
+}
+
+/** Rincones con camino (celdas abiertas con roca en 5 o más de las 8 vecinas), lejos del inicio y separados. */
+function rincones(sim: Sim, n: number): { x: number; y: number }[] {
+  const m = sim.mapa;
+  const d = m.distancias(m.inicio.x, m.inicio.y);
+  const cand: number[] = [];
+  for (let i = 0; i < m.c.length; i++) {
+    if (m.c[i] !== C.VACIO || d[i] === 65535 || d[i] < 9) continue;
+    const x = i % m.w, y = (i / m.w) | 0;
+    let roca = 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if ((dx || dy) && m.get(x + dx, y + dy) !== C.VACIO) roca++;
+    if (roca >= 5) cand.push(i);
+  }
+  const r: { x: number; y: number }[] = [];
+  for (let k = 0; k < 400 && r.length < n && cand.length; k++) {
+    const i = cand[Math.floor(sim.az.n() * cand.length)];
+    const x = (i % m.w) + 0.5, y = ((i / m.w) | 0) + 0.5;
+    if (r.some((p) => Math.hypot(p.x - x, p.y - y) < 10)) continue;
+    r.push({ x, y });
+  }
+  return r.length < n ? [...r, ...lugares(sim, n - r.length, 8, 10)] : r;
+}
 
 /** Celdas abiertas lejos del inicio, separadas entre sí, con espacio alrededor. */
 function lugares(sim: Sim, n: number, min: number, sep: number, max = 999): { x: number; y: number }[] {
@@ -149,9 +186,38 @@ export function prepararObjetivos(sim: Sim) {
       sim.llavesPendientes = ps.length;
       break;
     }
+    case 'rosas': {
+      // Regadas por el mapa, y una detrás de la roca
+      const ps = lugares(sim, 6, 8, 8);
+      for (const p of ps) sim.soltar(REC.ROSA, p.x, p.y, 1, '', false);
+      const oculta = enBolsillo(sim, 1);
+      for (const p of oculta) sim.soltar(REC.ROSA, p.x, p.y, 1, '', false);
+      sim.sec.meta = ps.length + oculta.length;
+      break;
+    }
+    case 'plumas':
+      // No están al empezar: caen de a una cerca de alguien mientras dure la etapa (ver plumas())
+      sim.sec.meta = 6;
+      sim.plumaT = 22;
+      break;
+    case 'hongos': {
+      // Montoncitos de 3 en los rincones (celdas abiertas con roca casi por todos lados), uno en un bolsillo cerrado
+      const montones = [...rincones(sim, 3), ...enBolsillo(sim, 1)];
+      let puestos = 0;
+      for (const p of montones) {
+        for (let k = 0; k < 3; k++) {
+          const a = (k / 3) * Math.PI * 2 + sim.az.n(), r = k === 0 ? 0 : 0.5;
+          if (sim.soltar(REC.HONGO, p.x + Math.cos(a) * r, p.y + Math.sin(a) * r, 1, '', false)) puestos++;
+        }
+      }
+      sim.sec.meta = puestos;
+      break;
+    }
   }
   // Santuarios de las bendiciones
   for (const p of lugares(sim, 1 + Math.ceil(n / 2), 8, 12)) nuevaEntidad(sim, ENT.SANTUARIO, p.x, p.y);
+  // Etapa final: los sepulcros de los custodios, regados lejos del inicio
+  if (cfg.final) for (const p of lugares(sim, SEPULCROS, 11, 13)) nuevaEntidad(sim, ENT.SEPULCRO, p.x, p.y);
   // En las bolsas cerradas a veces hay un cofre
   const m = sim.mapa;
   const d = m.distancias(m.inicio.x, m.inicio.y);
@@ -170,18 +236,13 @@ export function actualizarObjetivos(sim: Sim, dt: number) {
   if (!o.hecho && o.prog >= o.meta && o.meta > 0) {
     o.hecho = true;
     sim.aviso(1);
-    // Premio: un cofre a los pies de quien esté más cerca del centro de la acción y la campana en un minuto
+    // Premio: un cofre a los pies de quien esté más cerca del centro de la acción (y la barra da el salto)
     const ref = sim.vivos()[0];
     if (ref && !sim.cfg.exp.tutorial) sim.soltar(REC.COFRE, ref.x, ref.y, 1);
     if (sim.cfg.exp.tutorial) llamarCampana(sim);
-    else sim.limite = Math.min(sim.limite, sim.t + 60);
   }
-  // Se acabó el reloj: baja la campana (en la última etapa, sale el jefe)
-  if (sim.fase === 'juego' && sim.t >= sim.limite && !sim.sinReloj) {
-    sim.aviso(2);
-    if (sim.cfg.final) aparecerJefe(sim);
-    else llamarCampana(sim);
-  }
+  if (!sim.sinReloj && !sim.cfg.exp.tutorial) avanzar(sim, dt);
+  if (sim.sec.tipo === 'plumas') plumas(sim, dt);
   // La cacería: el élite marcado sale al rato (uno de los fuertes del bioma, más duro en las etapas finales)
   if (o.tipo === 'elite' && !o.hecho && !sim.ent.some((e) => e.dato === 'caceria') && sim.t >= 35) {
     const p = lugaresCerca(sim);
@@ -215,9 +276,280 @@ export function actualizarObjetivos(sim: Sim, dt: number) {
       case ENT.COFRE_MALDITO:
         abrible(sim, e, dt);
         break;
+      case ENT.SEPULCRO:
+        sepulcro(sim, e, dt);
+        break;
     }
   }
   if (sim.campana) extraccion(sim, sim.campana, dt);
+}
+
+/** Las plumas de grifo: cada tanto cae una a 5-9 m de alguien y se va con el viento (despacio); a los 30 s se la
+ *  lleva del todo. Siguen cayendo hasta completar la meta (mientras no empiece la extracción). */
+function plumas(sim: Sim, dt: number) {
+  let vivas = 0;
+  for (const r of sim.R) {
+    if (!r.vivo || r.tipo !== REC.PLUMA) continue;
+    vivas++;
+    if (r.hacia >= 0) continue;
+    if (r.t > 30) {
+      r.vivo = false;
+      vivas--;
+      continue;
+    }
+    // (vx, vy = el viento: con la pluma en el piso la caída no los usa)
+    const nx = r.x + r.vx * dt, ny = r.y + r.vy * dt;
+    if (!sim.mapa.solidaEn(nx, ny)) {
+      r.x = nx;
+      r.y = ny;
+    } else {
+      r.vx = -r.vx;
+      r.vy = -r.vy;
+    }
+  }
+  if (sim.fase !== 'juego' || sim.sec.prog + vivas >= sim.sec.meta) return;
+  sim.plumaT -= dt;
+  if (sim.plumaT > 0 || vivas >= 2) return;
+  const vivos = sim.vivos();
+  if (!vivos.length) return;
+  const j = sim.az.uno(vivos);
+  for (let k = 0; k < 16; k++) {
+    const a = sim.az.n() * Math.PI * 2, d = sim.az.entre(5, 9);
+    const p = sim.mapa.abiertaCerca(j.x + Math.cos(a) * d, j.y + Math.sin(a) * d, 3);
+    if (!p || sim.flujo.distEn(p.x, p.y) > 25) continue;
+    const r = sim.soltar(REC.PLUMA, p.x, p.y, 1, '', false);
+    if (r) {
+      const v = sim.az.n() * Math.PI * 2;
+      r.vx = Math.cos(v) * 0.45;
+      r.vy = Math.sin(v) * 0.45;
+      sim.aviso(30);
+    }
+    break;
+  }
+  sim.plumaT = sim.az.entre(22, 32);
+}
+
+// ------------------------------------------------------------------------------------------------- Avance
+/** La barra de la etapa: el tiempo la llena despacio y el objetivo de a mucho. En el camino salen las oleadas; llena,
+ *  despierta el Guardián (o se abren los sepulcros de la etapa final). */
+function avanzar(sim: Sim, dt: number) {
+  if (sim.fase === 'juego') {
+    sim.avanceT = Math.min(1, sim.avanceT + dt / AVANCE_SOLO);
+    sim.calcularAvance();
+  }
+  while (sim.oleadasHechas < sim.oleadas.length && sim.avance >= sim.oleadas[sim.oleadasHechas]) {
+    sim.oleadasHechas++;
+    empezarOleada(sim);
+  }
+  if (sim.oleadaResta > 0) seguirOleada(sim, dt);
+  traerImportantes(sim, dt);
+  let espera = false;
+  if (sim.cfg.final) {
+    // Los sepulcros se abren solos a medida que se llena la barra (o antes, si alguien los abre a mano). El jefe sale
+    // solo con la barra llena: abrirlos a la carrera adelanta un poco, pero la etapa final no se gana en un minuto
+    const seps = sim.ent.filter((e) => e.vivo && e.tipo === ENT.SEPULCRO);
+    const abiertos = seps.filter((e) => e.est >= 1).length;
+    if (abiertos < Math.floor(sim.avance * seps.length + 1e-6)) {
+      const vivos = sim.vivos();
+      const cerrado = seps.filter((e) => e.est === 0).sort((a, b) => cercania(vivos, a) - cercania(vivos, b))[0];
+      if (cerrado) abrirSepulcro(sim, cerrado, true);
+    }
+    const todos = seps.every((e) => e.est >= 1);
+    if (sim.fase === 'juego' && !sim.jefeVisto && todos && sim.custodiosVivos === 0 && sim.avance >= 1) aparecerJefe(sim);
+    espera = sim.fase === 'juego' && !sim.jefeVisto && sim.avance >= 1;
+  } else {
+    if (sim.avance >= 1 && !sim.guardianVisto && sim.fase === 'juego') aparecerGuardian(sim);
+    espera = sim.fase === 'juego' && sim.guardian >= 0;
+  }
+  // La Noche se impacienta mientras el Guardián (o los custodios) sigan en pie
+  if (espera) {
+    sim.impacienciaT += dt;
+    if (sim.impacienciaT >= IMPACIENCIA_CADA && sim.impaciencia < 8) {
+      sim.impacienciaT = 0;
+      sim.impaciencia++;
+      sim.aviso(22, sim.impaciencia);
+    }
+  }
+}
+
+/** El Guardián, los custodios y el jefe nunca se quedan atascados lejos (en un bolsillo sin camino, o trabados detrás
+ *  de una pared mientras los jugadores están en otra punta): si en 8 s no se acercan, se hunden y salen de la tierra
+ *  cerca de los jugadores, como en Deep Rock, donde los élites siempre van por uno. */
+function traerImportantes(sim: Sim, dt: number) {
+  sim.atascoT -= dt;
+  if (sim.atascoT > 0) return;
+  sim.atascoT = 1;
+  const E = sim.E;
+  const vivos = sim.vivos();
+  if (!vivos.length) return;
+  const vistos = new Set<number>();
+  for (let i = 0; i < E.max; i++) {
+    if (!E.vivo[i] || !(i === sim.guardian || i === sim.jefe || E.marcadoObj[i] === 4)) continue;
+    if (E.estado[i] === EST.SALIENDO || E.alt[i] < -0.2) continue;
+    const uid = E.uid[i];
+    vistos.add(uid);
+    let d = Infinity;
+    for (const j of vivos) d = Math.min(d, Math.hypot(j.x - E.x[i], j.y - E.y[i]));
+    const sinCamino = sim.flujo.distEn(E.x[i], E.y[i]) === 65535;
+    const m = sim.atascos.get(uid) ?? { d, t: 0 };
+    // (se cuenta el tiempo que lleva lejos sin acercarse de verdad)
+    if (sinCamino || (d > 16 && d > m.d - 1.5)) m.t += 1;
+    else {
+      m.t = 0;
+      m.d = d;
+    }
+    if (d < m.d) m.d = d;
+    sim.atascos.set(uid, m);
+    if (m.t < (sinCamino ? 3 : 8)) continue;
+    const p = lugarDeEntrada(sim, 8);
+    E.x[i] = p.x;
+    E.y[i] = p.y;
+    E.vx[i] = E.vy[i] = E.kx[i] = E.ky[i] = 0;
+    E.alt[i] = -1;
+    E.estado[i] = EST.SALIENDO;
+    sim.romperParedes(p.x, p.y, 1.6, null, true);
+    sim.suc.push(S.APARECE, p.x, p.y, E.tipo[i], 1, E.elite[i]);
+    sim.atascos.set(uid, { d: 8, t: 0 });
+  }
+  for (const k of sim.atascos.keys()) if (!vistos.has(k)) sim.atascos.delete(k);
+}
+
+/** Distancia del más cercano de los vivos a una entidad. */
+function cercania(vivos: Jugador[], e: Entidad) {
+  let m = Infinity;
+  for (const j of vivos) m = Math.min(m, (j.x - e.x) ** 2 + (j.y - e.y) ** 2);
+  return m;
+}
+
+function empezarOleada(sim: Sim) {
+  const pel = PELIGROS[Math.max(0, Math.min(4, sim.cfg.exp.peligro - 1))];
+  sim.oleadaResta = Math.round((24 + 9 * sim.n) * (1 + 0.2 * (sim.cfg.etapa - 1)) * pel.cantidad);
+  sim.oleadaT = 0;
+  sim.aviso(25, sim.oleadasHechas, sim.oleadas.length);
+  sim.suc.push(S.JEFE, 6, 0, 0, sim.oleadasHechas);
+}
+
+/** La oleada llega en tandas por dos lados, durante unos segundos. */
+function seguirOleada(sim: Sim, dt: number) {
+  sim.oleadaT -= dt;
+  if (sim.oleadaT > 0) return;
+  sim.oleadaT = 0.45;
+  const vivos = sim.vivos();
+  if (!vivos.length) return;
+  const cx = vivos.reduce((s, j) => s + j.x, 0) / vivos.length, cy = vivos.reduce((s, j) => s + j.y, 0) / vivos.length;
+  const tanda = Math.min(sim.oleadaResta, 4 + sim.n);
+  const dir = sim.az.n() * Math.PI * 2;
+  let primero = sim.cfg.etapa >= 2 && sim.az.n() < 0.18;
+  for (let k = 0; k < tanda; k++) {
+    const a = dir + (k % 2 ? Math.PI : 0) + sim.az.entre(-0.7, 0.7), r = sim.az.entre(12, 16);
+    const p = sim.mapa.abiertaCerca(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 3);
+    if (!p || sim.flujo.distEn(p.x, p.y) > 50) continue;
+    aparecerEnemigo(sim, sim.tipoAlAzar(), p.x, p.y, { elite: primero ? modsElite(sim) : 0 });
+    primero = false;
+  }
+  sim.oleadaResta -= tanda;
+}
+
+/** Un lugar abierto a unos 9 m de los jugadores, con camino hasta ellos (donde sale el Guardián o el jefe). */
+export function lugarDeEntrada(sim: Sim, lejos = 9) {
+  const vivos = sim.vivos();
+  const ref = vivos[0] ?? sim.J[0];
+  let p: { x: number; y: number } | null = null;
+  for (let k = 0; k < 24 && !p; k++) {
+    const a = sim.az.n() * Math.PI * 2;
+    const q = sim.mapa.abiertaCerca(ref.x + Math.cos(a) * lejos, ref.y + Math.sin(a) * lejos, 3);
+    if (q && sim.flujo.distEn(q.x, q.y) < 40) p = q;
+  }
+  return p ?? sim.mapa.abiertaCerca(ref.x + 4, ref.y, 6) ?? { x: ref.x, y: ref.y };
+}
+
+/** Vida del Guardián: fija (no depende de qué tan flojo sea su tipo), con la escala de la etapa y del grupo. */
+function vidaGuardian(sim: Sim) {
+  return 1900 * sim.esc.vida * (1 + 0.12 * (sim.cfg.exp.peligro - 1)) * (1 + 0.3 * (sim.n - 1));
+}
+
+/** Engorda a un élite para volverlo Guardián o custodio. */
+function engordar(sim: Sim, i: number, vida: number, escala: number) {
+  const E = sim.E;
+  E.hp[i] = E.hpMax[i] = vida;
+  if (E.escudo[i] > 0) E.escudo[i] = vida * 0.35;
+  E.esc[i] = escala;
+  E.r[i] = TIPOS[E.tipo[i]].radio * escala;
+  E.dano[i] *= 1.45;
+}
+
+/** Se llenó la barra: despierta el Guardián de la etapa. */
+export function aparecerGuardian(sim: Sim) {
+  sim.guardianVisto = true;
+  const lista = GUARDIANES[sim.bioma.id] ?? ['caballero_muerte'];
+  const tipo = TIPO[lista[(sim.cfg.etapa - 1) % lista.length]] ?? TIPO.caballero_muerte;
+  const p = lugarDeEntrada(sim);
+  const dobles = sim.cfg.exp.peligro >= 3 || sim.cfg.etapa >= 3;
+  const i = aparecerEnemigo(sim, tipo, p.x, p.y, { elite: modsElite(sim) | (dobles ? modsElite(sim) : 0), desdeTierra: true, marcado: 3 });
+  if (i < 0) {
+    llamarCampana(sim);
+    return;
+  }
+  engordar(sim, i, vidaGuardian(sim), 1.75);
+  sim.guardian = i;
+  sim.impacienciaT = 0;
+  sim.romperParedes(p.x, p.y, 1.8, null, true);
+  sim.suc.push(S.JEFE, 4, p.x, p.y, tipo);
+  sim.aviso(21, tipo);
+}
+
+/** Cayó el Guardián: botín, un respiro alrededor y baja la campana. */
+export function guardianMuerto(sim: Sim, i: number) {
+  const E = sim.E;
+  const x = E.x[i], y = E.y[i];
+  sim.guardian = -1;
+  sim.suc.push(S.JEFE, 5, x, y, E.tipo[i]);
+  sim.soltarAlmas(x, y, 50 + 15 * sim.cfg.etapa);
+  for (let k = 0; k < 3; k++) sim.soltar(REC.ORO, x, y, 5 + sim.az.entero(0, 5));
+  if (sim.az.n() < 0.6) sim.soltar(REC.HIERRO, x, y, 3);
+  if (sim.az.n() < 0.5) sim.soltar(REC.SANGRE, x, y, 2);
+  for (let k = 0; k < sim.n; k++) sim.soltar(REC.COFRE, x, y, 1);
+  for (let k = 0; k < E.max; k++) if (E.vivo[k] && k !== i && (E.x[k] - x) ** 2 + (E.y[k] - y) ** 2 < 64) E.aturdido[k] = Math.max(E.aturdido[k], 1.5);
+  sim.aviso(23);
+  llamarCampana(sim);
+}
+
+/** Abrir un sepulcro a mano (quedándose al lado, como un cofre). */
+function sepulcro(sim: Sim, e: Entidad, dt: number) {
+  if (e.est !== 0) return;
+  const j = quienUsa(sim, e, RADIO_ABRIR);
+  if (!j) {
+    e.prog = Math.max(0, e.prog - dt * 0.35);
+    return;
+  }
+  e.prog += dt / 2.5;
+  if (e.prog < 1) return;
+  soltarUso(sim, e);
+  abrirSepulcro(sim, e, false);
+}
+
+/** El sepulcro se abre (a mano o solo) y sale su custodio, un élite grande. */
+function abrirSepulcro(sim: Sim, e: Entidad, solo: boolean) {
+  e.est = 1;
+  e.prog = 1;
+  const seps = sim.ent.filter((x) => x.vivo && x.tipo === ENT.SEPULCRO);
+  const k = seps.filter((x) => x.est >= 1).length;
+  const lista = GUARDIANES[sim.bioma.id] ?? ['caballero_muerte'];
+  const tipo = TIPO[lista[(k - 1) % lista.length]] ?? TIPO.caballero_muerte;
+  // (sale del mismo sepulcro: su celda siempre tiene camino; una vecina podía caer en un bolsillo cerrado)
+  const i = aparecerEnemigo(sim, tipo, e.x, e.y, { elite: modsElite(sim), desdeTierra: true, marcado: 4 });
+  if (i >= 0) {
+    engordar(sim, i, vidaGuardian(sim) * 0.55, 1.5);
+    sim.custodiosVivos++;
+  }
+  // (abrirlo a mano, antes de tiempo, empuja un poquito la barra)
+  if (!solo) {
+    sim.avanceT = Math.min(1, sim.avanceT + 0.05);
+    sim.calcularAvance();
+  }
+  sim.suc.push(S.LIBERA, e.x, e.y, e.id);
+  sim.suc.push(S.JEFE, 7, e.x, e.y, tipo);
+  sim.aviso(solo ? 26 : 27, k, seps.length);
 }
 
 function lugaresCerca(sim: Sim) {
@@ -316,11 +648,8 @@ function carreta(sim: Sim, e: Entidad, dt: number) {
     sim.obj.fallo = true;
     sim.aviso(17);
     sim.suc.push(S.EXPLOSION, e.x, e.y, 2, 6);
-    if (!sim.obj.hecho) {
-      sim.obj.hecho = true;
-      if (sim.cfg.final) aparecerJefe(sim);
-      else llamarCampana(sim);
-    }
+    // (la barra sigue: lo que se pierde es el premio del objetivo)
+    sim.obj.hecho = true;
     return;
   }
   if (e.k >= r.length) {
@@ -486,9 +815,9 @@ function extraccion(sim: Sim, e: Entidad, dt: number) {
 }
 
 // ------------------------------------------------------------------------------------------------- Con la mano
-/** ¿Se abre o se libera tocándolo? (cofres de reliquias, santuarios, cofres malditos y prisioneros encadenados) */
+/** ¿Se abre o se libera tocándolo? (cofres de reliquias, santuarios, cofres malditos, sepulcros y prisioneros) */
 export function esTocable(e: Entidad) {
-  return e.vivo && e.est === 0 && (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.SANTUARIO || e.tipo === ENT.COFRE_MALDITO || e.tipo === ENT.PRISIONERO);
+  return e.vivo && e.est === 0 && (e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.SANTUARIO || e.tipo === ENT.COFRE_MALDITO || e.tipo === ENT.PRISIONERO || e.tipo === ENT.SEPULCRO);
 }
 
 /** Lo que hay para recoger o abrir donde se tocó (lo más cercano al punto), o null. Lo usan el aparato (para caminar

@@ -56,6 +56,7 @@ const COLOR_USO: Record<number, THREE.Color> = {
   [ENT.SANTUARIO]: new THREE.Color('#a8c8ff'),
   [ENT.COFRE_RELIQUIA]: new THREE.Color('#c890ff'),
   [ENT.COFRE_MALDITO]: new THREE.Color('#ff6a5a'),
+  [ENT.SEPULCRO]: new THREE.Color('#ff4a3a'),
 };
 const COLOR_EXPLOSION = ['#ff7a2a', '#fff0a0', '#8aff4a', '#a8f0ff', '#d01828', '#a060ff', '#a89880'];
 
@@ -408,6 +409,8 @@ export class Escena3D {
       else if (e.tipo === ENT.CARRETA && e.est === 1) mv.push({ x: e.x, y: e.y, r: 4, color: LUZ_SANGRE, fuerza: 0.5 });
       else if (e.tipo === ENT.COFRE_RELIQUIA && e.est === 0) mv.push({ x: e.x, y: e.y, r: 3, color: LUZ_RELIQUIA, fuerza: 0.5 });
       else if (e.tipo === ENT.CAMPANA_DEF && e.est === 1) mv.push({ x: e.x, y: e.y, r: 5, color: LUZ_CAMPANA, fuerza: 0.7 });
+      // (los sepulcros: velas rojas cerrados; abiertos, la brasa del hueco)
+      else if (e.tipo === ENT.SEPULCRO) mv.push({ x: e.x, y: e.y, r: e.est === 0 ? 3.5 : 3, color: e.est === 0 ? LUZ_SANGRE : LUZ_FUEGO, fuerza: e.est === 0 ? 0.5 : 0.7 });
     }
     for (let i = 0; i < est.E.max; i++) if (est.E.vivo[i] && (est.E.tipo[i] === TIPO_ALTAR_V || esJefe(est.E.tipo[i]))) mv.push({ x: est.E.x[i], y: est.E.y[i], r: 4, color: LUZ_SANGRE, fuerza: 0.55 });
     for (let k = this.flashes.length - 1; k >= 0; k--) {
@@ -816,11 +819,12 @@ export class Escena3D {
         }
         case S.JEFE: {
           const cod = d[k + 1];
-          if (cod === 0 || cod === 1) {
-            this.sacudir(0.9);
-            F.onda(d[k + 2], d[k + 3], 6, '#ff2030', 1.2);
+          if (cod === 0 || cod === 1 || cod === 4 || cod === 7) {
+            this.sacudir(cod === 7 ? 0.6 : 0.9);
+            F.onda(d[k + 2], d[k + 3], cod === 7 ? 4 : 6, '#ff2030', 1.2);
           }
-          if (cod === 2) {
+          if (cod === 4 || cod === 7) for (let e = 0; e < 3; e++) P.polvo(d[k + 2], 0, d[k + 3], this.bioma.piso[1], 14, 10);
+          if (cod === 2 || cod === 5) {
             this.sacudir(1);
             F.columna(d[k + 2], d[k + 3], 2, 20, '#ffd890', 1.5);
             for (let e = 0; e < 4; e++) P.brasas(d[k + 2], 0.5, d[k + 3], 10, 2);

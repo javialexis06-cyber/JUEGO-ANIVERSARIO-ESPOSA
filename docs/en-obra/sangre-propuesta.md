@@ -321,9 +321,12 @@ Propuesta:
 
 ## 4. En qué orden lo haría
 
-1. **Fase 1 (lo que más se siente, ~1-2 sesiones)**: A (etapas que se ganan peleando, Guardián, la Noche se
-   impacienta, 5 etapas), E (precios que suben, vetas más pobres, ratas del tesoro, mini-élites) y los secundarios
-   nuevos. Medir con el bot hasta llegar a las metas de E.
+1. ~~**Fase 1**~~ **hecha** (8 de octubre): A (etapas que se ganan peleando, Guardián, la Noche se impacienta, 5
+   etapas, sepulcros en la final), E (precios que suben, vetas más pobres, ratas del tesoro, mini-élites) y tres
+   secundarios nuevos (rosas del velo, plumas de grifo, hongos de tumba). Cómo quedó y lo medido: «Etapas que se
+   ganan peleando» y «Curva de dificultad pareja» en `docs/sistemas/sangre-y-ceniza.md`. Quedaron para después: los
+   centinelas del peligro 3, los demás secundarios (mercurio, campanitas de plata) y bajar más el oro de los élites
+   si al jugar sobra.
 2. **Fase 2**: D (seis minerales y el Pozo con materiales), C (cofre de suministros), F (reglas de cada bioma) y de L
    las sobrecargas nuevas, la potencia y la regla de las dos armas (L1 y L4).
 3. **Fase 3**: G (mapa de la Noche con historia y los retos por bioma y clase) y los logros en la Sala de Trofeos; de

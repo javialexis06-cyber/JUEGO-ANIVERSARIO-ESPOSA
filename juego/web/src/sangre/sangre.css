@@ -387,14 +387,67 @@ svg {
   min-width: 210px;
 }
 .hud-reloj {
-  font: 800 17px/1 var(--serif);
-  letter-spacing: 0.1em;
+  font: 700 11px/1.1 var(--serif);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   text-shadow: var(--sombra-texto);
   color: var(--hueso);
 }
+.hud-reloj:empty {
+  display: none;
+}
 .hud-reloj.urgente {
-  color: #ff5a5a;
+  color: #ff6a5a;
   animation: latido 0.8s infinite;
+}
+/* La barra de avance de la etapa (se llena con el tiempo y el objetivo; llena, despierta el Guardián) */
+.hud-avance {
+  position: relative;
+  width: 200px;
+  height: 9px;
+  margin: 2px 14px 3px 0;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #120d0f, #241b1e);
+  border: 1px solid #5a4a46;
+  box-shadow: 0 1px 0 #000, inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+.hud-avance > i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-radius: 1px;
+  background: linear-gradient(180deg, #e8b85a, #a8662a 60%, #7a3a1a);
+  box-shadow: 0 0 6px rgba(240, 160, 70, 0.55);
+  transition: width 0.4s linear;
+}
+.hud-avance .marcas i {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 3px;
+  margin-left: -1.5px;
+  border-radius: 1px;
+  background: #d8323a;
+  box-shadow: 0 0 4px rgba(220, 40, 50, 0.9), 0 0 0 1px #000;
+}
+.hud-avance .marcas i.paso {
+  background: #5a4a46;
+  box-shadow: 0 0 0 1px #000;
+}
+.hud-avance .fin-barra {
+  position: absolute;
+  right: -15px;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  transform: translateY(-50%);
+  color: #ff8a7a;
+}
+.hud-avance .fin-barra svg {
+  width: 100%;
+  height: 100%;
 }
 .hud-etapa {
   font-size: 10px;

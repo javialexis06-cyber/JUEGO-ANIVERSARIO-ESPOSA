@@ -52,6 +52,7 @@ const Q2 = new THREE.Quaternion();
 const V = new THREE.Vector3();
 const S = new THREE.Vector3();
 const Y = new THREE.Vector3(0, 1, 0);
+const EU = new THREE.Euler();
 const X = new THREE.Vector3(1, 0, 0);
 
 /** Qué modelo usa cada proyectil. */
@@ -82,7 +83,15 @@ const ESTELA: Record<string, string> = {
 const COLOR_ALMA: Record<number, [number, number, number]> = { [REC.ALMA_AZUL]: [0.35, 0.75, 1.6], [REC.ALMA_VERDE]: [0.35, 1.6, 0.6], [REC.ALMA_ROJA]: [1.8, 0.25, 0.3] };
 const MODELO_REC: Record<number, string> = {
   [REC.ORO]: 'oro', [REC.HIERRO]: 'hierro_negro', [REC.SANGRE]: 'sangre_cristal', [REC.COMIDA]: 'pierna_pollo', [REC.COFRE]: 'cofre', [REC.LLAVE]: 'llave',
-  [REC.FRASCO]: 'frasco', [REC.EQUIPO]: 'equipo', [REC.HUEVO]: 'huevo', [REC.GOTA]: 'gota',
+  [REC.FRASCO]: 'frasco_alquimia', [REC.EQUIPO]: 'equipo', [REC.HUEVO]: 'huevo_dragon', [REC.GOTA]: 'gota',
+  [REC.ROSA]: 'rosa_velo', [REC.PLUMA]: 'pluma_grifo', [REC.HONGO]: 'hongo_tumba',
+};
+/** Los del secundario se dibujan más grandes que su modelo (si no, entre la horda no se ven). */
+const ESCALA_REC: Record<number, number> = { [REC.ROSA]: 2.3, [REC.PLUMA]: 1.8, [REC.HONGO]: 2 };
+/** Lo del secundario brilla de su color (para que se vea entre la horda). */
+const BRILLO_REC: Record<number, string> = {
+  [REC.COFRE]: '#ffd060', [REC.LLAVE]: '#ffd060', [REC.EQUIPO]: '#ffd060', [REC.HUEVO]: '#ffd060', [REC.FRASCO]: '#8aff6a',
+  [REC.ROSA]: '#ff5a7a', [REC.PLUMA]: '#ffe08a', [REC.HONGO]: '#9affc8',
 };
 
 export class Cosas3D {
@@ -200,14 +209,22 @@ export class Cosas3D {
       const id = MODELO_REC[r.tipo];
       if (!id) continue;
       const grande = r.tipo === REC.COFRE || r.tipo === REC.EQUIPO;
-      Q.setFromAxisAngle(Y, grande ? r.id : t * (r.tipo === REC.ORO ? 3 : 1.5) + r.id);
-      V.set(r.x, (grande ? 0 : 0.25 + bob) + r.z, r.y);
-      S.setScalar(r.tipo === REC.ORO ? 0.9 + Math.min(1, r.valor / 10) * 0.5 : 1);
+      // (las rosas y los hongos crecen del piso: quietos; la pluma flota alto y se mece con el viento)
+      const planta = r.tipo === REC.ROSA || r.tipo === REC.HONGO;
+      if (r.tipo === REC.PLUMA) {
+        // (casi acostada, para que desde arriba se le vea lo largo)
+        Q.setFromEuler(EU.set(1.2 + Math.sin(t * 1.7 + r.id) * 0.3, t * 0.8 + r.id, Math.cos(t * 1.3 + r.id) * 0.3, 'YXZ'));
+        V.set(r.x, 0.75 + Math.sin(t * 2.2 + r.id) * 0.18, r.y);
+      } else {
+        Q.setFromAxisAngle(Y, grande || planta ? r.id : t * (r.tipo === REC.ORO ? 3 : 1.5) + r.id);
+        V.set(r.x, (grande || planta ? 0 : 0.25 + bob) + r.z, r.y);
+      }
+      S.setScalar(r.tipo === REC.ORO ? 0.9 + Math.min(1, r.valor / 10) * 0.5 : ESCALA_REC[r.tipo] ?? 1);
       M.compose(V, Q, S);
       this.lote('cosa', id).poner(M);
       // Brillito
-      if ((r.tipo === REC.COFRE || r.tipo === REC.LLAVE || r.tipo === REC.FRASCO || r.tipo === REC.EQUIPO || r.tipo === REC.HUEVO) && Math.random() < 0.06)
-        this.part.brasas(r.x, 0.4, r.y, 1, 0.5, r.tipo === REC.FRASCO ? '#8aff6a' : '#ffd060');
+      const brillo = BRILLO_REC[r.tipo];
+      if (brillo && Math.random() < (ESCALA_REC[r.tipo] ? 0.12 : 0.06)) this.part.brasas(r.x, 0.4, r.y, 1, 0.5, brillo);
     }
     this.almas.geometry.setDrawRange(0, na);
     this.aPos.needsUpdate = this.aCol.needsUpdate = this.aTam.needsUpdate = true;

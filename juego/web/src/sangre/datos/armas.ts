@@ -673,4 +673,4 @@ export const NIVEL_EVOLUCION = 12;
 export const MAX_ARMAS = 4;
 
 /** Experiencia (daño hecho) para pasar del nivel n al n+1 de un arma. */
-export const xpArma = (n: number) => Math.round(70 * Math.pow(n, 1.55));
+export const xpArma = (n: number) => Math.round(80 * Math.pow(n, 1.6));

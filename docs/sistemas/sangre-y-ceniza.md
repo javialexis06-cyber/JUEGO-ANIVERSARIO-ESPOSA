@@ -20,7 +20,7 @@ la noche, y a salir vivos en la **Campana de Extracción** antes de que la horda
 ## Cómo se juega una expedición (lo de Deep Rock Galactic: Survivor)
 
 - Se escoge **bioma** y **nivel de peligro** (1 a 5) y, desde el peligro 3, **mutadores** de la expedición.
-- Una expedición son **4 etapas + extracción final** en el mismo bioma, cada una un mapa **generado al azar**: cuevas,
+- Una expedición son **5 etapas** (la quinta con los sepulcros y el jefe) en el mismo bioma, cada una un mapa **generado al azar**: cuevas,
   criptas y ruinas con **paredes que se excavan** caminando contra ellas (velocidad de excavar es una estadística;
   hay roca blanda, roca dura, hierro negro, cristal de sangre y roca imposible del borde).
 - Cada etapa tiene un **objetivo principal** y uno **secundario**, con su barra arriba:
@@ -30,13 +30,20 @@ la noche, y a salir vivos en la **Campana de Extracción** antes de que la horda
   - **Escoltar la carreta** de reliquias por los rieles (hay que despejarle el camino y protegerla).
   - **Defender la campana** mientras se carga.
   - **Cazar al élite** marcado.
-  - Secundarios: huevos de dragón de piedra, frascos de alquimia, cofres de reliquias cerrados con llave.
-- Cada etapa dura unos **5 minutos**; la horda sube con el reloj. Al cumplir el objetivo (o al acabar el tiempo) baja
-  la **Campana de Extracción** en un punto del mapa: hay 60 segundos para llegar todos mientras la horda enloquece
-  (si alguien no llega, pierde lo que llevaba de esa etapa).
+  - Secundarios: huevos de dragón de piedra, frascos de alquimia, cofres de reliquias cerrados con llave, **rosas del
+    velo** (cada una cura un poco), **plumas de grifo** (caen cerca y el viento se las lleva en 30 s; dan un empujón
+    de velocidad) y **hongos de tumba** (montoncitos de 3 en los rincones, algunos detrás de la roca; dan almas).
+- **La etapa se gana peleando** (como Deep Rock: Survivor): arriba hay una **barra de avance** que el tiempo llena
+  despacio (10 min sola) y el objetivo de un salto (45 %). En el camino salen **oleadas** (marcas rojas en la barra).
+  Llena, despierta **el Guardián** (un élite enorme del bioma con su barra de vida): al matarlo baja la **Campana de
+  Extracción** y hay 60 segundos para llegar todos mientras la horda enloquece (si alguien no llega, pierde lo que
+  llevaba de esa etapa). Mientras el Guardián siga vivo **la Noche se impacienta**: cada 50 s la horda sale más rápida,
+  más dura y en más cantidad. Una etapa dura unos 6 minutos.
 - **Entre etapas**: la **Forja** (como la tienda de Brotato): con el **oro** se compran armas y objetos; con el
   **hierro negro** se mejoran armas; con la **sangre cristalizada** se ponen **sobrecargas** (los overclocks).
-- Al final de la última etapa: **jefe del bioma** y extracción.
+- **La quinta etapa**: 4 **sepulcros** regados por el mapa se abren solos a medida que se llena la barra (o antes, a
+  mano, quedándose al lado 2,5 s: empuja un poquito la barra); de cada uno sale su **custodio**. Con la barra llena y
+  los cuatro custodios muertos sale el **jefe del bioma**, y después la extracción.
 
 ## Cómo se pelea (lo mejor del género)
 
@@ -120,7 +127,7 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
 |---|---|
 | `tipos.ts`, `datos/` | Clases (12, con 3 especializaciones, dones y arsenal de 4), 66 armas (con 3 sobrecargas cada una y 14 evoluciones), mejoras, objetos con contrapartida, equipo (36), reliquias (18), santos y bendiciones, Pozo, enemigos (22), jefes (5), biomas, peligros y mutadores |
 | `sim/` | La simulación a paso fijo (30 por segundo), sin dibujo: mapa al azar con paredes que se excavan, campo de flujo para cientos de enemigos, armas, mecánicas de cada clase, objetivos, jefes por fases, aliados, elecciones. Corre en Node (bot y balance) |
-| `expedicion.ts` | Cuatro etapas + la Forja entre etapas + la recompensa final |
+| `expedicion.ts` | Cinco etapas + la Forja entre etapas + la recompensa final |
 | `vista/` | three.js: rejilla de luz de antorchas (todos los materiales la leen), enemigos instanciados por piezas animadas en el shader, partículas, efectos, muñecos con el traje de la clase y el arma en la mano, posprocesado y calidad que baja sola |
 | `ui/` | HUD, cartas, mando (joystick que aparece donde se toca, WASD), Forja, íconos SVG de reemplazo |
 | `partida.ts`, `main.ts` | El bucle (30 cuadros), los menús, la pausa, el tutorial y las pantallas |
@@ -129,11 +136,17 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
 | `sonidos.ts` | Efectos sintetizados con peso y la música lúgubre |
 
 **Decisiones**
-- **Etapas con reloj (como DRG: Survivor)**: cada etapa dura 5:30 como máximo; al cumplir el objetivo cae un cofre y
-  el reloj baja a un minuto; al acabarse baja la campana (60 s de cuenta, la horda enloquece). El reloj de arriba
-  dice «Campana en m:ss» (o «Jefe en» en la etapa final): por eso la campana «baja de repente» cuando llega a cero o
-  un minuto después de cumplir el objetivo. En la cuarta etapa, en vez de campana sale el jefe del bioma y después la
-  extracción. Si todos los vivos están en la campana, sale en 3 s.
+- **Etapas que se ganan peleando (Sangre y Ceniza 2, fase 1)**: ya no hay reloj. La barra de arriba (`sim.avance`)
+  la llena el tiempo (`AVANCE_SOLO` = 600 s) más el objetivo (`AVANCE_OBJETIVO` = 45 %, de a poquitos según el
+  progreso); las oleadas (`OLEADAS` = 1, 2, 3, 3 según la etapa) salen en puntos fijos de la barra (24 + 9 n enemigos
+  por los dos lados, en tandas). Llena: sale el Guardián (`GUARDIANES` por bioma, vida 1 900 × la escala, doble
+  modificador desde el peligro 3 o la etapa 3); al morir suelta almas, oro, un cofre por jugador y llama la campana.
+  La impaciencia (`IMPACIENCIA_CADA` = 50 s, hasta 8) sube velocidad +6 %, daño +10 % y horda +30 % por punto.
+  En la final, `SEPULCROS` = 4 sepulcros con custodios (55 % de la vida del Guardián); el jefe sale con la barra llena
+  y los custodios muertos (la final no se gana en un minuto abriéndolos a la carrera). El Guardián, los custodios y el
+  jefe nunca se quedan atascados: si en 8 s no se acercan (o no tienen camino 3 s), se hunden y salen de la tierra
+  cerca de los jugadores. Si todos los vivos están en la campana, sale en 3 s. Si la carreta se rompe, la barra
+  sigue (sin el salto del objetivo).
 - **Cómo se ve la campana**: baja del cielo por un haz de luz dorado que no se apaga y queda colgando sobre un círculo
   en el piso (el radio de extracción, 3,2 m) con la cuenta como un arco que se vacía (rojo los últimos 10 s); cae
   entre 10 y 20 casillas de camino de los jugadores. (Antes no se dibujaba nada después de caer: la flecha llevaba
@@ -170,16 +183,33 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   (altares, carreta, campana que se defiende, el élite marcado) y la campana. Sale una leyenda de colores abajo. Se
   apaga sola al empezar otra expedición y sigue prendida entre etapas.
 - **Curva de dificultad pareja** (Javier: «lo difícil del principio se pierde a los 2 minutos y después de la
-  primera etapa es prácticamente morir»):
-  - Dentro de cada etapa los enemigos se endurecen con el reloj (vida ×1 al empezar → ×2,1 al final de los 5:30),
-    así no se vuelve fácil a mitad de etapa.
-  - Entre etapas el salto es suave (+42 % de vida y +15 % de daño por etapa, antes +55 % y +22 %; los bichos
-    fuertes aparecen un poco más tarde): cada etapa empieza con un respiro y sube.
+  primera etapa es prácticamente morir»; y de Sangre 2: «sí debe durar más, lo que no quiero es que sea demasiado
+  corto»):
+  - Dentro de cada etapa los enemigos se endurecen con el tiempo (vida ×1 al empezar → ×2,1 a los 6:20).
+  - **Cada etapa arranca más o menos donde terminó la anterior** (vida ×2 por etapa, daño +50 % por etapa, horda
+    +20 %): así las últimas son las difíciles, como en Deep Rock, y no la primera. Las almas valen ×2^0,7 por etapa
+    (no tanto como crece la vida, para que el jugador no suba de nivel igual de rápido).
+  - **Calentamiento**: en la primera etapa la horda llega de a poco el primer minuto y pega más suave los primeros dos
+    (55 % → 100 %); en las demás, 20 s de respiro al llegar.
+  - Peligro: además de vida y cantidad, `dano` (0,85 / 1 / 1,12 / 1,25 / 1,4) y `curacion` (lo que rinde curarse:
+    1 / 1 / 0,9 / 0,8 / 0,7). La armadura rinde menos en las etapas hondas.
+  - **Mini-élites** desde la etapa 2 (morados, ×2,4 de vida, no cuentan como élite; sueltan almas y a veces oro).
+  - **Bichos del botín** (como los lootbugs): 3-4 **ratas del tesoro** por etapa (sueltan oro y a veces hierro o
+    sangre), a veces una **rata dorada** (mucho oro) y desde la etapa 2 un **ladrón de tumbas** (cofre y equipo). No
+    pegan: huyen y, si no las alcanzan, se hunden con todo.
+  - Medido con el bot (`balance-sangre.mjs`, 36 expediciones por peligro, todas las clases): con `TORPE=1` el
+    peligro 2 gana ~85 % y el bueno en peligro 3 ~75 %, con las muertes repartidas entre las etapas (antes todas en
+    la primera); la final pone en aprietos (vida más baja 2-50 % en la mitad de las partidas). Cada etapa dura
+    340-360 s y la final 4-7 min: la expedición, unos 30 minutos.
   - **Descanso**: al bajar a la etapa siguiente se recupera el 35 % de la vida (`DESCANSO`; el que se quedó afuera
     llega con media vida, sin descanso). La Forja lo avisa junto a la vida.
   - La cacería del élite ya no trae doble modificador antes del peligro 3 (era el pico que mataba de una).
-  - **Minería**: más vetas (hierro +2, oro +2, sangre +1) y pagan más (oro 6-10, hierro 3-4, sangre 2-4): con eso se
-    compra en la Forja y se suben armas en el yunque.
+  - **Minería**: más vetas (hierro +2, oro +2, sangre +1); las vetas pagan oro 4-7, hierro 2-3 y sangre 1-3 (con
+    las etapas más largas no hacía falta más).
+  - **Economía**: los precios de la Forja suben con la etapa (armas 26 + 12 × etapa, objetos +22 % por etapa, equipo
+    +15 %, yunque y altar +12 %), renovar sigue la escalera de Deep Rock (5, 7, 10, 14, 20, 28, 39…) y las vendas
+    curan la mitad de la vida. El secundario paga por la parte hecha (40 de oro y 10 de sangre al completo, +20 % por
+    etapa). Subir de nivel cuesta más (`xpPara` = 7 + 6 (n−1) + 0,42 (n−1)²) y las armas también (80 n^1,6).
   - Medido con el bot (`balance-sangre.mjs`, 30 expediciones): peligro 3 pasa de 17 a 24 victorias, con menos
     muertes en la primera y la última etapa; con `TORPE=1` (esquiva menos y casi no usa la Forja, como quien empieza)
     peligro 2 pasa de 23 a 25 y peligro 3 de 22 a 24. El script ahora muestra el daño recibido por minuto, la vida
@@ -194,9 +224,9 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
     (cada 6 paredes rotas, la siguiente revienta: rompe roca y vetas y lastima alrededor).
   - Nueva estadística `vetas` (cuánto más dan las vetas): carta de subir de nivel «Olfato de minero» (+15 %) y mejora
     del Pozo «Ojo de minero» (+10 % por nivel, hasta 5).
-- **Modo infinito** (en la expedición, «Modo: Cuatro etapas / Infinito»; se abre al ganar la primera expedición):
-  etapas sin fin con jefe cada cuatro, y los biomas abiertos se turnan cada cuatro etapas desde el escogido
-  (`cfg.rotacion`, la arma el anfitrión: en grupo todos van igual). Desde la quinta etapa cada una es mucho más dura
+- **Modo infinito** (en la expedición, «Modo: Cinco etapas / Infinito»; se abre al ganar la primera expedición):
+  etapas sin fin con jefe cada cinco, y los biomas abiertos se turnan cada cinco etapas desde el escogido
+  (`cfg.rotacion`, la arma el anfitrión: en grupo todos van igual). Desde la sexta etapa cada una es mucho más dura
   (vida ×1,3, daño ×1,1, más horda y más élites por etapa) y las almas ya no valen más: el poder del jugador se
   estanca y la noche termina ganando. Se acaba al caer; el récord queda en `cifras.infinitoMax` (lo muestran la
   expedición y los resultados) y hay dos logros (etapa 8 y etapa 16). Ceniza y maestría según las etapas; monedas de
@@ -206,9 +236,10 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   jugador extra: +38 % de vida, +60 % de enemigos, +30 % de élites y el botín se reparte.
 - **Experiencia compartida** en grupo; cada uno escoge sus cartas. Solo, el juego espera mientras escoge; en grupo
   sigue y quien escoge queda protegido (13 s, si no, se escoge la primera).
-- **La Forja**: cinco ofertas (armas, objetos, equipo, vendas), renovar (3 + 3 por vez + etapa de oro), guardar una
-  oferta con el candado, yunque (4 + 2 × nivel de hierro negro → +1 nivel), altar de sangre (6 + 6 × sobrecargas de
-  sangre → una sobrecarga antes de tiempo, una por arma y visita) y vender objetos a la mitad.
+- **La Forja**: cinco ofertas (armas, objetos, equipo, vendas), renovar (5, 7, 10, 14, 20… de oro, la cuenta sigue
+  toda la expedición), guardar una oferta con el candado, yunque ((5 + 3 × nivel) de hierro negro, +12 % por etapa →
+  +1 nivel), altar de sangre ((8 + 8 × sobrecargas) de sangre, +12 % por etapa → una sobrecarga antes de tiempo, una
+  por arma y visita) y vender objetos a la mitad.
 - **Progreso permanente** (`ProgresoSangre`): ceniza (moneda del Pozo de las Almas), 13 mejoras del Pozo, equipo
   ofrecido al Pozo (se escoge antes de bajar), maestría por clase (15 niveles: 2.ª especialización en el 1, 3.ª arma
   en el 2, 3.ª especialización en el 3, 4.ª arma en el 4, títulos y bonos después), clases, biomas y armas comunes
@@ -269,11 +300,12 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   en grupo (sala, Forja esperando a todos, etapa 2, resultados y vuelta a la sala), la extracción con el bot, la
   pausa y abandonar, el joystick con el dedo y el tutorial completo.
 - Parámetros: `sangre.html?prueba=1` (entra directo; `&clase=`, `&bioma=`, `&peligro=`, `&spec=`, `&semilla=`,
-  `&bot=1`, `&rapido=N`, `&etapa=4` para el jefe), `?prueba=tutorial`, `?calidad=baja|media|alta`, `?limpio=1` (progreso nuevo),
+  `&bot=1`, `&rapido=N`, `&etapa=5` para los sepulcros y el jefe, `&secundario=rosas|plumas|hongos|…`), `?prueba=tutorial`, `?calidad=baja|media|alta`, `?limpio=1` (progreso nuevo),
   `?salas=local` (salas entre pestañas), `?rol=el|ella`, `?amigo=Nombre&id=x`, `?sinanim=1`.
 - Ganchos: `__sangre()` (la simulación o el espejo), `__sangrePartida()`, `__sangreEscena()`, `__sangreProgreso()`,
   `__sangrePantalla()`, `__sangreInfo()` (llamadas, triángulos, ms), `__sangreDar(ceniza)`, `__sangreAbrirTodo()`,
-  `__sangreForja()` (salta a la Forja), `__sangreReloj(s)` (adelanta el reloj de la etapa).
+  `__sangreForja()` (salta a la Forja), `__sangreReloj(s)` (llena la barra hasta que falten `s` segundos),
+  `__sangreDebil()` (deja al Guardián o al jefe con un golpe de vida).
 
 ## Contrato de arte (lo que el código espera encontrar)
 
@@ -289,11 +321,11 @@ atacar, morir). Mirando hacia +Y de Blender. Altura de un zombi ≈ 1,1 m (los p
 
 | Archivo | Nodos | Qué es |
 |---|---|---|
-| `enemigos.glb` | `enemigo_<id>` | zombi, zombi_gordo, esqueleto, esqueleto_arquero, cuervo, perro_huesos, ghoul, arana_cripta, espectro, minero_maldito, rata_peste, abominacion, lacayo_explosivo, monje_caido, gargola, inquisidor_muerto, nigromante, vampiro, novia_vampira, hombre_lobo, murcielago, caballero_muerte |
+| `enemigos.glb` | `enemigo_<id>` | zombi, zombi_gordo, esqueleto, esqueleto_arquero, cuervo, perro_huesos, ghoul, arana_cripta, espectro, minero_maldito, rata_peste, abominacion, lacayo_explosivo, monje_caido, gargola, inquisidor_muerto, nigromante, vampiro, novia_vampira, hombre_lobo, murcielago, caballero_muerte; los del botín: rata_tesoro, rata_dorada, ladron_tumbas |
 | `jefes.glb` | `jefe_<id>` | golem_osarios, abadesa, gusano_sangre, obispo_hueco, conde (con capa `extra_capa` y fase 2 `extra_alas`) |
 | `armas.glb` | `arma_<id>` | espada_larga, horca, grillete, maza, escudo, ballesta, martillo, frasco, pala, incensario, hacha_verdugo, baston_cuervos, laud, guadana, antorcha, estaca, lanza, mangual, daga, arco (y las que hagan falta), con origen en el mango |
 | `proyectiles.glb` | `p_<id>` | virote, flecha, estaca, frasco_roto, nota_musical, pluma_cuervo, hueso, bola_fuego, rayo_sagrado, cadena_eslabon |
-| `cosas.glb` | `c_<id>` | alma_azul, alma_verde, alma_roja, oro, hierro_negro, sangre_cristal, pierna_pollo, cofre, cofre_reliquia, llave, campana_extraccion, altar_sangre, carreta, prisionero_cadenas, pozo_almas, forja, torreta_ballesta, trampa, tumba_abierta, totem_maleficio |
+| `cosas.glb` | `c_<id>` | alma_azul, alma_verde, alma_roja, oro, hierro_negro, sangre_cristal, pierna_pollo, cofre, cofre_reliquia, llave, campana_extraccion, altar_sangre, carreta, prisionero_cadenas, pozo_almas, forja, torreta_ballesta, trampa, tumba_abierta, totem_maleficio, frasco_alquimia, huevo_dragon, sepulcro, sepulcro_abierto, rosa_velo, pluma_grifo, hongo_tumba |
 | `bioma_<id>.glb` | `piso_*`, `pared_*`, `veta_*`, `deco_*`, `luz_*` | cementerio, catacumbas, minas, abadia, castillo: losas/tierra de piso en bloques de 2×2 m, **bloques de pared excavables** de 1×1×1,5 m (`pared_blanda_a/b/c`, `pared_dura_a/b`, `pared_borde`), vetas (`veta_hierro`, `veta_sangre`, `veta_oro`), y decoración (lápidas, mausoleos, cruces, nichos con calaveras, cadenas, rieles, vagonetas, vitrales, bancas, candelabros, tapices…), `luz_antorcha`/`luz_vela` con un nodo vacío `llama` donde va la luz |
 | `../ropa/sangre_<clase>_{el,ella}.glb` | igual que la ropa de la casa | el traje serio de cada clase para el cuerpo de Él y el de Ella, con el esqueleto de la ropa (`ropa*.py`): monarca, campesino, prisionero, caballero, cazador, herrero, alquimista, sepulturero, inquisidor, verdugo, bruja, juglar |
 

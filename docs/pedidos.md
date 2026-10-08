@@ -5,13 +5,16 @@ probado y subido.
 
 ## Por dónde seguir (nota para el próximo Claude)
 
-Último trabajo subido: el estudio de las dos wikis (lo que les falta a Lavarse la cara y a Sangre y Ceniza) y la
-**mitología de Astra** que Javier trajo de la granja ([`docs/mitologia.md`](mitologia.md)). Javier respondió lo de
-Sangre y Ceniza 2 (8 de octubre): **se hace primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de
-protagonistas) y todo lo de armas. Orden:
+Último trabajo subido: **Sangre y Ceniza 2, fase 1** (8 de octubre): etapas que se ganan peleando con la barra de
+avance, el Guardián, la Noche se impacienta, 5 etapas con sepulcros y custodios en la final, ratas del tesoro y
+ladrón de tumbas, mini-élites, precios que suben y tres secundarios nuevos; la dificultad ahora crece etapa por etapa
+(ver `docs/sistemas/sangre-y-ceniza.md`). Antes: el estudio de las dos wikis y la **mitología de Astra** que Javier
+trajo de la granja ([`docs/mitologia.md`](mitologia.md)). Javier respondió lo de Sangre y Ceniza 2: **se hace
+primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protagonistas) y todo lo de armas. Orden:
 
-1. **Sangre y Ceniza 2**, por fases (sección 4 de `docs/en-obra/sangre-propuesta.md`): fase 1 = etapas que se ganan
-   peleando, el Guardián, la Noche se impacienta, 5 etapas, precios que suben, ratas del tesoro y mini-élites.
+1. **Sangre y Ceniza 2**, por fases (sección 4 de `docs/en-obra/sangre-propuesta.md`): ~~fase 1~~ **hecha**; sigue la
+   **fase 2** = seis minerales y el Pozo con materiales, el cofre de suministros, las reglas de cada bioma y, de las
+   armas, las sobrecargas nuevas, la potencia y la regla de las dos armas.
 2. **Lavarse la cara 2** (`docs/en-obra/lavado-propuesta.md`): antes de empezar, hacerle a Javier las 5 preguntas del
    final (armas, escenarios, modos y tesoros, disfraces, aventuras).
 3. **Amigos: mesa, retrete y cocina en la app de amigos** (abajo, en «Amigos: lo que sigue»).

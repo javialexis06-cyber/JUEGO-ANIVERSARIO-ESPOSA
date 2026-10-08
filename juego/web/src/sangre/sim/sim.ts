@@ -3,7 +3,7 @@
 // en el anfitrión de una partida de hasta 4 y en Node con el bot. Cada `paso(dt)` deja lo que pasó en `suc`.
 import { Azar } from '../../casa/lavado/azar';
 import { Rejilla } from '../../casa/lavado/rejilla';
-import { BIOMAS, CUENTA_EXTRACCION, DESCANSO, DURACION_ETAPA, MOD_ELITE, PELIGROS, type DefBioma, type DefEnemigo } from '../datos/mundo';
+import { AVANCE_OBJETIVO, AVANCE_SOLO, BIOMAS, CUENTA_EXTRACCION, DESCANSO, DURACION_ETAPA, ETAPAS, MOD_ELITE, OLEADAS, PELIGROS, type DefBioma, type DefEnemigo } from '../datos/mundo';
 import { C, esExcavable, esSolida, type ConfigExpedicion, type IdBioma, type IdObjetivo, type IdSecundario } from '../tipos';
 import { TIPOS, TIPO_ALTAR, esJefe } from './catalogo';
 import { Aliado, ENT, Entidad, Enemigos, Proyectil, REC, Recogible, S, Sucesos, Zona } from './estado';
@@ -14,7 +14,7 @@ import { actualizarArmas, moverProyectiles, moverZonas } from './armas';
 import { dirigirHorda, moverEnemigos, aparecerEnemigo } from './enemigos_ia';
 import { moverAliados } from './aliados';
 import * as mec from './mecanicas';
-import { prepararObjetivos, actualizarObjetivos, llamarCampana, tomarConMano, RADIO_GRANDE, RADIO_LLAVE } from './objetivos';
+import { prepararObjetivos, actualizarObjetivos, llamarCampana, tomarConMano, guardianMuerto, RADIO_GRANDE, RADIO_LLAVE } from './objetivos';
 import { encolarNivel, encolarSobrecarga } from './opciones';
 import { jefeMuerto } from './jefes';
 import { Golpe } from './golpe';
@@ -34,7 +34,7 @@ export interface ConfigEtapa {
   secundario: IdSecundario;
   /** La última etapa: después del objetivo sale el jefe. */
   final: boolean;
-  /** El bioma de esta etapa (en el modo infinito cambia cada 4; si no, el de la expedición). */
+  /** El bioma de esta etapa (en el modo infinito cambia cada 5; si no, el de la expedición). */
   bioma?: IdBioma;
 }
 
@@ -67,8 +67,30 @@ export class Sim {
   rej = new Rejilla(MAX_ENEMIGOS, 2, 2048);
   /** Segundos de la etapa. */
   t = 0;
-  /** Cuándo baja la campana (o sale el jefe): al final del reloj, o un minuto después de cumplir el objetivo. */
-  limite = DURACION_ETAPA;
+  /** Avance de la etapa (0-1), como en Deep Rock Galactic: Survivor. Lo llenan el tiempo (despacio) y el objetivo
+   *  principal (de a mucho); en el camino salen las oleadas y, lleno, el Guardián. La campana baja cuando él cae. */
+  avance = 0;
+  /** La parte del avance que puso el tiempo. */
+  avanceT = 0;
+  /** En qué punto de la barra sale cada oleada, y cuántas han salido. */
+  oleadas: number[] = [];
+  oleadasHechas = 0;
+  /** Bichos que le faltan a la oleada en curso (salen de a tandas). */
+  oleadaResta = 0;
+  oleadaT = 0;
+  /** El Guardián: índice en la piscina (−1 si no está vivo) y si ya salió. */
+  guardian = -1;
+  guardianVisto = false;
+  /** La Noche se impacienta: desde que sale el Guardián, cada tanto la horda sale más rápida y más brava. */
+  impaciencia = 0;
+  impacienciaT = 0;
+  /** Cuándo sale cada bicho del botín en esta etapa (ordenado). */
+  botinPlan: { t: number; id: string }[] = [];
+  /** Plumas de grifo: cuánto falta para que caiga la siguiente. */
+  plumaT = 0;
+  /** Los importantes que se quedaron lejos (uid → distancia más corta y segundos sin acercarse). */
+  atascos = new Map<number, { d: number; t: number }>();
+  atascoT = 0;
   fase: 'juego' | 'extraccion' | 'jefe' = 'juego';
   campana: Entidad | null = null;
   obj = { tipo: 'hierro' as IdObjetivo, meta: 1, prog: 0, hecho: false, fallo: false, texto: '' };
@@ -77,6 +99,8 @@ export class Sim {
   jefe = -1;
   jefeFase = 0;
   jefeVisto = false;
+  /** Lo que rinde la curación en este peligro (en los altos, menos). */
+  curaPeligro = 1;
   /** Escala de la horda según el peligro, la etapa y cuántos juegan. */
   esc = { vida: 1, dano: 1, cantidad: 1, elites: 1, botin: 1, xp: 1 };
   /** Revienta un cartucho de minero ahora mismo (para que no encadene otro dentro de la misma explosión). */
@@ -124,22 +148,24 @@ export class Sim {
     const n = jugadores.length;
     const pel = PELIGROS[Math.max(0, Math.min(4, cfg.exp.peligro - 1))];
     const mut = (m: string) => cfg.exp.mutadores.includes(m as never);
-    // Modo infinito: después de la cuarta etapa, cada una bastante más dura que la anterior (crece más rápido que el
+    // Modo infinito: después de la quinta etapa, cada una bastante más dura que la anterior (crece más rápido que el
     // jugador, que se estanca con las armas al máximo: tarde o temprano la noche gana)
-    const inf = cfg.exp.infinito ? Math.max(0, cfg.etapa - 4) : 0;
+    const inf = cfg.exp.infinito ? Math.max(0, cfg.etapa - ETAPAS) : 0;
+    // Cada etapa arranca más o menos donde terminó la anterior (dentro de la etapa los enemigos se endurecen con el
+    // reloj): así las últimas son las difíciles, como en Deep Rock, y no la primera
+    const etapaV = 2 ** (Math.min(cfg.etapa, ETAPAS) - 1);
+    const base = pel.vida * (1 + 0.38 * (n - 1)) * (mut('codicia') ? 1.25 : 1) * (mut('fragiles') ? 0.75 : 1);
     this.esc = {
-      // (el salto entre etapas es suave: dentro de cada etapa los enemigos ya se endurecen con el reloj)
-      vida: pel.vida * (1 + 0.42 * (cfg.etapa - 1)) * (1 + 0.38 * (n - 1)) * (mut('codicia') ? 1.25 : 1) * (mut('fragiles') ? 0.75 : 1) * 1.3 ** inf,
-      dano: (1 + 0.15 * (cfg.etapa - 1)) * (1 + 0.1 * (pel.n - 1)) * (mut('sangrienta') ? 1.3 : 1) * 1.1 ** inf,
-      cantidad: pel.cantidad * (1 + 0.6 * (n - 1)) * (1 + 0.12 * (cfg.etapa - 1)) * (1 + 0.05 * inf),
+      vida: base * etapaV * 1.3 ** inf,
+      dano: (1 + 0.5 * (Math.min(cfg.etapa, ETAPAS) - 1)) * pel.dano * (mut('sangrienta') ? 1.3 : 1) * 1.1 ** inf,
+      cantidad: pel.cantidad * (1 + 0.6 * (n - 1)) * (1 + 0.2 * (Math.min(cfg.etapa, ETAPAS) - 1)) * (1 + 0.05 * inf),
       elites: pel.elites * (1 + 0.3 * (n - 1)) * (mut('elites_dobles') ? 2 : 1) * (1 + 0.12 * inf),
       botin: 1 / (1 + 0.45 * (n - 1)),
-      xp: 1,
+      // Las almas valen más en las etapas duras, pero no tanto como crece la vida (si no, el jugador sube de nivel tan
+      // rápido como se endurecen los enemigos); en el infinito ya no valen más (el poder del jugador se estanca)
+      xp: base * etapaV ** 0.7,
     };
-    // (las almas valen según la vida de la etapa, pero sin el extra del infinito: si no, el jugador sube de nivel tan
-    // rápido como se endurecen los enemigos y la noche nunca gana)
-    // En el infinito, después de la cuarta etapa las almas ya no valen más (el poder del jugador se estanca)
-    this.esc.xp = inf ? (this.esc.vida / 1.3 ** inf) * ((1 + 0.42 * 3) / (1 + 0.42 * (cfg.etapa - 1))) : this.esc.vida;
+    this.curaPeligro = pel.curacion;
     this.mapa = generarMapa({
       bioma: this.bioma, semilla: cfg.exp.semilla * 31 + cfg.etapa * 977, jugadores: n, rocaDura: mut('roca_dura'), sinAntorchas: mut('sin_antorchas'),
       vetasHierro: cfg.objetivo === 'hierro' ? 10 + 2 * n : 2, carreta: cfg.objetivo === 'carreta', tutorial: cfg.exp.tutorial,
@@ -178,6 +204,18 @@ export class Sim {
       mec.alEmpezarEtapa(this, j);
     });
     prepararObjetivos(this);
+    // Las oleadas, repartidas a lo largo de la barra (la etapa final no tiene: tiene los sepulcros)
+    const nOl = cfg.final || cfg.exp.tutorial ? 0 : OLEADAS[Math.min(OLEADAS.length - 1, cfg.etapa - 1)];
+    for (let k = 0; k < nOl; k++) this.oleadas.push(((k + 1) / (nOl + 1)) * 0.92);
+    // Los bichos del botín de la etapa: ratas del tesoro repartidas, a veces una rata dorada y, desde la segunda etapa,
+    // a veces un ladrón de tumbas
+    if (!cfg.exp.tutorial) {
+      const ratas = 3 + (cfg.etapa >= 3 ? 1 : 0);
+      for (let k = 0; k < ratas; k++) this.botinPlan.push({ t: 35 + (k + this.az.n() * 0.8) * (265 / ratas), id: 'rata_tesoro' });
+      if (this.az.n() < (cfg.exp.peligro >= 3 ? 0.35 : 0.25)) this.botinPlan.push({ t: this.az.entre(60, 260), id: 'rata_dorada' });
+      if (cfg.etapa >= 2 && this.az.n() < 0.55) this.botinPlan.push({ t: this.az.entre(80, 280), id: 'ladron_tumbas' });
+      this.botinPlan.sort((a, b) => a.t - b.t);
+    }
     this.calcularFlujo();
   }
 
@@ -194,6 +232,26 @@ export class Sim {
   }
   get duracion() {
     return DURACION_ETAPA;
+  }
+  /** Custodios de los sepulcros que siguen vivos (etapa final). */
+  custodiosVivos = 0;
+
+  /** Lo que el objetivo principal le pone a la barra (0-1). Fallido también cuenta: la noche sigue, sin premio. */
+  get fracObjetivo() {
+    const o = this.obj;
+    if (o.fallo || o.hecho) return 1;
+    return o.meta > 0 ? Math.min(1, o.prog / o.meta) : 0;
+  }
+
+  /** Recalcula el avance con el tiempo que lleva y el objetivo. */
+  calcularAvance() {
+    this.avance = Math.min(1, this.avanceT + AVANCE_OBJETIVO * this.fracObjetivo);
+  }
+
+  /** Pruebas: deja la barra a `seg` segundos de llenarse (sin contar el objetivo que falta). */
+  adelantar(seg: number) {
+    this.avanceT = Math.max(this.avanceT, 1 - AVANCE_OBJETIVO * this.fracObjetivo - seg / AVANCE_SOLO);
+    this.calcularAvance();
   }
 
   /** El jugador vivo más cercano (o null). Los invisibles no cuentan para los enemigos. */
@@ -520,6 +578,26 @@ export class Sim {
       if (this.az.n() < 0.5) this.soltar(REC.SANGRE, x, y, 2);
     } else if (esJefe(t)) {
       jefeMuerto(this, i);
+    } else if (def.conducta === 'ladron') {
+      // Los bichos del botín: lo que cargan es la plata de la etapa
+      this.soltarAlmas(x, y, def.xp);
+      if (def.id === 'rata_dorada') {
+        for (let k = 0; k < 6; k++) this.soltar(REC.ORO, x, y, this.az.entero(8, 14));
+        this.soltar(REC.SANGRE, x, y, 2);
+      } else if (def.id === 'ladron_tumbas') {
+        this.soltar(REC.COFRE, x, y, 1);
+        for (let k = 0; k < 2; k++) this.soltar(REC.ORO, x, y, this.az.entero(5, 9));
+        if (this.az.n() < 0.4) this.soltar(REC.EQUIPO, x, y, 1, '');
+      } else {
+        for (let k = 0; k < 3; k++) this.soltar(REC.ORO, x, y, this.az.entero(4, 7));
+        if (this.az.n() < 0.5) this.soltar(REC.HIERRO, x, y, 2);
+        if (this.az.n() < 0.3) this.soltar(REC.SANGRE, x, y, 1);
+      }
+      if (j) j.resumen.botin = (j.resumen.botin ?? 0) + 1;
+    } else if (elite === MOD_ELITE.MINI) {
+      this.soltarAlmas(x, y, def.xp * 3);
+      if (this.az.n() < 0.5) this.soltar(REC.ORO, x, y, this.az.entero(2, 4));
+      if (this.az.n() < 0.15) this.soltar(REC.HIERRO, x, y, 1);
     } else {
       this.soltarAlmas(x, y, def.xp * (elite ? 6 : 1));
       const suerte = j ? j.st.suerte : 0;
@@ -554,6 +632,8 @@ export class Sim {
       this.obj.prog = this.obj.meta;
       this.aviso(4);
     }
+    if (E.marcadoObj[i] === 4) this.custodiosVivos = Math.max(0, this.custodiosVivos - 1);
+    if (i === this.guardian) guardianMuerto(this, i);
     if (t === TIPO_ALTAR) {
       this.obj.prog++;
       if (j) j.resumen.altares++;
@@ -642,7 +722,7 @@ export class Sim {
   // ----------------------------------------------------------------------------------------------- Jugadores
   curar(j: Jugador, cant: number, robo = false) {
     if (j.estado !== 0 || cant <= 0) return;
-    const c = cant * Math.max(0.1, 1 + j.st.curacion);
+    const c = cant * Math.max(0.1, 1 + j.st.curacion) * this.curaPeligro;
     const antes = j.hp;
     j.hp = Math.min(j.hpMax, j.hp + c);
     if (!robo && j.hp - antes >= 1) this.suc.push(S.CURA, j.i, j.hp - antes);
@@ -664,8 +744,9 @@ export class Sim {
     }
     let d = mec.alRecibir(this, j, dano, x, y);
     if (d <= 0) return 0;
+    // (la armadura rinde menos mientras más hondo, como en Deep Rock)
     const arm = j.st.armadura;
-    d *= arm >= 0 ? 1 - arm / (arm + 12) : 1 + Math.min(0.5, -arm * 0.03);
+    d *= arm >= 0 ? 1 - arm / (arm + 12 + 2.5 * (this.cfg.etapa - 1)) : 1 + Math.min(0.5, -arm * 0.03);
     d = Math.max(1, d);
     j.hp -= d;
     j.golpeT = 0.25;
@@ -966,9 +1047,10 @@ export class Sim {
     const x = cx + 0.5, y = cy + 0.5;
     const vetas = 1 + (j ? mec.extraVetas(j) + j.st.vetas : 0);
     // (la minería paga bien: con eso se compra en la Forja y se suben las armas en el yunque)
-    if (tipo === C.HIERRO) this.soltar(REC.HIERRO, x, y, Math.round(this.az.entero(3, 4) * vetas));
-    else if (tipo === C.SANGRE) this.soltar(REC.SANGRE, x, y, Math.round(this.az.entero(2, 4) * vetas));
-    else if (tipo === C.ORO) this.soltar(REC.ORO, x, y, Math.round(this.az.entero(6, 10) * vetas));
+    // (las vetas pagan menos que antes: la plata grande la cargan los bichos del botín)
+    if (tipo === C.HIERRO) this.soltar(REC.HIERRO, x, y, Math.round(this.az.entero(2, 3) * vetas));
+    else if (tipo === C.SANGRE) this.soltar(REC.SANGRE, x, y, Math.round(this.az.entero(1, 3) * vetas));
+    else if (tipo === C.ORO) this.soltar(REC.ORO, x, y, Math.round(this.az.entero(4, 7) * vetas));
     else if (tipo === C.HUEVO) this.soltar(REC.HUEVO, x, y, 1);
     if (j) {
       j.resumen.excavadas++;
@@ -1133,6 +1215,23 @@ export class Sim {
         if (this.sec.tipo === 'huevos') this.sec.prog++;
         this.aviso(11, this.sec.prog, this.sec.meta);
         break;
+      case REC.ROSA:
+        if (this.sec.tipo === 'rosas') this.sec.prog++;
+        this.curar(j, j.hpMax * 0.06);
+        this.aviso(31, this.sec.prog, this.sec.meta);
+        break;
+      case REC.PLUMA:
+        // (el viento del grifo: un ratico más rápido)
+        if (this.sec.tipo === 'plumas') this.sec.prog++;
+        j.buffVel = Math.max(j.buffVel, 0.3);
+        j.buffT = Math.max(j.buffT, 6);
+        this.aviso(32, this.sec.prog, this.sec.meta);
+        break;
+      case REC.HONGO:
+        if (this.sec.tipo === 'hongos') this.sec.prog++;
+        this.ganarXp(3 * this.esc.xp);
+        if (this.sec.prog === this.sec.meta || this.sec.prog % 3 === 0) this.aviso(33, this.sec.prog, this.sec.meta);
+        break;
       case REC.EQUIPO:
         mec.recogerEquipo(this, j);
         break;
@@ -1169,13 +1268,14 @@ export class Sim {
 
   /** Daño de enemigo según su tipo y la escala. */
   danoEnemigo(def: DefEnemigo, elite: number) {
-    return def.dano * this.esc.dano * (elite ? 1.5 : 1);
+    return def.dano * this.esc.dano * this.calentamiento * (elite ? 1.5 : 1);
   }
 
-  /** Tiempo que le queda a la etapa antes de que la campana baje sola. */
-  get quedan() {
-    return Math.max(0, this.limite - this.t);
+  /** Los primeros dos minutos de la primera etapa pegan más suave (para armarse antes de que llegue lo duro). */
+  get calentamiento() {
+    return this.cfg.etapa === 1 ? 0.55 + 0.45 * Math.min(1, this.t / 150) : 1;
   }
+
   get cuentaExtraccion() {
     return CUENTA_EXTRACCION;
   }

@@ -460,9 +460,9 @@
   }
  },
  "c_pozo_almas": {
-  "altura": 2.015,
-  "radio": 0.95,
-  "alcance": 0.951,
+  "altura": 2.016,
+  "radio": 0.945,
+  "alcance": 0.95,
   "tris": 3000,
   "piezas": {
    "cuerpo": {
@@ -484,7 +484,7 @@
  },
  "c_forja": {
   "altura": 2.293,
-  "radio": 0.825,
+  "radio": 0.821,
   "alcance": 0.99,
   "tris": 3522,
   "piezas": {
@@ -656,6 +656,76 @@
    ]
   }
  },
+ "c_rosa_velo": {
+  "altura": 0.405,
+  "radio": 0.083,
+  "alcance": 0.099,
+  "tris": 1500,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1500
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.36
+   ]
+  }
+ },
+ "c_pluma_grifo": {
+  "altura": 0.501,
+  "radio": 0.078,
+  "alcance": 0.082,
+  "tris": 900,
+  "flota": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.2
+    ],
+    "tris": 900
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.03,
+    0.0,
+    0.3
+   ]
+  }
+ },
+ "c_hongo_tumba": {
+  "altura": 0.226,
+  "radio": 0.117,
+  "alcance": 0.147,
+  "tris": 1300,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1300
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.12
+   ]
+  }
+ },
  "c_espiga": {
   "altura": 0.548,
   "radio": 0.118,
@@ -744,7 +814,7 @@
  },
  "c_cofre_maldito": {
   "altura": 0.441,
-  "radio": 0.362,
+  "radio": 0.361,
   "alcance": 0.333,
   "tris": 2200,
   "piezas": {
@@ -770,6 +840,52 @@
     0.0,
     0.0,
     0.25
+   ]
+  }
+ },
+ "c_sepulcro": {
+  "altura": 1.039,
+  "radio": 0.968,
+  "alcance": 1.12,
+  "tris": 7593,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 7593
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.95
+   ]
+  }
+ },
+ "c_sepulcro_abierto": {
+  "altura": 0.848,
+  "radio": 1.143,
+  "alcance": 1.1,
+  "tris": 7593,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 7593
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.65
    ]
   }
  },

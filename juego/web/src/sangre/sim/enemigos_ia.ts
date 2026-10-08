@@ -36,7 +36,10 @@ export function aparecerEnemigo(sim: Sim, tipo: number, x: number, y: number, o:
   let vida = def.vida * sim.esc.vida * (esJefe(tipo) || def.conducta === 'quieto' ? 1 : reloj) * (o.vida ?? 1);
   const elite = o.elite ?? 0;
   let esc = 1;
-  if (elite) {
+  if (elite === MOD_ELITE.MINI) {
+    vida *= 2.4;
+    esc = 1.15;
+  } else if (elite) {
     vida *= 5.5;
     esc = 1.35;
     if (elite & MOD_ELITE.ESCUDO) E.escudo[i] = vida * 0.5;
@@ -47,8 +50,11 @@ export function aparecerEnemigo(sim: Sim, tipo: number, x: number, y: number, o:
   E.hp[i] = E.hpMax[i] = vida;
   E.r[i] = def.radio * esc;
   E.esc[i] = esc;
-  E.vel[i] = def.vel * (elite & MOD_ELITE.RAPIDO ? 1.45 : 1) * (sim.cfg.exp.mutadores.includes('velocidad') ? 1.2 : 1) * sim.az.entre(0.92, 1.08);
-  E.dano[i] = sim.danoEnemigo(def, elite);
+  // (la Noche impaciente los manda más rápidos y más bravos)
+  const imp = esJefe(tipo) ? 0 : sim.impaciencia;
+  E.vel[i] = def.vel * (elite & MOD_ELITE.RAPIDO ? 1.45 : elite === MOD_ELITE.MINI ? 1.18 : 1) * (sim.cfg.exp.mutadores.includes('velocidad') ? 1.2 : 1) * (1 + 0.06 * imp) * sim.az.entre(0.92, 1.08);
+  E.dano[i] = sim.danoEnemigo(def, elite) * (1 + 0.1 * imp) * (elite === MOD_ELITE.MINI ? 0.85 : 1);
+  if (def.escapa) E.et[i] = def.escapa;
   E.elite[i] = elite;
   E.marcadoObj[i] = o.marcado ?? (o.alObjetivo ? 2 : 0);
   E.atqT[i] = sim.az.entre(0.3, 1.2);
@@ -57,7 +63,7 @@ export function aparecerEnemigo(sim: Sim, tipo: number, x: number, y: number, o:
     E.alt[i] = -1;
     E.estado[i] = EST.SALIENDO;
   } else if (def.vuela) E.alt[i] = 0;
-  if (elite) sim.elitesVivos++;
+  if (elite && elite !== MOD_ELITE.MINI) sim.elitesVivos++;
   sim.aparecidos++;
   sim.suc.push(S.APARECE, x, y, tipo, o.desdePared ? 2 : o.desdeTierra ? 1 : 0, elite);
   return i;
@@ -74,6 +80,7 @@ export function modsElite(sim: Sim) {
 // ------------------------------------------------------------------------------------------------- Director
 export function dirigirHorda(sim: Sim, dt: number) {
   eventos(sim, dt);
+  while (sim.botinPlan.length && sim.botinPlan[0].t <= sim.t) soltarBotin(sim, sim.botinPlan.shift()!.id);
   const pel = PELIGROS[Math.max(0, Math.min(4, sim.cfg.exp.peligro - 1))];
   const tope = Math.round((260 + 70 * (sim.n - 1)) * Math.min(1.5, 0.75 + pel.cantidad * 0.35));
   if (sim.E.vivos >= tope) return;
@@ -82,8 +89,11 @@ export function dirigirHorda(sim: Sim, dt: number) {
   // (los mapas grandes obligan a caminar más: la horda es un poco menos densa para compensar)
   let presion = 1.65 * (1 + 2.8 * Math.pow(u, 1.3)) * sim.esc.cantidad * sim.presionExtra;
   if (sim.fase === 'extraccion') presion *= 1.55;
+  presion *= 1 + 0.3 * sim.impaciencia;
   if (sim.fase === 'jefe') presion *= 0.5;
   if (sim.cfg.exp.mutadores.includes('enjambres')) presion *= 1.2;
+  // Un respiro al llegar: el primer minuto de la primera etapa es para armarse (y en las otras, los primeros 20 s)
+  presion *= Math.min(1, sim.cfg.etapa === 1 ? 0.35 + sim.t / 110 : 0.5 + sim.t / 40);
   sim.hordaAcum += presion * dt;
   let seguro = 0;
   while (sim.hordaAcum >= 1 && seguro++ < 8) {
@@ -94,6 +104,21 @@ export function dirigirHorda(sim: Sim, dt: number) {
     const grupo = enjambre ? sim.az.entero(2, 3 + Math.round(4 * u)) : sim.az.entero(1, 4);
     sim.hordaAcum -= grupo * (enjambre ? 0.6 : 1);
     aparecerGrupo(sim, tipo, grupo);
+  }
+}
+
+/** Sale un bicho del botín a unos 10-14 m de alguien (con camino), saliendo de la tierra. */
+function soltarBotin(sim: Sim, id: string) {
+  const vivos = sim.vivos();
+  if (!vivos.length || sim.fase !== 'juego') return;
+  const j = sim.az.uno(vivos);
+  for (let k = 0; k < 16; k++) {
+    const a = sim.az.n() * Math.PI * 2, r = sim.az.entre(10, 14);
+    const p = sim.mapa.abiertaCerca(j.x + Math.cos(a) * r, j.y + Math.sin(a) * r, 3);
+    if (!p || sim.flujo.distEn(p.x, p.y) > 30) continue;
+    aparecerEnemigo(sim, TIPO[id], p.x, p.y, { desdeTierra: true });
+    if (id !== 'rata_tesoro') sim.aviso(29, TIPO[id]);
+    return;
   }
 }
 
@@ -121,6 +146,7 @@ export function aparecerGrupo(sim: Sim, tipo: number, cuantos: number, cerca?: {
   const def = TIPOS[tipo];
   // Élite: el jefe del grupo
   const pElite = 0.0045 * sim.esc.elites * (1 + sim.t / 110) * (sim.fase === 'extraccion' ? 1.6 : 1);
+  const pMini = 0.012 * (sim.cfg.etapa - 1) * sim.esc.elites;
   const objetivo = sim.flujoObj && sim.az.n() < 0.32;
   const cementerio = sim.bioma.id === 'cementerio';
   for (let n = 0; n < cuantos; n++) {
@@ -141,7 +167,9 @@ export function aparecerGrupo(sim: Sim, tipo: number, cuantos: number, cerca?: {
       x = p.x;
       y = p.y;
     }
-    const elite = n === 0 && sim.az.n() < pElite && def.conducta !== 'enjambre' && def.id !== 'murcielago' ? modsElite(sim) : 0;
+    let elite = n === 0 && sim.az.n() < pElite && def.conducta !== 'enjambre' && def.id !== 'murcielago' ? modsElite(sim) : 0;
+    // Mini-élites (morados) mezclados en la horda desde la segunda etapa, cada vez más
+    if (!elite && sim.cfg.etapa >= 2 && def.conducta !== 'enjambre' && def.id !== 'murcielago' && sim.az.n() < pMini) elite = MOD_ELITE.MINI;
     aparecerEnemigo(sim, tipo, x, y, { elite, desdePared, desdeTierra, alObjetivo: !!objetivo });
   }
 }
@@ -392,7 +420,7 @@ export function moverEnemigos(sim: Sim, dt: number) {
           if (E.atqT[i] <= 0 && dist < p.alcance && m.vista(E.x[i], E.y[i], j.x, j.y)) {
             const lead = dist / p.vel;
             const ang = Math.atan2(j.y + j.vy * lead * 0.6 - E.y[i], j.x + j.vx * lead * 0.6 - E.x[i]);
-            disparoEnemigo(sim, E.x[i], E.y[i], ang, p.vel, p.dano * sim.esc.dano * (E.elite[i] ? 1.4 : 1), t, p.alcance + 2);
+            disparoEnemigo(sim, E.x[i], E.y[i], ang, p.vel, p.dano * sim.esc.dano * sim.calentamiento * (E.elite[i] ? 1.4 : 1), t, p.alcance + 2);
             E.atqT[i] = p.cada * sim.az.entre(0.85, 1.15);
             E.ataque[i] = 1;
           }
@@ -496,6 +524,29 @@ export function moverEnemigos(sim: Sim, dt: number) {
             sim.suc.push(S.MARCA, j.x, j.y, 1, i);
           }
           break;
+        case 'ladron': {
+          // Bicho del botín: camina tranquilo hasta que alguien se le acerca; ahí huye cuesta arriba por el campo de
+          // flujo (alejándose por las cuevas, sin pegarse contra las paredes) y, si nadie lo alcanza, se escapa
+          E.et[i] -= dt;
+          if (E.et[i] <= 0) {
+            sim.suc.push(S.APARECE, E.x[i], E.y[i], t, 1, 0);
+            sim.aviso(28, t);
+            E.quitar(i);
+            continue;
+          }
+          if (dist < 7.5 && sim.flujo.direccion(E.x[i], E.y[i], DIR)) {
+            mx = -DIR.x;
+            my = -DIR.y;
+          } else if (dist < 7.5) {
+            mx = -dx / dist;
+            my = -dy / dist;
+          } else {
+            mx = Math.cos(E.fase[i] * 0.4 + E.uid[i]);
+            my = Math.sin(E.fase[i] * 0.4 + E.uid[i]);
+            vel *= 0.45;
+          }
+          break;
+        }
         case 'invocador':
           E.et[i] -= dt;
           if (dist < 5.5) {
@@ -539,8 +590,8 @@ export function moverEnemigos(sim: Sim, dt: number) {
     E.vx[i] += (mx * vel - E.vx[i]) * k;
     E.vy[i] += (my * vel - E.vy[i]) * k;
     moverYChocar(sim, i, def.vuela || def.conducta === 'fantasma', dt);
-    // Pegarle al jugador
-    if (j && E.atqT[i] <= 0 && def.conducta !== 'arquero' && dist < E.r[i] + RADIO_JUGADOR + 0.18 && (!def.vuela || E.alt[i] < 1.4)) {
+    // Pegarle al jugador (los del botín no pegan)
+    if (j && E.atqT[i] <= 0 && def.conducta !== 'arquero' && def.dano > 0 && dist < E.r[i] + RADIO_JUGADOR + 0.18 && (!def.vuela || E.alt[i] < 1.4)) {
       const hecho = sim.herir(j, E.dano[i], E.x[i], E.y[i]);
       if (hecho > 0 && E.elite[i] & MOD_ELITE.VAMPIRICO) E.hp[i] = Math.min(E.hpMax[i], E.hp[i] + hecho * 3);
       E.atqT[i] = 1.05;

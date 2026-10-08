@@ -1,5 +1,5 @@
 // Sangre y Ceniza: la página. Pantalla de carga, título con el muñeco en su traje en una cripta con antorchas,
-// escoger clase y especialización, bioma, peligro, mutadores y equipo del Pozo, la expedición (cuatro etapas con la
+// escoger clase y especialización, bioma, peligro, mutadores y equipo del Pozo, la expedición (cinco etapas con la
 // Forja entre medio), los resultados con la ceniza y la maestría, el Pozo de las Almas, los logros, la pausa y el
 // tutorial. Las partidas en grupo (hasta 4) van por `red/`.
 import './sangre.css';
@@ -9,7 +9,7 @@ import * as sonido from '../sonido';
 import * as fondo from '../segundo_plano';
 import { ARMAS } from './datos/armas';
 import { CLASES, nombreClase } from './datos/clases';
-import { BIOMAS, MUTADORES, PELIGROS } from './datos/mundo';
+import { BIOMAS, ETAPAS, MUTADORES, PELIGROS, SECUNDARIOS } from './datos/mundo';
 import { EQUIPO, POZO, precioPozo } from './datos/botin';
 import { Expedicion } from './expedicion';
 import { Guardado, ponerPreferencia, preferencia } from './guardado';
@@ -29,7 +29,7 @@ import { ArmaJ, Jugador } from './sim/jugador';
 import type { Sim } from './sim/sim';
 import { brillar, sinSaltar } from './ui/repintar';
 import { efectos, musica, sonarSucesos } from './sonidos';
-import { BIOMAS_ORDEN, CLASES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdBioma, type IdClase, type IdMutador, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
+import { BIOMAS_ORDEN, CLASES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdBioma, type IdClase, type IdMutador, type IdSecundario, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
 import { Tutorial } from './tutorial';
 import { VistaEleccion } from './ui/eleccion';
 import { mostrarForja } from './ui/forja';
@@ -79,7 +79,7 @@ const corregirSeleccion = () => {
 function infinitoAbierto(p: ProgresoSangre) {
   return Object.values(p.ganado).some((v) => (v ?? 0) > 0);
 }
-/** La expedición con lo escogido (en el modo infinito, los biomas abiertos se turnan cada cuatro etapas). */
+/** La expedición con lo escogido (en el modo infinito, los biomas abiertos se turnan cada cinco etapas). */
 function cfgDeSeleccion(): ConfigExpedicion {
   const cfg: ConfigExpedicion = { bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], semilla: semilla() };
   if (sel.infinito && infinitoAbierto(P())) {
@@ -381,7 +381,7 @@ function escogerExpedicion(alListo?: () => void) {
     }).join('');
     const extra = sel.mutadores.reduce((x, m) => x + MUTADORES[m].recompensa, 0);
     const infAbierto = infinitoAbierto(p);
-    const modos = `<button class="mutador${!sel.infinito ? ' si' : ''}" data-modo="normal"><span class="ico">${glifo('campana')}</span>Cuatro etapas</button>
+    const modos = `<button class="mutador${!sel.infinito ? ' si' : ''}" data-modo="normal"><span class="ico">${glifo('campana')}</span>Cinco etapas</button>
       <button class="mutador${sel.infinito ? ' si' : ''}${infAbierto ? '' : ' bloqueado'}" data-modo="infinito" title="Etapas sin fin, cada vez más duras; jefe cada cuatro y los biomas se turnan"><span class="ico">${glifo(infAbierto ? 'luna' : 'candado')}</span>Infinito</button>
       <small>${infAbierto ? (p.cifras.infinitoMax ? `Récord: etapa ${p.cifras.infinitoMax}` : 'Sin fin: hasta donde aguantes') : 'Gana una expedición para abrirlo'}</small>`;
     s.innerHTML = `${cabeza('La expedición')}
@@ -558,7 +558,7 @@ function pausa() {
   const pintar = () => {
     const j = pt.local;
     hojaPausa!.querySelector('.hoja-carta')!.innerHTML = `<h2>Pausa</h2>
-      ${j ? `<p class="centro">${nombreClase(j.clase, j.cuerpo)} · nivel ${j.nivel} · etapa ${pt.exp.etapa} de ${pt.exp.cfg.tutorial ? 1 : 4}${solo ? '' : ' · <em>el juego sigue para los demás</em>'}</p>` : ''}
+      ${j ? `<p class="centro">${nombreClase(j.clase, j.cuerpo)} · nivel ${j.nivel} · etapa ${pt.exp.etapa} de ${pt.exp.cfg.tutorial ? 1 : ETAPAS}${solo ? '' : ' · <em>el juego sigue para los demás</em>'}</p>` : ''}
       <div class="menu-pausa">
         <button class="boton boton-sangre" data-p="seguir">${glifo('espada')}Seguir</button>
         <div class="fila"><span class="etiqueta">Calidad</span>${(['baja', 'media', 'alta'] as Calidad[]).map((c) => `<button class="boton boton-chico${escena.calidad === c ? ' boton-oro' : ''}" data-c="${c}">${c[0].toUpperCase() + c.slice(1)}</button>`).join('')}</div>
@@ -639,9 +639,12 @@ async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: 
   const red = extra.sala ? redAnfitrion(extra.sala, pt, perfiles, local) : null;
   partida = pt;
   mando.alPausar = atras;
-  // Pruebas: arrancar en otra etapa (?etapa=4 para el jefe)
+  // Pruebas: arrancar en otra etapa (?etapa=5 para la final con los sepulcros y el jefe)
   const etapaPrueba = Number(params.get('etapa'));
-  if (params.has('prueba') && etapaPrueba > 1) pt.exp.etapa = Math.min(3, etapaPrueba - 1);
+  if (params.has('prueba') && etapaPrueba > 1) pt.exp.etapa = Math.min(ETAPAS - 1, etapaPrueba - 1);
+  // (y con otro secundario: ?secundario=rosas, plumas, hongos…)
+  const secPrueba = params.get('secundario') as IdSecundario | null;
+  if (params.has('prueba') && secPrueba && secPrueba in SECUNDARIOS) for (const e of pt.exp.plan) e.secundario = secPrueba;
   try {
     await pt.empezar();
   } catch (e) {
@@ -817,7 +820,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
       <div class="resultado">
         <div class="pergamino ficha-texto">
           <h3>${esc(j.nombre)} · ${nombreClase(j.clase, j.cuerpo)}</h3>
-          <p class="lema-clase">${BIOMAS[p.exp.cfg.bioma].nombre} · peligro ${p.exp.cfg.peligro} · ${inf ? `modo infinito · ${p.exp.resultados.filter((r) => r.fin.exito).length} etapas superadas · récord: etapa ${pr.cifras.infinitoMax}` : `${p.exp.resultados.filter((r) => r.fin.exito).length} de ${p.exp.cfg.tutorial ? 1 : 4} etapas`}</p>
+          <p class="lema-clase">${BIOMAS[p.exp.cfg.bioma].nombre} · peligro ${p.exp.cfg.peligro} · ${inf ? `modo infinito · ${p.exp.resultados.filter((r) => r.fin.exito).length} etapas superadas · récord: etapa ${pr.cifras.infinitoMax}` : `${p.exp.resultados.filter((r) => r.fin.exito).length} de ${p.exp.cfg.tutorial ? 1 : ETAPAS} etapas`}</p>
           <div class="cifras">
             <span>Tiempo</span><b>${min}:${String(seg).padStart(2, '0')}</b>
             <span>Nivel</span><b>${j.nivel}</b>
@@ -1218,9 +1221,16 @@ w.__sangreAbrirTodo = () => {
   for (const b of BIOMAS_ORDEN) p.ganado[b] = 5;
   guardado.guardar();
 };
+// Pruebas: deja la barra de avance a `seg` segundos de llenarse (sale el Guardián, o se abren los sepulcros)
 w.__sangreReloj = (seg: number) => {
   const sim = partida?.sim;
-  if (sim) sim.limite = sim.t + seg;
+  if (sim) sim.adelantar(seg);
+};
+// Pruebas: deja al Guardián (o al jefe) con un golpe de vida
+w.__sangreDebil = () => {
+  const sim = partida?.sim;
+  if (!sim) return;
+  for (const i of [sim.guardian, sim.jefe]) if (i >= 0 && sim.E.vivo[i]) sim.E.hp[i] = sim.E.escudo[i] = 1;
 };
 w.__sangreForja = () => {
   // Salta a la Forja con la etapa ganada (pruebas)

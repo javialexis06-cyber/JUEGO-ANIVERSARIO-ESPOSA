@@ -26,7 +26,7 @@ def registro(grupo):
     if grupo == 'enemigos':
         import importlib
         import sangre_enemigos as m
-        for extra in ('sangre_enemigos2', 'sangre_enemigos3'):
+        for extra in ('sangre_enemigos2', 'sangre_enemigos3', 'sangre_enemigos4'):
             if os.path.exists(os.path.join(HERE, f'{extra}.py')):
                 importlib.import_module(extra)
         return m.ENEMIGOS

@@ -5,7 +5,7 @@
 // marcado) y la Campana de Extracción. Fuera de la visión astral nada se señala en el mapa salvo la campana.
 import * as THREE from 'three';
 import { C } from '../tipos';
-import { TIPO_ALTAR } from '../sim/catalogo';
+import { TIPOS, TIPO_ALTAR } from '../sim/catalogo';
 import { ENT, REC } from '../sim/estado';
 import type { EstadoVista } from './escena';
 import { UNI_LUZ } from './luz';
@@ -167,17 +167,20 @@ export class VisionAstral {
       else if ((e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.COFRE_MALDITO) && e.est === 0) poner(e.x, e.y, 0.2, 1, COL.reliquia);
       else if (e.tipo === ENT.PRISIONERO && e.est === 0) poner(e.x, e.y, 0.2, 1, COL.prisionero);
       else if ((e.tipo === ENT.CARRETA || e.tipo === ENT.CAMPANA_DEF) && e.est === 1) poner(e.x, e.y, 0.2, 1.3, COL.objetivo);
+      else if (e.tipo === ENT.SEPULCRO && e.est === 0) poner(e.x, e.y, 0.2, 1.4, COL.objetivo);
     }
     const E = est.E;
     for (let i = 0; i < E.max; i++) {
-      if (!E.vivo[i] || !(E.tipo[i] === TIPO_ALTAR || E.marcadoObj[i] === 1) || !cerca(E.x[i], E.y[i])) continue;
-      poner(E.x[i], E.y[i], 0.2, 1.1, COL.objetivo);
+      if (!E.vivo[i] || !cerca(E.x[i], E.y[i])) continue;
+      // (los bichos del botín brillan como el botín)
+      if (TIPOS[E.tipo[i]]?.conducta === 'ladron') poner(E.x[i], E.y[i], 0.2, 0.9, COL.botin);
+      else if (E.tipo[i] === TIPO_ALTAR || E.marcadoObj[i] === 1 || E.marcadoObj[i] >= 3) poner(E.x[i], E.y[i], 0.2, 1.1, COL.objetivo);
     }
     for (const r of est.R) {
       if (!r.vivo || r.hacia >= 0 || !cerca(r.x, r.y)) continue;
       const t = r.tipo;
       if (t === REC.COFRE || t === REC.EQUIPO || t === REC.LLAVE || t === REC.IMAN) poner(r.x, r.y, 0.15, 0.75, COL.botin);
-      else if (t === REC.FRASCO) poner(r.x, r.y, 0.15, 0.6, COL.reliquia);
+      else if (t === REC.FRASCO || t === REC.ROSA || t === REC.PLUMA || t === REC.HONGO) poner(r.x, r.y, 0.15, 0.6, COL.reliquia);
       else if (t === REC.HUEVO) poner(r.x, r.y, 0.15, 0.6, COL.huevo);
       else if (t === REC.COMIDA) poner(r.x, r.y, 0.15, 0.5, COL.huevo);
       else if (t === REC.ORO && r.valor >= 5) poner(r.x, r.y, 0.15, 0.45, COL.oro);

@@ -645,6 +645,79 @@ def frasco_alquimia(coll):
     return F
 
 
+@cosa('rosa_velo')
+def rosa_velo(coll):
+    """Rosa del velo (secundario): las rosas que crecen por donde pasa Lara, ennegrecidas por la ceniza; el corazón
+    todavía brilla rojo."""
+    F = nueva('rosa_velo', voxel=0.005)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1500)
+    tallo = P_('#2A3A22', 'madera', color2='#18220F', eje='z')
+    hoja = P_('#24301C', 'tela', semilla=2)
+    petalo = P_('#1C1418', 'tela', semilla=3, var=0.6)
+    centro = brillo('rojo', '#FF2A2A')
+    pts = [(0, 0, 0.0), (0.02, 0.01, 0.12), (-0.01, 0.0, 0.24), (0.0, 0.0, 0.32)]
+    c.trazo(pts, [0.012, 0.01, 0.009, 0.008], tallo, 0.0)
+    for k, z in enumerate((0.08, 0.17, 0.25)):
+        a = k * 2.3
+        b = np.array([0.0, 0.0, z])
+        sf.diente(c, f'espina {k}', b, b + np.array([math.cos(a) * 0.025, math.sin(a) * 0.025, 0.01]), 0.005, tallo, coll)
+        e = b + np.array([math.cos(a + 1) * 0.09, math.sin(a + 1) * 0.09, 0.03])
+        c.malla(sf.pluma(f'hoja {k}', b, e, 0.035, coll, normal=(math.cos(a + 2.6), math.sin(a + 2.6), 0.6), dientes=5), hoja)
+    flor = np.array([0.0, 0.0, 0.36])
+    c.bola(flor, (0.03, 0.03, 0.03), centro, 0.0)
+    for capa, (n, r, alto, abre) in enumerate(((5, 0.04, 0.05, 0.3), (6, 0.058, 0.045, 0.7), (7, 0.075, 0.035, 1.1))):
+        for k in range(n):
+            a = 2 * math.pi * k / n + capa * 0.5
+            base = flor + np.array([math.cos(a) * 0.012, math.sin(a) * 0.012, -0.02])
+            punta = flor + np.array([math.cos(a) * r, math.sin(a) * r, alto - 0.02 * abre])
+            c.malla(sf.pluma(f'petalo {capa} {k}', base, punta, 0.045 + 0.01 * capa, coll, normal=(-math.sin(a) * 0.3, math.cos(a) * 0.3, 1), grosor=0.003),
+                    petalo)
+    for k in range(4):
+        a = k * 1.6
+        c.bola((math.cos(a) * 0.06, math.sin(a) * 0.05, 0.0), (0.04, 0.03, 0.012), P_('#4A4644', 'piedra', semilla=10 + k, musgo=0.0), 0.0)
+    F.marca('luz', (0, 0, 0.36))
+    return F
+
+
+@cosa('pluma_grifo')
+def pluma_grifo(coll):
+    """Pluma de grifo (secundario): una pluma dorada de Aura que se le cayó a un grifo de la frontera, clavada en el
+    piso y brillando."""
+    F = nueva('pluma_grifo', voxel=0.005, flota=1)
+    c = F.pieza('cuerpo', (0, 0, 0.2), tris=900)
+    raiz, punta = np.array([0.0, 0.0, 0.02]), np.array([0.05, 0.02, 0.5])
+    c.malla(sf.pluma('pluma', raiz, punta, 0.11, coll, normal=(0.2, -1, 0.1), grosor=0.006, dientes=9), P_('#E0B04A', 'oro', semilla=1))
+    c.trazo([raiz - np.array([0, 0, 0.04]), punta], [0.006, 0.003], P_('#F0D488', 'oro', semilla=2), 0.0)
+    for k in range(5):
+        t = 0.3 + 0.12 * k
+        b = raiz + (punta - raiz) * t
+        c.malla(sc.bolita(f'chispa {k}', b + np.array([0.04 * math.sin(k * 2), -0.03, 0.0]), 0.008, coll, n=1, sub=1), brillo('oro', '#FFD36B'))
+    F.marca('luz', (0.03, 0, 0.3))
+    return F
+
+
+@cosa('hongo_tumba')
+def hongo_tumba(coll):
+    """Hongo de tumba (secundario): un racimo de hongos pálidos que brillan verde, crecidos en un hueso viejo."""
+    F = nueva('hongo_tumba', voxel=0.005)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1300)
+    sf.hueso_largo(c, np.array([-0.12, -0.02, 0.025]), np.array([0.12, 0.03, 0.025]), 0.02, hueso_pt(1))
+    pie = P_('#CFC6A8', 'cera', semilla=2)
+    som = P_('#7A8A5A', 'tela', semilla=3)
+    for k, (x, y, h, r) in enumerate(((0.0, 0.0, 0.16, 0.06), (-0.07, 0.04, 0.11, 0.045), (0.06, -0.04, 0.09, 0.04), (0.09, 0.05, 0.07, 0.03),
+                                      (-0.04, -0.06, 0.06, 0.028))):
+        b = np.array([x, y, 0.03])
+        c.cono(b, b + np.array([0.0, 0.0, h]), r * 0.35, r * 0.28, pie, 0.004)
+        sombrero = sf.restar(sdf.ellipsoid(b + np.array([0, 0, h]), (r, r, r * 0.6)), sdf.plane(b + np.array([0, 0, h - r * 0.05]), (0, 0, 1)), 0.0)
+        c.sdf(sc.sdf_ruido(sombrero, 0.003, 40, k), b + np.array([-r - 0.02, -r - 0.02, h - 0.05]), b + np.array([r + 0.02, r + 0.02, h + r]), som)
+        for q in range(4):
+            a = q * 1.6 + k
+            c.malla(sc.bolita(f'punto {k} {q}', b + np.array([math.cos(a) * r * 0.5, math.sin(a) * r * 0.5, h + r * 0.45]), r * 0.12, coll, n=1, sub=1),
+                    brillo('verde', '#7CFF4A'))
+    F.marca('luz', (0, 0, 0.12))
+    return F
+
+
 @cosa('espiga')
 def espiga(coll):
     F = nueva('espiga', voxel=0.006)
@@ -737,6 +810,173 @@ def cofre_maldito(coll):
     _cofre(F, coll, ancho=0.3, fondo=0.21, alto=0.2, madera_pt=madera(3, '#2A2228', eje='x'), metal=hierro(4, '#3A3C42'), adornos=adornos, cerradura=cerradura)
     F.marca('luz', (0, 0, 0.25))
     return F
+
+
+def _unit(v):
+    v = np.asarray(v, float)
+    return v / (np.linalg.norm(v) or 1)
+
+
+def _eslabones(c, nombre, pts, alambre, coll, pt, largo=0.075):
+    """Cadena de eslabones de verdad a lo largo de una polilínea (uno de canto y otro de plano, alternados)."""
+    pts = [np.asarray(p, float) for p in pts]
+    seg = []
+    for a, b in zip(pts[:-1], pts[1:]):
+        n = max(1, int(round(np.linalg.norm(b - a) / largo)))
+        for k in range(n):
+            seg.append((a + (b - a) * k / n, a + (b - a) * (k + 1) / n))
+    for k, (a, b) in enumerate(seg):
+        d = _unit(b - a)
+        lat = _unit(np.cross(d, [0.3, 0.2, 1.0]))
+        if k % 2:
+            lat = _unit(np.cross(d, lat))
+        L = np.linalg.norm(b - a) * 0.66
+        cc = (a + b) / 2
+        ring = [cc + d * math.cos(t) * L + lat * math.sin(t) * L * 0.62 for t in np.linspace(0, 2 * math.pi, 8, endpoint=False)]
+        c.malla(sc.clay.sweep(f'{nombre} {k}', ring, alambre, (1, 1), coll, None, segments=4, samples=1, closed=True, subsurf=0), pt)
+
+
+def _sepulcro(F, coll, abierto):
+    """Sepulcro de la etapa final: sarcófago de piedra sobre una grada, sellado con cadenas y runas de ceniza (las de
+    Nath'Gora), con un caballero tallado en la tapa. Cerrado guarda a un custodio; abierto, la tapa partida queda
+    corrida (un pedazo de lado sobre el borde y el otro recostado atrás), las cadenas rotas y brasa en el hueco."""
+    c = F.pieza('cuerpo', (0, 0, 0), tris=7600)
+    pd = piedra(1, '#5E5A55', 0.55)
+    pd_osc = piedra(2, '#45413D', 0.7)
+    pd_clara = piedra(8, '#A39C90', 0.25)
+    runa = brillo('rojo', '#FF3A1A')
+    hc = hierro(3, '#3A3C42')
+    # grada de dos escalones, gastada, con una esquina mordida
+    grada = sf.union(sdf.round_box((0, 0, 0.05), (0.98, 0.58, 0.05), 0.02), sdf.round_box((0, 0, 0.13), (0.9, 0.5, 0.04), 0.02), k=0.0)
+    grada = sf.restar(grada, sdf.round_box((0.86, -0.56, 0.14), (0.14, 0.09, 0.08), 0.02, sc.rot('z', 30)))
+    c.sdf(sc.sdf_ruido(grada, 0.008, 12, 1), (-1.1, -0.7, -0.02), (1.1, 0.7, 0.2), pd_osc)
+    # el cajón: zócalo, moldura de arriba, el nicho de la cara de adelante y una esquina descascarada
+    caja = sf.union(sdf.round_box((0, 0, 0.42), (0.78, 0.38, 0.26), 0.03), sdf.round_box((0, 0, 0.19), (0.82, 0.42, 0.04), 0.015),
+                    sdf.round_box((0, 0, 0.66), (0.8, 0.4, 0.025), 0.012), k=0.0)
+    caja = sf.restar(caja, sdf.round_box((0, -0.4, 0.42), (0.6, 0.04, 0.15), 0.02))
+    for sx in (-1, 1):
+        caja = sf.restar(caja, sdf.round_box((sx * 0.79, 0, 0.42), (0.04, 0.26, 0.13), 0.02))
+    if abierto:
+        caja = sf.restar(caja, sdf.round_box((0, 0, 0.64), (0.68, 0.28, 0.2), 0.02))
+    caja = sf.restar(caja, sdf.round_box((-0.79, -0.39, 0.64), (0.09, 0.07, 0.1), 0.01, sc.rot('z', 35)))
+    c.sdf(sc.sdf_ruido(caja, 0.007, 16, 2), (-0.9, -0.5, 0.12), (0.9, 0.5, 0.72), pd)
+    # relieve del frente: calavera con alas de murciélago entre dos columnitas torcidas
+    c.bola((0, -0.395, 0.45), (0.075, 0.035, 0.08), hueso_pt(3), 0.0)
+    c.caja((0, -0.41, 0.38), (0.04, 0.02, 0.022), 0.01, hueso_pt(4), 0.0)
+    ojos(c, [(-0.028, -0.43, 0.46), (0.028, -0.43, 0.46)], 0.017, runa, coll)
+    for sx in (-1, 1):
+        ala = [(sx * 0.09, -0.4, 0.47), (sx * 0.25, -0.4, 0.53), (sx * 0.42, -0.4, 0.47), (sx * 0.55, -0.4, 0.37)]
+        c.trazo(ala, [0.024, 0.02, 0.015, 0.008], pd_clara, 0.01)
+        for k in range(4):
+            b = np.array([sx * (0.16 + 0.11 * k), -0.4, 0.51 - 0.025 * k])
+            c.trazo([b, b + np.array([sx * 0.03, 0, -0.11 + 0.01 * k])], [0.012, 0.004], pd_clara, 0.005)
+        col = [(sx * 0.7 + 0.012 * math.sin(t * 9), -0.41, 0.22 + 0.42 * t) for t in np.linspace(0, 1, 9)]
+        c.trazo(col, [0.038, 0.032, 0.036, 0.03, 0.035, 0.03, 0.034, 0.03, 0.036], pd_osc, 0.0)
+        c.caja((sx * 0.7, -0.41, 0.645), (0.05, 0.03, 0.02), 0.008, pd_osc, 0.0)
+    # runas de ceniza en el zócalo y en los paneles de los costados
+    for k in range(7):
+        x = -0.6 + 0.2 * k
+        pts = [(x - 0.035, -0.425, 0.25), (x, -0.425, 0.29), (x + 0.035, -0.425, 0.25)] if k % 2 else [(x, -0.425, 0.23), (x, -0.425, 0.3), (x + 0.03, -0.425, 0.27)]
+        c.malla(sc.tubo(f'runa frente {k}', pts, 0.008, coll, segmentos=4, muestras=1), runa)
+    for sx in (-1, 1):
+        for k in range(3):
+            y = -0.16 + 0.16 * k
+            c.malla(sc.tubo(f'runa lado {sx} {k}', [(sx * 0.755, y - 0.035, 0.36), (sx * 0.755, y, 0.46), (sx * 0.755, y + 0.035, 0.36), (sx * 0.755, y - 0.02, 0.4)],
+                            0.008, coll, segmentos=4, muestras=1), runa)
+    if not abierto:
+        # tapa a dos aguas, con su borde tallado y grietas por donde se asoma la brasa
+        tapa = sf.union(sdf.round_box((0, 0, 0.72), (0.84, 0.44, 0.04), 0.015), sdf.round_box((0, 0, 0.775), (0.78, 0.37, 0.03), 0.02), k=0.02)
+        for sy in (-1, 1):
+            tapa = sf.restar(tapa, sdf.round_box((0, sy * 0.405, 0.72), (0.8, 0.008, 0.012), 0.004))
+        c.sdf(sc.sdf_ruido(tapa, 0.006, 14, 6), (-0.95, -0.55, 0.65), (0.95, 0.55, 0.85), pd)
+        for k, pts in enumerate((((0.55, -0.37, 0.8), (0.62, -0.25, 0.805), (0.58, -0.12, 0.806), (0.66, -0.02, 0.805)),
+                                 ((-0.7, 0.1, 0.8), (-0.62, 0.2, 0.806), (-0.66, 0.33, 0.8)))):
+            c.malla(sc.tubo(f'grieta tapa {k}', pts, 0.007, coll, segmentos=4, muestras=1), brillo('fuego', '#FF6A1A'))
+        # el caballero tendido: yelmo, hombros, manos juntas sobre la espada y los pies
+        z0 = 0.82
+        cuerpo_ef = sf.union(sdf.round_cone((-0.38, 0, z0 + 0.06), (0.42, 0, z0 + 0.04), 0.16, 0.1), sdf.round_box((-0.34, 0, z0 + 0.07), (0.07, 0.21, 0.06), 0.04),
+                             k=0.05)
+        c.sdf(sc.sdf_ruido(cuerpo_ef, 0.005, 20, 7), (-0.6, -0.3, z0 - 0.05), (0.6, 0.3, z0 + 0.22), pd_clara)
+        yelmo = sf.restar(sdf.ellipsoid((-0.56, 0, z0 + 0.07), (0.1, 0.1, 0.085)), sdf.round_box((-0.64, 0, z0 + 0.11), (0.05, 0.06, 0.012), 0.004))
+        c.sdf(sc.sdf_ruido(yelmo, 0.004, 24, 8), (-0.7, -0.15, z0 - 0.04), (-0.44, 0.15, z0 + 0.18), pd_clara)
+        c.trazo([(-0.66, 0, z0 + 0.13), (-0.46, 0, z0 + 0.17)], [0.012, 0.02], pd_clara, 0.01)
+        for sy in (-1, 1):
+            c.bola((0.5, sy * 0.06, z0 + 0.04), (0.07, 0.045, 0.05), pd_clara, 0.01)
+            c.trazo([(-0.3, sy * 0.16, z0 + 0.09), (-0.12, sy * 0.1, z0 + 0.13), (-0.05, sy * 0.03, z0 + 0.15)], [0.04, 0.035, 0.03], pd_clara, 0.02)
+        hoja = [(-0.08, 0, z0 + 0.16), (0.45, 0, z0 + 0.12)]
+        c.trazo(hoja, [0.03, 0.012], hierro(9, '#6A6C72'), 0.0)
+        c.caja((-0.08, 0, z0 + 0.17), (0.02, 0.11, 0.016), 0.006, hierro(10, '#6A6C72'), 0.0)
+        c.bola((-0.13, 0, z0 + 0.17), (0.03, 0.03, 0.03), runa, 0.0)
+        c.bola((-0.05, 0, z0 + 0.19), (0.05, 0.07, 0.03), pd_clara, 0.01)
+        # dos cadenas de eslabones que abrazan la tapa y bajan por el frente hasta el candado
+        for k, x in enumerate((-0.44, 0.4)):
+            camino = [(x, -0.5, 0.18), (x, -0.47, 0.66), (x, -0.4, 0.86), (x + 0.02, 0.0, 0.92), (x, 0.4, 0.86), (x, 0.47, 0.66), (x, 0.5, 0.18)]
+            _eslabones(c, f'cadena sello {k}', camino, 0.011, coll, hierro(20 + k, '#3A3C42'))
+            c.trazo([(x, -0.5, 0.17), (x, -0.62, 0.17), (x, -0.64, 0.04)], 0.02, hc, 0.0)
+        cand = np.array([0.0, -0.49, 0.56])
+        _eslabones(c, 'cadena candado', [(-0.44, -0.48, 0.6), cand + np.array([-0.04, 0, 0.06]), cand + np.array([0.04, 0, 0.06]), (0.4, -0.48, 0.6)], 0.009, coll,
+                   hierro(24, '#3A3C42'), largo=0.065)
+        c.caja(cand, (0.06, 0.03, 0.065), 0.015, hierro(12, '#4A4C52'), 0.0)
+        c.trazo([cand + np.array([-0.035, 0, 0.05]), cand + np.array([-0.035, 0, 0.1]), cand + np.array([0.035, 0, 0.1]), cand + np.array([0.035, 0, 0.05])], 0.009, hc, 0.0)
+        c.malla(sc.bolita('ojo candado', cand + np.array([0, -0.035, 0.0]), (0.018, 0.008, 0.018), coll, n=2), runa)
+        sf.remaches(c, 'remaches candado', [(cand + np.array([sx * 0.045, -0.032, sz * 0.045]), np.array([0, -1, 0])) for sx in (-1, 1) for sz in (-1, 1)],
+                    0.008, hierro(13, '#6A6C72'), coll)
+    else:
+        def mover(f, d):
+            return lambda P: f(P - np.asarray(d, float))
+        # un pedazo de tapa quedó de lado sobre el borde derecho, inclinado hasta la grada
+        t1 = sdf.round_box((0.0, 0.0, 0.0), (0.42, 0.42, 0.04), 0.015, sc.rot('y', 22) @ sc.rot('z', 10))
+        c.sdf(sc.sdf_ruido(sf.cortar(mover(t1, (0.62, 0.05, 0.6)), (0.25, 0.05, 0.6), (1, 0.15, 0), 0.03, 20, 8), 0.006, 14, 9), (0.1, -0.6, 0.25),
+              (1.15, 0.65, 0.95), pd)
+        # y el otro, con medio caballero tallado, recostado contra la espalda
+        t2 = sdf.round_box((0.0, 0.0, 0.0), (0.4, 0.4, 0.04), 0.015, sc.rot('x', 64) @ sc.rot('z', -6))
+        c.sdf(sc.sdf_ruido(sf.cortar(mover(t2, (-0.42, 0.56, 0.44)), (-0.08, 0.56, 0.44), (-1, 0, 0.1), 0.03, 20, 10), 0.006, 14, 11), (-0.95, 0.05, 0.1),
+              (0.05, 1.05, 0.85), pd)
+        c.sdf(sc.sdf_ruido(mover(sdf.ellipsoid((0, 0, 0), (0.09, 0.05, 0.09)), (-0.55, 0.52, 0.62)), 0.004, 24, 12), (-0.7, 0.4, 0.5), (-0.4, 0.65, 0.75), pd_clara)
+        # el hueco: ceniza, huesos y brasa viva (de ahí salió el custodio)
+        c.sdf(sc.sdf_ruido(sdf.round_box((0, 0, 0.56), (0.66, 0.26, 0.03), 0.02), 0.014, 10, 12), (-0.75, -0.35, 0.48), (0.75, 0.35, 0.65),
+              P_('#2A1E18', 'piedra', semilla=13, musgo=0.0))
+        rng = np.random.default_rng(5)
+        for k in range(22):
+            x, y = rng.uniform(-0.6, 0.6), rng.uniform(-0.22, 0.22)
+            r = rng.uniform(0.035, 0.07)
+            c.malla(sc.bolita(f'brasa {k}', (x, y, 0.6), (r, r * 0.9, r * 0.55), coll, n=2, sub=1), brillo('fuego', '#FF6A1A'))
+        for k in range(5):
+            b = np.array([rng.uniform(-0.5, 0.5), rng.uniform(-0.18, 0.18), 0.62])
+            sf.hueso_largo(c, b, b + np.array([rng.uniform(-0.15, 0.15), rng.uniform(-0.08, 0.08), 0.02]), 0.014, hueso_pt(30 + k))
+        c.bola((0.3, 0.05, 0.64), (0.07, 0.06, 0.065), hueso_pt(36), 0.0)
+        # cadenas reventadas: los cabos cuelgan del frente y quedan regados en la grada
+        for k, x in enumerate((-0.44, 0.4)):
+            _eslabones(c, f'cabo {k}', [(x, -0.5, 0.18), (x, -0.47, 0.5), (x + 0.04, -0.5, 0.62)], 0.011, coll, hierro(20 + k, '#3A3C42'))
+            c.trazo([(x, -0.5, 0.17), (x, -0.62, 0.17), (x, -0.64, 0.04)], 0.02, hc, 0.0)
+        for k, (x, y, a) in enumerate(((-0.95, -0.4, 20), (0.7, -0.62, -30), (-0.3, 0.62, 170))):
+            pts = [(x + 0.07 * j * math.cos(math.radians(a + 25 * math.sin(j))), y + 0.07 * j * math.sin(math.radians(a + 25 * math.sin(j))), 0.12) for j in range(7)]
+            _eslabones(c, f'cadena rota {k}', pts, 0.011, coll, hierro(25 + k, '#3A3C42'))
+        c.caja((0.25, -0.66, 0.11), (0.06, 0.03, 0.065), 0.015, hierro(12, '#4A4C52'), 0.0, rot=sc.rot('y', 70))
+    # velas negras en las cuatro esquinas de la grada, con cera chorreada
+    for k, (x, y) in enumerate(((-0.86, -0.46), (0.86, -0.46), (-0.86, 0.46), (0.86, 0.46))):
+        h = 0.12 + 0.06 * (k % 2)
+        c.cono((x, y, 0.18), (x, y, 0.18 + h), 0.035, 0.03, P_('#2A2426', 'cera', semilla=20 + k), 0.0)
+        c.bola((x + 0.02, y, 0.19), (0.05, 0.045, 0.012), P_('#2A2426', 'cera', semilla=30 + k), 0.01)
+        c.trazo([(x + 0.03, y - 0.02, 0.18 + h * 0.8), (x + 0.036, y - 0.024, 0.18 + h * 0.4)], [0.008, 0.004], P_('#2A2426', 'cera', semilla=40 + k), 0.005)
+        c.malla(sc.punta(f'llama sepulcro {k}', (x, y, 0.19 + h), (x, y, 0.27 + h), 0.018, coll, seg=5), brillo('rojo', '#FF3A1A'))
+    # montoncitos de ceniza y piedritas alrededor
+    for k in range(7):
+        a = 0.6 + k * 0.9
+        c.bola((math.cos(a) * 1.02, math.sin(a) * 0.64, 0.0), (0.12, 0.08, 0.035), P_('#4A4644', 'piedra', semilla=40 + k, musgo=0.0), 0.0, ruido_amp=0.01)
+        c.bola((math.cos(a + 0.4) * 1.05, math.sin(a + 0.4) * 0.68, 0.02), (0.035, 0.03, 0.025), pd_osc, 0.0, ruido_amp=0.005)
+    F.marca('luz', (0, 0, 0.95 if not abierto else 0.65))
+    return F
+
+
+@cosa('sepulcro')
+def sepulcro(coll):
+    return _sepulcro(nueva('sepulcro', voxel=0.014), coll, False)
+
+
+@cosa('sepulcro_abierto')
+def sepulcro_abierto(coll):
+    return _sepulcro(nueva('sepulcro_abierto', voxel=0.014), coll, True)
 
 
 @cosa('aliado_ballestero')

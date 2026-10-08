@@ -3,7 +3,7 @@
 // corre a la campana, usa la habilidad cuando lo rodean y escoge mejoras con algo de criterio.
 import { C } from './tipos';
 import { ENT, REC } from './sim/estado';
-import { TIPO_ALTAR } from './sim/catalogo';
+import { TIPOS, TIPO_ALTAR } from './sim/catalogo';
 import type { Jugador } from './sim/jugador';
 import type { Sim } from './sim/sim';
 import { escoger } from './sim/opciones';
@@ -152,8 +152,24 @@ function elegirMeta(sim: Sim, j: Jugador): { x: number; y: number; cava: boolean
     if ((e.tipo === ENT.SANTUARIO || e.tipo === ENT.COFRE_MALDITO || (e.tipo === ENT.COFRE_RELIQUIA && j.m.llaves > 0)) && Math.hypot(e.x - j.x, e.y - j.y) < 14)
       return { x: e.x, y: e.y, cava: false };
   }
-  // El jefe: pelear de lejos
-  if (sim.jefe >= 0) return null;
+  // El Guardián, los custodios de los sepulcros y el jefe: si están lejos, ir por ellos (si no, la etapa no se
+  // acaba); cerca, pelear de lejos
+  const E = sim.E;
+  let imp = -1, di = Infinity;
+  for (let i = 0; i < E.max; i++) {
+    if (!E.vivo[i] || !(i === sim.guardian || i === sim.jefe || E.marcadoObj[i] === 4)) continue;
+    const d = Math.hypot(E.x[i] - j.x, E.y[i] - j.y);
+    if (d < di) {
+      di = d;
+      imp = i;
+    }
+  }
+  if (imp >= 0) return di > 7 ? { x: E.x[imp], y: E.y[imp], cava: false } : null;
+  // Los bichos del botín cercanos: perseguirlos si va bien de vida
+  if (j.hp > j.hpMax * 0.5)
+    for (let i = 0; i < E.max; i++) if (E.vivo[i] && TIPOS[E.tipo[i]].conducta === 'ladron' && Math.hypot(E.x[i] - j.x, E.y[i] - j.y) < 12) return { x: E.x[i], y: E.y[i], cava: false };
+  // Los sepulcros de la etapa final: abrir los cercanos si va bien de vida
+  if (j.hp > j.hpMax * 0.6) for (const e of sim.ent) if (e.vivo && e.tipo === ENT.SEPULCRO && e.est === 0 && Math.hypot(e.x - j.x, e.y - j.y) < 12) return { x: e.x, y: e.y, cava: false };
   // Objetivo
   const o = sim.obj;
   if (!o.hecho) {
@@ -202,12 +218,12 @@ function elegirMeta(sim: Sim, j: Jugador): { x: number; y: number; cava: boolean
       }
     }
   }
-  // Secundario: frascos y huevos
+  // Secundario: frascos, huevos, rosas, plumas y hongos
   if (sim.sec.tipo === 'huevos' && sim.sec.prog < sim.sec.meta) {
     const v = veta(sim, j, C.HUEVO);
     if (v && Math.hypot(v.x - j.x, v.y - j.y) < 18) return v;
   }
-  const f = cercano(sim, j, (r) => r.tipo === REC.FRASCO || r.tipo === REC.HUEVO, 20);
+  const f = cercano(sim, j, (r) => r.tipo === REC.FRASCO || r.tipo === REC.HUEVO || r.tipo === REC.ROSA || r.tipo === REC.PLUMA || r.tipo === REC.HONGO, 20);
   if (f) return { x: f.x, y: f.y, cava: true };
   // Vetas de oro y sangre cerca
   const v = veta(sim, j, C.ORO) ?? veta(sim, j, C.SANGRE);

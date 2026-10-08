@@ -239,7 +239,7 @@ export const tapaLuz = (c: number) => esSolida(c) && c !== C.LAVA;
 
 // ------------------------------------------------------------------------------------------------- Objetivos
 export type IdObjetivo = 'hierro' | 'altares' | 'prisioneros' | 'carreta' | 'campana' | 'elite';
-export type IdSecundario = 'huevos' | 'frascos' | 'cofres';
+export type IdSecundario = 'huevos' | 'frascos' | 'cofres' | 'rosas' | 'plumas' | 'hongos';
 
 // ------------------------------------------------------------------------------------------------- Peligro
 export type IdMutador = 'sangrienta' | 'sin_antorchas' | 'elites_dobles' | 'plaga' | 'roca_dura' | 'codicia' | 'eclipse' | 'fragiles' | 'enjambres' | 'velocidad';
@@ -252,9 +252,9 @@ export interface ConfigExpedicion {
   semilla: number;
   /** Prueba guiada (mapa fijo y pasos). */
   tutorial?: boolean;
-  /** Modo infinito: etapas sin fin, cada vez más duras, con jefe cada 4 (termina al caer). */
+  /** Modo infinito: etapas sin fin, cada vez más duras, con jefe cada 5 (termina al caer). */
   infinito?: boolean;
-  /** En el modo infinito, los biomas por los que se pasa cada 4 etapas (los abiertos del anfitrión, desde el escogido). */
+  /** En el modo infinito, los biomas por los que se pasa cada 5 etapas (los abiertos del anfitrión, desde el escogido). */
   rotacion?: IdBioma[];
 }
 

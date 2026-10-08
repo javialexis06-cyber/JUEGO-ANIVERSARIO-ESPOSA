@@ -35,7 +35,10 @@ export class Espejo {
     const dtFoto = this.ultimaFoto ? Math.min(0.5, (performance.now() - this.ultimaFoto) / 1000) : 0.125;
     this.ultimaFoto = this.llegada = performance.now();
     sim.t = f.t;
-    sim.limite = f.lim;
+    sim.avance = f.av ?? 0;
+    sim.oleadasHechas = f.ol ?? 0;
+    sim.guardianVisto = !!f.gv;
+    sim.impaciencia = f.imp ?? 0;
     sim.fase = f.fase;
     Object.assign(sim.obj, f.obj);
     Object.assign(sim.sec, f.sec);
@@ -74,7 +77,7 @@ export class Espejo {
       E.aturdido[i] = fl & 1 ? 0.5 : 0;
       E.lento[i] = fl & 2 ? 0.3 : 0;
       E.maldicion[i] = fl & 4 ? 1 : 0;
-      E.marcadoObj[i] = fl & 8 ? 1 : 0;
+      E.marcadoObj[i] = fl & 8 ? 1 : fl & 128 ? 3 : 0;
       E.condenaT[i] = fl & 16 ? 1 : 0;
       E.juzgado[i] = fl & 32 ? 1 : 0;
       E.escudo[i] = fl & 64 ? 1 : 0;
@@ -90,6 +93,7 @@ export class Espejo {
       if (E.vivo[i] && E.uid[i] === uid) E.quitar(i);
     }
     sim.jefe = f.jefe >= 0 ? this.porUid.get(f.jefe) ?? -1 : -1;
+    sim.guardian = f.g >= 0 ? this.porUid.get(f.g) ?? -1 : -1;
     // Proyectiles
     const dp = new Int16Array(deB64(f.p));
     let k = 0;

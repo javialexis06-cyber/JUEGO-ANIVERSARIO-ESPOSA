@@ -235,12 +235,19 @@ export class Actores {
         this.sombra(e.x, e.y, 0.4 + suave * 0.9, 0.5 + suave * 0.5);
         continue;
       }
-      const clave = e.tipo === ENT.CARRETA ? 'carreta' : e.tipo === ENT.CAMPANA_DEF ? 'campana' : e.tipo === ENT.COFRE_RELIQUIA ? 'cofre_reliquia' : e.tipo === ENT.SANTUARIO ? 'santuario' : e.tipo === ENT.COFRE_MALDITO ? 'cofre_maldito' : '';
+      const clave = e.tipo === ENT.CARRETA ? 'carreta' : e.tipo === ENT.CAMPANA_DEF ? 'campana' : e.tipo === ENT.COFRE_RELIQUIA ? 'cofre_reliquia' : e.tipo === ENT.SANTUARIO ? 'santuario' : e.tipo === ENT.COFRE_MALDITO ? 'cofre_maldito' : e.tipo === ENT.SEPULCRO ? (e.est >= 1 ? 'sepulcro_abierto' : 'sepulcro') : '';
       if (!clave) continue;
       vistas.add(e.id);
       let o = this.cosas.get(e.id);
+      // (el sepulcro cambia de modelo al abrirse)
+      if (o && o.userData.clave !== clave) {
+        this.grupo.remove(o);
+        this.cosas.delete(e.id);
+        o = undefined;
+      }
       if (!o) {
         o = mallaFija(this.bib.fijo('cosa', clave));
+        o.userData.clave = clave;
         if (e.tipo === ENT.CAMPANA_DEF) o.scale.setScalar(0.55);
         this.grupo.add(o);
         this.cosas.set(e.id, o);

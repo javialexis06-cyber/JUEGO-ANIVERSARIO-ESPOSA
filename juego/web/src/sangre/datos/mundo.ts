@@ -15,6 +15,7 @@ export type Conducta =
   | 'encantador' // jala al jugador hacia ella
   | 'excavador' // sale de las paredes
   | 'quieto' // altares y cosas que no se mueven
+  | 'ladron' // bichos del botín: no atacan, huyen y al caer sueltan lo que cargan (si nadie los alcanza, se escapan)
   | 'jefe'; // cada jefe tiene su propia cabeza (sim/jefes.ts)
 
 export interface DefEnemigo {
@@ -37,6 +38,8 @@ export interface DefEnemigo {
   proyectil?: { tipo: string; dano: number; vel: number; cada: number; alcance: number };
   /** Colores del modelo de reemplazo. */
   color: [string, string];
+  /** Bicho del botín: segundos que aguanta antes de escaparse por la tierra. */
+  escapa?: number;
 }
 
 const D = (o: DefEnemigo) => o;
@@ -65,6 +68,11 @@ export const ENEMIGOS_LISTA: DefEnemigo[] = [
   D({ id: 'hombre_lobo', nombre: 'Hombre lobo', vida: 95, vel: 2.5, dano: 16, radio: 0.6, xp: 8, conducta: 'cargador', masa: 0.6, alto: 1.5, vivo: true, color: ['#4a3e34', '#8a7a6a'] }),
   D({ id: 'murcielago', nombre: 'Murciélago', vida: 5, vel: 4.0, dano: 3, radio: 0.26, xp: 1, conducta: 'volador', masa: 0, alto: 0.35, vuela: true, vivo: true, color: ['#2a2024', '#5a3a40'] }),
   D({ id: 'caballero_muerte', nombre: 'Caballero de la muerte', vida: 260, vel: 1.7, dano: 20, radio: 0.62, xp: 22, conducta: 'perseguir', masa: 0.85, alto: 1.5, color: ['#2a2a30', '#6a1a1a'] }),
+  // Los bichos del botín (como los de Deep Rock Galactic: Survivor): no pegan, huyen, y lo que cargan es la plata de la
+  // etapa (las vetas pagan menos que antes)
+  D({ id: 'rata_tesoro', nombre: 'Rata del tesoro', vida: 34, vel: 2.2, dano: 0, radio: 0.34, xp: 3, conducta: 'ladron', masa: 0.2, alto: 0.75, vivo: true, escapa: 60, color: ['#6a5a4a', '#c89a3a'] }),
+  D({ id: 'rata_dorada', nombre: 'Rata dorada', vida: 60, vel: 3.1, dano: 0, radio: 0.3, xp: 6, conducta: 'ladron', masa: 0.2, alto: 0.47, vivo: true, escapa: 28, color: ['#d8aa44', '#9a7224'] }),
+  D({ id: 'ladron_tumbas', nombre: 'Ladrón de tumbas', vida: 110, vel: 2.8, dano: 0, radio: 0.42, xp: 8, conducta: 'ladron', masa: 0.3, alto: 1.3, vivo: true, escapa: 40, color: ['#2e2a30', '#7a6440'] }),
 ];
 export const ENEMIGOS: Record<string, DefEnemigo> = Object.fromEntries(ENEMIGOS_LISTA.map((e) => [e.id, e]));
 /** Índice de cada tipo (para la red y las piscinas por tipo). */
@@ -78,12 +86,14 @@ export const MOD_ELITE = {
   REGENERA: 8, // se cura 3 % por segundo
   VAMPIRICO: 16, // se cura al pegar y roba
   INVOCA: 32, // llama esqueletos
+  /** Mini-élite (morado): más vida y más rápido que los de su tipo, sin cofre; se mezcla en la horda desde la etapa 2. */
+  MINI: 64,
 } as const;
 export const NOMBRE_MOD: Record<number, string> = {
-  1: 'Veloz', 2: 'Acorazado', 4: 'Explosivo', 8: 'Regenerante', 16: 'Vampírico', 32: 'Invocador',
+  1: 'Veloz', 2: 'Acorazado', 4: 'Explosivo', 8: 'Regenerante', 16: 'Vampírico', 32: 'Invocador', 64: 'Mini-élite',
 };
 export const COLOR_MOD: Record<number, string> = {
-  1: '#ffd84a', 2: '#9ab8ff', 4: '#ff7a2a', 8: '#6aff8a', 16: '#ff2a4a', 32: '#b07aff',
+  1: '#ffd84a', 2: '#9ab8ff', 4: '#ff7a2a', 8: '#6aff8a', 16: '#ff2a4a', 32: '#b07aff', 64: '#c050ff',
 };
 
 // ------------------------------------------------------------------------------------------------- Jefes
@@ -209,6 +219,12 @@ export const SECUNDARIOS: Record<IdSecundario, { nombre: string; texto: string; 
   huevos: { nombre: 'Huevos de dragón de piedra', texto: 'Saca los huevos de las paredes', glifo: 'huevo' },
   frascos: { nombre: 'Frascos de alquimia', texto: 'Recoge los frascos de alquimia', glifo: 'frasco' },
   cofres: { nombre: 'Cofres de reliquias', texto: 'Abre los cofres de reliquias (las llaves las sueltan los élites)', glifo: 'cofre' },
+  // Las rosas negras que crecen donde pasa el velo de Lara: cada una devuelve un poco de vida
+  rosas: { nombre: 'Rosas del velo', texto: 'Recoge las rosas negras (cada una cura un poco)', glifo: 'espina' },
+  // Las plumas que sueltan los grifos al patrullar el escudo: caen cerca y el viento se las lleva en medio minuto
+  plumas: { nombre: 'Plumas de grifo', texto: 'Atrapa las plumas antes de que se las lleve el viento', glifo: 'pluma' },
+  // Los hongos de tumba crecen de a montoncitos en los rincones (algunos detrás de la roca)
+  hongos: { nombre: 'Hongos de tumba', texto: 'Recoge los montoncitos de hongos de los rincones', glifo: 'caldero' },
 };
 
 // ------------------------------------------------------------------------------------------------- Eventos
@@ -224,11 +240,12 @@ export const EVENTOS: Record<IdEvento, { nombre: string; aviso: string }> = {
 
 // ------------------------------------------------------------------------------------------------- Peligro y mutadores
 export const PELIGROS = [
-  { n: 1, nombre: 'Penumbra', desc: 'Para aprender. La horda tiene paciencia.', vida: 0.8, cantidad: 0.75, elites: 0.6, recompensa: 1 },
-  { n: 2, nombre: 'Oscuridad', desc: 'La horda empieza a apretar.', vida: 1.0, cantidad: 1.0, elites: 1.0, recompensa: 1.35 },
-  { n: 3, nombre: 'Noche cerrada', desc: 'Retador. Desde aquí hay mutadores.', vida: 1.3, cantidad: 1.2, elites: 1.35, recompensa: 1.8 },
-  { n: 4, nombre: 'Noche Eterna', desc: 'Solo para los que ya conocen su clase.', vida: 1.7, cantidad: 1.4, elites: 1.7, recompensa: 2.4 },
-  { n: 5, nombre: 'Sangre y Ceniza', desc: 'La muerte es segura. ¿Cuánto aguantan?', vida: 2.2, cantidad: 1.6, elites: 2.1, recompensa: 3.2 },
+  // (dano: cuánto pegan; curacion: cuánto rinde lo que cura)
+  { n: 1, nombre: 'Penumbra', desc: 'Para aprender. La horda tiene paciencia.', vida: 0.8, cantidad: 0.75, elites: 0.6, dano: 0.85, curacion: 1, recompensa: 1 },
+  { n: 2, nombre: 'Oscuridad', desc: 'La horda empieza a apretar.', vida: 1.0, cantidad: 1.0, elites: 1.0, dano: 1, curacion: 1, recompensa: 1.35 },
+  { n: 3, nombre: 'Noche cerrada', desc: 'Retador. Desde aquí hay mutadores.', vida: 1.3, cantidad: 1.2, elites: 1.35, dano: 1.12, curacion: 0.9, recompensa: 1.8 },
+  { n: 4, nombre: 'Noche Eterna', desc: 'Solo para los que ya conocen su clase.', vida: 1.7, cantidad: 1.4, elites: 1.7, dano: 1.25, curacion: 0.8, recompensa: 2.4 },
+  { n: 5, nombre: 'Sangre y Ceniza', desc: 'La muerte es segura. ¿Cuánto aguantan?', vida: 2.2, cantidad: 1.6, elites: 2.1, dano: 1.4, curacion: 0.7, recompensa: 3.2 },
 ];
 
 export const MUTADORES: Record<IdMutador, { nombre: string; desc: string; recompensa: number; glifo: string }> = {
@@ -244,9 +261,28 @@ export const MUTADORES: Record<IdMutador, { nombre: string; desc: string; recomp
   velocidad: { nombre: 'Prisa de los muertos', desc: 'Los enemigos van 20 % más rápido.', recompensa: 0.2, glifo: 'bota' },
 };
 
-/** Cuánto dura cada etapa (s) y la cuenta de la campana de extracción. */
-export const DURACION_ETAPA = 330;
+/** Duración de referencia de una etapa (s): con ella sube la horda (cuántos y qué tan duros). Ya no es un reloj: la
+ *  etapa se acaba cuando cae el Guardián (como en Deep Rock Galactic: Survivor). */
+export const DURACION_ETAPA = 380;
+/** Segundos que tarda la barra de avance en llenarse sola, sin hacer el objetivo. */
+export const AVANCE_SOLO = 600;
+/** Cuánto de la barra pone el objetivo principal cumplido (el resto lo pone el tiempo). */
+export const AVANCE_OBJETIVO = 0.45;
+/** Oleadas en cada etapa (1, 2, 3, 3…); la etapa final tiene los sepulcros. */
+export const OLEADAS = [1, 2, 3, 3];
+/** Cada cuántos segundos se impacienta más la Noche desde que sale el Guardián. */
+export const IMPACIENCIA_CADA = 50;
+/** Sepulcros de la etapa final (cada uno guarda un custodio; caídos los cuatro, sale el jefe). */
+export const SEPULCROS = 4;
+/** Los guardianes de cada bioma (el que sale al llenarse la barra; se turnan de etapa en etapa). */
+export const GUARDIANES: Record<IdBioma, string[]> = {
+  cementerio: ['zombi_gordo', 'caballero_muerte', 'perro_huesos'],
+  catacumbas: ['ghoul', 'caballero_muerte', 'espectro'],
+  minas: ['abominacion', 'minero_maldito', 'caballero_muerte'],
+  abadia: ['gargola', 'inquisidor_muerto', 'caballero_muerte'],
+  castillo: ['hombre_lobo', 'vampiro', 'caballero_muerte'],
+};
 /** Lo que se recupera de vida al bajar a la etapa siguiente (descanso junto al yunque), sobre la vida máxima. */
 export const DESCANSO = 0.35;
 export const CUENTA_EXTRACCION = 60;
-export const ETAPAS = 4;
+export const ETAPAS = 5;

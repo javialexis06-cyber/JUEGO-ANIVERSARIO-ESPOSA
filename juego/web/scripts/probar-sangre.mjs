@@ -110,8 +110,14 @@ if (cuales.includes('extraccion')) {
   // (inmortal: lo que se prueba es la extracción, no si el bot aguanta)
   await p.evaluate(() => { window.__sangre().inmortales = true; });
   await p.waitForTimeout(8000);
+  // (la barra se llena: sale el Guardián; se le deja con un golpe para que el bot lo tumbe y baje la campana)
   await p.evaluate(() => window.__sangreReloj(2));
-  await p.waitForFunction(() => !!window.__sangre().campana, null, { timeout: 120000 });
+  await p.waitForFunction(() => window.__sangre().guardian >= 0, null, { timeout: 60000 });
+  ok(true, 'salió el Guardián');
+  await p.waitForTimeout(2500);
+  await p.screenshot({ path: `${dir}/x_guardian.png` });
+  await p.evaluate(() => window.__sangreDebil());
+  await p.waitForFunction(() => !!window.__sangre().campana, null, { timeout: 180000 });
   ok(true, 'bajó la campana');
   await p.waitForTimeout(5000);
   await p.screenshot({ path: `${dir}/x_campana.png` });

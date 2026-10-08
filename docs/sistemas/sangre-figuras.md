@@ -64,7 +64,7 @@ blanco) y agrándala 1,25×. Así cada élite se distingue de lejos sin otro mod
 - `cola`: mecer alrededor del eje Z de Blender (Y de three.js).
 - Morir: soltar las piezas (cada una ya tiene su pivote) o tumbar la raíz.
 
-## Los 22 enemigos
+## Los 22 enemigos (y los 3 del botín)
 
 zombi, zombi_gordo (panza cosida con bilis verde), esqueleto (casco y espada), esqueleto_arquero (capucha, arco y
 carcaj), cuervo, perro_huesos, ghoul (agachado, brazos largos, mandíbula), arana_cripta (8 patas: las 4 de cada lado
@@ -75,6 +75,11 @@ con la mecha encendida: marca `llama`), monje_caido (vela en la mano: marca `lla
 piedra), inquisidor_muerto (máscara de hierro, hierro de marcar al rojo: marca `llama`), nigromante (bastón con
 calavera y llama verde: marca `llama`), vampiro (capa de cuello alto), novia_vampira (velo y rosa marchita),
 hombre_lobo (mandíbula y cola), caballero_muerte (élite común, `elite: 1`, mandoble en la mano derecha).
+
+Los bichos del botín (`sangre_enemigos4.py`, como los lootbugs de Deep Rock; no pegan, huyen): `rata_tesoro` (rata
+gorda con un costal de monedas al lomo, una gema y un diente de oro), `rata_dorada` (toda de oro, con corona,
+cadena y gemas: la rara) y `ladron_tumbas` (encapuchado con pañoleta roja y ojos que brillan, pala, farol verde y un
+costal con candelabro y cáliz).
 
 ## Jefes (`jefes.glb`)
 
@@ -105,8 +110,15 @@ hombre_lobo (mandíbula y cola), caballero_muerte (élite común, `elite: 1`, ma
   liberarlo se esconde el poste y camina detrás. `c_guardia_real`: caballero aliado del monarca, por piezas.
 - Construcciones: `c_torreta_ballesta` (`extra_arco` gira en Z; marca `punta`), `c_trampa` (`extra_quijada_a/b`
   se cierran girando en X), `c_totem_maleficio`, `c_plataforma`; y `c_tumba_abierta` (sepulturero).
-- Objetivos secundarios: `c_huevo_dragon`, `c_frasco_alquimia`; y además `c_espiga` (las espigas que curan del
-  campesino) y `c_bengala`.
+- Objetivos secundarios: `c_huevo_dragon`, `c_frasco_alquimia`, `c_rosa_velo` (rosa negra de tallo largo con el
+  corazón rojo que brilla, sobre piedritas), `c_pluma_grifo` (pluma dorada con chispas; el juego la dibuja casi
+  acostada y meciéndose) y `c_hongo_tumba` (montoncito de hongos pálidos de sombrero verde sobre un hueso); el juego
+  dibuja estos tres más grandes que su modelo (×2,3, ×1,8 y ×2) para que se vean desde arriba entre la horda. Y además
+  `c_espiga` (las espigas que curan del campesino) y `c_bengala`.
+- `c_sepulcro` y `c_sepulcro_abierto` (la etapa final): grada, cajón con calavera y alas de murciélago en relieve,
+  columnas torcidas y runas de ceniza; el cerrado con la tapa tallada, la efigie de un caballero, cadenas de eslabones
+  y candado, y grietas de fuego; el abierto con la tapa partida, cama de brasas, huesos y cadenas rotas. El juego
+  cambia uno por otro al abrirse (y le pone luz roja o de fuego).
 
 ## Armas y proyectiles
 

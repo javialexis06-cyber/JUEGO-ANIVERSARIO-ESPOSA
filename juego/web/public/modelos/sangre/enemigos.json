@@ -1378,5 +1378,201 @@
     "tris": 420
    }
   }
+ },
+ "enemigo_rata_tesoro": {
+  "altura": 0.765,
+  "radio": 0.292,
+  "alcance": 0.752,
+  "tris": 3098,
+  "cuadrupedo": 1,
+  "botin": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.25
+    ],
+    "tris": 1298
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.22,
+     0.3
+    ],
+    "tris": 620
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.09,
+     0.13,
+     0.22
+    ],
+    "tris": 220
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.1,
+     -0.18,
+     0.24
+    ],
+    "tris": 260
+   },
+   "brazo_der": {
+    "pivote": [
+     0.09,
+     0.13,
+     0.22
+    ],
+    "tris": 220
+   },
+   "pierna_der": {
+    "pivote": [
+     0.1,
+     -0.18,
+     0.24
+    ],
+    "tris": 260
+   },
+   "cola": {
+    "pivote": [
+     0.0,
+     -0.3,
+     0.22
+    ],
+    "tris": 220
+   }
+  }
+ },
+ "enemigo_rata_dorada": {
+  "altura": 0.471,
+  "radio": 0.279,
+  "alcance": 0.752,
+  "tris": 3100,
+  "cuadrupedo": 1,
+  "botin": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.25
+    ],
+    "tris": 1300
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.22,
+     0.3
+    ],
+    "tris": 620
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.09,
+     0.13,
+     0.22
+    ],
+    "tris": 220
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.1,
+     -0.18,
+     0.24
+    ],
+    "tris": 260
+   },
+   "brazo_der": {
+    "pivote": [
+     0.09,
+     0.13,
+     0.22
+    ],
+    "tris": 220
+   },
+   "pierna_der": {
+    "pivote": [
+     0.1,
+     -0.18,
+     0.24
+    ],
+    "tris": 260
+   },
+   "cola": {
+    "pivote": [
+     0.0,
+     -0.3,
+     0.22
+    ],
+    "tris": 220
+   }
+  }
+ },
+ "enemigo_ladron_tumbas": {
+  "altura": 1.308,
+  "radio": 0.314,
+  "alcance": 0.465,
+  "tris": 4087,
+  "botin": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.45
+    ],
+    "tris": 1699
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.1,
+     0.8
+    ],
+    "tris": 898
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.2,
+     0.06,
+     0.74
+    ],
+    "tris": 330
+   },
+   "brazo_der": {
+    "pivote": [
+     0.2,
+     0.06,
+     0.74
+    ],
+    "tris": 520
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.09,
+     0.0,
+     0.43
+    ],
+    "tris": 320
+   },
+   "pierna_der": {
+    "pivote": [
+     0.09,
+     0.0,
+     0.43
+    ],
+    "tris": 320
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.2,
+    0.08,
+    0.4
+   ]
+  }
  }
 }

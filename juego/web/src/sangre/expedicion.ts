@@ -1,4 +1,4 @@
-// Una expedición: cuatro etapas en el mismo bioma (la última con el jefe) y la Forja entre etapas. No dibuja nada:
+// Una expedición: cinco etapas en el mismo bioma (la última con los sepulcros y el jefe) y la Forja entre etapas. No dibuja nada:
 // la usan la pantalla de juego, el anfitrión de una partida en grupo y las pruebas del bot en Node.
 import { Azar } from '../casa/lavado/azar';
 import { ARMAS, MAX_ARMAS, NIVEL_EVOLUCION, NIVEL_MAX_ARMA } from './datos/armas';
@@ -37,8 +37,9 @@ export interface EstadoForja {
   listo: boolean;
 }
 
+const PRECIOS_RENOVAR = [5, 7, 10, 14, 20, 28, 39, 55, 77, 108, 151, 211];
 const OBJETIVOS_LISTA: IdObjetivo[] = ['hierro', 'altares', 'prisioneros', 'carreta', 'campana', 'elite'];
-const SECUNDARIOS_LISTA: IdSecundario[] = ['huevos', 'frascos', 'cofres'];
+const SECUNDARIOS_LISTA: IdSecundario[] = ['huevos', 'frascos', 'cofres', 'rosas', 'plumas', 'hongos'];
 
 export class Expedicion {
   cfg: ConfigExpedicion;
@@ -49,6 +50,8 @@ export class Expedicion {
   resultados: ResultadoEtapa[] = [];
   plan: { objetivo: IdObjetivo; secundario: IdSecundario }[] = [];
   forja = new Map<number, EstadoForja>();
+  /** Cuántas veces renovó la Forja cada jugador en la expedición (el precio sube). */
+  renovadas = new Map<number, number>();
   exito = false;
   az: Azar;
   /** Segundos totales jugados. */
@@ -74,12 +77,12 @@ export class Expedicion {
     return this.etapa >= (this.cfg.tutorial ? 1 : ETAPAS);
   }
 
-  /** ¿Esta etapa termina con jefe? (la cuarta; en el modo infinito, cada cuatro) */
+  /** ¿Esta etapa termina con jefe? (la quinta, con los sepulcros; en el modo infinito, cada cinco) */
   esFinal(etapa = this.etapa) {
     return this.cfg.infinito ? etapa % ETAPAS === 0 : etapa >= ETAPAS;
   }
 
-  /** El bioma de la etapa (en el modo infinito cambia cada cuatro, por los biomas que trae la rotación). */
+  /** El bioma de la etapa (en el modo infinito cambia cada cinco, por los biomas que trae la rotación). */
   biomaDe(etapa = this.etapa): IdBioma {
     const r = this.cfg.infinito && this.cfg.rotacion?.length ? this.cfg.rotacion : null;
     return r ? r[Math.floor((etapa - 1) / ETAPAS) % r.length] : this.cfg.bioma;
@@ -114,8 +117,10 @@ export class Expedicion {
       for (const j of this.J) {
         if (j.estado !== 3) continue;
         if (s.fin.objetivo) j.oroSeguro += 10 + 5 * this.etapa;
-        j.oroSeguro += s.fin.secundario * 8;
-        j.sangreSeguro += s.fin.secundario * 2;
+        // (el secundario paga por la parte hecha, sea de 2 cofres o de 12 hongos)
+        const sec = s.sec.meta > 0 ? Math.min(1, s.fin.secundario / s.sec.meta) : 0;
+        j.oroSeguro += Math.round(sec * 40 * (1 + 0.2 * (this.etapa - 1)));
+        j.sangreSeguro += Math.round(sec * 10);
         j.oroSeguro += s.fin.prisioneros * 12;
       }
     }
@@ -153,7 +158,7 @@ export class Expedicion {
         const id = this.az.uno(libres);
         const a = ARMAS[id];
         usados.add(id);
-        r.push({ id: `a${r.length}${id}`, tipo: 'arma', ref: id, nombre: a.nombre, desc: a.desc, precio: Math.round((22 + 9 * e) * d), rareza: 1, glifo: a.glifo });
+        r.push({ id: `a${r.length}${id}`, tipo: 'arma', ref: id, nombre: a.nombre, desc: a.desc, precio: Math.round((26 + 12 * e) * d), rareza: 1, glifo: a.glifo });
       } else if (t < 0.82) {
         // Objetos: los que evolucionan algo tuyo salen más cuando el arma ya va alta
         const evoluciones = j.armas.filter((a) => a.def.evoluciona && a.nivel >= NIVEL_EVOLUCION - 6 && !j.objeto(a.def.evoluciona.con)).map((a) => a.def.evoluciona!.con);
@@ -161,16 +166,16 @@ export class Expedicion {
         if (!lista.length) continue;
         const o = this.az.pesado(lista, (x) => (x.evoluciona ? 3 : x.rareza >= 3 ? 0.4 : x.rareza === 2 ? 0.8 : 1.3))!;
         usados.add(o.id);
-        r.push({ id: `o${r.length}${o.id}`, tipo: 'objeto', ref: o.id, nombre: o.nombre, desc: o.desc, precio: Math.round(o.precio * (1 + 0.15 * (e - 1)) * d), rareza: Math.min(4, o.rareza) as Rareza, glifo: o.glifo });
+        r.push({ id: `o${r.length}${o.id}`, tipo: 'objeto', ref: o.id, nombre: o.nombre, desc: o.desc, precio: Math.round(o.precio * (1 + 0.22 * (e - 1)) * d), rareza: Math.min(4, o.rareza) as Rareza, glifo: o.glifo });
       } else if (t < 0.95) {
         const lista = EQUIPOS.filter((q) => q.rareza <= Math.min(3, e) && j.equipo[q.ranura] !== q.id && !usados.has(q.id));
         if (!lista.length) continue;
         const q = this.az.uno(lista);
         usados.add(q.id);
-        r.push({ id: `e${r.length}${q.id}`, tipo: 'equipo', ref: q.id, nombre: q.nombre, desc: q.desc, precio: Math.round((18 + 14 * q.rareza) * (1 + 0.1 * e) * d), rareza: q.rareza as Rareza, glifo: q.ranura });
+        r.push({ id: `e${r.length}${q.id}`, tipo: 'equipo', ref: q.id, nombre: q.nombre, desc: q.desc, precio: Math.round((18 + 14 * q.rareza) * (1 + 0.15 * e) * d), rareza: q.rareza as Rareza, glifo: q.ranura });
       } else if (!usados.has('curar')) {
         usados.add('curar');
-        r.push({ id: 'curar', tipo: 'curar', ref: 'curar', nombre: 'Vendas y aguardiente', desc: 'Recupera toda la vida.', precio: Math.round(12 * d), rareza: 0, glifo: 'corazon' });
+        r.push({ id: 'curar', tipo: 'curar', ref: 'curar', nombre: 'Vendas y aguardiente', desc: 'Recupera la mitad de la vida.', precio: Math.round((20 + 6 * e) * d), rareza: 0, glifo: 'corazon' });
       }
     }
     return r;
@@ -200,7 +205,7 @@ export class Expedicion {
         j.recalcular();
         break;
       case 'curar':
-        j.hp = j.hpMax;
+        j.hp = Math.min(j.hpMax, j.hp + j.hpMax * 0.5);
         break;
     }
     j.oroSeguro -= o.precio;
@@ -208,9 +213,9 @@ export class Expedicion {
     return null;
   }
 
+  /** Renovar sube de precio en toda la expedición, como volver a tirar en Deep Rock (5, 7, 10, 14, 20, 28…). */
   precioRenovar(j: Jugador) {
-    const f = this.forja.get(j.i);
-    return 3 + 3 * (f?.renovaciones ?? 0) + this.etapa;
+    return PRECIOS_RENOVAR[Math.min(PRECIOS_RENOVAR.length - 1, this.renovadas.get(j.i) ?? 0)];
   }
 
   renovar(j: Jugador): string | null {
@@ -220,6 +225,7 @@ export class Expedicion {
     if (j.oroSeguro < p) return 'No alcanza el oro.';
     j.oroSeguro -= p;
     f.renovaciones++;
+    this.renovadas.set(j.i, (this.renovadas.get(j.i) ?? 0) + 1);
     f.ofertas = this.ofertasNuevas(j, f.ofertas.filter((o) => o.guardada && !o.vendida));
     return null;
   }
@@ -232,7 +238,7 @@ export class Expedicion {
   /** Yunque: hierro negro → un nivel de arma. */
   precioYunque(j: Jugador, ranura: number) {
     const a = j.armas[ranura];
-    return a ? 4 + 2 * a.nivel : 0;
+    return a ? Math.round((5 + 3 * a.nivel) * (1 + 0.12 * (this.etapa - 1))) : 0;
   }
   yunque(j: Jugador, ranura: number): string | null {
     const a = j.armas[ranura];
@@ -251,7 +257,7 @@ export class Expedicion {
   /** Altar de sangre: sangre cristalizada → una sobrecarga antes de tiempo (una por arma y visita). */
   precioSangre(j: Jugador, ranura: number) {
     const a = j.armas[ranura];
-    return a ? 6 + 6 * a.sobrecargas.length : 0;
+    return a ? Math.round((8 + 8 * a.sobrecargas.length) * (1 + 0.12 * (this.etapa - 1))) : 0;
   }
   altarSangre(j: Jugador, ranura: number): string | null {
     const a = j.armas[ranura];

@@ -31,7 +31,7 @@ export const S = {
   EVOLUCION: 25, // jugador, arma
   CONDENA: 26, // x, y
   EJECUTA: 27, // x, y
-  JEFE: 28, // código (0 aparece, 1 fase, 2 muere, 3 ataque), x, y, a
+  JEFE: 28, // código (0 aparece, 1 fase, 2 muere, 3 ataque, 4 aparece el Guardián, 5 muere el Guardián, 6 oleada, 7 sale un custodio), x, y, a
   CAMPANA: 29, // código (0 cae, 1 aterriza, 2 se va), x, y
   ESPIGA: 30, // x, y
   SALTO: 31, // x0, y0, x1, y1 (embestida, garfio, vampiro)
@@ -316,7 +316,7 @@ export class Zona {
 }
 
 // ------------------------------------------------------------------------------------------------- Recogibles
-export const REC = { ALMA_AZUL: 0, ALMA_VERDE: 1, ALMA_ROJA: 2, ORO: 3, HIERRO: 4, SANGRE: 5, COMIDA: 6, COFRE: 7, LLAVE: 8, FRASCO: 9, EQUIPO: 10, HUEVO: 11, GOTA: 12, IMAN: 13 } as const;
+export const REC = { ALMA_AZUL: 0, ALMA_VERDE: 1, ALMA_ROJA: 2, ORO: 3, HIERRO: 4, SANGRE: 5, COMIDA: 6, COFRE: 7, LLAVE: 8, FRASCO: 9, EQUIPO: 10, HUEVO: 11, GOTA: 12, IMAN: 13, ROSA: 14, PLUMA: 15, HONGO: 16 } as const;
 
 export class Recogible {
   vivo = false;
@@ -370,7 +370,7 @@ export class Aliado {
 }
 
 // ------------------------------------------------------------------------------------------------- Entidades de objetivo
-export const ENT = { ALTAR: 0, PRISIONERO: 1, CARRETA: 2, CAMPANA_DEF: 3, COFRE_RELIQUIA: 4, SANTUARIO: 5, EXTRACCION: 6, COFRE_MALDITO: 7 } as const;
+export const ENT = { ALTAR: 0, PRISIONERO: 1, CARRETA: 2, CAMPANA_DEF: 3, COFRE_RELIQUIA: 4, SANTUARIO: 5, EXTRACCION: 6, COFRE_MALDITO: 7, SEPULCRO: 8 } as const;
 
 export class Entidad {
   vivo = true;

@@ -135,6 +135,8 @@ export const efectos = {
   sobrecarga: () => cupo('sobrecarga', 400) && (golpeSordo(90, 0.3, 0.12, 2500, 0.8), coro([220, 277.2, 329.6], 1.2, 0.02)),
   jefe: () => cupo('jefe', 1200) && (golpeSordo(32, 1.6, 0.3, 160, 1), sonido.nota(55, 1.6, 0, 'sawtooth', 0.06, 41)),
   campana: () => cupo('campana', 900) && campanada(164.8, 0.13, 3.6),
+  /** Cuerno grave y tambor: llega una oleada. */
+  oleada: () => cupo('oleada', 2500) && (sonido.nota(73.4, 1.5, 0, 'sawtooth', 0.05, 69.3), sonido.nota(110, 1.3, 0.12, 'sawtooth', 0.035, 103.8), golpeSordo(42, 0.9, 0.22, 220, 0.9)),
   ejecuta: () => cupo('ejecuta', 120) && (golpeSordo(70, 0.2, 0.14, 1200, 0.9), sonido.rumor(0.08, 3000, 0.05, 0, 1.5)),
   libera: () => cupo('libera', 400) && (sonido.nota(784, 0.2, 0, 'triangle', 0.04), sonido.nota(988, 0.3, 0.12, 'triangle', 0.04)),
   carta: () => sonido.rumor(0.18, 2600, 0.04, 0, 0.6, 1600),
@@ -210,7 +212,8 @@ export function sonarSucesos(suc: Sucesos, sim: Sim, local: number) {
         if (d[k + 1] === local) efectos.sobrecarga();
         break;
       case S.JEFE:
-        if (d[k + 1] === 0 || d[k + 1] === 1 || d[k + 1] === 2) efectos.jefe();
+        if (d[k + 1] <= 2 || d[k + 1] === 4 || d[k + 1] === 5 || d[k + 1] === 7) efectos.jefe();
+        else if (d[k + 1] === 6) efectos.oleada();
         break;
       case S.CAMPANA:
         if (d[k + 1] === 0 || d[k + 1] === 1) efectos.campana();

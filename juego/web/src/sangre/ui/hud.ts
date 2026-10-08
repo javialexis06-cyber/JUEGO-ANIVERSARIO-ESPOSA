@@ -1,7 +1,7 @@
 // El HUD de la expedición (DOM) y la capa 2D encima del 3D (números de daño, nombres y vida de los compañeros,
 // flechas hacia lo que está fuera de la pantalla, barras de los élites). El DOM solo se toca cuando algo cambia.
 import { CLASES } from '../datos/clases';
-import { EVENTOS, JEFES, OBJETIVOS, SECUNDARIOS, type IdEvento } from '../datos/mundo';
+import { ETAPAS, EVENTOS, JEFES, OBJETIVOS, SECUNDARIOS, type IdEvento } from '../datos/mundo';
 import { SANTOS } from '../datos/botin';
 import { NIVEL_MAX_ARMA, xpArma } from '../datos/armas';
 import { TIPOS, esJefe } from '../sim/catalogo';
@@ -17,7 +17,14 @@ const $ = (id: string) => document.getElementById(id)!;
 /** Lo que el HUD lee (lo cumplen la simulación y el espejo). */
 export interface EstadoHud {
   t: number;
-  limite: number;
+  /** Barra de la etapa (0-1) y dónde salen las oleadas. */
+  avance: number;
+  oleadas: number[];
+  oleadasHechas: number;
+  /** El Guardián (índice o −1) y si ya salió; la impaciencia de la Noche. */
+  guardian: number;
+  guardianVisto: boolean;
+  impaciencia: number;
   fase: 'juego' | 'extraccion' | 'jefe';
   obj: { tipo: IdObjetivo; meta: number; prog: number; hecho: boolean; fallo: boolean };
   sec: { tipo: IdSecundario; meta: number; prog: number };
@@ -46,7 +53,7 @@ interface Numero {
 }
 
 const AVISOS: Record<number, (a: number, b: number, nombre: (i: number) => string) => [string, string?]> = {
-  1: () => ['¡Objetivo cumplido! La campana baja en un minuto.', 'grande'],
+  1: () => ['¡Objetivo cumplido! La barra dio un salto.', 'grande'],
   2: () => ['Se acabó el tiempo: ¡baja la campana!'],
   3: (a, b) => [`Altar destruido (${a}/${b}): ¡viene una oleada!`, 'peligro'],
   4: () => ['¡El élite marcado cayó!', 'grande'],
@@ -65,6 +72,18 @@ const AVISOS: Record<number, (a: number, b: number, nombre: (i: number) => strin
   17: () => ['La carreta se perdió.', 'peligro'],
   19: (a) => [`¡El jefe cambia! Fase ${a}.`, 'peligro'],
   20: (a) => [EVENTOS[(['enjambre', 'cerco', 'lluvia_huesos', 'eclipse', 'marea', 'cofre_maldito'] as IdEvento[])[a]]?.aviso ?? '', 'peligro'],
+  21: () => ['¡Despertó el Guardián! Mátenlo para llamar la campana.', 'grande'],
+  22: (a) => [`La Noche se impacienta (×${a}): la horda viene más rápida y más brava.`, 'peligro'],
+  23: () => ['¡Cayó el Guardián! Baja la campana.', 'grande'],
+  25: (a, b) => [b > 1 ? `¡Oleada ${a} de ${b}!` : '¡Una oleada!', 'peligro'],
+  26: (a, b) => [`Un sepulcro se abrió solo (${a}/${b}): ¡sale su custodio!`, 'peligro'],
+  27: (a, b) => [`Abriste un sepulcro (${a}/${b}): ¡sale su custodio!`, 'peligro'],
+  28: (a) => [`${TIPOS[a]?.nombre ?? 'El bicho'} se escapó con todo.`],
+  29: (a) => [TIPOS[a]?.id === 'rata_dorada' ? '¡Una rata dorada! Atrápenla antes de que se escape.' : '¡Un ladrón de tumbas va cargado! Que no se escape.', 'grande'],
+  30: () => ['Cayó una pluma de grifo: atrápala antes de que se la lleve el viento.'],
+  31: (a, b) => [`Rosa del velo (${a}/${b}): un poco de calma.`],
+  32: (a, b) => [`Pluma de grifo (${a}/${b}): ¡el viento te empuja!`],
+  33: (a, b) => [`Hongos de tumba (${a}/${b})`],
 };
 
 /** La leyenda de la visión astral: qué es cada color. */
@@ -103,6 +122,8 @@ export class Hud {
   /** Nombre de cada jugador (Javier, Laura o el del amigo). */
   nombre: (i: number) => string = (i) => `Jugador ${i + 1}`;
   private veloDano = $('velo-dano');
+  /** El cartel del Guardián ya salió en esta etapa (se reinicia al construir el HUD). */
+  guardianAnunciado = false;
   private golpeVelo = 0;
   private P = { x: 0, y: 0, visible: false };
 
@@ -120,6 +141,7 @@ export class Hud {
   /** Arma el HUD para el jugador local. */
   construir(j: Jugador, local: number) {
     this.local = local;
+    this.guardianAnunciado = false;
     const def = CLASES[j.clase];
     this.raiz.innerHTML = `
       <div class="hud-xp"><i data-e="xp"></i></div>
@@ -135,6 +157,7 @@ export class Hud {
       <div class="hud-objetivo">
         <span class="hud-etapa" data-e="etapa"></span>
         <span class="hud-reloj" data-e="reloj"></span>
+        <div class="hud-avance" data-e="avanceB"><i data-e="avance"></i><span class="marcas" data-e="marcas"></span><span class="fin-barra" data-e="finB">${glifo('calavera')}</span></div>
         <div class="obj" data-e="obj"></div>
         <div class="obj secundario" data-e="sec"></div>
       </div>
@@ -259,13 +282,25 @@ export class Hud {
     this.poner('comp', cc, (el) => {
       el.innerHTML = comp.map((o) => `<div class="companero${o.estado === 1 ? ' caido' : ''}"><span>${esc(this.nombre(o.i))}${o.estado === 1 ? ' · caído' : o.estado === 2 ? ' · fuera' : ''}</span><div class="barra"><i style="width:${Math.max(0, (o.hp / o.hpMax) * 100).toFixed(0)}%"></i></div></div>`).join('');
     });
-    // Etapa, reloj y objetivo
-    this.texto('etapa', est.cfg.exp.infinito ? `Etapa ${est.cfg.etapa} · infinito${est.cfg.final ? ' · jefe' : ''}` : `Etapa ${est.cfg.etapa}${est.cfg.final ? ' · final' : ''} de 4`);
-    const quedan = Math.max(0, est.limite - est.t);
-    const enJefe = est.fase === 'jefe';
-    // (el reloj dice para qué es: cuando llega a cero baja la campana; en la etapa final, sale el jefe)
-    this.texto('reloj', enJefe || est.sinReloj ? '' : est.fase === 'extraccion' ? '' : `${est.cfg.final ? 'Jefe en' : 'Campana en'} ${Math.floor(quedan / 60)}:${String(Math.floor(quedan % 60)).padStart(2, '0')}`);
-    this.poner('reloj!', quedan < 20 && est.fase === 'juego' ? '1' : '0', (el, x) => el.classList.toggle('urgente', x === '1'));
+    // Etapa, barra de avance y objetivo
+    this.texto('etapa', est.cfg.exp.infinito ? `Etapa ${est.cfg.etapa} · infinito${est.cfg.final ? ' · jefe' : ''}` : `Etapa ${est.cfg.etapa}${est.cfg.final ? ' · final' : ''} de ${ETAPAS}`);
+    const enJuego = est.fase === 'juego' && !est.sinReloj;
+    this.ver('avanceB', enJuego);
+    let titulo = '';
+    if (enJuego) {
+      this.ancho('avance', est.avance);
+      // Las marcas de las oleadas (las que ya salieron, apagadas)
+      this.poner('marcas', `${est.oleadas.join(',')}|${est.oleadasHechas}`, (el) => {
+        el.innerHTML = est.oleadas.map((x, k) => `<i class="${k < est.oleadasHechas ? 'paso' : ''}" style="left:${(x * 100).toFixed(1)}%"></i>`).join('');
+      });
+      const seps = est.cfg.final ? est.ent.filter((e) => e.vivo && e.tipo === ENT.SEPULCRO) : [];
+      if (seps.length) titulo = `Sepulcros ${seps.filter((e) => e.est >= 1).length}/${seps.length}`;
+      else if (est.guardian >= 0) titulo = '¡Maten al Guardián!';
+      else titulo = est.cfg.final ? 'La noche se acerca al jefe' : 'La noche despierta a su Guardián';
+      if (est.impaciencia > 0) titulo += ` · impaciencia ×${est.impaciencia}`;
+    }
+    this.texto('reloj', titulo);
+    this.poner('reloj!', est.impaciencia > 0 && enJuego ? '1' : '0', (el, x) => el.classList.toggle('urgente', x === '1'));
     const o = est.obj;
     const defO = OBJETIVOS[o.tipo];
     let progTxt = `${Math.floor(o.prog)}/${o.meta}`;
@@ -285,13 +320,19 @@ export class Hud {
       this.html('extra', txt);
       this.poner('extra!', c.est === 1 && c.cuenta < 10 ? '1' : '0', (el, x) => el.classList.toggle('urgente', x === '1'));
     } else this.ver('extra', false);
-    // Jefe
+    // Jefe (o el Guardián de la etapa, con la misma barra)
+    const g = est.guardian;
     if (est.jefe >= 0 && est.E.vivo[est.jefe] && esJefe(est.E.tipo[est.jefe])) {
       this.ver('jefe', true);
       const id = TIPOS[est.E.tipo[est.jefe]].id;
       this.texto('jefeN', JEFES[id]?.nombre ?? '');
       this.ancho('jefeV', est.E.hp[est.jefe] / est.E.hpMax[est.jefe]);
       this.ancho('jefeEco', est.E.hp[est.jefe] / est.E.hpMax[est.jefe]);
+    } else if (g >= 0 && est.E.vivo[g]) {
+      this.ver('jefe', true);
+      this.texto('jefeN', `El Guardián · ${TIPOS[est.E.tipo[g]]?.nombre ?? ''}`);
+      this.ancho('jefeV', est.E.hp[g] / est.E.hpMax[g]);
+      this.ancho('jefeEco', est.E.hp[g] / est.E.hpMax[g]);
     } else this.ver('jefe', false);
     this.capa(dt, est);
   }
@@ -343,6 +384,10 @@ export class Hud {
         const id = TIPOS[d[k + 4]]?.id;
         const j = id ? JEFES[id] : null;
         if (j) cartelJefe(j.nombre, j.titulo);
+      } else if (t === S.JEFE && d[k + 1] === 4 && !this.guardianAnunciado) {
+        // (el Guardián se anuncia con su cartel una vez por etapa; los custodios, solo con el aviso)
+        this.guardianAnunciado = true;
+        cartelJefe(`El Guardián · ${TIPOS[d[k + 4]]?.nombre ?? ''}`, 'Mátenlo y baja la campana');
       } else if (t === S.NIVEL && d[k + 1] === this.local) {
         aviso(`Nivel ${d[k + 2]}`, 'grande', 1100);
       } else if (t === S.EVOLUCION && d[k + 1] === this.local) {
