@@ -62,10 +62,10 @@ const BESOS: VarianteMimo[] = [
   { id: 'esquimal', nombre: 'un beso de esquimal', da: da('beso', 'Narices con narices 🐧', RISITA, 'feliz'), recibe: recibe('beso', '¡Cosquillas! 😆', RISITA, 'carcajada') },
   { id: 'robado', nombre: 'un beso robado', da: da('beso', 'Robado y sin devolución 😏', PRESUME, 'beso'), recibe: recibe('boca_abierta', '¡Ladrón! …devuélvemelo 😳', { pose: 'feliz', cara: 'beso' }, 'sorprendido') },
   { id: 'tiamu', nombre: 'un «ti amu»', da: da('beso', 'Ti amu ❤️', { pose: 'feliz', cara: 'feliz' }, 'beso'), recibe: recibe('beso', 'Ti amu más 🤍', { pose: 'feliz', cara: 'guino' }, 'beso') },
-  { id: 'kat', nombre: 'un beso de promesa', da: da('beso', 'Lo juro por Kat: te amo para siempre 👶', { pose: 'feliz', cara: 'feliz' }, 'beso'), recibe: recibe('beso', 'Y Kat comiendo dulces, seguro 🍬', RISITA, 'beso') },
+  { id: 'semana', nombre: 'un beso de promesa', da: da('beso', 'Te prometo un beso para cada día de la semana 📅', { pose: 'feliz', cara: 'feliz' }, 'beso'), recibe: recibe('beso', '¿Y los domingos? ¡Doble! 😚', RISITA, 'beso') },
   // Los de Él
   { id: 'esposha', de: 'el', nombre: 'un beso de «esposha»', da: da('beso', 'Esposha míaaa 😚', RISITA, 'beso'), recibe: recibe('beso', 'Ay deos, este hombre 🙈', TIMIDO, 'beso') },
-  { id: 'amodoro', de: 'el', nombre: 'un «te amodoro»', da: da('beso', 'Te amodoro ❤️', PRESUME, 'beso'), recibe: recibe('pensando', '¿Eso existe? …igual yo también 🥰', { pose: 'feliz', cara: 'feliz' }, 'normal') },
+  { id: 'amodoro', de: 'el', nombre: 'un «te amodoro»', da: da('beso', 'Te amodoro ❤️', PRESUME, 'beso'), recibe: recibe('pensando', '¡Y yo te amodoro el doble! 😚', { pose: 'feliz', cara: 'feliz' }, 'normal') },
   { id: 'dico', de: 'el', nombre: 'un beso «dico»', da: da('beso', 'Mmm… dico 😋', PRESUME, 'beso'), recibe: recibe('beso', '¿Dico? ¡Divino, dirás! 😤', { pose: 'puchero', cara: 'puchero' }, 'beso') },
   { id: 'motivo', de: 'el', nombre: 'un beso de los serios', da: da('beso', 'Eres mi motivo de todos los días ❤️', { pose: 'acariciar', cara: 'feliz' }, 'beso'), recibe: recibe('beso', 'Y tú el mío, esposo 🥺', TIMIDO, 'beso') },
   // Los de Ella
@@ -77,24 +77,24 @@ const BESOS: VarianteMimo[] = [
 
 const ABRAZOS: VarianteMimo[] = [
   { id: 'oso', nombre: 'un abrazo de oso', da: da('ABRAZO', '¡Abrazo de oso! 🐻', { pose: 'ABRAZO', cara: 'carcajada' }), recibe: recibe('ABRAZO', 'No respiro… pero no me sueltes 😵‍💫', { pose: 'ABRAZO', cara: 'feliz', temblor: 0.02 }, 'sorprendido') },
-  { id: 'casa', nombre: 'un abrazo de casita', da: da('ABRAZO', 'Aquí es mi casa 🏡', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', 'Y tú, mi hogar 🤍', { pose: 'ABRAZO', cara: 'feliz' }) },
-  { id: 'bus', nombre: 'un abrazo de reencuentro', da: da('ABRAZO', '¡Valieron las nueve horas de bus! 🚌', { pose: 'ABRAZO', cara: 'carcajada' }), recibe: recibe('ABRAZO', 'Ocho… bueno, nueve 😅', { pose: 'ABRAZO', cara: 'feliz' }) },
+  { id: 'casa', nombre: 'un abrazo de casita', da: da('ABRAZO', 'Aquí es mi casa 🏡', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', 'Pues no te me mudas nunca 🤍', { pose: 'ABRAZO', cara: 'feliz' }) },
+  { id: 'llegaste', nombre: 'un abrazo de reencuentro', da: da('ABRAZO', '¡Llegaste! Valió la pena cada kilómetro 🧳', { pose: 'ABRAZO', cara: 'carcajada' }), recibe: recibe('ABRAZO', 'Y no me suelto en una semana 😅', { pose: 'ABRAZO', cara: 'feliz' }) },
   { id: 'apretadito', nombre: 'un abrazo apretadito', da: da('ABRAZO', 'Apretadito, apretadito 🤗', { pose: 'ABRAZO', cara: 'feliz', temblor: 0.015 }), recibe: recibe('ABRAZO', 'Cinco minuticos más 🥺', { pose: 'ABRAZO', cara: 'feliz' }) },
   { id: 'seguro', nombre: 'un abrazo de lugar seguro', da: da('ABRAZO', 'Aquí no te pasa nada 🤍', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', 'Mi lugar seguro 🥹', { pose: 'ABRAZO', cara: 'feliz' }) },
   { id: 'brinco', nombre: 'un abrazo con brinquito', da: da('ABRAZO', '¡Te extrañé un montón! 💞', BRINCO), recibe: recibe('ABRAZO', '¡Yeiii! 🎉', BRINCO) },
-  { id: 'llamada', nombre: 'un abrazo de los que no caben en una videollamada', da: da('ABRAZO', 'Esto no se puede por videollamada 📱', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', 'Ni con veinte horas de llamada 🥺', { pose: 'ABRAZO', cara: 'feliz' }) },
+  { id: 'llamada', nombre: 'un abrazo de los que no caben en una llamada', da: da('ABRAZO', 'Esto no se puede por el celular 📱', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', 'Ni con la mejor señal del mundo 🥺', { pose: 'ABRAZO', cara: 'feliz' }) },
   { id: 'rompecabezas', nombre: 'un abrazo de rompecabezas', da: da('ABRAZO', 'Lo que a ti te falta lo tengo yo 🧩', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', '…y al revés. Encajamos perfecto ✨', { pose: 'ABRAZO', cara: 'guino' }) },
-  { id: 'silencioso', nombre: 'un abrazo de «video silenciosa»', da: da('ABRAZO', 'Shhh… abrazo silencioso 🤫', { pose: 'ABRAZO', cara: 'dormido' }), recibe: recibe('ABRAZO', '…zzz 😴', { pose: 'ABRAZO', cara: 'dormido' }) },
+  { id: 'silencioso', nombre: 'un abrazo calladito', da: da('ABRAZO', 'Shhh… abrazo calladito 🤫', { pose: 'ABRAZO', cara: 'dormido' }), recibe: recibe('ABRAZO', '…zzz 😴', { pose: 'ABRAZO', cara: 'dormido' }) },
   // Los de Él
   { id: 'invitada', de: 'el', nombre: 'un abrazo de invitación', da: da('ABRAZO', 'Donde yo voy, tú estás invitada 😋', { pose: 'ABRAZO', cara: 'guino' }), recibe: recibe('ABRAZO', '¡Me apunto a todo! 🙋‍♀️', APLAUSO) },
   { id: 'pulga', de: 'el', nombre: 'un abrazo de rescate', da: da('ABRAZO', '¿Qué aventura hiciste hoy, pulga aventurera? 🐜', { pose: 'ABRAZO', cara: 'sorprendido' }), recibe: recibe('ABRAZO', 'Mejor ni te cuento 🙈', TIMIDO) },
   { id: 'orgulloso', de: 'el', nombre: 'un abrazo de orgullo', da: da('ABRAZO', 'Estoy orgulloso de ti, nunca lo olvides ❤️', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', 'Y yo de ti, mi niño 🤍', { pose: 'ABRAZO', cara: 'feliz' }) },
-  { id: 'lonchera', de: 'el', nombre: 'un abrazo con promesa', da: da('ABRAZO', 'Cuando vivamos juntos te hago la lonchera 🍱', { pose: 'ABRAZO', cara: 'presumido' }), recibe: recibe('ABRAZO', '¿Con wafle? 🧇', { pose: 'pensando', cara: 'guino' }) },
+  { id: 'cobija', de: 'el', nombre: 'un abrazo de cobija', da: da('ABRAZO', 'Ven, que te caliento 🧣', { pose: 'ABRAZO', cara: 'presumido' }), recibe: recibe('ABRAZO', '¡Qué rico calorcito! 🥰', { pose: 'ABRAZO', cara: 'feliz' }) },
   // Los de Ella
   { id: 'lanudo', de: 'ella', nombre: 'un abrazo de perro lanudo', da: da('ABRAZO', '¡Mi perro lanudo! 🐶', { pose: 'ABRAZO', cara: 'carcajada' }), recibe: recibe('ABRAZO', 'Guau 🐶… digo, te amo', RISITA) },
   { id: 'panda', de: 'ella', nombre: 'un abrazo de panda', da: da('ABRAZO', 'Mi panda abrazable 🐼', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', 'Abrazable y gordito 🐼', PRESUME) },
   { id: 'nodejes', de: 'ella', nombre: 'un abrazo de los largos', da: da('ABRAZO', 'Quiero una vida entera a tu lado 🤍', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', 'Y yo nunca te dejo ir ❤️', { pose: 'ABRAZO', cara: 'feliz' }) },
-  { id: 'pilar', de: 'ella', nombre: 'un abrazo de pilar', da: da('ABRAZO', 'Contigo la vida se hace liviana ✨', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', 'Para eso estoy, esposa 💪', { pose: 'musculo', cara: 'presumido' }) },
+  { id: 'pilar', de: 'ella', nombre: 'un abrazo de equipo', da: da('ABRAZO', 'Contigo la vida se hace liviana ✨', { pose: 'ABRAZO', cara: 'feliz' }), recibe: recibe('ABRAZO', 'Para eso estoy, esposa 💪', { pose: 'musculo', cara: 'presumido' }) },
 ];
 
 const CARICIAS: VarianteMimo[] = [
@@ -109,12 +109,12 @@ const CARICIAS: VarianteMimo[] = [
   // Los de Él
   { id: 'cotita', de: 'el', nombre: 'una caricia a la cotita', da: da('acariciar', 'La cotita más hermota de este mundo 🥰', { pose: 'acariciar', cara: 'feliz' }), recibe: recibe('recibir_caricia', 'Ay deos 🙈', TIMIDO) },
   { id: 'mimilona', de: 'el', nombre: 'mimos de mimilona', da: da('acariciar', 'Ay, mi mimilona :3', { pose: 'acariciar', cara: 'feliz' }), recibe: recibe('recibir_caricia', 'Más mimos o me pongo brava 😤', { pose: 'jarras', cara: 'puchero' }) },
-  { id: 'fotito', de: 'el', nombre: 'una caricia… y una fotito', da: da('acariciar', 'Quietica… fotito 📸', { pose: 'senalar_a', pose2: 'senalar_b', ritmo: 2, cara: 'guino' }), recibe: recibe('recibir_caricia', 'Sácame lo bonita 💅', { pose: 'corona', cara: 'presumido' }) },
+  { id: 'manos', de: 'el', nombre: 'una caricia de manos', da: da('acariciar', 'Tus manos chiquitas en las mías 🤲', { pose: 'acariciar', cara: 'feliz' }), recibe: recibe('recibir_caricia', '¿Chiquitas? ¡Son normales! 😤', { pose: 'puchero', cara: 'puchero' }) },
   { id: 'pantalla', de: 'el', nombre: 'una caricia de fondo de pantalla', da: da('acariciar', 'Ya eres mi fondo de pantalla 📱', PRESUME), recibe: recibe('recibir_caricia', '¡Pero en la foto bonita! 😳', { pose: 'boca_abierta', cara: 'sorprendido' }) },
   // Los de Ella
   { id: 'nino', de: 'ella', nombre: 'una caricia de «mi niño»', da: da('acariciar', 'Mi niño bonito 🤍', { pose: 'acariciar', cara: 'feliz' }), recibe: recibe('recibir_caricia', 'Así sí :3', { pose: 'feliz', cara: 'feliz' }) },
   { id: 'cosita', de: 'ella', nombre: 'una caricia de cosita preciosa', da: da('acariciar', 'Cosita preciosa ✨', { pose: 'acariciar', cara: 'feliz' }), recibe: recibe('recibir_caricia', 'Tu cosita 😚', TIMIDO) },
-  { id: 'duolingo', de: 'ella', nombre: 'una caricia con recordatorio', da: da('acariciar', '¿Ya hiciste el Duolingo? 🦉', { pose: 'jarras', cara: 'puchero' }), recibe: recibe('recibir_caricia', '…¿otra caricia mientras me acuerdo? 😅', { pose: 'rascarse', cara: 'nervioso' }) },
+  { id: 'sonrisa', de: 'ella', nombre: 'una caricia de sonrisa', da: da('acariciar', '¿Y esa sonrisita? 🤭', { pose: 'jarras', cara: 'guino' }), recibe: recibe('recibir_caricia', 'Es que estás aquí 😊', TIMIDO) },
   { id: 'pensando', de: 'ella', nombre: 'una caricia de «estaba pensando en ti»', da: da('acariciar', 'Estaba pensando en ti 🤍', { pose: 'feliz', cara: 'feliz' }), recibe: recibe('recibir_caricia', 'Yo siempre pienso en ti 🥺', TIMIDO) },
 ];
 

@@ -41,8 +41,9 @@ function textosDelLavado() {
   return valores.map((t) => t.replace(/\\'/g, "'").replace(/^\P{L}+/u, '').trim());
 }
 
-/** Frases de los recuerdos que también son de uso común (no delatan nada): «Poderes para siempre». */
-const COMUNES = new Set(['Para siempre']);
+/** Frases de los recuerdos que también son de uso común (no delatan nada): «Poderes para siempre», la «suerte» de los
+ *  juegos, las «lucecitas» de la carta de todos. */
+const COMUNES = new Set(['Para siempre', 'La suerte', 'Lucecitas']);
 
 const FRASES = [...new Set([...recuerdosDelDocumento(), ...textosDelLavado()].filter((t) => t.length >= 8 && !COMUNES.has(t)))];
 /** Platos que son parte de los juegos de los amigos (el kiosco de wafles del súper, sus productos): el plato solo no

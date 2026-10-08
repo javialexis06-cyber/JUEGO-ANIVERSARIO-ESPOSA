@@ -48,14 +48,14 @@ línea, la escena sale en los dos celulares al mismo tiempo; la IA espera a que 
 | Escena | Precio | Dura | De qué se trata |
 |---|---:|---:|---|
 | Guerra de almohadas | 45 | 13 s | Un almohadazo por sorpresa y empieza la guerra: plumas por todo el cuarto hasta que caen rendidos en la cama. |
-| La propuesta | 100 | 15 s | Con pétalos por todo el cuarto, uno se arrodilla con un anillo: «¿Te casarías conmigo… otra vez?». |
+| Baile lento | 100 | 15 s | Pétalos por todo el cuarto, una flor y un baile lento sin música… hasta que uno pisa al otro. (id `la-propuesta`: la propuesta es de Cien Puertas) |
 | Despertar a besos | 25 | 12 s | Suena la alarma; uno no se quiere levantar y el otro lo despierta a besos hasta que se ríe. |
 | La carta | 30 | 13 s | Uno deja una carta en la almohada; el otro la lee y termina llorando de amor. |
 | Cuento para dormir | 25 | 13 s | Uno lee un cuento en la cama con voces chistosas; el otro se duerme… y al final el que lee también. |
 | El monstruo de la cama | 30 | 13 s | Un ruido raro en la noche, uno se esconde bajo la cobija y el otro sale a enfrentar al «monstruo»… que es el peluche. |
 | Desfile del clóset | 30 | 13 s | Uno se prueba sombreros frente al clóset y desfila como modelo; el otro califica con aplausos y fotos. |
 | La guerra del lado de la cama | 25 | 12 s | Los dos se acuestan y se empujan por espacio y por la cobija… hasta que terminan en el medio, abrazados. |
-| ¿Cómo se llamará? | 35 | 14 s | Acostados mirando el techo, discuten el nombre de la futura bebé: «Katherine»… «¡Lexy Katherine!». |
+| ¿Qué pedimos? | 35 | 14 s | Acostados mirando el techo, discuten qué pedir de comida: «Pizza»… «¡Arepas!». (id `nombres-bebe`: el nombre de la niña es de Cien Puertas) |
 
 ### Cocina
 

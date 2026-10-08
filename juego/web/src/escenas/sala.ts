@@ -86,10 +86,10 @@ export const SALA: Escena[] = [
     guion: [
       { t: 0, B: { alto: SOFA, pasos: [{ dur: 3, pose: 'sentado', cara: 'normal' }] }, camara: 'general', sub: 'Una noche cualquiera, en la sala…' },
       { t: 0.8, A: { ir: [0.2, 0.1], vel: 0.9, rot: 'otro' }, sonido: 'guitarra' },
-      { t: 2.8, A: { pasos: [{ dur: 5, pose: 'agitar_a', pose2: 'agitar_b', ritmo: 1.6, cara: 'feliz', mov: [{ tipo: 'balanceo', grados: 6, frec: 0.8 }] }] }, fx: [['A', { tipo: 'notas', dur: 5 }]], sonido: 'musiquita', sub: '♪ Eres mi pilar, mi hogar… ♪', camara: 'dos' },
+      { t: 2.8, A: { pasos: [{ dur: 5, pose: 'agitar_a', pose2: 'agitar_b', ritmo: 1.6, cara: 'feliz', mov: [{ tipo: 'balanceo', grados: 6, frec: 0.8 }] }] }, fx: [['A', { tipo: 'notas', dur: 5 }]], sonido: 'musiquita', sub: '♪ Contigo hasta los lunes son bonitos… ♪', camara: 'dos' },
       { t: 4.0, B: { pasos: [{ dur: 3, pose: 'sentado_feliz', cara: 'feliz' }] }, fx: [['B', { tipo: 'sonrojo', dur: 3 }]] },
       { t: 5.6, sonido: 'guitarra', camara: 'caraB', fx: [['B', { tipo: 'corazones', n: 6 }]] },
-      { t: 7.2, sub: '♪ …te busqué en Transformice y te encontré en la vida ♪', camara: 'A', sonido: 'musiquita' },
+      { t: 7.2, sub: '♪ …y si me pierdo, que sea en tu sonrisa ♪', camara: 'A', sonido: 'musiquita' },
       { t: 9.2, A: { prop: null, pasos: [{ dur: 1.2, pose: 'reverencia', cara: 'guino' }] }, sub: '', camara: 'dos' },
       { t: 9.6, B: { alto: 0, pasos: [{ dur: 1.4, pose: 'aplauso_a', pose2: 'aplauso_b', ritmo: 3, cara: 'carcajada', sonidoRitmo: 'palmada' }] }, dice: ['B', '¡Otra, otra!'] },
       { t: 11.0, B: { ir: [0.05, 0.05], vel: 1.4 }, fx: [['B', { tipo: 'corazones', n: 10 }]] },
@@ -243,7 +243,7 @@ export const SALA: Escena[] = [
       { t: 4.0, A: 'abrazo', B: 'abrazo', sonido: 'abrazo', fx: [['A', { tipo: 'corazones', n: 6 }]] },
       { t: 5.2, A: { pasos: [{ dur: 2.2, pose: 'abrazo_der', cara: 'carcajada', mov: [{ tipo: 'giro', vueltas: 1 }] }] }, B: { pasos: [{ dur: 2.2, pose: 'abrazo_izq', cara: 'carcajada', mov: [{ tipo: 'giro', vueltas: 1 }, { tipo: 'salto', alto: 0.2 }] }] }, sub: '…y todo el cansancio se fue.' },
       { t: 7.8, A: { pasos: [{ dur: 1.5, pose: 'beso', cara: 'beso' }] }, B: { pasos: [{ dur: 1.5, pose: 'beso', cara: 'beso' }] }, sonido: 'beso', fx: [['B', { tipo: 'sonrojo', dur: 2 }]], camara: 'dos' },
-      { t: 9.4, sub: 'Hogar es donde estás tú.' },
+      { t: 9.4, sub: 'Con un abrazo así, cualquier día se arregla.' },
     ],
   },
   {

@@ -1,8 +1,11 @@
 // Recuerdos flotantes: mientras se bañan (o se quedan abrazados en la cama) sale una burbuja con un dibujito
-// animado de los dos y lo que se dijeron. Los recuerdos son los de verdad (los mismos de Cien Puertas); en la
-// cama se mezclan con discusiones bobas y deseos a futuro. Cada uno dura de 10 a 15 s y salen al azar.
+// animado de los dos y lo que se dicen. En el baño son las cosas de todos los días del chat (la racha de Duolingo, la
+// base de Minecraft, la fotito, la video silenciosa…) y discusiones bobas en las que nunca se ponen de acuerdo; en la
+// cama, además, lo que sueñan para cuando vivan juntos. Los recuerdos grandes de la historia son de Cien Puertas y
+// no se repiten aquí (cada juego cuenta cosas distintas: ver «Quién cuenta qué» en docs/la-pareja.md).
+// Cada uno dura de 10 a 15 s y salen al azar.
 import './recuerdos.css';
-import { type Dicho, RECUERDOS } from '../puertas/historia';
+import type { Dicho } from '../puertas/historia';
 import { ESCENAS, H, Movimiento, Pose, ponerReacciones, precargar, W } from './recuerdos_arte';
 import { NOMBRE_ROL } from './modelo';
 import { esc } from './ui_casa';
@@ -16,45 +19,40 @@ interface Vineta {
   lineas: Dicho[];
 }
 
-/** Discusiones bobas (las de siempre: nunca se ponen de acuerdo en cómo pasó). */
+/** Discusiones bobas de todos los días (las del chat y otras en las que nunca se ponen de acuerdo). */
 const DISCUSIONES: Vineta[] = [
-  { titulo: '¿Treinta días o cuarenta?', dibujo: 'calendario', lineas: [['ella', 'Fueron como treinta días.'], ['el', 'Cuarenta. Del 15 de septiembre al 25 de octubre.'], ['ella', 'Bueno… pero se sintieron como treinta.'], ['el', 'Los conté todos.']] },
-  { titulo: '¿Insistente o persistente?', dibujo: 'birrete', lineas: [['ella', 'Eras insistente.'], ['el', 'Persistente.'], ['ella', 'Insistente.'], ['el', 'Y funcionó, ¿o no?']] },
-  { titulo: '¿Ocho horas o nueve?', dibujo: 'bus', lineas: [['el', 'De Sopetrán a Bucaramanga son ocho horas.'], ['ella', 'Nueve, si el bus para.'], ['el', 'Siempre para.'], ['ella', 'Entonces son nueve.']] },
-  { titulo: '¿Quién miraba a quién?', dibujo: 'estrellas', lineas: [['ella', 'En el planetario me mirabas a mí.'], ['el', 'Yo miraba las estrellas.'], ['ella', '¿Y cuál constelación era?'], ['el', '…la más bonita. Tú.']] },
-  { titulo: '¿Katherine o Lexy Katherine?', dibujo: 'familia', lineas: [['el', 'Se va a llamar Katherine.'], ['ella', 'Lexy Katherine.'], ['el', 'Katherine.'], ['ella', 'LEXY Katherine.'], ['el', '…Lexy Katherine.']] },
-  { titulo: '¿Las completamos o no?', dibujo: 'videollamada', lineas: [['ella', 'Completamos las 24 horas de videollamada.'], ['el', 'Casi.'], ['ella', '¡Las completamos!'], ['el', 'Tú te dormiste en la hora veinte.']] },
-  { titulo: '¿Estafa o no estafa?', dibujo: 'raton', lineas: [['el', 'Me querías estafar.'], ['ella', '¡Solo un poquito!'], ['el', 'Y te salió al revés.'], ['ella', 'Me estafaste el corazón.']] },
-  { titulo: '¿Era o eres?', dibujo: 'ojos', lineas: [['el', 'La primera vez que te vi, eras perfecta.'], ['ella', '¿Era?'], ['el', 'Eres. Eres perfecta.'], ['ella', 'Así me gusta.']] },
-  { titulo: '¿Estudiábamos o explicabas?', dibujo: 'lapiz', lineas: [['ella', 'Para el ICFES estudiábamos juntos.'], ['el', 'Yo explicaba.'], ['ella', 'Y yo te miraba explicar. Eso también es estudiar.']] },
-  { titulo: '¿Quién pagó?', dibujo: 'copa', lineas: [['ella', 'Ese restaurante de súper lujo… ¿quién lo pagó?'], ['el', 'Mejor hablemos de otra cosa.'], ['ella', 'Jajaja, ¡cobarde!']] },
-  { titulo: '¿Las luces o tus ojos?', dibujo: 'luces', lineas: [['el', 'Las luces de diciembre estaban lindas.'], ['ella', '¿Más que yo?'], ['el', 'Yo solo te miraba a ti.']] },
   { titulo: '¿Muak o betito?', dibujo: 'charla', lineas: [['el', 'Un muak no es lo mismo que un betito.'], ['ella', '¿Y cuál es la diferencia?'], ['el', 'El betito es en persona.'], ['ella', 'Entonces ven y dame uno.']] },
   { titulo: '¿Casi o se quemó?', dibujo: 'casa', lineas: [['el', 'La base de Minecraft casi se quema toda.'], ['ella', 'Se quemó.'], ['el', 'CASI.'], ['ella', 'Quedó un hueco negro, mor.']] },
   { titulo: '¿Y la racha?', dibujo: 'lapiz', lineas: [['ella', '¿Hiciste el Duolingo?'], ['el', 'Shi.'], ['ella', '¿Y la racha?'], ['el', '…mañana hago dos.']] },
   { titulo: '¿Fotito o no fotito?', dibujo: 'ojos', lineas: [['el', 'Mándame una fotito.'], ['ella', 'Ahorita no, estoy fea.'], ['el', 'Eso no existe.'], ['ella', '…bueno, una.']] },
   { titulo: '¿Para qué la video silenciosa?', dibujo: 'videollamada', lineas: [['ella', '¿Video silenciosa?'], ['el', '¿Y para qué, si no me hablas?'], ['ella', 'Para tenerte ahí.'], ['el', '…bueno, eso sí.']] },
   { titulo: '¿Te amo o te amodoro?', dibujo: 'charla', lineas: [['el', 'Te amodoro.'], ['ella', 'Eso no existe.'], ['el', 'Ahora sí: lo inventé para ti.'], ['ella', 'Ay deos… yo también te amodoro.']] },
+  { titulo: '¿Quién cuelga primero?', dibujo: 'videollamada', lineas: [['ella', 'Cuelga tú.'], ['el', 'No, tú.'], ['ella', 'A la de tres: una, dos… tres.'], ['el', '…¿y por qué no colgaste?'], ['ella', '¿Y tú?']] },
+  { titulo: '¿Ay deos o ay deoz?', dibujo: 'lapiz', lineas: [['el', 'Se escribe «ay deos».'], ['ella', 'Ay deoz. Con zeta.'], ['el', 'Eso no está en el diccionario.'], ['ella', 'Está en el nuestro.']] },
+  { titulo: '¿Mor o amor?', dibujo: 'charla', lineas: [['el', '¿Por qué me dices «mor»?'], ['ella', 'Es «amor», pero con afán.'], ['el', 'Entonces dímelo despacito.'], ['ella', 'Amooor.'], ['el', 'Así sí.']] },
+  { titulo: '¿Uwu o dos puntos tres?', dibujo: 'charla', lineas: [['el', 'Te mandé un uwu.'], ['ella', 'Eso es de niño chiquito.'], ['el', '¿Y el :3 qué?'], ['ella', 'El :3 es elegante.']] },
+  { titulo: '¿Pera qué?', dibujo: 'ojos', lineas: [['ella', 'Pera.'], ['el', '¿Pera qué?'], ['ella', 'Pera, que ya casi.'], ['el', 'Llevo media hora con la pera.'], ['ella', '…pera.']] },
+  { titulo: '¿Quién se durmió primero?', dibujo: 'estrellas', lineas: [['ella', 'Te dormiste en plena llamada.'], ['el', 'Tenía los ojos cerrados, pensando.'], ['ella', '¿Y el ronquido?'], ['el', 'Era el ventilador.']] },
+  { titulo: '¿Quién apaga la luz?', dibujo: 'luces', lineas: [['el', 'Apágala tú, que estás más cerca.'], ['ella', 'Tú estás más cerca.'], ['el', 'Medio centímetro.'], ['ella', 'Medio centímetro es más cerca.']] },
+  { titulo: '¿Cuántos días faltan?', dibujo: 'calendario', lineas: [['ella', '¿Cuántos días faltan para vernos?'], ['el', 'Doce.'], ['ella', 'Once y medio: hoy ya casi se acaba.'], ['el', 'Entonces once. Y contando.']] },
+  { titulo: '¿Peli o serie?', dibujo: 'casa', lineas: [['el', 'Una peli.'], ['ella', 'Una serie.'], ['el', 'Una peli y un capítulo.'], ['ella', 'Trato. Pero yo escojo la peli.']] },
+  { titulo: '¿Oki u okis?', dibujo: 'charla', lineas: [['el', 'Oki.'], ['ella', '¿Oki solito? ¿Así, seco?'], ['el', 'Okis, mi amor.'], ['ella', 'Eso. Okis es con cariño.']] },
 ];
 
-/** Deseos a futuro (lo que sueñan los dos). */
+/** Deseos a futuro (lo que sueñan para cuando vivan juntos). Lo de la niña es de Cien Puertas, lo de la comida de
+ *  la cocina y los juegos de mesa de la mesa: aquí no se repiten. */
 const DESEOS: Vineta[] = [
-  { titulo: 'Algún día…', sub: 'Nuestra niña', dibujo: 'familia', lineas: [['ella', 'Una niña con tus ojos…'], ['el', '…y tu risa.'], ['ella', 'Y que duerma en la camita entre los dos.']] },
   { titulo: 'Algún día…', sub: 'Nuestra casita', dibujo: 'casa', lineas: [['el', 'Una casita propia, con jardín.'], ['ella', 'Y con un sofá grande para ver pelis.'], ['el', 'Y que siempre huela a desayuno.']] },
-  { titulo: 'Algún día…', sub: 'Volver a Cartagena', dibujo: 'ola', lineas: [['ella', 'Volver a Cartagena.'], ['el', 'Esta vez sin dormir en la banca del aeropuerto.'], ['ella', '¡Y otra vez la moto acuática!']] },
   { titulo: 'Algún día…', sub: 'La graduación', dibujo: 'birrete', lineas: [['el', 'Verte graduada de psicóloga.'], ['ella', 'Y tú en primera fila gritando mi nombre.'], ['el', 'Con pancarta y todo.']] },
-  { titulo: 'Algún día…', sub: 'Sin distancia', dibujo: 'bus', lineas: [['ella', 'Que ya no haya que contar horas de bus.'], ['el', 'Que el único viaje sea de la cama a la cocina.'], ['ella', 'Juntos, todos los días.']] },
-  { titulo: 'Algún día…', sub: 'Todos los diciembres', dibujo: 'luces', lineas: [['el', 'Ver las luces de diciembre cada año.'], ['ella', 'Y tomarnos la misma foto, año tras año.']] },
-  { titulo: 'Algún día…', sub: 'Viejitos', dibujo: 'casa', lineas: [['ella', 'Viejitos, jugando parchís en el patio.'], ['el', 'Y yo dejándote ganar.'], ['ella', '¡Tú nunca me dejas ganar!']] },
+  { titulo: 'Algún día…', sub: 'Sin distancia', dibujo: 'bus', lineas: [['ella', 'Que ya no haya que contar kilómetros.'], ['el', 'Que el único viaje sea de la cama a la cocina.'], ['ella', 'Juntos, todos los días.']] },
+  { titulo: 'Algún día…', sub: 'Viejitos', dibujo: 'casa', lineas: [['ella', 'Viejitos, tomando tinto en el patio.'], ['el', 'Y yo contándote los mismos chistes.'], ['ella', 'Y yo riéndome igual que hoy.']] },
   { titulo: 'Algún día…', sub: 'Una boda con misterio', dibujo: 'lupa', lineas: [['ella', 'Que la boda tenga un juego: un crimen por mesa que los invitados tengan que resolver.'], ['el', '¿Y quién es el culpable?'], ['ella', 'Tú. Por robarme el corazón.']] },
-  { titulo: 'Algún día…', sub: 'La lonchera', dibujo: 'casa', lineas: [['el', 'Cuando nos casemos te hago la lonchera todos los días.'], ['ella', '¿Con wafle?'], ['el', 'Con wafle y una notica.']] },
-  { titulo: 'Algún día…', sub: 'Almorzar en la casa', dibujo: 'casa', lineas: [['el', 'Cuando vivamos juntos voy a ir a la casa a almorzar.'], ['ella', 'Y yo te espero con un frappé.'], ['el', 'Y betitos de postre.']] },
-  { titulo: 'Algún día…', sub: 'La casa grande y vieja', dibujo: 'casa', lineas: [['el', 'Una casa grande y vieja, llena de cosas nuestras.'], ['ella', 'Y un cuarto para Kat.'], ['el', 'Lleno de dulces.']] },
+  { titulo: 'Algún día…', sub: 'La lonchera', dibujo: 'casa', lineas: [['el', 'Cuando nos casemos te hago la lonchera todos los días.'], ['ella', '¿Y qué le vas a echar?'], ['el', 'Tu almuerzo favorito y una notica.']] },
+  { titulo: 'Algún día…', sub: 'Almorzar en la casa', dibujo: 'casa', lineas: [['el', 'Cuando vivamos juntos voy a ir a la casa a almorzar.'], ['ella', 'Y yo te espero con la mesa puesta.'], ['el', 'Y betitos de postre.']] },
+  { titulo: 'Algún día…', sub: 'La casa grande y vieja', dibujo: 'casa', lineas: [['el', 'Una casa grande y vieja, llena de cosas nuestras.'], ['ella', 'Con una hamaca en el patio.'], ['el', 'Para dos.']] },
   { titulo: 'Algún día…', sub: 'Todas las noches', dibujo: 'estrellas', lineas: [['el', 'Cuando vivamos juntitos: betitos todas las noches.'], ['ella', '¿Y en las mañanas?'], ['el', 'También. Y al mediodía.']] },
   { titulo: 'Algún día…', sub: 'Heladitos en el parque', dibujo: 'flor', lineas: [['el', 'Firmamos y nos vamos a comer heladitos al parque.'], ['ella', '¿Así no más?'], ['el', 'Así. Y después la fiesta, con todo.']] },
 ];
-
-const MEMORIAS: Vineta[] = RECUERDOS.map((r) => ({ titulo: r.titulo, sub: r.fecha, dibujo: r.icono, lineas: r.dialogo }));
 
 /** Cómo reacciona quien habla y quien escucha a una frase (por lo que dice). */
 export function emocion(texto: string): { habla: Pose; oye: Pose | null; mov: Movimiento; movOye: Movimiento } {
@@ -166,7 +164,7 @@ export class PanelRecuerdos {
 
   /** El recuerdo siguiente: sus frases con el tiempo de escribirlas letra por letra y de leerlas con calma. */
   private siguiente(ahora: number) {
-    const lista = this.modo === 'cama' ? [...MEMORIAS, ...DISCUSIONES, ...DISCUSIONES, ...DESEOS, ...DESEOS] : MEMORIAS;
+    const lista = this.modo === 'cama' ? [...DISCUSIONES, ...DESEOS, ...DESEOS] : DISCUSIONES;
     const libres = lista.filter((v) => !this.recientes.includes(v.titulo + (v.sub ?? '')));
     const v = (libres.length ? libres : lista)[Math.floor(Math.random() * (libres.length || lista.length))];
     this.recientes = [...this.recientes, v.titulo + (v.sub ?? '')].slice(-8);

@@ -73,3 +73,27 @@ la apuñalaron una noche en la puerta de la casa; tuvo un ataque de asma o de p�
 Sopetrán después de un Halloween; todavía vive con ansiedad y tiene bastantes problemas de salud. Nunca se
 dramatiza ni se muestra la violencia: a lo sumo se alude («todo lo que has pasado») para decirle lo valiente
 que es.
+
+## Quién cuenta qué
+
+Cada juego cuenta cosas distintas: un recuerdo, una discusión o una carta sale en **un solo juego**. Antes de escribir
+algo romántico nuevo, se busca aquí a quién le toca; si no le toca a nadie, se agrega en la fila de su juego. Las
+palabras del chat («muak», «betito», «ay deoz», «mi niño»…) y los apodos sí se usan en todas partes: son cómo hablan,
+no son historias.
+
+| Juego | Qué cuenta (y nadie más) | Dónde |
+|---|---|---|
+| Cien Puertas | La historia de verdad: los 20 recuerdos (Transformice, matemáticas y filosofía, te busqué, el 25 de octubre, las videollamadas de 24 horas, compañeros de estudio, psicología, la primera vez que se vieron, la meta de Yanbal, Cartagena, los días grises, las luces de diciembre, el bus Sopetrán–Bucaramanga, Halloween, el cumpleaños de reina, el cuento de hadas, el planetario, «mi hogar eres tú», la propuesta y la niña con su nombre) | `src/puertas/historia.ts` |
+| La bañera | Discusiones bobas del chat en las que nunca se ponen de acuerdo: ¿muak o betito?, la base de Minecraft, la racha de Duolingo, la fotito, la video silenciosa, ¿te amo o te amodoro?, ¿quién cuelga primero?, ¿ay deos o ay deoz?, ¿mor o amor?, ¿uwu o :3?, la «pera», ¿quién se durmió primero?, ¿quién apaga la luz?, ¿cuántos días faltan?, ¿peli o serie?, ¿oki u okis? | `src/casa/recuerdos_panel.ts` |
+| La cama (abrazados) | Lo de la bañera y los sueños dichos en el chat: la casita, la graduación, sin distancia, viejitos, la boda con misterio, la lonchera, almorzar en la casa, la casa grande y vieja, betitos todas las noches, heladitos en el parque | `src/casa/recuerdos_panel.ts` |
+| Mimos | Gestos y palabras del chat (el muak tronado, la ráfaga de betitos, la cotita, la mimilona, «hi baby», «te amodoro», el heladito, «orgulloso/a de ti», «lugar seguro», el fondo de pantalla, el buenos días de siempre); ningún recuerdo | `src/casa/mimos.ts` |
+| Lavarse la cara | Tres aventuras de «la protagonista» con humor (el iPhone más barato del mundo, bajarse del carro andando, las olas de diez metros) y 15 cartas de amor sin historia (tiro al corazón, ven para acá, un ratico más, mi estrella del norte…); los disfraces llevan los apodos (panda, perro lanudo, pulga aventurera, la mejor guerrera de Dios, directora Yanbal) | `src/casa/lavado/pareja.ts` |
+| Súper Manía | El mercado en Sopetrán cada vez que él va, cocinar juntitos después y el local que crece como lo de ellos (12 cartas) | `src/recuerdos_super.ts` |
+| Cocina | Los wafles de ella, el frappé de él después del trabajo, las fresas con crema gigantes | `src/casa/cocina/` |
+| Frases del baño | Bobadas sentados en el inodoro, pensando en la esposa / en «mi niño»; Bucaramanga y Medellín | `src/casa/bano_frases.ts` |
+| Retrete espacial | Chistes del vuelo, sin recuerdos | `src/casa/cohete.ts` |
+| Mesa | Reacciones al ganar y perder, con cariño (nunca se enojan al perder) | `src/reacciones/frases.ts` |
+| Escenas premium | Situaciones inventadas de la casa (el baile lento con pisotón, ¿qué pedimos?, la carta de amor escondida, la serenata…) | `src/escenas/` |
+
+Si se acaban las ideas para un juego, se le piden más historias a Javier (él ofreció contar más), nunca se toman
+las de otro juego.

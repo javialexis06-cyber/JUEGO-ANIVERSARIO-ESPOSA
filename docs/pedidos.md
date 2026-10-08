@@ -22,9 +22,11 @@ pulido el repositorio».
      (carrito de 5, meta y meta experta), 12 cartas en ciertos días, mejoras solo desbloqueadas y el súper en la app
      de amigos. Ver `docs/sistemas/mecanicas.md` (punto 9). Las cartas del súper se pueden cambiar por anécdotas
      reales si Javier quiere contar más del mercado en Sopetrán (`src/recuerdos_super.ts`).
-   - **Que nada romántico se repita entre juegos**: revisar todas las cartas, recuerdos y eventos (Cien Puertas, la
-     bañera y la cama, las cartas de amor de Lavarse la cara, el súper, los mimos, la mesa…) para que cada juego tenga
-     situaciones distintas. Si se acaban las ideas, pedirle a Javier más historias (él ofreció contar más).
+   - ~~Que nada romántico se repita entre juegos~~ **hecho**: los 20 recuerdos son solo de Cien Puertas; la bañera
+     cuenta discusiones bobas del chat (16), la cama además los sueños (10), las cartas de Lavarse la cara son cartas
+     de amor sin historia y tres aventuras de «la protagonista», y se cambiaron los mimos, frases, escenas y cartas que
+     repetían algo de otro juego. La tabla «Quién cuenta qué» de `docs/la-pareja.md` dice a quién le toca cada cosa.
+     Si Javier cuenta más anécdotas, van primero a las cartas de Lavarse la cara y a las del súper (hoy inventadas).
 3. **Repositorio pulido** en GitHub: sin cosas obsoletas, README y CLAUDE.md al día (se hizo una primera limpieza; se
    sigue cuidando en cada cambio).
 4. **Cien Puertas con mucho más amor y diseño** (para lo último, después de Sangre y Ceniza y lo urgente). Javier:

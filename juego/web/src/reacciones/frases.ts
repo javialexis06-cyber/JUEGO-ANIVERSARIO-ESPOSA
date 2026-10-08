@@ -10,8 +10,8 @@ export type Situacion =
 
 const FRASES: Record<Situacion, Record<Rol, string[]>> = {
   presumir: {
-    el: ['¿Viste eso, mi amor?', 'Aprende del maestro', 'Soy un genio, ¿no?', 'Esto es matemática pura', 'Como en el ICFES: fácil', '¿Viste eso, esposha?', 'Dico, ¿no? 😎'],
-    ella: ['¿Quién es la reina? Yo', 'Mírame y aprende', 'Así se juega, bebé', 'Pura psicología, amor', 'Y ni me esforcé', 'Ay deoz, qué crack soy', 'Aprende, mi niño'],
+    el: ['¿Viste eso, mi amor?', 'Aprende del maestro', 'Soy un genio, ¿no?', 'Esto es pura estrategia', 'Pan comido, ¿no?', '¿Viste eso, esposha?', 'Dico, ¿no? 😎'],
+    ella: ['¿Quién es la reina? Yo', 'Mírame y aprende', 'Así se juega, bebé', 'Pura intuición, amor', 'Y ni me esforcé', 'Ay deoz, qué crack soy', 'Aprende, mi niño'],
   },
   bien: {
     el: ['¡Eso!', 'Nada mal, ¿eh?', 'Vamos bien', 'Uy, qué jugada', 'Yei :D', 'Shi, señor'],
@@ -30,8 +30,8 @@ const FRASES: Record<Situacion, Record<Rol, string[]>> = {
     ella: ['¡Tramposo!', 'Ni tan bueno…', 'Seguro hiciste trampa', 'Disfrútalo mientras dure', 'Tramposo lanudo'],
   },
   burla: {
-    el: ['Jajaja, qué pesar', '¿Y eso qué fue?', 'Tranquila, yo te enseño', 'Te explico como en el ICFES', 'Jajaja, ay esposa', 'Ay, mi cotita :v'],
-    ella: ['Jijiji', 'Ay, pobrecito', '¿Te ayudo como en artística?', 'Ups…', 'Jajaja, ay mi bb', 'Pobre mi niño'],
+    el: ['Jajaja, qué pesar', '¿Y eso qué fue?', 'Tranquila, yo te enseño', 'Te explico despacito', 'Jajaja, ay esposa', 'Ay, mi cotita :v'],
+    ella: ['Jijiji', 'Ay, pobrecito', '¿Quieres que te explique?', 'Ups…', 'Jajaja, ay mi bb', 'Pobre mi niño'],
   },
   captura: {
     el: ['¡Mío!', 'Gracias por el regalo', 'Esto me lo llevo', '¡Te comí!', 'Esto me lo llevo, cotita'],
@@ -119,7 +119,7 @@ const FRASES: Record<Situacion, Record<Rol, string[]>> = {
   },
   huir: {
     el: ['¡No juego más!', 'Me voy…', '¡Así no juego!', 'Me voy a dormir… mentiras'],
-    ella: ['¡No quiero!', '¡Ya no juego!', 'Me voy, bye', 'Bye, me voy a hacer Duolingo'],
+    ella: ['¡No quiero!', '¡Ya no juego!', 'Me voy, bye', 'Bye, me voy a dormir'],
   },
   sonrojo: {
     el: ['Ay, mi amor…', 'Jejeje', 'Yo también', 'Ay deos…', 'Uwu'],
@@ -129,7 +129,7 @@ const FRASES: Record<Situacion, Record<Rol, string[]>> = {
 
 /** Con amigos: las mismas situaciones, con picardía de parceros y sin nada romántico (sirven para cualquiera). */
 const NEUTRAS: Record<Situacion, string[]> = {
-  presumir: ['¿Vieron eso?', 'Aprendan del maestro', 'Soy un genio, ¿no?', 'Matemática pura', 'Y ni me esforcé', 'Así se juega, parce'],
+  presumir: ['¿Vieron eso?', 'Aprendan del maestro', 'Soy un genio, ¿no?', 'Puro cálculo', 'Y ni me esforcé', 'Así se juega, parce'],
   bien: ['¡Eso!', 'Nada mal, ¿eh?', 'Vamos bien', 'Uy, qué jugada', '¡Toma!'],
   mal: ['Eso no contaba…', 'Estaba calentando', 'Fue sin querer', 'Mmm… estrategia', 'No me miren así'],
   cero: ['¿Cero? ¿En serio?', 'Nooo…', 'Esto está arreglado', 'Qué injusticia', 'Me saboteaste'],

@@ -586,7 +586,7 @@ export const BONITO = [
   'Cada recuerdo que vuelve me hace quererte más.',
   'Me haces sentir en casa en cualquier parte.',
   'Eres mi lugar favorito.',
-  'Estoy orgullos{a|o} de ti.',
+  'Sabía que lo ibas a lograr.',
   'Qué suerte la mía de ir contigo.',
   'Si tuviera que abrir cien puertas más, las abro contigo.',
   'Nuestro amor es la llave de todo.',

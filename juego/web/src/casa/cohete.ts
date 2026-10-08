@@ -80,7 +80,7 @@ const FRASES: Record<Rol, string[]> = {
     'No debí comerme ese picante…',
     'Siempre supe que algún día saldría como un cohete del baño.',
     '¡Houston, tenemos un problema… estomacal!',
-    '¡Ni en Cartagena volé tan alto!',
+    '¡Ni en un columpio volé tan alto!',
     '¿Esto cuenta como viaje espacial? Quiero el certificado.',
     'El ají no perdona.',
     '¡Mi amor, si me ves pasar por la ventana, saluda!',
@@ -96,8 +96,8 @@ const FRASES: Record<Rol, string[]> = {
     'Siempre supe que algún día saldría como un cohete del baño.',
     '¡Qué vista tan bonita… qué vergüenza tan grande!',
     'Si esto sale en las noticias, no me conoces.',
-    'Transformice nunca me preparó para esto.',
-    'Directora de Yanbal… y ahora de la NASA.',
+    'Ningún videojuego me preparó para esto.',
+    'Del baño a la NASA en un solo jalón.',
     '¡Mi amor, esto es culpa de tu leche!',
   ],
 };
@@ -117,7 +117,7 @@ const FRASES_TRAMO: Record<Rol, string[]> = {
     '¿La Luna es de queso? Ni loca la pruebo: lactosa.',
     '¿Habrá baños en Marte? Ojalá con papel.',
     'Esto está más lleno que el metro de Medellín en hora pico.',
-    '¡Qué colores tan bonitos! Parece el planetario de Explora.',
+    '¡Qué colores tan bonitos! Parece un cuadro.',
     '¡Todo rosado! Así sí me gusta el espacio.',
   ],
 };

@@ -348,9 +348,12 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.
-- **Cartas de amor** (los arcanos): 18 recuerdos reales de los dos (Transformice, las videollamadas de 24 horas,
-  el 25 de octubre, Cartagena, las luces de diciembre, la propuesta…). Se escoge una al empezar y salen otras en
-  los minutos 11 y 21.
+- **Cartas de amor** (los arcanos): 18 cartas de Javier para Laura. Tres cuentan aventuras de «la protagonista»
+  con humor (el iPhone más barato del mundo, bajarse del carro andando, las olas de diez metros) y las demás son
+  cartas de amor con lo que hace su poder (Tiro al corazón, Ven para acá, Un ratico más, Mi estrella del norte…);
+  los recuerdos grandes son de Cien Puertas y no se repiten aquí. Las partidas guardadas con los nombres viejos se
+  pasan solas (`cartasViejas` en `src/casa/lavado/pareja.ts`). Se escoge una al empezar y salen otras en los
+  minutos 11 y 21.
 - **Pantalla final** con el daño y el DPS de cada arma, y los logros nuevos.
 
 **Gotas doradas y tienda de poderes** (`tienda.ts`): 19 poderes como los del original (vida, recuperación,
@@ -569,8 +572,10 @@ mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.act
 
 - **Bañarse** dura 55 s: en la tina quedan en ropa interior (Él sin camisa y en bóxer, Ella en ropa
   interior rosada; la ropa comprada se esconde salvo el peinado) y al salir se vuelven a vestir.
-- Mientras tanto sale una burbuja de pensamiento con **recuerdos** al azar: los 20 recuerdos de verdad de Cien
-  Puertas, cada uno con su dibujito animado y lo que se dijeron. Se leen con calma: entre un recuerdo y otro la
+- Mientras tanto sale una burbuja de pensamiento con **discusiones bobas** al azar, las del chat en las que nunca se
+  ponen de acuerdo («¿Muak o betito?», «¿Y la racha?», «¿Quién cuelga primero?», «¿Mor o amor?», «¿Pera qué?»…: 16 en
+  total), cada una con su dibujito animado y lo que se dicen. Los recuerdos grandes son de Cien Puertas y no salen
+  aquí (ver «Quién cuenta qué» en `docs/la-pareja.md`). Se leen con calma: entre un recuerdo y otro la
   lámina se cubre de **neblina** y se despeja con el siguiente (como pasar de diapositiva); cada frase se
   **escribe letra por letra** (con su cursor) y se queda lo que tome leerla (2,4 s como mínimo, más si es larga).
   Los dos **reaccionan a lo que se dice** y sostienen la reacción toda la frase: se ríen sacudiéndose con un
@@ -578,8 +583,10 @@ mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.act
   sorprenden con un brinquito, presumen, hacen puchero o se quedan pensando con una pregunta.
 - **Dormir** se puede aunque no tengan sueño (una siesta: se despiertan solos con la energía llena y
   después de media hora, o con «Despertar»). Si los dos duermen, se abrazan: boca arriba juntitos o en
-  cucharita (el mismo en los dos celulares), y la burbuja mezcla recuerdos, **discusiones bobas** («¿treinta
-  días o cuarenta?», «¿Katherine o Lexy Katherine?», «¿Muak o betito?», «¿Y la racha?»…) y **deseos a futuro**. Código: `src/casa/recuerdos.ts`.
+  cucharita (el mismo en los dos celulares), y la burbuja mezcla las discusiones bobas con los **sueños a futuro**
+  dichos en el chat (la lonchera, almorzar en la casa, la casa grande y vieja, viejitos tomando tinto, la boda con
+  misterio…: 10, que salen el doble de seguido). Código: `src/casa/recuerdos.ts`, `recuerdos_panel.ts` (los textos)
+  y `recuerdos_arte.ts` (los dibujitos).
 
 ## La tele (YouTube)
 
@@ -626,9 +633,9 @@ igual (evento `nalgada`).
 **Cada mimo sale distinto** (`src/casa/mimos.ts`): hay 17 besos, 17 abrazos y 16 caricias (cada uno con unos de
 los dos y otros solo de Él o solo de Ella), con su pose, la reacción del otro y lo que se dicen en globitos, con
 las palabras de su chat de verdad: el «muak» tronado, la ráfaga de betitos, el beso volado que el otro atrapa
-aplaudiendo, el abrazo de oso («No respiro… pero no me sueltes»), el de las nueve horas de bus, el de la cotita
-más hermota, la mimilona que se pone brava si no hay más mimos, «¿Ya hiciste el Duolingo? 🦉», «Hi baby»,
-«Te amodoro»… Quien lo da lo saca de su bolsa (no se repite hasta que salgan todos, ni el mismo dos veces seguidas)
+aplaudiendo, el abrazo de oso («No respiro… pero no me sueltes»), el de «¡Llegaste! Valió la pena cada
+kilómetro», el de la cotita más hermota, la mimilona que se pone brava si no hay más mimos, «¿Y esa sonrisita?»,
+«Hi baby», «Te amodoro»… (ninguno cuenta un recuerdo: esos son de Cien Puertas). Quien lo da lo saca de su bolsa (no se repite hasta que salgan todos, ni el mismo dos veces seguidas)
 y lo manda con el evento (`datos.v`), así en los dos celulares sale el mismo; el aviso dice cuál fue («Laura te dio
 un abrazo de panda»). Quien da habla primero y se calla; quien recibe contesta después, para que los dos globitos
 (que quedan muy cerca) no se pisen. Una versión vieja que no manda la variante hace el mimo de siempre. **Saludar** también dice algo de lo de todos los días («¿Cómo amaneció el amor de mi
