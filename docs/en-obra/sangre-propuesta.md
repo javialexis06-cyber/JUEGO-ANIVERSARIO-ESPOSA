@@ -193,8 +193,13 @@ comunidad en Discord.
   piedras de azufre en la Abadía», «revienta 30 vetas de grisú en las Minas», «llega a nivel 50 con la Bruja en el
   Castillo»). Las metas abren los nodos siguientes.
 - Al final de cada sector, una **Puerta** (misión fija con reglas, un mutador bueno y dos malos) y una **escena corta**
-  (diálogo del Conde Sangrevil y de los sobrevivientes, ilustración) que avanza la historia. El último sector termina
-  en el Castillo con el Conde: el final de la historia.
+  (diálogo e ilustración) que avanza la historia. **La historia es la de la mitología de Astra** (decidido con Javier,
+  ver [`docs/mitologia.md`](../mitologia.md)): Valdemora es el reino de la frontera del escudo, el Conde Sangrevil es
+  vasallo de Nath'Gora y le abrió una grieta, y cada sector revela uno de los misterios (el motivo del escudo, qué
+  pasó con los otros panteones y el Lazo Primordial, que es el amor de Él y Ella). **Él y Ella son los protagonistas**
+  de las escenas en la versión de la pareja; la de los amigos cuenta el mismo mito sin nombrar a nadie. El último
+  sector termina en el Castillo: el velo de Lara sella al Conde en Nox y Nath'Gora sigue para la granja (que se juega a
+  la par).
 - Cada sector exige un peligro mínimo (sector 2 = peligro 2+…).
 - Estos retos son los **logros de «tal mapa con tal personaje»** que pidió Javier: quedan en la Sala de Trofeos.
 
@@ -332,6 +337,13 @@ Propuesta:
 ---
 
 ## 5. Preguntas para pulirla
+
+**Respondido por Javier (8 de octubre de 2026)**: se empieza por Sangre y Ceniza (antes que Lavarse la cara);
+**5 etapas** como DRG (pregunta 1); **escenas cortas con la mitología de Astra** y Él y Ella de protagonistas
+(pregunta 3, ver `docs/mitologia.md`); de las armas, **todo** lo de la sección L, familiar incluido (preguntas 7, 8 y
+9). Lo demás se hace con lo recomendado mientras él no diga otra cosa: los minerales con nombres del mito (Plata del
+velo, Chispa de Aura, Gema de dragón, Escarcha del alba, Polvo de estrellas y Esmeralda de Celia), el contrato del día
+igual para los dos, la meta de dificultad de E y los tres minijuegos del refugio.
 
 1. ¿**5 etapas** como DRG (4 + la final con los sepulcros y el jefe) o dejamos 4? Con A, cada expedición dura 30-40
    minutos.

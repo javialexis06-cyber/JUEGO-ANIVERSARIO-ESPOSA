@@ -5,21 +5,21 @@ probado y subido.
 
 ## Por dónde seguir (nota para el próximo Claude)
 
-Último trabajo subido: la tanda del súper, «Quién cuenta qué» (lo romántico sin repetirse) y la maestría de los
-disfraces de Lavarse la cara. Lo siguiente que se puede hacer sin esperar a Javier, en este orden:
+Último trabajo subido: el estudio de las dos wikis (lo que les falta a Lavarse la cara y a Sangre y Ceniza) y la
+**mitología de Astra** que Javier trajo de la granja ([`docs/mitologia.md`](mitologia.md)). Javier respondió lo de
+Sangre y Ceniza 2 (8 de octubre): **se hace primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de
+protagonistas) y todo lo de armas. Orden:
 
-1. **Amigos: mesa, retrete y cocina en la app de amigos** (abajo, en «Amigos: lo que sigue», con lo que ya se revisó).
-2. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
-3. **Lavarse la cara: seguir mejorándolo** con ideas del género (abajo, «Ronda 2»), sin chocar con Sangre y Ceniza.
-4. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.
+1. **Sangre y Ceniza 2**, por fases (sección 4 de `docs/en-obra/sangre-propuesta.md`): fase 1 = etapas que se ganan
+   peleando, el Guardián, la Noche se impacienta, 5 etapas, precios que suben, ratas del tesoro y mini-élites.
+2. **Lavarse la cara 2** (`docs/en-obra/lavado-propuesta.md`): antes de empezar, hacerle a Javier las 5 preguntas del
+   final (armas, escenarios, modos y tesoros, disfraces, aventuras).
+3. **Amigos: mesa, retrete y cocina en la app de amigos** (abajo, en «Amigos: lo que sigue»).
+4. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
+5. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.
 
-Lavarse la cara y Sangre y Ceniza ya están estudiados contra las dos wikis (octubre de 2026): lo que le falta a cada
-uno quedó en `docs/en-obra/lavado-propuesta.md` (Vampire Survivors) y en `docs/en-obra/sangre-propuesta.md` (Deep Rock,
-con la sección L nueva de armas, sobrecargas, reliquias y el familiar). Se empiezan cuando Javier responda las
-preguntas del final de cada una.
-
-Esperan a Javier (no se empiezan solos): las respuestas de las propuestas de Sangre y Ceniza 2 y de Lavarse la cara 2
-(los íconos nuevos de las mejoras van con eso), las ideas del sótano, la
+Esperan a Javier (no se empiezan solos): lo que sigue abierto de la mitología (sección 2 de `docs/mitologia.md`), las
+respuestas de Lavarse la cara 2, las ideas del sótano, la
 clave de ElevenLabs para las voces, pegar `supabase/cambios-pendientes.sql`, y si quiere el repositorio privado.
 Si cuenta anécdotas nuevas: van primero a las cartas de amor de Lavarse la cara y a las cartas del súper (hoy
 inventadas), mirando «Quién cuenta qué» en `docs/la-pareja.md`.
@@ -124,6 +124,9 @@ velocidad, se siente raro…»
   ficticias). Ojo: a Laura se le ocurrió que su boda tenga un juego así («un crimen por mesa que deban solucionar»).
 
 ## Lo acumulado (en orden)
+
+- **La casa y la mitología** (cuando exista la granja): el Altar del Lazo Primordial, el Álbum y las reliquias del
+  multiverso para decorar, con lo que se gana en Sangre y Ceniza y en la granja (`docs/mitologia.md`, sección 5).
 
 - **El Show de Nosotros** (rama `trabajo/show`, sin juntar; `mesa.html?juego=show`): concurso de preguntas de pareja
   con estudio 3D, presentador perrito, seis tipos de preguntas, pregunta del día en la nevera, el libro de nosotros y en

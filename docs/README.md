@@ -6,6 +6,7 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 |---|---|
 | [`pedidos.md`](pedidos.md) | **La cola de Javier**, en orden. Lo primero que se lee. |
 | [`la-pareja.md`](la-pareja.md) | Apodos, gustos, anécdotas y cómo se hablan (para cualquier texto romántico o chistoso). |
+| [`mitologia.md`](mitologia.md) | La mitología de Astra (de la granja): une la casa, la granja y Sangre y Ceniza. Lo decidido, lo abierto y el resumen para la otra IA. |
 
 ## `sistemas/` · lo que ya funciona (consultar solo si se toca esa parte)
 

@@ -11,6 +11,9 @@ minijuegos adentro. Cada uno juega en su celular Android y la casa está siempre
 
 - Textos de la pareja: apodos y anécdotas en `docs/la-pareja.md`; la historia y los recuerdos en
   `docs/sistemas/cien-puertas.md` («La historia» y «Los recuerdos»).
+- **Mitología de Astra** (`docs/mitologia.md`): la trae Javier del juego de la granja (lo hace otra IA y se juega a la
+  par). Une la casa, la granja y Sangre y Ceniza; Él y Ella son los protagonistas y el Lazo Primordial es su amor. Los
+  demás juegos son independientes.
 - **Es una sorpresa.** Ella no debe enterarse del contenido antes de tiempo (por eso las voces se clonan con IA a
   partir de frases sueltas: `docs/en-obra/voces-ia.md`).
 - Todo en **español colombiano cálido**: juego, comentarios, commits, documentos y lo que le respondes. Al usuario se
@@ -83,7 +86,7 @@ acceso a `javialexis06-cyber/juego-aniversario-esposa` y la red abierta a npm, P
 
 ```
 CLAUDE.md                este archivo
-docs/                    README.md (índice), pedidos.md (la cola), la-pareja.md
+docs/                    README.md (índice), pedidos.md (la cola), la-pareja.md, mitologia.md
   sistemas/              cómo funciona lo terminado (casa, súper, mesa y su Clue, Cien Puertas, salas, Sangre y
                          Ceniza, Supabase)
   en-obra/               propuesta de Sangre y Ceniza 2, escenas premium, voces
