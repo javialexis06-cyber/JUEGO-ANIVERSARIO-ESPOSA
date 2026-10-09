@@ -1,6 +1,7 @@
 // La partida de un invitado: no simula; arma cada etapa igual que el anfitrión (misma semilla), la dibuja con lo que
 // llega en las fotos, mueve a su propio personaje sin esperar y le manda al anfitrión dónde está, su joystick, la
 // habilidad y las cartas que escoge. Entre etapas hace su Forja aquí mismo y manda cómo quedó.
+import { ranuraActiva } from '../datos/sigilos';
 import * as fondo from '../../segundo_plano';
 import { Expedicion } from '../expedicion';
 import type { Sala } from '../../salas/tipos';
@@ -46,6 +47,10 @@ export class PartidaInvitado {
   /** Lo último que tocó para recoger y cuántas veces (el anfitrión toma el pedido cuando la cuenta sube). */
   private toma: [number, number] = [0, 0];
   private tomaCuenta = 0;
+  /** Pulsos de visión astral pedidos (el anfitrión los cobra). */
+  private astralCuenta = 0;
+  /** Usos pedidos de cada sigilo activo (el anfitrión los cobra). */
+  private sigiloCuenta = [0, 0];
   private quitar: (() => void)[] = [];
   private pendiente: { e: Eleccion | null; tiradas: number; vetos: number; t: number; llego: number } | null = null;
   private armando = false;
@@ -60,8 +65,20 @@ export class PartidaInvitado {
     this.hud.nombre = o.nombre;
     this.hud.alHabilidad = () => o.mando.pedirHabilidad();
     this.hud.alPausa = () => o.alPausa(this);
-    this.hud.alAstral = () => o.escena.alternarAstral();
-    o.mando.alAstral = () => o.escena.alternarAstral();
+    // (la visión astral la cobra el anfitrión: aquí se cuenta el pedido y va con el mando)
+    const astral = () => {
+      const j = this.espejo?.yo;
+      if (j && this.hud.puedeAstral(j, this.espejo!.sim.cfg.etapa)) this.astralCuenta++;
+    };
+    this.hud.alAstral = astral;
+    o.mando.alAstral = astral;
+    const sigilo = (n: number) => {
+      const j = this.espejo?.yo;
+      const k = j ? ranuraActiva(j.sigilos, n) : -1;
+      if (j && k >= 0 && this.hud.puedeSigilo(j, k)) this.sigiloCuenta[k]++;
+    };
+    this.hud.alSigilo = sigilo;
+    o.mando.alSigilo = sigilo;
     o.escena.apagarAstral();
     o.mando.alNumero = (n) => {
       if (this.eleccion.abierta) this.eleccion.tecla(n);
@@ -164,7 +181,7 @@ export class PartidaInvitado {
     const j = esp.yo;
     if (this.mandoT >= 1 / 15 && j) {
       this.mandoT = 0;
-      this.o.sala.mandar(MSJ.MANDO, [+j.x.toFixed(2), +j.y.toFixed(2), +j.vx.toFixed(2), +j.vy.toFixed(2), +j.fx.toFixed(2), +j.fy.toFixed(2), +mx.toFixed(2), +my.toFixed(2), this.habCuenta, +this.toma[0].toFixed(2), +this.toma[1].toFixed(2), this.tomaCuenta], { rapido: true });
+      this.o.sala.mandar(MSJ.MANDO, [+j.x.toFixed(2), +j.y.toFixed(2), +j.vx.toFixed(2), +j.vy.toFixed(2), +j.fx.toFixed(2), +j.fy.toFixed(2), +mx.toFixed(2), +my.toFixed(2), this.habCuenta, +this.toma[0].toFixed(2), +this.toma[1].toFixed(2), this.tomaCuenta, this.astralCuenta, this.sigiloCuenta[0], this.sigiloCuenta[1]], { rapido: true });
     }
     // Cartas
     const p = this.pendiente;

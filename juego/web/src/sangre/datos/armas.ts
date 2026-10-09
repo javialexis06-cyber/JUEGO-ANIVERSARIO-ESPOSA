@@ -553,7 +553,7 @@ export const ARMAS_LISTA: DefArma[] = [
   {
     id: 'bomba', nombre: 'Bomba de pólvora', clase: 'comun', tipo: 'lanzado', apunta: 'denso', etiquetas: ['fuego', 'area'],
     base: P({ dano: 22, cadencia: 2.8, area: 2.3, alcance: 8, empuje: 5, flags: F.EXPLOTA | F.EXCAVA }),
-    desc: 'Revienta sobre el montón y rompe paredes blandas.', modelo: 'bomba', proyectil: 'bomba', color: '#ffb05a', glifo: 'bomba',
+    desc: 'Revienta sobre el montón y rompe paredes, con vetas y todo.', modelo: 'bomba', proyectil: 'bomba', color: '#ffb05a', glifo: 'bomba',
     sobrecargas: [
       S('mecha_corta', 'Mecha corta', 'Explota un 30 % más seguido.', { por: { cadencia: 0.7 } }),
       S('barril', 'Barril', 'Explosión un 40 % más grande.', { por: { area: 1.4 } }),

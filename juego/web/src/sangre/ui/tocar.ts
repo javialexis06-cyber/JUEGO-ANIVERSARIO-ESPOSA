@@ -25,5 +25,6 @@ export function soltarToque(mando: Mando) {
   mando.alTocar = () => undefined;
   mando.alSobre = () => false;
   mando.alAstral = () => undefined;
+  mando.alSigilo = () => undefined;
   document.body.classList.remove('mano');
 }

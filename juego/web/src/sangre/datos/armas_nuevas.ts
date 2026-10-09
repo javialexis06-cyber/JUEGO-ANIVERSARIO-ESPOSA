@@ -64,8 +64,8 @@ export const COMUNES_NUEVAS: DefArma[] = [
   },
   {
     id: 'bomba_racimo', nombre: 'Bomba de racimo', clase: 'comun', tipo: 'lanzado', apunta: 'denso', etiquetas: ['fuego', 'area'],
-    base: P({ dano: 16, cadencia: 3, area: 1.6, alcance: 8, empuje: 4, flags: F.EXPLOTA | F.DIVIDE }),
-    desc: 'Revienta y suelta bombitas que revientan otra vez.', modelo: 'racimo', proyectil: 'racimo', color: '#ff9a3a', glifo: 'bomba',
+    base: P({ dano: 16, cadencia: 3, area: 1.6, alcance: 8, empuje: 4, flags: F.EXPLOTA | F.EXCAVA | F.DIVIDE }),
+    desc: 'Revienta y suelta bombitas que revientan otra vez (y rompen paredes).', modelo: 'racimo', proyectil: 'racimo', color: '#ff9a3a', glifo: 'bomba',
     sobrecargas: [
       T('racimo_grande', 'Racimo grande', '+30 % de área.', { por: { area: 1.3 } }),
       T('mecha_rapida', 'Mecha rápida', 'Revienta un 25 % más seguido.', { por: { cadencia: 0.75 } }),

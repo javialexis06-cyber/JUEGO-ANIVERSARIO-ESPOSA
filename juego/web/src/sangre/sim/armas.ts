@@ -861,7 +861,8 @@ function explotar(sim: Sim, pr: Proyectil) {
   golpeProyectil(sim, pr, GP, 0, 0);
   GP.empuje = Math.max(GP.empuje, 3);
   sim.explosion(x, y, r, pr.dano, GP, claseExplosion(pr.etq));
-  if (pr.flags & F.EXCAVA || (j && j.clase === 'alquimista' && j.spec === 1)) sim.romperParedes(x, y, r * 0.75, j, false, !!(pr.flags & F.MINA));
+  // (las bombas rompen las paredes blandas y también las vetas; lo que sueltan le llega solo a quien las tiró)
+  if (pr.flags & F.EXCAVA || (j && j.clase === 'alquimista' && j.spec === 1)) sim.romperParedes(x, y, r * 0.75, j, false, true);
 }
 
 function dividir(sim: Sim, pr: Proyectil) {

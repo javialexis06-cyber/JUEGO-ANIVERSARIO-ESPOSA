@@ -1,6 +1,7 @@
 // Una partida en marcha: la expedición, la simulación a paso fijo (30 por segundo), el dibujo a 30 cuadros, el
 // mando, las elecciones (en solitario el juego espera; en grupo sigue y quien escoge queda protegido un momento),
 // la pausa, el paso entre etapas y la Forja. La red (anfitrión e invitados) se engancha con `RedPartida`.
+import { ranuraActiva } from './datos/sigilos';
 import * as fondo from '../segundo_plano';
 import { botEscoger, botPaso } from './bot';
 import { Expedicion } from './expedicion';
@@ -70,8 +71,22 @@ export class Partida {
     this.hud.nombre = o.nombre;
     this.hud.alHabilidad = () => o.mando.pedirHabilidad();
     this.hud.alPausa = () => o.alPausa(this);
-    this.hud.alAstral = () => o.escena.alternarAstral();
-    o.mando.alAstral = () => o.escena.alternarAstral();
+    // (la visión astral la cobra la simulación: aquí solo se pide, si alcanza la vida)
+    const astral = () => {
+      const j = this.sim?.J[o.local];
+      if (j && this.hud.puedeAstral(j, this.sim!.cfg.etapa)) j.pideAstral = true;
+    };
+    this.hud.alAstral = astral;
+    o.mando.alAstral = astral;
+    // (los sigilos activos también los cobra la simulación)
+    // (n: el primero o el segundo de los activos; la simulación va por la ranura)
+    const sigilo = (n: number) => {
+      const j = this.sim?.J[o.local];
+      const k = j ? ranuraActiva(j.sigilos, n) : -1;
+      if (j && k >= 0 && this.hud.puedeSigilo(j, k)) j.pideSigilo = k;
+    };
+    this.hud.alSigilo = sigilo;
+    o.mando.alSigilo = sigilo;
     o.escena.apagarAstral();
     o.mando.alNumero = (n) => {
       if (this.eleccion.abierta) this.eleccion.tecla(n);

@@ -34,7 +34,9 @@ la noche, y a salir vivos en la **Campana de Extracción** antes de que la horda
     velo** (cada una cura un poco), **plumas de grifo** (caen cerca y el viento se las lleva en 30 s; dan un empujón
     de velocidad) y **hongos de tumba** (montoncitos de 3 en los rincones, algunos detrás de la roca; dan almas).
 - **La etapa se gana peleando** (como Deep Rock: Survivor): arriba hay una **barra de avance** que el tiempo llena
-  despacio (10 min sola) y el objetivo de un salto (45 %). En el camino salen **oleadas** (marcas rojas en la barra).
+  despacio (10 min sola) y el objetivo de un salto (45 %). Cumplido el objetivo principal, lo que falta se llena en
+  4 s (10 s en la etapa final, `PRISA_OBJETIVO`) y las oleadas que faltaban ya no salen: el Guardián viene de una
+  (Javier: «me toca esperar a que salga el boss»). En el camino salen **oleadas** (marcas rojas en la barra).
   Llena, despierta **el Guardián** (un élite enorme del bioma con su barra de vida): al matarlo baja la **Campana de
   Extracción** y hay 60 segundos para llegar todos mientras la horda enloquece (si alguien no llega, pierde lo que
   llevaba de esa etapa). Mientras el Guardián siga vivo **la Noche se impacienta**: cada 50 s la horda sale más rápida,
@@ -337,7 +339,11 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
 - **Subir de nivel**: un aura dorada que sube por el personaje (brilla en el contorno y deja verlo por el medio),
   con onda y chispas doradas, y lo acompaña mientras camina. En solitario la carta sale de una vez y el juego (y los
   efectos) se detienen, así que el aura se ve completa al escoger. (Antes era un destello azul pálido de menos de un
-  segundo que casi no se notaba: por eso «no salía».)
+  segundo que casi no se notaba: por eso «no salía».) **El pantallazo negro de 1-2 s al subir de nivel** (solo en
+  Android) era el aura: su sombreador hacía `pow()` de un número que por redondeo salía −0,0000001; en los celulares
+  eso da NaN y el bloom lo regaba por toda la pantalla mientras duraba el aura. Ahora las bases de `pow()` van con
+  `clamp` y los `atan(0, 0)` de los tajos y anillos, con un 1e-6. Regla: en un sombreador, nada de `pow`, `sqrt` o
+  `atan` con algo que pueda ser negativo o cero.
 - **Visión astral y nada señalado** (pedido de Javier): en el mapa solo se señala la Campana de Extracción (las
   flechas a prisioneros, carreta, santuarios, reliquias, altares y élites ya no salen; las de los compañeros sí,
   porque son personas). Para encontrar lo demás está la **visión astral** (`vista/astral.ts`): el botón del ojo encima
@@ -345,8 +351,36 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   `luz.ts`: sirve en las tres calidades y sin filtros CSS, que parpadean en Android) y hasta 20 m alrededor brilla por
   encima de todo, aunque lo tape una pared: las vetas como cristales en rombo (hierro azul acero, oro dorado, sangre
   roja, huevos verdes) y con aros el botín del piso, los santuarios, las reliquias, los prisioneros, el objetivo
-  (altares, carreta, campana que se defiende, el élite marcado) y la campana. Sale una leyenda de colores abajo. Se
-  apaga sola al empezar otra expedición y sigue prendida entre etapas.
+  (altares, carreta, campana que se defiende, el élite marcado) y la campana. Sale una leyenda de colores abajo.
+  **Es un pulso** (Javier: «que reste 10 de vida por uso, que aumente por etapa y que permita ver las cosas 1 o 2
+  segundos no más»): dura 1,6 s (`DURACION_ASTRAL`) y cuesta `costoAstral(etapa)` = 10 + 5 por etapa, hasta 60. Lo
+  cobra la simulación (`Sim.usarAstral`, suceso `S.ASTRAL`; el invitado lo pide con el mando) y nunca mata: sin vida
+  suficiente no sale y lo avisa. El botón lleva lo que cuesta; el número rojo sale sobre el personaje.
+- **Recoger y minar**: el imán crece con el nivel (+4 % por nivel, hasta el doble: `Jugador.radioIman`); todo lo que
+  suelta una veta (oro, hierro, sangre y los seis minerales) vuela solo a quien la rompió, con el pico, una bomba o
+  un cartucho (`Sim.alRomper` pone `atraerA`). Las bombas (pólvora, racimo, polvorín, carga minera) rompen las paredes
+  blandas y también las vetas (`F.EXCAVA` en una explosión rompe vetas).
+- **Sigilos** (`datos/sigilos.ts`, `ui/sigilos.ts`): herramientas que no son armas; se llevan dos (fila «Sigilos» al
+  escoger la expedición) y se compran en el Pozo con ceniza (los dos primeros vienen dados). Los activos tienen su
+  botón al lado del ojo (R y F en el computador, por orden de los activos) con la recarga como reloj; los cobra la
+  simulación (`Sim.usarSigilo`, suceso `S.SIGILO`; el invitado los pide con el mando).
+  - **Cartógrafo**: mapa en la esquina con el croquis de toda la etapa en sombra; lo que recorren (7 m alrededor de
+    cada jugador) se aclara. Tocarlo lo agranda.
+  - **Brújula de sangre** (activo, 70 % de la vida que se tiene, recarga 15 s): por 15 s una flecha roja (y un rombo
+    encima si se ve) al objetivo pendiente más cercano, principal o secundario; cumplido el principal, al Guardián, al
+    jefe o a la campana (`objetivosPendientes`). También sale en el mapa.
+  - **Zahorí**: las vetas a menos de 12 m brillan siempre a media luz (la visión astral sin volver gris el mundo) y
+    salen en el mapa.
+  - **Ojo del cuervo**: flechitas moradas a cofres, llaves, equipo tirado, santuarios y prisioneros a menos de 25 m.
+  - **Sangre fría**: el pulso astral cuesta la mitad y dura un segundo más.
+  - **Imán de tumba** (activo, 15 % de la vida, recarga 60 s): todo lo tirado en la etapa vuela hacia uno.
+  - **La última vela**: una vez por etapa, el golpe que iba a tumbar deja con 1 de vida, 2 s intocable y una onda.
+  - **Paso de sombra** (activo, gratis, recarga 10 s): 4 m hacia donde camina, sin atravesar paredes.
+- **Textos de ayuda del ratón**: los `title` se cambian por un globito del estilo del juego (`ui/ayuda.ts`); el del
+  sistema salía grandote y con otra letra en el computador.
+- **Las pantallas no saltan al principio**: toda pantalla que se repinta (clase, expedición con el equipo del Pozo,
+  mapa de la Noche, desafíos, pausa, resultados) pasa por `sinSaltar`, y los carruseles se centran solo de lado
+  (`centrarEnCarrusel`; `scrollIntoView` movía toda la pantalla hacia arriba al escoger equipo).
 - **Curva de dificultad pareja** (Javier: «lo difícil del principio se pierde a los 2 minutos y después de la
   primera etapa es prácticamente morir»; y de Sangre 2: «sí debe durar más, lo que no quiero es que sea demasiado
   corto»):

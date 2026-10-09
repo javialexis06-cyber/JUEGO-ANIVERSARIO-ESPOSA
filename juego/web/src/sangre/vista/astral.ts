@@ -10,6 +10,7 @@ import { TIPOS, TIPO_ALTAR } from '../sim/catalogo';
 import { ENT, REC, esMineral } from '../sim/estado';
 import type { EstadoVista } from './escena';
 import { UNI_LUZ } from './luz';
+import { RADIO_ZAHORI } from '../datos/sigilos';
 
 /** Hasta dónde alcanza la visión (m). */
 export const RADIO_ASTRAL = 20;
@@ -89,6 +90,8 @@ export class VisionAstral {
   readonly grupo = new THREE.Group();
   /** ¿La pidió el jugador? (la transición la lleva `f`) */
   activa = false;
+  /** El sigilo del Zahorí: las vetas cerca brillan siempre a media luz (sin volver gris el mundo). */
+  zahori = false;
   /** 0 normal, 1 visión astral completa. */
   private f = 0;
   private marcas: THREE.InstancedMesh;
@@ -110,8 +113,8 @@ export class VisionAstral {
     });
     this.matVeta = this.mat.clone();
     this.matVeta.fragmentShader = FRAG_VETA;
-    // (las dos comparten el reloj y la fuerza)
-    this.matVeta.uniforms = this.mat.uniforms;
+    // (las dos comparten el reloj; las vetas tienen su propia fuerza, por el Zahorí)
+    this.matVeta.uniforms = { uTiempo: tiempo, uFuerza: { value: 0 } };
     const geo = new THREE.PlaneGeometry(2, 2).rotateX(-Math.PI / 2);
     const hacer = (mat: THREE.ShaderMaterial) => {
       const m = new THREE.InstancedMesh(geo, mat, MAX);
@@ -136,7 +139,8 @@ export class VisionAstral {
     this.f += Math.sign(meta - this.f) * Math.min(Math.abs(meta - this.f), dt * 3.5);
     UNI_LUZ.uAstral.value = this.f;
     this.mat.uniforms.uFuerza.value = this.f;
-    this.grupo.visible = this.f > 0.01;
+    this.matVeta.uniforms.uFuerza.value = Math.max(this.f, this.zahori ? 0.55 : 0);
+    this.grupo.visible = this.f > 0.01 || this.zahori;
     if (!this.grupo.visible) return;
     this.buscarT -= dt;
     if (this.buscarT > 0) return;
@@ -161,11 +165,13 @@ export class VisionAstral {
       if (veta) nv++;
       else n++;
     };
-    const R = RADIO_ASTRAL, R2 = R * R;
+    // (solo el Zahorí, sin la visión astral: nada más las vetas, más cerca)
+    const soloVetas = this.f <= 0.01;
+    const R = soloVetas ? RADIO_ZAHORI : RADIO_ASTRAL, R2 = R * R;
     const cerca = (x: number, y: number) => (x - j.x) ** 2 + (y - j.y) ** 2 < R2;
     // Lo importante primero (si hay demasiadas vetas, que no se queden por fuera)
-    if (est.campana && est.campana.est < 2) poner(est.campana.x, est.campana.y, 0.2, 1.7, COL.campana);
-    for (const e of est.ent) {
+    if (!soloVetas && est.campana && est.campana.est < 2) poner(est.campana.x, est.campana.y, 0.2, 1.7, COL.campana);
+    for (const e of soloVetas ? [] : est.ent) {
       if (!e.vivo || !cerca(e.x, e.y)) continue;
       if (e.tipo === ENT.SANTUARIO && e.est === 0) poner(e.x, e.y, 0.2, 1.15, COL.santo);
       else if ((e.tipo === ENT.COFRE_RELIQUIA || e.tipo === ENT.COFRE_MALDITO) && e.est === 0) poner(e.x, e.y, 0.2, 1, COL.reliquia);
@@ -175,13 +181,13 @@ export class VisionAstral {
       else if (e.tipo === ENT.SUMINISTRO && e.est <= 2) poner(e.x, e.y, 0.2, 2.2, COL.reliquia);
     }
     const E = est.E;
-    for (let i = 0; i < E.max; i++) {
+    for (let i = 0; i < (soloVetas ? 0 : E.max); i++) {
       if (!E.vivo[i] || !cerca(E.x[i], E.y[i])) continue;
       // (los bichos del botín brillan como el botín)
       if (TIPOS[E.tipo[i]]?.conducta === 'ladron') poner(E.x[i], E.y[i], 0.2, 0.9, COL.botin);
       else if (E.tipo[i] === TIPO_ALTAR || E.marcadoObj[i] === 1 || E.marcadoObj[i] >= 3) poner(E.x[i], E.y[i], 0.2, 1.1, COL.objetivo);
     }
-    for (const r of est.R) {
+    for (const r of soloVetas ? [] : est.R) {
       if (!r.vivo || r.hacia >= 0 || !cerca(r.x, r.y)) continue;
       const t = r.tipo;
       if (t === REC.COFRE || t === REC.EQUIPO || t === REC.LLAVE || t === REC.IMAN) poner(r.x, r.y, 0.15, 0.75, COL.botin);

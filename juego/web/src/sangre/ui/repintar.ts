@@ -32,3 +32,11 @@ export function brillar(el: Element | null | undefined) {
   void (el as HTMLElement).offsetWidth;
   el.classList.add('subio');
 }
+
+/** Centra `el` en su carrusel, solo de lado (scrollIntoView también movía la pantalla de arriba abajo). */
+export function centrarEnCarrusel(el: HTMLElement | null) {
+  const c = el?.parentElement;
+  if (!el || !c) return;
+  const er = el.getBoundingClientRect(), cr = c.getBoundingClientRect();
+  c.scrollLeft += er.left + er.width / 2 - (cr.left + cr.width / 2);
+}

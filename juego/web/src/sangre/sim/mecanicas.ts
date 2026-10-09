@@ -107,6 +107,8 @@ export function alEmpezarEtapa(sim: Sim, j: Jugador) {
   if (j.tiene('galleta_monje') && sim.cfg.etapa > 1) sim.curar(j, j.hpMax * 0.5);
   // Las rarezas especiales del equipo que obran al empezar
   j.arranqueT = 20;
+  // (La última vela se vuelve a prender en cada etapa)
+  j.m.vela = 0;
   asegurarFamiliar(sim, j);
   if (j.tieneEspecial('escudo_inicio')) j.paraGolpes = Math.max(j.paraGolpes, 2);
 }
@@ -754,6 +756,17 @@ export function segundaOportunidad(sim: Sim, j: Jugador): boolean {
   if (j.objeto('segunda_piel') && !j.usados.segunda_piel) {
     j.usados.segunda_piel = 1;
     revivir(sim, j, 0.5);
+    return true;
+  }
+  // La última vela (sigilo): una vez por etapa, queda con 1 de vida, intocable un momento, y una onda que empuja
+  if (j.sigilo('ultima_vela') && !j.m.vela) {
+    j.m.vela = 1;
+    j.hp = 1;
+    j.invul = 2;
+    const g = golpeSimple(j, BIT_ETQ.sagrado, 0);
+    g.empuje = 7;
+    sim.explosion(j.x, j.y, 3.2, 10 + 2 * j.nivel, g, 1);
+    sim.aviso(55, j.i);
     return true;
   }
   return false;

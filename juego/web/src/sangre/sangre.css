@@ -3289,3 +3289,180 @@ img.ico-render {
   height: 112%;
   margin: -6%;
 }
+
+/* El pulso de visión astral cuesta vida: lo que cuesta va en el botón (rojo si no alcanza) */
+.hud-astral .costo {
+  position: absolute;
+  top: -7px;
+  right: -9px;
+  min-width: 22px;
+  padding: 1px 4px;
+  border-radius: 8px;
+  font: 800 9.5px/1.2 var(--serif);
+  color: #ffd6d0;
+  background: #6a1416;
+  box-shadow: 0 0 0 1.5px #000;
+  pointer-events: none;
+}
+.hud-astral.sin-vida {
+  opacity: 0.55;
+}
+.hud-astral.sin-vida .costo {
+  color: #ff8a7a;
+  background: #2a0808;
+}
+
+/* Globito de ayuda al pasar el ratón (reemplaza el del sistema; ui/ayuda.ts) */
+.globito-ayuda {
+  position: fixed;
+  z-index: 200;
+  max-width: 240px;
+  padding: 4px 9px;
+  font: 600 11.5px/1.3 var(--serif);
+  color: var(--hueso);
+  background: linear-gradient(180deg, rgba(36, 22, 18, 0.96), rgba(18, 10, 10, 0.96));
+  border: 1px solid rgba(201, 160, 70, 0.6);
+  border-radius: 4px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+/* Íconos renderizados (img.ico-render llena su caja): toda caja de ícono suelta necesita su tamaño. Sin esto, la
+   medalla de una reliquia nueva al final de la partida o el arma de premio de un lugar de la Noche salían gigantes */
+.desbloqueo .ico {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.desbloqueo .ico svg {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+.premio-lugar .arma-mini {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+}
+/* (red de seguridad: un ícono renderizado fuera de su caja nunca pasa de 64 px) */
+img.ico-render {
+  max-width: 64px;
+  max-height: 64px;
+  margin-inline: auto;
+}
+
+/* ---------- Sigilos ---------- */
+/* Los activos: botones al lado de la visión astral, con su recarga como reloj y lo que cuestan */
+.hud-sigilo {
+  position: absolute;
+  bottom: max(103px, calc(env(safe-area-inset-bottom) + 103px));
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 38% 30%, #4a3a3e 0%, #241a1e 60%, #120c0e 100%);
+  border: 2px solid var(--sg, #8a7a6a);
+  box-shadow: 0 0 0 2px #000, 0 4px 10px rgba(0, 0, 0, 0.55), inset 0 0 10px rgba(0, 0, 0, 0.6);
+  touch-action: none;
+  pointer-events: auto;
+}
+.hud-sigilo[data-n='0'] {
+  right: max(86px, calc(env(safe-area-inset-right) + 86px));
+}
+.hud-sigilo[data-n='1'] {
+  right: max(138px, calc(env(safe-area-inset-right) + 138px));
+}
+.hud-sigilo svg {
+  width: 21px;
+  height: 21px;
+  position: relative;
+  z-index: 1;
+}
+.hud-sigilo .recarga {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(rgba(0, 0, 0, 0.72) var(--rec, 0%), transparent 0);
+  z-index: 2;
+  pointer-events: none;
+}
+.hud-sigilo.cargando {
+  border-color: #4a3e40;
+}
+.hud-sigilo .costo {
+  position: absolute;
+  top: -7px;
+  right: -11px;
+  padding: 1px 4px;
+  border-radius: 8px;
+  font: 800 9px/1.2 var(--serif);
+  color: #ffd6d0;
+  background: #6a1416;
+  box-shadow: 0 0 0 1.5px #000;
+  z-index: 3;
+  pointer-events: none;
+}
+.hud-sigilo .tecla {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: var(--ceniza);
+}
+.tactil .hud-sigilo .tecla {
+  display: none;
+}
+/* El mapa del Cartógrafo: debajo de la vida (grande al tocarlo) */
+.hud-mapa {
+  position: absolute;
+  top: max(62px, calc(env(safe-area-inset-top) + 62px));
+  left: max(10px, calc(env(safe-area-inset-left) + 10px));
+  width: 124px;
+  height: 92px;
+  border-radius: 6px;
+  background: rgba(12, 8, 8, 0.72);
+  border: 1.5px solid rgba(201, 160, 70, 0.55);
+  box-shadow: 0 0 0 1.5px #000, 0 4px 12px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+  touch-action: none;
+  transition: width 0.2s, height 0.2s;
+}
+.hud-mapa.grande {
+  width: min(46vw, 380px);
+  height: min(70vh, 280px);
+  z-index: 3;
+}
+/* Al escoger la expedición y en el Pozo */
+.ranura-equipo.sigilo.si {
+  border-color: var(--sg);
+  color: var(--hueso);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--sg) 45%, transparent);
+}
+.ranura-equipo.sigilo kbd {
+  padding: 0 3px;
+  border-radius: 2px;
+  font: 700 9px/1.2 var(--serif);
+  color: #000;
+  background: var(--sg);
+}
+.sigilos-sel .vacio {
+  align-self: center;
+  font-size: 10px;
+  color: var(--ceniza);
+  opacity: 0.8;
+}
+.renglon.sigilo:not(.hecho) .ico {
+  box-shadow: 0 0 10px color-mix(in srgb, var(--sg) 40%, transparent);
+  border-radius: 50%;
+}
+.fila .etiqueta em {
+  font-style: normal;
+  font-size: 9px;
+  opacity: 0.7;
+}

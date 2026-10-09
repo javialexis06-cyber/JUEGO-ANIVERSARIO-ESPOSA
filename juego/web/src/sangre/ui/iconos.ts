@@ -65,6 +65,10 @@ export const G: Record<string, string> = {
   area: 'M12 2a10 10 0 110 20 10 10 0 010-20zm0 4a6 6 0 100 12 6 6 0 000-12zm0 4a2 2 0 110 4 2 2 0 010-4z',
   reloj: 'M6 2h12v3l-4 7 4 7v3H6v-3l4-7-4-7zM9 19h6l-3-4z',
   ojo: 'M12 5c6 0 10 7 10 7s-4 7-10 7S2 12 2 12s4-7 10-7zm0 3a4 4 0 100 8 4 4 0 000-8z',
+  // (los sigilos: el mapa doblado del cartógrafo, la brújula de sangre y la horqueta del zahorí)
+  mapa: 'M2 5l6-2 8 2 6-2v16l-6 2-8-2-6 2zm6 0v14m8-12v14',
+  brujula: 'M12 1a11 11 0 110 22 11 11 0 010-22zm0 2.5a8.5 8.5 0 100 17 8.5 8.5 0 000-17zM16.5 7.5L13.4 13.4 7.5 16.5l3.1-5.9zM12 10.6a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z',
+  horqueta: 'M5 2h2.4l4.6 9 4.6-9H19l-5.8 11v9h-2.4v-9z',
   diana: 'M12 2a10 10 0 110 20 10 10 0 010-20zm0 3a7 7 0 100 14 7 7 0 000-14zm0 3a4 4 0 110 8 4 4 0 010-8zm0 3a1 1 0 100 2 1 1 0 000-2z',
   iman: 'M5 4h4v8a3 3 0 006 0V4h4v8a7 7 0 01-14 0zM5 4h4v3H5zM15 4h4v3h-4z',
   trebol: 'M12 3a3 3 0 013 3 3 3 0 11-1 5 3 3 0 11-4 0 3 3 0 11-1-5 3 3 0 013-3zM11 12h2v10h-2z',

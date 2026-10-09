@@ -3,10 +3,11 @@
 // en el anfitrión de una partida de hasta 4 y en Node con el bot. Cada `paso(dt)` deja lo que pasó en `suc`.
 import { Azar } from '../../casa/lavado/azar';
 import { Rejilla } from '../../casa/lavado/rejilla';
-import { AVANCE_OBJETIVO, AVANCE_SOLO, BIOMAS, CUENTA_EXTRACCION, DESCANSO, DURACION_ETAPA, ETAPAS, MOD_ELITE, OLEADAS, PELIGROS, type DefBioma, type DefEnemigo } from '../datos/mundo';
+import { DURACION_BRUJULA, SIGILOS, SIGILOS_ORDEN } from '../datos/sigilos';
+import { AVANCE_OBJETIVO, AVANCE_SOLO, BIOMAS, CUENTA_EXTRACCION, DESCANSO, DURACION_ASTRAL, DURACION_ETAPA, ETAPAS, MOD_ELITE, OLEADAS, PELIGROS, costoAstral, type DefBioma, type DefEnemigo } from '../datos/mundo';
 import { C, esExcavable, esSolida, type ConfigExpedicion, type IdBioma, type IdObjetivo, type IdSecundario } from '../tipos';
 import { TIPOS, TIPO_ALTAR, esJefe } from './catalogo';
-import { Aliado, ENT, Entidad, Enemigos, Proyectil, REC, Recogible, S, Sucesos, Zona } from './estado';
+import { Aliado, ENT, Entidad, Enemigos, Proyectil, REC, Recogible, S, Sucesos, Zona, esMineral } from './estado';
 import { CampoFlujo } from './flujo';
 import { BIT_ETQ, RADIO_JUGADOR, type Jugador, xpPara } from './jugador';
 
@@ -487,8 +488,9 @@ export class Sim {
     r.vy = Math.sin(a) * v;
     r.vz = volar ? this.az.entre(2.5, 4) : 0;
     r.valor = valor;
-    // (lo que revienta la carga minera o un cartucho le llega solo al que la tiró, como en Deep Rock)
-    r.hacia = this.atraerA >= 0 && (tipo === REC.ORO || tipo === REC.HIERRO || tipo === REC.SANGRE) ? this.atraerA : -1;
+    // (lo que se pica o revienta una bomba le llega solo al que lo sacó, como en Deep Rock: oro, hierro, sangre y los
+    //  minerales del Pozo)
+    r.hacia = this.atraerA >= 0 && (tipo === REC.ORO || tipo === REC.HIERRO || tipo === REC.SANGRE || (tipo >= REC.MINERAL && tipo < REC.MINERAL + 6)) ? this.atraerA : -1;
     r.t = 0;
     r.dato = dato;
     r.id = this.id();
@@ -921,6 +923,18 @@ export class Sim {
         j.pideHabilidad = false;
         if (j.habT <= 0) mec.habilidad(this, j);
       }
+      if (j.astralT > 0) j.astralT -= dt;
+      if (j.brujulaT > 0) j.brujulaT -= dt;
+      for (let k = 0; k < j.sigiloT.length; k++) if (j.sigiloT[k] > 0) j.sigiloT[k] -= dt;
+      if (j.pideSigilo >= 0) {
+        const k = j.pideSigilo;
+        j.pideSigilo = -1;
+        this.usarSigilo(j, k);
+      }
+      if (j.pideAstral) {
+        j.pideAstral = false;
+        this.usarAstral(j);
+      }
       if (j.pideTomar) {
         tomarConMano(this, j, j.pideTomar.x, j.pideTomar.y);
         j.pideTomar = null;
@@ -1132,6 +1146,9 @@ export class Sim {
   alRomper(cx: number, cy: number, tipo: number, j: Jugador | null) {
     this.suc.push(S.ROTO, cx, cy, tipo);
     const x = cx + 0.5, y = cy + 0.5;
+    // (lo que suelta la veta vuela solo a quien la rompió: con el pico, una bomba o un cartucho)
+    const atraia = this.atraerA;
+    if (j) this.atraerA = j.i;
     const vetas = (1 + (j ? mec.extraVetas(j) + j.st.vetas : 0)) * (this.cfg.exp.mutadores.includes('esmeralda') ? 1.8 : 1) * (this.cfg.exp.mutadores.includes('cosecha') ? 1.6 : 1) * (this.mineria ? 3 : 1);
     // (la minería paga bien: con eso se compra en la Forja y se suben las armas en el yunque)
     // (las vetas pagan menos que antes: la plata grande la cargan los bichos del botín)
@@ -1141,6 +1158,7 @@ export class Sim {
     else if (tipo === C.HUEVO) this.soltar(REC.HUEVO, x, y, 1);
     else if (tipo === C.GRISU || tipo === C.COLUMNA) alRomperBioma(this, cx, cy, tipo);
     else if (tipo === C.MINERAL) this.soltar(REC.MINERAL + (this.mapa.v[this.mapa.idx(cx, cy)] % 6), x, y, Math.max(1, Math.round(this.az.entero(1, 2) * vetas)));
+    this.atraerA = atraia;
     // (solo minería: las almas salen de la roca)
     if (this.mineria) this.soltarAlmas(x, y, 5);
     if (j) {
@@ -1363,6 +1381,59 @@ export class Sim {
     if (this.eclipse > 0) return Math.min(1, this.eclipse / 2, (20 - Math.max(0, 20 - this.eclipse)) / 2 + 0.3);
     // (la niebla del cementerio: oscurece menos que el eclipse)
     return this.niebla > 0 ? 0.55 * Math.min(1, this.niebla / 2, (16 - this.niebla) / 2 + 0.2) : 0;
+  }
+
+  /** Un pulso de visión astral: cuesta vida (nunca la última: sin vida suficiente no sale) y dura un segundo y medio. */
+  usarAstral(j: Jugador) {
+    // (Sangre fría: la mitad de la vida y un segundo más)
+    const fria = j.sigilo('sangre_fria');
+    const costo = Math.ceil(costoAstral(this.cfg.etapa) * (fria ? 0.5 : 1));
+    if (j.astralT > 0 || j.estado !== 0 || j.hp <= costo + 1) return;
+    j.hp -= costo;
+    j.astralT = DURACION_ASTRAL + (fria ? 1 : 0);
+    this.suc.push(S.ASTRAL, j.i, costo, j.x, j.y);
+  }
+
+  /** Usa el sigilo activo de la ranura k (datos/sigilos.ts): cobra su vida, arranca su recarga y hace lo suyo. */
+  usarSigilo(j: Jugador, k: number) {
+    const id = j.sigilos[k];
+    const act = id ? SIGILOS[id].activo : undefined;
+    if (!id || !act || j.estado !== 0 || j.sigiloT[k] > 0) return;
+    const costo = Math.floor(j.hp * act.vida);
+    if (act.vida > 0 && j.hp - costo < 1) return;
+    if (id === 'paso_sombra' && !this.pasoSombra(j)) return;
+    j.hp -= costo;
+    j.sigiloT[k] = act.recarga;
+    if (id === 'brujula') j.brujulaT = DURACION_BRUJULA;
+    else if (id === 'iman_tumba') {
+      for (const r of this.R) if (r.vivo && r.hacia < 0 && (r.tipo <= REC.SANGRE || esMineral(r.tipo) || r.tipo === REC.MERCURIO)) r.hacia = j.i;
+    }
+    this.suc.push(S.SIGILO, j.i, k, SIGILOS_ORDEN.indexOf(id), costo, j.x, j.y);
+  }
+
+  /** Paso de sombra: hasta 4 m hacia donde camina (o mira), sin atravesar paredes; un instante intocable. */
+  private pasoSombra(j: Jugador) {
+    let dx = j.mx, dy = j.my;
+    if (!dx && !dy) {
+      dx = j.fx;
+      dy = j.fy;
+    }
+    const l = Math.hypot(dx, dy);
+    if (l < 0.01) return false;
+    dx /= l;
+    dy /= l;
+    let hasta = 0;
+    for (let d = 0.25; d <= 4.001; d += 0.25) {
+      if (!this.mapa.libre(Math.floor(j.x + dx * d), Math.floor(j.y + dy * d))) break;
+      hasta = d;
+    }
+    if (hasta < 0.75) return false;
+    const x0 = j.x, y0 = j.y;
+    j.x += dx * hasta;
+    j.y += dy * hasta;
+    j.invul = Math.max(j.invul, 0.35);
+    this.suc.push(S.SALTO, x0, y0, j.x, j.y);
+    return true;
   }
 
   /** Para pruebas y para el bot: la entrada de un jugador. */

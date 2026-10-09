@@ -8,7 +8,7 @@ import type { ConfigExpedicion, PerfilJugador } from './tipos';
 
 const CLAVE = 'sangre-bajada';
 /** Lo del jugador que no se guarda (se rehace al empezar la etapa o viene del perfil). */
-const SIN_COPIAR = new Set(['perfil', 'armas', 'x', 'y', 'vx', 'vy', 'pideTomar', 'remoto', 'mx', 'my', 'pideHabilidad', 'usa', 'excavando']);
+const SIN_COPIAR = new Set(['perfil', 'armas', 'x', 'y', 'vx', 'vy', 'pideTomar', 'remoto', 'mx', 'my', 'pideHabilidad', 'pideAstral', 'astralT', 'pideSigilo', 'brujulaT', 'usa', 'excavando']);
 
 export interface BajadaGuardada {
   v: 1;

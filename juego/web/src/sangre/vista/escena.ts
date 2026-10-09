@@ -6,7 +6,8 @@ import { BlendFunction, BloomEffect, EffectComposer, EffectPass, NoiseEffect, Re
 import * as THREE from 'three';
 import { vigilarContexto } from '../../contexto';
 import { ARMAS_LISTA } from '../datos/armas';
-import { BIOMAS, CUENTA_EXTRACCION, type DefBioma } from '../datos/mundo';
+import { BIOMAS, CUENTA_EXTRACCION, DURACION_ASTRAL, type DefBioma } from '../datos/mundo';
+import { SIGILOS, SIGILOS_ORDEN } from '../datos/sigilos';
 import { C, MINERALES_ORDEN } from '../tipos';
 import { MINERALES } from '../datos/minerales';
 import { TIPOS, esJefe } from '../sim/catalogo';
@@ -90,9 +91,11 @@ export class Escena3D {
   cosas: Cosas3D | null = null;
   particulas: Particulas | null = null;
   efectos: Efectos | null = null;
-  /** La visión astral (se arma con cada etapa; si estaba prendida, sigue prendida). */
+  /** La visión astral (se arma con cada etapa): un pulso corto que paga la vida del jugador (S.ASTRAL). */
   astral: VisionAstral | null = null;
   private astralPedida = false;
+  /** Lo que le queda al pulso de visión astral (s). */
+  private astralResta = 0;
   /** Dónde está el jugador local (para la onda al prender la visión astral). */
   private yo = { x: 0, y: 0 };
   jugadores = new Jugadores3D(this.bib);
@@ -306,17 +309,18 @@ export class Escena3D {
     this.luz = null;
   }
 
-  /** Prende o apaga la visión astral (con una onda que sale del jugador al prenderla). Devuelve si quedó prendida. */
-  alternarAstral() {
-    this.astralPedida = !this.astralPedida;
-    if (this.astral) this.astral.activa = this.astralPedida;
-    if (this.astralPedida) this.efectos?.onda(this.yo.x, this.yo.y, RADIO_ASTRAL * 0.6, '#9cc4ee', 0.9);
-    return this.astralPedida;
+  /** Un pulso de visión astral: se prende `seg` segundos (con una onda que sale del jugador) y se apaga sola. */
+  pulsoAstral(seg: number) {
+    this.astralPedida = true;
+    this.astralResta = seg;
+    if (this.astral) this.astral.activa = true;
+    this.efectos?.onda(this.yo.x, this.yo.y, RADIO_ASTRAL * 0.6, '#9cc4ee', 0.9);
   }
 
   /** Apaga la visión astral (al empezar otra expedición). */
   apagarAstral() {
     this.astralPedida = false;
+    this.astralResta = 0;
     if (this.astral) this.astral.activa = false;
   }
 
@@ -404,6 +408,11 @@ export class Escena3D {
       this.yo.x = yo.x;
       this.yo.y = yo.y;
     }
+    if (this.astralResta > 0) {
+      this.astralResta -= dt;
+      if (this.astralResta <= 0) this.apagarAstral();
+    }
+    if (this.astral) this.astral.zahori = !!est.J[this.local]?.sigilo('zahori');
     this.astral?.actualizar(dt, est, this.local);
     // Jugadores
     for (const j of est.J) {
@@ -794,6 +803,25 @@ export class Escena3D {
           F.onda(j.x, j.y, 2.8, '#ffd36a', 0.7);
           P.chispas(j.x, 0.5, j.y, '#ffd860', 16, 3);
           for (let e = 0; e < 4; e++) P.alma(j.x, 0.3, j.y, '#ffe08a');
+          break;
+        }
+        case S.ASTRAL: {
+          // El pulso de visión astral: el que lo pagó ve un segundo y medio; los demás ven la onda y la sangre
+          const j = est.J[x];
+          if (!j) break;
+          if (j.i === this.local) this.pulsoAstral(DURACION_ASTRAL + (j.sigilo('sangre_fria') ? 1 : 0));
+          else F.onda(j.x, j.y, 4, '#9cc4ee', 0.6);
+          P.sangre(j.x, 0.8, j.y, 4);
+          break;
+        }
+        case S.SIGILO: {
+          // Un sigilo activo: la sangre que se paga y una onda del color del sigilo
+          const j = est.J[x];
+          const id = SIGILOS_ORDEN[d[k + 3]];
+          if (!j || !id) break;
+          if (d[k + 4] > 0) P.sangre(j.x, 0.8, j.y, 6);
+          F.onda(j.x, j.y, id === 'iman_tumba' ? 6 : 2.4, SIGILOS[id].color, 0.7);
+          if (id === 'paso_sombra') P.chispas(j.x, 0.6, j.y, '#a890d0', 14, 4);
           break;
         }
         case S.HERIDO: {

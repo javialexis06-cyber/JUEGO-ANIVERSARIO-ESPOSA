@@ -32,7 +32,8 @@ const FRAG_ARCO = /* glsl */ `
     vec2 p = vUv * 2.0 - 1.0;
     float r = length( p );
     if ( r > 1.0 ) discard;
-    float a = atan( -p.y, p.x ) - uAng;
+    // (atan(0, 0) no está definido en todos los celulares: el 1e-6 lo evita en el centro)
+    float a = atan( -p.y, p.x + 1e-6 ) - uAng;
     a = mod( a + 3.14159265, 6.2831853 ) - 3.14159265;
     float medio = uArco * 0.5;
     if ( abs( a ) > medio ) discard;
@@ -149,7 +150,9 @@ const VERT_AURA = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4( position, 1.0 );
     vec3 n = normalize( normalMatrix * normal );
     // Brilla en el contorno (de canto a la cámara) y deja ver al personaje por el medio
-    vBorde = 1.0 - abs( dot( n, normalize( -mv.xyz ) ) );
+    // (OJO: sin el clamp, por redondeo daba −0,0000001 y pow() de un negativo es NaN en los celulares Android: ese NaN
+    //  lo regaba el bloom por toda la pantalla y quedaba negra el segundo y medio que dura el aura de subir de nivel)
+    vBorde = clamp( 1.0 - abs( dot( n, normalize( -mv.xyz ) ) ), 0.0, 1.0 );
     gl_Position = projectionMatrix * mv;
   }
 `;
@@ -166,8 +169,8 @@ const FRAG_AURA = /* glsl */ `
     // Vetas que corren hacia arriba (llamitas de luz)
     float n = nE( vec2( vUv.x * 22.0, y * 4.0 - uTiempo * 3.2 ) );
     float vetas = smoothstep( 0.35, 0.85, n );
-    float contorno = pow( vBorde, 1.6 );
-    float alfa = pow( 1.0 - y, 1.2 ) * ( 0.1 + 0.9 * contorno ) * ( 0.35 + 0.65 * vetas ) * entra * sale * sube;
+    float contorno = pow( clamp( vBorde, 0.0, 1.0 ), 1.6 );
+    float alfa = pow( clamp( 1.0 - y, 0.0, 1.0 ), 1.2 ) * ( 0.1 + 0.9 * contorno ) * ( 0.35 + 0.65 * vetas ) * entra * sale * sube;
     vec3 col = mix( uColor, vec3( 1.0, 0.96, 0.8 ), 0.35 * ( 1.0 - y ) * vetas );
     gl_FragColor = vec4( col * 1.9, alfa );
     ${FIN}
@@ -184,7 +187,7 @@ const FRAG_HAZ = /* glsl */ `
     float n = nE( vec2( vUv.x * 14.0, y * 5.0 - uTiempo * 1.4 ) );
     // Más fuerte abajo y en el centro del cilindro (los bordes se ven de canto: se apagan para no hacer una pared blanca)
     float canto = 0.35 + 0.65 * pow( abs( sin( vUv.x * 3.14159265 * 2.0 ) ), 0.5 );
-    float alfa = pow( 1.0 - y, 2.0 ) * ( 0.35 + 0.45 * n ) * uFuerza * canto * ( 0.85 + 0.15 * sin( uTiempo * 2.6 ) );
+    float alfa = pow( clamp( 1.0 - y, 0.0, 1.0 ), 2.0 ) * ( 0.35 + 0.45 * n ) * uFuerza * canto * ( 0.85 + 0.15 * sin( uTiempo * 2.6 ) );
     gl_FragColor = vec4( uColor * 1.3, alfa );
     ${FIN}
   }
@@ -202,7 +205,7 @@ const FRAG_ANILLO = /* glsl */ `
     vec3 col = mix( uColor, vec3( 1.0, 0.25, 0.15 ), uUrge );
     float pulso = 0.5 + 0.5 * sin( uTiempo * mix( 3.0, 10.0, uUrge ) );
     float borde = smoothstep( 0.84, 0.92, r ) * ( 1.0 - smoothstep( 0.96, 1.0, r ) );
-    float a = atan( p.x, -p.y ) / 6.2831853 + 0.5;
+    float a = atan( p.x, -p.y + 1e-6 ) / 6.2831853 + 0.5;
     float queda = step( a, uResto );
     float arco = smoothstep( 0.74, 0.79, r ) * ( 1.0 - smoothstep( 0.81, 0.86, r ) ) * queda;
     float onda = smoothstep( 0.035, 0.0, abs( r - ( 1.0 - fract( uTiempo * 0.45 ) ) ) ) * 0.45;
@@ -222,7 +225,7 @@ const FRAG_USO = /* glsl */ `
     float r = length( p );
     if ( r > 1.0 ) discard;
     // (empieza arriba y se llena como las agujas del reloj, visto desde la cámara)
-    float a = atan( -p.x, -p.y ) / 6.2831853 + 0.5;
+    float a = atan( -p.x, -p.y + 1e-6 ) / 6.2831853 + 0.5;
     float trazo = step( 0.42, fract( a * 26.0 - uTiempo * 0.3 ) );
     float borde = smoothstep( 0.89, 0.93, r ) * ( 1.0 - smoothstep( 0.97, 1.0, r ) ) * ( 0.3 + 0.7 * trazo );
     float banda = smoothstep( 0.71, 0.75, r ) * ( 1.0 - smoothstep( 0.84, 0.88, r ) );

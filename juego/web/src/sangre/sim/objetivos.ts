@@ -4,7 +4,7 @@
 // La etapa se gana peleando: una barra de avance que llenan el tiempo y el objetivo, con oleadas en el camino; llena,
 // despierta el Guardián (un élite enorme) y la Noche se impacienta hasta que cae. Al caer él, baja la campana. En la
 // etapa final, en vez del Guardián hay cuatro sepulcros con un custodio cada uno; caídos los custodios, sale el jefe.
-import { AVANCE_SOLO, CUENTA_EXTRACCION, GUARDIANES, IMPACIENCIA_CADA, PELIGROS, SEPULCROS } from '../datos/mundo';
+import { AVANCE_SOLO, CUENTA_EXTRACCION, GUARDIANES, IMPACIENCIA_CADA, PELIGROS, PRISA_OBJETIVO, PRISA_OBJETIVO_FINAL, SEPULCROS } from '../datos/mundo';
 import { C, esSolida } from '../tipos';
 import { TIPO, TIPOS, TIPO_ALTAR } from './catalogo';
 import { aparecerEnemigo, modsElite } from './enemigos_ia';
@@ -288,7 +288,8 @@ export function actualizarObjetivos(sim: Sim, dt: number) {
   const o = sim.obj;
   if (!o.hecho && o.prog >= o.meta && o.meta > 0) {
     o.hecho = true;
-    sim.aviso(1);
+    // (0: viene el Guardián; 1: se abren los sepulcros; 2: misiones con su propio final)
+    sim.aviso(1, !sim.cfg.final ? 0 : sim.cfg.exp.mision === 'cria' || sim.cfg.exp.mision === 'procesion' ? 2 : 1);
     // Premio: un cofre a los pies de quien esté más cerca del centro de la acción (y la barra da el salto)
     const ref = sim.vivos()[0];
     if (ref && !sim.cfg.exp.tutorial) sim.soltar(REC.COFRE, ref.x, ref.y, 1);
@@ -404,7 +405,11 @@ function plumas(sim: Sim, dt: number) {
  *  despierta el Guardián (o se abren los sepulcros de la etapa final). */
 function avanzar(sim: Sim, dt: number) {
   if (sim.fase === 'juego') {
-    sim.avanceT = Math.min(1, sim.avanceT + (dt * sim.ritmo) / AVANCE_SOLO);
+    // Con el objetivo principal cumplido, lo que falta se llena en unos segundos (y las oleadas que faltaban ya no
+    // salen): el Guardián viene de una, no hay que esperar al reloj
+    const prisa = sim.obj.hecho;
+    sim.avanceT = Math.min(1, sim.avanceT + (prisa ? dt / (sim.cfg.final ? PRISA_OBJETIVO_FINAL : PRISA_OBJETIVO) : (dt * sim.ritmo) / AVANCE_SOLO));
+    if (prisa) sim.oleadasHechas = sim.oleadas.length;
     sim.calcularAvance();
   }
   while (sim.oleadasHechas < sim.oleadas.length && sim.avance >= sim.oleadas[sim.oleadasHechas]) {

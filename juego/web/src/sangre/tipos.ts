@@ -336,6 +336,8 @@ export interface PerfilJugador {
   vidaMult?: number;
   /** Nivel del equipo que se trae del Pozo (sube con los logros de la cuenta, 0-5). */
   nivelEquipo?: number;
+  /** Los sigilos que lleva (hasta dos; datos/sigilos.ts). */
+  sigilos?: string[];
   tiradas: number; // volver a tirar por expedición
   vetos: number; // descartar por expedición
   cuerpo: 'el' | 'ella';

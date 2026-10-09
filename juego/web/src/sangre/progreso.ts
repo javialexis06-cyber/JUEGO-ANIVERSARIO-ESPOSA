@@ -2,6 +2,7 @@
 // el equipo ofrecido al Pozo, la maestría de cada clase, las clases, biomas, peligros y armas desbloqueadas, los
 // logros y las cifras. Liviano y sin dependencias pesadas: lo importa también la casa para normalizarlo.
 // Javier y Laura lo guardan en la casa compartida (casa.sangre[rol]); los amigos, en su aparato.
+import { RANURAS_SIGILO, SIGILOS_INICIALES, SIGILOS_ORDEN, type IdSigilo } from './datos/sigilos';
 import { LOGROS_POR_NIVEL_EQUIPO, MINERALES_ORDEN, NIVEL_EQUIPO_MAX, type IdBioma, type IdClase, type IdMineral, type IdMutador, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
 
 export const CLASES_INICIALES: IdClase[] = ['monarca', 'campesino', 'prisionero'];
@@ -57,6 +58,8 @@ export interface UltimaEleccion {
   infinito?: boolean;
   /** La misión de tres etapas escogida (La Procesión o La Cría). */
   mision?: 'procesion' | 'cria';
+  /** Los sigilos que se llevó (sin esto, los dos primeros). */
+  sigilos?: IdSigilo[];
 }
 
 export interface ProgresoSangre {
@@ -88,6 +91,8 @@ export interface ProgresoSangre {
   puntos: number;
   /** Los récords de los minijuegos del refugio (J) y la bolsa de ceniza de mentiras de la taberna. */
   refugio: { barril: number; campana: number; taberna: number; bolsa: number };
+  /** Los sigilos que ya tiene (los dos primeros vienen dados; los demás se compran en el Pozo). */
+  sigilos: IdSigilo[];
   /** Para fusionar copias de dos aparatos (la más reciente gana en lo que no se suma). */
   t: number;
 }
@@ -97,7 +102,7 @@ export function progresoNuevo(): ProgresoSangre {
     v: 1, ceniza: 0, cenizaTotal: 0, pozo: {}, ofrendas: [], maestria: {}, clases: [...CLASES_INICIALES], biomas: [...BIOMAS_INICIALES], ganado: {},
     comunes: [...COMUNES_INICIALES], logros: [], cifras: Object.fromEntries(CIFRAS.map((k) => [k, 0])) as unknown as CifrasSangre, ultima: null, tutorial: false,
     minerales: {}, noche: { metas: [], escenas: [] }, reliquias: [], contratos: {}, pruebas: { armas: [], clases: [], biomas: [] }, puntos: 0, t: 0,
-    refugio: { barril: 0, campana: 0, taberna: 0, bolsa: 100 },
+    refugio: { barril: 0, campana: 0, taberna: 0, bolsa: 100 }, sigilos: [...SIGILOS_INICIALES],
   };
 }
 
@@ -138,6 +143,7 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
       barril: Math.floor(num(esObj(x.refugio) ? x.refugio.barril : 0, 0, 99999)), campana: Math.round(num(esObj(x.refugio) ? x.refugio.campana : 0, 0, 9999) * 10) / 10,
       taberna: Math.floor(num(esObj(x.refugio) ? x.refugio.taberna : 0, 0, 1e7)), bolsa: Math.floor(num(esObj(x.refugio) ? x.refugio.bolsa : 100, 0, 1e7)),
     },
+    sigilos: [...new Set([...SIGILOS_INICIALES, ...lista(x.sigilos, SIGILOS_ORDEN)])],
     t: num(x.t),
   };
   if (esObj(x.contratos)) {
@@ -167,6 +173,7 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
       clase: u.clase as IdClase, spec: Math.floor(num(u.spec, 0, 2)), bioma: u.bioma as IdBioma, peligro: Math.max(1, Math.floor(num(u.peligro, 1, 5))),
       mutadores: lista(u.mutadores, MUTADORES_TODOS), equipo: eq, infinito: u.infinito === true,
       ...(u.mision === 'procesion' || u.mision === 'cria' ? { mision: u.mision } : {}),
+      ...(Array.isArray(u.sigilos) ? { sigilos: lista(u.sigilos, SIGILOS_ORDEN).slice(0, RANURAS_SIGILO) } : {}),
     };
   }
   return p;
@@ -193,6 +200,7 @@ export function fusionarProgreso(a: ProgresoSangre, b: ProgresoSangre): Progreso
   r.comunes = [...new Set([...a.comunes, ...b.comunes])];
   r.logros = [...new Set([...a.logros, ...b.logros])];
   r.reliquias = [...new Set([...a.reliquias, ...b.reliquias])];
+  r.sigilos = [...new Set([...a.sigilos, ...b.sigilos])];
   for (const k of new Set([...Object.keys(a.contratos), ...Object.keys(b.contratos)])) r.contratos[k] = Math.max(a.contratos[k] ?? 0, b.contratos[k] ?? 0);
   r.pruebas = {
     armas: [...new Set([...a.pruebas.armas, ...b.pruebas.armas])],
@@ -273,7 +281,7 @@ export function statsMaestria(nivel: number): Partial<Stats> {
 }
 
 /** El perfil con que un jugador entra a la expedición (permanentes del Pozo + maestría de la clase). */
-export function perfilDe(p: ProgresoSangre, datos: { id: string; nombre: string; puesto: number; clase: IdClase; spec: number; equipo: Partial<Record<RanuraEquipo, string>>; cuerpo: 'el' | 'ella'; tipo: 'el' | 'ella' | 'amigo'; piel?: string; pelo?: string; detalles?: Record<string, string> }, arsenal: [string, string, string, string], pozoStats: (nivel: Record<string, number>) => { meta: Partial<Stats>; tiradas: number; vetos: number }): PerfilJugador {
+export function perfilDe(p: ProgresoSangre, datos: { id: string; nombre: string; puesto: number; clase: IdClase; spec: number; equipo: Partial<Record<RanuraEquipo, string>>; sigilos?: IdSigilo[]; cuerpo: 'el' | 'ella'; tipo: 'el' | 'ella' | 'amigo'; piel?: string; pelo?: string; detalles?: Record<string, string> }, arsenal: [string, string, string, string], pozoStats: (nivel: Record<string, number>) => { meta: Partial<Stats>; tiradas: number; vetos: number }): PerfilJugador {
   const nv = nivelMaestria(p.maestria[datos.clase] ?? 0).nivel;
   const { meta, tiradas, vetos } = pozoStats(p.pozo);
   const sm = statsMaestria(nv);
@@ -285,6 +293,8 @@ export function perfilDe(p: ProgresoSangre, datos: { id: string; nombre: string;
   return {
     id: datos.id, nombre: datos.nombre, puesto: datos.puesto, clase: datos.clase, spec: Math.min(datos.spec, specsDisponibles(nv) - 1), meta: total, equipo,
     nivelEquipo: nivelEquipo(p),
+    // (solo los sigilos que de verdad tiene)
+    sigilos: (datos.sigilos ?? []).filter((s) => p.sigilos.includes(s)).slice(0, RANURAS_SIGILO),
     arsenal: arsenal.slice(0, armasDisponibles(nv)), comunes: [...p.comunes], reliquias: [...p.reliquias], armasMaestras: [...p.pruebas.armas], tiradas: 1 + tiradas, vetos: vetos, cuerpo: datos.cuerpo, tipo: datos.tipo,
     piel: datos.piel, pelo: datos.pelo, ...(datos.detalles ? { detalles: datos.detalles } : {}),
   };

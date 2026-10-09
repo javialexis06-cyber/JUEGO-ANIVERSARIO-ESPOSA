@@ -1,6 +1,7 @@
 // Un jugador dentro de la expedición: posición, vida, nivel, armas, mejoras, objetos, equipo, reliquias,
 // bendiciones, dones de su clase y el estado de su mecánica. Sus estadísticas finales se recalculan cuando algo cambia.
 import { ARMAS, MAX_SOBRECARGAS, NIVELES_SOBRECARGA, NIVEL_MAX_ARMA, xpArma } from '../datos/armas';
+import { RANURAS_SIGILO, esSigilo, type IdSigilo } from '../datos/sigilos';
 import { BENDICION, OBJETO, modsPieza, pieza } from '../datos/botin';
 import { CLASES } from '../datos/clases';
 import {
@@ -204,6 +205,17 @@ export class Jugador {
   mx = 0;
   my = 0;
   pideHabilidad = false;
+  /** Pidió un pulso de visión astral (cuesta vida; ver costoAstral). */
+  pideAstral = false;
+  /** Los sigilos que trae (datos/sigilos.ts) y la recarga de cada uno (en ese orden). */
+  sigilos: IdSigilo[] = [];
+  sigiloT = [0, 0];
+  /** Pidió usar el sigilo de esta ranura (-1: nada). */
+  pideSigilo = -1;
+  /** Lo que le queda a la flecha de la brújula de sangre (s). */
+  brujulaT = 0;
+  /** Lo que le queda al pulso de visión astral (mientras tanto no se cobra otro). */
+  astralT = 0;
   /** Tocó algo con el mouse o el dedo para recogerlo (punto del piso; se consume en el paso). */
   pideTomar: { x: number; y: number } | null = null;
   /** El cofre, santuario o prisionero que está abriendo desde lejos por tocarlo (id, −1 ninguno). */
@@ -298,6 +310,7 @@ export class Jugador {
     this.tiradas = perfil.tiradas;
     this.vetos = perfil.vetos;
     this.equipo = { ...perfil.equipo };
+    this.sigilos = [...new Set((perfil.sigilos ?? []).filter(esSigilo))].slice(0, RANURAS_SIGILO);
     this.armas = [new ArmaJ(CLASES[perfil.clase].arsenal[0])];
     this.recalcular();
     this.hp = this.hpMax;
@@ -319,6 +332,9 @@ export class Jugador {
   }
   objeto(id: string) {
     return this.objetos.includes(id);
+  }
+  sigilo(id: IdSigilo) {
+    return this.sigilos.includes(id);
   }
   /** Lo que las demás armas le hacen al daño de la de la ranura k (De cinto: +20 % a las otras; La consentida: −30 %). */
   multOtras(k: number) {
@@ -444,8 +460,10 @@ export class Jugador {
     const salmuera = this.tiene('hierro_salmuera') ? Math.min(0.3, this.hierro * 0.005) : 0;
     return VEL_BASE * Math.max(0.3, 1 - salmuera + this.st.velocidad + this.buffVel + (this.auraT > 0 ? this.auraVel : 0) + (this.prisaT > 0 ? 0.12 * this.don('aire_libre') : 0) + (this.arranqueT > 0 && this.tieneEspecial('prisa_inicio') ? 0.3 : 0));
   }
+  /** Lo que alcanza a jalar (almas, oro, minerales): crece con las mejoras de imán y también con el nivel (+4 % por
+   *  nivel, hasta el doble), así a mitad de la partida no hay que pasar encima de cada cosa. */
   get radioIman() {
-    return IMAN_BASE * (1 + this.st.iman);
+    return IMAN_BASE * (1 + this.st.iman + Math.min(1, (this.nivel - 1) * 0.04));
   }
   get radioLuz() {
     return LUZ_BASE * Math.max(0.4, 1 + this.st.luz + this.luzMut);

@@ -39,6 +39,8 @@ export const S = {
   SOBRECARGA: 33, // jugador, arma
   MARCA: 34, // x, y
   LIBERA: 35, // x, y
+  ASTRAL: 36, // jugador, costo, x, y (un pulso de visión astral)
+  SIGILO: 37, // jugador, ranura, sigilo (índice en SIGILOS_ORDEN), costo, x, y
 } as const;
 
 /** Un búfer de sucesos de 7 números cada uno: [tipo, a, b, c, d, e, f]. */

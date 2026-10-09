@@ -1,11 +1,14 @@
 // El HUD de la expedición (DOM) y la capa 2D encima del 3D (números de daño, nombres y vida de los compañeros,
 // flechas hacia lo que está fuera de la pantalla, barras de los élites). El DOM solo se toca cuando algo cambia.
 import { CLASES } from '../datos/clases';
-import { ETAPAS, EVENTOS, JEFES, OBJETIVOS, SECUNDARIOS, type IdEvento } from '../datos/mundo';
+import { ETAPAS, EVENTOS, JEFES, OBJETIVOS, SECUNDARIOS, costoAstral, type IdEvento } from '../datos/mundo';
 import { SANTOS } from '../datos/botin';
 import { NIVEL_MAX_ARMA, xpArma } from '../datos/armas';
 import { TIPOS, esJefe } from '../sim/catalogo';
-import { ENT, S, type Entidad, type Enemigos, type Sucesos } from '../sim/estado';
+import { ENT, S, type Entidad, type Enemigos, type Recogible, type Sucesos } from '../sim/estado';
+import type { Mapa } from '../sim/mapa';
+import { DURACION_BRUJULA, SIGILOS, SIGILOS_ORDEN, TECLAS_SIGILO } from '../datos/sigilos';
+import { Minimapa, objetivoCercano, tesorosCerca } from './sigilos';
 import { xpPara, type Jugador } from '../sim/jugador';
 import { MINERALES_ORDEN, type IdObjetivo, type IdSecundario } from '../tipos';
 import { MINERALES } from '../datos/minerales';
@@ -37,7 +40,8 @@ export interface EstadoHud {
   J: Jugador[];
   suc: Sucesos;
   eclipse: number;
-  mapa: { rieles: { x: number; y: number }[] };
+  mapa: Mapa;
+  R: Recogible[];
   cfg: { etapa: number; final: boolean; exp: { infinito?: boolean; etapas?: number; mision?: string } };
   /** Sin reloj (tutorial). */
   sinReloj?: boolean;
@@ -54,7 +58,7 @@ interface Numero {
 }
 
 const AVISOS: Record<number, (a: number, b: number, nombre: (i: number) => string) => [string, string?]> = {
-  1: () => ['¡Objetivo cumplido! La barra dio un salto.', 'grande'],
+  1: (a) => [['¡Objetivo cumplido! El Guardián ya viene…', '¡Objetivo cumplido! Se abren los sepulcros…', '¡Objetivo cumplido!'][a] ?? '¡Objetivo cumplido!', 'grande'],
   2: () => ['Se acabó el tiempo: ¡baja la campana!'],
   3: (a, b) => [`Altar destruido (${a}/${b}): ¡viene una oleada!`, 'peligro'],
   4: () => ['¡El élite marcado cayó!', 'grande'],
@@ -106,6 +110,7 @@ const AVISOS: Record<number, (a: number, b: number, nombre: (i: number) => strin
   52: () => ['¡Nacen las crías de la Madre de Piedra! Mientras vivan, la piedra la protege.', 'peligro'],
   53: () => ['Las crías cayeron: la Madre de Piedra queda expuesta.', 'grande'],
   54: (a, b) => [`¡Huevo de más (${a - b})! Premio aparte: oro y almas.`, 'grande'],
+  55: (a, _b, nombre) => [`La última vela salvó a ${nombre(a)}: 1 de vida y un respiro.`, 'grande'],
 };
 
 /** La leyenda de la visión astral: qué es cada color. */
@@ -142,6 +147,15 @@ export class Hud {
   alHabilidad: () => void = () => undefined;
   alPausa: () => void = () => undefined;
   alAstral: () => void = () => undefined;
+  /** Usar el sigilo activo de esa ranura. */
+  alSigilo: (k: number) => void = () => undefined;
+  /** Los sigilos del jugador local: el mapa, la recarga de los activos, la flecha de la brújula y el ojo del cuervo. */
+  private minimapa: Minimapa | null = null;
+  private sigRec = [0, 0];
+  private brujulaT = 0;
+  private objetivo: { x: number; y: number } | null = null;
+  private objetivoT = 0;
+  private cuervo = false;
   /** Nombre de cada jugador (Javier, Laura o el del amigo). */
   nombre: (i: number) => string = (i) => `Jugador ${i + 1}`;
   private veloDano = $('velo-dano');
@@ -197,8 +211,14 @@ export class Hud {
         <button class="boton boton-redondo boton-pausa" data-e="pausa" aria-label="Pausa">${glifo('pausa')}</button>
       </div>
       <div class="hud-armas" data-e="armas"></div>
-      <button class="hud-astral" data-e="astral" aria-label="Visión astral" title="Visión astral (Q)">${glifo('ojo')}<span class="tecla">Q</span></button>
+      <button class="hud-astral" data-e="astral" aria-label="Visión astral: cuesta vida" title="Visión astral (Q): un pulso que cuesta vida">${glifo('ojo')}<span class="costo" data-e="astralC"></span><span class="tecla">Q</span></button>
       <div class="hud-leyenda" data-e="leyenda" hidden>${LEYENDA.map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>
+      ${j.sigilos.filter((id) => SIGILOS[id].activo).map((id, n) => {
+        // (n: el primero o el segundo de los activos, con su tecla; la recarga va por la ranura k)
+        const d = SIGILOS[id], k = j.sigilos.indexOf(id);
+        return `<button class="hud-sigilo" data-n="${n}" style="--sg:${d.color}" aria-label="${d.nombre}" title="${d.nombre} (${TECLAS_SIGILO[n]})">${glifo(d.glifo, d.color)}<span class="recarga" data-e="sigR${k}"></span>${d.activo!.vida ? `<span class="costo">−${Math.round(d.activo!.vida * 100)}%</span>` : ''}<span class="tecla">${TECLAS_SIGILO[n]}</span></button>`;
+      }).join('')}
+      ${j.sigilo('cartografo') ? '<canvas class="hud-mapa" data-e="mapa" aria-label="Mapa del Cartógrafo"></canvas>' : ''}
       <button class="hud-habilidad" data-e="hab" aria-label="${def.habilidad.nombre}">${glifo(def.habilidad.glifo)}<span class="recarga" data-e="habR"></span><b data-e="habT"></b><span class="tecla">Espacio</span></button>`;
     this.els = {};
     for (const el of this.raiz.querySelectorAll<HTMLElement>('[data-e]')) this.els[el.dataset.e!] = el;
@@ -214,6 +234,24 @@ export class Hud {
       e.stopPropagation();
       this.alAstral();
     });
+    // Los sigilos activos (uno o dos botones) y el mapa del Cartógrafo (se agranda al tocarlo)
+    for (const b of this.raiz.querySelectorAll<HTMLElement>('.hud-sigilo')) {
+      b.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.alSigilo(Number(b.dataset.n));
+      });
+    }
+    this.sigRec = [0, 0];
+    this.brujulaT = 0;
+    this.objetivo = null;
+    this.cuervo = j.sigilo('cuervo');
+    this.minimapa = this.els.mapa ? new Minimapa(this.els.mapa as HTMLCanvasElement, j.sigilo('zahori')) : null;
+    this.els.mapa?.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.els.mapa.classList.toggle('grande');
+    });
     this.raiz.hidden = false;
   }
 
@@ -224,6 +262,26 @@ export class Hud {
   }
 
   /** Mientras se escogen las cartas el HUD casi desaparece (si no, sus letreros se cruzan con el título de la elección). */
+  /** ¿Se puede usar el sigilo de esa ranura? (si está recargando, lo dice) */
+  puedeSigilo(j: Jugador, k: number) {
+    const id = j.sigilos[k];
+    if (!id || !SIGILOS[id].activo || j.estado !== 0) return false;
+    if (this.sigRec[k] > 0) {
+      aviso(`${SIGILOS[id].nombre}: falta ${Math.ceil(this.sigRec[k])} s`, '', 1200);
+      return false;
+    }
+    return true;
+  }
+
+  /** ¿Alcanza la vida para un pulso de visión astral? (si no, lo dice y no se pide) */
+  puedeAstral(j: Jugador, etapa: number) {
+    if (j.estado !== 0 || j.astralT > 0) return false;
+    const costo = Math.ceil(costoAstral(etapa) * (j.sigilo('sangre_fria') ? 0.5 : 1));
+    if (j.hp > costo + 1) return true;
+    aviso(`Te falta vida para la visión astral (cuesta ${costo})`, 'peligro', 1600);
+    return false;
+  }
+
   eligiendo(si: boolean) {
     this.raiz.classList.toggle('eligiendo', si);
   }
@@ -265,7 +323,30 @@ export class Hud {
     this.texto('vidaT', `${Math.ceil(Math.max(0, j.hp))} / ${j.hpMax}`);
     this.ancho('xp', j.xp / xpPara(j.nivel));
     this.texto('nivel', j.nivel);
-    // Visión astral: el botón prendido y la leyenda de colores
+    // Sigilos: la recarga de los activos (se gira como un reloj) y el mapa del Cartógrafo
+    for (let k = 0; k < 2; k++) {
+      if (this.sigRec[k] > 0) this.sigRec[k] = Math.max(0, this.sigRec[k] - dt);
+      const id = j.sigilos[k];
+      const tot = id ? SIGILOS[id].activo?.recarga ?? 1 : 1;
+      if (!this.els[`sigR${k}`]) continue;
+      this.poner(`sigR${k}`, this.sigRec[k] > 0 ? String(Math.round((this.sigRec[k] / tot) * 100)) : '', (el, v) => {
+        el.style.setProperty('--rec', `${v || 0}%`);
+        el.parentElement?.classList.toggle('cargando', !!v);
+      });
+    }
+    if (this.brujulaT > 0) {
+      this.brujulaT -= dt;
+      this.objetivoT -= dt;
+      if (this.objetivoT <= 0) {
+        this.objetivoT = 0.5;
+        this.objetivo = objetivoCercano(est, j);
+      }
+    } else this.objetivo = null;
+    this.minimapa?.actualizar(dt, est, this.local, this.objetivo);
+    // Visión astral: el botón prendido, lo que cuesta (vida, sube cada etapa) y la leyenda de colores
+    const costo = Math.ceil(costoAstral(est.cfg.etapa) * (j.sigilo('sangre_fria') ? 0.5 : 1));
+    this.texto('astralC', `−${costo}`);
+    this.poner('astral!', j.hp > costo + 1 ? '' : 'no', (el, v) => el.classList.toggle('sin-vida', !!v));
     const astral = this.escena.astralFuerza > 0.5 ? 'si' : '';
     this.poner('astral?', astral, (el, v) => el.classList.toggle('activo', !!v));
     this.poner('leyenda', astral, (el, v) => (el.hidden = !v));
@@ -401,6 +482,25 @@ export class Hud {
         const crit = d[k + 4] > 0;
         const dueno = d[k + 6];
         this.numeros.push({ x: d[k + 1], y: 1.1, z: d[k + 2], v: d[k + 3], t: 0, crit, color: dueno === this.local ? (crit ? '#ffd040' : '#f0e6d6') : '#a8a098' });
+      } else if (t === S.SIGILO && d[k + 1] === this.local) {
+        // (un sigilo activo: su recarga, la flecha de la brújula y lo que costó)
+        const id = SIGILOS_ORDEN[d[k + 3]];
+        const def = id ? SIGILOS[id] : null;
+        if (def?.activo) this.sigRec[d[k + 2]] = def.activo.recarga;
+        if (id === 'brujula') {
+          this.brujulaT = DURACION_BRUJULA;
+          this.objetivoT = 0;
+        }
+        if (d[k + 4] > 0) {
+          if (this.numeros.length > 60) this.numeros.shift();
+          this.numeros.push({ x: d[k + 5], y: 1.5, z: d[k + 6], v: d[k + 4], t: 0, crit: true, color: '#ff4a4a' });
+          this.golpeVelo = 0.35;
+        }
+      } else if (t === S.ASTRAL && d[k + 1] === this.local) {
+        // (lo que costó el pulso de visión astral, en rojo sobre el jugador)
+        if (this.numeros.length > 60) this.numeros.shift();
+        this.numeros.push({ x: d[k + 3], y: 1.5, z: d[k + 4], v: d[k + 2], t: 0, crit: false, color: '#ff5a5a' });
+        this.golpeVelo = 0.25;
       } else if (t === S.HERIDO && d[k + 1] === this.local) {
         this.golpeVelo = Math.min(0.8, 0.3 + d[k + 2] / 40);
       } else if (t === S.AVISO) {
@@ -531,8 +631,36 @@ export class Hud {
       g.fillStyle = '#f2e8d2';
       g.fillText(u.texto, P.x * r, (y0 - 9) * r);
     }
-    // Lo único que se señala en el mapa es la Campana de Extracción (lo demás se busca con la visión astral)
+    // Lo único que se señala en el mapa es la Campana de Extracción (lo demás se busca con la visión astral o con los
+    // sigilos: la Brújula de sangre señala el objetivo más cercano y el Ojo del cuervo, los tesoros)
     if (est.campana && est.campana.est < 2) this.flecha(est.campana.x, est.campana.y, '#ffd890', est, true);
+    const yo = est.J[this.local];
+    if (this.cuervo && yo) for (const p of tesorosCerca(est, yo)) this.flecha(p.x, p.y, '#c8b8ff', est, false, 0.85);
+    if (this.objetivo && this.brujulaT > 0) {
+      const o = this.objetivo;
+      const alfa = Math.min(1, this.brujulaT / 1.5);
+      this.flecha(o.x, o.y, '#ff3a3a', est, true, alfa);
+      // (si se ve en pantalla: un rombo de sangre que late encima)
+      this.escena.aPantalla(o.x, 1.4, o.y, P);
+      if (P.visible) {
+        const t = performance.now() / 1000, tam = (8 + Math.sin(t * 7) * 2) * r;
+        g.save();
+        g.globalAlpha = alfa;
+        g.translate(P.x * r, (P.y - 10 + Math.sin(t * 4) * 3) * r);
+        g.beginPath();
+        g.moveTo(0, tam);
+        g.lineTo(tam * 0.7, 0);
+        g.lineTo(0, -tam);
+        g.lineTo(-tam * 0.7, 0);
+        g.closePath();
+        g.fillStyle = '#ff3a3a';
+        g.strokeStyle = 'rgba(0,0,0,0.85)';
+        g.lineWidth = 2 * r;
+        g.stroke();
+        g.fill();
+        g.restore();
+      }
+    }
   }
 
   /** Una flecha en el borde de la pantalla apuntando a algo que no se ve. */

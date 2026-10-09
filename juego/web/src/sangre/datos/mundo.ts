@@ -300,6 +300,13 @@ export const DURACION_ETAPA = 380;
 export const AVANCE_SOLO = 600;
 /** Cuánto de la barra pone el objetivo principal cumplido (el resto lo pone el tiempo). */
 export const AVANCE_OBJETIVO = 0.45;
+/** Cumplido el objetivo principal, lo que falta de la barra se llena en estos segundos y sale el Guardián (en la etapa
+ *  final, se abren los sepulcros): no hay que esperar al reloj. */
+export const PRISA_OBJETIVO = 4;
+export const PRISA_OBJETIVO_FINAL = 10;
+/** La visión astral es un pulso: deja ver lo que importa un segundo y medio y cuesta vida (más en cada etapa). */
+export const DURACION_ASTRAL = 1.6;
+export const costoAstral = (etapa: number) => Math.min(60, 10 + 5 * Math.max(0, etapa - 1));
 /** Oleadas en cada etapa (1, 2, 3, 3…); la etapa final tiene los sepulcros. */
 export const OLEADAS = [1, 2, 3, 3];
 /** Cada cuántos segundos se impacienta más la Noche desde que sale el Guardián. */
