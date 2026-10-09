@@ -386,10 +386,11 @@ export class Escena3D {
         continue;
       }
       if (e.vivo && (e.tipo === ENT.CALIZ || e.tipo === ENT.OSARIO) && this.tiempo - this.hazSuministro > 2.2) {
-        const lleva = est.ent.some((o) => o.vivo && o.est === 1 && (o.tipo === ENT.CRISTAL || o.tipo === ENT.HUEVO_GARGOLA));
+        // (solo si lo que se lleva está lejos: de cerca ya se ve, y el haz taparía el cáliz)
+        const lleva = est.ent.some((o) => o.vivo && o.est === 1 && (o.tipo === ENT.CRISTAL || o.tipo === ENT.HUEVO_GARGOLA) && (o.x - e.x) ** 2 + (o.y - e.y) ** 2 > 8 * 8);
         if (lleva) {
           this.hazSuministro = this.tiempo;
-          this.efectos.columna(e.x, e.y, 1, 9, e.tipo === ENT.CALIZ ? '#ff3040' : '#c8ff9a', 2.2);
+          this.efectos.columna(e.x, e.y, 0.5, 9, e.tipo === ENT.CALIZ ? '#ff3040' : '#c8ff9a', 2.2);
         }
       }
       if (!esTocable(e)) continue;

@@ -460,9 +460,9 @@
   }
  },
  "c_pozo_almas": {
-  "altura": 2.015,
+  "altura": 2.016,
   "radio": 0.95,
-  "alcance": 0.952,
+  "alcance": 0.951,
   "tris": 3000,
   "piezas": {
    "cuerpo": {
@@ -484,7 +484,7 @@
  },
  "c_forja": {
   "altura": 2.293,
-  "radio": 0.825,
+  "radio": 0.821,
   "alcance": 0.99,
   "tris": 3522,
   "piezas": {
@@ -814,7 +814,7 @@
  },
  "c_cofre_maldito": {
   "altura": 0.441,
-  "radio": 0.361,
+  "radio": 0.362,
   "alcance": 0.333,
   "tris": 2200,
   "piezas": {
@@ -1561,6 +1561,213 @@
     ],
     "tris": 224
    }
+  }
+ },
+ "c_campana_exorcismo": {
+  "altura": 2.155,
+  "radio": 1.008,
+  "alcance": 1.047,
+  "tris": 7500,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 7500
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    -0.2,
+    1.5
+   ]
+  }
+ },
+ "c_caliz_sangre": {
+  "altura": 1.521,
+  "radio": 0.739,
+  "alcance": 0.626,
+  "tris": 6999,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 6999
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    1.58
+   ]
+  }
+ },
+ "c_cristal_sangre": {
+  "altura": 0.65,
+  "radio": 0.17,
+  "alcance": 0.196,
+  "tris": 1800,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1800
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.3
+   ]
+  }
+ },
+ "c_huevo_gargola": {
+  "altura": 0.587,
+  "radio": 0.22,
+  "alcance": 0.227,
+  "tris": 2400,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 2400
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    -0.15,
+    0.3
+   ]
+  }
+ },
+ "c_osario": {
+  "altura": 1.588,
+  "radio": 1.28,
+  "alcance": 1.329,
+  "tris": 8906,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 8906
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.4
+   ]
+  }
+ },
+ "c_relicario": {
+  "altura": 1.13,
+  "radio": 0.58,
+  "alcance": 1.015,
+  "tris": 8000,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 8000
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.88
+   ]
+  }
+ },
+ "c_relicario_abierto": {
+  "altura": 1.17,
+  "radio": 1.072,
+  "alcance": 1.58,
+  "tris": 7000,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 7000
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.88
+   ]
+  }
+ },
+ "c_gota_mercurio": {
+  "altura": 0.095,
+  "radio": 0.137,
+  "alcance": 0.145,
+  "tris": 1100,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1100
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.06
+   ]
+  }
+ },
+ "c_campanita_plata": {
+  "altura": 0.258,
+  "radio": 0.12,
+  "alcance": 0.111,
+  "tris": 1300,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1300
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.08
+   ]
   }
  }
 }

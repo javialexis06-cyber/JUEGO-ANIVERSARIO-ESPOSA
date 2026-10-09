@@ -93,7 +93,7 @@ const MODELO_REC: Record<number, string> = {
 };
 /** Los del secundario se dibujan más grandes que su modelo (si no, entre la horda no se ven). */
 const ESCALA_REC: Record<number, number> = {
-  [REC.ROSA]: 2.3, [REC.PLUMA]: 1.8, [REC.HONGO]: 2, [REC.MERCURIO]: 2, [REC.CAMPANITA]: 2, ...Object.fromEntries(MINERALES_ORDEN.map((_, k) => [REC.MINERAL + k, 1.7])),
+  [REC.ROSA]: 2.3, [REC.PLUMA]: 1.8, [REC.HONGO]: 2, [REC.MERCURIO]: 3.2, [REC.CAMPANITA]: 2.2, ...Object.fromEntries(MINERALES_ORDEN.map((_, k) => [REC.MINERAL + k, 1.7])),
 };
 /** Lo del secundario brilla de su color (para que se vea entre la horda). */
 const BRILLO_REC: Record<number, string> = {
