@@ -1,7 +1,7 @@
 // Todo lo que se consigue en una expedición además de las armas: mejoras al subir de nivel (con rareza), objetos de
 // la Forja con su contrapartida (como Brotato), equipo que cae de élites y cofres (como Halls of Torment), reliquias
 // que cambian la partida (como Army of Ruin) y las bendiciones de los tres santos oscuros (como Death Must Die).
-import type { Etiqueta, IdMineral, RanuraEquipo, Stat, Stats } from '../tipos';
+import { NIVEL_EQUIPO_MAX, type Etiqueta, type IdMineral, type RanuraEquipo, type Stat, type Stats } from '../tipos';
 
 // ------------------------------------------------------------------------------------------------- Mejoras
 export interface DefMejora {
@@ -197,6 +197,116 @@ export const EQUIPOS: DefEquipo[] = [
   E('anillo_conde', 'Anillo del Conde', 'anillo', 3, { cantidad: 1, dano: -0.05 }, '+1 proyectil o golpe en todas las armas, −5 % de daño.'),
 ];
 export const EQUIPO: Record<string, DefEquipo> = Object.fromEntries(EQUIPOS.map((e) => [e.id, e]));
+
+// ------------------------------------------------------------------------------------------------- Calidad y especiales
+// Sangre y Ceniza 2 (K, como el equipo de Deep Rock): cada pieza cae con una calidad (común, poco común, rara o
+// épica) que sube sus números; las raras traen una rareza especial y las épicas dos. Lo que se lleva puesto se guarda
+// como «id@calidad.especial.especial» (las piezas viejas, solo con el id, son comunes). Las del Pozo suben de nivel
+// con los logros de la cuenta (+8 % por nivel, hasta 5).
+export const NOMBRE_CALIDAD = ['Común', 'Poco común', 'Rara', 'Épica'];
+const MULT_CALIDAD = [1, 1.3, 1.6, 2];
+
+export interface DefEspecial {
+  id: string;
+  desc: string;
+  /** Lo que suma a las estadísticas (los demás se miran en la simulación con `tieneEspecial`). */
+  mod?: Partial<Stats>;
+}
+export const ESPECIALES: DefEspecial[] = [
+  { id: 'cura_elite', desc: 'Cúrate 12 % al matar un élite.' },
+  { id: 'prisa_inicio', desc: '+30 % de velocidad los primeros 20 s de cada etapa.' },
+  { id: 'rata_dorada', desc: '+10 % de que salga una rata dorada en cada etapa.' },
+  { id: 'escudo_inicio', desc: 'Empiezas cada etapa con un escudo que para 2 golpes.' },
+  { id: 'cazador', desc: '+15 % de daño contra élites y jefes.', mod: { danoElite: 0.15 } },
+  { id: 'iman', desc: '+30 % para recoger.', mod: { iman: 0.3 } },
+  { id: 'ojo_fino', desc: '+5 % de crítico.', mod: { critico: 0.05 } },
+  { id: 'piel_dura', desc: '+3 de armadura.', mod: { armadura: 3 } },
+  { id: 'sangre_viva', desc: '+0,5 de vida por segundo.', mod: { regen: 0.5 } },
+  { id: 'veta_rica', desc: 'Las vetas dan 20 % más.', mod: { vetas: 0.2 } },
+  { id: 'pico_fino', desc: '+25 % de excavar.', mod: { excavar: 0.25 } },
+  { id: 'aprendiz', desc: '+8 % de experiencia.', mod: { experiencia: 0.08 } },
+  { id: 'trebol', desc: '+8 de suerte.', mod: { suerte: 8 } },
+  { id: 'liviano', desc: '+5 % de velocidad.', mod: { velocidad: 0.05 } },
+  { id: 'reloj', desc: '−8 % de recarga de la habilidad.', mod: { enfriamiento: 0.08 } },
+];
+export const ESPECIAL: Record<string, DefEspecial> = Object.fromEntries(ESPECIALES.map((e) => [e.id, e]));
+
+/** Una pieza de equipo con su calidad y sus especiales. */
+export interface Pieza {
+  def: DefEquipo;
+  calidad: number;
+  especiales: string[];
+  clave: string;
+}
+
+/** Lee «id@calidad.especial.especial» (o solo el id: común). */
+export function pieza(clave: string | undefined | null): Pieza | null {
+  if (!clave) return null;
+  const [id, resto] = clave.split('@');
+  const def = EQUIPO[id];
+  if (!def) return null;
+  let calidad = 0;
+  let especiales: string[] = [];
+  if (resto) {
+    const [c, ...e] = resto.split('.');
+    calidad = Math.max(0, Math.min(3, Math.floor(Number(c) || 0)));
+    especiales = [...new Set(e.filter((x) => ESPECIAL[x]))].slice(0, 2);
+  }
+  return { def, calidad, especiales, clave };
+}
+
+export function clavePieza(id: string, calidad: number, especiales: string[] = []): string {
+  return calidad > 0 || especiales.length ? `${id}@${calidad}${especiales.map((e) => `.${e}`).join('')}` : id;
+}
+
+/** Una pieza nueva al azar de esa calidad (las raras traen un especial y las épicas dos). */
+export function piezaNueva(az: { n(): number }, id: string, calidad: number): string {
+  const n = calidad >= 3 ? 2 : calidad >= 2 ? 1 : 0;
+  const lista = ESPECIALES.map((e) => e.id);
+  const esp: string[] = [];
+  while (esp.length < n && lista.length) esp.push(lista.splice(Math.floor(az.n() * lista.length), 1)[0]);
+  return clavePieza(id, calidad, esp);
+}
+
+/** Lo que suma la pieza: lo suyo por la calidad (y por el nivel del Pozo) y lo de los especiales. Lo malo (velocidad
+ *  negativa, menos daño) no crece, y los proyectiles de más tampoco. */
+export function modsPieza(p: Pieza, nivel = 0): Partial<Stats> {
+  const m = MULT_CALIDAD[p.calidad] * (1 + 0.08 * Math.max(0, Math.min(NIVEL_EQUIPO_MAX, nivel)));
+  const r: Partial<Stats> = {};
+  for (const [k, v] of Object.entries(p.def.mod) as [keyof Stats, number][]) r[k] = (r[k] ?? 0) + (v > 0 && k !== 'cantidad' ? v * m : v);
+  for (const e of p.especiales) for (const [k, v] of Object.entries(ESPECIAL[e]?.mod ?? {}) as [keyof Stats, number][]) r[k] = (r[k] ?? 0) + v;
+  return r;
+}
+
+const ETQ_STAT: Partial<Record<keyof Stats, [string, string]>> = {
+  armadura: ['de armadura', 'n'], experiencia: ['de experiencia', '%'], espinas: ['de espinas', 'n'], dano: ['de daño', '%'], vida: ['de vida', 'n'],
+  regen: ['de vida por segundo', 'd'], area: ['de área', '%'], critico: ['de crítico', '%'], danoCritico: ['de daño crítico', '%'], luz: ['de luz', '%'],
+  roboVida: ['de robo de vida', '%'], velocidad: ['de velocidad', '%'], curacion: ['de curación', '%'], esquiva: ['de esquiva', '%'], excavar: ['de excavar', '%'],
+  cadencia: ['de velocidad de ataque', '%'], velProy: ['de proyectiles', '%'], danoElite: ['contra élites', '%'], iman: ['para recoger', '%'], suerte: ['de suerte', 'n'],
+  alcance: ['de alcance', '%'], enfriamiento: ['de recarga', '-%'], oro: ['de oro', '%'], duracion: ['de duración', '%'], cantidad: ['proyectil o golpe en todas las armas', 'n'],
+};
+
+/** La descripción de una pieza con sus números de verdad (las comunes, la de siempre). */
+export function descPieza(p: Pieza, nivel = 0): string {
+  const esp = p.especiales.map((e) => ESPECIAL[e]?.desc).filter(Boolean).join(' ');
+  if (p.calidad === 0 && nivel <= 0) return `${p.def.desc}${esp ? ` ${esp}` : ''}`;
+  const m = MULT_CALIDAD[p.calidad] * (1 + 0.08 * Math.max(0, Math.min(NIVEL_EQUIPO_MAX, nivel)));
+  const partes: string[] = [];
+  for (const [k, v0] of Object.entries(p.def.mod) as [keyof Stats, number][]) {
+    const v = v0 > 0 && k !== 'cantidad' ? v0 * m : v0;
+    const [txt, fmt] = ETQ_STAT[k] ?? [k, 'n'];
+    const signo = fmt === '-%' ? (v > 0 ? '−' : '+') : v < 0 ? '−' : '+';
+    const abs = Math.abs(v);
+    const num = fmt === '%' || fmt === '-%' ? `${Math.round(abs * 1000) / 10} %` : fmt === 'd' ? String(Math.round(abs * 10) / 10) : String(Math.round(abs));
+    partes.push(`${signo}${num.replace('.', ',')} ${txt}`);
+  }
+  return `${NOMBRE_CALIDAD[p.calidad]}${nivel > 0 ? ` · nivel ${nivel}` : ''}: ${partes.join(', ')}.${esp ? ` ${esp}` : ''}`;
+}
+
+/** El nombre con la calidad (+1, +2, +3). */
+export function nombrePieza(p: Pieza): string {
+  return p.calidad > 0 ? `${p.def.nombre} +${p.calidad}` : p.def.nombre;
+}
 
 // ------------------------------------------------------------------------------------------------- Reliquias
 export interface DefReliquia {

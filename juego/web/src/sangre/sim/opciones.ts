@@ -3,7 +3,7 @@
 // descartar y aplicar lo escogido.
 import { ARMAS, ARMAS_LISTA, MAX_ARMAS, NIVEL_EVOLUCION, NIVEL_MAX_ARMA } from '../datos/armas';
 import { ABRE_SPEC, CLASES } from '../datos/clases';
-import { BENDICION, BENDICIONES, EQUIPOS, EQUIPO, MEJORA, MEJORAS, OBJETO, PAREJA_EVOLUCION, RELIQUIA, RELIQUIAS, SANTOS, type DefObjeto, type IdSanto } from '../datos/botin';
+import { BENDICION, BENDICIONES, EQUIPOS, MEJORA, MEJORAS, OBJETO, PAREJA_EVOLUCION, RELIQUIA, RELIQUIAS, SANTOS, descPieza, nombrePieza, pieza, piezaNueva, type DefObjeto, type IdSanto } from '../datos/botin';
 import { NOMBRE_RAREZA, PESO_RAREZA, RANURAS_EQUIPO, type Eleccion, type Opcion, type Rareza } from '../tipos';
 import { soltarOrbitas } from './armas';
 import { S } from './estado';
@@ -272,21 +272,24 @@ export function opcionesCofre(sim: Sim, j: Jugador, especial: boolean): Opcion[]
   return ops;
 }
 
-function elegirEquipo(sim: Sim, j: Jugador, bonus: number): Opcion | null {
+/** Una pieza de equipo al azar: cuál según la suerte y, aparte, su calidad (con `minCalidad` para la del jefe). */
+function elegirEquipo(sim: Sim, j: Jugador, bonus: number, minCalidad = 0): Opcion | null {
   const r = tirarRareza(sim.az, j.st.suerte, bonus);
-  const lista = EQUIPOS.filter((e) => e.rareza === Math.min(3, r) && j.equipo[e.ranura] !== e.id);
+  const lista = EQUIPOS.filter((e) => e.rareza === Math.min(3, r) && pieza(j.equipo[e.ranura])?.def.id !== e.id);
   if (!lista.length) return null;
   const e = sim.az.uno(lista);
-  const actual = j.equipo[e.ranura] ? EQUIPO[j.equipo[e.ranura]!] : null;
+  const calidad = Math.max(minCalidad, Math.min(3, tirarRareza(sim.az, j.st.suerte, bonus * 0.5)));
+  const p = pieza(piezaNueva(sim.az, e.id, calidad))!;
+  const actual = pieza(j.equipo[e.ranura]);
   return {
-    tipo: 'equipo', id: e.id, rareza: e.rareza as Rareza, nombre: e.nombre,
-    desc: `${e.desc}${actual ? ` (cambia: ${actual.nombre})` : ''}`, glifo: e.ranura,
+    tipo: 'equipo', id: p.clave, rareza: calidad as Rareza, nombre: nombrePieza(p),
+    desc: `${descPieza(p)}${actual ? ` (cambia: ${nombrePieza(actual)})` : ''}`, glifo: e.ranura,
   };
 }
 
-/** Equipo que cae de un élite: ponérselo o fundirlo en oro. */
-export function encolarEquipo(sim: Sim, j: Jugador) {
-  const eq = elegirEquipo(sim, j, 0.2);
+/** Equipo que cae de un élite (o del jefe, rara o mejor): ponérselo o fundirlo en oro. */
+export function encolarEquipo(sim: Sim, j: Jugador, minCalidad = 0) {
+  const eq = elegirEquipo(sim, j, 0.2, minCalidad);
   if (!eq) {
     j.oro += 8;
     return;
@@ -423,8 +426,8 @@ export function aplicar(sim: Sim, j: Jugador, op: Opcion) {
         const id = op.id.slice(4);
         if (OBJETO[id] && !j.objetos.includes(id)) j.objetos.push(id);
       } else {
-        const e = EQUIPO[op.id];
-        if (e) j.equipo[e.ranura] = e.id;
+        const p = pieza(op.id);
+        if (p) j.equipo[p.def.ranura] = p.clave;
       }
       j.recalcular();
       break;

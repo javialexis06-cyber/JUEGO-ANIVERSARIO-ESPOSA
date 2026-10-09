@@ -2,7 +2,7 @@
 // la usan la pantalla de juego, el anfitrión de una partida en grupo y las pruebas del bot en Node.
 import { Azar } from '../casa/lavado/azar';
 import { ARMAS, MAX_ARMAS, MAX_SOBRECARGAS, NIVEL_EVOLUCION, NIVEL_MAX_ARMA } from './datos/armas';
-import { EQUIPOS, EQUIPO, OBJETO, OBJETOS, PAREJA_EVOLUCION } from './datos/botin';
+import { EQUIPOS, OBJETO, OBJETOS, PAREJA_EVOLUCION, descPieza, nombrePieza, pieza, piezaNueva } from './datos/botin';
 import { ETAPAS, MUTADORES, PELIGROS } from './datos/mundo';
 import { Sim, type FinEtapa } from './sim/sim';
 import { ArmaJ, Jugador } from './sim/jugador';
@@ -194,11 +194,15 @@ export class Expedicion {
         usados.add(o.id);
         r.push({ id: `o${r.length}${o.id}`, tipo: 'objeto', ref: o.id, nombre: o.nombre, desc: descObjeto(o, j), precio: Math.round(o.precio * (1 + 0.22 * (e - 1)) * d), rareza: Math.min(4, o.rareza) as Rareza, glifo: o.glifo });
       } else if (t < 0.95) {
-        const lista = EQUIPOS.filter((q) => q.rareza <= Math.min(3, e) && j.equipo[q.ranura] !== q.id && !usados.has(q.id));
+        const lista = EQUIPOS.filter((q) => q.rareza <= Math.min(3, e) && pieza(j.equipo[q.ranura])?.def.id !== q.id && !usados.has(q.id));
         if (!lista.length) continue;
         const q = this.az.uno(lista);
         usados.add(q.id);
-        r.push({ id: `e${r.length}${q.id}`, tipo: 'equipo', ref: q.id, nombre: q.nombre, desc: q.desc, precio: Math.round((18 + 14 * q.rareza) * (1 + 0.15 * e) * d), rareza: q.rareza as Rareza, glifo: q.ranura });
+        // (la calidad sube un poco con las etapas; la pieza cuesta más mientras mejor sea)
+        const t2 = this.az.n();
+        const calidad = t2 < 0.04 + 0.02 * e ? 3 : t2 < 0.14 + 0.04 * e ? 2 : t2 < 0.42 + 0.04 * e ? 1 : 0;
+        const p = pieza(piezaNueva(this.az, q.id, calidad))!;
+        r.push({ id: `e${r.length}${q.id}`, tipo: 'equipo', ref: p.clave, nombre: nombrePieza(p), desc: descPieza(p), precio: Math.round((18 + 14 * q.rareza) * (1 + 0.4 * calidad) * (1 + 0.15 * e) * d), rareza: calidad as Rareza, glifo: q.ranura });
       } else if (!usados.has('curar')) {
         usados.add('curar');
         r.push({ id: 'curar', tipo: 'curar', ref: 'curar', nombre: 'Vendas y aguardiente', desc: 'Recupera la mitad de la vida.', precio: Math.round((20 + 6 * e) * d), rareza: 0, glifo: 'corazon' });
@@ -226,10 +230,13 @@ export class Expedicion {
         j.objetos.push(o.ref);
         j.recalcular();
         break;
-      case 'equipo':
-        j.equipo[EQUIPO[o.ref].ranura] = o.ref;
+      case 'equipo': {
+        const p = pieza(o.ref);
+        if (!p) return 'Ya no está.';
+        j.equipo[p.def.ranura] = p.clave;
         j.recalcular();
         break;
+      }
       case 'curar':
         j.hp = Math.min(j.hpMax, j.hp + j.hpMax * 0.5);
         break;
@@ -330,7 +337,7 @@ export class Expedicion {
 
   /** Lo que se puede ofrecer al Pozo de las Almas al final (el equipo que lleva puesto). */
   ofrendas(j: Jugador) {
-    return Object.values(j.equipo).filter((x): x is string => !!x && !!EQUIPO[x]);
+    return Object.values(j.equipo).filter((x): x is string => !!pieza(x));
   }
 }
 

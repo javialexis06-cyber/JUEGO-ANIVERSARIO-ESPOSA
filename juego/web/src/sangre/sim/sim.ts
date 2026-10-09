@@ -273,7 +273,9 @@ export class Sim {
       const ratas = (3 + (cfg.etapa >= 3 ? 1 : 0)) * queso;
       for (let k = 0; k < ratas; k++) this.botinPlan.push({ t: 35 + (k + this.az.n() * 0.8) * (265 / ratas), id: 'rata_tesoro' });
       if (queso > 1) this.botinPlan.push({ t: this.az.entre(60, 260), id: 'ladron_tumbas' });
-      if (this.az.n() < (cfg.exp.peligro >= 3 ? 0.35 : 0.25)) this.botinPlan.push({ t: this.az.entre(60, 260), id: 'rata_dorada' });
+      // (el equipo con «rata dorada» le suma 10 % por cada uno que la traiga)
+      const ratera = this.J.filter((j) => j.tieneEspecial('rata_dorada')).length * 0.1;
+      if (this.az.n() < (cfg.exp.peligro >= 3 ? 0.35 : 0.25) + ratera) this.botinPlan.push({ t: this.az.entre(60, 260), id: 'rata_dorada' });
       if (cfg.etapa >= 2 && this.az.n() < 0.55) this.botinPlan.push({ t: this.az.entre(80, 280), id: 'ladron_tumbas' });
       this.botinPlan.sort((a, b) => a.t - b.t);
     }
@@ -685,7 +687,11 @@ export class Sim {
           this.llavesPendientes--;
           this.soltar(REC.LLAVE, x, y, 1);
         }
-        if (j) j.resumen.elites++;
+        if (j) {
+          j.resumen.elites++;
+          // (equipo con «cúrate al matar un élite»)
+          if (j.tieneEspecial('cura_elite')) this.curar(j, j.hpMax * 0.12);
+        }
       }
       if (this.cfg.exp.mutadores.includes('plaga') && this.az.n() < 0.08) {
         const z = this.nuevaZona();
@@ -972,6 +978,7 @@ export class Sim {
     if (j.golpeT > 0) j.golpeT -= dt;
     if (j.invisible > 0) j.invisible -= dt;
     if (j.prisaT > 0) j.prisaT -= dt;
+    if (j.arranqueT > 0) j.arranqueT -= dt;
     if (j.buffT > 0) {
       j.buffT -= dt;
       if (j.buffT <= 0) j.buffDano = j.buffVel = j.buffCad = 0;

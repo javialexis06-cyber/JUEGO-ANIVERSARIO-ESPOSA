@@ -2,7 +2,7 @@
 // el equipo ofrecido al Pozo, la maestría de cada clase, las clases, biomas, peligros y armas desbloqueadas, los
 // logros y las cifras. Liviano y sin dependencias pesadas: lo importa también la casa para normalizarlo.
 // Javier y Laura lo guardan en la casa compartida (casa.sangre[rol]); los amigos, en su aparato.
-import { MINERALES_ORDEN, type IdBioma, type IdClase, type IdMineral, type IdMutador, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
+import { LOGROS_POR_NIVEL_EQUIPO, MINERALES_ORDEN, NIVEL_EQUIPO_MAX, type IdBioma, type IdClase, type IdMineral, type IdMutador, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
 
 export const CLASES_INICIALES: IdClase[] = ['monarca', 'campesino', 'prisionero'];
 export const BIOMAS_INICIALES: IdBioma[] = ['cementerio', 'catacumbas'];
@@ -102,6 +102,9 @@ const esObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 
 const num = (v: unknown, d = 0, max = 1e9) => (typeof v === 'number' && Number.isFinite(v) ? Math.max(0, Math.min(max, v)) : d);
 const lista = <T extends string>(v: unknown, validos: readonly T[]): T[] => (Array.isArray(v) ? [...new Set(v.filter((x): x is T => validos.includes(x as T)))] : []);
 const ids = (v: unknown, max = 200): string[] => (Array.isArray(v) ? [...new Set(v.filter((x): x is string => typeof x === 'string' && /^[a-z0-9_]{1,40}$/.test(x)))].slice(0, max) : []);
+/** Una pieza de equipo guardada: «id» o «id@calidad.especial.especial». */
+const RE_PIEZA = /^[a-z0-9_]{1,40}(@[0-3](\.[a-z_]{1,20}){0,2})?$/;
+const piezas = (v: unknown, max = 60): string[] => (Array.isArray(v) ? [...new Set(v.filter((x): x is string => typeof x === 'string' && RE_PIEZA.test(x)))].slice(0, max) : []);
 
 /** El progreso siempre con la forma esperada (viene de la casa, de otro aparato o de una versión vieja). */
 export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
@@ -112,7 +115,7 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
     ceniza: Math.floor(num(x.ceniza)),
     cenizaTotal: Math.floor(num(x.cenizaTotal)),
     pozo: {},
-    ofrendas: ids(x.ofrendas, 60),
+    ofrendas: piezas(x.ofrendas, 60),
     maestria: {},
     clases: [...new Set([...CLASES_INICIALES, ...lista(x.clases, CLASES_TODAS)])],
     biomas: [...new Set([...BIOMAS_INICIALES, ...lista(x.biomas, BIOMAS_TODOS)])],
@@ -152,7 +155,7 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
   const u = x.ultima;
   if (esObj(u) && CLASES_TODAS.includes(u.clase as IdClase) && BIOMAS_TODOS.includes(u.bioma as IdBioma)) {
     const eq: Partial<Record<RanuraEquipo, string>> = {};
-    if (esObj(u.equipo)) for (const r of RANURAS) if (typeof u.equipo[r] === 'string' && /^[a-z0-9_]{1,40}$/.test(u.equipo[r] as string)) eq[r] = u.equipo[r] as string;
+    if (esObj(u.equipo)) for (const r of RANURAS) if (typeof u.equipo[r] === 'string' && RE_PIEZA.test(u.equipo[r] as string)) eq[r] = u.equipo[r] as string;
     p.ultima = {
       clase: u.clase as IdClase, spec: Math.floor(num(u.spec, 0, 2)), bioma: u.bioma as IdBioma, peligro: Math.max(1, Math.floor(num(u.peligro, 1, 5))),
       mutadores: lista(u.mutadores, MUTADORES_TODOS), equipo: eq, infinito: u.infinito === true,
@@ -272,9 +275,15 @@ export function perfilDe(p: ProgresoSangre, datos: { id: string; nombre: string;
   for (const [r, id] of Object.entries(datos.equipo)) if (id && p.ofrendas.includes(id)) equipo[r as RanuraEquipo] = id;
   return {
     id: datos.id, nombre: datos.nombre, puesto: datos.puesto, clase: datos.clase, spec: Math.min(datos.spec, specsDisponibles(nv) - 1), meta: total, equipo,
+    nivelEquipo: nivelEquipo(p),
     arsenal: arsenal.slice(0, armasDisponibles(nv)), comunes: [...p.comunes], reliquias: [...p.reliquias], armasMaestras: [...p.pruebas.armas], tiradas: 1 + tiradas, vetos: vetos, cuerpo: datos.cuerpo, tipo: datos.tipo,
     piel: datos.piel, pelo: datos.pelo, ...(datos.detalles ? { detalles: datos.detalles } : {}),
   };
+}
+
+/** El nivel del equipo del Pozo: sube uno cada ocho logros de la cuenta (hasta 5). */
+export function nivelEquipo(p: ProgresoSangre) {
+  return Math.min(NIVEL_EQUIPO_MAX, Math.floor(p.logros.length / LOGROS_POR_NIVEL_EQUIPO));
 }
 
 /** Peligro máximo que puede escoger (uno más que el más alto que haya ganado, mínimo 2). */

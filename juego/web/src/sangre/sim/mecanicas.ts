@@ -104,6 +104,9 @@ export function alEmpezarEtapa(sim: Sim, j: Jugador) {
   j.m.oroRecluta = j.m.oroRecluta ?? 0;
   if (j.objeto('dados_cargados')) j.tiradas++;
   if (j.tiene('galleta_monje') && sim.cfg.etapa > 1) sim.curar(j, j.hpMax * 0.5);
+  // Las rarezas especiales del equipo que obran al empezar
+  j.arranqueT = 20;
+  if (j.tieneEspecial('escudo_inicio')) j.paraGolpes = Math.max(j.paraGolpes, 2);
 }
 
 // ------------------------------------------------------------------------------------------------- Cada cuadro

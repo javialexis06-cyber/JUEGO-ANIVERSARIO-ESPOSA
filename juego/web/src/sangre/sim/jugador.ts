@@ -1,7 +1,7 @@
 // Un jugador dentro de la expedición: posición, vida, nivel, armas, mejoras, objetos, equipo, reliquias,
 // bendiciones, dones de su clase y el estado de su mecánica. Sus estadísticas finales se recalculan cuando algo cambia.
 import { ARMAS, MAX_SOBRECARGAS, NIVELES_SOBRECARGA, NIVEL_MAX_ARMA, xpArma } from '../datos/armas';
-import { BENDICION, EQUIPO, OBJETO } from '../datos/botin';
+import { BENDICION, OBJETO, modsPieza, pieza } from '../datos/botin';
 import { CLASES } from '../datos/clases';
 import {
   ETIQUETAS, F, nuevasStats, type DanoEtiqueta, type DefArma, type Eleccion, type Etiqueta, type IdClase, type ParamsArma, type PerfilJugador,
@@ -268,6 +268,8 @@ export class Jugador {
   excavaT = 0;
   /** Velocidad extra temporal (aire libre del campesino). */
   prisaT = 0;
+  /** Segundos desde que empezó la etapa (el especial «prisa al empezar»). */
+  arranqueT = 0;
   /** Encantado por una novia vampira: hacia dónde lo jalan. */
   encantoX = 0;
   encantoY = 0;
@@ -309,6 +311,11 @@ export class Jugador {
   }
   tiene(reliquia: string) {
     return this.reliquias.includes(reliquia);
+  }
+  /** ¿Alguna pieza de equipo puesta trae esta rareza especial? */
+  tieneEspecial(id: string) {
+    for (const c of Object.values(this.equipo)) if (c && c.includes('.') && pieza(c)?.especiales.includes(id)) return true;
+    return false;
   }
   objeto(id: string) {
     return this.objetos.includes(id);
@@ -359,10 +366,12 @@ export class Jugador {
       sumar(o?.mod);
       sumarEtq(o?.etq);
     }
-    for (const id of Object.values(this.equipo)) {
-      const e = id ? EQUIPO[id] : undefined;
-      sumar(e?.mod);
-      sumarEtq(e?.etq);
+    // (el equipo con su calidad y sus especiales; lo que se trajo del Pozo, con su nivel)
+    for (const [r, clave] of Object.entries(this.equipo)) {
+      const p = pieza(clave);
+      if (!p) continue;
+      sumar(modsPieza(p, clave === this.perfil.equipo[r as RanuraEquipo] ? (this.perfil.nivelEquipo ?? 0) : 0));
+      sumarEtq(p.def.etq);
     }
     statsDeClase(this, st, etq);
     // Bendiciones
@@ -433,7 +442,7 @@ export class Jugador {
   get velocidad() {
     // (hierro en salmuera: el hierro del bolsillo pesa)
     const salmuera = this.tiene('hierro_salmuera') ? Math.min(0.3, this.hierro * 0.005) : 0;
-    return VEL_BASE * Math.max(0.3, 1 - salmuera + this.st.velocidad + this.buffVel + (this.auraT > 0 ? this.auraVel : 0) + (this.prisaT > 0 ? 0.12 * this.don('aire_libre') : 0));
+    return VEL_BASE * Math.max(0.3, 1 - salmuera + this.st.velocidad + this.buffVel + (this.auraT > 0 ? this.auraVel : 0) + (this.prisaT > 0 ? 0.12 * this.don('aire_libre') : 0) + (this.arranqueT > 0 && this.tieneEspecial('prisa_inicio') ? 0.3 : 0));
   }
   get radioIman() {
     return IMAN_BASE * (1 + this.st.iman);

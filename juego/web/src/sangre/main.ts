@@ -10,7 +10,7 @@ import * as fondo from '../segundo_plano';
 import { ARMAS } from './datos/armas';
 import { CLASES, nombreClase, textoAbre } from './datos/clases';
 import { BIOMAS, ETAPAS, MUTADORES, OBJETIVOS, PELIGROS, SECUNDARIOS } from './datos/mundo';
-import { EQUIPO, POZO, RELIQUIA, RELIQUIAS, precioPozo } from './datos/botin';
+import { POZO, RELIQUIA, RELIQUIAS, descPieza, nombrePieza, pieza, precioPozo } from './datos/botin';
 import { MINERALES, precioMineral } from './datos/minerales';
 import { ANOMALIAS, CENIZA_PRUEBA, COSTO_ANOMALIA, ETAPAS_PRUEBA, PUNTOS_PRUEBA, contrato, locura } from './datos/desafios';
 import { NOMBRE_PAREJA } from '../nombres';
@@ -29,7 +29,7 @@ import { MSJ, aplicarJugador, serializarJugador, type DatosJugador } from './red
 import { esperarEnSala } from '../salas/espera';
 import type { JugadorSala, Sala } from '../salas/tipos';
 import {
-  armasDisponibles, nivelMaestria, progresoNuevo, peligroPermitido, perfilDe, recompensaMaestria, specsDisponibles, tituloMaestria, xpMaestria, type ProgresoSangre,
+  armasDisponibles, nivelEquipo, nivelMaestria, progresoNuevo, peligroPermitido, perfilDe, recompensaMaestria, specsDisponibles, tituloMaestria, xpMaestria, type ProgresoSangre,
 } from './progreso';
 import { ArmaJ, Jugador } from './sim/jugador';
 import { encolarSobrecarga } from './sim/opciones';
@@ -400,8 +400,9 @@ function escogerExpedicion(alListo?: () => void) {
       : '<small>Desde el peligro 3 se pueden poner mutadores (más difícil, más ceniza).</small>';
     const equipo = RANURAS_EQUIPO.map((r) => {
       const id = sel.equipo[r];
-      const hay = p.ofrendas.filter((o) => EQUIPO[o]?.ranura === r).length;
-      return `<button class="ranura-equipo${id ? ' si' : ''}" data-r="${r}" ${hay ? '' : 'disabled'} title="${id ? EQUIPO[id].desc : hay ? 'Toca para escoger' : 'Ofrece equipo al Pozo para usarlo aquí'}"><span class="ico">${glifo(r)}</span><small>${id ? EQUIPO[id].nombre : hay ? 'Nada' : '—'}</small></button>`;
+      const hay = p.ofrendas.filter((o) => pieza(o)?.def.ranura === r).length;
+      const pz = pieza(id);
+      return `<button class="ranura-equipo${pz ? ' si' : ''}${pz ? ` calidad-${pz.calidad}` : ''}" data-r="${r}" ${hay ? '' : 'disabled'} title="${pz ? descPieza(pz, nivelEquipo(p)) : hay ? 'Toca para escoger' : 'Ofrece equipo al Pozo para usarlo aquí'}"><span class="ico">${glifo(r)}</span><small>${pz ? nombrePieza(pz) : hay ? 'Nada' : '—'}</small></button>`;
     }).join('');
     const extra = sel.mutadores.reduce((x, m) => x + MUTADORES[m].recompensa, 0);
     const infAbierto = infinitoAbierto(p);
@@ -460,7 +461,7 @@ function escogerExpedicion(alListo?: () => void) {
       sel.mutadores = sel.mutadores.includes(m) ? sel.mutadores.filter((x) => x !== m) : [...sel.mutadores, m];
     } else if (r) {
       efectos.boton();
-      const lista = [undefined, ...p.ofrendas.filter((o) => EQUIPO[o]?.ranura === r)];
+      const lista = [undefined, ...p.ofrendas.filter((o) => pieza(o)?.def.ranura === r)];
       const k = lista.indexOf(sel.equipo[r]);
       const sig = lista[(k + 1) % lista.length];
       if (sig) sel.equipo[r] = sig;
@@ -523,7 +524,7 @@ function pozo() {
     const mercader = `<div class="mercader"><span>Doy 2 de</span><select data-m="de">${opcionesMin(cambio.de)}</select><span>por 1 de</span><select data-m="a">${opcionesMin(cambio.a)}</select>
       <button class="boton boton-chico" data-a="cambiar" ${(p.minerales[cambio.de] ?? 0) < 2 || cambio.de === cambio.a ? 'disabled' : ''}>${glifo('mano')}Cambiar</button></div>`;
     const ofrendas = p.ofrendas.length
-      ? p.ofrendas.filter((o) => EQUIPO[o]).map((o) => `<div class="renglon hecho"><span class="ico">${glifo(EQUIPO[o].ranura)}</span><span><b>${EQUIPO[o].nombre}</b><small>${EQUIPO[o].desc}</small></span></div>`).join('')
+      ? p.ofrendas.map((o) => pieza(o)).filter((x) => !!x).map((x) => `<div class="renglon hecho calidad-${x!.calidad}"><span class="ico">${glifo(x!.def.ranura)}</span><span><b>${nombrePieza(x!)}</b><small>${descPieza(x!, nivelEquipo(p))}</small></span></div>`).join('')
       : '<small class="vacio ancho">Al terminar una expedición puedes ofrecer al Pozo una pieza del equipo que llevabas: queda tuya para siempre y la escoges antes de bajar.</small>';
     s.innerHTML = `${cabeza('El Pozo de las Almas')}
       <p class="sub-pozo">La ceniza y los minerales de cada expedición alimentan el Pozo. Lo que compres aquí te acompaña en todas las clases.</p>
@@ -1222,7 +1223,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
           ${cb.comunesNuevas.filter((a) => ARMAS[a]).map((a) => `<div class="desbloqueo">${glifo(ARMAS[a].glifo)} Nueva arma común: <b>${ARMAS[a].nombre}</b></div>`).join('')}
           ${cb.reliquias.filter((x) => RELIQUIA[x]).map((x) => `<div class="desbloqueo">${glifo(RELIQUIA[x].glifo)} Reliquia abierta: <b>${RELIQUIA[x].nombre}</b> (ya sale en los cofres)</div>`).join('')}
           ${cb.logros.map((l) => `<div class="desbloqueo">${glifo(l.glifo)} Logro: <b>${l.nombre}</b> (+${l.ceniza} ceniza)${l.premio ? ` · ${l.premio}` : ''}</div>`).join('')}
-          ${ofrecibles.length && !ofrecida ? `<h3 class="titulo-grabado">Ofrecer al Pozo (una)</h3><div class="ofrendas">${ofrecibles.map((o) => `<button class="boton boton-chico" data-o="${o}" title="${EQUIPO[o].desc}">${glifo(EQUIPO[o].ranura)}${EQUIPO[o].nombre}</button>`).join('')}</div>` : ''}
+          ${ofrecibles.length && !ofrecida ? `<h3 class="titulo-grabado">Ofrecer al Pozo (una)</h3><div class="ofrendas">${ofrecibles.map((o) => pieza(o)!).map((x) => `<button class="boton boton-chico calidad-${x.calidad}" data-o="${x.clave}" title="${descPieza(x)}">${glifo(x.def.ranura)}${nombrePieza(x)}</button>`).join('')}</div>` : ''}
         </div>
       </div>
       <footer class="fila-botones">${sala ? `<button class="boton boton-sangre" data-a="sala">${glifo('mano')}Volver a la sala</button>` : `<button class="boton" data-a="menu">${glifo('atras')}Menú</button>${p.exp.cfg.lugar ? `<button class="boton boton-sangre" data-a="mapa">${glifo('luna')}Al mapa de la Noche</button>` : desafio(p.exp.cfg) ? `<button class="boton boton-sangre" data-a="desafios">${glifo('dado')}A los desafíos</button>` : p.exp.cfg.tutorial ? '' : `<button class="boton boton-sangre" data-a="otra">${glifo('espada')}Otra expedición</button>`}`}</footer>`;
@@ -1237,7 +1238,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
       pr.ofrendas.push(o);
       guardado.guardar();
       efectos.campana();
-      aviso(`${EQUIPO[o].nombre} queda en el Pozo para siempre.`, '', 2200);
+      aviso(`${nombrePieza(pieza(o)!)} queda en el Pozo para siempre.`, '', 2200);
       pintar();
     } else if (a === 'menu' || a === 'otra' || a === 'sala' || a === 'mapa' || a === 'desafios') {
       efectos.boton();

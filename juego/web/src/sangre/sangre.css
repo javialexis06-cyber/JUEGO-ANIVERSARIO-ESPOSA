@@ -2012,6 +2012,22 @@ body.mano #zona-joystick {
 .ranura-equipo:disabled {
   opacity: 0.4;
 }
+/* La calidad del equipo (Sangre y Ceniza 2): poco común verde, rara azul, épica morada */
+.calidad-1 b, .ranura-equipo.calidad-1 small, .boton.calidad-1 {
+  color: #8fd47a;
+}
+.calidad-2 b, .ranura-equipo.calidad-2 small, .boton.calidad-2 {
+  color: #8fb4ff;
+}
+.calidad-3 b, .ranura-equipo.calidad-3 small, .boton.calidad-3 {
+  color: #d49aff;
+}
+.ranura-equipo.calidad-2 {
+  border-color: #4a7ad8;
+}
+.ranura-equipo.calidad-3 {
+  border-color: #a24ad8;
+}
 .sub-pozo {
   margin: 2px 0 8px;
   color: var(--ceniza);

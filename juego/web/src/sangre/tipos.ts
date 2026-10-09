@@ -232,6 +232,9 @@ export interface Eleccion {
 // ------------------------------------------------------------------------------------------------- Equipo
 export type RanuraEquipo = 'casco' | 'armadura' | 'guantes' | 'botas' | 'amuleto' | 'anillo';
 export const RANURAS_EQUIPO: RanuraEquipo[] = ['casco', 'armadura', 'guantes', 'botas', 'amuleto', 'anillo'];
+/** El equipo del Pozo sube un nivel cada tantos logros de la cuenta (+8 % por nivel). */
+export const NIVEL_EQUIPO_MAX = 5;
+export const LOGROS_POR_NIVEL_EQUIPO = 8;
 
 // ------------------------------------------------------------------------------------------------- Mapa
 /** Tipos de celda de la rejilla del mapa. */
@@ -331,6 +334,8 @@ export interface PerfilJugador {
   armasMaestras?: string[];
   /** Multiplica la vida máxima (la anomalía «Un golpe y adiós»). */
   vidaMult?: number;
+  /** Nivel del equipo que se trae del Pozo (sube con los logros de la cuenta, 0-5). */
+  nivelEquipo?: number;
   tiradas: number; // volver a tirar por expedición
   vetos: number; // descartar por expedición
   cuerpo: 'el' | 'ella';
