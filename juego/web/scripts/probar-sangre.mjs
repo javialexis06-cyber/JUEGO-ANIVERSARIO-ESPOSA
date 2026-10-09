@@ -96,6 +96,8 @@ if (cuales.includes('grupo')) {
   await B.waitForSelector('.sala-espera', { timeout: 60000 });
   ok(true, 'de vuelta en la sala');
   okGlobal(errores === 0, `${'grupo'}: sin errores de la página (${errores})`);
+  // (las páginas que quedan abiertas siguen corriendo el juego por detrás y vuelven lentas las secciones siguientes)
+  await ctx.close();
 }
 
 if (cuales.includes('extraccion')) {
@@ -151,6 +153,8 @@ if (cuales.includes('extraccion')) {
     ok(pr.ceniza > 0 && pr.cifras.etapas >= 1, `se cobró lo extraído (ceniza ${pr.ceniza}, etapas ${pr.cifras.etapas})`);
   }
   okGlobal(errores === 0, `${'extraccion'}: sin errores de la página (${errores})`);
+  // (las páginas que quedan abiertas siguen corriendo el juego por detrás y vuelven lentas las secciones siguientes)
+  await p.context().close();
 }
 
 if (cuales.includes('celular')) {
@@ -190,6 +194,8 @@ if (cuales.includes('celular')) {
   ok(true, 'el botón de pausa abre la pausa');
   await p.locator('.hoja-pausa [data-p="seguir"]').tap();
   okGlobal(errores === 0, `${'celular'}: sin errores de la página (${errores})`);
+  // (las páginas que quedan abiertas siguen corriendo el juego por detrás y vuelven lentas las secciones siguientes)
+  await ctx.close();
 }
 
 if (cuales.includes('tutorial')) {
@@ -280,6 +286,8 @@ if (cuales.includes('tutorial')) {
   await p.waitForFunction(() => window.__sangrePantalla() === 'clases', null, { timeout: 60000 });
   ok(true, 'del tutorial a escoger clase');
   okGlobal(errores === 0, `${'tutorial'}: sin errores de la página (${errores})`);
+  // (las páginas que quedan abiertas siguen corriendo el juego por detrás y vuelven lentas las secciones siguientes)
+  await ctx.close();
 }
 
 await navegador.close();
