@@ -334,8 +334,13 @@ Propuesta:
    suministros», «Los seis minerales», «Reglas de cada bioma», «Sobrecargas de Sangre y Ceniza 2» y «El Pozo con
    minerales» en `docs/sistemas/sangre-y-ceniza.md`. Quedaron para después: los espejos que duplican vampiros (castillo)
    y el piso en llamas (abadía).
-3. **Fase 3**: G (mapa de la Noche con historia y los retos por bioma y clase) y los logros en la Sala de Trofeos; de
-   L, las evoluciones y uniones, las armas comunes nuevas y las especializaciones que abren armas (L2, L3 y L5).
+3. ~~**Fase 3**~~ **hecha** (9 de octubre): G (el mapa de la Noche: cuatro sectores con sus Puertas, tres metas por
+   lugar, cinco escenas de la historia con Javier y Laura como el Lazo Primordial, y su versión neutra para los
+   amigos), Sangre y Ceniza en la Sala de Trofeos (séptimo pedestal, por logros), y de L las 54 evoluciones que
+   faltaban (con los objetos de la Forja como pareja), 14 uniones, las 13 armas comunes nuevas con sus modelos e
+   íconos y las especializaciones que abren todas las armas de una etiqueta (L2, L3 y L5). Cómo quedó: «El mapa de la
+   Noche», «Trece armas comunes nuevas», «Evoluciones para todas las armas», «Uniones» y «Especializaciones que abren
+   armas» en `docs/sistemas/sangre-y-ceniza.md`.
 4. **Fase 4**: B (La Procesión y La Cría), H (maestrías, anómalas, contratos y mutadores), I (infinito que crece) y las
    reliquias por hitos (L6).
 5. **Fase 5**: J (refugio con minijuegos), K (equipo con rarezas especiales), el familiar y la Forja con tres

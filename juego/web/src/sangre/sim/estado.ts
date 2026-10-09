@@ -207,7 +207,7 @@ export class Enemigos {
 
 // ------------------------------------------------------------------------------------------------- Proyectiles
 /** Cómo se mueve un proyectil. */
-export const MOV = { RECTO: 0, LANZADO: 1, BUMERAN: 2, ORBITA: 3, ENEMIGO: 4, CAE: 5, TORRETA: 6 } as const;
+export const MOV = { RECTO: 0, LANZADO: 1, BUMERAN: 2, ORBITA: 3, ENEMIGO: 4, CAE: 5, TORRETA: 6, TRAMPA: 7 } as const;
 
 export class Proyectil {
   vivo = false;

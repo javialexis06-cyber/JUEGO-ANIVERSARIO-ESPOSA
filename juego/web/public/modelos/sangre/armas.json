@@ -97,7 +97,7 @@
  },
  "arma_escudo": {
   "altura": 0.267,
-  "radio": 0.198,
+  "radio": 0.195,
   "alcance": 0.218,
   "tris": 1700,
   "clase": "caballero",
@@ -193,7 +193,7 @@
  },
  "arma_pala": {
   "altura": 0.96,
-  "radio": 0.11,
+  "radio": 0.109,
   "alcance": 0.116,
   "tris": 1300,
   "clase": "sepulturero",
@@ -598,6 +598,35 @@
     0.032,
     0.01,
     0.145
+   ],
+   "punta": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "arma_carga_minera": {
+  "altura": 0.153,
+  "radio": 0.06,
+  "alcance": 0.063,
+  "tris": 1400,
+  "clase": "minero",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1400
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.052,
+    0.02,
+    0.142
    ],
    "punta": [
     0.0,
@@ -1120,6 +1149,338 @@
     0.0,
     -0.05,
     0.0
+   ]
+  }
+ },
+ "arma_cazo_aceite": {
+  "altura": 0.135,
+  "radio": 0.137,
+  "alcance": 0.142,
+  "tris": 1500,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1500
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.075,
+    0.122
+   ],
+   "punta": [
+    0.0,
+    0.075,
+    0.122
+   ]
+  }
+ },
+ "arma_frasco_escarcha": {
+  "altura": 0.192,
+  "radio": 0.072,
+  "alcance": 0.072,
+  "tris": 1600,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1600
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.03
+   ]
+  }
+ },
+ "arma_bolsa_azufre": {
+  "altura": 0.193,
+  "radio": 0.063,
+  "alcance": 0.065,
+  "tris": 1500,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1500
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.16
+   ]
+  }
+ },
+ "arma_racimo": {
+  "altura": 0.172,
+  "radio": 0.089,
+  "alcance": 0.093,
+  "tris": 1500,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1500
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.0,
+    0.158
+   ],
+   "punta": [
+    0.0,
+    0.0,
+    0.06
+   ]
+  }
+ },
+ "arma_bolsa_abrojos": {
+  "altura": 0.217,
+  "radio": 0.083,
+  "alcance": 0.103,
+  "tris": 1700,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1700
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.12
+   ]
+  }
+ },
+ "arma_cepo": {
+  "altura": 0.292,
+  "radio": 0.11,
+  "alcance": 0.121,
+  "tris": 1700,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1700
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    0.3
+   ]
+  }
+ },
+ "arma_ballesta_pesada": {
+  "altura": 0.107,
+  "radio": 0.448,
+  "alcance": 0.46,
+  "tris": 2200,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 2200
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.47,
+    0.09
+   ]
+  }
+ },
+ "arma_guante_cetreria": {
+  "altura": 0.254,
+  "radio": 0.089,
+  "alcance": 0.122,
+  "tris": 2200,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 2200
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.05,
+    0.22
+   ]
+  }
+ },
+ "arma_jaula": {
+  "altura": -0.034,
+  "radio": 0.078,
+  "alcance": 0.078,
+  "tris": 868,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 868
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.0,
+    -0.23
+   ]
+  }
+ },
+ "arma_latigo_espinas": {
+  "altura": 0.472,
+  "radio": 0.126,
+  "alcance": 0.143,
+  "tris": 2200,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 2200
+   }
+  },
+  "marcas": {
+   "punta": [
+    -0.139,
+    -0.059,
+    0.425
+   ]
+  }
+ },
+ "arma_vara_sangre": {
+  "altura": 0.412,
+  "radio": 0.045,
+  "alcance": 0.049,
+  "tris": 1699,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1699
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.0,
+    0.36
+   ],
+   "punta": [
+    0.0,
+    0.0,
+    0.36
+   ]
+  }
+ },
+ "arma_sifon": {
+  "altura": 0.116,
+  "radio": 0.395,
+  "alcance": 0.47,
+  "tris": 2200,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 2200
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.42,
+    0.065
+   ],
+   "punta": [
+    0.0,
+    0.44,
+    0.065
+   ]
+  }
+ },
+ "arma_perdigonera": {
+  "altura": 0.109,
+  "radio": 0.32,
+  "alcance": 0.32,
+  "tris": 1700,
+  "clase": "comun",
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 1700
+   }
+  },
+  "marcas": {
+   "punta": [
+    0.0,
+    0.33,
+    0.065
    ]
   }
  }

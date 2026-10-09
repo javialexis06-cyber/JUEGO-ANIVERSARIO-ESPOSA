@@ -504,5 +504,154 @@
     0.0
    ]
   }
+ },
+ "p_jarra_aceite": {
+  "altura": 0.05,
+  "radio": 0.069,
+  "alcance": 0.053,
+  "tris": 172,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 172
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.0,
+    0.05
+   ]
+  }
+ },
+ "p_racimo": {
+  "altura": 0.072,
+  "radio": 0.062,
+  "alcance": 0.064,
+  "tris": 204,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 204
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.012,
+    -0.012,
+    0.066
+   ]
+  }
+ },
+ "p_abrojo": {
+  "altura": 0.17,
+  "radio": 0.053,
+  "alcance": 0.113,
+  "tris": 200,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 200
+   }
+  }
+ },
+ "p_cepo": {
+  "altura": 0.059,
+  "radio": 0.304,
+  "alcance": 0.325,
+  "tris": 700,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 700
+   }
+  }
+ },
+ "p_cuervo": {
+  "altura": 0.117,
+  "radio": 0.243,
+  "alcance": 0.255,
+  "tris": 700,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 700
+   }
+  }
+ },
+ "p_murcielago": {
+  "altura": 0.126,
+  "radio": 0.314,
+  "alcance": 0.318,
+  "tris": 650,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 650
+   }
+  }
+ },
+ "p_gota_sangre": {
+  "altura": 0.035,
+  "radio": 0.082,
+  "alcance": 0.16,
+  "tris": 70,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 70
+   }
+  },
+  "marcas": {
+   "llama": [
+    0.0,
+    0.02,
+    0.0
+   ]
+  }
+ },
+ "p_perdigon": {
+  "altura": 0.022,
+  "radio": 0.051,
+  "alcance": 0.09,
+  "tris": 66,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "tris": 66
+   }
+  }
  }
 }

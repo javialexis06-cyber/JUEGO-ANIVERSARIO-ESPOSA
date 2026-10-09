@@ -94,6 +94,7 @@ no son historias.
 | Retrete espacial | Chistes del vuelo, sin recuerdos | `src/casa/cohete.ts` |
 | Mesa | Reacciones al ganar y perder, con cariño (nunca se enojan al perder) | `src/reacciones/frases.ts` |
 | Escenas premium | Situaciones inventadas de la casa (el baile lento con pisotón, ¿qué pedimos?, la carta de amor escondida, la serenata…) | `src/escenas/` |
+| Sangre y Ceniza | El mito de Astra (`docs/mitologia.md`) con Javier y Laura como el Lazo Primordial: cinco escenas del mapa de la Noche (la constelación que parpadea, la grieta del Conde, por qué el escudo, los otros panteones, el Lazo); solo apodos y palabras del chat, ningún recuerdo | `src/sangre/historia_pareja.ts` |
 
 Si se acaban las ideas para un juego, se le piden más historias a Javier (él ofreció contar más), nunca se toman
 las de otro juego.

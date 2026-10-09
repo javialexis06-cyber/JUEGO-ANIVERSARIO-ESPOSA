@@ -5,7 +5,10 @@ probado y subido.
 
 ## Por dónde seguir (nota para el próximo Claude)
 
-Último trabajo subido: **Sangre y Ceniza 2, fase 2** (8 de octubre): los seis minerales del mito y el Pozo que los
+Último trabajo subido: **Sangre y Ceniza 2, fase 3** (9 de octubre): el mapa de la Noche (cuatro sectores con sus
+Puertas, tres metas por lugar y cinco escenas cortas con Javier y Laura como el Lazo Primordial), Sangre y Ceniza en
+la Sala de Trofeos, evoluciones para todas las armas, 14 uniones, 13 armas comunes nuevas con sus modelos y las
+especializaciones que abren armas. Antes, la **fase 2** (8 de octubre): los seis minerales del mito y el Pozo que los
 pide (con el mercader), el cofre de suministros, dos reglas propias por bioma y seis sobrecargas por arma (templadas y
 malditas con etiquetas especiales), la potencia y la regla de las dos armas. Antes, la **fase 1**: etapas que se ganan peleando con la barra de
 avance, el Guardián, la Noche se impacienta, 5 etapas con sepulcros y custodios en la final, ratas del tesoro y
@@ -14,11 +17,12 @@ ladrón de tumbas, mini-élites, precios que suben y tres secundarios nuevos; la
 trajo de la granja ([`docs/mitologia.md`](mitologia.md)). Javier respondió lo de Sangre y Ceniza 2: **se hace
 primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protagonistas) y todo lo de armas. Orden:
 
-1. **Sangre y Ceniza 2**, por fases (sección 4 de `docs/en-obra/sangre-propuesta.md`): ~~fase 1~~ y ~~fase 2~~
-   **hechas**; sigue la **fase 3** = el mapa de la Noche con la historia (escenas cortas con la mitología, Él y Ella de
-   protagonistas; el texto de la pareja va aparte con su versión neutra para los amigos), los retos por bioma y clase,
-   los logros en la Sala de Trofeos, las evoluciones y uniones de todas las armas, las 13 armas comunes nuevas y las
-   especializaciones que abren armas.
+1. **Sangre y Ceniza 2**, por fases (sección 4 de `docs/en-obra/sangre-propuesta.md`): ~~fase 1~~, ~~fase 2~~ y
+   ~~fase 3~~ **hechas** (la 3: el mapa de la Noche con cinco escenas de la historia, el pedestal en la Sala de
+   Trofeos, evoluciones para todas las armas, 14 uniones, 13 armas comunes nuevas y las especializaciones que abren
+   armas); sigue la **fase 4** = B (La Procesión y La Cría), H (maestrías, anómalas, contratos y mutadores), I (el
+   infinito que crece) y las reliquias por hitos (L6); después la **fase 5** (J, K, el familiar y la Forja con tres
+   mostradores).
 2. **Lavarse la cara 2** (`docs/en-obra/lavado-propuesta.md`): antes de empezar, hacerle a Javier las 5 preguntas del
    final (armas, escenarios, modos y tesoros, disfraces, aventuras).
 3. **Amigos: mesa, retrete y cocina en la app de amigos** (abajo, en «Amigos: lo que sigue»).

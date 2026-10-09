@@ -708,7 +708,8 @@ export function velocidadLevantar(o: Jugador) {
 
 // ------------------------------------------------------------------------------------------------- Recoger y excavar
 export function multOroGrupo(sim: Sim) {
-  let m = 1;
+  // (la Codicia y la luna Aurelia: más oro)
+  let m = (sim.cfg.exp.mutadores.includes('codicia') ? 1.5 : 1) * (sim.cfg.exp.mutadores.includes('aurelia') ? 1.4 : 1);
   for (const j of sim.J) if (j.clase === 'monarca' && j.spec === 2) m += 0.3;
   return m;
 }

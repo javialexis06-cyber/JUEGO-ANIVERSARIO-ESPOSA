@@ -97,7 +97,8 @@ export type Comportamiento =
 
 /** Hacia dónde apunta un arma. */
 /** veta: a la veta más cercana (minería; si no hay, al montón). */
-export type Apunte = 'cercano' | 'mira' | 'azar' | 'denso' | 'fuerte' | 'veta';
+/** pie: donde está parado (nubes, trampas); atras: el más cercano de los que vienen detrás. */
+export type Apunte = 'cercano' | 'mira' | 'azar' | 'denso' | 'fuerte' | 'veta' | 'pie' | 'atras';
 
 /** Banderas de comportamiento (las sobrecargas las prenden). */
 export const F = {
@@ -188,6 +189,10 @@ export interface DefArma {
   evoluciona?: { con: string; a: string };
   /** Solo existe como evolución (no sale en las mejoras). */
   evolucion?: boolean;
+  /** Unión: estas dos armas en el nivel de evolución se vuelven esta (y liberan un espacio). */
+  union?: [string, string];
+  /** Solo ataca (o arma su torreta) cuando el jugador lleva un momento quieto. */
+  quieto?: boolean;
   /** Color del destello (tajos, estelas). */
   color: string;
   /** Glifo de reemplazo para el ícono. */
@@ -204,6 +209,8 @@ export interface Opcion {
   rareza: Rareza;
   /** Para armas: en qué ranura. */
   ranura?: number;
+  /** Uniones: la ranura del arma que se va (queda libre). */
+  ranura2?: number;
   /** Texto ya armado (nombre, descripción, nivel). */
   nombre: string;
   desc: string;
@@ -260,7 +267,9 @@ export type IdObjetivo = 'hierro' | 'altares' | 'prisioneros' | 'carreta' | 'cam
 export type IdSecundario = 'huevos' | 'frascos' | 'cofres' | 'rosas' | 'plumas' | 'hongos';
 
 // ------------------------------------------------------------------------------------------------- Peligro
-export type IdMutador = 'sangrienta' | 'sin_antorchas' | 'elites_dobles' | 'plaga' | 'roca_dura' | 'codicia' | 'eclipse' | 'fragiles' | 'enjambres' | 'velocidad';
+export type IdMutador = 'sangrienta' | 'sin_antorchas' | 'elites_dobles' | 'plaga' | 'roca_dura' | 'codicia' | 'eclipse' | 'fragiles' | 'enjambres' | 'velocidad'
+  // (los buenos, del mito de Astra: las lunas)
+  | 'aurelia' | 'esmeralda' | 'nocturna';
 
 /** Cómo arranca una expedición. */
 export interface ConfigExpedicion {
@@ -272,6 +281,8 @@ export interface ConfigExpedicion {
   tutorial?: boolean;
   /** Modo infinito: etapas sin fin, cada vez más duras, con jefe cada 5 (termina al caer). */
   infinito?: boolean;
+  /** Un lugar del mapa de la Noche (sus metas se revisan al terminar). */
+  lugar?: string;
   /** En el modo infinito, los biomas por los que se pasa cada 5 etapas (los abiertos del anfitrión, desde el escogido). */
   rotacion?: IdBioma[];
 }

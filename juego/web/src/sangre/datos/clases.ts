@@ -1,7 +1,7 @@
 // Las doce clases: cada una con su arsenal, su mecánica (lo que la hace jugar distinto), su habilidad activa, tres
 // especializaciones y sus «dones» (mejoras que solo le salen a esa clase al subir de nivel). Los números de las
 // mecánicas viven en sim/mecanicas.ts; aquí van los textos y lo que se ve en las pantallas.
-import type { IdClase, Stats } from '../tipos';
+import type { Etiqueta, IdClase, Stats } from '../tipos';
 
 export interface DefSpec {
   id: string;
@@ -314,3 +314,32 @@ export const CLASES: Record<IdClase, DefClase> = {
 };
 
 export const nombreClase = (c: IdClase, cuerpo: 'el' | 'ella') => CLASES[c].nombre[cuerpo];
+
+/** Sangre y Ceniza 2 (como las subclases de Deep Rock): cada especialización suma a lo que se encuentra en la expedición
+ *  todas las armas de una etiqueta, de cualquier clase y las comunes (Pirómano: todas las de fuego). */
+export const ABRE_SPEC: Record<string, Etiqueta[]> = {
+  tirano: ['invocacion'], rey_guerrero: ['cuerpo'], mecenas: ['distancia'],
+  segador: ['cuerpo'], minero: ['area'], piromano: ['fuego'],
+  gladiador: ['cuerpo'], fugitivo: ['construccion'], martir: ['sangre'],
+  bastion: ['area'], cruzado: ['sagrado'], caballero_negro: ['sombra'],
+  francotirador: ['distancia'], estacas_spec: ['sangre'], agua_spec: ['sagrado'],
+  ingeniero: ['construccion'], armero: ['fisico'], trampero: ['veneno', 'hielo'],
+  envenenador: ['veneno'], explosivista: ['fuego'], transmutador: ['hielo', 'sombra'],
+  nigromante: ['invocacion'], ladron_tumbas: ['distancia'], exorcista: ['sagrado'],
+  juez: ['area'], sanador: ['sagrado'], fanatico: ['fuego'],
+  carnicero: ['sangre'], inquisidor_hacha: ['fuego'], sombra: ['sombra'],
+  cuervera: ['invocacion'], sangre_spec: ['sangre'], pantanosa: ['veneno'],
+  bardo: ['area'], arlequin: ['distancia'], trovador: ['sombra'],
+};
+
+/** Cómo se nombran las armas de cada etiqueta («todas las armas de fuego»). */
+export const ARMAS_DE: Partial<Record<Etiqueta, string>> = {
+  fisico: 'físicas', fuego: 'de fuego', sagrado: 'sagradas', veneno: 'de veneno', sangre: 'de sangre', sombra: 'de sombra', hielo: 'de hielo',
+  cuerpo: 'cuerpo a cuerpo', distancia: 'a distancia', area: 'de área', invocacion: 'de invocación', construccion: 'de construcción',
+};
+
+/** El texto de lo que abre una especialización. */
+export const textoAbre = (spec: string) => {
+  const e = ABRE_SPEC[spec];
+  return e?.length ? `Encuentras también todas las armas ${e.map((x) => ARMAS_DE[x]).join(' y ')}.` : '';
+};

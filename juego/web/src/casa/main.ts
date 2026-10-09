@@ -3714,6 +3714,14 @@ function efectos() {
 
 /** Monedas de regalo y botones de acción directos (pruebas de la ampliación). */
 (window as any).__monedas = (n: number) => cambiarCasa((c) => (c.monedas += n));
+/** Pruebas: construye un cuarto de la ampliación sin pagar y lo muestra. */
+(window as any).__ampliar = async (k: Cuarto) => {
+  await cambiarCasa((c) => {
+    if (!tieneCuarto(c, k)) c.ampliaciones = [...(c.ampliaciones ?? []), k];
+  });
+  await casa3d.asegurar(k).catch(() => {});
+  verCuarto(k);
+};
 (window as any).__patio = () => patio;
 (window as any).__accion = (id: string) => alAccion(id);
 (window as any).__nalgada = () => nalgada();

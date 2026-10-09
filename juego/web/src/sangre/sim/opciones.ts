@@ -1,9 +1,9 @@
 // Las elecciones: subir de nivel (1 de 3 con rareza), las sobrecargas de las armas, los cofres (equipo, evolución,
 // reliquias, oro), el equipo que cae, las bendiciones de los santuarios y las reliquias. También volver a tirar,
 // descartar y aplicar lo escogido.
-import { ARMAS, MAX_ARMAS, NIVEL_EVOLUCION, NIVEL_MAX_ARMA } from '../datos/armas';
-import { BENDICION, BENDICIONES, EQUIPOS, EQUIPO, MEJORA, MEJORAS, OBJETO, PAREJA_EVOLUCION, RELIQUIA, RELIQUIAS, SANTOS, type IdSanto } from '../datos/botin';
-import { CLASES } from '../datos/clases';
+import { ARMAS, ARMAS_LISTA, MAX_ARMAS, NIVEL_EVOLUCION, NIVEL_MAX_ARMA } from '../datos/armas';
+import { ABRE_SPEC, CLASES } from '../datos/clases';
+import { BENDICION, BENDICIONES, EQUIPOS, EQUIPO, MEJORA, MEJORAS, OBJETO, PAREJA_EVOLUCION, RELIQUIA, RELIQUIAS, SANTOS, type DefObjeto, type IdSanto } from '../datos/botin';
 import { NOMBRE_RAREZA, PESO_RAREZA, RANURAS_EQUIPO, type Eleccion, type Opcion, type Rareza } from '../tipos';
 import { soltarOrbitas } from './armas';
 import { S } from './estado';
@@ -44,7 +44,7 @@ function candidatosNivel(j: Jugador): Candidato[] {
   const vet = new Set(j.vetadas);
   // Armas nuevas: su arsenal y las comunes desbloqueadas
   if (j.armas.length < MAX_ARMAS) {
-    const libres = [...j.perfil.arsenal, ...j.perfil.comunes].filter((id) => ARMAS[id] && !ARMAS[id].evolucion && !j.tieneArma(id) && !vet.has(id));
+    const libres = encontrables(j).filter((id) => ARMAS[id] && !ARMAS[id].evolucion && !j.tieneArma(id) && !vet.has(id));
     const peso = libres.length ? Math.min(2.6, 9 / libres.length) * (j.armas.length <= 1 ? 1.6 : 1) : 0;
     for (const id of libres) c.push({ tipo: 'nueva', id, peso });
   }
@@ -168,17 +168,44 @@ export function eleccionSobrecarga(az: { n(): number }, a: ArmaJ, ranura: number
   };
 }
 
+/** La descripción de un objeto, con las armas suyas que evoluciona (los objetos de siempre también son pareja). */
+export function descObjeto(o: DefObjeto, j: Jugador) {
+  if (o.evoluciona) return o.desc;
+  const ev = j.armas.filter((a) => a.def.evoluciona?.con === o.id).map((a) => a.def.nombre);
+  return ev.length ? `${o.desc} Evoluciona: ${ev.join(', ')}.` : o.desc;
+}
+
+// ------------------------------------------------------------------------------------------------- Lo que se encuentra
+const ABIERTAS = new Map<string, string[]>();
+/** Las armas que puede encontrar: su arsenal, las comunes que tiene abiertas y las de la etiqueta de su especialización. */
+export function encontrables(j: Jugador): string[] {
+  const k = `${j.clase}:${j.spec}`;
+  let extra = ABIERTAS.get(k);
+  if (!extra) {
+    const abre = ABRE_SPEC[CLASES[j.clase]?.specs[j.spec]?.id ?? ''] ?? [];
+    extra = ARMAS_LISTA.filter((a) => !a.evolucion && a.clase !== j.clase && a.etiquetas.some((e) => abre.includes(e))).map((a) => a.id);
+    ABIERTAS.set(k, extra);
+  }
+  return [...new Set([...j.perfil.arsenal, ...j.perfil.comunes, ...extra])];
+}
+
 // ------------------------------------------------------------------------------------------------- Cofres
-/** ¿Qué armas de este jugador pueden evolucionar ya? */
-export function evolucionables(j: Jugador): { ranura: number; a: ArmaJ; a2: string }[] {
-  const r: { ranura: number; a: ArmaJ; a2: string }[] = [];
+/** ¿Qué armas de este jugador pueden evolucionar ya? (y las uniones: dos armas altas que se vuelven una) */
+export function evolucionables(j: Jugador): { ranura: number; a: ArmaJ; a2: string; ranura2?: number }[] {
+  const r: { ranura: number; a: ArmaJ; a2: string; ranura2?: number }[] = [];
   j.armas.forEach((a, k) => {
     const ev = a.def.evoluciona;
     if (!ev || a.nivel < NIVEL_EVOLUCION) return;
     if (j.objeto(ev.con) || j.tiene(ev.con)) r.push({ ranura: k, a, a2: ev.a });
   });
+  for (const u of UNIONES_LISTA) {
+    const k1 = j.armas.findIndex((a) => a.id === u.union![0] && a.nivel >= NIVEL_EVOLUCION);
+    const k2 = j.armas.findIndex((a) => a.id === u.union![1] && a.nivel >= NIVEL_EVOLUCION);
+    if (k1 >= 0 && k2 >= 0) r.push({ ranura: k1, a: j.armas[k1], a2: u.id, ranura2: k2 });
+  }
   return r;
 }
+const UNIONES_LISTA = Object.values(ARMAS).filter((a) => a.union);
 
 export function encolarCofre(sim: Sim, j: Jugador, especial: boolean) {
   j.cola.push({ motivo: 'cofre', titulo: especial ? 'Cofre maldito' : 'Cofre', opciones: opcionesCofre(sim, j, especial) });
@@ -189,7 +216,10 @@ export function opcionesCofre(sim: Sim, j: Jugador, especial: boolean): Opcion[]
   const ops: Opcion[] = [];
   for (const e of evolucionables(j)) {
     const d = ARMAS[e.a2];
-    ops.push({ tipo: 'evolucion', id: e.a2, ranura: e.ranura, rareza: 4, nombre: d.nombre, desc: `¡Evolución! ${e.a.def.nombre} se vuelve: ${d.desc}`, glifo: d.glifo, icono: d.id });
+    if (e.ranura2 !== undefined) {
+      const b = j.armas[e.ranura2];
+      ops.push({ tipo: 'evolucion', id: e.a2, ranura: e.ranura, ranura2: e.ranura2, rareza: 4, nombre: d.nombre, desc: `¡Unión! ${e.a.def.nombre} y ${b.def.nombre} se vuelven una sola (y queda un espacio libre): ${d.desc.replace(/^[^:]*: /, '')}`, glifo: d.glifo, icono: d.id });
+    } else ops.push({ tipo: 'evolucion', id: e.a2, ranura: e.ranura, rareza: 4, nombre: d.nombre, desc: `¡Evolución! ${e.a.def.nombre} se vuelve: ${d.desc}`, glifo: d.glifo, icono: d.id });
     if (ops.length >= 1) break;
   }
   const bonus = especial ? 1.2 : 0.4;
@@ -210,7 +240,7 @@ export function opcionesCofre(sim: Sim, j: Jugador, especial: boolean): Opcion[]
       const falta = j.armas.find((a) => a.def.evoluciona && a.nivel >= NIVEL_EVOLUCION - 4 && !j.objeto(a.def.evoluciona.con));
       if (falta) {
         const o = OBJETO[falta.def.evoluciona!.con];
-        if (o && !ops.some((x) => x.id === o.id)) ops.push({ tipo: 'equipo', id: 'obj:' + o.id, rareza: 3, nombre: o.nombre, desc: o.desc, glifo: o.glifo });
+        if (o && !ops.some((x) => x.id === o.id)) ops.push({ tipo: 'equipo', id: 'obj:' + o.id, rareza: 3, nombre: o.nombre, desc: descObjeto(o, j), glifo: o.glifo });
       }
     } else if (r < 0.8) {
       const a = j.armas.filter((x) => x.nivel < NIVEL_MAX_ARMA);
@@ -361,7 +391,22 @@ export function aplicar(sim: Sim, j: Jugador, op: Opcion) {
       n.danoTotal = a.danoTotal;
       n.pedidas = 3;
       j.armas[op.ranura!] = n;
-      sim.suc.push(S.EVOLUCION, j.i, op.ranura!);
+      // Unión: la segunda arma se va y su espacio queda libre (lo que esperaba por ella en la cola se corre)
+      const b = op.ranura2 !== undefined ? j.armas[op.ranura2] : undefined;
+      if (b && op.ranura2 !== op.ranura) {
+        const k2 = op.ranura2!;
+        soltarOrbitas(b);
+        n.nivel = Math.max(n.nivel, b.nivel);
+        n.danoTotal += b.danoTotal;
+        j.armas.splice(k2, 1);
+        j.cola = j.cola.filter((e) => e.ranura !== k2);
+        for (const e of j.cola) {
+          if (e.ranura !== undefined && e.ranura > k2) e.ranura--;
+          for (const o of e.opciones) if (o.ranura !== undefined && o.ranura > k2) o.ranura--;
+        }
+        for (const x of j.armas) x.sucio = true;
+      }
+      sim.suc.push(S.EVOLUCION, j.i, j.armas.indexOf(n));
       break;
     }
     case 'equipo':

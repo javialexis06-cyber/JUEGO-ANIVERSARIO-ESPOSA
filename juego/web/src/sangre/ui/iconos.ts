@@ -72,7 +72,8 @@ const G: Record<string, string> = {
   colmillo: 'M5 3h14c0 6-2 10-4 18l-2-9-1 0-2 9c-2-8-5-12-5-18z',
   cantidad: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z',
   engranaje: 'M10 2h4l1 3 3 1 3-2 3 3-2 3 1 3 3 1v4l-3 1-1 3 2 3-3 3-3-2-3 1-1 3h-4l-1-3-3-1-3 2-3-3 2-3-1-3-3-1v-4l3-1 1-3-2-3 3-3 3 2 3-1zm2 6a4 4 0 100 8 4 4 0 000-8z',
-  luna: 'M14 2a10 10 0 100 20 8 8 0 010-20z',
+  // (una medialuna gordita: los dos arcos van por la izquierda, el de adentro más plano)
+  luna: 'M15 3a10 10 0 100 18 11 11 0 010-18z',
   hierro: 'M3 14l5-6h8l5 6-5 6H8z',
   altar: 'M3 12h18v2H3zM5 14h14v8H5zM9 6h6l1 6H8zM11 2h2v4h-2z',
   carreta: 'M3 6h18l-2 8H5zM7 15a3 3 0 110 6 3 3 0 010-6zM17 15a3 3 0 110 6 3 3 0 010-6z',

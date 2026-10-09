@@ -256,6 +256,10 @@ export const MUTADORES: Record<IdMutador, { nombre: string; desc: string; recomp
   roca_dura: { nombre: 'Roca dura', desc: 'Casi toda la roca es dura.', recompensa: 0.1, glifo: 'pico' },
   codicia: { nombre: 'Codicia', desc: '+50 % de oro, pero los enemigos tienen +25 % de vida.', recompensa: 0.1, glifo: 'oro' },
   eclipse: { nombre: 'Eclipse eterno', desc: 'Los eclipses llegan el doble de seguido.', recompensa: 0.15, glifo: 'luna' },
+  // Los buenos (las lunas de Astra): ayudan, y por eso la ceniza rinde un poco menos
+  aurelia: { nombre: 'Luna Aurelia', desc: 'La luna dorada: +40 % de oro.', recompensa: -0.1, glifo: 'sol' },
+  esmeralda: { nombre: 'Luna Esmeralda', desc: 'Marea de maná: las vetas dan casi el doble.', recompensa: -0.1, glifo: 'cristal' },
+  nocturna: { nombre: 'Nocturna limpia', desc: 'La luna de ébano guía a las almas: +25 % de experiencia.', recompensa: -0.1, glifo: 'luna' },
   fragiles: { nombre: 'Frágiles', desc: 'Tienen 25 % menos de vida, pero no hay curación de comida.', recompensa: 0.1, glifo: 'corazon' },
   enjambres: { nombre: 'Enjambres', desc: 'Más enemigos pequeños y rápidos.', recompensa: 0.2, glifo: 'murcielago' },
   velocidad: { nombre: 'Prisa de los muertos', desc: 'Los enemigos van 20 % más rápido.', recompensa: 0.2, glifo: 'bota' },

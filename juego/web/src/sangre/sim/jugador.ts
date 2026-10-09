@@ -21,7 +21,7 @@ export const BIT_ETQ: Record<Etiqueta, number> = Object.fromEntries(ETIQUETAS.ma
 export const xpPara = (n: number) => Math.round(7 + 6 * (n - 1) + 0.42 * (n - 1) ** 2);
 
 /** Comportamientos en los que «cantidad» es cuántos proyectiles salen (en los demás da más área). */
-const CUENTA: Record<string, boolean> = { proyectil: true, lanzado: true, bumeran: true, orbita: true, rayo: true, cadena: true, torreta: true };
+const CUENTA: Record<string, boolean> = { proyectil: true, lanzado: true, bumeran: true, orbita: true, rayo: true, cadena: true, torreta: true, trampa: true };
 
 export class ArmaJ {
   def: DefArma;
@@ -176,6 +176,8 @@ export class Jugador {
   /** Hacia dónde mira (unitario). */
   fx = 0;
   fy = 1;
+  /** Segundos que lleva quieto (la ballesta de pie). */
+  quietoT = 0;
   /** Entrada del mando (−1..1) y si apretó la habilidad. */
   mx = 0;
   my = 0;
@@ -387,7 +389,7 @@ export class Jugador {
 
   /** ¿Puede escoger esta arma como nueva? */
   tieneArma(id: string) {
-    return this.armas.some((a) => a.id === id || (ARMAS[a.id]?.evolucion && Object.values(ARMAS).some((b) => b.evoluciona?.a === a.id && b.id === id)));
+    return this.armas.some((a) => a.id === id || (ARMAS[a.id]?.evolucion && (ARMAS[a.id].union?.includes(id) || Object.values(ARMAS).some((b) => b.evoluciona?.a === a.id && b.id === id))));
   }
 
   /** Bits de banderas de la bendición «herida abierta», «pira» y «escarcha» (para los golpes). */

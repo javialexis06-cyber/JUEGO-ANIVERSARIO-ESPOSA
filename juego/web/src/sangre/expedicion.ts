@@ -6,7 +6,7 @@ import { EQUIPOS, EQUIPO, OBJETO, OBJETOS, PAREJA_EVOLUCION } from './datos/boti
 import { ETAPAS, MUTADORES, PELIGROS } from './datos/mundo';
 import { Sim, type FinEtapa } from './sim/sim';
 import { ArmaJ, Jugador } from './sim/jugador';
-import { eleccionSobrecarga, encolarSobrecarga } from './sim/opciones';
+import { descObjeto, eleccionSobrecarga, encolarSobrecarga, encontrables } from './sim/opciones';
 import type { ConfigExpedicion, IdBioma, IdObjetivo, IdSecundario, PerfilJugador, Rareza } from './tipos';
 
 export interface ResultadoEtapa {
@@ -153,7 +153,7 @@ export class Expedicion {
     while (r.length < 5 && intentos++ < 60) {
       const t = this.az.n();
       if (t < 0.28 && j.armas.length < MAX_ARMAS) {
-        const libres = [...j.perfil.arsenal, ...j.perfil.comunes].filter((id) => !j.tieneArma(id) && !ARMAS[id]?.evolucion && !usados.has(id));
+        const libres = encontrables(j).filter((id) => !j.tieneArma(id) && !ARMAS[id]?.evolucion && !usados.has(id));
         if (!libres.length) continue;
         const id = this.az.uno(libres);
         const a = ARMAS[id];
@@ -164,9 +164,9 @@ export class Expedicion {
         const evoluciones = j.armas.filter((a) => a.def.evoluciona && a.nivel >= NIVEL_EVOLUCION - 6 && !j.objeto(a.def.evoluciona.con)).map((a) => a.def.evoluciona!.con);
         const lista = OBJETOS.filter((o) => (!o.evoluciona || evoluciones.includes(o.id)) && (o.repetible || !j.objeto(o.id)) && !usados.has(o.id));
         if (!lista.length) continue;
-        const o = this.az.pesado(lista, (x) => (x.evoluciona ? 3 : x.rareza >= 3 ? 0.4 : x.rareza === 2 ? 0.8 : 1.3))!;
+        const o = this.az.pesado(lista, (x) => (x.evoluciona || evoluciones.includes(x.id) ? 3 : x.rareza >= 3 ? 0.4 : x.rareza === 2 ? 0.8 : 1.3))!;
         usados.add(o.id);
-        r.push({ id: `o${r.length}${o.id}`, tipo: 'objeto', ref: o.id, nombre: o.nombre, desc: o.desc, precio: Math.round(o.precio * (1 + 0.22 * (e - 1)) * d), rareza: Math.min(4, o.rareza) as Rareza, glifo: o.glifo });
+        r.push({ id: `o${r.length}${o.id}`, tipo: 'objeto', ref: o.id, nombre: o.nombre, desc: descObjeto(o, j), precio: Math.round(o.precio * (1 + 0.22 * (e - 1)) * d), rareza: Math.min(4, o.rareza) as Rareza, glifo: o.glifo });
       } else if (t < 0.95) {
         const lista = EQUIPOS.filter((q) => q.rareza <= Math.min(3, e) && j.equipo[q.ranura] !== q.id && !usados.has(q.id));
         if (!lista.length) continue;

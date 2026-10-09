@@ -55,7 +55,54 @@ ICONOS = {
 GIRO = {
     'hoz': ('XYZ', (0, 0, 65)), 'pico_robado': ('ZYX', (0, -45, 90)), 'ballesta': ('XYZ', (0, 0, -70)), 'ballesta_cazanoche': ('XYZ', (0, 0, -70)),
     'trabuco': ('XYZ', (0, 0, -70)), 'sierra': ('XYZ', (70, 0, 0)), 'torreta_ballesta': ('XYZ', (0, 0, -50)),
+    # (la cuchilla de la guillotina de frente llenaba todo el ícono)
+    'guillotina': ('XYZ', (-15, 0, 205)),
 }
+
+
+# Sangre y Ceniza 2: las comunes nuevas, las evoluciones que faltaban (el arma de base con halo) y las uniones (las dos
+# armas cruzadas: se arman con sus íconos, sin volver a renderizar)
+ICONOS.update({
+    'aceite_hirviendo': ('armas', 'cazo_aceite', '#ff8a2a'), 'frasco_escarcha': ('armas', 'frasco_escarcha', '#9fe8ff'),
+    'humo_azufre': ('armas', 'bolsa_azufre', '#d8d04a'), 'bomba_racimo': ('armas', 'racimo', '#ff9a3a'), 'abrojos': ('armas', 'bolsa_abrojos', '#a8a0a0'),
+    'cepos': ('armas', 'cepo', '#8a8c92'), 'ballesta_pie': ('armas', 'ballesta_pesada', '#d8d0c0'), 'cuervos_cazadores': ('armas', 'guante_cetreria', '#7a5bb8'),
+    'murcielagos': ('armas', 'jaula', '#c8323a'), 'latigo_espinas': ('armas', 'latigo_espinas', '#7a8a4a'), 'rayo_sangre': ('armas', 'vara_sangre', '#ff3a4a'),
+    'lanza_fuego': ('armas', 'sifon', '#ff7a2a'), 'perdigonera': ('armas', 'perdigonera', '#c8c0b0'),
+})
+EVOLUCIONES_NUEVAS = {
+    'cetro_emperador': ('cetro_hierro', '#ffe08a'), 'estandarte_eterno': ('estandarte', '#ff7a4a'), 'lanza_coronacion': ('lanza_ceremonial', '#fff0b0'),
+    'guadana_luna': ('hoz', '#c8d8ff'), 'hoguera_pueblo': ('antorcha', '#ff8a2a'), 'honda_pastor': ('honda', '#e8e0c8'),
+    'bola_condenado': ('bola_hierro', '#b0b4ba'), 'punos_motin': ('punos', '#ff6a6a'), 'pico_fuga': ('pico_robado', '#d8d0c0'),
+    'mangual_asedio': ('mangual', '#c8ccd2'), 'lanza_campeon': ('lanza_justa', '#f0e2b8'), 'escudo_muralla': ('escudo_arrojadizo', '#e0d8c8'),
+    'estacas_plata': ('estacas', '#e8eef5'), 'agua_rio_santo': ('agua_bendita', '#9fe0ff'), 'trabuco_mayor': ('trabuco', '#ffd38a'),
+    'torreta_asedio': ('torreta_ballesta', '#ffb46a'), 'lluvia_yunques': ('yunque', '#b0b4ba'), 'fragua_viva': ('chispas', '#ffc04a'),
+    'fuego_inextinguible': ('fuego_griego', '#ff6a1a'), 'corazon_invierno': ('frasco_helado', '#bfeaff'), 'miasma': ('gas_venenoso', '#9bd84a'),
+    'farol_animas': ('linterna_almas', '#8fe3ff'), 'osario_vivo': ('huesos', '#f0e8d0'), 'campana_difuntos': ('campana_funebre', '#c8b8ff'),
+    'evangelio_fuego': ('libro_oraciones', '#ffb04a'), 'cruz_peregrina': ('cruz_plata', '#f4f8ff'), 'juicio_celestial': ('rayo_sagrado', '#fff4a8'),
+    'garfios_matadero': ('ganchos', '#c8504a'), 'la_viuda': ('guillotina', '#e8e8e8'), 'soga_ahorcado': ('soga', '#d8b888'),
+    'muneca_condena': ('vudu', '#d07bff'), 'caldero_tres_brujas': ('caldero', '#8ae05a'), 'plumas_augurio': ('plumas_negras', '#9a7aff'),
+    'cuchillos_fortuna': ('cuchillos_malabar', '#f0f4ff'), 'flauta_flautista': ('flauta', '#ffe08a'), 'tambor_ultima_batalla': ('tambor_guerra', '#f0c88a'),
+    'arco_montero': ('arco_largo', '#f0e0b8'), 'hachas_lenador': ('hacha_arrojadiza', '#e8d8c0'), 'barreno_mayor': ('carga_minera', '#ffc070'),
+    'sierras_molino': ('sierra', '#e0e4ea'), 'tormenta_dorada': ('ira_cielo', '#ffe07a'), 'rio_brea': ('aceite_hirviendo', '#ff7a1a'),
+    'invierno_eterno': ('frasco_escarcha', '#d8f4ff'), 'aliento_averno': ('humo_azufre', '#ffd04a'), 'lluvia_polvora': ('bomba_racimo', '#ffb05a'),
+    'campo_espinas': ('abrojos', '#c8c0b8'), 'mandibula_hierro': ('cepos', '#b8bcc4'), 'fortin': ('ballesta_pie', '#ffb46a'),
+    'bandada_noche': ('cuervos_cazadores', '#9a7aff'), 'nube_vampiros': ('murcielagos', '#ff4a5a'), 'zarza_maldita': ('latigo_espinas', '#9aaa5a'),
+    'rio_carmesi': ('rayo_sangre', '#ff2a3a'), 'aliento_dragon': ('lanza_fuego', '#ff9a2a'), 'canon_mano': ('perdigonera', '#e8d8b8'),
+}
+for _i, (_b, _c) in EVOLUCIONES_NUEVAS.items():
+    ICONOS[_i] = (ICONOS[_b][0], ICONOS[_b][1], _c, True)
+    if _b in GIRO:
+        GIRO.setdefault(_i, GIRO[_b])
+# uniones: id → (arma de adelante, arma de atrás, color)
+UNIONES = {
+    'cruz_bautismal': ('agua_bendita', 'cruz_plata', '#bfe8ff'), 'lanzaestacas': ('ballesta', 'estacas', '#e8c890'), 'campana_osario': ('campana_funebre', 'huesos', '#c8b8ff'),
+    'parlamento_cuervos': ('baston_cuervos', 'plumas_negras', '#a87bff'), 'evangelio_tormenta': ('rayo_sagrado', 'libro_oraciones', '#fff4a8'), 'marcha_flautista': ('tambor_guerra', 'flauta', '#ffe08a'),
+    'horca_garfios': ('ganchos', 'soga', '#c8504a'), 'molino_hachas': ('hacha_arrojadiza', 'sierra', '#e0d0c0'), 'santa_barbara': ('bomba', 'carga_minera', '#ffc06a'),
+    'peste_negra': ('gas_venenoso', 'frasco_acido', '#9bd84a'), 'cadalso': ('guillotina', 'hacha_verdugo', '#ff4a4a'), 'fuego_escarcha': ('fuego_griego', 'frasco_helado', '#ff9a6a'),
+    'campo_trampero': ('cepos', 'abrojos', '#c8c0b0'), 'noche_alada': ('cuervos_cazadores', 'murcielagos', '#c84aff'),
+}
+GIRO.update({'ballesta_pie': ('XYZ', (0, 0, -70)), 'fortin': ('XYZ', (0, 0, -70)), 'perdigonera': ('XYZ', (0, 0, -70)), 'canon_mano': ('XYZ', (0, 0, -70)),
+             'lanza_fuego': ('XYZ', (0, 0, -70)), 'aliento_dragon': ('XYZ', (0, 0, -70)), 'trabuco_mayor': ('XYZ', (0, 0, -70))})
 
 
 def registro(grupo):
@@ -89,6 +136,20 @@ def halo(png, color, evolucion, res=128):
     return capa.resize((res, res), Image.LANCZOS)
 
 
+def icono_union(out, tmp, i, a, b, color):
+    """Las dos armas cruzadas (la de atrás más chiquita e inclinada) con el halo dorado de las evoluciones."""
+    from PIL import Image
+    T = 512
+    lienzo = Image.new('RGBA', (T, T), (0, 0, 0, 0))
+    atras = Image.open(os.path.join(out, f'{b}.webp')).convert('RGBA').resize((380, 380), Image.LANCZOS).rotate(-24, resample=Image.BICUBIC)
+    adelante = Image.open(os.path.join(out, f'{a}.webp')).convert('RGBA').resize((400, 400), Image.LANCZOS).rotate(16, resample=Image.BICUBIC)
+    lienzo.alpha_composite(atras, (T - 380 - 10, 8))
+    lienzo.alpha_composite(adelante, (6, T - 400 - 6))
+    png = os.path.join(tmp, f'{i}.png')
+    lienzo.save(png)
+    halo(png, color, True).save(os.path.join(out, f'{i}.webp'), 'WEBP', quality=90, method=6)
+
+
 def main(out, ids=None, hoja=None):
     import sangre_exportar
     clay.reset_scene()
@@ -96,7 +157,9 @@ def main(out, ids=None, hoja=None):
     sc.preparar_render(scene, 256, 32, transparente=True)
     scene.view_settings.look = 'AgX - High Contrast'
     os.makedirs(out, exist_ok=True)
-    ids = ids or list(ICONOS)
+    ids = ids or [*ICONOS, *UNIONES]
+    uniones = [i for i in ids if i in UNIONES]
+    ids = [i for i in ids if i not in UNIONES]
     necesarios = {}
     for i in ids:
         g, f = ICONOS[i][0], ICONOS[i][1]
@@ -144,6 +207,11 @@ def main(out, ids=None, hoja=None):
         halo(png, color, evo).save(os.path.join(out, f'{i}.webp'), 'WEBP', quality=90, method=6)
         hechos.append(i)
         print('icono', i, flush=True)
+    for i in uniones:
+        a, b, color = UNIONES[i]
+        icono_union(out, tmp, i, a, b, color)
+        hechos.append(i)
+        print('union', i, flush=True)
     if hoja:
         from PIL import Image, ImageDraw
         n = len(hechos)

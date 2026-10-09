@@ -82,6 +82,48 @@ la noche, y a salir vivos en la **Campana de Extracción** antes de que la horda
 - **Regla de las dos armas** (fase 2, la de Deep Rock): las mejoras de etiqueta al subir de nivel (fuego, sagrado,
   cuerpo a cuerpo… y las especiales: Ambidiestro, Funda de cuero, Mimos de armero, Pólvora doble) **solo salen si dos
   armas comparten esa etiqueta**, y pesan más con tres o cuatro. Eso es lo que arma las combinaciones.
+- **El mapa de la Noche** (fase 3, como el mapa de sectores de Deep Rock, con la historia del mito de Astra): botón
+  del título «El mapa de la Noche» (con las metas cumplidas, de 51). Valdemora en cuatro sectores (**Las Afueras**,
+  **El Subsuelo**, **El Santuario** y **La Corte del Conde**), cada uno con 3-4 lugares (una expedición en su bioma y
+  peligro) y su **Puerta**, que se abre al terminar los demás lugares del sector y lleva una luna buena y dos mutadores
+  malos fijos. Cada lugar tiene **tres metas** (terminarlo y dos retos: «Gana con la Bruja», «Trae 30 minerales», «Gana
+  sin caer»…); cada meta paga ceniza una vez (30, 45, 60 u 80 según el sector) y diez lugares **regalan un arma común
+  nueva** la primera vez que se terminan. Al cruzar una Puerta se abre el sector siguiente (y sus biomas para las
+  expediciones de siempre) y se cuenta una **escena corta** encima de los resultados: fondo del color del sector con
+  ceniza que sube, el diálogo abajo con el retrato de quien habla (Él y Ella con el traje de su clase; la Santa de
+  Lara, el Conde, Nath'Gora y Vael'Thor con su medallón), texto que se va escribiendo y «Saltar». La primera vez que
+  se abre el mapa sale el **prólogo**; las escenas vistas se repiten desde el mapa. Cinco escenas: la Constelación
+  de los Amantes que parpadea, la grieta que abrió el Conde, por qué el escudo, los otros panteones y el Lazo
+  Primordial (Javier y Laura). El texto de la pareja va en `src/sangre/historia_pareja.ts`; la versión de amigos
+  (`src/amigos/sin_pareja/sangre_historia.ts`) cuenta el mismo mito con «sobrevivientes» sin nombrar a nadie. Datos:
+  `datos/noche.ts`; lo guardado: `p.noche = { metas: ['lugar:meta'], escenas }` (normalizado, máx. 300).
+- **Trece armas comunes nuevas** (fase 3, `datos/armas_nuevas.ts`, cada una con su modelo en `armas.glb`, su proyectil
+  y su ícono): **Aceite hirviendo** (jarra que deja fuego en el piso), **Frasco de escarcha** (revienta en esquirlas y
+  hiela el piso), **Humo de azufre** (nube venenosa donde estás parado), **Bomba de racimo** (revienta en bombitas),
+  **Abrojos** (se riegan alrededor: pinchan, sangran y frenan a todos los que pasan), **Cepos** (el primero que lo pisa
+  queda atrapado y aturdido), **Ballesta de pie** (se arma sola cuando te quedas quieto un momento), **Cuervos
+  cazadores** y **Murciélagos guardianes** (giran y se lanzan), **Látigo de espinas** (azota hacia atrás), **Rayo de
+  sangre** (atraviesa y rebota en las paredes), **Lanza de fuego** (el sifón de fuego griego que escupe dando vueltas)
+  y **Perdigonera** (seis perdigones en abanico, de cerca). Cada una con sus seis sobrecargas. Tres salen desde el
+  comienzo (perdigonera, abrojos, aceite) y las otras diez se ganan en el mapa de la Noche. Comportamientos nuevos en
+  la simulación: `trampa` (proyectiles quietos en el piso, `MOV.TRAMPA`, a lo sumo tres golpes por cuadro), apuntar
+  `pie` (la nube sale donde estás) y `atras` (el más cercano de los que vienen detrás), el cono con `GIRA` (va dando
+  vueltas) y las torretas `quieto` (`j.quietoT`).
+- **Evoluciones para todas las armas** (fase 3): las 54 que faltaban (las 41 armas de clase y comunes que no tenían, y
+  las 13 nuevas). Como en Vampire Survivors, la pareja es un **objeto de la Forja de siempre** (Cuerno de guerra,
+  Carbón vivo, Reloj roto…): con el arma en el nivel 12 y su objeto, un cofre ofrece la evolución. Cada evolución pega
+  ~2,2 veces más, ataca un poco más seguido y suma lo suyo (Guadaña de la Luna gira y remata, Hoguera del Pueblo
+  quema adelante y atrás y deja el piso ardiendo, Tormenta Dorada hace soltar más oro…). Los objetos dicen qué arma
+  tuya evolucionan, y en la Forja salen más cuando el arma ya va alta. Íconos: el arma de base con el halo dorado.
+- **Uniones** (fase 3, como las de Vampire Survivors): 14 parejas de armas (Agua bendita + Cruz de plata = Cruz
+  Bautismal, Ballesta + Estacas = Lanzaestacas, Bomba + Carga minera = Polvorín de Santa Bárbara, Cepos + Abrojos = El
+  Campo del Trampero, Cuervos + Murciélagos = La Noche Alada…): con las dos en el nivel 12, un cofre ofrece unirlas en
+  una sola, que se queda en el espacio de la primera y **deja libre el de la segunda** (con cuatro espacios vale oro).
+  Logro nuevo «Dos en uno». Íconos: las dos armas cruzadas con el halo.
+- **Especializaciones que abren armas** (fase 3, como las subclases de Deep Rock): cada especialización suma a lo que
+  se encuentra (subir de nivel, Forja) todas las armas de una etiqueta, de cualquier clase y las comunes aunque no
+  estén ganadas (Pirómano: todas las de fuego; Ingeniero: las de construcción; Nigromante: las de invocación;
+  Francotirador: las de distancia…; `ABRE_SPEC` en `datos/clases.ts`). Se lee en la tarjeta de la especialización.
 - **Potencia y daño de estados** (fase 2): dos estadísticas nuevas. La **potencia** pone más carga de quema, veneno,
   sangrado y frío en cada golpe; el **daño de estados** sube lo que pegan esas cargas. Salen al subir de nivel (Mano de
   boticario, Saña; pesan solo si algo pone estados), en la Forja (Estuche del boticario, Sal amarga) y en el Pozo.
@@ -354,7 +396,7 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   `__sangrePantalla()`, `__sangreInfo()` (llamadas, triángulos, ms), `__sangreDar(ceniza)`, `__sangreAbrirTodo()`,
   `__sangreForja()` (salta a la Forja), `__sangreReloj(s)` (llena la barra hasta que falten `s` segundos),
   `__sangreDebil()` (deja al Guardián o al jefe con un golpe de vida), `__sangreSobrecarga(ranura)` (pide la siguiente
-  sobrecarga de esa arma, si le toca).
+  sobrecarga de esa arma, si le toca), `__sangreTerminar(exito)` (termina la expedición ya y pasa a los resultados).
 
 ## Contrato de arte (lo que el código espera encontrar)
 

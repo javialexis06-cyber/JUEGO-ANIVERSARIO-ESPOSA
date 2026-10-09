@@ -1402,3 +1402,537 @@ def p_yunque(coll):
 
 
 PROYECTILES.update({'rayo': 'rayo_sagrado'})
+
+
+# ---------------------------------------------------------------------------
+# Sangre y Ceniza 2: las trece armas comunes nuevas y sus proyectiles
+# ---------------------------------------------------------------------------
+
+def terracota(s=0, color='#9A5A34'):
+    return P_(color, 'piedra', semilla=s)
+
+
+def _abrojo(pz, nombre, centro, tam, pt, coll, giro=0.0):
+    """Abrojo: cuatro púas en tetraedro (siempre queda una para arriba)."""
+    centro = np.asarray(centro, float)
+    dirs = [(0, 0, 1), (0.943, 0, -0.333), (-0.471, 0.816, -0.333), (-0.471, -0.816, -0.333)]
+    cg, sg = math.cos(giro), math.sin(giro)
+    for k, d in enumerate(dirs):
+        d = np.array([d[0] * cg - d[1] * sg, d[0] * sg + d[1] * cg, d[2]])
+        pz.malla(sc.punta(f'{nombre} {k}', centro - d * tam * 0.15, centro + d * tam, tam * 0.22, coll, seg=4), pt)
+    pz.bola(centro, tam * 0.2, pt, 0.0)
+
+
+def _cuervo(pz, nombre, centro, esc, coll, alas=0.0, sem=0):
+    """Un cuervo gordito (mira a +Y). `alas` 0 = recogidas, 1 = abiertas en vuelo."""
+    o = np.asarray(centro, float)
+    negro = P_('#1C1A22', 'pelo', semilla=sem)
+    pz.bola(o, (0.05 * esc, 0.07 * esc, 0.05 * esc), negro, 0.0)
+    cab = o + np.array([0, 0.065, 0.035]) * esc
+    pz.bola(cab, 0.036 * esc, negro, 0.012 * esc)
+    pz.malla(sc.punta(f'{nombre} pico', cab + np.array([0, 0.025, -0.004]) * esc, cab + np.array([0, 0.07, -0.012]) * esc, 0.012 * esc, coll, seg=4),
+             P_('#D8A02A', 'hueso', semilla=sem + 1))
+    for s in (-1, 1):
+        pz.malla(sc.bolita(f'{nombre} ojo {s}', cab + np.array([s * 0.022, 0.018, 0.012]) * esc, 0.007 * esc, coll, n=1, sub=1), brillo('ambar', '#FFAA33'))
+        if alas > 0:
+            raiz = o + np.array([s * 0.03, 0.0, 0.02]) * esc
+            for k in range(3):
+                punta = raiz + np.array([s * (0.12 - 0.02 * k), -0.03 - 0.03 * k, 0.03 * alas - 0.01 * k]) * esc
+                pz.malla(sf.pluma(f'{nombre} ala {s} {k}', raiz, punta, 0.05 * esc, coll, normal=(0, 0.2, 1)), negro)
+        else:
+            pz.bola(o + np.array([s * 0.042, -0.01, 0.01]) * esc, (0.018 * esc, 0.06 * esc, 0.032 * esc), negro, 0.01 * esc)
+    for k in (-1, 0, 1):
+        pz.malla(sf.pluma(f'{nombre} cola {k}', o + np.array([0, -0.05, 0.0]) * esc, o + np.array([k * 0.025, -0.13, -0.01]) * esc, 0.03 * esc, coll,
+                          normal=(0, 0, 1)), negro)
+
+
+def _murcielago(pz, nombre, centro, esc, coll, sem=0):
+    """Murciélago con las alas abiertas (mira a +Y) y los ojos rojos."""
+    o = np.asarray(centro, float)
+    piel = P_('#3A2A30', 'pelo', semilla=sem)
+    ala = P_('#2A1E26', 'cuero', semilla=sem + 1)
+    pz.bola(o, (0.035 * esc, 0.045 * esc, 0.03 * esc), piel, 0.0)
+    cab = o + np.array([0, 0.045, 0.01]) * esc
+    pz.bola(cab, 0.03 * esc, piel, 0.01 * esc)
+    for s in (-1, 1):
+        pz.malla(sc.punta(f'{nombre} oreja {s}', cab + np.array([s * 0.015, 0, 0.018]) * esc, cab + np.array([s * 0.028, -0.005, 0.06]) * esc, 0.012 * esc,
+                          coll, seg=3), piel)
+        pz.malla(sc.bolita(f'{nombre} ojo {s}', cab + np.array([s * 0.013, 0.025, 0.006]) * esc, 0.006 * esc, coll, n=1, sub=1), brillo('rojo', '#FF2A1A'))
+        # el ala: tres dedos con la membrana entre ellos
+        raiz = o + np.array([s * 0.025, 0.01, 0.01]) * esc
+        dedos = [raiz + np.array([s * 0.09, 0.03, 0.03]) * esc, raiz + np.array([s * 0.15, -0.01, 0.0]) * esc, raiz + np.array([s * 0.12, -0.06, -0.02]) * esc]
+        for k, d in enumerate(dedos):
+            pz.trazo([raiz, d], [0.006 * esc, 0.003 * esc], ala, 0.0)
+        filas = [[raiz, raiz, raiz], [dedos[0], (dedos[0] + dedos[1]) / 2 - np.array([0, 0.012, 0]) * esc, dedos[1]],
+                 [dedos[1], (dedos[1] + dedos[2]) / 2 - np.array([0, 0.012, 0]) * esc, dedos[2]]]
+        pz.malla(sc.lamina(f'{nombre} membrana {s} a', [[tuple(p) for p in f] for f in filas[:2]], coll, 0.003 * esc), ala)
+        pz.malla(sc.lamina(f'{nombre} membrana {s} b', [[tuple(p) for p in f] for f in filas[1:]], coll, 0.003 * esc), ala)
+        pz.malla(sc.lamina(f'{nombre} membrana {s} c', [[tuple(raiz)] * 3, [tuple(dedos[2]), tuple((dedos[2] + o) / 2), tuple(o - np.array([0, 0.04, 0]) * esc)]],
+                           coll, 0.003 * esc), ala)
+
+
+def _cepo(pz, nombre, centro, r, coll, abierto=True, sem=0):
+    """Cepo de oso: la placa con el resorte y las dos mandíbulas dentadas (abiertas en el piso o cerradas)."""
+    o = np.asarray(centro, float)
+    hi = P_('#4A4C52', 'hierro', semilla=sem, polvo=0.4)
+    pz.caja(o, (r * 0.32, r * 0.22, r * 0.05), r * 0.03, hi, 0.0)
+    pz.bola(o + np.array([0, 0, r * 0.07]), (r * 0.12, r * 0.12, r * 0.03), P_('#8A6A3A', 'oro', semilla=sem + 1), 0.0)
+    for s in (-1, 1):
+        # cada mandíbula: medio aro dentado
+        if abierto:
+            arco = [o + np.array([math.cos(a) * r, s * math.sin(a) * r * 0.95, 0.0]) for a in np.linspace(0, math.pi, 9)]
+            arriba = np.array([0, 0, 1.0])
+        else:
+            arco = [o + np.array([math.cos(a) * r, s * 0.015, math.sin(a) * r * 0.95]) for a in np.linspace(0, math.pi, 9)]
+            arriba = np.array([0, -s * 1.0, 0])
+        pz.trazo(arco, r * 0.07, hi, 0.0)
+        for k in range(1, 8):
+            b = arco[k]
+            hacia = (o - b)
+            hacia = hacia / max(np.linalg.norm(hacia), 1e-9)
+            pz.malla(sc.punta(f'{nombre} diente {s} {k}', b, b + hacia * r * 0.16 + arriba * r * 0.12, r * 0.05, coll, seg=3),
+                     P_('#8A8C92', 'hierro', semilla=sem + 2 + k, sangre=0.4))
+        # el resorte de lado
+        pz.trazo([o + np.array([s * r * 0.3, 0, 0.0]), o + np.array([s * r * 1.25, 0, 0.0])], r * 0.06, hi, 0.0)
+        pz.bola(o + np.array([s * r * 1.25, 0, 0.0]), r * 0.1, hi, 0.0)
+
+
+# ------------------------------------------------------------------ armas en la mano
+
+@arma('cazo_aceite')
+def cazo_aceite(coll):
+    """Jarra de barro con aceite hirviendo: la boca brilla, burbujea y escurre por los lados."""
+    F = nueva('cazo_aceite', clase='comun', icono_vista=(30, 15))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1500)
+    o = np.array([0, 0.075, -0.02])
+    c.malla(sc.torno('jarra', [(0.0, 0.0), (0.045, 0.0), (0.066, 0.035), (0.064, 0.085), (0.042, 0.12), (0.04, 0.135), (0.048, 0.145), (0.044, 0.152),
+                               (0.0, 0.14)], coll, segmentos=18, centro=tuple(o)), terracota(1))
+    # franjas pintadas y el asa (por donde se agarra)
+    for z, col in ((0.05, '#3A2418'), (0.075, '#C88A4A')):
+        banda(c, o[2] + z, 0.067, 0.008, P_(col, 'piedra', semilla=3), x=o[0], y=o[1])
+    c.malla(sc.tubo('asa jarra', [o + np.array([0, -0.04, 0.12]), o + np.array([0, -0.085, 0.1]), o + np.array([0, -0.088, 0.05]), o + np.array([0, -0.06, 0.03])],
+                    0.011, coll, segmentos=6, muestras=3), terracota(2, '#8A4E2C'))
+    # el aceite: la superficie que brilla, burbujas y chorros que escurren
+    top = o + np.array([0, 0, 0.142])
+    c.bola(top, (0.04, 0.04, 0.008), brillo('fuego', '#FF6A1A'), 0.0)
+    rng = np.random.default_rng(3)
+    for k in range(5):
+        a = rng.uniform(0, 2 * math.pi)
+        c.malla(sc.bolita(f'burbuja {k}', top + np.array([math.cos(a) * 0.02, math.sin(a) * 0.02, 0.008]), 0.007 + 0.004 * (k % 2), coll, n=1, sub=1),
+                brillo('ambar', '#FFAA33'))
+    for k, a in enumerate((0.9, 3.6)):
+        d = np.array([math.cos(a), math.sin(a), 0])
+        pts = [top + d * 0.046 + np.array([0, 0, 0.004]), top + d * 0.058 + np.array([0, 0, -0.02]), top + d * 0.066 + np.array([0, 0, -0.05 - 0.02 * k])]
+        c.malla(sc.tubo(f'chorro aceite {k}', pts, [0.007, 0.006, 0.005], coll, segmentos=6, muestras=3), brillo('fuego', '#FF6A1A'))
+        c.malla(sc.bolita(f'gota aceite {k}', pts[-1] + np.array([0, 0, -0.006]), 0.008, coll, n=2), brillo('fuego', '#FF6A1A'))
+    F.marca('llama', tuple(top))
+    F.marca('punta', tuple(top))
+    return F
+
+
+@arma('frasco_escarcha')
+def frasco_escarcha(coll):
+    """Frasco escarchado: vidrio blanco por el frío, líquido azul que brilla, carámbanos y tapa de plata."""
+    F = nueva('frasco_escarcha', clase='comun', icono_vista=(30, 10))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1600)
+    vidrio = P_('#BFE4FF', 'vidrio', mat='espectro')
+    c.sdf(sf.union(sdf.round_box((0, 0, 0.03), (0.05, 0.05, 0.06), 0.03), sdf.round_cone((0, 0, 0.08), (0, 0, 0.15), 0.022, 0.016), k=0.02),
+          (-0.09, -0.09, -0.06), (0.09, 0.09, 0.18), vidrio)
+    c.sdf(sdf.round_box((0, 0, 0.018), (0.042, 0.042, 0.045), 0.026), (-0.07, -0.07, -0.05), (0.07, 0.07, 0.08), brillo('hielo', '#8AF0FF'))
+    # escarcha pegada al vidrio (copitos blancos) y carámbanos que cuelgan de la panza
+    rng = np.random.default_rng(5)
+    for k in range(14):
+        a = rng.uniform(0, 2 * math.pi)
+        z = rng.uniform(-0.01, 0.09)
+        c.malla(sc.bolita(f'escarcha {k}', (math.cos(a) * 0.066, math.sin(a) * 0.066, z), (0.014, 0.014, 0.01), coll, n=1, sub=1), P_('#F4FAFF', 'hueso', semilla=k))
+    for k in range(6):
+        a = 2 * math.pi * k / 6 + 0.2
+        b = np.array([math.cos(a) * 0.055, math.sin(a) * 0.055, -0.02])
+        c.malla(sc.punta(f'carambano {k}', b, b + np.array([0, 0, -0.04 - 0.02 * (k % 3)]), 0.01, coll, seg=5), P_('#CFF0FF', 'vidrio', mat='espectro'))
+    c.cono((0, 0, 0.145), (0, 0, 0.17), 0.02, 0.022, P_('#C4CCD8', 'hierro', semilla=2, var=0.3), 0.0)
+    c.bola((0, 0, 0.175), 0.014, P_('#C4CCD8', 'hierro', semilla=3, var=0.3), 0.0)
+    c.malla(sf.sc.clay.sweep('cordel escarcha', [(math.cos(a) * 0.024, math.sin(a) * 0.024, 0.12) for a in np.linspace(0, 2 * math.pi, 10, endpoint=False)],
+                             0.004, (1, 1), coll, None, segments=4, samples=1, closed=True, subsurf=0), cuero(6, '#5A6A7A'))
+    F.marca('punta', (0, 0, 0.03))
+    return F
+
+
+@arma('bolsa_azufre')
+def bolsa_azufre(coll):
+    """Bolsita de cuero llena de azufre: el polvo amarillo se sale por arriba y echa humo."""
+    F = nueva('bolsa_azufre', clase='comun', icono_vista=(30, 15))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1500)
+    cu = cuero(1, '#6A4A2C')
+    c.sdf(sc.sdf_ruido(sf.union(sdf.ellipsoid((0, 0, 0.07), (0.065, 0.06, 0.065)), sdf.round_cone((0, 0, 0.1), (0, 0, 0.15), 0.035, 0.03), k=0.03), 0.004, 30, 2),
+          (-0.09, -0.09, -0.01), (0.09, 0.09, 0.17), cu)
+    c.malla(sf.sc.clay.sweep('cordon bolsa', [(math.cos(a) * 0.036, math.sin(a) * 0.033, 0.125) for a in np.linspace(0, 2 * math.pi, 12, endpoint=False)],
+                             0.005, (1, 1), coll, None, segments=4, samples=1, closed=True, subsurf=0), cuero(2, '#C8A870'))
+    c.malla(sc.tubo('cordon colgando', [(0.03, -0.02, 0.125), (0.05, -0.03, 0.06), (0.03, -0.04, 0.0), (0.0, 0, -0.04)], 0.005, coll, segmentos=4, muestras=2),
+            cuero(3, '#C8A870'))
+    # el azufre: un montoncito que se sale y unas piedritas
+    az = P_('#E0CC3A', 'piedra', semilla=4)
+    c.bola((0, 0, 0.155), (0.034, 0.034, 0.018), az, 0.01)
+    rng = np.random.default_rng(7)
+    for k in range(7):
+        a = rng.uniform(0, 2 * math.pi)
+        c.malla(sc.bolita(f'piedra azufre {k}', (math.cos(a) * 0.025, math.sin(a) * 0.025, 0.165 + rng.uniform(0, 0.01)), 0.008, coll, n=1, sub=1), az)
+    # símbolo alquímico del azufre cosido (triángulo con cruz) y el humo amarillento
+    for a, b in (((-0.025, -0.058, 0.04), (0.025, -0.058, 0.04)), ((-0.025, -0.058, 0.04), (0, -0.06, 0.085)), ((0.025, -0.058, 0.04), (0, -0.06, 0.085)),
+                 ((0, -0.056, 0.04), (0, -0.054, 0.005)), ((-0.014, -0.056, 0.022), (0.014, -0.056, 0.022))):
+        c.trazo([a, b], 0.0035, P_('#E0CC3A', 'tela', semilla=8), 0.0)
+    for k in range(3):
+        a = 2.1 * k + 0.4
+        c.malla(sc.bolita(f'chispa azufre {k}', (math.cos(a) * 0.012, math.sin(a) * 0.012, 0.178 + 0.006 * k), 0.007, coll, n=1, sub=1), brillo('ambar', '#FFAA33'))
+    F.marca('punta', (0, 0, 0.16))
+    return F
+
+
+@arma('racimo')
+def racimo(coll):
+    """Tres bombitas amarradas de una cuerda, con las mechas trenzadas en una sola chispa."""
+    F = nueva('racimo', clase='comun', icono_vista=(30, 20))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1500)
+    centros = [np.array([math.cos(a) * 0.045, math.sin(a) * 0.045, 0.06]) for a in (0.3, 2.4, 4.5)]
+    for k, p in enumerate(centros):
+        c.bola(p, 0.045, P_('#2E2C2A', 'hierro', semilla=k), 0.0)
+        ring = [p + np.array([math.cos(t) * 0.046, math.sin(t) * 0.046, 0]) for t in np.linspace(0, 2 * math.pi, 14, endpoint=False)]
+        c.malla(sf.sc.clay.sweep(f'aro racimo {k}', ring, 0.004, (1, 1), coll, None, segments=4, samples=1, closed=True, subsurf=0), oro(k + 2))
+        c.cono(p + np.array([0, 0, 0.038]), p + np.array([0, 0, 0.055]), 0.014, 0.012, hierro(4), 0.0)
+        c.malla(sc.tubo(f'mecha racimo {k}', [p + np.array([0, 0, 0.055]), p * 0.4 + np.array([0, 0, 0.12]), np.array([0, 0, 0.15])], 0.004, coll, segmentos=4,
+                        muestras=2), cuero(4, '#8A7450'))
+    c.malla(sf.sc.clay.sweep('cuerda racimo', [np.array([math.cos(t) * 0.075, math.sin(t) * 0.075, 0.07]) for t in np.linspace(0, 2 * math.pi, 18, endpoint=False)],
+                             0.006, (1, 1), coll, None, segments=4, samples=1, closed=True, subsurf=0), cuero(5, '#9A8058'))
+    c.malla(sc.tubo('asa racimo', [(0.07, 0, 0.07), (0.05, 0, 0.0), (0.0, 0, -0.03), (-0.05, 0, 0.0), (-0.07, 0, 0.07)], 0.006, coll, segmentos=4, muestras=2),
+            cuero(6, '#9A8058'))
+    c.bola((0, 0, 0.158), 0.014, brillo('fuego', '#FF6A1A'), 0.0)
+    F.marca('llama', (0, 0, 0.158))
+    F.marca('punta', (0, 0, 0.06))
+    return F
+
+
+@arma('bolsa_abrojos')
+def bolsa_abrojos(coll):
+    """Costal de lona remendado del que se salen los abrojos de hierro."""
+    F = nueva('bolsa_abrojos', clase='comun', icono_vista=(30, 15))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1700)
+    lona = P_('#8A7A5A', 'tela', semilla=1, polvo=0.4)
+    c.sdf(sc.sdf_ruido(sf.union(sdf.ellipsoid((0, 0, 0.06), (0.07, 0.06, 0.06)), sdf.round_cone((0, 0, 0.08), (0, 0, 0.12), 0.05, 0.045), k=0.03), 0.004, 25, 3),
+          (-0.1, -0.1, -0.01), (0.1, 0.1, 0.14), lona)
+    c.malla(sf.sc.clay.sweep('boca costal', [(math.cos(a) * 0.05, math.sin(a) * 0.046, 0.118) for a in np.linspace(0, 2 * math.pi, 14, endpoint=False)],
+                             0.007, (1, 1), coll, None, segments=4, samples=1, closed=True, subsurf=0), lona)
+    # el remiendo y la cuerda del hombro
+    c.caja((0.03, -0.055, 0.05), (0.022, 0.004, 0.02), 0.004, P_('#5A3A2A', 'tela', semilla=2), 0.0)
+    sf.puntadas(c, 'puntadas remiendo', np.array([0.008, -0.06, 0.032]), np.array([0.052, -0.06, 0.032]), 4, 0.01, P_('#D8C8A0', 'tela', semilla=3), coll,
+                normal=(0, -1, 0))
+    c.malla(sc.tubo('cuerda costal', [(0.045, 0.0, 0.11), (0.03, 0.0, 0.03), (0.0, 0, -0.04)], 0.005, coll, segmentos=4, muestras=2), cuero(3, '#9A8058'))
+    hi = P_('#5A5C62', 'hierro', semilla=4, polvo=0.3)
+    c.bola((0, 0, 0.12), (0.042, 0.04, 0.01), P_('#2A2420', 'liso'), 0.0)
+    for k, (p, t) in enumerate((((0.0, 0.0, 0.175), 0.042), ((0.035, 0.018, 0.155), 0.036), ((-0.034, -0.012, 0.152), 0.036), ((0.012, -0.034, 0.15), 0.032),
+                                ((-0.016, 0.034, 0.158), 0.032), ((0.075, -0.04, 0.03), 0.03))):
+        _abrojo(c, f'abrojo {k}', p, t, hi, coll, giro=k * 1.3)
+    F.marca('punta', (0, 0, 0.12))
+    return F
+
+
+@arma('cepo')
+def cepo(coll):
+    """Cepo de oso cerrado, colgado de su cadena (así se lleva)."""
+    F = nueva('cepo', clase='comun', icono_vista=(20, 15))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1700)
+    for k in range(6):
+        z0 = 0.03 * k
+        eje = (1, 0) if k % 2 else (0, 1)
+        aro = [(eje[0] * math.cos(t) * 0.011, eje[1] * math.cos(t) * 0.011, z0 + math.sin(t) * 0.019) for t in np.linspace(0, 2 * math.pi, 10, endpoint=False)]
+        c.malla(sf.sc.clay.sweep(f'eslabon cepo {k}', aro, 0.0042, (1, 1), coll, None, segments=4, samples=1, closed=True, subsurf=0), hierro(2 + k % 2))
+    c.bola((0, 0, 0.19), 0.016, hierro(4), 0.0)
+    _cepo(c, 'cepo', (0, 0, 0.2), 0.09, coll, abierto=False, sem=5)
+    F.marca('punta', (0, 0, 0.3))
+    return F
+
+
+@arma('ballesta_pesada')
+def ballesta_pesada(coll):
+    """Ballesta de pie: arco de acero grueso, torno para tensarla y tres patas plegadas debajo."""
+    F = nueva('ballesta_pesada', clase='comun', icono_vista=(55, 25))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=2200)
+    md = madera(1, '#5A3E26', eje='y')
+    c.trazo([(0, -0.16, 0.0), (0, -0.04, 0.03), (0, 0.15, 0.05), (0, 0.4, 0.05)], [0.032, 0.028, 0.024, 0.022], md, 0.0)
+    c.caja((0, 0.16, 0.065), (0.022, 0.24, 0.014), 0.008, md, 0.01)
+    arco = [(-0.3, 0.33, 0.065), (-0.16, 0.4, 0.065), (0, 0.42, 0.065), (0.16, 0.4, 0.065), (0.3, 0.33, 0.065)]
+    c.trazo(arco, [0.012, 0.018, 0.024, 0.018, 0.012], acero(2), 0.004)
+    c.malla(sc.tubo('cuerda pesada', [arco[0], (0, 0.1, 0.075), arco[-1]], 0.004, coll, segmentos=3, muestras=1), P_('#C9B88A', 'cuero', semilla=3))
+    # el torno de atrás con su manivela
+    c.cono((-0.05, -0.17, 0.05), (0.05, -0.17, 0.05), 0.025, 0.025, hierro(4), 0.0)
+    for s in (-1, 1):
+        c.trazo([(s * 0.05, -0.17, 0.05), (s * 0.07, -0.17, 0.05), (s * 0.07, -0.2, 0.09)], 0.007, hierro(5), 0.003)
+        c.bola((s * 0.07, -0.2, 0.095), 0.012, madera(6, '#3A2414'), 0.0)
+    # las tres patas plegadas por debajo y la bisagra
+    c.bola((0, 0.1, 0.015), 0.022, hierro(7), 0.0)
+    for k, a in enumerate((-0.35, 0.0, 0.35)):
+        c.trazo([(0, 0.1, 0.0), (math.sin(a) * 0.05, 0.1 - math.cos(a) * 0.04, -0.2)], [0.012, 0.009], madera(8 + k, '#4E3420'), 0.0)
+        c.malla(sc.punta(f'pata punta {k}', (math.sin(a) * 0.05, 0.1 - math.cos(a) * 0.04, -0.2), (math.sin(a) * 0.055, 0.1 - math.cos(a) * 0.045, -0.24), 0.01,
+                         coll, seg=4), hierro(11))
+    for y in (-0.06, 0.08, 0.3):
+        c.sdf(sdf.round_box((0, y, 0.05), (0.034, 0.012, 0.034), 0.006), (-0.05, y - 0.03, 0.0), (0.05, y + 0.03, 0.1), hierro(12), 0.0)
+    c.malla(sc.tubo('virote pesado', [(0, 0.1, 0.09), (0, 0.4, 0.09)], 0.007, coll, segmentos=4, muestras=1), md)
+    sf.diente(c, 'punta virote pesado', (0, 0.4, 0.09), (0, 0.46, 0.09), 0.014, acero(13), coll)
+    F.marca('punta', (0, 0.47, 0.09))
+    return F
+
+
+@arma('guante_cetreria')
+def guante_cetreria(coll):
+    """Guante de cetrero de cuero grueso con un cuervo parado encima."""
+    F = nueva('guante_cetreria', clase='comun', icono_vista=(30, 15))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=2200)
+    cu = cuero(1, '#7A5232')
+    # la manga ancha de cuero (acampanada) con su borde y la mano cerrada encima, los dedos hacia adelante
+    c.cono((0, 0, -0.07), (0, 0, 0.06), 0.066, 0.04, cu, 0.0)
+    banda(c, -0.066, 0.068, 0.01, cuero(2, '#C8A060'), 0.0)
+    for k in range(5):
+        a = 2 * math.pi * k / 5
+        c.malla(sc.bolita(f'remache guante {k}', (math.cos(a) * 0.058, math.sin(a) * 0.058, -0.03), 0.005, coll, n=1, sub=1), oro(10 + k))
+    c.bola((0, 0.012, 0.09), (0.046, 0.042, 0.04), cu, 0.015)
+    for k in range(4):
+        x = (k - 1.5) * 0.022
+        c.trazo([(x, 0.03, 0.105), (x, 0.065, 0.1), (x, 0.075, 0.07)], [0.012, 0.011, 0.01], cu, 0.004)
+    c.trazo([(0.042, 0.02, 0.08), (0.05, 0.05, 0.07), (0.035, 0.07, 0.065)], [0.013, 0.012, 0.01], cu, 0.004)
+    banda(c, 0.055, 0.042, 0.007, cuero(3, '#C8A060'), 0.0)
+    c.malla(sc.tubo('pihuela', [(0, -0.04, 0.11), (0.03, -0.06, 0.05), (0.02, -0.05, -0.01)], 0.004, coll, segmentos=4, muestras=2), cuero(4, '#3A2414'))
+    _cuervo(c, 'cuervo guante', (0, 0.0, 0.19), 0.9, coll, alas=0.0, sem=6)
+    for s in (-1, 1):
+        c.trazo([(s * 0.015, 0.0, 0.16), (s * 0.015, 0.012, 0.128)], 0.004, P_('#D8A02A', 'hueso', semilla=7), 0.0)
+    F.marca('punta', (0, 0.05, 0.22))
+    return F
+
+
+@arma('jaula')
+def jaula(coll):
+    """Jaulita de hierro colgando de la mano, con un murciélago adentro cabeza abajo y los ojos rojos."""
+    F = nueva('jaula', clase='comun')
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1900)
+    hi = hierro(1, '#3E3E44')
+    c.malla(sf.sc.clay.sweep('aro jaula', [(math.cos(a) * 0.035, 0, -math.sin(a) * 0.035 - 0.04) for a in np.linspace(0, math.pi, 8)], 0.006, (1, 1), coll, None,
+                             segments=4, samples=1, subsurf=0), hi)
+    b = np.array([0, 0, -0.23])
+    c.malla(sc.torno('techo jaula', [(0.0, 0.115), (0.03, 0.105), (0.072, 0.075), (0.078, 0.066), (0.0, 0.07)], coll, segmentos=14, centro=tuple(b)), hi)
+    c.malla(sc.torno('piso jaula', [(0.0, -0.1), (0.074, -0.1), (0.078, -0.088), (0.0, -0.086)], coll, segmentos=14, centro=tuple(b)), hi)
+    c.malla(sc.torno('pie jaula', [(0.0, -0.13), (0.03, -0.12), (0.02, -0.1), (0.0, -0.1)], coll, segmentos=10, centro=tuple(b)), hierro(2, '#5A4A3A'))
+    for k in range(10):
+        a = 2 * math.pi * k / 10
+        c.malla(sc.tubo(f'barrote {k}', [b + np.array([math.cos(a) * 0.07, math.sin(a) * 0.07, -0.09]), b + np.array([math.cos(a) * 0.07, math.sin(a) * 0.07, 0.07])],
+                        0.004, coll, segmentos=4, muestras=1), hi)
+    c.malla(sf.sc.clay.sweep('aro medio jaula', [b + np.array([math.cos(a) * 0.071, math.sin(a) * 0.071, -0.01]) for a in np.linspace(0, 2 * math.pi, 16, endpoint=False)],
+                             0.004, (1, 1), coll, None, segments=4, samples=1, closed=True, subsurf=0), hi)
+    c.malla(sc.tubo('varilla jaula', [b + np.array([0, 0, 0.11]), np.array([0, 0, -0.068])], 0.006, coll, segmentos=5, muestras=1), hi)
+    # el murciélago colgando de la percha, cabeza abajo y con las alas recogidas
+    m = b + np.array([0, 0, 0.0])
+    c.malla(sc.tubo('percha jaula', [b + np.array([-0.06, 0, 0.045]), b + np.array([0.06, 0, 0.045])], 0.004, coll, segmentos=4, muestras=1), madera(3, '#4E3420'))
+    c.malla(sc.bolita('cuerpo murcielago jaula', m, (0.026, 0.022, 0.036), coll, n=2), P_('#2A1E26', 'cuero', semilla=3))
+    c.malla(sc.bolita('cabeza murcielago jaula', m + np.array([0, 0.004, -0.042]), 0.02, coll, n=2), P_('#3A2A30', 'pelo', semilla=4))
+    for s in (-1, 1):
+        c.malla(sc.tubo(f'pata jaula {s}', [m + np.array([s * 0.008, 0, 0.03]), b + np.array([s * 0.008, 0, 0.045])], 0.0025, coll, segmentos=3, muestras=1),
+                P_('#2A1E26', 'cuero', semilla=6))
+        c.malla(sc.punta(f'oreja jaula {s}', m + np.array([s * 0.01, 0, -0.056]), m + np.array([s * 0.018, 0, -0.08]), 0.007, coll, seg=3), P_('#3A2A30', 'pelo', semilla=5))
+        c.malla(sc.bolita(f'ojo jaula {s}', m + np.array([s * 0.009, 0.018, -0.046]), 0.005, coll, n=1, sub=1), brillo('rojo', '#FF2A1A'))
+    F.marca('punta', tuple(b))
+    return F
+
+
+@arma('latigo_espinas')
+def latigo_espinas(coll):
+    """Látigo de zarza: mango forrado con una rosa y la rama llena de espinas que se enrolla."""
+    F = nueva('latigo_espinas', clase='comun', icono_vista=(40, 20))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=2200)
+    empunadura(c, -0.07, 0.09, 0.02, cuero(1, '#3A2414'), cuero(2, '#7A5232'), coll)
+    c.bola((0, 0, -0.08), 0.024, P_('#4A5A2A', 'madera', semilla=3), 0.0)
+    # la rama: sale para arriba y se enrolla
+    pts = [np.array([0, 0, 0.09])]
+    for k in range(1, 15):
+        t = k / 14
+        a = t * 4.2
+        r = 0.04 + 0.12 * t
+        pts.append(np.array([math.sin(a) * r, math.cos(a) * r * 0.5 - 0.02, 0.09 + 0.36 * math.sin(t * math.pi * 0.62)]))
+    rama = P_('#4A5A2A', 'madera', semilla=4, color2='#2A3418')
+    c.trazo(pts, list(np.linspace(0.011, 0.004, len(pts))), rama, 0.0)
+    rng = np.random.default_rng(9)
+    for k in range(1, len(pts) - 1):
+        for q in range(2):
+            d = pts[k + 1] - pts[k - 1]
+            d = d / max(np.linalg.norm(d), 1e-9)
+            n = np.cross(d, np.array([0, 0, 1.0]) if abs(d[2]) < 0.9 else np.array([1.0, 0, 0]))
+            n = n / max(np.linalg.norm(n), 1e-9)
+            a = rng.uniform(0, 2 * math.pi)
+            lado = n * math.cos(a) + np.cross(d, n) * math.sin(a)
+            r = 0.011 - 0.006 * k / len(pts)
+            c.malla(sc.punta(f'espina {k} {q}', pts[k] + lado * r * 0.6, pts[k] + lado * (r + 0.016) + d * 0.006, 0.004, coll, seg=3),
+                    P_('#C8B88A', 'hueso', semilla=k))
+    # hojitas y la rosa en el mango
+    for k in (3, 7, 11):
+        c.malla(sf.pluma(f'hoja zarza {k}', pts[k], pts[k] + np.array([0.03, 0.01, 0.02]), 0.02, coll, normal=(0, 1, 0.2)), P_('#3A6A2A', 'tela', semilla=k))
+    rosa = np.array([0.0, -0.025, 0.09])
+    for k in range(6):
+        a = 2 * math.pi * k / 6
+        c.bola(rosa + np.array([math.cos(a) * 0.012, 0, math.sin(a) * 0.012]), (0.012, 0.008, 0.012), P_('#A8141E', 'tela', semilla=10 + k), 0.006)
+    c.bola(rosa + np.array([0, -0.004, 0]), 0.01, P_('#7A0A12', 'tela', semilla=17), 0.004)
+    F.marca('punta', tuple(pts[-1]))
+    return F
+
+
+@arma('vara_sangre')
+def vara_sangre(coll):
+    """Varita de hueso con una gota de sangre que flota arriba, sujeta por alambre de plata."""
+    F = nueva('vara_sangre', clase='comun')
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1700)
+    sf.hueso_largo(c, np.array([0, 0, -0.1]), np.array([0, 0, 0.3]), 0.016, hueso_pt(1))
+    empunadura(c, -0.05, 0.06, 0.02, tela('#5A0A10', 2), cuero(3, '#2A1410'), coll)
+    top = np.array([0, 0, 0.36])
+    for k in range(3):
+        a = 2 * math.pi * k / 3
+        c.trazo([np.array([0, 0, 0.3]), np.array([math.cos(a) * 0.035, math.sin(a) * 0.035, 0.34]), top + np.array([math.cos(a) * 0.022, math.sin(a) * 0.022, 0.03])],
+                [0.005, 0.004, 0.002], P_('#C4CCD8', 'hierro', semilla=4 + k, var=0.3), 0.003)
+    # la gota: bola con su punta para arriba
+    c.sdf(sdf.round_cone(tuple(top - np.array([0, 0, 0.005])), tuple(top + np.array([0, 0, 0.05])), 0.03, 0.004), (-0.05, -0.05, 0.3), (0.05, 0.05, 0.43),
+          brillo('rojo', '#FF2A1A'))
+    for k in range(3):
+        c.malla(sc.bolita(f'gotita {k}', top + np.array([math.cos(k * 2.1) * 0.045, math.sin(k * 2.1) * 0.045, -0.03 - 0.01 * k]), 0.008, coll, n=1, sub=1),
+                brillo('rojo', '#FF2A1A'))
+    c.malla(sf.sc.clay.sweep('espiral plata', [np.array([math.cos(a) * 0.02, math.sin(a) * 0.02, 0.08 + a * 0.012]) for a in np.linspace(0, 14, 30)], 0.0025, (1, 1),
+                             coll, None, segments=4, samples=1, subsurf=0), P_('#C4CCD8', 'hierro', semilla=8, var=0.3))
+    F.marca('llama', tuple(top))
+    F.marca('punta', tuple(top))
+    return F
+
+
+@arma('sifon')
+def sifon(coll):
+    """Sifón de fuego griego: un tanque de cobre con su fuelle y el tubo con boca de dragón que escupe la llama."""
+    F = nueva('sifon', clase='comun', icono_vista=(55, 20))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=2200)
+    cobre = P_('#C07A44', 'oro', semilla=1)
+    # (el tanque forrado en cuero: el cobre liso se ve negro de lejos)
+    c.bola((0, -0.05, 0.02), (0.058, 0.058, 0.068), cuero(10, '#7A4A2A'), 0.0)
+    c.cono((0, -0.05, 0.08), (0, -0.05, 0.1), 0.02, 0.016, hierro(3), 0.0)
+    for z in (-0.02, 0.03):
+        banda(c, 0.02 + z, 0.06, 0.01, cobre, 0.0, y=-0.05)
+    # el fuelle de atrás
+    c.sdf(sdf.round_box((0, -0.13, 0.02), (0.045, 0.025, 0.04), 0.015), (-0.06, -0.17, -0.03), (0.06, -0.09, 0.07), cuero(3, '#5A3A22'))
+    c.trazo([(0, -0.16, 0.02), (0, -0.2, 0.02)], 0.01, madera(4, '#3A2414'), 0.0)
+    # el tubo hacia +Y con la boca de dragón
+    c.trazo([(0, -0.01, 0.05), (0, 0.12, 0.06), (0, 0.32, 0.065)], [0.016, 0.014, 0.013], cobre, 0.0)
+    for y in (0.08, 0.2):
+        c.trazo([(0, y, 0.065), (0, y, 0.0), (0, y - 0.03, -0.04)], 0.006, hierro(5), 0.003)
+    boca = np.array([0, 0.36, 0.065])
+    c.bola(boca, (0.03, 0.045, 0.028), P_('#8A5A2A', 'oro', semilla=6), 0.01)
+    for s in (-1, 1):
+        c.malla(sc.punta(f'cuerno sifon {s}', boca + np.array([s * 0.018, -0.02, 0.018]), boca + np.array([s * 0.03, -0.06, 0.05]), 0.008, coll, seg=4), hueso_pt(7))
+        c.malla(sc.bolita(f'ojo sifon {s}', boca + np.array([s * 0.022, 0.005, 0.016]), 0.006, coll, n=1, sub=1), brillo('ambar', '#FFAA33'))
+    c.caja(boca + np.array([0, 0.035, -0.012]), (0.022, 0.018, 0.006), 0.004, P_('#8A5A2A', 'oro', semilla=8), 0.0)
+    # la llamita en la boca
+    c.malla(sc.punta('llama sifon', boca + np.array([0, 0.04, 0.0]), boca + np.array([0, 0.11, 0.01]), 0.02, coll, seg=6), brillo('fuego', '#FF6A1A'))
+    c.trazo([(0, -0.05, -0.04), (0, -0.04, -0.1)], 0.014, madera(9, '#3A2414'), 0.0)
+    F.marca('llama', tuple(boca + np.array([0, 0.06, 0])))
+    F.marca('punta', tuple(boca + np.array([0, 0.08, 0])))
+    return F
+
+
+@arma('perdigonera')
+def perdigonera(coll):
+    """Perdigonera de dos cañones recortados y boca de campana, con la culata corta de nogal."""
+    F = nueva('perdigonera', clase='comun', icono_vista=(60, 20))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1700)
+    md = madera(1, '#5A3420', eje='y')
+    c.trazo([(0, -0.17, -0.05), (0, -0.06, 0.0), (0, 0.04, 0.03)], [0.034, 0.028, 0.024], md, 0.0)
+    c.caja((0, 0.1, 0.035), (0.024, 0.09, 0.018), 0.008, md, 0.0)
+    for s in (-1, 1):
+        c.malla(sc.torno(f'canon {s}', [(0.0, 0.0), (0.017, 0.0), (0.016, 0.2), (0.026, 0.27), (0.032, 0.3), (0.02, 0.3), (0.0, 0.29)], coll, segmentos=14,
+                         centro=(s * 0.018, 0.02, 0.065), eje=(0, 1, 0)), P_('#4A4C52', 'hierro', semilla=2 + s))
+        c.malla(sc.bolita(f'boca {s}', (s * 0.018, 0.316, 0.065), (0.019, 0.004, 0.019), coll, n=2), P_('#120D0B', 'liso'))
+    for y in (0.07, 0.18):
+        c.malla(sc.tubo(f'abrazadera perdigonera {y}', [(-0.04, y, 0.06), (0.0, y, 0.09), (0.04, y, 0.06)], 0.007, coll, segmentos=4, muestras=1), oro(3))
+    c.trazo([(0, -0.02, 0.06), (0, 0.0, 0.1), (0, 0.025, 0.095)], 0.008, hierro(4), 0.0)
+    c.trazo([(0, -0.03, 0.0), (0, -0.01, -0.04)], 0.006, hierro(5), 0.0)
+    c.malla(sf.sc.clay.sweep('guardamonte', [(0, -0.05 + 0.03 * math.cos(a), -0.015 - 0.03 * math.sin(a)) for a in np.linspace(0, math.pi, 8)], 0.004, (1, 1),
+                             coll, None, segments=4, samples=1, subsurf=0), oro(6))
+    F.marca('punta', (0, 0.33, 0.065))
+    return F
+
+
+# ------------------------------------------------------------------ proyectiles
+
+@proyectil('jarra_aceite')
+def p_jarra_aceite(coll):
+    F = nuevo_p('jarra_aceite', icono_vista=(20, 15))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=320)
+    c.malla(sc.torno('jarrita', [(0.0, -0.045), (0.035, -0.045), (0.05, -0.015), (0.045, 0.02), (0.028, 0.04), (0.03, 0.05), (0.0, 0.045)], coll, segmentos=10),
+            terracota(1))
+    c.malla(sc.bolita('aceite', (0, 0, 0.046), (0.024, 0.024, 0.006), coll, n=1, sub=1), brillo('fuego', '#FF6A1A'))
+    c.malla(sc.tubo('chorro', [(0.025, 0, 0.04), (0.04, -0.02, 0.02), (0.05, -0.05, -0.01)], [0.006, 0.005, 0.003], coll, segmentos=4, muestras=1),
+            brillo('fuego', '#FF6A1A'))
+    F.marca('llama', (0, 0, 0.05))
+    return F
+
+
+@proyectil('racimo')
+def p_racimo(coll):
+    F = nuevo_p('racimo')
+    c = F.pieza('cuerpo', (0, 0, 0), tris=360)
+    for k, a in enumerate((0.3, 2.4, 4.5)):
+        p = (math.cos(a) * 0.03, math.sin(a) * 0.03, 0.0)
+        c.malla(sc.bolita(f'bombita {k}', p, 0.035, coll, n=2), P_('#2E2C2A', 'hierro', semilla=k))
+    c.malla(sc.tubo('mecha racimo', [(0, 0, 0.03), (0.01, -0.01, 0.06)], 0.004, coll, segmentos=3, muestras=1), cuero(2, '#8A7450'))
+    c.malla(sc.bolita('chispa racimo', (0.012, -0.012, 0.066), 0.012, coll, n=1, sub=1), brillo('fuego', '#FF6A1A'))
+    F.marca('llama', (0.012, -0.012, 0.066))
+    return F
+
+
+@proyectil('abrojo')
+def p_abrojo(coll):
+    F = nuevo_p('abrojo', icono_vista=(40, 20))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=200)
+    # (grandotes: desde la cámara de arriba los abrojos de verdad no se veían)
+    _abrojo(c, 'abrojo', (0, 0, 0.05), 0.12, P_('#7A7C82', 'hierro', semilla=1, sangre=0.4), coll)
+    return F
+
+
+@proyectil('cepo')
+def p_cepo(coll):
+    F = nuevo_p('cepo', icono_vista=(50, 20))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=700)
+    _cepo(c, 'cepo suelo', (0, 0, 0.03), 0.24, coll, abierto=True, sem=2)
+    return F
+
+
+@proyectil('cuervo')
+def p_cuervo(coll):
+    F = nuevo_p('cuervo', icono_vista=(40, 20))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=700)
+    _cuervo(c, 'cuervo vuela', (0, 0, 0), 1.7, coll, alas=1.0, sem=3)
+    return F
+
+
+@proyectil('murcielago')
+def p_murcielago(coll):
+    F = nuevo_p('murcielago', icono_vista=(40, 20))
+    c = F.pieza('cuerpo', (0, 0, 0), tris=650)
+    _murcielago(c, 'murcielago vuela', (0, 0, 0), 1.8, coll, sem=4)
+    return F
+
+
+@proyectil('gota_sangre')
+def p_gota_sangre(coll):
+    F = nuevo_p('gota_sangre')
+    c = F.pieza('cuerpo', (0, 0, 0), tris=220)
+    c.malla(sc.bolita('gota', (0, 0.02, 0), (0.035, 0.04, 0.035), coll, n=2), brillo('rojo', '#FF2A1A'))
+    c.malla(sc.punta('estela gota', (0, 0.0, 0), (0, -0.16, 0.0), 0.032, coll, seg=6), P_('#FF3A4A', 'vidrio', mat='espectro'))
+    F.marca('llama', (0, 0.02, 0))
+    return F
+
+
+@proyectil('perdigon')
+def p_perdigon(coll):
+    F = nuevo_p('perdigon')
+    c = F.pieza('cuerpo', (0, 0, 0), tris=120)
+    c.malla(sc.bolita('perdigon', (0, 0, 0), 0.022, coll, n=2), P_('#5A5C62', 'hierro', semilla=1))
+    c.malla(sc.punta('estela perdigon', (0, -0.01, 0), (0, -0.09, 0), 0.016, coll, seg=5), P_('#FFE0A8', 'vidrio', mat='espectro'))
+    return F

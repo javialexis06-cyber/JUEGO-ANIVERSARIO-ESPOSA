@@ -76,6 +76,7 @@ export const LOGROS: DefLogro[] = [
   { id: 'mutado', nombre: 'Masoquista', desc: 'Gana con 3 mutadores o más.', glifo: 'gota', ceniza: 100, hecho: (d) => d.exito && d.exp.cfg.mutadores.length >= 3 },
   { id: 'intacto', nombre: 'Sin un rasguño', desc: 'Gana una expedición sin caer ni una vez.', glifo: 'escudo', ceniza: 80, hecho: (d) => d.exito && d.j.resumen.caidas === 0 },
   { id: 'evolucion', nombre: 'Forjado en sangre', desc: 'Evoluciona un arma.', glifo: 'yunque', ceniza: 40, hecho: (d) => evoluciono(d.j) },
+  { id: 'union', nombre: 'Dos en uno', desc: 'Une dos armas en una sola.', glifo: 'cadena', ceniza: 60, hecho: (d) => d.j.armas.some((a) => !!ARMAS[a.id]?.union) },
   { id: 'tres_sobrecargas', nombre: 'Al rojo vivo', desc: 'Ponle las tres sobrecargas a un arma.', glifo: 'llama', ceniza: 40, hecho: (d) => d.j.armas.some((a) => a.sobrecargas.length >= 3) },
   { id: 'arsenal_lleno', nombre: 'Armado hasta los dientes', desc: 'Lleva cuatro armas a la vez.', glifo: 'espada', ceniza: 20, hecho: (d) => d.j.armas.length >= 4 },
   { id: 'nivel_35', nombre: 'Leyenda de la noche', desc: 'Llega al nivel 35 en una expedición.', glifo: 'alma', ceniza: 80, hecho: (d) => d.j.nivel >= 35 },

@@ -22,6 +22,7 @@ const SUSTITUTOS: Record<string, string> = {
   'src/casa/sincro.ts': 'src/amigos/sin_pareja/sincro.ts',
   'src/casa/catalogo.ts': 'src/amigos/sin_pareja/catalogo.ts',
   'src/recuerdos_super.ts': 'src/amigos/sin_pareja/recuerdos_super.ts',
+  'src/sangre/historia_pareja.ts': 'src/amigos/sin_pareja/sangre_historia.ts',
 };
 
 /**

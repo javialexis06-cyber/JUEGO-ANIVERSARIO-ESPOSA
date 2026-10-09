@@ -1,13 +1,13 @@
 // Trofeos de los minijuegos: cada juego da bronce, plata y oro según lo mejor de los dos (estrellas del súper,
-// puertas abiertas, partidas de mesa ganadas, metros en el retrete espacial, minutos aguantados lavándose la cara y el rango de
-// chef). La copa del amor tiene el metal del trofeo más bajito: para que sea de oro hay que brillar en todo.
+// puertas abiertas, partidas de mesa ganadas, metros en el retrete espacial, minutos aguantados lavándose la cara, el rango de
+// chef y los logros de Sangre y Ceniza). La copa del amor tiene el metal del trofeo más bajito: para que sea de oro hay que brillar en todo.
 // Cada uno se gana además un título en cada juego (el de la pareja es el de lo mejor de los dos).
 import { RECETAS, nombreRango, rangoDe } from './cocina/tipos';
 import { mejorDistancia } from './cohete/datos';
 import type { Casa, Logros, Rol } from './modelo';
 import { minutosRecord } from './lavado/progreso';
 
-export type IdTrofeo = 'super' | 'puertas' | 'mesa' | 'retrete' | 'lavado' | 'cocina';
+export type IdTrofeo = 'super' | 'puertas' | 'mesa' | 'retrete' | 'lavado' | 'cocina' | 'sangre';
 export type Nivel = 0 | 1 | 2 | 3;
 
 export interface Trofeo {
@@ -31,6 +31,8 @@ export const TROFEOS: Trofeo[] = [
   { id: 'lavado', nombre: 'Lavarse la cara', unidad: 'minutos aguantados', metas: [10, 20, 30], color: '#35B6C4', titulos: ['Carita sucia', 'Carita limpia', 'Terror de los gérmenes', 'Piel de porcelana'] },
   // Los títulos de la cocina son los rangos de chef (van de Aprendiz a Leyenda de la cocina)
   { id: 'cocina', nombre: 'Cocina de chef', unidad: 'rango de chef', metas: [3, 6, 9], color: '#F29B38', titulos: ['Aprendiz', 'Cocinero de casa', 'Chef de la cuadra', 'Chef reconocido'] },
+  // Sangre y Ceniza: los logros de cada uno (son 36)
+  { id: 'sangre', nombre: 'Sangre y Ceniza', unidad: 'logros', metas: [8, 20, 32], color: '#B3262E', titulos: ['Recién bajado', 'Sobreviviente', 'Cazador de la Noche', 'Leyenda de Valdemora'] },
 ];
 export const METAL = ['Sin ganar', 'Bronce', 'Plata', 'Oro'] as const;
 /** Los títulos de la pareja según la copa del amor. */
@@ -43,6 +45,7 @@ export function valorDe(c: Casa, id: IdTrofeo, r: Rol): number {
   if (id === 'retrete') return mejorDistancia(c.cohete, c.retrete, r);
   // Los minutos que más ha aguantado en una lavada (30 = llegó a la Ducha Helada)
   if (id === 'lavado') return minutosRecord(c.lavadoProgreso?.[r]);
+  if (id === 'sangre') return c.sangre?.[r]?.logros.length ?? 0;
   if (id === 'cocina') {
     // El rango del restaurante donde mejor le va (0 si todavía no ha cocinado)
     const p = c.cocina?.[r];

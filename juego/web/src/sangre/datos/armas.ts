@@ -1,7 +1,9 @@
-// Las armas de Sangre y Ceniza: cuatro por clase (su arsenal propio), seis comunes y las evoluciones.
+// Las armas de Sangre y Ceniza: cuatro por clase (su arsenal propio), las comunes, las evoluciones y las uniones (las
+// comunes nuevas, las evoluciones que faltaban y las uniones viven en armas_nuevas.ts y se suman al final).
 // Cada arma es un comportamiento (barrido, proyectil, órbita…) con sus números; las sobrecargas (niveles 6, 12 y 18
 // del arma) le cambian el comportamiento prendiendo banderas o multiplicando parámetros.
 import { F, type DefArma, type DefSobrecarga, type ParamsArma } from '../tipos';
+import { COMUNES_NUEVAS, UNIONES, crearEvoluciones } from './armas_nuevas';
 import { SOBRECARGAS_NUEVAS } from './sobrecargas';
 
 const BASE: ParamsArma = {
@@ -668,6 +670,12 @@ for (const a of ARMAS_LISTA) {
   const nuevas = SOBRECARGAS_NUEVAS[a.id];
   if (nuevas) a.sobrecargas.push(...nuevas.filter((n) => !a.sobrecargas.some((x) => x.id === n.id)));
 }
+
+// Sangre y Ceniza 2: las trece comunes nuevas, una evolución para cada arma que no tenía y las uniones (al final de la
+// lista: el índice de cada arma va en lo que se manda por la red)
+ARMAS_LISTA.push(...COMUNES_NUEVAS);
+ARMAS_LISTA.push(...crearEvoluciones(Object.fromEntries(ARMAS_LISTA.map((a) => [a.id, a]))));
+ARMAS_LISTA.push(...UNIONES);
 
 export const ARMAS: Record<string, DefArma> = Object.fromEntries(ARMAS_LISTA.map((a) => [a.id, a]));
 export const ARMAS_COMUNES = ARMAS_LISTA.filter((a) => a.clase === 'comun' && !a.evolucion).map((a) => a.id);

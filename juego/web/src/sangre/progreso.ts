@@ -6,11 +6,14 @@ import { MINERALES_ORDEN, type IdBioma, type IdClase, type IdMineral, type IdMut
 
 export const CLASES_INICIALES: IdClase[] = ['monarca', 'campesino', 'prisionero'];
 export const BIOMAS_INICIALES: IdBioma[] = ['cementerio', 'catacumbas'];
-export const COMUNES_INICIALES = ['daga', 'hacha_arrojadiza', 'bomba', 'carga_minera'];
+export const COMUNES_INICIALES = ['daga', 'hacha_arrojadiza', 'bomba', 'carga_minera', 'perdigonera', 'abrojos', 'aceite_hirviendo'];
 const CLASES_TODAS: IdClase[] = ['monarca', 'campesino', 'prisionero', 'caballero', 'cazador', 'herrero', 'alquimista', 'sepulturero', 'inquisidor', 'verdugo', 'bruja', 'juglar'];
 const BIOMAS_TODOS: IdBioma[] = ['cementerio', 'catacumbas', 'minas', 'abadia', 'castillo'];
-const COMUNES_TODAS = ['daga', 'arco_largo', 'hacha_arrojadiza', 'bomba', 'carga_minera', 'sierra', 'ira_cielo'];
-const MUTADORES_TODOS: IdMutador[] = ['sangrienta', 'sin_antorchas', 'elites_dobles', 'plaga', 'roca_dura', 'codicia', 'eclipse', 'fragiles', 'enjambres', 'velocidad'];
+const COMUNES_TODAS = ['daga', 'arco_largo', 'hacha_arrojadiza', 'bomba', 'carga_minera', 'sierra', 'ira_cielo',
+  // (Sangre y Ceniza 2: las que se ganan en el mapa de la Noche)
+  'perdigonera', 'abrojos', 'aceite_hirviendo', 'humo_azufre', 'latigo_espinas', 'cuervos_cazadores', 'murcielagos', 'cepos', 'bomba_racimo', 'rayo_sangre',
+  'lanza_fuego', 'ballesta_pie', 'frasco_escarcha'];
+const MUTADORES_TODOS: IdMutador[] = ['sangrienta', 'sin_antorchas', 'elites_dobles', 'plaga', 'roca_dura', 'codicia', 'eclipse', 'fragiles', 'enjambres', 'velocidad', 'aurelia', 'esmeralda', 'nocturna'];
 const RANURAS: RanuraEquipo[] = ['casco', 'armadura', 'guantes', 'botas', 'amuleto', 'anillo'];
 
 export interface CifrasSangre {
@@ -66,6 +69,8 @@ export interface ProgresoSangre {
   tutorial: boolean;
   /** Los seis minerales del Pozo que se trajeron a casa (se gastan en el Pozo, junto con la ceniza). */
   minerales: Partial<Record<IdMineral, number>>;
+  /** El mapa de la Noche: las metas cumplidas («lugar:meta») y las escenas de la historia ya vistas. */
+  noche: { metas: string[]; escenas: string[] };
   /** Para fusionar copias de dos aparatos (la más reciente gana en lo que no se suma). */
   t: number;
 }
@@ -74,7 +79,7 @@ export function progresoNuevo(): ProgresoSangre {
   return {
     v: 1, ceniza: 0, cenizaTotal: 0, pozo: {}, ofrendas: [], maestria: {}, clases: [...CLASES_INICIALES], biomas: [...BIOMAS_INICIALES], ganado: {},
     comunes: [...COMUNES_INICIALES], logros: [], cifras: Object.fromEntries(CIFRAS.map((k) => [k, 0])) as unknown as CifrasSangre, ultima: null, tutorial: false,
-    minerales: {}, t: 0,
+    minerales: {}, noche: { metas: [], escenas: [] }, t: 0,
   };
 }
 
@@ -103,8 +108,13 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
     ultima: null,
     tutorial: !!x.tutorial,
     minerales: {},
+    noche: { metas: [], escenas: [] },
     t: num(x.t),
   };
+  if (esObj(x.noche)) {
+    p.noche.metas = Array.isArray(x.noche.metas) ? [...new Set(x.noche.metas.filter((m): m is string => typeof m === 'string' && /^[a-z0-9_]{1,40}:[a-z0-9_]{1,40}$/.test(m)))].slice(0, 300) : [];
+    p.noche.escenas = ids(x.noche.escenas, 40);
+  }
   if (esObj(x.minerales)) for (const k of MINERALES_ORDEN) if (x.minerales[k] !== undefined) p.minerales[k] = Math.floor(num(x.minerales[k], 0, 1e6));
   if (esObj(x.pozo)) for (const [k, v] of Object.entries(x.pozo)) if (/^[a-z_]{1,30}$/.test(k)) p.pozo[k] = Math.floor(num(v, 0, 20));
   if (esObj(x.maestria)) for (const c of CLASES_TODAS) if (x.maestria[c] !== undefined) p.maestria[c] = Math.floor(num(x.maestria[c]));
@@ -130,6 +140,8 @@ export function fusionarProgreso(a: ProgresoSangre, b: ProgresoSangre): Progreso
   r.ceniza = a.t >= b.t ? a.ceniza : b.ceniza;
   // (los minerales se gastan como la ceniza: manda la copia más reciente)
   r.minerales = { ...(a.t >= b.t ? a : b).minerales };
+  // (lo del mapa de la Noche solo se gana: la unión)
+  r.noche = { metas: [...new Set([...a.noche.metas, ...b.noche.metas])], escenas: [...new Set([...a.noche.escenas, ...b.noche.escenas])] };
   for (const k of new Set([...Object.keys(a.pozo), ...Object.keys(b.pozo)])) r.pozo[k] = Math.max(a.pozo[k] ?? 0, b.pozo[k] ?? 0);
   r.ofrendas = [...new Set([...a.ofrendas, ...b.ofrendas])];
   for (const c of CLASES_TODAS) {

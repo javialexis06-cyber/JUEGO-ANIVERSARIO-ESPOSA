@@ -1,5 +1,5 @@
-// La sala de trofeos por dentro: seis pedestales contra la pared del fondo (los cuatro del modelo corridos y dos
-// copiados para lavarse la cara y la cocina), una placa con el título de la pareja encima de cada uno, el cuadro de
+// La sala de trofeos por dentro: siete pedestales contra la pared del fondo (los cuatro del modelo corridos y tres
+// copiados para lavarse la cara, la cocina y Sangre y Ceniza), una placa con el título de la pareja encima de cada uno, el cuadro de
 // honor en la pared de la izquierda con el título de cada uno en cada juego, y en la vitrina los trofeos chiquitos
 // que cada uno se ha ganado (arriba los de Ella, abajo los de Él). Las medidas son del piso de Blender (x, y) y la
 // altura z → aTres.
@@ -11,7 +11,7 @@ import { TROFEOS, type IdTrofeo, type SalaTrofeos } from './trofeos';
 import { nombre } from './ui_casa';
 
 /** El centro de cada pedestal a lo largo de la pared del fondo. */
-const X_PEDESTAL: Record<IdTrofeo, number> = { super: -2.3, puertas: -1.58, mesa: -0.86, retrete: -0.14, lavado: 0.58, cocina: 1.3 };
+const X_PEDESTAL: Record<IdTrofeo, number> = { super: -2.3, puertas: -1.64, mesa: -0.98, retrete: -0.32, lavado: 0.34, cocina: 1.0, sangre: 1.66 };
 /** Dónde los dejó el modelo (los dos nuevos salen del del retrete). */
 const X_MODELO: Partial<Record<IdTrofeo, number>> = { super: -2, puertas: -0.95, mesa: 0.1, retrete: 1.15 };
 const APLIQUES: [string, IdTrofeo][] = [['aplique', 'super'], ['aplique001', 'puertas'], ['aplique002', 'mesa'], ['aplique003', 'retrete']];
@@ -96,7 +96,7 @@ function vestirPedestal(p: THREE.Object3D, id: IdTrofeo, color: string) {
   });
   for (const o of quitar) o.removeFromParent();
   // Frente a la placa (el pedestal todavía está donde el del retrete)
-  const e = id === 'lavado' ? burbujas() : gorroChef();
+  const e = id === 'lavado' ? burbujas() : id === 'sangre' ? gotaSangre() : gorroChef();
   e.position.copy(aTres(X_MODELO.retrete!, 1.335, 0.58));
   p.add(e);
 }
@@ -109,6 +109,20 @@ function burbujas() {
     b.position.set(x, y, 0.012);
     g.add(b);
   }
+  return g;
+}
+
+/** Sangre y Ceniza: una gota de sangre brillante. */
+function gotaSangre() {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({ color: '#C21A2A', roughness: 0.25, metalness: 0.1, emissive: '#6A0010', emissiveIntensity: 0.4 });
+  const bola = new THREE.Mesh(new THREE.SphereGeometry(0.034, 18, 14), mat);
+  bola.position.y = -0.012;
+  g.add(bola);
+  const punta = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.06, 18), mat);
+  punta.position.y = 0.035;
+  g.add(punta);
+  g.position.z = 0.014;
   return g;
 }
 
@@ -212,7 +226,7 @@ export class AdornosSala {
 
   constructor(private grupo: THREE.Object3D) {
     for (const t of TROFEOS) {
-      const p = cartel(0.62, 0.39, 320, 200);
+      const p = cartel(0.58, 0.37, 320, 200);
       p.m.position.copy(aTres(X_PEDESTAL[t.id], PARED_FONDO - 0.012, 1.8));
       p.m.name = `placa_titulo_${t.id}`;
       grupo.add(p.m);

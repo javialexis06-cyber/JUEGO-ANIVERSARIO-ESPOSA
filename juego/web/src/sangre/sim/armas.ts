@@ -119,18 +119,23 @@ function atacar(sim: Sim, j: Jugador, a: ArmaJ, k: number, eco: boolean): boolea
       return zona(sim, j, a, k);
     case 'torreta':
       return torreta(sim, j, a, k);
+    case 'trampa':
+      return trampa(sim, j, a, k);
   }
   return false;
 }
 
 /** Dirección hacia el blanco (o hacia donde mira). Devuelve el ángulo o null si no hay blanco. */
 function apuntar(sim: Sim, j: Jugador, a: ArmaJ, alcance: number): { ang: number; i: number; x: number; y: number } | null {
-  const i = sim.blanco(j.x, j.y, alcance, a.def.apunta === 'veta' ? 'denso' : a.def.apunta, j.fx, j.fy);
+  const ap = a.def.apunta;
+  const i = sim.blanco(j.x, j.y, alcance, ap === 'veta' ? 'denso' : ap === 'pie' ? 'cercano' : ap, j.fx, j.fy);
   if (i < 0) {
-    if (a.def.apunta === 'mira' && (Math.abs(j.vx) + Math.abs(j.vy) > 0.4)) return { ang: Math.atan2(j.fy, j.fx), i: -1, x: j.x + j.fx * 4, y: j.y + j.fy * 4 };
+    if (ap === 'mira' && (Math.abs(j.vx) + Math.abs(j.vy) > 0.4)) return { ang: Math.atan2(j.fy, j.fx), i: -1, x: j.x + j.fx * 4, y: j.y + j.fy * 4 };
     return null;
   }
   const E = sim.E;
+  // (hacia atrás: si el más cercano viene por delante, el golpe sale igual a la espalda)
+  if (ap === 'atras' && (E.x[i] - j.x) * j.fx + (E.y[i] - j.y) * j.fy > 0) return { ang: Math.atan2(-j.fy, -j.fx), i: -1, x: j.x - j.fx * 3, y: j.y - j.fy * 3 };
   return { ang: Math.atan2(E.y[i] - j.y, E.x[i] - j.x), i, x: E.x[i], y: E.y[i] };
 }
 
@@ -199,9 +204,11 @@ function cono(sim: Sim, j: Jugador, a: ArmaJ, k: number): boolean {
   const p = a.p;
   const b = apuntar(sim, j, a, p.alcance + 0.3);
   if (!b) return false;
-  const angs = [b.ang];
+  // (la lanza de fuego da vueltas: cada chorro sale un poco más girado que el anterior)
+  if (p.flags & F.GIRA) a.giro += 0.75;
+  const angs = [p.flags & F.GIRA ? a.giro : b.ang];
   for (let n = 1; n < p.cantidad; n++) angs.push(b.ang + (n % 2 ? 1 : -1) * Math.ceil(n / 2) * p.arco * 0.8);
-  if (p.flags & F.DETRAS) angs.push(b.ang + Math.PI);
+  if (p.flags & F.DETRAS) angs.push(angs[0] + Math.PI);
   const E = sim.E;
   const ya = new Set<number>();
   for (const ang of angs) {
@@ -438,15 +445,21 @@ function zona(sim: Sim, j: Jugador, a: ArmaJ, k: number): boolean {
   const p = a.p;
   const b = apuntar(sim, j, a, p.alcance);
   if (!b) return false;
+  // (el humo sale donde estás parado; a dos manos, otra nube detrás)
+  const pie = a.def.apunta === 'pie';
+  const cx = pie ? j.x : b.x, cy = pie ? j.y : b.y;
   for (let s = 0; s < p.cantidad; s++) {
     const ox = s ? sim.az.entre(-2, 2) : 0, oy = s ? sim.az.entre(-2, 2) : 0;
-    ponerZona(sim, j, a, k, b.x + ox, b.y + oy, p.area, p.dano, p.duracion);
+    ponerZona(sim, j, a, k, cx + ox, cy + oy, p.area, p.dano, p.duracion);
   }
+  if (p.flags & F.DETRAS) ponerZona(sim, j, a, k, j.x - j.fx * (p.area + 0.8), j.y - j.fy * (p.area + 0.8), p.area, p.dano, p.duracion);
   return true;
 }
 
 function torreta(sim: Sim, j: Jugador, a: ArmaJ, k: number): boolean {
   const p = a.p;
+  // (la ballesta de pie solo se arma con el jugador quieto un momento)
+  if (a.def.quieto && j.quietoT < 0.6) return false;
   let cuantas = 0;
   for (const al of sim.A) if (al.vivo && al.tipo === ALI.TORRETA && al.dueno === j.i && al.b === k) cuantas++;
   if (cuantas >= p.cantidad) return true;
@@ -454,6 +467,59 @@ function torreta(sim: Sim, j: Jugador, a: ArmaJ, k: number): boolean {
   if (!pos) return false;
   ponerTorreta(sim, j, pos.x, pos.y, p.dano, p.duracion, k, a.p.quema);
   return true;
+}
+
+/** Trampas (abrojos, cepos): se riegan alrededor y se quedan en el piso hasta que alguien las pisa. */
+function trampa(sim: Sim, j: Jugador, a: ArmaJ, k: number): boolean {
+  const p = a.p;
+  if (sim.blanco(j.x, j.y, p.alcance, 'cercano') < 0) return false;
+  const n = p.cantidad * (p.flags & F.DETRAS ? 2 : 1);
+  const atrasAng = Math.atan2(-j.fy, -j.fx);
+  for (let s = 0; s < n; s++) {
+    const atras = s >= p.cantidad;
+    const ang = atras ? atrasAng + sim.az.entre(-0.7, 0.7) : sim.az.entre(0, DOS_PI);
+    const dist = atras ? sim.az.entre(0.9, 2) : p.cantidad > 1 ? sim.az.entre(0.6, 2) : 0.9;
+    const x = j.x + Math.cos(ang) * dist, y = j.y + Math.sin(ang) * dist;
+    if (tapaLuz(sim.mapa.get(Math.floor(x), Math.floor(y)))) continue;
+    const pr = salirProyectil(sim, j, a, k, ang, MOV.TRAMPA);
+    if (!pr) break;
+    pr.x = x;
+    pr.y = y;
+    pr.z = 0.04;
+    pr.vx = pr.vy = 0;
+    pr.vida = Math.max(2, p.duracion);
+    pr.r = (0.3 + p.area * 0.35) * (p.flags & F.GORDA ? 1.8 : 1);
+  }
+  return true;
+}
+
+/** Una trampa en el piso: pica (o se cierra) a los que la pisan. */
+function moverTrampa(sim: Sim, pr: Proyectil) {
+  if (pr.t >= pr.vida) {
+    pr.vivo = false;
+    return;
+  }
+  const E = sim.E;
+  sim.enRadio(pr.x, pr.y, pr.r, LISTA);
+  // (a lo sumo tres por cuadro: un montón encima no la gasta de un tirón)
+  let golpes = 0;
+  for (const i of LISTA) {
+    if (!E.vivo[i] || pr.yaGolpeo(E.uid[i], sim.t)) continue;
+    if (++golpes > 3) break;
+    pr.anotar(E.uid[i], sim.t + 0.7);
+    golpeProyectil(sim, pr, GP, 0, 0);
+    sim.danar(i, pr.dano, GP);
+    if (pr.flags & F.EXPLOTA) {
+      explotar(sim, pr);
+      pr.vivo = false;
+      return;
+    }
+    pr.perfora--;
+    if (pr.perfora <= 0) {
+      pr.vivo = false;
+      return;
+    }
+  }
 }
 
 export function ponerTorreta(sim: Sim, j: Jugador, x: number, y: number, dano: number, vida: number, ranura: number, quema = 0) {
@@ -564,6 +630,9 @@ export function moverProyectiles(sim: Sim, dt: number, soloJugadores: boolean) {
         break;
       case MOV.BUMERAN:
         moverBumeran(sim, pr, dt);
+        break;
+      case MOV.TRAMPA:
+        moverTrampa(sim, pr);
         break;
       case MOV.CAE:
         pr.z = Math.max(0, 6 * (1 - pr.t / pr.vida));

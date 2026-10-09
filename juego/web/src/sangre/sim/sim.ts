@@ -178,7 +178,7 @@ export class Sim {
       botin: 1 / (1 + 0.45 * (n - 1)),
       // Las almas valen más en las etapas duras, pero no tanto como crece la vida (si no, el jugador sube de nivel tan
       // rápido como se endurecen los enemigos); en el infinito ya no valen más (el poder del jugador se estanca)
-      xp: base * etapaV ** 0.7,
+      xp: base * etapaV ** 0.7 * (mut('nocturna') ? 1.25 : 1),
     };
     this.curaPeligro = pel.curacion;
     this.mapa = generarMapa({
@@ -310,6 +310,7 @@ export class Sim {
       let v = d;
       if (modo === 'fuerte') v = -E.hp[i] - (E.elite[i] || esJefe(E.tipo[i]) ? 1e6 : 0) + d * 0.01;
       else if (modo === 'mira') v = d - (dx * fx + dy * fy) * 4;
+      else if (modo === 'atras') v = d + (dx * fx + dy * fy) * 4;
       else if (modo === 'denso') v = d * 0.2 - this.densidad(E.x[i], E.y[i]) * 3;
       // Los altares atraen un poco menos que los que vienen encima
       if (E.tipo[i] === TIPO_ALTAR) v += 6;
@@ -967,6 +968,7 @@ export class Sim {
       j.fy /= lf;
     }
     this.moverCirculo(j, j.vx * dt, j.vy * dt);
+    j.quietoT = l > 0.15 ? 0 : j.quietoT + dt;
     if (l > 0.3) this.excavarEmpujando(j, mx, my, dt);
     else j.excavando = -1;
   }
@@ -1065,7 +1067,7 @@ export class Sim {
   alRomper(cx: number, cy: number, tipo: number, j: Jugador | null) {
     this.suc.push(S.ROTO, cx, cy, tipo);
     const x = cx + 0.5, y = cy + 0.5;
-    const vetas = 1 + (j ? mec.extraVetas(j) + j.st.vetas : 0);
+    const vetas = (1 + (j ? mec.extraVetas(j) + j.st.vetas : 0)) * (this.cfg.exp.mutadores.includes('esmeralda') ? 1.8 : 1);
     // (la minería paga bien: con eso se compra en la Forja y se suben las armas en el yunque)
     // (las vetas pagan menos que antes: la plata grande la cargan los bichos del botín)
     if (tipo === C.HIERRO) this.soltar(REC.HIERRO, x, y, Math.round(this.az.entero(2, 3) * vetas));
