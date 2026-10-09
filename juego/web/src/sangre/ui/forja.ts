@@ -10,7 +10,7 @@ import type { Jugador } from '../sim/jugador';
 import type { Sim } from '../sim/sim';
 import { DESCANSO } from '../datos/mundo';
 import { NOMBRE_RAREZA } from '../tipos';
-import { RAREZA_COLOR, glifo, icono } from './iconos';
+import { RAREZA_COLOR, glifo, icono, medalla } from './iconos';
 import type { VistaEleccion } from './eleccion';
 import { aviso } from './hud';
 import { efectos } from '../sonidos';
@@ -52,7 +52,7 @@ export function mostrarForja(o: OpcionesForja) {
       const caro = of.precio > (hierro ? b.hierro : b.oro);
       const tipo = of.tipo === 'mejora' ? `${NOMBRE_RAREZA[of.rareza]}${of.op?.tipo === 'arma' ? ' · entrenar' : ''}` : NOMBRE_TIPO[of.tipo];
       return `<button class="oferta-fila pergamino${of.vendida ? ' vendida' : ''}${caro ? ' caro' : ''}${of.guardada ? ' guardada' : ''}" data-o="${of.id}" style="--rareza:${RAREZA_COLOR[of.rareza] ?? RAREZA_COLOR[0]}" ${of.vendida ? 'disabled' : ''}>
-        <span class="ico">${icono(of.glifo, of.tipo === 'arma' || of.op?.tipo === 'arma' ? of.op?.id ?? of.ref : undefined)}</span>
+        <span class="ico">${of.tipo === 'arma' || of.op?.tipo === 'arma' ? icono(of.glifo, of.op?.id ?? of.ref) : medalla(of.tipo === 'objeto' ? 'objeto' : of.tipo === 'equipo' ? 'equipo' : 'mejora', of.glifo)}</span>
         <span class="texto-oferta"><em class="tipo-oferta">${tipo}</em><b>${of.nombre}</b><small>${of.desc}</small></span>
         <span class="precio">${of.vendida ? 'Listo' : `<span class="ico">${glifo(hierro ? 'hierro' : 'oro')}</span>${of.precio}`}</span>
         <span class="guardar" data-g="${of.id}" title="Guardar para la próxima">${glifo('candado')}</span>
@@ -75,7 +75,7 @@ export function mostrarForja(o: OpcionesForja) {
     const objetos = j.objetos.length
       ? j.objetos.map((id) => {
           const ob = OBJETO[id];
-          return ob ? `<button class="objeto-mini" data-v="${id}" title="${ob.desc}"><span class="ico">${glifo(ob.glifo)}</span><span>${ob.nombre}</span><small>Vender · ${Math.round(ob.precio * 0.5)}</small></button>` : '';
+          return ob ? `<button class="objeto-mini" data-v="${id}" title="${ob.desc}"><span class="ico">${medalla('objeto', ob.glifo)}</span><span>${ob.nombre}</span><small>Vender · ${Math.round(ob.precio * 0.5)}</small></button>` : '';
         }).join('')
       : '<small class="vacio">Todavía no llevas objetos.</small>';
     const pC = exp.precioCurar(j);
@@ -104,7 +104,7 @@ export function mostrarForja(o: OpcionesForja) {
           <h3><span class="ico">${glifo('corazon')}</span>El personaje <small>· oro</small></h3>
           <div class="ofertas-col">${de('personaje')}</div>
           <button class="oferta-fila pergamino curar${llena || b.oro < pC ? ' caro' : ''}" data-a="curar" style="--rareza:${RAREZA_COLOR[0]}" ${llena ? 'disabled' : ''}>
-            <span class="ico">${glifo('corazon')}</span>
+            <span class="ico">${medalla('mejora', 'corazon')}</span>
             <span class="texto-oferta"><em class="tipo-oferta">Vendas y aguardiente</em><b>Curar la mitad</b><small>Vida ${Math.ceil(j.hp)}/${Math.ceil(j.hpMax)}${llena ? '' : ` · al bajar descansas +${Math.round(DESCANSO * 100)} %`}. Cada vez cuesta más.</small></span>
             <span class="precio">${llena ? 'Llena' : `<span class="ico">${glifo('oro')}</span>${pC}`}</span>
           </button>

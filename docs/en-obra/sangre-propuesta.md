@@ -351,9 +351,13 @@ Propuesta:
    `docs/sistemas/sangre-y-ceniza.md`. Quedaron para después: el aceite de lámpara de la Procesión (la carreta avanza
    como la escolta de siempre) y los sellos de la reja al final de cada etapa; Rescate y Cacería ya existían como
    prisioneros y élite.
-5. **Fase 5**: J (refugio con minijuegos), K (equipo con rarezas especiales), el familiar y la Forja con tres
-   mostradores (L7 y L8). Y los íconos más elaborados de las mejoras (pedido aparte, que va con esto porque llegan
-   muchas cosas nuevas).
+5. ~~**Fase 5**~~ **hecha** (9 de octubre): K (equipo común a épico con 15 rarezas especiales, el jefe suelta una rara
+   o mejor y lo del Pozo sube de nivel con los logros), L8 (la Forja con tres mostradores: armero, etiquetas y objetos,
+   personaje; mejoras con rareza y curar que sube de precio), L7 (el familiar: siete compañeros con modelo en una
+   ranura nueva del equipo), J (el refugio con patear el barril, la taberna y la campana de práctica, en el título y en
+   la sala) y los íconos más elaborados de las mejoras (137 medallas en relieve). Cómo quedó: «Equipo con calidades»,
+   «La Forja con tres mostradores», «El familiar», «El refugio» y «Medallas» en `docs/sistemas/sangre-y-ceniza.md`.
+   Con esto, Sangre y Ceniza 2 queda completo.
 
 ---
 

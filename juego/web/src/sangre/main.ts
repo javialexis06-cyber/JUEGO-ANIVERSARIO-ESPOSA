@@ -43,7 +43,7 @@ import { mostrarForja } from './ui/forja';
 import { mostrarRefugio } from './ui/refugio';
 import { verEscena } from './ui/historia';
 import { aviso } from './ui/hud';
-import { glifo, icono, revisarRenders } from './ui/iconos';
+import { glifo, icono, medalla, revisarRenders } from './ui/iconos';
 import { Mando } from './ui/mando';
 import { Escena3D, type Calidad } from './vista/escena';
 
@@ -550,7 +550,7 @@ function pozo() {
     const mercader = `<div class="mercader"><span>Doy 2 de</span><select data-m="de">${opcionesMin(cambio.de)}</select><span>por 1 de</span><select data-m="a">${opcionesMin(cambio.a)}</select>
       <button class="boton boton-chico" data-a="cambiar" ${(p.minerales[cambio.de] ?? 0) < 2 || cambio.de === cambio.a ? 'disabled' : ''}>${glifo('mano')}Cambiar</button></div>`;
     const ofrendas = p.ofrendas.length
-      ? p.ofrendas.map((o) => pieza(o)).filter((x) => !!x).map((x) => `<div class="renglon hecho calidad-${x!.calidad}"><span class="ico">${glifo(x!.def.ranura)}</span><span><b>${nombrePieza(x!)}</b><small>${descPieza(x!, nivelEquipo(p))}</small></span></div>`).join('')
+      ? p.ofrendas.map((o) => pieza(o)).filter((x) => !!x).map((x) => `<div class="renglon hecho calidad-${x!.calidad}"><span class="ico">${medalla('equipo', x!.def.ranura)}</span><span><b>${nombrePieza(x!)}</b><small>${descPieza(x!, nivelEquipo(p))}</small></span></div>`).join('')
       : '<small class="vacio ancho">Al terminar una expedición puedes ofrecer al Pozo una pieza del equipo que llevabas: queda tuya para siempre y la escoges antes de bajar.</small>';
     s.innerHTML = `${cabeza('El Pozo de las Almas')}
       <p class="sub-pozo">La ceniza y los minerales de cada expedición alimentan el Pozo. Lo que compres aquí te acompaña en todas las clases.</p>
@@ -833,7 +833,7 @@ function logros(pestana: 'logros' | 'reliquias' = 'logros') {
         const ab = !r.hito || p.reliquias.includes(r.id);
         const h = HITOS_RELIQUIA[r.id];
         const av = !ab && h?.avance ? h.avance(p) : 0;
-        return `<div class="renglon${ab ? ' hecho' : ' no'}"><span class="ico">${glifo(ab ? r.glifo : 'candado')}</span><span><b>${r.nombre}</b><small>${r.desc}${!ab && h ? ` <em>Se abre: ${h.desc}</em>` : ''}</small>
+        return `<div class="renglon${ab ? ' hecho' : ' no'}"><span class="ico">${ab ? medalla('reliquia', r.glifo) : glifo('candado')}</span><span><b>${r.nombre}</b><small>${r.desc}${!ab && h ? ` <em>Se abre: ${h.desc}</em>` : ''}</small>
           ${av ? `<span class="barra barra-logro"><i style="width:${Math.round(av * 100)}%"></i></span>` : ''}</span><span class="nivel">${ab ? glifo('caliz') : ''}</span></div>`;
       }).join('');
   const s = seccion('pantalla-logros opaca', `${cabeza(pestana === 'logros' ? 'Logros' : 'Reliquias')}${pestanas}<div class="lista">${filas}</div>`);
@@ -1247,7 +1247,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
           ${cb.clasesNuevas.map((k) => `<div class="desbloqueo">${glifo(CLASES[k].glifo)} Nueva clase: ${nombreClase(k, yo.cuerpo)}</div>`).join('')}
           ${cb.biomasNuevos.map((b) => `<div class="desbloqueo">${glifo(BIOMAS[b].glifo)} Nuevo bioma: ${BIOMAS[b].nombre}</div>`).join('')}
           ${cb.comunesNuevas.filter((a) => ARMAS[a]).map((a) => `<div class="desbloqueo">${glifo(ARMAS[a].glifo)} Nueva arma común: <b>${ARMAS[a].nombre}</b></div>`).join('')}
-          ${cb.reliquias.filter((x) => RELIQUIA[x]).map((x) => `<div class="desbloqueo">${glifo(RELIQUIA[x].glifo)} Reliquia abierta: <b>${RELIQUIA[x].nombre}</b> (ya sale en los cofres)</div>`).join('')}
+          ${cb.reliquias.filter((x) => RELIQUIA[x]).map((x) => `<div class="desbloqueo">${medalla('reliquia', RELIQUIA[x].glifo)} Reliquia abierta: <b>${RELIQUIA[x].nombre}</b> (ya sale en los cofres)</div>`).join('')}
           ${cb.logros.map((l) => `<div class="desbloqueo">${glifo(l.glifo)} Logro: <b>${l.nombre}</b> (+${l.ceniza} ceniza)${l.premio ? ` · ${l.premio}` : ''}</div>`).join('')}
           ${ofrecibles.length && !ofrecida ? `<h3 class="titulo-grabado">Ofrecer al Pozo (una)</h3><div class="ofrendas">${ofrecibles.map((o) => pieza(o)!).map((x) => `<button class="boton boton-chico calidad-${x.calidad}" data-o="${x.clave}" title="${descPieza(x)}">${glifo(x.def.ranura)}${nombrePieza(x)}</button>`).join('')}</div>` : ''}
         </div>

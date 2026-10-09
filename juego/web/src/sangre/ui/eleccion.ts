@@ -1,7 +1,7 @@
 // Las cartas de pergamino para escoger: subir de nivel, sobrecargas, cofres, bendiciones y equipo. Con volver a tirar,
 // descartar (vetar) y, en grupo, una cuenta regresiva (el juego no se detiene para los demás).
-import { NOMBRE_RAREZA, type Eleccion } from '../tipos';
-import { RAREZA_COLOR, glifo, icono } from './iconos';
+import { NOMBRE_RAREZA, type Eleccion, type Opcion } from '../tipos';
+import { RAREZA_COLOR, glifo, icono, medalla } from './iconos';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -48,7 +48,7 @@ export class VistaEleccion {
       return `<button class="carta pergamino ${clases}" data-k="${k}" style="--rareza:${color}">
         <span class="marco"></span>
         <span class="rareza">${rareza}</span>
-        <span class="ico ico-carta">${icono(op.glifo, op.icono)}</span>
+        <span class="ico ico-carta">${op.icono ? icono(op.glifo, op.icono) : medallaDe(op)}</span>
         <h3>${op.nombre}</h3>
         <p>${op.desc}</p>
         <span class="tipo">${op.tipo === 'sobrecarga' && op.rareza === 4 ? 'Sobrecarga maldita' : TIPO_TXT[op.tipo] ?? ''}</span>
@@ -94,4 +94,12 @@ export class VistaEleccion {
     this.vetando = false;
     this.clave = '';
   }
+}
+
+/** La medalla de una carta: reliquias, equipo, objetos y lo demás (mejoras, dones, bendiciones) como mejora. */
+function medallaDe(op: Opcion): string {
+  if (op.tipo === 'reliquia') return medalla('reliquia', op.glifo);
+  if (op.tipo === 'equipo') return medalla(op.id.startsWith('obj:') ? 'objeto' : 'equipo', op.glifo);
+  if (op.tipo === 'arma' || op.tipo === 'nueva' || op.tipo === 'evolucion' || op.tipo === 'sobrecarga') return icono(op.glifo);
+  return medalla('mejora', op.glifo);
 }

@@ -1,7 +1,8 @@
 // Íconos: si el frente de figuras ya dejó `sangre/iconos/<id>.webp` (renders de los modelos), se usa ese; si no, un
 // glifo dibujado en SVG (siluetas sencillas de 24 × 24) sobre una placa con el color de la rareza.
+import { MEDALLAS } from './medallas';
 
-const G: Record<string, string> = {
+export const G: Record<string, string> = {
   espada: 'M12 2l2 3v10h-4V5zM7 15h10v2h-4v3l-1 2-1-2v-3H7z',
   cetro: 'M11 9h2v13h-2zM12 2a3.5 3.5 0 110 7 3.5 3.5 0 010-7zM9 9h6v2H9z',
   bandera: 'M5 2h2v20H5zM7 3h11l-3 4 3 4H7z',
@@ -142,6 +143,13 @@ export function glifo(id: string, color = 'currentColor'): string {
 }
 
 /** Ícono completo: el render si existe (con id), si no el glifo. */
+/** Medallas en relieve (Sangre y Ceniza 2): los íconos de las mejoras, objetos, reliquias y equipo (si están). */
+export type TemaMedalla = 'mejora' | 'objeto' | 'reliquia' | 'equipo';
+export function medalla(tema: TemaMedalla, glifoId: string, color?: string): string {
+  const id = `med_${tema}_${glifoId}`;
+  return icono(glifoId, MEDALLAS.has(id) ? id : undefined, color);
+}
+
 export function icono(glifoId: string, renderId?: string, color?: string): string {
   if (hayRenders && renderId) return `<img class="ico-render" src="./sangre/iconos/${renderId}.webp" alt="" loading="lazy">`;
   return glifo(glifoId, color);

@@ -5,7 +5,9 @@ probado y subido.
 
 ## Por dónde seguir (nota para el próximo Claude)
 
-Último trabajo subido: **Sangre y Ceniza 2, fase 4** (9 de octubre): 26 reliquias que se abren con hitos, los
+Último trabajo subido: **Sangre y Ceniza 2, fase 5** (9 de octubre), con la que **Sangre y Ceniza 2 queda completo**:
+equipo común a épico con rarezas especiales, la Forja con tres mostradores, el familiar (siete compañeros con modelo),
+el refugio con tres minijuegos y las medallas en relieve como íconos de las mejoras. Antes, la **fase 4**: 26 reliquias que se abren con hitos, los
 Desafíos (contratos del día y de la semana para comparar entre los dos, pruebas de maestría, anómalas), 17 mutadores
 nuevos, las misiones La Procesión (el Relicario) y La Cría (la Madre de Piedra), los objetivos Exorcismo y Cosecha de
 sangre, dos secundarios nuevos y el infinito que crece (con la bajada guardada). Antes, la **fase 3**: el mapa de la Noche (cuatro sectores con sus
@@ -20,10 +22,10 @@ ladrón de tumbas, mini-élites, precios que suben y tres secundarios nuevos; la
 trajo de la granja ([`docs/mitologia.md`](mitologia.md)). Javier respondió lo de Sangre y Ceniza 2: **se hace
 primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protagonistas) y todo lo de armas. Orden:
 
-1. **Sangre y Ceniza 2**, por fases (sección 4 de `docs/en-obra/sangre-propuesta.md`): ~~fase 1~~, ~~fase 2~~,
-   ~~fase 3~~ y ~~fase 4~~ **hechas** (la 4: reliquias por hitos, Desafíos, 17 mutadores, La Procesión y La Cría con
-   sus modelos, Exorcismo, Cosecha de sangre, mercurio, campanitas y el infinito que crece); sigue la **fase 5** (J:
-   refugio con minijuegos, K: equipo con rarezas especiales, el familiar y la Forja con tres mostradores).
+1. ~~**Sangre y Ceniza 2**~~ **hecho** (las cinco fases de la sección 4 de `docs/en-obra/sangre-propuesta.md`; la 5:
+   equipo con rarezas, la Forja con tres mostradores, el familiar, el refugio y las medallas). Quedaron para después,
+   anotados en la propuesta: el aceite de lámpara y los sellos de la Procesión, los espejos del castillo y el piso en
+   llamas de la abadía.
 2. **Lavarse la cara 2** (`docs/en-obra/lavado-propuesta.md`): antes de empezar, hacerle a Javier las 5 preguntas del
    final (armas, escenarios, modos y tesoros, disfraces, aventuras).
 3. **Amigos: mesa, retrete y cocina en la app de amigos** (abajo, en «Amigos: lo que sigue»).
@@ -74,13 +76,13 @@ terror y el de crímenes (abajo, en «Después»): **falta que Javier pase las d
 
 ## Sangre y Ceniza: correcciones y mejoras (pedido de Javier tras probarlo)
 
-**Versión 2 (propuesta entregada, falta pulirla con Javier)**: misiones que llenen la etapa (se ganan matando al
+~~**Versión 2**~~ **hecha** en cinco fases (8 y 9 de octubre; cómo quedó en `docs/sistemas/sangre-y-ceniza.md`): misiones que llenen la etapa (se ganan matando al
 Guardián, la Noche se impacienta), más tipos de misión, dificultad y precios que suben, seis minerales para el Pozo,
 mapa de la Noche con historia y retos por bioma y clase, maestrías, contratos, infinito con mapa que crece y refugio
 con minijuegos, y (sección L) seis sobrecargas por arma con etiquetas especiales, evolución para todas las armas y
 uniones, 13 armas comunes nuevas, reliquias por hitos y el familiar que acompaña:
 [`docs/en-obra/sangre-propuesta.md`](en-obra/sangre-propuesta.md) (preguntas al final). Los íconos más elaborados de
-las mejoras van con esto (llegan muchas cosas nuevas).
+las mejoras quedaron como medallas en relieve (fase 5).
 
 Textual: «Mejorar calidad de mapa; mejorar movilidad, se siente tosca, los ojos se cansan o se abruman por la
 velocidad, se siente raro…»

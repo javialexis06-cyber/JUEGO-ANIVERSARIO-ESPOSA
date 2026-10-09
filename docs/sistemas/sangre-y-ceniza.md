@@ -171,6 +171,44 @@ la noche, y a salir vivos en la **Campana de Extracción** antes de que la horda
   cementerio, las minas con los de las catacumbas… **Tope de 15 reliquias** (después, los cofres de reliquias dan
   oro). **La bajada se guarda** al salir de la Forja cuando se juega solo (`bajada.ts`, en el aparato): si el celular
   cierra el juego, el título muestra «Seguir · N» (la etapa) y se sigue con todo lo que se llevaba.
+- **Equipo con calidades y rarezas especiales** (fase 5, K, como el equipo de Deep Rock): cada pieza cae **común,
+  poco común, rara o épica** (se lee «+1», «+2», «+3» en el nombre y con su color): sus números ×1, ×1,3, ×1,6 o ×2 (lo
+  malo no crece). Las raras traen **una rareza especial** y las épicas **dos**, de 15: cúrate 12 % al matar un élite,
+  +30 % de velocidad los primeros 20 s de la etapa, escudo de 2 golpes al empezar, +10 % de rata dorada y once de
+  estadística (contra élites, recoger, crítico, armadura, vida por segundo, vetas, excavar, experiencia, suerte,
+  velocidad, recarga). El **jefe** siempre suelta una pieza rara o mejor para cada uno (un familiar si no tiene, o a
+  veces). Lo ofrecido al Pozo guarda su calidad y **sube de nivel con los logros de la cuenta** (+8 % por cada ocho
+  logros, hasta 5). Se guarda como `id@calidad.especial.especial` (`pieza()` en `datos/botin.ts`); lo viejo, solo con el
+  id, es común.
+- **La Forja con tres mostradores** (fase 5, L8, como la tienda de Deep Rock): **el armero** (entrenar dos armas con
+  hierro negro: la rareza dice cuántos niveles y rinde más por hierro; un arma nueva con oro; y abajo el yunque y el
+  altar de sangre de siempre), **etiquetas y objetos** (mejoras de etiqueta con oro, solo de las que llevan dos armas, y
+  objetos con contrapartida; abajo, vender objetos) y **el personaje** (mejoras de estadística y una pieza de equipo).
+  Las mejoras salen con rareza (común a legendaria) y cuestan según ella. **Curar la mitad** es un botón aparte que
+  cuesta 50 % más cada vez en la expedición. Renovar cambia los tres; el candado guarda una oferta.
+- **El familiar** (fase 5, L7, el Bosco de Deep Rock): una **ranura nueva de equipo** con siete compañeros que pelean
+  solos a tu lado (`datos/familiares.ts`, IA en `sim/aliados.ts`, `ALI.FAMILIAR`): **cuervo** (picotea, sombra),
+  **linterna de ánimas** (quema con su luz y te trae las almas), **sapo de la bruja** (escupe charcos de veneno),
+  **salamandra** (brasas que dejan el piso ardiendo), **lechuza de escarcha** (frascos helados que frenan), **perro de
+  huesos** (muerde y excava la roca que le estorba) y **campanita de plata** (no pega: suma dos etiquetas a la regla de
+  las dos armas, como el «Support Chip»; la descripción dice cuáles). La calidad lo hace pegar 30 % más por escalón;
+  los que caminan corren más si se quedan atrás y aparecen a tu lado si te alejas 8 m. Modelos nuevos en `cosas.glb`
+  (`c_familiar_linterna`, `_sapo`, `_salamandra`, `_lechuza`, `_campanita`); el cuervo y el perro usan los de los
+  enemigos con el toque dorado de aliado.
+- **El refugio** (fase 5, J; botón del título y «🍺 Refugio» en la sala mientras llegan los demás; `ui/refugio.ts`):
+  tres minijuegos con récord propio y el del otro al lado. **Patear el barril**: resortera (se toca en cualquier lado
+  y se jala hacia atrás); tumba calaveras entre pilares; cada rebote antes de pegar vale más (hasta 4); 6 patadas, y +2
+  si tumba todas. **La taberna**: veintiuno con dados contra el tabernero (pide hasta 17; veintiuno exacto paga doble)
+  con ceniza de mentiras que sigue entre visitas (si se acaba, le fía 50). **La campana de práctica**: esquivar
+  campanas que caen (la sombra avisa) y calaveras que ruedan, cada vez más seguido; récord en segundos. Mientras se
+  juega, el campamento 3D de fondo se apaga. Lo guardado: `p.refugio = { barril, campana, taberna, bolsa }`.
+- **Medallas** (fase 5, los íconos más elaborados de las mejoras): los íconos de las mejoras, dones, bendiciones,
+  objetos, reliquias y equipo ya no son el glifo plano: son **medallas renderizadas** (esmalte con marco de metal y
+  tachuelas, el glifo en relieve dorado): rojo y bronce las mejoras, verde petróleo y plata los objetos, morado y oro
+  con piedritas las reliquias, azul acero y hierro el equipo. 137 en `public/sangre/iconos/med_<tema>_<glifo>.webp`.
+  Para rehacerlas: `node scripts/medallas-sangre.mjs` (escribe `personajes/blender/medallas.json` y
+  `src/sangre/ui/medallas.ts`) y `blender -b -P personajes/blender/sangre_medallas.py -- personajes/blender/medallas.json
+  juego/web/public/sangre/iconos --hoja <png>`. El trazo SVG se normaliza (arcos y repeticiones) para el importador.
 
 ## Cómo se pelea (lo mejor del género)
 
@@ -461,7 +499,7 @@ atacar, morir). Mirando hacia +Y de Blender. Altura de un zombi ≈ 1,1 m (los p
 | `jefes.glb` | `jefe_<id>` | golem_osarios, abadesa, gusano_sangre, obispo_hueco, conde (con capa `extra_capa` y fase 2 `extra_alas`), madre_piedra (La Cría: alas y cola) |
 | `armas.glb` | `arma_<id>` | espada_larga, horca, grillete, maza, escudo, ballesta, martillo, frasco, pala, incensario, hacha_verdugo, baston_cuervos, laud, guadana, antorcha, estaca, lanza, mangual, daga, arco (y las que hagan falta), con origen en el mango |
 | `proyectiles.glb` | `p_<id>` | virote, flecha, estaca, frasco_roto, nota_musical, pluma_cuervo, hueso, bola_fuego, rayo_sagrado, cadena_eslabon |
-| `cosas.glb` | `c_<id>` | alma_azul, alma_verde, alma_roja, oro, hierro_negro, sangre_cristal, pierna_pollo, cofre, cofre_reliquia, llave, campana_extraccion, altar_sangre, carreta, prisionero_cadenas, pozo_almas, forja, torreta_ballesta, trampa, tumba_abierta, totem_maleficio, frasco_alquimia, huevo_dragon, sepulcro, sepulcro_abierto, rosa_velo, pluma_grifo, hongo_tumba, ataud_suministros, ataud_abierto, veta_<mineral> y mineral_<mineral> (los seis), veta_grisu, columna_hueso, pinchos_placa, pinchos_puas, campana_exorcismo, caliz_sangre, cristal_sangre, huevo_gargola, osario, relicario, relicario_abierto, gota_mercurio, campanita_plata |
+| `cosas.glb` | `c_<id>` | alma_azul, alma_verde, alma_roja, oro, hierro_negro, sangre_cristal, pierna_pollo, cofre, cofre_reliquia, llave, campana_extraccion, altar_sangre, carreta, prisionero_cadenas, pozo_almas, forja, torreta_ballesta, trampa, tumba_abierta, totem_maleficio, frasco_alquimia, huevo_dragon, sepulcro, sepulcro_abierto, rosa_velo, pluma_grifo, hongo_tumba, ataud_suministros, ataud_abierto, veta_<mineral> y mineral_<mineral> (los seis), veta_grisu, columna_hueso, pinchos_placa, pinchos_puas, campana_exorcismo, caliz_sangre, cristal_sangre, huevo_gargola, osario, relicario, relicario_abierto, gota_mercurio, campanita_plata, familiar_linterna, familiar_sapo, familiar_salamandra, familiar_lechuza, familiar_campanita |
 | `bioma_<id>.glb` | `piso_*`, `pared_*`, `veta_*`, `deco_*`, `luz_*` | cementerio, catacumbas, minas, abadia, castillo: losas/tierra de piso en bloques de 2×2 m, **bloques de pared excavables** de 1×1×1,5 m (`pared_blanda_a/b/c`, `pared_dura_a/b`, `pared_borde`), vetas (`veta_hierro`, `veta_sangre`, `veta_oro`), y decoración (lápidas, mausoleos, cruces, nichos con calaveras, cadenas, rieles, vagonetas, vitrales, bancas, candelabros, tapices…), `luz_antorcha`/`luz_vela` con un nodo vacío `llama` donde va la luz |
 | `../ropa/sangre_<clase>_{el,ella}.glb` | igual que la ropa de la casa | el traje serio de cada clase para el cuerpo de Él y el de Ella, con el esqueleto de la ropa (`ropa*.py`): monarca, campesino, prisionero, caballero, cazador, herrero, alquimista, sepulturero, inquisidor, verdugo, bruja, juglar |
 
