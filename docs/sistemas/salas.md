@@ -100,12 +100,23 @@ Reglas para los juegos:
 Para pasarle el juego a amigos sin que se lleven nada de la pareja hay una **compilación aparte**:
 
 - `npm run build:amigos` (`vite build --mode amigos`, carpeta `dist-amigos`): solo las páginas de `PAGINAS_AMIGOS`
-  (`amigos.html`, `sangre.html` y `super.html`; un juego nuevo para amigos se agrega ahí y en `src/amigos/juegos.ts`, y su
-  página lleva `<meta name="apto-amigos" content="si">`). De `src/`
+  (`amigos.html`, `sangre.html`, `super.html`, `retrete.html`, `cocina.html` y `mesa.html`; un juego nuevo para amigos
+  se agrega ahí y en `src/amigos/juegos.ts`, y su página lleva `<meta name="apto-amigos" content="si">`). De `src/`
   solo entra lo de `PERMITIDOS_AMIGOS` (si algo más se cuela, la compilación falla con el nombre del archivo) y lo
-  personal se cambia por su versión vacía (`src/amigos/sin_pareja/`: el modelo, la sincronización y el catálogo de
-  la casa, y lo personal del lavado, que vive aparte en `src/casa/lavado/pareja.ts`). De `public/` solo se copia lo
-  que usan esos juegos (`PUBLICOS_AMIGOS`, `MODELOS_SUPER`, los íconos de los productos y la ropa del clóset genérico).
+  personal se cambia por su versión vacía o neutra (`src/amigos/sin_pareja/`, la lista está en `SUSTITUTOS`):
+  - el modelo, la sincronización y el catálogo de la casa;
+  - lo personal del lavado (`src/casa/lavado/pareja.ts`);
+  - lo del retrete (`src/casa/cohete/pareja.ts`: lo que dicen en el vuelo, el «¡Te pasé, mi amor!», las palabras de
+    las figuras de rollitos y la galaxia del amor);
+  - lo de la cocina (`src/casa/cocina/pareja.ts`: lo que dicen Él y Ella cuando llegan a comer y sus favoritos);
+  - lo que dicen los muñequitos de la mesa (`src/reacciones/pareja.ts`; con amigos salen las frases neutras de
+    `reacciones/frases.ts`);
+  - las escenas premium de la mesa (`src/escenas/catalogo.ts` y `cine.ts`: un amigo no tiene ninguna).
+
+  De `public/` solo se copia lo que usan esos juegos: `PUBLICOS_AMIGOS`, `MODELOS_SUPER`, los íconos de los
+  productos, la ropa del clóset genérico, los cascos y modelos del retrete (`cohete_*`), la cocina sin
+  `cocina/gente/pareja_*` (la pareja cuando llega a comer), la utilería de las reacciones (`reaccion_*.glb`) y las
+  imágenes del Clue (`modelos/clue/`).
 - **Súper Manía en la app de amigos**: `super.html` sale con sus textos neutros de una vez (el build cambia lo de cada
   `data-neutro` y quita lo `solo-pareja`), las cartas del súper (`src/recuerdos_super.ts`) se cambian por una lista
   vacía y el día 100 se llama «Gran final». El amigo guarda su partida aparte (`amigo-supermania`) y su local crece
@@ -138,6 +149,7 @@ Páginas propias que un amigo abre desde su sala de juegos (si el aparato no est
 | Retrete espacial | `./retrete.html` (`?tienda`: solo la tienda) | `amigo-retrete-progreso` |
 | Cocina de chef | `./cocina.html` (`?unirse=CÓDIGO`: entra a esa sala; `?receta=wafles`: abre ese restaurante) | `amigo-cocina-progreso` |
 | Lavarse la cara | dentro de `amigos.html` | `amigo-lavado-progreso` |
+| Juegos de mesa | `./mesa.html?amigo` (contra la máquina, dos en el mismo celular o sala con código) | `amigo-mesa-partida` |
 
 «Unirme con un código» de la sala de juegos: si `averiguarJuego(código)` dice `cocina`, va a
 `./cocina.html?unirse=CÓDIGO`. Lo común de estas páginas está en `src/sueltos/comun.ts` (quién juega, guardar en el
@@ -151,9 +163,12 @@ aparato, volver a `./amigos.html`, el botón atrás).
 - `node scripts/probar-lavado-salas.mjs <url>`: Lavarse la cara de a cuatro (ver docs/sistemas/nuestro-hogar.md).
 - `node scripts/probar-amigos.mjs <url>`: el modo amigo de punta a punta (creador por pestañas, sala, guardias) y que
   no vea nada personal.
-- `node scripts/probar-amigos-juegos.mjs <url>`: el retrete y la cocina sin la casa (la cocina también en sala con
-  otro amigo) sin nada personal, ni en la pantalla ni en lo dibujado. `node scripts/probar-cocina-linea.mjs` prueba la
-  cocina de Javier y Laura en sala.
+- `node scripts/probar-amigos-juegos.mjs <url>`: desde la sala de juegos (los seis dicen «Jugar»), el retrete y la
+  cocina sin la casa (la cocina también en sala con otro amigo) y una partida de dados en la mesa, sin nada personal,
+  ni en la pantalla ni en lo dibujado. Corre igual contra el servidor de desarrollo o contra la app de amigos
+  compilada (`npm run build:amigos && npx vite preview --mode amigos --port 5181`): ahí la lista de lo que no se
+  puede ver sale de los archivos de pareja. `node scripts/probar-mesa-salas.mjs <url>` prueba la mesa de los amigos
+  (contra la máquina y en sala) y `node scripts/probar-cocina-linea.mjs` la cocina de Javier y Laura en sala.
 - `npm run build:amigos`: compila la versión para amigos y la revisa con `verificar-amigos.mjs`.
 - `scripts/supabase-falso.mjs` (el Supabase de mentiras reutilizable) y `scripts/palabras-pareja.mjs` (lo que un amigo
   nunca debe ver).

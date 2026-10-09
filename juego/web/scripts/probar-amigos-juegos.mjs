@@ -1,16 +1,19 @@
-// Prueba de los juegos que los amigos abren sin la casa: el retrete espacial (retrete.html) y la cocina de chef
-// (cocina.html), sola y en una sala con otro amigo (Supabase de mentiras). Celulares táctiles con toques de verdad.
+// Prueba de los juegos que los amigos abren sin la casa: desde su sala de juegos (amigos.html), el retrete espacial
+// (retrete.html), la cocina de chef (cocina.html), sola y en una sala con otro amigo (Supabase de mentiras), y los
+// juegos de mesa (mesa.html?amigo). Celulares táctiles con toques de verdad.
 // En ningún momento un amigo ve algo personal de la pareja: se revisa el texto de la pantalla, todo lo que pasó por
 // ella (globos, avisos, letreros que salen y se van) y todo lo que se dibujó en los lienzos (banderitas del retrete,
 // tiquetes, frases de los invitados), contra las palabras de docs/la-pareja.md (scripts/palabras-pareja.mjs) y lo que
 // el mismo juego sabe que es de la pareja (`textosDeLaPareja()` del retrete y de la cocina). Tampoco se pide nada de
 // la casa (cuartos, recuerdos). El progreso de cada juego queda en el celular y al salir vuelven a su sala de juegos.
 // Uso (con el servidor de desarrollo prendido): node scripts/probar-amigos-juegos.mjs [url] [carpeta]
+// También corre contra la app de amigos compilada (npm run build:amigos && npx vite preview --mode amigos --port 5181):
+// ahí lo de la pareja ni siquiera existe, así que la lista de lo que no se puede ver sale de los archivos de pareja.
 //
 // Nota: «wafle», «frappé» y «fresas con crema» están en la lista de lo personal (son gustos de la pareja), pero en la
 // cocina son los platos mismos del juego; ahí lo personal es la anécdota, que sí se revisa (frases de la pareja).
 import { chromium } from '@playwright/test';
-import { existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { SupabaseFalso } from './supabase-falso.mjs';
 import { PALABRAS_PAREJA, buscarPersonal } from './palabras-pareja.mjs';
 
@@ -75,6 +78,18 @@ const foto = (p, n) => p.screenshot({ path: `${carpeta}/${p.nombre}-${n}.png` })
 
 /** Lo que el juego sabe que es de la pareja (se pide al mismo juego en la página). */
 let personales = [];
+/** Los textos entre comillas de un archivo (sin comentarios). */
+const textosDe = (f) => [...readFileSync(f, 'utf8').replace(/^\s*\/\/.*$/gm, '').matchAll(/'((?:[^'\\\n]|\\.)*)'/g)]
+  .map((m) => m[1].replace(/\\'/g, "'"))
+  .filter((t) => t.length >= 6);
+/** Con el servidor de desarrollo se le pregunta al juego (`textosDeLaPareja()` del módulo); en la app compilada eso
+ *  no existe y se sacan de sus archivos de pareja, menos lo que también dicen las frases neutras (`neutro`: archivos). */
+async function deLaPareja(p, modulo, pareja, neutro, extra = []) {
+  const delJuego = await p.evaluate(async (m) => (await import(m)).textosDeLaPareja(), modulo).catch(() => null);
+  if (delJuego) return delJuego;
+  const neutras = new Set([neutro].flat().flatMap(textosDe));
+  return [...textosDe(pareja).filter((t) => !neutras.has(t)), ...extra];
+}
 const SIN_PLATOS = PALABRAS_PAREJA.filter((x) => !['wafle', 'frappé', 'fresas con crema'].includes(x));
 async function nadaPersonal(p, momento, lista = PALABRAS_PAREJA) {
   const texto = await p.evaluate(() => `${document.body.innerText}\n${[...window.__vistos].join('\n')}\n${[...window.__dibujados].join('\n')}`);
@@ -89,15 +104,24 @@ function nadaDeLaCasa(p, momento) {
 const PIPE = { id: 'amigo-pipe12345', nombre: 'Pipe', cuerpo: 'ella', piel: '#a5653d', pelo: '#d76b9a', ropa: '#3fb5a3', ropa2: '#4a4a52', zapatos: '#f4efe6', activo: true, creado: 1 };
 const CARO = { id: 'amigo-caro12345', nombre: 'Caro', cuerpo: 'el', piel: '#f6c8a4', pelo: '#c99a5b', ropa: '#e85d5d', ropa2: '#1d1d24', zapatos: '#f4efe6', activo: true, creado: 2 };
 
-// ================================================================================================ 1. El retrete
+// ================================================================================================ 0. La sala de juegos
 const p = await celular('pipe', PIPE);
+await p.goto(`${url}/amigos.html`, { waitUntil: 'domcontentloaded', timeout: 180000 });
+const JUGABLES = ['lavado', 'sangre', 'super', 'mesa', 'retrete', 'cocina'];
+revisar(
+  await esperar(p, (ids) => ids.every((id) => document.querySelector(`.am-juego[data-j="${id}"] .estado`)?.textContent === 'Jugar'), JUGABLES, 60000),
+  `En su sala de juegos los seis juegos dicen «Jugar» (${await p.evaluate(() => [...document.querySelectorAll('.am-juego')].map((b) => `${b.dataset.j}: ${b.querySelector('.estado')?.textContent}`).join(', '))})`,
+);
+await foto(p, '0-sala');
+
+// ================================================================================================ 1. El retrete
 // (con un récord guardado, para que salga la banderita de «Tu récord» y ver que la de la pareja no)
 await p.addInitScript(() => {
   if (!localStorage.getItem('amigo-retrete-progreso')) localStorage.setItem('amigo-retrete-progreso', JSON.stringify({ mejor: 400, vuelos: 3, rollitos: 50 }));
 });
 await p.goto(`${url}/retrete.html`, { waitUntil: 'domcontentloaded', timeout: 180000 });
 revisar(await esperar(p, () => window.__cohete?.estado()?.fase === 'juego', null, 180000), 'El retrete despega sin la casa');
-personales = await p.evaluate(async () => (await import('/src/casa/cohete.ts')).textosDeLaPareja());
+personales = await deLaPareja(p, '/src/casa/cohete.ts', 'src/casa/cohete/pareja.ts', ['src/amigos/sin_pareja/cohete.ts', 'src/casa/cohete.ts'], ['Récord de Laura', 'Récord de Javier', 'Le ganaste']);
 revisar(personales.length > 20, `Se sabe qué es de la pareja en el retrete (${personales.length} textos)`);
 const pelo = await p.evaluate(() => {
   let c = '';
@@ -189,7 +213,7 @@ await espera(3000);
 p.pedidos = [];
 await p.goto(`${url}/cocina.html`, { waitUntil: 'domcontentloaded', timeout: 180000 });
 await p.waitForSelector('.cz-menu .cz-carta', { timeout: 120000 });
-personales = await p.evaluate(async () => (await import('/src/casa/cocina/invitados.ts')).textosDeLaPareja());
+personales = await deLaPareja(p, '/src/casa/cocina/invitados.ts', 'src/casa/cocina/pareja.ts', ['src/amigos/sin_pareja/cocina.ts', 'src/casa/cocina/invitados.ts'], ['hecho con amor', 'en pareja']);
 revisar(personales.length > 20, `Se sabe qué es de la pareja en la cocina (${personales.length} textos)`);
 await espera(1200);
 await foto(p, '5-cocina-menu');
@@ -322,7 +346,44 @@ await p.tap('.cz-menu [data-a="volver"]');
 await p.waitForURL(/amigos\.html/, { timeout: 20000 }).catch(() => undefined);
 revisar(/amigos\.html/.test(p.url()), 'Al salir de la cocina vuelve a su sala de juegos');
 
-// ================================================================================================ 4. Sin modo amigo, a la casa
+// ================================================================================================ 4. La mesa
+// (desde la tarjeta de su sala de juegos; las partidas largas y las salas de la mesa las prueba probar-mesa-salas.mjs)
+await p.goto(`${url}/amigos.html`, { waitUntil: 'domcontentloaded', timeout: 180000 });
+await esperar(p, () => document.querySelector('.am-juego[data-j="mesa"] .estado')?.textContent === 'Jugar', null, 60000);
+// (que termine de cargar su muñeco: si se va a la mitad, la descarga cortada sale como error)
+await p.waitForLoadState('networkidle').catch(() => undefined);
+await p.click('.am-juego[data-j="mesa"]');
+revisar(await esperar(p, () => /mesa\.html\?amigo/.test(location.href) && !!document.querySelector('#menu:not([hidden]) .juego-carta'), null, 120000), 'La tarjeta de la mesa abre los juegos de mesa');
+// (reacciones/pareja.ts no tiene textosDeLaPareja: siempre se leen del archivo)
+personales = await deLaPareja(p, '/src/reacciones/pareja.ts', 'src/reacciones/pareja.ts', 'src/reacciones/frases.ts');
+revisar(personales.length > 40, `Se sabe qué dicen Él y Ella en la mesa (${personales.length} frases)`);
+await p.click('[data-modo="ia"]');
+await p.click('[data-juego="dados"]');
+revisar(await esperar(p, () => !document.getElementById('partida').hidden, null, 60000), 'Juega dados contra la máquina');
+revisar(await p.evaluate(() => document.getElementById('btn-escenas').hidden), 'Sin el botón de escenas premium');
+const escenas = await p.evaluate(() => window.__mesa.escenas().then((l) => l.length));
+const compilada = await p.evaluate(() => fetch('/src/mesa/main.ts').then((r) => !r.ok || !/typescript|javascript/.test(r.headers.get('content-type') ?? '')).catch(() => true));
+if (compilada) revisar(escenas === 0, `La app de amigos no trae ninguna escena premium (${escenas})`);
+// (sin acelerar: con las animaciones de verdad, una partida entera tarda mucho con WebGL por software; basta con que
+//  avancen las rondas y los muñequitos hablen)
+const ronda = () => p.evaluate(() => Number(/Ronda (\d+)/.exec(document.getElementById('partida').innerText)?.[1] ?? 0));
+const t0 = Date.now();
+while (Date.now() - t0 < 180_000 && (await ronda()) < 4) {
+  await p.evaluate(() => {
+    const pt = window.__mesa.partida;
+    if (!pt || !pt.esperando) return;
+    const f = pt.esperando;
+    pt.esperando = null;
+    f(pt.juego.ia(pt.e, 'normal', Math.random));
+  }).catch(() => {});
+  await espera(300);
+}
+revisar((await ronda()) >= 4, `La partida de dados avanza (ronda ${await ronda()})`);
+await foto(p, '4-mesa-final');
+await nadaPersonal(p, 'jugando dados en la mesa');
+nadaDeLaCasa(p, 'la mesa');
+
+// ================================================================================================ 5. Sin modo amigo, a la casa
 const ctxCasa = await navegador.newContext({ viewport: { width: 844, height: 390 } });
 // (la casa de verdad no hace falta: solo se mira que la página mande allá)
 await ctxCasa.route(/\/index\.html/, (ruta) => ruta.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Nuestro Hogar</title>' }));
@@ -339,4 +400,4 @@ if (errores.length) {
   console.log(`\n${errores.length} problema(s):\n${errores.slice(0, 25).join('\n')}`);
   process.exit(1);
 }
-console.log('\nTodo bien: los amigos juegan el retrete y la cocina sin la casa y sin ver nada de la pareja.');
+console.log('\nTodo bien: los amigos juegan el retrete, la cocina y la mesa sin la casa y sin ver nada de la pareja.');

@@ -13,7 +13,7 @@ import { defineConfig, type Plugin } from 'vite';
 //   que en dist-amigos no quede ni una palabra de la pareja (docs/sistemas/salas.md, «Versión para amigos»).
 
 /** Páginas de la versión para amigos. Un juego nuevo para amigos se agrega aquí (y en la lista de `src/amigos/juegos.ts`). */
-export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html'];
+export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html'];
 
 /** Lo que se cambia, en la versión para amigos, por su versión vacía o sin nada personal. */
 const SUSTITUTOS: Record<string, string> = {
@@ -23,6 +23,11 @@ const SUSTITUTOS: Record<string, string> = {
   'src/casa/catalogo.ts': 'src/amigos/sin_pareja/catalogo.ts',
   'src/recuerdos_super.ts': 'src/amigos/sin_pareja/recuerdos_super.ts',
   'src/sangre/historia_pareja.ts': 'src/amigos/sin_pareja/sangre_historia.ts',
+  'src/casa/cohete/pareja.ts': 'src/amigos/sin_pareja/cohete.ts',
+  'src/casa/cocina/pareja.ts': 'src/amigos/sin_pareja/cocina.ts',
+  'src/escenas/catalogo.ts': 'src/amigos/sin_pareja/escenas.ts',
+  'src/escenas/cine.ts': 'src/amigos/sin_pareja/cine.ts',
+  'src/reacciones/pareja.ts': 'src/amigos/sin_pareja/reacciones.ts',
 };
 
 /**
@@ -33,6 +38,10 @@ const SUSTITUTOS: Record<string, string> = {
 export const PERMITIDOS_AMIGOS = [
   'src/amigos/', 'src/salas/', 'src/sangre/', 'src/casa/lavado/', 'src/casa/lavado.ts', 'src/casa/lavado.css', 'src/casa/ropa.ts',
   'src/casa/ropa_tapa.ts', 'src/casa/servidor.ts',
+  // el retrete espacial y la cocina sin la casa (src/sueltos), con lo de la pareja en archivos aparte
+  'src/sueltos/', 'src/casa/cohete/', 'src/casa/cohete.ts', 'src/casa/cohete.css', 'src/casa/cocina/', 'src/casa/progreso_nube.ts', 'src/casa/ropa.json',
+  // los juegos de mesa (sin las escenas premium, que son de la pareja: ver SUSTITUTOS)
+  'src/reacciones/', 'src/mesa/',
 ];
 
 /** Lo de `public/` que va en la versión para amigos (carpetas que terminan en «/» o archivos), además de la ropa. */
@@ -101,8 +110,17 @@ function versionAmigos(): Plugin {
         copiar(`modelos/iconos/ropa_${m.i}_${rol}.webp`);
       }
       for (const it of Object.values(prendas.items)) for (const rol of it.para) copiar(`modelos/ropa/${it.modelo}_${rol}.glb`);
-      // Los trajes de las clases de Sangre y Ceniza
-      for (const f of readdirSync(resolve(pub, 'modelos/ropa'))) if (f.startsWith('sangre_')) copiar(`modelos/ropa/${f}`);
+      // Los trajes de las clases de Sangre y Ceniza y los cascos del retrete espacial
+      for (const f of readdirSync(resolve(pub, 'modelos/ropa'))) if (/^(sangre|cohete)_/.test(f)) copiar(`modelos/ropa/${f}`);
+      // El retrete espacial: sus modelos y los íconos de la tienda y de los poderes
+      for (const f of ['cohete_cosas.glb', 'cohete_retretes.glb']) copiar(`modelos/${f}`);
+      for (const f of readdirSync(resolve(pub, 'modelos/iconos'))) if (/^cohete_\w+\.webp$/.test(f)) copiar(`modelos/iconos/${f}`);
+      // La cocina de chef: fondos, hojas de recortes y la gente, menos la pareja cuando llega a comer (pareja_*)
+      for (const f of readdirSync(resolve(pub, 'cocina'))) if (f !== 'gente') copiar(`cocina/${f}`);
+      for (const f of readdirSync(resolve(pub, 'cocina/gente'))) if (!f.startsWith('pareja_')) copiar(`cocina/gente/${f}`);
+      // Los juegos de mesa: la utilería de las reacciones y las imágenes del Clue
+      for (const f of readdirSync(resolve(pub, 'modelos'))) if (/^reaccion_\w+\.glb$/.test(f)) copiar(`modelos/${f}`);
+      copiar('modelos/clue/');
       // La app arranca en index.html: aquí lleva directo a la sala de juegos de los amigos
       writeFileSync(
         resolve(salida, 'index.html'),

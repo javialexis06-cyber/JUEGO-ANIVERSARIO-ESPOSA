@@ -228,3 +228,18 @@ versión neutra para los amigos, y los ids nuevos no reemplazan ninguno viejo (n
 3. **Modos y tesoros**: ¿toda la capa de exploración del original (tesoros, mercader, cajitas) o solo los modos?
 4. **Disfraces**: ¿cuántos nuevos y con transformación al nivel 80?
 5. **Aventuras**: ¿te animas a contar más de las tres aventuras de «la protagonista» para volverlas capítulos?
+
+### Lo que respondió Javier (9 de octubre)
+
+1. **Armas**: «lo que consideres mejor; creería que todas, incluyendo los DLC, siempre que no se vuelva demasiado
+   complejo» → las 24 del juego base y una selección de las de los DLC que encaje con el aseo (sin mecánicas que pidan
+   otra interfaz).
+2. **Escenarios**: partes de la ducha (La Ducha y lo que hay en ella: la regadera, la jabonera, el desagüe, la
+   cortina…).
+3. **Modos y tesoros**: toda la capa de exploración del original (tesoros, mercader, cajitas, modos).
+4. **Disfraces**: los que se consideren adecuados (con transformación al nivel 80).
+5. **Aventuras**: tres más de «la protagonista» para volverlas capítulos:
+   - una vez tuvo que saltarse de un carro en movimiento;
+   - un viaje en bus a Barranquilla que terminó tan mal que desde entonces no se vuelve a subir a un bus (el detalle
+     no va en el repositorio: es público);
+   - les cancelaron los vuelos a Cartagena y a ella le tocó dormir en el aeropuerto mientras él dormía en un hotel.

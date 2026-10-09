@@ -46,15 +46,19 @@ function textosDelLavado() {
 const COMUNES = new Set(['Para siempre', 'La suerte', 'Lucecitas']);
 
 const FRASES = [...new Set([...recuerdosDelDocumento(), ...textosDelLavado()].filter((t) => t.length >= 8 && !COMUNES.has(t)))];
-/** Platos que son parte de los juegos de los amigos (el kiosco de wafles del súper, sus productos): el plato solo no
- *  delata nada; lo personal es la anécdota («wafles cada vez que quieras»), que sí se busca. */
-const PLATOS_DEL_JUEGO = new Set(['wafle']);
+/** Platos que son parte de los juegos de los amigos (el kiosco de wafles del súper, los tres restaurantes de la cocina):
+ *  el plato solo no delata nada; lo personal es la anécdota («wafles cada vez que quieras», el frappé de después del
+ *  trabajo), que sí se busca. */
+const PLATOS_DEL_JUEGO = new Set(['wafle', 'frappé', 'fresas con crema']);
 const LISTA = [...PALABRAS_PAREJA.filter((p) => !PLATOS_DEL_JUEGO.has(p)), ...FRASES];
 
 /** Archivos que delatan la casa o lo personal (por su ruta). */
 const RUTAS_PROHIBIDAS = [
   /(^|\/)recuerdos\//, /(^|\/)voces\//, /(^|\/)carga\//, /casa_[a-z]/, /(^|\/)deco_/, /(^|\/)comida_/, /(^|\/)regalo/, /(^|\/)puertas/,
-  /(^|\/)mesa\b/, /casa\.json$/, /cocina\//, /cohete_/, /\.(mp3|ogg|m4a|wav)$/,
+  /casa\.json$/, /\.(mp3|ogg|m4a|wav)$/,
+  // la pareja cuando llega a comer a la cocina y el cine de las escenas premium de la mesa (su CSS solo viene con el
+  // cine de verdad: la versión para amigos lleva uno vacío, src/amigos/sin_pareja/cine.ts)
+  /cocina\/gente\/pareja_/, /(^|\/)cine-[\w-]+\.css$/,
 ];
 /** Las únicas páginas que puede tener (la sala de juegos y los juegos aptos; ver PAGINAS_AMIGOS en vite.config.ts). */
 const config = readFileSync('vite.config.ts', 'utf8');

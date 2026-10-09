@@ -15,6 +15,7 @@ import { cargar, cargarAnimado, liberarEsqueletos } from '../recursos';
 import * as fondo from '../segundo_plano';
 import { activar as activarSonido, musica, nota, rumor } from '../sonido';
 import { CUADRO, atlasParticulas, texturaHalo } from './cohete/arte';
+import { FRASES, FRASES_TRAMO, FRASE_PODER, GALAXIA_PAREJA, OTRA_VEZ, PALABRAS_FIGURAS, PASO_PAREJA } from './cohete/pareja';
 import {
   type Cuentas, DURA_PATICO, ESPERA_PATICO, type IdMejora, type IdPoder, PODERES, type ProgresoCohete, type TipoCosmetico, copiaProgreso,
   cuentasNuevas, ganarCosmeticos, multiplicador, nombreTramo, normalizarCohete, ponerNeutroCohete, registrarVuelo, revisarMisiones, tramoDe,
@@ -74,70 +75,6 @@ interface Opciones {
   textoSalir?: string;
 }
 
-/** Lo que va diciendo en el espacio (se sabía que algún día pasaría). */
-const FRASES: Record<Rol, string[]> = {
-  el: [
-    'No debí comerme ese picante…',
-    'Siempre supe que algún día saldría como un cohete del baño.',
-    '¡Houston, tenemos un problema… estomacal!',
-    '¡Ni en un columpio volé tan alto!',
-    '¿Esto cuenta como viaje espacial? Quiero el certificado.',
-    'El ají no perdona.',
-    '¡Mi amor, si me ves pasar por la ventana, saluda!',
-    'La próxima vez pido el ají suavecito.',
-    'Esto no estaba en el presupuesto del mes.',
-    '¡Guárdame la cena, ya vuelvo! Creo.',
-  ],
-  ella: [
-    '¡Sabía que la leche me iba a hacer esto!',
-    'Intolerante a la lactosa… y ahora astronauta.',
-    'Nunca más un vaso de leche. NUNCA.',
-    '¿Alguien tiene papel higiénico en el espacio?',
-    'Siempre supe que algún día saldría como un cohete del baño.',
-    '¡Qué vista tan bonita… qué vergüenza tan grande!',
-    'Si esto sale en las noticias, no me conoces.',
-    'Ningún videojuego me preparó para esto.',
-    'Del baño a la NASA en un solo jalón.',
-    '¡Mi amor, esto es culpa de tu leche!',
-  ],
-};
-const FRASES_TRAMO: Record<Rol, string[]> = {
-  el: [
-    '¡Chao, barrio!',
-    'Desde aquí la Tierra se ve chiquitica… como mi dignidad.',
-    'La Luna… y yo sin una serenata preparada.',
-    '¿Habrá baños en Marte? Pregunto por un amigo.',
-    'Esto está más lleno que el metro de Medellín en hora pico.',
-    'Parece un concierto con luces de colores. Qué nivel.',
-    '¡Todo es rosado! Esto lo decoró mi amor, seguro.',
-  ],
-  ella: [
-    '¡Chao, barrio! ¡Que nadie me vea!',
-    'Desde aquí la Tierra se ve chiquitica… como mi paciencia.',
-    '¿La Luna es de queso? Ni loca la pruebo: lactosa.',
-    '¿Habrá baños en Marte? Ojalá con papel.',
-    'Esto está más lleno que el metro de Medellín en hora pico.',
-    '¡Qué colores tan bonitos! Parece un cuadro.',
-    '¡Todo rosado! Así sí me gusta el espacio.',
-  ],
-};
-const FRASE_PODER: Record<IdPoder, Record<Rol, string>> = {
-  escudo: { el: '¡Limpiecito y protegido!', ella: '¡Burbujita protectora!' },
-  iman: { el: '¡Vengan, rollitos míos!', ella: '¡Vengan a mamá, rollitos!' },
-  turbo: { el: '¡Los frijoles de mi suegra!', ella: '¡Esa bandeja paisa no perdona!' },
-  lenta: { el: 'Todo va como Netflix con mal internet…', ella: 'Ay, qué paz… todo despacito.' },
-  doble: { el: '¡Doble o nada!', ella: '¡Todo me sale doble!' },
-  laser: { el: '¡Destapando el universo!', ella: '¡Desatascador láser, a la orden!' },
-  mini: { el: '¡Mi retretico ayudante!', ella: '¡Un retretico bebé!' },
-  hormiga: { el: '¡Me encogí como ropa en lavadora!', ella: '¡Quedé chiquitica!' },
-  ambientador: { el: '¡Huele a lavanda! Ya era hora.', ella: '¡Aroma a lavanda, por fin!' },
-  paca: { el: '¡Papel para todo el año!', ella: '¡Papel pa’ la casa entera!' },
-};
-/** Lo que dice al volver a volar sin bajarse. */
-const OTRA_VEZ: Record<Rol, string[]> = {
-  el: ['¡Una más y ya!', 'Esta vez sí le gano a mi amor.', '¡Revancha, universo!', 'Ya le cogí el tiro a esto.'],
-  ella: ['¡Una más y ya!', 'Ahora sí voy con toda.', '¡Revancha, universo!', 'Me quedé con ganas de más.'],
-};
 /**
  * Modo neutro (juega un amigo): lo mismo, sin la leche, el picante, los apodos ni los recuerdos de la pareja, y sin
  * «liviano|liviana» (no sabemos cómo le gusta que le digan).
@@ -872,7 +809,7 @@ class RetreteEspacial {
     const rp = this.o.recordPareja ?? 0;
     if (!this.neutro && !this.pasoPareja && rp > 150 && metros > rp) {
       this.pasoPareja = true;
-      this.decir(this.o.rol === 'el' ? '¡Te pasé, mi amor! 😏' : '¡Chao, mi amor! Te dejé atrás 💅', 2.6);
+      this.decir(PASO_PAREJA[this.o.rol], 2.6);
       this.fx.estallido(n.x, n.y + 1, CUADRO.corazon, ['#FF4F7E', '#FF8FB1'], 18, 5, 0.45);
     }
     this.moverMarcas();
@@ -1861,7 +1798,7 @@ export function textosDeLaPareja(): string[] {
     ...FRASES.el, ...FRASES.ella, ...FRASES_TRAMO.el, ...FRASES_TRAMO.ella, ...OTRA_VEZ.el, ...OTRA_VEZ.ella,
     ...Object.values(FRASE_PODER).flatMap((f) => [f.el, f.ella]),
   ];
-  return [...new Set(todas.filter((t) => !neutras.has(t))), 'J ♥ L', 'TE AMO', 'TQM', 'La galaxia del amor', 'Récord de Laura', 'Récord de Javier', 'Le ganaste'];
+  return [...new Set(todas.filter((t) => !neutras.has(t))), ...PALABRAS_FIGURAS, GALAXIA_PAREJA, ...Object.values(PASO_PAREJA), 'Récord de Laura', 'Récord de Javier', 'Le ganaste'];
 }
 
 /** Empieza a cargar los modelos del vuelo (mientras el personaje va al baño). */

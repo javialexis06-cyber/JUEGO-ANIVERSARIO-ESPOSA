@@ -26,14 +26,26 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
    equipo con rarezas, la Forja con tres mostradores, el familiar, el refugio y las medallas). Quedaron para después,
    anotados en la propuesta: el aceite de lámpara y los sellos de la Procesión, los espejos del castillo y el piso en
    llamas de la abadía.
-2. **Lavarse la cara 2** (`docs/en-obra/lavado-propuesta.md`): antes de empezar, hacerle a Javier las 5 preguntas del
-   final (armas, escenarios, modos y tesoros, disfraces, aventuras).
-3. **Amigos: mesa, retrete y cocina en la app de amigos** (abajo, en «Amigos: lo que sigue»).
-4. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
-5. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.
+2. **Sangre y Ceniza: lo que Javier encontró jugando** (9 de octubre), antes de Lavarse la cara 2:
+   - pantallazo negro de 1-2 s al subir de nivel (con las mejoras del piso no pasa);
+   - el Guardián debe salir apenas se cumple la misión principal (o a los pocos segundos);
+   - visión astral como pulso de 1-2 s que cuesta 10 de vida y sube por etapa;
+   - textos que se ponen gigantes al pasar el ratón; reliquias del final y el premio de la misión gigantes;
+   - el rango de recoger crece con el nivel; lo que se mina con bombas y demás llega solo al inventario; las bombas
+     rompen paredes con y sin minerales;
+   - al escoger equipo del Pozo la pantalla vuelve al principio (y todos los errores de ese tipo);
+   - **sigilos**: minimapa que se descubre al pasar (con el croquis de todo el mapa), brújula de sangre (70 % de la
+     vida por señalar el objetivo más cercano) y más ideas;
+   - mejores gráficos de lo simple: refugio, logros, Pozo, íconos de desafíos y una pantalla de inicio mucho más
+     trabajada (puede ser animada).
+3. **Lavarse la cara 2** (`docs/en-obra/lavado-propuesta.md`): Javier ya respondió las 5 preguntas (9 de octubre;
+   están anotadas en la propuesta).
+4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
+5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
+6. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.
 
 Esperan a Javier (no se empiezan solos): lo que sigue abierto de la mitología (sección 2 de `docs/mitologia.md`), las
-respuestas de Lavarse la cara 2, las ideas del sótano, la
+las ideas del sótano, la
 clave de ElevenLabs para las voces, pegar `supabase/cambios-pendientes.sql`, y si quiere el repositorio privado.
 Si cuenta anécdotas nuevas: van primero a las cartas de amor de Lavarse la cara y a las cartas del súper (hoy
 inventadas), mirando «Quién cuenta qué» en `docs/la-pareja.md`.
@@ -106,27 +118,9 @@ velocidad, se siente raro…»
 
 ## Amigos: lo que sigue
 
-- La app «Sala de Juegos» (NuestroHogar-Amigos) hoy trae Sangre y Ceniza, Lavarse la cara y Súper Manía. Los juegos
-  de mesa, el retrete y la cocina con amigos ya funcionan desde «Soy un amigo» en la app de la pareja; falta llevarlos
-  también a la app de amigos (agregar sus páginas a `PAGINAS_AMIGOS`, permitir su código en `vite.config.ts` y dejar
-  `verificar-amigos.mjs` limpio: las frases de pareja de la mesa y las escenas premium no pueden ir adentro).
-  Lo que ya se revisó para hacerlo:
-  - Las páginas ya existen y dejan entrar a un amigo: `retrete.html` y `cocina.html` (código en `src/sueltos/`, con
-    guardia en el `<head>`) y `mesa.html?amigo`; en `src/amigos/juegos.ts` ya están las tarjetas (salen «Muy pronto»
-    hasta que la página tenga `<meta name="apto-amigos" content="si">`).
-  - El retrete (`src/casa/cohete.ts` y `src/casa/cohete/`) esconde lo de la pareja en modo neutro, pero los textos
-    están compilados adentro (frases, banderitas, récord de la pareja, «galaxia del amor»): hay que sacarlos a un
-    archivo de pareja con su sustituto vacío, como `lavado/pareja.ts`. Usa `casa/modelo`, `casa/ropa`,
-    `reacciones/muneco`, `salas/*`, `recursos` y `sonido`.
-  - La cocina (`src/casa/cocina/`) usa `casa/modelo`, `casa/ropa`, `salas/*`, `personaje`, `recursos` y `sonido`;
-    revisar sus textos (invitados, pantallas) con `verificar-amigos`.
-  - La mesa (`src/mesa/`) usa `casa/modelo`, `casa/sincro` (ya tienen sustituto), `escenas/catalogo` y
-    `escenas/cine` (las escenas premium son de la pareja: sustituto vacío) y `reacciones/frases.ts` (tiene frases de
-    la pareja: sacarlas a un archivo aparte con sustituto neutro); el Clue y el Show (si ya se juntó) también se
-    revisan.
-  - Copiar a `dist-amigos` solo los modelos que usan (agregar a `PUBLICOS_AMIGOS` o un filtro como `MODELOS_SUPER`).
-  - Probar: `npm run build:amigos` (que `verificar-amigos` diga «Limpia»), `vite preview --mode amigos` y adaptar
-    `scripts/probar-amigos-juegos.mjs` para que entre desde `amigos.html` de dist-amigos a los tres juegos.
+- ~~La mesa, el retrete y la cocina en la app de amigos~~ **hecho**: la «Sala de Juegos» ya trae los seis juegos
+  (Sangre y Ceniza, Lavarse la cara, Súper Manía, los juegos de mesa, el retrete espacial y la cocina de chef), con lo
+  de la pareja sacado a archivos aparte y su versión neutra (ver `docs/sistemas/salas.md`, «Versión para amigos»).
 - **El repositorio es público**: los enlaces de «Invitar amigos» llevan el nombre del repositorio y cualquiera puede
   leer los documentos de la pareja. Opciones para Javier: volverlo privado y publicar las APK en otro repositorio
   público solo de descargas, o dejarlo así.

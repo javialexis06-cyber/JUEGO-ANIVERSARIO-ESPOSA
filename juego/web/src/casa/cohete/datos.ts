@@ -1,6 +1,7 @@
 // El retrete espacial: lo que se guarda de cada uno (rollitos, mejoras, cosméticos, misiones y récords) y los
 // catálogos de la tienda del retrete. Sin three.js: modelo.ts lo usa para normalizar la casa compartida.
 import type { Rol } from '../modelo';
+import { GALAXIA_PAREJA } from './pareja';
 
 // ---------------------------------------------------------------------------
 // Poderes que salen en el vuelo
@@ -203,7 +204,7 @@ export const TRAMOS: InfoTramo[] = [
   { id: 'marte', nombre: 'Marte', desde: 2200 },
   { id: 'cinturon', nombre: 'El cinturón de asteroides', desde: 3400 },
   { id: 'nebulosa', nombre: 'La nebulosa', desde: 4800 },
-  { id: 'amor', nombre: 'La galaxia del amor', desde: 6500 },
+  { id: 'amor', nombre: GALAXIA_PAREJA, desde: 6500 },
 ];
 /**
  * Modo neutro: juega un amigo (sin casa). Nada de la pareja: la galaxia del amor se vuelve la galaxia de chicle y los
