@@ -230,8 +230,8 @@ export interface Eleccion {
 }
 
 // ------------------------------------------------------------------------------------------------- Equipo
-export type RanuraEquipo = 'casco' | 'armadura' | 'guantes' | 'botas' | 'amuleto' | 'anillo';
-export const RANURAS_EQUIPO: RanuraEquipo[] = ['casco', 'armadura', 'guantes', 'botas', 'amuleto', 'anillo'];
+export type RanuraEquipo = 'casco' | 'armadura' | 'guantes' | 'botas' | 'amuleto' | 'anillo' | 'familiar';
+export const RANURAS_EQUIPO: RanuraEquipo[] = ['casco', 'armadura', 'guantes', 'botas', 'amuleto', 'anillo', 'familiar'];
 /** El equipo del Pozo sube un nivel cada tantos logros de la cuenta (+8 % por nivel). */
 export const NIVEL_EQUIPO_MAX = 5;
 export const LOGROS_POR_NIVEL_EQUIPO = 8;

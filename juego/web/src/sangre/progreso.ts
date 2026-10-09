@@ -16,7 +16,7 @@ const COMUNES_TODAS = ['daga', 'arco_largo', 'hacha_arrojadiza', 'bomba', 'carga
 const MUTADORES_TODOS: IdMutador[] = ['sangrienta', 'sin_antorchas', 'elites_dobles', 'plaga', 'roca_dura', 'codicia', 'eclipse', 'fragiles', 'enjambres', 'velocidad', 'aurelia', 'esmeralda', 'nocturna',
   'cosecha', 'bendita', 'mercado', 'relicaria', 'conde_fantasma', 'oxido', 'campana_borracha', 'escasez', 'hambruna', 'tercos', 'acorazados', 'hinchados', 'barro',
   'marea', 'guardian_furioso', 'tinieblas', 'sin_suministros'];
-const RANURAS: RanuraEquipo[] = ['casco', 'armadura', 'guantes', 'botas', 'amuleto', 'anillo'];
+const RANURAS: RanuraEquipo[] = ['casco', 'armadura', 'guantes', 'botas', 'amuleto', 'anillo', 'familiar'];
 
 export interface CifrasSangre {
   expediciones: number;
@@ -86,6 +86,8 @@ export interface ProgresoSangre {
   contratos: Record<string, number>;
   pruebas: { armas: string[]; clases: IdClase[]; biomas: IdBioma[] };
   puntos: number;
+  /** Los récords de los minijuegos del refugio (J) y la bolsa de ceniza de mentiras de la taberna. */
+  refugio: { barril: number; campana: number; taberna: number; bolsa: number };
   /** Para fusionar copias de dos aparatos (la más reciente gana en lo que no se suma). */
   t: number;
 }
@@ -95,6 +97,7 @@ export function progresoNuevo(): ProgresoSangre {
     v: 1, ceniza: 0, cenizaTotal: 0, pozo: {}, ofrendas: [], maestria: {}, clases: [...CLASES_INICIALES], biomas: [...BIOMAS_INICIALES], ganado: {},
     comunes: [...COMUNES_INICIALES], logros: [], cifras: Object.fromEntries(CIFRAS.map((k) => [k, 0])) as unknown as CifrasSangre, ultima: null, tutorial: false,
     minerales: {}, noche: { metas: [], escenas: [] }, reliquias: [], contratos: {}, pruebas: { armas: [], clases: [], biomas: [] }, puntos: 0, t: 0,
+    refugio: { barril: 0, campana: 0, taberna: 0, bolsa: 100 },
   };
 }
 
@@ -131,6 +134,10 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
     contratos: {},
     pruebas: { armas: [], clases: [], biomas: [] },
     puntos: Math.floor(num(x.puntos, 0, 999)),
+    refugio: {
+      barril: Math.floor(num(esObj(x.refugio) ? x.refugio.barril : 0, 0, 99999)), campana: Math.round(num(esObj(x.refugio) ? x.refugio.campana : 0, 0, 9999) * 10) / 10,
+      taberna: Math.floor(num(esObj(x.refugio) ? x.refugio.taberna : 0, 0, 1e7)), bolsa: Math.floor(num(esObj(x.refugio) ? x.refugio.bolsa : 100, 0, 1e7)),
+    },
     t: num(x.t),
   };
   if (esObj(x.contratos)) {
@@ -194,6 +201,8 @@ export function fusionarProgreso(a: ProgresoSangre, b: ProgresoSangre): Progreso
   };
   // (los puntos se gastan como la ceniza: manda la copia más reciente)
   r.puntos = a.t >= b.t ? a.puntos : b.puntos;
+  // (los récords del refugio: el mejor de los dos aparatos)
+  r.refugio = { ...r.refugio, barril: Math.max(a.refugio.barril, b.refugio.barril), campana: Math.max(a.refugio.campana, b.refugio.campana), taberna: Math.max(a.refugio.taberna, b.refugio.taberna) };
   for (const bi of BIOMAS_TODOS) {
     const v = Math.max(a.ganado[bi] ?? 0, b.ganado[bi] ?? 0);
     if (v) r.ganado[bi] = v;

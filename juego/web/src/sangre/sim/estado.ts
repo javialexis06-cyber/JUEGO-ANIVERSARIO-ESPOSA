@@ -343,7 +343,7 @@ export class Recogible {
 }
 
 // ------------------------------------------------------------------------------------------------- Aliados
-export const ALI = { CABALLERO: 0, BALLESTERO: 1, ESQUELETO: 2, ESPIRITU: 3, TORRETA: 4, TRAMPA: 5, CUERVO: 6, ANIMA: 7, PRISIONERO: 8, TOTEM: 9, ESPIGA: 10, ENCANTADO: 11 } as const;
+export const ALI = { CABALLERO: 0, BALLESTERO: 1, ESQUELETO: 2, ESPIRITU: 3, TORRETA: 4, TRAMPA: 5, CUERVO: 6, ANIMA: 7, PRISIONERO: 8, TOTEM: 9, ESPIGA: 10, ENCANTADO: 11, FAMILIAR: 12 } as const;
 
 export class Aliado {
   vivo = false;

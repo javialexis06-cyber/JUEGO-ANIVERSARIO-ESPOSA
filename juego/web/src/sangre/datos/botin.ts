@@ -1,6 +1,7 @@
 // Todo lo que se consigue en una expedición además de las armas: mejoras al subir de nivel (con rareza), objetos de
 // la Forja con su contrapartida (como Brotato), equipo que cae de élites y cofres (como Halls of Torment), reliquias
 // que cambian la partida (como Army of Ruin) y las bendiciones de los tres santos oscuros (como Death Must Die).
+import { FAMILIARES, textoCampanita } from './familiares';
 import { NIVEL_EQUIPO_MAX, type Etiqueta, type IdMineral, type RanuraEquipo, type Stat, type Stats } from '../tipos';
 
 // ------------------------------------------------------------------------------------------------- Mejoras
@@ -195,6 +196,8 @@ export const EQUIPOS: DefEquipo[] = [
   E('anillo_sangre', 'Anillo de sangre', 'anillo', 2, { roboVida: 0.025, dano: 0.05 }, '+2,5 % de robo de vida y +5 % de daño.'),
   E('anillo_tiempo', 'Anillo del tiempo', 'anillo', 2, { enfriamiento: 0.15, cadencia: 0.06 }, '−15 % de recarga y +6 % de velocidad de ataque.'),
   E('anillo_conde', 'Anillo del Conde', 'anillo', 3, { cantidad: 1, dano: -0.05 }, '+1 proyectil o golpe en todas las armas, −5 % de daño.'),
+  // El familiar (L7): pelea solo a tu lado (ver datos/familiares.ts); la calidad lo hace pegar más
+  ...FAMILIARES.map((f) => E(`fam_${f.id}`, f.nombre, 'familiar', f.id === 'campanita' ? 3 : 2, {}, f.desc, { especial: `familiar:${f.id}` })),
 ];
 export const EQUIPO: Record<string, DefEquipo> = Object.fromEntries(EQUIPOS.map((e) => [e.id, e]));
 
@@ -288,8 +291,8 @@ const ETQ_STAT: Partial<Record<keyof Stats, [string, string]>> = {
 
 /** La descripción de una pieza con sus números de verdad (las comunes, la de siempre). */
 export function descPieza(p: Pieza, nivel = 0): string {
-  const esp = p.especiales.map((e) => ESPECIAL[e]?.desc).filter(Boolean).join(' ');
-  if (p.calidad === 0 && nivel <= 0) return `${p.def.desc}${esp ? ` ${esp}` : ''}`;
+  const esp = [p.def.id === 'fam_campanita' ? `Suma ${textoCampanita(p.clave)}.` : '', ...p.especiales.map((e) => ESPECIAL[e]?.desc)].filter(Boolean).join(' ');
+  if ((p.calidad === 0 && nivel <= 0) || !Object.keys(p.def.mod).length) return `${p.calidad ? `${NOMBRE_CALIDAD[p.calidad]}: ` : ''}${p.def.desc}${p.def.ranura === 'familiar' && p.calidad ? ` Pega ${Math.round(30 * p.calidad)} % más.` : ''}${esp ? ` ${esp}` : ''}`;
   const m = MULT_CALIDAD[p.calidad] * (1 + 0.08 * Math.max(0, Math.min(NIVEL_EQUIPO_MAX, nivel)));
   const partes: string[] = [];
   for (const [k, v0] of Object.entries(p.def.mod) as [keyof Stats, number][]) {

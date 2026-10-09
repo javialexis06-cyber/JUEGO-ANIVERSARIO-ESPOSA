@@ -1,6 +1,7 @@
 // Lo que se mueve en el campo de batalla (menos los jugadores): la horda, los jefes, los cadáveres que se desintegran,
 // los aliados, los prisioneros y las cosas del objetivo (carreta, campana, cofres, santuarios). Más una sombra redonda
 // debajo de cada uno (barata y se lee muy bien desde arriba).
+import { FAMILIARES } from '../datos/familiares';
 import * as THREE from 'three';
 import { COLOR_MOD } from '../datos/mundo';
 import { TIPOS, esJefe } from '../sim/catalogo';
@@ -195,6 +196,13 @@ export class Actores {
         ta = a.a >= 1 ? 0.6 + 0.4 * Math.sin(v.t * 5) : 0;
       } else if (a.tipo === ALI.TORRETA || a.tipo === ALI.TRAMPA || a.tipo === ALI.TOTEM) {
         ta = a.tipo === ALI.TOTEM ? 0.4 : 0;
+      } else if (a.tipo === ALI.FAMILIAR) {
+        // El familiar: con sus colores (apenas un toque dorado de aliado); los que vuelan, a media altura
+        const f = FAMILIARES[a.imita];
+        id = !f ? '' : f.id === 'cuervo' ? 'cuervo' : f.id === 'perro' ? 'perro_huesos' : `familiar_${f.id}`;
+        ta = f?.id === 'perro' || f?.id === 'cuervo' ? 0.35 : 0.08;
+        alt = f?.vuela ? 0.9 + Math.sin(v.t * 2.2 + a.id) * 0.08 : 0;
+        esc = f?.id === 'perro' ? 0.75 : f?.id === 'cuervo' ? 0.8 : 1;
       }
       if (!id) continue;
       this.lote(id).poner(a.x, a.y, a.rot, esc, a.fase, a.ataque, a.golpe, 0, alt, col.r, col.g, col.b, ta, 0, transp);

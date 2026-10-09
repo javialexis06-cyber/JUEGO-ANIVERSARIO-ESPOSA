@@ -3064,3 +3064,217 @@ img.ico-render {
   width: 26px;
   height: 26px;
 }
+/* El refugio (Sangre y Ceniza 2, J): la lista de minijuegos y su mesa */
+.refugio .sub-refugio {
+  margin: 0 0 8px;
+  font-style: italic;
+  color: var(--ceniza);
+  font-size: 12.5px;
+}
+.juegos-refugio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  align-content: center;
+}
+.aura-juego {
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 170, 70, 0.35), rgba(120, 50, 10, 0.15) 60%, transparent 72%);
+  box-shadow: 0 0 0 1px rgba(201, 160, 70, 0.35) inset;
+}
+.aura-juego .ico {
+  width: 44px;
+  height: 44px;
+  color: var(--oro-claro);
+}
+.jugar-refugio {
+  margin-top: 4px;
+  pointer-events: none;
+}
+.marcador-refugio span {
+  white-space: nowrap;
+}
+.juego-refugio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 10px;
+  text-align: center;
+  color: var(--hueso);
+  cursor: pointer;
+  border: 1px solid #4a3a2a;
+}
+.juego-refugio b {
+  font: 700 15px/1.1 var(--serif);
+  color: var(--oro-claro);
+}
+.juego-refugio small {
+  font-size: 11.5px;
+  line-height: 1.25;
+  color: var(--ceniza);
+}
+.juego-refugio .record {
+  margin-top: auto;
+  font-size: 11.5px;
+  color: var(--ceniza);
+}
+.juego-refugio .record b {
+  font: 700 12px/1.2 var(--serif);
+  color: var(--hueso);
+}
+.marcador-refugio {
+  display: flex;
+  gap: 14px;
+  margin-left: auto;
+  font: 700 14px/1 var(--serif);
+  color: var(--oro-claro);
+}
+.marcador-refugio span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.marcador-refugio .ico {
+  width: 15px;
+  height: 15px;
+}
+.marcador-refugio .rec {
+  color: var(--ceniza);
+  font-size: 12px;
+}
+.mesa-refugio {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #3e3028;
+  background: #1e1a18;
+}
+.lienzo-refugio {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.taberna {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  grid-template-rows: 1fr auto auto;
+  gap: 8px 14px;
+  height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  background: radial-gradient(ellipse at 50% 40%, #4a2e1a, #1e140e 75%);
+}
+.tabernero {
+  grid-row: span 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.tabernero > .ico {
+  width: 64px;
+  height: 64px;
+  color: #c8a060;
+}
+.globo-tabernero {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #e8d8b0;
+  color: #2a1a10;
+  font: italic 13px/1.25 var(--serif);
+  text-align: center;
+}
+.manos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+.mano {
+  display: grid;
+  grid-template-columns: 90px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--hueso);
+}
+.mano.tuya {
+  border: 1px solid rgba(201, 160, 70, 0.5);
+}
+.mano b {
+  font: 800 22px/1 var(--serif);
+  color: var(--oro-claro);
+  text-align: right;
+}
+.dados {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.dado {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 30px;
+  height: 30px;
+  padding: 4px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  background: #f0e8d8;
+  box-shadow: inset 0 -3px 0 #c8b898, 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+.dado i {
+  width: 6px;
+  height: 6px;
+  margin: auto;
+  border-radius: 50%;
+  background: #2a1a14;
+}
+.dado.d1 i { grid-area: 2 / 2; }
+.dado.d2 i:nth-child(1) { grid-area: 1 / 1; }
+.dado.d2 i:nth-child(2) { grid-area: 3 / 3; }
+.dado.d3 i:nth-child(1) { grid-area: 1 / 1; }
+.dado.d3 i:nth-child(2) { grid-area: 2 / 2; }
+.dado.d3 i:nth-child(3) { grid-area: 3 / 3; }
+.dado.d4 i:nth-child(1) { grid-area: 1 / 1; }
+.dado.d4 i:nth-child(2) { grid-area: 1 / 3; }
+.dado.d4 i:nth-child(3) { grid-area: 3 / 1; }
+.dado.d4 i:nth-child(4) { grid-area: 3 / 3; }
+.dado.d5 i:nth-child(1) { grid-area: 1 / 1; }
+.dado.d5 i:nth-child(2) { grid-area: 1 / 3; }
+.dado.d5 i:nth-child(3) { grid-area: 2 / 2; }
+.dado.d5 i:nth-child(4) { grid-area: 3 / 1; }
+.dado.d5 i:nth-child(5) { grid-area: 3 / 3; }
+.dado.d6 i:nth-child(1) { grid-area: 1 / 1; }
+.dado.d6 i:nth-child(2) { grid-area: 2 / 1; }
+.dado.d6 i:nth-child(3) { grid-area: 3 / 1; }
+.dado.d6 i:nth-child(4) { grid-area: 1 / 3; }
+.dado.d6 i:nth-child(5) { grid-area: 2 / 3; }
+.dado.d6 i:nth-child(6) { grid-area: 3 / 3; }
+.acciones-taberna {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.acciones-taberna .boton-chico.si {
+  border-color: var(--oro);
+  color: var(--oro-claro);
+}
+.taberna .reglas {
+  font-size: 11px;
+  color: var(--ceniza);
+}

@@ -1830,3 +1830,191 @@ def campanita_plata(coll):
         c.malla(sc.bolita(f'destello {k}', (math.cos(a) * 0.13, math.sin(a) * 0.1, 0.12 + 0.03 * k), 0.008, coll, n=1, sub=1), brillo('plata', '#C4DAFF'))
     F.marca('luz', (0, 0, 0.08))
     return F
+
+
+# ------------------------------------------------------------------------------------------------- Familiares (L7)
+# Compañeros chiquitos que siguen al jugador (por piezas, como los enemigos: miran hacia +Y y aletean o caminan).
+# El cuervo y el perro de huesos usan los modelos de los enemigos; estos cinco son nuevos.
+
+def _ojo_tierno(pz, coll, c, r, iris, nombre, mira=(0, 1, 0)):
+    """Ojo grande y tierno: blanco, iris de color, pupila y el brillito."""
+    c = np.asarray(c, float)
+    m = _unit(np.asarray(mira, float))
+    pz.malla(sc.bolita(f'{nombre} blanco', c, r, coll, n=2), P_('#F4F0E6', 'liso'))
+    pz.malla(sc.bolita(f'{nombre} iris', c + m * r * 0.55, (r * 0.62, r * 0.4, r * 0.62) if abs(m[1]) > 0.5 else r * 0.6, coll, n=2), iris)
+    pz.malla(sc.bolita(f'{nombre} pupila', c + m * r * 0.82, r * 0.32, coll, n=1), P_('#0E0A08', 'liso'))
+    pz.malla(sc.bolita(f'{nombre} brillo', c + m * r * 0.9 + np.array([r * 0.25, 0, r * 0.3]), r * 0.13, coll, n=1), brillo('blanco', '#FFF4DA'))
+
+
+@cosa('familiar_linterna')
+def familiar_linterna(coll):
+    """Linterna de ánimas: un farol de hierro que flota solo, con un alma azul adentro que sonríe, y dos llamitas a
+    los lados que hacen de alas."""
+    F = nueva('familiar_linterna', voxel=0.006, suelo=False, flota=1)
+    c = F.pieza('cuerpo', (0, 0, 0.25), tris=2600)
+    mt = hierro(300, '#3A3A42')
+    azul = brillo('azul', '#5ED8FF')
+    # Base, techo de cono con su argolla y los cuatro barrotes
+    c.malla(sc.torno('base', [(0.0, 0.0), (0.1, 0.0), (0.11, 0.02), (0.09, 0.04), (0.0, 0.045)], coll, segmentos=16, centro=(0, 0, 0.06)), mt)
+    c.malla(sc.torno('techo', [(0.0, 0.0), (0.12, 0.0), (0.12, 0.015), (0.06, 0.09), (0.02, 0.12), (0.0, 0.125)], coll, segmentos=16, centro=(0, 0, 0.31)), mt)
+    sf.cuerda_anillo(c, 'argolla', [(math.cos(a) * 0.035, 0, 0.47 + math.sin(a) * 0.03) for a in np.linspace(0, 2 * math.pi, 10, endpoint=False)], 0.008, mt, coll)
+    for k in range(4):
+        a = math.pi / 4 + k * math.pi / 2
+        c.trazo([(math.cos(a) * 0.09, math.sin(a) * 0.09, 0.1), (math.cos(a) * 0.1, math.sin(a) * 0.1, 0.31)], 0.01, mt, 0.0)
+    c.malla(sc.bolita('vidrio', (0, 0, 0.205), (0.085, 0.085, 0.1), coll, n=2), P_('#8AD8FF', 'vidrio', mat='espectro'))
+    # El alma: una llama azul con carita
+    c.malla(sc.punta('alma', (0, 0, 0.13), (0, 0, 0.3), 0.06, coll, seg=8, medio=0.45), azul)
+    for s in (-1, 1):
+        c.malla(sc.bolita(f'ojo alma {s}', (s * 0.018, 0.045, 0.2), (0.008, 0.005, 0.012), coll, n=1), P_('#0A1A2A', 'liso'))
+    c.trazo([(-0.014, 0.05, 0.178), (0.0, 0.053, 0.172), (0.014, 0.05, 0.178)], 0.003, P_('#0A1A2A', 'liso'), 0.0)
+    F.marca('luz', (0, 0, 0.2))
+    for lado, s in LADOS:
+        w = F.pieza(f'ala_{lado}', (s * 0.1, 0, 0.22), tris=300)
+        for q in range(3):
+            w.malla(sc.punta(f'llamita {lado} {q}', (s * 0.1, 0, 0.21 - 0.03 * q), (s * (0.22 - 0.03 * q), -0.03, 0.26 - 0.05 * q), 0.03 - 0.006 * q, coll, seg=5),
+                    azul if q == 0 else P_('#8AD8FF', 'vidrio', mat='espectro'))
+    return F
+
+
+@cosa('familiar_sapo')
+def familiar_sapo(coll):
+    """Sapo de la bruja: gordito, verde con verrugas, ojos saltones y su sombrerito de bruja ladeado."""
+    F = nueva('familiar_sapo', voxel=0.006)
+    piel = P_('#5E8A3A', 'carne', color2='#3A5A22', semilla=310)
+    panza = P_('#C8C88A', 'carne', color2='#A8A86A', semilla=311)
+    c = F.pieza('cuerpo', (0, 0, 0.1), tris=3000)
+    cuerpo = sf.union(sdf.ellipsoid((0, 0, 0.11), (0.16, 0.15, 0.1)), sdf.ellipsoid((0, 0.07, 0.15), (0.13, 0.1, 0.08)), k=0.05)
+    c.sdf(sc.sdf_ruido(cuerpo, 0.004, 25, 310), (-0.22, -0.2, 0.0), (0.22, 0.22, 0.26), piel)
+    c.bola((0, 0.09, 0.08), (0.11, 0.07, 0.06), panza, 0.0)
+    rng = np.random.default_rng(310)
+    for k in range(14):
+        d = np.array([rng.uniform(-1, 1), rng.uniform(-1, 0.6), rng.uniform(0.2, 1)])
+        p, n = sf.hacia(cuerpo, (0, 0.02, 0.12), d)
+        if p is not None:
+            c.malla(sc.bolita(f'verruga {k}', p + n * 0.004, 0.012 + 0.006 * (k % 3), coll, n=1), P_('#4A6A2A', 'carne', semilla=320 + k))
+    # Ojos saltones arriba y la bocota
+    for s in (-1, 1):
+        c.bola((s * 0.07, 0.08, 0.22), 0.045, piel, 0.0)
+        _ojo_tierno(c, coll, (s * 0.07, 0.1, 0.235), 0.035, P_('#E0B020', 'liso'), f'ojo sapo {s}', mira=(s * 0.2, 1, 0.2))
+    c.trazo([(-0.11, 0.135, 0.12), (-0.05, 0.16, 0.105), (0.0, 0.165, 0.103), (0.05, 0.16, 0.105), (0.11, 0.135, 0.12)], 0.006, P_('#2A1A14', 'liso'), 0.0)
+    for s in (-1, 1):
+        c.bola((s * 0.09, 0.14, 0.13), (0.02, 0.012, 0.015), P_('#D88A8A', 'carne', semilla=330), 0.0)   # cachetes
+        c.trazo([(s * 0.1, 0.1, 0.05), (s * 0.13, 0.17, 0.015)], [0.025, 0.02], piel, 0.0)   # patitas de adelante
+        c.bola((s * 0.135, 0.19, 0.012), (0.03, 0.025, 0.01), piel, 0.0)
+    # El sombrerito de bruja, ladeado
+    sombrero = [(0.0, 0.0), (0.11, 0.0), (0.11, 0.008), (0.05, 0.012), (0.045, 0.06), (0.03, 0.12), (0.012, 0.17), (0.0, 0.18)]
+    c.malla(sc.torno('sombrero', sombrero, coll, segmentos=18, centro=(0.02, -0.01, 0.235), eje=(0.25, -0.15, 1)), P_('#3A1A4A', 'tela', semilla=331))
+    sf.cuerda_anillo(c, 'cinta sombrero', [(0.02 + math.cos(a) * 0.05, -0.01 + math.sin(a) * 0.05, 0.255 + 0.01 * math.cos(a)) for a in np.linspace(0, 2 * math.pi, 14, endpoint=False)],
+                     0.008, P_('#C09040', 'oro', semilla=332, mat='base'), coll)
+    for lado, s in LADOS:
+        p = F.pieza(f'pierna_{lado}', (s * 0.12, -0.06, 0.07), tris=500)
+        p.trazo([(s * 0.12, -0.06, 0.07), (s * 0.17, -0.02, 0.05), (s * 0.15, -0.1, 0.02)], [0.04, 0.03, 0.025], piel, 0.0)
+        p.bola((s * 0.16, -0.06, 0.012), (0.04, 0.05, 0.012), piel, 0.0)
+    return F
+
+
+@cosa('familiar_salamandra')
+def familiar_salamandra(coll):
+    """Salamandra: lagartijita de fuego, naranja con manchas negras y brasas que brillan en el lomo."""
+    F = nueva('familiar_salamandra', voxel=0.005)
+    piel = P_('#E07A2A', 'carne', color2='#B04A1A', semilla=340)
+    mancha = P_('#2A1A14', 'liso')
+    brasa = brillo('fuego', '#FF6A1A')
+    c = F.pieza('cuerpo', (0, 0, 0.06), tris=2400)
+    lomo = [np.array([0, y, 0.07 + 0.015 * math.sin(y * 9)]) for y in np.linspace(-0.12, 0.16, 6)]
+    c.trazo(lomo, [0.05, 0.065, 0.07, 0.068, 0.06, 0.05], piel, 0.0)
+    for k, y in enumerate((-0.08, -0.02, 0.04, 0.1)):
+        for s in (-1, 1):
+            c.bola((s * 0.035, y, 0.115), (0.016, 0.02, 0.008), mancha if (k + s) % 2 else brasa, 0.0)
+    for k, (s, y) in enumerate(((-1, 0.1), (1, 0.1), (-1, -0.07), (1, -0.07))):
+        b = np.array([s * 0.05, y, 0.06])
+        c.trazo([b, b + np.array([s * 0.06, 0.02, -0.03]), b + np.array([s * 0.07, 0.04, -0.055])], [0.022, 0.018, 0.015], piel, 0.0)
+        for q in range(3):
+            c.trazo([b + np.array([s * 0.07, 0.04, -0.055]), b + np.array([s * (0.07 + 0.015 * (q - 1)), 0.07, -0.058])], 0.006, piel, 0.0)
+    h = F.pieza('cabeza', (0, 0.17, 0.08), tris=1400)
+    h.sdf(sf.union(sdf.ellipsoid((0, 0.22, 0.09), (0.07, 0.07, 0.05)), sdf.ellipsoid((0, 0.27, 0.08), (0.05, 0.04, 0.035)), k=0.03), (-0.1, 0.13, 0.02), (0.1, 0.33, 0.16), piel)
+    for s in (-1, 1):
+        _ojo_tierno(h, coll, (s * 0.04, 0.24, 0.125), 0.024, P_('#FFD36B', 'liso'), f'ojo sala {s}', mira=(s * 0.3, 1, 0.3))
+    h.trazo([(-0.03, 0.305, 0.07), (0.0, 0.312, 0.068), (0.03, 0.305, 0.07)], 0.004, mancha, 0.0)
+    k_ = F.pieza('cola', (0, -0.13, 0.07), tris=700)
+    cola = [np.array([0.04 * math.sin(t * 5), -0.13 - t * 0.28, 0.07 - t * 0.04 + 0.04 * t * t]) for t in np.linspace(0, 1, 7)]
+    k_.trazo(cola, list(np.linspace(0.045, 0.012, 7)), piel, 0.0)
+    e = cola[-1]
+    for q in range(3):
+        k_.malla(sc.punta(f'llama cola {q}', e, e + np.array([0.02 * (q - 1), -0.02, 0.07 + 0.02 * (q == 1)]), 0.018, coll, seg=5), brasa)
+    F.marca('luz', (0, 0, 0.12))
+    return F
+
+
+@cosa('familiar_lechuza')
+def familiar_lechuza(coll):
+    """Lechuza de escarcha: bolita de plumas blancas y azules, ojos enormes de hielo, orejitas y escarcha en la cabeza."""
+    F = nueva('familiar_lechuza', voxel=0.006, suelo=False, flota=1)
+    pluma_b = P_('#E8F0F8', 'tela', semilla=350)
+    pluma_a = P_('#8AB0D8', 'tela', semilla=351)
+    hielo = brillo('hielo', '#8AF0FF')
+    c = F.pieza('cuerpo', (0, 0, 0.2), tris=2800)
+    cuerpo = sf.union(sdf.ellipsoid((0, 0, 0.17), (0.14, 0.12, 0.15)), sdf.ellipsoid((0, 0.02, 0.3), (0.13, 0.11, 0.1)), k=0.06)
+    c.sdf(sc.sdf_ruido(cuerpo, 0.004, 30, 350), (-0.2, -0.17, 0.0), (0.2, 0.17, 0.42), pluma_b)
+    # Pecho moteado y el disco de la cara
+    for k in range(10):
+        a = -0.6 + (k % 5) * 0.3
+        z = 0.12 + 0.05 * (k // 5)
+        p, n = sf.hacia(cuerpo, (0, 0, z), (math.sin(a), 1, 0))
+        if p is not None:
+            c.malla(sc.punta(f'mota {k}', p - n * 0.003, p + n * 0.004 + np.array([0, 0, -0.02]), 0.012, coll, seg=3), pluma_a)
+    c.bola((0, 0.1, 0.3), (0.11, 0.03, 0.08), P_('#F8FAFC', 'tela', semilla=352), 0.0)
+    for s in (-1, 1):
+        _ojo_tierno(c, coll, (s * 0.05, 0.115, 0.31), 0.04, hielo, f'ojo lechuza {s}')
+        sf.cuerno(c, f'oreja {s}', [(s * 0.08, 0.02, 0.38), (s * 0.11, 0.0, 0.43), (s * 0.12, -0.01, 0.46)], 0.025, pluma_a, coll)
+    c.malla(sc.punta('pico', (0, 0.125, 0.29), (0, 0.15, 0.255), 0.016, coll, seg=4), P_('#C8A040', 'liso'))
+    # Escarcha en la cabeza y las patitas
+    for k in range(4):
+        a = -0.6 + k * 0.4
+        b = np.array([math.sin(a) * 0.06, -0.01, 0.39])
+        c.malla(sc.punta(f'escarcha {k}', b, b + np.array([math.sin(a) * 0.03, 0.0, 0.04 + 0.01 * (k % 2)]), 0.012, coll, seg=4), hielo)
+    for s in (-1, 1):
+        for q in range(3):
+            b = np.array([s * 0.05, 0.03, 0.03])
+            c.trazo([b, b + np.array([s * 0.01 * (q - 1), 0.03, -0.025])], 0.007, P_('#C8A040', 'liso'), 0.0)
+    for lado, s in LADOS:
+        w = F.pieza(f'ala_{lado}', (s * 0.12, -0.01, 0.24), tris=600)
+        for q in range(4):
+            b = np.array([s * 0.12, -0.01, 0.24 - q * 0.015])
+            e = b + np.array([s * (0.16 - 0.025 * q), -0.03, -0.06 - 0.03 * q])
+            w.malla(sf.pluma(f'remera {lado} {q}', b, e, 0.05, coll, normal=(0, -1, 0.2), grosor=0.006), pluma_b if q % 2 else pluma_a)
+    F.marca('luz', (0, 0.12, 0.31))
+    return F
+
+
+@cosa('familiar_campanita')
+def familiar_campanita(coll):
+    """Campanita de plata: la campanita de las Santas con alitas de plumas blancas, lazo rojo y carita."""
+    F = nueva('familiar_campanita', voxel=0.005, suelo=False, flota=1)
+    plata = P_('#C8CED8', 'cera', semilla=360)
+    c = F.pieza('cuerpo', (0, 0, 0.15), tris=1800)
+    perfil = [(r * 0.09, z * 0.09) for r, z in ((1.05, 0.0), (1.08, 0.06), (0.98, 0.18), (0.82, 0.45), (0.74, 0.8), (0.72, 1.15), (0.66, 1.4), (0.45, 1.58), (0.0, 1.62))]
+    c.malla(sc.torno('campanita', perfil, coll, segmentos=20, centro=(0, 0, 0.06)), plata)
+    c.malla(sc.torno('dentro', [(0.0, 0.12), (0.06, 0.1), (0.07, 0.05), (0.09, 0.004)], coll, segmentos=20, centro=(0, 0, 0.06)), P_('#3A3E48', 'liso'))
+    c.bola((0, 0, 0.045), 0.022, P_('#8A8E98', 'cera', semilla=361), 0.0)
+    sf.cuerda_anillo(c, 'filo', [(math.cos(a) * 0.098, math.sin(a) * 0.098, 0.066) for a in np.linspace(0, 2 * math.pi, 20, endpoint=False)], 0.006,
+                     P_('#E8ECF2', 'cera', semilla=362), coll)
+    c.malla(sc.torno('asa', [(0.0, 0.0), (0.02, 0.0), (0.025, 0.02), (0.02, 0.04), (0.0, 0.045)], coll, segmentos=12, centro=(0, 0, 0.205)), P_('#C09040', 'oro', semilla=363, mat='base'))
+    # La carita en el frente (+Y) y el lazo
+    for s in (-1, 1):
+        c.malla(sc.bolita(f'ojo {s}', (s * 0.025, 0.07, 0.14), (0.008, 0.005, 0.012), coll, n=1), P_('#14161C', 'liso'))
+        c.bola((s * 0.045, 0.065, 0.12), (0.012, 0.005, 0.008), P_('#E8A0A8', 'cera', semilla=364), 0.0)
+    c.trazo([(-0.012, 0.073, 0.115), (0.0, 0.076, 0.11), (0.012, 0.073, 0.115)], 0.0025, P_('#14161C', 'liso'), 0.0)
+    rojo = P_('#A8141C', 'tela', semilla=365)
+    b = np.array([0, 0.03, 0.2])
+    c.bola(b, (0.014, 0.01, 0.012), rojo, 0.0)
+    for s in (-1, 1):
+        c.malla(sf.pluma(f'oreja lazo {s}', b, b + np.array([s * 0.045, 0.01, 0.015]), 0.03, coll, normal=(0, 1, 0.2), grosor=0.004), rojo)
+    for lado, s in LADOS:
+        w = F.pieza(f'ala_{lado}', (s * 0.06, -0.01, 0.17), tris=400)
+        for q in range(3):
+            base = np.array([s * 0.06, -0.01, 0.17])
+            e = base + np.array([s * (0.12 - 0.025 * q), -0.02, 0.05 - 0.035 * q])
+            w.malla(sf.pluma(f'pluma {lado} {q}', base, e, 0.04, coll, normal=(0, -1, 0.3), grosor=0.004), P_('#F4F4F8', 'tela', semilla=366 + q))
+    F.marca('luz', (0, 0, 0.12))
+    return F

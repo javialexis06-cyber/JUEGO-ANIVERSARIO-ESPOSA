@@ -40,6 +40,7 @@ import { BIOMAS_ORDEN, CLASES_ORDEN, MINERALES_ORDEN, RANURAS_EQUIPO, type Confi
 import { Tutorial } from './tutorial';
 import { VistaEleccion } from './ui/eleccion';
 import { mostrarForja } from './ui/forja';
+import { mostrarRefugio } from './ui/refugio';
 import { verEscena } from './ui/historia';
 import { aviso } from './ui/hud';
 import { glifo, icono, revisarRenders } from './ui/iconos';
@@ -132,7 +133,7 @@ let partida: PartidaComun | null = null;
 /** La sala del grupo (si se juega con otros). */
 let sala: Sala | null = null;
 let tutorial: Tutorial | null = null;
-let pantalla: 'carga' | 'titulo' | 'clases' | 'expedicion' | 'pozo' | 'logros' | 'noche' | 'desafios' | 'juego' | 'forja' | 'resultado' | 'grupo' | 'sala' = 'carga';
+let pantalla: 'carga' | 'titulo' | 'clases' | 'expedicion' | 'pozo' | 'logros' | 'noche' | 'desafios' | 'juego' | 'forja' | 'resultado' | 'grupo' | 'sala' | 'refugio' = 'carga';
 const eleccionMenu = new VistaEleccion();
 
 const perfilVista = () => ({ i: 0, cuerpo: yo.cuerpo, clase: sel.clase, piel: yo.piel, pelo: yo.pelo, detalles: yo.detalles });
@@ -260,10 +261,11 @@ function titulo() {
       <button class="boton" data-a="pozo">${glifo('caliz')}El Pozo</button>
       <button class="boton" data-a="logros">${glifo('corona')}Logros <small>${p.logros.length}/${LOGROS.length}</small></button>
       <button class="boton" data-a="tutorial">${glifo('libro')}${p.tutorial ? 'Tutorial' : 'Aprender'}</button>
-      <button class="boton" data-a="salir">${glifo('atras')}Volver</button>
+      <button class="boton" data-a="refugio">${glifo('jarra')}El refugio</button>
     </div>
     <div class="quien"><b>${esc(yo.nombre)}</b><br>${nombreClase(sel.clase, yo.cuerpo)} · ${tituloMaestria(nv)}</div>
     <div class="titulo-pie">
+      <button class="boton-redondo" data-a="salir" aria-label="Volver" title="Volver">${glifo('atras')}</button>
       <button class="boton-redondo" data-a="sonido" aria-label="Sonido">${glifo(sonido.silenciado() ? 'pausa' : 'sonido')}</button>
       <button class="boton-redondo" data-a="musica" aria-label="Música">${glifo('musica')}</button>
     </div>`);
@@ -285,6 +287,7 @@ function titulo() {
     else if (a === 'pozo') pozo();
     else if (a === 'logros') logros();
     else if (a === 'salir') salirDelJuego();
+    else if (a === 'refugio') refugio(() => titulo());
     else if (a === 'sonido') {
       sonido.alternar();
       titulo();
@@ -293,6 +296,29 @@ function titulo() {
       musica.despertar();
       titulo();
     }
+  });
+}
+
+/** El refugio (J): los tres minijuegos, con los récords de cada uno y los del otro. */
+function refugio(alVolver: () => void) {
+  pantalla = 'refugio';
+  const p = P();
+  const nombreOtro = yo.tipo === 'el' ? NOMBRE_PAREJA.ella : yo.tipo === 'ella' ? NOMBRE_PAREJA.el : null;
+  mostrarRefugio({
+    contenedor: pantallas, records: { ...p.refugio }, nombreOtro,
+    // (si la casa no contesta en 4 s, se queda en «—»)
+    delOtro: nombreOtro ? Promise.race([guardado.delOtro().then((o) => o?.refugio ?? null).catch(() => null), new Promise<null>((r) => setTimeout(() => r(null), 4000))]) : undefined,
+    alGuardar: (r) => {
+      P().refugio = { ...r };
+      guardado.guardar();
+    },
+    alVolver: () => {
+      void campamento();
+      alVolver();
+    },
+    // (mientras se juega un minijuego, el campamento 3D de fondo se apaga: el juego va más suave y gasta menos)
+    alJugar: (jugando) => (jugando ? cerrarCampamento() : void campamento()),
+    sonar: (q) => (q === 'golpe' ? efectos.boton() : q === 'campana' ? efectos.campana() : efectos[q]()),
   });
 }
 
@@ -1455,6 +1481,16 @@ async function lobby() {
     sala: s, titulo: 'Sangre y Ceniza', tema: 'oscuro', subtitulo: s.soyAnfitrion ? resumenExp() : 'Escoge tu clase mientras arrancan',
     retrato: retratoSala, detalle,
     extras: [
+      { id: 'refugio', texto: '🍺 Refugio', alTocar: () => {
+        // (los minijuegos mientras llegan los demás)
+        esconder(true);
+        refugio(() => {
+          pantallas.replaceChildren();
+          pantalla = 'sala';
+          esconder(false);
+          e.repintar();
+        });
+      } },
       { id: 'clase', texto: '⚔️ Mi clase', alTocar: () => {
         esconder(true);
         escogerClase(() => {

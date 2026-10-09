@@ -56,8 +56,8 @@ export function jefeMuerto(sim: Sim, i: number) {
   for (let k = 0; k < 4; k++) sim.soltar(REC.SANGRE, x, y, 3);
   for (let k = 0; k < 3; k++) sim.soltar(REC.HIERRO, x, y, 3);
   for (let k = 0; k < sim.n; k++) sim.soltar(REC.COFRE, x, y, 1);
-  // El jefe siempre suelta una pieza de equipo rara o mejor para cada uno
-  for (const j of sim.J) if (j.estado === 0 || j.estado === 1) encolarEquipo(sim, j, 2);
+  // El jefe siempre suelta una pieza de equipo rara o mejor para cada uno (un familiar si no tiene, o a veces)
+  for (const j of sim.J) if (j.estado === 0 || j.estado === 1) encolarEquipo(sim, j, 2, !j.equipo.familiar || sim.az.n() < 0.35 ? 'familiar' : undefined);
   sim.jefe = -1;
   sim.obj.hecho = true;
   // Los secuaces se deshacen

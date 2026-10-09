@@ -7,6 +7,7 @@ import { TIPO, TIPOS, TIPO_ALTAR, esJefe } from './catalogo';
 import { ALI, ENT, Entidad, MOV, type Proyectil, REC, S, ZONA } from './estado';
 import { BIT_ETQ, RADIO_JUGADOR, type Jugador } from './jugador';
 import { encolarCofre, encolarEquipo } from './opciones';
+import { asegurarFamiliar } from './aliados';
 import { Golpe } from './golpe';
 import type { Sim } from './sim';
 
@@ -106,6 +107,7 @@ export function alEmpezarEtapa(sim: Sim, j: Jugador) {
   if (j.tiene('galleta_monje') && sim.cfg.etapa > 1) sim.curar(j, j.hpMax * 0.5);
   // Las rarezas especiales del equipo que obran al empezar
   j.arranqueT = 20;
+  asegurarFamiliar(sim, j);
   if (j.tieneEspecial('escudo_inicio')) j.paraGolpes = Math.max(j.paraGolpes, 2);
 }
 

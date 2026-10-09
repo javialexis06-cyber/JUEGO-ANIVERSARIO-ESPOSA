@@ -1,9 +1,11 @@
 // Los aliados: la guardia del monarca, los esqueletos y espíritus del sepulturero, las ánimas del Santo Hueco, los
 // encantados por la flauta, las torretas y trampas del herrero, los cuervos y el tótem de la bruja y las espigas del
 // campesino. Pelean solos, siguen a su dueño y los enemigos que los tocan los van gastando.
+import { FAMILIARES, INDICE_FAMILIAR } from '../datos/familiares';
+import { pieza } from '../datos/botin';
 import { TIPOS, esJefe } from './catalogo';
 import { ALI, MOV, S, ZONA, type Aliado } from './estado';
-import { BIT_ETQ } from './jugador';
+import { BIT_ETQ, type Jugador } from './jugador';
 import { Golpe } from './golpe';
 import type { Sim } from './sim';
 
@@ -59,6 +61,9 @@ export function moverAliados(sim: Sim, dt: number) {
         break;
       case ALI.ESPIGA:
         espiga(sim, a, dt);
+        break;
+      case ALI.FAMILIAR:
+        familiar(sim, a, dt);
         break;
     }
     // Los enemigos que lo tocan lo gastan (los que tienen vida de verdad)
@@ -313,3 +318,143 @@ function espiga(sim: Sim, a: Aliado, dt: number) {
 }
 
 export { esJefe };
+
+// ------------------------------------------------------------------------------------------------- El familiar (L7)
+/** Que el jugador tenga a su lado el familiar que lleva puesto (y solo ese). Se llama al empezar la etapa y al
+ *  cambiar de equipo. En `a.imita` va cuál es (índice de FAMILIARES) y en `a.b` lo que pega de más por la calidad. */
+export function asegurarFamiliar(sim: Sim, j: Jugador) {
+  const p = pieza(j.equipo.familiar);
+  const k = p ? INDICE_FAMILIAR[p.def.id.replace(/^fam_/, '')] ?? -1 : -1;
+  let ya = false;
+  for (const a of sim.A) {
+    if (!a.vivo || a.tipo !== ALI.FAMILIAR || a.dueno !== j.i) continue;
+    if (a.imita === k && !ya) {
+      a.b = 1 + 0.3 * (p?.calidad ?? 0);
+      ya = true;
+    } else a.vivo = false;
+  }
+  if (ya || k < 0 || j.estado === 2 || j.estado === 3) return;
+  const a = sim.nuevoAliado();
+  if (!a) return;
+  Object.assign(a, { tipo: ALI.FAMILIAR, dueno: j.i, x: j.x - j.fx, y: j.y - j.fy, hp: 9999, hpMax: 9999, vida: 0, r: 0.3, imita: k, b: 1 + 0.3 * (p?.calidad ?? 0) });
+}
+
+function familiar(sim: Sim, a: Aliado, dt: number) {
+  const j = sim.J[a.dueno];
+  const def = FAMILIARES[a.imita];
+  if (!j || !def) {
+    a.vivo = false;
+    return;
+  }
+  if (j.estado === 2 || j.estado === 3) return;
+  const dano = (5 + 0.8 * j.nivel) * a.b;
+  const E = sim.E;
+  // Ir con el dueño: los que vuelan dan vueltas a su lado; los que caminan van detrás
+  if (def.vuela) {
+    a.a += dt * (def.id === 'cuervo' ? 2.3 : 1.4);
+    const r = 1.3 + Math.sin(sim.t * 1.3 + a.id) * 0.2;
+    a.x += (j.x + Math.cos(a.a) * r - a.x) * Math.min(1, dt * 5);
+    a.y += (j.y + Math.sin(a.a) * r - a.y) * Math.min(1, dt * 5);
+    a.rot = a.a + Math.PI / 2;
+    a.fase += dt * 9;
+  } else if (def.id !== 'perro' || a.blanco < 0) {
+    const ang = Math.atan2(j.fy, j.fx) + Math.PI + 0.5;
+    const tx = j.x + Math.cos(ang) * 1.3, ty = j.y + Math.sin(ang) * 1.3;
+    // (corre más mientras más lejos quede, para no perderte de vista)
+    const lejos = Math.hypot(tx - a.x, ty - a.y);
+    if (lejos > 0.4) moverHacia(sim, a, tx, ty, Math.min(10, 5 + 0.8 * lejos), dt, false);
+    else {
+      a.vx *= 0.7;
+      a.vy *= 0.7;
+    }
+  }
+  if (Math.hypot(j.x - a.x, j.y - a.y) > (def.vuela ? 12 : 8)) {
+    a.x = j.x - j.fx;
+    a.y = j.y - j.fy;
+  }
+  if (a.atqT > 0) return;
+  switch (def.id) {
+    case 'cuervo': {
+      // Picotazo: se lanza al más cercano y vuelve
+      const i = sim.blanco(a.x, a.y, 3, 'cercano');
+      if (i < 0) return void (a.atqT = 0.3);
+      a.atqT = 0.75;
+      a.ataque = 1;
+      a.x = (a.x + E.x[i]) / 2;
+      a.y = (a.y + E.y[i]) / 2;
+      const g = golpe(sim, a, BIT_ETQ.sombra);
+      g.empuje = 0.5;
+      sim.danar(i, dano, g);
+      return;
+    }
+    case 'linterna': {
+      // Te trae las almas cercanas y quema con su luz al más cercano
+      for (const r of sim.R) if (r.vivo && r.hacia < 0 && r.tipo <= 3 && (r.x - j.x) ** 2 + (r.y - j.y) ** 2 < 25) r.hacia = j.i;
+      const i = sim.blanco(a.x, a.y, 4.5, 'cercano');
+      if (i < 0) return void (a.atqT = 0.4);
+      a.atqT = 1.1;
+      a.ataque = 1;
+      const g = golpe(sim, a, BIT_ETQ.sombra);
+      g.maldicion = 1;
+      sim.danar(i, dano * 1.2, g);
+      sim.suc.push(S.ONDA, E.x[i], E.y[i], 0.8, 8);
+      return;
+    }
+    case 'sapo':
+    case 'salamandra':
+    case 'lechuza': {
+      // Escupe veneno, tira brasas o suelta un frasco helado donde está el más cercano
+      const i = sim.blanco(a.x, a.y, 5.5, 'cercano');
+      if (i < 0) return void (a.atqT = 0.4);
+      a.atqT = def.id === 'salamandra' ? 2 : def.id === 'sapo' ? 2.4 : 2.6;
+      a.ataque = 1;
+      a.rot = Math.atan2(E.x[i] - a.x, E.y[i] - a.y);
+      const z = sim.nuevaZona();
+      if (!z) return;
+      const etq = def.id === 'sapo' ? BIT_ETQ.veneno : def.id === 'salamandra' ? BIT_ETQ.fuego : BIT_ETQ.hielo;
+      Object.assign(z, {
+        tipo: def.id === 'sapo' ? ZONA.ACIDO : def.id === 'salamandra' ? ZONA.FUEGO : ZONA.HIELO, dueno: a.dueno, ranura: -1, arma: -1, x: E.x[i], y: E.y[i],
+        r: def.id === 'lechuza' ? 1.4 : 1.1, dps: dano * (def.id === 'lechuza' ? 0.5 : 0.8), vida: 2.8, total: 2.8, lento: def.id === 'lechuza' ? 0.5 : 0,
+        veneno: def.id === 'sapo' ? 1 : 0, quema: def.id === 'salamandra' ? 1 : 0, maldicion: 0, cura: 0, enemiga: false, sigue: -1, etq: etq | BIT_ETQ.invocacion | BIT_ETQ.area,
+        retraso: 0, unico: false, hecho: false,
+      });
+      if (def.id === 'lechuza') {
+        const g = golpe(sim, a, BIT_ETQ.hielo);
+        g.lento = 0.5;
+        sim.danar(i, dano, g);
+      }
+      return;
+    }
+    case 'perro': {
+      // Muerde a los que se acercan; si una pared le estorba para volver contigo, la excava
+      const i = buscar(sim, a, 5);
+      if (i >= 0 && Math.hypot(j.x - a.x, j.y - a.y) < 6) {
+        const d = Math.hypot(E.x[i] - a.x, E.y[i] - a.y);
+        if (d > a.r + E.r[i] + 0.25) {
+          moverHacia(sim, a, E.x[i], E.y[i], 6, dt, false);
+          return;
+        }
+        a.atqT = 0.6;
+        a.ataque = 1;
+        a.rot = Math.atan2(E.x[i] - a.x, E.y[i] - a.y);
+        const g = golpe(sim, a, BIT_ETQ.fisico | BIT_ETQ.cuerpo);
+        g.sangrado = 1;
+        sim.danar(i, dano * 1.3, g);
+        return;
+      }
+      a.blanco = -1;
+      a.atqT = 0.5;
+      const dx = j.x - a.x, dy = j.y - a.y;
+      const l = Math.hypot(dx, dy);
+      if (l > 1.6 && sim.mapa.solidaEn(a.x + (dx / l) * 0.7, a.y + (dy / l) * 0.7)) {
+        sim.romperParedes(a.x + (dx / l) * 0.7, a.y + (dy / l) * 0.7, 0.6, j);
+        a.ataque = 1;
+      }
+      return;
+    }
+    default:
+      // La campanita no pelea: suena de vez en cuando
+      a.atqT = 3;
+      a.ataque = 1;
+  }
+}

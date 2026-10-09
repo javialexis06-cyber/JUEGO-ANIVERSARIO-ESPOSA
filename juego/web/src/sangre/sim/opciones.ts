@@ -4,8 +4,10 @@
 import { ARMAS, ARMAS_LISTA, MAX_ARMAS, NIVEL_EVOLUCION, NIVEL_MAX_ARMA } from '../datos/armas';
 import { ABRE_SPEC, CLASES } from '../datos/clases';
 import { BENDICION, BENDICIONES, EQUIPOS, MEJORA, MEJORAS, OBJETO, PAREJA_EVOLUCION, RELIQUIA, RELIQUIAS, SANTOS, descPieza, nombrePieza, pieza, piezaNueva, type DefObjeto, type IdSanto } from '../datos/botin';
-import { NOMBRE_RAREZA, PESO_RAREZA, RANURAS_EQUIPO, type Eleccion, type Opcion, type Rareza } from '../tipos';
+import { ETIQUETAS, NOMBRE_RAREZA, PESO_RAREZA, RANURAS_EQUIPO, type Eleccion, type Opcion, type RanuraEquipo, type Rareza } from '../tipos';
+import { etiquetasCampanita } from '../datos/familiares';
 import { soltarOrbitas } from './armas';
+import { asegurarFamiliar } from './aliados';
 import { S } from './estado';
 import { ArmaJ, BIT_ETQ, type Jugador, xpPara } from './jugador';
 import type { Sim } from './sim';
@@ -46,6 +48,9 @@ export function armasPorEtiqueta(j: Jugador): Map<number, number> {
     const bits = a.etq || a.def.etiquetas.reduce((s, e) => s | BIT_ETQ[e], 0);
     for (const b of Object.values(BIT_ETQ)) if (bits & b) porEtq.set(b, (porEtq.get(b) ?? 0) + 1);
   }
+  // La campanita de plata (familiar) cuenta como un arma más con sus dos etiquetas
+  const fam = pieza(j.equipo.familiar);
+  if (fam?.def.id === 'fam_campanita') for (const e of etiquetasCampanita(fam.clave)) porEtq.set(BIT_ETQ[e], (porEtq.get(BIT_ETQ[e]) ?? 0) + 1);
   return porEtq;
 }
 
@@ -66,11 +71,10 @@ function candidatosNivel(j: Jugador): Candidato[] {
   for (const d of CLASES[j.clase].dones) if (j.don(d.id) < d.max && !vet.has(d.id)) c.push({ tipo: 'don', id: d.id, peso: 1.9 });
   // Mejoras de estadísticas. Las de etiqueta, como en Deep Rock, solo salen con DOS armas de esa etiqueta (eso arma
   // las combinaciones) y pesan más con tres o cuatro; la potencia y el daño de estados, si algo pone estados.
-  const porEtq = new Map<number, number>();
+  // (la campanita de plata suma sus dos etiquetas: ver armasPorEtiqueta)
+  const porEtq = armasPorEtiqueta(j);
   let estados = false;
   for (const a of j.armas) {
-    const bits = a.etq || a.def.etiquetas.reduce((s, e) => s | BIT_ETQ[e], 0);
-    for (const b of Object.values(BIT_ETQ)) if (bits & b) porEtq.set(b, (porEtq.get(b) ?? 0) + 1);
     const p = a.p ?? a.def.base;
     if (p.quema > 0 || p.veneno > 0 || p.sangrado > 0 || p.lento > 0) estados = true;
   }
@@ -283,9 +287,9 @@ export function opcionesCofre(sim: Sim, j: Jugador, especial: boolean): Opcion[]
 }
 
 /** Una pieza de equipo al azar: cuál según la suerte y, aparte, su calidad (con `minCalidad` para la del jefe). */
-function elegirEquipo(sim: Sim, j: Jugador, bonus: number, minCalidad = 0): Opcion | null {
+function elegirEquipo(sim: Sim, j: Jugador, bonus: number, minCalidad = 0, ranura?: RanuraEquipo): Opcion | null {
   const r = tirarRareza(sim.az, j.st.suerte, bonus);
-  const lista = EQUIPOS.filter((e) => e.rareza === Math.min(3, r) && pieza(j.equipo[e.ranura])?.def.id !== e.id);
+  const lista = EQUIPOS.filter((e) => (ranura ? e.ranura === ranura : e.rareza === Math.min(3, r)) && pieza(j.equipo[e.ranura])?.def.id !== e.id);
   if (!lista.length) return null;
   const e = sim.az.uno(lista);
   const calidad = Math.max(minCalidad, Math.min(3, tirarRareza(sim.az, j.st.suerte, bonus * 0.5)));
@@ -298,8 +302,8 @@ function elegirEquipo(sim: Sim, j: Jugador, bonus: number, minCalidad = 0): Opci
 }
 
 /** Equipo que cae de un élite (o del jefe, rara o mejor): ponérselo o fundirlo en oro. */
-export function encolarEquipo(sim: Sim, j: Jugador, minCalidad = 0) {
-  const eq = elegirEquipo(sim, j, 0.2, minCalidad);
+export function encolarEquipo(sim: Sim, j: Jugador, minCalidad = 0, ranura?: RanuraEquipo) {
+  const eq = elegirEquipo(sim, j, 0.2, minCalidad, ranura);
   if (!eq) {
     j.oro += 8;
     return;
@@ -438,6 +442,7 @@ export function aplicar(sim: Sim, j: Jugador, op: Opcion) {
       } else {
         const p = pieza(op.id);
         if (p) j.equipo[p.def.ranura] = p.clave;
+        if (p?.def.ranura === 'familiar') asegurarFamiliar(sim, j);
       }
       j.recalcular();
       break;
