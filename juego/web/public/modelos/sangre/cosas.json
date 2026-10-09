@@ -460,8 +460,8 @@
   }
  },
  "c_pozo_almas": {
-  "altura": 2.016,
-  "radio": 0.95,
+  "altura": 2.015,
+  "radio": 0.947,
   "alcance": 0.951,
   "tris": 3000,
   "piezas": {
@@ -484,7 +484,7 @@
  },
  "c_forja": {
   "altura": 2.293,
-  "radio": 0.821,
+  "radio": 0.83,
   "alcance": 0.99,
   "tris": 3522,
   "piezas": {
@@ -751,7 +751,7 @@
  },
  "c_plataforma": {
   "altura": 0.45,
-  "radio": 0.718,
+  "radio": 0.717,
   "alcance": 0.55,
   "tris": 1400,
   "construccion": 1,
@@ -892,7 +892,7 @@
  "c_aliado_ballestero": {
   "altura": 1.18,
   "radio": 0.207,
-  "alcance": 0.579,
+  "alcance": 0.578,
   "tris": 2719,
   "aliado": 1,
   "piezas": {
@@ -1510,7 +1510,7 @@
  },
  "c_columna_hueso": {
   "altura": 1.86,
-  "radio": 0.529,
+  "radio": 0.53,
   "alcance": 0.498,
   "tris": 4195,
   "piezas": {
@@ -1680,7 +1680,7 @@
  },
  "c_relicario": {
   "altura": 1.13,
-  "radio": 0.58,
+  "radio": 0.582,
   "alcance": 1.015,
   "tris": 8000,
   "piezas": {
@@ -1767,6 +1767,197 @@
     0.0,
     0.0,
     0.08
+   ]
+  }
+ },
+ "c_familiar_linterna": {
+  "altura": 0.506,
+  "radio": 0.109,
+  "alcance": 0.22,
+  "tris": 2708,
+  "flota": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.25
+    ],
+    "tris": 2600
+   },
+   "ala_izq": {
+    "pivote": [
+     -0.1,
+     0.0,
+     0.22
+    ],
+    "tris": 54
+   },
+   "ala_der": {
+    "pivote": [
+     0.1,
+     0.0,
+     0.22
+    ],
+    "tris": 54
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.2
+   ]
+  }
+ },
+ "c_familiar_sapo": {
+  "altura": 0.408,
+  "radio": 0.225,
+  "alcance": 0.215,
+  "tris": 4000,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.1
+    ],
+    "tris": 3000
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.12,
+     -0.06,
+     0.07
+    ],
+    "tris": 500
+   },
+   "pierna_der": {
+    "pivote": [
+     0.12,
+     -0.06,
+     0.07
+    ],
+    "tris": 500
+   }
+  }
+ },
+ "c_familiar_salamandra": {
+  "altura": 0.16,
+  "radio": 0.206,
+  "alcance": 0.43,
+  "tris": 4500,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.06
+    ],
+    "tris": 2400
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.17,
+     0.08
+    ],
+    "tris": 1400
+   },
+   "cola": {
+    "pivote": [
+     0.0,
+     -0.13,
+     0.07
+    ],
+    "tris": 700
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.12
+   ]
+  }
+ },
+ "c_familiar_lechuza": {
+  "altura": 0.461,
+  "radio": 0.152,
+  "alcance": 0.28,
+  "tris": 3152,
+  "flota": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.2
+    ],
+    "tris": 2800
+   },
+   "ala_izq": {
+    "pivote": [
+     -0.12,
+     -0.01,
+     0.24
+    ],
+    "tris": 176
+   },
+   "ala_der": {
+    "pivote": [
+     0.12,
+     -0.01,
+     0.24
+    ],
+    "tris": 176
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.12,
+    0.31
+   ]
+  }
+ },
+ "c_familiar_campanita": {
+  "altura": 0.25,
+  "radio": 0.102,
+  "alcance": 0.181,
+  "tris": 2064,
+  "flota": 1,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     0.15
+    ],
+    "tris": 1800
+   },
+   "ala_izq": {
+    "pivote": [
+     -0.06,
+     -0.01,
+     0.17
+    ],
+    "tris": 132
+   },
+   "ala_der": {
+    "pivote": [
+     0.06,
+     -0.01,
+     0.17
+    ],
+    "tris": 132
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    0.0,
+    0.12
    ]
   }
  }

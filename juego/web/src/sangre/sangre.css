@@ -3278,3 +3278,14 @@ img.ico-render {
   font-size: 11px;
   color: var(--ceniza);
 }
+/* Las medallas llenan el aro de la carta (ya traen su propio marco) */
+.carta .ico-carta:has(img[src*='/med_']) {
+  padding: 0;
+  background: none;
+  box-shadow: 0 0 0 2px var(--rareza, #8a8478), 0 3px 8px rgba(40, 20, 5, 0.45);
+}
+.carta .ico-carta img[src*='/med_'] {
+  width: 112%;
+  height: 112%;
+  margin: -6%;
+}

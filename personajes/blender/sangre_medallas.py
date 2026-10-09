@@ -100,13 +100,61 @@ def medalla_base(coll, tema):
 _NUM = None
 
 
+def _arco_a_bezier(x1, y1, rx, ry, fi, grande, barrido, x2, y2):
+    """Arco elíptico de SVG → lista de cúbicas [(c1x, c1y, c2x, c2y, x, y)] (cada trozo de 90° como mucho)."""
+    if (x1 == x2 and y1 == y2) or rx == 0 or ry == 0:
+        return [(x1, y1, x2, y2, x2, y2)]
+    rx, ry = abs(rx), abs(ry)
+    f = math.radians(fi)
+    cf, sf_ = math.cos(f), math.sin(f)
+    dx, dy = (x1 - x2) / 2, (y1 - y2) / 2
+    x1p, y1p = cf * dx + sf_ * dy, -sf_ * dx + cf * dy
+    lam = x1p ** 2 / rx ** 2 + y1p ** 2 / ry ** 2
+    if lam > 1:
+        rx, ry = rx * math.sqrt(lam), ry * math.sqrt(lam)
+    num = rx ** 2 * ry ** 2 - rx ** 2 * y1p ** 2 - ry ** 2 * x1p ** 2
+    den = rx ** 2 * y1p ** 2 + ry ** 2 * x1p ** 2
+    co = math.sqrt(max(0.0, num / den)) if den else 0.0
+    if grande == barrido:
+        co = -co
+    cxp, cyp = co * rx * y1p / ry, -co * ry * x1p / rx
+    cx = cf * cxp - sf_ * cyp + (x1 + x2) / 2
+    cy = sf_ * cxp + cf * cyp + (y1 + y2) / 2
+
+    def ang(ux, uy, vx, vy):
+        a = math.atan2(ux * vy - uy * vx, ux * vx + uy * vy)
+        return a
+    t1 = ang(1, 0, (x1p - cxp) / rx, (y1p - cyp) / ry)
+    dt = ang((x1p - cxp) / rx, (y1p - cyp) / ry, (-x1p - cxp) / rx, (-y1p - cyp) / ry)
+    if not barrido and dt > 0:
+        dt -= 2 * math.pi
+    elif barrido and dt < 0:
+        dt += 2 * math.pi
+    n = max(1, int(math.ceil(abs(dt) / (math.pi / 2) - 1e-9)))
+    d = dt / n
+    k = 4 / 3 * math.tan(d / 4)
+    out = []
+    t = t1
+    for _ in range(n):
+        c1, s1 = math.cos(t), math.sin(t)
+        c2, s2 = math.cos(t + d), math.sin(t + d)
+        p = [(c1 - k * s1, s1 + k * c1), (c2 + k * s2, s2 - k * c2), (c2, s2)]
+        # (con rotación: x = cx + rx·cos(f)·u − ry·sin(f)·v; y = cy + rx·sin(f)·u + ry·cos(f)·v)
+        q = [(cx + rx * cf * u - ry * sf_ * v, cy + rx * sf_ * u + ry * cf * v) for u, v in p]
+        out.append((q[0][0], q[0][1], q[1][0], q[1][1], q[2][0], q[2][1]))
+        t += d
+    return out
+
+
 def normalizar_d(d):
-    """Reescribe el trazo SVG con todo separado: los arcos compactos («a10 10 0 100 20», banderas pegadas) los lee mal
-    el importador de Blender y salen rayas sueltas."""
+    """Reescribe el trazo SVG en absoluto y solo con M, L, C y Z: el importador de Blender lee mal los arcos (y las
+    banderas pegadas, «a10 10 0 100 20») y salían rayas sueltas. Los arcos se vuelven curvas cúbicas."""
     import re
     global _NUM
     _NUM = _NUM or re.compile(r'[-+]?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?')
     out, i, n, cmd, primero = [], 0, len(d), None, True
+    x = y = x0 = y0 = 0.0
+    ctrl = None
 
     def saltar():
         nonlocal i
@@ -118,14 +166,15 @@ def normalizar_d(d):
         saltar()
         m = _NUM.match(d, i)
         i = m.end()
-        return m.group(0)
+        return float(m.group(0))
 
     def bandera():
         nonlocal i
         saltar()
         c = d[i]
         i += 1
-        return c
+        return c == '1'
+    f = lambda v: f'{v:.4f}'.rstrip('0').rstrip('.')
     while True:
         saltar()
         if i >= n:
@@ -133,20 +182,56 @@ def normalizar_d(d):
         if d[i].isalpha():
             cmd = d[i]
             i += 1
-            if cmd in 'Zz':
-                out.append(cmd)
-                primero = True
-                continue
             primero = True
+            if cmd in 'Zz':
+                out.append('Z')
+                x, y = x0, y0
+                ctrl = None
             continue
-        # (cada grupo con su letra: el importador tampoco entiende las repeticiones implícitas; después de M va L)
-        letra = cmd if primero or cmd not in 'Mm' else ('L' if cmd == 'M' else 'l')
+        rel = cmd.islower()
+        c = cmd.upper()
+        if c == 'M' and not primero:
+            c = 'L'
         primero = False
-        if cmd in ('A', 'a'):
-            out += [letra, num(), num(), num(), bandera(), bandera(), num(), num()]
+        bx, by = (x, y) if rel else (0.0, 0.0)
+        if c == 'M':
+            x, y = bx + num(), by + num()
+            x0, y0 = x, y
+            out.append(f'M {f(x)} {f(y)}')
+            ctrl = None
+        elif c == 'L':
+            x, y = bx + num(), by + num()
+            out.append(f'L {f(x)} {f(y)}')
+            ctrl = None
+        elif c == 'H':
+            x = (x if rel else 0.0) + num()
+            out.append(f'L {f(x)} {f(y)}')
+            ctrl = None
+        elif c == 'V':
+            y = (y if rel else 0.0) + num()
+            out.append(f'L {f(x)} {f(y)}')
+            ctrl = None
+        elif c == 'C':
+            c1x, c1y, c2x, c2y, ex, ey = bx + num(), by + num(), bx + num(), by + num(), bx + num(), by + num()
+            out.append(f'C {f(c1x)} {f(c1y)} {f(c2x)} {f(c2y)} {f(ex)} {f(ey)}')
+            ctrl, x, y = (c2x, c2y), ex, ey
+        elif c == 'S':
+            c1x, c1y = (2 * x - ctrl[0], 2 * y - ctrl[1]) if ctrl else (x, y)
+            c2x, c2y, ex, ey = bx + num(), by + num(), bx + num(), by + num()
+            out.append(f'C {f(c1x)} {f(c1y)} {f(c2x)} {f(c2y)} {f(ex)} {f(ey)}')
+            ctrl, x, y = (c2x, c2y), ex, ey
+        elif c == 'Q':
+            qx, qy, ex, ey = bx + num(), by + num(), bx + num(), by + num()
+            out.append(f'C {f(x + 2 / 3 * (qx - x))} {f(y + 2 / 3 * (qy - y))} {f(ex + 2 / 3 * (qx - ex))} {f(ey + 2 / 3 * (qy - ey))} {f(ex)} {f(ey)}')
+            ctrl, x, y = None, ex, ey
+        elif c == 'A':
+            rx, ry, fi, gr, ba = num(), num(), num(), bandera(), bandera()
+            ex, ey = bx + num(), by + num()
+            for c1x, c1y, c2x, c2y, px, py in _arco_a_bezier(x, y, rx, ry, fi, gr, ba, ex, ey):
+                out.append(f'C {f(c1x)} {f(c1y)} {f(c2x)} {f(c2y)} {f(px)} {f(py)}')
+            x, y, ctrl = ex, ey, None
         else:
-            k = {'M': 2, 'L': 2, 'H': 1, 'V': 1, 'C': 6, 'S': 4, 'Q': 4, 'T': 2}[cmd.upper()]
-            out += [letra] + [num() for _ in range(k)]
+            raise ValueError(f'comando {cmd}')
     return ' '.join(out)
 
 
@@ -188,10 +273,21 @@ def relieve(coll, d, tema, tmp):
     g.matrix_world = mathutils.Matrix.Identity(4)
     g.data.dimensions = '2D'
     g.data.fill_mode = 'BOTH'
-    g.data.extrude = 0.06
-    g.data.bevel_depth = 0.022
-    g.data.bevel_resolution = 3
+    g.data.extrude = 0.075
+    g.data.bevel_depth = 0.0
     g.data.resolution_u = 16
+    # (el bisel de la curva se dispara en las puntas agudas —los cuernos de la luna— y salían rayas: se hace malla y el
+    # bisel va como modificador, que no se pasa de las esquinas)
+    bpy.ops.object.select_all(action='DESELECT')
+    g.select_set(True)
+    bpy.context.view_layer.objects.active = g
+    bpy.ops.object.convert(target='MESH')
+    g = bpy.context.view_layer.objects.active
+    bev = g.modifiers.new('bisel', 'BEVEL')
+    bev.width = 0.02
+    bev.segments = 3
+    bev.limit_method = 'ANGLE'
+    bev.use_clamp_overlap = True
     # (de pie mirando a +Y y sin quedar al revés: X 90° y Z 180°)
     g.rotation_euler = (math.radians(90), 0, math.radians(180))
     g.location = (0, 0.16, 0)

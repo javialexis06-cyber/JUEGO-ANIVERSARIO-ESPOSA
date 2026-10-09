@@ -2,6 +2,9 @@
 // los aliados, los prisioneros y las cosas del objetivo (carreta, campana, cofres, santuarios). Más una sombra redonda
 // debajo de cada uno (barata y se lee muy bien desde arriba).
 import { FAMILIARES } from '../datos/familiares';
+
+/** Qué tanto se agranda cada familiar en el juego. */
+const ESC_FAMILIAR: Record<string, number> = { cuervo: 1, perro: 0.85, linterna: 1.6, sapo: 2, salamandra: 2.4, lechuza: 1.8, campanita: 2.2 };
 import * as THREE from 'three';
 import { COLOR_MOD } from '../datos/mundo';
 import { TIPOS, esJefe } from '../sim/catalogo';
@@ -202,7 +205,8 @@ export class Actores {
         id = !f ? '' : f.id === 'cuervo' ? 'cuervo' : f.id === 'perro' ? 'perro_huesos' : `familiar_${f.id}`;
         ta = f?.id === 'perro' || f?.id === 'cuervo' ? 0.35 : 0.08;
         alt = f?.vuela ? 0.9 + Math.sin(v.t * 2.2 + a.id) * 0.08 : 0;
-        esc = f?.id === 'perro' ? 0.75 : f?.id === 'cuervo' ? 0.8 : 1;
+        // (los modelos son chiquitos de verdad: se agrandan para que se lean desde la cámara)
+        esc = f ? ESC_FAMILIAR[f.id] ?? 1.6 : 1;
       }
       if (!id) continue;
       this.lote(id).poner(a.x, a.y, a.rot, esc, a.fase, a.ataque, a.golpe, 0, alt, col.r, col.g, col.b, ta, 0, transp);
