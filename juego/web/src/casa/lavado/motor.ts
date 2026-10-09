@@ -1,7 +1,7 @@
 // El motor de «Lavarse la cara»: la simulación completa del Vampire Survivors del baño, sin DOM ni three.js (corre
 // igual en el celular, en el anfitrión de una partida en pareja y en las pruebas de Node con el bot). Todo vive en
 // piscinas de objetos que se reutilizan: nada se crea por cuadro.
-import { ARMAS, BASICAS, ID_PASIVAS, MAX_RANURAS, PASIVAS, UNION_PIDE, baseEnNivel, maxNivelArma, type BaseArma } from './armas';
+import { ARMAS, BASICAS, ESCONDIDAS, ID_PASIVAS, MAX_RANURAS, PASIVAS, baseEnNivel, linaje, maxNivelArma, pasivasDeEvo, type BaseArma } from './armas';
 import { Azar, hash2 } from './azar';
 import { CARTAS } from './cartas';
 import { DISFRAZ, type DefDisfraz } from './disfraces';
@@ -11,7 +11,7 @@ import { bonosMaestria, MAESTRIA_MAX } from './maestria';
 import { Rejilla } from './rejilla';
 import { PODER } from './tienda';
 import { statsVacios, type Efecto, type IdArma, type IdCarta, type IdEnemigo, type IdEscenario, type IdObjeto, type IdPasiva, type Rol, type Stat, type Stats, type TipoEfecto } from './tipos';
-import { actualizarArmas, moverProyectiles, moverZonas, pendientesGolpe } from './disparos';
+import { actualizarArmas, alHerido, alMatar, moverProyectiles, moverZonas, pendientesGolpe } from './disparos';
 import type { ResumenPartida } from './progreso';
 import { valorOpcion } from './bot';
 import { cartaVista, disfrazVisto, personalizar } from './textos';
@@ -106,7 +106,7 @@ export class Enemigo {
   flash = 0;
   toque = 0;
   /** Cuándo puede volver a recibir golpe de cada fuente que se queda (aura, órbitas, charcos…), por jugador. */
-  hz = new Float32Array(20);
+  hz = new Float32Array(24);
   fase = 0;
   /** Para los que cruzan: dirección fija y cuándo se van. */
   dx = 0;
@@ -118,6 +118,8 @@ export class Enemigo {
   et = 0;
   /** El llamado de «Te busqué por todos lados». */
   llamado = 0;
+  /** La mascarilla lo dejó «sin dientes»: ya no le pega a nadie. */
+  sinDientes = false;
 }
 
 export class Proyectil {
@@ -177,6 +179,8 @@ export class Zona {
   vy = 0;
   crece = 0;
   lento = 0;
+  /** Probabilidad de dejar sin dientes (la mascarilla). */
+  dientes = 0;
   t = 0;
 }
 
@@ -218,6 +222,9 @@ export interface ArmaJ {
   total: number;
   /** Estado propio: lado del látigo, hora del reloj, ángulo de la órbita… */
   k: number;
+  /** Más estado propio (contadores de la plancha, la sauna, la hidrolavadora…). */
+  k2: number;
+  k3: number;
   ang: number;
   activo: number;
   desde: number;
@@ -429,7 +436,8 @@ export class Motor {
   gemaGrande = -1;
   readonly objs: Objeto[] = [];
   readonly rej = new Rejilla(POOL_EN, 64);
-  readonly pend: { vivo: boolean; t: number; x: number; y: number; r: number; dano: number; dueno: number; slot: number; arma: IdArma; tipo: number }[] = [];
+  /** Golpes que caen después (el segundo rayo de la tormenta, los cepillos de espalda que vienen cayendo). */
+  readonly pend: { vivo: boolean; t: number; x: number; y: number; r: number; dano: number; dueno: number; slot: number; arma: IdArma; tipo: number; crit: number; critX: number }[] = [];
   /** Efectos para el dibujo y el sonido (anillo: cada lector lleva su propia cuenta). */
   readonly ef: Efecto[] = [];
   nEf = 0;
@@ -457,7 +465,7 @@ export class Motor {
     for (let i = 0; i < MAX_ZONAS; i++) this.zonas.push(new Zona());
     for (let i = 0; i < MAX_GEMAS + 1; i++) this.gemas.push(new Gema());
     for (let i = 0; i < MAX_OBJ; i++) this.objs.push(new Objeto());
-    for (let i = 0; i < 96; i++) this.pend.push({ vivo: false, t: 0, x: 0, y: 0, r: 0, dano: 0, dueno: 0, slot: 0, arma: 'bombillo', tipo: 0 });
+    for (let i = 0; i < 160; i++) this.pend.push({ vivo: false, t: 0, x: 0, y: 0, r: 0, dano: 0, dueno: 0, slot: 0, arma: 'bombillo', tipo: 0, crit: 0, critX: 2 });
     for (let i = 0; i < MAX_EF; i++) this.ef.push({ tipo: 'golpe', x: 0, y: 0, c: 0, d: 0, e: 0, f: 0, t: '' });
     this.jug = o.jugadores.map((oj, i) => new Jugador(i, oj));
     const n = this.jug.length;
@@ -480,6 +488,30 @@ export class Motor {
     }
     this.tTanda = 0.5;
     this.tGrito = 1.2;
+    // Los anillos y los aretes escondidos de este escenario (si alguien ya tiene el espejito de mano)
+    if (!this.tutorial) ESCONDIDAS.forEach((t, k) => {
+      if (t.escenario !== this.esc.id || !this.jug.some((j) => this.disponible(j, t.id))) return;
+      const o = this.soltar('tesoro', t.x, t.y, k);
+      if (o) this.tesoros.push({ o, guardia: false });
+    });
+  }
+
+  /** Los tesoros escondidos de la partida y si ya salió el mugroso que los cuida. */
+  private tesoros: { o: Objeto; guardia: boolean }[] = [];
+
+  /** Cuando alguien se acerca a un tesoro, sale un élite a cuidarlo. */
+  private cuidarTesoros() {
+    for (const t of this.tesoros) {
+      if (t.guardia || !t.o.vivo) continue;
+      const j = this.jug.find((x) => x.activo && Math.hypot(x.x - t.o.x, x.y - t.o.y) < 520);
+      if (!j) continue;
+      t.guardia = true;
+      const ol = this.esc.oleadas[Math.min(this.esc.oleadas.length - 1, Math.floor(this.t / 60))];
+      const tipo = ol.tipos.find((x) => !ENEMIGOS[x].jefe) ?? 'germen';
+      const e = this.crear(tipo, [t.o.x + 40, t.o.y - 20], j, { elite: true, cofre: 1, fijo: true });
+      if (e) e.hp = e.hpMax = e.hpMax * 2.5;
+      this.aviso('💍 ¡Algo brilla por aquí… y alguien lo está cuidando!', j.i);
+    }
   }
 
   /** Cuándo se dice la habilidad de cada disfraz al empezar. */
@@ -542,8 +574,13 @@ export class Motor {
     vidaPct += m.vidaPct;
     for (const [id, n] of j.pasivas) {
       const p = PASIVAS[id];
-      if (p.stat === 'vida') vidaPct += p.paso * n;
-      else s[p.stat] += p.paso * n;
+      const sumar = (k: Stat, v: number) => {
+        if (k === 'vida') vidaPct += v;
+        else s[k] += v;
+      };
+      sumar(p.stat, p.paso * n);
+      if (p.mas) for (const [k, v] of Object.entries(p.mas) as [Stat, number][]) sumar(k, v * n);
+      if (p.ultimo && n >= p.max) for (const [k, v] of Object.entries(p.ultimo) as [Stat, number][]) sumar(k, v);
     }
     for (const c of j.disfraz.crece) {
       const desde = c.desde ?? c.cada;
@@ -591,7 +628,7 @@ export class Motor {
       a.b = baseEnNivel(id, a.nivel);
       return;
     }
-    j.armas.push({ id, nivel, b: baseEnNivel(id, nivel), t: 0.3 + j.armas.length * 0.15, rafaga: 0, tr: 0, total: 0, k: 0, ang: 0, activo: 0, desde: this.tReal });
+    j.armas.push({ id, nivel, b: baseEnNivel(id, nivel), t: 0.3 + j.armas.length * 0.15, rafaga: 0, tr: 0, total: 0, k: 0, k2: 0, k3: 0, ang: 0, activo: 0, desde: this.tReal });
     if (!j.danos.has(id)) j.danos.set(id, { dano: 0, desde: this.tReal });
     this.armasVistas.add(id);
   }
@@ -612,15 +649,16 @@ export class Motor {
     if (j.armas.length < MAX_RANURAS) {
       for (const id of BASICAS) {
         if (j.armas.some((a) => a.id === id) || !this.disponible(j, id)) continue;
-        // Si ya tiene la evolución de esta, no vuelve a salir
-        if (j.armas.some((a) => ARMAS[a.id].de?.includes(id))) continue;
+        // Si ya tiene la evolución de esta (o una unión que la lleva adentro), no vuelve a salir
+        if (j.armas.some((a) => linaje(a.id).has(id))) continue;
         l.push({ o: { tipo: 'arma', id, nivel: 1, nueva: true }, peso: ARMAS[id].rareza });
       }
     }
-    for (const [id, n] of j.pasivas) if (n < PASIVAS[id].max) l.push({ o: { tipo: 'pasiva', id, nivel: n + 1, nueva: false }, peso: PASIVAS[id].rareza * 1.4 });
+    // (los anillos y los aretes no salen nuevos, pero ya encontrados sí se suben)
+    for (const [id, n] of j.pasivas) if (n < PASIVAS[id].max) l.push({ o: { tipo: 'pasiva', id, nivel: n + 1, nueva: false }, peso: Math.max(50, PASIVAS[id].rareza) * 1.4 });
     if (j.pasivas.size < MAX_RANURAS) {
       for (const id of ID_PASIVAS) {
-        if (j.pasivas.has(id) || !this.disponible(j, id)) continue;
+        if (j.pasivas.has(id) || !this.disponible(j, id) || PASIVAS[id].escondida) continue;
         l.push({ o: { tipo: 'pasiva', id, nivel: 1, nueva: true }, peso: PASIVAS[id].rareza });
       }
     }
@@ -628,7 +666,8 @@ export class Motor {
     const cuantas = this.az.n() < Math.min(0.9, 1 - 1 / suerte) ? 4 : 3;
     const r: Opcion[] = [];
     while (r.length < cuantas && l.length) {
-      const x = this.az.pesado(l, (q) => q.peso)!;
+      const x = this.az.pesado(l, (q) => q.peso);
+      if (!x) break;
       r.push(x.o);
       l.splice(l.indexOf(x), 1);
     }
@@ -705,12 +744,11 @@ export class Motor {
     for (const a of j.armas) {
       const def = ARMAS[a.id];
       if (!def.evo || a.nivel < maxNivelArma(a.id)) continue;
-      if (def.evo.pasiva && j.pasivas.has(def.evo.pasiva)) return { de: [a.id], a: def.evo.a };
-      if (def.evo.arma) {
-        const otra = j.armas.find((x) => x.id === def.evo!.arma);
-        const pide = UNION_PIDE[def.evo.a];
-        if (otra && otra.nivel >= maxNivelArma(otra.id) && (!pide || j.pasivas.has(pide))) return { de: [a.id, otra.id], a: def.evo.a };
-      }
+      // (lo que pide: sus pasivas, con un nivel basta, y la otra arma de la unión al máximo)
+      if (!pasivasDeEvo(def).every((p) => j.pasivas.has(p))) continue;
+      if (!def.evo.arma) return { de: [a.id], a: def.evo.a };
+      const otra = j.armas.find((x) => x.id === def.evo!.arma);
+      if (otra && otra.nivel >= maxNivelArma(otra.id)) return { de: [a.id, otra.id], a: def.evo.a };
     }
     return null;
   }
@@ -719,7 +757,7 @@ export class Motor {
     const i = j.armas.findIndex((x) => x.id === de[0]);
     const vieja = j.armas[i];
     j.armas = j.armas.filter((x) => !de.includes(x.id));
-    j.armas.splice(Math.min(i, j.armas.length), 0, { id: a, nivel: 1, b: baseEnNivel(a, 1), t: 0.2, rafaga: 0, tr: 0, total: 0, k: vieja?.k ?? 0, ang: vieja?.ang ?? 0, activo: 0, desde: this.tReal });
+    j.armas.splice(Math.min(i, j.armas.length), 0, { id: a, nivel: 1, b: baseEnNivel(a, 1), t: 0.2, rafaga: 0, tr: 0, total: 0, k: vieja?.k ?? 0, k2: 0, k3: 0, ang: vieja?.ang ?? 0, activo: 0, desde: this.tReal });
     if (!j.danos.has(a)) j.danos.set(a, { dano: 0, desde: this.tReal });
     this.armasVistas.add(a);
     if (!this.evoluciones.includes(a)) this.evoluciones.push(a);
@@ -859,6 +897,7 @@ export class Motor {
     this.compactar();
     this.subirNivel();
     if (!this.tutorial) this.elitesExtra(dReloj);
+    if (this.tesoros.length) this.cuidarTesoros();
     if (this.jug.every((j) => j.caido || j.fuera)) this.terminar();
   }
 
@@ -997,12 +1036,15 @@ export class Motor {
     if (j.caido || j.invul > 0) return;
     const d = Math.max(1, dano - j.st.armadura);
     j.vida -= d;
-    j.invul = 0.08;
+    // (la bata gruesa alarga el ratico invencible)
+    j.invul = 0.08 + 0.12 * (j.pasivas.get('bataGruesa') ?? 0);
     // (en el tutorial nadie se cae: se aprende tranquilo)
     if (this.tutorial) j.vida = Math.max(j.vidaMax * 0.25, j.vida);
     this.emitir('herido', j.x, j.y, j.i, d);
     // Un cumpleaños de reina: el que pega recibe su merecido
     if (e && j.tieneCarta('coronaHierro')) this.herir(e, 20 + j.st.armadura * 10, j.i, -1, 0, 0, false, 'gorro');
+    // La plancha y las mariposas contraatacan
+    alHerido(this, j);
     if (j.vida > 0) return;
     if (j.revivesQuedan > 0) {
       j.revivesUsados++;
@@ -1094,6 +1136,13 @@ export class Motor {
     return 1 + m;
   }
 
+  /** La vela aromática atrae más mugrosos (sin que sean más duros): +8 % por nivel. */
+  atrae() {
+    let n = 0;
+    for (const j of this.jug) if (!j.fuera) n = Math.max(n, j.pasivas.get('velaAromatica') ?? 0);
+    return 1 + 0.08 * n;
+  }
+
   private oleadas(dReloj: number) {
     const esc = this.esc;
     // Eventos fijos
@@ -1122,7 +1171,7 @@ export class Motor {
     const pareja = POR_JUGADORES.densidad[Math.max(0, Math.min(3, enPie - 1))];
     // En el pasillo del lavamanos no hay para dónde huir arriba o abajo: llegan menos a la vez
     const densidad = esc.limites ? 0.5 : 1;
-    this.tTanda -= dReloj * mal;
+    this.tTanda -= dReloj * mal * this.atrae();
     let tandas = 0;
     while (this.tTanda <= 0 && tandas < 4) {
       tandas++;
@@ -1241,6 +1290,7 @@ export class Motor {
     e.estado = 0;
     e.et = this.az.entre(1, 3);
     e.llamado = 0;
+    e.sinDientes = false;
     this.vivos[this.nVivos++] = this.en.indexOf(e);
     if (!e.jefe && !e.elite) this.nComunes++;
     if (j && e.jefe) this.emitir('jefe', e.x, e.y, e.ti);
@@ -1557,7 +1607,7 @@ export class Motor {
           if (!p.activo) continue;
           const dx = p.x - e.x, dy = p.y - e.y;
           const rr = e.r * 0.85 + RADIO_JUGADOR;
-          if (dx * dx + dy * dy < rr * rr && e.toque <= 0) {
+          if (dx * dx + dy * dy < rr * rr && e.toque <= 0 && !e.sinDientes) {
             e.toque = 0.5;
             this.herirJugador(p, e.def.dano * (1 + (this.tarde() - 1) * TARDE_DANO), e);
           }
@@ -1641,8 +1691,9 @@ export class Motor {
     if (e.jefe) xp = e.def.xp + this.nivel * 3;
     this.gema(e.x, e.y, xp);
     if (j) {
-      // Espuma devoradora: crece con cada uno que se traga
+      // Espuma devoradora: crece con cada uno que se traga (y la plancha de diva y la sauna se calientan)
       for (const a of j.armas) if (a.id === 'espumaDevoradora') a.k = Math.min(70, a.k + 0.4);
+      alMatar(j);
       if (j.tieneCarta('solPlaya')) {
         j.eliminadosCarta++;
         if (j.eliminadosCarta % 10 === 0) this.explotar(ji, -1, 'aji', e.x, e.y, 70, 35 * (1 + j.st.poder), 1);
@@ -1843,6 +1894,22 @@ export class Motor {
         if (j.opciones || j.cofre || j.cartaOpciones) j.cofresPend.push(o.calidad);
         else this.abrirCofreOCarta(j, o.calidad);
         break;
+      case 'tesoro': {
+        const t = ESCONDIDAS[o.calidad];
+        if (!t) break;
+        const p = PASIVAS[t.id];
+        if (j.pasivas.has(t.id) || j.pasivas.size < MAX_RANURAS) {
+          this.darPasiva(j, t.id);
+          this.aviso(`💍 ¡Encontraste ${p.nombre}!`, j.i);
+        } else {
+          // (sin puesto para otra pasiva: vale su peso en gotas doradas)
+          const n = this.sumarOro(60, j);
+          this.emitir('moneda', o.x, o.y, n, j.i);
+          this.aviso(`💍 ${p.nombre}… pero no te cabe: ¡gotas doradas!`, j.i);
+        }
+        this.emitir('evolucion', j.x, j.y, j.i);
+        break;
+      }
     }
   }
 

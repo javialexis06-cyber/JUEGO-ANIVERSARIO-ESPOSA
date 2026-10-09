@@ -5,7 +5,8 @@ probado y subido.
 
 ## Por dónde seguir (nota para el próximo Claude)
 
-Último trabajo subido: **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
+Último trabajo subido: **Lavarse la cara 2, fase 1a** (14 armas del original con sus evoluciones, 7 pasivas y los
+logros que las abren). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
 astral en pulso, el Guardián de una, sin pantallazo negro y los menús rehechos) y **la app de amigos con los seis
 juegos**. Antes, **Sangre y Ceniza 2, fase 5**, con la que **Sangre y Ceniza 2 queda completo**:
 equipo común a épico con rarezas especiales, la Forja con tres mostradores, el familiar (siete compañeros con modelo),
@@ -45,7 +46,15 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
    - mejores gráficos de lo simple: refugio, logros, Pozo, íconos de desafíos y una pantalla de inicio mucho más
      trabajada (puede ser animada).
 3. **Lavarse la cara 2** (`docs/en-obra/lavado-propuesta.md`): Javier ya respondió las 5 preguntas (9 de octubre;
-   están anotadas en la propuesta).
+   están anotadas en la propuesta). Va por partes:
+   - ~~1a: 14 armas del original con 15 evoluciones, 7 pasivas (anillos y aretes escondidos en los escenarios) y 18
+     logros que las abren~~ **hecho** (ver `docs/sistemas/nuestro-hogar.md`, «Versión 2, fase 1a»).
+   - 1b: las especiales y las de rebote (cortina de baño, neceser, bolsillo de la bata, pececitos, confeti, hueso,
+     bomba de baño, barquito, talco, bolitas de gel).
+   - 1c: recogibles nuevos, los 4 arcanos que faltan, Omni/Encanto/Desarmar/Conservar en la tienda y sus logros.
+   - 1d: una selección de armas de los DLC que encaje con el aseo.
+   - Fases 2 a 4 de la propuesta: modos, tesoros y mercader; los escenarios de la ducha; disfraces con
+     transformación, cartas de la noche y las aventuras.
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
 6. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.

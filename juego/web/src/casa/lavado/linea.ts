@@ -99,7 +99,7 @@ export function aplicarInventario(m: Motor, inv: InvJugador[]) {
     j.armas = d.armas.map(([id, nivel]) => {
       const a = viejas.get(id);
       if (a && a.nivel === nivel) return a;
-      return { id, nivel, b: baseEnNivel(id, nivel), t: 0, rafaga: 0, tr: 0, total: a?.total ?? 1, k: a?.k ?? 0, ang: a?.ang ?? 0, activo: a?.activo ?? 0, desde: a?.desde ?? 0 };
+      return { id, nivel, b: baseEnNivel(id, nivel), t: 0, rafaga: 0, tr: 0, total: a?.total ?? 1, k: a?.k ?? 0, k2: 0, k3: 0, ang: a?.ang ?? 0, activo: a?.activo ?? 0, desde: a?.desde ?? 0 };
     });
     j.pasivas = new Map(d.pasivas);
     j.st = { ...d.st };
@@ -117,10 +117,10 @@ export function aplicarInventario(m: Motor, inv: InvJugador[]) {
 
 // ---------------------------------------------------------------------------------------------------- La foto
 const TIPOS_EF: TipoEfecto[] = ['golpe', 'muere', 'latigo', 'rayo', 'charco', 'limpiar', 'explosion', 'gema', 'moneda', 'curar', 'nivel', 'cofre', 'herido',
-  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego'];
+  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces'];
 const IDX_EF = new Map(TIPOS_EF.map((t, i) => [t, i]));
 const IDX_ARMA = new Map(ID_ARMAS.map((a, i) => [a, i]));
-const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre'];
+const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre', 'tesoro'];
 const IDX_OBJ = new Map(OBJETOS.map((o, i) => [o, i]));
 
 const buf = new ArrayBuffer(128 * 1024);
@@ -244,7 +244,7 @@ export function tomarFoto(m: Motor, efDesde: number, seq: number, extra = { band
     dv.setUint16(o, e.uid & 0xffff, true);
     o += 2;
     b8(e.ti);
-    b8((e.elite ? 1 : 0) | (e.jefe ? 2 : 0) | (e.luz ? 4 : 0) | (e.congelado > 0 ? 8 : 0) | (e.lento > 0 ? 16 : 0) | (e.flash > 0 ? 32 : 0));
+    b8((e.elite ? 1 : 0) | (e.jefe ? 2 : 0) | (e.luz ? 4 : 0) | (e.congelado > 0 ? 8 : 0) | (e.lento > 0 ? 16 : 0) | (e.flash > 0 ? 32 : 0) | (e.sinDientes ? 64 : 0));
     pos(a, e.x, e.y);
     b8((e.hp / e.hpMax) * 255);
     b8(e.luz ? e.fase * 255 : (e.fase * 10) % 255);
@@ -279,7 +279,7 @@ export function tomarFoto(m: Motor, efDesde: number, seq: number, extra = { band
     b8(IDX_ARMA.get(z.arma) ?? 0);
     b8(z.tipo);
     pos(cercana(z.x, z.y), z.x, z.y);
-    i16(Math.round(z.tipo ? z.w : z.r));
+    i16(Math.round(z.tipo === 1 ? z.w : z.r));
     i16(Math.round(z.h));
     b8(Math.min(255, z.vida * 40));
     b8(Math.min(255, z.t * 40));
@@ -497,6 +497,7 @@ export class Espejo {
       e.congelado = fl & 8 ? 0.2 : 0;
       e.lento = fl & 16 ? 0.2 : 0;
       if (fl & 32) e.flash = 0.13;
+      e.sinDientes = !!(fl & 64);
       e.esc = e.elite ? 1.8 : 1;
       e.r = e.luz ? 14 : e.def.radio * e.esc;
       e.hp = hp;
@@ -553,7 +554,7 @@ export class Espejo {
       z.x = x;
       z.y = y;
       z.h = h;
-      if (z.tipo) z.w = a;
+      if (z.tipo === 1) z.w = a;
       else z.r = a;
       z.vida = vida / 40;
       z.t = t / 40;

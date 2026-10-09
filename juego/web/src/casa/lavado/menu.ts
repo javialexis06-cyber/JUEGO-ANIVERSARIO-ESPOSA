@@ -1,7 +1,14 @@
 // El menú de «Lavarse la cara» (lo primero que se ve al entrar por el espejo): jugar, disfraces, escenarios,
 // cartas de amor, la tienda de poderes, la colección (armas, pasivas, mugrosos y logros) y jugar en pareja.
 // Todo lo que se compra o se escoge se guarda en el progreso de quien juega (en la casa compartida).
-import { ARMAS, ID_ARMAS, ID_PASIVAS, PASIVAS } from './armas';
+import { ARMAS, ID_ARMAS, ID_PASIVAS, PASIVAS, maxNivelArma, pasivasDeEvo, type DefArma } from './armas';
+
+/** «Evoluciona con…» para la colección (la pasiva, las dos pasivas, la otra arma de la unión o nada). */
+function conQue(a: DefArma): string {
+  const evo = a.evo!;
+  const pide = [...(evo.arma ? [ARMAS[evo.arma].nombre] : []), ...pasivasDeEvo(a).map((p) => PASIVAS[p].nombre)];
+  return pide.length ? `Evoluciona con ${pide.join(' y ')} en ${ARMAS[evo.a].nombre}.` : `Al nivel ${maxNivelArma(a.id)} se vuelve ${ARMAS[evo.a].nombre} (no pide nada más).`;
+}
 import { CARTAS, ID_CARTAS } from './cartas';
 import { DISFRAZ, disfracesDe, puedeApuntar, type DefDisfraz } from './disfraces';
 import { ENEMIGOS, ID_ENEMIGOS } from './enemigos';
@@ -328,7 +335,7 @@ export class Menu {
       if (a) {
         const visto = this.p.armas.includes(a.id);
         det = visto
-          ? `<h3>${a.nombre}</h3><p>Como ${a.original} en el original.</p><p>${a.desc}</p>${a.evo ? `<p class="esp">✨ Evoluciona con ${a.evo.pasiva ? PASIVAS[a.evo.pasiva].nombre : ARMAS[a.evo.arma!].nombre} en ${ARMAS[a.evo.a].nombre}.</p>` : ''}${a.de ? `<p class="esp">Evolución de ${a.de.map((x) => ARMAS[x].nombre).join(' + ')}.</p>` : ''}`
+          ? `<h3>${a.nombre}</h3><p>Como ${a.original} en el original.</p><p>${a.desc}</p>${a.evo ? `<p class="esp">✨ ${conQue(a)}</p>` : ''}${a.de ? `<p class="esp">Evolución de ${a.de.map((x) => ARMAS[x].nombre).join(' + ')}.</p>` : ''}`
           : '<h3>¿Qué será?</h3><p>Todavía no la has tenido en una partida.</p>';
       }
     } else if (this.pestana === 'pasivas') {
@@ -343,15 +350,15 @@ export class Menu {
       lista = `<div class="lv-recetas lv-recetas-menu">${RECETAS.map((r) => {
         const ya = this.p.armas.includes(r.a);
         const piezas = [
-          ...r.de.map((id) => `<span class="lv-paso" title="${ARMAS[id].nombre}">${icono(id, 26)}<em class="marca">8</em></span>`),
+          ...r.de.map((id) => `<span class="lv-paso" title="${ARMAS[id].nombre}">${icono(id, 26)}<em class="marca">${maxNivelArma(id)}</em></span>`),
           ...r.pasivas.map((id) => `<span class="lv-paso" title="${PASIVAS[id].nombre}">${icono(id, 26)}</span>`),
         ].join('<b class="mas">+</b>');
-        const nombres = [...r.de.map((id) => `${ARMAS[id].nombre} (nivel 8)`), ...r.pasivas.map((id) => PASIVAS[id].nombre)].join(' + ');
+        const nombres = [...r.de.map((id) => `${ARMAS[id].nombre} (nivel ${maxNivelArma(id)})`), ...r.pasivas.map((id) => PASIVAS[id].nombre)].join(' + ');
         return `<div class="lv-rec ${ya ? 'hecha' : 'cerca'}"><span class="lv-receta">${piezas}<b class="flecha">➜</b><span class="lv-paso fin ${ya ? 'si' : ''}">${icono(r.a, 30, ya ? '' : 'silueta')}</span></span>
           <div><b>${ya ? ARMAS[r.a].nombre : '¿Qué saldrá?'}</b><small>${nombres}</small></div></div>`;
       }).join('')}</div>`;
       det = `<h3>Cómo se evoluciona</h3><p>Sube el arma hasta el <b>nivel 8</b>, ten en la mochila la pasiva que pide (con un nivel basta) y abre un <b>cofre</b> después del <b>minuto ${MINUTO_EVOLUCION}</b> (los sueltan los élites y los jefes).</p>
-        <p>Las <b>uniones</b> juntan dos armas en nivel 8: los dos patos, o el perfume y la colonia (esa pide además la curita de corazón).</p>
+        <p>Las <b>uniones</b> juntan dos armas en su nivel máximo: los dos patos, el perfume y la colonia (esa pide además la curita de corazón) o la máquina de afeitar y el toallazo de vapor. El <b>copito</b> no pide nada: se vuelve doble y después triple. Los <b>anillos</b> y los <b>aretes</b> no salen en las cartas: están escondidos lejos en los escenarios (después del espejito de mano).</p>
         <p class="esp">En la partida, en la pausa (o tocando tus armas de arriba), la pestaña «Mochila» te dice qué le falta a cada una.</p>`;
     } else if (this.pestana === 'mugrosos') {
       lista = ID_ENEMIGOS.map((id) => {

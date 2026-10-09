@@ -181,6 +181,25 @@ export const LOGROS: DefLogro[] = [
   { id: 'evoluciones3', nombre: 'Coleccionista', desc: 'Ten 3 armas evolucionadas distintas en la colección', premio: 'Arma: Toallita desmaquillante · Carta «La corona de hierro»', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 3 },
   { id: 'arepas20', nombre: 'Barriga llena', desc: 'Cómete 20 arepas con queso en total', premio: 'Pasiva: Curita de corazón · Carta «La curita mágica»', cumple: (p) => p.arepas >= 20 },
   { id: 'veinticuatro', nombre: 'Maratón de lavado', desc: 'Juega 24 minutos en una sola partida', premio: 'Carta «La maratón»', cumple: (p, r) => !!r && r.segundos >= 24 * 60 },
+  // Versión 2: cada arma y pasiva nueva se abre con su logro (como en el original)
+  { id: 'evoToalla', nombre: 'Toalla hirviendo', desc: 'Evoluciona la Toalla mojada', premio: 'Arma: Máquina de afeitar', cumple: (p) => p.armas.includes('toallazo') },
+  { id: 'evoCepillo', nombre: 'Sonrisa de comercial', desc: 'Evoluciona el Cepillo de dientes', premio: 'Arma: Copito', cumple: (p) => p.armas.includes('milCerdas') },
+  { id: 'pantuflas15', nombre: 'Pasitos mojados', desc: 'Aguanta 15 minutos llevando las Pantuflas veloces', premio: 'Arma: Chancletas mojadas', cumple: (p, r) => !!r && r.segundos >= 15 * 60 && r.pasivas.includes('pantuflas') },
+  { id: 'bajas3000', nombre: 'Peinado de salón', desc: 'Elimina 3.000 mugrosos en una sola partida', premio: 'Arma: Plancha del pelo', cumple: (p, r) => !!r && r.eliminados >= 3000 },
+  { id: 'evoSecador', nombre: 'Aire hirviendo', desc: 'Evoluciona el Secador de pelo', premio: 'Arma: Vaporizador', cumple: (p) => p.armas.includes('secadorInfernal') },
+  { id: 'revivir', nombre: 'Siete vidas', desc: 'Revive con la Curita de corazón en una partida', premio: 'Arma: Mariposas de la cortina', cumple: (p, r) => !!r && r.revivio },
+  { id: 'cofres25', nombre: 'Cazador de cofres', desc: 'Abre 25 cofres en total', premio: 'Arma: Pistola de agua', cumple: (p) => p.cofres >= 25 },
+  { id: 'nivel30', nombre: 'Nivel 30', desc: 'Llega a nivel 30 en una partida', premio: 'Arma: Brillantina', cumple: (p) => p.mejorNivel >= 30 },
+  { id: 'banera20', nombre: 'Agua tibia', desc: 'Aguanta 20 minutos en La Bañera', premio: 'Arma: Cubitos de hielo', cumple: (p) => minutosEn(p, 'banera') >= 20 },
+  { id: 'tresEvos', nombre: 'Todo evoluciona', desc: 'Evoluciona 3 armas en una sola partida', premio: 'Arma: Cepillo de espalda', cumple: (p, r) => !!r && r.evoluciones.length >= 3 },
+  { id: 'arepas50', nombre: 'Arepera oficial', desc: 'Cómete 50 arepas con queso en total', premio: 'Arma: Mascarilla de pepino', cumple: (p) => p.arepas >= 50 },
+  { id: 'velitas200', nombre: 'Sin una velita', desc: 'Rompe 200 velitas en total', premio: 'Arma: Piedra pómez', cumple: (p) => p.velitas >= 200 },
+  { id: 'senorSarro', nombre: 'Porcelana sin sarro', desc: 'Vence al Señor Sarro', premio: 'Arma: Luces del espejo', cumple: (p) => (p.bestiario.senorSarro ?? 0) > 0 },
+  { id: 'lavamanos20', nombre: 'Lavamanos de exposición', desc: 'Aguanta 20 minutos en El Lavamanos', premio: 'Arma: Letras de espuma', cumple: (p) => minutosEn(p, 'lavamanos') >= 20 },
+  { id: 'minutos25', nombre: 'Casi, casi', desc: 'Aguanta 25 minutos en cualquier escenario', premio: 'Pasiva: Cajita de música', cumple: (p) => minutosEn(p) >= 25 },
+  { id: 'gorro15', nombre: 'Bien abrigado', desc: 'Aguanta 15 minutos llevando el Gorro de baño', premio: 'Pasiva: Bata gruesa', cumple: (p, r) => !!r && r.segundos >= 15 * 60 && r.pasivas.includes('gorro') },
+  { id: 'velitas100', nombre: 'Olor a lavanda', desc: 'Rompe 100 velitas en total', premio: 'Pasiva: Vela aromática', cumple: (p) => p.velitas >= 100 },
+  { id: 'espejito', nombre: 'El espejito de mano', desc: 'Ten 5 armas evolucionadas distintas en la colección', premio: 'Tesoro: Espejito de mano (en los escenarios aparecen anillos y aretes escondidos)', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 5 },
 ];
 
 export const LOGRO = Object.fromEntries(LOGROS.map((l) => [l.id, l])) as Record<string, DefLogro>;
@@ -195,6 +214,10 @@ export const CARTA_LOGRO: Record<IdCarta, string> = {
 /** Las armas y pasivas secretas (no salen en las cartas hasta su logro). */
 export const SECRETO_LOGRO: Partial<Record<IdArma | IdPasiva, string>> = {
   patoMorado: 'sobrevivir10', colonia: 'eliminar10000', toallita: 'evoluciones3', espejoRoto: 'nivel40', curita: 'arepas20',
+  maquina: 'evoToalla', copito: 'evoCepillo', chancletas: 'pantuflas15', plancha: 'bajas3000', vaporizador: 'evoSecador', mariposas: 'revivir',
+  pistolaAgua: 'cofres25', brillantina: 'nivel30', cubitos: 'banera20', cepilloEspalda: 'tresEvos', mascarilla: 'arepas50', piedraPomez: 'velitas200',
+  lucesLED: 'senorSarro', letrasEspuma: 'lavamanos20', cajitaMusica: 'minutos25', bataGruesa: 'gorro15', velaAromatica: 'velitas100',
+  anilloPlata: 'espejito', anilloOro: 'espejito', aretIzq: 'espejito', aretDer: 'espejito',
 };
 export const ESCENARIO_LOGRO: Record<IdEscenario, string | null> = { cara: null, lavamanos: 'cara15', banera: 'lavamanos15' };
 

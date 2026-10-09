@@ -40,13 +40,20 @@ export type Rol = 'el' | 'ella';
 export type IdArma =
   | 'toalla' | 'burbujas' | 'cepillo' | 'champu' | 'peinilla' | 'esponjas' | 'secador' | 'espuma' | 'botellas' | 'jabon' | 'bombillo'
   | 'toallita' | 'patoAmarillo' | 'patoMorado' | 'ranitas' | 'ducha' | 'hilo' | 'perfume' | 'colonia'
+  // Las de la versión 2 (las que faltaban del original)
+  | 'chancletas' | 'maquina' | 'copito' | 'plancha' | 'vaporizador' | 'mariposas' | 'pistolaAgua' | 'brillantina' | 'cubitos'
+  | 'cepilloEspalda' | 'mascarilla' | 'piedraPomez' | 'lucesLED' | 'letrasEspuma'
   // Evolucionadas
   | 'toallazo' | 'burbujero' | 'milCerdas' | 'remolino' | 'peinillaOro' | 'esponjasEternas' | 'secadorInfernal' | 'espumaDevoradora'
-  | 'inundacion' | 'jabonExplosivo' | 'tormenta' | 'lunaDeMiel' | 'patosEnamorados' | 'ranaGlotona' | 'diluvio' | 'hiloSeda' | 'perfumeAmor';
+  | 'inundacion' | 'jabonExplosivo' | 'tormenta' | 'lunaDeMiel' | 'patosEnamorados' | 'ranaGlotona' | 'diluvio' | 'hiloSeda' | 'perfumeAmor'
+  | 'pisoton' | 'afeitada' | 'dobleCopito' | 'tripleCopito' | 'planchaDiva' | 'sauna' | 'mariposario' | 'hidrolavadora' | 'lluviaBrillantina'
+  | 'granizada' | 'cepilloCeleste' | 'spa' | 'piedrasCalientes' | 'camerino' | 'abecedario';
 
 export type IdPasiva =
   | 'jabonFuerte' | 'gorro' | 'crema' | 'cremaNoche' | 'relojArena' | 'lupa' | 'liga' | 'sales' | 'espejoDoble' | 'pantuflas' | 'iman'
-  | 'trebol' | 'corona' | 'alcancia' | 'espejoRoto' | 'curita';
+  | 'trebol' | 'corona' | 'alcancia' | 'espejoRoto' | 'curita'
+  // Versión 2 (los anillos y los aretes no salen en las cartas: se encuentran escondidos en los escenarios)
+  | 'cajitaMusica' | 'anilloPlata' | 'anilloOro' | 'aretIzq' | 'aretDer' | 'bataGruesa' | 'velaAromatica';
 
 export type IdEnemigo =
   // La Cara
@@ -72,7 +79,8 @@ export type IdObjeto =
   | 'moneda' | 'bolsa' | 'frasco' // gotas doradas: 1, 10 y 25
   | 'trebolito' // +10 % de suerte en la partida
   | 'aji' // escupe fuego un rato (el ají de Él)
-  | 'cofre';
+  | 'cofre'
+  | 'tesoro'; // un anillo o un arete escondido (calidad = cuál, en ESCONDIDAS)
 
 export type IdCarta =
   | 'oroBrillante' | 'certero' | 'silbato' | 'comienzo' | 'maraton' | 'dobleTurno' | 'curitaMagica' | 'relojQuieto' | 'ruedaFortuna'
@@ -105,7 +113,10 @@ export type TipoEfecto =
   | 'evolucion' // c = jugador
   | 'columna' // x, y; c = ancho; d = alto; f = 1 diluvio
   | 'haz' // x, y; c = ángulo; d = largo; f = 1 hilo de seda
-  | 'fuego'; // aliento del ají x, y, c = ángulo
+  | 'fuego' // aliento del ají x, y, c = ángulo
+  | 'tajo' // planchazo: x, y; c = radio; d = ángulo; f = 0 plancha, 1 de diva, 2 remate, 3 contraataque
+  | 'lanza' // cepillo de espalda que cae: x, y; c = radio; d = segundos que tarda en caer; f = 1 celestial
+  | 'luces'; // rayita del espejo LED: x, y; c = largo; d = grosor; e = 1 vertical; f = color
 
 export interface Efecto {
   tipo: TipoEfecto;

@@ -318,7 +318,7 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   Pausa, retirarse y cobrar, y **modo Apurado** (todo más rápido; se abre ganando La Cara).
 - **La pausa tiene tres pestañas** (`interfaz.ts`, recetas en `evoluciones.ts`): **Mochila** (cada arma con su receta
   de evolución, sellos ✓ / ✗ / 6/8 y qué le falta en palabras; cada pasiva con el arma que hace evolucionar),
-  **Evoluciones** (las 17 recetas, las más cerca primero) y **Estadísticas**. Tocar las armas de arriba abre la pausa
+  **Evoluciones** (las 32 recetas, las más cerca primero) y **Estadísticas**. Tocar las armas de arriba abre la pausa
   en la Mochila. Las cartas de subir de nivel dicen con qué evoluciona cada cosa aunque todavía no se tenga (gris) y
   en dorado cuando ya se tiene la pareja. La colección del menú también tiene la pestaña **Evoluciones**.
 - Los íconos salen del atlas `public/lavado/objetos.webp` con su dirección completa: una `url()` relativa dentro de
@@ -346,6 +346,40 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   (paticos amarillo + morado, perfume + colonia). **16 pasivas** (jabón extra fuerte, gorro de baño, crema, crema
   de noche, reloj de arena, lupa, liga del pelo, sales de baño, espejo doble, pantuflas, imán, trébol, corona,
   alcancía, espejo roto y curita de corazón).
+- **Versión 2, fase 1a** (las armas que faltaban del original, `docs/en-obra/lavado-propuesta.md`): **14 armas** más,
+  cada una se abre con su logro como en el original, y **15 evoluciones**:
+  chancletas mojadas (Shadow Pinion: huellitas al caminar que salen disparadas al frenar → Pisotón de charco con las
+  pantuflas), máquina de afeitar (Vento Sacro: tajos que pegan más mientras más camine sin parar → **unión** con el
+  Toallazo de vapor: Afeitada perfecta), copito (Bracelet: **evoluciona sin pasiva**, a Doble y después a Triple
+  copito, que siguen subiendo de nivel), plancha del pelo (Victory Sword: combo al más cercano, **contraataca** al
+  recibir un golpe y desde el nivel 8 hace críticos y un remate enorme → Plancha de diva, que crece con cada mugroso),
+  vaporizador (Flames of Misspell → Sauna, adelante y atrás), mariposas de la cortina (Pako Battiliar: bandadas que
+  cruzan la pantalla y otra cuando te pegan → Mariposario con la crema), pistola de agua (Ammo Appalate: **guarda los
+  tiros** si no hay nadie adelante → Hidrolavadora con chorrazos que rebotan), brillantina (Unearthly Bolt: críticos
+  que revientan y se **encadenan**; cada vida extra le suma un rayito → Lluvia de brillantina con la curita), cubitos
+  de hielo (Glass Fandango: más rápidos caminando, congelan y les pegan el doble a los congelados → Granizada con los
+  **dos anillos**), cepillo de espalda (Santa Javelin: caen del cielo en abanico; la duración trae más → Cepillo
+  celestial con el trébol), mascarilla de pepino (Gaze of Gaea: deja a los mugrosos **sin dientes**, verdecitos, que ya
+  no pegan → Spa completo con la bata), piedra pómez (Magi-Stone: daño fijo por nivel, se parte en pedacitos →
+  Piedras calientes con la vela), luces del espejo (Phas3r: rayitas de colores, cada proyectil son cuatro → Camerino
+  de estrella con el reloj de arena) y letras de espuma (Chaos Rune: suben y caen locas, solo pegan cayendo →
+  Abecedario loco con las sales). Las armas «de adelante» (vapor, cubitos, cepillo de espalda, mascarilla) apuntan al
+  mugroso más cercano si está cerca, porque huyendo adelante casi nunca hay nadie (a mano, adonde se apunte).
+  **7 pasivas**: cajita de música (Torrona's Box: +4 % de daño, área, velocidad y duración por nivel; el nivel 9 trae
+  +50 % de maldición), bata gruesa (más tiempo invencible después de un golpe), vela aromática (atrae 8 % más
+  mugrosos sin que sean más duros) y los **anillos de plata y de oro y los aretes izquierdo y derecho**, que no salen en
+  las cartas: están **escondidos lejos** en los escenarios (`ESCONDIDAS` en `armas.ts`: dos en La Cara, uno en El
+  Lavamanos y uno en La Bañera), brillan en el piso, los cuida un élite que sale cuando alguien se acerca y aparecen
+  después del logro «El espejito de mano» (5 evoluciones distintas en la colección). 18 logros nuevos abren todo
+  (`SECRETO_LOGRO` en `progreso.ts`: evolucionar la toalla abre la máquina, el cepillo el copito, el secador el
+  vaporizador; 3.000 bajas en una partida la plancha; revivir las mariposas; 25 cofres la pistola; nivel 30 la
+  brillantina; 20 minutos en la bañera los cubitos; 3 evoluciones en una partida el cepillo de espalda; 50 arepas la
+  mascarilla; 200 velitas la piedra; el Señor Sarro las luces; 20 minutos en el lavamanos las letras…). Reglas nuevas
+  del motor: una evolución puede pedir dos pasivas (`evo.y`), las evolucionadas pueden tener niveles
+  (`maxNivelArma` = niveles + 1), lo que una unión lleva adentro ya no sale en las cartas (`linaje`) y los golpes que
+  caen después (`pend`) llevan su crítico. Íconos: `personajes/blender/lavado_objetos.py` (40 modelos nuevos con las
+  letras, la rodaja de pepino y los tesoros) y `python3 scripts/lavado-atlas.py - <carpeta>` rehace solo el atlas de
+  objetos.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

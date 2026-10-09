@@ -2,7 +2,7 @@
 // una partidita guiada, corta y tranquila (nadie se cae, no llegan oleadas): moverse, las armas que disparan solas,
 // recoger gotitas, subir de nivel, los cofres, la evolución de un arma y apuntar a mano. Cada paso espera a que se
 // haga de verdad (no basta con leer) y siempre se puede saltar.
-import { ARMAS, maxNivelArma } from './armas';
+import { ARMAS, maxNivelArma, pasivasDeEvo } from './armas';
 import type { Jugador, Motor } from './motor';
 import { sfx } from './sonidos';
 import type { IdArma } from './tipos';
@@ -77,7 +77,7 @@ const PASOS: Paso[] = [
     entrar: (t, m, j) => {
       t.vioCofre = false;
       // Un arma que evolucione con una pasiva (la del disfraz si se puede; si no, la varita de burbujas)
-      let a = j.armas.find((x) => ARMAS[x.id].evo?.pasiva && !ARMAS[x.id].de);
+      let a = j.armas.find((x) => ARMAS[x.id].evo?.pasiva && !ARMAS[x.id].evo?.arma && !ARMAS[x.id].de);
       if (!a) {
         m.darArma(j, 'burbujas');
         a = j.armas.find((x) => x.id === 'burbujas');
@@ -85,8 +85,7 @@ const PASOS: Paso[] = [
       if (!a) return;
       const id: IdArma = a.id;
       while ((j.armas.find((x) => x.id === id)?.nivel ?? 99) < maxNivelArma(id)) m.darArma(j, id);
-      const pasiva = ARMAS[id].evo!.pasiva!;
-      if (!j.pasivas.has(pasiva)) m.darPasiva(j, pasiva);
+      for (const pasiva of pasivasDeEvo(ARMAS[id])) if (!j.pasivas.has(pasiva)) m.darPasiva(j, pasiva);
       m.recalcular(j);
       t.armaEvo = ARMAS[id].nombre;
       m.soltar('cofre', j.x + 70, j.y + 10, 2);

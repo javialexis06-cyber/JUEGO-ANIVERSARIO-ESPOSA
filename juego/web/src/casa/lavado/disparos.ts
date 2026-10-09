@@ -6,10 +6,11 @@ import type { ArmaJ, Enemigo, Jugador, Motor, Proyectil, Zona } from './motor';
 import type { IdArma } from './tipos';
 
 /** Ranuras de «ya le pegó» en cada enemigo (por jugador: + índice del jugador). */
-const HZ_AURA = 0, HZ_ESPONJAS = 4, HZ_LASER = 8, HZ_COLUMNA = 12, HZ_CHARCO = 16;
+const HZ_AURA = 0, HZ_ESPONJAS = 4, HZ_LASER = 8, HZ_COLUMNA = 12, HZ_CHARCO = 16, HZ_MASCARILLA = 20;
 const TAU = Math.PI * 2;
 /** Armas de zona (para la carta del planetario). */
-const ZONA = new Set<IdArma>(['espuma', 'espumaDevoradora', 'botellas', 'inundacion', 'ducha', 'diluvio', 'esponjas', 'esponjasEternas', 'patoAmarillo', 'patoMorado', 'patosEnamorados']);
+const ZONA = new Set<IdArma>(['espuma', 'espumaDevoradora', 'botellas', 'inundacion', 'ducha', 'diluvio', 'esponjas', 'esponjasEternas', 'patoAmarillo', 'patoMorado', 'patosEnamorados',
+  'mascarilla', 'spa', 'chancletas', 'pisoton']);
 
 /** Lo efectivo del arma con las estadísticas del jugador (un solo objeto que se reutiliza). */
 const E = { dano: 0, area: 0, vel: 0, cant: 0, dur: 0, enfr: 0, perfora: 0, crit: 0, critX: 2, golpeCada: 0.5, retro: 1, radio: 10, rapidez: 300, congela: 0, inter: 0.1 };
@@ -33,6 +34,24 @@ function calcular(j: Jugador, a: ArmaJ) {
   E.rapidez = b.rapidez;
   E.congela = b.congela * (1 + j.st.duracion);
   E.inter = b.inter;
+  switch (ARMAS[a.id].comp) {
+    case 'piedra':
+      // Daño fijo según el nivel: no le importa el poder
+      E.dano = b.dano;
+      break;
+    case 'brillantina':
+      // Cada vida extra le suma un rayito
+      E.cant += Math.max(0, Math.round(j.st.revivir));
+      break;
+    case 'lanza':
+      // La duración trae más cepillos
+      E.cant += Math.floor(Math.max(0, E.dur - 1) * 4);
+      break;
+    case 'letras':
+      // La velocidad y la duración las hacen pegar a más
+      E.perfora = b.perfora + Math.floor(Math.max(0, j.st.velocidad) * 5 + Math.max(0, j.st.duracion) * 5);
+      break;
+  }
 }
 
 // ---------------------------------------------------------------------------------------------------- Ayudas
@@ -118,11 +137,75 @@ function aMano(j: Jugador): number | null {
   return j.manual ? Math.atan2(j.ay, j.ax) : null;
 }
 
+/** Hacia dónde va un arma «de adelante»: a mano, hacia donde apunta; si no, hacia el más cercano si está a menos de
+ *  `r` (huyendo, adelante casi nunca hay nadie) y, si no hay nadie cerca, hacia donde mira. */
+function apuntar(m: Motor, j: Jugador, r: number): number {
+  const mano = aMano(j);
+  if (mano !== null) return mano;
+  const e = masCercano(m, j.x, j.y, r);
+  return e ? Math.atan2(e.y - j.y, e.x - j.x) : Math.atan2(j.dy, j.dx);
+}
+
 function golpe(m: Motor, j: Jugador, slot: number, e: Enemigo, dano: number, crit: number, critX: number, kx: number, ky: number, arma: IdArma) {
   const c = crit > 0 && m.az.n() < crit;
   m.herir(e, c ? dano * critX : dano, j.i, slot, kx, ky, c, arma);
-  if (c && arma === 'toallazo') m.curar(j, 1);
+  if (c && (arma === 'toallazo' || arma === 'afeitada')) m.curar(j, 1);
   return c;
+}
+
+/** Uno al azar de los que están a menos de `r` (o el más cercano, si no hay). */
+function cercaAlAzar(m: Motor, x: number, y: number, r: number): Enemigo | null {
+  const n = m.rej.circulo(x, y, r);
+  for (let intento = 0; intento < 8 && n > 0; intento++) {
+    const e = m.en[m.rej.fuera[Math.floor(m.az.n() * n)]];
+    if (e.vivo && !e.luz && (e.x - x) ** 2 + (e.y - y) ** 2 < r * r) return e;
+  }
+  return masCercano(m, x, y, r);
+}
+
+/** El más cercano que esté adelante (a menos de 70° de `dir`). */
+function adelante(m: Motor, j: Jugador, dir: number, r: number): Enemigo | null {
+  const n = m.rej.circulo(j.x, j.y, r);
+  const cx = Math.cos(dir), cy = Math.sin(dir);
+  let mejor: Enemigo | null = null, d0 = r * r;
+  for (let k = 0; k < n; k++) {
+    const e = m.en[m.rej.fuera[k]];
+    if (!e.vivo || e.luz) continue;
+    const dx = e.x - j.x, dy = e.y - j.y, d = dx * dx + dy * dy;
+    if (d >= d0 || d < 1) continue;
+    if ((dx * cx + dy * cy) / Math.sqrt(d) < 0.05) continue;
+    d0 = d;
+    mejor = e;
+  }
+  return mejor;
+}
+
+/** Golpea a todos en un círculo (sin crear nada). Devuelve cuántos tocó. */
+function circulo(m: Motor, j: Jugador, slot: number, x: number, y: number, r: number, dano: number, arma: IdArma, empuje = 1) {
+  const n = m.rej.circulo(x, y, r + 40);
+  for (let k = 0; k < n; k++) m.tmp[k] = m.rej.fuera[k];
+  let t = 0;
+  for (let k = 0; k < n; k++) {
+    const e = m.en[m.tmp[k]];
+    if (!e.vivo) continue;
+    const dx = e.x - x, dy = e.y - y;
+    if (dx * dx + dy * dy > (r + e.r * 0.7) ** 2) continue;
+    golpe(m, j, slot, e, dano, E.crit, E.critX, dx * empuje, dy * empuje, arma);
+    t++;
+  }
+  return t;
+}
+
+/** Golpea a todos en un rectángulo (centro, medio ancho y medio alto). */
+function rectangulo(m: Motor, j: Jugador, slot: number, cx: number, cy: number, hw: number, hh: number, dano: number, arma: IdArma, kx: number, ky: number) {
+  const n = m.rej.rect(cx - hw - 40, cy - hh - 40, cx + hw + 40, cy + hh + 40);
+  for (let k = 0; k < n; k++) m.tmp[k] = m.rej.fuera[k];
+  for (let k = 0; k < n; k++) {
+    const e = m.en[m.tmp[k]];
+    if (!e.vivo) continue;
+    if (Math.abs(e.x - cx) > hw + e.r * 0.7 || Math.abs(e.y - cy) > hh + e.r * 0.7) continue;
+    golpe(m, j, slot, e, dano, E.crit, E.critX, kx, ky, arma);
+  }
 }
 
 // ---------------------------------------------------------------------------------------------------- Disparar
@@ -145,13 +228,23 @@ export function actualizarArmas(m: Motor, j: Jugador, dt: number) {
       case 'laser':
         laser(m, j, a, slot, dt);
         continue;
+      case 'chancla':
+        chanclas(m, j, a, slot, dt * ritmo);
+        continue;
       case 'pajaro':
         a.ang += E.rapidez * dt * (a.id === 'patoMorado' ? 1 : 1);
         break;
+      case 'tajo':
+        // La máquina pega más mientras más camine sin parar (y se reinicia al frenar)
+        a.k = moviendo ? a.k + Math.hypot(j.vx, j.vy) * dt : 0;
+        break;
     }
-    a.t -= dt * ritmo;
+    // La máquina y los cubitos se recargan más rápido caminando
+    const caminando = moviendo && (def.comp === 'tajo' || def.comp === 'cubito') ? 1.5 * (1 + Math.max(0, j.st.movimiento)) : 1;
+    a.t -= dt * ritmo * caminando;
     if (a.rafaga <= 0 && a.t <= 0) {
-      a.total = E.cant;
+      // (las luces del espejo: cada proyectil son cuatro rayitas)
+      a.total = E.cant * (def.comp === 'luces' ? 4 : 1);
       // Compañeros de estudio: a veces la tarea se hace dos veces
       if (j.tieneCarta('dobleTurno') && m.az.n() < 0.25) a.total *= 2;
       a.rafaga = a.total;
@@ -292,7 +385,7 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       if (a.id === 'tormenta') {
         for (const q of m.pend) {
           if (q.vivo) continue;
-          Object.assign(q, { vivo: true, t: 0.32, x, y, r, dano: E.dano, dueno: j.i, slot, arma: a.id, tipo: 0 });
+          Object.assign(q, { vivo: true, t: 0.32, x, y, r, dano: E.dano, dueno: j.i, slot, arma: a.id, tipo: 0, crit: 0, critX: 2 });
           break;
         }
       }
@@ -344,7 +437,7 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       const diluvio = a.id === 'diluvio';
       Object.assign(z, {
         vivo: true, dueno: j.i, arma: a.id, slot, tipo: 1, x: j.x, y: j.y, r: 0, w: E.radio * 2 * E.area, h: j.vistaH + 140, dano: E.dano,
-        vida: E.dur, dur: E.dur, golpeCada: E.golpeCada, hz: HZ_COLUMNA + j.i, vx: 0, vy: 0, crece: 0, lento: diluvio ? 1.2 : 0, t: 0,
+        vida: E.dur, dur: E.dur, golpeCada: E.golpeCada, hz: HZ_COLUMNA + j.i, vx: 0, vy: 0, crece: 0, lento: diluvio ? 1.2 : 0, dientes: 0, t: 0,
       });
       m.emitir('columna', j.x, j.y, z.w, z.h, E.dur, diluvio ? 1 : 0);
       break;
@@ -382,6 +475,216 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       }
       break;
     }
+    // ============================================================================================== Versión 2
+    case 'tajo': {
+      // Máquina de afeitar: tajos cortos adelante, uno encima de otro (la afeitada, a lado y lado)
+      const afeitada = a.id === 'afeitada';
+      const frente = j.manual ? (j.ax >= 0 ? 1 : -1) : j.mira;
+      const lado = afeitada && idx % 2 ? -frente : frente;
+      const fila = afeitada ? Math.floor(idx / 2) : idx;
+      const largo = E.rapidez * E.area * Math.max(0.7, E.vel);
+      const alto = E.radio * 2 * E.area * 0.8;
+      const yo = j.y - 8 + (fila % 2 ? 1 : -1) * Math.ceil(fila / 2) * alto * 0.6;
+      // (lo caminado sin parar se vuelve daño: hasta 5 por nivel)
+      const bono = Math.min(5 * (afeitada ? 10 : a.nivel), a.k / 150) * (1 + j.st.poder);
+      m.emitir('latigo', j.x, yo, lado, largo, alto, afeitada ? 3 : 2);
+      rectangulo(m, j, slot, j.x + lado * (6 + largo / 2), yo, largo / 2, alto / 2, E.dano + bono, a.id, lado, 0);
+      break;
+    }
+    case 'plancha': {
+      // Plancha del pelo: planchazos al más cercano (y a los que estén por ahí)
+      const diva = a.id === 'planchaDiva';
+      const e = idx === 0 ? masCercano(m, j.x, j.y, 330) : cercaAlAzar(m, j.x, j.y, 260);
+      const dir = aMano(j) ?? Math.atan2(j.dy, j.dx);
+      const x = e ? e.x : j.x + Math.cos(dir) * 50, y = e ? e.y : j.y + Math.sin(dir) * 40;
+      const r = E.radio * E.area;
+      const dano = E.dano + (diva ? a.k3 * (1 + j.st.poder) : 0);
+      m.emitir('tajo', x, y, r, m.az.n() * Math.PI, 0, diva ? 1 : 0);
+      circulo(m, j, slot, x, y, r, dano, a.id, 0.6);
+      // Remate (desde el nivel 8): cada cinco planchazos, uno enorme de arriba a abajo
+      a.k2++;
+      if (E.crit > 0 && a.k2 % 5 === 0) {
+        const ancho = 46 * E.area;
+        m.emitir('tajo', x, j.y, j.vistaH * 0.9, ancho, 0, 2);
+        rectangulo(m, j, slot, x, j.y, ancho / 2, j.vistaH * 0.45, dano * 2, a.id, 0, 1);
+      }
+      break;
+    }
+    case 'vapor': {
+      // Vaporizador: un cono de nubecitas hirviendo (la sauna, adelante y atrás)
+      const sauna = a.id === 'sauna';
+      if (idx === 0) a.ang = apuntar(m, j, 260);
+      const ang = a.ang + (sauna && idx % 2 ? Math.PI : 0) + (m.az.n() - 0.5) * 0.75;
+      const v = E.rapidez * E.vel * m.az.entre(0.75, 1.15);
+      const p = nuevoProy(m, j, slot, a.id, 11, j.x + Math.cos(ang) * 12, j.y - 6 + Math.sin(ang) * 10, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
+      if (p) {
+        p.dano = E.dano + (sauna ? a.k3 * (1 + j.st.poder) : 0);
+        p.n = E.radio * E.area;
+        p.ex = E.dur;
+      }
+      break;
+    }
+    case 'mariposa':
+      // Una bandada entera de una vez (las demás vueltas de la ráfaga no hacen nada)
+      if (idx === 0) {
+        bandada(m, j, a, slot, a.total);
+        a.rafaga = 0;
+      }
+      break;
+    case 'pistolaAgua': {
+      const hidro = a.id === 'hidrolavadora';
+      if (idx === 0) {
+        const dir = aMano(j) ?? Math.atan2(j.dy, j.dx);
+        const e = adelante(m, j, dir, 480);
+        if (!e) {
+          // Nadie adelante: guarda los tiros para después
+          a.k = Math.min(40, a.k + a.total);
+          a.rafaga = 0;
+          break;
+        }
+        if (a.k >= 1) {
+          const extra = Math.floor(a.k);
+          a.rafaga += extra;
+          a.total += extra;
+          a.k = 0;
+        }
+        a.ang = Math.atan2(e.y - j.y, e.x - j.x);
+        // La hidrolavadora, cada tanto, suelta un chorrazo que rebota por toda la pantalla
+        if (hidro && ++a.k2 % 6 === 0) {
+          for (let q = 0; q < 18; q++) {
+            const ang = (q / 18) * TAU + m.az.n() * 0.2;
+            const v = E.rapidez * E.vel * 0.6;
+            const c = nuevoProy(m, j, slot, a.id, 3, j.x, j.y - 6, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area * 1.3, 2.2);
+            if (c) {
+              c.perfora = 999;
+              c.golpeCada = 0.4;
+              c.dano = E.dano * 0.8;
+            }
+          }
+        }
+      }
+      const ang = a.ang + (m.az.n() - 0.5) * 0.12;
+      const v = E.rapidez * E.vel;
+      nuevoProy(m, j, slot, a.id, 0, j.x + Math.cos(ang) * 10, j.y - 8 + Math.sin(ang) * 8, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
+      break;
+    }
+    case 'brillantina': {
+      // Rayitos de brillantina: los primeros al más cercano, los demás a los de por ahí
+      const lluvia = a.id === 'lluviaBrillantina';
+      const e = idx === 0 ? masCercano(m, j.x, j.y, 420) : cercaAlAzar(m, j.x, j.y, 380);
+      if (!e) break;
+      m.emitir('rayo', e.x, e.y, 14, 0, 0, 2);
+      const c = m.az.n() < E.crit;
+      m.herir(e, E.dano, j.i, slot, 0, 0, c, a.id);
+      if (c) {
+        // El crítico revienta alrededor, y encadenado pega cada vez más (las vidas extra suben el tope)
+        const tope = Math.max(2, 3 * Math.round(j.st.revivir) + (lluvia ? 4 : 2));
+        a.k = a.k >= tope ? 0 : a.k + 1;
+        m.explotar(j.i, slot, a.id, e.x, e.y, E.radio * E.area, E.dano * (1 + a.k), 6);
+      }
+      break;
+    }
+    case 'cubito': {
+      // Cubitos cortos hacia donde mira; la granizada, quieta, para seis lados
+      const granizo = a.id === 'granizada';
+      const moviendo = Math.hypot(j.vx, j.vy) > 20;
+      const mano = aMano(j);
+      if (idx === 0) a.ang = apuntar(m, j, 240);
+      const base = a.ang;
+      const angs: number[] = [];
+      if (granizo && !moviendo && mano === null) for (let q = 0; q < 6; q++) angs.push((q / 6) * TAU + idx * 0.18);
+      else angs.push(base + (idx % 2 ? 1 : -1) * Math.ceil(idx / 2) * 0.16 + (m.az.n() - 0.5) * 0.1);
+      for (const ang of angs) {
+        const v = E.rapidez * E.vel;
+        const p = nuevoProy(m, j, slot, a.id, 0, j.x + Math.cos(ang) * 8, j.y - 8 + Math.sin(ang) * 6, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
+        if (p) {
+          p.dano *= moviendo ? 1.25 : 1;
+          p.ey = E.congela;
+          p.ex = granizo ? 0.16 : 0.05;
+        }
+      }
+      break;
+    }
+    case 'lanza': {
+      // Cepillos de espalda: caen del cielo en abanico adelante y revientan en espuma
+      const celeste = a.id === 'cepilloCeleste';
+      if (idx === 0) a.ang = apuntar(m, j, 320);
+      const n = Math.max(1, a.total);
+      const abre = (idx - (n - 1) / 2) * 0.34;
+      const d = 95 + (idx % 3) * 34 + m.az.entre(-8, 8);
+      const x = j.x + Math.cos(a.ang + abre) * d, y = j.y + Math.sin(a.ang + abre) * d * 0.85;
+      const r = E.radio * E.area;
+      const demora = 0.36;
+      m.emitir('lanza', x, y, r, demora, 0, celeste ? 1 : 0);
+      pendiente(m, j, slot, a.id, 1, demora, x, y, r, E.dano);
+      if (celeste) pendiente(m, j, slot, a.id, 1, demora + 0.28, x, y, r * 1.35, E.dano * 0.6);
+      break;
+    }
+    case 'mascarilla': {
+      // Mascarilla de pepino: una gota que se queda adelante un ratico
+      const spa = a.id === 'spa';
+      if (idx === 0) a.ang = apuntar(m, j, 200);
+      const n = Math.max(1, a.total);
+      const ang = a.ang + (idx - (n - 1) / 2) * 0.6;
+      const r = E.radio * E.area;
+      const d = 26 + r * 1.05 + (idx % 2) * 12;
+      const z = nuevaZona(m);
+      if (!z) break;
+      Object.assign(z, {
+        vivo: true, dueno: j.i, arma: a.id, slot, tipo: 2, x: j.x + Math.cos(ang) * d, y: j.y + Math.sin(ang) * d * 0.85, r, w: 0, h: 0, dano: E.dano,
+        vida: E.dur, dur: E.dur, golpeCada: E.golpeCada, hz: HZ_MASCARILLA + j.i, vx: Math.cos(ang) * 30, vy: Math.sin(ang) * 26, crece: 0, lento: 0,
+        dientes: (0.03 + E.crit) * (1 + Math.max(0, j.st.suerte)), t: 0,
+      });
+      m.emitir('charco', z.x, z.y, r, E.dur, 0, 2);
+      if (spa && idx === 0) m.curar(j, 1);
+      break;
+    }
+    case 'piedra': {
+      // Piedra pómez: cae desde arriba de la pantalla hacia un mugroso y se parte en pedacitos
+      const e = alAzarEnVista(m, j);
+      const tx = e ? e.x : j.x + m.az.entre(-200, 200), ty = e ? e.y : j.y + m.az.entre(-100, 100);
+      const sx = tx + m.az.entre(-70, 70), sy = j.y - j.vistaH / 2 - 60;
+      const v = E.rapidez * E.vel;
+      const d = Math.hypot(tx - sx, ty - sy) || 1;
+      const p = nuevoProy(m, j, slot, a.id, 7, sx, sy, ((tx - sx) / d) * v, ((ty - sy) / d) * v, E.radio * E.area, d / v + 0.04);
+      if (p) {
+        p.perfora = 1;
+        p.giro = m.az.entre(-6, 6);
+        p.n = 3 + Math.floor(E.cant / 2);
+        p.ex = E.dur;
+      }
+      break;
+    }
+    case 'luces': {
+      // Luces del espejo: rayitas delgadas sobre un mugroso (rojo la primera; después amarillo, azul, fucsia, naranja)
+      const camerino = a.id === 'camerino';
+      const e = idx === 0 ? masCercano(m, j.x, j.y, 560) : alAzarEnVista(m, j);
+      if (!e) break;
+      const vertical = camerino && idx % 2 === 1;
+      const largo = E.rapidez * 2 * E.area;
+      const grosor = E.radio;
+      const color = idx === 0 ? 0 : 1 + ((idx - 1) % 4);
+      m.emitir('luces', e.x, e.y - 6, largo, grosor, vertical ? 1 : 0, color);
+      if (vertical) rectangulo(m, j, slot, e.x, e.y, grosor, largo / 2, E.dano, a.id, 0, 0);
+      else rectangulo(m, j, slot, e.x, e.y, largo / 2, grosor, E.dano, a.id, 0, 0);
+      break;
+    }
+    case 'letras': {
+      // Letras de espuma: suben desde abajo de la pantalla y caen locas (solo pegan cayendo)
+      const abc = a.id === 'abecedario';
+      const x = j.x + m.az.entre(-0.42, 0.42) * j.vistaW;
+      const y = j.y + j.vistaH / 2 + 30;
+      const sube = Math.sqrt(2 * 900 * j.vistaH * m.az.entre(0.6, 0.9));
+      const p = nuevoProy(m, j, slot, a.id, 8, x, y, m.az.entre(-90, 90), -sube, E.radio * E.area, 4);
+      if (p) {
+        p.ay = 900;
+        p.perfora = E.perfora;
+        p.golpeCada = 0.03;
+        p.n = abc ? 1 : 0;
+        p.giro = m.az.entre(-5, 5);
+      }
+      break;
+    }
   }
 }
 
@@ -405,8 +708,121 @@ export function pendientesGolpe(m: Motor, dt: number) {
     q.vivo = false;
     const j = m.jug[q.dueno];
     if (!j) continue;
-    E.crit = 0;
-    rayo(m, j, q.slot, q.arma, q.x, q.y, q.r, q.dano, 1);
+    E.crit = q.crit;
+    E.critX = q.critX;
+    if (q.tipo === 1) {
+      // El cepillo de espalda llega al piso: revienta en espuma
+      m.emitir('explosion', q.x, q.y, q.r, 0, 0, 7);
+      circulo(m, j, q.slot, q.x, q.y, q.r, q.dano, q.arma, 1);
+    } else rayo(m, j, q.slot, q.arma, q.x, q.y, q.r, q.dano, 1);
+  }
+}
+
+/** Un golpe que cae después (con el crítico del arma en ese momento). */
+function pendiente(m: Motor, j: Jugador, slot: number, arma: IdArma, tipo: number, t: number, x: number, y: number, r: number, dano: number) {
+  for (const q of m.pend) {
+    if (q.vivo) continue;
+    Object.assign(q, { vivo: true, t, x, y, r, dano, dueno: j.i, slot, arma, tipo, crit: E.crit, critX: E.critX });
+    return;
+  }
+}
+
+/** Una bandada de mariposas: entra por un borde de la pantalla y la cruza pasando por el centro. */
+function bandada(m: Motor, j: Jugador, a: ArmaJ, slot: number, cuantas: number) {
+  const ang = m.az.n() * TAU;
+  const R = Math.hypot(j.vistaW, j.vistaH) * 0.55;
+  const sx = j.x + Math.cos(ang) * R, sy = j.y + Math.sin(ang) * R * 0.8;
+  const tx = j.x + m.az.entre(-60, 60), ty = j.y + m.az.entre(-40, 40);
+  const dir = Math.atan2(ty - sy, tx - sx);
+  const c = Math.cos(dir), s = Math.sin(dir);
+  const v = E.rapidez * E.vel;
+  const vida = (Math.hypot(tx - sx, ty - sy) * 2.1) / v;
+  for (let q = 0; q < cuantas; q++) {
+    const lado = (q % 2 ? 1 : -1) * Math.ceil(q / 2) * 13;
+    const atras = -m.az.n() * 70;
+    const k = m.az.entre(0.9, 1.1);
+    nuevoProy(m, j, slot, a.id, 0, sx + c * atras - s * lado, sy + s * atras + c * lado, c * v * k, s * v * k, E.radio * E.area, vida);
+  }
+}
+
+/** Chancletas mojadas: al caminar dejan huellitas que pican; al frenar, salen todas disparadas. */
+function chanclas(m: Motor, j: Jugador, a: ArmaJ, slot: number, dt: number) {
+  const moviendo = Math.hypot(j.vx, j.vy) > 20;
+  a.t -= dt;
+  let n = 0;
+  for (const p of m.pr) if (p.vivo && p.comp === 9 && p.dueno === j.i && p.slot === slot) n++;
+  a.total = n;
+  if (moviendo) {
+    if (a.t > 0 || n >= 2 + E.cant * 3) return;
+    a.tr -= dt * (1 + Math.max(0, j.st.movimiento));
+    if (a.tr > 0) return;
+    a.tr = E.inter;
+    // (una huella de cada pie, un poquito atrás)
+    a.k = a.k ? 0 : 1;
+    const atras = Math.atan2(-j.dy, -j.dx), pie = a.k ? 6 : -6;
+    const x = j.x + Math.cos(atras) * 12 - Math.sin(atras) * pie, y = j.y + Math.sin(atras) * 12 + Math.cos(atras) * pie;
+    const p = nuevoProy(m, j, slot, a.id, 9, x, y, Math.cos(atras) * 8 * E.vel, Math.sin(atras) * 8 * E.vel, E.radio * E.area, E.dur + 1.5);
+    if (p) {
+      p.perfora = 999;
+      p.golpeCada = E.golpeCada;
+      p.ang = Math.atan2(j.dy, j.dx);
+      p.n = E.rapidez * E.vel;
+      p.ex = E.dano;
+    }
+    return;
+  }
+  if (n === 0 || j.quieto < 0.06) return;
+  // Frenó: todas hacia donde mira (más fuertes mientras más tiempo llevaban en el piso)
+  const dir = aMano(j) ?? Math.atan2(j.dy, j.dx);
+  for (const p of m.pr) {
+    if (!p.vivo || p.comp !== 9 || p.dueno !== j.i || p.slot !== slot) continue;
+    p.comp = 10;
+    p.dano = p.ex * (1 + Math.min(3, p.t));
+    const ang = dir + (m.az.n() - 0.5) * 0.12;
+    p.vx = Math.cos(ang) * p.n;
+    p.vy = Math.sin(ang) * p.n;
+    p.ang = ang;
+    p.vida = 0.5 * Math.sqrt(E.area) + 0.22;
+    p.golpeCada = 9;
+    p.giro = a.id === 'pisoton' ? 1 : 0;
+    p.gid.fill(0);
+    p.gt.fill(0);
+  }
+  a.t = E.enfr;
+  a.tr = 0;
+}
+
+/** Le quitaron vida: la plancha contraataca alrededor y las mariposas mandan otra bandada. */
+export function alHerido(m: Motor, j: Jugador) {
+  for (let slot = 0; slot < j.armas.length; slot++) {
+    const a = j.armas[slot];
+    const comp = ARMAS[a.id].comp;
+    if (comp !== 'plancha' && comp !== 'mariposa') continue;
+    if (m.tReal < a.k) continue;
+    calcular(j, a);
+    if (comp === 'plancha') {
+      a.k = m.tReal + 0.6;
+      const r = E.radio * E.area * 0.9, R = 44 * Math.sqrt(E.area);
+      for (let q = 0; q < 6; q++) {
+        const ang = (q / 6) * TAU;
+        const x = j.x + Math.cos(ang) * R, y = j.y + Math.sin(ang) * R * 0.85;
+        m.emitir('tajo', x, y, r, ang, 0, 3);
+        circulo(m, j, slot, x, y, r, E.dano + (a.id === 'planchaDiva' ? a.k3 : 0), a.id, 1.2);
+      }
+    } else {
+      const mariposario = a.id === 'mariposario';
+      a.k = m.tReal + (mariposario ? 1 : 1.8);
+      bandada(m, j, a, slot, E.cant);
+      if (mariposario) m.curar(j, 3);
+    }
+  }
+}
+
+/** Cayó un mugroso: la plancha de diva y la sauna se calientan (sin tope de por vida, pero con tope por partida). */
+export function alMatar(j: Jugador) {
+  for (const a of j.armas) {
+    if (a.id === 'planchaDiva') a.k3 = Math.min(60, a.k3 + 0.02);
+    else if (a.id === 'sauna') a.k3 = Math.min(40, a.k3 + 0.01);
   }
 }
 
@@ -578,12 +994,67 @@ export function moverProyectiles(m: Motor, dt: number) {
             const inunda = p.arma === 'inundacion';
             Object.assign(z, {
               vivo: true, dueno: p.dueno, arma: p.arma, slot: p.slot, tipo: 0, x: p.ex, y: p.ey, r: p.r, w: 0, h: 0, dano: p.dano, vida: p.n, dur: p.n,
-              golpeCada: p.golpeCada, hz: HZ_CHARCO + p.dueno, vx: 0, vy: 0, crece: inunda ? 1 : 0, lento: 0, t: 0,
+              golpeCada: p.golpeCada, hz: HZ_CHARCO + p.dueno, vx: 0, vy: 0, crece: inunda ? 1 : 0, lento: 0, dientes: 0, t: 0,
             });
             m.emitir('charco', p.ex, p.ey, p.r, p.n, 0, inunda ? 1 : 0);
           }
         }
         continue;
+      }
+      case 7:
+        // Piedra pómez cayendo: al llegar, se parte
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.ang += p.giro * dt;
+        if (p.vida <= 0) {
+          p.vivo = false;
+          if (j) partir(m, j, p);
+          continue;
+        }
+        break;
+      case 8: {
+        // Letra de espuma: sube, se frena y cae dando tumbos (a veces cambia de lado)
+        p.vy += p.ay * dt;
+        if (m.az.n() < dt * 2.5) p.vx = m.az.entre(-150, 150);
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.ang += p.giro * dt;
+        if (j && p.vy > 0 && p.y > j.y + j.vistaH / 2 + 40) {
+          // (el abecedario rebota una vez abajo antes de irse)
+          if (p.n > 0) {
+            p.n--;
+            p.vy = -p.vy * 0.72;
+            p.gid.fill(0);
+            p.gt.fill(0);
+          } else p.vivo = false;
+        }
+        if (!p.vivo) continue;
+        break;
+      }
+      case 9: {
+        // Huellita en el piso: se va quedando atrás despacito
+        const k = 1 + 0.9 * dt;
+        p.vx *= k;
+        p.vy *= k;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        break;
+      }
+      case 10:
+        // Chancla disparada: al final, el pisotón revienta en un charco
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        if (p.vida <= 0 && p.giro === 1) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 44 * (p.r / 15), p.dano * 0.5, 0);
+        break;
+      case 11: {
+        // Nubecita de vapor: se frena y se infla
+        const f = Math.exp(-2.4 * dt);
+        p.vx *= f;
+        p.vy *= f;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.r = p.n * (0.7 + 1.5 * Math.min(1, p.t / Math.max(0.05, p.ex)));
+        break;
       }
     }
     if (p.vida <= 0) {
@@ -599,6 +1070,9 @@ export function moverProyectiles(m: Motor, dt: number) {
 function choques(m: Motor, j: Jugador, p: Proyectil) {
   const n = m.rej.circulo(p.x, p.y, p.r + 48);
   for (let k = 0; k < n; k++) m.tmp[k] = m.rej.fuera[k];
+  // (las letras de espuma solo pegan cayendo)
+  if (p.comp === 8 && p.vy < 0) return;
+  const hielo = p.arma === 'cubitos' || p.arma === 'granizada';
   for (let k = 0; k < n && p.vivo; k++) {
     const e = m.en[m.tmp[k]];
     if (!e.vivo) continue;
@@ -613,8 +1087,14 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
     p.gi = (p.gi + 1) % 16;
     const kx = p.vx || e.x - p.x, ky = p.vy || e.y - p.y;
     const luz = e.luz;
-    golpe(m, j, p.slot, e, p.dano, p.crit, p.critX, kx * p.retro, ky * p.retro, p.arma);
+    // Cubitos: a los congelados les pegan el doble, y a veces congelan
+    const congelado = hielo && (e.congelado > 0 || m.hielo > 0);
+    golpe(m, j, p.slot, e, congelado ? p.dano * 2 : p.dano, p.crit, p.critX, kx * p.retro, ky * p.retro, p.arma);
     if (luz) continue;
+    if (hielo && e.vivo && m.az.n() < p.ex * (1 + Math.max(0, j.st.suerte))) {
+      if (e.def.congelable) e.congelado = Math.max(e.congelado, p.ey);
+      else e.lento = Math.max(e.lento, p.ey);
+    }
     // Rana glotona: lo que se traga lo escupe en gotas doradas
     if (!e.vivo && p.arma === 'ranaGlotona' && m.az.n() < 0.3) m.soltar('moneda', e.x, e.y);
     if (j.tieneCarta('diamante') && e.vivo && m.az.n() < 0.12) e.congelado = Math.max(e.congelado, 1.5);
@@ -648,9 +1128,30 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
           }
         }
         p.vivo = false;
+        if (p.comp === 7) partir(m, j, p);
         if (!p.mini && j.tieneCarta('lucesFeria') && COMP_LUCES.has(p.comp)) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
       }
     }
+  }
+}
+
+/** La piedra pómez se parte en pedacitos (la mitad del daño); las calientes, además, revientan. */
+function partir(m: Motor, j: Jugador, p: Proyectil) {
+  const calientes = p.arma === 'piedrasCalientes';
+  if (calientes) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 40 * (p.r / 15), p.dano * 0.5, 1);
+  else m.emitir('romper', p.x, p.y);
+  const n = Math.max(1, Math.round(p.n));
+  for (let q = 0; q < n; q++) {
+    const c = libre(m);
+    if (!c) return;
+    const ang = (q / n) * TAU + m.az.n() * 0.8;
+    const v = 260 + m.az.n() * 120;
+    c.vivo = true;
+    Object.assign(c, { dueno: p.dueno, slot: p.slot, arma: p.arma, comp: 0, x: p.x, y: p.y, vx: Math.cos(ang) * v, vy: Math.sin(ang) * v, ax: 0, ay: 0,
+      r: p.r * 0.5, dano: p.dano * 0.5, crit: 0, critX: 2, perfora: calientes ? 2 : 1, vida: p.ex, t: 0, ang, giro: 0, golpeCada: 0.5, retro: 0.5, gi: 0,
+      ex: 0, ey: 0, n: 0, mini: false });
+    c.gid.fill(0);
+    c.gt.fill(0);
   }
 }
 
@@ -670,6 +1171,10 @@ export function moverZonas(m: Motor, dt: number) {
       // La columna de la ducha sigue al personaje
       z.x = j.x;
       z.y = j.y;
+    } else if (z.tipo === 2) {
+      // La gota de mascarilla avanza despacito
+      z.x += z.vx * dt;
+      z.y += z.vy * dt;
     } else if (z.crece) {
       // La inundación persigue al dueño despacito
       const dx = j.x - z.x, dy = j.y - z.y, d = Math.hypot(dx, dy);
@@ -688,6 +1193,7 @@ export function moverZonas(m: Motor, dt: number) {
       } else if ((e.x - z.x) ** 2 + ((e.y - z.y) * 1.25) ** 2 > (z.r + e.r * 0.5) ** 2) continue;
       e.hz[z.hz] = m.tReal + z.golpeCada;
       if (z.lento) e.lento = Math.max(e.lento, z.lento);
+      if (z.dientes && !e.jefe && !e.sinDientes && m.az.n() < z.dientes) e.sinDientes = true;
       golpe(m, j, z.slot, e, z.dano, E.crit * 0, 2, z.tipo === 1 ? 0 : e.x - z.x, z.tipo === 1 ? 1 : e.y - z.y, z.arma);
       if (z.crece && z.r < 160) z.r += 0.6;
     }

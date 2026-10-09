@@ -24,7 +24,21 @@ export type Comp =
   | 'reloj' // Clock Lancet: haz que congela
   | 'pistola' // Phiera / Eight the Sparrow: disparos en direcciones fijas
   | 'espiral' // Death Spiral
-  | 'laser'; // Phieraggi
+  | 'laser' // Phieraggi
+  // Versión 2
+  | 'chancla' // Shadow Pinion: huellitas al caminar que salen disparadas al frenar
+  | 'tajo' // Vento Sacro: tajos adelante, más seguido y más fuertes mientras más camine sin parar
+  | 'plancha' // Victory Sword: combo de tajos al más cercano y contraataque al recibir un golpe
+  | 'vapor' // Flames of Misspell: conos de vapor hacia donde se mira
+  | 'mariposa' // Pako Battiliar: bandadas que cruzan la pantalla (y salen más cuando le quitan vida)
+  | 'pistolaAgua' // Ammo Appalate: al que esté adelante; si no hay nadie, guarda los tiros
+  | 'brillantina' // Unearthly Bolt: rayitos al más cercano; el crítico revienta y se encadena
+  | 'cubito' // Glass Fandango: más fuerte caminando y contra los congelados
+  | 'lanza' // Santa Javelin: caen del cielo en abanico y revientan en el piso
+  | 'mascarilla' // Gaze of Gaea: una gota adelante que a veces deja al mugroso sin dientes
+  | 'piedra' // Magi-Stone: cae de arriba y se parte en pedacitos; daño fijo por nivel
+  | 'luces' // Phas3r: rayitas delgadas horizontales sobre un mugroso
+  | 'letras'; // Chaos Rune: suben desde abajo y caen locas (solo pegan cayendo)
 
 export interface BaseArma {
   /** Daño de cada golpe. */
@@ -73,8 +87,9 @@ export interface DefArma {
   base: BaseArma;
   /** Del nivel 2 al 8. */
   niveles: NivelArma[];
-  /** Con qué evoluciona (al nivel 8 + la pasiva, abriendo un cofre de jefe después del minuto 10). */
-  evo?: { pasiva?: IdPasiva; arma?: IdArma; a: IdArma };
+  /** Con qué evoluciona (al nivel máximo + la pasiva, abriendo un cofre después del minuto 10). Sin pasiva ni arma
+   *  (el copito): con el nivel máximo basta. `y`: una segunda pasiva (los dos anillos, los dos aretes). */
+  evo?: { pasiva?: IdPasiva; y?: IdPasiva; arma?: IdArma; a: IdArma };
   /** Es la evolución de… */
   de?: IdArma[];
   /** Qué tan seguido sale en las cartas (como la rareza del original). */
@@ -530,6 +545,367 @@ export const ARMAS: Record<IdArma, DefArma> = {
     base: B({ dano: 22, cant: 8, area: 1.2, enfr: 0, perfora: 999, radio: 9, rapidez: 1.1, golpeCada: 0.25, dur: 9999 }),
     niveles: [],
   },
+  // ================================================================================================ Versión 2
+  // ------------------------------------------------------------------------------------------------ Shadow Pinion
+  chancletas: {
+    id: 'chancletas', nombre: 'Chancletas mojadas', original: 'Shadow Pinion', secreta: true,
+    desc: 'Al caminar dejas huellitas de agua que pican a los que las pisan; al frenar, salen todas disparadas hacia donde miras.',
+    comp: 'chancla', rareza: 50,
+    base: B({ dano: 10, cant: 1, dur: 2.5, enfr: 1.6, inter: 0.32, perfora: 999, radio: 12, rapidez: 430, golpeCada: 1.2, retro: 1 }),
+    niveles: [
+      n('+1 huellita a la vez', { cant: 1 }),
+      n('+5 de daño', { dano: 5 }),
+      n('Duran 0,3 s más', { dur: 0.3 }),
+      n('+5 de daño', { dano: 5 }),
+      n('Duran 0,3 s más', { dur: 0.3 }),
+      n('+5 de daño', { dano: 5 }),
+      n('Duran 0,3 s más', { dur: 0.3 }),
+    ],
+    evo: { pasiva: 'pantuflas', a: 'pisoton' },
+  },
+  pisoton: {
+    id: 'pisoton', nombre: 'Pisotón de charco', original: 'Valkyrie Turner', de: ['chancletas'],
+    desc: 'Huellas enormes que, al salir disparadas, revientan en charcos.',
+    comp: 'chancla', rareza: 0,
+    base: B({ dano: 32, cant: 3, area: 1.4, dur: 3.6, enfr: 1.1, inter: 0.22, perfora: 999, radio: 15, rapidez: 500, golpeCada: 0.8, retro: 1.3 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Vento Sacro
+  maquina: {
+    id: 'maquina', nombre: 'Máquina de afeitar', original: 'Vento Sacro', secreta: true,
+    desc: 'Tajos rapidísimos adelante. Se recarga más rápido caminando y pega más mientras más camines sin parar. Críticos.',
+    comp: 'tajo', rareza: 50,
+    base: B({ dano: 3, area: 1, cant: 4, enfr: 2, inter: 0.05, perfora: 999, radio: 13, rapidez: 110, crit: 0.05, critX: 2, retro: 0.6 }),
+    niveles: [
+      n('+2 de daño', { dano: 2 }),
+      n('+1 tajo y +20 % de área', { cant: 1, area: 0.2 }),
+      n('+2 de daño', { dano: 2 }),
+      n('+1 tajo y +20 % de área', { cant: 1, area: 0.2 }),
+      n('+2 de daño', { dano: 2 }),
+      n('+1 tajo y +20 % de área', { cant: 1, area: 0.2 }),
+      n('+2 de daño', { dano: 2 }),
+    ],
+    evo: { arma: 'toallazo', a: 'afeitada' },
+  },
+  afeitada: {
+    id: 'afeitada', nombre: 'Afeitada perfecta', original: 'Fuwalafuwaloo', de: ['maquina', 'toallazo'],
+    desc: 'La máquina y la toalla hirviendo juntas: tajos a lado y lado que no fallan y críticos que te curan.',
+    comp: 'tajo', rareza: 0,
+    base: B({ dano: 26, area: 1.9, cant: 7, enfr: 1.1, inter: 0.04, perfora: 999, radio: 15, rapidez: 120, crit: 0.2, critX: 3, retro: 0.9 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Bracelet
+  copito: {
+    id: 'copito', nombre: 'Copito', original: 'Bracelet', secreta: true,
+    desc: 'Tres copitos a un mugroso al azar. Al nivel máximo evoluciona solo (sin pasiva).',
+    comp: 'fuego', rareza: 40,
+    base: B({ dano: 10, area: 0.9, cant: 3, dur: 0.62, enfr: 1.4, inter: 0.04, perfora: 1, rapidez: 430, radio: 8 }),
+    niveles: [
+      n('+10 de daño', { dano: 10 }),
+      n('Atraviesa a uno más', { perfora: 1 }),
+      n('+1 copito y +10 % de área', { cant: 1, area: 0.1 }),
+      n('Atraviesa a uno más', { perfora: 1 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+1 copito', { cant: 1 }),
+      n('Llegan más lejos', { dur: 0.1 }),
+    ],
+    evo: { a: 'dobleCopito' },
+  },
+  dobleCopito: {
+    id: 'dobleCopito', nombre: 'Doble copito', original: 'Bi-Bracelet', de: ['copito'],
+    desc: 'Copitos de dos puntas, más fuertes. Al nivel máximo se vuelve triple.',
+    comp: 'fuego', rareza: 20,
+    base: B({ dano: 30, area: 1, cant: 4, dur: 0.66, enfr: 1.4, inter: 0.04, perfora: 3, rapidez: 450, radio: 9 }),
+    niveles: [
+      n('Atraviesa a uno más', { perfora: 1 }),
+      n('+1 copito y +10 % de área', { cant: 1, area: 0.1 }),
+      n('Llegan más lejos y se recarga 0,2 s más rápido', { dur: 0.1, enfr: -0.2 }),
+      n('+1 copito y +10 % de área', { cant: 1, area: 0.1 }),
+      n('Atraviesa a uno más', { perfora: 1 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+1 copito', { cant: 1 }),
+    ],
+    evo: { a: 'tripleCopito' },
+  },
+  tripleCopito: {
+    id: 'tripleCopito', nombre: 'Triple copito', original: 'Tri-Bracelet', de: ['dobleCopito'],
+    desc: 'La caja entera de copitos.',
+    comp: 'fuego', rareza: 20,
+    base: B({ dano: 34, area: 1.2, cant: 5, dur: 0.72, enfr: 1.3, inter: 0.03, perfora: 4, rapidez: 470, radio: 10 }),
+    niveles: [
+      n('+1 copito y +10 % de área', { cant: 1, area: 0.1 }),
+      n('Llegan más lejos y se recarga 0,1 s más rápido', { dur: 0.1, enfr: -0.1 }),
+      n('+1 copito y +10 de daño', { cant: 1, dano: 10 }),
+      n('Llegan más lejos y se recarga 0,1 s más rápido', { dur: 0.1, enfr: -0.1 }),
+      n('+10 % de área', { area: 0.1 }),
+      n('+10 de daño', { dano: 10 }),
+      n('Atraviesa a uno más', { perfora: 1 }),
+    ],
+  },
+  // ------------------------------------------------------------------------------------------------ Victory Sword
+  plancha: {
+    id: 'plancha', nombre: 'Plancha del pelo', original: 'Victory Sword', secreta: true,
+    desc: 'Combo de planchazos al más cercano. Si te pegan, contraataca alrededor. Al nivel 8: críticos y remate.',
+    comp: 'plancha', rareza: 30,
+    base: B({ dano: 6, area: 1, cant: 2, enfr: 1.85, inter: 0.1, perfora: 999, radio: 28, retro: 1 }),
+    niveles: [
+      n('+1 planchazo', { cant: 1 }),
+      n('+15 % de área y +4 de daño', { area: 0.15, dano: 4 }),
+      n('+1 planchazo', { cant: 1 }),
+      n('+15 % de área y +6 de daño', { area: 0.15, dano: 6 }),
+      n('+1 planchazo', { cant: 1 }),
+      n('+15 % de área y +6 de daño', { area: 0.15, dano: 6 }),
+      n('Críticos y remate (cada cinco planchazos, uno enorme)', { crit: 0.1, enfr: -0.3 }),
+    ],
+    evo: { pasiva: 'cajitaMusica', a: 'planchaDiva' },
+  },
+  planchaDiva: {
+    id: 'planchaDiva', nombre: 'Plancha de diva', original: 'Sole Solution', de: ['plancha'],
+    desc: 'Planchazos de salón: cada mugroso que cae la pone más fuerte.',
+    comp: 'plancha', rareza: 0,
+    base: B({ dano: 26, area: 1.5, cant: 4, enfr: 1.2, inter: 0.08, perfora: 999, radio: 30, crit: 0.15, critX: 2.5, retro: 1.2 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Flames of Misspell
+  vaporizador: {
+    id: 'vaporizador', nombre: 'Vaporizador', original: 'Flames of Misspell', secreta: true,
+    desc: 'Conos de vapor hirviendo hacia donde miras.',
+    comp: 'vapor', rareza: 30,
+    base: B({ dano: 14, area: 1, cant: 12, dur: 0.6, enfr: 4, inter: 0.04, perfora: 999, radio: 13, rapidez: 260, golpeCada: 9, retro: 0.5 }),
+    niveles: [
+      n('+25 % de velocidad', { vel: 0.25 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+50 % de área y se recarga 0,5 s más rápido', { area: 0.5, enfr: -0.5 }),
+      n('+25 % de velocidad', { vel: 0.25 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+50 % de área y se recarga 0,5 s más rápido', { area: 0.5, enfr: -0.5 }),
+      n('Se recarga 0,5 s más rápido', { enfr: -0.5 }),
+    ],
+    evo: { pasiva: 'cajitaMusica', a: 'sauna' },
+  },
+  sauna: {
+    id: 'sauna', nombre: 'Sauna', original: 'Ashes of Muspell', de: ['vaporizador'],
+    desc: 'Vapor adelante y atrás, y más caliente con cada mugroso que cae.',
+    comp: 'vapor', rareza: 0,
+    base: B({ dano: 28, area: 2, cant: 16, dur: 0.62, enfr: 2.2, inter: 0.03, perfora: 999, radio: 14, rapidez: 300, vel: 1.4, golpeCada: 9, retro: 0.6 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Pako Battiliar
+  mariposas: {
+    id: 'mariposas', nombre: 'Mariposas de la cortina', original: 'Pako Battiliar', secreta: true,
+    desc: 'Bandadas de mariposas que cruzan la pantalla. Cuando te quitan vida, sale otra bandada.',
+    comp: 'mariposa', rareza: 60,
+    base: B({ dano: 20, cant: 10, enfr: 8, inter: 0, perfora: 1, rapidez: 170, radio: 10, retro: 0.8 }),
+    niveles: [
+      n('Atraviesan a uno más y +30 % de velocidad', { perfora: 1, vel: 0.3 }),
+      n('+1 mariposa y se recarga 0,5 s más rápido', { cant: 1, enfr: -0.5 }),
+      n('+1 mariposa y +10 de daño', { cant: 1, dano: 10 }),
+      n('Atraviesan a dos más y +30 % de velocidad', { perfora: 2, vel: 0.3 }),
+      n('+1 mariposa y se recarga 0,5 s más rápido', { cant: 1, enfr: -0.5 }),
+      n('+1 mariposa y atraviesan a tres más', { cant: 1, perfora: 3 }),
+      n('+1 mariposa y +10 de daño', { cant: 1, dano: 10 }),
+    ],
+    evo: { pasiva: 'crema', a: 'mariposario' },
+  },
+  mariposario: {
+    id: 'mariposario', nombre: 'Mariposario', original: 'Mazo Familiar', de: ['mariposas'],
+    desc: 'Nubes de mariposas que no se acaban; cada vez que te pegan te traen un poquito de vida.',
+    comp: 'mariposa', rareza: 0,
+    base: B({ dano: 36, cant: 18, enfr: 4.5, inter: 0, perfora: 8, rapidez: 250, radio: 12, retro: 1 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Ammo Appalate
+  pistolaAgua: {
+    id: 'pistolaAgua', nombre: 'Pistola de agua', original: 'Ammo Appalate', secreta: true,
+    desc: 'Chorritos al mugroso que tengas adelante. Si no hay nadie, guarda los tiros para después.',
+    comp: 'pistolaAgua', rareza: 60,
+    base: B({ dano: 10, cant: 3, enfr: 2, inter: 0.1, perfora: 1, rapidez: 540, radio: 6, dur: 1.1 }),
+    niveles: [
+      n('+10 % de área y atraviesan a tres más', { area: 0.1, perfora: 3 }),
+      n('+1 chorrito y +1 de daño', { cant: 1, dano: 1 }),
+      n('+1 chorrito y +1 de daño', { cant: 1, dano: 1 }),
+      n('+10 % de área y atraviesan a tres más', { area: 0.1, perfora: 3 }),
+      n('+1 chorrito y +1 de daño', { cant: 1, dano: 1 }),
+      n('+3 de daño', { dano: 3 }),
+      n('+2 chorritos', { cant: 2 }),
+    ],
+    evo: { pasiva: 'liga', a: 'hidrolavadora' },
+  },
+  hidrolavadora: {
+    id: 'hidrolavadora', nombre: 'Hidrolavadora', original: 'Gunastrophe', de: ['pistolaAgua'],
+    desc: 'Ráfagas a presión y, cada tanto, un chorrazo que rebota por toda la pantalla.',
+    comp: 'pistolaAgua', rareza: 0,
+    base: B({ dano: 22, cant: 6, area: 1.3, enfr: 1.2, inter: 0.06, perfora: 6, rapidez: 620, radio: 7, dur: 1.2 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Unearthly Bolt
+  brillantina: {
+    id: 'brillantina', nombre: 'Brillantina', original: 'Unearthly Bolt', secreta: true,
+    desc: 'Rayitos de brillantina al más cercano. El crítico revienta alrededor y, si se encadena, pega cada vez más. Cada vida extra le suma un rayito.',
+    comp: 'brillantina', rareza: 70,
+    base: B({ dano: 14, area: 1, cant: 1, enfr: 2.4, inter: 0.1, perfora: 999, radio: 34, crit: 0.22, critX: 1 }),
+    niveles: [
+      n('+1 rayito', { cant: 1 }),
+      n('+1 rayito y +10 % de área', { cant: 1, area: 0.1 }),
+      n('Se recarga 0,1 s más rápido y +5 de daño', { enfr: -0.1, dano: 5 }),
+      n('+1 rayito', { cant: 1 }),
+      n('+1 rayito y +10 % de área', { cant: 1, area: 0.1 }),
+      n('+1 rayito', { cant: 1 }),
+      n('Se recarga 0,1 s más rápido y +5 de daño', { enfr: -0.1, dano: 5 }),
+    ],
+    evo: { pasiva: 'curita', a: 'lluviaBrillantina' },
+  },
+  lluviaBrillantina: {
+    id: 'lluviaBrillantina', nombre: 'Lluvia de brillantina', original: 'Spirit Disturbance', de: ['brillantina'],
+    desc: 'Llueve brillantina: muchos más rayitos y críticos que revientan en grande.',
+    comp: 'brillantina', rareza: 0,
+    base: B({ dano: 26, area: 1.5, cant: 9, enfr: 2.2, inter: 0.07, perfora: 999, radio: 38, crit: 0.36, critX: 1 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Glass Fandango
+  cubitos: {
+    id: 'cubitos', nombre: 'Cubitos de hielo', original: 'Glass Fandango', secreta: true,
+    desc: 'Cubitos cortos hacia donde miras. Más rápidos caminando, a veces congelan, y a los congelados les pegan el doble.',
+    comp: 'cubito', rareza: 50,
+    base: B({ dano: 14, area: 0.7, cant: 1, dur: 0.4, enfr: 1.4, inter: 0.03, perfora: 999, radio: 12, rapidez: 430, golpeCada: 9, congela: 0.6 }),
+    niveles: [
+      n('+10 % de área y +2,5 de daño', { area: 0.1, dano: 2.5 }),
+      n('+1 cubito', { cant: 1 }),
+      n('+10 % de área y +2,5 de daño', { area: 0.1, dano: 2.5 }),
+      n('+1 cubito', { cant: 1 }),
+      n('+10 % de área y +2,5 de daño', { area: 0.1, dano: 2.5 }),
+      n('+1 cubito', { cant: 1 }),
+      n('+1 cubito y +2,5 de daño', { cant: 1, dano: 2.5 }),
+    ],
+    evo: { pasiva: 'anilloPlata', y: 'anilloOro', a: 'granizada' },
+  },
+  granizada: {
+    id: 'granizada', nombre: 'Granizada', original: 'Celestial Voulge', de: ['cubitos'],
+    desc: 'Caminando, granizo adelante; quieto, para todos lados. Congela mucho más.',
+    comp: 'cubito', rareza: 0,
+    base: B({ dano: 44, area: 1.3, cant: 5, dur: 0.45, enfr: 0.9, inter: 0.03, perfora: 999, radio: 14, rapidez: 470, golpeCada: 9, congela: 1.2 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Santa Javelin
+  cepilloEspalda: {
+    id: 'cepilloEspalda', nombre: 'Cepillo de espalda', original: 'Santa Javelin', secreta: true,
+    desc: 'Cepillos que caen del cielo en abanico y revientan en espuma. La duración trae más cepillos. Críticos.',
+    comp: 'lanza', rareza: 60,
+    base: B({ dano: 20, area: 1, cant: 1, dur: 1, enfr: 6.5, inter: 0.125, perfora: 999, radio: 40, crit: 0.05, critX: 2, retro: 1.2 }),
+    niveles: [
+      n('+50 % de área', { area: 0.5 }),
+      n('+1 cepillo y se recarga 0,5 s más rápido', { cant: 1, enfr: -0.5 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+50 % de área y se recarga 0,5 s más rápido', { area: 0.5, enfr: -0.5 }),
+      n('+1 cepillo', { cant: 1 }),
+      n('Se recarga 0,5 s más rápido y +10 de daño', { enfr: -0.5, dano: 10 }),
+      n('+30 de daño', { dano: 30 }),
+    ],
+    evo: { pasiva: 'trebol', a: 'cepilloCeleste' },
+  },
+  cepilloCeleste: {
+    id: 'cepilloCeleste', nombre: 'Cepillo celestial', original: 'Seraphic Cry', de: ['cepilloEspalda'],
+    desc: 'Una lluvia de cepillos dorados; cada uno revienta dos veces.',
+    comp: 'lanza', rareza: 0,
+    base: B({ dano: 62, area: 2.2, cant: 4, dur: 1, enfr: 3.6, inter: 0.1, perfora: 999, radio: 42, crit: 0.2, critX: 3, retro: 1.4 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Gaze of Gaea
+  mascarilla: {
+    id: 'mascarilla', nombre: 'Mascarilla de pepino', original: 'Gaze of Gaea', secreta: true,
+    desc: 'Una gota de mascarilla adelante que pica a los que toca. A veces los deja «sin dientes»: ya no te pueden pegar.',
+    comp: 'mascarilla', rareza: 50,
+    base: B({ dano: 8, area: 1, cant: 1, dur: 0.6, enfr: 2, inter: 0.2, perfora: 999, radio: 34, golpeCada: 0.3, retro: 0.4 }),
+    niveles: [
+      n('+1 gota', { cant: 1 }),
+      n('+5 de daño', { dano: 5 }),
+      n('Dura 0,2 s más', { dur: 0.2 }),
+      n('+15 % de área', { area: 0.15 }),
+      n('+1 gota', { cant: 1 }),
+      n('Dura 0,2 s más', { dur: 0.2 }),
+      n('+15 % de área y deja sin dientes más seguido', { area: 0.15, crit: 0.02 }),
+    ],
+    evo: { pasiva: 'bataGruesa', a: 'spa' },
+  },
+  spa: {
+    id: 'spa', nombre: 'Spa completo', original: 'Embrace of Gaea', de: ['mascarilla'],
+    desc: 'Mascarillas grandes que duran más, dejan sin dientes muy seguido y te consienten con un poquito de vida.',
+    comp: 'mascarilla', rareza: 0,
+    base: B({ dano: 30, area: 1.7, cant: 3, dur: 1.3, enfr: 1.5, inter: 0.15, perfora: 999, radio: 36, golpeCada: 0.25, retro: 0.6, crit: 0.05 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Magi-Stone
+  piedraPomez: {
+    id: 'piedraPomez', nombre: 'Piedra pómez', original: 'Magi-Stone', secreta: true,
+    desc: 'Cae de arriba y se parte en pedacitos. Daño fijo según su nivel: no le importa el poder.',
+    comp: 'piedra', rareza: 60,
+    base: B({ dano: 10, area: 1, vel: 1.2, cant: 1, enfr: 3.5, inter: 0.2, perfora: 1, radio: 13, rapidez: 380, dur: 0.4 }),
+    niveles: [
+      n('+1 piedra y +10 de daño', { cant: 1, dano: 10 }),
+      n('+10 % de área y +10 de daño', { area: 0.1, dano: 10 }),
+      n('+20 % de velocidad, se recarga 0,2 s más rápido y +10 de daño', { vel: 0.2, enfr: -0.2, dano: 10 }),
+      n('+1 piedra y +10 de daño', { cant: 1, dano: 10 }),
+      n('+10 % de área y +10 de daño', { area: 0.1, dano: 10 }),
+      n('+20 % de velocidad, se recarga 0,2 s más rápido y +10 de daño', { vel: 0.2, enfr: -0.2, dano: 10 }),
+      n('+20 % de área y +10 de daño', { area: 0.2, dano: 10 }),
+    ],
+    evo: { pasiva: 'velaAromatica', a: 'piedrasCalientes' },
+  },
+  piedrasCalientes: {
+    id: 'piedrasCalientes', nombre: 'Piedras calientes', original: 'Kyra-Stones', de: ['piedraPomez'],
+    desc: 'Piedras de masaje hirviendo: revientan al caer y sus pedacitos queman.',
+    comp: 'piedra', rareza: 0,
+    base: B({ dano: 110, area: 1.5, vel: 1.6, cant: 3, enfr: 2.4, inter: 0.15, perfora: 2, radio: 15, rapidez: 420, dur: 0.5 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Phas3r
+  lucesLED: {
+    id: 'lucesLED', nombre: 'Luces del espejo', original: 'Phas3r', secreta: true,
+    desc: 'Las lucecitas LED del espejo: rayitas delgadas de colores sobre los mugrosos. Cada proyectil extra son cuatro rayitas.',
+    comp: 'luces', rareza: 50,
+    base: B({ dano: 5, area: 1, cant: 1, enfr: 5, inter: 0.1, perfora: 999, radio: 5, rapidez: 92 }),
+    niveles: [
+      n('+1 (cuatro rayitas más)', { cant: 1, inter: -0.01 }),
+      n('+50 % de largo y +3 de daño', { area: 0.5, dano: 3, inter: -0.01 }),
+      n('+1 (cuatro rayitas más)', { cant: 1, inter: -0.01 }),
+      n('+50 % de largo y +3 de daño', { area: 0.5, dano: 3, inter: -0.01 }),
+      n('+1 (cuatro rayitas más)', { cant: 1, inter: -0.01 }),
+      n('+50 % de largo y +4 de daño', { area: 0.5, dano: 4, inter: -0.01 }),
+      n('+1 (cuatro rayitas más)', { cant: 1, inter: -0.01 }),
+    ],
+    evo: { pasiva: 'relojArena', a: 'camerino' },
+  },
+  camerino: {
+    id: 'camerino', nombre: 'Camerino de estrella', original: 'Photonstorm', de: ['lucesLED'],
+    desc: 'Todas las luces del camerino: rayas acostadas y paradas, más gruesas y sin parar.',
+    comp: 'luces', rareza: 0,
+    base: B({ dano: 16, area: 2.6, cant: 6, enfr: 2.4, inter: 0.04, perfora: 999, radio: 8, rapidez: 92 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Chaos Rune
+  letrasEspuma: {
+    id: 'letrasEspuma', nombre: 'Letras de espuma', original: 'Chaos Rune', secreta: true,
+    desc: 'Letras de espuma que suben desde abajo y caen locas; solo pegan cayendo. La velocidad y la duración las hacen pegar a más.',
+    comp: 'letras', rareza: 40,
+    base: B({ dano: 20, cant: 1, enfr: 2.5, inter: 0.25, perfora: 2, radio: 13, rapidez: 1 }),
+    niveles: [
+      n('+1 letra', { cant: 1 }),
+      n('Pegan a dos más', { perfora: 2 }),
+      n('+1 letra', { cant: 1 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+1 letra', { cant: 1 }),
+      n('Pegan a dos más', { perfora: 2 }),
+      n('+10 de daño', { dano: 10 }),
+    ],
+    evo: { pasiva: 'sales', a: 'abecedario' },
+  },
+  abecedario: {
+    id: 'abecedario', nombre: 'Abecedario loco', original: 'Wicked Ruler', de: ['letrasEspuma'],
+    desc: 'Todo el abecedario a la vez, rebotando abajo antes de irse.',
+    comp: 'letras', rareza: 0,
+    base: B({ dano: 55, area: 1.3, cant: 5, enfr: 2, inter: 0.14, perfora: 10, radio: 15, rapidez: 1 }),
+    niveles: [],
+  },
 };
 
 /** Las uniones (como Vandalier y Phieraggi) piden además una pasiva. */
@@ -549,7 +925,22 @@ export function baseEnNivel(id: IdArma, nivel: number): BaseArma {
   return b;
 }
 
-export const maxNivelArma = (id: IdArma) => (ARMAS[id].de ? 1 : MAX_ARMA);
+/** Las básicas llegan al 8; las evolucionadas, al 1 (salvo las que siguen subiendo, como el doble copito). */
+export const maxNivelArma = (id: IdArma) => (ARMAS[id].de ? ARMAS[id].niveles.length + 1 : MAX_ARMA);
+
+/** Todo lo que un arma lleva adentro (la afeitada lleva la máquina, el toallazo y la toalla): si ya tiene una de
+ *  esas, no vuelve a salir en las cartas. */
+export function linaje(id: IdArma, l = new Set<IdArma>()): Set<IdArma> {
+  for (const d of ARMAS[id].de ?? []) if (!l.has(d)) {
+    l.add(d);
+    linaje(d, l);
+  }
+  return l;
+}
+
+/** Las pasivas que pide una evolución (la de siempre, la segunda de los anillos y la de las uniones). */
+export const pasivasDeEvo = (def: DefArma): IdPasiva[] =>
+  def.evo ? [def.evo.pasiva, def.evo.y, UNION_PIDE[def.evo.a]].filter((x): x is IdPasiva => !!x) : [];
 
 // ------------------------------------------------------------------------------------------------------ Pasivas
 export interface DefPasiva {
@@ -563,6 +954,12 @@ export interface DefPasiva {
   max: number;
   rareza: number;
   secreta?: boolean;
+  /** Otras estadísticas que suma cada nivel (la cajita de música sube cuatro a la vez). */
+  mas?: Partial<Record<Stat, number>>;
+  /** Lo que trae además el último nivel (la maldición de la cajita). */
+  ultimo?: Partial<Record<Stat, number>>;
+  /** No sale en las cartas: se encuentra escondida en un escenario (los anillos y los aretes). */
+  escondida?: boolean;
 }
 
 export const PASIVAS: Record<IdPasiva, DefPasiva> = {
@@ -582,7 +979,46 @@ export const PASIVAS: Record<IdPasiva, DefPasiva> = {
   alcancia: { id: 'alcancia', nombre: 'Alcancía de cerdito', original: 'Máscara de piedra', desc: '+10 % de gotas doradas', stat: 'codicia', paso: 0.1, max: 5, rareza: 80 },
   espejoRoto: { id: 'espejoRoto', nombre: 'Espejo roto', original: 'Calavera', desc: 'Siete años de mala suerte: +10 % de enemigos, más rápidos y más duros (y más experiencia)', stat: 'maldicion', paso: 0.1, max: 5, rareza: 60, secreta: true },
   curita: { id: 'curita', nombre: 'Curita de corazón', original: 'Tiramisú', desc: 'Revives una vez más cuando te tumban', stat: 'revivir', paso: 1, max: 2, rareza: 40, secreta: true },
+  // Versión 2
+  cajitaMusica: {
+    id: 'cajitaMusica', nombre: 'Cajita de música', original: "Torrona's Box", secreta: true,
+    desc: '+4 % de daño, área, velocidad y duración por nivel… pero el nivel 9 trae +50 % de maldición',
+    stat: 'poder', paso: 0.04, mas: { area: 0.04, velocidad: 0.04, duracion: 0.04 }, ultimo: { maldicion: 0.5 }, max: 9, rareza: 40,
+  },
+  anilloPlata: {
+    id: 'anilloPlata', nombre: 'Anillo de plata', original: 'Silver Ring', secreta: true, escondida: true,
+    desc: '+5 % de duración y +5 % de área (escondido en La Cara)', stat: 'duracion', paso: 0.05, mas: { area: 0.05 }, max: 5, rareza: 0,
+  },
+  anilloOro: {
+    id: 'anilloOro', nombre: 'Anillo de oro', original: 'Gold Ring', secreta: true, escondida: true,
+    desc: '+6 % de experiencia y +5 % de maldición (escondido en El Lavamanos)', stat: 'crecimiento', paso: 0.06, mas: { maldicion: 0.05 }, max: 5, rareza: 0,
+  },
+  aretIzq: {
+    id: 'aretIzq', nombre: 'Arete izquierdo', original: 'Metaglio Left', secreta: true, escondida: true,
+    desc: '+5 % de vida y recuperas 0,1 por segundo (escondido en La Bañera)', stat: 'vida', paso: 0.05, mas: { recuperacion: 0.1 }, max: 5, rareza: 0,
+  },
+  aretDer: {
+    id: 'aretDer', nombre: 'Arete derecho', original: 'Metaglio Right', secreta: true, escondida: true,
+    desc: '+5 % de gotas doradas y +5 % de maldición (escondido en La Cara)', stat: 'codicia', paso: 0.05, mas: { maldicion: 0.05 }, max: 5, rareza: 0,
+  },
+  bataGruesa: {
+    id: 'bataGruesa', nombre: 'Bata gruesa', original: 'Parm Aegis', secreta: true,
+    desc: 'Después de un golpe quedas invencible un momentico más (+0,12 s) y +5 % de vida', stat: 'vida', paso: 0.05, max: 5, rareza: 60,
+  },
+  velaAromatica: {
+    id: 'velaAromatica', nombre: 'Vela aromática', original: "Karoma's Mana", secreta: true,
+    desc: 'Su olor atrae: +8 % de mugrosos (más experiencia) y +5 % de área', stat: 'area', paso: 0.05, max: 5, rareza: 50,
+  },
 };
+
+/** Los anillos y los aretes: dónde están escondidos (lejos del comienzo, cuidados por un mugroso de élite). Salen
+ *  después de conseguir el espejito de mano (el logro «El espejito de mano»). */
+export const ESCONDIDAS: { id: IdPasiva; escenario: string; x: number; y: number; pista: string }[] = [
+  { id: 'anilloPlata', escenario: 'cara', x: 1750, y: -1380, pista: 'muy arriba a la derecha de La Cara' },
+  { id: 'aretDer', escenario: 'cara', x: -1900, y: 1300, pista: 'muy abajo a la izquierda de La Cara' },
+  { id: 'anilloOro', escenario: 'lavamanos', x: 3200, y: -120, pista: 'bien a la derecha de El Lavamanos' },
+  { id: 'aretIzq', escenario: 'banera', x: -1500, y: -1500, pista: 'muy arriba a la izquierda de La Bañera' },
+];
 
 export const ID_PASIVAS = Object.keys(PASIVAS) as IdPasiva[];
 export const ID_ARMAS = Object.keys(ARMAS) as IdArma[];

@@ -47,6 +47,11 @@ Apurado, el tutorial y de 2 a 4 jugadores en línea.
 
 ### A. Las 24 armas que faltan (todas del juego base, en versión de aseo)
 
+> **Fase 1a hecha** (9 de octubre): las 14 primeras de la tabla (de las chancletas a las letras de espuma) con sus 15
+> evoluciones, las 7 pasivas y sus logros. Cambios frente a la tabla: la Plancha de diva es una evolución normal (no
+> un regalo aparte), la Granizada pide los dos anillos y las armas «de adelante» apuntan al más cercano cuando está
+> cerca. Faltan (1b) la cortina, el neceser, los pececitos, el confeti, el bolsillo y las cinco de rebote.
+
 | Original | En el baño | Qué hace | Evoluciona en |
 |---|---|---|---|
 | Shadow Pinion | **Chancletas mojadas** | Al caminar deja huellitas de agua que pegan; al frenar las dispara todas hacia donde mira | **Pisotón de charco** (+ Pantuflas veloces) |

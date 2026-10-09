@@ -2,7 +2,7 @@
 atlas del juego: public/lavado/bichos.webp + bichos.json y public/lavado/objetos.webp + objetos.json.
 También arma una hoja de contacto para revisar a ojo.
 
-Uso: python3 scripts/lavado-atlas.py <carpeta_bichos> <carpeta_objetos> [hoja.png]
+Uso: python3 scripts/lavado-atlas.py <carpeta_bichos | -> <carpeta_objetos> [hoja.png]
 """
 import json
 import os
@@ -92,12 +92,15 @@ def hoja(img, cel, ruta):
 if __name__ == '__main__':
     os.makedirs(SALIDA, exist_ok=True)
     bichos, objetos = sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else ''
-    img, datos = atlas_bichos(bichos)
-    img.save(os.path.join(SALIDA, 'bichos.webp'), 'WEBP', quality=88, method=6)
-    with open(os.path.join(SALIDA, 'bichos.json'), 'w') as f:
-        json.dump(datos, f, separators=(',', ':'))
-    if len(sys.argv) > 3:
-        hoja(img, 128, sys.argv[3])
+    # (con «-» en vez de la carpeta de los bichos, solo se rehace el atlas de los objetos)
+    datos = {'ancho': 0, 'alto': 0, 'bichos': {}}
+    if bichos != '-':
+        img, datos = atlas_bichos(bichos)
+        img.save(os.path.join(SALIDA, 'bichos.webp'), 'WEBP', quality=88, method=6)
+        with open(os.path.join(SALIDA, 'bichos.json'), 'w') as f:
+            json.dump(datos, f, separators=(',', ':'))
+        if len(sys.argv) > 3:
+            hoja(img, 128, sys.argv[3])
     if objetos and os.path.isdir(objetos):
         img2, datos2 = atlas_objetos(objetos)
         img2.save(os.path.join(SALIDA, 'objetos.webp'), 'WEBP', quality=90, method=6)

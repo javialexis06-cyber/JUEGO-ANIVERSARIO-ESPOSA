@@ -1,7 +1,7 @@
 // La interfaz durante la partida (HTML encima del dibujo): barra de experiencia, reloj, inventario, gotas
 // doradas, las cartas al subir de nivel (con volver a tirar, saltar y vetar), el cofre con su tragamonedas, las
 // cartas de amor, la pausa con las estadísticas y la pantalla final con el daño de cada arma.
-import { ARMAS, PASIVAS, MAX_RANURAS, maxNivelArma } from './armas';
+import { ARMAS, PASIVAS, MAX_RANURAS, maxNivelArma, pasivasDeEvo } from './armas';
 import { ENEMIGOS } from './enemigos';
 import { DISFRAZ, puedeApuntar } from './disfraces';
 import { FRASES, cartaVista, disfrazVisto, logroVisto, personalizar } from './textos';
@@ -54,10 +54,15 @@ export function descOpcion(o: Opcion): string {
 /** La pista de evolución de una carta: dorada si ya tiene la pareja, gris (para ir planeando) si no. */
 function pista(j: Jugador, o: Opcion): { texto: string; oro: boolean } | null {
   if (o.tipo === 'arma') {
-    const evo = ARMAS[o.id as IdArma].evo;
+    const def = ARMAS[o.id as IdArma];
+    const evo = def.evo;
     if (!evo) return null;
-    const con = evo.pasiva ? PASIVAS[evo.pasiva].nombre : evo.arma ? ARMAS[evo.arma].nombre : '';
-    const tiene = evo.pasiva ? j.pasivas.has(evo.pasiva) : evo.arma ? j.armas.some((a) => a.id === evo.arma) : false;
+    // (lo que pide: la otra arma de la unión y sus pasivas; el copito no pide nada)
+    const pasivas = pasivasDeEvo(def);
+    const piezas = [...(evo.arma ? [ARMAS[evo.arma].nombre] : []), ...pasivas.map((p) => PASIVAS[p].nombre)];
+    if (!piezas.length) return { texto: `✨ Al nivel ${maxNivelArma(def.id)} se vuelve ${ARMAS[evo.a].nombre}`, oro: true };
+    const con = piezas.join(' y ');
+    const tiene = pasivas.every((p) => j.pasivas.has(p)) && (!evo.arma || j.armas.some((a) => a.id === evo.arma));
     return tiene ? { texto: `✨ Con ${con} evoluciona en ${ARMAS[evo.a].nombre}`, oro: true } : { texto: `Evoluciona con ${con}`, oro: false };
   }
   if (o.tipo === 'pasiva') {

@@ -1038,6 +1038,470 @@ def toalla_mano(p):
 
 
 # ----------------------------------------------------------------------------------------------------- Catálogo
+# ----------------------------------------------------------------------------------------------------- Versión 2
+def chancla(p, x=0.0, color='#F2849E', correa='#FFFFFF', flor='#F7D046', rz=0.0, escala=1.0):
+    """Una chancla parada en la punta (se ve la suela de frente), con su correa en Y y una florecita."""
+    k = len(p.objs)
+    s = escala
+    suela = M(color, rough=0.5, coat=0.2)
+    p.blob((0, 0, 0.04 * s), (0.13 * s, 0.3 * s, 0.035 * s), suela, n=12, p=3.0,
+           shaper=lambda v: np.column_stack([v[:, 0] * (1 - 0.16 * np.cos(np.clip(v[:, 1], -1, 1) * math.pi)), v[:, 1], v[:, 2]]))
+    p.blob((0, 0, 0.075 * s), (0.11 * s, 0.27 * s, 0.01 * s), M('#FFF3E8', rough=0.7), n=10, p=3.0,
+           shaper=lambda v: np.column_stack([v[:, 0] * (1 - 0.16 * np.cos(np.clip(v[:, 1], -1, 1) * math.pi)), v[:, 1], v[:, 2]]))
+    m = M(correa, rough=0.4, coat=0.4)
+    for sx in (-1, 1):
+        p.tubo([(0, -0.16 * s, 0.09 * s), (sx * 0.06 * s, -0.06 * s, 0.17 * s), (sx * 0.115 * s, 0.03 * s, 0.08 * s)], 0.022 * s, m, seg=8)
+    for q in range(5):
+        a = q / 5 * TAU
+        p.blob((math.cos(a) * 0.03 * s, -0.17 * s, 0.11 * s + math.sin(a) * 0.03 * s), (0.022 * s, 0.012 * s, 0.022 * s), M(flor, rough=0.4, coat=0.3), n=6)
+    p.blob((0, -0.18 * s, 0.11 * s), (0.016 * s, 0.01 * s, 0.016 * s), M('#E4574B', 0.4), n=5)
+    objs = p.desde(k)
+    p.girar(objs, rx=0.95, pivote=(0, -0.3 * s, 0))
+    p.girar(objs, rz=rz)
+    for o in objs:
+        o.location.x += x
+
+
+def chancletas(p, pisoton=False):
+    if pisoton:
+        chancla(p, 0.0, '#5AA6E0', '#FFFFFF', '#FFFFFF', escala=1.25)
+        # Corona de agua del pisotón
+        agua = M('#8FD3F2', rough=0.1, coat=1.0, transmision=0.5, ruido=0.0)
+        p.torno([(0.0, 0.0), (0.42, 0.0), (0.44, 0.02), (0.0, 0.025)], agua, z=0.0, y=-0.25)
+        for q in range(9):
+            a = q / 9 * TAU
+            p.blob((math.cos(a) * 0.4, -0.25 + math.sin(a) * 0.28, 0.08 + (q % 2) * 0.06), (0.035, 0.035, 0.07), agua, n=6)
+        gotas(p, (0.0, -0.3, 0.55), 4, 0.04)
+    else:
+        chancla(p, -0.17, rz=0.18)
+        chancla(p, 0.17, rz=-0.18)
+        gotas(p, (0.0, -0.3, 0.08), 3, 0.03)
+
+
+def maquina(p, dorada=False):
+    mango = oro() if dorada else M('#7DB7E8', rough=0.3, coat=0.6)
+    p.tubo([(0.0, 0, 0.0), (0.02, 0, 0.25), (0.0, 0, 0.5)], [0.045, 0.05, 0.04], mango, seg=12)
+    for k in range(4):
+        p.torno([(0.052, 0.0), (0.054, 0.015), (0.052, 0.03)], M('#FFFFFF', 0.4), z=0.08 + k * 0.06, seg=20, tapas=(False, False))
+    cab = M('#F2F4F8', rough=0.25, coat=0.6) if not dorada else oro()
+    p.caja((0, 0, 0.58), (0.22, 0.06, 0.07), cab, p=4.0)
+    for k in range(3):
+        p.caja((0, -0.062, 0.55 + k * 0.03), (0.2, 0.008, 0.006), plata(), p=6.0)
+    p.caja((0, -0.06, 0.64), (0.2, 0.012, 0.012), M('#9EE1C9', 0.4, coat=0.4), p=6.0)
+    esp = M('#FFFFFF', rough=0.85, fuzz=0.4)
+    for (x, z, r) in [(-0.18, 0.66, 0.05), (-0.1, 0.69, 0.04), (0.16, 0.67, 0.045)]:
+        p.blob((x, -0.04, z), (r, r, r), esp, n=6)
+    if dorada:
+        # La toalla hirviendo, doblada detrás de la máquina (como un pañuelo)
+        roja = tela('#E4392B', '#FFB0A0')
+        p.tubo([(-0.34, 0.12, 0.2), (-0.12, 0.1, 0.32), (0.1, 0.12, 0.22), (0.34, 0.1, 0.34)], 0.09, roja, seg=12, perfil=(1.0, 0.45))
+        for x0 in (-0.2, 0.2):
+            p.tubo([(x0, 0.03, 0.18), (x0 + 0.04, 0.02, 0.36)], 0.012, tela('#FFD45C'), seg=5)
+        vapor(p, [(0.32, 0.0, 0.5), (-0.32, 0.0, 0.4)], 0.05)
+        destellos(p, [(0.3, -0.1, 0.75), (-0.28, -0.1, 0.62)])
+    else:
+        destellos(p, [(0.28, -0.1, 0.62)], 0.04, '#DDEEFF')
+
+
+def copito(p, color='#7DB7E8', x=0.0, z=0.0, ang=0.6, largo=0.42):
+    k = len(p.objs)
+    p.tubo([(-largo, 0, 0), (largo, 0, 0)], 0.02, M(color, rough=0.35, coat=0.4), seg=8)
+    algodon = M('#FFFFFF', rough=0.95, fuzz=0.7, pelusa='#F4F4F4')
+    for sx in (-1, 1):
+        p.blob((sx * (largo + 0.04), 0, 0), (0.075, 0.06, 0.06), algodon, n=8)
+    objs = p.desde(k)
+    p.girar(objs, ry=-ang)
+    for o in objs:
+        o.location.x += x
+        o.location.z += z + 0.3
+
+
+def copitos(p, cuantos=1):
+    if cuantos == 1:
+        copito(p)
+    elif cuantos == 2:
+        copito(p, '#7DB7E8', ang=0.55)
+        copito(p, '#F39AB0', ang=-0.55)
+    else:
+        copito(p, '#F2C14E', ang=0.75)
+        copito(p, '#F39AB0', ang=0.0, z=0.12)
+        copito(p, '#7FB069', ang=-0.75)
+        destellos(p, [(0.4, -0.1, 0.75), (-0.35, -0.1, 0.65)])
+
+
+def plancha(p, diva=False):
+    mango = M('#E86A8A' if not diva else '#F2C14E', rough=0.3, coat=0.6, metal=0.7 if diva else 0.0)
+    placa = M('#F4F0EC', rough=0.35, coat=0.3) if not diva else M('#FFE9F2', rough=0.3, coat=0.4)
+    for sx in (-1, 1):
+        k = len(p.objs)
+        p.caja((0, 0, 0.36), (0.055, 0.035, 0.34), mango, p=4.0)
+        p.caja((0.0, -0.002, 0.52), (0.058, 0.04, 0.17), placa, p=5.0)
+        p.girar(p.desde(k), ry=sx * 0.16, pivote=(0, 0, 0.0))
+    p.tubo([(0, 0, 0.0), (0, 0.0, -0.05), (0.12, 0.02, -0.08), (0.22, 0.0, -0.02)], 0.015, M('#3E3A3A', 0.5), seg=6)
+    p.blob((0, -0.04, 0.12), (0.03, 0.015, 0.03), M('#68C9B9', 0.3, emision=2.0, ruido=0.0), n=5)
+    vapor(p, [(0.0, -0.05, 0.98), (0.12, -0.05, 1.05)], 0.05)
+    if diva:
+        corona_simple(p, (0, 0, 0.92), 0.1, 0.12)
+        for (x, z) in [(0.25, 0.7), (-0.25, 0.55)]:
+            corazon(p, (x, -0.06, z), 0.1, M('#E86A8A', 0.35, coat=0.4), 0.3)
+        destellos(p, [(0.3, -0.1, 0.95), (-0.3, -0.1, 0.9)])
+
+
+def vaporizador(p):
+    base = M('#FFFFFF', rough=0.3, coat=0.6)
+    p.torno([(0.0, 0.0), (0.22, 0.0), (0.24, 0.04), (0.2, 0.22), (0.12, 0.3), (0.0, 0.31)], base)
+    p.torno([(0.0, 0.0), (0.16, 0.0), (0.17, 0.06), (0.0, 0.07)], M('#9EE1C9', rough=0.3, coat=0.5), z=0.28)
+    p.blob((0.0, -0.21, 0.12), (0.05, 0.02, 0.05), M('#68C9B9', 0.3, emision=1.5, ruido=0.0), n=6)
+    p.tubo([(0.0, 0, 0.32), (0.0, 0, 0.5), (0.12, -0.02, 0.66), (0.28, -0.04, 0.7)], [0.06, 0.055, 0.05, 0.065], M('#E2F4EE', rough=0.3, coat=0.5), seg=12, caps=('flat', 'flat'))
+    vapor(p, [(0.4, -0.06, 0.74), (0.55, -0.06, 0.8), (0.48, -0.06, 0.92)], 0.065)
+
+
+def sauna(p):
+    madera = M('#C08A55', rough=0.7)
+    aro = M('#8A8F99', rough=0.3, metal=0.8)
+    p.torno([(0.0, 0.0), (0.22, 0.0), (0.26, 0.32), (0.0, 0.32)], madera, tapas=(True, False))
+    for z in (0.06, 0.26):
+        p.torno([(0.225 + z * 0.12, z), (0.235 + z * 0.12, z + 0.015), (0.225 + z * 0.12, z + 0.03)], aro, seg=28, tapas=(False, False))
+    for q in range(10):
+        a = q / 10 * TAU
+        p.blob((math.cos(a) * 0.16, math.sin(a) * 0.16, 0.34), (0.07, 0.07, 0.05), M('#3A3533', rough=0.8), n=6)
+    fuego = M('#FF8A3D', rough=0.5, emision=2.5, ruido=0.0)
+    p.blob((0, 0, 0.36), (0.12, 0.12, 0.04), fuego, n=6)
+    p.tubo([(0.1, -0.05, 0.38), (0.3, -0.08, 0.6), (0.38, -0.08, 0.72)], 0.025, madera, seg=8)
+    p.blob((0.1, -0.05, 0.37), (0.07, 0.07, 0.03), madera, n=6)
+    vapor(p, [(-0.12, -0.1, 0.6), (0.05, -0.1, 0.72), (-0.05, -0.1, 0.88), (0.18, -0.1, 0.95)], 0.075)
+
+
+def mariposa(p, ala='#F39AB0', ala2='#C9A4F2', manchas='#FFFFFF', dorada=False):
+    m1 = M(ala, rough=0.35, coat=0.5, sss=0.2)
+    m2 = M(ala2, rough=0.35, coat=0.5, sss=0.2)
+    for sx in (-1, 1):
+        k = len(p.objs)
+        p.blob((sx * 0.2, 0, 0.42), (0.19, 0.02, 0.16), m1, n=10)
+        p.blob((sx * 0.15, 0, 0.2), (0.13, 0.02, 0.11), m2, n=10)
+        for (x, z, r) in [(0.24, 0.47, 0.04), (0.17, 0.36, 0.025), (0.14, 0.2, 0.03)]:
+            p.blob((sx * x, -0.02, z), (r, 0.01, r), M(manchas, 0.4, emision=0.6 if dorada else 0.0, ruido=0.0), n=6)
+        p.girar(p.desde(k), rz=sx * 0.35, pivote=(0, 0, 0.3))
+    cuerpo = M('#4A3A5A', rough=0.5)
+    p.tubo([(0, -0.02, 0.1), (0, -0.03, 0.3), (0, -0.02, 0.48)], [0.03, 0.04, 0.035], cuerpo, seg=8)
+    p.blob((0, -0.03, 0.53), (0.045, 0.04, 0.045), cuerpo, n=8)
+    for sx in (-1, 1):
+        p.tubo([(sx * 0.02, -0.03, 0.56), (sx * 0.07, -0.04, 0.66), (sx * 0.11, -0.04, 0.7)], 0.007, cuerpo, seg=4)
+        p.blob((sx * 0.115, -0.04, 0.705), (0.018,) * 3, M(ala, 0.4), n=5)
+    if dorada:
+        destellos(p, [(0.35, -0.1, 0.65), (-0.35, -0.1, 0.15)])
+
+
+def pistola_agua(p, hidro=False):
+    if hidro:
+        cuerpo = M('#F7D046', rough=0.3, coat=0.6)
+        negro = M('#2E2B2A', rough=0.45)
+        p.caja((0, 0, 0.34), (0.2, 0.09, 0.11), cuerpo, p=4.0)
+        p.caja((-0.02, -0.09, 0.36), (0.12, 0.01, 0.05), negro, p=5.0)
+        p.tubo([(-0.1, 0, 0.26), (-0.17, 0, 0.04)], 0.065, negro, seg=10)
+        p.tubo([(0.0, -0.02, 0.24), (0.06, -0.02, 0.16)], 0.025, negro, seg=6)
+        p.tubo([(0.18, 0, 0.34), (0.42, 0, 0.36)], 0.035, plata(), seg=8)
+        p.tubo([(0.42, 0, 0.36), (0.48, 0, 0.365)], 0.055, negro, seg=10, caps=('flat', 'flat'))
+        p.tubo([(-0.17, 0, 0.04), (-0.3, -0.05, -0.02), (-0.42, 0.0, 0.06)], 0.03, negro, seg=6)
+        agua = M('#7FD0F5', rough=0.1, coat=1.0, transmision=0.25, ruido=0.0)
+        p.tubo([(0.5, -0.02, 0.37), (0.68, -0.02, 0.4), (0.82, -0.02, 0.38)], [0.04, 0.07, 0.1], agua, seg=10)
+        esp = M('#FFFFFF', rough=0.85, fuzz=0.4)
+        for (x, z, r) in [(0.84, 0.42, 0.06), (0.88, 0.32, 0.05), (0.78, 0.46, 0.04)]:
+            p.blob((x, -0.05, z), (r, r, r), esp, n=6)
+        gotas(p, (0.75, -0.06, 0.5), 3, 0.03)
+        return
+    cuerpo = M('#FF8A3D', rough=0.2, coat=0.9, transmision=0.25)
+    tanque = M('#7DB7E8', rough=0.08, coat=1.0, transmision=0.6, ruido=0.0)
+    p.caja((0.02, 0, 0.34), (0.22, 0.07, 0.075), cuerpo, p=3.5)
+    p.tubo([(-0.1, 0, 0.3), (-0.16, 0, 0.08)], [0.055, 0.05], cuerpo, seg=10)
+    p.blob((-0.02, 0, 0.5), (0.14, 0.08, 0.09), tanque, n=10)
+    p.blob((-0.02, 0, 0.47), (0.11, 0.06, 0.05), M('#5AA6E0', rough=0.2, coat=0.6, ruido=0.0), n=8)
+    p.tubo([(0.24, 0, 0.36), (0.36, 0, 0.36)], 0.025, M('#F7D046', 0.3, coat=0.5), seg=8)
+    p.tubo([(-0.02, -0.02, 0.24), (0.02, -0.02, 0.19)], 0.018, M('#F7D046', 0.3, coat=0.5), seg=6)
+    gotas(p, (0.45, -0.03, 0.38), 3, 0.03)
+
+
+def brillantina(p, lluvia=False):
+    vid = M('#FFF0FA', rough=0.05, coat=1.0, transmision=0.35, ruido=0.0)
+    brillo = M('#FF6FD2', rough=0.25, metal=0.6, coat=0.6, emision=0.5, ruido=0.3)
+    k = len(p.objs)
+    p.torno([(0.0, 0.0), (0.13, 0.0), (0.14, 0.02), (0.14, 0.4), (0.12, 0.42), (0.0, 0.42)], vid)
+    p.torno([(0.0, 0.0), (0.135, 0.0), (0.135, 0.3), (0.0, 0.3)], brillo, z=0.02)
+    for q in range(10):
+        a = q * 2.4
+        p.blob((math.cos(a) * 0.1, -0.13, 0.06 + q * 0.026), (0.014, 0.006, 0.014), M(['#F7D046', '#7DB7E8', '#FFFFFF'][q % 3], 0.2, metal=0.7, emision=1.0, ruido=0.0), n=4)
+    p.torno([(0.0, 0.0), (0.15, 0.0), (0.15, 0.08), (0.0, 0.09)], oro(), z=0.41)
+    estrella(p, (0, -0.02, 0.62), 0.09, M('#F7D046', 0.3, metal=0.7, coat=0.5), 5, 0.4)
+    if lluvia:
+        p.girar(p.desde(k), ry=-1.1, pivote=(0, 0, 0.2))
+        for o in p.desde(k):
+            o.location.z += 0.45
+        cols = ['#F39AE0', '#F7D046', '#7DB7E8', '#C9A4F2']
+        for q in range(14):
+            x = 0.35 + (q % 4) * 0.06 + math.sin(q) * 0.04
+            z = 0.4 - q * 0.03
+            p.blob((x, -0.05, z), (0.018,) * 3, M(cols[q % 4], 0.2, metal=0.8, emision=0.8, ruido=0.0), n=4)
+        destellos(p, [(0.45, -0.1, 0.1), (0.2, -0.1, 0.05), (0.6, -0.1, 0.25)], 0.06, '#FFD6F4')
+    else:
+        destellos(p, [(0.28, -0.1, 0.55), (-0.25, -0.1, 0.35), (0.22, -0.1, 0.15)], 0.05, '#FFD6F4')
+
+
+def cubitos(p, granizo=False):
+    hielo = M('#BFE8FF', rough=0.08, coat=1.0, transmision=0.35, sss=0.3, ruido=0.0)
+    if granizo:
+        for (x, z, r) in [(0, 0.2, 0.17), (-0.22, 0.14, 0.12), (0.22, 0.16, 0.13), (-0.1, 0.4, 0.11), (0.13, 0.42, 0.1), (0.3, 0.38, 0.07)]:
+            p.blob((x, 0, z), (r, r, r), hielo, n=8, p=2.4)
+        copo = M('#FFFFFF', rough=0.4, emision=1.2, ruido=0.0)
+        for q in range(6):
+            a = q / 6 * TAU
+            p.tubo([(-0.25, -0.2, 0.62), (-0.25 + math.cos(a) * 0.12, -0.2, 0.62 + math.sin(a) * 0.12)], 0.012, copo, seg=4)
+        return
+    for (x, z, rz, s) in [(-0.1, 0.13, 0.3, 1.0), (0.14, 0.12, -0.25, 0.9), (0.02, 0.34, 0.6, 0.85)]:
+        k = len(p.objs)
+        p.caja((0, 0, 0), (0.12 * s, 0.12 * s, 0.12 * s), hielo, p=5.0)
+        p.blob((-0.04 * s, -0.11 * s, 0.05 * s), (0.04 * s, 0.01, 0.025 * s), BRILLO, n=5)
+        objs = p.desde(k)
+        p.girar(objs, rx=0.3, rz=rz)
+        for o in objs:
+            o.location.x += x
+            o.location.z += z
+
+
+def cepillo_espalda(p, celeste=False):
+    mango = M('#C08A55', rough=0.5, coat=0.3) if not celeste else oro()
+    p.tubo([(0.0, 0, -0.55), (0.0, 0, 0.1)], [0.035, 0.04], mango, seg=10)
+    p.blob((0, 0, -0.58), (0.05, 0.05, 0.05), mango, n=6)
+    p.blob((0, 0, 0.25), (0.12, 0.05, 0.18), mango, n=10)
+    cerdas = M('#FFFFFF' if celeste else '#F7E1C8', rough=0.8, fuzz=0.3)
+    for q in range(7):
+        for r in range(4):
+            x = (r - 1.5) * 0.045
+            z = 0.12 + q * 0.04
+            if (x / 0.11) ** 2 + ((z - 0.25) / 0.17) ** 2 > 1:
+                continue
+            p.blob((x, -0.07, z), (0.016, 0.03, 0.016), cerdas, n=4)
+    burbuja(p, (0.15, -0.05, 0.42), 0.06)
+    if celeste:
+        o = clay.lathe(p.nom(), [(0.12, -0.012), (0.14, 0.0), (0.12, 0.012), (0.1, 0.0), (0.12, -0.012)], p.coll, oro(), segments=28, subsurf=1,
+                       cap_bottom=False, cap_top=False)
+        o.location = (0, 0, 0.5)
+        o.rotation_euler = (0.35, 0, 0)
+        p.add(o)
+        ala = M('#FFFFFF', rough=0.6, fuzz=0.4)
+        for sx in (-1, 1):
+            p.blob((sx * 0.2, 0.02, 0.28), (0.13, 0.02, 0.07), ala, n=8, shaper=lambda v, sx=sx: np.column_stack([v[:, 0], v[:, 1], v[:, 2] + 0.5 * (v[:, 0] * sx) ** 2]))
+        destellos(p, [(0.3, -0.1, 0.5), (-0.3, -0.1, 0.0)])
+
+
+def rodaja(p):
+    p.torno([(0.0, 0.0), (0.2, 0.0), (0.21, 0.02), (0.2, 0.05), (0.0, 0.05)], M('#4F9A3A', rough=0.4, coat=0.4))
+    p.torno([(0.0, 0.0), (0.18, 0.0), (0.18, 0.012), (0.0, 0.012)], M('#C9EBA4', rough=0.35, coat=0.5, sss=0.2), z=0.05)
+    for q in range(7):
+        a = q / 7 * TAU
+        p.blob((math.cos(a) * 0.08, math.sin(a) * 0.08, 0.063), (0.016, 0.01, 0.008), M('#F4F8E0', 0.4), n=4)
+    for o in p.objs:
+        pass
+
+
+def rodaja_parada(p, x, z, ang=0.0, escala=1.0):
+    k = len(p.objs)
+    rodaja(p)
+    objs = p.desde(k)
+    p.girar(objs, rx=1.25, rz=ang)
+    for o in objs:
+        o.scale = (escala,) * 3
+        o.location = Vector(o.location) * escala
+        o.location.x += x
+        o.location.z += z
+
+
+def mascarilla(p, spa=False):
+    tarro = M('#FFFFFF', rough=0.25, coat=0.6)
+    crema = M('#A8DB86', rough=0.6, sss=0.2)
+    p.torno([(0.0, 0.0), (0.2, 0.0), (0.21, 0.02), (0.21, 0.2), (0.0, 0.2)], tarro)
+    p.blob((0, 0, 0.21), (0.19, 0.19, 0.06), crema, n=10)
+    p.tubo([(0.0, -0.05, 0.25), (0.06, -0.08, 0.3), (0.1, -0.04, 0.27)], 0.025, crema, seg=6)
+    rodaja_parada(p, 0.27, 0.12, -0.3, 0.8)
+    rodaja_parada(p, -0.27, 0.1, 0.3, 0.7)
+    if spa:
+        toalla_r = tela('#F39AB0', '#FFD1DC')
+        p.tubo([(-0.32, 0.12, 0.08), (0.32, 0.12, 0.08)], 0.08, toalla_r, seg=12)
+        for q in range(5):
+            a = q / 5 * TAU
+            p.blob((0.05 + math.cos(a) * 0.05, -0.05, 0.42 + math.sin(a) * 0.05), (0.04, 0.015, 0.04), M('#FFFFFF', 0.4), n=6)
+        p.blob((0.05, -0.06, 0.42), (0.025,) * 3, M('#F7D046', 0.4), n=5)
+        destellos(p, [(0.35, -0.1, 0.4), (-0.3, -0.1, 0.45)], 0.04, '#E8FFE0')
+
+
+def piedra(p, calientes=False):
+    if calientes:
+        negra = M('#2E2B2A', rough=0.35, coat=0.6)
+        for (z, rx, rz2) in [(0.08, 0.3, 0.08), (0.24, 0.24, 0.07), (0.38, 0.18, 0.06)]:
+            p.blob((0, 0, z), (rx, rx * 0.8, rz2), negra, n=10)
+        brasa = M('#FF8A3D', rough=0.5, emision=2.5, ruido=0.0)
+        p.blob((0, -0.02, 0.0), (0.33, 0.27, 0.02), brasa, n=8)
+        vapor(p, [(-0.1, -0.1, 0.55), (0.1, -0.1, 0.65)], 0.06)
+        return
+    gris = M('#A9A4A0', rough=0.95, ruido=0.35)
+    p.blob((0, 0, 0.22), (0.3, 0.2, 0.2), gris, n=12, p=2.3,
+           shaper=lambda v: v * (1 + 0.08 * np.sin(v[:, 0:1] * 9) * np.cos(v[:, 2:3] * 7)))
+    hueco = M('#6E6862', rough=0.9)
+    for (x, z) in [(-0.15, 0.3), (0.05, 0.18), (0.18, 0.3), (-0.05, 0.36), (0.2, 0.12), (-0.2, 0.14), (0.0, 0.08), (0.1, 0.38)]:
+        p.blob((x, -0.19, z), (0.02, 0.01, 0.02), hueco, n=4)
+
+
+def luces_led(p, camerino=False):
+    cols = ['#FF5A6A', '#FFE15A', '#5AA6FF', '#FF6AE0', '#FF9A3D']
+    if camerino:
+        marco = M('#F7F3EE', rough=0.3, coat=0.5)
+        p.caja((0, 0, 0.42), (0.36, 0.03, 0.42), marco, p=6.0)
+        p.caja((0, -0.02, 0.42), (0.3, 0.02, 0.36), M('#CFE6F2', rough=0.04, metal=0.9, coat=1.0, ruido=0.0), p=8.0)
+        k = 0
+        for q in range(6):
+            for sx in (-1, 1):
+                p.blob((sx * 0.33, -0.04, 0.1 + q * 0.13), (0.035,) * 3, M('#FFF4C8', 0.3, emision=3.0, ruido=0.0), n=6)
+        for q in range(5):
+            p.blob((-0.24 + q * 0.12, -0.04, 0.81), (0.035,) * 3, M('#FFF4C8', 0.3, emision=3.0, ruido=0.0), n=6)
+        estrella(p, (0, -0.05, 1.0), 0.12, M('#F2C14E', 0.3, metal=0.7, coat=0.5, emision=0.5), 5, 0.4)
+        return
+    o = clay.lathe(p.nom(), [(0.34, -0.03), (0.38, 0.0), (0.34, 0.03), (0.3, 0.0), (0.34, -0.03)], p.coll, M('#F7F3EE', rough=0.3, coat=0.5),
+                   segments=40, subsurf=1, cap_bottom=False, cap_top=False)
+    o.rotation_euler = (math.pi / 2, 0, 0)
+    o.location = (0, 0, 0.42)
+    p.add(o)
+    vidrio_m = clay.lathe(p.nom(), [(0.0, 0.0), (0.31, 0.0)], p.coll, M('#CFE6F2', rough=0.04, metal=0.9, coat=1.0, ruido=0.0), segments=40, subsurf=0,
+                          cap_bottom=False, cap_top=False)
+    vidrio_m.rotation_euler = (math.pi / 2, 0, 0)
+    vidrio_m.location = (0, 0.01, 0.42)
+    p.add(vidrio_m)
+    for q in range(14):
+        a = q / 14 * TAU
+        p.blob((math.cos(a) * 0.34, -0.035, 0.42 + math.sin(a) * 0.34), (0.026,) * 3, M(cols[q % 5], 0.3, emision=3.0, ruido=0.0), n=6)
+    p.caja((0, 0.02, 0.03), (0.16, 0.08, 0.03), M('#F7F3EE', rough=0.3, coat=0.5), p=4.0)
+    p.tubo([(0, 0.02, 0.05), (0, 0.02, 0.1)], 0.03, M('#F7F3EE', rough=0.3, coat=0.5), seg=8)
+
+
+def letra(p, ch, x=0.0, z=0.0, tam=0.6, color='#F39AB0', rx=0.0, ry=0.0):
+    """Una letra gordita de espuma (fuente de Blender con bisel) mirando hacia -y, con burbujitas pegadas."""
+    cu = bpy.data.curves.new(f'letra {ch}', 'FONT')
+    cu.body = ch
+    cu.size = tam
+    cu.align_x = 'CENTER'
+    cu.extrude = 0.06 * tam / 0.6
+    cu.bevel_depth = 0.035 * tam / 0.6
+    cu.bevel_resolution = 4
+    ob = bpy.data.objects.new(p.nom(), cu)
+    p.coll.objects.link(ob)
+    ob.rotation_euler = (math.pi / 2 + rx, ry, 0)
+    ob.location = (x, 0, z)
+    bpy.context.view_layer.objects.active = ob
+    for o in bpy.context.selected_objects:
+        o.select_set(False)
+    ob.select_set(True)
+    bpy.ops.object.convert(target='MESH')
+    ob = bpy.context.view_layer.objects.active
+    ob.data.materials.append(M(color, rough=0.45, coat=0.6, sss=0.15))
+    for f in ob.data.polygons:
+        f.use_smooth = True
+    p.add(ob)
+    esp = M('#FFFFFF', rough=0.85, fuzz=0.4)
+    for (dx, dz, r) in [(-0.12, 0.42, 0.045), (0.1, 0.46, 0.035), (0.16, 0.08, 0.03)]:
+        p.blob((x + dx * tam / 0.6, -0.06, z + dz * tam / 0.6), (r * tam / 0.6,) * 3, esp, n=6)
+    return ob
+
+
+def letras(p, abecedario=False):
+    if abecedario:
+        for (ch, x, z, c, ry) in [('A', -0.42, 0.05, '#F39AB0', 0.2), ('B', 0.0, 0.25, '#7DB7E8', -0.15), ('C', 0.42, 0.05, '#7FB069', 0.25),
+                                  ('Z', 0.0, -0.3, '#F7D046', 0.0)]:
+            letra(p, ch, x, z, 0.5, c, ry=ry)
+        destellos(p, [(0.5, -0.1, 0.6), (-0.5, -0.1, 0.55)])
+    else:
+        for (ch, x, z, c, ry) in [('A', -0.36, 0.0, '#F39AB0', 0.2), ('B', 0.0, 0.12, '#7DB7E8', -0.15), ('C', 0.36, 0.0, '#7FB069', 0.25)]:
+            letra(p, ch, x, z, 0.5, c, ry=ry)
+
+
+def caja_musica(p):
+    caja = M('#F2A5B8', rough=0.35, coat=0.5)
+    p.caja((0, 0, 0.14), (0.26, 0.17, 0.14), caja, p=4.0)
+    p.caja((0, 0.15, 0.44), (0.26, 0.03, 0.17), caja, p=4.0)
+    p.caja((0, 0.12, 0.44), (0.21, 0.01, 0.13), M('#CFE6F2', rough=0.04, metal=0.9, coat=1.0, ruido=0.0), p=8.0)
+    p.caja((0, 0, 0.285), (0.22, 0.14, 0.01), M('#8E3B5A', rough=0.9, fuzz=0.4), p=6.0)
+    for (x, z) in [(-0.18, 0.12), (0.18, 0.12)]:
+        p.blob((x, -0.17, z), (0.03, 0.01, 0.03), oro(), n=6)
+    p.tubo([(0.26, 0, 0.14), (0.34, 0, 0.14), (0.34, -0.06, 0.2)], 0.015, oro(), seg=6)
+    # La bailarina
+    p.tubo([(0, 0, 0.29), (0, 0, 0.33)], 0.012, oro(), seg=6)
+    p.blob((0, 0, 0.36), (0.07, 0.07, 0.025), M('#FFFFFF', rough=0.7, fuzz=0.5), n=8)
+    p.tubo([(0, 0, 0.36), (0, 0, 0.46)], [0.025, 0.02], M('#F7C6D2', 0.4), seg=8)
+    p.blob((0, 0, 0.5), (0.035,) * 3, M('#F2C9A8', 0.5), n=8)
+    p.tubo([(-0.08, 0, 0.5), (0, 0, 0.45), (0.08, 0, 0.5)], 0.01, M('#F2C9A8', 0.5), seg=5)
+    nota = M('#9C6BD6', rough=0.3, emision=1.2, ruido=0.0)
+    for (x, z) in [(0.32, 0.5), (-0.32, 0.42)]:
+        p.blob((x, -0.05, z), (0.035, 0.02, 0.028), nota, n=6)
+        p.tubo([(x + 0.03, -0.05, z), (x + 0.03, -0.05, z + 0.13), (x + 0.07, -0.05, z + 0.1)], 0.008, nota, seg=4)
+
+
+def anillo(p, metal_m, gema):
+    o = clay.lathe(p.nom(), [(0.2, -0.04), (0.24, 0.0), (0.2, 0.04), (0.17, 0.0), (0.2, -0.04)], p.coll, metal_m, segments=40, subsurf=1,
+                   cap_bottom=False, cap_top=False)
+    o.rotation_euler = (math.pi / 2 - 0.35, 0, 0)
+    o.location = (0, 0, 0.22)
+    p.add(o)
+    p.blob((0, -0.05, 0.47), (0.07, 0.05, 0.05), metal_m, n=8)
+    p.blob((0, -0.06, 0.53), (0.07, 0.06, 0.06), M(gema, rough=0.05, coat=1.0, transmision=0.4, ruido=0.0), n=8, p=1.6)
+    destellos(p, [(0.15, -0.12, 0.62)], 0.04)
+
+
+def arete(p, metal_m, colgante, corazon_forma=False):
+    o = clay.lathe(p.nom(), [(0.12, -0.012), (0.135, 0.0), (0.12, 0.012), (0.105, 0.0), (0.12, -0.012)], p.coll, metal_m, segments=32, subsurf=1,
+                   cap_bottom=False, cap_top=False)
+    o.rotation_euler = (math.pi / 2, 0, 0)
+    o.location = (0, 0, 0.55)
+    p.add(o)
+    p.tubo([(0, 0, 0.43), (0, 0, 0.32)], 0.01, metal_m, seg=5)
+    if corazon_forma:
+        corazon(p, (0, -0.02, 0.18), 0.34, M(colgante, rough=0.2, coat=0.8, sss=0.2), 0.3)
+    else:
+        p.blob((0, 0, 0.22), (0.09, 0.09, 0.11), M(colgante, rough=0.15, coat=1.0, sss=0.3), n=10,
+               shaper=lambda v: np.column_stack([v[:, 0] * (1 - 0.35 * np.clip(v[:, 2], 0, 1)), v[:, 1] * (1 - 0.35 * np.clip(v[:, 2], 0, 1)), v[:, 2]]))
+    destellos(p, [(0.15, -0.1, 0.35)], 0.04)
+
+
+def bata(p):
+    """La bata de baño gruesa, colgada de su gancho: cuerpo acampanado, mangas caídas, solapas rosadas y el cinturón."""
+    m = tela('#FFFFFF', '#F4ECEC')
+    rosa = tela('#F39AB0', '#FFD1DC')
+    p.tubo([(-0.16, -0.02, 0.84), (0, -0.02, 0.9), (0.16, -0.02, 0.84)], 0.018, M('#C08A55', 0.5), seg=6)
+    p.tubo([(0, -0.02, 0.9), (0, -0.02, 0.98), (0.05, -0.02, 1.02), (0.08, -0.02, 0.98)], 0.012, plata(), seg=5)
+    p.blob((0, 0, 0.42), (0.24, 0.12, 0.44), m, n=12, p=2.4,
+           shaper=lambda v: np.column_stack([v[:, 0] * (0.85 + 0.3 * np.clip(-v[:, 2], 0, 1)), v[:, 1], v[:, 2]]))
+    for sx in (-1, 1):
+        p.tubo([(sx * 0.2, 0, 0.76), (sx * 0.31, -0.01, 0.58), (sx * 0.33, -0.01, 0.34)], [0.085, 0.08, 0.085], m, seg=10)
+        p.tubo([(sx * 0.33, -0.01, 0.34), (sx * 0.335, -0.01, 0.29)], 0.09, rosa, seg=10, caps=('round', 'flat'))
+        # Solapa: banda rosada en V
+        p.tubo([(sx * 0.12, -0.11, 0.84), (sx * 0.05, -0.13, 0.62), (sx * 0.01, -0.125, 0.42)], [0.04, 0.035, 0.025], rosa, seg=8, perfil=(1.0, 0.45))
+    p.tubo([(-0.24, -0.1, 0.42), (0, -0.13, 0.41), (0.24, -0.1, 0.42)], 0.028, rosa, seg=8)
+    p.tubo([(0.02, -0.13, 0.41), (0.07, -0.14, 0.28), (0.1, -0.13, 0.18)], 0.02, rosa, seg=6)
+    p.tubo([(0.02, -0.13, 0.41), (-0.03, -0.14, 0.26), (-0.06, -0.13, 0.16)], 0.02, rosa, seg=6)
+    p.caja((-0.13, -0.115, 0.24), (0.065, 0.012, 0.06), rosa, p=4.0)
+    corazon(p, (0.13, -0.12, 0.62), 0.07, M('#E86A8A', 0.4), 0.3)
+
+
+def vela_aromatica(p):
+    vid = M('#F4EEFF', rough=0.05, coat=1.0, transmision=0.6, ruido=0.0)
+    p.torno([(0.0, 0.0), (0.18, 0.0), (0.19, 0.02), (0.19, 0.32), (0.17, 0.33), (0.17, 0.02), (0.0, 0.02)], vid, tapas=(True, False))
+    p.torno([(0.0, 0.0), (0.16, 0.0), (0.16, 0.24), (0.0, 0.25)], M('#C9A4F2', rough=0.5, sss=0.4), z=0.02)
+    p.tubo([(0, 0, 0.27), (0, 0, 0.31)], 0.008, M('#3E3A3A', 0.5), seg=4)
+    p.blob((0, 0, 0.36), (0.035, 0.035, 0.065), M('#FFB347', rough=0.5, emision=5.0, ruido=0.0), n=8,
+           shaper=lambda v: np.column_stack([v[:, 0] * (1 - 0.6 * np.clip(v[:, 2], 0, 1)), v[:, 1] * (1 - 0.6 * np.clip(v[:, 2], 0, 1)), v[:, 2]]))
+    p.blob((0, 0, 0.345), (0.02, 0.02, 0.03), M('#FFF4C8', rough=0.5, emision=6.0, ruido=0.0), n=6)
+    p.tubo([(0.22, -0.02, 0.0), (0.28, -0.03, 0.2), (0.3, -0.03, 0.38)], 0.01, M('#6A8F4A', 0.6), seg=5)
+    for q in range(6):
+        p.blob((0.29 + (q % 2) * 0.025 - 0.012, -0.03, 0.22 + q * 0.03), (0.018, 0.015, 0.02), M('#9C6BD6', rough=0.6), n=5)
+    vapor(p, [(-0.05, -0.05, 0.55), (0.08, -0.05, 0.66)], 0.04)
+
+
 ICONOS = {
     # Armas
     'toalla': lambda p: toalla(p), 'toallazo': lambda p: toalla(p, '#E4392B', '#FFD45C', caliente=True),
@@ -1065,6 +1529,26 @@ ICONOS = {
     'corona': corona_espuma, 'alcancia': alcancia, 'espejoRoto': lambda p: espejo_mano(p, '#6B5A48', roto=True), 'curita': curita,
     # Tienda
     'tirar': dado, 'saltar': flecha, 'vetar': tachar,
+    # Versión 2
+    'chancletas': lambda p: chancletas(p), 'pisoton': lambda p: chancletas(p, pisoton=True),
+    'maquina': lambda p: maquina(p), 'afeitada': lambda p: maquina(p, dorada=True),
+    'copito': lambda p: copitos(p, 1), 'dobleCopito': lambda p: copitos(p, 2), 'tripleCopito': lambda p: copitos(p, 3),
+    'plancha': lambda p: plancha(p), 'planchaDiva': lambda p: plancha(p, diva=True),
+    'vaporizador': vaporizador, 'sauna': sauna,
+    'mariposas': lambda p: mariposa(p), 'mariposario': lambda p: mariposa(p, '#5AC8D8', '#F7D046', '#FFF4C8', dorada=True),
+    'pistolaAgua': lambda p: pistola_agua(p), 'hidrolavadora': lambda p: pistola_agua(p, hidro=True),
+    'brillantina': lambda p: brillantina(p), 'lluviaBrillantina': lambda p: brillantina(p, lluvia=True),
+    'cubitos': lambda p: cubitos(p), 'granizada': lambda p: cubitos(p, granizo=True),
+    'cepilloEspalda': lambda p: cepillo_espalda(p), 'cepilloCeleste': lambda p: cepillo_espalda(p, celeste=True),
+    'mascarilla': lambda p: mascarilla(p), 'spa': lambda p: mascarilla(p, spa=True), 'rodaja': lambda p: rodaja_parada(p, 0, 0, 0, 1.0),
+    'piedraPomez': lambda p: piedra(p), 'piedrasCalientes': lambda p: piedra(p, calientes=True),
+    'lucesLED': lambda p: luces_led(p), 'camerino': lambda p: luces_led(p, camerino=True),
+    'letrasEspuma': lambda p: letras(p), 'abecedario': lambda p: letras(p, abecedario=True),
+    'letraA': lambda p: letra(p, 'A', 0, 0, 0.6, '#F39AB0'), 'letraB': lambda p: letra(p, 'B', 0, 0, 0.6, '#7DB7E8'),
+    'letraC': lambda p: letra(p, 'C', 0, 0, 0.6, '#7FB069'),
+    'cajitaMusica': caja_musica, 'anilloPlata': lambda p: anillo(p, plata(), '#7DB7E8'), 'anilloOro': lambda p: anillo(p, oro(), '#E4392B'),
+    'aretIzq': lambda p: arete(p, plata(), '#BFE3F7'), 'aretDer': lambda p: arete(p, oro(), '#F39AB0', corazon_forma=True),
+    'bataGruesa': bata, 'velaAromatica': vela_aromatica,
     # Del piso
     'arepa': arepa, 'ola': balde, 'hielo': cubo_hielo, 'aspiradora': aspiradora, 'moneda': moneda, 'bolsa': bolsa, 'frasco': frasco_oro,
     'trebolito': lambda p: trebol(p, 0.7), 'aji': aji, 'cofre': lambda p: cofre(p), 'cofreAbierto': lambda p: cofre(p, abierto=True),

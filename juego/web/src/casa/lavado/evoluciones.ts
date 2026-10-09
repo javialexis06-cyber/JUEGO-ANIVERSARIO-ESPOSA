@@ -2,7 +2,7 @@
 // u otra arma en las uniones), en qué se convierte y qué le falta. Lo usan el panel de la pausa («Mochila» y
 // «Evoluciones») y la colección del menú. La regla es la del motor (`evolucionPosible`): el arma en su nivel máximo,
 // lo que pide en la mochila y abrir un cofre después del minuto 10.
-import { ARMAS, PASIVAS, UNION_PIDE, maxNivelArma } from './armas';
+import { ARMAS, PASIVAS, maxNivelArma, pasivasDeEvo } from './armas';
 import type { IdArma, IdPasiva } from './tipos';
 
 export interface Receta {
@@ -20,14 +20,14 @@ export const RECETAS: Receta[] = (() => {
     const evo = def.evo;
     if (!evo || l.some((r) => r.a === evo.a)) continue;
     const de = evo.arma ? [def.id, evo.arma] : [def.id];
-    const pasivas = [evo.pasiva, UNION_PIDE[evo.a]].filter((x): x is IdPasiva => !!x);
-    l.push({ de, pasivas, a: evo.a });
+    l.push({ de, pasivas: pasivasDeEvo(def), a: evo.a });
   }
   return l;
 })();
 
-/** La receta en la que entra un arma básica (o null si no evoluciona). */
-export const recetaDeArma = (id: IdArma) => RECETAS.find((r) => r.de.includes(id)) ?? null;
+/** La receta en la que entra un arma (o null si no evoluciona). La del doble copito es la que lo vuelve triple, no
+ *  la que lo hizo. */
+export const recetaDeArma = (id: IdArma) => RECETAS.find((r) => r.de[0] === id) ?? RECETAS.find((r) => r.de.includes(id)) ?? null;
 /** Las recetas que piden una pasiva. */
 export const recetasDePasiva = (id: IdPasiva) => RECETAS.filter((r) => r.pasivas.includes(id));
 
@@ -76,7 +76,7 @@ export function estadoReceta(r: Receta, m: Mochila, t: number): EstadoReceta {
     const partes: string[] = [];
     for (const p of pasos) {
       const nombre = p.tipo === 'arma' ? ARMAS[p.id as IdArma].nombre : PASIVAS[p.id as IdPasiva].nombre;
-      if (!p.tiene) partes.push(p.tipo === 'arma' ? `conseguir ${nombre}` : `conseguir ${nombre} (con un nivel basta)`);
+      if (!p.tiene) partes.push(p.tipo === 'arma' ? `conseguir ${nombre}` : PASIVAS[p.id as IdPasiva].escondida ? `encontrar ${nombre} (está escondido)` : `conseguir ${nombre} (con un nivel basta)`);
       else if (!p.listo) partes.push(`subir ${nombre} al nivel ${p.max} (va en ${p.nivel})`);
     }
     falta = `Falta ${partes.join(' y ')}`;

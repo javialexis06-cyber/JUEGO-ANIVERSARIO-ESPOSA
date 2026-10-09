@@ -5,7 +5,7 @@
 // Calidad automática: si el celular va lento, baja la resolución y las partículas.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { ARMAS } from '../armas';
+import { ARMAS, ESCONDIDAS } from '../armas';
 import { ENEMIGOS, ID_ENEMIGOS } from '../enemigos';
 import type { Enemigo, Jugador, Motor } from '../motor';
 import type { Efecto, IdArma, IdEnemigo, IdObjeto } from '../tipos';
@@ -38,7 +38,13 @@ const COLOR: Partial<Record<IdEnemigo, string>> = {
 const SPRITE_PROY: Partial<Record<IdArma, string>> = {
   cepillo: 'cepillo', milCerdas: 'milCerdas', champu: 'champu', remolino: 'champu', peinilla: 'peinilla', peinillaOro: 'peinillaOro',
   botellas: 'botellas', inundacion: 'inundacion', jabon: 'jabon', jabonExplosivo: 'jabonExplosivo', ranitas: 'ranitas', ranaGlotona: 'ranaGlotona',
+  copito: 'copito', dobleCopito: 'dobleCopito', tripleCopito: 'tripleCopito', cubitos: 'cubitos', granizada: 'granizada',
+  piedraPomez: 'piedraPomez', piedrasCalientes: 'piedrasCalientes', chancletas: 'chancletas', pisoton: 'pisoton',
 };
+/** Colores de las rayitas del espejo LED: rojo (la primera), amarillo, azul, fucsia y naranja. */
+const COLOR_LUCES: [number, number, number][] = [[1, 0.25, 0.3], [1, 0.88, 0.3], [0.35, 0.62, 1], [1, 0.35, 0.88], [1, 0.6, 0.2]];
+/** Las letras de espuma que se turnan. */
+const LETRAS = ['letraA', 'letraB', 'letraC'];
 /** Pruebas automáticas: sin los muñecos 3D (el WebGL por software no da abasto con dos celulares). */
 const SIN_3D = typeof location !== 'undefined' && new URLSearchParams(location.search).has('sin3d');
 /** Pruebas con varios celulares en la misma máquina: empezar en la calidad más baja (`?calidad=0`). */
@@ -97,6 +103,12 @@ export class Dibujo {
   private rayos = new Float32Array(32 * 5);
   /** Haces de hilo dental: x, y, ángulo, largo, ancho, edad, tipo. */
   private haces = new Float32Array(24 * 7);
+  /** Planchazos: x, y, radio, ángulo, edad, tipo, ancho (el remate). */
+  private tajos = new Float32Array(32 * 7);
+  /** Cepillos de espalda cayendo: x, y, radio, demora, edad, tipo. */
+  private lanzas = new Float32Array(24 * 6);
+  /** Rayitas del espejo LED: x, y, largo, grosor, vertical, color, edad. */
+  private rayitas = new Float32Array(64 * 7);
   /** Muertes recientes (el cuerpo que se aplasta y se borra): x, y, tipo, escala, edad, voltear. */
   private muertes = new Float32Array(80 * 6);
   private nMuertes = 0;
@@ -312,6 +324,11 @@ export class Dibujo {
           T[b + 6] = e.f;
           break;
         }
+        // La máquina de afeitar: chispitas plateadas (no gotas)
+        if (e.f >= 2) {
+          for (let q = 0; q < 3; q++) P.crear('chispa', CAPA_LUZ, e.x + e.c * az() * e.d, e.y + (az() - 0.5) * e.e, 18, e.c * 90, 0, 40, 0.25, 9, 3, 0.8, 0.92, 1, 1);
+          break;
+        }
         // Gotas que salpica la toalla mojada
         for (let q = 0; q < 10; q++) {
           const x = e.x + e.c * (20 + az() * e.d);
@@ -333,6 +350,14 @@ export class Dibujo {
           R[b + 4] = e.f;
           break;
         }
+        if (e.f === 2) {
+          // Brillantina: destellitos de colores
+          for (let q = 0; q < 6; q++) {
+            const a = az() * Math.PI * 2;
+            P.crear(q % 2 ? 'estrella' : 'confeti', CAPA_LUZ, e.x, e.y, 14, Math.cos(a) * 90, Math.sin(a) * 70, 80, 0.45, 8, 3, 1, 0.55 + az() * 0.4, 0.85, 1, 200, a, 6);
+          }
+          break;
+        }
         P.crear('brillo', CAPA_LUZ, e.x, e.y, 10, 0, 0, 0, 0.3, e.c * 2.4, e.c * 3.2, 1, 0.95, 0.6, 0.9);
         P.crear('anillo', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.35, e.c * 0.5, e.c * 2.4, 1, 0.95, 0.6, 1);
         for (let q = 0; q < 8; q++) {
@@ -343,11 +368,13 @@ export class Dibujo {
         break;
       }
       case 'charco': {
-        for (let q = 0; q < 12; q++) {
+        // (la mascarilla salpica verde pepino)
+        const col = e.f === 2 ? [0.62, 0.9, 0.5] : [0.6, 0.85, 1];
+        for (let q = 0; q < (e.f === 2 ? 6 : 12); q++) {
           const a = (q / 12) * Math.PI * 2;
-          P.crear('gota', CAPA_NORMAL, e.x, e.y, 8, Math.cos(a) * 110, Math.sin(a) * 80, 100 + az() * 60, 0.5, 8, 4, 0.6, 0.85, 1, 1, 420);
+          P.crear('gota', CAPA_NORMAL, e.x, e.y, 8, Math.cos(a) * 110, Math.sin(a) * 80, 100 + az() * 60, 0.5, 8, 4, col[0], col[1], col[2], 1, 420);
         }
-        P.crear('salpicadura', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.5, e.c * 1.2, e.c * 2.2, 0.75, 0.92, 1, 0.8);
+        P.crear('salpicadura', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.5, e.c * 1.2, e.c * 2.2, e.f === 2 ? 0.7 : 0.75, e.f === 2 ? 0.95 : 0.92, e.f === 2 ? 0.6 : 1, 0.8);
         break;
       }
       case 'explosion': {
@@ -364,6 +391,24 @@ export class Dibujo {
             const a = (q / 10) * Math.PI * 2;
             P.crear('corazon', CAPA_NORMAL, e.x, e.y, 20, Math.cos(a) * r * 1.6, Math.sin(a) * r * 1.2, 60, 0.7, 16, 8, 1, 1, 1, 1, 0, 0, 0, 2);
           }
+        } else if (tipo === 6) {
+          // Brillantina que revienta: confeti de colores y estrellitas
+          const cols = [[1, 0.5, 0.85], [1, 0.85, 0.35], [0.6, 0.85, 1], [0.8, 0.6, 1]];
+          for (let q = 0; q < 14; q++) {
+            const a = az() * Math.PI * 2, v = 60 + az() * r * 3, c = cols[q % 4];
+            P.crear(q % 3 ? 'confeti' : 'estrella', CAPA_LUZ, e.x, e.y, 12, Math.cos(a) * v, Math.sin(a) * v * 0.7, 90 + az() * 80, 0.7, 9, 4, c[0], c[1], c[2], 1, 260, a, 8, 1.5);
+          }
+          P.crear('anillo', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.35, r * 0.4, r * 2.3, 1, 0.6, 0.9, 1);
+          P.crear('brillo', CAPA_LUZ, e.x, e.y, 10, 0, 0, 0, 0.22, r * 0.8, r * 1.5, 1, 0.45, 0.8, 0.3);
+        } else if (tipo === 7) {
+          // El cepillo de espalda llega al piso: un anillo de espuma y burbujas
+          for (let q = 0; q < 12; q++) {
+            const a = (q / 12) * Math.PI * 2;
+            P.crear(q % 3 ? 'espuma' : 'burbuja', CAPA_NORMAL, e.x + Math.cos(a) * r * 0.5, e.y + Math.sin(a) * r * 0.4, 6, Math.cos(a) * r * 1.6, Math.sin(a) * r * 1.2, 40, 0.55, r * 0.4, r * 0.15, 0.9, 0.96, 1, 1, 0, 0, 0, 3);
+          }
+          P.crear('anillo', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.4, r * 0.3, r * 2.4, 0.7, 0.88, 1, 1);
+          P.crear('onda', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.5, r * 0.5, r * 2.8, 1, 1, 1, 0.8);
+          this.sacudir(0.15);
         } else if (tipo === 5) {
           const cols = [[1, 0.85, 0.4], [1, 0.5, 0.7], [0.5, 0.8, 1], [0.6, 1, 0.6]];
           for (let q = 0; q < 8; q++) {
@@ -491,6 +536,58 @@ export class Dibujo {
       case 'jefe':
         this.sacudir(0.6);
         break;
+      case 'tajo': {
+        const T = this.tajos;
+        for (let q = 0; q < 32; q++) {
+          const b = q * 7;
+          if (T[b + 2] > 0 && T[b + 4] < 0.3) continue;
+          T[b] = e.x;
+          T[b + 1] = e.y;
+          T[b + 2] = e.c;
+          T[b + 3] = e.d;
+          T[b + 4] = 0;
+          T[b + 5] = e.f;
+          T[b + 6] = e.d;
+          break;
+        }
+        // Vapor de la plancha caliente
+        if (e.f !== 2) P.crear('humo', CAPA_NORMAL, e.x, e.y, 16, 0, 0, 30, 0.5, e.c * 0.4, e.c * 0.9, 1, 1, 1, 0.35);
+        else this.sacudir(0.25);
+        break;
+      }
+      case 'lanza': {
+        const L = this.lanzas;
+        for (let q = 0; q < 24; q++) {
+          const b = q * 6;
+          if (L[b + 2] > 0 && L[b + 4] < L[b + 3]) continue;
+          L[b] = e.x;
+          L[b + 1] = e.y;
+          L[b + 2] = e.c;
+          L[b + 3] = e.d;
+          L[b + 4] = 0;
+          L[b + 5] = e.f;
+          break;
+        }
+        break;
+      }
+      case 'luces': {
+        const R = this.rayitas;
+        for (let q = 0; q < 64; q++) {
+          const b = q * 7;
+          if (R[b + 2] > 0 && R[b + 6] < 0.24) continue;
+          R[b] = e.x;
+          R[b + 1] = e.y;
+          R[b + 2] = e.c;
+          R[b + 3] = e.d;
+          R[b + 4] = e.e;
+          R[b + 5] = e.f;
+          R[b + 6] = 0;
+          break;
+        }
+        const c = COLOR_LUCES[e.f] ?? COLOR_LUCES[0];
+        for (let q = 0; q < 3; q++) P.crear('chispa', CAPA_LUZ, e.x + (az() - 0.5) * (e.e ? e.d : e.c), e.y + (az() - 0.5) * (e.e ? e.c : e.d), 8, 0, 0, 30, 0.3, 8, 2, c[0], c[1], c[2], 1);
+        break;
+      }
     }
     this.alEfecto(e);
   }
@@ -603,6 +700,19 @@ export class Dibujo {
     this.pisoFx.poner(j.x + ux * 104, j.y + uy * 104 * 0.9, 0.14, 30 * pul, 22 * pul, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 1, 0.85, 0.55, a);
   }
 
+  /** Un anillo o un arete escondido: flota y brilla para que se vea desde lejos. */
+  private tesoro(x: number, y: number, nombre: string) {
+    const t = this.t;
+    const c = this.cuadrosObj.get(nombre);
+    if (!c) return;
+    const b = this.fx.c.brillo;
+    this.pisoFx.poner(x, y, 0.1, 120, 84, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.9, 0.6, 0.55 + Math.sin(t * 4) * 0.2);
+    this.fxLuz.poner(x, y, 30, 70, 70, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.95, 0.75, 0.35 + Math.sin(t * 6) * 0.1);
+    this.objetos.poner(x, y, 14 + Math.sin(t * 3) * 6, 44, 44, 0.5, 0.92, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, 0, 1, Math.sin(t * 2) * 0.2, 0.15 + Math.max(0, Math.sin(t * 5)) * 0.2);
+    this.sombra(x, y, 16, 0.3);
+    if (Math.random() < 0.2) this.part.crear('estrella', CAPA_LUZ, x + (Math.random() - 0.5) * 50, y + (Math.random() - 0.5) * 30, 20 + Math.random() * 30, 0, 0, 30, 0.8, 10, 3, 1, 0.92, 0.6, 1, 0, 0, 4);
+  }
+
   private sombra(x: number, y: number, r: number, a: number) {
     if (this.calidad === 0 && r < 20) return;
     const c = this.fx.c.sombra;
@@ -628,6 +738,22 @@ export class Dibujo {
     for (const z of m.zonas) {
       if (!z.vivo) continue;
       const vida = Math.min(1, z.vida * 2.5) * Math.min(1, z.t * 6);
+      if (z.tipo === 2) {
+        // Mascarilla de pepino: una gota verde en el piso con rodajitas y brillo (la del spa, rosadita alrededor)
+        const spa = z.arma === 'spa';
+        const c = this.fx.c.salpicadura, b = this.fx.c.brillo, o = this.fx.c.onda;
+        this.pisoFx.poner(z.x, z.y, 0.07, z.r * 2.4, z.r * 2.0, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 0.55, 0.85, 0.45, 0.8 * vida, 0, 0, 1, z.x * 0.01);
+        this.pisoFx.poner(z.x, z.y, 0.075, z.r * 1.5, z.r * 1.2, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 0.85, 1, 0.75, 0.45 * vida);
+        const f = (t * 1.4 + z.x * 0.01) % 1;
+        this.pisoFx.poner(z.x, z.y, 0.08, z.r * 2 * (0.4 + f * 0.8), z.r * 1.7 * (0.4 + f * 0.8), 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, spa ? 1 : 0.8, spa ? 0.75 : 1, spa ? 0.85 : 0.7, (1 - f) * 0.7 * vida);
+        const r = this.cuadrosObj.get('rodaja');
+        if (r) for (let q = 0; q < 2; q++) {
+          const a = t * 0.8 + q * Math.PI + z.y * 0.02;
+          this.objetos.poner(z.x + Math.cos(a) * z.r * 0.45, z.y + Math.sin(a) * z.r * 0.35, 3, 20, 20, 0.5, 0.5, r.u0, r.v0, r.u1, r.v1, 1, 1, 1, vida);
+        }
+        if (Math.random() < 0.15 * this.part.cupo) this.part.crear('gota', CAPA_NORMAL, z.x + (Math.random() - 0.5) * z.r, z.y + (Math.random() - 0.5) * z.r * 0.8, 4, 0, 0, 60, 0.4, 6, 3, 0.62, 0.9, 0.5, 1, 300);
+        continue;
+      }
       if (z.tipo === 0) {
         // Charco: agua azul con ondas que se abren
         const dorada = z.arma === 'inundacion';
@@ -682,6 +808,10 @@ export class Dibujo {
     for (const o of m.objs) {
       if (!o.vivo || !this.enVista(o.x, o.y, 40)) continue;
       const cofre = o.tipo === 'cofre';
+      if (o.tipo === 'tesoro') {
+        this.tesoro(o.x, o.y, ESCONDIDAS[o.calidad]?.id ?? 'anilloPlata');
+        continue;
+      }
       const nombre: string = cofre ? 'cofre' : o.tipo;
       const c = this.cuadrosObj.get(nombre);
       if (!c) continue;
@@ -787,6 +917,11 @@ export class Dibujo {
       r *= 0.85;
       g *= 0.95;
     }
+    if (e.sinDientes) {
+      // (la mascarilla lo dejó sin dientes: verdecito)
+      r *= 0.82;
+      b *= 0.82;
+    }
     if (e.elite) {
       // Las élites brillan (borde dorado que palpita)
       brillo = 0.1 + Math.sin(t * 5 + e.uid) * 0.06;
@@ -816,8 +951,10 @@ export class Dibujo {
   private dibujarProyectiles(m: Motor) {
     const P = this.proy;
     const F = this.fxNormal, L = this.fxLuz;
-    for (const p of m.pr) {
+    for (let i = 0; i < m.pr.length; i++) {
+      const p = m.pr[i];
       if (!p.vivo || !this.enVista(p.x, p.y, 60)) continue;
+      if (this.proyectilV2(p, i)) continue;
       const sprite = SPRITE_PROY[p.arma];
       const mini = p.mini ? 0.6 : 1;
       if (sprite) {
@@ -874,6 +1011,71 @@ export class Dibujo {
         }
       }
     }
+  }
+
+  /** Los proyectiles de la versión 2 que no son un dibujo quieto: huellitas, mariposas, letras, chorritos y vapor.
+   *  Devuelve true si ya lo dibujó. */
+  private proyectilV2(p: Motor['pr'][number], i: number): boolean {
+    const t = this.t;
+    if (p.comp === 9) {
+      // Huellita mojada en el piso (se va secando)
+      const c = this.fx.c.salpicadura;
+      const ang = p.ang;
+      const tam = p.r * 1.9;
+      this.pisoFx.poner(p.x, p.y, 0.08, tam * 1.5, tam * 0.85, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 0.62, 0.84, 1, 0.75, 0, 0, 1, -ang);
+      const o = this.fx.c.brillo;
+      this.pisoFx.poner(p.x, p.y, 0.09, tam * 2.2, tam * 1.4, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 0.5, 0.75, 1, 0.3 + Math.sin(t * 6 + i) * 0.08, 0, 0, 1, -ang);
+      return true;
+    }
+    switch (p.arma) {
+      case 'mariposas':
+      case 'mariposario': {
+        // Mariposa aleteando (se voltea según para dónde va)
+        const c = this.cuadrosObj.get(p.arma === 'mariposario' && i % 3 === 0 ? 'mariposario' : 'mariposas');
+        if (!c) return true;
+        const ala = 0.45 + 0.55 * Math.abs(Math.sin(t * 16 + i * 1.7));
+        const tam = Math.max(26, p.r * 2.8);
+        this.proy.poner(p.x, p.y, 24 + Math.sin(t * 5 + i) * 6, tam * ala, tam, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, 0, p.vx < 0 ? -1 : 1);
+        this.sombra(p.x, p.y, tam * 0.25, 0.18);
+        return true;
+      }
+      case 'letrasEspuma':
+      case 'abecedario': {
+        // Letras de espuma: más transparentes subiendo (todavía no pegan)
+        const c = this.cuadrosObj.get(LETRAS[i % 3]);
+        if (!c) return true;
+        const tam = Math.max(28, p.r * 2.9);
+        const a = p.vy < 0 ? 0.55 : 1;
+        const tinte = p.arma === 'abecedario' ? COLOR_LUCES[1 + (i % 4)] : [1, 1, 1];
+        this.proy.poner(p.x, p.y, 16, tam, tam, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, tinte[0], tinte[1], tinte[2], a, 0, 0, 1, p.ang);
+        if (p.vy > 0 && Math.random() < 0.2 * this.part.cupo) this.part.crear('burbuja', CAPA_NORMAL, p.x, p.y, 16, 0, 0, 10, 0.5, 5, 10, 1, 1, 1, 0.8);
+        return true;
+      }
+      case 'pistolaAgua':
+      case 'hidrolavadora': {
+        const c = this.fx.c.gota;
+        const ang = Math.atan2(p.vy, p.vx);
+        const tam = Math.min(18, p.r * 2.2);
+        this.fxNormal.poner(p.x, p.y, 12, tam, tam * 1.5, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 0.5, 0.78, 1, 0.95, 0, 0, 1, -ang + Math.PI / 2);
+        if (Math.random() < 0.25 * this.part.cupo) this.part.crear('gota', CAPA_NORMAL, p.x, p.y, 12, -p.vx * 0.05, -p.vy * 0.05, 20, 0.25, 4, 2, 0.6, 0.85, 1, 0.8, 300);
+        return true;
+      }
+      case 'vaporizador':
+      case 'sauna': {
+        if (p.comp !== 11) return false;
+        // Nubecita de vapor hirviendo (la sauna, un poquito anaranjada)
+        const c = this.fx.c.humo;
+        const tam = p.r * 2.6;
+        const sauna = p.arma === 'sauna';
+        this.fxNormal.poner(p.x, p.y, 14, tam, tam * 0.85, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, sauna ? 1 : 0.92, sauna ? 0.86 : 0.96, sauna ? 0.78 : 1, 0.32, 0, 0, 1, i);
+        if (sauna) {
+          const b = this.fx.c.brillo;
+          this.fxLuz.poner(p.x, p.y, 14, tam * 0.5, tam * 0.45, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.5, 0.3, 0.08);
+        }
+        return true;
+      }
+    }
+    return false;
   }
 
   /** Lo que el jugador tiene alrededor: espuma, esponjas, paticos, el perfume del amor. */
@@ -965,10 +1167,11 @@ export class Dibujo {
       }
       const k = edad / 0.28;
       const lado = this.trazos[b + 2], largo = this.trazos[b + 3], alto = this.trazos[b + 4];
-      const caliente = this.trazos[b + 6] > 0;
+      const tipo = this.trazos[b + 6];
       const x = this.trazos[b] + lado * (largo * 0.5 + 6);
       const crece = Math.min(1, k * 4);
-      const col = caliente ? [1, 0.5, 0.38] : [0.98, 0.62, 0.74];
+      // (toalla rosada, toallazo hirviendo, máquina plateada, afeitada plateada con filo dorado)
+      const col = tipo === 1 ? [1, 0.5, 0.38] : tipo === 2 ? [0.72, 0.86, 1] : tipo === 3 ? [1, 0.86, 0.55] : [0.98, 0.62, 0.74];
       this.fxNormal.poner(x, this.trazos[b + 1], 14, largo * crece, alto * 1.7, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, col[0], col[1], col[2], (1 - k) * 0.85, 0, 0, lado);
       this.fxNormal.poner(x, this.trazos[b + 1], 16, largo * crece * 0.8, alto * 0.7, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, 1, 0.95, 0.97, (1 - k) * 0.55, 0, 0, lado);
     }
@@ -983,7 +1186,14 @@ export class Dibujo {
         continue;
       }
       const a = 1 - edad / 0.25;
-      const tormenta = this.rayos[b + 4] > 0;
+      const tipo = this.rayos[b + 4];
+      if (tipo === 2) {
+        // Rayito de brillantina: delgado, rosado y dorado
+        this.fxLuz.poner(this.rayos[b], this.rayos[b + 1], 0, 26, 300, 0.5, 1, ry.u0, ry.v0, ry.u1, ry.v1, 1, 0.55, 0.9, a);
+        this.fxLuz.poner(this.rayos[b], this.rayos[b + 1], 0, 12, 300, 0.5, 1, ry.u0, ry.v0, ry.u1, ry.v1, 1, 0.92, 0.6, a);
+        continue;
+      }
+      const tormenta = tipo > 0;
       this.fxLuz.poner(this.rayos[b], this.rayos[b + 1], 0, 50 + this.rayos[b + 2] * 0.5, 360, 0.5, 1, ry.u0, ry.v0, ry.u1, ry.v1, tormenta ? 0.8 : 1, tormenta ? 0.85 : 0.95, 1, a);
     }
     const br = this.fx.c.brillo;
@@ -1002,6 +1212,72 @@ export class Dibujo {
       const seda = this.haces[b + 6] > 0;
       this.pisoFx.poner(mx, my, 0.15, largo, ancho * 2.2, 0.5, 0.5, br.u0, br.v0, br.u1, br.v1, seda ? 1 : 0.85, seda ? 0.9 : 0.97, seda ? 0.6 : 1, a, 0, 0, 1, -ang);
       this.fxLuz.poner(mx, my, 10, largo, 3 + ancho * 0.3, 0.5, 0.5, br.u0, br.v0, br.u1, br.v1, 1, 1, 1, a * 0.9, 0, 0, 1, 0);
+    }
+    this.dibujarTajos(dt);
+  }
+
+  /** Planchazos, cepillos de espalda cayendo y rayitas del espejo LED. */
+  private dibujarTajos(dt: number) {
+    const tr = this.fx.c.trazo, br = this.fx.c.brillo;
+    const T = this.tajos;
+    for (let q = 0; q < 32; q++) {
+      const b = q * 7;
+      if (T[b + 2] <= 0) continue;
+      T[b + 4] += dt;
+      const edad = T[b + 4], tipo = T[b + 5];
+      const dur = tipo === 2 ? 0.38 : 0.26;
+      if (edad > dur) {
+        T[b + 2] = 0;
+        continue;
+      }
+      const k = edad / dur, a = (1 - k) * 0.95, crece = Math.min(1, k * 5);
+      if (tipo === 2) {
+        // El remate: un planchazo enorme de arriba a abajo
+        const alto = T[b + 2], ancho = T[b + 6];
+        this.pisoFx.poner(T[b], T[b + 1], 0.16, alto * crece, ancho * 1.6, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, 1, 0.85, 0.55, a, 0, 0, 1, Math.PI / 2);
+        this.fxLuz.poner(T[b], T[b + 1], 20, ancho * 0.5, alto * 0.75 * crece, 0.5, 0.5, br.u0, br.v0, br.u1, br.v1, 1, 0.95, 0.85, a * 0.8);
+        continue;
+      }
+      // Un tajo en medialuna (la plancha rosada; la de diva, dorada; el contraataque, rojo)
+      const r = T[b + 2], ang = T[b + 3];
+      const col = tipo === 1 ? [1, 0.82, 0.45] : tipo === 3 ? [1, 0.4, 0.45] : [1, 0.55, 0.85];
+      this.fxNormal.poner(T[b], T[b + 1], 14, r * 2.3 * crece, r * 0.75, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, col[0], col[1], col[2], a, 0, 0, 1, ang);
+      this.fxNormal.poner(T[b], T[b + 1], 15, r * 1.9 * crece, r * 0.3, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, 1, 1, 1, a * 0.8, 0, 0, 1, ang);
+    }
+    const L = this.lanzas;
+    for (let q = 0; q < 24; q++) {
+      const b = q * 6;
+      if (L[b + 2] <= 0) continue;
+      L[b + 4] += dt;
+      const edad = L[b + 4], demora = L[b + 3];
+      if (edad > demora) {
+        L[b + 2] = 0;
+        continue;
+      }
+      // Cae del cielo dando vueltas, con su sombra que crece en el piso
+      const k = edad / Math.max(0.05, demora);
+      const c = this.cuadrosObj.get(L[b + 5] ? 'cepilloCeleste' : 'cepilloEspalda');
+      const z = (1 - k) * (1 - k) * 320;
+      if (c) this.proy.poner(L[b], L[b + 1], z, 46, 46, 0.5, 0.2, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, Math.min(1, k * 4), 0, 0, 1, Math.PI * 0.85 + k * 0.3);
+      this.sombra(L[b], L[b + 1], L[b + 2] * (0.3 + k * 0.7), 0.15 + k * 0.3);
+    }
+    const R = this.rayitas;
+    for (let q = 0; q < 64; q++) {
+      const b = q * 7;
+      if (R[b + 2] <= 0) continue;
+      R[b + 6] += dt;
+      const edad = R[b + 6];
+      if (edad > 0.24) {
+        R[b + 2] = 0;
+        continue;
+      }
+      const a = 1 - edad / 0.24, abre = Math.min(1, edad * 18);
+      const c = COLOR_LUCES[R[b + 5]] ?? COLOR_LUCES[0];
+      const giro = R[b + 4] ? Math.PI / 2 : 0;
+      const tr = this.fx.c.trazo;
+      this.pisoFx.poner(R[b], R[b + 1], 0.17, R[b + 2] * abre, R[b + 3] * 4.5, 0.5, 0.5, br.u0, br.v0, br.u1, br.v1, c[0], c[1], c[2], a, 0, 0, 1, giro);
+      this.pisoFx.poner(R[b], R[b + 1], 0.18, R[b + 2] * abre, R[b + 3] * 1.6, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, c[0], c[1], c[2], a, 0, 0, 1, giro);
+      this.pisoFx.poner(R[b], R[b + 1], 0.19, R[b + 2] * abre * 0.9, R[b + 3] * 0.6, 0.5, 0.5, tr.u0, tr.v0, tr.u1, tr.v1, 1, 1, 1, a * 0.9, 0, 0, 1, giro);
     }
   }
 
