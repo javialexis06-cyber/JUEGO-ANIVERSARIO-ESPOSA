@@ -38,8 +38,8 @@ export interface EstadoForja {
 }
 
 const PRECIOS_RENOVAR = [5, 7, 10, 14, 20, 28, 39, 55, 77, 108, 151, 211];
-const OBJETIVOS_LISTA: IdObjetivo[] = ['hierro', 'altares', 'prisioneros', 'carreta', 'campana', 'elite'];
-const SECUNDARIOS_LISTA: IdSecundario[] = ['huevos', 'frascos', 'cofres', 'rosas', 'plumas', 'hongos'];
+const OBJETIVOS_LISTA: IdObjetivo[] = ['hierro', 'altares', 'prisioneros', 'carreta', 'campana', 'elite', 'exorcismo', 'cosecha'];
+const SECUNDARIOS_LISTA: IdSecundario[] = ['huevos', 'frascos', 'cofres', 'rosas', 'plumas', 'hongos', 'mercurio', 'campanitas'];
 
 export class Expedicion {
   cfg: ConfigExpedicion;
@@ -78,11 +78,13 @@ export class Expedicion {
       this.plan.push({ objetivo: o, secundario: this.az.uno(SECUNDARIOS_LISTA) });
     }
     if (cfg.tutorial) this.plan = [{ objetivo: 'hierro', secundario: 'huevos' }];
+    // Las misiones: el mismo objetivo en sus tres etapas
+    if (cfg.mision) for (const p of this.plan) p.objetivo = cfg.mision === 'procesion' ? 'carreta' : 'cria';
   }
 
   /** Cuántas etapas tiene (cinco; las pruebas de maestría, 3, 5 o 10). */
   get total() {
-    return this.cfg.tutorial ? 1 : Math.max(1, this.cfg.etapas ?? ETAPAS);
+    return this.cfg.tutorial ? 1 : Math.max(1, this.cfg.etapas ?? (this.cfg.mision ? 3 : ETAPAS));
   }
 
   get ultima() {
@@ -104,6 +106,14 @@ export class Expedicion {
     return r ? r[Math.floor((etapa - 1) / ETAPAS) % r.length] : this.cfg.bioma;
   }
 
+  /** La capa de abajo en el modo infinito: desde la sexta etapa, los enemigos del bioma anterior se mezclan con los
+   *  del nuevo (las catacumbas debajo del cementerio, las minas debajo de las catacumbas…). */
+  capaDe(etapa = this.etapa): IdBioma | undefined {
+    if (!this.cfg.infinito || etapa <= ETAPAS) return undefined;
+    const antes = this.biomaDe(etapa - ETAPAS);
+    return antes !== this.biomaDe(etapa) ? antes : undefined;
+  }
+
   /** Arranca la etapa siguiente. */
   iniciarEtapa(): Sim {
     this.etapa++;
@@ -113,7 +123,7 @@ export class Expedicion {
       this.plan.push({ objetivo: this.az.uno(OBJETIVOS_LISTA.filter((o) => o !== antes)), secundario: this.az.uno(SECUNDARIOS_LISTA) });
     }
     const p = this.plan[this.etapa - 1] ?? this.plan[this.plan.length - 1];
-    this.sim = new Sim({ exp: this.cfg, etapa: this.etapa, objetivo: p.objetivo, secundario: p.secundario, final: this.esFinal(), bioma: this.biomaDe() }, this.J);
+    this.sim = new Sim({ exp: this.cfg, etapa: this.etapa, objetivo: p.objetivo, secundario: p.secundario, final: this.esFinal(), bioma: this.biomaDe(), capa: this.capaDe() }, this.J);
     if (this.cfg.tutorial) {
       this.sim.sinHorda = true;
       this.sim.sinReloj = true;

@@ -5,7 +5,10 @@ probado y subido.
 
 ## Por dónde seguir (nota para el próximo Claude)
 
-Último trabajo subido: **Sangre y Ceniza 2, fase 3** (9 de octubre): el mapa de la Noche (cuatro sectores con sus
+Último trabajo subido: **Sangre y Ceniza 2, fase 4** (9 de octubre): 26 reliquias que se abren con hitos, los
+Desafíos (contratos del día y de la semana para comparar entre los dos, pruebas de maestría, anómalas), 17 mutadores
+nuevos, las misiones La Procesión (el Relicario) y La Cría (la Madre de Piedra), los objetivos Exorcismo y Cosecha de
+sangre, dos secundarios nuevos y el infinito que crece (con la bajada guardada). Antes, la **fase 3**: el mapa de la Noche (cuatro sectores con sus
 Puertas, tres metas por lugar y cinco escenas cortas con Javier y Laura como el Lazo Primordial), Sangre y Ceniza en
 la Sala de Trofeos, evoluciones para todas las armas, 14 uniones, 13 armas comunes nuevas con sus modelos y las
 especializaciones que abren armas. Antes, la **fase 2** (8 de octubre): los seis minerales del mito y el Pozo que los
@@ -17,12 +20,10 @@ ladrón de tumbas, mini-élites, precios que suben y tres secundarios nuevos; la
 trajo de la granja ([`docs/mitologia.md`](mitologia.md)). Javier respondió lo de Sangre y Ceniza 2: **se hace
 primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protagonistas) y todo lo de armas. Orden:
 
-1. **Sangre y Ceniza 2**, por fases (sección 4 de `docs/en-obra/sangre-propuesta.md`): ~~fase 1~~, ~~fase 2~~ y
-   ~~fase 3~~ **hechas** (la 3: el mapa de la Noche con cinco escenas de la historia, el pedestal en la Sala de
-   Trofeos, evoluciones para todas las armas, 14 uniones, 13 armas comunes nuevas y las especializaciones que abren
-   armas); sigue la **fase 4** = B (La Procesión y La Cría), H (maestrías, anómalas, contratos y mutadores), I (el
-   infinito que crece) y las reliquias por hitos (L6); después la **fase 5** (J, K, el familiar y la Forja con tres
-   mostradores).
+1. **Sangre y Ceniza 2**, por fases (sección 4 de `docs/en-obra/sangre-propuesta.md`): ~~fase 1~~, ~~fase 2~~,
+   ~~fase 3~~ y ~~fase 4~~ **hechas** (la 4: reliquias por hitos, Desafíos, 17 mutadores, La Procesión y La Cría con
+   sus modelos, Exorcismo, Cosecha de sangre, mercurio, campanitas y el infinito que crece); sigue la **fase 5** (J:
+   refugio con minijuegos, K: equipo con rarezas especiales, el familiar y la Forja con tres mostradores).
 2. **Lavarse la cara 2** (`docs/en-obra/lavado-propuesta.md`): antes de empezar, hacerle a Javier las 5 preguntas del
    final (armas, escenarios, modos y tesoros, disfraces, aventuras).
 3. **Amigos: mesa, retrete y cocina en la app de amigos** (abajo, en «Amigos: lo que sigue»).

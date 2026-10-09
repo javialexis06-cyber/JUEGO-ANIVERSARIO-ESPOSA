@@ -9,7 +9,7 @@ import * as sonido from '../sonido';
 import * as fondo from '../segundo_plano';
 import { ARMAS } from './datos/armas';
 import { CLASES, nombreClase, textoAbre } from './datos/clases';
-import { BIOMAS, ETAPAS, MUTADORES, PELIGROS, SECUNDARIOS } from './datos/mundo';
+import { BIOMAS, ETAPAS, MUTADORES, OBJETIVOS, PELIGROS, SECUNDARIOS } from './datos/mundo';
 import { EQUIPO, POZO, RELIQUIA, RELIQUIAS, precioPozo } from './datos/botin';
 import { MINERALES, precioMineral } from './datos/minerales';
 import { ANOMALIAS, CENIZA_PRUEBA, COSTO_ANOMALIA, ETAPAS_PRUEBA, PUNTOS_PRUEBA, contrato, locura } from './datos/desafios';
@@ -21,6 +21,7 @@ import { Guardado, ponerPreferencia, preferencia } from './guardado';
 import { quienSoy } from './identidad';
 import { esModoAmigo } from '../salas/perfil';
 import { HITOS_RELIQUIA, LOGROS, aplicarDesbloqueos, revisarLogros, revisarReliquias, type DefLogro } from './logros';
+import { borrarBajada, guardarBajada, leerBajada, restaurarBajada, type BajadaGuardada } from './bajada';
 import { DT, Partida } from './partida';
 import { Anfitrion } from './red/anfitrion';
 import { PartidaInvitado, type DatosFin } from './red/invitado';
@@ -35,7 +36,7 @@ import { encolarSobrecarga } from './sim/opciones';
 import type { Sim } from './sim/sim';
 import { brillar, sinSaltar } from './ui/repintar';
 import { efectos, musica, sonarSucesos } from './sonidos';
-import { BIOMAS_ORDEN, CLASES_ORDEN, MINERALES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdAnomalia, type IdBioma, type IdClase, type IdMineral, type IdMutador, type IdSecundario, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
+import { BIOMAS_ORDEN, CLASES_ORDEN, MINERALES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdAnomalia, type IdBioma, type IdClase, type IdMineral, type IdMutador, type IdObjetivo, type IdSecundario, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
 import { Tutorial } from './tutorial';
 import { VistaEleccion } from './ui/eleccion';
 import { mostrarForja } from './ui/forja';
@@ -67,6 +68,8 @@ interface Seleccion {
   equipo: Partial<Record<RanuraEquipo, string>>;
   /** Modo infinito (se abre al ganar la primera expedición). */
   infinito?: boolean;
+  /** Misión de tres etapas (se abren igual que el infinito). */
+  mision?: 'procesion' | 'cria';
 }
 const sel: Seleccion = {
   clase: 'monarca', spec: 0, bioma: 'cementerio', peligro: 1, mutadores: [], equipo: {},
@@ -80,7 +83,11 @@ const corregirSeleccion = () => {
   sel.peligro = Math.max(1, Math.min(peligroPermitido(p), sel.peligro));
   if (sel.peligro < 3) sel.mutadores = [];
   for (const r of RANURAS_EQUIPO) if (sel.equipo[r] && !p.ofrendas.includes(sel.equipo[r]!)) delete sel.equipo[r];
-  if (!infinitoAbierto(p)) sel.infinito = false;
+  if (!infinitoAbierto(p)) {
+    sel.infinito = false;
+    delete sel.mision;
+  }
+  if (sel.infinito) delete sel.mision;
 };
 /** El modo infinito se abre al ganar una expedición (en cualquier bioma). */
 function infinitoAbierto(p: ProgresoSangre) {
@@ -94,7 +101,7 @@ function cfgDeSeleccion(): ConfigExpedicion {
     const k = Math.max(0, abiertos.indexOf(sel.bioma));
     cfg.infinito = true;
     cfg.rotacion = [...abiertos.slice(k), ...abiertos.slice(0, k)];
-  }
+  } else if (sel.mision && infinitoAbierto(P())) cfg.mision = sel.mision;
   return cfg;
 }
 corregirSeleccion();
@@ -239,11 +246,14 @@ function titulo() {
   if (escena.vitrina) Object.assign(escena.vitrina, { lado: 0.95, alto: 0.85, dist: 4.4 });
   const p = P();
   const nv = nivelMaestria(p.maestria[sel.clase] ?? 0).nivel;
+  const bajada = leerBajada();
   const s = seccion('titulo con-fondo', `
     <h1 class="logo">Sangre <em>y</em> Ceniza</h1>
     <p class="lema">Cayó la Noche Eterna sobre Valdemora. Baja, junta lo que puedas y sal viva por la campana.</p>
     <div class="menu-titulo">
-      <button class="boton boton-sangre" data-a="jugar">${glifo('espada')}Expedición</button>
+      ${bajada ? `<button class="boton boton-sangre medio" data-a="jugar">${glifo('espada')}Expedición</button>
+      <button class="boton boton-sangre medio" data-a="seguir" title="La bajada del modo infinito que quedó guardada">${glifo('luna')}Seguir · ${bajada.etapa + 1}</button>`
+        : `<button class="boton boton-sangre" data-a="jugar">${glifo('espada')}Expedición</button>`}
       <button class="boton boton-sangre" data-a="noche">${glifo('luna')}El mapa de la Noche <small>${p.noche.metas.length}/${LUGARES.length * 3}</small></button>
       <button class="boton" data-a="desafios">${glifo('dado')}Desafíos${p.puntos ? ` <small>${p.puntos} ✦</small>` : ''}</button>
       <button class="boton" data-a="grupo">${glifo('mano')}En grupo</button>
@@ -265,6 +275,9 @@ function titulo() {
     if (a === 'jugar') {
       if (!P().tutorial) return confirmar('¿Primera vez?', 'El tutorial enseña a moverse, excavar, cumplir el objetivo y salir en la campana. Toma unos tres minutos.', 'Hacer el tutorial', 'Ya sé jugar', (si) => (si ? empezarTutorial() : escogerClase()));
       escogerClase();
+    } else if (a === 'seguir' && bajada) {
+      // (con el perfil con el que se bajó: la clase, la especialización, el equipo y lo del Pozo de ese momento)
+      void empezar(bajada.cfg, bajada.perfiles, 0, { bajada });
     } else if (a === 'noche') noche();
     else if (a === 'desafios') desafios();
     else if (a === 'grupo') grupo();
@@ -392,9 +405,19 @@ function escogerExpedicion(alListo?: () => void) {
     }).join('');
     const extra = sel.mutadores.reduce((x, m) => x + MUTADORES[m].recompensa, 0);
     const infAbierto = infinitoAbierto(p);
-    const modos = `<button class="mutador${!sel.infinito ? ' si' : ''}" data-modo="normal"><span class="ico">${glifo('campana')}</span>Cinco etapas</button>
-      <button class="mutador${sel.infinito ? ' si' : ''}${infAbierto ? '' : ' bloqueado'}" data-modo="infinito" title="Etapas sin fin, cada vez más duras; jefe cada cuatro y los biomas se turnan"><span class="ico">${glifo(infAbierto ? 'luna' : 'candado')}</span>Infinito</button>
-      <small>${infAbierto ? (p.cifras.infinitoMax ? `Récord: etapa ${p.cifras.infinitoMax}` : 'Sin fin: hasta donde aguantes') : 'Gana una expedición para abrirlo'}</small>`;
+    const modo = sel.infinito ? 'infinito' : sel.mision ?? 'normal';
+    const boton = (id: string, ico: string, nombre: string, desc: string, abierto = true) =>
+      `<button class="mutador${modo === id ? ' si' : ''}${abierto ? '' : ' bloqueado'}" data-modo="${id}" title="${desc}"><span class="ico">${glifo(abierto ? ico : 'candado')}</span>${nombre}</button>`;
+    const notaModo = !infAbierto ? 'Gana una expedición para abrir los demás modos'
+      : modo === 'infinito' ? (p.cifras.infinitoMax ? `Récord: etapa ${p.cifras.infinitoMax}` : 'Sin fin: hasta donde aguantes')
+      : modo === 'procesion' ? 'Tres etapas escoltando la carreta; al final, abrir el Relicario'
+      : modo === 'cria' ? 'Tres etapas cargando huevos al osario; al final, la Madre de Piedra'
+      : 'La expedición de siempre';
+    const modos = `${boton('normal', 'campana', 'Cinco etapas', 'La expedición de siempre: cinco etapas y el jefe del bioma')}
+      ${boton('infinito', 'luna', 'Infinito', 'Etapas sin fin, cada vez más duras; jefe cada cinco, el mapa crece y los biomas se turnan', infAbierto)}
+      ${boton('procesion', 'caliz', 'La Procesión', 'Tres etapas: la carreta de reliquias avanza si la acompañan; al final llega al Relicario y hay que abrirlo mientras los monjes lo apagan', infAbierto)}
+      ${boton('cria', 'huevo', 'La Cría', 'Tres etapas: los huevos de gárgola al osario (uno a la vez, te ponen lento); el último despierta a la Madre de Piedra', infAbierto)}
+      <small>${notaModo}</small>`;
     s.innerHTML = `${cabeza('La expedición')}
       <div class="carrusel carrusel-biomas">${biomas}</div>
       <div class="opciones-exp placa">
@@ -417,8 +440,10 @@ function escogerExpedicion(alListo?: () => void) {
     const modo = t.closest<HTMLElement>('[data-modo]')?.dataset.modo;
     if (modo) {
       efectos.boton();
-      if (modo === 'infinito' && !infinitoAbierto(p)) return aviso('Gana una expedición para abrir el modo infinito.', '', 2200);
+      if (modo !== 'normal' && !infinitoAbierto(p)) return aviso('Gana una expedición para abrir este modo.', '', 2200);
       sel.infinito = modo === 'infinito';
+      if (modo === 'procesion' || modo === 'cria') sel.mision = modo;
+      else delete sel.mision;
     } else if (b) {
       efectos.carta();
       if (!p.biomas.includes(b)) return aviso(desbloqueoBioma(b), '', 2200);
@@ -466,7 +491,7 @@ function desbloqueoBioma(b: IdBioma) {
 const semilla = () => (params.get('semilla') ? Number(params.get('semilla')) : Math.floor(Math.random() * 1e9));
 
 function guardarUltima() {
-  P().ultima = { clase: sel.clase, spec: sel.spec, bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], equipo: { ...sel.equipo }, infinito: !!sel.infinito };
+  P().ultima = { clase: sel.clase, spec: sel.spec, bioma: sel.bioma, peligro: sel.peligro, mutadores: [...sel.mutadores], equipo: { ...sel.equipo }, infinito: !!sel.infinito, ...(sel.mision ? { mision: sel.mision } : {}) };
   guardado.guardar();
 }
 
@@ -879,7 +904,9 @@ function cerrarPausa() {
 }
 
 // ------------------------------------------------------------------------------------------------- La expedición
-async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: number, extra: { bots?: number[]; sala?: Sala } = {}) {
+async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: number, extra: { bots?: number[]; sala?: Sala; bajada?: BajadaGuardada } = {}) {
+  // (una bajada nueva del infinito reemplaza la guardada)
+  if (cfg.infinito && !extra.bajada) borrarBajada();
   pantalla = 'juego';
   carga(true, undefined, 0.15);
   pantallas.replaceChildren();
@@ -908,6 +935,8 @@ async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: 
     alFinEtapa: (p) => red?.finEtapa(p),
   });
   const red = extra.sala ? redAnfitrion(extra.sala, pt, perfiles, local) : null;
+  // Seguir una bajada guardada: arranca en la etapa siguiente a la última Forja
+  if (extra.bajada) restaurarBajada(pt.exp, extra.bajada);
   partida = pt;
   mando.alPausar = atras;
   // Pruebas: arrancar en otra etapa (?etapa=5 para la final con los sepulcros y el jefe)
@@ -916,6 +945,9 @@ async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: 
   // (y con otro secundario: ?secundario=rosas, plumas, hongos…)
   const secPrueba = params.get('secundario') as IdSecundario | null;
   if (params.has('prueba') && secPrueba && secPrueba in SECUNDARIOS) for (const e of pt.exp.plan) e.secundario = secPrueba;
+  // (y con otro objetivo: ?objetivo=exorcismo, cosecha…)
+  const objPrueba = params.get('objetivo') as IdObjetivo | null;
+  if (params.has('prueba') && objPrueba && objPrueba in OBJETIVOS) for (const e of pt.exp.plan) e.objetivo = objPrueba;
   try {
     await pt.empezar();
   } catch (e) {
@@ -952,6 +984,8 @@ function abrirForja(p: PartidaComun, seguir: () => void, esperando?: () => strin
       }
       f.cerrar();
       pantalla = 'juego';
+      // El infinito, jugando solo: se guarda al salir de la Forja (si el celular cierra el juego, se sigue de aquí)
+      if (p instanceof Partida && p.exp.cfg.infinito && p.o.perfiles.length === 1 && !params.has('prueba')) guardarBajada(p.exp, p.o.perfiles);
       const conCarga = !(p instanceof PartidaInvitado) && !p.exp.cfg.tutorial;
       if (conCarga) carga(true, `Etapa ${p.exp.etapa + 1}…`, 0.3);
       seguir();
@@ -967,6 +1001,7 @@ function abandonar(motivo?: string) {
   if (!partida) return;
   const p = partida;
   p.terminada = true;
+  if (p.exp.cfg.infinito) borrarBajada();
   p.liberar();
   partida = null;
   forjaAbierta?.cerrar();
@@ -1045,8 +1080,9 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
   if (p.exp.cfg.infinito) c.infinitoMax = Math.max(c.infinitoMax, p.exp.etapa);
   c.segundos += Math.round(p.exp.tiempo);
   if (p.o.perfiles.length > 1) c.enGrupo++;
-  // (los contratos pueden caer en un bioma que todavía no se abrió: no cuentan para abrir biomas ni peligros)
-  if (exito && !p.exp.cfg.tutorial && !p.exp.cfg.contrato) pr.ganado[p.exp.cfg.bioma] = Math.max(pr.ganado[p.exp.cfg.bioma] ?? 0, p.exp.cfg.peligro);
+  // (los contratos pueden caer en un bioma que todavía no se abrió, y las misiones son de tres etapas: no cuentan para
+  // abrir biomas ni peligros)
+  if (exito && !p.exp.cfg.tutorial && !p.exp.cfg.contrato && !p.exp.cfg.mision) pr.ganado[p.exp.cfg.bioma] = Math.max(pr.ganado[p.exp.cfg.bioma] ?? 0, p.exp.cfg.peligro);
   if (p.exp.cfg.tutorial) pr.tutorial = true;
   const nuevos = p.exp.cfg.tutorial ? [] : revisarLogros({ p: pr, exp: p.exp, j, exito, jugadores: p.o.perfiles.length });
   // Las reliquias que se abrieron con sus proezas
@@ -1117,6 +1153,7 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
 
 function terminar(p: PartidaComun) {
   const exito = p.exp.exito;
+  if (p.exp.cfg.infinito) borrarBajada();
   if (p.exp.cfg.tutorial && tutorial) {
     // El tutorial termina mostrando la Forja de mentiras y luego los resultados
     tutorial.cerrar();
@@ -1636,8 +1673,10 @@ async function arrancar() {
     }
     const perfil = perfilLocal();
     perfil.spec = sel.spec;
-    // (?infinito: prueba del modo infinito, con ?etapa=N para empezar más hondo)
-    await empezar({ bioma: sel.bioma, peligro: sel.peligro, mutadores: [], semilla: semilla(), ...(params.has('infinito') ? { infinito: true, rotacion: [...BIOMAS_ORDEN] } : {}) }, [perfil], 0);
+    // (?infinito: prueba del modo infinito, con ?etapa=N para empezar más hondo; ?mision=procesion|cria: las misiones)
+    const mision = params.get('mision');
+    await empezar({ bioma: sel.bioma, peligro: sel.peligro, mutadores: [], semilla: semilla(), ...(params.has('infinito') ? { infinito: true, rotacion: [...BIOMAS_ORDEN] } : {}),
+      ...(mision === 'procesion' || mision === 'cria' ? { mision } : {}) }, [perfil], 0);
     w.__listo = true;
     return;
   }

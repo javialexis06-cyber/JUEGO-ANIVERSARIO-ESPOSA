@@ -125,7 +125,7 @@ function soltarBotin(sim: Sim, id: string) {
 
 function elegirTipo(sim: Sim): number {
   const desdeEf = 1 + 0.28 * (sim.cfg.etapa - 1);
-  const lista = sim.bioma.enemigos.filter((e) => e.desde / desdeEf <= sim.t);
+  const lista = sim.enemigos.filter((e) => e.desde / desdeEf <= sim.t);
   const enj = sim.cfg.exp.mutadores.includes('enjambres');
   const e = sim.az.pesado(lista, (x) => x.peso * (enj && (TIPOS[TIPO[x.id]].conducta === 'enjambre' || TIPOS[TIPO[x.id]].conducta === 'volador') ? 2.5 : 1));
   return TIPO[(e ?? sim.bioma.enemigos[0]).id];

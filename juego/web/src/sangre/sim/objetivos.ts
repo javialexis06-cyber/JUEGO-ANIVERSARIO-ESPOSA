@@ -146,6 +146,43 @@ export function prepararObjetivos(sim: Sim) {
     case 'elite':
       sim.obj.meta = 1;
       break;
+    case 'exorcismo': {
+      // Tres campanas embrujadas lejos unas de otras
+      const ps = lugares(sim, 3, 11, 14);
+      sim.obj.meta = ps.length;
+      for (const p of ps) nuevaEntidad(sim, ENT.CAMPANA_EXO, p.x, p.y);
+      if (!ps.length) sim.obj.tipo = 'hierro';
+      break;
+    }
+    case 'cosecha': {
+      // El cáliz en un lugar abierto a media distancia; los cristales regados (algunos detrás de la roca)
+      const c = lugares(sim, 1, 10, 0, 22)[0] ?? lugares(sim, 1, 6, 0)[0];
+      if (!c) {
+        sim.obj.tipo = 'hierro';
+        break;
+      }
+      nuevaEntidad(sim, ENT.CALIZ, c.x, c.y);
+      const ps = [...lugares(sim, 4 + n, 9, 8), ...enBolsillo(sim, 2)];
+      sim.obj.meta = ps.length;
+      for (const p of ps) nuevaEntidad(sim, ENT.CRISTAL, p.x, p.y);
+      break;
+    }
+    case 'cria': {
+      // El osario cerca del centro; los huevos de gárgola en los rincones y en los bolsillos de roca
+      const m = sim.mapa;
+      const o = m.abiertaCerca(m.w / 2, m.h / 2, 12) ?? lugares(sim, 1, 8, 0)[0];
+      if (!o) {
+        sim.obj.tipo = 'hierro';
+        break;
+      }
+      nuevaEntidad(sim, ENT.OSARIO, o.x, o.y);
+      // (la cuota deja huevos de más: el que se arriesga por ellos se lleva premio aparte; en la etapa final hay que
+      // llevarlos todos: el último despierta a la Madre de Piedra)
+      const ps = [...rincones(sim, 5 + n), ...enBolsillo(sim, 2)];
+      sim.obj.meta = sim.cfg.final ? ps.length : Math.max(1, Math.min(ps.length - 2, 2 + n));
+      for (const p of ps) nuevaEntidad(sim, ENT.HUEVO_GARGOLA, p.x, p.y);
+      break;
+    }
   }
   if (sim.obj.tipo === 'hierro') sim.obj.meta = 60 + 15 * (n - 1);
   // Secundario
@@ -203,6 +240,19 @@ export function prepararObjetivos(sim: Sim) {
       sim.sec.meta = 6;
       sim.plumaT = 22;
       break;
+    case 'mercurio': {
+      const ps = lugares(sim, 8, 8, 6);
+      for (const p of ps) sim.soltar(REC.MERCURIO, p.x, p.y, 1, '', false);
+      sim.sec.meta = ps.length;
+      break;
+    }
+    case 'campanitas': {
+      // Escondidas: en los bolsillos cerrados y en los rincones
+      const ps = [...enBolsillo(sim, 2), ...rincones(sim, 3)];
+      for (const p of ps) sim.soltar(REC.CAMPANITA, p.x, p.y, 1, '', false);
+      sim.sec.meta = ps.length;
+      break;
+    }
     case 'hongos': {
       // Montoncitos de 3 en los rincones (celdas abiertas con roca casi por todos lados), uno en un bolsillo cerrado
       const montones = [...rincones(sim, 3), ...enBolsillo(sim, 1)];
@@ -220,7 +270,7 @@ export function prepararObjetivos(sim: Sim) {
   // Santuarios de las bendiciones
   for (const p of lugares(sim, 1 + Math.ceil(n / 2), 8, 12)) nuevaEntidad(sim, ENT.SANTUARIO, p.x, p.y);
   // Etapa final: los sepulcros de los custodios, regados lejos del inicio
-  if (cfg.final) for (const p of lugares(sim, SEPULCROS, 11, 13)) nuevaEntidad(sim, ENT.SEPULCRO, p.x, p.y);
+  if (cfg.final && !cfg.exp.mision) for (const p of lugares(sim, SEPULCROS, 11, 13)) nuevaEntidad(sim, ENT.SEPULCRO, p.x, p.y);
   // En las bolsas cerradas a veces hay un cofre
   const m = sim.mapa;
   const d = m.distancias(m.inicio.x, m.inicio.y);
@@ -285,8 +335,20 @@ export function actualizarObjetivos(sim: Sim, dt: number) {
       case ENT.SUMINISTRO:
         suministro(sim, e, dt);
         break;
+      case ENT.CAMPANA_EXO:
+        campanaExorcismo(sim, e, dt);
+        break;
+      case ENT.CRISTAL:
+      case ENT.HUEVO_GARGOLA:
+        seguidor(sim, e, dt);
+        break;
+      case ENT.RELICARIO:
+        relicario(sim, e, dt);
+        break;
     }
   }
+  if (sim.sec.tipo === 'mercurio') mercurio(sim, dt);
+  else if (sim.sec.tipo === 'campanitas') campanitas(sim, dt);
   // A la mitad de la barra llega el cofre de suministros (no en la etapa final ni en el tutorial)
   if (!sim.suministroVisto && !sim.cfg.final && !sim.cfg.exp.tutorial && !sim.cfg.exp.mutadores.includes('sin_suministros') && sim.fase === 'juego' && sim.avance >= 0.45) marcarSuministro(sim);
   if (sim.campana) extraccion(sim, sim.campana, dt);
@@ -342,7 +404,7 @@ function plumas(sim: Sim, dt: number) {
  *  despierta el Guardián (o se abren los sepulcros de la etapa final). */
 function avanzar(sim: Sim, dt: number) {
   if (sim.fase === 'juego') {
-    sim.avanceT = Math.min(1, sim.avanceT + dt / AVANCE_SOLO);
+    sim.avanceT = Math.min(1, sim.avanceT + (dt * sim.ritmo) / AVANCE_SOLO);
     sim.calcularAvance();
   }
   while (sim.oleadasHechas < sim.oleadas.length && sim.avance >= sim.oleadas[sim.oleadasHechas]) {
@@ -352,7 +414,26 @@ function avanzar(sim: Sim, dt: number) {
   if (sim.oleadaResta > 0) seguirOleada(sim, dt);
   traerImportantes(sim, dt);
   let espera = false;
-  if (sim.cfg.final) {
+  if (sim.cfg.final && sim.cfg.exp.mision === 'procesion') {
+    // La Procesión: al final no hay jefe ni sepulcros: la carreta lleva al Relicario (si se rompe, el Relicario sale
+    // igual cuando la barra se llena)
+    const carreta = sim.ent.find((e) => e.tipo === ENT.CARRETA);
+    if (!sim.relicarioVisto && sim.fase === 'juego' && (sim.obj.prog >= 1 || (sim.obj.fallo && sim.avance >= 1) || !carreta)) {
+      sim.relicarioVisto = true;
+      const ref = carreta && carreta.est !== 2 ? carreta : carreta ?? sim.vivos()[0];
+      const p = (ref && sim.mapa.abiertaCerca(ref.x + 1.5, ref.y, 4)) ?? lugares(sim, 1, 6, 0)[0];
+      if (p) {
+        const e = nuevaEntidad(sim, ENT.RELICARIO, p.x, p.y);
+        e.t = 3;
+        sim.romperParedes(p.x, p.y, 1.6, null, true);
+        sim.aviso(51);
+      } else llamarCampana(sim);
+    }
+  } else if (sim.cfg.final && sim.cfg.exp.mision === 'cria') {
+    // La Cría: el huevo que completa la cuota despierta a la Madre de Piedra (o la barra llena, si se demoran)
+    if (sim.fase === 'juego' && !sim.jefeVisto && (sim.obj.hecho || sim.avance >= 1)) aparecerJefe(sim);
+    espera = sim.fase === 'juego' && !sim.jefeVisto && sim.avance >= 1;
+  } else if (sim.cfg.final) {
     // Los sepulcros se abren solos a medida que se llena la barra (o antes, si alguien los abre a mano). El jefe sale
     // solo con la barra llena: abrirlos a la carrera adelanta un poco, pero la etapa final no se gana en un minuto
     const seps = sim.ent.filter((e) => e.vivo && e.tipo === ENT.SEPULCRO);
@@ -977,3 +1058,165 @@ export function tomarConMano(sim: Sim, j: Jugador, x: number, y: number) {
 }
 
 export { RADIO_JUGADOR };
+
+// ------------------------------------------------------------------------------------------------- Sangre y Ceniza 2 (B)
+/** Exorcismo: cada campana embrujada se purifica con alguien al lado (40 s); si un enemigo la toca, se ensucia un poco
+ *  y, mientras alguien la purifica, los espectros vienen a apagarla. */
+function campanaExorcismo(sim: Sim, e: Entidad, dt: number) {
+  if (e.est === 2) return;
+  const j = jugadorA(sim, e.x, e.y, 3.6);
+  e.cuenta = j ? 1 : 0;
+  if (j) {
+    e.est = 1;
+    e.prog = Math.min(1, e.prog + dt / 40);
+    // Los espectros vienen a apagarla
+    e.t -= dt;
+    if (e.t <= 0) {
+      e.t = 7;
+      const p = lugarDeEntrada(sim, 8);
+      for (let k = 0; k < 2 + sim.n; k++) aparecerEnemigo(sim, TIPO.espectro, p.x + sim.az.entre(-1, 1), p.y + sim.az.entre(-1, 1), { alObjetivo: true });
+    }
+  } else e.prog = Math.max(0, e.prog - dt * 0.004);
+  // Los enemigos que la tocan la ensucian (con alguien al lado, frenan pero no la echan atrás: nunca se atasca)
+  let tocan = 0;
+  sim.enRadio(e.x, e.y, 1.3, LISTA_OBJ);
+  for (const i of LISTA_OBJ) if (sim.E.vivo[i]) tocan++;
+  if (tocan) e.prog = Math.max(0, e.prog - dt * Math.min(0.012 * Math.min(4, tocan), j ? 0.6 / 40 : 1));
+  if (e.prog >= 1) {
+    e.est = 2;
+    sim.obj.prog++;
+    sim.suc.push(S.LIBERA, e.x, e.y, e.id);
+    sim.aviso(47, sim.obj.prog, sim.obj.meta);
+  }
+}
+const LISTA_OBJ: number[] = [];
+
+/** Cristales de sangre y huevos de gárgola: se tocan (o se desentierran) y siguen a quien los tomó hasta el cáliz o el
+ *  osario. Un huevo a la vez por jugador (y lo pone lento: ver Sim.moverJugador). */
+function seguidor(sim: Sim, e: Entidad, dt: number) {
+  const huevo = e.tipo === ENT.HUEVO_GARGOLA;
+  if (e.est === 0) {
+    // (en un bolsillo de roca, se llega excavando)
+    const j = jugadorA(sim, e.x, e.y, 1.6);
+    if (!j || (huevo && sim.ent.some((o) => o.vivo && o !== e && o.tipo === ENT.HUEVO_GARGOLA && o.est === 1 && o.quien === j.i))) return;
+    e.est = 1;
+    e.quien = j.i;
+    sim.suc.push(S.LIBERA, e.x, e.y, e.id);
+    return;
+  }
+  let j = sim.J[e.quien];
+  if (!j || j.estado !== 0) {
+    // Si cae quien lo llevaba, se queda en el piso
+    e.est = 0;
+    e.quien = -1;
+    return;
+  }
+  const dx = j.x - e.x, dy = j.y - e.y;
+  const d = Math.hypot(dx, dy);
+  if (d > 1.3) {
+    const v = Math.min(5, d * 2.4) * dt;
+    const p = { x: e.x + (dx / d) * v, y: e.y + (dy / d) * v };
+    sim.empujarFuera(p, 0.25, sim.mapa, true);
+    if (!sim.mapa.solidaEn(p.x, p.y)) {
+      e.x = p.x;
+      e.y = p.y;
+    }
+  }
+  if (d > 12) {
+    e.x = j.x - j.fx;
+    e.y = j.y - j.fy;
+  }
+  // ¿Llegó al cáliz o al osario?
+  const meta = sim.ent.find((o) => o.vivo && o.tipo === (huevo ? ENT.OSARIO : ENT.CALIZ));
+  if (meta && (meta.x - e.x) ** 2 + (meta.y - e.y) ** 2 < 2.4 * 2.4) {
+    e.vivo = false;
+    sim.obj.prog++;
+    meta.prog = sim.obj.prog / Math.max(1, sim.obj.meta);
+    sim.suc.push(S.LIBERA, meta.x, meta.y, meta.id);
+    const extra = sim.obj.prog > sim.obj.meta;
+    sim.aviso(extra ? 54 : huevo ? 48 : 49, sim.obj.prog, sim.obj.meta);
+    // Lo que se lleva de más que la cuota: oro y almas aparte
+    if (extra) {
+      sim.soltarAlmas(meta.x, meta.y, 60 + 15 * sim.cfg.etapa);
+      for (let k = 0; k < 3; k++) sim.soltar(REC.ORO, meta.x, meta.y, 8 + sim.az.entero(0, 6));
+    }
+    // (cada huevo que llega despierta a las gárgolas de alrededor)
+    if (huevo) {
+      const p = lugarDeEntrada(sim, 7);
+      for (let k = 0; k < 3 + sim.n; k++) aparecerEnemigo(sim, TIPO.gargola, p.x + sim.az.entre(-1, 1), p.y + sim.az.entre(-1, 1));
+    }
+  }
+}
+
+/** ¿Este jugador lleva un huevo de gárgola? (lo pone lento) */
+export function llevaHuevo(sim: Sim, j: Jugador) {
+  for (const e of sim.ent) if (e.vivo && e.tipo === ENT.HUEVO_GARGOLA && e.est === 1 && e.quien === j.i) return true;
+  return false;
+}
+
+/** El Relicario (final de La Procesión): cuando la carreta llega, hay que abrirlo con alguien al lado mientras los
+ *  monjes caídos vienen a apagarlo. Abierto, baja la campana. */
+function relicario(sim: Sim, e: Entidad, dt: number) {
+  if (e.est === 2) return;
+  const j = jugadorA(sim, e.x, e.y, 4.2);
+  e.cuenta = j ? 1 : 0;
+  sim.presionExtra = sim.evento ? sim.presionExtra : 1.4;
+  e.t -= dt;
+  if (e.t <= 0) {
+    e.t = 5;
+    const p = lugarDeEntrada(sim, 9);
+    const n = 3 + sim.n + Math.floor(e.prog * 5);
+    for (let k = 0; k < n; k++) aparecerEnemigo(sim, TIPO.monje_caido, p.x + sim.az.entre(-1.2, 1.2), p.y + sim.az.entre(-1.2, 1.2), { alObjetivo: true, elite: k === 0 && e.prog > 0.5 ? modsElite(sim) : 0 });
+  }
+  if (j) e.prog = Math.min(1, e.prog + dt / 100);
+  let tocan = 0;
+  sim.enRadio(e.x, e.y, 1.5, LISTA_OBJ);
+  for (const i of LISTA_OBJ) if (sim.E.vivo[i]) tocan++;
+  // (con alguien al lado, los monjes frenan pero no lo echan atrás: nunca se atasca)
+  if (tocan) e.prog = Math.max(0, e.prog - dt * Math.min(0.008 * Math.min(5, tocan), j ? 0.6 / 100 : 1));
+  if (e.prog >= 1) {
+    e.est = 2;
+    sim.presionExtra = 1;
+    sim.suc.push(S.LIBERA, e.x, e.y, e.id);
+    sim.aviso(50);
+    // El tesoro del Relicario: una reliquia para cada uno
+    for (const o of sim.vivos()) encolarReliquia(sim, o);
+    llamarCampana(sim);
+  }
+}
+
+/** Las gotas de mercurio se escurren de quien se acerca (más despacio que uno: hay que acorralarlas). */
+function mercurio(sim: Sim, dt: number) {
+  for (const r of sim.R) {
+    if (!r.vivo || r.tipo !== REC.MERCURIO) continue;
+    let cerca: Jugador | null = null, md = 5 * 5;
+    for (const j of sim.J) {
+      if (j.estado !== 0) continue;
+      const d = (j.x - r.x) ** 2 + (j.y - r.y) ** 2;
+      if (d < md) {
+        md = d;
+        cerca = j;
+      }
+    }
+    if (!cerca || md < 0.8 * 0.8) continue;
+    const d = Math.sqrt(md) || 1;
+    const v = 2.6 * dt;
+    const nx = r.x + ((r.x - cerca.x) / d) * v, ny = r.y + ((r.y - cerca.y) / d) * v;
+    if (!sim.mapa.solidaEn(nx, ny)) {
+      r.x = nx;
+      r.y = ny;
+    } else if (!sim.mapa.solidaEn(nx, r.y)) r.x = nx;
+    else if (!sim.mapa.solidaEn(r.x, ny)) r.y = ny;
+  }
+}
+
+/** Las campanitas de plata suenan cuando alguien pasa a menos de 7 m (cada 2,5 s). */
+function campanitas(sim: Sim, dt: number) {
+  sim.campanitaT -= dt;
+  if (sim.campanitaT > 0) return;
+  sim.campanitaT = 2.5;
+  for (const r of sim.R) {
+    if (!r.vivo || r.tipo !== REC.CAMPANITA) continue;
+    if (sim.J.some((j) => j.estado === 0 && (j.x - r.x) ** 2 + (j.y - r.y) ** 2 < 49)) sim.suc.push(S.MARCA, r.x, r.y, 5, -1);
+  }
+}

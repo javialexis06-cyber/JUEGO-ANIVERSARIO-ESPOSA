@@ -234,7 +234,8 @@ export function opcionesCofre(sim: Sim, j: Jugador, especial: boolean): Opcion[]
       const eq = elegirEquipo(sim, j, bonus);
       if (eq && !ops.some((o) => o.id === eq.id)) ops.push(eq);
     } else if (r < 0.45 + (especial ? 0.25 : 0)) {
-      const rel = RELIQUIAS.filter((x) => !j.tiene(x.id) && abierta(j, x.id) && !ops.some((o) => o.id === x.id));
+      const lleno = sim.cfg.exp.infinito && j.reliquias.length >= TOPE_RELIQUIAS_INFINITO;
+      const rel = lleno ? [] : RELIQUIAS.filter((x) => !j.tiene(x.id) && abierta(j, x.id) && !ops.some((o) => o.id === x.id));
       if (rel.length && sim.az.n() < (especial ? 0.8 : sim.cfg.exp.mutadores.includes('relicaria') ? 0.75 : 0.3)) {
         const x = sim.az.uno(rel);
         ops.push({ tipo: 'reliquia', id: x.id, rareza: 4, nombre: x.nombre, desc: x.desc, glifo: x.glifo });
@@ -316,8 +317,12 @@ export function opcionesBendicion(sim: Sim, j: Jugador): Opcion[] {
   return ops;
 }
 
+/** Tope de reliquias en el modo infinito (I): después, los cofres de reliquias dan oro. */
+export const TOPE_RELIQUIAS_INFINITO = 15;
+
 export function encolarReliquia(sim: Sim, j: Jugador) {
-  const lista = RELIQUIAS.filter((r) => !j.tiene(r.id) && abierta(j, r.id));
+  const lleno = sim.cfg.exp.infinito && j.reliquias.length >= TOPE_RELIQUIAS_INFINITO;
+  const lista = lleno ? [] : RELIQUIAS.filter((r) => !j.tiene(r.id) && abierta(j, r.id));
   const ops: Opcion[] = [];
   for (let k = 0; k < 3 && lista.length; k++) {
     const r = lista.splice(Math.floor(sim.az.n() * lista.length), 1)[0];

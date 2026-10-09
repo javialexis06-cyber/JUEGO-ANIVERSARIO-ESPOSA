@@ -64,6 +64,8 @@ function claveProyectil(p: Proyectil): string {
     if (id === 'esqueleto_arquero') return 'flecha_e';
     if (id === 'inquisidor_muerto') return 'fuego_e';
     if (id === 'espectro') return 'orbe_e';
+    // (las piedras de la Madre de Piedra)
+    if (id === 'gargola' || id === 'madre_piedra') return 'piedra';
     if (id === 'vampiro') return 'sangre_e';
     return 'hueso_e';
   }
@@ -86,17 +88,17 @@ const COLOR_ALMA: Record<number, [number, number, number]> = { [REC.ALMA_AZUL]: 
 const MODELO_REC: Record<number, string> = {
   [REC.ORO]: 'oro', [REC.HIERRO]: 'hierro_negro', [REC.SANGRE]: 'sangre_cristal', [REC.COMIDA]: 'pierna_pollo', [REC.COFRE]: 'cofre', [REC.LLAVE]: 'llave',
   [REC.FRASCO]: 'frasco_alquimia', [REC.EQUIPO]: 'equipo', [REC.HUEVO]: 'huevo_dragon', [REC.GOTA]: 'gota',
-  [REC.ROSA]: 'rosa_velo', [REC.PLUMA]: 'pluma_grifo', [REC.HONGO]: 'hongo_tumba',
+  [REC.ROSA]: 'rosa_velo', [REC.PLUMA]: 'pluma_grifo', [REC.HONGO]: 'hongo_tumba', [REC.MERCURIO]: 'gota_mercurio', [REC.CAMPANITA]: 'campanita_plata',
   ...Object.fromEntries(MINERALES_ORDEN.map((id, k) => [REC.MINERAL + k, `mineral_${id}`])),
 };
 /** Los del secundario se dibujan más grandes que su modelo (si no, entre la horda no se ven). */
 const ESCALA_REC: Record<number, number> = {
-  [REC.ROSA]: 2.3, [REC.PLUMA]: 1.8, [REC.HONGO]: 2, ...Object.fromEntries(MINERALES_ORDEN.map((_, k) => [REC.MINERAL + k, 1.7])),
+  [REC.ROSA]: 2.3, [REC.PLUMA]: 1.8, [REC.HONGO]: 2, [REC.MERCURIO]: 2, [REC.CAMPANITA]: 2, ...Object.fromEntries(MINERALES_ORDEN.map((_, k) => [REC.MINERAL + k, 1.7])),
 };
 /** Lo del secundario brilla de su color (para que se vea entre la horda). */
 const BRILLO_REC: Record<number, string> = {
   [REC.COFRE]: '#ffd060', [REC.LLAVE]: '#ffd060', [REC.EQUIPO]: '#ffd060', [REC.HUEVO]: '#ffd060', [REC.FRASCO]: '#8aff6a',
-  [REC.ROSA]: '#ff5a7a', [REC.PLUMA]: '#ffe08a', [REC.HONGO]: '#9affc8',
+  [REC.ROSA]: '#ff5a7a', [REC.PLUMA]: '#ffe08a', [REC.HONGO]: '#9affc8', [REC.MERCURIO]: '#e8f0ff', [REC.CAMPANITA]: '#e8f0ff',
   ...Object.fromEntries(MINERALES_ORDEN.map((id, k) => [REC.MINERAL + k, MINERALES[id].brillo])),
 };
 

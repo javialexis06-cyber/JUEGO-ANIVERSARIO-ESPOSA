@@ -341,8 +341,16 @@ Propuesta:
    íconos y las especializaciones que abren todas las armas de una etiqueta (L2, L3 y L5). Cómo quedó: «El mapa de la
    Noche», «Trece armas comunes nuevas», «Evoluciones para todas las armas», «Uniones» y «Especializaciones que abren
    armas» en `docs/sistemas/sangre-y-ceniza.md`.
-4. **Fase 4**: B (La Procesión y La Cría), H (maestrías, anómalas, contratos y mutadores), I (infinito que crece) y las
-   reliquias por hitos (L6).
+4. ~~**Fase 4**~~ **hecha** (9 de octubre): L6 (26 reliquias que se abren con hitos de la cuenta), H (contrato del
+   día y de la semana para comparar entre los dos, pruebas de maestría de arma, clase y bioma con puntos, seis
+   expediciones anómalas y 17 mutadores nuevos), B (La Procesión con el Relicario y La Cría con el osario y la Madre de
+   Piedra, más los objetivos Exorcismo y Cosecha de sangre y los secundarios mercurio y campanitas, todo con sus
+   modelos) e I (diez etapas cortas y el salto desde la 11, el mapa que crece hasta 110 × 110, capas mezcladas, tope de
+   15 reliquias y la bajada guardada al salir de la Forja). Cómo quedó: «Reliquias por hitos de la cuenta»,
+   «Desafíos», «17 mutadores nuevos», «Misiones de tres etapas», «Objetivos nuevos» y «El infinito que crece» en
+   `docs/sistemas/sangre-y-ceniza.md`. Quedaron para después: el aceite de lámpara de la Procesión (la carreta avanza
+   como la escolta de siempre) y los sellos de la reja al final de cada etapa; Rescate y Cacería ya existían como
+   prisioneros y élite.
 5. **Fase 5**: J (refugio con minijuegos), K (equipo con rarezas especiales), el familiar y la Forja con tres
    mostradores (L7 y L8). Y los íconos más elaborados de las mejoras (pedido aparte, que va con esto porque llegan
    muchas cosas nuevas).

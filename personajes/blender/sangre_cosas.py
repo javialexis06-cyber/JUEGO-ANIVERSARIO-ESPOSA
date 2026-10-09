@@ -1272,3 +1272,561 @@ def pinchos_puas(coll):
             y = -0.36 + 0.24 * q
             c.malla(sc.punta(f'pua {k} {q}', (x, y, -0.05), (x, y, 0.42), 0.032, coll, seg=4, medio=0.5), hierro(82 + k, '#7A7A84'))
     return F
+
+
+# ------------------------------------------------------------------------------------------------- Sangre y Ceniza 2
+# Los objetivos nuevos (Exorcismo, Cosecha de sangre, La Cría, La Procesión) y los secundarios (mercurio, campanitas).
+# Lo que mira a la cámara va hacia -Y.
+
+def _velas(c, coll, pts, z0=0.0, sem=0):
+    """Velas derretidas con su llama (en los puntos (x, y) a la altura z0)."""
+    for k, (x, y) in enumerate(pts):
+        hgt = 0.1 + 0.05 * ((k + sem) % 3)
+        c.cono((x, y, z0), (x, y, z0 + hgt), 0.032, 0.027, P_('#D8CCAA', 'cera', semilla=k + sem), 0.0)
+        c.trazo([(x + 0.022, y, z0 + hgt), (x + 0.032, y - 0.01, z0 + 0.03)], [0.01, 0.014], P_('#D8CCAA', 'cera', semilla=k + sem + 5), 0.008)
+        c.malla(sc.punta(f'llama {sem} {k}', (x, y, z0 + hgt + 0.005), (x, y, z0 + hgt + 0.075), 0.017, coll, seg=5), brillo('ambar', '#FFAA33'))
+
+
+def _calaverita(c, coll, p, r, mira, sem, pt=None):
+    """Calavera chiquita en el piso, mirando hacia `mira` (en el plano)."""
+    p = np.asarray(p, float)
+    m = _unit(np.array([mira[0], mira[1], 0.0]))
+    lat = np.cross([0, 0, 1], m)
+    c.bola(p, (r, r, r * 0.92), pt or hueso_pt(sem), 0.0, ruido_amp=0.003)
+    c.bola(p + m * r * 0.5 - np.array([0, 0, r * 0.55]), (r * 0.6, r * 0.5, r * 0.35), pt or hueso_pt(sem + 1), 0.0)
+    for s in (-1, 1):
+        c.malla(sc.bolita(f'cuenca {sem} {s}', p + m * r * 0.82 + lat * s * r * 0.38 + np.array([0, 0, r * 0.05]), r * 0.26, coll, n=1, sub=1), P_('#100C0A', 'liso'))
+
+
+def _perfil_campana(esc):
+    return [(r * esc, z * esc) for r, z in ((1.05, 0.0), (1.08, 0.06), (0.98, 0.18), (0.82, 0.45), (0.74, 0.8), (0.72, 1.15), (0.66, 1.4), (0.45, 1.58), (0.0, 1.62))]
+
+
+def _radio_en(perfil, z):
+    """Radio de un perfil de torno (r, z) a la altura z (interpolado)."""
+    for (r0, z0), (r1, z1) in zip(perfil, perfil[1:]):
+        if z0 <= z <= z1 and z1 > z0:
+            return r0 + (r1 - r0) * (z - z0) / (z1 - z0)
+    return perfil[-1][0]
+
+
+@cosa('campana_exorcismo')
+def campana_exorcismo(coll):
+    """Campana embrujada (Exorcismo): una campana de iglesia verdosa colgada de un yugo de madera vieja, envuelta en
+    cadenas, con trapos negros y la cara del espanto que vive adentro asomada en el bronce (las grietas brillan
+    violeta). Abajo, el círculo de sal con velas y calaveras que dejaron los que intentaron antes."""
+    F = nueva('campana_exorcismo', voxel=0.013)
+    F.alcance_ao = 0.5
+    c = F.pieza('cuerpo', (0, 0, 0), tris=7500)
+    md = madera(90, '#4A3424')
+    mdx = madera(91, '#4A3424', eje='x')
+    # Bases de piedra, postes, travesaño y tornapuntas
+    for s in (-1, 1):
+        c.sdf(sc.sdf_ruido(sdf.round_box((s * 0.74, 0, 0.11), (0.18, 0.2, 0.11), 0.03), 0.01, 10, 92 + s), (s * 0.74 - 0.25, -0.27, -0.02), (s * 0.74 + 0.25, 0.27, 0.27),
+              piedra(92 + s, '#5A5650', 0.6))
+        c.caja((s * 0.74, 0, 1.08), (0.075, 0.085, 0.92), 0.015, md, 0.0)
+        c.trazo([(s * 0.74, 0, 1.45), (s * 0.42, 0, 1.96)], 0.04, md, 0.0)
+        for z in (0.5, 1.3, 1.85):
+            c.malla(sc.bolita(f'clavo {s} {z}', (s * 0.74, -0.09, z), 0.016, coll, n=1), hierro(93))
+    c.caja((0, 0, 2.03), (0.95, 0.11, 0.08), 0.015, mdx, 0.0)
+    c.caja((0, 0, 2.13), (0.98, 0.13, 0.025), 0.01, madera(94, '#3A281A', eje='x'), 0.0)
+    # El yugo y la campana
+    c.caja((0, 0, 1.9), (0.18, 0.09, 0.07), 0.02, madera(95, '#3A281A', eje='x'), 0.0)
+    for s in (-1, 1):
+        c.caja((s * 0.14, 0, 1.97), (0.025, 0.1, 0.06), 0.008, hierro(96), 0.0)
+    esc, z0 = 0.44, 1.1
+    perfil = _perfil_campana(esc)
+    bronce = P_('#5E6E52', 'oro', semilla=97, mat='base')
+    c.malla(sc.torno('campana', perfil, coll, segmentos=26, centro=(0, 0, z0)), bronce)
+    c.malla(sc.torno('dentro campana', [(0.0, 0.62), (0.27, 0.56), (0.3, 0.4), (0.33, 0.2), (0.4, 0.08), (0.44, 0.015)], coll, segmentos=26,
+                     centro=(0, 0, z0)), P_('#1A1420', 'liso'))
+    verdin = P_('#7FA88A', 'cera', semilla=98)
+    for z, extra in ((0.05, 0.02), (0.53, 0.015)):
+        r = _radio_en(perfil, z) + extra
+        sf.cuerda_anillo(c, f'moldura {z}', [(math.cos(a) * r, math.sin(a) * r, z0 + z) for a in np.linspace(0, 2 * math.pi, 28, endpoint=False)], 0.016,
+                         verdin, coll)
+    # La cara del espanto en el frente: ojos y boca que brillan violeta (exagerados, de susto)
+    vio = brillo('violeta', '#C46BFF')
+    for s in (-1, 1):
+        a = -math.pi / 2 + s * 0.32
+        z = 0.42
+        r = _radio_en(perfil, z)
+        p = np.array([math.cos(a) * r, math.sin(a) * r, z0 + z])
+        c.bola(p, (0.06, 0.03, 0.075 + 0.015 * s), vio, 0.0)
+        c.bola(p + np.array([0, -0.02, 0.005]), (0.022, 0.012, 0.022), P_('#1A0A24', 'liso'), 0.0)
+        # cejas de bronce caídas (cara de lamento)
+        c.trazo([p + np.array([-s * 0.06, -0.01, 0.06]), p + np.array([s * 0.07, -0.01, 0.1])], 0.014, verdin, 0.0)
+    r = _radio_en(perfil, 0.22)
+    boca = np.array([0, -r, z0 + 0.22])
+    c.bola(boca, (0.07, 0.03, 0.09), vio, 0.0)
+    c.bola(boca + np.array([0, -0.018, -0.01]), (0.045, 0.012, 0.06), P_('#1A0A24', 'liso'), 0.0)
+    # Grietas violeta por el bronce
+    for k in range(5):
+        a = 0.6 + k * 1.15
+        pts = []
+        for q in range(5):
+            z = 0.58 - q * 0.12
+            aa = a + 0.08 * ((q % 2) * 2 - 1)
+            rr = _radio_en(perfil, z) + 0.004
+            pts.append((math.cos(aa) * rr, math.sin(aa) * rr, z0 + z))
+        c.malla(sc.tubo(f'grieta {k}', pts, 0.009, coll, segmentos=4, muestras=1), vio)
+    # Badajo que asoma por debajo
+    c.trazo([(0, 0, z0 + 0.6), (0, 0, z0 - 0.08)], 0.025, hierro(99), 0.0)
+    c.bola((0, 0, z0 - 0.13), 0.065, hierro(100), 0.0)
+    # Cadenas que la envuelven (en espiral) y el candado
+    pts = [(math.cos(t) * (_radio_en(perfil, 0.12 + t * 0.045) + 0.03), math.sin(t) * (_radio_en(perfil, 0.12 + t * 0.045) + 0.03), z0 + 0.12 + t * 0.045)
+           for t in np.linspace(0.3, 9.5, 46)]
+    _eslabones(c, 'cadena espiral', pts, 0.008, coll, hierro(101, '#3A3A40'), largo=0.06)
+    cand = np.array([0.16, -_radio_en(perfil, 0.33) - 0.06, z0 + 0.3])
+    c.caja(cand, (0.04, 0.02, 0.045), 0.01, hierro(102, '#5A4A3A'), 0.0)
+    sf.cuerda_anillo(c, 'arco candado', [cand + np.array([math.cos(a) * 0.028, 0, 0.045 + math.sin(a) * 0.035]) for a in np.linspace(0, math.pi, 8)], 0.007,
+                     hierro(103), coll)
+    # Trapos negros que cuelgan del travesaño, rasgados
+    for k, x in enumerate((-0.55, -0.32, 0.36, 0.6)):
+        b = np.array([x, -0.12, 1.98])
+        e = b + np.array([0.04 * (k % 2), -0.02, -0.55 - 0.15 * (k % 2)])
+        c.malla(sf.pluma(f'trapo {k}', b, e, 0.1, coll, normal=(0, -1, 0), grosor=0.006, dientes=4), P_('#1C1618', 'tela', semilla=104 + k))
+    # Ectoplasma que gotea del borde y el charco del piso
+    for k in range(6):
+        a = k * 1.05 + 0.3
+        rr = perfil[1][0] - 0.01
+        p = np.array([math.cos(a) * rr, math.sin(a) * rr, z0 + 0.01])
+        c.trazo([p, p + np.array([0, 0, -0.07 - 0.05 * (k % 3)])], [0.02, 0.008], P_('#B07AE0', 'vidrio', mat='espectro'), 0.0)
+    c.sdf(sc.sdf_ruido(sdf.ellipsoid((0, 0, 0.0), (0.5, 0.42, 0.025)), 0.02, 6, 105), (-0.6, -0.55, -0.03), (0.6, 0.55, 0.05),
+          P_('#B07AE0', 'vidrio', mat='espectro'))
+    # El círculo de sal (con cortes: ya se rompió) y lo que dejaron los de antes
+    sal = P_('#E8E2D2', 'cera', semilla=106)
+    for k in range(4):
+        a0 = k * math.pi / 2 + 0.25
+        pts = [(math.cos(a) * 1.0, math.sin(a) * 0.95, 0.012) for a in np.linspace(a0, a0 + 1.2, 9)]
+        c.malla(sc.tubo(f'sal {k}', pts, 0.016, coll, segmentos=4, muestras=1), sal)
+    _velas(c, coll, [(-0.95, -0.35), (-0.55, -0.82), (0.6, -0.8), (0.98, -0.25), (-0.85, 0.5)], 0.0, sem=107)
+    _calaverita(c, coll, (0.32, -0.78, 0.07), 0.075, (-0.2, -1), 110)
+    _calaverita(c, coll, (-0.98, 0.05, 0.065), 0.065, (0.3, -1), 112)
+    c.trazo([(0.45, -0.95, 0.02), (0.75, -0.72, 0.02)], 0.012, P_('#2A1E14', 'cuero', semilla=114), 0.0)   # el rosario tirado
+    for k in range(7):
+        c.malla(sc.bolita(f'cuenta {k}', (0.45 + 0.05 * k, -0.95 + 0.038 * k, 0.03), 0.014, coll, n=1), P_('#3A2A1E', 'madera', semilla=115))
+    F.marca('luz', (0, -0.2, z0 + 0.4))
+    return F
+
+
+@cosa('caliz_sangre')
+def caliz_sangre(coll):
+    """El Cáliz de Sangre (Cosecha): un cáliz dorado enorme sobre un pedestal de piedra con runas, lleno de sangre que
+    burbujea y se derrama por el borde. Ahí se llevan los cristales."""
+    F = nueva('caliz_sangre', voxel=0.012)
+    F.alcance_ao = 0.5
+    c = F.pieza('cuerpo', (0, 0, 0), tris=7000)
+    base = sf.union(sdf.round_box((0, 0, 0.08), (0.62, 0.62, 0.08), 0.03), sdf.round_box((0, 0, 0.33), (0.42, 0.42, 0.18), 0.03),
+                    sdf.round_box((0, 0, 0.54), (0.52, 0.52, 0.04), 0.02))
+    c.sdf(sc.sdf_ruido(base, 0.008, 9, 120), (-0.7, -0.7, -0.02), (0.7, 0.7, 0.6), piedra(120, '#4E4844', 0.35))
+    # Runas rojas en las cuatro caras del pedestal
+    rojo = brillo('rojo', '#FF2A1A')
+    for cara in range(4):
+        a = cara * math.pi / 2
+        u = np.array([math.cos(a), math.sin(a), 0.0])
+        w = np.cross([0, 0, 1], u)
+        p = u * 0.425 + np.array([0, 0, 0.33])
+        c.trazo([p + w * -0.08 + np.array([0, 0, 0.1]), p + np.array([0, 0, -0.1]), p + w * 0.08 + np.array([0, 0, 0.1])], 0.013, rojo, 0.0)
+        c.trazo([p + w * -0.05 + np.array([0, 0, 0.0]), p + w * 0.05], 0.011, rojo, 0.0)
+        # (sangre que chorrea por la cara)
+        q = u * 0.43 + w * 0.2 + np.array([0, 0, 0.5])
+        c.trazo([q, q + np.array([0, 0, -0.14 - 0.03 * cara])], [0.022, 0.01], P_('#5A0A0A', 'sangre', mat='sangre'), 0.0)
+    # El cáliz
+    dorado = P_('#C09040', 'oro', semilla=121, mat='base')
+    dorado2 = P_('#A07830', 'oro', semilla=122, mat='base')
+    z0 = 0.58
+    perfil = [(0.0, 0.0), (0.3, 0.0), (0.31, 0.03), (0.26, 0.07), (0.12, 0.13), (0.065, 0.24), (0.06, 0.34), (0.09, 0.38), (0.11, 0.42), (0.09, 0.46),
+              (0.065, 0.5), (0.08, 0.58), (0.18, 0.64), (0.29, 0.74), (0.36, 0.86), (0.385, 0.93), (0.36, 0.935), (0.34, 0.9), (0.0, 0.86)]
+    c.malla(sc.torno('caliz', perfil, coll, segmentos=30, centro=(0, 0, z0)), dorado)
+    c.bola((0, 0, z0 + 0.895), (0.345, 0.345, 0.02), P_('#6A0A0E', 'sangre', mat='sangre'), 0.0)
+    sf.cuerda_anillo(c, 'moldura copa', [(math.cos(a) * 0.335, math.sin(a) * 0.335, z0 + 0.82) for a in np.linspace(0, 2 * math.pi, 30, endpoint=False)], 0.016,
+                     dorado2, coll)
+    sf.cuerda_anillo(c, 'moldura pie', [(math.cos(a) * 0.27, math.sin(a) * 0.27, z0 + 0.06) for a in np.linspace(0, 2 * math.pi, 26, endpoint=False)], 0.015,
+                     dorado2, coll)
+    # Piedras rojas engastadas en la copa y en el nudo
+    for k in range(8):
+        a = 2 * math.pi * k / 8 + 0.2
+        p = np.array([math.cos(a) * 0.305, math.sin(a) * 0.305, z0 + 0.74])
+        c.bola(p, (0.045, 0.045, 0.045), dorado2, 0.0)
+        c.malla(sc.bolita(f'gema {k}', p + _unit(np.array([math.cos(a), math.sin(a), 0.3])) * 0.03, 0.032, coll, n=2), rojo if k % 2 == 0 else P_('#8A0E14', 'vidrio', mat='espectro'))
+    for k in range(6):
+        a = 2 * math.pi * k / 6
+        c.malla(sc.bolita(f'gema nudo {k}', (math.cos(a) * 0.11, math.sin(a) * 0.11, z0 + 0.42), 0.022, coll, n=1, sub=1), rojo)
+    # Sangre que se derrama por el borde y burbujas
+    for k in range(7):
+        a = 0.4 + k * 0.9
+        p = np.array([math.cos(a) * 0.39, math.sin(a) * 0.39, z0 + 0.92])
+        largo = 0.08 + 0.07 * (k % 3)
+        c.trazo([p, p + np.array([math.cos(a) * 0.02, math.sin(a) * 0.02, -0.05]), p + np.array([math.cos(a) * 0.01, math.sin(a) * 0.01, -0.05 - largo])],
+                [0.022, 0.018, 0.01], P_('#6A0A0E', 'sangre', mat='sangre'), 0.0)
+    for k in range(5):
+        a = k * 1.3
+        c.malla(sc.bolita(f'burbuja {k}', (math.cos(a) * 0.15 * (k % 3) / 2, math.sin(a) * 0.15 * (k % 3) / 2, z0 + 0.92), 0.02 + 0.008 * (k % 2), coll, n=1,
+                          sub=1), rojo)
+    # Velas en las esquinas del pedestal
+    _velas(c, coll, [(-0.44, -0.44), (0.44, -0.44), (0.44, 0.44), (-0.44, 0.44)], 0.58, sem=124)
+    F.marca('luz', (0, 0, z0 + 1.0))
+    return F
+
+
+@cosa('cristal_sangre')
+def cristal_sangre(coll):
+    """Cristal de sangre (Cosecha): un racimo de cristales rojos que laten, pegado a un pedazo de roca negra. Al tocarlo,
+    sale flotando detrás de quien lo tomó."""
+    F = nueva('cristal_sangre', voxel=0.007)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1800)
+    c.sdf(sc.sdf_ruido(sdf.ellipsoid((0, 0, 0.06), (0.17, 0.14, 0.085)), 0.012, 14, 130), (-0.23, -0.2, -0.03), (0.23, 0.2, 0.17), piedra(130, '#2E2826', 0.0))
+    rojo = brillo('rojo', '#FF2A1A')
+    vidrio = P_('#8A0E14', 'vidrio', mat='espectro')
+    for k, (d, h, r) in enumerate((((0, 0, 1), 0.55, 0.085), ((0.55, 0.15, 1), 0.34, 0.06), ((-0.5, 0.1, 1), 0.38, 0.062), ((0.1, -0.55, 1), 0.3, 0.052),
+                                   ((-0.2, 0.55, 1), 0.26, 0.046), ((0.6, -0.45, 0.8), 0.2, 0.04), ((-0.55, -0.4, 0.9), 0.22, 0.04))):
+        d = _unit(d)
+        b = np.array([0, 0, 0.1]) + np.array([d[0], d[1], 0]) * 0.06
+        c.malla(sc.punta(f'cristal {k}', b - d * r * 0.4, b + d * h, r, coll, seg=6, medio=0.8), rojo if k % 2 == 0 else vidrio)
+    # Venas rojas en la roca
+    for k in range(5):
+        a = k * 1.25
+        c.trazo([(math.cos(a) * 0.12, math.sin(a) * 0.1, 0.1), (math.cos(a + 0.4) * 0.17, math.sin(a + 0.4) * 0.14, 0.03)], 0.01, rojo, 0.0)
+    F.marca('luz', (0, 0, 0.3))
+    return F
+
+
+@cosa('huevo_gargola')
+def huevo_gargola(coll):
+    """Huevo de gárgola (La Cría): un huevo de piedra con escamas, cuernitos y una grieta que brilla, por donde la cría
+    ya está mirando con sus dos ojitos."""
+    F = nueva('huevo_gargola', voxel=0.007)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=2400)
+    centro = (0, 0, 0.27)
+    f = sdf.ellipsoid(centro, (0.2, 0.2, 0.27))
+    c.sdf(sc.sdf_ruido(f, 0.007, 12, 140), (-0.26, -0.26, -0.02), (0.26, 0.26, 0.58), piedra(140, '#7A7A84', 0.3))
+    escama = piedra(141, '#64646E', 0.15)
+    for fila, dz in enumerate((0.75, 0.35, -0.05, -0.45)):
+        for k in range(9):
+            a = 2 * math.pi * k / 9 + fila * 0.35
+            if fila in (1, 2) and abs(((a + math.pi / 2 + math.pi) % (2 * math.pi)) - math.pi) < 0.6:
+                continue   # (el frente queda libre para la grieta)
+            p, n = sf.hacia(f, centro, (math.cos(a), math.sin(a), dz))
+            if p is not None:
+                c.malla(sc.punta(f'escama {fila} {k}', p - n * 0.012, p + n * 0.022 + np.array([0, 0, -0.04]), 0.045, coll, seg=4), escama)
+    # Cuernitos arriba
+    for s in (-1, 1):
+        p, n = sf.hacia(f, centro, (s * 0.35, 0.1, 1))
+        if p is not None:
+            sf.cuerno(c, f'cuernito {s}', [p - n * 0.01, p + n * 0.05 + np.array([s * 0.02, 0, 0.02]), p + n * 0.08 + np.array([s * 0.05, 0.02, 0.0])], 0.022,
+                      escama, coll)
+    # La grieta del frente (zigzag) con la luz de adentro y los ojitos de la cría
+    ambar = brillo('fuego', '#FF8A2A')
+    pts = []
+    for q, (ax, dz) in enumerate(((-0.55, 0.55), (-0.25, 0.4), (-0.42, 0.2), (-0.1, 0.05), (-0.3, -0.12), (0.0, -0.25))):
+        p, n = sf.hacia(f, centro, (ax * 0.5 + 0.05 * q, -1, dz))
+        if p is not None:
+            pts.append(p + n * 0.003)
+    if len(pts) > 2:
+        c.malla(sc.tubo('grieta', pts, 0.011, coll, segmentos=4, muestras=1), ambar)
+    ramal = []
+    for ax, dz in ((0.35, 0.15), (0.5, -0.05), (0.32, -0.2)):
+        p, n = sf.hacia(f, centro, (ax, -1, dz))
+        if p is not None:
+            ramal.append(p + n * 0.003)
+    if len(ramal) > 1 and len(pts) > 2:
+        c.malla(sc.tubo('grieta ramal', [pts[2]] + ramal, 0.008, coll, segmentos=4, muestras=1), ambar)
+    hueco_c, hueco_n = sf.hacia(f, centro, (0.12, -1, 0.28))
+    if hueco_c is not None:
+        c.bola(hueco_c - hueco_n * 0.005, (0.085, 0.03, 0.05), P_('#1A0C06', 'liso'), 0.0)
+        for s in (-1, 1):
+            o = hueco_c + np.array([s * 0.032, -0.012, 0.005])
+            c.malla(sc.bolita(f'ojito {s}', o, 0.02, coll, n=2), brillo('oro', '#FFD36B'))
+            c.malla(sc.bolita(f'pupila {s}', o + np.array([0, -0.016, 0.0]), (0.006, 0.004, 0.012), coll, n=1), P_('#1A0C06', 'liso'))
+    # Musgo y polvo de piedra a los pies
+    for k in range(5):
+        a = k * 1.3
+        c.bola((math.cos(a) * 0.17, math.sin(a) * 0.17, 0.015), (0.05, 0.04, 0.02), piedra(150 + k, '#5A5A60', 0.8), 0.0)
+    F.marca('luz', (0, -0.15, 0.3))
+    return F
+
+
+@cosa('osario')
+def osario(coll):
+    """El nido de la Madre de Piedra (La Cría): un anillo de piedras de catedral, calaveras y fémures, con paja y
+    cáscaras rotas adentro; el fondo brilla donde se dejan los huevos. Atrás, una gárgola de piedra vigila con las alas
+    abiertas y los ojos encendidos."""
+    F = nueva('osario', voxel=0.015)
+    F.alcance_ao = 0.5
+    c = F.pieza('cuerpo', (0, 0, 0), tris=9000)
+    rng = np.random.default_rng(160)
+    # El anillo de piedras (dos hileras)
+    for fila, (R, z, n, tam) in enumerate(((1.05, 0.12, 15, 0.2), (1.0, 0.33, 12, 0.15))):
+        for k in range(n):
+            a = 2 * math.pi * k / n + fila * 0.2
+            p = np.array([math.cos(a) * R, math.sin(a) * R * 0.95, z])
+            t = tam * rng.uniform(0.85, 1.2)
+            c.bola(p, (t * 1.2, t, t * 0.85), piedra(161 + k + fila * 20, '#6A665E', 0.45), 0.0, ruido_amp=0.02)
+    # Calaveras metidas entre las piedras y fémures cruzados
+    for k in range(9):
+        a = 2 * math.pi * k / 9 + 0.17
+        p = np.array([math.cos(a) * 0.98, math.sin(a) * 0.93, 0.47])
+        _calaverita(c, coll, p, 0.075, (math.cos(a), math.sin(a)), 180 + k)
+    for k in range(7):
+        a = 2 * math.pi * k / 7 + 0.5
+        u = np.array([math.cos(a), math.sin(a), 0.0])
+        w = np.cross([0, 0, 1], u)
+        b = u * 1.12 + np.array([0, 0, 0.3])
+        sf.hueso_largo(c, b - w * 0.16 - np.array([0, 0, 0.1]), b + w * 0.16 + np.array([0, 0, 0.1]), 0.02, hueso_pt(200 + k))
+    # La paja del nido y el fondo que brilla
+    c.sdf(sc.sdf_ruido(sf.restar(sdf.ellipsoid((0, 0, 0.08), (0.95, 0.9, 0.2)), sdf.ellipsoid((0, 0, 0.26), (0.7, 0.65, 0.2)), 0.05), 0.02, 14, 210),
+          (-1.0, -1.0, -0.05), (1.0, 1.0, 0.3), P_('#8A6A3A', 'tela', semilla=211))
+    for k in range(40):
+        a = rng.uniform(0, 2 * math.pi)
+        r = rng.uniform(0.35, 0.9)
+        b = np.array([math.cos(a) * r, math.sin(a) * r * 0.95, 0.12 + 0.08 * (r > 0.6)])
+        d = _unit(np.array([rng.uniform(-1, 1), rng.uniform(-1, 1), rng.uniform(0.0, 0.5)]))
+        c.trazo([b, b + d * rng.uniform(0.1, 0.2)], 0.007, P_('#B8904A' if k % 3 else '#6A4A2A', 'tela', semilla=212 + k % 5), 0.0)
+    c.sdf(sdf.ellipsoid((0, 0, 0.1), (0.45, 0.42, 0.04)), (-0.5, -0.5, 0.0), (0.5, 0.5, 0.16), brillo('fuego', '#FF8A2A'), 0.0)
+    # Cáscaras de huevos ya nacidos
+    for k, (x, y, rot) in enumerate(((-0.42, -0.25, 0.4), (0.35, 0.3, 2.0), (0.5, -0.38, 4.0), (-0.3, 0.45, 5.2))):
+        p = np.array([x, y, 0.2])
+        cas = sf.restar(sdf.ellipsoid(p, (0.1, 0.1, 0.13)), sdf.ellipsoid(p, (0.085, 0.085, 0.115)), 0.0)
+        cas = sf.restar(cas, sdf.plane(p + np.array([0, 0, 0.01 * (k % 2)]), (math.cos(rot) * 0.4, math.sin(rot) * 0.4, 1)), 0.0)
+        c.sdf(cas, p - 0.16, p + 0.16, piedra(220 + k, '#7A7A84', 0.0))
+    # La gárgola vigía (atrás, en +Y), sin cabeza, con las alas abiertas sobre un pilar
+    g = np.array([0.0, 1.1, 0.0])
+    c.sdf(sc.sdf_ruido(sdf.round_box(g + np.array([0, 0, 0.35]), (0.26, 0.22, 0.35), 0.03), 0.01, 10, 230), g - np.array([0.35, 0.3, 0.02]),
+          g + np.array([0.35, 0.3, 0.75]), piedra(230, '#5A5650', 0.6))
+    cuerpo_g = sf.union(sdf.ellipsoid(g + np.array([0, -0.02, 0.98]), (0.24, 0.2, 0.26)), sdf.round_cone(g + np.array([0, 0, 0.72]), g + np.array([0, -0.02, 0.9]),
+                                                                                                       0.18, 0.2), k=0.06)
+    c.sdf(sc.sdf_ruido(cuerpo_g, 0.01, 12, 231), g - np.array([0.4, 0.35, -0.6]), g + np.array([0.4, 0.35, 1.3]), piedra(231, '#6E6C66', 0.5))
+    # La cabeza: hocico, cuernos hacia atrás, colmillos y los ojos que brillan como el fondo del nido
+    hc = g + np.array([0, -0.12, 1.36])
+    cab = sf.union(sdf.ellipsoid(hc, (0.15, 0.14, 0.13)), sdf.round_cone(hc + np.array([0, -0.06, -0.03]), hc + np.array([0, -0.2, -0.07]), 0.1, 0.065),
+                   sdf.ellipsoid(hc + np.array([0, -0.09, 0.06]), (0.15, 0.06, 0.035)), k=0.04)
+    for s in (-1, 1):
+        cab = sf.restar(cab, sdf.ellipsoid(hc + np.array([s * 0.065, -0.13, 0.03]), (0.035, 0.03, 0.025)), 0.01)
+    c.sdf(sc.sdf_ruido(cab, 0.006, 20, 232), hc - 0.35, hc + 0.35, piedra(232, '#6E6C66', 0.5))
+    for s in (-1, 1):
+        c.malla(sc.bolita(f'ojo vigia {s}', hc + np.array([s * 0.065, -0.125, 0.03]), 0.024, coll, n=2), brillo('fuego', '#FF8A2A'))
+        sf.cuerno(c, f'cuerno vigia {s}', [hc + np.array([s * 0.08, 0.0, 0.09]), hc + np.array([s * 0.16, 0.08, 0.2]), hc + np.array([s * 0.17, 0.22, 0.18]),
+                                          hc + np.array([s * 0.13, 0.3, 0.08])], 0.04, piedra(240, '#5A5852', 0.2), coll)
+        c.sdf(sdf.round_cone(hc + np.array([s * 0.13, 0.0, 0.03]), hc + np.array([s * 0.25, 0.04, 0.08]), 0.035, 0.006), hc - 0.4, hc + 0.4,
+              piedra(232, '#6E6C66', 0.5), 0.01)
+        sf.diente(c, f'colmillo vigia {s}', hc + np.array([s * 0.04, -0.24, -0.1]), hc + np.array([s * 0.04, -0.245, -0.16]), 0.014, piedra(241, '#9A968C', 0.0),
+                  coll)
+    for s in (-1, 1):
+        piv = g + np.array([s * 0.14, 0.05, 1.08])
+        cod = piv + np.array([s * 0.35, 0.05, 0.3])
+        c.trazo([piv, cod], [0.05, 0.035], piedra(233, '#6E6C66', 0.4), 0.0)
+        puntas = [cod + np.array([s * 0.42, 0.0, 0.08]), cod + np.array([s * 0.45, 0.05, -0.25]), cod + np.array([s * 0.25, 0.05, -0.55])]
+        for j, q in enumerate(puntas):
+            c.trazo([cod, (cod + q) / 2 + np.array([0, 0, 0.03]), q], [0.03, 0.022, 0.01], piedra(234 + j, '#5A5852', 0.3), 0.0)
+        borde = [piv + np.array([0, 0, -0.2]), puntas[2], puntas[1], puntas[0]]
+        c.malla(sf.poligono(f'membrana {s}', borde + [cod], 0.014, coll), piedra(237, '#4E4C48', 0.2))
+        mano = g + np.array([s * 0.2, -0.2, 0.75])
+        c.trazo([g + np.array([s * 0.2, -0.05, 1.05]), mano], [0.06, 0.045], piedra(238, '#6E6C66', 0.4), 0.0)
+        for q in range(3):
+            b = mano + np.array([s * 0.02 * (q - 1), -0.03, 0])
+            sf.diente(c, f'garra vigia {s} {q}', b, b + np.array([0.01 * (q - 1), -0.06, -0.06]), 0.016, piedra(239, '#5A5852', 0.0), coll)
+    F.marca('luz', (0, 0, 0.4))
+    return F
+
+
+def _tejado(c, centro, largo, ancho, alto, pt, eje='x'):
+    """Tejado a dos aguas (prisma): la cumbrera a lo largo de `eje`, alero en centro[2] y cumbrera a centro[2] + alto."""
+    cx, cy, cz = centro
+    f = sdf.plane((cx, cy, cz), (0, 0, -1))
+    if eje == 'x':
+        n = _unit(np.array([0.0, alto, ancho]))
+        f = sf.intersect(f, sdf.plane((cx, cy + ancho, cz), tuple(n)))
+        f = sf.intersect(f, sdf.plane((cx, cy - ancho, cz), (0.0, -n[1], n[2])))
+        f = sf.intersect(f, sdf.plane((cx + largo, cy, cz), (1, 0, 0)))
+        f = sf.intersect(f, sdf.plane((cx - largo, cy, cz), (-1, 0, 0)))
+        lo, hi = (cx - largo - 0.05, cy - ancho - 0.05, cz - 0.05), (cx + largo + 0.05, cy + ancho + 0.05, cz + alto + 0.05)
+    else:
+        n = _unit(np.array([alto, 0.0, ancho]))
+        f = sf.intersect(f, sdf.plane((cx + ancho, cy, cz), tuple(n)))
+        f = sf.intersect(f, sdf.plane((cx - ancho, cy, cz), (-n[0], 0.0, n[2])))
+        f = sf.intersect(f, sdf.plane((cx, cy + largo, cz), (0, 1, 0)))
+        f = sf.intersect(f, sdf.plane((cx, cy - largo, cz), (0, -1, 0)))
+        lo, hi = (cx - ancho - 0.05, cy - largo - 0.05, cz - 0.05), (cx + ancho + 0.05, cy + largo + 0.05, cz + alto + 0.05)
+    c.sdf(f, lo, hi, pt)
+    return f
+
+
+def _relicario(F, coll, abierto):
+    """El Relicario de la Procesión: una capilla de oro chiquita sobre andas (las varas para cargarla), con paneles de
+    terciopelo morado y ventanitas góticas por donde se ve brillar lo que lleva adentro. Cerrado va sellado con cadenas
+    y lacres; abierto, el tejado queda tirado al lado y la luz sale por arriba."""
+    c = F.pieza('cuerpo', (0, 0, 0), tris=7000 if abierto else 8000)
+    dorado = P_('#C09040', 'oro', semilla=240, mat='base')
+    dorado2 = P_('#9A7230', 'oro', semilla=241, mat='base')
+    terciopelo = P_('#4A1A5A', 'tela', semilla=242)
+    vio = brillo('violeta', '#C46BFF')
+    lx, ly, z0, z1 = 0.46, 0.3, 0.2, 0.68
+    # Las andas: dos varas largas de madera con remates dorados
+    for s in (-1, 1):
+        c.trazo([(-0.95, s * (ly + 0.08), 0.3), (0.95, s * (ly + 0.08), 0.3)], 0.032, madera(243, '#5A3A22', eje='x'), 0.0)
+        for e in (-1, 1):
+            c.bola((e * 0.97, s * (ly + 0.08), 0.3), 0.045, dorado, 0.0)
+            c.caja((e * (lx - 0.02), s * (ly + 0.04), 0.3), (0.03, 0.05, 0.03), 0.01, dorado2, 0.0)
+    # Patas de garra doradas
+    for x in (-1, 1):
+        for y in (-1, 1):
+            c.bola((x * (lx - 0.06), y * (ly - 0.05), 0.1), (0.06, 0.06, 0.1), dorado, 0.0)
+            c.bola((x * (lx - 0.06), y * (ly - 0.05), 0.03), (0.075, 0.075, 0.035), dorado2, 0.0)
+    # La caja: terciopelo con marco de oro
+    caja = sdf.round_box((0, 0, (z0 + z1) / 2), (lx, ly, (z1 - z0) / 2), 0.015)
+    if abierto:
+        caja = sf.restar(caja, sdf.round_box((0, 0, z1), (lx - 0.05, ly - 0.05, (z1 - z0) / 2), 0.01), 0.0)
+    c.sdf(caja, (-lx - 0.05, -ly - 0.05, z0 - 0.05), (lx + 0.05, ly + 0.05, z1 + 0.05), terciopelo)
+    c.caja((0, 0, z0 + 0.02), (lx + 0.03, ly + 0.03, 0.03), 0.01, dorado, 0.0)
+    c.caja((0, 0, z1 - 0.01), (lx + 0.025, ly + 0.025, 0.022), 0.008, dorado, 0.0)
+    # Columnitas en las esquinas con pináculos
+    for x in (-1, 1):
+        for y in (-1, 1):
+            p = np.array([x * lx, y * ly, 0.0])
+            c.cono(p + np.array([0, 0, z0]), p + np.array([0, 0, z1 + 0.02]), 0.035, 0.03, dorado, 0.0)
+            c.cono(p + np.array([0, 0, z1 + 0.02]), p + np.array([0, 0, z1 + 0.24]), 0.04, 0.0, dorado2, 0.0)
+            c.malla(sc.bolita(f'perla {x} {y}', p + np.array([0, 0, z1 + 0.25]), 0.018, coll, n=1, sub=1), brillo('blanco', '#FFF4DA'))
+    # Ventanitas góticas (tres por lado largo, una por lado corto) con la luz de adentro
+    def ventana(p, normal, ancho, alto):
+        p = np.asarray(p, float)
+        normal = np.asarray(normal, float)
+        lat = np.cross([0, 0, 1], normal)
+        c.caja(p, np.abs(lat) * ancho + np.abs(normal) * 0.008 + np.array([0, 0, alto]), 0.004, vio, 0.0)
+        c.bola(p + np.array([0, 0, alto]), np.abs(lat) * ancho + np.abs(normal) * 0.008 + np.array([0, 0, ancho * 1.3]), vio, 0.0)
+        c.caja(p + normal * 0.006, np.abs(normal) * 0.01 + np.array([0, 0, alto + ancho]) + np.abs(lat) * 0.008, 0.003, dorado2, 0.0)
+        for s in (-1, 1):
+            c.trazo([p + lat * s * (ancho + 0.012) + normal * 0.008 - np.array([0, 0, alto]),
+                     p + lat * s * (ancho + 0.012) + normal * 0.008 + np.array([0, 0, alto]),
+                     p + normal * 0.008 + np.array([0, 0, alto + ancho * 1.6])], 0.008, dorado, 0.0)
+    if True:
+        zc = (z0 + z1) / 2 - 0.02
+        for x in (-0.28, 0.0, 0.28):
+            for s in (-1, 1):
+                ventana((x, s * (ly + 0.002), zc), (0, s, 0), 0.055, 0.1)
+        for s in (-1, 1):
+            ventana((s * (lx + 0.002), 0, zc), (s, 0, 0), 0.06, 0.1)
+    # El tejado
+    teja = P_('#8A6A30', 'oro', semilla=244, mat='base')
+    if not abierto:
+        _tejado(c, (0, 0, z1 + 0.01), lx + 0.05, ly + 0.07, 0.3, teja, 'x')
+        for k in range(7):
+            x = -lx + 0.06 + k * (2 * lx - 0.12) / 6
+            for s in (-1, 1):
+                c.trazo([(x, s * (ly + 0.06), z1 + 0.02), (x, 0, z1 + 0.315)], 0.009, dorado2, 0.0)
+        c.trazo([(-lx - 0.05, 0, z1 + 0.32), (lx + 0.05, 0, z1 + 0.32)], 0.02, dorado, 0.0)
+        for k in range(5):
+            x = -0.36 + k * 0.18
+            c.malla(sc.punta(f'cresteria {k}', (x, 0, z1 + 0.32), (x, 0, z1 + 0.42 + 0.03 * (k % 2)), 0.025, coll, seg=4), dorado)
+        # La estrella de las Santas en la punta del frente y del fondo
+        for s in (-1, 1):
+            p = np.array([s * (lx + 0.07), 0, z1 + 0.24])
+            for k in range(6):
+                a = 2 * math.pi * k / 6
+                c.malla(sc.punta(f'estrella {s} {k}', p, p + np.array([0, math.cos(a) * 0.09, math.sin(a) * 0.09]), 0.022, coll, seg=4), dorado)
+            c.malla(sc.bolita(f'estrella centro {s}', p, 0.03, coll, n=1, sub=1), vio)
+        # Sellado: cadenas en cruz sobre el tejado, el candado y los lacres con cintas
+        mt = hierro(245, '#3A3A40')
+        for x in (-0.22, 0.22):
+            _eslabones(c, f'cadena {x}', [(x, -ly - 0.04, z0 + 0.05), (x, -ly - 0.08, z1 + 0.02), (x, 0, z1 + 0.34), (x, ly + 0.08, z1 + 0.02),
+                                          (x, ly + 0.04, z0 + 0.05)], 0.008, coll, mt, largo=0.055)
+        cand = np.array([0.0, -ly - 0.05, z1 - 0.12])
+        c.caja(cand, (0.05, 0.025, 0.055), 0.012, hierro(246, '#5A4A3A'), 0.0)
+        sf.cuerda_anillo(c, 'arco candado', [cand + np.array([math.cos(a) * 0.035, 0, 0.055 + math.sin(a) * 0.045]) for a in np.linspace(0, math.pi, 8)], 0.008,
+                         mt, coll)
+        for k, x in enumerate((-0.36, 0.36)):
+            p = np.array([x, -ly - 0.025, z1 - 0.1])
+            c.bola(p, (0.045, 0.015, 0.045), P_('#8A1418', 'cera', semilla=247 + k), 0.0)
+            c.malla(sc.bolita(f'sello {k}', p + np.array([0, -0.012, 0]), (0.022, 0.006, 0.022), coll, n=1), brillo('rojo', '#C0141A'))
+            for q in (-1, 1):
+                c.malla(sf.pluma(f'cinta {k} {q}', p + np.array([0, -0.01, -0.03]), p + np.array([q * 0.04, -0.02, -0.2]), 0.035, coll, normal=(0, -1, 0),
+                                 grosor=0.004), P_('#8A1418', 'tela', semilla=249 + k))
+    else:
+        # El tejado tirado al lado (+X), sobre el piso
+        _tejado(c, (lx + 0.62, -0.05, 0.0), ly + 0.07, lx + 0.05, 0.3, teja, 'y')
+        c.trazo([(lx + 0.62, -0.05 - ly - 0.07, 0.31), (lx + 0.62, -0.05 + ly + 0.07, 0.31)], 0.02, dorado, 0.0)
+        # Adentro: el cojín y la luz que sale
+        c.bola((0, 0, z0 + 0.1), (lx - 0.07, ly - 0.07, 0.07), P_('#6A2A7A', 'tela', semilla=250), 0.0)
+        c.bola((0, 0, z0 + 0.2), 0.07, vio, 0.0)
+        for k in range(9):
+            a = k * 2 * math.pi / 9
+            b = np.array([math.cos(a) * 0.08, math.sin(a) * 0.06, z0 + 0.22])
+            c.malla(sc.punta(f'rayo {k}', b, b + np.array([math.cos(a) * 0.15, math.sin(a) * 0.1, 0.45 + 0.15 * (k % 3)]), 0.03, coll, seg=4), vio)
+        # Las cadenas rotas en el piso
+        mt = hierro(245, '#3A3A40')
+        for k, (x, y) in enumerate(((-0.5, -0.55), (0.1, -0.6), (-0.7, 0.45))):
+            _eslabones(c, f'cadena rota {k}', [(x, y, 0.02), (x + 0.25, y + 0.08, 0.02), (x + 0.42, y - 0.06, 0.03)], 0.008, coll, mt, largo=0.055)
+    F.marca('luz', (0, 0, z1 + 0.2))
+    return F
+
+
+@cosa('relicario')
+def relicario(coll):
+    return _relicario(nueva('relicario', voxel=0.009), coll, False)
+
+
+@cosa('relicario_abierto')
+def relicario_abierto(coll):
+    return _relicario(nueva('relicario_abierto', voxel=0.009), coll, True)
+
+
+@cosa('gota_mercurio')
+def gota_mercurio(coll):
+    """Gota de mercurio (secundario): un charquito de plata viva, redondo y con dos ojitos asustados, con gotitas que se
+    le escapan. Se escurre cuando alguien se acerca."""
+    F = nueva('gota_mercurio', voxel=0.004)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1100)
+    plata = P_('#B4BECC', 'cera', semilla=260)
+    f = sf.union(sdf.ellipsoid((0, 0, 0.045), (0.085, 0.075, 0.05)), sdf.ellipsoid((0.07, 0.05, 0.015), (0.03, 0.028, 0.02)),
+                 sdf.ellipsoid((-0.075, 0.03, 0.012), (0.025, 0.022, 0.016)), k=0.03)
+    c.sdf(f, (-0.13, -0.12, -0.01), (0.13, 0.12, 0.11), plata)
+    for k, (x, y, r) in enumerate(((0.13, -0.04, 0.016), (-0.12, -0.06, 0.012), (0.02, 0.12, 0.014))):
+        c.bola((x, y, r * 0.8), (r, r, r * 0.8), plata, 0.0)
+    # Los brillos de la superficie (reflejos)
+    for k, (x, y, z, r) in enumerate(((-0.025, -0.03, 0.088, 0.018), (0.03, -0.045, 0.075, 0.009), (0.075, 0.04, 0.03, 0.007))):
+        c.malla(sc.bolita(f'reflejo {k}', (x, y, z), (r, r * 0.8, r * 0.4), coll, n=1, sub=1), brillo('blanco', '#FFF4DA'))
+    # Ojitos asustados
+    for s in (-1, 1):
+        o = np.array([s * 0.025, -0.06, 0.06])
+        c.malla(sc.bolita(f'ojo {s}', o, (0.012, 0.008, 0.016), coll, n=1, sub=1), P_('#14161C', 'liso'))
+        c.malla(sc.bolita(f'brillo ojo {s}', o + np.array([s * 0.003, -0.007, 0.006]), 0.004, coll, n=1), brillo('blanco', '#FFF4DA'))
+        c.trazo([o + np.array([-s * 0.012, -0.004, 0.022]), o + np.array([s * 0.008, -0.004, 0.03])], 0.003, P_('#14161C', 'liso'), 0.0)
+    c.malla(sc.bolita('boca', (0.0, -0.067, 0.035), (0.01, 0.005, 0.008), coll, n=1), P_('#14161C', 'liso'))
+    F.marca('luz', (0, 0, 0.06))
+    return F
+
+
+@cosa('campanita_plata')
+def campanita_plata(coll):
+    """Campanita de plata de las Santas (secundario): de mano, con mango de madera, lazo rojo y la estrellita grabada.
+    Está tirada entre la maleza y suena cuando pasas cerca."""
+    F = nueva('campanita_plata', voxel=0.004)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=1300)
+    plata = P_('#C8CED8', 'cera', semilla=270)
+    perfil = [(r * 0.075, z * 0.075) for r, z in ((1.05, 0.0), (1.08, 0.06), (0.98, 0.18), (0.82, 0.45), (0.74, 0.8), (0.72, 1.15), (0.66, 1.4), (0.45, 1.58), (0.0, 1.62))]
+    c.malla(sc.torno('campanita', perfil, coll, segmentos=18, centro=(0, 0, 0.02)), plata)
+    c.malla(sc.torno('dentro', [(0.0, 0.1), (0.05, 0.09), (0.06, 0.04), (0.075, 0.003)], coll, segmentos=18, centro=(0, 0, 0.02)), P_('#3A3E48', 'liso'))
+    c.bola((0, -0.02, 0.012), 0.016, P_('#8A8E98', 'cera', semilla=271), 0.0)   # el badajo asomado
+    sf.cuerda_anillo(c, 'filo', [(math.cos(a) * 0.081, math.sin(a) * 0.081, 0.025) for a in np.linspace(0, 2 * math.pi, 20, endpoint=False)], 0.005,
+                     P_('#E8ECF2', 'cera', semilla=272), coll)
+    # Mango de madera con perilla dorada
+    c.cono((0, 0, 0.135), (0, 0, 0.22), 0.016, 0.02, madera(273, '#6A4426'), 0.0)
+    c.bola((0, 0, 0.235), 0.024, P_('#C09040', 'oro', semilla=274, mat='base'), 0.0)
+    # Lazo rojo amarrado al mango
+    rojo = P_('#A8141C', 'tela', semilla=275)
+    b = np.array([0, -0.018, 0.15])
+    c.bola(b, (0.016, 0.01, 0.014), rojo, 0.0)
+    for s in (-1, 1):
+        c.malla(sf.pluma(f'oreja lazo {s}', b, b + np.array([s * 0.05, -0.005, 0.02]), 0.035, coll, normal=(0, -1, 0.2), grosor=0.004), rojo)
+        c.malla(sf.pluma(f'cola lazo {s}', b, b + np.array([s * 0.025, -0.012, -0.06]), 0.022, coll, normal=(0, -1, 0), grosor=0.003), rojo)
+    # La estrellita grabada en el frente
+    p = np.array([0, -_radio_en(perfil, 0.06) - 0.004, 0.08])
+    for k in range(6):
+        a = 2 * math.pi * k / 6
+        c.malla(sc.punta(f'estrellita {k}', p, p + np.array([math.cos(a) * 0.018, 0, math.sin(a) * 0.018]), 0.004, coll, seg=3), brillo('plata', '#C4DAFF'))
+    # Brillitos de que suena
+    for k in range(4):
+        a = 0.6 + k * 1.6
+        c.malla(sc.bolita(f'destello {k}', (math.cos(a) * 0.13, math.sin(a) * 0.1, 0.12 + 0.03 * k), 0.008, coll, n=1, sub=1), brillo('plata', '#C4DAFF'))
+    F.marca('luz', (0, 0, 0.08))
+    return F

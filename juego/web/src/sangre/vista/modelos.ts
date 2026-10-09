@@ -28,7 +28,7 @@ export interface Detalle {
 const MOV: Record<string, [number, number, number, number]> = {
   cuervo: [0, 0, 0.3, 2.2], murcielago: [0, 0, 0.3, 3], perro_huesos: [1.2, 0, 1, 1], arana_cripta: [0.5, 0, 0.4, 1], espectro: [0, 0.6, 0.2, 1],
   rata_peste: [1.4, 0, 0.6, 1], abominacion: [0.6, 0.6, 1.5, 1], gargola: [0.4, 0.5, 0.6, 1.2], abadesa: [0, 0.6, 0.2, 1], gusano_sangre: [0, 0, 0.6, 1],
-  zombi: [0.8, 0.4, 1, 1], monje_caido: [0.4, 0.5, 0.8, 1], novia_vampira: [0.2, 0.5, 0.4, 1],
+  zombi: [0.8, 0.4, 1, 1], monje_caido: [0.4, 0.5, 0.8, 1], novia_vampira: [0.2, 0.5, 0.4, 1], madre_piedra: [0.35, 0.45, 0.5, 0.7],
 };
 
 export class Biblioteca {

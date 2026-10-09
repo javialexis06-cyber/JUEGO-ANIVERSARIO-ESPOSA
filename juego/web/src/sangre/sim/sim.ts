@@ -17,7 +17,7 @@ import { actualizarArmas, moverProyectiles, moverZonas } from './armas';
 import { dirigirHorda, moverEnemigos, aparecerEnemigo } from './enemigos_ia';
 import { moverAliados } from './aliados';
 import * as mec from './mecanicas';
-import { prepararObjetivos, actualizarObjetivos, llamarCampana, tomarConMano, guardianMuerto, RADIO_GRANDE, RADIO_LLAVE } from './objetivos';
+import { prepararObjetivos, actualizarObjetivos, llamarCampana, llevaHuevo, tomarConMano, guardianMuerto, RADIO_GRANDE, RADIO_LLAVE } from './objetivos';
 import { actualizarBioma, alRomperBioma, prepararBioma, type Reventon } from './biomas';
 import { encolarNivel, encolarSobrecarga } from './opciones';
 import { jefeMuerto } from './jefes';
@@ -40,6 +40,8 @@ export interface ConfigEtapa {
   final: boolean;
   /** El bioma de esta etapa (en el modo infinito cambia cada 5; si no, el de la expedición). */
   bioma?: IdBioma;
+  /** Modo infinito: el bioma de la capa de arriba, cuyos enemigos se mezclan con los de este. */
+  capa?: IdBioma;
 }
 
 export interface FinEtapa {
@@ -124,6 +126,11 @@ export class Sim {
   barro = false;
   /** La anomalía «Solo minería». */
   mineria = false;
+  /** Las campanitas de plata suenan cada tanto; el Relicario de La Procesión ya salió; las crías que protegen a la
+   *  Madre de Piedra. */
+  campanitaT = 0;
+  relicarioVisto = false;
+  madreBrotes = 0;
   /** El fantasma del Conde (mutador): su índice y cuándo vuelve si lo tumban. */
   fantasma = -1;
   fantasmaT = 25;
@@ -164,6 +171,10 @@ export class Sim {
   /** Pruebas: nadie se muere. */
   inmortales = false;
   readonly G = new Golpe();
+  /** Los enemigos que salen en esta etapa (los del bioma y, en el infinito, los de la capa de arriba). */
+  enemigos: DefBioma['enemigos'];
+  /** Qué tan rápido se llena la barra con el tiempo (el infinito: las diez primeras etapas son más cortas). */
+  ritmo = 1;
   private tmp = { x: 0, y: 0 };
 
   constructor(cfg: ConfigEtapa, jugadores: Jugador[]) {
@@ -178,15 +189,21 @@ export class Sim {
     // jugador, que se estanca con las armas al máximo: tarde o temprano la noche gana)
     // (la prueba del bioma, de 10 etapas, también se endurece después de la quinta)
     const inf = cfg.exp.infinito || (cfg.exp.etapas ?? ETAPAS) > ETAPAS ? Math.max(0, cfg.etapa - ETAPAS) : 0;
+    // (el infinito: las diez primeras etapas son cortas y llenas, para subir de poder rápido; desde la once, el salto)
+    const corta = !!cfg.exp.infinito && cfg.etapa <= 10;
+    const salto = cfg.exp.infinito && cfg.etapa > 10 ? 1 : 0;
+    this.ritmo = corta ? 1.4 : 1;
     const aprendiz = cfg.exp.anomalia === 'aprendiz' ? 2 : 1;
     // Cada etapa arranca más o menos donde terminó la anterior (dentro de la etapa los enemigos se endurecen con el
     // reloj): así las últimas son las difíciles, como en Deep Rock, y no la primera
-    const etapaV = 2 ** (Math.min(cfg.etapa, ETAPAS) - 1);
+    // (las misiones de tres etapas suben como si fueran la 1, la 2½ y la 4: el final tiene que doler)
+    const etapaD = cfg.exp.mision ? ([1, 2.5, 4][cfg.etapa - 1] ?? cfg.etapa) : cfg.etapa;
+    const etapaV = 2 ** (Math.min(etapaD, ETAPAS) - 1);
     const base = pel.vida * (1 + 0.38 * (n - 1)) * (mut('codicia') ? 1.25 : 1) * (mut('fragiles') ? 0.75 : 1);
     this.esc = {
-      vida: base * etapaV * 1.3 ** inf,
-      dano: (1 + 0.5 * (Math.min(cfg.etapa, ETAPAS) - 1)) * pel.dano * (mut('sangrienta') ? 1.3 : 1) * 1.1 ** inf * aprendiz,
-      cantidad: pel.cantidad * (1 + 0.6 * (n - 1)) * (1 + 0.2 * (Math.min(cfg.etapa, ETAPAS) - 1)) * (1 + 0.05 * inf),
+      vida: base * etapaV * 1.3 ** inf * 1.5 ** salto,
+      dano: (1 + 0.5 * (Math.min(etapaD, ETAPAS) - 1)) * pel.dano * (mut('sangrienta') ? 1.3 : 1) * 1.1 ** inf * 1.2 ** salto * aprendiz,
+      cantidad: pel.cantidad * (1 + 0.6 * (n - 1)) * (1 + 0.2 * (Math.min(etapaD, ETAPAS) - 1)) * (1 + 0.05 * inf) * (corta ? 1.2 : 1),
       elites: pel.elites * (1 + 0.3 * (n - 1)) * (mut('elites_dobles') ? 2 : 1) * (1 + 0.12 * inf),
       botin: 1 / (1 + 0.45 * (n - 1)),
       // Las almas valen más en las etapas duras, pero no tanto como crece la vida (si no, el jugador sube de nivel tan
@@ -202,7 +219,14 @@ export class Sim {
     this.mapa = generarMapa({
       bioma: this.bioma, semilla: cfg.exp.semilla * 31 + cfg.etapa * 977, jugadores: n, rocaDura: mut('roca_dura'), sinAntorchas: mut('sin_antorchas'),
       vetasHierro: cfg.objetivo === 'hierro' ? 10 + 2 * n : 2, carreta: cfg.objetivo === 'carreta', tutorial: cfg.exp.tutorial,
+      // (el infinito: el mapa crece 6 casillas por lado cada cuatro etapas, hasta 42 más)
+      crece: cfg.exp.infinito ? Math.min(42, 6 * Math.floor((cfg.etapa - 1) / 4)) : 0,
     });
+    // Las capas mezcladas del infinito: los del bioma de arriba salen también, menos seguido
+    const capa = cfg.capa ? BIOMAS[cfg.capa] : null;
+    this.enemigos = capa
+      ? [...this.bioma.enemigos, ...capa.enemigos.filter((e) => e.id !== 'caballero_muerte' && !this.bioma.enemigos.some((b) => b.id === e.id)).map((e) => ({ ...e, peso: e.peso * 0.4 }))]
+      : this.bioma.enemigos;
     this.flujo = new CampoFlujo(this.mapa);
     for (let k = 0; k < MAX_PROY; k++) this.P.push(new Proyectil());
     for (let k = 0; k < MAX_ZONAS; k++) this.Z.push(new Zona());
@@ -699,7 +723,7 @@ export class Sim {
   /** Un tipo del bioma según el reloj (para oleadas). */
   tipoAlAzar(): number {
     const desdeEf = 1 + 0.35 * (this.cfg.etapa - 1);
-    const lista = this.bioma.enemigos.filter((e) => e.desde / desdeEf <= this.t + 30 && e.id !== 'caballero_muerte');
+    const lista = this.enemigos.filter((e) => e.desde / desdeEf <= this.t + 30 && e.id !== 'caballero_muerte');
     const e = this.az.pesado(lista, (x) => x.peso) ?? this.bioma.enemigos[0];
     return TIPOS.findIndex((d) => d.id === e.id);
   }
@@ -979,7 +1003,8 @@ export class Sim {
       mx /= l;
       my /= l;
     }
-    let vel = j.velocidad * (this.barro ? 0.85 : 1);
+    // (el barro frena a todos; el huevo de gárgola, a quien lo lleva)
+    let vel = j.velocidad * (this.barro ? 0.85 : 1) * (this.obj.tipo === 'cria' && llevaHuevo(this, j) ? 0.72 : 1);
     if (this.mapa.get(Math.floor(j.x), Math.floor(j.y)) === C.AGUA) vel *= 0.6;
     if (mec.embistiendo(j)) {
       mec.moverEmbestida(this, j, dt);
@@ -1197,7 +1222,7 @@ export class Sim {
         for (const j of this.J) {
           if (j.estado !== 0) continue;
           // (el área de recoger es más grande que el dibujo: basta con pasar cerca)
-          const rad = grande ? RADIO_GRANDE : r.tipo === REC.LLAVE ? RADIO_LLAVE : j.radioIman;
+          const rad = grande ? RADIO_GRANDE : r.tipo === REC.LLAVE ? RADIO_LLAVE : r.tipo === REC.MERCURIO ? 0.9 : j.radioIman;
           if ((j.x - r.x) ** 2 + (j.y - r.y) ** 2 < rad * rad) {
             r.hacia = j.i;
             break;
@@ -1277,6 +1302,11 @@ export class Sim {
         break;
       case REC.HUEVO:
         if (this.sec.tipo === 'huevos') this.sec.prog++;
+        this.aviso(11, this.sec.prog, this.sec.meta);
+        break;
+      case REC.MERCURIO:
+      case REC.CAMPANITA:
+        this.sec.prog++;
         this.aviso(11, this.sec.prog, this.sec.meta);
         break;
       case REC.MINERAL:

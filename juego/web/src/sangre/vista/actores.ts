@@ -86,7 +86,7 @@ export class Actores {
   lote(id: string): LotePiezas {
     let l = this.lotes.get(id);
     if (!l) {
-      l = new LotePiezas(this.bib.enemigo(id), this.grupo, id.startsWith('jefe') || ['golem_osarios', 'abadesa', 'gusano_sangre', 'obispo_hueco', 'conde', 'conde_alas'].includes(id) ? 2 : 48, this.sombraReal);
+      l = new LotePiezas(this.bib.enemigo(id), this.grupo, id.startsWith('jefe') || ['golem_osarios', 'abadesa', 'gusano_sangre', 'obispo_hueco', 'conde', 'conde_alas', 'madre_piedra'].includes(id) ? 2 : 48, this.sombraReal);
       this.lotes.set(id, l);
     }
     return l;
@@ -237,7 +237,9 @@ export class Actores {
       }
       const clave = e.tipo === ENT.CARRETA ? 'carreta' : e.tipo === ENT.CAMPANA_DEF ? 'campana' : e.tipo === ENT.COFRE_RELIQUIA ? 'cofre_reliquia' : e.tipo === ENT.SANTUARIO ? 'santuario' : e.tipo === ENT.COFRE_MALDITO ? 'cofre_maldito' : e.tipo === ENT.SEPULCRO ? (e.est >= 1 ? 'sepulcro_abierto' : 'sepulcro')
         : e.tipo === ENT.SUMINISTRO && e.est >= 1 ? (e.est >= 3 ? 'ataud_abierto' : 'ataud_suministros')
-        : e.tipo === ENT.VAGONETA ? 'carreta' : e.tipo === ENT.ARMADURA ? 'guardia_real' : e.tipo === ENT.CAMPANARIO ? 'campana' : e.tipo === ENT.PINCHOS ? 'pinchos' : '';
+        : e.tipo === ENT.VAGONETA ? 'carreta' : e.tipo === ENT.ARMADURA ? 'guardia_real' : e.tipo === ENT.CAMPANARIO ? 'campana' : e.tipo === ENT.PINCHOS ? 'pinchos'
+        : e.tipo === ENT.CAMPANA_EXO ? 'campana_exorcismo' : e.tipo === ENT.CALIZ ? 'caliz_sangre' : e.tipo === ENT.CRISTAL ? 'cristal_sangre' : e.tipo === ENT.HUEVO_GARGOLA ? 'huevo_gargola'
+        : e.tipo === ENT.OSARIO ? 'osario' : e.tipo === ENT.RELICARIO ? (e.est === 2 ? 'relicario_abierto' : 'relicario') : '';
       if (!clave) continue;
       vistas.add(e.id);
       let o = this.cosas.get(e.id);
@@ -284,6 +286,14 @@ export class Actores {
         if (puas) puas.position.y += ((e.est === 2 ? 0 : e.est === 1 ? -0.3 + Math.sin(v.t * 40) * 0.02 : -0.46) - puas.position.y) * Math.min(1, dt * (e.est === 2 ? 30 : 8));
       }
       if (e.tipo === ENT.ARMADURA) o.rotation.y = (e.k * Math.PI) / 2;
+      // Sangre y Ceniza 2: la campana embrujada se mece mientras la purifican; los cristales y los huevos que te siguen
+      // flotan un poquito y giran; el Relicario tiembla mientras lo abren
+      if (e.tipo === ENT.CAMPANA_EXO) o.rotation.z = e.est === 1 ? Math.sin(v.t * 4) * 0.08 * (1 - e.prog) : 0;
+      if ((e.tipo === ENT.CRISTAL || e.tipo === ENT.HUEVO_GARGOLA) && e.est === 1) {
+        o.position.y = 0.25 + Math.sin(v.t * 3 + e.id) * 0.08;
+        o.rotation.y = v.t * (e.tipo === ENT.CRISTAL ? 1.6 : 0.6);
+      }
+      if (e.tipo === ENT.RELICARIO && e.est !== 2) o.rotation.z = e.prog > 0.01 ? Math.sin(v.t * 24) * 0.02 * e.prog : 0;
       // El campanario: se mece mientras llama la oleada
       if (e.tipo === ENT.CAMPANARIO) o.rotation.z = e.est === 1 ? Math.sin(v.t * 3) * 0.12 : e.prog > 0.01 ? Math.sin(v.t * 20) * 0.02 * e.prog : 0;
       if (e.tipo === ENT.CARRETA) {

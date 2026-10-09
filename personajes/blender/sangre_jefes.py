@@ -485,3 +485,146 @@ def conde(coll):
         al.malla(sf.poligono(f'membrana {s}', poly, 0.02, coll), membrana)
     F.marca('luz', tuple(hc + np.array([0, 0.2, 0])))
     return F
+
+
+# ---------------------------------------------------------------------------
+# La Madre de Piedra (La Cría): la gárgola más vieja de la catedral, enorme y encorvada, con un halo de piedra roto
+# detrás de la cabeza, la campana de su torre colgada al cuello y una cría asomada en el nido de la espalda
+# ---------------------------------------------------------------------------
+
+@jefe('madre_piedra')
+def madre_piedra(coll):
+    F = nueva('madre_piedra', voxel=0.024, bioma='abadia', fases=3)
+    piedra = P_('#7A7882', 'piedra', musgo=0.6, semilla=1)
+    piedra2 = P_('#5E5C66', 'piedra', musgo=0.3, semilla=2)
+    oscura = P_('#46444C', 'piedra', semilla=3, var=0.7)
+    membrana = P_('#55535C', 'piedra', semilla=4, var=0.5, musgo=0.4)
+    fuego = P_('#FF6A1A', 'brillo', mat='brillo_fuego')
+    bronce = P_('#5E6E52', 'oro', semilla=5, mat='base')
+    hierro = P_('#3A3A40', 'hierro', semilla=6)
+    # --- cuerpo: pecho enorme encorvado hacia adelante, barriga y el lomo con púas
+    c = F.pieza('cuerpo', (0, 0, 1.3), tris=5200)
+    torso = sf.union(sdf.ellipsoid((0, 0.25, 1.95), (0.85, 0.68, 0.72)), sdf.round_cone((0, -0.1, 1.15), (0, 0.15, 1.7), 0.55, 0.7),
+                     sdf.ellipsoid((0, 0.45, 2.3), (0.6, 0.45, 0.35)), k=0.2)
+    c.sdf(sc.sdf_ruido(torso, 0.025, 6, 1), (-1.1, -0.9, 0.5), (1.1, 1.3, 2.8), piedra)
+    for k in range(7):
+        p = np.array([0, -0.35 - 0.04 * k, 2.45 - 0.2 * k])
+        q, n = sf.hacia(torso, (0, 0.15, p[2]), (0, -1, 0.3), lejos=3)
+        if q is not None:
+            sf.diente(c, f'pua lomo {k}', q - n * 0.03, q + n * (0.22 - 0.015 * k) + np.array([0, 0, 0.1]), 0.08 - 0.006 * k, piedra2, coll)
+    # Grietas encendidas en el pecho (el fuego que la mueve)
+    for k in range(4):
+        pts = []
+        for q_ in range(5):
+            a = -0.5 + k * 0.35 + 0.08 * ((q_ % 2) * 2 - 1)
+            q, n = sf.hacia(torso, (0, 0.25, 1.95), (math.sin(a), 1, 0.4 - q_ * 0.2), lejos=3)
+            if q is not None:
+                pts.append(q + n * 0.01)
+        if len(pts) > 2:
+            c.malla(sc.tubo(f'grieta pecho {k}', pts, 0.025, coll, segmentos=4, muestras=1), fuego)
+    # La campana de su torre, colgada al cuello con una cadena
+    cad = [np.array([math.cos(t) * 0.62, 0.25 + math.sin(t) * 0.5 + 0.12, 2.42 - 0.25 * max(0, math.sin(t))]) for t in np.linspace(0, math.pi, 12)]
+    sf.cuerda_anillo(c, 'cadena cuello', cad, 0.035, hierro, coll)
+    cb = np.array([0, 0.88, 1.75])
+    c.trazo([np.array([0, 0.85, 2.15]), cb + np.array([0, 0, 0.3])], 0.03, hierro, 0.0)
+    perfil = [(r * 0.22, z * 0.22) for r, z in ((1.05, 0.0), (1.08, 0.06), (0.98, 0.18), (0.82, 0.45), (0.74, 0.8), (0.72, 1.15), (0.66, 1.4), (0.45, 1.58), (0.0, 1.62))]
+    c.malla(sc.torno('campana cuello', perfil, coll, segmentos=18, centro=tuple(cb - np.array([0, 0, 0.05]))), bronce)
+    c.bola(cb - np.array([0, 0, 0.1]), 0.05, hierro, 0.0)
+    # El nido en la espalda con la cría asomada
+    nb = np.array([0, -0.55, 2.35])
+    c.sdf(sc.sdf_ruido(sf.restar(sdf.ellipsoid(nb, (0.45, 0.35, 0.2)), sdf.ellipsoid(nb + np.array([0, 0, 0.12]), (0.36, 0.27, 0.18)), 0.03), 0.02, 9, 7),
+          nb - 0.6, nb + 0.6, oscura)
+    for k in range(10):
+        a = 2 * math.pi * k / 10
+        b = nb + np.array([math.cos(a) * 0.42, math.sin(a) * 0.32, 0.1])
+        c.trazo([b, b + np.array([math.cos(a + 1.4) * 0.18, math.sin(a + 1.4) * 0.14, 0.04])], 0.018, P_('#6A4A2A', 'madera', semilla=8 + k), 0.0)
+    cria = nb + np.array([0.1, -0.02, 0.3])
+    c.sdf(sc.sdf_ruido(sf.union(sdf.ellipsoid(cria, (0.15, 0.14, 0.13)), sdf.ellipsoid(cria + np.array([0, -0.06, -0.15]), (0.17, 0.15, 0.12)), k=0.05), 0.006, 20, 9),
+          cria - 0.4, cria + 0.3, piedra)
+    ojos(c, [cria + np.array([-0.06, -0.12, 0.03]), cria + np.array([0.06, -0.12, 0.03])], 0.035, fuego, coll, 'ojo cria')
+    for s in (-1, 1):
+        sf.cuerno(c, f'cuernito cria {s}', [cria + np.array([s * 0.07, 0.0, 0.1]), cria + np.array([s * 0.12, 0.03, 0.19]), cria + np.array([s * 0.14, 0.08, 0.22])], 0.03,
+                  piedra2, coll)
+    c.malla(sc.bolita('cascara', nb + np.array([-0.2, 0.05, 0.22]), (0.1, 0.1, 0.12), coll, n=2), piedra2)
+    # --- cabeza: ancha, con cuernos de carnero, orejas de punta, cejas pesadas y el halo roto detrás
+    h = F.pieza('cabeza', (0, 0.55, 2.4), tris=2700)
+    hc = np.array([0, 0.75, 2.62])
+    cab = sf.union(sdf.round_box(hc, (0.36, 0.3, 0.27), 0.2), sdf.round_cone(hc + np.array([0, 0.18, -0.08]), hc + np.array([0, 0.45, -0.16]), 0.24, 0.17),
+                   sdf.ellipsoid(hc + np.array([0, 0.22, 0.12]), (0.36, 0.14, 0.08)), k=0.08)
+    for s in (-1, 1):
+        cab = sf.restar(cab, sdf.ellipsoid(hc + np.array([s * 0.15, 0.3, 0.05]), (0.09, 0.07, 0.06)), 0.02)
+        cab = sf.restar(cab, sdf.ellipsoid(hc + np.array([s * 0.06, 0.6, -0.12]), (0.03, 0.03, 0.025)), 0.01)
+    h.sdf(sc.sdf_ruido(cab, 0.012, 14, 10), hc - 0.7, hc + 0.7, piedra)
+    ojos(h, [hc + np.array([-0.15, 0.3, 0.05]), hc + np.array([0.15, 0.3, 0.05])], 0.07, fuego, coll)
+    for s in (-1, 1):
+        # cuernos de carnero que se enroscan
+        base = hc + np.array([s * 0.26, -0.02, 0.2])
+        pts = [base]
+        for k in range(1, 7):
+            t = k / 6
+            ang = t * math.pi * 1.4
+            pts.append(base + np.array([s * (0.12 + 0.28 * math.sin(ang * 0.7)), -0.3 * math.sin(ang) - 0.05 * t, 0.35 * math.cos(ang * 0.8) * (1 - t * 0.4) - 0.0]))
+        sf.cuerno(h, f'cuerno {s}', pts, 0.13, piedra2, coll, seg=7)
+        h.sdf(sdf.round_cone(hc + np.array([s * 0.33, 0.0, 0.05]), hc + np.array([s * 0.62, -0.12, 0.2]), 0.08, 0.012), hc - 1, hc + 1, piedra, 0.02)
+        for j in range(2):
+            b = hc + np.array([s * (0.07 + 0.05 * j), 0.58 - 0.03 * j, -0.24])
+            sf.diente(h, f'colmillo {s} {j}', b, b + np.array([0, 0.01, -0.14 + 0.04 * j]), 0.035, P_('#A8A49A', 'piedra', semilla=11), coll)
+    # El halo de piedra roto
+    halo = [hc + np.array([math.cos(a) * 0.62, -0.32, 0.12 + math.sin(a) * 0.62]) for a in np.linspace(math.radians(-10), math.radians(250), 22)]
+    h.malla(sc.tubo('halo', halo, 0.055, coll, segmentos=6, muestras=1), oscura)
+    for k in range(5):
+        a = math.radians(10 + k * 55)
+        p = hc + np.array([math.cos(a) * 0.62, -0.32, 0.12 + math.sin(a) * 0.62])
+        h.malla(sc.punta(f'rayo halo {k}', p, p + np.array([math.cos(a) * 0.16, 0, math.sin(a) * 0.16]), 0.05, coll, seg=4), oscura)
+    # --- mandíbula
+    piv = hc + np.array([0, 0.1, -0.2])
+    m = F.pieza('mandibula', piv, tris=900)
+    R = sc.rot('x', -12)
+    m.sdf(sdf.round_box(rot_en(hc + np.array([0, 0.36, -0.3]), piv, R), (0.24, 0.2, 0.07), 0.06, rot=R), hc - 0.8, hc + 0.8, piedra2)
+    sf.fila_dientes(m, 'diente inf', rot_en(hc + np.array([0, 0.48, -0.24]), piv, R), 0.3, 7, 0.07, P_('#A8A49A', 'piedra', semilla=12), coll, sentido=1, sem=3)
+    # --- brazos largos de gorila con garras que tocan el piso
+    for lado, s in LADOS:
+        hom = np.array([s * 0.82, 0.3, 2.2])
+        a = F.pieza(f'brazo_{lado}', hom, tris=1800)
+        codo, mun = np.array([s * 1.18, 0.55, 1.4]), np.array([s * 1.05, 0.95, 0.5])
+        brazo = sf.union(sdf.round_cone(hom, codo, 0.3, 0.22), sdf.round_cone(codo, mun, 0.22, 0.2), k=0.08)
+        a.sdf(sc.sdf_ruido(brazo, 0.02, 6, 13 + s), np.minimum(hom, mun) - 0.5, np.maximum(hom, mun) + 0.5, piedra)
+        a.bola(hom + np.array([s * 0.05, 0, 0.12]), (0.36, 0.34, 0.26), piedra2, 0.03)
+        for j in range(3):
+            b = hom + np.array([s * (0.15 + 0.06 * j), -0.15 + 0.15 * j, 0.32])
+            sf.diente(a, f'pua hombro {lado} {j}', b, b + np.array([s * 0.12, -0.02, 0.22]), 0.05, piedra2, coll)
+        mano_garra(a, mun, mun - codo, piedra, oscura, coll, f'mano {lado}', tam=5.5, curva=0.9)
+    # --- piernas agachadas con garras
+    for lado, s in LADOS:
+        cad = np.array([s * 0.5, -0.2, 1.15])
+        p = F.pieza(f'pierna_{lado}', cad, tris=1300)
+        rod, hock, pie = np.array([s * 0.72, 0.3, 0.75]), np.array([s * 0.66, -0.3, 0.4]), np.array([s * 0.62, -0.05, 0.12])
+        p.trazo([cad, rod, hock, pie], [0.36, 0.24, 0.17, 0.15], piedra, 0.0)
+        p.bola(rod + np.array([0, 0.05, 0.02]), 0.2, piedra2, 0.02)
+        pata_garra(p, pie + np.array([0, 0.12, -0.03]), (0, 1, 0), 3, 0.24, 0.07, piedra, oscura, coll, f'garra pie {lado}')
+    # --- alas a medio abrir
+    for lado, s in LADOS:
+        piv = np.array([s * 0.35, -0.45, 2.3])
+        w = F.pieza(f'ala_{lado}', piv, tris=1600)
+        cod = piv + np.array([s * 0.9, -0.35, 0.85])
+        w.trazo([piv, cod], [0.13, 0.09], piedra, 0.0)
+        puntas = [cod + np.array([s * 1.15, -0.1, 0.25]), cod + np.array([s * 1.2, -0.2, -0.55]), cod + np.array([s * 0.75, -0.25, -1.25]),
+                  cod + np.array([s * 0.15, -0.2, -1.55])]
+        for j, q in enumerate(puntas):
+            w.trazo([cod, (cod + q) / 2 + np.array([0, 0, 0.06]), q], [0.08, 0.055, 0.02], piedra2, 0.0)
+        sf.diente(w, 'garra ala', cod, cod + np.array([s * 0.04, 0.08, 0.28]), 0.07, oscura, coll)
+        borde = [piv + np.array([0, 0, -0.55])] + puntas[::-1]
+        poly = [piv + np.array([0, 0, -0.55])]
+        for i in range(len(borde) - 1):
+            a0, a1 = borde[i], borde[i + 1]
+            poly += [a0 + (a1 - a0) * 0.5 + (cod - (a0 + a1) / 2) * 0.2, a1]
+        poly += [cod, piv]
+        w.malla(sf.poligono(f'membrana {lado}', poly, 0.035, coll), membrana)
+    # --- cola gruesa con punta de pica
+    k_ = F.pieza('cola', (0, -0.55, 1.0), tris=900)
+    pts = [np.array([0.25 * math.sin(t * 3.5), -0.55 - t * 1.3, 1.0 - t * 0.85 + 0.25 * math.sin(t * 3)]) for t in np.linspace(0, 1, 9)]
+    k_.trazo(pts, list(np.linspace(0.24, 0.06, 9)), piedra, 0.0)
+    e = pts[-1]
+    k_.sdf(sdf.round_box(e + np.array([0, -0.12, 0]), (0.15, 0.15, 0.03), 0.02, rot=sc.rot('z', 45)), e - 0.4, e + 0.4, piedra2, 0.01)
+    F.marca('luz', tuple(hc + np.array([0, 0.3, 0])))
+    return F

@@ -342,5 +342,102 @@
     2.08
    ]
   }
+ },
+ "jefe_madre_piedra": {
+  "altura": 3.447,
+  "radio": 0.948,
+  "alcance": 2.512,
+  "tris": 19096,
+  "bioma": "abadia",
+  "fases": 3,
+  "piezas": {
+   "cuerpo": {
+    "pivote": [
+     0.0,
+     0.0,
+     1.3
+    ],
+    "tris": 5200
+   },
+   "cabeza": {
+    "pivote": [
+     0.0,
+     0.55,
+     2.4
+    ],
+    "tris": 2700
+   },
+   "mandibula": {
+    "pivote": [
+     0.0,
+     0.85,
+     2.42
+    ],
+    "tris": 898
+   },
+   "brazo_izq": {
+    "pivote": [
+     -0.82,
+     0.3,
+     2.2
+    ],
+    "tris": 1800
+   },
+   "brazo_der": {
+    "pivote": [
+     0.82,
+     0.3,
+     2.2
+    ],
+    "tris": 1800
+   },
+   "pierna_izq": {
+    "pivote": [
+     -0.5,
+     -0.2,
+     1.15
+    ],
+    "tris": 1300
+   },
+   "pierna_der": {
+    "pivote": [
+     0.5,
+     -0.2,
+     1.15
+    ],
+    "tris": 1300
+   },
+   "ala_izq": {
+    "pivote": [
+     -0.35,
+     -0.45,
+     2.3
+    ],
+    "tris": 1600
+   },
+   "ala_der": {
+    "pivote": [
+     0.35,
+     -0.45,
+     2.3
+    ],
+    "tris": 1600
+   },
+   "cola": {
+    "pivote": [
+     0.0,
+     -0.55,
+     1.0
+    ],
+    "tris": 898
+   }
+  },
+  "marcas": {
+   "luz": [
+    0.0,
+    1.05,
+    2.62
+   ]
+  }
  }
 }

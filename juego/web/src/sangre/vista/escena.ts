@@ -62,6 +62,8 @@ const COLOR_USO: Record<number, THREE.Color> = {
   [ENT.SEPULCRO]: new THREE.Color('#ff4a3a'),
   [ENT.SUMINISTRO]: new THREE.Color('#ffc060'),
   [ENT.CAMPANARIO]: new THREE.Color('#ff8a4a'),
+  [ENT.CAMPANA_EXO]: new THREE.Color('#b8a0ff'),
+  [ENT.RELICARIO]: new THREE.Color('#ffd070'),
 };
 const COLOR_EXPLOSION = ['#ff7a2a', '#fff0a0', '#8aff4a', '#a8f0ff', '#d01828', '#a060ff', '#a89880'];
 
@@ -376,6 +378,20 @@ export class Escena3D {
         usos.push({ id: e.id, x: e.x, y: e.y, r: RADIO_SUMINISTRO, lleno: e.est === 1 ? 1 : e.prog, fuerza: Math.max(0.35, Math.min(1, 1 - (d - 6) / 10)), color: COLOR_USO[ENT.SUMINISTRO] });
         continue;
       }
+      // (Sangre y Ceniza 2: las campanas embrujadas y el Relicario muestran su círculo y cuánto falta; el cáliz y el
+      // osario echan un haz de luz cuando alguien lleva algo, para saber a dónde ir)
+      if (e.vivo && (e.tipo === ENT.CAMPANA_EXO || e.tipo === ENT.RELICARIO) && e.est !== 2) {
+        const d = yo ? Math.hypot(yo.x - e.x, yo.y - e.y) : 99;
+        usos.push({ id: e.id, x: e.x, y: e.y, r: e.tipo === ENT.RELICARIO ? 4.2 : 3.6, lleno: e.prog, fuerza: Math.max(0.4, Math.min(1, 1 - (d - 6) / 12)), color: COLOR_USO[e.tipo] });
+        continue;
+      }
+      if (e.vivo && (e.tipo === ENT.CALIZ || e.tipo === ENT.OSARIO) && this.tiempo - this.hazSuministro > 2.2) {
+        const lleva = est.ent.some((o) => o.vivo && o.est === 1 && (o.tipo === ENT.CRISTAL || o.tipo === ENT.HUEVO_GARGOLA));
+        if (lleva) {
+          this.hazSuministro = this.tiempo;
+          this.efectos.columna(e.x, e.y, 1, 9, e.tipo === ENT.CALIZ ? '#ff3040' : '#c8ff9a', 2.2);
+        }
+      }
       if (!esTocable(e)) continue;
       const r = e.tipo === ENT.PRISIONERO ? RADIO_LIBERAR : RADIO_ABRIR;
       const d = yo ? Math.hypot(yo.x - e.x, yo.y - e.y) : 99;
@@ -436,6 +452,10 @@ export class Escena3D {
       else if (e.tipo === ENT.CARRETA && e.est === 1) mv.push({ x: e.x, y: e.y, r: 4, color: LUZ_SANGRE, fuerza: 0.5 });
       else if (e.tipo === ENT.COFRE_RELIQUIA && e.est === 0) mv.push({ x: e.x, y: e.y, r: 3, color: LUZ_RELIQUIA, fuerza: 0.5 });
       else if (e.tipo === ENT.CAMPANA_DEF && e.est === 1) mv.push({ x: e.x, y: e.y, r: 5, color: LUZ_CAMPANA, fuerza: 0.7 });
+      else if (e.tipo === ENT.CAMPANA_EXO) mv.push({ x: e.x, y: e.y, r: 4, color: e.est === 2 ? LUZ_CAMPANA : LUZ_RELIQUIA, fuerza: e.est === 2 ? 0.8 : 0.45 });
+      else if (e.tipo === ENT.CALIZ || e.tipo === ENT.CRISTAL) mv.push({ x: e.x, y: e.y, r: e.tipo === ENT.CALIZ ? 4.5 : 2.2, color: LUZ_SANGRE, fuerza: e.tipo === ENT.CALIZ ? 0.8 : 0.45 });
+      else if (e.tipo === ENT.OSARIO) mv.push({ x: e.x, y: e.y, r: 4.5, color: LUZ_SANTA, fuerza: 0.6 });
+      else if (e.tipo === ENT.RELICARIO) mv.push({ x: e.x, y: e.y, r: 5, color: e.est === 2 ? LUZ_RELIQUIA : LUZ_CAMPANA, fuerza: 0.9 });
       // (los sepulcros: velas rojas cerrados; abiertos, la brasa del hueco)
       else if (e.tipo === ENT.SEPULCRO) mv.push({ x: e.x, y: e.y, r: e.est === 0 ? 3.5 : 3, color: e.est === 0 ? LUZ_SANGRE : LUZ_FUEGO, fuerza: e.est === 0 ? 0.5 : 0.7 });
       // (el cofre de suministros: el círculo alumbra dorado; abierto, la reliquia brilla morada)
@@ -870,8 +890,12 @@ export class Escena3D {
           if (d[k + 3] === 1) F.onda(x, y, 1.6, '#ffd060', 0.5);
           break;
         case S.MARCA:
-          // (4: el grisú silba antes de reventar)
+          // (4: el grisú silba antes de reventar; 5: suena una campanita de plata escondida)
           if (d[k + 3] === 4) P.chispas(x, 0.6, y, '#a0ff40', 14, 3);
+          if (d[k + 3] === 5) {
+            F.onda(x, y, 1.4, '#e8f0ff', 0.5);
+            P.chispas(x, 0.6, y, '#e8f0ff', 6, 2);
+          }
           if (d[k + 3] === 1) F.rayo(x, y, est.E.x[d[k + 4]] ?? x, est.E.y[d[k + 4]] ?? y, '#ff4080', 0.06, 0.5, 0.9);
           break;
         case S.DISPARO_E:

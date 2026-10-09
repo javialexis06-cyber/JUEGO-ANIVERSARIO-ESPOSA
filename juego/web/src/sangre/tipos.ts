@@ -263,8 +263,8 @@ export const esExcavable = (c: number) => c !== C.VACIO && c !== C.BORDE && c !=
 export const tapaLuz = (c: number) => esSolida(c) && c !== C.LAVA;
 
 // ------------------------------------------------------------------------------------------------- Objetivos
-export type IdObjetivo = 'hierro' | 'altares' | 'prisioneros' | 'carreta' | 'campana' | 'elite';
-export type IdSecundario = 'huevos' | 'frascos' | 'cofres' | 'rosas' | 'plumas' | 'hongos';
+export type IdObjetivo = 'hierro' | 'altares' | 'prisioneros' | 'carreta' | 'campana' | 'elite' | 'exorcismo' | 'cosecha' | 'cria';
+export type IdSecundario = 'huevos' | 'frascos' | 'cofres' | 'rosas' | 'plumas' | 'hongos' | 'mercurio' | 'campanitas';
 
 // ------------------------------------------------------------------------------------------------- Peligro
 export type IdMutador = 'sangrienta' | 'sin_antorchas' | 'elites_dobles' | 'plaga' | 'roca_dura' | 'codicia' | 'eclipse' | 'fragiles' | 'enjambres' | 'velocidad'
@@ -302,6 +302,9 @@ export interface ConfigExpedicion {
   anomalia?: IdAnomalia;
   /** Contrato del día o de la semana («dia:2026-10-09», «semana:2026-41»). */
   contrato?: string;
+  /** Misión de 3 etapas (B): La Procesión (la carreta hasta el Relicario) o La Cría (huevos de gárgola; la Madre de
+   *  Piedra al final). */
+  mision?: 'procesion' | 'cria';
 }
 
 /** Las expediciones anómalas (se pagan con puntos de maestría). */

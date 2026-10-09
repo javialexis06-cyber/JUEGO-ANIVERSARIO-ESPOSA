@@ -114,6 +114,8 @@ export const JEFES: Record<string, DefJefe> = {
   abadesa: { id: 'abadesa', nombre: 'La Abadesa de los Lamentos', titulo: 'Su grito despierta a los muertos', vida: 3100, vel: 1.9, radio: 1.0, alto: 2.4, dano: 18, fases: 2, color: ['#c8d8e8', '#2a3a4a'] },
   gusano_sangre: { id: 'gusano_sangre', nombre: 'El Gusano de Sangre', titulo: 'Lo que vive bajo las minas', vida: 4200, vel: 2.6, radio: 1.5, alto: 2.6, dano: 24, fases: 2, color: ['#8a2a2a', '#d8a080'] },
   obispo_hueco: { id: 'obispo_hueco', nombre: 'El Obispo Hueco', titulo: 'Predica fuego a los vivos', vida: 3800, vel: 1.5, radio: 1.1, alto: 2.8, dano: 20, fases: 2, color: ['#e8d8b0', '#7a1a1a'] },
+  // (Sangre y Ceniza 2: la del final de La Cría, en cualquier bioma)
+  madre_piedra: { id: 'madre_piedra', nombre: 'La Madre de Piedra', titulo: 'Las gárgolas vuelven a su nido', vida: 4400, vel: 1.6, radio: 1.4, alto: 3.2, dano: 24, fases: 3, color: ['#8a8a90', '#3a3a40'] },
   conde: { id: 'conde', nombre: 'El Conde Sangrevil', titulo: 'Señor de la Noche Eterna', vida: 5600, vel: 2.2, radio: 1.0, alto: 2.4, dano: 26, fases: 3, color: ['#1a1418', '#a01a2a'] },
 };
 
@@ -214,8 +216,16 @@ export const OBJETIVOS: Record<IdObjetivo, DefObjetivo> = {
   carreta: { id: 'carreta', nombre: 'La carreta', texto: 'Escolta la carreta de reliquias', ayuda: 'Avanza por los rieles cuando estás cerca. Excava los escombros que la tapan y protégela.', glifo: 'carreta' },
   campana: { id: 'campana', nombre: 'La campana', texto: 'Defiende la campana mientras se carga', ayuda: 'Quédate dentro del círculo. Afuera no se carga.', glifo: 'campana' },
   elite: { id: 'elite', nombre: 'Cacería', texto: 'Caza al élite marcado', ayuda: 'Una flecha roja te lleva hasta él.', glifo: 'calavera' },
+  // Sangre y Ceniza 2 (B)
+  exorcismo: { id: 'exorcismo', nombre: 'Exorcismo', texto: 'Purifica las tres campanas embrujadas', ayuda: 'Quédate al lado de cada campana mientras se purifica. Los espectros que la tocan la vuelven a ensuciar.', glifo: 'campana' },
+  cosecha: { id: 'cosecha', nombre: 'Cosecha de sangre', texto: 'Lleva los cristales de sangre al cáliz', ayuda: 'Excava o toca un cristal: te sigue. Llévalo hasta el cáliz (el rayo rojo).', glifo: 'caliz' },
+  cria: { id: 'cria', nombre: 'La Cría', texto: 'Lleva los huevos de gárgola al osario', ayuda: 'Un huevo a la vez: te sigue y te pone lento. Déjalo en el osario del centro.', glifo: 'huevo' },
 };
 export const SECUNDARIOS: Record<IdSecundario, { nombre: string; texto: string; glifo: string }> = {
+  // Las gotas de mercurio del alquimista loco: se escurren cuando te acercas (hay que acorralarlas contra la roca)
+  mercurio: { nombre: 'Gotas de mercurio', texto: 'Atrapa las gotas de mercurio (se escurren)', glifo: 'gota' },
+  // Las campanitas de plata de las Santas, escondidas: suenan cuando pasas cerca
+  campanitas: { nombre: 'Campanitas de plata', texto: 'Encuentra las campanitas (suenan cuando estás cerca)', glifo: 'campana' },
   huevos: { nombre: 'Huevos de dragón de piedra', texto: 'Saca los huevos de las paredes', glifo: 'huevo' },
   frascos: { nombre: 'Frascos de alquimia', texto: 'Recoge los frascos de alquimia', glifo: 'frasco' },
   cofres: { nombre: 'Cofres de reliquias', texto: 'Abre los cofres de reliquias (las llaves las sueltan los élites)', glifo: 'cofre' },

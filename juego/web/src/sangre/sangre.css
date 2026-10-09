@@ -1102,6 +1102,9 @@ body.mano #zona-joystick {
 .menu-titulo .boton-sangre {
   grid-column: 1 / -1;
 }
+.menu-titulo .boton-sangre.medio {
+  grid-column: auto;
+}
 .titulo-pie {
   position: absolute;
   right: max(14px, env(safe-area-inset-right));

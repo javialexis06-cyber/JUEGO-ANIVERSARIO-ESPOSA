@@ -111,7 +111,7 @@ export class PartidaInvitado {
       this.espejo = new Espejo(sim, this.o.local);
       for (const j of sim.J) j.remoto = true;
       const bioma = sim.bioma;
-      await this.o.escena.prepararEtapa(sim.mapa, bioma, this.o.perfiles.map((p, i) => ({ i, cuerpo: p.cuerpo, clase: p.clase, piel: p.piel, pelo: p.pelo })), [...new Set([...bioma.enemigos.map((e) => e.id), 'altar', bioma.jefe, ...(bioma.jefe === 'conde' ? ['conde_alas'] : [])])]);
+      await this.o.escena.prepararEtapa(sim.mapa, bioma, this.o.perfiles.map((p, i) => ({ i, cuerpo: p.cuerpo, clase: p.clase, piel: p.piel, pelo: p.pelo })), [...new Set([...sim.enemigos.map((e) => e.id), 'altar', bioma.jefe, ...(bioma.jefe === 'conde' ? ['conde_alas'] : []), ...(sim.cfg.exp.mision === 'cria' ? ['madre_piedra'] : [])])]);
       this.hud.construir(sim.J[this.o.local], this.o.local);
       this.armando = false;
       if (this.fotoGuardada) this.espejo.aplicar(this.fotoGuardada);

@@ -18,7 +18,8 @@ const A = { NADA: 0, GOLPE: 10, LANZAR: 11, PISOTON: 12, RODAR: 13, GRITO: 14, T
 export function aparecerJefe(sim: Sim) {
   if (sim.jefe >= 0 || sim.jefeVisto) return;
   sim.jefeVisto = true;
-  const id = JEFE_DE_BIOMA[sim.bioma.id] ?? 'golem_osarios';
+  // (La Cría termina con la Madre de Piedra, en cualquier bioma)
+  const id = sim.cfg.exp.mision === 'cria' ? 'madre_piedra' : JEFE_DE_BIOMA[sim.bioma.id] ?? 'golem_osarios';
   const tipo = TIPO_JEFE + JEFES_ORDEN.indexOf(id);
   const vivos = sim.vivos();
   const ref = vivos[0] ?? sim.J[0];
@@ -76,7 +77,7 @@ export function moverJefe(sim: Sim, i: number, dt: number) {
   }
   // Fases por vida
   const frac = E.hp[i] / E.hpMax[i];
-  const fases = id === 'conde' ? 3 : 2;
+  const fases = id === 'conde' || id === 'madre_piedra' ? 3 : 2;
   const nueva = frac < 0.25 && fases === 3 ? 3 : frac < (fases === 3 ? 0.6 : 0.5) ? 2 : 1;
   if (nueva > sim.jefeFase) {
     sim.jefeFase = nueva;
@@ -88,6 +89,17 @@ export function moverJefe(sim: Sim, i: number, dt: number) {
     if (id === 'golem_osarios') invocarEsqueletos(sim, E.x[i], E.y[i], 6);
     if (id === 'obispo_hueco') for (let k = 0; k < 2; k++) aparecerEnemigo(sim, TIPO.inquisidor_muerto, E.x[i] + k * 2 - 1, E.y[i] + 1.5, { desdeTierra: true });
     if (id === 'conde' && nueva === 2) for (let k = 0; k < 2; k++) aparecerEnemigo(sim, TIPO.novia_vampira, E.x[i] + k * 3 - 1.5, E.y[i], {});
+    // La Madre de Piedra: en cada fase nacen sus crías y la piedra la protege mientras vivan
+    if (id === 'madre_piedra') {
+      const n = 3 + sim.n;
+      for (let k = 0; k < n; k++) {
+        const a = (k / n) * Math.PI * 2;
+        aparecerEnemigo(sim, TIPO.gargola, E.x[i] + Math.cos(a) * 2.5, E.y[i] + Math.sin(a) * 2.5, { desdeTierra: true, marcado: 4, vida: 2.5 });
+      }
+      sim.madreBrotes = n;
+      E.escudo[i] = 1e9;
+      sim.aviso(52);
+    }
   }
   const j = sim.jugadorCercano(E.x[i], E.y[i]);
   if (E.golpe[i] > 0) E.golpe[i] = Math.max(0, E.golpe[i] - dt * 5);
@@ -114,6 +126,8 @@ export function moverJefe(sim: Sim, i: number, dt: number) {
       return gusano(sim, i, j, dx, dy, dist, dt, f, est, dano);
     case 'obispo_hueco':
       return obispo(sim, i, j, dx, dy, dist, dt, f, est, dano);
+    case 'madre_piedra':
+      return madre(sim, i, j, dx, dy, dist, dt, f, est, dano);
     default:
       return conde(sim, i, j, dx, dy, dist, dt, f, est, dano);
   }
@@ -477,4 +491,49 @@ function conde(sim: Sim, i: number, j: J, dx: number, dy: number, dist: number, 
   }
   E.estado[i] = A.NADA;
   E.et[i] = f === 3 ? 0.9 : f === 2 ? 1.3 : 1.8;
+}
+
+// ------------------------------------------------------------------------------------------------- La Madre de Piedra
+/** La gárgola madre (final de La Cría): zarpazos, aletazos que barren alrededor, piedras en abanico y, desde la
+ *  segunda fase, lluvia de piedras sobre donde estás. En cada fase la protegen sus crías: mientras vivan, la piedra se
+ *  come casi todo el daño. */
+function madre(sim: Sim, i: number, j: J, dx: number, dy: number, dist: number, dt: number, f: number, est: number, dano: number) {
+  const E = sim.E;
+  if (sim.madreBrotes > 0) {
+    let vivos = 0;
+    for (let k = 0; k < E.max; k++) if (E.vivo[k] && E.marcadoObj[k] === 4) vivos++;
+    sim.madreBrotes = vivos;
+    E.escudo[i] = vivos > 0 ? 1e9 : 0;
+    if (!vivos) sim.aviso(53);
+  }
+  const piedra = TIPO.gargola;
+  if (est === A.NADA) {
+    caminar(sim, i, dx, dy, dist, dt, E.vel[i] * (f >= 2 ? 1.2 : 1));
+    if (E.et[i] > 0) return;
+    const r = sim.az.n();
+    if (dist < 3.6 && r < 0.45) {
+      empezar(sim, i, A.GOLPE, 0.9);
+      const ang = Math.atan2(dy, dx);
+      zonaPeligro(sim, E.x[i] + Math.cos(ang) * 2, E.y[i] + Math.sin(ang) * 2, 2.3, dano * 1.5, 0.9);
+    } else if (r < 0.68) {
+      // Aletazo: barre todo alrededor
+      empezar(sim, i, A.PISOTON, 1.2);
+      zonaPeligro(sim, E.x[i], E.y[i], 5, dano * 1.1, 1.2);
+    } else if (f >= 2 && r < 0.86) {
+      // Lluvia de piedras: caen donde estás y alrededor
+      empezar(sim, i, A.LLUVIA, 1.3);
+      for (const o of sim.vivos()) {
+        zonaPeligro(sim, o.x, o.y, 1.5, dano * 1.2, 1.3);
+        for (let k = 0; k < 2 + f; k++) zonaPeligro(sim, o.x + sim.az.entre(-4, 4), o.y + sim.az.entre(-4, 4), 1.3, dano, 1.1 + 0.15 * k);
+      }
+    } else empezar(sim, i, A.LANZAR, 0.8);
+    return;
+  }
+  if (E.et[i] > 0) return;
+  if (est === A.LANZAR) {
+    const ang = Math.atan2(j.y + j.vy * 0.4 - E.y[i], j.x + j.vx * 0.4 - E.x[i]);
+    abanico(sim, E.x[i], E.y[i], ang, f === 3 ? 7 : 5, 0.9, 8, dano * 0.7, piedra, 0.38);
+  }
+  E.estado[i] = A.NADA;
+  E.et[i] = f === 3 ? 1.2 : f === 2 ? 1.6 : 2.2;
 }

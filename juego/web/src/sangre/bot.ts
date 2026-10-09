@@ -190,10 +190,30 @@ export function elegirMeta(sim: Sim, j: Jugador): { x: number; y: number; cava: 
       }
     if (mejor) return { ...mejor, cava: true };
   }
+  // El Relicario de la Procesión: quedarse al lado mientras se abre
+  for (const e of sim.ent) if (e.vivo && e.tipo === ENT.RELICARIO && e.est !== 2) return Math.hypot(e.x - j.x, e.y - j.y) < 1.5 ? null : { x: e.x, y: e.y, cava: true };
+  // Lo que lleva (cristal o huevo): al cáliz o al osario, aunque el objetivo ya esté (los de más dan premio)
+  const lleva = sim.ent.find((e) => e.vivo && (e.tipo === ENT.CRISTAL || e.tipo === ENT.HUEVO_GARGOLA) && e.est === 1 && e.quien === j.i);
+  if (lleva) {
+    const meta = sim.ent.find((e) => e.vivo && e.tipo === (lleva.tipo === ENT.CRISTAL ? ENT.CALIZ : ENT.OSARIO));
+    if (meta) return { x: meta.x, y: meta.y, cava: true };
+  }
   // Objetivo
   const o = sim.obj;
   if (!o.hecho) {
     switch (o.tipo) {
+      case 'exorcismo': {
+        const e = sim.ent.filter((x) => x.vivo && x.tipo === ENT.CAMPANA_EXO && x.est !== 2).sort((a, b) => Math.hypot(a.x - j.x, a.y - j.y) - Math.hypot(b.x - j.x, b.y - j.y))[0];
+        if (e) return Math.hypot(e.x - j.x, e.y - j.y) < 1.5 ? null : { x: e.x, y: e.y, cava: true };
+        break;
+      }
+      case 'cosecha':
+      case 'cria': {
+        const tipo = o.tipo === 'cosecha' ? ENT.CRISTAL : ENT.HUEVO_GARGOLA;
+        const e = sim.ent.filter((x) => x.vivo && x.tipo === tipo && x.est === 0).sort((a, b) => Math.hypot(a.x - j.x, a.y - j.y) - Math.hypot(b.x - j.x, b.y - j.y))[0];
+        if (e) return { x: e.x, y: e.y, cava: true };
+        break;
+      }
       case 'hierro':
         return veta(sim, j, C.HIERRO);
       case 'altares': {
@@ -243,7 +263,8 @@ export function elegirMeta(sim: Sim, j: Jugador): { x: number; y: number; cava: 
     const v = veta(sim, j, C.HUEVO);
     if (v && Math.hypot(v.x - j.x, v.y - j.y) < 18) return v;
   }
-  const f = cercano(sim, j, (r) => r.tipo === REC.FRASCO || r.tipo === REC.HUEVO || r.tipo === REC.ROSA || r.tipo === REC.PLUMA || r.tipo === REC.HONGO || esMineral(r.tipo), 20);
+  const f = cercano(sim, j, (r) => r.tipo === REC.FRASCO || r.tipo === REC.HUEVO || r.tipo === REC.ROSA || r.tipo === REC.PLUMA || r.tipo === REC.HONGO || r.tipo === REC.MERCURIO
+    || r.tipo === REC.CAMPANITA || esMineral(r.tipo), 20);
   if (f) return { x: f.x, y: f.y, cava: true };
   // Vetas de oro y sangre cerca
   // (la más cercana de las vetas que pagan: minerales, oro o sangre)

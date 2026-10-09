@@ -38,7 +38,7 @@ export interface EstadoHud {
   suc: Sucesos;
   eclipse: number;
   mapa: { rieles: { x: number; y: number }[] };
-  cfg: { etapa: number; final: boolean; exp: { infinito?: boolean; etapas?: number } };
+  cfg: { etapa: number; final: boolean; exp: { infinito?: boolean; etapas?: number; mision?: string } };
   /** Sin reloj (tutorial). */
   sinReloj?: boolean;
 }
@@ -98,6 +98,14 @@ const AVISOS: Record<number, (a: number, b: number, nombre: (i: number) => strin
   44: () => ['El campanario calla: dejó dos cofres y oro.', 'grande'],
   45: () => ['¡Las armaduras del castillo despiertan cuando pasas cerca!', 'peligro'],
   46: () => ['El fantasma del Conde te busca: no se muere, solo se esquiva.', 'peligro'],
+  47: (a, b) => [`Campana purificada (${a}/${b}).`, 'grande'],
+  48: (a, b) => [`Huevo en el osario (${a}/${b}): ¡las gárgolas despiertan!`, 'peligro'],
+  49: (a, b) => [`Cristal en el cáliz (${a}/${b}).`],
+  50: () => ['¡El Relicario se abrió! Una reliquia para cada uno. ¡A la campana!', 'grande'],
+  51: () => ['La carreta llegó: ¡abran el Relicario mientras los monjes lo apagan!', 'peligro'],
+  52: () => ['¡Nacen las crías de la Madre de Piedra! Mientras vivan, la piedra la protege.', 'peligro'],
+  53: () => ['Las crías cayeron: la Madre de Piedra queda expuesta.', 'grande'],
+  54: (a, b) => [`¡Huevo de más (${a - b})! Premio aparte: oro y almas.`, 'grande'],
 };
 
 /** La leyenda de la visión astral: qué es cada color. */
@@ -304,7 +312,7 @@ export class Hud {
       el.innerHTML = comp.map((o) => `<div class="companero${o.estado === 1 ? ' caido' : ''}"><span>${esc(this.nombre(o.i))}${o.estado === 1 ? ' · caído' : o.estado === 2 ? ' · fuera' : ''}</span><div class="barra"><i style="width:${Math.max(0, (o.hp / o.hpMax) * 100).toFixed(0)}%"></i></div></div>`).join('');
     });
     // Etapa, barra de avance y objetivo
-    this.texto('etapa', est.cfg.exp.infinito ? `Etapa ${est.cfg.etapa} · infinito${est.cfg.final ? ' · jefe' : ''}` : `Etapa ${est.cfg.etapa}${est.cfg.final ? ' · jefe' : ''} de ${est.cfg.exp.etapas ?? ETAPAS}`);
+    this.texto('etapa', est.cfg.exp.infinito ? `Etapa ${est.cfg.etapa} · infinito${est.cfg.final ? ' · jefe' : ''}` : `${est.cfg.exp.mision === 'procesion' ? 'La Procesión · ' : est.cfg.exp.mision === 'cria' ? 'La Cría · ' : ''}Etapa ${est.cfg.etapa}${est.cfg.final && !est.cfg.exp.mision ? ' · jefe' : ''} de ${est.cfg.exp.etapas ?? (est.cfg.exp.mision ? 3 : ETAPAS)}`);
     const enJuego = est.fase === 'juego' && !est.sinReloj;
     this.ver('avanceB', enJuego);
     let titulo = '';

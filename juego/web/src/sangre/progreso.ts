@@ -55,6 +55,8 @@ export interface UltimaEleccion {
   mutadores: IdMutador[];
   equipo: Partial<Record<RanuraEquipo, string>>;
   infinito?: boolean;
+  /** La misión de tres etapas escogida (La Procesión o La Cría). */
+  mision?: 'procesion' | 'cria';
 }
 
 export interface ProgresoSangre {
@@ -154,6 +156,7 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
     p.ultima = {
       clase: u.clase as IdClase, spec: Math.floor(num(u.spec, 0, 2)), bioma: u.bioma as IdBioma, peligro: Math.max(1, Math.floor(num(u.peligro, 1, 5))),
       mutadores: lista(u.mutadores, MUTADORES_TODOS), equipo: eq, infinito: u.infinito === true,
+      ...(u.mision === 'procesion' || u.mision === 'cria' ? { mision: u.mision } : {}),
     };
   }
   return p;

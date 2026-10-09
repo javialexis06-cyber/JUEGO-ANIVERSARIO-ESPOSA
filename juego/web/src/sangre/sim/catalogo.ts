@@ -2,7 +2,7 @@
 // misma piscina, las armas les apuntan igual y el dibujo los pinta con el mismo sistema de instancias por piezas.
 import { ENEMIGOS_LISTA, JEFES, type DefEnemigo } from '../datos/mundo';
 
-export const JEFES_ORDEN = ['golem_osarios', 'abadesa', 'gusano_sangre', 'obispo_hueco', 'conde'] as const;
+export const JEFES_ORDEN = ['golem_osarios', 'abadesa', 'gusano_sangre', 'obispo_hueco', 'conde', 'madre_piedra'] as const;
 export const TIPO_ALTAR = ENEMIGOS_LISTA.length;
 export const TIPO_JEFE = TIPO_ALTAR + 1;
 

@@ -316,7 +316,9 @@ export class Zona {
 }
 
 // ------------------------------------------------------------------------------------------------- Recogibles
-export const REC = { ALMA_AZUL: 0, ALMA_VERDE: 1, ALMA_ROJA: 2, ORO: 3, HIERRO: 4, SANGRE: 5, COMIDA: 6, COFRE: 7, LLAVE: 8, FRASCO: 9, EQUIPO: 10, HUEVO: 11, GOTA: 12, IMAN: 13, ROSA: 14, PLUMA: 15, HONGO: 16, MINERAL: 17 } as const;
+export const REC = { ALMA_AZUL: 0, ALMA_VERDE: 1, ALMA_ROJA: 2, ORO: 3, HIERRO: 4, SANGRE: 5, COMIDA: 6, COFRE: 7, LLAVE: 8, FRASCO: 9, EQUIPO: 10, HUEVO: 11, GOTA: 12, IMAN: 13, ROSA: 14, PLUMA: 15, HONGO: 16, MINERAL: 17,
+  // (después de los seis minerales: las gotas de mercurio y las campanitas de plata)
+  MERCURIO: 23, CAMPANITA: 24 } as const;
 /** Los minerales son seis recogibles seguidos: REC.MINERAL + índice del mineral (MINERALES_ORDEN). */
 export const esMineral = (t: number) => t >= REC.MINERAL && t < REC.MINERAL + 6;
 
@@ -372,7 +374,13 @@ export class Aliado {
 }
 
 // ------------------------------------------------------------------------------------------------- Entidades de objetivo
-export const ENT = { ALTAR: 0, PRISIONERO: 1, CARRETA: 2, CAMPANA_DEF: 3, COFRE_RELIQUIA: 4, SANTUARIO: 5, EXTRACCION: 6, COFRE_MALDITO: 7, SEPULCRO: 8, SUMINISTRO: 9, VAGONETA: 10, PINCHOS: 11, ARMADURA: 12, CAMPANARIO: 13 } as const;
+export const ENT = {
+  ALTAR: 0, PRISIONERO: 1, CARRETA: 2, CAMPANA_DEF: 3, COFRE_RELIQUIA: 4, SANTUARIO: 5, EXTRACCION: 6, COFRE_MALDITO: 7, SEPULCRO: 8, SUMINISTRO: 9, VAGONETA: 10,
+  PINCHOS: 11, ARMADURA: 12, CAMPANARIO: 13,
+  // Sangre y Ceniza 2 (B): el cáliz y sus cristales (Cosecha), los huevos de gárgola y el osario (La Cría), las campanas
+  // embrujadas (Exorcismo) y el Relicario (final de La Procesión)
+  CALIZ: 14, CRISTAL: 15, HUEVO_GARGOLA: 16, OSARIO: 17, CAMPANA_EXO: 18, RELICARIO: 19,
+} as const;
 
 export class Entidad {
   vivo = true;

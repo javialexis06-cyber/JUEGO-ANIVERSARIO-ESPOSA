@@ -127,6 +127,50 @@ la noche, y a salir vivos en la **Campana de Extracción** antes de que la horda
 - **Potencia y daño de estados** (fase 2): dos estadísticas nuevas. La **potencia** pone más carga de quema, veneno,
   sangrado y frío en cada golpe; el **daño de estados** sube lo que pegan esas cargas. Salen al subir de nivel (Mano de
   boticario, Saña; pesan solo si algo pone estados), en la Forja (Estuche del boticario, Sal amarga) y en el Pozo.
+- **Reliquias por hitos de la cuenta** (fase 4, como los artefactos de Deep Rock): 26 reliquias nuevas (44 en total)
+  que no salen hasta cumplir su hito: «Vuelve a tirar 5 veces», «Llega a +75 % de velocidad de ataque», «Gasta 2 500 de
+  oro en la Forja», «Excava 3 000 rocas», «Haz 1 337 de daño de un solo golpe», «Mata a un jefe con menos de 30 de
+  vida»… (`HITOS_RELIQUIA` en `logros.ts`; lo ganado en `p.reliquias`). Los resultados anuncian las que se abren y los
+  Logros tienen la pestaña **Reliquias** con su avance. Cifras nuevas para eso en el resumen del jugador y en
+  `cifras` (`oroGastado`, `proyectiles`).
+- **Desafíos** (fase 4, botón del título; `datos/desafios.ts`):
+  - **Contrato del día y de la semana**: la misma expedición para los dos (sale de la fecha de Colombia: bioma,
+    peligro 3 o 4, dos o tres mutadores malos y uno bueno). Se guarda hasta dónde llegó cada uno y la tarjeta compara
+    con el otro (Él con Ella). Ganarlo paga 150 / 400 de ceniza y 1 / 2 puntos de maestría, una vez. No abren biomas
+    ni peligros. Logro «Trato hecho».
+  - **Pruebas de maestría**: de un **arma** (3 etapas solo con ella, en el nivel 4 y con +60 % de daño; ganarla le da
+    +12 % de daño para siempre, también a su evolución), de una **clase** (5 etapas sin curación) y de un **bioma**
+    (10 etapas con jefe en la 5 y en la 10). Dan **puntos de maestría** (1, 2, 3) y ceniza (120, 300, 500).
+  - **Expediciones anómalas**: Aprendiz sangriento, Solo minería, Locura de mutadores, Pies de plomo, Un golpe y adiós
+    y A la antigua. Cuestan un punto de maestría y dan el doble de ceniza. Logro «Lo nunca visto».
+- **17 mutadores nuevos** (fase 4, 30 en total; en la fila se ordenan con los escogidos primero y se desliza de lado):
+  lunas buenas (Luna de cosecha, Luna bendita, Mercado negro, Luna de reliquias) y malos (El fantasma del Conde, Armas
+  oxidadas, Campana borracha, Escasez, Hambruna, Muertos tercos, Acorazados, Cadáveres hinchados, Barro hasta las
+  rodillas, Marea de muertos, Guardián furioso, Tinieblas, Sin suministros).
+- **Misiones de tres etapas** (fase 4, B; en la expedición, «Modo: Cinco etapas / Infinito / La Procesión / La
+  Cría»; se abren al ganar la primera expedición; no cuentan para abrir biomas ni peligros):
+  - **La Procesión**: las tres etapas son de escoltar la carreta de reliquias por los rieles. En la tercera no hay
+    sepulcros ni jefe: cuando la carreta llega (o se rompe y se llena la barra) aparece **el Relicario**, la capilla
+    de oro en andas; hay que quedarse al lado 100 s mientras los **monjes caídos** vienen en oleadas a apagarlo (si lo
+    tocan, se devuelve). Abierto, **cada uno escoge una reliquia** y baja la campana. Logro «La Procesión».
+  - **La Cría**: las tres etapas son de **huevos de gárgola** (en los rincones y detrás de la roca): se tocan y siguen
+    a quien los tomó (uno a la vez, y te pone 28 % más lento) hasta **el osario** del centro, el nido de piedra con la
+    gárgola vigía. Cada huevo que llega despierta gárgolas. La cuota (2 + uno por jugador) deja **huevos de más**: el que se arriesga por
+    ellos se lleva oro y almas aparte. En la tercera hay que llevarlos todos: el último (o la barra llena) despierta a **la
+    Madre de Piedra** (jefe de 3 fases: zarpazos, aletazo, lluvia de piedras, escupe gárgolas; en cada fase nacen sus
+    crías y mientras vivan la piedra la protege). Logro «Madre de Piedra».
+- **Objetivos nuevos** (fase 4, para todas las expediciones): **Exorcismo** (tres campanas embrujadas lejos unas de
+  otras: quedarse al lado 40 s de cada una mientras los espectros vienen a ensuciarla) y **Cosecha de sangre**
+  (cristales de sangre regados, algunos detrás de la roca: se tocan, te siguen y se llevan al **cáliz**, que echa un
+  rayo rojo). Secundarios nuevos: **gotas de mercurio** (se escurren cuando te acercas: hay que acorralarlas; el imán
+  no las atrae) y **campanitas de plata** de las Santas (escondidas; suenan y brillan cuando pasas cerca).
+- **El infinito que crece** (fase 4, I): las **diez primeras etapas son cortas y llenas** (la barra se llena 40 % más
+  rápido con el tiempo y sale 20 % más horda) y **desde la once, el salto** (vida ×1,5 y daño ×1,2 encima de lo de
+  siempre). **El mapa crece** 6 casillas por lado cada cuatro etapas (68 → 110). Desde la sexta etapa, **capas
+  mezcladas**: los enemigos del bioma de arriba salen también (menos seguido), las catacumbas con muertos del
+  cementerio, las minas con los de las catacumbas… **Tope de 15 reliquias** (después, los cofres de reliquias dan
+  oro). **La bajada se guarda** al salir de la Forja cuando se juega solo (`bajada.ts`, en el aparato): si el celular
+  cierra el juego, el título muestra «Seguir · N» (la etapa) y se sigue con todo lo que se llevaba.
 
 ## Cómo se pelea (lo mejor del género)
 
@@ -307,7 +351,8 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
     (cada 6 paredes rotas, la siguiente revienta: rompe roca y vetas y lastima alrededor).
   - Nueva estadística `vetas` (cuánto más dan las vetas): carta de subir de nivel «Olfato de minero» (+15 %) y mejora
     del Pozo «Ojo de minero» (+10 % por nivel, hasta 5).
-- **Modo infinito** (en la expedición, «Modo: Cinco etapas / Infinito»; se abre al ganar la primera expedición):
+- **Modo infinito** (en la expedición, «Modo: Cinco etapas / Infinito / …»; se abre al ganar la primera expedición;
+  lo que creció en la fase 4 está arriba, en «El infinito que crece»):
   etapas sin fin con jefe cada cinco, y los biomas abiertos se turnan cada cinco etapas desde el escogido
   (`cfg.rotacion`, la arma el anfitrión: en grupo todos van igual). Desde la sexta etapa cada una es mucho más dura
   (vida ×1,3, daño ×1,1, más horda y más élites por etapa) y las almas ya no valen más: el poder del jugador se
@@ -413,10 +458,10 @@ atacar, morir). Mirando hacia +Y de Blender. Altura de un zombi ≈ 1,1 m (los p
 | Archivo | Nodos | Qué es |
 |---|---|---|
 | `enemigos.glb` | `enemigo_<id>` | zombi, zombi_gordo, esqueleto, esqueleto_arquero, cuervo, perro_huesos, ghoul, arana_cripta, espectro, minero_maldito, rata_peste, abominacion, lacayo_explosivo, monje_caido, gargola, inquisidor_muerto, nigromante, vampiro, novia_vampira, hombre_lobo, murcielago, caballero_muerte; los del botín: rata_tesoro, rata_dorada, ladron_tumbas |
-| `jefes.glb` | `jefe_<id>` | golem_osarios, abadesa, gusano_sangre, obispo_hueco, conde (con capa `extra_capa` y fase 2 `extra_alas`) |
+| `jefes.glb` | `jefe_<id>` | golem_osarios, abadesa, gusano_sangre, obispo_hueco, conde (con capa `extra_capa` y fase 2 `extra_alas`), madre_piedra (La Cría: alas y cola) |
 | `armas.glb` | `arma_<id>` | espada_larga, horca, grillete, maza, escudo, ballesta, martillo, frasco, pala, incensario, hacha_verdugo, baston_cuervos, laud, guadana, antorcha, estaca, lanza, mangual, daga, arco (y las que hagan falta), con origen en el mango |
 | `proyectiles.glb` | `p_<id>` | virote, flecha, estaca, frasco_roto, nota_musical, pluma_cuervo, hueso, bola_fuego, rayo_sagrado, cadena_eslabon |
-| `cosas.glb` | `c_<id>` | alma_azul, alma_verde, alma_roja, oro, hierro_negro, sangre_cristal, pierna_pollo, cofre, cofre_reliquia, llave, campana_extraccion, altar_sangre, carreta, prisionero_cadenas, pozo_almas, forja, torreta_ballesta, trampa, tumba_abierta, totem_maleficio, frasco_alquimia, huevo_dragon, sepulcro, sepulcro_abierto, rosa_velo, pluma_grifo, hongo_tumba, ataud_suministros, ataud_abierto, veta_<mineral> y mineral_<mineral> (los seis), veta_grisu, columna_hueso, pinchos_placa, pinchos_puas |
+| `cosas.glb` | `c_<id>` | alma_azul, alma_verde, alma_roja, oro, hierro_negro, sangre_cristal, pierna_pollo, cofre, cofre_reliquia, llave, campana_extraccion, altar_sangre, carreta, prisionero_cadenas, pozo_almas, forja, torreta_ballesta, trampa, tumba_abierta, totem_maleficio, frasco_alquimia, huevo_dragon, sepulcro, sepulcro_abierto, rosa_velo, pluma_grifo, hongo_tumba, ataud_suministros, ataud_abierto, veta_<mineral> y mineral_<mineral> (los seis), veta_grisu, columna_hueso, pinchos_placa, pinchos_puas, campana_exorcismo, caliz_sangre, cristal_sangre, huevo_gargola, osario, relicario, relicario_abierto, gota_mercurio, campanita_plata |
 | `bioma_<id>.glb` | `piso_*`, `pared_*`, `veta_*`, `deco_*`, `luz_*` | cementerio, catacumbas, minas, abadia, castillo: losas/tierra de piso en bloques de 2×2 m, **bloques de pared excavables** de 1×1×1,5 m (`pared_blanda_a/b/c`, `pared_dura_a/b`, `pared_borde`), vetas (`veta_hierro`, `veta_sangre`, `veta_oro`), y decoración (lápidas, mausoleos, cruces, nichos con calaveras, cadenas, rieles, vagonetas, vitrales, bancas, candelabros, tapices…), `luz_antorcha`/`luz_vela` con un nodo vacío `llama` donde va la luz |
 | `../ropa/sangre_<clase>_{el,ella}.glb` | igual que la ropa de la casa | el traje serio de cada clase para el cuerpo de Él y el de Ella, con el esqueleto de la ropa (`ropa*.py`): monarca, campesino, prisionero, caballero, cazador, herrero, alquimista, sepulturero, inquisidor, verdugo, bruja, juglar |
 
