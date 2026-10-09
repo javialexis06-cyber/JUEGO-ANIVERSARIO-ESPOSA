@@ -157,6 +157,24 @@ export interface ResumenJugador {
   botin?: number;
   /** Minerales recogidos (los seis juntos). */
   minerales?: number;
+  // Lo que miden las proezas que abren reliquias (Sangre y Ceniza 2, L6)
+  tiradas?: number;
+  esquivas?: number;
+  vidaMax?: number;
+  cadMax?: number;
+  critMax?: number;
+  armMax?: number;
+  golpeMax?: number;
+  danoFuego?: number;
+  danoHielo?: number;
+  /** Bits de los tipos de daño que hizo (físico, fuego, sagrado, veneno, sangre, sombra, hielo). */
+  tipos?: number;
+  curado?: number;
+  quietoMuertes?: number;
+  proyectiles?: number;
+  oroGastado?: number;
+  /** Mató a un jefe con menos de 30 de vida. */
+  cicatriz?: number;
 }
 
 export class Jugador {
@@ -255,7 +273,8 @@ export class Jugador {
   almasEscudo = 0;
   resumen: ResumenJugador = {
     muertes: 0, elites: 0, dano: 0, excavadas: 0, oro: 0, hierro: 0, sangre: 0, almas: 0, ejecuciones: 0, levantados: 0, frascos: 0, altares: 0,
-    prisioneros: 0, bendiciones: 0, caidas: 0, botin: 0,
+    prisioneros: 0, bendiciones: 0, caidas: 0, botin: 0, tiradas: 0, esquivas: 0, vidaMax: 0, cadMax: 0, critMax: 0, armMax: 0, golpeMax: 0, danoFuego: 0,
+    danoHielo: 0, tipos: 0, curado: 0, quietoMuertes: 0, proyectiles: 0, oroGastado: 0, cicatriz: 0,
   };
   /** Para mostrar el número al pegar: hasta cuándo no se vuelve a mostrar el de este jugador. */
   ultimoNumero = 0;
@@ -350,6 +369,31 @@ export class Jugador {
     }
     if (this.tiene('paso_fantasma')) st.velocidad += 0.1;
     if (this.tiene('eclipse_propio')) st.luz -= 0.2;
+    if (this.tiene('libro_rencores')) st.experiencia += 0.1;
+    if (this.tiene('herradura_vieja')) st.suerte += 15;
+    if (this.tiene('bandolera')) {
+      st.cadencia += 0.5;
+      st.velocidad -= 0.15;
+    }
+    if (this.tiene('grasa_armadura')) st.velocidad += 0.05;
+    if (this.tiene('tasajo')) {
+      st.vida += 80;
+      st.regen += 2;
+    }
+    if (this.tiene('cinto_brasas')) etq.fuego = (etq.fuego ?? 0) + 0.15;
+    if (this.tiene('cinto_escarcha')) etq.hielo = (etq.hielo ?? 0) + 0.15;
+    if (this.tiene('diario_difunto')) {
+      st.dano += 0.1;
+      st.cadencia += 0.1;
+      st.critico += 0.05;
+      st.danoCritico += 0.15;
+    }
+    if (this.tiene('pico_largo')) st.excavar += 0.3;
+    if (this.tiene('monoculo')) {
+      st.critico += 0.3;
+      st.danoCritico += 1;
+      st.dano -= 0.3;
+    }
     // Límites
     st.esquiva = Math.min(0.6, Math.max(0, st.esquiva));
     st.velocidad = Math.max(-0.5, st.velocidad);
@@ -357,6 +401,12 @@ export class Jugador {
     st.enfriamiento = Math.min(0.6, st.enfriamiento);
     st.vida = Math.max(20, st.vida);
     this.st = st;
+    // (para las proezas: lo más alto que llegó en la expedición)
+    const r = this.resumen;
+    r.vidaMax = Math.max(r.vidaMax ?? 0, st.vida);
+    r.cadMax = Math.max(r.cadMax ?? 0, st.cadencia);
+    r.critMax = Math.max(r.critMax ?? 0, st.critico);
+    r.armMax = Math.max(r.armMax ?? 0, st.armadura);
     this.etq = etq;
     const antes = this.hpMax;
     this.hpMax = Math.round(st.vida);
@@ -373,7 +423,9 @@ export class Jugador {
   }
 
   get velocidad() {
-    return VEL_BASE * Math.max(0.3, 1 + this.st.velocidad + this.buffVel + (this.auraT > 0 ? this.auraVel : 0) + (this.prisaT > 0 ? 0.12 * this.don('aire_libre') : 0));
+    // (hierro en salmuera: el hierro del bolsillo pesa)
+    const salmuera = this.tiene('hierro_salmuera') ? Math.min(0.3, this.hierro * 0.005) : 0;
+    return VEL_BASE * Math.max(0.3, 1 - salmuera + this.st.velocidad + this.buffVel + (this.auraT > 0 ? this.auraVel : 0) + (this.prisaT > 0 ? 0.12 * this.don('aire_libre') : 0));
   }
   get radioIman() {
     return IMAN_BASE * (1 + this.st.iman);

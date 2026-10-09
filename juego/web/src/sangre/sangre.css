@@ -2756,3 +2756,19 @@ img.ico-render {
   vertical-align: -2px;
   color: var(--oro);
 }
+/* Pestañas (logros y reliquias) */
+.pestanas {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 6px;
+}
+.pestanas .boton.activo {
+  border-color: var(--oro);
+  color: var(--oro-claro);
+  box-shadow: 0 0 10px rgba(201, 160, 70, 0.35);
+}
+.pestanas .boton svg {
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+}

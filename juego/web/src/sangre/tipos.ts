@@ -302,6 +302,8 @@ export interface PerfilJugador {
   arsenal: string[];
   /** Armas comunes desbloqueadas (por logros). */
   comunes: string[];
+  /** Reliquias de hitos que la cuenta ya abrió (las de siempre salen sin estar aquí). */
+  reliquias?: string[];
   tiradas: number; // volver a tirar por expedición
   vetos: number; // descartar por expedición
   cuerpo: 'el' | 'ella';

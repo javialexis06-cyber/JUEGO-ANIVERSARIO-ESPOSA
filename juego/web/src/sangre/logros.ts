@@ -143,3 +143,65 @@ export function aplicarDesbloqueos(p: ProgresoSangre) {
     arma('ira_cielo');
   }
 }
+
+// ------------------------------------------------------------------------------------------------- Reliquias por hitos
+// Sangre y Ceniza 2 (L6, como los artefactos de Deep Rock): las reliquias nuevas solo salen en los cofres cuando la
+// cuenta cumplió su proeza (algunas, desde el comienzo). Se revisan al terminar cada expedición, con lo que midió el
+// jugador en ella (`j.resumen`) y las cifras de la cuenta (`p.cifras`, ya sumadas).
+export interface DefHito {
+  desc: string;
+  hecho: (d: DatosLogro) => boolean;
+  /** Para la barra de avance (0-1), si se puede medir de a poquitos en la cuenta. */
+  avance?: (p: ProgresoSangre) => number;
+}
+const r = (d: DatosLogro) => d.j.resumen;
+const bits = (n: number) => {
+  let k = 0;
+  for (; n; n &= n - 1) k++;
+  return k;
+};
+export const HITOS_RELIQUIA: Record<string, DefHito> = {
+  herradura_vieja: { desc: 'Vuelve a tirar 5 veces en una expedición.', hecho: (d) => (r(d).tiradas ?? 0) >= 5 },
+  bandolera: { desc: 'Llega a +75 % de velocidad de ataque.', hecho: (d) => (r(d).cadMax ?? 0) >= 0.75 },
+  grimorio_olvidado: { desc: 'Llega al nivel 50 en una expedición.', hecho: (d) => d.j.nivel >= 50 },
+  grasa_armadura: { desc: 'Esquiva 100 golpes en una expedición.', hecho: (d) => (r(d).esquivas ?? 0) >= 100 },
+  tasajo: { desc: 'Llega a 300 de vida máxima.', hecho: (d) => (r(d).vidaMax ?? 0) >= 300 },
+  cinto_brasas: { desc: 'Haz 250 000 de daño de fuego en una expedición.', hecho: (d) => (r(d).danoFuego ?? 0) >= 250_000 },
+  cinto_escarcha: { desc: 'Haz 100 000 de daño de hielo en una expedición.', hecho: (d) => (r(d).danoHielo ?? 0) >= 100_000 },
+  iman_gremio: { desc: 'Recoge 2 000 almas en una expedición.', hecho: (d) => r(d).almas >= 2000 },
+  diario_difunto: { desc: 'Pierde 3 expediciones.', hecho: (d) => d.p.cifras.expediciones - d.p.cifras.victorias >= 3,
+    avance: (p) => Math.min(1, (p.cifras.expediciones - p.cifras.victorias) / 3) },
+  bula_obispo: { desc: 'Gasta 2 500 de oro en la Forja (en total).', hecho: (d) => d.p.cifras.oroGastado >= 2500, avance: (p) => Math.min(1, p.cifras.oroGastado / 2500) },
+  varita_zahori: { desc: 'Junta 250 de oro en una expedición.', hecho: (d) => r(d).oro >= 250 },
+  queso_podrido: { desc: 'Tumba 3 bichos del botín en una expedición.', hecho: (d) => (r(d).botin ?? 0) >= 3 },
+  botas_salto: { desc: 'Excava 200 rocas en una expedición.', hecho: (d) => r(d).excavadas >= 200 },
+  navaja_multiusos: { desc: 'Haz 5 tipos de daño en una expedición (físico, fuego, sagrado, veneno, sangre, sombra, hielo).', hecho: (d) => bits(r(d).tipos ?? 0) >= 5 },
+  dado_tahur: { desc: 'Gasta 8 000 de oro en la Forja (en total).', hecho: (d) => d.p.cifras.oroGastado >= 8000, avance: (p) => Math.min(1, p.cifras.oroGastado / 8000) },
+  pico_largo: { desc: 'Excava 3 000 rocas (en total).', hecho: (d) => d.p.cifras.excavadas >= 3000, avance: (p) => Math.min(1, p.cifras.excavadas / 3000) },
+  hierro_salmuera: { desc: 'Haz 1 337 de daño de un solo golpe.', hecho: (d) => (r(d).golpeMax ?? 0) >= 1337 },
+  puntas_acero: { desc: 'Dispara 50 000 proyectiles (en total).', hecho: (d) => d.p.cifras.proyectiles >= 50_000, avance: (p) => Math.min(1, p.cifras.proyectiles / 50_000) },
+  tripode: { desc: 'Tumba 300 muertos sin moverte en una expedición.', hecho: (d) => (r(d).quietoMuertes ?? 0) >= 300 },
+  costra: { desc: 'Llega a 30 de armadura.', hecho: (d) => (r(d).armMax ?? 0) >= 30 },
+  monoculo: { desc: 'Llega a 50 % de crítico.', hecho: (d) => (r(d).critMax ?? 0) >= 0.5 },
+  galleta_monje: { desc: 'Cúrate 1 500 de vida en una expedición.', hecho: (d) => (r(d).curado ?? 0) >= 1500 },
+  cicatriz: { desc: 'Mata a un jefe con menos de 30 de vida.', hecho: (d) => (r(d).cicatriz ?? 0) > 0 },
+  engranaje_relojero: { desc: 'Lleva 8 sobrecargas a la vez en una expedición.', hecho: (d) => d.j.armas.reduce((n, a) => n + a.sobrecargas.length, 0) >= 8 },
+};
+
+/** Las reliquias que se abrieron en esta expedición (y las de siempre, la primera vez). */
+export function revisarReliquias(d: DatosLogro): string[] {
+  const nuevas: string[] = [];
+  for (const [id, h] of Object.entries(HITOS_RELIQUIA)) {
+    if (d.p.reliquias.includes(id)) continue;
+    let ok = false;
+    try {
+      ok = h.hecho(d);
+    } catch {
+      ok = false;
+    }
+    if (!ok) continue;
+    d.p.reliquias.push(id);
+    nuevas.push(id);
+  }
+  return nuevas;
+}

@@ -9,6 +9,9 @@ import { TIPOS, TIPO_ALTAR, esJefe } from './catalogo';
 import { Aliado, ENT, Entidad, Enemigos, Proyectil, REC, Recogible, S, Sucesos, Zona } from './estado';
 import { CampoFlujo } from './flujo';
 import { BIT_ETQ, RADIO_JUGADOR, type Jugador, xpPara } from './jugador';
+
+/** Los tipos de daño que cuenta la Navaja multiusos (para abrirla: hacer cinco en una expedición). */
+const TIPOS_DANO = BIT_ETQ.fisico | BIT_ETQ.fuego | BIT_ETQ.sagrado | BIT_ETQ.veneno | BIT_ETQ.sangre | BIT_ETQ.sombra | BIT_ETQ.hielo;
 import { generarMapa, type Mapa } from './mapa';
 import { actualizarArmas, moverProyectiles, moverZonas } from './armas';
 import { dirigirHorda, moverEnemigos, aparecerEnemigo } from './enemigos_ia';
@@ -226,8 +229,11 @@ export class Sim {
     // Los bichos del botín de la etapa: ratas del tesoro repartidas, a veces una rata dorada y, desde la segunda etapa,
     // a veces un ladrón de tumbas
     if (!cfg.exp.tutorial) {
-      const ratas = 3 + (cfg.etapa >= 3 ? 1 : 0);
+      // (el queso podrido atrae el doble)
+      const queso = this.J.some((j) => j.tiene('queso_podrido')) ? 2 : 1;
+      const ratas = (3 + (cfg.etapa >= 3 ? 1 : 0)) * queso;
       for (let k = 0; k < ratas; k++) this.botinPlan.push({ t: 35 + (k + this.az.n() * 0.8) * (265 / ratas), id: 'rata_tesoro' });
+      if (queso > 1) this.botinPlan.push({ t: this.az.entre(60, 260), id: 'ladron_tumbas' });
       if (this.az.n() < (cfg.exp.peligro >= 3 ? 0.35 : 0.25)) this.botinPlan.push({ t: this.az.entre(60, 260), id: 'rata_dorada' });
       if (cfg.etapa >= 2 && this.az.n() < 0.55) this.botinPlan.push({ t: this.az.entre(80, 280), id: 'ladron_tumbas' });
       this.botinPlan.sort((a, b) => a.t - b.t);
@@ -528,7 +534,12 @@ export class Sim {
     if (g.aturde > 0 && !esJefe(t)) E.aturdido[i] = Math.max(E.aturdido[i], g.aturde * (E.elite[i] ? 0.5 : 1));
     if (j) {
       const real = Math.min(d, Math.max(0, antes));
-      j.resumen.dano += real;
+      const r = j.resumen;
+      r.dano += real;
+      if (real > (r.golpeMax ?? 0)) r.golpeMax = real;
+      if (g.etq & BIT_ETQ.fuego) r.danoFuego = (r.danoFuego ?? 0) + real;
+      if (g.etq & BIT_ETQ.hielo) r.danoHielo = (r.danoHielo ?? 0) + real;
+      r.tipos = (r.tipos ?? 0) | (g.etq & TIPOS_DANO);
       if (g.ranura >= 0 && !g.aliado) {
         const a = j.armas[g.ranura];
         if (a) {
@@ -745,15 +756,19 @@ export class Sim {
     const c = cant * Math.max(0.1, 1 + j.st.curacion) * this.curaPeligro;
     const antes = j.hp;
     j.hp = Math.min(j.hpMax, j.hp + c);
+    j.resumen.curado = (j.resumen.curado ?? 0) + (j.hp - antes);
     if (!robo && j.hp - antes >= 1) this.suc.push(S.CURA, j.i, j.hp - antes);
   }
 
   /** Un enemigo (o una trampa) le pega a un jugador. Devuelve el daño hecho. */
   herir(j: Jugador, dano: number, x: number, y: number, esquivable = true): number {
     if (j.estado !== 0 || j.invul > 0 || this.inmortales && j.hp <= 1) return 0;
-    if (esquivable && j.st.esquiva > 0 && this.az.n() < j.st.esquiva) {
+    // (grasa de armadura: caminando se esquiva más)
+    const esq = j.st.esquiva + (j.tiene('grasa_armadura') && Math.hypot(j.vx, j.vy) > 1 ? 0.1 : 0);
+    if (esquivable && esq > 0 && this.az.n() < esq) {
       this.suc.push(S.ESQUIVA, j.i);
       j.invul = 0.15;
+      j.resumen.esquivas = (j.resumen.esquivas ?? 0) + 1;
       return 0;
     }
     if (j.paraGolpes > 0) {
@@ -764,8 +779,8 @@ export class Sim {
     }
     let d = mec.alRecibir(this, j, dano, x, y);
     if (d <= 0) return 0;
-    // (la armadura rinde menos mientras más hondo, como en Deep Rock)
-    const arm = j.st.armadura;
+    // (la armadura rinde menos mientras más hondo, como en Deep Rock; la costra suma por la vida que falta)
+    const arm = j.st.armadura + (j.tiene('costra') ? Math.floor((1 - j.hp / j.hpMax) * 50) : 0);
     d *= arm >= 0 ? 1 - arm / (arm + 12 + 2.5 * (this.cfg.etapa - 1)) : 1 + Math.min(0.5, -arm * 0.03);
     d = Math.max(1, d);
     j.hp -= d;
@@ -784,7 +799,7 @@ export class Sim {
       }
     }
     if (j.hp <= 0) this.caer(j);
-    else mec.alSerHerido(this, j, d);
+    else mec.alSerHerido(this, j, d, x, y);
     return d;
   }
 
@@ -1023,7 +1038,8 @@ export class Sim {
     }
     const ux = mx / l, uy = my / l;
     // La celda justo delante (un poco más allá del radio)
-    const px = j.x + ux * (RADIO_JUGADOR + 0.18), py = j.y + uy * (RADIO_JUGADOR + 0.18);
+    const alc = RADIO_JUGADOR + (j.tiene('pico_largo') ? 0.55 : 0.18);
+    const px = j.x + ux * alc, py = j.y + uy * alc;
     let cx = Math.floor(px), cy = Math.floor(py);
     let t = this.mapa.get(cx, cy);
     if (!esExcavable(t)) {
@@ -1219,6 +1235,11 @@ export class Sim {
         break;
       case REC.COMIDA:
         if (!j.tiene('vampirismo')) this.curar(j, j.hpMax * 0.3);
+        // (corazón confitado: cada pierna de pollo sube la vida máxima)
+        if (j.tiene('corazon_confitado')) {
+          j.extra.vida = (j.extra.vida ?? 0) + 3;
+          j.recalcular();
+        }
         break;
       case REC.GOTA:
         this.curar(j, 2 + 1.5 * j.bend('banquete'));

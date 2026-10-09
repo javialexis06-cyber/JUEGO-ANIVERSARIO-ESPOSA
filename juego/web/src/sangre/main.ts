@@ -10,7 +10,7 @@ import * as fondo from '../segundo_plano';
 import { ARMAS } from './datos/armas';
 import { CLASES, nombreClase, textoAbre } from './datos/clases';
 import { BIOMAS, ETAPAS, MUTADORES, PELIGROS, SECUNDARIOS } from './datos/mundo';
-import { EQUIPO, POZO, precioPozo } from './datos/botin';
+import { EQUIPO, POZO, RELIQUIA, RELIQUIAS, precioPozo } from './datos/botin';
 import { MINERALES, precioMineral } from './datos/minerales';
 import { LUGAR, LUGARES, SECTOR, SECTORES, claveMeta, lugarAbierto, metasDe, metasNuevas, sectorAbierto, type DefLugar, type IdEscena } from './datos/noche';
 import { ESCENAS } from './historia_pareja';
@@ -18,7 +18,7 @@ import { Expedicion } from './expedicion';
 import { Guardado, ponerPreferencia, preferencia } from './guardado';
 import { quienSoy } from './identidad';
 import { esModoAmigo } from '../salas/perfil';
-import { LOGROS, aplicarDesbloqueos, revisarLogros, type DefLogro } from './logros';
+import { HITOS_RELIQUIA, LOGROS, aplicarDesbloqueos, revisarLogros, revisarReliquias, type DefLogro } from './logros';
 import { DT, Partida } from './partida';
 import { Anfitrion } from './red/anfitrion';
 import { PartidaInvitado, type DatosFin } from './red/invitado';
@@ -647,18 +647,37 @@ function detalleLugar(l: DefLugar) {
   });
 }
 
-function logros() {
+function logros(pestana: 'logros' | 'reliquias' = 'logros') {
   pantalla = 'logros';
   const p = P();
-  const s = seccion('pantalla-logros opaca', `${cabeza(`Logros · ${p.logros.length} de ${LOGROS.length}`)}
-    <div class="lista">${LOGROS.map((l) => {
-      const hecho = p.logros.includes(l.id);
-      const av = !hecho && l.avance ? l.avance(p) : 0;
-      return `<div class="renglon${hecho ? ' hecho' : ' no'}"><span class="ico">${glifo(l.glifo)}</span><span><b>${l.nombre}</b><small>${l.desc}${l.premio ? ` <em>${l.premio}.</em>` : ''}</small>
-        ${av ? `<span class="barra barra-logro"><i style="width:${Math.round(av * 100)}%"></i></span>` : ''}</span><span class="nivel">${hecho ? glifo('corona') : `+${l.ceniza}`}</span></div>`;
-    }).join('')}</div>`);
+  const hitos = RELIQUIAS.filter((r) => r.hito);
+  const abiertas = RELIQUIAS.filter((r) => !r.hito || p.reliquias.includes(r.id)).length;
+  const pestanas = `<div class="pestanas"><button class="boton boton-chico${pestana === 'logros' ? ' activo' : ''}" data-p="logros">${glifo('corona')}Logros ${p.logros.length}/${LOGROS.length}</button>
+    <button class="boton boton-chico${pestana === 'reliquias' ? ' activo' : ''}" data-p="reliquias">${glifo('caliz')}Reliquias ${abiertas}/${RELIQUIAS.length}</button></div>`;
+  const filas = pestana === 'logros'
+    ? LOGROS.map((l) => {
+        const hecho = p.logros.includes(l.id);
+        const av = !hecho && l.avance ? l.avance(p) : 0;
+        return `<div class="renglon${hecho ? ' hecho' : ' no'}"><span class="ico">${glifo(l.glifo)}</span><span><b>${l.nombre}</b><small>${l.desc}${l.premio ? ` <em>${l.premio}.</em>` : ''}</small>
+          ${av ? `<span class="barra barra-logro"><i style="width:${Math.round(av * 100)}%"></i></span>` : ''}</span><span class="nivel">${hecho ? glifo('corona') : `+${l.ceniza}`}</span></div>`;
+      }).join('')
+    : [...hitos, ...RELIQUIAS.filter((r) => !r.hito)].map((r) => {
+        // (las de siempre salen desde el comienzo; las de hitos dicen qué proeza las abre)
+        const ab = !r.hito || p.reliquias.includes(r.id);
+        const h = HITOS_RELIQUIA[r.id];
+        const av = !ab && h?.avance ? h.avance(p) : 0;
+        return `<div class="renglon${ab ? ' hecho' : ' no'}"><span class="ico">${glifo(ab ? r.glifo : 'candado')}</span><span><b>${r.nombre}</b><small>${r.desc}${!ab && h ? ` <em>Se abre: ${h.desc}</em>` : ''}</small>
+          ${av ? `<span class="barra barra-logro"><i style="width:${Math.round(av * 100)}%"></i></span>` : ''}</span><span class="nivel">${ab ? glifo('caliz') : ''}</span></div>`;
+      }).join('');
+  const s = seccion('pantalla-logros opaca', `${cabeza(pestana === 'logros' ? 'Logros' : 'Reliquias')}${pestanas}<div class="lista">${filas}</div>`);
   s.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).closest('[data-a="atras"]')) {
+    const t = e.target as HTMLElement;
+    const pe = t.closest<HTMLElement>('[data-p]')?.dataset.p as 'logros' | 'reliquias' | undefined;
+    if (pe && pe !== pestana) {
+      efectos.boton();
+      return logros(pe);
+    }
+    if (t.closest('[data-a="atras"]')) {
       efectos.boton();
       titulo();
     }
@@ -867,6 +886,8 @@ interface Cobro {
   escena: IdEscena | null;
   /** Armas comunes que se abrieron (el mapa de la Noche, los logros). */
   comunesNuevas: string[];
+  /** Reliquias de hitos que se abrieron (ya pueden salir en los cofres). */
+  reliquias: string[];
 }
 
 /** Lo que se gana al terminar (ceniza, maestría, logros, cifras, monedas de la casa). */
@@ -901,6 +922,8 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
   c.levantados += rs.levantados;
   c.caidas += rs.caidas;
   c.nivelMax = Math.max(c.nivelMax, j.nivel);
+  c.oroGastado += rs.oroGastado ?? 0;
+  c.proyectiles += rs.proyectiles ?? 0;
   const recordInfinito = !!p.exp.cfg.infinito && p.exp.etapa > c.infinitoMax;
   if (p.exp.cfg.infinito) c.infinitoMax = Math.max(c.infinitoMax, p.exp.etapa);
   c.segundos += Math.round(p.exp.tiempo);
@@ -908,6 +931,8 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
   if (exito && !p.exp.cfg.tutorial) pr.ganado[p.exp.cfg.bioma] = Math.max(pr.ganado[p.exp.cfg.bioma] ?? 0, p.exp.cfg.peligro);
   if (p.exp.cfg.tutorial) pr.tutorial = true;
   const nuevos = p.exp.cfg.tutorial ? [] : revisarLogros({ p: pr, exp: p.exp, j, exito, jugadores: p.o.perfiles.length });
+  // Las reliquias que se abrieron con sus proezas
+  const reliquiasAnunciar = p.exp.cfg.tutorial ? [] : revisarReliquias({ p: pr, exp: p.exp, j, exito, jugadores: p.o.perfiles.length });
   // El mapa de la Noche: las metas del lugar (cada una paga ceniza) y, si se cruzó la Puerta, la escena y lo que abre
   const lugar = p.exp.cfg.lugar ? LUGAR[p.exp.cfg.lugar] : undefined;
   const metasNoche: string[] = [];
@@ -939,7 +964,7 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
   return {
     ceniza: r.ceniza, maestria: r.maestria, subio: Array.from({ length: nvDespues - nvAntes }, (_, k) => nvAntes + k + 1), logros: nuevos,
     record: recordInfinito, minerales: minerales.map(([k, n]) => ({ id: k, n })), metasNoche, escena, comunesNuevas: pr.comunes.filter((k) => !antes.comunes.includes(k)),
-    cenizaNoche: lugar ? metasNoche.length * SECTOR[lugar.sector].ceniza : 0,
+    cenizaNoche: lugar ? metasNoche.length * SECTOR[lugar.sector].ceniza : 0, reliquias: reliquiasAnunciar,
     monedas: yo.tipo === 'amigo' ? 0 : monedas, clasesNuevas: pr.clases.filter((k) => !antes.clases.includes(k)), biomasNuevos: pr.biomas.filter((b) => !antes.biomas.includes(b)),
   };
 }
@@ -1011,6 +1036,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
           ${cb.clasesNuevas.map((k) => `<div class="desbloqueo">${glifo(CLASES[k].glifo)} Nueva clase: ${nombreClase(k, yo.cuerpo)}</div>`).join('')}
           ${cb.biomasNuevos.map((b) => `<div class="desbloqueo">${glifo(BIOMAS[b].glifo)} Nuevo bioma: ${BIOMAS[b].nombre}</div>`).join('')}
           ${cb.comunesNuevas.filter((a) => ARMAS[a]).map((a) => `<div class="desbloqueo">${glifo(ARMAS[a].glifo)} Nueva arma común: <b>${ARMAS[a].nombre}</b></div>`).join('')}
+          ${cb.reliquias.filter((x) => RELIQUIA[x]).map((x) => `<div class="desbloqueo">${glifo(RELIQUIA[x].glifo)} Reliquia abierta: <b>${RELIQUIA[x].nombre}</b> (ya sale en los cofres)</div>`).join('')}
           ${cb.logros.map((l) => `<div class="desbloqueo">${glifo(l.glifo)} Logro: <b>${l.nombre}</b> (+${l.ceniza} ceniza)${l.premio ? ` · ${l.premio}` : ''}</div>`).join('')}
           ${ofrecibles.length && !ofrecida ? `<h3 class="titulo-grabado">Ofrecer al Pozo (una)</h3><div class="ofrendas">${ofrecibles.map((o) => `<button class="boton boton-chico" data-o="${o}" title="${EQUIPO[o].desc}">${glifo(EQUIPO[o].ranura)}${EQUIPO[o].nombre}</button>`).join('')}</div>` : ''}
         </div>

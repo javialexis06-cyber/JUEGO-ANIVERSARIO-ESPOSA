@@ -141,7 +141,7 @@ export class Expedicion {
 
   // ----------------------------------------------------------------------------------------------- Forja
   descuento(j: Jugador) {
-    return j.clase === 'monarca' && j.spec === 2 ? 0.8 : 1;
+    return (j.clase === 'monarca' && j.spec === 2 ? 0.8 : 1) * (j.tiene('bula_obispo') ? 0.8 : 1);
   }
 
   ofertasNuevas(j: Jugador, guardadas: OfertaForja[] = []): OfertaForja[] {
@@ -209,6 +209,7 @@ export class Expedicion {
         break;
     }
     j.oroSeguro -= o.precio;
+    j.resumen.oroGastado = (j.resumen.oroGastado ?? 0) + o.precio;
     o.vendida = true;
     return null;
   }
@@ -224,6 +225,7 @@ export class Expedicion {
     const p = this.precioRenovar(j);
     if (j.oroSeguro < p) return 'No alcanza el oro.';
     j.oroSeguro -= p;
+    j.resumen.oroGastado = (j.resumen.oroGastado ?? 0) + p;
     f.renovaciones++;
     this.renovadas.set(j.i, (this.renovadas.get(j.i) ?? 0) + 1);
     f.ofertas = this.ofertasNuevas(j, f.ofertas.filter((o) => o.guardada && !o.vendida));

@@ -4,7 +4,7 @@
 import { F, type DanoEtiqueta, type Stats } from '../tipos';
 import { ponerTorreta, ponerZona, zonaPeligro } from './armas';
 import { TIPO, TIPOS, TIPO_ALTAR, esJefe } from './catalogo';
-import { ALI, ENT, Entidad, MOV, type Proyectil, S, ZONA } from './estado';
+import { ALI, ENT, Entidad, MOV, type Proyectil, REC, S, ZONA } from './estado';
 import { BIT_ETQ, RADIO_JUGADOR, type Jugador } from './jugador';
 import { encolarCofre, encolarEquipo } from './opciones';
 import { Golpe } from './golpe';
@@ -103,12 +103,20 @@ export function alEmpezarEtapa(sim: Sim, j: Jugador) {
   j.m.embestidaT = 0;
   j.m.oroRecluta = j.m.oroRecluta ?? 0;
   if (j.objeto('dados_cargados')) j.tiradas++;
-  void sim;
+  if (j.tiene('galleta_monje') && sim.cfg.etapa > 1) sim.curar(j, j.hpMax * 0.5);
 }
 
 // ------------------------------------------------------------------------------------------------- Cada cuadro
 export function tick(sim: Sim, j: Jugador, dt: number) {
   const m = j.m;
+  // Imán del gremio: cada 30 s, todas las almas del mapa
+  if (j.tiene('iman_gremio') && j.estado === 0) {
+    m.imanT = (m.imanT ?? 0) + dt;
+    if (m.imanT >= 30) {
+      m.imanT = 0;
+      sim.atraerTodo(j);
+    }
+  }
   if (j.auraT > 0) {
     j.auraT -= dt;
     if (j.auraCura > 0) sim.curar(j, j.hpMax * j.auraCura * dt, true);
@@ -321,6 +329,10 @@ export function multDano(sim: Sim, j: Jugador, i: number, g: Golpe): number {
   if (j.objeto('reliquia_peregrino')) m += 0.03 * (sim.cfg.etapa - 1);
   if (j.tiene('hierro_dano')) m += Math.min(0.4, ((j.hierro + j.hierroSeguro) / 5) * 0.01);
   if (j.tiene('eclipse_propio') && m_.oscuro) m += 0.3;
+  if (j.tiene('dado_tahur')) m += 0.025 * (j.resumen.tiradas ?? 0);
+  if (j.tiene('hierro_salmuera')) m += Math.min(0.6, j.hierro * 0.02);
+  if (j.tiene('cicatriz')) m += 1 - j.hp / j.hpMax;
+  if (j.tiene('engranaje_relojero')) m += 0.03 * sobrecargasDe(j);
   void g;
   return m;
 }
@@ -354,7 +366,24 @@ export function modGolpe(sim: Sim, j: Jugador, g: Golpe) {
 /** Velocidad de ataque extra temporal. */
 export function cadenciaExtra(sim: Sim, j: Jugador) {
   void sim;
-  return (j.m.cazaT ?? 0) > 0 ? 0.15 : 0;
+  let c = (j.m.cazaT ?? 0) > 0 ? 0.15 : 0;
+  if (j.tiene('tripode') && j.quietoT > 0.3) c += Math.min(0.3, 0.02 * j.quietoT);
+  if (j.tiene('engranaje_relojero')) c += 0.03 * sobrecargasDe(j);
+  if (j.tiene('navaja_multiusos')) {
+    let bits = 0;
+    for (const a of j.armas) for (const e of a.def.etiquetas) bits |= BIT_ETQ[e];
+    let n = 0;
+    for (; bits; bits &= bits - 1) n++;
+    c += 0.05 * n - 0.25;
+  }
+  return c;
+}
+
+/** Cuántas sobrecargas llevan sus armas (el Engranaje del relojero). */
+function sobrecargasDe(j: Jugador) {
+  let n = 0;
+  for (const a of j.armas) n += a.sobrecargas.length;
+  return n;
 }
 
 export function multConstruccion(j: Jugador) {
@@ -515,6 +544,9 @@ export function alMatar(sim: Sim, j: Jugador, i: number, g: Golpe) {
   const E = sim.E;
   const x = E.x[i], y = E.y[i];
   const t = E.tipo[i];
+  // (lo que miden las proezas de las reliquias)
+  if (j.quietoT > 0.5) j.resumen.quietoMuertes = (j.resumen.quietoMuertes ?? 0) + 1;
+  if (esJefe(t) && j.estado === 0 && j.hp < 30) j.resumen.cicatriz = 1;
   switch (j.clase) {
     case 'campesino':
       if (j.spec === 0 && g.habilidad) j.habT = Math.max(0, j.habT - 0.5);
@@ -666,7 +698,32 @@ export function alRecibir(sim: Sim, j: Jugador, dano: number, x: number, y: numb
 }
 
 /** Ya recibió el golpe (y sigue en pie). */
-export function alSerHerido(sim: Sim, j: Jugador, d: number) {
+export function alSerHerido(sim: Sim, j: Jugador, d: number, x = j.x, y = j.y) {
+  // Reliquias que reaccionan al golpe
+  if (j.tiene('libro_rencores')) {
+    j.xp += d * 0.6 * (1 + j.st.experiencia);
+    sim.ganarXp(0);
+  }
+  if ((j.tiene('cinto_brasas') || j.tiene('cinto_escarcha')) && sim.t >= (j.m.cintoHasta ?? 0)) {
+    j.m.cintoHasta = sim.t + 3;
+    if (j.tiene('cinto_brasas')) {
+      const g = golpeSimple(j, BIT_ETQ.fuego, 3);
+      g.quema = 4;
+      sim.explosion(j.x, j.y, 3, 20 + 2 * j.nivel, g, 0);
+    }
+    if (j.tiene('cinto_escarcha')) {
+      const g = golpeSimple(j, BIT_ETQ.hielo, 3);
+      g.lento = 0.6;
+      sim.explosion(j.x, j.y, 3.2, 12 + 1.5 * j.nivel, g, 3);
+    }
+  }
+  if (j.tiene('botas_salto') && sim.t >= (j.m.saltoHasta ?? 0)) {
+    j.m.saltoHasta = sim.t + 20;
+    const dx = j.x - x, dy = j.y - y, l = Math.hypot(dx, dy) || 1;
+    sim.moverCirculo(j, (dx / l) * 3.2, (dy / l) * 3.2);
+    j.invul = Math.max(j.invul, 0.7);
+    sim.suc.push(S.ESQUIVA, j.i);
+  }
   if (j.clase === 'prisionero' && j.spec === 2) {
     const g = golpeSimple(j, BIT_ETQ.sangre, 4);
     sim.explosion(j.x, j.y, 3, d * 1.5 + 5, g, 4);
@@ -782,6 +839,7 @@ export function alRecoger(sim: Sim, j: Jugador, que: 'alma' | 'oro' | 'hierro', 
 export function alExcavar(sim: Sim, j: Jugador, cx: number, cy: number, tipo: number) {
   void tipo;
   if (j.don('aire_libre')) j.prisaT = 3;
+  if (j.tiene('varita_zahori') && sim.az.n() < 0.08) sim.soltar(REC.ORO, cx + 0.5, cy + 0.5, 2 + Math.floor(sim.az.n() * 4));
   if (j.clase === 'campesino' && j.spec === 1) {
     // Esquirlas contra los enemigos cercanos
     for (let k = 0; k < 3; k++) {

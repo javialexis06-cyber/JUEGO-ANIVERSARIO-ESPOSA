@@ -38,8 +38,12 @@ export interface CifrasSangre {
   infinitoMax: number;
   segundos: number;
   enGrupo: number;
+  /** Oro gastado en la Forja (para las reliquias del obispo y del tahúr). */
+  oroGastado: number;
+  /** Proyectiles disparados (para las Puntas de acero). */
+  proyectiles: number;
 }
-const CIFRAS: (keyof CifrasSangre)[] = ['expediciones', 'victorias', 'etapas', 'muertes', 'elites', 'jefes', 'excavadas', 'oro', 'almas', 'frascos', 'altares', 'prisioneros', 'bendiciones', 'ejecuciones', 'levantados', 'caidas', 'nivelMax', 'segundos', 'enGrupo', 'infinitoMax'];
+const CIFRAS: (keyof CifrasSangre)[] = ['expediciones', 'victorias', 'etapas', 'muertes', 'elites', 'jefes', 'excavadas', 'oro', 'almas', 'frascos', 'altares', 'prisioneros', 'bendiciones', 'ejecuciones', 'levantados', 'caidas', 'nivelMax', 'segundos', 'enGrupo', 'infinitoMax', 'oroGastado', 'proyectiles'];
 
 export interface UltimaEleccion {
   clase: IdClase;
@@ -71,6 +75,8 @@ export interface ProgresoSangre {
   minerales: Partial<Record<IdMineral, number>>;
   /** El mapa de la Noche: las metas cumplidas («lugar:meta») y las escenas de la historia ya vistas. */
   noche: { metas: string[]; escenas: string[] };
+  /** Reliquias de hitos que ya se abrieron con su proeza (Sangre y Ceniza 2, L6). */
+  reliquias: string[];
   /** Para fusionar copias de dos aparatos (la más reciente gana en lo que no se suma). */
   t: number;
 }
@@ -79,7 +85,7 @@ export function progresoNuevo(): ProgresoSangre {
   return {
     v: 1, ceniza: 0, cenizaTotal: 0, pozo: {}, ofrendas: [], maestria: {}, clases: [...CLASES_INICIALES], biomas: [...BIOMAS_INICIALES], ganado: {},
     comunes: [...COMUNES_INICIALES], logros: [], cifras: Object.fromEntries(CIFRAS.map((k) => [k, 0])) as unknown as CifrasSangre, ultima: null, tutorial: false,
-    minerales: {}, noche: { metas: [], escenas: [] }, t: 0,
+    minerales: {}, noche: { metas: [], escenas: [] }, reliquias: [], t: 0,
   };
 }
 
@@ -109,6 +115,7 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
     tutorial: !!x.tutorial,
     minerales: {},
     noche: { metas: [], escenas: [] },
+    reliquias: ids(x.reliquias, 80),
     t: num(x.t),
   };
   if (esObj(x.noche)) {
@@ -152,6 +159,7 @@ export function fusionarProgreso(a: ProgresoSangre, b: ProgresoSangre): Progreso
   r.biomas = [...new Set([...a.biomas, ...b.biomas])];
   r.comunes = [...new Set([...a.comunes, ...b.comunes])];
   r.logros = [...new Set([...a.logros, ...b.logros])];
+  r.reliquias = [...new Set([...a.reliquias, ...b.reliquias])];
   for (const bi of BIOMAS_TODOS) {
     const v = Math.max(a.ganado[bi] ?? 0, b.ganado[bi] ?? 0);
     if (v) r.ganado[bi] = v;
@@ -233,7 +241,7 @@ export function perfilDe(p: ProgresoSangre, datos: { id: string; nombre: string;
   for (const [r, id] of Object.entries(datos.equipo)) if (id && p.ofrendas.includes(id)) equipo[r as RanuraEquipo] = id;
   return {
     id: datos.id, nombre: datos.nombre, puesto: datos.puesto, clase: datos.clase, spec: Math.min(datos.spec, specsDisponibles(nv) - 1), meta: total, equipo,
-    arsenal: arsenal.slice(0, armasDisponibles(nv)), comunes: [...p.comunes], tiradas: 1 + tiradas, vetos: vetos, cuerpo: datos.cuerpo, tipo: datos.tipo,
+    arsenal: arsenal.slice(0, armasDisponibles(nv)), comunes: [...p.comunes], reliquias: [...p.reliquias], tiradas: 1 + tiradas, vetos: vetos, cuerpo: datos.cuerpo, tipo: datos.tipo,
     piel: datos.piel, pelo: datos.pelo, ...(datos.detalles ? { detalles: datos.detalles } : {}),
   };
 }

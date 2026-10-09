@@ -204,6 +204,8 @@ export interface DefReliquia {
   nombre: string;
   desc: string;
   glifo: string;
+  /** Sangre y Ceniza 2 (L6): solo sale cuando la cuenta la abrió con su proeza (logros.ts, HITOS_RELIQUIA). */
+  hito?: boolean;
 }
 
 export const RELIQUIAS: DefReliquia[] = [
@@ -225,6 +227,34 @@ export const RELIQUIAS: DefReliquia[] = [
   { id: 'ojo_tormenta', nombre: 'Ojo de la tormenta', desc: 'Los críticos lanzan una chispa que salta a otro enemigo.', glifo: 'rayo' },
   { id: 'llave_oro', nombre: 'Llave de oro', desc: 'Los cofres de reliquias se abren sin llave.', glifo: 'llave' },
   { id: 'sangre_fria', nombre: 'Sangre fría', desc: 'Los enemigos congelados o aturdidos reciben +40 % de daño.', glifo: 'copo' },
+  // Sangre y Ceniza 2 (como los artefactos de Deep Rock): dos nuevas desde el comienzo y las demás se abren con proezas
+  // de la cuenta
+  { id: 'libro_rencores', nombre: 'Libro de rencores', desc: '+10 % de experiencia; cada golpe que recibes también te da experiencia.', glifo: 'libro' },
+  { id: 'corazon_confitado', nombre: 'Corazón confitado', desc: 'Cada pierna de pollo que te comes te sube 3 de vida máxima.', glifo: 'corazon' },
+  { id: 'herradura_vieja', nombre: 'Herradura vieja', desc: '+15 de suerte; al volver a tirar, esa tirada sale con 20 más.', glifo: 'trebol', hito: true },
+  { id: 'bandolera', nombre: 'Bandolera', desc: '+50 % de velocidad de ataque, −15 % de velocidad.', glifo: 'cuchillos', hito: true },
+  { id: 'grimorio_olvidado', nombre: 'Grimorio olvidado', desc: 'Al tomarlo, subes tres niveles de una.', glifo: 'libro', hito: true },
+  { id: 'grasa_armadura', nombre: 'Grasa de armadura', desc: '+5 % de velocidad; mientras caminas, +10 % de esquiva.', glifo: 'armadura', hito: true },
+  { id: 'tasajo', nombre: 'Tasajo y pan duro', desc: '+80 de vida máxima y +2 de vida por segundo.', glifo: 'pan', hito: true },
+  { id: 'cinto_brasas', nombre: 'Cinto de brasas', desc: '+15 % de daño de fuego; cuando te pegan, un anillo de fuego (cada 3 s).', glifo: 'llama', hito: true },
+  { id: 'cinto_escarcha', nombre: 'Cinto de escarcha', desc: '+15 % de daño de hielo; cuando te pegan, un anillo de frío que frena (cada 3 s).', glifo: 'copo', hito: true },
+  { id: 'iman_gremio', nombre: 'Imán del gremio', desc: 'Cada 30 s atraes todas las almas del mapa.', glifo: 'iman', hito: true },
+  { id: 'diario_difunto', nombre: 'Diario del difunto', desc: '+10 % de daño y de velocidad de ataque, +5 % de crítico y +15 % de daño crítico.', glifo: 'pergamino', hito: true },
+  { id: 'bula_obispo', nombre: 'Bula del obispo', desc: 'La Forja te cobra 20 % menos.', glifo: 'pergamino', hito: true },
+  { id: 'varita_zahori', nombre: 'Varita de zahorí', desc: 'A veces sale oro al picar roca.', glifo: 'baston', hito: true },
+  { id: 'queso_podrido', nombre: 'Queso podrido', desc: 'Salen el doble de ratas del tesoro y ladrones de tumbas.', glifo: 'pan', hito: true },
+  { id: 'botas_salto', nombre: 'Botas de salto', desc: 'Cuando te pegan, saltas lejos del golpe (cada 20 s).', glifo: 'bota', hito: true },
+  { id: 'navaja_multiusos', nombre: 'Navaja multiusos', desc: '−25 % de velocidad de ataque, +5 % por cada etiqueta distinta de tus armas.', glifo: 'cuchillos', hito: true },
+  { id: 'dado_tahur', nombre: 'Dado del tahúr', desc: '+2,5 % de daño por cada vez que vuelves a tirar en la expedición.', glifo: 'dado', hito: true },
+  { id: 'pico_largo', nombre: 'Pico largo', desc: '+30 % de excavar y alcanzas la roca desde más lejos.', glifo: 'pico', hito: true },
+  { id: 'hierro_salmuera', nombre: 'Hierro en salmuera', desc: '+2 % de daño y −0,5 % de velocidad por cada hierro negro en el bolsillo (hasta +60 %).', glifo: 'hierro', hito: true },
+  { id: 'puntas_acero', nombre: 'Puntas de acero', desc: 'Tus proyectiles atraviesan a dos más.', glifo: 'diana', hito: true },
+  { id: 'tripode', nombre: 'Trípode', desc: 'Quieto, +2 % de velocidad de ataque por segundo (hasta +30 %).', glifo: 'torreta', hito: true },
+  { id: 'costra', nombre: 'Costra', desc: '+1 de armadura por cada 2 % de vida que te falta.', glifo: 'escudo', hito: true },
+  { id: 'monoculo', nombre: 'Monóculo', desc: '+30 % de crítico y +100 % de daño crítico, −30 % de daño.', glifo: 'ojo', hito: true },
+  { id: 'galleta_monje', nombre: 'Galleta de monje', desc: 'Al bajar a cada etapa te cura la mitad de la vida.', glifo: 'pan', hito: true },
+  { id: 'cicatriz', nombre: 'Cicatriz', desc: '+1 % de daño por cada 1 % de vida que te falta.', glifo: 'espina', hito: true },
+  { id: 'engranaje_relojero', nombre: 'Engranaje del relojero', desc: '+3 % de daño y de velocidad de ataque por cada sobrecarga de tus armas.', glifo: 'engranaje', hito: true },
 ];
 export const RELIQUIA: Record<string, DefReliquia> = Object.fromEntries(RELIQUIAS.map((r) => [r.id, r]));
 

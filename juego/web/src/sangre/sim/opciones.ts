@@ -7,7 +7,7 @@ import { BENDICION, BENDICIONES, EQUIPOS, EQUIPO, MEJORA, MEJORAS, OBJETO, PAREJ
 import { NOMBRE_RAREZA, PESO_RAREZA, RANURAS_EQUIPO, type Eleccion, type Opcion, type Rareza } from '../tipos';
 import { soltarOrbitas } from './armas';
 import { S } from './estado';
-import { ArmaJ, BIT_ETQ, type Jugador } from './jugador';
+import { ArmaJ, BIT_ETQ, type Jugador, xpPara } from './jugador';
 import type { Sim } from './sim';
 
 /** Rareza al azar (la suerte sube las probabilidades de lo bueno). */
@@ -175,6 +175,9 @@ export function descObjeto(o: DefObjeto, j: Jugador) {
   return ev.length ? `${o.desc} Evoluciona: ${ev.join(', ')}.` : o.desc;
 }
 
+/** ¿La cuenta ya abrió esta reliquia? (las de siempre, sí; las de hitos, cuando se cumplió su proeza) */
+export const abierta = (j: Jugador, id: string) => !RELIQUIA[id]?.hito || (j.perfil.reliquias ?? []).includes(id);
+
 // ------------------------------------------------------------------------------------------------- Lo que se encuentra
 const ABIERTAS = new Map<string, string[]>();
 /** Las armas que puede encontrar: su arsenal, las comunes que tiene abiertas y las de la etiqueta de su especialización. */
@@ -230,7 +233,7 @@ export function opcionesCofre(sim: Sim, j: Jugador, especial: boolean): Opcion[]
       const eq = elegirEquipo(sim, j, bonus);
       if (eq && !ops.some((o) => o.id === eq.id)) ops.push(eq);
     } else if (r < 0.45 + (especial ? 0.25 : 0)) {
-      const rel = RELIQUIAS.filter((x) => !j.tiene(x.id) && !ops.some((o) => o.id === x.id));
+      const rel = RELIQUIAS.filter((x) => !j.tiene(x.id) && abierta(j, x.id) && !ops.some((o) => o.id === x.id));
       if (rel.length && sim.az.n() < (especial ? 0.8 : 0.3)) {
         const x = sim.az.uno(rel);
         ops.push({ tipo: 'reliquia', id: x.id, rareza: 4, nombre: x.nombre, desc: x.desc, glifo: x.glifo });
@@ -313,7 +316,7 @@ export function opcionesBendicion(sim: Sim, j: Jugador): Opcion[] {
 }
 
 export function encolarReliquia(sim: Sim, j: Jugador) {
-  const lista = RELIQUIAS.filter((r) => !j.tiene(r.id));
+  const lista = RELIQUIAS.filter((r) => !j.tiene(r.id) && abierta(j, r.id));
   const ops: Opcion[] = [];
   for (let k = 0; k < 3 && lista.length; k++) {
     const r = lista.splice(Math.floor(sim.az.n() * lista.length), 1)[0];
@@ -420,7 +423,14 @@ export function aplicar(sim: Sim, j: Jugador, op: Opcion) {
       j.recalcular();
       break;
     case 'reliquia':
-      if (RELIQUIA[op.id] && !j.tiene(op.id)) j.reliquias.push(op.id);
+      if (RELIQUIA[op.id] && !j.tiene(op.id)) {
+        j.reliquias.push(op.id);
+        // Grimorio olvidado: tres niveles de una
+        if (op.id === 'grimorio_olvidado') {
+          for (let k = 0; k < 3; k++) j.xp += xpPara(j.nivel + k);
+          sim.ganarXp(0);
+        }
+      }
       j.recalcular();
       break;
     case 'bendicion': {
@@ -445,9 +455,14 @@ export function volverATirar(sim: Sim, j: Jugador): boolean {
   const e = j.cola[0];
   if (!e || j.tiradas <= 0 || e.motivo === 'sobrecarga') return false;
   j.tiradas--;
+  j.resumen.tiradas = (j.resumen.tiradas ?? 0) + 1;
+  // (herradura vieja: esta tirada sale con 20 de suerte más)
+  const herradura = j.tiene('herradura_vieja') ? 20 : 0;
+  j.st.suerte += herradura;
   if (e.motivo === 'nivel') e.opciones = opcionesNivel(sim, j, e.opciones.length, e.opciones.map((o) => o.tipo + ':' + o.id));
   else if (e.motivo === 'bendicion') e.opciones = opcionesBendicion(sim, j);
   else if (e.titulo === 'Cofre' || e.titulo === 'Cofre maldito') e.opciones = opcionesCofre(sim, j, e.titulo === 'Cofre maldito');
+  j.st.suerte -= herradura;
   return true;
 }
 

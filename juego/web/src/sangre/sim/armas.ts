@@ -314,8 +314,9 @@ function salirProyectil(sim: Sim, j: Jugador, a: ArmaJ, k: number, ang: number, 
   pr.vy = Math.sin(ang) * p.vel;
   pr.r = (0.22 + (a.def.tipo === 'bumeran' ? 0.15 : 0)) * (p.flags & F.GORDA ? 2.2 : 1);
   pr.dano = p.dano;
-  pr.perfora = p.perfora;
+  pr.perfora = p.perfora + (j.tiene('puntas_acero') ? 2 : 0);
   pr.rebotes = p.rebotes + (j.tiene('rebote') ? 1 : 0);
+  j.resumen.proyectiles = (j.resumen.proyectiles ?? 0) + 1;
   pr.flags = p.flags | (j.tiene('rebote') ? F.REBOTA : 0);
   pr.vida = (p.alcance * 1.35) / Math.max(1, p.vel);
   pr.area = p.area;
