@@ -473,6 +473,122 @@ def pozo_almas(coll):
     return F
 
 
+@cosa('barril_refugio')
+def barril_refugio(coll):
+    """El barril del refugio (Patear el barril, solo para la ilustración del menú): barril de roble abombado con aros
+    de hierro y calaveras apiladas alrededor, una encima."""
+    F = nueva('barril_refugio', voxel=0.01)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=7000)
+    _barril(c, coll)
+    # Calaveras: tres en el piso mirando al frente y una arriba
+    for k, (x, y, mx, my) in enumerate(((-0.42, -0.18, -0.4, -1), (0.4, -0.22, 0.3, -1), (0.05, -0.42, 0.0, -1))):
+        _calaverita(c, coll, (x, y, 0.0), 0.11, (mx, my), 300 + k)
+    _calaverita(c, coll, (-0.05, 0.0, 0.66), 0.09, (-0.3, -1), 310)
+    F.marca('luz', (0, -0.3, 0.6))
+    return F
+
+
+@cosa('mesa_taberna')
+def mesa_taberna(coll):
+    """La mesa de la taberna (Veintiuno con dados, solo para la ilustración del menú): tablón con dos jarras, tres
+    dados, monedas de ceniza y una vela."""
+    F = nueva('mesa_taberna', voxel=0.01)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=9000)
+    tablas(c, (0, 0, 0.62), (0.62, 0.38, 0.03), 0, 6, madera(1, '#5C3F26', eje='x'))
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            c.caja((sx * 0.52, sy * 0.28, 0.3), (0.035, 0.035, 0.3), 0.01, madera(2, '#4A3220'), 0.0)
+    c.caja((0, 0.28, 0.16), (0.5, 0.025, 0.02), 0.008, madera(3, '#4A3220'), 0.0)
+    # Las jarras de cerveza con espuma y asa
+    for k, (x, y) in enumerate(((-0.38, 0.14), (0.3, 0.2))):
+        c.malla(sc.torno(f'jarra {k}', [(0.0, 0.65), (0.075, 0.65), (0.082, 0.72), (0.08, 0.8), (0.072, 0.835), (0.0, 0.835)], coll, segmentos=18,
+                         centro=(x, y, 0)), madera(4 + k, '#7A5434', eje='z'))
+        for z in (0.67, 0.81):
+            c.malla(sc.torno(f'aro jarra {k} {z}', [(0.079, z - 0.008), (0.086, z - 0.006), (0.086, z + 0.006), (0.079, z + 0.008)], coll,
+                             segmentos=18, centro=(x, y, 0)), hierro(6))
+        c.malla(sc.bolita(f'espuma {k}', (x, y, 0.84), (0.072, 0.072, 0.028), coll, n=2), P_('#F2E8D2', 'tela', semilla=7 + k))
+        c.trazo([(x + 0.078, y, 0.8), (x + 0.125, y, 0.785), (x + 0.125, y, 0.7), (x + 0.08, y, 0.685)], 0.012, hierro(8), 0.0)
+    # Los dados (de hueso, con sus puntos)
+    for k, (x, y, rz, pts) in enumerate(((-0.1, -0.06, 15, 3), (0.08, 0.0, 40, 5), (-0.02, -0.2, 70, 2))):
+        c.caja((x, y, 0.69), (0.036, 0.036, 0.036), 0.009, hueso_pt(10 + k), 0.0, rot=sc.rot('z', rz))
+        a = math.radians(rz)
+        cara = {2: ((0.016, 0.016), (-0.016, -0.016)), 3: ((0.018, 0.018), (0, 0), (-0.018, -0.018)),
+                5: ((0.018, 0.018), (-0.018, 0.018), (0, 0), (0.018, -0.018), (-0.018, -0.018))}[pts]
+        for j, (px, py) in enumerate(cara):
+            qx, qy = px * math.cos(a) - py * math.sin(a), px * math.sin(a) + py * math.cos(a)
+            c.malla(sc.bolita(f'punto dado {k} {j}', (x + qx, y + qy, 0.727), (0.0065, 0.0065, 0.003), coll, n=1), P_('#1A0C0C', 'hierro', semilla=20))
+    # Monedas de ceniza (un montoncito y unas sueltas)
+    for k in range(7):
+        x, y = (0.12 + 0.0 * k, -0.22) if k < 4 else (0.2 + 0.07 * (k - 4), -0.12 + 0.03 * k)
+        z = 0.652 + (0.012 * k if k < 4 else 0.0)
+        c.cono((x, y, z), (x, y, z + 0.011), 0.032, 0.032, oro(20 + k), 0.0)
+    # La vela con su llama
+    c.cono((0.45, -0.2, 0.65), (0.45, -0.2, 0.78), 0.026, 0.022, P_('#E8DCC0', 'cera', semilla=30), 0.0)
+    c.malla(sc.bolita('llama vela', (0.45, -0.2, 0.81), (0.013, 0.013, 0.032), coll, n=2), brillo('fuego', '#FFB040'))
+    F.marca('luz', (0.45, -0.2, 0.86))
+    return F
+
+
+@cosa('dado_hueso')
+def dado_hueso(coll):
+    """Un dado de hueso con sus puntos en las seis caras (los sprites de la taberna del refugio): 1 arriba, 6 abajo,
+    2 atrás (+Y), 5 adelante (−Y), 3 a la derecha (+X) y 4 a la izquierda (−X); los opuestos suman 7."""
+    F = nueva('dado_hueso', voxel=0.003, suelo=False)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=4000)
+    h = 0.05
+    c.caja((0, 0, 0), (h, h, h), 0.012, hueso_pt(1), 0.0)
+    o = 0.024
+    caras = {1: [(0, 0)], 2: [(-o, -o), (o, o)], 3: [(-o, -o), (0, 0), (o, o)], 4: [(-o, -o), (-o, o), (o, -o), (o, o)],
+             5: [(-o, -o), (-o, o), (0, 0), (o, -o), (o, o)], 6: [(-o, -o), (-o, 0), (-o, o), (o, -o), (o, 0), (o, o)]}
+    pos = {1: lambda u, v: (u, v, h), 6: lambda u, v: (u, v, -h), 3: lambda u, v: (h, u, v), 4: lambda u, v: (-h, u, v),
+           2: lambda u, v: (u, h, v), 5: lambda u, v: (u, -h, v)}
+    for n, pts in caras.items():
+        for j, (u, v) in enumerate(pts):
+            c.malla(sc.bolita(f'punto {n} {j}', pos[n](u, v), 0.0085, coll, n=2), P_('#2A0E0E', 'hierro', semilla=40))
+    return F
+
+
+@cosa('calavera_suelta')
+def calavera_suelta(coll):
+    """Una calavera sola (los sprites del refugio)."""
+    F = nueva('calavera_suelta', voxel=0.004)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=3000)
+    _calaverita(c, coll, (0, 0, 0.0), 0.11, (0, -1), 320)
+    return F
+
+
+@cosa('barril_suelto')
+def barril_suelto(coll):
+    """El barril solo (el que se patea en el refugio)."""
+    F = nueva('barril_suelto', voxel=0.01)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=5000)
+    _barril(c, coll)
+    return F
+
+
+@cosa('pilar_piedra')
+def pilar_piedra(coll):
+    """Un tocón de columna de piedra con musgo (los obstáculos del barril del refugio)."""
+    F = nueva('pilar_piedra', voxel=0.012)
+    c = F.pieza('cuerpo', (0, 0, 0), tris=4000)
+    c.sdf(sc.sdf_ruido(sdf.round_cone((0, 0, 0.0), (0, 0, 0.42), 0.3, 0.26), 0.02, 9, 330), (-0.4, -0.4, -0.05), (0.4, 0.4, 0.5),
+          piedra(330, '#6A6660', 0.7))
+    for k in range(5):
+        a = 2 * math.pi * k / 5 + 0.3
+        c.bola((math.cos(a) * 0.3, math.sin(a) * 0.3, 0.04), (0.09, 0.07, 0.05), piedra(331 + k, '#5A5650', 0.5), 0.0, ruido_amp=0.01)
+    return F
+
+
+def _barril(c, coll):
+    perfil = [(0.0, 0.0), (0.25, 0.0), (0.3, 0.14), (0.325, 0.32), (0.3, 0.5), (0.25, 0.64), (0.0, 0.64)]
+    c.malla(sc.torno('barril refugio', perfil, coll, segmentos=30), madera(1, '#6A4428', eje='z'))
+    for k, (z, r) in enumerate(((0.07, 0.27), (0.21, 0.318), (0.43, 0.318), (0.57, 0.27))):
+        c.malla(sc.torno(f'aro barril {k}', [(r - 0.004, z - 0.024), (r + 0.014, z - 0.018), (r + 0.014, z + 0.018), (r - 0.004, z + 0.024)], coll,
+                         segmentos=30), hierro(2 + k, '#3E3A3A'))
+    tablas(c, (0, 0, 0.645), (0.22, 0.22, 0.012), 0, 5, madera(7, '#5A3A22', eje='y'))
+    c.cono((0.1, 0.05, 0.655), (0.1, 0.05, 0.69), 0.03, 0.026, madera(8, '#3A2614', eje='z'), 0.0)
+
+
 @cosa('forja')
 def forja(coll):
     F = nueva('forja', voxel=0.02)

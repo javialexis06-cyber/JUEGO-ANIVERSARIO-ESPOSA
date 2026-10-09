@@ -5,7 +5,9 @@ probado y subido.
 
 ## Por dónde seguir (nota para el próximo Claude)
 
-Último trabajo subido: **Sangre y Ceniza 2, fase 5** (9 de octubre), con la que **Sangre y Ceniza 2 queda completo**:
+Último trabajo subido: **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
+astral en pulso, el Guardián de una, sin pantallazo negro y los menús rehechos) y **la app de amigos con los seis
+juegos**. Antes, **Sangre y Ceniza 2, fase 5**, con la que **Sangre y Ceniza 2 queda completo**:
 equipo común a épico con rarezas especiales, la Forja con tres mostradores, el familiar (siete compañeros con modelo),
 el refugio con tres minijuegos y las medallas en relieve como íconos de las mejoras. Antes, la **fase 4**: 26 reliquias que se abren con hitos, los
 Desafíos (contratos del día y de la semana para comparar entre los dos, pruebas de maestría, anómalas), 17 mutadores
@@ -26,7 +28,11 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
    equipo con rarezas, la Forja con tres mostradores, el familiar, el refugio y las medallas). Quedaron para después,
    anotados en la propuesta: el aceite de lámpara y los sellos de la Procesión, los espejos del castillo y el piso en
    llamas de la abadía.
-2. **Sangre y Ceniza: lo que Javier encontró jugando** (9 de octubre), antes de Lavarse la cara 2:
+2. ~~**Sangre y Ceniza: lo que Javier encontró jugando**~~ **hecho** (9 de octubre): sin pantallazo negro, el
+   Guardián de una, visión astral en pulso, imán con el nivel, lo minado vuela solo, bombas que rompen vetas, ocho
+   sigilos, pantallas que no saltan, globito de ayuda propio, y los menús rehechos (logo en relieve con brasas, Cinzel,
+   medallas de logros/desafíos/sigilos, ilustraciones del Pozo y del refugio, juegos del refugio con sprites). Ver
+   `docs/sistemas/sangre-y-ceniza.md`. Lo que pidió:
    - pantallazo negro de 1-2 s al subir de nivel (con las mejoras del piso no pasa);
    - el Guardián debe salir apenas se cumple la misión principal (o a los pocos segundos);
    - visión astral como pulso de 1-2 s que cuesta 10 de vida y sube por etapa;

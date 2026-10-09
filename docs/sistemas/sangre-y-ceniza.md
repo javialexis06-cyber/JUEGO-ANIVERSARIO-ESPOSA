@@ -283,6 +283,29 @@ apagada. Los personajes siguen siendo los muñecos del proyecto, pero con trajes
 contraluz). Partículas: chispas, brasas, polvo al excavar, almas que flotan, sangre en neblina (sin gore
 exagerado). Interfaz sobria (hierro, pergamino quemado, sello rojo). Música lúgubre y sonidos con peso.
 
+**Lo de los menús (octubre, «que se vea mucho más profesional»):**
+
+- **Pantalla de inicio**: el logo en relieve (`public/sangre/logo.webp`, lo dibuja `personajes/blender/sangre_logo.py`:
+  «Sangre y Ceniza» en Cinzel Decorative con la cara de hueso, el filo dorado, la «y» de sangre y goterones que se
+  escurren; una barra con un rombo debajo). Entra con un golpe de luz, tiene un halo de brasa que respira, suben brasas
+  (`ui/brasas.ts`, un lienzo 2D a 30 cuadros), pasa niebla por abajo y los botones llegan uno por uno (la entrada
+  completa solo la primera vez). Nada de filtros ni mezclas encima del 3D.
+- **Letras**: Cinzel (licencia OFL, `public/sangre/fuentes/`, recortada al español con `pyftsubset`) para los títulos,
+  los botones y las placas (`--titular`); el texto corrido sigue en la serif. La carga `cargarFuentes()` de main.ts.
+- **Medallas nuevas** (mismo `sangre_medallas.py`): `logro` (oro y esmalte negro con rayos de premio) para los
+  logros, `desafio` (hierro, esmalte carmesí y cuatro púas) para contratos, pruebas, anomalías, mutadores, clases y
+  biomas de los desafíos, y `sigilo` (plata, esmalte azul noche y tres gemas) para los sigilos.
+- **Logros**: placas con su medalla a color si se ganó y apagada con candado si no, la barrita de lo que falta y un
+  resumen arriba (cuántos y el nivel del equipo del Pozo).
+- **Ilustraciones 3D** (`personajes/blender/sangre_vinetas.py` → `public/sangre/vinetas/`): el Pozo de las Almas
+  (arriba en su pantalla) y los tres juegos del refugio (el barril con calaveras y la mesa de la taberna, modelos
+  nuevos en `sangre_cosas.py`, y la Campana de Extracción) en sus tarjetas de madera.
+- **Los juegos del refugio** ya no son dibujos planos: piso de losas con grietas y musgo (dibujado una vez y copiado,
+  con la luz del fuego que titila), sprites renderizados (`spr_barril`, `spr_calavera`, `spr_pilar`, `spr_campana` y
+  `dado1`…`dado6`, de los modelos `barril_suelto`, `calavera_suelta`, `pilar_piedra`, `campanita_plata` y
+  `dado_hueso`), la campana que baja sobre su sombra, el retrato del jugador como muñequito y la mesa de la taberna
+  ilustrada junto al tabernero. Si un sprite no carga, se dibuja lo de antes.
+
 ## Cómo quedó el juego (código, decisiones y pruebas)
 
 **Dónde está**: `juego/web/sangre.html` → `src/sangre/` (entrada en `vite.config.ts`). Desde la casa: cuarto de

@@ -37,13 +37,14 @@ import { encolarSobrecarga } from './sim/opciones';
 import type { Sim } from './sim/sim';
 import { brillar, centrarEnCarrusel, sinSaltar } from './ui/repintar';
 import { efectos, musica, sonarSucesos } from './sonidos';
-import { BIOMAS_ORDEN, CLASES_ORDEN, MINERALES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdAnomalia, type IdBioma, type IdClase, type IdMineral, type IdMutador, type IdObjetivo, type IdSecundario, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
+import { BIOMAS_ORDEN, CLASES_ORDEN, LOGROS_POR_NIVEL_EQUIPO, MINERALES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdAnomalia, type IdBioma, type IdClase, type IdMineral, type IdMutador, type IdObjetivo, type IdSecundario, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
 import { Tutorial } from './tutorial';
 import { VistaEleccion } from './ui/eleccion';
 import { mostrarForja } from './ui/forja';
 import { mostrarRefugio } from './ui/refugio';
 import { verEscena } from './ui/historia';
 import { globitosDeAyuda } from './ui/ayuda';
+import { brasas } from './ui/brasas';
 import { aviso } from './ui/hud';
 import { glifo, icono, medalla, revisarRenders } from './ui/iconos';
 import { Mando } from './ui/mando';
@@ -246,6 +247,21 @@ function seccion(clase: string, html: string) {
   return s;
 }
 
+/** Cinzel (letras de piedra tallada, licencia OFL) para los títulos y los botones; si no carga, queda la serif. */
+function cargarFuentes() {
+  if (!('FontFace' in window)) return;
+  for (const [familia, archivo, peso] of [['Cinzel', 'cinzel.woff2', '400 900'], ['Cinzel Decorative', 'cinzel-decorativa.woff2', '700']]) {
+    try {
+      const f = new FontFace(familia, `url(./sangre/fuentes/${archivo})`, { weight: peso, display: 'swap' });
+      document.fonts.add(f);
+      void f.load().catch(() => undefined);
+    } catch {
+      /* sin fuentes propias */
+    }
+  }
+}
+
+let tituloVisto = false;
 function titulo() {
   pantalla = 'titulo';
   musica.cambiar('menu');
@@ -253,8 +269,11 @@ function titulo() {
   const p = P();
   const nv = nivelMaestria(p.maestria[sel.clase] ?? 0).nivel;
   const bajada = leerBajada();
+  // La pantalla de inicio: el logo en relieve (personajes/blender/sangre_logo.py) que entra con un golpe de luz, su
+  // halo que respira, brasas que suben, niebla que pasa por abajo y los botones que llegan uno por uno
   const s = seccion('titulo con-fondo', `
-    <h1 class="logo">Sangre <em>y</em> Ceniza</h1>
+    <div class="titulo-ambiente" aria-hidden="true"><i class="niebla n1"></i><i class="niebla n2"></i><canvas class="brasas"></canvas><i class="vineta"></i></div>
+    <h1 class="logo"><i class="logo-halo"></i><img src="./sangre/logo.webp" alt="Sangre y Ceniza" draggable="false"></h1>
     <p class="lema">Cayó la Noche Eterna sobre Valdemora. Baja, junta lo que puedas y sal viva por la campana.</p>
     <div class="menu-titulo">
       ${bajada ? `<button class="boton boton-sangre medio" data-a="jugar">${glifo('espada')}Expedición</button>
@@ -275,6 +294,11 @@ function titulo() {
       <button class="boton-redondo" data-a="musica" aria-label="Música">${glifo('musica')}</button>
     </div>`);
   s.querySelector('[data-a="musica"]')!.classList.toggle('apagado', sonido.musica.apagada());
+  s.querySelectorAll<HTMLElement>('.menu-titulo .boton').forEach((b, k) => b.style.setProperty('--i', String(k)));
+  // (la entrada completa solo la primera vez; al volver de otra pantalla, más corta)
+  s.classList.toggle('primera', !tituloVisto);
+  tituloVisto = true;
+  brasas(s.querySelector<HTMLCanvasElement>('.brasas')!);
   s.addEventListener('click', (e) => {
     const a = (e.target as HTMLElement).closest<HTMLElement>('[data-a]')?.dataset.a;
     if (!a) return;
@@ -324,6 +348,7 @@ function refugio(alVolver: () => void) {
     // (mientras se juega un minijuego, el campamento 3D de fondo se apaga: el juego va más suave y gasta menos)
     alJugar: (jugando) => (jugando ? cerrarCampamento() : void campamento()),
     sonar: (q) => (q === 'golpe' ? efectos.boton() : q === 'campana' ? efectos.campana() : efectos[q]()),
+    retrato: `./sangre/retratos/${sel.clase}_${yo.cuerpo}.webp`,
   });
 }
 
@@ -440,7 +465,7 @@ function escogerExpedicion(alListo?: () => void) {
       const d = SIGILOS[x];
       const k = sel.sigilos.indexOf(x);
       const n = sel.sigilos.filter((y) => SIGILOS[y].activo).indexOf(x);
-      return `<button class="ranura-equipo sigilo${k >= 0 ? ' si' : ''}" data-sg="${x}" style="--sg:${d.color}" title="${d.desc}"><span class="ico">${glifo(d.glifo, d.color)}</span><small>${d.nombre}${d.activo && n >= 0 ? ` <kbd>${TECLAS_SIGILO[n]}</kbd>` : ''}</small></button>`;
+      return `<button class="ranura-equipo sigilo${k >= 0 ? ' si' : ''}" data-sg="${x}" style="--sg:${d.color}" title="${d.desc}"><span class="ico ico-sigilo">${medalla('sigilo', d.glifo, d.color)}</span><small>${d.nombre}${d.activo && n >= 0 ? ` <kbd>${TECLAS_SIGILO[n]}</kbd>` : ''}</small></button>`;
     }).join('') + (p.sigilos.length < SIGILOS_ORDEN.length ? '<small class="vacio">Más en el Pozo</small>' : '');
     const equipo = RANURAS_EQUIPO.map((r) => {
       const id = sel.equipo[r];
@@ -588,11 +613,11 @@ function pozo() {
       const tiene = p.sigilos.includes(x);
       const falta = !tiene && p.ceniza < d.precio;
       return `<button class="renglon sigilo${tiene ? ' hecho' : ''}${falta ? ' no' : ''}" data-sg="${x}" style="--sg:${d.color}" ${tiene ? 'disabled' : ''}>
-        <span class="ico">${glifo(d.glifo, d.color)}</span><span><b>${d.nombre}</b><small>${d.activo ? '<em>Se usa con su botón.</em> ' : ''}${d.desc}</small></span>
+        <span class="ico ico-sigilo">${medalla('sigilo', d.glifo, d.color)}</span><span><b>${d.nombre}</b><small>${d.activo ? '<em>Se usa con su botón.</em> ' : ''}${d.desc}</small></span>
         <span class="nivel">${tiene ? 'Tuyo' : `${glifo('alma')} ${d.precio}`}</span></button>`;
     }).join('');
     s.innerHTML = `${cabeza('El Pozo de las Almas')}
-      <p class="sub-pozo">La ceniza y los minerales de cada expedición alimentan el Pozo. Lo que compres aquí te acompaña en todas las clases.</p>
+      <div class="pozo-cabeza"><img class="pozo-vineta" src="./sangre/vinetas/pozo.webp" alt=""><p class="sub-pozo">La ceniza y los minerales de cada expedición alimentan el Pozo. Lo que compres aquí te acompaña en todas las clases.</p></div>
       <div class="lista">
         <h3 class="titulo-grabado ancho">Sigilos <small>(llevas dos; se escogen antes de bajar)</small></h3>
         ${sigilos}
@@ -783,30 +808,30 @@ function desafios() {
   if (!biomaPrueba || !p.biomas.includes(biomaPrueba)) biomaPrueba = p.biomas.includes(sel.bioma) ? sel.bioma : p.biomas[0];
   const dibujar = () => {
     const tarjetaContrato = (c: ReturnType<typeof contrato>) => `<div class="tarjeta-desafio">
-      <h4>${glifo(c.tipo === 'dia' ? 'sol' : 'luna')}${c.nombre}</h4>
+      <h4><span class="med-desafio">${medalla('desafio', c.tipo === 'dia' ? 'sol' : 'luna')}</span>${c.nombre}</h4>
       <p>${BIOMAS[c.bioma].nombre} · peligro ${c.peligro}</p>
-      <p class="muts">${c.mutadores.map((m) => `<span title="${MUTADORES[m].desc}">${glifo(MUTADORES[m].glifo)}${MUTADORES[m].nombre}</span>`).join('')}</p>
+      <p class="muts">${c.mutadores.map((m) => `<span title="${MUTADORES[m].desc}"><i class="med-mini">${medalla('desafio', MUTADORES[m].glifo)}</i>${MUTADORES[m].nombre}</span>`).join('')}</p>
       <p><b>Tú:</b> ${mejorContrato(p.contratos[c.id])}${nombreOtro ? `<br><b>${nombreOtro}:</b> ${otro ? mejorContrato(otro.contratos[c.id]) : '…'}` : ''}</p>
       <small>La primera vez que lo ganes: +${c.ceniza} de ceniza y +${c.puntos} ✦</small>
       <button class="boton boton-sangre boton-chico" data-c="${c.tipo}">${glifo('antorcha')}Aceptar</button></div>`;
     const chipsArma = probables.map((id) => `<button class="arma-mini${id === armaPrueba ? ' elegida' : ''}${p.pruebas.armas.includes(id) ? ' hecha' : ''}" data-w="${id}" title="${ARMAS[id].nombre}">${icono(ARMAS[id].glifo, id)}</button>`).join('');
-    const chipsBioma = p.biomas.map((b) => `<button class="boton boton-chico${b === biomaPrueba ? ' activo' : ''}" data-b="${b}">${glifo(BIOMAS[b].glifo)}${p.pruebas.biomas.includes(b) ? ' ✓' : ''}</button>`).join('');
+    const chipsBioma = p.biomas.map((b) => `<button class="boton boton-chico chip-bioma${b === biomaPrueba ? ' activo' : ''}" data-b="${b}" title="${BIOMAS[b].nombre}"><i class="med-mini">${medalla('desafio', BIOMAS[b].glifo)}</i>${p.pruebas.biomas.includes(b) ? ' ✓' : ''}</button>`).join('');
     s.innerHTML = `${cabeza('Desafíos')}
       <p class="centro puntos-maestria">${glifo('dado')} Puntos de maestría: <b>${p.puntos} ✦</b> · bajas como ${nombreClase(sel.clase, yo.cuerpo)} <button class="boton boton-chico" data-a="clase">Cambiar</button></p>
       <div class="desafios">
         <section class="col-desafio"><h3>Contratos</h3><small>Los mismos para los dos: ¿quién llega más lejos?</small>${tarjetaContrato(dia)}${tarjetaContrato(semana)}</section>
         <section class="col-desafio"><h3>Pruebas de maestría</h3>
-          <div class="tarjeta-desafio"><h4>${glifo('espada')}Prueba del arma</h4><p>3 etapas en peligro 1 solo con ella (no salen otras; arranca en el nivel 4 y pega 60 % más). Gánala: <b>+12 % de daño con esa arma para siempre</b> y +1 ✦.</p>
+          <div class="tarjeta-desafio"><h4><span class="med-desafio">${medalla('desafio', 'espada')}</span>Prueba del arma</h4><p>3 etapas en peligro 1 solo con ella (no salen otras; arranca en el nivel 4 y pega 60 % más). Gánala: <b>+12 % de daño con esa arma para siempre</b> y +1 ✦.</p>
             <div class="chips-armas">${chipsArma}</div><p><b>${ARMAS[armaPrueba]?.nombre ?? ''}</b>${p.pruebas.armas.includes(armaPrueba) ? ' · ya superada' : ''}</p>
             <button class="boton boton-sangre boton-chico" data-q="arma">${glifo('antorcha')}Bajar</button></div>
-          <div class="tarjeta-desafio"><h4>${glifo(CLASES[sel.clase].glifo)}Prueba de la clase</h4><p>${nombreClase(sel.clase, yo.cuerpo)}: 5 etapas en peligro 1 sin ninguna curación. Gánala: +2 ✦ y 300 de ceniza.${p.pruebas.clases.includes(sel.clase) ? ' <b>Ya superada.</b>' : ''}</p>
+          <div class="tarjeta-desafio"><h4><span class="med-desafio">${medalla('desafio', CLASES[sel.clase].glifo)}</span>Prueba de la clase</h4><p>${nombreClase(sel.clase, yo.cuerpo)}: 5 etapas en peligro 1 sin ninguna curación. Gánala: +2 ✦ y 300 de ceniza.${p.pruebas.clases.includes(sel.clase) ? ' <b>Ya superada.</b>' : ''}</p>
             <button class="boton boton-sangre boton-chico" data-q="clase">${glifo('antorcha')}Bajar</button></div>
-          <div class="tarjeta-desafio"><h4>${glifo('castillo')}Prueba del bioma</h4><p>10 etapas en ${BIOMAS[biomaPrueba as IdBioma]?.nombre ?? ''}, peligro 3, con jefe en la 5 y en la 10. Gánala: +3 ✦ y 500 de ceniza.</p>
+          <div class="tarjeta-desafio"><h4><span class="med-desafio">${medalla('desafio', 'castillo')}</span>Prueba del bioma</h4><p>10 etapas en ${BIOMAS[biomaPrueba as IdBioma]?.nombre ?? ''}, peligro 3, con jefe en la 5 y en la 10. Gánala: +3 ✦ y 500 de ceniza.</p>
             <div class="chips-biomas">${chipsBioma}</div>
             <button class="boton boton-sangre boton-chico" data-q="bioma">${glifo('antorcha')}Bajar</button></div>
         </section>
         <section class="col-desafio"><h3>Expediciones anómalas</h3><small>Cuestan ${COSTO_ANOMALIA} ✦ y dan el doble de ceniza. En ${BIOMAS[sel.bioma].nombre}, peligro ${Math.max(2, sel.peligro)}.</small>
-          ${ANOMALIAS.map((x) => `<button class="tarjeta-desafio anomalia" data-n="${x.id}" ${p.puntos < COSTO_ANOMALIA ? 'disabled' : ''}><h4>${glifo(x.glifo)}${x.nombre}</h4><p>${x.desc}</p></button>`).join('')}
+          ${ANOMALIAS.map((x) => `<button class="tarjeta-desafio anomalia" data-n="${x.id}" ${p.puntos < COSTO_ANOMALIA ? 'disabled' : ''}><h4><span class="med-desafio">${medalla('desafio', x.glifo)}</span>${x.nombre}</h4><p>${x.desc}</p></button>`).join('')}
         </section>
       </div>`;
   };
@@ -878,22 +903,29 @@ function logros(pestana: 'logros' | 'reliquias' = 'logros') {
   const abiertas = RELIQUIAS.filter((r) => !r.hito || p.reliquias.includes(r.id)).length;
   const pestanas = `<div class="pestanas"><button class="boton boton-chico${pestana === 'logros' ? ' activo' : ''}" data-p="logros">${glifo('corona')}Logros ${p.logros.length}/${LOGROS.length}</button>
     <button class="boton boton-chico${pestana === 'reliquias' ? ' activo' : ''}" data-p="reliquias">${glifo('caliz')}Reliquias ${abiertas}/${RELIQUIAS.length}</button></div>`;
+  // Cada logro (o reliquia) es una placa con su medalla: a color y con brillo si ya se ganó; apagada, con candado y lo
+  // que falta, si no. Arriba, cuánto lleva.
+  const placa = (o: { hecho: boolean; medalla: string; nombre: string; desc: string; extra?: string; av: number; premio: string }) =>
+    `<div class="placa-logro${o.hecho ? ' hecho' : ''}"><span class="medalla">${o.medalla}${o.hecho ? '' : `<i class="candado">${glifo('candado')}</i>`}</span>
+      <span class="txt"><b>${o.nombre}</b><small>${o.desc}${o.extra ? ` <em>${o.extra}</em>` : ''}</small>
+      ${!o.hecho && o.av ? `<span class="barra barra-logro"><i style="width:${Math.round(o.av * 100)}%"></i></span>` : ''}</span>
+      <span class="premio-logro">${o.premio}</span></div>`;
   const filas = pestana === 'logros'
     ? LOGROS.map((l) => {
         const hecho = p.logros.includes(l.id);
-        const av = !hecho && l.avance ? l.avance(p) : 0;
-        return `<div class="renglon${hecho ? ' hecho' : ' no'}"><span class="ico">${glifo(l.glifo)}</span><span><b>${l.nombre}</b><small>${l.desc}${l.premio ? ` <em>${l.premio}.</em>` : ''}</small>
-          ${av ? `<span class="barra barra-logro"><i style="width:${Math.round(av * 100)}%"></i></span>` : ''}</span><span class="nivel">${hecho ? glifo('corona') : `+${l.ceniza}`}</span></div>`;
+        return placa({ hecho, medalla: medalla('logro', l.glifo), nombre: l.nombre, desc: l.desc, extra: l.premio ? `${l.premio}.` : '', av: !hecho && l.avance ? l.avance(p) : 0, premio: hecho ? glifo('corona') : `+${l.ceniza}<small>ceniza</small>` });
       }).join('')
     : [...hitos, ...RELIQUIAS.filter((r) => !r.hito)].map((r) => {
         // (las de siempre salen desde el comienzo; las de hitos dicen qué proeza las abre)
         const ab = !r.hito || p.reliquias.includes(r.id);
         const h = HITOS_RELIQUIA[r.id];
-        const av = !ab && h?.avance ? h.avance(p) : 0;
-        return `<div class="renglon${ab ? ' hecho' : ' no'}"><span class="ico">${ab ? medalla('reliquia', r.glifo) : glifo('candado')}</span><span><b>${r.nombre}</b><small>${r.desc}${!ab && h ? ` <em>Se abre: ${h.desc}</em>` : ''}</small>
-          ${av ? `<span class="barra barra-logro"><i style="width:${Math.round(av * 100)}%"></i></span>` : ''}</span><span class="nivel">${ab ? glifo('caliz') : ''}</span></div>`;
+        return placa({ hecho: ab, medalla: medalla('reliquia', r.glifo), nombre: r.nombre, desc: r.desc, extra: !ab && h ? `Se abre: ${h.desc}` : '', av: !ab && h?.avance ? h.avance(p) : 0, premio: ab ? glifo('caliz') : '' });
       }).join('');
-  const s = seccion('pantalla-logros opaca', `${cabeza(pestana === 'logros' ? 'Logros' : 'Reliquias')}${pestanas}<div class="lista">${filas}</div>`);
+  const hechos = pestana === 'logros' ? p.logros.length : abiertas;
+  const total = pestana === 'logros' ? LOGROS.length : RELIQUIAS.length;
+  const resumen = `<div class="resumen-logros"><span><b>${hechos}</b> de ${total}</span><span class="barra"><i style="width:${Math.round((hechos / total) * 100)}%"></i></span>
+    ${pestana === 'logros' ? `<span>Equipo del Pozo: nivel <b>${nivelEquipo(p)}</b> <small>(sube cada ${LOGROS_POR_NIVEL_EQUIPO} logros)</small></span>` : '<span><small>Las de hitos se abren con una proeza</small></span>'}</div>`;
+  const s = seccion('pantalla-logros opaca', `${cabeza(pestana === 'logros' ? 'Logros' : 'Reliquias')}${pestanas}${resumen}<div class="lista lista-logros">${filas}</div>`);
   s.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
     const pe = t.closest<HTMLElement>('[data-p]')?.dataset.p as 'logros' | 'reliquias' | undefined;
@@ -1752,6 +1784,7 @@ w.__sangreForja = () => {
 async function arrancar() {
   carga(true, 'Encendiendo las antorchas…', 0.1);
   globitosDeAyuda();
+  cargarFuentes();
   void revisarRenders();
   await guardado.traer().catch(() => undefined);
   aplicarDesbloqueos(P());

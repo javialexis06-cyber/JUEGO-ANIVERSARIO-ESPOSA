@@ -3,7 +3,8 @@ las mejoras, los objetos, las reliquias y el equipo, más elaborados que el glif
 esmalte con su marco de metal y tachuelas, y el glifo del juego en relieve dorado (sale del mismo trazo SVG).
 
 Temas: mejora (bronce y esmalte rojo sangre), objeto (plata y verde petróleo), reliquia (oro, esmalte morado y
-piedritas) y equipo (hierro y azul acero).
+piedritas), equipo (hierro y azul acero), logro (oro y esmalte negro con rayos de premio), desafio (hierro, esmalte
+carmesí y cuatro púas) y sigilo (plata, esmalte azul noche y tres gemas).
 
 Uso: blender -b -P sangre_medallas.py -- <glifos.json> <carpeta_salida> [tema:glifo,…] [--hoja <png>]
   glifos.json: {"usos": {tema: [glifo…]}, "glifos": {glifo: "d del path"}} (lo saca el juego de ui/iconos.ts)
@@ -28,6 +29,10 @@ TEMAS = {
     'objeto': ('#1E6A66', '#C8CED8', '#F4E2B0', '#6ad8c8'),
     'reliquia': ('#5A2A96', '#E0B04A', '#FFE08A', '#c46bff'),
     'equipo': ('#34506C', '#9A9EA6', '#ECE2CC', '#a8b8c8'),
+    # (de los arreglos de octubre: logros con rayos de premio, desafíos con púas y sigilos con gemas azules)
+    'logro': ('#1E1416', '#D8A848', '#FFDC7A', '#ffcf6a'),
+    'desafio': ('#6A0E16', '#6E686C', '#F0E2C8', '#ff4a3a'),
+    'sigilo': ('#1C2C58', '#C8CED8', '#E8EEF8', '#8ab8ff'),
 }
 
 
@@ -87,6 +92,34 @@ def medalla_base(coll, tema):
         for k in range(4):
             a = math.pi / 2 * k
             bpy.ops.mesh.primitive_ico_sphere_add(radius=0.085, subdivisions=2, location=(math.cos(a) * 1.0, 0.13, math.sin(a) * 1.0))
+            g = bpy.context.object
+            g.data.materials.append(m_gema)
+            objs.append(g)
+    if tema == 'logro':
+        # Rayos de premio alrededor (como una condecoración)
+        for k in range(16):
+            a = 2 * math.pi * k / 16
+            largo = 0.2 if k % 2 == 0 else 0.13
+            bpy.ops.mesh.primitive_cone_add(vertices=8, radius1=0.075, radius2=0.0, depth=largo,
+                                            location=(math.cos(a) * (1.08 + largo / 2), 0.0, math.sin(a) * (1.08 + largo / 2)),
+                                            rotation=(0, math.pi / 2 - a, 0))
+            r = bpy.context.object
+            r.data.materials.append(m_mar)
+            objs.append(r)
+    elif tema == 'desafio':
+        m_hierro = material('púas desafío', '#4A4448', 0.9, 0.38)
+        for k in range(4):
+            a = math.pi / 4 + math.pi / 2 * k
+            bpy.ops.mesh.primitive_cone_add(vertices=6, radius1=0.11, radius2=0.0, depth=0.3,
+                                            location=(math.cos(a) * 1.2, 0.0, math.sin(a) * 1.2), rotation=(0, math.pi / 2 - a, 0))
+            r = bpy.context.object
+            r.data.materials.append(m_hierro)
+            objs.append(r)
+    elif tema == 'sigilo':
+        m_gema = material('gema sigilo', '#4A8CFF', 0.0, 0.1, brillo=1.6)
+        for k in range(3):
+            a = math.pi / 2 + 2 * math.pi / 3 * k
+            bpy.ops.mesh.primitive_ico_sphere_add(radius=0.09, subdivisions=2, location=(math.cos(a) * 1.0, 0.13, math.sin(a) * 1.0))
             g = bpy.context.object
             g.data.materials.append(m_gema)
             objs.append(g)
@@ -324,8 +357,10 @@ def main(json_path, out, cuales=None, hoja=None):
         for o in list(luces.objects):
             bpy.data.objects.remove(o, do_unlink=True)
         import mathutils
-        lo = mathutils.Vector((-1.12, -0.3, -1.12))
-        hi = mathutils.Vector((1.12, 0.1, 1.12))
+        # (los rayos de los logros y las púas de los desafíos salen del aro)
+        ex = 1.4 if tema in ('logro', 'desafio') else 1.12
+        lo = mathutils.Vector((-ex, -0.3, -ex))
+        hi = mathutils.Vector((ex, 0.1, ex))
         sc.luces_dramaticas(luces, centro=(0, 0, 0), escala=2.2, calida='#FFD8A8')
         cam = sc.camara_figura(f'cam medalla {tema} {gl}', lo, hi, 12, 18, margen=1.08)
         png = os.path.join(tmp, f'{tema}_{gl}.png')

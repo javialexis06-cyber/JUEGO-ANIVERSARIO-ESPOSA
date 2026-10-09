@@ -23,6 +23,35 @@ export interface OpcionesRefugio {
   /** Al entrar a un minijuego (true) y al salir (false): para apagar el 3D de fondo mientras se juega. */
   alJugar?: (jugando: boolean) => void;
   sonar?: (que: 'boton' | 'golpe' | 'compra' | 'derrota' | 'victoria' | 'campana' | 'carta') => void;
+  /** El retrato del jugador (su clase y su cuerpo): es el muñequito de la campana de práctica. */
+  retrato?: string;
+}
+
+// ------------------------------------------------------------------------------------------------- Sprites
+// Renders de Blender (personajes/blender/sangre_vinetas.py → public/sangre/vinetas/spr_*.webp y dado<n>.webp); mientras
+// cargan (o si faltan) se dibuja lo de antes, a mano.
+const SPRITES = new Map<string, HTMLImageElement>();
+function sprite(nombre: string, ruta = `./sangre/vinetas/${nombre}.webp`) {
+  let i = SPRITES.get(ruta);
+  if (!i) {
+    i = new Image();
+    i.decoding = 'async';
+    i.src = ruta;
+    SPRITES.set(ruta, i);
+  }
+  return i.complete && i.naturalWidth > 0 ? i : null;
+}
+/** Dibuja un sprite centrado en (x, y), de `tam` de ancho, girado y con su transparencia; false si no ha cargado. */
+function dibujar(c: CanvasRenderingContext2D, nombre: string, x: number, y: number, tam: number, rot = 0, alfa = 1) {
+  const i = sprite(nombre);
+  if (!i) return false;
+  c.save();
+  c.globalAlpha = alfa;
+  c.translate(x, y);
+  if (rot) c.rotate(rot);
+  c.drawImage(i, -tam / 2, -tam / 2, tam, tam);
+  c.restore();
+  return true;
 }
 
 type Juego = 'barril' | 'taberna' | 'campana';
@@ -52,7 +81,7 @@ export function mostrarRefugio(o: OpcionesRefugio) {
     raiz.innerHTML = `<header class="cabeza"><button class="boton-redondo" data-a="atras" aria-label="Atrás">${glifo('atras')}</button><h2>El refugio</h2></header>
       <p class="sub-refugio">Junto al fuego, mientras se espera a los demás: tres juegos de taberna.</p>
       <div class="juegos-refugio">${JUEGOS.map((g) => `<button class="juego-refugio placa" data-j="${g.id}">
-        <span class="aura-juego"><span class="ico">${glifo(g.glifo)}</span></span><b>${g.nombre}</b><small>${g.desc}</small>
+        <span class="aura-juego vineta-juego"><img src="./sangre/vinetas/${g.id}.webp" alt=""></span><b>${g.nombre}</b><small>${g.desc}</small>
         <span class="record">Tu récord: <b>${r[g.id] ? g.unidad(r[g.id]) : '—'}</b>${o.nombreOtro ? `<br>${o.nombreOtro}: <b>${otro ? (otro[g.id] ? g.unidad(otro[g.id]) : '—') : '…'}</b>` : ''}</span>
         <span class="boton boton-chico boton-sangre jugar-refugio">${glifo('mano')}Jugar</span>
       </button>`).join('')}</div>`;
@@ -88,7 +117,7 @@ export function mostrarRefugio(o: OpcionesRefugio) {
         <div class="marcador-refugio"></div></header><div class="mesa-refugio"></div>`;
       const mesa = raiz.querySelector<HTMLElement>('.mesa-refugio')!;
       const marcador = raiz.querySelector<HTMLElement>('.marcador-refugio')!;
-      const ctx: CtxJuego = { mesa, marcador, sonar, record: (v) => record(j, v), r };
+      const ctx: CtxJuego = { mesa, marcador, sonar, record: (v) => record(j, v), r, retrato: o.retrato };
       detener = j === 'barril' ? barril(ctx) : j === 'taberna' ? taberna(ctx, () => o.alGuardar(r)) : campana(ctx);
     }
   });
@@ -108,6 +137,7 @@ interface CtxJuego {
   /** Guarda el récord si lo superó (devuelve si fue récord). */
   record: (v: number) => boolean;
   r: RecordsRefugio;
+  retrato?: string;
 }
 
 /** Un lienzo que llena la mesa, con su bucle de cuadros (para cuando se sale). */
@@ -148,8 +178,93 @@ function lienzo(mesa: HTMLElement, cuadro: (dt: number, c: CanvasRenderingContex
   };
 }
 
-/** Piso de piedra con juntas (barato: rectángulos). */
+/** Piso de losas de piedra (cada una de su tono, con grietas y musgo en las juntas), dibujado una vez por tamaño y
+ *  después copiado; encima, la luz del fuego que titila. */
+const PISOS = new Map<string, HTMLCanvasElement>();
 function piso(c: CanvasRenderingContext2D, w: number, h: number, tono = '#2a2420') {
+  const clave = `${Math.round(w)}x${Math.round(h)}:${tono}`;
+  let lienzo = PISOS.get(clave);
+  if (!lienzo) {
+    lienzo = document.createElement('canvas');
+    lienzo.width = Math.max(1, Math.round(w));
+    lienzo.height = Math.max(1, Math.round(h));
+    const cl = lienzo.getContext('2d')!;
+    if (typeof cl.roundRect === 'function') losas(cl, w, h, tono);
+    else pisoSimple(cl, w, h, tono);
+    PISOS.clear();
+    PISOS.set(clave, lienzo);
+  }
+  c.drawImage(lienzo, 0, 0, w, h);
+  const t = performance.now() / 1000;
+  const titila = 0.06 + 0.025 * Math.sin(t * 7.3) + 0.02 * Math.sin(t * 13.1);
+  const g = c.createRadialGradient(w * 0.08, h * 0.5, 0, w * 0.08, h * 0.5, Math.max(w, h) * 0.9);
+  g.addColorStop(0, `rgba(255,150,60,${titila + 0.06})`);
+  g.addColorStop(0.5, `rgba(255,120,40,${titila * 0.5})`);
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  c.fillStyle = g;
+  c.fillRect(0, 0, w, h);
+}
+function losas(c: CanvasRenderingContext2D, w: number, h: number, tono: string) {
+  let semilla = 7;
+  const az = () => ((semilla = (semilla * 16807) % 2147483647) / 2147483647);
+  c.fillStyle = '#120e0c';
+  c.fillRect(0, 0, w, h);
+  const alto = 40;
+  for (let y = 0, fila = 0; y < h; y += alto, fila++) {
+    for (let x = fila % 2 ? -30 : 0; x < w; ) {
+      const ancho = 46 + az() * 34;
+      const l = 0.82 + az() * 0.3;
+      // la losa: su tono, un poco más clara arriba (luz) y con el borde gastado
+      const g = c.createLinearGradient(0, y, 0, y + alto);
+      g.addColorStop(0, sombra(tono, l * 1.12));
+      g.addColorStop(1, sombra(tono, l * 0.86));
+      c.fillStyle = g;
+      c.beginPath();
+      c.roundRect(x + 1.5, y + 1.5, ancho - 3, alto - 3, 4);
+      c.fill();
+      c.strokeStyle = 'rgba(255,230,190,0.05)';
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(x + 4, y + 2.5);
+      c.lineTo(x + ancho - 4, y + 2.5);
+      c.stroke();
+      // grieta
+      if (az() < 0.35) {
+        c.strokeStyle = 'rgba(0,0,0,0.45)';
+        c.beginPath();
+        let gx = x + 6 + az() * (ancho - 12), gy = y + 4;
+        c.moveTo(gx, gy);
+        for (let k = 0; k < 4; k++) {
+          gx += (az() - 0.5) * 12;
+          gy += alto / 5;
+          c.lineTo(gx, gy);
+        }
+        c.stroke();
+      }
+      // musgo en la junta
+      if (az() < 0.25) {
+        c.fillStyle = 'rgba(70,90,40,0.35)';
+        c.beginPath();
+        c.ellipse(x + az() * ancho, y + alto - 2, 6 + az() * 10, 2.5, 0, 0, Math.PI * 2);
+        c.fill();
+      }
+      x += ancho;
+    }
+  }
+  const v = c.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.25, w / 2, h / 2, Math.max(w, h) * 0.72);
+  v.addColorStop(0, 'rgba(0,0,0,0)');
+  v.addColorStop(1, 'rgba(0,0,0,0.6)');
+  c.fillStyle = v;
+  c.fillRect(0, 0, w, h);
+}
+/** Un color #rrggbb más claro u oscuro. */
+function sombra(hex: string, f: number) {
+  const n = parseInt(hex.slice(1), 16);
+  const ch = (k: number) => Math.max(0, Math.min(255, Math.round(((n >> k) & 255) * f)));
+  return `rgb(${ch(16)},${ch(8)},${ch(0)})`;
+}
+/** (el piso viejo, por si el aparato no tiene roundRect) */
+function pisoSimple(c: CanvasRenderingContext2D, w: number, h: number, tono = '#2a2420') {
   c.fillStyle = tono;
   c.fillRect(0, 0, w, h);
   c.strokeStyle = 'rgba(0,0,0,0.35)';
@@ -175,6 +290,7 @@ function piso(c: CanvasRenderingContext2D, w: number, h: number, tono = '#2a2420
 }
 
 function calavera(c: CanvasRenderingContext2D, x: number, y: number, r: number, rot = 0, alfa = 1) {
+  if (dibujar(c, 'spr_calavera', x, y, r * 2.7, rot, alfa)) return;
   c.save();
   c.globalAlpha = alfa;
   c.translate(x, y);
@@ -352,6 +468,7 @@ function barril(x: CtxJuego) {
     }
     // Pilares, calaveras (las tumbadas salen volando) y el barril
     for (const p of pilares) {
+      if (dibujar(c, 'spr_pilar', p.x, p.y, p.r * 2.5)) continue;
       c.fillStyle = '#4a4440';
       c.beginPath();
       c.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -389,6 +506,12 @@ function barril(x: CtxJuego) {
       c.stroke();
       c.setLineDash([]);
     }
+    // (su sombra, y el barril que gira al rodar)
+    c.fillStyle = 'rgba(0,0,0,0.35)';
+    c.beginPath();
+    c.ellipse(b.x + 3, b.y + 5, R * 1.05, R * 0.8, 0, 0, Math.PI * 2);
+    c.fill();
+    if (!dibujar(c, 'spr_barril', b.x, b.y, R * 2.8, b.giro)) {
     c.save();
     c.translate(b.x, b.y);
     c.rotate(b.giro);
@@ -405,6 +528,7 @@ function barril(x: CtxJuego) {
       c.stroke();
     }
     c.restore();
+    }
     if (!b.rodando && patadas > 0 && !apunta && !fin) {
       c.fillStyle = 'rgba(255,230,180,0.85)';
       c.font = '600 13px Georgia, serif';
@@ -435,14 +559,15 @@ function taberna(x: CtxJuego, guardar: () => void) {
   let apuesta = 10, yo: number[] = [], el: number[] = [], fase: 'apostar' | 'pedir' | 'fin' = 'apostar', dice = 'Siéntese. ¿Cuánto va a apostar?';
   const suma = (d: number[]) => d.reduce((a, b) => a + b, 0);
   const dado = () => 1 + Math.floor(Math.random() * 6);
-  const pintarDado = (v: number) => `<span class="dado d${v}">${'<i></i>'.repeat(v)}</span>`;
+  // (el último dado de cada mano cae rodando; los de antes ya están quietos)
+  const pintarDados = (d: number[]) => d.map((v, k) => `<img class="dado-render${k === d.length - 1 ? ' nuevo' : ''}" src="./sangre/vinetas/dado${v}.webp" alt="${v}">`).join('');
   const pintar = () => {
     x.marcador.innerHTML = `<span><span class="ico">${glifo('alma')}</span>${r.bolsa}</span><span class="rec">Récord ${r.taberna}</span>`;
     x.mesa.innerHTML = `<div class="taberna">
-      <div class="tabernero"><span class="ico">${glifo('jarra')}</span><p class="globo-tabernero">${dice}</p></div>
+      <div class="tabernero"><img class="mesa-tabernero" src="./sangre/vinetas/taberna.webp" alt=""><p class="globo-tabernero">${dice}</p></div>
       <div class="manos">
-        <div class="mano"><small>El tabernero</small><div class="dados">${el.map(pintarDado).join('') || '<em>—</em>'}</div><b>${el.length ? suma(el) : ''}</b></div>
-        <div class="mano tuya"><small>Tú</small><div class="dados">${yo.map(pintarDado).join('') || '<em>—</em>'}</div><b>${yo.length ? suma(yo) : ''}</b></div>
+        <div class="mano"><small>El tabernero</small><div class="dados">${pintarDados(el) || '<em>—</em>'}</div><b>${el.length ? suma(el) : ''}</b></div>
+        <div class="mano tuya"><small>Tú</small><div class="dados">${pintarDados(yo) || '<em>—</em>'}</div><b>${yo.length ? suma(yo) : ''}</b></div>
       </div>
       <div class="acciones-taberna">${fase === 'apostar' || fase === 'fin'
         ? `${[10, 25, 50].map((v) => `<button class="boton boton-chico${apuesta === v ? ' si' : ''}" data-ap="${v}" ${r.bolsa < v ? 'disabled' : ''}>${v}</button>`).join('')}
@@ -617,13 +742,22 @@ function campana(x: CtxJuego) {
         c.beginPath();
         c.arc(g.x, g.y, g.r, 0, Math.PI * 2);
         c.stroke();
+        // la campana que viene bajando (al final del aviso se ve llegar)
+        if (u > 0.45) {
+          const baja = (u - 0.45) / 0.55;
+          dibujar(c, 'spr_campana', g.x, g.y - g.r * 0.4 - (1 - baja) * 140, g.r * 2.2, 0, Math.min(1, baja * 2));
+        }
       } else {
         if (g.t - g.dur < dt * 1.5) {
           x.sonar('campana');
           if (vivo && Math.hypot(yo.x - g.x, yo.y - g.y) < g.r + 6) morir();
         }
         const f = (g.t - g.dur) / 0.35;
-        // la campana que cae (y se va)
+        // la campana que cayó (y se desvanece)
+        if (dibujar(c, 'spr_campana', g.x, g.y - g.r * 0.4, g.r * 2.2 * (1 + f * 0.1), 0, 1 - f)) {
+          if (f >= 1) golpes.splice(k, 1);
+          continue;
+        }
         c.fillStyle = `rgba(176,138,58,${1 - f})`;
         c.beginPath();
         c.moveTo(g.x - g.r * 0.8, g.y + g.r * 0.4);
@@ -643,8 +777,28 @@ function campana(x: CtxJuego) {
       if (vivo && Math.hypot(yo.x - q.x, yo.y - q.y) < 11 + 9) morir();
       if (Math.hypot(q.x - cx, q.y - cy) > RA + 40) rodantes.splice(k, 1);
     }
-    // El muñequito
-    if (listo) {
+    // El muñequito: el retrato del jugador en un medallón (si cargó), o la carita de antes
+    const ret = x.retrato ? sprite('', x.retrato) : null;
+    if (listo && ret) {
+      c.save();
+      c.globalAlpha = vivo ? 1 : 0.5;
+      c.fillStyle = 'rgba(0,0,0,0.4)';
+      c.beginPath();
+      c.ellipse(yo.x + 2, yo.y + 15, 13, 5, 0, 0, Math.PI * 2);
+      c.fill();
+      c.beginPath();
+      c.arc(yo.x, yo.y, 16, 0, Math.PI * 2);
+      c.fillStyle = '#1a1210';
+      c.fill();
+      c.save();
+      c.clip();
+      c.drawImage(ret, yo.x - 19, yo.y - 16, 38, 38);
+      c.restore();
+      c.lineWidth = 2.5;
+      c.strokeStyle = '#c9a046';
+      c.stroke();
+      c.restore();
+    } else if (listo) {
       c.fillStyle = vivo ? '#f0c8a8' : '#8a6a5a';
       c.beginPath();
       c.arc(yo.x, yo.y, 10, 0, Math.PI * 2);

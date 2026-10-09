@@ -14,7 +14,7 @@ import { MINERALES_ORDEN, type IdObjetivo, type IdSecundario } from '../tipos';
 import { MINERALES } from '../datos/minerales';
 import type { Escena3D } from '../vista/escena';
 import { COLOR_ASTRAL } from '../vista/astral';
-import { glifo, icono } from './iconos';
+import { glifo, icono, medalla } from './iconos';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -216,7 +216,7 @@ export class Hud {
       ${j.sigilos.filter((id) => SIGILOS[id].activo).map((id, n) => {
         // (n: el primero o el segundo de los activos, con su tecla; la recarga va por la ranura k)
         const d = SIGILOS[id], k = j.sigilos.indexOf(id);
-        return `<button class="hud-sigilo" data-n="${n}" style="--sg:${d.color}" aria-label="${d.nombre}" title="${d.nombre} (${TECLAS_SIGILO[n]})">${glifo(d.glifo, d.color)}<span class="recarga" data-e="sigR${k}"></span>${d.activo!.vida ? `<span class="costo">−${Math.round(d.activo!.vida * 100)}%</span>` : ''}<span class="tecla">${TECLAS_SIGILO[n]}</span></button>`;
+        return `<button class="hud-sigilo" data-n="${n}" style="--sg:${d.color}" aria-label="${d.nombre}" title="${d.nombre} (${TECLAS_SIGILO[n]})">${medalla('sigilo', d.glifo, d.color)}<span class="recarga" data-e="sigR${k}"></span>${d.activo!.vida ? `<span class="costo">−${Math.round(d.activo!.vida * 100)}%</span>` : ''}<span class="tecla">${TECLAS_SIGILO[n]}</span></button>`;
       }).join('')}
       ${j.sigilo('cartografo') ? '<canvas class="hud-mapa" data-e="mapa" aria-label="Mapa del Cartógrafo"></canvas>' : ''}
       <button class="hud-habilidad" data-e="hab" aria-label="${def.habilidad.nombre}">${glifo(def.habilidad.glifo)}<span class="recarga" data-e="habR"></span><b data-e="habT"></b><span class="tecla">Espacio</span></button>`;

@@ -148,7 +148,7 @@ export function glifo(id: string, color = 'currentColor'): string {
 
 /** Ícono completo: el render si existe (con id), si no el glifo. */
 /** Medallas en relieve (Sangre y Ceniza 2): los íconos de las mejoras, objetos, reliquias y equipo (si están). */
-export type TemaMedalla = 'mejora' | 'objeto' | 'reliquia' | 'equipo';
+export type TemaMedalla = 'mejora' | 'objeto' | 'reliquia' | 'equipo' | 'logro' | 'desafio' | 'sigilo';
 export function medalla(tema: TemaMedalla, glifoId: string, color?: string): string {
   const id = `med_${tema}_${glifoId}`;
   return icono(glifoId, MEDALLAS.has(id) ? id : undefined, color);
