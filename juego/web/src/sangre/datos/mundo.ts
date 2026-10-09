@@ -263,6 +263,24 @@ export const MUTADORES: Record<IdMutador, { nombre: string; desc: string; recomp
   fragiles: { nombre: 'Frágiles', desc: 'Tienen 25 % menos de vida, pero no hay curación de comida.', recompensa: 0.1, glifo: 'corazon' },
   enjambres: { nombre: 'Enjambres', desc: 'Más enemigos pequeños y rápidos.', recompensa: 0.2, glifo: 'murcielago' },
   velocidad: { nombre: 'Prisa de los muertos', desc: 'Los enemigos van 20 % más rápido.', recompensa: 0.2, glifo: 'bota' },
+  // Sangre y Ceniza 2 (como las advertencias y anomalías de Deep Rock, en versión de Valdemora)
+  cosecha: { nombre: 'Luna de cosecha', desc: 'Las vetas dan 60 % más.', recompensa: -0.1, glifo: 'espiga' },
+  bendita: { nombre: 'Luna bendita', desc: 'Te curas 50 % más.', recompensa: -0.1, glifo: 'cruz' },
+  mercado: { nombre: 'Mercado negro', desc: 'La Forja cobra 25 % menos.', recompensa: -0.1, glifo: 'oro' },
+  relicaria: { nombre: 'Luna de reliquias', desc: 'Los cofres traen reliquias mucho más seguido.', recompensa: -0.1, glifo: 'caliz' },
+  conde_fantasma: { nombre: 'El fantasma del Conde', desc: 'Un espectro que no muere te persigue despacio toda la etapa.', recompensa: 0.25, glifo: 'sombra' },
+  oxido: { nombre: 'Armas oxidadas', desc: 'Tus armas atacan 20 % más despacio.', recompensa: 0.2, glifo: 'espada' },
+  campana_borracha: { nombre: 'Campana borracha', desc: 'La campana se va mucho antes: hay que correr a subirse.', recompensa: 0.1, glifo: 'campana' },
+  escasez: { nombre: 'Escasez', desc: '−40 % de oro.', recompensa: 0.1, glifo: 'oro' },
+  hambruna: { nombre: 'Hambruna', desc: 'No hay comida y te curas la mitad.', recompensa: 0.2, glifo: 'pan' },
+  tercos: { nombre: 'Muertos tercos', desc: 'Los enemigos se curan 1 % de vida por segundo.', recompensa: 0.15, glifo: 'corazon' },
+  acorazados: { nombre: 'Acorazados', desc: 'Los enemigos reciben 20 % menos daño.', recompensa: 0.2, glifo: 'escudo' },
+  hinchados: { nombre: 'Cadáveres hinchados', desc: 'Algunos muertos revientan: aléjate de la sombra roja.', recompensa: 0.15, glifo: 'calavera' },
+  barro: { nombre: 'Barro hasta las rodillas', desc: 'Caminas 15 % más despacio.', recompensa: 0.15, glifo: 'bota' },
+  marea: { nombre: 'Marea de muertos', desc: 'Las oleadas traen 60 % más enemigos.', recompensa: 0.2, glifo: 'tumba' },
+  guardian_furioso: { nombre: 'Guardián furioso', desc: 'El Guardián tiene 60 % más vida.', recompensa: 0.1, glifo: 'yelmo' },
+  tinieblas: { nombre: 'Tinieblas', desc: 'Tu luz alumbra 35 % menos.', recompensa: 0.1, glifo: 'vela' },
+  sin_suministros: { nombre: 'Sin suministros', desc: 'Las Santas no mandan el cofre de suministros.', recompensa: 0.1, glifo: 'cofre' },
 };
 
 /** Duración de referencia de una etapa (s): con ella sube la horda (cuántos y qué tan duros). Ya no es un reloj: la

@@ -23,10 +23,32 @@ function modoCasa(rol: Rol): 'local' | 'linea' | null {
   return null;
 }
 
-/** Lee y cambia el progreso de este rol en la casa (null si la casa no se alcanza). */
-async function enCasa(rol: Rol, cambio?: (p: ProgresoSangre | null) => ProgresoSangre | null): Promise<ProgresoSangre | null> {
+/** Lee y cambia el progreso de este rol en la casa (null si la casa no se alcanza). Con `deQuien`, solo lee el de
+ *  ese otro rol (para comparar los contratos). */
+async function enCasa(rol: Rol, cambio?: (p: ProgresoSangre | null) => ProgresoSangre | null, deQuien?: Rol): Promise<ProgresoSangre | null> {
   const modo = modoCasa(rol);
   if (!modo) return null;
+  if (deQuien) {
+    try {
+      const sincro = await import('../casa/sincro');
+      if (modo === 'local') {
+        const s = new sincro.SincroLocal(rol);
+        try {
+          return s.casa.sangre?.[deQuien] ?? null;
+        } finally {
+          s.cerrar();
+        }
+      }
+      const { normalizarCasa } = await import('../casa/modelo');
+      const con = await sincro.conexionPareja();
+      if (!con) return null;
+      const { data: p, error } = await con.sb.from('parejas').select('casa').eq('id', con.sesion.parejaId).single();
+      if (error || !p) return null;
+      return normalizarCasa(p.casa).sangre?.[deQuien] ?? null;
+    } catch {
+      return null;
+    }
+  }
   try {
     const sincro = await import('../casa/sincro');
     if (modo === 'local') {
@@ -133,6 +155,14 @@ export class Guardado {
     } finally {
       this.subiendo = false;
     }
+  }
+
+  /** El progreso del otro (Javier ↔ Laura), para comparar los contratos; null para los amigos o sin casa. */
+  async delOtro(): Promise<ProgresoSangre | null> {
+    const rol = this.rol;
+    if (!rol) return null;
+    const c = await enCasa(rol, undefined, rol === 'el' ? 'ella' : 'el');
+    return c ? normalizarProgresoSangre(c) : null;
   }
 
   /** Monedas de la casa (solo Javier y Laura): van al sobre. */

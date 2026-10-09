@@ -269,7 +269,10 @@ export type IdSecundario = 'huevos' | 'frascos' | 'cofres' | 'rosas' | 'plumas' 
 // ------------------------------------------------------------------------------------------------- Peligro
 export type IdMutador = 'sangrienta' | 'sin_antorchas' | 'elites_dobles' | 'plaga' | 'roca_dura' | 'codicia' | 'eclipse' | 'fragiles' | 'enjambres' | 'velocidad'
   // (los buenos, del mito de Astra: las lunas)
-  | 'aurelia' | 'esmeralda' | 'nocturna';
+  | 'aurelia' | 'esmeralda' | 'nocturna'
+  // (Sangre y Ceniza 2: cuatro lunas buenas y trece malas más)
+  | 'cosecha' | 'bendita' | 'mercado' | 'relicaria' | 'conde_fantasma' | 'oxido' | 'campana_borracha' | 'escasez' | 'hambruna' | 'tercos' | 'acorazados'
+  | 'hinchados' | 'barro' | 'marea' | 'guardian_furioso' | 'tinieblas' | 'sin_suministros';
 
 /** Cómo arranca una expedición. */
 export interface ConfigExpedicion {
@@ -285,7 +288,24 @@ export interface ConfigExpedicion {
   lugar?: string;
   /** En el modo infinito, los biomas por los que se pasa cada 5 etapas (los abiertos del anfitrión, desde el escogido). */
   rotacion?: IdBioma[];
+  // Sangre y Ceniza 2 (H): los desafíos
+  /** Cuántas etapas tiene (si no, ETAPAS) y en cuáles sale jefe (si no, la última). */
+  etapas?: number;
+  jefesEn?: number[];
+  /** Prueba de maestría (arma, clase o bioma) y lo que se pone a prueba. */
+  prueba?: { tipo: 'arma' | 'clase' | 'bioma'; ref: string };
+  /** Solo con esta arma: no se encuentran otras. */
+  armaUnica?: string;
+  /** Sin curación de ninguna clase. */
+  sinCurar?: boolean;
+  /** Expedición anómala. */
+  anomalia?: IdAnomalia;
+  /** Contrato del día o de la semana («dia:2026-10-09», «semana:2026-41»). */
+  contrato?: string;
 }
+
+/** Las expediciones anómalas (se pagan con puntos de maestría). */
+export type IdAnomalia = 'aprendiz' | 'mineria' | 'locura' | 'pies_plomo' | 'un_golpe' | 'antigua';
 
 /** Lo que trae cada jugador al empezar (clase, especialización, equipo inicial del Pozo y lo permanente). */
 export interface PerfilJugador {
@@ -304,6 +324,10 @@ export interface PerfilJugador {
   comunes: string[];
   /** Reliquias de hitos que la cuenta ya abrió (las de siempre salen sin estar aquí). */
   reliquias?: string[];
+  /** Armas con la prueba de maestría ganada (+12 % de daño para siempre). */
+  armasMaestras?: string[];
+  /** Multiplica la vida máxima (la anomalía «Un golpe y adiós»). */
+  vidaMult?: number;
   tiradas: number; // volver a tirar por expedición
   vetos: number; // descartar por expedición
   cuerpo: 'el' | 'ella';

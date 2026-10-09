@@ -61,9 +61,18 @@ export class Expedicion {
     this.cfg = cfg;
     this.az = new Azar(cfg.semilla);
     this.J = perfiles.map((p, i) => new Jugador(i, p));
+    // Prueba del arma: se baja solo con ella
+    if (cfg.armaUnica && ARMAS[cfg.armaUnica])
+      for (const j of this.J) {
+        // (sola contra la Noche: arranca en el nivel 4 y pega 60 % más, ver multOtras)
+        const a = new ArmaJ(cfg.armaUnica);
+        a.nivel = 4;
+        j.armas = [a];
+        j.armaUnica = cfg.armaUnica;
+      }
     // Plan de objetivos: sin repetir el principal seguido
     const obj = [...OBJETIVOS_LISTA];
-    for (let k = 0; k < ETAPAS; k++) {
+    for (let k = 0; k < this.total; k++) {
       const disponibles = obj.filter((o) => !this.plan.some((p) => p.objetivo === o));
       const o = this.az.uno(disponibles.length ? disponibles : obj);
       this.plan.push({ objetivo: o, secundario: this.az.uno(SECUNDARIOS_LISTA) });
@@ -71,15 +80,22 @@ export class Expedicion {
     if (cfg.tutorial) this.plan = [{ objetivo: 'hierro', secundario: 'huevos' }];
   }
 
+  /** Cuántas etapas tiene (cinco; las pruebas de maestría, 3, 5 o 10). */
+  get total() {
+    return this.cfg.tutorial ? 1 : Math.max(1, this.cfg.etapas ?? ETAPAS);
+  }
+
   get ultima() {
     // (el modo infinito no tiene última: se acaba al caer)
     if (this.cfg.infinito && !this.cfg.tutorial) return false;
-    return this.etapa >= (this.cfg.tutorial ? 1 : ETAPAS);
+    return this.etapa >= this.total;
   }
 
-  /** ¿Esta etapa termina con jefe? (la quinta, con los sepulcros; en el modo infinito, cada cinco) */
+  /** ¿Esta etapa termina con jefe? (la última, con los sepulcros; en el modo infinito, cada cinco; en la prueba del
+   *  bioma, la 5 y la 10) */
   esFinal(etapa = this.etapa) {
-    return this.cfg.infinito ? etapa % ETAPAS === 0 : etapa >= ETAPAS;
+    if (this.cfg.infinito) return etapa % ETAPAS === 0;
+    return this.cfg.jefesEn ? this.cfg.jefesEn.includes(etapa) : etapa >= this.total;
   }
 
   /** El bioma de la etapa (en el modo infinito cambia cada cinco, por los biomas que trae la rotación). */
@@ -141,7 +157,7 @@ export class Expedicion {
 
   // ----------------------------------------------------------------------------------------------- Forja
   descuento(j: Jugador) {
-    return (j.clase === 'monarca' && j.spec === 2 ? 0.8 : 1) * (j.tiene('bula_obispo') ? 0.8 : 1);
+    return (j.clase === 'monarca' && j.spec === 2 ? 0.8 : 1) * (j.tiene('bula_obispo') ? 0.8 : 1) * (this.cfg.mutadores.includes('mercado') ? 0.75 : 1);
   }
 
   ofertasNuevas(j: Jugador, guardadas: OfertaForja[] = []): OfertaForja[] {
@@ -296,7 +312,8 @@ export class Expedicion {
     const etapas = this.resultados.filter((r) => r.fin.exito && r.fin.extraidos.includes(j.i)).length;
     const objetivos = this.resultados.filter((r) => r.fin.objetivo).length;
     const base = 12 * etapas + 8 * objetivos + j.resumen.muertes / 60 + j.resumen.elites * 1.5 + (this.exito ? 40 : 0);
-    const ceniza = Math.round(base * pel.recompensa * mut * (this.cfg.tutorial ? 0.3 : 1));
+    // (las anómalas dan el doble de ceniza)
+    const ceniza = Math.round(base * pel.recompensa * mut * (this.cfg.tutorial ? 0.3 : 1) * (this.cfg.anomalia ? 2 : 1));
     const maestria = Math.round((60 * etapas + 25 * objetivos + j.resumen.muertes / 12 + (this.exito ? 150 : 0)) * pel.recompensa * mut);
     return { ceniza, maestria, etapas, objetivos };
   }

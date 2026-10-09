@@ -119,6 +119,14 @@ export class Sim {
   jefeVisto = false;
   /** Lo que rinde la curación en este peligro (en los altos, menos). */
   curaPeligro = 1;
+  /** Mutadores que se miran en cada golpe o cada cuadro (para no buscarlos en la lista cada vez). */
+  acorazados = false;
+  barro = false;
+  /** La anomalía «Solo minería». */
+  mineria = false;
+  /** El fantasma del Conde (mutador): su índice y cuándo vuelve si lo tumban. */
+  fantasma = -1;
+  fantasmaT = 25;
   /** Escala de la horda según el peligro, la etapa y cuántos juegan. */
   esc = { vida: 1, dano: 1, cantidad: 1, elites: 1, botin: 1, xp: 1 };
   /** Revienta un cartucho de minero ahora mismo (para que no encadene otro dentro de la misma explosión). */
@@ -168,22 +176,29 @@ export class Sim {
     const mut = (m: string) => cfg.exp.mutadores.includes(m as never);
     // Modo infinito: después de la quinta etapa, cada una bastante más dura que la anterior (crece más rápido que el
     // jugador, que se estanca con las armas al máximo: tarde o temprano la noche gana)
-    const inf = cfg.exp.infinito ? Math.max(0, cfg.etapa - ETAPAS) : 0;
+    // (la prueba del bioma, de 10 etapas, también se endurece después de la quinta)
+    const inf = cfg.exp.infinito || (cfg.exp.etapas ?? ETAPAS) > ETAPAS ? Math.max(0, cfg.etapa - ETAPAS) : 0;
+    const aprendiz = cfg.exp.anomalia === 'aprendiz' ? 2 : 1;
     // Cada etapa arranca más o menos donde terminó la anterior (dentro de la etapa los enemigos se endurecen con el
     // reloj): así las últimas son las difíciles, como en Deep Rock, y no la primera
     const etapaV = 2 ** (Math.min(cfg.etapa, ETAPAS) - 1);
     const base = pel.vida * (1 + 0.38 * (n - 1)) * (mut('codicia') ? 1.25 : 1) * (mut('fragiles') ? 0.75 : 1);
     this.esc = {
       vida: base * etapaV * 1.3 ** inf,
-      dano: (1 + 0.5 * (Math.min(cfg.etapa, ETAPAS) - 1)) * pel.dano * (mut('sangrienta') ? 1.3 : 1) * 1.1 ** inf,
+      dano: (1 + 0.5 * (Math.min(cfg.etapa, ETAPAS) - 1)) * pel.dano * (mut('sangrienta') ? 1.3 : 1) * 1.1 ** inf * aprendiz,
       cantidad: pel.cantidad * (1 + 0.6 * (n - 1)) * (1 + 0.2 * (Math.min(cfg.etapa, ETAPAS) - 1)) * (1 + 0.05 * inf),
       elites: pel.elites * (1 + 0.3 * (n - 1)) * (mut('elites_dobles') ? 2 : 1) * (1 + 0.12 * inf),
       botin: 1 / (1 + 0.45 * (n - 1)),
       // Las almas valen más en las etapas duras, pero no tanto como crece la vida (si no, el jugador sube de nivel tan
       // rápido como se endurecen los enemigos); en el infinito ya no valen más (el poder del jugador se estanca)
-      xp: base * etapaV ** 0.7 * (mut('nocturna') ? 1.25 : 1),
+      xp: base * etapaV ** 0.7 * (mut('nocturna') ? 1.25 : 1) * aprendiz,
     };
-    this.curaPeligro = pel.curacion;
+    this.acorazados = mut('acorazados');
+    this.mineria = cfg.exp.anomalia === 'mineria';
+    this.barro = mut('barro');
+    this.curaPeligro = cfg.exp.sinCurar ? 0 : pel.curacion * (mut('bendita') ? 1.5 : 1) * (mut('hambruna') ? 0.5 : 1);
+    // (tinieblas: la luz de cada uno alumbra menos)
+    for (const j of jugadores) j.luzMut = mut('tinieblas') ? -0.35 : 0;
     this.mapa = generarMapa({
       bioma: this.bioma, semilla: cfg.exp.semilla * 31 + cfg.etapa * 977, jugadores: n, rocaDura: mut('roca_dura'), sinAntorchas: mut('sin_antorchas'),
       vetasHierro: cfg.objetivo === 'hierro' ? 10 + 2 * n : 2, carreta: cfg.objetivo === 'carreta', tutorial: cfg.exp.tutorial,
@@ -491,6 +506,7 @@ export class Sim {
       if (fuerte) d *= 1 + j.st.danoElite;
     }
     d *= this.vulnerable(i, j, g);
+    if (this.acorazados) d *= 0.8;
     let esCrit = false;
     if (crit > 0 && this.az.n() < crit) {
       esCrit = true;
@@ -626,14 +642,15 @@ export class Sim {
       }
       if (j) j.resumen.botin = (j.resumen.botin ?? 0) + 1;
     } else if (elite === MOD_ELITE.MINI) {
-      this.soltarAlmas(x, y, def.xp * 3);
+      if (!this.mineria) this.soltarAlmas(x, y, def.xp * 3);
       if (this.az.n() < 0.5) this.soltar(REC.ORO, x, y, this.az.entero(2, 4));
       if (this.az.n() < 0.15) this.soltar(REC.HIERRO, x, y, 1);
     } else {
-      this.soltarAlmas(x, y, def.xp * (elite ? 6 : 1));
+      // (solo minería: los muertos no sueltan almas)
+      if (!this.mineria) this.soltarAlmas(x, y, def.xp * (elite ? 6 : 1));
       const suerte = j ? j.st.suerte : 0;
       if (this.az.n() < 0.035 + suerte * 0.0006 || elite) this.soltar(REC.ORO, x, y, elite ? this.az.entero(8, 15) : this.az.entero(1, 3));
-      if (!this.cfg.exp.mutadores.includes('fragiles') && this.az.n() < (elite ? 0.3 : 0.004 + suerte * 0.00005)) this.soltar(REC.COMIDA, x, y, 1);
+      if (!this.cfg.exp.mutadores.includes('fragiles') && !this.cfg.exp.mutadores.includes('hambruna') && this.az.n() < (elite ? 0.3 : 0.004 + suerte * 0.00005)) this.soltar(REC.COMIDA, x, y, 1);
       if (elite) {
         this.elitesVivos = Math.max(0, this.elitesVivos - 1);
         if (this.az.n() < 0.35 + suerte * 0.004) this.soltar(REC.COFRE, x, y, 1);
@@ -962,7 +979,7 @@ export class Sim {
       mx /= l;
       my /= l;
     }
-    let vel = j.velocidad;
+    let vel = j.velocidad * (this.barro ? 0.85 : 1);
     if (this.mapa.get(Math.floor(j.x), Math.floor(j.y)) === C.AGUA) vel *= 0.6;
     if (mec.embistiendo(j)) {
       mec.moverEmbestida(this, j, dt);
@@ -1083,7 +1100,7 @@ export class Sim {
   alRomper(cx: number, cy: number, tipo: number, j: Jugador | null) {
     this.suc.push(S.ROTO, cx, cy, tipo);
     const x = cx + 0.5, y = cy + 0.5;
-    const vetas = (1 + (j ? mec.extraVetas(j) + j.st.vetas : 0)) * (this.cfg.exp.mutadores.includes('esmeralda') ? 1.8 : 1);
+    const vetas = (1 + (j ? mec.extraVetas(j) + j.st.vetas : 0)) * (this.cfg.exp.mutadores.includes('esmeralda') ? 1.8 : 1) * (this.cfg.exp.mutadores.includes('cosecha') ? 1.6 : 1) * (this.mineria ? 3 : 1);
     // (la minería paga bien: con eso se compra en la Forja y se suben las armas en el yunque)
     // (las vetas pagan menos que antes: la plata grande la cargan los bichos del botín)
     if (tipo === C.HIERRO) this.soltar(REC.HIERRO, x, y, Math.round(this.az.entero(2, 3) * vetas));
@@ -1092,6 +1109,8 @@ export class Sim {
     else if (tipo === C.HUEVO) this.soltar(REC.HUEVO, x, y, 1);
     else if (tipo === C.GRISU || tipo === C.COLUMNA) alRomperBioma(this, cx, cy, tipo);
     else if (tipo === C.MINERAL) this.soltar(REC.MINERAL + (this.mapa.v[this.mapa.idx(cx, cy)] % 6), x, y, Math.max(1, Math.round(this.az.entero(1, 2) * vetas)));
+    // (solo minería: las almas salen de la roca)
+    if (this.mineria) this.soltarAlmas(x, y, 5);
     if (j) {
       j.resumen.excavadas++;
       mec.alExcavar(this, j, cx, cy, tipo);
@@ -1334,7 +1353,7 @@ export class Sim {
   }
 
   get cuentaExtraccion() {
-    return CUENTA_EXTRACCION;
+    return CUENTA_EXTRACCION * (this.cfg.exp.mutadores.includes('campana_borracha') ? 0.55 : 1);
   }
   get proyectilesVivos() {
     let n = 0;

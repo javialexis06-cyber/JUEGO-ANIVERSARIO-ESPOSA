@@ -196,6 +196,10 @@ export class Jugador {
   fy = 1;
   /** Segundos que lleva quieto (la ballesta de pie). */
   quietoT = 0;
+  /** Luz que le quita el mutador de las tinieblas (lo pone la etapa). */
+  luzMut = 0;
+  /** Prueba de maestría del arma: solo esta (no se encuentran otras). */
+  armaUnica = '';
   /** Entrada del mando (−1..1) y si apretó la habilidad. */
   mx = 0;
   my = 0;
@@ -311,7 +315,11 @@ export class Jugador {
   }
   /** Lo que las demás armas le hacen al daño de la de la ranura k (De cinto: +20 % a las otras; La consentida: −30 %). */
   multOtras(k: number) {
-    let m = 1;
+    // (la prueba de maestría del arma: +12 % para siempre; también para su evolución)
+    const a = this.armas[k];
+    const maestras = this.perfil.armasMaestras;
+    let m = a && maestras?.length && (maestras.includes(a.id) || maestras.some((id) => ARMAS[id]?.evoluciona?.a === a.id)) ? 1.12 : 1;
+    if (this.armaUnica) m *= 1.6;
     this.armas.forEach((b, i) => {
       if (i === k) return;
       for (const e of b.especiales) {
@@ -399,7 +407,7 @@ export class Jugador {
     st.velocidad = Math.max(-0.5, st.velocidad);
     st.roboVida = Math.min(0.25, Math.max(0, st.roboVida));
     st.enfriamiento = Math.min(0.6, st.enfriamiento);
-    st.vida = Math.max(20, st.vida);
+    st.vida = Math.max(this.perfil.vidaMult ? 5 : 20, st.vida * (this.perfil.vidaMult ?? 1));
     this.st = st;
     // (para las proezas: lo más alto que llegó en la expedición)
     const r = this.resumen;
@@ -431,7 +439,7 @@ export class Jugador {
     return IMAN_BASE * (1 + this.st.iman);
   }
   get radioLuz() {
-    return LUZ_BASE * Math.max(0.4, 1 + this.st.luz);
+    return LUZ_BASE * Math.max(0.4, 1 + this.st.luz + this.luzMut);
   }
 
   /** Arma por id (o null). */

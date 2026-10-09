@@ -1,6 +1,7 @@
 // El piloto automático: juega como un jugador decente (para probar el balance de clases y peligros en Node, y para
 // las pruebas del navegador con ?bot). Huye de la horda, va por el objetivo, excava vetas, levanta a los caídos,
 // corre a la campana, usa la habilidad cuando lo rodean y escoge mejoras con algo de criterio.
+import { ARMAS } from './datos/armas';
 import { C, esSolida } from './tipos';
 import { ENT, REC, esMineral } from './sim/estado';
 import { TIPOS, TIPO_ALTAR } from './sim/catalogo';
@@ -288,7 +289,7 @@ export function botEscoger(sim: Sim, j: Jugador) {
     e.opciones.forEach((o, k) => {
       let v = o.rareza * 2;
       if (o.tipo === 'evolucion') v += 100;
-      else if (o.tipo === 'nueva') v += j.armas.length < 3 ? 30 : 8;
+      else if (o.tipo === 'nueva') v += (j.armas.length < 3 ? 30 : 8) - (ARMAS[o.id]?.quieto ? 25 : 0);
       else if (o.tipo === 'sobrecarga') v += 5 + Math.random();
       else if (o.tipo === 'arma') v += 9;
       else if (o.tipo === 'don') v += 8;

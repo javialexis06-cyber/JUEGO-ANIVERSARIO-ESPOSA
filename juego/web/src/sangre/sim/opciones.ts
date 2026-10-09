@@ -182,6 +182,7 @@ export const abierta = (j: Jugador, id: string) => !RELIQUIA[id]?.hito || (j.per
 const ABIERTAS = new Map<string, string[]>();
 /** Las armas que puede encontrar: su arsenal, las comunes que tiene abiertas y las de la etiqueta de su especialización. */
 export function encontrables(j: Jugador): string[] {
+  if (j.armaUnica) return [];
   const k = `${j.clase}:${j.spec}`;
   let extra = ABIERTAS.get(k);
   if (!extra) {
@@ -234,7 +235,7 @@ export function opcionesCofre(sim: Sim, j: Jugador, especial: boolean): Opcion[]
       if (eq && !ops.some((o) => o.id === eq.id)) ops.push(eq);
     } else if (r < 0.45 + (especial ? 0.25 : 0)) {
       const rel = RELIQUIAS.filter((x) => !j.tiene(x.id) && abierta(j, x.id) && !ops.some((o) => o.id === x.id));
-      if (rel.length && sim.az.n() < (especial ? 0.8 : 0.3)) {
+      if (rel.length && sim.az.n() < (especial ? 0.8 : sim.cfg.exp.mutadores.includes('relicaria') ? 0.75 : 0.3)) {
         const x = sim.az.uno(rel);
         ops.push({ tipo: 'reliquia', id: x.id, rareza: 4, nombre: x.nombre, desc: x.desc, glifo: x.glifo });
       }

@@ -602,9 +602,11 @@ export function alMatar(sim: Sim, j: Jugador, i: number, g: Golpe) {
 
 /** Efectos de reliquias y bendiciones de cualquiera al morir un enemigo (los del que lo mató). */
 export function alMorirCualquiera(sim: Sim, i: number, g: Golpe) {
+  const E = sim.E;
+  // Cadáveres hinchados (mutador): algunos revientan con aviso y le pegan a quien esté cerca
+  if (sim.cfg.exp.mutadores.includes('hinchados') && !esJefe(E.tipo[i]) && sim.az.n() < 0.07) zonaPeligro(sim, E.x[i], E.y[i], 1.7, sim.esc.dano * 14, 0.9);
   const j = g.j >= 0 ? sim.J[g.j] : null;
   if (!j) return;
-  const E = sim.E;
   const x = E.x[i], y = E.y[i];
   if (j.tiene('cadaveres') && sim.az.n() < 0.15) {
     const g2 = golpeSimple(j, BIT_ETQ.area | BIT_ETQ.veneno, 3);
@@ -766,7 +768,7 @@ export function velocidadLevantar(o: Jugador) {
 // ------------------------------------------------------------------------------------------------- Recoger y excavar
 export function multOroGrupo(sim: Sim) {
   // (la Codicia y la luna Aurelia: más oro)
-  let m = (sim.cfg.exp.mutadores.includes('codicia') ? 1.5 : 1) * (sim.cfg.exp.mutadores.includes('aurelia') ? 1.4 : 1);
+  let m = (sim.cfg.exp.mutadores.includes('codicia') ? 1.5 : 1) * (sim.cfg.exp.mutadores.includes('aurelia') ? 1.4 : 1) * (sim.cfg.exp.mutadores.includes('escasez') ? 0.6 : 1);
   for (const j of sim.J) if (j.clase === 'monarca' && j.spec === 2) m += 0.3;
   return m;
 }

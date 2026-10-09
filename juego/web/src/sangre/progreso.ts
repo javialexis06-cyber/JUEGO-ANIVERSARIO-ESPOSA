@@ -13,7 +13,9 @@ const COMUNES_TODAS = ['daga', 'arco_largo', 'hacha_arrojadiza', 'bomba', 'carga
   // (Sangre y Ceniza 2: las que se ganan en el mapa de la Noche)
   'perdigonera', 'abrojos', 'aceite_hirviendo', 'humo_azufre', 'latigo_espinas', 'cuervos_cazadores', 'murcielagos', 'cepos', 'bomba_racimo', 'rayo_sangre',
   'lanza_fuego', 'ballesta_pie', 'frasco_escarcha'];
-const MUTADORES_TODOS: IdMutador[] = ['sangrienta', 'sin_antorchas', 'elites_dobles', 'plaga', 'roca_dura', 'codicia', 'eclipse', 'fragiles', 'enjambres', 'velocidad', 'aurelia', 'esmeralda', 'nocturna'];
+const MUTADORES_TODOS: IdMutador[] = ['sangrienta', 'sin_antorchas', 'elites_dobles', 'plaga', 'roca_dura', 'codicia', 'eclipse', 'fragiles', 'enjambres', 'velocidad', 'aurelia', 'esmeralda', 'nocturna',
+  'cosecha', 'bendita', 'mercado', 'relicaria', 'conde_fantasma', 'oxido', 'campana_borracha', 'escasez', 'hambruna', 'tercos', 'acorazados', 'hinchados', 'barro',
+  'marea', 'guardian_furioso', 'tinieblas', 'sin_suministros'];
 const RANURAS: RanuraEquipo[] = ['casco', 'armadura', 'guantes', 'botas', 'amuleto', 'anillo'];
 
 export interface CifrasSangre {
@@ -77,6 +79,11 @@ export interface ProgresoSangre {
   noche: { metas: string[]; escenas: string[] };
   /** Reliquias de hitos que ya se abrieron con su proeza (Sangre y Ceniza 2, L6). */
   reliquias: string[];
+  /** Los desafíos (H): lo mejor en cada contrato (etapas superadas; 99 = ganado), las pruebas de maestría ganadas y
+   *  los puntos de maestría para gastar en las anómalas. */
+  contratos: Record<string, number>;
+  pruebas: { armas: string[]; clases: IdClase[]; biomas: IdBioma[] };
+  puntos: number;
   /** Para fusionar copias de dos aparatos (la más reciente gana en lo que no se suma). */
   t: number;
 }
@@ -85,7 +92,7 @@ export function progresoNuevo(): ProgresoSangre {
   return {
     v: 1, ceniza: 0, cenizaTotal: 0, pozo: {}, ofrendas: [], maestria: {}, clases: [...CLASES_INICIALES], biomas: [...BIOMAS_INICIALES], ganado: {},
     comunes: [...COMUNES_INICIALES], logros: [], cifras: Object.fromEntries(CIFRAS.map((k) => [k, 0])) as unknown as CifrasSangre, ultima: null, tutorial: false,
-    minerales: {}, noche: { metas: [], escenas: [] }, reliquias: [], t: 0,
+    minerales: {}, noche: { metas: [], escenas: [] }, reliquias: [], contratos: {}, pruebas: { armas: [], clases: [], biomas: [] }, puntos: 0, t: 0,
   };
 }
 
@@ -116,8 +123,21 @@ export function normalizarProgresoSangre(x: unknown): ProgresoSangre {
     minerales: {},
     noche: { metas: [], escenas: [] },
     reliquias: ids(x.reliquias, 80),
+    contratos: {},
+    pruebas: { armas: [], clases: [], biomas: [] },
+    puntos: Math.floor(num(x.puntos, 0, 999)),
     t: num(x.t),
   };
+  if (esObj(x.contratos)) {
+    // (solo los últimos 40: los viejos no sirven de nada)
+    const llaves = Object.keys(x.contratos).filter((k) => /^(dia|semana):\d{4}-\d{2}(-\d{2})?$/.test(k)).sort().slice(-40);
+    for (const k of llaves) p.contratos[k] = Math.floor(num((x.contratos as Record<string, unknown>)[k], 0, 99));
+  }
+  if (esObj(x.pruebas)) {
+    p.pruebas.armas = ids(x.pruebas.armas, 200);
+    p.pruebas.clases = lista(x.pruebas.clases, CLASES_TODAS);
+    p.pruebas.biomas = lista(x.pruebas.biomas, BIOMAS_TODOS);
+  }
   if (esObj(x.noche)) {
     p.noche.metas = Array.isArray(x.noche.metas) ? [...new Set(x.noche.metas.filter((m): m is string => typeof m === 'string' && /^[a-z0-9_]{1,40}:[a-z0-9_]{1,40}$/.test(m)))].slice(0, 300) : [];
     p.noche.escenas = ids(x.noche.escenas, 40);
@@ -160,6 +180,14 @@ export function fusionarProgreso(a: ProgresoSangre, b: ProgresoSangre): Progreso
   r.comunes = [...new Set([...a.comunes, ...b.comunes])];
   r.logros = [...new Set([...a.logros, ...b.logros])];
   r.reliquias = [...new Set([...a.reliquias, ...b.reliquias])];
+  for (const k of new Set([...Object.keys(a.contratos), ...Object.keys(b.contratos)])) r.contratos[k] = Math.max(a.contratos[k] ?? 0, b.contratos[k] ?? 0);
+  r.pruebas = {
+    armas: [...new Set([...a.pruebas.armas, ...b.pruebas.armas])],
+    clases: [...new Set([...a.pruebas.clases, ...b.pruebas.clases])],
+    biomas: [...new Set([...a.pruebas.biomas, ...b.pruebas.biomas])],
+  };
+  // (los puntos se gastan como la ceniza: manda la copia más reciente)
+  r.puntos = a.t >= b.t ? a.puntos : b.puntos;
   for (const bi of BIOMAS_TODOS) {
     const v = Math.max(a.ganado[bi] ?? 0, b.ganado[bi] ?? 0);
     if (v) r.ganado[bi] = v;
@@ -241,7 +269,7 @@ export function perfilDe(p: ProgresoSangre, datos: { id: string; nombre: string;
   for (const [r, id] of Object.entries(datos.equipo)) if (id && p.ofrendas.includes(id)) equipo[r as RanuraEquipo] = id;
   return {
     id: datos.id, nombre: datos.nombre, puesto: datos.puesto, clase: datos.clase, spec: Math.min(datos.spec, specsDisponibles(nv) - 1), meta: total, equipo,
-    arsenal: arsenal.slice(0, armasDisponibles(nv)), comunes: [...p.comunes], reliquias: [...p.reliquias], tiradas: 1 + tiradas, vetos: vetos, cuerpo: datos.cuerpo, tipo: datos.tipo,
+    arsenal: arsenal.slice(0, armasDisponibles(nv)), comunes: [...p.comunes], reliquias: [...p.reliquias], armasMaestras: [...p.pruebas.armas], tiradas: 1 + tiradas, vetos: vetos, cuerpo: datos.cuerpo, tipo: datos.tipo,
     piel: datos.piel, pelo: datos.pelo, ...(datos.detalles ? { detalles: datos.detalles } : {}),
   };
 }

@@ -38,7 +38,7 @@ export interface EstadoHud {
   suc: Sucesos;
   eclipse: number;
   mapa: { rieles: { x: number; y: number }[] };
-  cfg: { etapa: number; final: boolean; exp: { infinito?: boolean } };
+  cfg: { etapa: number; final: boolean; exp: { infinito?: boolean; etapas?: number } };
   /** Sin reloj (tutorial). */
   sinReloj?: boolean;
 }
@@ -97,6 +97,7 @@ const AVISOS: Record<number, (a: number, b: number, nombre: (i: number) => strin
   43: () => ['¡El campanario llama a los muertos! Aguanta la oleada y paga.', 'grande'],
   44: () => ['El campanario calla: dejó dos cofres y oro.', 'grande'],
   45: () => ['¡Las armaduras del castillo despiertan cuando pasas cerca!', 'peligro'],
+  46: () => ['El fantasma del Conde te busca: no se muere, solo se esquiva.', 'peligro'],
 };
 
 /** La leyenda de la visión astral: qué es cada color. */
@@ -303,7 +304,7 @@ export class Hud {
       el.innerHTML = comp.map((o) => `<div class="companero${o.estado === 1 ? ' caido' : ''}"><span>${esc(this.nombre(o.i))}${o.estado === 1 ? ' · caído' : o.estado === 2 ? ' · fuera' : ''}</span><div class="barra"><i style="width:${Math.max(0, (o.hp / o.hpMax) * 100).toFixed(0)}%"></i></div></div>`).join('');
     });
     // Etapa, barra de avance y objetivo
-    this.texto('etapa', est.cfg.exp.infinito ? `Etapa ${est.cfg.etapa} · infinito${est.cfg.final ? ' · jefe' : ''}` : `Etapa ${est.cfg.etapa}${est.cfg.final ? ' · final' : ''} de ${ETAPAS}`);
+    this.texto('etapa', est.cfg.exp.infinito ? `Etapa ${est.cfg.etapa} · infinito${est.cfg.final ? ' · jefe' : ''}` : `Etapa ${est.cfg.etapa}${est.cfg.final ? ' · jefe' : ''} de ${est.cfg.exp.etapas ?? ETAPAS}`);
     const enJuego = est.fase === 'juego' && !est.sinReloj;
     this.ver('avanceB', enJuego);
     let titulo = '';

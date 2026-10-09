@@ -80,6 +80,7 @@ export function modsElite(sim: Sim) {
 // ------------------------------------------------------------------------------------------------- Director
 export function dirigirHorda(sim: Sim, dt: number) {
   eventos(sim, dt);
+  if (sim.cfg.exp.mutadores.includes('conde_fantasma') && !sim.cfg.exp.tutorial) fantasmaDelConde(sim, dt);
   while (sim.botinPlan.length && sim.botinPlan[0].t <= sim.t) soltarBotin(sim, sim.botinPlan.shift()!.id);
   const pel = PELIGROS[Math.max(0, Math.min(4, sim.cfg.exp.peligro - 1))];
   const tope = Math.round((260 + 70 * (sim.n - 1)) * Math.min(1.5, 0.75 + pel.cantidad * 0.35));
@@ -296,6 +297,7 @@ export function moverEnemigos(sim: Sim, dt: number) {
   sim.presionTick = (sim.presionTick ?? 0) + dt;
   const tickDot = sim.presionTick >= 0.25;
   if (tickDot) sim.presionTick = 0;
+  const tercos = sim.cfg.exp.mutadores.includes('tercos');
   for (let i = 0; i < E.max; i++) {
     if (!E.vivo[i]) continue;
     const t = E.tipo[i];
@@ -337,6 +339,8 @@ export function moverEnemigos(sim: Sim, dt: number) {
       }
       // (el Guardián, los custodios y el jefe se regeneran mucho más despacio: con 3 % por segundo no se morían nunca)
       if (E.elite[i] & MOD_ELITE.REGENERA) E.hp[i] = Math.min(E.hpMax[i], E.hp[i] + E.hpMax[i] * (E.marcadoObj[i] >= 3 ? 0.006 : 0.03) * 0.25);
+      // (muertos tercos: todos se curan 1 % por segundo)
+      if (tercos && E.hp[i] < E.hpMax[i]) E.hp[i] = Math.min(E.hpMax[i], E.hp[i] + E.hpMax[i] * 0.01 * 0.25);
       if (E.condenaT[i] > 0) {
         E.condenaT[i] -= 0.25;
         if (E.condenaT[i] <= 0) mec.condenar(sim, i);
@@ -747,3 +751,33 @@ export function invocarEsqueletos(sim: Sim, x: number, y: number, n: number) {
 }
 
 export { EVENTOS };
+
+/** El fantasma del Conde (mutador): un espectro grande y lento que no se muere y persigue a los jugadores toda la
+ *  etapa (atraviesa las paredes). Si de alguna manera lo tumban, vuelve a los 20 s. */
+function fantasmaDelConde(sim: Sim, dt: number) {
+  const E = sim.E;
+  if (sim.fantasma >= 0 && (!E.vivo[sim.fantasma] || E.tipo[sim.fantasma] !== TIPO.espectro)) {
+    sim.fantasma = -1;
+    sim.fantasmaT = 20;
+  }
+  if (sim.fantasma >= 0) {
+    // (no se muere: cada golpe se le cura)
+    E.hp[sim.fantasma] = E.hpMax[sim.fantasma];
+    return;
+  }
+  sim.fantasmaT -= dt;
+  if (sim.fantasmaT > 0) return;
+  const vivos = sim.vivos();
+  if (!vivos.length) return;
+  const j = sim.az.uno(vivos);
+  const a = sim.az.entre(0, Math.PI * 2);
+  const p = sim.mapa.abiertaCerca(j.x + Math.cos(a) * 14, j.y + Math.sin(a) * 14, 6) ?? { x: j.x + Math.cos(a) * 14, y: j.y + Math.sin(a) * 14 };
+  const i = aparecerEnemigo(sim, TIPO.espectro, p.x, p.y, { vida: 40 });
+  if (i < 0) return;
+  E.vel[i] = 1.2;
+  E.dano[i] *= 3;
+  E.esc[i] = 1.9;
+  E.r[i] *= 1.5;
+  sim.fantasma = i;
+  sim.aviso(46);
+}

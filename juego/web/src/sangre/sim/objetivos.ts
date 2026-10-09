@@ -288,7 +288,7 @@ export function actualizarObjetivos(sim: Sim, dt: number) {
     }
   }
   // A la mitad de la barra llega el cofre de suministros (no en la etapa final ni en el tutorial)
-  if (!sim.suministroVisto && !sim.cfg.final && !sim.cfg.exp.tutorial && sim.fase === 'juego' && sim.avance >= 0.45) marcarSuministro(sim);
+  if (!sim.suministroVisto && !sim.cfg.final && !sim.cfg.exp.tutorial && !sim.cfg.exp.mutadores.includes('sin_suministros') && sim.fase === 'juego' && sim.avance >= 0.45) marcarSuministro(sim);
   if (sim.campana) extraccion(sim, sim.campana, dt);
 }
 
@@ -434,7 +434,7 @@ function cercania(vivos: Jugador[], e: Entidad) {
 
 function empezarOleada(sim: Sim) {
   const pel = PELIGROS[Math.max(0, Math.min(4, sim.cfg.exp.peligro - 1))];
-  sim.oleadaResta = Math.round((24 + 9 * sim.n) * (1 + 0.2 * (sim.cfg.etapa - 1)) * pel.cantidad);
+  sim.oleadaResta = Math.round((24 + 9 * sim.n) * (1 + 0.2 * (sim.cfg.etapa - 1)) * pel.cantidad * (sim.cfg.exp.mutadores.includes('marea') ? 1.6 : 1));
   sim.oleadaT = 0;
   sim.aviso(25, sim.oleadasHechas, sim.oleadas.length);
   sim.suc.push(S.JEFE, 6, 0, 0, sim.oleadasHechas);
@@ -501,7 +501,7 @@ export function aparecerGuardian(sim: Sim) {
     llamarCampana(sim);
     return;
   }
-  engordar(sim, i, vidaGuardian(sim), 1.75);
+  engordar(sim, i, vidaGuardian(sim) * (sim.cfg.exp.mutadores.includes('guardian_furioso') ? 1.6 : 1), 1.75);
   sim.guardian = i;
   sim.impacienciaT = 0;
   sim.romperParedes(p.x, p.y, 1.8, null, true);
@@ -871,7 +871,7 @@ export function llamarCampana(sim: Sim) {
   const i = cand.length ? cand[Math.floor(sim.az.n() * cand.length)] : lejos >= 0 ? lejos : m.idx(Math.floor(ref.x), Math.floor(ref.y));
   const e = nuevaEntidad(sim, ENT.EXTRACCION, (i % m.w) + 0.5, ((i / m.w) | 0) + 0.5);
   e.est = 0;
-  e.cuenta = CUENTA_EXTRACCION;
+  e.cuenta = CUENTA_EXTRACCION * (sim.cfg.exp.mutadores.includes('campana_borracha') ? 0.55 : 1);
   sim.campana = e;
   sim.fase = 'extraccion';
   sim.suc.push(S.CAMPANA, 0, e.x, e.y);

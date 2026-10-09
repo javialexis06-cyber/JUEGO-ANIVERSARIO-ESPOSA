@@ -7,7 +7,7 @@ import type { Expedicion, OfertaForja } from '../expedicion';
 import { escoger } from '../sim/opciones';
 import type { Jugador } from '../sim/jugador';
 import type { Sim } from '../sim/sim';
-import { DESCANSO, ETAPAS } from '../datos/mundo';
+import { DESCANSO } from '../datos/mundo';
 import { RAREZA_COLOR, glifo, icono } from './iconos';
 import type { VistaEleccion } from './eleccion';
 import { aviso } from './hud';
@@ -77,7 +77,7 @@ export function mostrarForja(o: OpcionesForja) {
     const espera = listo ? o.esperando?.() ?? null : null;
     raiz.innerHTML = `
       <header class="cabeza">
-        <h2>La Forja · antes de la etapa ${exp.etapa + 1}${exp.cfg.infinito ? (exp.esFinal(exp.etapa + 1) ? ' · jefe' : '') : ` de ${ETAPAS}`}</h2>
+        <h2>La Forja · antes de la etapa ${exp.etapa + 1}${exp.cfg.infinito ? (exp.esFinal(exp.etapa + 1) ? ' · jefe' : '') : ` de ${exp.total}${exp.esFinal(exp.etapa + 1) ? ' · jefe' : ''}`}</h2>
         <div class="saldo"><span class="r-oro"><span class="ico">${glifo('oro')}</span>${b.oro}</span><span class="r-hierro"><span class="ico">${glifo('hierro')}</span>${b.hierro}</span><span class="r-sangre"><span class="ico">${glifo('gota')}</span>${b.sangre}</span></div>
       </header>
       ${o.pista ? `<p class="pista-forja">${o.pista}</p>` : ''}

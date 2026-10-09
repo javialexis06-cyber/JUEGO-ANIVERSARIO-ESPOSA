@@ -12,6 +12,8 @@ import { CLASES, nombreClase, textoAbre } from './datos/clases';
 import { BIOMAS, ETAPAS, MUTADORES, PELIGROS, SECUNDARIOS } from './datos/mundo';
 import { EQUIPO, POZO, RELIQUIA, RELIQUIAS, precioPozo } from './datos/botin';
 import { MINERALES, precioMineral } from './datos/minerales';
+import { ANOMALIAS, CENIZA_PRUEBA, COSTO_ANOMALIA, ETAPAS_PRUEBA, PUNTOS_PRUEBA, contrato, locura } from './datos/desafios';
+import { NOMBRE_PAREJA } from '../nombres';
 import { LUGAR, LUGARES, SECTOR, SECTORES, claveMeta, lugarAbierto, metasDe, metasNuevas, sectorAbierto, type DefLugar, type IdEscena } from './datos/noche';
 import { ESCENAS } from './historia_pareja';
 import { Expedicion } from './expedicion';
@@ -33,7 +35,7 @@ import { encolarSobrecarga } from './sim/opciones';
 import type { Sim } from './sim/sim';
 import { brillar, sinSaltar } from './ui/repintar';
 import { efectos, musica, sonarSucesos } from './sonidos';
-import { BIOMAS_ORDEN, CLASES_ORDEN, MINERALES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdBioma, type IdClase, type IdMineral, type IdMutador, type IdSecundario, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
+import { BIOMAS_ORDEN, CLASES_ORDEN, MINERALES_ORDEN, RANURAS_EQUIPO, type ConfigExpedicion, type IdAnomalia, type IdBioma, type IdClase, type IdMineral, type IdMutador, type IdSecundario, type PerfilJugador, type RanuraEquipo, type Stats } from './tipos';
 import { Tutorial } from './tutorial';
 import { VistaEleccion } from './ui/eleccion';
 import { mostrarForja } from './ui/forja';
@@ -123,7 +125,7 @@ let partida: PartidaComun | null = null;
 /** La sala del grupo (si se juega con otros). */
 let sala: Sala | null = null;
 let tutorial: Tutorial | null = null;
-let pantalla: 'carga' | 'titulo' | 'clases' | 'expedicion' | 'pozo' | 'logros' | 'noche' | 'juego' | 'forja' | 'resultado' | 'grupo' | 'sala' = 'carga';
+let pantalla: 'carga' | 'titulo' | 'clases' | 'expedicion' | 'pozo' | 'logros' | 'noche' | 'desafios' | 'juego' | 'forja' | 'resultado' | 'grupo' | 'sala' = 'carga';
 const eleccionMenu = new VistaEleccion();
 
 const perfilVista = () => ({ i: 0, cuerpo: yo.cuerpo, clase: sel.clase, piel: yo.piel, pelo: yo.pelo, detalles: yo.detalles });
@@ -243,10 +245,11 @@ function titulo() {
     <div class="menu-titulo">
       <button class="boton boton-sangre" data-a="jugar">${glifo('espada')}Expedición</button>
       <button class="boton boton-sangre" data-a="noche">${glifo('luna')}El mapa de la Noche <small>${p.noche.metas.length}/${LUGARES.length * 3}</small></button>
+      <button class="boton" data-a="desafios">${glifo('dado')}Desafíos${p.puntos ? ` <small>${p.puntos} ✦</small>` : ''}</button>
       <button class="boton" data-a="grupo">${glifo('mano')}En grupo</button>
-      <button class="boton" data-a="tutorial">${glifo('libro')}${p.tutorial ? 'Tutorial' : 'Aprender'}</button>
       <button class="boton" data-a="pozo">${glifo('caliz')}El Pozo</button>
       <button class="boton" data-a="logros">${glifo('corona')}Logros <small>${p.logros.length}/${LOGROS.length}</small></button>
+      <button class="boton" data-a="tutorial">${glifo('libro')}${p.tutorial ? 'Tutorial' : 'Aprender'}</button>
       <button class="boton" data-a="salir">${glifo('atras')}Volver</button>
     </div>
     <div class="quien"><b>${esc(yo.nombre)}</b><br>${nombreClase(sel.clase, yo.cuerpo)} · ${tituloMaestria(nv)}</div>
@@ -263,6 +266,7 @@ function titulo() {
       if (!P().tutorial) return confirmar('¿Primera vez?', 'El tutorial enseña a moverse, excavar, cumplir el objetivo y salir en la campana. Toma unos tres minutos.', 'Hacer el tutorial', 'Ya sé jugar', (si) => (si ? empezarTutorial() : escogerClase()));
       escogerClase();
     } else if (a === 'noche') noche();
+    else if (a === 'desafios') desafios();
     else if (a === 'grupo') grupo();
     else if (a === 'tutorial') empezarTutorial();
     else if (a === 'pozo') pozo();
@@ -379,7 +383,7 @@ function escogerExpedicion(alListo?: () => void) {
     const peligros = PELIGROS.map((g) => `<button class="peligro${g.n === sel.peligro ? ' elegido' : ''}${g.n > max ? ' bloqueado' : ''}" data-p="${g.n}" ${g.n > max ? 'disabled' : ''} title="${g.nombre}">${g.n}</button>`).join('');
     const pel = PELIGROS[sel.peligro - 1];
     const mutadores = sel.peligro >= 3
-      ? (Object.keys(MUTADORES) as IdMutador[]).map((m) => `<button class="mutador${sel.mutadores.includes(m) ? ' si' : ''}" data-m="${m}" title="${MUTADORES[m].desc}"><span class="ico">${glifo(MUTADORES[m].glifo)}</span>${MUTADORES[m].nombre}</button>`).join('')
+      ? (Object.keys(MUTADORES) as IdMutador[]).sort((a, b) => Number(sel.mutadores.includes(b)) - Number(sel.mutadores.includes(a)) || MUTADORES[a].recompensa - MUTADORES[b].recompensa).map((m) => `<button class="mutador${sel.mutadores.includes(m) ? ' si' : ''}" data-m="${m}" title="${MUTADORES[m].desc}"><span class="ico">${glifo(MUTADORES[m].glifo)}</span>${MUTADORES[m].nombre}</button>`).join('')
       : '<small>Desde el peligro 3 se pueden poner mutadores (más difícil, más ceniza).</small>';
     const equipo = RANURAS_EQUIPO.map((r) => {
       const id = sel.equipo[r];
@@ -396,7 +400,7 @@ function escogerExpedicion(alListo?: () => void) {
       <div class="opciones-exp placa">
         <div class="fila"><span class="etiqueta">Peligro</span><div class="peligros">${peligros}</div><span class="desc-peligro"><b>${pel.nombre}</b> · ${pel.desc} <em>×${(pel.recompensa * (1 + extra)).toFixed(2)} de ceniza</em></span></div>
         <div class="fila"><span class="etiqueta">Modo</span><div class="mutadores">${modos}</div></div>
-        <div class="fila"><span class="etiqueta">Mutadores</span><div class="mutadores">${mutadores}</div></div>
+        <div class="fila"><span class="etiqueta">Mutadores</span><div class="mutadores lista-mut">${mutadores}</div></div>
         <div class="fila"><span class="etiqueta">Equipo</span><div class="equipo-pozo">${equipo}</div></div>
       </div>
       <div class="pie-clases"><span class="resumen-sel">${nombreClase(sel.clase, yo.cuerpo)} · ${CLASES[sel.clase].specs[sel.spec].nombre}</span><button class="boton boton-sangre boton-grande" data-a="empezar">${glifo('antorcha')}Bajar</button></div>`;
@@ -647,6 +651,117 @@ function detalleLugar(l: DefLugar) {
   });
 }
 
+// ------------------------------------------------------------------------------------------------- Desafíos
+/** ¿Es un desafío (contrato, prueba de maestría o anómala)? */
+const desafio = (c: ConfigExpedicion) => !!(c.contrato || c.prueba || c.anomalia);
+
+/** Lo mejor en un contrato, dicho en palabras. */
+const mejorContrato = (v: number | undefined) => (v === undefined ? 'sin intentar' : v >= 99 ? '¡ganado!' : v === 0 ? 'no pasó de la primera etapa' : `${v} etapa${v > 1 ? 's' : ''} superada${v > 1 ? 's' : ''}`);
+
+let armaPrueba = '';
+let biomaPrueba: IdBioma | '' = '';
+
+function desafios() {
+  pantalla = 'desafios';
+  const p = P();
+  const dia = contrato('dia'), semana = contrato('semana');
+  const s = seccion('pantalla-desafios opaca', '');
+  let otro: ProgresoSangre | null = null;
+  const nombreOtro = yo.tipo === 'el' ? NOMBRE_PAREJA.ella : yo.tipo === 'ella' ? NOMBRE_PAREJA.el : '';
+  // Las armas que se pueden probar: el arsenal abierto de la clase y las comunes
+  const nv = nivelMaestria(p.maestria[sel.clase] ?? 0).nivel;
+  const probables = [...CLASES[sel.clase].arsenal.slice(0, armasDisponibles(nv)), ...p.comunes].filter((id) => ARMAS[id] && !ARMAS[id].evolucion);
+  if (!probables.includes(armaPrueba)) armaPrueba = probables[0] ?? '';
+  if (!biomaPrueba || !p.biomas.includes(biomaPrueba)) biomaPrueba = p.biomas.includes(sel.bioma) ? sel.bioma : p.biomas[0];
+  const pintar = () => {
+    const tarjetaContrato = (c: ReturnType<typeof contrato>) => `<div class="tarjeta-desafio">
+      <h4>${glifo(c.tipo === 'dia' ? 'sol' : 'luna')}${c.nombre}</h4>
+      <p>${BIOMAS[c.bioma].nombre} · peligro ${c.peligro}</p>
+      <p class="muts">${c.mutadores.map((m) => `<span title="${MUTADORES[m].desc}">${glifo(MUTADORES[m].glifo)}${MUTADORES[m].nombre}</span>`).join('')}</p>
+      <p><b>Tú:</b> ${mejorContrato(p.contratos[c.id])}${nombreOtro ? `<br><b>${nombreOtro}:</b> ${otro ? mejorContrato(otro.contratos[c.id]) : '…'}` : ''}</p>
+      <small>La primera vez que lo ganes: +${c.ceniza} de ceniza y +${c.puntos} ✦</small>
+      <button class="boton boton-sangre boton-chico" data-c="${c.tipo}">${glifo('antorcha')}Aceptar</button></div>`;
+    const chipsArma = probables.map((id) => `<button class="arma-mini${id === armaPrueba ? ' elegida' : ''}${p.pruebas.armas.includes(id) ? ' hecha' : ''}" data-w="${id}" title="${ARMAS[id].nombre}">${icono(ARMAS[id].glifo, id)}</button>`).join('');
+    const chipsBioma = p.biomas.map((b) => `<button class="boton boton-chico${b === biomaPrueba ? ' activo' : ''}" data-b="${b}">${glifo(BIOMAS[b].glifo)}${p.pruebas.biomas.includes(b) ? ' ✓' : ''}</button>`).join('');
+    s.innerHTML = `${cabeza('Desafíos')}
+      <p class="centro puntos-maestria">${glifo('dado')} Puntos de maestría: <b>${p.puntos} ✦</b> · bajas como ${nombreClase(sel.clase, yo.cuerpo)} <button class="boton boton-chico" data-a="clase">Cambiar</button></p>
+      <div class="desafios">
+        <section class="col-desafio"><h3>Contratos</h3><small>Los mismos para los dos: ¿quién llega más lejos?</small>${tarjetaContrato(dia)}${tarjetaContrato(semana)}</section>
+        <section class="col-desafio"><h3>Pruebas de maestría</h3>
+          <div class="tarjeta-desafio"><h4>${glifo('espada')}Prueba del arma</h4><p>3 etapas en peligro 1 solo con ella (no salen otras; arranca en el nivel 4 y pega 60 % más). Gánala: <b>+12 % de daño con esa arma para siempre</b> y +1 ✦.</p>
+            <div class="chips-armas">${chipsArma}</div><p><b>${ARMAS[armaPrueba]?.nombre ?? ''}</b>${p.pruebas.armas.includes(armaPrueba) ? ' · ya superada' : ''}</p>
+            <button class="boton boton-sangre boton-chico" data-q="arma">${glifo('antorcha')}Bajar</button></div>
+          <div class="tarjeta-desafio"><h4>${glifo(CLASES[sel.clase].glifo)}Prueba de la clase</h4><p>${nombreClase(sel.clase, yo.cuerpo)}: 5 etapas en peligro 1 sin ninguna curación. Gánala: +2 ✦ y 300 de ceniza.${p.pruebas.clases.includes(sel.clase) ? ' <b>Ya superada.</b>' : ''}</p>
+            <button class="boton boton-sangre boton-chico" data-q="clase">${glifo('antorcha')}Bajar</button></div>
+          <div class="tarjeta-desafio"><h4>${glifo('castillo')}Prueba del bioma</h4><p>10 etapas en ${BIOMAS[biomaPrueba as IdBioma]?.nombre ?? ''}, peligro 3, con jefe en la 5 y en la 10. Gánala: +3 ✦ y 500 de ceniza.</p>
+            <div class="chips-biomas">${chipsBioma}</div>
+            <button class="boton boton-sangre boton-chico" data-q="bioma">${glifo('antorcha')}Bajar</button></div>
+        </section>
+        <section class="col-desafio"><h3>Expediciones anómalas</h3><small>Cuestan ${COSTO_ANOMALIA} ✦ y dan el doble de ceniza. En ${BIOMAS[sel.bioma].nombre}, peligro ${Math.max(2, sel.peligro)}.</small>
+          ${ANOMALIAS.map((x) => `<button class="tarjeta-desafio anomalia" data-n="${x.id}" ${p.puntos < COSTO_ANOMALIA ? 'disabled' : ''}><h4>${glifo(x.glifo)}${x.nombre}</h4><p>${x.desc}</p></button>`).join('')}
+        </section>
+      </div>`;
+  };
+  pintar();
+  void guardado.delOtro().then((o) => {
+    otro = o;
+    if (pantalla === 'desafios') pintar();
+  });
+  s.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const d = (k: string) => t.closest<HTMLElement>(`[data-${k}]`)?.getAttribute(`data-${k}`);
+    if (d('a') === 'atras') {
+      efectos.boton();
+      return titulo();
+    }
+    if (d('a') === 'clase') {
+      efectos.boton();
+      return escogerClase(() => desafios());
+    }
+    if (d('w')) {
+      armaPrueba = d('w')!;
+      efectos.carta();
+      return pintar();
+    }
+    if (d('b')) {
+      biomaPrueba = d('b') as IdBioma;
+      efectos.carta();
+      return pintar();
+    }
+    const c = d('c');
+    if (c) {
+      efectos.boton();
+      const k = c === 'dia' ? dia : semana;
+      return void empezar({ bioma: k.bioma, peligro: k.peligro, mutadores: [...k.mutadores], semilla: k.semilla, contrato: k.id }, [perfilLocal()], 0);
+    }
+    const q = d('q') as 'arma' | 'clase' | 'bioma' | undefined;
+    if (q) {
+      efectos.boton();
+      if (q === 'arma' && !armaPrueba) return;
+      const cfg: ConfigExpedicion =
+        q === 'arma' ? { bioma: sel.bioma, peligro: 1, mutadores: [], semilla: semilla(), etapas: ETAPAS_PRUEBA.arma, armaUnica: armaPrueba, prueba: { tipo: 'arma', ref: armaPrueba } }
+        : q === 'clase' ? { bioma: sel.bioma, peligro: 1, mutadores: [], semilla: semilla(), etapas: ETAPAS_PRUEBA.clase, sinCurar: true, prueba: { tipo: 'clase', ref: sel.clase } }
+        : { bioma: biomaPrueba as IdBioma, peligro: 3, mutadores: [], semilla: semilla(), etapas: ETAPAS_PRUEBA.bioma, jefesEn: [5, 10], prueba: { tipo: 'bioma', ref: biomaPrueba } };
+      return void empezar(cfg, [perfilLocal()], 0);
+    }
+    const n = d('n') as IdAnomalia | undefined;
+    if (n && p.puntos >= COSTO_ANOMALIA) {
+      efectos.boton();
+      p.puntos -= COSTO_ANOMALIA;
+      guardado.guardar();
+      const sem = semilla();
+      const perfil = perfilLocal();
+      if (n === 'pies_plomo') perfil.meta = { ...perfil.meta, velocidad: (perfil.meta.velocidad ?? 0) - 0.5, dano: (perfil.meta.dano ?? 0) + 0.6, armadura: (perfil.meta.armadura ?? 0) + 3 };
+      if (n === 'un_golpe') perfil.vidaMult = 0.1;
+      if (n === 'antigua') {
+        perfil.meta = {};
+        perfil.equipo = {};
+      }
+      return void empezar({ bioma: sel.bioma, peligro: Math.max(2, sel.peligro), mutadores: n === 'locura' ? locura(sem) : [], semilla: sem, anomalia: n }, [perfil], 0);
+    }
+  });
+}
+
 function logros(pestana: 'logros' | 'reliquias' = 'logros') {
   pantalla = 'logros';
   const p = P();
@@ -714,7 +829,7 @@ function pausa() {
   const pintar = () => {
     const j = pt.local;
     hojaPausa!.querySelector('.hoja-carta')!.innerHTML = `<h2>Pausa</h2>
-      ${j ? `<p class="centro">${nombreClase(j.clase, j.cuerpo)} · nivel ${j.nivel} · etapa ${pt.exp.etapa} de ${pt.exp.cfg.tutorial ? 1 : ETAPAS}${solo ? '' : ' · <em>el juego sigue para los demás</em>'}</p>` : ''}
+      ${j ? `<p class="centro">${nombreClase(j.clase, j.cuerpo)} · nivel ${j.nivel} · etapa ${pt.exp.etapa} de ${pt.exp.total}${solo ? '' : ' · <em>el juego sigue para los demás</em>'}</p>` : ''}
       <div class="menu-pausa">
         <button class="boton boton-sangre" data-p="seguir">${glifo('espada')}Seguir</button>
         <div class="fila"><span class="etiqueta">Calidad</span>${(['baja', 'media', 'alta'] as Calidad[]).map((c) => `<button class="boton boton-chico${escena.calidad === c ? ' boton-oro' : ''}" data-c="${c}">${c[0].toUpperCase() + c.slice(1)}</button>`).join('')}</div>
@@ -888,6 +1003,8 @@ interface Cobro {
   comunesNuevas: string[];
   /** Reliquias de hitos que se abrieron (ya pueden salir en los cofres). */
   reliquias: string[];
+  /** Lo de los desafíos (contrato, prueba, anómala), en palabras. */
+  desafio: string[];
 }
 
 /** Lo que se gana al terminar (ceniza, maestría, logros, cifras, monedas de la casa). */
@@ -928,7 +1045,8 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
   if (p.exp.cfg.infinito) c.infinitoMax = Math.max(c.infinitoMax, p.exp.etapa);
   c.segundos += Math.round(p.exp.tiempo);
   if (p.o.perfiles.length > 1) c.enGrupo++;
-  if (exito && !p.exp.cfg.tutorial) pr.ganado[p.exp.cfg.bioma] = Math.max(pr.ganado[p.exp.cfg.bioma] ?? 0, p.exp.cfg.peligro);
+  // (los contratos pueden caer en un bioma que todavía no se abrió: no cuentan para abrir biomas ni peligros)
+  if (exito && !p.exp.cfg.tutorial && !p.exp.cfg.contrato) pr.ganado[p.exp.cfg.bioma] = Math.max(pr.ganado[p.exp.cfg.bioma] ?? 0, p.exp.cfg.peligro);
   if (p.exp.cfg.tutorial) pr.tutorial = true;
   const nuevos = p.exp.cfg.tutorial ? [] : revisarLogros({ p: pr, exp: p.exp, j, exito, jugadores: p.o.perfiles.length });
   // Las reliquias que se abrieron con sus proezas
@@ -955,6 +1073,34 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
       for (const sig of LUGARES.filter((x) => x.sector === SECTORES[k + 1]?.id)) if (!pr.biomas.includes(sig.bioma)) pr.biomas.push(sig.bioma);
     }
   }
+  // Los desafíos: el contrato (lo mejor de cada uno), las pruebas de maestría y sus premios
+  const desafio: string[] = [];
+  const cfgE = p.exp.cfg;
+  if (cfgE.contrato) {
+    const superadas = exito ? 99 : p.exp.resultados.filter((x) => x.fin.exito).length;
+    const antes = pr.contratos[cfgE.contrato] ?? -1;
+    pr.contratos[cfgE.contrato] = Math.max(antes, superadas);
+    const c = contrato(cfgE.contrato.startsWith('dia') ? 'dia' : 'semana');
+    if (exito && antes < 99 && c.id === cfgE.contrato) {
+      pr.ceniza += c.ceniza;
+      pr.cenizaTotal += c.ceniza;
+      pr.puntos += c.puntos;
+      desafio.push(`${c.nombre} ganado: +${c.ceniza} de ceniza y +${c.puntos} ✦`);
+    } else if (superadas > antes) desafio.push(`${cfgE.contrato.startsWith('dia') ? 'Contrato del día' : 'Contrato de la semana'}: tu mejor ahora es ${mejorContrato(superadas)}`);
+  }
+  if (cfgE.prueba && exito) {
+    const { tipo, ref } = cfgE.prueba;
+    const lista = tipo === 'arma' ? pr.pruebas.armas : tipo === 'clase' ? pr.pruebas.clases : pr.pruebas.biomas;
+    if (!(lista as string[]).includes(ref)) {
+      (lista as string[]).push(ref);
+      pr.puntos += PUNTOS_PRUEBA[tipo];
+      pr.ceniza += CENIZA_PRUEBA[tipo];
+      pr.cenizaTotal += CENIZA_PRUEBA[tipo];
+      const que = tipo === 'arma' ? `del arma (${ARMAS[ref]?.nombre}): +12 % de daño con ella para siempre` : tipo === 'clase' ? `de la clase (${nombreClase(ref as IdClase, yo.cuerpo)})` : `del bioma (${BIOMAS[ref as IdBioma]?.nombre})`;
+      desafio.push(`Prueba ${que} · +${PUNTOS_PRUEBA[tipo]} ✦ y +${CENIZA_PRUEBA[tipo]} de ceniza`);
+    } else desafio.push('Prueba superada otra vez (el premio ya lo tenías)');
+  }
+  if (cfgE.anomalia) desafio.push(`Expedición anómala: ${ANOMALIAS.find((x) => x.id === cfgE.anomalia)?.nombre} (ceniza doble)`);
   aplicarDesbloqueos(pr);
   // Monedas de la casa (escasas): una por etapa extraída y un poquito más por ganar
   // (en el modo infinito, máximo 4: las monedas de la casa son escasas)
@@ -964,7 +1110,7 @@ function cobrar(p: PartidaComun, exito: boolean): Cobro {
   return {
     ceniza: r.ceniza, maestria: r.maestria, subio: Array.from({ length: nvDespues - nvAntes }, (_, k) => nvAntes + k + 1), logros: nuevos,
     record: recordInfinito, minerales: minerales.map(([k, n]) => ({ id: k, n })), metasNoche, escena, comunesNuevas: pr.comunes.filter((k) => !antes.comunes.includes(k)),
-    cenizaNoche: lugar ? metasNoche.length * SECTOR[lugar.sector].ceniza : 0, reliquias: reliquiasAnunciar,
+    cenizaNoche: lugar ? metasNoche.length * SECTOR[lugar.sector].ceniza : 0, reliquias: reliquiasAnunciar, desafio,
     monedas: yo.tipo === 'amigo' ? 0 : monedas, clasesNuevas: pr.clases.filter((k) => !antes.clases.includes(k)), biomasNuevos: pr.biomas.filter((b) => !antes.biomas.includes(b)),
   };
 }
@@ -1016,7 +1162,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
       <div class="resultado">
         <div class="pergamino ficha-texto">
           <h3>${esc(j.nombre)} · ${nombreClase(j.clase, j.cuerpo)}</h3>
-          <p class="lema-clase">${BIOMAS[p.exp.cfg.bioma].nombre} · peligro ${p.exp.cfg.peligro} · ${inf ? `modo infinito · ${p.exp.resultados.filter((r) => r.fin.exito).length} etapas superadas · récord: etapa ${pr.cifras.infinitoMax}` : `${p.exp.resultados.filter((r) => r.fin.exito).length} de ${p.exp.cfg.tutorial ? 1 : ETAPAS} etapas`}</p>
+          <p class="lema-clase">${BIOMAS[p.exp.cfg.bioma].nombre} · peligro ${p.exp.cfg.peligro} · ${inf ? `modo infinito · ${p.exp.resultados.filter((r) => r.fin.exito).length} etapas superadas · récord: etapa ${pr.cifras.infinitoMax}` : `${p.exp.resultados.filter((r) => r.fin.exito).length} de ${p.exp.total} etapas`}</p>
           <div class="cifras">
             <span>Tiempo</span><b>${min}:${String(seg).padStart(2, '0')}</b>
             <span>Nivel</span><b>${j.nivel}</b>
@@ -1031,6 +1177,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
         </div>
         <div class="placa premios">
           <div class="premio"><span>${glifo('alma', '#d8d0c8')}+${cb.ceniza} ceniza</span>${cb.minerales.map((m) => `<span>${glifo(MINERALES[m.id].glifo, MINERALES[m.id].brillo)}+${m.n} ${MINERALES[m.id].nombre}</span>`).join('')}<span>${glifo('corona', '#f0d488')}+${cb.maestria} maestría</span>${cb.monedas ? `<span>${glifo('oro', '#f0d488')}+${cb.monedas} moneda${cb.monedas > 1 ? 's' : ''} de la casa</span>` : ''}</div>
+          ${cb.desafio.map((x) => `<div class="desbloqueo">${glifo('dado')} ${x}</div>`).join('')}
           ${cb.metasNoche.length ? `<div class="desbloqueo">${glifo('luna')} Mapa de la Noche (+${cb.cenizaNoche} ceniza): ${cb.metasNoche.join(' · ')}</div>` : ''}
           ${cb.subio.map((n) => `<div class="desbloqueo">Maestría ${n} de ${nombreClase(j.clase, j.cuerpo)}: ${recompensaMaestria(n)}</div>`).join('')}
           ${cb.clasesNuevas.map((k) => `<div class="desbloqueo">${glifo(CLASES[k].glifo)} Nueva clase: ${nombreClase(k, yo.cuerpo)}</div>`).join('')}
@@ -1041,7 +1188,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
           ${ofrecibles.length && !ofrecida ? `<h3 class="titulo-grabado">Ofrecer al Pozo (una)</h3><div class="ofrendas">${ofrecibles.map((o) => `<button class="boton boton-chico" data-o="${o}" title="${EQUIPO[o].desc}">${glifo(EQUIPO[o].ranura)}${EQUIPO[o].nombre}</button>`).join('')}</div>` : ''}
         </div>
       </div>
-      <footer class="fila-botones">${sala ? `<button class="boton boton-sangre" data-a="sala">${glifo('mano')}Volver a la sala</button>` : `<button class="boton" data-a="menu">${glifo('atras')}Menú</button>${p.exp.cfg.lugar ? `<button class="boton boton-sangre" data-a="mapa">${glifo('luna')}Al mapa de la Noche</button>` : p.exp.cfg.tutorial ? '' : `<button class="boton boton-sangre" data-a="otra">${glifo('espada')}Otra expedición</button>`}`}</footer>`;
+      <footer class="fila-botones">${sala ? `<button class="boton boton-sangre" data-a="sala">${glifo('mano')}Volver a la sala</button>` : `<button class="boton" data-a="menu">${glifo('atras')}Menú</button>${p.exp.cfg.lugar ? `<button class="boton boton-sangre" data-a="mapa">${glifo('luna')}Al mapa de la Noche</button>` : desafio(p.exp.cfg) ? `<button class="boton boton-sangre" data-a="desafios">${glifo('dado')}A los desafíos</button>` : p.exp.cfg.tutorial ? '' : `<button class="boton boton-sangre" data-a="otra">${glifo('espada')}Otra expedición</button>`}`}</footer>`;
   };
   pintar();
   s.addEventListener('click', (e) => {
@@ -1055,7 +1202,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
       efectos.campana();
       aviso(`${EQUIPO[o].nombre} queda en el Pozo para siempre.`, '', 2200);
       pintar();
-    } else if (a === 'menu' || a === 'otra' || a === 'sala' || a === 'mapa') {
+    } else if (a === 'menu' || a === 'otra' || a === 'sala' || a === 'mapa' || a === 'desafios') {
       efectos.boton();
       p.liberar();
       partida = null;
@@ -1064,7 +1211,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
       else if (a === 'otra') {
         corregirSeleccion();
         void empezar(cfgDeSeleccion(), [perfilLocal()], 0);
-      } else void volverAlMenu(a === 'mapa' ? 'noche' : p.exp.cfg.tutorial ? 'clases' : 'titulo');
+      } else void volverAlMenu(a === 'mapa' ? 'noche' : a === 'desafios' ? 'desafios' : p.exp.cfg.tutorial ? 'clases' : 'titulo');
     }
   });
   // (si cruzó una Puerta, la historia se cuenta encima de los resultados)
@@ -1076,7 +1223,7 @@ function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
   }
 }
 
-async function volverAlMenu(a: 'titulo' | 'clases' | 'noche' | 'nada' = 'titulo') {
+async function volverAlMenu(a: 'titulo' | 'clases' | 'noche' | 'desafios' | 'nada' = 'titulo') {
   pantalla = 'carga';
   carga(true, 'Subiendo a la superficie…', 0.5);
   pantallas.replaceChildren();
@@ -1085,6 +1232,7 @@ async function volverAlMenu(a: 'titulo' | 'clases' | 'noche' | 'nada' = 'titulo'
   carga(false);
   if (a === 'clases') escogerClase();
   else if (a === 'noche') noche();
+  else if (a === 'desafios') desafios();
   else if (a === 'titulo') titulo();
 }
 

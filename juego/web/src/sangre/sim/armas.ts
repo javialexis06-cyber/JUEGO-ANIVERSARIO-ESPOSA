@@ -55,7 +55,7 @@ export function golpeDeArma(sim: Sim, g: Golpe, j: Jugador, a: ArmaJ, ranura: nu
 
 /** Cada cuadro: las armas del jugador cuentan su tiempo y atacan cuando toca. */
 export function actualizarArmas(sim: Sim, j: Jugador, dt: number) {
-  const cad = 1 + j.buffCad + mec.cadenciaExtra(sim, j);
+  const cad = (1 + j.buffCad + mec.cadenciaExtra(sim, j)) * (sim.cfg.exp.mutadores.includes('oxido') ? 0.8 : 1);
   for (let k = 0; k < j.armas.length; k++) {
     const a = j.armas[k];
     if (a.sucio) a.calcular(j.st, j.multOtras(k));
