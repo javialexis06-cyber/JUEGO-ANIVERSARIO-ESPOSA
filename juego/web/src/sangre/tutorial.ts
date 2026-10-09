@@ -164,7 +164,7 @@ export class Tutorial {
   }
 
   pistaForja() {
-    return 'La Forja sale entre etapas: con oro compras armas y objetos al mercader, en el yunque subes de nivel un arma con hierro negro y en el altar de sangre le pones una sobrecarga. Te dejamos algo para probar; al terminar, toca el botón rojo.';
+    return 'La Forja sale entre etapas, con tres mostradores: el armero (entrena tus armas con hierro negro; abajo, el yunque y el altar de sangre), etiquetas y objetos, y el personaje (con oro). Te dejamos algo para probar; al terminar, toca el botón rojo.';
   }
 
   private quitarGlobo() {

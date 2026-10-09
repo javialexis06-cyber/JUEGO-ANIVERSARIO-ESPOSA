@@ -25,7 +25,7 @@ const fmtValor = (v: number, fmt: string) =>
   fmt === '%' ? `${Math.round(v * 1000) / 10} %`.replace('.', ',') : fmt === 'e' ? String(Math.max(1, Math.round(v))) : String(Math.round(v * 10) / 10).replace('.', ',');
 
 /** Cuántos niveles sube «entrenar» según la rareza. */
-const NIVELES_ENTRENAR = [1, 2, 2, 3, 4];
+export const NIVELES_ENTRENAR = [1, 2, 2, 3, 4];
 
 // ------------------------------------------------------------------------------------------------- Subir de nivel
 export function encolarNivel(sim: Sim, j: Jugador) {
@@ -37,6 +37,16 @@ interface Candidato {
   id: string;
   peso: number;
   ranura?: number;
+}
+
+/** Cuántas armas llevan cada etiqueta (para la regla de las dos armas). */
+export function armasPorEtiqueta(j: Jugador): Map<number, number> {
+  const porEtq = new Map<number, number>();
+  for (const a of j.armas) {
+    const bits = a.etq || a.def.etiquetas.reduce((s, e) => s | BIT_ETQ[e], 0);
+    for (const b of Object.values(BIT_ETQ)) if (bits & b) porEtq.set(b, (porEtq.get(b) ?? 0) + 1);
+  }
+  return porEtq;
 }
 
 function candidatosNivel(j: Jugador): Candidato[] {

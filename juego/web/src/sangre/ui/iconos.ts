@@ -57,7 +57,7 @@ const G: Record<string, string> = {
   corazon: 'M12 21C5 15 2 12 2 8a5 5 0 0110-1 5 5 0 0110 1c0 4-3 7-10 13z',
   gota: 'M12 2c5 7 7 10 7 13a7 7 0 01-14 0c0-3 2-6 7-13z',
   armadura: 'M7 3h10l3 4-2 3v11H6V10L4 7zM9 6v12M15 6v12',
-  sombra: 'M12 2a10 10 0 100 20 7 7 0 010-20z',
+  sombra: 'M12 2a10 10 0 100 20 5 10 0 010-20z',
   bota: 'M7 2h6v11l6 3a3 3 0 012 3v2H5V18l2-3z',
   mano: 'M8 22a6 6 0 01-4-6V9h2v5h1V4h2v9h1V2h2v11h1V4h2v10h1V8h2v8a6 6 0 01-6 6z',
   area: 'M12 2a10 10 0 110 20 10 10 0 010-20zm0 4a6 6 0 100 12 6 6 0 000-12zm0 4a2 2 0 110 4 2 2 0 010-4z',

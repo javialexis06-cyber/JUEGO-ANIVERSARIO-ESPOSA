@@ -2939,3 +2939,128 @@ img.ico-render {
 .mutadores.lista-mut .mutador {
   flex: none;
 }
+/* La Forja con tres mostradores (Sangre y Ceniza 2): tres columnas que se deslizan solas, ofertas en renglones */
+.forja-tres .mostrador {
+  flex: 1;
+  overflow-y: auto;
+  touch-action: pan-y;
+  padding: 8px;
+}
+.forja-tres .mostrador h3 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+}
+.forja-tres .mostrador h3 .ico {
+  width: 15px;
+  height: 15px;
+}
+.forja-tres .mostrador h4 {
+  margin: 6px 0 0;
+  font: 700 10px/1 var(--serif);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ceniza);
+}
+.ofertas-col {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.oferta-fila {
+  position: relative;
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 22px 5px 6px;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.oferta-fila::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-left: 4px solid var(--rareza);
+  border-radius: 3px 0 0 3px;
+  pointer-events: none;
+}
+.oferta-fila > .ico {
+  width: 30px;
+  height: 30px;
+  color: var(--tinta);
+}
+.oferta-fila .texto-oferta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.oferta-fila .tipo-oferta {
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tinta-2);
+  font-style: normal;
+}
+.oferta-fila b {
+  font-size: 11.5px;
+  line-height: 1.1;
+}
+.oferta-fila small {
+  font-size: 9.5px;
+  line-height: 1.15;
+  color: var(--tinta-2);
+}
+.oferta-fila .precio {
+  font: 800 12px/1 var(--serif);
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
+  color: #6a4a10;
+  white-space: nowrap;
+}
+.oferta-fila .precio .ico {
+  width: 13px;
+  height: 13px;
+  color: #8a6a1a;
+}
+.oferta-fila.caro .precio {
+  color: #8a1010;
+}
+.oferta-fila.vendida {
+  opacity: 0.35;
+}
+.oferta-fila .guardar {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 16px;
+  height: 16px;
+  color: var(--tinta-2);
+  opacity: 0.55;
+}
+.oferta-fila.guardada .guardar {
+  opacity: 1;
+  color: var(--sangre);
+}
+.oferta-fila.curar {
+  margin-top: 4px;
+  padding-right: 6px;
+}
+.nota-forja {
+  margin-right: auto;
+  font-size: 11px;
+  color: var(--ceniza);
+}
+.forja-tres .arma-forja {
+  grid-template-columns: 26px 1fr;
+}
+.forja-tres .arma-forja .ico {
+  width: 26px;
+  height: 26px;
+}

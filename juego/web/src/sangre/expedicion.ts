@@ -2,12 +2,13 @@
 // la usan la pantalla de juego, el anfitrión de una partida en grupo y las pruebas del bot en Node.
 import { Azar } from '../casa/lavado/azar';
 import { ARMAS, MAX_ARMAS, MAX_SOBRECARGAS, NIVEL_EVOLUCION, NIVEL_MAX_ARMA } from './datos/armas';
-import { EQUIPOS, OBJETO, OBJETOS, PAREJA_EVOLUCION, descPieza, nombrePieza, pieza, piezaNueva } from './datos/botin';
+import { EQUIPOS, MEJORAS, OBJETO, OBJETOS, PAREJA_EVOLUCION, descPieza, nombrePieza, pieza, piezaNueva } from './datos/botin';
 import { ETAPAS, MUTADORES, PELIGROS } from './datos/mundo';
 import { Sim, type FinEtapa } from './sim/sim';
 import { ArmaJ, Jugador } from './sim/jugador';
-import { descObjeto, eleccionSobrecarga, encolarSobrecarga, encontrables } from './sim/opciones';
-import type { ConfigExpedicion, IdBioma, IdObjetivo, IdSecundario, PerfilJugador, Rareza } from './tipos';
+import { BIT_ETQ } from './sim/jugador';
+import { NIVELES_ENTRENAR, aplicar, armasPorEtiqueta, descObjeto, describir, eleccionSobrecarga, encolarSobrecarga, encontrables, tirarRareza } from './sim/opciones';
+import type { ConfigExpedicion, IdBioma, IdObjetivo, IdSecundario, Opcion, PerfilJugador, Rareza } from './tipos';
 
 export interface ResultadoEtapa {
   etapa: number;
@@ -16,9 +17,20 @@ export interface ResultadoEtapa {
   segundos: number;
 }
 
+/** Los tres mostradores de la Forja. */
+export type Mostrador = 'armero' | 'etiquetas' | 'personaje';
+/** Lo que se paga de más (o de menos) por rareza: las mejoras con oro y el entrenamiento con hierro (que rinde más). */
+const PRECIO_RAREZA = [1, 1.6, 2.4, 3.4, 4.8];
+const DESCUENTO_RAREZA = [1, 0.9, 0.85, 0.8, 0.75];
+
 export interface OfertaForja {
   id: string;
-  tipo: 'arma' | 'objeto' | 'equipo' | 'curar';
+  tipo: 'arma' | 'objeto' | 'equipo' | 'curar' | 'mejora';
+  mostrador?: Mostrador;
+  /** Con qué se paga (oro si no dice). */
+  pago?: 'oro' | 'hierro';
+  /** La mejora que se compra (entrenar un arma, una estadística o una etiqueta). */
+  op?: Opcion;
   ref: string;
   nombre: string;
   desc: string;
@@ -52,6 +64,8 @@ export class Expedicion {
   forja = new Map<number, EstadoForja>();
   /** Cuántas veces renovó la Forja cada jugador en la expedición (el precio sube). */
   renovadas = new Map<number, number>();
+  /** Cuántas veces se curó cada jugador en la Forja (el precio sube). */
+  curadas = new Map<number, number>();
   exito = false;
   az: Azar;
   /** Segundos totales jugados. */
@@ -170,45 +184,103 @@ export class Expedicion {
     return (j.clase === 'monarca' && j.spec === 2 ? 0.8 : 1) * (j.tiene('bula_obispo') ? 0.8 : 1) * (this.cfg.mutadores.includes('mercado') ? 0.75 : 1);
   }
 
+  /** Las ofertas de los tres mostradores de la Forja (como la tienda de Deep Rock): el armero (entrenar armas con
+   *  hierro negro y armas nuevas con oro), etiquetas y objetos (mejoras de etiqueta con oro, por la regla de las dos
+   *  armas, y los objetos con contrapartida) y el personaje (mejoras de estadística y equipo con oro). Las mejoras
+   *  salen con rareza y cuestan según ella. Las guardadas con el candado se quedan. */
   ofertasNuevas(j: Jugador, guardadas: OfertaForja[] = []): OfertaForja[] {
     const r: OfertaForja[] = [...guardadas];
     const e = this.etapa;
     const d = this.descuento(j);
     const usados = new Set(r.map((o) => o.ref));
-    let intentos = 0;
-    while (r.length < 5 && intentos++ < 60) {
-      const t = this.az.n();
-      if (t < 0.28 && j.armas.length < MAX_ARMAS) {
-        const libres = encontrables(j).filter((id) => !j.tieneArma(id) && !ARMAS[id]?.evolucion && !usados.has(id));
-        if (!libres.length) continue;
+    const cuantas = (m: Mostrador) => r.filter((o) => o.mostrador === m).length;
+    const sube = 1 + 0.12 * (e - 1);
+    // --- El armero: entrenar dos armas (hierro negro; las raras rinden más por cada hierro) y un arma nueva (oro)
+    const entrenables = j.armas.map((a, k) => ({ a, k })).filter(({ a }) => a.nivel < NIVEL_MAX_ARMA && !usados.has(`entrenar:${a.id}`));
+    while (cuantas('armero') < 2 && entrenables.length) {
+      const { a, k } = entrenables.splice(Math.floor(this.az.n() * entrenables.length), 1)[0];
+      const rz = tirarRareza(this.az, j.st.suerte);
+      const op = describir(j, 'arma', a.id, rz, k);
+      if (!op) continue;
+      const niveles = Math.min(NIVELES_ENTRENAR[rz], NIVEL_MAX_ARMA - a.nivel);
+      usados.add(`entrenar:${a.id}`);
+      r.push({
+        id: `t${r.length}${a.id}`, tipo: 'mejora', mostrador: 'armero', pago: 'hierro', ref: `entrenar:${a.id}`, nombre: op.nombre, desc: op.desc, op,
+        precio: Math.max(1, Math.round((5 + 3 * a.nivel) * niveles * DESCUENTO_RAREZA[rz] * sube)), rareza: rz, glifo: op.glifo,
+      });
+    }
+    if (j.armas.length < MAX_ARMAS && cuantas('armero') < 3) {
+      const libres = encontrables(j).filter((id) => !j.tieneArma(id) && !ARMAS[id]?.evolucion && !usados.has(id));
+      if (libres.length) {
         const id = this.az.uno(libres);
         const a = ARMAS[id];
         usados.add(id);
-        r.push({ id: `a${r.length}${id}`, tipo: 'arma', ref: id, nombre: a.nombre, desc: a.desc, precio: Math.round((26 + 12 * e) * d), rareza: 1, glifo: a.glifo });
-      } else if (t < 0.82) {
-        // Objetos: los que evolucionan algo tuyo salen más cuando el arma ya va alta
-        const evoluciones = j.armas.filter((a) => a.def.evoluciona && a.nivel >= NIVEL_EVOLUCION - 6 && !j.objeto(a.def.evoluciona.con)).map((a) => a.def.evoluciona!.con);
-        const lista = OBJETOS.filter((o) => (!o.evoluciona || evoluciones.includes(o.id)) && (o.repetible || !j.objeto(o.id)) && !usados.has(o.id));
-        if (!lista.length) continue;
-        const o = this.az.pesado(lista, (x) => (x.evoluciona || evoluciones.includes(x.id) ? 3 : x.rareza >= 3 ? 0.4 : x.rareza === 2 ? 0.8 : 1.3))!;
-        usados.add(o.id);
-        r.push({ id: `o${r.length}${o.id}`, tipo: 'objeto', ref: o.id, nombre: o.nombre, desc: descObjeto(o, j), precio: Math.round(o.precio * (1 + 0.22 * (e - 1)) * d), rareza: Math.min(4, o.rareza) as Rareza, glifo: o.glifo });
-      } else if (t < 0.95) {
-        const lista = EQUIPOS.filter((q) => q.rareza <= Math.min(3, e) && pieza(j.equipo[q.ranura])?.def.id !== q.id && !usados.has(q.id));
-        if (!lista.length) continue;
+        r.push({ id: `a${r.length}${id}`, tipo: 'arma', mostrador: 'armero', ref: id, nombre: a.nombre, desc: a.desc, precio: Math.round((26 + 12 * e) * d), rareza: 1, glifo: a.glifo });
+      }
+    }
+    // --- Etiquetas y objetos: hasta tres mejoras de etiqueta (solo de las que llevan dos armas) y objetos hasta cuatro
+    const porEtq = armasPorEtiqueta(j);
+    const etqs = MEJORAS.filter((m) => m.etiqueta && (porEtq.get(BIT_ETQ[m.etiqueta]) ?? 0) >= 2 && !usados.has(`mejora:${m.id}`));
+    while (cuantas('etiquetas') < 3 && etqs.length) {
+      const m = etqs.splice(Math.floor(this.az.n() * etqs.length), 1)[0];
+      const rz = tirarRareza(this.az, j.st.suerte);
+      const op = describir(j, 'stat', m.id, rz);
+      if (!op) continue;
+      usados.add(`mejora:${m.id}`);
+      r.push({ id: `g${r.length}${m.id}`, tipo: 'mejora', mostrador: 'etiquetas', ref: `mejora:${m.id}`, nombre: op.nombre, desc: op.desc, op, precio: this.precioMejora(rz, d), rareza: rz, glifo: op.glifo });
+    }
+    for (let intentos = 0; cuantas('etiquetas') < 4 && intentos < 20; intentos++) {
+      // (los que evolucionan algo tuyo salen más cuando el arma ya va alta)
+      const evoluciones = j.armas.filter((a) => a.def.evoluciona && a.nivel >= NIVEL_EVOLUCION - 6 && !j.objeto(a.def.evoluciona.con)).map((a) => a.def.evoluciona!.con);
+      const lista = OBJETOS.filter((o) => (!o.evoluciona || evoluciones.includes(o.id)) && (o.repetible || !j.objeto(o.id)) && !usados.has(o.id));
+      if (!lista.length) break;
+      const o = this.az.pesado(lista, (x) => (x.evoluciona || evoluciones.includes(x.id) ? 3 : x.rareza >= 3 ? 0.4 : x.rareza === 2 ? 0.8 : 1.3))!;
+      usados.add(o.id);
+      r.push({ id: `o${r.length}${o.id}`, tipo: 'objeto', mostrador: 'etiquetas', ref: o.id, nombre: o.nombre, desc: descObjeto(o, j), precio: Math.round(o.precio * (1 + 0.22 * (e - 1)) * d), rareza: Math.min(4, o.rareza) as Rareza, glifo: o.glifo });
+    }
+    // --- El personaje: dos mejoras de estadística (con rareza) y una pieza de equipo
+    const stats = MEJORAS.filter((m) => !m.etiqueta && m.id !== 'cantidad' && m.id !== 'potencia' && m.id !== 'estados' && !usados.has(`mejora:${m.id}`));
+    while (cuantas('personaje') < 2 && stats.length) {
+      const m = stats.splice(Math.floor(this.az.n() * stats.length), 1)[0];
+      const rz = tirarRareza(this.az, j.st.suerte);
+      const op = describir(j, 'stat', m.id, rz);
+      if (!op) continue;
+      usados.add(`mejora:${m.id}`);
+      r.push({ id: `p${r.length}${m.id}`, tipo: 'mejora', mostrador: 'personaje', ref: `mejora:${m.id}`, nombre: op.nombre, desc: op.desc, op, precio: this.precioMejora(rz, d), rareza: rz, glifo: op.glifo });
+    }
+    if (cuantas('personaje') < 3) {
+      const lista = EQUIPOS.filter((q) => q.rareza <= Math.min(3, e) && pieza(j.equipo[q.ranura])?.def.id !== q.id && !usados.has(q.id));
+      if (lista.length) {
         const q = this.az.uno(lista);
         usados.add(q.id);
         // (la calidad sube un poco con las etapas; la pieza cuesta más mientras mejor sea)
         const t2 = this.az.n();
         const calidad = t2 < 0.04 + 0.02 * e ? 3 : t2 < 0.14 + 0.04 * e ? 2 : t2 < 0.42 + 0.04 * e ? 1 : 0;
         const p = pieza(piezaNueva(this.az, q.id, calidad))!;
-        r.push({ id: `e${r.length}${q.id}`, tipo: 'equipo', ref: p.clave, nombre: nombrePieza(p), desc: descPieza(p), precio: Math.round((18 + 14 * q.rareza) * (1 + 0.4 * calidad) * (1 + 0.15 * e) * d), rareza: calidad as Rareza, glifo: q.ranura });
-      } else if (!usados.has('curar')) {
-        usados.add('curar');
-        r.push({ id: 'curar', tipo: 'curar', ref: 'curar', nombre: 'Vendas y aguardiente', desc: 'Recupera la mitad de la vida.', precio: Math.round((20 + 6 * e) * d), rareza: 0, glifo: 'corazon' });
+        r.push({ id: `e${r.length}${q.id}`, tipo: 'equipo', mostrador: 'personaje', ref: p.clave, nombre: nombrePieza(p), desc: descPieza(p), precio: Math.round((18 + 14 * q.rareza) * (1 + 0.4 * calidad) * (1 + 0.15 * e) * d), rareza: calidad as Rareza, glifo: q.ranura });
       }
     }
     return r;
+  }
+
+  /** Lo que cuesta una mejora de estadística o de etiqueta (oro), según su rareza. */
+  precioMejora(rz: Rareza, d: number) {
+    return Math.round((12 + 5 * this.etapa) * PRECIO_RAREZA[rz] * d);
+  }
+
+  /** Curar la mitad de la vida: el precio sube cada vez que se usa en la expedición. */
+  precioCurar(j: Jugador) {
+    return Math.round((18 + 5 * this.etapa) * 1.5 ** (this.curadas.get(j.i) ?? 0) * this.descuento(j));
+  }
+  curarForja(j: Jugador): string | null {
+    if (j.hp >= j.hpMax) return 'Ya tienes la vida llena.';
+    const p = this.precioCurar(j);
+    if (j.oroSeguro < p) return 'No alcanza el oro.';
+    j.oroSeguro -= p;
+    j.resumen.oroGastado = (j.resumen.oroGastado ?? 0) + p;
+    j.hp = Math.min(j.hpMax, j.hp + j.hpMax * 0.5);
+    this.curadas.set(j.i, (this.curadas.get(j.i) ?? 0) + 1);
+    return null;
   }
 
   /** Oro, hierro y sangre que tiene a salvo para gastar. */
@@ -220,8 +292,18 @@ export class Expedicion {
     const f = this.forja.get(j.i);
     const o = f?.ofertas.find((x) => x.id === idOferta);
     if (!f || !o || o.vendida) return 'Ya no está.';
-    if (j.oroSeguro < o.precio) return 'No alcanza el oro.';
+    const hierro = o.pago === 'hierro';
+    if (hierro ? j.hierroSeguro < o.precio : j.oroSeguro < o.precio) return hierro ? 'Falta hierro negro.' : 'No alcanza el oro.';
     switch (o.tipo) {
+      case 'mejora': {
+        // (entrenar un arma, una estadística o una etiqueta: lo mismo que la carta de subir de nivel)
+        const op = o.op;
+        if (!op) return 'Ya no está.';
+        if (op.tipo === 'arma' && (!j.armas[op.ranura ?? -1] || j.armas[op.ranura!].id !== op.id)) return 'Esa arma ya no está.';
+        if (!this.sim) return 'Ahora no se puede.';
+        aplicar(this.sim, j, op);
+        break;
+      }
       case 'arma':
         if (j.armas.length >= MAX_ARMAS) return 'Ya tienes cuatro armas.';
         j.armas.push(new ArmaJ(o.ref));
@@ -241,8 +323,11 @@ export class Expedicion {
         j.hp = Math.min(j.hpMax, j.hp + j.hpMax * 0.5);
         break;
     }
-    j.oroSeguro -= o.precio;
-    j.resumen.oroGastado = (j.resumen.oroGastado ?? 0) + o.precio;
+    if (hierro) j.hierroSeguro -= o.precio;
+    else {
+      j.oroSeguro -= o.precio;
+      j.resumen.oroGastado = (j.resumen.oroGastado ?? 0) + o.precio;
+    }
     o.vendida = true;
     return null;
   }
