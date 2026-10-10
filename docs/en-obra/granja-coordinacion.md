@@ -80,3 +80,13 @@ Contrato para el frente de motor:
   espada), como en Stardew; cada noche brotan 3-6 malezas o piedras en terreno propio (`brotarMaleza`, tope de 40
   por terreno comprado); una partida nueva empieza enmontada (`monte_*`). El patio de enfrente de la cabaña
   (x -5..9, z -4..9) siempre queda limpio: ahí se empieza a sembrar y ahí trabajan las pruebas.
+
+## Herramientas por calidad (Claude, 10 de octubre de 2026)
+
+- `src/granja-v3/herramientas3d.ts` modela azada, regadera, hacha, pico, guadaña, caña y espada en las cinco
+  calidades (`NIVELES_HERRAMIENTA`): la figura de la mano (`AvatarGranja.equipar`) y los íconos
+  (`public/modelos/granja-v3/iconos/herr_<tipo>_<nivel>.webp`, que se rehacen con
+  `node scripts/granja-v3/iconos-herramientas.mjs` con Vite andando en el 5300). La barra y la mochila escogen el
+  ícono según `nivelesHerramienta`.
+- Arreglo: la herramienta nunca salía en la mano (se buscaba el hueso `mano.R`, pero al cargar se llama `manoR`), y
+  quedaba metida en los pies.

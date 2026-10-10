@@ -1,0 +1,19 @@
+<!doctype html><html><body style="margin:0;background:#c9e0b4"><script type="module">
+import * as THREE from 'three';
+import { crearHerramienta, HERRAMIENTAS_3D } from '/src/granja-v3/herramientas3d.ts';
+const T=160,r=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});r.setSize(T,T);r.setPixelRatio(1);r.toneMapping=THREE.ACESFilmicToneMapping;r.outputColorSpace=THREE.SRGBColorSpace;r.setClearColor(0x000000,0);
+document.body.appendChild(r.domElement);
+const s=new THREE.Scene();s.add(new THREE.HemisphereLight('#fff7e8','#8a7a6a',1.6));const d=new THREE.DirectionalLight('#fff3dc',2.6);d.position.set(2,3,4);s.add(d);const d2=new THREE.DirectionalLight('#cfe6ff',1.1);d2.position.set(-3,1,2);s.add(d2);
+const env=new THREE.PMREMGenerator(r);const sala=new THREE.Scene();sala.background=new THREE.Color('#d9e6f2');const luzSala=new THREE.Mesh(new THREE.SphereGeometry(5,16,8),new THREE.MeshBasicMaterial({color:'#fff6e0',side:THREE.BackSide}));sala.add(luzSala);s.environment=env.fromScene(sala,0.04).texture;
+const fotos={};
+for(const id of HERRAMIENTAS_3D)for(let n=0;n<5;n++){
+ const g=crearHerramienta(id,n);const pivote=new THREE.Group();pivote.add(g);
+ // Diagonal: mango abajo a la izquierda, cabeza arriba a la derecha; la cara ancha hacia la cámara
+ g.rotation.set(0,id==='hacha'?Math.PI/2:id==='regadera'?-Math.PI/2:0,0);pivote.rotation.set(0.25,0.35,id==='regadera'?0.15:-0.75);
+ s.add(pivote);pivote.updateMatrixWorld(true);
+ const box=new THREE.Box3().setFromObject(pivote),c=box.getCenter(new THREE.Vector3()),z=box.getSize(new THREE.Vector3());const m=Math.max(z.x,z.y)*0.56;
+ const cam=new THREE.OrthographicCamera(-m,m,m,-m,0.01,20);cam.position.set(c.x,c.y,c.z+5);cam.lookAt(c);
+ r.render(s,cam);fotos[id+'_'+n]=r.domElement.toDataURL('image/png');s.remove(pivote);
+}
+window.fotos=fotos;
+</script></body></html>

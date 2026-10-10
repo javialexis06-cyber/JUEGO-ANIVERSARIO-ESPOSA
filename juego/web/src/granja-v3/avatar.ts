@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Personaje } from '../personaje';
 import { elegirModelos } from '../recursos';
 import { caja, esfera, liberar } from './suelo';
+import { crearHerramienta } from './herramientas3d';
 
 export class AvatarGranja{
  private montada=false;
@@ -27,17 +28,27 @@ export class AvatarGranja{
   if(!found)return false;let c=end,path:number[][]=[];while(c[0]!==start[0]||c[1]!==start[1]){path.push(c);c=parents.get(key(c[0],c[1]))!;}path.reverse();this.activo.ruta=path.map(([xx,zz])=>({x:xx+.5,y:-(zz+.5)}));this.activo.alLlegar=()=>{this.activo?.quieto();done?.();};if(!path.length)done?.();return true;
  }
  equipar(id:string,nivel=0){liberar(this.herramienta);const g=new THREE.Group();g.userData.id=id;g.userData.nivel=nivel;this.herramienta=g;g.visible=!this.montada;if(id==='mano'||id==='mover')return;
-  if(id==='regadera'){esfera(g,[.16,.18,.13],[0,-.14,0],'#769b81');caja(g,[.055,.07,.28],[0,-.08,.2],'#557e68');const h=new THREE.Mesh(new THREE.TorusGeometry(.17,.025,6,16),new THREE.MeshStandardMaterial({color:'#ccad76'}));h.position.y=-.08;g.add(h);}
+  const fina=crearHerramienta(id,nivel);if(fina){g.add(...fina.children);}
+  else if(id==='regadera'){esfera(g,[.16,.18,.13],[0,-.14,0],'#769b81');caja(g,[.055,.07,.28],[0,-.08,.2],'#557e68');const h=new THREE.Mesh(new THREE.TorusGeometry(.17,.025,6,16),new THREE.MeshStandardMaterial({color:'#ccad76'}));h.position.y=-.08;g.add(h);}
   else if(id==='cubo_ordeno'){const m=new THREE.Mesh(new THREE.CylinderGeometry(.16,.12,.24,12),new THREE.MeshStandardMaterial({color:'#abb5b4',metalness:.45,roughness:.5}));m.position.y=-.15;g.add(m);const h=new THREE.Mesh(new THREE.TorusGeometry(.14,.016,6,16),new THREE.MeshStandardMaterial({color:'#8b9694'}));h.position.y=-.04;g.add(h);}
   else if(id==='tijeras_esquila'){for(const x of[-1,1]){const blade=caja(g,[.035,.32,.028],[x*.04,-.05,0],'#c8d5d1');blade.rotation.z=x*.2;const h=new THREE.Mesh(new THREE.TorusGeometry(.055,.012,6,12),new THREE.MeshStandardMaterial({color:'#ae8f61'}));h.position.set(x*.065,-.24,0);g.add(h);}}
   else if(id==='semillas'||id==='pasto'){esfera(g,[.14,.18,.12],[0,-.15,0],'#c4a67a');}
   else {caja(g,[.038,.66,.038],[0,-.20,0],'#926b45');if(id==='azada')caja(g,[.24,.045,.19],[0,.14,.06],'#879292');else if(id==='hacha')caja(g,[.26,.22,.055],[.09,.12,0],'#98a6a2');else if(id==='pico')caja(g,[.45,.06,.055],[0,.14,0],'#758588');else if(id==='espada'){caja(g,[.085,.58,.028],[0,.19,0],'#d7e7e6');caja(g,[.22,.045,.06],[0,-.12,0],'#c4a25a');}else if(id==='cana'){caja(g,[.025,1.35,.025],[0,.43,0],'#b69557');}else if(id==='guadana'){const s=new THREE.Mesh(new THREE.TorusGeometry(.20,.025,6,14,Math.PI*.9),new THREE.MeshStandardMaterial({color:'#abb8a7'}));s.position.set(.13,.1,0);g.add(s);}}
-  if(nivel>0){const tonos=['#a1aaa3','#c69265','#b7c3c9','#a99ccd','#a7ddd6'];g.traverse(o=>{if(o instanceof THREE.Mesh){const m=o.material as THREE.MeshStandardMaterial;if(m.color&&m.color.r<=m.color.g*1.2){m.color.set(tonos[nivel]??tonos[4]);m.metalness=.2;m.roughness=.5;}}});}
-  const mano=this.activo?.huesos.get('mano.R');if(mano){mano.add(g);g.position.set(0,.08,0);g.rotation.set(0,0,Math.PI*.5);}else this.activo?.cuerpo.add(g);
+  if(nivel>0&&!fina){const tonos=['#a1aaa3','#c69265','#b7c3c9','#a99ccd','#a7ddd6'];g.traverse(o=>{if(o instanceof THREE.Mesh){const m=o.material as THREE.MeshStandardMaterial;if(m.color&&m.color.r<=m.color.g*1.2){m.color.set(tonos[nivel]??tonos[4]);m.metalness=.2;m.roughness=.5;}}});}
+  const mano=(this.activo?.huesos.get('mano.R')??this.activo?.huesos.get('manoR'));
+  if(mano&&this.activo){
+   // La herramienta va en una «pose» adentro: la mano la agarra por el mango (un tercio de abajo) y queda parada,
+   // un poco hacia adelante y hacia afuera, sin importar cómo vengan los ejes del hueso. El golpe gira `g`.
+   const pose=new THREE.Group();pose.add(...g.children);g.add(pose);mano.add(g);g.position.set(0,0,0);g.rotation.set(0,0,0);
+   this.activo.grupo.updateWorldMatrix(true,true);const qMano=mano.getWorldQuaternion(new THREE.Quaternion()),qCuerpo=this.activo.grupo.getWorldQuaternion(new THREE.Quaternion());
+   const deseo=qCuerpo.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(.45,0,-.3)));pose.quaternion.copy(qMano.invert().multiply(deseo));
+   const s=mano.getWorldScale(new THREE.Vector3()).x||1,escalaCuerpo=this.activo.grupo.getWorldScale(new THREE.Vector3()).x||1;pose.scale.setScalar(.85*escalaCuerpo/s);
+   pose.position.copy(new THREE.Vector3(0,.3,0).applyQuaternion(pose.quaternion).multiplyScalar(pose.scale.x));
+  }else this.activo?.cuerpo.add(g);
  }
  accion(afecto=false){this.usando=.7;this.activo?.pose(afecto?'acariciar':'reponer');}
  update(dt:number,walkable:(x:number,z:number)=>boolean=()=>true){
-  const p=this.activo;if(!p)return;const brazo=p.huesos.get('brazo.R');if(brazo&&this.brazoBase){brazo.quaternion.copy(this.brazoBase);this.brazoBase=undefined;}
+  const p=this.activo;if(!p)return;const brazo=(p.huesos.get('brazo.R')??p.huesos.get('brazoR'));if(brazo&&this.brazoBase){brazo.quaternion.copy(this.brazoBase);this.brazoBase=undefined;}
   if(this.manual&&!this.golpe){const v=this.direccion,speed=(this.montada?(this.carrera?6.1:4.8):(this.carrera?5.1:3.4))*Math.max(.5,Math.min(2,this.multiplicadorVelocidad)),step=speed*dt,pos=this.position;let dx=v.x,dz=v.y;const radio=this.montada?.45:.24,libre=(x:number,z:number)=>[[-radio,-radio],[radio,-radio],[-radio,radio],[radio,radio]].every(([rx,rz])=>walkable(Math.floor(x+rx),Math.floor(z+rz)));
    if(!libre(pos.x+dx*step,pos.z+dz*step)){if(libre(pos.x+dx*step,pos.z))dz=0;else if(libre(pos.x,pos.z+dz*step))dx=0;else dx=dz=0;}
    p.velocidad=speed;if(Math.hypot(dx,dz)>.01){p.ruta=[{x:pos.x+dx*3,y:-(pos.z+dz*3)}];p.alLlegar=null;}else{p.ruta=[];p.quieto();}

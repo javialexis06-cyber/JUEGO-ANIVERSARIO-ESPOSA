@@ -32,13 +32,19 @@ function vegetal(id:string):string {
  return `<path d="M14 33Q14 18 31 20Q48 15 50 32Q49 49 32 49Q15 49 14 33" fill="${id.includes('fuego')?'#e28258':'#d98678'}"/><path d="M23 22L22 15L29 19L34 13L35 19L45 18L39 25L32 22L27 27Z" fill="#7d9c69"/><ellipse cx="22" cy="31" rx="3" ry="5" transform="rotate(25 22 31)" fill="#ffffff" opacity=".23"/>`;
 }
 
+/** Nivel de cada herramienta para su ícono (lo fijan la barra y la mochila antes de dibujar). */
+let nivelesIcono:Record<string,number>={};
+export function fijarNivelesIcono(n:Record<string,number>|undefined){nivelesIcono=n??{};}
+const CON_FOTO=new Set(['azada','regadera','hacha','pico','guadana','cana','espada']);
+/** Las herramientas se ven con su calidad (Básica, Cobre, Hierro, Acero estelar, Cristal de Celia). */
+function iconoCalidad(tipo:string):string|undefined{if(!CON_FOTO.has(tipo))return undefined;const n=Math.max(0,Math.min(4,nivelesIcono[tipo]||0));return `<img class="icono-foto" src="./modelos/granja-v3/iconos/herr_${tipo}_${n}.webp" alt="" draggable="false">`;}
 /** Small, original vector assets keep inventory icons sharp without texture downloads. */
 export function iconoInventario(articulo:string):string {
  const id=articulo.replace(/^creacion_/, ''); let figura:string;
  if(id==='cubo_ordeno')return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M17 28Q14 7 32 7Q50 7 47 28" fill="none" stroke="#809597" stroke-width="4"/><path d="M12 24H52L47 53Q32 60 17 53Z" fill="#b7ccca" stroke="#7e9897" stroke-width="3"/><ellipse cx="32" cy="25" rx="20" ry="6" fill="#eceddb"/><path d="M23 33L25 48" stroke="#e7f1ea" stroke-width="4"/></svg>';
  if(id==='tijeras_esquila')return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M21 42L44 9L36 41L28 10L43 42" fill="#c6d8d2" stroke="#809694" stroke-width="3"/><circle cx="21" cy="49" r="8" fill="none" stroke="#be9a65" stroke-width="5"/><circle cx="44" cy="49" r="8" fill="none" stroke="#be9a65" stroke-width="5"/><circle cx="33" cy="34" r="3" fill="#7a8b85"/></svg>';
  if(id.startsWith('huevo_fertil_')||['huevo_pato','huevo_avestruz','huevo_dinosaurio'].includes(id))return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 9C46 9 54 31 53 42C52 61 12 61 11 42C10 31 18 9 32 9Z" fill="'+(id.includes('dinosaurio')?'#a2be86':id.includes('pato')?'#d1e5d0':'#ecdcb3')+'" stroke="#c3b48c" stroke-width="2"/><ellipse cx="23" cy="30" rx="5" ry="10" fill="#fffbed" opacity=".7"/>'+(id.startsWith('huevo_fertil_')?'<path d="M43 14V29M36 21H50" stroke="#96a66d" stroke-width="4"/>':'')+'</svg>';
- const def=obtenerObjeto(id);if(def?.herramienta)return iconoHerramienta(def.herramienta.tipo);if(def?.equipo?.ranura==='arma')return iconoHerramienta('espada');
+ const def=obtenerObjeto(id);if(def?.herramienta)return iconoCalidad(def.herramienta.tipo)??iconoHerramienta(def.herramienta.tipo);if(def?.equipo?.ranura==='arma')return iconoHerramienta('espada');
  if(def?.equipo){const casco='<path d="M14 39V27Q15 12 32 12Q49 12 50 27V39L40 43V30H24V43Z"/>',pechera='<path d="M14 20L24 13L28 21H36L40 13L50 20L44 31V49H20V31Z"/>',botas='<path d="M15 17H29V38L24 49H9V39L15 35ZM36 17H50V35L56 39V49H40L36 38Z"/>';return `<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="${id.includes('cobre')?'#c19573':id.includes('astral')?'#b7a7d4':'#9aaeb0'}" stroke="#657c79" stroke-width="2">${def.equipo.ranura==='casco'?casco:def.equipo.ranura==='pechera'?pechera:botas}</g></svg>`;}
  if(def?.comida){figura='<ellipse cx="32" cy="40" rx="24" ry="12" fill="#e8dcc1"/><path d="M13 39Q10 20 30 17Q49 14 51 37Q47 47 28 48Q17 48 13 39" fill="#d2a16f"/><path d="M24 22L22 34M34 20L32 33M43 23L42 33" stroke="#f5dca4" stroke-width="4" stroke-linecap="round"/>';return `<svg viewBox="0 0 64 64" aria-hidden="true">${figura}</svg>`;}
  const frutal=FRUTALES.find(f=>f.producto===id||f.planton===id);
@@ -74,6 +80,7 @@ export function iconoInventario(articulo:string):string {
 
 export interface OpcionesMochila {nombre:(id:string)=>string;icono?:(id:string)=>string;calidad?:'alta'|'ligera'}
 export function renderMochila(s:EstadoGranja,{nombre,icono=iconoInventario,calidad}:OpcionesMochila):string {
+ fijarNivelesIcono(s.nivelesHerramienta);
  const usadas=s.casillasInventario.filter(Boolean).length, total=s.casillasInventario.length, tienda=s.zona==='pueblo'&&s.servicio==='semillas';
  const casillas=s.casillasInventario.map((p,i)=>`<button class="mochila-casilla${p?' ocupada':''}${Math.floor(i/12)===s.filaBarra?' en-barra':''}" type="button" data-casilla="${i}" data-articulo="${esc(p?.articulo||'')}" data-cantidad="${p?.cantidad||0}" data-nombre="${esc(p?nombre(p.articulo)+(calidadPila(p)>0?' · '+nombreCalidad(calidadPila(p)):''):'Casilla vacía')}" data-precio="${p?Math.floor((obtenerObjeto(p.articulo)?.precioVenta??PRECIOS_VENTA[p.articulo]??0)*multiplicadorCalidad(calidadPila(p))):0}" draggable="${!!p}" aria-pressed="false" aria-label="Casilla ${i+1}${p?`: ${esc(nombre(p.articulo)+(calidadPila(p)>0?' · '+nombreCalidad(calidadPila(p)):''))}, ${p.cantidad}`:', vacía'}" title="${p?`${esc(nombre(p.articulo)+(calidadPila(p)>0?' · '+nombreCalidad(calidadPila(p)):''))} · ${p.cantidad}`:`Casilla ${i+1} · vacía`}"><span class="mochila-casilla-num">${i+1}</span>${p?`<span class="mochila-icono">${icono(p.articulo)}</span><span class="mochila-cantidad">${p.cantidad}</span>${calidadPila(p)>0?`<span class="calidad-estrella calidad-${calidadPila(p)}">★</span>`:''}`:'<span class="mochila-vacia" aria-hidden="true">·</span>'}</button>`).join('');
  const legado=Object.entries(s.almacenMigracion).filter(([,n])=>n>0).map(([id,n])=>{
