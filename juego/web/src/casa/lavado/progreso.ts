@@ -49,13 +49,15 @@ export interface ProgresoLavado {
   tutorial: boolean;
   /** Puntos de maestría de cada disfraz (ver maestria.ts). */
   maestria: Record<string, number>;
+  /** Lo que le han subido los patitos dorados a cada disfraz (para siempre, como los huevos de oro del original). */
+  patitos: Record<string, Partial<Record<Stat, number>>>;
 }
 
 export function progresoNuevo(rol: Rol): ProgresoLavado {
   return {
     oro: 0, gastado: 0, poderes: {}, comprados: [], disfraz: rol === 'el' ? 'el_panda' : 'ella_pulga', logros: [], armas: [], pasivas: [],
     bestiario: {}, mejor: {}, ganados: [], mejorNivel: 0, mejorBajas: 0, partidas: 0, eliminados: 0, velitas: 0, cofres: 0, arepas: 0,
-    oroTotal: 0, segundos: 0, apurado: false, escenario: 'cara', carta: '', manual: false, tutorial: false, maestria: {},
+    oroTotal: 0, segundos: 0, apurado: false, escenario: 'cara', carta: '', manual: false, tutorial: false, maestria: {}, patitos: {},
   };
 }
 
@@ -90,6 +92,14 @@ export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
     const n = entero(v, 1e6);
     if (typeof id === 'string' && disfraces.includes(id) && n) maestria[id] = Math.max(maestria[id] ?? 0, n);
   }
+  const patitos: Record<string, Partial<Record<Stat, number>>> = {};
+  if (esObjeto(x.patitos)) for (const [k, v] of Object.entries(x.patitos)) {
+    const id = disfrazGuardado(k);
+    if (typeof id !== 'string' || !disfraces.includes(id) || !esObjeto(v)) continue;
+    const st: Partial<Record<Stat, number>> = {};
+    for (const [s, n] of Object.entries(v)) if (s in PATITO && typeof n === 'number' && Number.isFinite(n) && n > 0) st[s as Stat] = Math.min(5, Math.round(n * 1000) / 1000);
+    if (Object.keys(st).length) patitos[id] = st;
+  }
   return {
     oro: entero(x.oro),
     gastado: entero(x.gastado),
@@ -118,6 +128,7 @@ export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
     // (quien ya jugó antes no necesita el tutorial a la fuerza: lo puede ver desde el menú)
     tutorial: !!x.tutorial || entero(x.partidas) > 0,
     maestria,
+    patitos,
   };
 }
 
@@ -148,6 +159,8 @@ export interface ResumenPartida {
   retiro?: boolean;
   /** Daño de cada arma y cuánto tiempo la tuvo (para la pantalla final). */
   danos: { arma: IdArma; dano: number; desde: number; nivel: number }[];
+  /** Lo que subieron los patitos dorados que recogió (se le suma a su disfraz para siempre). */
+  patitos?: Partial<Record<Stat, number>>;
 }
 
 // ---------------------------------------------------------------------------------------------------- Logros
@@ -159,6 +172,12 @@ export interface DefLogro {
   premio: string;
   cumple: (p: ProgresoLavado, r: ResumenPartida | null) => boolean;
 }
+
+/** Lo que sube cada patito dorado (una de estas, al azar). La vida es en porcentaje. */
+export const PATITO: Partial<Record<Stat, number>> = {
+  poder: 0.01, area: 0.01, velocidad: 0.01, duracion: 0.01, movimiento: 0.01, crecimiento: 0.01, suerte: 0.01, codicia: 0.01, recuperacion: 0.02,
+  vida: 0.01, iman: 0.02,
+};
 
 /** Cuántos jefes ha vencido en total (del bestiario). */
 const jefesVencidos = (p: ProgresoLavado) => (Object.entries(p.bestiario) as [IdEnemigo, number][]).reduce((t, [id, n]) => t + (ENEMIGOS[id]?.jefe ? n : 0), 0);
@@ -211,6 +230,13 @@ export const LOGROS: DefLogro[] = [
   { id: 'partidas25', nombre: 'Lavado diario', desc: 'Juega 25 partidas', premio: 'Arma: Barquito de papel', cumple: (p) => p.partidas >= 25 },
   { id: 'eliminar50000', nombre: 'Cincuenta mil', desc: 'Elimina 50.000 mugrosos en total', premio: 'Arma: Talco de florecitas', cumple: (p) => p.eliminados >= 50000 },
   { id: 'nivel60', nombre: 'Nivel 60', desc: 'Llega a nivel 60 en una partida', premio: 'Arma: Bolitas de gel', cumple: (p) => p.mejorNivel >= 60 },
+  { id: 'eliminar100000', nombre: 'Cien mil', desc: 'Elimina 100.000 mugrosos en total', premio: 'Carta «Sin gotitas»', cumple: (p) => p.eliminados >= 100000 },
+  { id: 'jefes25', nombre: 'Terror de los jefes', desc: 'Vence 25 jefes en total', premio: 'Carta «Despierto»', cumple: (p) => jefesVencidos(p) >= 25 },
+  { id: 'apurado20', nombre: 'A las carreras', desc: 'Aguanta 20 minutos en modo Apurado', premio: 'Carta «La noche loca»', cumple: (p, r) => !!r && r.apurado && r.segundos >= 20 * 60 },
+  { id: 'evoluciones20', nombre: 'Todo evolucionado', desc: 'Ten 20 armas evolucionadas distintas en la colección', premio: 'Carta «Terquedad»', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 20 },
+  { id: 'oro20000', nombre: 'Gotas de sobra', desc: 'Junta 20.000 gotas doradas en total', premio: 'Tienda: Encanto', cumple: (p) => p.oroTotal >= 20000 },
+  { id: 'evoMascarilla', nombre: 'Cero dientes', desc: 'Evoluciona la Mascarilla de pepino', premio: 'Tienda: Desarmar', cumple: (p) => p.armas.includes('spa') },
+  { id: 'partidas50', nombre: 'Lavado de siempre', desc: 'Juega 50 partidas', premio: 'Tienda: Conservar', cumple: (p) => p.partidas >= 50 },
   { id: 'espejito', nombre: 'El espejito de mano', desc: 'Ten 5 armas evolucionadas distintas en la colección', premio: 'Tesoro: Espejito de mano (en los escenarios aparecen anillos y aretes escondidos)', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 5 },
 ];
 
@@ -222,6 +248,7 @@ export const CARTA_LOGRO: Record<IdCarta, string> = {
   solPlaya: 'velitas50', silbato: 'sobrevivir10', viajeLargo: 'cara15', fiestaDisfraces: 'lavamanos15', reboteSinFin: 'ganarCara',
   diamante: 'ganarLavamanos', conLoJusto: 'ganarBanera', relojQuieto: 'espinillon', ruedaFortuna: 'nivel40', estrellas: 'eliminar10000',
   coronaHierro: 'evoluciones3', curitaMagica: 'arepas20', maraton: 'veinticuatro',
+  sinGotitas: 'eliminar100000', despierto: 'jefes25', nocheLoca: 'apurado20', terquedad: 'evoluciones20',
 };
 /** Las armas y pasivas secretas (no salen en las cartas hasta su logro). */
 export const SECRETO_LOGRO: Partial<Record<IdArma | IdPasiva, string>> = {
@@ -262,6 +289,10 @@ export function sumarPartida(p: ProgresoLavado, r: ResumenPartida): string[] {
   for (const a of r.armas) if (!p.armas.includes(a)) p.armas.push(a);
   for (const a of r.pasivas) if (!p.pasivas.includes(a)) p.pasivas.push(a);
   for (const [k, v] of Object.entries(r.bestiario) as [IdEnemigo, number][]) p.bestiario[k] = (p.bestiario[k] ?? 0) + v;
+  if (r.patitos && Object.keys(r.patitos).length) {
+    const st = (p.patitos[r.disfraz] ??= {});
+    for (const [k, v] of Object.entries(r.patitos) as [Stat, number][]) if (k in PATITO) st[k] = Math.min(5, (st[k] ?? 0) + v);
+  }
   const nuevos: string[] = [];
   for (const l of LOGROS) {
     if (p.logros.includes(l.id)) continue;

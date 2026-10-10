@@ -34,6 +34,15 @@ function calcular(j: Jugador, a: ArmaJ) {
   E.rapidez = b.rapidez;
   E.congela = b.congela * (1 + j.st.duracion);
   E.inter = b.inter;
+  // El espejo de la verdad: el doble de proyectiles y todos a la vez
+  if (j.espejo > 0) {
+    E.cant *= 2;
+    E.inter = 0;
+  }
+  // La noche loca: la velocidad sube y baja
+  if (j.tieneCarta('nocheLoca')) E.vel *= Math.max(0.3, 1 + j.caos);
+  // Terquedad: atraviesan a dos más
+  if (j.tieneCarta('terquedad') && E.perfora < 999) E.perfora += 2;
   switch (ARMAS[a.id].comp) {
     case 'piedra':
       // Daño fijo según el nivel: no le importa el poder
@@ -98,6 +107,7 @@ function nuevoProy(m: Motor, j: Jugador, slot: number, arma: IdArma, comp: numbe
   p.ex = p.ey = 0;
   p.n = 0;
   p.mini = false;
+  p.rb = 0;
   return p;
 }
 
@@ -156,7 +166,7 @@ function golpe(m: Motor, j: Jugador, slot: number, e: Enemigo, dano: number, cri
   m.herir(e, c ? dano * critX : dano, j.i, slot, kx, ky, c, arma);
   if (c && (arma === 'toallazo' || arma === 'afeitada')) m.curar(j, 1);
   // El talco al máximo: los que caen a veces sueltan un corazoncito
-  if (arma === 'talco' && !e.vivo && !e.luz && m.az.n() < 0.25 && j.nivelArma('talco') >= 8) m.curar(j, 1);
+  if (arma === 'talco' && !e.vivo && !e.luz && m.az.n() < 0.25 && j.nivelArma('talco') >= 8) m.soltar('corazoncito', e.x, e.y);
   return c;
 }
 
@@ -221,6 +231,8 @@ export function actualizarArmas(m: Motor, j: Jugador, dt: number) {
   let ritmo = 1;
   if (j.tieneCarta('viajeLargo') && moviendo) ritmo *= 1.3;
   if (j.arranque > 0) ritmo *= 1 + 6 * (j.arranque / Math.max(1, j.disfraz.arranque ?? 1));
+  // El guante dorado: recargando a tope
+  if (j.guante > 0) ritmo *= 4;
   for (let slot = 0; slot < j.armas.length; slot++) {
     const a = j.armas[slot];
     const def = ARMAS[a.id];
@@ -811,6 +823,10 @@ export function pendientesGolpe(m: Motor, dt: number) {
       // El cepillo de espalda llega al piso: revienta en espuma
       m.emitir('explosion', q.x, q.y, q.r, 0, 0, 7);
       circulo(m, j, q.slot, q.x, q.y, q.r, q.dano, q.arma, 1);
+    } else if (q.tipo === 3) {
+      // «Sin gotitas»: la experiencia revienta
+      E.crit = 0;
+      m.explotar(q.dueno, -1, 'aji', q.x, q.y, q.r, q.dano, 5);
     } else if (q.tipo === 2) {
       // El cohete de confeti revienta (sin críticos: esos son del show de luces)
       E.crit = 0;
@@ -1038,6 +1054,18 @@ export function moverProyectiles(m: Motor, dt: number) {
       case 0:
         p.x += p.vx * dt;
         p.y += p.vy * dt;
+        // Terquedad: rebota hasta 3 veces en los bordes de la pantalla
+        if (j && p.rb < 3 && !p.mini && j.tieneCarta('terquedad')) {
+          const hw = j.vistaW / 2 - 6, hh = j.vistaH / 2 - 6;
+          let reboto = false;
+          if ((p.x < j.x - hw && p.vx < 0) || (p.x > j.x + hw && p.vx > 0)) (p.vx = -p.vx), (reboto = true);
+          if ((p.y < j.y - hh && p.vy < 0) || (p.y > j.y + hh && p.vy > 0)) (p.vy = -p.vy), (reboto = true);
+          if (reboto) {
+            p.rb++;
+            p.vida = Math.max(p.vida, 0.6);
+            p.ang = Math.atan2(p.vy, p.vx);
+          }
+        }
         break;
       case 1:
         p.vy += p.ay * dt;
@@ -1289,7 +1317,7 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
       const c = libre(m);
       if (c) {
         c.vivo = true;
-        Object.assign(c, { dueno: p.dueno, slot: p.slot, arma: p.arma, comp: 0, x: p.x, y: p.y, vx: p.vx * 0.9, vy: p.vy * 0.9, ax: 0, ay: 0, r: p.r * 0.6, dano: p.dano * 0.5, crit: 0, critX: 2, perfora: 1, vida: 0.6, t: 0, ang: p.ang, giro: 0, golpeCada: 0.5, retro: 0.5, gi: 0, ex: 0, ey: 0, n: 0, mini: true });
+        Object.assign(c, { dueno: p.dueno, slot: p.slot, arma: p.arma, comp: 0, x: p.x, y: p.y, vx: p.vx * 0.9, vy: p.vy * 0.9, ax: 0, ay: 0, r: p.r * 0.6, dano: p.dano * 0.5, crit: 0, critX: 2, perfora: 1, vida: 0.6, t: 0, ang: p.ang, giro: 0, golpeCada: 0.5, retro: 0.5, gi: 0, ex: 0, ey: 0, n: 0, mini: true, rb: 3 });
         c.gid.fill(0);
         c.gid[0] = e.uid;
         c.gt.fill(0);
@@ -1336,7 +1364,7 @@ function partir(m: Motor, j: Jugador, p: Proyectil) {
     c.vivo = true;
     Object.assign(c, { dueno: p.dueno, slot: p.slot, arma: p.arma, comp: 0, x: p.x, y: p.y, vx: Math.cos(ang) * v, vy: Math.sin(ang) * v, ax: 0, ay: 0,
       r: p.r * 0.5, dano: p.dano * 0.5, crit: 0, critX: 2, perfora: calientes ? 2 : 1, vida: p.ex, t: 0, ang, giro: 0, golpeCada: 0.5, retro: 0.5, gi: 0,
-      ex: 0, ey: 0, n: 0, mini: false });
+      ex: 0, ey: 0, n: 0, mini: false, rb: 3 });
     c.gid.fill(0);
     c.gt.fill(0);
   }

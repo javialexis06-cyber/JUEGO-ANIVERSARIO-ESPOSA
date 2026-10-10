@@ -21,18 +21,24 @@ export type Stat =
   | 'revivir'
   | 'tirar' // «volver a tirar» las cartas al subir de nivel
   | 'saltar'
-  | 'vetar';
+  | 'vetar'
+  // De la tienda (versión 2)
+  | 'omni' // +2 % de daño, velocidad, duración y área por rango
+  | 'encanto' // más mugrosos (como la vela aromática)
+  | 'desarmar' // probabilidad de que un mugroso salga sin dientes
+  | 'conservar'; // probabilidad de que volver a tirar, saltar o vetar no se gaste
 
 export type Stats = Record<Stat, number>;
 
 export const STATS: Stat[] = [
   'vida', 'recuperacion', 'armadura', 'movimiento', 'poder', 'area', 'velocidad', 'duracion', 'cantidad', 'enfriamiento', 'suerte',
-  'crecimiento', 'codicia', 'maldicion', 'iman', 'revivir', 'tirar', 'saltar', 'vetar',
+  'crecimiento', 'codicia', 'maldicion', 'iman', 'revivir', 'tirar', 'saltar', 'vetar', 'omni', 'encanto', 'desarmar', 'conservar',
 ];
 
 export const statsVacios = (): Stats => ({
   vida: 0, recuperacion: 0, armadura: 0, movimiento: 0, poder: 0, area: 0, velocidad: 0, duracion: 0, cantidad: 0, enfriamiento: 0,
-  suerte: 0, crecimiento: 0, codicia: 0, maldicion: 0, iman: 0, revivir: 0, tirar: 0, saltar: 0, vetar: 0,
+  suerte: 0, crecimiento: 0, codicia: 0, maldicion: 0, iman: 0, revivir: 0, tirar: 0, saltar: 0, vetar: 0, omni: 0, encanto: 0, desarmar: 0,
+  conservar: 0,
 });
 
 export type Rol = 'el' | 'ella';
@@ -82,11 +88,22 @@ export type IdObjeto =
   | 'trebolito' // +10 % de suerte en la partida
   | 'aji' // escupe fuego un rato (el ají de Él)
   | 'cofre'
-  | 'tesoro'; // un anillo o un arete escondido (calidad = cuál, en ESCONDIDAS)
+  | 'tesoro' // un anillo o un arete escondido (calidad = cuál, en ESCONDIDAS)
+  // Versión 2
+  | 'trebolDorado' // recoge las gotas doradas de la pantalla y empieza la fiebre de gotas
+  | 'guante' // el guante dorado: 14 s invencible y recargando a tope; al final, premio según cuántos cayeron
+  | 'patito' // el patito dorado: sube para siempre un poquito una estadística del disfraz
+  | 'dado' // +1 para volver a tirar
+  | 'paleta' // paleta de hielo: como el ají, pero congela
+  | 'corazoncito' // cura un poquito
+  | 'pulsera' // pulsera de la amistad (solo con más de uno): a todos les sube un arma
+  | 'espejoVerdad' // el espejo de la verdad: el doble de proyectiles y todo a la vez un ratico
+  | 'burbuja'; // burbuja protectora: ataja el siguiente golpe
 
 export type IdCarta =
   | 'oroBrillante' | 'certero' | 'silbato' | 'comienzo' | 'maraton' | 'dobleTurno' | 'curitaMagica' | 'relojQuieto' | 'ruedaFortuna'
-  | 'solPlaya' | 'lucesFeria' | 'viajeLargo' | 'fiestaDisfraces' | 'coronaHierro' | 'estrellas' | 'conLoJusto' | 'diamante' | 'reboteSinFin';
+  | 'solPlaya' | 'lucesFeria' | 'viajeLargo' | 'fiestaDisfraces' | 'coronaHierro' | 'estrellas' | 'conLoJusto' | 'diamante' | 'reboteSinFin'
+  | 'sinGotitas' | 'despierto' | 'nocheLoca' | 'terquedad';
 
 export type IdPoder = Stat;
 

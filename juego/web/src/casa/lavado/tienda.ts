@@ -14,6 +14,8 @@ export interface DefPoder {
   precio: number;
   /** Ícono: el de la pasiva que hace lo mismo (o uno propio). */
   icono: string;
+  /** El logro que lo abre (si no, está desde el principio). */
+  logro?: string;
 }
 
 export const PODERES: DefPoder[] = [
@@ -36,6 +38,11 @@ export const PODERES: DefPoder[] = [
   { id: 'tirar', nombre: 'Volver a tirar', desc: '+2 para cambiar las cartas al subir de nivel', paso: 2, max: 5, precio: 500, icono: 'tirar' },
   { id: 'saltar', nombre: 'Saltar', desc: '+2 para dejar pasar una subida de nivel (y ganar experiencia)', paso: 2, max: 5, precio: 50, icono: 'saltar' },
   { id: 'vetar', nombre: 'Vetar', desc: '+1 para sacar una carta de la partida para siempre', paso: 1, max: 5, precio: 50, icono: 'vetar' },
+  // Versión 2
+  { id: 'omni', nombre: 'Omni', desc: '+2 % de daño, velocidad, duración y área por rango', paso: 0.02, max: 5, precio: 350, icono: 'cajitaMusica' },
+  { id: 'encanto', nombre: 'Encanto', desc: '+10 % de mugrosos por rango (más experiencia y más gotas)', paso: 0.1, max: 5, precio: 300, icono: 'velaAromatica', logro: 'oro20000' },
+  { id: 'desarmar', nombre: 'Desarmar', desc: 'El 3 % de los mugrosos sale sin dientes (no pegan), por rango', paso: 0.03, max: 5, precio: 400, icono: 'mascarilla', logro: 'evoMascarilla' },
+  { id: 'conservar', nombre: 'Conservar', desc: '10 % de que volver a tirar, saltar o vetar no se gaste, por rango', paso: 0.1, max: 3, precio: 500, icono: 'bolsillo', logro: 'partidas50' },
 ];
 
 export const PODER = Object.fromEntries(PODERES.map((p) => [p.id, p])) as Record<Stat, DefPoder>;

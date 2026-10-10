@@ -106,6 +106,27 @@ export const CARTAS: Record<IdCarta, DefCarta> = {
     frase: 'Y vuelve, y vuelve, y vuelve…',
     efecto: 'Los proyectiles rebotan de un mugroso a otro, una y otra vez (+2 rebotes).',
   },
+  // Versión 2: los cuatro que faltaban del original
+  sinGotitas: {
+    id: 'sinGotitas', numero: 'XVIII', nombre: 'Sin gotitas', original: 'Game Killer', color: '#5E5A66',
+    frase: 'El que no necesita crecer.',
+    efecto: 'No hay experiencia: las gotitas revientan en cuanto salen, y los cofres traen por lo menos tres cosas. (Con más de uno jugando, solo si todos la llevan.)',
+  },
+  despierto: {
+    id: 'despierto', numero: 'XIX', nombre: 'Despierto', original: 'Awake', color: '#F2C14E',
+    frase: 'Cada caída te deja más fuerte.',
+    efecto: '+3 vidas, y cada vez que revives sube tu daño, tu vida, tu armadura y tu recuperación.',
+  },
+  nocheLoca: {
+    id: 'nocheLoca', numero: 'XX', nombre: 'La noche loca', original: 'Chaos in the Dark Night', color: '#3A2F6B',
+    frase: 'Rápido, despacio, rápido… nadie sabe.',
+    efecto: 'La velocidad de los proyectiles sube y baja hasta 50 %, y con cada nivel gana un poquito más.',
+  },
+  terquedad: {
+    id: 'terquedad', numero: 'XXI', nombre: 'Terquedad', original: 'Iron Blue Will', color: '#3E6FB0',
+    frase: 'No se rinde ni rebotando.',
+    efecto: 'Los proyectiles atraviesan a dos más y rebotan hasta 3 veces en los bordes de la pantalla.',
+  },
 };
 
 export const ID_CARTAS = Object.keys(CARTAS) as IdCarta[];

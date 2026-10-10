@@ -17,7 +17,7 @@ import { icono, iconoBicho } from './iconos';
 import { MINUTO_EVOLUCION, RECETAS } from './evoluciones';
 import { barraMaestria, marcoDe, MAESTRIA_MAX, PREMIOS_MAESTRIA, tituloMaestria } from './maestria';
 import {
-  CARTA_LOGRO, ESCENARIO_LOGRO, LOGRO, LOGROS, apuradoAbierto, cartasDe, disfrazAbierto, escenarioAbierto, maestriaDe, type ProgresoLavado,
+  CARTA_LOGRO, ESCENARIO_LOGRO, LOGRO, LOGROS, apuradoAbierto, cartasDe, disfrazAbierto, escenarioAbierto, maestriaDe, tieneLogro, type ProgresoLavado,
 } from './progreso';
 import { sfx } from './sonidos';
 import { PODER, PODERES, precioPoder } from './tienda';
@@ -305,18 +305,20 @@ export class Menu {
     const lista = PODERES.map((d) => {
       const r = this.p.poderes[d.id] ?? 0;
       const lleno = r >= d.max;
-      return `<button class="lv-item ${this.sel === d.id ? 'sel' : ''}" data-sel="${d.id}">${icono(d.icono, 38)}<span>${d.nombre}</span>
+      const abierto = tieneLogro(this.p, d.logro);
+      return `<button class="lv-item ${this.sel === d.id ? 'sel' : ''}" data-sel="${d.id}">${icono(d.icono, 38, abierto ? '' : 'silueta')}<span>${abierto ? d.nombre : '¿?'}</span>
         <span class="pips">${Array.from({ length: d.max }, (_, k) => `<u class="${k < r ? 'si' : ''}"></u>`).join('')}</span>
-        <span class="precio">${lleno ? '¡Completo!' : `${miles(precioPoder(d.id, this.p.poderes))}`}</span></button>`;
+        <span class="precio">${!abierto ? '🔒' : lleno ? '¡Completo!' : `${miles(precioPoder(d.id, this.p.poderes))}`}</span></button>`;
     }).join('');
     const d = PODER[this.sel as Stat] ?? PODERES[0];
     const r = this.p.poderes[d.id] ?? 0;
     const precio = precioPoder(d.id, this.p.poderes);
+    const abierto = tieneLogro(this.p, d.logro);
     return `<div class="cuerpo"><div class="lv-lista">${lista}</div>
-      <div class="lv-detalle"><div class="gran">${icono(d.icono, 70)}<div><h3>${d.nombre}</h3><p>Rango ${r} de ${d.max}</p></div></div>
-        <p>${d.desc}.</p>
+      <div class="lv-detalle"><div class="gran">${icono(d.icono, 70, abierto ? '' : 'silueta')}<div><h3>${abierto ? d.nombre : '¿Qué será?'}</h3><p>Rango ${r} de ${d.max}</p></div></div>
+        <p>${abierto ? `${d.desc}.` : `🔒 ${LOGRO[d.logro!]?.desc ?? ''}`}</p>
         <p>Como en el original, cada compra encarece un poquito todo lo demás. Puedes pedir el reembolso completo y repartir de nuevo.</p>
-        ${r < d.max ? `<button class="lv-boton oro" data-v="comprarPoder" ${this.p.oro >= precio ? '' : 'disabled'}>Comprar por ${miles(precio)} ${icono('moneda', 16)}</button>` : '<button class="lv-boton" disabled>¡Completo!</button>'}
+        ${!abierto ? '<button class="lv-boton" disabled>🔒 Todavía no</button>' : r < d.max ? `<button class="lv-boton oro" data-v="comprarPoder" ${this.p.oro >= precio ? '' : 'disabled'}>Comprar por ${miles(precio)} ${icono('moneda', 16)}</button>` : '<button class="lv-boton" disabled>¡Completo!</button>'}
         <button class="lv-boton" data-v="reembolso" ${this.p.gastado ? '' : 'disabled'}>↩️ Reembolsar todo (${miles(this.p.gastado)})</button></div></div>`;
   }
 
@@ -447,7 +449,7 @@ export class Menu {
       const d = PODER[id];
       const r = this.p.poderes[id] ?? 0;
       const precio = precioPoder(id, this.p.poderes);
-      if (!d || r >= d.max || this.p.oro < precio) return;
+      if (!d || r >= d.max || this.p.oro < precio || !tieneLogro(this.p, d.logro)) return;
       this.p.oro -= precio;
       this.p.gastado += precio;
       this.p.poderes = { ...this.p.poderes, [id]: r + 1 };

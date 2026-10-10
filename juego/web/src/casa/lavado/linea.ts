@@ -124,7 +124,8 @@ const TIPOS_EF: TipoEfecto[] = ['golpe', 'muere', 'latigo', 'rayo', 'charco', 'l
   'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces', 'escudo', 'cohete'];
 const IDX_EF = new Map(TIPOS_EF.map((t, i) => [t, i]));
 const IDX_ARMA = new Map(ID_ARMAS.map((a, i) => [a, i]));
-const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre', 'tesoro'];
+const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre', 'tesoro', 'trebolDorado', 'guante',
+  'patito', 'dado', 'paleta', 'corazoncito', 'pulsera', 'espejoVerdad', 'burbuja'];
 const IDX_OBJ = new Map(OBJETOS.map((o, i) => [o, i]));
 
 const buf = new ArrayBuffer(128 * 1024);
@@ -217,7 +218,7 @@ export function tomarFoto(m: Motor, efDesde: number, seq: number, extra = { band
     f32(j.dy);
     f32(j.vida);
     f32(j.vidaMax);
-    b8((j.caido ? 1 : 0) | (j.mira > 0 ? 2 : 0) | (j.invul > 0 ? 4 : 0) | (j.fuera ? 8 : 0) | (j.manual ? 16 : 0));
+    b8((j.caido ? 1 : 0) | (j.mira > 0 ? 2 : 0) | (j.invul > 0 ? 4 : 0) | (j.fuera ? 8 : 0) | (j.manual ? 16 : 0) | (j.burbuja ? 32 : 0) | (j.guante > 0 ? 64 : 0) | (j.espejo > 0 ? 128 : 0));
     b8(j.rescate * 255);
     f32(j.aji);
     f32(j.oro);
@@ -454,6 +455,9 @@ export class Espejo {
       j.vida = vida;
       j.vidaMax = vidaMax;
       j.invul = bj & 4 ? 0.1 : 0;
+      j.burbuja = !!(bj & 32);
+      j.guante = bj & 64 ? 1 : 0;
+      j.espejo = bj & 128 ? 1 : 0;
       j.rescate = rescate;
       j.aji = aji;
       j.oro = oro;

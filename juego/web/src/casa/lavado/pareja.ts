@@ -102,6 +102,23 @@ export const PAREJA: TextosPareja | null = {
       nombre: 'Ida y vuelta',
       frase: 'Todo el cariño que me das me rebota en el pecho y te vuelve multiplicado.',
     },
+    // (cartas de amor sin historia, inventadas: se cambian si Javier cuenta más)
+    sinGotitas: {
+      nombre: 'Sin llevar la cuenta',
+      frase: 'Contigo no llevo la cuenta de nada: ni de los días, ni de los besos, ni de las gotitas.',
+    },
+    despierto: {
+      nombre: 'Más fuerte que antes',
+      frase: 'Cada vez que me caigo, tú me ayudas a pararme más fuerte que antes.',
+    },
+    nocheLoca: {
+      nombre: 'Mi desorden favorito',
+      frase: 'Contigo el tiempo va rápido y despacio a la vez, y así me encanta.',
+    },
+    terquedad: {
+      nombre: 'Tercos los dos',
+      frase: 'Testarudos como nadie: por eso nada nos tumba.',
+    },
   },
   disfraces: {
     // (el panda es como le dice ella)
@@ -148,6 +165,10 @@ export const PAREJA: TextosPareja | null = {
     evoluciones3: { premio: 'Arma: Toallita desmaquillante · Carta «Corona de guerrera»' },
     arepas20: { premio: 'Pasiva: Curita de corazón · Carta «Curita de besos»' },
     veinticuatro: { premio: 'Carta «Para largo»', nombre: 'Maratón de cariño' },
+    eliminar100000: { premio: 'Carta «Sin llevar la cuenta»' },
+    jefes25: { premio: 'Carta «Más fuerte que antes»' },
+    apurado20: { premio: 'Carta «Mi desorden favorito»' },
+    evoluciones20: { premio: 'Carta «Tercos los dos»' },
   },
   enemigos: {
     pulga: 'Chiquita y brincona. (No confundir con la pulga aventurera.)',

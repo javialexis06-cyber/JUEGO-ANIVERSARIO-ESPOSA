@@ -395,6 +395,23 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   con 10 logros más (hilo dental 15 minutos, 12 evoluciones, llenar las pasivas, 10 minutos en la bañera, 500
   velitas, 10 jefes, 50 cofres, 25 partidas, 50.000 mugrosos y nivel 60). Proyectiles nuevos 12-15 (`disparos.ts`): el
   número de comportamiento viaja en 4 bits en la foto en línea, así que 15 es el último.
+- **Versión 2, fase 1c** (recogibles, arcanos, tienda): **9 recogibles** que sueltan las velitas (`SUELTA_LUZ`):
+  corazoncito (cura 8), trébol dorado (jala las gotas doradas de la pantalla y empieza la **fiebre de gotas**: 10 s en
+  que todo lo que cae suelta una moneda; la vela aromática la alarga), guante dorado (14 s invencible y recargando
+  4 veces más rápido; al final, un cofre con 250 bajas, frascos con 80 o una bolsa), **patito dorado** (sube para siempre
+  un poquito una estadística del disfraz: se guarda en `patitos` del progreso, normalizado, y viaja en
+  `OpcionesJugador.patitos`), dado (+1 para volver a tirar), paleta de hielo (como el ají, pero el aliento congela),
+  pulsera de la amistad (solo con más de uno: a todos les sube un arma), espejo de la verdad (10 s con el doble de
+  proyectiles y todos a la vez) y burbuja protectora (ataja el siguiente golpe). Si el piso se llena de monedas, lo
+  importante toma el puesto de una moneda (`soltar`). **4 arcanos** que faltaban (cartas de amor sin historia en la
+  versión de la pareja): Sin gotitas (Game Killer: la experiencia revienta y los cofres traen al menos tres; con varios,
+  solo si todos la llevan), Despierto (Awake: +3 vidas y cada revivida sube daño, vida, armadura y recuperación), La
+  noche loca (Chaos in the Dark Night: velocidad que sube y baja) y Terquedad (Iron Blue Will: +2 de atravesar y tres
+  rebotes en los bordes). **Tienda**: Omni (+2 % de daño, velocidad, duración y área por rango) y, con su logro,
+  Encanto (+10 % de mugrosos), Desarmar (3 % salen sin dientes) y Conservar (10 % de que tirar, saltar o vetar no se
+  gasten). Son estadísticas nuevas (`omni`, `encanto`, `desarmar`, `conservar` en `tipos.ts`). 7 logros más (100.000
+  mugrosos, 25 jefes, 20 minutos en Apurado, 20 evoluciones, 20.000 gotas, evolucionar la mascarilla y 50
+  partidas): en total, 53.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

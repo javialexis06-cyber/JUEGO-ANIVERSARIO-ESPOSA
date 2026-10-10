@@ -23,7 +23,7 @@ import {
 } from './linea';
 import { Menu, retrato } from './menu';
 import { Motor, VEL_JUGADOR, xpPara, type OpcionesJugador } from './motor';
-import { cartasDe, maestriaDe, SECRETO_LOGRO, secretoAbierto, sumarMaestria, sumarPartida, type ProgresoLavado, type ResumenPartida } from './progreso';
+import { cartasDe, maestriaDe, PATITO, SECRETO_LOGRO, secretoAbierto, sumarMaestria, sumarPartida, type ProgresoLavado, type ResumenPartida } from './progreso';
 import { MAESTRIA_MAX } from './maestria';
 import { musicaLavado, sonarEfecto } from './sonidos';
 import { botPaso } from './bot';
@@ -87,6 +87,7 @@ export function opcionesJugador(rol: Rol, p: ProgresoLavado): OpcionesJugador {
     cartas: cartasDe(p),
     manual: p.manual && puedeApuntar(disfraz),
     maestria: maestriaDe(p, disfraz),
+    patitos: { ...(p.patitos[disfraz] ?? {}) },
   };
 }
 
@@ -98,11 +99,16 @@ function opcionesSeguras(x: unknown, rol: Rol): OpcionesJugador {
   if (o.poderes && typeof o.poderes === 'object')
     for (const [k, v] of Object.entries(o.poderes)) if (typeof v === 'number' && Number.isFinite(v)) poderes[k as Stat] = Math.max(0, Math.min(10, Math.floor(v)));
   const carta = typeof o.carta === 'string' && o.carta in CARTAS ? (o.carta as IdCarta) : null;
-  const lista = (v: unknown) => (Array.isArray(v) ? v.filter((s): s is string => typeof s === 'string').slice(0, 40) : []);
+  // (la lista de secretos ya pasa de 40: hay espacio de sobra)
+  const lista = (v: unknown) => (Array.isArray(v) ? v.filter((s): s is string => typeof s === 'string').slice(0, 200) : []);
+  const patitos: Partial<Record<Stat, number>> = {};
+  if (o.patitos && typeof o.patitos === 'object')
+    for (const [k, v] of Object.entries(o.patitos)) if (k in PATITO && typeof v === 'number' && Number.isFinite(v)) patitos[k as Stat] = Math.max(0, Math.min(5, v));
   return {
     rol, disfraz, poderes, carta, secretos: lista(o.secretos), cartas: lista(o.cartas).filter((c) => c in CARTAS) as IdCarta[],
     manual: !!o.manual && puedeApuntar(disfraz),
     maestria: Math.max(0, Math.min(MAESTRIA_MAX, Math.floor(Number(o.maestria) || 0))),
+    patitos,
   };
 }
 

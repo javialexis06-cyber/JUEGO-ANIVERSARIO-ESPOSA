@@ -552,6 +552,14 @@ export class Dibujo {
         break;
       }
       case 'fuego': {
+        if (e.f === 1) {
+          // El aliento de la paleta de hielo: escarcha y copitos
+          for (let q = 0; q < 6; q++) {
+            const a = e.c + (az() - 0.5) * 0.7, v = 200 + az() * 160;
+            P.crear(q % 2 ? 'copo' : 'chispa', CAPA_LUZ, e.x + Math.cos(e.c) * 16, e.y + Math.sin(e.c) * 12, 26, Math.cos(a) * v, Math.sin(a) * v * 0.75, 0, 0.5, 12, 26, 0.75, 0.92, 1, 1, 0, a, 3);
+          }
+          break;
+        }
         for (let q = 0; q < 6; q++) {
           const a = e.c + (az() - 0.5) * 0.7, v = 220 + az() * 160;
           P.crear('llama', CAPA_LUZ, e.x + Math.cos(e.c) * 16, e.y + Math.sin(e.c) * 12, 26, Math.cos(a) * v, Math.sin(a) * v * 0.75, 0, 0.5, 14, 40, 1, 0.75, 0.4, 1, 0, a + Math.PI / 2);
@@ -576,8 +584,9 @@ export class Dibujo {
         this.sacudir(0.6);
         break;
       case 'escudo': {
-        // La cortina atajó el golpe: un anillo que se abre y chispitas del color de las cargas que quedan
-        const col = e.f ? [1, 0.35, 0.45] : e.d >= 2 ? [1, 0.95, 0.55] : e.d >= 1 ? [0.6, 1, 0.7] : [0.6, 0.82, 1];
+        // La cortina (o la burbuja) atajó el golpe: un anillo que se abre y chispitas del color de las cargas que quedan
+        const col = e.f === 2 ? [0.85, 0.95, 1] : e.f ? [1, 0.35, 0.45] : e.d >= 2 ? [1, 0.95, 0.55] : e.d >= 1 ? [0.6, 1, 0.7] : [0.6, 0.82, 1];
+        if (e.f === 2) for (let q = 0; q < 10; q++) P.crear('burbuja', CAPA_NORMAL, e.x + (az() - 0.5) * 60, e.y + (az() - 0.5) * 40, 20 + az() * 30, 0, 0, 30, 0.6, 8, 14, 1, 1, 1, 0.9);
         P.crear('anillo', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.45, 30, 140, col[0], col[1], col[2], 1);
         for (let q = 0; q < 12; q++) {
           const a = (q / 12) * Math.PI * 2;
@@ -876,10 +885,16 @@ export class Dibujo {
         this.tesoro(o.x, o.y, ESCONDIDAS[o.calidad]?.id ?? 'anilloPlata');
         continue;
       }
-      const nombre: string = cofre ? 'cofre' : o.tipo;
+      // (el dado extra usa el dado de volver a tirar)
+      const nombre: string = cofre ? 'cofre' : o.tipo === 'dado' ? 'tirar' : o.tipo;
       const c = this.cuadrosObj.get(nombre);
       if (!c) continue;
-      const tam = cofre ? 52 : o.tipo === 'frasco' || o.tipo === 'aspiradora' ? 34 : 30;
+      const tam = cofre ? 52 : o.tipo === 'frasco' || o.tipo === 'aspiradora' || o.tipo === 'guante' || o.tipo === 'patito' || o.tipo === 'trebolDorado' ? 34 : 30;
+      // Lo dorado brilla en el piso para que se vea
+      if (o.tipo === 'guante' || o.tipo === 'patito' || o.tipo === 'trebolDorado') {
+        const b = this.fx.c.brillo;
+        this.pisoFx.poner(o.x, o.y, 0.1, 70, 48, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.85, 0.4, 0.45 + Math.sin(t * 5) * 0.15);
+      }
       const flota = cofre ? 0 : 4 + Math.sin(t * 3 + o.x) * 3;
       O.poner(o.x, o.y, flota, tam, tam, 0.5, 0.92, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, cofre ? Math.sin(t * 6) * 0.04 : 0, 1, 0, 0);
       this.sombra(o.x, o.y, tam * 0.4, 0.35);
@@ -1190,6 +1205,21 @@ export class Dibujo {
     const t = this.t;
     for (const j of m.jug) {
       if (j.caido) continue;
+      // La burbuja protectora, el aura del guante dorado y el brillo del espejo de la verdad
+      if (j.burbuja) {
+        const c = this.fx.c.burbuja;
+        this.fxNormal.poner(j.x, j.y, 26, 92 + Math.sin(t * 4) * 4, 96, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 0.85, 0.95, 1, 0.6);
+      }
+      if (j.guante > 0) {
+        const b = this.fx.c.brillo, o = this.fx.c.anillo;
+        this.pisoFx.poner(j.x, j.y, 0.1, 120, 84, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.82, 0.3, 0.55 + Math.sin(t * 8) * 0.15);
+        this.pisoFx.poner(j.x, j.y, 0.11, 90 + Math.sin(t * 6) * 10, 64, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 1, 0.85, 0.35, 0.9);
+        if (Math.random() < 0.5 * this.part.cupo) this.part.crear('estrella', CAPA_LUZ, j.x + (Math.random() - 0.5) * 60, j.y, 10 + Math.random() * 50, 0, 0, 40, 0.6, 10, 3, 1, 0.85, 0.4, 1, 0, 0, 5);
+      }
+      if (j.espejo > 0 && Math.random() < 0.4 * this.part.cupo) {
+        const a = Math.random() * Math.PI * 2;
+        this.part.crear('brillo', CAPA_LUZ, j.x + Math.cos(a) * 40, j.y + Math.sin(a) * 30, 30, 0, 0, 30, 0.5, 14, 4, 0.8, 0.9, 1, 0.8);
+      }
       for (const a of j.armas) {
         const def = ARMAS[a.id];
         if (def.comp === 'ajo') {
