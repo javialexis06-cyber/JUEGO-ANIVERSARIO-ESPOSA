@@ -3,6 +3,7 @@ import type { EstadoGranja } from './estado';
 import { tiempoDia, lluviaRiega } from './clima';
 import { VIVIENDAS_PUEBLO, viviendaInterior, posicionResidente, visitaVivienda, type ViviendaPueblo } from './pueblo-datos';
 import { ubicacionAldeano } from './aldeanos';
+import { vecinoPeluche, animarVecino, sacarVecinos } from './vecinos3d';
 import type { Jornada } from './jornada';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
@@ -244,7 +245,7 @@ export function crearPueblo():THREE.Group {
   for(let i=0;i<29;i++){const x=55+i*1.9;a.ball([.55,.27,.39],[x,.2,-28.1+hash(i)*.2],i%3?C.stone:'#b7b49b');}
   a.cyl(.13,2.5,[54,1.25,1.8],C.wood);a.box([2.2,.48,.13],[54,2.17,1.8],C.woodLight);a.box([1.7,.42,.13],[54,1.58,1.8],C.woodLight,.04,[0,0,-.09]);
   group.add(a.mesh());
-  const npcs=NPCS_PUEBLO.map((n,i)=>{const g=npc(n.color,i);if(n.id==='nina'||n.id==='nino')g.scale.setScalar(.82);g.position.set(n.x,0,n.z);g.userData.origin={x:n.x,z:n.z};g.userData.npcId=n.id;group.add(g);return g;});
+  const npcs=NPCS_PUEBLO.map((n,i)=>{const g=vecinoPeluche(n.id,i);if(n.id==='nina'||n.id==='nino')g.scale.setScalar(.82);g.position.set(n.x,0,n.z);g.userData.origin={x:n.x,z:n.z};g.userData.npcId=n.id;group.add(g);return g;});
   const rueda=new THREE.Group(),r=new Arcilla();for(const xx of [-.29,.29]){r.add(new THREE.TorusGeometry(1.68,.12,6,24),C.wood,[xx,0,0],[0,Math.PI/2,0]);}
   r.cyl(.19,.85,[0,0,0],C.metal,[0,0,Math.PI/2]);
   for(let i=0;i<12;i++){const t=i/12*Math.PI*2;r.box([.72,.24,.65],[0,Math.sin(t)*1.61,Math.cos(t)*1.61],C.woodLight,.04,[t,0,0]);r.box([.12,3.22,.11],[0,0,0],C.wood,.01,[t,0,0]);}
@@ -265,12 +266,13 @@ export function updatePueblo(group:THREE.Group,dt:number,time:number,jornada?:Jo
   a.npcs.forEach(g=>{
     const u=ubicacionAldeano(g.userData.npcId,jornada?.diasCompletados??0,jornada?.minutos??600,resguardado);if(!u)return;g.visible=u.visible;
     const walk=u.andando?1:0,phase=u.paso*3;g.position.set(u.x,alturaSueloPueblo(u.x,u.z)+Math.abs(Math.sin(phase*2))*.025*walk,u.z);g.rotation.y=u.direccion;
-    const legs=g.userData.legs as THREE.Group[];legs.forEach((leg,j)=>leg.rotation.x=Math.sin(phase+j*Math.PI)*.38*walk);
+    const legs=g.userData.legs as THREE.Group[];legs.forEach((leg,j)=>leg.rotation.x=Math.sin(phase+j*Math.PI)*.38*walk);animarVecino(g,dt,!!walk);
     g.userData.actividad=u.actividad;
   });
 }
 
 export function liberarPueblo(group:THREE.Group){
+  sacarVecinos(group);
   const geometries=new Set<THREE.BufferGeometry>(),materials=new Set<THREE.Material>(),textures=new Set<THREE.Texture>();
   group.traverse(o=>{if(!(o instanceof THREE.Mesh))return;geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){materials.add(m);if(m instanceof THREE.MeshStandardMaterial&&m.map)textures.add(m.map);}});
   textures.forEach(t=>t.dispose());geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());group.removeFromParent();delete group.userData.animacionPueblo;
@@ -290,7 +292,7 @@ export function crearInteriorServicio(servicio:ServicioPueblo):THREE.Group {
   else if(servicio==='carpinteria'){a.box([2.6,.16,1.25],[1.8,1.02,1.2],C.woodLight);for(const s of [-1,1])a.box([.16,1,.95],[1.8+s, .49,1.2],C.wood);for(let i=0;i<3;i++)a.cyl(.17,2.5,[-2.8+i*.38,.22,1.4],C.wood,[Math.PI/2,0,0]);}
   else if(servicio==='posada'){for(const x of [-2.5,2.5]){a.cyl(.92,.13,[x,.95,1.4],C.woodLight);a.cyl(.11,.92,[x,.46,1.4],C.wood);seat(a,x,2.65);}}
   else {for(let i=0;i<12;i++)a.box([.16,.5+hash(i)*.2,.38],[-3.95+i*.083,.8,-3.1],['#a66959','#84927c','#b49b69'][i%3]);}
-  group.add(a.mesh());const vecino=NPCS_PUEBLO.find(n=>n.oficio===servicio);if(vecino){const personaje=npc(vecino.color,NPCS_PUEBLO.indexOf(vecino));personaje.name='dependiente';personaje.userData.npcId=vecino.id;personaje.position.set(-.8,0,-2.7);group.add(personaje);}return group;
+  group.add(a.mesh());const vecino=NPCS_PUEBLO.find(n=>n.oficio===servicio);if(vecino){const personaje=vecinoPeluche(vecino.id,NPCS_PUEBLO.indexOf(vecino));personaje.name='dependiente';personaje.userData.npcId=vecino.id;personaje.position.set(-.8,0,-2.7);group.add(personaje);}return group;
 }
 
 /** Interiores propios, agrupados en una malla de color por vivienda. */
@@ -312,7 +314,7 @@ export function crearInteriorVivienda(v:ViviendaPueblo){
  if(['molino','tejidos'].includes(v.tema)){a.box([1.8,.8,.5],[-4,.5,0],C.wood);a.box([1.5,.1,1.2],[-4,1.3,0],color);}
  for(const x of [-1,1])a.box([.15,2.7,.15],[x,1.35,4.8],C.beam);a.box([2.15,.2,.2],[0,2.6,4.8],C.woodLight);
  const room=a.mesh();room.name='mobiliario-vivienda';g.add(room);
- for(const id of v.ocupantes){const n=NPCS_PUEBLO.find(n=>n.id===id)!;const personaje=npc(n.color,NPCS_PUEBLO.indexOf(n));personaje.userData.npcId=id;personaje.userData.residente=true;const pos=posicionResidente(id);personaje.position.set(pos.x,0,pos.z);personaje.visible=false;g.add(personaje);}return g;
+ for(const id of v.ocupantes){const n=NPCS_PUEBLO.find(n=>n.id===id)!;const personaje=vecinoPeluche(n.id,NPCS_PUEBLO.indexOf(n));personaje.userData.npcId=id;personaje.userData.residente=true;const pos=posicionResidente(id);personaje.position.set(pos.x,0,pos.z);personaje.visible=false;g.add(personaje);}return g;
 }
 export function updateInteriorVivienda(g:THREE.Group,s:EstadoGranja,tiempo=0){const rain=lluviaRiega(tiempoDia(s.tiempo,s.jornada.diasCompletados));g.traverse(o=>{if(o.userData.residente){const u=ubicacionAldeano(o.userData.npcId,s.jornada.diasCompletados,s.jornada.minutos,rain);o.visible=u?.actividad==='hogar'&&visitaVivienda(s.jornada.minutos)&&(o.userData.privado?horaDormitorio(s.jornada.minutos):!horaDormitorio(s.jornada.minutos));o.scale.y=1+Math.sin(tiempo*2+(o.userData.seed??0))*.007;}});}
 
@@ -326,5 +328,5 @@ export function crearDormitorio(id:string){
  a.box([.7,2.1,1.4],[-3.3,1.05,.2],C.wood);for(let i=0;i<3;i++){a.box([.8,.1,1.5],[-3.3,.3+i*.7,.2],C.woodLight);for(let j=0;j<4;j++)a.box([.45,.42,.12],[-3.15,.55+i*.7,-.25+j*.26],j%2?color:C.cream);}
  a.box([3.1,.025,2.3],[0,.03,1.1],color,0);for(const x of [-1.45,1.45])a.box([.04,.02,2.2],[x,.05,1.1],C.cream,0);flowerpot(a,3,2.2,color,.32);
  for(const x of [-1,1])a.box([.15,2.6,.15],[x,1.3,3.9],C.beam);a.box([2.15,.2,.2],[0,2.6,3.9],C.woodLight);
- const m=a.mesh();m.name='mobiliario-dormitorio';g.add(m);const residente=npc(n.color,NPCS_PUEBLO.indexOf(n));residente.userData.npcId=id;residente.userData.residente=true;residente.userData.privado=true;residente.position.set(0,0,0);residente.visible=false;g.add(residente);return g;
+ const m=a.mesh();m.name='mobiliario-dormitorio';g.add(m);const residente=vecinoPeluche(n.id,NPCS_PUEBLO.indexOf(n));residente.userData.npcId=id;residente.userData.residente=true;residente.userData.privado=true;residente.position.set(0,0,0);residente.visible=false;g.add(residente);return g;
 }

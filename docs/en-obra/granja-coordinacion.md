@@ -98,3 +98,11 @@ semillas en su sobre, plantones, minerales, lingotes, recursos, productos de ani
 `node scripts/granja-v3/iconos-objetos.mjs [url] [regex]` los fotografía a `public/modelos/granja-v3/iconos/obj_<id>.webp`
 y reescribe `src/granja-v3/iconos-lista.ts`. Un objeto nuevo sin foto sigue usando su dibujo SVG: cuando agregues
 objetos, avísame (o corre el script) para fotografiarlos. Construcciones y máquinas siguen con SVG por ahora.
+
+## Vecinos de peluche (Claude, 10 de octubre de 2026)
+
+`src/granja-v3/vecinos3d.ts`: los 24 vecinos son el muñeco de Javier o de Laura vestido con el clóset de los amigos
+(`salas/vestir.ts`) según su oficio (`DISENOS`, por id de `NPCS_PUEBLO`). `pueblo.ts` llama `vecinoPeluche(id, índice)`
+y `animarVecino` (caminar/quieto); los que están dentro de una casa se animan solos. No se destruyen al soltar el
+pueblo (comparten modelos con los protagonistas: `sacarVecinos` y `liberar` los sacan antes). Un vecino nuevo en
+`NPCS_PUEBLO` sin diseño toma uno prestado: avísame para darle el suyo.
