@@ -30,6 +30,9 @@ import { dormitorioDef, puertaDormitorio, libreDormitorio } from './dormitorios'
 import { viviendaInterior, VIVIENDAS_PUEBLO, libreVivienda } from './pueblo-datos';
 import { crearDormitorio, crearInteriorVivienda, updateInteriorVivienda } from './pueblo';
 import { cespedPueblo } from './pueblo-adornos';
+import { cuevaMina, monteZona, senderoTierra } from './zonas-render';
+/** Senderos de tierra entre zonas (centro x, centro z, ancho, fondo). */
+const SENDEROS_PUBLICOS:[number,number,number,number][]=[[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]];
 import { crearPueblo, crearInteriorServicio, updatePueblo, liberarPueblo, librePueblo, alturaSueloPueblo, EDIFICIOS_PUEBLO } from './pueblo';
 import { EfectosGranja } from './efectos';
 import { EscenaAventura, ambienteAventura, type ObjetivoAventura } from './escenas-aventura';
@@ -69,7 +72,7 @@ export class VistaGranja{
  onAldeano:(id:string)=>void=()=>{};
  onObjetivoGanado:(objetivo:ObjetivoGanado,interactuar?:boolean)=>void=()=>{};
  onObjetivoAventura:(objetivo:ObjetivoAventura,interactuar?:boolean)=>void=()=>{};
- readonly efectos=new EfectosGranja();private pueblo?:THREE.Group;private seguimiento=false;private regresoTienda={x:79,z:3};
+ readonly efectos=new EfectosGranja();private pueblo?:THREE.Group;private cueva?:THREE.Group;private seguimiento=false;private regresoTienda={x:79,z:3};
  readonly escena=new THREE.Scene();readonly avatar=new AvatarGranja();readonly renderer:THREE.WebGLRenderer;readonly camera=new THREE.OrthographicCamera(-15,15,11,-11,.1,280);readonly controles:OrbitControls;
  seleccion=new THREE.Group();private world=new THREE.Group();private detalle=new THREE.Group();private entorno=new THREE.Group();private modelos=new Map<string,Instancia>();private pendientes=new Map<string,Promise<void>>();private pedidos=new Set<string>();private suelos=new Suelos();private biblioteca!:BibliotecaV2;private miticos!:BibliotecaV2;private sun=new THREE.DirectionalLight('#fff0d7',3.5);private env:THREE.WebGLRenderTarget;private estado?:EstadoVista;private revision=-1;private stream='';private vistaActual='';private ejemplar?:Instancia;private catalogando=false;private generacion=0;private tiempo=0;private texturas:THREE.Texture[]=[];
  calidad:'ligera'|'alta'='ligera';rejilla=false;private grid=new THREE.GridHelper(100,100,'#fcf0b4','#f0ead1');onCelda:(x:number,z:number,interactuar?:boolean)=>void=()=>{};onApuntar:(x:number,z:number)=>void=()=>{};onMantener:(v:boolean)=>void=()=>{};onMovimiento:()=>void=()=>{};
@@ -146,15 +149,16 @@ export class VistaGranja{
     for(const x of[-.95,.95])caja(this.entorno,[.15,2.35,.15],[x,1.18,4],'#9b7b5c');caja(this.entorno,[2.05,.18,.16],[0,2.4,4],'#b28e63');
    }return;}
   this.entorno.add(señalesSalidas(e.zona));
-  if(e.zona==='mina'){caja(this.entorno,[25,.2,23],[0,-.15,-1],'#686b68');for(let i=0;i<35;i++){const a=i/35*Math.PI*2;esfera(this.entorno,[1.4,2+ruido(i)*2,1.3],[Math.cos(a)*11,1,Math.sin(a)*10-1],'#6d7775');}for(let i=0;i<9;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(.35,1.7,5),new THREE.MeshStandardMaterial({color:'#91d5cb',emissive:'#31716d',emissiveIntensity:.3,roughness:.4}));c.position.set(-8+ruido(i,2)*16,.75,-7+ruido(i,4)*11);this.entorno.add(c);}caja(this.entorno,[3,.1,1.4],[0,.02,7],'#b69b72');return;}
+  if(e.zona==='mina'){this.cueva=cuevaMina(e.nivelMina||1);this.cueva.userData.nivel=e.nivelMina||1;this.entorno.add(this.cueva);return;}
   this.entorno.add(this.suelos.terreno());if(e.zona==='pueblo'){this.pueblo=crearPueblo();this.entorno.add(this.pueblo);this.entorno.add(this.suelos.pasto(52,-32,60,75,5200,cespedPueblo));}
+  if(e.zona==='bosque'||e.zona==='bosque_ancestral'||e.zona==='lago')this.entorno.add(monteZona(e.zona,SENDEROS_PUBLICOS,e.obstaculos.filter(o=>o.zona===e.zona&&o.hp>0)));
   // Background clumps and hills remain cheap instanced geometry; detailed props stream nearby.
-  const geometry=new THREE.IcosahedronGeometry(1,1),hill=new THREE.InstancedMesh(geometry,material('#849765'),30),dummy=new THREE.Object3D();for(let i=0;i<30;i++){const a=i/30*Math.PI*2;dummy.position.set(Math.cos(a)*128,-3,Math.sin(a)*120);dummy.scale.set(12+ruido(i)*13,8+ruido(i,6)*8,13);dummy.updateMatrix();hill.setMatrixAt(i,dummy.matrix);}this.entorno.add(hill);
+  const geometry=new THREE.IcosahedronGeometry(1,1),hill=new THREE.InstancedMesh(geometry,material('#849765'),30),dummy=new THREE.Object3D();for(let i=0;i<30;i++){const a=i/30*Math.PI*2;dummy.position.set(Math.cos(a)*128,-3,Math.sin(a)*120);if(Math.hypot(dummy.position.x-DESTINOS[e.zona].x,dummy.position.z-DESTINOS[e.zona].z)<75)dummy.position.y=-60;dummy.scale.set(12+ruido(i)*13,8+ruido(i,6)*8,13);dummy.updateMatrix();hill.setMatrixAt(i,dummy.matrix);}this.entorno.add(hill);
   const water=mallaAgua(13,10,'#25708a','#68b6b2');water.scale.set(13,1,10);water.position.set(28,.015,89);this.entorno.add(water);this.entorno.add(this.suelos.pasto(-100,-24,36,48,1700));this.entorno.add(this.suelos.pasto(-102,52,45,46,1500));
   // Public trails live outside the editable farm. Player paths use inventory cells.
-  for(let [x,z,w,d]of [[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]]){
+  for(let [x,z,w,d]of SENDEROS_PUBLICOS){
    // En el pueblo el sendero llega hasta la calle del sur; adentro mandan las calles empedradas
-   if(e.zona==='pueblo'&&x===76){const z0=41.3,z1=z+d/2;z=(z0+z1)/2;d=z1-z0;}this.entorno.add(this.suelos.sendero(x,z,w,d));}
+   if(e.zona==='pueblo'&&x===76){const z0=41.3,z1=z+d/2;z=(z0+z1)/2;d=z1-z0;}this.entorno.add(senderoTierra(x,z,w,d));}
 
 
  }
@@ -170,6 +174,7 @@ export class VistaGranja{
   if(this.claveAventura){this.efectos.clear();this.claveAventura='';this.revisionAventura=-1;this.revision=-1;this.expedicion.grupo.visible=false;this.world.visible=true;this.efectos.root.visible=true;this.sun.color.set('#fff0d7');this.sun.intensity=3;this.escena.background=new THREE.Color('#dde8ca');this.escena.fog=new THREE.Fog('#dde8ca',56,150);if(this.regresoAventura){const p=this.regresoAventura;this.avatar.detener();this.avatar.setPosition(p.x,p.z);this.camera.zoom=p.zoom;this.centrar(p.targetX,p.targetZ);this.regresoAventura=undefined;}this.limpiarMarca();}
   const v=e.zona+':'+e.interior+':'+e.servicio+':'+(e.interior&&!viviendaInterior(e.interior)?nivelEdificio(e.edificios.find(b=>b.id===e.interior)!):0),cell=Math.floor(this.controles.target.x/12)+','+Math.floor(this.controles.target.z/12);if(!force&&e.revision===this.revision&&cell===this.stream)return;this.revision=e.revision;this.stream=cell;
   if(v!==this.vistaActual){const antes=this.vistaActual.split(':')[2],saleTienda=!!antes&&antes!=='null'&&!e.servicio&&e.zona==='pueblo';if(e.servicio&&(!antes||antes==='null'))this.regresoTienda={x:this.avatar.position.x,z:this.avatar.position.z};this.vistaActual=v;this.fondo(e);const guardada=e.posicionExterior?.zona===e.zona?e.posicionExterior:undefined;const p=e.interior&&e.invernaderos.some(i=>i.edificioId===e.interior)?{x:0,z:1.5}:e.interior||e.servicio?{x:0,z:0}:guardada?{x:guardada.x,z:guardada.z-3}:e.zona==='mina'?{x:0,z:3}:e.zona==='lago'?{x:14.5,z:77.5}:DESTINOS[e.zona];this.camera.zoom=e.interior&&e.invernaderos.some(i=>i.edificioId===e.interior)?.95:e.interior||e.servicio?1.3:1;this.avatar.detener();if(saleTienda){this.avatar.setPosition(this.regresoTienda.x,this.regresoTienda.z);this.centrar(this.regresoTienda.x,this.regresoTienda.z);}else{this.avatar.setPosition(p.x,p.z+3);this.centrar(p.x,p.z);}this.limpiarMarca();}this.mostrarRejilla(this.rejilla);
+  if(e.zona==='mina'&&this.cueva&&this.cueva.userData.nivel!==(e.nivelMina||1)&&this.cueva.parent){const padre=this.cueva.parent;liberar(this.cueva);this.cueva=cuevaMina(e.nivelMina||1);this.cueva.userData.nivel=e.nivelMina||1;padre.add(this.cueva);}
   liberar(this.detalle);this.copasFrutales=[];this.detalle=new THREE.Group();this.world.add(this.detalle);const desired:Modelo[]=[];const add=(c:Modelo)=>{if(e.interior||e.servicio||e.zona==='mina'||Math.hypot(c.x-this.controles.target.x,c.z-this.controles.target.z)<(this.calidad==='alta'?46:29))desired.push(c);};
   if(e.zona==='granja'&&!e.interior&&!e.servicio)this.detalle.add(crearBuzon(e));
   const recinto=e.invernaderos.find(i=>i.edificioId===e.interior);

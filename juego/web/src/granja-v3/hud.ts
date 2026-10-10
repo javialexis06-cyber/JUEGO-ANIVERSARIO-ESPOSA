@@ -145,7 +145,7 @@ export function iniciarHud(h: Hud) {
   function dibujarZona(m: Marco, conNombres: boolean) {
     const s = motor.estado, zona = s.zona, [x0, x1, z0, z1] = limites(zona), ctx = m.ctx;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = '#4f6b4a';
+    ctx.fillStyle = zona === 'mina' ? '#211d24' : '#4f6b4a';
     ctx.fillRect(0, 0, m.w, m.h);
     transformar(m);
     rect(m, x0, z0, x1 - x0, z1 - z0, PISO[zona] ?? '#9cc77a');

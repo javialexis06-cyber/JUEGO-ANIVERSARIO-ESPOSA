@@ -118,3 +118,16 @@ pueblo (comparten modelos con los protagonistas: `sacarVecinos` y `liberar` los 
 - Prados del pueblo con matas y flores (`cespedPueblo` decide dónde). Los senderos entre zonas son tierra
   apisonada con textura (`Suelos.sendero`) y el que cruzaba el pueblo ahora llega hasta la calle del sur.
 - No cambia ninguna regla ni dato del motor.
+
+### Zonas: cueva de la mina, monte espeso, orilla del lago y senderos (Claude)
+
+- `src/granja-v3/zonas-render.ts` (solo decorado, no cambia por dónde se camina):
+  - `cuevaMina(nivel)`: oscuridad alrededor, piso de roca con grietas y charquitos, paredes de roca con vetas (altas
+    atrás, bajitas del lado de la cámara), estalagmitas, entibados con farol, luz cálida, rieles con vagoneta y
+    racimos de cristal que brillan; el color del cristal cambia con `nivelMina` (vista cambia la cueva al bajar).
+  - `monteZona(zona, senderos, obstaculos)`: robles y pinos instanciados afuera de los límites de bosque, bosque
+    ancestral y lago (abiertos en senderos y salidas, más ralos del lado de la cámara); adentro helechos, matas,
+    hongos (que brillan en el ancestral) y troncos caídos, lejos de lo que se recoge.
+  - Lago: playita de arena, juncos, piedras de orilla y hojas de lirio.
+  - `senderoTierra`: tierra apisonada con huellas de carreta y bordes que se pierden en el pasto.
+- Las lomas de fondo ya no tapan la zona donde está el jugador. El minimapa de la mina es oscuro.
