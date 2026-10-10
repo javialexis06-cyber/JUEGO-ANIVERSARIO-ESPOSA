@@ -1,0 +1,1767 @@
+{
+  "version": 2,
+  "units": "meters",
+  "upAxis": "Y",
+  "frontAxis": "+Z",
+  "assets": [
+    {
+      "id": "vaca",
+      "label": "Vaca · caramelo y crema",
+      "category": "animales",
+      "path": "vaca.glb",
+      "footprint": [
+        1.08,
+        1.92
+      ],
+      "size": [
+        1.1512447656457336,
+        1.663500012218952,
+        2.072527391910553
+      ],
+      "bytes": 632976,
+      "triangles": 24728,
+      "drawCalls": 19,
+      "animations": [
+        "reposo",
+        "caminar",
+        "comer",
+        "acariciar"
+      ],
+      "lod": {
+        "path": "vaca_lod.glb",
+        "bytes": 305992,
+        "triangles": 11410,
+        "drawCalls": 19
+      }
+    },
+    {
+      "id": "oveja",
+      "label": "Oveja · vellón de algodón",
+      "category": "animales",
+      "path": "oveja.glb",
+      "footprint": [
+        1.1,
+        1.55
+      ],
+      "size": [
+        1.0565505623817444,
+        1.2707189114390471,
+        1.6519104993343352
+      ],
+      "bytes": 645696,
+      "triangles": 25092,
+      "drawCalls": 18,
+      "animations": [
+        "reposo",
+        "caminar",
+        "comer",
+        "acariciar"
+      ],
+      "lod": {
+        "path": "oveja_lod.glb",
+        "bytes": 430884,
+        "triangles": 16546,
+        "drawCalls": 18
+      }
+    },
+    {
+      "id": "cerdito",
+      "label": "Cerdito · mejillas de melocotón",
+      "category": "animales",
+      "path": "cerdito.glb",
+      "footprint": [
+        1.02,
+        1.6
+      ],
+      "size": [
+        0.9199999570846558,
+        1.2717682125951668,
+        1.69186732172966
+      ],
+      "bytes": 532776,
+      "triangles": 20548,
+      "drawCalls": 18,
+      "animations": [
+        "reposo",
+        "caminar",
+        "comer",
+        "acariciar"
+      ],
+      "lod": {
+        "path": "cerdito_lod.glb",
+        "bytes": 277276,
+        "triangles": 10306,
+        "drawCalls": 18
+      }
+    },
+    {
+      "id": "gallina",
+      "label": "Gallina · plumas de vainilla",
+      "category": "animales",
+      "path": "gallina.glb",
+      "footprint": [
+        0.77,
+        1.22
+      ],
+      "size": [
+        0.680829929690611,
+        1.1225317299365996,
+        1.2246590985655785
+      ],
+      "bytes": 567644,
+      "triangles": 22532,
+      "drawCalls": 12,
+      "animations": [
+        "reposo",
+        "caminar",
+        "comer",
+        "acariciar"
+      ],
+      "lod": {
+        "path": "gallina_lod.glb",
+        "bytes": 257388,
+        "triangles": 9570,
+        "drawCalls": 12
+      }
+    },
+    {
+      "id": "conejo",
+      "label": "Conejo · orejas de terciopelo",
+      "category": "animales",
+      "path": "conejo.glb",
+      "footprint": [
+        0.89,
+        1.34
+      ],
+      "size": [
+        0.7699999809265137,
+        1.6175011254538512,
+        1.3141786134243012
+      ],
+      "bytes": 491540,
+      "triangles": 19000,
+      "drawCalls": 14,
+      "animations": [
+        "reposo",
+        "caminar",
+        "comer",
+        "acariciar"
+      ],
+      "lod": {
+        "path": "conejo_lod.glb",
+        "bytes": 251540,
+        "triangles": 9328,
+        "drawCalls": 14
+      }
+    },
+    {
+      "id": "pato",
+      "label": "Pato · plumón de crema",
+      "category": "animales",
+      "path": "pato.glb",
+      "footprint": [
+        0.8,
+        1.29
+      ],
+      "size": [
+        0.6909686022494934,
+        0.9770000171661377,
+        1.389766286611557
+      ],
+      "bytes": 495172,
+      "triangles": 17956,
+      "drawCalls": 12,
+      "animations": [
+        "reposo",
+        "caminar",
+        "comer",
+        "acariciar"
+      ],
+      "lod": {
+        "path": "pato_lod.glb",
+        "bytes": 253192,
+        "triangles": 7918,
+        "drawCalls": 12
+      }
+    },
+    {
+      "id": "granero",
+      "label": "Granero artesanal",
+      "category": "edificios",
+      "path": "granero.glb",
+      "footprint": [
+        3.9,
+        3.55
+      ],
+      "size": [
+        3.6848102807998657,
+        3.3913949429406784,
+        3.3320685625076294
+      ],
+      "bytes": 720332,
+      "triangles": 16456,
+      "drawCalls": 4,
+      "animations": [
+        "abrir",
+        "cerrar"
+      ],
+      "lod": {
+        "path": "granero_lod.glb",
+        "bytes": 479336,
+        "triangles": 7162,
+        "drawCalls": 4
+      }
+    },
+    {
+      "id": "molino",
+      "label": "Molino de velas y piedra",
+      "category": "edificios",
+      "path": "molino.glb",
+      "footprint": [
+        3.35,
+        2.6
+      ],
+      "size": [
+        2.818805694580078,
+        3.7643059674844923,
+        2.1162461638450623
+      ],
+      "bytes": 414908,
+      "triangles": 9428,
+      "drawCalls": 4,
+      "animations": [
+        "idle"
+      ],
+      "lod": {
+        "path": "molino_lod.glb",
+        "bytes": 292940,
+        "triangles": 4719,
+        "drawCalls": 4
+      }
+    },
+    {
+      "id": "gallinero",
+      "label": "Gallinero con nidal y rampa",
+      "category": "edificios",
+      "path": "gallinero.glb",
+      "footprint": [
+        2.75,
+        2.8
+      ],
+      "size": [
+        2.3648104667663574,
+        2.3692291940096766,
+        2.7495686411857605
+      ],
+      "bytes": 291464,
+      "triangles": 7740,
+      "drawCalls": 2,
+      "animations": [],
+      "lod": {
+        "path": "gallinero_lod.glb",
+        "bytes": 167812,
+        "triangles": 2922,
+        "drawCalls": 2
+      }
+    },
+    {
+      "id": "puesto_mercado",
+      "label": "Puesto de cosecha con toldo de lona",
+      "category": "edificios",
+      "path": "puesto_mercado.glb",
+      "footprint": [
+        2.7,
+        1.85
+      ],
+      "size": [
+        2.5135000944137573,
+        2.194287061691284,
+        1.6731173396110535
+      ],
+      "bytes": 298096,
+      "triangles": 7352,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "puesto_mercado_lod.glb",
+        "bytes": 171036,
+        "triangles": 2790,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "pozo",
+      "label": "Pozo de cantería con torno",
+      "category": "edificios",
+      "path": "pozo.glb",
+      "footprint": [
+        2.7,
+        1.6
+      ],
+      "size": [
+        2.317317843437195,
+        2.317690367985051,
+        1.5579909086227417
+      ],
+      "bytes": 316384,
+      "triangles": 7584,
+      "drawCalls": 3,
+      "animations": [
+        "extraer_agua"
+      ],
+      "lod": {
+        "path": "pozo_lod.glb",
+        "bytes": 216768,
+        "triangles": 3720,
+        "drawCalls": 3
+      }
+    },
+    {
+      "id": "cerca",
+      "label": "Cerca modular de carpintería",
+      "category": "decoracion",
+      "path": "cerca.glb",
+      "footprint": [
+        2.2,
+        0.4
+      ],
+      "size": [
+        2.155263304710388,
+        1.2073648864752613,
+        0.3115040063858032
+      ],
+      "bytes": 59664,
+      "triangles": 1244,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "cerca_lod.glb",
+        "bytes": 36472,
+        "triangles": 488,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "porton",
+      "label": "Portón con bisagras y pestillo",
+      "category": "decoracion",
+      "path": "porton.glb",
+      "footprint": [
+        2.3,
+        2
+      ],
+      "size": [
+        2.2552632093429565,
+        1.3573648626334034,
+        0.29530521571636204
+      ],
+      "bytes": 93108,
+      "triangles": 2300,
+      "drawCalls": 2,
+      "animations": [
+        "abrir",
+        "cerrar"
+      ],
+      "lod": {
+        "path": "porton_lod.glb",
+        "bytes": 53244,
+        "triangles": 828,
+        "drawCalls": 2
+      }
+    },
+    {
+      "id": "sendero_piedra",
+      "label": "Losas de piedra irregular",
+      "category": "decoracion",
+      "path": "sendero_piedra.glb",
+      "footprint": [
+        1.25,
+        2.25
+      ],
+      "size": [
+        1.154762089252472,
+        0.19389307498931885,
+        2.0728061199188232
+      ],
+      "bytes": 52344,
+      "triangles": 1160,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "sendero_piedra_lod.glb",
+        "bytes": 38700,
+        "triangles": 626,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "puente_madera",
+      "label": "Puente curvo de tablones",
+      "category": "decoracion",
+      "path": "puente_madera.glb",
+      "footprint": [
+        1.6,
+        2.7
+      ],
+      "size": [
+        1.5549999475479126,
+        1.0235164179466665,
+        2.597396731376648
+      ],
+      "bytes": 183144,
+      "triangles": 5812,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "puente_madera_lod.glb",
+        "bytes": 83744,
+        "triangles": 2026,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "barril",
+      "label": "Barril de duelas y aros",
+      "category": "decoracion",
+      "path": "barril.glb",
+      "footprint": [
+        0.82,
+        0.82
+      ],
+      "size": [
+        0.7450798153877258,
+        0.7950000166893005,
+        0.7527413666248322
+      ],
+      "bytes": 82660,
+      "triangles": 3004,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "barril_lod.glb",
+        "bytes": 47096,
+        "triangles": 1506,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "paca_heno",
+      "label": "Paca de heno atada",
+      "category": "decoracion",
+      "path": "paca_heno.glb",
+      "footprint": [
+        1.12,
+        0.84
+      ],
+      "size": [
+        1.0856720805168152,
+        0.6878158450126648,
+        0.8240858018398285
+      ],
+      "bytes": 54032,
+      "triangles": 1652,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "paca_heno_lod.glb",
+        "bytes": 24096,
+        "triangles": 660,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "cajon",
+      "label": "Cajón de tablillas con asas",
+      "category": "decoracion",
+      "path": "cajon.glb",
+      "footprint": [
+        0.9,
+        0.75
+      ],
+      "size": [
+        0.8510000109672546,
+        0.4300000071525574,
+        0.7179999947547913
+      ],
+      "bytes": 72820,
+      "triangles": 1352,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "cajon_lod.glb",
+        "bytes": 52580,
+        "triangles": 616,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "letrero",
+      "label": "Letrero tallado de la granja",
+      "category": "decoracion",
+      "path": "letrero.glb",
+      "footprint": [
+        1.3,
+        0.4
+      ],
+      "size": [
+        1.228133499622345,
+        1.3970400473917834,
+        0.3357616364955902
+      ],
+      "bytes": 58348,
+      "triangles": 1312,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "letrero_lod.glb",
+        "bytes": 44688,
+        "triangles": 794,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "farol",
+      "label": "Farol de forja y cristal",
+      "category": "decoracion",
+      "path": "farol.glb",
+      "footprint": [
+        1.05,
+        0.52
+      ],
+      "size": [
+        0.8232818174362182,
+        2.052416122343857,
+        0.4259999990463257
+      ],
+      "bytes": 67620,
+      "triangles": 1748,
+      "drawCalls": 4,
+      "animations": [
+        "idle"
+      ],
+      "lod": {
+        "path": "farol_lod.glb",
+        "bytes": 38828,
+        "triangles": 1014,
+        "drawCalls": 4
+      }
+    },
+    {
+      "id": "regadera",
+      "label": "Regadera acanalada de jardín",
+      "category": "herramientas",
+      "path": "regadera.glb",
+      "footprint": [
+        1.3,
+        0.63
+      ],
+      "size": [
+        1.2706466317176819,
+        0.6429790258407593,
+        0.5386327505111694
+      ],
+      "bytes": 61844,
+      "triangles": 2232,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "regadera_lod.glb",
+        "bytes": 23636,
+        "triangles": 762,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "casita_pueblo",
+      "label": "Casita del pueblo con porche",
+      "category": "edificios",
+      "path": "casita_pueblo.glb",
+      "footprint": [
+        3.6,
+        3.3
+      ],
+      "size": [
+        3.199178695678711,
+        3.2931506290042307,
+        3.266156792640686
+      ],
+      "bytes": 822604,
+      "triangles": 19732,
+      "drawCalls": 4,
+      "animations": [],
+      "lod": {
+        "path": "casita_pueblo_lod.glb",
+        "bytes": 527756,
+        "triangles": 8230,
+        "drawCalls": 4
+      }
+    },
+    {
+      "id": "invernadero",
+      "label": "Invernadero con bancadas de cultivo",
+      "category": "edificios",
+      "path": "invernadero.glb",
+      "footprint": [
+        2.5,
+        3.15
+      ],
+      "size": [
+        2.3322579860687256,
+        2.584230273263529,
+        2.992664933204651
+      ],
+      "bytes": 479664,
+      "triangles": 14300,
+      "drawCalls": 2,
+      "animations": [],
+      "lod": {
+        "path": "invernadero_lod.glb",
+        "bytes": 249420,
+        "triangles": 5146,
+        "drawCalls": 2
+      }
+    },
+    {
+      "id": "entrada_mina",
+      "label": "Entrada de mina de piedra y madera",
+      "category": "edificios",
+      "path": "entrada_mina.glb",
+      "footprint": [
+        2.95,
+        2
+      ],
+      "size": [
+        2.700345039367676,
+        2.406132698059082,
+        1.913282334804535
+      ],
+      "bytes": 163248,
+      "triangles": 3838,
+      "drawCalls": 3,
+      "animations": [],
+      "lod": {
+        "path": "entrada_mina_lod.glb",
+        "bytes": 93476,
+        "triangles": 1576,
+        "drawCalls": 3
+      }
+    },
+    {
+      "id": "banco",
+      "label": "Banco de plaza con brazos de forja",
+      "category": "decoracion",
+      "path": "banco.glb",
+      "footprint": [
+        1.72,
+        0.85
+      ],
+      "size": [
+        1.5597249269485474,
+        0.9396212100982666,
+        0.6661688387393951
+      ],
+      "bytes": 62648,
+      "triangles": 1696,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "banco_lod.glb",
+        "bytes": 34344,
+        "triangles": 646,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "fuente",
+      "label": "Fuente de plaza con agua",
+      "category": "decoracion",
+      "path": "fuente.glb",
+      "footprint": [
+        2.02,
+        2.02
+      ],
+      "size": [
+        1.8799999952316284,
+        1.3038561320304871,
+        1.8799999952316284
+      ],
+      "bytes": 127308,
+      "triangles": 4636,
+      "drawCalls": 4,
+      "animations": [
+        "agua"
+      ],
+      "lod": {
+        "path": "fuente_lod.glb",
+        "bytes": 57812,
+        "triangles": 1820,
+        "drawCalls": 4
+      }
+    },
+    {
+      "id": "zanahoria_0",
+      "label": "Zanahoria de huerta · etapa 1",
+      "category": "cultivos",
+      "path": "zanahoria_0.glb",
+      "footprint": [
+        0.53,
+        0.53
+      ],
+      "size": [
+        0.12882843613624573,
+        0.10588403057772666,
+        0.03422636818140745
+      ],
+      "bytes": 11048,
+      "triangles": 330,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "zanahoria_0_lod.glb",
+        "bytes": 7056,
+        "triangles": 164,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "zanahoria_1",
+      "label": "Zanahoria de huerta · etapa 2",
+      "category": "cultivos",
+      "path": "zanahoria_1.glb",
+      "footprint": [
+        0.53,
+        0.53
+      ],
+      "size": [
+        0.20937496423721313,
+        0.2987827658653259,
+        0.2095460519194603
+      ],
+      "bytes": 61700,
+      "triangles": 2288,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "zanahoria_1_lod.glb",
+        "bytes": 28176,
+        "triangles": 820,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "zanahoria_2",
+      "label": "Zanahoria de huerta · etapa 3",
+      "category": "cultivos",
+      "path": "zanahoria_2.glb",
+      "footprint": [
+        0.53,
+        0.53
+      ],
+      "size": [
+        0.3114222437143326,
+        0.43674010038375854,
+        0.3057446777820587
+      ],
+      "bytes": 73772,
+      "triangles": 2758,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "zanahoria_2_lod.glb",
+        "bytes": 33800,
+        "triangles": 989,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "zanahoria_3",
+      "label": "Zanahoria de huerta · etapa 4",
+      "category": "cultivos",
+      "path": "zanahoria_3.glb",
+      "footprint": [
+        0.53,
+        0.53
+      ],
+      "size": [
+        0.4093770384788513,
+        0.5746580362319946,
+        0.40194331109523773
+      ],
+      "bytes": 85808,
+      "triangles": 3228,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "zanahoria_3_lod.glb",
+        "bytes": 39332,
+        "triangles": 1161,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "tomate_0",
+      "label": "Tomatera en rama · etapa 1",
+      "category": "cultivos",
+      "path": "tomate_0.glb",
+      "footprint": [
+        0.68,
+        0.68
+      ],
+      "size": [
+        0.18187543749809265,
+        0.15769570338306949,
+        0.041605439968407154
+      ],
+      "bytes": 11024,
+      "triangles": 330,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "tomate_0_lod.glb",
+        "bytes": 6808,
+        "triangles": 156,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "tomate_1",
+      "label": "Tomatera en rama · etapa 2",
+      "category": "cultivos",
+      "path": "tomate_1.glb",
+      "footprint": [
+        0.68,
+        0.68
+      ],
+      "size": [
+        0.6091073453426361,
+        0.367859368911013,
+        0.6173666715621948
+      ],
+      "bytes": 47436,
+      "triangles": 1744,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "tomate_1_lod.glb",
+        "bytes": 21816,
+        "triangles": 611,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "tomate_2",
+      "label": "Tomatera en rama · etapa 3",
+      "category": "cultivos",
+      "path": "tomate_2.glb",
+      "footprint": [
+        0.68,
+        0.68
+      ],
+      "size": [
+        0.6811699569225311,
+        0.6435073217144236,
+        0.6173666715621948
+      ],
+      "bytes": 94668,
+      "triangles": 3528,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "tomate_2_lod.glb",
+        "bytes": 43012,
+        "triangles": 1258,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "tomate_3",
+      "label": "Tomatera en rama · etapa 4",
+      "category": "cultivos",
+      "path": "tomate_3.glb",
+      "footprint": [
+        0.68,
+        0.68
+      ],
+      "size": [
+        0.6811699569225311,
+        1.0015260784421116,
+        0.6173666715621948
+      ],
+      "bytes": 126312,
+      "triangles": 4724,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "tomate_3_lod.glb",
+        "bytes": 57416,
+        "triangles": 1695,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "trigo_0",
+      "label": "Trigo dorado · etapa 1",
+      "category": "cultivos",
+      "path": "trigo_0.glb",
+      "footprint": [
+        0.44,
+        0.44
+      ],
+      "size": [
+        0.1364065706729889,
+        0.11199064343236387,
+        0.0352737782523036
+      ],
+      "bytes": 11028,
+      "triangles": 330,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "trigo_0_lod.glb",
+        "bytes": 7076,
+        "triangles": 164,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "trigo_1",
+      "label": "Trigo dorado · etapa 2",
+      "category": "cultivos",
+      "path": "trigo_1.glb",
+      "footprint": [
+        0.44,
+        0.44
+      ],
+      "size": [
+        0.24807291477918625,
+        0.26176114106783643,
+        0.15676745772361755
+      ],
+      "bytes": 22480,
+      "triangles": 780,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "trigo_1_lod.glb",
+        "bytes": 11848,
+        "triangles": 300,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "trigo_2",
+      "label": "Trigo dorado · etapa 3",
+      "category": "cultivos",
+      "path": "trigo_2.glb",
+      "footprint": [
+        0.44,
+        0.44
+      ],
+      "size": [
+        0.3836960047483444,
+        0.5787567674124148,
+        0.2046159878373146
+      ],
+      "bytes": 116072,
+      "triangles": 4340,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "trigo_2_lod.glb",
+        "bytes": 61996,
+        "triangles": 2254,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "trigo_3",
+      "label": "Trigo dorado · etapa 4",
+      "category": "cultivos",
+      "path": "trigo_3.glb",
+      "footprint": [
+        0.44,
+        0.44
+      ],
+      "size": [
+        0.5032449960708618,
+        0.8086380783061031,
+        0.2388438954949379
+      ],
+      "bytes": 116064,
+      "triangles": 4340,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "trigo_3_lod.glb",
+        "bytes": 53028,
+        "triangles": 1882,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "calabaza_0",
+      "label": "Calabaza de otoño · etapa 1",
+      "category": "cultivos",
+      "path": "calabaza_0.glb",
+      "footprint": [
+        0.82,
+        0.82
+      ],
+      "size": [
+        0.1515628695487976,
+        0.13171878980938345,
+        0.03741809260100126
+      ],
+      "bytes": 11032,
+      "triangles": 330,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "calabaza_0_lod.glb",
+        "bytes": 7008,
+        "triangles": 164,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "calabaza_1",
+      "label": "Calabaza de otoño · etapa 2",
+      "category": "cultivos",
+      "path": "calabaza_1.glb",
+      "footprint": [
+        0.82,
+        0.82
+      ],
+      "size": [
+        0.4755139499902725,
+        0.16012110840529203,
+        0.49154625833034515
+      ],
+      "bytes": 30984,
+      "triangles": 1116,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "calabaza_1_lod.glb",
+        "bytes": 13672,
+        "triangles": 398,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "calabaza_2",
+      "label": "Calabaza de otoño · etapa 3",
+      "category": "cultivos",
+      "path": "calabaza_2.glb",
+      "footprint": [
+        0.82,
+        0.82
+      ],
+      "size": [
+        0.644083172082901,
+        0.2460133032873273,
+        0.6659659147262573
+      ],
+      "bytes": 55048,
+      "triangles": 2026,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "calabaza_2_lod.glb",
+        "bytes": 23508,
+        "triangles": 729,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "calabaza_3",
+      "label": "Calabaza de otoño · etapa 4",
+      "category": "cultivos",
+      "path": "calabaza_3.glb",
+      "footprint": [
+        0.82,
+        0.82
+      ],
+      "size": [
+        0.7666789889335632,
+        0.3925334741361439,
+        0.7928165197372437
+      ],
+      "bytes": 67648,
+      "triangles": 2518,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "calabaza_3_lod.glb",
+        "bytes": 28204,
+        "triangles": 906,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "fresa_0",
+      "label": "Fresal con flores · etapa 1",
+      "category": "cultivos",
+      "path": "fresa_0.glb",
+      "footprint": [
+        0.64,
+        0.64
+      ],
+      "size": [
+        0.12125028669834137,
+        0.10581644892226905,
+        0.033229093067348
+      ],
+      "bytes": 11020,
+      "triangles": 330,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "fresa_0_lod.glb",
+        "bytes": 6952,
+        "triangles": 162,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "fresa_1",
+      "label": "Fresal con flores · etapa 2",
+      "category": "cultivos",
+      "path": "fresa_1.glb",
+      "footprint": [
+        0.64,
+        0.64
+      ],
+      "size": [
+        0.4678877294063568,
+        0.20180489867925644,
+        0.4565503001213074
+      ],
+      "bytes": 32696,
+      "triangles": 1170,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "fresa_1_lod.glb",
+        "bytes": 15648,
+        "triangles": 418,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "fresa_2",
+      "label": "Fresal con flores · etapa 3",
+      "category": "cultivos",
+      "path": "fresa_2.glb",
+      "footprint": [
+        0.64,
+        0.64
+      ],
+      "size": [
+        0.4678877294063568,
+        0.255124531686306,
+        0.4791959375143051
+      ],
+      "bytes": 80616,
+      "triangles": 3036,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "fresa_2_lod.glb",
+        "bytes": 34452,
+        "triangles": 1092,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "fresa_3",
+      "label": "Fresal con flores · etapa 4",
+      "category": "cultivos",
+      "path": "fresa_3.glb",
+      "footprint": [
+        0.64,
+        0.64
+      ],
+      "size": [
+        0.5272302627563477,
+        0.2830485925078392,
+        0.501644104719162
+      ],
+      "bytes": 186668,
+      "triangles": 7050,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "fresa_3_lod.glb",
+        "bytes": 82916,
+        "triangles": 2538,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "maiz_0",
+      "label": "Maíz con mazorca · etapa 1",
+      "category": "cultivos",
+      "path": "maiz_0.glb",
+      "footprint": [
+        0.76,
+        0.76
+      ],
+      "size": [
+        0.18187543749809265,
+        0.14873259532032534,
+        0.04155579302459955
+      ],
+      "bytes": 11016,
+      "triangles": 330,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "maiz_0_lod.glb",
+        "bytes": 6836,
+        "triangles": 156,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "maiz_1",
+      "label": "Maíz con mazorca · etapa 2",
+      "category": "cultivos",
+      "path": "maiz_1.glb",
+      "footprint": [
+        0.76,
+        0.76
+      ],
+      "size": [
+        0.18315819650888443,
+        0.38292396016186103,
+        0.19989818334579468
+      ],
+      "bytes": 31348,
+      "triangles": 1152,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "maiz_1_lod.glb",
+        "bytes": 19008,
+        "triangles": 618,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "maiz_2",
+      "label": "Maíz con mazorca · etapa 3",
+      "category": "cultivos",
+      "path": "maiz_2.glb",
+      "footprint": [
+        0.76,
+        0.76
+      ],
+      "size": [
+        0.44127216935157776,
+        0.8213577262940817,
+        0.4296633303165436
+      ],
+      "bytes": 57124,
+      "triangles": 2132,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "maiz_2_lod.glb",
+        "bytes": 23492,
+        "triangles": 730,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "maiz_3",
+      "label": "Maíz con mazorca · etapa 4",
+      "category": "cultivos",
+      "path": "maiz_3.glb",
+      "footprint": [
+        0.76,
+        0.76
+      ],
+      "size": [
+        0.6571740210056305,
+        1.3917242430907208,
+        0.6387852430343628
+      ],
+      "bytes": 135960,
+      "triangles": 5188,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "maiz_3_lod.glb",
+        "bytes": 54932,
+        "triangles": 1853,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "manzano",
+      "label": "Manzano rubí",
+      "category": "naturaleza",
+      "path": "manzano.glb",
+      "footprint": [
+        1.95,
+        1.85
+      ],
+      "size": [
+        1.7577946186065674,
+        2.3467620312049986,
+        1.5809955596923828
+      ],
+      "bytes": 259400,
+      "triangles": 9460,
+      "drawCalls": 2,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "manzano_lod.glb",
+        "bytes": 108084,
+        "triangles": 3402,
+        "drawCalls": 2
+      }
+    },
+    {
+      "id": "duraznero",
+      "label": "Duraznero de verano",
+      "category": "naturaleza",
+      "path": "duraznero.glb",
+      "footprint": [
+        1.8524999999999998,
+        1.7575
+      ],
+      "size": [
+        1.669904887676239,
+        2.2294239296447484,
+        1.5019457817077635
+      ],
+      "bytes": 251996,
+      "triangles": 9172,
+      "drawCalls": 2,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "duraznero_lod.glb",
+        "bytes": 102112,
+        "triangles": 3268,
+        "drawCalls": 2
+      }
+    },
+    {
+      "id": "limonero",
+      "label": "Limonero soleado",
+      "category": "naturaleza",
+      "path": "limonero.glb",
+      "footprint": [
+        1.755,
+        1.665
+      ],
+      "size": [
+        1.5820151567459106,
+        2.112085828084499,
+        1.4228960037231446
+      ],
+      "bytes": 290208,
+      "triangles": 10660,
+      "drawCalls": 2,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "limonero_lod.glb",
+        "bytes": 125068,
+        "triangles": 3828,
+        "drawCalls": 2
+      }
+    },
+    {
+      "id": "pino",
+      "label": "Pino de ramas suaves",
+      "category": "naturaleza",
+      "path": "pino.glb",
+      "footprint": [
+        1.6,
+        1.6
+      ],
+      "size": [
+        1.5551999807357788,
+        2.3657678408175706,
+        1.4790830612182617
+      ],
+      "bytes": 73584,
+      "triangles": 2524,
+      "drawCalls": 2,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "pino_lod.glb",
+        "bytes": 41404,
+        "triangles": 1199,
+        "drawCalls": 2
+      }
+    },
+    {
+      "id": "roble",
+      "label": "Roble del sendero",
+      "category": "naturaleza",
+      "path": "roble.glb",
+      "footprint": [
+        2.45,
+        2.35
+      ],
+      "size": [
+        2.1313440799713135,
+        2.3581051259115338,
+        2.154678702354431
+      ],
+      "bytes": 183600,
+      "triangles": 6796,
+      "drawCalls": 2,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "roble_lod.glb",
+        "bytes": 88892,
+        "triangles": 2854,
+        "drawCalls": 2
+      }
+    },
+    {
+      "id": "arbusto_flores",
+      "label": "Arbusto de flores silvestres",
+      "category": "naturaleza",
+      "path": "arbusto_flores.glb",
+      "footprint": [
+        1,
+        0.9
+      ],
+      "size": [
+        0.9549902677536011,
+        0.5639819491188973,
+        0.7909240424633026
+      ],
+      "bytes": 163492,
+      "triangles": 6092,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "arbusto_flores_lod.glb",
+        "bytes": 68080,
+        "triangles": 2192,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "parcela_seca",
+      "label": "Tierra de huerta",
+      "category": "parcelas",
+      "path": "parcela_seca.glb",
+      "footprint": [
+        1.4,
+        1.4
+      ],
+      "size": [
+        1.4054899215698242,
+        0.16937394440174103,
+        1.4037002921104431
+      ],
+      "bytes": 68896,
+      "triangles": 1552,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "parcela_seca_lod.glb",
+        "bytes": 51512,
+        "triangles": 826,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "parcela_regada",
+      "label": "Tierra recién regada",
+      "category": "parcelas",
+      "path": "parcela_regada.glb",
+      "footprint": [
+        1.4,
+        1.4
+      ],
+      "size": [
+        1.4054899215698242,
+        0.16937394440174103,
+        1.4037002921104431
+      ],
+      "bytes": 74272,
+      "triangles": 1768,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "parcela_regada_lod.glb",
+        "bytes": 51732,
+        "triangles": 832,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "roca",
+      "label": "Roca con musgo",
+      "category": "naturaleza",
+      "path": "roca.glb",
+      "footprint": [
+        0.95,
+        0.78
+      ],
+      "size": [
+        0.8783564269542694,
+        0.45326065778732305,
+        0.6657999753952026
+      ],
+      "bytes": 43692,
+      "triangles": 1200,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "roca_lod.glb",
+        "bytes": 22180,
+        "triangles": 431,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "tronco",
+      "label": "Tronco con anillos y musgo",
+      "category": "naturaleza",
+      "path": "tronco.glb",
+      "footprint": [
+        0.56,
+        1.08
+      ],
+      "size": [
+        0.4826997220516205,
+        0.4849209487438202,
+        0.9869999885559082
+      ],
+      "bytes": 78980,
+      "triangles": 2872,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "tronco_lod.glb",
+        "bytes": 32028,
+        "triangles": 934,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "flores_pradera",
+      "label": "Flores de la pradera",
+      "category": "naturaleza",
+      "path": "flores_pradera.glb",
+      "footprint": [
+        0.54,
+        0.5
+      ],
+      "size": [
+        0.5175608098506927,
+        0.45793375722132623,
+        0.45208075642585754
+      ],
+      "bytes": 106224,
+      "triangles": 4064,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "flores_pradera_lod.glb",
+        "bytes": 42856,
+        "triangles": 1486,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "nenufar",
+      "label": "Nenúfar en flor",
+      "category": "naturaleza",
+      "path": "nenufar.glb",
+      "footprint": [
+        0.85,
+        0.65
+      ],
+      "size": [
+        0.7351977527141571,
+        0.16148087289184332,
+        0.5354654490947723
+      ],
+      "bytes": 92164,
+      "triangles": 2476,
+      "drawCalls": 1,
+      "animations": [
+        "viento"
+      ],
+      "lod": {
+        "path": "nenufar_lod.glb",
+        "bytes": 55856,
+        "triangles": 966,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "fruta_manzana",
+      "label": "Manzana rubí cosechada",
+      "category": "cosecha",
+      "path": "fruta_manzana.glb",
+      "footprint": [
+        0.33,
+        0.33
+      ],
+      "size": [
+        0.3100000023841858,
+        0.3102271258831024,
+        0.3100000023841858
+      ],
+      "bytes": 25980,
+      "triangles": 920,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "fruta_manzana_lod.glb",
+        "bytes": 12340,
+        "triangles": 374,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "fruta_fresa",
+      "label": "Fresa con semillas",
+      "category": "cosecha",
+      "path": "fruta_fresa.glb",
+      "footprint": [
+        0.29,
+        0.29
+      ],
+      "size": [
+        0.26475679874420166,
+        0.2800843417644501,
+        0.24764196574687958
+      ],
+      "bytes": 64196,
+      "triangles": 2392,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "fruta_fresa_lod.glb",
+        "bytes": 28004,
+        "triangles": 861,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "fruta_limon",
+      "label": "Limón de piel rugosa",
+      "category": "cosecha",
+      "path": "fruta_limon.glb",
+      "footprint": [
+        0.27,
+        0.27
+      ],
+      "size": [
+        0.21400000154972076,
+        0.3757014572620392,
+        0.2156079187989235
+      ],
+      "bytes": 26452,
+      "triangles": 942,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "fruta_limon_lod.glb",
+        "bytes": 13136,
+        "triangles": 387,
+        "drawCalls": 1
+      }
+    },
+    {
+      "id": "fruta_durazno",
+      "label": "Durazno aterciopelado",
+      "category": "cosecha",
+      "path": "fruta_durazno.glb",
+      "footprint": [
+        0.34,
+        0.34
+      ],
+      "size": [
+        0.2979208678007126,
+        0.3072972893714905,
+        0.31200000643730164
+      ],
+      "bytes": 19348,
+      "triangles": 664,
+      "drawCalls": 1,
+      "animations": [],
+      "lod": {
+        "path": "fruta_durazno_lod.glb",
+        "bytes": 12316,
+        "triangles": 388,
+        "drawCalls": 1
+      }
+    }
+  ],
+  "totalBytes": 17212748
+}

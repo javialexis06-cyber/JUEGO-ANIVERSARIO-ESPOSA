@@ -1,5 +1,7 @@
 # CLAUDE.md · Nuestro Hogar (juego de aniversario)
 
+> **Frente de granja compartido (10 de octubre de 2026):** Javier pidió integrar la granja y subir cada avance. Su motor, sistemas, historia y misiones continúan en el frente de granja; Claude se encarga de sus gráficos, personajes y presentación visual. Antes de tocarla, leer [`docs/en-obra/granja-coordinacion.md`](docs/en-obra/granja-coordinacion.md). Fuente única: `juego/web/src/granja-v3/`; no crear otro motor ni borrar progreso.
+
 Lee este archivo antes de tocar nada. Lo demás se consulta solo cuando se va a tocar esa parte: el índice está en
 [`docs/README.md`](docs/README.md) y la cola de trabajo en [`docs/pedidos.md`](docs/pedidos.md).
 

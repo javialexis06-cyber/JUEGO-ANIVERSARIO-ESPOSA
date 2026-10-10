@@ -9,6 +9,7 @@ import '@fontsource/nunito/latin-700.css';
 import '@fontsource/nunito/latin-800.css';
 import '../estilos.css';
 import './casa.css';
+import './regreso_granja';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import * as THREE from 'three';
@@ -1368,6 +1369,7 @@ const JUEGOS = {
   puertas: { punto: 'cien', url: './puertas.html', nombre: 'Cien Puertas' },
   mesa: { punto: 'mesa', url: './mesa.html', nombre: 'los juegos de mesa' },
   sangre: { punto: 'arcade', url: './sangre.html', nombre: 'Sangre y Ceniza' },
+  granja: { punto: 'arcade', url: './granja-v3.html', nombre: 'Nuestra granjita' },
 } as const;
 let yendoAJugar = false;
 
@@ -2126,6 +2128,7 @@ function botonesCuarto(): Boton[] {
         { id: 'jugar-puertas', texto: 'Cien Puertas', icono: ico('puerta') },
         { id: 'jugar-mesa', texto: 'Juegos de mesa', icono: '<img src="./modelos/iconos/mesa_juegos.svg" alt="">' },
         { id: 'jugar-sangre', texto: 'Sangre y Ceniza', icono: '<span class="ico ico-emoji">⚔️</span>' },
+        { id: 'jugar-granja', texto: 'Nuestra granjita', icono: '<span class="ico ico-emoji">🌱</span>' },
         { id: 'tienda-retrete', texto: 'Tienda del retrete', icono: '<img src="./modelos/iconos/cohete_rollito.webp" alt="">' },
       );
       break;
@@ -2286,6 +2289,8 @@ async function alAccion(id: string) {
       return jugar('mesa');
     case 'jugar-sangre':
       return jugar('sangre');
+    case 'jugar-granja':
+      return jugar('granja');
     case 'retrete':
       // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse,
       // ver quién ha volado más lejos y abrir la tienda del retrete

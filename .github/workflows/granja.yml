@@ -1,0 +1,23 @@
+name: Motor de la granja
+on:
+  push:
+    paths: ['juego/web/src/granja-v3/**', 'juego/web/src/granja-v2/biblioteca.ts', 'juego/web/scripts/granja-v3/**', 'juego/web/package*.json', '.github/workflows/granja.yml']
+  pull_request:
+    paths: ['juego/web/src/granja-v3/**', 'juego/web/src/granja-v2/biblioteca.ts', 'juego/web/scripts/granja-v3/**', 'juego/web/package*.json', '.github/workflows/granja.yml']
+permissions:
+  contents: read
+jobs:
+  motor:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: juego/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: juego/web/package-lock.json
+      - run: npm ci
+      - run: npm run probar:granja

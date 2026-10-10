@@ -1,0 +1,100 @@
+{
+  "version": 2,
+  "collection": "miticos-v3",
+  "units": "meters",
+  "upAxis": "Y",
+  "frontAxis": "+Z",
+  "assets": [
+    {
+      "id": "unicornio",
+      "label": "Unicornio · crin de amanecer",
+      "category": "animales",
+      "path": "unicornio.glb",
+      "footprint": [
+        0.95,
+        2.25
+      ],
+      "size": [
+        0.6899999976158142,
+        2.229999985694885,
+        2.140676935911179
+      ],
+      "bytes": 374996,
+      "triangles": 14182,
+      "drawCalls": 13,
+      "animations": [
+        "reposo",
+        "caminar",
+        "comer",
+        "acariciar"
+      ],
+      "lod": {
+        "path": "unicornio_lod.glb",
+        "bytes": 207456,
+        "triangles": 7202,
+        "drawCalls": 13
+      }
+    },
+    {
+      "id": "dragon",
+      "label": "Dragón · guardián de jade",
+      "category": "animales",
+      "path": "dragon.glb",
+      "footprint": [
+        2.7,
+        2.72
+      ],
+      "size": [
+        2.5752580308914186,
+        1.7099999868869782,
+        2.407334134578705
+      ],
+      "bytes": 381888,
+      "triangles": 14628,
+      "drawCalls": 15,
+      "animations": [
+        "reposo",
+        "caminar",
+        "comer",
+        "acariciar"
+      ],
+      "lod": {
+        "path": "dragon_lod.glb",
+        "bytes": 208788,
+        "triangles": 7416,
+        "drawCalls": 15
+      }
+    },
+    {
+      "id": "grifo",
+      "label": "Grifo · alas de trigo",
+      "category": "animales",
+      "path": "grifo.glb",
+      "footprint": [
+        2.7,
+        2.15
+      ],
+      "size": [
+        2.3048086965545838,
+        1.7692974317073822,
+        2.032700525522232
+      ],
+      "bytes": 383012,
+      "triangles": 14576,
+      "drawCalls": 15,
+      "animations": [
+        "reposo",
+        "caminar",
+        "comer",
+        "acariciar"
+      ],
+      "lod": {
+        "path": "grifo_lod.glb",
+        "bytes": 230256,
+        "triangles": 8254,
+        "drawCalls": 15
+      }
+    }
+  ],
+  "totalBytes": 1786396
+}

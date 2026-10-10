@@ -152,6 +152,7 @@ export default defineConfig(({ mode, command }) => {
             // La casa (index.html, el juego principal), los minijuegos con página propia y los que se abren sin la casa
             // desde la sala de juegos de amigos (retrete.html, cocina.html)
             casa: resolve(raiz, 'index.html'), super: resolve(raiz, 'super.html'), puertas: resolve(raiz, 'puertas.html'), mesa: resolve(raiz, 'mesa.html'),
+            granjaV3: resolve(raiz, 'granja-v3.html'),
             amigos: resolve(raiz, 'amigos.html'), sangre: resolve(raiz, 'sangre.html'), retrete: resolve(raiz, 'retrete.html'), cocina: resolve(raiz, 'cocina.html'),
           },
       },
