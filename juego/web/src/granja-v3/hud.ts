@@ -47,6 +47,18 @@ export function renderAjustes(personaje: string, calidad: string): string {
   </div>`;
 }
 
+const CLAVE_CALIDAD = 'granja-hud-calidad';
+/** Antes de cargar los modelos (así no se cargan dos veces): con detalle en celulares potentes o si la persona lo
+ * escogió en Ajustes. */
+export function calidadInicial(vista: VistaGranja) {
+  let elegida = '';
+  try { elegida = localStorage.getItem(CLAVE_CALIDAD) ?? ''; } catch { /* nada */ }
+  const nav = navigator as Navigator & { deviceMemory?: number };
+  const potente = (nav.deviceMemory ?? 4) >= 6 || (navigator.hardwareConcurrency ?? 4) >= 8;
+  if ((elegida === 'alta' || (!elegida && potente)) && vista.calidad !== 'alta') vista.cambiarCalidad();
+  $('quality').textContent = vista.calidad === 'alta' ? 'Detalle' : 'Ligero';
+}
+
 export function iniciarHud(h: Hud) {
   const { motor, vista } = h;
   let buscado = '';
@@ -351,6 +363,26 @@ export function iniciarHud(h: Hud) {
   palanca.addEventListener('pointerup', soltar);
   palanca.addEventListener('pointercancel', soltar);
   palanca.addEventListener('lostpointercapture', soltar);
+
+  // ── Calidad automática: con detalle en celulares potentes, y baja sola si el juego va lento ─────
+  let elegida = '';
+  try { elegida = localStorage.getItem(CLAVE_CALIDAD) ?? ''; } catch { /* nada */ }
+  // Si la persona la cambia en Ajustes, se respeta su elección
+  document.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('[data-ajuste="calidad"]')) setTimeout(() => { try { localStorage.setItem(CLAVE_CALIDAD, vista.calidad); } catch { /* nada */ } }, 0);
+  }, true);
+  let cuadros = 0, desde = performance.now(), lentos = 0;
+  const medir = (t: number) => {
+    requestAnimationFrame(medir);
+    if (document.hidden) { desde = t; cuadros = 0; return; }
+    cuadros++;
+    if (t - desde < 4000) return;
+    const fps = (cuadros * 1000) / (t - desde);
+    cuadros = 0; desde = t;
+    lentos = fps < 22 && !h.panelAbierto() ? lentos + 1 : 0;
+    if (lentos >= 2 && vista.calidad === 'alta' && !elegida) { $('quality').click(); lentos = 0; }
+  };
+  requestAnimationFrame(medir);
 
   // ── Bucle (barato: 5 veces por segundo, nada cuando la app duerme) ──
   const tic = () => {

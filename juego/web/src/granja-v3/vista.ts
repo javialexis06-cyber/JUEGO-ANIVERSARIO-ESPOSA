@@ -37,7 +37,7 @@ import { huellaProduccion } from './produccion';
 import { dentroDeZona } from './caminos-mundo';
 import { aguaEn, huecoEn } from './paisaje';
 import { AmbienteClima } from './clima-render';
-import { paisajeGranja, señalesSalidas, huecoArbolGrande } from './paisaje-render';
+import { paisajeGranja, señalesSalidas, huecoArbolGrande, mallaAgua } from './paisaje-render';
 type EstadoVista = EstadoGranja & {aventura:EstadoAventura;posicionAventura:PuntoAventura|null};
 
 export const DESTINOS:Record<Zona,{x:number;z:number;nombre:string;sub:string}>={granja:{x:0,z:0,nombre:'Nuestra granjita',sub:'Un hogar que crece contigo'},pueblo:{x:79,z:0,nombre:'Pueblo del Sol',sub:'Mercado, vecinos y nuevos comienzos'},bosque:{x:-78,z:0,nombre:'Bosque de los Susurros',sub:'Madera, semillas y un río tranquilo'},lago:{x:24,z:90,nombre:'Lago de los Lirios',sub:'Cada estación trae otras especies'},mina:{x:0,z:0,nombre:'Mina de Cristal',sub:'Minerales y criaturas bajo la montaña'},bosque_ancestral:{x:-78,z:76,nombre:'Bosque ancestral',sub:'Maderas antiguas y guardianes del valle'}};
@@ -50,10 +50,10 @@ export function medidas(e:Edificio){const a=articulo(e);return e.giro%2?{w:a.fon
 /** Qué modelo lleva cada recurso del suelo. La variante sale del id (siempre la misma para el mismo recurso): en la
  * granja, parte de los árboles son tocones, la maleza es pasto alto, diente de león o matorral y las rocas van de
  * piedritas a peñascos; en la mina, las rocas muestran la veta del mineral que dan. */
-function modeloEscombro(o:{id:string;tipo:string;gigante?:boolean;sectorId:number;zona?:string;nivelMina?:number}):{id:string;escala:number;rotation:number}{
+function modeloEscombro(o:{id:string;tipo:string;gigante?:boolean;sectorId:number;zona?:string;nivelMina?:number}):{id:string;escala:number;rotation:number;clip?:string}{
  let h=2166136261;for(let i=0;i<o.id.length;i++)h=Math.imul(h^o.id.charCodeAt(i),16777619);h>>>=0;const v=h%100,rotation=(h>>>8)%628/100;
  if(o.zona==='mina'){const n=o.nivelMina||1;return {id:n>=3?'mena_cristal':n===2?'mena_hierro':'mena_cobre',escala:1.3,rotation};}
- if(o.tipo==='arbol'){if(o.gigante)return {id:'roble',escala:2.1,rotation:0};if((o.zona??'granja')==='granja'&&v<45)return {id:v<15?'tocon_grande':'tocon',escala:1.3,rotation};return {id:o.sectorId%3?'roble':'manzano',escala:1.05,rotation};}
+ if(o.tipo==='arbol'){if(o.gigante)return {id:'roble',escala:2.1,rotation:0,clip:'viento'};if((o.zona??'granja')==='granja'&&v<45)return {id:v<15?'tocon_grande':'tocon',escala:1.3,rotation};return {id:o.sectorId%3?'roble':'manzano',escala:1.05,rotation,clip:'viento'};}
  if(o.tipo==='roca')return {id:v<35?'piedra_chica':v<80?'piedra':'piedra_grande',escala:v<35?1.6:1.35,rotation};
  return {id:v<50?'maleza_hierba':v<75?'maleza_flores':'maleza_matorral',escala:1.5,rotation};
 }
@@ -63,14 +63,14 @@ export class VistaGranja{
  private huerto=new THREE.Group();
  private animacionesEnvio=new Map<string,number>();
  animarEnvio(id:string){this.animacionesEnvio.set(id,0);}
- private clima=new AmbienteClima();private ambiente=new THREE.HemisphereLight('#fff8e5','#728c57',2.1);
+ private clima=new AmbienteClima();private ambiente=new THREE.HemisphereLight('#fff8e5','#728c57',1.55);
  private expedicion=new EscenaAventura();private claveAventura='';private revisionAventura=-1;private regresoAventura?:{x:number;z:number;targetX:number;targetZ:number;zoom:number};
  onAldeano:(id:string)=>void=()=>{};
  onObjetivoGanado:(objetivo:ObjetivoGanado,interactuar?:boolean)=>void=()=>{};
  onObjetivoAventura:(objetivo:ObjetivoAventura,interactuar?:boolean)=>void=()=>{};
  readonly efectos=new EfectosGranja();private pueblo?:THREE.Group;private seguimiento=false;private regresoTienda={x:79,z:3};
  readonly escena=new THREE.Scene();readonly avatar=new AvatarGranja();readonly renderer:THREE.WebGLRenderer;readonly camera=new THREE.OrthographicCamera(-15,15,11,-11,.1,280);readonly controles:OrbitControls;
- seleccion=new THREE.Group();private world=new THREE.Group();private detalle=new THREE.Group();private entorno=new THREE.Group();private modelos=new Map<string,Instancia>();private pendientes=new Map<string,Promise<void>>();private pedidos=new Set<string>();private suelos=new Suelos();private biblioteca!:BibliotecaV2;private miticos!:BibliotecaV2;private sun=new THREE.DirectionalLight('#fff0d7',3);private env:THREE.WebGLRenderTarget;private estado?:EstadoVista;private revision=-1;private stream='';private vistaActual='';private ejemplar?:Instancia;private catalogando=false;private generacion=0;private tiempo=0;private texturas:THREE.Texture[]=[];
+ seleccion=new THREE.Group();private world=new THREE.Group();private detalle=new THREE.Group();private entorno=new THREE.Group();private modelos=new Map<string,Instancia>();private pendientes=new Map<string,Promise<void>>();private pedidos=new Set<string>();private suelos=new Suelos();private biblioteca!:BibliotecaV2;private miticos!:BibliotecaV2;private sun=new THREE.DirectionalLight('#fff0d7',3.5);private env:THREE.WebGLRenderTarget;private estado?:EstadoVista;private revision=-1;private stream='';private vistaActual='';private ejemplar?:Instancia;private catalogando=false;private generacion=0;private tiempo=0;private texturas:THREE.Texture[]=[];
  calidad:'ligera'|'alta'='ligera';rejilla=false;private grid=new THREE.GridHelper(100,100,'#fcf0b4','#f0ead1');onCelda:(x:number,z:number,interactuar?:boolean)=>void=()=>{};onApuntar:(x:number,z:number)=>void=()=>{};onMantener:(v:boolean)=>void=()=>{};onMovimiento:()=>void=()=>{};
  constructor(readonly canvas:HTMLCanvasElement){
   this.renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});this.renderer.outputColorSpace=THREE.SRGBColorSpace;this.renderer.toneMapping=THREE.AgXToneMapping;this.renderer.toneMappingExposure=1.1;this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -149,7 +149,7 @@ export class VistaGranja{
   this.entorno.add(this.suelos.terreno());if(e.zona==='pueblo'){this.pueblo=crearPueblo();this.entorno.add(this.pueblo);}
   // Background clumps and hills remain cheap instanced geometry; detailed props stream nearby.
   const geometry=new THREE.IcosahedronGeometry(1,1),hill=new THREE.InstancedMesh(geometry,material('#849765'),30),dummy=new THREE.Object3D();for(let i=0;i<30;i++){const a=i/30*Math.PI*2;dummy.position.set(Math.cos(a)*128,-3,Math.sin(a)*120);dummy.scale.set(12+ruido(i)*13,8+ruido(i,6)*8,13);dummy.updateMatrix();hill.setMatrixAt(i,dummy.matrix);}this.entorno.add(hill);
-  const water=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.06,72),new THREE.MeshStandardMaterial({color:'#73b6ad',roughness:.22,metalness:.05}));water.scale.set(13,1,10);water.position.set(28,.015,89);this.entorno.add(water);this.entorno.add(this.suelos.pasto(-100,-24,36,48,1700));this.entorno.add(this.suelos.pasto(-102,52,45,46,1500));
+  const water=mallaAgua(13,10,'#25708a','#68b6b2');water.scale.set(13,1,10);water.position.set(28,.015,89);this.entorno.add(water);this.entorno.add(this.suelos.pasto(-100,-24,36,48,1700));this.entorno.add(this.suelos.pasto(-102,52,45,46,1500));
   // Public trails live outside the editable farm. Player paths use inventory cells.
   for(const [x,z,w,d]of [[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]])caja(this.entorno,[w,.055,d],[x,-.002,z],'#b9a47b');
 

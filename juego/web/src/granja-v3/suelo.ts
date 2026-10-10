@@ -8,7 +8,7 @@ export function liberar(root:THREE.Object3D){const geo=new Set<THREE.BufferGeome
 /** Batch owned, untextured helper meshes inside a static group. Never use on GLB instances or animated pivots. */
 export function compactar(root:THREE.Group){
  const batches=new Map<string,THREE.Mesh[]>();root.updateMatrixWorld(true);const inverse=root.matrixWorld.clone().invert();
- root.traverse(o=>{if(!(o instanceof THREE.Mesh)||(o as THREE.InstancedMesh).isInstancedMesh||Array.isArray(o.material))return;const m=o.material;if(!(m instanceof THREE.MeshStandardMaterial)||m.map||m.vertexColors||m.transparent)return;const key=[m.color.getHex(),m.roughness,m.metalness,m.emissive.getHex(),m.emissiveIntensity,m.side,o.castShadow,o.receiveShadow].join(':');const list=batches.get(key)??[];list.push(o);batches.set(key,list);});
+ root.traverse(o=>{if(!(o instanceof THREE.Mesh)||(o as THREE.InstancedMesh).isInstancedMesh||Array.isArray(o.material)||o.userData.noCompactar)return;const m=o.material;if(!(m instanceof THREE.MeshStandardMaterial)||m.map||m.vertexColors||m.transparent)return;const key=[m.color.getHex(),m.roughness,m.metalness,m.emissive.getHex(),m.emissiveIntensity,m.side,o.castShadow,o.receiveShadow].join(':');const list=batches.get(key)??[];list.push(o);batches.set(key,list);});
  for(const meshes of batches.values()){
   if(meshes.length<2)continue;
   const parts=meshes.map(m=>{const transformed=m.geometry.clone().applyMatrix4(inverse.clone().multiply(m.matrixWorld));transformed.deleteAttribute('uv');if(!transformed.index)return transformed;const expanded=transformed.toNonIndexed();transformed.dispose();return expanded;});

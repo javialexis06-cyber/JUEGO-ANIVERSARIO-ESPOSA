@@ -3,11 +3,28 @@ import { caja, esfera, compactar } from './suelo';
 import type { PaisajeGranja } from './paisaje';
 import { SALIDAS } from './caminos-mundo';
 import type { Zona } from './catalogo';
+/** Agua viva: ondas que se mueven, centro más hondo, orilla clarita y destellos del sol. Sigue siendo un material
+ * estándar (le llegan la luz, la niebla y la noche); el tiempo lo pone la malla justo antes de dibujarse. */
+const tiempoAgua={value:0};
+export function materialAgua(hondo='#2c7a8c',claro='#6fbdb6'){
+ const m=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.5,metalness:0,envMapIntensity:.25});
+ m.onBeforeCompile=(sh)=>{
+  sh.uniforms.uTiempo=tiempoAgua;sh.uniforms.uHondo={value:new THREE.Color(hondo)};sh.uniforms.uClaro={value:new THREE.Color(claro)};
+  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vMundoAgua;varying vec2 vLocalAgua;').replace('#include <worldpos_vertex>','#include <worldpos_vertex>\nvMundoAgua=(modelMatrix*vec4(transformed,1.0)).xyz;vLocalAgua=position.xz;');
+  sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float uTiempo;uniform vec3 uHondo;uniform vec3 uClaro;varying vec3 vMundoAgua;varying vec2 vLocalAgua;\nfloat ondaAgua(vec2 p){return sin(p.x*2.1+uTiempo*1.3)*.5+sin(p.y*2.7-uTiempo*1.1)*.5+sin((p.x+p.y)*3.9+uTiempo*1.9)*.35+sin((p.x-p.y)*5.3-uTiempo*2.3)*.2;}')
+   .replace('#include <color_fragment>','#include <color_fragment>\n{float r=length(vLocalAgua);float o=ondaAgua(vMundoAgua.xz);vec3 c=mix(uClaro,uHondo,1.0-smoothstep(.25,.95,r));c+=o*.035;c=mix(c,vec3(.93,.98,.96),smoothstep(.86,.97,r)*(.55+.25*sin(uTiempo*1.6+atan(vLocalAgua.y,vLocalAgua.x)*7.0)));diffuseColor.rgb=c;}')
+   .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n{vec2 q=vMundoAgua.xz;float e=.15;float h=ondaAgua(q);vec3 n2=normalize(vec3(-(ondaAgua(q+vec2(e,0.))-h)*.35,1.,-(ondaAgua(q+vec2(0.,e))-h)*.35));normal=normalize((viewMatrix*vec4(n2,0.)).xyz);}')
+   .replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n{float d=ondaAgua(vMundoAgua.xz*1.7+3.0);totalEmissiveRadiance+=vec3(1.,.98,.9)*smoothstep(1.05,1.3,d)*.35;}');
+ };
+ m.customProgramCacheKey=()=>'agua-granja';return m;
+}
+/** Malla de agua (disco) que avanza su reloj al dibujarse. */
+export function mallaAgua(rx:number,rz:number,hondo?:string,claro?:string){const a=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.025,48,1),materialAgua(hondo,claro));a.scale.set(rx,1,rz);a.receiveShadow=true;a.userData.noCompactar=true;a.onBeforeRender=()=>{tiempoAgua.value=performance.now()/1000;};return a;}
 export function paisajeGranja(p:PaisajeGranja):THREE.Group{
  const g=new THREE.Group();
  for(const e of p.estanques){
   const borde=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.07,32),new THREE.MeshStandardMaterial({color:'#a8b793',roughness:1}));borde.scale.set(e.radioX+.26,1,e.radioZ+.26);borde.position.set(e.x,-.005,e.z);borde.receiveShadow=true;g.add(borde);
-  const agua=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.025,32),new THREE.MeshStandardMaterial({color:'#79b9b0',roughness:.24,metalness:.08}));agua.scale.set(e.radioX,1,e.radioZ);agua.position.set(e.x,.043,e.z);g.add(agua);
+  const agua=mallaAgua(e.radioX,e.radioZ);agua.position.set(e.x,.043,e.z);g.add(agua);
   for(let i=0;i<12;i++){const a=i*Math.PI/6,x=e.x+Math.cos(a)*(e.radioX+.12),z=e.z+Math.sin(a)*(e.radioZ+.10);if(i%3===0)esfera(g,[.22,.16,.18],[x,.11,z],'#a9ada0');else{const tallo=caja(g,[.025,.35,.025],[x,.17,z],'#819771');tallo.rotation.z=.13;esfera(g,[.04,.1,.04],[x,.38,z],'#a18e68');}}
   for(let i=0;i<3;i++){const nenufar=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.014,10),new THREE.MeshStandardMaterial({color:'#86a97d'}));nenufar.position.set(e.x+(i-1)*.4,.068,e.z+i*.13-.2);g.add(nenufar);if(i===1)esfera(g,[.07,.03,.07],[nenufar.position.x,.10,nenufar.position.z],'#e6bdc6');}
  }
