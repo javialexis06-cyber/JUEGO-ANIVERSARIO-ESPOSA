@@ -51,3 +51,21 @@ npm run build:amigos
 El runner ejecuta las suites de `scripts/granja-v3/probar-*.mjs` una por una y falla ante errores. Las pruebas visuales/de integración usan un contexto de navegador aislado, nunca una partida del jugador. Verificar casa → granja → casa → granja, controles, guardado y recursos desde el build. El workflow existente «APK Android» compila las versiones de pareja y amigos e instaladores al subir; confirmar sus resultados para el commit publicado.
 
 Plan de aceptación completo: [`../../juego/web/src/granja-v3/PLAN-MOTOR-COMPLETO.md`](../../juego/web/src/granja-v3/PLAN-MOTOR-COMPLETO.md). Documentación funcional resumida: [`../sistemas/granja.md`](../sistemas/granja.md).
+
+## Interfaz nueva (Claude, 10 de octubre de 2026)
+
+Javier pidió quitar las pestañas y textos de prueba y dejar una interfaz clara, con el estilo de los demás juegos.
+Contrato para el frente de motor:
+
+- `hud.ts` + `hud.css` son la cara del juego: reloj, monedas, energía y salud, minimapa con la zona real (lo que se
+  construye, cultivos, recursos, salidas y vecinos), mapa grande (tecla M o tocar el minimapa) con buscador de
+  vecinos, menú de pestañas y palanca táctil. Solo leen el estado; no cambian reglas.
+- Los paneles de siempre (`mostrarPanel`) se abren en una ventana grande con pestañas (`.menu-pestana[data-panel]`).
+  Para que un panel nuevo salga en el menú, agrega su pestaña en la plantilla de `main.ts`; los paneles que no son
+  pestaña (correo, conversación, envíos…) salen en la misma ventana, sin pestañas.
+- Los ids viejos siguen en el DOM dentro de `.hud-oculto` (`calendar`, `coins`, `character`, `quality`,
+  `place-name`, `health`, `energy`, `quest-mini`…), así `actualizarUI` no cambia. No muestres texto nuevo fijo en
+  pantalla: lo que el jugador necesita va en el panel que corresponde o en un aviso (`toast`).
+- `ControlesGranja.eje` es la palanca analógica (x derecha, y arriba de la pantalla).
+- Cambiar de casilla a mitad de un golpe ya no se pierde (`esperarLibre`), y tocar una casilla lejos hace caminar al
+  personaje hasta al lado antes de trabajar (`vista.acercarse`), como Stardew en el celular.
