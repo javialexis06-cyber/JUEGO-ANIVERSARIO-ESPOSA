@@ -103,6 +103,9 @@ export class Suelos{
    const r=(k:number)=>hash(k+id.length*3,vecinos.n?1:2);for(let k=0;k<(moss?3:0);k++){const sx=.22+r(k)*.12,sz=.2+r(k+9)*.1;const p=new THREE.Mesh(new THREE.CylinderGeometry(1,1.08,1,9,1),mat(moss?'adoquin_musgo':'adoquin',null,moss?'#8f9a74':'#aaa392',.85));p.scale.set(sx,.05,sz);p.position.set((r(k+3)-.5)*.6,.06,(r(k+5)-.5)*.6);p.rotation.y=r(k+7)*3;p.castShadow=p.receiveShadow=true;g.add(p);}
    const border=moss?'#6e8a55':'#8e9278';if(!vecinos.n)caja(g,[1,.06,.05],[0,.04,-.48],border);if(!vecinos.s)caja(g,[1,.06,.05],[0,.04,.48],border);if(!vecinos.e)caja(g,[.05,.06,1],[.48,.04,0],border);if(!vecinos.w)caja(g,[.05,.06,1],[-.48,.04,0],border);}
   return g;}
+ /** Sendero de tierra apisonada entre zonas (coordenadas de textura del mundo, sin costuras). */
+ sendero(x:number,z:number,w:number,d:number){let m=this.matsCamino.get('sendero');if(!m){m=new THREE.MeshStandardMaterial({map:this.tierra,color:'#e8d6b2',roughness:1});m.userData.compartido=true;this.matsCamino.set('sendero',m);}
+  const g=new THREE.PlaneGeometry(w,d);g.rotateX(-Math.PI/2);g.translate(x,.026,z);const p=g.attributes.position,uv=g.attributes.uv;for(let i=0;i<p.count;i++)uv.setXY(i,p.getX(i)/1.5,-p.getZ(i)/1.5);const s=new THREE.Mesh(g,m);s.receiveShadow=true;return s;}
  /** Matas de pasto con degradé y, de vez en cuando, florecitas blancas, amarillas, lilas y rosadas. */
  pasto(x:number,z:number,w:number,d:number,density=300,visible:(x:number,z:number)=>boolean=()=>true){const g=new THREE.Group(),dummy=new THREE.Object3D();
   const grass=new THREE.InstancedMesh(this.mata,this.matPasto,density);for(let i=0;i<density;i++){dummy.position.set(x+hash(i,x)*w,.0,z+hash(i,z+20)*d);dummy.rotation.y=hash(i,99)*Math.PI*2;dummy.scale.setScalar(visible(dummy.position.x,dummy.position.z)?(.7+hash(i,31)*.8):0);dummy.updateMatrix();grass.setMatrixAt(i,dummy.matrix);}

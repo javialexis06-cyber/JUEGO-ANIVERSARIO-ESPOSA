@@ -10,6 +10,8 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 
 import { EDIFICIOS_PUEBLO, NPCS_PUEBLO, CAMINOS_PUEBLO, alturaSueloPueblo, ARBOLES_PUEBLO, BANCOS_PUEBLO, PUENTES_PUEBLO, MOBILIARIO_SOLIDO, type ServicioPueblo, type EdificioPueblo } from './pueblo-datos';
 export * from './pueblo-datos';
+import { adornosPueblo, animarFuente } from './pueblo-adornos';
+import { mallaAgua } from './paisaje-render';
 const C={wood:'#79523c',woodLight:'#b98e62',beam:'#674a39',cream:'#f0dabc',stone:'#ada793',darkStone:'#827e72',green:'#78955d',leaf:'#91ae6d',leafLight:'#b4c87b',metal:'#536271',soil:'#9c7851',white:'#f8ead3',glass:'#9ebcc0'};
 const hash=(i:number,k=0)=>{const n=Math.sin(i*124.16+k*271.7)*15423.724;return n-Math.floor(n);};
 
@@ -165,13 +167,6 @@ function tree(a:Arcilla,x:number,z:number,h=3.5){
   for(let i=0;i<4;i++){const t=i*2.4;a.ball([.93,h*.31,.88],[x+Math.cos(t)*.58,h*.77+hash(i,x)*.27,z+Math.sin(t)*.55],i%2?C.leaf:C.leafLight);}
   a.ball([.7,.8,.7],[x,h*1.12,z],C.leaf);
 }
-function path(a:Arcilla,x:number,z:number,w:number,d:number,variant=0){
-  a.box([w+.2,.1,d+.2],[x+w/2,.018,z+d/2],'#93957c',.04);
-  const cols=Math.ceil(w/.95),rows=Math.ceil(d/.95),dx=w/cols,dz=d/rows;
-  for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){
-    const tint=['#c9c2a7','#d3cbb3','#c3bda5','#d0c5ab'][(row+col+variant)%4];a.box([dx-.037,.055,dz-.037],[x+(col+.5)*dx,.088,z+(row+.5)*dz],tint,.025);
-  }
-}
 function fence(a:Arcilla,x:number,z:number,x2:number,z2:number){
   const d=Math.hypot(x2-x,z2-z),n=Math.ceil(d/1.5),horizontal=Math.abs(x2-x)>Math.abs(z2-z);
   for(let i=0;i<=n;i++){const t=i/n;a.box([.18,1.15,.18],[x+(x2-x)*t,.58,z+(z2-z)*t],C.woodLight);a.ball([.14,.13,.14],[x+(x2-x)*t,1.17,z+(z2-z)*t],C.wood);}
@@ -219,11 +214,12 @@ interface AnimationPueblo { npcs:THREE.Group[]; humo:THREE.Group[]; rueda:THREE.
 export function crearPueblo():THREE.Group {
   const group=new THREE.Group();group.name='pueblo';const a=new Arcilla();
   // A offset plaza and bent approach distinguish the layout from a copied map.
-  for(const [x,z,w,d]of CAMINOS_PUEBLO)path(a,x,z,w,d);
+  // Calles empedradas, la plaza del sol y el agua de la fuente (texturas pintadas): pueblo-adornos.ts
+  if(typeof document!=='undefined')group.add(adornosPueblo(mallaAgua));
   // Irregular paving of the civic square, with visible raised perimeter.
   a.cyl(7.15,.16,[84,.05,2],C.stone,[0,0,0]);a.cyl(6.94,.12,[84,.12,2],'#d3c8aa');
-  for(let ring=0;ring<3;ring++)for(let i=0;i<24;i++){const t=i/24*Math.PI*2,r=3.2+ring*1.12;a.box([.86,.035,.72],[84+Math.sin(t)*r,.2,2+Math.cos(t)*r],i%3?'#d0c5aa':'#e0d5b9',.04,[0,t,0]);}
-  a.cyl(2.23,.32,[84,.29,2],C.stone);a.cyl(1.95,.24,[84,.5,2],C.cream);a.cyl(1.75,.1,[84,.59,2],'#729d9d');a.cyl(.47,.86,[84,1.04,2],C.stone);a.cyl(.98,.2,[84,1.5,2],C.cream);a.cyl(.27,.83,[84,1.88,2],C.stone);a.ball([.29,.31,.29],[84,2.4,2],'#c5b27e');
+  for(let ring=0;ring<3;ring++)for(let i=0;i<24;i++){const t=i/24*Math.PI*2,r=3.2+ring*1.12;a.box([.86,.035,.72],[84+Math.sin(t)*r,.2,2+Math.cos(t)*r],ring===1?(i%2?'#c98a57':'#d9a466'):(i%2?'#b9b09a':'#cfc5ab'),.04,[0,t,0]);}
+  a.cyl(2.23,.32,[84,.29,2],C.stone);a.cyl(1.95,.24,[84,.5,2],C.cream);a.cyl(.47,.86,[84,1.04,2],C.stone);a.cyl(.98,.2,[84,1.5,2],C.cream);a.cyl(.27,.83,[84,1.88,2],C.stone);a.ball([.29,.31,.29],[84,2.4,2],'#c5b27e');
   for(const v of VIVIENDAS_PUEBLO.filter(v=>!v.edificio)){building(a,group,{...v,servicio:({despertar:'clinica',calma:'archivo',ribera:'animales',senderos:'carpinteria',huerto:'clinica',escuela:'archivo',bosque:'carpinteria',tejidos:'posada',observatorio:'archivo',rosal:'clinica'} as Record<string,ServicioPueblo>)[v.tema],descripcion:'Vivienda de los habitantes del pueblo'});}
   for(const e of EDIFICIOS_PUEBLO)e.servicio.startsWith('altar')?shrine(a,group,e):building(a,group,e);
   // Animal-yard fence has a visible gate gap facing the plaza.
@@ -263,7 +259,7 @@ export function crearPueblo():THREE.Group {
 
 export function updatePueblo(group:THREE.Group,dt:number,time:number,jornada?:Jornada,resguardado=false){
   const a=group.userData.animacionPueblo as AnimationPueblo|undefined;if(!a)return;
-  a.rueda.rotation.x+=Math.min(dt,.1)*.25;
+  animarFuente(group,time);a.rueda.rotation.x+=Math.min(dt,.1)*.25;
   a.humo.forEach((g,i)=>{const phase=(time*.43+i*.83)%3.3;g.position.set(104.6+Math.sin(time*.3+i)*phase*.14,5.9+phase,2.31+phase*.17);g.scale.setScalar(.6+phase*.42);((g.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity=.25*(1-phase/3.3);});
   const pulse=.9+Math.sin(time*7)*.12;a.fuego.scale.set(.8,pulse*1.45,.75);a.agua.scale.setScalar(1+(time*.24)%1.35);
   a.npcs.forEach(g=>{
@@ -277,7 +273,7 @@ export function updatePueblo(group:THREE.Group,dt:number,time:number,jornada?:Jo
 export function liberarPueblo(group:THREE.Group){
   sacarPeluches?.(group);
   const geometries=new Set<THREE.BufferGeometry>(),materials=new Set<THREE.Material>(),textures=new Set<THREE.Texture>();
-  group.traverse(o=>{if(!(o instanceof THREE.Mesh))return;geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){materials.add(m);if(m instanceof THREE.MeshStandardMaterial&&m.map)textures.add(m.map);}});
+  group.traverse(o=>{if(!(o instanceof THREE.Mesh))return;geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){materials.add(m);if(m instanceof THREE.MeshStandardMaterial){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);}}});
   textures.forEach(t=>t.dispose());geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());group.removeFromParent();delete group.userData.animacionPueblo;
 }
 

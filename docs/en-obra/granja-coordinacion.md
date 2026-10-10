@@ -106,3 +106,15 @@ objetos, avísame (o corre el script) para fotografiarlos. Construcciones y máq
 y `animarVecino` (caminar/quieto); los que están dentro de una casa se animan solos. No se destruyen al soltar el
 pueblo (comparten modelos con los protagonistas: `sacarVecinos` y `liberar` los sacan antes). Un vecino nuevo en
 `NPCS_PUEBLO` sin diseño toma uno prestado: avísame para darle el suyo.
+
+### Pueblo del Sol: calles empedradas, plaza del sol y fuente viva (Claude)
+
+- `src/granja-v3/pueblo-adornos.ts` pinta en lienzo el empedrado de piedras de río (color + relieve, coordenadas del
+  mundo para que los cruces casen) y lo pone a la altura `.1155` que ya usa `alturaSueloPueblo`; bordillo de piedras
+  boleadas solo donde la calle toca el pasto. Los rectángulos de `CAMINOS_PUEBLO` con ancho o fondo negativo se
+  normalizan al dibujar (antes salían como franjas lisas).
+- La plaza lleva un piso propio con anillos en abanico, un sol de piedra rojiza y lajas de borde; la fuente usa
+  `mallaAgua` en sus dos tazas, cortinas de agua que caen y gotitas (`animarFuente` desde `updatePueblo`).
+- Prados del pueblo con matas y flores (`cespedPueblo` decide dónde). Los senderos entre zonas son tierra
+  apisonada con textura (`Suelos.sendero`) y el que cruzaba el pueblo ahora llega hasta la calle del sur.
+- No cambia ninguna regla ni dato del motor.

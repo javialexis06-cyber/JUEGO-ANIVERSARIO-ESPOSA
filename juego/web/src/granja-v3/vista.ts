@@ -29,6 +29,7 @@ import { crearBuzon } from './correo-render';
 import { dormitorioDef, puertaDormitorio, libreDormitorio } from './dormitorios';
 import { viviendaInterior, VIVIENDAS_PUEBLO, libreVivienda } from './pueblo-datos';
 import { crearDormitorio, crearInteriorVivienda, updateInteriorVivienda } from './pueblo';
+import { cespedPueblo } from './pueblo-adornos';
 import { crearPueblo, crearInteriorServicio, updatePueblo, liberarPueblo, librePueblo, alturaSueloPueblo, EDIFICIOS_PUEBLO } from './pueblo';
 import { EfectosGranja } from './efectos';
 import { EscenaAventura, ambienteAventura, type ObjetivoAventura } from './escenas-aventura';
@@ -146,12 +147,14 @@ export class VistaGranja{
    }return;}
   this.entorno.add(señalesSalidas(e.zona));
   if(e.zona==='mina'){caja(this.entorno,[25,.2,23],[0,-.15,-1],'#686b68');for(let i=0;i<35;i++){const a=i/35*Math.PI*2;esfera(this.entorno,[1.4,2+ruido(i)*2,1.3],[Math.cos(a)*11,1,Math.sin(a)*10-1],'#6d7775');}for(let i=0;i<9;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(.35,1.7,5),new THREE.MeshStandardMaterial({color:'#91d5cb',emissive:'#31716d',emissiveIntensity:.3,roughness:.4}));c.position.set(-8+ruido(i,2)*16,.75,-7+ruido(i,4)*11);this.entorno.add(c);}caja(this.entorno,[3,.1,1.4],[0,.02,7],'#b69b72');return;}
-  this.entorno.add(this.suelos.terreno());if(e.zona==='pueblo'){this.pueblo=crearPueblo();this.entorno.add(this.pueblo);}
+  this.entorno.add(this.suelos.terreno());if(e.zona==='pueblo'){this.pueblo=crearPueblo();this.entorno.add(this.pueblo);this.entorno.add(this.suelos.pasto(52,-32,60,75,5200,cespedPueblo));}
   // Background clumps and hills remain cheap instanced geometry; detailed props stream nearby.
   const geometry=new THREE.IcosahedronGeometry(1,1),hill=new THREE.InstancedMesh(geometry,material('#849765'),30),dummy=new THREE.Object3D();for(let i=0;i<30;i++){const a=i/30*Math.PI*2;dummy.position.set(Math.cos(a)*128,-3,Math.sin(a)*120);dummy.scale.set(12+ruido(i)*13,8+ruido(i,6)*8,13);dummy.updateMatrix();hill.setMatrixAt(i,dummy.matrix);}this.entorno.add(hill);
   const water=mallaAgua(13,10,'#25708a','#68b6b2');water.scale.set(13,1,10);water.position.set(28,.015,89);this.entorno.add(water);this.entorno.add(this.suelos.pasto(-100,-24,36,48,1700));this.entorno.add(this.suelos.pasto(-102,52,45,46,1500));
   // Public trails live outside the editable farm. Player paths use inventory cells.
-  for(const [x,z,w,d]of [[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]])caja(this.entorno,[w,.055,d],[x,-.002,z],'#b9a47b');
+  for(let [x,z,w,d]of [[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]]){
+   // En el pueblo el sendero llega hasta la calle del sur; adentro mandan las calles empedradas
+   if(e.zona==='pueblo'&&x===76){const z0=41.3,z1=z+d/2;z=(z0+z1)/2;d=z1-z0;}this.entorno.add(this.suelos.sendero(x,z,w,d));}
 
 
  }
