@@ -3,6 +3,7 @@ import { nombreCalidad, multiplicadorCalidad } from './agricultura';
 import type { Accion, EstadoGranja, Resultado } from './estado';
 import { CULTIVOS, PECES, PRECIOS_VENTA } from './catalogo';
 import { iconoHerramienta } from './iconos';
+import { CON_FOTO as OBJETOS_CON_FOTO } from './iconos-lista';
 import { obtenerObjeto } from './objetos';
 import { calidadPila, limitePila, MAX_PILA, CASILLAS_AMPLIADAS } from './inventario';
 import './inventario-ui.css';
@@ -44,7 +45,7 @@ export function iconoInventario(articulo:string):string {
  if(id==='cubo_ordeno')return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M17 28Q14 7 32 7Q50 7 47 28" fill="none" stroke="#809597" stroke-width="4"/><path d="M12 24H52L47 53Q32 60 17 53Z" fill="#b7ccca" stroke="#7e9897" stroke-width="3"/><ellipse cx="32" cy="25" rx="20" ry="6" fill="#eceddb"/><path d="M23 33L25 48" stroke="#e7f1ea" stroke-width="4"/></svg>';
  if(id==='tijeras_esquila')return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M21 42L44 9L36 41L28 10L43 42" fill="#c6d8d2" stroke="#809694" stroke-width="3"/><circle cx="21" cy="49" r="8" fill="none" stroke="#be9a65" stroke-width="5"/><circle cx="44" cy="49" r="8" fill="none" stroke="#be9a65" stroke-width="5"/><circle cx="33" cy="34" r="3" fill="#7a8b85"/></svg>';
  if(id.startsWith('huevo_fertil_')||['huevo_pato','huevo_avestruz','huevo_dinosaurio'].includes(id))return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 9C46 9 54 31 53 42C52 61 12 61 11 42C10 31 18 9 32 9Z" fill="'+(id.includes('dinosaurio')?'#a2be86':id.includes('pato')?'#d1e5d0':'#ecdcb3')+'" stroke="#c3b48c" stroke-width="2"/><ellipse cx="23" cy="30" rx="5" ry="10" fill="#fffbed" opacity=".7"/>'+(id.startsWith('huevo_fertil_')?'<path d="M43 14V29M36 21H50" stroke="#96a66d" stroke-width="4"/>':'')+'</svg>';
- const def=obtenerObjeto(id);if(def?.herramienta)return iconoCalidad(def.herramienta.tipo)??iconoHerramienta(def.herramienta.tipo);if(def?.equipo?.ranura==='arma')return iconoHerramienta('espada');
+ const def=obtenerObjeto(id);if(def?.herramienta)return iconoCalidad(def.herramienta.tipo)??iconoHerramienta(def.herramienta.tipo);if(OBJETOS_CON_FOTO.has(id))return `<img class="icono-foto" src="./modelos/granja-v3/iconos/obj_${id}.webp" alt="" draggable="false" loading="lazy">`;if(def?.equipo?.ranura==='arma')return iconoHerramienta('espada');
  if(def?.equipo){const casco='<path d="M14 39V27Q15 12 32 12Q49 12 50 27V39L40 43V30H24V43Z"/>',pechera='<path d="M14 20L24 13L28 21H36L40 13L50 20L44 31V49H20V31Z"/>',botas='<path d="M15 17H29V38L24 49H9V39L15 35ZM36 17H50V35L56 39V49H40L36 38Z"/>';return `<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="${id.includes('cobre')?'#c19573':id.includes('astral')?'#b7a7d4':'#9aaeb0'}" stroke="#657c79" stroke-width="2">${def.equipo.ranura==='casco'?casco:def.equipo.ranura==='pechera'?pechera:botas}</g></svg>`;}
  if(def?.comida){figura='<ellipse cx="32" cy="40" rx="24" ry="12" fill="#e8dcc1"/><path d="M13 39Q10 20 30 17Q49 14 51 37Q47 47 28 48Q17 48 13 39" fill="#d2a16f"/><path d="M24 22L22 34M34 20L32 33M43 23L42 33" stroke="#f5dca4" stroke-width="4" stroke-linecap="round"/>';return `<svg viewBox="0 0 64 64" aria-hidden="true">${figura}</svg>`;}
  const frutal=FRUTALES.find(f=>f.producto===id||f.planton===id);
