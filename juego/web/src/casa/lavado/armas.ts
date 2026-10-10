@@ -38,7 +38,15 @@ export type Comp =
   | 'mascarilla' // Gaze of Gaea: una gota adelante que a veces deja al mugroso sin dientes
   | 'piedra' // Magi-Stone: cae de arriba y se parte en pedacitos; daño fijo por nivel
   | 'luces' // Phas3r: rayitas delgadas horizontales sobre un mugroso
-  | 'letras'; // Chaos Rune: suben desde abajo y caen locas (solo pegan cayendo)
+  | 'letras' // Chaos Rune: suben desde abajo y caen locas (solo pegan cayendo)
+  | 'cortina' // Laurel: escudo con cargas
+  | 'selector' // Candybox y Arma Dio: no se tienen; al escogerlos se escoge otra cosa
+  | 'pez' // Penshin Fatcha: salen nadando hasta un mugroso y vuelven
+  | 'confeti' // Greatest Jubilee: fuegos artificiales arriba en la pantalla (y velitas)
+  | 'rebote' // Bone y Cherry Bomb: rebotan en los bordes y en los mugrosos
+  | 'barco' // Carréllo: de lado a lado, rebotando en los bordes
+  | 'talco' // Celestial Dusting: hacia atrás, rebotando; al final suelta pétalos
+  | 'gel'; // La Robba: llueven desde arriba y rebotan en los mugrosos
 
 export interface BaseArma {
   /** Daño de cada golpe. */
@@ -906,12 +914,185 @@ export const ARMAS: Record<IdArma, DefArma> = {
     base: B({ dano: 55, area: 1.3, cant: 5, enfr: 2, inter: 0.14, perfora: 10, radio: 15, rapidez: 1 }),
     niveles: [],
   },
+  // ------------------------------------------------------------------------------------------------ Laurel
+  cortina: {
+    id: 'cortina', nombre: 'Cortina de baño', original: 'Laurel', secreta: true,
+    desc: 'Una cortina que te ataja los golpes: cada golpe gasta una carga y te deja invencible un ratito. Solo le importa la recarga.',
+    comp: 'cortina', rareza: 60,
+    base: B({ dano: 0, cant: 1, dur: 0.3, enfr: 10, perfora: 999, radio: 70 }),
+    niveles: [
+      n('Se recarga 0,5 s más rápido y te protege 0,2 s más', { enfr: -0.5, dur: 0.2 }),
+      n('Se recarga 0,5 s más rápido y te protege 0,2 s más', { enfr: -0.5, dur: 0.2 }),
+      n('+1 carga', { cant: 1 }),
+      n('Se recarga 0,5 s más rápido y te protege 0,2 s más', { enfr: -0.5, dur: 0.2 }),
+      n('Se recarga 0,5 s más rápido y te protege 0,2 s más', { enfr: -0.5, dur: 0.2 }),
+      n('+1 carga', { cant: 1 }),
+      n('Se recarga 0,5 s más rápido', { enfr: -0.5 }),
+    ],
+    evo: { pasiva: 'aretIzq', y: 'aretDer', a: 'cortinaTerciopelo' },
+  },
+  cortinaTerciopelo: {
+    id: 'cortinaTerciopelo', nombre: 'Cortina de terciopelo', original: 'Crimson Shroud', de: ['cortina'],
+    desc: 'Ningún golpe te quita más de 10, y cada carga que se gasta revienta y les devuelve el golpe a los de alrededor.',
+    comp: 'cortina', rareza: 0,
+    base: B({ dano: 0, cant: 3, dur: 1.1, enfr: 6, perfora: 999, radio: 80 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Candybox
+  neceser: {
+    id: 'neceser', nombre: 'Neceser', original: 'Candybox', secreta: true,
+    desc: 'Se abre y te deja escoger cualquier arma que ya hayas desbloqueado (no ocupa puesto).',
+    comp: 'selector', rareza: 10,
+    base: B({}),
+    niveles: [],
+  },
+  neceserLujo: {
+    id: 'neceserLujo', nombre: 'Neceser de lujo', original: 'Super Candybox II Turbo', de: ['neceser'],
+    desc: 'El regalo del neceser: sale en un cofre después del minuto 10 y te deja escoger un arma ya evolucionada.',
+    comp: 'selector', rareza: 0,
+    base: B({}),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Arma Dio
+  bolsillo: {
+    id: 'bolsillo', nombre: 'Bolsillo de la bata', original: 'Arma Dio', secreta: true,
+    desc: 'Un puesto más para pasivas y escoges una de una vez (no ocupa puesto de arma).',
+    comp: 'selector', rareza: 30,
+    base: B({}),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Penshin Fatcha
+  pececitos: {
+    id: 'pececitos', nombre: 'Pececitos de la pecera', original: 'Penshin Fatcha', secreta: true,
+    desc: 'Pececitos que salen nadando hasta los mugrosos y vuelven. Al nivel máximo evolucionan solos.',
+    comp: 'pez', rareza: 50,
+    base: B({ dano: 12, cant: 2, enfr: 2.4, inter: 0.12, perfora: 999, rapidez: 300, radio: 11, dur: 2.4, golpeCada: 0.35 }),
+    niveles: [
+      n('+1 pececito', { cant: 1 }),
+      n('+5 de daño', { dano: 5 }),
+      n('+1 pececito', { cant: 1 }),
+      n('+20 % de área', { area: 0.2 }),
+      n('+1 pececito', { cant: 1 }),
+      n('+5 de daño y +20 % de velocidad', { dano: 5, vel: 0.2 }),
+      n('+1 pececito', { cant: 1 }),
+    ],
+    evo: { a: 'peceraInfinita' },
+  },
+  peceraInfinita: {
+    id: 'peceraInfinita', nombre: 'La pecera infinita', original: 'Miracle of Multiplication', de: ['pececitos'],
+    desc: 'Pececitos dorados que no paran de multiplicarse.',
+    comp: 'pez', rareza: 20,
+    base: B({ dano: 18, cant: 5, area: 1.3, enfr: 1.9, inter: 0.08, perfora: 999, rapidez: 340, radio: 12, dur: 2.6, golpeCada: 0.3 }),
+    niveles: [
+      n('+1 pececito', { cant: 1 }),
+      n('+5 de daño', { dano: 5 }),
+      n('+1 pececito', { cant: 1 }),
+      n('+15 % de área', { area: 0.15 }),
+      n('+1 pececito', { cant: 1 }),
+      n('+5 de daño', { dano: 5 }),
+      n('+2 pececitos', { cant: 2 }),
+    ],
+  },
+  // ------------------------------------------------------------------------------------------------ Greatest Jubilee
+  confeti: {
+    id: 'confeti', nombre: 'Confeti de espuma', original: 'Greatest Jubilee', secreta: true,
+    desc: 'Fuegos artificiales de espuma arriba en la pantalla. A veces hacen aparecer velitas. Al nivel 8, un show de luces abajo.',
+    comp: 'confeti', rareza: 20,
+    base: B({ dano: 8, area: 1, cant: 1, enfr: 3, inter: 0.2, perfora: 999, radio: 46, crit: 0.05, critX: 2, rapidez: 300 }),
+    niveles: [
+      n('+1 cohete', { cant: 1 }),
+      n('Se recarga 0,5 s más rápido y +10 de daño', { enfr: -0.5, dano: 10 }),
+      n('+1 cohete', { cant: 1 }),
+      n('+25 % de área y +10 de daño', { area: 0.25, dano: 10 }),
+      n('+1 cohete', { cant: 1 }),
+      n('+25 % de área y se recarga 0,5 s más rápido', { area: 0.25, enfr: -0.5 }),
+      n('+1 cohete y el show de luces', { cant: 1 }),
+    ],
+  },
+  // ------------------------------------------------------------------------------------------------ Las de rebote
+  hueso: {
+    id: 'hueso', nombre: 'Hueso del perrito', original: 'Bone', secreta: true,
+    desc: 'Un hueso que rebota en los mugrosos y en los bordes de la pantalla.',
+    comp: 'rebote', rareza: 15,
+    base: B({ dano: 8, area: 1.2, vel: 0.75, cant: 1, dur: 2, enfr: 3, inter: 0.05, perfora: 999, rapidez: 320, radio: 9, golpeCada: 0.3 }),
+    niveles: [
+      n('+20 % de área y dura 0,2 s más', { area: 0.2, dur: 0.2 }),
+      n('+1 hueso y +15 de daño', { cant: 1, dano: 15 }),
+      n('+20 % de área y +50 % de velocidad', { area: 0.2, vel: 0.5 }),
+      n('+1 hueso y +15 de daño', { cant: 1, dano: 15 }),
+      n('Dura 0,2 s más', { dur: 0.2 }),
+      n('+15 de daño', { dano: 15 }),
+      n('Dura 0,2 s más y +50 % de velocidad', { dur: 0.2, vel: 0.5 }),
+    ],
+  },
+  bombaBano: {
+    id: 'bombaBano', nombre: 'Bomba de baño', original: 'Cherry Bomb', secreta: true,
+    desc: 'Rebota por ahí y a veces revienta en espuma de colores.',
+    comp: 'rebote', rareza: 15,
+    base: B({ dano: 14, area: 1, cant: 1, dur: 2, enfr: 3, inter: 0.3, perfora: 999, rapidez: 300, radio: 10, golpeCada: 0.3, crit: 0.4, critX: 1 }),
+    niveles: [
+      n('+25 % de área y +30 % de velocidad', { area: 0.25, vel: 0.3 }),
+      n('Revienta más seguido (50 %)', { crit: 0.1 }),
+      n('+1 bomba', { cant: 1 }),
+      n('+25 % de área y +5 de daño', { area: 0.25, dano: 5 }),
+      n('Revienta más seguido (60 %)', { crit: 0.1 }),
+      n('+25 % de área y +30 % de velocidad', { area: 0.25, vel: 0.3 }),
+      n('+25 % de área y +5 de daño', { area: 0.25, dano: 5 }),
+    ],
+  },
+  barquito: {
+    id: 'barquito', nombre: 'Barquito de papel', original: 'Carréllo', secreta: true,
+    desc: 'Navega de lado a lado de la pantalla atropellando mugre; la cantidad le da más rebotes y al final se deshace de un golpe.',
+    comp: 'barco', rareza: 15,
+    base: B({ dano: 15, area: 0.8, cant: 2, enfr: 5.5, inter: 0, perfora: 999, rapidez: 260, radio: 16, golpeCada: 0.4, retro: 1.4 }),
+    niveles: [
+      n('+20 % de área', { area: 0.2 }),
+      n('+30 de daño (y se recarga 0,3 s más lento)', { dano: 30, enfr: 0.3 }),
+      n('+50 % de velocidad', { vel: 0.5 }),
+      n('+30 de daño (y se recarga 0,3 s más lento)', { dano: 30, enfr: 0.3 }),
+      n('+20 % de área', { area: 0.2 }),
+      n('+30 de daño (y se recarga 0,3 s más lento)', { dano: 30, enfr: 0.3 }),
+      n('+50 % de velocidad', { vel: 0.5 }),
+    ],
+  },
+  talco: {
+    id: 'talco', nombre: 'Talco de florecitas', original: 'Celestial Dusting', secreta: true,
+    desc: 'Florecitas de talco hacia atrás que rebotan en los bordes y al final sueltan pétalos. Se recarga caminando.',
+    comp: 'talco', rareza: 15,
+    base: B({ dano: 12, cant: 1, vel: 0.7, dur: 0.6, enfr: 4, inter: 0.1, perfora: 999, rapidez: 330, radio: 14, golpeCada: 0.3 }),
+    niveles: [
+      n('Duran 1 s más', { dur: 1 }),
+      n('+30 % de velocidad', { vel: 0.3 }),
+      n('+5 de daño', { dano: 5 }),
+      n('+30 % de velocidad', { vel: 0.3 }),
+      n('+1 florecita', { cant: 1 }),
+      n('+30 % de velocidad', { vel: 0.3 }),
+      n('Los mugrosos que caen a veces sueltan corazoncitos (vida)', {}),
+    ],
+  },
+  bolitasGel: {
+    id: 'bolitasGel', nombre: 'Bolitas de gel', original: 'La Robba', secreta: true,
+    desc: 'Llueven bolitas de gel desde arriba que rebotan de mugroso en mugroso.',
+    comp: 'gel', rareza: 15,
+    base: B({ dano: 10, cant: 3, dur: 2, enfr: 4.5, inter: 0.3, perfora: 999, rapidez: 330, radio: 9, golpeCada: 0.5 }),
+    niveles: [
+      n('+1 bolita y duran 0,3 s más', { cant: 1, dur: 0.3 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+1 bolita y duran 0,3 s más', { cant: 1, dur: 0.3 }),
+      n('+10 de daño y +50 % de velocidad', { dano: 10, vel: 0.5 }),
+      n('+1 bolita y duran 0,3 s más', { cant: 1, dur: 0.3 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+1 bolita y duran 0,3 s más', { cant: 1, dur: 0.3 }),
+    ],
+  },
 };
 
 /** Las uniones (como Vandalier y Phieraggi) piden además una pasiva. */
 export const UNION_PIDE: Partial<Record<IdArma, IdPasiva>> = { perfumeAmor: 'curita' };
 
 export const BASICAS = (Object.values(ARMAS) as DefArma[]).filter((a) => !a.de).map((a) => a.id);
+/** Las que de verdad disparan (sin el neceser ni el bolsillo, que solo dejan escoger). */
+export const DISPARAN = BASICAS.filter((id) => ARMAS[id].comp !== 'selector');
 export const EVOLUCIONADAS = (Object.values(ARMAS) as DefArma[]).filter((a) => a.de).map((a) => a.id);
 export const MAX_ARMA = 8;
 
@@ -926,7 +1107,7 @@ export function baseEnNivel(id: IdArma, nivel: number): BaseArma {
 }
 
 /** Las básicas llegan al 8; las evolucionadas, al 1 (salvo las que siguen subiendo, como el doble copito). */
-export const maxNivelArma = (id: IdArma) => (ARMAS[id].de ? ARMAS[id].niveles.length + 1 : MAX_ARMA);
+export const maxNivelArma = (id: IdArma) => (ARMAS[id].de || ARMAS[id].comp === 'selector' ? ARMAS[id].niveles.length + 1 : MAX_ARMA);
 
 /** Todo lo que un arma lleva adentro (la afeitada lleva la máquina, el toallazo y la toalla): si ya tiene una de
  *  esas, no vuelve a salir en las cartas. */

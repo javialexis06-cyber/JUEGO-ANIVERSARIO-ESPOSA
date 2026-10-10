@@ -9,6 +9,7 @@ const VALOR_ARMA: Partial<Record<IdArma, number>> = {
   toallita: 3, patoAmarillo: 6.5, patoMorado: 6.5, ranitas: 5, ducha: 7, hilo: 5, perfume: 6, colonia: 6,
   chancletas: 6, maquina: 6.5, copito: 6, plancha: 7, vaporizador: 6, mariposas: 7, pistolaAgua: 4.5, brillantina: 6, cubitos: 6,
   cepilloEspalda: 6, mascarilla: 5, piedraPomez: 6, lucesLED: 6.5, letrasEspuma: 5,
+  cortina: 5.5, neceser: 7, bolsillo: 6.5, pececitos: 6, confeti: 5.5, hueso: 5, bombaBano: 5, barquito: 4.5, talco: 4.5, bolitasGel: 5,
 };
 const VALOR_PASIVA: Partial<Record<IdPasiva, number>> = {
   jabonFuerte: 7, relojArena: 7, lupa: 6, espejoDoble: 8, crema: 6, cremaNoche: 5, gorro: 6, sales: 5, liga: 4, pantuflas: 5, iman: 5,

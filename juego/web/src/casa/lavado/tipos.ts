@@ -43,11 +43,13 @@ export type IdArma =
   // Las de la versión 2 (las que faltaban del original)
   | 'chancletas' | 'maquina' | 'copito' | 'plancha' | 'vaporizador' | 'mariposas' | 'pistolaAgua' | 'brillantina' | 'cubitos'
   | 'cepilloEspalda' | 'mascarilla' | 'piedraPomez' | 'lucesLED' | 'letrasEspuma'
+  | 'cortina' | 'neceser' | 'bolsillo' | 'pececitos' | 'confeti' | 'hueso' | 'bombaBano' | 'barquito' | 'talco' | 'bolitasGel'
   // Evolucionadas
   | 'toallazo' | 'burbujero' | 'milCerdas' | 'remolino' | 'peinillaOro' | 'esponjasEternas' | 'secadorInfernal' | 'espumaDevoradora'
   | 'inundacion' | 'jabonExplosivo' | 'tormenta' | 'lunaDeMiel' | 'patosEnamorados' | 'ranaGlotona' | 'diluvio' | 'hiloSeda' | 'perfumeAmor'
   | 'pisoton' | 'afeitada' | 'dobleCopito' | 'tripleCopito' | 'planchaDiva' | 'sauna' | 'mariposario' | 'hidrolavadora' | 'lluviaBrillantina'
-  | 'granizada' | 'cepilloCeleste' | 'spa' | 'piedrasCalientes' | 'camerino' | 'abecedario';
+  | 'granizada' | 'cepilloCeleste' | 'spa' | 'piedrasCalientes' | 'camerino' | 'abecedario'
+  | 'cortinaTerciopelo' | 'neceserLujo' | 'peceraInfinita';
 
 export type IdPasiva =
   | 'jabonFuerte' | 'gorro' | 'crema' | 'cremaNoche' | 'relojArena' | 'lupa' | 'liga' | 'sales' | 'espejoDoble' | 'pantuflas' | 'iman'
@@ -116,7 +118,9 @@ export type TipoEfecto =
   | 'fuego' // aliento del ají x, y, c = ángulo
   | 'tajo' // planchazo: x, y; c = radio; d = ángulo; f = 0 plancha, 1 de diva, 2 remate, 3 contraataque
   | 'lanza' // cepillo de espalda que cae: x, y; c = radio; d = segundos que tarda en caer; f = 1 celestial
-  | 'luces'; // rayita del espejo LED: x, y; c = largo; d = grosor; e = 1 vertical; f = color
+  | 'luces' // rayita del espejo LED: x, y; c = largo; d = grosor; e = 1 vertical; f = color
+  | 'escudo' // la cortina atajó un golpe: x, y; c = jugador; d = cargas que le quedan; f = 1 de terciopelo
+  | 'cohete'; // fuego artificial de confeti subiendo: x, y (de dónde sale); c, d = adónde va; e = segundos
 
 export interface Efecto {
   tipo: TipoEfecto;

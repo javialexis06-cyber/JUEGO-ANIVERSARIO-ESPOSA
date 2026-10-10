@@ -290,7 +290,7 @@ export class Interfaz {
     const o = miles(m.oro);
     if (oro.lastChild?.textContent !== o) oro.innerHTML = `${icono('moneda', 18)}${o}`;
     // Inventario (solo si cambió)
-    const clave = j.armas.map((a) => a.id + a.nivel).join() + '|' + [...j.pasivas].map(([k, v]) => k + v).join();
+    const clave = j.armas.map((a) => a.id + a.nivel).join() + '|' + [...j.pasivas].map(([k, v]) => k + v).join() + '|' + j.pasivasExtra;
     if (clave !== this.claveInv) {
       this.claveInv = clave;
       const celdas: string[] = [];
@@ -299,7 +299,7 @@ export class Interfaz {
         celdas.push(a ? `<span class="${ARMAS[a.id].de ? 'evo' : ''}">${icono(a.id, 24)}${ARMAS[a.id].de ? '' : `<i class="n">${a.nivel}</i>`}</span>` : '<span class="vacio"></span>');
       }
       const pas = [...j.pasivas];
-      for (let k = 0; k < MAX_RANURAS; k++) {
+      for (let k = 0; k < MAX_RANURAS + j.pasivasExtra; k++) {
         const p = pas[k];
         celdas.push(p ? `<span class="pas">${icono(p[0], 24)}<i class="n">${p[1]}</i></span>` : '<span class="pas vacio"></span>');
       }
@@ -648,7 +648,7 @@ export class Interfaz {
       });
       const cartas = j.cartas.map((c) => `<div class="lv-mo carta">${FRASES.iconoCarta()}<div><b>${cartaVista(c).nombre}</b><small>${cartaVista(c).efecto}</small></div></div>`);
       cuerpo = `<div class="col"><h4>Armas (${j.armas.length}/${MAX_RANURAS})</h4>${armas.join('') || '<p class="vacio">Todavía nada</p>'}</div>
-        <div class="col"><h4>Pasivas (${j.pasivas.size}/${MAX_RANURAS})</h4>${pasivas.join('') || '<p class="vacio">Todavía nada</p>'}${cartas.length ? `<h4>${personalizar('Cartas mágicas')}</h4>${cartas.join('')}` : ''}</div>`;
+        <div class="col"><h4>Pasivas (${j.pasivas.size}/${MAX_RANURAS + j.pasivasExtra})</h4>${pasivas.join('') || '<p class="vacio">Todavía nada</p>'}${cartas.length ? `<h4>${personalizar('Cartas mágicas')}</h4>${cartas.join('')}` : ''}</div>`;
     } else if (this.pestanaPausa === 'evoluciones') {
       // Todas las recetas, las que tiene más cerca primero
       const estados = RECETAS.map((r) => estadoReceta(r, j, m.t)).sort((a, b) => Number(b.lista) - Number(a.lista) || Number(a.hecha) - Number(b.hecha) || b.avance - a.avance);

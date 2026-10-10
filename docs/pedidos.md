@@ -5,8 +5,8 @@ probado y subido.
 
 ## Por dónde seguir (nota para el próximo Claude)
 
-Último trabajo subido: **Lavarse la cara 2, fase 1a** (14 armas del original con sus evoluciones, 7 pasivas y los
-logros que las abren). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
+Último trabajo subido: **Lavarse la cara 2, fases 1a y 1b** (las 24 armas del juego base con sus evoluciones, 7
+pasivas, el neceser y el bolsillo, y los 28 logros que las abren). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
 astral en pulso, el Guardián de una, sin pantallazo negro y los menús rehechos) y **la app de amigos con los seis
 juegos**. Antes, **Sangre y Ceniza 2, fase 5**, con la que **Sangre y Ceniza 2 queda completo**:
 equipo común a épico con rarezas especiales, la Forja con tres mostradores, el familiar (siete compañeros con modelo),
@@ -49,8 +49,9 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
    están anotadas en la propuesta). Va por partes:
    - ~~1a: 14 armas del original con 15 evoluciones, 7 pasivas (anillos y aretes escondidos en los escenarios) y 18
      logros que las abren~~ **hecho** (ver `docs/sistemas/nuestro-hogar.md`, «Versión 2, fase 1a»).
-   - 1b: las especiales y las de rebote (cortina de baño, neceser, bolsillo de la bata, pececitos, confeti, hueso,
-     bomba de baño, barquito, talco, bolitas de gel).
+   - ~~1b: las especiales y las de rebote~~ **hecho** (cortina de baño y de terciopelo, neceser y su regalo de lujo,
+     bolsillo de la bata, pececitos y la pecera infinita, confeti, hueso, bomba de baño, barquito, talco y bolitas de
+     gel, con 10 logros).
    - 1c: recogibles nuevos, los 4 arcanos que faltan, Omni/Encanto/Desarmar/Conservar en la tienda y sus logros.
    - 1d: una selección de armas de los DLC que encaje con el aseo.
    - Fases 2 a 4 de la propuesta: modos, tesoros y mercader; los escenarios de la ducha; disfraces con

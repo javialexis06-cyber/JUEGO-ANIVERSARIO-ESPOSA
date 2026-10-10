@@ -1,7 +1,7 @@
 // El motor de «Lavarse la cara»: la simulación completa del Vampire Survivors del baño, sin DOM ni three.js (corre
 // igual en el celular, en el anfitrión de una partida en pareja y en las pruebas de Node con el bot). Todo vive en
 // piscinas de objetos que se reutilizan: nada se crea por cuadro.
-import { ARMAS, BASICAS, ESCONDIDAS, ID_PASIVAS, MAX_RANURAS, PASIVAS, baseEnNivel, linaje, maxNivelArma, pasivasDeEvo, type BaseArma } from './armas';
+import { ARMAS, BASICAS, DISPARAN, ESCONDIDAS, EVOLUCIONADAS, ID_PASIVAS, MAX_RANURAS, PASIVAS, baseEnNivel, linaje, maxNivelArma, pasivasDeEvo, type BaseArma } from './armas';
 import { Azar, hash2 } from './azar';
 import { CARTAS } from './cartas';
 import { DISFRAZ, type DefDisfraz } from './disfraces';
@@ -11,7 +11,7 @@ import { bonosMaestria, MAESTRIA_MAX } from './maestria';
 import { Rejilla } from './rejilla';
 import { PODER } from './tienda';
 import { statsVacios, type Efecto, type IdArma, type IdCarta, type IdEnemigo, type IdEscenario, type IdObjeto, type IdPasiva, type Rol, type Stat, type Stats, type TipoEfecto } from './tipos';
-import { actualizarArmas, alHerido, alMatar, moverProyectiles, moverZonas, pendientesGolpe } from './disparos';
+import { actualizarArmas, alHerido, alMatar, cortinaAtaja, moverProyectiles, moverZonas, pendientesGolpe } from './disparos';
 import type { ResumenPartida } from './progreso';
 import { valorOpcion } from './bot';
 import { cartaVista, disfrazVisto, personalizar } from './textos';
@@ -65,6 +65,8 @@ export const RADIO_JUGADOR = 12;
 export const VEL_JUGADOR = 130;
 /** Radio base para recoger gotitas. */
 export const IMAN_BASE = 56;
+/** Las velitas que hace aparecer el confeti llevan un `estado` por debajo de esto (las del mapa, el de su celda). */
+const VELITA_CONFETI = -1e12;
 /** Celda del mapa donde puede haber una velita. */
 const CELDA_LUZ = 380;
 
@@ -346,6 +348,12 @@ export class Jugador {
   curado = 0;
   /** El trebolito suma suerte por el resto de la partida. */
   bonoSuerte = 0;
+  /** Puestos de pasivas de más (el bolsillo de la bata). */
+  pasivasExtra = 0;
+  /** El neceser y el bolsillo salen una sola vez por partida; el neceser trae su regalo una vez. */
+  selectores = new Set<IdArma>();
+  lujoDado = false;
+  lujoPend = false;
 
   constructor(public i: number, o: OpcionesJugador) {
     this.rol = o.rol;
@@ -479,7 +487,7 @@ export class Motor {
       this.darArma(j, j.disfraz.arma);
       if (j.disfraz.arma2) this.darArma(j, j.disfraz.arma2);
       if (j.tieneCarta('comienzo')) {
-        const extra = this.az.pesado(BASICAS.filter((a) => !j.armas.some((x) => x.id === a) && this.disponible(j, a)), (a) => ARMAS[a].rareza);
+        const extra = this.az.pesado(DISPARAN.filter((a) => !j.armas.some((x) => x.id === a) && this.disponible(j, a)), (a) => ARMAS[a].rareza);
         if (extra) this.darArma(j, extra);
       }
       j.arranque = j.disfraz.arranque ?? 0;
@@ -648,15 +656,17 @@ export class Motor {
     }
     if (j.armas.length < MAX_RANURAS) {
       for (const id of BASICAS) {
-        if (j.armas.some((a) => a.id === id) || !this.disponible(j, id)) continue;
+        if (j.armas.some((a) => a.id === id) || !this.disponible(j, id) || j.selectores.has(id) || id === 'bolsillo') continue;
         // Si ya tiene la evolución de esta (o una unión que la lleva adentro), no vuelve a salir
         if (j.armas.some((a) => linaje(a.id).has(id))) continue;
         l.push({ o: { tipo: 'arma', id, nivel: 1, nueva: true }, peso: ARMAS[id].rareza });
       }
     }
     // (los anillos y los aretes no salen nuevos, pero ya encontrados sí se suben)
+    // El bolsillo de la bata no ocupa puesto de arma (da uno de pasiva)
+    if (this.disponible(j, 'bolsillo') && !j.selectores.has('bolsillo')) l.push({ o: { tipo: 'arma', id: 'bolsillo', nivel: 1, nueva: true }, peso: ARMAS.bolsillo.rareza });
     for (const [id, n] of j.pasivas) if (n < PASIVAS[id].max) l.push({ o: { tipo: 'pasiva', id, nivel: n + 1, nueva: false }, peso: Math.max(50, PASIVAS[id].rareza) * 1.4 });
-    if (j.pasivas.size < MAX_RANURAS) {
+    if (j.pasivas.size < MAX_RANURAS + j.pasivasExtra) {
       for (const id of ID_PASIVAS) {
         if (j.pasivas.has(id) || !this.disponible(j, id) || PASIVAS[id].escondida) continue;
         l.push({ o: { tipo: 'pasiva', id, nivel: 1, nueva: true }, peso: PASIVAS[id].rareza });
@@ -690,12 +700,47 @@ export class Motor {
     if (!o) return;
     j.acciones++;
     j.tEscoger = 0;
-    if (o.tipo === 'arma') this.darArma(j, o.id as IdArma);
+    if (o.tipo === 'arma' && ARMAS[o.id as IdArma].comp === 'selector') {
+      // El neceser y el bolsillo: se abren y se escoge otra cosa de una vez
+      if (this.abrirSelector(j, o.id as IdArma)) return;
+    } else if (o.tipo === 'arma') this.darArma(j, o.id as IdArma);
     else if (o.tipo === 'pasiva') this.darPasiva(j, o.id as IdPasiva);
     else if (o.tipo === 'arepa') this.curar(j, 30);
     else this.sumarOro(25, j);
     this.recalcular(j);
     this.siguienteOpcion(j);
+  }
+
+  /** El neceser (cualquier arma desbloqueada), el de lujo (una evolucionada) y el bolsillo (un puesto y una pasiva).
+   *  Deja las opciones listas para escoger; devuelve false si no había nada que ofrecer. */
+  abrirSelector(j: Jugador, id: IdArma): boolean {
+    j.selectores.add(id);
+    this.armasVistas.add(id);
+    let l: Opcion[] = [];
+    const revolver = <T,>(x: T[]) => {
+      for (let k = x.length - 1; k > 0; k--) {
+        const q = Math.floor(this.az.n() * (k + 1));
+        [x[k], x[q]] = [x[q], x[k]];
+      }
+      return x;
+    };
+    const tiene = (a: IdArma) => j.armas.some((x) => x.id === a || linaje(x.id).has(a));
+    if (id === 'bolsillo') {
+      j.pasivasExtra++;
+      l = revolver(ID_PASIVAS.filter((p) => !j.pasivas.has(p) && this.disponible(j, p) && !PASIVAS[p].escondida))
+        .slice(0, 4).map((p) => ({ tipo: 'pasiva', id: p, nivel: 1, nueva: true }));
+      this.aviso('👘 ¡Un puesto más para pasivas!', j.i);
+    } else if (id === 'neceserLujo') {
+      l = revolver(EVOLUCIONADAS.filter((a) => !tiene(a) && ARMAS[a].comp !== 'selector' && (ARMAS[a].de ?? []).every((d) => this.disponible(j, d) || !ARMAS[d].secreta)))
+        .slice(0, 3).map((a) => ({ tipo: 'arma', id: a, nivel: 1, nueva: true }));
+    } else {
+      l = revolver(DISPARAN.filter((a) => !tiene(a) && this.disponible(j, a))).slice(0, 4).map((a) => ({ tipo: 'arma', id: a, nivel: 1, nueva: true }));
+      this.aviso('👝 ¡El neceser! Escoge la que quieras', j.i);
+    }
+    this.recalcular(j);
+    if (!l.length) return false;
+    j.opciones = l;
+    return true;
   }
 
   tirarCartas(ji: number, n?: number) {
@@ -773,6 +818,11 @@ export class Motor {
     const n = r < p5 ? 5 : r < p5 + p3 ? 3 : 1;
     const premios: PremioCofre[] = [];
     let oro = 0;
+    // El regalo del neceser: un cofre de jefe después del minuto 10 trae el neceser de lujo (se abre al cerrar el cofre)
+    if (j.selectores.has('neceser') && !j.lujoDado && calidad >= 2 && (this.t >= 600 || this.tutorial) && j.armas.length < MAX_RANURAS) {
+      j.lujoDado = true;
+      j.lujoPend = true;
+    }
     for (let k = 0; k < n; k++) {
       const evo = this.evolucionPosible(j);
       if (evo) {
@@ -805,6 +855,7 @@ export class Motor {
     j.oro += oro;
     this.cofres++;
     this.recalcular(j);
+    if (j.lujoPend) premios.unshift({ tipo: 'evolucion', id: 'neceserLujo', nivel: 1 });
     j.cofre = { jugador: j.i, premios, oro, calidad };
     this.emitir('cofre', j.x, j.y, j.i, n);
   }
@@ -815,6 +866,10 @@ export class Motor {
     j.acciones++;
     j.tEscoger = 0;
     j.cofre = null;
+    if (j.lujoPend) {
+      j.lujoPend = false;
+      if (this.abrirSelector(j, 'neceserLujo')) return;
+    }
     const q = j.cofresPend.shift();
     if (q !== undefined) this.abrirCofreOCarta(j, q);
   }
@@ -842,7 +897,7 @@ export class Motor {
       j.cartas.push(id);
       this.aviso(`🃏 ${cartaVista(id).nombre}`);
       if (id === 'comienzo') {
-        const extra = this.az.pesado(BASICAS.filter((a) => !j.armas.some((x) => x.id === a) && this.disponible(j, a)), (a) => ARMAS[a].rareza);
+        const extra = this.az.pesado(DISPARAN.filter((a) => !j.armas.some((x) => x.id === a) && this.disponible(j, a)), (a) => ARMAS[a].rareza);
         if (extra && j.armas.length < MAX_RANURAS) this.darArma(j, extra);
       }
     }
@@ -1034,7 +1089,10 @@ export class Motor {
 
   herirJugador(j: Jugador, dano: number, e: Enemigo | null) {
     if (j.caido || j.invul > 0) return;
-    const d = Math.max(1, dano - j.st.armadura);
+    // La cortina de baño ataja el golpe (la de terciopelo, además, se lo devuelve a los de alrededor)
+    if (cortinaAtaja(this, j, dano)) return;
+    let d = Math.max(1, dano - j.st.armadura);
+    if (j.armas.some((a) => a.id === 'cortinaTerciopelo')) d = Math.min(10, d);
     j.vida -= d;
     // (la bata gruesa alarga el ratico invencible)
     j.invul = 0.08 + 0.12 * (j.pasivas.get('bataGruesa') ?? 0);
@@ -1418,10 +1476,35 @@ export class Motor {
     }
   }
 
+  /** El confeti hace aparecer velitas (cuatro alrededor del jugador; nunca más de 10 de estas a la vez). */
+  velitasConfeti(j: Jugador) {
+    let n = 0;
+    for (let k = 0; k < this.nVivos; k++) {
+      const e = this.en[this.vivos[k]];
+      if (e.vivo && e.luz && e.estado < VELITA_CONFETI) n++;
+    }
+    for (let q = 0; q < 4 && n < 10; q++, n++) {
+      const a = (q / 4) * Math.PI * 2 + this.az.n();
+      const e = this.crear('germen', [j.x + Math.cos(a) * 120, j.y + Math.sin(a) * 90], null, { fijo: true });
+      if (!e) return;
+      this.nComunes--;
+      e.luz = true;
+      e.hp = e.hpMax = 1;
+      e.r = 14;
+      e.esc = 1;
+      e.estado = VELITA_CONFETI - 1 - this.az.n() * 1e6;
+      e.cofre = 0;
+      e.fase = this.az.n();
+    }
+    this.aviso('🎉 ¡Velitas de fiesta!', j.i);
+  }
+
   private romperLuz(e: Enemigo, ji: number) {
     this.velitas++;
-    this.lucesRotas.set(e.estado, this.tReal);
-    this.celdaLuz.delete(e.estado);
+    if (e.estado > VELITA_CONFETI) {
+      this.lucesRotas.set(e.estado, this.tReal);
+      this.celdaLuz.delete(e.estado);
+    }
     this.emitir('romper', e.x, e.y, e.fase);
     const j = this.jug[ji] ?? this.jug[0];
     const suerte = 1 + (j?.st.suerte ?? 0);
@@ -1898,7 +1981,7 @@ export class Motor {
         const t = ESCONDIDAS[o.calidad];
         if (!t) break;
         const p = PASIVAS[t.id];
-        if (j.pasivas.has(t.id) || j.pasivas.size < MAX_RANURAS) {
+        if (j.pasivas.has(t.id) || j.pasivas.size < MAX_RANURAS + j.pasivasExtra) {
           this.darPasiva(j, t.id);
           this.aviso(`💍 ¡Encontraste ${p.nombre}!`, j.i);
         } else {

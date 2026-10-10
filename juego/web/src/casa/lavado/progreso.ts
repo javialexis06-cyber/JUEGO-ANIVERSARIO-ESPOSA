@@ -160,6 +160,8 @@ export interface DefLogro {
   cumple: (p: ProgresoLavado, r: ResumenPartida | null) => boolean;
 }
 
+/** Cuántos jefes ha vencido en total (del bestiario). */
+const jefesVencidos = (p: ProgresoLavado) => (Object.entries(p.bestiario) as [IdEnemigo, number][]).reduce((t, [id, n]) => t + (ENEMIGOS[id]?.jefe ? n : 0), 0);
 const minutosEn = (p: ProgresoLavado, e?: IdEscenario) => Math.floor((e ? p.mejor[e] ?? 0 : Math.max(0, ...Object.values(p.mejor).map((v) => v ?? 0))) / 60);
 
 export const LOGROS: DefLogro[] = [
@@ -199,6 +201,16 @@ export const LOGROS: DefLogro[] = [
   { id: 'minutos25', nombre: 'Casi, casi', desc: 'Aguanta 25 minutos en cualquier escenario', premio: 'Pasiva: Cajita de música', cumple: (p) => minutosEn(p) >= 25 },
   { id: 'gorro15', nombre: 'Bien abrigado', desc: 'Aguanta 15 minutos llevando el Gorro de baño', premio: 'Pasiva: Bata gruesa', cumple: (p, r) => !!r && r.segundos >= 15 * 60 && r.pasivas.includes('gorro') },
   { id: 'velitas100', nombre: 'Olor a lavanda', desc: 'Rompe 100 velitas en total', premio: 'Pasiva: Vela aromática', cumple: (p) => p.velitas >= 100 },
+  { id: 'hilo15', nombre: 'Hilo de oro', desc: 'Aguanta 15 minutos llevando el Hilo dental', premio: 'Arma: Cortina de baño', cumple: (p, r) => !!r && r.segundos >= 15 * 60 && r.armas.includes('hilo') },
+  { id: 'evoluciones12', nombre: 'Neceser completo', desc: 'Ten 12 armas evolucionadas distintas en la colección', premio: 'Arma: Neceser', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 12 },
+  { id: 'pasivas6', nombre: 'Bolsillos llenos', desc: 'Llena los seis puestos de pasivas en una partida', premio: 'Arma: Bolsillo de la bata', cumple: (p, r) => !!r && r.pasivas.length >= 6 },
+  { id: 'banera10', nombre: 'Pecera en la tina', desc: 'Aguanta 10 minutos en La Bañera', premio: 'Arma: Pececitos de la pecera', cumple: (p) => minutosEn(p, 'banera') >= 10 },
+  { id: 'velitas500', nombre: 'Fiesta de velitas', desc: 'Rompe 500 velitas en total', premio: 'Arma: Confeti de espuma', cumple: (p) => p.velitas >= 500 },
+  { id: 'jefes10', nombre: 'Cazajefes', desc: 'Vence 10 jefes en total', premio: 'Arma: Hueso del perrito', cumple: (p) => jefesVencidos(p) >= 10 },
+  { id: 'cofres50', nombre: 'Coleccionista de cofres', desc: 'Abre 50 cofres en total', premio: 'Arma: Bomba de baño', cumple: (p) => p.cofres >= 50 },
+  { id: 'partidas25', nombre: 'Lavado diario', desc: 'Juega 25 partidas', premio: 'Arma: Barquito de papel', cumple: (p) => p.partidas >= 25 },
+  { id: 'eliminar50000', nombre: 'Cincuenta mil', desc: 'Elimina 50.000 mugrosos en total', premio: 'Arma: Talco de florecitas', cumple: (p) => p.eliminados >= 50000 },
+  { id: 'nivel60', nombre: 'Nivel 60', desc: 'Llega a nivel 60 en una partida', premio: 'Arma: Bolitas de gel', cumple: (p) => p.mejorNivel >= 60 },
   { id: 'espejito', nombre: 'El espejito de mano', desc: 'Ten 5 armas evolucionadas distintas en la colección', premio: 'Tesoro: Espejito de mano (en los escenarios aparecen anillos y aretes escondidos)', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 5 },
 ];
 
@@ -218,6 +230,8 @@ export const SECRETO_LOGRO: Partial<Record<IdArma | IdPasiva, string>> = {
   pistolaAgua: 'cofres25', brillantina: 'nivel30', cubitos: 'banera20', cepilloEspalda: 'tresEvos', mascarilla: 'arepas50', piedraPomez: 'velitas200',
   lucesLED: 'senorSarro', letrasEspuma: 'lavamanos20', cajitaMusica: 'minutos25', bataGruesa: 'gorro15', velaAromatica: 'velitas100',
   anilloPlata: 'espejito', anilloOro: 'espejito', aretIzq: 'espejito', aretDer: 'espejito',
+  cortina: 'hilo15', neceser: 'evoluciones12', bolsillo: 'pasivas6', pececitos: 'banera10', confeti: 'velitas500', hueso: 'jefes10',
+  bombaBano: 'cofres50', barquito: 'partidas25', talco: 'eliminar50000', bolitasGel: 'nivel60',
 };
 export const ESCENARIO_LOGRO: Record<IdEscenario, string | null> = { cara: null, lavamanos: 'cara15', banera: 'lavamanos15' };
 

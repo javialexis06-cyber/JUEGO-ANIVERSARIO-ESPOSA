@@ -33,6 +33,8 @@ export interface InvJugador {
   acciones: number;
   vetadas: string[];
   danos: [IdArma, number, number][];
+  /** Puestos de pasivas de más (el bolsillo de la bata). */
+  extra?: number;
 }
 
 /** Lo que se dicen los celulares durante la partida (tipos de mensaje de la sala). */
@@ -87,6 +89,7 @@ export function inventarioDe(m: Motor): InvJugador[] {
     acciones: j.acciones,
     vetadas: [...j.vetadas],
     danos: [...j.danos].map(([id, d]): [IdArma, number, number] => [id, Math.round(d.dano), d.desde]),
+    extra: j.pasivasExtra,
   }));
 }
 
@@ -112,12 +115,13 @@ export function aplicarInventario(m: Motor, inv: InvJugador[]) {
     j.acciones = d.acciones ?? j.acciones;
     j.vetadas = new Set(d.vetadas);
     j.danos = new Map(d.danos.map(([id, dano, desde]) => [id, { dano, desde }]));
+    j.pasivasExtra = d.extra ?? 0;
   });
 }
 
 // ---------------------------------------------------------------------------------------------------- La foto
 const TIPOS_EF: TipoEfecto[] = ['golpe', 'muere', 'latigo', 'rayo', 'charco', 'limpiar', 'explosion', 'gema', 'moneda', 'curar', 'nivel', 'cofre', 'herido',
-  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces'];
+  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces', 'escudo', 'cohete'];
 const IDX_EF = new Map(TIPOS_EF.map((t, i) => [t, i]));
 const IDX_ARMA = new Map(ID_ARMAS.map((a, i) => [a, i]));
 const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre', 'tesoro'];

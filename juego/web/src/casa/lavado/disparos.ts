@@ -51,6 +51,11 @@ function calcular(j: Jugador, a: ArmaJ) {
       // La velocidad y la duración las hacen pegar a más
       E.perfora = b.perfora + Math.floor(Math.max(0, j.st.velocidad) * 5 + Math.max(0, j.st.duracion) * 5);
       break;
+    case 'cortina':
+      // Solo le importa la recarga
+      E.cant = b.cant;
+      E.dur = b.dur;
+      break;
   }
 }
 
@@ -150,6 +155,8 @@ function golpe(m: Motor, j: Jugador, slot: number, e: Enemigo, dano: number, cri
   const c = crit > 0 && m.az.n() < crit;
   m.herir(e, c ? dano * critX : dano, j.i, slot, kx, ky, c, arma);
   if (c && (arma === 'toallazo' || arma === 'afeitada')) m.curar(j, 1);
+  // El talco al máximo: los que caen a veces sueltan un corazoncito
+  if (arma === 'talco' && !e.vivo && !e.luz && m.az.n() < 0.25 && j.nivelArma('talco') >= 8) m.curar(j, 1);
   return c;
 }
 
@@ -231,6 +238,19 @@ export function actualizarArmas(m: Motor, j: Jugador, dt: number) {
       case 'chancla':
         chanclas(m, j, a, slot, dt * ritmo);
         continue;
+      case 'selector':
+        continue;
+      case 'cortina':
+        // Cuando le faltan cargas, se recarga (y vuelve a quedar completa)
+        if (a.k < E.cant) {
+          a.t -= dt * ritmo;
+          if (a.t <= 0) {
+            a.k = E.cant;
+            a.t = E.enfr;
+          }
+        } else a.t = E.enfr;
+        a.total = a.k;
+        continue;
       case 'pajaro':
         a.ang += E.rapidez * dt * (a.id === 'patoMorado' ? 1 : 1);
         break;
@@ -240,7 +260,7 @@ export function actualizarArmas(m: Motor, j: Jugador, dt: number) {
         break;
     }
     // La máquina y los cubitos se recargan más rápido caminando
-    const caminando = moviendo && (def.comp === 'tajo' || def.comp === 'cubito') ? 1.5 * (1 + Math.max(0, j.st.movimiento)) : 1;
+    const caminando = moviendo && (def.comp === 'tajo' || def.comp === 'cubito' || def.comp === 'talco') ? 1.5 * (1 + Math.max(0, j.st.movimiento)) : 1;
     a.t -= dt * ritmo * caminando;
     if (a.rafaga <= 0 && a.t <= 0) {
       // (las luces del espejo: cada proyectil son cuatro rayitas)
@@ -685,6 +705,83 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       }
       break;
     }
+    case 'pez': {
+      // Pececitos: salen nadando hasta un mugroso y vuelven (como la peinilla, sin dar vueltas)
+      const e = idx === 0 ? masCercano(m, j.x, j.y, 420) : alAzarEnVista(m, j);
+      const mano = aMano(j);
+      const ang = mano !== null ? mano + (idx % 2 ? 1 : -1) * Math.ceil(idx / 2) * 0.25 : e ? Math.atan2(e.y - j.y, e.x - j.x) : m.az.n() * TAU;
+      const v = E.rapidez * E.vel * m.az.entre(0.9, 1.1);
+      const p = nuevoProy(m, j, slot, a.id, 2, j.x, j.y - 6, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
+      if (p) {
+        p.ex = Math.cos(ang);
+        p.ey = Math.sin(ang);
+        p.n = v;
+        p.giro = 0;
+      }
+      break;
+    }
+    case 'confeti': {
+      // Un cohete de espuma que sube y revienta arriba en la pantalla (el primero, al más cercano, mientras sean pocos)
+      const e = idx === 0 && a.total < 4 ? masCercano(m, j.x, j.y, 360) : null;
+      const x = e ? e.x : j.x + m.az.entre(-0.45, 0.45) * j.vistaW;
+      const y = e ? e.y : j.y - j.vistaH * m.az.entre(0.05, 0.42);
+      const demora = 0.45;
+      m.emitir('cohete', j.x, j.y - 10, x, y, demora);
+      pendiente(m, j, slot, a.id, 2, demora, x, y, E.radio * E.area, E.dano);
+      // A veces aparecen velitas (más con suerte)
+      if (idx === 0 && m.az.n() < 0.02 * (1 + Math.max(0, j.st.suerte))) m.velitasConfeti(j);
+      // Al nivel 8, el show de luces abajo en la pantalla (el único que hace críticos)
+      if (idx === a.total - 1 && a.nivel >= 8) {
+        const yb = j.y + j.vistaH * 0.36;
+        for (let q = 0; q < 6; q++) m.emitir('luces', j.x + (q - 2.5) * (j.vistaW / 6), yb, j.vistaW / 6, 14, 0, q % 5);
+        rectangulo(m, j, slot, j.x, yb, j.vistaW / 2, 36, E.dano * 1.5, a.id, 0, -1);
+      }
+      break;
+    }
+    case 'rebote': {
+      // Hueso y bomba de baño: hacia cualquier lado (a mano, hacia donde apunta)
+      const mano = aMano(j);
+      const ang = mano !== null ? mano + (m.az.n() - 0.5) * 0.4 : m.az.n() * TAU;
+      const v = E.rapidez * E.vel;
+      const p = nuevoProy(m, j, slot, a.id, 12, j.x, j.y - 6, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
+      if (p) {
+        p.giro = a.id === 'hueso' ? 9 : 4;
+        // (en la bomba, el «crítico» es la probabilidad de reventar)
+        if (a.id === 'bombaBano') {
+          p.ex = E.crit;
+          p.crit = 0;
+        }
+      }
+      break;
+    }
+    case 'barco': {
+      // Barquito de papel: de lado a lado; la cantidad son sus rebotes
+      const lado = j.manual ? (j.ax >= 0 ? 1 : -1) : j.mira;
+      const v = E.rapidez * E.vel;
+      const p = nuevoProy(m, j, slot, a.id, 13, j.x, j.y - 4, lado * v, 0, E.radio * E.area, 14);
+      if (p) {
+        p.n = Math.max(0, E.cant - 1);
+        p.ang = 0;
+      }
+      // (un solo barquito por vez: la cantidad no saca más barcos)
+      a.rafaga = 0;
+      break;
+    }
+    case 'talco': {
+      // Florecitas de talco hacia atrás (al revés de hacia donde camina)
+      const atras = Math.atan2(-j.dy, -j.dx) + (idx % 2 ? 1 : -1) * Math.ceil(idx / 2) * 0.3 + (m.az.n() - 0.5) * 0.2;
+      const v = E.rapidez * E.vel;
+      const p = nuevoProy(m, j, slot, a.id, 14, j.x, j.y - 6, Math.cos(atras) * v, Math.sin(atras) * v, E.radio * E.area, E.dur);
+      if (p) p.giro = 3;
+      break;
+    }
+    case 'gel': {
+      // Bolitas de gel: caen desde arriba en el centro de la pantalla y rebotan de mugroso en mugroso
+      const ang = Math.PI / 2 + m.az.entre(-0.9, 0.9);
+      const v = E.rapidez * E.vel * m.az.entre(0.85, 1.15);
+      nuevoProy(m, j, slot, a.id, 15, j.x + m.az.entre(-40, 40), j.y - j.vistaH / 2 - 10, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur + 0.6);
+      break;
+    }
   }
 }
 
@@ -714,6 +811,11 @@ export function pendientesGolpe(m: Motor, dt: number) {
       // El cepillo de espalda llega al piso: revienta en espuma
       m.emitir('explosion', q.x, q.y, q.r, 0, 0, 7);
       circulo(m, j, q.slot, q.x, q.y, q.r, q.dano, q.arma, 1);
+    } else if (q.tipo === 2) {
+      // El cohete de confeti revienta (sin críticos: esos son del show de luces)
+      E.crit = 0;
+      m.emitir('explosion', q.x, q.y, q.r, 0, 0, 8);
+      circulo(m, j, q.slot, q.x, q.y, q.r, q.dano, q.arma, 0.6);
     } else rayo(m, j, q.slot, q.arma, q.x, q.y, q.r, q.dano, 1);
   }
 }
@@ -816,6 +918,27 @@ export function alHerido(m: Motor, j: Jugador) {
       if (mariposario) m.curar(j, 3);
     }
   }
+}
+
+/** La cortina de baño ataja un golpe si le quedan cargas (y queda invencible un ratito). La de terciopelo, además,
+ *  revienta y les devuelve el golpe a los de alrededor. Devuelve true si lo atajó. */
+export function cortinaAtaja(m: Motor, j: Jugador, dano: number): boolean {
+  for (let slot = 0; slot < j.armas.length; slot++) {
+    const a = j.armas[slot];
+    if (ARMAS[a.id].comp !== 'cortina' || a.k < 1) continue;
+    calcular(j, a);
+    a.k--;
+    j.invul = 0.4 + E.dur;
+    const terciopelo = a.id === 'cortinaTerciopelo';
+    m.emitir('escudo', j.x, j.y, j.i, a.k, 0, terciopelo ? 1 : 0);
+    if (terciopelo) {
+      // El golpe de vuelta: lo que le iban a quitar (hasta 100) con el poder y la armadura
+      const d = Math.min(100, dano) * (1 + j.st.poder) * (1 + 0.1 * j.st.armadura) * m.maldicion();
+      m.explotar(j.i, slot, a.id, j.x, j.y, E.radio * E.area, d, 11);
+    }
+    return true;
+  }
+  return false;
 }
 
 /** Cayó un mugroso: la plancha de diva y la sauna se calientan (sin tope de por vida, pero con tope por partida). */
@@ -931,7 +1054,8 @@ export function moverProyectiles(m: Motor, dt: number) {
         p.ang += p.giro * dt;
         break;
       }
-      case 3: {
+      case 3:
+      case 12: {
         p.x += p.vx * dt;
         p.y += p.vy * dt;
         p.ang += p.giro * dt;
@@ -1046,6 +1170,55 @@ export function moverProyectiles(m: Motor, dt: number) {
         p.y += p.vy * dt;
         if (p.vida <= 0 && p.giro === 1) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 44 * (p.r / 15), p.dano * 0.5, 0);
         break;
+      case 13: {
+        // Barquito: de lado a lado; al acabarse los rebotes se deshace de un golpe
+        p.x += p.vx * dt;
+        if (j) {
+          const hw = j.vistaW / 2 - 10;
+          if ((p.x < j.x - hw && p.vx < 0) || (p.x > j.x + hw && p.vx > 0)) {
+            if (p.n <= 0) {
+              p.vivo = false;
+              m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 46 * (p.r / 13), p.dano, 0);
+              continue;
+            }
+            p.n--;
+            p.vx = -p.vx;
+            p.gid.fill(0);
+            p.gt.fill(0);
+          }
+        }
+        break;
+      }
+      case 14: {
+        // Florecita de talco: rebota en los bordes, se frena al final y suelta pétalos en equis
+        if (p.vida < 0.35) {
+          const f = Math.exp(-6 * dt);
+          p.vx *= f;
+          p.vy *= f;
+        }
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.ang += p.giro * dt;
+        if (j) {
+          const hw = j.vistaW / 2 - 8, hh = j.vistaH / 2 - 8;
+          if ((p.x < j.x - hw && p.vx < 0) || (p.x > j.x + hw && p.vx > 0)) p.vx = -p.vx;
+          if ((p.y < j.y - hh && p.vy < 0) || (p.y > j.y + hh && p.vy > 0)) p.vy = -p.vy;
+        }
+        if (p.vida <= 0) {
+          p.vivo = false;
+          m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 34 * (p.r / 11), p.dano, 9);
+          continue;
+        }
+        break;
+      }
+      case 15:
+        // Bolita de gel: cae y rebota en los mugrosos (no en los bordes: si se sale, se acaba)
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.ang += 3 * dt;
+        if (j && !j.enVista(p.x, p.y, 60)) p.vivo = false;
+        if (!p.vivo) continue;
+        break;
       case 11: {
         // Nubecita de vapor: se frena y se infla
         const f = Math.exp(-2.4 * dt);
@@ -1091,6 +1264,20 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
     const congelado = hielo && (e.congelado > 0 || m.hielo > 0);
     golpe(m, j, p.slot, e, congelado ? p.dano * 2 : p.dano, p.crit, p.critX, kx * p.retro, ky * p.retro, p.arma);
     if (luz) continue;
+    if ((p.comp === 12 || p.comp === 15) && p.vivo) {
+      // Rebota en el mugroso (y la bomba de baño, a veces, revienta)
+      if (p.arma === 'bombaBano' && m.az.n() < p.ex * (1 + Math.max(0, j.st.suerte))) {
+        p.vivo = false;
+        m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, p.r * 3.4, p.dano * 2.5, 10);
+        continue;
+      }
+      const nx = p.x - e.x, ny = p.y - e.y, d = Math.hypot(nx, ny) || 1;
+      const pv = (p.vx * nx + p.vy * ny) / d;
+      if (pv < 0) {
+        p.vx -= (2 * pv * nx) / d;
+        p.vy -= (2 * pv * ny) / d;
+      }
+    }
     if (hielo && e.vivo && m.az.n() < p.ex * (1 + Math.max(0, j.st.suerte))) {
       if (e.def.congelable) e.congelado = Math.max(e.congelado, p.ey);
       else e.lento = Math.max(e.lento, p.ey);

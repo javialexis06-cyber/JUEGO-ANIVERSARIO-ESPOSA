@@ -40,7 +40,10 @@ const SPRITE_PROY: Partial<Record<IdArma, string>> = {
   botellas: 'botellas', inundacion: 'inundacion', jabon: 'jabon', jabonExplosivo: 'jabonExplosivo', ranitas: 'ranitas', ranaGlotona: 'ranaGlotona',
   copito: 'copito', dobleCopito: 'dobleCopito', tripleCopito: 'tripleCopito', cubitos: 'cubitos', granizada: 'granizada',
   piedraPomez: 'piedraPomez', piedrasCalientes: 'piedrasCalientes', chancletas: 'chancletas', pisoton: 'pisoton',
+  hueso: 'hueso', bombaBano: 'bombaBano',
 };
+/** Colores de las bolitas de gel. */
+const COLOR_GEL: [number, number, number][] = [[1, 0.55, 0.75], [0.55, 0.85, 1], [0.7, 1, 0.6], [1, 0.85, 0.45], [0.8, 0.65, 1]];
 /** Colores de las rayitas del espejo LED: rojo (la primera), amarillo, azul, fucsia y naranja. */
 const COLOR_LUCES: [number, number, number][] = [[1, 0.25, 0.3], [1, 0.88, 0.3], [0.35, 0.62, 1], [1, 0.35, 0.88], [1, 0.6, 0.2]];
 /** Las letras de espuma que se turnan. */
@@ -109,6 +112,8 @@ export class Dibujo {
   private lanzas = new Float32Array(24 * 6);
   /** Rayitas del espejo LED: x, y, largo, grosor, vertical, color, edad. */
   private rayitas = new Float32Array(64 * 7);
+  /** Cohetes de confeti subiendo: x0, y0, x1, y1, duración, edad. */
+  private cohetes = new Float32Array(24 * 6);
   /** Muertes recientes (el cuerpo que se aplasta y se borra): x, y, tipo, escala, edad, voltear. */
   private muertes = new Float32Array(80 * 6);
   private nMuertes = 0;
@@ -391,6 +396,40 @@ export class Dibujo {
             const a = (q / 10) * Math.PI * 2;
             P.crear('corazon', CAPA_NORMAL, e.x, e.y, 20, Math.cos(a) * r * 1.6, Math.sin(a) * r * 1.2, 60, 0.7, 16, 8, 1, 1, 1, 1, 0, 0, 0, 2);
           }
+        } else if (tipo === 8) {
+          // Cohete de confeti que revienta: confeti de colores, estrellitas y un anillo
+          const cols = [[1, 0.5, 0.8], [1, 0.85, 0.35], [0.55, 0.85, 1], [0.6, 1, 0.6], [0.85, 0.6, 1]];
+          for (let q = 0; q < 18; q++) {
+            const a = (q / 18) * Math.PI * 2, v = r * (1.6 + az() * 1.4), c = cols[q % 5];
+            P.crear(q % 4 ? 'confeti' : 'estrella', CAPA_LUZ, e.x, e.y, 30, Math.cos(a) * v, Math.sin(a) * v * 0.8, 40, 0.9, 9, 5, c[0], c[1], c[2], 1, 160, a, 7, 2);
+          }
+          P.crear('anillo', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.45, r * 0.3, r * 2.2, 1, 0.9, 0.6, 0.9);
+          P.crear('brillo', CAPA_LUZ, e.x, e.y, 30, 0, 0, 0, 0.2, r * 0.6, r * 1.4, 1, 0.85, 0.6, 0.5);
+        } else if (tipo === 9) {
+          // Pétalos de talco en equis
+          for (let q = 0; q < 8; q++) {
+            const a = Math.PI / 4 + (q % 4) * (Math.PI / 2), v = r * (q < 4 ? 2.2 : 1.2);
+            P.crear('petalo', CAPA_NORMAL, e.x, e.y, 14, Math.cos(a) * v, Math.sin(a) * v * 0.8, 20, 0.6, 10, 6, 1, 0.82, 0.9, 1, 0, a, 4, 2);
+          }
+          P.crear('polvo', CAPA_NORMAL, e.x, e.y, 10, 0, 0, 10, 0.6, r * 0.6, r * 1.6, 1, 1, 1, 0.6);
+        } else if (tipo === 10) {
+          // La bomba de baño revienta en espuma de colores
+          const cols = [[1, 0.55, 0.75], [0.6, 0.85, 1], [0.75, 0.6, 1], [1, 0.9, 0.5]];
+          for (let q = 0; q < 14; q++) {
+            const a = az() * Math.PI * 2, v = az() * r * 2.2, c = cols[q % 4];
+            P.crear(q % 3 ? 'espuma' : 'burbuja', CAPA_NORMAL, e.x, e.y, 10, Math.cos(a) * v, Math.sin(a) * v * 0.7, 50 + az() * 60, 0.7, r * 0.5, r * 0.2, c[0], c[1], c[2], 1, 60, 0, 0, 3);
+          }
+          P.crear('anillo', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.35, r * 0.4, r * 2.2, 1, 0.7, 0.9, 0.9);
+          this.sacudir(0.2);
+        } else if (tipo === 11) {
+          // La cortina de terciopelo devuelve el golpe: onda roja
+          P.crear('onda', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.5, 20, r * 2.4, 0.95, 0.25, 0.35, 1);
+          P.crear('anillo', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.4, 10, r * 2, 1, 0.5, 0.6, 1);
+          for (let q = 0; q < 10; q++) {
+            const a = (q / 10) * Math.PI * 2;
+            P.crear('chispa', CAPA_LUZ, e.x, e.y, 20, Math.cos(a) * r * 2, Math.sin(a) * r * 1.5, 40, 0.4, 12, 3, 1, 0.4, 0.5, 1);
+          }
+          this.sacudir(0.35);
         } else if (tipo === 6) {
           // Brillantina que revienta: confeti de colores y estrellitas
           const cols = [[1, 0.5, 0.85], [1, 0.85, 0.35], [0.6, 0.85, 1], [0.8, 0.6, 1]];
@@ -536,6 +575,31 @@ export class Dibujo {
       case 'jefe':
         this.sacudir(0.6);
         break;
+      case 'escudo': {
+        // La cortina atajó el golpe: un anillo que se abre y chispitas del color de las cargas que quedan
+        const col = e.f ? [1, 0.35, 0.45] : e.d >= 2 ? [1, 0.95, 0.55] : e.d >= 1 ? [0.6, 1, 0.7] : [0.6, 0.82, 1];
+        P.crear('anillo', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.45, 30, 140, col[0], col[1], col[2], 1);
+        for (let q = 0; q < 12; q++) {
+          const a = (q / 12) * Math.PI * 2;
+          P.crear('estrella', CAPA_LUZ, e.x + Math.cos(a) * 30, e.y + Math.sin(a) * 24, 24, Math.cos(a) * 140, Math.sin(a) * 100, 60, 0.5, 10, 4, col[0], col[1], col[2], 1, 0, 0, 5);
+        }
+        break;
+      }
+      case 'cohete': {
+        const C = this.cohetes;
+        for (let q = 0; q < 24; q++) {
+          const b = q * 6;
+          if (C[b + 4] > 0 && C[b + 5] < C[b + 4]) continue;
+          C[b] = e.x;
+          C[b + 1] = e.y;
+          C[b + 2] = e.c;
+          C[b + 3] = e.d;
+          C[b + 4] = e.e;
+          C[b + 5] = 0;
+          break;
+        }
+        break;
+      }
       case 'tajo': {
         const T = this.tajos;
         for (let q = 0; q < 32; q++) {
@@ -1060,6 +1124,49 @@ export class Dibujo {
         if (Math.random() < 0.25 * this.part.cupo) this.part.crear('gota', CAPA_NORMAL, p.x, p.y, 12, -p.vx * 0.05, -p.vy * 0.05, 20, 0.25, 4, 2, 0.6, 0.85, 1, 0.8, 300);
         return true;
       }
+      case 'pececitos':
+      case 'peceraInfinita': {
+        // El pececito mira para donde nada y mueve la cola
+        const c = this.cuadrosObj.get(p.arma);
+        if (!c) return true;
+        const tam = Math.max(26, p.r * 2.6);
+        const der = p.vx >= 0;
+        const ang = Math.atan2(p.vy, Math.abs(p.vx)) * (der ? -1 : 1);
+        this.proy.poner(p.x, p.y, 14, tam, tam * (0.92 + Math.sin(t * 14 + i) * 0.08), 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, 0, der ? 1 : -1, ang);
+        if (Math.random() < 0.15 * this.part.cupo) this.part.crear('burbuja', CAPA_NORMAL, p.x, p.y, 14, 0, 0, 30, 0.5, 4, 8, 1, 1, 1, 0.8);
+        return true;
+      }
+      case 'barquito': {
+        const c = this.cuadrosObj.get('barquito');
+        if (!c) return true;
+        const tam = Math.max(40, p.r * 3.2);
+        this.proy.poner(p.x, p.y, 6 + Math.sin(t * 6 + i) * 3, tam, tam, 0.5, 0.7, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, 0, p.vx < 0 ? -1 : 1, Math.sin(t * 5 + i) * 0.12);
+        const o = this.fx.c.onda;
+        this.pisoFx.poner(p.x, p.y, 0.08, tam * 1.3, tam * 0.6, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 0.7, 0.9, 1, 0.5);
+        if (Math.random() < 0.4 * this.part.cupo) this.part.crear('gota', CAPA_NORMAL, p.x - Math.sign(p.vx) * tam * 0.4, p.y, 4, -p.vx * 0.2, (Math.random() - 0.5) * 40, 60, 0.35, 5, 3, 0.65, 0.88, 1, 0.9, 300);
+        return true;
+      }
+      case 'talco': {
+        // Florecita de talco: cinco pétalos que giran
+        const c = this.fx.c.petalo;
+        const r = Math.max(8, p.r) * 0.9;
+        for (let q = 0; q < 5; q++) {
+          const a = p.ang + (q / 5) * Math.PI * 2;
+          this.fxNormal.poner(p.x + Math.cos(a) * r * 0.55, p.y + Math.sin(a) * r * 0.45, 12, r * 1.3, r * 0.9, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 1, 0.82, 0.9, 1, 0, 0, 1, -a);
+        }
+        const b = this.fx.c.brillo;
+        this.fxNormal.poner(p.x, p.y, 13, r * 0.7, r * 0.7, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.92, 0.5, 1);
+        if (Math.random() < 0.3 * this.part.cupo) this.part.crear('polvo', CAPA_NORMAL, p.x, p.y, 12, 0, 0, 10, 0.6, 6, 18, 1, 1, 1, 0.5);
+        return true;
+      }
+      case 'bolitasGel': {
+        const c = this.fx.c.burbuja;
+        const col = COLOR_GEL[i % COLOR_GEL.length];
+        const tam = Math.max(16, p.r * 2.6);
+        this.fxNormal.poner(p.x, p.y, 14, tam, tam, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, col[0], col[1], col[2], 1);
+        this.sombra(p.x, p.y, tam * 0.3, 0.2);
+        return true;
+      }
       case 'vaporizador':
       case 'sauna': {
         if (p.comp !== 11) return false;
@@ -1135,6 +1242,16 @@ export class Dibujo {
             this.sombra(x, y, 14, 0.2);
             if (dos && Math.random() < 0.1) this.part.crear('corazon', CAPA_NORMAL, x, y, 70, 0, 0, 30, 0.8, 10, 14, 1, 1, 1, 1);
           });
+        } else if (def.comp === 'cortina') {
+          if (a.k < 1) continue;
+          // Una burbuja de cortina alrededor: azul con una carga, verde con dos, dorada con tres (roja la de terciopelo)
+          const terciopelo = a.id === 'cortinaTerciopelo';
+          const col = terciopelo ? [1, 0.45, 0.55] : a.k >= 3 ? [1, 0.95, 0.6] : a.k >= 2 ? [0.65, 1, 0.75] : [0.65, 0.85, 1];
+          const c = this.fx.c.burbuja;
+          const tam = 84 + Math.sin(t * 3) * 3;
+          this.fxNormal.poner(j.x, j.y, 26, tam, tam * 1.05, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, col[0], col[1], col[2], 0.55);
+          const o = this.fx.c.anillo;
+          this.pisoFx.poner(j.x, j.y, 0.1, 76, 54, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, col[0], col[1], col[2], 0.6);
         } else if (def.comp === 'laser') {
           const area = a.b.area * (1 + j.st.area);
           const largo = 230 * area;
@@ -1260,6 +1377,22 @@ export class Dibujo {
       const z = (1 - k) * (1 - k) * 320;
       if (c) this.proy.poner(L[b], L[b + 1], z, 46, 46, 0.5, 0.2, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, Math.min(1, k * 4), 0, 0, 1, Math.PI * 0.85 + k * 0.3);
       this.sombra(L[b], L[b + 1], L[b + 2] * (0.3 + k * 0.7), 0.15 + k * 0.3);
+    }
+    const C = this.cohetes;
+    for (let q = 0; q < 24; q++) {
+      const b = q * 6;
+      if (C[b + 4] <= 0) continue;
+      C[b + 5] += dt;
+      const k = C[b + 5] / C[b + 4];
+      if (k >= 1) {
+        C[b + 4] = 0;
+        continue;
+      }
+      // Sube en curva (más alto en el medio) dejando una estela de chispitas
+      const x = C[b] + (C[b + 2] - C[b]) * k, y = C[b + 1] + (C[b + 3] - C[b + 1]) * k;
+      const z = Math.sin(k * Math.PI) * 120 + 20;
+      this.fxLuz.poner(x, y, z, 16, 16, 0.5, 0.5, br.u0, br.v0, br.u1, br.v1, 1, 0.85, 0.6, 1);
+      if (Math.random() < 0.8 * this.part.cupo) this.part.crear('chispa', CAPA_LUZ, x, y, z, 0, 0, -20, 0.35, 8, 2, 1, 0.75, 0.5, 1);
     }
     const R = this.rayitas;
     for (let q = 0; q < 64; q++) {

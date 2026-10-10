@@ -50,7 +50,9 @@ Apurado, el tutorial y de 2 a 4 jugadores en línea.
 > **Fase 1a hecha** (9 de octubre): las 14 primeras de la tabla (de las chancletas a las letras de espuma) con sus 15
 > evoluciones, las 7 pasivas y sus logros. Cambios frente a la tabla: la Plancha de diva es una evolución normal (no
 > un regalo aparte), la Granizada pide los dos anillos y las armas «de adelante» apuntan al más cercano cuando está
-> cerca. Faltan (1b) la cortina, el neceser, los pececitos, el confeti, el bolsillo y las cinco de rebote.
+> cerca. **Fase 1b hecha** también: la cortina, el neceser (con su regalo), el bolsillo, los pececitos (evolucionan
+> solos en la pecera infinita, que sigue subiendo, en vez de las formas de la original), el confeti y las cinco de
+> rebote (sin transformación hasta los disfraces de la fase 4).
 
 | Original | En el baño | Qué hace | Evoluciona en |
 |---|---|---|---|

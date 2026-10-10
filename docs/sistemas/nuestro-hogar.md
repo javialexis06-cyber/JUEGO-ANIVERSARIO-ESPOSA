@@ -380,6 +380,21 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   caen después (`pend`) llevan su crítico. Íconos: `personajes/blender/lavado_objetos.py` (40 modelos nuevos con las
   letras, la rodaja de pepino y los tesoros) y `python3 scripts/lavado-atlas.py - <carpeta>` rehace solo el atlas de
   objetos.
+- **Versión 2, fase 1b** (las especiales y las de rebote): **cortina de baño** (Laurel: cargas que atajan golpes y
+  dejan invencible un ratito; solo le importa la recarga → **cortina de terciopelo** con los dos aretes: ningún golpe
+  quita más de 10 y cada carga gastada les devuelve el golpe), **neceser** (Candybox: no ocupa puesto; al escogerlo se
+  escoge cualquier arma desbloqueada entre cuatro, una vez por partida; su regalo, el **neceser de lujo**, sale en un
+  cofre de jefe después del minuto 10 y deja escoger un arma ya evolucionada), **bolsillo de la bata** (Arma Dio: un
+  puesto más para pasivas y se escoge una de una vez; `pasivasExtra`), **pececitos** (salen nadando hasta los mugrosos
+  y vuelven; evolucionan solos en **la pecera infinita**, que sigue subiendo), **confeti de espuma** (Greatest
+  Jubilee: cohetes que revientan arriba, a veces hacen aparecer cuatro velitas; al nivel 8, show de luces abajo con
+  críticos) y las cinco **de rebote**, sin evolución todavía (sus transformaciones llegan con los disfraces):
+  **hueso del perrito**, **bomba de baño** (a veces revienta en espuma de colores), **barquito de papel** (de lado a
+  lado; la cantidad son sus rebotes), **talco de florecitas** (hacia atrás, se recarga caminando, al final suelta
+  pétalos; al 8, corazoncitos) y **bolitas de gel** (llueven desde arriba y rebotan de mugroso en mugroso). Se abren
+  con 10 logros más (hilo dental 15 minutos, 12 evoluciones, llenar las pasivas, 10 minutos en la bañera, 500
+  velitas, 10 jefes, 50 cofres, 25 partidas, 50.000 mugrosos y nivel 60). Proyectiles nuevos 12-15 (`disparos.ts`): el
+  número de comportamiento viaja en 4 bits en la foto en línea, así que 15 es el último.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.
