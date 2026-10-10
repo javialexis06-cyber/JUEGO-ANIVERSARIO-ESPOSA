@@ -2,6 +2,24 @@
 import * as THREE from 'three';
 import { figuraObjeto } from '/src/granja-v3/iconos3d.ts';
 import { OBJETOS } from '/src/granja-v3/objetos.ts';
+import { ARTICULOS } from '/src/granja-v3/catalogo.ts';
+import { figura } from '/src/granja-v3/escenas-produccion.ts';
+import { crearRefugio } from '/src/granja-v3/arte.ts';
+import { Suelos } from '/src/granja-v3/suelo.ts';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+const manifiesto=await (await fetch('/modelos/granja-v2/manifest.json')).json(),glbs=new Set(manifiesto.assets.map(a=>a.id)),loader=new GLTFLoader(),suelos=new Suelos();
+/** Construcciones y máquinas: la misma figura que se ve en la granja. */
+async function construccion(id){
+ const def=OBJETOS[id];
+ if(def?.categoria==='maquina'||def?.categoria==='contenedor'||/^(aspersor_|portal_|nave_)/.test(id)){try{return figura(id).grupo;}catch{}}
+ if(id.startsWith('refugio_')){const partes=id.split('_'),clima=partes.pop(),especie=partes.slice(1).join('_');return crearRefugio(especie,clima==='templado'?'madera':clima);}
+ if(id==='establo')return crearRefugio('caballo','madera');
+ if(id.startsWith('suelo_')){const g=new THREE.Group();for(const [x,z] of [[-.5,-.5],[.5,-.5],[-.5,.5],[.5,.5]]){const t=suelos.camino(id,{n:z>0,s:z<0,e:x<0,w:x>0});t.position.set(x,0,z);g.add(t);}return g;}
+ const modelo=ARTICULOS.find(a=>a.id===id)?.modelo??id;
+ const nombre=glbs.has(modelo)?modelo:glbs.has(id)?id:id.startsWith('valla_')?'cerca':id.startsWith('arbol_')?id.slice(6):null;
+ if(nombre&&glbs.has(nombre)){const g=await loader.loadAsync('/modelos/granja-v2/'+nombre+'.glb');return g.scene;}
+ return null;
+}
 const T=160,r=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});r.setSize(T,T);r.setPixelRatio(1);r.toneMapping=THREE.ACESFilmicToneMapping;r.outputColorSpace=THREE.SRGBColorSpace;r.toneMappingExposure=0.82;r.setClearColor(0x000000,0);
 document.body.appendChild(r.domElement);
 const s=new THREE.Scene();s.add(new THREE.HemisphereLight('#fff7e8','#8a7a6a',1.5));const d=new THREE.DirectionalLight('#fff3dc',2.5);d.position.set(2,4,4);s.add(d);const d2=new THREE.DirectionalLight('#cfe6ff',1.0);d2.position.set(-3,1,2);s.add(d2);
@@ -10,8 +28,8 @@ const solo=new URLSearchParams(location.search).get('solo');
 const fotos={};
 for(const id of Object.keys(OBJETOS)){
  if(solo&&!new RegExp(solo).test(id))continue;
- let g;try{g=figuraObjeto(id);}catch(e){console.error(id,e.message);continue;}
- if(!g)continue;
+ let g;try{g=figuraObjeto(id)??await construccion(id);}catch(e){console.error(id,e.message);continue;}
+ if(!g){console.log('sin figura',id);continue;}
  const pivote=new THREE.Group();pivote.add(g);pivote.rotation.set(0.35,-0.45,0);s.add(pivote);pivote.updateMatrixWorld(true);
  const box=new THREE.Box3().setFromObject(pivote),c=box.getCenter(new THREE.Vector3()),z=box.getSize(new THREE.Vector3());const m=Math.max(z.x,z.y)*0.56;
  const cam=new THREE.OrthographicCamera(-m,m,m,-m,0.01,20);cam.position.set(c.x,c.y,c.z+5);cam.lookAt(c);

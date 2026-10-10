@@ -8,7 +8,7 @@ const PALETA={madera:'#b7885b',oscuro:'#6e5542',metal:'#647d81',claro:'#c8d4c2',
 function cilindro(g:THREE.Object3D,radio:number,alto:number,x:number,y:number,z:number,color:string,vertices=12){const m=new THREE.Mesh(new THREE.CylinderGeometry(radio,radio,alto,vertices),new THREE.MeshStandardMaterial({color,roughness:.65,metalness:.12}));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}
 function aro(g:THREE.Object3D,radio:number,grosor:number,color:string){const m=new THREE.Mesh(new THREE.TorusGeometry(radio,grosor,6,24),new THREE.MeshStandardMaterial({color,metalness:.4,roughness:.5}));g.add(m);return m;}
 function piloto(g:THREE.Object3D){const m=new THREE.Mesh(new THREE.SphereGeometry(.047,8,6),new THREE.MeshBasicMaterial({color:PALETA.verde}));m.position.set(.31,.51,.38);g.add(m);return m;}
-function figura(articulo:string):FiguraProduccion{
+export function figura(articulo:string):FiguraProduccion{
  const grupo=new THREE.Group(),fijo=new THREE.Group(),moviles:THREE.Object3D[]=[],portal=articulo.startsWith('portal_'),aspersor=articulo.startsWith('aspersor_');grupo.add(fijo);
  const madera=PALETA.madera,oscuro=PALETA.oscuro,metal=articulo.includes('hierro')?PALETA.metal:PALETA.cobre;
  if(articulo.startsWith('cofre_')){

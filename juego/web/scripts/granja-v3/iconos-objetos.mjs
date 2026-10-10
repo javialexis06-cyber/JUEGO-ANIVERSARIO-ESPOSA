@@ -11,7 +11,7 @@ await fs.mkdir(out, { recursive: true });
 const b = await chromium.launch({ executablePath: process.env.CHROME_PATH ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const p = await b.newPage();
 p.on('pageerror', (e) => console.log('PAGE', e.message));
-p.on('console', (m) => m.type() === 'error' && console.log(m.text()));
+p.on('console', (m) => (m.type() === 'error' || m.text().startsWith('sin figura')) && console.log(m.text()));
 await p.goto(base + 'scripts/granja-v3/objetos-fotos.html' + (solo ? '?solo=' + encodeURIComponent(solo) : ''));
 await p.waitForFunction(() => window.fotos, null, { timeout: 600000 });
 const fotos = await p.evaluate(() => window.fotos);
