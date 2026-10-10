@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const manifestPath=path.resolve(process.argv[2]??'public/modelos/granja-v2/manifest.json');
-const expected=Number(process.argv[3]??66),base=path.dirname(manifestPath);
+const expected=Number(process.argv[3]??77),base=path.dirname(manifestPath);
 const manifest=JSON.parse(await fs.readFile(manifestPath,'utf8'));
 const errors=[],warnings=[],loader=new GLTFLoader();
 let files=0,clipsValidated=0,totalBytes=0,highTriangles=0,lodTriangles=0;

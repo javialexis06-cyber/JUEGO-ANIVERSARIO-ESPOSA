@@ -69,3 +69,14 @@ Contrato para el frente de motor:
 - `ControlesGranja.eje` es la palanca analógica (x derecha, y arriba de la pantalla).
 - Cambiar de casilla a mitad de un golpe ya no se pierde (`esperarLibre`), y tocar una casilla lejos hace caminar al
   personaje hasta al lado antes de trabajar (`vista.acercarse`), como Stardew en el celular.
+
+## Escombros de la granja (Claude, 10 de octubre de 2026)
+
+- Arte: `scripts/granja-v2/escombros.mjs` hace `maleza_hierba`, `maleza_flores`, `maleza_matorral`, `tocon`,
+  `tocon_grande`, `piedra_chica`, `piedra`, `piedra_grande` y `mena_cobre/hierro/cristal` (fieltro por vértice, una
+  malla por modelo). `SOLO='^(maleza_|tocon)' node scripts/granja-v2/exportar.mjs` exporta solo esos sin tocar el
+  resto. `modeloEscombro` en `vista.ts` escoge el modelo por el id del recurso (siempre el mismo); no cambia tipos.
+- Reglas que pidió Javier (en `motor.ts`): la maleza sale con cualquier herramienta (azada, guadaña, hacha, pico o
+  espada), como en Stardew; cada noche brotan 3-6 malezas o piedras en terreno propio (`brotarMaleza`, tope de 40
+  por terreno comprado); una partida nueva empieza enmontada (`monte_*`). El patio de enfrente de la cabaña
+  (x -5..9, z -4..9) siempre queda limpio: ahí se empieza a sembrar y ahí trabajan las pruebas.

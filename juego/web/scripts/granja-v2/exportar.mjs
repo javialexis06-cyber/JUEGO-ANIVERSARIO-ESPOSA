@@ -8,10 +8,15 @@ import { mkdir,writeFile } from 'node:fs/promises';
 import { crearAnimales } from './animales.mjs';
 import { crearEdificios } from './edificios.mjs';
 import { crearNaturaleza } from './naturaleza.mjs';
+import { crearEscombros } from './escombros.mjs';
+import { readFile } from 'node:fs/promises';
 import { compactar } from './formas.mjs';
 globalThis.FileReader??=class{result=null;onloadend=null;onerror=null;readAsArrayBuffer(b){b.arrayBuffer().then(x=>{this.result=x;this.onloadend?.({target:this});}).catch(e=>this.onerror?.(e));}readAsDataURL(b){b.arrayBuffer().then(x=>{this.result='data:'+b.type+';base64,'+Buffer.from(x).toString('base64');this.onloadend?.({target:this});}).catch(e=>this.onerror?.(e));}};
 await MeshoptSimplifier.ready;const io=new NodeIO().registerExtensions(ALL_EXTENSIONS),exporter=new GLTFExporter(),out='public/modelos/granja-v2';await mkdir(out,{recursive:true});
-const assets=[...crearAnimales(),...crearEdificios(),...crearNaturaleza()],manifest={version:2,units:'meters',upAxis:'Y',frontAxis:'+Z',assets:[]};
+// SOLO='^(maleza|tocon)' exporta solo esos y conserva lo demás del catálogo tal cual
+const solo=process.env.SOLO?new RegExp(process.env.SOLO):null;
+const assets=[...crearAnimales(),...crearEdificios(),...crearNaturaleza(),...crearEscombros()].filter(a=>!solo||solo.test(a.id)),manifest=solo?JSON.parse(await readFile(out+'/manifest.json','utf8')):{version:2,units:'meters',upAxis:'Y',frontAxis:'+Z',assets:[]};
+if(solo)manifest.assets=manifest.assets.filter(a=>!solo.test(a.id));
 const stats=(buffer)=>{const data=JSON.parse(new TextDecoder().decode(buffer.slice(20,20+new DataView(buffer.buffer,buffer.byteOffset,buffer.byteLength).getUint32(12,true))));let triangles=0,drawCalls=0;for(const m of data.meshes??[])for(const p of m.primitives){triangles+=data.accessors[p.indices??p.attributes.POSITION].count/3;drawCalls++;}return{triangles,drawCalls};};
 for(const a of assets){
  compactar(a.root);a.root.userData={...a.root.userData,assetId:a.id,footprint:a.footprint,version:2};

@@ -60,6 +60,8 @@ export class MotorGranja {
  constructor(opciones:{ahora?:()=>number;azar?:()=>number;estado?:EstadoGranja}={}){
   this.ahora=opciones.ahora||Date.now;this.azar=opciones.azar||Math.random;
   const now=this.ahora();this.estado=this.inicial(now);
+  // La granja empieza enmontada, como en Stardew: maleza, piedras y tocones por limpiar
+  if(!opciones.estado)for(let ronda=1;ronda<=9;ronda++)this.brotarMaleza(ronda);
   if(opciones.estado){const r=this.cargarJSON(JSON.stringify(opciones.estado));if(!r.ok)throw new Error(r.mensaje)}
  }
  private inicial(now:number):EstadoGranja {
@@ -144,6 +146,15 @@ export class MotorGranja {
   for(let z=f.z-1;z<=f.z+1;z++)for(let x=f.x-1;x<=f.x+1;x++){if(x===f.x&&z===f.z)continue;if(recinto?!dentroInvernadero(x,z)||recinto.parcelas.some(p=>p.x===x&&p.z===z):!this.celdaLibre(x,z)||this.estado.parcelas.some(p=>p.x===x&&p.z===z))return false;}return true;
  }
  climaDeCelda(x:number,z:number):Clima{return biomaCelda(this.estado,x,z);}
+ /** Como en Stardew: cada noche brota maleza y salen piedritas en la granja (solo en terreno propio, libre y sin
+  * tapar caminos, cultivos, construcciones ni el sendero). Nunca pasa de un tope, para que no se vuelva una selva. */
+ brotarMaleza(ronda=0){const s=this.estado,dia=s.jornada.diasCompletados,TOPE=40*s.sectorIds.length,granja=s.obstaculos.filter(o=>(o.zona??'granja')==='granja'&&o.hp>0&&this.celdaPropia(o.x,o.z)).length;if(granja>=TOPE)return;
+  let semilla=(dia*2654435761+ronda*40503+s.sectorIds.length*97)>>>0;const azar=()=>{semilla=(semilla*1664525+1013904223)>>>0;return semilla/4294967296;};
+  /* El patio de enfrente de la cabaña (donde se empieza a sembrar) se queda limpio */const ocupada=(x:number,z:number)=>(x>=-5&&x<=9&&z>=-4&&z<=9)||s.obstaculos.some(o=>(o.zona??'granja')==='granja'&&o.x===x&&o.z===z)||s.parcelas.some(p=>p.x===x&&p.z===z)||s.frutales.some(f=>!f.edificioId&&Math.abs(f.x-x)<=1&&Math.abs(f.z-z)<=1)||s.edificios.some(e=>{const h=huella(e);return x>=h.x-1&&x<h.x+h.ancho+1&&z>=h.z-1&&z<h.z+h.fondo+1;})||[...s.produccion.cofres,...s.produccion.maquinas,...s.produccion.estructuras].some(n=>n.zona==='granja'&&Math.abs(n.x-x)<=1&&Math.abs(n.z-z)<=1)||aguaEn(s.paisaje,x,z)||!!huecoEn(s.paisaje,x,z)||esSenderoGranja(x,z)||celdaReservadaObra(s,x,z,false);
+  const cuantos=Math.min(TOPE-granja,3+Math.floor(azar()*4));let k=0;
+  for(let intento=0;intento<cuantos*12&&k<cuantos;intento++){const sec=SECTORES.find(x=>x.id===s.sectorIds[Math.floor(azar()*s.sectorIds.length)]);if(!sec)continue;const x=sec.x+Math.floor(azar()*sec.ancho),z=sec.z+Math.floor(azar()*sec.fondo);if(!this.celdaPropia(x,z)||ocupada(x,z))continue;
+   const v=azar(),tipo=ronda&&v>.86?'arbol':v<.62?'maleza':'roca',hp=VIDA_RECURSO[tipo];s.obstaculos.push({id:ronda?`monte_${ronda}_${k}`:`brote_${dia}_${k}`,tipo,x,z,sectorId:sec.id,hp,hpMax:hp,regeneraEn:null});k++;}
+ }
  celdaPropia(x:number,z:number){const s=sectorDeCelda(x,z);return entero(x)&&entero(z)&&!!s&&this.estado.sectorIds.includes(s.id)}
  celdaLibre(x:number,z:number,ignorarEdificio?:string){return !celdaReservadaObra(this.estado,x,z)&&!aguaEn(this.estado.paisaje,x,z)&&!huecoEn(this.estado.paisaje,x,z)&&!esSenderoGranja(x,z)&&!this.nodosProduccion().some(n=>n.id!==ignorarEdificio&&n.zona==='granja'&&contiene(huellaProduccion(n),x,z))&&this.celdaPropia(x,z)&&!this.estado.frutales.some(f=>!f.edificioId&&f.x===x&&f.z===z)&&!this.estado.obstaculos.some(o=>(o.zona||'granja')==='granja'&&o.hp>0&&o.x===x&&o.z===z)&&!this.estado.edificios.some(e=>e.id!==ignorarEdificio&&contiene(huella(e),x,z))}
  pecesDisponibles(cebo?:string):PezDef[]{const {hora,estacion}=this.calendario();return PECES.filter(p=>p.zonas.includes(this.estado.zona)&&p.estaciones.includes(estacion)&&(!p.tiempos||p.tiempos.includes(this.meteorologia()))&&(!cebo||p.cebo===cebo)&&(p.desde<p.hasta?hora>=p.desde&&hora<p.hasta:hora>=p.desde||hora<p.hasta))}
@@ -362,7 +373,7 @@ export class MotorGranja {
     if((o.zona||'granja')==='granja'&&!this.celdaPropia(o.x,o.z))return mal('Compra primero este sector.');
     if(!this.cerca(o.x,o.z,a.xJugador as number,a.zJugador as number,ALCANCE_GOLPE))return mal('Acércate al recurso con el teclado para usar la herramienta.');
     if(s.enemigo>0)return mal('Despeja los monstruos antes de recolectar recursos.');
-    const herramienta=herramientaDeNodo(o);if(s.herramienta!==herramienta)return mal(`Equipa ${herramienta==='guadana'?'la guadaña':herramienta==='hacha'?'el hacha':'el pico'}.`);
+    const herramienta=herramientaDeNodo(o);/* Como en Stardew, la maleza sale con cualquier herramienta (azada, guadaña, hacha, pico o espada) */if(s.herramienta!==herramienta&&!(o.tipo==='maleza'&&['azada','hacha','pico','espada'].includes(s.herramienta)))return mal(`Equipa ${herramienta==='guadana'?'la guadaña':herramienta==='hacha'?'el hacha':'el pico'}.`);
     const nivel=this.nivelHerramienta();if(nivel<nivelNecesario(o))return mal(`Necesitas una herramienta de ${NIVELES_HERRAMIENTA[nivelNecesario(o)].nombre.toLowerCase()} o mejor.`);
     if(now-s.ultimoGolpeAt<360)return mal('Espera a terminar el golpe.');
     if(s.energia<this.costeEnergia())return mal('Descansa para recuperar energía.');
@@ -640,7 +651,7 @@ export class MotorGranja {
     for(const i of s.ganaderia.incubadoras){const h=i.huevo;if(!h)continue;const huevo=leerHuevo(h.articulo)!;h.dias++;if(h.dias>=GANADO[huevo.especie].incubacion){this.nacimiento(huevo.especie,huevo.genoma,huevo.sexo,i.edificioId,h.nombre,now);i.huevo=null;this.contar('huevos_incubados');}}
     cerrarDiaCompania(s);this.paseosCompania.limpiar();s.vida=100;s.energia=100;s.interior=null;s.servicio=null;s.enemigo=0;s.posicionExterior={zona:'granja',...p};this.contar('dias_dormidos');
     s.monedas+=ventas.total;for(const c of s.envios.cajas)c.casillas.fill(null);if(ventas.total){this.contar('ingresos_envio',ventas.total);this.contar('vender',ventas.lineas.reduce((n,p)=>n+p.cantidad,0));}
-    const terminadas=this.avanzarObras();const resumen=cerrarJornada(s.jornada,now,Math.floor(s.monedas),s.estadisticas,avanzados,maduros);if(terminadas.length)resumen.obras=terminadas;entregarCorreo(s);vencerEncargos(s);reiniciarRutinas(s);resumen.envios=ventas;resumen.aprendizajes=reconocerAprendizajes(s.habilidades,RECETAS);r={...bien('Jornada cerrada. Amanecerá a las 06:00.'),resumenJornada:resumen,posicionZona:p};break;
+    const terminadas=this.avanzarObras();const resumen=cerrarJornada(s.jornada,now,Math.floor(s.monedas),s.estadisticas,avanzados,maduros);if(terminadas.length)resumen.obras=terminadas;entregarCorreo(s);vencerEncargos(s);reiniciarRutinas(s);this.brotarMaleza();resumen.envios=ventas;resumen.aprendizajes=reconocerAprendizajes(s.habilidades,RECETAS);r={...bien('Jornada cerrada. Amanecerá a las 06:00.'),resumenJornada:resumen,posicionZona:p};break;
    }
    case 'descansar':if(s.zona!=='granja'&&s.zona!=='pueblo')return mal('Regresa a un lugar seguro para descansar.');s.vida=100;s.energia=100;r=bien('Descansaste y recuperaste fuerzas. El reloj de cuidado sigue su curso.');break;
    case 'reclamar':{
