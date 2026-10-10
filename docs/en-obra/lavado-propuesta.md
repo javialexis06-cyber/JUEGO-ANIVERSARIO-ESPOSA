@@ -52,7 +52,9 @@ Apurado, el tutorial y de 2 a 4 jugadores en línea.
 > un regalo aparte), la Granizada pide los dos anillos y las armas «de adelante» apuntan al más cercano cuando está
 > cerca. **Fase 1b hecha** también: la cortina, el neceser (con su regalo), el bolsillo, los pececitos (evolucionan
 > solos en la pecera infinita, que sigue subiendo, en vez de las formas de la original), el confeti y las cinco de
-> rebote (sin transformación hasta los disfraces de la fase 4).
+> rebote (sin transformación hasta los disfraces de la fase 4). **Fases 1c y 1d hechas**: los recogibles, los cuatro
+> arcanos, la tienda y cinco armas de los DLC (brisa, cuatro estaciones, bata de seda, gotas de colores y culebrita
+> destapacaños). La fase 1 queda completa.
 
 | Original | En el baño | Qué hace | Evoluciona en |
 |---|---|---|---|

@@ -6,7 +6,7 @@ import type { ArmaJ, Enemigo, Jugador, Motor, Proyectil, Zona } from './motor';
 import type { IdArma } from './tipos';
 
 /** Ranuras de «ya le pegó» en cada enemigo (por jugador: + índice del jugador). */
-const HZ_AURA = 0, HZ_ESPONJAS = 4, HZ_LASER = 8, HZ_COLUMNA = 12, HZ_CHARCO = 16, HZ_MASCARILLA = 20;
+const HZ_AURA = 0, HZ_ESPONJAS = 4, HZ_LASER = 8, HZ_COLUMNA = 12, HZ_CHARCO = 16, HZ_MASCARILLA = 20, HZ_ESPEJISMO = 24;
 const TAU = Math.PI * 2;
 /** Armas de zona (para la carta del planetario). */
 const ZONA = new Set<IdArma>(['espuma', 'espumaDevoradora', 'botellas', 'inundacion', 'ducha', 'diluvio', 'esponjas', 'esponjasEternas', 'patoAmarillo', 'patoMorado', 'patosEnamorados',
@@ -167,6 +167,9 @@ function golpe(m: Motor, j: Jugador, slot: number, e: Enemigo, dano: number, cri
   if (c && (arma === 'toallazo' || arma === 'afeitada')) m.curar(j, 1);
   // El talco al máximo: los que caen a veces sueltan un corazoncito
   if (arma === 'talco' && !e.vivo && !e.luz && m.az.n() < 0.25 && j.nivelArma('talco') >= 8) m.soltar('corazoncito', e.x, e.y);
+  if ((arma === 'brisa' || arma === 'vendaval') && !e.vivo && !e.luz && m.az.n() < 0.05 * (1 + Math.max(0, j.st.suerte))) m.soltar('corazoncito', e.x, e.y);
+  // El vendaval ablanda: cada golpe, 2 % más de daño (hasta el doble)
+  if (arma === 'vendaval' && e.vivo) e.debil = Math.min(1, e.debil + 0.02);
   return c;
 }
 
@@ -275,8 +278,8 @@ export function actualizarArmas(m: Motor, j: Jugador, dt: number) {
     const caminando = moviendo && (def.comp === 'tajo' || def.comp === 'cubito' || def.comp === 'talco') ? 1.5 * (1 + Math.max(0, j.st.movimiento)) : 1;
     a.t -= dt * ritmo * caminando;
     if (a.rafaga <= 0 && a.t <= 0) {
-      // (las luces del espejo: cada proyectil son cuatro rayitas)
-      a.total = E.cant * (def.comp === 'luces' ? 4 : 1);
+      // (las luces del espejo: cada proyectil son cuatro rayitas; las estaciones, siempre sus cuatro esquinas o cinco)
+      a.total = def.comp === 'estaciones' ? (a.id === 'salesArcoiris' ? 5 : 4) : E.cant * (def.comp === 'luces' ? 4 : 1);
       // Compañeros de estudio: a veces la tarea se hace dos veces
       if (j.tieneCarta('dobleTurno') && m.az.n() < 0.25) a.total *= 2;
       a.rafaga = a.total;
@@ -469,7 +472,7 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       const diluvio = a.id === 'diluvio';
       Object.assign(z, {
         vivo: true, dueno: j.i, arma: a.id, slot, tipo: 1, x: j.x, y: j.y, r: 0, w: E.radio * 2 * E.area, h: j.vistaH + 140, dano: E.dano,
-        vida: E.dur, dur: E.dur, golpeCada: E.golpeCada, hz: HZ_COLUMNA + j.i, vx: 0, vy: 0, crece: 0, lento: diluvio ? 1.2 : 0, dientes: 0, t: 0,
+        vida: E.dur, dur: E.dur, golpeCada: E.golpeCada, hz: HZ_COLUMNA + j.i, vx: 0, vy: 0, crece: 0, lento: diluvio ? 1.2 : 0, dientes: 0, hiela: 0, revienta: 0, mata: 0, t: 0,
       });
       m.emitir('columna', j.x, j.y, z.w, z.h, E.dur, diluvio ? 1 : 0);
       break;
@@ -665,7 +668,7 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       Object.assign(z, {
         vivo: true, dueno: j.i, arma: a.id, slot, tipo: 2, x: j.x + Math.cos(ang) * d, y: j.y + Math.sin(ang) * d * 0.85, r, w: 0, h: 0, dano: E.dano,
         vida: E.dur, dur: E.dur, golpeCada: E.golpeCada, hz: HZ_MASCARILLA + j.i, vx: Math.cos(ang) * 30, vy: Math.sin(ang) * 26, crece: 0, lento: 0,
-        dientes: (0.03 + E.crit) * (1 + Math.max(0, j.st.suerte)), t: 0,
+        dientes: (0.03 + E.crit) * (1 + Math.max(0, j.st.suerte)), hiela: 0, revienta: 0, mata: 0, t: 0,
       });
       m.emitir('charco', z.x, z.y, r, E.dur, 0, 2);
       if (spa && idx === 0) m.curar(j, 1);
@@ -792,6 +795,93 @@ function disparar(m: Motor, j: Jugador, a: ArmaJ, slot: number, idx: number) {
       const ang = Math.PI / 2 + m.az.entre(-0.9, 0.9);
       const v = E.rapidez * E.vel * m.az.entre(0.85, 1.15);
       nuevoProy(m, j, slot, a.id, 15, j.x + m.az.entre(-40, 40), j.y - j.vistaH / 2 - 10, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur + 0.6);
+      break;
+    }
+    // ============================================================================================== De los DLC
+    case 'brisa': {
+      // Remolinos de brisa: salen repartidos alrededor y dan la vuelta en óvalo, siguiéndote
+      const p = nuevoProy(m, j, slot, a.id, 16, j.x, j.y, 0, 0, E.radio * E.area, E.dur);
+      if (p) {
+        p.ang = a.ang + (idx / Math.max(1, a.total)) * TAU;
+        p.n = 90 * Math.sqrt(E.area) + 20;
+        p.giro = E.rapidez * E.vel * (idx % 2 ? 1 : 0.85);
+        p.ex = m.az.n() * TAU;
+        if (idx === a.total - 1) a.ang += 0.9;
+      }
+      break;
+    }
+    case 'estaciones': {
+      // Un reventón en cada esquina (las sales del arcoíris, además, uno encima): la cantidad y la duración suben el daño
+      const esquina = idx < 4 ? [[-1, -1], [1, -1], [-1, 1], [1, 1]][idx] : [0, 0];
+      const sep = 60 + 14 * (a.nivel - 1) + (a.id === 'salesArcoiris' ? 60 : 0);
+      const x = j.x + esquina[0] * sep * 1.3, y = j.y + esquina[1] * sep * 0.85;
+      const dano = (E.dano + E.dur * 10) * Math.max(1, E.cant);
+      m.explotar(j.i, slot, a.id, x, y, E.radio * E.area, dano, idx < 4 ? 12 + idx : 16);
+      break;
+    }
+    case 'espejismo': {
+      // Un espejismo tuyo de espuma (los del perfume salen caminando)
+      const perfume = a.id === 'perfumeEspejismo';
+      const z = nuevaZona(m);
+      if (!z) break;
+      const ang = (idx / Math.max(1, a.total)) * TAU + m.az.n() * 0.6;
+      const d = idx === 0 && !perfume ? 0 : 36;
+      const v = perfume ? E.rapidez * E.vel : 0;
+      Object.assign(z, {
+        vivo: true, dueno: j.i, arma: a.id, slot, tipo: 3, x: j.x + Math.cos(ang) * d, y: j.y + Math.sin(ang) * d * 0.8, r: E.radio * E.area, w: 0, h: 0,
+        dano: E.dano, vida: E.dur, dur: E.dur, golpeCada: E.golpeCada, hz: HZ_ESPEJISMO + j.i, vx: Math.cos(ang) * v, vy: Math.sin(ang) * v * 0.8, crece: 0,
+        lento: 0, dientes: 0, hiela: E.congela, revienta: E.crit * (1 + Math.max(0, j.st.suerte)), mata: 0, t: 0,
+      });
+      break;
+    }
+    case 'misil': {
+      if (a.id === 'arcoiris') {
+        // Rayos de colores que caen sobre los mugrosos que se ven
+        for (let q = 0; q < 3; q++) {
+          const e = alAzarEnVista(m, j);
+          if (!e) break;
+          const largo = E.rapidez * 2 * E.area;
+          m.emitir('luces', e.x, e.y - largo * 0.3, largo, E.radio, 1, (idx * 3 + q) % 5);
+          rectangulo(m, j, slot, e.x, e.y - largo * 0.3, E.radio * 1.4, largo / 2, E.dano, a.id, 0, 1);
+        }
+        break;
+      }
+      // Gotas de colores: un anillo que cae desde arriba en espiral alrededor de donde estás
+      const p = nuevoProy(m, j, slot, a.id, 17, j.x, j.y - j.vistaH / 2, 0, 0, 10, E.dur);
+      if (p) {
+        p.ex = j.x;
+        p.ey = j.y;
+        p.ang = (idx / Math.max(1, a.total)) * TAU;
+        p.n = 150 + E.radio * E.area;
+        p.ax = E.dur;
+        p.ay = E.radio * E.area;
+      }
+      break;
+    }
+    case 'culebra': {
+      if (a.id === 'granDesague') {
+        // Remolinos del desagüe encima de los mugrosos
+        const e = alAzarEnVista(m, j);
+        const z = nuevaZona(m);
+        if (!z) break;
+        const x = e ? e.x : j.x + m.az.entre(-200, 200), y = e ? e.y : j.y + m.az.entre(-120, 120);
+        Object.assign(z, {
+          vivo: true, dueno: j.i, arma: a.id, slot, tipo: 4, x, y, r: E.radio * E.area, w: 0, h: 0, dano: E.dano, vida: E.dur, dur: E.dur,
+          golpeCada: E.golpeCada, hz: HZ_ESPEJISMO + j.i, vx: 0, vy: 0, crece: 0, lento: 0, dientes: 0, hiela: 0, revienta: 1,
+          mata: 0.01 * (1 + Math.max(0, j.st.suerte)), t: 0,
+        });
+        break;
+      }
+      // La culebrita sale hacia un mugroso al azar
+      const e = alAzarEnVista(m, j);
+      const ang = e ? Math.atan2(e.y - j.y, e.x - j.x) : m.az.n() * TAU;
+      const v = E.rapidez * E.vel;
+      const p = nuevoProy(m, j, slot, a.id, 18, j.x, j.y - 4, Math.cos(ang) * v, Math.sin(ang) * v, E.radio * E.area, E.dur);
+      if (p) {
+        p.n = e ? e.uid : 0;
+        p.ex = 40 * E.area;
+        p.perfora = 1;
+      }
       break;
     }
   }
@@ -1146,7 +1236,7 @@ export function moverProyectiles(m: Motor, dt: number) {
             const inunda = p.arma === 'inundacion';
             Object.assign(z, {
               vivo: true, dueno: p.dueno, arma: p.arma, slot: p.slot, tipo: 0, x: p.ex, y: p.ey, r: p.r, w: 0, h: 0, dano: p.dano, vida: p.n, dur: p.n,
-              golpeCada: p.golpeCada, hz: HZ_CHARCO + p.dueno, vx: 0, vy: 0, crece: inunda ? 1 : 0, lento: 0, dientes: 0, t: 0,
+              golpeCada: p.golpeCada, hz: HZ_CHARCO + p.dueno, vx: 0, vy: 0, crece: inunda ? 1 : 0, lento: 0, dientes: 0, hiela: 0, revienta: 0, mata: 0, t: 0,
             });
             m.emitir('charco', p.ex, p.ey, p.r, p.n, 0, inunda ? 1 : 0);
           }
@@ -1247,6 +1337,60 @@ export function moverProyectiles(m: Motor, dt: number) {
         if (j && !j.enVista(p.x, p.y, 60)) p.vivo = false;
         if (!p.vivo) continue;
         break;
+      case 16: {
+        // Remolino de brisa: da la vuelta en óvalo alrededor del dueño (y lo sigue)
+        p.ang += p.giro * dt;
+        if (j) {
+          const r = p.n * (0.75 + 0.25 * Math.sin(p.t * 2 + p.ex));
+          p.x = j.x + Math.cos(p.ang) * r * 1.45;
+          p.y = j.y + Math.sin(p.ang) * r * 0.9;
+        }
+        break;
+      }
+      case 17: {
+        // Gota de colores: baja en espiral hasta donde estaba el dueño y revienta
+        const k = Math.min(1, p.t / Math.max(0.1, p.ax));
+        const ang = p.ang + k * TAU * 1.2;
+        // (terminan en un anillo alrededor, no todas en el mismo punto)
+        const r = 70 + (p.n - 70) * (1 - k);
+        const nx = p.ex + Math.cos(ang) * r, ny = p.ey + Math.sin(ang) * r * 0.8 - (1 - k) * (1 - k) * 160;
+        p.vx = (nx - p.x) / Math.max(dt, 1e-4);
+        p.vy = (ny - p.y) / Math.max(dt, 1e-4);
+        p.x = nx;
+        p.y = ny;
+        if (k >= 1) {
+          p.vivo = false;
+          m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, p.ay, p.dano, 6);
+          continue;
+        }
+        // (cayendo no pega: solo el reventón)
+        continue;
+      }
+      case 18: {
+        // Culebrita: va culebreando hasta su mugroso (si se le muere, busca otro)
+        let e = null as Enemigo | null;
+        for (let k = 0; k < m.nVivos; k++) {
+          const c = m.en[m.vivos[k]];
+          if (c.uid === p.n && c.vivo) {
+            e = c;
+            break;
+          }
+        }
+        if (!e) {
+          e = masCercano(m, p.x, p.y, 380);
+          p.n = e ? e.uid : 0;
+        }
+        const v = Math.hypot(p.vx, p.vy) || 200;
+        if (e) {
+          const ang = Math.atan2(e.y - p.y, e.x - p.x) + Math.sin(p.t * 9) * 0.5;
+          p.vx += (Math.cos(ang) * v - p.vx) * Math.min(1, dt * 6);
+          p.vy += (Math.sin(ang) * v - p.vy) * Math.min(1, dt * 6);
+        }
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.ang = Math.atan2(p.vy, p.vx);
+        break;
+      }
       case 11: {
         // Nubecita de vapor: se frena y se infla
         const f = Math.exp(-2.4 * dt);
@@ -1260,6 +1404,7 @@ export function moverProyectiles(m: Motor, dt: number) {
     }
     if (p.vida <= 0) {
       p.vivo = false;
+      if (j && p.comp === 18) culebraRevienta(m, j, p);
       if (j && !p.mini && COMP_LUCES.has(p.comp) && j.tieneCarta('lucesFeria')) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
       continue;
     }
@@ -1344,9 +1489,22 @@ function choques(m: Motor, j: Jugador, p: Proyectil) {
         }
         p.vivo = false;
         if (p.comp === 7) partir(m, j, p);
+        if (p.comp === 18) culebraRevienta(m, j, p);
         if (!p.mini && j.tieneCarta('lucesFeria') && COMP_LUCES.has(p.comp)) m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, 42, p.dano * 0.6, 5);
       }
     }
+  }
+}
+
+/** La culebrita revienta donde llega y a veces deja frenados para siempre a los de alrededor. */
+function culebraRevienta(m: Motor, j: Jugador, p: Proyectil) {
+  const r = p.ex;
+  m.explotar(p.dueno, p.slot, p.arma, p.x, p.y, r, p.dano, 17);
+  const n = m.rej.circulo(p.x, p.y, r + 30);
+  for (let k = 0; k < n; k++) {
+    const e = m.en[m.rej.fuera[k]];
+    if (!e.vivo || e.luz || (e.x - p.x) ** 2 + (e.y - p.y) ** 2 > (r + e.r) ** 2) continue;
+    if (m.az.n() < 0.5 * (1 + Math.max(0, j.st.suerte))) e.freno = Math.min(0.8, e.freno + 0.05);
   }
 }
 
@@ -1378,6 +1536,8 @@ export function moverZonas(m: Motor, dt: number) {
     z.vida -= dt;
     if (z.vida <= 0) {
       z.vivo = false;
+      // Los espejismos a veces revientan al final; los remolinos del desagüe, siempre
+      if (z.revienta && m.az.n() < z.revienta) m.explotar(z.dueno, z.slot, z.arma, z.x, z.y, z.r * 1.6, z.dano * 3, z.tipo === 4 ? 17 : 6);
       continue;
     }
     const j = m.jug[z.dueno];
@@ -1386,8 +1546,8 @@ export function moverZonas(m: Motor, dt: number) {
       // La columna de la ducha sigue al personaje
       z.x = j.x;
       z.y = j.y;
-    } else if (z.tipo === 2) {
-      // La gota de mascarilla avanza despacito
+    } else if (z.tipo === 2 || z.tipo === 3) {
+      // La gota de mascarilla y los espejismos del perfume avanzan
       z.x += z.vx * dt;
       z.y += z.vy * dt;
     } else if (z.crece) {
@@ -1409,6 +1569,15 @@ export function moverZonas(m: Motor, dt: number) {
       e.hz[z.hz] = m.tReal + z.golpeCada;
       if (z.lento) e.lento = Math.max(e.lento, z.lento);
       if (z.dientes && !e.jefe && !e.sinDientes && m.az.n() < z.dientes) e.sinDientes = true;
+      if (z.hiela) {
+        if (e.def.congelable) e.congelado = Math.max(e.congelado, z.hiela);
+        else e.lento = Math.max(e.lento, z.hiela);
+      }
+      // El gran desagüe a veces se traga a uno entero
+      if (z.mata && !e.jefe && !e.luz && m.az.n() < z.mata) {
+        m.matar(e, z.dueno, false);
+        continue;
+      }
       golpe(m, j, z.slot, e, z.dano, E.crit * 0, 2, z.tipo === 1 ? 0 : e.x - z.x, z.tipo === 1 ? 1 : e.y - z.y, z.arma);
       if (z.crece && z.r < 160) z.r += 0.6;
     }

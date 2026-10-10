@@ -265,7 +265,8 @@ export function tomarFoto(m: Motor, efDesde: number, seq: number, extra = { band
     const a = quienVe(p.x, p.y);
     if (a < 0) continue;
     b8(IDX_ARMA.get(p.arma) ?? 0);
-    b8(p.comp | (p.mini ? 16 : 0));
+    // (el comportamiento en 6 bits y la copia chiquita en el séptimo)
+    b8(p.comp | (p.mini ? 64 : 0));
     pos(a, p.x, p.y);
     i16(q(p.vx));
     i16(q(p.vy));
@@ -536,8 +537,8 @@ export class Espejo {
       if (!p) continue;
       p.vivo = true;
       p.arma = ID_ARMAS[ia];
-      p.comp = c & 15;
-      p.mini = !!(c & 16);
+      p.comp = c & 63;
+      p.mini = !!(c & 64);
       p.x = x;
       p.y = y;
       p.vx = vx;

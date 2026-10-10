@@ -50,12 +50,15 @@ export type IdArma =
   | 'chancletas' | 'maquina' | 'copito' | 'plancha' | 'vaporizador' | 'mariposas' | 'pistolaAgua' | 'brillantina' | 'cubitos'
   | 'cepilloEspalda' | 'mascarilla' | 'piedraPomez' | 'lucesLED' | 'letrasEspuma'
   | 'cortina' | 'neceser' | 'bolsillo' | 'pececitos' | 'confeti' | 'hueso' | 'bombaBano' | 'barquito' | 'talco' | 'bolitasGel'
+  // De los DLC
+  | 'brisa' | 'estaciones' | 'bataEspejismo' | 'gotasColores' | 'culebrita'
   // Evolucionadas
   | 'toallazo' | 'burbujero' | 'milCerdas' | 'remolino' | 'peinillaOro' | 'esponjasEternas' | 'secadorInfernal' | 'espumaDevoradora'
   | 'inundacion' | 'jabonExplosivo' | 'tormenta' | 'lunaDeMiel' | 'patosEnamorados' | 'ranaGlotona' | 'diluvio' | 'hiloSeda' | 'perfumeAmor'
   | 'pisoton' | 'afeitada' | 'dobleCopito' | 'tripleCopito' | 'planchaDiva' | 'sauna' | 'mariposario' | 'hidrolavadora' | 'lluviaBrillantina'
   | 'granizada' | 'cepilloCeleste' | 'spa' | 'piedrasCalientes' | 'camerino' | 'abecedario'
-  | 'cortinaTerciopelo' | 'neceserLujo' | 'peceraInfinita';
+  | 'cortinaTerciopelo' | 'neceserLujo' | 'peceraInfinita'
+  | 'vendaval' | 'salesArcoiris' | 'perfumeEspejismo' | 'arcoiris' | 'granDesague';
 
 export type IdPasiva =
   | 'jabonFuerte' | 'gorro' | 'crema' | 'cremaNoche' | 'relojArena' | 'lupa' | 'liga' | 'sales' | 'espejoDoble' | 'pantuflas' | 'iman'

@@ -412,6 +412,18 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   gasten). Son estadísticas nuevas (`omni`, `encanto`, `desarmar`, `conservar` en `tipos.ts`). 7 logros más (100.000
   mugrosos, 25 jefes, 20 minutos en Apurado, 20 evoluciones, 20.000 gotas, evolucionar la mascarilla y 50
   partidas): en total, 53.
+- **Versión 2, fase 1d** (una selección de los DLC, sin mecánicas que pidan otra interfaz): **brisa de la ventana**
+  (Silver Wind: remolinos que te dan la vuelta en óvalo; a veces sueltan corazoncitos → **vendaval de lavanda** con la
+  crema de noche: cada golpe ablanda al mugroso, `Enemigo.debil`), **sales de las cuatro estaciones** (Four Seasons:
+  reventones de flores, hojas, hojas secas y escarcha en las cuatro esquinas; la cantidad y la duración suben el daño →
+  **sales del arcoíris** con la lupa: cinco, uno encima), **bata de seda** (Mirage Robe: espejismos de espuma que
+  congelan y a veces revientan, zona tipo 3 → **perfume espejismo** con el imán: salen caminando), **gotas de
+  colores** (Prismatic Missile: un anillo que cae en espiral y revienta alrededor → **arcoíris** con la corona: rayos de
+  colores sobre los mugrosos que se ven) y **culebrita destapacaños** (Shadow Servant: va hasta un mugroso, revienta y a
+  veces lo frena para siempre, `Enemigo.freno` → **el gran desagüe** con el espejo roto: remolinos morados, zona tipo
+  4, que a veces se tragan a uno entero). Se abren con 5 logros (25 minutos en el lavamanos y en la cara, evolucionar
+  el hilo dental, unir el perfume y la colonia, vencer al Tapón): en total, 58. Proyectiles 16-18: el comportamiento
+  viaja ahora en 6 bits en la foto en línea (la copia chiquita, en el bit 64).
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

@@ -46,7 +46,13 @@ export type Comp =
   | 'rebote' // Bone y Cherry Bomb: rebotan en los bordes y en los mugrosos
   | 'barco' // Carréllo: de lado a lado, rebotando en los bordes
   | 'talco' // Celestial Dusting: hacia atrás, rebotando; al final suelta pétalos
-  | 'gel'; // La Robba: llueven desde arriba y rebotan en los mugrosos
+  | 'gel' // La Robba: llueven desde arriba y rebotan en los mugrosos
+  // De los DLC
+  | 'brisa' // Silver Wind: remolinos que dan la vuelta en óvalo
+  | 'estaciones' // Four Seasons: reventones en las cuatro esquinas
+  | 'espejismo' // Mirage Robe: espejismos que congelan
+  | 'misil' // Prismatic Missile: gotas que caen en espiral
+  | 'culebra'; // Shadow Servant: culebrita que va hasta un mugroso y revienta
 
 export interface BaseArma {
   /** Daño de cada golpe. */
@@ -1084,6 +1090,127 @@ export const ARMAS: Record<IdArma, DefArma> = {
       n('+10 de daño', { dano: 10 }),
       n('+1 bolita y duran 0,3 s más', { cant: 1, dur: 0.3 }),
     ],
+  },
+  // ================================================================================================ De los DLC
+  // ------------------------------------------------------------------------------------------------ Silver Wind
+  brisa: {
+    id: 'brisa', nombre: 'Brisa de la ventana', original: 'Silver Wind (Legacy of the Moonspell)', secreta: true,
+    desc: 'Remolinos de brisa que te dan la vuelta en óvalo y te siguen. A veces los que caen sueltan un corazoncito.',
+    comp: 'brisa', rareza: 50,
+    base: B({ dano: 7, cant: 1, dur: 3, enfr: 3, inter: 0.25, perfora: 999, radio: 12, rapidez: 2.4, golpeCada: 0.5 }),
+    niveles: [
+      n('+1 remolino', { cant: 1 }),
+      n('+6 de daño', { dano: 6 }),
+      n('+20 % de área', { area: 0.2 }),
+      n('+1 remolino', { cant: 1 }),
+      n('Duran 0,5 s más', { dur: 0.5 }),
+      n('+6 de daño', { dano: 6 }),
+      n('+1 remolino', { cant: 1 }),
+    ],
+    evo: { pasiva: 'cremaNoche', a: 'vendaval' },
+  },
+  vendaval: {
+    id: 'vendaval', nombre: 'Vendaval de lavanda', original: 'Festive Winds', de: ['brisa'],
+    desc: 'Remolinos de lavanda más rápidos: cada golpe ablanda al mugroso (le pegan cada vez más duro).',
+    comp: 'brisa', rareza: 0,
+    base: B({ dano: 30, cant: 5, area: 1.3, dur: 2.6, enfr: 2, inter: 0.15, perfora: 999, radio: 13, rapidez: 3.4, golpeCada: 0.45 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Four Seasons
+  estaciones: {
+    id: 'estaciones', nombre: 'Sales de las cuatro estaciones', original: 'Four Seasons (Legacy of the Moonspell)', secreta: true,
+    desc: 'Cuatro reventones de sales en las esquinas: flores, hojas, hojas secas y escarcha. La cantidad y la duración les suben el daño.',
+    comp: 'estaciones', rareza: 50,
+    base: B({ dano: 14, cant: 1, dur: 1, enfr: 2.6, inter: 0.12, perfora: 999, radio: 38, retro: 1 }),
+    niveles: [
+      n('+25 % de área y más separadas', { area: 0.25 }),
+      n('+5 de daño', { dano: 5 }),
+      n('+25 % de área y más separadas', { area: 0.25 }),
+      n('Duran 0,5 s más (más daño)', { dur: 0.5 }),
+      n('+25 % de área y más separadas', { area: 0.25 }),
+      n('+5 de daño', { dano: 5 }),
+      n('+25 % de área y más separadas', { area: 0.25 }),
+    ],
+    evo: { pasiva: 'lupa', a: 'salesArcoiris' },
+  },
+  salesArcoiris: {
+    id: 'salesArcoiris', nombre: 'Sales del arcoíris', original: 'Godai Shuffle', de: ['estaciones'],
+    desc: 'Cinco reventones: las cuatro esquinas y uno encima tuyo.',
+    comp: 'estaciones', rareza: 0,
+    base: B({ dano: 16, cant: 2, dur: 1.5, area: 2.2, enfr: 2.8, inter: 0.08, perfora: 999, radio: 40, retro: 1.2 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Mirage Robe
+  bataEspejismo: {
+    id: 'bataEspejismo', nombre: 'Bata de seda', original: 'Mirage Robe (Legacy of the Moonspell)', secreta: true,
+    desc: 'Deja espejismos tuyos de espuma que congelan a los que los tocan; a veces revientan.',
+    comp: 'espejismo', rareza: 50,
+    base: B({ dano: 8, cant: 1, dur: 1.5, enfr: 4, inter: 0.2, perfora: 999, radio: 34, golpeCada: 0.6, congela: 1, crit: 0.2 }),
+    niveles: [
+      n('+1 espejismo', { cant: 1 }),
+      n('Duran 0,5 s más', { dur: 0.5 }),
+      n('+20 % de área', { area: 0.2 }),
+      n('Revientan más seguido', { crit: 0.1 }),
+      n('+1 espejismo', { cant: 1 }),
+      n('Duran 0,5 s más y congelan más rato', { dur: 0.5, congela: 0.3 }),
+      n('+20 % de área y revientan más seguido', { area: 0.2, crit: 0.1 }),
+    ],
+    evo: { pasiva: 'iman', a: 'perfumeEspejismo' },
+  },
+  perfumeEspejismo: {
+    id: 'perfumeEspejismo', nombre: 'Perfume espejismo', original: "J'Odore", de: ['bataEspejismo'],
+    desc: 'Los espejismos salen caminando, congelan más y casi siempre revientan.',
+    comp: 'espejismo', rareza: 0,
+    base: B({ dano: 20, cant: 4, dur: 1.6, enfr: 2.6, inter: 0.15, perfora: 999, radio: 30, golpeCada: 0.5, congela: 1.6, crit: 0.7, rapidez: 90 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Prismatic Missile
+  gotasColores: {
+    id: 'gotasColores', nombre: 'Gotas de colores', original: 'Prismatic Missile (Tides of the Foscari)', secreta: true,
+    desc: 'Un anillo de gotas de colores que cae en espiral alrededor tuyo y revienta en polvito de arcoíris.',
+    comp: 'misil', rareza: 50,
+    base: B({ dano: 14, cant: 4, dur: 0.9, enfr: 3.2, inter: 0, perfora: 999, radio: 34 }),
+    niveles: [
+      n('+1 gota', { cant: 1 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+20 % de área', { area: 0.2 }),
+      n('+1 gota', { cant: 1 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+20 % de área', { area: 0.2 }),
+      n('+2 gotas', { cant: 2 }),
+    ],
+    evo: { pasiva: 'corona', a: 'arcoiris' },
+  },
+  arcoiris: {
+    id: 'arcoiris', nombre: 'Arcoíris', original: 'Luminaire', de: ['gotasColores'],
+    desc: 'Rayos de colores que caen de arriba sobre los mugrosos que se ven.',
+    comp: 'misil', rareza: 0,
+    base: B({ dano: 34, cant: 4, area: 1, enfr: 2.2, inter: 0.05, perfora: 999, radio: 10, rapidez: 140 }),
+    niveles: [],
+  },
+  // ------------------------------------------------------------------------------------------------ Shadow Servant
+  culebrita: {
+    id: 'culebrita', nombre: 'Culebrita destapacaños', original: 'Shadow Servant (Tides of the Foscari)', secreta: true,
+    desc: 'Una culebrita de resorte que va hasta un mugroso y revienta; a veces los deja más lentos para siempre.',
+    comp: 'culebra', rareza: 50,
+    base: B({ dano: 15, cant: 1, dur: 4, enfr: 2.5, inter: 0.3, perfora: 1, radio: 10, rapidez: 200 }),
+    niveles: [
+      n('+1 culebrita', { cant: 1 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+20 % de área', { area: 0.2 }),
+      n('+1 culebrita', { cant: 1 }),
+      n('+10 de daño', { dano: 10 }),
+      n('+20 % de área y +20 % de velocidad', { area: 0.2, vel: 0.2 }),
+      n('+1 culebrita', { cant: 1 }),
+    ],
+    evo: { pasiva: 'espejoRoto', a: 'granDesague' },
+  },
+  granDesague: {
+    id: 'granDesague', nombre: 'El gran desagüe', original: 'Ophion', de: ['culebrita'],
+    desc: 'Remolinos del desagüe sobre los mugrosos: chupan, a veces se tragan a uno entero y al final revientan.',
+    comp: 'culebra', rareza: 0,
+    base: B({ dano: 22, cant: 3, dur: 2.5, area: 1, enfr: 2.2, inter: 0.12, perfora: 999, radio: 40, golpeCada: 1 }),
+    niveles: [],
   },
 };
 

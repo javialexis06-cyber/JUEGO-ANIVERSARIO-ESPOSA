@@ -237,6 +237,12 @@ export const LOGROS: DefLogro[] = [
   { id: 'oro20000', nombre: 'Gotas de sobra', desc: 'Junta 20.000 gotas doradas en total', premio: 'Tienda: Encanto', cumple: (p) => p.oroTotal >= 20000 },
   { id: 'evoMascarilla', nombre: 'Cero dientes', desc: 'Evoluciona la Mascarilla de pepino', premio: 'Tienda: Desarmar', cumple: (p) => p.armas.includes('spa') },
   { id: 'partidas50', nombre: 'Lavado de siempre', desc: 'Juega 50 partidas', premio: 'Tienda: Conservar', cumple: (p) => p.partidas >= 50 },
+  // De los DLC
+  { id: 'lavamanos25', nombre: 'Brisa fresca', desc: 'Aguanta 25 minutos en El Lavamanos', premio: 'Arma: Brisa de la ventana', cumple: (p) => minutosEn(p, 'lavamanos') >= 25 },
+  { id: 'cara25', nombre: 'Cuatro estaciones', desc: 'Aguanta 25 minutos en La Cara', premio: 'Arma: Sales de las cuatro estaciones', cumple: (p) => minutosEn(p, 'cara') >= 25 },
+  { id: 'evoHilo', nombre: 'Quietos todos', desc: 'Evoluciona el Hilo dental', premio: 'Arma: Bata de seda', cumple: (p) => p.armas.includes('hiloSeda') },
+  { id: 'evoPerfume', nombre: 'Huele a enamorados', desc: 'Une el Perfume y la Colonia', premio: 'Arma: Gotas de colores', cumple: (p) => p.armas.includes('perfumeAmor') },
+  { id: 'tapon', nombre: 'Desagüe destapado', desc: 'Vence al Tapón', premio: 'Arma: Culebrita destapacaños', cumple: (p) => (p.bestiario.tapon ?? 0) > 0 },
   { id: 'espejito', nombre: 'El espejito de mano', desc: 'Ten 5 armas evolucionadas distintas en la colección', premio: 'Tesoro: Espejito de mano (en los escenarios aparecen anillos y aretes escondidos)', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 5 },
 ];
 
@@ -259,6 +265,7 @@ export const SECRETO_LOGRO: Partial<Record<IdArma | IdPasiva, string>> = {
   anilloPlata: 'espejito', anilloOro: 'espejito', aretIzq: 'espejito', aretDer: 'espejito',
   cortina: 'hilo15', neceser: 'evoluciones12', bolsillo: 'pasivas6', pececitos: 'banera10', confeti: 'velitas500', hueso: 'jefes10',
   bombaBano: 'cofres50', barquito: 'partidas25', talco: 'eliminar50000', bolitasGel: 'nivel60',
+  brisa: 'lavamanos25', estaciones: 'cara25', bataEspejismo: 'evoHilo', gotasColores: 'evoPerfume', culebrita: 'tapon',
 };
 export const ESCENARIO_LOGRO: Record<IdEscenario, string | null> = { cara: null, lavamanos: 'cara15', banera: 'lavamanos15' };
 

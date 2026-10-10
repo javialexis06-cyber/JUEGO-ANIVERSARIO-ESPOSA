@@ -40,7 +40,7 @@ const SPRITE_PROY: Partial<Record<IdArma, string>> = {
   botellas: 'botellas', inundacion: 'inundacion', jabon: 'jabon', jabonExplosivo: 'jabonExplosivo', ranitas: 'ranitas', ranaGlotona: 'ranaGlotona',
   copito: 'copito', dobleCopito: 'dobleCopito', tripleCopito: 'tripleCopito', cubitos: 'cubitos', granizada: 'granizada',
   piedraPomez: 'piedraPomez', piedrasCalientes: 'piedrasCalientes', chancletas: 'chancletas', pisoton: 'pisoton',
-  hueso: 'hueso', bombaBano: 'bombaBano',
+  hueso: 'hueso', bombaBano: 'bombaBano', culebrita: 'culebrita',
 };
 /** Colores de las bolitas de gel. */
 const COLOR_GEL: [number, number, number][] = [[1, 0.55, 0.75], [0.55, 0.85, 1], [0.7, 1, 0.6], [1, 0.85, 0.45], [0.8, 0.65, 1]];
@@ -396,6 +396,23 @@ export class Dibujo {
             const a = (q / 10) * Math.PI * 2;
             P.crear('corazon', CAPA_NORMAL, e.x, e.y, 20, Math.cos(a) * r * 1.6, Math.sin(a) * r * 1.2, 60, 0.7, 16, 8, 1, 1, 1, 1, 0, 0, 0, 2);
           }
+        } else if (tipo >= 12 && tipo <= 16) {
+          // Las sales de las estaciones: primavera (flores), verano (hojas), otoño (hojas secas), invierno (escarcha)
+          // y, en las del arcoíris, el del centro (destellos de colores)
+          const cols = [[1, 0.65, 0.8], [0.5, 0.85, 0.4], [1, 0.6, 0.25], [0.8, 0.92, 1], [1, 0.9, 0.6]][tipo - 12];
+          const fx = tipo === 15 ? 'copo' : tipo === 16 ? 'estrella' : 'petalo';
+          for (let q = 0; q < 12; q++) {
+            const a = (q / 12) * Math.PI * 2 + az() * 0.3, v = r * (1.2 + az() * 1.2);
+            P.crear(fx, tipo === 15 || tipo === 16 ? CAPA_LUZ : CAPA_NORMAL, e.x, e.y, 14, Math.cos(a) * v, Math.sin(a) * v * 0.75, 50, 0.75, 10, 6, cols[0], cols[1], cols[2], 1, 90, a, 5, 2);
+          }
+          P.crear('anillo', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.4, r * 0.3, r * 2.2, cols[0], cols[1], cols[2], 0.9);
+        } else if (tipo === 17) {
+          // Reventón del desagüe y de la culebrita: agua oscura y burbujas moradas
+          for (let q = 0; q < 12; q++) {
+            const a = az() * Math.PI * 2, v = az() * r * 2;
+            P.crear(q % 2 ? 'burbuja' : 'gota', CAPA_NORMAL, e.x, e.y, 10, Math.cos(a) * v, Math.sin(a) * v * 0.7, 60 + az() * 60, 0.6, r * 0.25, r * 0.1, 0.6, 0.4, 0.85, 1, 200);
+          }
+          P.crear('onda', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.45, r * 0.4, r * 2.4, 0.55, 0.3, 0.8, 0.9);
         } else if (tipo === 8) {
           // Cohete de confeti que revienta: confeti de colores, estrellitas y un anillo
           const cols = [[1, 0.5, 0.8], [1, 0.85, 0.35], [0.55, 0.85, 1], [0.6, 1, 0.6], [0.85, 0.6, 1]];
@@ -811,6 +828,25 @@ export class Dibujo {
     for (const z of m.zonas) {
       if (!z.vivo) continue;
       const vida = Math.min(1, z.vida * 2.5) * Math.min(1, z.t * 6);
+      if (z.tipo === 3) {
+        // Espejismo de espuma: una burbuja lila con destellos que tiembla
+        const c = this.fx.c.burbuja, b = this.fx.c.brillo;
+        const tam = z.r * 2.2 * (1 + Math.sin(t * 8 + z.x) * 0.04);
+        this.fxNormal.poner(z.x, z.y, 22, tam, tam * 1.15, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 0.82, 0.72, 1, 0.55 * vida);
+        this.pisoFx.poner(z.x, z.y, 0.08, tam * 1.2, tam * 0.8, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 0.7, 0.85, 1, 0.45 * vida);
+        if (Math.random() < 0.25 * this.part.cupo) this.part.crear('copo', CAPA_LUZ, z.x + (Math.random() - 0.5) * z.r, z.y, 10 + Math.random() * 30, 0, 0, 20, 0.6, 8, 3, 0.85, 0.95, 1, 1);
+        continue;
+      }
+      if (z.tipo === 4) {
+        // Remolino del desagüe: un torbellino morado oscuro que gira
+        const o = this.fx.c.onda, h = this.fx.c.humo;
+        for (let q = 0; q < 3; q++) {
+          const f = (t * 1.5 + q / 3) % 1;
+          this.pisoFx.poner(z.x, z.y, 0.08 + q * 0.01, z.r * 2.4 * (1 - f * 0.7), z.r * 1.7 * (1 - f * 0.7), 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 0.55, 0.3, 0.75, f * vida, 0, 0, 1, t * 3 + q);
+        }
+        this.pisoFx.poner(z.x, z.y, 0.07, z.r * 1.8, z.r * 1.3, 0.5, 0.5, h.u0, h.v0, h.u1, h.v1, 0.2, 0.1, 0.3, 0.7 * vida, 0, 0, 1, -t * 2);
+        continue;
+      }
       if (z.tipo === 2) {
         // Mascarilla de pepino: una gota verde en el piso con rodajitas y brillo (la del spa, rosadita alrededor)
         const spa = z.arma === 'spa';
@@ -1137,6 +1173,40 @@ export class Dibujo {
         const tam = Math.min(18, p.r * 2.2);
         this.fxNormal.poner(p.x, p.y, 12, tam, tam * 1.5, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 0.5, 0.78, 1, 0.95, 0, 0, 1, -ang + Math.PI / 2);
         if (Math.random() < 0.25 * this.part.cupo) this.part.crear('gota', CAPA_NORMAL, p.x, p.y, 12, -p.vx * 0.05, -p.vy * 0.05, 20, 0.25, 4, 2, 0.6, 0.85, 1, 0.8, 300);
+        return true;
+      }
+      case 'brisa':
+      case 'vendaval': {
+        // Remolino de brisa (el vendaval, con hojitas de lavanda)
+        const ven = p.arma === 'vendaval';
+        // (una nubecita que gira con un brillo en el centro)
+        const h = this.fx.c.humo, b = this.fx.c.brillo, o = this.fx.c.onda;
+        const tam = Math.max(24, p.r * 3);
+        this.fxNormal.poner(p.x, p.y, 18, tam, tam * 0.85, 0.5, 0.5, h.u0, h.v0, h.u1, h.v1, ven ? 0.88 : 1, ven ? 0.8 : 1, 1, 0.7, 0, 0, 1, t * 5 + i);
+        this.fxNormal.poner(p.x, p.y, 19, tam * 1.1, tam * 0.9, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, ven ? 0.75 : 0.85, ven ? 0.65 : 0.95, 1, 0.6, 0, 0, 1, -t * 4);
+        this.fxLuz.poner(p.x, p.y, 20, tam * 0.5, tam * 0.5, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, ven ? 0.9 : 1, ven ? 0.8 : 1, 1, 0.5);
+        if (Math.random() < 0.3 * this.part.cupo) this.part.crear(ven ? 'petalo' : 'chispa', ven ? CAPA_NORMAL : CAPA_LUZ, p.x, p.y, 18, 0, 0, 10, 0.5, 8, 4, ven ? 0.75 : 0.9, ven ? 0.6 : 0.95, 1, 0.9, 0, Math.random() * 6, 3);
+        return true;
+      }
+      case 'gotasColores': {
+        if (p.comp !== 17) return false;
+        // Gota de colores bajando en espiral con su estela
+        const col = COLOR_LUCES[i % 5];
+        const c = this.fx.c.gota, b = this.fx.c.brillo;
+        this.fxNormal.poner(p.x, p.y, 20, 14, 20, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, col[0], col[1], col[2], 1);
+        this.fxLuz.poner(p.x, p.y, 20, 30, 30, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, col[0], col[1], col[2], 0.5);
+        if (Math.random() < 0.6 * this.part.cupo) this.part.crear('chispa', CAPA_LUZ, p.x, p.y, 20, 0, 0, 0, 0.3, 8, 2, col[0], col[1], col[2], 1);
+        return true;
+      }
+      case 'culebrita': {
+        // La culebrita culebrea mirando para donde va
+        const c = this.cuadrosObj.get('culebrita');
+        if (!c) return true;
+        const der = p.vx >= 0;
+        const tam = 34;
+        const ang = Math.atan2(p.vy, Math.abs(p.vx)) * (der ? -1 : 1) + Math.sin(t * 14 + i) * 0.2;
+        this.proy.poner(p.x, p.y, 8, tam, tam, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, 0, der ? 1 : -1, ang);
+        this.sombra(p.x, p.y, 10, 0.25);
         return true;
       }
       case 'pececitos':

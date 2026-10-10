@@ -108,7 +108,7 @@ export class Enemigo {
   flash = 0;
   toque = 0;
   /** Cuándo puede volver a recibir golpe de cada fuente que se queda (aura, órbitas, charcos…), por jugador. */
-  hz = new Float32Array(24);
+  hz = new Float32Array(28);
   fase = 0;
   /** Para los que cruzan: dirección fija y cuándo se van. */
   dx = 0;
@@ -122,6 +122,9 @@ export class Enemigo {
   llamado = 0;
   /** La mascarilla lo dejó «sin dientes»: ya no le pega a nadie. */
   sinDientes = false;
+  /** El vendaval lo ablanda (recibe este tanto más de daño) y la culebrita lo frena para siempre (0 a 0,8). */
+  debil = 0;
+  freno = 0;
 }
 
 export class Proyectil {
@@ -185,6 +188,10 @@ export class Zona {
   lento = 0;
   /** Probabilidad de dejar sin dientes (la mascarilla). */
   dientes = 0;
+  /** Los espejismos congelan (segundos) y al final pueden reventar (probabilidad); el desagüe a veces se traga a uno. */
+  hiela = 0;
+  revienta = 0;
+  mata = 0;
   t = 0;
 }
 
@@ -1474,6 +1481,7 @@ export class Motor {
     e.estado = 0;
     e.et = this.az.entre(1, 3);
     e.llamado = 0;
+    e.debil = e.freno = 0;
     // Desarmar (de la tienda): algunos salen sin dientes
     let desarmar = 0;
     for (const q of this.jug) if (!q.fuera) desarmar = Math.max(desarmar, q.st.desarmar);
@@ -1713,7 +1721,7 @@ export class Motor {
       e.ky *= fr;
       const j = this.cercano(e.x, e.y);
       if (!quieto && j) {
-        let v = e.def.vel * (e.def.comp === 'parca' ? 1 : mal) * (e.lento > 0 ? 0.5 : 1) * (e.llamado > 0 ? 2 : 1);
+        let v = e.def.vel * (e.def.comp === 'parca' ? 1 : mal) * (e.lento > 0 ? 0.5 : 1) * (e.llamado > 0 ? 2 : 1) * (1 - e.freno);
         if (e.elite) v *= 0.85;
         let ux = j.x - e.x, uy = j.y - e.y;
         const d = Math.hypot(ux, uy) || 1;
@@ -1865,6 +1873,7 @@ export class Motor {
     const j = this.jug[ji];
     let d = dano;
     if (j && (e.congelado > 0 || this.hielo > 0) && j.tieneCarta('relojQuieto')) d *= 1.5;
+    if (e.debil) d *= 1 + e.debil;
     e.hp -= d;
     e.flash = 0.13;
     if (j && slot >= 0) {
