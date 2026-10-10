@@ -3,7 +3,6 @@ import type { EstadoGranja } from './estado';
 import { tiempoDia, lluviaRiega } from './clima';
 import { VIVIENDAS_PUEBLO, viviendaInterior, posicionResidente, visitaVivienda, type ViviendaPueblo } from './pueblo-datos';
 import { ubicacionAldeano } from './aldeanos';
-import { vecinoPeluche, animarVecino, sacarVecinos } from './vecinos3d';
 import type { Jornada } from './jornada';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
@@ -182,6 +181,10 @@ function lamp(a:Arcilla,x:number,z:number){
   a.cyl(.2,.18,[x,.09,z],C.stone);a.cyl(.075,2.5,[x,1.3,z],C.metal);a.box([.57,.08,.52],[x,2.87,z],C.metal);a.box([.42,.51,.37],[x,2.58,z],'#efcd86',.065);
   for(const s of [-1,1])a.box([.045,.59,.045],[x+s*.2,2.58,z+.2],C.metal);
 }
+/** Los vecinos de peluche los pone `main.ts` (en el navegador); sin ellos (pruebas en Node) quedan los de arcilla. */
+let pelucheVecino:((id:string,i:number)=>THREE.Group)|null=null,animarPeluche:((g:THREE.Object3D,dt:number,andando:boolean)=>void)|null=null,sacarPeluches:((g:THREE.Object3D)=>void)|null=null;
+export function usarVecinosPeluche(crear:(id:string,i:number)=>THREE.Group,animar:(g:THREE.Object3D,dt:number,andando:boolean)=>void,sacar:(g:THREE.Object3D)=>void){pelucheVecino=crear;animarPeluche=animar;sacarPeluches=sacar;}
+function vecinoPeluche(id:string,i:number){return pelucheVecino?.(id,i)??npc(NPCS_PUEBLO[i]?.color??'#b98a6a',i);}
 function npc(color:string,index:number){
   const group=new THREE.Group(),body=new Arcilla(),skin=['#dcb294','#b88463','#ebc9a6'][index%3],hair=index===20?'#ada99c':['#644c3f','#9b7652','#4d4749'][index%3];
   body.ball([.34,.39,.23],[0,.95,0],color);body.box([.45,.28,.1],[0,.8,.21],'#d8c5a4',.08);body.cyl(.09,.13,[0,1.28,0],skin);
@@ -266,13 +269,13 @@ export function updatePueblo(group:THREE.Group,dt:number,time:number,jornada?:Jo
   a.npcs.forEach(g=>{
     const u=ubicacionAldeano(g.userData.npcId,jornada?.diasCompletados??0,jornada?.minutos??600,resguardado);if(!u)return;g.visible=u.visible;
     const walk=u.andando?1:0,phase=u.paso*3;g.position.set(u.x,alturaSueloPueblo(u.x,u.z)+Math.abs(Math.sin(phase*2))*.025*walk,u.z);g.rotation.y=u.direccion;
-    const legs=g.userData.legs as THREE.Group[];legs.forEach((leg,j)=>leg.rotation.x=Math.sin(phase+j*Math.PI)*.38*walk);animarVecino(g,dt,!!walk);
+    const legs=g.userData.legs as THREE.Group[];legs.forEach((leg,j)=>leg.rotation.x=Math.sin(phase+j*Math.PI)*.38*walk);animarPeluche?.(g,dt,!!walk);
     g.userData.actividad=u.actividad;
   });
 }
 
 export function liberarPueblo(group:THREE.Group){
-  sacarVecinos(group);
+  sacarPeluches?.(group);
   const geometries=new Set<THREE.BufferGeometry>(),materials=new Set<THREE.Material>(),textures=new Set<THREE.Texture>();
   group.traverse(o=>{if(!(o instanceof THREE.Mesh))return;geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){materials.add(m);if(m instanceof THREE.MeshStandardMaterial&&m.map)textures.add(m.map);}});
   textures.forEach(t=>t.dispose());geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());group.removeFromParent();delete group.userData.animacionPueblo;

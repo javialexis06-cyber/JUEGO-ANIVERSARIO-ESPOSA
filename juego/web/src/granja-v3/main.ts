@@ -50,6 +50,9 @@ import { TIEMPOS } from './clima';
 import { confirmarNoche, resumenNoche, renderCalendario } from './jornada-ui';
 import { CLAVE_PARTIDA, CLAVE_ULTIMA_NOCHE, guardarPartida } from './guardado';
 import { iniciarHud, renderAjustes, calidadInicial } from './hud';
+import { usarVecinosPeluche } from './pueblo';
+import { vecinoPeluche, animarVecino, sacarVecinos } from './vecinos3d';
+usarVecinosPeluche(vecinoPeluche,animarVecino,sacarVecinos);
 
 let interiorSilenciado:string|null=null;
 const SAVE=CLAVE_PARTIDA, $=(id:string)=>document.getElementById(id)!, escape=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
