@@ -131,3 +131,12 @@ pueblo (comparten modelos con los protagonistas: `sacarVecinos` y `liberar` los 
   - Lago: playita de arena, juncos, piedras de orilla y hojas de lirio.
   - `senderoTierra`: tierra apisonada con huellas de carreta y bordes que se pierden en el pasto.
 - Las lomas de fondo ya no tapan la zona donde está el jugador. El minimapa de la mina es oscuro.
+
+### Bosques espesos (Claude, pedido de Javier)
+
+- `nodosExteriores()` agrega árboles talables en rejilla desordenada (unos 215 en el Bosque de los Susurros y 180 en
+  el ancestral), dejando libres senderos, salidas, llegadas y el sitio del guardián. Los 12 + 8 árboles originales
+  conservan id y lugar. `migrarEstado` (rama v5) añade a las partidas guardadas los árboles que no tengan, sin tocar
+  los existentes; el límite de obstáculos del validador pasó de 1000 a 2000.
+- Vista: los árboles a más de 8 m del jugador se dibujan con instancias livianas (`arbolesLejanos`); los cercanos
+  siguen siendo el modelo completo que se sacude y cae.

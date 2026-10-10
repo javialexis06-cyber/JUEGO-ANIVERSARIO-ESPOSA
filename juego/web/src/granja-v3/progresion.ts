@@ -29,6 +29,19 @@ export function nodosExteriores():Obstaculo[]{
  const agregar=(zona:Zona,tipo:Obstaculo['tipo'],x:number,z:number,i:number,nivelMina?:number)=>{const hpMax=zona==='bosque_ancestral'?10:tipo==='roca'?4+(nivelMina||1):VIDA_RECURSO[tipo];nodos.push({id:`nodo_${zona}_${nivelMina||0}_${i}`,tipo,x,z,sectorId:-1,zona,nivelMina,hp:hpMax,hpMax,regeneraEn:null});};
  for(let i=0;i<12;i++)agregar('bosque','arbol',-89+(i%4)*7,-7+Math.floor(i/4)*7,i);
  for(let i=0;i<8;i++)agregar('bosque_ancestral','arbol',-89+(i%4)*7,70+Math.floor(i/4)*9,i);
+ // Monte espeso (los primeros árboles conservan su id y lugar): rejilla desordenada que deja libres los senderos,
+ // las salidas, el claro de llegada y el sitio del guardián del bosque ancestral.
+ const espeso=(zona:'bosque'|'bosque_ancestral',x0:number,x1:number,z0:number,z1:number,paso:number,libres:[number,number,number][],desde:number)=>{
+  const usadas=new Set(nodos.filter(n=>n.zona===zona).map(n=>n.x+','+n.z));let i=desde,k=0;
+  for(let z=z0;z<=z1;z+=paso)for(let x=x0;x<=x1;x+=paso){k++;const h=(a:number)=>{const n=Math.sin(k*127.1+a*311.7)*43758.5453;return n-Math.floor(n);};
+   const px=Math.round(x+(h(1)-.5)*paso*.7),pz=Math.round(z+(h(2)-.5)*paso*.7);
+   if(h(3)<.12||libres.some(([cx,cz,r])=>Math.hypot(px+.5-cx,pz+.5-cz)<r))continue;
+   if([...usadas].some(c=>{const [ux,uz]=c.split(',').map(Number);return Math.abs(ux-px)<2&&Math.abs(uz-pz)<2;}))continue;
+   usadas.add(px+','+pz);agregar(zona,'arbol',px,pz,i++);}
+ };
+ const sendero=(x:number,z0:number,z1:number)=>Array.from({length:Math.ceil((z1-z0)/2)+1},(_,j)=>[x,z0+j*2,2.6] as [number,number,number]);
+ espeso('bosque',-99,-59,-22,21,2.3,[[-78,1,4.5],[-59,3.5,4],[-61.5,3.5,3.5],[-77.5,19.5,4],[-78.5,16.5,3.5],...sendero(-74,-8,23)],12);
+ espeso('bosque_ancestral',-100,-57,54,98,2.6,[[-78,76,4.5],[-77.5,60.5,4],[-78.5,63.5,4],[-76,74,3.5],...sendero(-74,54,98)],8);
  const piedras=[[-6,-5],[-2,-5],[3,-5],[6,-2],[-6,0],[-3,2],[2,2],[5,3]];
  for(let nivel=1;nivel<=5;nivel++)piedras.forEach(([x,z],i)=>agregar('mina','roca',x,z,i,nivel));
  return nodos;

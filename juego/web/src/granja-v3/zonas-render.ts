@@ -28,7 +28,7 @@ const unir=(partes:THREE.BufferGeometry[])=>{const g=mergeGeometries(partes.map(
 
 /** Árboles de monte (copa redonda o pino), un solo dibujo por especie con instancias. */
 function geoRoble(){const tronco=pintar(new THREE.CylinderGeometry(.2,.34,2.3,8).translate(0,1.15,0),'#5c3d2a','#8a5f3f',0,2.3);
- const copas=[[0,2.9,0,1.25],[.75,2.55,.3,.85],[-.7,2.6,-.2,.9],[.15,2.5,-.75,.85],[-.2,3.55,.15,.85]].map(([x,y,z,r],i)=>bola(2,.08,i*1.7).scale(r,r*.9,r).translate(x,y,z));
+ const copas=[[0,2.9,0,1.25],[.75,2.55,.3,.85],[-.7,2.6,-.2,.9],[.15,2.5,-.75,.85],[-.2,3.55,.15,.85]].map(([x,y,z,r],i)=>bola(1,.1,i*1.7).scale(r,r*.9,r).translate(x,y,z));
  return {tronco,copa:pintar(unir(copas),'#5f8a45','#c3dc8a',1.7,4.3)};}
 function geoPino(){const tronco=pintar(new THREE.CylinderGeometry(.14,.26,1.4,7).translate(0,.7,0),'#553826','#7d573a',0,1.4);
  const pisos=[0,1,2,3].map(i=>{const r=1.45-i*.32;const c=new THREE.ConeGeometry(r,1.3,10,2);c.deleteAttribute('uv');const m=mergeVertices(c.deleteAttribute('normal') as THREE.BufferGeometry);const p=m.attributes.position;for(let k=0;k<p.count;k++){const y=p.getY(k);if(y<-.6)p.setY(k,y+.12*Math.sin(p.getX(k)*7+i));}m.computeVertexNormals();return m.translate(0,1.4+i*.72,0);});
@@ -46,10 +46,11 @@ const matVertices=(extra:THREE.MeshStandardMaterialParameters={})=>new THREE.Mes
 export function monteZona(zona:Zona,senderos:[number,number,number,number][],obstaculos:{x:number;z:number}[]):THREE.Group{
  const g=new THREE.Group();g.name='monte';const b=LIMITES[zona];if(!b)return g;
  const antiguo=zona==='bosque_ancestral',lago=zona==='lago';
- const salidas=SALIDAS.filter(s=>s.desde===zona||s.hacia===zona).map(s=>s.desde===zona?{x:s.x,z:s.z}:s.llegada);
+ const llegada={bosque:{x:-78,z:3},bosque_ancestral:{x:-78,z:79},lago:{x:14.5,z:80.5}}[zona as 'bosque'];
+ const salidas=[...SALIDAS.filter(s=>s.desde===zona||s.hacia===zona).map(s=>s.desde===zona?{x:s.x,z:s.z}:s.llegada),...(llegada?[llegada]:[])];
  const enSendero=(x:number,z:number,m:number)=>senderos.some(([cx,cz,w,d])=>Math.abs(x-cx)<w/2+m&&Math.abs(z-cz)<d/2+m)||salidas.some(s=>Math.hypot(x-s.x,z-s.z)<m+4);
  const fuera:Sitio[][]=[[],[]];let k=0;
- for(let x=b[0]-15;x<b[1]+15;x+=2.3)for(let z=b[2]-15;z<b[3]+15;z+=2.3){k++;
+ for(let x=b[0]-10;x<b[1]+10;x+=2.5)for(let z=b[2]-10;z<b[3]+10;z+=2.5){k++;
   const px=x+(hash(k,1)-.5)*1.9,pz=z+(hash(k,2)-.5)*1.9,dx=Math.max(b[0]-px,px-b[1],0),dz=Math.max(b[2]-pz,pz-b[3],0),afuera=Math.max(dx,dz);
   if(afuera<.8||enSendero(px,pz,1.5))continue;
   // Del lado de la cámara (abajo a la derecha) el monte es más ralo y bajito para no tapar al jugador
@@ -188,5 +189,17 @@ export function cuevaMina(nivel:number):THREE.Group{
  // Piedritas sueltas
  const sueltas:Sitio[]=[];for(let i=0;i<70;i++){const x=cx+(hash(i,111)-.5)*21,z=cz+(hash(i,112)-.5)*19;if(Math.abs(x-rx)<1)continue;sueltas.push({x,z,s:.08+hash(i,113)*.12,r:hash(i,114)*6,especie:0});}
  g.add(instancias(pintar(bola(1,.2,9).translate(0,.4,0),'#5f5a54','#a8a196',-.5,1.2),matVertices(),sueltas,[new THREE.Color('#ffffff')],false));
+ return g;
+}
+
+/** Árboles talables lejanos dibujados con instancias (los cercanos usan el modelo completo, que se sacude y cae).
+ * Geometría y material se comparten entre reconstrucciones. */
+let lejanos:{roble:{tronco:THREE.BufferGeometry;copa:THREE.BufferGeometry};pino:{tronco:THREE.BufferGeometry;copa:THREE.BufferGeometry};mat:THREE.MeshStandardMaterial}|null=null;
+export function arbolesLejanos(arboles:{id:string;x:number;z:number}[],antiguo:boolean):THREE.Group{
+ if(!lejanos){lejanos={roble:geoRoble(),pino:geoPino(),mat:matVertices()};for(const g of [lejanos.roble.tronco,lejanos.roble.copa,lejanos.pino.tronco,lejanos.pino.copa])g.userData.compartido=true;lejanos.mat.userData.compartido=true;}
+ const g=new THREE.Group();g.name='arboles-lejanos';const sitios:Sitio[][]=[[],[]];
+ for(const a of arboles){let h=0;for(let i=0;i<a.id.length;i++)h=(h*31+a.id.charCodeAt(i))>>>0;sitios[h%10<(antiguo?4:3)?1:0].push({x:a.x+.5,z:a.z+.5,s:(antiguo?.95:.72)*(.9+(h%7)*.03),r:(h%628)/100,especie:0});}
+ const verdes=(antiguo?['#a3bc90','#8fae84','#b4c69c']:['#ffffff','#eef5d8','#dfeac0']).map(c=>new THREE.Color(c)),madera=['#ffffff','#e6d9c9'].map(c=>new THREE.Color(c));
+ const l=lejanos;g.add(instancias(l.roble.tronco,l.mat,sitios[0],madera),instancias(l.roble.copa,l.mat,sitios[0],verdes),instancias(l.pino.tronco,l.mat,sitios[1],madera),instancias(l.pino.copa,l.mat,sitios[1],verdes));
  return g;
 }

@@ -30,7 +30,7 @@ import { dormitorioDef, puertaDormitorio, libreDormitorio } from './dormitorios'
 import { viviendaInterior, VIVIENDAS_PUEBLO, libreVivienda } from './pueblo-datos';
 import { crearDormitorio, crearInteriorVivienda, updateInteriorVivienda } from './pueblo';
 import { cespedPueblo } from './pueblo-adornos';
-import { cuevaMina, monteZona, senderoTierra } from './zonas-render';
+import { cuevaMina, monteZona, senderoTierra, arbolesLejanos } from './zonas-render';
 /** Senderos de tierra entre zonas (centro x, centro z, ancho, fondo). */
 const SENDEROS_PUBLICOS:[number,number,number,number][]=[[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]];
 import { crearPueblo, crearInteriorServicio, updatePueblo, liberarPueblo, librePueblo, alturaSueloPueblo, EDIFICIOS_PUEBLO } from './pueblo';
@@ -57,7 +57,7 @@ export function medidas(e:Edificio){const a=articulo(e);return e.giro%2?{w:a.fon
 function modeloEscombro(o:{id:string;tipo:string;gigante?:boolean;sectorId:number;zona?:string;nivelMina?:number}):{id:string;escala:number;rotation:number;clip?:string}{
  let h=2166136261;for(let i=0;i<o.id.length;i++)h=Math.imul(h^o.id.charCodeAt(i),16777619);h>>>=0;const v=h%100,rotation=(h>>>8)%628/100;
  if(o.zona==='mina'){const n=o.nivelMina||1;return {id:n>=3?'mena_cristal':n===2?'mena_hierro':'mena_cobre',escala:1.3,rotation};}
- if(o.tipo==='arbol'){if(o.gigante)return {id:'roble',escala:2.1,rotation:0,clip:'viento'};if((o.zona??'granja')==='granja'&&v<45)return {id:v<15?'tocon_grande':'tocon',escala:1.3,rotation};return {id:o.sectorId%3?'roble':'manzano',escala:1.05,rotation,clip:'viento'};}
+ if(o.tipo==='arbol'){if(o.gigante)return {id:'roble',escala:2.1,rotation:0,clip:'viento'};if((o.zona??'granja')==='granja'&&v<45)return {id:v<15?'tocon_grande':'tocon',escala:1.3,rotation};return {id:o.sectorId%3?'roble':'manzano',escala:o.zona==='bosque_ancestral'?1.35:1.05,rotation,clip:'viento'};}
  if(o.tipo==='roca')return {id:v<35?'piedra_chica':v<80?'piedra':'piedra_grande',escala:v<35?1.6:1.35,rotation};
  return {id:v<50?'maleza_hierba':v<75?'maleza_flores':'maleza_matorral',escala:1.5,rotation};
 }
@@ -189,7 +189,9 @@ export class VistaGranja{
   }else{
    if(e.zona==='granja'&&e.paisaje)this.detalle.add(paisajeGranja(e.paisaje));
    for(const s of SECTORES){if(Math.hypot(s.x+10-this.controles.target.x,s.z+8-this.controles.target.z)>55)continue;const own=e.sectorIds.includes(s.id);if(!own){const p=new THREE.Mesh(new THREE.PlaneGeometry(20,16),new THREE.MeshStandardMaterial({color:'#a99d72',transparent:true,opacity:.22,depthWrite:false}));p.rotation.x=-Math.PI/2;p.position.set(s.x+10,-.02,s.z+8);this.detalle.add(p);}if(this.rejilla){const line=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(20,.02,16)),new THREE.LineBasicMaterial({color:own?'#f8e3a0':'#718862',transparent:true,opacity:.65}));line.position.set(s.x+10,.06,s.z+8);this.detalle.add(line);}}
-   for(const o of e.obstaculos){if((o.zona??'granja')!==e.zona||o.hp<=0)continue;if(o.gigante&&Math.hypot(o.x-this.controles.target.x,o.z-this.controles.target.z)<29)this.detalle.add(huecoArbolGrande(o.x+.5,o.z+.5));if(o.tipo==='ruina'){if(Math.hypot(o.x-this.controles.target.x,o.z-this.controles.target.z)<40){for(let i=0;i<5;i++){const m=caja(this.detalle,[.45,.3+ruido(i)*.4,.28],[o.x+ruido(i)*.8,.2,o.z+ruido(i,3)*.8],'#a2a18a');m.rotation.y=ruido(i)*3;}caja(this.detalle,[.9,.08,.14],[o.x+.5,.65,o.z+.4],'#8b6e51');}}else add({key:o.id,...modeloEscombro(o),x:o.x+.5,z:o.z+.5});}
+   const bosqueLejos:{id:string;x:number;z:number}[]=[],enBosque=e.zona==='bosque'||e.zona==='bosque_ancestral';
+   for(const o of e.obstaculos){if((o.zona??'granja')!==e.zona||o.hp<=0)continue;if(enBosque&&o.tipo==='arbol'&&!o.gigante&&Math.hypot(o.x-this.controles.target.x,o.z-this.controles.target.z)>8){bosqueLejos.push(o);continue;}if(o.gigante&&Math.hypot(o.x-this.controles.target.x,o.z-this.controles.target.z)<29)this.detalle.add(huecoArbolGrande(o.x+.5,o.z+.5));if(o.tipo==='ruina'){if(Math.hypot(o.x-this.controles.target.x,o.z-this.controles.target.z)<40){for(let i=0;i<5;i++){const m=caja(this.detalle,[.45,.3+ruido(i)*.4,.28],[o.x+ruido(i)*.8,.2,o.z+ruido(i,3)*.8],'#a2a18a');m.rotation.y=ruido(i)*3;}caja(this.detalle,[.9,.08,.14],[o.x+.5,.65,o.z+.4],'#8b6e51');}}else add({key:o.id,...modeloEscombro(o),x:o.x+.5,z:o.z+.5});}
+   if(bosqueLejos.length)this.detalle.add(arbolesLejanos(bosqueLejos,e.zona==='bosque_ancestral'));
    const activa=obraActiva(e);if(e.zona==='granja')for(const o of e.obras.encargos){if(!o.lugar||Math.hypot(o.lugar.x-this.controles.target.x,o.lugar.z-this.controles.target.z)>40)continue;this.detalle.add(obraVista(o,activa?.id===o.id));}
     const ocupadas=new Set(e.parcelas.map(p=>p.x+','+p.z));for(const b of e.edificios){const {w,d}=medidas(b);for(let zz=b.z;zz<b.z+d;zz++)for(let xx=b.x;xx<b.x+w;xx++)ocupadas.add(xx+','+zz);}for(const o of e.obras.encargos){if(o.tipo!=='nueva'||!o.lugar)continue;const h=huellaObra(o);for(let z=h.z;z<h.z+h.fondo;z++)for(let x=h.x;x<h.x+h.ancho;x++)ocupadas.add(x+','+z);}this.detalle.add(this.suelos.pasto(-49,-39,98,94,6500,(x,z)=>!ocupadas.has(Math.floor(x)+','+Math.floor(z))&&!aguaEn(e.paisaje,Math.floor(x),Math.floor(z))&&!huecoEn(e.paisaje,Math.floor(x),Math.floor(z))));
    const plots=e.parcelas.filter(p=>Math.hypot(p.x-this.controles.target.x,p.z-this.controles.target.z)<40);this.detalle.add(this.suelos.labrado(plots.map(p=>({x:p.x,z:p.z,wet:p.cuidado?.status==='creciendo'&&p.campo?.riegoDia===e.jornada.diasCompletados,dead:p.cuidado?.status==='arruinado'}))));
