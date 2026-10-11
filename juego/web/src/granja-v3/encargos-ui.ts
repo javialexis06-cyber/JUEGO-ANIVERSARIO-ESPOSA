@@ -5,6 +5,7 @@ import { fechaValle } from './jornada';
 import { calidadPila } from './inventario';
 import { obtenerObjeto } from './objetos';
 import { nombreCalidad } from './agricultura';
+import { PROYECTOS_CORRESPONDENCIA, ramaPorEncargo } from './correspondencia-datos';
 const esc=(v:unknown)=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const boton=(id:string,op:string,texto:string,habilitado:boolean,extra='')=>`<button class="btn" data-do="encargo-${op}" data-id="${id}" ${habilitado?'':'disabled'} ${extra}>${texto}</button>`;
 const fecha=(dia:number)=>{const f=fechaValle(dia);return `${f.dia} de ${f.estacion}, año ${f.ano}`;};
@@ -26,14 +27,16 @@ function tarjeta(s:EstadoGranja,d:DefEncargo,x:number,z:number){
  }else if(r.fase==='vencido')contenido='<p>Vencido. Tus entregas siguen reservadas para recuperarlas.</p>'+boton(d.id,'cancelar','Recuperar materiales',true);
  else if(r.fase==='cancelado')contenido='<span class="pill">Cancelado · materiales recuperados</span>';
  else contenido='<span class="pill">Completado · recompensa entregada</span>'+(d.cierre?`<p>${esc(d.cierre)}</p>`:'');
- const origen=edicion?`${edicion.tipo} · ${fecha(edicion.desdeDia)}`:'pedido permanente';
+ const rama=ramaPorEncargo(d.id),origen=edicion?`${edicion.tipo} · ${fecha(edicion.desdeDia)}`:rama?'proyecto elegido por correo':'pedido permanente';
  const premios=(d.premios??[]).map(p=>`${p.cantidad} ${esc(obtenerObjeto(p.articulo)?.nombre??p.articulo)}`).join(' · ');
- return `<article class="card" data-encargo="${d.id}"><div class="caps">${esc(aldeanoDef(d.npcId)?.nombre)} · ${r?.fase??'disponible'} · ${esc(origen)}</div><h3>${esc(d.nombre)}</h3><p>${esc(d.texto)}</p><p class="small-text">Recompensa: ${d.monedas} monedas y ${d.amistad} amistad.${premios?' Además: '+premios+'.':''}</p>${contenido}${!cerca&&(!r||r.fase==='activo')?'<p class="small-text">Busca al solicitante en el pueblo para entregar, revisar etapas o cobrar.</p>':''}</article>`;
+ return `<article class="card" data-encargo="${d.id}"><div class="caps">${esc(aldeanoDef(d.npcId)?.nombre)} · ${r?.fase??'disponible'} · ${esc(origen)}</div><h3>${esc(d.nombre)}</h3><p>${esc(d.texto)}</p><p class="small-text">Recompensa: ${d.monedas} monedas y ${d.amistad} amistad.${premios?' Además: '+premios+'.':''}${rama?' Receta: '+esc(rama.rama.receta.nombre)+'.':''}</p>${contenido}${!cerca&&(!r||r.fase==='activo')?'<p class="small-text">Busca al solicitante en el pueblo para entregar, revisar etapas o cobrar.</p>':''}</article>`;
 }
 export function renderEncargos(s:EstadoGranja,x:number,z:number){
  const nuevos=ofertasEncargos(s).filter(d=>!s.encargos.registros.some(r=>r.id===d.id)),rotacion=s.encargos.registros.filter(r=>edicionEncargo(r.id)),pendientes=rotacion.filter(r=>['activo','vencido'].includes(r.fase)),historial=rotacion.filter(r=>['completado','cancelado'].includes(r.fase));
  const cartas=(ds:readonly DefEncargo[])=>ds.map(d=>tarjeta(s,d,x,z)).join(''),registrados=(rs:typeof rotacion)=>cartas(rs.map(r=>encargoDef(r.id,s.encargos)!));
+ const proyectos=s.correo.decisiones.map(d=>PROYECTOS_CORRESPONDENCIA.find(p=>p.id===d.proyectoId)!.ramas[d.eleccion].encargo);
  return `<div class="section-label">Encargos de los vecinos</div><p class="small-text">Hasta cinco activos entre todos los pedidos. Acepta junto al solicitante o en la Casa de los Oficios; entrega y cobra junto a su vecino. Los plazos y las ofertas solo pasan al dormir. Cancelar devuelve materiales con su calidad.</p>
+ ${proyectos.length?'<div class="section-label">Proyectos por correspondencia</div>'+cartas(proyectos):''}
  ${pendientes.length?'<div class="section-label">Tus encargos renovables · '+pendientes.length+'</div>'+registrados(pendientes):''}
  <div class="section-label">Ofertas de hoy</div><p class="small-text">Dos ofertas por jornada. Cambian al dormir; los pedidos aceptados mantienen su plazo.</p>${cartas(nuevos.filter(d=>edicionEncargo(d.id)!.tipo==='diario'))||'<p>Ya aceptaste las ofertas de hoy.</p>'}
  <div class="section-label">Ofertas de la semana</div><p class="small-text">Cambian cada lunes del calendario del valle. Un pedido semanal y un especial de varias etapas.</p>${cartas(nuevos.filter(d=>edicionEncargo(d.id)!.tipo!=='diario'))||'<p>Ya aceptaste las ofertas de esta semana.</p>'}

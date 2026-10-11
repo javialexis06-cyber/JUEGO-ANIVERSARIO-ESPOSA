@@ -2,6 +2,8 @@ import type { EstadoGranja, Resultado } from './estado';
 import { aldeanoDef, puedeConversar, atencionServicio } from './aldeanos';
 import { tiempoDia, lluviaRiega } from './clima';
 import { calidadPila, cambiarCantidad, resumirCasillas, type Calidad } from './inventario';
+import { cercaBuzon } from './buzon';
+import { ENCARGOS_CORRESPONDENCIA, ramaPorEncargo } from './correspondencia-datos';
 
 import { ENCARGOS, PLANTILLAS_ENCARGOS, type DefEncargo } from './encargos-datos';
 export { ENCARGOS, PLANTILLAS_ENCARGOS } from './encargos-datos';
@@ -24,7 +26,7 @@ export function edicionEncargo(id:string):EdicionEncargo|null{
 }
 /** Permutación fija por semilla/periodo. Consultar o recargar no consume azar ni modifica el estado. */
 export function encargoDef(id:string,encargos?:EstadoEncargos):DefEncargo|undefined{
- const fijo=ENCARGOS.find(d=>d.id===id);if(fijo)return fijo;const e=edicionEncargo(id);if(!e||!encargos)return;
+ const fijo=ENCARGOS.find(d=>d.id===id)??ENCARGOS_CORRESPONDENCIA.find(d=>d.id===id);if(fijo)return fijo;const e=edicionEncargo(id);if(!e||!encargos)return;
  const catalogo=PLANTILLAS_ENCARGOS[e.tipo],sal=e.tipo==='diario'?0x13579:e.tipo==='semanal'?0x24680:0xabcdef;
  const inicio=(Math.imul(encargos.semilla^sal,1664525)>>>0)%catalogo.length;
  return {...catalogo[(inicio+e.periodo+e.indice)%catalogo.length],id};
@@ -41,12 +43,14 @@ export function archivarEncargos(s:EstadoGranja,limite=MAX_REGISTROS_ROTACION){
 }
 export function vencerEncargos(s:EstadoGranja){for(const r of s.encargos.registros)if(r.fase==='activo'&&s.jornada.diasCompletados>=r.venceDia)r.fase='vencido';archivarEncargos(s);}
 export function cercaCliente(s:EstadoGranja,npcId:string,x:number,z:number){return puedeConversar(s,npcId,x,z,lluviaRiega(tiempoDia(s.tiempo,s.jornada.diasCompletados)));}
-export function puedeAceptarEncargo(s:EstadoGranja,d:DefEncargo,x:number,z:number){return cercaCliente(s,d.npcId,x,z)||s.zona==='pueblo'&&!s.interior&&s.servicio==='archivo'&&atencionServicio('archivo',s.jornada.diasCompletados,s.jornada.minutos).abierto;}
+export function puedeAceptarEncargo(s:EstadoGranja,d:DefEncargo,x:number,z:number){const rama=ramaPorEncargo(d.id);if(rama&&!s.correo.decisiones.some(c=>c.proyectoId===rama.proyecto.id&&c.eleccion===rama.eleccion&&c.completadaDia===null))return false;return !!rama&&cercaBuzon(s,x,z)||cercaCliente(s,d.npcId,x,z)||s.zona==='pueblo'&&!s.interior&&s.servicio==='archivo'&&atencionServicio('archivo',s.jornada.diasCompletados,s.jornada.minutos).abierto;}
 const ok=(mensaje:string):Resultado=>({ok:true,mensaje}),no=(mensaje:string):Resultado=>({ok:false,mensaje});
 /** MotorGranja garantiza rollback de cualquier fallo; se valida antes de gastar. */
 export function actuarEncargo(s:EstadoGranja,a:AccionEncargo,x:number,z:number):Resultado{
  if(!a||!['aceptar','entregar','reclamar','cancelar','avanzar'].includes(a.tipo))return no('Acción de encargo desconocida.');
  const d=encargoDef(a.id,s.encargos);if(!d)return no('Encargo desconocido.');let r=s.encargos.registros.find(r=>r.id===a.id);const dia=s.jornada.diasCompletados,e=edicionEncargo(a.id);
+ const rama=ramaPorEncargo(d.id),decision=rama&&s.correo.decisiones.find(c=>c.proyectoId===rama.proyecto.id&&c.eleccion===rama.eleccion);
+ if(rama&&!decision)return no('Este proyecto requiere elegir su rama en la carta del buzón.');
  if(a.tipo==='aceptar'){
   if(e&&(dia<e.desdeDia||dia>=e.hastaDia))return no('Esta oferta ya no está en el tablón. Consulta las ofertas de la jornada actual.');
   if(r&&(r.fase!=='cancelado'||e))return no('Este encargo ya está registrado. Cada oferta renovable se acepta una sola vez por edición.');
@@ -82,6 +86,7 @@ export function actuarEncargo(s:EstadoGranja,a:AccionEncargo,x:number,z:number):
  if(s.monedas+d.monedas>1e9)return no('La recompensa supera el límite de monedas.');
  let casillas=s.casillasInventario;for(const p of d.premios??[]){const copia=cambiarCantidad(casillas,p.articulo,p.cantidad,p.calidad);if(!copia)return no('Libera espacio para recibir todos los objetos del premio.');casillas=copia;}
  s.casillasInventario=casillas;s.inventario=resumirCasillas(casillas);
+ if(rama&&decision){decision.completadaDia=dia;if(!s.desbloqueos.includes(rama.rama.receta.requisito!))s.desbloqueos.push(rama.rama.receta.requisito!);}
  const vecino=s.pueblo.relaciones.find(n=>n.id===d.npcId)!;vecino.conocido=true;vecino.amistad=Math.min(2500,vecino.amistad+d.amistad);s.estadisticas['amistad_'+d.npcId]=vecino.amistad;s.monedas+=d.monedas;r.fase='completado';r.entregas=[];s.estadisticas.encargos_completados=(s.estadisticas.encargos_completados??0)+1;archivarEncargos(s);return ok(`Encargo completado: ${d.nombre}. +${d.monedas} monedas y amistad. ${d.cierre??''}`.trim());
 }
 export function encargosValidos(v:unknown,dia:number,stats:Record<string,number>):v is EstadoEncargos{
@@ -93,10 +98,10 @@ export function migrarEncargos(v:unknown,dia:number,stats:Record<string,number>)
 }
 function registrosValidos(v:unknown,dia:number,stats:Record<string,number>,anterior:boolean){
  const s=v as EstadoEncargos,int=(v:unknown,a:number,b:number)=>typeof v==='number'&&Number.isInteger(v)&&v>=a&&v<=b;
- if(!s||!int(dia,0,1e6)||s.version!==(anterior?1:2)||!anterior&&!int(s.semilla,0,0xffffffff)||!Array.isArray(s.registros)||s.registros.length>ENCARGOS.length+(anterior?0:MAX_REGISTROS_ROTACION))return false;
+ if(!s||!int(dia,0,1e6)||s.version!==(anterior?1:2)||!anterior&&!int(s.semilla,0,0xffffffff)||!Array.isArray(s.registros)||s.registros.length>ENCARGOS.length+(anterior?0:ENCARGOS_CORRESPONDENCIA.length+MAX_REGISTROS_ROTACION))return false;
  const ids=new Set<string>(),especiales=new Set<string>();let activos=0;
  let renovables=0;
- for(const r of s.registros){const d=r&&encargoDef(r.id,anterior?undefined:s),e=r&&edicionEncargo(r.id);if(!d||ids.has(r.id)||!aldeanoDef(d.npcId)||!int(r.aceptadoDia,0,dia)||r.venceDia!==r.aceptadoDia+d.dias||!['activo','completado','vencido','cancelado'].includes(r.fase)||r.fase==='activo'&&dia>=r.venceDia||r.fase==='vencido'&&dia<r.venceDia||!Array.isArray(r.inicios)||r.inicios.length!==d.objetivos.length||!Array.isArray(r.entregas)||r.entregas.length>d.objetivos.length*4)return false;
+ for(const r of s.registros){const d=r&&(anterior?ENCARGOS.find(d=>d.id===r.id):encargoDef(r.id,s)),e=r&&edicionEncargo(r.id);if(!d||ids.has(r.id)||!aldeanoDef(d.npcId)||!int(r.aceptadoDia,0,dia)||r.venceDia!==r.aceptadoDia+d.dias||!['activo','completado','vencido','cancelado'].includes(r.fase)||r.fase==='activo'&&dia>=r.venceDia||r.fase==='vencido'&&dia<r.venceDia||!Array.isArray(r.inicios)||r.inicios.length!==d.objetivos.length||!Array.isArray(r.entregas)||r.entregas.length>d.objetivos.length*4)return false;
   if(e){renovables++;if(r.aceptadoDia<e.desdeDia||r.aceptadoDia>=e.hastaDia)return false;}
   if(d.etapas?!int(r.etapa,0,d.etapas.length-1)||r.fase==='completado'&&r.etapa!==d.etapas.length-1:r.etapa!==undefined)return false;
   if(d.etapas&&['activo','vencido'].includes(r.fase)){if(especiales.has(d.nombre))return false;especiales.add(d.nombre);}
