@@ -3,7 +3,7 @@ import { crearCorreo, entregarCorreo, actuarCorreo, correoValido } from './corre
 import { dormitorioDef, puertaDormitorio, puedeEntrarDormitorio, MUEBLES_DORMITORIO } from './dormitorios';
 import { viviendaDef, viviendaInterior, visitaVivienda, librePueblo } from './pueblo-datos';
 import { crearVidaSocial, vidaSocialValida, actuarSocial, celebrarRegalo } from './vida-social';
-import { crearEncargos, encargosValidos, actuarEncargo, vencerEncargos } from './encargos';
+import { crearEncargos, encargosValidos, migrarEncargos, actuarEncargo, vencerEncargos } from './encargos';
 import { crearPuebloEstado, puebloValido, conversar, atencionServicio } from './aldeanos';
 import { puntoInteraccion } from './pueblo-datos';
 import { esperaCorral } from './refugios';
@@ -88,7 +88,7 @@ export class MotorGranja {
   }
   const inventario={...Object.fromEntries(HERRAMIENTAS_INICIALES.map(h=>['herramienta_'+h,1])),pan:3,semilla_zanahoria:12,semilla_trigo:6,semilla_fresa:4,semilla_pasto:8,heno:20,madera:12,piedra:8,creacion_banco:1,lombriz:8};
   obstaculos.push(...nodosExteriores());
-  return {...crearBarra(),festivales:crearFestivales(),correo:crearCorreo(),vidaSocial:crearVidaSocial(),encargos:crearEncargos(),pueblo:crearPuebloEstado(),obras:crearObras(),compania:crearCompania(),ganaderia:crearGanaderia('corral_inicial'),habilidades:crearHabilidades(),frutales:[],invernaderos:[],jornada:crearJornada(420),tiempo:crearTiempo(now),envios:{version:1,cajas:[crearCajaEnvio('envio_inicial')]},paisaje,produccion:crearProduccion(now),aventura:crearAventura(),posicionAventura:null,version:5,revision:0,ultimoTiempo:now,inicioTiempo:now,monedas:420,inventario,casillasInventario:distribuirInventario(inventario).casillas,almacenMigracion:{},nivelesHerramienta:Object.fromEntries(HERRAMIENTAS_MEJORABLES.map(h=>[h,0])),mejoraHerramienta:null,servicio:null,drops:[],ultimoGolpeAt:0,herramienta:'azada',personaje:'ella',sectorIds:[...SECTORES_INICIALES],edificios,obstaculos,parcelas:[],animales,estadisticas:{},misionesCompletadas:[],desbloqueos:['especie_gallina'],tokensCasa:[],zona:'granja',interior:null,vida:100,energia:100,enemigo:0,nivelMina:1,ayudante:null,secuencia:0};
+  return {...crearBarra(),festivales:crearFestivales(),correo:crearCorreo(),vidaSocial:crearVidaSocial(),encargos:crearEncargos(now>>>0),pueblo:crearPuebloEstado(),obras:crearObras(),compania:crearCompania(),ganaderia:crearGanaderia('corral_inicial'),habilidades:crearHabilidades(),frutales:[],invernaderos:[],jornada:crearJornada(420),tiempo:crearTiempo(now),envios:{version:1,cajas:[crearCajaEnvio('envio_inicial')]},paisaje,produccion:crearProduccion(now),aventura:crearAventura(),posicionAventura:null,version:5,revision:0,ultimoTiempo:now,inicioTiempo:now,monedas:420,inventario,casillasInventario:distribuirInventario(inventario).casillas,almacenMigracion:{},nivelesHerramienta:Object.fromEntries(HERRAMIENTAS_MEJORABLES.map(h=>[h,0])),mejoraHerramienta:null,servicio:null,drops:[],ultimoGolpeAt:0,herramienta:'azada',personaje:'ella',sectorIds:[...SECTORES_INICIALES],edificios,obstaculos,parcelas:[],animales,estadisticas:{},misionesCompletadas:[],desbloqueos:['especie_gallina'],tokensCasa:[],zona:'granja',interior:null,vida:100,energia:100,enemigo:0,nivelMina:1,ayudante:null,secuencia:0};
  }
  private random(){const r=this.azar();return Number.isFinite(r)?Math.max(0,Math.min(.999999999,r)):0.5}
  private id(prefijo:string){return `${prefijo}_${++this.estado.secuencia}`}
@@ -837,6 +837,7 @@ export function migrarEstado(valor:unknown):unknown {
    for(const m of s.produccion?.maquinas??[])for(const id of [m.recetaId,m.proceso?.recetaId,...(m.cola??[]).map((p:any)=>p.recetaId)])if(RECETAS.some(r=>r.id===id)&&!h.recetasLegadas.includes(id))h.recetasLegadas.push(id);
    s.habilidades=h;
   }
+  s.encargos=migrarEncargos(s.encargos,s.jornada?.diasCompletados,s.estadisticas??{});
   return s;
  }
 if(!antiguo||typeof antiguo!=='object'||(antiguo as {version?:number}).version!==4)return antiguo;
