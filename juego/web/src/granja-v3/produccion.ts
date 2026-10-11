@@ -1,5 +1,5 @@
 import { recetaAprendida, type EstadoHabilidades } from './habilidades';
-import { articuloValido, mismaPila, calidadPila, cambiarCantidad, limitePila, moverPila, resumirCasillas } from './inventario';
+import { type Calidad, articuloValido, mismaPila, calidadPila, cambiarCantidad, limitePila, moverPila, resumirCasillas } from './inventario';
 import type { Pila } from './inventario';
 import { obtenerObjeto, obtenerReceta } from './objetos';
 import type { RecetaProduccion } from './objetos';
@@ -13,6 +13,8 @@ export interface PedidoProduccion {recetaId:string;cantidad:number;reserva?:Pila
 export interface MaquinaProduccion extends PosicionProduccion {
  id:string;articulo:string;recetaId:string|null;cola:PedidoProduccion[];
  proceso:{recetaId:string;terminaEn:number}|null;salida:CasillasProduccion;
+ /** Solo recuperadoras: qué objeto reciclar sola, la unidad que está reciclando y lo que sobra de fracciones. */
+ recuperar?:string|null;reciclando?:{articulo:string;calidad:Calidad;terminaEn:number}|null;resto?:Record<string,number>;
 }
 export interface EstadoProduccion {
  version:1;ultimoTiempo:number;secuencia:number;adyacencia:'cardinal'|'diagonal';
@@ -21,6 +23,7 @@ export interface EstadoProduccion {
 export interface ContextoProduccion {habilidades?:EstadoHabilidades;casillas:CasillasProduccion;nivel?:number;desbloqueos?:string[];ahora?:number;zona?:string}
 export interface ReferenciaCasilla {tipo:'mochila'|'cofre'|'maquina';id?:string;casilla:number}
 export type AccionProduccion=
+ |{tipo:'recuperar_maquina';id:string;articulo:string|null}
  |({tipo:'colocar_cofre'|'colocar_maquina'|'colocar_estructura';articulo:string}&PosicionProduccion)
  |{tipo:'receta_maquina';id:string;recetaId:string|null}
  |{tipo:'encolar_receta';id:string;recetaId:string;cantidad?:number}
@@ -32,8 +35,11 @@ export type AccionProduccion=
  |{tipo:'retirar_produccion';id:string}
  |{tipo:'adyacencia';modo:'cardinal'|'diagonal'};
 export interface ResultadoProduccion {ok:boolean;mensaje:string;estado:EstadoProduccion;casillas:CasillasProduccion;producidos:Record<string,number>;pendiente:boolean}
+import { NIVEL_RECUPERADORA, materialesDe, porcentajeRecuperacion } from './recuperadora';
+/** Milisegundos por unidad en cada nivel de recuperadora. */
+const DURACION_RECUPERAR=[0,20_000,12_000,6_000];
 export const MAX_NODOS_PRODUCCION=128,MAX_COLA_PRODUCCION=100,MAX_AVANCE_PRODUCCION_MS=7*24*60*60_000,MAX_EVENTOS_PRODUCCION=20_000;
-export const ESTRUCTURAS_PRODUCCION=new Set(['portal_verdia','portal_senda','portal_nox','nave_exploradora','aspersor_cobre','aspersor_hierro','aspersor_astral']);
+export const ESTRUCTURAS_PRODUCCION=new Set(['portal_verdia','portal_senda','portal_nox','nave_exploradora','aspersor_basico','aspersor_cobre','aspersor_hierro','aspersor_astral']);
 export function huellaProduccion(n:{articulo:string;x:number;z:number}){return {x:n.x,z:n.z,ancho:n.articulo==='nave_exploradora'?3:typeof n.articulo==='string'&&n.articulo.startsWith('portal_')?2:1,fondo:n.articulo==='nave_exploradora'?3:1};}
 export function solapanProduccion(a:PosicionProduccion&{articulo:string},b:PosicionProduccion&{articulo:string}){const p=huellaProduccion(a),q=huellaProduccion(b);return a.zona===b.zona&&p.x<q.x+q.ancho&&p.x+p.ancho>q.x&&p.z<q.z+q.fondo&&p.z+p.fondo>q.z;}
 const copiaCasillas=(casillas:CasillasProduccion)=>casillas.map(p=>p?{...p}:null);
@@ -70,6 +76,7 @@ export function errorProduccion(v:unknown):string|null{
     const total=resumirCasillas(p.reserva);if(Object.entries(r.ingredientes).some(([id,n])=>total[id]!==n*cantidadPedido)||new Set(p.reserva.map(i=>`${i.articulo}:${calidadPila(i)}`)).size!==p.reserva.length)return 'La reserva no corresponde a los lotes pendientes.';
    }cantidad+=p.cantidad;}
   if(cantidad>MAX_COLA_PRODUCCION)return 'Cola demasiado larga.';
+  if(NIVEL_RECUPERADORA[m.articulo as string]){if(m.recuperar!==undefined&&m.recuperar!==null&&(typeof m.recuperar!=='string'||!materialesDe(m.recuperar)))return 'Recuperadora con objeto inválido.';if(m.reciclando!==undefined&&m.reciclando!==null&&(!registro(m.reciclando)||typeof m.reciclando.articulo!=='string'||!materialesDe(m.reciclando.articulo)||![0,1,2,3].includes(m.reciclando.calidad as number)||!finito(m.reciclando.terminaEn)))return 'Recuperación en curso inválida.';if(m.resto!==undefined&&(!registro(m.resto)||Object.entries(m.resto).some(([k,v])=>!obtenerObjeto(k)||!finito(v)||(v as number)<0||(v as number)>=1)))return 'Restos de recuperadora inválidos.';}
   if(m.proceso!==null){const r=registro(m.proceso)&&typeof m.proceso.recetaId==='string'&&obtenerReceta(m.proceso.recetaId);if(!r||!recetaCompatible(m,r)||!finito(m.proceso.terminaEn)||m.proceso.terminaEn<0)return 'Proceso inválido.';}
  }
  if(!registro(v.fabricados)||Object.entries(v.fabricados).some(([id,n])=>!obtenerObjeto(id)||!entero(n)))return 'Contadores de producción inválidos.';
@@ -134,6 +141,16 @@ export function avanzarProduccion(origen:EstadoProduccion,ahora:number,contexto:
  let cursor=e.ultimoTiempo,eventos=0;
  const asentar=()=>{let cambio=true,pasadas=0;while(cambio&&pasadas++<=maquinas.length*3+1){cambio=false;
   for(const m of maquinas){const cofres=conexion.get(m.id)||[];if(depositar(m,cofres))cambio=true;
+   const nivelRec=NIVEL_RECUPERADORA[m.articulo];
+   if(nivelRec){
+    // Recuperadora: saca una unidad del objeto elegido de los cofres conectados y devuelve parte de sus materiales
+    if(m.reciclando&&m.reciclando.terminaEn<=cursor){const mats=materialesDe(m.reciclando.articulo)??{},p=porcentajeRecuperacion(nivelRec,m.reciclando.calidad),resto={...(m.resto??{})};let salida:CasillasProduccion|null=copiaCasillas(m.salida);const hechos:Record<string,number>={};
+     for(const [k,v] of Object.entries(mats)){const total=v*p+(resto[k]??0),n=Math.floor(total+1e-9);resto[k]=Math.max(0,total-n);if(n>0&&salida){salida=cambiarCantidad(salida,k,n);hechos[k]=n;}}
+     if(salida){m.salida=salida;m.resto=Object.fromEntries(Object.entries(resto).filter(([,v])=>v>1e-6));m.reciclando=null;for(const [k,n] of Object.entries(hechos)){producidos[k]=(producidos[k]||0)+n;if(obtenerObjeto(k))e.fabricados[k]=(e.fabricados[k]||0)+n;}cambio=true;depositar(m,cofres);}}
+    if(m.reciclando||m.salida.some(Boolean)||!m.recuperar)continue;
+    for(const c of cofres){const i=c.casillas.findIndex(p=>p?.articulo===m.recuperar);if(i<0)continue;const pila=c.casillas[i]!,calidad=calidadPila(pila);c.casillas=copiaCasillas(c.casillas);c.casillas[i]=pila.cantidad>1?{...pila,cantidad:pila.cantidad-1}:null;m.reciclando={articulo:pila.articulo,calidad,terminaEn:cursor+DURACION_RECUPERAR[nivelRec]};cambio=true;break;}
+    continue;
+   }
    if(m.proceso&&m.proceso.terminaEn<=cursor){const r=obtenerReceta(m.proceso.recetaId)!;const salida=cambiarCantidad(m.salida,r.salida.articulo,r.salida.cantidad);
     if(salida){m.salida=salida;m.proceso=null;producidos[r.salida.articulo]=(producidos[r.salida.articulo]||0)+r.salida.cantidad;e.fabricados[r.salida.articulo]=(e.fabricados[r.salida.articulo]||0)+r.salida.cantidad;cambio=true;depositar(m,cofres);}
    }
@@ -146,7 +163,7 @@ export function avanzarProduccion(origen:EstadoProduccion,ahora:number,contexto:
  }};
  asentar();
  while(cursor<limite&&eventos<MAX_EVENTOS_PRODUCCION){
-  let siguiente=Infinity;for(const m of maquinas)if(m.proceso&&m.proceso.terminaEn>cursor)siguiente=Math.min(siguiente,m.proceso.terminaEn);
+  let siguiente=Infinity;for(const m of maquinas){if(m.proceso&&m.proceso.terminaEn>cursor)siguiente=Math.min(siguiente,m.proceso.terminaEn);if(m.reciclando&&m.reciclando.terminaEn>cursor)siguiente=Math.min(siguiente,m.reciclando.terminaEn);}
   if(siguiente>limite){cursor=limite;break;}cursor=siguiente;eventos++;asentar();
  }
  e.ultimoTiempo=cursor;return resultado(e,copiaCasillas(contexto.casillas),true,'Producción actualizada.',producidos,cursor<meta);
@@ -178,6 +195,11 @@ export function aplicarProduccion(origen:EstadoProduccion,accion:AccionProduccio
   }
   case 'adyacencia':if(accion.modo!=='cardinal'&&accion.modo!=='diagonal')return falla('Modo de conexión desconocido.');e.adyacencia=accion.modo;mensaje=`Conexión ${accion.modo} activada.`;break;
   case 'prioridad_cofre':{const c=e.cofres.find(c=>c.id===accion.id);if(!c||!entero(accion.prioridad,0,9))return falla('Cofre o prioridad inválida.');c.prioridadSalida=accion.prioridad;mensaje='Prioridad de salida del cofre actualizada.';break;}
+  case 'recuperar_maquina':{
+   const m=e.maquinas.find(m=>m.id===accion.id);if(!m||!NIVEL_RECUPERADORA[m.articulo])return falla('No existe esa recuperadora.');
+   if(accion.articulo!==null&&!materialesDe(accion.articulo))return falla('Eso no se puede recuperar.');
+   m.recuperar=accion.articulo;mensaje=accion.articulo?'La recuperadora tomará ese objeto de los cofres conectados.':'Recuperación automática detenida.';break;
+  }
   case 'receta_maquina':{
    const m=e.maquinas.find(m=>m.id===accion.id);if(!m)return falla('No existe esa máquina.');
    if(accion.recetaId!==null){const r=obtenerReceta(accion.recetaId);if(!r||!recetaCompatible(m,r))return falla('La receta no corresponde a esta máquina.');if(!recetaPermitida(r,contexto))return falla('Falta aprendizaje, nivel de herramienta o un descubrimiento. Consulta Habilidades y duerme para reconocer lo aprendido.');}
@@ -222,7 +244,7 @@ export function aplicarProduccion(origen:EstadoProduccion,accion:AccionProduccio
   }
   case 'retirar_produccion':{
    const cofre=e.cofres.find(c=>c.id===accion.id),m=e.maquinas.find(m=>m.id===accion.id),n=cofre||m||e.estructuras.find(n=>n.id===accion.id);if(!n)return falla('No existe ese dispositivo.');
-   if(m&&(m.proceso||m.cola.length))return falla('Finaliza el lote y cancela la cola antes de retirar la máquina.');
+   if(m&&(m.proceso||m.cola.length||m.reciclando))return falla('Finaliza el lote y cancela la cola antes de retirar la máquina.');
    let despues=copiaCasillas(casillas);for(const p of cofre?cofre.casillas:m?m.salida:[]){if(!p)continue;const nuevo=cambiarCantidad(despues,p.articulo,p.cantidad,calidadPila(p));if(!nuevo)return falla('No cabe todo el contenido en la mochila.');despues=nuevo;}
    const nuevo=cambiarCantidad(despues,n.articulo,1);if(!nuevo)return falla('No cabe el dispositivo en la mochila.');casillas=nuevo;e.cofres=e.cofres.filter(c=>c.id!==accion.id);e.maquinas=e.maquinas.filter(m=>m.id!==accion.id);e.estructuras=e.estructuras.filter(n=>n.id!==accion.id);mensaje='Dispositivo y contenido recuperados.';break;
   }

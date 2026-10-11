@@ -31,6 +31,15 @@ export function figura(articulo:string):FiguraProduccion{
   caja(fijo,[.09,.55,.64],[0,1.22,-.83],PALETA.cobre);const rotor=new THREE.Group();rotor.position.set(0,1.68,-.35);cilindro(rotor,.13,.1,0,0,0,PALETA.metal);for(const r of[0,Math.PI/2]){const b=caja(rotor,[1.6,.045,.105],[0,.08,0],PALETA.oro);b.rotation.y=r;}grupo.add(rotor);moviles.push(rotor);
  }else if(aspersor){
   cilindro(fijo,.22,.14,0,.09,0,metal);cilindro(fijo,.065,.53,0,.36,0,metal);const rotor=new THREE.Group();rotor.position.y=.64;caja(rotor,[.69,.07,.075],[0,0,0],metal);for(const x of[-.3,.3])caja(rotor,[.06,.06,.18],[x,0,.045],PALETA.claro);grupo.add(rotor);moviles.push(rotor);
+ }else if(articulo.startsWith('recuperadora_')){
+  // Recuperadora: cuerpo de hierro con tolva, dos rodillos que trituran, rampa de salida y el símbolo de reciclar
+  const tono=articulo.endsWith('astral')?'#8d78c9':articulo.endsWith('hierro')?'#8e9aa3':'#c38a5c';
+  caja(fijo,[.86,.55,.74],[0,.3,0],tono);caja(fijo,[.9,.08,.78],[0,.6,0],PALETA.oscuro);
+  const tolva=new THREE.Mesh(new THREE.CylinderGeometry(.44,.24,.34,4,1,true),new THREE.MeshStandardMaterial({color:'#9aa3ab',roughness:.55,metalness:.4,side:THREE.DoubleSide}));tolva.rotation.y=Math.PI/4;tolva.position.y=.82;fijo.add(tolva);
+  for(const x of[-.12,.12]){const r=new THREE.Group();r.position.set(x,.68,0);const c=cilindro(r,.1,.5,0,0,0,'#5b6168',10);c.rotation.x=Math.PI/2;for(let k=0;k<6;k++){const d=caja(r,[.04,.04,.48],[Math.cos(k)*.11,Math.sin(k)*.11,0],PALETA.claro);d.rotation.z=k;}grupo.add(r);moviles.push(r);}
+  const rampa=caja(fijo,[.4,.05,.36],[0,.16,.5],PALETA.metal);rampa.rotation.x=.4;for(let k=0;k<3;k++)esfera(fijo,[.06,.05,.06],[-.1+k*.1,.12,.62],['#c8743c','#b7c0c6','#b7885b'][k]);
+  const signo=aro(fijo,.13,.025,'#7fc77a');signo.position.set(0,.36,.375);
+  if(articulo.endsWith('astral')){const gema=new THREE.Mesh(new THREE.OctahedronGeometry(.1),new THREE.MeshStandardMaterial({color:'#c9a8ff',emissive:'#9a7ae0',emissiveIntensity:.5}));gema.position.set(.32,.75,.3);fijo.add(gema);}
  }else if(articulo==='alto_horno'){
   // Torre de ladrillo con boca encendida, chimenea humeando y fuelle que sube y baja
   caja(fijo,[.95,.16,.95],[0,.08,0],'#7b6f66');for(let y=0;y<4;y++){const r=.42-y*.04;cilindro(fijo,r,.3,0,.31+y*.3,0,y%2?'#a8574a':'#b9644f',8);}
@@ -95,7 +104,7 @@ export class EscenaProduccion{
  update(dt:number){if(!this.grupo.visible)return;this.tiempo+=Math.max(0,Math.min(.1,dt));const t=this.tiempo;
   for(const f of this.figuras.values()){
    if(f.portal){f.moviles.forEach((m,i)=>{if(!i)(m as THREE.Mesh<THREE.BufferGeometry,THREE.MeshBasicMaterial>).material.opacity=.4+Math.sin(t*1.6)*.07;else{m.position.x=Math.sin(t*.5+i*2.4)*.53;m.position.y=.35+((t*.15+i*.21)%1.57);}});}
-   else if(f.aspersor||f.proceso||f.articulo==='nave_exploradora')for(const [k,m] of f.moviles.entries()){if(f.articulo==='recicladora')m.rotation.z+=dt*1.4;else if(f.articulo==='trituradora')m.rotation.x+=dt*(k?-3:3);else if(f.articulo==='alto_horno')m.scale.y=1+Math.sin(performance.now()/180)*.35;else if(f.articulo==='ensambladora')m.rotation.y=k?m.rotation.y+dt*2.4:Math.sin(performance.now()/400)*.9;else if(f.articulo==='taladro_vapor')m.rotation.y+=dt*6;else m.rotation.y+=dt*(f.aspersor?1.1:f.articulo==='nave_exploradora'?.35:1.4);}
+   else if(f.aspersor||f.proceso||f.articulo==='nave_exploradora')for(const [k,m] of f.moviles.entries()){if(f.articulo==='recicladora')m.rotation.z+=dt*1.4;else if(f.articulo==='trituradora'||f.articulo.startsWith('recuperadora_'))m.rotation.x+=dt*(k?-3:3);else if(f.articulo==='alto_horno')m.scale.y=1+Math.sin(performance.now()/180)*.35;else if(f.articulo==='ensambladora')m.rotation.y=k?m.rotation.y+dt*2.4:Math.sin(performance.now()/400)*.9;else if(f.articulo==='taladro_vapor')m.rotation.y+=dt*6;else m.rotation.y+=dt*(f.aspersor?1.1:f.articulo==='nave_exploradora'?.35:1.4);}
    f.piloto.scale.setScalar(f.llena?1:1+Math.sin(t*4)*.08);
   }
  }

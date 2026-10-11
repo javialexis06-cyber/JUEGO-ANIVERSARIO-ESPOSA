@@ -4,7 +4,7 @@ import { ARTICULOS, CULTIVOS, ESPECIES, PECES, PRECIOS_VENTA } from './catalogo'
 
 /** Un único vocabulario de objetos para mochila, cofres, cocina, equipo y botín. */
 export type RarezaObjeto='comun'|'inusual'|'raro'|'epico'|'legendario';
-export type EstacionProduccion='mano'|'banco_trabajo'|'horno'|'fundidora'|'prensa'|'molino_artesanal'|'cocina'|'fermentador'|'telar'|'recicladora'|'forja'|'alto_horno'|'trituradora'|'taladro_vapor'|'ensambladora';
+export type EstacionProduccion='mano'|'banco_trabajo'|'horno'|'fundidora'|'prensa'|'molino_artesanal'|'cocina'|'fermentador'|'telar'|'recicladora'|'forja'|'alto_horno'|'trituradora'|'taladro_vapor'|'ensambladora'|'recuperadora';
 export type TipoBuff='ataque'|'defensa'|'velocidad'|'pesca'|'mineria'|'suerte';
 export interface BuffObjeto {tipo:TipoBuff;valor:number;duracionMs:number}
 export interface DefObjeto {
@@ -13,7 +13,7 @@ export interface DefObjeto {
  comida?:{energia:number;vida:number;buffs?:BuffObjeto[]};
  equipo?:{ranura:'arma'|'casco'|'pechera'|'botas';ataque?:number;defensa?:number;critico?:number;velocidad?:number};
  herramienta?:{tipo:string;nivel:number};maquina?:{estacion:EstacionProduccion};contenedor?:{casillas:number};
- aspersor?:{radio:number;cruz?:boolean};
+ aspersor?:{radio:number;cruz?:boolean};recuperadora?:{nivel:number};
 }
 export interface RecetaProduccion {id:string;nombre:string;estacion:EstacionProduccion;ingredientes:Record<string,number>;salida:{articulo:string;cantidad:number};duracionMs:number;nivel:number;requisito?:string}
 export const OBJETOS:Record<string,DefObjeto>=Object.create(null);
@@ -84,6 +84,8 @@ for(const [id,nombre,precio,descripcion] of [
  ['taladro_vapor','Taladro de vapor',1400,'Saca mineral del suelo de la granja con carbón, sin bajar a la mina.'],
  ['ensambladora','Ensambladora',1200,'Arma engranajes, baterías y circuitos en serie.'],
  ] as [EstacionProduccion,string,number,string][])objeto(id,nombre,'maquina',precio,{pilaMax:20,rareza:'raro',maquina:{estacion:id},descripcion});
+for(const [id,nombre,nivel,precio,rareza] of [['recuperadora_cobre','Recuperadora de cobre',1,300,'inusual'],['recuperadora_hierro','Recuperadora de hierro',2,900,'raro'],['recuperadora_astral','Recuperadora astral',3,2600,'epico']] as [string,string,number,number,RarezaObjeto][])
+ objeto(id,nombre,'maquina',precio,{pilaMax:5,rareza,maquina:{estacion:'recuperadora'},recuperadora:{nivel},descripcion:`Mete lo que fabriques o consigas y devuelve el ${[0,40,60,80][nivel]} % de sus materiales (más si tiene calidad).`});
 objeto('aspersor_basico','Aspersor básico','estructura',45,{pilaMax:20,aspersor:{radio:1,cruz:true},descripcion:'Riega cada mañana las 4 casillas de al lado (arriba, abajo y a los lados).'});
 objeto('aspersor_cobre','Aspersor de cobre','estructura',100,{pilaMax:20,aspersor:{radio:1}});
 objeto('aspersor_hierro','Aspersor de hierro','estructura',280,{pilaMax:20,aspersor:{radio:2}});
@@ -154,6 +156,9 @@ RECETAS.push({id:'acero_forjado',nombre:'Acero de herrería',estacion:'forja',in
 receta('engranaje','forja',{lingote_hierro:2},35,1,2);
 receta('bateria','banco_trabajo',{cuarzo:3,lingote_cobre:1,lingote_plata:1},60,1);
 receta('aspersor_basico','mano',{lingote_cobre:1,lingote_hierro:1},0);
+receta('recuperadora_cobre','banco_trabajo',{lingote_cobre:4,piedra:20,madera:15},45,1);
+receta('recuperadora_hierro','forja',{recuperadora_cobre:1,lingote_hierro:6,engranaje:4},80,2);
+receta('recuperadora_astral','forja',{recuperadora_hierro:1,lingote_titanio:4,bateria:2,cristal_astral:1},120,3);
 receta('aspersor_cobre','banco_trabajo',{lingote_cobre:3,lingote_hierro:1},35,1);
 // Bronce y mitrilo
 receta('lingote_bronce','horno',{cobre:3,estano:2,carbon:1},40,0,2);

@@ -207,3 +207,14 @@ Cambio de reglas (frente de motor, avisado aquí):
 - Bordes: `monteZona('granja'|'pueblo')` rodea la granja y el pueblo con monte; cada salida sigue en camino más allá
   del arco hasta un adelanto del destino (`adelantoZona`: casitas del pueblo, pinar, montaña con la boca de la mina,
   orilla del lago con muelle).
+
+### Recuperadora (Claude, pedido de Javier)
+
+- `recuperadora.ts`: `materialesDe(articulo)` (receta del objeto, receta de `creacion_*`; sin receta: minerales →
+  piedra, lo orgánico → abono; herramientas y recursos básicos no se reciclan) y `porcentajeRecuperacion(nivel,
+  calidad)`: 40/60/80 % según nivel (cobre, hierro, astral) × 1/1.1/1.25/1.5 por calidad, tope 95 %.
+- Es una máquina (`estacion:'recuperadora'`) de la red automática: con `recuperar_maquina` se elige qué objeto
+  tomar de los cofres conectados; recicla una unidad cada 20/12/6 s, deja los materiales en su salida y los
+  deposita en los cofres; las fracciones se acumulan en `resto` (nada se pierde). Validación en `errorProduccion`.
+- A mano: acción de motor `recuperar` (junto a la máquina, desde una casilla de la mochila); redondea al azar.
+- Panel propio en Fabricar › Taller, modelo animado y tres íconos.

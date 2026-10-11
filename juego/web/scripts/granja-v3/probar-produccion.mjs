@@ -19,6 +19,15 @@ const chest=(id,x,z,items={})=>({id,articulo:'cofre_madera',zona:'granja',x,z,ca
 const machine=(id,x,z,recetaId='lingote_cobre',articulo='horno')=>({id,articulo,zona:'granja',x,z,recetaId,cola:[],proceso:null,salida:inv({},4)});
 function count(g){const out={};for(const list of[g.c,...g.e.cofres.map(c=>c.casillas),...g.e.maquinas.map(m=>m.salida)])for(const[id,n]of Object.entries(resumirCasillas(list)))out[id]=(out[id]||0)+n;return out;}
 
+test('Recuperadora automática: saca del cofre el objeto elegido y devuelve sus materiales sin perder fracciones',()=>{
+ const g=game();g.e.cofres.push(chest('c',0,0,{espada_cobre:3}));g.e.maquinas.push({...machine('r',1,0,null,'recuperadora_cobre')});
+ fail(g,{tipo:'recuperar_maquina',id:'r',articulo:'madera'});act(g,{tipo:'recuperar_maquina',id:'r',articulo:'espada_cobre'});
+ tick(g,61_000);const c=resumirCasillas(g.e.cofres[0].casillas);
+ // 3 espadas × (2 lingotes + 3 maderas) × 40 % = 2,4 lingotes y 3,6 maderas
+ assert.equal(c.espada_cobre??0,0);assert.equal(c.lingote_cobre,2);assert.equal(c.madera,3);assert.ok(Math.abs(g.e.maquinas[0].resto.lingote_cobre-.4)<1e-6);
+ const g2=game();g2.e.cofres.push(chest('c',0,0,{espada_cobre:3}));g2.e.maquinas.push({...machine('r',1,0,null,'recuperadora_astral')});act(g2,{tipo:'recuperar_maquina',id:'r',articulo:'espada_cobre'});tick(g2,19_000);
+ assert.equal(resumirCasillas(g2.e.cofres[0].casillas).lingote_cobre,4,'La astral devuelve el 80 % y trabaja más rápido');
+});
 test('Catálogo coherente: ingredientes, productos y estaciones registrados',()=>{const ids=new Set();for(const r of RECETAS){assert.ok(!ids.has(r.id),r.id);ids.add(r.id);assert.ok(OBJETOS[r.salida.articulo],r.salida.articulo);assert.ok(r.estacion==='mano'||OBJETOS[r.estacion]?.maquina,r.estacion);assert.ok(r.duracionMs>=0);for(const[id,n]of Object.entries(r.ingredientes)){assert.ok(OBJETOS[id],`${r.id}: ${id}`);assert.ok(Number.isInteger(n)&&n>0);}}});
 test('Fabricación de mano consume exacto y reserva espacio para resultado',()=>{const g=game({madera:50});const r=act(g,{tipo:'fabricar',recetaId:'cofre_madera'});assert.deepEqual(resumirCasillas(g.c),{madera:25,cofre_madera:1});assert.equal(r.producidos.cofre_madera,1);fail(g,{tipo:'fabricar',recetaId:'cofre_madera',cantidad:3});});
 test('Rechazo atómico con mochila llena, cantidades inválidas y receta desconocida',()=>{const g=game({fibra:10,piedra:999},2);fail(g,{tipo:'fabricar',recetaId:'cuerda'});for(const cantidad of[0,-1,.5,101,NaN])fail(g,{tipo:'fabricar',recetaId:'cuerda',cantidad});fail(g,{tipo:'fabricar',recetaId:'constructor'});});

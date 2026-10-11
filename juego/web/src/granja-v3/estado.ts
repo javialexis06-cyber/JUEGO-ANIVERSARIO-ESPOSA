@@ -71,7 +71,7 @@ export type Accion =
  |{tipo:'fertilizar';x:number;z:number;articulo:string}
  |{tipo:'vender_pila';casilla:number;cantidad?:number}
  |{tipo:'comprar_objeto';articulo:string;cantidad?:number}
- |{tipo:'entrar_aventura';destino:string;xJugador:number;zJugador:number;piso?:number}|{tipo:'construir_ascensor';xJugador:number;zJugador:number}
+ |{tipo:'entrar_aventura';destino:string;xJugador:number;zJugador:number;piso?:number}|{tipo:'construir_ascensor';xJugador:number;zJugador:number}|{tipo:'recuperar';estructuraId:string;casilla:number;cantidad:number;xJugador:number;zJugador:number}
  |{tipo:'salir_aventura'}|{tipo:'descender_aventura';xJugador:number;zJugador:number}
  |{tipo:'accion_aventura';objetivo:'monstruo'|'nodo'|'botin'|'situacion';id:string;xJugador:number;zJugador:number}
  |{tipo:'seleccionar_casilla';casilla:number}|{tipo:'fila_barra';fila:number}|{tipo:'consumir';casilla?:number}

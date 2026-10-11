@@ -79,4 +79,13 @@ test('Aspersor básico riega en cruz; minerales nuevos tienen aleaciones, armadu
  for(const r of RECETAS.filter(r=>['alto_horno','trituradora','taladro_vapor','ensambladora'].includes(r.estacion)))for(const k of [...Object.keys(r.ingredientes),r.salida.articulo])assert.ok(obtenerObjeto(k),k);
  assert.ok(RECETAS.find(r=>r.id==='tanda_cobre').salida.cantidad>RECETAS.find(r=>r.id==='lingote_cobre').salida.cantidad);
 });
+test('Recuperadora a mano: devuelve materiales según nivel, exige estar cerca y no recicla herramientas',()=>{
+ const m=game();m.estado.produccion.maquinas.push({id:'rec',articulo:'recuperadora_hierro',zona:'granja',x:3,z:6,recetaId:null,cola:[],proceso:null,salida:[null,null,null,null]});
+ inventory(m,{...m.estado.inventario,espada_cobre:1},36);const k=m.estado.casillasInventario.findIndex(p=>p?.articulo==='espada_cobre'),antes=m.estado.inventario.lingote_cobre??0;
+ fail(m,{tipo:'recuperar',estructuraId:'rec',casilla:k,cantidad:1,xJugador:30,zJugador:30});fail(m,{tipo:'recuperar',estructuraId:'rec',casilla:k,cantidad:2,xJugador:3.5,zJugador:7.5});
+ const madera=m.estado.inventario.madera??0;act(m,{tipo:'recuperar',estructuraId:'rec',casilla:k,cantidad:1,xJugador:3.5,zJugador:7.5});
+ assert.equal(m.estado.inventario.espada_cobre??0,0);assert.ok((m.estado.inventario.lingote_cobre??0)-antes>=1);assert.ok(m.estado.inventario.madera-madera>=1);
+ const h=m.estado.casillasInventario.findIndex(p=>p?.articulo==='herramienta_hacha');fail(m,{tipo:'recuperar',estructuraId:'rec',casilla:h,cantidad:1,xJugador:3.5,zJugador:7.5});
+ assert.equal(validarEstado(m.estado),null);
+});
 console.log(JSON.stringify({suite:'motor-interaccion-inventario-herreria',ok:failures===0,checks,failures}));if(failures)process.exitCode=1;

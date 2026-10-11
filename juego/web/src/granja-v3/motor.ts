@@ -29,6 +29,7 @@ import { SALIDAS, dentroDeZona, esSenderoGranja } from './caminos-mundo';
 import { crearPaisaje, aguaEn, huecoEn, paisajeValido } from './paisaje';
 import { crearCampo, campoValido, duracionCampo, diasCultivo, calidadCosecha, siguienteCosecha, nombreCalidad, multiplicadorCalidad } from './agricultura';
 import { crearProduccion, aplicarProduccion, avanzarProduccion, errorProduccion, huellaProduccion } from './produccion';
+import { NIVEL_RECUPERADORA, materialesDe, porcentajeRecuperacion } from './recuperadora';
 import { MINA, costoEstacion, estacionPendiente, construirAscensor, MONSTRUOS, MINERALES, crearAventura, errorAventura, entrarAventura, salirAventura, descenderAventura, golpearMonstruo, golpearNodo, recogerBotin, resolverSituacion, stepAventura, destinoAventura, instanciaAventura, esTransitableAventura, opcionesAventura } from './aventura';
 import { crearBarra, validarBarra, indiceActivo, objetoActivo, herramientaDeObjeto, bonosEquipo, HERRAMIENTAS_INICIALES, LARGO_BARRA } from './barra';
 import type { Pila } from './inventario';
@@ -350,6 +351,19 @@ export class MotorGranja {
     if(a.piso!==undefined&&!entero(a.piso,1,100000))return mal('Piso inválido.');
     const result=entrarAventura(s.aventura,a.destino,{x:a.xJugador,z:a.zJugador},{desbloqueos:s.desbloqueos,construcciones:s.produccion.estructuras.map(n=>n.articulo),nivelPico:this.nivelHerramienta('pico')},a.piso??1);if(!result.ok)return result;
     s.posicionAventura=result.posicion!;s.enemigo=0;this.contar('expediciones');r={...result,posicionAventura:result.posicion};break;
+   }
+   case 'recuperar':{
+    if(s.zona!=='granja'||s.interior||s.servicio)return mal('La recuperadora está en el exterior de tu granja.');
+    const maq=s.produccion.maquinas.find(n=>n.id===a.estructuraId&&n.zona==='granja'),nivel=maq?NIVEL_RECUPERADORA[maq.articulo]:0;if(!maq||!nivel)return mal('Esa recuperadora no está en tu granja.');
+    if(!this.cerca(maq.x,maq.z,a.xJugador,a.zJugador,3.3))return mal('Acércate a la recuperadora.');
+    const pila=entero(a.casilla,0,s.casillasInventario.length-1)?s.casillasInventario[a.casilla]:null;if(!pila)return mal('Elige algo de tu mochila.');
+    if(!entero(a.cantidad,1,pila.cantidad))return mal('Cantidad inválida.');const materiales=materialesDe(pila.articulo);if(!materiales)return mal('Eso no se puede recuperar.');
+    const calidad=calidadPila(pila),p=porcentajeRecuperacion(nivel,calidad),salida:Record<string,number>={};
+    for(const [k,v] of Object.entries(materiales)){const total=v*a.cantidad*p,entera=Math.floor(total+1e-9);salida[k]=entera+(this.random()<total-entera?1:0);}
+    if(!Object.values(salida).some(n=>n>0))return mal('Es muy poquito: mete más unidades para recuperar algo.');
+    const casillas=s.casillasInventario.map(x=>x?{...x}:x);casillas[a.casilla]!.cantidad-=a.cantidad;if(casillas[a.casilla]!.cantidad<=0)casillas[a.casilla]=null;s.casillasInventario=casillas;s.inventario=resumirCasillas(casillas);
+    for(const [k,n] of Object.entries(salida))if(n>0)this.agregar(k,n);this.contar('recuperar',a.cantidad);
+    r=bien('Recuperaste '+Object.entries(salida).filter(([,n])=>n>0).map(([k,n])=>`${n} ${obtenerObjeto(k)?.nombre.toLowerCase()??k}`).join(', ')+'.');break;
    }
    case 'construir_ascensor':{
     if(!finito(a.xJugador,-1000,1000)||!finito(a.zJugador,-1000,1000))return mal('Posición de jugador inválida.');const n=estacionPendiente(s.aventura);if(!n)return mal('Aquí no se puede construir una estación de ascensor.');

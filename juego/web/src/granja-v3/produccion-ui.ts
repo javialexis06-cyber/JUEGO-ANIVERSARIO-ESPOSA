@@ -1,3 +1,5 @@
+import { NIVEL_RECUPERADORA, materialesDe, porcentajeRecuperacion, previsionRecuperacion } from './recuperadora';
+import type { Calidad } from './inventario';
 import { recetaAprendida, requisitoReceta, NOMBRES_HABILIDAD } from './habilidades';
 import { calidadPila } from './inventario';
 import { nombreCalidad } from './agricultura';
@@ -12,7 +14,7 @@ import './produccion-ui.css';
 
 const esc=(v:unknown)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const normalizar=(v:string)=>v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-const estaciones:Record<EstacionProduccion,string>={mano:'A mano',banco_trabajo:'Banco de trabajo',horno:'Horno',fundidora:'Fundidora',prensa:'Prensa',molino_artesanal:'Molino artesanal',cocina:'Cocina',fermentador:'Fermentador',telar:'Telar',recicladora:'Recicladora',forja:'Forja',alto_horno:'Alto horno',trituradora:'Trituradora',taladro_vapor:'Taladro de vapor',ensambladora:'Ensambladora'};
+const estaciones:Record<EstacionProduccion,string>={mano:'A mano',banco_trabajo:'Banco de trabajo',horno:'Horno',fundidora:'Fundidora',prensa:'Prensa',molino_artesanal:'Molino artesanal',cocina:'Cocina',fermentador:'Fermentador',telar:'Telar',recicladora:'Recicladora',forja:'Forja',alto_horno:'Alto horno',trituradora:'Trituradora',taladro_vapor:'Taladro de vapor',ensambladora:'Ensambladora',recuperadora:'Recuperadora'};
 const categorias:Record<string,string>={todas:'Todas',materiales:'Materiales',comida:'Cocina',equipo:'Equipo',taller:'Taller y cofres',granja:'Granja',viajes:'Portales y viajes'};
 const tiempo=(ms:number)=>ms<=0?'Al instante':ms<60_000?`${Math.ceil(ms/1000)} s`:`${Math.floor(ms/60_000)} min${ms%60_000?` ${Math.ceil(ms%60_000/1000)} s`:''}`;
 const categoria=(r:RecetaProduccion)=>r.salida.articulo.startsWith('portal_')||r.salida.articulo==='nave_exploradora'?'viajes':obtenerObjeto(r.salida.articulo)?.categoria==='comida'?'comida':obtenerObjeto(r.salida.articulo)?.equipo?'equipo':obtenerObjeto(r.salida.articulo)?.maquina||obtenerObjeto(r.salida.articulo)?.contenedor?'taller':obtenerObjeto(r.salida.articulo)?.aspersor||['fertilizante','fertilizante_mejorado','cebo_refinado'].includes(r.salida.articulo)?'granja':'materiales';
@@ -42,7 +44,23 @@ function recetaCard(r:RecetaProduccion,s:EstadoConProduccion,opts:OpcionesProduc
  return `<article class="prod-receta" data-prod-receta="${esc(r.id)}" data-categoria="${categoria(r)}" data-buscar="${esc(textoBuscar)}" data-permitida="${permitida}" data-estacion="${r.estacion}" data-hay-estacion="${hayEstacion}"><div class="prod-receta-head"><span class="prod-item-icon">${iconoInventario(r.salida.articulo)}</span><div><h3>${esc(r.nombre)}</h3><p>${r.salida.cantidad} ${r.salida.cantidad===1?'unidad':'unidades'} · ${tiempo(r.duracionMs)}</p></div></div><div class="prod-meta"><span>${estaciones[r.estacion]}</span><span${nivel<r.nivel?' class="falta"':''}>Herramienta ${r.nivel}</span></div>${ingredientes(r,s.inventario,opts.nombre)}${!permitida?`<p class="prod-bloqueo">${!recetaAprendida(s.habilidades,r)?`Aprende ${NOMBRES_HABILIDAD[requisitoReceta(r).habilidad]} ${requisitoReceta(r).nivel} y duerme para desbloquearla.`:nivel<r.nivel?`Necesita una herramienta de nivel ${r.nivel}.`:'Necesitas descubrir esta receta en tus aventuras.'}</p>`:''}${r.estacion!=='mano'?(disponibles.length?`<label class="prod-label">Preparar en<select data-prod-estacion aria-label="Estación para ${esc(r.nombre)}">${disponibles.map((m,i)=>`<option value="${esc(m.id)}" ${m.id===opts.seleccionado?'selected':''}>${esc(opts.nombre(m.articulo))} ${i+1} · ${m.x}, ${m.z}</option>`).join('')}</select></label>`:`<p class="prod-bloqueo">Coloca un ${estaciones[r.estacion].toLowerCase()} en esta zona.</p>`):''}<div class="prod-fabricar"><label class="prod-label">Lotes<input data-prod-lotes type="number" inputmode="numeric" min="1" max="100" step="1" value="1" aria-label="Lotes de ${esc(r.nombre)}"></label><button class="btn small${materiales&&permitida&&hayEstacion?' primary':''}" data-prod-accion="fabricar" data-receta="${esc(r.id)}" ${materiales&&permitida&&hayEstacion?'':'disabled'}>${r.estacion==='mano'?'Fabricar':'Añadir a la cola'}</button></div></article>`;
 }
 
+/** Recuperadora: qué recicla sola desde los cofres conectados y qué meterle a mano desde la mochila. */
+function recuperadoraCard(m:MaquinaProduccion,s:EstadoConProduccion,{nombre,ahora=s.ultimoTiempo}:OpcionesProduccion){
+ const nivelM=NIVEL_RECUPERADORA[m.articulo],grupo=gruposProduccion(s.produccion).find(g=>g.ids.includes(m.id)),local=m.zona===s.zona&&!s.interior&&!s.servicio;
+ const prev=(id:string,n:number,cal:Calidad=0)=>{const p=previsionRecuperacion(id,n,nivelM,cal);return p?Object.entries(p).map(([k,v])=>`${v<1?v.toFixed(1):Math.floor(v*10)/10} ${esc(nombre(k))}`).join(' · '):'';};
+ const enCofres=new Set<string>();for(const c of s.produccion.cofres.filter(c=>grupo?.cofres.includes(c.id)))for(const p of c.casillas)if(p&&materialesDe(p.articulo))enCofres.add(p.articulo);if(m.recuperar)enCofres.add(m.recuperar);
+ const restante=m.reciclando?Math.max(0,m.reciclando.terminaEn-ahora):0;
+ const mochila=s.casillasInventario.map((p,i)=>({p,i})).filter(({p})=>p&&materialesDe(p.articulo));
+ return `<article class="prod-dispositivo" data-prod-maquina="${esc(m.id)}"><div class="prod-dispositivo-head"><span class="prod-item-icon">${iconoInventario(m.articulo)}</span><div><h3>${esc(nombre(m.articulo))}</h3><p>Devuelve el ${Math.round(porcentajeRecuperacion(nivelM)*100)} % de los materiales (más con calidad plata, oro o iridio).</p></div></div>${!local?'<p class="prod-bloqueo">Ve a su zona para utilizarla.</p>':''}
+ <div class="prod-proceso">${m.reciclando?`<strong>Reciclando ${esc(nombre(m.reciclando.articulo))}</strong><span>${restante?`Listo en ${tiempo(restante)}`:'Esperando espacio en la salida'}</span>`:m.salida.some(Boolean)?'<strong>Materiales listos</strong><span>Recógelos o deja espacio en un cofre conectado.</span>':'<strong>Lista para trabajar</strong><span>Elige qué reciclar sola o mete algo de tu mochila.</span>'}</div>
+ <h4>Salida</h4>${casillas(m.salida,'maquina',nombre,m.id)}
+ <h4>Recuperación automática</h4><p class="prod-ayuda">${grupo?.cofres.length?`Toma el objeto elegido de ${grupo.cofres.length===1?'su cofre conectado':`sus ${grupo.cofres.length} cofres conectados`} y guarda allí los materiales.`:'Pon un cofre junto a ella y llénalo con lo que quieras reciclar.'}</p>
+ <label class="prod-label">Reciclar sola<select data-prod-recuperar data-id="${esc(m.id)}" ${local?'':'disabled'}><option value="">Apagada</option>${[...enCofres].map(id=>`<option value="${esc(id)}" ${id===m.recuperar?'selected':''}>${esc(nombre(id))} → ${prev(id,1)}</option>`).join('')}</select></label>
+ <h4>Desde tu mochila</h4>${mochila.length?`<ul class="prod-recuperar">${mochila.map(({p,i})=>`<li><span><strong>${esc(nombre(p!.articulo))}</strong>${p!.calidad?` · ${['','plata','oro','iridio'][p!.calidad]}`:''} ×${p!.cantidad}<br><small>Por unidad: ${prev(p!.articulo,1,(p!.calidad??0) as Calidad)}</small></span><span class="buttons"><button class="btn small" data-prod-accion="recuperar" data-id="${esc(m.id)}" data-casilla="${i}" data-cantidad="1" ${local?'':'disabled'}>×1</button><button class="btn small primary" data-prod-accion="recuperar" data-id="${esc(m.id)}" data-casilla="${i}" data-cantidad="${p!.cantidad}" ${local?'':'disabled'}>Todo</button></span></li>`).join('')}</ul>`:'<p class="prod-ayuda">No llevas nada que se pueda reciclar.</p>'}
+ <div class="buttons"><button class="btn small" data-prod-accion="mover" data-id="${esc(m.id)}">Mover</button><button class="btn small quiet" data-prod-accion="retirar" data-id="${esc(m.id)}">Guardar</button></div></article>`;
+}
 function maquinaCard(m:MaquinaProduccion,s:EstadoConProduccion,{nombre,nivel=0,ahora=s.ultimoTiempo}:OpcionesProduccion){
+ if(NIVEL_RECUPERADORA[m.articulo])return recuperadoraCard(m,s,{nombre,ahora} as OpcionesProduccion);
  const estacion=obtenerObjeto(m.articulo)!.maquina!.estacion,recetas=RECETAS.filter(r=>r.estacion===estacion);
  const grupo=gruposProduccion(s.produccion).find(g=>g.ids.includes(m.id));
  const almacen:Record<string,number>={};for(const c of s.produccion.cofres.filter(c=>grupo?.cofres.includes(c.id)))for(const p of c.casillas)if(p)almacen[p.articulo]=(almacen[p.articulo]||0)+p.cantidad;
@@ -66,6 +84,7 @@ export interface CallbacksProduccion {
  mover:(id:string)=>void;
  seleccionar:(id:string)=>void;
  refrescar:()=>void;
+ recuperar?:(id:string,casilla:number,cantidad:number)=>Promise<unknown>;
 }
 interface MemoriaUI {tab:TabProduccion;busqueda:string;filtro:string;seleccion:string;recetas:Record<string,string>;scroll:number}
 const memorias=new WeakMap<HTMLElement,MemoriaUI>(),conexiones=new WeakMap<HTMLElement,AbortController>();
@@ -136,6 +155,7 @@ export function conectarProduccion(root:HTMLElement,callbacks:CallbacksProduccio
    case 'mover':callbacks.mover(id);break;
    case 'retirar':void ejecutar({tipo:'retirar_produccion',id});break;
    case 'cancelar-cola':void ejecutar({tipo:'cancelar_cola',id});break;
+   case 'recuperar':if(callbacks.recuperar){ocupado=true;void callbacks.recuperar(id,Number(control.dataset.casilla),Number(control.dataset.cantidad)).finally(()=>{ocupado=false;callbacks.refrescar();});}break;
    case 'fabricar':{
     const card=control.closest<HTMLElement>('[data-prod-receta]')!,n=lotes(card.querySelector('[data-prod-lotes]'));if(n===null)return;
     const recetaId=control.dataset.receta!,estacion=card.querySelector<HTMLSelectElement>('[data-prod-estacion]');
@@ -157,6 +177,7 @@ export function conectarProduccion(root:HTMLElement,callbacks:CallbacksProduccio
   else if(target.matches('[data-prod-elegir-cofre]')&&target.value){memoria.scroll=0;callbacks.seleccionar(target.value);}
   else if(target.matches('[data-prod-manual-receta]'))mostrarRecetaManual(target.closest<HTMLElement>('[data-prod-maquina]')!,target.value);
   else if(target.matches('[data-prod-automatica]'))void ejecutar({tipo:'receta_maquina',id:target.dataset.id!,recetaId:target.value||null});
+  else if(target.matches('[data-prod-recuperar]'))void ejecutar({tipo:'recuperar_maquina',id:target.dataset.id!,articulo:target.value||null});
   else if(target.matches('[data-prod-conexion]'))void ejecutar({tipo:'adyacencia',modo:target.value as 'cardinal'|'diagonal'});
   else if(target.matches('[data-prod-prioridad]'))void ejecutar({tipo:'prioridad_cofre',id:target.dataset.id!,prioridad:Number(target.value)});
  },{signal});
