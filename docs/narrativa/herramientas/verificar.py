@@ -161,6 +161,6 @@ if __name__=='__main__':
     resumen=json.loads((ROOT/'audio/resumen.json').read_text())
     exigir(resumen['total_lineas']==len(datos['lineas']),'Resumen de audio desactualizado')
     resultado['casos_invalidos_rechazados']=len(casos)
-    resultado['estado']='autoria_validada; runtime_y_audio_no_integrados'
+    resultado['estado']='autoria_validada; verificaciones_de_motor_y_medios_separadas'
     (ROOT/'VERIFICACION.json').write_text(json.dumps(resultado,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps(resultado,ensure_ascii=False))

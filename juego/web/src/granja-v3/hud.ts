@@ -1,3 +1,4 @@
+import { regionAstra, regionActual, NPC_ASTRA, RECURSOS_ASTRA, puntoRecurso, posicionNpcAstra, rutasDesde } from './astra';
 // La cara de la granja: reloj, monedas, energía, minimapa, mapa grande con buscador de vecinos, menú de pestañas y
 // palanca táctil. Solo lee el estado del motor y abre los paneles que ya existen: no cambia reglas ni partidas.
 import type { MotorGranja } from './motor';
@@ -151,6 +152,7 @@ export function iniciarHud(h: Hud) {
     ctx.fillRect(0, 0, m.w, m.h);
     const exp = instanciaAventura(s.aventura);
     if (exp) { dibujarExpedicion(m, exp); return []; }
+    if(s.astra?.actual)return dibujarAstra(m,conNombres);
     transformar(m);
     rect(m, x0, z0, x1 - x0, z1 - z0, PISO[zona] ?? '#9cc77a');
     if (zona === 'granja') {
@@ -241,6 +243,15 @@ export function iniciarHud(h: Hud) {
     ctx.restore();
     return npcs;
   }
+  function dibujarAstra(m:Marco,nombres:boolean){
+    const s=motor.estado,r=regionAstra(s.astra!.actual!)!,ctx=m.ctx;transformar(m);rect(m,-24,-28,48,56,r.color);rect(m,-22,11,44,3,'#e2cf9f');rect(m,-1.5,-20,3,46,'#e2cf9f');
+    for(const h of r.viviendas)rect(m,h.x,h.z,h.ancho,h.fondo,'#b98a5e');
+    ctx.setTransform(1,0,0,1,0,0);const npcs=[];
+    for(const id of r.npc){const n=NPC_ASTRA.find(n=>n.id===id)!,p=posicionNpcAstra(s,id);if(!p||p.interior!==s.astra!.interior)continue;const q=aPantalla(m,p.x,p.z);ctx.fillStyle=id===buscado?'#fff':'#da7659';ctx.beginPath();ctx.arc(q.x,q.y,id===buscado?5:3,0,Math.PI*2);ctx.fill();if(nombres||id===buscado)etiqueta(ctx,n.nombre,q.x,q.y-8,9,id===buscado);npcs.push({id,x:p.x,z:p.z,color:'#da7659',nombre:n.nombre});}
+    for(const ruta of rutasDesde(s)){if(!ruta.punto)continue;const p=aPantalla(m,ruta.punto.x,ruta.punto.z);ctx.fillStyle='#f6cf5a';ctx.fillRect(p.x-3,p.y-3,6,6);if(nombres)etiqueta(ctx,regionAstra(ruta.destino)?.nombre??'Granja',p.x,p.y-9,9,false);}
+    RECURSOS_ASTRA.find(v=>v.id===r.id)?.recursos.forEach((d,i)=>{const p=puntoRecurso(r.id,i),q=aPantalla(m,p.x,p.z);ctx.fillStyle='#75645e';ctx.fillRect(q.x-3,q.y-3,6,6);if(nombres)etiqueta(ctx,d.nombre,q.x,q.y-8,8,false);});
+    const p=aPantalla(m,vista.avatar.position.x,vista.avatar.position.z);ctx.fillStyle='#e4566b';ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();return npcs;
+  }
   /** Plano del piso de la expedición (galerías, vetas, monstruos, escalera y cofres), cacheado por mapa. */
   let planoClave = '', plano: HTMLCanvasElement | null = null, planoX = 0, planoZ = 0;
   function dibujarExpedicion(m: Marco, i: NonNullable<ReturnType<typeof instanciaAventura>>) {
@@ -283,7 +294,7 @@ export function iniciarHud(h: Hud) {
   function guiaBuscado(m: Marco, npcs: { id: string; x: number; z: number }[]) {
     if (!buscado) return '';
     const n = NPCS_PUEBLO.find((n) => n.id === buscado);
-    if (!n) return '';
+    if(motor.estado.astra?.actual||!n){const nuevo=NPC_ASTRA.find(n=>n.id===buscado),p=nuevo&&posicionNpcAstra(motor.estado,nuevo.id);return nuevo?`${nuevo.nombre} · ${p?(p.interior?'En casa':'En este lugar'):regionAstra(nuevo.region)?.nombre}`:'';}
     const s = motor.estado;
     let meta: { x: number; z: number } | undefined, texto = '';
     const enPueblo = npcs.find((v) => v.id === buscado);
@@ -317,7 +328,7 @@ export function iniciarHud(h: Hud) {
   }
   function pintarMini() {
     const s = motor.estado;
-    if (s.interior || s.servicio || s.aventura.destinoActual) { $('minimapa').classList.add('apagado'); }
+    if (s.astra?.interior || s.interior || s.servicio || s.aventura.destinoActual) { $('minimapa').classList.add('apagado'); }
     else $('minimapa').classList.remove('apagado');
     const { ctx, w, h: alto, dpr } = prepararLienzo(mini);
     orientar();
@@ -326,12 +337,12 @@ export function iniciarHud(h: Hud) {
     const npcs = dibujarZona(m, false);
     const guia = guiaBuscado(m, npcs);
     const exp = instanciaAventura(s.aventura);
-    $('minimapa-nombre').textContent = exp ? (exp.destinoId === MINA ? `Minas · piso ${exp.nivel}` : `${destinoAventura(exp.destinoId)?.nombre ?? ''} · ${exp.nivel}`) : s.interior ? $('place-name').textContent ?? '' : DESTINOS[s.zona].nombre;
+    $('minimapa-nombre').textContent = exp ? (exp.destinoId === MINA ? `Minas · piso ${exp.nivel}` : `${destinoAventura(exp.destinoId)?.nombre ?? ''} · ${exp.nivel}`) : s.astra?.actual?regionAstra(s.astra.actual)!.nombre:s.interior ? $('place-name').textContent ?? '' : DESTINOS[s.zona].nombre;
     $('minimapa-buscando').hidden = !guia;
     $('minimapa-buscando').textContent = guia ? '🔎 ' + guia : '';
   }
   function pintarGrande() {
-    const s = motor.estado, { ctx, w, h: alto, dpr } = prepararLienzo(grande), [x0, x1, z0, z1] = limites(s.zona);
+    const s = motor.estado, { ctx, w, h: alto, dpr } = prepararLienzo(grande), [x0, x1, z0, z1] = s.astra?.actual?[-24,24,-28,28]:limites(s.zona);
     orientar();
     // Cabe la zona entera girada
     const rx = -fwd.z, rz = fwd.x, esquinas = [[x0, z0], [x1, z0], [x0, z1], [x1, z1]];
@@ -340,7 +351,7 @@ export function iniciarHud(h: Hud) {
     const esc = Math.min((w - 20 * dpr) / ancho, (alto - 20 * dpr) / largo);
     const m: Marco = { ctx, cx: w / 2, cy: alto / 2, s: esc, px: (x0 + x1) / 2, pz: (z0 + z1) / 2, w, h: alto };
     dibujarZona(m, true);
-    $('mapa-grande-titulo').textContent = DESTINOS[s.zona].nombre;
+    $('mapa-grande-titulo').textContent = s.astra?.actual?regionAstra(s.astra.actual)!.nombre:DESTINOS[s.zona].nombre;
     // Dónde está el vecino que se busca
     const n = NPCS_PUEBLO.find((n) => n.id === buscado);
     let texto = 'Escoge a alguien y te lo señalo en el minimapa.';
@@ -350,12 +361,13 @@ export function iniciarHud(h: Hud) {
       if (s.zona === 'pueblo') texto = u?.visible ? `${n.nombre} anda por el pueblo${lugar}. Sigue el punto grande.` : `${n.nombre} está bajo techo${lugar}.`;
       else { const r = rutaCaminando(s.zona, 'pueblo')[0]; texto = `${n.nombre} está en el ${DESTINOS.pueblo.nombre}${lugar}.` + (r ? ` Ve por el ${r.nombre.toLowerCase()}: la flecha del minimapa te guía.` : ''); }
     }
+    const nuevo=NPC_ASTRA.find(n=>n.id===buscado);if(nuevo&&(s.astra?.actual||!n)){const p=posicionNpcAstra(s,nuevo.id);texto=`${nuevo.nombre}: ${regionAstra(nuevo.region)?.nombre}. ${p?(p.interior?'Está en casa; respeta el horario de visitas.':'Busca su punto en el mapa.'):'Consulta los accesos en la pestaña Astra.'}`;}
     $('mapa-donde').textContent = texto;
   }
 
   // ── Mapa grande ─────────────────────────────────────────────────────
   const sel = $('mapa-buscar') as HTMLSelectElement;
-  sel.innerHTML = '<option value="">— Nadie —</option>' + [...NPCS_PUEBLO].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')).map((n) => `<option value="${n.id}">${n.nombre}</option>`).join('');
+  sel.innerHTML = '<option value="">— Nadie —</option>' + [...NPC_ASTRA].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')).map((n) => `<option value="${n.id}">${n.nombre}</option>`).join('');
   sel.value = buscado;
   sel.onchange = () => {
     buscado = sel.value;

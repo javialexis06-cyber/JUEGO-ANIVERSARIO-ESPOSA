@@ -8,5 +8,5 @@
   "ciclos": 0,
   "premios_con_bonus_global": 0,
   "casos_invalidos_rechazados": 17,
-  "estado": "autoria_validada; runtime_y_audio_no_integrados"
+  "estado": "autoria_validada; verificaciones_de_motor_y_medios_separadas"
 }

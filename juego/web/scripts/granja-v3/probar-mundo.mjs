@@ -1,8 +1,9 @@
+import { compilarModulo } from './modulos-prueba.mjs';
 import assert from 'node:assert/strict';
 import {transform} from 'esbuild';
 import {readFile} from 'node:fs/promises';
 const modules=new Map();
-async function compile(url){if(modules.has(url.href))return modules.get(url.href);let {code}=await transform(await readFile(url,'utf8'),{loader:'ts',format:'esm',target:'es2022'});for(const m of [...code.matchAll(/from (["'])([^"']+)\1/g)]){const dep=m[2].startsWith('./')?await compile(new URL(m[2]+'.ts',url)):import.meta.resolve(m[2]);code=code.replace(m[0],'from '+JSON.stringify(dep));}const result='data:text/javascript;base64,'+Buffer.from(code).toString('base64');modules.set(url.href,result);return result;}
+async function compile(url){return compilarModulo(url);}
 const load=f=>compile(new URL('../../src/granja-v3/'+f+'.ts',import.meta.url)).then(s=>import(s));
 const {MotorGranja,validarEstado}=await load('motor'),{SALIDAS,dentroDeZona,rutaCaminando,salidaCercana,esSenderoGranja}=await load('caminos-mundo');
 const {crearPaisaje,aguaEn,huecoEn,paisajeValido}=await load('paisaje'),{tiempoCosecha}=await load('agricultura');

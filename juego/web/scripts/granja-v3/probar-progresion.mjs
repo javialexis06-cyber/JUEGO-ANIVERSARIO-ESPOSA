@@ -1,19 +1,11 @@
+import { compilarModulo } from './modulos-prueba.mjs';
 import assert from 'node:assert/strict';
 import { transform } from 'esbuild';
 import { readFile } from 'node:fs/promises';
 
-// Transform in memory: no temporary build and no directory scanning outside the workspace.
+// Compilar un grafo ESM temporal aislado, compartiendo los mismos módulos dentro de la suite.
 const modules = new Map();
-async function compile(url) {
-  if (modules.has(url.href)) return modules.get(url.href);
-  let { code } = await transform(await readFile(url, 'utf8'), { loader: 'ts', format: 'esm', target: 'es2022' });
-  for (const match of [...code.matchAll(/from (["'])(\.\/[^"']+)\1/g)]) {
-    const imported = await compile(new URL(`${match[2]}.ts`, url));
-    code = code.replace(match[0], `from ${JSON.stringify(imported)}`);
-  }
-  const result = `data:text/javascript;base64,${Buffer.from(code).toString('base64')}`;
-  modules.set(url.href, result); return result;
-}
+async function compile(url){return compilarModulo(url);}
 const { MotorGranja, validarEstado } = await import(await compile(new URL('../../src/granja-v3/motor.ts', import.meta.url)));
 const { distribuirInventario, resumirCasillas } = await import(await compile(new URL('../../src/granja-v3/inventario.ts', import.meta.url)));
 const { nodosExteriores } = await import(await compile(new URL('../../src/granja-v3/progresion.ts', import.meta.url)));

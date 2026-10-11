@@ -1,8 +1,9 @@
+import { compilarModulo } from './modulos-prueba.mjs';
 import assert from 'node:assert/strict';
 import {transform} from 'esbuild';
 import {readFile} from 'node:fs/promises';
 const modules=new Map();
-async function compile(url){if(modules.has(url.href))return modules.get(url.href);let {code}=await transform(await readFile(url,'utf8'),{loader:'ts',format:'esm',target:'es2022'});for(const m of [...code.matchAll(/from (["'])([^"']+)\1/g)]){const dep=m[2].startsWith('./')?await compile(new URL(`${m[2]}.ts`,url)):import.meta.resolve(m[2]);code=code.replace(m[0],`from ${JSON.stringify(dep)}`);}const result=`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`;modules.set(url.href,result);return result;}
+async function compile(url){return compilarModulo(url);}
 const load=f=>compile(new URL('../../src/granja-v3/'+f+'.ts',import.meta.url)).then(s=>import(s));
 const {MotorGranja,validarEstado}=await load('motor');
 const {CULTIVOS,PRECIOS_VENTA}=await load('catalogo');
@@ -29,7 +30,7 @@ function grow(m,p){
 }
 
 
-test('El catálogo tiene semillas, productos, fases y tiempos coherentes sin IDs repetidos',()=>{assert.equal(CULTIVOS.length,63);assert.equal(new Set(CULTIVOS.map(c=>c.id)).size,63);for(const d of CULTIVOS){assert.ok(OBJETOS[d.semilla]&&OBJETOS[d.producto]);assert.ok(Number.isInteger(diasCultivo(d))&&diasCultivo(d)>0&&diasCultivo(d)<=28&&d.estaciones.length&&d.climas.length);if(d.fases)assert.ok(Math.abs(d.fases.reduce((n,v)=>n+v,0)-1)<1e-9);}assert.equal(PRECIOS_VENTA.fibra,2);});
+test('El catálogo tiene semillas, productos, fases y tiempos coherentes sin IDs repetidos',()=>{assert.equal(CULTIVOS.length,87);assert.equal(new Set(CULTIVOS.map(c=>c.id)).size,87);for(const d of CULTIVOS){assert.ok(OBJETOS[d.semilla]&&OBJETOS[d.producto]);assert.ok(Number.isInteger(diasCultivo(d))&&diasCultivo(d)>0&&diasCultivo(d)<=28&&d.estaciones.length&&d.climas.length);if(d.fases)assert.ok(Math.abs(d.fases.reduce((n,v)=>n+v,0)-1)<1e-9);}assert.equal(PRECIOS_VENTA.fibra,2);});
 test('Sin riego no crece y se seca a las 48 horas; retirar deja el terreno reutilizable',()=>{const m=game(),p=plot(m,'chirivia');now+=47*H;m.actualizar();assert.equal(p.cuidado.grownMs,0);now+=H;m.actualizar();assert.equal(p.cuidado.status,'arruinado');act(m,{tipo:'cosechar',x:p.x,z:p.z});assert.equal(p.cultivo,null);assert.equal(p.campo.fertilizante,0);});
 test('Cosecha madura permanece intacta durante meses de ausencia y cambios de temporada',()=>{const m=game(),p=plot(m,'chirivia');grow(m,p);const mature=p.cuidado.maturedAt;now+=365*24*H;m.actualizar();assert.equal(p.cuidado.status,'maduro');assert.equal(p.cuidado.maturedAt,mature);});
 test('Cosechar rebrote no gasta otra semilla y conserva abono; el nuevo ciclo necesita riego',()=>{const m=game(),p=plot(m,'fresa',2);grow(m,p);const seed=m.estado.inventario.semilla_fresa;act(m,{tipo:'cosechar',x:p.x,z:p.z});assert.equal(p.cultivo,'fresa');assert.equal(p.campo.fertilizante,2);assert.equal(p.campo.cosechas,1);assert.equal(p.campo.ciclo,'rebrote');assert.equal(p.cuidado.growthMs,duracionCampo(CULTIVOS.find(d=>d.id==='fresa'),p.campo));assert.equal(p.cuidado.lastWateredAt,null);now+=H;m.actualizar();assert.equal(p.cuidado.grownMs,0);grow(m,p);act(m,{tipo:'cosechar',x:p.x,z:p.z});assert.equal(m.estado.inventario.semilla_fresa,seed);assert.equal(p.campo.cosechas,2);});

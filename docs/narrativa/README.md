@@ -28,3 +28,7 @@ Hay tres escalas de profundidad: la campaña y sus figuras sostienen el conflict
 La historia de la pareja conserva el Lazo Primordial. Una futura adaptación para amigos necesita el guion neutro y otra condición de protección; estos archivos no deben copiarse enteros al build de amigos. Los juegos casuales no se convierten en puertas obligatorias de la campaña.
 
 La campaña ampliada conserva P01–P24 y añade F01–F12: 36 misiones principales. Los 142 arcos personales, doce secretos originales, 19 encuentros y ocho arcos elementales suman 217 misiones. Hay 284 conversaciones personales repetibles y 14 escenas cinematográficas. Consultar los catálogos para no confundir escenas, actos y misiones.
+
+## Base de producción integrada
+
+[Entrega a Claude y pendientes del motor](../../juego/web/src/granja-v3/ASTRA-INTEGRACION.md): 28 lugares, 142 identidades presentes, recursos y jugador de escenas integrados. Los 36 expedientes son adaptaciones de investigación; la campaña definitiva, los secundarios y sus premios no están completos.

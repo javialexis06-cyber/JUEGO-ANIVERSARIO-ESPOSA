@@ -1,5 +1,18 @@
 # Plan del motor completo: capacidades, variedad y aceptación
 
+## Base de Astra para producción · 11 de octubre de 2026
+
+Se integraron 28 lugares, 27 rutas físicas, 142 identidades y 76 domicilios; 118 residentes y
+59 interiores son nuevos. Hay 24 bancos regionales, 24 cultivos adicionales, 72 recetas regionales,
+mantenimiento local de ocho estancias, cuatro arenas elementales y lectura de hitos de Sangre y Ceniza.
+Los 36 expedientes adaptan la campaña a investigación y escenas: **no certifican las 36 misiones finales**.
+Las 181 historias adicionales y los efectos de 217 premios siguen pendientes.
+
+[ASTRA-INTEGRACION.md](ASTRA-INTEGRACION.md) reúne lo que puede producir el frente visual, el manifiesto
+de modelos/voz/música, las reglas de guardado y la lista actual de pendientes. El jugador de escenas
+tiene subtítulos y claves para 284 guiones de recuerdos y 14 cinematográficas. Se reproducen los 142 recuerdos iniciales; los 142 posteriores esperan sus misiones personales. El audio nuevo no se ha generado.
+El cuidado, el crecimiento al dormir y las economías anteriores se conservan.
+
 ## Libros y pistas útiles integrados
 
 Actualización del 11 de octubre de 2026: tres cuadernos técnicos se recuperan junto a campamentos existentes
@@ -390,7 +403,7 @@ Referencias: [Socializar](https://es.stardewvalleywiki.com/Amistades), [Expanded
 
 | ID | Capacidad | Estado base | Criterio propio para cerrar |
 |---|---|---|---|
-| H01 | NPC independientes | Parcial · 24 habitantes con apariencia, rutina y relación; alojamiento compartido provisional | Identidad, apariencia, hogar, oficio y estado propio; hablar con una persona abre diálogo, no siempre la tienda. |
+| H01 | NPC independientes | Parcial · 142 identidades presentes, 76 domicilios y recuerdos; regalos/comercios completos solo en el primer pueblo | Identidad, apariencia, hogar, oficio y estado propio; hablar con una persona abre diálogo, no siempre la tienda. |
 | H02 | Horario y navegación | Parcial · rutas por hora, día y lluvia; pendientes estaciones/eventos y viajes entre regiones | Agenda por día, hora, estación, clima y evento; caminar entre nodos, entrar/salir, atender/descansar; sin teletransporte visible injustificado. |
 | H03 | Horarios comerciales | Parcial · apertura, cierre y días libres integrados; pendientes cierres especiales y alternativas de entrega | Edificio y mostrador pueden tener disponibilidad distinta; cartel/UI anticipan cierres; no bloquear una entrega sin alternativa razonable. |
 | H04 | Diálogo contextual | Parcial · diálogos propios por día/amistad y lluvia; pendientes misión, elecciones y escenas | Estado de misión, relación, lugar, evento y conversación previa eligen texto coherente; alternativas y condiciones persistidas. |
@@ -461,11 +474,11 @@ Referencias: red de regiones de [Expanded](https://stardew-valley-expanded.fando
 | L01 | Red de mapas | Parcial | Exteriores, interiores y transiciones definidos con acceso, salida, colisiones, recursos, NPC y estado persistente; mostrar mapa con rutas y restricciones. |
 | L02 | Diversidad regional | Parcial | Costa, río, montaña, bosque, subsuelo, ruinas y regiones avanzadas difieren en silueta, recorrido, encuentro, recurso y actividad. |
 | L03 | Desbloquear rutas | Parcial | Obra, equipo, misión, relación o colección abre acceso verificable; la barrera explica falta y no puede saltarse con UI de viaje. |
-| L04 | Portales | Pendiente | Descubrir, activar, seleccionar destino y cruzar un portal físico; validar requisitos/coste; regreso seguro incluso con inventario lleno o derrota. |
-| L05 | Verdia | Pendiente | Región propia con mapa recorrible, recursos/plantas, NPC o encuentro, cadena de actividad y recompensa que se use fuera de ella; contenido narrativo provisional. |
-| L06 | Senda | Pendiente | Región distinta de Verdia por actividad, distribución y materiales; entrada/salida y desbloqueo funcionan; no es recolor del mismo plano. |
-| L07 | Nox | Pendiente | Identidad mecánica, recursos, peligros/equipo apropiado, hallazgo y vuelta segura; no asignar doctrina o historia definitiva sin fuente del usuario. |
-| L08 | Espacio | Pendiente | Acceso avanzado, mapa navegable, actividad propia, recursos usados en fabricación y pedidos, gestión de peligros y retorno; fondo estrellado no cuenta como sistema. |
+| L04 | Portales | Parcial · accesos físicos, habitantes y recursos presentes; ver ASTRA-INTEGRACION.md para límites | Descubrir, activar, seleccionar destino y cruzar un portal físico; validar requisitos/coste; regreso seguro incluso con inventario lleno o derrota. |
+| L05 | Verdia | Parcial · accesos físicos, habitantes y recursos presentes; ver ASTRA-INTEGRACION.md para límites | Región propia con mapa recorrible, recursos/plantas, NPC o encuentro, cadena de actividad y recompensa que se use fuera de ella; contenido narrativo provisional. |
+| L06 | Senda | Parcial · accesos físicos, habitantes y recursos presentes; ver ASTRA-INTEGRACION.md para límites | Región distinta de Verdia por actividad, distribución y materiales; entrada/salida y desbloqueo funcionan; no es recolor del mismo plano. |
+| L07 | Nox | Parcial · accesos físicos, habitantes y recursos presentes; ver ASTRA-INTEGRACION.md para límites | Identidad mecánica, recursos, peligros/equipo apropiado, hallazgo y vuelta segura; no asignar doctrina o historia definitiva sin fuente del usuario. |
+| L08 | Espacio | Parcial · accesos físicos, habitantes y recursos presentes; ver ASTRA-INTEGRACION.md para límites | Acceso avanzado, mapa navegable, actividad propia, recursos usados en fabricación y pedidos, gestión de peligros y retorno; fondo estrellado no cuenta como sistema. |
 | L09 | Mundo que recuerda | Parcial | Cofres, nodos, encuentros, obras, NPC y pedidos conservan estado por zona; entrar/salir no reinicia recompensas ni desbloquea rutas ajenas. |
 | L10 | Casa y juegos existentes | Implementado | Viajar a casa y volver mantiene personaje, posición segura, inventario y sesión; nuevos sistemas no sustituyen ni rompen minijuegos existentes. |
 

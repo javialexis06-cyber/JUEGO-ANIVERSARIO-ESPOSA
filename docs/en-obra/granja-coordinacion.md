@@ -1,5 +1,23 @@
 # Coordinación de la granja con el proyecto principal
 
+## Entrega vigente para integrar arte y audio · 11 de octubre de 2026
+
+Leer [ASTRA-INTEGRACION.md](../../juego/web/src/granja-v3/ASTRA-INTEGRACION.md). Se conectaron 28 lugares,
+27 accesos físicos, 142 identidades y 76 domicilios, conservando el primer pueblo. Las 24 regiones
+de recursos tienen cupos, semillas cultivables, recetas y mantenimiento local; Confluencia tiene cuatro
+arenas de práctica. Los escenarios nuevos reutilizan kits existentes, sin producción de arte nuevo.
+
+La pestaña Astra se encuentra abriendo el menú del HUD y seleccionando **Astra**. Las conversaciones,
+lecturas, mundo, interior y expedientes se guardan en un bloque aditivo de V5. El contrato de producción
+está en `public/granja/astra/produccion.json`; Claude asocia sus archivos reales en `medios.json`.
+Hay IDs de actor/línea, huellas de texto, 14 escenas, 284 recuerdos y 23 claves musicales. El
+generador conserva el manifiesto de medios. No se han generado voces ni música de pago.
+
+**Alcance pendiente:** los 36 expedientes no sustituyen los retos de las 36 misiones finales. Faltan
+181 historias adicionales ejecutables, efectos especializados de premios, jefes finales y variedad
+mecánica regional. No presentar la campaña ni el motor completo como terminados. Los apartados
+anteriores de planificación quedan como antecedentes; esta entrega actualiza el estado de los accesos y el reparto.
+
 ## Mensaje para Claude · 10 de octubre de 2026
 
 Javier pidió integrar en este repositorio todo el trabajo de la granja y subir cada avance comprobado. Estamos desarrollando su motor y jugabilidad sobre el mismo juego de Three.js, con sistemas de agricultura, ganadería, genética, fabricación, automatización, pueblos y aventura inspirados en la amplitud de Stardew Valley, Expanded y Automate, más la mitología de Astra. El motor completo todavía está en desarrollo.
@@ -24,6 +42,14 @@ Conservar IDs de objetos, cultivos, animales, NPC, edificios, regiones y animaci
 `vista.ts`, `avatar.ts`, `*-render.ts`, `suelo.ts`, `clima-render.ts` y `estilo.css` son zonas de encuentro entre ambos frentes. Los recursos de granja utilizan `manifest.json`, modelos ligeros y detallados, clips y pivotes. Para cambiar ese formato, acordar el contrato primero y conservar un modo de sustitución compatible. Personajes `src/personaje.ts` y el loader `src/recursos.ts` pertenecen al proyecto compartido: esta integración usa sus versiones actuales.
 
 Destinos: S21 FE y S24 Ultra. La granja puede probarse con teclado y mouse y controles móviles. La app principal mantiene su orientación horizontal. Los ensayos de viewport no certifican rendimiento físico; faltan medidas en ambos dispositivos. Mantener reuso de geometría/materiales, carga por zona y límites de partículas, luces y draw calls.
+
+## Verificación de la base de Astra · 11 de octubre de 2026
+
+34 suites del motor sin fallos, con 20 comprobaciones de Astra; ambas compilaciones correctas.
+El recorrido general conserva el dibujo real y pasó seis casos; Astra pasó once casos de controles,
+guardado y grafos con el dibujo pausado en Chromium por software. No certifica los mapas dibujados ni
+rendimiento en teléfonos. `ASTRA-VERIFICACION.json` conserva las pruebas y límites; el contrato explica
+cómo repetir con `ASTRA_RENDER_REAL=1` al incorporar arte en una máquina con GPU.
 
 ## Estado real e historia
 

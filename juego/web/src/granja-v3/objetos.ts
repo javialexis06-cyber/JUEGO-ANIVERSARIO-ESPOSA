@@ -1,3 +1,4 @@
+import { DATOS as RECURSOS_ASTRA } from './astra-recursos-datos';
 import { leerHuevo } from './ganaderia';
 import { FRUTALES } from './frutales-datos';
 import { ARTICULOS, CULTIVOS, ESPECIES, PECES, PRECIOS_VENTA } from './catalogo';
@@ -248,5 +249,13 @@ receta('mayonesa_avestruz','prensa',{huevo_avestruz:1,aceite:2},60,0,3);
 receta('mayonesa_antigua','prensa',{huevo_dinosaurio:1,aceite:2},80);
 RECETAS.push(...RECETAS_CORRESPONDENCIA);
 RECETAS.push(...RECETAS_LIBROS);
+for(const r of RECURSOS_ASTRA){
+ objeto('kit_'+r.id,'Mantenimiento · '+r.nombre,'insumo',0,{precioCompra:0,descripcion:'Reduce en uno la energía de recolección solo en su región durante ocho estancias. Un único kit activo, sin aumentar cupos ni combate.'});
+ receta('kit_'+r.id,'banco_trabajo',{[r.id+'_mineral']:2,[r.id+'_madera']:2,[r.id+'_cosecha']:1},45);
+ for(const d of r.recursos)if(['mineral','madera'].includes(d.clase))objeto(d.id,d.nombre,d.clase==='mineral'?'mineral':'recurso',0,{precioCompra:0,descripcion:d.usos.join(' ')});
+ RECETAS.push({id:'flechas_'+r.id,nombre:'Munición · '+r.nombre,estacion:'banco_trabajo',ingredientes:{[r.id+'_mineral']:1,[r.id+'_madera']:2},salida:{articulo:'flecha_ribera',cantidad:4},duracionMs:12000,nivel:0});
+ RECETAS.push({id:'racion_'+r.id,nombre:'Ración · '+r.nombre,estacion:'cocina',ingredientes:{[r.id+'_cosecha']:1,sal:1},salida:{articulo:'pan',cantidad:1},duracionMs:30000,nivel:0});
+ for(const d of r.recursos)if(d.clase==='semilla'&&OBJETOS[d.id]){OBJETOS[d.id].precioCompra=0;OBJETOS[d.id].precioVenta=0;}
+}
 const INDICE_RECETAS=new Map(RECETAS.map(r=>[r.id,r]));
 export function obtenerReceta(id:string):RecetaProduccion|undefined{return INDICE_RECETAS.get(id);}

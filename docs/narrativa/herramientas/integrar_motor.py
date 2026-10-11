@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+"""Compila la autoría de Astra a contratos de juego y producción; no genera audio."""
+import json, re, hashlib, subprocess
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[3]
+N=ROOT/'docs/narrativa'
+W=ROOT/'juego/web/src/granja-v3'
+def load(f): return json.loads((N/f).read_text())
+def ts(name,value): (W/name).write_text('// Generado por docs/narrativa/herramientas/integrar_motor.py.\nexport const DATOS = '+json.dumps(value,ensure_ascii=False,separators=(',',':'))+';\n')
+roster=load('datos/reparto.json'); regiones=load('datos/regiones-recursos.json')['regiones']
+original=json.loads((W/'REPARTO-MUNDOS.json').read_text())
+# El primer pueblo conserva exactamente sus huellas y sus horarios existentes.
+legacy_code="import {compilarModulo} from './scripts/granja-v3/modulos-prueba.mjs';const D=await import(await compilarModulo(new URL('./src/granja-v3/pueblo-datos.ts',import.meta.url)));const A=await import(await compilarModulo(new URL('./src/granja-v3/aldeanos.ts',import.meta.url)));process.stdout.write(JSON.stringify({viviendas:D.VIVIENDAS_PUEBLO,npc:D.NPCS_PUEBLO,vida:A.VIDA_PUEBLO}));"
+legacy=json.loads(subprocess.check_output(['node','--input-type=module','-e',legacy_code],cwd=ROOT/'juego/web',text=True))
+worlds=[]
+colors={'celia':'#88aa78','frontera':'#a78b7d','verdia':'#a8cda0','senda':'#b8a5cc','nox':'#7d82a7','astra':'#8db9ca','confluencia':'#d0bc9c'}
+for s in original['asentamientos']:
+ homes=[h for h in original['viviendas'] if h['asentamientoId']==s['id']]
+ for i,h in enumerate(homes):
+  h=dict(h);h.update(estado='presente_en_motor_provisional',x=-17+(i%3)*12,z=-17+(i//3)*12,ancho=8,fondo=6,entrada={'x':-13+(i%3)*12,'z':-10+(i//3)*12})
+  if s['id']=='pueblo_sol': h.update(next(v for v in legacy['viviendas'] if v['id']==h['id']))
+  homes[i]=h
+ worlds.append({'id':s['id'],'nombre':s['nombre'],'mundo':s['mundoId'],'color':colors[s['mundoId']],'musica':{'pueblo_sol':'M02','puerto_lirios':'M03','brumaverde':'M04','piedralumbre':'M05','brasaviva':'M06','nieveclara':'M07','vigilia':'M08','rosal_eterno':'M12','jardines_eco':'M12','travesia':'M13','refugio_hilos':'M14','bastion_velo':'M15','ambarina':'M17','iridalia':'M18'}.get(s['id'],'M16'),'viviendas':homes,'npc':[n['id'] for n in roster if n['asentamiento']==s['id']],'permiso':None,'combate':None})
+for ident,nombre,mundo in [('cruce_valle','Cruce del Valle','celia'),('fragmentos_cobre','Asteroide Cobrizo','astra'),('fragmentos_cristal','Asteroide Prisma','astra'),('confluencia','Refugio de Confluencia','confluencia'),('confluencia_fuego','Caldera del Rescoldo','confluencia'),('confluencia_agua','Mar de los Retornos','confluencia'),('confluencia_tierra','Terraza de las Raíces','confluencia'),('confluencia_aire','Altura de las Corrientes','confluencia'),('borde_astra','Borde de Astra','astra')]:
+ worlds.append({'id':ident,'nombre':nombre,'mundo':mundo,'color':colors[mundo],'musica':'M19' if ident=='borde_astra' else 'M23' if mundo=='confluencia' else 'M16' if mundo=='astra' else 'M02','viviendas':[],'npc':[],'permiso':None,'combate':None})
+by={r['id']:r for r in worlds}
+for r in worlds:
+ r['permiso']={'rosal_eterno':'F04','jardines_eco':'F04','travesia':'P13','refugio_hilos':'P14','bastion_velo':'P15','estacion_celia':'P16','huerto_aurelia':'P17','vigia_nocturna':'P17','cantera_esmeralda':'P17','campamento_fragmentos':'P17','fragmentos_cobre':'P17','fragmentos_cristal':'P17','ambarina':'P18','iridalia':'P19','confluencia':'F06','borde_astra':'P22'}.get(r['id'],'F06' if r['mundo']=='confluencia' else None)
+ r['combate']={'brumaverde':'ruinas_celia','rosal_eterno':'reino_verdia','travesia':'reino_senda','bastion_velo':'reino_nox','fragmentos_cobre':'asteroide_cobre','fragmentos_cristal':'asteroide_cristal','ambarina':'planeta_ambar','iridalia':'planeta_iris'}.get(r['id'],r['id'] if r['id'].startswith('confluencia_') else None)
+routes=[]
+def connect(a,b,tipo='camino',construccion=None):
+ routes.append({'id':a+'__'+b,'desde':a,'hacia':b,'tipo':tipo,'construccion':construccion})
+connect('pueblo_sol','cruce_valle')
+for rid in ['puerto_lirios','brumaverde','piedralumbre']:connect('cruce_valle',rid)
+connect('piedralumbre','brasaviva');connect('brumaverde','nieveclara');connect('nieveclara','vigilia')
+for rid,obj in [('rosal_eterno','portal_verdia'),('travesia','portal_senda'),('bastion_velo','portal_nox'),('estacion_celia','nave_exploradora')]:connect('granja',rid,'nave' if rid=='estacion_celia' else 'portal',obj)
+connect('rosal_eterno','jardines_eco');connect('travesia','refugio_hilos')
+for rid in ['huerto_aurelia','vigia_nocturna','cantera_esmeralda','campamento_fragmentos','ambarina','iridalia']:connect('estacion_celia',rid,'nave')
+connect('campamento_fragmentos','fragmentos_cobre','nave');connect('campamento_fragmentos','fragmentos_cristal','nave')
+connect('estacion_celia','confluencia','umbral')
+for elemento in ['fuego','agua','tierra','aire']:connect('confluencia','confluencia_'+elemento,'umbral')
+connect('estacion_celia','borde_astra','nave')
+# Cada extremo reserva una puerta física y una llegada libre; regreso siempre accesible.
+for r in routes:
+ for endpoint in ['desde','hacia']:
+  here=r[endpoint]; i=sum(1 for previous in routes[:routes.index(r)] if here in [previous['desde'],previous['hacia']])
+  r[endpoint+'_punto']={'x':108,'z':29} if here=='pueblo_sol' else {'x':-22 if i%2==0 else 22,'z':-4+(i//2)*5}
+np=[]
+for n in roster:
+ k=by[n['asentamiento']]['npc'].index(n['id'])
+ np.append({'id':n['id'],'nombre':n['nombre'],'region':n['asentamiento'],'hogar':n['hogar_planeado'],'voz':n['id'],'mision':n['mision']['id'],'funcion':n['funcion'],'plaza':{'x':-8+(k%4)*5,'z':10+(k//4)*4},'oficio':{'x':-8+(k%4)*5,'z':3+(k//4)*3},'horario':{'oficio':[480,1020],'plaza':[1020,1260],'hogar':[1260,480]},'naturaleza':n['naturaleza']})
+for n in np:
+ if n['region']=='pueblo_sol':
+  old=next(v for v in legacy['npc'] if v['id']==n['id']);vida=legacy['vida'][n['id']]
+  n['oficio']={'x':old['x'],'z':old['z']};n['plaza']=vida['plaza'];n['horario_fuente']='aldeanos.ts: VIDA_PUEBLO y ubicacionAldeano, incluida lluvia y festivales'
+ts('astra-mundo-datos.ts',{'regiones':worlds,'rutas':routes,'npc':np})
+for r in regiones:
+ for i,d in enumerate(r['recursos']):d['punto']={'x':[68,72,80,84][i],'z':26} if r['id']=='pueblo_sol' else {'x':-15+i*10,'z':18}
+ts('astra-recursos-datos.ts',regiones)
+seeds=[]
+for r in regiones:
+ seed=next(x for x in r['recursos'] if x['clase']=='semilla')
+ seeds.append({'id':r['id']+'_cultivo','nombre':seed['nombre'].removeprefix('Semilla de ').capitalize(),'modelo':'zanahoria','semilla':seed['id'],'producto':r['id']+'_cosecha','horas':24*r['renovacion']['dias_dormidos'],'dias':r['renovacion']['dias_dormidos'],'estaciones':['primavera','verano','otono','invierno'],'climas':['templado'],'precio':0,'valor':0,'cantidad':1,'region':r['id'],'presurizado':r['mundo'] in ['Astra','Confluencia']})
+ts('astra-cultivos-datos.ts',seeds)
+# Guiones y memorias grandes quedan fuera del núcleo: solo la interfaz los carga bajo demanda.
+ts('astra-lore-datos.ts',{'npc':roster,'figuras':load('datos/figuras.json'),'lineas':load('audio/lineas.json')})
+qs=load('datos/campana.json')+load('datos/secretos.json')+load('datos/encuentros.json')+load('datos/elementales.json')
+qs += [dict(n['mision'],clase='personal',zona=n['asentamiento'],reparto=[n['id']]) for n in roster]
+rewards={r['mision']:r for r in load('datos/recompensas.json')}
+compiled=[]
+for q in qs:
+ labels=q.get('actos',q.get('acciones',[]))
+ if isinstance(labels,str):labels=[s.strip() for s in labels.split(';') if s.strip()]
+ if not labels:labels=[q['titulo']]
+ region=q.get('zona') or next((n['asentamiento'] for n in roster if n['id'] in q.get('reparto',[])),'pueblo_sol')
+ region={'celia':'pueblo_sol','lunas':'estacion_celia','sangre/afueras':'vigilia','sangre/subsuelo':'piedralumbre','sangre/santuario':'vigilia','sangre/corte':'vigilia'}.get(region,region)
+ stages=[{'id':q['id']+'.testimonios','tipo':'testimonios','texto':'Consultar a quienes participan, con copias públicas para testimonios de otros lugares.','npc':[i for i in q.get('reparto',[]) if not i.startswith('figura_')][:3]}]
+ stages.extend({'id':q['id']+'.archivo.'+str(i+1),'tipo':'archivo','texto':'Consultar el registro público: '+label,'accion_original':label,'punto':{'x':-4+i*4,'z':22},'lectura':True} for i,label in enumerate(labels[:4]))
+ compiled.append({'id':q['id'],'titulo':q['titulo'],'region':region,'requiere':q.get('requiere',[]),'reparto':q.get('reparto',[]),'clase':q.get('clase','principal' if q['id'][0] in 'PF' else 'secreta' if q['id'].startswith('S') else 'encuentro'),'pasos':stages,'decision':q.get('decision',q.get('eleccion','')),'premio':rewards[q['id']],'alcance':'adaptacion_archivistica; acciones economicas y retos específicos se añaden en contratos explícitos'})
+# Recibos reales de campaña; no se acreditan por leer su guion.
+steps={
+ 'P01':[{'tipo':'estadistica','clave':'cosechar','cantidad':1,'texto':'Sembrar, regar y cosechar un cultivo ordinario después de aceptar.'}],
+ 'P02':[{'tipo':'jornadas','cantidad':1,'texto':'Dormir una jornada para recibir la carta.'}],
+ 'P03':[{'tipo':'entrega','materiales':{'pan':1,'madera':2},'texto':'Preparar y reservar una ración y el ancla de práctica.'}],
+ 'P04':[{'tipo':'sangre','sector':'afueras','texto':'Terminar la puerta de Afueras en Sangre y Ceniza y rescatar a una persona.'}],
+ 'P06':[{'tipo':'sangre','sector':'subsuelo','texto':'Completar la puerta del Subsuelo en Sangre y Ceniza.'}],
+ 'P07':[{'tipo':'estadistica','clave':'alimentar','cantidad':1,'texto':'Cuidar un animal ordinario después de aceptar para recibir copias autorizadas.'}],
+ 'P08':[{'tipo':'sangre','sector':'santuario','texto':'Completar la puerta del Santuario en Sangre y Ceniza.'}],
+ 'P09':[{'tipo':'sangre','sector':'corte','texto':'Completar Corte en Sangre y Ceniza.'}],
+ 'P10':[{'tipo':'entrega','materiales':{'pan':2},'texto':'Entregar provisiones reales al refugio.'}],
+ 'P11':[{'tipo':'jornadas','cantidad':3,'texto':'Registrar tres jornadas dormidas para las lecturas.'}],
+ 'P17':[{'tipo':'entrega','materiales':{'combustible_estelar':1,'bateria':1},'texto':'Reservar combustible y batería; fabricar y colocar nave aparte.'}],
+ 'P18':[{'tipo':'visitas','regiones':['huerto_aurelia','vigia_nocturna','cantera_esmeralda'],'texto':'Visitar los tres puestos lunares en cualquier orden.'}],
+ 'P19':[{'tipo':'visitas','regiones':['ambarina'],'texto':'Visitar la terraza de Ambarina.'}],
+ 'P20':[{'tipo':'visitas','regiones':['iridalia'],'texto':'Visitar la asamblea de Iridalia.'}],
+ 'P24':[{'tipo':'estadistica','clave':'plantar','cantidad':1,'texto':'Plantar una semilla ordinaria para la parcela de mañana.'}],
+}
+for i,el in enumerate(['fuego','agua','tierra','aire'],7):steps['F'+str(i).zfill(2)]=[{'tipo':'visitas','regiones':['confluencia_'+el],'texto':'Visitar y registrar el territorio elemental.'},{'tipo':'prueba_elemental','elemento':el,'texto':'Confirmar el balance con mineral y madera autorizados; la arena permite practicar combate aparte.'}]
+steps['F11']=[{'tipo':'visitas','regiones':['confluencia_fuego','confluencia_agua','confluencia_tierra','confluencia_aire'],'texto':'Contrastar los cuatro balances en el refugio.'}]
+for q in compiled:
+ for i,st in enumerate(steps.get(q['id'],[])):q['pasos'].append(dict(st,id=q['id']+'.real.'+str(i+1)))
+ if q['id'].startswith('S') or q['id']=='T08':q['pasos'].insert(0,{'id':q['id']+'.pista','tipo':'archivo','texto':'Reconocer una pista pública antes de descubrir esta misión.','punto':{'x':8,'z':22},'lectura':True})
+ts('astra-misiones-datos.ts',compiled)
+lines=load('audio/lineas.json')
+counts={scene:sum(l['escena']==scene for l in lines) for scene in set(l['escena'] for l in lines)}
+for q in compiled:
+ if q['id'][0] in 'PF':
+  for parte in ['inicio','giro','cierre','rama1','rama2']:
+   cantidad=sum(l['id'].startswith(q['id']+'.'+parte+'.') for l in lines)
+   if cantidad:counts[q['id']+'#'+parte]=cantidad
+ts('astra-campana-datos.ts',{'misiones':[q for q in compiled if q['id'][0] in 'PF'],'escenas':counts})
+# Contrato de producción: ningún archivo se da por producido y no hay rutas inventadas para reproducirlo.
+lines=load('audio/lineas.json')
+manifest={'version':1,'estado':'contrato_sin_medios_producidos','npc':np,'regiones':worlds,'rutas':routes,'voces':load('audio/reparto-voces.json'),'biografias':roster,'figuras':load('datos/figuras.json'),'misiones':compiled,'recursos':regiones,'lineas':lines,'escenas':sorted(set(l['escena'] for l in lines)),'musica':[{'id':m.group(1),'uso':m.group(2),'direccion':m.group(3)} for m in re.finditer(r'^\| (M\d+) \| ([^|]+) \| ([^|]+) \|', (N/'06-produccion.md').read_text(),re.M)]+[{'id':'M23','uso':'Confluencia','direccion':'Cuatro variaciones elementales y refugio; motivos separados, sin letra.'}],'medios':{'voces':{},'musica':{},'modelos':{}},'guardado':5,'nota':'Las misiones catalogadas incluyen adaptación de investigación; consultar los recibos reales adicionales y los efectos aún pendientes de cada premio.'}
+p=ROOT/'juego/web/public/granja/astra';p.mkdir(parents=True,exist_ok=True)
+(p/'produccion.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+if not (p/'medios.json').exists(): (p/'medios.json').write_text(json.dumps({'version':1,'voces':{},'musica':{},'modelos':{}},indent=2)+'\n')
+print(json.dumps({'regiones':len(worlds),'npc':len(np),'viviendas':sum(len(r['viviendas']) for r in worlds),'misiones':len(compiled),'lineas':len(lines),'rutas':len(routes)},ensure_ascii=False))

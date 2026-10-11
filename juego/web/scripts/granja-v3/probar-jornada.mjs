@@ -1,5 +1,6 @@
+import { compilarModulo } from './modulos-prueba.mjs';
 import assert from 'node:assert/strict';import {transform} from 'esbuild';import {readFile} from 'node:fs/promises';
-const modules=new Map();async function compile(url){if(modules.has(url.href))return modules.get(url.href);let {code}=await transform(await readFile(url,'utf8'),{loader:'ts',format:'esm',target:'es2022'});for(const m of [...code.matchAll(/from (["'])([^"']+)\1/g)]){const dep=m[2].startsWith('./')?await compile(new URL(m[2]+'.ts',url)):import.meta.resolve(m[2]);code=code.replace(m[0],'from '+JSON.stringify(dep));}const result='data:text/javascript;base64,'+Buffer.from(code).toString('base64');modules.set(url.href,result);return result;}
+const modules=new Map();async function compile(url){return compilarModulo(url);}
 const load=f=>compile(new URL('../../src/granja-v3/'+f+'.ts',import.meta.url)).then(s=>import(s));
 const {MotorGranja,validarEstado,migrarEstado}=await load('motor'),{crearJornada,fechaValle,INICIO_DIA,FIN_DIA,CRECIMIENTO_NOCHE_MS}=await load('jornada'),{crearCultivo}=await load('cuidados'),{crearCampo,duracionCampo}=await load('agricultura'),{CULTIVOS}=await load('catalogo'),{guardarPartida,CLAVE_PARTIDA,CLAVE_ULTIMA_NOCHE}=await load('guardado');
 let now=1_800_000_000_000,checks=0,failures=0;const game=()=>new MotorGranja({ahora:()=>now});
