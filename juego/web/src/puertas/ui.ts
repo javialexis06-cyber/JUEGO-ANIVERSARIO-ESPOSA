@@ -36,6 +36,8 @@ export class Globo {
     alLinea?: (i: number) => void,
   ) {
     this.capa.hidden = false;
+    // Mientras habla, lo de arriba (el letrero de la puerta, el tutorial) se esconde para que el globo no se monte
+    document.body.classList.add('con-dialogo');
     for (const [n, l] of lineas.entries()) {
       alLinea?.(n);
       const linea = typeof l === 'string' ? l : l.texto;
@@ -46,17 +48,27 @@ export class Globo {
       this.yo.hidden = !deJugador;
       if (deJugador) this.yoNombre.textContent = l.jugador;
       this.hablando = true;
-      seguir.hidden = true;
+      // «toca para seguir» guarda su lugar desde el comienzo (si no, el globo crece al final y pega un brinco)
+      seguir.hidden = false;
+      seguir.style.visibility = 'hidden';
       let saltar = false;
       const toque = () => (saltar = true);
       this.capa.addEventListener('pointerdown', toque);
-      texto.textContent = '';
+      // La frase completa ocupa su sitio desde la primera letra (lo que falta, invisible): el globo sale de una vez con
+      // su tamaño y no va creciendo ni saltando mientras se escribe
+      const vista = document.createElement('span');
+      const resto = document.createElement('span');
+      resto.className = 'globo-resto';
+      resto.textContent = linea;
+      texto.replaceChildren(vista, resto);
       for (let i = 1; i <= linea.length; i++) {
         if (saltar) {
-          texto.textContent = linea;
+          vista.textContent = linea;
+          resto.textContent = '';
           break;
         }
-        texto.textContent = linea.slice(0, i);
+        vista.textContent = linea.slice(0, i);
+        resto.textContent = linea.slice(i);
         alLetra?.(i % 3 !== 0, deJugador);
         if (i % 4 === 0) sonido.nota((deJugador ? 440 : 520) + (i % 5) * 40, 0.03, 0, 'sine', 0.018);
         await pausa(/[.,!?…]/.test(linea[i - 1]) ? 110 : 26);
@@ -64,7 +76,7 @@ export class Globo {
       this.capa.removeEventListener('pointerdown', toque);
       alLetra?.(false, deJugador);
       this.hablando = false;
-      seguir.hidden = false;
+      seguir.style.visibility = '';
       await new Promise<void>((listo) => {
         const fn = () => {
           this.capa.removeEventListener('pointerdown', fn);
@@ -78,6 +90,7 @@ export class Globo {
     this.el.hidden = true;
     this.yo.hidden = true;
     this.capa.hidden = true;
+    document.body.classList.remove('con-dialogo');
   }
 
   /** Globito que se va solo (ánimo en medio del acertijo, sin tapar el juego). */
@@ -99,11 +112,27 @@ export class Globo {
   /** Rectángulo de la puerta en la pantalla (px): el globo nunca la tapa. */
   evitar: { x0: number; y0: number; x1: number; y1: number } | null = null;
 
+  /** Lo que el globo no puede tapar: el letrero de la puerta, la ficha de la pareja, los botones de arriba y la
+   *  tarjeta del tutorial (si están a la vista). */
+  private estorbos(): DOMRect[] {
+    const out: DOMRect[] = [];
+    // (mientras habla, el letrero y el tutorial se están yendo: solo cuentan los botones)
+    const sel = document.body.classList.contains('con-dialogo') ? '.hud-botones' : '.hud-chip, #pareja-chip, .hud-botones, .tp-globo';
+    for (const e of document.querySelectorAll<HTMLElement>(sel)) {
+      if (!e.offsetParent || e.hidden) continue;
+      const r = e.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0 && Number(getComputedStyle(e).opacity) > 0.1) out.push(r);
+    }
+    return out;
+  }
+
   /** Sigue la cabeza del narrador en la pantalla. */
   ubicar(x: number, y: number) {
     this.ancla = { x, y };
     const w = window.innerWidth;
+    const h = window.innerHeight;
     const e = this.evitar;
+    let estorbos: DOMRect[] | null = null;
     for (const el of [this.el, this.chico]) {
       if (el.hidden) continue;
       // Si el narrador está a un lado de la puerta, el globo cabe entre el borde y la puerta
@@ -111,9 +140,29 @@ export class Globo {
       const tope = lado > 150 ? `${Math.round(lado)}px` : '';
       if (el.style.maxWidth !== tope) el.style.maxWidth = tope;
       const ancho = el.offsetWidth || 260;
-      const izq = lado > 150 ? Math.min(Math.max(12, x - ancho * 0.35), e!.x0 - 10 - ancho) : Math.min(Math.max(12, x + 18), w - ancho - 12);
-      el.style.left = `${izq}px`;
-      el.style.top = `${Math.max(12, y - el.offsetHeight - 8)}px`;
+      const alto = el.offsetHeight || 60;
+      const derecha = lado > 150 ? e!.x0 - 10 : w - 12;
+      let izq = lado > 150 ? Math.min(Math.max(12, x - ancho * 0.35), derecha - ancho) : Math.min(Math.max(12, x + 18), derecha - ancho);
+      let arriba = Math.max(12, y - alto - 8);
+      // Si se monta sobre algo de la interfaz, se corre a un lado o se baja lo justo (lo que menos lo aleje)
+      estorbos ??= this.estorbos();
+      for (let vuelta = 0; vuelta < 3; vuelta++) {
+        const r = estorbos.find((o) => izq < o.right + 6 && izq + ancho > o.left - 6 && arriba < o.bottom + 6 && arriba + alto > o.top - 6);
+        if (!r) break;
+        const opciones = [
+          { izq: r.right + 8, arriba }, // a la derecha
+          { izq: r.left - 8 - ancho, arriba }, // a la izquierda
+          { izq, arriba: r.bottom + 8 }, // debajo
+        ].filter((o) => o.izq >= 8 && o.izq + ancho <= Math.max(derecha, w - 8) && o.arriba + alto <= h - 8);
+        const mejor = opciones.sort((a, b) => Math.hypot(a.izq - izq, a.arriba - arriba) - Math.hypot(b.izq - izq, b.arriba - arriba))[0];
+        if (!mejor) break;
+        izq = mejor.izq;
+        arriba = mejor.arriba;
+      }
+      el.style.left = `${Math.round(izq)}px`;
+      el.style.top = `${Math.round(arriba)}px`;
+      // La colita apunta a la cabeza; si el globo quedó debajo de ella, la colita se esconde
+      el.classList.toggle('sin-cola', arriba + alto > y + 4);
       el.style.setProperty('--cola', `${Math.max(16, Math.min(ancho - 24, x - izq))}px`);
     }
   }
