@@ -28,9 +28,13 @@ export function paisajeGranja(p:PaisajeGranja):THREE.Group{
   for(let i=0;i<12;i++){const a=i*Math.PI/6,x=e.x+Math.cos(a)*(e.radioX+.12),z=e.z+Math.sin(a)*(e.radioZ+.10);if(i%3===0)esfera(g,[.22,.16,.18],[x,.11,z],'#a9ada0');else{const tallo=caja(g,[.025,.35,.025],[x,.17,z],'#819771');tallo.rotation.z=.13;esfera(g,[.04,.1,.04],[x,.38,z],'#a18e68');}}
   for(let i=0;i<3;i++){const nenufar=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.014,10),new THREE.MeshStandardMaterial({color:'#86a97d'}));nenufar.position.set(e.x+(i-1)*.4,.068,e.z+i*.13-.2);g.add(nenufar);if(i===1)esfera(g,[.07,.03,.07],[nenufar.position.x,.10,nenufar.position.z],'#e6bdc6');}
  }
- for(const h of p.huecos){if(h.relleno){caja(g,[.96,.016,.96],[h.x+.5,.012,h.z+.5],'#a49b77');continue;}
-  caja(g,[.96,.012,.96],[h.x+.5,.022,h.z+.5],'#514e43');caja(g,[.67,.014,.67],[h.x+.5,.031,h.z+.5],'#343a34');
-  for(const z of[h.z+.025,h.z+.975])caja(g,[1.04,.12,.11],[h.x+.5,.065,z],'#a08a64');for(const x of[h.x+.025,h.x+.975])caja(g,[.11,.12,.87],[x,.065,h.z+.5],'#b5a077');
+ for(const h of p.huecos){const cx=h.x+.5,cz=h.z+.5,r=(k:number)=>{const n=Math.sin((h.x*12.9+h.z*78.2+k)*43.1)*4375.5;return n-Math.floor(n);};
+  if(h.relleno){const t=new THREE.Mesh(new THREE.CylinderGeometry(.5,.55,.04,16),new THREE.MeshStandardMaterial({color:'#9c8160',roughness:1}));t.position.set(cx,.012,cz);t.receiveShadow=true;g.add(t);for(let k=0;k<4;k++)esfera(g,[.08,.04,.07],[cx+(r(k)-.5)*.6,.04,cz+(r(k+5)-.5)*.6],'#8a7152');continue;}
+  // Hoyo redondo: fondo oscuro con degradé, bordecito de tierra removida en terrones y piedritas
+  const fondo=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.02,18),new THREE.MeshStandardMaterial({color:'#2f2a24',roughness:1}));fondo.position.set(cx,.02,cz);g.add(fondo);
+  const medio=new THREE.Mesh(new THREE.CylinderGeometry(.47,.47,.015,18),new THREE.MeshStandardMaterial({color:'#5a4a3a',roughness:1}));medio.position.set(cx,.012,cz);g.add(medio);
+  for(let k=0;k<11;k++){const a=k/11*Math.PI*2+r(k)*.3,d=.5+r(k+20)*.06;esfera(g,[.13+r(k+30)*.06,.07+r(k+40)*.04,.11],[cx+Math.cos(a)*d,.05,cz+Math.sin(a)*d],k%3?'#9c7d58':'#b39168');}
+  for(let k=0;k<3;k++)esfera(g,[.07,.05,.06],[cx+(r(k+50)-.5)*1.1,.04,cz+(r(k+60)-.5)*1.1],'#a9a596');
  }
  compactar(g);return g;
 }

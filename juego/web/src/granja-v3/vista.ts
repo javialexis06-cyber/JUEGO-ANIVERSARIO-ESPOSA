@@ -150,7 +150,7 @@ export class VistaGranja{
     caja(this.entorno,[3.4,.025,2.2],[0,.03,1],'#c4b591');for(const x of[-1.5,1.5])caja(this.entorno,[.035,.015,1.95],[x,.052,1],'#ecdfbc');
     for(const x of[-.95,.95])caja(this.entorno,[.15,2.35,.15],[x,1.18,4],'#9b7b5c');caja(this.entorno,[2.05,.18,.16],[0,2.4,4],'#b28e63');
    }return;}
-  this.entorno.add(señalesSalidas(e.zona));
+  if(e.zona!=='granja')this.entorno.add(señalesSalidas(e.zona));
   if(e.zona==='mina'){this.cueva=cuevaMina(e.nivelMina||1);this.cueva.userData.nivel=e.nivelMina||1;this.entorno.add(this.cueva);return;}
   this.entorno.add(this.suelos.terreno());if(e.zona==='pueblo'){this.pueblo=crearPueblo();this.entorno.add(this.pueblo);this.entorno.add(this.suelos.pasto(52,-32,60,75,5200,cespedPueblo));}
   // Caminos de tierra de la granja y arcos en sus salidas (los bordes de la granja llevan a las otras zonas)
