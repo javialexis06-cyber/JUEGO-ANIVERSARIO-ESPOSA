@@ -11,6 +11,7 @@ try {
 let maestro: GainNode | null = null;
 let salidaEfectos: GainNode | null = null;
 let salidaMusica: GainNode | null = null;
+let salidaPistas: GainNode | null = null;
 let musicaApagada = false;
 try {
   musicaApagada = localStorage.getItem('supermania-musica') === '0';
@@ -37,7 +38,12 @@ export function activar() {
     salidaMusica = ctx.createGain();
     salidaMusica.gain.value = 0;
     salidaMusica.connect(filtro).connect(maestro);
+    // Las pistas en archivo van sin el filtro (ya vienen mezcladas)
+    salidaPistas = ctx.createGain();
+    salidaPistas.gain.value = volumenPistas();
+    salidaPistas.connect(maestro);
     if (musicaPendiente) musica.iniciar(musicaPendiente, bpm, cancion);
+    if (pistaPedida) void ponerPista(pistaPedida.id, pistaPedida.op);
   } catch {
     ctx = null;
   }
@@ -321,7 +327,9 @@ let cancion: 'cumbia' | 'hogar' | 'mesa' = 'cumbia';
 let musicaPendiente: 'menu' | 'juego' | null = null;
 /** Callada por un rato sin tocar la preferencia de quien juega (con la tele prendida, para oír el video). */
 let musicaCallada = false;
-const volumenMusica = () => (musicaApagada || musicaCallada ? 0 : musicaPendiente === 'menu' ? 0.45 : 0.8);
+/** Mientras habla alguien (las voces de la pareja) la música baja para que se le entienda. */
+let musicaAgachada = false;
+const volumenMusica = () => (musicaApagada || musicaCallada ? 0 : (musicaPendiente === 'menu' ? 0.45 : 0.8) * (musicaAgachada ? 0.35 : 1));
 let reloj: ReturnType<typeof setInterval> | null = null;
 let pasoActual = 0;
 let proximo = 0;
@@ -339,7 +347,7 @@ function arrancarReloj() {
     while (proximo < ctx.currentTime + 0.2) {
       // Un poco de swing: la corchea del contratiempo llega tarde
       const swing = pasoActual % 2 ? corchea * 0.08 : 0;
-      if (!musicaApagada && !musicaCallada && !silencio) (cancion === 'hogar' ? tocarPasoHogar : cancion === 'mesa' ? tocarPasoMesa : tocarPaso)(pasoActual, proximo + (cancion === 'cumbia' ? swing : 0), corchea);
+      if (!musicaApagada && !musicaCallada && !silencio && !pistaActiva) (cancion === 'hogar' ? tocarPasoHogar : cancion === 'mesa' ? tocarPasoMesa : tocarPaso)(pasoActual, proximo + (cancion === 'cumbia' ? swing : 0), corchea);
       proximo += corchea;
       pasoActual = (pasoActual + 1) % 128;
     }
@@ -369,6 +377,33 @@ export const musica = {
     salidaMusica.gain.setTargetAtTime(volumenMusica(), ctx.currentTime, 0.4);
     arrancarReloj();
   },
+  /** Pone una pista en archivo (null: vuelve la sintetizada). Si no hay archivo, sigue la sintetizada. */
+  pista(id: string | null, op: OpcionesPista = {}) {
+    if (id === (pistaPedida?.id ?? null) && !op.reiniciar) {
+      // La misma: solo se actualiza qué sigue después
+      if (pistaPedida) pistaPedida.op = op;
+      if (sonando && sonando.id === id) sonando.luego = op.luego;
+      return;
+    }
+    pistaPedida = id ? { id, op } : null;
+    void ponerPista(id, op);
+  },
+  /** La pista pedida (para devolverla después de un minijuego que pone la suya). */
+  pistaActual: () => pistaPedida?.id ?? null,
+  /** La que de verdad está sonando en archivo (null: la sintetizada o nada). */
+  pistaSonando: () => sonando?.id ?? null,
+  /** Un minijuego (lavado, cohete…) puso su música: la casa no la cambia hasta que termine. */
+  enMinijuego: false,
+  /** Más rápido o más lento (1 = normal), sin cortar: el súper al final del día. */
+  prisa(v: number) {
+    if (Math.abs(v - velocidad) < 0.001) return;
+    velocidad = v;
+    reprogramar();
+  },
+  /** Un remate corto (ganar, perder, abrir) encima de la música, que baja un momento. */
+  remate(id: string) {
+    void tocarRemate(id);
+  },
   /** Más rápido cuando falta poco para cerrar. */
   tempo(t: number) {
     bpm = t;
@@ -384,6 +419,7 @@ export const musica = {
       /* sin almacenamiento */
     }
     if (ctx && salidaMusica) salidaMusica.gain.setTargetAtTime(volumenMusica(), ctx.currentTime, 0.2);
+    if (ctx && salidaPistas) salidaPistas.gain.setTargetAtTime(volumenPistas(), ctx.currentTime, 0.2);
     return musicaApagada;
   },
   /** Calla la música un rato (la tele prendida) y la devuelve después, sin cambiar lo que eligió quien juega. */
@@ -391,5 +427,219 @@ export const musica = {
     if (musicaCallada === si) return;
     musicaCallada = si;
     if (ctx && salidaMusica) salidaMusica.gain.setTargetAtTime(volumenMusica(), ctx.currentTime, si ? 0.15 : 0.8);
+    if (ctx && salidaPistas) salidaPistas.gain.setTargetAtTime(volumenPistas(), ctx.currentTime, si ? 0.15 : 0.8);
+  },
+  /** Baja la música mientras alguien habla (y la sube suavecito después). */
+  agachar(si: boolean) {
+    if (musicaAgachada === si) return;
+    musicaAgachada = si;
+    if (ctx && salidaMusica) salidaMusica.gain.setTargetAtTime(volumenMusica(), ctx.currentTime, si ? 0.12 : 0.6);
+    if (ctx && salidaPistas) salidaPistas.gain.setTargetAtTime(volumenPistas(), ctx.currentTime, si ? 0.12 : 0.6);
   },
 };
+
+// ------------------------------------------------------------------------------------------ Música en archivos
+// Las pistas de Eleven Music (docs/sistemas/musica.md): si un juego pide una pista y su archivo existe, suena esa
+// (las de jugar en bucle, con un cambio suave de una vuelta a la otra) y la sintetizada se calla. Si no existe (la app
+// de amigos no trae las de la pareja, o todavía no se generó) sigue la sintetizada de siempre. Las listas las arma
+// scripts/musica-ia.mjs: public/musica/lista.json y public/musica/pareja/lista.json.
+
+export interface OpcionesPista {
+  /** Repetirla (las de jugar). false: canciones y remates, que suenan una vez. */
+  bucle?: boolean;
+  /** Cuando termina una que no se repite (por ejemplo, la canción de la entrada y después la de jugar). */
+  luego?: string;
+  /** Volver a empezarla aunque ya esté sonando. */
+  reiniciar?: boolean;
+  /** Si esta no tiene archivo (la app de amigos no trae las de la pareja), esta otra. */
+  oSino?: string;
+}
+type ListaPistas = Record<string, [string, number]>;
+let listaPistas: Promise<ListaPistas> | null = null;
+function leerLista(dir: string): Promise<ListaPistas> {
+  return fetch(`./${dir}lista.json`)
+    .then((r) => (r.ok ? r.json() : {}))
+    .then((l: unknown) => {
+      const out: ListaPistas = {};
+      if (l && typeof l === 'object' && !Array.isArray(l))
+        for (const [k, v] of Object.entries(l as Record<string, unknown>)) if (Array.isArray(v) && typeof v[0] === 'string') out[k] = [dir + v[0], Number(v[1]) || 0];
+      return out;
+    })
+    .catch(() => ({}));
+}
+function pistasDisponibles() {
+  listaPistas ??= Promise.all([leerLista('musica/'), leerLista('musica/pareja/')]).then(([a, b]) => ({ ...a, ...b }));
+  return listaPistas;
+}
+/** ¿Hay archivo para esta pista? (para escoger entre una pista y otra). */
+export async function hayPista(id: string) {
+  return !!(await pistasDisponibles())[id];
+}
+
+const buffersPistas = new Map<string, Promise<AudioBuffer | null>>();
+function cargarPista(archivo: string): Promise<AudioBuffer | null> {
+  let p = buffersPistas.get(archivo);
+  if (!p && ctx) {
+    const c = ctx;
+    p = fetch(`./${archivo}`)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(String(r.status)))))
+      .then((b) => c.decodeAudioData(b))
+      .catch(() => null);
+    buffersPistas.set(archivo, p);
+    // Que no se llene la memoria: se guardan las últimas 6
+    if (buffersPistas.size > 6) buffersPistas.delete(buffersPistas.keys().next().value!);
+  }
+  return p ?? Promise.resolve(null);
+}
+
+if (typeof window !== 'undefined') (window as unknown as { __musica?: unknown }).__musica = () => ({ pista: sonando?.id ?? null, activa: pistaActiva, velocidad });
+
+const volumenPistas = () => (musicaApagada || musicaCallada ? 0 : 0.62 * (musicaAgachada ? 0.35 : 1));
+/** Lo que dura el cruce entre una vuelta y la siguiente. */
+const CRUCE = 2.5;
+interface Vuelta { f: AudioBufferSourceNode; g: GainNode; inicio: number; desde: number; vel: number }
+interface Sonando { id: string; buf: AudioBuffer; g: GainNode; bucle: boolean; luego?: string; vueltas: Vuelta[]; proxima: number; reloj: number }
+let pistaPedida: { id: string; op: OpcionesPista } | null = null;
+let sonando: Sonando | null = null;
+/** Hay una pista en archivo sonando: la sintetizada se calla. */
+let pistaActiva = false;
+let velocidad = 1;
+let turnoPista = 0;
+
+async function ponerPista(id: string | null, op: OpcionesPista) {
+  const mio = ++turnoPista;
+  if (!ctx || !salidaPistas) return;
+  if (!id) return soltarPista();
+  const lista = await pistasDisponibles();
+  if (!lista[id] && op.oSino) return ponerPista(op.oSino, { ...op, oSino: undefined });
+  const archivo = lista[id]?.[0];
+  const buf = archivo ? await cargarPista(archivo) : null;
+  if (mio !== turnoPista || !ctx || !salidaPistas) return;
+  if (!buf) return soltarPista();
+  soltarPista(false);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0, ctx.currentTime);
+  g.gain.linearRampToValueAtTime(1, ctx.currentTime + 1.2);
+  g.connect(salidaPistas);
+  const bucle = op.bucle ?? true;
+  sonando = { id, buf, g, bucle, luego: op.luego, vueltas: [], proxima: 0, reloj: 0 };
+  pistaActiva = true;
+  vuelta(sonando, ctx.currentTime + 0.05, 0, true);
+  const s = sonando;
+  s.reloj = window.setInterval(() => cuidarPista(s), 400);
+}
+
+/** Programa una vuelta de la pista desde `desde` (segundos del archivo) en el momento `t`. */
+function vuelta(s: Sonando, t: number, desde: number, primera = false) {
+  if (!ctx) return;
+  const f = ctx.createBufferSource();
+  f.buffer = s.buf;
+  f.playbackRate.value = velocidad;
+  const g = ctx.createGain();
+  f.connect(g).connect(s.g);
+  const v: Vuelta = { f, g, inicio: t, desde, vel: velocidad };
+  if (s.bucle && !primera && desde === 0) {
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(1, t + CRUCE);
+  }
+  f.start(t, desde);
+  s.vueltas.push(v);
+  programarFin(s, v);
+}
+
+/** Cuándo se apaga una vuelta y cuándo entra la siguiente (según la velocidad). */
+function programarFin(s: Sonando, v: Vuelta) {
+  if (!ctx) return;
+  const fin = v.inicio + (s.buf.duration - v.desde) / v.vel;
+  if (s.bucle) {
+    const cruce = Math.min(CRUCE, (s.buf.duration - v.desde) / v.vel / 3);
+    v.g.gain.cancelScheduledValues(Math.max(ctx.currentTime, fin - cruce));
+    v.g.gain.setValueAtTime(1, Math.max(ctx.currentTime, fin - cruce));
+    v.g.gain.linearRampToValueAtTime(0, fin);
+    s.proxima = fin - cruce;
+  } else s.proxima = Infinity;
+  try {
+    v.f.stop(fin + 0.05);
+  } catch {
+    /* ya paró */
+  }
+}
+
+/** Cada poco: entra la vuelta siguiente a tiempo, y al terminar una que no se repite sigue la de «luego». */
+function cuidarPista(s: Sonando) {
+  if (!ctx || sonando !== s) return clearInterval(s.reloj);
+  const ahora = ctx.currentTime;
+  s.vueltas = s.vueltas.filter((v) => v.inicio + (s.buf.duration - v.desde) / v.vel > ahora - 0.5);
+  if (s.bucle && ahora > s.proxima - 1.5 && s.proxima !== Infinity) {
+    const t = Math.max(ahora + 0.05, s.proxima);
+    s.proxima = Infinity;
+    vuelta(s, t, 0);
+  }
+  if (!s.bucle && !s.vueltas.length) {
+    const luego = s.luego;
+    soltarPista();
+    if (luego) musica.pista(luego);
+    else pistaPedida = null;
+  }
+}
+
+/** Cambió la velocidad: la vuelta que suena sigue desde donde iba, a la velocidad nueva. */
+function reprogramar() {
+  if (!ctx || !sonando) return;
+  const s = sonando;
+  const ahora = ctx.currentTime;
+  const actual = s.vueltas.filter((v) => v.inicio <= ahora).pop();
+  for (const v of s.vueltas) if (v.inicio > ahora) {
+    try {
+      v.f.stop();
+    } catch {
+      /* ya paró */
+    }
+  }
+  s.vueltas = s.vueltas.filter((v) => v.inicio <= ahora);
+  if (!actual) return;
+  const pos = actual.desde + (ahora - actual.inicio) * actual.vel;
+  if (pos >= s.buf.duration - 0.2) return;
+  actual.f.playbackRate.setTargetAtTime(velocidad, ahora, 0.3);
+  actual.inicio = ahora;
+  actual.desde = pos;
+  actual.vel = velocidad;
+  programarFin(s, actual);
+}
+
+function soltarPista(volverSintetizada = true) {
+  const s = sonando;
+  sonando = null;
+  if (s && ctx) {
+    clearInterval(s.reloj);
+    const t = ctx.currentTime;
+    s.g.gain.cancelScheduledValues(t);
+    s.g.gain.setValueAtTime(s.g.gain.value, t);
+    s.g.gain.linearRampToValueAtTime(0, t + 1.2);
+    for (const v of s.vueltas) {
+      try {
+        v.f.stop(t + 1.3);
+      } catch {
+        /* ya paró */
+      }
+    }
+    setTimeout(() => s.g.disconnect(), 1500);
+  }
+  if (volverSintetizada) pistaActiva = false;
+}
+
+async function tocarRemate(id: string) {
+  if (!ctx || !salidaPistas || silencio) return;
+  const archivo = (await pistasDisponibles())[id]?.[0];
+  const buf = archivo ? await cargarPista(archivo) : null;
+  if (!buf || !ctx || !salidaPistas) return;
+  const f = ctx.createBufferSource();
+  f.buffer = buf;
+  const g = ctx.createGain();
+  g.gain.value = musicaApagada ? 0.7 : 1.15;
+  f.connect(g).connect(maestro ?? salidaPistas);
+  f.start();
+  // La música de fondo baja mientras suena el remate
+  musica.agachar(true);
+  setTimeout(() => musica.agachar(false), buf.duration * 1000);
+}

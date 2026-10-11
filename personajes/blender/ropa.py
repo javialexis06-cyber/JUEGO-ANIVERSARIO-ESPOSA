@@ -609,7 +609,7 @@ def punto_cabeza(ctx, az, el, lift=0.0, sup=None):
 
 def cargar_modulos():
     import importlib
-    for nombre in ('ropa_arriba', 'ropa_abajo', 'ropa_pies', 'ropa_pelo', 'ropa_accesorios', 'ropa_disfraces'):
+    for nombre in ('ropa_arriba', 'ropa_abajo', 'ropa_pies', 'ropa_pelo', 'ropa_accesorios', 'ropa_disfraces', 'ropa_pueblo'):
         if os.path.exists(os.path.join(HERE, f'{nombre}.py')):
             importlib.import_module(nombre)
 

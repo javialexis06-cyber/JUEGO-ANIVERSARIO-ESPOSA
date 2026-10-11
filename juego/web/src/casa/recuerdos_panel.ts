@@ -9,10 +9,11 @@ import type { Dicho } from '../puertas/historia';
 import { ESCENAS, H, Movimiento, Pose, ponerReacciones, precargar, W } from './recuerdos_arte';
 import { NOMBRE_ROL } from './modelo';
 import { esc } from './ui_casa';
+import * as voces from '../voces';
 
 export type ModoRecuerdos = 'bano' | 'cama';
 
-interface Vineta {
+export interface Vineta {
   titulo: string;
   sub?: string;
   dibujo: string;
@@ -20,7 +21,7 @@ interface Vineta {
 }
 
 /** Discusiones bobas de todos los días (las del chat y otras en las que nunca se ponen de acuerdo). */
-const DISCUSIONES: Vineta[] = [
+export const DISCUSIONES: Vineta[] = [
   { titulo: '¿Muak o betito?', dibujo: 'charla', lineas: [['el', 'Un muak no es lo mismo que un betito.'], ['ella', '¿Y cuál es la diferencia?'], ['el', 'El betito es en persona.'], ['ella', 'Entonces ven y dame uno.']] },
   { titulo: '¿Casi o se quemó?', dibujo: 'casa', lineas: [['el', 'La base de Minecraft casi se quema toda.'], ['ella', 'Se quemó.'], ['el', 'CASI.'], ['ella', 'Quedó un hueco negro, mor.']] },
   { titulo: '¿Y la racha?', dibujo: 'lapiz', lineas: [['ella', '¿Hiciste el Duolingo?'], ['el', 'Shi.'], ['ella', '¿Y la racha?'], ['el', '…mañana hago dos.']] },
@@ -41,7 +42,7 @@ const DISCUSIONES: Vineta[] = [
 
 /** Deseos a futuro (lo que sueñan para cuando vivan juntos). Lo de la niña es de Cien Puertas, lo de la comida de
  *  la cocina y los juegos de mesa de la mesa: aquí no se repiten. */
-const DESEOS: Vineta[] = [
+export const DESEOS: Vineta[] = [
   { titulo: 'Algún día…', sub: 'Nuestra casita', dibujo: 'casa', lineas: [['el', 'Una casita propia, con jardín.'], ['ella', 'Y con un sofá grande para ver pelis.'], ['el', 'Y que siempre huela a desayuno.']] },
   { titulo: 'Algún día…', sub: 'La graduación', dibujo: 'birrete', lineas: [['el', 'Verte graduada de psicóloga.'], ['ella', 'Y tú en primera fila gritando mi nombre.'], ['el', 'Con pancarta y todo.']] },
   { titulo: 'Algún día…', sub: 'Sin distancia', dibujo: 'bus', lineas: [['ella', 'Que ya no haya que contar kilómetros.'], ['el', 'Que el único viaje sea de la cama a la cocina.'], ['ella', 'Juntos, todos los días.']] },
@@ -83,6 +84,8 @@ interface Frase {
   desde: number;
   escrita: number;
   hasta: number;
+  /** Ya sonó con su voz. */
+  sono?: boolean;
 }
 
 export class PanelRecuerdos {
@@ -129,6 +132,7 @@ export class PanelRecuerdos {
   mostrar(modo: ModoRecuerdos) {
     if (this.modo === modo || this.cerrado) return;
     precargar();
+    voces.precargar();
     this.modo = modo;
     this.raiz.hidden = false;
     this.raiz.dataset.modo = modo;
@@ -146,6 +150,7 @@ export class PanelRecuerdos {
   }
 
   ocultar() {
+    if (this.modo) voces.callar();
     this.modo = null;
     this.raiz.hidden = true;
     ponerReacciones({});
@@ -178,7 +183,9 @@ export class PanelRecuerdos {
     this.frases = v.lineas.slice(desde, desde + n).map(([quien, texto]) => {
       const txt = forma(texto, quien);
       const escrita = t + txt.length * POR_LETRA;
-      const f = { quien, texto: txt, desde: t, escrita, hasta: escrita + Math.max(LEER_MIN, txt.length * LEER_POR_LETRA) };
+      // Con voz, la frase se queda por lo menos lo que dura el audio (y un respiro)
+      const voz = voces.duracionYa(quien, txt);
+      const f: Frase = { quien, texto: txt, desde: t, escrita, hasta: Math.max(escrita + Math.max(LEER_MIN, txt.length * LEER_POR_LETRA), t + voz + 0.5) };
       t = f.hasta + ENTRE_FRASES;
       return f;
     });
@@ -205,6 +212,10 @@ export class PanelRecuerdos {
     const f = this.frases.find((x) => k >= x.desde && k < x.hasta + ENTRE_FRASES) ?? null;
     let html = '';
     if (f && k < this.fin) {
+      if (!f.sono) {
+        f.sono = true;
+        void voces.decir(f.quien, f.texto);
+      }
       const n = Math.min(f.texto.length, Math.floor((k - f.desde) / POR_LETRA));
       const escribiendo = n < f.texto.length;
       html = `<span class="quien-${f.quien}">${NOMBRE_ROL[f.quien === 'el' ? 'el' : 'ella']}</span>${esc(f.texto.slice(0, n))}${escribiendo ? '<i class="cursor"></i>' : ''}`;

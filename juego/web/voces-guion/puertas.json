@@ -1,0 +1,4450 @@
+[
+ {
+  "id": "09nt1ts",
+  "g": "Recuerdo · La villa de Transformice (puerta 5)",
+  "q": "ella",
+  "t": "¿Te acuerdas de cómo empezó todo? En la villa de Transformice, esa que parece un barcito.",
+  "d": "[nostalgic] ¿Te acuerdas de cómo empezó todo? En la villa de Transformice, esa que parece un barcito.",
+  "revisada": true
+ },
+ {
+  "id": "1ysbmpw",
+  "g": "Recuerdo · La villa de Transformice (puerta 5)",
+  "q": "el",
+  "t": "Sí. Tú me querías estafar.",
+  "d": "[teasing] Sí. Tú me querías estafar.",
+  "revisada": true
+ },
+ {
+  "id": "0be13dt",
+  "g": "Recuerdo · La villa de Transformice (puerta 5)",
+  "q": "ella",
+  "t": "¡Yo no te quería estafar! Bueno… un poquito. Mi vida estaba muy monótona y pensé: es solo un juego.",
+  "d": "[indignant] ¡Yo no te quería estafar! [laughs] Bueno… un poquito. [sighs] Mi vida estaba muy monótona y pensé: es solo un juego.",
+  "revisada": true
+ },
+ {
+  "id": "1blonhs",
+  "g": "Recuerdo · La villa de Transformice (puerta 5)",
+  "q": "el",
+  "t": "Y yo, que ya casi no jugaba, te di todo lo que tenía. Sin pensarlo.",
+  "d": "[warmly] Y yo, que ya casi no jugaba, te di todo lo que tenía. Sin pensarlo.",
+  "revisada": true
+ },
+ {
+  "id": "0f500t3",
+  "g": "Recuerdo · La villa de Transformice (puerta 5)",
+  "q": "ella",
+  "t": "Me dijiste: «estás como necesitada, así que ten». ¡Qué humillación!",
+  "d": "[mock outrage] Me dijiste: «estás como necesitada, así que ten». ¡Qué humillación!",
+  "revisada": true
+ },
+ {
+  "id": "0rljos9",
+  "g": "Recuerdo · La villa de Transformice (puerta 5)",
+  "q": "el",
+  "t": "Fue un acto de caridad.",
+  "d": "[smug] Fue un acto de caridad.",
+  "revisada": true
+ },
+ {
+  "id": "1ioqnki",
+  "g": "Recuerdo · La villa de Transformice (puerta 5)",
+  "q": "ella",
+  "t": "Fuiste el primero y el único que se dio cuenta de la estafa. Pensé: este hombre es muy inteligente.",
+  "d": "[admiring] Fuiste el primero y el único que se dio cuenta de la estafa. Pensé: este hombre es muy inteligente.",
+  "revisada": true
+ },
+ {
+  "id": "1n62y2d",
+  "g": "Recuerdo · La villa de Transformice (puerta 5)",
+  "q": "el",
+  "t": "Al final la estafada fuiste tú.",
+  "d": "[chuckles] Al final la estafada fuiste tú.",
+  "revisada": true
+ },
+ {
+  "id": "0dh9kos",
+  "g": "Recuerdo · La villa de Transformice (puerta 5)",
+  "q": "ella",
+  "t": "Sí… yo quería robarte las cositas del juego y tú me robaste el corazón.",
+  "d": "[tenderly] Sí… yo quería robarte las cositas del juego y tú me robaste el corazón.",
+  "revisada": true
+ },
+ {
+  "id": "07hrs11",
+  "g": "Recuerdo · Matemáticas y filosofía (puerta 10)",
+  "q": "ella",
+  "t": "Esa noche me hablaste de matemáticas y de filosofía.",
+  "d": "[nostalgic] Esa noche me hablaste de matemáticas y de filosofía.",
+  "revisada": true
+ },
+ {
+  "id": "0i1laf7",
+  "g": "Recuerdo · Matemáticas y filosofía (puerta 10)",
+  "q": "ella",
+  "t": "Y yo te dije que nada de eso me gustaba.",
+  "d": "[playfully] Y yo te dije que nada de eso me gustaba.",
+  "revisada": true
+ },
+ {
+  "id": "0pcr21s",
+  "g": "Recuerdo · Matemáticas y filosofía (puerta 10)",
+  "q": "el",
+  "t": "Pero yo seguí hablando.",
+  "d": "[amused] Pero yo seguí hablando.",
+  "revisada": true
+ },
+ {
+  "id": "0p00kek",
+  "g": "Recuerdo · Matemáticas y filosofía (puerta 10)",
+  "q": "ella",
+  "t": "Y lo fuiste volviendo cosas que sí me gustaban. Terminó encantándome la conversación.",
+  "d": "[warmly] Y lo fuiste volviendo cosas que sí me gustaban. Terminó encantándome la conversación.",
+  "revisada": true
+ },
+ {
+  "id": "0m06eyz",
+  "g": "Recuerdo · Matemáticas y filosofía (puerta 10)",
+  "q": "el",
+  "t": "¿Ves? La filosofía sí sirve para algo.",
+  "d": "[proudly] ¿Ves? La filosofía sí sirve para algo.",
+  "revisada": true
+ },
+ {
+  "id": "1evaw6x",
+  "g": "Recuerdo · Matemáticas y filosofía (puerta 10)",
+  "q": "ella",
+  "t": "La filosofía no sé. El filósofo, tal vez.",
+  "d": "[flirty] La filosofía no sé. El filósofo, tal vez.",
+  "revisada": true
+ },
+ {
+  "id": "1l1blot",
+  "g": "Recuerdo · Matemáticas y filosofía (puerta 10)",
+  "q": "el",
+  "t": "Eso también es filosofía.",
+  "d": "[chuckles] Eso también es filosofía.",
+  "revisada": true
+ },
+ {
+  "id": "0rae1s6",
+  "g": "Recuerdo · Te busqué por todos lados (puerta 15)",
+  "q": "ella",
+  "t": "Me fui a dormir pensando en ti… y ahí me acordé: ¡no nos habíamos agregado de amigos!",
+  "d": "[excited] Me fui a dormir pensando en ti… y ahí me acordé: ¡no nos habíamos agregado de amigos!",
+  "revisada": true
+ },
+ {
+  "id": "09nibrf",
+  "g": "Recuerdo · Te busqué por todos lados (puerta 15)",
+  "q": "ella",
+  "t": "Me dio una tristeza… pensé que no te iba a volver a encontrar.",
+  "d": "[sad] Me dio una tristeza… pensé que no te iba a volver a encontrar.",
+  "revisada": true
+ },
+ {
+  "id": "1kpin0g",
+  "g": "Recuerdo · Te busqué por todos lados (puerta 15)",
+  "q": "ella",
+  "t": "Así que te busqué por todo el juego, con la esperanza de que estuvieras en línea.",
+  "d": "[hopeful] Así que te busqué por todo el juego, con la esperanza de que estuvieras en línea.",
+  "revisada": true
+ },
+ {
+  "id": "1csbu7f",
+  "g": "Recuerdo · Te busqué por todos lados (puerta 15)",
+  "q": "el",
+  "t": "Y cuando me encontraste, te dije que yo también te estaba buscando.",
+  "d": "[warmly] Y cuando me encontraste, te dije que yo también te estaba buscando.",
+  "revisada": true
+ },
+ {
+  "id": "06bnvsh",
+  "g": "Recuerdo · Te busqué por todos lados (puerta 15)",
+  "q": "ella",
+  "t": "¿De verdad me estabas buscando o lo dijiste por quedar bien?",
+  "d": "[suspicious] ¿De verdad me estabas buscando o lo dijiste por quedar bien?",
+  "revisada": true
+ },
+ {
+  "id": "1sjcoqh",
+  "g": "Recuerdo · Te busqué por todos lados (puerta 15)",
+  "q": "el",
+  "t": "…Te di mi número de teléfono, ¿no?",
+  "d": "[pause] …Te di mi número de teléfono, ¿no?",
+  "revisada": true
+ },
+ {
+  "id": "1jmuhhg",
+  "g": "Recuerdo · Te busqué por todos lados (puerta 15)",
+  "q": "ella",
+  "t": "Buen punto. Punto para las matemáticas.",
+  "d": "[laughs] Buen punto. Punto para las matemáticas.",
+  "revisada": true
+ },
+ {
+  "id": "00f887f",
+  "g": "Recuerdo · Te busqué por todos lados (puerta 15)",
+  "q": "ella",
+  "t": "Desde ahí nos contábamos todo, todos los días.",
+  "d": "[happy] Desde ahí nos contábamos todo, todos los días.",
+  "revisada": true
+ },
+ {
+  "id": "1kyo3uc",
+  "g": "Recuerdo · El 25 de octubre (puerta 20)",
+  "q": "ella",
+  "t": "No sé en qué momento me di cuenta de que era feliz solo con contarte mis cosas. Fue una conexión inmediata.",
+  "d": "[tenderly] No sé en qué momento me di cuenta de que era feliz solo con contarte mis cosas. Fue una conexión inmediata.",
+  "revisada": true
+ },
+ {
+  "id": "1uh5b1b",
+  "g": "Recuerdo · El 25 de octubre (puerta 20)",
+  "q": "el",
+  "t": "Yo al principio era un poco indiferente…",
+  "d": "[embarrassed] Yo al principio era un poco indiferente…",
+  "revisada": true
+ },
+ {
+  "id": "122acdp",
+  "g": "Recuerdo · El 25 de octubre (puerta 20)",
+  "q": "ella",
+  "t": "¿Un poco? ¡Eras un témpano de hielo!",
+  "d": "[indignant] ¿Un poco? ¡Eras un témpano de hielo!",
+  "revisada": true
+ },
+ {
+  "id": "0qydun3",
+  "g": "Recuerdo · El 25 de octubre (puerta 20)",
+  "q": "el",
+  "t": "Pero tú estuviste ahí, te esforzaste tanto… que poquito a poco me fui enamorando.",
+  "d": "[softly] Pero tú estuviste ahí, te esforzaste tanto… que poquito a poco me fui enamorando.",
+  "revisada": true
+ },
+ {
+  "id": "1hciqiy",
+  "g": "Recuerdo · El 25 de octubre (puerta 20)",
+  "q": "el",
+  "t": "Y el 25 de octubre, treinta días después, ya éramos novios.",
+  "d": "[proudly] Y el 25 de octubre, treinta días después, ya éramos novios.",
+  "revisada": true
+ },
+ {
+  "id": "0m4xzzh",
+  "g": "Recuerdo · El 25 de octubre (puerta 20)",
+  "q": "ella",
+  "t": "¿Treinta? Nos conocimos el 15 de septiembre, mi amor. Fueron cuarenta.",
+  "d": "[correcting] ¿Treinta? Nos conocimos el 15 de septiembre, mi amor. Fueron cuarenta.",
+  "revisada": true
+ },
+ {
+  "id": "1fv33rj",
+  "g": "Recuerdo · El 25 de octubre (puerta 20)",
+  "q": "el",
+  "t": "Treinta, cuarenta… un mes, pues.",
+  "d": "[dismissive] Treinta, cuarenta… un mes, pues.",
+  "revisada": true
+ },
+ {
+  "id": "0r747nb",
+  "g": "Recuerdo · El 25 de octubre (puerta 20)",
+  "q": "ella",
+  "t": "El de las matemáticas contando mal los días.",
+  "d": "[teasing] El de las matemáticas contando mal los días.",
+  "revisada": true
+ },
+ {
+  "id": "0h9g6i2",
+  "g": "Recuerdo · El 25 de octubre (puerta 20)",
+  "q": "el",
+  "t": "Es que contigo el tiempo vuela.",
+  "d": "[lovingly] Es que contigo el tiempo vuela.",
+  "revisada": true
+ },
+ {
+  "id": "0x65qmy",
+  "g": "Recuerdo · Videollamadas de 24 horas (puerta 25)",
+  "q": "ella",
+  "t": "Al principio las videollamadas eran a veces sí, a veces no. Teníamos colegio y mil cosas.",
+  "d": "[nostalgic] Al principio las videollamadas eran a veces sí, a veces no. Teníamos colegio y mil cosas.",
+  "revisada": true
+ },
+ {
+  "id": "15njn0g",
+  "g": "Recuerdo · Videollamadas de 24 horas (puerta 25)",
+  "q": "el",
+  "t": "Y llegó la pandemia.",
+  "d": "[dramatically] Y llegó la pandemia.",
+  "revisada": true
+ },
+ {
+  "id": "15h86eg",
+  "g": "Recuerdo · Videollamadas de 24 horas (puerta 25)",
+  "q": "ella",
+  "t": "¡Clases virtuales! Podíamos estar en llamada todo el día.",
+  "d": "[excited] ¡Clases virtuales! Podíamos estar en llamada todo el día.",
+  "revisada": true
+ },
+ {
+  "id": "1py6eee",
+  "g": "Recuerdo · Videollamadas de 24 horas (puerta 25)",
+  "q": "el",
+  "t": "Casi completamos las 24 horas en llamada.",
+  "d": "Casi completamos las 24 horas en llamada.",
+  "revisada": true
+ },
+ {
+  "id": "09p3id8",
+  "g": "Recuerdo · Videollamadas de 24 horas (puerta 25)",
+  "q": "ella",
+  "t": "¿Casi? Las completamos. Dormíamos, estudiábamos, comíamos… todo juntos.",
+  "d": "[indignant] ¿Casi? Las completamos. Dormíamos, estudiábamos, comíamos… todo juntos.",
+  "revisada": true
+ },
+ {
+  "id": "1layqnf",
+  "g": "Recuerdo · Videollamadas de 24 horas (puerta 25)",
+  "q": "el",
+  "t": "Lo mejor era despertarse y que siguieras ahí, en la pantalla.",
+  "d": "[tenderly] Lo mejor era despertarse y que siguieras ahí, en la pantalla.",
+  "revisada": true
+ },
+ {
+  "id": "0tg4wg9",
+  "g": "Recuerdo · Videollamadas de 24 horas (puerta 25)",
+  "q": "ella",
+  "t": "Lo único bueno de la pandemia: tenerte todo el día.",
+  "d": "[warmly] Lo único bueno de la pandemia: tenerte todo el día.",
+  "revisada": true
+ },
+ {
+  "id": "0i35vcc",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "ella",
+  "t": "Siempre nos ayudábamos con las tareas. Yo te hacía las de artística.",
+  "d": "[playfully] Siempre nos ayudábamos con las tareas. Yo te hacía las de artística.",
+  "revisada": true
+ },
+ {
+  "id": "03yfm0g",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "el",
+  "t": "Y yo casi todas las tuyas.",
+  "d": "[smug] Y yo casi todas las tuyas.",
+  "revisada": true
+ },
+ {
+  "id": "1f8wdqa",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "ella",
+  "t": "¿Casi todas?",
+  "d": "[suspicious] ¿Casi todas?",
+  "revisada": true
+ },
+ {
+  "id": "1urkfnu",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "el",
+  "t": "…Todas. Pero con mucho amor.",
+  "d": "[sheepishly] …Todas. Pero con mucho amor.",
+  "revisada": true
+ },
+ {
+  "id": "06y3cw5",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "ella",
+  "t": "Contigo me sentía muy acompañada.",
+  "d": "[tenderly] Contigo me sentía muy acompañada.",
+  "revisada": true
+ },
+ {
+  "id": "0wobtwp",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "el",
+  "t": "Después volvimos al colegio: los dos en once, graduándonos el mismo año.",
+  "d": "[nostalgic] Después volvimos al colegio: los dos en once, graduándonos el mismo año.",
+  "revisada": true
+ },
+ {
+  "id": "0ndy7nu",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "ella",
+  "t": "Y estudiamos juntos para el ICFES. Teníamos nuestras sesiones.",
+  "d": "Y estudiamos juntos para el ICFES. Teníamos nuestras sesiones.",
+  "revisada": true
+ },
+ {
+  "id": "1etcqlb",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "el",
+  "t": "Bueno, «estudiábamos»… yo explicaba y tú aprendías.",
+  "d": "[teasing] Bueno, «estudiábamos»… yo explicaba y tú aprendías.",
+  "revisada": true
+ },
+ {
+  "id": "0kpyeo0",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "ella",
+  "t": "¡Oye! Yo también ponía de mi parte.",
+  "d": "[indignant] ¡Oye! Yo también ponía de mi parte.",
+  "revisada": true
+ },
+ {
+  "id": "0ztjxib",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "el",
+  "t": "Ponías lo más importante: las ganas de estar conmigo.",
+  "d": "[lovingly] Ponías lo más importante: las ganas de estar conmigo.",
+  "revisada": true
+ },
+ {
+  "id": "0aedako",
+  "g": "Recuerdo · Compañeros de estudio (puerta 30)",
+  "q": "ella",
+  "t": "Eso sí.",
+  "d": "[giggles] Eso sí.",
+  "revisada": true
+ },
+ {
+  "id": "0jqggq9",
+  "g": "Recuerdo · Psicología (puerta 35)",
+  "q": "ella",
+  "t": "Cuando nos graduamos, yo no quería seguir estudiando.",
+  "d": "[serious] Cuando nos graduamos, yo no quería seguir estudiando.",
+  "revisada": true
+ },
+ {
+  "id": "00wfo8s",
+  "g": "Recuerdo · Psicología (puerta 35)",
+  "q": "ella",
+  "t": "Quería un año sabático, tranquila. Y la verdad… no me sentía capaz. Creía que no iba a poder.",
+  "d": "[sighs] Quería un año sabático, tranquila. Y la verdad… no me sentía capaz. Creía que no iba a poder.",
+  "revisada": true
+ },
+ {
+  "id": "1k33t2r",
+  "g": "Recuerdo · Psicología (puerta 35)",
+  "q": "el",
+  "t": "Y yo no paré hasta convencerte.",
+  "d": "[determined] Y yo no paré hasta convencerte.",
+  "revisada": true
+ },
+ {
+  "id": "0ent8yl",
+  "g": "Recuerdo · Psicología (puerta 35)",
+  "q": "ella",
+  "t": "Eres muy insistente.",
+  "d": "[teasing] Eres muy insistente.",
+  "revisada": true
+ },
+ {
+  "id": "126y9xr",
+  "g": "Recuerdo · Psicología (puerta 35)",
+  "q": "el",
+  "t": "Persistente, que es distinto.",
+  "d": "[proudly] Persistente, que es distinto.",
+  "revisada": true
+ },
+ {
+  "id": "1ovvhkm",
+  "g": "Recuerdo · Psicología (puerta 35)",
+  "q": "ella",
+  "t": "Y justo abrieron Psicología, en la universidad que yo quería, donde yo quería.",
+  "d": "[excited] Y justo abrieron Psicología, en la universidad que yo quería, donde yo quería.",
+  "revisada": true
+ },
+ {
+  "id": "0xczrep",
+  "g": "Recuerdo · Psicología (puerta 35)",
+  "q": "ella",
+  "t": "Hice el examen el día de mi cumpleaños… ¡y pasé!",
+  "d": "[very excited] Hice el examen el día de mi cumpleaños… ¡y pasé!",
+  "revisada": true
+ },
+ {
+  "id": "1awsdvi",
+  "g": "Recuerdo · Psicología (puerta 35)",
+  "q": "el",
+  "t": "El mejor regalo de cumpleaños. Yo siempre supe que ibas a poder.",
+  "d": "[proudly] El mejor regalo de cumpleaños. Yo siempre supe que ibas a poder.",
+  "revisada": true
+ },
+ {
+  "id": "0m3rbjx",
+  "g": "Recuerdo · La primera vez que nos vimos (puerta 40)",
+  "q": "el",
+  "t": "La primera vez que te vi fue como ver a la mujer más hermosa del mundo.",
+  "d": "[dreamy] La primera vez que te vi fue como ver a la mujer más hermosa del mundo.",
+  "revisada": true
+ },
+ {
+  "id": "087rnyp",
+  "g": "Recuerdo · La primera vez que nos vimos (puerta 40)",
+  "q": "el",
+  "t": "Tu cabello negro, tus labios, tu sonrisa… eras perfecta.",
+  "d": "[tenderly] Tu cabello negro, tus labios, tu sonrisa… eras perfecta.",
+  "revisada": true
+ },
+ {
+  "id": "030jpum",
+  "g": "Recuerdo · La primera vez que nos vimos (puerta 40)",
+  "q": "ella",
+  "t": "¿Era? ¿Y ahora qué?",
+  "d": "[mock offended] ¿Era? ¿Y ahora qué?",
+  "revisada": true
+ },
+ {
+  "id": "0m2t06k",
+  "g": "Recuerdo · La primera vez que nos vimos (puerta 40)",
+  "q": "el",
+  "t": "Eres. Presente. Siempre presente.",
+  "d": "[quickly] Eres. Presente. Siempre presente.",
+  "revisada": true
+ },
+ {
+  "id": "10u2nq1",
+  "g": "Recuerdo · La primera vez que nos vimos (puerta 40)",
+  "q": "ella",
+  "t": "Ah, bueno. Salvaste la conversación.",
+  "d": "[laughs] Ah, bueno. Salvaste la conversación.",
+  "revisada": true
+ },
+ {
+  "id": "1ye58cv",
+  "g": "Recuerdo · La primera vez que nos vimos (puerta 40)",
+  "q": "el",
+  "t": "Y ese viaje valió cada kilómetro.",
+  "d": "[warmly] Y ese viaje valió cada kilómetro.",
+  "revisada": true
+ },
+ {
+  "id": "0a1ddwo",
+  "g": "Recuerdo · La meta de diciembre (puerta 45)",
+  "q": "ella",
+  "t": "Yo quería trabajar, tener mi propia plata. Intenté de todo… y algunas cosas eran estafas.",
+  "d": "[serious] Yo quería trabajar, tener mi propia plata. Intenté de todo… y algunas cosas eran estafas.",
+  "revisada": true
+ },
+ {
+  "id": "1k1s9js",
+  "g": "Recuerdo · La meta de diciembre (puerta 45)",
+  "q": "el",
+  "t": "Esta vez te estafaron a ti.",
+  "d": "[teasing] Esta vez te estafaron a ti.",
+  "revisada": true
+ },
+ {
+  "id": "0ce2npb",
+  "g": "Recuerdo · La meta de diciembre (puerta 45)",
+  "q": "ella",
+  "t": "¡Ja! El karma de Transformice.",
+  "d": "[laughs] ¡Ja! El karma de Transformice.",
+  "revisada": true
+ },
+ {
+  "id": "1hhhe47",
+  "g": "Recuerdo · La meta de diciembre (puerta 45)",
+  "q": "ella",
+  "t": "Hasta que decidí ser directora de Yanbal. Casi un año intentándolo.",
+  "d": "[proudly] Hasta que decidí ser directora de Yanbal. Casi un año intentándolo.",
+  "revisada": true
+ },
+ {
+  "id": "0paurp9",
+  "g": "Recuerdo · La meta de diciembre (puerta 45)",
+  "q": "ella",
+  "t": "Y la meta se cumplía en diciembre… justo antes de nuestro viaje a Cartagena.",
+  "d": "Y la meta se cumplía en diciembre… justo antes de nuestro viaje a Cartagena.",
+  "revisada": true
+ },
+ {
+  "id": "1y2giwp",
+  "g": "Recuerdo · La meta de diciembre (puerta 45)",
+  "q": "ella",
+  "t": "Tenía un miedo: si no la cumplía, iba a estar triste en Cartagena y te iba a dañar el paseo.",
+  "d": "[worried] Tenía un miedo: si no la cumplía, iba a estar triste en Cartagena y te iba a dañar el paseo.",
+  "revisada": true
+ },
+ {
+  "id": "16bovvh",
+  "g": "Recuerdo · La meta de diciembre (puerta 45)",
+  "q": "el",
+  "t": "Tú nunca me dañas nada.",
+  "d": "[softly] Tú nunca me dañas nada.",
+  "revisada": true
+ },
+ {
+  "id": "0rvplfq",
+  "g": "Recuerdo · La meta de diciembre (puerta 45)",
+  "q": "ella",
+  "t": "¡Y la cumplí! A los dos días ya íbamos para Cartagena.",
+  "d": "[excited] ¡Y la cumplí! A los dos días ya íbamos para Cartagena.",
+  "revisada": true
+ },
+ {
+  "id": "12fhylt",
+  "g": "Recuerdo · La meta de diciembre (puerta 45)",
+  "q": "el",
+  "t": "Mi directora.",
+  "d": "[proudly] Mi directora.",
+  "revisada": true
+ },
+ {
+  "id": "0dmrmq4",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "ella",
+  "t": "¡Cartagena! Nuestro primer viaje de playa. Solo los dos.",
+  "d": "[excited] ¡Cartagena! Nuestro primer viaje de playa. Solo los dos.",
+  "revisada": true
+ },
+ {
+  "id": "1792yxr",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "el",
+  "t": "Bueno… primero hubo un problemita con el vuelo.",
+  "d": "[sheepishly] Bueno… primero hubo un problemita con el vuelo.",
+  "revisada": true
+ },
+ {
+  "id": "1mbkkkx",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "ella",
+  "t": "¿Problemita? No pudiste viajar el día que habíamos acordado.",
+  "d": "[annoyed] ¿Problemita? No pudiste viajar el día que habíamos acordado.",
+  "revisada": true
+ },
+ {
+  "id": "1ujxuu8",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "el",
+  "t": "Y la aerolínea me dio un hotel cinco estrellas, de compensación.",
+  "d": "[innocently] Y la aerolínea me dio un hotel cinco estrellas, de compensación.",
+  "revisada": true
+ },
+ {
+  "id": "04obewi",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "ella",
+  "t": "Y yo dormí toda la noche en una banca de piedra del aeropuerto.",
+  "d": "[sarcastic] Y yo dormí toda la noche en una banca de piedra del aeropuerto.",
+  "revisada": true
+ },
+ {
+  "id": "11xhmoo",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "ella",
+  "t": "¡¿Y todavía lo dices así de tranquilo?!",
+  "d": "[outraged] ¡¿Y todavía lo dices así de tranquilo?!",
+  "revisada": true
+ },
+ {
+  "id": "1fwh8se",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "el",
+  "t": "Te pensé toda la noche… desde la cama grandota.",
+  "d": "[teasing] Te pensé toda la noche… desde la cama grandota.",
+  "revisada": true
+ },
+ {
+  "id": "0lxsyhk",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "ella",
+  "t": "Muy chistoso.",
+  "d": "[sarcastic] Muy chistoso.",
+  "revisada": true
+ },
+ {
+  "id": "1fdgmzb",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "el",
+  "t": "Después alquilamos una moto acuática y salimos volando por el mar.",
+  "d": "[excited] Después alquilamos una moto acuática y salimos volando por el mar.",
+  "revisada": true
+ },
+ {
+  "id": "0qkcd96",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "ella",
+  "t": "Y conocí el castillo, y tantas cosas que nunca había visto.",
+  "d": "[happy] Y conocí el castillo, y tantas cosas que nunca había visto.",
+  "revisada": true
+ },
+ {
+  "id": "0u3xk82",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "el",
+  "t": "Parecías una niña chiquita, mirándolo todo.",
+  "d": "[tenderly] Parecías una niña chiquita, mirándolo todo.",
+  "revisada": true
+ },
+ {
+  "id": "0j6hqq7",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "ella",
+  "t": "Es que allá me sentí yo, contigo. Muy feliz.",
+  "d": "[softly] Es que allá me sentí yo, contigo. Muy feliz.",
+  "revisada": true
+ },
+ {
+  "id": "0cf077s",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "el",
+  "t": "La próxima vez yo duermo en el aeropuerto y tú en el hotel. Prometido.",
+  "d": "[playfully] La próxima vez yo duermo en el aeropuerto y tú en el hotel. Prometido.",
+  "revisada": true
+ },
+ {
+  "id": "1mryiy0",
+  "g": "Recuerdo · Cartagena (puerta 50)",
+  "q": "ella",
+  "t": "Lo dejo por escrito aquí, para que no se te olvide.",
+  "d": "[teasing] Lo dejo por escrito aquí, para que no se te olvide.",
+  "revisada": true
+ },
+ {
+  "id": "1hkar4r",
+  "g": "Recuerdo · Me enamoré de la vida (puerta 55)",
+  "q": "ella",
+  "t": "Hubo un tiempo en que yo estaba muy triste. Sin ganas de nada.",
+  "d": "[sad] Hubo un tiempo en que yo estaba muy triste. Sin ganas de nada.",
+  "revisada": true
+ },
+ {
+  "id": "1uxus3f",
+  "g": "Recuerdo · Me enamoré de la vida (puerta 55)",
+  "q": "el",
+  "t": "Me acuerdo.",
+  "d": "[softly] Me acuerdo.",
+  "revisada": true
+ },
+ {
+  "id": "0cyzisx",
+  "g": "Recuerdo · Me enamoré de la vida (puerta 55)",
+  "q": "ella",
+  "t": "Y tú me motivabas en todo. Todos los días.",
+  "d": "[warmly] Y tú me motivabas en todo. Todos los días.",
+  "revisada": true
+ },
+ {
+  "id": "02zdbim",
+  "g": "Recuerdo · Me enamoré de la vida (puerta 55)",
+  "q": "ella",
+  "t": "No sé en qué momento empecé a sentirme feliz… a amar la vida, a imaginarme un futuro y desearlo.",
+  "d": "[emotional] No sé en qué momento empecé a sentirme feliz… a amar la vida, a imaginarme un futuro y desearlo.",
+  "revisada": true
+ },
+ {
+  "id": "1dw8ju4",
+  "g": "Recuerdo · Me enamoré de la vida (puerta 55)",
+  "q": "el",
+  "t": "Yo sí sé: cuando empezaste a verte como yo te veo.",
+  "d": "[tenderly] Yo sí sé: cuando empezaste a verte como yo te veo.",
+  "revisada": true
+ },
+ {
+  "id": "14cilsr",
+  "g": "Recuerdo · Me enamoré de la vida (puerta 55)",
+  "q": "ella",
+  "t": "Me enamoré de ti… y después me enamoré de la vida.",
+  "d": "[emotional] Me enamoré de ti… y después me enamoré de la vida.",
+  "revisada": true
+ },
+ {
+  "id": "0hgkxfj",
+  "g": "Recuerdo · Las luces de diciembre (puerta 60)",
+  "q": "el",
+  "t": "En diciembre fuimos a ver los alumbrados de Medellín.",
+  "d": "[nostalgic] En diciembre fuimos a ver los alumbrados de Medellín.",
+  "revisada": true
+ },
+ {
+  "id": "1oactdi",
+  "g": "Recuerdo · Las luces de diciembre (puerta 60)",
+  "q": "ella",
+  "t": "¡Los que hicieron con Disney! Todo brillaba.",
+  "d": "[excited] ¡Los que hicieron con Disney! Todo brillaba.",
+  "revisada": true
+ },
+ {
+  "id": "045d5pd",
+  "g": "Recuerdo · Las luces de diciembre (puerta 60)",
+  "q": "el",
+  "t": "Yo solo veía cómo te brillaban los ojos.",
+  "d": "[tenderly] Yo solo veía cómo te brillaban los ojos.",
+  "revisada": true
+ },
+ {
+  "id": "1feu6ga",
+  "g": "Recuerdo · Las luces de diciembre (puerta 60)",
+  "q": "ella",
+  "t": "Ay… ¿y las luces?",
+  "d": "[shy] Ay… ¿y las luces?",
+  "revisada": true
+ },
+ {
+  "id": "0m5fq95",
+  "g": "Recuerdo · Las luces de diciembre (puerta 60)",
+  "q": "el",
+  "t": "Bonitas también. Pero no tanto.",
+  "d": "[playfully] Bonitas también. Pero no tanto.",
+  "revisada": true
+ },
+ {
+  "id": "0bfhhx0",
+  "g": "Recuerdo · De Sopetrán a Bucaramanga (puerta 65)",
+  "q": "ella",
+  "t": "Yo en Sopetrán, tú en Bucaramanga. Ocho horas de distancia.",
+  "d": "[sighs] Yo en Sopetrán, tú en Bucaramanga. Ocho horas de distancia.",
+  "revisada": true
+ },
+ {
+  "id": "17peucx",
+  "g": "Recuerdo · De Sopetrán a Bucaramanga (puerta 65)",
+  "q": "el",
+  "t": "Nueve.",
+  "d": "[correcting] Nueve.",
+  "revisada": true
+ },
+ {
+  "id": "163zu6e",
+  "g": "Recuerdo · De Sopetrán a Bucaramanga (puerta 65)",
+  "q": "ella",
+  "t": "Ocho… si el bus no para.",
+  "d": "[insisting] Ocho… si el bus no para.",
+  "revisada": true
+ },
+ {
+  "id": "0whscc8",
+  "g": "Recuerdo · De Sopetrán a Bucaramanga (puerta 65)",
+  "q": "el",
+  "t": "El bus siempre para.",
+  "d": "[deadpan] El bus siempre para.",
+  "revisada": true
+ },
+ {
+  "id": "0oej656",
+  "g": "Recuerdo · De Sopetrán a Bucaramanga (puerta 65)",
+  "q": "ella",
+  "t": "Distintos departamentos, distintas costumbres… y aquí estamos.",
+  "d": "[warmly] Distintos departamentos, distintas costumbres… y aquí estamos.",
+  "revisada": true
+ },
+ {
+  "id": "0n7iad2",
+  "g": "Recuerdo · De Sopetrán a Bucaramanga (puerta 65)",
+  "q": "el",
+  "t": "Tú eres todo lo contrario a mí.",
+  "d": "[amused] Tú eres todo lo contrario a mí.",
+  "revisada": true
+ },
+ {
+  "id": "1gk4fl5",
+  "g": "Recuerdo · De Sopetrán a Bucaramanga (puerta 65)",
+  "q": "ella",
+  "t": "Y tú a mí. Por eso encajamos: lo que no tiene uno, lo tiene el otro.",
+  "d": "[lovingly] Y tú a mí. Por eso encajamos: lo que no tiene uno, lo tiene el otro.",
+  "revisada": true
+ },
+ {
+  "id": "1xxgqad",
+  "g": "Recuerdo · De Sopetrán a Bucaramanga (puerta 65)",
+  "q": "el",
+  "t": "Somos el complemento.",
+  "d": "[tenderly] Somos el complemento.",
+  "revisada": true
+ },
+ {
+  "id": "1l8gpq0",
+  "g": "Recuerdo · Halloween elegante (puerta 70)",
+  "q": "ella",
+  "t": "En todos los Halloween nos vestimos elegantes.",
+  "d": "[happy] En todos los Halloween nos vestimos elegantes.",
+  "revisada": true
+ },
+ {
+  "id": "0fot6pf",
+  "g": "Recuerdo · Halloween elegante (puerta 70)",
+  "q": "el",
+  "t": "Y compramos vestidos… y tú te ves lindísima.",
+  "d": "[admiring] Y compramos vestidos… y tú te ves lindísima.",
+  "revisada": true
+ },
+ {
+  "id": "1dk6wxh",
+  "g": "Recuerdo · Halloween elegante (puerta 70)",
+  "q": "el",
+  "t": "Me encanta verte en ese vestido. Me derrite.",
+  "d": "[flirty] Me encanta verte en ese vestido. Me derrite.",
+  "revisada": true
+ },
+ {
+  "id": "0485sn1",
+  "g": "Recuerdo · Halloween elegante (puerta 70)",
+  "q": "ella",
+  "t": "Dímelo otra vez, que no te escuché bien.",
+  "d": "[flirty] Dímelo otra vez, que no te escuché bien.",
+  "revisada": true
+ },
+ {
+  "id": "1dut4ch",
+  "g": "Recuerdo · Halloween elegante (puerta 70)",
+  "q": "el",
+  "t": "Me. De. Rri. Te.",
+  "d": "[slowly, playfully] Me. De. Rri. Te.",
+  "revisada": true
+ },
+ {
+  "id": "1inmeh2",
+  "g": "Recuerdo · Halloween elegante (puerta 70)",
+  "q": "ella",
+  "t": "Así sí.",
+  "d": "[giggles] Así sí.",
+  "revisada": true
+ },
+ {
+  "id": "07tyq5a",
+  "g": "Recuerdo · Un cumpleaños de reina (puerta 75)",
+  "q": "el",
+  "t": "Por tu cumpleaños te llevé a un restaurante de súper lujo.",
+  "d": "[proudly] Por tu cumpleaños te llevé a un restaurante de súper lujo.",
+  "revisada": true
+ },
+ {
+  "id": "0t0ksdr",
+  "g": "Recuerdo · Un cumpleaños de reina (puerta 75)",
+  "q": "ella",
+  "t": "Me sentí como una reina.",
+  "d": "[happy] Me sentí como una reina.",
+  "revisada": true
+ },
+ {
+  "id": "0l3cuo9",
+  "g": "Recuerdo · Un cumpleaños de reina (puerta 75)",
+  "q": "el",
+  "t": "Eras la reina del lugar.",
+  "d": "[lovingly] Eras la reina del lugar.",
+  "revisada": true
+ },
+ {
+  "id": "02tlfb0",
+  "g": "Recuerdo · Un cumpleaños de reina (puerta 75)",
+  "q": "ella",
+  "t": "Y tú el rey… que pagó la cuenta.",
+  "d": "[teasing] Y tú el rey… que pagó la cuenta.",
+  "revisada": true
+ },
+ {
+  "id": "0smjhud",
+  "g": "Recuerdo · Un cumpleaños de reina (puerta 75)",
+  "q": "el",
+  "t": "Con todo el gusto del mundo.",
+  "d": "[chuckles] Con todo el gusto del mundo.",
+  "revisada": true
+ },
+ {
+  "id": "0oq0zyq",
+  "g": "Recuerdo · Un cuento de hadas (puerta 80)",
+  "q": "ella",
+  "t": "Yo siempre digo que tú eres mis oraciones respondidas. Todo lo que le pedí a Dios.",
+  "d": "[emotional] Yo siempre digo que tú eres mis oraciones respondidas. Todo lo que le pedí a Dios.",
+  "revisada": true
+ },
+ {
+  "id": "1nj1pa1",
+  "g": "Recuerdo · Un cuento de hadas (puerta 80)",
+  "q": "el",
+  "t": "¿Todo, todo? ¿Hasta lo de las tareas?",
+  "d": "[teasing] ¿Todo, todo? ¿Hasta lo de las tareas?",
+  "revisada": true
+ },
+ {
+  "id": "0t30bfo",
+  "g": "Recuerdo · Un cuento de hadas (puerta 80)",
+  "q": "ella",
+  "t": "Hasta lo de las tareas.",
+  "d": "[laughs] Hasta lo de las tareas.",
+  "revisada": true
+ },
+ {
+  "id": "122rlu0",
+  "g": "Recuerdo · Un cuento de hadas (puerta 80)",
+  "q": "el",
+  "t": "Somos la persona que el otro soñó.",
+  "d": "[tenderly] Somos la persona que el otro soñó.",
+  "revisada": true
+ },
+ {
+  "id": "07qz16w",
+  "g": "Recuerdo · Un cuento de hadas (puerta 80)",
+  "q": "ella",
+  "t": "Esta historia es un cuento de hadas.",
+  "d": "[dreamy] Esta historia es un cuento de hadas.",
+  "revisada": true
+ },
+ {
+  "id": "0sh5wmi",
+  "g": "Recuerdo · Un cuento de hadas (puerta 80)",
+  "q": "el",
+  "t": "Con castillo y todo.",
+  "d": "[playfully] Con castillo y todo.",
+  "revisada": true
+ },
+ {
+  "id": "10liima",
+  "g": "Recuerdo · Un cuento de hadas (puerta 80)",
+  "q": "ella",
+  "t": "Y solo le pido una cosa: un final de Disney.",
+  "d": "[hopeful] Y solo le pido una cosa: un final de Disney.",
+  "revisada": true
+ },
+ {
+  "id": "1rrsxj5",
+  "g": "Recuerdo · Un cuento de hadas (puerta 80)",
+  "q": "el",
+  "t": "Eso déjamelo a mí.",
+  "d": "[confident] Eso déjamelo a mí.",
+  "revisada": true
+ },
+ {
+  "id": "0f6sxwp",
+  "g": "Recuerdo · El planetario (puerta 85)",
+  "q": "el",
+  "t": "La primera vez que fui a Medellín fuimos al Parque Explora.",
+  "d": "[nostalgic] La primera vez que fui a Medellín fuimos al Parque Explora.",
+  "revisada": true
+ },
+ {
+  "id": "1yd2bcd",
+  "g": "Recuerdo · El planetario (puerta 85)",
+  "q": "ella",
+  "t": "Y al planetario. Miles de estrellas en el techo.",
+  "d": "[dreamy] Y al planetario. Miles de estrellas en el techo.",
+  "revisada": true
+ },
+ {
+  "id": "0aojbtj",
+  "g": "Recuerdo · El planetario (puerta 85)",
+  "q": "el",
+  "t": "¿Viste alguna estrella o solo me mirabas a mí?",
+  "d": "[teasing] ¿Viste alguna estrella o solo me mirabas a mí?",
+  "revisada": true
+ },
+ {
+  "id": "1ns5jvq",
+  "g": "Recuerdo · El planetario (puerta 85)",
+  "q": "ella",
+  "t": "¡Oye! Eso lo tenía que preguntar yo.",
+  "d": "[indignant] ¡Oye! Eso lo tenía que preguntar yo.",
+  "revisada": true
+ },
+ {
+  "id": "12uxxk3",
+  "g": "Recuerdo · El planetario (puerta 85)",
+  "q": "el",
+  "t": "Yo sí te miraba a ti. Eras la más bonita del planetario.",
+  "d": "[lovingly] Yo sí te miraba a ti. Eras la más bonita del planetario.",
+  "revisada": true
+ },
+ {
+  "id": "09zw5qg",
+  "g": "Recuerdo · El planetario (puerta 85)",
+  "q": "ella",
+  "t": "Ahí sí te salió bien.",
+  "d": "[giggles] Ahí sí te salió bien.",
+  "revisada": true
+ },
+ {
+  "id": "198wu1m",
+  "g": "Recuerdo · Mi hogar eres tú (puerta 90)",
+  "q": "ella",
+  "t": "Después vino la ansiedad. Me faltaba el aire y creía que mis pulmones estaban enfermos.",
+  "d": "[serious] Después vino la ansiedad. Me faltaba el aire y creía que mis pulmones estaban enfermos.",
+  "revisada": true
+ },
+ {
+  "id": "11nnk8q",
+  "g": "Recuerdo · Mi hogar eres tú (puerta 90)",
+  "q": "ella",
+  "t": "Y luego se fue mi abuela.",
+  "d": "[sad] Y luego se fue mi abuela.",
+  "revisada": true
+ },
+ {
+  "id": "1gezssb",
+  "g": "Recuerdo · Mi hogar eres tú (puerta 90)",
+  "q": "el",
+  "t": "Y ahí estuve contigo, en todo.",
+  "d": "[softly] Y ahí estuve contigo, en todo.",
+  "revisada": true
+ },
+ {
+  "id": "1qp4j3a",
+  "g": "Recuerdo · Mi hogar eres tú (puerta 90)",
+  "q": "ella",
+  "t": "Cuando viajé a Bucaramanga a verte, solo pensaba una cosa: «cuando lo vea, todo va a ser más fácil».",
+  "d": "[emotional] Cuando viajé a Bucaramanga a verte, solo pensaba una cosa: «cuando lo vea, todo va a ser más fácil».",
+  "revisada": true
+ },
+ {
+  "id": "0s2qibw",
+  "g": "Recuerdo · Mi hogar eres tú (puerta 90)",
+  "q": "el",
+  "t": "¿Y fue así?",
+  "d": "[softly] ¿Y fue así?",
+  "revisada": true
+ },
+ {
+  "id": "197q5x8",
+  "g": "Recuerdo · Mi hogar eres tú (puerta 90)",
+  "q": "ella",
+  "t": "Siempre es así. Tú eres mi pilar: cuando siento que no puedo más, me sostengo en ti y la vida se vuelve más liviana.",
+  "d": "[emotional] Siempre es así. Tú eres mi pilar: cuando siento que no puedo más, me sostengo en ti y la vida se vuelve más liviana.",
+  "revisada": true
+ },
+ {
+  "id": "01c2ybl",
+  "g": "Recuerdo · Mi hogar eres tú (puerta 90)",
+  "q": "ella",
+  "t": "Tú eres mi hogar.",
+  "d": "[tenderly] Tú eres mi hogar.",
+  "revisada": true
+ },
+ {
+  "id": "09j0is4",
+  "g": "Recuerdo · Mi hogar eres tú (puerta 90)",
+  "q": "el",
+  "t": "Y tú el mío. Por eso siempre volvemos a casa.",
+  "d": "[lovingly] Y tú el mío. Por eso siempre volvemos a casa.",
+  "revisada": true
+ },
+ {
+  "id": "1qpj5pv",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "ella",
+  "t": "Yo llevaba tiempo pensando: ¿cuándo me va a pedir matrimonio?",
+  "d": "[curious] Yo llevaba tiempo pensando: ¿cuándo me va a pedir matrimonio?",
+  "revisada": true
+ },
+ {
+  "id": "0qwyukn",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "el",
+  "t": "Y yo, calladito, comprando el anillo.",
+  "d": "[mischievously] Y yo, calladito, comprando el anillo.",
+  "revisada": true
+ },
+ {
+  "id": "11gf3mh",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "ella",
+  "t": "Estábamos comiendo picada. Yo en pijama.",
+  "d": "[laughs] Estábamos comiendo picada. Yo en pijama.",
+  "revisada": true
+ },
+ {
+  "id": "0bzpfzy",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "el",
+  "t": "Y después de la picada te dije que cerraras los ojos.",
+  "d": "[softly] Y después de la picada te dije que cerraras los ojos.",
+  "revisada": true
+ },
+ {
+  "id": "1cq3t12",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "ella",
+  "t": "Me pusiste una cajita en las manos y me preguntaste qué creía que era.",
+  "d": "[excited] Me pusiste una cajita en las manos y me preguntaste qué creía que era.",
+  "revisada": true
+ },
+ {
+  "id": "0nqajr4",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "ella",
+  "t": "Yo pensaba: ¿unos aretes? ¿Una cadena? Pero una vocecita me decía: es el anillo, es el anillo…",
+  "d": "[nervous excitement] Yo pensaba: ¿unos aretes? ¿Una cadena? Pero una vocecita me decía: es el anillo, es el anillo…",
+  "revisada": true
+ },
+ {
+  "id": "00eio61",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "el",
+  "t": "Y era el anillo.",
+  "d": "[tenderly] Y era el anillo.",
+  "revisada": true
+ },
+ {
+  "id": "0nfr4sl",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "ella",
+  "t": "Tú arrodillado en la cama, yo sentada… y me puse a llorar.",
+  "d": "[emotional] Tú arrodillado en la cama, yo sentada… y me puse a llorar.",
+  "revisada": true
+ },
+ {
+  "id": "1mebv54",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "el",
+  "t": "Lloraste muchísimo.",
+  "d": "[teasing] Lloraste muchísimo.",
+  "revisada": true
+ },
+ {
+  "id": "08gcxhx",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "ella",
+  "t": "¡Lloré lo justo!",
+  "d": "[indignant] ¡Lloré lo justo!",
+  "revisada": true
+ },
+ {
+  "id": "01cl30w",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "el",
+  "t": "Te dije lo mucho que te amo, que quiero pasar el resto de mi vida contigo, hacer una familia, un hogar.",
+  "d": "[emotional] Te dije lo mucho que te amo, que quiero pasar el resto de mi vida contigo, hacer una familia, un hogar.",
+  "revisada": true
+ },
+ {
+  "id": "0h7l4sb",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "ella",
+  "t": "¡Y yo toda desarreglada!",
+  "d": "[laughs] ¡Y yo toda desarreglada!",
+  "revisada": true
+ },
+ {
+  "id": "1oo4661",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "el",
+  "t": "Estabas perfecta.",
+  "d": "[lovingly] Estabas perfecta.",
+  "revisada": true
+ },
+ {
+  "id": "09gg4gl",
+  "g": "Recuerdo · La propuesta (puerta 95)",
+  "q": "ella",
+  "t": "Fue tan nuestro… Jamás me lo habría esperado.",
+  "d": "[emotional] Fue tan nuestro… Jamás me lo habría esperado.",
+  "revisada": true
+ },
+ {
+  "id": "01sx7ac",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "el",
+  "t": "Tenemos un sueño: ser papás.",
+  "d": "[dreamy] Tenemos un sueño: ser papás.",
+  "revisada": true
+ },
+ {
+  "id": "1f4y07q",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "ella",
+  "t": "Queremos una niña… y si es niño, lo vamos a amar igualito.",
+  "d": "[tenderly] Queremos una niña… y si es niño, lo vamos a amar igualito.",
+  "revisada": true
+ },
+ {
+  "id": "1puzsz7",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "ella",
+  "t": "Y ya tiene nombre: Katherine.",
+  "d": "[proudly] Y ya tiene nombre: Katherine.",
+  "revisada": true
+ },
+ {
+  "id": "10rhugb",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "el",
+  "t": "Lexy Katherine.",
+  "d": "[insisting] Lexy Katherine.",
+  "revisada": true
+ },
+ {
+  "id": "0m713zy",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "ella",
+  "t": "Katherine.",
+  "d": "[firmly] Katherine.",
+  "revisada": true
+ },
+ {
+  "id": "031yx25",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "el",
+  "t": "Lexy, de Alexis, mi segundo nombre…",
+  "d": "[persuasive] Lexy, de Alexis, mi segundo nombre…",
+  "revisada": true
+ },
+ {
+  "id": "1qihll0",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "ella",
+  "t": "…y con L, como manda la tradición de mi familia. Bueno, está bien: Lexy Katherine.",
+  "d": "[sighs] …y con L, como manda la tradición de mi familia. [laughs] Bueno, está bien: Lexy Katherine.",
+  "revisada": true
+ },
+ {
+  "id": "1byc8tq",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "ella",
+  "t": "Tú vas a ser el mejor papá y el mejor esposo.",
+  "d": "[tenderly] Tú vas a ser el mejor papá y el mejor esposo.",
+  "revisada": true
+ },
+ {
+  "id": "0v557qd",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "el",
+  "t": "Y tú la mejor mamá del mundo.",
+  "d": "[lovingly] Y tú la mejor mamá del mundo.",
+  "revisada": true
+ },
+ {
+  "id": "1q4yqou",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "el",
+  "t": "Lo que más amo de ti son tus labios y tu sonrisa. Cada vez que sonríes, me vuelvo a enamorar.",
+  "d": "[lovingly] Lo que más amo de ti son tus labios y tu sonrisa. Cada vez que sonríes, me vuelvo a enamorar.",
+  "revisada": true
+ },
+ {
+  "id": "0t54fth",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "ella",
+  "t": "Y lo que más me gusta a mí es estar abrazados en camita, sin hacer nada.",
+  "d": "[dreamy] Y lo que más me gusta a mí es estar abrazados en camita, sin hacer nada.",
+  "revisada": true
+ },
+ {
+  "id": "0mqagz9",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "el",
+  "t": "Plan perfecto para el resto de la vida.",
+  "d": "[happy] Plan perfecto para el resto de la vida.",
+  "revisada": true
+ },
+ {
+  "id": "1mmco0v",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "ella",
+  "t": "Nuestro cuento de hadas…",
+  "d": "[dreamy] Nuestro cuento de hadas…",
+  "revisada": true
+ },
+ {
+  "id": "1bgek3d",
+  "g": "Recuerdo · Para siempre (puerta 100)",
+  "q": "el",
+  "t": "…con final de Disney: felices para siempre.",
+  "d": "[emotional] …con final de Disney: felices para siempre.",
+  "revisada": true
+ },
+ {
+  "id": "012mbat",
+  "g": "Final (puerta 100)",
+  "q": "el",
+  "t": "¡Cien puertas, mi amor! Todos nuestros recuerdos volvieron a casa.",
+  "d": "[very excited] ¡Cien puertas, mi amor! Todos nuestros recuerdos volvieron a casa.",
+  "revisada": true
+ },
+ {
+  "id": "0eqfdyt",
+  "g": "Final (puerta 100)",
+  "q": "el",
+  "t": "El Olvido no tuvo nada que hacer contra nosotros.",
+  "d": "[proudly] El Olvido no tuvo nada que hacer contra nosotros.",
+  "revisada": true
+ },
+ {
+  "id": "1lmtfpn",
+  "g": "Final (puerta 100)",
+  "q": "el",
+  "t": "Gracias por buscarme, por esforzarte y por elegirme. Eres el amor de mi vida.",
+  "d": "[emotional] Gracias por buscarme, por esforzarte y por elegirme. Eres el amor de mi vida.",
+  "revisada": true
+ },
+ {
+  "id": "0rmqvmt",
+  "g": "Final (puerta 100)",
+  "q": "el",
+  "t": "Feliz aniversario. Te amo.",
+  "d": "[tenderly] Feliz aniversario. Te amo.",
+  "revisada": true
+ },
+ {
+  "id": "0mfr5as",
+  "g": "Final (puerta 100)",
+  "q": "ella",
+  "t": "¡Cien puertas, mi amor! Todos nuestros recuerdos volvieron a casa.",
+  "d": "[very excited] ¡Cien puertas, mi amor! Todos nuestros recuerdos volvieron a casa.",
+  "revisada": true
+ },
+ {
+  "id": "0ogl5ae",
+  "g": "Final (puerta 100)",
+  "q": "ella",
+  "t": "El Olvido no tuvo nada que hacer contra nosotros.",
+  "d": "[proudly] El Olvido no tuvo nada que hacer contra nosotros.",
+  "revisada": true
+ },
+ {
+  "id": "0l781az",
+  "g": "Final (puerta 100)",
+  "q": "ella",
+  "t": "Te quise estafar en una villa de Transformice… y terminé dándote mi corazón para siempre.",
+  "d": "[emotional] Te quise estafar en una villa de Transformice… [laughs softly] y terminé dándote mi corazón para siempre.",
+  "revisada": true
+ },
+ {
+  "id": "0vyyr5z",
+  "g": "Final (puerta 100)",
+  "q": "ella",
+  "t": "Eres mis oraciones respondidas, mi pilar, mi hogar.",
+  "d": "[emotional] Eres mis oraciones respondidas, mi pilar, mi hogar.",
+  "revisada": true
+ },
+ {
+  "id": "1v3ctwg",
+  "g": "Final (puerta 100)",
+  "q": "ella",
+  "t": "Feliz aniversario. Te amo.",
+  "d": "[tenderly] Feliz aniversario. Te amo.",
+  "revisada": true
+ },
+ {
+  "id": "01szin7",
+  "g": "Inicio",
+  "q": "el",
+  "t": "Mi amor… anoche un nubarrón travieso, el Olvido, se metió por la ventana.",
+  "d": "[softly, mysterious] Mi amor… anoche un nubarrón travieso, el Olvido, se metió por la ventana.",
+  "revisada": true
+ },
+ {
+  "id": "1ac5zby",
+  "g": "Inicio",
+  "q": "el",
+  "t": "Se llevó nuestros recuerdos: desde la villa de Transformice hasta hoy.",
+  "d": "[sad] Se llevó nuestros recuerdos: desde la villa de Transformice hasta hoy.",
+  "revisada": true
+ },
+ {
+  "id": "0biiwfz",
+  "g": "Inicio",
+  "q": "el",
+  "t": "Los escondió detrás de cien puertas. Yo voy contigo a cada una: tú abres, yo te acompaño. ¿Vamos?",
+  "d": "[determined, warmly] Los escondió detrás de cien puertas. Yo voy contigo a cada una: tú abres, yo te acompaño. ¿Vamos?",
+  "revisada": true
+ },
+ {
+  "id": "1haho14",
+  "g": "Inicio",
+  "q": "ella",
+  "t": "Mi amor… anoche un nubarrón travieso, el Olvido, se metió por la ventana.",
+  "d": "[softly, mysterious] Mi amor… anoche un nubarrón travieso, el Olvido, se metió por la ventana.",
+  "revisada": true
+ },
+ {
+  "id": "0k2mgbz",
+  "g": "Inicio",
+  "q": "ella",
+  "t": "Se llevó nuestros recuerdos: desde la villa de Transformice hasta hoy.",
+  "d": "[sad] Se llevó nuestros recuerdos: desde la villa de Transformice hasta hoy.",
+  "revisada": true
+ },
+ {
+  "id": "0lyhcvw",
+  "g": "Inicio",
+  "q": "ella",
+  "t": "Los escondió detrás de cien puertas. Yo voy contigo a cada una: tú abres, yo te acompaño. ¿Vamos?",
+  "d": "[determined, warmly] Los escondió detrás de cien puertas. Yo voy contigo a cada una: tú abres, yo te acompaño. ¿Vamos?",
+  "revisada": true
+ },
+ {
+  "id": "17mg8vb",
+  "g": "Capítulo 1 · Nuestra casa · llegada",
+  "q": "el",
+  "t": "Empecemos por casa. Todas las puertas amanecieron con seguro.",
+  "d": "[playfully] Empecemos por casa. Todas las puertas amanecieron con seguro.",
+  "revisada": true
+ },
+ {
+  "id": "0qekm58",
+  "g": "Capítulo 1 · Nuestra casa · llegada",
+  "q": "ella",
+  "t": "Empecemos por casa. Todas las puertas amanecieron con seguro.",
+  "d": "[playfully] Empecemos por casa. Todas las puertas amanecieron con seguro.",
+  "revisada": true
+ },
+ {
+  "id": "10hb121",
+  "g": "Capítulo 1 · Nuestra casa · despedida",
+  "q": "el",
+  "t": "¡Salimos de la casa! Y mira… se nos devolvió otro recuerdo.",
+  "d": "[excited] ¡Salimos de la casa! Y mira… se nos devolvió otro recuerdo.",
+  "revisada": true
+ },
+ {
+  "id": "0n53u3a",
+  "g": "Capítulo 1 · Nuestra casa · despedida",
+  "q": "ella",
+  "t": "¡Salimos de la casa! Y mira… se nos devolvió otro recuerdo.",
+  "d": "[excited] ¡Salimos de la casa! Y mira… se nos devolvió otro recuerdo.",
+  "revisada": true
+ },
+ {
+  "id": "05j3nnf",
+  "g": "Capítulo 2 · El jardín · llegada",
+  "q": "el",
+  "t": "Un jardín lleno de rejas. El Olvido no tiene vergüenza.",
+  "d": "[annoyed, playfully] Un jardín lleno de rejas. El Olvido no tiene vergüenza.",
+  "revisada": true
+ },
+ {
+  "id": "1hdmei0",
+  "g": "Capítulo 2 · El jardín · llegada",
+  "q": "ella",
+  "t": "Un jardín lleno de rejas. El Olvido no tiene vergüenza.",
+  "d": "[annoyed, playfully] Un jardín lleno de rejas. El Olvido no tiene vergüenza.",
+  "revisada": true
+ },
+ {
+  "id": "0ez0py8",
+  "g": "Capítulo 2 · El jardín · despedida",
+  "q": "el",
+  "t": "Otro recuerdo de vuelta. Este me pone sonrisa de bobo.",
+  "d": "[tenderly] Otro recuerdo de vuelta. [laughs] Este me pone sonrisa de bobo.",
+  "revisada": true
+ },
+ {
+  "id": "0bkohdf",
+  "g": "Capítulo 2 · El jardín · despedida",
+  "q": "ella",
+  "t": "Otro recuerdo de vuelta. Este me pone sonrisa de boba.",
+  "d": "[tenderly] Otro recuerdo de vuelta. [laughs] Este me pone sonrisa de boba.",
+  "revisada": true
+ },
+ {
+  "id": "1bw1200",
+  "g": "Capítulo 3 · La cafetería · llegada",
+  "q": "el",
+  "t": "Una cafetería como para contarnos el día, como hacíamos todas las noches.",
+  "d": "[warmly] Una cafetería como para contarnos el día, como hacíamos todas las noches.",
+  "revisada": true
+ },
+ {
+  "id": "1c9q7hn",
+  "g": "Capítulo 3 · La cafetería · llegada",
+  "q": "ella",
+  "t": "Una cafetería como para contarnos el día, como hacíamos todas las noches.",
+  "d": "[warmly] Una cafetería como para contarnos el día, como hacíamos todas las noches.",
+  "revisada": true
+ },
+ {
+  "id": "0zie9lj",
+  "g": "Capítulo 3 · La cafetería · despedida",
+  "q": "el",
+  "t": "Ya van a cerrar. Pero antes… mira lo que recuperamos.",
+  "d": "[mischievously] Ya van a cerrar. Pero antes… mira lo que recuperamos.",
+  "revisada": true
+ },
+ {
+  "id": "1v0njm8",
+  "g": "Capítulo 3 · La cafetería · despedida",
+  "q": "ella",
+  "t": "Ya van a cerrar. Pero antes… mira lo que recuperamos.",
+  "d": "[mischievously] Ya van a cerrar. Pero antes… mira lo que recuperamos.",
+  "revisada": true
+ },
+ {
+  "id": "0moopus",
+  "g": "Capítulo 4 · La terminal · llegada",
+  "q": "el",
+  "t": "La terminal: aquí aprendimos a extrañarnos.",
+  "d": "[nostalgic] La terminal: aquí aprendimos a extrañarnos.",
+  "revisada": true
+ },
+ {
+  "id": "08lem2j",
+  "g": "Capítulo 4 · La terminal · llegada",
+  "q": "el",
+  "t": "Pero también a viajar para vernos. Siempre volvemos.",
+  "d": "[warmly] Pero también a viajar para vernos. Siempre volvemos.",
+  "revisada": true
+ },
+ {
+  "id": "1pkxxp7",
+  "g": "Capítulo 4 · La terminal · llegada",
+  "q": "ella",
+  "t": "La terminal: aquí aprendimos a extrañarnos.",
+  "d": "[nostalgic] La terminal: aquí aprendimos a extrañarnos.",
+  "revisada": true
+ },
+ {
+  "id": "170pzti",
+  "g": "Capítulo 4 · La terminal · llegada",
+  "q": "ella",
+  "t": "Pero también a viajar para vernos. Siempre volvemos.",
+  "d": "[warmly] Pero también a viajar para vernos. Siempre volvemos.",
+  "revisada": true
+ },
+ {
+  "id": "1v1x6nd",
+  "g": "Capítulo 4 · La terminal · despedida",
+  "q": "el",
+  "t": "Qué bonito es llegar a donde está uno.",
+  "d": "[tenderly] Qué bonito es llegar a donde está uno.",
+  "revisada": true
+ },
+ {
+  "id": "02smvi4",
+  "g": "Capítulo 4 · La terminal · despedida",
+  "q": "ella",
+  "t": "Qué bonito es llegar a donde está uno.",
+  "d": "[tenderly] Qué bonito es llegar a donde está uno.",
+  "revisada": true
+ },
+ {
+  "id": "09hezu3",
+  "g": "Capítulo 5 · La playa · llegada",
+  "q": "el",
+  "t": "¡El mar! Arena, sol y… tormentas. Ya verás.",
+  "d": "[excited] ¡El mar! Arena, sol y… [ominous] tormentas. Ya verás.",
+  "revisada": true
+ },
+ {
+  "id": "0fi8iir",
+  "g": "Capítulo 5 · La playa · llegada",
+  "q": "el",
+  "t": "El Olvido escondió las puertas entre las conchas.",
+  "d": "[mischievously] El Olvido escondió las puertas entre las conchas.",
+  "revisada": true
+ },
+ {
+  "id": "06ckhos",
+  "g": "Capítulo 5 · La playa · llegada",
+  "q": "ella",
+  "t": "¡El mar! Arena, sol y… tormentas. Ya verás.",
+  "d": "[excited] ¡El mar! Arena, sol y… [ominous] tormentas. Ya verás.",
+  "revisada": true
+ },
+ {
+  "id": "150e2kg",
+  "g": "Capítulo 5 · La playa · llegada",
+  "q": "ella",
+  "t": "El Olvido escondió las puertas entre las conchas.",
+  "d": "[mischievously] El Olvido escondió las puertas entre las conchas.",
+  "revisada": true
+ },
+ {
+  "id": "0hyx89e",
+  "g": "Capítulo 5 · La playa · despedida",
+  "q": "el",
+  "t": "Se hizo de noche. Antes de ir al bosque… otro recuerdo.",
+  "d": "[softly] Se hizo de noche. Antes de ir al bosque… otro recuerdo.",
+  "revisada": true
+ },
+ {
+  "id": "1vwp9g1",
+  "g": "Capítulo 5 · La playa · despedida",
+  "q": "ella",
+  "t": "Se hizo de noche. Antes de ir al bosque… otro recuerdo.",
+  "d": "[softly] Se hizo de noche. Antes de ir al bosque… otro recuerdo.",
+  "revisada": true
+ },
+ {
+  "id": "0nj7co3",
+  "g": "Capítulo 6 · El bosque de las luciérnagas · llegada",
+  "q": "el",
+  "t": "El bosque de noche. No te asustes: las luciérnagas nos acompañan.",
+  "d": "[whispers] El bosque de noche. No te asustes: las luciérnagas nos acompañan.",
+  "revisada": true
+ },
+ {
+  "id": "1w10i7d",
+  "g": "Capítulo 6 · El bosque de las luciérnagas · llegada",
+  "q": "el",
+  "t": "Yo te agarro la mano.",
+  "d": "[tenderly] Yo te agarro la mano.",
+  "revisada": true
+ },
+ {
+  "id": "02kn85k",
+  "g": "Capítulo 6 · El bosque de las luciérnagas · llegada",
+  "q": "ella",
+  "t": "El bosque de noche. No te asustes: las luciérnagas nos acompañan.",
+  "d": "[whispers] El bosque de noche. No te asustes: las luciérnagas nos acompañan.",
+  "revisada": true
+ },
+ {
+  "id": "0bobnh6",
+  "g": "Capítulo 6 · El bosque de las luciérnagas · llegada",
+  "q": "ella",
+  "t": "Yo te agarro la mano.",
+  "d": "[tenderly] Yo te agarro la mano.",
+  "revisada": true
+ },
+ {
+  "id": "1cfujzt",
+  "g": "Capítulo 6 · El bosque de las luciérnagas · despedida",
+  "q": "el",
+  "t": "Tantas lucecitas me hicieron acordar de algo…",
+  "d": "[dreamy] Tantas lucecitas me hicieron acordar de algo…",
+  "revisada": true
+ },
+ {
+  "id": "1lqlitu",
+  "g": "Capítulo 6 · El bosque de las luciérnagas · despedida",
+  "q": "ella",
+  "t": "Tantas lucecitas me hicieron acordar de algo…",
+  "d": "[dreamy] Tantas lucecitas me hicieron acordar de algo…",
+  "revisada": true
+ },
+ {
+  "id": "0uhwmpm",
+  "g": "Capítulo 7 · La feria · llegada",
+  "q": "el",
+  "t": "¡La feria! Disfraces, luces y la rueda de la fortuna.",
+  "d": "[excited] ¡La feria! Disfraces, luces y la rueda de la fortuna.",
+  "revisada": true
+ },
+ {
+  "id": "0ifonyn",
+  "g": "Capítulo 7 · La feria · llegada",
+  "q": "el",
+  "t": "El Olvido se escondió entre los juegos. Qué tramposo.",
+  "d": "[playfully] El Olvido se escondió entre los juegos. Qué tramposo.",
+  "revisada": true
+ },
+ {
+  "id": "0y2yomd",
+  "g": "Capítulo 7 · La feria · llegada",
+  "q": "ella",
+  "t": "¡La feria! Disfraces, luces y la rueda de la fortuna.",
+  "d": "[excited] ¡La feria! Disfraces, luces y la rueda de la fortuna.",
+  "revisada": true
+ },
+ {
+  "id": "1rzyksc",
+  "g": "Capítulo 7 · La feria · llegada",
+  "q": "ella",
+  "t": "El Olvido se escondió entre los juegos. Qué tramposo.",
+  "d": "[playfully] El Olvido se escondió entre los juegos. Qué tramposo.",
+  "revisada": true
+ },
+ {
+  "id": "06rtnd8",
+  "g": "Capítulo 7 · La feria · despedida",
+  "q": "el",
+  "t": "Hablando de disfraces…",
+  "d": "[mischievously] Hablando de disfraces…",
+  "revisada": true
+ },
+ {
+  "id": "1fxjp0t",
+  "g": "Capítulo 7 · La feria · despedida",
+  "q": "ella",
+  "t": "Hablando de disfraces…",
+  "d": "[mischievously] Hablando de disfraces…",
+  "revisada": true
+ },
+ {
+  "id": "14y9vjx",
+  "g": "Capítulo 8 · El castillo de los cuentos · llegada",
+  "q": "el",
+  "t": "Un castillo como de cuento, con reina y todo.",
+  "d": "[dreamy] Un castillo como de cuento, con reina y todo.",
+  "revisada": true
+ },
+ {
+  "id": "04m983i",
+  "g": "Capítulo 8 · El castillo de los cuentos · llegada",
+  "q": "el",
+  "t": "Dicen que por aquí vive un dragón… ojalá esté de buen genio.",
+  "d": "[whispers] Dicen que por aquí vive un dragón… ojalá esté de buen genio.",
+  "revisada": true
+ },
+ {
+  "id": "0p7fvta",
+  "g": "Capítulo 8 · El castillo de los cuentos · llegada",
+  "q": "ella",
+  "t": "Un castillo como de cuento, con reina y todo.",
+  "d": "[dreamy] Un castillo como de cuento, con reina y todo.",
+  "revisada": true
+ },
+ {
+  "id": "0govkgf",
+  "g": "Capítulo 8 · El castillo de los cuentos · llegada",
+  "q": "ella",
+  "t": "Dicen que por aquí vive un dragón… ojalá esté de buen genio.",
+  "d": "[whispers] Dicen que por aquí vive un dragón… ojalá esté de buen genio.",
+  "revisada": true
+ },
+ {
+  "id": "1kx2pfr",
+  "g": "Capítulo 8 · El castillo de los cuentos · despedida",
+  "q": "el",
+  "t": "Fin del cuento… no, mentiras: el nuestro no se acaba. Pero mira este recuerdo.",
+  "d": "[dramatically] Fin del cuento… [laughs] no, mentiras: el nuestro no se acaba. Pero mira este recuerdo.",
+  "revisada": true
+ },
+ {
+  "id": "0jwgu82",
+  "g": "Capítulo 8 · El castillo de los cuentos · despedida",
+  "q": "ella",
+  "t": "Fin del cuento… no, mentiras: el nuestro no se acaba. Pero mira este recuerdo.",
+  "d": "[dramatically] Fin del cuento… [laughs] no, mentiras: el nuestro no se acaba. Pero mira este recuerdo.",
+  "revisada": true
+ },
+ {
+  "id": "0yjwik4",
+  "g": "Capítulo 9 · Entre las estrellas · llegada",
+  "q": "el",
+  "t": "Entre las estrellas… esto me recuerda un techo lleno de estrellas en Medellín.",
+  "d": "[dreamy] Entre las estrellas… esto me recuerda un techo lleno de estrellas en Medellín.",
+  "revisada": true
+ },
+ {
+  "id": "1bu6t3p",
+  "g": "Capítulo 9 · Entre las estrellas · llegada",
+  "q": "el",
+  "t": "Ya casi. Solo quedan unas puertitas.",
+  "d": "[excited] Ya casi. Solo quedan unas puertitas.",
+  "revisada": true
+ },
+ {
+  "id": "0okr8ld",
+  "g": "Capítulo 9 · Entre las estrellas · llegada",
+  "q": "ella",
+  "t": "Entre las estrellas… esto me recuerda un techo lleno de estrellas en Medellín.",
+  "d": "[dreamy] Entre las estrellas… esto me recuerda un techo lleno de estrellas en Medellín.",
+  "revisada": true
+ },
+ {
+  "id": "08l4hec",
+  "g": "Capítulo 9 · Entre las estrellas · llegada",
+  "q": "ella",
+  "t": "Ya casi. Solo quedan unas puertitas.",
+  "d": "[excited] Ya casi. Solo quedan unas puertitas.",
+  "revisada": true
+ },
+ {
+  "id": "0ntkrz1",
+  "g": "Capítulo 9 · Entre las estrellas · despedida",
+  "q": "el",
+  "t": "El Olvido se asustó y soltó los últimos recuerdos.",
+  "d": "[proudly] El Olvido se asustó y soltó los últimos recuerdos.",
+  "revisada": true
+ },
+ {
+  "id": "1884wc4",
+  "g": "Capítulo 9 · Entre las estrellas · despedida",
+  "q": "el",
+  "t": "Volvamos a casa, mi amor. A nuestro hogar para siempre.",
+  "d": "[tenderly] Volvamos a casa, mi amor. A nuestro hogar para siempre.",
+  "revisada": true
+ },
+ {
+  "id": "08jx998",
+  "g": "Capítulo 9 · Entre las estrellas · despedida",
+  "q": "ella",
+  "t": "El Olvido se asustó y soltó los últimos recuerdos.",
+  "d": "[proudly] El Olvido se asustó y soltó los últimos recuerdos.",
+  "revisada": true
+ },
+ {
+  "id": "1wteq53",
+  "g": "Capítulo 9 · Entre las estrellas · despedida",
+  "q": "ella",
+  "t": "Volvamos a casa, mi amor. A nuestro hogar para siempre.",
+  "d": "[tenderly] Volvamos a casa, mi amor. A nuestro hogar para siempre.",
+  "revisada": true
+ },
+ {
+  "id": "066m9f3",
+  "g": "Capítulo 10 · Nuestro hogar para siempre · llegada",
+  "q": "el",
+  "t": "Volvimos a casa… pero ahora brilla con todo lo que recuperamos.",
+  "d": "[emotional] Volvimos a casa… pero ahora brilla con todo lo que recuperamos.",
+  "revisada": true
+ },
+ {
+  "id": "0naoq3i",
+  "g": "Capítulo 10 · Nuestro hogar para siempre · llegada",
+  "q": "el",
+  "t": "Las últimas diez puertas. Las más nuestras.",
+  "d": "[softly] Las últimas diez puertas. Las más nuestras.",
+  "revisada": true
+ },
+ {
+  "id": "006bpag",
+  "g": "Capítulo 10 · Nuestro hogar para siempre · llegada",
+  "q": "ella",
+  "t": "Volvimos a casa… pero ahora brilla con todo lo que recuperamos.",
+  "d": "[emotional] Volvimos a casa… pero ahora brilla con todo lo que recuperamos.",
+  "revisada": true
+ },
+ {
+  "id": "04rloxx",
+  "g": "Capítulo 10 · Nuestro hogar para siempre · llegada",
+  "q": "ella",
+  "t": "Las últimas diez puertas. Las más nuestras.",
+  "d": "[softly] Las últimas diez puertas. Las más nuestras.",
+  "revisada": true
+ },
+ {
+  "id": "05udrp9",
+  "g": "Al empezar la puerta 1",
+  "q": "el",
+  "t": "Primera puerta, mi amor. El Olvido le echó seguro y se llevó la llave… o eso cree él.",
+  "d": "[playfully] Primera puerta, mi amor. El Olvido le echó seguro y se llevó la llave… o eso cree él.",
+  "revisada": true
+ },
+ {
+  "id": "0km76j2",
+  "g": "Al empezar la puerta 1",
+  "q": "ella",
+  "t": "Primera puerta, mi amor. El Olvido le echó seguro y se llevó la llave… o eso cree él.",
+  "d": "[playfully] Primera puerta, mi amor. El Olvido le echó seguro y se llevó la llave… o eso cree él.",
+  "revisada": true
+ },
+ {
+  "id": "0pyoyi1",
+  "g": "Al empezar la puerta 2",
+  "q": "el",
+  "t": "Antes, cuando llegabas, yo ya sabía que eras tú desde el primer golpecito.",
+  "d": "[tenderly] Antes, cuando llegabas, yo ya sabía que eras tú desde el primer golpecito.",
+  "revisada": true
+ },
+ {
+  "id": "18jag88",
+  "g": "Al empezar la puerta 2",
+  "q": "ella",
+  "t": "Antes, cuando llegabas, yo ya sabía que eras tú desde el primer golpecito.",
+  "d": "[tenderly] Antes, cuando llegabas, yo ya sabía que eras tú desde el primer golpecito.",
+  "revisada": true
+ },
+ {
+  "id": "1rlzd7y",
+  "g": "Al empezar la puerta 3",
+  "q": "el",
+  "t": "Esta sala la pintamos juntos, ¿te acuerdas? Quedó más colorida que nosotros.",
+  "d": "[nostalgic] Esta sala la pintamos juntos, ¿te acuerdas? Quedó más colorida que nosotros.",
+  "revisada": true
+ },
+ {
+  "id": "0jib0dn",
+  "g": "Al empezar la puerta 3",
+  "q": "ella",
+  "t": "Esta sala la pintamos juntos, ¿te acuerdas? Quedó más colorida que nosotros.",
+  "d": "[nostalgic] Esta sala la pintamos juntos, ¿te acuerdas? Quedó más colorida que nosotros.",
+  "revisada": true
+ },
+ {
+  "id": "1n4zqmd",
+  "g": "Al empezar la puerta 4",
+  "q": "el",
+  "t": "Aquí nos quedábamos dormidos viendo películas. Tú con toda la cobija, yo sin nada.",
+  "d": "[teasing] Aquí nos quedábamos dormidos viendo películas. Tú con toda la cobija, yo sin nada.",
+  "revisada": true
+ },
+ {
+  "id": "0p5szvo",
+  "g": "Al empezar la puerta 4",
+  "q": "ella",
+  "t": "Aquí nos quedábamos dormidos viendo películas. Tú con toda la cobija, yo sin nada.",
+  "d": "[teasing] Aquí nos quedábamos dormidos viendo películas. Tú con toda la cobija, yo sin nada.",
+  "revisada": true
+ },
+ {
+  "id": "0nz8ood",
+  "g": "Al empezar la puerta 5",
+  "q": "el",
+  "t": "La puerta de la casa. El Olvido le echó seguro por dentro… qué descarado.",
+  "d": "[annoyed] La puerta de la casa. El Olvido le echó seguro por dentro… qué descarado.",
+  "revisada": true
+ },
+ {
+  "id": "0q2631q",
+  "g": "Al empezar la puerta 5",
+  "q": "ella",
+  "t": "La puerta de la casa. El Olvido le echó seguro por dentro… qué descarado.",
+  "d": "[annoyed] La puerta de la casa. El Olvido le echó seguro por dentro… qué descarado.",
+  "revisada": true
+ },
+ {
+  "id": "03ge4nj",
+  "g": "Al empezar la puerta 6",
+  "q": "el",
+  "t": "Este juguete me lo regalaste para que dejara de morderme las uñas. No funcionó, pero lo amo.",
+  "d": "[laughs] Este juguete me lo regalaste para que dejara de morderme las uñas. No funcionó, pero lo amo.",
+  "revisada": true
+ },
+ {
+  "id": "0ebrnci",
+  "g": "Al empezar la puerta 6",
+  "q": "ella",
+  "t": "Este juguete me lo regalaste para que dejara de morderme las uñas. No funcionó, pero lo amo.",
+  "d": "[laughs] Este juguete me lo regalaste para que dejara de morderme las uñas. No funcionó, pero lo amo.",
+  "revisada": true
+ },
+ {
+  "id": "00zx6ui",
+  "g": "Al empezar la puerta 7",
+  "q": "el",
+  "t": "Nuestra foto favorita… el Olvido la hizo pedazos. Qué rabia me da.",
+  "d": "[angry] Nuestra foto favorita… el Olvido la hizo pedazos. Qué rabia me da.",
+  "revisada": true
+ },
+ {
+  "id": "0q73axf",
+  "g": "Al empezar la puerta 7",
+  "q": "ella",
+  "t": "Nuestra foto favorita… el Olvido la hizo pedazos. Qué rabia me da.",
+  "d": "[angry] Nuestra foto favorita… el Olvido la hizo pedazos. Qué rabia me da.",
+  "revisada": true
+ },
+ {
+  "id": "15nwm2h",
+  "g": "Al empezar la puerta 8",
+  "q": "el",
+  "t": "La sala de las noches largas: películas, cobijas y hablar hasta las tantas.",
+  "d": "[nostalgic] La sala de las noches largas: películas, cobijas y hablar hasta las tantas.",
+  "revisada": true
+ },
+ {
+  "id": "1sk42ym",
+  "g": "Al empezar la puerta 8",
+  "q": "ella",
+  "t": "La sala de las noches largas: películas, cobijas y hablar hasta las tantas.",
+  "d": "[nostalgic] La sala de las noches largas: películas, cobijas y hablar hasta las tantas.",
+  "revisada": true
+ },
+ {
+  "id": "1s1lov0",
+  "g": "Al empezar la puerta 9",
+  "q": "el",
+  "t": "El reloj de la sala. Nos regañaba cada vez que se nos hacía tarde hablando.",
+  "d": "[amused] El reloj de la sala. Nos regañaba cada vez que se nos hacía tarde hablando.",
+  "revisada": true
+ },
+ {
+  "id": "0xwo73b",
+  "g": "Al empezar la puerta 9",
+  "q": "ella",
+  "t": "El reloj de la sala. Nos regañaba cada vez que se nos hacía tarde hablando.",
+  "d": "[amused] El reloj de la sala. Nos regañaba cada vez que se nos hacía tarde hablando.",
+  "revisada": true
+ },
+ {
+  "id": "0ptnsxy",
+  "g": "Al empezar la puerta 10",
+  "q": "el",
+  "t": "La puerta de la calle, por fin. El último seguro de la casa.",
+  "d": "[relieved] La puerta de la calle, por fin. El último seguro de la casa.",
+  "revisada": true
+ },
+ {
+  "id": "1re63db",
+  "g": "Al empezar la puerta 10",
+  "q": "ella",
+  "t": "La puerta de la calle, por fin. El último seguro de la casa.",
+  "d": "[relieved] La puerta de la calle, por fin. El último seguro de la casa.",
+  "revisada": true
+ },
+ {
+  "id": "1am6db5",
+  "g": "Al empezar la puerta 11",
+  "q": "el",
+  "t": "El jardín de la abuela. Aquí sembramos una semillita el día que nos hicimos novios… bueno, más o menos.",
+  "d": "[nostalgic] El jardín de la abuela. Aquí sembramos una semillita el día que nos hicimos novios… [laughs] bueno, más o menos.",
+  "revisada": true
+ },
+ {
+  "id": "0a95fhu",
+  "g": "Al empezar la puerta 11",
+  "q": "ella",
+  "t": "El jardín de la abuela. Aquí sembramos una semillita el día que nos hicimos novios… bueno, más o menos.",
+  "d": "[nostalgic] El jardín de la abuela. Aquí sembramos una semillita el día que nos hicimos novios… [laughs] bueno, más o menos.",
+  "revisada": true
+ },
+ {
+  "id": "1o0su5j",
+  "g": "Al empezar la puerta 12",
+  "q": "el",
+  "t": "¡Mira, una mariposa! Tú me dijiste una vez que traían buena suerte.",
+  "d": "[excited] ¡Mira, una mariposa! Tú me dijiste una vez que traían buena suerte.",
+  "revisada": true
+ },
+ {
+  "id": "12lv39o",
+  "g": "Al empezar la puerta 12",
+  "q": "ella",
+  "t": "¡Mira, una mariposa! Tú me dijiste una vez que traían buena suerte.",
+  "d": "[excited] ¡Mira, una mariposa! Tú me dijiste una vez que traían buena suerte.",
+  "revisada": true
+ },
+ {
+  "id": "10cc0ng",
+  "g": "Al empezar la puerta 13",
+  "q": "el",
+  "t": "¡Topos! Llevan toda la mañana dañando el pasto… y robándose cosas.",
+  "d": "[outraged] ¡Topos! Llevan toda la mañana dañando el pasto… y robándose cosas.",
+  "revisada": true
+ },
+ {
+  "id": "1sqvj5p",
+  "g": "Al empezar la puerta 13",
+  "q": "ella",
+  "t": "¡Topos! Llevan toda la mañana dañando el pasto… y robándose cosas.",
+  "d": "[outraged] ¡Topos! Llevan toda la mañana dañando el pasto… y robándose cosas.",
+  "revisada": true
+ },
+ {
+  "id": "0sh85oc",
+  "g": "Al empezar la puerta 14",
+  "q": "el",
+  "t": "Este árbol da las manzanas más dulces del barrio. Ni el Olvido se atrevió a tumbarlo.",
+  "d": "[proudly] Este árbol da las manzanas más dulces del barrio. Ni el Olvido se atrevió a tumbarlo.",
+  "revisada": true
+ },
+ {
+  "id": "0v4jtij",
+  "g": "Al empezar la puerta 14",
+  "q": "ella",
+  "t": "Este árbol da las manzanas más dulces del barrio. Ni el Olvido se atrevió a tumbarlo.",
+  "d": "[proudly] Este árbol da las manzanas más dulces del barrio. Ni el Olvido se atrevió a tumbarlo.",
+  "revisada": true
+ },
+ {
+  "id": "0z0wkv6",
+  "g": "Al empezar la puerta 15",
+  "q": "el",
+  "t": "Un diente de león. De chiquito pedía deseos con ellos… y mira, uno se me cumplió.",
+  "d": "[dreamy] Un diente de león. De chiquito pedía deseos con ellos… y mira, uno se me cumplió.",
+  "revisada": true
+ },
+ {
+  "id": "07tlx4n",
+  "g": "Al empezar la puerta 15",
+  "q": "ella",
+  "t": "Un diente de león. De chiquita pedía deseos con ellos… y mira, uno se me cumplió.",
+  "d": "[dreamy] Un diente de león. De chiquita pedía deseos con ellos… y mira, uno se me cumplió.",
+  "revisada": true
+ },
+ {
+  "id": "1i7t2ti",
+  "g": "Al empezar la puerta 16",
+  "q": "el",
+  "t": "Ese caracol vive en esta matera desde siempre. Nunca tiene afán, como tú los domingos.",
+  "d": "[teasing] Ese caracol vive en esta matera desde siempre. Nunca tiene afán, como tú los domingos.",
+  "revisada": true
+ },
+ {
+  "id": "0mdpsz3",
+  "g": "Al empezar la puerta 16",
+  "q": "ella",
+  "t": "Ese caracol vive en esta matera desde siempre. Nunca tiene afán, como tú los domingos.",
+  "d": "[teasing] Ese caracol vive en esta matera desde siempre. Nunca tiene afán, como tú los domingos.",
+  "revisada": true
+ },
+ {
+  "id": "15hylmp",
+  "g": "Al empezar la puerta 17",
+  "q": "el",
+  "t": "El caminito de piedras. Lo hicimos una tarde entera y quedó torcido… pero es nuestro.",
+  "d": "[laughs] El caminito de piedras. Lo hicimos una tarde entera y quedó torcido… pero es nuestro.",
+  "revisada": true
+ },
+ {
+  "id": "0lvi0ee",
+  "g": "Al empezar la puerta 17",
+  "q": "ella",
+  "t": "El caminito de piedras. Lo hicimos una tarde entera y quedó torcido… pero es nuestro.",
+  "d": "[laughs] El caminito de piedras. Lo hicimos una tarde entera y quedó torcido… pero es nuestro.",
+  "revisada": true
+ },
+ {
+  "id": "0szhic9",
+  "g": "Al empezar la puerta 18",
+  "q": "el",
+  "t": "El reloj de sol de la abuela. Dice que solo marca las horas felices.",
+  "d": "[softly] El reloj de sol de la abuela. Dice que solo marca las horas felices.",
+  "revisada": true
+ },
+ {
+  "id": "0y6wlig",
+  "g": "Al empezar la puerta 18",
+  "q": "ella",
+  "t": "El reloj de sol de la abuela. Dice que solo marca las horas felices.",
+  "d": "[softly] El reloj de sol de la abuela. Dice que solo marca las horas felices.",
+  "revisada": true
+ },
+ {
+  "id": "0d0ses2",
+  "g": "Al empezar la puerta 19",
+  "q": "el",
+  "t": "Nadie ha barrido este jardín desde el otoño pasado. Qué pereza.",
+  "d": "[sighs] Nadie ha barrido este jardín desde el otoño pasado. Qué pereza.",
+  "revisada": true
+ },
+ {
+  "id": "14359mh",
+  "g": "Al empezar la puerta 19",
+  "q": "ella",
+  "t": "Nadie ha barrido este jardín desde el otoño pasado. Qué pereza.",
+  "d": "[sighs] Nadie ha barrido este jardín desde el otoño pasado. Qué pereza.",
+  "revisada": true
+ },
+ {
+  "id": "1cnox5y",
+  "g": "Al empezar la puerta 20",
+  "q": "el",
+  "t": "El invernadero, donde las maticas pasan el frío. Adentro hace un calorcito rico.",
+  "d": "[warmly] El invernadero, donde las maticas pasan el frío. Adentro hace un calorcito rico.",
+  "revisada": true
+ },
+ {
+  "id": "1lf0tcv",
+  "g": "Al empezar la puerta 20",
+  "q": "ella",
+  "t": "El invernadero, donde las maticas pasan el frío. Adentro hace un calorcito rico.",
+  "d": "[warmly] El invernadero, donde las maticas pasan el frío. Adentro hace un calorcito rico.",
+  "revisada": true
+ },
+ {
+  "id": "16w5bl6",
+  "g": "Al empezar la puerta 21",
+  "q": "el",
+  "t": "La cafetería de la primera cita. Tú pediste lo de siempre… y yo lo mismo que tú, para no quedar mal.",
+  "d": "[laughs] La cafetería de la primera cita. Tú pediste lo de siempre… y yo lo mismo que tú, para no quedar mal.",
+  "revisada": true
+ },
+ {
+  "id": "0ji9ogf",
+  "g": "Al empezar la puerta 21",
+  "q": "ella",
+  "t": "La cafetería de la primera cita. Tú pediste lo de siempre… y yo lo mismo que tú, para no quedar mal.",
+  "d": "[laughs] La cafetería de la primera cita. Tú pediste lo de siempre… y yo lo mismo que tú, para no quedar mal.",
+  "revisada": true
+ },
+ {
+  "id": "0vmfkw6",
+  "g": "Al empezar la puerta 22",
+  "q": "el",
+  "t": "Aquí nos tomamos el primer café juntos. Del café no me acuerdo; de ti, de todo.",
+  "d": "[lovingly] Aquí nos tomamos el primer café juntos. Del café no me acuerdo; de ti, de todo.",
+  "revisada": true
+ },
+ {
+  "id": "0gufij9",
+  "g": "Al empezar la puerta 22",
+  "q": "ella",
+  "t": "Aquí nos tomamos el primer café juntos. Del café no me acuerdo; de ti, de todo.",
+  "d": "[lovingly] Aquí nos tomamos el primer café juntos. Del café no me acuerdo; de ti, de todo.",
+  "revisada": true
+ },
+ {
+  "id": "0w6cmzy",
+  "g": "Al empezar la puerta 23",
+  "q": "el",
+  "t": "La balanza de las tortas. La dueña dice que aquí todo se vende al peso… hasta los abrazos.",
+  "d": "[amused] La balanza de las tortas. La dueña dice que aquí todo se vende al peso… hasta los abrazos.",
+  "revisada": true
+ },
+ {
+  "id": "1s2fybz",
+  "g": "Al empezar la puerta 23",
+  "q": "ella",
+  "t": "La balanza de las tortas. La dueña dice que aquí todo se vende al peso… hasta los abrazos.",
+  "d": "[amused] La balanza de las tortas. La dueña dice que aquí todo se vende al peso… hasta los abrazos.",
+  "revisada": true
+ },
+ {
+  "id": "06geo46",
+  "g": "Al empezar la puerta 24",
+  "q": "el",
+  "t": "La rocola del rincón. Aquí sonó la canción que después fue nuestra.",
+  "d": "[nostalgic] La rocola del rincón. Aquí sonó la canción que después fue nuestra.",
+  "revisada": true
+ },
+ {
+  "id": "1f25ft9",
+  "g": "Al empezar la puerta 24",
+  "q": "ella",
+  "t": "La rocola del rincón. Aquí sonó la canción que después fue nuestra.",
+  "d": "[nostalgic] La rocola del rincón. Aquí sonó la canción que después fue nuestra.",
+  "revisada": true
+ },
+ {
+  "id": "0id76sd",
+  "g": "Al empezar la puerta 25",
+  "q": "el",
+  "t": "Llegó la cuenta. Esta vez invitas tú, que la vez pasada me tocó a mí.",
+  "d": "[teasing] Llegó la cuenta. Esta vez invitas tú, que la vez pasada me tocó a mí.",
+  "revisada": true
+ },
+ {
+  "id": "0efnbl6",
+  "g": "Al empezar la puerta 25",
+  "q": "ella",
+  "t": "Llegó la cuenta. Esta vez invitas tú, que la vez pasada me tocó a mí.",
+  "d": "[teasing] Llegó la cuenta. Esta vez invitas tú, que la vez pasada me tocó a mí.",
+  "revisada": true
+ },
+ {
+  "id": "0i8rmph",
+  "g": "Al empezar la puerta 26",
+  "q": "el",
+  "t": "La ventana donde nos sentábamos. Afuera llovía y adentro era otro mundo.",
+  "d": "[dreamy] La ventana donde nos sentábamos. Afuera llovía y adentro era otro mundo.",
+  "revisada": true
+ },
+ {
+  "id": "0g3juic",
+  "g": "Al empezar la puerta 26",
+  "q": "ella",
+  "t": "La ventana donde nos sentábamos. Afuera llovía y adentro era otro mundo.",
+  "d": "[dreamy] La ventana donde nos sentábamos. Afuera llovía y adentro era otro mundo.",
+  "revisada": true
+ },
+ {
+  "id": "1h0p3fb",
+  "g": "Al empezar la puerta 27",
+  "q": "el",
+  "t": "Galletas de la fortuna. La mía siempre dice cosas raras; la tuya, siempre cosas bonitas.",
+  "d": "[amused] Galletas de la fortuna. La mía siempre dice cosas raras; la tuya, siempre cosas bonitas.",
+  "revisada": true
+ },
+ {
+  "id": "1s69gt2",
+  "g": "Al empezar la puerta 27",
+  "q": "ella",
+  "t": "Galletas de la fortuna. La mía siempre dice cosas raras; la tuya, siempre cosas bonitas.",
+  "d": "[amused] Galletas de la fortuna. La mía siempre dice cosas raras; la tuya, siempre cosas bonitas.",
+  "revisada": true
+ },
+ {
+  "id": "0e71zj7",
+  "g": "Al empezar la puerta 28",
+  "q": "el",
+  "t": "El mesero de aquí es un tramposo. Una vez me cobró dos veces el mismo tinto.",
+  "d": "[grumpy] El mesero de aquí es un tramposo. Una vez me cobró dos veces el mismo tinto.",
+  "revisada": true
+ },
+ {
+  "id": "0u5kuxy",
+  "g": "Al empezar la puerta 28",
+  "q": "ella",
+  "t": "El mesero de aquí es un tramposo. Una vez me cobró dos veces el mismo tinto.",
+  "d": "[grumpy] El mesero de aquí es un tramposo. Una vez me cobró dos veces el mismo tinto.",
+  "revisada": true
+ },
+ {
+  "id": "0vkucwl",
+  "g": "Al empezar la puerta 29",
+  "q": "el",
+  "t": "El letrero de la entrada lo pintaron los dueños. Llevan cuarenta años juntos… así quiero que estemos.",
+  "d": "[tenderly] El letrero de la entrada lo pintaron los dueños. Llevan cuarenta años juntos… así quiero que estemos.",
+  "revisada": true
+ },
+ {
+  "id": "19jh5uu",
+  "g": "Al empezar la puerta 29",
+  "q": "ella",
+  "t": "El letrero de la entrada lo pintaron los dueños. Llevan cuarenta años juntos… así quiero que estemos.",
+  "d": "[tenderly] El letrero de la entrada lo pintaron los dueños. Llevan cuarenta años juntos… así quiero que estemos.",
+  "revisada": true
+ },
+ {
+  "id": "1c0bwot",
+  "g": "Al empezar la puerta 30",
+  "q": "el",
+  "t": "Ya cerraron… qué mala suerte. Con lo que me gusta quedarme aquí contigo.",
+  "d": "[sighs] Ya cerraron… qué mala suerte. Con lo que me gusta quedarme aquí contigo.",
+  "revisada": true
+ },
+ {
+  "id": "0ar3xzs",
+  "g": "Al empezar la puerta 30",
+  "q": "ella",
+  "t": "Ya cerraron… qué mala suerte. Con lo que me gusta quedarme aquí contigo.",
+  "d": "[sighs] Ya cerraron… qué mala suerte. Con lo que me gusta quedarme aquí contigo.",
+  "revisada": true
+ },
+ {
+  "id": "1aujb4y",
+  "g": "Al empezar la puerta 31",
+  "q": "el",
+  "t": "Cuántas veces buscamos el bus que iba a donde estaba el otro.",
+  "d": "[nostalgic] Cuántas veces buscamos el bus que iba a donde estaba el otro.",
+  "revisada": true
+ },
+ {
+  "id": "117wk2y",
+  "g": "Al empezar la puerta 31",
+  "q": "el",
+  "t": "Yo contaba los días; tú contabas las horas.",
+  "d": "[tenderly] Yo contaba los días; tú contabas las horas.",
+  "revisada": true
+ },
+ {
+  "id": "17bs5bd",
+  "g": "Al empezar la puerta 31",
+  "q": "ella",
+  "t": "Cuántas veces buscamos el bus que iba a donde estaba el otro.",
+  "d": "[nostalgic] Cuántas veces buscamos el bus que iba a donde estaba el otro.",
+  "revisada": true
+ },
+ {
+  "id": "0axjcs1",
+  "g": "Al empezar la puerta 31",
+  "q": "ella",
+  "t": "Yo contaba los días; tú contabas las horas.",
+  "d": "[tenderly] Yo contaba los días; tú contabas las horas.",
+  "revisada": true
+ },
+ {
+  "id": "1bbkqyg",
+  "g": "Al empezar la puerta 32",
+  "q": "el",
+  "t": "La maleta de todos nuestros viajes. Siempre la empacabas tú, porque yo metía de todo.",
+  "d": "[teasing] La maleta de todos nuestros viajes. Siempre la empacabas tú, porque yo metía de todo.",
+  "revisada": true
+ },
+ {
+  "id": "1e4beab",
+  "g": "Al empezar la puerta 32",
+  "q": "ella",
+  "t": "La maleta de todos nuestros viajes. Siempre la empacabas tú, porque yo metía de todo.",
+  "d": "[teasing] La maleta de todos nuestros viajes. Siempre la empacabas tú, porque yo metía de todo.",
+  "revisada": true
+ },
+ {
+  "id": "1l6u2na",
+  "g": "Al empezar la puerta 33",
+  "q": "el",
+  "t": "El tablero de las salidas se volvió loco con el Olvido. Antes anunciaba nuestros viajes.",
+  "d": "[annoyed] El tablero de las salidas se volvió loco con el Olvido. Antes anunciaba nuestros viajes.",
+  "revisada": true
+ },
+ {
+  "id": "18qnn37",
+  "g": "Al empezar la puerta 33",
+  "q": "ella",
+  "t": "El tablero de las salidas se volvió loco con el Olvido. Antes anunciaba nuestros viajes.",
+  "d": "[annoyed] El tablero de las salidas se volvió loco con el Olvido. Antes anunciaba nuestros viajes.",
+  "revisada": true
+ },
+ {
+  "id": "1tebfmh",
+  "g": "Al empezar la puerta 34",
+  "q": "el",
+  "t": "El torniquete de la terminal. Siempre se trababa justo cuando íbamos tarde.",
+  "d": "[laughs] El torniquete de la terminal. Siempre se trababa justo cuando íbamos tarde.",
+  "revisada": true
+ },
+ {
+  "id": "0zpntei",
+  "g": "Al empezar la puerta 34",
+  "q": "ella",
+  "t": "El torniquete de la terminal. Siempre se trababa justo cuando íbamos tarde.",
+  "d": "[laughs] El torniquete de la terminal. Siempre se trababa justo cuando íbamos tarde.",
+  "revisada": true
+ },
+ {
+  "id": "180gn9e",
+  "g": "Al empezar la puerta 35",
+  "q": "el",
+  "t": "El mapa de carreteras. Nos lo aprendimos de memoria de tanto ir y venir.",
+  "d": "[nostalgic] El mapa de carreteras. Nos lo aprendimos de memoria de tanto ir y venir.",
+  "revisada": true
+ },
+ {
+  "id": "0n2wjzr",
+  "g": "Al empezar la puerta 35",
+  "q": "ella",
+  "t": "El mapa de carreteras. Nos lo aprendimos de memoria de tanto ir y venir.",
+  "d": "[nostalgic] El mapa de carreteras. Nos lo aprendimos de memoria de tanto ir y venir.",
+  "revisada": true
+ },
+ {
+  "id": "179bu6f",
+  "g": "Al empezar la puerta 36",
+  "q": "el",
+  "t": "Los relojes de las ciudades. Cuando estábamos lejos, yo miraba el de la tuya.",
+  "d": "[softly] Los relojes de las ciudades. Cuando estábamos lejos, yo miraba el de la tuya.",
+  "revisada": true
+ },
+ {
+  "id": "1pf4pb8",
+  "g": "Al empezar la puerta 36",
+  "q": "ella",
+  "t": "Los relojes de las ciudades. Cuando estábamos lejos, yo miraba el de la tuya.",
+  "d": "[softly] Los relojes de las ciudades. Cuando estábamos lejos, yo miraba el de la tuya.",
+  "revisada": true
+ },
+ {
+  "id": "0rjk3a9",
+  "g": "Al empezar la puerta 37",
+  "q": "el",
+  "t": "La sala de espera. Aquí esperé tantas veces tu bus que me aprendí todos los horarios.",
+  "d": "[warmly] La sala de espera. Aquí esperé tantas veces tu bus que me aprendí todos los horarios.",
+  "revisada": true
+ },
+ {
+  "id": "126xr3a",
+  "g": "Al empezar la puerta 37",
+  "q": "ella",
+  "t": "La sala de espera. Aquí esperé tantas veces tu bus que me aprendí todos los horarios.",
+  "d": "[warmly] La sala de espera. Aquí esperé tantas veces tu bus que me aprendí todos los horarios.",
+  "revisada": true
+ },
+ {
+  "id": "193jnwa",
+  "g": "Al empezar la puerta 38",
+  "q": "el",
+  "t": "La máquina de dulces de la terminal. Me comía uno cada vez que te despedía.",
+  "d": "[sad, playfully] La máquina de dulces de la terminal. Me comía uno cada vez que te despedía.",
+  "revisada": true
+ },
+ {
+  "id": "0n6pg6p",
+  "g": "Al empezar la puerta 38",
+  "q": "ella",
+  "t": "La máquina de dulces de la terminal. Me comía uno cada vez que te despedía.",
+  "d": "[sad, playfully] La máquina de dulces de la terminal. Me comía uno cada vez que te despedía.",
+  "revisada": true
+ },
+ {
+  "id": "1bgx5g7",
+  "g": "Al empezar la puerta 39",
+  "q": "el",
+  "t": "La banda de las maletas. Una vez casi me llevo la de un señor… igualita a la nuestra.",
+  "d": "[laughs] La banda de las maletas. Una vez casi me llevo la de un señor… igualita a la nuestra.",
+  "revisada": true
+ },
+ {
+  "id": "0iwic24",
+  "g": "Al empezar la puerta 39",
+  "q": "ella",
+  "t": "La banda de las maletas. Una vez casi me llevo la de un señor… igualita a la nuestra.",
+  "d": "[laughs] La banda de las maletas. Una vez casi me llevo la de un señor… igualita a la nuestra.",
+  "revisada": true
+ },
+ {
+  "id": "18bbhct",
+  "g": "Al empezar la puerta 40",
+  "q": "el",
+  "t": "El túnel antes de llegar. El viaje más largo siempre era el último pedacito.",
+  "d": "[sighs] El túnel antes de llegar. El viaje más largo siempre era el último pedacito.",
+  "revisada": true
+ },
+ {
+  "id": "0o0w370",
+  "g": "Al empezar la puerta 40",
+  "q": "ella",
+  "t": "El túnel antes de llegar. El viaje más largo siempre era el último pedacito.",
+  "d": "[sighs] El túnel antes de llegar. El viaje más largo siempre era el último pedacito.",
+  "revisada": true
+ },
+ {
+  "id": "1fekrrq",
+  "g": "Al empezar la puerta 41",
+  "q": "el",
+  "t": "¡El mar! La primera vez que lo vimos juntos no dijimos nada durante un buen rato.",
+  "d": "[awed] ¡El mar! La primera vez que lo vimos juntos no dijimos nada durante un buen rato.",
+  "revisada": true
+ },
+ {
+  "id": "0rmy0ex",
+  "g": "Al empezar la puerta 41",
+  "q": "ella",
+  "t": "¡El mar! La primera vez que lo vimos juntos no dijimos nada durante un buen rato.",
+  "d": "[awed] ¡El mar! La primera vez que lo vimos juntos no dijimos nada durante un buen rato.",
+  "revisada": true
+ },
+ {
+  "id": "0005lqa",
+  "g": "Al empezar la puerta 42",
+  "q": "el",
+  "t": "Un castillo de arena gigante. El nuestro nunca pasó de ser un montoncito.",
+  "d": "[laughs] Un castillo de arena gigante. El nuestro nunca pasó de ser un montoncito.",
+  "revisada": true
+ },
+ {
+  "id": "1x7lrex",
+  "g": "Al empezar la puerta 42",
+  "q": "ella",
+  "t": "Un castillo de arena gigante. El nuestro nunca pasó de ser un montoncito.",
+  "d": "[laughs] Un castillo de arena gigante. El nuestro nunca pasó de ser un montoncito.",
+  "revisada": true
+ },
+ {
+  "id": "1rujyi0",
+  "g": "Al empezar la puerta 43",
+  "q": "el",
+  "t": "Una botella con un mensaje. ¿Será de alguien que también está buscando a su persona?",
+  "d": "[curious] Una botella con un mensaje. ¿Será de alguien que también está buscando a su persona?",
+  "revisada": true
+ },
+ {
+  "id": "1tpgh49",
+  "g": "Al empezar la puerta 43",
+  "q": "ella",
+  "t": "Una botella con un mensaje. ¿Será de alguien que también está buscando a su persona?",
+  "d": "[curious] Una botella con un mensaje. ¿Será de alguien que también está buscando a su persona?",
+  "revisada": true
+ },
+ {
+  "id": "0eyksc5",
+  "g": "Al empezar la puerta 44",
+  "q": "el",
+  "t": "Ese cangrejo me pellizcó el dedo en Cartagena. Todavía le tengo rabia.",
+  "d": "[grumpy] Ese cangrejo me pellizcó el dedo en Cartagena. Todavía le tengo rabia.",
+  "revisada": true
+ },
+ {
+  "id": "036i9mk",
+  "g": "Al empezar la puerta 44",
+  "q": "ella",
+  "t": "Ese cangrejo me pellizcó el dedo en Cartagena. Todavía le tengo rabia.",
+  "d": "[grumpy] Ese cangrejo me pellizcó el dedo en Cartagena. Todavía le tengo rabia.",
+  "revisada": true
+ },
+ {
+  "id": "0vvhb2j",
+  "g": "Al empezar la puerta 45",
+  "q": "el",
+  "t": "La marea sube y baja todo el día. Me gustaba mirarla contigo sin decir nada.",
+  "d": "[softly] La marea sube y baja todo el día. Me gustaba mirarla contigo sin decir nada.",
+  "revisada": true
+ },
+ {
+  "id": "1uex50q",
+  "g": "Al empezar la puerta 45",
+  "q": "ella",
+  "t": "La marea sube y baja todo el día. Me gustaba mirarla contigo sin decir nada.",
+  "d": "[softly] La marea sube y baja todo el día. Me gustaba mirarla contigo sin decir nada.",
+  "revisada": true
+ },
+ {
+  "id": "03zlg87",
+  "g": "Al empezar la puerta 46",
+  "q": "el",
+  "t": "Un velerito de papel. Lo hicimos con la servilleta del almuerzo.",
+  "d": "[tenderly] Un velerito de papel. Lo hicimos con la servilleta del almuerzo.",
+  "revisada": true
+ },
+ {
+  "id": "1i4gt4m",
+  "g": "Al empezar la puerta 46",
+  "q": "ella",
+  "t": "Un velerito de papel. Lo hicimos con la servilleta del almuerzo.",
+  "d": "[tenderly] Un velerito de papel. Lo hicimos con la servilleta del almuerzo.",
+  "revisada": true
+ },
+ {
+  "id": "1is6xrg",
+  "g": "Al empezar la puerta 47",
+  "q": "el",
+  "t": "La palmera de los cocos. Tú querías agua de coco y yo quería sombra.",
+  "d": "[laughs] La palmera de los cocos. Tú querías agua de coco y yo quería sombra.",
+  "revisada": true
+ },
+ {
+  "id": "0kvadu9",
+  "g": "Al empezar la puerta 47",
+  "q": "ella",
+  "t": "La palmera de los cocos. Tú querías agua de coco y yo quería sombra.",
+  "d": "[laughs] La palmera de los cocos. Tú querías agua de coco y yo quería sombra.",
+  "revisada": true
+ },
+ {
+  "id": "1e758b1",
+  "g": "Al empezar la puerta 48",
+  "q": "el",
+  "t": "El faro de Cartagena. Dicen que les avisa a los barcos por dónde volver a casa.",
+  "d": "[softly] El faro de Cartagena. Dicen que les avisa a los barcos por dónde volver a casa.",
+  "revisada": true
+ },
+ {
+  "id": "0bper9y",
+  "g": "Al empezar la puerta 48",
+  "q": "ella",
+  "t": "El faro de Cartagena. Dicen que les avisa a los barcos por dónde volver a casa.",
+  "d": "[softly] El faro de Cartagena. Dicen que les avisa a los barcos por dónde volver a casa.",
+  "revisada": true
+ },
+ {
+  "id": "0o6rh71",
+  "g": "Al empezar la puerta 49",
+  "q": "el",
+  "t": "Estrellas de mar. Yo nunca había visto una de verdad hasta ese viaje.",
+  "d": "[amazed] Estrellas de mar. Yo nunca había visto una de verdad hasta ese viaje.",
+  "revisada": true
+ },
+ {
+  "id": "05suzhq",
+  "g": "Al empezar la puerta 49",
+  "q": "ella",
+  "t": "Estrellas de mar. Yo nunca había visto una de verdad hasta ese viaje.",
+  "d": "[amazed] Estrellas de mar. Yo nunca había visto una de verdad hasta ese viaje.",
+  "revisada": true
+ },
+ {
+  "id": "1fdgdih",
+  "g": "Al empezar la puerta 50",
+  "q": "el",
+  "t": "El atardecer más lindo del mundo… bueno, el segundo, después de ti.",
+  "d": "[flirty] El atardecer más lindo del mundo… bueno, el segundo, después de ti.",
+  "revisada": true
+ },
+ {
+  "id": "1fqpgq2",
+  "g": "Al empezar la puerta 50",
+  "q": "ella",
+  "t": "El atardecer más lindo del mundo… bueno, el segundo, después de ti.",
+  "d": "[flirty] El atardecer más lindo del mundo… bueno, el segundo, después de ti.",
+  "revisada": true
+ },
+ {
+  "id": "0x2p4kp",
+  "g": "Al empezar la puerta 51",
+  "q": "el",
+  "t": "El bosque de noche. Agárrame la mano, que no se ve nada.",
+  "d": "[whispers] El bosque de noche. Agárrame la mano, que no se ve nada.",
+  "revisada": true
+ },
+ {
+  "id": "05dwc7c",
+  "g": "Al empezar la puerta 51",
+  "q": "ella",
+  "t": "El bosque de noche. Agárrame la mano, que no se ve nada.",
+  "d": "[whispers] El bosque de noche. Agárrame la mano, que no se ve nada.",
+  "revisada": true
+ },
+ {
+  "id": "1g0j7g3",
+  "g": "Al empezar la puerta 52",
+  "q": "el",
+  "t": "Las luciérnagas de este bosque se conocen de memoria. Son como un coro.",
+  "d": "[dreamy] Las luciérnagas de este bosque se conocen de memoria. Son como un coro.",
+  "revisada": true
+ },
+ {
+  "id": "1q963lk",
+  "g": "Al empezar la puerta 52",
+  "q": "ella",
+  "t": "Las luciérnagas de este bosque se conocen de memoria. Son como un coro.",
+  "d": "[dreamy] Las luciérnagas de este bosque se conocen de memoria. Son como un coro.",
+  "revisada": true
+ },
+ {
+  "id": "1aisp4a",
+  "g": "Al empezar la puerta 53",
+  "q": "el",
+  "t": "Un búho. Dicen que son los más sabios del bosque… y los más chismosos.",
+  "d": "[whispers, amused] Un búho. Dicen que son los más sabios del bosque… y los más chismosos.",
+  "revisada": true
+ },
+ {
+  "id": "14eg0en",
+  "g": "Al empezar la puerta 53",
+  "q": "ella",
+  "t": "Un búho. Dicen que son los más sabios del bosque… y los más chismosos.",
+  "d": "[whispers, amused] Un búho. Dicen que son los más sabios del bosque… y los más chismosos.",
+  "revisada": true
+ },
+ {
+  "id": "1ggju9h",
+  "g": "Al empezar la puerta 54",
+  "q": "el",
+  "t": "Las luciérnagas de este claro son las más tímidas del bosque.",
+  "d": "[whispers] Las luciérnagas de este claro son las más tímidas del bosque.",
+  "revisada": true
+ },
+ {
+  "id": "0s07tiy",
+  "g": "Al empezar la puerta 54",
+  "q": "ella",
+  "t": "Las luciérnagas de este claro son las más tímidas del bosque.",
+  "d": "[whispers] Las luciérnagas de este claro son las más tímidas del bosque.",
+  "revisada": true
+ },
+ {
+  "id": "0p3i17z",
+  "g": "Al empezar la puerta 55",
+  "q": "el",
+  "t": "Los hongos de este bosque cantan. Una vez nos dieron serenata.",
+  "d": "[playfully] Los hongos de este bosque cantan. Una vez nos dieron serenata.",
+  "revisada": true
+ },
+ {
+  "id": "183qbq6",
+  "g": "Al empezar la puerta 55",
+  "q": "ella",
+  "t": "Los hongos de este bosque cantan. Una vez nos dieron serenata.",
+  "d": "[playfully] Los hongos de este bosque cantan. Una vez nos dieron serenata.",
+  "revisada": true
+ },
+ {
+  "id": "01s10xk",
+  "g": "Al empezar la puerta 56",
+  "q": "el",
+  "t": "El arroyo. La primera vez que lo cruzamos me caí, y tú te reíste media hora.",
+  "d": "[mock offended] El arroyo. La primera vez que lo cruzamos me caí, y tú te reíste media hora.",
+  "revisada": true
+ },
+ {
+  "id": "1onk0bp",
+  "g": "Al empezar la puerta 56",
+  "q": "ella",
+  "t": "El arroyo. La primera vez que lo cruzamos me caí, y tú te reíste media hora.",
+  "d": "[mock offended] El arroyo. La primera vez que lo cruzamos me caí, y tú te reíste media hora.",
+  "revisada": true
+ },
+ {
+  "id": "0gpdsdh",
+  "g": "Al empezar la puerta 57",
+  "q": "el",
+  "t": "Una telaraña gigante. Tranquilo: la araña se fue de vacaciones.",
+  "d": "[playfully] Una telaraña gigante. Tranquilo: la araña se fue de vacaciones.",
+  "revisada": true
+ },
+ {
+  "id": "0ikhk88",
+  "g": "Al empezar la puerta 57",
+  "q": "ella",
+  "t": "Una telaraña gigante. Tranquila: la araña se fue de vacaciones.",
+  "d": "[playfully] Una telaraña gigante. Tranquila: la araña se fue de vacaciones.",
+  "revisada": true
+ },
+ {
+  "id": "14xcdwy",
+  "g": "Al empezar la puerta 58",
+  "q": "el",
+  "t": "La luna se ve distinta desde aquí. Cada noche le pedía que te cuidara.",
+  "d": "[tenderly] La luna se ve distinta desde aquí. Cada noche le pedía que te cuidara.",
+  "revisada": true
+ },
+ {
+  "id": "1y24lvj",
+  "g": "Al empezar la puerta 58",
+  "q": "ella",
+  "t": "La luna se ve distinta desde aquí. Cada noche le pedía que te cuidara.",
+  "d": "[tenderly] La luna se ve distinta desde aquí. Cada noche le pedía que te cuidara.",
+  "revisada": true
+ },
+ {
+  "id": "0uw6gdn",
+  "g": "Al empezar la puerta 59",
+  "q": "el",
+  "t": "El árbol más viejo del bosque. Dicen que solo se despierta con los que saben esperar.",
+  "d": "[whispers, mysterious] El árbol más viejo del bosque. Dicen que solo se despierta con los que saben esperar.",
+  "revisada": true
+ },
+ {
+  "id": "1napkts",
+  "g": "Al empezar la puerta 59",
+  "q": "ella",
+  "t": "El árbol más viejo del bosque. Dicen que solo se despierta con los que saben esperar.",
+  "d": "[whispers, mysterious] El árbol más viejo del bosque. Dicen que solo se despierta con los que saben esperar.",
+  "revisada": true
+ },
+ {
+  "id": "0dh2vwf",
+  "g": "Al empezar la puerta 60",
+  "q": "el",
+  "t": "¡Se despertó! Y es más conversador que tu tía en diciembre.",
+  "d": "[surprised] ¡Se despertó! [laughs] Y es más conversador que tu tía en diciembre.",
+  "revisada": true
+ },
+ {
+  "id": "1w10x3g",
+  "g": "Al empezar la puerta 60",
+  "q": "ella",
+  "t": "¡Se despertó! Y es más conversador que tu tía en diciembre.",
+  "d": "[surprised] ¡Se despertó! [laughs] Y es más conversador que tu tía en diciembre.",
+  "revisada": true
+ },
+ {
+  "id": "0qhkc3y",
+  "g": "Al empezar la puerta 61",
+  "q": "el",
+  "t": "¡Tiro al blanco! Aquí me ganaste un peluche… después de gastarte toda la plata.",
+  "d": "[excited] ¡Tiro al blanco! [laughs] Aquí me ganaste un peluche… después de gastarte toda la plata.",
+  "revisada": true
+ },
+ {
+  "id": "0fngwnp",
+  "g": "Al empezar la puerta 61",
+  "q": "ella",
+  "t": "¡Tiro al blanco! Aquí me ganaste un peluche… después de gastarte toda la plata.",
+  "d": "[excited] ¡Tiro al blanco! [laughs] Aquí me ganaste un peluche… después de gastarte toda la plata.",
+  "revisada": true
+ },
+ {
+  "id": "0swsuxn",
+  "g": "Al empezar la puerta 62",
+  "q": "el",
+  "t": "La rueda de colores de la feria. Nunca ganamos nada, pero nos reímos harto.",
+  "d": "[happy] La rueda de colores de la feria. Nunca ganamos nada, pero nos reímos harto.",
+  "revisada": true
+ },
+ {
+  "id": "1r1w3qw",
+  "g": "Al empezar la puerta 62",
+  "q": "ella",
+  "t": "La rueda de colores de la feria. Nunca ganamos nada, pero nos reímos harto.",
+  "d": "[happy] La rueda de colores de la feria. Nunca ganamos nada, pero nos reímos harto.",
+  "revisada": true
+ },
+ {
+  "id": "0854mjv",
+  "g": "Al empezar la puerta 63",
+  "q": "el",
+  "t": "¿Algodón de azúcar? El tuyo siempre terminaba en mi pelo.",
+  "d": "[teasing] ¿Algodón de azúcar? El tuyo siempre terminaba en mi pelo.",
+  "revisada": true
+ },
+ {
+  "id": "0rcbuxs",
+  "g": "Al empezar la puerta 63",
+  "q": "ella",
+  "t": "¿Algodón de azúcar? El tuyo siempre terminaba en mi pelo.",
+  "d": "[teasing] ¿Algodón de azúcar? El tuyo siempre terminaba en mi pelo.",
+  "revisada": true
+ },
+ {
+  "id": "0r00n5t",
+  "g": "Al empezar la puerta 64",
+  "q": "el",
+  "t": "La máquina de peluches. Esa garra es más floja que yo un lunes.",
+  "d": "[laughs] La máquina de peluches. Esa garra es más floja que yo un lunes.",
+  "revisada": true
+ },
+ {
+  "id": "1rcpnji",
+  "g": "Al empezar la puerta 64",
+  "q": "ella",
+  "t": "La máquina de peluches. Esa garra es más floja que yo un lunes.",
+  "d": "[laughs] La máquina de peluches. Esa garra es más floja que yo un lunes.",
+  "revisada": true
+ },
+ {
+  "id": "0fp76qi",
+  "g": "Al empezar la puerta 65",
+  "q": "el",
+  "t": "El martillo de fuerza. Aquí quisiste lucirte… y casi te sacas un ojo.",
+  "d": "[teasing] El martillo de fuerza. Aquí quisiste lucirte… y casi te sacas un ojo.",
+  "revisada": true
+ },
+ {
+  "id": "1g01e6d",
+  "g": "Al empezar la puerta 65",
+  "q": "ella",
+  "t": "El martillo de fuerza. Aquí quisiste lucirte… y casi te sacas un ojo.",
+  "d": "[teasing] El martillo de fuerza. Aquí quisiste lucirte… y casi te sacas un ojo.",
+  "revisada": true
+ },
+ {
+  "id": "1u87mny",
+  "g": "Al empezar la puerta 66",
+  "q": "el",
+  "t": "La carpa de la adivina. Me dijo que me iba a casar con alguien muy guapa.",
+  "d": "[flirty] La carpa de la adivina. Me dijo que me iba a casar con alguien muy guapa.",
+  "revisada": true
+ },
+ {
+  "id": "0yms7q3",
+  "g": "Al empezar la puerta 66",
+  "q": "ella",
+  "t": "La carpa de la adivina. Me dijo que me iba a casar con alguien muy guapo.",
+  "d": "[flirty] La carpa de la adivina. Me dijo que me iba a casar con alguien muy guapo.",
+  "revisada": true
+ },
+ {
+  "id": "1kt8s6p",
+  "g": "Al empezar la puerta 67",
+  "q": "el",
+  "t": "¡Globos! Tú siempre querías el más grande, aunque no cupiera en el bus.",
+  "d": "[teasing] ¡Globos! Tú siempre querías el más grande, aunque no cupiera en el bus.",
+  "revisada": true
+ },
+ {
+  "id": "164pffm",
+  "g": "Al empezar la puerta 67",
+  "q": "ella",
+  "t": "¡Globos! Tú siempre querías el más grande, aunque no cupiera en el bus.",
+  "d": "[teasing] ¡Globos! Tú siempre querías el más grande, aunque no cupiera en el bus.",
+  "revisada": true
+ },
+ {
+  "id": "1q8g2qb",
+  "g": "Al empezar la puerta 68",
+  "q": "el",
+  "t": "El carrusel. Nos montamos aunque éramos los más grandes de la fila.",
+  "d": "[laughs] El carrusel. Nos montamos aunque éramos los más grandes de la fila.",
+  "revisada": true
+ },
+ {
+  "id": "0w8w210",
+  "g": "Al empezar la puerta 68",
+  "q": "ella",
+  "t": "El carrusel. Nos montamos aunque éramos los más grandes de la fila.",
+  "d": "[laughs] El carrusel. Nos montamos aunque éramos los más grandes de la fila.",
+  "revisada": true
+ },
+ {
+  "id": "1kon6h1",
+  "g": "Al empezar la puerta 69",
+  "q": "el",
+  "t": "La casa de los espejos. Aquí te vi gordita, flaquita y chiquita… y siempre linda.",
+  "d": "[lovingly] La casa de los espejos. Aquí te vi gordita, flaquita y chiquita… y siempre linda.",
+  "revisada": true
+ },
+ {
+  "id": "0owp71i",
+  "g": "Al empezar la puerta 69",
+  "q": "ella",
+  "t": "La casa de los espejos. Aquí te vi gordito, flaquito y chiquito… y siempre lindo.",
+  "d": "[lovingly] La casa de los espejos. Aquí te vi gordito, flaquito y chiquito… y siempre lindo.",
+  "revisada": true
+ },
+ {
+  "id": "0lq8968",
+  "g": "Al empezar la puerta 70",
+  "q": "el",
+  "t": "La gran carpa. Aquí vimos el show de magia y adivinaste todos los trucos.",
+  "d": "[proudly] La gran carpa. Aquí vimos el show de magia y adivinaste todos los trucos.",
+  "revisada": true
+ },
+ {
+  "id": "1dunyvz",
+  "g": "Al empezar la puerta 70",
+  "q": "ella",
+  "t": "La gran carpa. Aquí vimos el show de magia y adivinaste todos los trucos.",
+  "d": "[proudly] La gran carpa. Aquí vimos el show de magia y adivinaste todos los trucos.",
+  "revisada": true
+ },
+ {
+  "id": "0f8fy8u",
+  "g": "Al empezar la puerta 71",
+  "q": "el",
+  "t": "Un castillo de verdad. Siempre quisiste vivir en uno… con wifi, eso sí.",
+  "d": "[teasing] Un castillo de verdad. Siempre quisiste vivir en uno… con wifi, eso sí.",
+  "revisada": true
+ },
+ {
+  "id": "0p2yalt",
+  "g": "Al empezar la puerta 71",
+  "q": "ella",
+  "t": "Un castillo de verdad. Siempre quisiste vivir en uno… con wifi, eso sí.",
+  "d": "[teasing] Un castillo de verdad. Siempre quisiste vivir en uno… con wifi, eso sí.",
+  "revisada": true
+ },
+ {
+  "id": "1iufmuf",
+  "g": "Al empezar la puerta 72",
+  "q": "el",
+  "t": "Shhh… un dragón dormido. Ronca igualitico a ti después del almuerzo.",
+  "d": "[whispers] Shhh… un dragón dormido. [giggles] Ronca igualitico a ti después del almuerzo.",
+  "revisada": true
+ },
+ {
+  "id": "1uxhu36",
+  "g": "Al empezar la puerta 72",
+  "q": "ella",
+  "t": "Shhh… un dragón dormido. Ronca igualitico a ti después del almuerzo.",
+  "d": "[whispers] Shhh… un dragón dormido. [giggles] Ronca igualitico a ti después del almuerzo.",
+  "revisada": true
+ },
+ {
+  "id": "0brf4at",
+  "g": "Al empezar la puerta 73",
+  "q": "el",
+  "t": "El comedor del castillo. Aquí cenaríamos todas las noches… a la luz de las velas, claro.",
+  "d": "[dreamy] El comedor del castillo. Aquí cenaríamos todas las noches… a la luz de las velas, claro.",
+  "revisada": true
+ },
+ {
+  "id": "1sszfrw",
+  "g": "Al empezar la puerta 73",
+  "q": "ella",
+  "t": "El comedor del castillo. Aquí cenaríamos todas las noches… a la luz de las velas, claro.",
+  "d": "[dreamy] El comedor del castillo. Aquí cenaríamos todas las noches… a la luz de las velas, claro.",
+  "revisada": true
+ },
+ {
+  "id": "03x26ps",
+  "g": "Al empezar la puerta 74",
+  "q": "el",
+  "t": "La sala del tesoro. Esa gema es bonita… pero no tanto como tú.",
+  "d": "[lovingly] La sala del tesoro. Esa gema es bonita… pero no tanto como tú.",
+  "revisada": true
+ },
+ {
+  "id": "0buxb9x",
+  "g": "Al empezar la puerta 74",
+  "q": "ella",
+  "t": "La sala del tesoro. Esa gema es bonita… pero no tanto como tú.",
+  "d": "[lovingly] La sala del tesoro. Esa gema es bonita… pero no tanto como tú.",
+  "revisada": true
+ },
+ {
+  "id": "1vrpyoz",
+  "g": "Al empezar la puerta 75",
+  "q": "el",
+  "t": "La armería del castillo. Aquí nadie sale sin estar bien vestido.",
+  "d": "[playfully] La armería del castillo. Aquí nadie sale sin estar bien vestido.",
+  "revisada": true
+ },
+ {
+  "id": "001gn9a",
+  "g": "Al empezar la puerta 75",
+  "q": "ella",
+  "t": "La armería del castillo. Aquí nadie sale sin estar bien vestido.",
+  "d": "[playfully] La armería del castillo. Aquí nadie sale sin estar bien vestido.",
+  "revisada": true
+ },
+ {
+  "id": "0hz97th",
+  "g": "Al empezar la puerta 76",
+  "q": "el",
+  "t": "El tablero de ajedrez gigante. Tú me enseñaste a jugar y luego no me dejabas ganar.",
+  "d": "[mock offended] El tablero de ajedrez gigante. Tú me enseñaste a jugar y luego no me dejabas ganar.",
+  "revisada": true
+ },
+ {
+  "id": "0dvuyhi",
+  "g": "Al empezar la puerta 76",
+  "q": "ella",
+  "t": "El tablero de ajedrez gigante. Tú me enseñaste a jugar y luego no me dejabas ganar.",
+  "d": "[mock offended] El tablero de ajedrez gigante. Tú me enseñaste a jugar y luego no me dejabas ganar.",
+  "revisada": true
+ },
+ {
+  "id": "0jcjtjl",
+  "g": "Al empezar la puerta 77",
+  "q": "el",
+  "t": "El salón de los escudos. Cada familia del reino tenía el suyo.",
+  "d": "[curious] El salón de los escudos. Cada familia del reino tenía el suyo.",
+  "revisada": true
+ },
+ {
+  "id": "16irv74",
+  "g": "Al empezar la puerta 77",
+  "q": "ella",
+  "t": "El salón de los escudos. Cada familia del reino tenía el suyo.",
+  "d": "[curious] El salón de los escudos. Cada familia del reino tenía el suyo.",
+  "revisada": true
+ },
+ {
+  "id": "19zuxsd",
+  "g": "Al empezar la puerta 78",
+  "q": "el",
+  "t": "El laboratorio de la bruja buena. Huele a canela… y a algo raro.",
+  "d": "[suspicious] El laboratorio de la bruja buena. Huele a canela… y a algo raro.",
+  "revisada": true
+ },
+ {
+  "id": "0gi91cc",
+  "g": "Al empezar la puerta 78",
+  "q": "ella",
+  "t": "El laboratorio de la bruja buena. Huele a canela… y a algo raro.",
+  "d": "[suspicious] El laboratorio de la bruja buena. Huele a canela… y a algo raro.",
+  "revisada": true
+ },
+ {
+  "id": "0vipjf4",
+  "g": "Al empezar la puerta 79",
+  "q": "el",
+  "t": "La biblioteca del castillo. Aquí guardan los secretos más importantes del reino.",
+  "d": "[whispers] La biblioteca del castillo. Aquí guardan los secretos más importantes del reino.",
+  "revisada": true
+ },
+ {
+  "id": "19vryrd",
+  "g": "Al empezar la puerta 79",
+  "q": "ella",
+  "t": "La biblioteca del castillo. Aquí guardan los secretos más importantes del reino.",
+  "d": "[whispers] La biblioteca del castillo. Aquí guardan los secretos más importantes del reino.",
+  "revisada": true
+ },
+ {
+  "id": "173j4jk",
+  "g": "Al empezar la puerta 80",
+  "q": "el",
+  "t": "La torre más alta. Allá arriba hay alguien con el pelo larguísimo… me recuerda a alguien.",
+  "d": "[teasing] La torre más alta. Allá arriba hay alguien con el pelo larguísimo… me recuerda a alguien.",
+  "revisada": true
+ },
+ {
+  "id": "0hinuwv",
+  "g": "Al empezar la puerta 80",
+  "q": "ella",
+  "t": "La torre más alta. Allá arriba hay alguien con el pelo larguísimo… me recuerda a alguien.",
+  "d": "[teasing] La torre más alta. Allá arriba hay alguien con el pelo larguísimo… me recuerda a alguien.",
+  "revisada": true
+ },
+ {
+  "id": "1vm0ncy",
+  "g": "Al empezar la puerta 81",
+  "q": "el",
+  "t": "Entre las estrellas. Como el techo del planetario, pero de verdad.",
+  "d": "[awed] Entre las estrellas. Como el techo del planetario, pero de verdad.",
+  "revisada": true
+ },
+ {
+  "id": "0sergcj",
+  "g": "Al empezar la puerta 81",
+  "q": "ella",
+  "t": "Entre las estrellas. Como el techo del planetario, pero de verdad.",
+  "d": "[awed] Entre las estrellas. Como el techo del planetario, pero de verdad.",
+  "revisada": true
+ },
+ {
+  "id": "1o09wo9",
+  "g": "Al empezar la puerta 82",
+  "q": "el",
+  "t": "¡Gravedad cero! Por fin floto como me siento cuando me miras.",
+  "d": "[excited] ¡Gravedad cero! Por fin floto como me siento cuando me miras.",
+  "revisada": true
+ },
+ {
+  "id": "1mxvcyy",
+  "g": "Al empezar la puerta 82",
+  "q": "ella",
+  "t": "¡Gravedad cero! Por fin floto como me siento cuando me miras.",
+  "d": "[excited] ¡Gravedad cero! Por fin floto como me siento cuando me miras.",
+  "revisada": true
+ },
+ {
+  "id": "15aa0de",
+  "g": "Al empezar la puerta 83",
+  "q": "el",
+  "t": "El sistema solar de juguete de la nave. El Olvido lo desordenó todo.",
+  "d": "[annoyed] El sistema solar de juguete de la nave. El Olvido lo desordenó todo.",
+  "revisada": true
+ },
+ {
+  "id": "10eqmyv",
+  "g": "Al empezar la puerta 83",
+  "q": "ella",
+  "t": "El sistema solar de juguete de la nave. El Olvido lo desordenó todo.",
+  "d": "[annoyed] El sistema solar de juguete de la nave. El Olvido lo desordenó todo.",
+  "revisada": true
+ },
+ {
+  "id": "0oxqe7b",
+  "g": "Al empezar la puerta 84",
+  "q": "el",
+  "t": "La radio de la nave. Por aquí te dedicaba canciones… aunque nadie más las oyera.",
+  "d": "[tenderly] La radio de la nave. Por aquí te dedicaba canciones… aunque nadie más las oyera.",
+  "revisada": true
+ },
+ {
+  "id": "0lkg5ci",
+  "g": "Al empezar la puerta 84",
+  "q": "ella",
+  "t": "La radio de la nave. Por aquí te dedicaba canciones… aunque nadie más las oyera.",
+  "d": "[tenderly] La radio de la nave. Por aquí te dedicaba canciones… aunque nadie más las oyera.",
+  "revisada": true
+ },
+ {
+  "id": "1u22a1a",
+  "g": "Al empezar la puerta 85",
+  "q": "el",
+  "t": "La nave está tratando de decirnos algo. Qué romántica esta nave.",
+  "d": "[amused] La nave está tratando de decirnos algo. Qué romántica esta nave.",
+  "revisada": true
+ },
+ {
+  "id": "1ayw1z7",
+  "g": "Al empezar la puerta 85",
+  "q": "ella",
+  "t": "La nave está tratando de decirnos algo. Qué romántica esta nave.",
+  "d": "[amused] La nave está tratando de decirnos algo. Qué romántica esta nave.",
+  "revisada": true
+ },
+ {
+  "id": "0wbzob0",
+  "g": "Al empezar la puerta 86",
+  "q": "el",
+  "t": "Todo quedó pegado al techo. Hasta yo me estoy mareando.",
+  "d": "[dizzy] Todo quedó pegado al techo. Hasta yo me estoy mareando.",
+  "revisada": true
+ },
+ {
+  "id": "0uv020n",
+  "g": "Al empezar la puerta 86",
+  "q": "ella",
+  "t": "Todo quedó pegado al techo. Hasta yo me estoy mareando.",
+  "d": "[dizzy] Todo quedó pegado al techo. Hasta yo me estoy mareando.",
+  "revisada": true
+ },
+ {
+  "id": "1bhdlq0",
+  "g": "Al empezar la puerta 87",
+  "q": "el",
+  "t": "¡Asteroides! Agárrate, que yo manejo… mentiras, maneja tú.",
+  "d": "[excited] ¡Asteroides! Agárrate, que yo manejo… [laughs] mentiras, maneja tú.",
+  "revisada": true
+ },
+ {
+  "id": "1bn1hrt",
+  "g": "Al empezar la puerta 87",
+  "q": "ella",
+  "t": "¡Asteroides! Agárrate, que yo manejo… mentiras, maneja tú.",
+  "d": "[excited] ¡Asteroides! Agárrate, que yo manejo… [laughs] mentiras, maneja tú.",
+  "revisada": true
+ },
+ {
+  "id": "0nds7hp",
+  "g": "Al empezar la puerta 88",
+  "q": "el",
+  "t": "La sala de máquinas. Aquí todo zumba y huele a nuevo.",
+  "d": "[curious] La sala de máquinas. Aquí todo zumba y huele a nuevo.",
+  "revisada": true
+ },
+ {
+  "id": "1f1voby",
+  "g": "Al empezar la puerta 88",
+  "q": "ella",
+  "t": "La sala de máquinas. Aquí todo zumba y huele a nuevo.",
+  "d": "[curious] La sala de máquinas. Aquí todo zumba y huele a nuevo.",
+  "revisada": true
+ },
+ {
+  "id": "0zdhxl9",
+  "g": "Al empezar la puerta 89",
+  "q": "el",
+  "t": "El cohete de emergencia. Solo tiene combustible para un viaje: el de vuelta a casa.",
+  "d": "[tenderly] El cohete de emergencia. Solo tiene combustible para un viaje: el de vuelta a casa.",
+  "revisada": true
+ },
+ {
+  "id": "07r57a6",
+  "g": "Al empezar la puerta 89",
+  "q": "ella",
+  "t": "El cohete de emergencia. Solo tiene combustible para un viaje: el de vuelta a casa.",
+  "d": "[tenderly] El cohete de emergencia. Solo tiene combustible para un viaje: el de vuelta a casa.",
+  "revisada": true
+ },
+ {
+  "id": "0zvbs2t",
+  "g": "Al empezar la puerta 90",
+  "q": "el",
+  "t": "Un eclipse. El sol y la luna solo se encuentran de vez en cuando… nosotros, todos los días.",
+  "d": "[dreamy] Un eclipse. El sol y la luna solo se encuentran de vez en cuando… nosotros, todos los días.",
+  "revisada": true
+ },
+ {
+  "id": "0tm8qg6",
+  "g": "Al empezar la puerta 90",
+  "q": "ella",
+  "t": "Un eclipse. El sol y la luna solo se encuentran de vez en cuando… nosotros, todos los días.",
+  "d": "[dreamy] Un eclipse. El sol y la luna solo se encuentran de vez en cuando… nosotros, todos los días.",
+  "revisada": true
+ },
+ {
+  "id": "1x558wn",
+  "g": "Al empezar la puerta 91",
+  "q": "el",
+  "t": "Volvimos a casa. Todas nuestras fotos se cayeron de la pared… qué desorden.",
+  "d": "[sighs] Volvimos a casa. Todas nuestras fotos se cayeron de la pared… qué desorden.",
+  "revisada": true
+ },
+ {
+  "id": "0qq2e34",
+  "g": "Al empezar la puerta 91",
+  "q": "ella",
+  "t": "Volvimos a casa. Todas nuestras fotos se cayeron de la pared… qué desorden.",
+  "d": "[sighs] Volvimos a casa. Todas nuestras fotos se cayeron de la pared… qué desorden.",
+  "revisada": true
+ },
+ {
+  "id": "0sxk82g",
+  "g": "Al empezar la puerta 92",
+  "q": "el",
+  "t": "El cofre de la abuela. Dice que solo se abre con cosas que nadie más sabe de nosotros.",
+  "d": "[curious] El cofre de la abuela. Dice que solo se abre con cosas que nadie más sabe de nosotros.",
+  "revisada": true
+ },
+ {
+  "id": "1wp06q1",
+  "g": "Al empezar la puerta 92",
+  "q": "ella",
+  "t": "El cofre de la abuela. Dice que solo se abre con cosas que nadie más sabe de nosotros.",
+  "d": "[curious] El cofre de la abuela. Dice que solo se abre con cosas que nadie más sabe de nosotros.",
+  "revisada": true
+ },
+ {
+  "id": "1jevixz",
+  "g": "Al empezar la puerta 93",
+  "q": "el",
+  "t": "Te dejé una carta… pero me dio pena y la escribí en clave.",
+  "d": "[shy] Te dejé una carta… pero me dio pena y la escribí en clave.",
+  "revisada": true
+ },
+ {
+  "id": "1ld6myu",
+  "g": "Al empezar la puerta 93",
+  "q": "ella",
+  "t": "Te dejé una carta… pero me dio pena y la escribí en clave.",
+  "d": "[shy] Te dejé una carta… pero me dio pena y la escribí en clave.",
+  "revisada": true
+ },
+ {
+  "id": "10lrxdx",
+  "g": "Al empezar la puerta 94",
+  "q": "el",
+  "t": "La matica de la ventana. La regamos entre los dos… cuando nos acordamos.",
+  "d": "[laughs] La matica de la ventana. La regamos entre los dos… cuando nos acordamos.",
+  "revisada": true
+ },
+ {
+  "id": "0op96tw",
+  "g": "Al empezar la puerta 94",
+  "q": "ella",
+  "t": "La matica de la ventana. La regamos entre los dos… cuando nos acordamos.",
+  "d": "[laughs] La matica de la ventana. La regamos entre los dos… cuando nos acordamos.",
+  "revisada": true
+ },
+ {
+  "id": "1xcbvg8",
+  "g": "Al empezar la puerta 95",
+  "q": "el",
+  "t": "El piano de la casa. Aprendimos a tocar una sola canción… y la tocamos mil veces.",
+  "d": "[laughs] El piano de la casa. Aprendimos a tocar una sola canción… y la tocamos mil veces.",
+  "revisada": true
+ },
+ {
+  "id": "0dn56jv",
+  "g": "Al empezar la puerta 95",
+  "q": "ella",
+  "t": "El piano de la casa. Aprendimos a tocar una sola canción… y la tocamos mil veces.",
+  "d": "[laughs] El piano de la casa. Aprendimos a tocar una sola canción… y la tocamos mil veces.",
+  "revisada": true
+ },
+ {
+  "id": "1gwm5jx",
+  "g": "Al empezar la puerta 96",
+  "q": "el",
+  "t": "¡La torta del aniversario! Tú haces la mezcla y yo me como lo que queda en la olla.",
+  "d": "[excited] ¡La torta del aniversario! Tú haces la mezcla y yo me como lo que queda en la olla.",
+  "revisada": true
+ },
+ {
+  "id": "10pn8ve",
+  "g": "Al empezar la puerta 96",
+  "q": "ella",
+  "t": "¡La torta del aniversario! Tú haces la mezcla y yo me como lo que queda en la olla.",
+  "d": "[excited] ¡La torta del aniversario! Tú haces la mezcla y yo me como lo que queda en la olla.",
+  "revisada": true
+ },
+ {
+  "id": "02qiy5o",
+  "g": "Al empezar la puerta 97",
+  "q": "el",
+  "t": "La caja musical que me regalaste. Todavía suena bonito.",
+  "d": "[tenderly] La caja musical que me regalaste. Todavía suena bonito.",
+  "revisada": true
+ },
+ {
+  "id": "194sa83",
+  "g": "Al empezar la puerta 97",
+  "q": "ella",
+  "t": "La caja musical que me regalaste. Todavía suena bonito.",
+  "d": "[tenderly] La caja musical que me regalaste. Todavía suena bonito.",
+  "revisada": true
+ },
+ {
+  "id": "1kifw2m",
+  "g": "Al empezar la puerta 98",
+  "q": "el",
+  "t": "Una estrella fugaz en la ventana. Yo ya sé qué voy a pedir.",
+  "d": "[dreamy] Una estrella fugaz en la ventana. Yo ya sé qué voy a pedir.",
+  "revisada": true
+ },
+ {
+  "id": "1q15vvt",
+  "g": "Al empezar la puerta 98",
+  "q": "ella",
+  "t": "Una estrella fugaz en la ventana. Yo ya sé qué voy a pedir.",
+  "d": "[dreamy] Una estrella fugaz en la ventana. Yo ya sé qué voy a pedir.",
+  "revisada": true
+ },
+ {
+  "id": "0y4rk7h",
+  "g": "Al empezar la puerta 99",
+  "q": "el",
+  "t": "Ya casi, mi amor. Esta puerta es un poquito de todo lo que vivimos.",
+  "d": "[emotional] Ya casi, mi amor. Esta puerta es un poquito de todo lo que vivimos.",
+  "revisada": true
+ },
+ {
+  "id": "12rdkie",
+  "g": "Al empezar la puerta 99",
+  "q": "ella",
+  "t": "Ya casi, mi amor. Esta puerta es un poquito de todo lo que vivimos.",
+  "d": "[emotional] Ya casi, mi amor. Esta puerta es un poquito de todo lo que vivimos.",
+  "revisada": true
+ },
+ {
+  "id": "0uv1pl0",
+  "g": "Al empezar la puerta 100",
+  "q": "el",
+  "t": "La última puerta, mi amor. Llegamos hasta aquí juntos… y así la vamos a abrir.",
+  "d": "[emotional] La última puerta, mi amor. Llegamos hasta aquí juntos… y así la vamos a abrir.",
+  "revisada": true
+ },
+ {
+  "id": "1m5xaex",
+  "g": "Al empezar la puerta 100",
+  "q": "ella",
+  "t": "La última puerta, mi amor. Llegamos hasta aquí juntos… y así la vamos a abrir.",
+  "d": "[emotional] La última puerta, mi amor. Llegamos hasta aquí juntos… y así la vamos a abrir.",
+  "revisada": true
+ },
+ {
+  "id": "059dey7",
+  "g": "Cuando aparece un recuerdo",
+  "q": "el",
+  "t": "¡Espera! Algo brilla detrás de esta puerta… ¡es un recuerdo nuestro!",
+  "d": "[excited] ¡Espera! Algo brilla detrás de esta puerta… ¡es un recuerdo nuestro!",
+  "revisada": true
+ },
+ {
+  "id": "0j40soo",
+  "g": "Cuando aparece un recuerdo",
+  "q": "el",
+  "t": "¡Mira lo que había escondido aquí! Un recuerdo.",
+  "d": "[excited] ¡Mira lo que había escondido aquí! Un recuerdo.",
+  "revisada": true
+ },
+ {
+  "id": "0o92aox",
+  "g": "Cuando aparece un recuerdo",
+  "q": "el",
+  "t": "El Olvido dejó caer algo… ¡otro recuerdo!",
+  "d": "[excited] El Olvido dejó caer algo… ¡otro recuerdo!",
+  "revisada": true
+ },
+ {
+  "id": "0goyyrb",
+  "g": "Cuando aparece un recuerdo",
+  "q": "el",
+  "t": "Shhh… ¿oyes? Es un recuerdo que quiere volver.",
+  "d": "[whispers] Shhh… ¿oyes? Es un recuerdo que quiere volver.",
+  "revisada": true
+ },
+ {
+  "id": "0u0g5da",
+  "g": "Cuando aparece un recuerdo",
+  "q": "ella",
+  "t": "¡Espera! Algo brilla detrás de esta puerta… ¡es un recuerdo nuestro!",
+  "d": "[excited] ¡Espera! Algo brilla detrás de esta puerta… ¡es un recuerdo nuestro!",
+  "revisada": true
+ },
+ {
+  "id": "1s5mrf3",
+  "g": "Cuando aparece un recuerdo",
+  "q": "ella",
+  "t": "¡Mira lo que había escondido aquí! Un recuerdo.",
+  "d": "[excited] ¡Mira lo que había escondido aquí! Un recuerdo.",
+  "revisada": true
+ },
+ {
+  "id": "17ldg0e",
+  "g": "Cuando aparece un recuerdo",
+  "q": "ella",
+  "t": "El Olvido dejó caer algo… ¡otro recuerdo!",
+  "d": "[excited] El Olvido dejó caer algo… ¡otro recuerdo!",
+  "revisada": true
+ },
+ {
+  "id": "1387x5e",
+  "g": "Cuando aparece un recuerdo",
+  "q": "ella",
+  "t": "Shhh… ¿oyes? Es un recuerdo que quiere volver.",
+  "d": "[whispers] Shhh… ¿oyes? Es un recuerdo que quiere volver.",
+  "revisada": true
+ },
+ {
+  "id": "0i58r2b",
+  "g": "Ánimos",
+  "q": "el",
+  "t": "Tú puedes, yo te espero aquí.",
+  "d": "[warmly] Tú puedes, yo te espero aquí.",
+  "revisada": true
+ },
+ {
+  "id": "1lwt76y",
+  "g": "Ánimos",
+  "q": "el",
+  "t": "Respira, mi amor. Vas muy bien.",
+  "d": "[softly] Respira, mi amor. Vas muy bien.",
+  "revisada": true
+ },
+ {
+  "id": "0ofg9vu",
+  "g": "Ánimos",
+  "q": "el",
+  "t": "No hay afán. Me encanta verte pensar.",
+  "d": "[tenderly] No hay afán. Me encanta verte pensar.",
+  "revisada": true
+ },
+ {
+  "id": "0fpps0k",
+  "g": "Ánimos",
+  "q": "el",
+  "t": "Sé que lo vas a lograr.",
+  "d": "[confident] Sé que lo vas a lograr.",
+  "revisada": true
+ },
+ {
+  "id": "1kzr8ud",
+  "g": "Ánimos",
+  "q": "el",
+  "t": "Aquí estoy contigo.",
+  "d": "[softly] Aquí estoy contigo.",
+  "revisada": true
+ },
+ {
+  "id": "0jie448",
+  "g": "Ánimos",
+  "q": "el",
+  "t": "Una idea a la vez, corazón.",
+  "d": "[calmly] Una idea a la vez, corazón.",
+  "revisada": true
+ },
+ {
+  "id": "00eifm6",
+  "g": "Ánimos",
+  "q": "el",
+  "t": "Confío en ti más que en nadie.",
+  "d": "[warmly] Confío en ti más que en nadie.",
+  "revisada": true
+ },
+ {
+  "id": "0ds3bza",
+  "g": "Ánimos",
+  "q": "el",
+  "t": "Ya casi, lo presiento.",
+  "d": "[excited] Ya casi, lo presiento.",
+  "revisada": true
+ },
+ {
+  "id": "0ds8zfp",
+  "g": "Ánimos",
+  "q": "el",
+  "t": "Pase lo que pase, eres mi persona favorita.",
+  "d": "[lovingly] Pase lo que pase, eres mi persona favorita.",
+  "revisada": true
+ },
+ {
+  "id": "09i53fs",
+  "g": "Ánimos",
+  "q": "ella",
+  "t": "Tú puedes, yo te espero aquí.",
+  "d": "[warmly] Tú puedes, yo te espero aquí.",
+  "revisada": true
+ },
+ {
+  "id": "0va2gd1",
+  "g": "Ánimos",
+  "q": "ella",
+  "t": "Respira, mi amor. Vas muy bien.",
+  "d": "[softly] Respira, mi amor. Vas muy bien.",
+  "revisada": true
+ },
+ {
+  "id": "0dplnz5",
+  "g": "Ánimos",
+  "q": "ella",
+  "t": "No hay afán. Me encanta verte pensar.",
+  "d": "[tenderly] No hay afán. Me encanta verte pensar.",
+  "revisada": true
+ },
+ {
+  "id": "0dyptij",
+  "g": "Ánimos",
+  "q": "ella",
+  "t": "Sé que lo vas a lograr.",
+  "d": "[confident] Sé que lo vas a lograr.",
+  "revisada": true
+ },
+ {
+  "id": "0lhqnq6",
+  "g": "Ánimos",
+  "q": "ella",
+  "t": "Aquí estoy contigo.",
+  "d": "[softly] Aquí estoy contigo.",
+  "revisada": true
+ },
+ {
+  "id": "0rkvl2b",
+  "g": "Ánimos",
+  "q": "ella",
+  "t": "Una idea a la vez, corazón.",
+  "d": "[calmly] Una idea a la vez, corazón.",
+  "revisada": true
+ },
+ {
+  "id": "0qq3zaj",
+  "g": "Ánimos",
+  "q": "ella",
+  "t": "Confío en ti más que en nadie.",
+  "d": "[warmly] Confío en ti más que en nadie.",
+  "revisada": true
+ },
+ {
+  "id": "1c2230z",
+  "g": "Ánimos",
+  "q": "ella",
+  "t": "Ya casi, lo presiento.",
+  "d": "[excited] Ya casi, lo presiento.",
+  "revisada": true
+ },
+ {
+  "id": "1fp78fq",
+  "g": "Ánimos",
+  "q": "ella",
+  "t": "Pase lo que pase, eres mi persona favorita.",
+  "d": "[lovingly] Pase lo que pase, eres mi persona favorita.",
+  "revisada": true
+ },
+ {
+  "id": "017fvt0",
+  "g": "Ánimos propios",
+  "q": "el",
+  "t": "Sonríe un poquito, que cuando sonríes todo sale mejor.",
+  "d": "[tenderly] Sonríe un poquito, que cuando sonríes todo sale mejor.",
+  "revisada": true
+ },
+ {
+  "id": "1nxvj8y",
+  "g": "Ánimos propios",
+  "q": "el",
+  "t": "Tú no te rindes nunca. Así me conquistaste.",
+  "d": "[proudly] Tú no te rindes nunca. Así me conquistaste.",
+  "revisada": true
+ },
+ {
+  "id": "0ciqr36",
+  "g": "Ánimos propios",
+  "q": "el",
+  "t": "Tranquila, mi amor. Yo te espero el tiempo que sea.",
+  "d": "[tenderly] Tranquila, mi amor. Yo te espero el tiempo que sea.",
+  "revisada": true
+ },
+ {
+  "id": "0cn5lpg",
+  "g": "Ánimos propios",
+  "q": "el",
+  "t": "Pasaste a Psicología el día de tu cumpleaños. Esto es facilito para ti.",
+  "d": "[encouraging] Pasaste a Psicología el día de tu cumpleaños. Esto es facilito para ti.",
+  "revisada": true
+ },
+ {
+  "id": "0j71g69",
+  "g": "Ánimos propios",
+  "q": "el",
+  "t": "Sostente en mí, como siempre. Aquí estoy.",
+  "d": "[softly] Sostente en mí, como siempre. Aquí estoy.",
+  "revisada": true
+ },
+ {
+  "id": "1c6svnq",
+  "g": "Ánimos propios",
+  "q": "ella",
+  "t": "Tú, que te diste cuenta de mi estafa al instante… esto es facilito.",
+  "d": "[playfully] Tú, que te diste cuenta de mi estafa al instante… esto es facilito.",
+  "revisada": true
+ },
+ {
+  "id": "10j2gqd",
+  "g": "Ánimos propios",
+  "q": "ella",
+  "t": "Piénsalo como cuando me explicabas matemáticas, pero con cosas que me gusten.",
+  "d": "[teasing] Piénsalo como cuando me explicabas matemáticas, pero con cosas que me gusten.",
+  "revisada": true
+ },
+ {
+  "id": "1s0yxy5",
+  "g": "Ánimos propios",
+  "q": "ella",
+  "t": "Me gusta la carita que pones cuando piensas.",
+  "d": "[lovingly] Me gusta la carita que pones cuando piensas.",
+  "revisada": true
+ },
+ {
+  "id": "1mwl254",
+  "g": "Ánimos propios",
+  "q": "ella",
+  "t": "Tú me explicabas para el ICFES. Esto, al lado de eso, es nada.",
+  "d": "[encouraging] Tú me explicabas para el ICFES. Esto, al lado de eso, es nada.",
+  "revisada": true
+ },
+ {
+  "id": "1q1og6k",
+  "g": "Al abrir una puerta",
+  "q": "el",
+  "t": "¡Lo lograste!",
+  "d": "[excited] ¡Lo lograste!",
+  "revisada": true
+ },
+ {
+  "id": "0r82jqs",
+  "g": "Al abrir una puerta",
+  "q": "el",
+  "t": "¡Eso, mi amor!",
+  "d": "[excited] ¡Eso, mi amor!",
+  "revisada": true
+ },
+ {
+  "id": "0kje9o1",
+  "g": "Al abrir una puerta",
+  "q": "el",
+  "t": "¡Sabía que podías!",
+  "d": "[proudly] ¡Sabía que podías!",
+  "revisada": true
+ },
+ {
+  "id": "1504ab5",
+  "g": "Al abrir una puerta",
+  "q": "el",
+  "t": "¡Otra puerta abierta!",
+  "d": "[happy] ¡Otra puerta abierta!",
+  "revisada": true
+ },
+ {
+  "id": "0ur1qd4",
+  "g": "Al abrir una puerta",
+  "q": "el",
+  "t": "¡Qué cerebro tan lindo tienes!",
+  "d": "[playfully] ¡Qué cerebro tan lindo tienes!",
+  "revisada": true
+ },
+ {
+  "id": "0dv0843",
+  "g": "Al abrir una puerta",
+  "q": "el",
+  "t": "¡Increíble!",
+  "d": "[amazed] ¡Increíble!",
+  "revisada": true
+ },
+ {
+  "id": "1ivm59c",
+  "g": "Al abrir una puerta",
+  "q": "el",
+  "t": "¡Así se hace!",
+  "d": "[excited] ¡Así se hace!",
+  "revisada": true
+ },
+ {
+  "id": "004sow8",
+  "g": "Al abrir una puerta",
+  "q": "el",
+  "t": "¡Mira nada más!",
+  "d": "[impressed] ¡Mira nada más!",
+  "revisada": true
+ },
+ {
+  "id": "16rulor",
+  "g": "Al abrir una puerta",
+  "q": "ella",
+  "t": "¡Lo lograste!",
+  "d": "[excited] ¡Lo lograste!",
+  "revisada": true
+ },
+ {
+  "id": "13rmps9",
+  "g": "Al abrir una puerta",
+  "q": "ella",
+  "t": "¡Eso, mi amor!",
+  "d": "[excited] ¡Eso, mi amor!",
+  "revisada": true
+ },
+ {
+  "id": "1ne45fo",
+  "g": "Al abrir una puerta",
+  "q": "ella",
+  "t": "¡Sabía que podías!",
+  "d": "[proudly] ¡Sabía que podías!",
+  "revisada": true
+ },
+ {
+  "id": "1q5qgoq",
+  "g": "Al abrir una puerta",
+  "q": "ella",
+  "t": "¡Otra puerta abierta!",
+  "d": "[happy] ¡Otra puerta abierta!",
+  "revisada": true
+ },
+ {
+  "id": "16z7x9d",
+  "g": "Al abrir una puerta",
+  "q": "ella",
+  "t": "¡Qué cerebro tan lindo tienes!",
+  "d": "[playfully] ¡Qué cerebro tan lindo tienes!",
+  "revisada": true
+ },
+ {
+  "id": "1lv1joc",
+  "g": "Al abrir una puerta",
+  "q": "ella",
+  "t": "¡Increíble!",
+  "d": "[amazed] ¡Increíble!",
+  "revisada": true
+ },
+ {
+  "id": "1tem36n",
+  "g": "Al abrir una puerta",
+  "q": "ella",
+  "t": "¡Así se hace!",
+  "d": "[excited] ¡Así se hace!",
+  "revisada": true
+ },
+ {
+  "id": "1qi2fsz",
+  "g": "Al abrir una puerta",
+  "q": "ella",
+  "t": "¡Mira nada más!",
+  "d": "[impressed] ¡Mira nada más!",
+  "revisada": true
+ },
+ {
+  "id": "1atzjp9",
+  "g": "Algo bonito al abrir",
+  "q": "el",
+  "t": "Contigo hasta las puertas más difíciles se abren.",
+  "d": "[warmly] Contigo hasta las puertas más difíciles se abren.",
+  "revisada": true
+ },
+ {
+  "id": "13ahnmp",
+  "g": "Algo bonito al abrir",
+  "q": "el",
+  "t": "Cada recuerdo que vuelve me hace quererte más.",
+  "d": "[tenderly] Cada recuerdo que vuelve me hace quererte más.",
+  "revisada": true
+ },
+ {
+  "id": "1kgm7nq",
+  "g": "Algo bonito al abrir",
+  "q": "el",
+  "t": "Me haces sentir en casa en cualquier parte.",
+  "d": "[lovingly] Me haces sentir en casa en cualquier parte.",
+  "revisada": true
+ },
+ {
+  "id": "0fo0bqo",
+  "g": "Algo bonito al abrir",
+  "q": "el",
+  "t": "Eres mi lugar favorito.",
+  "d": "[softly] Eres mi lugar favorito.",
+  "revisada": true
+ },
+ {
+  "id": "0dr61z1",
+  "g": "Algo bonito al abrir",
+  "q": "el",
+  "t": "Sabía que lo ibas a lograr.",
+  "d": "[proudly] Sabía que lo ibas a lograr.",
+  "revisada": true
+ },
+ {
+  "id": "046i782",
+  "g": "Algo bonito al abrir",
+  "q": "el",
+  "t": "Qué suerte la mía de ir contigo.",
+  "d": "[happy] Qué suerte la mía de ir contigo.",
+  "revisada": true
+ },
+ {
+  "id": "052gj2w",
+  "g": "Algo bonito al abrir",
+  "q": "el",
+  "t": "Si tuviera que abrir cien puertas más, las abro contigo.",
+  "d": "[lovingly] Si tuviera que abrir cien puertas más, las abro contigo.",
+  "revisada": true
+ },
+ {
+  "id": "09tt9un",
+  "g": "Algo bonito al abrir",
+  "q": "el",
+  "t": "Nuestro amor es la llave de todo.",
+  "d": "[tenderly] Nuestro amor es la llave de todo.",
+  "revisada": true
+ },
+ {
+  "id": "02ilyfo",
+  "g": "Algo bonito al abrir",
+  "q": "el",
+  "t": "Gracias por no rendirte nunca.",
+  "d": "[emotional] Gracias por no rendirte nunca.",
+  "revisada": true
+ },
+ {
+  "id": "1vlvan2",
+  "g": "Algo bonito al abrir",
+  "q": "ella",
+  "t": "Contigo hasta las puertas más difíciles se abren.",
+  "d": "[warmly] Contigo hasta las puertas más difíciles se abren.",
+  "revisada": true
+ },
+ {
+  "id": "01k7vrk",
+  "g": "Algo bonito al abrir",
+  "q": "ella",
+  "t": "Cada recuerdo que vuelve me hace quererte más.",
+  "d": "[tenderly] Cada recuerdo que vuelve me hace quererte más.",
+  "revisada": true
+ },
+ {
+  "id": "088osjl",
+  "g": "Algo bonito al abrir",
+  "q": "ella",
+  "t": "Me haces sentir en casa en cualquier parte.",
+  "d": "[lovingly] Me haces sentir en casa en cualquier parte.",
+  "revisada": true
+ },
+ {
+  "id": "1hnvxef",
+  "g": "Algo bonito al abrir",
+  "q": "ella",
+  "t": "Eres mi lugar favorito.",
+  "d": "[softly] Eres mi lugar favorito.",
+  "revisada": true
+ },
+ {
+  "id": "0yu4q2i",
+  "g": "Algo bonito al abrir",
+  "q": "ella",
+  "t": "Sabía que lo ibas a lograr.",
+  "d": "[proudly] Sabía que lo ibas a lograr.",
+  "revisada": true
+ },
+ {
+  "id": "0waxhbz",
+  "g": "Algo bonito al abrir",
+  "q": "ella",
+  "t": "Qué suerte la mía de ir contigo.",
+  "d": "[happy] Qué suerte la mía de ir contigo.",
+  "revisada": true
+ },
+ {
+  "id": "1a9tskp",
+  "g": "Algo bonito al abrir",
+  "q": "ella",
+  "t": "Si tuviera que abrir cien puertas más, las abro contigo.",
+  "d": "[lovingly] Si tuviera que abrir cien puertas más, las abro contigo.",
+  "revisada": true
+ },
+ {
+  "id": "0zb5czc",
+  "g": "Algo bonito al abrir",
+  "q": "ella",
+  "t": "Nuestro amor es la llave de todo.",
+  "d": "[tenderly] Nuestro amor es la llave de todo.",
+  "revisada": true
+ },
+ {
+  "id": "0g3acfx",
+  "g": "Algo bonito al abrir",
+  "q": "ella",
+  "t": "Gracias por no rendirte nunca.",
+  "d": "[emotional] Gracias por no rendirte nunca.",
+  "revisada": true
+ },
+ {
+  "id": "1qeowrv",
+  "g": "Algo bonito propio",
+  "q": "el",
+  "t": "Cada vez que sonríes me vuelvo a enamorar.",
+  "d": "[lovingly] Cada vez que sonríes me vuelvo a enamorar.",
+  "revisada": true
+ },
+ {
+  "id": "16e9v3d",
+  "g": "Algo bonito propio",
+  "q": "el",
+  "t": "Lo que más amo de ti son tus labios y tu sonrisa.",
+  "d": "[tenderly] Lo que más amo de ti son tus labios y tu sonrisa.",
+  "revisada": true
+ },
+ {
+  "id": "06sqe6l",
+  "g": "Algo bonito propio",
+  "q": "el",
+  "t": "Eres la mujer más hermosa del mundo.",
+  "d": "[admiring] Eres la mujer más hermosa del mundo.",
+  "revisada": true
+ },
+ {
+  "id": "0tjzx28",
+  "g": "Algo bonito propio",
+  "q": "el",
+  "t": "Eres el amor de mi vida.",
+  "d": "[emotional] Eres el amor de mi vida.",
+  "revisada": true
+ },
+ {
+  "id": "086ldaz",
+  "g": "Algo bonito propio",
+  "q": "el",
+  "t": "Gracias por esforzarte tanto por mí.",
+  "d": "[grateful] Gracias por esforzarte tanto por mí.",
+  "revisada": true
+ },
+ {
+  "id": "1lkihqs",
+  "g": "Algo bonito propio",
+  "q": "el",
+  "t": "Siempre supe que ibas a poder. Siempre.",
+  "d": "[proudly] Siempre supe que ibas a poder. Siempre.",
+  "revisada": true
+ },
+ {
+  "id": "1usboq1",
+  "g": "Algo bonito propio",
+  "q": "el",
+  "t": "Ya quiero verte de esposa… y de mamá.",
+  "d": "[dreamy] Ya quiero verte de esposa… y de mamá.",
+  "revisada": true
+ },
+ {
+  "id": "1u15cuw",
+  "g": "Algo bonito propio",
+  "q": "ella",
+  "t": "Me robaste el corazón… y eso que la estafadora era yo.",
+  "d": "[laughs] Me robaste el corazón… y eso que la estafadora era yo.",
+  "revisada": true
+ },
+ {
+  "id": "07nfew3",
+  "g": "Algo bonito propio",
+  "q": "ella",
+  "t": "Eres el hombre más inteligente que conozco.",
+  "d": "[admiring] Eres el hombre más inteligente que conozco.",
+  "revisada": true
+ },
+ {
+  "id": "0ir5zno",
+  "g": "Algo bonito propio",
+  "q": "ella",
+  "t": "Contigo hasta la filosofía me gusta.",
+  "d": "[playfully] Contigo hasta la filosofía me gusta.",
+  "revisada": true
+ },
+ {
+  "id": "050go1f",
+  "g": "Algo bonito propio",
+  "q": "ella",
+  "t": "Soy feliz solo con contarte mis cosas.",
+  "d": "[tenderly] Soy feliz solo con contarte mis cosas.",
+  "revisada": true
+ },
+ {
+  "id": "1hg1ihm",
+  "g": "Algo bonito propio",
+  "q": "ella",
+  "t": "Qué bueno que tú también me estabas buscando.",
+  "d": "[happy] Qué bueno que tú también me estabas buscando.",
+  "revisada": true
+ },
+ {
+  "id": "049qoa6",
+  "g": "Algo bonito propio",
+  "q": "ella",
+  "t": "Tú eres mis oraciones respondidas.",
+  "d": "[emotional] Tú eres mis oraciones respondidas.",
+  "revisada": true
+ },
+ {
+  "id": "0zmlrx1",
+  "g": "Algo bonito propio",
+  "q": "ella",
+  "t": "Contigo la vida se hace más liviana.",
+  "d": "[softly] Contigo la vida se hace más liviana.",
+  "revisada": true
+ },
+ {
+  "id": "0906ozy",
+  "g": "Cuando algo se rompe",
+  "q": "el",
+  "t": "¡Ay, eso era de mi abuela!",
+  "d": "[shocked] ¡Ay, eso era de mi abuela!",
+  "revisada": true
+ },
+ {
+  "id": "0dwmzk1",
+  "g": "Cuando algo se rompe",
+  "q": "el",
+  "t": "Tranquilo… después lo pegamos.",
+  "d": "[sighs] Tranquilo… después lo pegamos.",
+  "revisada": true
+ },
+ {
+  "id": "02931qn",
+  "g": "Cuando algo se rompe",
+  "q": "el",
+  "t": "¡Uy! Hagamos como que no pasó.",
+  "d": "[nervous laugh] ¡Uy! Hagamos como que no pasó.",
+  "revisada": true
+ },
+ {
+  "id": "0ndbpxy",
+  "g": "Cuando algo se rompe",
+  "q": "el",
+  "t": "Eso no era la llave, mi amor.",
+  "d": "[teasing] Eso no era la llave, mi amor.",
+  "revisada": true
+ },
+ {
+  "id": "15hc97h",
+  "g": "Cuando algo se rompe",
+  "q": "el",
+  "t": "¡Mi cosita favorita!",
+  "d": "[dramatic gasp] ¡Mi cosita favorita!",
+  "revisada": true
+ },
+ {
+  "id": "1oajy4r",
+  "g": "Cuando algo se rompe",
+  "q": "ella",
+  "t": "¡Ay, eso era de mi abuela!",
+  "d": "[shocked] ¡Ay, eso era de mi abuela!",
+  "revisada": true
+ },
+ {
+  "id": "1unw7ki",
+  "g": "Cuando algo se rompe",
+  "q": "ella",
+  "t": "Tranquila… después lo pegamos.",
+  "d": "Tranquila… después lo pegamos.",
+  "revisada": true
+ },
+ {
+  "id": "065mat6",
+  "g": "Cuando algo se rompe",
+  "q": "ella",
+  "t": "¡Uy! Hagamos como que no pasó.",
+  "d": "[nervous laugh] ¡Uy! Hagamos como que no pasó.",
+  "revisada": true
+ },
+ {
+  "id": "1h9tkp9",
+  "g": "Cuando algo se rompe",
+  "q": "ella",
+  "t": "Eso no era la llave, mi amor.",
+  "d": "[teasing] Eso no era la llave, mi amor.",
+  "revisada": true
+ },
+ {
+  "id": "04ebytg",
+  "g": "Cuando algo se rompe",
+  "q": "ella",
+  "t": "¡Mi cosita favorita!",
+  "d": "[dramatic gasp] ¡Mi cosita favorita!",
+  "revisada": true
+ },
+ {
+  "id": "1arykx6",
+  "g": "Antes de la pista (dulce 1)",
+  "q": "el",
+  "t": "Mmm, rico… Bueno, solo un poquito:",
+  "d": "[savoring] Mmm, rico… Bueno, solo un poquito…",
+  "revisada": true
+ },
+ {
+  "id": "0g9gfeq",
+  "g": "Antes de la pista (dulce 1)",
+  "q": "el",
+  "t": "Un caramelo, una pistica:",
+  "d": "[playfully] Un caramelo, una pistica…",
+  "revisada": true
+ },
+ {
+  "id": "1jnl70k",
+  "g": "Antes de la pista (dulce 1)",
+  "q": "el",
+  "t": "Ay, qué dulce eres. Te digo algo chiquito:",
+  "d": "[tenderly] Ay, qué dulce eres. Te digo algo chiquito…",
+  "revisada": true
+ },
+ {
+  "id": "09gkncn",
+  "g": "Antes de la pista (dulce 1)",
+  "q": "ella",
+  "t": "Mmm, rico… Bueno, solo un poquito:",
+  "d": "[savoring] Mmm, rico… Bueno, solo un poquito…",
+  "revisada": true
+ },
+ {
+  "id": "0hah4gd",
+  "g": "Antes de la pista (dulce 1)",
+  "q": "ella",
+  "t": "Un caramelo, una pistica:",
+  "d": "[playfully] Un caramelo, una pistica…",
+  "revisada": true
+ },
+ {
+  "id": "1e5vm2p",
+  "g": "Antes de la pista (dulce 1)",
+  "q": "ella",
+  "t": "Ay, qué dulce eres. Te digo algo chiquito:",
+  "d": "[tenderly] Ay, qué dulce eres. Te digo algo chiquito…",
+  "revisada": true
+ },
+ {
+  "id": "0tx87mu",
+  "g": "Antes de la pista (dulce 2)",
+  "q": "el",
+  "t": "¡Chocolates! Así sí se habla:",
+  "d": "[excited] ¡Chocolates! Así sí se habla…",
+  "revisada": true
+ },
+ {
+  "id": "0egytlp",
+  "g": "Antes de la pista (dulce 2)",
+  "q": "el",
+  "t": "Con chocolate hasta te ayudo un poco más:",
+  "d": "[happy] Con chocolate hasta te ayudo un poco más…",
+  "revisada": true
+ },
+ {
+  "id": "1dgo5bh",
+  "g": "Antes de la pista (dulce 2)",
+  "q": "el",
+  "t": "Mmm… Está bien, te lo digo más claro:",
+  "d": "[sighs] Mmm… Está bien, te lo digo más claro…",
+  "revisada": true
+ },
+ {
+  "id": "1b27skl",
+  "g": "Antes de la pista (dulce 2)",
+  "q": "ella",
+  "t": "¡Chocolates! Así sí se habla:",
+  "d": "[excited] ¡Chocolates! Así sí se habla…",
+  "revisada": true
+ },
+ {
+  "id": "02cvl1a",
+  "g": "Antes de la pista (dulce 2)",
+  "q": "ella",
+  "t": "Con chocolate hasta te ayudo un poco más:",
+  "d": "[happy] Con chocolate hasta te ayudo un poco más…",
+  "revisada": true
+ },
+ {
+  "id": "1t6cn4y",
+  "g": "Antes de la pista (dulce 2)",
+  "q": "ella",
+  "t": "Mmm… Está bien, te lo digo más claro:",
+  "d": "[sighs] Mmm… Está bien, te lo digo más claro…",
+  "revisada": true
+ },
+ {
+  "id": "1iyonm3",
+  "g": "Antes de la pista (dulce 3)",
+  "q": "el",
+  "t": "¡Fresas con crema! Por esto te lo digo casi todo:",
+  "d": "[very excited] ¡Fresas con crema! Por esto te lo digo casi todo…",
+  "revisada": true
+ },
+ {
+  "id": "0yv6aih",
+  "g": "Antes de la pista (dulce 3)",
+  "q": "el",
+  "t": "Me compraste, lo admito. Escucha bien:",
+  "d": "[laughs] Me compraste, lo admito. Escucha bien…",
+  "revisada": true
+ },
+ {
+  "id": "0e8rit1",
+  "g": "Antes de la pista (dulce 3)",
+  "q": "el",
+  "t": "Con fresas no me puedo negar:",
+  "d": "[delighted] Con fresas no me puedo negar…",
+  "revisada": true
+ },
+ {
+  "id": "1i0590c",
+  "g": "Antes de la pista (dulce 3)",
+  "q": "ella",
+  "t": "¡Fresas con crema! Por esto te lo digo casi todo:",
+  "d": "[very excited] ¡Fresas con crema! Por esto te lo digo casi todo…",
+  "revisada": true
+ },
+ {
+  "id": "0uq8wwc",
+  "g": "Antes de la pista (dulce 3)",
+  "q": "ella",
+  "t": "Me compraste, lo admito. Escucha bien:",
+  "d": "[laughs] Me compraste, lo admito. Escucha bien…",
+  "revisada": true
+ },
+ {
+  "id": "0wwaw3a",
+  "g": "Antes de la pista (dulce 3)",
+  "q": "ella",
+  "t": "Con fresas no me puedo negar:",
+  "d": "[delighted] Con fresas no me puedo negar…",
+  "revisada": true
+ },
+ {
+  "id": "0zlcmmu",
+  "g": "Sin plata para el dulce",
+  "q": "el",
+  "t": "¿Sin dulce? Así no se vale, mi amor.",
+  "d": "[pouting] ¿Sin dulce? Así no se vale, mi amor.",
+  "revisada": true
+ },
+ {
+  "id": "0fg2zrn",
+  "g": "Sin plata para el dulce",
+  "q": "el",
+  "t": "Primero mi antojo… y no alcanza.",
+  "d": "[sighs] Primero mi antojo… y no alcanza.",
+  "revisada": true
+ },
+ {
+  "id": "1sjfkhr",
+  "g": "Sin plata para el dulce",
+  "q": "el",
+  "t": "Esa alcancía está flaquita. Tú puedes sin mí.",
+  "d": "[teasing] Esa alcancía está flaquita. Tú puedes sin mí.",
+  "revisada": true
+ },
+ {
+  "id": "02lebx3",
+  "g": "Sin plata para el dulce",
+  "q": "ella",
+  "t": "¿Sin dulce? Así no se vale, mi amor.",
+  "d": "[pouting] ¿Sin dulce? Así no se vale, mi amor.",
+  "revisada": true
+ },
+ {
+  "id": "0s96f9a",
+  "g": "Sin plata para el dulce",
+  "q": "ella",
+  "t": "Primero mi antojo… y no alcanza.",
+  "d": "[sighs] Primero mi antojo… y no alcanza.",
+  "revisada": true
+ },
+ {
+  "id": "1tt23q4",
+  "g": "Sin plata para el dulce",
+  "q": "ella",
+  "t": "Esa alcancía está flaquita. Tú puedes sin mí.",
+  "d": "[teasing] Esa alcancía está flaquita. Tú puedes sin mí.",
+  "revisada": true
+ }
+]

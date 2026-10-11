@@ -1,0 +1,36 @@
+{
+  "fecha": "2026-10-10",
+  "baseIntegrada": "f3174e79f394e04e57c7eb3f85da079a0c8f80a3",
+  "fuente": "juego/web/src/granja-v3",
+  "esquemaGuardado": 5,
+  "compilacionPareja": "correcta, TypeScript + Vite",
+  "compilacionAmigos": "correcta, 485 archivos revisados sin contenido de pareja",
+  "regresion": {
+    "comando": "npm run probar:granja",
+    "suites": 27,
+    "fallos": 0
+  },
+  "navegador": {
+    "checks": [
+      "Botón de la casa abre la granja V5 sobre el build actual",
+      "Teclado mueve al personaje compartido actual",
+      "Mouse abre el buzón y conserva lectura",
+      "Inventario actual accesible en horizontal",
+      "Granja → casa real → granja conserva posición, inventario y jornada",
+      "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+    ],
+    "errors": [],
+    "bad": [],
+    "viewport": [
+      844,
+      390
+    ],
+    "escenariosPreparados": "Cuarto habilitado y avatar posicionado en contexto nuevo aislado.",
+    "dispositivosFisicos": []
+  },
+  "noCertifica": [
+    "rendimiento físico en S21 FE/S24 Ultra",
+    "campaña completa desde cero",
+    "paridad completa con los juegos de referencia"
+  ]
+}

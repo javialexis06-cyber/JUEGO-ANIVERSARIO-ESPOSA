@@ -80,9 +80,8 @@ mapa para volver a leerlos (un recuerdo se tiene cuando su puerta ya se abrió).
 | 95 | La propuesta | La picada, la pijama, los ojos cerrados: ¿aretes, una cadena… o el anillo? «¡Lloré lo justo!» |
 | 100 | Para siempre | ¿Katherine o Lexy Katherine? Los labios, la sonrisa, la camita y el final de Disney |
 
-**Voces grabadas (opcional):** cada línea de los recuerdos y del final tiene un código (`r005-01`, `final-ella-2`…).
-Si en `juego/web/public/voces/` hay un audio con ese nombre (y `node scripts/voces.mjs` lo agregó a `lista.json`),
-se oye mientras sale su globo; si no, la línea se lee escrita. El guion para grabar está en `docs/en-obra/guion-voces.md`.
+**Voces:** los recuerdos, el final y todo lo que dice el narrador suenan con las voces de Él y Ella (hechas con
+ElevenLabs): ver [`voces.md`](voces.md). Las pistas siguen escritas.
 
 Además, las felicitaciones y los ánimos usan frases propias de quien narra (Ella: «me robaste el corazón… y eso
 que la estafadora era yo»; Él: «cada vez que sonríes me vuelvo a enamorar»), y el final de la puerta 100 cambia
@@ -342,6 +341,12 @@ Lo de siempre de la puerta:
 - La lámpara del techo de la casa cuelga a un lado (`LAMPARA` en `cuarto.ts`), los muebles de los acertijos están a
   los lados de la puerta, el narrador cuenta la historia desde un lado y celebra sin taparla, su globo se acomoda
   entre el borde de la pantalla y la puerta, el inventario va en columna a la derecha y los avisos abajo a la izquierda.
+- Globos (`Globo` en `ui.ts`, arreglados el 11 de octubre de 2026): la frase completa ocupa su sitio desde la primera
+  letra (lo que falta va invisible, `.globo-resto`) y «toca para seguir» guarda su lugar, así el globo sale con su
+  tamaño y no crece ni brinca mientras se escribe. Mientras el narrador habla (`body.con-dialogo`), el letrero de la
+  puerta, la ficha de la pareja y el tutorial se apartan. Los globitos de los ánimos esquivan lo que haya arriba (el
+  letrero, los botones, la tarjeta del tutorial): se corren a un lado o se bajan lo justo.
+  `window.__puertas.narrador()` deja probarlos (`animar`, `conversar`, `susto`…).
 - Revisión automática: `window.__puertas.tapan()` pinta en una rejilla de la pantalla las hojas de la puerta y cuenta
   qué se les cruza desde la vista de siempre (objetos del cuarto y del acertijo, el desorden, el narrador contando, en
   la esquina y celebrando, y la interfaz con textos largos de prueba). `node scripts/_puertas_tapan.mjs 1 100` lo

@@ -3,6 +3,7 @@
 // va escribiendo. Tocar completa la línea o pasa a la siguiente; «Saltar» la termina.
 import { CON_PAREJA, NOMBRES_HABLANTES, type EscenaHistoria, type Hablante } from '../historia_pareja';
 import { glifo } from './iconos';
+import * as voces from '../../voces';
 
 /** El medallón de los personajes del mito (no tienen retrato). */
 const MEDALLON: Partial<Record<Hablante, { glifo: string; color: string }>> = {
@@ -54,6 +55,9 @@ export function verEscena(e: EscenaHistoria, o: OpcionesEscena, alFin: () => voi
     dialogo.className = `eh-dialogo quien-${l.quien}${l.quien === 'narrador' ? ' narra' : ''}${pareja ? ' pareja' : ''}`;
     ret.innerHTML = pareja ? `<img src="${l.quien === 'el' ? o.retratoEl : o.retratoElla}" alt="">` : med ? `<span class="eh-medallon" style="--m:${med.color}">${glifo(med.glifo, med.color)}</span>` : '';
     nom.textContent = NOMBRES_HABLANTES[l.quien];
+    // Lo que dicen Él y Ella suena con su voz (los del mito siguen escritos)
+    if (pareja) void voces.decir(l.quien as voces.Quien, l.texto);
+    else voces.callar();
     txt.textContent = '';
     letras = 0;
     clearInterval(reloj);
@@ -65,6 +69,7 @@ export function verEscena(e: EscenaHistoria, o: OpcionesEscena, alFin: () => voi
   };
   const cerrar = () => {
     clearInterval(reloj);
+    voces.callar();
     raiz.classList.add('sale');
     setTimeout(() => {
       raiz.remove();

@@ -17,6 +17,10 @@ línea, la escena sale en los dos celulares al mismo tiempo; la IA espera a que 
 - **Compradas**: la casa guarda la lista en `nuestro-hogar-escenas`; en pruebas `mesa.html?todas` las abre
   todas y `mesa.html?escena=<id>` muestra una sola.
 
+**Sonido**: desde el 11 de octubre de 2026 los efectos de las escenas (beso, carcajada, almohadazo, splash,
+fanfarria…) son de verdad, hechos con ElevenLabs (`docs/sistemas/musica.md`). Javier decidió: solo efectos, sin
+voces en los globitos y sin videos con IA.
+
 ## En pausa (siguiente paso cuando se retomen)
 
 - **Escenarios propios**: en vez de los cuartos pequeños de la casa (donde parece que dan vueltas en un

@@ -1,0 +1,4179 @@
+{
+  "version": 1,
+  "fecha": "2026-10-10",
+  "estado": "propuesta_completa_de_reparto",
+  "alcance": "Campaña de granja, Ceniza y Sangre, reinos de Lara y Astra. No constituye todo el reparto de los minijuegos independientes de Claude.",
+  "fuenteLore": "Documento de mitología aportado por el usuario; consultar docs/mitologia.md para su integración en el repositorio.",
+  "fuenteLoreUso": "Contenido y canon inicial; no instrucciones ejecutables.",
+  "mundos": [
+    {
+      "id": "celia",
+      "nombre": "Celia · Santuario Protegido",
+      "habitantes": 64
+    },
+    {
+      "id": "frontera",
+      "nombre": "Ceniza y Sangre · Fronteras de Astra",
+      "habitantes": 6
+    },
+    {
+      "id": "verdia",
+      "nombre": "Verdia",
+      "habitantes": 18
+    },
+    {
+      "id": "senda",
+      "nombre": "Senda",
+      "habitantes": 12
+    },
+    {
+      "id": "nox",
+      "nombre": "Nox",
+      "habitantes": 6
+    },
+    {
+      "id": "astra",
+      "nombre": "Astra · espacio",
+      "habitantes": 36
+    }
+  ],
+  "asentamientos": [
+    {
+      "id": "pueblo_sol",
+      "mundoId": "celia",
+      "nombre": "Pueblo del Sol",
+      "tipo": "pueblo",
+      "habitantes": 24,
+      "anclajeMotor": "pueblo",
+      "accesoPropuesto": "Desde el inicio, caminando por el sendero este de la granja; mantener las nueve puertas actuales.",
+      "disenoPropuesto": "Conservar plaza descentrada, molino, canal y dos puentes. Norte: altares y clínica. Centro: mercado y plaza. Este: talleres y posada. Ampliar hacia barrios con huerto, escuela y observatorio; no colocar casas sobre las colisiones actuales.",
+      "serviciosPropuestos": [
+        "Mercado de la Semilla",
+        "Casa de los Animales",
+        "Taller del Roble",
+        "Forja del Arroyo",
+        "Clínica del Jardín",
+        "Posada del Molino",
+        "Casa de los Oficios y museo",
+        "Altar del Despertar",
+        "Altar de la Calma",
+        "Muelle del Arroyo",
+        "Escuela del Valle",
+        "Huerto comunitario",
+        "Casa de los Tejidos",
+        "Observatorio de los Amantes"
+      ],
+      "restauracionPropuesta": "Recuperar viviendas, escuela, muelle y observatorio mediante encargos. Comercios básicos disponibles al empezar.",
+      "eventoPropuesto": "Fiesta del Despertar Dorado y Noche del Velo y el Rosal; las fechas concretas se fijarán en el calendario jugado.",
+      "estado": "base_actual_con_ampliacion_planificada",
+      "npcIds": [
+        "mercader",
+        "cuidadora",
+        "carpintera",
+        "herrero",
+        "veterinaria",
+        "posadera",
+        "archivero",
+        "canalizadora_aura",
+        "canalizadora_lara",
+        "pescadora",
+        "minero",
+        "exploradora",
+        "cocinero",
+        "botanica",
+        "agricultor",
+        "maestra",
+        "musica",
+        "guardabosques",
+        "artesana",
+        "astronoma",
+        "veterano",
+        "nina",
+        "nino",
+        "viajera"
+      ]
+    },
+    {
+      "id": "puerto_lirios",
+      "mundoId": "celia",
+      "nombre": "Puerto de los Lirios",
+      "tipo": "pueblo",
+      "habitantes": 8,
+      "anclajeMotor": "lago",
+      "accesoPropuesto": "Reparar el muelle con Cora; llegar andando a la otra orilla. Barca como transporte local posterior.",
+      "disenoPropuesto": "Norte: llegada y tablón del agua. Centro: lonja y plaza seca. Sur: muelles y estanques. Este: redes y viviendas. Casas sobre suelo firme, madera húmeda y juncos; futura conexión al delta, sin confundir agua dulce y salada.",
+      "serviciosPropuestos": [
+        "Astillero de Ribera",
+        "Lonja de los Lirios",
+        "Estanques de Junco",
+        "Faro del Delta",
+        "Taller de Redes",
+        "Huerta del Juncal"
+      ],
+      "restauracionPropuesta": "Muelle, faro fluvial y estanques deteriorados; cada reparación habilita una función.",
+      "eventoPropuesto": "Feria del Lago y Noche de Faroles.",
+      "estado": "planificado",
+      "npcIds": [
+        "lirios_bastian",
+        "lirios_olga",
+        "lirios_maite",
+        "lirios_julian",
+        "lirios_belen",
+        "lirios_teo",
+        "lirios_dalia",
+        "lirios_tina"
+      ]
+    },
+    {
+      "id": "brumaverde",
+      "mundoId": "celia",
+      "nombre": "Brumaverde",
+      "tipo": "pueblo",
+      "habitantes": 8,
+      "anclajeMotor": "bosque_ancestral; ruinas_celia",
+      "accesoPropuesto": "Despejar el sendero y recuperar las pasarelas con Gael; ruinas como excursión separada del barrio.",
+      "disenoPropuesto": "Entrada este. Plaza bajo un árbol hueco. Norte: vivero y apiario. Oeste: santuario de criaturas. Sur: talleres y casas. Raíces, claros y pasarelas; diferenciar aprovechamiento forestal de árboles guardianes.",
+      "serviciosPropuestos": [
+        "Arboreto de la Raíz",
+        "Casa de los Hongos",
+        "Apiario de Bruma",
+        "Taller de Talla",
+        "Claro de los Guardianes",
+        "Herbolario del Musgo"
+      ],
+      "restauracionPropuesta": "Pasarelas, vivero y árbol hueco; retirar residuos sin talar el árbol monumental.",
+      "eventoPropuesto": "Jornada de la Semilla Ancestral y Velada de Cuentos.",
+      "estado": "planificado",
+      "npcIds": [
+        "bruma_silvana",
+        "bruma_felix",
+        "bruma_amira",
+        "bruma_roque",
+        "bruma_elio",
+        "bruma_zaira",
+        "bruma_ada",
+        "bruma_benicio"
+      ]
+    },
+    {
+      "id": "piedralumbre",
+      "mundoId": "celia",
+      "nombre": "Piedralumbre",
+      "tipo": "pueblo",
+      "habitantes": 8,
+      "anclajeMotor": "mina; mina_celia",
+      "accesoPropuesto": "Permiso de Darío y reparación del ascensor y la ventilación; viviendas en superficie.",
+      "disenoPropuesto": "Entrada sur. Plaza y comedor en el centro. Ascensor al norte. Laterales: forja, talleres, laboratorio y casas. Cantera, arroyo de lavado, vigas y luz ámbar; ninguna vivienda dentro de salas de combate.",
+      "serviciosPropuestos": [
+        "Oficina de Galería",
+        "Laboratorio de Vetas",
+        "Fundición",
+        "Taller de Gemas",
+        "Armería del Paso",
+        "Taller de Poleas",
+        "Comedor Minero"
+      ],
+      "restauracionPropuesta": "Ascensor, railes, bombas y señales por etapas que habilitan cotas.",
+      "eventoPropuesto": "Feria de los Oficios.",
+      "estado": "planificado",
+      "npcIds": [
+        "piedra_eloy",
+        "piedra_ursula",
+        "piedra_gonzalo",
+        "piedra_petra",
+        "piedra_santiago",
+        "piedra_mireya",
+        "piedra_hugo",
+        "piedra_ciro"
+      ]
+    },
+    {
+      "id": "brasaviva",
+      "mundoId": "celia",
+      "nombre": "Brasaviva",
+      "tipo": "pueblo",
+      "habitantes": 8,
+      "anclajeMotor": null,
+      "accesoPropuesto": "Paso desde Piedralumbre; reparar puente de basalto, preparar equipo térmico e inspeccionar hábitat.",
+      "disenoPropuesto": "Entrada oeste con agua. Centro: horno y mercado. Norte: nido de dragones. Sur: bancales, baños y casas. Lava inaccesible, respiraderos señalizados, sombra y caminos seguros.",
+      "serviciosPropuestos": [
+        "Corral de Basalto",
+        "Horno de Tierra Roja",
+        "Bancales Termales",
+        "Taller de Vidrio Vivo",
+        "Nido de la Brasa",
+        "Puesto del Paso Cálido",
+        "Baños de la Caldera"
+      ],
+      "restauracionPropuesta": "Puente, canales de enfriamiento y horno; casas fuera del flujo de lava.",
+      "eventoPropuesto": "Vigilia de las Brasas.",
+      "estado": "planificado",
+      "npcIds": [
+        "brasa_tarek",
+        "brasa_sol",
+        "brasa_nadia",
+        "brasa_ramiro",
+        "brasa_idalia",
+        "brasa_dante",
+        "brasa_rufina",
+        "brasa_yago"
+      ]
+    },
+    {
+      "id": "nieveclara",
+      "mundoId": "celia",
+      "nombre": "Nieveclara",
+      "tipo": "pueblo",
+      "habitantes": 8,
+      "anclajeMotor": null,
+      "accesoPropuesto": "Despejar paso alto desde Brumaverde; equipo de abrigo y estación meteorológica recuperada.",
+      "disenoPropuesto": "Entrada sur con refugio. Centro: plaza abrigada. Norte: clima y mirador. Oeste: lago glacial. Este: conservatorio y corrales. Pasto resistente, tejados altos, lana y sendas de nieve.",
+      "serviciosPropuestos": [
+        "Pastos de la Cumbre",
+        "Taller de Lana Tibia",
+        "Gallinero de Aurora",
+        "Lago del Hielo",
+        "Estación del Viento",
+        "Conservatorio de Escarcha",
+        "Refugio del Paso Alto"
+      ],
+      "restauracionPropuesta": "Puente colgante, conservatorio y refugio de rescate.",
+      "eventoPropuesto": "Encuentro de la Primera Nieve.",
+      "estado": "planificado",
+      "npcIds": [
+        "nieve_eira",
+        "nieve_anselmo",
+        "nieve_luz",
+        "nieve_quirina",
+        "nieve_severo",
+        "nieve_milena",
+        "nieve_otto",
+        "nieve_celeste"
+      ]
+    },
+    {
+      "id": "vigilia",
+      "mundoId": "frontera",
+      "nombre": "Vigilia de Ceniza",
+      "tipo": "campamento",
+      "habitantes": 6,
+      "anclajeMotor": null,
+      "accesoPropuesto": "Cadena de guardianes, permiso de las Santas y expedición guiada desde Nieveclara. La posición exacta respecto al escudo queda sujeta al lore posterior.",
+      "disenoPropuesto": "Entrada controlada y regreso. Centro: mesa de expediciones. Norte: mirador y balizas. Laterales: clínica, nidos y alojamientos. Corredores protegidos entre terrenos de ceniza; no se afirma que monstruos corrientes rompen el escudo.",
+      "serviciosPropuestos": [
+        "Mesa de Expediciones",
+        "Puesto de Recuperación",
+        "Sala de Cartas",
+        "Observatorio del Límite",
+        "Nidos de Vigilia",
+        "Puesto del Enlace"
+      ],
+      "restauracionPropuesta": "Balizas, refugios y pasos seguros; estudiar la frontera no significa reparar un escudo roto.",
+      "eventoPropuesto": "Consejos de expedición y recuerdos del regreso; desenlace de Nath’Gora abierto.",
+      "estado": "planificado",
+      "npcIds": [
+        "vigilia_aldan",
+        "vigilia_noemi",
+        "vigilia_ulises",
+        "vigilia_kael",
+        "vigilia_azucena",
+        "vigilia_telmo"
+      ]
+    },
+    {
+      "id": "rosal_eterno",
+      "mundoId": "verdia",
+      "nombre": "Rosal Eterno",
+      "tipo": "pueblo_de_cuidadores",
+      "habitantes": 12,
+      "anclajeMotor": "reino_verdia",
+      "accesoPropuesto": "Portal, enseñanza de Serena, ofrenda y unicornio criado y cuidado; ancla de regreso.",
+      "disenoPropuesto": "Umbral al sur. Centro: jardín de encuentro. Norte: memoria y decisiones. Este: río sereno. Oeste: talleres y viviendas. Rosales, agua calma, luz de tarde; sin combates o minería destructiva dentro del paraíso.",
+      "serviciosPropuestos": [
+        "Jardín de los Cuidadores",
+        "Casa del Umbral Sereno",
+        "Archivo de Rosales",
+        "Mesa de la Gratitud",
+        "Galería de Quietud",
+        "Casa de la Nueva Vida",
+        "Ribera Serena",
+        "Jardín de Semillas"
+      ],
+      "restauracionPropuesta": "Puentes, jardines olvidados y relatos incompletos; restauración de cuidado, no conquista.",
+      "eventoPropuesto": "Velada de Gratitud y Memoria.",
+      "estado": "planificado",
+      "npcIds": [
+        "verdia_amaranta",
+        "verdia_nilo",
+        "verdia_isadora",
+        "verdia_berenice",
+        "verdia_lucio",
+        "verdia_sarai",
+        "verdia_eneas",
+        "verdia_yara",
+        "verdia_tobias",
+        "verdia_celino",
+        "verdia_aina",
+        "verdia_dimas"
+      ]
+    },
+    {
+      "id": "jardines_eco",
+      "mundoId": "verdia",
+      "nombre": "Jardines del Eco",
+      "tipo": "aldea_de_cuidadores",
+      "habitantes": 6,
+      "anclajeMotor": "reino_verdia",
+      "accesoPropuesto": "Caminar desde Rosal Eterno después de recuperar el puente de memoria.",
+      "disenoPropuesto": "Entrada oeste. Centro: anfiteatro. Norte: arboleda y archivo. Sur: claro de unicornios y casas. Senderos florales, pérgolas y árboles de recuerdo.",
+      "serviciosPropuestos": [
+        "Anfiteatro del Eco",
+        "Arboleda de Recuerdos",
+        "Claro del Velo Plateado",
+        "Semillero del Alba",
+        "Casa de las Velas",
+        "Pérgola del Lazo"
+      ],
+      "restauracionPropuesta": "Anfiteatro, pasarela y arboleda; cada tarea añade vida comunitaria.",
+      "eventoPropuesto": "Canto de los Rosales.",
+      "estado": "planificado",
+      "npcIds": [
+        "eco_sora",
+        "eco_esteban",
+        "eco_violeta",
+        "eco_nazario",
+        "eco_basilia",
+        "eco_oriel"
+      ]
+    },
+    {
+      "id": "travesia",
+      "mundoId": "senda",
+      "nombre": "Umbral de la Travesía",
+      "tipo": "refugio",
+      "habitantes": 8,
+      "anclajeMotor": "reino_senda",
+      "accesoPropuesto": "Portal de Senda, enseñanzas de Lara y ancla de regreso. Purificación, no castigo comercial.",
+      "disenoPropuesto": "Umbral sur. Plaza de preparación central. Norte: puertas de pruebas. Laterales: registro, suministros y alojamiento. Puentes suspendidos, piedra tibia y rutas legibles; pruebas separadas del refugio seguro.",
+      "serviciosPropuestos": [
+        "Casa del Primer Paso",
+        "Taller de Puentes",
+        "Registro de Travesía",
+        "Mesa de Provisiones",
+        "Refugio del Camino",
+        "Patio de la Balanza"
+      ],
+      "restauracionPropuesta": "Puentes y señales borrados por interferencias de Vael’Thor.",
+      "eventoPropuesto": "Llegadas y despedidas durante jornadas jugadas.",
+      "estado": "planificado",
+      "npcIds": [
+        "senda_iria",
+        "senda_mateo",
+        "senda_nora",
+        "senda_fabian",
+        "senda_leire",
+        "senda_anwar",
+        "senda_ofelia",
+        "senda_pablo"
+      ]
+    },
+    {
+      "id": "refugio_hilos",
+      "mundoId": "senda",
+      "nombre": "Refugio de los Hilos",
+      "tipo": "refugio",
+      "habitantes": 4,
+      "anclajeMotor": "reino_senda",
+      "accesoPropuesto": "Primeras pruebas completadas y anclas reparadas; caminar por Senda antes de entrar a laberintos.",
+      "disenoPropuesto": "Llegada oeste. Telar de rutas central. Norte: mesa de geometrías. Sur: descanso y retorno. Hilos de luz entre geometrías restauradas; ilusiones en instancias separadas.",
+      "serviciosPropuestos": [
+        "Mesa de Geometrías",
+        "Taller de Anclas",
+        "Telar de Caminos",
+        "Casa de Testimonios"
+      ],
+      "restauracionPropuesta": "Anclas y señales; reconocer una ilusión no borra decisiones ya guardadas.",
+      "eventoPropuesto": "Reconstrucción del Camino.",
+      "estado": "planificado",
+      "npcIds": [
+        "hilos_tecla",
+        "hilos_hector",
+        "hilos_asha",
+        "hilos_elian"
+      ]
+    },
+    {
+      "id": "bastion_velo",
+      "mundoId": "nox",
+      "nombre": "Bastión del Velo",
+      "tipo": "puesto_de_frontera",
+      "habitantes": 6,
+      "anclajeMotor": "reino_nox",
+      "accesoPropuesto": "Autorización narrativa de Lara, preparación especial y ancla de extracción. Solo personal aliado en el perímetro.",
+      "disenoPropuesto": "Entrada y extracción sur. Sala de control central. Norte: puertas selladas. Laterales: enfermería, taller y dormitorios de custodios. El interior de Nox sigue fuera del ciclo de la vida; no es un pueblo de almas inocentes ni ofrece reencarnación a prisioneros.",
+      "serviciosPropuestos": [
+        "Guardia del Velo",
+        "Enfermería del Umbral",
+        "Taller de Sellos",
+        "Registro de Nox",
+        "Puesto de Patrulla",
+        "Ancla del Regreso"
+      ],
+      "restauracionPropuesta": "Puestos y balizas del perímetro; no abrir sellos del aislamiento mediante compras.",
+      "eventoPropuesto": "Operaciones de contención, sin ferias dentro del aislamiento.",
+      "estado": "planificado",
+      "npcIds": [
+        "nox_dorian",
+        "nox_salma",
+        "nox_viggo",
+        "nox_mirta",
+        "nox_inigo",
+        "nox_tamara"
+      ]
+    },
+    {
+      "id": "estacion_celia",
+      "mundoId": "astra",
+      "nombre": "Estación sobre Celia",
+      "tipo": "estacion",
+      "habitantes": 8,
+      "anclajeMotor": "orbita_celia",
+      "accesoPropuesto": "Nave exploradora, restauración de estación y autorización de expediciones; el acceso respetará el lore del escudo.",
+      "disenoPropuesto": "Hangar y retorno al sur. Plaza presurizada central. Control y ciencia al norte. Invernadero, clínica, almacenes y camarotes laterales. Exterior sin aire separado por esclusas; materiales claros y plantas hidropónicas.",
+      "serviciosPropuestos": [
+        "Puente de Estación",
+        "Hangar de Celia",
+        "Laboratorio de Asistencia",
+        "Soporte Vital",
+        "Invernadero Orbital",
+        "Laboratorio de Astra",
+        "Clínica Orbital",
+        "Depósito de Carga"
+      ],
+      "restauracionPropuesta": "Soporte vital, cúpula, invernadero y depósitos; aire y combustible finitos.",
+      "eventoPropuesto": "Encuentro de Observadores.",
+      "estado": "planificado",
+      "npcIds": [
+        "orbita_helena",
+        "orbita_dexo",
+        "orbita_tessa",
+        "orbita_boris",
+        "orbita_valentina",
+        "orbita_ivo",
+        "orbita_said",
+        "orbita_rita"
+      ]
+    },
+    {
+      "id": "huerto_aurelia",
+      "mundoId": "astra",
+      "nombre": "Huerto de Aurelia",
+      "tipo": "puesto_lunar",
+      "habitantes": 4,
+      "anclajeMotor": null,
+      "accesoPropuesto": "Ruta orbital y permiso, módulo de luz y soporte vital. Presencia humana en la luna: propuesta nueva.",
+      "disenoPropuesto": "Esclusa sur, cultivo central, colectores al norte, laboratorio y módulos laterales. Vidrio dorado y jardines dentro de cúpula; exterior inhóspito.",
+      "serviciosPropuestos": [
+        "Huerto Dorado",
+        "Campo de Colectores",
+        "Jardín de Polinizadores",
+        "Laboratorio de Néctar"
+      ],
+      "restauracionPropuesta": "Cúpula, colectores y banco de semillas.",
+      "eventoPropuesto": "Observación del Fulgor; nunca crecimiento offline.",
+      "estado": "planificado",
+      "npcIds": [
+        "aurelia_aitana",
+        "aurelia_oscar",
+        "aurelia_kiara",
+        "aurelia_saul"
+      ]
+    },
+    {
+      "id": "vigia_nocturna",
+      "mundoId": "astra",
+      "nombre": "Vigía de Nocturna",
+      "tipo": "puesto_lunar",
+      "habitantes": 4,
+      "anclajeMotor": null,
+      "accesoPropuesto": "Ruta y enseñanza inicial de Senda; baliza y soporte vital. La guía de almas pertenece a Nocturna y Lara.",
+      "disenoPropuesto": "Esclusa sur, observatorio central, balizas al norte, jardín y orfebrería laterales. Plata, metal oscuro y cúpulas; no se vende ni controla el tránsito de almas.",
+      "serviciosPropuestos": [
+        "Observatorio del Velo",
+        "Jardín de Penumbra",
+        "Taller de Plata Lunar",
+        "Registro de la Luna"
+      ],
+      "restauracionPropuesta": "Lentes, observatorio y señales de expedición.",
+      "eventoPropuesto": "Vigilia de la Luna Ébano.",
+      "estado": "planificado",
+      "npcIds": [
+        "nocturna_matea",
+        "nocturna_elvira",
+        "nocturna_gaspar",
+        "nocturna_naim"
+      ]
+    },
+    {
+      "id": "cantera_esmeralda",
+      "mundoId": "astra",
+      "nombre": "Cantera de Esmeralda",
+      "tipo": "puesto_lunar",
+      "habitantes": 4,
+      "anclajeMotor": null,
+      "accesoPropuesto": "Ruta orbital, herramientas y laboratorio de resonancia; población propuesta.",
+      "disenoPropuesto": "Entrada sur, laboratorio central, extracción controlada al norte, musgos y módulos laterales. Piedra verde y sensores; no agotar indiscriminadamente energía del núcleo de Celia.",
+      "serviciosPropuestos": [
+        "Oficina de Vetas",
+        "Laboratorio de Manátides",
+        "Jardín Mineral",
+        "Control Sísmico"
+      ],
+      "restauracionPropuesta": "Sensores, plataforma y laboratorio.",
+      "eventoPropuesto": "Censo de las Manátides.",
+      "estado": "planificado",
+      "npcIds": [
+        "esmeralda_olmo",
+        "esmeralda_indira",
+        "esmeralda_duna",
+        "esmeralda_raimundo"
+      ]
+    },
+    {
+      "id": "campamento_fragmentos",
+      "mundoId": "astra",
+      "nombre": "Campamento de los Fragmentos",
+      "tipo": "campamento_asteroides",
+      "habitantes": 4,
+      "anclajeMotor": "asteroide_cobre; asteroide_cristal",
+      "accesoPropuesto": "Nave, oxígeno y balizas desde estación; Prisma exige equipo superior. Un equipo móvil para los dos asteroides.",
+      "disenoPropuesto": "Aterrizaje y módulo seguro, mesa de muestras, reciclaje y balizas; vetas y combate fuera del alojamiento. Anclajes y módulos plegables; los mismos cuatro personajes alternan destino sin duplicarse.",
+      "serviciosPropuestos": [
+        "Frente de Extracción",
+        "Mesa de Prismas",
+        "Compactadora de Restos",
+        "Puesto de Anclajes"
+      ],
+      "restauracionPropuesta": "Balizas, compactadora y plataformas de retorno.",
+      "eventoPropuesto": "Clasificación de Meteoritas.",
+      "estado": "planificado",
+      "npcIds": [
+        "fragmentos_axel",
+        "fragmentos_pia",
+        "fragmentos_lazaro",
+        "fragmentos_uma"
+      ]
+    },
+    {
+      "id": "ambarina",
+      "mundoId": "astra",
+      "nombre": "Ambarina",
+      "tipo": "colonia_planetaria",
+      "habitantes": 6,
+      "anclajeMotor": "planeta_ambar",
+      "accesoPropuesto": "Ruta de estación, cartografía y módulos térmicos; núcleo seguro separado de ruinas hostiles.",
+      "disenoPropuesto": "Llegada este, cisterna y plaza cubierta centrales, geotermia y talleres al norte, oasis y casas al sur. Basalto ocre, agua medida, corredores de sombra y alarmas de tormenta.",
+      "serviciosPropuestos": [
+        "Sala Geotérmica",
+        "Forja del Ámbar",
+        "Banco de Semillas Secas",
+        "Taller de Cascos",
+        "Observatorio de Arena",
+        "Casa de las Terrazas"
+      ],
+      "restauracionPropuesta": "Cisterna, sensores y talleres; recuperar agua habilita agricultura.",
+      "eventoPropuesto": "Feria del Agua Conservada.",
+      "estado": "planificado",
+      "npcIds": [
+        "ambar_zora",
+        "ambar_nestor",
+        "ambar_alina",
+        "ambar_baltasar",
+        "ambar_samira",
+        "ambar_kenzo"
+      ]
+    },
+    {
+      "id": "iridalia",
+      "mundoId": "astra",
+      "nombre": "Iridalia",
+      "tipo": "colonia_planetaria",
+      "habitantes": 6,
+      "anclajeMotor": "planeta_iris",
+      "accesoPropuesto": "Cartografiar balizas y demostrar convivencia ambiental; habitantes humanoides propuestos, sin asignar un panteón nuevo.",
+      "disenoPropuesto": "Llegada sur, plaza de resonancia central, bosque y jardín al norte, talleres y casas laterales. Cristales violetas y aguas reflectantes; zona habitada distinta de corredores hostiles.",
+      "serviciosPropuestos": [
+        "Pabellón de Convivencia",
+        "Taller de Resonancia",
+        "Jardín de Cristal",
+        "Laboratorio de Fauna",
+        "Puesto de Huellas",
+        "Casa de Semillas de Iris"
+      ],
+      "restauracionPropuesta": "Balizas, jardín y puentes de resonancia.",
+      "eventoPropuesto": "Festival de la Resonancia.",
+      "estado": "planificado",
+      "npcIds": [
+        "iris_calista",
+        "iris_orin",
+        "iris_liora",
+        "iris_edda",
+        "iris_mauro",
+        "iris_yuna"
+      ]
+    }
+  ],
+  "viviendas": [
+    {
+      "id": "pueblo_sol_vivienda_01",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Vivienda del Mercado",
+      "capacidad": 1,
+      "ocupantes": [
+        "mercader"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_02",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Casa del Corral",
+      "capacidad": 1,
+      "ocupantes": [
+        "cuidadora"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_03",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Vivienda del Roble",
+      "capacidad": 1,
+      "ocupantes": [
+        "carpintera"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_04",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Casa de la Forja",
+      "capacidad": 1,
+      "ocupantes": [
+        "herrero"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_05",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Vivienda del Jardín",
+      "capacidad": 1,
+      "ocupantes": [
+        "veterinaria"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_06",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Habitaciones de la Posada",
+      "capacidad": 2,
+      "ocupantes": [
+        "posadera",
+        "cocinero"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_07",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Vivienda del Archivo",
+      "capacidad": 1,
+      "ocupantes": [
+        "archivero"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_08",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Casa del Despertar",
+      "capacidad": 1,
+      "ocupantes": [
+        "canalizadora_aura"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_09",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Casa de la Calma",
+      "capacidad": 1,
+      "ocupantes": [
+        "canalizadora_lara"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_10",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Casa de la Ribera",
+      "capacidad": 2,
+      "ocupantes": [
+        "pescadora",
+        "minero"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_11",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Casa de los Senderos",
+      "capacidad": 2,
+      "ocupantes": [
+        "exploradora",
+        "viajera"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_12",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Casa del Huerto",
+      "capacidad": 4,
+      "ocupantes": [
+        "botanica",
+        "agricultor",
+        "nina",
+        "nino"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_13",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Dúplex de la Escuela",
+      "capacidad": 2,
+      "ocupantes": [
+        "maestra",
+        "musica"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_14",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Cabaña del Guardabosques",
+      "capacidad": 1,
+      "ocupantes": [
+        "guardabosques"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_15",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Casa de los Tejidos",
+      "capacidad": 1,
+      "ocupantes": [
+        "artesana"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_16",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Vivienda del Observatorio",
+      "capacidad": 1,
+      "ocupantes": [
+        "astronoma"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "pueblo_sol_vivienda_17",
+      "asentamientoId": "pueblo_sol",
+      "nombre": "Casa del Rosal",
+      "capacidad": 1,
+      "ocupantes": [
+        "veterano"
+      ],
+      "estado": "interior_basico_integrado",
+      "notaImplementacion": "Granja-v3: entrada peatonal, rutina domiciliaria e interior visitable. Falta restauración y habitaciones privadas."
+    },
+    {
+      "id": "puerto_lirios_vivienda_01",
+      "asentamientoId": "puerto_lirios",
+      "nombre": "Casa 01 · Puerto de los Lirios",
+      "capacidad": 2,
+      "ocupantes": [
+        "lirios_bastian",
+        "lirios_olga"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "puerto_lirios_vivienda_02",
+      "asentamientoId": "puerto_lirios",
+      "nombre": "Casa 02 · Puerto de los Lirios",
+      "capacidad": 2,
+      "ocupantes": [
+        "lirios_maite",
+        "lirios_julian"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "puerto_lirios_vivienda_03",
+      "asentamientoId": "puerto_lirios",
+      "nombre": "Casa 03 · Puerto de los Lirios",
+      "capacidad": 2,
+      "ocupantes": [
+        "lirios_belen",
+        "lirios_teo"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "puerto_lirios_vivienda_04",
+      "asentamientoId": "puerto_lirios",
+      "nombre": "Casa 04 · Puerto de los Lirios",
+      "capacidad": 2,
+      "ocupantes": [
+        "lirios_dalia",
+        "lirios_tina"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "brumaverde_vivienda_01",
+      "asentamientoId": "brumaverde",
+      "nombre": "Casa 01 · Brumaverde",
+      "capacidad": 2,
+      "ocupantes": [
+        "bruma_silvana",
+        "bruma_felix"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "brumaverde_vivienda_02",
+      "asentamientoId": "brumaverde",
+      "nombre": "Casa 02 · Brumaverde",
+      "capacidad": 2,
+      "ocupantes": [
+        "bruma_amira",
+        "bruma_roque"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "brumaverde_vivienda_03",
+      "asentamientoId": "brumaverde",
+      "nombre": "Casa 03 · Brumaverde",
+      "capacidad": 2,
+      "ocupantes": [
+        "bruma_elio",
+        "bruma_zaira"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "brumaverde_vivienda_04",
+      "asentamientoId": "brumaverde",
+      "nombre": "Casa 04 · Brumaverde",
+      "capacidad": 2,
+      "ocupantes": [
+        "bruma_ada",
+        "bruma_benicio"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "piedralumbre_vivienda_01",
+      "asentamientoId": "piedralumbre",
+      "nombre": "Casa 01 · Piedralumbre",
+      "capacidad": 2,
+      "ocupantes": [
+        "piedra_eloy",
+        "piedra_ursula"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "piedralumbre_vivienda_02",
+      "asentamientoId": "piedralumbre",
+      "nombre": "Casa 02 · Piedralumbre",
+      "capacidad": 2,
+      "ocupantes": [
+        "piedra_gonzalo",
+        "piedra_petra"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "piedralumbre_vivienda_03",
+      "asentamientoId": "piedralumbre",
+      "nombre": "Casa 03 · Piedralumbre",
+      "capacidad": 2,
+      "ocupantes": [
+        "piedra_santiago",
+        "piedra_mireya"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "piedralumbre_vivienda_04",
+      "asentamientoId": "piedralumbre",
+      "nombre": "Casa 04 · Piedralumbre",
+      "capacidad": 2,
+      "ocupantes": [
+        "piedra_hugo",
+        "piedra_ciro"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "brasaviva_vivienda_01",
+      "asentamientoId": "brasaviva",
+      "nombre": "Casa 01 · Brasaviva",
+      "capacidad": 2,
+      "ocupantes": [
+        "brasa_tarek",
+        "brasa_sol"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "brasaviva_vivienda_02",
+      "asentamientoId": "brasaviva",
+      "nombre": "Casa 02 · Brasaviva",
+      "capacidad": 2,
+      "ocupantes": [
+        "brasa_nadia",
+        "brasa_ramiro"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "brasaviva_vivienda_03",
+      "asentamientoId": "brasaviva",
+      "nombre": "Casa 03 · Brasaviva",
+      "capacidad": 2,
+      "ocupantes": [
+        "brasa_idalia",
+        "brasa_dante"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "brasaviva_vivienda_04",
+      "asentamientoId": "brasaviva",
+      "nombre": "Casa 04 · Brasaviva",
+      "capacidad": 2,
+      "ocupantes": [
+        "brasa_rufina",
+        "brasa_yago"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "nieveclara_vivienda_01",
+      "asentamientoId": "nieveclara",
+      "nombre": "Casa 01 · Nieveclara",
+      "capacidad": 2,
+      "ocupantes": [
+        "nieve_eira",
+        "nieve_anselmo"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "nieveclara_vivienda_02",
+      "asentamientoId": "nieveclara",
+      "nombre": "Casa 02 · Nieveclara",
+      "capacidad": 2,
+      "ocupantes": [
+        "nieve_luz",
+        "nieve_quirina"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "nieveclara_vivienda_03",
+      "asentamientoId": "nieveclara",
+      "nombre": "Casa 03 · Nieveclara",
+      "capacidad": 2,
+      "ocupantes": [
+        "nieve_severo",
+        "nieve_milena"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "nieveclara_vivienda_04",
+      "asentamientoId": "nieveclara",
+      "nombre": "Casa 04 · Nieveclara",
+      "capacidad": 2,
+      "ocupantes": [
+        "nieve_otto",
+        "nieve_celeste"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "vigilia_vivienda_01",
+      "asentamientoId": "vigilia",
+      "nombre": "Módulo 01 · Vigilia de Ceniza",
+      "capacidad": 2,
+      "ocupantes": [
+        "vigilia_aldan",
+        "vigilia_noemi"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "vigilia_vivienda_02",
+      "asentamientoId": "vigilia",
+      "nombre": "Módulo 02 · Vigilia de Ceniza",
+      "capacidad": 2,
+      "ocupantes": [
+        "vigilia_ulises",
+        "vigilia_kael"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "vigilia_vivienda_03",
+      "asentamientoId": "vigilia",
+      "nombre": "Módulo 03 · Vigilia de Ceniza",
+      "capacidad": 2,
+      "ocupantes": [
+        "vigilia_azucena",
+        "vigilia_telmo"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "rosal_eterno_vivienda_01",
+      "asentamientoId": "rosal_eterno",
+      "nombre": "Casa 01 · Rosal Eterno",
+      "capacidad": 2,
+      "ocupantes": [
+        "verdia_amaranta",
+        "verdia_nilo"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "rosal_eterno_vivienda_02",
+      "asentamientoId": "rosal_eterno",
+      "nombre": "Casa 02 · Rosal Eterno",
+      "capacidad": 2,
+      "ocupantes": [
+        "verdia_isadora",
+        "verdia_berenice"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "rosal_eterno_vivienda_03",
+      "asentamientoId": "rosal_eterno",
+      "nombre": "Casa 03 · Rosal Eterno",
+      "capacidad": 2,
+      "ocupantes": [
+        "verdia_lucio",
+        "verdia_sarai"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "rosal_eterno_vivienda_04",
+      "asentamientoId": "rosal_eterno",
+      "nombre": "Casa 04 · Rosal Eterno",
+      "capacidad": 2,
+      "ocupantes": [
+        "verdia_eneas",
+        "verdia_yara"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "rosal_eterno_vivienda_05",
+      "asentamientoId": "rosal_eterno",
+      "nombre": "Casa 05 · Rosal Eterno",
+      "capacidad": 2,
+      "ocupantes": [
+        "verdia_tobias",
+        "verdia_celino"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "rosal_eterno_vivienda_06",
+      "asentamientoId": "rosal_eterno",
+      "nombre": "Casa 06 · Rosal Eterno",
+      "capacidad": 2,
+      "ocupantes": [
+        "verdia_aina",
+        "verdia_dimas"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "jardines_eco_vivienda_01",
+      "asentamientoId": "jardines_eco",
+      "nombre": "Casa 01 · Jardines del Eco",
+      "capacidad": 2,
+      "ocupantes": [
+        "eco_sora",
+        "eco_esteban"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "jardines_eco_vivienda_02",
+      "asentamientoId": "jardines_eco",
+      "nombre": "Casa 02 · Jardines del Eco",
+      "capacidad": 2,
+      "ocupantes": [
+        "eco_violeta",
+        "eco_nazario"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "jardines_eco_vivienda_03",
+      "asentamientoId": "jardines_eco",
+      "nombre": "Casa 03 · Jardines del Eco",
+      "capacidad": 2,
+      "ocupantes": [
+        "eco_basilia",
+        "eco_oriel"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "travesia_vivienda_01",
+      "asentamientoId": "travesia",
+      "nombre": "Módulo 01 · Umbral de la Travesía",
+      "capacidad": 2,
+      "ocupantes": [
+        "senda_iria",
+        "senda_mateo"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "travesia_vivienda_02",
+      "asentamientoId": "travesia",
+      "nombre": "Módulo 02 · Umbral de la Travesía",
+      "capacidad": 2,
+      "ocupantes": [
+        "senda_nora",
+        "senda_fabian"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "travesia_vivienda_03",
+      "asentamientoId": "travesia",
+      "nombre": "Módulo 03 · Umbral de la Travesía",
+      "capacidad": 2,
+      "ocupantes": [
+        "senda_leire",
+        "senda_anwar"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "travesia_vivienda_04",
+      "asentamientoId": "travesia",
+      "nombre": "Módulo 04 · Umbral de la Travesía",
+      "capacidad": 2,
+      "ocupantes": [
+        "senda_ofelia",
+        "senda_pablo"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "refugio_hilos_vivienda_01",
+      "asentamientoId": "refugio_hilos",
+      "nombre": "Módulo 01 · Refugio de los Hilos",
+      "capacidad": 2,
+      "ocupantes": [
+        "hilos_tecla",
+        "hilos_hector"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "refugio_hilos_vivienda_02",
+      "asentamientoId": "refugio_hilos",
+      "nombre": "Módulo 02 · Refugio de los Hilos",
+      "capacidad": 2,
+      "ocupantes": [
+        "hilos_asha",
+        "hilos_elian"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "bastion_velo_vivienda_01",
+      "asentamientoId": "bastion_velo",
+      "nombre": "Módulo 01 · Bastión del Velo",
+      "capacidad": 2,
+      "ocupantes": [
+        "nox_dorian",
+        "nox_salma"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "bastion_velo_vivienda_02",
+      "asentamientoId": "bastion_velo",
+      "nombre": "Módulo 02 · Bastión del Velo",
+      "capacidad": 2,
+      "ocupantes": [
+        "nox_viggo",
+        "nox_mirta"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "bastion_velo_vivienda_03",
+      "asentamientoId": "bastion_velo",
+      "nombre": "Módulo 03 · Bastión del Velo",
+      "capacidad": 2,
+      "ocupantes": [
+        "nox_inigo",
+        "nox_tamara"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "estacion_celia_vivienda_01",
+      "asentamientoId": "estacion_celia",
+      "nombre": "Módulo 01 · Estación sobre Celia",
+      "capacidad": 2,
+      "ocupantes": [
+        "orbita_helena",
+        "orbita_dexo"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "estacion_celia_vivienda_02",
+      "asentamientoId": "estacion_celia",
+      "nombre": "Módulo 02 · Estación sobre Celia",
+      "capacidad": 2,
+      "ocupantes": [
+        "orbita_tessa",
+        "orbita_boris"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "estacion_celia_vivienda_03",
+      "asentamientoId": "estacion_celia",
+      "nombre": "Módulo 03 · Estación sobre Celia",
+      "capacidad": 2,
+      "ocupantes": [
+        "orbita_valentina",
+        "orbita_ivo"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "estacion_celia_vivienda_04",
+      "asentamientoId": "estacion_celia",
+      "nombre": "Módulo 04 · Estación sobre Celia",
+      "capacidad": 2,
+      "ocupantes": [
+        "orbita_said",
+        "orbita_rita"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "huerto_aurelia_vivienda_01",
+      "asentamientoId": "huerto_aurelia",
+      "nombre": "Módulo 01 · Huerto de Aurelia",
+      "capacidad": 2,
+      "ocupantes": [
+        "aurelia_aitana",
+        "aurelia_oscar"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "huerto_aurelia_vivienda_02",
+      "asentamientoId": "huerto_aurelia",
+      "nombre": "Módulo 02 · Huerto de Aurelia",
+      "capacidad": 2,
+      "ocupantes": [
+        "aurelia_kiara",
+        "aurelia_saul"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "vigia_nocturna_vivienda_01",
+      "asentamientoId": "vigia_nocturna",
+      "nombre": "Módulo 01 · Vigía de Nocturna",
+      "capacidad": 2,
+      "ocupantes": [
+        "nocturna_matea",
+        "nocturna_elvira"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "vigia_nocturna_vivienda_02",
+      "asentamientoId": "vigia_nocturna",
+      "nombre": "Módulo 02 · Vigía de Nocturna",
+      "capacidad": 2,
+      "ocupantes": [
+        "nocturna_gaspar",
+        "nocturna_naim"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "cantera_esmeralda_vivienda_01",
+      "asentamientoId": "cantera_esmeralda",
+      "nombre": "Módulo 01 · Cantera de Esmeralda",
+      "capacidad": 2,
+      "ocupantes": [
+        "esmeralda_olmo",
+        "esmeralda_indira"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "cantera_esmeralda_vivienda_02",
+      "asentamientoId": "cantera_esmeralda",
+      "nombre": "Módulo 02 · Cantera de Esmeralda",
+      "capacidad": 2,
+      "ocupantes": [
+        "esmeralda_duna",
+        "esmeralda_raimundo"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "campamento_fragmentos_vivienda_01",
+      "asentamientoId": "campamento_fragmentos",
+      "nombre": "Módulo 01 · Campamento de los Fragmentos",
+      "capacidad": 2,
+      "ocupantes": [
+        "fragmentos_axel",
+        "fragmentos_pia"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "campamento_fragmentos_vivienda_02",
+      "asentamientoId": "campamento_fragmentos",
+      "nombre": "Módulo 02 · Campamento de los Fragmentos",
+      "capacidad": 2,
+      "ocupantes": [
+        "fragmentos_lazaro",
+        "fragmentos_uma"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "ambarina_vivienda_01",
+      "asentamientoId": "ambarina",
+      "nombre": "Casa 01 · Ambarina",
+      "capacidad": 2,
+      "ocupantes": [
+        "ambar_zora",
+        "ambar_nestor"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "ambarina_vivienda_02",
+      "asentamientoId": "ambarina",
+      "nombre": "Casa 02 · Ambarina",
+      "capacidad": 2,
+      "ocupantes": [
+        "ambar_alina",
+        "ambar_baltasar"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "ambarina_vivienda_03",
+      "asentamientoId": "ambarina",
+      "nombre": "Casa 03 · Ambarina",
+      "capacidad": 2,
+      "ocupantes": [
+        "ambar_samira",
+        "ambar_kenzo"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "iridalia_vivienda_01",
+      "asentamientoId": "iridalia",
+      "nombre": "Casa 01 · Iridalia",
+      "capacidad": 2,
+      "ocupantes": [
+        "iris_calista",
+        "iris_orin"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "iridalia_vivienda_02",
+      "asentamientoId": "iridalia",
+      "nombre": "Casa 02 · Iridalia",
+      "capacidad": 2,
+      "ocupantes": [
+        "iris_liora",
+        "iris_edda"
+      ],
+      "estado": "planificado"
+    },
+    {
+      "id": "iridalia_vivienda_03",
+      "asentamientoId": "iridalia",
+      "nombre": "Casa 03 · Iridalia",
+      "capacidad": 2,
+      "ocupantes": [
+        "iris_mauro",
+        "iris_yuna"
+      ],
+      "estado": "planificado"
+    }
+  ],
+  "personajes": [
+    {
+      "id": "mercader",
+      "nombrePropuesto": "Inés",
+      "funcionPlaneada": "Semillas por estación, provisiones, plantones, venta de cosechas y ampliación de mochila.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Reponer el banco de semillas con cosechas diversas de cuatro estaciones jugadas.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "mercader_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "cuidadora",
+      "nombrePropuesto": "Mara",
+      "funcionPlaneada": "Venta de ganado normal y mascotas; genealogías, capacidad y verificación de hábitats.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Preparar un corral y documentar dos cruces naturales con el cuadro de Punnett.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "cuidadora_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "carpintera",
+      "nombrePropuesto": "Olivia",
+      "funcionPlaneada": "Contratos y mejoras de edificios, cobertizos, vallas, caminos y muebles movibles.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Restaurar una construcción derruida y comprobar su recolocación sin perder sus contenidos.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "carpintera_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "herrero",
+      "nombrePropuesto": "Bruno",
+      "funcionPlaneada": "Mejora de herramientas; armas y armaduras con minerales progresivos.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Encargar una mejora y probarla en un recurso del nivel correspondiente.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "herrero_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "veterinaria",
+      "nombrePropuesto": "Adela",
+      "funcionPlaneada": "Diagnóstico, ánimo, tratamientos y futuras visitas pagadas a la granja.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Curar un animal y corregir la causa de su malestar con alimento, hábitat y compañía.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_05",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "veterinaria_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "posadera",
+      "nombrePropuesto": "Rosa",
+      "funcionPlaneada": "Descanso, habitaciones, carta de comida y reuniones de vecinos.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Recuperar el salón y reunir a vecinos de tres oficios en una bienvenida.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_06",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "posadera_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "archivero",
+      "nombrePropuesto": "Damián",
+      "funcionPlaneada": "Diario, tablón, museo, donaciones y registro global de manuscritos.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Ordenar un manuscrito de Celia encontrado mediante la crianza de guardianes.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_07",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "archivero_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "canalizadora_aura",
+      "nombrePropuesto": "Eliana",
+      "funcionPlaneada": "Santa humana de Aura; Brotes del Alba, creación y enseñanzas de vida.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Cultivar y ofrecer Brotes del Alba y presentar una cría fantástica sana.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_08",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "canalizadora_aura_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "canalizadora_lara",
+      "nombrePropuesto": "Serena",
+      "funcionPlaneada": "Santa humana de Lara; Lirios del Ocaso, descanso y acceso a los reinos.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Preparar una ofrenda de memoria y aprender el protocolo de regreso desde Verdia.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_09",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "canalizadora_lara_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "pescadora",
+      "nombrePropuesto": "Cora",
+      "funcionPlaneada": "Técnicas de pesca, cañas, cebo y encargos por horario, temporada y tipo de agua.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Registrar un pez de río y otro de lago y recuperar el muelle del puerto.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [
+        "puerto_lirios"
+      ],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_10",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "pescadora_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable",
+      "reglaVisita": "Solo tras evento y durante jornadas jugadas. Sigue siendo el mismo NPC, con igual relación y registro."
+    },
+    {
+      "id": "minero",
+      "nombrePropuesto": "Darío",
+      "funcionPlaneada": "Tutorial de minería, expediciones y enlace con Piedralumbre.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Explorar una cota nueva con luz, ración y una salida comprobada.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [
+        "piedralumbre"
+      ],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_10",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "minero_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable",
+      "reglaVisita": "Solo tras evento y durante jornadas jugadas. Sigue siendo el mismo NPC, con igual relación y registro."
+    },
+    {
+      "id": "exploradora",
+      "nombrePropuesto": "Vera",
+      "funcionPlaneada": "Mapas, senderos, señales y descubrimientos caminando.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Recorrer bosque y lago y reponer señales de un paso obstruido.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_11",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "exploradora_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "cocinero",
+      "nombrePropuesto": "Simón",
+      "funcionPlaneada": "Recetas y comidas; transforma productos estacionales en platos útiles.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Preparar un menú de estación para vecinos con gustos diferentes.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_06",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "cocinero_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "botanica",
+      "nombrePropuesto": "Flora",
+      "funcionPlaneada": "Cultivos, frutales, abonos, fichas y noches restantes hasta la cosecha.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Observar un cultivo y un frutal y comparar resultados con dos abonos.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_12",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "botanica_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "agricultor",
+      "nombrePropuesto": "Tomás",
+      "funcionPlaneada": "Azada, surcos unidos, riego, pasto, silo y contratación de siembra de pasto.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Labrar una parcela continua y verificar un suministro de heno con reservas finitas.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_12",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "agricultor_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "maestra",
+      "nombrePropuesto": "Alma",
+      "funcionPlaneada": "Escuela, biblioteca de oficios, tutoriales y aprendizaje de profesiones.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Preparar un aula con muestras de agricultura, pesca, minería y artesanía.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_13",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "maestra_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "musica",
+      "nombrePropuesto": "Lía",
+      "funcionPlaneada": "Instrumentos, conciertos y melodías para el bienestar de los animales.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Probar música suave y organizar una velada adaptada al clima y los horarios.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_13",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "musica_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "guardabosques",
+      "nombrePropuesto": "Gael",
+      "funcionPlaneada": "Madera, replantación, conservación y paso al bosque protegido.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Obtener madera permitida, replantar y restaurar una pasarela hacia Brumaverde.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [
+        "brumaverde"
+      ],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_14",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "guardabosques_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable",
+      "reglaVisita": "Solo tras evento y durante jornadas jugadas. Sigue siendo el mismo NPC, con igual relación y registro."
+    },
+    {
+      "id": "artesana",
+      "nombrePropuesto": "Renata",
+      "funcionPlaneada": "Textiles, lana, tintes, ropa y decoración elegida por el jugador.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Tejer una pieza con lana propia y preparar decoración para una fiesta.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_15",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "artesana_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "astronoma",
+      "nombrePropuesto": "Nerea",
+      "funcionPlaneada": "Constelación, calendario lunar y preparación de exploración espacial.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Registrar las tres lunas y reconstruir el telescopio para preparar la nave.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [
+        "estacion_celia"
+      ],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_16",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "astronoma_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable",
+      "reglaVisita": "Solo tras evento y durante jornadas jugadas. Sigue siendo el mismo NPC, con igual relación y registro."
+    },
+    {
+      "id": "veterano",
+      "nombrePropuesto": "Aurelio",
+      "funcionPlaneada": "Memoria del valle y consejo comunitario; evita crear un alcalde redundante.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Contrastar dos testimonios sobre una herramienta antigua y restaurar su lugar de trabajo.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_17",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "veterano_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nina",
+      "nombrePropuesto": "Nina",
+      "funcionPlaneada": "Aprendiz menor de agricultura, vida escolar y cuaderno de plantas.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Acompañar una siembra escolar y dibujar flores sin destruirlas.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_12",
+      "naturalezaPlaneada": "menor",
+      "encargoIdPropuesto": "nina_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nino",
+      "nombrePropuesto": "Leo",
+      "funcionPlaneada": "Aprendiz menor de mapas y criaturas; recorridos seguros y observación.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Marcar un trayecto entre escuela, plaza y huerto y observar tres animales desde su corral.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_12",
+      "naturalezaPlaneada": "menor",
+      "encargoIdPropuesto": "nino_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "viajera",
+      "nombrePropuesto": "Paloma",
+      "funcionPlaneada": "Noticias, correo, caravanas y visitas entre comunidades.",
+      "mundoId": "celia",
+      "asentamientoId": "pueblo_sol",
+      "encargoEjemplo": "Entregar cartas y organizar una visita regional a la posada manteniendo su identidad.",
+      "estado": "base_social_actual",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [
+        "puerto_lirios",
+        "brumaverde",
+        "piedralumbre",
+        "brasaviva",
+        "nieveclara"
+      ],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "pueblo_sol_vivienda_11",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "viajera_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable",
+      "reglaVisita": "Solo tras evento y durante jornadas jugadas. Sigue siendo el mismo NPC, con igual relación y registro."
+    },
+    {
+      "id": "lirios_bastian",
+      "nombrePropuesto": "Bastián",
+      "funcionPlaneada": "Calafate: barcas, muelles y plataformas acuáticas.",
+      "mundoId": "celia",
+      "asentamientoId": "puerto_lirios",
+      "encargoEjemplo": "Reparar una barca con madera adecuada y completar una travesía de prueba con carga intacta.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "puerto_lirios_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "lirios_bastian_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "lirios_olga",
+      "nombrePropuesto": "Olga",
+      "funcionPlaneada": "Encargada de lonja: pedidos, especies y temporadas de pesca.",
+      "mundoId": "celia",
+      "asentamientoId": "puerto_lirios",
+      "encargoEjemplo": "Registrar especies del lago y atender un pedido respetando la reproducción de los peces.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "puerto_lirios_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "lirios_olga_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "lirios_maite",
+      "nombrePropuesto": "Maite",
+      "funcionPlaneada": "Acuicultora: estanques productivos, reproducción de peces y hábitats de patos.",
+      "mundoId": "celia",
+      "asentamientoId": "puerto_lirios",
+      "encargoEjemplo": "Construir un estanque y mantener especie, capacidad y alimento durante su ciclo.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "puerto_lirios_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "lirios_maite_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "lirios_julian",
+      "nombrePropuesto": "Julián",
+      "funcionPlaneada": "Farero: crecidas, lecturas de agua y rutas del delta.",
+      "mundoId": "celia",
+      "asentamientoId": "puerto_lirios",
+      "encargoEjemplo": "Reparar la luz del faro y publicar una ruta basada en marcas de nivel observadas.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "puerto_lirios_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "lirios_julian_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "lirios_belen",
+      "nombrePropuesto": "Belén",
+      "funcionPlaneada": "Tejedora: trampas selectivas, redes, cuerda y bolsas.",
+      "mundoId": "celia",
+      "asentamientoId": "puerto_lirios",
+      "encargoEjemplo": "Recuperar una red dañada y fabricar una trampa cuya recogida no pierda objetos.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "puerto_lirios_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "lirios_belen_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "lirios_teo",
+      "nombrePropuesto": "Teo",
+      "funcionPlaneada": "Mensajero de barca: paquetes y correo entre orillas.",
+      "mundoId": "celia",
+      "asentamientoId": "puerto_lirios",
+      "encargoEjemplo": "Resolver un envío extraviado hablando con remitente y destinatario.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "puerto_lirios_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "lirios_teo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "lirios_dalia",
+      "nombrePropuesto": "Dalia",
+      "funcionPlaneada": "Cultivadora de juncos: plantas de ribera, cestería y restauración de orillas.",
+      "mundoId": "celia",
+      "asentamientoId": "puerto_lirios",
+      "encargoEjemplo": "Cosechar juncos y recuperar un margen erosionado conservando refugio para aves.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "puerto_lirios_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "lirios_dalia_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "lirios_tina",
+      "nombrePropuesto": "Tina",
+      "funcionPlaneada": "Aprendiz menor del río: cartilla de peces y vida cotidiana del muelle.",
+      "mundoId": "celia",
+      "asentamientoId": "puerto_lirios",
+      "encargoEjemplo": "Dibujar tres especies observadas y devolver un objeto perdido siguiendo testimonios.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "puerto_lirios_vivienda_04",
+      "naturalezaPlaneada": "menor",
+      "encargoIdPropuesto": "lirios_tina_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "bruma_silvana",
+      "nombrePropuesto": "Silvana",
+      "funcionPlaneada": "Arborista: árboles gigantes, plantones y madera especial.",
+      "mundoId": "celia",
+      "asentamientoId": "brumaverde",
+      "encargoEjemplo": "Limpiar el árbol hueco y devolver suelo y árboles de reemplazo a su entorno.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brumaverde_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "bruma_silvana_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "bruma_felix",
+      "nombrePropuesto": "Félix",
+      "funcionPlaneada": "Micólogo: setas de estación, compost y fermentación.",
+      "mundoId": "celia",
+      "asentamientoId": "brumaverde",
+      "encargoEjemplo": "Identificar tres setas por sustrato y preparar compost con restos de cultivos.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brumaverde_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "bruma_felix_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "bruma_amira",
+      "nombrePropuesto": "Amira",
+      "funcionPlaneada": "Apicultora: miel floral y polinizadores.",
+      "mundoId": "celia",
+      "asentamientoId": "brumaverde",
+      "encargoEjemplo": "Crear un corredor de floraciones y obtener una miel de origen floral identificado.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brumaverde_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "bruma_amira_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "bruma_roque",
+      "nombrePropuesto": "Roque",
+      "funcionPlaneada": "Tallador: muebles, vallas y cobertizos de madera ancestral.",
+      "mundoId": "celia",
+      "asentamientoId": "brumaverde",
+      "encargoEjemplo": "Convertir un diseño complejo en piezas modulares y construir una pasarela accesible.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brumaverde_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "bruma_roque_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "bruma_elio",
+      "nombrePropuesto": "Elio",
+      "funcionPlaneada": "Cuidador del claro: conejos y enseñanza de crianza de unicornios.",
+      "mundoId": "celia",
+      "asentamientoId": "brumaverde",
+      "encargoEjemplo": "Demostrar bienestar de conejos y obtener una cría de unicornio con genealogía registrada.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brumaverde_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "bruma_elio_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "bruma_zaira",
+      "nombrePropuesto": "Zaira",
+      "funcionPlaneada": "Herbolaria: remedios, tintes y colaboración veterinaria.",
+      "mundoId": "celia",
+      "asentamientoId": "brumaverde",
+      "encargoEjemplo": "Recolectar hierbas conservando semillas y validar un remedio con Adela.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brumaverde_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "bruma_zaira_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "bruma_ada",
+      "nombrePropuesto": "Ada",
+      "funcionPlaneada": "Restauradora: claros y hábitats de cerdos de musgo.",
+      "mundoId": "celia",
+      "asentamientoId": "brumaverde",
+      "encargoEjemplo": "Recuperar pasto, agua y sombra y registrar una cría de cerdo de musgo en el claro.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brumaverde_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "bruma_ada_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "bruma_benicio",
+      "nombrePropuesto": "Benicio",
+      "funcionPlaneada": "Narrador mayor: cuentos para animales y memoria oral.",
+      "mundoId": "celia",
+      "asentamientoId": "brumaverde",
+      "encargoEjemplo": "Reunir tres versiones de un cuento y usarlo para mejorar el ánimo de animales.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brumaverde_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "bruma_benicio_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "piedra_eloy",
+      "nombrePropuesto": "Eloy",
+      "funcionPlaneada": "Capataz: permisos de cota, seguridad y contratos de expedición.",
+      "mundoId": "celia",
+      "asentamientoId": "piedralumbre",
+      "encargoEjemplo": "Reparar ventilación y reconocer una galería antes de abrir su acceso.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "piedralumbre_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "piedra_eloy_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "piedra_ursula",
+      "nombrePropuesto": "Úrsula",
+      "funcionPlaneada": "Geóloga: minerales, geodas y procedencias; comparte colección con el museo.",
+      "mundoId": "celia",
+      "asentamientoId": "piedralumbre",
+      "encargoEjemplo": "Comparar tres muestras por cota y catalogar una geoda sin vender la pieza de estudio.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "piedralumbre_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "piedra_ursula_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "piedra_gonzalo",
+      "nombrePropuesto": "Gonzalo",
+      "funcionPlaneada": "Metalurgista: aleaciones, combustible y componentes.",
+      "mundoId": "celia",
+      "asentamientoId": "piedralumbre",
+      "encargoEjemplo": "Producir una aleación y diagnosticar una red de horno y cofre con salida bloqueada.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "piedralumbre_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "piedra_gonzalo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "piedra_petra",
+      "nombrePropuesto": "Petra",
+      "funcionPlaneada": "Lapidaria: gemas, engastes y decoración de piedra.",
+      "mundoId": "celia",
+      "asentamientoId": "piedralumbre",
+      "encargoEjemplo": "Identificar gemas y fabricar un engaste conservando el material elegido.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "piedralumbre_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "piedra_petra_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "piedra_santiago",
+      "nombrePropuesto": "Santiago",
+      "funcionPlaneada": "Armero: armas, armaduras y defensa progresiva.",
+      "mundoId": "celia",
+      "asentamientoId": "piedralumbre",
+      "encargoEjemplo": "Fabricar equipo, equiparlo desde inventario y probarlo contra una familia de monstruos.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "piedralumbre_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "piedra_santiago_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "piedra_mireya",
+      "nombrePropuesto": "Mireya",
+      "funcionPlaneada": "Mecánica: silos, transportadores, redes y diagnóstico de máquinas.",
+      "mundoId": "celia",
+      "asentamientoId": "piedralumbre",
+      "encargoEjemplo": "Reactivar una red detenida por falta de insumos sin duplicar sus salidas.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "piedralumbre_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "piedra_mireya_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "piedra_hugo",
+      "nombrePropuesto": "Hugo",
+      "funcionPlaneada": "Farolero: iluminación, alarmas y seguridad minera.",
+      "mundoId": "celia",
+      "asentamientoId": "piedralumbre",
+      "encargoEjemplo": "Fabricar luces con consumo identificable y señalizar una ruta de regreso.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "piedralumbre_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "piedra_hugo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "piedra_ciro",
+      "nombrePropuesto": "Ciro",
+      "funcionPlaneada": "Cocinero de expedición: raciones conservadas y preparación de minería.",
+      "mundoId": "celia",
+      "asentamientoId": "piedralumbre",
+      "encargoEjemplo": "Preparar raciones de estación y entregar un lote antes del plazo de jornadas.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "piedralumbre_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "piedra_ciro_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "brasa_tarek",
+      "nombrePropuesto": "Tarek",
+      "funcionPlaneada": "Cuidador: vacas de volcán y corrales de calor con descanso.",
+      "mundoId": "celia",
+      "asentamientoId": "brasaviva",
+      "encargoEjemplo": "Preparar sombra, agua y abrigo y registrar una vaca de volcán nacida por cruce válido.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brasaviva_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "brasa_tarek_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "brasa_sol",
+      "nombrePropuesto": "Sol",
+      "funcionPlaneada": "Ceramista: tejados, comederos y arquitectura resistente al calor.",
+      "mundoId": "celia",
+      "asentamientoId": "brasaviva",
+      "encargoEjemplo": "Cocer piezas propias y comparar un fragmento de geometría de sombra sin destruirlo.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brasaviva_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "brasa_sol_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "brasa_nadia",
+      "nombrePropuesto": "Nadia",
+      "funcionPlaneada": "Agricultora termal: cultivos cálidos y riego medido.",
+      "mundoId": "celia",
+      "asentamientoId": "brasaviva",
+      "encargoEjemplo": "Cosechar un cultivo de calor y probar un canal templado con reservas finitas.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brasaviva_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "brasa_nadia_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "brasa_ramiro",
+      "nombrePropuesto": "Ramiro",
+      "funcionPlaneada": "Vidriero: ventanas, cúpulas, recipientes y decoración.",
+      "mundoId": "celia",
+      "asentamientoId": "brasaviva",
+      "encargoEjemplo": "Fabricar vidrio térmico y comprobarlo en un refugio.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brasaviva_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "brasa_ramiro_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "brasa_idalia",
+      "nombrePropuesto": "Idalia",
+      "funcionPlaneada": "Guardiana del nido: crianza de dragones y manuscritos de Celia.",
+      "mundoId": "celia",
+      "asentamientoId": "brasaviva",
+      "encargoEjemplo": "Preparar nido y alimento y obtener una cría de dragón mediante reproducción registrada.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brasaviva_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "brasa_idalia_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "brasa_dante",
+      "nombrePropuesto": "Dante",
+      "funcionPlaneada": "Guía de caldera: rutas de basalto, minerales y calor.",
+      "mundoId": "celia",
+      "asentamientoId": "brasaviva",
+      "encargoEjemplo": "Actualizar un mapa de respiraderos y recuperar un paso de montaña seguro.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brasaviva_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "brasa_dante_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "brasa_rufina",
+      "nombrePropuesto": "Rufina",
+      "funcionPlaneada": "Anfitriona mayor: baños, comida y descanso comunitario.",
+      "mundoId": "celia",
+      "asentamientoId": "brasaviva",
+      "encargoEjemplo": "Recuperar el circuito de un baño y organizar una velada de reposo.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brasaviva_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "brasa_rufina_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "brasa_yago",
+      "nombrePropuesto": "Yago",
+      "funcionPlaneada": "Aprendiz menor del horno: cerámica y vida del barrio.",
+      "mundoId": "celia",
+      "asentamientoId": "brasaviva",
+      "encargoEjemplo": "Clasificar arcilla fría y preparar un mosaico bajo supervisión.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "brasaviva_vivienda_04",
+      "naturalezaPlaneada": "menor",
+      "encargoIdPropuesto": "brasa_yago_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nieve_eira",
+      "nombrePropuesto": "Eira",
+      "funcionPlaneada": "Pastora: ovejas de cristal y tormenta, refugio y esquila.",
+      "mundoId": "celia",
+      "asentamientoId": "nieveclara",
+      "encargoEjemplo": "Preparar abrigo de viento y registrar una cría fantástica con genes y fenotipo correctos.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "nieveclara_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nieve_eira_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nieve_anselmo",
+      "nombrePropuesto": "Anselmo",
+      "funcionPlaneada": "Tejedor mayor: lana, ropa térmica y tapices.",
+      "mundoId": "celia",
+      "asentamientoId": "nieveclara",
+      "encargoEjemplo": "Tejer un abrigo propio y preparar mantas para el refugio.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "nieveclara_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nieve_anselmo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nieve_luz",
+      "nombrePropuesto": "Luz",
+      "funcionPlaneada": "Cuidadora: gallinas de aurora, luz y descanso.",
+      "mundoId": "celia",
+      "asentamientoId": "nieveclara",
+      "encargoEjemplo": "Adaptar el gallinero y obtener una gallina de aurora mediante cruce y nacimiento.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "nieveclara_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nieve_luz_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nieve_quirina",
+      "nombrePropuesto": "Quirina",
+      "funcionPlaneada": "Pescadora glacial: especies de invierno y equipo de frío.",
+      "mundoId": "celia",
+      "asentamientoId": "nieveclara",
+      "encargoEjemplo": "Registrar un pez glacial y devolver un ejemplar joven en una zona autorizada.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "nieveclara_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nieve_quirina_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nieve_severo",
+      "nombrePropuesto": "Severo",
+      "funcionPlaneada": "Meteorólogo: pronósticos, tormentas y expediciones.",
+      "mundoId": "celia",
+      "asentamientoId": "nieveclara",
+      "encargoEjemplo": "Recuperar sensores y contrastar su pronóstico con tres jornadas jugadas.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "nieveclara_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nieve_severo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nieve_milena",
+      "nombrePropuesto": "Milena",
+      "funcionPlaneada": "Botánica de escarcha: cultivos fríos y conejos de escarcha.",
+      "mundoId": "celia",
+      "asentamientoId": "nieveclara",
+      "encargoEjemplo": "Cosechar una planta fría y demostrar un nacimiento de conejo de escarcha sano.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "nieveclara_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nieve_milena_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nieve_otto",
+      "nombrePropuesto": "Otto",
+      "funcionPlaneada": "Rescatista: cuerdas, balizas y preparación de montaña.",
+      "mundoId": "celia",
+      "asentamientoId": "nieveclara",
+      "encargoEjemplo": "Preparar equipo y completar una búsqueda con un plan de regreso.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "nieveclara_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nieve_otto_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nieve_celeste",
+      "nombrePropuesto": "Celeste",
+      "funcionPlaneada": "Cuidadora de altura: vacas de nube y enlace con grifos.",
+      "mundoId": "celia",
+      "asentamientoId": "nieveclara",
+      "encargoEjemplo": "Criar una vaca de nube y preparar un nido para la visita de un grifo.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "nieveclara_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nieve_celeste_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "vigilia_aldan",
+      "nombrePropuesto": "Aldán",
+      "funcionPlaneada": "Capitán: defensa, patrullas y expediciones de Ceniza y Sangre.",
+      "mundoId": "frontera",
+      "asentamientoId": "vigilia",
+      "encargoEjemplo": "Proteger un corredor y recuperar un puesto seguro con informe de operación.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "vigilia_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "vigilia_aldan_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "vigilia_noemi",
+      "nombrePropuesto": "Noemí",
+      "funcionPlaneada": "Médica de ceniza: recuperación, corruptela y colaboración con Adela.",
+      "mundoId": "frontera",
+      "asentamientoId": "vigilia",
+      "encargoEjemplo": "Estudiar una muestra sellada y validar un protocolo de recuperación.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "vigilia_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "vigilia_noemi_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "vigilia_ulises",
+      "nombrePropuesto": "Ulises",
+      "funcionPlaneada": "Cartógrafo: mapas y rutas alteradas de frontera.",
+      "mundoId": "frontera",
+      "asentamientoId": "vigilia",
+      "encargoEjemplo": "Reconocer hitos y contrastar una ruta con testimonios del archivo.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "vigilia_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "vigilia_ulises_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "vigilia_kael",
+      "nombrePropuesto": "Kael",
+      "funcionPlaneada": "Observador del escudo: señales y Constelación de los Amantes.",
+      "mundoId": "frontera",
+      "asentamientoId": "vigilia",
+      "encargoEjemplo": "Contrastar lecturas con manuscritos sin cerrar los misterios del Lazo Primordial.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "vigilia_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "vigilia_kael_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "vigilia_azucena",
+      "nombrePropuesto": "Azucena",
+      "funcionPlaneada": "Guardiana: crianza de grifos y guardianes de frontera.",
+      "mundoId": "frontera",
+      "asentamientoId": "vigilia",
+      "encargoEjemplo": "Obtener una cría de grifo registrada y presentar su manuscrito de Celia.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "vigilia_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "vigilia_azucena_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "vigilia_telmo",
+      "nombrePropuesto": "Telmo",
+      "funcionPlaneada": "Enlace del hogar: informes y eventos de campaña hacia Claude.",
+      "mundoId": "frontera",
+      "asentamientoId": "vigilia",
+      "encargoEjemplo": "Registrar el cierre de un capítulo y emitir una sola vez su evento para la casa.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [
+        "pueblo_sol",
+        "hogar_claude"
+      ],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "vigilia_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "vigilia_telmo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable",
+      "reglaVisita": "Solo tras evento y durante jornadas jugadas. Sigue siendo el mismo NPC, con igual relación y registro."
+    },
+    {
+      "id": "verdia_amaranta",
+      "nombrePropuesto": "Amaranta",
+      "funcionPlaneada": "Cuidadora del rosal: jardinería y bendiciones.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Recuperar un rosal según los recuerdos compartidos por sus visitantes.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_01",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_amaranta_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_nilo",
+      "nombrePropuesto": "Nilo",
+      "funcionPlaneada": "Guía: recepción, visita y decisiones de las almas; no sustituye a Lara.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Acompañar una despedida respetando la elección del alma.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_01",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_nilo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_isadora",
+      "nombrePropuesto": "Isadora",
+      "funcionPlaneada": "Jardinera de memorias: árboles de recuerdo y diversidad de relatos.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Restaurar un jardín conservando distintas versiones de una memoria.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_02",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_isadora_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_berenice",
+      "nombrePropuesto": "Berenice",
+      "funcionPlaneada": "Escritora: cartas y páginas para el álbum de recuerdos.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Preparar una página de memoria con un objeto y una imagen autorizados.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_02",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_berenice_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_lucio",
+      "nombrePropuesto": "Lucio",
+      "funcionPlaneada": "Anfitrión: recetas vegetales y hospitalidad de los Cuidadores.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Preparar una mesa de gratitud adaptada a gustos diferentes.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_03",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_lucio_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_sarai",
+      "nombrePropuesto": "Sarai",
+      "funcionPlaneada": "Pintora: murales, pigmentos y memoria visual.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Completar un mural con pigmentos de recolección permitida.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_03",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_sarai_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_eneas",
+      "nombrePropuesto": "Eneas",
+      "funcionPlaneada": "Acompañante: decisiones de reencarnación o permanencia como Cuidador.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Escuchar a un alma indecisa y acompañar su decisión sin comprarla ni decidir por ella.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_04",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_eneas_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_yara",
+      "nombrePropuesto": "Yara",
+      "funcionPlaneada": "Cantora: canciones de descanso y ceremonias.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Alternar música y silencio respetando a quienes participan.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_04",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_yara_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_tobias",
+      "nombrePropuesto": "Tobías",
+      "funcionPlaneada": "Cuidador de río: fauna y pesca contemplativa con devolución.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Registrar una especie y restaurar su ribera sin extraerla del reino.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_05",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_tobias_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_celino",
+      "nombrePropuesto": "Celino",
+      "funcionPlaneada": "Carpintero de jardín: puentes y pérgolas con madera autorizada.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Reconstruir la pasarela a Jardines del Eco con ramas permitidas.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_05",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_celino_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_aina",
+      "nombrePropuesto": "Aina",
+      "funcionPlaneada": "Anfitriona de recuerdos: objetos y exposiciones personales.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Relacionar objetos humildes con sus historias y respetar la voluntad de sus dueños.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_06",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_aina_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "verdia_dimas",
+      "nombrePropuesto": "Dimas",
+      "funcionPlaneada": "Custodio: semillas sagradas y cooperación con las Santas.",
+      "mundoId": "verdia",
+      "asentamientoId": "rosal_eterno",
+      "encargoEjemplo": "Cosechar una planta sagrada y devolver su enseñanza al mundo vivo.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "rosal_eterno_vivienda_06",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "verdia_dimas_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "eco_sora",
+      "nombrePropuesto": "Sora",
+      "funcionPlaneada": "Directora de coro: música de memoria y reuniones.",
+      "mundoId": "verdia",
+      "asentamientoId": "jardines_eco",
+      "encargoEjemplo": "Reunir recuerdos sonoros y celebrar un canto de participación voluntaria.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "jardines_eco_vivienda_01",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "eco_sora_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "eco_esteban",
+      "nombrePropuesto": "Esteban",
+      "funcionPlaneada": "Archivero de ecos: relatos antiguos y colección compartida con Damián.",
+      "mundoId": "verdia",
+      "asentamientoId": "jardines_eco",
+      "encargoEjemplo": "Contrastar un eco con testimonios y enviar una versión anotada al archivo.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "jardines_eco_vivienda_01",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "eco_esteban_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "eco_violeta",
+      "nombrePropuesto": "Violeta",
+      "funcionPlaneada": "Cuidadora del velo: crianza de unicornios y restauración de suelo.",
+      "mundoId": "verdia",
+      "asentamientoId": "jardines_eco",
+      "encargoEjemplo": "Presentar una cría verificada y recuperar un suelo dañado con ayuda del guardián.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "jardines_eco_vivienda_02",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "eco_violeta_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "eco_nazario",
+      "nombrePropuesto": "Nazario",
+      "funcionPlaneada": "Guardián del semillero: conservación y viabilidad de plantas sagradas.",
+      "mundoId": "verdia",
+      "asentamientoId": "jardines_eco",
+      "encargoEjemplo": "Sembrar una muestra autorizada y documentar su desarrollo por noches.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "jardines_eco_vivienda_02",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "eco_nazario_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "eco_basilia",
+      "nombrePropuesto": "Basilia",
+      "funcionPlaneada": "Artesana: velas, rosales y ofrendas de memoria.",
+      "mundoId": "verdia",
+      "asentamientoId": "jardines_eco",
+      "encargoEjemplo": "Crear una vela y vincular su ofrenda a un relato compartido.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "jardines_eco_vivienda_03",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "eco_basilia_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "eco_oriel",
+      "nombrePropuesto": "Oriel",
+      "funcionPlaneada": "Cuidador de vínculos: amistad, consentimiento y enseñanzas del Lazo.",
+      "mundoId": "verdia",
+      "asentamientoId": "jardines_eco",
+      "encargoEjemplo": "Ayudar a reconstruir una amistad y registrar una enseñanza para el hogar.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "jardines_eco_vivienda_03",
+      "naturalezaPlaneada": "alma_cuidadora",
+      "encargoIdPropuesto": "eco_oriel_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "senda_iria",
+      "nombrePropuesto": "Iria",
+      "funcionPlaneada": "Guía: primeras pruebas y orientación de viajeros.",
+      "mundoId": "senda",
+      "asentamientoId": "travesia",
+      "encargoEjemplo": "Escuchar motivos de dos viajeros y recorrer una prueba con retorno verificable.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "travesia_vivienda_01",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "senda_iria_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "senda_mateo",
+      "nombrePropuesto": "Mateo",
+      "funcionPlaneada": "Constructor: pasarelas reales frente a ilusiones.",
+      "mundoId": "senda",
+      "asentamientoId": "travesia",
+      "encargoEjemplo": "Identificar un puente auténtico y reparar sus soportes.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "travesia_vivienda_01",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "senda_mateo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "senda_nora",
+      "nombrePropuesto": "Nora",
+      "funcionPlaneada": "Registradora: testimonios, decisiones y progreso persistido.",
+      "mundoId": "senda",
+      "asentamientoId": "travesia",
+      "encargoEjemplo": "Recuperar un testimonio alterado y registrar su contexto.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "travesia_vivienda_02",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "senda_nora_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "senda_fabian",
+      "nombrePropuesto": "Fabián",
+      "funcionPlaneada": "Proveedor: equipo específico y reservas para pruebas.",
+      "mundoId": "senda",
+      "asentamientoId": "travesia",
+      "encargoEjemplo": "Preparar y entregar suministros sin consumir el ancla de regreso.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "travesia_vivienda_02",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "senda_fabian_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "senda_leire",
+      "nombrePropuesto": "Leire",
+      "funcionPlaneada": "Anfitriona: descanso y apoyo a viajeros.",
+      "mundoId": "senda",
+      "asentamientoId": "travesia",
+      "encargoEjemplo": "Preparar un reposo y ayudar a alguien sin superar su prueba por él.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "travesia_vivienda_03",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "senda_leire_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "senda_anwar",
+      "nombrePropuesto": "Anwar",
+      "funcionPlaneada": "Custodio de balanza: verdad y reparación de faltas.",
+      "mundoId": "senda",
+      "asentamientoId": "travesia",
+      "encargoEjemplo": "Contrastar una confesión y completar una reparación relacionada con ella.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "travesia_vivienda_03",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "senda_anwar_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "senda_ofelia",
+      "nombrePropuesto": "Ofelia",
+      "funcionPlaneada": "Viajera en purificación: historia de promesas incumplidas.",
+      "mundoId": "senda",
+      "asentamientoId": "travesia",
+      "encargoEjemplo": "Reconstruir una promesa y acompañar una decisión de reparación.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [
+        "rosal_eterno"
+      ],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "travesia_vivienda_04",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "senda_ofelia_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable",
+      "reglaVisita": "Solo tras evento y durante jornadas jugadas. Sigue siendo el mismo NPC, con igual relación y registro."
+    },
+    {
+      "id": "senda_pablo",
+      "nombrePropuesto": "Pablo",
+      "funcionPlaneada": "Viajero en purificación: historia de confianza y petición de ayuda.",
+      "mundoId": "senda",
+      "asentamientoId": "travesia",
+      "encargoEjemplo": "Acompañar un tramo corto y respetar su decisión sobre la siguiente prueba.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [
+        "rosal_eterno"
+      ],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "travesia_vivienda_04",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "senda_pablo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable",
+      "reglaVisita": "Solo tras evento y durante jornadas jugadas. Sigue siendo el mismo NPC, con igual relación y registro."
+    },
+    {
+      "id": "hilos_tecla",
+      "nombrePropuesto": "Tecla",
+      "funcionPlaneada": "Analista: patrones de laberintos y arquitectura de sombra.",
+      "mundoId": "senda",
+      "asentamientoId": "refugio_hilos",
+      "encargoEjemplo": "Comparar mapas contradictorios y compartir un patrón verificado con Nora.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "refugio_hilos_vivienda_01",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "hilos_tecla_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "hilos_hector",
+      "nombrePropuesto": "Héctor",
+      "funcionPlaneada": "Artesano: anclas, puntos seguros y retorno.",
+      "mundoId": "senda",
+      "asentamientoId": "refugio_hilos",
+      "encargoEjemplo": "Fabricar un ancla y probar ida y vuelta antes de abrir otro corredor.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "refugio_hilos_vivienda_01",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "hilos_hector_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "hilos_asha",
+      "nombrePropuesto": "Asha",
+      "funcionPlaneada": "Tejedora: rutas reales, señales y rescates.",
+      "mundoId": "senda",
+      "asentamientoId": "refugio_hilos",
+      "encargoEjemplo": "Reconstruir un trayecto compatible con los testimonios y guiar a un viajero.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "refugio_hilos_vivienda_02",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "hilos_asha_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "hilos_elian",
+      "nombrePropuesto": "Elián",
+      "funcionPlaneada": "Viajero atrapado: identidad y formas falsas.",
+      "mundoId": "senda",
+      "asentamientoId": "refugio_hilos",
+      "encargoEjemplo": "Recuperar recuerdos que distingan apariencia y decisión sin fijar el desenlace de Vael’Thor.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "refugio_hilos_vivienda_02",
+      "naturalezaPlaneada": "guia_o_alma_en_purificacion",
+      "encargoIdPropuesto": "hilos_elian_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nox_dorian",
+      "nombrePropuesto": "Dorian",
+      "funcionPlaneada": "Comandante: permisos y operaciones de contención.",
+      "mundoId": "nox",
+      "asentamientoId": "bastion_velo",
+      "encargoEjemplo": "Revisar autorización y completar una operación regresando al puesto.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "bastion_velo_vivienda_01",
+      "naturalezaPlaneada": "custodio_aliado_del_perimetro",
+      "encargoIdPropuesto": "nox_dorian_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nox_salma",
+      "nombrePropuesto": "Salma",
+      "funcionPlaneada": "Sanadora: descontaminación y recuperación de expedicionarios.",
+      "mundoId": "nox",
+      "asentamientoId": "bastion_velo",
+      "encargoEjemplo": "Validar un protocolo con Noemí y limpiar equipo antes del retorno.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "bastion_velo_vivienda_01",
+      "naturalezaPlaneada": "custodio_aliado_del_perimetro",
+      "encargoIdPropuesto": "nox_salma_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nox_viggo",
+      "nombrePropuesto": "Viggo",
+      "funcionPlaneada": "Artesano: sellos, cerraduras y protección de equipo; no comercio de almas.",
+      "mundoId": "nox",
+      "asentamientoId": "bastion_velo",
+      "encargoEjemplo": "Fabricar una protección y validarla sin abrir una puerta de aislamiento.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "bastion_velo_vivienda_02",
+      "naturalezaPlaneada": "custodio_aliado_del_perimetro",
+      "encargoIdPropuesto": "nox_viggo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nox_mirta",
+      "nombrePropuesto": "Mirta",
+      "funcionPlaneada": "Registradora: entidades corruptas y evidencia autorizada.",
+      "mundoId": "nox",
+      "asentamientoId": "bastion_velo",
+      "encargoEjemplo": "Contrastar un rumor con los registros sin alterar el destino de un condenado.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "bastion_velo_vivienda_02",
+      "naturalezaPlaneada": "custodio_aliado_del_perimetro",
+      "encargoIdPropuesto": "nox_mirta_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nox_inigo",
+      "nombrePropuesto": "Íñigo",
+      "funcionPlaneada": "Guardián: patrullas, rutas y combate de contención.",
+      "mundoId": "nox",
+      "asentamientoId": "bastion_velo",
+      "encargoEjemplo": "Reconocer una ruta, contener una amenaza y volver con reserva suficiente.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "bastion_velo_vivienda_03",
+      "naturalezaPlaneada": "custodio_aliado_del_perimetro",
+      "encargoIdPropuesto": "nox_inigo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nox_tamara",
+      "nombrePropuesto": "Tamara",
+      "funcionPlaneada": "Guardiana del retorno: balizas y extracción de visitantes autorizados.",
+      "mundoId": "nox",
+      "asentamientoId": "bastion_velo",
+      "encargoEjemplo": "Reparar una baliza y recuperar una carga por la ruta autorizada.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "bastion_velo_vivienda_03",
+      "naturalezaPlaneada": "custodio_aliado_del_perimetro",
+      "encargoIdPropuesto": "nox_tamara_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "orbita_helena",
+      "nombrePropuesto": "Helena",
+      "funcionPlaneada": "Comandante: rutas, permisos y coordinación de bases.",
+      "mundoId": "astra",
+      "asentamientoId": "estacion_celia",
+      "encargoEjemplo": "Recuperar mando y soporte vital y autorizar una salida con regreso seguro.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "estacion_celia_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "orbita_helena_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "orbita_dexo",
+      "nombrePropuesto": "Dexo",
+      "funcionPlaneada": "Piloto: vuelo, aterrizaje y combustible.",
+      "mundoId": "astra",
+      "asentamientoId": "estacion_celia",
+      "encargoEjemplo": "Probar una nave revisada y volver con reserva para imprevistos.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "estacion_celia_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "orbita_dexo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "orbita_tessa",
+      "nombrePropuesto": "Tessa",
+      "funcionPlaneada": "Ingeniera: IA avanzada de cuidados con Mireya y Adela.",
+      "mundoId": "astra",
+      "asentamientoId": "estacion_celia",
+      "encargoEjemplo": "Demostrar asistencia con consumos finitos y aviso por falta de alimento, agua o energía.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "estacion_celia_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "orbita_tessa_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "orbita_boris",
+      "nombrePropuesto": "Boris",
+      "funcionPlaneada": "Ingeniero: aire, electricidad, módulos y cúpulas.",
+      "mundoId": "astra",
+      "asentamientoId": "estacion_celia",
+      "encargoEjemplo": "Construir soporte vital y verificar reserva y consumo visibles.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "estacion_celia_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "orbita_boris_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "orbita_valentina",
+      "nombrePropuesto": "Valentina",
+      "funcionPlaneada": "Agrónoma: cultivos hidropónicos y adaptación espacial.",
+      "mundoId": "astra",
+      "asentamientoId": "estacion_celia",
+      "encargoEjemplo": "Comparar un cultivo en órbita y Celia conservando el crecimiento únicamente al dormir.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "estacion_celia_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "orbita_valentina_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "orbita_ivo",
+      "nombrePropuesto": "Ivo",
+      "funcionPlaneada": "Investigador: muestras, cartas planetarias y enlace con Nerea.",
+      "mundoId": "astra",
+      "asentamientoId": "estacion_celia",
+      "encargoEjemplo": "Catalogar una muestra y verificar una ruta planetaria con balizas.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "estacion_celia_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "orbita_ivo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "orbita_said",
+      "nombrePropuesto": "Said",
+      "funcionPlaneada": "Médico: presión, fatiga y protocolos de expedición.",
+      "mundoId": "astra",
+      "asentamientoId": "estacion_celia",
+      "encargoEjemplo": "Revisar a un viajero y validar equipo para una salida lunar.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "estacion_celia_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "orbita_said_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "orbita_rita",
+      "nombrePropuesto": "Rita",
+      "funcionPlaneada": "Logística: depósitos, pedidos y transporte espacial.",
+      "mundoId": "astra",
+      "asentamientoId": "estacion_celia",
+      "encargoEjemplo": "Entregar una carga identificada y probar prioridades y bloqueos del depósito.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "estacion_celia_vivienda_04",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "orbita_rita_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "aurelia_aitana",
+      "nombrePropuesto": "Aitana",
+      "funcionPlaneada": "Heliobotánica: efectos de luz en cultivos y ensayos controlados.",
+      "mundoId": "astra",
+      "asentamientoId": "huerto_aurelia",
+      "encargoEjemplo": "Comparar dos parcelas registrando noches, abono, consumo y calidad.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "huerto_aurelia_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "aurelia_aitana_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "aurelia_oscar",
+      "nombrePropuesto": "Óscar",
+      "funcionPlaneada": "Técnico solar: colectores, baterías y redes de energía.",
+      "mundoId": "astra",
+      "asentamientoId": "huerto_aurelia",
+      "encargoEjemplo": "Construir una reserva y probar demanda y almacenamiento finitos.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "huerto_aurelia_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "aurelia_oscar_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "aurelia_kiara",
+      "nombrePropuesto": "Kiara",
+      "funcionPlaneada": "Cuidadora: polinizadores y floraciones dentro de cúpula.",
+      "mundoId": "astra",
+      "asentamientoId": "huerto_aurelia",
+      "encargoEjemplo": "Plantar flores complementarias y mantener una colonia sin liberarla al vacío.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "huerto_aurelia_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "aurelia_kiara_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "aurelia_saul",
+      "nombrePropuesto": "Saúl",
+      "funcionPlaneada": "Investigador: néctares y productos artesanales experimentales.",
+      "mundoId": "astra",
+      "asentamientoId": "huerto_aurelia",
+      "encargoEjemplo": "Repetir una receta y comprobar procedencia, consumo y calidad.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "huerto_aurelia_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "aurelia_saul_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nocturna_matea",
+      "nombrePropuesto": "Matea",
+      "funcionPlaneada": "Navegante: mapas nocturnos y coordinación con Celia.",
+      "mundoId": "astra",
+      "asentamientoId": "vigia_nocturna",
+      "encargoEjemplo": "Contrastar señales con Nerea y verificar ida y vuelta por balizas.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "vigia_nocturna_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nocturna_matea_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nocturna_elvira",
+      "nombrePropuesto": "Elvira",
+      "funcionPlaneada": "Botánica: plantas nocturnas, gallinas oscuras y conejos lunares.",
+      "mundoId": "astra",
+      "asentamientoId": "vigia_nocturna",
+      "encargoEjemplo": "Cultivar una variedad nocturna y presentar un nacimiento de linaje nocturno criado en Celia.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "vigia_nocturna_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nocturna_elvira_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nocturna_gaspar",
+      "nombrePropuesto": "Gaspar",
+      "funcionPlaneada": "Orfebre: plata, lentes, instrumentos y decoración.",
+      "mundoId": "astra",
+      "asentamientoId": "vigia_nocturna",
+      "encargoEjemplo": "Fabricar un instrumento y calibrarlo con una señal conocida.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "vigia_nocturna_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nocturna_gaspar_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "nocturna_naim",
+      "nombrePropuesto": "Naim",
+      "funcionPlaneada": "Registrador: observación de Nocturna y enseñanzas de Lara.",
+      "mundoId": "astra",
+      "asentamientoId": "vigia_nocturna",
+      "encargoEjemplo": "Relacionar lecturas con testimonios de Serena e Iria sin inventar causalidades.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "vigia_nocturna_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "nocturna_naim_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "esmeralda_olmo",
+      "nombrePropuesto": "Olmo",
+      "funcionPlaneada": "Prospector: minerales lunares y extracción controlada.",
+      "mundoId": "astra",
+      "asentamientoId": "cantera_esmeralda",
+      "encargoEjemplo": "Cartografiar una veta y obtener una muestra respetando su área protegida.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "cantera_esmeralda_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "esmeralda_olmo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "esmeralda_indira",
+      "nombrePropuesto": "Indira",
+      "funcionPlaneada": "Ingeniera: manátides y energía mineral.",
+      "mundoId": "astra",
+      "asentamientoId": "cantera_esmeralda",
+      "encargoEjemplo": "Calibrar un sensor y comparar lecturas antes y después de una extracción autorizada.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "cantera_esmeralda_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "esmeralda_indira_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "esmeralda_duna",
+      "nombrePropuesto": "Duna",
+      "funcionPlaneada": "Jardinera: musgos y recuperación de zonas de muestra.",
+      "mundoId": "astra",
+      "asentamientoId": "cantera_esmeralda",
+      "encargoEjemplo": "Cultivar un musgo por noches y restaurar su sustrato con agua medida.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "cantera_esmeralda_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "esmeralda_duna_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "esmeralda_raimundo",
+      "nombrePropuesto": "Raimundo",
+      "funcionPlaneada": "Técnico sísmico: alertas y rutas de galería.",
+      "mundoId": "astra",
+      "asentamientoId": "cantera_esmeralda",
+      "encargoEjemplo": "Instalar sensores con batería visible y validar un recorrido seguro.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "cantera_esmeralda_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "esmeralda_raimundo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "fragmentos_axel",
+      "nombrePropuesto": "Axel",
+      "funcionPlaneada": "Extractor: minerales del Asteroide Cobrizo y contratos.",
+      "mundoId": "astra",
+      "asentamientoId": "campamento_fragmentos",
+      "encargoEjemplo": "Extraer cobre y meteorita con origen registrado y aprovechar fragmentos pequeños.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "campamento_fragmentos_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "fragmentos_axel_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "fragmentos_pia",
+      "nombrePropuesto": "Pía",
+      "funcionPlaneada": "Prospectora: cristales y geodas de Asteroide Prisma.",
+      "mundoId": "astra",
+      "asentamientoId": "campamento_fragmentos",
+      "encargoEjemplo": "Catalogar estabilidad de un prisma y regresar por balizas verificadas.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "campamento_fragmentos_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "fragmentos_pia_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "fragmentos_lazaro",
+      "nombrePropuesto": "Lázaro",
+      "funcionPlaneada": "Reciclador: chatarra, compactación y componentes reutilizados.",
+      "mundoId": "astra",
+      "asentamientoId": "campamento_fragmentos",
+      "encargoEjemplo": "Recuperar restos y registrar piezas útiles y residuos sin duplicación.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "campamento_fragmentos_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "fragmentos_lazaro_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "fragmentos_uma",
+      "nombrePropuesto": "Uma",
+      "funcionPlaneada": "Técnica: oxígeno, anclajes y rescate de campamento.",
+      "mundoId": "astra",
+      "asentamientoId": "campamento_fragmentos",
+      "encargoEjemplo": "Preparar una baliza y recuperar una carga antes del límite de aire.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "campamento_fragmentos_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "fragmentos_uma_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "ambar_zora",
+      "nombrePropuesto": "Zora",
+      "funcionPlaneada": "Coordinadora: energía, agua y hábitats.",
+      "mundoId": "astra",
+      "asentamientoId": "ambarina",
+      "encargoEjemplo": "Reparar cisterna y bombeo y probar un circuito con reserva y consumo.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "ambarina_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "ambar_zora_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "ambar_nestor",
+      "nombrePropuesto": "Néstor",
+      "funcionPlaneada": "Metalista: titanio, basalto y equipo de calor.",
+      "mundoId": "astra",
+      "asentamientoId": "ambarina",
+      "encargoEjemplo": "Fabricar una aleación y probar equipo planetario en una expedición adecuada.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "ambarina_vivienda_01",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "ambar_nestor_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "ambar_alina",
+      "nombrePropuesto": "Alina",
+      "funcionPlaneada": "Cultivadora: semillas de sequía y riego medido.",
+      "mundoId": "astra",
+      "asentamientoId": "ambarina",
+      "encargoEjemplo": "Comparar consumo y rendimiento de dos variedades adaptadas.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "ambarina_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "ambar_alina_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "ambar_baltasar",
+      "nombrePropuesto": "Baltasar",
+      "funcionPlaneada": "Constructor: cascos, cúpulas y reparación de nave.",
+      "mundoId": "astra",
+      "asentamientoId": "ambarina",
+      "encargoEjemplo": "Fabricar una pieza térmica y comprobar presión y temperatura de un módulo.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "ambarina_vivienda_02",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "ambar_baltasar_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "ambar_samira",
+      "nombrePropuesto": "Samira",
+      "funcionPlaneada": "Meteoróloga: tormentas de arena y rutas alternativas.",
+      "mundoId": "astra",
+      "asentamientoId": "ambarina",
+      "encargoEjemplo": "Registrar tres jornadas y verificar una ruta de regreso alternativa.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "ambarina_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "ambar_samira_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "ambar_kenzo",
+      "nombrePropuesto": "Kenzo",
+      "funcionPlaneada": "Explorador: ruinas, terrazas y procedencia de hallazgos.",
+      "mundoId": "astra",
+      "asentamientoId": "ambarina",
+      "encargoEjemplo": "Cartografiar una terraza y documentar un hallazgo antes de retirarlo.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "ambarina_vivienda_03",
+      "naturalezaPlaneada": "persona_del_santuario",
+      "encargoIdPropuesto": "ambar_kenzo_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "iris_calista",
+      "nombrePropuesto": "Calista",
+      "funcionPlaneada": "Portavoz: convivencia y acuerdos de uso del territorio.",
+      "mundoId": "astra",
+      "asentamientoId": "iridalia",
+      "encargoEjemplo": "Escuchar tres oficios y reparar una plaza según un acuerdo ambiental.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "iridalia_vivienda_01",
+      "naturalezaPlaneada": "humanoide_original_propuesto",
+      "encargoIdPropuesto": "iris_calista_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "iris_orin",
+      "nombrePropuesto": "Orin",
+      "funcionPlaneada": "Artesano: instrumentos y componentes de cristal resonante.",
+      "mundoId": "astra",
+      "asentamientoId": "iridalia",
+      "encargoEjemplo": "Crear un instrumento y calibrarlo para una función demostrable.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "iridalia_vivienda_01",
+      "naturalezaPlaneada": "humanoide_original_propuesto",
+      "encargoIdPropuesto": "iris_orin_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "iris_liora",
+      "nombrePropuesto": "Liora",
+      "funcionPlaneada": "Botánica: cultivos de Iris, sustratos y luz.",
+      "mundoId": "astra",
+      "asentamientoId": "iridalia",
+      "encargoEjemplo": "Comparar dos sustratos anotando calidad y noches hasta cosecha.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "iridalia_vivienda_02",
+      "naturalezaPlaneada": "humanoide_original_propuesto",
+      "encargoIdPropuesto": "iris_liora_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "iris_edda",
+      "nombrePropuesto": "Edda",
+      "funcionPlaneada": "Observadora: criaturas y hábitats; no domestica por defecto.",
+      "mundoId": "astra",
+      "asentamientoId": "iridalia",
+      "encargoEjemplo": "Observar dos criaturas y restaurar un hábitat sin sacar a sus habitantes.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "iridalia_vivienda_02",
+      "naturalezaPlaneada": "humanoide_original_propuesto",
+      "encargoIdPropuesto": "iris_edda_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "iris_mauro",
+      "nombrePropuesto": "Mauro",
+      "funcionPlaneada": "Rastreador: huellas, rutas y protección del bosque violeta.",
+      "mundoId": "astra",
+      "asentamientoId": "iridalia",
+      "encargoEjemplo": "Distinguir una amenaza real de fauna neutral y proteger una ruta.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "iridalia_vivienda_03",
+      "naturalezaPlaneada": "humanoide_original_propuesto",
+      "encargoIdPropuesto": "iris_mauro_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    },
+    {
+      "id": "iris_yuna",
+      "nombrePropuesto": "Yuna",
+      "funcionPlaneada": "Conservadora: banco de semillas y encuentros regionales.",
+      "mundoId": "astra",
+      "asentamientoId": "iridalia",
+      "encargoEjemplo": "Intercambiar muestras autorizadas con fichas completas de requisitos climáticos.",
+      "estado": "planificado",
+      "nombreEsPropuesta": true,
+      "visitasPlaneadas": [],
+      "amistadPlaneada": true,
+      "hogarPlaneado": "iridalia_vivienda_03",
+      "naturalezaPlaneada": "humanoide_original_propuesto",
+      "encargoIdPropuesto": "iris_yuna_encargo_presentacion",
+      "estadoEncargo": "planificado_no_ejecutable"
+    }
+  ],
+  "figurasNarrativas": [
+    {
+      "id": "figura_aura",
+      "nombre": "Aura",
+      "naturaleza": "diosa",
+      "origen": "canon_usuario",
+      "funcion": "Vida, pasión y fuego interno; oportunidades, creación y enseñanzas mediante su Santa.",
+      "aparicion": "Enseñanzas, visiones o escenas de campaña propuestas; no dependienta de tienda ni romance."
+    },
+    {
+      "id": "figura_lara",
+      "nombre": "Lara",
+      "naturaleza": "diosa",
+      "origen": "canon_usuario",
+      "funcion": "Muerte, descanso y paz; guía compasiva y autoridad sobre Verdia, Senda y Nox.",
+      "aparicion": "Enseñanzas y escenas de umbral propuestas; no reina malvada ni vendedora de almas."
+    },
+    {
+      "id": "figura_celia",
+      "nombre": "Celia",
+      "naturaleza": "semidiosa",
+      "origen": "canon_usuario",
+      "funcion": "Tierra y fertilidad del Santuario; su conocimiento aparece en guardianes, manuscritos y cultivo.",
+      "aparicion": "Manifestaciones narrativas por definir; no se fija aquí el desenlace de su origen."
+    },
+    {
+      "id": "figura_nathgora",
+      "nombre": "Nath’Gora",
+      "naturaleza": "antagonista",
+      "origen": "canon_usuario",
+      "funcion": "Señor de la Ceniza; antiguo guardián de una estrella apagada y origen de la corruptela.",
+      "aparicion": "Campaña de Ceniza y Sangre; fases, posibilidad de redención y desenlace quedan abiertos al lore."
+    },
+    {
+      "id": "figura_vaelthor",
+      "nombre": "Vael’Thor",
+      "naturaleza": "antagonista",
+      "origen": "canon_usuario",
+      "funcion": "Ceramista de Sombras; geometrías, laberintos e ilusiones que atrapan almas en Senda.",
+      "aparicion": "Interferencias y escenas de campaña; no se determina su resolución final."
+    }
+  ],
+  "conexiones": [
+    {
+      "id": "granja__pueblo_sol",
+      "desde": "granja",
+      "hacia": "pueblo_sol",
+      "bidireccional": true,
+      "tipo": "camino",
+      "requisitoPropuesto": "Sendero actual disponible.",
+      "estado": "planificado"
+    },
+    {
+      "id": "granja__puerto_lirios",
+      "desde": "granja",
+      "hacia": "puerto_lirios",
+      "bidireccional": true,
+      "tipo": "camino",
+      "requisitoPropuesto": "Ruta actual al lago y muelle reparado.",
+      "estado": "planificado"
+    },
+    {
+      "id": "granja__brumaverde",
+      "desde": "granja",
+      "hacia": "brumaverde",
+      "bidireccional": true,
+      "tipo": "camino",
+      "requisitoPropuesto": "Ruta actual bosque–bosque ancestral y pasarelas reparadas.",
+      "estado": "planificado"
+    },
+    {
+      "id": "granja__piedralumbre",
+      "desde": "granja",
+      "hacia": "piedralumbre",
+      "bidireccional": true,
+      "tipo": "camino",
+      "requisitoPropuesto": "Ruta actual a mina y permiso de expedición.",
+      "estado": "planificado"
+    },
+    {
+      "id": "piedralumbre__brasaviva",
+      "desde": "piedralumbre",
+      "hacia": "brasaviva",
+      "bidireccional": true,
+      "tipo": "camino",
+      "requisitoPropuesto": "Puente de basalto y equipo térmico.",
+      "estado": "planificado"
+    },
+    {
+      "id": "brumaverde__nieveclara",
+      "desde": "brumaverde",
+      "hacia": "nieveclara",
+      "bidireccional": true,
+      "tipo": "camino",
+      "requisitoPropuesto": "Paso alto y equipo de abrigo.",
+      "estado": "planificado"
+    },
+    {
+      "id": "nieveclara__vigilia",
+      "desde": "nieveclara",
+      "hacia": "vigilia",
+      "bidireccional": true,
+      "tipo": "camino_expedicion",
+      "requisitoPropuesto": "Guardianes y autorización de frontera; posición exacta sujeta al lore.",
+      "estado": "planificado"
+    },
+    {
+      "id": "granja__rosal_eterno",
+      "desde": "granja",
+      "hacia": "rosal_eterno",
+      "bidireccional": true,
+      "tipo": "portal",
+      "requisitoPropuesto": "Portal Verdia, ofrenda y ancla autorizados.",
+      "estado": "planificado"
+    },
+    {
+      "id": "rosal_eterno__jardines_eco",
+      "desde": "rosal_eterno",
+      "hacia": "jardines_eco",
+      "bidireccional": true,
+      "tipo": "camino",
+      "requisitoPropuesto": "Puente de memoria reparado.",
+      "estado": "planificado"
+    },
+    {
+      "id": "granja__travesia",
+      "desde": "granja",
+      "hacia": "travesia",
+      "bidireccional": true,
+      "tipo": "portal",
+      "requisitoPropuesto": "Portal Senda y enseñanza de Lara.",
+      "estado": "planificado"
+    },
+    {
+      "id": "travesia__refugio_hilos",
+      "desde": "travesia",
+      "hacia": "refugio_hilos",
+      "bidireccional": true,
+      "tipo": "camino",
+      "requisitoPropuesto": "Primeras pruebas y anclas reparadas.",
+      "estado": "planificado"
+    },
+    {
+      "id": "granja__bastion_velo",
+      "desde": "granja",
+      "hacia": "bastion_velo",
+      "bidireccional": true,
+      "tipo": "portal_controlado",
+      "requisitoPropuesto": "Portal Nox y autorización especial de Lara; solo acceso de visitantes al perímetro.",
+      "estado": "planificado"
+    },
+    {
+      "id": "granja__estacion_celia",
+      "desde": "granja",
+      "hacia": "estacion_celia",
+      "bidireccional": true,
+      "tipo": "nave",
+      "requisitoPropuesto": "Nave exploradora y autorización de expediciones.",
+      "estado": "planificado"
+    },
+    {
+      "id": "estacion_celia__huerto_aurelia",
+      "desde": "estacion_celia",
+      "hacia": "huerto_aurelia",
+      "bidireccional": true,
+      "tipo": "nave",
+      "requisitoPropuesto": "Ruta cartografiada, equipo de destino, aire y combustible.",
+      "estado": "planificado"
+    },
+    {
+      "id": "estacion_celia__vigia_nocturna",
+      "desde": "estacion_celia",
+      "hacia": "vigia_nocturna",
+      "bidireccional": true,
+      "tipo": "nave",
+      "requisitoPropuesto": "Ruta cartografiada, equipo de destino, aire y combustible.",
+      "estado": "planificado"
+    },
+    {
+      "id": "estacion_celia__cantera_esmeralda",
+      "desde": "estacion_celia",
+      "hacia": "cantera_esmeralda",
+      "bidireccional": true,
+      "tipo": "nave",
+      "requisitoPropuesto": "Ruta cartografiada, equipo de destino, aire y combustible.",
+      "estado": "planificado"
+    },
+    {
+      "id": "estacion_celia__campamento_fragmentos",
+      "desde": "estacion_celia",
+      "hacia": "campamento_fragmentos",
+      "bidireccional": true,
+      "tipo": "nave",
+      "requisitoPropuesto": "Ruta cartografiada, equipo de destino, aire y combustible.",
+      "estado": "planificado"
+    },
+    {
+      "id": "estacion_celia__ambarina",
+      "desde": "estacion_celia",
+      "hacia": "ambarina",
+      "bidireccional": true,
+      "tipo": "nave",
+      "requisitoPropuesto": "Ruta cartografiada, equipo de destino, aire y combustible.",
+      "estado": "planificado"
+    },
+    {
+      "id": "estacion_celia__iridalia",
+      "desde": "estacion_celia",
+      "hacia": "iridalia",
+      "bidireccional": true,
+      "tipo": "nave",
+      "requisitoPropuesto": "Ruta cartografiada, equipo de destino, aire y combustible.",
+      "estado": "planificado"
+    },
+    {
+      "id": "granja__hogar_claude",
+      "desde": "granja",
+      "hacia": "hogar_claude",
+      "bidireccional": true,
+      "tipo": "puerta_integracion",
+      "requisitoPropuesto": "Puerta de casa original; conservar puente existente.",
+      "estado": "planificado"
+    }
+  ],
+  "arcos": [
+    {
+      "id": "inicio",
+      "nombre": "Recuperar la vida cotidiana",
+      "npcIds": [
+        "mercader",
+        "agricultor",
+        "carpintera",
+        "cuidadora",
+        "veterinaria",
+        "veterano"
+      ],
+      "objetivo": "Parcela inicial, azada, riego, pasto, refugio y primer ganado. Abrir vecinos y servicios sin depender de un minijuego casual."
+    },
+    {
+      "id": "oficios",
+      "nombre": "Reconectar el valle",
+      "npcIds": [
+        "pescadora",
+        "guardabosques",
+        "minero",
+        "exploradora",
+        "piedra_mireya"
+      ],
+      "objetivo": "Muelle, bosque, minas, contratos, peces, madera y máquinas; ampliar sectores por monedas y restauración."
+    },
+    {
+      "id": "linajes",
+      "nombre": "Diversidad de crianza",
+      "npcIds": [
+        "cuidadora",
+        "bruma_ada",
+        "brasa_tarek",
+        "nieve_luz",
+        "nieve_eira",
+        "nieve_celeste",
+        "nocturna_elvira"
+      ],
+      "objetivo": "Cruces naturales y fantásticos, hábitats propios, genes verificables y nacimientos; no basta comprar o presentar un adulto."
+    },
+    {
+      "id": "guardianes",
+      "nombre": "Tres familias guardianas",
+      "npcIds": [
+        "bruma_elio",
+        "brasa_idalia",
+        "vigilia_azucena",
+        "archivero"
+      ],
+      "objetivo": "Es obligatorio criar unicornio, dragón y grifo para sus registros y manuscritos de Celia; no son tres mascotas equivalentes."
+    },
+    {
+      "id": "verdia",
+      "nombre": "Memoria y cuidado",
+      "npcIds": [
+        "canalizadora_lara",
+        "verdia_nilo",
+        "verdia_amaranta",
+        "eco_oriel"
+      ],
+      "objetivo": "Ofrendas y retorno, Cuidadores, recuerdos y restauración. Reencarnación sujeta a decisión y guion, no compra."
+    },
+    {
+      "id": "senda",
+      "nombre": "Verdad y reparación",
+      "npcIds": [
+        "senda_iria",
+        "senda_anwar",
+        "hilos_tecla",
+        "hilos_asha"
+      ],
+      "objetivo": "Pruebas, reparación, decisiones guardadas y laberintos de Vael’Thor. Desenlace reservado."
+    },
+    {
+      "id": "ceniza",
+      "nombre": "Fronteras de ceniza",
+      "npcIds": [
+        "vigilia_aldan",
+        "vigilia_noemi",
+        "vigilia_kael",
+        "vigilia_telmo"
+      ],
+      "objetivo": "Defensa y estudio de la corruptela de Nath’Gora, sin declarar roto el escudo ni fijar el final de campaña."
+    },
+    {
+      "id": "nox",
+      "nombre": "Contención autorizada",
+      "npcIds": [
+        "nox_dorian",
+        "nox_mirta",
+        "nox_tamara"
+      ],
+      "objetivo": "Operaciones del perímetro, evidencia y regreso. No convertir Nox en un pueblo común ni liberar corruptos por amistad."
+    },
+    {
+      "id": "astra",
+      "nombre": "Exploración y convivencia",
+      "npcIds": [
+        "astronoma",
+        "orbita_helena",
+        "orbita_ivo",
+        "ambar_zora",
+        "iris_calista"
+      ],
+      "objetivo": "Nave, estación, lunas, asteroides y planetas; módulos, aire y recursos finitos."
+    },
+    {
+      "id": "asistencia",
+      "nombre": "IA tardía de cuidados",
+      "npcIds": [
+        "veterinaria",
+        "piedra_mireya",
+        "orbita_tessa"
+      ],
+      "objetivo": "Desbloqueo avanzado tras bienestar, mecanismos y sensores. La IA usa reservas, registra consumos y avisa si no puede cuidar; no acelera cosechas ni noches."
+    }
+  ],
+  "reglas": [
+    "147 identidades: 142 interlocutores y aliados, más cinco figuras del lore. No sumar de nuevo a viajeros, dependientes interiores o almas que cambian de reino.",
+    "Él y Ella son protagonistas jugables; hogar sin residentes NPC nuevos. Animales de granja y guardianes criados, monstruos genéricos, multitudes y el dispositivo de IA no cuentan como NPC nombrados.",
+    "Todos los nombres personales nuevos, asentamientos, alojamientos y encargos son propuestas. Solo Aura, Lara, Celia, Nath’Gora y Vael’Thor proceden como figuras nombradas del lore recibido. Los títulos actuales de los 24 vecinos siguen intactos.",
+    "Las Santas son humanas canalizadoras; no son las diosas. Lara es compasiva. Verdia es paz; Senda es purificación; Nox permanece fuera del ciclo de la vida.",
+    "Lunas Aurelia, Nocturna y Esmeralda pertenecen al lore; sus bases y poblaciones son propuestas. No se añade un panteón ni una historia definitiva de los habitantes de Iris.",
+    "La Constelación de los Amantes mantiene el escudo indestructible mientras brilla. La ubicación de frontera, permisos de viaje y desenlace quedan sujetos al lore posterior.",
+    "Días, estaciones, crecimiento, edad, visitas, cumpleaños y plazos avanzan al dormir. La ausencia real no avanza historias; se conserva aparte la regla de cuidado real ya acordada.",
+    "Amistad y convivencia, sin nuevos romances por defecto: Él y Ella conservan su relación protagonista. Viviendas compartidas no fijan parentescos ni parejas; los menores tienen actividades supervisadas.",
+    "Ganado normal en la tienda de Mara; especialistas regionales enseñan linajes y venden suministros o planos. Nacimientos y bienestar son obligatorios para las misiones de crianza y los registros de guardianes.",
+    "Servicios esenciales, señalamientos y regreso visibles. Movimiento entre zonas caminando; portales solo para los reinos y nave para el espacio. No abrir lugares mediante teletransporte de menú.",
+    "La casa, Altar del Lazo Primordial y Álbum de Recuerdos los integra Claude. Esta planificación reserva eventos únicos de recompensa sin determinar objetos especiales de la casa.",
+    "Súper Manía, Cien Puertas, El Retrete Espacial y juegos de mesa permanecen independientes de la campaña; su reparto propio lo mantiene el proyecto principal de Claude.",
+    "Cargar geometría y simulación detallada solo del núcleo visitado. Datos globales ligeros, interiores bajo demanda y avatares con piezas compartidas; no renderizar 147 personajes a la vez."
+  ],
+  "integracion": {
+    "estado": "catalogo_de_planeacion_no_importado_por_runtime",
+    "motor": "granja-v3",
+    "guardadoActual": 5,
+    "preservacion": "Mantener los 24 IDs actuales, relaciones, inventario, calendario, edificios y puentes de hogar. Nombres propios solo se aplican después de validar el reparto.",
+    "migracionFutura": "Crear relaciones de nuevos NPC cuando se integren o descubran. Ajustar validadores y migración con pruebas; no introducir 142 entradas a la fuerza en el validador actual de 24.",
+    "eventoCasaPropuesto": {
+      "tipo": "capitulo_granja_completado",
+      "eventoId": "identificador_estable_unico",
+      "npcId": "id_del_registro",
+      "capituloId": "id_del_arco",
+      "recompensaHook": "acordado_con_Claude",
+      "registro": "entrega_unica_persistida"
+    },
+    "pendientes": [
+      "Modelos propios, animaciones y retratos de nuevos NPC.",
+      "Rutinas interiores, cumpleaños, escenas y biografías definitivas.",
+      "Misiones ejecutables, cantidades, costes, recompensas y balance.",
+      "Geometría, colisiones y conexiones de los nuevos pueblos.",
+      "Ajustar ambientación de reinos a su lore: descripciones y combate genérico actuales no son narrativa definitiva.",
+      "Compatibilidad y rendimiento físico en S21 FE y S24 Ultra."
+    ],
+    "orden": [
+      "Pueblo del Sol: viviendas, escenas, pedidos y calendario.",
+      "Puerto, Brumaverde y Piedralumbre: actividades y rutas.",
+      "Brasaviva y Nieveclara: clima, linajes y hábitats.",
+      "Guardianes y Verdia; después Senda, frontera y Nox con guion.",
+      "Estación, lunas, asteroides, planetas e IA tardía."
+    ]
+  },
+  "totales": {
+    "interlocutores": 142,
+    "figurasNarrativas": 5,
+    "personajesUnicos": 147,
+    "asentamientos": 19,
+    "viviendas": 76,
+    "encargosEjemplo": 142,
+    "interlocutoresConBaseSocialActual": 24,
+    "interlocutoresNuevosPlanificados": 118
+  },
+  "validacion": {
+    "resultado": "correcto",
+    "idsActualesPreservados": 24,
+    "destinosAventuraReferenciados": 10,
+    "personajesConVivienda": 142,
+    "pueblosConectados": 19,
+    "relacionesDuplicadas": 0,
+    "nota": "Integridad de la planeación. No valida que los NPC o mapas planificados sean jugables."
+  }
+}

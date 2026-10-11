@@ -1,5 +1,9 @@
 # Pedidos de Javier en cola
 
+## Frente de granja en paralelo
+
+Javier pidió integrar la granja existente, subir cada avance probado y repartir el trabajo: el frente de granja continúa motor, sistemas e historia; Claude hace gráficos, diseño de personajes y presentación visual. Leer [`en-obra/granja-coordinacion.md`](en-obra/granja-coordinacion.md). El motor sigue en desarrollo; cuatro festivales básicos ya conectados (ver `juego/web/src/granja-v3/FESTIVALES-INTEGRACION.md`); ofertas diarias/semanales y tres especiales de dos etapas ya integrados (ver `juego/web/src/granja-v3/ENCARGOS-INTEGRACION.md`); dos proyectos de correspondencia con cuatro ramas excluyentes, recetas útiles y decisiones persistentes ya integrados (ver `juego/web/src/granja-v3/CORREO-INTEGRACION.md`); seis lotes del archivo con donaciones, premios únicos y reserva de semillas durante todo el año ya integrados (ver `juego/web/src/granja-v3/COLECCIONES-INTEGRACION.md`); siguiente bloque previsto: libros y pistas útiles (K07). Esto no reemplaza el orden de los demás pedidos de esta cola.
+
 Lo que Javier pidió y todavía falta, en el orden en que se va a hacer. Se tacha (se borra) cuando queda hecho,
 probado y subido.
 
@@ -71,7 +75,7 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
 
 Esperan a Javier (no se empiezan solos): lo que sigue abierto de la mitología (sección 2 de `docs/mitologia.md`), las
 las ideas del sótano, la
-clave de ElevenLabs para las voces, pegar `supabase/cambios-pendientes.sql`, y si quiere el repositorio privado.
+pegar `supabase/cambios-pendientes.sql`, y si quiere el repositorio privado.
 Si cuenta anécdotas nuevas: van primero a las cartas de amor de Lavarse la cara y a las cartas del súper (hoy
 inventadas), mirando «Quién cuenta qué» en `docs/la-pareja.md`.
 
@@ -167,4 +171,10 @@ velocidad, se siente raro…»
   `probar-show-linea.mjs`, mirar capturas del estudio (Javier y Laura en la tarima, el texto de las pantallas al
   derecho), juntar y subir. Diseño en `docs/show.md` de esa rama.
 - Tele compartida, tocador de Laura, escenas premium (en pausa) y diseños premium.
-- Voces con IA: esperan la clave de ElevenLabs (`docs/en-obra/voces-ia.md`).
+- ~~Música de todos los minijuegos y efectos de las escenas~~ **hecho** (11 de octubre): 60 pistas (81 min) con
+  Eleven Music, 5 canciones con letra (casa, Cien Puertas, súper, cohete, cocina), metal sin letra en Sangre y Ceniza
+  y Lavarse la cara, y 43 efectos de verdad para las escenas premium y la mesa (`docs/sistemas/musica.md`). Falta la
+  granja (cuando esté más avanzada) y el Show cuando se junte.
+- ~~Voces con IA~~ **hecho** (11 de octubre): 1.727 frases de Él y Ella con su voz y su emoción en Cien Puertas, la
+  casa, la mesa, el cohete, la cocina, las cartas del súper y Sangre y Ceniza (`docs/sistemas/voces.md`). Falta
+  sumar las frases sueltas que todavía no están en el guion (ver «Pendiente» allá).

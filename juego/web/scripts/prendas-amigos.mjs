@@ -18,7 +18,7 @@ const LISTA = {
   pelo_colita: ['Colita de samurái', 'recogido'], pelo_cola: ['Cola de caballo', 'recogido'], pelo_mono: ['Moño alto', 'recogido'],
   pelo_trenzas: ['Dos trenzas', 'recogido'], pelo_colitas: ['Dos colitas', 'recogido'],
   pelo_largo_el: ['Largo suelto', 'largo'], pelo_corto: ['Bob con flequillo', 'largo'], pelo_flequillo: ['Largo con flequillo', 'largo'],
-  pelo_ondas: ['Largo ondulado', 'largo'],
+  pelo_ondas: ['Largo ondulado', 'largo'], pelo_mono_bajo: ['Moño bajo', 'recogido'], pelo_calvo: ['Calvo con canas', 'corto'],
   // Cabeza
   gorra: ['Gorra', 'gorros'], boina: ['Boina', 'gorros'], gorro_lana: ['Gorro de lana', 'gorros'], gorro_navidad: ['Gorro de Navidad', 'gorros'],
   gorro_chef: ['Gorro de chef', 'gorros'], gorro_fiesta: ['Gorro de fiesta', 'gorros'],
@@ -33,10 +33,13 @@ const LISTA = {
   capucha_raton: ['Capucha de ratoncito', 'capuchas'], capucha_rana: ['Capucha de ranita', 'capuchas'], capucha_vaca: ['Capucha de vaquita', 'capuchas'],
   capucha_cascaron: ['Capucha de pollito', 'capuchas'], capucha_tigre: ['Capucha de tigre', 'capuchas'], capucha_oveja: ['Capucha de ovejita', 'capuchas'],
   capucha_leon: ['Capucha de leoncito', 'capuchas'],
+  sombrero_arriero: ['Sombrero arriero', 'sombreros'], sombrero_pescador: ['Sombrero de pescador', 'sombreros'],
+  casco_minero: ['Casco de minero', 'gorros'], panoleta: ['Pañoleta', 'gorros'],
   // Cara
   gafas_redondas: ['Gafas redondas', 'gafas'], gafas_sol: ['Gafas de sol', 'gafas'], gafas_corazon: ['Gafas de corazón', 'gafas'],
   gafas_estrella: ['Gafas de estrella', 'gafas'], antifaz: ['Antifaz', 'disfraz'], parche: ['Parche de pirata', 'disfraz'],
   nariz_payaso: ['Nariz de payaso', 'disfraz'], bigote: ['Bigote', 'disfraz'], bigotes_gato: ['Bigotes de gatito', 'disfraz'],
+  barba: ['Barba de candado', 'disfraz'],
   // Arriba
   camiseta: ['Camiseta', 'camisetas'], camiseta_rayas: ['Camiseta marinera', 'camisetas'], camiseta_corazon: ['Camiseta con corazón', 'camisetas'],
   camiseta_estrella: ['Camiseta de héroe', 'camisetas'], camiseta_futbol: ['Camiseta de fútbol', 'camisetas'], esqueleto: ['Camiseta de esqueleto', 'camisetas'],
@@ -45,7 +48,7 @@ const LISTA = {
   sueter_navidad: ['Suéter navideño', 'abrigos'], chaqueta: ['Chaqueta', 'abrigos'], chaqueta_cuero: ['Chaqueta de cuero', 'abrigos'],
   camisa: ['Camisa', 'camisas'], camisa_hawaiana: ['Camisa hawaiana', 'camisas'], camisa_cuadros: ['Camisa de cuadros', 'camisas'],
   chaleco: ['Chaleco con camiseta', 'camisas'], saco_corbata: ['Saco con corbata', 'camisas'], saco_corbatin: ['Esmoquin con corbatín', 'camisas'],
-  chaqueta_chef: ['Chaqueta de chef', 'oficios'], bata_medico: ['Bata de médico', 'oficios'], traje_astronauta: ['Traje de astronauta', 'oficios'],
+  chaqueta_chef: ['Chaqueta de chef', 'oficios'], delantal: ['Delantal con camisa', 'oficios'], ruana: ['Ruana', 'abrigos'], bata_medico: ['Bata de médico', 'oficios'], traje_astronauta: ['Traje de astronauta', 'oficios'],
   vestido: ['Vestido', 'vestidos'], vestido_puntos: ['Vestido de puntos', 'vestidos'], vestido_princesa: ['Vestido de princesa', 'vestidos'],
   pijama_oso: ['Pijama de osito', 'enterizos'], pijama_dino: ['Pijama de dinosaurio', 'enterizos'], pijama_corazones: ['Pijama de corazones', 'enterizos'],
   enterizo_dragon: ['Enterizo de dragón', 'enterizos'], enterizo_zorro: ['Enterizo de zorrito', 'enterizos'], enterizo_raton: ['Enterizo de ratoncito', 'enterizos'],
@@ -61,7 +64,7 @@ const LISTA = {
   pantuflas_conejo: ['Pantuflas de conejito', 'pantuflas'], pantuflas_oso: ['Pantuflas de osito', 'pantuflas'], pantuflas_dragon: ['Pantuflas de dragón', 'pantuflas'],
   pantuflas_zorro: ['Patitas de zorrito', 'pantuflas'], pantuflas_rana: ['Patas de ranita', 'pantuflas'], pantuflas_pollito: ['Patitas de pollito', 'pantuflas'],
   // Espalda
-  capa: ['Capa', 'capas'], mochila: ['Mochila', 'capas'],
+  capa: ['Capa', 'capas'], mochila: ['Mochila', 'capas'], carriel: ['Carriel', 'capas'],
   alas_angel: ['Alas de angelito', 'alas'], alas_mariposa: ['Alas de mariposa', 'alas'], alas_abeja: ['Alitas de abeja', 'alas'],
   alas_murcielago: ['Alas de murciélago', 'alas'], alas_dragon: ['Alas de dragón', 'alas'],
   // Cola

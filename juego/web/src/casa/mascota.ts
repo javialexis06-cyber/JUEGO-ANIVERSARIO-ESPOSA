@@ -11,6 +11,7 @@ import { conGenero, EVENTOS_BANO, type EventoBano, type PasoBano, pasosEvento, r
 import { DUR_MIMO, type PasoMimo, type VarianteMimo } from './mimos';
 import { Actividad, alDia, animo, Cuarto, EstadoPersonaje, Rol } from './modelo';
 import { Vestuario } from './ropa';
+import * as voces from '../voces';
 
 type P = { x: number; y: number };
 /** Un destino: punto del cuarto (con su giro y su acceso) o un sitio libre del piso. */
@@ -158,8 +159,19 @@ export class Mascota {
   /** Giro sobre el eje largo del cuerpo (acostado de lado) y corrimiento hacia el centro de la cama. */
   private rodar = 0;
   private juntar = 0;
-  /** Lo que va pensando en el inodoro (globito). */
-  frase: string | null = null;
+  private fraseActual: string | null = null;
+  /** Lo que va diciendo (globito). Al cambiar suena con su voz, si la frase tiene audio (si ya habla, espera). */
+  get frase() {
+    return this.fraseActual;
+  }
+  set frase(v: string | null) {
+    this.decirFrase(v, 'esperar');
+  }
+  /** Pone la frase y la dice. En el inodoro las frases pasan rapidito: si todavía habla, esa se la salta. */
+  private decirFrase(v: string | null, modo: voces.ModoVoz) {
+    if (v && v !== this.fraseActual) void voces.decir(this.rol, v, modo);
+    this.fraseActual = v;
+  }
   /** El retrete cohete: altura extra (despega o cae del cielo) y temblor antes de despegar. */
   vuelo = 0;
   temblor = 0;
@@ -532,7 +544,7 @@ export class Mascota {
   }
 
   /** Un momento en el inodoro: la frase (y las notas o los Zzz) cuando empieza. */
-  private pasoBano(q: PasoBano, luego?: () => void): Paso {
+  private pasoBano(q: PasoBano, luego?: () => void, modo: voces.ModoVoz = 'saltar'): Paso {
     return {
       pose: q.pose,
       pose2: q.pose2,
@@ -541,7 +553,7 @@ export class Mascota {
       cara: q.cara,
       temblor: q.temblor,
       alEmpezar: () => {
-        this.frase = q.frase;
+        this.decirFrase(q.frase, modo);
         this.efecto = q.efecto ?? null;
         luego?.();
       },
@@ -566,7 +578,7 @@ export class Mascota {
             this.bucle(resto);
           });
         }
-      }),
+      }, 'cortar'),
     );
     if (ev.huye === undefined) return [...antes, ...pasos];
     const resto = pasos.slice(ev.huye + 1);

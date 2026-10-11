@@ -17,18 +17,21 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | [`juegos-mesa.md`](sistemas/juegos-mesa.md), [`reacciones.md`](sistemas/reacciones.md) | Juegos de mesa y las reacciones de los muñequitos. |
 | [`cien-puertas.md`](sistemas/cien-puertas.md) | Cien Puertas: las 100 puertas, el desorden, nada tapa lo importante, la revisión automática y el modo pareja. Tiene **la historia y los recuerdos de verdad**. |
 | [`clue.md`](sistemas/clue.md) | «¿Quién fue?», el Clue de la casona: reglas para dos, IA, cuaderno y el tablero renderizado en Blender. |
+| [`granja.md`](sistemas/granja.md) | La granja integrada: acceso desde la casa, motor y guardado, documentación de sistemas y límites actuales. |
 | [`salas.md`](sistemas/salas.md) | Salas de hasta 4, modo amigo y la app «Sala de Juegos» para amigos. |
 | [`sangre-y-ceniza.md`](sistemas/sangre-y-ceniza.md), [`sangre-figuras.md`](sistemas/sangre-figuras.md) | El survivors oscuro: diseño, código, contrato de arte y figuras. |
+| [`musica.md`](sistemas/musica.md) | La música de cada juego y los efectos de sonido (Eleven Music): qué suena dónde, el guion y cómo se generan. |
+| [`voces.md`](sistemas/voces.md) | Las voces de Él y Ella (ElevenLabs): dónde suenan, el guion con sus emociones y cómo se generan. |
 | [`supabase.md`](sistemas/supabase.md) | La base en línea: tablas, cuentas con contraseña, cambios pendientes, latido. |
 
 ## `en-obra/` · frentes a medias o en pausa
 
 | Archivo | Estado |
 |---|---|
+| [`granja-coordinacion.md`](en-obra/granja-coordinacion.md) | Reparto pedido por Javier: motor/historia en el frente de granja; gráficos, personajes y presentación a cargo de Claude; avances probados y subidos. |
 | [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor (misiones, minerales, mapa de la Noche y, en L, armas, sobrecargas, reliquias y el familiar), para pulirla con Javier. |
 | [`lavado-propuesta.md`](en-obra/lavado-propuesta.md) | Lavarse la cara 2: lo que le falta frente a Vampire Survivors (24 armas, cartas, modos, tesoros, mercader, escenarios, disfraces), para pulirla con Javier. |
 | [`escenas-premium.md`](en-obra/escenas-premium.md) | Escenas pagas: en pausa. |
-| [`voces-ia.md`](en-obra/voces-ia.md), [`guion-voces.md`](en-obra/guion-voces.md) | Voces clonadas: esperan la clave de ElevenLabs. |
 
 El Show de Nosotros está en la rama `trabajo/show` (con su `docs/show.md` allá).
 

@@ -616,6 +616,17 @@ export const BONITO_DE: Record<Quien, string[]> = {
   ],
 };
 
+/** Lo que dice el narrador cuando algo se rompe (una vez por puerta). */
+export const ROTO = ['¡Ay, eso era de mi abuela!', 'Tranquil{a|o}… después lo pegamos.', '¡Uy! Hagamos como que no pasó.', 'Eso no era la llave, mi amor.', '¡Mi cosita favorita!'];
+
+/** Lo que dice el narrador antes de soltar la pista (según el dulce). */
+export const ANTES_DE_PISTA: Record<number, string[]> = {
+  1: ['Mmm, rico… Bueno, solo un poquito:', 'Un caramelo, una pistica:', 'Ay, qué dulce eres. Te digo algo chiquito:'],
+  2: ['¡Chocolates! Así sí se habla:', 'Con chocolate hasta te ayudo un poco más:', 'Mmm… Está bien, te lo digo más claro:'],
+  3: ['¡Fresas con crema! Por esto te lo digo casi todo:', 'Me compraste, lo admito. Escucha bien:', 'Con fresas no me puedo negar:'],
+};
+export const SIN_PLATA = ['¿Sin dulce? Así no se vale, mi amor.', 'Primero mi antojo… y no alcanza.', 'Esa alcancía está flaquita. Tú puedes sin mí.'];
+
 /** Lo último que dice el narrador en la puerta 100. */
 export const FINAL_DE: Record<Quien, string[]> = {
   ella: [

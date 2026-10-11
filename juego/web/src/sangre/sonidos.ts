@@ -241,18 +241,63 @@ class Musica {
   private nodos: { g: GainNode; o: OscillatorNode[] } | null = null;
   private reloj = 0;
   private paso = 0;
-  private modo: 'menu' | 'juego' | null = null;
-  /** 0 calma … 1 horda encima (tambores más seguidos). */
-  tension = 0;
+  private modo: 'menu' | 'juego' | 'noche' | null = null;
+  private nivel = 0;
+  private horda = false;
+  private conJefe = false;
+  // Las pistas de metal (docs/sistemas/musica.md): si están, suenan esas y esta sintetizada no se arma
+  private archivo = false;
 
-  iniciar(modo: 'menu' | 'juego') {
+  constructor() {
+    void sonido.hayPista('sangre-batalla').then((si) => {
+      this.archivo = si;
+      if (si) {
+        this.parar();
+        this.elegir();
+      }
+    });
+  }
+
+  /** 0 calma … 1 horda encima (tambores más seguidos; con las pistas, desde 0,75 suena la de la horda). */
+  get tension() {
+    return this.nivel;
+  }
+  set tension(v: number) {
+    this.nivel = v;
+    const h = v >= 0.75 || (this.horda && v > 0.5);
+    if (h !== this.horda) {
+      this.horda = h;
+      this.elegir();
+    }
+  }
+  /** El jefe de la etapa está vivo. */
+  set jefe(v: boolean) {
+    if (v === this.conJefe) return;
+    this.conJefe = v;
+    this.elegir();
+  }
+  /** Ganaron la expedición: el final y después el menú. */
+  final() {
+    if (this.archivo) sonido.musica.pista('sangre-final', { bucle: false, luego: 'sangre-menu' });
+  }
+  private elegir() {
+    if (!this.archivo || !this.modo) return;
+    sonido.musica.pista(this.modo === 'menu' ? 'sangre-menu' : this.modo === 'noche' ? 'sangre-noche' : this.conJefe ? 'sangre-jefe' : this.horda ? 'sangre-horda' : 'sangre-batalla');
+  }
+
+  iniciar(modo: 'menu' | 'juego' | 'noche') {
     this.modo = modo;
+    if (modo !== 'juego') {
+      this.horda = false;
+      this.conJefe = false;
+    }
+    this.elegir();
     this.armar();
   }
 
   private armar() {
     const c = sonido.contextoAudio();
-    if (!c || this.reloj || !this.modo || fondo.enPausa()) return;
+    if (!c || this.reloj || !this.modo || fondo.enPausa() || this.archivo) return;
     const { ctx, salida } = c;
     // Bordón grave (siempre): dos sierras desafinadas por un filtro bajo que respira
     const g = ctx.createGain();
@@ -320,8 +365,9 @@ class Musica {
     this.nodos = null;
   }
 
-  cambiar(modo: 'menu' | 'juego') {
-    if (this.modo === modo && this.reloj) return;
+  cambiar(modo: 'menu' | 'juego' | 'noche') {
+    if (this.modo === modo && (this.reloj || this.archivo)) return;
+    if (this.archivo && sonido.musica.pistaSonando() === 'sangre-final' && modo === 'menu') return void (this.modo = modo);
     this.parar();
     this.iniciar(modo);
   }

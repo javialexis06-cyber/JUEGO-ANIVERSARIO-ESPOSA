@@ -8,7 +8,7 @@
 // (en qué estación está, qué tiquete tiene, dónde tiene el dedo) viaja como presencia. Con amigos (o si cocina un
 // amigo) todo va en modo neutro: la pareja no llega a comer y no hay frases de amor, apodos ni premios de la casa.
 import * as fondo from '../../segundo_plano';
-import { nota, rumor } from '../../sonido';
+import { musica, nota, rumor } from '../../sonido';
 import { COLOR_PUESTO } from '../../salas/sala';
 import type { JugadorSala } from '../../salas/tipos';
 import { NOMBRE_ROL, type Rol } from '../modelo';
@@ -280,6 +280,10 @@ export class Motor {
   calidad = 1;
   private entregando = 0;
 
+  /** La música que sonaba antes de entrar (se devuelve al salir) y si va en hora pico. */
+  private pistaAntes: string | null = null;
+  private pico = false;
+
   constructor(public receta: Receta, private o: OpcionesCocina, private alSalir: (s: SalidaCocina) => void) {
     this.progreso = structuredClone(o.progreso);
     this.yo = o.yo ?? { id: o.rol, nombre: NOMBRE_ROL[o.rol], tipo: o.rol, rol: o.rol, puesto: 0 };
@@ -433,6 +437,10 @@ export class Motor {
   empezar() {
     this.ajustar();
     window.addEventListener('resize', this.ajustar);
+    // La música (docs/sistemas/musica.md): la canción en la entrada y después la del restaurante
+    this.pistaAntes = musica.pistaActual();
+    musica.enMinijuego = true;
+    musica.pista('cocina-cancion', { bucle: false, luego: `cocina-${this.receta.id}` });
     // Segundo plano (otra app, pantalla bloqueada): pausa con aviso (en pareja, al otro le sale la pausa) y el bucle se
     // detiene solo; al volver sigue sin salto de tiempo (ver segundo_plano.ts)
     this.quitarFondo.push(
@@ -835,6 +843,8 @@ export class Motor {
   private jugar() {
     if (this.s.fase !== 'espera') return;
     this.s.fase = 'jugando';
+    this.pico = false;
+    musica.pista(`cocina-${this.receta.id}`);
     this.cambioDia();
     this.capa('');
     this.actual = 0;
@@ -957,6 +967,12 @@ export class Motor {
   private pasoDia(dt: number) {
     const s = this.s;
     s.t += dt;
+    // Hora pico: con cuatro o más en la fila, la música se apura (y vuelve cuando bajan a dos)
+    const enFila = s.invitados.filter((e) => e.estado === 'fila' || e.estado === 'pidiendo').length;
+    if (enFila >= 4 !== this.pico && (enFila >= 4 || enFila <= 2)) {
+      this.pico = enFila >= 4;
+      musica.pista(this.pico ? 'cocina-pico' : `cocina-${this.receta.id}`);
+    }
     let cambio = false;
     for (const e of s.invitados) {
       if (e.estado === 'fuera' && s.t >= e.llega) {
@@ -1265,6 +1281,8 @@ export class Motor {
     this.sync?.cerrar();
     for (const q of this.quitarSala.splice(0)) q();
     this.terminado = true;
+    musica.enMinijuego = false;
+    musica.pista(this.pistaAntes);
     this.bucle?.detener();
     this.bucle = null;
     for (const q of this.quitarFondo.splice(0)) q();

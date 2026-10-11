@@ -1,0 +1,5 @@
+import * as THREE from 'three';
+import type { EstadoGranja } from './estado';
+import { posicionBuzon } from './correo';
+import { CARTAS } from './correo';
+export function crearBuzon(s:EstadoGranja){const g=new THREE.Group(),p=posicionBuzon(s);g.name='buzon-granja';if(!p)return g;g.position.set(p.x,0,p.z);g.userData.ganado={tipo:'buzon',id:'correo'};const box=(w:number,h:number,d:number,x:number,y:number,z:number,color:string)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,roughness:.85}));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);};box(.16,.9,.16,0,.45,0,'#79523c');box(.75,.48,.56,0,1.08,0,'#76968b');box(.85,.09,.65,0,1.36,0,'#f0dabc');box(.52,.04,.025,0,1.13,.29,'#405a4d');box(.14,.14,.025,0,.95,.3,'#d5b370');box(.035,.52,.035,.43,1.24,0,'#79523c');const pendientes=s.correo.cartas.some(r=>r.leidaDia===null||r.reclamadaDia===null&&CARTAS.some(c=>c.id===r.id&&(c.monedas>0||c.objetos.length>0)));box(.24,.15,.035,.54,pendientes?1.45:1.03,0,pendientes?'#d6a15e':'#b3b7a3');return g;}

@@ -20,7 +20,7 @@ import { tema } from './cuarto';
 import { Desorden, esquinaNarrador, zonasNarrador } from './desorden';
 import { Entrada } from './entrada';
 import { Escena, MIRA, OJO } from './escena';
-import { CAPITULOS, capituloDe, elegir, FINAL_DE, HALLAZGO, INICIO, PUERTAS, RECUERDOS, recuerdoDe, voz } from './historia';
+import { ANTES_DE_PISTA, CAPITULOS, capituloDe, elegir, FINAL_DE, HALLAZGO, INICIO, PUERTAS, RECUERDOS, recuerdoDe, ROTO, SIN_PLATA, voz } from './historia';
 import { azar, grupo, iconoItem } from './kit';
 import { Narrador } from './narrador';
 import type { Ctx, Nivel } from './nivel';
@@ -29,7 +29,6 @@ import { ProbadorReal } from './probador';
 import { TutorialPuertas, tutorialVisto } from './tutorial';
 import { Puerta } from './puerta';
 import { Sensores } from './sensores';
-import { idRecuerdo } from './voces';
 import { gastarMonedas, saldo } from './monedero';
 import { HUECO } from './puerta';
 import { rectDeCaja } from './revision';
@@ -186,6 +185,7 @@ function controles() {
   const sonar = () => {
     sonido.activar();
     sonido.musica.iniciar('menu', 76, 'hogar');
+    if (!jugadas) sonido.musica.pista('puertas-menu');
   };
   window.addEventListener('pointerdown', sonar, { once: true });
   $('btn-mapa').onclick = () => {
@@ -317,6 +317,7 @@ function salirAlMapa(texto?: string) {
   paneles.quitar();
   terminarCtx();
   narrador.esconder();
+  if (sonido.musica.pistaSonando() !== 'puertas-final') sonido.musica.pista('puertas-menu');
   mapa();
 }
 
@@ -512,6 +513,8 @@ function armarCapitulo(cap: number) {
 
 async function jugar(n: number, plano?: PlanoDesorden) {
   const turno = ++jugadas;
+  // La música del capítulo (docs/sistemas/musica.md); la canción del final se deja terminar
+  if (sonido.musica.pistaSonando() !== 'puertas-final') sonido.musica.pista(`puertas-cap${Math.min(10, Math.floor((n - 1) / 10) + 1)}`);
   const papel: Papel | 'solo' = pareja?.papel ?? 'solo';
   // La tarjeta con el número de la puerta mientras se arma (sobre el fundido)
   const tapada = cubrir(n);
@@ -663,17 +666,23 @@ async function jugar(n: number, plano?: PlanoDesorden) {
   celebrarEstrellas(n, estrellas, ganadas);
   guardar();
   if (UNA) return;
+  sonido.musica.remate('puertas-abierta');
   if (!SIN_HISTORIA) {
     await narrador.celebrar(n);
     if (n % 10 === 0) await narrador.decir(capituloDe(n).despedida);
     // Cada cinco puertas vuelve un recuerdo de verdad, contado por los dos
     const r = recuerdoDe(n);
     if (r) {
+      sonido.musica.remate('puertas-recuerdo');
       if (n % 10 !== 0) await narrador.decir([elegir(HALLAZGO, n / 5)]);
       await tarjetaRecuerdo(r, RECUERDOS.indexOf(r) + 1, RECUERDOS.length);
-      await narrador.conversar(r.dialogo, nombreDe(yo), r.dialogo.map((_, i) => idRecuerdo(r.puerta, i)));
+      await narrador.conversar(r.dialogo, nombreDe(yo));
     }
-    if (n === 100) await narrador.decir(FINAL_DE[otro(yo)], FINAL_DE[otro(yo)].map((_, i) => `final-${otro(yo)}-${i + 1}`));
+    if (n === 100) {
+      // El regalo: la canción de los dos suena mientras se despiden
+      sonido.musica.pista('puertas-final', { bucle: false, luego: 'puertas-cap10' });
+      await narrador.decir(FINAL_DE[otro(yo)]);
+    }
   }
   if (turno !== jugadas) return;
   // Cruzar la puerta
@@ -706,8 +715,6 @@ let jugadas = 0;
 /** Las pistas que ya soltó el narrador en esta puerta (de la 1 a la 3). */
 let pistaDada: string[] = [];
 
-/** Lo que dice el narrador cuando algo se rompe (una vez por puerta). */
-const ROTO = ['¡Ay, eso era de mi abuela!', 'Tranquil{a|o}… después lo pegamos.', '¡Uy! Hagamos como que no pasó.', 'Eso no era la llave, mi amor.', '¡Mi cosita favorita!'];
 
 /** Rectángulo de la puerta en la pantalla: el globo del narrador se acomoda sin taparla. */
 let tamPuerta = '';
@@ -831,13 +838,6 @@ function pagar(monedas: number) {
   }
 }
 
-/** Lo que dice el narrador antes de soltar la pista (según el dulce). */
-const ANTES_DE_PISTA: Record<number, string[]> = {
-  1: ['Mmm, rico… Bueno, solo un poquito:', 'Un caramelo, una pistica:', 'Ay, qué dulce eres. Te digo algo chiquito:'],
-  2: ['¡Chocolates! Así sí se habla:', 'Con chocolate hasta te ayudo un poco más:', 'Mmm… Está bien, te lo digo más claro:'],
-  3: ['¡Fresas con crema! Por esto te lo digo casi todo:', 'Me compraste, lo admito. Escucha bien:', 'Con fresas no me puedo negar:'],
-};
-const SIN_PLATA = ['¿Sin dulce? Así no se vale, mi amor.', 'Primero mi antojo… y no alcanza.', 'Esa alcancía está flaquita. Tú puedes sin mí.'];
 
 /** Los antojos del narrador: se le compra un dulce y a cambio suelta una pista (más grande mientras más cueste). */
 async function antojo() {
@@ -1174,6 +1174,8 @@ const probador = () => new ProbadorReal(() => escena.escena, escena, entrada, pa
 
 (window as unknown as Record<string, unknown>).__puertas = {
   jugar: (n: number) => jugar(n),
+  /** El narrador (para ver sus globos en las pruebas: decir, conversar, animar, celebrar…). */
+  narrador: () => narrador,
   estado: () => ({ jugando, progreso, bloqueada: entrada?.bloqueada, abierta: puerta?.abierta, items: inv.items, listo: !entrada?.bloqueada && $('fundido').hidden && escena.enVistaGeneral }),
   /** Resuelve la puerta que se está jugando con su prueba (toques y sensores simulados). */
   probar: async () => {

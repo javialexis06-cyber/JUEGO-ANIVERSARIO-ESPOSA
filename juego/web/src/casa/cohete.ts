@@ -35,6 +35,7 @@ import { NOMBRE_ROL, otro, type Rol, type Ropa } from './modelo';
 import { Vestuario } from './ropa';
 import { teñirModelo } from '../salas/tinte';
 import type { AspectoJugador } from '../salas/tipos';
+import * as voces from '../voces';
 
 export interface Resultado {
   /** Segundos que duró el vuelo (para el récord viejo y las monedas de la casa). */
@@ -656,8 +657,8 @@ class RetreteEspacial {
     this.cara('sorprendido', 99);
     rumor(this.durIntro - 0.2, 180, 0.12, 0, 0.6, 90);
     nota(90, this.durIntro - 0.4, 0, 'sawtooth', 0.05, 320);
-    musica.callar(true);
     this.musica.iniciar();
+    this.musica.callarCasa();
     this.musica.pausar(false);
     this.musica.prisa = 1;
     this.musica.tramo(0);
@@ -1640,6 +1641,7 @@ class RetreteEspacial {
 
   private tGlobo = 0;
   private decir(texto: string, dur: number) {
+    if (!this.neutro) void voces.decir(this.o.rol, texto);
     const g = this.capa.querySelector<HTMLElement>('.cohete-globo')!;
     g.textContent = texto;
     g.hidden = false;

@@ -121,6 +121,16 @@ function versionAmigos(): Plugin {
       // Los juegos de mesa: la utilería de las reacciones y las imágenes del Clue
       for (const f of readdirSync(resolve(pub, 'modelos'))) if (/^reaccion_\w+\.glb$/.test(f)) copiar(`modelos/${f}`);
       copiar('modelos/clue/');
+      // La música de los juegos que tienen los amigos (nada de la casa ni de public/musica/pareja/) y los efectos
+      const musica = resolve(pub, 'musica');
+      if (existsSync(resolve(musica, 'lista.json'))) {
+        const de = (id: string) => /^(super|mesa|lavado|sangre|cohete|cocina|amigos)-/.test(id);
+        const lista = JSON.parse(readFileSync(resolve(musica, 'lista.json'), 'utf8')) as Record<string, [string, number]>;
+        const suya = Object.fromEntries(Object.entries(lista).filter(([id]) => de(id)));
+        for (const [a] of Object.values(suya)) copiar(`musica/${a}`);
+        writeFileSync(resolve(salida, 'musica/lista.json'), JSON.stringify(suya) + '\n');
+      }
+      copiar('sfx/');
       // La app arranca en index.html: aquí lleva directo a la sala de juegos de los amigos
       writeFileSync(
         resolve(salida, 'index.html'),
@@ -152,6 +162,7 @@ export default defineConfig(({ mode, command }) => {
             // La casa (index.html, el juego principal), los minijuegos con página propia y los que se abren sin la casa
             // desde la sala de juegos de amigos (retrete.html, cocina.html)
             casa: resolve(raiz, 'index.html'), super: resolve(raiz, 'super.html'), puertas: resolve(raiz, 'puertas.html'), mesa: resolve(raiz, 'mesa.html'),
+            granjaV3: resolve(raiz, 'granja-v3.html'),
             amigos: resolve(raiz, 'amigos.html'), sangre: resolve(raiz, 'sangre.html'), retrete: resolve(raiz, 'retrete.html'), cocina: resolve(raiz, 'cocina.html'),
           },
       },

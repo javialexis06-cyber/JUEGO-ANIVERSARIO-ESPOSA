@@ -8,7 +8,7 @@ import * as sonido from '../sonido';
 import { Escena, OJO } from './escena';
 import { ANIMO, ANIMO_DE, BONITO, BONITO_DE, type Dicho, elegir, FELICITAR, voz } from './historia';
 import { Globo } from './ui';
-import * as voces from './voces';
+import * as voces from '../voces';
 
 const ESCALA = 0.68;
 /** Personaje (x, y) ↔ three (x, 0, -y). */
@@ -34,6 +34,7 @@ export class Narrador {
   }
 
   async cargar() {
+    voces.precargar();
     await this.p.cargarPoses(this.rol);
     this.p.velocidad = 1.6;
     // Viste como en la casa
@@ -95,20 +96,21 @@ export class Narrador {
     void this.escena.animar(380, (k) => g.scale.setScalar(ESCALA * (0.6 + 0.4 * k)));
   }
 
-  /** Cuenta algo (varias líneas, tocar para seguir). `audios`: código de la voz grabada de cada línea. */
-  async decir(lineas: string[], audios?: string[]) {
+  /** Cuenta algo (varias líneas, tocar para seguir), con su voz. Una línea en pedazos se ve junta y suena por partes. */
+  async decir(lineas: (string | string[])[]) {
     if (!lineas.length) return;
     this.hablando = true;
     this.p.pose('hablar_a');
-    await this.globo.decir(lineas.map((l) => voz(l, this.rol)), (h) => this.p.cara(h ? 'hablar' : 'normal'), audios && ((i) => void voces.oir(audios[i])));
-    if (audios) voces.callar();
+    const partes = lineas.map((l) => (Array.isArray(l) ? l : [l]).map((x) => voz(x, this.rol)));
+    await this.globo.decir(partes.map((l) => l.join(' ')), (h) => this.p.cara(h ? 'hablar' : 'normal'), (i) => void voces.decir(this.rol, partes[i]));
+    voces.callar();
     this.hablando = false;
     this.p.quieto();
     this.p.cara('feliz');
   }
 
   /** Conversación de los dos: lo del narrador sale en su globo y lo de quien juega, abajo con su nombre. */
-  async conversar(dialogo: Dicho[], nombreJugador: string, audios?: string[]) {
+  async conversar(dialogo: Dicho[], nombreJugador: string) {
     if (!dialogo.length) return;
     this.hablando = true;
     this.p.pose('hablar_a');
@@ -122,8 +124,8 @@ export class Narrador {
         this.p.cara(h ? 'hablar' : 'normal');
         if (this.p.poseVisible === 'pensando') this.p.pose('hablar_a');
       }
-    }, audios && ((i) => void voces.oir(audios[i])));
-    if (audios) voces.callar();
+    }, (i) => void voces.decir(dialogo[i][0], voz(dialogo[i][1], dialogo[i][0])));
+    voces.callar();
     this.hablando = false;
     this.p.quieto();
     this.p.cara('feliz');
@@ -154,7 +156,9 @@ export class Narrador {
   animar(n: number) {
     if (this.animos >= 2 || this.hablando) return;
     const lista = [...ANIMO, ...ANIMO_DE[this.rol], ...ANIMO_DE[this.rol]];
-    this.globo.susurrar(voz(elegir(lista, n + this.animos * 3), this.rol));
+    const texto = voz(elegir(lista, n + this.animos * 3), this.rol);
+    this.globo.susurrar(texto);
+    void voces.decir(this.rol, texto);
     this.animos++;
     this.p.cara('feliz');
     this.p.pose('saludo_a');
@@ -179,6 +183,7 @@ export class Narrador {
   /** Sin dulce no hay pista: brazos cruzados y puchero. */
   negarse(texto: string) {
     this.globo.susurrar(voz(texto, this.rol), 3000);
+    void voces.decir(this.rol, voz(texto, this.rol));
     this.p.pose('brazos_cruzados');
     this.p.cara('puchero');
     this.hasta = this.escena.t + 2.2;
@@ -190,7 +195,10 @@ export class Narrador {
     this.p.pose(texto ? 'facepalm' : 'boca_abierta');
     this.p.cara('sorprendido');
     this.hasta = this.escena.t + 1.4;
-    if (texto) this.globo.susurrar(voz(texto, this.rol), 2600);
+    if (texto) {
+      this.globo.susurrar(voz(texto, this.rol), 2600);
+      void voces.decir(this.rol, voz(texto, this.rol));
+    }
   }
 
   /** Al abrir la puerta: se acerca, celebra y dice algo bonito. */
@@ -206,7 +214,7 @@ export class Narrador {
     await this.escena.esperar(500);
     // La mitad de las veces algo propio de quien narra (los labios, la sonrisa, la estafa…)
     const bonito = n % 2 ? elegir(BONITO_DE[this.rol], Math.floor(n / 2)) : elegir(BONITO, n);
-    await this.decir([`${elegir(FELICITAR, n)} ${bonito}`]);
+    await this.decir([[elegir(FELICITAR, n), bonito]]);
     this.p.pose('beso');
     this.p.cara('beso');
     sonido.beso();
@@ -227,5 +235,6 @@ export class Narrador {
   esconder() {
     this.p.grupo.visible = false;
     this.globo.callar();
+    voces.callar();
   }
 }

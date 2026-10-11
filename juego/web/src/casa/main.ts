@@ -9,12 +9,14 @@ import '@fontsource/nunito/latin-700.css';
 import '@fontsource/nunito/latin-800.css';
 import '../estilos.css';
 import './casa.css';
+import './regreso_granja';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import * as THREE from 'three';
 import { aTres, Mundo } from '../mundo';
 import { cargar, cargarAnimado, elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
+import * as voces from '../voces';
 import * as fondo from '../segundo_plano';
 import { salirSuave } from '../transiciones';
 import {
@@ -51,6 +53,9 @@ import {
   $, abrirHoja, Capa, caraClase, cerrarHoja, cerrarVentana, cuerpoHoja, esc, hojaAbierta, ico, iconoItem, iconoRopa, lluviaCorazones,
   mostrar, nombre, pintarNecesidades, SVG, toast, ventana,
 } from './ui_casa';
+
+// Las voces de la pareja: la lista se pide de una vez para que la primera frase no llegue tarde
+voces.precargar();
 
 const params = new URLSearchParams(location.search);
 const CLAVE_MODO = 'nuestro-hogar-modo';
@@ -272,6 +277,7 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
   await alAbrir();
   pintarTodo();
   sonido.musica.iniciar('menu', 76, 'hogar');
+  pistaCasa();
   (window as any).__listo = true;
   if (s.modo === 'linea') void asegurarCuenta();
   return true;
@@ -324,6 +330,8 @@ function abrirFormCuenta(r: Rol, aviso = '') {
 }
 
 function elegirRol(r: Rol) {
+  // La canción de la casa suena en la bienvenida (después sigue la de la casa)
+  sonido.musica.pista('casa-cancion', { bucle: false, luego: 'casa-dia' });
   rolElegido = r;
   if (claveBien !== r) claveBien = null;
   $('bienv-aviso').textContent = '';
@@ -1368,6 +1376,7 @@ const JUEGOS = {
   puertas: { punto: 'cien', url: './puertas.html', nombre: 'Cien Puertas' },
   mesa: { punto: 'mesa', url: './mesa.html', nombre: 'los juegos de mesa' },
   sangre: { punto: 'arcade', url: './sangre.html', nombre: 'Sangre y Ceniza' },
+  granja: { punto: 'arcade', url: './granja-v3.html', nombre: 'Nuestra granjita' },
 } as const;
 let yendoAJugar = false;
 
@@ -2012,12 +2021,24 @@ async function abrirRegaloDeVerdad() {
 // ---------------------------------------------------------------------------
 // Cuartos, botones y HUD
 // ---------------------------------------------------------------------------
+/** La música de la casa (docs/sistemas/musica.md): en el patio la del patio y de noche (de 8 de la noche a 6 de la
+ *  mañana) la de dormir; si no, la de día. Mientras está la canción de la bienvenida, se deja terminar. */
+function pistaCasa(c: Cuarto | undefined = casa3d?.actual) {
+  if (sonido.musica.enMinijuego) return;
+  const h = new Date().getHours();
+  const id = c === 'patio' ? 'casa-patio' : h >= 20 || h < 6 ? 'casa-noche' : 'casa-dia';
+  if (sonido.musica.pistaActual() === 'casa-cancion' && sonido.musica.pistaSonando() === 'casa-cancion') return;
+  sonido.musica.pista(id);
+}
+setInterval(() => pistaCasa(), 60000);
+
 /** Los cuartos propios solo los decora su dueño. */
 const puedeDecorar = (c: Cuarto) => !DUENO[c] || DUENO[c] === yo;
 
 function verCuarto(c: Cuarto) {
   if (c !== 'patio' && patio?.activo) patio.salir();
   casa3d.mostrar(c);
+  pistaCasa(c);
   if (c === 'patio') patio?.sincronizar();
   if (decorando) casa3d.modoDecorar(true, puedeDecorar);
   pintarCuartos();
@@ -2126,6 +2147,7 @@ function botonesCuarto(): Boton[] {
         { id: 'jugar-puertas', texto: 'Cien Puertas', icono: ico('puerta') },
         { id: 'jugar-mesa', texto: 'Juegos de mesa', icono: '<img src="./modelos/iconos/mesa_juegos.svg" alt="">' },
         { id: 'jugar-sangre', texto: 'Sangre y Ceniza', icono: '<span class="ico ico-emoji">⚔️</span>' },
+        { id: 'jugar-granja', texto: 'Nuestra granjita', icono: '<span class="ico ico-emoji">🌱</span>' },
         { id: 'tienda-retrete', texto: 'Tienda del retrete', icono: '<img src="./modelos/iconos/cohete_rollito.webp" alt="">' },
       );
       break;
@@ -2286,6 +2308,8 @@ async function alAccion(id: string) {
       return jugar('mesa');
     case 'jugar-sangre':
       return jugar('sangre');
+    case 'jugar-granja':
+      return jugar('granja');
     case 'retrete':
       // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse,
       // ver quién ha volado más lejos y abrir la tienda del retrete

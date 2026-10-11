@@ -155,7 +155,11 @@ function pintarMenu() {
   }
 }
 
+/** La música de cada juego de la mesa (docs/sistemas/musica.md); en el menú, la del menú. */
+const PISTA_JUEGO: Record<string, string> = { dados: 'mesa-dados', mancala: 'mesa-mancala', cajas: 'mesa-cajas', parchis: 'mesa-parchis', parchis2: 'mesa-parchis', clue: 'mesa-clue' };
+
 function mostrar(id: 'menu' | 'partida' | 'final') {
+  if (id === 'menu') sonido.musica.pista('mesa-menu');
   $('menu').hidden = id !== 'menu';
   // El final sale encima del tablero: arriba siguen los muñequitos celebrando o haciendo drama
   $('partida').hidden = id === 'menu';
@@ -348,8 +352,9 @@ class Partida {
     this.terminada = true;
     borrarPartida();
     $('turno').textContent = '';
-    await escenario!.final(fin);
     const g = fin.ganador;
+    sonido.musica.remate(g === null || g === yo || this.modo === 'local' ? 'mesa-ganar' : 'mesa-perder');
+    await escenario!.final(fin);
     $('final-titulo').textContent = g === null ? '¡Empate!' : this.modo === 'local' ? `¡Ganó ${nombreDe(g)}!` : g === yo ? '¡Ganaste!' : `Ganó ${nombreDe(g)}`;
     $('final-marcador').innerHTML = `${nombreDe('el')} <b>${fin.puntos.el}</b> · ${nombreDe('ella')} <b>${fin.puntos.ella}</b>`;
     const premio = premioDe(this, fin);
@@ -461,6 +466,7 @@ async function jugar(
   quienEmpieza = otro(empieza);
   $('partida-juego').textContent = juego.nombre;
   mostrar('partida');
+  sonido.musica.pista(PISTA_JUEGO[entrada.id] ?? 'mesa-menu', { reiniciar: true, oSino: 'mesa-menu' });
   // Fuera de una sala, cada lado es el de siempre (Él y Ella, o el amigo contra la máquina o el Jugador 2)
   if (!opciones.sala) lados = ladosBase(modo);
   escenario ??= new Escenario($<HTMLCanvasElement>('escenario-lienzo'), $('efectos'), RAPIDO);
@@ -633,6 +639,7 @@ function arrancarMusica() {
   conMusica = true;
   sonido.activar();
   sonido.musica.iniciar('menu', 84, 'mesa');
+  if (!$('menu').hidden) sonido.musica.pista('mesa-menu');
 }
 function pintarMusica() {
   for (const b of document.querySelectorAll('.boton-musica')) b.classList.toggle('apagado', sonido.musica.apagada());
