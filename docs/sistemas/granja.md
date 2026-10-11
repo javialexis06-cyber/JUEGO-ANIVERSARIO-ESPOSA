@@ -12,7 +12,13 @@ En Misiones o el tablón de la Casa de los Oficios aparecen dos ofertas diarias,
 
 El buzón ofrece un proyecto de riego o cuidados después de despejar terreno y dormir tres jornadas; otro de pesca o minería después de una expedición y cinco jornadas. Cada propuesta permite elegir una sola rama. El encargo elegido tiene dos etapas y, al completarlo, enseña una receta alternativa útil. Cancelar o vencer permite retomar esa misma rama con devolución de las entregas y sus calidades. La elección, receta, confirmación y cierre permanecen al guardar; la correspondencia nueva llega solo al dormir.
 
-Los documentos detallados están en el módulo: `PUEBLO-INTEGRACION.md`, `VIVIENDAS-INTEGRACION.md`, `DORMITORIOS-INTEGRACION.md`, `VIDA-SOCIAL-INTEGRACION.md`, `ENCARGOS-INTEGRACION.md`, `CORREO-INTEGRACION.md`, `FESTIVALES-INTEGRACION.md`, `CARPINTERIA-INTEGRACION.md` y `COMPANIA-INTEGRACION.md`. `PLAN-MOTOR-COMPLETO.md` registra las capacidades parciales y pendientes. `REPARTO-COMPLETO.md` y `PLAN-PUEBLOS-MUNDOS.md` son planificación de contenido, no un catálogo de mundos ya terminados.
+En Colecciones puedes consultar seis lotes sin plazo. Entra a la Casa de los Oficios para reservar entregas
+por casilla y calidad, recuperarlas o cerrar un lote como donación permanente. Cada cierre entrega un premio
+único; los cuatro lotes agrícolas abren semillas durante todo el año al precio original. La siembra conserva
+estación y clima. El cuaderno registra solo lo donado, y el Atlas continúa como vista previa separada.
+Partidas anteriores, recarga, mochila llena y fallo de almacenamiento conservan o revierten los pasos.
+
+Los documentos detallados están en el módulo: `PUEBLO-INTEGRACION.md`, `VIVIENDAS-INTEGRACION.md`, `DORMITORIOS-INTEGRACION.md`, `VIDA-SOCIAL-INTEGRACION.md`, `ENCARGOS-INTEGRACION.md`, `CORREO-INTEGRACION.md`, `COLECCIONES-INTEGRACION.md`, `FESTIVALES-INTEGRACION.md`, `CARPINTERIA-INTEGRACION.md` y `COMPANIA-INTEGRACION.md`. `PLAN-MOTOR-COMPLETO.md` registra las capacidades parciales y pendientes. `REPARTO-COMPLETO.md` y `PLAN-PUEBLOS-MUNDOS.md` son planificación de contenido, no un catálogo de mundos ya terminados.
 
 El cargador `src/granja-v2/biblioteca.ts` y los modelos de `public/modelos/granja-v2/` son dependencias visuales. Los antiguos motores y demos no se publican. No hay nuevas dependencias runtime. Las pruebas se ejecutan con `npm run probar:granja`; al integrar también se revisan `npm run build` y `npm run build:amigos` y el flujo de casa/retorno.
 

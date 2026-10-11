@@ -27,6 +27,17 @@ Destinos: S21 FE y S24 Ultra. La granja puede probarse con teclado y mouse y con
 
 ## Estado real e historia
 
+### Contrato del bloque de colecciones y lotes (motor)
+
+El archivo existente registra seis lotes: cuatro de cultivos por estación, pesca y minerales/oficios.
+Cada requisito acepta una pieza concreta o alternativas explícitas del catálogo, cantidad y calidad mínima.
+Las entregas por casilla quedan reservadas y se pueden recuperar completas hasta cerrar el lote; el cierre
+las convierte en donaciones permanentes y concede un premio único. Los cuatro lotes agrícolas abren una
+reserva de sus semillas básicas durante todo el año al precio original; plantar conserva estación y clima.
+Un cuaderno distingue reservas de donaciones efectivas y permanece separado del atlas de vista previa.
+Se conservan V5, IDs, inventario, economía y recursos visuales. Solo se agregan paneles, botones y texto
+al menú y al archivo; no se trabajan modelos, iconos, decoración ni gráficos finales.
+
 ### Contrato del bloque de encargos renovables (motor)
 
 Se conservan los doce IDs originales y sus registros. El diario y el tablón existente integran dos ofertas
@@ -55,7 +66,7 @@ decoración, animación y presentación final siguen a cargo del frente visual; 
 
 El catálogo integrado contiene 63 cultivos, ocho frutales, doce familias productivas y linajes fantásticos, 147 recetas, 458 objetos, 24 vecinos del primer pueblo, 17 viviendas y 24 dormitorios básicos. Hay calendario de 28 días, herramientas y habilidades, encargos, ocho encuentros sociales, correo, construcción y redes de producción. Consultar los documentos del módulo para reglas, API y límites de cada sistema.
 
-La planificación propone 147 identidades en 19 núcleos: no son 147 NPC jugables ni 19 pueblos terminados. Los mundos de aventura tienen una primera base; faltan variedad regional, campaña, eventos comunitarios y muchas funciones de la auditoría. Los dormitorios comparten distribución. Cuatro festivales básicos del primer pueblo ya conectan calendario, invitaciones, seis participantes por evento, actividad, recompensa anual y guardado. Dos ofertas diarias, una semanal y un especial semanal ya conectan instancias persistidas, reservas, etapas y premios reales, conservando los doce pedidos permanentes. Dos propuestas de correspondencia ya conectan cuatro ramas excluyentes, encargos de dos etapas, recetas alternativas, recuperación y decisiones persistidas. Siguiente bloque: colecciones y lotes (I09).
+La planificación propone 147 identidades en 19 núcleos: no son 147 NPC jugables ni 19 pueblos terminados. Los mundos de aventura tienen una primera base; faltan variedad regional, campaña, eventos comunitarios y muchas funciones de la auditoría. Los dormitorios comparten distribución. Cuatro festivales básicos del primer pueblo ya conectan calendario, invitaciones, seis participantes por evento, actividad, recompensa anual y guardado. Dos ofertas diarias, una semanal y un especial semanal ya conectan instancias persistidas, reservas, etapas y premios reales, conservando los doce pedidos permanentes. Dos propuestas de correspondencia ya conectan cuatro ramas excluyentes, encargos de dos etapas, recetas alternativas, recuperación y decisiones persistidas. Seis lotes del archivo ya conectan entregas por casilla/calidad, reservas recuperables, donación permanente, premios únicos y reserva de semillas todo el año. El atlas sigue como vista previa separada. Siguiente bloque: libros y pistas útiles (K07).
 
 El lore recibido está en `docs/mitologia.md`. La planificación específica está en `PLAN-PUEBLOS-MUNDOS.md`, `REPARTO-COMPLETO.md` y `REPARTO-MUNDOS.json`, dentro del módulo. Distinguir canon de nombres/episodios propuestos. Nox no es un refugio de almas inocentes ni un ciclo de reencarnación; no rehacer el canon por una necesidad de arte. La casa, la granja y Sangre y Ceniza se coordinan; los minijuegos casuales permanecen independientes. No declarar equivalencia completa con Stardew/Expanded/Automate.
 

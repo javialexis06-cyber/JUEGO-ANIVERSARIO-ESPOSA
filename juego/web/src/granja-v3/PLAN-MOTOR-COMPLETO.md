@@ -1,5 +1,22 @@
 # Plan del motor completo: capacidades, variedad y aceptación
 
+## Colecciones y lotes integrados
+
+Actualización del 11 de octubre de 2026: seis lotes del archivo conectan piezas concretas y alternativas,
+calidades mínimas, entregas parciales por casilla, reservas recuperables y donación permanente al cierre.
+Cada lote concede un premio funcional único. Los cuatro agrícolas abren sus semillas básicas todo el año
+al precio original; la siembra conserva estación y clima. El cuaderno registra únicamente lo donado,
+separado de las reservas y del atlas de vista previa. Las partidas V5 anteriores reciben lotes vacíos;
+importaciones incoherentes se rechazan y fallos de almacenamiento revierten la acción completa.
+
+[COLECCIONES-INTEGRACION.md](COLECCIONES-INTEGRACION.md) documenta los seis lotes y sus reglas.
+I09 pasa a parcial: falta variedad regional, exhibición física y lotes de artefactos. K06 sigue parcial:
+se distinguen donaciones, reservas y vista previa; faltan todos los cuadernos semánticos independientes.
+No se certifica una campaña completa desde cero. Siguiente bloque: libros y pistas útiles (K07).
+Verificación: 23 grupos nuevos de lógica, regresión de 31 suites y 17 comprobaciones de navegador
+(11 de colecciones y seis de casa/granja), sin fallos; compilaciones completa y de amigos correctas.
+
+
 ## Correspondencia ramificada integrada
 
 Actualización del 11 de octubre de 2026: dos propuestas por hitos y jornada ofrecen cuatro ramas originales.
@@ -12,7 +29,7 @@ V1 a V2 dentro de la V5 general. Se usan paneles sencillos y artículos existent
 
 [CORREO-INTEGRACION.md](CORREO-INTEGRACION.md) documenta elección, encargos, recetas, recuperación y límites.
 I05 pasa a parcial: cuatro rutas comprobadas por lógica, pero faltan ramas regionales, escenas y cambios físicos
-del mundo. No se certifica una campaña completa desde cero. Siguiente bloque: colecciones y lotes (I09).
+del mundo. No se certifica una campaña completa desde cero. La primera serie de I09 está documentada al inicio de este plan.
 Verificación: 21 grupos nuevos de lógica, regresión de 30 suites y 17 recorridos de navegador (11 de
 correspondencia y seis de casa/granja), sin fallos; compilaciones completa y de amigos correctas.
 Se integraron las voces remotas y se repitieron compilaciones, lógica nueva y casa/granja antes de publicar,
@@ -380,7 +397,7 @@ Referencias: [Misiones base](https://es.stardewvalleywiki.com/Misiones) y [misio
 | I06 | Diarias y repetibles | Parcial · dos diarias, semanal, semilla e instancia persistidas; pendiente variedad regional | Generación por día con semilla persistida, variedad de tipo y petición alcanzable; renovar no reinicia al recargar; repetible lleva identificador de instancia. |
 | I07 | Pedidos especiales | Parcial · tres pedidos de dos etapas y premio real; pendientes escenas, ramas y más etapas | Varias etapas, acumulación desde aceptación, entrega concreta, plazo más largo, escena/recompensa y cooldown si aplica. |
 | I08 | Espacio de pedidos | Parcial · Casa de los Oficios y Diario conectados; pendientes cajas dedicadas | Tablón/lugar físico con disponibles, aceptados y entregas; acceso directo al detalle; cajas o mostradores muestran pedido y contenido entregado. |
-| I09 | Colecciones/lotes | Pendiente | Entregas de categorías o piezas concretas, cantidades y calidad; avance persistido, recompensa por lote y transformación/desbloqueo visible. |
+| I09 | Colecciones/lotes | Parcial · seis lotes, reservas, calidades, premios y oferta permanente de semillas; pendientes exhibiciones y lotes regionales | Entregas de categorías o piezas concretas, cantidades y calidad; avance persistido, recompensa por lote y transformación/desbloqueo visible. |
 | I10 | Recompensas | Parcial | Monedas, artículos, receta, relación, acceso, edificio o efecto; validar capacidad antes de cerrar; reclamar de nuevo no da nada. |
 | I11 | Prerrequisitos y alcanzabilidad | Parcial | Grafo sin ciclos imposibles; recursos y NPC accesibles en el plazo; probar ambas ramas y recuperación tras vencer plazo. |
 | I12 | Campaña completa | Pendiente | Recorrer inicio, ramas, progresión y cierre con medios ordinarios; ningún objetivo necesita consola, fixture o tiempo artificial para ocultar un bloqueo de diseño. |
@@ -412,7 +429,7 @@ Referencias: [Productos artesanales](https://es.stardewvalleywiki.com/Productos_
 | K03 | Obras y mejoras | Parcial | Plano, materiales, huella/acceso, encargo, plazo y entrega; durante obra no ofrece cupo/servicio; mejoras cambian interior y capacidades. |
 | K04 | Decorar y reorganizar | Implementado | Mover/girar/retirar conserva estado de objetos funcionales y acceso; caminos, vallas y portones tienen conducta coherente. |
 | K05 | Museo físico | Pendiente | Donar pieza obtenida realmente, consumir una unidad, situarla/mostrarla, registrar donación única y reclamar recompensa sin duplicar. |
-| K06 | Colecciones y cuadernos | Parcial | Separar descubierto, capturado, criado, fabricado, vendido y donado; atlas de vista previa no se muestra como colección conseguida. |
+| K06 | Colecciones y cuadernos | Parcial · cuaderno de donaciones separado de reservas y atlas; pendientes los demás registros semánticos | Separar descubierto, capturado, criado, fabricado, vendido y donado; atlas de vista previa no se muestra como colección conseguida. |
 | K07 | Libros y pistas | Pendiente | Hallazgos leíbles con registro y pistas útiles para sistemas/desbloqueos; textos provisionales etiquetados internamente, sin canon nuevo. |
 | K08 | Obras comunitarias | Pendiente | Contribuir materiales/categorías, terminar obra, abrir ruta o servicio y ver NPC usarlo; no solo añadir un token. |
 | K09 | Balance y vías alternativas | Parcial | Comprar/craftear/vender no crea dinero infinito; no hay dependencia circular entre herramienta, mineral y zona; el jugador puede recuperarse de falta de recursos. |
