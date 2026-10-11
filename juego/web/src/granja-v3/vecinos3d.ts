@@ -7,7 +7,8 @@ import { elegirModelos } from '../recursos';
 import { Vestidor } from '../salas/vestir';
 import { valorPieza } from '../salas/prendas';
 import type { AspectoJugador } from '../salas/tipos';
-import { VECINOS_ASTRA } from './vecinos-astra';
+import { VECINOS_ASTRA, type FilaAstra } from './vecinos-astra';
+import { DATOS as MUNDO_ASTRA } from './astra-mundo-datos';
 
 interface Diseno {
   c: 'el' | 'ella';
@@ -52,7 +53,8 @@ const DISENOS: Record<string, Diseno> = {
 
 /** Los residentes nuevos de Astra, cada uno con su ropa (ver `vecinos-astra.ts`). */
 function disenoAstra(id: string): Diseno | undefined {
-  const f = VECINOS_ASTRA[id];
+  // Los vecinos que llegaron con la vida de los pueblos traen su ropa en los datos (docs/narrativa/datos/pueblos)
+  const f = VECINOS_ASTRA[id] ?? ((MUNDO_ASTRA.npc as { id: string; ropa?: unknown }[]).find((n) => n.id === id)?.ropa as FilaAstra | undefined);
   if (!f) return undefined;
   const [c, piel, pelo, peinado, cabeza, cara, arriba, abajo, pies, espalda, quieto, escala] = f;
   return {

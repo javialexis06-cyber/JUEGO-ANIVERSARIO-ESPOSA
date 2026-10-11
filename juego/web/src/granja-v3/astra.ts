@@ -146,12 +146,15 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
   const exp=t.expedientes[id];
   if(a.tipo==='aceptar'){
    if(exp)return mal('El expediente ya está registrado.');if(here!==q.region||t.interior)return mal('Visita '+(regionAstra(q.region)?.nombre??q.region)+' para abrir el expediente.');
-   t.expedientes[id]={dia:s.jornada.diasCompletados,estadisticas:{...s.estadisticas},paso:0,decision:null,cerrado:false};t.escena={id:q.id+'#inicio',linea:0};return bien('Expediente abierto. El guion completo sigue disponible en la wiki.');
+   t.expedientes[id]={dia:s.jornada.diasCompletados,estadisticas:{...s.estadisticas},paso:0,decision:null,cerrado:false};t.escena={id:q.id+'#inicio',linea:0};return bien((q as {clase?:string}).clase?.startsWith('encargo')?'Encargo aceptado.':'Expediente abierto. El guion completo sigue disponible en la wiki.');
   }
   if(a.tipo==='retomar'){if(!exp||here!==q.region)return mal('Vuelve al lugar donde abriste el expediente.');const parte=exp.cerrado?'cierre':exp.paso===q.pasos.length?'giro':'inicio';t.escena={id:id+'#'+parte,linea:0};return bien('La escena se retoma sin repetir entregas.');}
   if(!exp||exp.cerrado)return mal('Abre primero el expediente o consulta su acta cerrada.');
   if(a.tipo==='decidir'){
-   if(exp.paso!==q.pasos.length||![0,1].includes(a.opcion)||!t.lecturas.includes(id+'#giro'))return mal('Confirma los objetivos y escucha el giro antes de decidir.');exp.decision=a.opcion;exp.cerrado=true;t.escena={id:id+'#cierre',linea:0};return bien('Acta guardada. Acceso narrativo abierto; el premio especializado sigue en producción.');
+   if(exp.paso!==q.pasos.length||![0,1].includes(a.opcion)||!t.lecturas.includes(id+'#giro'))return mal('Confirma los objetivos y escucha el giro antes de decidir.');exp.decision=a.opcion;exp.cerrado=true;t.escena={id:id+'#cierre',linea:0};
+   // Los encargos de los pueblos pagan al cerrar (una sola vez: el expediente queda cerrado)
+   const pago=(q as {recompensa?:{monedas?:number;objetos?:Record<string,number>}}).recompensa;if(pago){if(pago.monedas)s.monedas+=pago.monedas;for(const [o,n] of Object.entries(pago.objetos??{}))recursos.agregar(o,n);return bien('Encargo cumplido'+(pago.monedas?' · +'+pago.monedas+' monedas':'')+'.');}
+   return bien('Acta guardada. Acceso narrativo abierto; el premio especializado sigue en producción.');
   }
   if(!t.lecturas.includes(id+'#inicio'))return mal('Escucha o lee el inicio antes de contrastar sus objetivos.');
   const st=q.pasos[exp.paso] as {tipo:string;texto:string;npc?:string[];punto?:{x:number;z:number};clave?:string;cantidad?:number;materiales?:Record<string,number>;regiones?:string[];sector?:string;elemento?:string}|undefined;
@@ -191,8 +194,8 @@ export function astraValida(t:EstadoAstra|undefined,dia:number):boolean {
  if(!lista(t.visitas,[...REGIONES_ASTRA.map(r=>r.id),'granja'])||!lista(t.conocidos,NPC_ASTRA.map(n=>n.id))||!lista(t.lecturas,Object.keys(CAMPANA.escenas))||!lista(t.pruebas,['fuego','agua','tierra','aire']))return false;
  if(!lista(t.personales,NPC_ASTRA.map(n=>n.mision)))return false;
  if(t.escena!==null&&(!t.escena||!Object.hasOwn(CAMPANA.escenas,t.escena.id)||!Number.isInteger(t.escena.linea)||t.escena.linea<0||t.escena.linea>=(CAMPANA.escenas as Record<string,number>)[t.escena.id]))return false;
- if(!t.charlas||typeof t.charlas!=='object'||Object.keys(t.charlas).length>142||Object.entries(t.charlas).some(([id,v])=>!npcAstra(id)||!t.conocidos.includes(id)||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.puntos)||v.puntos<0||v.puntos>500))return false;
- if(!t.expedientes||typeof t.expedientes!=='object'||Object.keys(t.expedientes).length>36)return false;
+ if(!t.charlas||typeof t.charlas!=='object'||Object.keys(t.charlas).length>NPC_ASTRA.length||Object.entries(t.charlas).some(([id,v])=>!npcAstra(id)||!t.conocidos.includes(id)||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.puntos)||v.puntos<0||v.puntos>500))return false;
+ if(!t.expedientes||typeof t.expedientes!=='object'||Object.keys(t.expedientes).length>CAMPANA_ASTRA.length)return false;
  for(const [id,v]of Object.entries(t.expedientes)){
   const q=CAMPANA_ASTRA.find(q=>q.id===id);if(!q||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.paso)||v.paso<0||v.paso>q.pasos.length||typeof v.cerrado!=='boolean'||v.decision!==null&&v.decision!==0&&v.decision!==1||v.cerrado&&(v.paso!==q.pasos.length||v.decision===null)||!q.requiere.every(i=>t.expedientes[i]?.cerrado)||!v.estadisticas||typeof v.estadisticas!=='object'||Object.keys(v.estadisticas).length>500||Object.values(v.estadisticas).some(n=>!Number.isSafeInteger(n)||n<0))return false;
  }

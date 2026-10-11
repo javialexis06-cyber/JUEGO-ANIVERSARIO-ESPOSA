@@ -10,6 +10,19 @@ W=ROOT/'juego/web/src/granja-v3'
 def load(f): return json.loads((N/f).read_text())
 def ts(name,value): (W/name).write_text('// Generado por docs/narrativa/herramientas/integrar_motor.py.\nexport const DATOS = '+json.dumps(value,ensure_ascii=False,separators=(',',':'))+';\n')
 roster=load('datos/reparto.json'); regiones=load('datos/regiones-recursos.json')['regiones']
+# Vida de los pueblos (docs/narrativa/datos/pueblos/*.json): vecinos nuevos, sus casas y los encargos de cada pueblo
+vida_pueblos={'residentes':[],'viviendas':[],'encargos':[]}
+for f in sorted((N/'datos/pueblos').glob('*.json')):
+ if f.name.startswith('contexto'):continue
+ d=json.loads(f.read_text())
+ for k in vida_pueblos:vida_pueblos[k]+=d.get(k,[])
+def linea_vida(escena,parte,i,hablante,texto):
+ lid=f'{escena}.{parte}.{i:02d}'
+ return dict(id=lid,escena=escena,hablante=hablante,texto=texto,direccion='Natural y cercano; vida del pueblo.',capa='pareja' if hablante in ('el','ella') else 'mundo',archivo=lid+'.ogg',prioridad='C',huella_texto=hashlib.sha256(f'{hablante}|{texto}'.encode()).hexdigest()[:16])
+lineas_pueblos=[]
+for n in vida_pueblos['residentes']:
+ roster.append({'id':n['id'],'nombre':n['nombre'],'asentamiento':n['asentamiento'],'mundo':n.get('mundo',''),'funcion':n['funcion'],'pasado':n['pasado'],'presente':n['presente'],'arco':n['arco'],'vinculos':n.get('vinculos',[]),'mision':None,'hogar_planeado':n['hogar'],'naturaleza':n.get('naturaleza','persona_viva'),'voz':n.get('voz',''),'ropa':n.get('ropa'),'profundidad':{'id':n['id'],'memorias':n['memorias'],'cotidiano':n.get('cotidiano',''),'postura_fuatia':n.get('postura_fuatia','')},'origen':'vida_pueblos'})
+ lineas_pueblos+=[linea_vida('VID_'+n['id']+'_1','vida',i+1,l['hablante'],l['texto']) for i,l in enumerate(n['conversacion'])]
 original=json.loads((W/'REPARTO-MUNDOS.json').read_text())
 # El primer pueblo conserva exactamente sus huellas y sus horarios existentes.
 legacy_code="import {compilarModulo} from './scripts/granja-v3/modulos-prueba.mjs';const D=await import(await compilarModulo(new URL('./src/granja-v3/pueblo-datos.ts',import.meta.url)));const A=await import(await compilarModulo(new URL('./src/granja-v3/aldeanos.ts',import.meta.url)));process.stdout.write(JSON.stringify({viviendas:D.VIVIENDAS_PUEBLO,npc:D.NPCS_PUEBLO,vida:A.VIDA_PUEBLO}));"
@@ -17,7 +30,8 @@ legacy=json.loads(subprocess.check_output(['node','--input-type=module','-e',leg
 worlds=[]
 colors={'celia':'#88aa78','frontera':'#a78b7d','verdia':'#a8cda0','senda':'#b8a5cc','nox':'#7d82a7','astra':'#8db9ca','confluencia':'#d0bc9c'}
 for s in original['asentamientos']:
- homes=[h for h in original['viviendas'] if h['asentamientoId']==s['id']]
+ homes=[dict(h) for h in original['viviendas'] if h['asentamientoId']==s['id']]+[dict(h,capacidad=len(h['ocupantes'])) for h in vida_pueblos['viviendas'] if h['asentamientoId']==s['id']]
+ for h in homes:h['ocupantes']=list(h['ocupantes'])+[n['id'] for n in vida_pueblos['residentes'] if n['hogar']==h['id'] and n['id'] not in h['ocupantes']]
  for i,h in enumerate(homes):
   h=dict(h);h.update(estado='presente_en_motor_provisional',**(PL.casa(i) if s['id']!='pueblo_sol' else {}))
   if s['id']=='pueblo_sol': h.update(next(v for v in legacy['viviendas'] if v['id']==h['id']))
@@ -52,7 +66,7 @@ for r in routes:
 np=[]
 for n in roster:
  k=by[n['asentamiento']]['npc'].index(n['id'])
- np.append({'id':n['id'],'nombre':n['nombre'],'region':n['asentamiento'],'hogar':n['hogar_planeado'],'voz':n['id'],'mision':n['mision']['id'],'funcion':n['funcion'],'plaza':PL.plaza(k,len(by[n['asentamiento']]['npc'])),'oficio':PL.puesto(k)['oficio'],'horario':{'oficio':[480,1020],'plaza':[1020,1260],'hogar':[1260,480]},'naturaleza':n['naturaleza']})
+ np.append({'id':n['id'],'nombre':n['nombre'],'region':n['asentamiento'],'hogar':n['hogar_planeado'],'voz':n['id'],'mision':n['mision']['id'] if n.get('mision') else None,'funcion':n['funcion'],'plaza':PL.plaza(k,len(by[n['asentamiento']]['npc'])),'oficio':PL.puesto(k)['oficio'],'horario':{'oficio':[480,1020],'plaza':[1020,1260],'hogar':[1260,480]},'naturaleza':n['naturaleza'],**({'ropa':n['ropa']} if n.get('ropa') else {})})
 for n in np:
  if n['region']=='pueblo_sol':
   old=next(v for v in legacy['npc'] if v['id']==n['id']);vida=legacy['vida'][n['id']]
@@ -74,10 +88,8 @@ for r in regiones:
  seed=next(x for x in r['recursos'] if x['clase']=='semilla')
  seeds.append({'id':r['id']+'_cultivo','nombre':seed['nombre'].removeprefix('Semilla de ').capitalize(),'modelo':'zanahoria','semilla':seed['id'],'producto':r['id']+'_cosecha','horas':24*r['renovacion']['dias_dormidos'],'dias':r['renovacion']['dias_dormidos'],'estaciones':['primavera','verano','otono','invierno'],'climas':['templado'],'precio':0,'valor':0,'cantidad':1,'region':r['id'],'presurizado':r['mundo'] in ['Astra','Confluencia']})
 ts('astra-cultivos-datos.ts',seeds)
-# Guiones y memorias grandes quedan fuera del núcleo: solo la interfaz los carga bajo demanda.
-ts('astra-lore-datos.ts',{'npc':roster,'figuras':load('datos/figuras.json'),'lineas':load('audio/lineas.json')})
 qs=load('datos/campana.json')+load('datos/secretos.json')+load('datos/encuentros.json')+load('datos/elementales.json')
-qs += [dict(n['mision'],clase='personal',zona=n['asentamiento'],reparto=[n['id']]) for n in roster]
+qs += [dict(n['mision'],clase='personal',zona=n['asentamiento'],reparto=[n['id']]) for n in roster if n.get('mision')]
 rewards={r['mision']:r for r in load('datos/recompensas.json')}
 compiled=[]
 for q in qs:
@@ -112,17 +124,31 @@ steps['F11']=[{'tipo':'visitas','regiones':['confluencia_fuego','confluencia_agu
 for q in compiled:
  for i,st in enumerate(steps.get(q['id'],[])):q['pasos'].append(dict(st,id=q['id']+'.real.'+str(i+1)))
  if q['id'].startswith('S') or q['id']=='T08':q['pasos'].insert(0,{'id':q['id']+'.pista','tipo':'archivo','texto':'Reconocer una pista pública antes de descubrir esta misión.','punto':PL.paso_archivo(3),'lectura':True})
+for q in vida_pueblos['encargos']:
+ pasos=[]
+ for i,st in enumerate(q['pasos']):
+  st=dict(st,id=q['id']+'.paso.'+str(i+1))
+  if st['tipo']=='archivo':st.update(punto=PL.paso_archivo(i%4),lectura=True)
+  pasos.append(st)
+ compiled.append({'id':q['id'],'titulo':q['titulo'],'region':q['region'],'requiere':q.get('requiere',[]),'reparto':q.get('reparto',[]),'clase':q['clase'],'pasos':pasos,'decision':q['decision'],'opciones':q['opciones'],'premio':{'mision':q['id'],'nombre':q['titulo'],'familia':'encargo'},'recompensa':q.get('recompensa',{}),'alcance':'encargo de pueblo: pasos del motor y recompensa al cerrar'})
+ # Escenas: inicio, giro, un cierre corto común y cada rama seguida de las palabras de cierre
+ for parte in ['inicio','giro']:lineas_pueblos+=[linea_vida(q['id'],parte,i+1,l['hablante'],l['texto']) for i,l in enumerate(q[parte])]
+ lineas_pueblos.append(linea_vida(q['id'],'cierre',1,'narrador','El acuerdo queda anotado en el archivo del pueblo.'))
+ for k,rama in enumerate(q['ramas']):lineas_pueblos+=[linea_vida(q['id'],'rama'+str(k+1),i+1,l['hablante'],l['texto']) for i,l in enumerate(rama+q['cierre'])]
 ts('astra-misiones-datos.ts',compiled)
-lines=load('audio/lineas.json')
+# Guiones y memorias grandes quedan fuera del núcleo: solo la interfaz los carga bajo demanda.
+ts('astra-lore-datos.ts',{'npc':roster,'figuras':load('datos/figuras.json'),'lineas':load('audio/lineas.json')+lineas_pueblos})
+
+lines=load('audio/lineas.json')+lineas_pueblos
 counts={scene:sum(l['escena']==scene for l in lines) for scene in set(l['escena'] for l in lines)}
 for q in compiled:
- if q['id'][0] in 'PF':
+ if q['id'][0] in 'PF' or q['clase'].startswith('encargo'):
   for parte in ['inicio','giro','cierre','rama1','rama2']:
    cantidad=sum(l['id'].startswith(q['id']+'.'+parte+'.') for l in lines)
    if cantidad:counts[q['id']+'#'+parte]=cantidad
-ts('astra-campana-datos.ts',{'misiones':[q for q in compiled if q['id'][0] in 'PF'],'escenas':counts})
+ts('astra-campana-datos.ts',{'misiones':[q for q in compiled if q['id'][0] in 'PF' or q['clase'].startswith('encargo')],'escenas':counts})
 # Contrato de producción: ningún archivo se da por producido y no hay rutas inventadas para reproducirlo.
-lines=load('audio/lineas.json')
+lines=load('audio/lineas.json')+lineas_pueblos
 manifest={'version':1,'estado':'contrato_sin_medios_producidos','npc':np,'regiones':worlds,'rutas':routes,'voces':load('audio/reparto-voces.json'),'biografias':roster,'figuras':load('datos/figuras.json'),'misiones':compiled,'recursos':regiones,'lineas':lines,'escenas':sorted(set(l['escena'] for l in lines)),'musica':[{'id':m.group(1),'uso':m.group(2),'direccion':m.group(3)} for m in re.finditer(r'^\| (M\d+) \| ([^|]+) \| ([^|]+) \|', (N/'06-produccion.md').read_text(),re.M)]+[{'id':'M23','uso':'Confluencia','direccion':'Cuatro variaciones elementales y refugio; motivos separados, sin letra.'}],'medios':{'voces':{},'musica':{},'modelos':{}},'guardado':5,'nota':'Las misiones catalogadas incluyen adaptación de investigación; consultar los recibos reales adicionales y los efectos aún pendientes de cada premio.'}
 p=ROOT/'juego/web/public/granja/astra';p.mkdir(parents=True,exist_ok=True)
 (p/'produccion.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')

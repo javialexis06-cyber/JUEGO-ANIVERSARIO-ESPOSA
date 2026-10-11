@@ -1,0 +1,1619 @@
+[
+ {
+  "region": "puerto_lirios",
+  "nombre": "Puerto de los Lirios",
+  "mundo": "celia",
+  "casas": [
+   {
+    "id": "puerto_lirios_vivienda_01",
+    "nombre": "Casa 01 · Puerto de los Lirios",
+    "ocupantes": [
+     "lirios_bastian",
+     "lirios_olga"
+    ]
+   },
+   {
+    "id": "puerto_lirios_vivienda_02",
+    "nombre": "Casa 02 · Puerto de los Lirios",
+    "ocupantes": [
+     "lirios_maite",
+     "lirios_julian"
+    ]
+   },
+   {
+    "id": "puerto_lirios_vivienda_03",
+    "nombre": "Casa 03 · Puerto de los Lirios",
+    "ocupantes": [
+     "lirios_belen",
+     "lirios_teo"
+    ]
+   },
+   {
+    "id": "puerto_lirios_vivienda_04",
+    "nombre": "Casa 04 · Puerto de los Lirios",
+    "ocupantes": [
+     "lirios_dalia",
+     "lirios_tina"
+    ]
+   }
+  ],
+  "conflicto": "El vivero de Nerina sostiene pesca y alimento; Fuatia exige protegerlo sin expulsar a familias pescadoras.",
+  "recursos": [
+   {
+    "id": "puerto_lirios_mineral",
+    "nombre": "Sal de espejo",
+    "clase": "mineral"
+   },
+   {
+    "id": "puerto_lirios_semilla",
+    "nombre": "Semilla de salicornia azul",
+    "clase": "semilla"
+   },
+   {
+    "id": "puerto_lirios_madera",
+    "nombre": "Madera de deriva certificada",
+    "clase": "madera"
+   },
+   {
+    "id": "puerto_lirios_fauna",
+    "nombre": "Nutrias de estuario",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "lirios_bastian",
+    "nombre": "Bastián",
+    "funcion": "Calafate: barcas, muelles y plataformas acuáticas."
+   },
+   {
+    "id": "lirios_olga",
+    "nombre": "Olga",
+    "funcion": "Encargada de lonja: pedidos, especies y temporadas de pesca."
+   },
+   {
+    "id": "lirios_maite",
+    "nombre": "Maite",
+    "funcion": "Acuicultora: estanques productivos, reproducción de peces y hábitats de patos."
+   },
+   {
+    "id": "lirios_julian",
+    "nombre": "Julián",
+    "funcion": "Farero: crecidas, lecturas de agua y rutas del delta."
+   },
+   {
+    "id": "lirios_belen",
+    "nombre": "Belén",
+    "funcion": "Tejedora: trampas selectivas, redes, cuerda y bolsas."
+   },
+   {
+    "id": "lirios_teo",
+    "nombre": "Teo",
+    "funcion": "Mensajero de barca: paquetes y correo entre orillas."
+   },
+   {
+    "id": "lirios_dalia",
+    "nombre": "Dalia",
+    "funcion": "Cultivadora de juncos: plantas de ribera, cestería y restauración de orillas."
+   },
+   {
+    "id": "lirios_tina",
+    "nombre": "Tina",
+    "funcion": "Aprendiz menor del río: cartilla de peces y vida cotidiana del muelle."
+   }
+  ]
+ },
+ {
+  "region": "brumaverde",
+  "nombre": "Brumaverde",
+  "mundo": "celia",
+  "casas": [
+   {
+    "id": "brumaverde_vivienda_01",
+    "nombre": "Casa 01 · Brumaverde",
+    "ocupantes": [
+     "bruma_silvana",
+     "bruma_felix"
+    ]
+   },
+   {
+    "id": "brumaverde_vivienda_02",
+    "nombre": "Casa 02 · Brumaverde",
+    "ocupantes": [
+     "bruma_amira",
+     "bruma_roque"
+    ]
+   },
+   {
+    "id": "brumaverde_vivienda_03",
+    "nombre": "Casa 03 · Brumaverde",
+    "ocupantes": [
+     "bruma_elio",
+     "bruma_zaira"
+    ]
+   },
+   {
+    "id": "brumaverde_vivienda_04",
+    "nombre": "Casa 04 · Brumaverde",
+    "ocupantes": [
+     "bruma_ada",
+     "bruma_benicio"
+    ]
+   }
+  ],
+  "conflicto": "Mara teme repetir un error de brigada; conservar un árbol puede exigir reforzar antes una vivienda.",
+  "recursos": [
+   {
+    "id": "brumaverde_mineral",
+    "nombre": "Jade de raíz",
+    "clase": "mineral"
+   },
+   {
+    "id": "brumaverde_semilla",
+    "nombre": "Semilla de helecho de niebla",
+    "clase": "semilla"
+   },
+   {
+    "id": "brumaverde_madera",
+    "nombre": "Madera de aliso caído",
+    "clase": "madera"
+   },
+   {
+    "id": "brumaverde_fauna",
+    "nombre": "Ciervos de bruma",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "bruma_silvana",
+    "nombre": "Silvana",
+    "funcion": "Arborista: árboles gigantes, plantones y madera especial."
+   },
+   {
+    "id": "bruma_felix",
+    "nombre": "Félix",
+    "funcion": "Micólogo: setas de estación, compost y fermentación."
+   },
+   {
+    "id": "bruma_amira",
+    "nombre": "Amira",
+    "funcion": "Apicultora: miel floral y polinizadores."
+   },
+   {
+    "id": "bruma_roque",
+    "nombre": "Roque",
+    "funcion": "Tallador: muebles, vallas y cobertizos de madera ancestral."
+   },
+   {
+    "id": "bruma_elio",
+    "nombre": "Elio",
+    "funcion": "Cuidador del claro: conejos y enseñanza de crianza de unicornios."
+   },
+   {
+    "id": "bruma_zaira",
+    "nombre": "Zaira",
+    "funcion": "Herbolaria: remedios, tintes y colaboración veterinaria."
+   },
+   {
+    "id": "bruma_ada",
+    "nombre": "Ada",
+    "funcion": "Restauradora: claros y hábitats de cerdos de musgo."
+   },
+   {
+    "id": "bruma_benicio",
+    "nombre": "Benicio",
+    "funcion": "Narrador mayor: cuentos para animales y memoria oral."
+   }
+  ]
+ },
+ {
+  "region": "piedralumbre",
+  "nombre": "Piedralumbre",
+  "mundo": "celia",
+  "casas": [
+   {
+    "id": "piedralumbre_vivienda_01",
+    "nombre": "Casa 01 · Piedralumbre",
+    "ocupantes": [
+     "piedra_eloy",
+     "piedra_ursula"
+    ]
+   },
+   {
+    "id": "piedralumbre_vivienda_02",
+    "nombre": "Casa 02 · Piedralumbre",
+    "ocupantes": [
+     "piedra_gonzalo",
+     "piedra_petra"
+    ]
+   },
+   {
+    "id": "piedralumbre_vivienda_03",
+    "nombre": "Casa 03 · Piedralumbre",
+    "ocupantes": [
+     "piedra_santiago",
+     "piedra_mireya"
+    ]
+   },
+   {
+    "id": "piedralumbre_vivienda_04",
+    "nombre": "Casa 04 · Piedralumbre",
+    "ocupantes": [
+     "piedra_hugo",
+     "piedra_ciro"
+    ]
+   }
+  ],
+  "conflicto": "El accidente de AV 281 dejó a Bruno y Darío con versiones distintas de la misma decisión.",
+  "recursos": [
+   {
+    "id": "piedralumbre_mineral",
+    "nombre": "Estaño de junta",
+    "clase": "mineral"
+   },
+   {
+    "id": "piedralumbre_semilla",
+    "nombre": "Semilla de liquen de lámpara",
+    "clase": "semilla"
+   },
+   {
+    "id": "piedralumbre_madera",
+    "nombre": "Madera de apuntalamiento recuperada",
+    "clase": "madera"
+   },
+   {
+    "id": "piedralumbre_fauna",
+    "nombre": "Topillos de piedra",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "piedra_eloy",
+    "nombre": "Eloy",
+    "funcion": "Capataz: permisos de cota, seguridad y contratos de expedición."
+   },
+   {
+    "id": "piedra_ursula",
+    "nombre": "Úrsula",
+    "funcion": "Geóloga: minerales, geodas y procedencias; comparte colección con el museo."
+   },
+   {
+    "id": "piedra_gonzalo",
+    "nombre": "Gonzalo",
+    "funcion": "Metalurgista: aleaciones, combustible y componentes."
+   },
+   {
+    "id": "piedra_petra",
+    "nombre": "Petra",
+    "funcion": "Lapidaria: gemas, engastes y decoración de piedra."
+   },
+   {
+    "id": "piedra_santiago",
+    "nombre": "Santiago",
+    "funcion": "Armero: armas, armaduras y defensa progresiva."
+   },
+   {
+    "id": "piedra_mireya",
+    "nombre": "Mireya",
+    "funcion": "Mecánica: silos, transportadores, redes y diagnóstico de máquinas."
+   },
+   {
+    "id": "piedra_hugo",
+    "nombre": "Hugo",
+    "funcion": "Farolero: iluminación, alarmas y seguridad minera."
+   },
+   {
+    "id": "piedra_ciro",
+    "nombre": "Ciro",
+    "funcion": "Cocinero de expedición: raciones conservadas y preparación de minería."
+   }
+  ]
+ },
+ {
+  "region": "brasaviva",
+  "nombre": "Brasaviva",
+  "mundo": "celia",
+  "casas": [
+   {
+    "id": "brasaviva_vivienda_01",
+    "nombre": "Casa 01 · Brasaviva",
+    "ocupantes": [
+     "brasa_tarek",
+     "brasa_sol"
+    ]
+   },
+   {
+    "id": "brasaviva_vivienda_02",
+    "nombre": "Casa 02 · Brasaviva",
+    "ocupantes": [
+     "brasa_nadia",
+     "brasa_ramiro"
+    ]
+   },
+   {
+    "id": "brasaviva_vivienda_03",
+    "nombre": "Casa 03 · Brasaviva",
+    "ocupantes": [
+     "brasa_idalia",
+     "brasa_dante"
+    ]
+   },
+   {
+    "id": "brasaviva_vivienda_04",
+    "nombre": "Casa 04 · Brasaviva",
+    "ocupantes": [
+     "brasa_rufina",
+     "brasa_yago"
+    ]
+   }
+  ],
+  "conflicto": "La reparación debe detener el daño de un horno sin abandonar a quienes dependen de su calor.",
+  "recursos": [
+   {
+    "id": "brasaviva_mineral",
+    "nombre": "Obsidiana porosa",
+    "clase": "mineral"
+   },
+   {
+    "id": "brasaviva_semilla",
+    "nombre": "Semilla de pimiento rescoldo",
+    "clase": "semilla"
+   },
+   {
+    "id": "brasaviva_madera",
+    "nombre": "Madera de acacia carbonizada naturalmente",
+    "clase": "madera"
+   },
+   {
+    "id": "brasaviva_fauna",
+    "nombre": "Lagartos de ceniza",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "brasa_tarek",
+    "nombre": "Tarek",
+    "funcion": "Cuidador: vacas de volcán y corrales de calor con descanso."
+   },
+   {
+    "id": "brasa_sol",
+    "nombre": "Sol",
+    "funcion": "Ceramista: tejados, comederos y arquitectura resistente al calor."
+   },
+   {
+    "id": "brasa_nadia",
+    "nombre": "Nadia",
+    "funcion": "Agricultora termal: cultivos cálidos y riego medido."
+   },
+   {
+    "id": "brasa_ramiro",
+    "nombre": "Ramiro",
+    "funcion": "Vidriero: ventanas, cúpulas, recipientes y decoración."
+   },
+   {
+    "id": "brasa_idalia",
+    "nombre": "Idalia",
+    "funcion": "Guardiana del nido: crianza de dragones y manuscritos de Celia."
+   },
+   {
+    "id": "brasa_dante",
+    "nombre": "Dante",
+    "funcion": "Guía de caldera: rutas de basalto, minerales y calor."
+   },
+   {
+    "id": "brasa_rufina",
+    "nombre": "Rufina",
+    "funcion": "Anfitriona mayor: baños, comida y descanso comunitario."
+   },
+   {
+    "id": "brasa_yago",
+    "nombre": "Yago",
+    "funcion": "Aprendiz menor del horno: cerámica y vida del barrio."
+   }
+  ]
+ },
+ {
+  "region": "nieveclara",
+  "nombre": "Nieveclara",
+  "mundo": "celia",
+  "casas": [
+   {
+    "id": "nieveclara_vivienda_01",
+    "nombre": "Casa 01 · Nieveclara",
+    "ocupantes": [
+     "nieve_eira",
+     "nieve_anselmo"
+    ]
+   },
+   {
+    "id": "nieveclara_vivienda_02",
+    "nombre": "Casa 02 · Nieveclara",
+    "ocupantes": [
+     "nieve_luz",
+     "nieve_quirina"
+    ]
+   },
+   {
+    "id": "nieveclara_vivienda_03",
+    "nombre": "Casa 03 · Nieveclara",
+    "ocupantes": [
+     "nieve_severo",
+     "nieve_milena"
+    ]
+   },
+   {
+    "id": "nieveclara_vivienda_04",
+    "nombre": "Casa 04 · Nieveclara",
+    "ocupantes": [
+     "nieve_otto",
+     "nieve_celeste"
+    ]
+   }
+  ],
+  "conflicto": "Sol y Renata discuten si advertir de un riesgo alcanza cuando faltan alternativas reales de alojamiento.",
+  "recursos": [
+   {
+    "id": "nieveclara_mineral",
+    "nombre": "Cuarzo de deshielo",
+    "clase": "mineral"
+   },
+   {
+    "id": "nieveclara_semilla",
+    "nombre": "Semilla de mora de escarcha",
+    "clase": "semilla"
+   },
+   {
+    "id": "nieveclara_madera",
+    "nombre": "Madera de pino de poda",
+    "clase": "madera"
+   },
+   {
+    "id": "nieveclara_fauna",
+    "nombre": "Liebres de nieve",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "nieve_eira",
+    "nombre": "Eira",
+    "funcion": "Pastora: ovejas de cristal y tormenta, refugio y esquila."
+   },
+   {
+    "id": "nieve_anselmo",
+    "nombre": "Anselmo",
+    "funcion": "Tejedor mayor: lana, ropa térmica y tapices."
+   },
+   {
+    "id": "nieve_luz",
+    "nombre": "Luz",
+    "funcion": "Cuidadora: gallinas de aurora, luz y descanso."
+   },
+   {
+    "id": "nieve_quirina",
+    "nombre": "Quirina",
+    "funcion": "Pescadora glacial: especies de invierno y equipo de frío."
+   },
+   {
+    "id": "nieve_severo",
+    "nombre": "Severo",
+    "funcion": "Meteorólogo: pronósticos, tormentas y expediciones."
+   },
+   {
+    "id": "nieve_milena",
+    "nombre": "Milena",
+    "funcion": "Botánica de escarcha: cultivos fríos y conejos de escarcha."
+   },
+   {
+    "id": "nieve_otto",
+    "nombre": "Otto",
+    "funcion": "Rescatista: cuerdas, balizas y preparación de montaña."
+   },
+   {
+    "id": "nieve_celeste",
+    "nombre": "Celeste",
+    "funcion": "Cuidadora de altura: vacas de nube y enlace con grifos."
+   }
+  ]
+ },
+ {
+  "region": "vigilia",
+  "nombre": "Vigilia de Ceniza",
+  "mundo": "frontera",
+  "casas": [
+   {
+    "id": "vigilia_vivienda_01",
+    "nombre": "Módulo 01 · Vigilia de Ceniza",
+    "ocupantes": [
+     "vigilia_aldan",
+     "vigilia_noemi"
+    ]
+   },
+   {
+    "id": "vigilia_vivienda_02",
+    "nombre": "Módulo 02 · Vigilia de Ceniza",
+    "ocupantes": [
+     "vigilia_ulises",
+     "vigilia_kael"
+    ]
+   },
+   {
+    "id": "vigilia_vivienda_03",
+    "nombre": "Módulo 03 · Vigilia de Ceniza",
+    "ocupantes": [
+     "vigilia_azucena",
+     "vigilia_telmo"
+    ]
+   }
+  ],
+  "conflicto": "La Custodia usa ayuda real para fabricar obediencia; sus miembros pueden abandonar sin perder el derecho a comer.",
+  "recursos": [
+   {
+    "id": "vigilia_mineral",
+    "nombre": "Hierro de campana",
+    "clase": "mineral"
+   },
+   {
+    "id": "vigilia_semilla",
+    "nombre": "Semilla de centeno de vigilia",
+    "clase": "semilla"
+   },
+   {
+    "id": "vigilia_madera",
+    "nombre": "Madera de olmo recuperada",
+    "clase": "madera"
+   },
+   {
+    "id": "vigilia_fauna",
+    "nombre": "Búhos de campanario",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "vigilia_aldan",
+    "nombre": "Aldán",
+    "funcion": "Capitán: defensa, patrullas y expediciones de Ceniza y Sangre."
+   },
+   {
+    "id": "vigilia_noemi",
+    "nombre": "Noemí",
+    "funcion": "Médica de ceniza: recuperación, corruptela y colaboración con Adela."
+   },
+   {
+    "id": "vigilia_ulises",
+    "nombre": "Ulises",
+    "funcion": "Cartógrafo: mapas y rutas alteradas de frontera."
+   },
+   {
+    "id": "vigilia_kael",
+    "nombre": "Kael",
+    "funcion": "Observador del escudo: señales y Constelación de los Amantes."
+   },
+   {
+    "id": "vigilia_azucena",
+    "nombre": "Azucena",
+    "funcion": "Guardiana: crianza de grifos y guardianes de frontera."
+   },
+   {
+    "id": "vigilia_telmo",
+    "nombre": "Telmo",
+    "funcion": "Enlace del hogar: informes y eventos de campaña hacia Claude."
+   }
+  ]
+ },
+ {
+  "region": "rosal_eterno",
+  "nombre": "Rosal Eterno",
+  "mundo": "verdia",
+  "casas": [
+   {
+    "id": "rosal_eterno_vivienda_01",
+    "nombre": "Casa 01 · Rosal Eterno",
+    "ocupantes": [
+     "verdia_amaranta",
+     "verdia_nilo"
+    ]
+   },
+   {
+    "id": "rosal_eterno_vivienda_02",
+    "nombre": "Casa 02 · Rosal Eterno",
+    "ocupantes": [
+     "verdia_isadora",
+     "verdia_berenice"
+    ]
+   },
+   {
+    "id": "rosal_eterno_vivienda_03",
+    "nombre": "Casa 03 · Rosal Eterno",
+    "ocupantes": [
+     "verdia_lucio",
+     "verdia_sarai"
+    ]
+   },
+   {
+    "id": "rosal_eterno_vivienda_04",
+    "nombre": "Casa 04 · Rosal Eterno",
+    "ocupantes": [
+     "verdia_eneas",
+     "verdia_yara"
+    ]
+   },
+   {
+    "id": "rosal_eterno_vivienda_05",
+    "nombre": "Casa 05 · Rosal Eterno",
+    "ocupantes": [
+     "verdia_tobias",
+     "verdia_celino"
+    ]
+   },
+   {
+    "id": "rosal_eterno_vivienda_06",
+    "nombre": "Casa 06 · Rosal Eterno",
+    "ocupantes": [
+     "verdia_aina",
+     "verdia_dimas"
+    ]
+   }
+  ],
+  "conflicto": "Rosa y Lucio pueden conversar y disentir sin que su matrimonio exija que ella deje de vivir.",
+  "recursos": [
+   {
+    "id": "rosal_eterno_mineral",
+    "nombre": "Nácar de rocío",
+    "clase": "mineral"
+   },
+   {
+    "id": "rosal_eterno_semilla",
+    "nombre": "Semilla de rosa de retorno",
+    "clase": "semilla"
+   },
+   {
+    "id": "rosal_eterno_madera",
+    "nombre": "Madera de rosal de poda voluntaria",
+    "clase": "madera"
+   },
+   {
+    "id": "rosal_eterno_fauna",
+    "nombre": "Mariposas del recuerdo",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "verdia_amaranta",
+    "nombre": "Amaranta",
+    "funcion": "Cuidadora del rosal: jardinería y bendiciones."
+   },
+   {
+    "id": "verdia_nilo",
+    "nombre": "Nilo",
+    "funcion": "Guía: recepción, visita y decisiones de las almas; no sustituye a Lara."
+   },
+   {
+    "id": "verdia_isadora",
+    "nombre": "Isadora",
+    "funcion": "Jardinera de memorias: árboles de recuerdo y diversidad de relatos."
+   },
+   {
+    "id": "verdia_berenice",
+    "nombre": "Berenice",
+    "funcion": "Escritora: cartas y páginas para el álbum de recuerdos."
+   },
+   {
+    "id": "verdia_lucio",
+    "nombre": "Lucio",
+    "funcion": "Anfitrión: recetas vegetales y hospitalidad de los Cuidadores."
+   },
+   {
+    "id": "verdia_sarai",
+    "nombre": "Sarai",
+    "funcion": "Pintora: murales, pigmentos y memoria visual."
+   },
+   {
+    "id": "verdia_eneas",
+    "nombre": "Eneas",
+    "funcion": "Acompañante: decisiones de reencarnación o permanencia como Cuidador."
+   },
+   {
+    "id": "verdia_yara",
+    "nombre": "Yara",
+    "funcion": "Cantora: canciones de descanso y ceremonias."
+   },
+   {
+    "id": "verdia_tobias",
+    "nombre": "Tobías",
+    "funcion": "Cuidador de río: fauna y pesca contemplativa con devolución."
+   },
+   {
+    "id": "verdia_celino",
+    "nombre": "Celino",
+    "funcion": "Carpintero de jardín: puentes y pérgolas con madera autorizada."
+   },
+   {
+    "id": "verdia_aina",
+    "nombre": "Aina",
+    "funcion": "Anfitriona de recuerdos: objetos y exposiciones personales."
+   },
+   {
+    "id": "verdia_dimas",
+    "nombre": "Dimas",
+    "funcion": "Custodio: semillas sagradas y cooperación con las Santas."
+   }
+  ]
+ },
+ {
+  "region": "jardines_eco",
+  "nombre": "Jardines del Eco",
+  "mundo": "verdia",
+  "casas": [
+   {
+    "id": "jardines_eco_vivienda_01",
+    "nombre": "Casa 01 · Jardines del Eco",
+    "ocupantes": [
+     "eco_sora",
+     "eco_esteban"
+    ]
+   },
+   {
+    "id": "jardines_eco_vivienda_02",
+    "nombre": "Casa 02 · Jardines del Eco",
+    "ocupantes": [
+     "eco_violeta",
+     "eco_nazario"
+    ]
+   },
+   {
+    "id": "jardines_eco_vivienda_03",
+    "nombre": "Casa 03 · Jardines del Eco",
+    "ocupantes": [
+     "eco_basilia",
+     "eco_oriel"
+    ]
+   }
+  ],
+  "conflicto": "Isadora y Esteban contrastan su memoria anterior al Velo con archivos que llegaron después de su muerte.",
+  "recursos": [
+   {
+    "id": "jardines_eco_mineral",
+    "nombre": "Vidrio de eco inerte",
+    "clase": "mineral"
+   },
+   {
+    "id": "jardines_eco_semilla",
+    "nombre": "Semilla de campánula de eco",
+    "clase": "semilla"
+   },
+   {
+    "id": "jardines_eco_madera",
+    "nombre": "Madera de ciprés de poda",
+    "clase": "madera"
+   },
+   {
+    "id": "jardines_eco_fauna",
+    "nombre": "Abejas de jardín",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "eco_sora",
+    "nombre": "Sora",
+    "funcion": "Directora de coro: música de memoria y reuniones."
+   },
+   {
+    "id": "eco_esteban",
+    "nombre": "Esteban",
+    "funcion": "Archivero de ecos: relatos antiguos y colección compartida con Damián."
+   },
+   {
+    "id": "eco_violeta",
+    "nombre": "Violeta",
+    "funcion": "Cuidadora del velo: crianza de unicornios y restauración de suelo."
+   },
+   {
+    "id": "eco_nazario",
+    "nombre": "Nazario",
+    "funcion": "Guardián del semillero: conservación y viabilidad de plantas sagradas."
+   },
+   {
+    "id": "eco_basilia",
+    "nombre": "Basilia",
+    "funcion": "Artesana: velas, rosales y ofrendas de memoria."
+   },
+   {
+    "id": "eco_oriel",
+    "nombre": "Oriel",
+    "funcion": "Cuidador de vínculos: amistad, consentimiento y enseñanzas del Lazo."
+   }
+  ]
+ },
+ {
+  "region": "travesia",
+  "nombre": "Umbral de la Travesía",
+  "mundo": "senda",
+  "casas": [
+   {
+    "id": "travesia_vivienda_01",
+    "nombre": "Módulo 01 · Umbral de la Travesía",
+    "ocupantes": [
+     "senda_iria",
+     "senda_mateo"
+    ]
+   },
+   {
+    "id": "travesia_vivienda_02",
+    "nombre": "Módulo 02 · Umbral de la Travesía",
+    "ocupantes": [
+     "senda_nora",
+     "senda_fabian"
+    ]
+   },
+   {
+    "id": "travesia_vivienda_03",
+    "nombre": "Módulo 03 · Umbral de la Travesía",
+    "ocupantes": [
+     "senda_leire",
+     "senda_anwar"
+    ]
+   },
+   {
+    "id": "travesia_vivienda_04",
+    "nombre": "Módulo 04 · Umbral de la Travesía",
+    "ocupantes": [
+     "senda_ofelia",
+     "senda_pablo"
+    ]
+   }
+  ],
+  "conflicto": "Ofelia puede reparar un gesto sin comprar absolución; Fuatia debe aceptar que una respuesta no le pertenece.",
+  "recursos": [
+   {
+    "id": "travesia_mineral",
+    "nombre": "Pizarra de umbral",
+    "clase": "mineral"
+   },
+   {
+    "id": "travesia_semilla",
+    "nombre": "Semilla de junco de paso",
+    "clase": "semilla"
+   },
+   {
+    "id": "travesia_madera",
+    "nombre": "Madera de pasarela descartada",
+    "clase": "madera"
+   },
+   {
+    "id": "travesia_fauna",
+    "nombre": "Grullas de umbral",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "senda_iria",
+    "nombre": "Iria",
+    "funcion": "Guía: primeras pruebas y orientación de viajeros."
+   },
+   {
+    "id": "senda_mateo",
+    "nombre": "Mateo",
+    "funcion": "Constructor: pasarelas reales frente a ilusiones."
+   },
+   {
+    "id": "senda_nora",
+    "nombre": "Nora",
+    "funcion": "Registradora: testimonios, decisiones y progreso persistido."
+   },
+   {
+    "id": "senda_fabian",
+    "nombre": "Fabián",
+    "funcion": "Proveedor: equipo específico y reservas para pruebas."
+   },
+   {
+    "id": "senda_leire",
+    "nombre": "Leire",
+    "funcion": "Anfitriona: descanso y apoyo a viajeros."
+   },
+   {
+    "id": "senda_anwar",
+    "nombre": "Anwar",
+    "funcion": "Custodio de balanza: verdad y reparación de faltas."
+   },
+   {
+    "id": "senda_ofelia",
+    "nombre": "Ofelia",
+    "funcion": "Viajera en purificación: historia de promesas incumplidas."
+   },
+   {
+    "id": "senda_pablo",
+    "nombre": "Pablo",
+    "funcion": "Viajero en purificación: historia de confianza y petición de ayuda."
+   }
+  ]
+ },
+ {
+  "region": "refugio_hilos",
+  "nombre": "Refugio de los Hilos",
+  "mundo": "senda",
+  "casas": [
+   {
+    "id": "refugio_hilos_vivienda_01",
+    "nombre": "Módulo 01 · Refugio de los Hilos",
+    "ocupantes": [
+     "hilos_tecla",
+     "hilos_hector"
+    ]
+   },
+   {
+    "id": "refugio_hilos_vivienda_02",
+    "nombre": "Módulo 02 · Refugio de los Hilos",
+    "ocupantes": [
+     "hilos_asha",
+     "hilos_elian"
+    ]
+   }
+  ],
+  "conflicto": "Tecla debe permitir que un testigo contradiga el modelo que hizo para ayudarlo.",
+  "recursos": [
+   {
+    "id": "refugio_hilos_mineral",
+    "nombre": "Mica de hilo",
+    "clase": "mineral"
+   },
+   {
+    "id": "refugio_hilos_semilla",
+    "nombre": "Semilla de algodón de niebla",
+    "clase": "semilla"
+   },
+   {
+    "id": "refugio_hilos_madera",
+    "nombre": "Madera de bastidor retirada",
+    "clase": "madera"
+   },
+   {
+    "id": "refugio_hilos_fauna",
+    "nombre": "Polillas de telar",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "hilos_tecla",
+    "nombre": "Tecla",
+    "funcion": "Analista: patrones de laberintos y arquitectura de sombra."
+   },
+   {
+    "id": "hilos_hector",
+    "nombre": "Héctor",
+    "funcion": "Artesano: anclas, puntos seguros y retorno."
+   },
+   {
+    "id": "hilos_asha",
+    "nombre": "Asha",
+    "funcion": "Tejedora: rutas reales, señales y rescates."
+   },
+   {
+    "id": "hilos_elian",
+    "nombre": "Elián",
+    "funcion": "Viajero atrapado: identidad y formas falsas."
+   }
+  ]
+ },
+ {
+  "region": "bastion_velo",
+  "nombre": "Bastión del Velo",
+  "mundo": "nox",
+  "casas": [
+   {
+    "id": "bastion_velo_vivienda_01",
+    "nombre": "Módulo 01 · Bastión del Velo",
+    "ocupantes": [
+     "nox_dorian",
+     "nox_salma"
+    ]
+   },
+   {
+    "id": "bastion_velo_vivienda_02",
+    "nombre": "Módulo 02 · Bastión del Velo",
+    "ocupantes": [
+     "nox_viggo",
+     "nox_mirta"
+    ]
+   },
+   {
+    "id": "bastion_velo_vivienda_03",
+    "nombre": "Módulo 03 · Bastión del Velo",
+    "ocupantes": [
+     "nox_inigo",
+     "nox_tamara"
+    ]
+   }
+  ],
+  "conflicto": "Dorian y sus colegas son personas vivas que custodian entidades corruptas. El Conde no es un preso inocente.",
+  "recursos": [
+   {
+    "id": "bastion_velo_mineral",
+    "nombre": "Basalto de sello inerte",
+    "clase": "mineral"
+   },
+   {
+    "id": "bastion_velo_semilla",
+    "nombre": "Semilla de cardo de guardia",
+    "clase": "semilla"
+   },
+   {
+    "id": "bastion_velo_madera",
+    "nombre": "Madera de caja de suministro reutilizada",
+    "clase": "madera"
+   },
+   {
+    "id": "bastion_velo_fauna",
+    "nombre": "Cuervos del perímetro",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "nox_dorian",
+    "nombre": "Dorian",
+    "funcion": "Comandante: permisos y operaciones de contención."
+   },
+   {
+    "id": "nox_salma",
+    "nombre": "Salma",
+    "funcion": "Sanadora: descontaminación y recuperación de expedicionarios."
+   },
+   {
+    "id": "nox_viggo",
+    "nombre": "Viggo",
+    "funcion": "Artesano: sellos, cerraduras y protección de equipo; no comercio de almas."
+   },
+   {
+    "id": "nox_mirta",
+    "nombre": "Mirta",
+    "funcion": "Registradora: entidades corruptas y evidencia autorizada."
+   },
+   {
+    "id": "nox_inigo",
+    "nombre": "Íñigo",
+    "funcion": "Guardián: patrullas, rutas y combate de contención."
+   },
+   {
+    "id": "nox_tamara",
+    "nombre": "Tamara",
+    "funcion": "Guardiana del retorno: balizas y extracción de visitantes autorizados."
+   }
+  ]
+ },
+ {
+  "region": "estacion_celia",
+  "nombre": "Estación sobre Celia",
+  "mundo": "astra",
+  "casas": [
+   {
+    "id": "estacion_celia_vivienda_01",
+    "nombre": "Módulo 01 · Estación sobre Celia",
+    "ocupantes": [
+     "orbita_helena",
+     "orbita_dexo"
+    ]
+   },
+   {
+    "id": "estacion_celia_vivienda_02",
+    "nombre": "Módulo 02 · Estación sobre Celia",
+    "ocupantes": [
+     "orbita_tessa",
+     "orbita_boris"
+    ]
+   },
+   {
+    "id": "estacion_celia_vivienda_03",
+    "nombre": "Módulo 03 · Estación sobre Celia",
+    "ocupantes": [
+     "orbita_valentina",
+     "orbita_ivo"
+    ]
+   },
+   {
+    "id": "estacion_celia_vivienda_04",
+    "nombre": "Módulo 04 · Estación sobre Celia",
+    "ocupantes": [
+     "orbita_said",
+     "orbita_rita"
+    ]
+   }
+  ],
+  "conflicto": "Helena recuerda que un buen dato necesita saber quién podrá usarlo y quién pagará el error.",
+  "recursos": [
+   {
+    "id": "estacion_celia_mineral",
+    "nombre": "Titanio recuperado",
+    "clase": "mineral"
+   },
+   {
+    "id": "estacion_celia_semilla",
+    "nombre": "Semilla de albahaca orbital",
+    "clase": "semilla"
+   },
+   {
+    "id": "estacion_celia_madera",
+    "nombre": "Madera compuesta de fibra cultivada",
+    "clase": "madera"
+   },
+   {
+    "id": "estacion_celia_fauna",
+    "nombre": "Geckos del módulo botánico",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "orbita_helena",
+    "nombre": "Helena",
+    "funcion": "Comandante: rutas, permisos y coordinación de bases."
+   },
+   {
+    "id": "orbita_dexo",
+    "nombre": "Dexo",
+    "funcion": "Piloto: vuelo, aterrizaje y combustible."
+   },
+   {
+    "id": "orbita_tessa",
+    "nombre": "Tessa",
+    "funcion": "Ingeniera: IA avanzada de cuidados con Mireya y Adela."
+   },
+   {
+    "id": "orbita_boris",
+    "nombre": "Boris",
+    "funcion": "Ingeniero: aire, electricidad, módulos y cúpulas."
+   },
+   {
+    "id": "orbita_valentina",
+    "nombre": "Valentina",
+    "funcion": "Agrónoma: cultivos hidropónicos y adaptación espacial."
+   },
+   {
+    "id": "orbita_ivo",
+    "nombre": "Ivo",
+    "funcion": "Investigador: muestras, cartas planetarias y enlace con Nerea."
+   },
+   {
+    "id": "orbita_said",
+    "nombre": "Said",
+    "funcion": "Médico: presión, fatiga y protocolos de expedición."
+   },
+   {
+    "id": "orbita_rita",
+    "nombre": "Rita",
+    "funcion": "Logística: depósitos, pedidos y transporte espacial."
+   }
+  ]
+ },
+ {
+  "region": "huerto_aurelia",
+  "nombre": "Huerto de Aurelia",
+  "mundo": "astra",
+  "casas": [
+   {
+    "id": "huerto_aurelia_vivienda_01",
+    "nombre": "Módulo 01 · Huerto de Aurelia",
+    "ocupantes": [
+     "aurelia_aitana",
+     "aurelia_oscar"
+    ]
+   },
+   {
+    "id": "huerto_aurelia_vivienda_02",
+    "nombre": "Módulo 02 · Huerto de Aurelia",
+    "ocupantes": [
+     "aurelia_kiara",
+     "aurelia_saul"
+    ]
+   }
+  ],
+  "conflicto": "El crecimiento no vale si obliga a agotar la reserva de otro módulo.",
+  "recursos": [
+   {
+    "id": "huerto_aurelia_mineral",
+    "nombre": "Topacio solar",
+    "clase": "mineral"
+   },
+   {
+    "id": "huerto_aurelia_semilla",
+    "nombre": "Semilla de trigo aurelio",
+    "clase": "semilla"
+   },
+   {
+    "id": "huerto_aurelia_madera",
+    "nombre": "Madera de tallo lignificado de invernadero",
+    "clase": "madera"
+   },
+   {
+    "id": "huerto_aurelia_fauna",
+    "nombre": "Escarabajos polinizadores de cápsula",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "aurelia_aitana",
+    "nombre": "Aitana",
+    "funcion": "Heliobotánica: efectos de luz en cultivos y ensayos controlados."
+   },
+   {
+    "id": "aurelia_oscar",
+    "nombre": "Óscar",
+    "funcion": "Técnico solar: colectores, baterías y redes de energía."
+   },
+   {
+    "id": "aurelia_kiara",
+    "nombre": "Kiara",
+    "funcion": "Cuidadora: polinizadores y floraciones dentro de cúpula."
+   },
+   {
+    "id": "aurelia_saul",
+    "nombre": "Saúl",
+    "funcion": "Investigador: néctares y productos artesanales experimentales."
+   }
+  ]
+ },
+ {
+  "region": "vigia_nocturna",
+  "nombre": "Vigía de Nocturna",
+  "mundo": "astra",
+  "casas": [
+   {
+    "id": "vigia_nocturna_vivienda_01",
+    "nombre": "Módulo 01 · Vigía de Nocturna",
+    "ocupantes": [
+     "nocturna_matea",
+     "nocturna_elvira"
+    ]
+   },
+   {
+    "id": "vigia_nocturna_vivienda_02",
+    "nombre": "Módulo 02 · Vigía de Nocturna",
+    "ocupantes": [
+     "nocturna_gaspar",
+     "nocturna_naim"
+    ]
+   }
+  ],
+  "conflicto": "Conducir almas no permite quedarse con ellas para alimentar una máquina.",
+  "recursos": [
+   {
+    "id": "vigia_nocturna_mineral",
+    "nombre": "Plata de tránsito",
+    "clase": "mineral"
+   },
+   {
+    "id": "vigia_nocturna_semilla",
+    "nombre": "Semilla de lunaria oscura",
+    "clase": "semilla"
+   },
+   {
+    "id": "vigia_nocturna_madera",
+    "nombre": "Madera de lunaria de poda de cúpula",
+    "clase": "madera"
+   },
+   {
+    "id": "vigia_nocturna_fauna",
+    "nombre": "Zorros de módulo nocturno",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "nocturna_matea",
+    "nombre": "Matea",
+    "funcion": "Navegante: mapas nocturnos y coordinación con Celia."
+   },
+   {
+    "id": "nocturna_elvira",
+    "nombre": "Elvira",
+    "funcion": "Botánica: plantas nocturnas, gallinas oscuras y conejos lunares."
+   },
+   {
+    "id": "nocturna_gaspar",
+    "nombre": "Gaspar",
+    "funcion": "Orfebre: plata, lentes, instrumentos y decoración."
+   },
+   {
+    "id": "nocturna_naim",
+    "nombre": "Naim",
+    "funcion": "Registrador: observación de Nocturna y enseñanzas de Lara."
+   }
+  ]
+ },
+ {
+  "region": "cantera_esmeralda",
+  "nombre": "Cantera de Esmeralda",
+  "mundo": "astra",
+  "casas": [
+   {
+    "id": "cantera_esmeralda_vivienda_01",
+    "nombre": "Módulo 01 · Cantera de Esmeralda",
+    "ocupantes": [
+     "esmeralda_olmo",
+     "esmeralda_indira"
+    ]
+   },
+   {
+    "id": "cantera_esmeralda_vivienda_02",
+    "nombre": "Módulo 02 · Cantera de Esmeralda",
+    "ocupantes": [
+     "esmeralda_duna",
+     "esmeralda_raimundo"
+    ]
+   }
+  ],
+  "conflicto": "Un catalizador organiza energía finita; no debe disfrazarse de fuente inagotable.",
+  "recursos": [
+   {
+    "id": "cantera_esmeralda_mineral",
+    "nombre": "Esmeralda resonante",
+    "clase": "mineral"
+   },
+   {
+    "id": "cantera_esmeralda_semilla",
+    "nombre": "Semilla de musgo esmeralda",
+    "clase": "semilla"
+   },
+   {
+    "id": "cantera_esmeralda_madera",
+    "nombre": "Madera de bastidor de cultivo recuperada",
+    "clase": "madera"
+   },
+   {
+    "id": "cantera_esmeralda_fauna",
+    "nombre": "Caracoles de cúpula húmeda",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "esmeralda_olmo",
+    "nombre": "Olmo",
+    "funcion": "Prospector: minerales lunares y extracción controlada."
+   },
+   {
+    "id": "esmeralda_indira",
+    "nombre": "Indira",
+    "funcion": "Ingeniera: manátides y energía mineral."
+   },
+   {
+    "id": "esmeralda_duna",
+    "nombre": "Duna",
+    "funcion": "Jardinera: musgos y recuperación de zonas de muestra."
+   },
+   {
+    "id": "esmeralda_raimundo",
+    "nombre": "Raimundo",
+    "funcion": "Técnico sísmico: alertas y rutas de galería."
+   }
+  ]
+ },
+ {
+  "region": "campamento_fragmentos",
+  "nombre": "Campamento de los Fragmentos",
+  "mundo": "astra",
+  "casas": [
+   {
+    "id": "campamento_fragmentos_vivienda_01",
+    "nombre": "Módulo 01 · Campamento de los Fragmentos",
+    "ocupantes": [
+     "fragmentos_axel",
+     "fragmentos_pia"
+    ]
+   },
+   {
+    "id": "campamento_fragmentos_vivienda_02",
+    "nombre": "Módulo 02 · Campamento de los Fragmentos",
+    "ocupantes": [
+     "fragmentos_lazaro",
+     "fragmentos_uma"
+    ]
+   }
+  ],
+  "conflicto": null,
+  "recursos": [],
+  "residentes": [
+   {
+    "id": "fragmentos_axel",
+    "nombre": "Axel",
+    "funcion": "Extractor: minerales del Asteroide Cobrizo y contratos."
+   },
+   {
+    "id": "fragmentos_pia",
+    "nombre": "Pía",
+    "funcion": "Prospectora: cristales y geodas de Asteroide Prisma."
+   },
+   {
+    "id": "fragmentos_lazaro",
+    "nombre": "Lázaro",
+    "funcion": "Reciclador: chatarra, compactación y componentes reutilizados."
+   },
+   {
+    "id": "fragmentos_uma",
+    "nombre": "Uma",
+    "funcion": "Técnica: oxígeno, anclajes y rescate de campamento."
+   }
+  ]
+ },
+ {
+  "region": "ambarina",
+  "nombre": "Ambarina",
+  "mundo": "astra",
+  "casas": [
+   {
+    "id": "ambarina_vivienda_01",
+    "nombre": "Casa 01 · Ambarina",
+    "ocupantes": [
+     "ambar_zora",
+     "ambar_nestor"
+    ]
+   },
+   {
+    "id": "ambarina_vivienda_02",
+    "nombre": "Casa 02 · Ambarina",
+    "ocupantes": [
+     "ambar_alina",
+     "ambar_baltasar"
+    ]
+   },
+   {
+    "id": "ambarina_vivienda_03",
+    "nombre": "Casa 03 · Ambarina",
+    "ocupantes": [
+     "ambar_samira",
+     "ambar_kenzo"
+    ]
+   }
+  ],
+  "conflicto": "Calista representa una comunidad que puede rechazar un plan de visitantes; no es reina de tierras por conquistar.",
+  "recursos": [
+   {
+    "id": "ambarina_mineral",
+    "nombre": "Oro de ámbar",
+    "clase": "mineral"
+   },
+   {
+    "id": "ambarina_semilla",
+    "nombre": "Semilla de frijol de reserva",
+    "clase": "semilla"
+   },
+   {
+    "id": "ambarina_madera",
+    "nombre": "Madera de tamarisco de poda",
+    "clase": "madera"
+   },
+   {
+    "id": "ambarina_fauna",
+    "nombre": "Antílopes de sal",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "ambar_zora",
+    "nombre": "Zora",
+    "funcion": "Coordinadora: energía, agua y hábitats."
+   },
+   {
+    "id": "ambar_nestor",
+    "nombre": "Néstor",
+    "funcion": "Metalista: titanio, basalto y equipo de calor."
+   },
+   {
+    "id": "ambar_alina",
+    "nombre": "Alina",
+    "funcion": "Cultivadora: semillas de sequía y riego medido."
+   },
+   {
+    "id": "ambar_baltasar",
+    "nombre": "Baltasar",
+    "funcion": "Constructor: cascos, cúpulas y reparación de nave."
+   },
+   {
+    "id": "ambar_samira",
+    "nombre": "Samira",
+    "funcion": "Meteoróloga: tormentas de arena y rutas alternativas."
+   },
+   {
+    "id": "ambar_kenzo",
+    "nombre": "Kenzo",
+    "funcion": "Explorador: ruinas, terrazas y procedencia de hallazgos."
+   }
+  ]
+ },
+ {
+  "region": "iridalia",
+  "nombre": "Iridalia",
+  "mundo": "astra",
+  "casas": [
+   {
+    "id": "iridalia_vivienda_01",
+    "nombre": "Casa 01 · Iridalia",
+    "ocupantes": [
+     "iris_calista",
+     "iris_orin"
+    ]
+   },
+   {
+    "id": "iridalia_vivienda_02",
+    "nombre": "Casa 02 · Iridalia",
+    "ocupantes": [
+     "iris_liora",
+     "iris_edda"
+    ]
+   },
+   {
+    "id": "iridalia_vivienda_03",
+    "nombre": "Casa 03 · Iridalia",
+    "ocupantes": [
+     "iris_mauro",
+     "iris_yuna"
+    ]
+   }
+  ],
+  "conflicto": "Un brillo bello puede ocultar una lectura falsa; escuchar música no exige aceptar toda su interpretación.",
+  "recursos": [
+   {
+    "id": "iridalia_mineral",
+    "nombre": "Cristal iridiano",
+    "clase": "mineral"
+   },
+   {
+    "id": "iridalia_semilla",
+    "nombre": "Semilla de lirio de prisma",
+    "clase": "semilla"
+   },
+   {
+    "id": "iridalia_madera",
+    "nombre": "Madera de sauce prismático de poda",
+    "clase": "madera"
+   },
+   {
+    "id": "iridalia_fauna",
+    "nombre": "Aves de prisma",
+    "clase": "fauna"
+   }
+  ],
+  "residentes": [
+   {
+    "id": "iris_calista",
+    "nombre": "Calista",
+    "funcion": "Portavoz: convivencia y acuerdos de uso del territorio."
+   },
+   {
+    "id": "iris_orin",
+    "nombre": "Orin",
+    "funcion": "Artesano: instrumentos y componentes de cristal resonante."
+   },
+   {
+    "id": "iris_liora",
+    "nombre": "Liora",
+    "funcion": "Botánica: cultivos de Iris, sustratos y luz."
+   },
+   {
+    "id": "iris_edda",
+    "nombre": "Edda",
+    "funcion": "Observadora: criaturas y hábitats; no domestica por defecto."
+   },
+   {
+    "id": "iris_mauro",
+    "nombre": "Mauro",
+    "funcion": "Rastreador: huellas, rutas y protección del bosque violeta."
+   },
+   {
+    "id": "iris_yuna",
+    "nombre": "Yuna",
+    "funcion": "Conservadora: banco de semillas y encuentros regionales."
+   }
+  ]
+ }
+]
