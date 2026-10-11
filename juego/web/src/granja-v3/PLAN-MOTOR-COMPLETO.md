@@ -1,5 +1,23 @@
 # Plan del motor completo: capacidades, variedad y aceptación
 
+## Encargos renovables y especiales integrados
+
+Sobre el mismo motor y guardado V5 se conserva el catálogo de doce pedidos permanentes y sus reservas/historia.
+El tablón y Diario agregan dos ofertas diarias, una semanal y un especial semanal: seis plantillas diarias,
+cuatro semanales y tres especiales, con semilla persistida e ID por edición. La renovación depende solo de
+jornadas dormidas; aceptar tarde mantiene el plazo completo y cambiar de semana no sustituye pedidos activos.
+
+Los especiales tienen dos etapas: actividad posterior a aceptar, revisión cercana por el solicitante y entrega
+real desde casilla/calidad exactas. Narración de transición/cierre, monedas, amistad y objetos útiles del catálogo
+se conceden una vez. Plazos, historial acotado, devolución de reservas y guardado fallido se validan en el motor.
+La interfaz usa paneles sencillos; no se añade arte. [ENCARGOS-INTEGRACION.md](ENCARGOS-INTEGRACION.md) documenta
+la API, migración V1 → V2 del subestado, reglas y límites. I06 pasa a parcial con ofertas diarias/semanales;
+I07 pasa a parcial con tres pedidos de dos etapas. Faltan más etapas, ramificaciones, escenas y pedidos regionales.
+Verificación: 23 casos nuevos de lógica, regresión de 29 suites y 17 recorridos de navegador (11 de encargos,
+seis de integración casa/granja), sin fallos; compilaciones completa y de amigos correctas. Los escenarios de
+navegador preparan datos en un contexto aislado; no certifican campaña ni teléfonos físicos.
+Siguiente bloque del motor: cartas ramificadas y decisiones con consecuencias persistentes.
+
 ## Festivales básicos integrados
 
 Sobre el mismo motor y V5 se conectan cuatro celebraciones originales del Pueblo del Sol, una por estación:
@@ -11,7 +29,7 @@ acción. La muestra de otoño conserva su casilla/calidad y solo se consume al c
 [FESTIVALES-INTEGRACION.md](FESTIVALES-INTEGRACION.md) documenta reglas, API y límites. Se usa interfaz sencilla;
 arte y presentación final siguen a cargo de Claude. J06 pasa a parcial con cuatro festivales jugables del primer
 pueblo; faltan variedad regional, concursos más amplios y los eventos de mundo con cola/prioridad de J07.
-Siguiente bloque del motor: rotación diaria/semanal y encargos especiales, conservando los pedidos ya activos.
+El bloque posterior de encargos renovables y especiales ya está conectado; sus límites se registran al inicio.
 
 ## Correo integrado
 
@@ -45,7 +63,7 @@ Sobre granja-v3 y guardado V5 se integran doce pedidos aceptables, hasta cinco a
 
 [ENCARGOS-INTEGRACION.md](ENCARGOS-INTEGRACION.md) describe catálogo, API, fechas, reservas y límites. 21 casos específicos y regresión de 23 suites (512 comprobaciones contando la última ampliación), ocho recorridos de navegador y compilación completa correctos. La revisión móvil usa 412 × 915; los recorridos preparan escenarios y no certifican rendimiento físico ni una campaña desde cero.
 
-El sistema de misiones sigue parcial: faltan rotación diaria/semanal, encargos especiales, cartas ramificadas, más elecciones y escenas, colecciones y campañas de nuevos mundos. Los doce pedidos no implementan los 142 ejemplos del reparto planificado ni alteran las misiones antiguas o sus tokens de casa. El calendario, ocho encuentros, viviendas, dormitorios y correo básico ya se integraron. Los cuatro festivales básicos del primer pueblo ya están integrados. El siguiente bloque previsto es la rotación diaria/semanal y los encargos especiales.
+El sistema de misiones sigue parcial: faltan ampliaciones de encargos especiales, cartas ramificadas, más elecciones y escenas, colecciones y campañas de nuevos mundos. Los doce pedidos no implementan los 142 ejemplos del reparto planificado ni alteran las misiones antiguas o sus tokens de casa. El calendario, ocho encuentros, viviendas, dormitorios y correo básico ya se integraron. Los cuatro festivales básicos del primer pueblo ya están integrados. La rotación diaria/semanal y tres encargos especiales ya están integrados; el siguiente bloque es cartas ramificadas y decisiones persistentes.
 
 ## Reparto y pueblos planificados el 10 de octubre de 2026
 
@@ -337,13 +355,13 @@ Referencias: [Misiones base](https://es.stardewvalleywiki.com/Misiones) y [misio
 | ID | Capacidad | Estado base | Criterio propio para cerrar |
 |---|---|---|---|
 | I01 | Diario y seguimiento | Parcial | Varias misiones activas, seleccionables; objetivo actual, lugar, persona, plazo y recompensa; el HUD sigue la elegida. |
-| I02 | Máquina de estados | Pendiente | Disponible, aceptada, activa, lista para entregar, completada, fallida/cancelada; transición validada y persistida. |
+| I02 | Máquina de estados | Parcial · aceptación, actividad, entrega, etapas, vencimiento y cierre integrados en encargos | Disponible, aceptada, activa, lista para entregar, completada, fallida/cancelada; transición validada y persistida. |
 | I03 | Objetivos semánticos | Parcial | Distinguir obtener después de aceptar, poseer, entregar, fabricar, visitar, conversar, descubrir, derrotar y elegir; vender antes no satisface poseer/entregar. |
-| I04 | Entregas | Pendiente | NPC/buzón/cofre correctos reciben artículo, calidad y cantidad; descuenta lo entregado, admite avance parcial y nunca consume otra pila por error. |
+| I04 | Entregas | Parcial · NPC correcto, casilla/calidad/cantidad exactas y reservas recuperables integradas; pendientes otros receptores | NPC/buzón/cofre correctos reciben artículo, calidad y cantidad; descuenta lo entregado, admite avance parcial y nunca consume otra pila por error. |
 | I05 | Ramificación | Pendiente | Elección A abre una cadena y cambia un estado del mundo; elección B produce otro resultado real; condiciones excluyentes y cierre sin doble recompensa. |
-| I06 | Diarias y repetibles | Pendiente | Generación por día con semilla persistida, variedad de tipo y petición alcanzable; renovar no reinicia al recargar; repetible lleva identificador de instancia. |
-| I07 | Pedidos especiales | Pendiente | Varias etapas, acumulación desde aceptación, entrega concreta, plazo más largo, escena/recompensa y cooldown si aplica. |
-| I08 | Espacio de pedidos | Pendiente | Tablón/lugar físico con disponibles, aceptados y entregas; acceso directo al detalle; cajas o mostradores muestran pedido y contenido entregado. |
+| I06 | Diarias y repetibles | Parcial · dos diarias, semanal, semilla e instancia persistidas; pendiente variedad regional | Generación por día con semilla persistida, variedad de tipo y petición alcanzable; renovar no reinicia al recargar; repetible lleva identificador de instancia. |
+| I07 | Pedidos especiales | Parcial · tres pedidos de dos etapas y premio real; pendientes escenas, ramas y más etapas | Varias etapas, acumulación desde aceptación, entrega concreta, plazo más largo, escena/recompensa y cooldown si aplica. |
+| I08 | Espacio de pedidos | Parcial · Casa de los Oficios y Diario conectados; pendientes cajas dedicadas | Tablón/lugar físico con disponibles, aceptados y entregas; acceso directo al detalle; cajas o mostradores muestran pedido y contenido entregado. |
 | I09 | Colecciones/lotes | Pendiente | Entregas de categorías o piezas concretas, cantidades y calidad; avance persistido, recompensa por lote y transformación/desbloqueo visible. |
 | I10 | Recompensas | Parcial | Monedas, artículos, receta, relación, acceso, edificio o efecto; validar capacidad antes de cerrar; reclamar de nuevo no da nada. |
 | I11 | Prerrequisitos y alcanzabilidad | Parcial | Grafo sin ciclos imposibles; recursos y NPC accesibles en el plazo; probar ambas ramas y recuperación tras vencer plazo. |
