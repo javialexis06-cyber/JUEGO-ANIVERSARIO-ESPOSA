@@ -215,7 +215,8 @@ export function aplicarVariante(root: THREE.Group, especie: string, variante: 0 
 export function crearRefugio(especie: string, estilo = 'madera'): THREE.Group {
   especie = normalizar(especie); const root = new THREE.Group(); root.name = `refugio_${especie}_${estilo}`;
   root.userData = { footprint: [4, 4], entrada: [0, 0, 2.1], tipo: 'refugio', especie, estilo, ownsResources: true };
-  const themes: Record<string, string> = { caballo:'#9c7562',cabra:'#b89163',pato:'#789f92',avestruz:'#b4a182',dinosaurio:'#83a17c',vaca: '#aa685c', cerdito: '#cd9276', gallina: '#caaa6e', conejo: '#91ad85', oveja: '#94a9b0', unicornio: '#b4a0c4', dragon: '#8f7694', grifo: '#c0a575' };
+  // Techos con color propio y vivo (como el gallinero rojo de Stardew), para reconocer cada refugio de lejos
+  const themes: Record<string, string> = { caballo:'#7b4f3b',cabra:'#a8743f',pato:'#4f8f8a',avestruz:'#b4884f',dinosaurio:'#5f8f5a',vaca: '#9c3f36', cerdito: '#c4766b', gallina: '#c65b45', conejo: '#6f9a55', oveja: '#5f7f9c', unicornio: '#a58cc4', dragon: '#7d5a8f', grifo: '#c0954f' };
   const climates: Record<string, [string, string, string]> = { volcanico: ['#b3a4b2', '#77657f', '#edb087'], celeste: ['#d9d5dd', '#afa8c9', '#ebd7a0'], humedo: ['#c5c6a4', '#86a07d', '#d9c193'], mineral: ['#ccc4bd', '#9cb3b6', '#acd7d5'], sombrio: ['#bbb0c3', '#6f6486', '#c8b0d4'], polar: ['#dce3e1', '#9fbdca', '#d2edf0'] };
   const climate = climates[estilo];
   const wall = newMaterial(climate?.[0] ?? (estilo === 'piedra' ? '#b8b9a8' : estilo === 'fantasia' ? '#c0bdce' : '#e0caa1'));
@@ -269,6 +270,53 @@ export function crearRefugio(especie: string, estilo = 'madera'): THREE.Group {
     for (let i = 0; i < 5; i++) ell(root, [.35, .15, .23], [(i - 2) * .22, 3.00 + Math.sin(i) * .015, .05], edge);
   }
   if (especie === 'grifo') { const perch = box(root, [2.30, .10, .18], [0, 1.16, 2.06], timber); perch.name = 'percha_exterior'; }
+  detallesRefugio(root, especie, { wall, timber, dark, roof, edge, stone, metal });
+  compact(root); return root;
+}
+
+/** Detalles de granja de verdad: cimiento de piedras, veleta en el caballete, farol junto a la puerta, heno y
+ * costal de alimento; los gallineros y patos llevan nidales con paja y una rampita con su puertica. */
+function detallesRefugio(root: THREE.Group, especie: string, m: Record<'wall' | 'timber' | 'dark' | 'roof' | 'edge' | 'stone' | 'metal', THREE.Material>) {
+  const piedra = [newMaterial('#a9a596'), newMaterial('#bdb8a6'), newMaterial('#979383')], paja = newMaterial('#e3c77a'), pajaOscura = newMaterial('#c9a95c'), costal = newMaterial('#d8c49c'), hierro = newMaterial('#5d5a58'), luz = newMaterial('#ffd98a');
+  (luz as THREE.MeshStandardMaterial).emissive = new THREE.Color('#ffb347'); (luz as THREE.MeshStandardMaterial).emissiveIntensity = .8;
+  // Cimiento: piedras redondas alrededor de la base
+  for (const [x0, z0, dx, dz, n] of [[-1.8, -1.84, 1, 0, 10], [-1.84, -1.8, 0, 1, 10], [1.84, -1.8, 0, 1, 10], [-1.8, 1.84, 1, 0, 3], [1.8, 1.84, -1, 0, 3]] as [number, number, number, number, number][])
+    for (let i = 0; i < n; i++) { const t = i * .37; ell(root, [.2 + (i % 3) * .03, .12, .16], [x0 + dx * t, .12, z0 + dz * t], piedra[i % 3]); }
+  // Veleta en el caballete (gallito en los gallineros)
+  rod(root, [0, 3.0, -1.2], [0, 3.75, -1.2], .03, hierro); rod(root, [-.32, 3.55, -1.2], [.32, 3.55, -1.2], .018, hierro); rod(root, [0, 3.55, -1.52], [0, 3.55, -.88], .018, hierro);
+  if (especie === 'gallina' || especie === 'pato') { const gallo = new THREE.Group(); gallo.position.set(0, 3.82, -1.2); root.add(gallo); ell(gallo, [.16, .1, .05], [0, 0, 0], hierro); ell(gallo, [.06, .07, .045], [.12, .07, 0], hierro); ell(gallo, [.07, .11, .03], [-.13, .07, 0], hierro); box(gallo, [.035, .05, .03], [.17, .13, 0], newMaterial('#b8442f'), .005); }
+  else { const flecha = new THREE.Mesh(new THREE.ConeGeometry(.06, .18, 4), hierro); flecha.rotation.z = -Math.PI / 2; flecha.position.set(.26, 3.75, -1.2); root.add(flecha); rod(root, [-.26, 3.75, -1.2], [.2, 3.75, -1.2], .016, hierro); }
+  // Farol junto a la puerta
+  box(root, [.05, .3, .05], [.82, 1.75, 1.93], hierro, .005); box(root, [.16, .2, .16], [.82, 1.5, 1.98], hierro, .01); box(root, [.12, .15, .12], [.82, 1.5, 1.98], luz, .01);
+  // Heno y costal de alimento en la esquina de enfrente
+  for (const [x, y, z, r] of [[-1.55, .27, 2.25, .2], [-1.05, .27, 2.3, -.1], [-1.32, .7, 2.27, .05]] as [number, number, number, number][]) { const paca = box(root, [.52, .4, .36], [x, y, z], paja, .06); paca.rotation.y = r; for (const k of [-.13, .13]) { const cinta = box(root, [.04, .41, .37], [x + k * Math.cos(r), y, z - k * Math.sin(r)], pajaOscura, .01); cinta.rotation.y = r; } }
+  ell(root, [.22, .3, .18], [1.5, .3, 2.25], costal); ell(root, [.13, .08, .12], [1.5, .6, 2.25], costal); rod(root, [1.4, .55, 2.25], [1.6, .55, 2.25], .02, pajaOscura);
+  if (especie === 'gallina' || especie === 'pato') {
+    // Nidales con techito y paja asomando, en el costado
+    box(root, [.42, .55, 1.6], [1.98, .95, -.3], m.timber, .03); const techo = box(root, [.56, .08, 1.7], [2.02, 1.27, -.3], m.roof, .02); techo.rotation.z = -.35;
+    for (let i = 0; i < 3; i++) { box(root, [.04, .4, .44], [2.2, .95, -.82 + i * .52], m.dark, .01); for (let k = 0; k < 4; k++) rod(root, [2.2, .8, -.95 + i * .52 + k * .08], [2.28, .86 + (k % 2) * .05, -.93 + i * .52 + k * .08], .02, paja); ell(root, [.06, .05, .06], [2.2, .85, -.78 + i * .52], newMaterial(i === 1 ? '#c99a6a' : '#f3ead8')); }
+    // Puertica y rampa con travesaños para que suban las gallinas
+    box(root, [.08, .4, .36], [-1.83, .62, .6], m.dark, .01); const rampa = box(root, [.9, .05, .34], [-2.12, .3, .6], m.timber, .01); rampa.rotation.z = .55;
+    for (let k = 0; k < 4; k++) { const t = box(root, [.04, .04, .34], [-2.42 + k * .2, .14 + k * .11, .6], m.dark, .005); t.rotation.z = .55; }
+  }
+}
+
+/** Patio del refugio (local 0..4 × 4..8): caminito de tierra desde la puerta, paja regada, bebedero y comedero;
+ * en los gallineros, granitos de maíz en el suelo. Todo bajito: los animales caminan por encima. */
+export function patioRefugio(especie: string): THREE.Group {
+  especie = normalizar(especie); const root = new THREE.Group(); root.name = 'patio_refugio';
+  const tierra = newMaterial('#b08f68'), tierraClara = newMaterial('#c4a57c'), paja = newMaterial('#e3c77a'), madera = newMaterial('#8f6a4c'), agua = newMaterial('#7fbcd0'), piedra = newMaterial('#a9a596'), maiz = newMaterial('#f2c94c');
+  const h = (i: number, k: number) => { const n = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return n - Math.floor(n); };
+  // Caminito pisado desde la puerta y manchas de tierra
+  for (let i = 0; i < 6; i++) { const m = ell(root, [.42 + h(i, 1) * .2, .012, .34 + h(i, 2) * .15], [2 + (h(i, 3) - .5) * .5, .012, 4.3 + i * .55], i % 2 ? tierra : tierraClara); m.castShadow = false; }
+  for (let i = 0; i < 5; i++) { const m = ell(root, [.5 + h(i, 4) * .4, .01, .4 + h(i, 5) * .3], [.6 + h(i, 6) * 2.8, .01, 4.6 + h(i, 7) * 3], tierra); m.castShadow = false; }
+  // Paja regada
+  for (let i = 0; i < 36; i++) { const x = .4 + h(i, 8) * 3.2, z = 4.4 + h(i, 9) * 3.2, a = h(i, 10) * 6.3; rod(root, [x, .02, z], [x + Math.cos(a) * .18, .02, z + Math.sin(a) * .18], .012, paja); }
+  // Bebedero de piedra y comedero de madera contra la valla
+  box(root, [.7, .2, .4], [.7, .1, 7.3], piedra, .05); box(root, [.58, .02, .28], [.7, .19, 7.3], agua, .01);
+  box(root, [.9, .22, .32], [3.2, .14, 7.25], madera, .03); for (const x of [2.8, 3.6]) box(root, [.06, .28, .32], [x, .14, 7.25], madera, .01);
+  for (let i = 0; i < 6; i++) rod(root, [2.85 + i * .13, .26, 7.15], [2.9 + i * .12, .27, 7.35], .015, paja);
+  if (especie === 'gallina' || especie === 'pato' || especie === 'avestruz') for (let i = 0; i < 40; i++) ell(root, [.025, .018, .025], [.8 + h(i, 11) * 2.4, .02, 5 + h(i, 12) * 2.4], maiz);
   compact(root); return root;
 }
 

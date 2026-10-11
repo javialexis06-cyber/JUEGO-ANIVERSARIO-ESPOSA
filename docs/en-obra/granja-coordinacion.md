@@ -173,3 +173,9 @@ Cambio de reglas pedido por Javier (frente de motor, avisado aquí):
   circuitos en serie). Funcionan solas con la red de cofres que ya existía.
 - `aspersor_basico` (cruz de 4 casillas, `aspersor.cruz`), como el de Stardew; `riegaAspersor` en motor.ts.
 - Modelos de las máquinas en `escenas-produccion.ts` (con su animación) e íconos nuevos.
+
+### Refugios con detalle de granja (Claude)
+
+- `arte.ts`: techos de color vivo por especie (gallinero rojo, establo vino, pato verde agua…), cimiento de piedras,
+  veleta (gallito en gallineros y patos), farol, pacas de heno y costal; gallineros con nidales de paja y rampa con
+  puertica (`detallesRefugio`). `patioRefugio` llena el corral con caminito de tierra, paja, bebedero, comedero y maíz.
