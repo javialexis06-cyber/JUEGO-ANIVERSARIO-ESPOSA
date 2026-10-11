@@ -30,7 +30,8 @@ import { dormitorioDef, puertaDormitorio, libreDormitorio } from './dormitorios'
 import { viviendaInterior, VIVIENDAS_PUEBLO, libreVivienda } from './pueblo-datos';
 import { crearDormitorio, crearInteriorVivienda, updateInteriorVivienda } from './pueblo';
 import { cespedPueblo } from './pueblo-adornos';
-import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida, adelantoZona, amoblarCabana, adornosRefugio, adornosServicio } from './zonas-render';
+import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida, adelantoZona, adornosRefugio } from './zonas-render';
+import { interiorCabana, precargarMuebles } from './cuartos';
 import { CAMINOS_GRANJA, SALIDAS } from './caminos-mundo';
 /** Senderos de tierra entre zonas (centro x, centro z, ancho, fondo). */
 const SENDEROS_PUBLICOS:[number,number,number,number][]=[[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]];
@@ -133,23 +134,16 @@ export class VistaGranja{
  acercarse(x:number,z:number,done:()=>void){const pos=this.avatar.position;if(Math.hypot(pos.x-x-.5,pos.z-z-.5)<2.2){done();return true;}const options=[[x+1,z],[x-1,z],[x,z+1],[x,z-1],[x+1,z+1],[x-1,z-1]].filter(([xx,zz])=>this.libre(xx,zz)).sort((a,b)=>Math.hypot(a[0]-pos.x,a[1]-pos.z)-Math.hypot(b[0]-pos.x,b[1]-pos.z));for(const[xx,zz]of options)if(this.irA(xx,zz,done))return true;return false;}
  private valla(parent:THREE.Group,x:number,z:number,w:number,d:number){const root=new THREE.Group(),nx=Math.ceil(w),nz=Math.ceil(d);for(let i=0;i<=nx;i++)for(const zz of [z,z+d]){const xx=x+i*w/nx;caja(root,[.10,.8,.10],[xx,.4,zz],'#e5c79a');if(i<nx)for(const y of [.32,.56])caja(root,[w/nx,.08,.06],[xx+w/nx/2,y,zz],'#bd9466');}for(let i=0;i<=nz;i++)for(const xx of [x,x+w]){const zz=z+i*d/nz;if(i>0&&i<nz)caja(root,[.10,.8,.10],[xx,.4,zz],'#e5c79a');if(i<nz&&i!==Math.floor(nz/2))for(const y of [.32,.56])caja(root,[.06,.08,d/nz],[xx,y,zz+d/nz/2],'#bd9466');}compactar(root);parent.add(root);}
 
- private fondo(e:EstadoGranja){this.efectos.clear();if(this.pueblo){liberarPueblo(this.pueblo);this.pueblo=undefined;}liberar(this.entorno);this.entorno=new THREE.Group();this.world.add(this.entorno);
+ private fondo(e:EstadoGranja){this.efectos.clear();if(this.pueblo){liberarPueblo(this.pueblo);this.pueblo=undefined;}this.entorno.userData.liberado=true;liberar(this.entorno);this.entorno=new THREE.Group();this.world.add(this.entorno);
   if(dormitorioDef(e.interior)){this.entorno.add(crearDormitorio(dormitorioDef(e.interior)!.id));return;}
   if(viviendaInterior(e.interior)){this.entorno.add(crearInteriorVivienda(viviendaInterior(e.interior)!));return;}
-  if(e.servicio){this.entorno.add(crearInteriorServicio(e.servicio));this.entorno.add(adornosServicio(e.servicio));return;}
+  if(e.servicio){this.entorno.add(crearInteriorServicio(e.servicio));return;}
   if(e.interior||e.servicio){const b=e.edificios.find(b=>b.id===e.interior);
    if(b?.articulo==='invernadero'){this.entorno.add(interiorInvernadero());}
    else if(b?.especie||b?.articulo==='establo'){const room=decorarInterior(b.especie??'caballo',true,capacidadRefugio(b));room.scale.set(2,1.4,2);this.entorno.add(room);this.entorno.add(adornosRefugio(b.especie??'caballo'));}
    else {
-    // La cabaña por dentro, con sus muebles
-    this.entorno.add(amoblarCabana());
-    caja(this.entorno,[8,.16,8],[0,-.08,0],'#ba9570');
-    for(let i=0;i<17;i++)caja(this.entorno,[.02,.008,8],[-4+i*.5,.006,0],'#8e7056');
-    caja(this.entorno,[8,2.8,.16],[0,1.4,-4],'#ead8b6');caja(this.entorno,[.16,1.8,8],[-4,.9,0],'#dcc7a2');
-    for(const x of[-3.9,0,3.9])caja(this.entorno,[.14,2.8,.18],[x,1.4,-3.85],'#9a795a');
-    caja(this.entorno,[1.8,1.3,.10],[1.8,1.7,-3.88],'#a8cad0');for(const x of[.85,1.8,2.75])caja(this.entorno,[.08,1.5,.15],[x,1.7,-3.77],'#faf0d7');for(const y of[.95,1.7,2.45])caja(this.entorno,[1.98,.08,.15],[1.8,y,-3.77],'#faf0d7');
-    caja(this.entorno,[3.4,.025,2.2],[0,.03,1],'#c4b591');for(const x of[-1.5,1.5])caja(this.entorno,[.035,.015,1.95],[x,.052,1],'#ecdfbc');
-    for(const x of[-.95,.95])caja(this.entorno,[.15,2.35,.15],[x,1.18,4],'#9b7b5c');caja(this.entorno,[2.05,.18,.16],[0,2.4,4],'#b28e63');
+    // La cabaña por dentro: cascarón y muebles modelados en Blender
+    this.entorno.add(interiorCabana());
    }return;}
   if(e.zona!=='granja')this.entorno.add(señalesSalidas(e.zona));
   if(e.zona==='mina'){this.cueva=cuevaMina(e.nivelMina||1);this.cueva.userData.nivel=e.nivelMina||1;this.entorno.add(this.cueva);return;}

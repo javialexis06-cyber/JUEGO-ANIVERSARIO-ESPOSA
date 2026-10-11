@@ -1,3 +1,4 @@
+import { interiorLocal, interiorVivienda, interiorDormitorio, puertaCuarto } from './cuartos';
 import { dormitorioDef, horaDormitorio } from './dormitorios';
 import type { EstadoGranja } from './estado';
 import { tiempoDia, lluviaRiega } from './clima';
@@ -279,53 +280,23 @@ export function liberarPueblo(group:THREE.Group){
 
 /** Optional shared interior for a service. The house/hogar remains the host project's scene. */
 export function crearInteriorServicio(servicio:ServicioPueblo):THREE.Group {
-  const group=new THREE.Group(),a=new Arcilla(),col=servicio==='herreria'?'#b7b3a4':servicio==='clinica'?'#dfdfc7':'#dfc8a7';
-  a.box([9,.18,8],[0,-.04,0],C.woodLight,.02);for(let i=0;i<12;i++)a.box([9,.012,.035],[0,.057,-3.8+i*.67],C.wood,.001);
-  a.box([9,2.9,.2],[0,1.43,-4],col);a.box([.2,2.9,8],[-4.5,1.43,0],col);a.box([9,.2,.25],[0,2.9,-3.99],C.wood);
-  a.box([4.8,1.05,.9],[0,.55,-1.6],C.woodLight);a.box([5.05,.13,1.15],[0,1.14,-1.6],C.wood);
-  for(const side of [-1,1]){a.box([1.4,2.55,.65],[side*3.5,1.28,-3.5],C.wood);for(let shelf=0;shelf<3;shelf++)a.box([1.3,.12,.8],[side*3.5,.4+shelf*.77,-3.42],C.woodLight);}
-  if(servicio==='semillas'){for(let i=0;i<5;i++)crate(a,-2.8+i*1.4,0,-3.4,['#bd8b65','#d6b959','#8d9f5b'][i%3]);}
-  else if(servicio==='herreria'){a.box([2.1,1.7,1.35],[2.3,.85,-3.2],C.darkStone);a.box([1.3,.7,.03],[2.3,.8,-2.5],'#e4a263');a.box([1.5,.25,.65],[0,1.4,-1.6],C.metal);}
-  else if(servicio==='clinica'){a.box([1.5,.65,2.2],[2.5,.4,1],C.woodLight);a.box([1.65,.18,2.3],[2.5,.82,1],'#e9ecd8');a.box([1.2,.22,.5],[2.5,1,.24],'#b7caae');}
-  else if(servicio==='animales'){fence(a,-3.8,.4,-.4,.4);fence(a,-.4,.4,-.4,3.2);chicken(a,-2.2,1.8);chicken(a,-1.2,2.6);flowerpot(a,3.6,2.8);}
-  else if(servicio==='carpinteria'){a.box([2.6,.16,1.25],[1.8,1.02,1.2],C.woodLight);for(const s of [-1,1])a.box([.16,1,.95],[1.8+s, .49,1.2],C.wood);for(let i=0;i<3;i++)a.cyl(.17,2.5,[-2.8+i*.38,.22,1.4],C.wood,[Math.PI/2,0,0]);}
-  else if(servicio==='posada'){for(const x of [-2.5,2.5]){a.cyl(.92,.13,[x,.95,1.4],C.woodLight);a.cyl(.11,.92,[x,.46,1.4],C.wood);seat(a,x,2.65);}}
-  else {for(let i=0;i<12;i++)a.box([.16,.5+hash(i)*.2,.38],[-3.95+i*.083,.8,-3.1],['#a66959','#84927c','#b49b69'][i%3]);}
-  group.add(a.mesh());const vecino=NPCS_PUEBLO.find(n=>n.oficio===servicio);if(vecino){const personaje=vecinoPeluche(vecino.id,NPCS_PUEBLO.indexOf(vecino));personaje.name='dependiente';personaje.userData.npcId=vecino.id;personaje.position.set(-.8,0,-2.7);group.add(personaje);}return group;
+  // Cascarón y muebles modelados en Blender (cuartos.ts); aquí solo se pone a quien atiende
+  const group=interiorLocal(servicio);
+  const vecino=NPCS_PUEBLO.find(n=>n.oficio===servicio);if(vecino){const personaje=vecinoPeluche(vecino.id,NPCS_PUEBLO.indexOf(vecino));personaje.name='dependiente';personaje.userData.npcId=vecino.id;personaje.position.set(-.8,0,-2.7);group.add(personaje);}return group;
 }
 
 /** Interiores propios, agrupados en una malla de color por vivienda. */
 export function crearInteriorVivienda(v:ViviendaPueblo){
- const g=new THREE.Group(),a=new Arcilla();g.name='interior-vivienda';const color=NPCS_PUEBLO.find(n=>n.id===v.ocupantes[0])?.color??C.cream;
- a.box([12,.18,10],[0,-.08,0],C.woodLight);for(let i=0;i<20;i++)a.box([12,.012,.025],[0,.02,-4.8+i*.5],C.wood,0);
- a.box([12,3,.18],[0,1.5,-5],C.cream);a.box([.18,3,10],[-6,1.5,0],'#dfcdb0');for(const x of [-5.8,0,5.8])a.box([.18,3,.2],[x,1.5,-4.88],C.beam);
- for(const x of [-3,3])windowFront(a,x,1.9,-4.8,color,1.5);
- a.box([5,.025,2.5],[0,.025,2],color,0);for(const x of [-2.4,2.4])a.box([.04,.015,2.4],[x,.045,2],C.cream,0);
- for(let i=0;i<v.ocupantes.length;i++){const x=[-4.5,-1.5,1.5,4.5][i],n=NPCS_PUEBLO.find(n=>n.id===v.ocupantes[i])!;a.box([1.65,2.5,.18],[x,1.25,-4.8],C.beam);a.box([1.4,2.3,.13],[x,1.2,-4.65],n.color);for(let j=0;j<4;j++)a.box([.035,2.05,.04],[x-.5+j*.33,1.2,-4.55],C.wood);a.ball([.08,.08,.08],[x+.42,1.2,-4.53],'#d9bc76');}
+ const g=new THREE.Group();g.name='interior-vivienda';const colores=v.ocupantes.map(id=>NPCS_PUEBLO.find(n=>n.id===id)?.color??C.cream);
+ g.add(interiorVivienda(colores,v.tema));
+ // Una puerta por cuarto, del color de quien vive ahí
+ for(let i=0;i<v.ocupantes.length;i++)puertaCuarto(g,[-4.5,-1.5,1.5,4.5][i],-5,colores[i]);
 
- a.box([2.4,.16,1.6],[-1,.9,-.7],C.woodLight);for(const x of [-2,-.0])for(const z of [-1.3,-.1])a.box([.14,.8,.14],[x,.4,z],C.wood);
- a.cyl(.22,.09,[-1,.99,-.7],'#e6ceb0');a.cyl(.13,.3,[-.5,1.1,-.7],color);a.box([1.6,2.3,1.8],[4.5,1.15,0],C.wood);for(let i=0;i<3;i++)a.box([1.65,.1,1.85],[4.5,.3+i*.7,0],C.woodLight);
- for(let i=0;i<6;i++)a.box([.13,.45,.5],[3.9+i*.2,.59,-.25],i%2?color:C.cream);
- flowerpot(a,-5,2.7,color,.35);flowerpot(a,5,3,color,.35);
- if(['huerto','jardin','corral','despertar','bosque','rosal'].includes(v.tema))for(let i=0;i<3;i++)flowerpot(a,-4+i*.65,-1.5,color,.24);
- if(['roble','forja','senderos','ribera'].includes(v.tema)){a.box([1.6,.08,.65],[-4,1.1,0],C.wood);a.cyl(.12,.8,[-4,1.25,0],C.metal,[0,0,Math.PI/2]);}
- if(['archivo','escuela','observatorio','calma'].includes(v.tema)){for(let i=0;i<4;i++)a.box([.5,.1,.7],[-4,.2+i*.12,0],i%2?color:C.cream);if(v.tema==='observatorio'){for(let i=0;i<3;i++){const t=i*Math.PI*2/3;a.box([.07,1,.07],[-4+Math.sin(t)*.24,.5,-1+Math.cos(t)*.24],C.metal,0,[Math.cos(t)*.4,0,Math.sin(t)*.4]);}a.cyl(.16,.16,[-4,1,-1],C.metal);a.cyl(.19,1.3,[-4,1.3,-1],C.metal,[Math.PI/2,0,.2]);a.ball([.12,.12,.03],[-4,1.3,-.33],C.glass);}}
- if(['molino','tejidos'].includes(v.tema)){a.box([1.8,.8,.5],[-4,.5,0],C.wood);a.box([1.5,.1,1.2],[-4,1.3,0],color);}
- for(const x of [-1,1])a.box([.15,2.7,.15],[x,1.35,4.8],C.beam);a.box([2.15,.2,.2],[0,2.6,4.8],C.woodLight);
- const room=a.mesh();room.name='mobiliario-vivienda';g.add(room);
  for(const id of v.ocupantes){const n=NPCS_PUEBLO.find(n=>n.id===id)!;const personaje=vecinoPeluche(n.id,NPCS_PUEBLO.indexOf(n));personaje.userData.npcId=id;personaje.userData.residente=true;const pos=posicionResidente(id);personaje.position.set(pos.x,0,pos.z);personaje.visible=false;g.add(personaje);}return g;
 }
 export function updateInteriorVivienda(g:THREE.Group,s:EstadoGranja,tiempo=0){const rain=lluviaRiega(tiempoDia(s.tiempo,s.jornada.diasCompletados));g.traverse(o=>{if(o.userData.residente){const u=ubicacionAldeano(o.userData.npcId,s.jornada.diasCompletados,s.jornada.minutos,rain);o.visible=u?.actividad==='hogar'&&visitaVivienda(s.jornada.minutos)&&(o.userData.privado?horaDormitorio(s.jornada.minutos):!horaDormitorio(s.jornada.minutos));o.scale.y=1+Math.sin(tiempo*2+(o.userData.seed??0))*.007;}});}
 
 export function crearDormitorio(id:string){
- const n=NPCS_PUEBLO.find(n=>n.id===id)!,a=new Arcilla(),g=new THREE.Group();g.name='dormitorio';const color=n.color;
- a.box([8,.18,8],[0,-.08,0],C.woodLight);for(let i=0;i<16;i++)a.box([8,.012,.025],[0,.02,-3.8+i*.5],C.wood,0);
- a.box([8,3,.18],[0,1.5,-4],C.cream);a.box([.18,3,8],[-4,1.5,0],'#dfcdb0');windowFront(a,0,1.9,-3.85,color,1.6);
- for(const x of [-3.8,3.8])a.box([.16,3,.2],[x,1.5,-3.85],C.beam);
- a.box([1.6,.6,2],[-2.5,.3,-2.6],C.wood);a.box([1.5,.22,1.9],[-2.5,.7,-2.6],C.cream);a.box([1.5,.1,1.3],[-2.5,.84,-2.3],color);a.box([1.1,.18,.4],[-2.5,.92,-3.2],C.white);a.box([1.7,1.1,.16],[-2.5,.55,-3.6],C.wood);
- a.box([1.8,.13,1.1],[2.4,.9,-2.2],C.woodLight);for(const x of [1.65,3.15])for(const z of [-2.6,-1.8])a.box([.12,.85,.12],[x,.45,z],C.wood);a.box([.6,.025,.45],[2.3,1,-2.2],C.cream);a.cyl(.1,.24,[2.9,1.06,-2.2],color);a.cyl(.06,.35,[2.9,1.2,-2.2],C.wood,[0,0,.25]);
- a.box([.7,2.1,1.4],[-3.3,1.05,.2],C.wood);for(let i=0;i<3;i++){a.box([.8,.1,1.5],[-3.3,.3+i*.7,.2],C.woodLight);for(let j=0;j<4;j++)a.box([.45,.42,.12],[-3.15,.55+i*.7,-.25+j*.26],j%2?color:C.cream);}
- a.box([3.1,.025,2.3],[0,.03,1.1],color,0);for(const x of [-1.45,1.45])a.box([.04,.02,2.2],[x,.05,1.1],C.cream,0);flowerpot(a,3,2.2,color,.32);
- for(const x of [-1,1])a.box([.15,2.6,.15],[x,1.3,3.9],C.beam);a.box([2.15,.2,.2],[0,2.6,3.9],C.woodLight);
- const m=a.mesh();m.name='mobiliario-dormitorio';g.add(m);const residente=vecinoPeluche(n.id,NPCS_PUEBLO.indexOf(n));residente.userData.npcId=id;residente.userData.residente=true;residente.userData.privado=true;residente.position.set(0,0,0);residente.visible=false;g.add(residente);return g;
+ const n=NPCS_PUEBLO.find(n=>n.id===id)!,g=new THREE.Group();g.name='dormitorio';g.add(interiorDormitorio(n.color));
+const residente=vecinoPeluche(n.id,NPCS_PUEBLO.indexOf(n));residente.userData.npcId=id;residente.userData.residente=true;residente.userData.privado=true;residente.position.set(0,0,0);residente.visible=false;g.add(residente);return g;
 }
