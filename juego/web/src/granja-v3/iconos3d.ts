@@ -137,7 +137,17 @@ function planton(hojas: string): THREE.Group {
 }
 
 // ── Minerales, lingotes y recursos ───────────────────────────────────
-const COLOR_MINERAL: Record<string, string> = { carbon: '#3a3533', cobre: '#c8743c', hierro: '#b7c0c6', oro: '#f2c14a', cuarzo: '#f2eef8', rubi: '#d8364c', jade: '#4fb48a', obsidiana: '#352a44', plata: '#dfe4ea', titanio: '#9aa7c9', meteorita: '#5b4a6e', cristal_astral: '#8fd6ff', acero: '#8d98a6', astral: '#a98bff' };
+const COLOR_MINERAL: Record<string, string> = { carbon: '#3a3533', cobre: '#c8743c', hierro: '#b7c0c6', oro: '#f2c14a', cuarzo: '#f2eef8', rubi: '#d8364c', jade: '#4fb48a', obsidiana: '#352a44', plata: '#dfe4ea', titanio: '#9aa7c9', meteorita: '#5b4a6e', cristal_astral: '#8fd6ff', acero: '#8d98a6', astral: '#a98bff', estano: '#c9cfc4', bronce: '#c98a4a', mitrilo: '#8fe0ea', amatista: '#b07ee0', topacio: '#f2b84a', aguamarina: '#6fd3e6', esmeralda: '#3fc27a', diamante: '#eaf8ff', geoda: '#a99c8e', geoda_helada: '#a8c8dc', geoda_magma: '#b0624a', geoda_omni: '#b49ad8' };
+/** Geoda: piedra redonda partida por la mitad con cristales adentro. */
+function geoda(roca: string, cristal: string): THREE.Group {
+  const g = new THREE.Group();
+  M(g, new THREE.SphereGeometry(0.34, 18, 14), mat(roca, { rough: 0.95 }), [0, 0, 0], [0, 0, 0], [1, 0.92, 0.9]);
+  // Cara partida hacia el frente, con su borde claro y cristales que brillan
+  M(g, new THREE.CircleGeometry(0.24, 18), mat('#3b3046', { rough: 0.7 }), [0.02, 0.04, 0.3]);
+  M(g, new THREE.TorusGeometry(0.24, 0.035, 6, 20), mat('#efe8f4', { rough: 0.5 }), [0.02, 0.04, 0.3]);
+  for (let k = 0; k < 9; k++) { const p = new THREE.OctahedronGeometry(0.05 + (k % 3) * 0.018, 0); p.scale(0.8, 1.3, 0.8); const a = k * 0.7, r = k === 0 ? 0 : 0.08 + (k % 2) * 0.07; M(g, p, mat(cristal, { metal: 0.1, rough: 0.1, brillo: 0.35 }), [0.02 + Math.cos(a) * r, 0.04 + Math.sin(a) * r, 0.33], [0.3, 0, a]); }
+  return g;
+}
 function gema(color: string, brillo = 0.15): THREE.Group {
   const g = new THREE.Group();
   const geo = new THREE.OctahedronGeometry(0.3, 0); geo.scale(0.9, 1.25, 0.9);
@@ -277,12 +287,13 @@ export function figuraObjeto(id: string): THREE.Group | null {
   if (id.startsWith('lingote_')) return lingote(COLOR_MINERAL[id.slice(8)] ?? '#b7c0c6');
   if (def?.categoria === 'mineral' || COLOR_MINERAL[id]) {
     const c = COLOR_MINERAL[id] ?? '#b7c0c6';
-    return ['cuarzo', 'rubi', 'jade', 'obsidiana', 'cristal_astral', 'meteorita'].includes(id) ? gema(c, id === 'cristal_astral' ? 0.4 : 0.08) : mena(c);
+    if (id.startsWith('geoda')) return geoda(c, ({ geoda: '#b07ee0', geoda_helada: '#6fd3e6', geoda_magma: '#3fc27a', geoda_omni: '#eaf8ff' } as Record<string, string>)[id] ?? '#b07ee0');
+    return ['cuarzo', 'rubi', 'jade', 'obsidiana', 'cristal_astral', 'meteorita', 'amatista', 'topacio', 'aguamarina', 'esmeralda', 'diamante'].includes(id) ? gema(c, id === 'cristal_astral' || id === 'diamante' ? 0.4 : 0.1) : mena(c);
   }
   if (def?.categoria === 'pez') return pez(({ carpa: '#bb9b62', perca: '#83a877', trucha: '#b18c9e', bagre: '#7f92a3', lucio: '#739482', sardina_lago: '#a8bdc5', salmon: '#e39987', anguila: '#827d9c', pez_sol: '#e3b75f', esturion: '#8090a1', trucha_arcoiris: '#99bcb2', tenca: '#a0a77b', pez_hielo: '#a3dce0', koi_lunar: '#a09ac8', anguila_cristal: '#c0b7dc', pez_lava: '#e48966', carpa_ancestral: '#96ae7a', pez_aurora: '#c2a9d9' } as Record<string, string>)[id] ?? '#99b8b0');
   if (def?.categoria === 'equipo') {
     const [tipo, material] = id.split('_'), color = COLOR_MINERAL[material] ?? '#b7c0c6';
-    if (tipo === 'espada') { const nivel = { cobre: 1, hierro: 2, oro: 2, obsidiana: 3, titanio: 3, astral: 4 }[material] ?? 1; return crearHerramienta('espada', nivel); }
+    if (tipo === 'espada') { const nivel = ({ cobre: 1, bronce: 1, hierro: 2, oro: 2, obsidiana: 3, titanio: 3, mitrilo: 4, astral: 4 } as Record<string, number>)[material] ?? 1; return crearHerramienta('espada', nivel); }
     return armadura(tipo, color);
   }
   return null;

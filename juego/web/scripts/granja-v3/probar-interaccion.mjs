@@ -3,7 +3,8 @@ import { transform } from 'esbuild';
 import { readFile } from 'node:fs/promises';
 const modules=new Map();
 async function compile(url){if(modules.has(url.href))return modules.get(url.href);let {code}=await transform(await readFile(url,'utf8'),{loader:'ts',format:'esm',target:'es2022'});for(const match of [...code.matchAll(/from (["'])(\.\/[^"']+)\1/g)])code=code.replace(match[0],`from ${JSON.stringify(await compile(new URL(`${match[2]}.ts`,url)))}`);const result=`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`;modules.set(url.href,result);return result;}
-const {MotorGranja,validarEstado,migrarEstado}=await import(await compile(new URL('../../src/granja-v3/motor.ts',import.meta.url)));
+const {MotorGranja,validarEstado,migrarEstado,riegaAspersor}=await import(await compile(new URL('../../src/granja-v3/motor.ts',import.meta.url)));
+const {RECETAS,obtenerObjeto}=await import(await compile(new URL('../../src/granja-v3/objetos.ts',import.meta.url)));
 const {distribuirInventario,resumirCasillas}=await import(await compile(new URL('../../src/granja-v3/inventario.ts',import.meta.url)));
 const {crearCultivo,reconciliarCultivo,regarCultivo}=await import(await compile(new URL('../../src/granja-v3/cuidados.ts',import.meta.url)));
 const {NIVELES_HERRAMIENTA}=await import(await compile(new URL('../../src/granja-v3/progresion.ts',import.meta.url)));
@@ -70,4 +71,12 @@ test('Pescar puede usar la casilla liberada por el último cebo; si no cabe el p
  const pez=m.pecesDisponibles('lombriz').find(p=>m.estado.inventario[p.id]===1);assert.ok(pez);assert.equal(m.estado.casillasInventario.filter(Boolean).length,24);assert.equal(validarEstado(m.estado),null);
 });
 
+test('Aspersor básico riega en cruz; minerales nuevos tienen aleaciones, armaduras y máquinas que los procesan',()=>{
+ const b={articulo:'aspersor_basico',x:0,z:0},c={articulo:'aspersor_cobre',x:0,z:0};
+ assert.deepEqual([[1,0],[0,1],[-1,0],[0,-1]].map(([x,z])=>riegaAspersor(b,x,z)),[true,true,true,true]);assert.equal(riegaAspersor(b,1,1),false);assert.equal(riegaAspersor(b,0,0),false);assert.equal(riegaAspersor(c,1,1),true);
+ for(const id of ['estano','mitrilo','amatista','topacio','aguamarina','esmeralda','diamante','geoda_omni','lingote_bronce','lingote_mitrilo','pechera_mitrilo','espada_bronce','alto_horno','trituradora','taladro_vapor','ensambladora'])assert.ok(obtenerObjeto(id),id);
+ for(const est of ['alto_horno','trituradora','taladro_vapor','ensambladora'])assert.ok(RECETAS.filter(r=>r.estacion===est).length>=3,est);
+ for(const r of RECETAS.filter(r=>['alto_horno','trituradora','taladro_vapor','ensambladora'].includes(r.estacion)))for(const k of [...Object.keys(r.ingredientes),r.salida.articulo])assert.ok(obtenerObjeto(k),k);
+ assert.ok(RECETAS.find(r=>r.id==='tanda_cobre').salida.cantidad>RECETAS.find(r=>r.id==='lingote_cobre').salida.cantidad);
+});
 console.log(JSON.stringify({suite:'motor-interaccion-inventario-herreria',ok:failures===0,checks,failures}));if(failures)process.exitCode=1;

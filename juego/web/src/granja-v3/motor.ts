@@ -51,6 +51,8 @@ export function huella(e:Pick<Edificio,'articulo'|'giro'|'x'|'z'>):{x:number;z:n
 function contiene(r:{x:number;z:number;ancho:number;fondo:number},x:number,z:number){return x>=r.x&&x<r.x+r.ancho&&z>=r.z&&z<r.z+r.fondo}
 function solapa(a:ReturnType<typeof huella>,b:ReturnType<typeof huella>){return a.x<b.x+b.ancho&&a.x+a.ancho>b.x&&a.z<b.z+b.fondo&&a.z+a.fondo>b.z}
 
+/** Casillas que riega un aspersor (como en Stardew: el básico solo en cruz; los demás en cuadro). */
+export function riegaAspersor(n:{articulo:string;x:number;z:number},x:number,z:number){const a=obtenerObjeto(n.articulo)?.aspersor;if(!a)return false;const dx=Math.abs(n.x-x),dz=Math.abs(n.z-z);return a.cruz?dx+dz<=a.radio&&(dx||dz)>0:Math.max(dx,dz)<=a.radio;}
 /** Premio de los cofres de las Minas de Celia (pisos 10, 20 … 100). */
 const PREMIOS_COFRE:Record<number,string>={10:'botas_cobre',20:'espada_cobre',30:'casco_hierro',40:'espada_hierro',50:'pechera_hierro',60:'botas_oro',70:'espada_oro',80:'casco_obsidiana',90:'espada_obsidiana',100:'pechera_titanio'};
 export class MotorGranja {
@@ -203,7 +205,7 @@ export class MotorGranja {
   for(const a of s.animales)programar(a.ultimoProductoAt,ESPECIES[a.especie].periodoMs);
   const aspersores=s.produccion.estructuras.filter(n=>obtenerObjeto(n.articulo)?.aspersor);if(aspersores.length||s.invernaderos.some(i=>i.riegoAutomatico))programar(s.inicioTiempo,6*HORA);
   const regarAutomaticos=(at:number,continuo=false)=>{
-   const cubierto=(x:number,z:number)=>aspersores.some(n=>n.zona==='granja'&&Math.max(Math.abs(n.x-x),Math.abs(n.z-z))<=(obtenerObjeto(n.articulo)?.aspersor?.radio??0));
+   const cubierto=(x:number,z:number)=>aspersores.some(n=>n.zona==='granja'&&riegaAspersor(n,x,z));
    const regar=(p:EstadoGranja['parcelas'][number])=>{if(p.cuidado?.status==='creciendo'){p.cuidado=continuo?{...p.cuidado,lastWateredAt:at,lastEvaluatedAt:at}:regarCultivo(p.cuidado,at);if(p.cuidado.status==='creciendo'){p.campo??=crearCampo();p.campo.riegoDia=s.jornada.diasCompletados;}}};
    const regarArbol=(f:Frutal)=>{if(continuo&&f.cuidado.status==='creciendo'){f.cuidado={...f.cuidado,lastWateredAt:at,lastEvaluatedAt:at};f.riegoDia=s.jornada.diasCompletados;}else regarFrutal(f,s.jornada.diasCompletados,at);};
    for(const p of s.parcelas)if(cubierto(p.x,p.z))regar(p);
@@ -651,12 +653,12 @@ export class MotorGranja {
     const aspersores=s.produccion.estructuras.filter(n=>n.zona==='granja'&&obtenerObjeto(n.articulo)?.aspersor);
     for(const parcela of this.todasParcelas()){
      const c=parcela.cuidado;if(c?.status!=='creciendo')continue;
-     if(s.invernaderos.some(i=>i.riegoAutomatico&&i.parcelas.includes(parcela))||s.parcelas.includes(parcela)&&aspersores.some(n=>Math.max(Math.abs(n.x-parcela.x),Math.abs(n.z-parcela.z))<=(obtenerObjeto(n.articulo)?.aspersor?.radio??0))||s.ayudante&&s.ayudante.hasta>now){parcela.cuidado=regarCultivo(c,now);parcela.campo??=crearCampo();parcela.campo.riegoDia=s.jornada.diasCompletados;}
+     if(s.invernaderos.some(i=>i.riegoAutomatico&&i.parcelas.includes(parcela))||s.parcelas.includes(parcela)&&aspersores.some(n=>riegaAspersor(n,parcela.x,parcela.z))||s.ayudante&&s.ayudante.hasta>now){parcela.cuidado=regarCultivo(c,now);parcela.campo??=crearCampo();parcela.campo.riegoDia=s.jornada.diasCompletados;}
      if(parcela.campo?.riegoDia!==s.jornada.diasCompletados)continue;
      const antes=parcela.cuidado!,despues=avanzarCultivoDia(antes,CRECIMIENTO_NOCHE_MS,now);parcela.cuidado=despues;
      if(despues.grownMs>antes.grownMs)avanzados++;if(despues.status==='maduro'&&antes.status!=='maduro')maduros++;
     }
-    for(const f of s.frutales){if(s.ayudante&&s.ayudante.hasta>now||f.edificioId&&s.invernaderos.some(i=>i.edificioId===f.edificioId&&i.riegoAutomatico)||!f.edificioId&&aspersores.some(n=>Math.max(Math.abs(n.x-f.x),Math.abs(n.z-f.z))<=(obtenerObjeto(n.articulo)?.aspersor?.radio??0)))regarFrutal(f,s.jornada.diasCompletados,now);const paso=avanzarFrutal(f,s.jornada.diasCompletados,now,this.frutalDespejado(f));if(paso.crecio)this.contar('frutales_crecidos');if(paso.maduro)this.contar('frutales_maduros');if(paso.producido)this.contar('fruta_producida');}
+    for(const f of s.frutales){if(s.ayudante&&s.ayudante.hasta>now||f.edificioId&&s.invernaderos.some(i=>i.edificioId===f.edificioId&&i.riegoAutomatico)||!f.edificioId&&aspersores.some(n=>riegaAspersor(n,f.x,f.z)))regarFrutal(f,s.jornada.diasCompletados,now);const paso=avanzarFrutal(f,s.jornada.diasCompletados,now,this.frutalDespejado(f));if(paso.crecio)this.contar('frutales_crecidos');if(paso.maduro)this.contar('frutales_maduros');if(paso.producido)this.contar('fruta_producida');}
     for(const animal of s.animales)animal.edadDias=Math.min(1_000_003,animal.edadDias+1);
     for(const i of s.ganaderia.incubadoras){const h=i.huevo;if(!h)continue;const huevo=leerHuevo(h.articulo)!;h.dias++;if(h.dias>=GANADO[huevo.especie].incubacion){this.nacimiento(huevo.especie,huevo.genoma,huevo.sexo,i.edificioId,h.nombre,now);i.huevo=null;this.contar('huevos_incubados');}}
     cerrarDiaCompania(s);this.paseosCompania.limpiar();s.vida=100;s.energia=100;s.interior=null;s.servicio=null;s.enemigo=0;s.posicionExterior={zona:'granja',...p};this.contar('dias_dormidos');

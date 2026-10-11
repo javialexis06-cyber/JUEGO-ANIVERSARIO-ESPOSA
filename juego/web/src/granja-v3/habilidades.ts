@@ -56,7 +56,7 @@ export function mejorarBotin(e:EstadoHabilidades,botin:Record<string,number>,tip
 
 /** Requisitos de aprendizaje adicionales a herramientas y descubrimientos. */
 export function requisitoReceta(r:RecetaProduccion):{habilidad:Habilidad;nivel:number} {const id=r.salida.articulo;
- if(id.startsWith('aspersor_'))return {habilidad:'agricultura',nivel:id==='aspersor_cobre'?2:id==='aspersor_hierro'?5:9};
+ if(id.startsWith('aspersor_'))return {habilidad:'agricultura',nivel:id==='aspersor_basico'?1:id==='aspersor_cobre'?2:id==='aspersor_hierro'?5:9};
  if(id==='fertilizante_mejorado')return {habilidad:'agricultura',nivel:3};
  if(id==='cebo_refinado')return {habilidad:'pesca',nivel:2};
  if(id==='prensa'||id==='fermentador'||id==='telar')return {habilidad:'agricultura',nivel:id==='prensa'?2:4};

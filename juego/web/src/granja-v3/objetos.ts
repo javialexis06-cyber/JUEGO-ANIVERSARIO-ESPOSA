@@ -4,7 +4,7 @@ import { ARTICULOS, CULTIVOS, ESPECIES, PECES, PRECIOS_VENTA } from './catalogo'
 
 /** Un único vocabulario de objetos para mochila, cofres, cocina, equipo y botín. */
 export type RarezaObjeto='comun'|'inusual'|'raro'|'epico'|'legendario';
-export type EstacionProduccion='mano'|'banco_trabajo'|'horno'|'fundidora'|'prensa'|'molino_artesanal'|'cocina'|'fermentador'|'telar'|'recicladora'|'forja';
+export type EstacionProduccion='mano'|'banco_trabajo'|'horno'|'fundidora'|'prensa'|'molino_artesanal'|'cocina'|'fermentador'|'telar'|'recicladora'|'forja'|'alto_horno'|'trituradora'|'taladro_vapor'|'ensambladora';
 export type TipoBuff='ataque'|'defensa'|'velocidad'|'pesca'|'mineria'|'suerte';
 export interface BuffObjeto {tipo:TipoBuff;valor:number;duracionMs:number}
 export interface DefObjeto {
@@ -13,7 +13,7 @@ export interface DefObjeto {
  comida?:{energia:number;vida:number;buffs?:BuffObjeto[]};
  equipo?:{ranura:'arma'|'casco'|'pechera'|'botas';ataque?:number;defensa?:number;critico?:number;velocidad?:number};
  herramienta?:{tipo:string;nivel:number};maquina?:{estacion:EstacionProduccion};contenedor?:{casillas:number};
- aspersor?:{radio:number};
+ aspersor?:{radio:number;cruz?:boolean};
 }
 export interface RecetaProduccion {id:string;nombre:string;estacion:EstacionProduccion;ingredientes:Record<string,number>;salida:{articulo:string;cantidad:number};duracionMs:number;nivel:number;requisito?:string}
 export const OBJETOS:Record<string,DefObjeto>=Object.create(null);
@@ -32,10 +32,15 @@ for(const [id,nombre,precio,rareza] of [
  ['carbon','Carbón',5,'comun'],['cobre','Mineral de cobre',7,'comun'],['hierro','Mineral de hierro',12,'comun'],['oro','Mineral de oro',28,'inusual'],
  ['cuarzo','Cuarzo',18,'comun'],['rubi','Rubí',85,'raro'],['jade','Jade',65,'raro'],['obsidiana','Obsidiana',50,'raro'],
  ['plata','Mineral de plata',22,'inusual'],['titanio','Mineral de titanio',60,'epico'],['meteorita','Meteorita',110,'epico'],['cristal_astral','Cristal astral',180,'legendario'],
+ // Minas de Celia (estilo Stardew): estaño para el bronce, mitrilo de la caverna, gemas y geodas para la trituradora
+ ['estano','Mineral de estaño',9,'comun'],['mitrilo','Mineral de mitrilo',140,'epico'],['amatista','Amatista',45,'inusual'],['topacio','Topacio',55,'inusual'],
+ ['aguamarina','Aguamarina',75,'raro'],['esmeralda','Esmeralda',120,'raro'],['diamante','Diamante',300,'epico'],
+ ['geoda','Geoda',20,'comun'],['geoda_helada','Geoda helada',35,'inusual'],['geoda_magma','Geoda de magma',50,'raro'],['geoda_omni','Geoda omni',120,'epico'],
  ] as [string,string,number,RarezaObjeto][])objeto(id,nombre,'mineral',precio,{rareza});
 for(const [id,nombre,precio,rareza] of [
  ['cobre','Cobre',45,'comun'],['hierro','Hierro',75,'comun'],['oro','Oro',170,'inusual'],['plata','Plata',135,'inusual'],
  ['titanio','Titanio',365,'epico'],['meteorita','Meteorita',660,'epico'],['acero','Acero',165,'raro'],['astral','Aleación astral',1150,'legendario'],
+ ['bronce','Bronce',95,'comun'],['mitrilo','Mitrilo',900,'epico'],
  ] as [string,string,number,RarezaObjeto][])objeto(`lingote_${id}`,`Lingote de ${nombre.toLowerCase()}`,'lingote',precio,{rareza});
 for(const c of CULTIVOS){if(!OBJETOS[c.producto])objeto(c.producto,c.nombre,'producto',c.valor);objeto(c.semilla,`Semillas de ${c.nombre.toLowerCase()}`,'semilla',Math.max(1,Math.floor(c.precio/2)),{precioCompra:c.precio});}
 for(const p of PECES)objeto(p.id,p.nombre,'pez',p.valor,{rareza:p.rareza>=5?'epico':p.rareza>=3?'raro':'comun'});
@@ -60,7 +65,7 @@ for(const [id,nombre,precio,energia,vida,buffs] of comidas)objeto(id,nombre,'com
 for(const [tipo,nombre] of [['hacha','Hacha'],['pico','Pico'],['azada','Azada'],['regadera','Regadera'],['guadana','Guadaña'],['cana','Caña'],['espada','Espada']] as const){
  objeto(`herramienta_${tipo}`,nombre,'herramienta',0,{pilaMax:1,herramienta:{tipo,nivel:0},descripcion:`Herramienta permanente: ${nombre.toLowerCase()}.`});
 }
-const metales:[string,string,number,number,number,RarezaObjeto][]=[['cobre','cobre',7,2,100,'comun'],['hierro','hierro',12,4,220,'inusual'],['oro','oro',14,3,390,'raro'],['obsidiana','obsidiana',21,6,600,'raro'],['titanio','titanio',29,9,1100,'epico'],['astral','aleación astral',40,13,2400,'legendario']];
+const metales:[string,string,number,number,number,RarezaObjeto][]=[['cobre','cobre',7,2,100,'comun'],['bronce','bronce',10,3,160,'comun'],['hierro','hierro',12,4,220,'inusual'],['oro','oro',14,3,390,'raro'],['obsidiana','obsidiana',21,6,600,'raro'],['titanio','titanio',29,9,1100,'epico'],['mitrilo','mitrilo',34,11,1600,'epico'],['astral','aleación astral',40,13,2400,'legendario']];
 for(const [metal,nombre,ataque,defensa,precio,rareza] of metales){
  objeto(`espada_${metal}`,`Espada de ${nombre}`,'equipo',precio,{pilaMax:1,rareza,equipo:{ranura:'arma',ataque,critico:metal==='oro'?.16:metal==='astral'?.12:.05}});
  for(const [pieza,etiqueta,factor] of [['casco','Casco',.6],['pechera','Pechera',1],['botas','Botas',.5]] as const)
@@ -72,6 +77,14 @@ for(const [id,nombre,precio] of [
  ['cocina','Cocina de campo',160],['fermentador','Fermentador de roble',180],['telar','Telar',190],['recicladora','Recicladora',210],
  ['banco_trabajo','Banco de trabajo',90],['forja','Forja de equipo',300],
  ] as [EstacionProduccion,string,number][])objeto(id,nombre,'maquina',precio,{pilaMax:20,maquina:{estacion:id},descripcion:`Colócala junto a un cofre para automatizar sus recetas.`});
+// Revolución industrial: máquinas de vapor que trabajan solas entre cofres (entra por un cofre, sale por otro)
+for(const [id,nombre,precio,descripcion] of [
+ ['alto_horno','Alto horno',900,'Funde por tandas: más lingotes por mineral y más rápido que el horno. Junto a un cofre trabaja sola.'],
+ ['trituradora','Trituradora de vapor',650,'Parte geodas y saca sus gemas; también muele piedra en arena.'],
+ ['taladro_vapor','Taladro de vapor',1400,'Saca mineral del suelo de la granja con carbón, sin bajar a la mina.'],
+ ['ensambladora','Ensambladora',1200,'Arma engranajes, baterías y circuitos en serie.'],
+ ] as [EstacionProduccion,string,number,string][])objeto(id,nombre,'maquina',precio,{pilaMax:20,rareza:'raro',maquina:{estacion:id},descripcion});
+objeto('aspersor_basico','Aspersor básico','estructura',45,{pilaMax:20,aspersor:{radio:1,cruz:true},descripcion:'Riega cada mañana las 4 casillas de al lado (arriba, abajo y a los lados).'});
 objeto('aspersor_cobre','Aspersor de cobre','estructura',100,{pilaMax:20,aspersor:{radio:1}});
 objeto('aspersor_hierro','Aspersor de hierro','estructura',280,{pilaMax:20,aspersor:{radio:2}});
 objeto('aspersor_astral','Aspersor astral','estructura',850,{pilaMax:20,rareza:'epico',aspersor:{radio:3}});
@@ -140,12 +153,50 @@ receta('fundidora','forja',{horno:1,lingote_acero:3,lingote_oro:2},90,2);
 RECETAS.push({id:'acero_forjado',nombre:'Acero de herrería',estacion:'forja',ingredientes:{lingote_hierro:3,carbon:4},salida:{articulo:'lingote_acero',cantidad:1},duracionMs:140_000,nivel:2});
 receta('engranaje','forja',{lingote_hierro:2},35,1,2);
 receta('bateria','banco_trabajo',{cuarzo:3,lingote_cobre:1,lingote_plata:1},60,1);
+receta('aspersor_basico','mano',{lingote_cobre:1,lingote_hierro:1},0);
 receta('aspersor_cobre','banco_trabajo',{lingote_cobre:3,lingote_hierro:1},35,1);
+// Bronce y mitrilo
+receta('lingote_bronce','horno',{cobre:3,estano:2,carbon:1},40,0,2);
+receta('lingote_mitrilo','fundidora',{mitrilo:5,carbon:4},160,4);
+// Máquinas industriales
+receta('alto_horno','forja',{horno:1,lingote_hierro:8,lingote_bronce:6,piedra:40},90,2);
+receta('trituradora','banco_trabajo',{lingote_hierro:5,lingote_bronce:4,engranaje:4,piedra:20},70,2);
+receta('taladro_vapor','forja',{lingote_acero:4,lingote_bronce:6,engranaje:6,bateria:1},120,3);
+receta('ensambladora','forja',{lingote_acero:3,engranaje:8,bateria:2,vidrio:4},110,3);
+// Alto horno: por tandas grandes
+const tanda=(id:string,estacion:EstacionProduccion,ingredientes:Record<string,number>,articulo:string,cantidad:number,segundos:number,nivel=0)=>RECETAS.push({id,nombre:`${OBJETOS[articulo]?.nombre??articulo} ×${cantidad}`,estacion,ingredientes,salida:{articulo,cantidad},duracionMs:segundos*1000,nivel});
+tanda('tanda_cobre','alto_horno',{cobre:12,carbon:1},'lingote_cobre',3,60,2);
+tanda('tanda_bronce','alto_horno',{cobre:6,estano:4,carbon:1},'lingote_bronce',5,70,2);
+tanda('tanda_hierro','alto_horno',{hierro:12,carbon:2},'lingote_hierro',3,80,2);
+tanda('tanda_plata','alto_horno',{plata:12,carbon:2},'lingote_plata',3,90,2);
+tanda('tanda_oro','alto_horno',{oro:12,carbon:3},'lingote_oro',3,100,2);
+tanda('tanda_acero','alto_horno',{lingote_hierro:4,carbon:4},'lingote_acero',3,110,3);
+tanda('tanda_titanio','alto_horno',{titanio:12,carbon:5},'lingote_titanio',3,140,3);
+tanda('tanda_mitrilo','alto_horno',{mitrilo:12,carbon:6},'lingote_mitrilo',3,180,4);
+// Trituradora: geodas → gemas, piedra → arena
+tanda('triturar_geoda','trituradora',{geoda:1},'amatista',1,25,2);
+tanda('triturar_geoda_cuarzo','trituradora',{geoda:2},'cuarzo',3,25,2);
+tanda('triturar_helada','trituradora',{geoda_helada:1},'aguamarina',1,30,2);
+tanda('triturar_helada_topacio','trituradora',{geoda_helada:2},'topacio',3,30,2);
+tanda('triturar_magma','trituradora',{geoda_magma:1},'esmeralda',1,35,2);
+tanda('triturar_magma_rubi','trituradora',{geoda_magma:2},'rubi',2,35,2);
+tanda('triturar_omni','trituradora',{geoda_omni:1},'diamante',1,45,3);
+tanda('moler_piedra','trituradora',{piedra:10},'arena',6,20,2);
+// Taladro de vapor: mineral con carbón, en la granja
+tanda('taladrar_cobre','taladro_vapor',{carbon:1},'cobre',5,90,3);
+tanda('taladrar_estano','taladro_vapor',{carbon:1},'estano',4,90,3);
+tanda('taladrar_hierro','taladro_vapor',{carbon:2},'hierro',4,120,3);
+tanda('taladrar_oro','taladro_vapor',{carbon:3},'oro',3,150,4);
+tanda('taladrar_titanio','taladro_vapor',{carbon:5},'titanio',2,240,4);
+// Ensambladora: piezas en serie
+tanda('serie_engranajes','ensambladora',{lingote_hierro:3},'engranaje',5,40,3);
+tanda('serie_baterias','ensambladora',{cuarzo:5,lingote_cobre:2,lingote_plata:1},'bateria',3,70,3);
+tanda('serie_circuitos','ensambladora',{bateria:3,lingote_oro:2,cristal_astral:1},'circuito_astral',2,110,4);
 receta('aspersor_hierro','banco_trabajo',{aspersor_cobre:1,lingote_hierro:4,engranaje:2},55,2);
 receta('aspersor_astral','forja',{aspersor_hierro:1,lingote_titanio:2,bateria:2,cristal_astral:1},90,3);
 for(const [metal,_nombre,_ataque,_defensa,_precio] of metales){
  const material=metal==='obsidiana'?'obsidiana':`lingote_${metal}`;
- const nivel=metal==='cobre'?0:metal==='hierro'?1:metal==='oro'||metal==='obsidiana'?2:metal==='titanio'?3:4;
+ const nivel=({cobre:0,bronce:1,hierro:1,oro:2,obsidiana:2,titanio:3,mitrilo:4,astral:4} as Record<string,number>)[metal]??4;
  receta(`espada_${metal}`,'forja',{[material]:2,madera:3},45+nivel*15,nivel);
  receta(`casco_${metal}`,'forja',{[material]:3,tela:1},45+nivel*15,nivel);
  receta(`pechera_${metal}`,'forja',{[material]:5,tela:2},55+nivel*15,nivel);

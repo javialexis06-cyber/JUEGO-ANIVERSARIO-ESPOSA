@@ -47,7 +47,7 @@ function rocaNodo(n:NodoAventura){
  // Roca grande y redondita con la veta a la vista: trozos de metal o cristales del color del mineral
  const g=new THREE.Group(),color=MINERALES[n.mineral].color,h=(k:number)=>{const v=Math.sin((n.x*12.9+n.z*78.2+k)*43.1)*4375.5;return v-Math.floor(v);};
  const roca=esfera(g,[.5,.36,.46],[0,.28,0],n.mineral==='piedra'?'#9a948c':'#7d7672');roca.rotation.y=h(1)*6;esfera(g,[.3,.22,.28],[.28,.2,.16],'#8a837d');
- if(['carbon','piedra','hierro','cobre','oro','plata','titanio','meteorita'].includes(n.mineral)){
+ if(['carbon','piedra','hierro','cobre','oro','plata','titanio','meteorita','estano','mitrilo','geoda','geoda_helada','geoda_magma','geoda_omni'].includes(n.mineral)){
   for(let k=0;k<6;k++){const angle=k*2.399+h(2),mesh=new THREE.Mesh(new THREE.DodecahedronGeometry(.11+h(k)*.05,0),new THREE.MeshStandardMaterial({color,roughness:n.mineral==='carbon'?.9:.35,metalness:['oro','plata','hierro','titanio','cobre'].includes(n.mineral)?.55:.05}));mesh.position.set(Math.sin(angle)*.33,.3+(k%3)*.12,Math.cos(angle)*.3);mesh.rotation.set(k,k*.6,k*.3);mesh.castShadow=true;g.add(mesh);}
  }else for(let k=0;k<4;k++){const angle=k*2.399+h(3);cristal(g,color,Math.sin(angle)*.25,Math.cos(angle)*.22,.5+k*.12);}
  g.scale.setScalar(1.25);objetivo(g,'nodo',n.id);g.position.set(n.x,0,n.z);return g;

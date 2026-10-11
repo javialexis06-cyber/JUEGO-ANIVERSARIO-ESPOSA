@@ -31,6 +31,29 @@ export function figura(articulo:string):FiguraProduccion{
   caja(fijo,[.09,.55,.64],[0,1.22,-.83],PALETA.cobre);const rotor=new THREE.Group();rotor.position.set(0,1.68,-.35);cilindro(rotor,.13,.1,0,0,0,PALETA.metal);for(const r of[0,Math.PI/2]){const b=caja(rotor,[1.6,.045,.105],[0,.08,0],PALETA.oro);b.rotation.y=r;}grupo.add(rotor);moviles.push(rotor);
  }else if(aspersor){
   cilindro(fijo,.22,.14,0,.09,0,metal);cilindro(fijo,.065,.53,0,.36,0,metal);const rotor=new THREE.Group();rotor.position.y=.64;caja(rotor,[.69,.07,.075],[0,0,0],metal);for(const x of[-.3,.3])caja(rotor,[.06,.06,.18],[x,0,.045],PALETA.claro);grupo.add(rotor);moviles.push(rotor);
+ }else if(articulo==='alto_horno'){
+  // Torre de ladrillo con boca encendida, chimenea humeando y fuelle que sube y baja
+  caja(fijo,[.95,.16,.95],[0,.08,0],'#7b6f66');for(let y=0;y<4;y++){const r=.42-y*.04;cilindro(fijo,r,.3,0,.31+y*.3,0,y%2?'#a8574a':'#b9644f',8);}
+  caja(fijo,[.36,.3,.05],[0,.42,.38],PALETA.oscuro);caja(fijo,[.28,.2,.06],[0,.38,.4],'#f2a24e');cilindro(fijo,.12,.6,.22,1.6,-.14,PALETA.metal,8);
+  for(const y of[.6,1.05])cilindro(fijo,.45,.04,0,y,0,PALETA.metal,8);
+  const fuelle=new THREE.Group();fuelle.position.set(-.48,.35,.1);caja(fuelle,[.18,.08,.34],[0,0,0],madera);caja(fuelle,[.16,.12,.3],[0,.08,0],'#8a5a3a');grupo.add(fuelle);moviles.push(fuelle);
+ }else if(articulo==='trituradora'){
+  // Tolva arriba, dos rodillos dentados que giran y bandeja de salida
+  caja(fijo,[.84,.5,.7],[0,.27,0],PALETA.metal);caja(fijo,[.62,.08,.5],[0,.55,0],PALETA.oscuro);
+  const tolva=new THREE.Mesh(new THREE.CylinderGeometry(.42,.22,.36,4,1,true),new THREE.MeshStandardMaterial({color:'#9aa3ab',roughness:.6,metalness:.4,side:THREE.DoubleSide}));tolva.rotation.y=Math.PI/4;tolva.position.y=.82;fijo.add(tolva);
+  for(const x of[-.14,.14]){const r=new THREE.Group();r.position.set(x,.62,0);cilindro(r,.11,.46,0,0,0,'#6d7680',10);r.children[0].rotation.x=Math.PI/2;for(let k=0;k<6;k++){const d=caja(r,[.05,.05,.44],[Math.cos(k)*.12,Math.sin(k)*.12,0],PALETA.claro);d.rotation.z=k;}grupo.add(r);moviles.push(r);}
+  caja(fijo,[.4,.05,.3],[0,.12,.45],PALETA.cobre);
+ }else if(articulo==='taladro_vapor'){
+  // Torre de perforación: patas de hierro, caldera, broca que gira y nube de vapor
+  for(const [x,z] of[[-.4,-.4],[.4,-.4],[-.4,.4],[.4,.4]]){const p=caja(fijo,[.08,1.5,.08],[x*.8,.75,z*.8],PALETA.metal);p.rotation.set(z*.12,0,-x*.12);}
+  caja(fijo,[.7,.08,.7],[0,1.45,0],PALETA.metal);cilindro(fijo,.26,.5,.3,.3,.25,PALETA.cobre,10);esfera(fijo,[.26,.16,.26],[.3,.56,.25],PALETA.cobre);cilindro(fijo,.05,.4,.3,.85,.25,PALETA.metal,6);
+  const broca=new THREE.Group();broca.position.y=.7;cilindro(broca,.06,1.2,0,0,0,'#c9cdd2',6);for(let k=0;k<4;k++){const h=caja(broca,[.22,.03,.05],[0,-.4+k*.2,0],'#9aa3ab');h.rotation.y=k*.8;}grupo.add(broca);moviles.push(broca);
+  caja(fijo,[.5,.05,.5],[0,.03,0],'#6b5a4c');
+ }else if(articulo==='ensambladora'){
+  // Mesa con cinta transportadora, brazo mecánico y engranajes a la vista
+  caja(fijo,[.9,.5,.6],[0,.27,0],PALETA.metal);caja(fijo,[.92,.06,.34],[0,.55,.08],PALETA.oscuro);for(let k=0;k<5;k++)caja(fijo,[.04,.065,.32],[-.36+k*.18,.56,.08],'#5a5f66');
+  caja(fijo,[.1,.6,.1],[.32,.85,-.18],PALETA.metal);const brazo=new THREE.Group();brazo.position.set(.32,1.12,-.18);caja(brazo,[.5,.07,.07],[-.22,0,0],PALETA.cobre);caja(brazo,[.06,.18,.06],[-.45,-.1,0],PALETA.claro);grupo.add(brazo);moviles.push(brazo);
+  for(const [x,r] of[[-.25,.15],[-.05,.1]]){const e=aro(grupo,r,.04,PALETA.oro);e.position.set(x,.3,.31);moviles.push(e);}
  }else if(articulo==='horno'||articulo==='fundidora'||articulo==='forja'){
   caja(fijo,[.83,.17,.79],[0,.09,0],'#8a9188');caja(fijo,[.75,.65,.68],[0,.49,0],articulo==='fundidora'?PALETA.metal:'#a2a598');
   caja(fijo,[.42,.3,.04],[0,.4,.36],PALETA.oscuro);caja(fijo,[.32,.17,.043],[0,.34,.385],'#d29966');for(const x of[-.13,0,.13])caja(fijo,[.035,.27,.06],[x,.41,.405],PALETA.metal);
@@ -72,7 +95,7 @@ export class EscenaProduccion{
  update(dt:number){if(!this.grupo.visible)return;this.tiempo+=Math.max(0,Math.min(.1,dt));const t=this.tiempo;
   for(const f of this.figuras.values()){
    if(f.portal){f.moviles.forEach((m,i)=>{if(!i)(m as THREE.Mesh<THREE.BufferGeometry,THREE.MeshBasicMaterial>).material.opacity=.4+Math.sin(t*1.6)*.07;else{m.position.x=Math.sin(t*.5+i*2.4)*.53;m.position.y=.35+((t*.15+i*.21)%1.57);}});}
-   else if(f.aspersor||f.proceso||f.articulo==='nave_exploradora')for(const m of f.moviles){if(f.articulo==='recicladora')m.rotation.z+=dt*1.4;else m.rotation.y+=dt*(f.aspersor?1.1:f.articulo==='nave_exploradora'?.35:1.4);}
+   else if(f.aspersor||f.proceso||f.articulo==='nave_exploradora')for(const [k,m] of f.moviles.entries()){if(f.articulo==='recicladora')m.rotation.z+=dt*1.4;else if(f.articulo==='trituradora')m.rotation.x+=dt*(k?-3:3);else if(f.articulo==='alto_horno')m.scale.y=1+Math.sin(performance.now()/180)*.35;else if(f.articulo==='ensambladora')m.rotation.y=k?m.rotation.y+dt*2.4:Math.sin(performance.now()/400)*.9;else if(f.articulo==='taladro_vapor')m.rotation.y+=dt*6;else m.rotation.y+=dt*(f.aspersor?1.1:f.articulo==='nave_exploradora'?.35:1.4);}
    f.piloto.scale.setScalar(f.llena?1:1+Math.sin(t*4)*.08);
   }
  }

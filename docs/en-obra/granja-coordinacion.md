@@ -162,3 +162,14 @@ Cambio de reglas pedido por Javier (frente de motor, avisado aquí):
   repisa de 30 cm que no tapa al jugador (`terrenoMina`). Rocas sueltas al pie y sobre el canto, sombra de contacto
   en el piso, farol que lleva el personaje y luz ambiente del color del piso (`escena.userData.ambienteExpedicion`).
   Cámara: 1.9 de zoom en los pisos y 1.6 en la entrada.
+
+### Minerales nuevos, bronce y mitrilo, máquinas de vapor y aspersor básico (Claude, pedido de Javier)
+
+- Minas: estaño (desde el piso 5), geoda (8), amatista (10); en hielo topacio, aguamarina y geoda helada; en lava
+  esmeralda y geoda de magma; en la caverna diamante (120), mitrilo (150) y geoda omni.
+- `objetos.ts`: lingotes de bronce (horno: cobre + estaño) y mitrilo (fundidora); espadas y armaduras de bronce y
+  mitrilo en la forja. Máquinas industriales (`EstacionProduccion`): alto horno (tandas grandes), trituradora (geodas
+  → gemas, piedra → arena), taladro de vapor (carbón → mineral en la granja) y ensambladora (engranajes, baterías y
+  circuitos en serie). Funcionan solas con la red de cofres que ya existía.
+- `aspersor_basico` (cruz de 4 casillas, `aspersor.cruz`), como el de Stardew; `riegaAspersor` en motor.ts.
+- Modelos de las máquinas en `escenas-produccion.ts` (con su animación) e íconos nuevos.

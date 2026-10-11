@@ -3,7 +3,7 @@ export interface PuntoAventura { x:number; z:number }
 export type SueloAventura = 'suelo'|'muro';
 export type FaseMonstruo = 'reposo'|'patrulla'|'alerta'|'persecucion'|'anticipacion'|'ataque'|'recuperacion';
 export type TipoMonstruo = 'gelatina'|'escarabajo'|'murcielago'|'guardian'|'ascua'|'sombra'|'centinela';
-export type MineralAventura = 'piedra'|'carbon'|'cobre'|'hierro'|'oro'|'cuarzo'|'rubi'|'jade'|'obsidiana'|'plata'|'titanio'|'meteorita'|'cristal_astral'|'polvo_estelar';
+export type MineralAventura = 'piedra'|'carbon'|'cobre'|'hierro'|'oro'|'cuarzo'|'rubi'|'jade'|'obsidiana'|'plata'|'titanio'|'meteorita'|'cristal_astral'|'polvo_estelar'|'estano'|'mitrilo'|'amatista'|'topacio'|'aguamarina'|'esmeralda'|'diamante'|'geoda'|'geoda_helada'|'geoda_magma'|'geoda_omni';
 export interface AccesoAventura { desbloqueos?:string[]; construcciones?:string[]; nivelPico?:number }
 export interface DestinoAventura {
  id:string; nombre:string; tipo:'mina'|'mazmorra'|'reino'|'orbita'|'asteroide'|'planeta'; descripcion:string;
@@ -12,7 +12,7 @@ export interface DestinoAventura {
 }
 /** Son destinos de exploración configurables; no afirman un desenlace ni el canon de los mundos muertos. */
 export const AVENTURAS:DestinoAventura[] = [
- {id:'mina_celia',nombre:'Minas de Celia',tipo:'mina',descripcion:'Pisos que cambian cada vez que bajas: tierra, hielo, lava y, pasando el piso 100, la caverna sin fondo. Busca la escalera bajo las rocas.',color:'#8c8172',roca:'#665f60',luz:'#ffc27e',dificultad:1,espacial:false,minerales:['piedra','carbon','cobre','cuarzo','hierro','plata','oro','jade','rubi','obsidiana','titanio','meteorita','polvo_estelar','cristal_astral'],monstruos:['gelatina','escarabajo','murcielago'],niveles:100000},
+ {id:'mina_celia',nombre:'Minas de Celia',tipo:'mina',descripcion:'Pisos que cambian cada vez que bajas: tierra, hielo, lava y, pasando el piso 100, la caverna sin fondo. Busca la escalera bajo las rocas.',color:'#8c8172',roca:'#665f60',luz:'#ffc27e',dificultad:1,espacial:false,minerales:['piedra','carbon','cobre','cuarzo','hierro','plata','oro','jade','rubi','obsidiana','titanio','meteorita','polvo_estelar','cristal_astral','estano','mitrilo','amatista','topacio','aguamarina','esmeralda','diamante','geoda','geoda_helada','geoda_magma','geoda_omni'],monstruos:['gelatina','escarabajo','murcielago'],niveles:100000},
  {id:'ruinas_celia',nombre:'Ruinas del bosque',tipo:'mazmorra',descripcion:'Patios olvidados, guardianes de piedra y cámaras de jade conectadas por pasillos.',color:'#739176',roca:'#50685d',luz:'#a5e2bb',dificultad:2,espacial:false,nivelPico:1,minerales:['piedra','hierro','jade','plata','oro'],monstruos:['gelatina','guardian','escarabajo'],niveles:6},
  {id:'reino_verdia',nombre:'Ecos de Verdia',tipo:'reino',descripcion:'Un destino provisional entre raíces antiguas y cristales verdes. Su historia espera ser descubierta.',color:'#748c70',roca:'#3e6354',luz:'#bcf3a0',dificultad:3,espacial:false,construccion:'portal_verdia',minerales:['jade','cuarzo','hierro','oro'],monstruos:['guardian','gelatina','escarabajo'],niveles:4},
  {id:'reino_senda',nombre:'Ecos de Senda',tipo:'reino',descripcion:'Islas de roca cálida y senderos de brasas. Un umbral de exploración, todavía sin desenlace.',color:'#b98268',roca:'#765368',luz:'#ffb580',dificultad:3,espacial:false,construccion:'portal_senda',minerales:['rubi','obsidiana','carbon','oro'],monstruos:['ascua','guardian','murcielago'],niveles:4},
@@ -43,6 +43,10 @@ export const MINERALES:Record<MineralAventura,{nombre:string; color:string; hp:n
  obsidiana:{nombre:'Obsidiana',color:'#61536d',hp:42,pico:3},plata:{nombre:'Plata',color:'#d3daeb',hp:30,pico:1},
  titanio:{nombre:'Titanio',color:'#9daeca',hp:48,pico:3},meteorita:{nombre:'Meteorita',color:'#a87d9b',hp:44,pico:2},
  cristal_astral:{nombre:'Cristal astral',color:'#b8a4ee',hp:52,pico:4},polvo_estelar:{nombre:'Polvo estelar',color:'#e8cce9',hp:36,pico:2},
+ estano:{nombre:'Estaño',color:'#c9cfc4',hp:18,pico:0},mitrilo:{nombre:'Mitrilo',color:'#8fe0ea',hp:56,pico:4},amatista:{nombre:'Amatista',color:'#b07ee0',hp:22,pico:0},
+ topacio:{nombre:'Topacio',color:'#f2b84a',hp:26,pico:1},aguamarina:{nombre:'Aguamarina',color:'#6fd3e6',hp:28,pico:1},esmeralda:{nombre:'Esmeralda',color:'#3fc27a',hp:34,pico:2},
+ diamante:{nombre:'Diamante',color:'#eaf8ff',hp:50,pico:3},geoda:{nombre:'Geoda',color:'#a99c8e',hp:16,pico:0},geoda_helada:{nombre:'Geoda helada',color:'#a8c8dc',hp:22,pico:1},
+ geoda_magma:{nombre:'Geoda de magma',color:'#b0624a',hp:30,pico:2},geoda_omni:{nombre:'Geoda omni',color:'#b49ad8',hp:40,pico:3},
 };
 export interface NodoAventura extends PuntoAventura { id:string; mineral:MineralAventura; hp:number; hpMax:number; cantidad:number; agotado:boolean }
 export interface MonstruoAventura extends PuntoAventura {
@@ -92,7 +96,7 @@ export function varianteMina(nivel:number,semilla:number):VarianteMina{
 }
 const MONSTRUOS_MINA:Record<TemaMina,TipoMonstruo[]>={tierra:['gelatina','escarabajo','murcielago'],hielo:['murcielago','gelatina','sombra'],lava:['ascua','guardian','escarabajo'],fondo:['guardian','ascua'],caverna:['sombra','centinela','guardian','ascua','murcielago']};
 /** Peso de cada mineral en los pisos (los raros salen menos, pero abundan más mientras más hondo). */
-const PESO_MINERAL:Record<MineralAventura,number>={piedra:3,carbon:2.4,cobre:3,cuarzo:1.4,hierro:2.6,plata:1.6,jade:.8,oro:1.8,rubi:.7,obsidiana:1,titanio:1.6,meteorita:1,polvo_estelar:.8,cristal_astral:.55};
+const PESO_MINERAL:Record<MineralAventura,number>={piedra:3,carbon:2.4,cobre:3,cuarzo:1.4,hierro:2.6,plata:1.6,jade:.8,oro:1.8,rubi:.7,obsidiana:1,titanio:1.6,meteorita:1,polvo_estelar:.8,cristal_astral:.55,estano:2.2,mitrilo:1.2,amatista:.5,topacio:.5,aguamarina:.5,esmeralda:.45,diamante:.35,geoda:.8,geoda_helada:.8,geoda_magma:.8,geoda_omni:.7};
 /** Costo de una estación de ascensor en la caverna (piso 125, 150, 175…). */
 export function costoEstacion(nivel:number):Record<string,number>{const k=Math.max(1,Math.round((nivel-FONDO_MINA)/25));return {piedra:60+k*20,madera:30+k*10,lingote_hierro:6+k*2,lingote_oro:2+k,engranaje:2+k};}
 export function estacionPendiente(e:EstadoAventura):number|null{const i=instanciaAventura(e);if(!i||i.destinoId!==MINA||i.nivel<=FONDO_MINA||i.nivel%25!==0||(e.ascensor??[]).includes(i.nivel))return null;return i.nivel;}
@@ -130,10 +134,11 @@ export function mineralesPorProfundidad(destinoId:string,nivel:number):MineralAv
  const d=destinoAventura(destinoId);if(!d)return [];
  if(destinoId!==MINA)return [...d.minerales];
  const tema=temaMina(nivel);
- if(tema==='tierra')return ['piedra','carbon','cobre','cuarzo',...(nivel>=15?['hierro' as const]:[]),...(nivel>=25?['jade' as const]:[])];
- if(tema==='hielo')return ['piedra','carbon','hierro','plata','cuarzo','jade',...(nivel>=60?['oro' as const]:[])];
- if(tema==='lava'||tema==='fondo')return ['piedra','carbon','hierro','oro','plata','rubi','obsidiana'];
- return ['oro','rubi','obsidiana','titanio','meteorita','polvo_estelar',...(nivel>=125?['cristal_astral' as const]:[])];
+ const desde=(n:number,...m:MineralAventura[])=>nivel>=n?m:[];
+ if(tema==='tierra')return ['piedra','carbon','cobre','cuarzo',...desde(5,'estano'),...desde(8,'geoda'),...desde(10,'amatista'),...desde(15,'hierro'),...desde(25,'jade')];
+ if(tema==='hielo')return ['piedra','carbon','hierro','plata','cuarzo','jade','estano','topacio','aguamarina','geoda_helada',...desde(60,'oro')];
+ if(tema==='lava'||tema==='fondo')return ['piedra','carbon','hierro','oro','plata','rubi','obsidiana','esmeralda','geoda_magma'];
+ return ['oro','rubi','obsidiana','titanio','meteorita','polvo_estelar','esmeralda','geoda_omni',...desde(120,'diamante'),...desde(125,'cristal_astral'),...desde(150,'mitrilo')];
 }
 
 /** Salas unidas por corredores de tres celdas; los cuatro conectores permiten ampliar sin rehacer el mapa. */

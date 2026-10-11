@@ -12,7 +12,7 @@ import './produccion-ui.css';
 
 const esc=(v:unknown)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const normalizar=(v:string)=>v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-const estaciones:Record<EstacionProduccion,string>={mano:'A mano',banco_trabajo:'Banco de trabajo',horno:'Horno',fundidora:'Fundidora',prensa:'Prensa',molino_artesanal:'Molino artesanal',cocina:'Cocina',fermentador:'Fermentador',telar:'Telar',recicladora:'Recicladora',forja:'Forja'};
+const estaciones:Record<EstacionProduccion,string>={mano:'A mano',banco_trabajo:'Banco de trabajo',horno:'Horno',fundidora:'Fundidora',prensa:'Prensa',molino_artesanal:'Molino artesanal',cocina:'Cocina',fermentador:'Fermentador',telar:'Telar',recicladora:'Recicladora',forja:'Forja',alto_horno:'Alto horno',trituradora:'Trituradora',taladro_vapor:'Taladro de vapor',ensambladora:'Ensambladora'};
 const categorias:Record<string,string>={todas:'Todas',materiales:'Materiales',comida:'Cocina',equipo:'Equipo',taller:'Taller y cofres',granja:'Granja',viajes:'Portales y viajes'};
 const tiempo=(ms:number)=>ms<=0?'Al instante':ms<60_000?`${Math.ceil(ms/1000)} s`:`${Math.floor(ms/60_000)} min${ms%60_000?` ${Math.ceil(ms%60_000/1000)} s`:''}`;
 const categoria=(r:RecetaProduccion)=>r.salida.articulo.startsWith('portal_')||r.salida.articulo==='nave_exploradora'?'viajes':obtenerObjeto(r.salida.articulo)?.categoria==='comida'?'comida':obtenerObjeto(r.salida.articulo)?.equipo?'equipo':obtenerObjeto(r.salida.articulo)?.maquina||obtenerObjeto(r.salida.articulo)?.contenedor?'taller':obtenerObjeto(r.salida.articulo)?.aspersor||['fertilizante','fertilizante_mejorado','cebo_refinado'].includes(r.salida.articulo)?'granja':'materiales';
