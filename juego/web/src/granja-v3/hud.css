@@ -179,3 +179,9 @@ html body .mochila-casilla .icono-foto { max-width: 80%; max-height: 80%; }
 /* Ascensor de la mina: botones de piso en rejilla */
 #context .buttons.ascensor{display:flex;flex-wrap:wrap;gap:4px;max-height:118px;overflow:auto}
 #context .buttons.ascensor .btn{min-width:42px;padding:4px 6px}
+
+/* Modo diseño de la granja */
+.banda-diseno{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:10px;padding:6px 8px 6px 14px;background:#fff8ee;border:2px dashed #c9a87a;border-radius:16px;box-shadow:0 4px 0 #0000001f;font:700 13px Nunito,sans-serif;color:#3d2b27}
+.banda-diseno[hidden]{display:none}
+.fila-diseno{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px}
+.fila-diseno h3{margin:0;font-size:14px}.fila-diseno p{margin:0}

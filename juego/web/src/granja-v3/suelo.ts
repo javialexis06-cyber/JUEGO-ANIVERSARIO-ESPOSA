@@ -68,6 +68,26 @@ function geometriaMata(){const pos:number[]=[],col:number[]=[],base=new THREE.Co
  // Normales hacia arriba: el pasto se ilumina parejo, como fieltro, sin caras negras
  const n=g.attributes.normal;for(let i=0;i<n.count;i++)n.setXYZ(i,0,1,0);return g;}
 function geometriaFlor(){const g=new THREE.CylinderGeometry(.07,.045,.04,7,1);g.translate(0,.12,0);const tallo=new THREE.CylinderGeometry(.008,.008,.12,4);tallo.translate(0,.06,0);const m=mergeGeometries([g.toNonIndexed(),tallo.toNonIndexed()].map(x=>{x.deleteAttribute('uv');return x;}));return m!;}
+const SUELOS_PINTADOS=new Set(['tablon','desgastado','paja','lajas','adoquin','grava','pasaderas','ladrillo','terracota','mosaico','astillas','cristal','sendero_cristal']);
+/** Pinta la textura de cada suelo nuevo (128 px por casilla). */
+function texturaSuelo(tipo:string){
+ const T=128,c=document.createElement('canvas');c.width=c.height=T;const ctx=c.getContext('2d')!,r=(i:number,k:number)=>hash(i,k);
+ const rr=(x:number,y:number,w:number,h:number,rad:number,col:string)=>{ctx.fillStyle=col;ctx.beginPath();ctx.roundRect(x,y,w,h,rad);ctx.fill();};
+ const tablas=(tonos:string[],veta:string,n:number)=>{const h=T/n;for(let k=0;k<n;k++){rr(1,k*h+1,T-2,h-2,3,tonos[k%tonos.length]);ctx.strokeStyle=veta;ctx.lineWidth=1;for(let v=0;v<5;v++){ctx.beginPath();const y=k*h+4+r(k*9+v,1)*(h-8);ctx.moveTo(2,y);ctx.bezierCurveTo(40,y+2,80,y-2,T-2,y+1);ctx.stroke();}ctx.fillStyle='#5f5b57';for(const x of [8,T-8])ctx.fillRect(x-1.5,k*h+h/2-1.5,3,3);}};
+ if(tipo==='tablon')tablas(['#b5834f','#a8774a','#bf8e5a'],'#7d522f66',3);
+ else if(tipo==='desgastado')tablas(['#9c958a','#8f887c','#a7a093'],'#5d574f66',4);
+ else if(tipo==='paja'){ctx.fillStyle='#d9b85a';ctx.fillRect(0,0,T,T);ctx.lineCap='round';for(let k=0;k<420;k++){const x=r(k,2)*T,y=r(k,3)*T,a=r(k,4)*3.1;ctx.strokeStyle=['#f0d27a','#c49a3c','#e8c466','#b8913a'][k%4];ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(a)*12,y+Math.sin(a)*12);ctx.stroke();}}
+ else if(tipo==='lajas'){ctx.fillStyle='#7e786c';ctx.fillRect(0,0,T,T);for(const [x,y,w,h] of [[2,2,70,52],[74,2,52,38],[74,42,52,48],[2,56,40,70],[44,56,28,36],[44,94,82,32],[2,128,0,0]] as number[][])if(w)rr(x+1,y+1,w-2,h-2,8,['#b8b2a2','#aaa393','#c3bcab','#a29c8c'][(x+y)%4]);}
+ else if(tipo==='adoquin'){ctx.fillStyle='#6d685e';ctx.fillRect(0,0,T,T);for(let j=0;j<4;j++)for(let i=0;i<4;i++){const g=ctx.createLinearGradient(0,j*32,0,j*32+32);g.addColorStop(0,'#c9c2b2');g.addColorStop(1,'#9d978a');ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(i*32+2+(j%2)*0,j*32+2,28,28,9);ctx.fill();}}
+ else if(tipo==='grava'){ctx.fillStyle='#a49a86';ctx.fillRect(0,0,T,T);for(let k=0;k<520;k++){const x=r(k,5)*T,y=r(k,6)*T,s=1.5+r(k,7)*3;ctx.fillStyle=['#c8bfae','#8a8172','#b3aa98','#d8d0c0','#776f63'][k%5];ctx.beginPath();ctx.ellipse(x,y,s,s*.75,r(k,8)*3,0,6.3);ctx.fill();}}
+ else if(tipo==='ladrillo'){ctx.fillStyle='#d9cdb8';ctx.fillRect(0,0,T,T);for(let j=0;j<6;j++)for(let i=-1;i<4;i++){const x=i*42+(j%2)*21,y=j*T/6;rr(x+2,y+2,38,T/6-4,3,['#b55a3f','#a64f36','#c0664a','#9e4a33'][(i+j+8)%4]);}}
+ else if(tipo==='terracota'){ctx.fillStyle='#e0d2bb';ctx.fillRect(0,0,T,T);for(let j=0;j<2;j++)for(let i=0;i<2;i++){const g=ctx.createRadialGradient(i*64+24,j*64+24,4,i*64+32,j*64+32,44);g.addColorStop(0,'#e09464');g.addColorStop(1,'#c26e45');ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(i*64+3,j*64+3,58,58,6);ctx.fill();}}
+ else if(tipo==='mosaico'){ctx.fillStyle='#efe6d6';ctx.fillRect(0,0,T,T);for(let j=0;j<8;j++)for(let i=0;i<8;i++){const d=Math.abs(i-3.5)+Math.abs(j-3.5);rr(i*16+1.5,j*16+1.5,13,13,3,d<2?'#e2a33f':d<4?'#3e8fb0':d<6?'#d9654f':'#5fa36a');}}
+ else if(tipo==='astillas'){ctx.fillStyle='#7a5a3c';ctx.fillRect(0,0,T,T);for(let k=0;k<300;k++){const x=r(k,9)*T,y=r(k,10)*T,a=r(k,11)*3.1;ctx.fillStyle=['#a47a50','#8c6640','#c49766','#6b4a2e'][k%4];ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.fillRect(-5,-1.5,10,3);ctx.restore();}}
+ else if(tipo==='cristal'){ctx.fillStyle='#a8d8e6';ctx.fillRect(0,0,T,T);for(let j=0;j<2;j++)for(let i=0;i<2;i++){const g=ctx.createLinearGradient(i*64,j*64,i*64+64,j*64+64);g.addColorStop(0,'#e6fbff');g.addColorStop(.5,'#9fd8ea');g.addColorStop(1,'#7cc0dc');ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(i*64+3,j*64+3,58,58,4);ctx.fill();ctx.fillStyle='#ffffffaa';ctx.fillRect(i*64+10,j*64+9,18,4);}}
+ else if(tipo==='sendero_cristal'){ctx.fillStyle='#4b4566';ctx.fillRect(0,0,T,T);for(let k=0;k<26;k++){const x=r(k,12)*T,y=r(k,13)*T,s=4+r(k,14)*7;ctx.fillStyle=['#b48cff','#7fe3d6','#e0b8ff','#9fd4e6'][k%4];ctx.beginPath();ctx.moveTo(x,y-s);ctx.lineTo(x+s*.7,y);ctx.lineTo(x,y+s);ctx.lineTo(x-s*.7,y);ctx.closePath();ctx.fill();ctx.fillStyle='#ffffff88';ctx.fillRect(x-1,y-s*.5,2,2);}}
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t;
+}
 export class Suelos{
  readonly hierba=textura('hierba');readonly surcos=textura('surcos');readonly piedra=textura('piedra');readonly madera=textura('madera');readonly musgo=textura('musgo');readonly tierra=textura('tierra');
  private mata=geometriaMata();private flor=geometriaFlor();
@@ -93,7 +113,19 @@ export class Suelos{
   const owned=new Set(cells.map(c=>c.x+','+c.z));for(const c of cells)for(const[dx,dz]of[[1,0],[-1,0],[0,1],[0,-1]])if(!owned.has((c.x+dx)+','+(c.z+dz))){const b=caja(group,[dx?.07:1.02,.03,dz?.07:1.02],[c.x+.5+dx*.5,.012,c.z+.5+dz*.5],'#8e6a47');b.castShadow=false;}
   compactar(group);return group;}
  /** Caminos pieza por pieza: adoquines sobre arena, tablas con clavos, tierra apisonada o piedra con musgo. */
- camino(id:string,vecinos:{n:boolean;s:boolean;e:boolean;w:boolean}){const g=new THREE.Group();const wood=/madera|tabl/.test(id),sand=/arena|tierra/.test(id),moss=/musgo/.test(id);
+ /** Suelos nuevos: una baldosa pintada por casilla (textura propia por tipo) y, si no tiene vecino igual, su borde. */
+ private sueloPintado(tipo:string,vecinos:{n:boolean;s:boolean;e:boolean;w:boolean}){const g=new THREE.Group();
+  const clave='pintado:'+tipo;let m=this.matsCamino.get(clave);if(!m){const t=texturaSuelo(tipo);m=new THREE.MeshStandardMaterial({map:t,roughness:tipo.includes('cristal')?.25:.9,metalness:tipo.includes('cristal')?.1:0,...(tipo.includes('cristal')?{emissive:'#7fd6e6',emissiveIntensity:.12,emissiveMap:t}:{})});m.userData.compartido=true;this.matsCamino.set(clave,m);}
+  if(tipo==='pasaderas'){// Piedras sueltas sobre el pasto, sin baldosa
+   const piedra=this.matsCamino.get('pasadera')??(()=>{const n=new THREE.MeshStandardMaterial({color:'#b5ae9c',roughness:.9});n.userData.compartido=true;this.matsCamino.set('pasadera',n);return n;})();
+   for(const [x,z,r] of [[-.2,-.18,.24],[.22,.2,.2],[-.22,.28,.14]] as [number,number,number][]){const p=new THREE.Mesh(new THREE.CylinderGeometry(r,r*1.08,.07,10),piedra);p.position.set(x,.035,z);p.castShadow=p.receiveShadow=true;g.add(p);}return g;}
+  const alto=['tablon','desgastado','ladrillo','lajas','terracota','mosaico','cristal'].includes(tipo)?.05:.03;
+  const base=new THREE.Mesh(new THREE.BoxGeometry(1,alto,1),m);base.position.y=alto/2;base.receiveShadow=true;g.add(base);
+  // Bordillo donde termina el suelo (los pisos de tablas y baldosas llevan un marco fino)
+  const borde=['grava','astillas','sendero_cristal','adoquin'].includes(tipo)?'#8e8a78':tipo==='paja'?'#b8983f':tipo.includes('cristal')?'#9fd6e6':'#6e5a44';
+  if(!vecinos.n)caja(g,[1,alto+.03,.05],[0,(alto+.03)/2,-.475],borde);if(!vecinos.s)caja(g,[1,alto+.03,.05],[0,(alto+.03)/2,.475],borde);if(!vecinos.e)caja(g,[.05,alto+.03,1],[.475,(alto+.03)/2,0],borde);if(!vecinos.w)caja(g,[.05,alto+.03,1],[-.475,(alto+.03)/2,0],borde);
+  return g;}
+ camino(id:string,vecinos:{n:boolean;s:boolean;e:boolean;w:boolean}){if(SUELOS_PINTADOS.has(id.replace('suelo_','')))return this.sueloPintado(id.replace('suelo_',''),vecinos);const g=new THREE.Group();const wood=/madera|tabl/.test(id),sand=/arena|tierra/.test(id),moss=/musgo/.test(id);
   const mat=(clave:string,map:THREE.Texture|null,color:string,rough=1)=>{let m=this.matsCamino.get(clave);if(!m){m=new THREE.MeshStandardMaterial({map,color,roughness:rough});m.userData.compartido=true;this.matsCamino.set(clave,m);}return m;};
   if(wood){const tabla=new THREE.BoxGeometry(1,.06,.3);for(let k=0;k<3;k++){const m=new THREE.Mesh(tabla,mat('tabla',this.madera,['#f2dcbc','#e8cfa8','#f6e2c4'][k]));m.position.set((hash(k,id.length)-.5)*.04,.04,-.33+k*.33);m.rotation.y=(hash(k,3)-.5)*.03;m.castShadow=m.receiveShadow=true;g.add(m);}
    for(const [x,z] of [[-.36,-.36],[.36,-.36],[-.36,0],[.36,0],[-.36,.33],[.36,.33]])caja(g,[.03,.012,.03],[x,.075,z],'#6d6f71');

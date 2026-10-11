@@ -98,7 +98,13 @@ export const ARTICULOS:Articulo[]=[
  {id:'farol_cristal',nombre:'Farol de cristal',categoria:'decoracion',modelo:'farol',ancho:1,fondo:1,clima:'templado',precio:180,receta:{madera_ancestral:4,cristal:5}},
  {id:'jardin_lirios',nombre:'Jardín de lirios',categoria:'decoracion',modelo:'nenufar',ancho:2,fondo:2,clima:'templado',precio:120,receta:{piedra:15,cristal:3}},
  {id:'pergola_ancestral',nombre:'Pérgola ancestral florida',categoria:'decoracion',modelo:'pergola_ancestral',ancho:4,fondo:3,clima:'templado',precio:350,receta:{madera_ancestral:24,madera:12,fibra:10},requiere:'bosque_ancestral'},
- ...['piedra','madera','tierra','musgo'].map(tipo=>({id:`suelo_${tipo}`,nombre:`Camino de ${tipo}`,categoria:'suelo' as const,modelo:tipo==='madera'?'puente_madera':'sendero_piedra',ancho:1,fondo:1,clima:'templado' as const,precio:5,receta:{[tipo==='madera'?'madera':'piedra']:1}})),
+ ...['piedra','madera','tierra','musgo'].map(tipo=>({id:`suelo_${tipo}`,nombre:`Camino de ${tipo}`,categoria:'suelo' as const,modelo:tipo==='madera'?'puente_madera':'sendero_piedra',ancho:1,fondo:1,clima:'templado' as const,precio:5,receta:(tipo==='madera'?{madera:1}:tipo==='tierra'?{fibra:1,piedra:1}:tipo==='musgo'?{piedra:1,fibra:2}:{piedra:1}) as Record<string,number>})),
+ // Suelos y caminos al estilo Stardew para diseñar la granja a gusto
+ ...([['tablon','Piso de tablones',{madera:1},6],['desgastado','Piso de madera vieja',{madera:1},6],['paja','Piso de paja',{madera:1,fibra:1},4],
+  ['lajas','Piso de lajas',{piedra:1},6],['adoquin','Camino de adoquines',{piedra:1},6],['grava','Camino de grava',{piedra:1},3],['pasaderas','Piedras pasaderas',{piedra:1},4],
+  ['ladrillo','Piso de ladrillo',{arcilla:2,piedra:5},9],['terracota','Baldosas de barro',{arcilla:1},7],['mosaico','Mosaico de colores',{piedra:2,cuarzo:1,vidrio:1},14],
+  ['astillas','Sendero de astillas',{madera:1},3],['cristal','Piso de cristal',{vidrio:1},20],['sendero_cristal','Sendero de cristal',{cuarzo:1},18]] as [string,string,Record<string,number>,number][])
+  .map(([tipo,nombre,receta,precio])=>({id:`suelo_${tipo}`,nombre,categoria:'suelo' as const,modelo:'sendero_piedra',ancho:1,fondo:1,clima:'templado' as const,precio,receta})),
  ...['madera','piedra','floral'].map(tipo=>({id:`valla_${tipo}`,nombre:`Valla de ${tipo}`,categoria:'valla' as const,modelo:'cerca',ancho:1,fondo:1,clima:'templado' as const,precio:8,receta:{[tipo==='piedra'?'piedra':'madera']:2}})),
  {id:'porton',nombre:'Portón de jardín',categoria:'valla',modelo:'porton',ancho:2,fondo:1,clima:'templado',precio:25,receta:{madera:6,cobre:1}},
  ...[['heno','Heno',3],['semilla_pasto','Semilla de pasto',4],['lombriz','Lombriz',2],['pez_cebo','Pez cebo',5],['cebo_magico','Cebo mágico',12]].map(([id,nombre,precio])=>({id,nombre,precio,modelo:'',categoria:'insumo',ancho:0,fondo:0,clima:'templado',receta:{}} as Articulo)),

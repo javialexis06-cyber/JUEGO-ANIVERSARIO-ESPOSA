@@ -8,7 +8,7 @@ import type { Zona } from './catalogo';
  * cambia por dónde se camina ni qué se puede recoger. */
 
 const hash=(i:number,k=0)=>{const n=Math.sin(i*127.1+k*311.7)*43758.5453;return n-Math.floor(n);};
-const LIMITES:Partial<Record<Zona,[number,number,number,number]>>={bosque:[-101,-57,-24,23],bosque_ancestral:[-102,-55,52,100],lago:[5,49,74,111]};
+const LIMITES:Partial<Record<Zona,[number,number,number,number]>>={bosque:[-101,-57,-24,23],bosque_ancestral:[-102,-55,52,100],lago:[5,49,74,111],granja:[-50,50,-40,56],pueblo:[50,112,-43,44]};
 const lienzo=(T:number,H=T)=>{const c=document.createElement('canvas');c.width=T;c.height=H;return c;};
 const textura=(c:HTMLCanvasElement,color=true)=>{const t=new THREE.CanvasTexture(c);if(color)t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=4;return t;};
 
@@ -43,12 +43,12 @@ function instancias(geo:THREE.BufferGeometry,mat:THREE.Material,sitios:Sitio[],t
 const matVertices=(extra:THREE.MeshStandardMaterialParameters={})=>new THREE.MeshStandardMaterial({vertexColors:true,roughness:.95,...extra});
 
 /** Monte espeso alrededor de una zona (afuera de donde se camina), dejando abiertos los senderos de salida. */
-export function monteZona(zona:Zona,senderos:[number,number,number,number][],obstaculos:{x:number;z:number}[]):THREE.Group{
+export function monteZona(zona:Zona,senderos:[number,number,number,number][],obstaculos:{x:number;z:number}[],libres:[number,number,number,number][]=[]):THREE.Group{
  const g=new THREE.Group();g.name='monte';const b=LIMITES[zona];if(!b)return g;
  const antiguo=zona==='bosque_ancestral',lago=zona==='lago';
  const llegada={bosque:{x:-78,z:3},bosque_ancestral:{x:-78,z:79},lago:{x:14.5,z:80.5}}[zona as 'bosque'];
  const salidas=[...SALIDAS.filter(s=>s.desde===zona||s.hacia===zona).map(s=>s.desde===zona?{x:s.x,z:s.z}:s.llegada),...(llegada?[llegada]:[])];
- const enSendero=(x:number,z:number,m:number)=>senderos.some(([cx,cz,w,d])=>Math.abs(x-cx)<w/2+m&&Math.abs(z-cz)<d/2+m)||salidas.some(s=>Math.hypot(x-s.x,z-s.z)<m+4);
+const enSendero=(x:number,z:number,m:number)=>libres.some(([cx,cz,w,d])=>Math.abs(x-cx)<w/2+m&&Math.abs(z-cz)<d/2+m)||senderos.some(([cx,cz,w,d])=>Math.abs(x-cx)<w/2+m&&Math.abs(z-cz)<d/2+m)||salidas.some(s=>Math.hypot(x-s.x,z-s.z)<m+4);
  const fuera:Sitio[][]=[[],[]];let k=0;
  for(let x=b[0]-10;x<b[1]+10;x+=2.5)for(let z=b[2]-10;z<b[3]+10;z+=2.5){k++;
   const px=x+(hash(k,1)-.5)*1.9,pz=z+(hash(k,2)-.5)*1.9,dx=Math.max(b[0]-px,px-b[1],0),dz=Math.max(b[2]-pz,pz-b[3],0),afuera=Math.max(dx,dz);
@@ -63,6 +63,8 @@ export function monteZona(zona:Zona,senderos:[number,number,number,number][],obs
  const verdes=(antiguo?['#9fb88c','#87a67c','#b2c49a','#7e9a73']:['#ffffff','#e9f3d2','#d8e8b8','#f4f0c8']).map(c=>new THREE.Color(c));
  const madera=['#ffffff','#e6d9c9','#d7c3ad'].map(c=>new THREE.Color(c));
  g.add(instancias(roble.tronco,mat,fuera[0],madera),instancias(roble.copa,mat,fuera[0],verdes),instancias(pino.tronco,mat,fuera[1],madera),instancias(pino.copa,mat,fuera[1],verdes));
+ // La granja y el pueblo solo llevan el monte del borde; el sotobosque es de los bosques y el lago
+ if(zona==='granja'||zona==='pueblo')return g;
  // Sotobosque adentro: helechos, matas bajitas, hongos y troncos caídos, lejos de lo que se puede recoger
  const libre=(x:number,z:number,m:number)=>!enSendero(x,z,.6)&&!obstaculos.some(o=>Math.abs(o.x+.5-x)<m&&Math.abs(o.z+.5-z)<m);
  const helechos:Sitio[]=[],matas:Sitio[]=[],hongos:Sitio[]=[];
@@ -239,5 +241,43 @@ export function arcoSalida(nombre:string,x:number,z:number,horizontal:boolean):T
  // Faroles a los lados y flores al pie
  for(const s of [-1.6,1.6]){const f=new THREE.Mesh(new THREE.BoxGeometry(.18,.24,.18),new THREE.MeshStandardMaterial({color:'#ffd88a',emissive:'#ffb347',emissiveIntensity:.9}));f.position.set(s,2.05,.2);g.add(f);
   for(let k=0;k<5;k++){const fl=new THREE.Mesh(new THREE.SphereGeometry(.07,6,4),new THREE.MeshStandardMaterial({color:['#f4a7b9','#f7d55a','#ffffff','#c9a3e0'][k%4]}));fl.position.set(s+(k-2)*.13,.18,.35+(k%2)*.12);g.add(fl);}}
+ return g;
+}
+
+/** Adelanto de la zona a la que lleva cada salida de la granja, más allá del arco: así el borde no se ve como un
+ * prado vacío. Pueblo: casitas, faroles y cerca; bosque: pinos grandes y troncos; mina: la montaña con la boca de la
+ * mina y rieles; lago: un pedazo de agua con juncos y muelle. Solo decorado. */
+export function adelantoZona(hacia:Zona,x:number,z:number,mallaAgua:(rx:number,rz:number)=>THREE.Mesh):THREE.Group{
+ const g=new THREE.Group();g.name='adelanto-'+hacia;g.position.set(x,0,z);
+ const mat=(c:string,extra:THREE.MeshStandardMaterialParameters={})=>new THREE.MeshStandardMaterial({color:c,roughness:.85,...extra});
+ const caja=(w:number,h:number,d:number,px:number,py:number,pz:number,c:string|THREE.Material)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),typeof c==='string'?mat(c):c);m.position.set(px,py,pz);m.castShadow=m.receiveShadow=true;g.add(m);return m;};
+ if(hacia==='pueblo'){
+  // Dos casitas del pueblo con techo de teja, ventanas con luz, cerca y faroles a lado y lado del camino
+  for(const [cx,cz,pared,techo] of [[9,-6,'#f0dabc','#c9715a'],[11,6,'#e6d3b0','#7d9a6a'],[17,-1,'#efe2c8','#b3684f']] as [number,number,string,string][]){
+   caja(4,2.4,3.4,cx,1.2,cz,pared);for(const s of [-1,1]){const t=caja(2.6,.18,3.9,cx+s*1.05,2.95,cz,techo);t.rotation.z=-s*.6;}
+   caja(.8,1.3,.08,cx-2.04,.65,cz,'#7a5236').rotation.y=Math.PI/2;for(const dz of [-1,1])caja(.08,.6,.6,cx-2.04,1.4,cz+dz*1,new THREE.MeshStandardMaterial({color:'#ffe2a0',emissive:'#ffb347',emissiveIntensity:.4}));
+   caja(.5,.9,.5,cx+.8,3.3,cz-.8,'#a8a296');}
+  for(const s of [-1,1]){caja(.12,2.4,.12,3,1.2,s*2.2,'#536271');caja(.38,.42,.34,3,2.5,s*2.2,new THREE.MeshStandardMaterial({color:'#ffe2a0',emissive:'#ffb347',emissiveIntensity:.8}));
+   for(let k=0;k<6;k++){caja(.12,.9,.12,5+k*1.4,.45,s*3.4,'#b98e62');}caja(7.2,.1,.1,8.5,.7,s*3.4,'#b98e62');}
+ }else if(hacia==='bosque'){
+  // Pinos altos a lado y lado y un tronco caído con hongos
+  for(let k=0;k<10;k++){const lado=k%2?1:-1,px=-3-k*1.6,pz=lado*(3+((k*7)%3));const h=3+((k*5)%4);const tronco=caja(.35,h*.45,.35,px,h*.22,pz,'#5c3d2a');void tronco;
+   for(let n=0;n<3;n++){const c=new THREE.Mesh(new THREE.ConeGeometry(1.3-n*.3,1.6,9),mat(['#3f6b3d','#4c7a45','#5d8a50'][n]));c.position.set(px,h*.45+n*.9,pz);c.castShadow=true;g.add(c);}}
+  const log=new THREE.Mesh(new THREE.CylinderGeometry(.35,.4,3,10),mat('#6d4a33'));log.rotation.z=Math.PI/2;log.rotation.y=.4;log.position.set(-6,.35,-2.4);g.add(log);
+  for(let k=0;k<4;k++){const h=new THREE.Mesh(new THREE.SphereGeometry(.16,8,5,0,Math.PI*2,0,Math.PI/2),mat('#d2543f'));h.position.set(-6.6+k*.4,.68,-2.3+(k%2)*.2);g.add(h);}
+ }else if(hacia==='mina'){
+  // La montaña con la boca de la mina, su marco de madera, rieles y una vagoneta
+  const roca=mat('#8a837b');for(let k=0;k<9;k++){const m=new THREE.Mesh(new THREE.IcosahedronGeometry(1,1),roca);m.scale.set(3+((k*3)%4),3+((k*5)%5),2.5+((k*7)%3));m.position.set(-9+k*2.4,1+((k*5)%3),-9-((k*3)%4));m.castShadow=true;g.add(m);}
+  caja(3.2,3,1.5,0,1.5,-6.5,'#1a1714');for(const s of [-1,1])caja(.35,3.4,.35,s*1.8,1.7,-5.7,'#7a5236');caja(4.2,.4,.45,0,3.4,-5.7,'#6b4a33');
+  for(let k=0;k<7;k++)caja(1.3,.08,.22,0,.05,-5+k*.8,'#6b4a33');for(const s of [-.45,.45])caja(.08,.1,5.8,s,.13,-2.3,'#5d6168');
+  caja(1,.6,1.3,0,.55,-3,'#7a5a3e');for(let k=0;k<4;k++){const p=new THREE.Mesh(new THREE.DodecahedronGeometry(.22,0),mat(['#c8743c','#b7c0c6','#f2c14a','#9b938a'][k]));p.position.set(-.25+(k%2)*.5,.95,-3.3+Math.floor(k/2)*.6);g.add(p);}
+  const farol=caja(.25,.3,.25,1.8,2.6,-5.4,new THREE.MeshStandardMaterial({color:'#ffe2a0',emissive:'#ffb347',emissiveIntensity:.9}));void farol;
+ }else if(hacia==='lago'){
+  // Un pedazo del lago con su muelle, juncos y piedras
+  const agua=mallaAgua(7,4);agua.position.set(0,.02,10);g.add(agua);
+  const orilla=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.03,40),mat('#d9c69a',{roughness:1}));orilla.scale.set(8,1,5);orilla.position.set(0,.004,10);g.add(orilla);
+  for(let k=0;k<6;k++)caja(1.2,.1,.5,0,.2,5.6+k*.5,'#a07850');for(const s of [-.5,.5])for(let k=0;k<3;k++)caja(.12,.6,.12,s,0,6+k*1.2,'#7a5236');
+  for(let k=0;k<26;k++){const a=k/26*Math.PI*2,px=Math.cos(a)*7.4,pz=10+Math.sin(a)*4.3;if(Math.abs(px)<1.4&&pz<10)continue;const j=new THREE.Mesh(new THREE.CylinderGeometry(.02,.03,.9,4),mat('#6f9a4a'));j.position.set(px,.45,pz);g.add(j);if(k%3===0){const e=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.2,6),mat('#6b4329'));e.position.set(px,.85,pz);g.add(e);}}
+ }
  return g;
 }

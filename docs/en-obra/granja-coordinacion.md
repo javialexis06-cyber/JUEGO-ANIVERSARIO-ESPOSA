@@ -193,3 +193,17 @@ Cambio de reglas (frente de motor, avisado aquí):
   familia» ahora se cumple comprando el sector 5 o cualquier otro.
 - Vista: caminos de tierra, arcos de madera con letrero del destino y faroles en cada salida; el minimapa dibuja los
   caminos; el velo de los sectores sin comprar es más suave.
+
+### Diseñar la granja, suelos de Stardew y bordes con adelanto de cada zona (Claude, pedido de Javier)
+
+- Pestaña «Diseñar» (`renderDiseno`, `entrarDiseno` en main.ts): lista todas las construcciones, máquinas, cofres
+  y obras encargadas con «Mover»/«Guardar»; «Diseñar en el mapa» aleja la cámara, muestra la rejilla y deja tocar
+  cualquier cosa para moverla sin caminar hasta ella (usa las acciones `mover`, `mover_produccion` y `emplazar_obra`).
+- Motor: `emplazar_obra` acepta cambiar de lugar una obra ya reservada, conservando su `colocadaDia`.
+- 13 suelos nuevos (`catalogo.ts`, `Suelos.sueloPintado` con texturas pintadas): tablones, madera vieja, paja,
+  lajas, adoquines, grava, piedras pasaderas, ladrillo, baldosas de barro, mosaico, astillas, cristal y sendero de
+  cristal. Los suelos ya no se compran: se fabrican con materiales (madera, piedra, fibra, arcilla, cuarzo, vidrio),
+  ×1 o ×10, y al colocarlos se gasta la pieza; al guardarlos vuelve a la mochila.
+- Bordes: `monteZona('granja'|'pueblo')` rodea la granja y el pueblo con monte; cada salida sigue en camino más allá
+  del arco hasta un adelanto del destino (`adelantoZona`: casitas del pueblo, pinar, montaña con la boca de la mina,
+  orilla del lago con muelle).

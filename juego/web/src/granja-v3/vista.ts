@@ -30,7 +30,7 @@ import { dormitorioDef, puertaDormitorio, libreDormitorio } from './dormitorios'
 import { viviendaInterior, VIVIENDAS_PUEBLO, libreVivienda } from './pueblo-datos';
 import { crearDormitorio, crearInteriorVivienda, updateInteriorVivienda } from './pueblo';
 import { cespedPueblo } from './pueblo-adornos';
-import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida } from './zonas-render';
+import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida, adelantoZona } from './zonas-render';
 import { CAMINOS_GRANJA, SALIDAS } from './caminos-mundo';
 /** Senderos de tierra entre zonas (centro x, centro z, ancho, fondo). */
 const SENDEROS_PUBLICOS:[number,number,number,number][]=[[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]];
@@ -152,9 +152,16 @@ export class VistaGranja{
    }return;}
   if(e.zona!=='granja')this.entorno.add(señalesSalidas(e.zona));
   if(e.zona==='mina'){this.cueva=cuevaMina(e.nivelMina||1);this.cueva.userData.nivel=e.nivelMina||1;this.entorno.add(this.cueva);return;}
-  this.entorno.add(this.suelos.terreno());if(e.zona==='pueblo'){this.pueblo=crearPueblo();this.entorno.add(this.pueblo);this.entorno.add(this.suelos.pasto(52,-32,60,75,5200,cespedPueblo));}
+  this.entorno.add(this.suelos.terreno());if(e.zona==='pueblo'){this.pueblo=crearPueblo();this.entorno.add(this.pueblo);this.entorno.add(this.suelos.pasto(52,-32,60,75,5200,cespedPueblo));this.entorno.add(senderoTierra(44,13,14,2.2));this.entorno.add(monteZona('pueblo',SENDEROS_PUBLICOS,[],[[45,13,12,4]]));}
   // Caminos de tierra de la granja y arcos en sus salidas (los bordes de la granja llevan a las otras zonas)
-  if(e.zona==='granja'){for(const [x,z,w,d] of CAMINOS_GRANJA)this.entorno.add(senderoTierra(x+w/2,z+d/2,w+.4,d+.4));for(const sal of SALIDAS.filter(s=>s.desde==='granja')){const horizontal=Math.abs(sal.x)>40;this.entorno.add(arcoSalida(DESTINOS[sal.hacia].nombre,horizontal?sal.x+.5:sal.x+1,horizontal?sal.z+1:sal.z+.5,horizontal));}}
+  if(e.zona==='granja'){for(const [x,z,w,d] of CAMINOS_GRANJA)this.entorno.add(senderoTierra(x+w/2,z+d/2,w+.4,d+.4));
+   // Más allá de cada salida: el camino sigue, monte espeso alrededor y un adelanto de la zona a la que se llega
+   const extensiones:[number,number,number,number][]=[],libres:[number,number,number,number][]=[];
+   for(const sal of SALIDAS.filter(s=>s.desde==='granja')){const este=sal.x>40,oeste=sal.x<-40,norte=sal.z<-30;const cx=este?sal.x+8:oeste?sal.x-7:sal.x+1,cz=este||oeste?sal.z+1:norte?sal.z-7:sal.z+8,w=este||oeste?14:2.2,d=este||oeste?2.2:14;
+    extensiones.push([cx,cz,w,d]);this.entorno.add(senderoTierra(cx,cz,w,d));
+    const ox=este?sal.x+2:oeste?sal.x-1:sal.x+1,oz=este||oeste?sal.z+1:norte?sal.z-1:sal.z+2;this.entorno.add(adelantoZona(sal.hacia,ox,oz,mallaAgua));
+    libres.push(este?[ox+12,oz,24,16]:oeste?[ox-8,oz,16,10]:norte?[ox,oz-8,22,14]:[ox,oz+10,18,12]);}
+   this.entorno.add(monteZona('granja',extensiones,[],libres));for(const sal of SALIDAS.filter(s=>s.desde==='granja')){const horizontal=Math.abs(sal.x)>40;this.entorno.add(arcoSalida(DESTINOS[sal.hacia].nombre,horizontal?sal.x+.5:sal.x+1,horizontal?sal.z+1:sal.z+.5,horizontal));}}
   if(e.zona==='bosque'||e.zona==='bosque_ancestral'||e.zona==='lago')this.entorno.add(monteZona(e.zona,SENDEROS_PUBLICOS,e.obstaculos.filter(o=>o.zona===e.zona&&o.hp>0)));
   // Background clumps and hills remain cheap instanced geometry; detailed props stream nearby.
   const geometry=new THREE.IcosahedronGeometry(1,1),hill=new THREE.InstancedMesh(geometry,material('#849765'),30),dummy=new THREE.Object3D();for(let i=0;i<30;i++){const a=i/30*Math.PI*2;dummy.position.set(Math.cos(a)*128,-3,Math.sin(a)*120);if(Math.hypot(dummy.position.x-DESTINOS[e.zona].x,dummy.position.z-DESTINOS[e.zona].z)<75)dummy.position.y=-60;dummy.scale.set(12+ruido(i)*13,8+ruido(i,6)*8,13);dummy.updateMatrix();hill.setMatrixAt(i,dummy.matrix);}this.entorno.add(hill);

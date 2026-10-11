@@ -254,7 +254,8 @@ test('Suelos y vallas vuelven al inventario sin duplicarse; los refugios ocupado
   const game = new MotorGranja({ ahora: () => start, estado: clone(basicState) });
   for (const articulo of ['suelo_piedra', 'valla_madera']) {
     service(game,'carpinteria');
-    act(game, { tipo: 'comprar', articulo });
+    // Los suelos no se compran: se fabrican con materiales, como en Stardew
+    if (articulo.startsWith('suelo_')) { fail(game, { tipo: 'comprar', articulo }); act(game, { tipo: 'craftear', articulo }); } else act(game, { tipo: 'comprar', articulo });
     const money = game.estado.monedas;
     act(game,{tipo:'viajar',zona:'granja'});
     act(game, { tipo: 'construir', articulo, x: -1, z: 4 });
