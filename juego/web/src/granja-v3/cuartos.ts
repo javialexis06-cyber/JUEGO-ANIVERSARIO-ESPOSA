@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 /** Interiores de la granja y del pueblo hechos con el kit de muebles de Blender (personajes/blender/granja_muebles.py,
  * un solo GLB con un vacío «m_<clave>» por pieza). El kit se carga una vez; cada mueble es una copia que comparte
@@ -19,7 +20,29 @@ function cargarKit(archivo='granja_muebles.glb'){
 }
 /** Usa las piezas de otro kit de la granja (p. ej. granja_festivales.glb) cuando cargue, si g sigue en escena. */
 export function conKit(g:THREE.Object3D,archivo:string,usar:(piezas:Map<string,THREE.Object3D>)=>void){cargarKit(archivo).then(m=>{if(vivo(g))usar(m);}).catch(()=>{});}
-export function precargarMuebles(){return cargarKit().then(()=>undefined,()=>undefined);}
+export function precargarMuebles(){return Promise.all(['granja_muebles.glb','granja_pueblo.glb'].map(a=>cargarKit(a).then(()=>undefined,()=>undefined)));}
+
+/** Junta en una malla por material todas las piezas de g (utilería quieta: decenas de copias pasan a pocas llamadas de
+ * dibujo). Las mallas nuevas son propias del grupo; los materiales siguen siendo los compartidos del kit. */
+export function fundir(g:THREE.Object3D):THREE.Group{
+ g.updateMatrixWorld(true);const inv=g.matrixWorld.clone().invert(),grupos=new Map<THREE.Material,THREE.BufferGeometry[]>();
+ g.traverse(o=>{const m=o as THREE.Mesh;if(!m.isMesh||Array.isArray(m.material))return;const src=m.geometry,geo=new THREE.BufferGeometry();
+  // A flotantes (el kit viene cuantizado) para poder moverlas y juntarlas
+  for(const nombre of ['position','normal','uv']){const at=src.getAttribute(nombre);if(!at)continue;const n=at.count,k=at.itemSize,arr=new Float32Array(n*k);
+   for(let i=0;i<n;i++){arr[i*k]=at.getX(i);if(k>1)arr[i*k+1]=at.getY(i);if(k>2)arr[i*k+2]=at.getZ(i);}geo.setAttribute(nombre,new THREE.BufferAttribute(arr,k));}
+  if(src.index)geo.setIndex(Array.from(src.index.array as ArrayLike<number>));
+  geo.applyMatrix4(inv.clone().multiply(m.matrixWorld));
+  const lista=grupos.get(m.material)??[];lista.push(geo);grupos.set(m.material,lista);});
+ const out=new THREE.Group();out.name='utileria-kit';
+ for(const [material,geos] of grupos){
+  for(const nombre of ['uv','normal'])if(!geos.every(x=>x.getAttribute(nombre)))geos.forEach(x=>x.deleteAttribute(nombre));
+  const lista=geos.every(x=>x.index)?geos:geos.map(x=>x.index?x.toNonIndexed():x);
+  const unida=mergeGeometries(lista,false);new Set([...geos,...lista]).forEach(x=>x.dispose());if(!unida)continue;
+  if(!unida.getAttribute('normal'))unida.computeVertexNormals();unida.computeBoundingSphere();
+  const malla=new THREE.Mesh(unida,material);malla.castShadow=true;malla.receiveShadow=true;out.add(malla);
+ }
+ return out;
+}
 
 /** [clave, x, z, giro, escala, altura] */
 export type Puesto=[string,number,number,number?,number?,number?];

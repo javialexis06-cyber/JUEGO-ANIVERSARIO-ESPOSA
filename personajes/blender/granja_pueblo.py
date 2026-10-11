@@ -373,6 +373,244 @@ def m_letrero_entrada(coll):
     hoja_plana(coll, 'letrero hoja', (0.0, -0.13, 1.82), 0.12, '#5FA85A', ang=1.2)
 
 
+# ---------------------------------------------------------------- utilería de cada edificio (frente hacia -y)
+
+def _caja_fruta(coll, nombre, x, y, fruta=None):
+    caja(coll, f'{nombre} cuerpo', (x, y, 0.29), (0.47, 0.34, 0.27), MAD(), p=8)
+    for s in (-1, 1):
+        for k in range(3):
+            caja(coll, f'{nombre} tabla {s}{k}', (x, y + s * 0.36, 0.13 + k * 0.18), (0.49, 0.015, 0.03), OSC(), p=10, sub=0)
+    caja(coll, f'{nombre} sello', (x, y - 0.37, 0.3), (0.12, 0.008, 0.08), mat('sello caja', '#C9563F', 0.7), p=10, sub=0)
+    if fruta:
+        for k in range(9):
+            bola(coll, f'{nombre} fruta {k}', (x - 0.3 + (k % 3) * 0.3 + RNG.uniform(-0.03, 0.03), y - 0.2 + (k // 3) * 0.2, 0.62 + (k % 2) * 0.03), 0.12,
+                 laca(f'fruta {fruta}', fruta, 0.4), n=3)
+            if k % 3 == 1:
+                hoja_plana(coll, f'{nombre} hojita {k}', (x - 0.3 + (k % 3) * 0.3, y - 0.2 + (k // 3) * 0.2 - 0.08, 0.72), 0.07, '#5FA85A', ang=0.8)
+
+
+def _puesto_mercado(coll, toldo, frutas):
+    """Toldo de rayas sobre dos cajas de fruta, delante de la fachada del mercado."""
+    t = caja(coll, 'toldo', (0, 0, 0), (1.28, 0.83, 0.07), tela(f'toldo {toldo}', toldo), p=10, sub=1)
+    t.location = (0, 0, 2.7)
+    t.rotation_euler = (0.12, 0, 0)
+    for k in range(5):
+        caja(coll, f'raya toldo {k}', (-1.04 + k * 0.52, 0, 0.075), (0.12, 0.83, 0.008), tela('raya toldo', '#F0DABC'), p=12, sub=0).parent = t
+    for k in range(12):
+        bola(coll, f'festón {k}', (-1.18 + k * 0.215, -0.84, 2.53), (0.11, 0.03, 0.1), tela(f'toldo {toldo}', toldo) if k % 2 else tela('raya toldo', '#F0DABC'), n=3)
+    for sx in (-1, 1):
+        cilindro(coll, f'poste toldo {sx}', (sx * 1.16, -0.7, 0), 0.06, 2.55, OSC(), seg=10)
+        bola(coll, f'remate toldo {sx}', (sx * 1.16, -0.7, 2.6), 0.07, laca('remate', '#E8C66A', 0.4), n=3)
+    for k, (x, fruta) in enumerate(((-0.51, frutas[0]), (0.51, frutas[1]))):
+        _caja_fruta(coll, f'caja mercado {k}', x, -0.07, fruta)
+    caja(coll, 'pizarrita', (0.0, -0.45, 0.62), (0.22, 0.02, 0.17), mat('pizarra', '#3E4A45', 0.8), p=8)
+    for k in range(3):
+        caja(coll, f'tiza {k}', (-0.06 + k * 0.06, -0.475, 0.66 - k * 0.05), (0.05, 0.004, 0.008), mat('tiza', '#F6F1E6', 0.7), p=12, sub=0)
+
+
+def m_puesto_mercado_verde(coll):
+    _puesto_mercado(coll, '#899F69', ('#DF9360', '#D9BC68'))
+
+
+def m_puesto_mercado_mostaza(coll):
+    _puesto_mercado(coll, '#D4AA68', ('#879D5C', '#BE7471'))
+
+
+def m_troncos_pila(coll):
+    """Pila de troncos de la carpintería (a lo largo de y, 2,2 m)."""
+    corteza = madera('corteza', '#79523C')
+    filas = ((-0.87, -0.29, 0.29, 0.87), (-0.58, 0.0, 0.58), (-0.29, 0.29))
+    for r, xs in enumerate(filas):
+        for k, x in enumerate(xs):
+            o = clay.lathe(f'tronco {r}{k}', [(0.0, -1.1), (0.24, -1.1), (0.25, -1.05), (0.255, 0.0), (0.25, 1.05), (0.24, 1.1), (0.0, 1.1)], coll, corteza,
+                           segments=14, subsurf=1)
+            o.location = (x, 0, 0.28 + r * 0.44)
+            o.rotation_euler = (math.pi / 2, 0, 0)
+            for j, rr in enumerate((0.2, 0.13, 0.06)):
+                c = clay.lathe(f'anillo tronco {r}{k}{j}', [(rr - 0.012, 0.0), (rr + 0.012, 0.0)], coll, madera('corte', '#D9B07A' if j % 2 == 0 else '#B98E62'),
+                               segments=14, subsurf=0, cap_bottom=False, cap_top=False)
+                c.location = (x, -1.105, 0.28 + r * 0.44)
+                c.rotation_euler = (math.pi / 2, 0, 0)
+            cilindro(coll, f'cara tronco {r}{k}', (x, -1.1, 0.28 + r * 0.44), 0.235, 0.004, madera('corte', '#D9B07A'), seg=14).rotation_euler = (math.pi / 2, 0, 0)
+    for s in (-1, 1):
+        caja(coll, f'cuña {s}', (s * 1.12, 0, 0.12), (0.08, 0.5, 0.12), OSC(), p=8)
+
+
+def m_banco_taller(coll):
+    caja(coll, 'tablero taller', (0, 0, 1.07), (1.4, 0.62, 0.12), MAD(), p=8)
+    for s in (-1, 1):
+        caja(coll, f'pata taller {s}', (s * 1.14, 0, 0.48), (0.08, 0.54, 0.48), OSC(), p=8)
+    caja(coll, 'travesaño taller', (0, 0, 0.3), (1.1, 0.05, 0.05), OSC(), p=10, sub=0)
+    caja(coll, 'tabla encima', (0, 0, 1.24), (0.92, 0.19, 0.045), madera('tabla clara', '#F0DABC'), p=10)
+    o = caja(coll, 'serrucho', (0, 0, 0), (0.42, 0.13, 0.006), metal('serrucho', '#B7C0C6'), p=12, sub=0)
+    o.location = (0.05, -0.1, 1.32)
+    o.rotation_euler = (0, 0, 0.3)
+    m = caja(coll, 'mango serrucho', (0, 0, 0), (0.08, 0.06, 0.03), laca('mango', '#C9563F', 0.4), p=8)
+    m.location = (0.46, 0.04, 1.33)
+    m.rotation_euler = (0, 0, 0.3)
+    for k in range(6):
+        bola(coll, f'viruta {k}', (RNG.uniform(-1.0, 1.0), RNG.uniform(-0.45, 0.45), 1.2), (0.05, 0.03, 0.02), madera('viruta', '#E3C08A'), n=2)
+    tubo(coll, 'martillo mango', [(-0.9, 0.2, 1.21), (-0.6, 0.3, 1.21)], 0.025, MAD(), seg=6)
+    caja(coll, 'martillo cabeza', (-0.92, 0.19, 1.24), (0.04, 0.09, 0.05), metal('martillo', '#536271'), p=8)
+    for k in range(4):
+        cilindro(coll, f'tarro clavos {k}', (0.95 + (k % 2) * 0.12, 0.3 - (k // 2) * 0.12, 1.19), 0.05, 0.1, metal('tarro', '#8D949C'), seg=10)
+
+
+def m_barril_taller(coll):
+    clay.lathe('barril', [(0.0, 0.0), (0.4, 0.0), (0.47, 0.55), (0.4, 1.15), (0.0, 1.15)], coll, madera('barril', '#B98E62'), segments=20, subsurf=1)
+    for z in (0.18, 0.55, 0.95):
+        r = 0.4 + 0.07 * (1 - abs(z - 0.55) / 0.55)
+        clay.lathe(f'zuncho {z}', [(r, -0.025), (r + 0.015, 0.0), (r, 0.025)], coll, metal('zuncho', '#536271'), segments=20, subsurf=0,
+                   cap_bottom=False, cap_top=False).location = (0, 0, z)
+    cilindro(coll, 'tapa barril', (0, 0, 1.13), 0.43, 0.06, madera('tapa', '#79523C'), seg=20)
+
+
+def m_fragua_patio(coll):
+    """Fragua de piedra (1,8 × 1,42) con la boca al frente; el fuego animado lo pone el juego delante."""
+    rocas = piedra('fragua', '#827E72')
+    caja(coll, 'fragua cuerpo', (0, 0, 0.81), (0.9, 0.71, 0.81), rocas, p=6)
+    for i in range(5):
+        for j in range(5):
+            x = -0.72 + j * 0.36 + (0.18 if i % 2 else 0)
+            z = 0.18 + i * 0.32
+            if abs(x) < 0.5 and z < 1.2 or abs(x) > 0.85:
+                continue
+            bola(coll, f'piedra fragua {i}{j}', (x, -0.72, z), (0.16, 0.05, 0.13), piedra(f'piedra {(i + j) % 3}', ('#958B80', '#7B6F66', '#A39A8E')[(i + j) % 3]), n=3)
+    caja(coll, 'boca fragua', (0, -0.7, 0.75), (0.5, 0.04, 0.4), mat('hollín', '#2B2422', 0.95), p=8, sub=0)
+    for k in range(7):
+        bola(coll, f'brasa {k}', (-0.35 + k * 0.12, -0.62, 0.42 + (k % 2) * 0.04), (0.08, 0.06, 0.05), luz('brasa', ('#FF8A3D', '#FFB347')[k % 2], 3.0), n=3)
+    clay.lathe('campana fragua', [(0.95, 0.0), (0.6, 0.45), (0.3, 0.6), (0.3, 0.62)], coll, metal('campana fragua', '#4A4F57'), segments=4,
+               subsurf=0).location = (0, 0, 1.62)
+    bpy.data.objects['campana fragua'].rotation_euler = (0, 0, math.pi / 4)
+    cilindro(coll, 'chimenea fragua', (0, 0, 2.2), 0.25, 1.0, metal('campana fragua', '#4A4F57'), seg=12)
+    clay.lathe('fuelle', [(0.0, 0.0), (0.25, 0.05), (0.28, 0.15), (0.2, 0.3), (0.0, 0.32)], coll, tela('fuelle', '#8A5A3B'), segments=12,
+               subsurf=1).location = (1.15, -0.2, 0.55)
+    bpy.data.objects['fuelle'].rotation_euler = (0, math.pi / 2, 0)
+    tubo(coll, 'pico fuelle', [(1.0, -0.2, 0.7), (0.9, -0.2, 0.7)], 0.04, metal('pico', '#536271'), seg=6)
+    for k in range(3):
+        tubo(coll, f'tenaza {k}', [(-0.95, -0.4 + k * 0.08, 1.3), (-1.0, -0.42 + k * 0.08, 0.6)], 0.018, metal('tenaza', '#3E4A57'), seg=5)
+
+
+def m_yunque_patio(coll):
+    clay.lathe('tocón yunque', [(0.0, 0.0), (0.52, 0.0), (0.47, 0.1), (0.46, 0.72), (0.0, 0.8)], coll, madera('corteza', '#79523C'), segments=16,
+               subsurf=1)
+    cilindro(coll, 'corte tocón', (0, 0, 0.79), 0.44, 0.015, madera('corte', '#D9B07A'), seg=16)
+    caja(coll, 'yunque base', (0, 0, 0.92), (0.27, 0.22, 0.13), metal('yunque', '#536271'), p=6)
+    caja(coll, 'yunque cintura', (0, 0, 1.06), (0.17, 0.14, 0.06), metal('yunque', '#536271'), p=6)
+    caja(coll, 'yunque cara', (0.1, 0, 1.19), (0.62, 0.2, 0.08), metal('yunque', '#536271'), p=6)
+    clay.lathe('yunque cuerno', [(0.0, 0.0), (0.12, 0.0), (0.0, 0.36)], coll, metal('yunque', '#536271'), segments=12, subsurf=1).location = (-0.5, 0, 1.19)
+    bpy.data.objects['yunque cuerno'].rotation_euler = (0, -math.pi / 2, 0)
+    tubo(coll, 'mazo mango', [(0.35, -0.05, 1.3), (0.6, -0.12, 1.75)], 0.03, MAD(), seg=6)
+    m = caja(coll, 'mazo cabeza', (0, 0, 0), (0.13, 0.07, 0.07), metal('mazo', '#3E4A57'), p=6)
+    m.location = (0.62, -0.12, 1.79)
+    m.rotation_euler = (0, -0.5, 0)
+    caja(coll, 'herradura', (0.25, 0.05, 1.29), (0.08, 0.07, 0.012), luz('hierro caliente', '#FF8A3D', 2.0), p=4)
+
+
+def m_piedras_mineral(coll):
+    for k in range(6):
+        x, y = RNG.uniform(-0.45, 0.45), RNG.uniform(-0.5, 0.5)
+        col = ('#98AFA9', '#AE9279', '#B7C0C6')[k % 3]
+        clay.blob(f'mineral {k}', (x, y, 0.17), (0.24, 0.2, 0.19), coll, piedra(f'mineral {col}', col), n=4, p=2.4)
+        for j in range(2):
+            bola(coll, f'veta {k}{j}', (x + RNG.uniform(-0.1, 0.1), y - 0.17, 0.2 + j * 0.06), (0.04, 0.02, 0.03),
+                 laca('veta', ('#C8743C', '#F2C14A', '#B48CFF')[k % 3], 0.2), n=2)
+
+
+def m_emblema_clinica(coll):
+    """Medallón de la clínica (frente hacia -y, centro en z=0) con su cruz verde y hojitas."""
+    o = clay.lathe('medallón', [(0.0, -0.06), (0.44, -0.06), (0.48, 0.0), (0.44, 0.06), (0.0, 0.06)], coll, madera('medallón', '#DFE8D3'),
+                   segments=28, subsurf=1)
+    o.rotation_euler = (math.pi / 2, 0, 0)
+    a = clay.lathe('aro medallón', [(0.45, -0.07), (0.5, 0.0), (0.45, 0.07)], coll, metal('aro', '#C9A44C'), segments=28, subsurf=0, cap_bottom=False,
+                   cap_top=False)
+    a.rotation_euler = (math.pi / 2, 0, 0)
+    verde = laca('cruz', '#819E87', 0.35)
+    caja(coll, 'cruz v', (0, -0.08, 0), (0.07, 0.04, 0.27), verde, p=6)
+    caja(coll, 'cruz h', (0, -0.08, 0), (0.27, 0.04, 0.07), verde, p=6)
+    for s in (-1, 1):
+        hoja_plana(coll, f'hoja medallón {s}', (s * 0.3, -0.07, -0.42), 0.18, '#7FB069', ang=-s * 1.0)
+
+
+def m_maceta_grande(coll):
+    """Matera grande con matas y flores; la matera lleva el material «maceta» para teñirla."""
+    clay.lathe('maceta', [(0.0, 0.0), (0.27, 0.0), (0.39, 0.45), (0.42, 0.48), (0.42, 0.56), (0.0, 0.54)], coll, laca('maceta', '#C59679', 0.6),
+               segments=18, subsurf=1)
+    clay.lathe('raya maceta', [(0.35, 0.28), (0.37, 0.31), (0.355, 0.34)], coll, mat('raya maceta', '#F2EBDD', 0.7), segments=18, subsurf=0,
+               cap_bottom=False, cap_top=False)
+    bola(coll, 'tierra maceta', (0, 0, 0.53), (0.38, 0.38, 0.05), TIERRA(), n=3)
+    for k in range(6):
+        a = k * 1.05
+        bola(coll, f'mata maceta {k}', (math.cos(a) * 0.2, math.sin(a) * 0.2, 0.72), (0.2, 0.2, 0.16), (HOJA, HOJA_CLARA, HOJA_OSC)[k % 3](), n=3)
+    for k in range(5):
+        a = k * 1.3 + 0.4
+        flor(coll, f'flor maceta {k}', (math.cos(a) * 0.22, math.sin(a) * 0.22 - 0.05, 0.9), 0.07, FLORES[k % len(FLORES)], centro='#F2C94C')
+
+
+def m_maceta_puerta(coll):
+    clay.lathe('maceta', [(0.0, 0.0), (0.2, 0.0), (0.29, 0.34), (0.31, 0.37), (0.31, 0.42), (0.0, 0.4)], coll, laca('maceta', '#C59679', 0.6),
+               segments=16, subsurf=1)
+    bola(coll, 'tierra maceta', (0, 0, 0.4), (0.28, 0.28, 0.04), TIERRA(), n=3)
+    for k in range(5):
+        a = k * 1.25
+        bola(coll, f'mata puerta {k}', (math.cos(a) * 0.14, math.sin(a) * 0.14, 0.55), (0.15, 0.15, 0.12), (HOJA, HOJA_OSC)[k % 2](), n=3)
+    for k in range(4):
+        a = k * 1.6 + 0.3
+        flor(coll, f'flor puerta {k}', (math.cos(a) * 0.15, math.sin(a) * 0.15 - 0.04, 0.68), 0.055, ('#E58FA6', '#F2C94C')[k % 2], centro='#F6F1E6')
+
+
+def m_tablon(coll):
+    """Tablón de anuncios del archivo con tres hojas clavadas (frente hacia -y)."""
+    corteza = madera('poste letrero', '#79523C')
+    for s in (-1, 1):
+        cilindro(coll, f'poste tablón {s}', (s * 0.85, 0, 0), 0.08, 2.25, corteza, seg=10)
+        bola(coll, f'remate tablón {s}', (s * 0.85, 0, 2.28), 0.09, OSC(), n=3)
+    caja(coll, 'tablón', (0, 0, 1.65), (1.1, 0.08, 0.65), madera('tablón', '#8A5A3B'), p=6)
+    caja(coll, 'tablón marco', (0, 0.01, 1.65), (1.16, 0.07, 0.7), OSC(), p=6)
+    for s in (-1, 1):
+        t = caja(coll, f'tejadito {s}', (0, 0, 0), (1.3, 0.2, 0.04), laca('tejado', '#7D8399', 0.5), p=10)
+        t.location = (0, s * 0.17, 2.38)
+        t.rotation_euler = (s * 0.45, 0, 0)
+    for k, col in enumerate(('#EDDFB6', '#DDC7A3', '#F6F1E6', '#F4D6C8')):
+        x = -0.75 + k * 0.5
+        o = caja(coll, f'hoja tablón {k}', (0, 0, 0), (0.18, 0.006, 0.24), mat(f'hoja {col}', col, 0.8), p=12, sub=0)
+        o.location = (x, -0.09, 1.66 + (0.05 if k % 2 else -0.04))
+        o.rotation_euler = (0, (k - 1.5) * 0.06, 0)
+        bola(coll, f'chinche {k}', (x, -0.1, 1.86 + (0.05 if k % 2 else -0.04)), 0.025, laca('chinche', ('#E4566B', '#3B6FB6')[k % 2], 0.3), n=2)
+        for j in range(3):
+            caja(coll, f'renglón {k}{j}', (x, -0.097, 1.72 - j * 0.07 + (0.05 if k % 2 else -0.04)), (0.12, 0.002, 0.008), mat('tinta', '#5A3E2B', 0.7), p=12, sub=0)
+    for k in range(4):
+        a = k * 1.5
+        bola(coll, f'mata tablón {k}', (math.cos(a) * 0.3, math.sin(a) * 0.2, 0.07), (0.12, 0.1, 0.08), (HOJA, HOJA_OSC)[k % 2](), n=3)
+
+
+def m_caja(coll):
+    _caja_fruta(coll, 'caja', 0, 0)
+    for k in range(3):
+        o = caja(coll, f'rollo papel {k}', (0, 0, 0), (0.05, 0.05, 0.28), mat('papel', '#EDDFB6', 0.8), p=6)
+        o.location = (-0.2 + k * 0.18, 0.0, 0.64)
+        o.rotation_euler = (0, math.pi / 2, 0.2 * k)
+
+
+def m_mesa_posada(coll):
+    cilindro(coll, 'mesa pata', (0, 0, 0), 0.1, 0.92, MAD(), seg=12)
+    cilindro(coll, 'mesa pie', (0, 0, 0), 0.4, 0.05, OSC(), seg=16)
+    clay.lathe('mesa tablero', [(0.0, 0.89), (0.8, 0.89), (0.83, 0.93), (0.8, 0.98), (0.0, 0.98)], coll, madera('mesa posada', '#B98E62'), segments=28,
+               subsurf=1)
+    clay.lathe('mantelito', [(0.0, 0.985), (0.5, 0.985), (0.0, 0.99)], coll, tela('mantelito', '#F0DABC'), segments=20, subsurf=0)
+    for s in (-1, 1):
+        cilindro(coll, f'taburete pata {s}', (s * 1.05, 0, 0), 0.08, 0.46, OSC(), seg=10)
+        clay.lathe(f'taburete asiento {s}', [(0.0, 0.45), (0.26, 0.45), (0.28, 0.5), (0.26, 0.57), (0.0, 0.57)], coll, madera('mesa posada', '#B98E62'),
+                   segments=18, subsurf=1).location = (s * 1.05, 0, 0)
+        bola(coll, f'cojín taburete {s}', (s * 1.05, 0, 0.6), (0.22, 0.22, 0.04), tela('cojín posada', '#8F6976'), n=4)
+    clay.lathe('jarra', [(0.0, 0.0), (0.14, 0.0), (0.16, 0.15), (0.11, 0.28), (0.13, 0.32), (0.0, 0.31)], coll, laca('jarra', '#F0DABC', 0.3),
+               segments=16, subsurf=1).location = (0.15, 0.1, 0.99)
+    tubo(coll, 'asa jarra', [(0.29, 0.1, 1.24), (0.38, 0.1, 1.17), (0.3, 0.1, 1.08)], 0.02, laca('jarra', '#F0DABC', 0.3), seg=6)
+    for k, (x, y) in enumerate(((-0.35, -0.2), (-0.2, 0.3))):
+        clay.lathe(f'taza {k}', [(0.0, 0.0), (0.07, 0.0), (0.08, 0.12), (0.0, 0.11)], coll, laca('taza', '#8EC5F0', 0.3), segments=12, subsurf=1).location = (x, y, 0.99)
+    clay.lathe('pan posada', [(0.0, 0.0), (0.16, 0.0), (0.15, 0.06), (0.0, 0.1)], coll, laca('pan', '#C98A4A', 0.6), segments=14, subsurf=1).location = (0.4, -0.3, 0.99)
+
+
 PIEZAS = {k[2:]: v for k, v in globals().items() if k.startswith('m_') and callable(v) and v.__module__ == __name__}
 
 

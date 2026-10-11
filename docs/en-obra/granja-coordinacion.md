@@ -302,3 +302,19 @@ de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/bl
 - La clave de la vista del pueblo incluye el tema del festival de hoy, para que la plaza se rehaga si cambia el día
   estando allí. Si el motor mueve la plaza, la fuente o los puestos de los participantes, se ajustan las constantes de
   `festejos-render.ts`.
+
+### Utilería del Pueblo del Sol en Blender (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_pueblo.py` → `public/modelos/granja_pueblo.glb` (0,7 MB): la fuente (pila con repisa,
+  columna con anillos, tacita, un sol con cara y cuatro ranitas en el borde; mismas alturas del agua de
+  `pueblo-adornos.ts`), banco de hierro forjado, farol con vidrio que alumbra, jardinera por módulos de 1 m con su
+  bordillo, tramo y poste de valla, dos árboles (manzano y florecido), la rueda del molino, vaca, gallina, bebedero,
+  rollo de heno, piedra del borde y el letrero de la entrada.
+- `crearPueblo()` arma esa utilería en una arcilla aparte (`utileria-arcilla`); en el navegador, apenas carga el kit
+  (se precarga con los muebles al abrir la granja) la cambia por `utileriaPueblo()`: las mismas posiciones, alturas y
+  giros (`BANCOS_PUEBLO`, `ARBOLES_PUEBLO`, `PUENTES_PUEBLO`, `VALLAS_CORRAL`, `FAROLES_PUEBLO`, `JARDINERAS_PUEBLO`),
+  juntadas por material con `fundir()` (`cuartos.ts`) para que sean pocas llamadas de dibujo. La rueda del kit va dentro
+  del grupo `rueda` que ya animaba el pueblo. En Node (pruebas del motor) queda la arcilla.
+- `liberarPueblo()` ya no destruye lo marcado `compartido` (geometrías, materiales y texturas de los kits).
+- Siguen en arcilla (siguiente tanda): los edificios con su utilería propia (puestos del mercado, troncos de la
+  carpintería, fragua, macetas de la clínica, tablón del archivo, mesa de la posada) y los altares.

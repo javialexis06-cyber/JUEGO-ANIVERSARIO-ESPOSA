@@ -1,4 +1,4 @@
-import { interiorLocal, interiorVivienda, interiorDormitorio, puertaCuarto } from './cuartos';
+import { interiorLocal, interiorVivienda, interiorDormitorio, puertaCuarto, conKit, fundir } from './cuartos';
 import { dormitorioDef, horaDormitorio } from './dormitorios';
 import type { EstadoGranja } from './estado';
 import { tiempoDia, lluviaRiega } from './clima';
@@ -209,47 +209,83 @@ function chicken(a:Arcilla,x:number,z:number){
   a.ball([.08,.13,.07],[x,.98,z+.18],'#b96358');a.ball([.23,.16,.2],[x,.65,z-.29],C.cream);
 }
 
+const VALLAS_CORRAL:readonly [number,number,number,number][]=[[58,12,70,12],[58,21,70,21],[58,12,58,21],[70,12,70,15.4],[70,17.6,70,21]];
+const FAROLES_PUEBLO:readonly [number,number][]=[[55,-8],[69,-6],[80,-10],[88,-6],[108,-6],[71,9],[92,8],[81,22],[102,23],[55,23]];
+const JARDINERAS_PUEBLO:readonly [number,number,number,number][]=[[70,-13,2,5],[88,-20,1.8,8],[56,-21,1.4,13],[87,13,1.7,8],[73,7,2.5,3.2],[102,-14,2,5]];
+
+/** La utilería del pueblo con las piezas de granja_pueblo.glb (mismas posiciones, alturas y huellas que la arcilla),
+ * juntada por material para que sean pocas llamadas de dibujo. */
+function utileriaPueblo(m:Map<string,THREE.Object3D>):THREE.Group|null{
+  if(!m.has('fuente'))return null;const g=new THREE.Group();
+  const poner=(clave:string,x:number,z:number,giro=0,escala:number|[number,number,number]=1,y=0)=>{const base=m.get(clave);if(!base)return;const o=base.clone(true);o.position.set(x,y,z);o.rotation.y=giro;if(typeof escala==='number')o.scale.setScalar(escala);else o.scale.set(...escala);g.add(o);};
+  poner('fuente',84,2);
+  for(const [x,z,r]of BANCOS_PUEBLO)poner('banco',x,z,r);
+  for(const [x,z]of FAROLES_PUEBLO)poner('farol',x,z,hash(x,z)*6.28);
+  ARBOLES_PUEBLO.forEach(([x,z,h],i)=>poner(i%3===1?'arbol_b':'arbol_a',x,z,hash(i,7)*6.28,h/3.5));
+  // Jardineras: módulos de 1 m estirados para llenar cada una, con su bordillo alrededor
+  for(const [x,z,w,d]of JARDINERAS_PUEBLO){
+    const nx=Math.max(1,Math.round(w)),nz=Math.max(1,Math.round(d)),sx=w/nx,sz=d/nz;
+    for(let i=0;i<nx;i++)for(let j=0;j<nz;j++)poner('jardinera',x+sx*(i+.5),z+sz*(j+.5),0,[sx,1,sz]);
+    const lado=(x0:number,z0:number,x1:number,z1:number)=>{const largo=Math.hypot(x1-x0,z1-z0),n=Math.max(1,Math.round(largo)),giro=Math.atan2(-(z1-z0),x1-x0);for(let k=0;k<n;k++){const t=(k+.5)/n;poner('jardinera_borde',x0+(x1-x0)*t,z0+(z1-z0)*t,giro,[largo/n,1,1]);}};
+    lado(x-.1,z-.1,x+w+.1,z-.1);lado(x-.1,z+d+.1,x+w+.1,z+d+.1);lado(x-.1,z-.1,x-.1,z+d+.1);lado(x+w+.1,z-.1,x+w+.1,z+d+.1);
+  }
+  // Vallas del corral y de los puentes: tramos de 1,5 m como mucho, igual que la arcilla
+  const valla=(x:number,z:number,x2:number,z2:number)=>{const d=Math.hypot(x2-x,z2-z),n=Math.ceil(d/1.5),giro=Math.atan2(-(z2-z),x2-x);for(let i=0;i<n;i++)poner('valla_tramo',x+(x2-x)*i/n,z+(z2-z)*i/n,giro,[d/n/1.5,1,1]);poner('valla_poste',x2,z2);};
+  for(const [x,z,x2,z2] of VALLAS_CORRAL)valla(x,z,x2,z2);
+  for(const zz of PUENTES_PUEBLO){valla(103.3,zz,109,zz);valla(103.3,zz+1.6,109,zz+1.6);}
+  poner('vaca',61,15.5,-.4,.8);poner('vaca',66,18,.5,.63);
+  for(const [x,z,r] of [[66,14,.3],[67.1,15.5,-.8],[62,19,2.4]] as const)poner('gallina',x,z,r);
+  poner('bebedero',59.4,19.8);
+  for(let i=0;i<3;i++)poner('rollo_heno',66.8+i*.85,20.1,(i-1)*.12);
+  for(let i=0;i<29;i++)poner('piedra_borde',55+i*1.9,-28.1+hash(i)*.2,hash(i,3)*6.28,.85+hash(i,4)*.3);
+  poner('letrero_entrada',54,1.8);
+  return fundir(g);
+}
+
 interface AnimationPueblo { npcs:THREE.Group[]; humo:THREE.Group[]; rueda:THREE.Group; agua:THREE.Mesh; fuego:THREE.Mesh; }
 
 /** Original compact village. Owns all geometry/materials; no V2 cache references. */
 export function crearPueblo():THREE.Group {
-  const group=new THREE.Group();group.name='pueblo';const a=new Arcilla();
+  const group=new THREE.Group();group.name='pueblo';const a=new Arcilla(),u=new Arcilla();
   // A offset plaza and bent approach distinguish the layout from a copied map.
   // Calles empedradas, la plaza del sol y el agua de la fuente (texturas pintadas): pueblo-adornos.ts
   if(typeof document!=='undefined')group.add(adornosPueblo(mallaAgua));
   // Irregular paving of the civic square, with visible raised perimeter.
   a.cyl(7.15,.16,[84,.05,2],C.stone,[0,0,0]);a.cyl(6.94,.12,[84,.12,2],'#d3c8aa');
   for(let ring=0;ring<3;ring++)for(let i=0;i<24;i++){const t=i/24*Math.PI*2,r=3.2+ring*1.12;a.box([.86,.035,.72],[84+Math.sin(t)*r,.2,2+Math.cos(t)*r],ring===1?(i%2?'#c98a57':'#d9a466'):(i%2?'#b9b09a':'#cfc5ab'),.04,[0,t,0]);}
-  a.cyl(2.23,.32,[84,.29,2],C.stone);a.cyl(1.95,.24,[84,.5,2],C.cream);a.cyl(.47,.86,[84,1.04,2],C.stone);a.cyl(.98,.2,[84,1.5,2],C.cream);a.cyl(.27,.83,[84,1.88,2],C.stone);a.ball([.29,.31,.29],[84,2.4,2],'#c5b27e');
+  u.cyl(2.23,.32,[84,.29,2],C.stone);u.cyl(1.95,.24,[84,.5,2],C.cream);u.cyl(.47,.86,[84,1.04,2],C.stone);u.cyl(.98,.2,[84,1.5,2],C.cream);u.cyl(.27,.83,[84,1.88,2],C.stone);u.ball([.29,.31,.29],[84,2.4,2],'#c5b27e');
   for(const v of VIVIENDAS_PUEBLO.filter(v=>!v.edificio)){building(a,group,{...v,servicio:({despertar:'clinica',calma:'archivo',ribera:'animales',senderos:'carpinteria',huerto:'clinica',escuela:'archivo',bosque:'carpinteria',tejidos:'posada',observatorio:'archivo',rosal:'clinica'} as Record<string,ServicioPueblo>)[v.tema],descripcion:'Vivienda de los habitantes del pueblo'});}
   for(const e of EDIFICIOS_PUEBLO)e.servicio.startsWith('altar')?shrine(a,group,e):building(a,group,e);
   // Animal-yard fence has a visible gate gap facing the plaza.
-  fence(a,58,12,70,12);fence(a,58,21,70,21);fence(a,58,12,58,21);fence(a,70,12,70,15.4);fence(a,70,17.6,70,21);
+  for(const [x,z,x2,z2] of VALLAS_CORRAL)fence(u,x,z,x2,z2);
   a.box([10.9,.075,8.15],[64,.025,16.5],'#98b575',.12);for(let i=0;i<32;i++){const xx=58.7+hash(i,2)*10.5,zz=12.5+hash(i,9)*8;a.ball([.15,.045,.12],[xx,.09,zz],i%3?'#a6ba7b':'#becc8e');}
-  cow(a,61,15.5);cow(a,66,18,.63);chicken(a,66,14);chicken(a,67.1,15.5);chicken(a,62,19);
-  a.box([1.8,.4,.65],[59.4,.25,19.8],C.woodLight);a.box([1.56,.08,.44],[59.4,.49,19.8],'#89adb4');
-  for(let i=0;i<3;i++)a.cyl(.5,.8,[67+i*.63,.45,20.1],'#c8b679',[0,0,Math.PI/2]);
+  cow(u,61,15.5);cow(u,66,18,.63);chicken(u,66,14);chicken(u,67.1,15.5);chicken(u,62,19);
+  u.box([1.8,.4,.65],[59.4,.25,19.8],C.woodLight);u.box([1.56,.08,.44],[59.4,.49,19.8],'#89adb4');
+  for(let i=0;i<3;i++)u.cyl(.5,.8,[66.8+i*.85,.45,20.1],'#c8b679',[0,0,Math.PI/2]);
   // Narrow millrace; its banks and wheel are the inn's architectural landmark.
   a.box([3.5,.1,11],[106.1,.03,16.5],'#83aeb0',.15);for(const x of [104.2,108])a.box([.35,.33,11.3],[x,.15,16.5],C.stone);
   for(let i=0;i<11;i++)a.box([3.55,.09,.09],[106.1,.13,11.3+i*.95],i%2?'#a7c8c6':'#97bab9',.01);
-  for(const zz of PUENTES_PUEBLO){fence(a,103.3,zz,109,zz);fence(a,103.3,zz+1.6,109,zz+1.6);}
-  for(const [x,z,r]of BANCOS_PUEBLO)seat(a,x,z,r);
-  for(const [x,z]of [[55,-8],[69,-6],[80,-10],[88,-6],[108,-6],[71,9],[92,8],[81,22],[102,23],[55,23]])lamp(a,x,z);
+  for(const zz of PUENTES_PUEBLO){fence(u,103.3,zz,109,zz);fence(u,103.3,zz+1.6,109,zz+1.6);}
+  for(const [x,z,r]of BANCOS_PUEBLO)seat(u,x,z,r);
+  for(const [x,z]of FAROLES_PUEBLO)lamp(u,x,z);
   // Flowerbeds are inset with a stone rim, leaving the main routes clear.
-  for(const [x,z,w,d]of [[70,-13,2,5],[88,-20,1.8,8],[56,-21,1.4,13],[87,13,1.7,8],[73,7,2.5,3.2],[102,-14,2,5]] as [number,number,number,number][]){
-    a.box([w+.2,.19,d+.2],[x+w/2,.08,z+d/2],C.stone,.07);a.box([w,.17,d],[x+w/2,.16,z+d/2],C.soil,.06);
-    for(let i=0;i<Math.ceil(w*d*1.4);i++){const xx=x+.2+hash(i,x)*(w-.4),zz=z+.2+hash(i,z)*(d-.4);a.ball([.25,.25,.25],[xx,.36,zz],i%3?C.green:C.leaf);a.ball([.12,.085,.12],[xx,.61,zz],['#d4a0a1','#dec46b','#c8b0d5'][i%3]);}
+  for(const [x,z,w,d]of JARDINERAS_PUEBLO){
+    u.box([w+.2,.19,d+.2],[x+w/2,.08,z+d/2],C.stone,.07);u.box([w,.17,d],[x+w/2,.16,z+d/2],C.soil,.06);
+    for(let i=0;i<Math.ceil(w*d*1.4);i++){const xx=x+.2+hash(i,x)*(w-.4),zz=z+.2+hash(i,z)*(d-.4);u.ball([.25,.25,.25],[xx,.36,zz],i%3?C.green:C.leaf);u.ball([.12,.085,.12],[xx,.61,zz],['#d4a0a1','#dec46b','#c8b0d5'][i%3]);}
   }
-  for(const [x,z,h]of ARBOLES_PUEBLO)tree(a,x,z,h);
+  for(const [x,z,h]of ARBOLES_PUEBLO)tree(u,x,z,h);
   // Low perimeter stones, flowers and signpost at the approach.
-  for(let i=0;i<29;i++){const x=55+i*1.9;a.ball([.55,.27,.39],[x,.2,-28.1+hash(i)*.2],i%3?C.stone:'#b7b49b');}
-  a.cyl(.13,2.5,[54,1.25,1.8],C.wood);a.box([2.2,.48,.13],[54,2.17,1.8],C.woodLight);a.box([1.7,.42,.13],[54,1.58,1.8],C.woodLight,.04,[0,0,-.09]);
-  group.add(a.mesh());
+  for(let i=0;i<29;i++){const x=55+i*1.9;u.ball([.55,.27,.39],[x,.2,-28.1+hash(i)*.2],i%3?C.stone:'#b7b49b');}
+  u.cyl(.13,2.5,[54,1.25,1.8],C.wood);u.box([2.2,.48,.13],[54,2.17,1.8],C.woodLight);u.box([1.7,.42,.13],[54,1.58,1.8],C.woodLight,.04,[0,0,-.09]);
+  group.add(a.mesh());const arcilla=u.mesh();arcilla.name='utileria-arcilla';group.add(arcilla);
   const npcs=NPCS_PUEBLO.map((n,i)=>{const g=vecinoPeluche(n.id,i);if(n.id==='nina'||n.id==='nino')g.scale.setScalar(.82);g.position.set(n.x,0,n.z);g.userData.origin={x:n.x,z:n.z};g.userData.npcId=n.id;group.add(g);return g;});
   const rueda=new THREE.Group(),r=new Arcilla();for(const xx of [-.29,.29]){r.add(new THREE.TorusGeometry(1.68,.12,6,24),C.wood,[xx,0,0],[0,Math.PI/2,0]);}
   r.cyl(.19,.85,[0,0,0],C.metal,[0,0,Math.PI/2]);
   for(let i=0;i<12;i++){const t=i/12*Math.PI*2;r.box([.72,.24,.65],[0,Math.sin(t)*1.61,Math.cos(t)*1.61],C.woodLight,.04,[t,0,0]);r.box([.12,3.22,.11],[0,0,0],C.wood,.01,[t,0,0]);}
   rueda.add(r.mesh());rueda.position.set(103.2,1.75,16);group.add(rueda);
+  // En el navegador la utilería de arcilla se cambia por la de Blender (granja_pueblo.glb) apenas carga el kit
+  conKit(group,'granja_pueblo.glb',m=>{const kit=utileriaPueblo(m);if(!kit)return;group.add(kit);arcilla.removeFromParent();arcilla.geometry.dispose();(arcilla.material as THREE.Material).dispose();
+   const ruedaKit=m.get('rueda_molino');if(ruedaKit){for(const c of [...rueda.children]){c.removeFromParent();const malla=c as THREE.Mesh;malla.geometry?.dispose();(malla.material as THREE.Material|undefined)?.dispose();}rueda.add(ruedaKit.clone(true));}});
   const humo:THREE.Group[]=[];for(let i=0;i<4;i++){const g=new THREE.Group(),m=new THREE.Mesh(new THREE.SphereGeometry(.35,8,5),new THREE.MeshStandardMaterial({color:'#d0cbc0',roughness:1,transparent:true,opacity:.28,depthWrite:false}));g.add(m);g.userData.offset=i*.9;g.position.set(104.6,5.9,2.31);group.add(g);humo.push(g);}
   const agua=new THREE.Mesh(new THREE.TorusGeometry(.7,.025,5,28),new THREE.MeshStandardMaterial({color:'#cee5d6',roughness:.28}));agua.rotation.x=Math.PI/2;agua.position.set(84,.66,2);group.add(agua);
   const fuego=new THREE.Mesh(new THREE.SphereGeometry(.24,8,6),new THREE.MeshStandardMaterial({color:'#f5b064',emissive:'#db7835',emissiveIntensity:.2,roughness:.8}));fuego.position.set(100.4,.93,9.4);fuego.scale.set(.8,1.45,.75);group.add(fuego);
@@ -275,7 +311,7 @@ export function liberarPueblo(group:THREE.Group){
   sacarPeluches?.(group);
   const geometries=new Set<THREE.BufferGeometry>(),materials=new Set<THREE.Material>(),textures=new Set<THREE.Texture>();
   group.traverse(o=>{if(!(o instanceof THREE.Mesh))return;geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){materials.add(m);if(m instanceof THREE.MeshStandardMaterial){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);}}});
-  textures.forEach(t=>t.dispose());geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());group.removeFromParent();delete group.userData.animacionPueblo;
+  textures.forEach(t=>{if(!t.userData.compartido)t.dispose();});geometries.forEach(g=>{if(!g.userData.compartido)g.dispose();});materials.forEach(m=>{if(!m.userData.compartido)m.dispose();});group.removeFromParent();delete group.userData.animacionPueblo;
 }
 
 /** Optional shared interior for a service. The house/hogar remains the host project's scene. */
