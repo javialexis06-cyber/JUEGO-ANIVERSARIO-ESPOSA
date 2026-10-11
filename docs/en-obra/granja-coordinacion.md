@@ -221,3 +221,10 @@ Cambio de reglas (frente de motor, avisado aquí):
 - Interiores (Claude): `amoblarCabana` (cama doble, cocina, mesa, chimenea encendida, biblioteca, plantas y cuadros,
   todo contra las paredes) y `adornosRefugio` (paja, farol que alumbra, ventanas, costales, escoba, aseladero).
   Cámara a 2 de zoom en interiores y fondo oscuro cálido en lugar del verde del exterior.
+
+## Regla: todo de la granja en Blender (Javier, 11 de octubre de 2026)
+
+Javier pidió que **todo, absolutamente todo** lo que se ve en la granja se modele en Blender con la máxima calidad del
+estilo del juego (peluche, fieltro, madera, plastilina; formas redondeadas y llenas de detalle). Las figuras sueltas
+de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/blender/granja_*.py`, exportados a
+`juego/web/public/modelos/` y cargados con `src/recursos.ts`. El motor no cambia: solo la presentación.
