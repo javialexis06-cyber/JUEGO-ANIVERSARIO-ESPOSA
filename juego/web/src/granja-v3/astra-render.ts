@@ -3,7 +3,8 @@ import * as THREE from 'three';
 import type { EstadoGranja } from './estado';
 import { regionAstra, NPC_ASTRA, posicionNpcAstra, rutasDesde, RECURSOS_ASTRA, puntoRecurso } from './astra';
 import { Suelos, liberar } from './suelo';
-import { conKit, interiorVivienda } from './cuartos';
+import { interiorVivienda } from './cuartos';
+import { viviendaAstra, recursoAstra, lugaresAstra, paisajeAstra, paletaSueloAstra } from './astra-arte';
 import { vecinoPeluche, animarVecino, sacarVecinos } from './vecinos3d';
 import { arcoSalida, senderoTierra } from './zonas-render';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
@@ -22,7 +23,8 @@ function sustituir(id:string,raiz:THREE.Group,provisional:THREE.Object3D){
   if(provisional.userData.peluche)sacarVecinos(provisional);else liberar(provisional);raiz.add(g);
  }).catch(()=>{/* El kit existente sigue disponible si un recurso aún no se produjo. */});
 }
-export function señalesRecursosAstra(region:string){const g=new THREE.Group();g.name='astra-recursos-'+region;RECURSOS_ASTRA.find(r=>r.id===region)?.recursos.forEach((d,i)=>{const p=puntoRecurso(region,i);g.add(arcoSalida(d.nombre,p.x,p.z,false));conKit(g,'granja_pueblo.glb',m=>{const base=m.get(d.clase==='mineral'?'piedras_mineral':d.clase==='madera'?'troncos':'jardinera');if(base){const o=base.clone(true);o.position.set(p.x,0,p.z);g.add(o);sustituir('recurso:'+d.id,g,o);}});});return g;}
+/** El arte de cada recurso (afloramiento, troncos, cantero, puesto de observación) con su letrero está en astra-arte.ts. */
+export function señalesRecursosAstra(region:string){const g=new THREE.Group();g.name='astra-recursos-'+region;RECURSOS_ASTRA.find(r=>r.id===region)?.recursos.forEach((d,i)=>{const p=puntoRecurso(region,i);recursoAstra(g,region,d,p,o=>sustituir('recurso:'+d.id,g,o));});return g;}
 
 export class EscenaAstra {
  readonly grupo=new THREE.Group();private clave='';private vecinos=new Map<string,THREE.Group>();private estado?:EstadoGranja;private suelos=new Suelos();
@@ -32,13 +34,14 @@ export class EscenaAstra {
   this.grupo.visible=true;const key=t.actual+':'+t.interior;if(key!==this.clave){this.limpiar();this.clave=key;this.grupo.userData.liberado=false;const capa=new THREE.Group();this.grupo.add(capa);const r=regionAstra(t.actual)!;
    if(t.interior)capa.add(interiorVivienda([r.color],'archivo'));
    else {
-    const terreno=this.suelos.terreno();capa.add(terreno);sustituir('region:'+r.id,capa,terreno);capa.add(senderoTierra(0,13,43,3));capa.add(senderoTierra(0,5,3,43));
-    for(const h of r.viviendas){capa.add(arcoSalida(h.nombre,h.entrada.x,h.entrada.z,false));conKit(capa,'granja_edificios.glb',m=>{const base=m.get('edificio_animales_7x6');if(!base)return;const o=base.clone(true);o.name='astra-vivienda-'+h.id;o.position.set(h.x+4,0,h.z+3);o.scale.x=8/7;capa.add(o);sustituir('vivienda:'+h.id,capa,o);});}
+    const terreno=this.suelos.terreno(paletaSueloAstra(r.id));capa.add(terreno);sustituir('region:'+r.id,capa,terreno);capa.add(senderoTierra(0,13,43,3));capa.add(senderoTierra(0,5,3,43));
+    // Casas, paisaje, archivo y combate con el arte de su región (astra-arte.ts)
+    for(const h of r.viviendas)viviendaAstra(capa,r.id,h,o=>sustituir('vivienda:'+h.id,capa,o));
+    paisajeAstra(capa,r.id,r.viviendas,rutasDesde(s).flatMap(ruta=>ruta.punto?[ruta.punto]:[]));
     for(const ruta of rutasDesde(s))if(ruta.punto)capa.add(arcoSalida(regionAstra(ruta.destino)?.nombre??'Granja',ruta.punto.x,ruta.punto.z,true));
-    capa.add(arcoSalida('Archivo público',0,22,false));
-    if(r.combate)capa.add(arcoSalida('Zona de combate',18,23,false));
+    lugaresAstra(capa,r.id,r.mundo==='confluencia'?(r.id==='confluencia'?'Fuatia · los cuatro elementos':'Puesto de balance'):'Archivo público',!!r.combate);
     capa.add(señalesRecursosAstra(r.id));
-    if(r.mundo==='confluencia'){const lugar=arcoSalida(r.id==='confluencia'?'Fuatia · los cuatro elementos':'Puesto de balance',0,22,false);capa.add(lugar);if(r.id==='confluencia'){const figura=new THREE.Group();figura.position.set(0,0,20);capa.add(figura);sustituir('figura:figura_fuatia',capa,figura);}}
+    if(r.mundo==='confluencia'){if(r.id==='confluencia'){const figura=new THREE.Group();figura.position.set(0,0,20);capa.add(figura);sustituir('figura:figura_fuatia',capa,figura);}}
    }
    for(const id of r.npc){const g=vecinoPeluche(id,NPC_ASTRA.findIndex(n=>n.id===id));g.name='astra-npc-'+id;g.userData.npcId=id;this.vecinos.set(id,g);capa.add(g);sustituir('npc:'+id,capa,g);}
   }
