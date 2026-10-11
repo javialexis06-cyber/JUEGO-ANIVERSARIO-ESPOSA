@@ -7,6 +7,7 @@ import { elegirModelos } from '../recursos';
 import { Vestidor } from '../salas/vestir';
 import { valorPieza } from '../salas/prendas';
 import type { AspectoJugador } from '../salas/tipos';
+import { VECINOS_ASTRA } from './vecinos-astra';
 
 interface Diseno {
   c: 'el' | 'ella';
@@ -14,6 +15,8 @@ interface Diseno {
   /** «modelo#color#color2» de cada ranura (como `valorPieza`). */
   peinado: string; cabeza?: string; cara?: string; arriba: string; abajo?: string; pies: string; espalda?: string;
   ojos?: string;
+  /** Pose en la que descansa (brazos cruzados, manos en la cintura…) y tamaño (los niños, más pequeños). */
+  quieto?: string; escala?: number;
 }
 const P = valorPieza;
 const PIELES = ['#f3cfb3', '#e5b48f', '#c98e66', '#a8714d', '#f6d7c1', '#8d5a3b'];
@@ -47,6 +50,18 @@ const DISENOS: Record<string, Diseno> = {
   viajera: { c: 'ella', piel: PIELES[3], pelo: '#c98a4a', peinado: P('pelo_ondas', '#c98a4a'), cabeza: P('sombrero_arriero', '#c9a46a', '#3a2a20'), arriba: P('ruana', '#8e2e43', '#f1e4cc'), abajo: P('pantalon', '#6b5a3a'), pies: P('botas', '#6b4a33'), espalda: P('mochila', '#4f79a8') },
 };
 
+/** Los residentes nuevos de Astra, cada uno con su ropa (ver `vecinos-astra.ts`). */
+function disenoAstra(id: string): Diseno | undefined {
+  const f = VECINOS_ASTRA[id];
+  if (!f) return undefined;
+  const [c, piel, pelo, peinado, cabeza, cara, arriba, abajo, pies, espalda, quieto, escala] = f;
+  return {
+    c, piel: PIELES[piel] ?? PIELES[0], pelo, peinado: peinado.includes('#') ? peinado : P(peinado, pelo),
+    cabeza: cabeza || undefined, cara: cara || undefined, arriba, abajo: abajo || undefined, pies, espalda: espalda || undefined,
+    quieto, escala,
+  };
+}
+
 function aspecto(d: Diseno): AspectoJugador {
   const det: Record<string, string> = { peinado: d.peinado, arriba: d.arriba, pies: d.pies };
   for (const k of ['cabeza', 'cara', 'abajo', 'espalda'] as const) if (d[k]) det[k] = d[k]!;
@@ -76,8 +91,8 @@ export function vecinoPeluche(id: string, index: number): THREE.Group {
   g.userData.legs = [];
   g.userData.seed = index;
   g.userData.peluche = true;
-  const d = DISENOS[id] ?? DISENOS[Object.keys(DISENOS)[index % Object.keys(DISENOS).length]];
-  const p = new Personaje({ x: 0, y: 0 }, d.c === 'ella' ? 0.7 : 0.69);
+  const d = DISENOS[id] ?? disenoAstra(id) ?? DISENOS[Object.keys(DISENOS)[index % Object.keys(DISENOS).length]];
+  const p = new Personaje({ x: 0, y: 0 }, (d.c === 'ella' ? 0.7 : 0.69) * (d.escala ?? 1));
   g.add(p.grupo);
   g.userData.personaje = p;
   vivos.add(g);
@@ -86,12 +101,13 @@ export function vecinoPeluche(id: string, index: number): THREE.Group {
     await modelosListos;
     await p.cargarPoses(d.c);
     await new Vestidor(p, d.c).aplicar(aspecto(d));
+    if (d.quieto && p.tienePose(d.quieto)) p.poseQuieto = d.quieto;
     p.quieto();
   })().catch((e) => console.warn('vecino', id, e));
   return g;
 }
 
-/** Anima al vecino: caminando (vaivén de piernas) o quieto respirando. */
+/** Anima al vecino: caminando (vaivén de piernas), hablando (`userData.hablando`: manos y boca) o quieto respirando. */
 export function animarVecino(g: THREE.Object3D, dt: number, andando: boolean, ahora = performance.now()) {
   const p = g.userData.personaje as Personaje | undefined;
   if (!p) return;
@@ -99,7 +115,14 @@ export function animarVecino(g: THREE.Object3D, dt: number, andando: boolean, ah
   if (andando) {
     g.userData.fase = (g.userData.fase ?? 0) + dt * 5;
     p.vaiven(p.poseCaminar[0], p.poseCaminar[1], 0.5 + 0.5 * Math.sin(g.userData.fase));
-  } else if (p.poseVisible !== p.poseQuieto) p.quieto();
+  } else if (g.userData.hablando) {
+    g.userData.fase = (g.userData.fase ?? 0) + dt * 3.2;
+    p.vaiven('hablar_a', 'hablar_b', 0.5 + 0.5 * Math.sin(g.userData.fase));
+    if (p.caraVisible !== 'hablar') p.cara('hablar');
+  } else {
+    if (p.caraVisible === 'hablar') p.cara('normal');
+    if (p.poseVisible !== p.poseQuieto) p.quieto();
+  }
   p.update(Math.min(0.1, dt));
 }
 

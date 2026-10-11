@@ -44,8 +44,17 @@ export class EscenaAstra {
   }
   this.update(0);
  }
- actorHabla(id:string|null){this.grupo.traverse(g=>{if(!g.userData.mixer||!g.userData.actorId)return;const hablando=g.userData.actorId===id;if(g.userData.hablando===hablando)return;g.userData.hablando=hablando;const clips=g.userData.clips as THREE.AnimationClip[],clip=clips.find(c=>c.name===(hablando?'hablar':'reposo'));if(clip){const mixer=g.userData.mixer as THREE.AnimationMixer;mixer.stopAllAction();mixer.clipAction(clip).play();}});}
- update(dt:number){if(!this.grupo.visible||!this.estado)return;this.grupo.traverse(g=>{if(g.userData.mixer)(g.userData.mixer as THREE.AnimationMixer).update(dt);if(!g.userData.npcId)return;const id=g.userData.npcId,p=posicionNpcAstra(this.estado!,id);g.visible=!!p&&p.interior===this.estado!.astra?.interior;if(p&&g.visible){g.position.set(p.x,0,p.z);if(!g.userData.mixer)animarVecino(g,dt,false);}});}
+ actorHabla(id:string|null){this.grupo.traverse(g=>{
+  // El peluche provisional habla con las manos y la boca (vecinos3d); el arte propio, con su clip «hablar»
+  if(g.userData.peluche&&g.userData.npcId&&!g.userData.mixer){g.userData.hablando=g.userData.npcId===id;return;}
+  if(!g.userData.mixer||!g.userData.actorId)return;const hablando=g.userData.actorId===id;if(g.userData.hablando===hablando)return;g.userData.hablando=hablando;const clips=g.userData.clips as THREE.AnimationClip[],clip=clips.find(c=>c.name===(hablando?'hablar':'reposo'));if(clip){const mixer=g.userData.mixer as THREE.AnimationMixer;mixer.stopAllAction();mixer.clipAction(clip).play();}});}
+ update(dt:number){if(!this.grupo.visible||!this.estado)return;this.grupo.traverse(g=>{if(g.userData.mixer)(g.userData.mixer as THREE.AnimationMixer).update(dt);if(!g.userData.npcId)return;const id=g.userData.npcId,p=posicionNpcAstra(this.estado!,id);g.visible=!!p&&p.interior===this.estado!.astra?.interior;if(!g.visible){g.userData.puesto=false;return;}
+  if(g.userData.mixer||!g.userData.puesto){g.position.set(p!.x,0,p!.z);g.userData.puesto=true;if(!g.userData.mixer)animarVecino(g,dt,false);return;}
+  // Solo arte: si el motor lo cambia de sitio cerca, se le ve caminar hasta allá; si es lejos (otra punta del mapa), aparece
+  const dx=p!.x-g.position.x,dz=p!.z-g.position.z,d=Math.hypot(dx,dz),paso=2.6*dt;
+  if(d>18||d<=paso){g.position.set(p!.x,0,p!.z);animarVecino(g,dt,false);return;}
+  g.position.x+=dx/d*paso;g.position.z+=dz/d*paso;g.rotation.y=Math.atan2(dx,dz);animarVecino(g,dt,true);
+ });}
  private limpiar(){sacarVecinos(this.grupo);for(const g of [...this.grupo.children]){g.userData.liberado=true;liberar(g);}this.vecinos.clear();}
  dispose(){this.limpiar();this.suelos.dispose();this.grupo.userData.liberado=true;this.grupo.removeFromParent();}
 }
