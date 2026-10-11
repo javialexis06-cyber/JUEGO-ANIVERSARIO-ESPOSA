@@ -10,7 +10,9 @@ import { DURACION, ESCENARIOS, type DefEscenario, type EventoOleada } from './es
 import { bonosMaestria, MAESTRIA_MAX } from './maestria';
 import { Rejilla } from './rejilla';
 import { PODER } from './tienda';
-import { statsVacios, type Efecto, type IdArma, type IdCarta, type IdEnemigo, type IdEscenario, type IdObjeto, type IdPasiva, type Rol, type Stat, type Stats, type TipoEfecto } from './tipos';
+import { LIMITE, TESOROS, type StatLimite } from './tesoros';
+import { ESCENARIO_VENDEDOR, PUESTO, RADIO_PUESTO, VENTA, VENTAS, type DefVenta, type IdVenta } from './vendedor';
+import { statsVacios, type Efecto, type IdArma, type IdCarta, type IdEnemigo, type IdEscenario, type IdModo, type IdObjeto, type IdPasiva, type IdTesoro, type Rol, type Stat, type Stats, type TipoEfecto } from './tipos';
 import { actualizarArmas, alHerido, alMatar, cortinaAtaja, moverProyectiles, moverZonas, pendientesGolpe } from './disparos';
 import { PATITO, type ResumenPartida } from './progreso';
 import { valorOpcion } from './bot';
@@ -53,6 +55,8 @@ export const POR_JUGADORES = {
 /** Segundos para escoger cuando hay más de uno (después se escoge solo lo mejor, para no frenar a los demás). */
 export const LIMITE_ESCOGER = 15;
 export const LIMITE_COFRE = 9;
+/** El puesto del vendedor, con varios jugando (después se cierra solo). */
+export const LIMITE_TIENDA = 25;
 const POOL_EN = 520;
 const MAX_PROY = 760;
 const MAX_GEMAS = 320;
@@ -67,6 +71,9 @@ export const VEL_JUGADOR = 130;
 export const IMAN_BASE = 56;
 /** Las velitas que hace aparecer el confeti llevan un `estado` por debajo de esto (las del mapa, el de su celda). */
 const VELITA_CONFETI = -1e12;
+/** Los chorros de La Ducha: segundos que avisan con su sombra y segundos que caen. */
+const AVISO_CHORRO = 1.3;
+const DURA_CHORRO = 2.6;
 /** Celda del mapa donde puede haber una velita. */
 const CELDA_LUZ = 380;
 
@@ -237,15 +244,20 @@ export interface ArmaJ {
   k2: number;
   k3: number;
   ang: number;
+  /** Lo que le ha subido «Sin límite» (por encima de su nivel máximo) y cuántas veces. */
+  lim?: Partial<Record<StatLimite, number>>;
+  nLim?: number;
   activo: number;
   desde: number;
 }
 
 export interface Opcion {
-  tipo: 'arma' | 'pasiva' | 'arepa' | 'oro';
+  tipo: 'arma' | 'pasiva' | 'arepa' | 'oro' | 'limite';
   id: string;
   nivel: number;
   nueva: boolean;
+  /** «Sin límite»: qué le sube al arma. */
+  st?: StatLimite;
 }
 
 export interface PremioCofre {
@@ -280,6 +292,12 @@ export interface OpcionesJugador {
   maestria?: number;
   /** Lo que los patitos dorados le han subido a su disfraz (para siempre). */
   patitos?: Partial<Record<Stat, number>>;
+  /** Los tesoros del baño que todavía puede encontrar (salen en su sitio si es este escenario). */
+  reliquias?: IdTesoro[];
+  /** Trae el mapa del baño (flechas hacia lo escondido y el mapa en la pausa). */
+  mapa?: boolean;
+  /** Ya tiene el Monedero (el vendedor ambulante sale en todos los escenarios). */
+  monedero?: boolean;
 }
 
 export interface OpcionesMotor {
@@ -289,6 +307,8 @@ export interface OpcionesMotor {
   semilla?: number;
   /** El tutorial: sin oleadas ni velitas (los mugrosos los pone el tutorial) y nadie se cae. */
   tutorial?: boolean;
+  /** Los modos de la partida (los que se abren con los tesoros y el Hiper). */
+  modos?: IdModo[];
 }
 
 export class Jugador {
@@ -374,6 +394,16 @@ export class Jugador {
   espejo = 0;
   burbuja = false;
   dadosExtra = 0;
+  /** Saltos y vetos de más (comprados al vendedor del otro lado del espejo). */
+  saltosExtra = 0;
+  vetosExtra = 0;
+  /** El puesto del vendedor ambulante está abierto para este jugador. */
+  tienda = false;
+  /** Sigue parado junto al puesto (para no volver a abrirlo hasta que se aleje). */
+  enPuesto = false;
+  /** Lo que le ha comprado al vendedor y las gotas doradas que se gastó. */
+  compras: Partial<Record<IdVenta, number>> = {};
+  gastado = 0;
   caos = 0;
   patitosBase: Partial<Record<Stat, number>>;
   patitosGanados: Partial<Record<Stat, number>> = {};
@@ -412,10 +442,10 @@ export class Jugador {
     return Math.max(0, Math.round(this.st.tirar) + this.dadosExtra - this.usadosTirar);
   }
   get quedanSaltar() {
-    return Math.max(0, Math.round(this.st.saltar) - this.usadosSaltar);
+    return Math.max(0, Math.round(this.st.saltar) + this.saltosExtra - this.usadosSaltar);
   }
   get quedanVetar() {
-    return Math.max(0, Math.round(this.st.vetar) - this.usadosVetar);
+    return Math.max(0, Math.round(this.st.vetar) + this.vetosExtra - this.usadosVetar);
   }
   /** Ventana de pantalla alrededor del personaje. */
   enVista(x: number, y: number, margen = 0) {
@@ -445,6 +475,11 @@ export class Motor {
   readonly az: Azar;
   readonly jug: Jugador[];
   readonly tutorial: boolean;
+  readonly modos: Set<IdModo>;
+  /** Alguien trae el mapa del baño. */
+  readonly mapa: boolean;
+  /** Dónde está parado el vendedor ambulante (o null si no pasa por este escenario). */
+  readonly puesto: [number, number] | null;
   /** Segundos reales jugados y el reloj de la partida (en «Apurado» corre al doble). */
   tReal = 0;
   t = 0;
@@ -464,6 +499,17 @@ export class Motor {
   armasVistas = new Set<IdArma>();
   pasivasVistas = new Set<IdPasiva>();
   revivio = false;
+  /** Los tesoros del baño que se encontraron en esta partida. */
+  hallados: IdTesoro[] = [];
+  /** Agua caliente sin fin: cuántas vueltas de 30 minutos van. */
+  ciclo = 0;
+  /** Ya llegó la Ducha Helada (no salen más oleadas). */
+  helada = false;
+  /** Lo que falta para la siguiente vuelta de la ruleta de sorpresas (segundos del reloj). */
+  tRuleta = 60;
+  /** Los chorros de La Ducha que están avisando (t < 0) o cayendo. */
+  readonly chorros: { x: number; y: number; r: number; t: number }[] = [];
+  private tChorro = 9;
 
   readonly en: Enemigo[] = [];
   readonly vivos = new Int32Array(POOL_EN);
@@ -500,6 +546,9 @@ export class Motor {
     this.esc = ESCENARIOS[o.escenario];
     this.apurado = o.apurado;
     this.tutorial = !!o.tutorial;
+    this.modos = new Set(o.tutorial ? [] : o.modos ?? []);
+    this.mapa = o.jugadores.some((x) => !!x.mapa);
+    this.puesto = !o.tutorial && (o.escenario === ESCENARIO_VENDEDOR || o.jugadores.some((x) => !!x.monedero)) ? PUESTO[o.escenario] : null;
     this.az = new Azar(o.semilla);
     for (let i = 0; i < POOL_EN; i++) this.en.push(new Enemigo());
     for (let i = 0; i < MAX_PROY; i++) this.pr.push(new Proyectil());
@@ -509,6 +558,7 @@ export class Motor {
     for (let i = 0; i < 160; i++) this.pend.push({ vivo: false, t: 0, x: 0, y: 0, r: 0, dano: 0, dueno: 0, slot: 0, arma: 'bombillo', tipo: 0, crit: 0, critX: 2 });
     for (let i = 0; i < MAX_EF; i++) this.ef.push({ tipo: 'golpe', x: 0, y: 0, c: 0, d: 0, e: 0, f: 0, t: '' });
     this.jug = o.jugadores.map((oj, i) => new Jugador(i, oj));
+    this.jugadorTieneMonedero = o.jugadores.map((x) => !!x.monedero);
     const n = this.jug.length;
     for (const j of this.jug) {
       // Solo, en el centro; en pareja, uno a cada lado; de a tres o cuatro, en ronda
@@ -535,6 +585,20 @@ export class Motor {
       const o = this.soltar('tesoro', t.x, t.y, k);
       if (o) this.tesoros.push({ o, guardia: false });
     });
+    // Los tesoros del baño que alguien todavía no tiene, cada uno en su sitio (con su flecha verde)
+    if (!this.tutorial) TESOROS.forEach((t, k) => {
+      if (t.escenario === this.esc.id && o.jugadores.some((x) => x.reliquias?.includes(t.id))) this.soltar('reliquia', t.x, t.y, k);
+    });
+  }
+
+  /** ¿Se juega con ese modo? */
+  modo(m: IdModo) {
+    return this.modos.has(m);
+  }
+
+  /** Velocidad al caminar (el Hiper acelera a todos). */
+  velJugador(j: Jugador) {
+    return VEL_JUGADOR * Math.max(0.2, 1 + j.st.movimiento) * (this.modo('hiper') ? 1.35 : 1);
   }
 
   /** Los tesoros escondidos de la partida y si ya salió el mugroso que los cuida. */
@@ -645,6 +709,9 @@ export class Motor {
     }
     // Cartas
     s.suerte += j.bonoSuerte;
+    // Los modos: del otro lado del espejo y el Hiper traen suerte
+    if (this.modo('inverso')) s.suerte += 0.25;
+    if (this.modo('hiper')) s.suerte += 0.1;
     if (j.tieneCarta('despierto')) {
       // +3 vidas, y cada vez que revive sube todo un poquito
       const k = j.revivesUsados;
@@ -737,10 +804,63 @@ export class Motor {
       r.push(x.o);
       l.splice(l.indexOf(x), 1);
     }
+    // Sin límite: con todo al máximo, cada nivel le sube algo a un arma
+    if (!r.length && this.modo('sinLimite')) r.push(...this.opcionesLimite(j, cuantas));
     if (!r.length) {
       r.push({ tipo: 'arepa', id: 'arepa', nivel: 1, nueva: false }, { tipo: 'oro', id: 'oro', nivel: 1, nueva: false });
     }
     return r;
+  }
+
+  /** Las cartas de «Sin límite»: un arma y qué le sube (daño, área, recarga, cantidad, duración o cuántos atraviesa). */
+  private opcionesLimite(j: Jugador, n: number): Opcion[] {
+    const l: { o: Opcion; peso: number }[] = [];
+    for (const a of j.armas) {
+      const comp = ARMAS[a.id].comp;
+      if (comp === 'selector' || j.vetadas.has(a.id)) continue;
+      for (const st of Object.keys(LIMITE) as StatLimite[]) {
+        const d = LIMITE[st];
+        if ((a.lim?.[st] ?? 0) + d.paso > d.max + 1e-6) continue;
+        // (la cortina solo sabe de recarga; lo que no dura o ya lo atraviesa todo, no se sube)
+        if (comp === 'cortina' && st !== 'enfr') continue;
+        if (st === 'perfora' && a.b.perfora >= 999) continue;
+        if (st === 'dur' && !(a.b.dur > 0)) continue;
+        l.push({ o: { tipo: 'limite', id: a.id, nivel: maxNivelArma(a.id) + (a.nLim ?? 0) + 1, nueva: false, st }, peso: d.peso });
+      }
+    }
+    const r: Opcion[] = [];
+    while (r.length < n && l.length) {
+      const x = this.az.pesado(l, (q) => q.peso);
+      if (!x) break;
+      r.push(x.o);
+      // (una sola carta por arma, para que se pueda escoger a cuál)
+      for (let k = l.length - 1; k >= 0; k--) if (l[k].o.id === x.o.id) l.splice(k, 1);
+    }
+    return r;
+  }
+
+  /** Sube lo que dice la carta de «Sin límite». */
+  subirLimite(j: Jugador, id: IdArma, st: StatLimite) {
+    const a = j.armas.find((x) => x.id === id);
+    const d = LIMITE[st];
+    if (!a || !d) return;
+    a.lim ??= {};
+    a.lim[st] = Math.min(d.max, (a.lim[st] ?? 0) + d.paso);
+    a.nLim = (a.nLim ?? 0) + 1;
+    this.emitir('nivel', j.x, j.y, this.nivel);
+  }
+
+  /** Nivel al azar: las cartas se escogen solas (sin pausar), y un aviso dice qué salió. */
+  private alAzar() {
+    for (const j of this.jug) {
+      let n = 0;
+      while (j.opciones && !j.cofre && !j.cartaOpciones && n++ < 24) {
+        const k = Math.floor(this.az.n() * j.opciones.length);
+        const o = j.opciones[k];
+        this.escoger(j.i, k);
+        if (o) this.aviso(`🎲 ${nombreOpcion(o)}`, j.i);
+      }
+    }
   }
 
   /** Lo que escogió al subir de nivel. */
@@ -761,6 +881,7 @@ export class Motor {
       if (this.abrirSelector(j, o.id as IdArma)) return;
     } else if (o.tipo === 'arma') this.darArma(j, o.id as IdArma);
     else if (o.tipo === 'pasiva') this.darPasiva(j, o.id as IdPasiva);
+    else if (o.tipo === 'limite') this.subirLimite(j, o.id as IdArma, o.st ?? 'dano');
     else if (o.tipo === 'arepa') this.curar(j, 30);
     else this.sumarOro(25, j);
     this.recalcular(j);
@@ -858,7 +979,8 @@ export class Motor {
     const i = j.armas.findIndex((x) => x.id === de[0]);
     const vieja = j.armas[i];
     j.armas = j.armas.filter((x) => !de.includes(x.id));
-    j.armas.splice(Math.min(i, j.armas.length), 0, { id: a, nivel: 1, b: baseEnNivel(a, 1), t: 0.2, rafaga: 0, tr: 0, total: 0, k: vieja?.k ?? 0, k2: 0, k3: 0, ang: vieja?.ang ?? 0, activo: 0, desde: this.tReal });
+    j.armas.splice(Math.min(i, j.armas.length), 0, { id: a, nivel: 1, b: baseEnNivel(a, 1), t: 0.2, rafaga: 0, tr: 0, total: 0, k: vieja?.k ?? 0, k2: 0, k3: 0, ang: vieja?.ang ?? 0, activo: 0, desde: this.tReal,
+      lim: vieja?.lim, nLim: vieja?.nLim });
     if (!j.danos.has(a)) j.danos.set(a, { dano: 0, desde: this.tReal });
     this.armasVistas.add(a);
     if (!this.evoluciones.includes(a)) this.evoluciones.push(a);
@@ -964,11 +1086,99 @@ export class Motor {
 
   // ------------------------------------------------------------------------------------------------- Pausas
   /** Mientras alguien escoge cartas o abre un cofre, el juego se detiene (también para el otro). */
-  get pausa(): 'nivel' | 'cofre' | 'carta' | null {
+  get pausa(): 'nivel' | 'cofre' | 'carta' | 'tienda' | null {
     for (const j of this.jug) if (j.cofre) return 'cofre';
     for (const j of this.jug) if (j.cartaOpciones) return 'carta';
     for (const j of this.jug) if (j.opciones) return 'nivel';
+    for (const j of this.jug) if (j.tienda) return 'tienda';
     return null;
+  }
+
+  // ------------------------------------------------------------------------------------------------- El vendedor ambulante
+  /** Al llegar al carrito se abre el puesto (una vez por visita: hay que alejarse para volver a abrirlo). */
+  private alPuesto() {
+    const p = this.puesto;
+    if (!p) return;
+    if (!this.avisoPuesto && this.tReal > 4) {
+      this.avisoPuesto = true;
+      this.aviso('🧼 ¡Don Jabón vende cerquita! Sigue la flecha naranja');
+    }
+    for (const j of this.jug) {
+      if (!j.activo) continue;
+      const d = Math.hypot(j.x - p[0], j.y - p[1]);
+      if (d > RADIO_PUESTO * 2.4) j.enPuesto = false;
+      else if (d < RADIO_PUESTO && !j.enPuesto && !j.opciones && !j.cofre && !j.cartaOpciones) {
+        j.enPuesto = true;
+        j.tienda = true;
+        j.tEscoger = 0;
+        j.acciones++;
+        this.emitir('cofre', p[0], p[1], j.i);
+      }
+    }
+  }
+
+  /** Las gotas doradas que tiene para gastar (lo recogido en la partida menos lo que ya se gastó). */
+  oroParaGastar(j: Jugador) {
+    return Math.max(0, Math.floor(this.recogidoDe(j.i) - j.gastado));
+  }
+
+  precioVenta(j: Jugador, v: DefVenta) {
+    return v.precio + (v.sube ?? 0) * (j.compras[v.id] ?? 0);
+  }
+
+  /** Lo que el vendedor le ofrece a este jugador ahora (las armas, si no las tiene y le cabe una más). */
+  ventasDe(j: Jugador): DefVenta[] {
+    return VENTAS.filter((v) => {
+      if (v.inverso && !this.modo('inverso')) return false;
+      const n = j.compras[v.id] ?? 0;
+      if (n >= (v.max ?? 1)) return false;
+      if (v.arma) return !j.armas.some((a) => a.id === v.arma || linaje(a.id).has(v.arma!)) && j.armas.length < MAX_RANURAS;
+      if (v.id === 'monedero') return !this.jugadorTieneMonedero[j.i] && !this.hallados.includes('monedero');
+      if (v.id === 'carta') return j.cartasLibres.some((c) => !j.cartas.includes(c));
+      return true;
+    });
+  }
+  private avisoPuesto = false;
+  /** Quién trae ya el Monedero (para no vendérselo otra vez). */
+  private readonly jugadorTieneMonedero: boolean[];
+
+  comprar(ji: number, id: IdVenta, n?: number) {
+    const j = this.jug[ji];
+    if (!this.vigente(j, n) || !j.tienda) return;
+    const v = VENTA[id];
+    if (!v || !this.ventasDe(j).includes(v)) return;
+    const precio = this.precioVenta(j, v);
+    if (this.oroParaGastar(j) < precio) return;
+    j.acciones++;
+    j.gastado += precio;
+    j.compras[id] = (j.compras[id] ?? 0) + 1;
+    this.emitir('evolucion', j.x, j.y, j.i);
+    if (v.arma) {
+      this.darArma(j, v.arma);
+      this.aviso(`🧼 ¡${ARMAS[v.arma].nombre}! Gracias, mijo`, j.i);
+    } else if (id === 'patito') this.darPatito(j);
+    else if (id === 'monedero') {
+      if (!this.hallados.includes('monedero')) this.hallados.push('monedero');
+      this.aviso('👛 ¡El Monedero! Ahora me encuentras en todos los escenarios', j.i);
+    } else if (id === 'tirar') j.dadosExtra++;
+    else if (id === 'saltar') j.saltosExtra++;
+    else if (id === 'vetar') j.vetosExtra++;
+    else if (id === 'carta') {
+      // Una carta más: se cierra el puesto y se escoge entre tres
+      const libres = j.cartasLibres.filter((c) => !j.cartas.includes(c));
+      const ops: IdCarta[] = [];
+      while (ops.length < 3 && libres.length) ops.push(libres.splice(Math.floor(this.az.n() * libres.length), 1)[0]);
+      j.tienda = false;
+      j.cartaOpciones = ops;
+    }
+  }
+
+  cerrarTienda(ji: number, n?: number) {
+    const j = this.jug[ji];
+    if (!this.vigente(j, n) || !j.tienda) return;
+    j.acciones++;
+    j.tienda = false;
+    j.tEscoger = 0;
   }
 
   // ------------------------------------------------------------------------------------------------- Paso
@@ -982,6 +1192,7 @@ export class Motor {
       }
       if (!j.opciones && !j.cofre && !j.cartaOpciones && j.cofresPend.length) this.abrirCofreOCarta(j, j.cofresPend.shift()!);
     }
+    if (this.modo('azar')) this.alAzar();
     if (this.pausa) {
       this.escogerSolos(dt);
       return;
@@ -994,6 +1205,7 @@ export class Motor {
     if (Math.floor(this.t / 60) !== minAntes) for (const j of this.jug) if (j.tieneCarta('ruedaFortuna')) this.recalcular(j);
     this.hielo = Math.max(0, this.hielo - dt);
     this.moverJugadores(dt);
+    this.alPuesto();
     this.cartasTiempo(dt);
     if (!this.tutorial) {
       this.oleadas(dReloj);
@@ -1003,11 +1215,13 @@ export class Motor {
     for (const j of this.jug) if (j.activo) actualizarArmas(this, j, dt);
     moverProyectiles(this, dt);
     moverZonas(this, dt);
+    if (this.esc.chorros && !this.tutorial) this.moverChorros(dt);
     pendientesGolpe(this, dt);
     this.moverEnemigos(dt);
     this.recoger(dt);
     this.compactar();
     this.subirNivel();
+    if (this.modo('azar')) this.alAzar();
     if (!this.tutorial) this.elitesExtra(dReloj);
     if (this.tesoros.length) this.cuidarTesoros();
     if (this.jug.every((j) => j.caido || j.fuera)) this.terminar();
@@ -1020,15 +1234,16 @@ export class Motor {
   private escogerSolos(dt: number) {
     if (this.jug.length < 2) return;
     for (const j of this.jug) {
-      if (!j.opciones && !j.cofre && !j.cartaOpciones) {
+      if (!j.opciones && !j.cofre && !j.cartaOpciones && !j.tienda) {
         j.tEscoger = 0;
         continue;
       }
       j.tEscoger += dt;
-      const limite = j.fuera ? 0 : j.cofre ? LIMITE_COFRE : LIMITE_ESCOGER;
+      const limite = j.fuera ? 0 : j.cofre ? LIMITE_COFRE : j.tienda && !j.opciones && !j.cartaOpciones ? LIMITE_TIENDA : LIMITE_ESCOGER;
       if (j.tEscoger < limite) continue;
       j.tEscoger = 0;
       if (j.cofre) this.cerrarCofre(j.i);
+      else if (j.tienda && !j.opciones && !j.cartaOpciones) this.cerrarTienda(j.i);
       else if (j.cartaOpciones) this.escogerCarta(j.i, j.cartaOpciones[0] ?? null);
       else if (j.opciones) {
         let mejor = 0, v = -1e9;
@@ -1047,14 +1262,14 @@ export class Motor {
   /** Lo que le falta a alguien para que se le escoja solo (para la interfaz). */
   restanteEscoger(j: Jugador) {
     if (this.jug.length < 2) return -1;
-    return Math.max(0, (j.cofre ? LIMITE_COFRE : LIMITE_ESCOGER) - j.tEscoger);
+    return Math.max(0, (j.cofre ? LIMITE_COFRE : j.tienda && !j.opciones && !j.cartaOpciones ? LIMITE_TIENDA : LIMITE_ESCOGER) - j.tEscoger);
   }
 
   private tElite = 0;
   /** Con tres o cuatro (y un poquito en pareja), élites extra con cofre cada tanto. */
   private elitesExtra(dReloj: number) {
     const cada = this.porJugadores('elite');
-    if (!cada || this.gano || this.t < 90) return;
+    if (!cada || this.helada || this.t < 90) return;
     this.tElite += dReloj;
     if (this.tElite < cada) return;
     this.tElite = 0;
@@ -1104,7 +1319,7 @@ export class Motor {
           mx /= m;
           my /= m;
         }
-        const v = VEL_JUGADOR * Math.max(0.2, 1 + j.st.movimiento);
+        const v = this.velJugador(j);
         j.vx = mx * v;
         j.vy = my * v;
         j.x += j.vx * dt;
@@ -1334,12 +1549,51 @@ export class Motor {
     return alguno;
   }
 
+  /** El reloj dentro de la vuelta (con el agua caliente sin fin, cada 30 minutos vuelve a empezar). */
+  tCiclo() {
+    return this.t - this.ciclo * DURACION;
+  }
+
+  /** Cuánto aguantan los mugrosos por los modos: del otro lado del espejo (el triple, y crece cada minuto) y cada
+   *  vuelta del agua caliente sin fin (+100 %). */
+  durezaModos() {
+    return (this.modo('inverso') ? 3 + 0.05 * (this.t / 60) : 1) * (1 + this.ciclo);
+  }
+
+  /** Lo que pegan de más (cada vuelta del agua caliente sin fin, +25 %). */
+  danoModos() {
+    return 1 + 0.25 * this.ciclo;
+  }
+
+  /** Qué tan rápido van (el Hiper acelera todo; del otro lado del espejo se van apurando con los minutos). */
+  velModos() {
+    return (this.modo('hiper') ? 1.45 : 1) * (this.modo('inverso') ? 1 + Math.min(0.3, 0.005 * (this.t / 60)) : 1);
+  }
+
   private oleadas(dReloj: number) {
     const esc = this.esc;
+    const t0 = this.ciclo * DURACION;
     // Eventos fijos
-    while (this.iEvento < esc.eventos.length && esc.eventos[this.iEvento].t <= this.t) this.evento(esc.eventos[this.iEvento++]);
+    while (this.iEvento < esc.eventos.length && esc.eventos[this.iEvento].t + t0 <= this.t) this.evento(esc.eventos[this.iEvento++]);
+    // La ruleta de sorpresas: cada minuto escoge algo
+    if (this.modo('ruleta') && !this.helada) {
+      this.tRuleta -= dReloj;
+      if (this.tRuleta <= 0) {
+        this.tRuleta += 60;
+        this.ruleta();
+      }
+    }
+    // Con el agua caliente sin fin no llega la Ducha Helada: todo vuelve a empezar, más duro
+    if (this.t >= this.sigParca && this.modo('infinito')) {
+      this.sigParca += DURACION;
+      this.ciclo++;
+      this.iEvento = 0;
+      this.gano = true;
+      this.aviso(`♨️ ¡El agua sigue caliente! Vuelta ${this.ciclo + 1}: todo más duro`);
+    }
     // ¡Se acabó el agua caliente!
     if (this.t >= this.sigParca) {
+      this.helada = true;
       if (!this.gano) {
         this.gano = true;
         this.aviso('🥶 ¡Se acabó el agua caliente!');
@@ -1353,9 +1607,9 @@ export class Motor {
       if (j) this.crear('duchaHelada', this.puntoAfuera(j, 40), j, { jefe: true });
       this.emitir('jefe', 0, 0, INDICE_ENEMIGO.duchaHelada);
     }
-    if (this.gano) return;
-    const ol = esc.oleadas[Math.min(esc.oleadas.length - 1, Math.floor(this.t / 60))];
-    const mal = this.maldicion();
+    if (this.helada) return;
+    const ol = esc.oleadas[Math.min(esc.oleadas.length - 1, Math.floor(this.tCiclo() / 60))];
+    const mal = this.maldicion() * (1 + 0.5 * this.ciclo);
     // Más jugadores, más mugrosos a la vez (cuentan los que están en pie: si caen, baja mientras los levantan)
     let enPie = 0;
     for (const j of this.jug) if (j.activo) enPie++;
@@ -1375,6 +1629,86 @@ export class Motor {
     while (this.nComunes < minimo && this.nVivos < MAX_ENEMIGOS && k < 40) {
       this.crearComun(ol.tipos[k % ol.tipos.length]);
       k++;
+    }
+  }
+
+  /** La ruleta de sorpresas (los eventos al azar del original): casi todo ayuda, a veces llega una horda. */
+  private ruleta() {
+    const j = this.objetivoAzar();
+    if (!j) return;
+    const ol = this.esc.oleadas[Math.min(this.esc.oleadas.length - 1, Math.floor(this.tCiclo() / 60))];
+    const comun = ol.tipos.find((x) => !ENEMIGOS[x].jefe) ?? 'germen';
+    const lim = this.esc.limites;
+    const cerca = (r: number): [number, number] => {
+      const a = this.az.n() * Math.PI * 2, d = r * (0.5 + this.az.n() * 0.5);
+      let y = j.y + Math.sin(a) * d * 0.7;
+      if (lim) y = Math.max(lim.yMin + 30, Math.min(lim.yMax - 30, y));
+      return [j.x + Math.cos(a) * d, y];
+    };
+    const sorpresas: { peso: number; txt: string; f: () => void }[] = [
+      { peso: 3, txt: '¡Lluvia de arepas!', f: () => { for (let k = 0; k < 4; k++) this.soltar('arepa', ...cerca(220)); } },
+      { peso: 2, txt: '¡Fiebre de gotas!', f: () => { this.fiebre = Math.max(this.fiebre, 10); } },
+      { peso: 2, txt: '¡Un cofre en el piso!', f: () => { this.soltar('cofre', ...cerca(200), 1); } },
+      { peso: 2, txt: '¡Velitas por todas partes!', f: () => this.velitasConfeti(j) },
+      { peso: 2, txt: '¡Todos congelados!', f: () => { this.hielo = Math.max(this.hielo, 8); this.emitir('congela', j.x, j.y, 8); } },
+      { peso: 2, txt: '¡Un muro de espuma!', f: () => this.evento({ t: this.t, tipo: 'muro', enemigo: comun, cant: 26 }) },
+      { peso: 2, txt: '¡Una horda cruzando!', f: () => this.evento({ t: this.t, tipo: 'enjambre', enemigo: comun, cant: 24 }) },
+      { peso: 1.5, txt: '¡Un grandote te persigue! (suelta cofre)', f: () => {
+        const e = this.crear(comun, this.puntoAfuera(j, 60), j, { elite: true, cofre: 1 });
+        if (e) e.llamado = 8;
+      } },
+      { peso: 1.5, txt: '¡Un regalito en el piso!', f: () => {
+        const r = this.az.uno<IdObjeto>(['guante', 'paleta', 'espejoVerdad', 'burbuja', 'dado', 'aji', 'trebolito', 'aspiradora']);
+        this.soltar(r, ...cerca(180));
+      } },
+      { peso: 1, txt: '¡Agua fría!', f: () => { this.soltar('ola', ...cerca(160)); } },
+    ];
+    const s = this.az.pesado(sorpresas, (x) => x.peso);
+    if (!s) return;
+    this.aviso(`🎡 La ruleta dice: ${s.txt}`);
+    this.emitir('evolucion', j.x, j.y, j.i);
+    s.f();
+  }
+
+  /** Los chorros de La Ducha: cada tanto caen del techo cerca de alguien. Avisan con su sombra y, al caer, empujan
+   *  hacia afuera a los mugrosos, los frenan y les quitan un poquito de vida (a los jefes solo los mojan). */
+  private moverChorros(dt: number) {
+    this.tChorro -= dt;
+    if (this.tChorro <= 0) {
+      this.tChorro = 5 + this.az.n() * 4;
+      const j = this.objetivoAzar();
+      if (j) {
+        const n = 1 + Math.floor(this.az.n() * 2.5);
+        for (let k = 0; k < n; k++) {
+          const x = j.x + this.az.entre(-300, 300), y = j.y + this.az.entre(-180, 180), r = this.az.entre(62, 92);
+          this.chorros.push({ x, y, r, t: -AVISO_CHORRO });
+          this.emitir('chorro', x, y, r, AVISO_CHORRO, DURA_CHORRO);
+        }
+      }
+    }
+    for (let k = this.chorros.length - 1; k >= 0; k--) {
+      const c = this.chorros[k];
+      c.t += dt;
+      if (c.t >= DURA_CHORRO) {
+        this.chorros.splice(k, 1);
+        continue;
+      }
+      if (c.t < 0) continue;
+      const alcance = c.r * 1.4;
+      const n = this.rej.circulo(c.x, c.y, alcance + 30);
+      for (let q = 0; q < n; q++) this.tmp[q] = this.rej.fuera[q];
+      for (let q = 0; q < n; q++) {
+        const e = this.en[this.tmp[q]];
+        if (!e.vivo || e.luz || e.def.comp === 'parca') continue;
+        const dx = e.x - c.x, dy = e.y - c.y, d = Math.hypot(dx, dy) || 1;
+        if (d > alcance + e.r) continue;
+        const f = 520 * (1 - Math.min(1, d / (alcance + e.r))) * Math.max(0.15, e.def.retro);
+        e.kx += (dx / d) * f * dt * 6;
+        e.ky += (dy / d) * f * dt * 6;
+        e.lento = Math.max(e.lento, 0.6);
+        if (!e.jefe) e.hp -= e.hpMax * 0.12 * dt;
+        if (e.hp <= 0) this.matar(e, this.cercano(e.x, e.y)?.i ?? 0, false);
+      }
     }
   }
 
@@ -1469,6 +1803,7 @@ export class Motor {
     let hp = def.vida * mal * tarde * kv;
     if (def.jefe && tipo !== 'duchaHelada') hp = def.vida * Math.max(1, this.nivel) * mal * this.porJugadores('jefe');
     if (e.elite) hp = (def.vida * 16 * mal * tarde + 40 * this.nivel) * kv;
+    if (tipo !== 'duchaHelada') hp *= this.durezaModos();
     e.hp = e.hpMax = hp;
     e.cofre = o.cofre ?? (e.elite || (def.jefe && tipo !== 'duchaHelada') ? 1 : 0);
     e.luz = false;
@@ -1701,6 +2036,7 @@ export class Motor {
   private moverEnemigos(dt: number) {
     const lim = this.esc.limites;
     const mal = this.maldicion();
+    const velModos = this.velModos();
     const congelados = this.hielo > 0;
     for (let k = 0; k < this.nVivos; k++) {
       const e = this.en[this.vivos[k]];
@@ -1721,7 +2057,7 @@ export class Motor {
       e.ky *= fr;
       const j = this.cercano(e.x, e.y);
       if (!quieto && j) {
-        let v = e.def.vel * (e.def.comp === 'parca' ? 1 : mal) * (e.lento > 0 ? 0.5 : 1) * (e.llamado > 0 ? 2 : 1) * (1 - e.freno);
+        let v = e.def.vel * (e.def.comp === 'parca' ? 1 : mal * velModos) * (e.lento > 0 ? 0.5 : 1) * (e.llamado > 0 ? 2 : 1) * (1 - e.freno);
         if (e.elite) v *= 0.85;
         let ux = j.x - e.x, uy = j.y - e.y;
         const d = Math.hypot(ux, uy) || 1;
@@ -1835,7 +2171,7 @@ export class Motor {
           const rr = e.r * 0.85 + RADIO_JUGADOR;
           if (dx * dx + dy * dy < rr * rr && e.toque <= 0 && !e.sinDientes) {
             e.toque = 0.5;
-            this.herirJugador(p, e.def.dano * (1 + (this.tarde() - 1) * TARDE_DANO), e);
+            this.herirJugador(p, e.def.dano * (1 + (this.tarde() - 1) * TARDE_DANO) * this.danoModos(), e);
           }
         }
       }
@@ -2013,7 +2349,7 @@ export class Motor {
   }
 
   sumarOro(n: number, j: Jugador | null) {
-    const k = j?.tieneCarta('oroBrillante') ? 2 : 1;
+    const k = (j?.tieneCarta('oroBrillante') ? 2 : 1) * (this.modo('inverso') ? 3 : 1) * (this.modo('hiper') ? 1.5 : 1);
     const g = Math.round(n * ORO_X * (1 + (j?.st.codicia ?? 0)) * k);
     this.oro += g;
     if (j) j.oro += g;
@@ -2149,15 +2485,9 @@ export class Motor {
         j.guanteBajas = 0;
         this.aviso('🧤 ¡El guante dorado! 14 segundos invencible y a tope', j.i);
         break;
-      case 'patito': {
-        // Sube para siempre un poquito una estadística del disfraz con que se juega
-        const st = this.az.uno(Object.keys(PATITO) as Stat[]);
-        j.patitosGanados[st] = (j.patitosGanados[st] ?? 0) + (PATITO[st] ?? 0);
-        this.recalcular(j);
-        this.aviso(`🐤 ¡Patito dorado! Tu disfraz sube para siempre: ${NOMBRE_PATITO[st] ?? st}`, j.i);
-        this.emitir('evolucion', j.x, j.y, j.i);
+      case 'patito':
+        this.darPatito(j);
         break;
-      }
       case 'dado':
         j.dadosExtra++;
         this.aviso('🎲 +1 para volver a tirar', j.i);
@@ -2189,6 +2519,14 @@ export class Motor {
         j.burbuja = true;
         this.aviso('🫧 Burbuja protectora: ataja el siguiente golpe', j.i);
         break;
+      case 'reliquia': {
+        const t = TESOROS[o.calidad];
+        if (!t || this.hallados.includes(t.id)) break;
+        this.hallados.push(t.id);
+        this.aviso(`🗝️ ¡${t.nombre}! ${t.abre}`);
+        this.emitir('evolucion', j.x, j.y, j.i);
+        break;
+      }
       case 'tesoro': {
         const t = ESCONDIDAS[o.calidad];
         if (!t) break;
@@ -2206,6 +2544,15 @@ export class Motor {
         break;
       }
     }
+  }
+
+  /** El patito dorado: sube para siempre un poquito una estadística del disfraz con que se juega. */
+  darPatito(j: Jugador) {
+    const st = this.az.uno(Object.keys(PATITO) as Stat[]);
+    j.patitosGanados[st] = (j.patitosGanados[st] ?? 0) + (PATITO[st] ?? 0);
+    this.recalcular(j);
+    this.aviso(`🐤 ¡Patito dorado! Tu disfraz sube para siempre: ${NOMBRE_PATITO[st] ?? st}`, j.i);
+    this.emitir('evolucion', j.x, j.y, j.i);
   }
 
   /** Lo que falta para el siguiente nivel con los que están jugando (la barra de arriba usa lo mismo). */
@@ -2255,8 +2602,13 @@ export class Motor {
    *  Más el jornal por aguantar (cada uno el suyo completo). */
   oroDe(ji: number) {
     const j = this.jug[ji];
-    const recogido = !j || this.jug.length < 2 ? this.oro : Math.round(j.oro + Math.max(0, this.oro - j.oro) * 0.25);
-    return recogido + this.jornalDe(ji);
+    return Math.max(0, Math.round(this.recogidoDe(ji) - (j?.gastado ?? 0))) + this.jornalDe(ji);
+  }
+
+  /** Lo recogido en la partida (solo, todo; con más, lo suyo + la cuarta parte de lo de los demás). */
+  recogidoDe(ji: number) {
+    const j = this.jug[ji];
+    return !j || this.jug.length < 2 ? this.oro : Math.round(j.oro + Math.max(0, this.oro - j.oro) * 0.25);
   }
 
   /** Lo que se gana por aguantar (la codicia también lo sube). */
@@ -2289,8 +2641,19 @@ export class Motor {
       revivio: this.revivio,
       danos: j ? [...j.danos].map(([arma, r]) => ({ arma, dano: Math.round(r.dano), desde: r.desde, nivel: j.nivelArma(arma) })) : [],
       patitos: j ? { ...j.patitosGanados } : {},
+      tesoros: [...this.hallados],
+      modos: [...this.modos],
     };
   }
+}
+
+/** Lo que salió en una carta (para el aviso del nivel al azar). */
+function nombreOpcion(o: Opcion) {
+  if (o.tipo === 'arepa') return '¡Arepa con queso!';
+  if (o.tipo === 'oro') return '¡Gotas doradas!';
+  if (o.tipo === 'limite') return `${ARMAS[o.id as IdArma]?.nombre ?? ''}: +${LIMITE[o.st ?? 'dano'].nombre.toLowerCase()}`;
+  const nombre = o.tipo === 'arma' ? ARMAS[o.id as IdArma]?.nombre : PASIVAS[o.id as IdPasiva]?.nombre;
+  return `${nombre ?? ''}${o.nueva ? ' (¡nueva!)' : ` nivel ${o.nivel}`}`;
 }
 
 function oj(o: OpcionesMotor, i: number) {

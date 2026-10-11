@@ -74,13 +74,21 @@ export type IdEnemigo =
   | 'sarro' | 'pastaSeca' | 'hongo' | 'cucaracha' | 'pelo' | 'moho' | 'jabonSucio'
   // La Bañera
   | 'piojo' | 'mosquito' | 'pulga' | 'burbujaSucia' | 'babosa' | 'espinilla'
+  // La Ducha
+  | 'gotaDura' | 'mosquitaDesague' | 'tapaChampu' | 'hongoPie' | 'espumaSucia' | 'ciempies' | 'estropajo' | 'cal'
   // Jefes
   | 'espinillon' | 'reinaCaspa' | 'granMoco' | 'senorLagana' | 'barroNegro' | 'senorSarro' | 'donaCucaracha' | 'motaPelo' | 'tapon'
   | 'esponjaPodrida' | 'peloDesague'
+  | 'reyHongo' | 'regaderaLoca' | 'cortinaMohosa' | 'ciempiesGigante'
   // La Parca del baño
   | 'duchaHelada';
 
-export type IdEscenario = 'cara' | 'lavamanos' | 'banera';
+export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha';
+
+/** Los modos que se abren con los tesoros (y el Hiper de cada escenario, venciendo a su jefe del minuto 25). */
+export type IdModo = 'hiper' | 'inverso' | 'infinito' | 'sinLimite' | 'ruleta' | 'azar';
+/** Los tesoros del baño (las reliquias del original). */
+export type IdTesoro = 'espejoReves' | 'calentador' | 'recetas' | 'ruleta' | 'cuento' | 'mapa' | 'monedero';
 
 export type IdObjeto =
   | 'arepa' // vida (el pollo del original)
@@ -101,7 +109,8 @@ export type IdObjeto =
   | 'corazoncito' // cura un poquito
   | 'pulsera' // pulsera de la amistad (solo con más de uno): a todos les sube un arma
   | 'espejoVerdad' // el espejo de la verdad: el doble de proyectiles y todo a la vez un ratico
-  | 'burbuja'; // burbuja protectora: ataja el siguiente golpe
+  | 'burbuja' // burbuja protectora: ataja el siguiente golpe
+  | 'reliquia'; // un tesoro del baño (calidad = cuál, en TESOROS)
 
 export type IdCarta =
   | 'oroBrillante' | 'certero' | 'silbato' | 'comienzo' | 'maraton' | 'dobleTurno' | 'curitaMagica' | 'relojQuieto' | 'ruedaFortuna'
@@ -140,7 +149,8 @@ export type TipoEfecto =
   | 'lanza' // cepillo de espalda que cae: x, y; c = radio; d = segundos que tarda en caer; f = 1 celestial
   | 'luces' // rayita del espejo LED: x, y; c = largo; d = grosor; e = 1 vertical; f = color
   | 'escudo' // la cortina atajó un golpe: x, y; c = jugador; d = cargas que le quedan; f = 1 de terciopelo
-  | 'cohete'; // fuego artificial de confeti subiendo: x, y (de dónde sale); c, d = adónde va; e = segundos
+  | 'cohete' // fuego artificial de confeti subiendo: x, y (de dónde sale); c, d = adónde va; e = segundos
+  | 'chorro'; // chorro de La Ducha que va a caer: x, y; c = radio; d = segundos de aviso; e = segundos que cae
 
 export interface Efecto {
   tipo: TipoEfecto;
