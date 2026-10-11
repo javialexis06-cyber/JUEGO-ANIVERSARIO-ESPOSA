@@ -281,3 +281,61 @@ export function adelantoZona(hacia:Zona,x:number,z:number,mallaAgua:(rx:number,r
  }
  return g;
 }
+
+/** Muebles de la cabaña (por dentro): cama doble con colcha de retazos, mesitas con lámpara, cocina con estufa y
+ * repisas, mesa con dos sillas y flores, chimenea encendida, biblioteca, plantas y cuadros. Todo pegado a las paredes
+ * para dejar libre el paso. */
+export function amoblarCabana():THREE.Group{
+ const g=new THREE.Group();g.name='muebles-cabana';
+ const m=(c:string,extra:THREE.MeshStandardMaterialParameters={})=>new THREE.MeshStandardMaterial({color:c,roughness:.8,...extra});
+ const caja=(w:number,h:number,d:number,x:number,y:number,z:number,c:string|THREE.Material)=>{const k=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),typeof c==='string'?m(c):c);k.position.set(x,y,z);k.castShadow=k.receiveShadow=true;g.add(k);return k;};
+ const bola=(r:number,x:number,y:number,z:number,c:string|THREE.Material,sx=1,sy=1,sz=1)=>{const k=new THREE.Mesh(new THREE.SphereGeometry(r,12,8),typeof c==='string'?m(c):c);k.position.set(x,y,z);k.scale.set(sx,sy,sz);k.castShadow=true;g.add(k);return k;};
+ const cil=(r:number,h:number,x:number,y:number,z:number,c:string|THREE.Material)=>{const k=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,12),typeof c==='string'?m(c):c);k.position.set(x,y,z);k.castShadow=true;g.add(k);return k;};
+ const madera='#9a6f4c',oscura='#6e4b33',luz=m('#ffe2a0',{emissive:'#ffb347',emissiveIntensity:.9});
+ // Cama doble
+ caja(2.2,.35,2.5,-2.6,.3,-2.55,madera);caja(2.3,1.1,.16,-2.6,.75,-3.8,oscura);caja(2.05,.22,2.3,-2.6,.58,-2.5,'#f3ead8');
+ for(let i=0;i<5;i++)for(let j=0;j<4;j++)caja(.4,.06,.36,-3.4+i*.4,.72,-2.15+j*.38,['#d9654f','#e9b44c','#6fa3c7','#f4a7b9','#7fb77e'][(i+j)%5]);
+ for(const x of [-3.1,-2.1])bola(.32,x,.78,-3.45,'#ffffff',1.2,.45,.8);
+ caja(.9,.5,.5,-2.6,.25,-1.05,oscura);caja(.95,.06,.55,-2.6,.52,-1.05,madera);
+ for(const x of [-3.95,-1.25]){caja(.55,.6,.5,x+(x<-2?.25:0),.3,-3.6,madera);cil(.08,.25,x+(x<-2?.25:0),.72,-3.6,'#d9c9a8');const pantalla=new THREE.Mesh(new THREE.ConeGeometry(.2,.22,10,1,true),luz);pantalla.position.set(x+(x<-2?.25:0),.95,-3.6);g.add(pantalla);}
+ // Cocina: mesón, estufa de leña, olla, repisas con frascos
+ caja(2.6,.9,.6,2.6,.45,-3.65,madera);caja(2.7,.08,.66,2.6,.92,-3.65,'#d9cdb8');caja(.8,.95,.62,3.55,.48,-3.64,'#4a4a4f');caja(.62,.3,.05,3.55,.45,-3.32,'#e9a14e');cil(.08,.9,3.75,1.4,-3.75,'#3c3c40');
+ cil(.18,.2,1.9,1.06,-3.6,'#b0b7bc');for(let k=0;k<2;k++){caja(2.4,.06,.3,2.4,1.55+k*.45,-3.85,oscura);for(let j=0;j<5;j++)cil(.07,.2,1.5+j*.42,1.68+k*.45,-3.82,['#e3b45a','#c9563f','#8fbf7a','#d9c9a8','#7aa7c7'][(j+k)%5]);}
+ // Mesa con dos sillas y florero
+ cil(.65,.08,2.2,.82,-.6,madera);cil(.08,.78,2.2,.4,-.6,oscura);for(const dz of [-1,1]){caja(.5,.06,.5,2.2,.48,-.6+dz*.95,madera);caja(.5,.6,.06,2.2,.8,-.6+dz*1.18,madera);for(const dx of [-.2,.2])for(const ez of [-.2,.2])caja(.05,.46,.05,2.2+dx,.23,-.6+dz*.95+ez,oscura);}
+ cil(.1,.22,2.2,.97,-.6,'#7aa7c7');for(let k=0;k<5;k++)bola(.07,2.2+Math.cos(k*1.3)*.09,1.15+(k%2)*.05,-.6+Math.sin(k*1.3)*.09,['#f4a7b9','#f7d55a','#ffffff'][k%3]);
+ // Chimenea de piedra con fuego
+ caja(.6,1.6,1.6,-3.7,.8,1.4,'#a69f92');caja(.62,.15,1.8,-3.65,1.62,1.4,oscura);caja(.3,.7,.9,-3.45,.45,1.4,'#2d2421');const fuego=bola(.22,-3.4,.35,1.4,m('#ffb347',{emissive:'#ff7a1a',emissiveIntensity:1.2}),1,1.4,1);fuego.name='fuego-chimenea';
+ caja(.4,1.4,.6,-3.75,2.2,1.4,'#a69f92');const calor=new THREE.PointLight('#ffb36b',5,7,1.6);calor.position.set(-3,1,1.4);g.add(calor);
+ // Biblioteca, baúl, plantas y cuadros
+ caja(.45,1.9,1.3,-3.75,.95,-.5,oscura);for(let k=0;k<4;k++){caja(.42,.05,1.25,-3.72,.3+k*.45,-.5,madera);for(let j=0;j<6;j++)caja(.28,.32,.12,-3.7,.48+k*.45,-1.0+j*.19,['#c9563f','#6fa3c7','#e3b45a','#7fb77e','#a58cc4','#d9cdb8'][(j+k)%6]);}
+ for(const [x,z] of [[3.5,3.4],[-3.4,3.4],[.9,-3.6]] as [number,number][]){cil(.22,.35,x,.18,z,'#c26e45');for(let k=0;k<6;k++)bola(.16,x+Math.cos(k)*.12,.5+k*.07,z+Math.sin(k)*.12,['#5f8a45','#7fae55','#4c7a45'][k%3]);}
+ for(const [x,c] of [[-1.2,'#7aa7c7'],[.2,'#e9b44c']] as [number,string][]){caja(.7,.5,.05,x,2.05,-3.9,oscura);caja(.6,.4,.06,x,2.05,-3.88,c);}
+ return g;
+}
+
+/** Detalles por dentro de los refugios (en coordenadas del cuarto de 8 × 8): paja regada, farol colgado que alumbra,
+ * ventana con luz de afuera, costales de alimento, escoba y, en gallineros, un aseladero para dormir. */
+export function adornosRefugio(especie:string):THREE.Group{
+ const g=new THREE.Group();g.name='adornos-refugio';const h=(i:number,k:number)=>{const n=Math.sin(i*127.1+k*311.7)*43758.5453;return n-Math.floor(n);};
+ const m=(c:string,extra:THREE.MeshStandardMaterialParameters={})=>new THREE.MeshStandardMaterial({color:c,roughness:.85,...extra});
+ const caja=(w:number,hh:number,d:number,x:number,y:number,z:number,c:string|THREE.Material,ry=0)=>{const k=new THREE.Mesh(new THREE.BoxGeometry(w,hh,d),typeof c==='string'?m(c):c);k.position.set(x,y,z);k.rotation.y=ry;k.castShadow=k.receiveShadow=true;g.add(k);return k;};
+ const paja=m('#e3c77a'),oscura=m('#c9a95c');
+ for(let i=0;i<70;i++){const x=-3.6+h(i,1)*7.2,z=-3.6+h(i,2)*7.2;if(Math.abs(x)<.9&&z>2)continue;caja(.3,.015,.03,x,.02,z,i%3?paja:oscura,h(i,3)*6.3);}
+ // Farol colgado del techo
+ const cuerda=new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,.9,4),m('#6b5a4c'));cuerda.position.set(0,2.75,-.5);g.add(cuerda);
+ caja(.26,.32,.26,0,2.15,-.5,m('#ffe2a0',{emissive:'#ffb347',emissiveIntensity:1}));caja(.34,.06,.34,0,2.34,-.5,'#4a4a4f');
+ const luz=new THREE.PointLight('#ffc27a',6,9,1.5);luz.position.set(0,1.9,-.5);g.add(luz);
+ // Ventana en la pared del fondo con su luz entrando
+ for(const z of [-1.6,1.2]){caja(.06,.7,1.1,-3.8,1.05,z,'#6e4b33');caja(.07,.52,.9,-3.78,1.05,z,m('#cfe9ef',{emissive:'#9fd6e6',emissiveIntensity:.35}));caja(.08,.52,.05,-3.75,1.05,z,'#6e4b33');caja(.08,.05,.9,-3.75,1.05,z,'#6e4b33');
+  const haz=new THREE.Mesh(new THREE.PlaneGeometry(1,1.8),new THREE.MeshBasicMaterial({color:'#fff4d0',transparent:true,opacity:.12,depthWrite:false,side:THREE.DoubleSide}));haz.position.set(-3,.5,z);haz.rotation.set(-Math.PI/2,0,0);haz.scale.set(1,1,1);g.add(haz);}
+ // Costales de alimento y escoba junto a la puerta
+ for(const [x,z,s] of [[3.3,3.2,1],[2.8,3.4,.85],[3.35,2.65,.8]] as [number,number,number][]){const c=new THREE.Mesh(new THREE.SphereGeometry(.3*s,10,8),m('#d8c49c'));c.scale.set(1,1.35,.9);c.position.set(x,.38*s,z);c.castShadow=true;g.add(c);caja(.12*s,.08,.12*s,x,.8*s,z,'#b39168');}
+ const palo=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,1.5,5),m('#8a6242'));palo.position.set(-1.4,.75,3.8);palo.rotation.z=.18;g.add(palo);caja(.32,.3,.08,-1.53,.12,3.8,'#c9a95c');
+ if(especie==='gallina'||especie==='pato'){
+  // Aseladero: palos para dormir y su escalerita
+  for(const x of [-3.3,-1.9])caja(.08,1.1,.08,x,.55,3.2,'#7a5236');for(let k=0;k<2;k++)caja(1.6,.06,.06,-2.6,.7+k*.3,3.2-k*.35,'#9a6f4c');
+  const esc=caja(.3,.04,1.2,-2.6,.35,2.4,'#9a6f4c');esc.rotation.x=.6;
+ }
+ return g;
+}

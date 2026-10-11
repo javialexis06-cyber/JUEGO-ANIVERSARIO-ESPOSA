@@ -30,7 +30,7 @@ import { dormitorioDef, puertaDormitorio, libreDormitorio } from './dormitorios'
 import { viviendaInterior, VIVIENDAS_PUEBLO, libreVivienda } from './pueblo-datos';
 import { crearDormitorio, crearInteriorVivienda, updateInteriorVivienda } from './pueblo';
 import { cespedPueblo } from './pueblo-adornos';
-import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida, adelantoZona } from './zonas-render';
+import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida, adelantoZona, amoblarCabana, adornosRefugio } from './zonas-render';
 import { CAMINOS_GRANJA, SALIDAS } from './caminos-mundo';
 /** Senderos de tierra entre zonas (centro x, centro z, ancho, fondo). */
 const SENDEROS_PUBLICOS:[number,number,number,number][]=[[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]];
@@ -139,9 +139,10 @@ export class VistaGranja{
   if(e.servicio){this.entorno.add(crearInteriorServicio(e.servicio));return;}
   if(e.interior||e.servicio){const b=e.edificios.find(b=>b.id===e.interior);
    if(b?.articulo==='invernadero'){this.entorno.add(interiorInvernadero());}
-   else if(b?.especie||b?.articulo==='establo'){const room=decorarInterior(b.especie??'caballo',true,capacidadRefugio(b));room.scale.set(2,1.4,2);this.entorno.add(room);}
+   else if(b?.especie||b?.articulo==='establo'){const room=decorarInterior(b.especie??'caballo',true,capacidadRefugio(b));room.scale.set(2,1.4,2);this.entorno.add(room);this.entorno.add(adornosRefugio(b.especie??'caballo'));}
    else {
-    // A simple cabin shell leaves house reward furniture to the host game.
+    // La cabaña por dentro, con sus muebles
+    this.entorno.add(amoblarCabana());
     caja(this.entorno,[8,.16,8],[0,-.08,0],'#ba9570');
     for(let i=0;i<17;i++)caja(this.entorno,[.02,.008,8],[-4+i*.5,.006,0],'#8e7056');
     caja(this.entorno,[8,2.8,.16],[0,1.4,-4],'#ead8b6');caja(this.entorno,[.16,1.8,8],[-4,.9,0],'#dcc7a2');
@@ -184,7 +185,7 @@ export class VistaGranja{
   }
   if(this.claveAventura){this.farol.visible=false;delete this.escena.userData.ambienteExpedicion;this.efectos.clear();this.claveAventura='';this.revisionAventura=-1;this.revision=-1;this.expedicion.grupo.visible=false;this.world.visible=true;this.efectos.root.visible=true;this.sun.color.set('#fff0d7');this.sun.intensity=3;this.escena.background=new THREE.Color('#dde8ca');this.escena.fog=new THREE.Fog('#dde8ca',56,150);if(this.regresoAventura){const p=this.regresoAventura;this.avatar.detener();this.avatar.setPosition(p.x,p.z);this.camera.zoom=p.zoom;this.centrar(p.targetX,p.targetZ);this.regresoAventura=undefined;}this.limpiarMarca();}
   const v=e.zona+':'+e.interior+':'+e.servicio+':'+(e.interior&&!viviendaInterior(e.interior)?nivelEdificio(e.edificios.find(b=>b.id===e.interior)!):0),cell=Math.floor(this.controles.target.x/12)+','+Math.floor(this.controles.target.z/12);if(!force&&e.revision===this.revision&&cell===this.stream)return;this.revision=e.revision;this.stream=cell;
-  if(v!==this.vistaActual){const antes=this.vistaActual.split(':')[2],saleTienda=!!antes&&antes!=='null'&&!e.servicio&&e.zona==='pueblo';if(e.servicio&&(!antes||antes==='null'))this.regresoTienda={x:this.avatar.position.x,z:this.avatar.position.z};this.vistaActual=v;this.fondo(e);const guardada=e.posicionExterior?.zona===e.zona?e.posicionExterior:undefined;const p=e.interior&&e.invernaderos.some(i=>i.edificioId===e.interior)?{x:0,z:1.5}:e.interior||e.servicio?{x:0,z:0}:guardada?{x:guardada.x,z:guardada.z-3}:e.zona==='mina'?{x:0,z:3}:e.zona==='lago'?{x:14.5,z:77.5}:DESTINOS[e.zona];this.camera.zoom=e.interior&&e.invernaderos.some(i=>i.edificioId===e.interior)?.95:e.interior||e.servicio?1.3:e.zona==='mina'?1.6:1;this.avatar.detener();if(saleTienda){this.avatar.setPosition(this.regresoTienda.x,this.regresoTienda.z);this.centrar(this.regresoTienda.x,this.regresoTienda.z);}else{this.avatar.setPosition(p.x,p.z+3);this.centrar(p.x,p.z);}this.limpiarMarca();}this.mostrarRejilla(this.rejilla);
+  if(v!==this.vistaActual){const antes=this.vistaActual.split(':')[2],saleTienda=!!antes&&antes!=='null'&&!e.servicio&&e.zona==='pueblo';if(e.servicio&&(!antes||antes==='null'))this.regresoTienda={x:this.avatar.position.x,z:this.avatar.position.z};this.vistaActual=v;this.fondo(e);const guardada=e.posicionExterior?.zona===e.zona?e.posicionExterior:undefined;const p=e.interior&&e.invernaderos.some(i=>i.edificioId===e.interior)?{x:0,z:1.5}:e.interior||e.servicio?{x:0,z:0}:guardada?{x:guardada.x,z:guardada.z-3}:e.zona==='mina'?{x:0,z:3}:e.zona==='lago'?{x:14.5,z:77.5}:DESTINOS[e.zona];this.camera.zoom=e.interior&&e.invernaderos.some(i=>i.edificioId===e.interior)?.95:e.interior||e.servicio?2:e.zona==='mina'?1.6:1;this.avatar.detener();if(saleTienda){this.avatar.setPosition(this.regresoTienda.x,this.regresoTienda.z);this.centrar(this.regresoTienda.x,this.regresoTienda.z);}else{this.avatar.setPosition(p.x,p.z+3);this.centrar(p.x,p.z);}this.limpiarMarca();}this.mostrarRejilla(this.rejilla);
   if(e.zona==='mina'&&this.cueva&&this.cueva.userData.nivel!==(e.nivelMina||1)&&this.cueva.parent){const padre=this.cueva.parent;liberar(this.cueva);this.cueva=cuevaMina(e.nivelMina||1);this.cueva.userData.nivel=e.nivelMina||1;padre.add(this.cueva);}
   liberar(this.detalle);this.copasFrutales=[];this.detalle=new THREE.Group();this.world.add(this.detalle);const desired:Modelo[]=[];const add=(c:Modelo)=>{if(e.interior||e.servicio||e.zona==='mina'||Math.hypot(c.x-this.controles.target.x,c.z-this.controles.target.z)<(this.calidad==='alta'?46:29))desired.push(c);};
   if(e.zona==='granja'&&!e.interior&&!e.servicio)this.detalle.add(crearBuzon(e));

@@ -218,3 +218,6 @@ Cambio de reglas (frente de motor, avisado aquí):
   deposita en los cofres; las fracciones se acumulan en `resto` (nada se pierde). Validación en `errorProduccion`.
 - A mano: acción de motor `recuperar` (junto a la máquina, desde una casilla de la mochila); redondea al azar.
 - Panel propio en Fabricar › Taller, modelo animado y tres íconos.
+- Interiores (Claude): `amoblarCabana` (cama doble, cocina, mesa, chimenea encendida, biblioteca, plantas y cuadros,
+  todo contra las paredes) y `adornosRefugio` (paja, farol que alumbra, ventanas, costales, escoba, aseladero).
+  Cámara a 2 de zoom en interiores y fondo oscuro cálido en lugar del verde del exterior.
