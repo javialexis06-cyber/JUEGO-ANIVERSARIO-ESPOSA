@@ -20,7 +20,7 @@ function cargarKit(archivo='granja_muebles.glb'){
 }
 /** Usa las piezas de otro kit de la granja (p. ej. granja_festivales.glb) cuando cargue, si g sigue en escena. */
 export function conKit(g:THREE.Object3D,archivo:string,usar:(piezas:Map<string,THREE.Object3D>)=>void){cargarKit(archivo).then(m=>{if(vivo(g))usar(m);}).catch(()=>{});}
-export function precargarMuebles(){return Promise.all(['granja_muebles.glb','granja_pueblo.glb'].map(a=>cargarKit(a).then(()=>undefined,()=>undefined)));}
+export function precargarMuebles(){return Promise.all(['granja_muebles.glb','granja_pueblo.glb','granja_edificios.glb'].map(a=>cargarKit(a).then(()=>undefined,()=>undefined)));}
 
 /** Junta en una malla por material todas las piezas de g (utilería quieta: decenas de copias pasan a pocas llamadas de
  * dibujo). Las mallas nuevas son propias del grupo; los materiales siguen siendo los compartidos del kit. */

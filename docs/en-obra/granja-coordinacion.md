@@ -303,7 +303,7 @@ de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/bl
   estando allí. Si el motor mueve la plaza, la fuente o los puestos de los participantes, se ajustan las constantes de
   `festejos-render.ts`.
 
-### Utilería del Pueblo del Sol en Blender (Claude, 11 de octubre de 2026)
+### El Pueblo del Sol en Blender: utilería, edificios y altares (Claude, 11 de octubre de 2026)
 
 - `personajes/blender/granja_pueblo.py` → `public/modelos/granja_pueblo.glb` (0,7 MB): la fuente (pila con repisa,
   columna con anillos, tacita, un sol con cara y cuatro ranitas en el borde; mismas alturas del agua de
@@ -316,5 +316,16 @@ de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/bl
   juntadas por material con `fundir()` (`cuartos.ts`) para que sean pocas llamadas de dibujo. La rueda del kit va dentro
   del grupo `rueda` que ya animaba el pueblo. En Node (pruebas del motor) queda la arcilla.
 - `liberarPueblo()` ya no destruye lo marcado `compartido` (geometrías, materiales y texturas de los kits).
-- Siguen en arcilla (siguiente tanda): los edificios con su utilería propia (puestos del mercado, troncos de la
-  carpintería, fragua, macetas de la clínica, tablón del archivo, mesa de la posada) y los altares.
+- Edificios y altares (`personajes/blender/granja_edificios.py` → `public/modelos/granja_edificios.glb`, 0,9 MB): una
+  pieza `edificio_<oficio>_<ancho>x<fondo>` por cada combinación de pueblo.ts (siete locales y cinco paletas de
+  vivienda) con zócalo, entramado, puerta con arco de vidrio, ventanas con postigos y jardineras, techo de tejas en
+  escama, frontón con ojo de buey y chimenea en el mismo sitio (el humo de la herrería sigue saliendo de la suya);
+  `altar_aura` y `altar_lara`. La utilería propia de cada edificio está en `granja_pueblo.glb` (puestos del mercado,
+  pila de troncos, banco de taller y barril, fragua, yunque y minerales, medallón y materas de la clínica, tablón y
+  cajas del archivo, mesa de la posada, materas de la puerta teñidas con el color de la fachada).
+- `building()` y `shrine()` dibujan todo en la arcilla reemplazable y anotan en una lista (`PuestoKit`) qué pieza va
+  dónde; `utileriaPueblo()` las pone con esa misma lista. Si al kit le falta cualquier pieza (por ejemplo, un edificio
+  de medidas nuevas que agregue el motor), se queda la arcilla completa: nada desaparece. Para un edificio nuevo, se
+  agrega su `(oficio, ancho, fondo)` a `EDIFICIOS` en `granja_edificios.py` y se exporta.
+- Lo único que sigue en arcilla en el pueblo: el piso de la plaza (debajo de la textura pintada), el pasto del corral y
+  el canal del molino.

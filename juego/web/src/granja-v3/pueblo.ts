@@ -82,86 +82,97 @@ function sign(root:THREE.Group,e:EdificioPueblo,y=3.08){
   const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=2;
   const mesh=new THREE.Mesh(new THREE.PlaneGeometry(Math.min(e.ancho-.8,6.5),.8),new THREE.MeshStandardMaterial({map:tex,roughness:.9}));mesh.position.set(e.x+e.ancho/2,y,e.z+e.fondo+.21);root.add(mesh);
 }
-function building(a:Arcilla,root:THREE.Group,e:EdificioPueblo){
+/** Pieza del kit del pueblo que reemplaza a la utilería de arcilla de un edificio (mismo sitio). */
+interface PuestoKit {clave:string;x:number;z:number;giro?:number;escala?:number;y?:number;tinte?:string}
+function building(u:Arcilla,root:THREE.Group,e:EdificioPueblo,kit:PuestoKit[]=[]){
   const palettes:Record<string,[string,string,string]>={semillas:['#edc38f','#a56548','#809958'],animales:['#d7bf93','#699c91','#a95e4d'],carpinteria:['#caa77c','#656f50','#976b42'],herreria:['#b5b2a2','#637e8b','#525766'],clinica:['#e8e5c8','#78a492','#92ada4'],posada:['#ead6b0','#8f6976','#977346'],archivo:['#d8c7a8','#7d8399','#699181']};
   const [wall,roofColor,accent]=palettes[e.servicio],{x,z,ancho:w,fondo:d}=e,h=e.servicio==='posada'?4.65:3.7;
-  a.box([w+.32,.42,d+.3],[x+w/2,.2,z+d/2],C.stone,.09);a.box([w,h-.3,d],[x+w/2,(h+.3)/2,z+d/2],wall,.09);
-  for(const xx of [x+.06,x+w-.06])a.box([.2,h,.22],[xx,h/2,z+d+.04],C.beam);
-  a.box([w+.12,.24,.25],[x+w/2,.72,z+d+.07],accent);a.box([w+.12,.22,.26],[x+w/2,h-.1,z+d+.07],C.beam);
+  u.box([w+.32,.42,d+.3],[x+w/2,.2,z+d/2],C.stone,.09);u.box([w,h-.3,d],[x+w/2,(h+.3)/2,z+d/2],wall,.09);
+  for(const xx of [x+.06,x+w-.06])u.box([.2,h,.22],[xx,h/2,z+d+.04],C.beam);
+  u.box([w+.12,.24,.25],[x+w/2,.72,z+d+.07],accent);u.box([w+.12,.22,.26],[x+w/2,h-.1,z+d+.07],C.beam);
   const doorX=x+w/2,front=z+d;
-  a.box([1.6,2.6,.2],[doorX,1.58,front+.05],C.beam);a.box([1.28,2.32,.15],[doorX,1.56,front+.18],accent);
-  for(let n=0;n<4;n++)a.box([.035,2.12,.04],[doorX-.48+n*.32,1.54,front+.28],C.beam);
-  a.ball([.09,.09,.09],[doorX+.42,1.42,front+.32],'#e5c574');
-  a.box([2.25,.2,1.1],[doorX,.12,front+.52],C.stone);a.box([2.55,.1,.65],[doorX,.055,front+1.05],C.stone);
-  for(const side of [-1,1])windowFront(a,doorX+side*(w*.3),2,front+.08,accent,w>8?1.55:1.2);
+  u.box([1.6,2.6,.2],[doorX,1.58,front+.05],C.beam);u.box([1.28,2.32,.15],[doorX,1.56,front+.18],accent);
+  for(let n=0;n<4;n++)u.box([.035,2.12,.04],[doorX-.48+n*.32,1.54,front+.28],C.beam);
+  u.ball([.09,.09,.09],[doorX+.42,1.42,front+.32],'#e5c574');
+  u.box([2.25,.2,1.1],[doorX,.12,front+.52],C.stone);u.box([2.55,.1,.65],[doorX,.055,front+1.05],C.stone);
+  for(const side of [-1,1])windowFront(u,doorX+side*(w*.3),2,front+.08,accent,w>8?1.55:1.2);
   if(e.servicio==='posada'){
-    for(const side of [-1,0,1])windowFront(a,doorX+side*2.8,3.78,front+.08,accent,1.0);
-    a.box([w+.25,.21,.4],[doorX,2.7,front+.08],C.woodLight);
+    for(const side of [-1,0,1])windowFront(u,doorX+side*2.8,3.78,front+.08,accent,1.0);
+    u.box([w+.25,.21,.4],[doorX,2.7,front+.08],C.woodLight);
   }
-  roof(a,x,z,w,d,h,roofColor);
+  roof(u,x,z,w,d,h,roofColor);
   if(e.servicio!=='animales'){
-    a.box([.9,2.7,1.05],[x+w*.8,h+.55,z+d*.33],e.servicio==='herreria'?C.darkStone:C.cream,.04);a.box([1.14,.23,1.2],[x+w*.8,h+1.97,z+d*.33],C.darkStone,.045);
+    u.box([.9,2.7,1.05],[x+w*.8,h+.55,z+d*.33],e.servicio==='herreria'?C.darkStone:C.cream,.04);u.box([1.14,.23,1.2],[x+w*.8,h+1.97,z+d*.33],C.darkStone,.045);
   }
-  for(const side of [-1,1])flowerpot(a,x+w/2+side*1.5,front+.6,e.servicio==='clinica'?'#c8d8bd':'#c59679',.32);
+  for(const side of [-1,1]){flowerpot(u,x+w/2+side*1.5,front+.6,e.servicio==='clinica'?'#c8d8bd':'#c59679',.32);kit.push({clave:'maceta_puerta',x:x+w/2+side*1.5,z:front+.6,giro:side,tinte:e.servicio==='clinica'?'#c8d8bd':'#c59679'});}
   sign(root,e,e.servicio==='posada'?5.05:3.19);
+  // El edificio entero también tiene su modelo de Blender (granja_edificios.py), centrado en su huella
+  kit.push({clave:`edificio_${e.servicio}_${w}x${d}`,x:x+w/2,z:z+d/2});
   // Side windows make the buildings feel complete when viewed from the orthographic camera.
   for(let j=0;j<2;j++){
-    a.box([.14,1.3,1.15],[x+w+.035,2,z+1.55+j*(d-3)],C.beam);a.box([.12,1.06,.95],[x+w+.12,2,z+1.55+j*(d-3)],C.glass);
-    a.box([.05,1.08,.07],[x+w+.19,2,z+1.55+j*(d-3)],C.cream);a.box([.05,.07,.98],[x+w+.19,2,z+1.55+j*(d-3)],C.cream);
+    u.box([.14,1.3,1.15],[x+w+.035,2,z+1.55+j*(d-3)],C.beam);u.box([.12,1.06,.95],[x+w+.12,2,z+1.55+j*(d-3)],C.glass);
+    u.box([.05,1.08,.07],[x+w+.19,2,z+1.55+j*(d-3)],C.cream);u.box([.05,.07,.98],[x+w+.19,2,z+1.55+j*(d-3)],C.cream);
   }
   if(e.servicio==='semillas'){
     for(const side of [-1,1]){const bx=doorX+side*2.6;
-      a.box([2.55,.19,1.65],[bx,2.7,front+.85],side<0?'#899f69':'#d4aa68',.04,[-.12,0,0]);
-      for(let i=0;i<5;i++)a.box([.24,.06,1.66],[bx-1.04+i*.52,2.75,front+.85],C.cream,.01,[-.12,0,0]);
-      for(const s of [-1,1])a.cyl(.06,2.62,[bx+s*1.16,1.31,front+1.55],C.wood);
-      crate(a,bx-.51,0,front+.92,side<0?'#df9360':'#879d5c');crate(a,bx+.51,0,front+.92,side<0?'#d9bc68':'#be7471');
+      u.box([2.55,.19,1.65],[bx,2.7,front+.85],side<0?'#899f69':'#d4aa68',.04,[-.12,0,0]);
+      for(let i=0;i<5;i++)u.box([.24,.06,1.66],[bx-1.04+i*.52,2.75,front+.85],C.cream,.01,[-.12,0,0]);
+      for(const s of [-1,1])u.cyl(.06,2.62,[bx+s*1.16,1.31,front+1.55],C.wood);
+      crate(u,bx-.51,0,front+.92,side<0?'#df9360':'#879d5c');crate(u,bx+.51,0,front+.92,side<0?'#d9bc68':'#be7471');
+      kit.push({clave:side<0?'puesto_mercado_verde':'puesto_mercado_mostaza',x:bx,z:front+.85});
     }
   }
   if(e.servicio==='carpinteria'){
     for(let row=0;row<3;row++)for(let i=0;i<4-row;i++){
-      const lx=x+.2+i*.58+row*.29;a.cyl(.25,2.2,[lx,.28+row*.44,z+d+2.6],C.wood,[Math.PI/2,0,0]);a.cyl(.2,.025,[lx,.28+row*.44,z+d+3.71],C.woodLight,[Math.PI/2,0,0]);
+      const lx=x+.2+i*.58+row*.29;u.cyl(.25,2.2,[lx,.28+row*.44,z+d+2.6],C.wood,[Math.PI/2,0,0]);u.cyl(.2,.025,[lx,.28+row*.44,z+d+3.71],C.woodLight,[Math.PI/2,0,0]);
     }
-    a.box([2.8,.25,1.25],[x+w-1.15,1.07,z+d+2.25],C.woodLight);
-    for(const s of [-1,1])a.box([.15,.95,1.08],[x+w-1.15+s*1.14,.47,z+d+2.25],C.beam);
-    a.box([1.85,.09,.38],[x+w-1.15,1.25,z+d+2.25],C.cream);
-    a.box([1.2,.04,.26],[x+w-1.1,1.36,z+d+2.15],C.metal,.01,[0,.3,0]);
-    a.cyl(.46,1.15,[x+w+1.1,.6,z+d-1.1],C.woodLight);a.cyl(.48,.1,[x+w+1.1,1.22,z+d-1.1],C.wood);
+    u.box([2.8,.25,1.25],[x+w-1.15,1.07,z+d+2.25],C.woodLight);
+    for(const s of [-1,1])u.box([.15,.95,1.08],[x+w-1.15+s*1.14,.47,z+d+2.25],C.beam);
+    u.box([1.85,.09,.38],[x+w-1.15,1.25,z+d+2.25],C.cream);
+    u.box([1.2,.04,.26],[x+w-1.1,1.36,z+d+2.15],C.metal,.01,[0,.3,0]);
+    u.cyl(.46,1.15,[x+w+1.1,.6,z+d-1.1],C.woodLight);u.cyl(.48,.1,[x+w+1.1,1.22,z+d-1.1],C.wood);
+    kit.push({clave:'troncos_pila',x:x+1.27,z:z+d+2.6},{clave:'banco_taller',x:x+w-1.15,z:z+d+2.25},{clave:'barril_taller',x:x+w+1.1,z:z+d-1.1});
   }
   if(e.servicio==='herreria'){
-    a.box([1.8,1.62,1.42],[x+1.4,.82,z+d+1.7],C.darkStone);a.box([1.27,.73,.06],[x+1.4,.83,z+d+2.44],'#493f3b');
-    a.box([1.02,.15,.5],[x+1.4,.5,z+d+2.42],'#ecab57');
-    a.cyl(.48,.76,[x+w-1.25,.42,z+d+1.9],C.wood);a.box([1.65,.31,.66],[x+w-1.25,1.04,z+d+1.9],C.metal);
-    a.box([.55,.54,.5],[x+w-1.25,.8,z+d+1.9],C.metal);a.cyl(.12,.7,[x+w-.95,1.46,z+d+1.9],C.wood,[0,0,.5]);a.box([.47,.23,.24],[x+w-.77,1.78,z+d+1.9],C.metal,.03,[0,0,.5]);
-    for(let i=0;i<5;i++)a.ball([.23,.2,.22],[x-.3+hash(i)*.8,.19,z+d-1.3+hash(i,2)],i%2?'#98afa9':'#ae9279');
+    u.box([1.8,1.62,1.42],[x+1.4,.82,z+d+1.7],C.darkStone);u.box([1.27,.73,.06],[x+1.4,.83,z+d+2.44],'#493f3b');
+    u.box([1.02,.15,.5],[x+1.4,.5,z+d+2.42],'#ecab57');
+    u.cyl(.48,.76,[x+w-1.25,.42,z+d+1.9],C.wood);u.box([1.65,.31,.66],[x+w-1.25,1.04,z+d+1.9],C.metal);
+    u.box([.55,.54,.5],[x+w-1.25,.8,z+d+1.9],C.metal);u.cyl(.12,.7,[x+w-.95,1.46,z+d+1.9],C.wood,[0,0,.5]);u.box([.47,.23,.24],[x+w-.77,1.78,z+d+1.9],C.metal,.03,[0,0,.5]);
+    for(let i=0;i<5;i++)u.ball([.23,.2,.22],[x-.3+hash(i)*.8,.19,z+d-1.3+hash(i,2)],i%2?'#98afa9':'#ae9279');
+    kit.push({clave:'fragua_patio',x:x+1.4,z:z+d+1.7},{clave:'yunque_patio',x:x+w-1.25,z:z+d+1.9},{clave:'piedras_mineral',x:x+.1,z:z+d-.8});
   }
   if(e.servicio==='clinica'){
-    a.cyl(.46,.12,[doorX,h+.5,front+.16],'#dfe8d3',[Math.PI/2,0,0]);a.box([.13,.6,.09],[doorX,h+.5,front+.27],'#819e87');a.box([.56,.13,.09],[doorX,h+.5,front+.27],'#819e87');
-    for(let i=0;i<4;i++)flowerpot(a,x+w+1.05,z+.9+i*1.45,'#bdd0b0',.43);
+    u.cyl(.46,.12,[doorX,h+.5,front+.16],'#dfe8d3',[Math.PI/2,0,0]);u.box([.13,.6,.09],[doorX,h+.5,front+.27],'#819e87');u.box([.56,.13,.09],[doorX,h+.5,front+.27],'#819e87');
+    for(let i=0;i<4;i++)flowerpot(u,x+w+1.05,z+.9+i*1.45,'#bdd0b0',.43);
+    kit.push({clave:'emblema_clinica',x:doorX,z:front+.18,y:h+.5});for(let i=0;i<4;i++)kit.push({clave:'maceta_grande',x:x+w+1.05,z:z+.9+i*1.45,giro:i,tinte:'#bdd0b0'});
   }
   if(e.servicio==='archivo'){
-    a.box([2.2,1.3,.22],[x-1.25,1.65,z+d],C.wood);for(const s of [-1,1])a.cyl(.08,2.25,[x-1.25+s*.85,1.12,z+d],C.wood);
-    for(let i=0;i<3;i++)a.box([.52,.73,.03],[x-1.87+i*.62,1.66,z+d+.14],i%2?'#ddc7a3':'#eddfb6',.01,[0,0,(i-1)*.04]);
-    for(let i=0;i<3;i++)crate(a,x+w+1.1,0,z+1.25+i*1.1);
+    u.box([2.2,1.3,.22],[x-1.25,1.65,z+d],C.wood);for(const s of [-1,1])u.cyl(.08,2.25,[x-1.25+s*.85,1.12,z+d],C.wood);
+    for(let i=0;i<3;i++)u.box([.52,.73,.03],[x-1.87+i*.62,1.66,z+d+.14],i%2?'#ddc7a3':'#eddfb6',.01,[0,0,(i-1)*.04]);
+    for(let i=0;i<3;i++)crate(u,x+w+1.1,0,z+1.25+i*1.1);
+    kit.push({clave:'tablon',x:x-1.25,z:z+d});for(let i=0;i<3;i++)kit.push({clave:'caja',x:x+w+1.1,z:z+1.25+i*1.1,giro:(i-1)*.15});
   }
   if(e.servicio==='posada'){
-    seat(a,x+1.3,z+d+1.4);a.cyl(.8,.12,[x+w-1.5,.95,z+d+1.7],C.woodLight);a.cyl(.1,.92,[x+w-1.5,.46,z+d+1.7],C.wood);
-    for(const side of [-1,1]){a.cyl(.26,.12,[x+w-1.5+side*1.05,.51,z+d+1.7],C.woodLight);a.cyl(.08,.49,[x+w-1.5+side*1.05,.25,z+d+1.7],C.wood);}
-    a.cyl(.16,.31,[x+w-1.5,1.17,z+d+1.7],C.cream);
+    seat(u,x+1.3,z+d+1.4);u.cyl(.8,.12,[x+w-1.5,.95,z+d+1.7],C.woodLight);u.cyl(.1,.92,[x+w-1.5,.46,z+d+1.7],C.wood);
+    for(const side of [-1,1]){u.cyl(.26,.12,[x+w-1.5+side*1.05,.51,z+d+1.7],C.woodLight);u.cyl(.08,.49,[x+w-1.5+side*1.05,.25,z+d+1.7],C.wood);}
+    u.cyl(.16,.31,[x+w-1.5,1.17,z+d+1.7],C.cream);
+    kit.push({clave:'banco',x:x+1.3,z:z+d+1.4},{clave:'mesa_posada',x:x+w-1.5,z:z+d+1.7});
   }
 }
-function shrine(a:Arcilla,root:THREE.Group,e:EdificioPueblo){
+function shrine(u:Arcilla,root:THREE.Group,e:EdificioPueblo,kit:PuestoKit[]=[]){
   const aura=e.servicio==='altar_aura',col=aura?'#d5b66a':'#9591ac',flower=aura?'#e8c460':'#c6b1d3',cx=e.x+2,cz=e.z+2;
-  a.box([4.6,.16,4.7],[cx,.08,cz],C.stone,.11);a.box([3.3,.18,3.4],[cx,.24,cz],aura?'#e6d5b1':'#c1bbca',.11);
-  for(const sx of [-1,1]){a.cyl(.18,2.65,[cx+sx*1.2,1.55,cz-.65],col);a.ball([.27,.23,.27],[cx+sx*1.2,2.91,cz-.65],col);}
-  a.box([3.06,.2,.38],[cx,2.77,cz-.65],col,.08);a.box([3.1,.15,.44],[cx,2.96,cz-.65],aura?'#e5cd83':'#aaa3bb',.08);
-  a.cyl(.64,.66,[cx,.65,cz],col);a.cyl(.86,.13,[cx,1.03,cz],C.cream);
-  if(aura){a.ball([.24,.55,.24],[cx,1.62,cz],'#edbf62');a.ball([.16,.4,.16],[cx+.12,1.61,cz+.1],'#e58b58');a.ball([.13,.26,.13],[cx-.05,1.51,cz+.12],'#fff1b1');}
-  else {a.cyl(.38,.075,[cx,1.57,cz],'#ddd5e9',[Math.PI/2,0,0]);a.ball([.22,.28,.09],[cx+.18,1.69,cz+.07],'#9591ac');}
+  u.box([4.6,.16,4.7],[cx,.08,cz],C.stone,.11);u.box([3.3,.18,3.4],[cx,.24,cz],aura?'#e6d5b1':'#c1bbca',.11);
+  for(const sx of [-1,1]){u.cyl(.18,2.65,[cx+sx*1.2,1.55,cz-.65],col);u.ball([.27,.23,.27],[cx+sx*1.2,2.91,cz-.65],col);}
+  u.box([3.06,.2,.38],[cx,2.77,cz-.65],col,.08);u.box([3.1,.15,.44],[cx,2.96,cz-.65],aura?'#e5cd83':'#aaa3bb',.08);
+  u.cyl(.64,.66,[cx,.65,cz],col);u.cyl(.86,.13,[cx,1.03,cz],C.cream);
+  if(aura){u.ball([.24,.55,.24],[cx,1.62,cz],'#edbf62');u.ball([.16,.4,.16],[cx+.12,1.61,cz+.1],'#e58b58');u.ball([.13,.26,.13],[cx-.05,1.51,cz+.12],'#fff1b1');}
+  else {u.cyl(.38,.075,[cx,1.57,cz],'#ddd5e9',[Math.PI/2,0,0]);u.ball([.22,.28,.09],[cx+.18,1.69,cz+.07],'#9591ac');}
   for(let i=0;i<10;i++){
     const angle=i*Math.PI*2/10,r=1.6,xx=cx+Math.cos(angle)*r,zz=cz+Math.sin(angle)*r;
-    if(zz>cz+.9&&Math.abs(xx-cx)<.75)continue;a.cyl(.035,.45,[xx,.47,zz],C.green);for(let p=0;p<4;p++)a.ball([.12,.06,.12],[xx+Math.cos(p*Math.PI/2)*.1,.72,zz+Math.sin(p*Math.PI/2)*.1],flower);
+    if(zz>cz+.9&&Math.abs(xx-cx)<.75)continue;u.cyl(.035,.45,[xx,.47,zz],C.green);for(let p=0;p<4;p++)u.ball([.12,.06,.12],[xx+Math.cos(p*Math.PI/2)*.1,.72,zz+Math.sin(p*Math.PI/2)*.1],flower);
   }
   sign(root,e,3.28);
+  kit.push({clave:aura?'altar_aura':'altar_lara',x:cx,z:cz});
 }
 function tree(a:Arcilla,x:number,z:number,h=3.5){
   a.cyl(.2,h*.67,[x,h*.335,z],C.wood,[0,0,-.05],.3);
@@ -215,8 +226,8 @@ const JARDINERAS_PUEBLO:readonly [number,number,number,number][]=[[70,-13,2,5],[
 
 /** La utilería del pueblo con las piezas de granja_pueblo.glb (mismas posiciones, alturas y huellas que la arcilla),
  * juntada por material para que sean pocas llamadas de dibujo. */
-function utileriaPueblo(m:Map<string,THREE.Object3D>):THREE.Group|null{
-  if(!m.has('fuente'))return null;const g=new THREE.Group();
+function utileriaPueblo(m:Map<string,THREE.Object3D>,edificios:readonly PuestoKit[]=[]):THREE.Group|null{
+  if(!m.has('fuente')||edificios.some(p=>!m.has(p.clave)))return null;const g=new THREE.Group(),tintes=new Map<string,THREE.Material>();
   const poner=(clave:string,x:number,z:number,giro=0,escala:number|[number,number,number]=1,y=0)=>{const base=m.get(clave);if(!base)return;const o=base.clone(true);o.position.set(x,y,z);o.rotation.y=giro;if(typeof escala==='number')o.scale.setScalar(escala);else o.scale.set(...escala);g.add(o);};
   poner('fuente',84,2);
   for(const [x,z,r]of BANCOS_PUEBLO)poner('banco',x,z,r);
@@ -239,6 +250,10 @@ function utileriaPueblo(m:Map<string,THREE.Object3D>):THREE.Group|null{
   for(let i=0;i<3;i++)poner('rollo_heno',66.8+i*.85,20.1,(i-1)*.12);
   for(let i=0;i<29;i++)poner('piedra_borde',55+i*1.9,-28.1+hash(i)*.2,hash(i,3)*6.28,.85+hash(i,4)*.3);
   poner('letrero_entrada',54,1.8);
+  // Lo de cada edificio, en el sitio que anotó building(); las materas toman el color de su fachada
+  for(const p of edificios){const base=m.get(p.clave);if(!base)continue;const o=base.clone(true);o.position.set(p.x,p.y??0,p.z);o.rotation.y=p.giro??0;o.scale.setScalar(p.escala??1);
+    if(p.tinte)o.traverse(x=>{const malla=x as THREE.Mesh;if(!malla.isMesh||Array.isArray(malla.material)||!malla.material.name.endsWith('| maceta'))return;const clave=malla.material.uuid+p.tinte;let t=tintes.get(clave);if(!t){const c=(malla.material as THREE.MeshStandardMaterial).clone();c.userData={};c.color.set(p.tinte!);t=c;tintes.set(clave,t);}malla.material=t;});
+    g.add(o);}
   return fundir(g);
 }
 
@@ -254,8 +269,9 @@ export function crearPueblo():THREE.Group {
   a.cyl(7.15,.16,[84,.05,2],C.stone,[0,0,0]);a.cyl(6.94,.12,[84,.12,2],'#d3c8aa');
   for(let ring=0;ring<3;ring++)for(let i=0;i<24;i++){const t=i/24*Math.PI*2,r=3.2+ring*1.12;a.box([.86,.035,.72],[84+Math.sin(t)*r,.2,2+Math.cos(t)*r],ring===1?(i%2?'#c98a57':'#d9a466'):(i%2?'#b9b09a':'#cfc5ab'),.04,[0,t,0]);}
   u.cyl(2.23,.32,[84,.29,2],C.stone);u.cyl(1.95,.24,[84,.5,2],C.cream);u.cyl(.47,.86,[84,1.04,2],C.stone);u.cyl(.98,.2,[84,1.5,2],C.cream);u.cyl(.27,.83,[84,1.88,2],C.stone);u.ball([.29,.31,.29],[84,2.4,2],'#c5b27e');
-  for(const v of VIVIENDAS_PUEBLO.filter(v=>!v.edificio)){building(a,group,{...v,servicio:({despertar:'clinica',calma:'archivo',ribera:'animales',senderos:'carpinteria',huerto:'clinica',escuela:'archivo',bosque:'carpinteria',tejidos:'posada',observatorio:'archivo',rosal:'clinica'} as Record<string,ServicioPueblo>)[v.tema],descripcion:'Vivienda de los habitantes del pueblo'});}
-  for(const e of EDIFICIOS_PUEBLO)e.servicio.startsWith('altar')?shrine(a,group,e):building(a,group,e);
+  const kitEdificios:PuestoKit[]=[];
+  for(const v of VIVIENDAS_PUEBLO.filter(v=>!v.edificio)){building(u,group,{...v,servicio:({despertar:'clinica',calma:'archivo',ribera:'animales',senderos:'carpinteria',huerto:'clinica',escuela:'archivo',bosque:'carpinteria',tejidos:'posada',observatorio:'archivo',rosal:'clinica'} as Record<string,ServicioPueblo>)[v.tema],descripcion:'Vivienda de los habitantes del pueblo'},kitEdificios);}
+  for(const e of EDIFICIOS_PUEBLO)e.servicio.startsWith('altar')?shrine(u,group,e,kitEdificios):building(u,group,e,kitEdificios);
   // Animal-yard fence has a visible gate gap facing the plaza.
   for(const [x,z,x2,z2] of VALLAS_CORRAL)fence(u,x,z,x2,z2);
   a.box([10.9,.075,8.15],[64,.025,16.5],'#98b575',.12);for(let i=0;i<32;i++){const xx=58.7+hash(i,2)*10.5,zz=12.5+hash(i,9)*8;a.ball([.15,.045,.12],[xx,.09,zz],i%3?'#a6ba7b':'#becc8e');}
@@ -284,8 +300,8 @@ export function crearPueblo():THREE.Group {
   for(let i=0;i<12;i++){const t=i/12*Math.PI*2;r.box([.72,.24,.65],[0,Math.sin(t)*1.61,Math.cos(t)*1.61],C.woodLight,.04,[t,0,0]);r.box([.12,3.22,.11],[0,0,0],C.wood,.01,[t,0,0]);}
   rueda.add(r.mesh());rueda.position.set(103.2,1.75,16);group.add(rueda);
   // En el navegador la utilería de arcilla se cambia por la de Blender (granja_pueblo.glb) apenas carga el kit
-  conKit(group,'granja_pueblo.glb',m=>{const kit=utileriaPueblo(m);if(!kit)return;group.add(kit);arcilla.removeFromParent();arcilla.geometry.dispose();(arcilla.material as THREE.Material).dispose();
-   const ruedaKit=m.get('rueda_molino');if(ruedaKit){for(const c of [...rueda.children]){c.removeFromParent();const malla=c as THREE.Mesh;malla.geometry?.dispose();(malla.material as THREE.Material|undefined)?.dispose();}rueda.add(ruedaKit.clone(true));}});
+  conKit(group,'granja_pueblo.glb',m1=>conKit(group,'granja_edificios.glb',m2=>{const m=new Map([...m1,...m2]);const kit=utileriaPueblo(m,kitEdificios);if(!kit)return;group.add(kit);arcilla.removeFromParent();arcilla.geometry.dispose();(arcilla.material as THREE.Material).dispose();
+   const ruedaKit=m.get('rueda_molino');if(ruedaKit){for(const c of [...rueda.children]){c.removeFromParent();const malla=c as THREE.Mesh;malla.geometry?.dispose();(malla.material as THREE.Material|undefined)?.dispose();}rueda.add(ruedaKit.clone(true));}}));
   const humo:THREE.Group[]=[];for(let i=0;i<4;i++){const g=new THREE.Group(),m=new THREE.Mesh(new THREE.SphereGeometry(.35,8,5),new THREE.MeshStandardMaterial({color:'#d0cbc0',roughness:1,transparent:true,opacity:.28,depthWrite:false}));g.add(m);g.userData.offset=i*.9;g.position.set(104.6,5.9,2.31);group.add(g);humo.push(g);}
   const agua=new THREE.Mesh(new THREE.TorusGeometry(.7,.025,5,28),new THREE.MeshStandardMaterial({color:'#cee5d6',roughness:.28}));agua.rotation.x=Math.PI/2;agua.position.set(84,.66,2);group.add(agua);
   const fuego=new THREE.Mesh(new THREE.SphereGeometry(.24,8,6),new THREE.MeshStandardMaterial({color:'#f5b064',emissive:'#db7835',emissiveIntensity:.2,roughness:.8}));fuego.position.set(100.4,.93,9.4);fuego.scale.set(.8,1.45,.75);group.add(fuego);
