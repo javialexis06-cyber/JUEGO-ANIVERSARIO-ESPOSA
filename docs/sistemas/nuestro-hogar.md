@@ -445,6 +445,17 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   salió). La colección tiene la pestaña «Tesoros» y hay 4 logros más (encontrar uno, los seis, abrir un Hiper y 40
   minutos sin fin): 62 en total. Íconos nuevos en el atlas (ahora 152): los seis tesoros, el monedero y el carrito
   del vendedor.
+- **Versión 2, fase 2b: el vendedor ambulante** (`vendedor.ts`, el mercader del original): **Don Jabón**, una
+  pastilla de jabón de peluche con bigotote y sombrero vueltiao (modelo en `lavado_objetos.py`, `don_jabon`), parado
+  junto a su carrito de jabones con sombrilla de rayas (`PUESTO`). Sin el Monedero solo pasa por El Lavamanos; con el
+  **Monedero** (tesoro que se le compra a él por 1.500), en todos los escenarios. Una flecha naranja lo señala y un
+  aviso lo anuncia a los 4 segundos. Al llegar al carrito se abre su puesto (la partida se pausa, `Jugador.tienda`;
+  con varios jugando se cierra solo a los 25 s, `LIMITE_TIENDA`; para volver a abrirlo hay que alejarse). Vende con
+  las **gotas doradas recogidas en la partida** (`Motor.oroParaGastar`; lo gastado, `Jugador.gastado`, ya no se lleva a
+  la casa): las cinco armas de rebote (300 cada una, si cabe otra arma), **patitos dorados** (400, +100 cada uno) y el
+  Monedero; **del otro lado del espejo**, además, volver a tirar, saltar y vetar (+1 para la partida, con precio que
+  sube) y una carta mágica más (2.500). En línea, comprar y cerrar viajan como acciones (`comprar`, `tienda`) y el
+  inventario lleva el puesto, lo comprado, lo gastado y las tiradas/saltos/vetos de más.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

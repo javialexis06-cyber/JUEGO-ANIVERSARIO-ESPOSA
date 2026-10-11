@@ -25,6 +25,7 @@ import { Menu, retrato } from './menu';
 import { Motor, xpPara, type OpcionesJugador } from './motor';
 import { cartasDe, maestriaDe, modosDe, PATITO, reliquiasDe, SECRETO_LOGRO, secretoAbierto, sumarMaestria, sumarPartida, type ProgresoLavado, type ResumenPartida } from './progreso';
 import { ID_MODOS, ID_TESOROS } from './tesoros';
+import { ID_VENTAS } from './vendedor';
 import { MAESTRIA_MAX } from './maestria';
 import { musicaLavado, sonarEfecto } from './sonidos';
 import { botPaso } from './bot';
@@ -91,6 +92,7 @@ export function opcionesJugador(rol: Rol, p: ProgresoLavado): OpcionesJugador {
     patitos: { ...(p.patitos[disfraz] ?? {}) },
     reliquias: reliquiasDe(p),
     mapa: p.tesoros.includes('mapa'),
+    monedero: p.tesoros.includes('monedero'),
   };
 }
 
@@ -114,6 +116,7 @@ function opcionesSeguras(x: unknown, rol: Rol): OpcionesJugador {
     patitos,
     reliquias: lista(o.reliquias).filter((t): t is IdTesoro => ID_TESOROS.includes(t as IdTesoro)),
     mapa: !!o.mapa,
+    monedero: !!o.monedero,
   };
 }
 
@@ -474,6 +477,8 @@ export class Lavado {
       vetar: (k, nn) => (local ? m.vetar(yo, k, nn) : pedir({ a: 'vetar', k, n: nn })),
       cerrarCofre: (nn) => (local ? m.cerrarCofre(yo, nn) : pedir({ a: 'cofre', n: nn })),
       escogerCarta: (cc, nn) => (local ? m.escogerCarta(yo, cc, nn) : pedir({ a: 'carta', c: cc, n: nn })),
+      comprar: (v, nn) => (local ? m.comprar(yo, v, nn) : pedir({ a: 'comprar', v, n: nn })),
+      cerrarTienda: (nn) => (local ? m.cerrarTienda(yo, nn) : pedir({ a: 'tienda', n: nn })),
       pausa: (si) => {
         pausado = si;
         ui.mostrarPausa(m, si, musicaLavado.muda, silenciado(), numeros);
@@ -763,6 +768,8 @@ export class Lavado {
             else if (x.a === 'vetar') m.vetar(i, Number(x.k), x.n);
             else if (x.a === 'cofre') m.cerrarCofre(i, x.n);
             else if (x.a === 'carta') m.escogerCarta(i, (x.c ?? null) as IdCarta | null, x.n);
+            else if (x.a === 'comprar' && typeof x.v === 'string' && ID_VENTAS.includes(x.v)) m.comprar(i, x.v, x.n);
+            else if (x.a === 'tienda') m.cerrarTienda(i, x.n);
           }),
           sala.al(MSJ.dentro, (_d, de) => {
             const i = indice.get(de.id);

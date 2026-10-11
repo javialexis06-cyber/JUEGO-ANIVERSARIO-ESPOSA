@@ -10,6 +10,7 @@ import { ID_ARMAS, ID_PASIVAS, baseEnNivel } from './armas';
 import { ID_ENEMIGOS, ENEMIGOS } from './enemigos';
 import { LIMITE_COFRE, LIMITE_ESCOGER, MAX_ENEMIGOS, type CofreAbierto, type Jugador, type Motor, type Opcion, type OpcionesJugador } from './motor';
 import type { ResumenPartida } from './progreso';
+import type { IdVenta } from './vendedor';
 import type { Efecto, IdArma, IdCarta, IdEscenario, IdModo, IdObjeto, IdPasiva, Stats, TipoEfecto } from './tipos';
 
 export interface ConfigPartida {
@@ -37,6 +38,11 @@ export interface InvJugador {
   danos: [IdArma, number, number][];
   /** Puestos de pasivas de más (el bolsillo de la bata). */
   extra?: number;
+  /** El puesto del vendedor: si está abierto, lo comprado, lo gastado y las tiradas, saltos y vetos de más. */
+  tienda?: boolean;
+  compras?: Partial<Record<IdVenta, number>>;
+  gastado?: number;
+  extras?: [number, number, number];
 }
 
 /** Lo que se dicen los celulares durante la partida (tipos de mensaje de la sala). */
@@ -71,10 +77,12 @@ export interface Mando {
   man: boolean;
 }
 export interface Accion {
-  a: 'escoger' | 'tirar' | 'saltar' | 'vetar' | 'cofre' | 'carta';
+  a: 'escoger' | 'tirar' | 'saltar' | 'vetar' | 'cofre' | 'carta' | 'comprar' | 'tienda';
   k?: number;
   c?: IdCarta | null;
   n?: number;
+  /** Lo que se le compra al vendedor. */
+  v?: IdVenta;
 }
 
 // ---------------------------------------------------------------------------------------------------- Inventario
@@ -92,6 +100,10 @@ export function inventarioDe(m: Motor): InvJugador[] {
     vetadas: [...j.vetadas],
     danos: [...j.danos].map(([id, d]): [IdArma, number, number] => [id, Math.round(d.dano), d.desde]),
     extra: j.pasivasExtra,
+    tienda: j.tienda,
+    compras: { ...j.compras },
+    gastado: j.gastado,
+    extras: [j.dadosExtra, j.saltosExtra, j.vetosExtra],
   }));
 }
 
@@ -118,6 +130,10 @@ export function aplicarInventario(m: Motor, inv: InvJugador[]) {
     j.vetadas = new Set(d.vetadas);
     j.danos = new Map(d.danos.map(([id, dano, desde]) => [id, { dano, desde }]));
     j.pasivasExtra = d.extra ?? 0;
+    j.tienda = !!d.tienda;
+    j.compras = { ...(d.compras ?? {}) };
+    j.gastado = d.gastado ?? 0;
+    [j.dadosExtra, j.saltosExtra, j.vetosExtra] = d.extras ?? [0, 0, 0];
   });
 }
 

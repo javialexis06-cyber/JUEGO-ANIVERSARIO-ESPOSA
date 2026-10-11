@@ -10,9 +10,10 @@ import { icono } from './iconos';
 import { RECETAS, estadoReceta, recetaDeArma, recetasDePasiva, type EstadoReceta } from './evoluciones';
 import { LOGRO, type ResumenPartida } from './progreso';
 import { sfx } from './sonidos';
-import { ORO_X, type Jugador, type Motor, type Opcion } from './motor';
+import { LIMITE_COFRE, LIMITE_ESCOGER, LIMITE_TIENDA, ORO_X, type Jugador, type Motor, type Opcion } from './motor';
 import { ESCONDIDAS } from './armas';
 import { LIMITE, MODO, TESOROS } from './tesoros';
+import type { IdVenta } from './vendedor';
 import type { Efecto, IdArma, IdCarta, IdPasiva, Rol } from './tipos';
 
 /** Las acciones llevan `n`: cuántas cosas había escogido cuando se pintó la capa (un toque viejo o doble no cuenta). */
@@ -30,6 +31,9 @@ export interface Acciones {
   numeros(): boolean;
   /** Cambia entre apuntar a mano y que las armas busquen solas (devuelve si quedó a mano). */
   ataque?(): boolean;
+  /** El puesto del vendedor ambulante. */
+  comprar(v: IdVenta, n: number): void;
+  cerrarTienda(n: number): void;
 }
 
 const esc = (t: string) => t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -103,6 +107,9 @@ export class Interfaz {
   private capaFin: HTMLElement;
   private capaEspera: HTMLElement;
   private claveNivel = '';
+  private claveTienda = '';
+  private nTienda = 0;
+  private capaTienda: HTMLElement;
   private claveCofre = '';
   private claveCarta = '';
   /** Las acciones del jugador cuando se pintó cada capa (viajan con el toque). */
@@ -137,6 +144,7 @@ export class Interfaz {
         ${otros.map((i) => `<div class="lv-flecha" data-i="${i}" style="--c:${colores[i] ?? '#fff'}"><b>${esc((nombres[i] ?? '?').slice(0, 1).toUpperCase())}</b></div>`).join('')}
         ${otros.map((i) => `<div class="lv-etiqueta" data-i="${i}" style="--c:${colores[i] ?? '#fff'}">${esc(nombres[i] ?? '')}</div>`).join('')}
         ${Array.from({ length: 6 }, () => '<div class="lv-flecha-tesoro"><span></span></div>').join('')}
+        <div class="lv-flecha-tesoro vendedor"><span></span></div>
         <div class="lv-aviso"></div>
         <div class="lv-jefe"></div>
       </div>
@@ -145,6 +153,7 @@ export class Interfaz {
       <div class="lv-capa lv-c-nivel" hidden></div>
       <div class="lv-capa lv-c-cofre" hidden></div>
       <div class="lv-capa lv-c-carta" hidden></div>
+      <div class="lv-capa lv-c-tienda" hidden></div>
       <div class="lv-capa lv-c-pausa" hidden></div>
       <div class="lv-capa lv-c-espera" hidden></div>
       <div class="lv-capa lv-c-fin" hidden></div>
@@ -156,6 +165,7 @@ export class Interfaz {
     this.capaCofre = $(raiz, '.lv-c-cofre');
     this.capaCarta = $(raiz, '.lv-c-carta');
     this.capaPausa = $(raiz, '.lv-c-pausa');
+    this.capaTienda = $(raiz, '.lv-c-tienda');
     this.capaFin = $(raiz, '.lv-c-fin');
     this.capaEspera = $(raiz, '.lv-c-espera');
     this.otros = otros.map((i) => ({
@@ -203,6 +213,19 @@ export class Interfaz {
         if (a === 'saltar') this.acc.saltar(this.nNivel);
       }
       this.desbloquearLuego(this.capaNivel);
+    });
+    this.capaTienda.addEventListener('click', (ev) => {
+      const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-venta], [data-cerrar]');
+      if (!el || this.capaTienda.classList.contains('enviado') || this.recien(this.capaTienda) || (el as HTMLButtonElement).disabled) return;
+      this.capaTienda.classList.add('enviado');
+      if (el.dataset.venta) {
+        sfx.premio();
+        this.acc.comprar(el.dataset.venta as IdVenta, this.nTienda);
+      } else {
+        sfx.toque();
+        this.acc.cerrarTienda(this.nTienda);
+      }
+      this.desbloquearLuego(this.capaTienda);
     });
     this.capaCarta.addEventListener('click', (ev) => {
       const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-carta]');
@@ -361,6 +384,25 @@ export class Interfaz {
       f.classList.add('si');
     }
     for (let k = n; k < flechas.length; k++) flechas[k].classList.remove('si');
+    // La flecha naranja hacia el carrito de Don Jabón
+    const fv = this.hud.querySelector<HTMLElement>('.lv-flecha-tesoro.vendedor')!;
+    const p = m.puesto;
+    let ver = false;
+    if (p) {
+      const [px, py] = aPantalla(p[0], p[1]);
+      if (px < 0 || py < 0 || px > w || py > h) {
+        ver = true;
+        const x = Math.max(30, Math.min(w - 30, px)), y = Math.max(x < 230 || x > w - 70 ? 104 : 76, Math.min(h - 34, py));
+        const metros = Math.round(Math.hypot(p[0] - yo.x, p[1] - yo.y) / 40);
+        if (fv.dataset.k !== String(metros)) {
+          fv.dataset.k = String(metros);
+          fv.firstElementChild!.innerHTML = `${icono('donJabon', 28)}<em>${metros} m</em>`;
+        }
+        fv.style.transform = `translate(${x}px, ${y}px)`;
+        fv.style.setProperty('--a', `${Math.atan2(py - y, px - x)}rad`);
+      }
+    }
+    fv.classList.toggle('si', ver);
   }
 
   /**
@@ -468,10 +510,19 @@ export class Interfaz {
         this.mostrarNivel(m, j, j.opciones);
       } else this.cerrarCapa(this.capaNivel);
     } else if (!kn && !this.capaNivel.hidden) this.cerrarCapa(this.capaNivel);
+    // El puesto del vendedor ambulante (debajo de todo lo demás)
+    const kt = j.tienda && !j.opciones && !j.cofre && !j.cartaOpciones ? `${JSON.stringify(j.compras)}|${m.oroParaGastar(j)}|${j.armas.length}#${j.acciones}` : '';
+    if (kt !== this.claveTienda) {
+      this.claveTienda = kt;
+      if (kt) {
+        this.nTienda = j.acciones;
+        this.mostrarTienda(m, j);
+      } else this.cerrarCapa(this.capaTienda);
+    } else if (!kt && !this.capaTienda.hidden) this.cerrarCapa(this.capaTienda);
     // Los demás están escogiendo (con varios, cada uno con su reloj: después se escoge solo)
     const varios = m.jug.length > 1;
-    const yoEscojo = !!(j.opciones || j.cofre || j.cartaOpciones);
-    const escogiendo = varios && m.pausa && !yoEscojo ? m.jug.filter((x) => x !== j && !x.fuera && (x.opciones || x.cofre || x.cartaOpciones)) : [];
+    const yoEscojo = !!(j.opciones || j.cofre || j.cartaOpciones || j.tienda);
+    const escogiendo = varios && m.pausa && !yoEscojo ? m.jug.filter((x) => x !== j && !x.fuera && (x.opciones || x.cofre || x.cartaOpciones || x.tienda)) : [];
     const espera = escogiendo.length > 0;
     // (si se cortó la conexión, ese aviso manda sobre el de «está escogiendo»)
     if (!this.cortada) {
@@ -479,7 +530,7 @@ export class Interfaz {
       if (espera) {
         const filas = escogiendo
           .map((x) => {
-            const que = x.cofre ? 'abre un cofre' : x.cartaOpciones ? FRASES.leyendoCarta().replace(/^escogiendo/, 'escoge').replace(/^leyendo/, 'lee') : 'escoge su mejora';
+            const que = x.cofre ? 'abre un cofre' : x.cartaOpciones ? FRASES.leyendoCarta().replace(/^escogiendo/, 'escoge').replace(/^leyendo/, 'lee') : x.opciones ? 'escoge su mejora' : 'le compra a Don Jabón';
             const resta = Math.ceil(this.restante(m, x));
             return `<li style="--c:${this.colores[x.i] ?? '#fff'}"><b>${esc(this.nombres[x.i] ?? '')}</b> ${que}<em>${resta > 0 ? `${resta} s` : ''}</em></li>`;
           })
@@ -495,7 +546,7 @@ export class Interfaz {
     const resto = varios && yoEscojo ? this.restante(m, j) : -1;
     this.reloj.hidden = resto < 0;
     if (resto >= 0) {
-      const lim = j.cofre ? 9 : 15;
+      const lim = j.cofre ? LIMITE_COFRE : j.tienda && !j.opciones && !j.cartaOpciones ? LIMITE_TIENDA : LIMITE_ESCOGER;
       (this.reloj.firstChild as HTMLElement).style.width = `${Math.max(0, Math.min(100, (resto / lim) * 100))}%`;
       (this.reloj.lastChild as HTMLElement).textContent = resto > 0.2 ? `Se escoge solo en ${Math.ceil(resto)} s` : '¡Escogiendo!';
       this.reloj.classList.toggle('apurate', resto < 5);
@@ -560,6 +611,31 @@ export class Interfaz {
     this.modoVetar = false;
     this.capaNivel.hidden = false;
     this.pintada.set(this.capaNivel, performance.now());
+  }
+
+  /** El puesto de Don Jabón: lo que vende, cuánto cuesta y con cuántas gotas doradas de la partida se cuenta. */
+  private mostrarTienda(m: Motor, j: Jugador) {
+    const oro = m.oroParaGastar(j);
+    const ventas = m.ventasDe(j);
+    const filas = ventas
+      .map((v) => {
+        const precio = m.precioVenta(j, v);
+        const ya = j.compras[v.id] ?? 0;
+        return `<button class="lv-venta ${v.inverso ? 'inverso' : ''}" data-venta="${v.id}" ${oro >= precio ? '' : 'disabled'}>
+          ${v.id === 'carta' ? `<span class="emoji">${FRASES.iconoCarta()}</span>` : icono(v.icono, 44)}
+          <b>${esc(v.nombre)}${ya && (v.max ?? 1) > 1 ? ` <small>×${ya}</small>` : ''}</b><em>${esc(v.desc)}</em>
+          <span class="precio">${icono('moneda', 16)}${miles(precio)}</span></button>`;
+      })
+      .join('');
+    this.capaTienda.innerHTML = `<div class="lv-panel lv-panel-tienda">
+      <div class="lv-tienda-cab">${icono('donJabon', 64)}<div><h2>¡Jabones, jaboncitos!</h2>
+        <p>Don Jabón vende con las gotas doradas de esta partida (lo que gastes ya no te lo llevas a la casa).</p></div>
+        <span class="lv-tienda-oro">${icono('moneda', 22)}${miles(oro)}</span></div>
+      <div class="lv-ventas">${filas || '<p class="vacio">Ya no me queda nada para ti, mijo. ¡Gracias por la compra!</p>'}</div>
+      <div class="lv-fila"><button class="lv-boton menta grande" data-cerrar="1">🧼 Seguir lavándome</button></div></div>`;
+    this.capaTienda.classList.remove('enviado');
+    this.capaTienda.hidden = false;
+    this.pintada.set(this.capaTienda, performance.now());
   }
 
   private mostrarCartas(ids: IdCarta[]) {
@@ -742,6 +818,7 @@ export class Interfaz {
       y0 = Math.min(y0, lim.yMin - 300);
       y1 = Math.max(y1, lim.yMax + 300);
     }
+    if (m.puesto) puntos.push({ x: m.puesto[0], y: m.puesto[1], html: icono('donJabon', 30) });
     // (dónde se empezó, para ubicarse)
     puntos.unshift({ x: 0, y: 0, html: '<i class="inicio">🫧<small>inicio</small></i>' });
     const marcas = puntos.map((p) => `<span style="left:${((p.x - x0) / (x1 - x0)) * 100}%;top:${((p.y - y0) / (y1 - y0)) * 100}%">${p.html}</span>`).join('');
@@ -792,7 +869,7 @@ export class Interfaz {
         <button class="lv-boton" data-f="menu">Al menú</button>
       </div></div>`;
     this.capaFin.hidden = false;
-    for (const c of [this.capaNivel, this.capaCofre, this.capaCarta, this.capaPausa, this.capaEspera]) c.hidden = true;
+    for (const c of [this.capaNivel, this.capaCofre, this.capaCarta, this.capaPausa, this.capaEspera, this.capaTienda]) c.hidden = true;
     return new Promise((ok) => {
       this.capaFin.addEventListener('click', (ev) => {
         const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-f]');

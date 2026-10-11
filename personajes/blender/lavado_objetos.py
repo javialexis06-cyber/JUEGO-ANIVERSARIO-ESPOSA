@@ -2131,6 +2131,50 @@ def carrito(p):
     p.blob((0, 0.12, 0.98), (0.03,) * 3, oro(), n=5)
 
 
+def don_jabon(p, x=0.0, y=0.0):
+    """Don Jabón, el vendedor ambulante: una pastilla de jabón de peluche con bigotote, cachetes y sombrero vueltiao."""
+    cuerpo = M('#9FD3F2', rough=0.45, coat=0.4, sss=0.25)
+    p.caja((x, y, 0.27), (0.17, 0.11, 0.21), cuerpo, p=3.2)
+    # La espuma de la coronilla
+    for (dx, dz, r) in ((-0.09, 0.48, 0.05), (0.0, 0.5, 0.06), (0.09, 0.48, 0.045)):
+        p.blob((x + dx, y, dz), (r, r * 0.8, r * 0.7), M('#FFFFFF', rough=0.9, fuzz=0.5, pelusa='#F2F2F2'), n=6)
+    # Los ojos, los cachetes, la sonrisa y el bigotote
+    fy = y - 0.112
+    for sx in (-1, 1):
+        p.blob((x + sx * 0.065, fy, 0.33), (0.04, 0.012, 0.05), M('#FFFDF8', 0.3), n=6)
+        p.blob((x + sx * 0.065 + 0.006, fy - 0.01, 0.325), (0.024, 0.008, 0.03), M('#1E1514', 0.2), n=5)
+        p.blob((x + sx * 0.065 - 0.004, fy - 0.017, 0.342), (0.008, 0.004, 0.009), BRILLO, n=4)
+        p.blob((x + sx * 0.12, fy, 0.26), (0.032, 0.008, 0.022), M('#F59AAE', rough=0.7, fuzz=0.3), n=5)
+    p.tubo([(x - 0.045, fy - 0.004, 0.2), (x, fy - 0.006, 0.18), (x + 0.045, fy - 0.004, 0.2)], 0.008, M('#7A2E2E', 0.4), seg=5)
+    bigote = M('#3A2C25', rough=0.85, fuzz=0.5, pelusa='#6B5446')
+    for sx in (-1, 1):
+        p.tubo([(x, fy - 0.012, 0.245), (x + sx * 0.06, fy - 0.016, 0.24), (x + sx * 0.11, fy - 0.012, 0.255), (x + sx * 0.125, fy - 0.008, 0.285)],
+               [0.028, 0.026, 0.018, 0.01], bigote, seg=8)
+    # Las manitos y los pies
+    for sx in (-1, 1):
+        p.tubo([(x + sx * 0.16, y, 0.24), (x + sx * 0.22, y - 0.04, 0.2)], 0.028, cuerpo, seg=6)
+        p.blob((x + sx * 0.23, y - 0.045, 0.19), (0.035,) * 3, cuerpo, n=6)
+        p.blob((x + sx * 0.08, y - 0.02, 0.04), (0.05, 0.06, 0.035), M('#E4574B', rough=0.6, fuzz=0.3), n=6)
+    # El sombrero vueltiao
+    crema = M('#EFE3C8', rough=0.8, fuzz=0.25)
+    negro = M('#2B2422', rough=0.8, fuzz=0.2)
+    p.torno([(0.0, 0.0), (0.27, 0.0), (0.28, 0.012), (0.09, 0.03), (0.0, 0.03)], crema, x=x, y=y, z=0.5)
+    p.torno([(0.0, 0.0), (0.095, 0.0), (0.09, 0.1), (0.06, 0.125), (0.0, 0.13)], crema, x=x, y=y, z=0.52)
+    for z, r in ((0.56, 0.094), (0.6, 0.09)):
+        p.torno([(r, -0.006), (r + 0.004, 0.0), (r, 0.006)], negro, x=x, y=y, z=z, tapas=(False, False))
+    # (las trenzas negras del ala, en anillos)
+    for r in (0.15, 0.215):
+        p.torno([(r - 0.012, 0.0), (r, 0.006), (r + 0.012, 0.0), (r, -0.002)], negro, x=x, y=y, z=0.5 + 0.03 * (0.28 - r) / 0.19 + 0.004, tapas=(False, False))
+
+
+def vendedor(p):
+    """El vendedor ambulante completo: Don Jabón empujando su carrito."""
+    carrito(p)
+    don_jabon(p, 0.72, 0.02)
+    for (x, z, r) in ((0.95, 0.75, 0.04), (0.5, 0.95, 0.03)):
+        burbuja(p, (x, -0.1, z), r)
+
+
 ICONOS = {
     # Armas
     'toalla': lambda p: toalla(p), 'toallazo': lambda p: toalla(p, '#E4392B', '#FFD45C', caliente=True),
@@ -2189,7 +2233,7 @@ ICONOS = {
     'gotasColores': lambda p: gotas_colores(p), 'arcoiris': lambda p: gotas_colores(p, arcoiris=True),
     'culebrita': lambda p: culebrita(p), 'granDesague': lambda p: culebrita(p, gran=True),
     'espejoReves': espejo_reves, 'calentador': calentador, 'recetas': libro_recetas, 'ruleta': ruleta, 'cuento': cuento, 'mapa': mapa_bano,
-    'monedero': monedero, 'carrito': carrito,
+    'monedero': monedero, 'carrito': carrito, 'vendedor': vendedor, 'donJabon': lambda p: don_jabon(p),
     # Del piso
     'arepa': arepa, 'ola': balde, 'hielo': cubo_hielo, 'aspiradora': aspiradora, 'moneda': moneda, 'bolsa': bolsa, 'frasco': frasco_oro,
     'trebolito': lambda p: trebol(p, 0.7), 'aji': aji, 'cofre': lambda p: cofre(p), 'cofreAbierto': lambda p: cofre(p, abierto=True),

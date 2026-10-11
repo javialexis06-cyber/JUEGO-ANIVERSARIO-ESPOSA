@@ -11,6 +11,7 @@ import { bonosMaestria, MAESTRIA_MAX } from './maestria';
 import { Rejilla } from './rejilla';
 import { PODER } from './tienda';
 import { LIMITE, TESOROS, type StatLimite } from './tesoros';
+import { ESCENARIO_VENDEDOR, PUESTO, RADIO_PUESTO, VENTA, VENTAS, type DefVenta, type IdVenta } from './vendedor';
 import { statsVacios, type Efecto, type IdArma, type IdCarta, type IdEnemigo, type IdEscenario, type IdModo, type IdObjeto, type IdPasiva, type IdTesoro, type Rol, type Stat, type Stats, type TipoEfecto } from './tipos';
 import { actualizarArmas, alHerido, alMatar, cortinaAtaja, moverProyectiles, moverZonas, pendientesGolpe } from './disparos';
 import { PATITO, type ResumenPartida } from './progreso';
@@ -54,6 +55,8 @@ export const POR_JUGADORES = {
 /** Segundos para escoger cuando hay más de uno (después se escoge solo lo mejor, para no frenar a los demás). */
 export const LIMITE_ESCOGER = 15;
 export const LIMITE_COFRE = 9;
+/** El puesto del vendedor, con varios jugando (después se cierra solo). */
+export const LIMITE_TIENDA = 25;
 const POOL_EN = 520;
 const MAX_PROY = 760;
 const MAX_GEMAS = 320;
@@ -290,6 +293,8 @@ export interface OpcionesJugador {
   reliquias?: IdTesoro[];
   /** Trae el mapa del baño (flechas hacia lo escondido y el mapa en la pausa). */
   mapa?: boolean;
+  /** Ya tiene el Monedero (el vendedor ambulante sale en todos los escenarios). */
+  monedero?: boolean;
 }
 
 export interface OpcionesMotor {
@@ -386,6 +391,16 @@ export class Jugador {
   espejo = 0;
   burbuja = false;
   dadosExtra = 0;
+  /** Saltos y vetos de más (comprados al vendedor del otro lado del espejo). */
+  saltosExtra = 0;
+  vetosExtra = 0;
+  /** El puesto del vendedor ambulante está abierto para este jugador. */
+  tienda = false;
+  /** Sigue parado junto al puesto (para no volver a abrirlo hasta que se aleje). */
+  enPuesto = false;
+  /** Lo que le ha comprado al vendedor y las gotas doradas que se gastó. */
+  compras: Partial<Record<IdVenta, number>> = {};
+  gastado = 0;
   caos = 0;
   patitosBase: Partial<Record<Stat, number>>;
   patitosGanados: Partial<Record<Stat, number>> = {};
@@ -424,10 +439,10 @@ export class Jugador {
     return Math.max(0, Math.round(this.st.tirar) + this.dadosExtra - this.usadosTirar);
   }
   get quedanSaltar() {
-    return Math.max(0, Math.round(this.st.saltar) - this.usadosSaltar);
+    return Math.max(0, Math.round(this.st.saltar) + this.saltosExtra - this.usadosSaltar);
   }
   get quedanVetar() {
-    return Math.max(0, Math.round(this.st.vetar) - this.usadosVetar);
+    return Math.max(0, Math.round(this.st.vetar) + this.vetosExtra - this.usadosVetar);
   }
   /** Ventana de pantalla alrededor del personaje. */
   enVista(x: number, y: number, margen = 0) {
@@ -460,6 +475,8 @@ export class Motor {
   readonly modos: Set<IdModo>;
   /** Alguien trae el mapa del baño. */
   readonly mapa: boolean;
+  /** Dónde está parado el vendedor ambulante (o null si no pasa por este escenario). */
+  readonly puesto: [number, number] | null;
   /** Segundos reales jugados y el reloj de la partida (en «Apurado» corre al doble). */
   tReal = 0;
   t = 0;
@@ -525,6 +542,7 @@ export class Motor {
     this.tutorial = !!o.tutorial;
     this.modos = new Set(o.tutorial ? [] : o.modos ?? []);
     this.mapa = o.jugadores.some((x) => !!x.mapa);
+    this.puesto = !o.tutorial && (o.escenario === ESCENARIO_VENDEDOR || o.jugadores.some((x) => !!x.monedero)) ? PUESTO[o.escenario] : null;
     this.az = new Azar(o.semilla);
     for (let i = 0; i < POOL_EN; i++) this.en.push(new Enemigo());
     for (let i = 0; i < MAX_PROY; i++) this.pr.push(new Proyectil());
@@ -534,6 +552,7 @@ export class Motor {
     for (let i = 0; i < 160; i++) this.pend.push({ vivo: false, t: 0, x: 0, y: 0, r: 0, dano: 0, dueno: 0, slot: 0, arma: 'bombillo', tipo: 0, crit: 0, critX: 2 });
     for (let i = 0; i < MAX_EF; i++) this.ef.push({ tipo: 'golpe', x: 0, y: 0, c: 0, d: 0, e: 0, f: 0, t: '' });
     this.jug = o.jugadores.map((oj, i) => new Jugador(i, oj));
+    this.jugadorTieneMonedero = o.jugadores.map((x) => !!x.monedero);
     const n = this.jug.length;
     for (const j of this.jug) {
       // Solo, en el centro; en pareja, uno a cada lado; de a tres o cuatro, en ronda
@@ -1061,11 +1080,99 @@ export class Motor {
 
   // ------------------------------------------------------------------------------------------------- Pausas
   /** Mientras alguien escoge cartas o abre un cofre, el juego se detiene (también para el otro). */
-  get pausa(): 'nivel' | 'cofre' | 'carta' | null {
+  get pausa(): 'nivel' | 'cofre' | 'carta' | 'tienda' | null {
     for (const j of this.jug) if (j.cofre) return 'cofre';
     for (const j of this.jug) if (j.cartaOpciones) return 'carta';
     for (const j of this.jug) if (j.opciones) return 'nivel';
+    for (const j of this.jug) if (j.tienda) return 'tienda';
     return null;
+  }
+
+  // ------------------------------------------------------------------------------------------------- El vendedor ambulante
+  /** Al llegar al carrito se abre el puesto (una vez por visita: hay que alejarse para volver a abrirlo). */
+  private alPuesto() {
+    const p = this.puesto;
+    if (!p) return;
+    if (!this.avisoPuesto && this.tReal > 4) {
+      this.avisoPuesto = true;
+      this.aviso('🧼 ¡Don Jabón vende cerquita! Sigue la flecha naranja');
+    }
+    for (const j of this.jug) {
+      if (!j.activo) continue;
+      const d = Math.hypot(j.x - p[0], j.y - p[1]);
+      if (d > RADIO_PUESTO * 2.4) j.enPuesto = false;
+      else if (d < RADIO_PUESTO && !j.enPuesto && !j.opciones && !j.cofre && !j.cartaOpciones) {
+        j.enPuesto = true;
+        j.tienda = true;
+        j.tEscoger = 0;
+        j.acciones++;
+        this.emitir('cofre', p[0], p[1], j.i);
+      }
+    }
+  }
+
+  /** Las gotas doradas que tiene para gastar (lo recogido en la partida menos lo que ya se gastó). */
+  oroParaGastar(j: Jugador) {
+    return Math.max(0, Math.floor(this.recogidoDe(j.i) - j.gastado));
+  }
+
+  precioVenta(j: Jugador, v: DefVenta) {
+    return v.precio + (v.sube ?? 0) * (j.compras[v.id] ?? 0);
+  }
+
+  /** Lo que el vendedor le ofrece a este jugador ahora (las armas, si no las tiene y le cabe una más). */
+  ventasDe(j: Jugador): DefVenta[] {
+    return VENTAS.filter((v) => {
+      if (v.inverso && !this.modo('inverso')) return false;
+      const n = j.compras[v.id] ?? 0;
+      if (n >= (v.max ?? 1)) return false;
+      if (v.arma) return !j.armas.some((a) => a.id === v.arma || linaje(a.id).has(v.arma!)) && j.armas.length < MAX_RANURAS;
+      if (v.id === 'monedero') return !this.jugadorTieneMonedero[j.i] && !this.hallados.includes('monedero');
+      if (v.id === 'carta') return j.cartasLibres.some((c) => !j.cartas.includes(c));
+      return true;
+    });
+  }
+  private avisoPuesto = false;
+  /** Quién trae ya el Monedero (para no vendérselo otra vez). */
+  private readonly jugadorTieneMonedero: boolean[];
+
+  comprar(ji: number, id: IdVenta, n?: number) {
+    const j = this.jug[ji];
+    if (!this.vigente(j, n) || !j.tienda) return;
+    const v = VENTA[id];
+    if (!v || !this.ventasDe(j).includes(v)) return;
+    const precio = this.precioVenta(j, v);
+    if (this.oroParaGastar(j) < precio) return;
+    j.acciones++;
+    j.gastado += precio;
+    j.compras[id] = (j.compras[id] ?? 0) + 1;
+    this.emitir('evolucion', j.x, j.y, j.i);
+    if (v.arma) {
+      this.darArma(j, v.arma);
+      this.aviso(`🧼 ¡${ARMAS[v.arma].nombre}! Gracias, mijo`, j.i);
+    } else if (id === 'patito') this.darPatito(j);
+    else if (id === 'monedero') {
+      if (!this.hallados.includes('monedero')) this.hallados.push('monedero');
+      this.aviso('👛 ¡El Monedero! Ahora me encuentras en todos los escenarios', j.i);
+    } else if (id === 'tirar') j.dadosExtra++;
+    else if (id === 'saltar') j.saltosExtra++;
+    else if (id === 'vetar') j.vetosExtra++;
+    else if (id === 'carta') {
+      // Una carta más: se cierra el puesto y se escoge entre tres
+      const libres = j.cartasLibres.filter((c) => !j.cartas.includes(c));
+      const ops: IdCarta[] = [];
+      while (ops.length < 3 && libres.length) ops.push(libres.splice(Math.floor(this.az.n() * libres.length), 1)[0]);
+      j.tienda = false;
+      j.cartaOpciones = ops;
+    }
+  }
+
+  cerrarTienda(ji: number, n?: number) {
+    const j = this.jug[ji];
+    if (!this.vigente(j, n) || !j.tienda) return;
+    j.acciones++;
+    j.tienda = false;
+    j.tEscoger = 0;
   }
 
   // ------------------------------------------------------------------------------------------------- Paso
@@ -1092,6 +1199,7 @@ export class Motor {
     if (Math.floor(this.t / 60) !== minAntes) for (const j of this.jug) if (j.tieneCarta('ruedaFortuna')) this.recalcular(j);
     this.hielo = Math.max(0, this.hielo - dt);
     this.moverJugadores(dt);
+    this.alPuesto();
     this.cartasTiempo(dt);
     if (!this.tutorial) {
       this.oleadas(dReloj);
@@ -1119,15 +1227,16 @@ export class Motor {
   private escogerSolos(dt: number) {
     if (this.jug.length < 2) return;
     for (const j of this.jug) {
-      if (!j.opciones && !j.cofre && !j.cartaOpciones) {
+      if (!j.opciones && !j.cofre && !j.cartaOpciones && !j.tienda) {
         j.tEscoger = 0;
         continue;
       }
       j.tEscoger += dt;
-      const limite = j.fuera ? 0 : j.cofre ? LIMITE_COFRE : LIMITE_ESCOGER;
+      const limite = j.fuera ? 0 : j.cofre ? LIMITE_COFRE : j.tienda && !j.opciones && !j.cartaOpciones ? LIMITE_TIENDA : LIMITE_ESCOGER;
       if (j.tEscoger < limite) continue;
       j.tEscoger = 0;
       if (j.cofre) this.cerrarCofre(j.i);
+      else if (j.tienda && !j.opciones && !j.cartaOpciones) this.cerrarTienda(j.i);
       else if (j.cartaOpciones) this.escogerCarta(j.i, j.cartaOpciones[0] ?? null);
       else if (j.opciones) {
         let mejor = 0, v = -1e9;
@@ -1146,7 +1255,7 @@ export class Motor {
   /** Lo que le falta a alguien para que se le escoja solo (para la interfaz). */
   restanteEscoger(j: Jugador) {
     if (this.jug.length < 2) return -1;
-    return Math.max(0, (j.cofre ? LIMITE_COFRE : LIMITE_ESCOGER) - j.tEscoger);
+    return Math.max(0, (j.cofre ? LIMITE_COFRE : j.tienda && !j.opciones && !j.cartaOpciones ? LIMITE_TIENDA : LIMITE_ESCOGER) - j.tEscoger);
   }
 
   private tElite = 0;
@@ -2327,15 +2436,9 @@ export class Motor {
         j.guanteBajas = 0;
         this.aviso('🧤 ¡El guante dorado! 14 segundos invencible y a tope', j.i);
         break;
-      case 'patito': {
-        // Sube para siempre un poquito una estadística del disfraz con que se juega
-        const st = this.az.uno(Object.keys(PATITO) as Stat[]);
-        j.patitosGanados[st] = (j.patitosGanados[st] ?? 0) + (PATITO[st] ?? 0);
-        this.recalcular(j);
-        this.aviso(`🐤 ¡Patito dorado! Tu disfraz sube para siempre: ${NOMBRE_PATITO[st] ?? st}`, j.i);
-        this.emitir('evolucion', j.x, j.y, j.i);
+      case 'patito':
+        this.darPatito(j);
         break;
-      }
       case 'dado':
         j.dadosExtra++;
         this.aviso('🎲 +1 para volver a tirar', j.i);
@@ -2394,6 +2497,15 @@ export class Motor {
     }
   }
 
+  /** El patito dorado: sube para siempre un poquito una estadística del disfraz con que se juega. */
+  darPatito(j: Jugador) {
+    const st = this.az.uno(Object.keys(PATITO) as Stat[]);
+    j.patitosGanados[st] = (j.patitosGanados[st] ?? 0) + (PATITO[st] ?? 0);
+    this.recalcular(j);
+    this.aviso(`🐤 ¡Patito dorado! Tu disfraz sube para siempre: ${NOMBRE_PATITO[st] ?? st}`, j.i);
+    this.emitir('evolucion', j.x, j.y, j.i);
+  }
+
   /** Lo que falta para el siguiente nivel con los que están jugando (la barra de arriba usa lo mismo). */
   xpReq() {
     return xpPara(this.nivel) * POR_JUGADORES.xp[Math.max(0, Math.min(3, this.jug.length - 1))];
@@ -2441,8 +2553,13 @@ export class Motor {
    *  Más el jornal por aguantar (cada uno el suyo completo). */
   oroDe(ji: number) {
     const j = this.jug[ji];
-    const recogido = !j || this.jug.length < 2 ? this.oro : Math.round(j.oro + Math.max(0, this.oro - j.oro) * 0.25);
-    return recogido + this.jornalDe(ji);
+    return Math.max(0, Math.round(this.recogidoDe(ji) - (j?.gastado ?? 0))) + this.jornalDe(ji);
+  }
+
+  /** Lo recogido en la partida (solo, todo; con más, lo suyo + la cuarta parte de lo de los demás). */
+  recogidoDe(ji: number) {
+    const j = this.jug[ji];
+    return !j || this.jug.length < 2 ? this.oro : Math.round(j.oro + Math.max(0, this.oro - j.oro) * 0.25);
   }
 
   /** Lo que se gana por aguantar (la codicia también lo sube). */

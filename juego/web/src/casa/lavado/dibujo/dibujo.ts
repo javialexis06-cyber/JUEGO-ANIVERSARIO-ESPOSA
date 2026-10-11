@@ -905,6 +905,18 @@ export class Dibujo {
   private dibujarObjetos(m: Motor) {
     const t = this.t;
     const O = this.objetos;
+    // Don Jabón con su carrito (el vendedor ambulante): se mece, saluda y le salen burbujitas
+    const p = m.puesto;
+    if (p && this.enVista(p[0], p[1], 120)) {
+      const cc = this.cuadrosObj.get('carrito'), cd = this.cuadrosObj.get('donJabon');
+      const b = this.fx.c.brillo;
+      this.pisoFx.poner(p[0] + 10, p[1], 0.1, 190, 110, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.82, 0.55, 0.35 + Math.sin(t * 2.5) * 0.08);
+      if (cc) O.poner(p[0] - 26, p[1], 0, 104, 104, 0.5, 0.92, cc.u0, cc.v0, cc.u1, cc.v1, 1, 1, 1, 1, 0, 0, 1, 0, 0);
+      if (cd) O.poner(p[0] + 40, p[1] + 4, Math.abs(Math.sin(t * 3)) * 5, 70, 70, 0.5, 0.92, cd.u0, cd.v0, cd.u1, cd.v1, 1, 1, 1, 1, 0, Math.sin(t * 2) * 0.06, 1, 0, 0);
+      this.sombra(p[0] - 20, p[1], 46, 0.35);
+      this.sombra(p[0] + 40, p[1] + 4, 22, 0.35);
+      if (Math.random() < 0.06 * this.part.cupo) this.part.crear('estrella', CAPA_LUZ, p[0] - 30 + (Math.random() - 0.5) * 70, p[1], 60 + Math.random() * 30, 0, 0, 25, 1.2, 9, 3, 0.85, 0.95, 1, 0.9, 0, 0, 4);
+    }
     // Gotitas de experiencia
     for (let i = 0; i < m.gemas.length; i++) {
       const g = m.gemas[i];

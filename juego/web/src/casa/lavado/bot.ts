@@ -39,6 +39,13 @@ export function valorOpcion(j: Jugador, o: Opcion): number {
 
 /** Escoge entre las cartas que tiene enfrente (con «volver a tirar» si todo está malo). */
 export function botEscoger(m: Motor, j: Jugador) {
+  if (j.tienda && !j.opciones && !j.cartaOpciones) {
+    // Donde Don Jabón: un patito si le alcanza, y a seguir
+    const patito = m.ventasDe(j).find((v) => v.id === 'patito');
+    if (patito && m.oroParaGastar(j) >= m.precioVenta(j, patito) + 200) m.comprar(j.i, 'patito');
+    else m.cerrarTienda(j.i);
+    return;
+  }
   if (j.cofre) {
     m.cerrarCofre(j.i);
     return;
