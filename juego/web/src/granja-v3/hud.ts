@@ -7,6 +7,8 @@ import { huella } from './motor';
 import { DESTINOS } from './vista';
 import { ARTICULOS, CULTIVOS, SECTORES, type Zona } from './catalogo';
 import { SALIDAS, rutaCaminando } from './caminos-mundo';
+import { MINA, MINERALES as MINERALES_AV, instanciaAventura, destinoAventura } from './aventura';
+const MINERALES_COLOR: Record<string, string> = Object.fromEntries(Object.entries(MINERALES_AV).map(([k, v]) => [k, v.color]));
 import { ARBOLES_PUEBLO, CAMINOS_PUEBLO, EDIFICIOS_PUEBLO, NPCS_PUEBLO, VIVIENDAS_PUEBLO } from './pueblo-datos';
 import { ubicacionAldeano } from './aldeanos';
 import { huellaProduccion } from './produccion';
@@ -147,6 +149,8 @@ export function iniciarHud(h: Hud) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = zona === 'mina' ? '#211d24' : '#4f6b4a';
     ctx.fillRect(0, 0, m.w, m.h);
+    const exp = instanciaAventura(s.aventura);
+    if (exp) { dibujarExpedicion(m, exp); return []; }
     transformar(m);
     rect(m, x0, z0, x1 - x0, z1 - z0, PISO[zona] ?? '#9cc77a');
     if (zona === 'granja') {
@@ -236,6 +240,38 @@ export function iniciarHud(h: Hud) {
     ctx.restore();
     return npcs;
   }
+  /** Plano del piso de la expedición (galerías, vetas, monstruos, escalera y cofres), cacheado por mapa. */
+  let planoClave = '', plano: HTMLCanvasElement | null = null, planoX = 0, planoZ = 0;
+  function dibujarExpedicion(m: Marco, i: NonNullable<ReturnType<typeof instanciaAventura>>) {
+    const ctx = m.ctx, clave = i.id + ':' + i.semilla + ':' + Object.keys(i.chunks).length;
+    ctx.fillStyle = '#1b181f'; ctx.fillRect(0, 0, m.w, m.h);
+    if (clave !== planoClave) {
+      const xs = Object.values(i.chunks).flatMap((c) => [c.x, c.x + c.ancho]), zs = Object.values(i.chunks).flatMap((c) => [c.z, c.z + c.fondo]);
+      planoX = Math.min(...xs); planoZ = Math.min(...zs);
+      plano = document.createElement('canvas'); plano.width = Math.max(...xs) - planoX; plano.height = Math.max(...zs) - planoZ;
+      const p = plano.getContext('2d')!; p.fillStyle = i.destinoId === MINA ? '#8b7f72' : '#8a8f86';
+      for (const [k, t] of Object.entries(i.suelos)) if (t === 'suelo') { const [x, z] = k.split(',').map(Number); p.fillRect(x - planoX, z - planoZ, 1, 1); }
+      planoClave = clave;
+    }
+    transformar(m); ctx.imageSmoothingEnabled = false;
+    if (plano) ctx.drawImage(plano, planoX, planoZ);
+    for (const n of i.nodos) if (!n.agotado) circulo(m, n.x, n.z, 0.38, MINERALES_COLOR[n.mineral] ?? '#c9c2b6');
+    for (const s2 of i.situaciones) if (!s2.resuelta) circulo(m, s2.x, s2.z, 0.7, s2.tipo === 'cofre' ? '#f2c14e' : '#d9c6f0');
+    for (const mo of i.monstruos) if (mo.vivo) circulo(m, mo.x, mo.z, 0.5, '#e05a5a');
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    for (const e of i.entradas) {
+      const q = aPantalla(m, e.x, e.z);
+      ctx.fillStyle = e.tipo === 'descenso' ? '#f6cf5a' : '#9fe0b8'; ctx.strokeStyle = '#3d2b27'; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(q.x, q.y, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#3d2b27'; ctx.font = '700 8px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(e.tipo === 'descenso' ? '↓' : '↑', q.x, q.y + 0.5);
+    }
+    const yo = vista.avatar.position, q = aPantalla(m, yo.x, yo.z), rot = vista.avatar.direccionMontura;
+    const dirX = Math.sin(rot), dirZ = Math.cos(rot), ang = Math.atan2(dirX * -fwd.z + dirZ * fwd.x, dirX * fwd.x + dirZ * fwd.z);
+    ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(ang);
+    ctx.fillStyle = motor.estado.personaje === 'ella' ? '#e4566b' : '#3f86c9'; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(0, -7); ctx.lineTo(5, 5); ctx.lineTo(0, 2.5); ctx.lineTo(-5, 5); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
   function etiqueta(ctx: CanvasRenderingContext2D, texto: string, x: number, y: number, px: number, fuerte: boolean) {
     ctx.font = `${fuerte ? 700 : 600} ${px}px Nunito, sans-serif`;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -288,7 +324,8 @@ export function iniciarHud(h: Hud) {
     const m: Marco = { ctx, cx: w / 2, cy: alto / 2, s: 3.6 * dpr, px: p.x, pz: p.z, w, h: alto };
     const npcs = dibujarZona(m, false);
     const guia = guiaBuscado(m, npcs);
-    $('minimapa-nombre').textContent = s.interior ? $('place-name').textContent ?? '' : DESTINOS[s.zona].nombre;
+    const exp = instanciaAventura(s.aventura);
+    $('minimapa-nombre').textContent = exp ? (exp.destinoId === MINA ? `Minas · piso ${exp.nivel}` : `${destinoAventura(exp.destinoId)?.nombre ?? ''} · ${exp.nivel}`) : s.interior ? $('place-name').textContent ?? '' : DESTINOS[s.zona].nombre;
     $('minimapa-buscando').hidden = !guia;
     $('minimapa-buscando').textContent = guia ? '🔎 ' + guia : '';
   }

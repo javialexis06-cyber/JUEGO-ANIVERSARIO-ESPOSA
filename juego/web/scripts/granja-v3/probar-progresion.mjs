@@ -143,10 +143,12 @@ test('Flujo de los 13 linajes: una adopción jamás satisface una misión que ex
     if (species === 'dragon') {
       fail(game, { tipo: 'reclamar', misionId: `crianza_${lineage}` });
       act(game, { tipo: 'viajar', zona: 'mina' });
-      act(game, { tipo: 'herramienta', herramienta: 'espada' });
-      while (game.estado.enemigo) act(game, { tipo: 'combatir' });
+      // La mina del valle es la entrada: se extrae en las Minas de Celia
+      act(game, { tipo: 'entrar_aventura', destino: 'mina_celia', xJugador: 0, zJugador: 6 });
       act(game, { tipo: 'herramienta', herramienta: 'pico' });
-      for(const node of game.nodosActuales().slice(0,3))harvest(game,node);
+      const piso = game.estado.aventura.instancias[game.estado.aventura.instanciaActual];
+      for (const n of piso.nodos.filter(n => n.mineral !== 'piedra').slice(0, 3)) while (!n.agotado) { game.estado.aventura.enfriamientoGolpe = 0; act(game, { tipo: 'accion_aventura', objetivo: 'nodo', id: n.id, xJugador: n.x, zJugador: n.z }); }
+      act(game, { tipo: 'salir_aventura' });
     }
     act(game, { tipo: 'reclamar', misionId: `crianza_${lineage}` });
     assert.equal(game.estado.tokensCasa.includes(`casa_${lineage}`), true);

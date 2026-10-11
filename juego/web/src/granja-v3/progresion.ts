@@ -43,7 +43,8 @@ export function nodosExteriores():Obstaculo[]{
  espeso('bosque',-99,-59,-22,21,2.3,[[-78,1,4.5],[-59,3.5,4],[-61.5,3.5,3.5],[-77.5,19.5,4],[-78.5,16.5,3.5],...sendero(-74,-8,23)],12);
  espeso('bosque_ancestral',-100,-57,54,98,2.6,[[-78,76,4.5],[-77.5,60.5,4],[-78.5,63.5,4],[-76,74,3.5],...sendero(-74,54,98)],8);
  const piedras=[[-6,-5],[-2,-5],[3,-5],[6,-2],[-6,0],[-3,2],[2,2],[5,3]];
- for(let nivel=1;nivel<=5;nivel++)piedras.forEach(([x,z],i)=>agregar('mina','roca',x,z,i,nivel));
+ // La mina del valle es la entrada a las Minas de Celia (pisos al azar): ya no tiene rocas propias.
+ void piedras;
  return nodos;
 }
 export function botinDeNodo(o:Obstaculo):Record<string,number>{

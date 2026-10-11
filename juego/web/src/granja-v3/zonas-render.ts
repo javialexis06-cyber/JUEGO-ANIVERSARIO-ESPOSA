@@ -130,6 +130,8 @@ export function texturaSendero(){
 
 /** La cueva de la Mina de Cristal: piso de roca, paredes con vetas, entibados con faroles, rieles con su vagoneta y
  * racimos de cristal que brillan. El color del cristal cambia con el nivel. */
+/** Dónde está el pozo de bajada y el ascensor en la entrada de la mina. */
+export const POZO_MINA={x:0,z:-8.2};
 export function cuevaMina(nivel:number):THREE.Group{
  const g=new THREE.Group();g.name='cueva';const cx=0,cz=-1;
  const tono=nivel>=3?{cristal:['#b48cff','#7fe3d6','#e0b8ff'],veta:'#7d6aa6',piso:'#827d8c'}:nivel===2?{cristal:['#9fd4e6','#cfeffa','#7fb8d8'],veta:'#7e8a96',piso:'#86847f'}:{cristal:['#ffb15c','#ffd08a','#ff8f4a'],veta:'#8c6a52',piso:'#8b8378'};
@@ -186,6 +188,22 @@ export function cuevaMina(nivel:number):THREE.Group{
    const col=new THREE.Color(tono.cristal[(n+i)%3]),cs=new Float32Array(m.attributes.position.count*3);for(let k=0;k<cs.length;k+=3)cs.set([col.r,col.g,col.b],k);m.setAttribute('color',new THREE.BufferAttribute(cs,3));prismas.push(m);}
   const brillo=new THREE.Mesh(new THREE.CircleGeometry(1.6,20).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:tono.cristal[0],transparent:true,opacity:.32,blending:THREE.AdditiveBlending,depthWrite:false}));brillo.position.set(x,.02,z);g.add(brillo);}
  const cristales=new THREE.Mesh(unir(prismas),new THREE.MeshStandardMaterial({vertexColors:true,emissive:tono.cristal[0],emissiveIntensity:.9,roughness:.15,metalness:.1,transparent:true,opacity:.92}));cristales.castShadow=true;g.add(cristales);
+ // Pozo de la mina (escalera al piso 1) y jaula del ascensor al fondo: acercarse abre los botones para bajar
+ {const pozo=new THREE.Group();pozo.position.set(POZO_MINA.x,0,POZO_MINA.z);g.add(pozo);
+  const hueco=new THREE.Mesh(new THREE.CircleGeometry(1.1,24).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:'#060508'}));hueco.position.set(-1.4,.012,0);pozo.add(hueco);
+  const borde=new THREE.Mesh(new THREE.TorusGeometry(1.12,.16,6,24),new THREE.MeshStandardMaterial({color:'#6d6258',roughness:.95}));borde.rotation.x=-Math.PI/2;borde.position.set(-1.4,.05,0);pozo.add(borde);
+  for(const sx of [-1,1]){const l=new THREE.Mesh(new THREE.BoxGeometry(.08,.08,1.6),madera);l.position.set(-1.4+sx*.28,.1,0);l.rotation.x=-.45;pozo.add(l);}
+  for(let k=0;k<5;k++){const p=new THREE.Mesh(new THREE.BoxGeometry(.6,.05,.07),madera);p.position.set(-1.4,.3-k*.13,-.5+k*.25);pozo.add(p);}
+  // Jaula del ascensor: cuatro postes, techo con polea, rejas y una lucecita
+  const jaula=new THREE.Group();jaula.position.set(1.4,0,0);pozo.add(jaula);
+  for(const [x,z] of [[-.7,-.7],[.7,-.7],[-.7,.7],[.7,.7]]){const p=new THREE.Mesh(new THREE.BoxGeometry(.14,2.6,.14),metal);p.position.set(x,1.3,z);p.castShadow=true;jaula.add(p);}
+  const techo=new THREE.Mesh(new THREE.BoxGeometry(1.7,.16,1.7),madera);techo.position.y=2.65;jaula.add(techo);
+  const polea=new THREE.Mesh(new THREE.TorusGeometry(.25,.06,8,16),metal);polea.position.y=3;jaula.add(polea);
+  const cable=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,2,5),metal);cable.position.y=4;jaula.add(cable);
+  for(let k=0;k<6;k++){const r=new THREE.Mesh(new THREE.BoxGeometry(.04,2.4,.04),metal);r.position.set(-.55+k*.22,1.25,-.7);jaula.add(r);}
+  const piso=new THREE.Mesh(new THREE.BoxGeometry(1.5,.1,1.5),madera);piso.position.y=.05;jaula.add(piso);
+  const luz=new THREE.Mesh(new THREE.BoxGeometry(.2,.26,.2),farol);luz.position.set(0,2.35,.62);jaula.add(luz);
+  const aro=new THREE.Mesh(new THREE.RingGeometry(2.4,2.6,40).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:tono.cristal[0],transparent:true,opacity:.35,depthWrite:false}));aro.position.y=.02;pozo.add(aro);}
  // Piedritas sueltas
  const sueltas:Sitio[]=[];for(let i=0;i<70;i++){const x=cx+(hash(i,111)-.5)*21,z=cz+(hash(i,112)-.5)*19;if(Math.abs(x-rx)<1)continue;sueltas.push({x,z,s:.08+hash(i,113)*.12,r:hash(i,114)*6,especie:0});}
  g.add(instancias(pintar(bola(1,.2,9).translate(0,.4,0),'#5f5a54','#a8a196',-.5,1.2),matVertices(),sueltas,[new THREE.Color('#ffffff')],false));

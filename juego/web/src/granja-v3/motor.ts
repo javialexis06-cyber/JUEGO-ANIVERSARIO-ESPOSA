@@ -29,7 +29,7 @@ import { SALIDAS, dentroDeZona, esSenderoGranja } from './caminos-mundo';
 import { crearPaisaje, aguaEn, huecoEn, paisajeValido } from './paisaje';
 import { crearCampo, campoValido, duracionCampo, diasCultivo, calidadCosecha, siguienteCosecha, nombreCalidad, multiplicadorCalidad } from './agricultura';
 import { crearProduccion, aplicarProduccion, avanzarProduccion, errorProduccion, huellaProduccion } from './produccion';
-import { MONSTRUOS, MINERALES, crearAventura, errorAventura, entrarAventura, salirAventura, descenderAventura, golpearMonstruo, golpearNodo, recogerBotin, resolverSituacion, stepAventura, destinoAventura, instanciaAventura, esTransitableAventura, opcionesAventura } from './aventura';
+import { MINA, costoEstacion, estacionPendiente, construirAscensor, MONSTRUOS, MINERALES, crearAventura, errorAventura, entrarAventura, salirAventura, descenderAventura, golpearMonstruo, golpearNodo, recogerBotin, resolverSituacion, stepAventura, destinoAventura, instanciaAventura, esTransitableAventura, opcionesAventura } from './aventura';
 import { crearBarra, validarBarra, indiceActivo, objetoActivo, herramientaDeObjeto, bonosEquipo, HERRAMIENTAS_INICIALES, LARGO_BARRA } from './barra';
 import type { Pila } from './inventario';
 import { calidadPila, type Calidad, articuloValido, limitePila, cambiarCantidad, distribuirInventario, resumirCasillas, moverPila, MAX_PILA, CASILLAS_AMPLIADAS } from './inventario';
@@ -51,6 +51,8 @@ export function huella(e:Pick<Edificio,'articulo'|'giro'|'x'|'z'>):{x:number;z:n
 function contiene(r:{x:number;z:number;ancho:number;fondo:number},x:number,z:number){return x>=r.x&&x<r.x+r.ancho&&z>=r.z&&z<r.z+r.fondo}
 function solapa(a:ReturnType<typeof huella>,b:ReturnType<typeof huella>){return a.x<b.x+b.ancho&&a.x+a.ancho>b.x&&a.z<b.z+b.fondo&&a.z+a.fondo>b.z}
 
+/** Premio de los cofres de las Minas de Celia (pisos 10, 20 … 100). */
+const PREMIOS_COFRE:Record<number,string>={10:'botas_cobre',20:'espada_cobre',30:'casco_hierro',40:'espada_hierro',50:'pechera_hierro',60:'botas_oro',70:'espada_oro',80:'casco_obsidiana',90:'espada_obsidiana',100:'pechera_titanio'};
 export class MotorGranja {
  estado:EstadoGranja;
  private paseosCompania=new PaseosCompania();
@@ -256,7 +258,7 @@ export class MotorGranja {
   const s=this.estado;const now=s.ultimoTiempo;let r:Resultado;
   if(s.vidaSocial.actual&&a.tipo!=='social')return mal('Termina o cancela el encuentro antes de continuar.');
   if(s.jornada.resumenPendiente&&a.tipo!=='continuar_dia')return mal('Lee el resumen de la jornada y comienza la mañana.');
-  if(s.aventura.destinoActual&&!['seleccionar_casilla','fila_barra','herramienta','personaje','mover_item','consumir','equipar_objeto','desequipar_objeto','accion_aventura','salir_aventura','descender_aventura'].includes(a.tipo))return mal('Regresa de la expedición antes de realizar esa actividad.');
+  if(s.aventura.destinoActual&&!['seleccionar_casilla','fila_barra','herramienta','personaje','mover_item','consumir','equipar_objeto','desequipar_objeto','accion_aventura','salir_aventura','descender_aventura','construir_ascensor'].includes(a.tipo))return mal('Regresa de la expedición antes de realizar esa actividad.');
   if(['golpear','limpiar','labrar','regar','alisar','combatir','pescar','extraer'].includes(a.tipo)&&!this.herramientaDisponible())return mal('Esa herramienta está en la herrería. Retírala cuando termine el encargo.');
   if(s.compania.montada&&!['compania','viajar','seleccionar_casilla','fila_barra','herramienta','personaje','mover_item','consumir','equipar_objeto','desequipar_objeto','recoger_drop'].includes(a.tipo))return mal('Desmonta para entrar en edificios o trabajar con las herramientas.');
   if(s.zona==='pueblo'&&s.servicio&&(['comprar','craftear','comprar_objeto','adoptar','comprar_huevo_fertil','ampliar_mochila','vender','vender_pila','mejorar_herramienta','retirar_mejora','encargar_obra','ampliar_refugio','cancelar_obra'].includes(a.tipo)||(a.tipo==='compania'&&a.accion.tipo==='adoptar'))){const horario=atencionServicio(s.servicio,s.jornada.diasCompletados,s.jornada.minutos);if(!horario.abierto)return mal(horario.mensaje);}
@@ -341,8 +343,14 @@ export class MotorGranja {
     const d=destinoAventura(a.destino);if(!d)return mal('Destino desconocido.');if(s.interior||s.servicio||!finito(a.xJugador,-1000,1000)||!finito(a.zJugador,-1000,1000))return mal('Sal al exterior para iniciar la expedición.');
     if(d.construccion){const portal=s.produccion.estructuras.find(n=>n.articulo===d.construccion&&n.zona===s.zona&&this.cerca(n.x,n.z,a.xJugador,a.zJugador,5));if(!portal)return mal('Acércate al portal o a tu nave construida en la granja.');}
     else if(s.zona!==(d.tipo==='mina'?'mina':'bosque_ancestral'))return mal(d.tipo==='mina'?'Viaja a la entrada de la mina.':'Viaja al bosque ancestral para encontrar las ruinas.');
-    const result=entrarAventura(s.aventura,a.destino,{x:a.xJugador,z:a.zJugador},{desbloqueos:s.desbloqueos,construcciones:s.produccion.estructuras.map(n=>n.articulo),nivelPico:this.nivelHerramienta('pico')});if(!result.ok)return result;
+    if(a.piso!==undefined&&!entero(a.piso,1,100000))return mal('Piso inválido.');
+    const result=entrarAventura(s.aventura,a.destino,{x:a.xJugador,z:a.zJugador},{desbloqueos:s.desbloqueos,construcciones:s.produccion.estructuras.map(n=>n.articulo),nivelPico:this.nivelHerramienta('pico')},a.piso??1);if(!result.ok)return result;
     s.posicionAventura=result.posicion!;s.enemigo=0;this.contar('expediciones');r={...result,posicionAventura:result.posicion};break;
+   }
+   case 'construir_ascensor':{
+    if(!finito(a.xJugador,-1000,1000)||!finito(a.zJugador,-1000,1000))return mal('Posición de jugador inválida.');const n=estacionPendiente(s.aventura);if(!n)return mal('Aquí no se puede construir una estación de ascensor.');
+    const costo=costoEstacion(n);if(!this.puedePagar(costo))return mal('Para la estación necesitas '+Object.entries(costo).map(([k,v])=>`${v} ${obtenerObjeto(k)?.nombre.toLowerCase()??k}`).join(', ')+'.');
+    const result=construirAscensor(s.aventura,{x:a.xJugador,z:a.zJugador});if(!result.ok)return result;this.pagar(costo);this.contar('estaciones_ascensor');r=result;break;
    }
    case 'salir_aventura':{if(!s.aventura.destinoActual)return mal('No estás en una expedición.');const result=salirAventura(s.aventura);s.posicionAventura=null;r={...result,posicionAventura:result.posicion};break;}
    case 'descender_aventura':{if(!finito(a.xJugador,-1000,1000)||!finito(a.zJugador,-1000,1000))return mal('Posición de jugador inválida.');const result=descenderAventura(s.aventura,{x:a.xJugador,z:a.zJugador});if(!result.ok)return result;s.posicionAventura=result.posicion!;r={...result,posicionAventura:result.posicion};break;}
@@ -356,7 +364,9 @@ export class MotorGranja {
     const instancia=instanciaAventura(s.aventura),monstruo=instancia?.monstruos.find(m=>m.id===a.id),nodo=instancia?.nodos.find(n=>n.id===a.id),botinAntes=new Set(instancia?.botin.map(b=>b.id));
     const result=a.objetivo==='monstruo'?golpearMonstruo(s.aventura,a.id,jugador,this.nivelHerramienta('espada'),this.bonos().ataque):a.objetivo==='nodo'?golpearNodo(s.aventura,a.id,jugador,this.nivelHerramienta('pico')):a.objetivo==='botin'?recogerBotin(s.aventura,a.id,jugador):resolverSituacion(s.aventura,a.id,jugador);
     if(!result.ok)return result;if(result.botin)this.agregar(result.botin.articulo,result.botin.cantidad);
-    if(['nodo','monstruo'].includes(a.objetivo))s.energia=Math.max(0,s.energia-this.costeEnergia());if(result.destruido){this.contar(a.objetivo==='monstruo'?'monstruos':'mineria');if(a.objetivo==='monstruo'&&monstruo)this.experiencia('combate',Math.ceil(MONSTRUOS[monstruo.tipo].vida/2));if(a.objetivo==='nodo'&&nodo){this.experiencia('mineria',8+MINERALES[nodo.mineral].pico*5);for(const b of instancia?.botin??[])if(!botinAntes.has(b.id))b.cantidad=mejorarBotin(s.habilidades,{[b.articulo]:b.cantidad},'roca')[b.articulo];}}
+    if(['nodo','monstruo'].includes(a.objetivo))s.energia=Math.max(0,s.energia-this.costeEnergia());if(result.destruido){this.contar(a.objetivo==='monstruo'?'monstruos':'mineria');if(a.objetivo==='monstruo'&&monstruo)this.experiencia('combate',Math.ceil(MONSTRUOS[monstruo.tipo].vida/2));if(a.objetivo==='nodo'&&nodo){this.experiencia('mineria',8+MINERALES[nodo.mineral].pico*5);this.contar('mineral',nodo.cantidad);for(const b of instancia?.botin??[])if(!botinAntes.has(b.id))b.cantidad=mejorarBotin(s.habilidades,{[b.articulo]:b.cantidad},'roca')[b.articulo];}}
+    // Cofres de la mina (cada 10 pisos): monedas y una pieza de equipo según la profundidad
+    if(result.cofre){s.monedas=Math.min(1e9,s.monedas+100+result.cofre*25);const pieza=PREMIOS_COFRE[result.cofre];if(pieza)this.agregar(pieza,1);this.contar('cofres_mina');}
     s.vida=Math.min(100,s.vida+(result.vida??0));s.energia=Math.min(100,s.energia+(result.energia??0));r=result;break;
    }
    case 'herramienta':{if(!HERRAMIENTAS.some(h=>h.id===a.herramienta))return mal('Herramienta desconocida.');if(!this.herramientaDisponible(a.herramienta))return mal('Tu herramienta está en la herrería.');if(a.herramienta!=='mano'){const at=s.casillasInventario.findIndex(p=>p?.articulo==='herramienta_'+a.herramienta);if(at<0)return mal('Esa herramienta no está en tu mochila.');s.filaBarra=Math.floor(at/LARGO_BARRA);s.casillaActiva=at%LARGO_BARRA;}s.herramienta=a.herramienta;r=bien('Herramienta equipada.');break;}
@@ -610,7 +620,7 @@ export class MotorGranja {
     // Cada entrada comienza en la boca de la mina: los minerales de pisos anteriores
     // siguen siendo accesibles aunque el jugador aún no pueda picar en los profundos.
     if(a.zona==='mina'&&s.zona!=='mina')s.nivelMina=1;
-    s.zona=a.zona;s.interior=null;s.servicio=null;s.enemigo=a.zona==='mina'?30+s.nivelMina*10:a.zona==='bosque_ancestral'?50:0;if(llegada){s.posicionExterior={zona:a.zona,...llegada};posicionMontada(s,llegada.x,llegada.z);}else delete s.posicionExterior;r={...bien(`Has llegado a ${a.zona.replace('_',' ')}.`),...(llegada?{posicionZona:llegada}:{})};break;
+    s.zona=a.zona;s.interior=null;s.servicio=null;s.enemigo=a.zona==='bosque_ancestral'?50:0;if(llegada){s.posicionExterior={zona:a.zona,...llegada};posicionMontada(s,llegada.x,llegada.z);}else delete s.posicionExterior;r={...bien(`Has llegado a ${a.zona.replace('_',' ')}.`),...(llegada?{posicionZona:llegada}:{})};break;
    }
    case 'rellenar_hueco':{
     const h=s.paisaje?.huecos.find(h=>h.id===a.id&&!h.relleno);if(s.zona!=='granja'||s.interior||s.servicio||!h||!this.celdaPropia(h.x,h.z))return mal('Compra este sector antes de reparar el terreno.');if(!this.cerca(h.x,h.z,a.xJugador,a.zJugador,2.4))return mal('Acércate al hueco para rellenarlo.');if(!this.puedePagar({piedra:5}))return mal('Necesitas 5 piedras para rellenar el hueco.');this.pagar({piedra:5});h.relleno=true;this.contar('huecos_rellenados');r=bien('Terreno reparado: ya puedes caminar, cultivar y construir aquí.');break;
@@ -628,7 +638,7 @@ export class MotorGranja {
     if(s.vida<=0){s.zona='granja';s.enemigo=0;s.vida=35;s.energia=25;r=bien('Te rescataron y volviste a casa. Conservas tus recursos.')}else r=bien(s.enemigo?'El monstruo retrocede.':'Zona despejada. Puedes recolectar con seguridad.');break;
    }
    case 'extraer':return mal('Selecciona un árbol o una roca de la zona y golpéalo con la herramienta. Los recursos ya no son infinitos.');
-   case 'descender':if(s.zona!=='mina'||s.enemigo>0)return mal('Despeja la mina antes de descender.');if(s.nivelMina>=5)return mal('Has alcanzado el último nivel de esta colección.');s.nivelMina++;s.enemigo=30+s.nivelMina*10;r=bien(`Mina: nivel ${s.nivelMina}.`);break;
+   case 'descender':return mal('Baja por la entrada de las Minas de Celia o toma el ascensor.');
    case 'continuar_dia':if(!s.jornada.resumenPendiente||a.jornada!==s.jornada.diasCompletados)return mal('Esta mañana ya está abierta.');s.jornada.resumenPendiente=false;r=bien('Buenos días. El valle te espera.');break;
    case 'dormir':{
     if(a.jornada!==s.jornada.diasCompletados)return mal('Esta jornada ya se ha guardado.');const casa=s.edificios.find(e=>e.id===a.edificioId&&articulo(e.articulo)?.categoria==='casa');
@@ -763,7 +773,7 @@ export function migrarEstado(valor:unknown):unknown {
  if(antiguo&&typeof antiguo==='object'&&(antiguo as any).version===5){
   const s=clonar(antiguo) as any;
   // Bosques más espesos: los árboles nuevos llegan también a las partidas guardadas, sin tocar los que ya había
-  if(Array.isArray(s.obstaculos)){const ids=new Set(s.obstaculos.map((o:any)=>o?.id)),ocupadas=new Set(s.obstaculos.map((o:any)=>`${o?.zona},${o?.x},${o?.z}`));for(const n of nodosExteriores())if(n.zona!=='mina'&&!ids.has(n.id)&&!ocupadas.has(`${n.zona},${n.x},${n.z}`))s.obstaculos.push(n);}
+  if(Array.isArray(s.obstaculos)){/* La mina del valle ahora es solo la entrada: las rocas viejas de sus 5 niveles se retiran */s.obstaculos=s.obstaculos.filter((o:any)=>o?.zona!=='mina');/* lo que quedó en el suelo de cualquier nivel se puede recoger en la entrada */if(Array.isArray(s.drops))for(const d of s.drops)if(d?.zona==='mina')d.nivelMina=1;if(s.zona==='mina'){s.enemigo=0;s.nivelMina=1;}const ids=new Set(s.obstaculos.map((o:any)=>o?.id)),ocupadas=new Set(s.obstaculos.map((o:any)=>`${o?.zona},${o?.x},${o?.z}`));for(const n of nodosExteriores())if(n.zona!=='mina'&&!ids.has(n.id)&&!ocupadas.has(`${n.zona},${n.x},${n.z}`))s.obstaculos.push(n);}
   if(s.correo===undefined)s.correo=crearCorreo();if(s.vidaSocial===undefined)s.vidaSocial=crearVidaSocial();if(s.encargos===undefined)s.encargos=crearEncargos();if(s.pueblo===undefined)s.pueblo=crearPuebloEstado();else if(s.pueblo?.version===1&&Array.isArray(s.pueblo.relaciones)&&s.pueblo.relaciones.length===9&&s.pueblo.relaciones.every((r:any)=>crearPuebloEstado().relaciones.slice(0,9).some(n=>n.id===r?.id)))s.pueblo.relaciones.push(...crearPuebloEstado().relaciones.filter(n=>!s.pueblo.relaciones.some((r:any)=>r?.id===n.id)));if(s.obras===undefined)s.obras=crearObras();if(s.compania===undefined)s.compania=crearCompania();if(s.ganaderia===undefined){s.ganaderia=crearGanaderia(s.edificios?.some((b:any)=>b.id==='corral_inicial'&&b.especie==='gallina')?'corral_inicial':undefined);if(Array.isArray(s.animales))for(const a of s.animales)if(a?.sexo==='macho'&&['vaca','cabra','gallina','pato','avestruz','dinosaurio'].includes(a.especie)&&a.productos>0)a.productoLegado=true;}if(s.tiempo===undefined&&finito(s.inicioTiempo))s.tiempo=crearTiempo(s.inicioTiempo);if(s.produccion===undefined)s.produccion=crearProduccion(s.ultimoTiempo);if(s.aventura===undefined){s.aventura=crearAventura();s.posicionAventura=null;}
   if(s.envios===undefined){
    s.envios=crearEnvios();if(Array.isArray(s.edificios))s.envios.cajas=s.edificios.filter((e:any)=>e?.articulo===ARTICULO_ENVIO).map((e:any)=>crearCajaEnvio(e.id));

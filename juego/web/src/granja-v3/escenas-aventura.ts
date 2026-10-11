@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { caja, esfera, liberar, compactar } from './suelo';
-import { destinoAventura, instanciaAventura, MINERALES, MONSTRUOS } from './aventura';
+import { destinoAventura, instanciaAventura, MINERALES, MONSTRUOS, MINA } from './aventura';
+import { terrenoMina, escaleraMina, cofreMina, paletaMina } from './mina-render';
 import type { EstadoAventura, InstanciaAventura, MonstruoAventura, NodoAventura, TipoMonstruo, PuntoAventura } from './aventura';
 
 export type ObjetivoAventura = { tipo:'monstruo'|'nodo'|'botin'|'entrada'|'situacion'; id:string };
@@ -43,14 +44,15 @@ function figura(tipo:TipoMonstruo):FiguraMonstruo {
  return {grupo,cuerpo,miembros,aviso,barra,relleno,fase:0};
 }
 function rocaNodo(n:NodoAventura){
- const g=new THREE.Group(),color=MINERALES[n.mineral].color;
- esfera(g,[.43,.29,.39],[0,.23,0],'#827c7c');
+ // Roca grande y redondita con la veta a la vista: trozos de metal o cristales del color del mineral
+ const g=new THREE.Group(),color=MINERALES[n.mineral].color,h=(k:number)=>{const v=Math.sin((n.x*12.9+n.z*78.2+k)*43.1)*4375.5;return v-Math.floor(v);};
+ const roca=esfera(g,[.5,.36,.46],[0,.28,0],n.mineral==='piedra'?'#9a948c':'#7d7672');roca.rotation.y=h(1)*6;esfera(g,[.3,.22,.28],[.28,.2,.16],'#8a837d');
  if(['carbon','piedra','hierro','cobre','oro','plata','titanio','meteorita'].includes(n.mineral)){
-  for(let k=0;k<4;k++){const angle=k*2.399,mesh=caja(g,[.2,.16,.21],[Math.sin(angle)*.23,.39+(k%2)*.08,Math.cos(angle)*.19],color);mesh.rotation.set(k*.2,k*.6,k*.11);}
- }else for(let k=0;k<3;k++){const angle=k*2.399;cristal(g,color,Math.sin(angle)*.2,Math.cos(angle)*.2,.42+k*.1);}
- objetivo(g,'nodo',n.id);g.position.set(n.x,0,n.z);return g;
+  for(let k=0;k<6;k++){const angle=k*2.399+h(2),mesh=new THREE.Mesh(new THREE.DodecahedronGeometry(.11+h(k)*.05,0),new THREE.MeshStandardMaterial({color,roughness:n.mineral==='carbon'?.9:.35,metalness:['oro','plata','hierro','titanio','cobre'].includes(n.mineral)?.55:.05}));mesh.position.set(Math.sin(angle)*.33,.3+(k%3)*.12,Math.cos(angle)*.3);mesh.rotation.set(k,k*.6,k*.3);mesh.castShadow=true;g.add(mesh);}
+ }else for(let k=0;k<4;k++){const angle=k*2.399+h(3);cristal(g,color,Math.sin(angle)*.25,Math.cos(angle)*.22,.5+k*.12);}
+ g.scale.setScalar(1.25);objetivo(g,'nodo',n.id);g.position.set(n.x,0,n.z);return g;
 }
-export function ambienteAventura(e:EstadoAventura){const d=destinoAventura(e.destinoActual);return{fondo:d?.espacial?'#252439':d?.tipo==='reino'?'#3c344c':'#404044',niebla:d?.espacial?'#343249':'#696578',luz:d?.luz??'#e8cfa4'};}
+export function ambienteAventura(e:EstadoAventura){const d=destinoAventura(e.destinoActual),i=instanciaAventura(e);if(i&&i.destinoId===MINA){const p=paletaMina(i);return{fondo:p.fondo,niebla:p.niebla,luz:p.luz};}return{fondo:d?.espacial?'#252439':d?.tipo==='reino'?'#3c344c':'#404044',niebla:d?.espacial?'#343249':'#696578',luz:d?.luz??'#e8cfa4'};}
 
 /** Adaptador de escena: geometría estática se reconstruye solo al cambiar de instancia/chunks.
  * `grupo` se añade a la escena anfitriona; sync tras acciones, update cada frame.
@@ -61,17 +63,23 @@ export class EscenaAventura {
  readonly group=this.grupo;
  private terreno=new THREE.Group();private objetos=new THREE.Group();private efectos=new THREE.Group();
  private particulas:{mesh:THREE.Mesh;vx:number;vz:number;vy:number;edad:number}[]=[];
- private monstruos=new Map<string,FiguraMonstruo>();private nodos=new Map<string,THREE.Group>();private botin=new Map<string,THREE.Group>();private situaciones=new Map<string,THREE.Group>();
+ private monstruos=new Map<string,FiguraMonstruo>();private nodos=new Map<string,THREE.Group>();private botin=new Map<string,THREE.Group>();private situaciones=new Map<string,THREE.Group>();private entradas=new Map<string,THREE.Group>();
  private claveMapa='';private estado:EstadoAventura|null=null;private tiempo=0;
  constructor(){this.grupo.name='expedicion';this.grupo.add(this.terreno,this.objetos,this.efectos);}
  get seleccionables(){return this.objetos.children;}
  objetivoDeInterseccion(obj:THREE.Object3D):ObjetivoAventura|null {let actual:THREE.Object3D|null=obj;while(actual){if(actual.userData.aventura)return actual.userData.aventura as ObjetivoAventura;actual=actual.parent;}return null;}
- private limpiar(){liberar(this.terreno);liberar(this.objetos);liberar(this.efectos);this.terreno=new THREE.Group();this.objetos=new THREE.Group();this.efectos=new THREE.Group();this.particulas=[];this.grupo.add(this.terreno,this.objetos,this.efectos);this.monstruos.clear();this.nodos.clear();this.botin.clear();this.situaciones.clear();}
+ private limpiar(){liberar(this.terreno);liberar(this.objetos);liberar(this.efectos);this.terreno=new THREE.Group();this.objetos=new THREE.Group();this.efectos=new THREE.Group();this.particulas=[];this.grupo.add(this.terreno,this.objetos,this.efectos);this.monstruos.clear();this.nodos.clear();this.botin.clear();this.situaciones.clear();this.entradas.clear();}
  private deshacer(p:PuntoAventura,color:string){
   for(let k=0;k<7;k++){const a=k*2.399,mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(.09+(k%3)*.025,0),new THREE.MeshStandardMaterial({color,roughness:.9}));mesh.position.set(p.x,.4,p.z);this.efectos.add(mesh);this.particulas.push({mesh,vx:Math.cos(a)*1.3,vz:Math.sin(a)*1.3,vy:1.7+k*.1,edad:0});}
   while(this.particulas.length>70){const p=this.particulas.shift()!;liberar(p.mesh);}
  }
  private construir(i:InstanciaAventura){
+  if(i.destinoId===MINA){
+   // Minas de Celia: piso por tipo (tierra, hielo, lava, caverna…), paredes de roca y escaleras de verdad
+   this.terreno.add(terrenoMina(i));
+   for(const entrada of i.entradas){const g=escaleraMina(entrada.tipo);g.position.set(entrada.x,0,entrada.z);objetivo(g,'entrada',entrada.id);this.objetos.add(g);this.entradas.set(entrada.id,g);}
+   return;
+  }
   const d=destinoAventura(i.destinoId)!,dummy=new THREE.Object3D(),floor:number[][]=[],walls:number[][]=[];
   for(const[k,tipo]of Object.entries(i.suelos)){const[x,z]=k.split(',').map(Number);if(tipo==='suelo')floor.push([x,z]);else if([[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dz])=>i.suelos[`${x+dx},${z+dz}`]==='suelo'))walls.push([x,z]);}
   const piso=new THREE.InstancedMesh(new THREE.BoxGeometry(1,.12,1),new THREE.MeshStandardMaterial({color:d.color,roughness:1}),floor.length);piso.receiveShadow=true;
@@ -94,6 +102,8 @@ export class EscenaAventura {
   this.estado=e;const i=instanciaAventura(e);this.grupo.visible=!!i;if(!i)return;
   const key=`${i.id}:${i.semilla}:${Object.keys(i.chunks).sort().join('|')}`;
   if(key!==this.claveMapa){this.limpiar();this.claveMapa=key;this.construir(i);}
+  // La escalera escondida aparece en pleno piso: se agrega sin rehacer el terreno
+  if(i.destinoId===MINA)for(const entrada of i.entradas)if(!this.entradas.has(entrada.id)){const g=escaleraMina(entrada.tipo);g.position.set(entrada.x,0,entrada.z);objetivo(g,'entrada',entrada.id);this.objetos.add(g);this.entradas.set(entrada.id,g);this.deshacer(entrada,'#f6cf5a');}
   const vivos=new Set(i.monstruos.filter(m=>m.vivo).map(m=>m.id));for(const[id,f]of this.monstruos)if(!vivos.has(id)){const m=i.monstruos.find(m=>m.id===id);if(m)this.deshacer(m,MONSTRUOS[m.tipo].color);liberar(f.grupo);this.monstruos.delete(id);}
   for(const m of i.monstruos)if(m.vivo&&!this.monstruos.has(m.id)){const f=figura(m.tipo);objetivo(f.grupo,'monstruo',m.id);this.monstruos.set(m.id,f);this.objetos.add(f.grupo);}
   const activos=new Set(i.nodos.filter(n=>!n.agotado).map(n=>n.id));for(const[id,g]of this.nodos)if(!activos.has(id)){const n=i.nodos.find(n=>n.id===id);if(n)this.deshacer(n,MINERALES[n.mineral].color);liberar(g);this.nodos.delete(id);}
@@ -103,6 +113,7 @@ export class EscenaAventura {
   for(const s of i.situaciones){
    let g=this.situaciones.get(s.id);if(!g){g=new THREE.Group();g.position.set(s.x,0,s.z);
     if(s.tipo==='campamento'){for(const x of [-.24,.24]){const wood=caja(g,[.13,.13,.85],[x,.08,0],'#84604f');wood.rotation.y=x>0?.45:-.45;}cristal(g,'#f4c189',0,0,.7);esfera(g,[.3,.1,.2],[.9,.1,0],'#bcbaad');}
+    else if(s.tipo==='cofre')g.add(cofreMina());
     else if(s.tipo==='baliza'){caja(g,[.48,1,.48],[0,.5,0],'#a3b5bf');cristal(g,'#c5edda',0,0,1.5);aro(g,.5,.03,'#bfdfd1');}
     else{esfera(g,[.54,.48,.5],[0,.4,0],'#9993ad');cristal(g,'#dbbfe8',0,.25,.8);}
     objetivo(g,'situacion',s.id);this.objetos.add(g);this.situaciones.set(s.id,g);

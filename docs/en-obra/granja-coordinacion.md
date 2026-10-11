@@ -140,3 +140,20 @@ pueblo (comparten modelos con los protagonistas: `sacarVecinos` y `liberar` los 
   los existentes; el límite de obstáculos del validador pasó de 1000 a 2000.
 - Vista: los árboles a más de 8 m del jugador se dibujan con instancias livianas (`arbolesLejanos`); los cercanos
   siguen siendo el modelo completo que se sacude y cae.
+
+### Minas de Celia al estilo Stardew (Claude, pedido de Javier)
+
+Cambio de reglas pedido por Javier (frente de motor, avisado aquí):
+- `aventura.ts`: `mina_celia` ya no tiene fondo (`niveles:100000`). Cada piso se genera al entrar o bajar con una semilla
+  nueva (`visitasMina`) y solo se guarda el piso actual. Tipos por profundidad (`temaMina`): tierra 1-39, hielo
+  40-79, lava 80-99, fondo 100 y caverna 101+, con variantes `hongos`/`cristal` y cofre en 10, 20 … 100
+  (`cofresMina`, una sola vez). Minerales por tipo (`mineralesPorProfundidad`), más vetas, más mineral por veta, rocas
+  más duras, monstruos por tipo y más fuertes al bajar; minas más grandes (hasta 4 regiones) y con cavernas redondas
+  y pilares.
+- La escalera se esconde: aparece al romper una veta (seguro con la última) o, a veces, al vencer un monstruo.
+- Ascensor (`ascensor`): parada automática cada 5 pisos hasta el 100. Pasando el 100 se construye una estación
+  cada 25 pisos (`construir_ascensor`, `costoEstacion`). `entrar_aventura` acepta `piso`.
+- Motor: la mina del valle es solo la entrada (sin rocas ni monstruo); `descender` queda rechazado; la migración
+  retira las rocas viejas de esa zona y deja lo que estaba en el suelo recogible. Cofres dan monedas y una pieza de
+  equipo (`PREMIOS_COFRE`); `mineral` cuenta lo extraído en las expediciones (misión del dragón).
+- Vista: `mina-render.ts` (piso, paredes, decorado, escaleras, cofre) y el minimapa dibuja el plano del piso.

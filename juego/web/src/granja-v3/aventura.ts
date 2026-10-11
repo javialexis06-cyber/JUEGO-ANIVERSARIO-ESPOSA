@@ -12,7 +12,7 @@ export interface DestinoAventura {
 }
 /** Son destinos de exploración configurables; no afirman un desenlace ni el canon de los mundos muertos. */
 export const AVENTURAS:DestinoAventura[] = [
- {id:'mina_celia',nombre:'Minas de Celia',tipo:'mina',descripcion:'Galerías de cobre, hongos luminosos y vetas profundas. Cada piso conserva lo que descubres.',color:'#8c8172',roca:'#665f60',luz:'#ffc27e',dificultad:1,espacial:false,minerales:['piedra','carbon','cobre','cuarzo','hierro','plata','oro','jade','rubi','obsidiana','titanio','polvo_estelar'],monstruos:['gelatina','escarabajo','murcielago'],niveles:12},
+ {id:'mina_celia',nombre:'Minas de Celia',tipo:'mina',descripcion:'Pisos que cambian cada vez que bajas: tierra, hielo, lava y, pasando el piso 100, la caverna sin fondo. Busca la escalera bajo las rocas.',color:'#8c8172',roca:'#665f60',luz:'#ffc27e',dificultad:1,espacial:false,minerales:['piedra','carbon','cobre','cuarzo','hierro','plata','oro','jade','rubi','obsidiana','titanio','meteorita','polvo_estelar','cristal_astral'],monstruos:['gelatina','escarabajo','murcielago'],niveles:100000},
  {id:'ruinas_celia',nombre:'Ruinas del bosque',tipo:'mazmorra',descripcion:'Patios olvidados, guardianes de piedra y cámaras de jade conectadas por pasillos.',color:'#739176',roca:'#50685d',luz:'#a5e2bb',dificultad:2,espacial:false,nivelPico:1,minerales:['piedra','hierro','jade','plata','oro'],monstruos:['gelatina','guardian','escarabajo'],niveles:6},
  {id:'reino_verdia',nombre:'Ecos de Verdia',tipo:'reino',descripcion:'Un destino provisional entre raíces antiguas y cristales verdes. Su historia espera ser descubierta.',color:'#748c70',roca:'#3e6354',luz:'#bcf3a0',dificultad:3,espacial:false,construccion:'portal_verdia',minerales:['jade','cuarzo','hierro','oro'],monstruos:['guardian','gelatina','escarabajo'],niveles:4},
  {id:'reino_senda',nombre:'Ecos de Senda',tipo:'reino',descripcion:'Islas de roca cálida y senderos de brasas. Un umbral de exploración, todavía sin desenlace.',color:'#b98268',roca:'#765368',luz:'#ffb580',dificultad:3,espacial:false,construccion:'portal_senda',minerales:['rubi','obsidiana','carbon','oro'],monstruos:['ascua','guardian','murcielago'],niveles:4},
@@ -51,19 +51,23 @@ export interface MonstruoAventura extends PuntoAventura {
 }
 export interface BotinAventura extends PuntoAventura { id:string; articulo:string; cantidad:number }
 export interface EntradaAventura extends PuntoAventura { id:string; tipo:'retorno'|'descenso'; etiqueta:string }
-export interface SituacionAventura extends PuntoAventura { id:string; tipo:'campamento'|'geoda'|'baliza'; resuelta:boolean; nombre:string }
+export interface SituacionAventura extends PuntoAventura { id:string; tipo:'campamento'|'geoda'|'baliza'|'cofre'; resuelta:boolean; nombre:string }
 export interface ChunkAventura { x:number; z:number; ancho:number; fondo:number }
 export interface InstanciaAventura {
  id:string; destinoId:string; nivel:number; semilla:number; revision:number;
  suelos:Record<string,SueloAventura>; chunks:Record<string,ChunkAventura>; nodos:NodoAventura[]; monstruos:MonstruoAventura[];
  botin:BotinAventura[]; entradas:EntradaAventura[]; situaciones:SituacionAventura[]; inicio:PuntoAventura;
+ /** Solo mientras se genera un piso de la mina. */
+ cofreReclamado?:boolean;
 }
 export interface EstadoAventura {
+ /** Solo Minas de Celia: pisos con parada de ascensor, cofres abiertos y visitas (cambian el plano de cada piso). */
+ ascensor?:number[]; cofresMina?:number[]; visitasMina?:number;
  version:1; semilla:number; destinoActual:string|null; instanciaActual:string|null; instancias:Record<string,InstanciaAventura>;
  retorno:PuntoAventura|null; descubrimientos:string[]; profundidad:Record<string,number>; oxigeno:number;
  avisoOxigeno:number; invulnerable:number; enfriamientoGolpe:number; secuencia:number; derrotados:number; mineralesExtraidos:number;
 }
-export interface ResultadoAventura { ok:boolean; mensaje:string; posicion?:PuntoAventura; botin?:{articulo:string;cantidad:number}; dano?:number; destruido?:boolean; vida?:number; energia?:number; oxigeno?:number }
+export interface ResultadoAventura { cofre?:number; ok:boolean; mensaje:string; posicion?:PuntoAventura; botin?:{articulo:string;cantidad:number}; dano?:number; destruido?:boolean; vida?:number; energia?:number; oxigeno?:number }
 export interface JugadorAventura extends PuntoAventura { vida?:number; defensa?:number }
 export interface ResultadoPaso { dano:number; empuje?:PuntoAventura; avisos:string[]; salidaSegura?:PuntoAventura }
 export type ColisionAventura = (x:number,z:number)=>boolean;
@@ -74,6 +78,39 @@ const bien = (mensaje:string,extra:Partial<ResultadoAventura>={}):ResultadoAvent
 const mal = (mensaje:string):ResultadoAventura=>({ok:false,mensaje});
 function semillaTexto(texto:string,base:number){let n=base>>>0;for(let i=0;i<texto.length;i++)n=Math.imul(n^texto.charCodeAt(i),16777619);return n>>>0;}
 function azarSemilla(seed:number){let s=seed>>>0;return()=>{s=(s+0x6D2B79F5)>>>0;let t=Math.imul(s^(s>>>15),1|s);t^=t+Math.imul(t^(t>>>7),61|t);return((t^(t>>>14))>>>0)/4294967296;};}
+/* ── Minas de Celia al estilo Stardew ─────────────────────────────────────────────────────────────────────
+ * Cada piso se arma al azar cada vez que se entra. La escalera al siguiente piso está escondida bajo una roca (o la
+ * deja un monstruo); los pisos múltiplos de 10 hasta el 100 traen un cofre y la escalera a la vista. El ascensor se
+ * abre solo cada 5 pisos hasta el 100; desde ahí, en la caverna sin fondo, se construye una estación cada 25 pisos. */
+export const MINA='mina_celia',FONDO_MINA=100;
+export type TemaMina='tierra'|'hielo'|'lava'|'fondo'|'caverna';
+export type VarianteMina='normal'|'hongos'|'cristal'|'cofre';
+export const temaMina=(nivel:number):TemaMina=>nivel<40?'tierra':nivel<80?'hielo':nivel<FONDO_MINA?'lava':nivel===FONDO_MINA?'fondo':'caverna';
+export function varianteMina(nivel:number,semilla:number):VarianteMina{
+ if(nivel%10===0&&nivel<=FONDO_MINA)return 'cofre';const r=azarSemilla(semillaTexto('variante:'+nivel,semilla))();
+ if(nivel>=30&&nivel<FONDO_MINA&&r<.12)return 'hongos';if(nivel>FONDO_MINA&&r<.2)return 'cristal';return 'normal';
+}
+const MONSTRUOS_MINA:Record<TemaMina,TipoMonstruo[]>={tierra:['gelatina','escarabajo','murcielago'],hielo:['murcielago','gelatina','sombra'],lava:['ascua','guardian','escarabajo'],fondo:['guardian','ascua'],caverna:['sombra','centinela','guardian','ascua','murcielago']};
+/** Peso de cada mineral en los pisos (los raros salen menos, pero abundan más mientras más hondo). */
+const PESO_MINERAL:Record<MineralAventura,number>={piedra:3,carbon:2.4,cobre:3,cuarzo:1.4,hierro:2.6,plata:1.6,jade:.8,oro:1.8,rubi:.7,obsidiana:1,titanio:1.6,meteorita:1,polvo_estelar:.8,cristal_astral:.55};
+/** Costo de una estación de ascensor en la caverna (piso 125, 150, 175…). */
+export function costoEstacion(nivel:number):Record<string,number>{const k=Math.max(1,Math.round((nivel-FONDO_MINA)/25));return {piedra:60+k*20,madera:30+k*10,lingote_hierro:6+k*2,lingote_oro:2+k,engranaje:2+k};}
+export function estacionPendiente(e:EstadoAventura):number|null{const i=instanciaAventura(e);if(!i||i.destinoId!==MINA||i.nivel<=FONDO_MINA||i.nivel%25!==0||(e.ascensor??[]).includes(i.nivel))return null;return i.nivel;}
+export function pisosAscensor(e:EstadoAventura){return [1,...(e.ascensor??[])];}
+function semillaMina(e:EstadoAventura){e.visitasMina=(e.visitasMina??0)+1;return (e.semilla^Math.imul(e.visitasMina,2654435761))>>>0;}
+function borrarPisosMina(e:EstadoAventura){for(const k of Object.keys(e.instancias))if(k.startsWith(MINA+':'))delete e.instancias[k];}
+function revelarEscalera(e:EstadoAventura,i:InstanciaAventura,p:PuntoAventura,probabilidad:number){
+ if(i.destinoId!==MINA||i.entradas.some(x=>x.tipo==='descenso'))return false;
+ const x=Math.floor(p.x),z=Math.floor(p.z);if(i.suelos[clave(x,z)]!=='suelo')return false;
+ if(azarSemilla(semillaTexto(`${i.id}:escalera:${e.secuencia}:${x},${z}`,i.semilla))()>=probabilidad)return false;
+ i.entradas.push({id:`${i.id}:descenso`,tipo:'descenso',etiqueta:`Escalera al piso ${i.nivel+1}`,x:x+.5,z:z+.5});i.revision++;return true;
+}
+export function construirAscensor(e:EstadoAventura,jugador:PuntoAventura):ResultadoAventura{
+ const n=estacionPendiente(e),i=instanciaAventura(e);if(!n||!i)return mal('Aquí no se puede construir una estación de ascensor.');
+ if(distancia(jugador,i.inicio)>3.5)return mal('Construye la estación junto a la escalera de llegada.');
+ e.ascensor=[...(e.ascensor??[]),n].sort((a,b)=>a-b);i.revision++;return bien(`Estación del piso ${n} lista: ya puedes bajar directo desde la entrada.`);
+}
+
 export function crearAventura(semilla=71839):EstadoAventura {
  return {version:1,semilla:semilla>>>0,destinoActual:null,instanciaActual:null,instancias:{},retorno:null,descubrimientos:[],profundidad:{},oxigeno:100,avisoOxigeno:0,invulnerable:0,enfriamientoGolpe:0,secuencia:0,derrotados:0,mineralesExtraidos:0};
 }
@@ -91,9 +128,12 @@ export function opcionesAventura(acceso:AccesoAventura={}){return AVENTURAS.map(
  * Cada región genera al menos una veta de cada material permitido en ese piso. */
 export function mineralesPorProfundidad(destinoId:string,nivel:number):MineralAventura[] {
  const d=destinoAventura(destinoId);if(!d)return [];
- if(destinoId!=='mina_celia')return [...d.minerales];
- const profundidad:Partial<Record<MineralAventura,number>>={hierro:3,plata:5,oro:5,jade:7,rubi:7,obsidiana:9,titanio:11,polvo_estelar:11};
- return d.minerales.filter(m=>nivel>=(profundidad[m]??1));
+ if(destinoId!==MINA)return [...d.minerales];
+ const tema=temaMina(nivel);
+ if(tema==='tierra')return ['piedra','carbon','cobre','cuarzo',...(nivel>=15?['hierro' as const]:[]),...(nivel>=25?['jade' as const]:[])];
+ if(tema==='hielo')return ['piedra','carbon','hierro','plata','cuarzo','jade',...(nivel>=60?['oro' as const]:[])];
+ if(tema==='lava'||tema==='fondo')return ['piedra','carbon','hierro','oro','plata','rubi','obsidiana'];
+ return ['oro','rubi','obsidiana','titanio','meteorita','polvo_estelar',...(nivel>=125?['cristal_astral' as const]:[])];
 }
 
 /** Salas unidas por corredores de tres celdas; los cuatro conectores permiten ampliar sin rehacer el mapa. */
@@ -107,35 +147,50 @@ function generarChunk(inst:InstanciaAventura,cx:number,cz:number,d:DestinoAventu
  const corredor=(a:PuntoAventura,b:PuntoAventura)=>{const minX=Math.min(a.x,b.x),maxX=Math.max(a.x,b.x),minZ=Math.min(a.z,b.z),maxZ=Math.max(a.z,b.z);for(let x=minX;x<=maxX;x++)for(let w=-1;w<=1;w++)piso(x,a.z+w);for(let z=minZ;z<=maxZ;z++)for(let w=-1;w<=1;w++)piso(b.x+w,z);};
  const centros:PuntoAventura[]=[{x:x0+4,z:z0+4},{x:x0+16,z:z0+16},{x:x0+26,z:z0+26}];
  for(let n=0;n<5;n++)centros.push({x:x0+4+Math.floor(rand()*23),z:z0+4+Math.floor(rand()*23)});
- for(const c of centros){const ancho=5+Math.floor(rand()*4),alto=5+Math.floor(rand()*4);sala(c.x-2,c.z-2,Math.min(ancho,x0+30-(c.x-2)),Math.min(alto,z0+30-(c.z-2)));}
+ const mina=d.id===MINA,nivel=inst.nivel;
+ for(const c of centros){const ancho=5+Math.floor(rand()*4)+(mina?Math.floor(rand()*4):0),alto=5+Math.floor(rand()*4)+(mina?Math.floor(rand()*4):0);
+  // En la mina hay cavernas redondas además de salas cuadradas
+  if(mina&&rand()<.5){const rx=ancho/2,rz=alto/2;for(let zz=Math.floor(c.z-rz);zz<=c.z+rz;zz++)for(let xx=Math.floor(c.x-rx);xx<=c.x+rx;xx++)if(((xx-c.x)/rx)**2+((zz-c.z)/rz)**2<=1&&xx>=x0+1&&xx<=x0+30&&zz>=z0+1&&zz<=z0+30)piso(xx,zz);}
+  else sala(c.x-2,c.z-2,Math.min(ancho,x0+30-(c.x-2)),Math.min(alto,z0+30-(c.z-2)));}
  for(let n=1;n<centros.length;n++)corredor(centros[n-1],centros[n]);
  for(const p of [{x:x0,z:z0+16},{x:x0+31,z:z0+16},{x:x0+16,z:z0},{x:x0+16,z:z0+31}])corredor(centros[1],p);
+ // Pilares de roca sueltos dentro de las salas: cada uno rodeado de piso, así nunca cierran un camino
+ if(mina)for(let n=0;n<14;n++){const x=x0+3+Math.floor(rand()*26),z=z0+3+Math.floor(rand()*26);if(distancia({x,z},centros[0])<4||distancia({x,z},centros[1])<2||distancia({x,z},centros[2])<2)continue;
+  let rodeado=true;for(let dz=-1;dz<=1&&rodeado;dz++)for(let dx=-1;dx<=1;dx++)if(inst.suelos[clave(x+dx,z+dz)]!=='suelo'){rodeado=false;break;}if(rodeado)inst.suelos[clave(x,z)]='muro';}
  // Occupants stay clear of the landing and use only open room interiors.
  const libres:PuntoAventura[]=[];
  for(let z=z0+2;z<z0+30;z++)for(let x=x0+2;x<x0+30;x++)if(inst.suelos[clave(x,z)]==='suelo'&&inst.suelos[clave(x+1,z)]==='suelo'&&inst.suelos[clave(x-1,z)]==='suelo'&&inst.suelos[clave(x,z+1)]==='suelo'&&inst.suelos[clave(x,z-1)]==='suelo'&&distancia({x,z},centros[0])>4)libres.push({x:x+.5,z:z+.5});
  for(let i=libres.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[libres[i],libres[j]]=[libres[j],libres[i]];}
  const tomar=()=>libres.pop()??{x:x0+16.5,z:z0+16.5};
  const minerales=mineralesPorProfundidad(d.id,inst.nivel);
- for(let n=0;n<18;n++){
-  const mineral=n<minerales.length?minerales[n]:minerales[Math.floor(rand()*minerales.length)],def=MINERALES[mineral],hp=def.hp+Math.min(inst.nivel-1,10)*2;
-  inst.nodos.push({id:`${inst.id}:${chunkKey}:n${n}`,...tomar(),mineral,hp,hpMax:hp,cantidad:2+Math.floor(rand()*3),agotado:false});
+ const pesoTotal=minerales.reduce((t,m)=>t+PESO_MINERAL[m]*(mina&&MINERALES[m].pico>=2?1+Math.max(0,nivel-FONDO_MINA)/150:1),0);
+ const sortear=()=>{let r=rand()*pesoTotal;for(const m of minerales){r-=PESO_MINERAL[m]*(mina&&MINERALES[m].pico>=2?1+Math.max(0,nivel-FONDO_MINA)/150:1);if(r<=0)return m;}return minerales[minerales.length-1];};
+ // Más hondo: más vetas, más mineral por veta y rocas más duras
+ const vetas=mina?18+Math.min(22,Math.floor(nivel/6)):18;
+ for(let n=0;n<vetas;n++){
+  const mineral=n<minerales.length?minerales[n]:mina?sortear():minerales[Math.floor(rand()*minerales.length)],def=MINERALES[mineral],hp=def.hp+Math.min(inst.nivel-1,10)*2+(mina?Math.min(120,Math.floor(Math.max(0,nivel-12)*.5)):0);
+  inst.nodos.push({id:`${inst.id}:${chunkKey}:n${n}`,...tomar(),mineral,hp,hpMax:hp,cantidad:Math.min(20,2+Math.floor(rand()*3)+(mina?Math.min(10,Math.floor(nivel/30)):0)),agotado:false});
  }
  const numero=d.tipo==='orbita'?2:5+Math.min(5,d.dificultad+Math.floor(inst.nivel/3));
  for(let n=0;n<numero;n++){
-  const tipo=d.monstruos[Math.floor(rand()*d.monstruos.length)],def=MONSTRUOS[tipo],p=tomar(),hp=def.vida+Math.min(25,(inst.nivel-1)*3);
+  const lista=mina?MONSTRUOS_MINA[temaMina(nivel)]:d.monstruos,tipo=lista[Math.floor(rand()*lista.length)],def=MONSTRUOS[tipo],p=tomar(),hp=def.vida+Math.min(25,(inst.nivel-1)*3)+(mina?Math.min(400,Math.floor(Math.max(0,nivel-10)*1.5)):0);
   inst.monstruos.push({id:`${inst.id}:${chunkKey}:m${n}`,tipo,...p,hp,hpMax:hp,fase:'reposo',tiempoFase:rand()*1.8,invulnerable:0,origen:{...p},objetivo:{...p},direccion:{x:0,z:1},retroceso:{x:0,z:0},patrulla:Math.floor(rand()*4),vivo:true});
  }
- const situacionTipo=d.espacial?'baliza':(inst.nivel%2?'campamento':'geoda');
- inst.situaciones.push({id:`${inst.id}:${chunkKey}:s`,...centros[1],x:centros[1].x+.5,z:centros[1].z+.5,tipo:situacionTipo,nombre:situacionTipo==='campamento'?'Campamento tranquilo':situacionTipo==='baliza'?'Baliza de oxígeno':'Geoda sellada',resuelta:false});
+ const situacionTipo=d.espacial?'baliza':mina&&chunkKey==='0,0'&&varianteMina(nivel,inst.semilla)==='cofre'&&!inst.cofreReclamado?'cofre':(inst.nivel%2?'campamento':'geoda');
+ inst.situaciones.push({id:`${inst.id}:${chunkKey}:s`,...centros[1],x:centros[1].x+.5,z:centros[1].z+.5,tipo:situacionTipo,nombre:situacionTipo==='campamento'?'Campamento tranquilo':situacionTipo==='baliza'?'Baliza de oxígeno':situacionTipo==='cofre'?'Cofre del piso '+nivel:'Geoda sellada',resuelta:false});
  inst.revision++;
 }
-export function generarInstancia(destinoId:string,semilla:number,nivel=1):InstanciaAventura {
+export function generarInstancia(destinoId:string,semilla:number,nivel=1,opciones:{cofreReclamado?:boolean}={}):InstanciaAventura {
  const d=destinoAventura(destinoId);if(!d)throw new Error('Destino de aventura desconocido.');
  nivel=clamp(Math.floor(nivel),1,d.niveles);
  const id=`${destinoId}:${nivel}`,s=semillaTexto(id,semilla),inst:InstanciaAventura={id,destinoId,nivel,semilla:s,revision:0,suelos:{},chunks:{},nodos:[],monstruos:[],botin:[],entradas:[],situaciones:[],inicio:{x:-11.5,z:-11.5}};
+ if(opciones.cofreReclamado)inst.cofreReclamado=true;
  generarChunk(inst,0,0,d);
- inst.entradas.push({id:`${id}:salida`,tipo:'retorno',etiqueta:'Regreso seguro',...inst.inicio});
- if(nivel<d.niveles)inst.entradas.push({id:`${id}:descenso`,tipo:'descenso',etiqueta:d.tipo==='mina'?'Bajar al siguiente piso':'Explorar la siguiente región',x:10.5,z:10.5});
+ // Minas más grandes mientras más hondo: se suman regiones conectadas
+ if(destinoId===MINA){const extra=nivel>100?3:nivel>50?2:nivel>15?1:0,orden:[number,number][]=[[1,0],[0,1],[1,1]];for(let k=0;k<extra;k++)generarChunk(inst,orden[k][0],orden[k][1],d);}
+ delete inst.cofreReclamado;
+ inst.entradas.push({id:`${id}:salida`,tipo:'retorno',etiqueta:destinoId===MINA?'Subir a la entrada':'Regreso seguro',...inst.inicio});
+ if(nivel<d.niveles&&(destinoId!==MINA||varianteMina(nivel,s)==='cofre'))inst.entradas.push({id:`${id}:descenso`,tipo:'descenso',etiqueta:d.tipo==='mina'?`Escalera al piso ${nivel+1}`:'Explorar la siguiente región',x:10.5,z:10.5});
  return inst;
 }
 export function ampliarAventura(e:EstadoAventura,cx:number,cz:number):ResultadoAventura {
@@ -145,26 +200,33 @@ export function ampliarAventura(e:EstadoAventura,cx:number,cz:number):ResultadoA
  if(![[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dz])=>i.chunks[`${cx+dx},${cz+dz}`]))return mal('Primero descubre una región contigua.');
  generarChunk(i,cx,cz,destinoAventura(i.destinoId)!);return bien('Nueva región conectada a tus senderos.');
 }
-export function entrarAventura(e:EstadoAventura,destinoId:string,jugador:PuntoAventura,acceso:AccesoAventura={}):ResultadoAventura {
+export function entrarAventura(e:EstadoAventura,destinoId:string,jugador:PuntoAventura,acceso:AccesoAventura={},piso=1):ResultadoAventura {
  if(e.destinoActual)return mal('Regresa a la granja antes de iniciar otra expedición.');
  const permitido=accesoAventura(destinoId,acceso);if(!permitido.ok)return permitido;
- const id=`${destinoId}:1`;e.instancias[id]??=generarInstancia(destinoId,e.semilla);
+ if(destinoId!==MINA)piso=1;else if(!pisosAscensor(e).includes(piso))return mal('Ese piso todavía no tiene parada de ascensor.');
+ const id=`${destinoId}:${piso}`;
+ if(destinoId===MINA){borrarPisosMina(e);e.instancias[id]=generarInstancia(MINA,semillaMina(e),piso,{cofreReclamado:e.cofresMina?.includes(piso)});}
+ else e.instancias[id]??=generarInstancia(destinoId,e.semilla);
  e.destinoActual=destinoId;e.instanciaActual=id;e.retorno={x:jugador.x,z:jugador.z};e.oxigeno=100;e.avisoOxigeno=0;e.invulnerable=2;e.enfriamientoGolpe=0;
- e.profundidad[destinoId]=Math.max(1,e.profundidad[destinoId]??0);if(!e.descubrimientos.includes(destinoId))e.descubrimientos.push(destinoId);
- return bien(`Llegaste a ${destinoAventura(destinoId)!.nombre}. La baliza te permite volver en cualquier momento.`,{posicion:{...e.instancias[id].inicio}});
+ e.profundidad[destinoId]=Math.max(piso,e.profundidad[destinoId]??0);if(!e.descubrimientos.includes(destinoId))e.descubrimientos.push(destinoId);
+ return bien(destinoId===MINA?`Minas de Celia · piso ${piso}. Busca la escalera bajo las rocas.`:`Llegaste a ${destinoAventura(destinoId)!.nombre}. La baliza te permite volver en cualquier momento.`,{posicion:{...e.instancias[id].inicio}});
 }
 /** Retorno de emergencia sin coste, pérdida de mochila ni requisitos: también funciona con un mapa corrupto. */
 export function salirAventura(e:EstadoAventura):ResultadoAventura {
- const posicion={...(e.retorno??{x:0,z:4})};e.destinoActual=null;e.instanciaActual=null;e.retorno=null;e.invulnerable=0;e.enfriamientoGolpe=0;
+ const posicion={...(e.retorno??{x:0,z:4})};if(e.destinoActual===MINA)borrarPisosMina(e);e.destinoActual=null;e.instanciaActual=null;e.retorno=null;e.invulnerable=0;e.enfriamientoGolpe=0;
  return bien('Regresaste con tus hallazgos a salvo.',{posicion});
 }
 export function descenderAventura(e:EstadoAventura,jugador:PuntoAventura):ResultadoAventura {
  const i=instanciaAventura(e);if(!i)return mal('No estás en una expedición.');
  const entrada=i.entradas.find(p=>p.tipo==='descenso');if(!entrada)return mal('Has llegado a la última región de este destino.');
  if(distancia(jugador,entrada)>2)return mal('Acércate a la baliza del siguiente piso.');
- const nivel=i.nivel+1,id=`${i.destinoId}:${nivel}`;e.instancias[id]??=generarInstancia(i.destinoId,e.semilla,nivel);e.instanciaActual=id;e.invulnerable=2;
+ const nivel=i.nivel+1,id=`${i.destinoId}:${nivel}`;
+ if(i.destinoId===MINA){delete e.instancias[i.id];e.instancias[id]=generarInstancia(MINA,semillaMina(e),nivel,{cofreReclamado:e.cofresMina?.includes(nivel)});if(nivel%5===0&&nivel<=FONDO_MINA&&!(e.ascensor??[]).includes(nivel))e.ascensor=[...(e.ascensor??[]),nivel].sort((a,b)=>a-b);}
+ else e.instancias[id]??=generarInstancia(i.destinoId,e.semilla,nivel);
+ e.instanciaActual=id;e.invulnerable=2;
  e.profundidad[i.destinoId]=Math.max(nivel,e.profundidad[i.destinoId]??0);
- return bien(`Región ${nivel} descubierta.`,{posicion:{...e.instancias[id].inicio}});
+ const parada=i.destinoId===MINA&&nivel%5===0&&nivel<=FONDO_MINA?' Nueva parada de ascensor.':i.destinoId===MINA&&nivel>FONDO_MINA&&nivel%25===0&&!(e.ascensor??[]).includes(nivel)?' Aquí puedes construir una estación de ascensor.':'';
+ return bien(i.destinoId===MINA?`Piso ${nivel}.${parada}`:`Región ${nivel} descubierta.`,{posicion:{...e.instancias[id].inicio}});
 }
 export function esTransitableAventura(e:EstadoAventura,x:number,z:number,radio=.28){
  const i=instanciaAventura(e);if(!i||!Number.isFinite(x)||!Number.isFinite(z))return false;
@@ -213,7 +275,7 @@ export function stepAventura(e:EstadoAventura,dt:number,jugador:JugadorAventura,
    // Attack direction is locked during the visible wind-up, so stepping sideways really dodges it.
    const v=orientacion(m,jugador),frente=v.x*m.direccion.x+v.z*m.direccion.z;
    if(e.invulnerable<=0&&dist<=def.alcance+.35&&frente>.1&&lineaVision(i,m,jugador)&&!cercaSalida){
-    const dano=Math.max(1,def.dano-Math.max(0,jugador.defensa??0));r.dano+=dano;e.invulnerable=.95;r.empuje={x:v.x*.5,z:v.z*.5};
+    const fuerza=i.destinoId===MINA?1+Math.min(3,(i.nivel-1)/60):1,dano=Math.max(1,Math.round(def.dano*fuerza)-Math.max(0,jugador.defensa??0));r.dano+=dano;e.invulnerable=.95;r.empuje={x:v.x*.5,z:v.z*.5};
    }
    if(m.tiempoFase<=0)fase(m,'recuperacion',def.recuperacion);
   }else if(m.fase==='recuperacion'&&m.tiempoFase<=0)fase(m,ve&&!cercaSalida?'persecucion':'reposo',ve?3:1.5);
@@ -228,7 +290,7 @@ export function golpearMonstruo(e:EstadoAventura,id:string,jugador:PuntoAventura
  if(distancia(jugador,m)>2.1||!lineaVision(i,jugador,m))return mal('Acércate a la criatura por un camino despejado.');
  const nivel=clamp(Math.floor(nivelEspada),0,6),dano=Math.max(1,10+nivel*7+clamp(danoExtra,0,50)-MONSTRUOS[m.tipo].defensa);
  m.hp=Math.max(0,m.hp-dano);m.invulnerable=.28;e.enfriamientoGolpe=.42;m.retroceso=orientacion(jugador,m);m.retroceso.x*=5;m.retroceso.z*=5;
- if(m.hp===0){m.vivo=false;e.derrotados++;soltar(e,i,m,MONSTRUOS[m.tipo].botin,2+Math.min(3,Math.floor(i.nivel/3)));}
+ if(m.hp===0){m.vivo=false;e.derrotados++;soltar(e,i,m,MONSTRUOS[m.tipo].botin,Math.min(20,2+Math.min(3,Math.floor(i.nivel/3))+(i.destinoId===MINA?Math.floor(i.nivel/40):0)));revelarEscalera(e,i,m,.12);}
  else fase(m,'recuperacion',Math.max(.55,MONSTRUOS[m.tipo].recuperacion*.55));
  return bien(m.vivo?`${MONSTRUOS[m.tipo].nombre}: ${m.hp} / ${m.hpMax}`:'La criatura dejó recursos para recoger.',{dano,destruido:!m.vivo});
 }
@@ -237,7 +299,7 @@ export function golpearNodo(e:EstadoAventura,id:string,jugador:PuntoAventura,niv
  if(e.enfriamientoGolpe>0)return mal('Espera a terminar el golpe.');if(distancia(jugador,n)>2.3||!lineaVision(i,jugador,n))return mal('Acércate a la veta por un camino despejado.');
  const def=MINERALES[n.mineral],nivel=clamp(Math.floor(nivelPico),0,6);if(nivel<def.pico)return mal(`${def.nombre} necesita un pico de nivel ${def.pico}.`);
  const dano=6+nivel*5;n.hp=Math.max(0,n.hp-dano);e.enfriamientoGolpe=.36;
- if(n.hp===0){n.agotado=true;e.mineralesExtraidos++;soltar(e,i,n,n.mineral,n.cantidad);}
+ if(n.hp===0){n.agotado=true;e.mineralesExtraidos++;soltar(e,i,n,n.mineral,n.cantidad);const quedan=i.nodos.filter(o=>!o.agotado).length;revelarEscalera(e,i,n,quedan===0?1:.05+1.2/(quedan+1));}
  return bien(n.agotado?`${def.nombre} listo para recoger.`:`${def.nombre}: ${n.hp} / ${n.hpMax}`,{dano,destruido:n.agotado});
 }
 /** El motor añade este resultado al inventario de manera transaccional; si la mochila está llena, revierte su copia. */
@@ -252,6 +314,7 @@ export function resolverSituacion(e:EstadoAventura,id:string,jugador:PuntoAventu
  s.resuelta=true;i.revision++;
  if(s.tipo==='campamento')return bien('Descansas junto a la luz del campamento.',{vida:25,energia:25});
  if(s.tipo==='baliza'){e.oxigeno=Math.min(100,e.oxigeno+45);e.avisoOxigeno=e.oxigeno>25?0:e.avisoOxigeno;return bien('La baliza recuperó 45 puntos de oxígeno.',{oxigeno:45});}
+ if(s.tipo==='cofre'){const lista=mineralesPorProfundidad(i.destinoId,i.nivel);for(const m of lista.slice(-3))soltar(e,i,s,m,Math.min(20,4+Math.floor(i.nivel/10)));e.cofresMina=[...(e.cofresMina??[]),i.nivel].sort((a,b)=>a-b);return bien(`¡Cofre del piso ${i.nivel}! Recoge lo que trae.`,{cofre:i.nivel});}
  const mineral=mineralesPorProfundidad(i.destinoId,i.nivel).at(-1)!;soltar(e,i,s,mineral,3);return bien('La geoda guardaba tres minerales. Recógelos del suelo.');
 }
 
@@ -267,6 +330,8 @@ export function errorAventura(raw:unknown):string|null {
  if(!registro(raw)||raw.version!==1)return 'Formato de expediciones no compatible.';
  const r=raw;
  if(!entero(r.semilla,0,0xffffffff))return 'Semilla de expediciones inválida.';
+ for(const campo of ['ascensor','cofresMina'])if(r[campo]!==undefined&&(!Array.isArray(r[campo])||r[campo].length>5000||new Set(r[campo]).size!==r[campo].length||r[campo].some((n:unknown)=>!entero(n,1,100000))))return 'Paradas o cofres de la mina inválidos.';
+ if(r.visitasMina!==undefined&&!entero(r.visitasMina))return 'Visitas a la mina inválidas.';
  for(const k of ['secuencia','derrotados','mineralesExtraidos'])if(!entero(r[k]))return `Contador de expediciones inválido: ${k}.`;
  if(!numero(r.oxigeno,0,100)||!numero(r.invulnerable,0,2)||!numero(r.enfriamientoGolpe,0,1)||![0,1,2].includes(r.avisoOxigeno))return 'Reloj de combate u oxígeno inválido.';
  if(!Array.isArray(r.descubrimientos)||r.descubrimientos.length>AVENTURAS.length||new Set(r.descubrimientos).size!==r.descubrimientos.length||r.descubrimientos.some((id:unknown)=>typeof id!=='string'||!destinoAventura(id)))return 'Destinos descubiertos inválidos.';
@@ -293,8 +358,8 @@ export function errorAventura(raw:unknown):string|null {
   for(const n of i.nodos)if(!Object.hasOwn(MINERALES,n.mineral)||!numero(n.hpMax,.001,1000)||!numero(n.hp,0,n.hpMax)||!entero(n.cantidad,1,20)||typeof n.agotado!=='boolean'||n.agotado!==(n.hp===0))return `Veta inválida: ${id}.`;
   for(const m of i.monstruos)if(!Object.hasOwn(MONSTRUOS,m.tipo)||!numero(m.hpMax,.001,1000)||!numero(m.hp,0,m.hpMax)||typeof m.vivo!=='boolean'||m.vivo!==(m.hp>0)||!['reposo','patrulla','alerta','persecucion','anticipacion','ataque','recuperacion'].includes(m.fase)||!numero(m.tiempoFase,-.3,10)||!numero(m.invulnerable,0,1)||!punto(m.origen)||!punto(m.objetivo)||!punto(m.direccion)||!punto(m.retroceso)||!entero(m.patrulla,0,3))return `Criatura inválida: ${id}.`;
   for(const b of i.botin){if((!Object.hasOwn(MINERALES,b.articulo)&&b.articulo!=='fibra')||!entero(b.cantidad,1,99)||idsBotin.has(b.id))return `Botín inválido o duplicado: ${id}.`;idsBotin.add(b.id);const sec=/^botin_aventura_(\d+)$/.exec(b.id);if(sec&&Number(sec[1])>r.secuencia)return 'Secuencia de hallazgos inválida.';}
-  if(i.entradas.filter((p:any)=>p.tipo==='retorno').length!==1||i.entradas.filter((p:any)=>p.tipo==='descenso').length!==(i.nivel<d.niveles?1:0)||i.entradas.some((p:any)=>!['retorno','descenso'].includes(p.tipo)||!texto(p.etiqueta)))return `Balizas inválidas: ${id}.`;
-  for(const s of i.situaciones)if(!['campamento','geoda','baliza'].includes(s.tipo)||typeof s.resuelta!=='boolean'||!texto(s.nombre))return `Hallazgo inválido: ${id}.`;
+  if(i.entradas.filter((p:any)=>p.tipo==='retorno').length!==1||(d.id===MINA?i.entradas.filter((p:any)=>p.tipo==='descenso').length>1:i.entradas.filter((p:any)=>p.tipo==='descenso').length!==(i.nivel<d.niveles?1:0))||i.entradas.some((p:any)=>!['retorno','descenso'].includes(p.tipo)||!texto(p.etiqueta)))return `Balizas inválidas: ${id}.`;
+  for(const s of i.situaciones)if(!['campamento','geoda','baliza','cofre'].includes(s.tipo)||typeof s.resuelta!=='boolean'||!texto(s.nombre))return `Hallazgo inválido: ${id}.`;
   if(!r.descubrimientos.includes(d.id)||!entero(r.profundidad[d.id],i.nivel,d.niveles))return `Región sin progreso registrado: ${id}.`;
  }
  if(r.destinoActual===null){if(r.instanciaActual!==null||r.retorno!==null)return 'Retorno de expedición inconsistente.';}
