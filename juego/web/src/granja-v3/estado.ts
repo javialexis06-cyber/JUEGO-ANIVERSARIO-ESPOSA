@@ -1,3 +1,4 @@
+import type { EstadoFestivales, AccionFestival } from './festivales';
 import type { EstadoCorreo, AccionCorreo } from './correo';
 import type { EstadoVidaSocial, AccionSocial } from './vida-social';
 import type { EstadoEncargos, AccionEncargo } from './encargos';
@@ -29,7 +30,7 @@ export interface Obstaculo {id:string;tipo:'arbol'|'roca'|'maleza'|'ruina';x:num
 export interface Drop {id:string;articulo:string;cantidad:number;x:number;z:number;zona:Zona;nivelMina?:number}
 export interface Parcela {campo?:CampoCultivo;x:number;z:number;cultivo:string|null;cuidado:CropCare|null}
 export interface EstadoGranja extends EstadoBarra {
- correo:EstadoCorreo;vidaSocial:EstadoVidaSocial;encargos:EstadoEncargos;pueblo:EstadoPueblo;obras:EstadoObras;compania:EstadoCompania;ganaderia:EstadoGanaderia;habilidades:EstadoHabilidades;jornada:Jornada;tiempo:EstadoTiempo;envios:EstadoEnvios;frutales:Frutal[];invernaderos:Invernadero[];
+ festivales:EstadoFestivales;correo:EstadoCorreo;vidaSocial:EstadoVidaSocial;encargos:EstadoEncargos;pueblo:EstadoPueblo;obras:EstadoObras;compania:EstadoCompania;ganaderia:EstadoGanaderia;habilidades:EstadoHabilidades;jornada:Jornada;tiempo:EstadoTiempo;envios:EstadoEnvios;frutales:Frutal[];invernaderos:Invernadero[];
  paisaje?:PaisajeGranja;posicionExterior?:{zona:Zona;x:number;z:number};
  produccion:EstadoProduccion;aventura:EstadoAventura;posicionAventura:PuntoAventura|null;
  version:5;revision:number;ultimoTiempo:number;inicioTiempo:number;monedas:number;inventario:Record<string,number>;casillasInventario:(Pila|null)[];almacenMigracion:Record<string,number>;nivelesHerramienta:Record<string,number>;mejoraHerramienta:{herramienta:Herramienta;nivel:number;hasta:number}|null;servicio:Servicio|null;drops:Drop[];ultimoGolpeAt:number;herramienta:Herramienta;personaje:'ella'|'el';sectorIds:number[];
@@ -37,6 +38,7 @@ export interface EstadoGranja extends EstadoBarra {
  zona:Zona;interior:string|null;vida:number;energia:number;enemigo:number;nivelMina:number;ayudante:{desde:number;hasta:number;ultimoTurno:number}|null;secuencia:number;
 }
 export type Accion =
+ |{tipo:'festival';accion:AccionFestival;xJugador:number;zJugador:number}
  |{tipo:'correo';accion:AccionCorreo;xJugador:number;zJugador:number}
  |{tipo:'entrar_dormitorio';npcId:string;xJugador:number;zJugador:number}
  |{tipo:'inspeccionar_mueble';mueble:'escritorio'|'biblioteca';xJugador:number;zJugador:number}

@@ -1,8 +1,21 @@
 # Plan del motor completo: capacidades, variedad y aceptación
 
+## Festivales básicos integrados
+
+Sobre el mismo motor y V5 se conectan cuatro celebraciones originales del Pueblo del Sol, una por estación:
+calendario e invitación nocturna anual, acceso cercano por horario, seis participantes por evento con rutas y
+cierres comerciales, actividad de decisiones/memoria o muestra real de cosecha, premio anual único, recuerdo,
+pausa del calendario y retorno con hora coherente. Recarga conserva el paso y el guardado fallido revierte la
+acción. La muestra de otoño conserva su casilla/calidad y solo se consume al cobrar.
+
+[FESTIVALES-INTEGRACION.md](FESTIVALES-INTEGRACION.md) documenta reglas, API y límites. Se usa interfaz sencilla;
+arte y presentación final siguen a cargo de Claude. J06 pasa a parcial con cuatro festivales jugables del primer
+pueblo; faltan variedad regional, concursos más amplios y los eventos de mundo con cola/prioridad de J07.
+Siguiente bloque del motor: rotación diaria/semanal y encargos especiales, conservando los pedidos ya activos.
+
 ## Correo integrado
 
-Actualización del 10 de octubre de 2026: buzón físico junto a la cabaña, historial en el Diario, 13 cartas por jornadas, actividades y estaciones, adjuntos únicos y persistencia con reversión si falla almacenamiento. Las cartas nuevas llegan exclusivamente al dormir. [CORREO-INTEGRACION.md](CORREO-INTEGRACION.md) documenta reglas, catálogo, API y límites. Los festivales jugables, cartas ramificadas y recetas por correspondencia siguen pendientes.
+Actualización del 10 de octubre de 2026: buzón físico junto a la cabaña, historial en el Diario, 13 cartas por jornadas, actividades y estaciones, adjuntos únicos y persistencia con reversión si falla almacenamiento. Las cartas nuevas llegan exclusivamente al dormir. [CORREO-INTEGRACION.md](CORREO-INTEGRACION.md) documenta reglas, catálogo, API y límites. Los cuatro festivales básicos están integrados; siguen pendientes festivales regionales, cartas ramificadas y recetas por correspondencia.
 
 
 ## Dormitorios privados integrados
@@ -17,7 +30,7 @@ El 10 de octubre de 2026 se conectan 17 viviendas para los 24 vecinos: siete int
 
 ## Vida social integrada el 10 de octubre de 2026
 
-Calendario de 28 días y cumpleaños para los 24 habitantes, bonus anual de regalo y ocho encuentros originales con requisitos, dos respuestas, amistad y recuerdo persistidos. Guardado de cada paso, recarga del diálogo y rollback si falla almacenamiento. Se conserva el motor y la V5. [VIDA-SOCIAL-INTEGRACION.md](VIDA-SOCIAL-INTEGRACION.md) contiene requisitos, API, pruebas y límites. Los dormitorios privados básicos ya están integrados; los festivales jugables siguen pendientes; los 17 interiores residenciales básicos ya están conectados.
+Calendario de 28 días y cumpleaños para los 24 habitantes, bonus anual de regalo y ocho encuentros originales con requisitos, dos respuestas, amistad y recuerdo persistidos. Guardado de cada paso, recarga del diálogo y rollback si falla almacenamiento. Se conserva el motor y la V5. [VIDA-SOCIAL-INTEGRACION.md](VIDA-SOCIAL-INTEGRACION.md) contiene requisitos, API, pruebas y límites. Los dormitorios privados básicos ya están integrados; los cuatro festivales básicos ya están integrados; quedan pendientes sus ampliaciones regionales; los 17 interiores residenciales básicos ya están conectados.
 
 
 Consulta de referencias: **7 de octubre de 2026**. Línea base examinada: `src/granja-v3`, estado persistido versión 4, antes de las ampliaciones simultáneas de esta sesión. Este documento es un inventario de trabajo y una auditoría por lectura de código. **No certifica paridad, campaña completa ni funciones verificadas en ejecución.** Los cambios posteriores requieren actualizar cada estado con evidencia.
@@ -32,7 +45,7 @@ Sobre granja-v3 y guardado V5 se integran doce pedidos aceptables, hasta cinco a
 
 [ENCARGOS-INTEGRACION.md](ENCARGOS-INTEGRACION.md) describe catálogo, API, fechas, reservas y límites. 21 casos específicos y regresión de 23 suites (512 comprobaciones contando la última ampliación), ocho recorridos de navegador y compilación completa correctos. La revisión móvil usa 412 × 915; los recorridos preparan escenarios y no certifican rendimiento físico ni una campaña desde cero.
 
-El sistema de misiones sigue parcial: faltan rotación diaria/semanal, encargos especiales, cartas ramificadas, más elecciones y escenas, colecciones y campañas de nuevos mundos. Los doce pedidos no implementan los 142 ejemplos del reparto planificado ni alteran las misiones antiguas o sus tokens de casa. El calendario, ocho encuentros, viviendas, dormitorios y correo básico ya se integraron. El siguiente bloque previsto es la participación en eventos comunitarios.
+El sistema de misiones sigue parcial: faltan rotación diaria/semanal, encargos especiales, cartas ramificadas, más elecciones y escenas, colecciones y campañas de nuevos mundos. Los doce pedidos no implementan los 142 ejemplos del reparto planificado ni alteran las misiones antiguas o sus tokens de casa. El calendario, ocho encuentros, viviendas, dormitorios y correo básico ya se integraron. Los cuatro festivales básicos del primer pueblo ya están integrados. El siguiente bloque previsto es la rotación diaria/semanal y los encargos especiales.
 
 ## Reparto y pueblos planificados el 10 de octubre de 2026
 
@@ -347,7 +360,7 @@ Referencias: [Ciclo diario](https://es.stardewvalleywiki.com/Ciclo_Diario), [Cli
 | J03 | Energía, salud y descanso | Parcial | Acciones consumen según reglas, comida/descanso recuperan; agotamiento, desmayo y rescate tienen consecuencias y vuelta segura. |
 | J04 | Estaciones visibles | Parcial | Suelo, vegetación, iluminación, oferta y actividades reflejan estación sin reemplazar mecánica por un texto del calendario. |
 | J05 | Meteorología | Pendiente | Día soleado/lluvioso/tormenta/nieve y estados propios, pronóstico persistido, efectos sobre pesca/rutinas/riego/visibilidad; recargar no vuelve a sortear. |
-| J06 | Festivales | Pendiente | Calendario, invitación, área preparada, NPC, actividad jugable y recompensa propia; terminar devuelve al mundo con hora coherente. |
+| J06 | Festivales | Parcial · cuatro celebraciones del primer pueblo, invitación anual, muestra real, rutinas y premio único | Calendario, invitación, área preparada, NPC, actividad jugable y recompensa propia; terminar devuelve al mundo con hora coherente. |
 | J07 | Eventos de mundo | Pendiente | Disparadores por fecha/progreso/lugar/clima, cola y prioridad; escena que se salta o interrumpe puede recuperarse sin aplicar efectos dos veces. |
 | J08 | Menús y pausa | Parcial | Definir qué pausa el calendario y combate; el cuidado real continúa; abrir mochila no permite un exploit de ataques invisibles. |
 | J09 | Actualización ausente | Parcial | Ausencia corta/larga conserva cosechas maduras y calcula procesos con límites; mismas reglas online/offline sin bucles por cada milisegundo. |

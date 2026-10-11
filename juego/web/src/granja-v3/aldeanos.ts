@@ -1,3 +1,4 @@
+import { festivalHoy, puntoParticipante, INICIO_FESTIVAL, FIN_FESTIVAL } from './festivales-datos';
 import { dormitorioDef, horaDormitorio } from './dormitorios';
 import { viviendaDe, viviendaInterior, posicionResidente, NPCS_PUEBLO, EDIFICIOS_PUEBLO, librePueblo, type ServicioPueblo } from './pueblo-datos';
 import { obtenerObjeto } from './objetos';
@@ -43,9 +44,9 @@ export const aldeanoDef=(id:string)=>NPCS_PUEBLO.find(n=>n.id===id);
 export const horaPueblo=(minutos:number)=>`${String(Math.floor(minutos/60)%24).padStart(2,'0')}:${String(Math.floor(minutos%60)).padStart(2,'0')}`;
 export function crearPuebloEstado():EstadoPueblo{return {version:1,relaciones:NPCS_PUEBLO.map(n=>({id:n.id,conocido:false,amistad:0,ultimaCharla:null,semanaRegalos:0,diasRegalos:[],gustosDescubiertos:{}}))};}
 export function atencionServicio(servicio:ServicioPueblo,dia:number,minutos:number){
- const n=NPCS_PUEBLO.find(n=>n.oficio===servicio)!;const h=VIDA_PUEBLO[n.id],descanso=dia%7===h.descanso,abierto=!descanso&&minutos>=h.abre&&minutos<h.cierra;
+ const n=NPCS_PUEBLO.find(n=>n.oficio===servicio)!;const h=VIDA_PUEBLO[n.id],descanso=dia%7===h.descanso,festival=festivalHoy(dia),enFestival=!!festival?.participantes.includes(n.id)&&minutos>=INICIO_FESTIVAL-30&&minutos<FIN_FESTIVAL+30,abierto=!descanso&&!enFestival&&minutos>=h.abre&&minutos<h.cierra;
  const horario=`${horaPueblo(h.abre)}–${horaPueblo(h.cierra)}`;
- return {npc:n.id,abierto,descanso,horario,mensaje:abierto?'Abierto':descanso?`Hoy es día de descanso. Horario habitual: ${horario}.`:`Cerrado. Horario: ${horario}.`};
+ return {npc:n.id,abierto,descanso,horario,mensaje:enFestival?'El responsable participa en '+festival!.nombre+'. Vuelve después de las 18:30 o el próximo día de atención.':abierto?'Abierto':descanso?`Hoy es día de descanso. Horario habitual: ${horario}.`:`Cerrado. Horario: ${horario}.`};
 }
 
 // Rutas de medio metro sobre las mismas colisiones que usa el jugador. Se calculan una vez;
@@ -76,6 +77,13 @@ export function ubicacionAldeano(id:string,dia:number,minutos:number,resguardado
  const n=aldeanoDef(id);if(!n)return null;const h=VIDA_PUEBLO[n.id],ed=EDIFICIOS_PUEBLO.find(e=>e.id===n.edificio)!,puerta=viviendaDe(id)?.entrada??ed.entrada,trabajo={x:n.x,z:n.z},plaza=h.plaza;
  const quieto=(p:PuntoPueblo,actividad:UbicacionAldeano['actividad'],lugar:string,visible=true):UbicacionAldeano=>({...p,actividad,lugar,visible,andando:false,direccion:0,paso:0});
  const hogar=()=>quieto(puerta,'hogar','Dentro de '+(viviendaDe(id)?.nombre??ed.nombre),false);
+ const festival=festivalHoy(dia),destino=festival&&puntoParticipante(festival,id);
+ if(destino&&minutos>=INICIO_FESTIVAL-30&&minutos<FIN_FESTIVAL+30){
+  const origen=ubicacionAldeano(id,dia,INICIO_FESTIVAL-31,resguardado)!;
+  if(minutos<INICIO_FESTIVAL)return trayecto(origen,destino,(minutos-INICIO_FESTIVAL+30)/30,'Camino a '+festival!.nombre);
+  if(minutos<FIN_FESTIVAL)return quieto(destino,'plaza',festival!.nombre);
+  const regreso=ubicacionAldeano(id,dia,FIN_FESTIVAL+30,resguardado)!;return trayecto(destino,regreso,(minutos-FIN_FESTIVAL)/30,'Regresando del festival');
+ }
  if(dia%7===h.descanso){if(resguardado||minutos<480||minutos>=1110)return hogar();if(minutos<510)return trayecto(puerta,plaza,(minutos-480)/30,'Camino a la plaza');if(minutos<1080)return quieto(plaza,'plaza','Descansando en el pueblo');return trayecto(plaza,puerta,(minutos-1080)/30,'Regresando a '+ed.nombre);}
  if(minutos<h.abre-90)return hogar();
  if(resguardado){if(minutos<h.abre-30)return hogar();if(minutos<h.abre)return trayecto(puerta,trabajo,(minutos-h.abre+30)/30,'Camino a '+ed.nombre);if(minutos<h.cierra)return quieto(trabajo,'oficio',h.labor??ed.nombre);if(minutos<h.cierra+30)return trayecto(trabajo,puerta,(minutos-h.cierra)/30,'Buscando refugio');return hogar();}

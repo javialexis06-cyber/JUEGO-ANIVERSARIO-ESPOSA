@@ -27,9 +27,16 @@ Destinos: S21 FE y S24 Ultra. La granja puede probarse con teclado y mouse y con
 
 ## Estado real e historia
 
+### Contrato del bloque de festivales (motor)
+
+Se integran cuatro celebraciones estacionales en la plaza existente del Pueblo del Sol. El motor controla fecha,
+invitaciones, acceso cercano, participantes y sus rutas, actividad, consumo de una muestra de cosecha, premio anual,
+pausa del calendario, retorno y guardado V5. La interfaz usa paneles sencillos del menú actual. El arte, modelos,
+decoración, animación y presentación final siguen a cargo del frente visual; no se crea otro escenario ni motor.
+
 El catálogo integrado contiene 63 cultivos, ocho frutales, doce familias productivas y linajes fantásticos, 101 recetas, 416 objetos, 24 vecinos del primer pueblo, 17 viviendas y 24 dormitorios básicos. Hay calendario de 28 días, herramientas y habilidades, encargos, ocho encuentros sociales, correo, construcción y redes de producción. Consultar los documentos del módulo para reglas, API y límites de cada sistema.
 
-La planificación propone 147 identidades en 19 núcleos: no son 147 NPC jugables ni 19 pueblos terminados. Los mundos de aventura tienen una primera base; faltan variedad regional, campaña, eventos comunitarios y muchas funciones de la auditoría. Los dormitorios comparten distribución. El siguiente bloque del motor previsto son los eventos comunitarios/festivales.
+La planificación propone 147 identidades en 19 núcleos: no son 147 NPC jugables ni 19 pueblos terminados. Los mundos de aventura tienen una primera base; faltan variedad regional, campaña, eventos comunitarios y muchas funciones de la auditoría. Los dormitorios comparten distribución. Cuatro festivales básicos del primer pueblo ya conectan calendario, invitaciones, seis participantes por evento, actividad, recompensa anual y guardado. Siguiente bloque: rotación diaria/semanal y encargos especiales.
 
 El lore recibido está en `docs/mitologia.md`. La planificación específica está en `PLAN-PUEBLOS-MUNDOS.md`, `REPARTO-COMPLETO.md` y `REPARTO-MUNDOS.json`, dentro del módulo. Distinguir canon de nombres/episodios propuestos. Nox no es un refugio de almas inocentes ni un ciclo de reencarnación; no rehacer el canon por una necesidad de arte. La casa, la granja y Sangre y Ceniza se coordinan; los minijuegos casuales permanecen independientes. No declarar equivalencia completa con Stardew/Expanded/Automate.
 
