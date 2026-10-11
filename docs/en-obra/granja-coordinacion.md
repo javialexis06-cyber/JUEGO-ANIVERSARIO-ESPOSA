@@ -346,3 +346,15 @@ de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/bl
 - La cueva de la mina conserva sus paredes de roca y cambia lo hecho por mano: `entibado` (con farol), `marco_tunel`
   de la salida, la vía con su vagoneta y los racimos de `cristales`, teñidos y brillantes con el color de cada piso.
 - Los árboles que se talan (obstáculos) siguen con sus modelos de la biblioteca.
+
+### Máquinas de producción en Blender (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_maquinas.py` → `public/modelos/granja_maquinas.glb` (0,4 MB): la parte fija de cada máquina
+  con las medidas de `figura()` (escenas-produccion.ts): cofres de cobre y de hierro, los tres portales, la nave
+  exploradora, aspersores, recuperadoras (cobre, hierro y astral), alto horno, trituradora, taladro de vapor,
+  ensambladora, horno, fundidora y forja, banco de trabajo, cocina y telar, fermentador y prensa, molino artesanal y
+  `maquina` (la genérica para lo que no tiene figura propia).
+- `figura()` arma todo como antes y, cuando carga el kit, cambia solo el grupo `fijo` por la pieza de
+  `claveMaquina(articulo)`. Lo que se mueve (rotores, rodillos, broca, brazo, engranajes, manivela, fuelle, el brillo y
+  las estrellas del portal) y el piloto siguen siendo del juego, así que la animación y los estados no cambian. Para una
+  máquina nueva: su figura en `figura()`, su pieza `m_<articulo>` en granja_maquinas.py y su clave en `claveMaquina`.
