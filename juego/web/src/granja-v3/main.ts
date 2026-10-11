@@ -58,6 +58,10 @@ import { iniciarHud, renderAjustes, calidadInicial } from './hud';
 import { usarVecinosPeluche } from './pueblo';
 import { vecinoPeluche, animarVecino, sacarVecinos } from './vecinos3d';
 usarVecinosPeluche(vecinoPeluche,animarVecino,sacarVecinos);
+import { usarCargadorMuebles, precargarMuebles } from './cuartos';
+import { cargar as cargarModelo } from '../recursos';
+// Muebles de los interiores (kit de Blender): se cargan en segundo plano para que la cabaña y los locales abran completos
+usarCargadorMuebles(cargarModelo);setTimeout(()=>void precargarMuebles(),4000);
 
 let interiorSilenciado:string|null=null;
 const SAVE=CLAVE_PARTIDA, $=(id:string)=>document.getElementById(id)!, escape=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));

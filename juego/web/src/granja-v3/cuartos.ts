@@ -1,12 +1,16 @@
 import * as THREE from 'three';
-import { cargar } from '../recursos';
 
 /** Interiores de la granja y del pueblo hechos con el kit de muebles de Blender (personajes/blender/granja_muebles.py,
  * un solo GLB con un vacío «m_<clave>» por pieza). El kit se carga una vez; cada mueble es una copia que comparte
  * geometría y materiales (marcados «compartido» para que liberar() no los destruya). */
 let kit:Promise<Map<string,THREE.Object3D>>|null=null;
+/** El cargador de modelos lo pone main.ts (como los peluches de pueblo.ts): las pruebas del motor corren estos módulos
+ * sin él y los cuartos quedan con su base, sin muebles. */
+let cargarModelo:((archivo:string)=>Promise<THREE.Object3D>)|null=null;
+export function usarCargadorMuebles(cargar:(archivo:string)=>Promise<THREE.Object3D>){cargarModelo=cargar;}
 function cargarKit(){
- if(!kit){kit=cargar('granja_muebles.glb').then(g=>{const m=new Map<string,THREE.Object3D>();g.traverse(o=>{const x=o as THREE.Mesh;if(!x.isMesh)return;x.geometry.userData.compartido=true;for(const mm of ([] as THREE.Material[]).concat(x.material))mm.userData.compartido=true;x.castShadow=true;x.receiveShadow=true;});for(const c of g.children)m.set(c.name.replace(/^m_/,''),c);return m;});kit.catch(()=>{kit=null;});}
+ if(!cargarModelo)return Promise.reject(new Error('sin cargador de modelos'));
+ if(!kit){kit=cargarModelo('granja_muebles.glb').then(g=>{const m=new Map<string,THREE.Object3D>();g.traverse(o=>{const x=o as THREE.Mesh;if(!x.isMesh)return;x.geometry.userData.compartido=true;for(const mm of ([] as THREE.Material[]).concat(x.material))mm.userData.compartido=true;x.castShadow=true;x.receiveShadow=true;});for(const c of g.children)m.set(c.name.replace(/^m_/,''),c);return m;});kit.catch(()=>{kit=null;});}
  return kit;
 }
 export function precargarMuebles(){return cargarKit().then(()=>undefined,()=>undefined);}
@@ -41,14 +45,14 @@ export function mosaico(g:THREE.Group,clave:string,lugares:[number,number,number
 const PI2=Math.PI/2;
 /** Cascarón de un cuarto: piso de tablas, pared del fondo y pared izquierda con zócalo y colgadura, postes en las
  * esquinas y marco de la puerta al frente. El cuarto va de -ancho/2 a ancho/2 en x y de -fondo/2 a fondo/2 en z. */
-export function cascaron(ancho:number,fondo:number,papel='#E8D5B0',conPuerta=true){
+export function cascaron(ancho:number,fondo:number,papel='#E8D5B0',conPuerta=true,nombreBase='base-cuarto'){
  const g=new THREE.Group();g.name='cascaron';const x0=-ancho/2,z0=-fondo/2;
  const piso:[number,number,number,number][]=[];for(let i=0;i<Math.ceil(ancho);i++)for(let j=0;j<Math.ceil(fondo);j++)piso.push([x0+.5+i,0,z0+.5+j,0]);
  mosaico(g,'piso_modulo',piso);
  const pared:[number,number,number,number][]=[];for(let i=0;i<Math.ceil(ancho);i++)pared.push([x0+.5+i,0,z0,0]);for(let j=0;j<Math.ceil(fondo);j++)pared.push([x0,0,z0+.5+j,PI2]);
  mosaico(g,'pared_modulo',pared,{'papel pared':papel,'raya papel':new THREE.Color(papel).offsetHSL(0,-.05,.06).getStyle()});
  // Base oscura bajo el piso (lo que se alcanza a ver por los bordes mientras carga)
- const base=new THREE.Mesh(new THREE.BoxGeometry(ancho+.4,.2,fondo+.4),new THREE.MeshStandardMaterial({color:'#6b4a32',roughness:.9}));base.position.set(0,-.17,0);base.receiveShadow=true;g.add(base);
+ const base=new THREE.Mesh(new THREE.BoxGeometry(ancho+.4,.2,fondo+.4),new THREE.MeshStandardMaterial({color:'#6b4a32',roughness:.9}));base.position.set(0,-.17,0);base.receiveShadow=true;base.name=nombreBase;base.geometry.computeBoundingSphere();g.add(base);
  const p:Puesto[]=[['poste',x0,z0]];if(conPuerta)p.push(['marco_puerta',0,-z0-.15,0,1]);amueblar(g,p);
  return g;
 }
@@ -89,11 +93,14 @@ export function interiorLocal(servicio:string):THREE.Group{
 // ------------------------------------------------------------------ viviendas del pueblo (12 × 10)
 
 export function interiorVivienda(colores:string[],tema:string):THREE.Group{
- const color=colores[0]??'#E4566B';const g=cascaron(12,10,new THREE.Color(color).lerp(new THREE.Color('#F3E6CA'),.75).getStyle());g.name='interior-vivienda-kit';
+ const color=colores[0]??'#E4566B';// La base lleva el nombre que revisan las pruebas del motor (probar-viviendas): es lo que existe sin el modelo
+ const g=cascaron(12,10,new THREE.Color(color).lerp(new THREE.Color('#F3E6CA'),.75).getStyle(),true,'mobiliario-vivienda');g.name='interior-vivienda-kit';
  const p:Puesto[]=[['ventana',-3,-5,0,.85,1.9],['ventana',3,-5,0,.85,1.9],['tapete',0,2,0,1.3],['planta',-5.4,4.3],['planta',5.4,4.3],
   ['lampara',-1,-.7,0,1,2.4],['lampara',3,1.6,0,1,2.4],
   ['mesa_comedor',-1,-.7],['silla',-1.55,.0,Math.PI],['silla',-.45,.0,Math.PI],['silla',-1.55,-1.4],['silla',-.45,-1.4],
-  ['cocina',-5.65,1.6,PI2],['biblioteca',5.3,.2,-PI2],['sillon',3.3,2.6,-.5],['cuadro',-6,-2.6,PI2,1,1.9],['baul',5.2,-2.6,-PI2]];
+  ['cocina',-5.65,1.6,PI2],['sillon',3.3,2.6,-.5],['cuadro',-6,-2.6,PI2,1,1.9],
+  // Lo que va en el lado abierto (derecha) mira hacia la cámara, si no se ve el respaldo
+  ['biblioteca',5.3,.2,PI2],['baul',5.2,-2.6,PI2]];
  luzCalida(g,-1,2.2,-.7);luzCalida(g,3,2.2,1.6);
  const t=tema;
  if(['huerto','jardin','corral','despertar','bosque','rosal'].includes(t))p.push(['jarron_flores',-1,-.7,0,.5,.84],['canasta_frutas',-4.6,3.4],['planta',-3.2,4.3]);
@@ -108,9 +115,9 @@ export function puertaCuarto(g:THREE.Group,x:number,z:number,color:string){amueb
 // ------------------------------------------------------------------ dormitorios (8 × 8)
 
 export function interiorDormitorio(color:string):THREE.Group{
- const g=cascaron(8,8,new THREE.Color(color).lerp(new THREE.Color('#F3E6CA'),.7).getStyle());g.name='dormitorio-kit';
+ const g=cascaron(8,8,new THREE.Color(color).lerp(new THREE.Color('#F3E6CA'),.7).getStyle(),true,'mobiliario-dormitorio');g.name='dormitorio-kit';
  amueblar(g,[['ventana',0,-4,0,1,1.9],['cama',-2.4,-2.95],['mesa_noche',-1.2,-3.6],['armario',-3.6,.2,PI2],['escritorio',2.4,-3.5],['silla',2.4,-2.7,Math.PI],
-  ['tapete',0,1.1],['planta',3.2,2.6],['lampara',0,0,0,1,2.4],['cuadro',-4,-1.8,PI2,1,1.9],['baul',-2.4,-1.2,0,.8]]);
+  ['tapete',0,1.1],['planta',3.2,2.6],['planta',3.7,-3.7,0,.8],['lampara',0,0,0,1,2.4],['cuadro',-4,-1.8,PI2,1,1.9],['baul',-2.4,-1.2,0,.8]]);
  amueblar(g,[['cama',-2.4,-2.95]],{'cobija':color});
  luzCalida(g,0,2.2,0);luzCalida(g,-1.2,1,-3.4,'#ffd9a0',2,3);return g;
 }

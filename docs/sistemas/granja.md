@@ -20,6 +20,8 @@ Partidas anteriores, recarga, mochila llena y fallo de almacenamiento conservan 
 
 Los documentos detallados están en el módulo: `PUEBLO-INTEGRACION.md`, `VIVIENDAS-INTEGRACION.md`, `DORMITORIOS-INTEGRACION.md`, `VIDA-SOCIAL-INTEGRACION.md`, `ENCARGOS-INTEGRACION.md`, `CORREO-INTEGRACION.md`, `COLECCIONES-INTEGRACION.md`, `FESTIVALES-INTEGRACION.md`, `CARPINTERIA-INTEGRACION.md` y `COMPANIA-INTEGRACION.md`. `PLAN-MOTOR-COMPLETO.md` registra las capacidades parciales y pendientes. `REPARTO-COMPLETO.md` y `PLAN-PUEBLOS-MUNDOS.md` son planificación de contenido, no un catálogo de mundos ya terminados.
 
+Los interiores (cabaña, los nueve locales, las viviendas y los dormitorios) se arman con el kit de muebles modelado en Blender (`personajes/blender/granja_muebles.py` → `public/modelos/granja_muebles.glb`, armado en `src/granja-v3/cuartos.ts`); el contrato está en la coordinación.
+
 El cargador `src/granja-v2/biblioteca.ts` y los modelos de `public/modelos/granja-v2/` son dependencias visuales. Los antiguos motores y demos no se publican. No hay nuevas dependencias runtime. Las pruebas se ejecutan con `npm run probar:granja`; al integrar también se revisan `npm run build` y `npm run build:amigos` y el flujo de casa/retorno.
 
 El reparto de trabajo solicitado por Javier está en [`../en-obra/granja-coordinacion.md`](../en-obra/granja-coordinacion.md): motor, historia y sistemas en el frente de granja; gráficos, personajes y presentación a cargo de Claude. Cada avance probado se sube al repositorio.

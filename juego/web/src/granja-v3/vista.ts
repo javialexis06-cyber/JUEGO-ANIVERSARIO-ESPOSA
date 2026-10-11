@@ -31,7 +31,7 @@ import { viviendaInterior, VIVIENDAS_PUEBLO, libreVivienda } from './pueblo-dato
 import { crearDormitorio, crearInteriorVivienda, updateInteriorVivienda } from './pueblo';
 import { cespedPueblo } from './pueblo-adornos';
 import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida, adelantoZona, adornosRefugio } from './zonas-render';
-import { interiorCabana, precargarMuebles } from './cuartos';
+import { interiorCabana } from './cuartos';
 import { CAMINOS_GRANJA, SALIDAS } from './caminos-mundo';
 /** Senderos de tierra entre zonas (centro x, centro z, ancho, fondo). */
 const SENDEROS_PUBLICOS:[number,number,number,number][]=[[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]];

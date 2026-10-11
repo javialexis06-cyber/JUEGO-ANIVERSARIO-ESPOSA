@@ -255,9 +255,9 @@ Cambio de reglas (frente de motor, avisado aquí):
   deposita en los cofres; las fracciones se acumulan en `resto` (nada se pierde). Validación en `errorProduccion`.
 - A mano: acción de motor `recuperar` (junto a la máquina, desde una casilla de la mochila); redondea al azar.
 - Panel propio en Fabricar › Taller, modelo animado y tres íconos.
-- Interiores (Claude): `amoblarCabana` (cama doble, cocina, mesa, chimenea encendida, biblioteca, plantas y cuadros,
-  todo contra las paredes) y `adornosRefugio` (paja, farol que alumbra, ventanas, costales, escoba, aseladero).
-  Cámara a 2 de zoom en interiores y fondo oscuro cálido en lugar del verde del exterior.
+- Interiores (Claude): `adornosRefugio` (paja, farol que alumbra, ventanas, costales, escoba, aseladero). La cabaña
+  y los cuartos del pueblo pasaron al kit de muebles de Blender (sección siguiente). Cámara a 2 de zoom en interiores y
+  fondo oscuro cálido en lugar del verde del exterior.
 
 ## Regla: todo de la granja en Blender (Javier, 11 de octubre de 2026)
 
@@ -265,3 +265,21 @@ Javier pidió que **todo, absolutamente todo** lo que se ve en la granja se mode
 estilo del juego (peluche, fieltro, madera, plastilina; formas redondeadas y llenas de detalle). Las figuras sueltas
 de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/blender/granja_*.py`, exportados a
 `juego/web/public/modelos/` y cargados con `src/recursos.ts`. El motor no cambia: solo la presentación.
+
+### Interiores con el kit de muebles de Blender (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_muebles.py` modela 54 piezas (mostrador, estantes, ventanas, lámparas, tapete, matas,
+  exhibidor de semillas, costales, fragua y yunque, banco de carpintero, vitrinas de frascos, camilla, barriles,
+  chimenea, bibliotecas, escritorio, globo, altar y cristales de Aura y Lara, cama, armario, cocina, piso y pared por
+  módulos de 1 m, marco y puertas…) y las exporta en un solo `public/modelos/granja_muebles.glb` con un vacío
+  `m_<clave>` por pieza.
+- `src/granja-v3/cuartos.ts` lo carga una vez y arma: `interiorCabana()` (8 × 8), `interiorLocal(servicio)` (9 × 8,
+  los nueve servicios, también `archivo` y los dos altares), `interiorVivienda(colores, tema)` (12 × 10, con extras por
+  tema) y `interiorDormitorio(color)` (8 × 8, cobija del color del vecino). `amueblar(g, puestos, tintes)` pone piezas
+  `[clave, x, z, giro, escala, altura]`; `mosaico` repite piso y pared con instancias; los tintes se aplican por
+  nombre de material (papel de pared, cobija, puerta del cuarto). Geometría y materiales del kit van marcados
+  `compartido` y `liberar()` no los destruye.
+- Las colisiones siguen siendo las del motor (`libreDormitorio`, `libreVivienda`/`SOLIDOS_VIVIENDA`, el rectángulo de
+  los locales): los muebles van contra las paredes o encima de esos sólidos, y lo que queda en el lado abierto (derecha
+  y frente, sin pared por la cámara) mira hacia la cámara. Si el motor mueve un sólido, se mueve el mueble aquí.
+- Se retiraron `amoblarCabana` y `adornosServicio` (cajas de three.js) de `zonas-render.ts`.
