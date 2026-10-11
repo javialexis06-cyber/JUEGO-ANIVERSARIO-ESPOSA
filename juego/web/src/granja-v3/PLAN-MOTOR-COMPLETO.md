@@ -1,5 +1,23 @@
 # Plan del motor completo: capacidades, variedad y aceptación
 
+## Correspondencia ramificada integrada
+
+Actualización del 11 de octubre de 2026: dos propuestas por hitos y jornada ofrecen cuatro ramas originales.
+Elegir abre solo su pedido de dos etapas y persiste una decisión permanente; cancelar o vencer permite retomar
+la misma rama con devolución íntegra de calidades. El cierre desbloquea una receta alternativa de aspersor,
+alimento de mascota, cebo o guiso minero; cada rama produce una consecuencia de fabricación distinta.
+Confirmación y cierre llegan en noches posteriores. Se respetan el máximo compartido de cinco activos,
+requisitos de aprendizaje/herramienta, monedas/amistad únicas, guardado fallido y migración íntegra de correo
+V1 a V2 dentro de la V5 general. Se usan paneles sencillos y artículos existentes, sin trabajo de arte.
+
+[CORREO-INTEGRACION.md](CORREO-INTEGRACION.md) documenta elección, encargos, recetas, recuperación y límites.
+I05 pasa a parcial: cuatro rutas comprobadas por lógica, pero faltan ramas regionales, escenas y cambios físicos
+del mundo. No se certifica una campaña completa desde cero. Siguiente bloque: colecciones y lotes (I09).
+Verificación: 21 grupos nuevos de lógica, regresión de 30 suites y 17 recorridos de navegador (11 de
+correspondencia y seis de casa/granja), sin fallos; compilaciones completa y de amigos correctas.
+Se integraron las voces remotas y se repitieron compilaciones, lógica nueva y casa/granja antes de publicar,
+conservando el motor y los datos de granja.
+
 ## Encargos renovables y especiales integrados
 
 Sobre el mismo motor y guardado V5 se conserva el catálogo de doce pedidos permanentes y sus reservas/historia.
@@ -16,7 +34,7 @@ I07 pasa a parcial con tres pedidos de dos etapas. Faltan más etapas, ramificac
 Verificación: 23 casos nuevos de lógica, regresión de 29 suites y 17 recorridos de navegador (11 de encargos,
 seis de integración casa/granja), sin fallos; compilaciones completa y de amigos correctas. Los escenarios de
 navegador preparan datos en un contexto aislado; no certifican campaña ni teléfonos físicos.
-Siguiente bloque del motor: cartas ramificadas y decisiones con consecuencias persistentes.
+El bloque posterior de correspondencia ramificada está conectado y se describe al inicio.
 
 ## Festivales básicos integrados
 
@@ -33,7 +51,7 @@ El bloque posterior de encargos renovables y especiales ya está conectado; sus 
 
 ## Correo integrado
 
-Actualización del 10 de octubre de 2026: buzón físico junto a la cabaña, historial en el Diario, 13 cartas por jornadas, actividades y estaciones, adjuntos únicos y persistencia con reversión si falla almacenamiento. Las cartas nuevas llegan exclusivamente al dormir. [CORREO-INTEGRACION.md](CORREO-INTEGRACION.md) documenta reglas, catálogo, API y límites. Los cuatro festivales básicos están integrados; siguen pendientes festivales regionales, cartas ramificadas y recetas por correspondencia.
+Actualización del 10 de octubre de 2026: buzón físico junto a la cabaña, historial en el Diario, 13 cartas por jornadas, actividades y estaciones, adjuntos únicos y persistencia con reversión si falla almacenamiento. Las cartas nuevas llegan exclusivamente al dormir. El 11 de octubre se añaden dos proyectos con cuatro ramas y recetas exclusivas. [CORREO-INTEGRACION.md](CORREO-INTEGRACION.md) documenta reglas, catálogo, API y límites. Siguen pendientes festivales y correspondencia regionales.
 
 
 ## Dormitorios privados integrados
@@ -63,7 +81,7 @@ Sobre granja-v3 y guardado V5 se integran doce pedidos aceptables, hasta cinco a
 
 [ENCARGOS-INTEGRACION.md](ENCARGOS-INTEGRACION.md) describe catálogo, API, fechas, reservas y límites. 21 casos específicos y regresión de 23 suites (512 comprobaciones contando la última ampliación), ocho recorridos de navegador y compilación completa correctos. La revisión móvil usa 412 × 915; los recorridos preparan escenarios y no certifican rendimiento físico ni una campaña desde cero.
 
-El sistema de misiones sigue parcial: faltan ampliaciones de encargos especiales, cartas ramificadas, más elecciones y escenas, colecciones y campañas de nuevos mundos. Los doce pedidos no implementan los 142 ejemplos del reparto planificado ni alteran las misiones antiguas o sus tokens de casa. El calendario, ocho encuentros, viviendas, dormitorios y correo básico ya se integraron. Los cuatro festivales básicos del primer pueblo ya están integrados. La rotación diaria/semanal y tres encargos especiales ya están integrados; el siguiente bloque es cartas ramificadas y decisiones persistentes.
+El sistema de misiones sigue parcial: faltan ampliaciones de encargos especiales y correspondencia regional, más elecciones y escenas, colecciones y campañas de nuevos mundos. Los doce pedidos no implementan los 142 ejemplos del reparto planificado ni alteran las misiones antiguas o sus tokens de casa. El calendario, ocho encuentros, viviendas, dormitorios y correo básico ya se integraron. Los cuatro festivales básicos del primer pueblo ya están integrados. La rotación diaria/semanal y tres encargos especiales ya están integrados; dos proyectos de correspondencia con cuatro ramas ya están integrados; el siguiente bloque es colecciones y lotes.
 
 ## Reparto y pueblos planificados el 10 de octubre de 2026
 
@@ -358,7 +376,7 @@ Referencias: [Misiones base](https://es.stardewvalleywiki.com/Misiones) y [misio
 | I02 | Máquina de estados | Parcial · aceptación, actividad, entrega, etapas, vencimiento y cierre integrados en encargos | Disponible, aceptada, activa, lista para entregar, completada, fallida/cancelada; transición validada y persistida. |
 | I03 | Objetivos semánticos | Parcial | Distinguir obtener después de aceptar, poseer, entregar, fabricar, visitar, conversar, descubrir, derrotar y elegir; vender antes no satisface poseer/entregar. |
 | I04 | Entregas | Parcial · NPC correcto, casilla/calidad/cantidad exactas y reservas recuperables integradas; pendientes otros receptores | NPC/buzón/cofre correctos reciben artículo, calidad y cantidad; descuenta lo entregado, admite avance parcial y nunca consume otra pila por error. |
-| I05 | Ramificación | Pendiente | Elección A abre una cadena y cambia un estado del mundo; elección B produce otro resultado real; condiciones excluyentes y cierre sin doble recompensa. |
+| I05 | Ramificación | Parcial · dos proyectos, cuatro ramas de dos etapas y recetas excluyentes; pendientes escenas y cambios físicos/regionales | Elección A abre una cadena y cambia un estado del mundo; elección B produce otro resultado real; condiciones excluyentes y cierre sin doble recompensa. |
 | I06 | Diarias y repetibles | Parcial · dos diarias, semanal, semilla e instancia persistidas; pendiente variedad regional | Generación por día con semilla persistida, variedad de tipo y petición alcanzable; renovar no reinicia al recargar; repetible lleva identificador de instancia. |
 | I07 | Pedidos especiales | Parcial · tres pedidos de dos etapas y premio real; pendientes escenas, ramas y más etapas | Varias etapas, acumulación desde aceptación, entrega concreta, plazo más largo, escena/recompensa y cooldown si aplica. |
 | I08 | Espacio de pedidos | Parcial · Casa de los Oficios y Diario conectados; pendientes cajas dedicadas | Tablón/lugar físico con disponibles, aceptados y entregas; acceso directo al detalle; cajas o mostradores muestran pedido y contenido entregado. |

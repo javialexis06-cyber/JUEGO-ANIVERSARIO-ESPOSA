@@ -5,7 +5,7 @@ Actualizado: 10 de octubre de 2026. Se amplía **granja-v3 / guardado V5**, sin 
 ## Flujo jugable
 
 - Aceptar junto al solicitante o dentro de la Casa de los Oficios abierta. Consultar el diario desde cualquier lugar no permite aceptar remotamente.
-- Hasta cinco encargos activos entre permanentes y renovables. Plazo desde aceptación: tres jornadas para las diarias, diez para las semanales, veintiuna para los especiales y cuatro a catorce para los permanentes.
+- Hasta cinco encargos activos entre permanentes, renovables y proyectos por correspondencia. Plazo desde aceptación: tres jornadas para las diarias, diez para las semanales, veintiuna para los especiales y cuatro a catorce para los permanentes.
 - Entregar junto al solicitante, escogiendo **casilla, cantidad y calidad**. Se admiten entregas parciales y varias calidades compatibles; los demás objetos no se consumen.
 - Los objetivos de actividad guardan el contador al aceptar. Solo cuentan acciones posteriores; el jugador conserva los productos obtenidos.
 - Cobrar junto al solicitante cuando todos los objetivos estén completos: monedas y amistad. El cierre queda persistido y no permite volver a cobrar o aceptar ese pedido completado.
@@ -124,4 +124,6 @@ Verificación histórica de los doce pedidos permanentes (10 de octubre): 21 cas
 
 Ocho recorridos de navegador: diario, aceptación, entrega parcial, cobro, recarga, cancelación, almacenamiento lleno y pantalla de 412 × 915. Captura móvil revisada. Los recorridos preparan ubicaciones/servicios y materiales para aislar casos; no certifican adquisición desde una partida nueva, campaña completa o rendimiento en S21 FE/S24 Ultra físicos. Evidencia: `work/qa-motor/encargos-*` y la regresión consolidada en `work/qa-motor/encargos-regresion.json` desde la raíz del trabajo.
 
-Pendientes: más variedad de pedidos y etapas, cartas ramificadas, elecciones y consecuencias de historia, recompensas de recetas, museo y campañas regionales. No se declaran implementados todos los encargos del reparto ni terminada la equivalencia con Stardew/Expanded/Automate. El siguiente bloque previsto es cartas ramificadas y decisiones con consecuencias persistentes, conservando los IDs actuales.
+El 11 de octubre se añaden cuatro pedidos por correspondencia, agrupados en dos decisiones excluyentes. Usan las mismas reservas, plazos, etapas y límite de activos; su cierre concede una receta exclusiva y registra la fecha en la decisión. Solo pueden aceptarse tras elegir la rama en su carta; el buzón también permite retomar esa misma rama cancelada o vencida, devolviendo primero las reservas de forma atómica. Los pedidos y decisiones no se archivan con el historial de rotación. Consultar `CORREO-INTEGRACION.md`.
+
+Pendientes: más variedad de pedidos y etapas, ramificaciones y escenas regionales, museo y campañas de otros mundos. No se declaran implementados todos los encargos del reparto ni terminada la equivalencia con Stardew/Expanded/Automate. El siguiente bloque previsto es colecciones y lotes (I09).

@@ -1,5 +1,5 @@
 import { crearFestivales, invitarFestivales, actuarFestival, festivalesValidos } from './festivales';
-import { crearCorreo, entregarCorreo, actuarCorreo, correoValido } from './correo';
+import { crearCorreo, entregarCorreo, actuarCorreo, correoValido, migrarCorreo, correspondenciaValida } from './correo';
 import { dormitorioDef, puertaDormitorio, puedeEntrarDormitorio, MUEBLES_DORMITORIO } from './dormitorios';
 import { viviendaDef, viviendaInterior, visitaVivienda, librePueblo } from './pueblo-datos';
 import { crearVidaSocial, vidaSocialValida, actuarSocial, celebrarRegalo } from './vida-social';
@@ -731,6 +731,7 @@ export function validarEstado(v:unknown):string|null {
  const errorMochila=validarMochila(s);if(errorMochila)return errorMochila;if(!validarBarra(s,s.casillasInventario.length,s.ultimoTiempo))return 'barra o equipo inválido';
  if(!Array.isArray(s.sectorIds)||!s.sectorIds.includes(0)||s.sectorIds.length>30||new Set(s.sectorIds).size!==s.sectorIds.length||!s.sectorIds.every(id=>entero(id,0,29)))return 'sectores inválidos';
  for(const k of ['misionesCompletadas','desbloqueos','tokensCasa'] as const)if(!Array.isArray(s[k])||s[k].length>100||new Set(s[k]).size!==s[k].length||s[k].some(x=>typeof x!=='string'||x.length>80))return `${k} inválidos`;
+ if(!correspondenciaValida(s))return 'decisiones y proyectos incoherentes';
  if(s.misionesCompletadas.some((id,i)=>MISIONES[i]?.id!==id))return 'misiones fuera de orden';
  if(!Array.isArray(s.edificios)||s.edificios.length>MAX_EDIFICIOS||!Array.isArray(s.animales)||s.animales.length>MAX_ANIMALES||!Array.isArray(s.obstaculos)||s.obstaculos.length>2000||!Array.isArray(s.parcelas)||s.parcelas.length>9600)return 'colecciones fuera de límite';
  if(!Array.isArray(s.frutales)||s.frutales.length>400||!Array.isArray(s.invernaderos)||s.invernaderos.length>MAX_INVERNADEROS)return 'huerto o invernaderos inválidos';
@@ -838,6 +839,7 @@ export function migrarEstado(valor:unknown):unknown {
    s.habilidades=h;
   }
   s.encargos=migrarEncargos(s.encargos,s.jornada?.diasCompletados,s.estadisticas??{});
+  s.correo=migrarCorreo(s.correo,s.jornada?.diasCompletados);
   return s;
  }
 if(!antiguo||typeof antiguo!=='object'||(antiguo as {version?:number}).version!==4)return antiguo;
