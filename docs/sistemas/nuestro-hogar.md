@@ -456,6 +456,18 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   Monedero; **del otro lado del espejo**, además, volver a tirar, saltar y vetar (+1 para la partida, con precio que
   sube) y una carta mágica más (2.500). En línea, comprar y cerrar viajan como acciones (`comprar`, `tienda`) y el
   inventario lleva el puesto, lo comprado, lo gastado y las tiradas/saltos/vetos de más.
+- **Versión 2, fase 3a: La Ducha** (el cuarto escenario, como la fábrica de lácteos del original; se abre
+  aguantando 15 minutos en La Bañera, logro `banera15`). Piso de **baldosas mojadas** con su junta delgadita, moho en
+  algunas juntas, taquitos azules en las esquinas y la película de agua que corre (`FRAG_DUCHA` en `suelo.ts`), con
+  utilería de Blender tirada siempre en el mismo sitio (champú, jabón, esponjas, patico, peinilla, toalla:
+  `utileriaDucha`) y la velita en su jabonera rosada como luz que se rompe. **Ocho bichos nuevos** en Blender
+  (`lavado_bichos.py`): gota de agua dura (enjambre), mosquita del desagüe, tapita de champú (brinca), hongo del pie,
+  espuma sucia (flota), ciempiés, estropajo mugroso (embiste) y costra de cal; y **cuatro jefes**: el Rey Hongo (10:00),
+  la Regadera Loca (15:00), la Cortina Mohosa (20:00) y el Ciempiés Gigante (25:00, abre su Hiper). Lo especial: los
+  **chorros** que caen del techo cada 5-9 s cerca de alguien (`Motor.moverChorros`, efecto `chorro`): avisan 1,3 s
+  con su sombra y, al caer 2,6 s, empujan hacia afuera a los mugrosos, los frenan y les quitan vida (a los jefes solo
+  los mojan). El atlas de bichos ahora se arma sumando los nuevos a los que ya tiene (`lavado-atlas.py +carpeta`), con
+  los jefes en 160 px y alto múltiplo de 32 (2048 × 2112, 50 bichos). Tres logros más de La Ducha (66 en total).
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

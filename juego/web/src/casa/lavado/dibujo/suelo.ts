@@ -1,6 +1,7 @@
 // El piso de cada escenario: un plano grande que sigue a la cámara con un shader que pinta, según la posición en el
 // mapa, la piel de la cara (poros, pequitas, rubor, brillo de la zona T), la porcelana del lavamanos (con las
-// paredes de baldosín arriba y abajo) o el agua de la bañera (cáusticas que se mueven, espuma). Encima, decoración
+// paredes de baldosín arriba y abajo), el agua de la bañera (cáusticas que se mueven, espuma) o las baldosas mojadas
+// de la ducha (con su junta, el moho y el agua que corre). Encima, decoración
 // que sale siempre en el mismo sitio (lunares con pelito, vellitos, cicatrices, gotas, pelos, pétalos, paticos).
 import * as THREE from 'three';
 import { hash2 } from '../azar';
@@ -118,6 +119,56 @@ const FRAG_BANERA = COMUN + /* glsl */ `
   }
 `;
 
+const FRAG_DUCHA = COMUN + /* glsl */ `
+  float causticas(vec2 q, float t) {
+    vec2 a = q;
+    a += 0.6 * vec2(sin(a.y * 1.3 + t * 0.7), cos(a.x * 1.1 - t * 0.6));
+    float c1 = sin(a.x * 2.1 + t) * sin(a.y * 1.7 - t * 0.8);
+    a += 0.4 * vec2(sin(a.y * 2.3 - t * 0.5), cos(a.x * 2.0 + t * 0.9));
+    float c2 = sin(a.x * 3.3 - t * 0.6) * sin(a.y * 2.9 + t * 0.4);
+    return pow(clamp(1.0 - abs(c1 + c2) * 0.7, 0.0, 1.0), 5.0);
+  }
+  void main() {
+    vec2 p = vMapa;
+    float d1 = texture2D(uDetalle, p / 300.0).r;
+    vec4 n = texture2D(uRuido, p / 1900.0);
+    // Baldosas cuadradas con su junta, cada una con su tonito
+    vec2 q = p / 84.0;
+    vec2 f = fract(q);
+    vec2 celda = floor(q);
+    float tono = fract(sin(dot(celda, vec2(12.9898, 78.233))) * 43758.5453);
+    vec3 col = mix(uC1, uC2, tono * 0.7 + smoothstep(0.3, 0.8, n.r) * 0.3);
+    col *= 1.0 + (d1 - 0.55) * 0.35;
+    // El biselito de cada baldosa: luz arriba a la izquierda, sombra abajo a la derecha
+    float bx = min(f.x, 1.0 - f.x), by = min(f.y, 1.0 - f.y);
+    float borde = smoothstep(0.0, 0.08, min(bx, by));
+    col *= 0.9 + 0.1 * borde;
+    col += (2.0 - smoothstep(0.0, 0.12, f.x) - smoothstep(0.0, 0.12, f.y)) * 0.05;
+    // La junta delgadita (con moho en algunas partes)
+    float junta = 1.0 - smoothstep(0.008, 0.02, min(bx, by));
+    float moho = smoothstep(0.62, 0.8, n.a * 0.7 + texture2D(uRuido, p / 400.0).g * 0.3);
+    vec3 colJunta = mix(uC3, vec3(0.36, 0.42, 0.36), moho * 0.6);
+    col = mix(col, colJunta, junta * 0.85);
+    // Los taquitos azules en las esquinas (como en los baños de antes), uno sí y uno no
+    vec2 esq = abs(f - floor(f + 0.5));
+    float rombo = 1.0 - smoothstep(0.1, 0.115, esq.x + esq.y);
+    vec2 cEsq = floor(q + 0.5);
+    float alterna = mod(cEsq.x + cEsq.y, 2.0);
+    vec3 azul = mix(vec3(0.42, 0.66, 0.82), vec3(0.62, 0.8, 0.9), smoothstep(0.03, 0.1, esq.x + esq.y));
+    col = mix(col, azul, rombo * alterna);
+    // La película de agua que corre (más brillante en los charcos) y los reflejos que se mueven
+    vec4 n3 = texture2D(uRuido, p / 700.0 + vec2(uTiempo * 0.006, uTiempo * 0.011));
+    float charco = smoothstep(0.56, 0.74, n3.b * 0.65 + n.g * 0.35);
+    float c = causticas(p / 70.0, uTiempo * 1.2);
+    col = mix(col, col * vec3(0.86, 0.95, 1.04), charco * 0.55);
+    col += c * charco * vec3(0.16, 0.2, 0.22);
+    float hilos = smoothstep(0.82, 1.0, sin(p.x * 0.05 + sin(p.y * 0.013 + uTiempo * 0.8) * 2.0) * 0.5 + 0.5) * charco;
+    col += hilos * 0.06;
+    gl_FragColor = vec4(col, 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
 interface Paleta {
   c1: string;
   c2: string;
@@ -144,6 +195,7 @@ const DECOR: Record<IdEscenario, [IdDecor, number, number][]> = {
   cara: [['pecas', 4, 90], ['vellos', 3, 80], ['poroGrande', 3, 70], ['lunar', 1.2, 46], ['brilloGrasa', 2, 160], ['cicatriz', 0.8, 70], ['ceja', 0.25, 260]],
   lavamanos: [['gotaAgua', 5, 70], ['manchaJabon', 2, 120], ['pelito', 1.2, 80], ['pasta', 0.7, 70], ['desague', 0.12, 110]],
   banera: [['burbujitas', 4, 80], ['espumaIsla', 2.2, 150], ['petalos', 1.5, 70], ['hojita', 0.6, 40]],
+  ducha: [['gotaAgua', 5, 70], ['burbujitas', 3, 80], ['manchaJabon', 2, 120], ['pelito', 0.8, 80], ['espumaIsla', 0.8, 130], ['desague', 0.18, 130]],
 };
 
 export class Suelo {
@@ -157,18 +209,21 @@ export class Suelo {
 
   /** `piel`: el color de piel del anfitrión cuando es un amigo con su propio tono (la cara es la suya). */
   constructor(private esc: IdEscenario, rol: Rol, limites: { yMin: number; yMax: number } | null, piel?: string) {
-    const detalle = esc === 'cara' ? detalleCara() : esc === 'lavamanos' ? detalleLavamanos() : detalleBanera();
+    const detalle = esc === 'cara' ? detalleCara() : esc === 'lavamanos' || esc === 'ducha' ? detalleLavamanos() : detalleBanera();
     // El detalle es un dato (gris), no un color: se lee tal cual
     detalle.colorSpace = THREE.NoColorSpace;
     detalle.needsUpdate = true;
     const ruido = texturaRuido();
     this.texturas.push(detalle, ruido);
-    const pal: Paleta = esc === 'cara' ? (piel ? paletaDe(piel) : PIEL[rol]) : esc === 'lavamanos' ? { c1: '#e6ecf2', c2: '#c9d6e2', c3: '#9fcde3' } : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
+    const pal: Paleta = esc === 'cara' ? (piel ? paletaDe(piel) : PIEL[rol])
+      : esc === 'lavamanos' ? { c1: '#e6ecf2', c2: '#c9d6e2', c3: '#9fcde3' }
+      : esc === 'ducha' ? { c1: '#e3f1f4', c2: '#c6e4ec', c3: '#8fa9b5' }
+      : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
     // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
     const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({
       vertexShader: VERT,
-      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : FRAG_BANERA,
+      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : FRAG_BANERA,
       uniforms: {
         uDetalle: { value: detalle },
         uRuido: { value: ruido },
@@ -203,7 +258,7 @@ export class Suelo {
     const C = 150;
     const x0 = Math.floor((cx - ancho * 0.62) / C), x1 = Math.floor((cx + ancho * 0.62) / C);
     const y0 = Math.floor((cy - hondo * 0.7) / C), y1 = Math.floor((cy + hondo * 0.62) / C);
-    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : 7;
+    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : 7;
     for (let gy = y0; gy <= y1; gy++)
       for (let gx = x0; gx <= x1; gx++) {
         if (hash2(gx, gy, sem) > 0.62) continue;

@@ -1,4 +1,4 @@
-// Los mugrosos de la cara, del lavamanos y de la bañera. Como en el original, la vida de los enemigos comunes es
+// Los mugrosos de la cara, del lavamanos, de la bañera y de la ducha. Como en el original, la vida de los enemigos comunes es
 // fija (la dificultad sube porque cada minuto llegan tipos nuevos y más duros, y más de ellos); la de los jefes se
 // multiplica por el nivel de quien juega. La Ducha Helada (la Parca del original) llega a los 30 minutos.
 import type { IdEnemigo } from './tipos';
@@ -67,6 +67,15 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   burbujaSucia: E({ id: 'burbujaSucia', nombre: 'Burbuja sucia', desc: 'Una burbuja con mugre adentro. Flota bravísima.', vida: 200, vel: 46, dano: 17, xp: 3, radio: 15, tam: 48, comp: 'flotar' }),
   babosa: E({ id: 'babosa', nombre: 'Babosa', desc: 'Deja un caminito brillante. Lenta pero tiene mucha vida.', vida: 1700, vel: 32, dano: 28, xp: 5, radio: 19, tam: 56, retro: 0.2 }),
   espinilla: E({ id: 'espinilla', nombre: 'Espinilla', desc: 'Con punta blanca y actitud. La élite del cutis.', vida: 460, vel: 52, dano: 23, xp: 3, radio: 16, tam: 48 }),
+  // ------------------------------------------------------------------------------------------------ La Ducha
+  gotaDura: E({ id: 'gotaDura', nombre: 'Gota de agua dura', desc: 'Azulita y con pecas de cal. Cae en chorro y en manada.', vida: 7, vel: 112, dano: 4, xp: 1, radio: 9, tam: 30, comp: 'enjambre' }),
+  mosquitaDesague: E({ id: 'mosquitaDesague', nombre: 'Mosquita del desagüe', desc: 'Peludita y con alas de corazón. Vive en el sifón y sale de noche.', vida: 12, vel: 86, dano: 6, xp: 1, radio: 10, tam: 32, comp: 'revolotear' }),
+  tapaChampu: E({ id: 'tapaChampu', nombre: 'Tapita de champú', desc: 'Se perdió hace meses y ahora brinca resentida.', vida: 28, vel: 88, dano: 9, xp: 1, radio: 11, tam: 36, comp: 'saltar' }),
+  hongoPie: E({ id: 'hongoPie', nombre: 'Hongo del pie', desc: 'Amarillito y con esporas. Por eso se usan chanclas en la ducha.', vida: 95, vel: 44, dano: 12, xp: 2, radio: 15, tam: 46, retro: 0.6 }),
+  espumaSucia: E({ id: 'espumaSucia', nombre: 'Espuma sucia', desc: 'Una nube de espuma con mugre adentro. Flota de mal genio.', vida: 230, vel: 46, dano: 17, xp: 3, radio: 15, tam: 50, comp: 'flotar' }),
+  ciempies: E({ id: 'ciempies', nombre: 'Ciempiés', desc: 'Sale de la rejilla con sus cien patas. Rapidísimo.', vida: 250, vel: 74, dano: 16, xp: 3, radio: 14, tam: 50 }),
+  estropajo: E({ id: 'estropajo', nombre: 'Estropajo mugroso', desc: 'Verde de un lado, amarillo del otro. Se lanza a raspar.', vida: 640, vel: 92, dano: 23, xp: 4, radio: 18, tam: 54, comp: 'embestir', retro: 0.3 }),
+  cal: E({ id: 'cal', nombre: 'Costra de cal', desc: 'La piedrita blanca que tapa los huequitos de la regadera. Durísima.', vida: 1900, vel: 32, dano: 30, xp: 6, radio: 23, tam: 64, retro: 0.1 }),
   // ------------------------------------------------------------------------------------------------ Jefes (vida × nivel)
   espinillon: E({ id: 'espinillon', nombre: 'El Espinillón', desc: 'El rey de los granitos, con corona y todo. Embiste cuando se enoja.', vida: 420, vel: 56, dano: 30, xp: 120, radio: 40, tam: 130, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
   reinaCaspa: E({ id: 'reinaCaspa', nombre: 'La Reina Caspa', desc: 'Llega nevando. Guarda una carta mágica perdida.', vida: 300, vel: 72, dano: 24, xp: 120, radio: 34, tam: 118, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
@@ -79,6 +88,10 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   tapon: E({ id: 'tapon', nombre: 'El Tapón', desc: 'El tapón de la bañera, harto de que lo jalen.', vida: 480, vel: 54, dano: 32, xp: 120, radio: 40, tam: 128, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
   esponjaPodrida: E({ id: 'esponjaPodrida', nombre: 'La Esponja Podrida', desc: 'La esponja vieja que nadie botó. Huele a historia.', vida: 680, vel: 50, dano: 38, xp: 160, radio: 44, tam: 138, retro: 0, jefe: true, congelable: false }),
   peloDesague: E({ id: 'peloDesague', nombre: 'El Pelo del Desagüe', desc: 'Sale del sifón con tentáculos de pelo. Pesadilla de domingo.', vida: 950, vel: 48, dano: 46, xp: 220, radio: 50, tam: 156, retro: 0, jefe: true, congelable: false }),
+  reyHongo: E({ id: 'reyHongo', nombre: 'El Rey Hongo', desc: 'El hongo del pie con corona y capa. Reina en el piso de la ducha.', vida: 470, vel: 56, dano: 32, xp: 130, radio: 40, tam: 132, retro: 0, jefe: true, congelable: false }),
+  regaderaLoca: E({ id: 'regaderaLoca', nombre: 'La Regadera Loca', desc: 'Llena de cal y de rabia. Escupe chorros para todos lados.', vida: 650, vel: 66, dano: 36, xp: 160, radio: 40, tam: 134, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
+  cortinaMohosa: E({ id: 'cortinaMohosa', nombre: 'La Cortina Mohosa', desc: 'Nadie la lavó nunca. Ahora camina sola, con argollas y todo.', vida: 920, vel: 46, dano: 44, xp: 210, radio: 48, tam: 152, retro: 0, jefe: true, congelable: false }),
+  ciempiesGigante: E({ id: 'ciempiesGigante', nombre: 'El Ciempiés Gigante', desc: 'El papá de todos los ciempiés del sifón. Embiste con sus pinzas.', vida: 1000, vel: 62, dano: 48, xp: 230, radio: 50, tam: 156, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
   // ------------------------------------------------------------------------------------------------ La Parca
   duchaHelada: E({ id: 'duchaHelada', nombre: 'La Ducha Helada', desc: '¡Se acabó el agua caliente! Si llega, ya ganaste… pero no la aguanta nadie.', vida: 655350, vel: 230, dano: 65535, xp: 0, radio: 34, tam: 140, retro: 0, comp: 'parca', jefe: true, congelable: false }),
 };

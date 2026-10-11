@@ -843,6 +843,25 @@ def vela_flotante(p):
     p.blob((0, 0, 0.26), (0.035, 0.035, 0.07), fuego, n=8, shaper=lambda x: x * (1 - 0.6 * np.clip(x[:, 2:3], 0, 1)))
 
 
+
+def vela_jabonera(p):
+    """Velita en la jabonera de la ducha (La Ducha): la conchita blanca con sus ranuras y una pastillita de jabón."""
+    concha = M('#F59AB5', rough=0.3, coat=0.6, sss=0.15)
+    p.torno([(0.0, 0.0), (0.26, 0.0), (0.3, 0.04), (0.31, 0.1), (0.28, 0.1), (0.25, 0.05), (0.0, 0.05)], concha)
+    for k in range(5):
+        x = -0.16 + k * 0.08
+        p.caja((x, 0.0, 0.051), (0.012, 0.18, 0.004), M('#C9567E', 0.4), p=4.0)
+    p.torno([(0.0, 0.0), (0.12, 0.0), (0.12, 0.1), (0.0, 0.1)], M('#C9D6E2', 0.25, metal=0.6), x=-0.06, z=0.05)
+    p.torno([(0.0, 0.0), (0.11, 0.0), (0.11, 0.08), (0.0, 0.08)], M('#FFF6E8', 0.55, sss=0.3), x=-0.06, z=0.06)
+    p.tubo([(-0.06, 0, 0.14), (-0.055, 0, 0.2)], 0.008, M('#3E322A', 0.6), seg=5)
+    fuego = M('#FFB347', rough=0.5, emision=8.0, ruido=0.0)
+    p.blob((-0.06, 0, 0.26), (0.035, 0.035, 0.07), fuego, n=8, shaper=lambda x: x * (1 - 0.6 * np.clip(x[:, 2:3], 0, 1)))
+    p.caja((0.15, -0.02, 0.1), (0.08, 0.055, 0.045), M('#9FD3F2', rough=0.35, coat=0.6, sss=0.25), p=3.0)
+    for (x, z, r) in ((0.2, 0.2, 0.03), (0.12, 0.26, 0.022)):
+        burbuja(p, (x, -0.03, z), r)
+
+
+
 # ----------------------------------------------------------------------------------------------------- Accesorios (disfraces)
 def turbante(p):
     m = tela('#F7C6D2', '#FFE4EC')
@@ -2239,7 +2258,7 @@ ICONOS = {
     'trebolito': lambda p: trebol(p, 0.7), 'aji': aji, 'cofre': lambda p: cofre(p), 'cofreAbierto': lambda p: cofre(p, abierto=True),
     'gemaAzul': lambda p: gema(p, '#5AB4F0'), 'gemaVerde': lambda p: gema(p, '#5DCB7A'), 'gemaRoja': lambda p: gema(p, '#F0566B'),
     'gemaGrande': lambda p: gema(p, '#FF3D6A', 0.24),
-    'velita': velita, 'vasoCepillos': vaso_cepillos, 'velaFlotante': vela_flotante,
+    'velita': velita, 'vasoCepillos': vaso_cepillos, 'velaFlotante': vela_flotante, 'velaJabonera': vela_jabonera,
 }
 
 ACCESORIOS = {

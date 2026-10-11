@@ -36,6 +36,8 @@ export interface DefEscenario {
   desbloqueo: string;
   /** El jefe del minuto 25: vencerlo abre el modo Hiper de este escenario. */
   jefeHiper: IdEnemigo;
+  /** La Ducha: chorros de agua que caen del techo y empujan a todos. */
+  chorros?: boolean;
 }
 
 const o = (min: number, cada: number, ...tipos: IdEnemigo[]): Oleada => ({ min, cada, tipos });
@@ -248,8 +250,77 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
       { t: m(28, 30), tipo: 'muro', enemigo: 'mugre', cant: 40 },
     ],
   },
+  ducha: {
+    id: 'ducha',
+    nombre: 'La Ducha',
+    original: 'Fábrica de lácteos',
+    desc: 'Baldosas mojadas, chorros que caen del techo y la rejilla del desagüe. De ahí salen ciempiés y hongos del pie.',
+    limites: null,
+    desbloqueo: 'Aguanta 15 minutos en La Bañera',
+    jefeHiper: 'ciempiesGigante',
+    chorros: true,
+    oleadas: [
+      o(14, 1.0, 'mosquitaDesague'),
+      o(28, 1.0, 'mosquitaDesague', 'tapaChampu'),
+      o(40, 0.9, 'tapaChampu', 'mosquitaDesague'),
+      o(50, 0.8, 'tapaChampu', 'hongoPie'),
+      o(60, 0.8, 'hongoPie', 'mosquitaDesague'),
+      o(70, 0.7, 'hongoPie', 'tapaChampu', 'espumaSucia'),
+      o(80, 0.65, 'espumaSucia', 'hongoPie'),
+      o(90, 0.6, 'ciempies', 'tapaChampu'),
+      o(100, 0.55, 'ciempies', 'hongoPie'),
+      o(105, 0.5, 'ciempies', 'espumaSucia'),
+      o(110, 0.5, 'espumaSucia', 'ciempies'),
+      o(120, 0.45, 'ciempies', 'hongoPie'),
+      o(130, 0.42, 'estropajo', 'ciempies'),
+      o(140, 0.4, 'estropajo', 'espumaSucia'),
+      o(150, 0.36, 'estropajo', 'tapaChampu', 'ciempies'),
+      o(160, 0.34, 'estropajo', 'ciempies'),
+      o(170, 0.32, 'estropajo', 'espumaSucia'),
+      o(180, 0.3, 'cal', 'estropajo'),
+      o(190, 0.28, 'cal', 'ciempies'),
+      o(200, 0.26, 'cal', 'estropajo'),
+      o(210, 0.25, 'cal', 'espumaSucia'),
+      o(220, 0.24, 'cal', 'estropajo'),
+      o(230, 0.22, 'mugre', 'cal'),
+      o(240, 0.2, 'moco', 'cal'),
+      o(250, 0.2, 'moco', 'estropajo'),
+      o(260, 0.18, 'cal', 'mugre', 'estropajo'),
+      o(270, 0.16, 'cal', 'moco'),
+      o(280, 0.15, 'cal', 'mugre', 'estropajo'),
+      o(290, 0.12, 'cal', 'moco'),
+      o(300, 0.1, 'cal', 'mugre', 'estropajo'),
+    ],
+    eventos: [
+      { t: m(1), tipo: 'enjambre', enemigo: 'gotaDura', cant: 20, aviso: '¡Un chorro de gotas de agua dura!' },
+      { t: m(2, 30), tipo: 'elite', enemigo: 'tapaChampu' },
+      { t: m(3, 30), tipo: 'enjambre', enemigo: 'gotaDura', cant: 28 },
+      { t: m(4, 30), tipo: 'anillo', enemigo: 'mosquitaDesague', cant: 32, aviso: '¡Las mosquitas del desagüe te rodearon!' },
+      { t: m(5, 30), tipo: 'flotar', enemigo: 'espumaSucia', cant: 10 },
+      { t: m(7), tipo: 'elite', enemigo: 'hongoPie' },
+      { t: m(8, 30), tipo: 'enjambre', enemigo: 'gotaDura', cant: 36 },
+      { t: m(10), tipo: 'jefe', enemigo: 'reyHongo', aviso: '¡El Rey Hongo salió de entre las baldosas!' },
+      { t: m(11), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Una carta mágica en la jabonera…' },
+      { t: m(12), tipo: 'anillo', enemigo: 'tapaChampu', cant: 40 },
+      { t: m(13), tipo: 'elite', enemigo: 'ciempies' },
+      { t: m(14), tipo: 'enjambre', enemigo: 'gotaDura', cant: 46 },
+      { t: m(15), tipo: 'jefe', enemigo: 'regaderaLoca', aviso: '¡La Regadera Loca se soltó del tubo!' },
+      { t: m(16, 30), tipo: 'flotar', enemigo: 'espumaSucia', cant: 18 },
+      { t: m(17, 30), tipo: 'elite', enemigo: 'estropajo' },
+      { t: m(18, 30), tipo: 'muro', enemigo: 'ciempies', cant: 34, aviso: '¡Una fila de ciempiés!' },
+      { t: m(20), tipo: 'jefe', enemigo: 'cortinaMohosa', aviso: '¡La Cortina Mohosa se cansó de colgar!' },
+      { t: m(21), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Otra carta mágica perdida…' },
+      { t: m(22), tipo: 'enjambre', enemigo: 'gotaDura', cant: 58 },
+      { t: m(23), tipo: 'elite', enemigo: 'cal' },
+      { t: m(24, 30), tipo: 'anillo', enemigo: 'estropajo', cant: 36 },
+      { t: m(25), tipo: 'jefe', enemigo: 'ciempiesGigante', aviso: '¡El Ciempiés Gigante subió por la rejilla!' },
+      { t: m(26, 30), tipo: 'enjambre', enemigo: 'gotaDura', cant: 66 },
+      { t: m(27, 30), tipo: 'elite', enemigo: 'cal' },
+      { t: m(28, 30), tipo: 'muro', enemigo: 'cal', cant: 36 },
+    ],
+  },
 };
 
-export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera'];
+export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha'];
 /** La partida completa (después llega la Ducha Helada). */
 export const DURACION = 30 * 60;

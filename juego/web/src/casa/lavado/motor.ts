@@ -71,6 +71,9 @@ export const VEL_JUGADOR = 130;
 export const IMAN_BASE = 56;
 /** Las velitas que hace aparecer el confeti llevan un `estado` por debajo de esto (las del mapa, el de su celda). */
 const VELITA_CONFETI = -1e12;
+/** Los chorros de La Ducha: segundos que avisan con su sombra y segundos que caen. */
+const AVISO_CHORRO = 1.3;
+const DURA_CHORRO = 2.6;
 /** Celda del mapa donde puede haber una velita. */
 const CELDA_LUZ = 380;
 
@@ -504,6 +507,9 @@ export class Motor {
   helada = false;
   /** Lo que falta para la siguiente vuelta de la ruleta de sorpresas (segundos del reloj). */
   tRuleta = 60;
+  /** Los chorros de La Ducha que están avisando (t < 0) o cayendo. */
+  readonly chorros: { x: number; y: number; r: number; t: number }[] = [];
+  private tChorro = 9;
 
   readonly en: Enemigo[] = [];
   readonly vivos = new Int32Array(POOL_EN);
@@ -1209,6 +1215,7 @@ export class Motor {
     for (const j of this.jug) if (j.activo) actualizarArmas(this, j, dt);
     moverProyectiles(this, dt);
     moverZonas(this, dt);
+    if (this.esc.chorros && !this.tutorial) this.moverChorros(dt);
     pendientesGolpe(this, dt);
     this.moverEnemigos(dt);
     this.recoger(dt);
@@ -1661,6 +1668,48 @@ export class Motor {
     this.aviso(`🎡 La ruleta dice: ${s.txt}`);
     this.emitir('evolucion', j.x, j.y, j.i);
     s.f();
+  }
+
+  /** Los chorros de La Ducha: cada tanto caen del techo cerca de alguien. Avisan con su sombra y, al caer, empujan
+   *  hacia afuera a los mugrosos, los frenan y les quitan un poquito de vida (a los jefes solo los mojan). */
+  private moverChorros(dt: number) {
+    this.tChorro -= dt;
+    if (this.tChorro <= 0) {
+      this.tChorro = 5 + this.az.n() * 4;
+      const j = this.objetivoAzar();
+      if (j) {
+        const n = 1 + Math.floor(this.az.n() * 2.5);
+        for (let k = 0; k < n; k++) {
+          const x = j.x + this.az.entre(-300, 300), y = j.y + this.az.entre(-180, 180), r = this.az.entre(62, 92);
+          this.chorros.push({ x, y, r, t: -AVISO_CHORRO });
+          this.emitir('chorro', x, y, r, AVISO_CHORRO, DURA_CHORRO);
+        }
+      }
+    }
+    for (let k = this.chorros.length - 1; k >= 0; k--) {
+      const c = this.chorros[k];
+      c.t += dt;
+      if (c.t >= DURA_CHORRO) {
+        this.chorros.splice(k, 1);
+        continue;
+      }
+      if (c.t < 0) continue;
+      const alcance = c.r * 1.4;
+      const n = this.rej.circulo(c.x, c.y, alcance + 30);
+      for (let q = 0; q < n; q++) this.tmp[q] = this.rej.fuera[q];
+      for (let q = 0; q < n; q++) {
+        const e = this.en[this.tmp[q]];
+        if (!e.vivo || e.luz || e.def.comp === 'parca') continue;
+        const dx = e.x - c.x, dy = e.y - c.y, d = Math.hypot(dx, dy) || 1;
+        if (d > alcance + e.r) continue;
+        const f = 520 * (1 - Math.min(1, d / (alcance + e.r))) * Math.max(0.15, e.def.retro);
+        e.kx += (dx / d) * f * dt * 6;
+        e.ky += (dy / d) * f * dt * 6;
+        e.lento = Math.max(e.lento, 0.6);
+        if (!e.jefe) e.hp -= e.hpMax * 0.12 * dt;
+        if (e.hp <= 0) this.matar(e, this.cercano(e.x, e.y)?.i ?? 0, false);
+      }
+    }
   }
 
   private objetivoAzar(): Jugador | null {

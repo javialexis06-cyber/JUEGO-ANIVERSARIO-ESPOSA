@@ -693,6 +693,13 @@
 .lv-escenario .vista { height: 64px; position: relative; }
 .lv-escenario .vista.cara { background: radial-gradient(circle at 30% 40%, #f4a0a8 0 18%, transparent 30%), radial-gradient(circle at 70% 60%, #b07a5e 0 3%, transparent 4%), #f3cbb1; }
 .lv-escenario .vista.lavamanos { background: linear-gradient(180deg, #bfe0ee 0 20%, #fff 20% 80%, #bfe0ee 80%), #fff; }
+.lv-escenario .vista.ducha {
+  background:
+    radial-gradient(circle at 70% 30%, rgba(140, 200, 230, 0.7) 0 6%, transparent 7%),
+    repeating-linear-gradient(0deg, transparent 0 22px, #9fb6c1 22px 24px),
+    repeating-linear-gradient(90deg, transparent 0 22px, #9fb6c1 22px 24px),
+    linear-gradient(160deg, #e3f1f4, #c6e4ec);
+}
 .lv-escenario .vista.banera { background: radial-gradient(circle at 25% 35%, #fff 0 10%, transparent 12%), radial-gradient(circle at 70% 65%, #fff 0 8%, transparent 10%), linear-gradient(160deg, #5fbcd3, #8fd8e6); }
 .lv-escenario b, .lv-escenario small, .lv-escenario em { padding: 0 8px; }
 .lv-escenario b { font: 700 15px/1.1 var(--display); }
@@ -951,7 +958,7 @@ body.lavandose .hud-arriba-der { opacity: 0; pointer-events: none; transition: o
   box-shadow: inset 0 0 0 3px rgba(120, 80, 40, 0.25), inset 0 0 30px rgba(120, 80, 40, 0.2);
   overflow: hidden;
 }
-.lv-mapa.lavamanos, .lv-mapa.banera {
+.lv-mapa.lavamanos, .lv-mapa.banera, .lv-mapa.ducha {
   background:
     repeating-linear-gradient(0deg, transparent 0 27px, rgba(60, 100, 140, 0.12) 27px 28px),
     repeating-linear-gradient(90deg, transparent 0 27px, rgba(60, 100, 140, 0.12) 27px 28px),

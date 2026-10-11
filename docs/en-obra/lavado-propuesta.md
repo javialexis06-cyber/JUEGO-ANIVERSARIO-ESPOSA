@@ -230,6 +230,10 @@ Ducha» → una carta…). Todo se ve en la colección y en la Sala de Trofeos.
      vueltiao) con su carrito; vende con las gotas de la partida. Las **cajitas sorpresa** se pasan a la fase 4: cada
      una trae un disfraz nuevo, así que se hacen junto con esos disfraces.
 3. **Fase 3**: los escenarios (E) con sus bichos y jefes (I) en Blender, empezando por La Ducha; los minijuegos (H).
+   - **3a hecha** (11 de octubre): La Ducha, con baldosas mojadas, 8 bichos (gota de agua dura, mosquita del desagüe,
+     tapita de champú, hongo del pie, espuma sucia, ciempiés, estropajo, costra de cal), 4 jefes (Rey Hongo, Regadera
+     Loca, Cortina Mohosa, Ciempiés Gigante) y los chorros que caen del techo. Como Javier pidió «partes de la
+     ducha», los siguientes son La Jabonera (pasillos de repisas, como la torre del original) y El Desagüe (el final).
 4. **Fase 4**: los disfraces nuevos con transformación (J), las cartas de la noche (B) y, si Javier cuenta las
    historias, las aventuras (K).
 
