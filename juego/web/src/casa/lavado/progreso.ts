@@ -9,7 +9,9 @@ import { ENEMIGOS } from './enemigos';
 import { nivelMaestria, PREMIOS_MAESTRIA, puntosDePartida, type SubidaMaestria } from './maestria';
 import { PODER } from './tienda';
 import { cartaGuardada, disfrazGuardado } from './textos';
-import type { IdArma, IdCarta, IdEnemigo, IdEscenario, IdPasiva, Rol, Stat } from './tipos';
+import { ESCENARIOS as DEF_ESCENARIOS } from './escenarios';
+import { ID_MODOS, ID_TESOROS, TESORO_DE_MODO, TESOROS } from './tesoros';
+import type { IdArma, IdCarta, IdEnemigo, IdEscenario, IdModo, IdPasiva, IdTesoro, Rol, Stat } from './tipos';
 
 export interface ProgresoLavado {
   /** Gotas doradas para gastar. */
@@ -51,6 +53,14 @@ export interface ProgresoLavado {
   maestria: Record<string, number>;
   /** Lo que le han subido los patitos dorados a cada disfraz (para siempre, como los huevos de oro del original). */
   patitos: Record<string, Partial<Record<Stat, number>>>;
+  /** Los tesoros del baño que ya encontró. */
+  tesoros: IdTesoro[];
+  /** Escenarios con el modo Hiper abierto (venció a su jefe del minuto 25). */
+  hiper: IdEscenario[];
+  /** Los modos prendidos en el menú (además de Apurado). */
+  modos: IdModo[];
+  /** Lo más que ha aguantado con el agua caliente sin fin (segundos). */
+  mejorSinFin: number;
 }
 
 export function progresoNuevo(rol: Rol): ProgresoLavado {
@@ -58,6 +68,7 @@ export function progresoNuevo(rol: Rol): ProgresoLavado {
     oro: 0, gastado: 0, poderes: {}, comprados: [], disfraz: rol === 'el' ? 'el_panda' : 'ella_pulga', logros: [], armas: [], pasivas: [],
     bestiario: {}, mejor: {}, ganados: [], mejorNivel: 0, mejorBajas: 0, partidas: 0, eliminados: 0, velitas: 0, cofres: 0, arepas: 0,
     oroTotal: 0, segundos: 0, apurado: false, escenario: 'cara', carta: '', manual: false, tutorial: false, maestria: {}, patitos: {},
+    tesoros: [], hiper: [], modos: [], mejorSinFin: 0,
   };
 }
 
@@ -129,6 +140,10 @@ export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
     tutorial: !!x.tutorial || entero(x.partidas) > 0,
     maestria,
     patitos,
+    tesoros: listaDe(x.tesoros, ID_TESOROS),
+    hiper: listaDe(x.hiper, ESCENARIOS),
+    modos: listaDe(x.modos, ID_MODOS),
+    mejorSinFin: entero(x.mejorSinFin, 24 * 3600),
   };
 }
 
@@ -161,6 +176,10 @@ export interface ResumenPartida {
   danos: { arma: IdArma; dano: number; desde: number; nivel: number }[];
   /** Lo que subieron los patitos dorados que recogió (se le suma a su disfraz para siempre). */
   patitos?: Partial<Record<Stat, number>>;
+  /** Los tesoros del baño que se encontraron en la partida (los recibe cada uno). */
+  tesoros?: IdTesoro[];
+  /** Los modos con que se jugó. */
+  modos?: IdModo[];
 }
 
 // ---------------------------------------------------------------------------------------------------- Logros
@@ -243,6 +262,11 @@ export const LOGROS: DefLogro[] = [
   { id: 'evoHilo', nombre: 'Quietos todos', desc: 'Evoluciona el Hilo dental', premio: 'Arma: Bata de seda', cumple: (p) => p.armas.includes('hiloSeda') },
   { id: 'evoPerfume', nombre: 'Huele a enamorados', desc: 'Une el Perfume y la Colonia', premio: 'Arma: Gotas de colores', cumple: (p) => p.armas.includes('perfumeAmor') },
   { id: 'tapon', nombre: 'Desagüe destapado', desc: 'Vence al Tapón', premio: 'Arma: Culebrita destapacaños', cumple: (p) => (p.bestiario.tapon ?? 0) > 0 },
+  // Los tesoros y los modos (versión 2, fase 2)
+  { id: 'tesoro1', nombre: '¡Algo brilla!', desc: 'Encuentra un tesoro del baño (sigue la flecha verde)', premio: 'El modo que abre ese tesoro', cumple: (p) => p.tesoros.length >= 1 },
+  { id: 'hiper', nombre: 'A toda máquina', desc: 'Vence al jefe del minuto 25 de un escenario', premio: 'Modo Hiper en ese escenario', cumple: (p) => p.hiper.length >= 1 },
+  { id: 'tesoros6', nombre: 'Cazatesoros', desc: 'Encuentra los seis tesoros tirados en los escenarios', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.tesoros.filter((t) => t !== 'monedero').length >= 6 },
+  { id: 'sinFin40', nombre: 'Agua para rato', desc: 'Aguanta 40 minutos con el agua caliente sin fin', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.mejorSinFin >= 40 * 60 },
   { id: 'espejito', nombre: 'El espejito de mano', desc: 'Ten 5 armas evolucionadas distintas en la colección', premio: 'Tesoro: Espejito de mano (en los escenarios aparecen anillos y aretes escondidos)', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 5 },
 ];
 
@@ -273,6 +297,14 @@ export const tieneLogro = (p: ProgresoLavado, id: string | null | undefined) => 
 export const cartasDe = (p: ProgresoLavado) => (Object.keys(CARTAS) as IdCarta[]).filter((c) => tieneLogro(p, CARTA_LOGRO[c]));
 export const escenarioAbierto = (p: ProgresoLavado, e: IdEscenario) => tieneLogro(p, ESCENARIO_LOGRO[e]);
 export const apuradoAbierto = (p: ProgresoLavado) => tieneLogro(p, 'ganarCara');
+/** ¿Ya puede prender ese modo? (el Hiper, en el escenario escogido). */
+export const modoAbierto = (p: ProgresoLavado, m: IdModo, e: IdEscenario = p.escenario) =>
+  m === 'hiper' ? p.hiper.includes(e) : p.tesoros.includes(TESORO_DE_MODO[m]!);
+/** Los tesoros que todavía puede encontrar (los de los modos difíciles, después de ganar ese escenario). */
+export const reliquiasDe = (p: ProgresoLavado): IdTesoro[] =>
+  TESOROS.filter((t) => t.escenario && !p.tesoros.includes(t.id) && (!t.gano || p.ganados.includes(t.gano))).map((t) => t.id);
+/** Los modos con que se juega ahora (los prendidos que estén abiertos). */
+export const modosDe = (p: ProgresoLavado): IdModo[] => p.modos.filter((m) => modoAbierto(p, m));
 export const disfrazAbierto = (p: ProgresoLavado, id: string) => {
   const d = DISFRACES.find((x) => x.id === id);
   return !!d && (!!d.inicial || p.comprados.includes(id) || tieneLogro(p, d.logro));
@@ -296,6 +328,11 @@ export function sumarPartida(p: ProgresoLavado, r: ResumenPartida): string[] {
   for (const a of r.armas) if (!p.armas.includes(a)) p.armas.push(a);
   for (const a of r.pasivas) if (!p.pasivas.includes(a)) p.pasivas.push(a);
   for (const [k, v] of Object.entries(r.bestiario) as [IdEnemigo, number][]) p.bestiario[k] = (p.bestiario[k] ?? 0) + v;
+  for (const t of r.tesoros ?? []) if (ID_TESOROS.includes(t) && !p.tesoros.includes(t)) p.tesoros.push(t);
+  // El Hiper de cada escenario se abre venciendo a su jefe del minuto 25
+  const jefeHiper = DEF_ESCENARIOS[r.escenario]?.jefeHiper;
+  if (jefeHiper && r.jefes.includes(jefeHiper) && !p.hiper.includes(r.escenario)) p.hiper.push(r.escenario);
+  if (r.modos?.includes('infinito')) p.mejorSinFin = Math.max(p.mejorSinFin, Math.round(r.segundos));
   if (r.patitos && Object.keys(r.patitos).length) {
     const st = (p.patitos[r.disfraz] ??= {});
     for (const [k, v] of Object.entries(r.patitos) as [Stat, number][]) if (k in PATITO) st[k] = Math.min(5, (st[k] ?? 0) + v);

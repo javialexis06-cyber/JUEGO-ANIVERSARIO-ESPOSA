@@ -424,6 +424,27 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   4, que a veces se tragan a uno entero). Se abren con 5 logros (25 minutos en el lavamanos y en la cara, evolucionar
   el hilo dental, unir el perfume y la colonia, vencer al Tapón): en total, 58. Proyectiles 16-18: el comportamiento
   viaja ahora en 6 bits en la foto en línea (la copia chiquita, en el bit 64).
+- **Versión 2, fase 2a: tesoros y modos** (`tesoros.ts`, la capa de exploración del original). Seis **tesoros del
+  baño** (las reliquias) tirados lejos en los escenarios, con una **flecha verde** en el borde de la pantalla que dice
+  qué es y a cuántos metros está (`Interfaz.flechasTesoros`; en línea los tesoros viajan en la foto aunque nadie los
+  vea): el **Cuento al azar** (La Cara, abre «Nivel al azar»), el **Mapa del baño** (El Lavamanos: flechas también hacia
+  los anillos y aretes escondidos y una pestaña «Mapa» en la pausa), la **Ruleta de la abuela** (La Bañera, abre la
+  «Ruleta de sorpresas») y, después de ganar cada escenario, el **Libro de recetas** (La Cara → «Sin límite»), el
+  **Calentador** (El Lavamanos → «Agua caliente sin fin») y el **Espejo al revés** (La Bañera → «Del otro lado del
+  espejo»). Se recogen una sola vez (`ProgresoLavado.tesoros`; el motor los pone con `OpcionesJugador.reliquias`, de
+  `reliquiasDe`) y en pareja los recibe cada uno. Los **modos** se prenden en «¿Dónde nos lavamos?» (`p.modos`, y
+  `ConfigPartida.modos` los lleva a todos los celulares): **Hiper** (por escenario, venciendo a su jefe del minuto 25,
+  `DefEscenario.jefeHiper` → `p.hiper`: caminas ×1,35, los mugrosos ×1,45, +50 % de gotas y +10 % de suerte),
+  **Del otro lado del espejo** (vida ×3 que sube un 5 % por minuto, se van apurando, el triple de gotas, +25 % de
+  suerte y un velo morado), **Agua caliente sin fin** (no llega la Ducha Helada: cada 30 minutos `Motor.ciclo` sube,
+  los eventos vuelven a empezar y los mugrosos traen +100 % de vida, +50 % de cantidad y +25 % de daño por vuelta; los
+  30:00 cuentan como ganado), **Sin límite** (cuando no queda nada que subir, las cartas suben daño, área, recarga,
+  cantidad, duración o cuántos atraviesa de un arma, con topes salvo el daño: `ArmaJ.lim`, pasa a la evolución),
+  **Ruleta de sorpresas** (cada minuto: arepas, fiebre de gotas, cofre, velitas, hielo, muro, horda, un grandote que
+  persigue, un regalito o agua fría) y **Nivel al azar** (las cartas se escogen solas sin pausar, con un aviso de qué
+  salió). La colección tiene la pestaña «Tesoros» y hay 4 logros más (encontrar uno, los seis, abrir un Hiper y 40
+  minutos sin fin): 62 en total. Íconos nuevos en el atlas (ahora 152): los seis tesoros, el monedero y el carrito
+  del vendedor.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

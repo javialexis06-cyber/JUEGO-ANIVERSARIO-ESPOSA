@@ -6,6 +6,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { ARMAS, ESCONDIDAS } from '../armas';
+import { TESOROS } from '../tesoros';
 import { ENEMIGOS, ID_ENEMIGOS } from '../enemigos';
 import type { Enemigo, Jugador, Motor } from '../motor';
 import type { Efecto, IdArma, IdEnemigo, IdObjeto } from '../tipos';
@@ -791,14 +792,18 @@ export class Dibujo {
   }
 
   /** Un anillo o un arete escondido: flota y brilla para que se vea desde lejos. */
-  private tesoro(x: number, y: number, nombre: string) {
+  private tesoro(x: number, y: number, nombre: string, grande = false) {
     const t = this.t;
     const c = this.cuadrosObj.get(nombre);
     if (!c) return;
     const b = this.fx.c.brillo;
-    this.pisoFx.poner(x, y, 0.1, 120, 84, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.9, 0.6, 0.55 + Math.sin(t * 4) * 0.2);
-    this.fxLuz.poner(x, y, 30, 70, 70, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.95, 0.75, 0.35 + Math.sin(t * 6) * 0.1);
-    this.objetos.poner(x, y, 14 + Math.sin(t * 3) * 6, 44, 44, 0.5, 0.92, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, 0, 1, Math.sin(t * 2) * 0.2, 0.15 + Math.max(0, Math.sin(t * 5)) * 0.2);
+    // (los tesoros del baño, más grandes y con brillo verde, como las reliquias del original)
+    const k = grande ? 1.35 : 1;
+    const [r, g, bl] = grande ? [0.6, 1, 0.65] : [1, 0.9, 0.6];
+    this.pisoFx.poner(x, y, 0.1, 120 * k, 84 * k, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, r, g, bl, 0.55 + Math.sin(t * 4) * 0.2);
+    // (el brillo de encima, suavecito en los tesoros grandes para que se vea bien qué es)
+    this.fxLuz.poner(x, y, 30, 70 * k, 70 * k, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, r, 0.95, bl + 0.1, grande ? 0.1 + Math.sin(t * 6) * 0.04 : 0.35 + Math.sin(t * 6) * 0.1);
+    this.objetos.poner(x, y, 14 + Math.sin(t * 3) * 6, 44 * k, 44 * k, 0.5, 0.92, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, 0, 1, Math.sin(t * 2) * 0.2, 0.15 + Math.max(0, Math.sin(t * 5)) * 0.2);
     this.sombra(x, y, 16, 0.3);
     if (Math.random() < 0.2) this.part.crear('estrella', CAPA_LUZ, x + (Math.random() - 0.5) * 50, y + (Math.random() - 0.5) * 30, 20 + Math.random() * 30, 0, 0, 30, 0.8, 10, 3, 1, 0.92, 0.6, 1, 0, 0, 4);
   }
@@ -919,6 +924,10 @@ export class Dibujo {
       const cofre = o.tipo === 'cofre';
       if (o.tipo === 'tesoro') {
         this.tesoro(o.x, o.y, ESCONDIDAS[o.calidad]?.id ?? 'anilloPlata');
+        continue;
+      }
+      if (o.tipo === 'reliquia') {
+        this.tesoro(o.x, o.y, TESOROS[o.calidad]?.id ?? 'mapa', true);
         continue;
       }
       // (el dado extra usa el dado de volver a tirar)

@@ -10,11 +10,13 @@ import { ID_ARMAS, ID_PASIVAS, baseEnNivel } from './armas';
 import { ID_ENEMIGOS, ENEMIGOS } from './enemigos';
 import { LIMITE_COFRE, LIMITE_ESCOGER, MAX_ENEMIGOS, type CofreAbierto, type Jugador, type Motor, type Opcion, type OpcionesJugador } from './motor';
 import type { ResumenPartida } from './progreso';
-import type { Efecto, IdArma, IdCarta, IdEscenario, IdObjeto, IdPasiva, Stats, TipoEfecto } from './tipos';
+import type { Efecto, IdArma, IdCarta, IdEscenario, IdModo, IdObjeto, IdPasiva, Stats, TipoEfecto } from './tipos';
 
 export interface ConfigPartida {
   escenario: IdEscenario;
   apurado: boolean;
+  /** Los modos de la partida (los del anfitrión). */
+  modos?: IdModo[];
   semilla: number;
   /** En el orden de los puestos de la sala: el 0 es el anfitrión (y la cara es la suya). */
   jugadores: OpcionesJugador[];
@@ -125,7 +127,7 @@ const TIPOS_EF: TipoEfecto[] = ['golpe', 'muere', 'latigo', 'rayo', 'charco', 'l
 const IDX_EF = new Map(TIPOS_EF.map((t, i) => [t, i]));
 const IDX_ARMA = new Map(ID_ARMAS.map((a, i) => [a, i]));
 const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre', 'tesoro', 'trebolDorado', 'guante',
-  'patito', 'dado', 'paleta', 'corazoncito', 'pulsera', 'espejoVerdad', 'burbuja'];
+  'patito', 'dado', 'paleta', 'corazoncito', 'pulsera', 'espejoVerdad', 'burbuja', 'reliquia'];
 const IDX_OBJ = new Map(OBJETOS.map((o, i) => [o, i]));
 
 const buf = new ArrayBuffer(128 * 1024);
@@ -311,7 +313,9 @@ export function tomarFoto(m: Motor, efDesde: number, seq: number, extra = { band
   n = 0;
   for (const ob of m.objs) {
     if (!ob.vivo || n > 200) continue;
-    const a = quienVe(ob.x, ob.y);
+    let a = quienVe(ob.x, ob.y);
+    // (los tesoros van siempre, aunque nadie los vea: así todos tienen su flecha verde)
+    if (a < 0 && (ob.tipo === 'reliquia' || ob.tipo === 'tesoro')) a = cercana(ob.x, ob.y);
     if (a < 0) continue;
     b8(IDX_OBJ.get(ob.tipo) ?? 0);
     b8((ob.calidad & 15) | ((ob.dueno + 1) << 4));

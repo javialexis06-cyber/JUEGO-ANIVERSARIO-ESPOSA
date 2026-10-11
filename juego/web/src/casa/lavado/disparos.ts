@@ -66,6 +66,16 @@ function calcular(j: Jugador, a: ArmaJ) {
       E.dur = b.dur;
       break;
   }
+  // Lo que le ha subido «Sin límite»
+  const l = a.lim;
+  if (l) {
+    E.dano *= 1 + (l.dano ?? 0);
+    E.area *= 1 + (l.area ?? 0);
+    E.enfr = Math.max(0.05, E.enfr * (1 - (l.enfr ?? 0)));
+    E.cant += l.cant ?? 0;
+    E.dur *= 1 + (l.dur ?? 0);
+    if (E.perfora < 999) E.perfora += l.perfora ?? 0;
+  }
 }
 
 // ---------------------------------------------------------------------------------------------------- Ayudas

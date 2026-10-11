@@ -20,6 +20,7 @@ const VALOR_PASIVA: Partial<Record<IdPasiva, number>> = {
 export function valorOpcion(j: Jugador, o: Opcion): number {
   if (o.tipo === 'arepa') return j.vida < j.vidaMax * 0.6 ? 6 : 2;
   if (o.tipo === 'oro') return 1;
+  if (o.tipo === 'limite') return o.st === 'dano' ? 3 : o.st === 'cant' ? 3.5 : 2.5;
   if (o.tipo === 'arma') {
     const id = o.id as IdArma;
     if (!o.nueva) return 9 + o.nivel * 0.3;

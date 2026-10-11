@@ -5,9 +5,11 @@ probado y subido.
 
 ## Por dónde seguir (nota para el próximo Claude)
 
-Último trabajo subido: **Lavarse la cara 2, fase 1 completa** (las 24 armas del juego base y 5 de los DLC con sus
-evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros nuevos). Sigue
-la fase 2 (modos, tesoros, mercader y cajitas). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
+Último trabajo subido: **Lavarse la cara 2, fase 2a** (seis tesoros del baño con flecha verde y los seis modos del
+original: Hiper, Del otro lado del espejo, Agua caliente sin fin, Sin límite, Ruleta de sorpresas y Nivel al azar).
+Sigue la 2b (el vendedor ambulante y el Monedero). Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
+los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
+nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
 astral en pulso, el Guardián de una, sin pantallazo negro y los menús rehechos) y **la app de amigos con los seis
 juegos**. Antes, **Sangre y Ceniza 2, fase 5**, con la que **Sangre y Ceniza 2 queda completo**:
 equipo común a épico con rarezas especiales, la Forja con tres mostradores, el familiar (siete compañeros con modelo),
@@ -57,8 +59,12 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
      **hecho** (9 recogibles con la fiebre de gotas y el patito dorado que se guarda, 4 arcanos, 4 poderes y 7 logros).
    - ~~1d: una selección de armas de los DLC que encaje con el aseo~~ **hecho** (brisa, sales de las cuatro
      estaciones, bata de seda, gotas de colores y culebrita destapacaños, con sus evoluciones y 5 logros).
-   - Fases 2 a 4 de la propuesta: modos, tesoros y mercader; los escenarios de la ducha; disfraces con
-     transformación, cartas de la noche y las aventuras.
+   - ~~2a: tesoros y modos~~ **hecho** (seis tesoros con flecha verde; modos Hiper, Del otro lado del espejo, Agua
+     caliente sin fin, Sin límite, Ruleta de sorpresas y Nivel al azar; el mapa en la pausa; 4 logros).
+   - 2b: el vendedor ambulante (armas de rebote, patitos, y del otro lado del espejo tiradas, vetos y una carta) y el
+     Monedero.
+   - Fases 3 y 4 de la propuesta: los escenarios de la ducha; disfraces con transformación, cartas de la noche y las
+     aventuras.
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
 6. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.

@@ -34,6 +34,8 @@ export interface DefEscenario {
   eventos: EventoOleada[];
   /** Cómo se gana. */
   desbloqueo: string;
+  /** El jefe del minuto 25: vencerlo abre el modo Hiper de este escenario. */
+  jefeHiper: IdEnemigo;
 }
 
 const o = (min: number, cada: number, ...tipos: IdEnemigo[]): Oleada => ({ min, cada, tipos });
@@ -47,6 +49,7 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
     desc: 'Tu propia carita, con poros, pequitas y cachetes. Los gérmenes llegan de todos lados.',
     limites: null,
     desbloqueo: 'Desde el principio',
+    jefeHiper: 'barroNegro',
     oleadas: [
       o(14, 1.0, 'germen'),
       o(28, 1.0, 'germen', 'puntoNegro'),
@@ -118,6 +121,7 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
     desc: 'Un pasillo de porcelana larguísimo, con la llave, el jabón y el vaso de los cepillos. Arriba y abajo no hay salida.',
     limites: { yMin: -195, yMax: 195 },
     desbloqueo: 'Aguanta 15 minutos en La Cara',
+    jefeHiper: 'barroNegro',
     oleadas: [
       o(14, 1.0, 'sarro'),
       o(28, 1.0, 'sarro', 'pastaSeca'),
@@ -183,6 +187,7 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
     desc: 'Agua tibia, espuma y paticos de hule. Por el agua llegan bichos brincones y burbujas sucias.',
     limites: null,
     desbloqueo: 'Aguanta 15 minutos en El Lavamanos',
+    jefeHiper: 'motaPelo',
     oleadas: [
       o(14, 1.0, 'pulga'),
       o(28, 1.0, 'pulga', 'piojo'),

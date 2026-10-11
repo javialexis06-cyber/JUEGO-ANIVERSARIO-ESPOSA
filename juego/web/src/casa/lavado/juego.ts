@@ -22,14 +22,15 @@ import {
   Espejo, FOTO_CARGANDO, FOTO_CORTE, MSJ, aplicarInventario, inventarioDe, restanteEspejo, tomarFoto, type Accion, type ConfigPartida, type Mando,
 } from './linea';
 import { Menu, retrato } from './menu';
-import { Motor, VEL_JUGADOR, xpPara, type OpcionesJugador } from './motor';
-import { cartasDe, maestriaDe, PATITO, SECRETO_LOGRO, secretoAbierto, sumarMaestria, sumarPartida, type ProgresoLavado, type ResumenPartida } from './progreso';
+import { Motor, xpPara, type OpcionesJugador } from './motor';
+import { cartasDe, maestriaDe, modosDe, PATITO, reliquiasDe, SECRETO_LOGRO, secretoAbierto, sumarMaestria, sumarPartida, type ProgresoLavado, type ResumenPartida } from './progreso';
+import { ID_MODOS, ID_TESOROS } from './tesoros';
 import { MAESTRIA_MAX } from './maestria';
 import { musicaLavado, sonarEfecto } from './sonidos';
 import { botPaso } from './bot';
 import { disfrazVisto, ponerNeutro } from './textos';
 import { Tutorial } from './tutorial';
-import type { IdArma, IdCarta, IdPasiva, Rol, Stat } from './tipos';
+import type { IdArma, IdCarta, IdModo, IdPasiva, IdTesoro, Rol, Stat } from './tipos';
 
 export interface ResultadoLavado {
   /** Lo más que aguantó en las partidas de esta vez (segundos del reloj de la partida). */
@@ -88,6 +89,8 @@ export function opcionesJugador(rol: Rol, p: ProgresoLavado): OpcionesJugador {
     manual: p.manual && puedeApuntar(disfraz),
     maestria: maestriaDe(p, disfraz),
     patitos: { ...(p.patitos[disfraz] ?? {}) },
+    reliquias: reliquiasDe(p),
+    mapa: p.tesoros.includes('mapa'),
   };
 }
 
@@ -109,8 +112,13 @@ function opcionesSeguras(x: unknown, rol: Rol): OpcionesJugador {
     manual: !!o.manual && puedeApuntar(disfraz),
     maestria: Math.max(0, Math.min(MAESTRIA_MAX, Math.floor(Number(o.maestria) || 0))),
     patitos,
+    reliquias: lista(o.reliquias).filter((t): t is IdTesoro => ID_TESOROS.includes(t as IdTesoro)),
+    mapa: !!o.mapa,
   };
 }
+
+/** Los modos que llegan de otro celular, revisados. */
+const modosSeguros = (v: unknown): IdModo[] => (Array.isArray(v) ? [...new Set(v.filter((x): x is IdModo => ID_MODOS.includes(x as IdModo)))] : []);
 
 export const lavado: { actual: Lavado | null } = { actual: null };
 
@@ -220,6 +228,7 @@ export class Lavado {
       const config: ConfigPartida = {
         escenario: this.p.escenario,
         apurado: this.p.apurado,
+        modos: modosDe(this.p),
         semilla: (Math.random() * 1e9) >>> 0,
         jugadores: [this.misOpciones()],
       };
@@ -270,6 +279,7 @@ export class Lavado {
     return {
       escenario: this.p.escenario,
       apurado: this.p.apurado,
+      modos: modosDe(this.p),
       semilla: (Math.random() * 1e9) >>> 0,
       jugadores: js.map((j) => {
         const rol: Rol = j.tipo === 'amigo' ? j.aspecto.cuerpo : j.tipo;
@@ -286,6 +296,7 @@ export class Lavado {
     return {
       escenario: c.escenario,
       apurado: !!c.apurado,
+      modos: modosSeguros(c.modos),
       semilla: Number(c.semilla) >>> 0,
       jugadores: c.jugadores.map((j) => {
         const rol: Rol = j?.rol === 'ella' ? 'ella' : 'el';
@@ -434,7 +445,7 @@ export class Lavado {
 
   // ------------------------------------------------------------------------------------------------- Una partida
   private async partida(config: ConfigPartida, papel: Papel, yo: number, sala: Sala | null, conTutorial?: (m: Motor) => Tutorial): Promise<'otra' | 'menu'> {
-    const m = new Motor({ escenario: config.escenario, apurado: config.apurado, jugadores: config.jugadores, semilla: config.semilla, tutorial: !!conTutorial });
+    const m = new Motor({ escenario: config.escenario, apurado: config.apurado, modos: config.modos, jugadores: config.jugadores, semilla: config.semilla, tutorial: !!conTutorial });
     this.m = m;
     const n = config.jugadores.length;
     const varios = n > 1;
@@ -865,7 +876,7 @@ export class Lavado {
           if (!quieto && !m.pausa && !yoJ.caido && !yoJ.fuera && !m.fin) {
             const l = Math.hypot(mx, my);
             const ux = l > 1 ? mx / l : mx, uy = l > 1 ? my / l : my;
-            const v = VEL_JUGADOR * Math.max(0.2, 1 + yoJ.st.movimiento);
+            const v = m.velJugador(yoJ);
             yoJ.vx = ux * v;
             yoJ.vy = uy * v;
             yoJ.x += yoJ.vx * dt;
@@ -920,6 +931,7 @@ export class Lavado {
         ui.actualizar(m, dt, (i) => !sala || salieron.has(i) || sala.conectado(ids[i]));
         ui.revisar(m);
         if (varios) ui.companeros(m, (x, y) => dib.aPantalla(x, y));
+        ui.flechasTesoros(m, yoJ, (x, y) => dib.aPantalla(x, y));
         // Música: se anima con los minutos y se pone seria con los jefes
         tJefe += dt;
         if (tJefe > 0.5) {

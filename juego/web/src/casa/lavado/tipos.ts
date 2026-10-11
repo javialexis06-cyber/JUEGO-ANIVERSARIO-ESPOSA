@@ -82,6 +82,11 @@ export type IdEnemigo =
 
 export type IdEscenario = 'cara' | 'lavamanos' | 'banera';
 
+/** Los modos que se abren con los tesoros (y el Hiper de cada escenario, venciendo a su jefe del minuto 25). */
+export type IdModo = 'hiper' | 'inverso' | 'infinito' | 'sinLimite' | 'ruleta' | 'azar';
+/** Los tesoros del baño (las reliquias del original). */
+export type IdTesoro = 'espejoReves' | 'calentador' | 'recetas' | 'ruleta' | 'cuento' | 'mapa' | 'monedero';
+
 export type IdObjeto =
   | 'arepa' // vida (el pollo del original)
   | 'ola' // limpia la pantalla (el rosario)
@@ -101,7 +106,8 @@ export type IdObjeto =
   | 'corazoncito' // cura un poquito
   | 'pulsera' // pulsera de la amistad (solo con más de uno): a todos les sube un arma
   | 'espejoVerdad' // el espejo de la verdad: el doble de proyectiles y todo a la vez un ratico
-  | 'burbuja'; // burbuja protectora: ataja el siguiente golpe
+  | 'burbuja' // burbuja protectora: ataja el siguiente golpe
+  | 'reliquia'; // un tesoro del baño (calidad = cuál, en TESOROS)
 
 export type IdCarta =
   | 'oroBrillante' | 'certero' | 'silbato' | 'comienzo' | 'maraton' | 'dobleTurno' | 'curitaMagica' | 'relojQuieto' | 'ruedaFortuna'

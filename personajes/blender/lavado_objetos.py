@@ -1937,6 +1937,200 @@ def culebrita(p, gran=False):
     p.tubo([(0.38, 0, 0.28), (0.4, -0.015, 0.27)], 0.006, M('#E4574B', 0.4), seg=4)
 
 
+# ---------------------------------------------------------------------------------------------- Tesoros (versión 2)
+def espejo_reves(p):
+    """El Espejo al revés: el espejo de mano morado, patas arriba, con un remolino oscuro adentro."""
+    k = len(p.objs)
+    espejo_mano(p, '#8E6BD6')
+    p.blob((0, -0.03, 0.48), (0.13, 0.01, 0.13), M('#3B2A66', rough=0.2, emision=0.4, ruido=0.0), n=10)
+    remolinos(p, (0, -0.05, 0.48), 0.11, M('#C9A4F2', 0.3, emision=1.4, ruido=0.0), vueltas=1.6, n=12)
+    p.girar(p.desde(k), ry=math.pi, pivote=(0, 0, 0.36))
+    destellos(p, [(0.28, -0.1, 0.62), (-0.27, -0.1, 0.2), (0.24, -0.1, 0.08)], 0.05, '#E6D8FF')
+
+
+def calentador(p):
+    """El Calentador: el tanque blanco de la pared con su llamita, el reloj y los tubos de agua fría y caliente."""
+    m = M('#F4F1EA', rough=0.3, coat=0.6)
+    p.torno([(0.0, 0.0), (0.18, 0.0), (0.21, 0.04), (0.21, 0.56), (0.18, 0.62), (0.0, 0.63)], m, z=0.08)
+    for z in (0.18, 0.62):
+        p.torno([(0.205, -0.01), (0.222, 0.0), (0.205, 0.01)], M('#C9C2B4', 0.4, metal=0.4), z=z, tapas=(False, False))
+    # La ventanita con la llama
+    p.blob((0, -0.2, 0.26), (0.08, 0.02, 0.06), M('#2E2420', 0.4), n=8)
+    fuego = M('#FF8A3D', rough=0.3, emision=3.0, ruido=0.0)
+    p.blob((0, -0.215, 0.255), (0.035, 0.012, 0.045), fuego, n=6,
+           shaper=lambda v: np.column_stack([v[:, 0] * (1 - 0.6 * np.clip(v[:, 2] / 0.045, 0, 1)), v[:, 1], v[:, 2]]))
+    p.blob((0, -0.222, 0.24), (0.018, 0.008, 0.022), M('#FFE08A', rough=0.3, emision=3.0, ruido=0.0), n=5)
+    # El reloj de la temperatura
+    p.torno([(0.0, 0.0), (0.06, 0.0), (0.065, 0.02), (0.0, 0.025)], plata(), z=0.0)
+    reloj = p.objs[-1]
+    reloj.rotation_euler = (math.pi / 2, 0, 0)
+    reloj.location = (0.0, -0.2, 0.48)
+    p.blob((0, -0.226, 0.48), (0.05, 0.004, 0.05), M('#FFFDF8', 0.4), n=8)
+    p.tubo([(0, -0.232, 0.48), (0.03, -0.232, 0.51)], 0.006, M('#E4392B', 0.4), seg=4)
+    # Los tubos: el frío y el caliente
+    for (x, color) in ((-0.1, '#5AB4F0'), (0.1, '#E4574B')):
+        p.tubo([(x, 0, 0.1), (x, 0, 0.02), (x * 2.6, -0.02, 0.0)], 0.03, plata(), seg=8)
+        p.blob((x * 2.6, -0.02, 0.0), (0.045, 0.045, 0.03), M(color, 0.35, coat=0.5), n=6)
+    vapor(p, [(-0.06, 0, 0.8), (0.1, 0, 0.9)], 0.06)
+    destellos(p, [(0.3, -0.1, 0.62), (-0.3, -0.1, 0.42)], 0.05)
+
+
+def libro_recetas(p):
+    """El Libro de recetas de la abuela: tapa rosada con esquinas doradas, la rodaja de pepino y su cinta."""
+    tapa = M('#D9577A', rough=0.6, fuzz=0.3, pelusa='#F2A5B8')
+    p.caja((0, 0, 0.36), (0.25, 0.07, 0.34), tapa, p=5.0)
+    hojas = M('#FFF4DC', rough=0.8)
+    p.caja((0.02, 0.0, 0.36), (0.235, 0.058, 0.32), hojas, p=8.0)
+    p.caja((-0.245, 0, 0.36), (0.02, 0.075, 0.34), M('#B23A5E', rough=0.6, fuzz=0.3), p=4.0)
+    for (x, z) in ((0.2, 0.66), (0.2, 0.06), (-0.2, 0.66), (-0.2, 0.06)):
+        p.blob((x, -0.072, z), (0.05, 0.01, 0.05), oro(), n=6)
+    # La rodaja de pepino en la tapa y un corazoncito
+    p.torno([(0.0, 0.0), (0.1, 0.0), (0.1, 0.02), (0.0, 0.02)], M('#5FA346', 0.4), z=0.0)
+    r1 = p.objs[-1]
+    r1.rotation_euler = (math.pi / 2, 0, 0)
+    r1.location = (0.0, -0.075, 0.4)
+    p.blob((0, -0.098, 0.4), (0.082, 0.006, 0.082), M('#D9F0B8', 0.5, sss=0.2), n=8)
+    for k in range(6):
+        a = k / 6 * TAU
+        p.blob((math.cos(a) * 0.045, -0.104, 0.4 + math.sin(a) * 0.045), (0.012, 0.004, 0.018), M('#F4FBE8', 0.4), n=4)
+    corazon_v(p, (0, -0.08, 0.17), 0.1, oro(), 0.3)
+    # La cinta de marcar
+    p.tubo([(0.08, 0.02, 0.7), (0.1, 0.0, 0.76), (0.12, -0.02, 0.82)], [0.025, 0.02], M('#F2C14E', 0.4), seg=6, perfil=(1.0, 0.3))
+    destellos(p, [(0.33, -0.1, 0.62), (-0.33, -0.1, 0.25)], 0.05)
+
+
+def ruleta(p):
+    """La Ruleta de la abuela: rueda de colores parada en su base, con el piquito arriba."""
+    cz = 0.42
+    colores = ['#E4574B', '#F2C14E', '#5AB4F0', '#7FCB5A', '#E86A8A', '#9C6BD6', '#FF8A3D', '#68C9B9']
+    n = len(colores)
+    for k, c in enumerate(colores):
+        a0, a1 = k / n * TAU, (k + 1) / n * TAU
+        pts = [(0.0, cz)] + [(math.cos(a0 + (a1 - a0) * t / 4) * 0.27, cz + math.sin(a0 + (a1 - a0) * t / 4) * 0.27) for t in range(5)]
+        prisma(p, pts, 0.03, M(c, rough=0.3, coat=0.5), y=0.0, bisel=0.006)
+    o = clay.lathe(p.nom(), [(0.27, -0.03), (0.3, 0.0), (0.27, 0.03), (0.25, 0.0), (0.27, -0.03)], p.coll, oro(), segments=48, subsurf=1,
+                   cap_bottom=False, cap_top=False)
+    o.rotation_euler = (math.pi / 2, 0, 0)
+    o.location = (0, 0, cz)
+    p.add(o)
+    for k in range(n):
+        a = k / n * TAU
+        p.blob((math.cos(a) * 0.3, -0.02, cz + math.sin(a) * 0.3), (0.022,) * 3, M('#FFF3B0', rough=0.3, emision=1.5, ruido=0.0), n=5)
+    p.blob((0, -0.03, cz), (0.05, 0.03, 0.05), oro(), n=8)
+    # El piquito
+    prisma(p, [(-0.05, cz + 0.36), (0.05, cz + 0.36), (0.0, cz + 0.24)], 0.05, M('#E4392B', 0.35, coat=0.5), y=-0.03, bisel=0.008)
+    # La base
+    madera = M('#B07A4F', rough=0.6)
+    p.tubo([(0, 0.04, cz), (0, 0.06, 0.08)], 0.03, madera, seg=8)
+    p.caja((0, 0.05, 0.05), (0.2, 0.1, 0.05), madera, p=4.0)
+    destellos(p, [(0.38, -0.1, 0.75), (-0.38, -0.1, 0.62)], 0.05)
+
+
+def cuento(p):
+    """El Cuento al azar: un libro de cuentos abierto del que salen un dado y estrellitas."""
+    tapa = M('#3E8FB0', rough=0.6, fuzz=0.3, pelusa='#9FD3E8')
+    hojas = M('#FFF8E6', rough=0.8)
+    for sx in (-1, 1):
+        k = len(p.objs)
+        p.caja((sx * 0.21, 0, 0.12), (0.2, 0.2, 0.014), tapa, p=5.0)
+        p.caja((sx * 0.2, 0, 0.145), (0.18, 0.185, 0.02), hojas, p=8.0)
+        for q in range(3):
+            p.tubo([(sx * 0.06, -0.12 + q * 0.06, 0.168), (sx * 0.3, -0.12 + q * 0.06, 0.168)], 0.006, M('#C9B79A', 0.7), seg=4)
+        p.girar(p.desde(k), ry=-sx * 0.22, pivote=(0, 0, 0.12))
+    # El dado que salta
+    k = len(p.objs)
+    dado(p)
+    for o in p.desde(k):
+        o.scale = (0.55, 0.55, 0.55)
+        o.location = (o.location[0], o.location[1], o.location[2] + 0.42)
+    p.girar(p.desde(k), rx=0.3, ry=0.5, pivote=(0, 0, 0.56))
+    estrellas = M('#F2C14E', rough=0.3, emision=1.6, ruido=0.0)
+    for (x, z, s) in ((-0.3, 0.5, 0.06), (0.28, 0.62, 0.05), (-0.12, 0.82, 0.045), (0.18, 0.36, 0.04)):
+        estrella(p, (x, -0.05, z), s, estrellas, puntas=5, grosor=0.35)
+
+
+def mapa_bano(p):
+    """El Mapa del baño: un papel doblado en tres con el río de la ducha, el caminito y la equis del tesoro."""
+    papel = M('#F4E6C4', rough=0.85)
+    agua = M('#5AB4F0', rough=0.3, coat=0.4)
+    camino = M('#E4574B', rough=0.4)
+    for q in range(3):
+        k = len(p.objs)
+        x0 = -0.26 + q * 0.26
+        prisma(p, [(x0 - 0.13, 0.04), (x0 + 0.13, 0.04), (x0 + 0.13, 0.66), (x0 - 0.13, 0.66)], 0.016, papel, y=0.0, bisel=0.006)
+        # El río (cada panel su pedazo)
+        pts = [(x, -0.012, 0.42 + 0.08 * math.sin((x + 0.4) * 9)) for x in np.linspace(x0 - 0.12, x0 + 0.12, 8)]
+        p.tubo(pts, 0.016, agua, seg=5, perfil=(1.0, 0.3))
+        # El caminito de puntos
+        for t in range(3):
+            x = x0 - 0.08 + t * 0.08
+            p.blob((x, -0.012, 0.2 + 0.05 * math.cos((x + 0.3) * 7)), (0.014, 0.004, 0.014), camino, n=4)
+        if q == 2:
+            for s in (-1, 1):
+                p.tubo([(x0 + 0.02 - 0.05, -0.014, 0.24 + s * 0.05), (x0 + 0.02 + 0.05, -0.014, 0.24 - s * 0.05)], 0.016, camino, seg=5)
+        if q == 0:
+            # Una regadera chiquita
+            p.blob((x0 - 0.02, -0.014, 0.56), (0.04, 0.006, 0.03), M('#9AA7B8', 0.3, metal=0.6), n=6)
+            gotas(p, (x0 - 0.02, -0.014, 0.49), 3, 0.012, abanico=0.4)
+        p.girar(p.desde(k), rz=(0.32 if q % 2 == 0 else -0.32), pivote=(x0, 0, 0.35))
+    destellos(p, [(0.42, -0.1, 0.7), (-0.42, -0.1, 0.12)], 0.05)
+
+
+def monedero(p):
+    """El Monedero de vidrio: un monedero de broche con gotas doradas saliendo."""
+    m = M('#B9E3F7', rough=0.08, coat=1.0, transmision=0.55, ruido=0.0)
+    p.blob((0, 0, 0.28), (0.27, 0.12, 0.22), m, n=12,
+           shaper=lambda v: np.column_stack([v[:, 0] * (1 + 0.15 * np.clip(-v[:, 2] / 0.22, 0, 1)), v[:, 1], v[:, 2]]))
+    o = clay.lathe(p.nom(), [(0.2, -0.018), (0.22, 0.0), (0.2, 0.018), (0.19, 0.0), (0.2, -0.018)], p.coll, oro(), segments=32, subsurf=1,
+                   cap_bottom=False, cap_top=False)
+    o.rotation_euler = (0, 0, 0)
+    o.scale = (1.25, 0.55, 1.0)
+    o.location = (0, 0, 0.46)
+    p.add(o)
+    for sx in (-1, 1):
+        p.blob((sx * 0.05, -0.02, 0.53), (0.04,) * 3, oro(), n=6)
+    for (x, z) in ((-0.1, 0.62), (0.08, 0.68), (0.0, 0.8)):
+        gota_dorada(p, (x, -0.02, z), 0.06)
+    for (x, z) in ((-0.1, 0.22), (0.08, 0.18), (0.0, 0.3)):
+        gota_dorada(p, (x, 0.0, z), 0.05)
+    destellos(p, [(0.33, -0.15, 0.5), (-0.34, -0.15, 0.36)], 0.05)
+
+
+def carrito(p):
+    """El carrito del vendedor ambulante: sombrilla de rayas, ruedas y la mercancía de jabones y frasquitos."""
+    madera = M('#C98A55', rough=0.6)
+    p.caja((0, 0, 0.3), (0.32, 0.2, 0.13), madera, p=4.0)
+    p.caja((0, -0.205, 0.3), (0.3, 0.01, 0.1), M('#68C9B9', rough=0.5), p=6.0)
+    for x in (-0.18, 0.0, 0.18):
+        p.blob((x, -0.22, 0.3), (0.035, 0.008, 0.035), M('#FFF6E8', 0.4), n=5)
+    for sx in (-1, 1):
+        o = clay.lathe(p.nom(), [(0.08, -0.025), (0.11, 0.0), (0.08, 0.025), (0.06, 0.0), (0.08, -0.025)], p.coll, M('#3E3A3A', 0.5), segments=24,
+                       subsurf=1, cap_bottom=False, cap_top=False)
+        o.rotation_euler = (math.pi / 2, 0, 0)
+        o.location = (sx * 0.22, -0.2, 0.11)
+        p.add(o)
+        p.blob((sx * 0.22, -0.21, 0.11), (0.03, 0.02, 0.03), oro(), n=5)
+    p.tubo([(0.32, 0, 0.36), (0.48, 0, 0.42), (0.52, 0, 0.42)], 0.02, madera, seg=6)
+    # La mercancía
+    jabones = ['#F59AAE', '#7DB7E8', '#F2C14E', '#7FCB5A']
+    for q, c in enumerate(jabones):
+        p.caja((-0.22 + q * 0.15, -0.05, 0.47), (0.06, 0.04, 0.04), M(c, rough=0.35, coat=0.5, sss=0.2), p=3.0)
+    for q, c in enumerate(['#E58BB5', '#9C6BD6', '#68C9B9']):
+        p.torno([(0.0, 0.0), (0.04, 0.0), (0.045, 0.02), (0.045, 0.12), (0.025, 0.15), (0.0, 0.16)], M(c, rough=0.25, coat=0.6), x=-0.16 + q * 0.16, y=0.1, z=0.43)
+    for (x, z, r) in ((-0.28, 0.62, 0.04), (0.3, 0.66, 0.05)):
+        burbuja(p, (x, -0.05, z), r)
+    # La sombrilla de rayas
+    p.tubo([(0.0, 0.12, 0.43), (0.0, 0.12, 0.95)], 0.012, plata(), seg=6)
+    rayas = ['#E4574B', '#FFFDF8']
+    for k in range(10):
+        a0, a1 = k / 10 * TAU, (k + 1) / 10 * TAU
+        pts = [(0.0, 0.0)] + [(math.cos(a0 + (a1 - a0) * t / 3) * 0.42, math.sin(a0 + (a1 - a0) * t / 3) * 0.42) for t in range(4)]
+        o = prisma(p, pts, 0.012, M(rayas[k % 2], rough=0.7, fuzz=0.2), y=0.0, bisel=0.004)
+        o.rotation_euler = (math.pi / 2, 0, 0)
+        o.location = (0, 0.12, 0.95)
+    p.blob((0, 0.12, 0.98), (0.03,) * 3, oro(), n=5)
+
+
 ICONOS = {
     # Armas
     'toalla': lambda p: toalla(p), 'toallazo': lambda p: toalla(p, '#E4392B', '#FFD45C', caliente=True),
@@ -1994,6 +2188,8 @@ ICONOS = {
     'salesArcoiris': lambda p: estaciones(p, arcoiris=True), 'bataEspejismo': bata_seda, 'perfumeEspejismo': perfume_espejismo,
     'gotasColores': lambda p: gotas_colores(p), 'arcoiris': lambda p: gotas_colores(p, arcoiris=True),
     'culebrita': lambda p: culebrita(p), 'granDesague': lambda p: culebrita(p, gran=True),
+    'espejoReves': espejo_reves, 'calentador': calentador, 'recetas': libro_recetas, 'ruleta': ruleta, 'cuento': cuento, 'mapa': mapa_bano,
+    'monedero': monedero, 'carrito': carrito,
     # Del piso
     'arepa': arepa, 'ola': balde, 'hielo': cubo_hielo, 'aspiradora': aspiradora, 'moneda': moneda, 'bolsa': bolsa, 'frasco': frasco_oro,
     'trebolito': lambda p: trebol(p, 0.7), 'aji': aji, 'cofre': lambda p: cofre(p), 'cofreAbierto': lambda p: cofre(p, abierto=True),

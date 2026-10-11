@@ -11,6 +11,8 @@ import { RECETAS, estadoReceta, recetaDeArma, recetasDePasiva, type EstadoReceta
 import { LOGRO, type ResumenPartida } from './progreso';
 import { sfx } from './sonidos';
 import { ORO_X, type Jugador, type Motor, type Opcion } from './motor';
+import { ESCONDIDAS } from './armas';
+import { LIMITE, MODO, TESOROS } from './tesoros';
 import type { Efecto, IdArma, IdCarta, IdPasiva, Rol } from './tipos';
 
 /** Las acciones llevan `n`: cuántas cosas había escogido cuando se pintó la capa (un toque viejo o doble no cuenta). */
@@ -43,6 +45,11 @@ export function nombreItem(id: string) {
 export function descOpcion(o: Opcion): string {
   if (o.tipo === 'arepa') return 'Una arepa con queso calientita: recuperas 30 de vida.';
   if (o.tipo === 'oro') return `${Math.round(25 * ORO_X)} gotas doradas para la tienda.`;
+  if (o.tipo === 'limite') {
+    const d = LIMITE[o.st ?? 'dano'];
+    const v = d.paso >= 1 ? `+${d.paso}` : `+${Math.round(d.paso * 100)} %`;
+    return `Sin límite: ${v} de ${d.nombre.toLowerCase()} para esta arma.`;
+  }
   if (o.tipo === 'arma') {
     const a = ARMAS[o.id as IdArma];
     return o.nueva ? a.desc : a.niveles[o.nivel - 2]?.txt ?? a.desc;
@@ -110,7 +117,7 @@ export class Interfaz {
   private tHud = 0;
   pausado = false;
   /** La pestaña de la pausa (tocar las armas de arriba la abre en la mochila). */
-  private pestanaPausa: 'mochila' | 'evoluciones' | 'stats' = 'mochila';
+  private pestanaPausa: 'mochila' | 'evoluciones' | 'stats' | 'mapa' = 'mochila';
   private ultimaPausa: [Motor, boolean, boolean, boolean] | null = null;
 
   /** Los demás: su chip (nombre, vida, estado), la flecha cuando no se ven y su nombre encima. */
@@ -129,11 +136,12 @@ export class Interfaz {
         <div class="lv-equipo">${otros.map((i) => `<div class="lv-compa" data-i="${i}" style="--c:${colores[i] ?? '#fff'}"><span></span><i><u></u></i></div>`).join('')}</div>
         ${otros.map((i) => `<div class="lv-flecha" data-i="${i}" style="--c:${colores[i] ?? '#fff'}"><b>${esc((nombres[i] ?? '?').slice(0, 1).toUpperCase())}</b></div>`).join('')}
         ${otros.map((i) => `<div class="lv-etiqueta" data-i="${i}" style="--c:${colores[i] ?? '#fff'}">${esc(nombres[i] ?? '')}</div>`).join('')}
+        ${Array.from({ length: 6 }, () => '<div class="lv-flecha-tesoro"><span></span></div>').join('')}
         <div class="lv-aviso"></div>
         <div class="lv-jefe"></div>
       </div>
       <button class="lv-pausa" aria-label="Pausa">❚❚</button>
-      <div class="lv-velo-hielo"></div><div class="lv-velo-dano"></div><div class="lv-velo-luz"></div>
+      <div class="lv-velo-inverso"></div><div class="lv-velo-hielo"></div><div class="lv-velo-dano"></div><div class="lv-velo-luz"></div>
       <div class="lv-capa lv-c-nivel" hidden></div>
       <div class="lv-capa lv-c-cofre" hidden></div>
       <div class="lv-capa lv-c-carta" hidden></div>
@@ -283,7 +291,9 @@ export class Interfaz {
     $(this.hud, '.lv-xp b').textContent = `Nv ${m.nivel}`;
     const t = $(this.hud, '.lv-tiempo');
     const txt = mmss(m.t);
-    if (t.firstChild?.textContent !== txt) t.innerHTML = `${txt}${m.apurado ? '<small>¡Apurado!</small>' : ''}`;
+    // (debajo del reloj: Apurado y los modos prendidos)
+    const modos = [...m.modos].map((x) => MODO[x].emoji).join('');
+    if (t.firstChild?.textContent !== txt) t.innerHTML = `${txt}${m.apurado || modos ? `<small>${m.apurado ? '¡Apurado! ' : ''}${modos}</small>` : ''}`;
     t.classList.toggle('apurado', m.apurado);
     $(this.hud, '.lv-cuenta .bajas').textContent = `🦠 ${miles(m.eliminados)}`;
     const oro = $(this.hud, '.lv-cuenta .oro');
@@ -320,6 +330,37 @@ export class Interfaz {
       $(o.chip, 'u').style.width = `${Math.max(0, (q.vida / Math.max(1, q.vidaMax)) * 100)}%`;
     }
     this.raiz.querySelector('.lv-velo-hielo')!.classList.toggle('si', m.hielo > 0);
+    this.raiz.querySelector('.lv-velo-inverso')!.classList.toggle('si', m.modo('inverso'));
+  }
+
+  /**
+   * Las flechas verdes hacia los tesoros del baño que no se ven (y, con el mapa del baño, hacia los anillos y aretes
+   * escondidos), con el ícono de lo que hay allá y cuánto falta.
+   */
+  flechasTesoros(m: Motor, yo: Jugador, aPantalla: (x: number, y: number) => [number, number]) {
+    const flechas = this.hud.querySelectorAll<HTMLElement>('.lv-flecha-tesoro');
+    const w = this.raiz.clientWidth, h = this.raiz.clientHeight;
+    let n = 0;
+    for (const o of m.objs) {
+      if (n >= flechas.length) break;
+      if (!o.vivo || !(o.tipo === 'reliquia' || (o.tipo === 'tesoro' && m.mapa))) continue;
+      const [px, py] = aPantalla(o.x, o.y);
+      if (px > 0 && py > 0 && px < w && py < h) continue;
+      const f = flechas[n++];
+      // (sin tapar las armas de arriba a la izquierda ni el botón de pausa)
+      const x = Math.max(30, Math.min(w - 30, px)), y = Math.max(x < 230 || x > w - 70 ? 104 : 76, Math.min(h - 34, py));
+      const id = o.tipo === 'reliquia' ? TESOROS[o.calidad]?.id ?? 'mapa' : ESCONDIDAS[o.calidad]?.id ?? 'anilloPlata';
+      const metros = Math.round(Math.hypot(o.x - yo.x, o.y - yo.y) / 40);
+      const clave = `${id}|${metros}`;
+      if (f.dataset.k !== clave) {
+        f.dataset.k = clave;
+        f.firstElementChild!.innerHTML = `${icono(id, 26)}<em>${metros} m</em>`;
+      }
+      f.style.transform = `translate(${x}px, ${y}px)`;
+      f.style.setProperty('--a', `${Math.atan2(py - y, px - x)}rad`);
+      f.classList.add('si');
+    }
+    for (let k = n; k < flechas.length; k++) flechas[k].classList.remove('si');
   }
 
   /**
@@ -503,7 +544,7 @@ export class Interfaz {
         const ico = o.tipo === 'arepa' ? 'arepa' : o.tipo === 'oro' ? 'bolsa' : o.id;
         return `<button class="lv-carta ${nueva ? 'nueva' : ''} ${p?.oro ? 'evo' : ''}" data-k="${k}">
           ${icono(ico, 54)}
-          <small>${o.tipo === 'arepa' || o.tipo === 'oro' ? 'Regalito' : nueva ? '¡Nueva!' : `Nivel ${o.nivel}`}</small>
+          <small>${o.tipo === 'arepa' || o.tipo === 'oro' ? 'Regalito' : o.tipo === 'limite' ? `📖 Sin límite · ${o.nivel}` : nueva ? '¡Nueva!' : `Nivel ${o.nivel}`}</small>
           <b>${o.tipo === 'arepa' ? 'Arepa con queso' : o.tipo === 'oro' ? 'Gotas doradas' : nombreItem(o.id)}</b>
           ${pips}<em>${descOpcion(o)}</em>${p ? `<span class="pista ${p.oro ? '' : 'gris'}">${p.texto}</span>` : ''}</button>`;
       })
@@ -655,12 +696,13 @@ export class Interfaz {
       cuerpo = `<div class="col lv-recetas">${estados
         .map((e) => `<div class="lv-rec ${e.hecha ? 'hecha' : e.lista ? 'lista' : e.avance > 0 ? 'cerca' : ''}">${recetaHtml(e, 24)}<div><b>${ARMAS[e.receta.a].nombre}</b><small>${e.avance > 0 || e.hecha ? e.falta : `${e.receta.de.map((x) => ARMAS[x].nombre).join(' + ')} al nivel ${maxNivelArma(e.receta.de[0])} + ${e.receta.pasivas.map((x) => PASIVAS[x].nombre).join(' + ') || 'nada más'}`}</small></div></div>`)
         .join('')}</div>`;
-    } else {
+    } else if (this.pestanaPausa === 'stats') {
       cuerpo = `<div class="col"><div class="lv-stats">${filas.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('')}</div></div>`;
     }
-    const tabs = (['mochila', 'evoluciones', 'stats'] as const)
-      .map((t) => `<button class="${this.pestanaPausa === t ? 'sel' : ''}" data-p="pestana" data-t="${t}">${t === 'mochila' ? '🎒 Mochila' : t === 'evoluciones' ? '✨ Evoluciones' : '📊 Estadísticas'}</button>`)
-      .join('');
+    if (this.pestanaPausa === 'mapa') cuerpo = `<div class="col">${this.mapaHtml(m)}</div>`;
+    const pestanas = m.mapa ? (['mochila', 'evoluciones', 'stats', 'mapa'] as const) : (['mochila', 'evoluciones', 'stats'] as const);
+    const nombreTab = { mochila: '🎒 Mochila', evoluciones: '✨ Evoluciones', stats: '📊 Estadísticas', mapa: '🗺️ Mapa' };
+    const tabs = pestanas.map((t) => `<button class="${this.pestanaPausa === t ? 'sel' : ''}" data-p="pestana" data-t="${t}">${nombreTab[t]}</button>`).join('');
     this.capaPausa.innerHTML = `<div class="lv-panel lv-panel-pausa">
       <h2>Pausa · ${mmss(m.t)} · Nivel ${m.nivel}</h2>
       <div class="lv-pestanas lv-pestanas-pausa">${tabs}</div>
@@ -675,11 +717,45 @@ export class Interfaz {
       </div></div>`;
   }
 
+  /** El mapa del baño (en la pausa): dónde está cada uno, los tesoros que quedan y lo escondido. */
+  private mapaHtml(m: Motor) {
+    const puntos: { x: number; y: number; html: string }[] = [];
+    m.jug.forEach((q, i) => {
+      if (!q.fuera) puntos.push({ x: q.x, y: q.y, html: `<i class="yo" style="--c:${this.colores[i] ?? '#ff6f9c'}">${i === this.yo ? '★' : esc((this.nombres[i] ?? '?').slice(0, 1))}</i>` });
+    });
+    for (const o of m.objs) {
+      if (!o.vivo) continue;
+      if (o.tipo === 'reliquia') puntos.push({ x: o.x, y: o.y, html: icono(TESOROS[o.calidad]?.id ?? 'mapa', 30) });
+      else if (o.tipo === 'tesoro') puntos.push({ x: o.x, y: o.y, html: icono(ESCONDIDAS[o.calidad]?.id ?? 'anilloPlata', 26) });
+      else if (o.tipo === 'cofre') puntos.push({ x: o.x, y: o.y, html: icono('cofre', 22) });
+    }
+    // (el mapa abarca todo lo marcado, con un margen)
+    let x0 = -600, x1 = 600, y0 = -400, y1 = 400;
+    for (const p of puntos) {
+      x0 = Math.min(x0, p.x - 300);
+      x1 = Math.max(x1, p.x + 300);
+      y0 = Math.min(y0, p.y - 250);
+      y1 = Math.max(y1, p.y + 250);
+    }
+    const lim = m.esc.limites;
+    if (lim) {
+      y0 = Math.min(y0, lim.yMin - 300);
+      y1 = Math.max(y1, lim.yMax + 300);
+    }
+    // (dónde se empezó, para ubicarse)
+    puntos.unshift({ x: 0, y: 0, html: '<i class="inicio">🫧<small>inicio</small></i>' });
+    const marcas = puntos.map((p) => `<span style="left:${((p.x - x0) / (x1 - x0)) * 100}%;top:${((p.y - y0) / (y1 - y0)) * 100}%">${p.html}</span>`).join('');
+    const pasillo = lim ? `<b class="pasillo" style="top:${((lim.yMin - y0) / (y1 - y0)) * 100}%;height:${((lim.yMax - lim.yMin) / (y1 - y0)) * 100}%"></b>` : '';
+    return `<div class="lv-mapa ${m.esc.id}">${pasillo}<b class="rosa">🧭</b><b class="nombre">${m.esc.nombre}</b>${marcas}</div><p class="lv-mapa-pie">🗺️ ${m.esc.nombre}: ★ eres tú; los tesoros y lo escondido salen donde están.</p>`;
+  }
+
   // ------------------------------------------------------------------------------------------------- Final
   mostrarFin(r: ResumenPartida, extra: { logros: string[]; maestria?: SubidaMaestria; monedas: number; pareja: boolean; nombreOtro: string; nota?: string }): Promise<'otra' | 'menu'> {
     sfx.fin(r.gano);
-    const titulo = r.gano ? '¡Se acabó el agua caliente!' : r.retiro ? (r.segundos < 60 ? 'Lavadita de gato' : '¡Bien lavadito!') : r.segundos < 60 ? 'Otro día te lavas bien…' : 'Te ganaron los mugrosos';
-    const sub = r.gano ? 'Aguantaste hasta la Ducha Helada: ¡cara limpiecita!' : r.retiro ? 'Te saliste a tiempo y cobraste todo lo que recogiste.' : r.segundos >= 15 * 60 ? '¡Qué lavada tan buena!' : '¡Ya casi! Con la tienda de poderes se aguanta más.';
+    // (con el agua caliente sin fin no llega la Ducha Helada: se gana igual al pasar los 30:00)
+    const sinFin = !!r.modos?.includes('infinito');
+    const titulo = r.gano ? (sinFin ? '¡Agua caliente para rato!' : '¡Se acabó el agua caliente!') : r.retiro ? (r.segundos < 60 ? 'Lavadita de gato' : '¡Bien lavadito!') : r.segundos < 60 ? 'Otro día te lavas bien…' : 'Te ganaron los mugrosos';
+    const sub = r.gano && sinFin ? `Pasaste los 30:00 y seguiste: ${Math.floor(r.segundos / 1800) + 1} vueltas de agua caliente.` : r.gano ? 'Aguantaste hasta la Ducha Helada: ¡cara limpiecita!' : r.retiro ? 'Te saliste a tiempo y cobraste todo lo que recogiste.' : r.segundos >= 15 * 60 ? '¡Qué lavada tan buena!' : '¡Ya casi! Con la tienda de poderes se aguanta más.';
     const total = r.danos.reduce((a, d) => a + d.dano, 0) || 1;
     const filas = r.danos
       .slice()
@@ -696,6 +772,11 @@ export class Interfaz {
       .map((l) => `<div class="lv-logro">🏆<span><b>${l.nombre}</b>${l.premio}</span></div>`)
       .join('');
     const maestria = extra.maestria ? htmlMaestriaFin(extra.maestria) : '';
+    const tesoros = (r.tesoros ?? [])
+      .map((id) => TESOROS.find((t) => t.id === id))
+      .filter((t): t is (typeof TESOROS)[number] => !!t)
+      .map((t) => `<div class="lv-logro">${icono(t.id, 30)}<span><b>¡${t.nombre}!</b>${t.abre}</span></div>`)
+      .join('');
     this.capaFin.innerHTML = `<div class="lv-panel">
       <h2>${titulo}<small style="color:#7a625a">${extra.nota ? `${esc(extra.nota)} · ` : ''}${sub}</small></h2>
       <div class="lv-resumen">
@@ -704,7 +785,7 @@ export class Interfaz {
       </div>
       <div class="cuerpo">
         <div class="col"><table class="lv-tabla"><tr><th>Arma</th><th>Nv</th><th>Daño</th><th>%</th><th>DPS</th></tr>${filas}</table></div>
-        ${logros || maestria ? `<div class="col">${maestria}${logros}</div>` : ''}
+        ${logros || maestria || tesoros ? `<div class="col">${tesoros}${maestria}${logros}</div>` : ''}
       </div>
       <div class="lv-fila">
         <button class="lv-boton menta grande" data-f="otra">${extra.pareja ? 'Volver a la sala' : 'Otra lavada'}</button>

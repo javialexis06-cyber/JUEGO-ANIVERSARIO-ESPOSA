@@ -17,12 +17,14 @@ import { icono, iconoBicho } from './iconos';
 import { MINUTO_EVOLUCION, RECETAS } from './evoluciones';
 import { barraMaestria, marcoDe, MAESTRIA_MAX, PREMIOS_MAESTRIA, tituloMaestria } from './maestria';
 import {
-  CARTA_LOGRO, ESCENARIO_LOGRO, LOGRO, LOGROS, apuradoAbierto, cartasDe, disfrazAbierto, escenarioAbierto, maestriaDe, tieneLogro, type ProgresoLavado,
+  CARTA_LOGRO, ESCENARIO_LOGRO, LOGRO, LOGROS, apuradoAbierto, cartasDe, disfrazAbierto, escenarioAbierto, maestriaDe, modoAbierto, modosDe, tieneLogro,
+  type ProgresoLavado,
 } from './progreso';
+import { MODO, MODOS, TESORO, TESORO_DE_MODO, TESOROS } from './tesoros';
 import { sfx } from './sonidos';
 import { PODER, PODERES, precioPoder } from './tienda';
 import { FRASES, cartaVista, disfrazVisto, enemigoVisto, logroVisto } from './textos';
-import type { IdCarta, IdEscenario, Rol, Stat } from './tipos';
+import type { IdCarta, IdEscenario, IdModo, Rol, Stat } from './tipos';
 
 export type AccionMenu = 'jugar' | 'pareja' | 'amigos' | 'codigo' | 'tutorial' | 'salir';
 
@@ -132,7 +134,7 @@ export class Menu {
           this.p.maestria[d.id] ? `<em class="lv-maestria-chip">⭐ Maestría ${maestriaDe(this.p, d.id)}/${MAESTRIA_MAX}</em>` : ''
         }</span></button>
         <div class="lv-chips">
-          <button class="lv-chip" data-m="escenarios">🗺️ ${esc.nombre}${this.p.apurado ? ' · ¡Apurado!' : ''}</button>
+          <button class="lv-chip" data-m="escenarios">🗺️ ${esc.nombre}${this.p.apurado ? ' · ¡Apurado!' : ''}${modosDe(this.p).map((m) => ` ${MODO[m].emoji}`).join('')}</button>
           <button class="lv-chip" data-m="cartas">${FRASES.iconoCarta()} ${carta ? carta.nombre : FRASES.sinCarta()}</button>
           <button class="lv-chip lv-chip-ataque ${apunta && this.p.manual ? 'si' : ''}" data-m="ataque" ${apunta ? '' : 'disabled'}
             title="${apunta ? 'Toca para cambiar' : 'Los disfraces de área siempre disparan solos'}">🎯 Ataque: ${apunta ? (this.p.manual ? 'a mano' : 'solito') : 'solito (de área)'}</button>
@@ -177,6 +179,8 @@ export class Menu {
   private actual = '';
   private sel = '';
   private pestana = 'armas';
+  /** El último modo que se tocó en la pantalla de escenarios (para mostrar qué hace o cómo se abre). */
+  private modoVisto: IdModo | '' = '';
 
   private abrirPantalla(cual: string) {
     this.actual = cual;
@@ -274,7 +278,24 @@ export class Menu {
         <small>${mejor ? `Lo más que has aguantado: ${mmss(mejor)}` : abierto ? '¡Sin estrenar!' : ''}</small></button>`;
     }).join('');
     const apurado = apuradoAbierto(this.p);
+    // Los modos: los abiertos se prenden y se apagan; los cerrados dicen cómo se abren
+    const modos = MODOS.map((d) => {
+      const ab = modoAbierto(this.p, d.id);
+      const si = ab && this.p.modos.includes(d.id);
+      return `<button class="lv-modo ${si ? 'si' : ''} ${ab ? '' : 'bloq'}" data-modo="${d.id}">${ab ? d.emoji : '🔒'} ${d.nombre}</button>`;
+    }).join('');
+    let desc = '';
+    if (this.modoVisto) {
+      const d = MODO[this.modoVisto];
+      const t = TESORO_DE_MODO[d.id];
+      desc = modoAbierto(this.p, d.id)
+        ? `${d.emoji} ${d.desc}`
+        : d.id === 'hiper'
+          ? `🔒 Vence al jefe del minuto 25 de ${ESCENARIOS[this.p.escenario].nombre} para abrir su modo Hiper.`
+          : `🔒 Se abre con ${TESORO[t!].nombre}. ${TESORO[t!].pista}.`;
+    }
     return `<div class="cuerpo" style="flex-direction:column"><div class="lv-lista anchos" style="flex:1">${lista}</div>
+      <div class="lv-modos">${modos}${desc ? `<p class="lv-modo-desc">${desc}</p>` : ''}</div>
       <div class="lv-fila">
         <label class="lv-interruptor" style="${apurado ? '' : 'opacity:.5'}"><input type="checkbox" data-v="apurado" ${this.p.apurado ? 'checked' : ''} ${apurado ? '' : 'disabled'}>
           ⏩ Modo Apurado: el reloj corre al doble ${apurado ? '' : '(se gana llegando a los 30:00 en La Cara)'}</label>
@@ -323,7 +344,7 @@ export class Menu {
   }
 
   private htmlColeccion() {
-    const tabs = ['armas', 'pasivas', 'evoluciones', 'mugrosos', 'logros']
+    const tabs = ['armas', 'pasivas', 'evoluciones', 'mugrosos', 'tesoros', 'logros']
       .map((t) => `<button class="${this.pestana === t ? 'sel' : ''}" data-tab="${t}">${t[0].toUpperCase() + t.slice(1)}</button>`)
       .join('');
     let lista = '';
@@ -373,6 +394,18 @@ export class Menu {
         const n = this.p.bestiario[e.id] ?? 0;
         det = n ? `<h3>${e.nombre}</h3><p>${e.desc}</p><p class="esp">Eliminados: ${miles(n)}</p><p>Vida ${e.jefe ? `${e.vida} × tu nivel` : e.vida} · daño ${e.dano}</p>` : '<h3>¿Quién será?</h3><p>Todavía no lo has eliminado.</p>';
       }
+    } else if (this.pestana === 'tesoros') {
+      lista = TESOROS.map((t) => {
+        const si = this.p.tesoros.includes(t.id);
+        return `<button class="lv-item ${this.sel === t.id ? 'sel' : ''}" data-sel="${t.id}">${icono(t.id, 40, si ? '' : 'silueta')}<span>${si ? t.nombre : '¿?'}</span></button>`;
+      }).join('');
+      const t = TESORO[this.sel as keyof typeof TESORO];
+      if (t) {
+        const si = this.p.tesoros.includes(t.id);
+        det = si
+          ? `<h3>${t.nombre}</h3><p>Como ${t.original} en el original.</p><p class="esp">${t.abre}</p>`
+          : `<h3>¿Qué será?</h3><p>${t.pista}.</p><p>Cuando estés en ese escenario, una flecha verde te lleva hasta él.</p>`;
+      } else det = `<h3>Tesoros del baño</h3><p>Están tirados lejos en los escenarios y una flecha verde los señala. Cada uno abre algo para siempre: casi todos, un modo de juego (se prenden en «¿Dónde nos lavamos?»).</p><p class="esp">Encontrados: ${this.p.tesoros.length} de ${TESOROS.length}</p>`;
     } else {
       lista = LOGROS.map(logroVisto).map((l) => {
         const si = this.p.logros.includes(l.id);
@@ -406,6 +439,18 @@ export class Menu {
           this.p.escenario = id;
           void this.guardar();
         }
+      }
+      this.pintarPantalla();
+      return;
+    }
+    const md = t.closest<HTMLElement>('[data-modo]');
+    if (md) {
+      const id = md.dataset.modo as IdModo;
+      this.modoVisto = id;
+      sfx.toque();
+      if (modoAbierto(this.p, id)) {
+        this.p.modos = this.p.modos.includes(id) ? this.p.modos.filter((x) => x !== id) : [...this.p.modos, id];
+        void this.guardar();
       }
       this.pintarPantalla();
       return;
