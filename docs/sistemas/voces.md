@@ -11,7 +11,7 @@ frases, cada una con la emoción con la que se dice.
 | Cien Puertas | Los 20 recuerdos, el final de la puerta 100 y todo lo del narrador (inicio, capítulos, la entrada de cada puerta, ánimos, felicitaciones, «algo bonito», cuando algo se rompe, antes de la pista, sin plata) | `src/puertas/narrador.ts` |
 | La casa | Saludos, mimos (quien da y quien recibe), los recuerdos flotantes del baño y la cama, la rutina del inodoro y sus eventos | `src/casa/mascota.ts` (el globito `frase`), `src/casa/recuerdos_panel.ts` |
 | Mesa de juegos | Las reacciones de la pareja (presumir, celos, burla, ganar, perder…) | `src/reacciones/director.ts` |
-| Retrete cohete | Lo que dice en el vuelo, en cada tramo, con cada poder, «¡Te pasé!» y «otra vez» | `src/casa/cohete.ts` (`decir`) |
+| Retrete cohete | Lo que dice en el vuelo (110 frases por cada uno, barajadas: no se repite ninguna hasta que salgan todas), en cada tramo, con cada poder, «¡Te pasé!» y «otra vez». Durante la canción del primer despegue no habla (el globito sale mudo) | `src/casa/cohete.ts` (`decir`, `frase`), `src/casa/cohete/pareja.ts` |
 | Cocina de chef | La pareja cuando llega a comer y cuando prueba el plato | `src/casa/cocina/pantallas.ts` |
 | Súper Manía | Las 12 cartas de los recuerdos del súper, leídas por Javier | `src/main.ts` (`leerRecuerdo`) |
 | Sangre y Ceniza | Solo las líneas de Él y Ella en las escenas del mapa de la Noche (la Santa, el Conde y el narrador siguen escritos) | `src/sangre/ui/historia.ts` |
@@ -47,7 +47,7 @@ acotaciones de ruido del baño («\*cuac\*», «\*rasca, rasca\*») quedaron mud
   rehace solo esa; los audios que ya no se usan se borran.
 - Necesita `ELEVENLABS_API_KEY` en el entorno (nunca en archivos ni en el chat), `ffmpeg` y la red abierta a
   `api.elevenlabs.io`. Cada carácter de `d` (emociones incluidas) gasta un crédito; el plan Creator trae unos 160.000
-  al mes.
+  al mes. Con Eleven v4 cada frase corta gastó de 4 a 8 créditos (medido en el historial, 11 de octubre de 2026).
 - Para revisar cómo suena una frase sin el juego: el audio está en `public/voces/` (búscalo por su código en la lista).
 
 ## Pendiente o por mejorar

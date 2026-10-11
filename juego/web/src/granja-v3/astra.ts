@@ -111,7 +111,7 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
  }
  if(a.tipo==='escena'){
   const npc=NPC_ASTRA.find(n=>a.id==='VID_'+n.id+'_2');
-  if(npc&&!t.personales.includes(npc.mision))return mal('Este recuerdo ocurre después de su misión personal. La misión '+npc.mision+' todavía está pendiente de integrar.');
+  if(npc&&!npc.mision)return mal('Su próximo recuerdo llegará con su historia.');if(npc&&npc.mision&&!t.personales.includes(npc.mision))return mal('Este recuerdo ocurre después de su misión personal. La misión '+npc.mision+' todavía está pendiente de integrar.');
   if(!npc||!t.conocidos.includes(npc.id)||!t.lecturas.includes('VID_'+npc.id+'_1'))return mal('Escucha primero su recuerdo inicial.');
   const p=posicionNpcAstra(s,npc.id);if(!p||p.interior!==t.interior||!cerca(x,z,p))return mal('Acércate para escuchar este recuerdo.');
   t.escena={id:a.id,linea:0};return bien('Un recuerdo compartido.');
@@ -192,7 +192,7 @@ export function astraValida(t:EstadoAstra|undefined,dia:number):boolean {
  if(t.actual&&(t.interior?!libreVivienda(t.posicion.x,t.posicion.z):Math.abs(t.posicion.x)>=limitesAstra(t.actual).x||Math.abs(t.posicion.z)>=limitesAstra(t.actual).z))return false;
  const lista=(xs:unknown,ids:string[])=>Array.isArray(xs)&&xs.length<=ids.length&&new Set(xs).size===xs.length&&xs.every(id=>typeof id==='string'&&ids.includes(id));
  if(!lista(t.visitas,[...REGIONES_ASTRA.map(r=>r.id),'granja'])||!lista(t.conocidos,NPC_ASTRA.map(n=>n.id))||!lista(t.lecturas,Object.keys(CAMPANA.escenas))||!lista(t.pruebas,['fuego','agua','tierra','aire']))return false;
- if(!lista(t.personales,NPC_ASTRA.map(n=>n.mision)))return false;
+ if(!lista(t.personales,NPC_ASTRA.flatMap(n=>n.mision?[n.mision]:[])))return false;
  if(t.escena!==null&&(!t.escena||!Object.hasOwn(CAMPANA.escenas,t.escena.id)||!Number.isInteger(t.escena.linea)||t.escena.linea<0||t.escena.linea>=(CAMPANA.escenas as Record<string,number>)[t.escena.id]))return false;
  if(!t.charlas||typeof t.charlas!=='object'||Object.keys(t.charlas).length>NPC_ASTRA.length||Object.entries(t.charlas).some(([id,v])=>!npcAstra(id)||!t.conocidos.includes(id)||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.puntos)||v.puntos<0||v.puntos>500))return false;
  if(!t.expedientes||typeof t.expedientes!=='object'||Object.keys(t.expedientes).length>CAMPANA_ASTRA.length)return false;

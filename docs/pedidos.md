@@ -13,6 +13,20 @@ Javier pidió integrar la granja existente, subir cada avance probado y repartir
 
 **Gráficos de la granja (Claude, regla «todo en Blender»):** ya están en Blender los muebles de todos los interiores, la decoración de los cuatro festivales, el Pueblo del Sol entero (14 edificios, 2 altares, fuente, bancos, faroles, jardineras, vallas, árboles, molino, corral), el monte de todas las zonas, los arcos y letreros de las salidas, lo que se ve más allá de cada arco, lo hecho por mano en la cueva de la mina y el cuerpo de las máquinas de producción. Falta (en este orden): obras de construcción y refugios por dentro, invernadero por dentro, nodos de la mina, caja de envíos y cuencos de los compañeros, herramientas en la mano, monstruos de las aventuras e íconos 3D. Detalle en `en-obra/granja-coordinacion.md`.
 
+**Astra (11 de octubre, pedido de Javier):** ya son pueblos de verdad, cuatro veces más grandes.
+- Cada uno tiene calle con faroles, plaza empedrada con monumento, puestos de oficio con letrero, huertas, pozo y su hito
+  al norte (faro, árbol ancestral, mina, termas, estanque helado, atalaya, rosaleda, pilar de hilos, cristal sellado o
+  nave).
+- Casas y paisaje propios de cada región, todo hecho en Blender.
+- 154 habitantes con ropa propia que caminan por la calle.
+- 36 vecinos nuevos con trasfondo.
+- 42 encargos con recompensa, 6 de ellos entre pueblos.
+
+Falta:
+- Voz de las líneas de Astra (ver el presupuesto en `sistemas/musica.md`).
+- Música de la granja.
+- Lo que espera al frente de motor.
+
 Lo que Javier pidió y todavía falta, en el orden en que se va a hacer. Se tacha (se borra) cuando queda hecho,
 probado y subido.
 

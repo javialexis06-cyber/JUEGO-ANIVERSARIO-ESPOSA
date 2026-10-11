@@ -453,6 +453,8 @@ export interface OpcionesPista {
   reiniciar?: boolean;
   /** Si esta no tiene archivo (la app de amigos no trae las de la pareja), esta otra. */
   oSino?: string;
+  /** Rueda de pistas (incluye esta): cada una suena una vez y sigue la siguiente, en círculo (las de jugar largo). */
+  rueda?: string[];
 }
 type ListaPistas = Record<string, [string, number]>;
 let listaPistas: Promise<ListaPistas> | null = null;
@@ -498,7 +500,7 @@ const volumenPistas = () => (musicaApagada || musicaCallada ? 0 : 0.62 * (musica
 /** Lo que dura el cruce entre una vuelta y la siguiente. */
 const CRUCE = 2.5;
 interface Vuelta { f: AudioBufferSourceNode; g: GainNode; inicio: number; desde: number; vel: number }
-interface Sonando { id: string; buf: AudioBuffer; g: GainNode; bucle: boolean; luego?: string; vueltas: Vuelta[]; proxima: number; reloj: number }
+interface Sonando { id: string; buf: AudioBuffer; g: GainNode; bucle: boolean; luego?: string; rueda?: string[]; vueltas: Vuelta[]; proxima: number; reloj: number }
 let pistaPedida: { id: string; op: OpcionesPista } | null = null;
 let sonando: Sonando | null = null;
 /** Hay una pista en archivo sonando: la sintetizada se calla. */
@@ -521,8 +523,8 @@ async function ponerPista(id: string | null, op: OpcionesPista) {
   g.gain.setValueAtTime(0, ctx.currentTime);
   g.gain.linearRampToValueAtTime(1, ctx.currentTime + 1.2);
   g.connect(salidaPistas);
-  const bucle = op.bucle ?? true;
-  sonando = { id, buf, g, bucle, luego: op.luego, vueltas: [], proxima: 0, reloj: 0 };
+  const bucle = op.bucle ?? !op.rueda?.length;
+  sonando = { id, buf, g, bucle, luego: op.luego, rueda: op.rueda, vueltas: [], proxima: 0, reloj: 0 };
   pistaActiva = true;
   vuelta(sonando, ctx.currentTime + 0.05, 0, true);
   const s = sonando;
@@ -574,6 +576,12 @@ function cuidarPista(s: Sonando) {
     const t = Math.max(ahora + 0.05, s.proxima);
     s.proxima = Infinity;
     vuelta(s, t, 0);
+  }
+  if (!s.bucle && !s.vueltas.length && s.rueda?.length) {
+    const sig = s.rueda[(s.rueda.indexOf(s.id) + 1) % s.rueda.length];
+    soltarPista();
+    musica.pista(sig, { rueda: s.rueda, reiniciar: true });
+    return;
   }
   if (!s.bucle && !s.vueltas.length) {
     const luego = s.luego;

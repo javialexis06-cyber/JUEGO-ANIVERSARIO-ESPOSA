@@ -15,8 +15,8 @@ premium **solo efectos** (sin voces ni videos con IA). La granja se musicaliza d
 | Mesa de juegos | `mesa-menu` · `mesa-clue` · `mesa-parchis` · `mesa-mancala` · `mesa-dados` · `mesa-cajas` · remates `mesa-ganar`, `mesa-perder` | El menú y una por juego (`PISTA_JUEGO` en `src/mesa/main.ts`) |
 | Cien Puertas | `puertas-menu` · `puertas-cap1` … `puertas-cap10` · `puertas-final` («Cien Puertas», con letra) · remates `puertas-abierta`, `puertas-recuerdo` (todas de la pareja) | Una por capítulo; la canción suena en la puerta 100 mientras se despiden y sigue la del capítulo 10 |
 | Sangre y Ceniza | `sangre-menu` · `sangre-noche` · `sangre-batalla` · `sangre-horda` · `sangre-jefe` · `sangre-final` | Con tensión ≥ 0,75 la de la horda; con el jefe vivo la del jefe; al ganar la expedición, el final (`src/sangre/sonidos.ts`) |
-| Lavarse la cara | `lavado-menu` · `lavado-partida` · `lavado-intensa` · `lavado-jefe` · remates `lavado-victoria`, `lavado-derrota` | Desde la intensidad 2, la intensa; con jefe, la del jefe (`src/casa/lavado/sonidos.ts`) |
-| Retrete cohete | `cohete-cancion` («Del baño a la NASA», con letra) · `cohete-tramo0` … `cohete-tramo6` | La canción en el primer despegue; después una por tramo (si cambia de tramo mientras canta, espera a que termine); el turbo la acelera (`src/casa/cohete/musica.ts`) |
+| Lavarse la cara | `lavado-menu` · `lavado-partida`, `-partida2`, `-partida3`, `-partida4` · `lavado-intensa`, `-intensa2`, `-intensa3` · `lavado-jefe` · remates `lavado-victoria`, `lavado-derrota` | En la partida rotan las cuatro normales (barajadas en cada partida, una tras otra); desde la intensidad 2 rotan las tres intensas; con jefe, la del jefe (`src/casa/lavado/sonidos.ts`) |
+| Retrete cohete | `cohete-cancion` («Del baño a la NASA», con letra) · `cohete-tramo0` … `cohete-tramo6` | La canción en el primer despegue; después una por tramo (si cambia de tramo mientras canta, espera a que termine); el turbo la acelera (`src/casa/cohete/musica.ts`). Mientras suena la canción no se oye nada encima: ni voces ni efectos (`src/casa/cohete/silencio.ts`; el globito sale mudo) |
 | Cocina de chef | `cocina-cancion` («Hecho con amor», con letra) · `cocina-wafles` · `cocina-fresas` · `cocina-frappes` · `cocina-pico` | La canción al entrar, la del restaurante al jugar y la de hora pico con 4 o más en la fila (`src/casa/cocina/motor.ts`) |
 | Sala de amigos | `amigos-sala` | Desde el primer toque |
 
@@ -29,6 +29,7 @@ mientras tanto, o si faltan, suena el sintetizado de siempre.
 - `src/sonido.ts` → `musica.pista(id, { bucle, luego, reiniciar, oSino })`: carga la pista (las listas son
   `public/musica/lista.json` y `public/musica/pareja/lista.json`), la repite con un cruce de 2,5 s entre vueltas
   y, mientras suena, la música sintetizada se calla. Si no hay archivo, sigue la sintetizada (o la de `oSino`).
+  `rueda: [ids]` hace una lista que se recorre en círculo, cada pista una vez (la partida del lavado).
   `musica.prisa(v)` la acelera sin cortar; `musica.remate(id)` toca un remate corto encima y baja la música un
   momento. Respeta el botón de música, el silencio, la pausa y baja sola cuando hablan las voces.
 - Los minijuegos con música propia (lavado, cohete, cocina) marcan `musica.enMinijuego` mientras juegan, para que
@@ -56,5 +57,16 @@ mientras tanto, o si faltan, suena el sintetizado de siempre.
 ## Pendiente
 
 - La granja (cuando tenga todas sus zonas y personajes): música por estación y del pueblo, a coordinar con su frente.
+  **Presupuesto medido (11 de octubre de 2026):** la granja tiene 3.590 líneas (243.000 caracteres, 188 hablantes;
+  840 son de la vida de los pueblos) y 23 pistas de música escritas (≈ 48 min).
+  - Con Eleven v4 las voces gastaron unos 0,1 créditos por carácter, así que todo saldría en unos 30.000–40.000
+    créditos. Si el precio vuelve a 1 crédito por carácter, serían unos 300.000.
+  - La música va a unos 720 créditos por minuto: unos 35.000 créditos, o unos 50.000 con música por estación y de
+    festivales.
+  - En total son 70.000–90.000 créditos, que caben en un mes del plan Creator (160.000).
+  - El límite real son las voces: el plan Creator deja tener 30 voces (hay 27 libres). Hay dos caminos: repartir unas
+    25 voces por tipo de personaje, o un mes de Pro (160 voces) para darles voz propia a los principales.
+  - Conviene grabar primero los recuerdos y los encargos, que ya están cerrados, y dejar las escenas de los
+    expedientes para cuando el motor cierre sus misiones.
 - El Show de Nosotros (rama `trabajo/show`): cortina de concurso cuando se junte.
 - Las escenas premium siguen en los cuartos de la casa; los escenarios grandes propios están en `en-obra/escenas-premium.md`.

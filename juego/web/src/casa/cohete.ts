@@ -13,7 +13,8 @@ import './cohete.css';
 import { Muneco } from '../reacciones/muneco';
 import { cargar, cargarAnimado, liberarEsqueletos } from '../recursos';
 import * as fondo from '../segundo_plano';
-import { activar as activarSonido, musica, nota, rumor } from '../sonido';
+import { activar as activarSonido, musica } from '../sonido';
+import { cantando, nota, rumor } from './cohete/silencio';
 import { CUADRO, atlasParticulas, texturaHalo } from './cohete/arte';
 import { FRASES, FRASES_TRAMO, FRASE_PODER, GALAXIA_PAREJA, OTRA_VEZ, PALABRAS_FIGURAS, PASO_PAREJA } from './cohete/pareja';
 import {
@@ -36,6 +37,9 @@ import { Vestuario } from './ropa';
 import { teñirModelo } from '../salas/tinte';
 import type { AspectoJugador } from '../salas/tipos';
 import * as voces from '../voces';
+
+/** Bolsas barajadas de frases del vuelo, por quien vuela (ver `frase`). */
+const BOLSAS = new Map<string, string[]>();
 
 export interface Resultado {
   /** Segundos que duró el vuelo (para el récord viejo y las monedas de la casa). */
@@ -1635,13 +1639,21 @@ class RetreteEspacial {
   }
 
   /** Una frase al azar para el vuelo (la del modo neutro si juega un amigo). */
+  /** Las frases salen barajadas: ninguna se repite hasta que hayan salido todas (la bolsa dura toda la sesión). */
   private frase() {
-    return elegir(this.neutro ? NEUTRO.frases : FRASES[this.o.rol]);
+    const lista = this.neutro ? NEUTRO.frases : FRASES[this.o.rol], clave = this.neutro ? 'neutro' : this.o.rol;
+    let b = BOLSAS.get(clave);
+    if (!b?.length) {
+      b = [...lista].sort(() => Math.random() - 0.5);
+      BOLSAS.set(clave, b);
+    }
+    return b.pop()!;
   }
 
   private tGlobo = 0;
   private decir(texto: string, dur: number) {
-    if (!this.neutro) void voces.decir(this.o.rol, texto);
+    // Durante la canción del primer despegue, el globito sale mudo (cohete/silencio.ts)
+    if (!this.neutro && !cantando()) void voces.decir(this.o.rol, texto);
     const g = this.capa.querySelector<HTMLElement>('.cohete-globo')!;
     g.textContent = texto;
     g.hidden = false;

@@ -184,6 +184,9 @@ const MELODIA: [number, number, number][] = [
 ];
 const MEL = new Map<number, [number, number]>(MELODIA.map(([k, n, d]) => [k, [n, d]]));
 
+/** Copia barajada. */
+const barajar = <T,>(xs: T[]) => [...xs].sort(() => Math.random() - 0.5);
+
 class Musica {
   private reloj = 0;
   private paso = 0;
@@ -198,6 +201,8 @@ class Musica {
   private callo = false;
   private enPartida = false;
   private antes: string | null = null;
+  // Las pistas que rotan en la partida (las que tengan archivo), barajadas en cada partida
+  private ruedas: { normal: string[]; intensa: string[] } = { normal: ['lavado-partida'], intensa: ['lavado-intensa'] };
 
   /** 0 tranquila … 3 a todo dar (sube con los minutos): desde la 2, la pista más pesada. */
   get intensidad() {
@@ -226,6 +231,7 @@ class Musica {
     this.enPartida = true;
     this.nivel = 0;
     this.conJefe = false;
+    this.ruedas = { normal: barajar(this.ruedas.normal), intensa: barajar(this.ruedas.intensa) };
     this.elegir();
   }
   /** El remate de la partida. */
@@ -234,7 +240,11 @@ class Musica {
   }
   private elegir() {
     if (!this.reloj) return;
-    musicaCasa.pista(!this.enPartida ? 'lavado-menu' : this.conJefe ? 'lavado-jefe' : this.nivel >= 2 ? 'lavado-intensa' : 'lavado-partida');
+    if (!this.enPartida || this.conJefe) return musicaCasa.pista(!this.enPartida ? 'lavado-menu' : 'lavado-jefe');
+    // En la partida, una rueda de canciones (normal o intensa): si ya suena una de la rueda que toca, se deja seguir
+    const rueda = this.nivel >= 2 ? this.ruedas.intensa : this.ruedas.normal;
+    if (rueda.includes(musicaCasa.pistaActual() ?? '')) return;
+    musicaCasa.pista(rueda[0], { rueda });
   }
 
   iniciar() {
@@ -242,6 +252,12 @@ class Musica {
     if (!a || this.reloj) return;
     musicaCasa.enMinijuego = true;
     this.antes = musicaCasa.pistaActual();
+    // Solo entran a la rueda las que tienen archivo (las nuevas pueden faltar en una instalación vieja)
+    const tener = (ids: string[]) => Promise.all(ids.map((id) => hayPista(id).then((si) => (si ? id : null)))).then((xs) => xs.filter((x): x is string => !!x));
+    void Promise.all([tener(['lavado-partida', 'lavado-partida2', 'lavado-partida3', 'lavado-partida4']), tener(['lavado-intensa', 'lavado-intensa2', 'lavado-intensa3'])]).then(([normal, intensa]) => {
+      if (normal.length) this.ruedas.normal = barajar(normal);
+      if (intensa.length) this.ruedas.intensa = barajar(intensa);
+    });
     void hayPista('lavado-partida').then((si) => {
       this.conArchivo = si;
       // Sin archivos: se calla la música de la casa y suena la sintetizada de aquí, como antes

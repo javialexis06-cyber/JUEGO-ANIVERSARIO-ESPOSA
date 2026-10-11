@@ -1,0 +1,910 @@
+{
+  "residentes": [
+    {
+      "id": "vigilia_brigida",
+      "nombre": "Brígida",
+      "asentamiento": "vigilia",
+      "funcion": "Cocinera del comedor abierto: olla común, pan de centeno y mesa sin preguntas en la puerta.",
+      "pasado": "Brígida, 52, cultivaba centeno en las granjas del borde de Valdemora hasta la evacuación de AV 303. En Vigilia abrió un comedor y, por orden, anotaba nombres en un cuaderno; se lo prestó a un hombre amable que decía venir del Concejo y era de la Custodia. Tres vecinos recibieron cartas de reclutamiento con su nombre bien escrito. Desde entonces en su puerta no se firma nada.",
+      "presente": "Mide la sal con la palma, canta mal mientras amasa y discute con Aldán sobre cuánta sopa es «demasiada». Sirve primero a quien llega callado y no le pregunta a nadie de dónde viene.",
+      "arco": "Aprende a guardar solo lo que de verdad hace falta (alergias, turnos, faltantes), con permiso y a la vista, sin volver a llenar cuadernos por costumbre.",
+      "vinculos": ["vigilia_aldan", "vigilia_noemi", "nox_inigo"],
+      "naturaleza": "persona_viva",
+      "voz": "Grave y risueña, de cocina grande; manda con cariño y remata con un chiste.",
+      "hogar": "vigilia_vivienda_04",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Brígida creció entre surcos de centeno al borde de Valdemora. Su abuela horneaba el pan de los sábados para quien pasara por el camino y nunca preguntaba el apellido. «El hambre no trae papeles», decía, y le daba a la niña la corteza más tostada. Brígida aprendió a amasar antes que a leer, y a querer una mesa larga donde nadie tuviera que ganarse el puesto."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "En AV 303 llegó a Vigilia con una bolsa de harina y una olla abollada. Abrió un comedor en un galpón y, para no repetir raciones, anotaba nombres. Un hombre de buenos modales pidió el cuaderno «para el Concejo» y ella se lo dio sin dudar. Cuando tres vecinos recibieron cartas de la Custodia, fue a pedirles perdón uno por uno. Dos volvieron a comer; uno todavía no."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Ahora cuenta platos, no personas. Íñigo viene a comer en sus relevos y ella le guarda el pan del borde sin preguntarle nada de lo que fue. Todavía se le aprieta el estómago cuando alguien entra con una carpeta. Noemí le enseñó a anotar alergias con permiso, en una pizarra que todos ven. Le cuesta, pero ya distingue entre cuidar y vigilar."}
+      ],
+      "cotidiano": "Prende el horno antes de la primera campana y deja una olla tibia toda la noche para el turno de guardia. Los sábados enseña a amasar a quien quiera, sin inscripción.",
+      "postura_fuatia": "Le tiene respeto y algo de miedo; dice que si Fuatia tiene hambre de algo, que sea de justicia y no de pan.",
+      "conversacion": [
+        {"hablante": "vigilia_brigida", "texto": "Siéntate. Aquí no se firma, no se paga y no se cuenta la vida. Solo se devuelve el plato."},
+        {"hablante": "vigilia_aldan", "texto": "Y se repite. Ella siempre hace que uno repita."},
+        {"hablante": "vigilia_brigida", "texto": "Porque tú cocinas para veinte y sirves para cuarenta, capitán. Alguien tiene que equilibrar."},
+        {"hablante": "el", "texto": "Entonces me quedo con el plato. Y con la corteza tostada, si sobra."}
+      ],
+      "ropa": ["ella", 3, "#5b3a2e", "pelo_mono_bajo", "panoleta#7a2433", "", "delantal#e9dccb#6b2233", "falda_larga#4a2a24", "botas#3b2618", "", "jarras"]
+    },
+    {
+      "id": "vigilia_evaristo",
+      "nombre": "Evaristo",
+      "asentamiento": "vigilia",
+      "funcion": "Campanero: campanas de hierro, toques de aviso y nidales de búhos en el campanario.",
+      "pasado": "Evaristo, 61, toca las campanas de Vigilia desde los diecinueve años. En la primera noche de la evacuación de AV 303 dio el toque de peligro por una sombra que resultó ser humo; en la carrera hacia los refugios hubo empujones y una vecina se rompió la muñeca. Desde entonces solo marca las horas y deja que Kael decida las alarmas, aunque eso le vaya quitando el oficio de a pocos.",
+      "presente": "Habla bajito para no espantar a los búhos que anidan entre las vigas, y a todos les tiene nombre. Distingue cada campana por el golpe y se ofende si alguien dice que «suenan igual».",
+      "arco": "Diseña con Kael toques distintos para peligro, aviso y reunión, y vuelve a confiar en su mano sin cargar solo con la decisión.",
+      "vinculos": ["vigilia_kael", "vigilia_azucena", "vigilia_telmo"],
+      "naturaleza": "persona_viva",
+      "voz": "Pausada y baja, con humor seco; cuenta los silencios como cuenta los golpes.",
+      "hogar": "vigilia_vivienda_04",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Evaristo subió al campanario por primera vez a los nueve años, detrás de su tío, que le hacía poner la mano en el bronce después de cada toque. «Siente cuánto le dura la voz», le decía. Aprendió que cada campana tiene su carácter: una gruñona, una que llama a comer, una que casi canta. Le gustaba que un pueblo entero supiera la hora sin mirar al cielo."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "La noche de AV 303 vio una columna oscura sobre el paso y tocó peligro con todas sus fuerzas. Era humo de un granero. La gente corrió, hubo empujones en la escalera del refugio y una vecina se rompió la muñeca. Ella misma subió al campanario una semana después, con el yeso puesto, a decirle que no estaba enojada. Evaristo no supo qué contestarle."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Desde entonces solo marca horas. Kael le trae datos del escudo y Evaristo los escucha con los brazos cruzados, sin querer volver a decidir. Azucena le enseñó a correr los toques del amanecer para no espantar a los búhos en época de cría. Lo que todavía pesa es la mano: le tiembla un poco cuando la campana grande espera algo más que la hora."}
+      ],
+      "cotidiano": "Sube los ochenta escalones dos veces al día, engrasa los yugos y deja agua para los búhos. A mediodía baja al comedor de Brígida a quejarse del ruido de las ollas.",
+      "postura_fuatia": "Dice que el viento de Fuatia toca mejor que él cuando sopla por las troneras, y que con eso le basta para respetarla sin pedirle nada.",
+      "conversacion": [
+        {"hablante": "vigilia_evaristo", "texto": "Shhh. La del rincón es Doña Plumas. Si la despiertas, me reclama a mí."},
+        {"hablante": "vigilia_kael", "texto": "Evaristo, te traje la tabla de señales de esta semana."},
+        {"hablante": "vigilia_evaristo", "texto": "Déjala en el banco. Las campanas primero; los papeles, cuando ya no haya luz."},
+        {"hablante": "ella", "texto": "¿Cuál es la que llama a comer? Para no perdérmela."}
+      ],
+      "ropa": ["el", 1, "#cfcac4", "pelo_calvo", "boina#5a1f2b", "bigote#d8d2cc", "chaleco#6b2a2e#8a5a3a", "pantalon#3e2b22", "botas#2f2018", "carriel#8a5a3a", "reloj"]
+    },
+    {
+      "id": "verdia_eulalia",
+      "nombre": "Eulalia",
+      "asentamiento": "rosal_eterno",
+      "funcion": "Costurera de descanso: mantas, cojines y rincones de siesta para las almas recién llegadas.",
+      "pasado": "Eulalia murió con 74 años en AV 299, después de una vida cosiendo uniformes en un taller de Brasaviva. Le prometió a su sobrina el vestido de boda y lo fue aplazando por encargos pagados; la sobrina se casó con uno prestado y se rió del asunto, pero Eulalia guardó la tela sin cortar hasta el final. En Verdia eligió quedarse como Cuidadora y coser solo lo que alguien le pide para descansar.",
+      "presente": "Lleva alfileres en el cuello de la blusa y cuenta puntadas en voz alta cuando se pone nerviosa. Deja mantas dobladas en las bancas de Lucio sin que nadie se las pida, y luego finge que no fue ella.",
+      "arco": "Aprende que una cosa sin terminar también se puede entregar, y que cuidar no exige adivinar lo que el otro necesita.",
+      "vinculos": ["verdia_nilo", "verdia_lucio", "verdia_berenice"],
+      "naturaleza": "alma",
+      "voz": "Cálida y apurada, de costurera que habla con alfileres en la boca.",
+      "hogar": "rosal_eterno_vivienda_02",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Eulalia aprendió a coser en la mesa de la cocina, con una máquina que su madre pedaleaba de noche. Le fascinaba que dos retazos que no se parecían terminaran siendo un mismo abrigo. De niña cosía ropa para las gallinas, que no la querían, y dobladillos torcidos para su hermano, que sí. Supo pronto que una costura bien hecha no se ve, pero se nota cuando falta."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "En el taller de uniformes de Brasaviva cosió miles de chaquetas iguales y llegó a ser la más rápida. Cuando su sobrina le pidió el vestido de boda, Eulalia compró la tela y dijo «después del pedido grande». Hubo otro pedido grande, y otro. La sobrina se casó con un vestido prestado, bailó toda la noche y nunca le reclamó. Eso le dolió más que un reclamo."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "En Verdia no hace frío, pero hay almas que llegan cansadas y no saben dónde sentarse. Eulalia cose mantas para ellas y las deja donde Nilo las recibe. Berenice la animó a escribirle a su sobrina, que sigue viva, con permiso y sin exigir respuesta. La carta está a medio escribir. Eulalia dice que eso, por lo menos, ya lo sabe hacer: empezar."}
+      ],
+      "cotidiano": "Por la mañana revisa las bancas del rosal y cambia las mantas que alguien usó; por la tarde cose al lado de Berenice, que escribe, y las dos se corrigen la ortografía y las puntadas.",
+      "postura_fuatia": "Curiosa: le gustaría saber si Fuatia descansa alguna vez, y le coserá un cojín si se lo pide, aunque no sabe de qué tamaño.",
+      "conversacion": [
+        {"hablante": "verdia_eulalia", "texto": "No te sientes ahí todavía, que al cojín le falta un botón. Bueno, siéntate. Total, el botón no hace nada."},
+        {"hablante": "verdia_nilo", "texto": "Eulalia, vienen de visita. No son recién llegados."},
+        {"hablante": "verdia_eulalia", "texto": "Igual se cansan, Nilo. Los vivos también caminan."},
+        {"hablante": "ella", "texto": "Gracias, está suave. ¿Esto también lo hiciste aquí?"}
+      ],
+      "ropa": ["ella", 2, "#e8e2ea", "pelo_mono", "flor_pelo#f4a6c1", "gafas_redondas#b9a0c9", "sueter#f7cfe0", "falda_larga#cfe9dc", "zapatos#d9c2e6", "", "frotar_manos_a"]
+    },
+    {
+      "id": "verdia_anibal",
+      "nombre": "Aníbal",
+      "asentamiento": "rosal_eterno",
+      "funcion": "Maestro de juegos: rayuela, bolos de jardín y tardes sin propósito.",
+      "pasado": "Aníbal murió con 81 años en AV 296; fue maestro de escuela en Pueblo del Sol durante cuarenta años. Convertía cada juego en una lección con nota, hasta que una alumna le preguntó, con la tiza en la mano, «¿y cuándo jugamos de verdad?». No supo responderle a tiempo. En Verdia eligió quedarse como Cuidador para aprender lo que nunca le enseñaron: jugar por jugar.",
+      "presente": "Organiza partidas en el césped y jura que nadie lleva la cuenta, aunque él la lleva en la cabeza y lo confiesa al final. Se ríe primero de sus propias trampas.",
+      "arco": "Deja que otros inventen las reglas y descubre que perder una partida puede ser la mejor parte de la tarde.",
+      "vinculos": ["verdia_eneas", "verdia_yara", "verdia_tobias"],
+      "naturaleza": "alma",
+      "voz": "De maestro que se escapa al patio: clara, juguetona, con preguntas que no son de examen.",
+      "hogar": "rosal_eterno_vivienda_04",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "De niño, Aníbal jugaba a la rayuela con piedras planas del río y perdía siempre porque se detenía a mirar cómo saltaban los demás. Su padre le decía que pensaba demasiado para ser tan bajito. Le encantaba el sonido de la tiza en el piso y las peleas cortas sobre si una piedra había pisado la raya. Nunca quiso ganar tanto como quiso que la tarde no se acabara."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Como maestro aprendió que un juego enseña tablas, turnos y paciencia, y empezó a calificarlo todo. La rayuela servía para contar; la ronda, para las capitales. Una tarde, una alumna le preguntó cuándo iban a jugar de verdad. Él sonrió, anotó la pregunta en la pizarra como tema de reflexión y siguió la clase. Años después entendió que la respuesta era «ahora»."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Llegó a Verdia y Eneas lo invitó a una partida de damas sin reloj. Aníbal tardó tres tardes en dejar de explicar estrategias. Ahora inventa juegos con Yara, que canta las reglas, y con Tobías, que exagera los resultados. Todavía lleva la cuenta en secreto. Lo nuevo es que al final la dice en voz alta, se equivoca a propósito y todos se ríen."}
+      ],
+      "cotidiano": "Pinta casillas de rayuela con polvo de nácar en los senderos y espera a ver quién salta. Si nadie juega, se sienta a mirar mariposas y lo llama «turno de descanso».",
+      "postura_fuatia": "Le parece que Fuatia juega con los vientos como un niño con una cometa, y le da un poco de vergüenza admitir que eso le cae bien.",
+      "conversacion": [
+        {"hablante": "verdia_anibal", "texto": "Regla número uno: no hay reglas. Regla número dos: la piedra no puede caer en el estanque de Tobías."},
+        {"hablante": "verdia_eneas", "texto": "La segunda regla la puso él después de que se le cayeran cinco."},
+        {"hablante": "verdia_anibal", "texto": "Cuatro. La quinta fue el viento. ¿Juegas una?"},
+        {"hablante": "el", "texto": "Una. Y si gano, no quiero nota."}
+      ],
+      "ropa": ["el", 4, "#d9d4cc", "pelo_lado", "sombrero_paja#f3e3b5#f4a6c1", "bigote#d9d4cc", "camisa#cfeee0", "bermuda#d8c6ea", "sandalias#e9cfd9", "", "risita_a"]
+    },
+    {
+      "id": "eco_gregoria",
+      "nombre": "Gregoria",
+      "asentamiento": "jardines_eco",
+      "funcion": "Apicultora: colmenas voluntarias, miel con reserva para la colonia y cera para ofrendas.",
+      "pasado": "Gregoria murió con 67 años en AV 293; tuvo colmenas toda la vida en las laderas de Brumaverde. En el año seco de AV 290 cosechó la miel de reserva para cumplir un pedido grande y una colonia no pasó el invierno. Lo contó en el mercado en vez de esconderlo, y le compraron menos. En Verdia eligió quedarse como Cuidadora de las abejas de jardín, que aquí cosechan cuando quieren.",
+      "presente": "Les cuenta a las abejas todas las noticias del jardín, en voz alta, porque así se lo enseñó su abuela. Tiene manos tranquilas, risa de pájaro y no regala cera si a la colonia no le sobra.",
+      "arco": "Acepta que dar poco también es dar, y enseña a cosechar dejando primero lo de la colonia.",
+      "vinculos": ["eco_basilia", "eco_nazario", "eco_violeta"],
+      "naturaleza": "alma",
+      "voz": "Bajita y musical, como si siempre hablara cerca de una colmena.",
+      "hogar": "jardines_eco_vivienda_04",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "La abuela de Gregoria tenía una costumbre: cuando pasaba algo importante en la familia, iba a las colmenas y se lo contaba a las abejas. Bodas, mudanzas, una vaca nueva. «Si no les cuentas, se ofenden», decía. Gregoria creyó en eso a medias toda su vida, pero nunca dejó de hacerlo. Le gustaba tener a quién darle noticias sin que nadie opinara."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "En el año seco de AV 290 tenía un pedido grande de miel para una fiesta en Pueblo del Sol. Sacó también la reserva de invierno, convencida de que llovería. No llovió a tiempo y perdió una colonia entera. En el mercado contó lo que había hecho, frasco por frasco. Algunos dejaron de comprarle. Otros empezaron a preguntarle cómo cosechar sin repetir su error."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "En Verdia las abejas de jardín no necesitan a nadie, y eso la desconcertó al principio. Nazario le mostró qué flores sostienen a las colonias; Basilia le pide cera para sus velas y a veces Gregoria le dice que no. Ya no le duele decirlo. Lo que le pesa es no haber vuelto a ver la colonia que perdió, aunque sabe que nunca fue suya."}
+      ],
+      "cotidiano": "Al amanecer recorre las colmenas, les cuenta quién llegó y quién se despidió, y anota en una tablilla cuánta miel sobra. Por las tardes enseña a Basilia a trenzar mechas de cera.",
+      "postura_fuatia": "Respetuosa: las abejas sienten el viento antes que nadie, y cuando Fuatia está inquieta las colmenas se callan; Gregoria dice que eso se respeta y no se pregunta.",
+      "conversacion": [
+        {"hablante": "eco_gregoria", "texto": "Despacio, que les estoy contando que llegaste. Si te ven correr, creen que es mala noticia."},
+        {"hablante": "eco_basilia", "texto": "Gregoria, ¿hay cera para las velas del sábado?"},
+        {"hablante": "eco_gregoria", "texto": "Un poquito. Las abejas dijeron que sí, pero con cara de que no se repita."},
+        {"hablante": "el", "texto": "¿Y qué más les cuentas? ¿También el clima?"}
+      ],
+      "ropa": ["ella", 1, "#a8796a", "pelo_trenzas", "sombrero_paja#f2e3bc#c9e8d6", "", "blusa#fbe1ea", "overol#cdb8e6", "botas#e3c7d5", "", "presumir_a"]
+    },
+    {
+      "id": "eco_casiano",
+      "nombre": "Casiano",
+      "asentamiento": "jardines_eco",
+      "funcion": "Afinador: campanas de viento, instrumentos del coro y vidrio de eco.",
+      "pasado": "Casiano murió con 45 años en AV 301; afinaba pianos y campanas en Pueblo del Sol. En el Despertar Dorado de AV 288 no dejó tocar a la escuela porque el piano estaba un cuarto de tono bajo, y los niños pasaron la fiesta sin música. Entendió tarde que afinado y a tiempo no son lo mismo. En Verdia eligió quedarse como Cuidador junto al coro de Sora, con la promesa de no detener ninguna canción.",
+      "presente": "Lleva un diapasón colgado del cuello y lo golpea contra la rodilla cuando no sabe qué decir. Escucha a cualquiera con paciencia infinita, salvo cuando alguien silba desafinado: ahí sufre en silencio.",
+      "arco": "Aprende que una voz desafinada que quiere cantar vale más que una nota perfecta en un coro vacío.",
+      "vinculos": ["eco_sora", "eco_esteban", "verdia_yara"],
+      "naturaleza": "alma",
+      "voz": "Precisa y suave, con pausas largas; se ríe por la nariz cuando se descubre exagerando.",
+      "hogar": "jardines_eco_vivienda_04",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Casiano creció en un taller lleno de pianos destripados. Su madre los afinaba y él se metía debajo para sentir cómo vibraba la madera. A los diez años distinguía una cuerda floja desde la puerta. Le encantaba ese instante en que dos notas que peleaban dejan de pelear y suenan como una sola. Para él, afinar era una forma de poner paz."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Con los años se volvió el afinador más pedido del pueblo y también el más estricto. Antes del Despertar Dorado de AV 288 encontró el piano de la escuela un poco bajo y dijo que así no se podía tocar. No había tiempo de arreglarlo. Los niños cantaron sin acompañamiento, bajito, y algunos no cantaron. Una maestra le dijo que nadie habría notado el cuarto de tono."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "En Verdia el coro de Sora canta como puede y Casiano aprendió a no interrumpir. Esteban le mostró partituras viejas llenas de errores que nadie corrigió y que todos recuerdan con cariño. Afina las campanas de viento del jardín, pero deja una sin tocar, un poco torcida, para acordarse. Le sigue costando oír un silbido desafinado sin arrugar la nariz."}
+      ],
+      "cotidiano": "Por la mañana revisa las campanas de vidrio del sendero; por la tarde acompaña los ensayos de Sora sentado al fondo, golpeando el diapasón contra la rodilla al ritmo de la canción.",
+      "postura_fuatia": "Curioso: le gustaría saber en qué nota sopla Fuatia, aunque sospecha que ella no se dejaría afinar por nadie.",
+      "conversacion": [
+        {"hablante": "eco_casiano", "texto": "¿Oyes esa campana? La tercera. Está un pelito alta. No pasa nada. No pasa nada..."},
+        {"hablante": "eco_sora", "texto": "Lleva una semana diciendo que no pasa nada."},
+        {"hablante": "eco_casiano", "texto": "Y cada día me lo creo un poco más. Es un avance."},
+        {"hablante": "ella", "texto": "A mí me suena bonita. ¿La vas a dejar así?"}
+      ],
+      "ropa": ["el", 2, "#3c2f3a", "pelo_rizos", "flor_pelo#cdb8e6", "gafas_redondas#9fb8a8", "saco_corbatin#d7f0e3#e9a8c3", "pantalon#e4d6f2", "zapatos#b8a6cf", "", "pensando"]
+    },
+    {
+      "id": "senda_lorenzo",
+      "nombre": "Lorenzo",
+      "asentamiento": "travesia",
+      "funcion": "Cordelero y cuidador de grullas: cuerdas de junco de paso, guías de pasarela y bebederos del umbral.",
+      "pasado": "Lorenzo, 50, viene de una familia de cordeleros de Puerto de los Lirios y entró al servicio de Senda como acompañante vivo autorizado hace ocho años. Una vez entregó a las carreras un lote de guías sin probar; una se deshilachó a mitad de un paso y el viajero se devolvió asustado y no quiso cruzar en un año. Nadie se cayó, pero Lorenzo ya no entrega una cuerda sin probarla delante de quien la va a usar.",
+      "presente": "Tiene manos ásperas, silba para avisar a las grullas que va a llenar los bebederos y no puede pasar junto a un nudo mal hecho sin rehacerlo. Vuelve a Celia en sus días de descanso y trae dulces de sal para todo el módulo.",
+      "arco": "Comparte el oficio en vez de cargar con cada cuerda, y deja que otros prueben y firmen su propio trabajo.",
+      "vinculos": ["senda_mateo", "senda_fabian", "lirios_bastian"],
+      "naturaleza": "persona_viva",
+      "voz": "Ronca y paciente, de hombre de muelle; explica más con las manos que con palabras.",
+      "hogar": "travesia_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Lorenzo creció en un galpón de Puerto de los Lirios donde las cuerdas se torcían caminando hacia atrás, de una punta a la otra. Su padre le enseñó a escuchar el junco: si cruje, está seco; si suspira, está listo. Le encantaba que una cuerda bien hecha uniera dos cosas sin que nadie le diera las gracias. Las barcas volvían, y con eso bastaba."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Cuando entró a Senda, Mateo le pidió guías para una pasarela nueva. Había prisa por los viajeros y Lorenzo entregó un lote sin probar. Una guía se deshilachó en medio del paso. El viajero se agarró, volvió atrás temblando y no quiso cruzar en un año. Lorenzo lo esperó en la orilla cada semana para pedirle perdón. Al final, el viajero cruzó con él."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Ahora prueba cada cuerda en público, colgándose con todo su peso, aunque le digan que exagera. Fabián le reserva junco para los meses secos y Bastián le manda cáñamo del puerto cuando puede. Lo que todavía pesa es la costumbre de hacerlo todo él. Cuando otro tuerce una cuerda, Lorenzo la mira tanto que el aprendiz termina nervioso."}
+      ],
+      "cotidiano": "Al amanecer llena los bebederos de las grullas silbando bajito; luego tuerce junco en el patio del módulo y prueba lo del día colgándose de una viga.",
+      "postura_fuatia": "Neutral y práctico: dice que el agua y el viento de Fuatia ponen a prueba cada nudo, y que eso es justo.",
+      "conversacion": [
+        {"hablante": "senda_lorenzo", "texto": "Agarra esta punta. Tira. Más. Si aguanta mi peso y el tuyo, aguanta a un viajero con miedo."},
+        {"hablante": "senda_mateo", "texto": "Lorenzo prueba las cuerdas delante de todo el mundo. Es todo un espectáculo."},
+        {"hablante": "senda_lorenzo", "texto": "Es una promesa que se puede ver. Las otras no me salen tan bien."},
+        {"hablante": "el", "texto": "Aguanta. Y eso que tiré con ganas."}
+      ],
+      "ropa": ["el", 3, "#6e6a70", "pelo_colita", "gorro_lana#a99bc2", "barba#6e6a70", "chaqueta#8c8a93#b9a8d6", "pantalon#5f5b66", "botas#4a4650", "mochila#9c90b4", "contar_a"]
+    },
+    {
+      "id": "senda_socorro",
+      "nombre": "Socorro",
+      "asentamiento": "travesia",
+      "funcion": "Viajera en purificación: historia de un horno compartido y un cuaderno de recetas guardado.",
+      "pasado": "Socorro murió con 57 años en AV 309; era panadera en Piedralumbre. Por celos le dijo durante años a su hermana menor que el horno familiar estaba «dañado» para que no horneara, y se quedó con su cuaderno de recetas cuando ella cerró su puesto. No fue mala con el resto del pueblo: regalaba pan a los mineros del turno de noche. Entró a Senda por voluntad propia y quiere reparar ese daño concreto sin exigir que la perdonen.",
+      "presente": "Es rápida de lengua, competitiva hasta en los juegos de mesa y se ríe de sí misma antes que nadie. Como alma en reparación no come ni hornea, pero huele el aire del módulo como si buscara pan.",
+      "arco": "Devuelve lo que guardó con testimonio autorizado y acepta que la respuesta de su hermana, si llega, le pertenece a su hermana.",
+      "vinculos": ["senda_anwar", "senda_leire", "senda_ofelia"],
+      "naturaleza": "alma",
+      "voz": "Rápida y burlona, con frases de mostrador; baja la voz cuando habla de su hermana.",
+      "hogar": "travesia_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Socorro y su hermana amasaban de pie sobre dos banquitos frente a la mesa de su madre. Socorro era la mayor y la más rápida; su hermana era la que inventaba: pan con anís, con queso, con cáscara de naranja. A Socorro le encantaba el olor del horno a las cuatro de la mañana y que el pueblo entero supiera, por ese olor, que la jornada empezaba."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Cuando su madre murió, el horno quedó para las dos. La hermana abrió un puesto y la gente hacía fila por su pan de anís. Socorro empezó a decirle que el horno calentaba mal, que había que repararlo, que mejor esperara. La hermana cerró el puesto y le dejó su cuaderno de recetas «para cuando lo arregles». Socorro nunca lo arregló, porque nunca estuvo dañado."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "En Senda, Anwar le explicó que reparar no es lo mismo que recibir perdón. Le costó: ella quería una escena con abrazo y pan caliente. Ofelia, que también rompió una promesa, le dijo que lo que se repara es el daño, no el final. El cuaderno sigue en una caja de su antigua casa en Piedralumbre. Socorro sabe exactamente en cuál."}
+      ],
+      "cotidiano": "Ayuda a Leire a preparar los cuartos de descanso y apuesta con Fabián cuántos viajeros llegarán en el día; casi siempre pierde y paga con chistes.",
+      "postura_fuatia": "Le tiene un respeto nervioso: dice que una diosa que siente cada fuego seguro sabía que ese horno nunca estuvo dañado.",
+      "conversacion": [
+        {"hablante": "senda_socorro", "texto": "¿Vivos? Qué bueno. Díganme a qué huele allá afuera. ¿Hay alguien horneando?"},
+        {"hablante": "senda_leire", "texto": "Socorro, déjalos llegar primero."},
+        {"hablante": "senda_socorro", "texto": "Ya llegaron, mira, tienen los pies en el piso. Perdón. Es la costumbre del mostrador."},
+        {"hablante": "ella", "texto": "Huele al pan de la posada, creo. La próxima te cuento si era de anís."}
+      ],
+      "ropa": ["ella", 2, "#d6d0dc", "pelo_corto", "", "", "vestido#c9b8e0", "", "sandalias#bdb7c4", "", "pensando_b"]
+    },
+    {
+      "id": "hilos_hermelinda",
+      "nombre": "Hermelinda",
+      "asentamiento": "refugio_hilos",
+      "funcion": "Zurcidora: arneses, vendas de algodón de niebla y remiendos del equipo de rescate.",
+      "pasado": "Hermelinda, 55, nació en Brumaverde y llegó al Refugio de los Hilos como acompañante viva hace doce años. Cuando la vista empezó a fallarle siguió diciendo «no hay problema» y enhebrando a ojo; una costura de arnés cedió en un ensayo y el equipo de Asha tuvo que esperar medio día por un repuesto. Nadie se lastimó, pero ella dejó de esconder los lentes en el bolsillo del delantal.",
+      "presente": "Usa una lupa enorme montada en un brazo de madera, regaña con ternura a quien rompe una venda y tararea mientras zurce. Pide ayuda para enhebrar en voz alta, para que los jóvenes vean que se puede.",
+      "arco": "Convierte su costurero en un lugar donde cualquiera aprende a remendar su propio equipo.",
+      "vinculos": ["hilos_asha", "hilos_hector", "nieve_anselmo"],
+      "naturaleza": "persona_viva",
+      "voz": "Maternal y franca, con refranes de costurero que ella misma se inventa.",
+      "hogar": "refugio_hilos_vivienda_03",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Hermelinda aprendió a zurcir medias en Brumaverde, a la luz de una ventana que daba al bosque. Su tía le decía que un remiendo honrado se ve: «el que esconde la costura, esconde la historia». Le encantaba devolver un abrigo con un parche de otro color y ver la cara de su dueño, entre la queja y la risa. Nunca tuvo prisa por coser bonito."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "En el Refugio cosía arneses para los rescates de Asha. Cuando la vista empezó a nublarse no quiso decir nada: le daba miedo que la mandaran a descansar a Celia. Enhebraba a ojo y repasaba con los dedos. En un ensayo, una costura cedió con Héctor colgado a medio metro del suelo. Él se rió. Ella no pudo, y esa noche sacó los lentes del bolsillo."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Héctor le armó un brazo de madera para la lupa, y Anselmo le mandó desde Nieveclara una aguja de enhebrado fácil con una nota: «a todos nos pasa». Ahora pide ayuda para enhebrar sin bajar la voz. Lo que le pesa es pensar en cuántas costuras hizo a ojo antes de aquel ensayo. Las revisó todas. Dos estaban flojas."}
+      ],
+      "cotidiano": "Abre el costurero después del desayuno, revisa los arneses que volvieron de ruta y deja un canasto de vendas limpias a la entrada de cada módulo.",
+      "postura_fuatia": "Neutral: dice que el viento de Fuatia descose más que cualquier rescate, y que no le guarda rencor; solo le cobra los remiendos.",
+      "conversacion": [
+        {"hablante": "hilos_hermelinda", "texto": "Pásame ese hilo. No, el otro. Y enhébralo tú, que hoy veo doble y no me da vergüenza decirlo."},
+        {"hablante": "hilos_asha", "texto": "Hermelinda zurce todo lo que traemos roto. A veces también a nosotros."},
+        {"hablante": "hilos_hermelinda", "texto": "A ustedes solo les remiendo el ánimo. Lo difícil es el arnés."},
+        {"hablante": "ella", "texto": "Listo, enhebrado. ¿Qué más hay en el canasto?"}
+      ],
+      "ropa": ["ella", 4, "#8f8796", "pelo_mono", "diadema_mono#b7a3d8", "gafas_redondas#5e5866", "delantal#d8d4dd#9a88c0", "falda#7e7889", "zapatos#5a5560", "carriel#a197b8", "inclinado"]
+    },
+    {
+      "id": "hilos_abel",
+      "nombre": "Abel",
+      "asentamiento": "refugio_hilos",
+      "funcion": "Viajero rescatado: violinista que salió de un molde de Vael y aprende a tocar distinto.",
+      "pasado": "Abel murió con 31 años en AV 305; era violinista de una banda de fiestas en Puerto de los Lirios. La víspera de un festival dejó a la banda por un contrato mejor y dijo que estaba enfermo. En Senda, un molde de Vael lo atrapó en una fiesta que se repetía, donde él siempre era el más aplaudido. Asha lo sacó de ahí, y él eligió seguir su reparación en el Refugio.",
+      "presente": "Es simpático, inquieto y toca su canción siempre igual, nota por nota, aunque intente cambiarla. Le encantan las polillas de telar y les deja una lámpara bajita para que no se quemen.",
+      "arco": "Toca una versión distinta de su canción y le cuenta a su banda la verdad, sin esperar que lo vuelvan a invitar.",
+      "vinculos": ["hilos_elian", "hilos_asha", "hilos_tecla"],
+      "naturaleza": "alma",
+      "voz": "Ligera y rápida, con chistes de escenario; se apaga de golpe cuando algo le recuerda el molde.",
+      "hogar": "refugio_hilos_vivienda_03",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Abel tocó el violín por primera vez en una boda, donde su tío lo subió a una silla para que lo vieran. Tenía siete años, desafinó toda la pieza y aun así lo aplaudieron. Desde entonces quiso ese sonido: palmas, risas, alguien gritando su nombre. Le gustaba la música, pero le gustaba todavía más lo que pasaba después de la última nota."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "La banda de fiestas era su familia de verano. La víspera del festival grande, una orquesta de Brasaviva le ofreció el doble. Abel dijo que tenía fiebre y se fue. La banda tocó sin violín y nadie le reclamó en voz alta; simplemente no lo volvieron a llamar. Durante años se contó que había sido una decisión de oficio. Nunca les escribió."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "En Senda, el molde de Vael le ofreció la misma fiesta cada noche, con él en el centro. Asha lo encontró tocando la misma pieza por centésima vez. Elián, que también salió de un molde, le enseña a reconocer cuándo la memoria repite algo que él no eligió. Abel quiere tocar su canción de otra forma. Todavía no puede. Los dedos van solos."}
+      ],
+      "cotidiano": "Toca al atardecer en la puerta del costurero de Hermelinda mientras ella zurce; Elián lo escucha sentado en el escalón y le dice cada vez si notó algo distinto.",
+      "postura_fuatia": "Curioso y algo temeroso: dice que Fuatia nunca sopla el mismo viento dos veces, y que eso le da envidia.",
+      "conversacion": [
+        {"hablante": "hilos_abel", "texto": "¿Quieren oír algo? Es la única que me sale. Siempre igual. Igualita, igualita."},
+        {"hablante": "hilos_elian", "texto": "Ayer cambió una nota al final. Yo la oí."},
+        {"hablante": "hilos_abel", "texto": "Fue un error, Elián. Pero gracias. Me lo voy a creer."},
+        {"hablante": "el", "texto": "Tócala. Si cambia algo, te aviso."}
+      ],
+      "ropa": ["el", 0, "#2e2a33", "pelo_largo_el", "", "", "ruana#a998c7#7d7887", "jogger#6c6874", "tenis#d3cfd8", "", "senalar_a"]
+    },
+    {
+      "id": "nox_griselda",
+      "nombre": "Griselda",
+      "asentamiento": "bastion_velo",
+      "funcion": "Cuidadora del perímetro: cuervos, huerto de cardo y nidales fuera del sello.",
+      "pasado": "Griselda, 46, fue veterinaria en Vigilia antes de pedir traslado al Bastión. Al llegar convenció al personal de que los cuervos «avisaban» las filtraciones, y durante un año los turnos miraron más los nidos que los instrumentos; los pájaros, espantados por tanta atención, abandonaron dos nidales. Tamara le mostró que una baliza mide y un cuervo solo vive.",
+      "presente": "Habla con los cuervos como con colegas que no le deben nada y comparte con Dorian el huerto de hierbas, aunque discuten cuánta menta es «suficiente». Es directa, se ríe fuerte y anota todo con lápiz para poder corregir.",
+      "arco": "Separa observación de alarma y defiende que los animales del perímetro son vecinos, no instrumentos de la contención.",
+      "vinculos": ["nox_dorian", "nox_tamara", "vigilia_azucena"],
+      "naturaleza": "persona_viva",
+      "voz": "Clara y enérgica, de veterinaria de campo; dice las cosas una vez y luego sonríe.",
+      "hogar": "bastion_velo_vivienda_04",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Griselda creció en una granja de Vigilia donde su padre curaba animales ajenos a cambio de lo que pudieran pagarle. Le encantaba acompañarlo de noche, con la linterna, y oír cómo le hablaba a una vaca asustada como si le explicara el clima. Aprendió que un animal enfermo no es un problema por resolver, sino alguien a quien se le pregunta dónde le duele."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Cuando llegó al Bastión vio cuervos alborotados justo antes de una alarma y armó una teoría. La repitió tanto que el personal empezó a vigilar los nidos más que las balizas. Los cuervos, con gente mirándolos a toda hora, dejaron dos nidales. Tamara le mostró los registros: se alborotaban también cuando llegaba el carro de suministros. Griselda pidió que corrigieran el manual."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Ahora quiere los nidales lejos del sello, donde nadie los mire con binoculares de guardia. Dorian le dejó la mitad del huerto de hierbas y ella siembra cardo de guardia para los paños de Salma. Azucena le escribe desde Vigilia sobre sus grifos. Lo que todavía pesa es la costumbre: cuando un cuervo grazna fuerte, la cabeza se le va sola hacia el sello."}
+      ],
+      "cotidiano": "Al amanecer revisa el huerto y los nidales con equipo autorizado; a mediodía discute con Dorian sobre la menta y por la tarde ayuda a Salma con los paños de cardo.",
+      "postura_fuatia": "Respetuosa y desconfiada a partes iguales: dice que Fuatia cuida a los cuervos mejor que nadie, pero que nunca les pide permiso para soplarles el nido.",
+      "conversacion": [
+        {"hablante": "nox_griselda", "texto": "Ese de la cerca es Tornillo. No es una alarma, es un cuervo. Si grazna, es porque tiene opiniones."},
+        {"hablante": "nox_tamara", "texto": "Antes aquí todos miraban los nidos cuando sonaba algo."},
+        {"hablante": "nox_griselda", "texto": "Y la culpa fue mía. Ahora se mira la baliza. Los cuervos, a la hora del café."},
+        {"hablante": "ella", "texto": "Entonces saludo a Tornillo y miro la baliza. Entendido."}
+      ],
+      "ropa": ["ella", 3, "#1f2430", "pelo_cola", "gorra#2a3550", "", "chaqueta#1e2a44#7f8a99", "pantalon#3a4252", "botas#20242c", "mochila#5d6878", "brazos_cruzados"]
+    },
+    {
+      "id": "nox_leandro",
+      "nombre": "Leandro",
+      "asentamiento": "bastion_velo",
+      "funcion": "Intendente de relevos: turnos, bajas, descanso y la cocina del personal.",
+      "pasado": "Leandro, 39, era cocinero en Pueblo del Sol y llegó al Bastión a cubrir una baja que duró seis años. Por no dejar solos a sus compañeros dejó de tomar sus propios relevos, hasta que se quedó dormido en una guardia; la doble revisión lo detectó a tiempo y no pasó nada, pero Dorian tuvo que firmar el incidente. Desde entonces defiende el descanso como parte de la contención.",
+      "presente": "Hace sopas de cardo y patata que todos fingen no extrañar en sus días libres, lleva el tablero de turnos con letra de menú y juega cartas con Íñigo los jueves. Es bromista, pero un relevo no se lo negocia a nadie.",
+      "arco": "Logra que el comandante descanse de verdad y acepta que él también puede dejar el oficio algún día sin traicionar a nadie.",
+      "vinculos": ["nox_dorian", "nox_inigo", "posadera"],
+      "naturaleza": "persona_viva",
+      "voz": "Cálida y mandona, de cocinero de turno; habla de turnos como si fueran recetas.",
+      "hogar": "bastion_velo_vivienda_04",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Leandro creció en la cocina de su abuelo, que servía almuerzos a los arrieros que pasaban por Pueblo del Sol. Aprendió a picar cebolla antes de los diez años y a saber, por la cara de alguien, si necesitaba sopa o conversación. Le encantaba la hora en que la cocina se calmaba y todos comían juntos, cocineros incluidos, sin que nadie atendiera a nadie."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Llegó al Bastión a cubrir una baja de un mes y se quedó seis años. Cada vez que alguien necesitaba un turno extra, Leandro lo tomaba. Una noche se durmió con la cabeza sobre el registro. La doble revisión lo notó en minutos y no pasó nada. Dorian firmó el incidente sin un solo regaño, y eso le pesó más que cualquier sanción."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Ahora lleva el tablero de turnos y no deja que nadie, ni él, cubra tres seguidos. Íñigo le gana a las cartas los jueves; Leandro dice que lo deja ganar y nadie le cree. Le escribe a la posadera de Pueblo del Sol para cambiar recetas. Lo que todavía pesa es una idea: que si él descansa, algo se rompe. Ya sabe que no es cierto."}
+      ],
+      "cotidiano": "Prepara el desayuno del relevo de la madrugada, actualiza el tablero de turnos con tiza de colores y obliga a quien sale de guardia a sentarse diez minutos antes de irse a dormir.",
+      "postura_fuatia": "Neutral y hospitalario: si Fuatia pasa algún día por el Bastión, le sirve sopa; lo que haga después es asunto de ella.",
+      "conversacion": [
+        {"hablante": "nox_leandro", "texto": "¿Visitantes? Siéntense. Primero sopa, después permisos. Bueno, al revés, que si no Dorian me regaña."},
+        {"hablante": "nox_dorian", "texto": "Primero permisos, Leandro."},
+        {"hablante": "nox_leandro", "texto": "¿Ven? Por eso tiene que tomar su relevo. Está muy tieso."},
+        {"hablante": "el", "texto": "El permiso lo tengo aquí. ¿La sopa es de cardo?"}
+      ],
+      "ropa": ["el", 2, "#4a3a2e", "pelo_copete", "", "", "delantal#c9ced6#24304a", "pantalon#2a3348", "zapatos#1d222b", "", "presumir_a"]
+    }
+  ],
+  "viviendas": [
+    {"id": "vigilia_vivienda_04", "asentamientoId": "vigilia", "nombre": "Módulo de la Campana Vieja", "ocupantes": ["vigilia_brigida", "vigilia_evaristo"]},
+    {"id": "jardines_eco_vivienda_04", "asentamientoId": "jardines_eco", "nombre": "Casa de la Colmena y el Diapasón", "ocupantes": ["eco_gregoria", "eco_casiano"]},
+    {"id": "travesia_vivienda_05", "asentamientoId": "travesia", "nombre": "Módulo de las Grullas", "ocupantes": ["senda_lorenzo", "senda_socorro"]},
+    {"id": "refugio_hilos_vivienda_03", "asentamientoId": "refugio_hilos", "nombre": "Módulo del Costurero", "ocupantes": ["hilos_hermelinda", "hilos_abel"]},
+    {"id": "bastion_velo_vivienda_04", "asentamientoId": "bastion_velo", "nombre": "Módulo del Relevo", "ocupantes": ["nox_griselda", "nox_leandro"]}
+  ],
+  "encargos": [
+    {
+      "id": "E_vigilia_1",
+      "titulo": "La campana que no grita",
+      "region": "vigilia",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["vigilia_evaristo", "vigilia_kael", "vigilia_brigida"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Evaristo y con Kael sobre la campana rajada.", "npc": ["vigilia_evaristo", "vigilia_kael"]},
+        {"tipo": "entrega", "texto": "Trae 3 de hierro de campana y 1 lingote de cobre para refundirla.", "materiales": {"vigilia_mineral": 3, "lingote_cobre": 1}},
+        {"tipo": "jornadas", "texto": "Espera una noche a que el molde enfríe.", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "vigilia_evaristo", "texto": "La campana del medio tiene una grieta. Ya no suena: tose."},
+        {"hablante": "vigilia_kael", "texto": "Hay que refundirla. Y de paso pensar qué queremos que diga."},
+        {"hablante": "vigilia_evaristo", "texto": "Yo quiero que diga la hora. Lo demás, que lo diga otro."},
+        {"hablante": "narrador", "texto": "Kael te mira de reojo, como quien espera que alguien más insista."}
+      ],
+      "giro": [
+        {"hablante": "vigilia_evaristo", "texto": "Salió limpia. Oye eso: tiene una nota más dulce que la vieja."},
+        {"hablante": "vigilia_kael", "texto": "Con una campana nueva podemos tener un toque nuevo. Uno que no asuste."},
+        {"hablante": "vigilia_brigida", "texto": "Uno que diga «la olla está lista», por ejemplo. Lo digo por nada."}
+      ],
+      "decision": "¿Qué va a tocar la campana nueva: un llamado a la olla común o solo las horas?",
+      "opciones": ["Olla común: un toque alegre para reunir a la gente sin miedo.", "Solo horas: Evaristo se queda con lo que sabe tocar y la alarma sigue en manos de Kael."],
+      "ramas": [
+        [
+          {"hablante": "vigilia_evaristo", "texto": "Tres golpes y uno largo. Si alguien corre, que sea hacia el pan."},
+          {"hablante": "vigilia_brigida", "texto": "Ya era hora de que esa torre trajera buenas noticias."}
+        ],
+        [
+          {"hablante": "vigilia_evaristo", "texto": "La hora, bien dada, también es un cuidado. No me pidan más por ahora."},
+          {"hablante": "vigilia_kael", "texto": "Por ahora. La tabla de señales se queda en tu banco, por si un día quieres leerla."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "narrador", "texto": "Al atardecer, la campana nueva suena por primera vez. Los búhos ni se mueven."},
+        {"hablante": "vigilia_evaristo", "texto": "¿Ves? Ni Doña Plumas se quejó. Eso es una campana bien hecha."}
+      ],
+      "recompensa": {"monedas": 140, "objetos": {"vigilia_cosecha": 2}}
+    },
+    {
+      "id": "E_vigilia_2",
+      "titulo": "Pan sin firma",
+      "region": "vigilia",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["vigilia_brigida", "vigilia_aldan", "vigilia_noemi", "nox_inigo"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Brígida y con Aldán sobre el volante que dejaron en el comedor.", "npc": ["vigilia_brigida", "vigilia_aldan"]},
+        {"tipo": "entrega", "texto": "Trae 3 de harina y 2 de la cosecha de centeno de vigilia para hornear de más.", "materiales": {"harina": 3, "vigilia_cosecha": 2}},
+        {"tipo": "estadistica", "texto": "Cocina dos comidas para la olla del sábado.", "clave": "comidas", "cantidad": 2}
+      ],
+      "inicio": [
+        {"hablante": "vigilia_brigida", "texto": "Mira lo que dejaron debajo de la puerta: «Pan caliente para quien firme aquí». Con dibujito de espiga y todo."},
+        {"hablante": "vigilia_aldan", "texto": "Es de la Custodia. Puedo poner un guardia en la entrada."},
+        {"hablante": "vigilia_brigida", "texto": "¿Para que la gente vea un uniforme antes que la sopa? No, gracias. Lo que quiero es hornear más."},
+        {"hablante": "vigilia_brigida", "texto": "Si ellos regalan pan con letra pequeña, nosotros lo regalamos sin letra."}
+      ],
+      "giro": [
+        {"hablante": "narrador", "texto": "El sábado el galpón se llena. Al fondo, Íñigo come despacio, de espaldas a la puerta."},
+        {"hablante": "nox_inigo", "texto": "Antes yo repartía esos papeles. No sé si debería estar aquí."},
+        {"hablante": "vigilia_brigida", "texto": "Aquí puede estar cualquiera que devuelva el plato. ¿Ves algún letrero que diga otra cosa?"}
+      ],
+      "decision": "¿Ponen un letrero en la puerta o dejan que el comedor hable solo?",
+      "opciones": ["Letrero: «Aquí se come sin firmar», bien grande, para que nadie dude.", "Sin letrero: solo la puerta abierta, para no volver el comedor un pleito con la Custodia."],
+      "ramas": [
+        [
+          {"hablante": "vigilia_brigida", "texto": "Lo pinto yo, con letra de cuaderno de escuela."},
+          {"hablante": "vigilia_noemi", "texto": "Y abajo, en chiquito: «alergias en la pizarra, si quieres». Con permiso, como acordamos."}
+        ],
+        [
+          {"hablante": "vigilia_brigida", "texto": "Que lo cuenten los que comen. Eso viaja más rápido que un letrero."},
+          {"hablante": "vigilia_aldan", "texto": "Entonces mi guardia viene sin uniforme y a pelar papas."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "nox_inigo", "texto": "Gracias por el pan del borde. No me preguntaste nada."},
+        {"hablante": "vigilia_brigida", "texto": "Porque no hacía falta. Vuelve el otro sábado, que hay de centeno."}
+      ],
+      "recompensa": {"monedas": 120, "objetos": {"pan": 2, "vigilia_semilla": 1}}
+    },
+    {
+      "id": "E_rosal_eterno_1",
+      "titulo": "La primera noche",
+      "region": "rosal_eterno",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["verdia_eulalia", "verdia_nilo", "verdia_celino"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Eulalia y con Nilo sobre el alma que llega esta tarde.", "npc": ["verdia_eulalia", "verdia_nilo"]},
+        {"tipo": "entrega", "texto": "Trae 2 de madera de rosal de poda voluntaria, 2 telas y 1 fibra para la hamaca y la manta.", "materiales": {"rosal_eterno_madera": 2, "tela": 2, "fibra": 1}},
+        {"tipo": "jornadas", "texto": "Deja pasar la primera noche del recién llegado.", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "verdia_nilo", "texto": "Esta tarde llega un alma que pidió algo poco común: nada de ceremonia, nada de canto. Solo un lugar donde sentarse."},
+        {"hablante": "verdia_eulalia", "texto": "¡Eso no es raro! Es lo más normal del mundo. Le hago una manta."},
+        {"hablante": "verdia_nilo", "texto": "No sabemos si quiere manta."},
+        {"hablante": "verdia_eulalia", "texto": "Entonces se la hago y no se la pongo encima. Se la dejo cerca. Celino, ¿me ayudas con una hamaca?"}
+      ],
+      "giro": [
+        {"hablante": "verdia_celino", "texto": "La hamaca quedó bajo la pérgola, lejos del camino. Si quiere compañía, la ve; si no, nadie la ve a ella."},
+        {"hablante": "narrador", "texto": "El recién llegado se sienta. No habla. Al rato se envuelve solo en la manta."},
+        {"hablante": "verdia_eulalia", "texto": "Ahora falta la noche. ¿Le dejamos luz o lo dejamos a oscuras?"}
+      ],
+      "decision": "¿Un farol encendido o la oscuridad con una campanita a mano?",
+      "opciones": ["Farol: una luz bajita toda la noche, para que no despierte sin saber dónde está.", "Campanita: oscuridad tranquila y una campana pequeña por si quiere llamar a alguien."],
+      "ramas": [
+        [
+          {"hablante": "verdia_nilo", "texto": "Un farol que no pregunta nada. Me gusta."},
+          {"hablante": "verdia_eulalia", "texto": "Le cosí una pantalla de tela para que no le dé en los ojos. Por si acaso."}
+        ],
+        [
+          {"hablante": "verdia_eulalia", "texto": "La campana la amarré con una cinta de la manta. Así la encuentra a tientas."},
+          {"hablante": "verdia_nilo", "texto": "Y si no la toca en toda la noche, también está bien."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "narrador", "texto": "En la mañana, la manta está doblada sobre la hamaca. Encima, una flor de rosal."},
+        {"hablante": "verdia_eulalia", "texto": "No dijo gracias. Dijo algo mejor: la dobló."},
+        {"hablante": "verdia_nilo", "texto": "Hoy pidió caminar solo. Le dije que el rosal también es suyo."}
+      ],
+      "recompensa": {"monedas": 110, "objetos": {"rosal_eterno_semilla": 2}}
+    },
+    {
+      "id": "E_rosal_eterno_2",
+      "titulo": "Rayuela sin cuenta",
+      "region": "rosal_eterno",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["verdia_anibal", "verdia_eneas", "verdia_celino", "verdia_yara", "verdia_tobias"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Aníbal y con Eneas sobre la tarde de juegos.", "npc": ["verdia_anibal", "verdia_eneas"]},
+        {"tipo": "entrega", "texto": "Trae 3 de madera de rosal de poda voluntaria para los bolos y 1 de nácar de rocío para pintar la rayuela.", "materiales": {"rosal_eterno_madera": 3, "rosal_eterno_mineral": 1}},
+        {"tipo": "estadistica", "texto": "Fabrica algo dos veces en tu taller: Celino necesita ver que sabes usar un torno.", "clave": "fabricar", "cantidad": 2}
+      ],
+      "inicio": [
+        {"hablante": "verdia_anibal", "texto": "Quiero hacer la tarde de juegos más grande que haya visto el Rosal. Bolos, rayuela y carrera de caracoles voluntarios."},
+        {"hablante": "verdia_eneas", "texto": "¿Caracoles voluntarios?"},
+        {"hablante": "verdia_anibal", "texto": "Si no quieren correr, no corren. Los caracoles también tienen derechos. Celino me presta el torno si traes madera."}
+      ],
+      "giro": [
+        {"hablante": "verdia_celino", "texto": "Los bolos quedaron torcidos. A propósito, dice Aníbal."},
+        {"hablante": "narrador", "texto": "Detrás del cobertizo aparece una pizarra con columnas: nombres, rondas, puntos. Todo con letra de maestro."},
+        {"hablante": "verdia_anibal", "texto": "Ah. Eso. La hice por costumbre. ¿La sacamos o la escondemos?"}
+      ],
+      "decision": "¿Pizarra de puntos para quien quiera o una tarde sin ninguna cuenta?",
+      "opciones": ["Pizarra libre: queda a un lado y cada quien decide si anota.", "Sin pizarra: la tarde se juega sin puntos, y Aníbal confiesa su cuenta secreta solo al final."],
+      "ramas": [
+        [
+          {"hablante": "verdia_anibal", "texto": "Que anote el que quiera. Yo me pongo cero a mí mismo, para dar ejemplo."},
+          {"hablante": "verdia_yara", "texto": "Y yo le canto una regla nueva: el que anota, sirve el té."}
+        ],
+        [
+          {"hablante": "verdia_anibal", "texto": "Bien. La pizarra sirve de mesa para el té. Algo tiene que aprender."},
+          {"hablante": "verdia_eneas", "texto": "Al final igual vas a decir la cuenta, ¿cierto?"}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "narrador", "texto": "La tarde termina con Yara ganando los bolos sin querer y Tobías jurando que tumbó doce."},
+        {"hablante": "verdia_tobias", "texto": "Doce. Lo vi con estos ojos. Bueno, nueve, pero doce suena mejor."},
+        {"hablante": "verdia_anibal", "texto": "Eran nueve, sí. Gracias por jugar de verdad."}
+      ],
+      "recompensa": {"monedas": 100, "objetos": {"rosal_eterno_cosecha": 2}}
+    },
+    {
+      "id": "E_jardines_eco_1",
+      "titulo": "Contarles a las abejas",
+      "region": "jardines_eco",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["eco_gregoria", "eco_basilia", "eco_nazario"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Gregoria y con Basilia sobre la cera de la Noche del Velo y el Rosal.", "npc": ["eco_gregoria", "eco_basilia"]},
+        {"tipo": "entrega", "texto": "Trae 3 de madera de ciprés de poda y 1 de resina para una colmena nueva.", "materiales": {"jardines_eco_madera": 3, "resina": 1}},
+        {"tipo": "estadistica", "texto": "Planta tres veces: las abejas necesitan flores antes que cajas.", "clave": "plantar", "cantidad": 3}
+      ],
+      "inicio": [
+        {"hablante": "eco_basilia", "texto": "Se acerca la Noche del Velo y el Rosal y me faltan velas. Gregoria dice que la cera no alcanza."},
+        {"hablante": "eco_gregoria", "texto": "No alcanza para todas las velas que tú quieres. Alcanza para las que la colonia puede dar."},
+        {"hablante": "eco_gregoria", "texto": "Hay un enjambre buscando casa. Si me ayudas con una colmena nueva y con flores, tendrá dónde quedarse. Y entonces hablamos."},
+        {"hablante": "eco_nazario", "texto": "Yo pongo las campánulas. Tú pon las manos."}
+      ],
+      "giro": [
+        {"hablante": "narrador", "texto": "Al tercer día el enjambre entra a la caja nueva, sin que nadie lo empuje."},
+        {"hablante": "eco_gregoria", "texto": "Ahora hay que contarles. Siéntate. Se les dice despacio, como una noticia buena."},
+        {"hablante": "eco_gregoria", "texto": "En la colmena vieja sobra cera. La pregunta es para quién es este ciclo."}
+      ],
+      "decision": "¿La cera que sobra va a las velas de Basilia o se queda con la colonia nueva?",
+      "opciones": ["Velas: la cera sobrante va a la ceremonia, con la reserva de la colonia ya separada.", "Colonia: este ciclo la cera ayuda a la colmena nueva a empezar y Basilia hará menos velas."],
+      "ramas": [
+        [
+          {"hablante": "eco_basilia", "texto": "Haré velas pequeñas. Ya aprendí que no hace falta que sean grandes."},
+          {"hablante": "eco_gregoria", "texto": "Y les contamos a las abejas para qué fue. Les gusta saber."}
+        ],
+        [
+          {"hablante": "eco_basilia", "texto": "Menos velas, entonces. Que cada quien traiga lo que tenga; una flor también alumbra a su manera."},
+          {"hablante": "eco_gregoria", "texto": "Gracias, Basilia. Las abejas te lo van a recordar el próximo ciclo."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "eco_gregoria", "texto": "Les conté que ayudaste. No dijeron nada, que es su manera de decir que sí."},
+        {"hablante": "eco_nazario", "texto": "Las campánulas ya abrieron. Eso también es una respuesta."}
+      ],
+      "recompensa": {"monedas": 130, "objetos": {"jardines_eco_cosecha": 2, "jardines_eco_semilla": 1}}
+    },
+    {
+      "id": "E_jardines_eco_2",
+      "titulo": "La campana torcida",
+      "region": "jardines_eco",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["eco_casiano", "eco_sora", "eco_esteban"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Casiano y con Sora sobre el canto en el sendero.", "npc": ["eco_casiano", "eco_sora"]},
+        {"tipo": "archivo", "texto": "Consulta en el archivo público la partitura del primer coro de los Jardines."},
+        {"tipo": "entrega", "texto": "Trae 2 de vidrio de eco inerte y 1 cuerda para colgar dos campanas nuevas.", "materiales": {"jardines_eco_mineral": 2, "cuerda": 1}}
+      ],
+      "inicio": [
+        {"hablante": "eco_sora", "texto": "El coro quiere cantar en el sendero, con las campanas de viento sonando alrededor."},
+        {"hablante": "eco_casiano", "texto": "Hermoso. Solo que cada campana está en su nota, y el coro en otra, y..."},
+        {"hablante": "eco_sora", "texto": "Y nada. Quiero que estés ahí. Trae tu diapasón, pero déjalo en el bolsillo."},
+        {"hablante": "eco_casiano", "texto": "Al menos déjame colgar dos campanas nuevas. Y mirar la partitura vieja, por curiosidad."}
+      ],
+      "giro": [
+        {"hablante": "eco_esteban", "texto": "La partitura del primer coro tiene una nota tachada y reescrita tres veces. Nunca se pusieron de acuerdo."},
+        {"hablante": "eco_casiano", "texto": "Y la cantaron igual. Durante años."},
+        {"hablante": "eco_casiano", "texto": "Tengo las campanas nuevas. Puedo afinarlas al coro o dejarlas como salieron."}
+      ],
+      "decision": "¿Afinan las campanas al tono del coro o cada campana queda con su propia nota?",
+      "opciones": ["Afinadas: Casiano las ajusta al coro, para que acompañen sin estorbar.", "Cada una con su nota: las campanas suenan como salieron y el coro canta entre ellas."],
+      "ramas": [
+        [
+          {"hablante": "eco_casiano", "texto": "Las afino al coro, no al revés. Esa es la diferencia que tardé una vida en ver."},
+          {"hablante": "eco_sora", "texto": "Y si alguien canta desafinado, te sientas y aplaudes. Trato hecho."}
+        ],
+        [
+          {"hablante": "eco_casiano", "texto": "Que suenen como salieron. Como esa nota tachada tres veces."},
+          {"hablante": "eco_sora", "texto": "Por fin dices algo que yo misma te habría pedido en un ensayo."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "narrador", "texto": "El coro canta en el sendero. Una campana sale un poco alta y nadie se detiene."},
+        {"hablante": "eco_casiano", "texto": "¿Oíste? Nadie se detuvo. Ni yo."}
+      ],
+      "recompensa": {"monedas": 110, "objetos": {"jardines_eco_mineral": 1, "jardines_eco_cosecha": 1}}
+    },
+    {
+      "id": "E_travesia_1",
+      "titulo": "Cuerda a la vista",
+      "region": "travesia",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["senda_lorenzo", "senda_mateo", "senda_iria"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Lorenzo y con Mateo sobre la guía gastada de la pasarela norte.", "npc": ["senda_lorenzo", "senda_mateo"]},
+        {"tipo": "entrega", "texto": "Trae 3 de junco de paso cosechado y 2 fibras para torcer la cuerda nueva.", "materiales": {"travesia_cosecha": 3, "fibra": 2}},
+        {"tipo": "estadistica", "texto": "Repara algo una vez: Lorenzo dice que quien repara entiende las cuerdas.", "clave": "reparar", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "senda_mateo", "texto": "La guía de la pasarela norte está gastada. Aguanta, pero ya no da confianza."},
+        {"hablante": "senda_lorenzo", "texto": "Lo que no da confianza no sirve de guía. Hago una nueva."},
+        {"hablante": "senda_iria", "texto": "Mañana temprano cruzan unos viajeros. Uno de ellos le tiene miedo al agua."},
+        {"hablante": "senda_lorenzo", "texto": "Entonces la pruebo delante de él. Necesito junco bueno y manos que tiren."}
+      ],
+      "giro": [
+        {"hablante": "narrador", "texto": "La cuerda nueva aguanta a Lorenzo, a Mateo y a ti colgados al mismo tiempo. Mateo se ríe; Lorenzo no."},
+        {"hablante": "senda_lorenzo", "texto": "Aguanta. Ahora la pregunta: ¿quitamos la vieja ya o la dejamos un día al lado de la nueva?"}
+      ],
+      "decision": "¿Retiran la cuerda vieja de inmediato o la dejan un día junto a la nueva?",
+      "opciones": ["Retirarla ya: la pasarela cierra una hora y queda solo la cuerda probada.", "Un día las dos: el viajero con miedo cruza agarrado a la que conoce y prueba la nueva si quiere."],
+      "ramas": [
+        [
+          {"hablante": "senda_lorenzo", "texto": "Una hora cerrada es mejor que un año de miedo. Lo sé de primera mano."},
+          {"hablante": "senda_iria", "texto": "Les aviso a los viajeros, y les cuento por qué. Eso calma."}
+        ],
+        [
+          {"hablante": "senda_lorenzo", "texto": "Que elija él con qué mano se agarra. La cuerda no apura a nadie."},
+          {"hablante": "senda_mateo", "texto": "A mitad del paso se cambió de cuerda. Lo vi. Ni se dio cuenta."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "narrador", "texto": "En la tarde, el viajero que le temía al agua llega al otro lado y le da la mano a Lorenzo."},
+        {"hablante": "senda_lorenzo", "texto": "No me dio las gracias a mí. Se las dio a la cuerda. Así tiene que ser."}
+      ],
+      "recompensa": {"monedas": 120, "objetos": {"cuerda": 2, "travesia_semilla": 1}}
+    },
+    {
+      "id": "E_travesia_2",
+      "titulo": "El cuaderno de recetas",
+      "region": "travesia",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["senda_socorro", "senda_anwar", "senda_nora", "vigilia_telmo"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Socorro y con Anwar sobre lo que Socorro quiere devolver.", "npc": ["senda_socorro", "senda_anwar"]},
+        {"tipo": "archivo", "texto": "Consulta en el archivo público el registro de correspondencia autorizada entre Senda y Celia."},
+        {"tipo": "visitas", "texto": "Visita Piedralumbre, donde la familia de Socorro guarda el cuaderno.", "regiones": ["piedralumbre"]}
+      ],
+      "inicio": [
+        {"hablante": "senda_socorro", "texto": "Tengo que devolver un cuaderno. No es mío. Nunca lo fue, aunque lo tuve once años."},
+        {"hablante": "senda_anwar", "texto": "¿Quieres devolverlo, o quieres que te devuelvan algo a cambio?"},
+        {"hablante": "senda_socorro", "texto": "Las dos cosas, para qué miento. Pero solo la primera depende de mí."},
+        {"hablante": "senda_nora", "texto": "Si hay correspondencia con una persona viva, se registra y se pide permiso. Sin atajos."}
+      ],
+      "giro": [
+        {"hablante": "senda_nora", "texto": "La hermana de Socorro aceptó recibir el cuaderno. Pidió que no haya encuentro. Por ahora."},
+        {"hablante": "senda_socorro", "texto": "Por ahora. Bueno. Eso ya es más de lo que me tocaba."},
+        {"hablante": "vigilia_telmo", "texto": "Yo lo llevo con la correspondencia de la semana. Solo falta saber si va solo o con carta."}
+      ],
+      "decision": "¿El cuaderno viaja con una carta de Socorro o solo con una nota que diga «es tuyo»?",
+      "opciones": ["Carta: Socorro cuenta lo del horno con sus palabras, sin pedir respuesta.", "Nota: solo «es tuyo; el horno nunca estuvo dañado», para no pesar más de lo necesario."],
+      "ramas": [
+        [
+          {"hablante": "senda_socorro", "texto": "Escribí tres hojas. Anwar me hizo tachar dos, donde me explicaba demasiado."},
+          {"hablante": "senda_anwar", "texto": "La que quedó dice lo que hiciste y no pide nada. Esa sí es tuya."}
+        ],
+        [
+          {"hablante": "senda_socorro", "texto": "Siete palabras. Me costaron más que todo el pan que horneé en la vida."},
+          {"hablante": "senda_anwar", "texto": "A veces lo corto es lo que le deja espacio al otro para decidir."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "vigilia_telmo", "texto": "Entregado en mano a la destinataria. Sin leer, como se debe."},
+        {"hablante": "senda_socorro", "texto": "Ojalá vuelva a hacer el de anís. No por mí. Porque era el mejor."}
+      ],
+      "recompensa": {"monedas": 150, "objetos": {"pan": 2, "travesia_mineral": 1}}
+    },
+    {
+      "id": "E_refugio_hilos_1",
+      "titulo": "La lupa de todos",
+      "region": "refugio_hilos",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["hilos_hermelinda", "hilos_hector", "hilos_asha"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Hermelinda y con Héctor sobre las lupas del costurero.", "npc": ["hilos_hermelinda", "hilos_hector"]},
+        {"tipo": "entrega", "texto": "Trae 2 de mica de hilo, 1 vidrio y 2 de madera de bastidor retirada para tres lupas nuevas.", "materiales": {"refugio_hilos_mineral": 2, "vidrio": 1, "refugio_hilos_madera": 2}}
+      ],
+      "inicio": [
+        {"hablante": "hilos_hermelinda", "texto": "La lupa de Héctor me cambió la vida. El problema es que es una sola, y aquí todo el mundo rompe cosas."},
+        {"hablante": "hilos_hector", "texto": "Puedo hacer más brazos. Sencillos, que cualquiera los arregle. Ya aprendí esa lección."},
+        {"hablante": "hilos_hermelinda", "texto": "Y yo pongo la mesa grande. Faltan la mica para los lentes y la madera de bastidor."},
+        {"hablante": "hilos_asha", "texto": "Si mi equipo aprende a remendar en ruta, volvemos antes. Cuenten conmigo."}
+      ],
+      "giro": [
+        {"hablante": "narrador", "texto": "Tres lupas nuevas quedan sobre la mesa larga del costurero. Héctor dejó las instrucciones pegadas debajo de cada una."},
+        {"hablante": "hilos_hermelinda", "texto": "Ahora hay más lupas que costureras. Y no sé si quiero un taller lleno o mi rincón tranquilo."}
+      ],
+      "decision": "¿El costurero se abre como taller para todos o Hermelinda presta las lupas y conserva su rincón?",
+      "opciones": ["Taller abierto: tardes de remiendo donde cualquiera aprende a coser su equipo.", "Préstamo: las lupas salen con los equipos y el costurero sigue siendo el rincón de Hermelinda."],
+      "ramas": [
+        [
+          {"hablante": "hilos_hermelinda", "texto": "Los martes, mesa larga. Se cose torcido y se aprende derecho."},
+          {"hablante": "hilos_asha", "texto": "Mi equipo ya se peleó por el primer turno."}
+        ],
+        [
+          {"hablante": "hilos_hermelinda", "texto": "Las lupas viajan; yo me quedo con mi silla y mi radio. Eso también es cuidarse."},
+          {"hablante": "hilos_hector", "texto": "Entonces cada lupa lleva su hoja. Si se rompe, la arregla quien la tenga."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "hilos_hermelinda", "texto": "Mira: ya nadie me pregunta si veo bien. Me preguntan dónde está la lupa. Es mejor pregunta."},
+        {"hablante": "hilos_hector", "texto": "Y ninguna depende de mí para arreglarse. Me da un poquito de vértigo. Del bueno."}
+      ],
+      "recompensa": {"monedas": 120, "objetos": {"refugio_hilos_cosecha": 2}}
+    },
+    {
+      "id": "E_refugio_hilos_2",
+      "titulo": "La canción que se repite",
+      "region": "refugio_hilos",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["hilos_abel", "hilos_elian", "hilos_tecla", "hilos_hermelinda"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Abel, Elián y Tecla sobre la canción de Abel.", "npc": ["hilos_abel", "hilos_elian", "hilos_tecla"]},
+        {"tipo": "entrega", "texto": "Trae 2 de madera de bastidor retirada y 1 cuerda para un atril nuevo.", "materiales": {"refugio_hilos_madera": 2, "cuerda": 1}},
+        {"tipo": "jornadas", "texto": "Deja pasar dos noches de ensayo.", "cantidad": 2}
+      ],
+      "inicio": [
+        {"hablante": "hilos_tecla", "texto": "Abel toca su canción idéntica cada vez. Medí los tiempos: no varía ni un pulso. Eso es el molde."},
+        {"hablante": "hilos_abel", "texto": "Gracias por la estadística, Tecla. Me hace sentir muy especial."},
+        {"hablante": "hilos_elian", "texto": "No hay que romperla. Hay que darle espacio para que salga otra."},
+        {"hablante": "hilos_abel", "texto": "Un atril nuevo me ayudaría. El viejo es del molde. Hasta el atril es igual."}
+      ],
+      "giro": [
+        {"hablante": "narrador", "texto": "La segunda noche, a mitad de la canción, Abel se detiene. Vuelve a empezar más despacio, y la melodía tuerce hacia otro lado."},
+        {"hablante": "hilos_tecla", "texto": "Eso no estaba en mis tiempos. Me equivoqué en el modelo. Qué bueno."},
+        {"hablante": "hilos_abel", "texto": "Creo que la puedo tocar así otra vez. ¿Para quién?"}
+      ],
+      "decision": "¿Abel toca la versión nueva en público o primero solo para Elián?",
+      "opciones": ["En público: en la puerta del costurero, para quien quiera oír.", "Solo para Elián: sin aplausos, para que la canción no se vuelva a pegar al escenario."],
+      "ramas": [
+        [
+          {"hablante": "hilos_abel", "texto": "Si me aplauden, voy a pensar en la fiesta del molde. Pero si no toco, también."},
+          {"hablante": "hilos_hermelinda", "texto": "Aquí se aplaude con las agujas. Hace menos ruido."}
+        ],
+        [
+          {"hablante": "hilos_elian", "texto": "No la cambiaste por mí. Pero me gustó que me la mostraras."},
+          {"hablante": "hilos_abel", "texto": "Sin aplausos se oye mejor el final. No lo sabía."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "hilos_abel", "texto": "Esta noche le escribí a la banda, por el registro autorizado. No les pedí que me inviten. Les dije que no tenía fiebre."},
+        {"hablante": "hilos_elian", "texto": "¿Y cómo te sientes?"},
+        {"hablante": "hilos_abel", "texto": "Desafinado. Bien desafinado."}
+      ],
+      "recompensa": {"monedas": 140, "objetos": {"refugio_hilos_semilla": 1, "refugio_hilos_mineral": 1}}
+    },
+    {
+      "id": "E_bastion_velo_1",
+      "titulo": "Los cuervos no son alarma",
+      "region": "bastion_velo",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["nox_griselda", "nox_tamara", "nox_mirta"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Griselda y con Tamara sobre los nidales y el manual.", "npc": ["nox_griselda", "nox_tamara"]},
+        {"tipo": "entrega", "texto": "Trae 3 de madera de caja de suministro reutilizada y 1 hierro para postes de nidal lejos del sello.", "materiales": {"bastion_velo_madera": 3, "hierro": 1}},
+        {"tipo": "estadistica", "texto": "Alimenta dos veces a tus animales: Griselda quiere saber cómo cuidas.", "clave": "alimentar", "cantidad": 2}
+      ],
+      "inicio": [
+        {"hablante": "nox_griselda", "texto": "El manual todavía dice «observar los cuervos ante sospecha de filtración». Lo escribí yo. Hay que sacarlo."},
+        {"hablante": "nox_tamara", "texto": "Y llevar los nidales lejos del sello. Allá cerca se estresan con cada prueba de baliza."},
+        {"hablante": "nox_griselda", "texto": "Postes nuevos de madera reutilizada, y algo de hierro para que el viento no los tumbe."},
+        {"hablante": "nox_mirta", "texto": "Si el manual cambia, se registra el cambio y el porqué. No se borra como si nunca hubiera existido."}
+      ],
+      "giro": [
+        {"hablante": "narrador", "texto": "Los postes nuevos quedan en la loma, fuera del perímetro de prueba. A la segunda mañana, un cuervo deja una ramita encima."},
+        {"hablante": "nox_griselda", "texto": "Eso es una mudanza. No es un presagio. Es una mudanza."},
+        {"hablante": "nox_mirta", "texto": "Queda la línea del manual. ¿La retiramos o la dejamos como nota de observación?"}
+      ],
+      "decision": "¿La «señal de cuervos» sale del manual o queda como observación sin valor de alarma?",
+      "opciones": ["Retirarla: el manual solo habla de balizas y los cuervos tienen su propia hoja de cuidado.", "Nota de observación: se anotan los cuervos, aclarando que no sirven como alarma."],
+      "ramas": [
+        [
+          {"hablante": "nox_mirta", "texto": "Retirada, con fecha, firma y razón. Quien lea la versión vieja sabrá por qué cambió."},
+          {"hablante": "nox_griselda", "texto": "Y la hoja nueva dice: «No son instrumentos. Son vecinos». En letra grande."}
+        ],
+        [
+          {"hablante": "nox_tamara", "texto": "Anotar ayuda, siempre que nadie apague una baliza porque los cuervos están tranquilos."},
+          {"hablante": "nox_griselda", "texto": "Lo dejo escrito en rojo: un cuervo tranquilo no prueba nada."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "nox_griselda", "texto": "Tornillo ya se mudó. No me pidió permiso, que es como debe ser."},
+        {"hablante": "nox_tamara", "texto": "Y la baliza sigue sonando cuando debe. Cada quien con su oficio."}
+      ],
+      "recompensa": {"monedas": 160, "objetos": {"bastion_velo_semilla": 2}}
+    },
+    {
+      "id": "E_bastion_velo_2",
+      "titulo": "Un relevo completo",
+      "region": "bastion_velo",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["nox_leandro", "nox_dorian", "nox_salma", "vigilia_aldan"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Leandro, Dorian y Salma sobre el tablero de turnos.", "npc": ["nox_leandro", "nox_dorian", "nox_salma"]},
+        {"tipo": "entrega", "texto": "Trae 3 patatas y 2 de la cosecha de cardo de guardia para la sopa del relevo.", "materiales": {"patata": 3, "bastion_velo_cosecha": 2}},
+        {"tipo": "jornadas", "texto": "Espera una noche entera de relevo.", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "nox_leandro", "texto": "El comandante lleva diecinueve días sin un relevo completo. Lo conté en el tablero. Con tiza roja."},
+        {"hablante": "nox_dorian", "texto": "Estoy bien. Si pasa algo, quiero estar aquí."},
+        {"hablante": "nox_salma", "texto": "Si pasa algo, Mirta y Viggo saben qué hacer. Hay protocolo. Lo escribiste tú, Dorian."},
+        {"hablante": "nox_leandro", "texto": "Hago sopa de despedida. No de que te vayas para siempre: de que te vayas a dormir."}
+      ],
+      "giro": [
+        {"hablante": "narrador", "texto": "La sopa está lista. Dorian se la toma de pie, mirando el tablero."},
+        {"hablante": "nox_dorian", "texto": "Si descanso, ¿dónde? Aquí oigo cada alarma. Lejos no oigo ninguna."},
+        {"hablante": "nox_leandro", "texto": "Por eso te pregunto. Las dos cosas son descanso. Una es más descanso que la otra."}
+      ],
+      "decision": "¿Dorian descansa en su módulo con el radio en otras manos o pasa la noche en Vigilia?",
+      "opciones": ["Módulo: descansa aquí, con el radio en manos del relevo y la puerta cerrada.", "Vigilia: una noche lejos, en la mesa de Aldán, sin oír el perímetro."],
+      "ramas": [
+        [
+          {"hablante": "nox_dorian", "texto": "Le entrego el radio al relevo de guardia. Que me despierten solo si es de verdad."},
+          {"hablante": "nox_leandro", "texto": "Y si no suena, que no te despierte nadie. Ni la menta de Griselda."}
+        ],
+        [
+          {"hablante": "vigilia_aldan", "texto": "Dorian, siéntate. Aquí también cocino de más, pero no hay alarmas."},
+          {"hablante": "nox_dorian", "texto": "Ni una. Qué silencio tan raro. Creo que me va a gustar."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "narrador", "texto": "A la mañana siguiente, el tablero tiene una línea nueva en tiza verde: «Relevo completo: Dorian»."},
+        {"hablante": "nox_leandro", "texto": "Mira qué bonito queda. Ahora el mío."},
+        {"hablante": "nox_salma", "texto": "El tuyo es el jueves. Ya lo apunté."}
+      ],
+      "recompensa": {"monedas": 150, "objetos": {"bastion_velo_mineral": 1, "pan": 2}}
+    },
+    {
+      "id": "EP_3",
+      "titulo": "Campanas en el sendero de los jardines",
+      "region": "rosal_eterno",
+      "clase": "encargo_entre_pueblos",
+      "requiere": [],
+      "reparto": ["verdia_celino", "verdia_eulalia", "eco_casiano", "eco_gregoria"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Celino y con Eulalia sobre las almas que se pierden de noche.", "npc": ["verdia_celino", "verdia_eulalia"]},
+        {"tipo": "visitas", "texto": "Visita los Jardines del Eco y el taller de Casiano.", "regiones": ["jardines_eco"]},
+        {"tipo": "entrega", "texto": "Trae a Rosal Eterno 2 de vidrio de eco inerte y 2 de madera de ciprés de poda.", "materiales": {"jardines_eco_mineral": 2, "jardines_eco_madera": 2}}
+      ],
+      "inicio": [
+        {"hablante": "verdia_celino", "texto": "Hay almas recién llegadas que caminan de noche entre el Rosal y los Jardines y se pierden en la neblina."},
+        {"hablante": "verdia_eulalia", "texto": "Una llegó a mi rincón llorando de risa porque le había dado tres vueltas a la misma pérgola."},
+        {"hablante": "verdia_celino", "texto": "Casiano tiene campanas de vidrio. Si las colgamos en el sendero, se oye hacia dónde se va. Pero hay que traerlas."}
+      ],
+      "giro": [
+        {"hablante": "eco_casiano", "texto": "Cada campana tiene su nota. Las del Rosal suenan graves; las de los Jardines, agudas. Así se sabe hacia dónde vas."},
+        {"hablante": "eco_gregoria", "texto": "Las mías no las cuelguen cerca de las colmenas. Las abejas tienen su propio coro."},
+        {"hablante": "verdia_celino", "texto": "Falta decidir si suenan siempre, con el viento, o solo cuando alguien las toca al pasar."}
+      ],
+      "decision": "¿Las campanas suenan con el viento o solo si alguien las toca al pasar?",
+      "opciones": ["Con el viento: el sendero siempre canta y nadie tiene que pedir ayuda para orientarse.", "Al tocarlas: silencio de noche para quien duerme y sonido solo para quien lo busca."],
+      "ramas": [
+        [
+          {"hablante": "eco_casiano", "texto": "Con el viento, cada noche sonará distinto. Por fin algo que no tengo que afinar."},
+          {"hablante": "verdia_eulalia", "texto": "Les coso fundas de tela para la temporada de siestas. Por si acaso."}
+        ],
+        [
+          {"hablante": "verdia_celino", "texto": "Un cordel en cada poste. El que se pierde, tira; el que duerme, ni se entera."},
+          {"hablante": "eco_gregoria", "texto": "Las abejas te lo agradecen. Y yo también."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "narrador", "texto": "Esa noche, alguien se pierde entre las pérgolas, oye una nota grave y encuentra el camino solo."},
+        {"hablante": "verdia_eulalia", "texto": "No tuvo que llegar a mi rincón llorando. Qué pena. Era buena compañía."}
+      ],
+      "recompensa": {"monedas": 200, "objetos": {"rosal_eterno_mineral": 1, "jardines_eco_semilla": 2}}
+    },
+    {
+      "id": "EP_4",
+      "titulo": "La cuerda que vuelve",
+      "region": "travesia",
+      "clase": "encargo_entre_pueblos",
+      "requiere": [],
+      "reparto": ["senda_lorenzo", "senda_fabian", "hilos_hermelinda", "hilos_asha"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Lorenzo y con Fabián sobre el pedido del Refugio de los Hilos.", "npc": ["senda_lorenzo", "senda_fabian"]},
+        {"tipo": "visitas", "texto": "Visita el Refugio de los Hilos y el costurero de Hermelinda.", "regiones": ["refugio_hilos"]},
+        {"tipo": "entrega", "texto": "Trae a la Travesía 2 de algodón de niebla del Refugio y 3 de junco de paso.", "materiales": {"refugio_hilos_cosecha": 2, "travesia_cosecha": 3}}
+      ],
+      "inicio": [
+        {"hablante": "senda_fabian", "texto": "Llegó un pedido del Refugio de los Hilos: cuerdas para los arneses de rescate de Asha. Dice «urgente»."},
+        {"hablante": "senda_lorenzo", "texto": "Urgente fue como entregué la peor cuerda de mi vida. Esta va probada."},
+        {"hablante": "senda_fabian", "texto": "Hermelinda propone algo: tu junco por fuera y su algodón de niebla por dentro. Menos peso, más agarre."},
+        {"hablante": "senda_lorenzo", "texto": "Junco y algodón. Mi padre se desmayaría. Tráeme el algodón y lo intentamos."}
+      ],
+      "giro": [
+        {"hablante": "narrador", "texto": "La cuerda mezclada aguanta la prueba de Lorenzo. Hermelinda cose los extremos a los arneses con la lupa nueva."},
+        {"hablante": "hilos_hermelinda", "texto": "Quedó bonita. Torcida de un lado, pero honrada."},
+        {"hablante": "hilos_asha", "texto": "Ahora, ¿quién firma que está probada? Mi equipo confía en quien la hizo."}
+      ],
+      "decision": "¿Firma Lorenzo solo o firman los dos talleres juntos?",
+      "opciones": ["Firma Lorenzo: él responde por la cuerda y Hermelinda por la costura, cada uno por lo suyo.", "Firman juntos: una sola etiqueta de los dos talleres y una hoja de prueba que cualquiera pueda repetir."],
+      "ramas": [
+        [
+          {"hablante": "senda_lorenzo", "texto": "Mi nombre en la cuerda y el de Hermelinda en la costura. Si algo falla, saben a quién preguntar."},
+          {"hablante": "hilos_hermelinda", "texto": "Y a quién regañar. Me parece justo."}
+        ],
+        [
+          {"hablante": "senda_lorenzo", "texto": "Juntos, entonces. Y con hoja de prueba. Que no dependa de que yo esté."},
+          {"hablante": "hilos_hermelinda", "texto": "Mira eso: el hombre aprendió a compartir. Lo voy a bordar."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "hilos_asha", "texto": "Los arneses salieron a ruta. Volvimos todos, y las cuerdas también."},
+        {"hablante": "senda_lorenzo", "texto": "Es lo único que tiene que hacer una cuerda: volver."}
+      ],
+      "recompensa": {"monedas": 220, "objetos": {"cuerda": 2, "refugio_hilos_mineral": 1}}
+    }
+  ]
+}

@@ -29,6 +29,25 @@ cambiar ningún ID ni el guardado V5:
 - El arte (`astra-arte.ts`) dibuja exactamente lo que el plano declara. Los habitantes caminan por la calle entre su puesto,
   la plaza y la puerta de su casa; es solo vista, la posición sigue saliendo de `posicionNpcAstra`.
 
+**Vida de los pueblos (mismo día, también a pedido de Javier).** Se sumaron, sin tocar los 142 IDs:
+- 36 vecinos con historia completa (`docs/narrativa/datos/pueblos/*.json`, guía en `GUIA.md`).
+- 17 casas.
+- 42 encargos: 36 locales `E_<region>_n` y 6 entre pueblos `EP_n`.
+
+Cómo se integran:
+- `integrar_motor.py` los compila.
+- `verificar_pueblos.py` los revisa: IDs, hablantes, materiales, estadísticas, ropa y nombres sin repetir.
+
+Los encargos usan solo pasos que el motor ya ejecuta (testimonios, archivo, entrega, visitas, estadística, jornadas).
+Entran en `CAMPANA_ASTRA` con `clase: 'encargo' | 'encargo_entre_pueblos'`.
+
+Cambios en el motor:
+- `decidir` paga la `recompensa` (monedas y objetos) una sola vez.
+- Los topes de `astraValida` ahora salen del total real (`NPC_ASTRA.length`, `CAMPANA_ASTRA.length`).
+- Los vecinos nuevos no tienen misión personal (`mision: null`).
+
+Las líneas de los pueblos tienen su huella como las demás, en `astra-lore-datos.ts` y `produccion.json`, pero sin voz todavía.
+
 **Para el frente de motor:** si cambian las posiciones o se agregan casas, háganlo en `planos_pueblos.py`, que caben hasta
 ocho casas y 16 puestos por pueblo. Lo que siga de historias y misiones secundarias de los pueblos lo coordino aquí antes de
 tocar `astra.ts`.

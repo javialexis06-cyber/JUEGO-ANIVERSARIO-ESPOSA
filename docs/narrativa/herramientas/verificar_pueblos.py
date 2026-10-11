@@ -40,7 +40,8 @@ for n in vida['residentes']:
     i = n.get('id', '?')
     if i in viejos or i in nuevos:
         errores.append(f'{i}: ID repetido')
-    if n.get('nombre') in nombres_viejos:
+    sin_tilde = lambda t: t.translate(str.maketrans('áéíóúÁÉÍÓÚñÑ', 'aeiouAEIOUnN'))
+    if sin_tilde(n.get('nombre', '')) in {sin_tilde(x) for x in nombres_viejos} | {sin_tilde(x['nombre']) for x in nuevos.values()}:
         errores.append(f'{i}: el nombre {n.get("nombre")} ya lo tiene otro residente')
     nuevos[i] = n
     if n.get('asentamiento') not in regiones:

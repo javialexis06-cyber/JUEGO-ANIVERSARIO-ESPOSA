@@ -2,7 +2,7 @@
 // tocándolos y duran lo que digan las mejoras. Aquí vive lo que se ve de cada uno: la burbuja de jabón alrededor
 // del retrete, el imán, el cañón desatascador con sus rayos, el mini-retrete ayudante y el «×2» que flota.
 import * as THREE from 'three';
-import { nota } from '../../sonido';
+import { nota } from './silencio';
 import { CUADRO } from './arte';
 import { type IdPoder, MEJORA, PODERES, type ProgresoCohete, duracionPoder, poderDisponible, valorDe } from './datos';
 import type { Efectos } from './efectos';

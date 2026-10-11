@@ -114,6 +114,12 @@ export const PISTAS = [
   i('lavado-menu', 'lavado', 'Menú', 60, 'Hard electronic rock instrumental for an arcade survivors-like game menu: heavy guitars, punchy drums, retro synth lead, catchy and energetic, 130 bpm.'),
   i('lavado-partida', 'lavado', 'La partida', 150, 'Driving hard electronic rock instrumental for a fast arcade horde shooter: heavy palm-muted riffs, energetic drums, chiptune-like synth leads, relentless, 145 bpm.'),
   i('lavado-intensa', 'lavado', 'La partida, a tope', 120, 'Heavy electronic metal instrumental, faster and more intense, for the late waves of an arcade horde shooter: double bass drums, distorted riffs, screaming synth, 160 bpm.'),
+  // Rotan con la de la partida y la intensa para no oír siempre la misma (src/casa/lavado/sonidos.ts)
+  i('lavado-partida2', 'lavado', 'La partida · 2', 120, 'Upbeat synthwave metal instrumental for a fast arcade horde shooter: driving retro synth arpeggios over chunky distorted guitars, punchy electronic drums, bright and fun, 140 bpm.'),
+  i('lavado-partida3', 'lavado', 'La partida · 3', 120, 'Energetic pop-punk electronic rock instrumental for a cartoon arcade shooter: fast power chords, bouncy bass, 8-bit chiptune melody on top, playful and catchy, 150 bpm.'),
+  i('lavado-partida4', 'lavado', 'La partida · 4', 120, 'Groovy industrial electronic rock instrumental for an arcade survivors game: stomping beat, crunchy bass synth, staccato guitar riffs, funky and heavy at the same time, 128 bpm.'),
+  i('lavado-intensa2', 'lavado', 'La partida, a tope · 2', 120, 'Fast djent electronic metal instrumental for the late waves of an arcade horde shooter: tight low riffs, glitchy synths, blast-beat bursts, exciting but not dark, 165 bpm.'),
+  i('lavado-intensa3', 'lavado', 'La partida, a tope · 3', 120, 'Speed metal meets drum and bass instrumental for the frantic final waves of an arcade game: shredding guitar leads, rolling breakbeats, heroic synth stabs, 170 bpm.'),
   i('lavado-jefe', 'lavado', 'El jefe', 120, 'Heavy metal boss battle instrumental for an arcade game: crushing riffs, epic guitar leads, pounding drums, dramatic, 150 bpm.'),
   r('lavado-victoria', 'lavado', 'Victoria', 6, 'Triumphant electric guitar and synth victory riff, rock.'),
   r('lavado-derrota', 'lavado', 'Derrota', 5, 'Short heavy guitar game over riff, descending, a little funny.'),
