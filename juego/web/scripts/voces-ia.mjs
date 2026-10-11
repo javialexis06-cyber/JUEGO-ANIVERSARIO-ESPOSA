@@ -4,7 +4,7 @@
 //                                        voces-guion/<parte>.json: conserva lo ya escrito en «d» (cómo se dice, con
 //                                        las emociones entre corchetes) y avisa qué frases son nuevas o ya no están.
 //   SECO=1 node scripts/voces-ia.mjs   → cuenta lo que falta por generar (no gasta nada)
-//   node scripts/voces-ia.mjs          → genera lo que falte (SOLO=puertas para una parte) en public/voces/*.ogg y
+//   node scripts/voces-ia.mjs          → genera lo que falte (SOLO=puertas para una parte, LIMITE=3 para probar) en public/voces/*.ogg y
 //                                        arma public/voces/lista.json (código → [archivo, segundos])
 //
 // Necesita ELEVENLABS_API_KEY (en la configuración del entorno, nunca en el código), ffmpeg y dos voces en la cuenta
@@ -177,7 +177,7 @@ async function generar() {
   const frases = partes.flatMap((p) => JSON.parse(readFileSync(join(GUION, `${p}.json`), 'utf8')).map((e) => ({ ...e, parte: p })));
   const listaVieja = existsSync(join(DIR, 'lista.json')) ? JSON.parse(readFileSync(join(DIR, 'lista.json'), 'utf8')) : {};
   const conVoz = frases.filter((e) => e.d);
-  const falta = conVoz.filter((e) => (!process.env.SOLO || e.parte === process.env.SOLO) && !existsSync(join(DIR, archivoDe(e))));
+  const falta = conVoz.filter((e) => (!process.env.SOLO || e.parte === process.env.SOLO) && !existsSync(join(DIR, archivoDe(e)))).slice(0, Number(process.env.LIMITE) || Infinity);
   console.log(`${conVoz.length} frases con voz · faltan ${falta.length} (${falta.reduce((a, e) => a + e.d.length, 0)} caracteres)`);
   if (process.env.SECO) return;
   if (!CLAVE) throw new Error('Falta ELEVENLABS_API_KEY (se agrega en la configuración del entorno).');

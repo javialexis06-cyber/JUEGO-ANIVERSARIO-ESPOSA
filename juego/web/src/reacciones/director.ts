@@ -5,6 +5,7 @@ import type { Anclas, Efectos } from './efectos';
 import { esNeutro } from '../neutro';
 import { frase, type Situacion } from './frases';
 import type { Muneco } from './muneco';
+import * as voces from '../voces';
 
 export type Calidad = 'genial' | 'buena' | 'normal' | 'mala' | 'nula';
 
@@ -104,7 +105,9 @@ export class Director {
     if (!s) return;
     this.situacion.delete(rol);
     if (Math.random() > (HABLAR[s] ?? 0.55)) return;
-    this.efectos.globo(frase(s, rol), this.anclas[rol], 2.1 / this.rapido);
+    const texto = frase(s, rol);
+    this.efectos.globo(texto, this.anclas[rol], 2.1 / this.rapido);
+    void voces.decir(rol, texto, 'esperar');
   }
 
   /** Actúa una coreografía con su situación (para la frase). */

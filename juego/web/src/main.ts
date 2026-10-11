@@ -24,6 +24,7 @@ import { Mandos } from './mando';
 import { Mundo } from './mundo';
 import { cargar, cargarAnimado, cargarJSON, elegirModelos, icono, Productos } from './recursos';
 import * as sonido from './sonido';
+import * as voces from './voces';
 import * as segundoPlano from './segundo_plano';
 import { liberarPropios, NOMBRE_SECCION, Tienda, TiendaDato } from './tienda';
 import { mostrar, pantallaUnica, UI } from './ui';
@@ -569,6 +570,8 @@ const recuerdosVisibles = (): RecuerdoSuper[] => (esNeutro() ? [] : RECUERDOS_SU
 const recuerdoAbierto = (r: RecuerdoSuper) => !!partida.estrellas[r.dia]?.[0];
 
 let alCerrarCarta: (() => void) | null = null;
+/** Cambia con cada carta que se abre o se cierra (para que la voz no arranque en una carta que ya no está). */
+let turnoCarta = 0;
 function mostrarCarta(c: { sello: string; fecha: string; titulo: string; texto: string; firma: string; boton?: string; alCerrar: () => void; lista?: HTMLElement[] }) {
   pantallaUnica('carta');
   $('carta-sello').textContent = c.sello;
@@ -584,10 +587,15 @@ function mostrarCarta(c: { sello: string; fecha: string; titulo: string; texto: 
   $('btn-carta').textContent = c.boton ?? '¡Qué bonito!';
   alCerrarCarta = c.alCerrar;
   sonido.campana();
+  voces.callar();
+  turnoCarta++;
 }
 
 function leerRecuerdo(r: RecuerdoSuper, volver: () => void) {
   mostrarCarta({ sello: TEXTOS_CARTAS.sello, fecha: TEXTOS_CARTAS.fecha(r.dia), titulo: r.titulo, texto: r.texto, firma: r.firma, alCerrar: volver });
+  // Javier la lee en voz alta (después de la campanita)
+  const turno = turnoCarta;
+  setTimeout(() => turno === turnoCarta && void voces.decir('el', `${r.texto}\n${r.firma}`), 700);
 }
 
 /** Las cartas abiertas para volver a leerlas (las que faltan dicen en qué día se abren). */
@@ -724,6 +732,8 @@ function conectarBotones() {
   $('btn-mejoras').addEventListener('click', abrirMejoras);
   $('btn-recuerdos').addEventListener('click', abrirRecuerdos);
   $('btn-carta').addEventListener('click', () => {
+    voces.callar();
+    turnoCarta++;
     const f = alCerrarCarta;
     alCerrarCarta = null;
     (f ?? abrirMenu)();

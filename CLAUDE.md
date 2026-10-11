@@ -17,7 +17,7 @@ minijuegos adentro. Cada uno juega en su celular Android y la casa está siempre
   par). Une la casa, la granja y Sangre y Ceniza; Él y Ella son los protagonistas y el Lazo Primordial es su amor. Los
   demás juegos son independientes.
 - **Es una sorpresa.** Ella no debe enterarse del contenido antes de tiempo (por eso las voces se clonan con IA a
-  partir de frases sueltas: `docs/en-obra/voces-ia.md`).
+  partir de frases sueltas: `docs/sistemas/voces.md`).
 - Todo en **español colombiano cálido**: juego, comentarios, commits, documentos y lo que le respondes. Al usuario se
   le trata de tú.
 - **El repositorio es público.** No subas nada más personal de lo que ya hay (nada de chats, teléfonos, nombres
@@ -76,7 +76,7 @@ minijuegos adentro. Cada uno juega en su celular Android y la casa está siempre
 | Blender 4.x (solo para modelos) | `sudo apt-get install -y blender` y `python3.12 -m pip install --break-system-packages numpy scikit-image scipy` |
 | Pillow | `pip install pillow` (hojas de contacto) |
 | Supabase | URL y clave publicable en `src/casa/servidor.ts`; esquema en `supabase/esquema.sql`; los cambios de SQL los pega Javier en el SQL Editor |
-| ElevenLabs (pendiente) | `ELEVENLABS_API_KEY` y permitir `api.elevenlabs.io` |
+| ElevenLabs (voces) | `ELEVENLABS_API_KEY` en el entorno, `api.elevenlabs.io` permitido y `ffmpeg` (`docs/sistemas/voces.md`) |
 
 La APK la compila GitHub Actions (usa las variables `SUPABASE_URL` y `SUPABASE_ANON_KEY` del repositorio si están).
 El contenedor se borra entre sesiones: `npm ci` en cada sesión nueva (los modelos optimizados ya están en
@@ -194,8 +194,7 @@ GitHub, sin juntar: `trabajo/show` (El Show de Nosotros). Para retomarlo:
 `git fetch origin trabajo/show && git worktree add .wt/show trabajo/show` y
 `ln -s "$PWD/juego/web/node_modules" .wt/show/juego/web/node_modules`; lo que falta está al final de su documento.
 
-**Para Javier** (no lo puede hacer Claude): pegar `supabase/cambios-pendientes.sql` en el SQL Editor de Supabase y,
-para las voces, poner `ELEVENLABS_API_KEY` en el entorno y permitir `api.elevenlabs.io`.
+**Para Javier** (no lo puede hacer Claude): pegar `supabase/cambios-pendientes.sql` en el SQL Editor de Supabase.
 
 Cuando termines algo, actualiza `docs/pedidos.md` y el documento de `docs/sistemas/` que corresponda.
 

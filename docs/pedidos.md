@@ -69,7 +69,7 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
 
 Esperan a Javier (no se empiezan solos): lo que sigue abierto de la mitología (sección 2 de `docs/mitologia.md`), las
 las ideas del sótano, la
-clave de ElevenLabs para las voces, pegar `supabase/cambios-pendientes.sql`, y si quiere el repositorio privado.
+pegar `supabase/cambios-pendientes.sql`, y si quiere el repositorio privado.
 Si cuenta anécdotas nuevas: van primero a las cartas de amor de Lavarse la cara y a las cartas del súper (hoy
 inventadas), mirando «Quién cuenta qué» en `docs/la-pareja.md`.
 
@@ -165,4 +165,6 @@ velocidad, se siente raro…»
   `probar-show-linea.mjs`, mirar capturas del estudio (Javier y Laura en la tarima, el texto de las pantallas al
   derecho), juntar y subir. Diseño en `docs/show.md` de esa rama.
 - Tele compartida, tocador de Laura, escenas premium (en pausa) y diseños premium.
-- Voces con IA: esperan la clave de ElevenLabs (`docs/en-obra/voces-ia.md`).
+- ~~Voces con IA~~ **hecho** (11 de octubre): 1.727 frases de Él y Ella con su voz y su emoción en Cien Puertas, la
+  casa, la mesa, el cohete, la cocina, las cartas del súper y Sangre y Ceniza (`docs/sistemas/voces.md`). Falta
+  sumar las frases sueltas que todavía no están en el guion (ver «Pendiente» allá).

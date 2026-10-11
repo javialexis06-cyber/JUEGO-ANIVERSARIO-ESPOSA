@@ -20,6 +20,7 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | [`granja.md`](sistemas/granja.md) | La granja integrada: acceso desde la casa, motor y guardado, documentación de sistemas y límites actuales. |
 | [`salas.md`](sistemas/salas.md) | Salas de hasta 4, modo amigo y la app «Sala de Juegos» para amigos. |
 | [`sangre-y-ceniza.md`](sistemas/sangre-y-ceniza.md), [`sangre-figuras.md`](sistemas/sangre-figuras.md) | El survivors oscuro: diseño, código, contrato de arte y figuras. |
+| [`voces.md`](sistemas/voces.md) | Las voces de Él y Ella (ElevenLabs): dónde suenan, el guion con sus emociones y cómo se generan. |
 | [`supabase.md`](sistemas/supabase.md) | La base en línea: tablas, cuentas con contraseña, cambios pendientes, latido. |
 
 ## `en-obra/` · frentes a medias o en pausa
@@ -30,7 +31,6 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor (misiones, minerales, mapa de la Noche y, en L, armas, sobrecargas, reliquias y el familiar), para pulirla con Javier. |
 | [`lavado-propuesta.md`](en-obra/lavado-propuesta.md) | Lavarse la cara 2: lo que le falta frente a Vampire Survivors (24 armas, cartas, modos, tesoros, mercader, escenarios, disfraces), para pulirla con Javier. |
 | [`escenas-premium.md`](en-obra/escenas-premium.md) | Escenas pagas: en pausa. |
-| [`voces-ia.md`](en-obra/voces-ia.md), [`guion-voces.md`](en-obra/guion-voces.md) | Voces clonadas: esperan la clave de ElevenLabs. |
 
 El Show de Nosotros está en la rama `trabajo/show` (con su `docs/show.md` allá).
 

@@ -34,6 +34,8 @@ export function idFrase(quien: Quien, texto: string) {
 /** código → [archivo, segundos] */
 type Lista = Record<string, [string, number]>;
 let lista: Promise<Lista> | null = null;
+/** La lista ya cargada (para saber cuánto dura una frase sin esperar). */
+let listaYa: Lista = {};
 
 function disponibles(): Promise<Lista> {
   lista ??= fetch('./voces/lista.json')
@@ -45,6 +47,7 @@ function disponibles(): Promise<Lista> {
         if (Array.isArray(v) && typeof v[0] === 'string') out[k] = [v[0], Number(v[1]) || 0];
         else if (typeof v === 'string') out[k] = [v, 0];
       }
+      listaYa = out;
       return out;
     })
     .catch(() => ({}));
@@ -70,6 +73,10 @@ function cargar(ctx: AudioContext, archivo: string) {
   }
   return p;
 }
+
+/** Para las pruebas: lo último que sonó (código y segundos). */
+const sonadas: [string, number][] = [];
+if (typeof window !== 'undefined') (window as unknown as { __voces?: unknown }).__voces = { sonadas, idFrase };
 
 let fuente: AudioBufferSourceNode | null = null;
 let terminaEn = 0;
@@ -102,6 +109,12 @@ export async function duracion(quien: Quien, texto: string | null | undefined): 
   return (await disponibles())[idFrase(quien, texto)]?.[1] ?? 0;
 }
 
+/** Lo mismo pero sin esperar (0 si la lista todavía no ha llegado): para armar tiempos en el momento. */
+export function duracionYa(quien: Quien, texto: string | null | undefined): number {
+  if (!texto || esNeutro()) return 0;
+  return listaYa[idFrase(quien, texto)]?.[1] ?? 0;
+}
+
 /** Suena un audio por su código (los recuerdos de Cien Puertas también tienen código propio). */
 async function oirCodigo(ids: string[], modo: ModoVoz): Promise<number> {
   if (sonido.silenciado()) return 0;
@@ -124,6 +137,8 @@ async function oirCodigo(ids: string[], modo: ModoVoz): Promise<number> {
       const buf = await cargar(audio.ctx, archivo);
       if (mio !== turno) return;
       if (!buf) continue;
+      sonadas.push([archivo, Math.round(buf.duration * 100) / 100]);
+      if (sonadas.length > 30) sonadas.shift();
       const f = audio.ctx.createBufferSource();
       f.buffer = buf;
       f.connect(audio.salida);

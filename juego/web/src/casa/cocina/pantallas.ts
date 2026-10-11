@@ -3,6 +3,7 @@
 // comienzo y la calificación de cada plato. Usa los recortes renderizados (sprites.ts) y, mientras cargan, dibujos
 // de respaldo.
 import { nota } from '../../sonido';
+import * as voces from '../../voces';
 import type { Rol } from '../modelo';
 import { aclarar, conAlfa, elipse, G, lineal, oscurecer, radial, Rect, rr, sombra, texto } from './dibujo';
 import { barridoBrillo, corazon, destello, estrella } from './efectos';
@@ -483,6 +484,7 @@ export function dibujarPedidos(m: Motor, g: G) {
   // Globos de lo que dicen
   s.invitados.forEach((e2, i) => {
     if (!e2.frase || !['fila', 'pidiendo', 'esperando'].includes(e2.estado)) return;
+    decirPareja(m.def(e2), e2.frase.texto, `${i}|${e2.frase.texto}`);
     const x = m.xs[i] ?? W;
     const lejos = e2.estado === 'esperando';
     globo(m, g, e2.frase.texto, x, lejos ? my - 230 : my - 330);
@@ -786,6 +788,14 @@ const T_CATS = 1.5;
 let monedasDe = -1;
 const T_CAT = 0.32;
 
+/** Lo que dice la pareja cuando llega a comer o prueba el plato suena con su voz (una vez por frase). */
+let ultimoDicho = '';
+function decirPareja(inv: { id: string; especial?: string } | null, texto: string, clave: string) {
+  if (inv?.especial !== 'pareja' || clave === ultimoDicho) return;
+  ultimoDicho = clave;
+  void voces.decir(inv.id === 'pareja_el' ? 'el' : 'ella', texto, 'esperar');
+}
+
 /** Los sonidos del juicio, a tiempo con la animación. */
 export function sonarJuicio(m: Motor, j: JuicioDia) {
   const n = m.s.juicio?.n;
@@ -795,6 +805,8 @@ export function sonarJuicio(m: Motor, j: JuicioDia) {
   const tTotal = T_CATS + j.cats.length * T_CAT + 0.2;
   setTimeout(() => {
     if (!vivo()) return;
+    const e = m.s.invitados[j.ticket.inv];
+    decirPareja(e ? m.def(e) : null, j.frase, `juicio|${n}`);
     sonidos.sello();
     if (j.total >= 70) sonidos.bien();
     else sonidos.mal();

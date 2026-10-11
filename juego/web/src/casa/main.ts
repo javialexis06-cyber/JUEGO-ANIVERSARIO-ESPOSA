@@ -16,6 +16,7 @@ import * as THREE from 'three';
 import { aTres, Mundo } from '../mundo';
 import { cargar, cargarAnimado, elegirModelos, Productos } from '../recursos';
 import * as sonido from '../sonido';
+import * as voces from '../voces';
 import * as fondo from '../segundo_plano';
 import { salirSuave } from '../transiciones';
 import {
@@ -52,6 +53,9 @@ import {
   $, abrirHoja, Capa, caraClase, cerrarHoja, cerrarVentana, cuerpoHoja, esc, hojaAbierta, ico, iconoItem, iconoRopa, lluviaCorazones,
   mostrar, nombre, pintarNecesidades, SVG, toast, ventana,
 } from './ui_casa';
+
+// Las voces de la pareja: la lista se pide de una vez para que la primera frase no llegue tarde
+voces.precargar();
 
 const params = new URLSearchParams(location.search);
 const CLAVE_MODO = 'nuestro-hogar-modo';
