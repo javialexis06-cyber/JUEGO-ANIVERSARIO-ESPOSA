@@ -363,6 +363,144 @@ def m_pilar_elemental(coll):
     o.location = (0, 0, 2.75)
 
 
+# ---------------------------------------------------------------- lo que llena los pueblos
+
+def m_pozo(coll):
+    """Pozo de piedra con techito de tejas, manivela, cuerda y balde."""
+    clay.lathe('brocal', [(0.0, 0.0), (0.85, 0.0), (0.85, 0.8), (0.65, 0.8), (0.65, 0.1), (0.0, 0.1)], coll, piedra('brocal', '#A9A596'), segments=16, subsurf=0)
+    for k in range(10):
+        a = k * math.pi / 5
+        caja(coll, f'piedra brocal {k}', (math.cos(a) * 0.87, math.sin(a) * 0.87, 0.25 + (k % 2) * 0.3), (0.15, 0.06, 0.12), piedra('brocal claro', '#BDB7A8'), p=4, sub=0)
+    cilindro(coll, 'agua pozo', (0, 0, 0.55), 0.64, 0.02, mat('agua pozo', '#3F7FA0', 0.1), seg=16)
+    for s in (-1, 1):
+        cilindro(coll, f'poste pozo {s}', (s * 0.75, 0, 0.8), 0.07, 1.3, madera('poste', '#7A5236'), seg=8)
+    caja(coll, 'eje', (0, 0, 1.7), (0.85, 0.05, 0.05), madera('poste', '#7A5236'), p=10, sub=0)
+    for s in (-1, 1):
+        o = caja(coll, f'techo pozo {s}', (0, 0, 0), (0.6, 0.62, 0.04), laca('techo pozo', '#B5453B', 0.5), p=8, sub=0)
+        o.location = (0, s * 0.42, 2.25)
+        o.rotation_euler = (-s * 0.7, 0, 0)
+    tubo(coll, 'cuerda pozo', [(0.1, 0, 1.68), (0.1, 0, 1.2)], 0.012, mat('cuerda', '#E2C9A0', 0.85), seg=4)
+    clay.lathe('balde pozo', [(0.0, 0.0), (0.12, 0.0), (0.15, 0.2), (0.0, 0.19)], coll, madera('balde', '#9A6A48'), segments=10, subsurf=0).location = (0.1, 0, 1.0)
+    tubo(coll, 'manivela', [(0.9, 0, 1.7), (1.0, 0, 1.7), (1.0, 0, 1.5)], 0.03, metal('manivela', '#5D5A58'), seg=4)
+
+
+def m_huerta(coll):
+    """Huerta de 3 × 2 m con surcos, matas de verdura, espantapájaros pequeño y una cerquita."""
+    caja(coll, 'tierra huerta', (0, 0, 0.04), (1.5, 1.0, 0.05), mat('tierra huerta', '#6B4A33', 0.95), p=6, sub=0)
+    for j in range(3):
+        caja(coll, f'surco {j}', (0, -0.65 + j * 0.65, 0.1), (1.4, 0.16, 0.05), mat('surco', '#5A3E2A', 0.95), p=6, sub=0)
+        for i in range(6):
+            x = -1.2 + i * 0.48
+            c = ('#5FA85A', '#7FC86A', '#4C8B45')[(i + j) % 3]
+            bola(coll, f'mata {j}{i}', (x, -0.65 + j * 0.65, 0.2), (0.16, 0.14, 0.12), mat(f'verdura {c}', c, 0.55), n=2, sub=0)
+            if (i + j) % 3 == 0:
+                bola(coll, f'fruto {j}{i}', (x + 0.08, -0.6 + j * 0.65, 0.2), 0.06, mat('fruto', ('#E4574B', '#F28C45', '#F2C94C')[(i + j) % 3], 0.5), n=2, sub=0)
+    for k in range(8):
+        x = -1.6 + k * (3.2 / 7)
+        cilindro(coll, f'estaca cerca {k}', (x, 1.1, 0), 0.03, 0.45, madera('cerca', '#C9A46A'), seg=6)
+    caja(coll, 'tabla cerca', (0, 1.1, 0.35), (1.6, 0.02, 0.03), madera('cerca', '#C9A46A'), p=10, sub=0)
+    cilindro(coll, 'palo espantapájaros', (1.2, 0.3, 0), 0.03, 1.15, madera('poste', '#7A5236'), seg=6)
+    caja(coll, 'brazos espantapájaros', (1.2, 0.3, 0.85), (0.32, 0.03, 0.03), madera('poste', '#7A5236'), p=10, sub=0)
+    bola(coll, 'cabeza espantapájaros', (1.2, 0.3, 1.2), 0.13, tela('costal', '#D9C29A'), n=3)
+    clay.lathe('sombrero espantapájaros', [(0.0, 0.0), (0.22, 0.0), (0.12, 0.04), (0.1, 0.14), (0.0, 0.15)], coll, mat('paja', '#E8C77A', 0.85), segments=12,
+               subsurf=0).location = (1.2, 0.3, 1.28)
+    caja(coll, 'camisa espantapájaros', (1.2, 0.3, 0.75), (0.2, 0.08, 0.2), tela('camisa', '#C4553F'), p=6)
+
+
+def m_faro(coll):
+    """Faro del puerto (≈9 m): torre blanca de franjas rojas, linterna encendida, balcón y casita del farero."""
+    clay.lathe('base faro', [(0.0, 0.0), (2.0, 0.0), (1.9, 0.6), (0.0, 0.6)], coll, piedra('base faro', '#A9A596'), segments=20, subsurf=0)
+    for k in range(5):
+        clay.lathe(f'tramo faro {k}', [(0.0, 0.0), (1.5 - k * 0.12, 0.0), (1.38 - k * 0.12, 1.3), (0.0, 1.3)], coll,
+                   laca('faro', ('#F2EFE6', '#C4453B')[k % 2], 0.4), segments=20, subsurf=0).location = (0, 0, 0.6 + k * 1.3)
+    clay.lathe('balcón faro', [(0.0, 0.0), (1.25, 0.0), (1.25, 0.12), (0.0, 0.12)], coll, metal('balcón', '#3E4A57'), segments=20, subsurf=0).location = (0, 0, 7.1)
+    for k in range(16):
+        a = k * math.pi / 8
+        cilindro(coll, f'barrote faro {k}', (math.cos(a) * 1.2, math.sin(a) * 1.2, 7.2), 0.02, 0.45, metal('balcón', '#3E4A57'), seg=4)
+    clay.lathe('baranda faro', [(1.17, -0.02), (1.23, -0.02), (1.23, 0.02), (1.17, 0.02)], coll, metal('balcón', '#3E4A57'), segments=20, subsurf=0).location = (0, 0, 7.67)
+    clay.lathe('linterna', [(0.0, 0.0), (0.7, 0.0), (0.7, 0.9), (0.0, 0.9)], coll, luz('linterna faro', '#FFE8A0', 2.5), segments=12, subsurf=0).location = (0, 0, 7.2)
+    for k in range(6):
+        a = k * math.pi / 3
+        cilindro(coll, f'montante {k}', (math.cos(a) * 0.72, math.sin(a) * 0.72, 7.2), 0.03, 0.9, metal('balcón', '#3E4A57'), seg=4)
+    clay.lathe('cúpula faro', [(0.0, 0.0), (0.85, 0.0), (0.6, 0.4), (0.0, 0.75)], coll, laca('cúpula faro', '#C4453B', 0.4), segments=16, subsurf=0).location = (0, 0, 8.1)
+    bola(coll, 'veleta faro', (0, 0, 8.95), 0.1, metal('dorado', '#E5C574'), n=2)
+    for k in range(3):
+        o = clay.lathe(f'ventanita faro {k}', [(0.0, -0.03), (0.16, -0.03), (0.16, 0.03), (0.0, 0.03)], coll, luz('ventanita', '#FFE8A0', 1.0), segments=10, subsurf=0)
+        o.location = (0, -1.42 + k * 0.1, 1.6 + k * 2.0)
+        o.rotation_euler = (math.pi / 2, 0, 0)
+    caja(coll, 'puerta faro', (0, -1.48, 1.2), (0.38, 0.06, 0.6), laca('puerta faro', '#3FA0A0', 0.45), p=8)
+    # Casita del farero pegada
+    caja(coll, 'casita farero', (1.9, 0.6, 0.9), (0.9, 0.8, 0.9), laca('casita farero', '#F2EFE6', 0.5), p=7)
+    for s in (-1, 1):
+        o = caja(coll, f'techo casita farero {s}', (0, 0, 0), (0.65, 0.95, 0.05), laca('techo rojo', '#C4553F', 0.5), p=8, sub=0)
+        o.location = (1.9 + s * 0.45, 0.6, 2.05)
+        o.rotation_euler = (0, s * 0.75, 0)
+    for k in range(3):
+        bola(coll, f'boya faro {k}', (-1.7 + k * 0.4, -1.6, 0.18), 0.17, laca('boya', ('#F28C45', '#F2EFE6')[k % 2], 0.4), n=3)
+
+
+def m_termas(coll):
+    """Aguas termales de Brasaviva: poza de agua turquesa entre rocas, vapor, cubos y una banca."""
+    o = clay.lathe('agua termal', [(0.0, 0.05), (2.6, 0.05), (2.7, 0.0)], coll, mat('agua termal', '#5FC4C0', 0.08, coat=0.6), segments=24, subsurf=0)
+    o.scale = (1, 0.75, 1)
+    for k in range(18):
+        a = k * math.pi / 9
+        clay.blob(f'roca terma {k}', (math.cos(a) * 2.8, math.sin(a) * 2.1, 0.18), (0.45, 0.4, 0.3 + (k % 3) * 0.08), coll, piedra('basalto', ('#3E3A3C', '#5A4E4A')[k % 2]), n=3, subsurf=0)
+    for k in range(6):
+        clay.blob(f'vapor {k}', (math.cos(k * 1.1) * 1.2, math.sin(k * 1.1) * 0.8, 0.8 + (k % 3) * 0.5), (0.55, 0.55, 0.35), coll, mat('vapor', '#FFFFFF', 0.9), n=3, subsurf=0)
+    for k in range(2):
+        clay.lathe(f'cubo terma {k}', [(0.0, 0.0), (0.2, 0.0), (0.24, 0.32), (0.0, 0.3)], coll, madera('cubo', '#9A6A48'), segments=10, subsurf=0).location = (3.4, -1.2 + k * 0.6, 0)
+    caja(coll, 'banca terma', (-3.6, 0, 0.35), (0.3, 1.1, 0.06), madera('banca', '#C9956A'), p=8)
+    for s in (-1, 1):
+        caja(coll, f'pata banca terma {s}', (-3.6, s * 0.9, 0.17), (0.25, 0.06, 0.17), madera('banca', '#C9956A'), p=8, sub=0)
+    for k in range(3):
+        caja(coll, f'toalla {k}', (-3.6, -0.6 + k * 0.6, 0.44), (0.22, 0.2, 0.03), tela('toalla', ('#F2E2C4', '#E4574B', '#F7C948')[k]), p=6, sub=0)
+
+
+def m_estanque_helado(coll):
+    """Estanque congelado con su borde de nieve, rocas, un pino chico y un trineo."""
+    o = clay.lathe('hielo', [(0.0, 0.04), (3.0, 0.04), (3.1, 0.0)], coll, mat('hielo', '#CDEBFA', 0.08, coat=0.8), segments=24, subsurf=0)
+    o.scale = (1, 0.7, 1)
+    for k in range(5):
+        caja(coll, f'raya hielo {k}', (math.cos(k * 1.3) * 1.2, math.sin(k * 1.3) * 0.7, 0.05), (0.5, 0.012, 0.004), mat('raya hielo', '#FFFFFF', 0.3), p=10, sub=0)
+    for k in range(20):
+        a = k * math.pi / 10
+        bola(coll, f'nieve borde {k}', (math.cos(a) * 3.2, math.sin(a) * 2.3, 0.05), (0.55, 0.45, 0.22), NIEVE(), n=3, sub=0)
+    for k in range(4):
+        a = k * 1.7 + 0.3
+        clay.blob(f'roca estanque {k}', (math.cos(a) * 3.4, math.sin(a) * 2.5, 0.3), (0.4, 0.35, 0.3), coll, piedra('roca nevada', '#8A939C'), n=3, subsurf=0)
+    caja(coll, 'trineo', (2.4, -2.6, 0.3), (0.35, 0.7, 0.06), madera('trineo', '#B5453B'), p=8)
+    for s in (-1, 1):
+        tubo(coll, f'patín trineo {s}', [(2.4 + s * 0.3, -3.4, 0.25), (2.4 + s * 0.3, -3.2, 0.05), (2.4 + s * 0.3, -1.9, 0.05)], 0.03, metal('patín', '#8D949C'), seg=4)
+
+
+def m_plataforma_nave(coll):
+    """Plataforma de aterrizaje con su nave exploradora posada (el hito de los destinos espaciales)."""
+    gris = metal('estructura', '#9AA3AD')
+    clay.lathe('plataforma', [(0.0, 0.0), (3.4, 0.0), (3.4, 0.2), (0.0, 0.2)], coll, metal('plataforma', '#6E737A'), segments=8, subsurf=0)
+    for k in range(8):
+        a = k * math.pi / 4 + math.pi / 8
+        bola(coll, f'luz plataforma {k}', (math.cos(a) * 3.15, math.sin(a) * 3.15, 0.24), 0.08, luz('luz plataforma', '#8EE8FF', 2.5), n=2, sub=0)
+    for k in range(4):
+        caja(coll, f'franja plataforma {k}', (0, 0, 0.21), (2.6, 0.12, 0.01) if k % 2 else (0.12, 2.6, 0.01), laca('franja', '#F2C94C', 0.4), p=10, sub=0)
+    # Nave: casco de gota con cabina, aletas y patas
+    o = clay.lathe('casco nave', [(0.0, -2.0), (0.5, -1.9), (1.0, -1.2), (1.15, 0.0), (1.0, 1.2), (0.6, 1.9), (0.0, 2.2)], coll, laca('casco nave', '#F2F4F7', 0.35),
+                   segments=20, subsurf=1)
+    o.location = (0, 0, 1.6)
+    o.rotation_euler = (math.pi / 2, 0, 0)
+    o = clay.lathe('cabina nave', [(0.0, 0.0), (0.6, 0.0), (0.5, 0.4), (0.0, 0.55)], coll, mat('cabina', '#7FCDE0', 0.08, coat=0.8), segments=16, subsurf=1)
+    o.location = (0, -1.0, 2.35)
+    for s in (-1, 1):
+        o = caja(coll, f'aleta {s}', (0, 0, 0), (0.9, 0.5, 0.06), laca('acento', '#2F8F9A', 0.4), p=8)
+        o.location = (s * 1.4, 0.9, 1.5)
+        o.rotation_euler = (0, s * 0.3, 0)
+        tubo(coll, f'pata nave {s}', [(s * 0.7, -0.6, 1.0), (s * 1.2, -0.9, 0.22)], 0.06, gris, seg=5)
+        tubo(coll, f'pata nave atrás {s}', [(s * 0.7, 1.0, 1.0), (s * 1.2, 1.3, 0.22)], 0.06, gris, seg=5)
+    clay.lathe('tobera', [(0.0, 0.0), (0.45, 0.0), (0.6, 0.5), (0.0, 0.5)], coll, metal('tobera', '#5A5F66'), segments=14, subsurf=0).location = (0, 2.1, 1.6)
+    bola(coll, 'brillo tobera', (0, 2.5, 1.6), (0.3, 0.1, 0.3), luz('tobera', '#8EE8FF', 2.0), n=2, sub=0)
+    caja(coll, 'franja nave', (0, 0, 1.6), (1.17, 0.12, 1.17), laca('acento', '#2F8F9A', 0.4), p=3, sub=0)
+
+
 PIEZAS = {k[2:]: v for k, v in list(globals().items()) if k.startswith('m_') and callable(v) and v.__module__ == __name__}
 
 

@@ -1,4 +1,4 @@
-import { puntoRecurso, rutasDesde, regionActual, regionAstra, NPC_ASTRA, RECURSOS_ASTRA, posicionNpcAstra, type AccionAstra } from './astra';
+import { puntoRecurso, rutasDesde, regionActual, regionAstra, NPC_ASTRA, RECURSOS_ASTRA, posicionNpcAstra, puntoCombate, type AccionAstra } from './astra';
 import { renderAstra, cargarLoreAstra, lineaActualAstra } from './astra-ui';
 import { usarArteAstra } from './astra-render';
 import { cargarAnimado } from '../recursos';
@@ -439,7 +439,7 @@ function interactuarAstraCelda(x:number,z:number){
  if(h){contextHTML(`<h3>${escape(h.nombre)}</h3>`+btn('Visitar','astra-vivienda',`data-id="${h.id}"`));return true;}
  const rec=RECURSOS_ASTRA.find(r=>r.id===here),d=rec?.recursos.find((_,i)=>Math.hypot(puntoRecurso(here,i).x-x-.5,puntoRecurso(here,i).z-z-.5)<2);
  if(d){contextHTML(`<h3>${escape(d.nombre)}</h3><p>${escape(d.obtencion)}</p>`+btn(d.clase==='fauna'?'Observar':'Recoger','astra-'+(d.clase==='fauna'?'observar':'recurso'),`data-id="${d.id}"`));return true;}
- if(reg.combate&&Math.hypot(18-x-.5,23-z-.5)<2){contextHTML(btn('Entrar en combate','astra-combate',`data-id="${reg.combate}"`));return true;}
+ if(reg.combate&&Math.hypot(puntoCombate(reg.id).x-x-.5,puntoCombate(reg.id).z-z-.5)<2){contextHTML(btn('Entrar en combate','astra-combate',`data-id="${reg.combate}"`));return true;}
  const n=NPC_ASTRA.filter(n=>n.region===here).find(n=>{const p=posicionNpcAstra(s,n.id);return p&&!p.interior&&Math.hypot(p.x-x-.5,p.z-z-.5)<2;});
  if(n){void accionAstra({tipo:'hablar',id:n.id});return true;}
  if(Math.hypot(x+.5,z+.5-22)<3){biografiaAstra='';mostrarPanel('astra');return true;}

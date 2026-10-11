@@ -213,15 +213,43 @@ export function recursoAstra(g: THREE.Group, region: string, d: { id: string; no
   });
 }
 
+type Plano = {
+  limites: { x: number; z: number }; plaza: { x: number; z: number; r: number }; inicio: { x: number; z: number }; archivo: { x: number; z: number };
+  combate: { x: number; z: number } | null; hito: { x: number; z: number }; adornos: [string, number, number, number][];
+  puestos: { npc: string; x: number; z: number; giro: number; oficio: { x: number; z: number } }[];
+};
+/** Lo que pone cada región en su plaza (al centro) y como hito al norte del pueblo. */
+const MONUMENTO: Record<string, [string, number]> = {
+  puerto: ['fuente', 1], bruma: ['fuente', 1], piedra: ['fuente', 1], brasa: ['basalto', 0.8], nieve: ['pino_nevado', 1.1], vigilia: ['fuente', 1],
+  verdia: ['cerezo', 1.1], senda: ['pilar_hilos', 1.2], nox: ['cristal_oscuro', 1.2], confluencia: ['pilar_elemental', 1.2], valle: ['fuente', 1],
+};
+const HITO: Record<string, [string, number]> = {
+  puerto: ['faro', 1], bruma: ['arbol_niebla', 1.5], piedra: ['boca_mina', 1.6], brasa: ['termas', 1], nieve: ['estanque_helado', 1], vigilia: ['atalaya', 1.1],
+  verdia: ['arco_rosas', 1.8], senda: ['pilar_hilos', 1.9], nox: ['cristal_oscuro', 2.3], confluencia: ['pilar_elemental', 1.7], valle: ['pozo', 1.3],
+};
+/** El puesto de cada habitante según su oficio: [pieza principal, pieza al lado]. */
+function puestoDe(funcion: string): [string, string] {
+  const f = funcion.toLowerCase();
+  if (/pesc|lonja|peces|red|barca|calafate|muelle|delta|faro/.test(f)) return ['puesto_mercado_verde', 'barril_taller'];
+  if (/forj|arm|metal|vidri|mecán|orfebre|sello|lámpar|ilumin|técnic|ingenier|solar|recicl/.test(f)) return ['fragua_patio', 'yunque_patio'];
+  if (/madera|tall|carpint|constru|mueble|pasarela|ancla|artesan/.test(f)) return ['banco_taller', 'troncos_pila'];
+  if (/cocin|anfitri|baño|receta|hospital|ración|néctar|comida/.test(f)) return ['mesa_posada', 'barril_taller'];
+  if (/vaca|oveja|gallina|cerd|conej|dragon|grifo|unicorn|crianza|cuidador|pastor|animal|nido|fauna|criatura/.test(f)) return ['bebedero', 'rollo_heno'];
+  if (/regist|archiv|escrit|cartógraf|narrador|investig|observ|analista|portavoz|meteor|pronóst|capitán|comandante|enlace|navegante/.test(f)) return ['tablon', 'caja'];
+  if (/bot|herbol|cultiv|semilla|agr|jardín|jardin|flor|rosal|musgo|plant|hidrop|apicul|miel|seta|micólog/.test(f)) return ['puesto_mercado_mostaza', 'jardinera'];
+  return ['puesto_mercado_verde', 'caja'];
+}
+
 /** Archivo público (atril y tablón) o lugar de la Confluencia, y la puerta de la zona de combate. */
-export function lugaresAstra(capa: THREE.Group, region: string, archivo: string, combate: boolean) {
+export function lugaresAstra(capa: THREE.Group, region: string, archivo: string, combate: boolean, plano?: Plano) {
+  const a0 = plano?.archivo ?? { x: 0, z: 22 }, c0 = plano?.combate ?? { x: 18, z: 23 };
   conKit(capa, 'granja_astra.glb', (m) => {
     const a = m.get('archivo_publico');
-    if (a) { const o = fundir(a.clone(true)); o.position.set(0, 0, 23.2); capa.add(o); letrero(capa, m, archivo, -2.6, 23.4, 0.85); }
+    if (a) { const o = fundir(a.clone(true)); o.position.set(a0.x, 0, a0.z + 1.2); capa.add(o); letrero(capa, m, archivo, a0.x - 2.6, a0.z + 1.4, 0.85); }
     const c = m.get('puerta_combate');
     if (combate && c) {
       const o = fundir(c.clone(true));
-      o.position.set(18, 0, 24.2);
+      o.position.set(c0.x, 0, c0.z + 1.2);
       const t = tablaNombre('Zona de combate', 1.5, 0.42);
       t.position.set(0, 2.45, 0.41);
       o.add(t);
@@ -230,16 +258,31 @@ export function lugaresAstra(capa: THREE.Group, region: string, archivo: string,
   });
 }
 
-/** Paisaje de la región: caminos entre las casas, agua, lo que la rodea y unas cositas adentro. */
+/** El pueblo: calles, plaza con su monumento, el puesto de cada habitante con su letrero, faroles, bancos, huertas,
+ * árboles, el pozo y el hito del norte, y alrededor el paisaje de su región. Todo sale del plano (astra.ts): lo que
+ * tiene colisión allá es lo mismo que se dibuja acá. */
 export function paisajeAstra(capa: THREE.Group, region: string, viviendas: { x: number; z: number; entrada: { x: number; z: number } }[],
-  rutas: { x: number; z: number }[]) {
-  const e = estilo(region);
-  // Caminos: el que une las entradas de arriba y uno corto desde cada entrada de abajo hasta la plaza
-  if (viviendas.some((h) => h.entrada.z < -5)) capa.add(senderoTierra(0, -8.6, 42, 2.2));
-  for (const h of viviendas) if (h.entrada.z > -5) capa.add(senderoTierra(h.entrada.x, (h.entrada.z + 13) / 2, 2.2, 13 - h.entrada.z));
-  // Las rutas siguen hacia afuera
-  for (const r of rutas) capa.add(senderoTierra(Math.sign(r.x) * 31, r.z, 16, 2.6));
-  if (e.agua) { const a = mallaAgua(70, 14, e.agua.hondo, e.agua.claro); a.position.set(0, 0.02, -44); capa.add(a); }
+  rutas: { x: number; z: number }[], plano?: Plano, npc: { id: string; nombre: string; funcion: string }[] = []) {
+  const e = estilo(region), clave = REGION[region] ?? 'valle';
+  const L = plano?.limites ?? { x: 24, z: 28 };
+  // Calles: la principal (este-oeste), la de norte a sur hasta el hito, la de los recursos, la entrada de cada casa y las rutas
+  capa.add(senderoTierra(0, 0, L.x * 2, 3.2));
+  if (plano) {
+    capa.add(senderoTierra(0, (plano.hito.z + 4 + L.z) / 2, 3, L.z - plano.hito.z - 4));
+    capa.add(senderoTierra(0, 19, 64, 2.4));
+    if (plano.combate) capa.add(senderoTierra(plano.combate.x, (19 + plano.combate.z) / 2, 2.4, plano.combate.z - 19));
+    const piso = new THREE.Mesh(new THREE.CircleGeometry(plano.plaza.r, 40), new THREE.MeshStandardMaterial({ map: empedrado(e.suelo.textura === false ? '#bdb6a8' : '#d4c3a0'), roughness: 0.95 }));
+    piso.rotation.x = -Math.PI / 2; piso.position.set(plano.plaza.x, 0.03, plano.plaza.z); piso.receiveShadow = true; capa.add(piso);
+    const anillo = new THREE.Mesh(new THREE.RingGeometry(plano.plaza.r - 0.35, plano.plaza.r, 48), new THREE.MeshStandardMaterial({ color: '#a89c86', roughness: 0.95 }));
+    anillo.rotation.x = -Math.PI / 2; anillo.position.set(plano.plaza.x, 0.035, plano.plaza.z); capa.add(anillo);
+  }
+  for (const h of viviendas) capa.add(senderoTierra(h.entrada.x, h.entrada.z / 2, 2, Math.abs(h.entrada.z) + 0.4));
+  for (const r of rutas) {
+    const borde = Math.sign(r.x) * (L.x - 6);
+    capa.add(senderoTierra((r.x + borde) / 2 + Math.sign(r.x) * 4, r.z, Math.abs(r.x - borde) + 8, 2.6));
+    if (r.z !== 0) capa.add(senderoTierra(borde, r.z / 2, 2.6, Math.abs(r.z)));
+  }
+  if (e.agua) { const a = mallaAgua(80, 12, e.agua.hondo, e.agua.claro); a.position.set(0, 0.02, -L.z - 14); capa.add(a); }
   const archivos = ['granja_astra_paisaje.glb', 'granja_monte.glb', 'granja_pueblo.glb'];
   conKit(capa, archivos[0], (m1) => conKit(capa, archivos[1], (m2) => conKit(capa, archivos[2], (m3) => {
     const m = new Map([...m3, ...m2, ...m1]), kit = new THREE.Group(), cache = new Map<string, THREE.Material>();
@@ -249,31 +292,95 @@ export function paisajeAstra(capa: THREE.Group, region: string, viviendas: { x: 
       const o = base.clone(true);
       o.position.set(x, y, z); o.rotation.y = giro; o.scale.setScalar(escala);
       if (clave === 'cristales' || clave === 'pilar_elemental') tenir(o, 'cristal', CRISTAL_ELEMENTO[region] ?? e.cristal, 0.8, cache);
+      if (clave === 'plataforma_nave' && e.acento) tenir(o, 'acento', e.acento, 0, cache);
       kit.add(o);
     };
-    const libreRuta = (x: number, z: number) => !rutas.some((r) => Math.sign(r.x) === Math.sign(x) && Math.abs(z - r.z) < 3.2);
-    // El borde: una franja alrededor de la zona caminable; adelante (cerca de la cámara) solo lo bajito
     const altas = e.borde.filter((p) => !p[3]), bajas = e.borde.filter((p) => p[3]);
+    const arbol = altas[0] ?? ['roble', 1, 1];
+    if (plano) {
+      const espacio = REGION[region] && !['puerto', 'bruma', 'piedra', 'brasa', 'nieve', 'vigilia', 'verdia', 'senda', 'nox', 'confluencia', 'valle'].includes(clave);
+      const [mon, ms] = MONUMENTO[clave] ?? (espacio ? ['invernadero_cupula', 0.85] : ['fuente', 1]);
+      poner(mon, plano.plaza.x, plano.plaza.z, 0, ms * (mon === 'fuente' ? 1.7 : 1));
+      const [hito, hs] = HITO[clave] ?? (espacio ? ['plataforma_nave', 1] : ['pozo', 1.3]);
+      poner(hito, plano.hito.x, plano.hito.z, 0, hs);
+      if (clave === 'piedra') { for (let k = 0; k < 6; k++) poner('riel', plano.hito.x, plano.hito.z + 3 + k * 0.8); poner('vagoneta', plano.hito.x, plano.hito.z + 5.5); }
+      if (clave === 'verdia') for (let k = 0; k < 8; k++) poner('rosal', plano.hito.x + Math.cos(k * 0.785) * 3.4, plano.hito.z + Math.sin(k * 0.785) * 2.6, k, 1.2);
+      if (clave === 'puerto') { for (let k = 0; k < 4; k++) poner('muelle', -30 + k * 20, -L.z - 2, Math.PI, 1.3); for (const [x, r] of [[-22, 0.4], [6, -0.3], [26, 0.9]]) poner('barca', x, -L.z - 9, r, 1.3, -0.1); }
+      for (const [tipo, x, z] of plano.adornos) {
+        const k = Math.abs(Math.round(x * 3 + z * 7));
+        if (tipo === 'farol') poner('farol', x, z, 0, 0.9);
+        else if (tipo === 'banco') poner('banco', x, z, Math.atan2(x - plano.plaza.x, z - plano.plaza.z), 1);
+        else if (tipo === 'jardin') poner(clave === 'verdia' ? 'rosal' : 'jardinera_borde', x, z, Math.atan2(x, z), 1);
+        else if (tipo === 'huerta') poner(espacio ? 'invernadero_cupula' : 'huerta', x, z, 0, espacio ? 0.8 : 1);
+        else if (tipo === 'arbol') { const [c, a, b] = altas[k % Math.max(1, altas.length)] ?? arbol; poner(c, x, z, k * 0.7, Math.min(b, a + (b - a) * ((k % 5) / 4))); }
+        else if (tipo === 'pozo') poner(espacio ? 'antena' : 'pozo', x, z, 0.3, 1);
+        else if (tipo === 'cerca') poner(clave === 'vigilia' ? 'empalizada' : clave === 'nox' ? 'poste_cadena' : 'valla_tramo', x, z, 0, clave === 'vigilia' ? 1.3 : 1);
+      }
+      // Matas, flores y piedritas bajas por el pasto (se pisan), lejos de calles, plaza, casas y puestos
+      const ocupado = (x: number, z: number) => Math.abs(z) < 3.5 || Math.abs(x) < 3 && z > plano.hito.z || Math.hypot(x - plano.plaza.x, z - plano.plaza.z) < plano.plaza.r + 3
+        || Math.abs(z - 19) < 2.5 || viviendas.some((h) => x > h.x - 1.5 && x < h.x + 9.5 && z > h.z - 1.5 && z < h.z + 8) || plano.puestos.some((p) => Math.abs(x - p.x) < 3 && Math.abs(z - p.z) < 2.6)
+        || plano.adornos.some(([, ax, az]) => Math.hypot(x - ax, z - az) < 2.2) || Math.hypot(x - plano.hito.x, z - plano.hito.z) < 6;
+      // (la lava y los cristales grandes se quedan afuera: adentro no se pisa nada peligroso)
+      const menudo = (bajas.filter((p) => p[0] !== 'charco_lava').length ? bajas.filter((p) => p[0] !== 'charco_lava') : [['mata', 0.8, 1.2]]) as Planta[];
+      for (let x = -L.x + 2; x < L.x - 1; x += 2.9) for (let z = -L.z + 2; z < L.z - 1; z += 2.9) {
+        const jx = x + (azar(x * 1.3, z) - 0.5) * 2.2, jz = z + (azar(z, x * 1.7) - 0.5) * 2.2;
+        if (azar(jx * 5, jz * 3) < 0.55 || ocupado(jx, jz)) continue;
+        const [c, a, b] = menudo[Math.floor(azar(jx, jz * 9) * menudo.length)];
+        poner(c, jx, jz, azar(jz, jx) * 6.28, (a + (b - a) * azar(jx * 4, jz)) * 0.7);
+      }
+      // El puesto de cada habitante, con su nombre y oficio
+      for (const p of plano.puestos) {
+        const n = nombres(npc).get(p.npc), [a, b] = puestoDe(n?.funcion ?? '');
+        poner(a, p.x, p.z, p.giro, 1.25);
+        poner(b, p.x + 1.9, p.z + 0.4, 0.4, 1);
+      }
+    }
+    // El borde: una franja alrededor de la zona caminable; adelante (cerca de la cámara) solo lo bajito
+    const libreRuta = (x: number, z: number) => !rutas.some((r) => Math.sign(r.x) === Math.sign(x) && Math.abs(z - r.z) < 3.4);
     let n = 0;
-    for (let x = -40; x <= 40; x += 3.4) for (let z = -46; z <= 36; z += 3.4) {
+    for (let x = -L.x - 16; x <= L.x + 16; x += 3.4) for (let z = -L.z - 16; z <= L.z + 10; z += 3.4) {
       const jx = x + (azar(x, z) - 0.5) * 2.6, jz = z + (azar(z, x) - 0.5) * 2.6;
-      const fuera = Math.abs(jx) > 25.5 || jz < -29.5 || jz > 29.5;
+      const fuera = Math.abs(jx) > L.x + 1.5 || jz < -L.z - 1.5 || jz > L.z + 1.5;
       if (!fuera || !libreRuta(jx, jz)) continue;
-      if (e.agua && jz < -31 && Math.abs(jx) < 40) continue;
-      const adelante = jz > 26;
+      if (e.agua && jz < -L.z - 3) continue;
+      const adelante = jz > L.z - 2;
       const lista = adelante ? bajas : (azar(jx * 3, jz) < 0.72 ? altas : bajas);
       if (!lista.length || azar(jx, jz * 2) < (adelante ? 0.45 : 0.18)) continue;
-      const [clave, a, b] = lista[Math.floor(azar(jx * 7, jz * 5) * lista.length)];
-      poner(clave, jx, jz, azar(jx, jz * 3) * 6.28, a + (b - a) * azar(jx * 2, jz));
+      const [c, a, b] = lista[Math.floor(azar(jx * 7, jz * 5) * lista.length)];
+      poner(c, jx, jz, azar(jx, jz * 3) * 6.28, a + (b - a) * azar(jx * 2, jz));
       n++;
     }
-    // Adentro, en sitios que no usa nada (ni casas, ni recursos, ni el archivo, ni los caminos)
-    const sitios: [number, number][] = [[-21, 26], [-10.5, 25.5], [10.5, 25.5], [22, -15], [22, -8.5], [-22, -21], [-1, -21], [21.5, 2.5], [-21.5, 10]];
-    sitios.forEach(([x, z], k) => { if (!libreRuta(x, z) || viviendas.some((h) => x > h.x - 1 && x < h.x + 9 && z > h.z - 1 && z < h.z + 8)) return; poner(e.adentro[k % e.adentro.length], x, z, k * 1.7, 0.9 + (k % 3) * 0.15); });
-    e.extra?.(poner);
+    e.extra && !plano && e.extra(poner);
     if (!kit.children.length) return;
     const unido = fundir(kit);
     unido.name = 'astra-paisaje-' + region + '-' + n;
     capa.add(unido);
+    // Letreros de los puestos (nombre y oficio), aparte porque llevan su textura
+    if (plano) {
+      conKit(capa, 'granja_astra.glb', (ma) => {
+        for (const p of plano.puestos) {
+          const n = nombres(npc).get(p.npc);
+          if (!n) continue;
+          const oficio = n.funcion.split(':')[0].trim();
+          letrero(capa, ma, n.nombre + ' · ' + oficio, p.x - 2.1, p.z + 0.6, 0.62);
+        }
+      });
+    }
   })));
 }
+/** Textura de empedrado para la plaza (piedras redondeadas con su junta), propia de la escena. */
+function empedrado(color: string) {
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const g = c.getContext('2d')!;
+  g.fillStyle = '#8a7e6a'; g.fillRect(0, 0, 256, 256);
+  const base = new THREE.Color(color);
+  for (let j = 0; j < 8; j++) for (let i = 0; i < 8; i++) {
+    const x = i * 32 + (j % 2) * 16 + 16, y = j * 32 + 16, k = 0.86 + azar(i, j) * 0.22;
+    g.fillStyle = '#' + base.clone().multiplyScalar(k).getHexString();
+    g.beginPath(); g.ellipse(x % 256, y, 13 + azar(j, i) * 2, 12, azar(i * 3, j) * 3, 0, Math.PI * 2); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.12)'; g.beginPath(); g.ellipse(x % 256 - 3, y - 4, 6, 4, 0, 0, Math.PI * 2); g.fill();
+  }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(5, 5); t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+const nombres = (npc: { id: string; nombre: string; funcion: string }[]) => new Map(npc.map((n) => [n.id, n]));

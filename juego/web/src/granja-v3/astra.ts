@@ -10,7 +10,11 @@ export const RUTAS_ASTRA = DATOS.rutas;
 export const NPC_ASTRA = DATOS.npc;
 export const CAMPANA_ASTRA = CAMPANA.misiones;
 export const CINEMATICAS_ASTRA:Record<string,string>={C01:'P01',C02:'P03',C03:'P05',C04:'P09',C05:'P10',C06:'P15',C07:'P21',C08:'P22',C09:'P23',C10:'P24',C11:'F01',C12:'F04',C13:'F06',C14:'F12'};
-export const puntoArchivo=(region:string)=>region==='pueblo_sol'?{x:75.5,z:23.4}:{x:0,z:22};
+/** El plano de cada pueblo (calles, plaza, archivo, puestos, combate) lo arma el generador; sin plano, el tamaño de antes. */
+export const planoAstra=(region:string)=>(regionAstra(region) as {plano?:{limites:{x:number;z:number};plaza:{x:number;z:number;r:number};inicio:{x:number;z:number};archivo:{x:number;z:number};combate:{x:number;z:number}|null;solidos:number[][]}}|undefined)?.plano;
+export const puntoArchivo=(region:string)=>region==='pueblo_sol'?{x:75.5,z:23.4}:planoAstra(region)?.archivo??{x:0,z:22};
+export const puntoCombate=(region:string)=>planoAstra(region)?.combate??{x:18,z:23};
+const limitesAstra=(region:string)=>planoAstra(region)?.limites??{x:24,z:28};
 export const puntoRecurso=(region:string,i:number)=>RECURSOS_ASTRA.find(r=>r.id===region)!.recursos[i].punto;
 export const RECURSOS_ASTRA=RECURSOS;
 export const regionAstra=(id:string)=>REGIONES_ASTRA.find(r=>r.id===id);
@@ -51,7 +55,15 @@ export function posicionNpcAstra(s:EstadoGranja,id:string):{x:number;z:number;in
 }
 export function libreAstra(s:EstadoGranja,x:number,z:number){
  if(s.astra?.interior)return libreVivienda(x,z);
- const r=regionAstra(s.astra?.actual??'');return !!r&&Math.abs(x)<24&&Math.abs(z)<28&&!r.viviendas.some(h=>x>h.x-.4&&x<h.x+h.ancho+.4&&z>h.z-.4&&z<h.z+h.fondo+.4);
+ return libreRegionAstra(s.astra?.actual??'',x,z);
+}
+/** Dentro del pueblo y sin chocar con casas, puestos, monumento ni archivo. */
+export function libreRegionAstra(region:string,x:number,z:number){
+ const r=regionAstra(region),l=limitesAstra(region);return !!r&&Math.abs(x)<l.x&&Math.abs(z)<l.z&&!r.viviendas.some(h=>x>h.x-.4&&x<h.x+h.ancho+.4&&z>h.z-.4&&z<h.z+h.fondo+.4)&&!(planoAstra(region)?.solidos??[]).some(([bx,bz,w,d])=>Math.abs(x-bx)<w+.3&&Math.abs(z-bz)<d+.3);
+}
+/** Una partida guardada con el plano viejo puede quedar dentro de algo nuevo: vuelve a la entrada del pueblo. */
+export function reubicarAstra(t:EstadoAstra|undefined){
+ if(!t?.actual||t.interior||!Number.isFinite(t.posicion?.x)||!Number.isFinite(t.posicion?.z))return;const l=limitesAstra(t.actual);/* Fuera de los límites es una partida corrupta: eso lo rechaza la validación */if(Math.abs(t.posicion.x)<l.x&&Math.abs(t.posicion.z)<l.z&&!libreRegionAstra(t.actual,t.posicion.x,t.posicion.z))t.posicion={...(planoAstra(t.actual)?.inicio??{x:0,z:8})};
 }
 export function campanaDisponible(s:EstadoGranja,q:typeof CAMPANA_ASTRA[number]){return q.requiere.every(id=>s.astra?.expedientes[id]?.cerrado);}
 export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recursos:{agregar:(id:string,n:number)=>void;noche?:()=>unknown}) :Resultado {
@@ -124,7 +136,7 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
   recursos.agregar(id,-1);t.mantenimiento={region:here,visitasRestantes:8};return bien('Mantenimiento local instalado: recoger cuesta una energía durante ocho estancias. Sustituye cualquier kit anterior; no aumenta cupos ni daño.');
  }
  if(a.tipo==='balance'){
-  const id='confluencia_'+a.elemento;if(!['fuego','agua','tierra','aire'].includes(a.elemento)||here!==id||t.interior||!cerca(x,z,{x:0,z:22}))return mal('Ve al puesto de balance del territorio.');
+  const id='confluencia_'+a.elemento;if(!['fuego','agua','tierra','aire'].includes(a.elemento)||here!==id||t.interior||!cerca(x,z,puntoArchivo(here)))return mal('Ve al puesto de balance del territorio.');
   if(t.pruebas.includes(a.elemento))return mal('Ese balance ya está confirmado.');
   const coste={[id+'_mineral']:2,[id+'_madera']:2};if(!Object.entries(coste).every(([id,n])=>(s.inventario[id]??0)>=n))return mal('Requiere dos minerales y dos maderas autorizados de este territorio.');
   for(const [id,n]of Object.entries(coste))recursos.agregar(id,-n);t.pruebas.push(a.elemento);return bien('Balance confirmado: devolución de materiales al circuito local.');
@@ -174,7 +186,7 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
 export function astraValida(t:EstadoAstra|undefined,dia:number):boolean {
  if(!t||t.version!==1||t.actual!==null&&(!regionAstra(t.actual)||t.actual==='pueblo_sol')||!Number.isFinite(t.posicion?.x)||!Number.isFinite(t.posicion?.z)||Math.abs(t.posicion.x)>1000||Math.abs(t.posicion.z)>1000)return false;
  if(t.interior!==null&&!regionAstra(t.actual??'')?.viviendas.some(h=>h.id===t.interior))return false;
- if(t.actual&&(t.interior?!libreVivienda(t.posicion.x,t.posicion.z):Math.abs(t.posicion.x)>=24||Math.abs(t.posicion.z)>=28))return false;
+ if(t.actual&&(t.interior?!libreVivienda(t.posicion.x,t.posicion.z):Math.abs(t.posicion.x)>=limitesAstra(t.actual).x||Math.abs(t.posicion.z)>=limitesAstra(t.actual).z))return false;
  const lista=(xs:unknown,ids:string[])=>Array.isArray(xs)&&xs.length<=ids.length&&new Set(xs).size===xs.length&&xs.every(id=>typeof id==='string'&&ids.includes(id));
  if(!lista(t.visitas,[...REGIONES_ASTRA.map(r=>r.id),'granja'])||!lista(t.conocidos,NPC_ASTRA.map(n=>n.id))||!lista(t.lecturas,Object.keys(CAMPANA.escenas))||!lista(t.pruebas,['fuego','agua','tierra','aire']))return false;
  if(!lista(t.personales,NPC_ASTRA.map(n=>n.mision)))return false;

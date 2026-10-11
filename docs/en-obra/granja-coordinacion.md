@@ -1,5 +1,38 @@
 # Coordinación de la granja con el proyecto principal
 
+## Pueblos de Astra agrandados · 11 de octubre de 2026 (Claude, a pedido de Javier)
+
+Javier pidió pueblos más grandes y con vida, «con una estructura tan bonita como la del primero». Se hizo sin
+cambiar ningún ID ni el guardado V5:
+
+- **Plano por región** (`docs/narrativa/herramientas/planos_pueblos.py`, usado por `integrar_motor.py`): zona caminable
+  de 104 × 76 m (|x| < 52, |z| < 38). Tiene:
+  - Calle principal este-oeste, con las rutas en sus extremos (x = ±49,5).
+  - Plaza redonda en (0, 0) con monumento.
+  - Casas al norte, mirando a la calle (z −12 a −6).
+  - Un puesto de oficio por habitante al sur (z = 6,6), donde trabaja de día.
+  - Archivo en (0, −9,6).
+  - Recursos en las afueras (z = 22).
+  - Combate en (38, 24).
+  - Hito al norte en (0, −27).
+  - Adornos con colisión: faroles, bancos, árboles, pozo e hito.
+- Cada región trae `plano` en `astra-mundo-datos.ts`: `limites`, `plaza`, `inicio`, `archivo`, `combate`, `hito`, `solidos`,
+  `adornos` y `puestos`.
+- **Cambios en `astra.ts`**, todos con valor por defecto para regiones sin plano:
+  - `libreAstra` usa `libreRegionAstra`, que lee límites y sólidos.
+  - Nuevos `puntoArchivo`, `puntoCombate` y `planoAstra`.
+  - `reubicarAstra`, llamado desde `migrarEstado`, devuelve a la entrada del pueblo una posición guardada que quedó dentro
+    de algo nuevo. Una posición fuera de los límites sigue siendo inválida.
+- **Otros archivos:**
+  - `motor.ts`, `main.ts` y `astra-ui.ts` toman el combate y el balance del plano.
+  - `probar-astra.mjs` usa el archivo de cada región.
+- El arte (`astra-arte.ts`) dibuja exactamente lo que el plano declara. Los habitantes caminan por la calle entre su puesto,
+  la plaza y la puerta de su casa; es solo vista, la posición sigue saliendo de `posicionNpcAstra`.
+
+**Para el frente de motor:** si cambian las posiciones o se agregan casas, háganlo en `planos_pueblos.py`, que caben hasta
+ocho casas y 16 puestos por pueblo. Lo que siga de historias y misiones secundarias de los pueblos lo coordino aquí antes de
+tocar `astra.ts`.
+
 ## Entrega vigente para integrar arte y audio · 11 de octubre de 2026
 
 Leer [ASTRA-INTEGRACION.md](../../juego/web/src/granja-v3/ASTRA-INTEGRACION.md). Se conectaron 28 lugares,
