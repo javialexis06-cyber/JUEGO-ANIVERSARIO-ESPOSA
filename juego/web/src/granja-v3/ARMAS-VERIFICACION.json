@@ -1,5 +1,5 @@
 {
-  "estado": "motor_local_verificado_sin_push",
+  "estado": "motor_integrado_verificado",
   "formato_granja": 5,
   "familias": [
     "espada",
@@ -52,5 +52,7 @@
     "Jefes elementales",
     "Arte definitivo y audio"
   ],
-  "nota": "Las pruebas de navegador usan partidas aisladas preparadas; no certifican campaña completa ni dispositivos físicos."
+  "nota": "Las pruebas de navegador usan partidas aisladas preparadas; no certifican campaña completa ni dispositivos físicos.",
+  "integracion_con_remoto": "a33deb0b5b7f94e3918bde89df9b4bdc0df87255",
+  "fecha_integracion": "2026-10-11"
 }

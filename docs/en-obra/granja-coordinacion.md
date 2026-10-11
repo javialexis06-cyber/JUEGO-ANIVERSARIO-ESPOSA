@@ -36,9 +36,9 @@ como nombres de autoría, sin renombrar todavía personajes del motor. Las capac
 como diseño pendiente: un guion no concede objetos ni acredita misiones en una partida.
 No se modifican modelos, renderizadores, audio existente ni el guardado V5. Las entregas narrativas
 requieren recibos de acciones reales y recompensas únicas con límites; los secretos tienen pistas
-descubribles sin reloj real ni compras. La publicación sigue pausada por petición expresa de Javier.
-Se consultó el remoto `5099d4f` antes de editar: contiene avances gráficos de Claude; no se mezclan
-ni se publican durante esta pausa.
+descubribles sin reloj real ni compras. La publicación estuvo pausada por petición expresa del usuario durante la autoría.
+Se consultó el remoto `5099d4f` antes de editar y se conservaron sus avances gráficos sin publicar este bloque.
+La pausa quedó levantada posteriormente con «has push a todo»; la integración incorpora el remoto `a33deb0`.
 
 ### Cuadernos integrados · 11 de octubre de 2026
 
@@ -398,3 +398,4 @@ de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/bl
 - Primer motor integrado: `aventura.ts` mantiene las expediciones actuales y añade arco, bastón y cuatro sellos; trayectorias, colisión, duración activa, una invocación, dominio limitado y compatibilidad V5. `objetos.ts` registra armas y recetas; `motor.ts` valida y paga energía y flechas. No se añade RPG de personajes o armaduras.
 - Presentación mínima: `main.ts` respeta alcance de la familia; `escenas-aventura.ts` muestra esferas simples para proyectiles y patrones. Arte definitivo y animaciones siguen en el frente de Claude. No se han añadido modelos ni llamadas de audio.
 - Publicar sin push forzado en `claude/supermarket-mania-minigame-xn2it8` y `work`, tras repetir las comprobaciones de integración. Consultar `docs/narrativa/11-armas-y-combate.md` y la prueba `probar-armas.mjs` antes de integrar.
+- Integración comprobada sobre el remoto `a33deb0`: 33 suites sin fallos, ambas compilaciones correctas, seis comprobaciones del recorrido casa/granja y cinco de armas en navegador sin errores. Los escenarios de navegador usan partidas de prueba aisladas. `ARMAS-VERIFICACION.json` conserva alcance y pendientes.
