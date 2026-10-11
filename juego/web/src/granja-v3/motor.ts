@@ -33,7 +33,7 @@ import { crearPaisaje, aguaEn, huecoEn, paisajeValido } from './paisaje';
 import { crearCampo, campoValido, duracionCampo, diasCultivo, calidadCosecha, siguienteCosecha, nombreCalidad, multiplicadorCalidad } from './agricultura';
 import { crearProduccion, aplicarProduccion, avanzarProduccion, errorProduccion, huellaProduccion } from './produccion';
 import { NIVEL_RECUPERADORA, materialesDe, porcentajeRecuperacion } from './recuperadora';
-import { MINA, costoEstacion, estacionPendiente, construirAscensor, MONSTRUOS, MINERALES, crearAventura, errorAventura, entrarAventura, salirAventura, descenderAventura, golpearMonstruo, golpearNodo, recogerBotin, resolverSituacion, stepAventura, destinoAventura, instanciaAventura, esTransitableAventura, opcionesAventura } from './aventura';
+import { MINA, costoEstacion, estacionPendiente, construirAscensor, MONSTRUOS, MINERALES, crearAventura, errorAventura, entrarAventura, salirAventura, descenderAventura, atacarConArma, modoDeArma, ARMAS_AVENTURA, golpearNodo, recogerBotin, resolverSituacion, stepAventura, destinoAventura, instanciaAventura, esTransitableAventura, opcionesAventura } from './aventura';
 import { crearBarra, validarBarra, indiceActivo, objetoActivo, herramientaDeObjeto, bonosEquipo, HERRAMIENTAS_INICIALES, LARGO_BARRA } from './barra';
 import type { Pila } from './inventario';
 import { calidadPila, type Calidad, articuloValido, limitePila, cambiarCantidad, distribuirInventario, resumirCasillas, moverPila, MAX_PILA, CASILLAS_AMPLIADAS } from './inventario';
@@ -104,12 +104,16 @@ export class MotorGranja {
  rutasAventura(){return opcionesAventura({desbloqueos:this.estado.desbloqueos,construcciones:this.estado.produccion.estructuras.map(n=>n.articulo),nivelPico:this.nivelHerramienta('pico')})}
  pasoAventura(dt:number,x:number,z:number){
   const s=this.estado;if(!s.aventura.destinoActual||!finito(x,-1000,1000)||!finito(z,-1000,1000))return {dano:0,avisos:[] as string[]};
+  const habiaEfectos=!!s.aventura.invocacion||!!s.aventura.proyectiles?.length;
   const r=stepAventura(s.aventura,dt,{x,z,vida:s.vida,defensa:this.bonos().defensa});
+  if(r.bajasArma){this.contar('monstruos',r.bajasArma);this.experiencia('combate',r.experienciaArma??0);}
   s.vida=Math.max(0,s.vida-r.dano);s.posicionAventura=s.aventura.destinoActual?{x,z}:null;
-  if(r.dano)s.revision++;if(r.salidaSegura){s.vida=Math.max(35,s.vida);s.energia=Math.max(25,s.energia);s.revision++;}
+  if(r.dano||habiaEfectos)s.revision++;if(r.salidaSegura){s.vida=Math.max(35,s.vida);s.energia=Math.max(25,s.energia);s.revision++;}
   return r;
  }
  seleccionado(){return objetoActivo(this.estado)}
+ modoArma(){const activo=this.seleccionado()?.articulo;return modoDeArma(obtenerObjeto(activo??'')?.equipo?.ranura==='arma'?activo:this.estado.equipo.arma??undefined);}
+ alcanceArma(){return ARMAS_AVENTURA[this.modoArma()].alcance;}
  registrarPosicion(x:number,z:number){const s=this.estado;if(!s.interior&&!s.servicio&&!s.aventura.destinoActual&&dentroDeZona(s.zona,x,z))s.posicionExterior={zona:s.zona,x,z};posicionMontada(s,x,z);}
  bonos(){const b=bonosEquipo(this.estado,this.estado.ultimoTiempo),h=efectosHabilidades(this.estado.habilidades);return {...b,ataque:b.ataque+(h.ataque??0)+Math.floor(nivelHabilidad(this.estado.habilidades,'combate')/2),defensa:b.defensa+(h.defensa??0)}}
  private sincronizarSeleccion(){const s=this.estado,h=herramientaDeObjeto(this.seleccionado()?.articulo);s.herramienta=this.herramientaDisponible(h)?h:'mano';}
@@ -381,15 +385,18 @@ export class MotorGranja {
    case 'descender_aventura':{if(!finito(a.xJugador,-1000,1000)||!finito(a.zJugador,-1000,1000))return mal('Posición de jugador inválida.');const result=descenderAventura(s.aventura,{x:a.xJugador,z:a.zJugador});if(!result.ok)return result;s.posicionAventura=result.posicion!;r={...result,posicionAventura:result.posicion};break;}
    case 'accion_aventura':{
     if(!s.aventura.destinoActual||!finito(a.xJugador,-1000,1000)||!finito(a.zJugador,-1000,1000))return mal('No estás en una expedición.');const jugador={x:a.xJugador,z:a.zJugador};
+    const modo=this.modoArma(),coste=a.objetivo==='monstruo'?ARMAS_AVENTURA[modo].energia:this.costeEnergia();
     if(['nodo','monstruo'].includes(a.objetivo)){
-     if(s.energia<this.costeEnergia())return mal('Come algo o busca un campamento para recuperar energía.');
+     if(s.energia<coste)return mal('Come algo o busca un campamento para recuperar energía.');
      if(!this.herramientaDisponible())return mal('Tu herramienta está en la herrería.');
      if(s.herramienta!==(a.objetivo==='nodo'?'pico':'espada'))return mal(a.objetivo==='nodo'?'Selecciona tu pico.':'Selecciona una espada en la barra.');
     }
+    if(a.objetivo==='monstruo'&&modo==='arco'&&!this.puedePagar({flecha_ribera:1}))return mal('Prepara flechas de ribera antes de usar el arco.');
     const instancia=instanciaAventura(s.aventura),monstruo=instancia?.monstruos.find(m=>m.id===a.id),nodo=instancia?.nodos.find(n=>n.id===a.id),botinAntes=new Set(instancia?.botin.map(b=>b.id));
-    const result=a.objetivo==='monstruo'?golpearMonstruo(s.aventura,a.id,jugador,this.nivelHerramienta('espada'),this.bonos().ataque):a.objetivo==='nodo'?golpearNodo(s.aventura,a.id,jugador,this.nivelHerramienta('pico')):a.objetivo==='botin'?recogerBotin(s.aventura,a.id,jugador):resolverSituacion(s.aventura,a.id,jugador);
+    const result=a.objetivo==='monstruo'?atacarConArma(s.aventura,a.id,jugador,modo,this.nivelHerramienta('espada'),this.bonos().ataque):a.objetivo==='nodo'?golpearNodo(s.aventura,a.id,jugador,this.nivelHerramienta('pico')):a.objetivo==='botin'?recogerBotin(s.aventura,a.id,jugador):resolverSituacion(s.aventura,a.id,jugador);
     if(!result.ok)return result;if(result.botin)this.agregar(result.botin.articulo,result.botin.cantidad);
-    if(['nodo','monstruo'].includes(a.objetivo))s.energia=Math.max(0,s.energia-this.costeEnergia());if(result.destruido){this.contar(a.objetivo==='monstruo'?'monstruos':'mineria');if(a.objetivo==='monstruo'&&monstruo)this.experiencia('combate',Math.ceil(MONSTRUOS[monstruo.tipo].vida/2));if(a.objetivo==='nodo'&&nodo){this.experiencia('mineria',8+MINERALES[nodo.mineral].pico*5);this.contar('mineral',nodo.cantidad);for(const b of instancia?.botin??[])if(!botinAntes.has(b.id))b.cantidad=mejorarBotin(s.habilidades,{[b.articulo]:b.cantidad},'roca')[b.articulo];}}
+    if(a.objetivo==='monstruo'&&modo==='arco')this.pagar({flecha_ribera:1});
+    if(['nodo','monstruo'].includes(a.objetivo))s.energia=Math.max(0,s.energia-coste);if(result.destruido){this.contar(a.objetivo==='monstruo'?'monstruos':'mineria');if(a.objetivo==='monstruo'&&monstruo)this.experiencia('combate',Math.ceil(MONSTRUOS[monstruo.tipo].vida/2));if(a.objetivo==='nodo'&&nodo){this.experiencia('mineria',8+MINERALES[nodo.mineral].pico*5);this.contar('mineral',nodo.cantidad);for(const b of instancia?.botin??[])if(!botinAntes.has(b.id))b.cantidad=mejorarBotin(s.habilidades,{[b.articulo]:b.cantidad},'roca')[b.articulo];}}
     // Cofres de la mina (cada 10 pisos): monedas y una pieza de equipo según la profundidad
     if(result.cofre){s.monedas=Math.min(1e9,s.monedas+100+result.cofre*25);const pieza=PREMIOS_COFRE[result.cofre];if(pieza)this.agregar(pieza,1);this.contar('cofres_mina');}
     s.vida=Math.min(100,s.vida+(result.vida??0));s.energia=Math.min(100,s.energia+(result.energia??0));r=result;break;
@@ -663,6 +670,7 @@ export class MotorGranja {
     const pesos=disponibles.map(p=>1/(p.rareza*p.rareza));let aleatorio=this.random()*pesos.reduce((a,b)=>a+b,0),indice=0;while(indice<pesos.length-1&&aleatorio>=pesos[indice])aleatorio-=pesos[indice++];const pez=disponibles[indice];this.agregar(pez.id,cantidad,calidad);this.experiencia('pesca',8+pez.rareza*4);this.contar('pescar',cantidad);this.contar(`pez_${pez.id}`,cantidad);r=bien(`¡Has pescado ${cantidad} × ${pez.nombre.toLowerCase()} · ${nombreCalidad(calidad)}!`);break;
    }
    case 'combatir':{
+    if(this.modoArma()!=='espada')return mal('Los arcos, bastones y sellos se usan en las expediciones.');
     if(s.herramienta!=='espada')return mal('Equipa la espada.');if(s.enemigo<=0)return mal('No hay un monstruo frente a ti.');if(s.energia<this.costeEnergia('espada',4))return mal('Retírate y descansa antes de combatir.');s.energia=Math.max(0,s.energia-this.costeEnergia('espada',4));s.enemigo=Math.max(0,s.enemigo-(22+this.nivelHerramienta()*6+this.bonos().ataque));if(s.enemigo>0)s.vida=Math.max(0,s.vida-Math.max(1,8+s.nivelMina*2-this.bonos().defensa));else{this.crearDrops({cristal:1},s.zona==='bosque_ancestral'?-76:0,s.zona==='bosque_ancestral'?74:1);this.contar('monstruos');this.experiencia('combate',30+s.nivelMina*5);}
     if(s.vida<=0){s.zona='granja';s.enemigo=0;s.vida=35;s.energia=25;r=bien('Te rescataron y volviste a casa. Conservas tus recursos.')}else r=bien(s.enemigo?'El monstruo retrocede.':'Zona despejada. Puedes recolectar con seguridad.');break;
    }

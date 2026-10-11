@@ -1,8 +1,8 @@
 # Contrato de la biblia narrativa
 
 Fuente: [docs/narrativa](../../../../docs/narrativa/README.md), encargo de Javier del 11 de octubre.
-142 NPC, cinco figuras originales, 24 misiones principales, 142 arcos personales, doce secretos y
-19 encuentros comunitarios: 197 misiones de autoría. Son documentos y datos, sin importación automática.
+142 NPC, cinco figuras originales y Fuatia, 36 misiones principales, 142 arcos personales, doce secretos originales,
+19 encuentros comunitarios y ocho secundarios elementales (T08 es un secreto nuevo): 217 misiones de autoría. Son documentos y datos, sin importación automática.
 Conde, protagonistas y narrador se documentan aparte del roster de 147.
 
 ## Identidades y viviendas
@@ -11,7 +11,7 @@ Conde, protagonistas y narrador se documentan aparte del roster de 147.
 No renombrar IDs funcionales del motor. Las biografías no conceden parentescos mediante un apellido
 compartido ni convierten compañeros de vivienda en parejas. Tina vive con Dalia por acuerdo familiar;
 Bastián sigue siendo su padre. Flora y Nina, Tomás y Leo, Rufina y Yago tienen vínculos explícitos.
-Las cinco figuras usan IDs `figura_*` y aliases de voz; no entran a tiendas o amistad ordinaria.
+Las seis figuras usan IDs `figura_*` y aliases de voz; no entran a tiendas o amistad ordinaria.
 
 ## Estado propuesto
 
@@ -74,3 +74,5 @@ No certifica jugabilidad, pronunciación ni equilibrio real.
 Primer bloque ejecutable recomendado: P01–P05 y tres arcos del pueblo, con guardado y recibos, antes
 de expandir mapas. Las pruebas del motor, builds y demo se hacen cuando ese bloque toque runtime.
 Esta entrega solo modifica autoría y documentación. No publicar mientras siga la pausa del usuario.
+
+La ampliación incluye 284 conversaciones VID repetibles y 14 escenas cinematográficas. `vidas.json` conserva recuerdos y vida cotidiana por ID; `regiones-recursos.json` propone 24 territorios y su renovación por jornadas dormidas. No activa recursos ni portales. El motor de armas local se describe en [Armas y combate](../../../../docs/narrativa/11-armas-y-combate.md): es un avance distinto del diseño de misiones, compatible con V5 y todavía sin push.

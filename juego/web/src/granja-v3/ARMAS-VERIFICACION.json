@@ -1,0 +1,56 @@
+{
+  "estado": "motor_local_verificado_sin_push",
+  "formato_granja": 5,
+  "familias": [
+    "espada",
+    "arco",
+    "baston",
+    "sello_fuego",
+    "sello_agua",
+    "sello_tierra",
+    "sello_aire"
+  ],
+  "suites_motor": 33,
+  "fallos_suites": 0,
+  "pruebas_nuevas_armas": 9,
+  "pruebas_aventura": 18,
+  "navegador_armas": {
+    "checks": [
+      "Un clic a distancia dispara arco, consume flecha y registra impacto efectivo",
+      "Panel muestra familias, rangos y dominio real",
+      "El bastón resuelve su trayectoria en la escena activa",
+      "Abrir el panel pausa la invocación",
+      "Regreso y recarga conservan dominio, cancelan efectos y mantienen V5"
+    ],
+    "errores": [],
+    "escenario": "Partida nueva aislada con armas y sala despejada para comprobar controles; no es una campaña completada."
+  },
+  "navegador_recorrido": {
+    "checks": [
+      "Botón de la casa abre la granja V5 sobre el build actual",
+      "Teclado mueve al personaje compartido actual",
+      "Mouse abre el buzón y conserva lectura",
+      "Inventario actual accesible en horizontal",
+      "Granja → casa real → granja conserva posición, inventario y jornada",
+      "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+    ],
+    "errors": [],
+    "bad": [],
+    "viewport": [
+      844,
+      390
+    ],
+    "escenariosPreparados": "Cuarto habilitado y avatar posicionado en contexto nuevo aislado.",
+    "dispositivosFisicos": []
+  },
+  "build": "correcto",
+  "build_amigos": "correcto; verificacion de exclusion de contenido privado superada",
+  "pendientes": [
+    "Confluencia y sus materiales",
+    "Ajustes regionales y renovacion por jornadas dormidas",
+    "Estado y adaptador de las misiones narrativas",
+    "Jefes elementales",
+    "Arte definitivo y audio"
+  ],
+  "nota": "Las pruebas de navegador usan partidas aisladas preparadas; no certifican campaña completa ni dispositivos físicos."
+}

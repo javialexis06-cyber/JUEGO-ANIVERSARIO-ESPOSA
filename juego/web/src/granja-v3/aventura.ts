@@ -65,6 +65,8 @@ export interface InstanciaAventura {
  cofreReclamado?:boolean;
 }
 export interface EstadoAventura {
+ /** Campos opcionales para guardar V5 anteriores; los efectos solo avanzan en expedición activa. */
+ proyectiles?:ProyectilArma[]; invocacion?:InvocacionArma|null; dominioArmas?:Partial<Record<ModoArma,number>>;
  /** Solo Minas de Celia: pisos con parada de ascensor, cofres abiertos y visitas (cambian el plano de cada piso). */
  ascensor?:number[]; cofresMina?:number[]; visitasMina?:number;
  version:1; semilla:number; destinoActual:string|null; instanciaActual:string|null; instancias:Record<string,InstanciaAventura>;
@@ -73,7 +75,24 @@ export interface EstadoAventura {
 }
 export interface ResultadoAventura { cofre?:number; ok:boolean; mensaje:string; posicion?:PuntoAventura; botin?:{articulo:string;cantidad:number}; dano?:number; destruido?:boolean; vida?:number; energia?:number; oxigeno?:number }
 export interface JugadorAventura extends PuntoAventura { vida?:number; defensa?:number }
-export interface ResultadoPaso { dano:number; empuje?:PuntoAventura; avisos:string[]; salidaSegura?:PuntoAventura }
+export interface ResultadoPaso { dano:number; empuje?:PuntoAventura; avisos:string[]; salidaSegura?:PuntoAventura; bajasArma?:number; experienciaArma?:number }
+export type ModoArma='espada'|'arco'|'baston'|'sello_fuego'|'sello_agua'|'sello_tierra'|'sello_aire';
+export const ARMAS_AVENTURA:Record<ModoArma,{nombre:string;alcance:number;energia:number;espera:number;dano:number;velocidad:number}>={
+ espada:{nombre:'Espada',alcance:2.1,energia:1,espera:.42,dano:10,velocidad:0},
+ arco:{nombre:'Arco',alcance:8,energia:1,espera:.6,dano:12,velocidad:11},
+ baston:{nombre:'Bastón',alcance:6,energia:3,espera:.8,dano:17,velocidad:8},
+ sello_fuego:{nombre:'Invocación de fuego',alcance:5,energia:10,espera:1,dano:10,velocidad:8},
+ sello_agua:{nombre:'Invocación de agua',alcance:5,energia:10,espera:1,dano:8,velocidad:7},
+ sello_tierra:{nombre:'Invocación de tierra',alcance:4,energia:10,espera:1,dano:12,velocidad:6},
+ sello_aire:{nombre:'Invocación de aire',alcance:6,energia:10,espera:1,dano:7,velocidad:12},
+};
+export interface ProyectilArma extends PuntoAventura { id:number;modo:ModoArma;direccion:PuntoAventura;restante:number;dano:number }
+export interface InvocacionArma extends PuntoAventura { modo:ModoArma;restante:number;espera:number;dano:number }
+export function modoDeArma(id:string|undefined):ModoArma {
+ if(id==='arco_ribera')return 'arco';if(id==='baston_cuarzo')return 'baston';
+ return id&&Object.hasOwn(ARMAS_AVENTURA,id)?id as ModoArma:'espada';
+}
+export function rangoArma(e:EstadoAventura,modo:ModoArma){return Math.min(3,Math.floor((e.dominioArmas?.[modo]??0)/30));}
 export type ColisionAventura = (x:number,z:number)=>boolean;
 const clave = (x:number,z:number)=>`${Math.floor(x)},${Math.floor(z)}`;
 const distancia = (a:PuntoAventura,b:PuntoAventura)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -218,6 +237,7 @@ export function entrarAventura(e:EstadoAventura,destinoId:string,jugador:PuntoAv
 }
 /** Retorno de emergencia sin coste, pérdida de mochila ni requisitos: también funciona con un mapa corrupto. */
 export function salirAventura(e:EstadoAventura):ResultadoAventura {
+ e.proyectiles=[];e.invocacion=null;
  const posicion={...(e.retorno??{x:0,z:4})};if(e.destinoActual===MINA)borrarPisosMina(e);e.destinoActual=null;e.instanciaActual=null;e.retorno=null;e.invulnerable=0;e.enfriamientoGolpe=0;
  return bien('Regresaste con tus hallazgos a salvo.',{posicion});
 }
@@ -228,7 +248,7 @@ export function descenderAventura(e:EstadoAventura,jugador:PuntoAventura):Result
  const nivel=i.nivel+1,id=`${i.destinoId}:${nivel}`;
  if(i.destinoId===MINA){delete e.instancias[i.id];e.instancias[id]=generarInstancia(MINA,semillaMina(e),nivel,{cofreReclamado:e.cofresMina?.includes(nivel)});if(nivel%5===0&&nivel<=FONDO_MINA&&!(e.ascensor??[]).includes(nivel))e.ascensor=[...(e.ascensor??[]),nivel].sort((a,b)=>a-b);}
  else e.instancias[id]??=generarInstancia(i.destinoId,e.semilla,nivel);
- e.instanciaActual=id;e.invulnerable=2;
+ e.instanciaActual=id;e.invulnerable=2;e.proyectiles=[];e.invocacion=null;
  e.profundidad[i.destinoId]=Math.max(nivel,e.profundidad[i.destinoId]??0);
  const parada=i.destinoId===MINA&&nivel%5===0&&nivel<=FONDO_MINA?' Nueva parada de ascensor.':i.destinoId===MINA&&nivel>FONDO_MINA&&nivel%25===0&&!(e.ascensor??[]).includes(nivel)?' Aquí puedes construir una estación de ascensor.':'';
  return bien(i.destinoId===MINA?`Piso ${nivel}.${parada}`:`Región ${nivel} descubierta.`,{posicion:{...e.instancias[id].inicio}});
@@ -267,6 +287,7 @@ export function stepAventura(e:EstadoAventura,dt:number,jugador:JugadorAventura,
   if(e.oxigeno<=10&&e.avisoOxigeno<2){e.avisoOxigeno=2;r.avisos.push('Reserva de oxígeno al 10 %. La nave te recogerá si se agota.');}
   if(e.oxigeno<=0){r.salidaSegura=salirAventura(e).posicion;r.avisos.push('La nave te recogió a tiempo. Conservas todos tus hallazgos.');return r;}
  }
+ const armas=pasoArmas(e,dt,jugador);r.bajasArma=armas.bajas;r.experienciaArma=armas.experiencia;
  for(const m of i.monstruos){
   if(!m.vivo)continue;m.invulnerable=Math.max(0,m.invulnerable-dt);
   const def=MONSTRUOS[m.tipo],dist=distancia(m,jugador);if(dist>18)continue;
@@ -300,13 +321,60 @@ export function stepAventura(e:EstadoAventura,dt:number,jugador:JugadorAventura,
  return r;
 }
 function soltar(e:EstadoAventura,i:InstanciaAventura,p:PuntoAventura,articulo:string,cantidad:number){i.botin.push({id:`botin_aventura_${++e.secuencia}`,x:p.x,z:p.z,articulo,cantidad});i.revision++;}
+function botinMonstruo(e:EstadoAventura,i:InstanciaAventura,m:MonstruoAventura){e.derrotados++;soltar(e,i,m,MONSTRUOS[m.tipo].botin,Math.min(20,2+Math.min(3,Math.floor(i.nivel/3))+(i.destinoId===MINA?Math.floor(i.nivel/40):0)));revelarEscalera(e,i,m,.12);}
+function aprenderArma(e:EstadoAventura,modo:ModoArma){e.dominioArmas??={};e.dominioArmas[modo]=Math.min(90,(e.dominioArmas[modo]??0)+1);}
+function proyectil(e:EstadoAventura,modo:ModoArma,origen:PuntoAventura,objetivo:PuntoAventura,dano:number){
+ const def=ARMAS_AVENTURA[modo];e.proyectiles??=[];
+ e.proyectiles.push({id:++e.secuencia,modo,x:origen.x,z:origen.z,direccion:orientacion(origen,objetivo),restante:def.alcance/def.velocidad,dano});
+}
+/** Apuntar fija la dirección; el impacto se resuelve en pasos activos, no al pulsar ni fuera del juego. */
+export function atacarConArma(e:EstadoAventura,id:string,jugador:PuntoAventura,modo:ModoArma,nivel=0,extra=0):ResultadoAventura {
+ if(!Object.hasOwn(ARMAS_AVENTURA,modo)||!esTransitableAventura(e,jugador.x,jugador.z))return mal('Arma o posición de combate inválida.');
+ if(modo==='espada'){const r=golpearMonstruo(e,id,jugador,nivel,extra+rangoArma(e,modo)*2);if(r.ok)aprenderArma(e,modo);return r;}
+ const i=instanciaAventura(e),m=i?.monstruos.find(m=>m.id===id&&m.vivo),def=ARMAS_AVENTURA[modo];if(!i||!m)return mal('La criatura ya no está aquí.');
+ if(e.enfriamientoGolpe>0)return mal('Espera a preparar tu arma.');
+ if(distancia(jugador,m)>def.alcance||!lineaVision(i,jugador,m))return mal('Apunta dentro del alcance y por una trayectoria despejada.');
+ if((e.proyectiles?.length??0)>=24)return mal('Espera a que termine la ráfaga.');
+ const dano=def.dano+rangoArma(e,modo)*2+clamp(extra,0,50);
+ if(modo.startsWith('sello_')){if(e.invocacion)return mal('La invocación actual debe terminar antes de convocar otra.');e.invocacion={modo,x:jugador.x,z:jugador.z,restante:8,espera:0,dano};}
+ else proyectil(e,modo,jugador,m,dano);
+ e.enfriamientoGolpe=def.espera;i.revision++;
+ return bien(modo.startsWith('sello_')?'Patrón elemental convocado durante ocho segundos.':'Proyectil en camino; puede fallar si el objetivo se mueve.');
+}
+function pasoArmas(e:EstadoAventura,dt:number,jugador:PuntoAventura){
+ const i=instanciaAventura(e);if(!i)return {bajas:0,experiencia:0};let bajas=0,experiencia=0;const inv=e.invocacion;
+ if(inv){
+  inv.restante=Math.max(0,inv.restante-dt);inv.espera=Math.max(0,inv.espera-dt);
+  if(inv.restante<=0||distancia(inv,jugador)>10)e.invocacion=null;
+  else if(inv.espera===0&&(e.proyectiles?.length??0)<24){
+   const def=ARMAS_AVENTURA[inv.modo],objetivo=i.monstruos.filter(m=>m.vivo&&distancia(inv,m)<=def.alcance&&lineaVision(i,inv,m)).sort((a,b)=>distancia(inv,a)-distancia(inv,b))[0];
+   if(objetivo){proyectil(e,inv.modo,inv,objetivo,inv.dano);inv.espera=1;}
+  }
+ }
+ const pendientes:ProyectilArma[]=[];
+ for(const p of e.proyectiles??[]){
+  const tiempo=Math.min(dt,p.restante),def=ARMAS_AVENTURA[p.modo],pasos=Math.max(1,Math.ceil(tiempo*def.velocidad/.15));let terminado=false;
+  for(let n=0;n<pasos&&!terminado;n++){
+   const x=p.x+p.direccion.x*def.velocidad*tiempo/pasos,z=p.z+p.direccion.z*def.velocidad*tiempo/pasos;
+   if(i.suelos[clave(x,z)]!=='suelo'){terminado=true;break;}p.x=x;p.z=z;
+   const m=i.monstruos.find(m=>m.vivo&&distancia(m,p)<.55);if(!m)continue;terminado=true;
+   if(m.invulnerable>0)continue;
+   m.hp=Math.max(0,m.hp-Math.max(1,p.dano-MONSTRUOS[m.tipo].defensa));m.invulnerable=.28;aprenderArma(e,p.modo);
+   const empuje=p.modo==='sello_tierra'?7:p.modo==='sello_agua'?3:2;m.retroceso={x:p.direccion.x*empuje,z:p.direccion.z*empuje};
+   if(m.hp===0){m.vivo=false;bajas++;experiencia+=Math.ceil(MONSTRUOS[m.tipo].vida/2);botinMonstruo(e,i,m);}
+   else fase(m,'recuperacion',p.modo==='sello_agua'?.8:.55);i.revision++;
+  }
+  p.restante=Math.max(0,p.restante-tiempo);if(!terminado&&p.restante>0)pendientes.push(p);
+ }
+ e.proyectiles=pendientes;return {bajas,experiencia};
+}
 export function golpearMonstruo(e:EstadoAventura,id:string,jugador:PuntoAventura,nivelEspada=0,danoExtra=0):ResultadoAventura {
  const i=instanciaAventura(e),m=i?.monstruos.find(m=>m.id===id&&m.vivo);if(!i||!m)return mal('La criatura ya no está aquí.');
  if(e.enfriamientoGolpe>0)return mal('Espera a terminar el golpe.');if(m.invulnerable>0)return mal('La criatura está recuperándose del impacto.');
  if(distancia(jugador,m)>2.1||!lineaVision(i,jugador,m))return mal('Acércate a la criatura por un camino despejado.');
  const nivel=clamp(Math.floor(nivelEspada),0,6),dano=Math.max(1,10+nivel*7+clamp(danoExtra,0,50)-MONSTRUOS[m.tipo].defensa);
  m.hp=Math.max(0,m.hp-dano);m.invulnerable=.28;e.enfriamientoGolpe=.42;m.retroceso=orientacion(jugador,m);m.retroceso.x*=5;m.retroceso.z*=5;
- if(m.hp===0){m.vivo=false;e.derrotados++;soltar(e,i,m,MONSTRUOS[m.tipo].botin,Math.min(20,2+Math.min(3,Math.floor(i.nivel/3))+(i.destinoId===MINA?Math.floor(i.nivel/40):0)));revelarEscalera(e,i,m,.12);}
+ if(m.hp===0){m.vivo=false;botinMonstruo(e,i,m);}
  else fase(m,'recuperacion',Math.max(.55,MONSTRUOS[m.tipo].recuperacion*.55));
  return bien(m.vivo?`${MONSTRUOS[m.tipo].nombre}: ${m.hp} / ${m.hpMax}`:'La criatura dejó recursos para recoger.',{dano,destruido:!m.vivo});
 }
@@ -345,6 +413,16 @@ export function errorAventura(raw:unknown):string|null {
  const texto=(v:unknown)=>typeof v==='string'&&v.length>0&&v.length<=200;
  if(!registro(raw)||raw.version!==1)return 'Formato de expediciones no compatible.';
  const r=raw;
+ if(r.dominioArmas!==undefined&&(!registro(r.dominioArmas)||Object.keys(r.dominioArmas).length>7||Object.entries(r.dominioArmas).some(([k,v])=>!Object.hasOwn(ARMAS_AVENTURA,k)||!entero(v,0,90))))return 'Dominio de armas inválido.';
+ const modo=(v:unknown):v is ModoArma=>typeof v==='string'&&Object.hasOwn(ARMAS_AVENTURA,v);
+ const puntoArma=(v:unknown):boolean=>punto(v);
+ if(r.proyectiles!==undefined){
+  if(!Array.isArray(r.proyectiles)||r.proyectiles.length>24)return 'Ráfaga de armas inválida.';
+  const vistos=new Set<number>();
+  for(const p of r.proyectiles){if(!registro(p)||!puntoArma(p)||!modo(p.modo)||p.modo==='espada'||!entero(p.id,1,r.secuencia)||vistos.has(p.id)||!puntoArma(p.direccion)||Math.abs(Math.hypot(p.direccion.x,p.direccion.z)-1)>.001||!numero(p.restante,.000001,2)||!numero(p.dano,1,100))return 'Proyectil de arma inválido.';vistos.add(p.id);}
+ }
+ if(r.invocacion!==undefined&&r.invocacion!==null){const p=r.invocacion;if(!registro(p)||!puntoArma(p)||!modo(p.modo)||!p.modo.startsWith('sello_')||!numero(p.restante,.000001,8)||!numero(p.espera,0,1)||!numero(p.dano,1,100))return 'Invocación elemental inválida.';}
+ if(r.destinoActual===null&&((r.proyectiles?.length??0)>0||r.invocacion))return 'Efecto de arma fuera de expedición.';
  if(!entero(r.semilla,0,0xffffffff))return 'Semilla de expediciones inválida.';
  for(const campo of ['ascensor','cofresMina'])if(r[campo]!==undefined&&(!Array.isArray(r[campo])||r[campo].length>5000||new Set(r[campo]).size!==r[campo].length||r[campo].some((n:unknown)=>!entero(n,1,100000))))return 'Paradas o cofres de la mina inválidos.';
  if(r.visitasMina!==undefined&&!entero(r.visitasMina))return 'Visitas a la mina inválidas.';

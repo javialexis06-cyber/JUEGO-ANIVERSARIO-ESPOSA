@@ -74,6 +74,10 @@ for(const [metal,nombre,ataque,defensa,precio,rareza] of metales){
   objeto(`${pieza}_${metal}`,`${etiqueta} de ${nombre}`,'equipo',Math.round(precio*factor),{pilaMax:1,rareza,equipo:{ranura:pieza,defensa:Math.max(1,Math.round(defensa*factor)),...(pieza==='botas'?{velocidad:metal==='astral'?.15:metal==='titanio'?.1:0}:{})}});
 }
 for(const [id,nombre,casillas,precio] of [['cofre_madera','Cofre de madera',24,70],['cofre_hierro','Cofre de hierro',48,260]] as const)objeto(id,nombre,'contenedor',precio,{pilaMax:20,contenedor:{casillas}});
+// Progresión de armas: no crea niveles de personaje ni de armadura.
+for(const [id,nombre] of [['arco_ribera','Arco de ribera'],['baston_cuarzo','Bastón de cuarzo'],['sello_fuego','Sello de fuego'],['sello_agua','Sello de agua'],['sello_tierra','Sello de tierra'],['sello_aire','Sello de aire']] as const)
+ objeto(id,nombre,'equipo',40,{pilaMax:1,equipo:{ranura:'arma'},descripcion:'Arma de expedición. Su dominio crece con impactos efectivos; se selecciona en la barra o se equipa en la ranura de arma.'});
+objeto('flecha_ribera','Flecha de ribera','insumo',0,{pilaMax:99,descripcion:'Munición del arco; cada disparo confirmado consume una flecha.'});
 for(const [id,nombre,precio] of [
  ['horno','Horno de piedra',100],['fundidora','Fundidora avanzada',440],['prensa','Prensa artesanal',140],['molino_artesanal','Molino de mesa',170],
  ['cocina','Cocina de campo',160],['fermentador','Fermentador de roble',180],['telar','Telar',190],['recicladora','Recicladora',210],
@@ -210,6 +214,13 @@ for(const [metal,_nombre,_ataque,_defensa,_precio] of metales){
  receta(`botas_${metal}`,'forja',{[material]:2,cuero:1},40+nivel*15,nivel);
 }
 receta('circuito_astral','forja',{bateria:2,lingote_oro:2,cristal_astral:1},100,3);
+receta('arco_ribera','banco_trabajo',{madera:8,fibra:6,cobre:2},30,0);
+receta('baston_cuarzo','banco_trabajo',{madera:6,cuarzo:3,cobre:2},30,0);
+receta('sello_fuego','banco_trabajo',{piedra:6,carbon:4,cuarzo:2},30,0);
+receta('sello_agua','banco_trabajo',{piedra:6,arcilla:4,cuarzo:2},30,0);
+receta('sello_tierra','banco_trabajo',{piedra:8,cobre:2,cuarzo:2},30,0);
+receta('sello_aire','banco_trabajo',{madera:6,fibra:4,cuarzo:2},30,0);
+tanda('flechas_ribera','mano',{madera:2,piedra:1},'flecha_ribera',4,0);
 receta('combustible_estelar','fundidora',{carbon:5,meteorita:2,polvo_estelar:1},65,3,3);
 receta('portal_verdia','banco_trabajo',{madera_ancestral:15,jade:4,lingote_cobre:8,cristal:10},100,1);
 receta('portal_senda','banco_trabajo',{lingote_plata:8,cuarzo:15,jade:4,bateria:3},120,2);

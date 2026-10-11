@@ -290,3 +290,11 @@ Cambio de reglas (frente de motor, avisado aquí):
 - Interiores (Claude): `amoblarCabana` (cama doble, cocina, mesa, chimenea encendida, biblioteca, plantas y cuadros,
   todo contra las paredes) y `adornosRefugio` (paja, farol que alumbra, ventanas, costales, escoba, aseladero).
   Cámara a 2 de zoom en interiores y fondo oscuro cálido en lugar del verde del exterior.
+
+### Fuatia, Confluencia y primeras armas (Codex, 11 de octubre de 2026)
+
+- Pedido de Javier: añadir a Fuatia, ampliar pasados del reparto, dar recursos recurrentes a todos los mundos y centrar el RPG nuevo en armas. La wiki puede actualizarse; el push del código sigue pausado mientras Claude trabaja.
+- Autoría: `docs/narrativa/08-fuatia.md`, vidas de los 142 NPC y 284 conversaciones, 36 principales, ocho secundarios de Fuatia, 24 territorios de recursos y 14 escenas largas. Confluencia, sus materiales y esas misiones todavía no están construidos en el juego.
+- Primer motor local: `aventura.ts` mantiene las expediciones actuales y añade arco, bastón y cuatro sellos; trayectorias, colisión, duración activa, una invocación, dominio limitado y compatibilidad V5. `objetos.ts` registra armas y recetas; `motor.ts` valida y paga energía y flechas. No se añade RPG de personajes o armaduras.
+- Presentación mínima: `main.ts` respeta alcance de la familia; `escenas-aventura.ts` muestra esferas simples para proyectiles y patrones. Arte definitivo y animaciones siguen en el frente de Claude. No se han añadido modelos ni llamadas de audio.
+- No combinar ni subir estos cambios de motor hasta que se levante la pausa. Consultar `docs/narrativa/11-armas-y-combate.md` y la prueba `probar-armas.mjs` antes de integrar.
