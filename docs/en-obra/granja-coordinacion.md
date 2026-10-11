@@ -157,3 +157,8 @@ Cambio de reglas pedido por Javier (frente de motor, avisado aquí):
   retira las rocas viejas de esa zona y deja lo que estaba en el suelo recogible. Cofres dan monedas y una pieza de
   equipo (`PREMIOS_COFRE`); `mineral` cuenta lo extraído en las expediciones (misión del dragón).
 - Vista: `mina-render.ts` (piso, paredes, decorado, escaleras, cofre) y el minimapa dibuja el plano del piso.
+- Gráficos de los pisos (estrategia de Stardew): la roca es una masa sólida con techo oscuro; detrás del piso se ve
+  la cara del acantilado (hileras de piedras, grietas, vetas que brillan) y del lado de la cámara la roca baja a una
+  repisa de 30 cm que no tapa al jugador (`terrenoMina`). Rocas sueltas al pie y sobre el canto, sombra de contacto
+  en el piso, farol que lleva el personaje y luz ambiente del color del piso (`escena.userData.ambienteExpedicion`).
+  Cámara: 1.9 de zoom en los pisos y 1.6 en la entrada.

@@ -53,31 +53,81 @@ function geoCristal(){const partes:THREE.BufferGeometry[]=[];for(let k=0;k<4;k++
  const g=mergeGeometries(partes)!;g.deleteAttribute('uv');return g;}
 function geoHongo(){const pie=new THREE.CylinderGeometry(.05,.07,.32,7).translate(0,.16,0),som=new THREE.SphereGeometry(.2,10,6,0,Math.PI*2,0,Math.PI/2).translate(0,.3,0);const g=mergeGeometries([pie.toNonIndexed(),som.toNonIndexed()])!;g.deleteAttribute('uv');return g;}
 
-/** Terreno del piso: piso, paredes, decorado y luces. */
+/** Cara de acantilado (como Stardew): capas de piedras redondeadas con sombra abajo, grietas y algún brillo de veta.
+ * Un metro de ancho por toda la altura de la pared. */
+function texturaAcantilado(tema:TemaMina,p:PaletaMina){
+ const clave='acantilado:'+tema;let t=texturas.get(clave);if(t)return t;
+ const W=128,H=320,c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d')!;
+ const base=new THREE.Color(p.roca),clara=new THREE.Color(p.rocaClara),honda=new THREE.Color(p.fondo);
+ const g0=ctx.createLinearGradient(0,0,0,H);g0.addColorStop(0,'#'+base.clone().lerp(honda,.25).getHexString());g0.addColorStop(1,'#'+base.clone().lerp(honda,.55).getHexString());ctx.fillStyle=g0;ctx.fillRect(0,0,W,H);
+ // Hileras de piedras: más grandes abajo, con luz arriba y sombra abajo (relieve pintado)
+ let y=4;let fila=0;while(y<H){const alto=22+hash(fila,1,20)*16+(y/H)*10;let x=-hash(fila,2,20)*30;let k=0;
+  while(x<W+10){const ancho=26+hash(fila,k,21)*30;const tono=base.clone().lerp(clara,.15+hash(fila,k,22)*.45).lerp(honda,(y/H)*.35);
+   const gx=ctx.createLinearGradient(0,y,0,y+alto);gx.addColorStop(0,'#'+tono.clone().lerp(new THREE.Color('#ffffff'),.18).getHexString());gx.addColorStop(.55,'#'+tono.getHexString());gx.addColorStop(1,'#'+tono.clone().lerp(honda,.45).getHexString());
+   ctx.fillStyle=gx;ctx.beginPath();ctx.roundRect(x+1.5,y+1.5,ancho-3,alto-3,Math.min(10,alto/2.4));ctx.fill();
+   for(const dx of [-W,W]){ctx.save();ctx.translate(dx,0);ctx.fillStyle=gx;ctx.beginPath();ctx.roundRect(x+1.5,y+1.5,ancho-3,alto-3,Math.min(10,alto/2.4));ctx.fill();ctx.restore();}
+   x+=ancho;k++;}
+  y+=alto;fila++;}
+ // Grietas, motitas y vetas que brillan
+ ctx.strokeStyle='#00000055';ctx.lineWidth=1.3;for(let k=0;k<5;k++){let x=hash(k,3,23)*W,yy=hash(k,4,23)*H;ctx.beginPath();ctx.moveTo(x,yy);for(let s=0;s<4;s++){x+=(hash(k,s,24)-.5)*22;yy+=8+hash(k,s,25)*18;ctx.lineTo(x,yy);}ctx.stroke();}
+ for(let k=0;k<260;k++){ctx.fillStyle=k%3?'#00000026':'#ffffff1c';ctx.fillRect(hash(k,5,26)*W,hash(k,6,26)*H,1.5,1.5);}
+ ctx.shadowColor=p.brillo;ctx.shadowBlur=8;ctx.fillStyle=p.veta;for(let k=0;k<4;k++){const x=10+hash(k,7,27)*(W-20),yy=30+hash(k,8,27)*(H-80);ctx.beginPath();ctx.ellipse(x,yy,3+hash(k,9,27)*3,2,hash(k,10,27)*3,0,6.3);ctx.fill();}ctx.shadowBlur=0;
+ // Base oscura (oclusión donde la pared toca el piso)
+ const g1=ctx.createLinearGradient(0,H-46,0,H);g1.addColorStop(0,'#00000000');g1.addColorStop(1,'#000000aa');ctx.fillStyle=g1;ctx.fillRect(0,H-46,W,46);
+ t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=THREE.RepeatWrapping;t.anisotropy=4;t.userData.compartido=true;texturas.set(clave,t);return t;
+}
+/** Techo de la roca (lo que se ve desde arriba): oscuro y con textura suave, como la masa negra de Stardew. */
+function texturaTecho(tema:TemaMina,p:PaletaMina,borde:boolean){
+ const clave='techo:'+tema+borde;let t=texturas.get(clave);if(t)return t;
+ const T=128,c=document.createElement('canvas');c.width=c.height=T;const ctx=c.getContext('2d')!;
+ const base=new THREE.Color(p.roca).lerp(new THREE.Color(p.fondo),borde?.35:.7);ctx.fillStyle='#'+base.getHexString();ctx.fillRect(0,0,T,T);
+ for(let k=0;k<26;k++){const x=hash(k,1,30)*T,y=hash(k,2,30)*T,r=8+hash(k,3,30)*16;const g=ctx.createRadialGradient(x-r*.3,y-r*.3,1,x,y,r);g.addColorStop(0,'#ffffff'+(borde?'22':'12'));g.addColorStop(1,'#00000000');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,6.3);ctx.fill();}
+ for(let k=0;k<160;k++){ctx.fillStyle=k%2?'#0000002a':'#ffffff10';ctx.fillRect(hash(k,4,31)*T,hash(k,5,31)*T,2,2);}
+ t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.userData.compartido=true;texturas.set(clave,t);return t;
+}
+
+const ALTO_PARED=2.6,ALTO_REPISA=.3;
+/** Terreno del piso con la estrategia de Stardew: toda la roca es una masa sólida (nada de vacío). Detrás del piso
+ * se ve la cara del acantilado; del lado de la cámara la roca baja a una repisa que no tapa al jugador. */
 export function terrenoMina(i:InstanciaAventura):THREE.Group{
- const g=new THREE.Group(),p=paletaMina(i),o=new THREE.Object3D(),piso:[number,number][]=[],muros:{x:number;z:number;frente:boolean}[]=[];
+ const g=new THREE.Group(),p=paletaMina(i),o=new THREE.Object3D(),piso:[number,number][]=[],altos:[number,number][]=[],repisas:[number,number][]=[];
  const es=(x:number,z:number)=>i.suelos[`${x},${z}`]==='suelo';
- for(const [k,t] of Object.entries(i.suelos)){const [x,z]=k.split(',').map(Number);if(t==='suelo')piso.push([x,z]);else if(es(x+1,z)||es(x-1,z)||es(x,z+1)||es(x,z-1)||es(x+1,z+1)||es(x-1,z-1)||es(x+1,z-1)||es(x-1,z+1)){
-  // Las paredes del lado de la cámara (abajo a la derecha de la pantalla) son bajitas para no tapar al jugador
-  muros.push({x,z,frente:es(x-1,z)||es(x,z-1)||es(x-1,z-1)});}}
- // Piso: losas instanciadas con textura y un poco de variación de tono
- const geoPiso=new THREE.BoxGeometry(1,.12,1);const losas=new THREE.InstancedMesh(geoPiso,new THREE.MeshStandardMaterial({map:texturaPiso(p.tema,p),roughness:p.tema==='hielo'?.35:.95,metalness:0,...(p.tema==='lava'?{emissive:'#ff5a1a',emissiveMap:texturaPiso(p.tema,p),emissiveIntensity:.18}:{})}),piso.length);
- piso.forEach(([x,z],n)=>{o.position.set(x+.5,-.08,z+.5);o.rotation.set(0,((x*3+z*5)&3)*Math.PI/2,0);o.scale.set(1,1,1);o.updateMatrix();losas.setMatrixAt(n,o.matrix);losas.setColorAt(n,new THREE.Color('#ffffff').multiplyScalar(.9+hash(x,z)*.16));});
+ for(const [k,t] of Object.entries(i.suelos)){const [x,z]=k.split(',').map(Number);if(t==='suelo'){piso.push([x,z]);continue;}
+  // ¿Hay piso detrás (hacia el fondo de la pantalla) a menos de 4 casillas? Entonces esta roca va bajita
+  let tapa=false;for(let dz=0;dz<=3&&!tapa;dz++)for(let dx=0;dx<=3;dx++)if((dx||dz)&&es(x-dx,z-dz)){tapa=true;break;}
+  (tapa?repisas:altos).push([x,z]);}
+ // Piso: losas con textura; más oscuras junto a la pared (sombra de contacto)
+ const losas=new THREE.InstancedMesh(new THREE.BoxGeometry(1,.12,1),new THREE.MeshStandardMaterial({map:texturaPiso(p.tema,p),roughness:p.tema==='hielo'?.35:.95,...(p.tema==='lava'?{emissive:'#ff5a1a',emissiveMap:texturaPiso(p.tema,p),emissiveIntensity:.18}:{})}),piso.length);
+ piso.forEach(([x,z],n)=>{o.position.set(x+.5,-.08,z+.5);o.rotation.set(0,((x*3+z*5)&3)*Math.PI/2,0);o.scale.set(1,1,1);o.updateMatrix();losas.setMatrixAt(n,o.matrix);
+  const junto=[[1,0],[-1,0],[0,1],[0,-1]].filter(([dx,dz])=>!es(x+dx,z+dz)).length;losas.setColorAt(n,new THREE.Color('#ffffff').multiplyScalar((.92+hash(x,z)*.14)*(1-junto*.09)));});
  losas.receiveShadow=true;g.add(losas);
- // Paredes: tres rocas distintas, altura y giro al azar por casilla
- const mat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.92});const geos=[0,1,2].map(k=>geoRoca(k*2.3+i.nivel%7,p)),grupos:typeof muros[]=[[],[],[]];
- muros.forEach(m=>grupos[Math.floor(hash(m.x,m.z,3)*3)].push(m));
- grupos.forEach((lista,k)=>{if(!lista.length)return;const im=new THREE.InstancedMesh(geos[k],mat,lista.length);lista.forEach((m,n)=>{const alto=m.frente?.35+hash(m.x,m.z,4)*.25:1.1+hash(m.x,m.z,5)*1.3;o.position.set(m.x+.5+(hash(m.x,m.z,6)-.5)*.2,0,m.z+.5+(hash(m.x,m.z,7)-.5)*.2);o.rotation.set(0,hash(m.x,m.z,8)*6.3,0);o.scale.set(.72+hash(m.x,m.z,9)*.2,alto,.72+hash(m.x,m.z,10)*.2);o.updateMatrix();im.setMatrixAt(n,o.matrix);});im.castShadow=true;im.receiveShadow=true;g.add(im);});
- // Decorado por tipo de piso, junto a las paredes y lejos de la llegada
+ // Roca alta: caras de acantilado a los lados y techo oscuro arriba
+ const cara=new THREE.MeshStandardMaterial({map:texturaAcantilado(p.tema,p),roughness:.9}),techo=new THREE.MeshStandardMaterial({map:texturaTecho(p.tema,p,false),roughness:1}),techoBorde=new THREE.MeshStandardMaterial({map:texturaTecho(p.tema,p,true),roughness:1});
+ const bloque=new THREE.BoxGeometry(1,ALTO_PARED,1).translate(0,ALTO_PARED/2,0);
+ const mAltos=new THREE.InstancedMesh(bloque,[cara,cara,techo,techo,cara,cara],altos.length);
+ altos.forEach(([x,z],n)=>{o.position.set(x+.5,0,z+.5);o.rotation.set(0,0,0);o.scale.set(1,1+hash(x,z,2)*.06,1);o.updateMatrix();mAltos.setMatrixAt(n,o.matrix);mAltos.setColorAt(n,new THREE.Color('#ffffff').multiplyScalar(.9+hash(x,z,3)*.2));});
+ mAltos.castShadow=true;mAltos.receiveShadow=true;g.add(mAltos);
+ const repisa=new THREE.BoxGeometry(1,ALTO_REPISA,1).translate(0,ALTO_REPISA/2,0);
+ const mRepisas=new THREE.InstancedMesh(repisa,[cara,cara,techoBorde,techoBorde,cara,cara],repisas.length);
+ repisas.forEach(([x,z],n)=>{o.position.set(x+.5,0,z+.5);o.scale.set(1,1,1);o.updateMatrix();mRepisas.setMatrixAt(n,o.matrix);mRepisas.setColorAt(n,new THREE.Color('#ffffff').multiplyScalar(.85+hash(x,z,4)*.2));});
+ mRepisas.receiveShadow=true;g.add(mRepisas);
+ // Bordes orgánicos: rocas sueltas al pie del acantilado y sobre el canto, para que no se vea cuadriculado
+ const pie:{x:number;z:number;s:number;y:number}[]=[];
+ for(const [x,z] of piso){for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1]]){if(es(x+dx,z+dz))continue;const k=hash(x*3+dx,z*3+dz,5);if(k>.55)continue;
+  pie.push({x:x+.5+dx*.42+(hash(x,z,6)-.5)*.5*(dz?1:0),z:z+.5+dz*.42+(hash(x,z,7)-.5)*.5*(dx?1:0),s:.16+k*.3,y:0});}}
+ for(const [x,z] of altos)if(es(x+1,z)||es(x,z+1)||es(x-1,z)||es(x,z-1)){if(hash(x,z,8)<.5)pie.push({x:x+.5+(hash(x,z,9)-.5)*.6,z:z+.5+(hash(x,z,10)-.5)*.6,s:.22+hash(x,z,11)*.25,y:ALTO_PARED});}
+ const geoPiedra=geoRoca(1.7,p),mPie=new THREE.InstancedMesh(geoPiedra,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.9}),Math.max(1,pie.length));mPie.count=pie.length;
+ pie.forEach((r,n)=>{o.position.set(r.x,r.y-r.s*.25,r.z);o.rotation.set(0,hash(n,r.s,12)*6.3,0);o.scale.set(r.s*1.2,r.s*(r.y?.6:1),r.s);o.updateMatrix();mPie.setMatrixAt(n,o.matrix);});
+ mPie.castShadow=true;g.add(mPie);
+ // Decorado por tipo de piso: cristales u hongos que brillan junto a las paredes
  const orillas=piso.filter(([x,z])=>(!es(x+1,z)||!es(x-1,z)||!es(x,z+1)||!es(x,z-1))&&Math.hypot(x+.5-i.inicio.x,z+.5-i.inicio.z)>3);
- const n=Math.min(orillas.length,p.variante==='cristal'||p.variante==='hongos'?90:45),elegidas=orillas.filter((_,k)=>hash(k,i.nivel,11)<n/Math.max(1,orillas.length));
- const deco=p.variante==='hongos'?geoHongo():p.tema==='tierra'&&p.variante==='normal'?geoHongo():geoCristal();
- const brilla=p.variante!=='normal'||p.tema!=='tierra';
- const im=new THREE.InstancedMesh(deco,new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.3,emissive:brilla?p.brillo:'#000000',emissiveIntensity:brilla?.55:0,transparent:p.tema==='hielo',opacity:p.tema==='hielo'?.85:1}),Math.max(1,elegidas.length));im.count=elegidas.length;
+ const n=Math.min(orillas.length,p.variante==='cristal'||p.variante==='hongos'?90:40),elegidas=orillas.filter((_,k)=>hash(k,i.nivel,11)<n/Math.max(1,orillas.length));
+ const deco=p.variante==='hongos'||p.tema==='tierra'&&p.variante==='normal'?geoHongo():geoCristal(),brilla=p.variante!=='normal'||p.tema!=='tierra';
+ const im=new THREE.InstancedMesh(deco,new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.3,emissive:brilla?p.brillo:'#000000',emissiveIntensity:brilla?.55:0}),Math.max(1,elegidas.length));im.count=elegidas.length;
  elegidas.forEach(([x,z],k)=>{o.position.set(x+.2+hash(x,z,12)*.6,0,z+.2+hash(x,z,13)*.6);o.rotation.set(0,hash(x,z,14)*6.3,0);o.scale.setScalar(.8+hash(x,z,15)*1.1);o.updateMatrix();im.setMatrixAt(k,o.matrix);im.setColorAt(k,new THREE.Color(p.deco[k%p.deco.length]));});
  g.add(im);
- // Luces: la de llegada y unas cuantas cálidas repartidas (pocas, por el celular)
- const llegada=new THREE.PointLight(p.luz,7,18,1.4);llegada.position.set(i.inicio.x,4,i.inicio.z);g.add(llegada);
+ // Luces: la de llegada y unas pocas del color del piso
+ const llegada=new THREE.PointLight(p.luz,8,16,1.4);llegada.position.set(i.inicio.x,3.5,i.inicio.z);g.add(llegada);
  const salas=piso.filter((_,k)=>k%Math.max(1,Math.floor(piso.length/3))===0).slice(1,4);for(const [x,z] of salas){const l=new THREE.PointLight(p.brillo,4,12,1.6);l.position.set(x+.5,3,z+.5);g.add(l);}
  return g;
 }

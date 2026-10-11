@@ -52,7 +52,7 @@ function rocaNodo(n:NodoAventura){
  }else for(let k=0;k<4;k++){const angle=k*2.399+h(3);cristal(g,color,Math.sin(angle)*.25,Math.cos(angle)*.22,.5+k*.12);}
  g.scale.setScalar(1.25);objetivo(g,'nodo',n.id);g.position.set(n.x,0,n.z);return g;
 }
-export function ambienteAventura(e:EstadoAventura){const d=destinoAventura(e.destinoActual),i=instanciaAventura(e);if(i&&i.destinoId===MINA){const p=paletaMina(i);return{fondo:p.fondo,niebla:p.niebla,luz:p.luz};}return{fondo:d?.espacial?'#252439':d?.tipo==='reino'?'#3c344c':'#404044',niebla:d?.espacial?'#343249':'#696578',luz:d?.luz??'#e8cfa4'};}
+export function ambienteAventura(e:EstadoAventura){const d=destinoAventura(e.destinoActual),i=instanciaAventura(e);if(i&&i.destinoId===MINA){const p=paletaMina(i);return{fondo:p.fondo,niebla:p.niebla,luz:p.luz,mina:true};}return{mina:false,fondo:d?.espacial?'#252439':d?.tipo==='reino'?'#3c344c':'#404044',niebla:d?.espacial?'#343249':'#696578',luz:d?.luz??'#e8cfa4'};}
 
 /** Adaptador de escena: geometría estática se reconstruye solo al cambiar de instancia/chunks.
  * `grupo` se añade a la escena anfitriona; sync tras acciones, update cada frame.
