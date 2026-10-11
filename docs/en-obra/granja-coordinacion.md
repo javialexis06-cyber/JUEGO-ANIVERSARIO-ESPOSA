@@ -283,3 +283,22 @@ de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/bl
   los locales): los muebles van contra las paredes o encima de esos sólidos, y lo que queda en el lado abierto (derecha
   y frente, sin pared por la cámara) mira hacia la cámara. Si el motor mueve un sólido, se mueve el mueble aquí.
 - Se retiraron `amoblarCabana` y `adornosServicio` (cajas de three.js) de `zonas-render.ts`.
+
+### Decoración de los festivales (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_festivales.py` → `public/modelos/granja_festivales.glb` (1,7 MB, mallas juntadas por
+  material en cada pieza): para cada festival (`primavera`, `verano`, `otono`, `invierno`) un poste con cintas y remate
+  (flor, sol, hojas con bellota, estrella), un tramo de guirnalda de 2 m (banderines, farolillos, hojas de arce,
+  bombillos con estrellas), un arco con el emblema (brote, campana, calabaza, vela), lo principal (puesto de semillas
+  con toldo, tarima de la ronda con tambor y campana, mesa de la cosecha, árbol de los recuerdos con marcos y regalos),
+  un rincón (carretilla con plántulas, cojines y tambores, espantapájaros sobre pacas, muñeco de nieve) y la corona para
+  la repisa de la fuente.
+- `src/granja-v3/festejos-render.ts`: `decoracionFestival(dia)` arma la plaza solo cuando `festivalHoy(dia)` da un
+  festival (todo ese día); cuatro postes alrededor de la plaza unidos por guirnaldas en catenaria, el arco en la calle
+  del oeste (73, 0), lo principal al este (94,6; 2,6), el rincón al suroeste (75,8; 4) y la corona en la fuente.
+  `celdasFestejo(dia)` son las celdas que ocupan esas piezas: `vista.libre()` no deja pisarlas (solo movimiento del
+  personaje; las reglas del motor no cambian). El punto de inscripción (84, 10), la plaza, las calles y los seis
+  puestos de los participantes quedan libres. `animarFestejo` mece las guirnaldas y hace titilar las luces.
+- La clave de la vista del pueblo incluye el tema del festival de hoy, para que la plaza se rehaga si cambia el día
+  estando allí. Si el motor mueve la plaza, la fuente o los puestos de los participantes, se ajustan las constantes de
+  `festejos-render.ts`.

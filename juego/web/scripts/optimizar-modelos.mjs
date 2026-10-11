@@ -24,6 +24,8 @@ const POSES_VIEJAS = /^(el|ella|abuelita|mama|adolescente|nino|ejecutivo|deporti
 // solo se quitan triángulos que no cambian la forma (0,001 ≈ 3 mm en un personaje de 2,7 m).
 function ajustes(nombre) {
   if (nombre === 'productos.glb') return [...UNIR, '--simplify-ratio', '0', '--simplify-error', '0.002'];
+  // Kits de la granja (un vacío m_<clave> por pieza): se juntan las mallas de cada pieza por material
+  if (nombre === 'granja_festivales.glb' || nombre === 'granja_pueblo.glb') return [...UNIR, '--simplify-ratio', '0', '--simplify-error', '0.0015'];
   if (nombre === 'el.glb' || nombre === 'ella.glb') return [...SEPARAR, '--simplify-ratio', '0', '--simplify-error', '0.001'];
   if (PERSONAJES.test(nombre)) return [...SEPARAR, '--simplify-ratio', '0', '--simplify-error', '0.0015'];
   return [...SEPARAR, '--simplify-ratio', '0', '--simplify-error', '0.001'];

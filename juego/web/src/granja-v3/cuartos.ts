@@ -3,16 +3,22 @@ import * as THREE from 'three';
 /** Interiores de la granja y del pueblo hechos con el kit de muebles de Blender (personajes/blender/granja_muebles.py,
  * un solo GLB con un vacío «m_<clave>» por pieza). El kit se carga una vez; cada mueble es una copia que comparte
  * geometría y materiales (marcados «compartido» para que liberar() no los destruya). */
-let kit:Promise<Map<string,THREE.Object3D>>|null=null;
+const kits=new Map<string,Promise<Map<string,THREE.Object3D>>>();
 /** El cargador de modelos lo pone main.ts (como los peluches de pueblo.ts): las pruebas del motor corren estos módulos
  * sin él y los cuartos quedan con su base, sin muebles. */
 let cargarModelo:((archivo:string)=>Promise<THREE.Object3D>)|null=null;
 export function usarCargadorMuebles(cargar:(archivo:string)=>Promise<THREE.Object3D>){cargarModelo=cargar;}
-function cargarKit(){
+function cargarKit(archivo='granja_muebles.glb'){
  if(!cargarModelo)return Promise.reject(new Error('sin cargador de modelos'));
- if(!kit){kit=cargarModelo('granja_muebles.glb').then(g=>{const m=new Map<string,THREE.Object3D>();g.traverse(o=>{const x=o as THREE.Mesh;if(!x.isMesh)return;x.geometry.userData.compartido=true;for(const mm of ([] as THREE.Material[]).concat(x.material))mm.userData.compartido=true;x.castShadow=true;x.receiveShadow=true;});for(const c of g.children)m.set(c.name.replace(/^m_/,''),c);return m;});kit.catch(()=>{kit=null;});}
+ let kit=kits.get(archivo);
+ if(!kit){
+  const nuevo=cargarModelo(archivo).then(g=>{const m=new Map<string,THREE.Object3D>();g.traverse(o=>{const x=o as THREE.Mesh;if(!x.isMesh)return;x.geometry.userData.compartido=true;for(const mm of ([] as THREE.Material[]).concat(x.material))mm.userData.compartido=true;x.castShadow=true;x.receiveShadow=true;});for(const c of g.children)m.set(c.name.replace(/^m_/,''),c);return m;});
+  kit=nuevo;kits.set(archivo,nuevo);nuevo.catch(()=>{if(kits.get(archivo)===nuevo)kits.delete(archivo);});
+ }
  return kit;
 }
+/** Usa las piezas de otro kit de la granja (p. ej. granja_festivales.glb) cuando cargue, si g sigue en escena. */
+export function conKit(g:THREE.Object3D,archivo:string,usar:(piezas:Map<string,THREE.Object3D>)=>void){cargarKit(archivo).then(m=>{if(vivo(g))usar(m);}).catch(()=>{});}
 export function precargarMuebles(){return cargarKit().then(()=>undefined,()=>undefined);}
 
 /** [clave, x, z, giro, escala, altura] */
