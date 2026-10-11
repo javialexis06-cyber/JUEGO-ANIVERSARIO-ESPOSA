@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { SALIDAS } from './caminos-mundo';
 import type { Zona } from './catalogo';
-import { conKit } from './cuartos';
+import { conKit, fundir } from './cuartos';
 
 /** Arte de las zonas fuera de la granja: la cueva de la Mina de Cristal, el monte espeso alrededor del bosque, del
  * bosque ancestral y del lago, el sotobosque, la orilla del lago y la textura de los senderos. Todo es decorado: no
@@ -183,34 +183,50 @@ export function cuevaMina(nivel:number):THREE.Group{
  const paredes=new THREE.Mesh(unir(rocas),matVertices());paredes.castShadow=paredes.receiveShadow=true;g.add(paredes);
  // Boca del túnel (por donde se sale) con su marco de madera
  const madera=new THREE.MeshStandardMaterial({color:'#8a6242',roughness:.9}),metal=new THREE.MeshStandardMaterial({color:'#5d6168',roughness:.5,metalness:.5});
+ // Lo hecho por mano (entibados, túnel, rieles, vagoneta, cristales) se cambia por piezas de Blender al cargar el kit
+ const figuras:THREE.Object3D[]=[],entibados:[number,number,number][]=[],racimos:[number,number,number,string][]=[];
  const viga=(w:number,h:number,d:number,x:number,y:number,z:number,ry=0)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),madera);m.position.set(x,y,z);m.rotation.y=ry;m.castShadow=m.receiveShadow=true;g.add(m);return m;};
  // Luz de afuera que entra por la salida
  const entra=new THREE.Mesh(new THREE.CircleGeometry(2.6,24).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:'#ffe2a8',transparent:true,opacity:.22,blending:THREE.AdditiveBlending,depthWrite:false}));entra.scale.set(1,1,1.4);entra.position.set(0,.02,8.6);g.add(entra);
- for(const s of [-1,1])viga(.3,3,.3,s*2.1,1.5,9.9);viga(4.8,.34,.36,0,3.05,9.9);
+ for(const s of [-1,1])figuras.push(viga(.3,3,.3,s*2.1,1.5,9.9));figuras.push(viga(4.8,.34,.36,0,3.05,9.9));
  // Entibados contra las paredes del fondo, con farol que alumbra
  const farol=new THREE.MeshStandardMaterial({color:'#ffd88a',emissive:'#ffb347',emissiveIntensity:1.6});
  for(const a of [3.35,3.95,4.55,5.15,2.75]){const x=cx+Math.cos(a)*10.2,z=cz+Math.sin(a)*9.3,ry=-a+Math.PI/2;
-  const marco=new THREE.Group();marco.position.set(x,0,z);marco.rotation.y=ry;g.add(marco);
+  const marco=new THREE.Group();marco.position.set(x,0,z);marco.rotation.y=ry;g.add(marco);figuras.push(marco);entibados.push([x,z,ry]);
   for(const s of [-1,1]){const p=new THREE.Mesh(new THREE.BoxGeometry(.26,2.7,.26),madera);p.position.set(s*1.1,1.35,0);p.castShadow=true;marco.add(p);}
   const l=new THREE.Mesh(new THREE.BoxGeometry(2.6,.3,.32),madera);l.position.y=2.75;marco.add(l);
   const f=new THREE.Mesh(new THREE.BoxGeometry(.24,.32,.24),farol);f.position.set(0,2.35,.22);marco.add(f);const tapa=new THREE.Mesh(new THREE.ConeGeometry(.2,.16,4),metal);tapa.position.set(0,2.58,.22);tapa.rotation.y=Math.PI/4;marco.add(tapa);
  }
  for(const [x,z] of [[-6,-7],[6,-6.5]]){const luz=new THREE.PointLight('#ffbf70',14,13,1.6);luz.position.set(x,2.4,z);g.add(luz);}
  // Rieles con su vagoneta llena de mineral
- const rx=-5.2;for(let z=-8;z<=8.5;z+=.7)viga(1.25,.07,.18,rx,.04,z);
- for(const s of [-1,1]){const r=new THREE.Mesh(new THREE.BoxGeometry(.07,.08,16.8),metal);r.position.set(rx+s*.45,.11,.25);g.add(r);}
- const vagon=new THREE.Group();vagon.position.set(rx,0,-2.5);g.add(vagon);
+ const rx=-5.2;for(let z=-8;z<=8.5;z+=.7)figuras.push(viga(1.25,.07,.18,rx,.04,z));
+ for(const s of [-1,1]){const r=new THREE.Mesh(new THREE.BoxGeometry(.07,.08,16.8),metal);r.position.set(rx+s*.45,.11,.25);g.add(r);figuras.push(r);}
+ const vagon=new THREE.Group();vagon.position.set(rx,0,-2.5);g.add(vagon);figuras.push(vagon);
  const caja=new THREE.Mesh(new THREE.BoxGeometry(1.1,.62,1.5),new THREE.MeshStandardMaterial({color:'#7a5a3e',roughness:.85}));caja.position.y=.62;caja.castShadow=true;vagon.add(caja);
  for(const y of [.4,.86]){const aro=new THREE.Mesh(new THREE.BoxGeometry(1.14,.06,1.54),metal);aro.position.y=y;vagon.add(aro);}
  for(const sx of [-1,1])for(const sz of [-1,1]){const rueda=new THREE.Mesh(new THREE.CylinderGeometry(.17,.17,.1,12),metal);rueda.rotation.z=Math.PI/2;rueda.position.set(sx*.5,.19,sz*.48);vagon.add(rueda);}
  const carga=new THREE.MeshStandardMaterial({color:tono.cristal[0],emissive:tono.cristal[0],emissiveIntensity:.25,roughness:.4});for(let i=0;i<6;i++){const m=new THREE.Mesh(bola(1,.2,i),i%2?carga:new THREE.MeshStandardMaterial({color:'#77716a',roughness:.9}));m.scale.setScalar(.22+hash(i,91)*.08);m.position.set((hash(i,92)-.5)*.6,.98,(hash(i,93)-.5)*.9);vagon.add(m);}
  // Racimos de cristal que brillan, pegados a las paredes
  const prismas:THREE.BufferGeometry[]=[];
- for(let n=0;n<11;n++){const a=hash(n,101)*Math.PI*2,x=cx+Math.cos(a)*10.7,z=cz+Math.sin(a)*9.8;if(Math.abs(x)<3&&z>6)continue;
+ for(let n=0;n<11;n++){const a=hash(n,101)*Math.PI*2,x=cx+Math.cos(a)*10.7,z=cz+Math.sin(a)*9.8;if(Math.abs(x)<3&&z>6)continue;racimos.push([x,z,hash(n,106)*6.3,tono.cristal[n%3]]);
   for(let i=0;i<7;i++){const h=.9+hash(n*7+i,102)*1.5,p=new THREE.CylinderGeometry(0,.24+hash(n*7+i,103)*.1,h*.3,6).translate(0,h*.85,0),cuerpo=new THREE.CylinderGeometry(.24+hash(n*7+i,103)*.1,.26,h*.7,6).translate(0,h*.35,0);const m=unir([cuerpo,p]);m.rotateX((hash(n*7+i,104)-.5)*.9);m.rotateZ((hash(n*7+i,105)-.5)*.9);m.translate(x+(hash(n*7+i,106)-.5)*.6,0,z+(hash(n*7+i,107)-.5)*.6);
    const col=new THREE.Color(tono.cristal[(n+i)%3]),cs=new Float32Array(m.attributes.position.count*3);for(let k=0;k<cs.length;k+=3)cs.set([col.r,col.g,col.b],k);m.setAttribute('color',new THREE.BufferAttribute(cs,3));prismas.push(m);}
   const brillo=new THREE.Mesh(new THREE.CircleGeometry(1.6,20).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:tono.cristal[0],transparent:true,opacity:.32,blending:THREE.AdditiveBlending,depthWrite:false}));brillo.position.set(x,.02,z);g.add(brillo);}
- const cristales=new THREE.Mesh(unir(prismas),new THREE.MeshStandardMaterial({vertexColors:true,emissive:tono.cristal[0],emissiveIntensity:.9,roughness:.15,metalness:.1,transparent:true,opacity:.92}));cristales.castShadow=true;g.add(cristales);
+ const cristales=new THREE.Mesh(unir(prismas),new THREE.MeshStandardMaterial({vertexColors:true,emissive:tono.cristal[0],emissiveIntensity:.9,roughness:.15,metalness:.1,transparent:true,opacity:.92}));cristales.castShadow=true;g.add(cristales);figuras.push(cristales);
+ conKit(g,'granja_monte.glb',m=>{
+  if(!['entibado','marco_tunel','riel','vagoneta','cristales'].every(k=>m.has(k)))return;
+  const kit=new THREE.Group(),tintes=new Map<string,THREE.Material>();
+  const poner=(clave:string,x:number,z:number,giro=0,escala:number|[number,number,number]=1,tinte?:string)=>{const o=m.get(clave)!.clone(true);o.position.set(x,0,z);o.rotation.y=giro;if(typeof escala==='number')o.scale.setScalar(escala);else o.scale.set(...escala);
+   // Los cristales toman el color y el brillo del piso
+   if(tinte)o.traverse(x=>{const malla=x as THREE.Mesh;if(!malla.isMesh||Array.isArray(malla.material)||!malla.material.name.endsWith('| cristal'))return;let t=tintes.get(tinte);if(!t){const c=(malla.material as THREE.MeshStandardMaterial).clone();c.userData={};c.color.set(tinte);c.emissive.set(tinte);c.emissiveIntensity=.9;c.transparent=true;c.opacity=.92;t=c;tintes.set(tinte,t);}malla.material=t;});
+   kit.add(o);};
+  for(const [x,z,ry] of entibados)poner('entibado',x,z,ry);
+  poner('marco_tunel',0,9.9);
+  for(let z=-8;z<=8.5;z+=.8)poner('riel',rx,z);poner('vagoneta',rx,-2.5);
+  for(const [x,z,r,col] of racimos)poner('cristales',x,z,r,1,col);
+  for(const o of figuras){o.removeFromParent();o.traverse(x=>{const malla=x as THREE.Mesh;if(malla.isMesh)malla.geometry.dispose();});}
+  g.add(fundir(kit));
+ });
  // Pozo de la mina (escalera al piso 1) y jaula del ascensor al fondo: acercarse abre los botones para bajar
  {const pozo=new THREE.Group();pozo.position.set(POZO_MINA.x,0,POZO_MINA.z);g.add(pozo);
   const hueco=new THREE.Mesh(new THREE.CircleGeometry(1.1,24).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:'#060508'}));hueco.position.set(-1.4,.012,0);pozo.add(hueco);
@@ -271,6 +287,32 @@ export function arcoSalida(nombre:string,x:number,z:number,horizontal:boolean):T
  return g;
 }
 
+/** Cambia el adelanto de figuras por piezas de Blender (monte, pueblo y edificios), en los mismos sitios. El agua y
+ * la arena del lago se quedan. Si falta alguna pieza, se queda todo como estaba. */
+function adelantoDeBlender(g:THREE.Group,hacia:Zona){
+ conKit(g,'granja_monte.glb',m1=>conKit(g,'granja_pueblo.glb',m2=>conKit(g,'granja_edificios.glb',m3=>{
+  const m=new Map([...m1,...m2,...m3]),kit=new THREE.Group();let falta=false;
+  const poner=(clave:string,x:number,z:number,giro=0,escala:number|[number,number,number]=1,y=0)=>{const base=m.get(clave);if(!base){falta=true;return;}const o=base.clone(true);o.position.set(x,y,z);o.rotation.y=giro;if(typeof escala==='number')o.scale.setScalar(escala);else o.scale.set(...escala);kit.add(o);};
+  if(hacia==='pueblo'){
+   // Tres casitas mirando hacia la granja (al oeste), faroles y la cerca del camino
+   poner('edificio_semillas_8x7',9,-6,-Math.PI/2,.5);poner('edificio_clinica_7x6',11,6,-Math.PI/2,.56);poner('edificio_carpinteria_7x7',17,-1,-Math.PI/2,.56);
+   for(const s of [-1,1]){poner('farol',3,s*2.2,0,.85);for(let k=0;k<6;k++)poner('valla_tramo',5+k*1.4,s*3.4,0,[1.4/1.5,1,1]);poner('valla_poste',13.4,s*3.4);}
+  }else if(hacia==='bosque'){
+   for(let k=0;k<10;k++){const lado=k%2?1:-1,px=-3-k*1.6,pz=lado*(3+((k*7)%3)),h=3+((k*5)%4);poner('pino',px,pz,k*1.3,(h*.45+2.6)/4.5);}
+   poner('tronco_caido',-6,-2.4,.4);poner('helecho',-4.2,2.2,0,1.3);poner('hongo',-7.2,-1.6,0,1.5);
+  }else if(hacia==='mina'){
+   for(let k=0;k<9;k++)poner('roca_grande',-9+k*2.4,-9-((k*3)%4),k*.9,[(3+((k*3)%4))/2,(3+((k*5)%5))/1.8,(2.5+((k*7)%3))/1.9],-.3);
+   poner('boca_mina',0,-5.8);for(let k=0;k<8;k++)poner('riel',0,-5.2+k*.8);poner('vagoneta',0,-3);
+  }else if(hacia==='lago'){
+   poner('muelle',0,5.4,Math.PI);
+   for(let k=0;k<26;k+=2){const a=k/26*Math.PI*2,px=Math.cos(a)*7.4,pz=10+Math.sin(a)*4.3;if(Math.abs(px)<1.4&&pz<10)continue;poner(k%4?'juncos':'piedra_orilla',px,pz,k);}
+  }
+  if(falta||!kit.children.length)return;
+  for(const o of [...g.children])if(!o.userData.queda){o.removeFromParent();o.traverse(x=>{const malla=x as THREE.Mesh;if(malla.isMesh){malla.geometry.dispose();for(const mt of ([] as THREE.Material[]).concat(malla.material))mt.dispose();}});}
+  g.add(fundir(kit));
+ })));
+}
+
 /** Adelanto de la zona a la que lleva cada salida de la granja, más allá del arco: así el borde no se ve como un
  * prado vacío. Pueblo: casitas, faroles y cerca; bosque: pinos grandes y troncos; mina: la montaña con la boca de la
  * mina y rieles; lago: un pedazo de agua con juncos y muelle. Solo decorado. */
@@ -301,11 +343,12 @@ export function adelantoZona(hacia:Zona,x:number,z:number,mallaAgua:(rx:number,r
   const farol=caja(.25,.3,.25,1.8,2.6,-5.4,new THREE.MeshStandardMaterial({color:'#ffe2a0',emissive:'#ffb347',emissiveIntensity:.9}));void farol;
  }else if(hacia==='lago'){
   // Un pedazo del lago con su muelle, juncos y piedras
-  const agua=mallaAgua(7,4);agua.position.set(0,.02,10);g.add(agua);
-  const orilla=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.03,40),mat('#d9c69a',{roughness:1}));orilla.scale.set(8,1,5);orilla.position.set(0,.004,10);g.add(orilla);
+  const agua=mallaAgua(7,4);agua.position.set(0,.02,10);agua.userData.queda=true;g.add(agua);
+  const orilla=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.03,40),mat('#d9c69a',{roughness:1}));orilla.scale.set(8,1,5);orilla.position.set(0,.004,10);orilla.userData.queda=true;g.add(orilla);
   for(let k=0;k<6;k++)caja(1.2,.1,.5,0,.2,5.6+k*.5,'#a07850');for(const s of [-.5,.5])for(let k=0;k<3;k++)caja(.12,.6,.12,s,0,6+k*1.2,'#7a5236');
   for(let k=0;k<26;k++){const a=k/26*Math.PI*2,px=Math.cos(a)*7.4,pz=10+Math.sin(a)*4.3;if(Math.abs(px)<1.4&&pz<10)continue;const j=new THREE.Mesh(new THREE.CylinderGeometry(.02,.03,.9,4),mat('#6f9a4a'));j.position.set(px,.45,pz);g.add(j);if(k%3===0){const e=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.2,6),mat('#6b4329'));e.position.set(px,.85,pz);g.add(e);}}
  }
+ adelantoDeBlender(g,hacia);
  return g;
 }
 
