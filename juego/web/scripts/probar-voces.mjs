@@ -62,6 +62,7 @@ const sonadas = (p) => p.evaluate(() => window.__voces?.sonadas.length ?? 0);
 // 3. Cien Puertas: el narrador habla al empezar la puerta
 {
   const p = await abrir('puertas.html?rol=el&local=1');
+  await p.getByText('Empezar', { exact: true }).click();
   await p.waitForFunction(() => (window.__voces?.sonadas.length ?? 0) > 0, null, { timeout: 120000 }).catch(() => errores.push('puertas: el narrador no habló'));
   for (let i = 0; i < 2; i++) {
     await p.waitForTimeout(2500);
