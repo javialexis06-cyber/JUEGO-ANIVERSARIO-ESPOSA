@@ -6,7 +6,7 @@ import type { ControlesGranja } from './controles';
 import { huella } from './motor';
 import { DESTINOS } from './vista';
 import { ARTICULOS, CULTIVOS, SECTORES, type Zona } from './catalogo';
-import { SALIDAS, rutaCaminando } from './caminos-mundo';
+import { SALIDAS, rutaCaminando, CAMINOS_GRANJA } from './caminos-mundo';
 import { MINA, MINERALES as MINERALES_AV, instanciaAventura, destinoAventura } from './aventura';
 const MINERALES_COLOR: Record<string, string> = Object.fromEntries(Object.entries(MINERALES_AV).map(([k, v]) => [k, v.color]));
 import { ARBOLES_PUEBLO, CAMINOS_PUEBLO, EDIFICIOS_PUEBLO, NPCS_PUEBLO, VIVIENDAS_PUEBLO } from './pueblo-datos';
@@ -157,6 +157,7 @@ export function iniciarHud(h: Hud) {
       // Terrenos que todavía no son nuestros: más apagados
       for (const sec of SECTORES) if (!s.sectorIds.includes(sec.id)) rect(m, sec.x, sec.z, sec.ancho, sec.fondo, '#86a96c');
       for (const sec of SECTORES) if (s.sectorIds.includes(sec.id)) { ctx.strokeStyle = '#ffffff55'; ctx.lineWidth = 0.25; ctx.strokeRect(sec.x, sec.z, sec.ancho, sec.fondo); }
+      for (const [x, z, w, d] of CAMINOS_GRANJA) rect(m, x, z, w, d, '#e2cf9f');
       for (const e of s.paisaje?.estanques ?? []) elipse(m, e.x, e.z, e.radioX, e.radioZ, '#6fb3d6');
       for (const hu of s.paisaje?.huecos ?? []) if (!hu.relleno) circulo(m, hu.x + 0.5, hu.z + 0.5, 0.45, '#5b4a3c');
       for (const p of s.parcelas) {

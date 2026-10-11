@@ -179,3 +179,17 @@ Cambio de reglas pedido por Javier (frente de motor, avisado aquí):
 - `arte.ts`: techos de color vivo por especie (gallinero rojo, establo vino, pato verde agua…), cimiento de piedras,
   veleta (gallito en gallineros y patos), farol, pacas de heno y costal; gallineros con nidales de paja y rampa con
   puertica (`detallesRefugio`). `patioRefugio` llena el corral con caminito de tierra, paja, bebedero, comedero y maíz.
+
+### Caminos de la granja y salidas en los bordes (Claude, pedido de Javier)
+
+Cambio de reglas (frente de motor, avisado aquí):
+- `caminos-mundo.ts`: `CAMINOS_GRANJA` (camino real este-oeste en z 12-13, ramal norte en x -13/-12, ramal sur en
+  x 6/7 y caminito de la cabaña). `esSenderoGranja` cubre esos caminos: nada se construye, siembra ni brota encima.
+- Las salidas de la granja pasaron a los bordes: pueblo (49,12), bosque (-50,12), mina (-13,-40) y lago (6,55), con
+  sus llegadas desde las otras zonas. Se llega caminando por los caminos, cruzando terreno sin comprar (ya era
+  transitable). En `main.ts` la salida se toma a 1.3 casillas para cubrir todo el ancho del camino.
+- Terreno inicial más grande: `SECTORES_INICIALES=[0,1,2,3,4]` (la cabaña y sus vecinas en cruz). La migración se
+  los da a las partidas guardadas y retira escombros que hayan quedado sobre los caminos. La misión «Una nueva
+  familia» ahora se cumple comprando el sector 5 o cualquier otro.
+- Vista: caminos de tierra, arcos de madera con letrero del destino y faroles en cada salida; el minimapa dibuja los
+  caminos; el velo de los sectores sin comprar es más suave.

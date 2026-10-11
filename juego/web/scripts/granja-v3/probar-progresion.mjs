@@ -74,9 +74,10 @@ test('La primera familia usa los adultos iniciales y desbloquea fantasía sin co
   assert.equal(motor.estado.animales.length, 3);
   assert.equal(motor.estado.estadisticas.nacimientos, 1);
   fail(motor, { tipo: 'criar', madreId: 'animal_inicial_0', padreId: 'animal_inicial_1' });
-  act(motor, { tipo: 'sector', sectorId: 1 });
+  act(motor, { tipo: 'sector', sectorId: 5 });
   act(motor, { tipo: 'reclamar', misionId: 'familia' });
-  assert.equal(motor.estado.monedas, 1000);
+  // El primer sector por comprar ya es el 5 (se empieza con la cruz 0-4), que cuesta 90 más
+  assert.equal(motor.estado.monedas, 910);
   assert.equal(motor.getMisionActual().id, 'crianza_gallina_oscura');
   assert.equal(validarEstado(motor.estado), null);
 });

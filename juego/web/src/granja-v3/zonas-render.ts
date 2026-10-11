@@ -221,3 +221,23 @@ export function arbolesLejanos(arboles:{id:string;x:number;z:number}[],antiguo:b
  const l=lejanos;g.add(instancias(l.roble.tronco,l.mat,sitios[0],madera),instancias(l.roble.copa,l.mat,sitios[0],verdes),instancias(l.pino.tronco,l.mat,sitios[1],madera),instancias(l.pino.copa,l.mat,sitios[1],verdes));
  return g;
 }
+
+/** Arco de madera con letrero al final de un camino de la granja (como las salidas de Stardew). */
+export function arcoSalida(nombre:string,x:number,z:number,horizontal:boolean):THREE.Group{
+ const g=new THREE.Group();g.position.set(x,0,z);if(horizontal)g.rotation.y=Math.PI/2;
+ const madera=new THREE.MeshStandardMaterial({color:'#8a6242',roughness:.9}),oscura=new THREE.MeshStandardMaterial({color:'#6b4a33',roughness:.9});
+ for(const s of [-1.6,1.6]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.13,.16,2.8,8),madera);p.position.set(s,1.4,0);p.castShadow=true;g.add(p);
+  const piedra=new THREE.Mesh(new THREE.DodecahedronGeometry(.3,1),new THREE.MeshStandardMaterial({color:'#a9a596',roughness:.95}));piedra.scale.set(1,.5,1);piedra.position.set(s,.1,0);g.add(piedra);}
+ const viga=new THREE.Mesh(new THREE.BoxGeometry(3.9,.22,.26),oscura);viga.position.y=2.75;viga.castShadow=true;g.add(viga);
+ // Letrero con el nombre del destino, colgado de dos cadenitas
+ const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d')!;ctx.fillStyle='#d9b98a';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#8a6242';ctx.lineWidth=10;ctx.strokeRect(5,5,502,118);
+ for(let k=0;k<6;k++){ctx.strokeStyle='#c4a272';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(10,20+k*18);ctx.lineTo(502,24+k*18);ctx.stroke();}
+ ctx.fillStyle='#4a3324';ctx.font='700 52px Nunito, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(nombre,256,68,480);
+ const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+ const tabla=new THREE.Mesh(new THREE.BoxGeometry(2.4,.6,.08),[madera,madera,madera,madera,new THREE.MeshStandardMaterial({map:tex,roughness:.85}),new THREE.MeshStandardMaterial({map:tex,roughness:.85})]);tabla.position.y=2.22;tabla.castShadow=true;g.add(tabla);
+ for(const s of [-.9,.9]){const cad=new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,.3,4),new THREE.MeshStandardMaterial({color:'#5d5a58'}));cad.position.set(s,2.55,0);g.add(cad);}
+ // Faroles a los lados y flores al pie
+ for(const s of [-1.6,1.6]){const f=new THREE.Mesh(new THREE.BoxGeometry(.18,.24,.18),new THREE.MeshStandardMaterial({color:'#ffd88a',emissive:'#ffb347',emissiveIntensity:.9}));f.position.set(s,2.05,.2);g.add(f);
+  for(let k=0;k<5;k++){const fl=new THREE.Mesh(new THREE.SphereGeometry(.07,6,4),new THREE.MeshStandardMaterial({color:['#f4a7b9','#f7d55a','#ffffff','#c9a3e0'][k%4]}));fl.position.set(s+(k-2)*.13,.18,.35+(k%2)*.12);g.add(fl);}}
+ return g;
+}
