@@ -1,0 +1,1210 @@
+[
+  {
+    "id": "mercader",
+    "nombre": "Inés",
+    "direccion": "Directa y cálida; hacer cuentas no la vuelve fría. Ofrecer corrección sin vender confianza.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "mercader"
+  },
+  {
+    "id": "cuidadora",
+    "nombre": "Mara",
+    "direccion": "Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "cuidadora"
+  },
+  {
+    "id": "carpintera",
+    "nombre": "Olivia",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "carpintera"
+  },
+  {
+    "id": "herrero",
+    "nombre": "Bruno",
+    "direccion": "Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "herrero"
+  },
+  {
+    "id": "veterinaria",
+    "nombre": "Adela",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "veterinaria"
+  },
+  {
+    "id": "posadera",
+    "nombre": "Rosa",
+    "direccion": "Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "posadera"
+  },
+  {
+    "id": "archivero",
+    "nombre": "Damián",
+    "direccion": "Preciso; usa fechas para ganar tiempo antes de admitir responsabilidad.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "archivero"
+  },
+  {
+    "id": "canalizadora_aura",
+    "nombre": "Eliana",
+    "direccion": "Impulso cálido que aprende a hacer una pausa antes de invitar.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "canalizadora_aura"
+  },
+  {
+    "id": "canalizadora_lara",
+    "nombre": "Serena",
+    "direccion": "Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "canalizadora_lara"
+  },
+  {
+    "id": "pescadora",
+    "nombre": "Cora",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "pescadora"
+  },
+  {
+    "id": "minero",
+    "nombre": "Darío",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "minero"
+  },
+  {
+    "id": "exploradora",
+    "nombre": "Vera",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "exploradora"
+  },
+  {
+    "id": "cocinero",
+    "nombre": "Simón",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "cocinero"
+  },
+  {
+    "id": "botanica",
+    "nombre": "Flora",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "botanica"
+  },
+  {
+    "id": "agricultor",
+    "nombre": "Tomás",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "agricultor"
+  },
+  {
+    "id": "maestra",
+    "nombre": "Alma",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "maestra"
+  },
+  {
+    "id": "musica",
+    "nombre": "Lía",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "musica"
+  },
+  {
+    "id": "guardabosques",
+    "nombre": "Gael",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "guardabosques"
+  },
+  {
+    "id": "artesana",
+    "nombre": "Renata",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "artesana"
+  },
+  {
+    "id": "astronoma",
+    "nombre": "Nerea",
+    "direccion": "Precisión con curiosidad y dudas audibles, nunca voz robótica.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "astronoma"
+  },
+  {
+    "id": "veterano",
+    "nombre": "Aurelio",
+    "direccion": "Autoridad acostumbrada a explicar; acortar frases al reconocer su firma.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "veterano"
+  },
+  {
+    "id": "nina",
+    "nombre": "Nina",
+    "direccion": "Curiosidad y afecto, orgullo pequeño; interpretación infantil sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nina"
+  },
+  {
+    "id": "nino",
+    "nombre": "Leo",
+    "direccion": "Entusiasmo por aventuras y vergüenza al corregir un mapa; interpretación infantil respetuosa.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nino"
+  },
+  {
+    "id": "viajera",
+    "nombre": "Paloma",
+    "direccion": "Ágil sin atropellar confidencias; cansancio cotidiano cuando habla de quedarse.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "viajera"
+  },
+  {
+    "id": "lirios_bastian",
+    "nombre": "Bastián",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "lirios_bastian"
+  },
+  {
+    "id": "lirios_olga",
+    "nombre": "Olga",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "lirios_olga"
+  },
+  {
+    "id": "lirios_maite",
+    "nombre": "Maite",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "lirios_maite"
+  },
+  {
+    "id": "lirios_julian",
+    "nombre": "Julián",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "lirios_julian"
+  },
+  {
+    "id": "lirios_belen",
+    "nombre": "Belén",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "lirios_belen"
+  },
+  {
+    "id": "lirios_teo",
+    "nombre": "Teo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "lirios_teo"
+  },
+  {
+    "id": "lirios_dalia",
+    "nombre": "Dalia",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "lirios_dalia"
+  },
+  {
+    "id": "lirios_tina",
+    "nombre": "Tina",
+    "direccion": "Preguntas rápidas y sentido del humor; sin declamar como una persona adulta.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "lirios_tina"
+  },
+  {
+    "id": "bruma_silvana",
+    "nombre": "Silvana",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "bruma_silvana"
+  },
+  {
+    "id": "bruma_felix",
+    "nombre": "Félix",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "bruma_felix"
+  },
+  {
+    "id": "bruma_amira",
+    "nombre": "Amira",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "bruma_amira"
+  },
+  {
+    "id": "bruma_roque",
+    "nombre": "Roque",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "bruma_roque"
+  },
+  {
+    "id": "bruma_elio",
+    "nombre": "Elio",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "bruma_elio"
+  },
+  {
+    "id": "bruma_zaira",
+    "nombre": "Zaira",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "bruma_zaira"
+  },
+  {
+    "id": "bruma_ada",
+    "nombre": "Ada",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "bruma_ada"
+  },
+  {
+    "id": "bruma_benicio",
+    "nombre": "Benicio",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "bruma_benicio"
+  },
+  {
+    "id": "piedra_eloy",
+    "nombre": "Eloy",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "piedra_eloy"
+  },
+  {
+    "id": "piedra_ursula",
+    "nombre": "Úrsula",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "piedra_ursula"
+  },
+  {
+    "id": "piedra_gonzalo",
+    "nombre": "Gonzalo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "piedra_gonzalo"
+  },
+  {
+    "id": "piedra_petra",
+    "nombre": "Petra",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "piedra_petra"
+  },
+  {
+    "id": "piedra_santiago",
+    "nombre": "Santiago",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "piedra_santiago"
+  },
+  {
+    "id": "piedra_mireya",
+    "nombre": "Mireya",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "piedra_mireya"
+  },
+  {
+    "id": "piedra_hugo",
+    "nombre": "Hugo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "piedra_hugo"
+  },
+  {
+    "id": "piedra_ciro",
+    "nombre": "Ciro",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "piedra_ciro"
+  },
+  {
+    "id": "brasa_tarek",
+    "nombre": "Tarek",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "brasa_tarek"
+  },
+  {
+    "id": "brasa_sol",
+    "nombre": "Sol",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "brasa_sol"
+  },
+  {
+    "id": "brasa_nadia",
+    "nombre": "Nadia",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "brasa_nadia"
+  },
+  {
+    "id": "brasa_ramiro",
+    "nombre": "Ramiro",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "brasa_ramiro"
+  },
+  {
+    "id": "brasa_idalia",
+    "nombre": "Idalia",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "brasa_idalia"
+  },
+  {
+    "id": "brasa_dante",
+    "nombre": "Dante",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "brasa_dante"
+  },
+  {
+    "id": "brasa_rufina",
+    "nombre": "Rufina",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "brasa_rufina"
+  },
+  {
+    "id": "brasa_yago",
+    "nombre": "Yago",
+    "direccion": "Impulso y alivio al poder admitir un error; sin caricatura ni solemnidad adulta.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "brasa_yago"
+  },
+  {
+    "id": "nieve_eira",
+    "nombre": "Eira",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nieve_eira"
+  },
+  {
+    "id": "nieve_anselmo",
+    "nombre": "Anselmo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nieve_anselmo"
+  },
+  {
+    "id": "nieve_luz",
+    "nombre": "Luz",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nieve_luz"
+  },
+  {
+    "id": "nieve_quirina",
+    "nombre": "Quirina",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nieve_quirina"
+  },
+  {
+    "id": "nieve_severo",
+    "nombre": "Severo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nieve_severo"
+  },
+  {
+    "id": "nieve_milena",
+    "nombre": "Milena",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nieve_milena"
+  },
+  {
+    "id": "nieve_otto",
+    "nombre": "Otto",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nieve_otto"
+  },
+  {
+    "id": "nieve_celeste",
+    "nombre": "Celeste",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nieve_celeste"
+  },
+  {
+    "id": "vigilia_aldan",
+    "nombre": "Aldán",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "vigilia_aldan"
+  },
+  {
+    "id": "vigilia_noemi",
+    "nombre": "Noemí",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "vigilia_noemi"
+  },
+  {
+    "id": "vigilia_ulises",
+    "nombre": "Ulises",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "vigilia_ulises"
+  },
+  {
+    "id": "vigilia_kael",
+    "nombre": "Kael",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "vigilia_kael"
+  },
+  {
+    "id": "vigilia_azucena",
+    "nombre": "Azucena",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "vigilia_azucena"
+  },
+  {
+    "id": "vigilia_telmo",
+    "nombre": "Telmo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "vigilia_telmo"
+  },
+  {
+    "id": "verdia_amaranta",
+    "nombre": "Amaranta",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_amaranta"
+  },
+  {
+    "id": "verdia_nilo",
+    "nombre": "Nilo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_nilo"
+  },
+  {
+    "id": "verdia_isadora",
+    "nombre": "Isadora",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_isadora"
+  },
+  {
+    "id": "verdia_berenice",
+    "nombre": "Berenice",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_berenice"
+  },
+  {
+    "id": "verdia_lucio",
+    "nombre": "Lucio",
+    "direccion": "Humor de cocina y cariño sin exigir espera; voz humana, no efecto fantasmal.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_lucio"
+  },
+  {
+    "id": "verdia_sarai",
+    "nombre": "Sarai",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_sarai"
+  },
+  {
+    "id": "verdia_eneas",
+    "nombre": "Eneas",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_eneas"
+  },
+  {
+    "id": "verdia_yara",
+    "nombre": "Yara",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_yara"
+  },
+  {
+    "id": "verdia_tobias",
+    "nombre": "Tobías",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_tobias"
+  },
+  {
+    "id": "verdia_celino",
+    "nombre": "Celino",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_celino"
+  },
+  {
+    "id": "verdia_aina",
+    "nombre": "Aina",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_aina"
+  },
+  {
+    "id": "verdia_dimas",
+    "nombre": "Dimas",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "verdia_dimas"
+  },
+  {
+    "id": "eco_sora",
+    "nombre": "Sora",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "eco_sora"
+  },
+  {
+    "id": "eco_esteban",
+    "nombre": "Esteban",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "eco_esteban"
+  },
+  {
+    "id": "eco_violeta",
+    "nombre": "Violeta",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "eco_violeta"
+  },
+  {
+    "id": "eco_nazario",
+    "nombre": "Nazario",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "eco_nazario"
+  },
+  {
+    "id": "eco_basilia",
+    "nombre": "Basilia",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "eco_basilia"
+  },
+  {
+    "id": "eco_oriel",
+    "nombre": "Oriel",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "eco_oriel"
+  },
+  {
+    "id": "senda_iria",
+    "nombre": "Iria",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "senda_iria"
+  },
+  {
+    "id": "senda_mateo",
+    "nombre": "Mateo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "senda_mateo"
+  },
+  {
+    "id": "senda_nora",
+    "nombre": "Nora",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "senda_nora"
+  },
+  {
+    "id": "senda_fabian",
+    "nombre": "Fabián",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "senda_fabian"
+  },
+  {
+    "id": "senda_leire",
+    "nombre": "Leire",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "senda_leire"
+  },
+  {
+    "id": "senda_anwar",
+    "nombre": "Anwar",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "senda_anwar"
+  },
+  {
+    "id": "senda_ofelia",
+    "nombre": "Ofelia",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "senda_ofelia"
+  },
+  {
+    "id": "senda_pablo",
+    "nombre": "Pablo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "senda_pablo"
+  },
+  {
+    "id": "hilos_tecla",
+    "nombre": "Tecla",
+    "direccion": "Comparar y corregirse; firmeza contra un modelo, respeto ante su testigo.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "hilos_tecla"
+  },
+  {
+    "id": "hilos_hector",
+    "nombre": "Héctor",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "hilos_hector"
+  },
+  {
+    "id": "hilos_asha",
+    "nombre": "Asha",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "hilos_asha"
+  },
+  {
+    "id": "hilos_elian",
+    "nombre": "Elián",
+    "direccion": "Recuperar respiración al poder negar; no actuar confusión como caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "hilos_elian"
+  },
+  {
+    "id": "nox_dorian",
+    "nombre": "Dorian",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nox_dorian"
+  },
+  {
+    "id": "nox_salma",
+    "nombre": "Salma",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nox_salma"
+  },
+  {
+    "id": "nox_viggo",
+    "nombre": "Viggo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nox_viggo"
+  },
+  {
+    "id": "nox_mirta",
+    "nombre": "Mirta",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nox_mirta"
+  },
+  {
+    "id": "nox_inigo",
+    "nombre": "Íñigo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nox_inigo"
+  },
+  {
+    "id": "nox_tamara",
+    "nombre": "Tamara",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nox_tamara"
+  },
+  {
+    "id": "orbita_helena",
+    "nombre": "Helena",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "orbita_helena"
+  },
+  {
+    "id": "orbita_dexo",
+    "nombre": "Dexo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "orbita_dexo"
+  },
+  {
+    "id": "orbita_tessa",
+    "nombre": "Tessa",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "orbita_tessa"
+  },
+  {
+    "id": "orbita_boris",
+    "nombre": "Boris",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "orbita_boris"
+  },
+  {
+    "id": "orbita_valentina",
+    "nombre": "Valentina",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "orbita_valentina"
+  },
+  {
+    "id": "orbita_ivo",
+    "nombre": "Ivo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "orbita_ivo"
+  },
+  {
+    "id": "orbita_said",
+    "nombre": "Said",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "orbita_said"
+  },
+  {
+    "id": "orbita_rita",
+    "nombre": "Rita",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "orbita_rita"
+  },
+  {
+    "id": "aurelia_aitana",
+    "nombre": "Aitana",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "aurelia_aitana"
+  },
+  {
+    "id": "aurelia_oscar",
+    "nombre": "Óscar",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "aurelia_oscar"
+  },
+  {
+    "id": "aurelia_kiara",
+    "nombre": "Kiara",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "aurelia_kiara"
+  },
+  {
+    "id": "aurelia_saul",
+    "nombre": "Saúl",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "aurelia_saul"
+  },
+  {
+    "id": "nocturna_matea",
+    "nombre": "Matea",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nocturna_matea"
+  },
+  {
+    "id": "nocturna_elvira",
+    "nombre": "Elvira",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nocturna_elvira"
+  },
+  {
+    "id": "nocturna_gaspar",
+    "nombre": "Gaspar",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nocturna_gaspar"
+  },
+  {
+    "id": "nocturna_naim",
+    "nombre": "Naim",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nocturna_naim"
+  },
+  {
+    "id": "esmeralda_olmo",
+    "nombre": "Olmo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "esmeralda_olmo"
+  },
+  {
+    "id": "esmeralda_indira",
+    "nombre": "Indira",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "esmeralda_indira"
+  },
+  {
+    "id": "esmeralda_duna",
+    "nombre": "Duna",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "esmeralda_duna"
+  },
+  {
+    "id": "esmeralda_raimundo",
+    "nombre": "Raimundo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "esmeralda_raimundo"
+  },
+  {
+    "id": "fragmentos_axel",
+    "nombre": "Axel",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "fragmentos_axel"
+  },
+  {
+    "id": "fragmentos_pia",
+    "nombre": "Pía",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "fragmentos_pia"
+  },
+  {
+    "id": "fragmentos_lazaro",
+    "nombre": "Lázaro",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "fragmentos_lazaro"
+  },
+  {
+    "id": "fragmentos_uma",
+    "nombre": "Uma",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "fragmentos_uma"
+  },
+  {
+    "id": "ambar_zora",
+    "nombre": "Zora",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "ambar_zora"
+  },
+  {
+    "id": "ambar_nestor",
+    "nombre": "Néstor",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "ambar_nestor"
+  },
+  {
+    "id": "ambar_alina",
+    "nombre": "Alina",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "ambar_alina"
+  },
+  {
+    "id": "ambar_baltasar",
+    "nombre": "Baltasar",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "ambar_baltasar"
+  },
+  {
+    "id": "ambar_samira",
+    "nombre": "Samira",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "ambar_samira"
+  },
+  {
+    "id": "ambar_kenzo",
+    "nombre": "Kenzo",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "ambar_kenzo"
+  },
+  {
+    "id": "iris_calista",
+    "nombre": "Calista",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "iris_calista"
+  },
+  {
+    "id": "iris_orin",
+    "nombre": "Orin",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "iris_orin"
+  },
+  {
+    "id": "iris_liora",
+    "nombre": "Liora",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "iris_liora"
+  },
+  {
+    "id": "iris_edda",
+    "nombre": "Edda",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "iris_edda"
+  },
+  {
+    "id": "iris_mauro",
+    "nombre": "Mauro",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "iris_mauro"
+  },
+  {
+    "id": "iris_yuna",
+    "nombre": "Yuna",
+    "direccion": "Leer su biografía: ritmo y léxico de oficio sin caricatura.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "iris_yuna"
+  },
+  {
+    "id": "el",
+    "nombre": "Él",
+    "direccion": "Natural, práctico, escuchar antes de resolver.",
+    "voz_proveedor": null,
+    "estado": "reutilizar_voz_ya_autorizada",
+    "referencia_personaje": "el"
+  },
+  {
+    "id": "ella",
+    "nombre": "Ella",
+    "direccion": "Natural, humor y límites claros; sin solemnidad automática.",
+    "voz_proveedor": null,
+    "estado": "reutilizar_voz_ya_autorizada",
+    "referencia_personaje": "ella"
+  },
+  {
+    "id": "narrador",
+    "nombre": "Narrador",
+    "direccion": "Cercano y respirado; describir sin anunciar emociones grandiosas.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "narrador"
+  },
+  {
+    "id": "aura",
+    "nombre": "Aura",
+    "direccion": "Energía cálida, con escucha; firme sin gritar.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "aura"
+  },
+  {
+    "id": "lara",
+    "nombre": "Lara",
+    "direccion": "Serenidad clara, verdad difícil sin amenaza.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "lara"
+  },
+  {
+    "id": "celia",
+    "nombre": "Celia",
+    "direccion": "Cercana, cotidiana, asombro sin infantilizar.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "celia"
+  },
+  {
+    "id": "nathgora",
+    "nombre": "Nath’Gora",
+    "direccion": "Cortesía fría; convicción de estar ofreciendo una solución.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "nathgora"
+  },
+  {
+    "id": "vaelthor",
+    "nombre": "Vael’Thor",
+    "direccion": "Preciso y paciente; control que empieza a fallar.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "vaelthor"
+  },
+  {
+    "id": "conde",
+    "nombre": "Conde Sangrevil",
+    "direccion": "Autoridad educada con miedo; sin pedir absolución.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "conde"
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "A": {
+    "lineas": 298,
+    "caracteres": 19399,
+    "palabras": 3304
+  },
+  "B": {
+    "lineas": 250,
+    "caracteres": 15578,
+    "palabras": 2673
+  },
+  "C": {
+    "lineas": 770,
+    "caracteres": 45682,
+    "palabras": 7597
+  },
+  "total_lineas": 1318,
+  "voces_con_lineas": 151,
+  "misiones_principales": 24,
+  "arcos_personales": 142,
+  "secretos": 12,
+  "encuentros": 19,
+  "relaciones": 98,
+  "estado": "guiones_sin_audio_generado",
+  "costo": "Sin calcular; depende del proveedor, voz, modelo y promoción vigentes.",
+  "tomas_unicas_por_hablante_texto": 1317,
+  "caracteres_unicos": 80642,
+  "minutos_estimados_a_145_palabras_por_minuto": 93.6
+}

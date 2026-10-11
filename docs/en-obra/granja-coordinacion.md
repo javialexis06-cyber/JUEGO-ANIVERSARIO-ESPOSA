@@ -27,6 +27,19 @@ Destinos: S21 FE y S24 Ultra. La granja puede probarse con teclado y mouse y con
 
 ## Estado real e historia
 
+### Biblia narrativa ampliada · 11 de octubre de 2026
+
+Javier pidió desarrollar la mitología, la historia completa y los guiones de todo el reparto para futura
+producción de voces, música y escenas. Este bloque escribe en `docs/narrativa/`: conserva los 142 IDs
+del reparto, las cinco figuras narrativas y el canon importado de Astra. Los nombres propuestos se usan
+como nombres de autoría, sin renombrar todavía personajes del motor. Las capacidades nuevas se marcan
+como diseño pendiente: un guion no concede objetos ni acredita misiones en una partida.
+No se modifican modelos, renderizadores, audio existente ni el guardado V5. Las entregas narrativas
+requieren recibos de acciones reales y recompensas únicas con límites; los secretos tienen pistas
+descubribles sin reloj real ni compras. La publicación sigue pausada por petición expresa de Javier.
+Se consultó el remoto `5099d4f` antes de editar: contiene avances gráficos de Claude; no se mezclan
+ni se publican durante esta pausa.
+
 ### Cuadernos integrados · 11 de octubre de 2026
 
 La primera serie de K07 ya conecta los tres campamentos existentes con recuperación, lectura persistente,

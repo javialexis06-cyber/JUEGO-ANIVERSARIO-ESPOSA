@@ -1,5 +1,11 @@
 # La mitología de Astra (la historia que une la casa, la granja y Sangre y Ceniza)
 
+**Ampliación encargada el 11 de octubre de 2026:** [biblia narrativa de Astra](narrativa/README.md).
+Desarrolla los puntos abiertos con cronología, facciones, biografías, relaciones, campaña y guiones.
+Es autoría nueva a partir de este canon, no una copia recuperada de la conversación perdida.
+Las decisiones de historia y recompensas están escritas; su integración jugable y audio siguen pendientes.
+El texto original de Javier se conserva debajo.
+
 La trajo Javier el 8 de octubre de 2026 desde el **juego de la granja**, que será otro de los juegos principales y que
 desarrolla otra IA. Es el **canon compartido**: la historia principal se cuenta en la granja; **Sangre y Ceniza** revela
 los misterios del abismo y **la casa** es donde se juntan las respuestas. Si la mitología cambia allá, se cambia aquí

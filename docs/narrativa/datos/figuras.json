@@ -1,0 +1,37 @@
+[
+  {
+    "id": "figura_aura",
+    "nombre": "Aura",
+    "alias_voz": "aura",
+    "biografia": "recuerda cada mundo que quiso salvar y no pudo. En su juventud confundía ofrecer oportunidades con garantizar felicidad: llenó un valle de brotes que sus habitantes no tenían cómo cuidar. Lara le enseñó a esperar. Ahora pregunta antes de bendecir; aun así, ante una amenaza, su impulso es encender más. Su debilidad no es amar demasiado sino decidir demasiado rápido qué debería querer otro. Habla con verbos concretos, se entusiasma, reconoce errores sin perder alegría. Eliana aprende de ella a ofrecer un comienzo sin exigir entusiasmo a quien está agotado. Su objeto íntimo es una semilla que no germinó: recuerda que una oportunidad también puede rechazarse.",
+    "estado": "autoria_sin_npc_social"
+  },
+  {
+    "id": "figura_lara",
+    "nombre": "Lara",
+    "alias_voz": "lara",
+    "biografia": "no decide cuánto vale una vida por lo que produjo. Conoce el peso de cada despedida, no todas las intenciones de los vivos. Al proteger el Santuario ocultó el horror de otros planos para evitar pánico; con los siglos, ese silencio permitió que el Consejo confundiera seguridad con invulnerabilidad. Le cuesta admitir que una verdad dolorosa puede ser un cuidado. Su arco consiste en hacer pública la historia del escudo sin convertir a los muertos en espectáculo. Con Serena mantiene una relación de oficio, no de posesión: puede aconsejarla, nunca obligarla a pronunciar un rito. Habla despacio, sin acertijos, y deja terminar al otro. Su velo conserva espacios vacíos; no contiene almas cautivas.",
+    "estado": "autoria_sin_npc_social"
+  },
+  {
+    "id": "figura_celia",
+    "nombre": "Celia",
+    "alias_voz": "celia",
+    "biografia": "nació del núcleo natural de un planeta, no de un matrimonio divino. Su primer gesto fue separar un cauce para que dos raíces pudieran vivir. Creó diversidad sin comprender todavía que diversidad incluye conflicto. Cuando Aura y Lara alzaron el escudo, agradeció la protección y lamentó no haber participado de su decisión. En la actualidad intenta cuidar personalmente todo y se agota; la granja, las cooperativas y la estación le enseñan a confiar sin abandonar. Su voz es cercana, ocasionalmente divertida: sabe de raíces antes que de política. El jugador no extrae poder de su cuerpo como si fuera un almacén infinito. Los minerales son procesos naturales finitos y el uso exige recuperación de suelos.",
+    "estado": "autoria_sin_npc_social"
+  },
+  {
+    "id": "figura_nathgora",
+    "nombre": "Nath’Gora",
+    "alias_voz": "nathgora",
+    "biografia": "custodió una estrella cuyo panteón trató el agotamiento como un problema ajeno. Pidió ayuda, recibió homenajes en vez de recursos y vio morir su sistema. Conservó su función de custodio sin tener ya nada que custodiar. Decidió que toda pasión era una promesa de abandono y destruyó otros panteones para que nadie disfrutara una confianza que él había perdido. Su argumento tiene una herida verdadera y una conclusión criminal. No busca cariño secreto ni se cura con una conversación. Ofrece a los mortales quietud sin hambre, sin duelo y sin voluntad. Su voz es serena, casi útil; no grita porque cree estar explicando una solución. El final le quita acceso al Santuario; no borra sus víctimas ni proclama reconciliación.",
+    "estado": "autoria_sin_npc_social"
+  },
+  {
+    "id": "figura_vaelthor",
+    "nombre": "Vael’Thor",
+    "alias_voz": "vaelthor",
+    "biografia": "fue arquitecto de rutas seguras entre planos. Una travesía que él diseñó falló y perdió a su compañera de oficio; decidió que el error era permitir que algo pudiera cambiar. Empezó a encerrar esencias divinas en geometrías perfectas. Fue exiliado cuando su obra dejó de permitir salida. Nath le ofrece materia de estrellas muertas y acceso a las ruinas de panteones; Vael ofrece prisiones, falsos recorridos y una red de repetición. Desprecia el apagamiento de Nath: quiere conservar, no reducir todo a ceniza. Se necesitan y se sabotean. Su debilidad es una geometría que presupone respuestas idénticas: testimonios incompatibles pero honestos y decisiones libres desajustan sus moldes. Sol no es su descendiente ni una reencarnación; su cerámica humana constituye un contraejemplo humilde. Habla con cortesía precisa y trata a las personas como material hasta que ellas le niegan esa autoridad.",
+    "estado": "autoria_sin_npc_social"
+  }
+]

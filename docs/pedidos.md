@@ -2,6 +2,13 @@
 
 ## Frente de granja en paralelo
 
+**Prioridad actual, 11 de octubre:** Javier encargó una base narrativa profunda para conectar granja y
+Sangre y Ceniza. Entrega local en [narrativa/README.md](narrativa/README.md): cosmología y cronología,
+142 biografías y arcos personales, cinco figuras divinas, 24 misiones principales, doce secretos,
+19 encuentros comunitarios, 98 relaciones y guiones de audio. Es diseño escrito, no campaña ya ejecutable.
+Los pushes siguen pausados por su instrucción mientras Claude trabaja. No retomar publicación automática
+por las instrucciones anteriores de esta cola; los cuadernos K07 también permanecen locales.
+
 Javier pidió integrar la granja existente, subir cada avance probado y repartir el trabajo: el frente de granja continúa motor, sistemas e historia; Claude hace gráficos, diseño de personajes y presentación visual. Leer [`en-obra/granja-coordinacion.md`](en-obra/granja-coordinacion.md). El motor sigue en desarrollo; cuatro festivales básicos ya conectados (ver `juego/web/src/granja-v3/FESTIVALES-INTEGRACION.md`); ofertas diarias/semanales y tres especiales de dos etapas ya integrados (ver `juego/web/src/granja-v3/ENCARGOS-INTEGRACION.md`); dos proyectos de correspondencia con cuatro ramas excluyentes, recetas útiles y decisiones persistentes ya integrados (ver `juego/web/src/granja-v3/CORREO-INTEGRACION.md`); seis lotes del archivo con donaciones, premios únicos y reserva de semillas durante todo el año ya integrados (ver `juego/web/src/granja-v3/COLECCIONES-INTEGRACION.md`); tres cuadernos recuperables con lectura persistente, prospección y recetas rápidas ya integrados (ver `juego/web/src/granja-v3/LIBROS-INTEGRACION.md`); siguiente bloque previsto: identificación y uso de hallazgos mineros (F11). Esto no reemplaza el orden de los demás pedidos de esta cola.
 
 Lo que Javier pidió y todavía falta, en el orden en que se va a hacer. Se tacha (se borra) cuando queda hecho,

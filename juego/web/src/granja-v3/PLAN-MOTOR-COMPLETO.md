@@ -629,6 +629,12 @@ Los fixtures sirven para comprobar casos raros y regresiones. Deben etiquetarse 
 
 ## 7. Condición de entrega y registro de cierre
 
+**Actualización narrativa, 11 de octubre:** por encargo expreso de Javier existe ahora una biblia de
+autoría en `docs/narrativa/`, con 197 misiones escritas, todo el reparto y guiones de producción.
+`NARRATIVA-INTEGRACION.md` define cómo llevarla a este motor sin cambiar IDs o V5. Este avance no
+cierra capacidades pendientes de esta auditoría: ningún portal, personaje adicional o premio queda
+implementado porque tenga un guion. La publicación sigue pausada por petición del usuario.
+
 No declarar «motor completo», «igual a Stardew» ni «todo implementado» mientras exista una capacidad solicitada parcial o pendiente. Se puede informar de avances concretos, pero este plan no es el resultado final solicitado.
 
 Al cerrar cada ID registrar: commit/build o revisión del archivo, escenario probado, entradas del jugador, resultado observado, evidencia visual si procede y regresión de guardado. Reconciliar los estados de esta auditoría con cambios posteriores; no marcar todos como implementados porque un módulo nuevo exporta funciones con esos nombres.

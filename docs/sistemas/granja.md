@@ -1,5 +1,10 @@
 # Nuestra granjita · integración actual
 
+**Historia nueva, todavía sin activar:** [biblia narrativa](../narrativa/README.md) y contrato
+`juego/web/src/granja-v3/NARRATIVA-INTEGRACION.md`. Desarrolla todo el reparto previsto, campaña,
+relaciones y secundarios, con guiones exportables; no agrega NPC, escenas, premios ni voces al motor.
+La publicación de este frente está pausada por petición de Javier.
+
 La granja vive en `juego/web/src/granja-v3/`, con entrada `granja-v3.html`, guardado V5 y una única fuente de motor. El 10 de octubre de 2026 se integra sobre la versión actual del proyecto principal. Está en desarrollo: no certifica paridad completa con los juegos de referencia.
 
 En la casa, abrir el cuarto de juegos y elegir «Nuestra granjita». En la granja, acercarse a la entrada de la cabaña y abrir la casa real; aparece «Volver a la granja» para recuperar la posición. No se transfieren por esta navegación inventario, monedas o recompensas entre economías. El guardado de granja sigue local; la integración no añade multijugador o sincronización Supabase a sus sistemas.

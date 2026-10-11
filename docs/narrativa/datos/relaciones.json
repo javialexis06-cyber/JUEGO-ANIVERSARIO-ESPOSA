@@ -1,0 +1,982 @@
+[
+  {
+    "id": "R01",
+    "a": "mercader",
+    "b": "cuidadora",
+    "tipo": "amistad_en_conflicto",
+    "pasado": "Compartieron turnos de agua en AV 294; Inés registró como deuda lo que Mara entendía como ayuda.",
+    "presente": "Mara sostiene animales, Inés reserva semillas; ambas temen depender de la otra y negocian fondo con límites.",
+    "secreto": false,
+    "revela": "V_mercader"
+  },
+  {
+    "id": "R02",
+    "a": "mercader",
+    "b": "agricultor",
+    "tipo": "deuda_y_reparacion",
+    "pasado": "La tienda financió a Tomás durante sequía. Él pagó dinero, nunca discutió el agua que había reservado.",
+    "presente": "Las cuentas dejan de medir toda reparación; el banco abre revisión sin humillar a deudores.",
+    "secreto": false,
+    "revela": "V_agricultor"
+  },
+  {
+    "id": "R03",
+    "a": "herrero",
+    "b": "piedra_gonzalo",
+    "tipo": "maestro_y_aprendiz",
+    "pasado": "Gonzalo formó a Bruno antes de AV 281. Después le atribuyó culpa por estar fuera de la galería.",
+    "presente": "La acusación se retira; pueden colaborar sin llamar reconciliación a una corrección necesaria.",
+    "secreto": false,
+    "revela": "V_piedra_gonzalo"
+  },
+  {
+    "id": "R04",
+    "a": "veterano",
+    "b": "piedra_gonzalo",
+    "tipo": "responsabilidad_institucional",
+    "pasado": "Aurelio firmó un cierre ambiguo; Gonzalo perdió compañeros. Sus recuerdos no abarcan toda la secuencia.",
+    "presente": "Publicar acta permite reparación y relevo. Gonzalo conserva derecho a no perdonar.",
+    "secreto": false,
+    "revela": "V_veterano"
+  },
+  {
+    "id": "R05",
+    "a": "archivero",
+    "b": "veterano",
+    "tipo": "alianza_de_silencio",
+    "pasado": "Damián prometió custodiar reverso de AV 305 mientras Aurelio preparaba medidas. Ambos prolongaron secreto por reputación.",
+    "presente": "Publican autoría de decisión y sus consecuencias; el archivo no rehabilita automáticamente al Consejo.",
+    "secreto": false,
+    "revela": "P05"
+  },
+  {
+    "id": "R06",
+    "a": "canalizadora_aura",
+    "b": "canalizadora_lara",
+    "tipo": "amistad_desde_la_escuela",
+    "pasado": "Eliana veía futuro donde Serena escuchaba pérdidas; la cercanía infantil se tensó cuando tomaron los oficios.",
+    "presente": "Aprenden a preguntar si se necesita impulso o descanso. Ninguna controla voluntad ni ritos de la otra.",
+    "secreto": false,
+    "revela": "V_canalizadora_aura"
+  },
+  {
+    "id": "R07",
+    "a": "veterinaria",
+    "b": "bruma_zaira",
+    "tipo": "expareja_adulta_y_colegas",
+    "pasado": "En AV 300 intentaron vivir juntas. Una discusión técnica reveló problemas de escucha doméstica y decidieron separarse; no hubo engaño.",
+    "presente": "Se respetan en consulta. No buscan reanudación obligatoria; pueden hablar de su pasado o mantenerlo privado.",
+    "secreto": true,
+    "revela": "S03"
+  },
+  {
+    "id": "R08",
+    "a": "posadera",
+    "b": "verdia_lucio",
+    "tipo": "matrimonio_y_duelo",
+    "pasado": "Compartieron posada y recetas hasta muerte de Lucio en AV 306. Rosa hizo más trabajo doméstico del que él reconoció.",
+    "presente": "Lucio desea que siga libre; Rosa puede recibir carta sin prometer espera eterna.",
+    "secreto": true,
+    "revela": "S02"
+  },
+  {
+    "id": "R09",
+    "a": "musica",
+    "b": "artesana",
+    "tipo": "pareja_adulta_privada",
+    "pasado": "Lía conoció a Renata al reparar una correa. Aprendieron a diferenciar acompañarse de aceptar trabajo gratuito.",
+    "presente": "Han elegido una relación que no quieren convertir en festejo público por ahora. El jugador no decide su orientación ni les exige anunciarse.",
+    "secreto": true,
+    "revela": "S01"
+  },
+  {
+    "id": "R10",
+    "a": "astronoma",
+    "b": "orbita_ivo",
+    "tipo": "hermana_y_hermano",
+    "pasado": "Nerea enseñó a Ivo observación. Su viaje en AV 308 convirtió cuidado en reproche leído a distancia.",
+    "presente": "Acuerdan noticias voluntarias y separan informe científico de conversación familiar.",
+    "secreto": false,
+    "revela": "V_orbita_ivo"
+  },
+  {
+    "id": "R11",
+    "a": "viajera",
+    "b": "lirios_teo",
+    "tipo": "hermana_y_hermano",
+    "pasado": "Paloma viajó mientras Teo sostuvo casa. La admiración pública por viajes hizo invisible el trabajo de quedarse.",
+    "presente": "Necesitan turnos y aviso, no decidir que una vida es más valiosa que otra.",
+    "secreto": false,
+    "revela": "V_viajera"
+  },
+  {
+    "id": "R12",
+    "a": "lirios_bastian",
+    "b": "lirios_tina",
+    "tipo": "padre_e_hija",
+    "pasado": "Bastián descubrió fallas de espacio al ver un dibujo de Tina sobre equipo de seguridad.",
+    "presente": "Visitas supervisadas, juego y aprendizaje. Tina no trabaja para pagar un taller ni hace pruebas en mar abierto.",
+    "secreto": false,
+    "revela": "V_lirios_tina"
+  },
+  {
+    "id": "R13",
+    "a": "nina",
+    "b": "nino",
+    "tipo": "amistad_infantil",
+    "pasado": "Compartieron patio y compitieron por mejores dibujos. Leo atribuía hallazgos a su mapa, Nina exigió nombres compartidos.",
+    "presente": "Alma acompaña cooperación. Sus discrepancias no se usan como lección adulta sobre fidelidad.",
+    "secreto": false,
+    "revela": "V_nino"
+  },
+  {
+    "id": "R14",
+    "a": "nino",
+    "b": "lirios_tina",
+    "tipo": "amistad_infantil",
+    "pasado": "Leo inventó un atajo y Tina llegó a una puerta cerrada durante paseo supervisado.",
+    "presente": "Corrigen el mapa y distinguen fantasía; todavía disfrutan dibujar dragones donde no hay ninguno.",
+    "secreto": false,
+    "revela": "V_lirios_tina"
+  },
+  {
+    "id": "R15",
+    "a": "maestra",
+    "b": "nina",
+    "tipo": "tutoria_sin_filiacion",
+    "pasado": "Alma acompañó el duelo de Nina por un plantón. No se asigna maternidad como atajo de biografía.",
+    "presente": "Enseña que un error no mide cariño y que la escuela también sirve para jugar.",
+    "secreto": false,
+    "revela": "V_nina"
+  },
+  {
+    "id": "R16",
+    "a": "pescadora",
+    "b": "lirios_olga",
+    "tipo": "oficio_y_limites",
+    "pasado": "Olga rechazó una captura de Cora por talla y presión. Cora creyó que le estaba quitando prestigio.",
+    "presente": "Construyen datos y cuotas con representación; no se penaliza pobreza como defecto moral.",
+    "secreto": false,
+    "revela": "V_pescadora"
+  },
+  {
+    "id": "R17",
+    "a": "lirios_maite",
+    "b": "lirios_olga",
+    "tipo": "vecinas_y_representacion",
+    "pasado": "El estanque dependía de precios del mercado; la cuota se decidió sin invitar a Maite.",
+    "presente": "Acuerdan representación y balanza verificable. Pueden seguir discutiendo precios.",
+    "secreto": false,
+    "revela": "V_lirios_olga"
+  },
+  {
+    "id": "R18",
+    "a": "lirios_dalia",
+    "b": "bruma_silvana",
+    "tipo": "riberas_y_responsabilidad",
+    "pasado": "Ambas heredaron versiones familiares de la crecida. Silvana aprobó una tala, Dalia un dique; las dos afectaron agua.",
+    "presente": "Restauración y mantenimiento conjuntos sin adjudicar una única culpable universal.",
+    "secreto": false,
+    "revela": "V_lirios_dalia"
+  },
+  {
+    "id": "R19",
+    "a": "guardabosques",
+    "b": "bruma_roque",
+    "tipo": "permiso_y_accesibilidad",
+    "pasado": "Gael negó madera sin preguntar; Roque cortó a escondidas para una rampa.",
+    "presente": "Cada uno corrige su acto, no intercambian culpas para anularlas.",
+    "secreto": false,
+    "revela": "V_bruma_roque"
+  },
+  {
+    "id": "R20",
+    "a": "carpintera",
+    "b": "bruma_roque",
+    "tipo": "colegas_de_diseno",
+    "pasado": "Olivia y Roque se conocieron reparando entrada de posada; el primer módulo no permitía girar un carro.",
+    "presente": "Prueban con usuarios y comparten diseños, conservando crédito individual.",
+    "secreto": false,
+    "revela": "V_carpintera"
+  },
+  {
+    "id": "R21",
+    "a": "bruma_felix",
+    "b": "bruma_amira",
+    "tipo": "amistad_y_confianza",
+    "pasado": "Amira encontró un dato de temperatura oculto por Félix en un lote.",
+    "presente": "La confianza se sostiene con registros y retiro de producto, no con exigirle creer otra promesa.",
+    "secreto": false,
+    "revela": "V_bruma_felix"
+  },
+  {
+    "id": "R22",
+    "a": "bruma_amira",
+    "b": "aurelia_kiara",
+    "tipo": "aprendizaje_reciproco",
+    "pasado": "Kiara proponía una solución universal; Amira vio presión local. El intercambio mostró límites de ambas.",
+    "presente": "Diseñan recintos y densidad sin colonizar hábitats.",
+    "secreto": false,
+    "revela": "V_aurelia_kiara"
+  },
+  {
+    "id": "R23",
+    "a": "bruma_ada",
+    "b": "bruma_elio",
+    "tipo": "campo_y_autoria",
+    "pasado": "Elio conocía un refugio que apareció como descubrimiento de Ada; ella aceptó el crédito de terceros.",
+    "presente": "Corrigen ficha y deciden cuánto del hábitat publicar.",
+    "secreto": false,
+    "revela": "V_bruma_ada"
+  },
+  {
+    "id": "R24",
+    "a": "minero",
+    "b": "piedra_eloy",
+    "tipo": "seguridad_y_autonomia",
+    "pasado": "Darío quería rutas nuevas y Eloy respondía con cierres sin explicación.",
+    "presente": "Permisos con criterios y revisión permiten explorar sin convertir intuición en garantía.",
+    "secreto": false,
+    "revela": "V_piedra_eloy"
+  },
+  {
+    "id": "R25",
+    "a": "piedra_hugo",
+    "b": "lirios_julian",
+    "tipo": "colegas_de_alertas",
+    "pasado": "Hugo propuso señales redundantes; Julián creyó que admitir relevo significaba retiro forzado.",
+    "presente": "Diseñan continuidad con diversidad de señales y descansos.",
+    "secreto": false,
+    "revela": "V_lirios_julian"
+  },
+  {
+    "id": "R26",
+    "a": "piedra_mireya",
+    "b": "orbita_tessa",
+    "tipo": "colegas_de_automatizacion",
+    "pasado": "Mireya encontró diferencias entre panel automático y refugio físico. Tessa creyó que el señalamiento atacaba su proyecto.",
+    "presente": "Publican lo que el sistema no observa y preservan insumos finitos.",
+    "secreto": false,
+    "revela": "V_orbita_tessa"
+  },
+  {
+    "id": "R27",
+    "a": "cocinero",
+    "b": "posadera",
+    "tipo": "empleo_y_gratitud",
+    "pasado": "Rosa financió un menú caro de Simón y luego invocó esa ayuda en discusiones laborales.",
+    "presente": "Separan deuda comercial de obligación afectiva, acuerdan horas y porciones.",
+    "secreto": false,
+    "revela": "V_cocinero"
+  },
+  {
+    "id": "R28",
+    "a": "cocinero",
+    "b": "piedra_ciro",
+    "tipo": "colegas_de_cocina",
+    "pasado": "Ciro calculaba una ración menos para no admitir hambre propia. Simón dejó su plato preparado.",
+    "presente": "El cuidado incluye al cocinero y variantes de gusto no escalan poder.",
+    "secreto": false,
+    "revela": "V_piedra_ciro"
+  },
+  {
+    "id": "R29",
+    "a": "brasa_nadia",
+    "b": "brasa_rufina",
+    "tipo": "agua_y_descanso",
+    "pasado": "Un ensayo de Nadia gastó agua necesaria en baños. Ambas defendían bienestar desde una cifra incompleta.",
+    "presente": "La reserva se acuerda antes de nuevos lotes; Rufina recibe relevo.",
+    "secreto": false,
+    "revela": "V_brasa_nadia"
+  },
+  {
+    "id": "R30",
+    "a": "brasa_sol",
+    "b": "brasa_yago",
+    "tipo": "mentoria_infantil",
+    "pasado": "Yago rompió cuenco frío y temió perder acceso al taller. Sol mostró reparación sin negar el daño.",
+    "presente": "Arcilla fría, supervisión y derecho a jugar; nadie cobra trabajo infantil.",
+    "secreto": false,
+    "revela": "V_brasa_yago"
+  },
+  {
+    "id": "R31",
+    "a": "brasa_ramiro",
+    "b": "nox_inigo",
+    "tipo": "responsabilidad_ante_la_secta",
+    "pasado": "Ramiro vendió recipientes; Íñigo entregó promesas de refugio. Ambos aprendieron consecuencias y tardaron en salir por razones distintas.",
+    "presente": "Entregan evidencia y restituyen; no se absuelven el uno al otro.",
+    "secreto": true,
+    "revela": "S04"
+  },
+  {
+    "id": "R32",
+    "a": "nieve_eira",
+    "b": "nieve_anselmo",
+    "tipo": "produccion_y_cuidado",
+    "pasado": "Anselmo rechazó lana de un lote que estresaba a las ovejas; Eira creyó que rechazaba su refugio.",
+    "presente": "Cupos con bienestar permiten continuar sin engañar demanda.",
+    "secreto": false,
+    "revela": "V_nieve_eira"
+  },
+  {
+    "id": "R33",
+    "a": "nieve_luz",
+    "b": "nieve_milena",
+    "tipo": "ciencia_y_descanso",
+    "pasado": "Milena señaló que las gallinas no podían retirarse de una prueba de iluminación.",
+    "presente": "Diseñan oscuridad elegible y registros de bienestar.",
+    "secreto": false,
+    "revela": "V_nieve_luz"
+  },
+  {
+    "id": "R34",
+    "a": "nieve_quirina",
+    "b": "nieve_otto",
+    "tipo": "rutas_y_rescate",
+    "pasado": "Otto regresó a un grupo por un camino largo que Quirina había omitido.",
+    "presente": "La demora deja de ser vergüenza y se vuelve alternativa registrada.",
+    "secreto": false,
+    "revela": "V_nieve_quirina"
+  },
+  {
+    "id": "R35",
+    "a": "vigilia_aldan",
+    "b": "vigilia_noemi",
+    "tipo": "autoridad_y_atencion",
+    "pasado": "Un diagnóstico inicial incorrecto de Noemí sirvió a Aldán para ignorar alertas posteriores.",
+    "presente": "Ella publica corrección; él acepta que atención y causa son decisiones distintas.",
+    "secreto": false,
+    "revela": "V_vigilia_noemi"
+  },
+  {
+    "id": "R36",
+    "a": "vigilia_azucena",
+    "b": "nieve_celeste",
+    "tipo": "mentoria_adulta",
+    "pasado": "Celeste quería un grifo disponible para todo rescate; Azucena respondió prohibiendo planes.",
+    "presente": "Enseñan límites que hacen posible soñar sin poseer a una criatura.",
+    "secreto": false,
+    "revela": "V_nieve_celeste"
+  },
+  {
+    "id": "R37",
+    "a": "verdia_isadora",
+    "b": "eco_esteban",
+    "tipo": "testimonio_y_archivo",
+    "pasado": "Sobrevivieron a fases distintas de la destrucción de un panteón anterior al Velo. Sus relatos discordantes fueron resumidos como uno.",
+    "presente": "Conservan dos versiones y un dato de procedencia; no reclaman memoria absoluta.",
+    "secreto": true,
+    "revela": "S08"
+  },
+  {
+    "id": "R38",
+    "a": "nieve_anselmo",
+    "b": "eco_sora",
+    "tipo": "autoria_musical",
+    "pasado": "Sora cantó con la compañera de Anselmo. Conservó partituras anteriores al contrato que borró créditos.",
+    "presente": "Devuelve permiso de interpretar, no devuelve una persona muerta a su vida anterior.",
+    "secreto": true,
+    "revela": "S06"
+  },
+  {
+    "id": "R39",
+    "a": "verdia_eneas",
+    "b": "eco_oriel",
+    "tipo": "amistad_y_decision",
+    "pasado": "Oriel mediaba todo desacuerdo. Eneas le enseñó que acompañar no obliga a permanecer.",
+    "presente": "Preparan despedida posible sin fabricar una decisión que Eneas aún no tomó.",
+    "secreto": false,
+    "revela": "V_verdia_eneas"
+  },
+  {
+    "id": "R40",
+    "a": "senda_iria",
+    "b": "senda_ofelia",
+    "tipo": "acompanamiento",
+    "pasado": "Iria completaba respuestas para ayudar. Ofelia encontró otra manera de aplazar su responsabilidad usando la respuesta ajena.",
+    "presente": "La guía devuelve elección; el alma puede descansar sin prueba fingida.",
+    "secreto": false,
+    "revela": "V_senda_ofelia"
+  },
+  {
+    "id": "R41",
+    "a": "senda_anwar",
+    "b": "senda_pablo",
+    "tipo": "reparacion_sin_perdon_obligado",
+    "pasado": "Anwar organizó un encuentro que Pablo quería como garantía de perdón. La persona afectada no lo autorizó.",
+    "presente": "Ofrecen reparación sin contacto y registran retiro de exigencia.",
+    "secreto": false,
+    "revela": "V_senda_pablo"
+  },
+  {
+    "id": "R42",
+    "a": "hilos_tecla",
+    "b": "hilos_elian",
+    "tipo": "rescate_y_modelo",
+    "pasado": "Tecla descartó recuerdos discordantes de Elián por no encajar en su hipótesis. La red de Vael se sostuvo con ese descarte.",
+    "presente": "Acepta evidencia plural y acompaña salida sin absolver responsabilidad.",
+    "secreto": false,
+    "revela": "V_hilos_elian"
+  },
+  {
+    "id": "R43",
+    "a": "hilos_asha",
+    "b": "hilos_hector",
+    "tipo": "regreso_y_diseno",
+    "pasado": "Las anclas complejas de Héctor dependían de su presencia; Asha necesitaba repararlas lejos.",
+    "presente": "Simplifican instrucciones y comparten reparación con responsables.",
+    "secreto": false,
+    "revela": "V_hilos_hector"
+  },
+  {
+    "id": "R44",
+    "a": "nox_dorian",
+    "b": "nox_salma",
+    "tipo": "limites_y_lenguaje",
+    "pasado": "Un formulario de Dorian confundió origen con riesgo; una palabra clínica de Salma se volvió condena social.",
+    "presente": "Ambos corrigen procedimiento sin equiparar pacientes a entidades contenidas.",
+    "secreto": false,
+    "revela": "V_nox_salma"
+  },
+  {
+    "id": "R45",
+    "a": "nox_mirta",
+    "b": "nox_viggo",
+    "tipo": "registro_y_sellado",
+    "pasado": "Viggo tapó una grieta con capas que impedían inspección; Mirta lo registró sin presentarlo como sabotaje.",
+    "presente": "Los sellos aceptan mantenimiento, la evidencia no desaparece para salvar reputación.",
+    "secreto": false,
+    "revela": "V_nox_viggo"
+  },
+  {
+    "id": "R46",
+    "a": "orbita_helena",
+    "b": "orbita_boris",
+    "tipo": "mando_y_reserva",
+    "pasado": "Helena pidió carga extra en AV 308. Boris preservó reserva y luego convirtió temor en margen oculto.",
+    "presente": "Publican cálculo y desacuerdo, aceptan revisión independiente.",
+    "secreto": false,
+    "revela": "V_orbita_boris"
+  },
+  {
+    "id": "R47",
+    "a": "orbita_dexo",
+    "b": "fragmentos_uma",
+    "tipo": "vuelo_y_rescate",
+    "pasado": "Dexo celebró combustible mínimo, Uma gastó recursos preparando contingencia.",
+    "presente": "El vuelo incluye costo de quien podría rescatar, no solo del piloto.",
+    "secreto": false,
+    "revela": "V_orbita_dexo"
+  },
+  {
+    "id": "R48",
+    "a": "orbita_valentina",
+    "b": "iris_liora",
+    "tipo": "cultivos_y_dependencia",
+    "pasado": "Se conocieron comparando un lote importado que Valentina ocultaba y una variedad local que Liora desplazaba.",
+    "presente": "Reconocen intercambio, diversifican y no prometen autosuficiencia perfecta.",
+    "secreto": false,
+    "revela": "V_iris_liora"
+  },
+  {
+    "id": "R49",
+    "a": "aurelia_oscar",
+    "b": "fragmentos_lazaro",
+    "tipo": "apego_a_objetos",
+    "pasado": "Ambos conservaron repuestos sin medir capacidad y contaron traslados como disponibilidad.",
+    "presente": "Reciclan con pérdidas registradas y reservan piezas que sí funcionan.",
+    "secreto": false,
+    "revela": "V_fragmentos_lazaro"
+  },
+  {
+    "id": "R50",
+    "a": "nocturna_gaspar",
+    "b": "fragmentos_pia",
+    "tipo": "instrumentos_y_pruebas",
+    "pasado": "Gaspar usó un prisma probado una sola vez y anunció precisión universal.",
+    "presente": "Publican condiciones y tolerancias, compensan servicio incorrecto.",
+    "secreto": false,
+    "revela": "V_fragmentos_pia"
+  },
+  {
+    "id": "R51",
+    "a": "esmeralda_indira",
+    "b": "iris_orin",
+    "tipo": "resonancia_y_creencia",
+    "pasado": "Orin atribuía voluntad al cristal; Indira confundía saturación con estabilidad.",
+    "presente": "Se corrigen mutuamente y separan interpretación artística de medición.",
+    "secreto": false,
+    "revela": "V_iris_orin"
+  },
+  {
+    "id": "R52",
+    "a": "esmeralda_duna",
+    "b": "iris_yuna",
+    "tipo": "restauracion_y_contexto",
+    "pasado": "Duna quería llevar una idea terrestre de verde; Yuna pidió atender al suelo receptor.",
+    "presente": "Ensayan sin liberar especies ni presentar un mundo como maceta.",
+    "secreto": false,
+    "revela": "V_esmeralda_duna"
+  },
+  {
+    "id": "R53",
+    "a": "ambar_zora",
+    "b": "iris_calista",
+    "tipo": "alianza_con_derecho_a_negar",
+    "pasado": "Zora sufrió un contrato de lluvia, Calista anunció un trato antes de votarlo. Se escribieron sobre errores de representación.",
+    "presente": "Defienden tratados revisables y aceptan que amistad no sustituye mandato.",
+    "secreto": true,
+    "revela": "S10"
+  },
+  {
+    "id": "R54",
+    "a": "ambar_kenzo",
+    "b": "fragmentos_axel",
+    "tipo": "propiedad_y_ruinas",
+    "pasado": "Una recuperación contratada de Axel retiró una pieza ligada a custodios que Kenzo había dejado fuera del permiso.",
+    "presente": "Restitución y copia local sustituyen apropiación por silencio.",
+    "secreto": false,
+    "revela": "V_fragmentos_axel"
+  },
+  {
+    "id": "R55",
+    "a": "iris_edda",
+    "b": "iris_mauro",
+    "tipo": "fauna_y_miedo",
+    "pasado": "Mauro convirtió huellas en amenaza; Edda detuvo una batida y admitió su propia captura innecesaria anterior.",
+    "presente": "Registran indicios y observan sin poseer toda vida útil.",
+    "secreto": false,
+    "revela": "V_iris_mauro"
+  },
+  {
+    "id": "R56",
+    "a": "exploradora",
+    "b": "vigilia_ulises",
+    "tipo": "mentoria_y_error",
+    "pasado": "Ulises halló a Vera por una señal ajena. Ella creyó que él nunca se perdía y vendió la misma imagen de sí.",
+    "presente": "Ambos publican fuentes y blancos del mapa; Vera puede agradecer sin obedecer todas sus rutas.",
+    "secreto": false,
+    "revela": "V_exploradora"
+  },
+  {
+    "id": "R57",
+    "a": "botanica",
+    "b": "canalizadora_aura",
+    "tipo": "maestra_y_aprendiz",
+    "pasado": "Eliana trabajó en el huerto de Flora y llevó esperanza a una familia que necesitaba relevo, no ceremonia.",
+    "presente": "Flora aporta observación; Eliana aporta escucha. Ninguna usa su oficio para invalidar el de la otra.",
+    "secreto": false,
+    "revela": "V_botanica"
+  },
+  {
+    "id": "R58",
+    "a": "lirios_belen",
+    "b": "artesana",
+    "tipo": "amistad_de_remiendos",
+    "pasado": "Intercambiaron técnicas en un festival. Belén prefería rapidez, Renata descubrió una unión que no podía repararse después.",
+    "presente": "Diseñan cierres reemplazables y reconocen quién propuso cada parte.",
+    "secreto": false,
+    "revela": "V_lirios_belen"
+  },
+  {
+    "id": "R59",
+    "a": "bruma_benicio",
+    "b": "archivero",
+    "tipo": "tradicion_y_documento",
+    "pasado": "Damián citó como fuente un cuento mezclado de Benicio. El narrador disfrutó el prestigio y demoró la corrección.",
+    "presente": "Separan relato, acta y memoria sin prohibir inventar cuentos.",
+    "secreto": false,
+    "revela": "V_bruma_benicio"
+  },
+  {
+    "id": "R60",
+    "a": "piedra_ursula",
+    "b": "esmeralda_olmo",
+    "tipo": "procedencia_y_autoria",
+    "pasado": "Úrsula publicó un origen no comprobado; Olmo se atribuyó un hallazgo previo. Se conocieron comparando esas fichas.",
+    "presente": "Corrigen dos errores distintos y exigen recibos reales; no basta una factura de venta.",
+    "secreto": false,
+    "revela": "V_esmeralda_olmo"
+  },
+  {
+    "id": "R61",
+    "a": "piedra_petra",
+    "b": "piedra_ursula",
+    "tipo": "belleza_y_clasificacion",
+    "pasado": "Úrsula halló una inclusión estructural en una gema que Petra había descrito solo por su brillo.",
+    "presente": "Tolerancia y uso acompañan precio; una piedra común sigue pudiendo ser querida.",
+    "secreto": false,
+    "revela": "V_piedra_petra"
+  },
+  {
+    "id": "R62",
+    "a": "piedra_santiago",
+    "b": "exploradora",
+    "tipo": "diseno_y_usuario",
+    "pasado": "La armadura de Santiago limitaba el movimiento de Vera; él atribuyó la dificultad a inexperiencia.",
+    "presente": "Prueban ajustes y disculpa concreta; Vera puede rechazar la variante sin dañar amistad.",
+    "secreto": false,
+    "revela": "V_piedra_santiago"
+  },
+  {
+    "id": "R63",
+    "a": "brasa_tarek",
+    "b": "brasa_nadia",
+    "tipo": "ganaderia_y_agua",
+    "pasado": "Tarek necesitó enfriar refugios; Nadia calculó consumo agrícola sin incorporar sus turnos de cuidado.",
+    "presente": "Presupuestan ambos usos y dejan bienestar antes de entregas comerciales.",
+    "secreto": false,
+    "revela": "V_brasa_tarek"
+  },
+  {
+    "id": "R64",
+    "a": "brasa_idalia",
+    "b": "brasa_dante",
+    "tipo": "custodia_y_excursion",
+    "pasado": "Dante ofreció ver un nido sin consultar a Idalia. Ella respondió cerrando también una ruta que podía enseñarse a distancia.",
+    "presente": "Ponen límites de observación y alternativas, conservando autonomía de criaturas.",
+    "secreto": false,
+    "revela": "V_brasa_idalia"
+  },
+  {
+    "id": "R65",
+    "a": "brasa_dante",
+    "b": "brasa_rufina",
+    "tipo": "trabajo_y_contingencia",
+    "pasado": "Rufina alojó un grupo que Dante llevó con mala visibilidad. Él celebró el regreso sin contabilizar el cuidado recibido.",
+    "presente": "El guía financia reserva y devolución; la posada no absorbe cada imprudencia.",
+    "secreto": false,
+    "revela": "V_brasa_dante"
+  },
+  {
+    "id": "R66",
+    "a": "nieve_severo",
+    "b": "ambar_samira",
+    "tipo": "colegas_de_incertidumbre",
+    "pasado": "Samira pidió a Severo un formato simple tras una tormenta mal comunicada. Sus cartas empezaron comparando errores, no récords.",
+    "presente": "Publican rangos de tres días lógicos y planes alternativos sin simular profecía.",
+    "secreto": false,
+    "revela": "V_ambar_samira"
+  },
+  {
+    "id": "R67",
+    "a": "vigilia_kael",
+    "b": "astronoma",
+    "tipo": "escudo_y_privacidad",
+    "pasado": "Kael quiso correlacionar brillo con conversaciones privadas; Nerea mostró que esos registros no medían el conducto.",
+    "presente": "Retiran datos personales y calibran observación territorial con permisos.",
+    "secreto": false,
+    "revela": "V_vigilia_kael"
+  },
+  {
+    "id": "R68",
+    "a": "vigilia_telmo",
+    "b": "verdia_berenice",
+    "tipo": "correspondencia_y_limites",
+    "pasado": "Ambos retuvieron o reconstruyeron mensajes para ayudar y cambiaron lo que otro podía decidir.",
+    "presente": "Copia, resumen y original se distinguen. El destinatario puede no abrir un sobre.",
+    "secreto": false,
+    "revela": "V_verdia_berenice"
+  },
+  {
+    "id": "R69",
+    "a": "verdia_amaranta",
+    "b": "verdia_aina",
+    "tipo": "memoria_privada",
+    "pasado": "Aina devolvió un botón que Amaranta quería exhibir como símbolo de un jardín. La dueña prefería guardarlo.",
+    "presente": "Ofrecen espacio sin placa y objetos sin historia pública; el catálogo no los penaliza.",
+    "secreto": false,
+    "revela": "V_verdia_aina"
+  },
+  {
+    "id": "R70",
+    "a": "verdia_nilo",
+    "b": "canalizadora_lara",
+    "tipo": "guia_y_santa",
+    "pasado": "Serena observó a Nilo prometer calma para resolver una pregunta abierta. Él la invitó después a pasear sin hablar de muerte.",
+    "presente": "Se acompañan en oficio y descanso; ninguno es voz omnisciente de Lara.",
+    "secreto": false,
+    "revela": "V_verdia_nilo"
+  },
+  {
+    "id": "R71",
+    "a": "verdia_sarai",
+    "b": "artesana",
+    "tipo": "capas_y_costuras",
+    "pasado": "Renata llevó a Sarai una prenda reparada con costura visible. La pintora vio cómo conservar cambio sin taparlo.",
+    "presente": "Un mural conserva autores y permisos; una reparación no reescribe el pasado.",
+    "secreto": false,
+    "revela": "V_verdia_sarai"
+  },
+  {
+    "id": "R72",
+    "a": "verdia_yara",
+    "b": "verdia_eneas",
+    "tipo": "despedida_voluntaria",
+    "pasado": "Yara ofreció cantar en una preparación de Eneas; él todavía no había decidido reincarnarse.",
+    "presente": "La música no anuncia una salida que no se eligió. Pueden disfrutar una canción sin darle destino.",
+    "secreto": false,
+    "revela": "V_verdia_yara"
+  },
+  {
+    "id": "R73",
+    "a": "verdia_tobias",
+    "b": "pescadora",
+    "tipo": "observacion_y_oficio",
+    "pasado": "Cora llegó preguntando por capturas y Tobías mostró un registro lleno sin vaciar agua.",
+    "presente": "La pescadora conserva oficio y aprende una actividad distinta; observar no da peces inventados.",
+    "secreto": false,
+    "revela": "V_verdia_tobias"
+  },
+  {
+    "id": "R74",
+    "a": "verdia_celino",
+    "b": "carpintera",
+    "tipo": "acceso_y_permiso",
+    "pasado": "Olivia visitó un puente de Celino que una orilla no había pedido. Ambos reconocieron que acceso físico no garantiza autorización.",
+    "presente": "Prototipan con residentes y salida alternativa, no con una idea universal de conectar.",
+    "secreto": false,
+    "revela": "V_verdia_celino"
+  },
+  {
+    "id": "R75",
+    "a": "verdia_dimas",
+    "b": "eco_nazario",
+    "tipo": "semillas_y_vergüenza",
+    "pasado": "Nazario escondió un libro que le había dado consuelo; Dimas había ocultado lotes fallidos por prestigio.",
+    "presente": "Comparten documentos y límites sin equiparar error con crimen de la Custodia.",
+    "secreto": false,
+    "revela": "V_eco_nazario"
+  },
+  {
+    "id": "R76",
+    "a": "eco_violeta",
+    "b": "bruma_elio",
+    "tipo": "purificacion_y_memoria",
+    "pasado": "Elio quería una revelación mítica; Violeta mostró un terreno que volvió a vivir sin borrar marca de desastre.",
+    "presente": "La copia del manuscrito permite aprender sin forzar crianza ni espectáculo.",
+    "secreto": false,
+    "revela": "V_eco_violeta"
+  },
+  {
+    "id": "R77",
+    "a": "eco_basilia",
+    "b": "canalizadora_lara",
+    "tipo": "rito_y_pobreza",
+    "pasado": "Serena recibió catálogo de Basilia y preguntó dónde estaba la opción para quien no trajera nada.",
+    "presente": "Ritos sin entrada económica y silencio equivalente a ofrenda; no se compra virtud.",
+    "secreto": false,
+    "revela": "V_eco_basilia"
+  },
+  {
+    "id": "R78",
+    "a": "senda_mateo",
+    "b": "hilos_tecla",
+    "tipo": "modelo_y_destino",
+    "pasado": "Tecla probó el puente de Mateo y encontró retorno a la entrada. Él había revisado longitud, no destino.",
+    "presente": "El diseño incluye recorrido y ancla, no apariencia perfecta.",
+    "secreto": false,
+    "revela": "V_senda_mateo"
+  },
+  {
+    "id": "R79",
+    "a": "senda_nora",
+    "b": "hilos_tecla",
+    "tipo": "testimonio_y_prueba",
+    "pasado": "Una inferencia de Nora encajó demasiado bien en la hipótesis de Tecla. Elián quedó fuera como excepción.",
+    "presente": "Conservan dichos y dudas, revisan modelo a partir de personas, no al revés.",
+    "secreto": false,
+    "revela": "V_senda_nora"
+  },
+  {
+    "id": "R80",
+    "a": "senda_fabian",
+    "b": "hilos_hector",
+    "tipo": "suministro_y_regreso",
+    "pasado": "Héctor aportó su reserva para una entrega mal preparada de Fabián. El encargado lo llamó rescate heroico sin asumir costo.",
+    "presente": "El paquete de retorno se separa antes de salir y la deuda material se reconoce.",
+    "secreto": false,
+    "revela": "V_senda_fabian"
+  },
+  {
+    "id": "R81",
+    "a": "senda_leire",
+    "b": "senda_ofelia",
+    "tipo": "cuidado_y_responsabilidad",
+    "pasado": "Leire preparó respuestas para aliviar a Ofelia; la ayuda permitía evitar una decisión propia.",
+    "presente": "Ofrece silla y pausa; el alma elige. Descanso y reparación no son mercancías.",
+    "secreto": false,
+    "revela": "V_senda_leire"
+  },
+  {
+    "id": "R82",
+    "a": "nox_tamara",
+    "b": "piedra_hugo",
+    "tipo": "alarmas_y_aprendizaje",
+    "pasado": "Hugo leyó un pulso que Tamara había normalizado como ruido de fondo. Ella temía preguntar algo básico.",
+    "presente": "Señales redundantes y revisión sin ridiculizar aprendices; la pista también existe en texto.",
+    "secreto": false,
+    "revela": "V_nox_tamara"
+  },
+  {
+    "id": "R83",
+    "a": "orbita_said",
+    "b": "vigilia_noemi",
+    "tipo": "medicina_y_relevo",
+    "pasado": "Noemí vio a Said verificar a otros y omitir fatiga propia. Él ayudó a separar diagnóstico de atención tras su primer error.",
+    "presente": "Protocolos por pares y descanso del equipo, sin exhibir historiales al jugador.",
+    "secreto": false,
+    "revela": "V_orbita_said"
+  },
+  {
+    "id": "R84",
+    "a": "orbita_rita",
+    "b": "viajera",
+    "tipo": "rutas_y_recibos",
+    "pasado": "Paloma perdió una caja y Rita corrigió saldo sin historial; luego ambas tenían una entrega que nadie podía explicar.",
+    "presente": "Cadena de custodia y derecho a rechazar paquetes; no leen correo privado para probar transporte.",
+    "secreto": false,
+    "revela": "V_orbita_rita"
+  },
+  {
+    "id": "R85",
+    "a": "aurelia_aitana",
+    "b": "botanica",
+    "tipo": "ensayo_y_generalizacion",
+    "pasado": "Flora repitió con otra especie una prueba exitosa de Aitana y observó daño.",
+    "presente": "Conservan entusiasmo y delimitan a qué planta sirve; los resultados negativos también se publican.",
+    "secreto": false,
+    "revela": "V_aurelia_aitana"
+  },
+  {
+    "id": "R86",
+    "a": "aurelia_saul",
+    "b": "cocinero",
+    "tipo": "sabor_y_etiqueta",
+    "pasado": "Simón disfrutó una mezcla que Saúl vendía como origen lunar único. El gusto no justificaba precio engañoso.",
+    "presente": "Etiquetas claras y recetas equivalentes permiten vender sin inventar rareza.",
+    "secreto": false,
+    "revela": "V_aurelia_saul"
+  },
+  {
+    "id": "R87",
+    "a": "nocturna_matea",
+    "b": "astronoma",
+    "tipo": "navegacion_y_nube",
+    "pasado": "Matea perdió referencia en ceniza y Nerea pidió un instrumento alterno; la navegante temió perder la poesía de su oficio.",
+    "presente": "Cuentos y rutas coexisten, pero la vuelta no depende de ver una luna.",
+    "secreto": false,
+    "revela": "V_nocturna_matea"
+  },
+  {
+    "id": "R88",
+    "a": "nocturna_elvira",
+    "b": "nieve_luz",
+    "tipo": "exhibicion_y_reposo",
+    "pasado": "Luz mostró refugios con oscuridad elegible; Elvira reconoció que había sometido una planta a luz para una foto.",
+    "presente": "Visita y ficha no otorgan disponibilidad perpetua de seres vivos.",
+    "secreto": false,
+    "revela": "V_nocturna_elvira"
+  },
+  {
+    "id": "R89",
+    "a": "nocturna_naim",
+    "b": "canalizadora_lara",
+    "tipo": "observacion_y_intimidad",
+    "pasado": "Serena encontró notas de despedidas que Naim había guardado bajo permiso territorial.",
+    "presente": "El observador borra copia no autorizada y conserva solo rutas anónimas.",
+    "secreto": false,
+    "revela": "V_nocturna_naim"
+  },
+  {
+    "id": "R90",
+    "a": "esmeralda_raimundo",
+    "b": "esmeralda_indira",
+    "tipo": "tendencia_y_saturacion",
+    "pasado": "Raimundo necesitaba cambios pequeños que el sensor amplificado de Indira había ocultado.",
+    "presente": "La señal deja margen y distingue tendencia de emergencia con acción clara.",
+    "secreto": false,
+    "revela": "V_esmeralda_raimundo"
+  },
+  {
+    "id": "R91",
+    "a": "ambar_nestor",
+    "b": "ambar_kenzo",
+    "tipo": "metal_y_territorio",
+    "pasado": "Kenzo siguió marcas de una terraza hasta el taller de Néstor, que solo había revisado precio de la aleación.",
+    "presente": "El metal lleva origen y permiso; competencia no autoriza cargar daño a un suelo ajeno.",
+    "secreto": false,
+    "revela": "V_ambar_nestor"
+  },
+  {
+    "id": "R92",
+    "a": "ambar_alina",
+    "b": "ambar_zora",
+    "tipo": "cultivo_y_promesa",
+    "pasado": "Zora había rechazado un contrato de lluvia; Alina repitió una promesa pequeña al anunciar plantas casi sin agua.",
+    "presente": "Ambas publican cantidades y límites; resistir sequía no equivale a carecer de necesidades.",
+    "secreto": false,
+    "revela": "V_ambar_alina"
+  },
+  {
+    "id": "R93",
+    "a": "ambar_baltasar",
+    "b": "brasa_ramiro",
+    "tipo": "recipiente_y_habitante",
+    "pasado": "Ramiro envió vidrio para un domo demasiado sellado. Baltasar diseñó presión y olvidó intercambio de aire.",
+    "presente": "Separan calidad material de función; recipientes para habitar requieren salida y mantenimiento.",
+    "secreto": false,
+    "revela": "V_ambar_baltasar"
+  },
+  {
+    "id": "R94",
+    "a": "lirios_bastian",
+    "b": "lirios_dalia",
+    "tipo": "hermano_y_hermana",
+    "pasado": "Bastián y Dalia crecieron discutiendo barcos y riberas. Al iniciar escuela de Tina acordaron residencia con su tía, cerca del camino seguro.",
+    "presente": "Él mantiene cuidado y visitas; ella no es cuidadora gratuita implícita. Los turnos tienen relevo.",
+    "secreto": false,
+    "revela": "V_lirios_bastian"
+  },
+  {
+    "id": "R95",
+    "a": "lirios_dalia",
+    "b": "lirios_tina",
+    "tipo": "tia_y_sobrina",
+    "pasado": "Tina vive con Dalia durante semana escolar por acuerdo familiar. Aprendió a mirar juncos mientras la tía trabajaba en ribera.",
+    "presente": "Paseos supervisados y tiempo de juego; el afecto no exige ayudar en cosecha o pagar alojamiento.",
+    "secreto": false,
+    "revela": "V_lirios_tina"
+  },
+  {
+    "id": "R96",
+    "a": "botanica",
+    "b": "nina",
+    "tipo": "tia_y_tutora",
+    "pasado": "Flora recibió tutela familiar acordada y comparte la Casa del Huerto. Nina creyó que un plantón seco decepcionaría a una botánica.",
+    "presente": "Flora separa tardes familiares de ensayos y muestra errores propios sin convertir a Nina en alumna permanente.",
+    "secreto": false,
+    "revela": "V_nina"
+  },
+  {
+    "id": "R97",
+    "a": "agricultor",
+    "b": "nino",
+    "tipo": "abuelo_y_nieto",
+    "pasado": "Tomás vive con Leo en la Casa del Huerto. Su orgullo agrícola confundía aprender una ruta con aprovecharla para otro trabajo.",
+    "presente": "Leo puede dibujar dragones por placer; Tomás aprende que un paseo también cuenta sin producción.",
+    "secreto": false,
+    "revela": "V_nino"
+  },
+  {
+    "id": "R98",
+    "a": "brasa_rufina",
+    "b": "brasa_yago",
+    "tipo": "abuela_y_nieto",
+    "pasado": "Rufina aloja a Yago por acuerdo con padres viajeros de temporada. Sol acompaña dibujo en taller, no sustituye crianza familiar.",
+    "presente": "Hay cartas y visitas; la infancia incluye merienda y juego. El niño no paga con trabajo la ayuda.",
+    "secreto": false,
+    "revela": "V_brasa_yago"
+  }
+]
