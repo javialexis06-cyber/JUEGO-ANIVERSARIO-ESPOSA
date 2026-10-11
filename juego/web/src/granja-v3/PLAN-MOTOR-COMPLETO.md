@@ -1,5 +1,23 @@
 # Plan del motor completo: capacidades, variedad y aceptación
 
+## Libros y pistas útiles integrados
+
+Actualización del 11 de octubre de 2026: tres cuadernos técnicos se recuperan junto a campamentos existentes
+en los pisos 1, 5 y 9 de Minas de Celia. Encontrado y leído se registran por separado con fechas y semilla
+de origen; consultar la biblioteca no concede aprendizaje. Leer tras regresar enseña prospección pagada
+con antorchas/energía o dos recetas más rápidas de cobre/vidrio con los materiales y requisitos originales.
+Los efectos, descubrimientos y pagos persisten; importaciones incoherentes se rechazan y el guardado fallido
+revierte toda la operación. Se conserva V5 y se utilizan paneles sencillos, sin trabajo de arte.
+
+[LIBROS-INTEGRACION.md](LIBROS-INTEGRACION.md) documenta fuentes, costes, recetas, API y límites.
+K07 pasa a parcial: tres hallazgos y textos técnicos propuestos, sin canon nuevo; faltan libros regionales,
+variedad y conexiones narrativas. K06 sigue parcial aunque ya distingue cuaderno encontrado y leído.
+Siguiente bloque previsto: hallazgos mineros, identificación de geodas/tesoros/artefactos y uso en museo/equipo (F11).
+No se certifica campaña completa desde cero. Catálogo actual: 149 recetas y 458 objetos.
+Verificación: 22 grupos nuevos de lógica, 32 suites y 17 comprobaciones de navegador
+(11 de cuadernos y seis de casa/granja), sin fallos; ambas compilaciones correctas.
+
+
 ## Colecciones y lotes integrados
 
 Actualización del 11 de octubre de 2026: seis lotes del archivo conectan piezas concretas y alternativas,
@@ -12,7 +30,7 @@ importaciones incoherentes se rechazan y fallos de almacenamiento revierten la a
 [COLECCIONES-INTEGRACION.md](COLECCIONES-INTEGRACION.md) documenta los seis lotes y sus reglas.
 I09 pasa a parcial: falta variedad regional, exhibición física y lotes de artefactos. K06 sigue parcial:
 se distinguen donaciones, reservas y vista previa; faltan todos los cuadernos semánticos independientes.
-No se certifica una campaña completa desde cero. Siguiente bloque: libros y pistas útiles (K07).
+No se certifica una campaña completa desde cero. La primera serie de K07 se describe al inicio de este plan.
 Verificación: 23 grupos nuevos de lógica, regresión de 31 suites y 17 comprobaciones de navegador
 (11 de colecciones y seis de casa/granja), sin fallos; compilaciones completa y de amigos correctas.
 
@@ -429,8 +447,8 @@ Referencias: [Productos artesanales](https://es.stardewvalleywiki.com/Productos_
 | K03 | Obras y mejoras | Parcial | Plano, materiales, huella/acceso, encargo, plazo y entrega; durante obra no ofrece cupo/servicio; mejoras cambian interior y capacidades. |
 | K04 | Decorar y reorganizar | Implementado | Mover/girar/retirar conserva estado de objetos funcionales y acceso; caminos, vallas y portones tienen conducta coherente. |
 | K05 | Museo físico | Pendiente | Donar pieza obtenida realmente, consumir una unidad, situarla/mostrarla, registrar donación única y reclamar recompensa sin duplicar. |
-| K06 | Colecciones y cuadernos | Parcial · cuaderno de donaciones separado de reservas y atlas; pendientes los demás registros semánticos | Separar descubierto, capturado, criado, fabricado, vendido y donado; atlas de vista previa no se muestra como colección conseguida. |
-| K07 | Libros y pistas | Pendiente | Hallazgos leíbles con registro y pistas útiles para sistemas/desbloqueos; textos provisionales etiquetados internamente, sin canon nuevo. |
+| K06 | Colecciones y cuadernos | Parcial · donado/reservado y cuaderno encontrado/leído separados del atlas; pendientes los demás registros semánticos | Separar descubierto, capturado, criado, fabricado, vendido y donado; atlas de vista previa no se muestra como colección conseguida. |
+| K07 | Libros y pistas | Parcial · tres cuadernos recuperables, lectura, prospección y dos recetas; pendientes variedad regional e historia | Hallazgos leíbles con registro y pistas útiles para sistemas/desbloqueos; textos provisionales etiquetados internamente, sin canon nuevo. |
 | K08 | Obras comunitarias | Pendiente | Contribuir materiales/categorías, terminar obra, abrir ruta o servicio y ver NPC usarlo; no solo añadir un token. |
 | K09 | Balance y vías alternativas | Parcial | Comprar/craftear/vender no crea dinero infinito; no hay dependencia circular entre herramienta, mineral y zona; el jugador puede recuperarse de falta de recursos. |
 

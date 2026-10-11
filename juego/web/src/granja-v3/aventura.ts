@@ -238,6 +238,17 @@ export function esTransitableAventura(e:EstadoAventura,x:number,z:number,radio=.
  return [x-radio,x+radio].every(xx=>[z-radio,z+radio].every(zz=>i.suelos[clave(xx,zz)]==='suelo'));
 }
 function lineaVision(i:InstanciaAventura,a:PuntoAventura,b:PuntoAventura){const n=Math.ceil(distancia(a,b)*4);for(let s=1;s<=n;s++){const t=s/n;if(i.suelos[clave(a.x+(b.x-a.x)*t,a.z+(b.z-a.z)*t)]!=='suelo')return false;}return true;}
+/** Acceso físico compartido para recuperar un cuaderno en situaciones ya existentes. */
+export function puedeInvestigar(e:EstadoAventura,id:string,jugador:PuntoAventura){const i=instanciaAventura(e),s=i?.situaciones.find(s=>s.id===id);return !!i&&!!s&&esTransitableAventura(e,jugador.x,jugador.z)&&distancia(jugador,s)<=2.3&&lineaVision(i,jugador,s);}
+/** El anfitrión comprueba el aprendizaje y prepara el pago antes de llamar. No altera vetas ni botín. */
+export function sondearEscalera(e:EstadoAventura,jugador:PuntoAventura):ResultadoAventura {
+ const i=instanciaAventura(e);if(!i||i.destinoId!==MINA||i.nivel>=100000)return mal('La prospección requiere un piso de la mina con otra bajada.');
+ if(i.entradas.some(p=>p.tipo==='descenso'))return mal('Ya hay una escalera en este piso.');if(!esTransitableAventura(e,jugador.x,jugador.z))return mal('Busca un lugar transitable para prospectar.');
+ const ocupadas=new Set([...i.nodos.filter(n=>!n.agotado),...i.monstruos.filter(m=>m.vivo),...i.entradas,...i.situaciones].map(p=>clave(p.x,p.z))),candidatas:PuntoAventura[]=[];
+ for(let dz=-2;dz<=2;dz++)for(let dx=-2;dx<=2;dx++){const p={x:Math.floor(jugador.x)+dx+.5,z:Math.floor(jugador.z)+dz+.5};if(esTransitableAventura(e,p.x,p.z)&&!ocupadas.has(clave(p.x,p.z))&&lineaVision(i,jugador,p))candidatas.push(p);}
+ candidatas.sort((a,b)=>distancia(a,jugador)-distancia(b,jugador));const p=candidatas[0];if(!p||!revelarEscalera(e,i,p,1))return mal('No hay espacio despejado cercano para marcar la escalera.');
+ return bien('Descubriste la escalera al piso '+(i.nivel+1)+'. Acércate a ella para bajar.');
+}
 function mover(e:EstadoAventura,m:PuntoAventura,dx:number,dz:number,colision?:ColisionAventura){
  const libre=(x:number,z:number)=>esTransitableAventura(e,x,z,.22)&&!colision?.(x,z);
  if(libre(m.x+dx,m.z+dz)){m.x+=dx;m.z+=dz;}else if(libre(m.x+dx,m.z))m.x+=dx;else if(libre(m.x,m.z+dz))m.z+=dz;

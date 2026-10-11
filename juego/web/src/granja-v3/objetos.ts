@@ -2,6 +2,7 @@ import { leerHuevo } from './ganaderia';
 import { FRUTALES } from './frutales-datos';
 import { ARTICULOS, CULTIVOS, ESPECIES, PECES, PRECIOS_VENTA } from './catalogo';
 import { RECETAS_CORRESPONDENCIA } from './correspondencia-datos';
+import { RECETAS_LIBROS } from './libros-datos';
 
 /** Un único vocabulario de objetos para mochila, cofres, cocina, equipo y botín. */
 export type RarezaObjeto='comun'|'inusual'|'raro'|'epico'|'legendario';
@@ -235,5 +236,6 @@ receta('mayonesa_pato','prensa',{huevo_pato:1,aceite:1},40);
 receta('mayonesa_avestruz','prensa',{huevo_avestruz:1,aceite:2},60,0,3);
 receta('mayonesa_antigua','prensa',{huevo_dinosaurio:1,aceite:2},80);
 RECETAS.push(...RECETAS_CORRESPONDENCIA);
+RECETAS.push(...RECETAS_LIBROS);
 const INDICE_RECETAS=new Map(RECETAS.map(r=>[r.id,r]));
 export function obtenerReceta(id:string):RecetaProduccion|undefined{return INDICE_RECETAS.get(id);}

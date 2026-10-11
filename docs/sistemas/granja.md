@@ -18,7 +18,14 @@ por casilla y calidad, recuperarlas o cerrar un lote como donación permanente. 
 estación y clima. El cuaderno registra solo lo donado, y el Atlas continúa como vista previa separada.
 Partidas anteriores, recarga, mochila llena y fallo de almacenamiento conservan o revierten los pasos.
 
-Los documentos detallados están en el módulo: `PUEBLO-INTEGRACION.md`, `VIVIENDAS-INTEGRACION.md`, `DORMITORIOS-INTEGRACION.md`, `VIDA-SOCIAL-INTEGRACION.md`, `ENCARGOS-INTEGRACION.md`, `CORREO-INTEGRACION.md`, `COLECCIONES-INTEGRACION.md`, `FESTIVALES-INTEGRACION.md`, `CARPINTERIA-INTEGRACION.md` y `COMPANIA-INTEGRACION.md`. `PLAN-MOTOR-COMPLETO.md` registra las capacidades parciales y pendientes. `REPARTO-COMPLETO.md` y `PLAN-PUEBLOS-MUNDOS.md` son planificación de contenido, no un catálogo de mundos ya terminados.
+En Explorar o la biblioteca de la Casa de los Oficios puedes consultar tres cuadernos. Se recuperan
+junto al campamento principal de los pisos 1, 5 y 9 de Minas de Celia, con cercanía y camino despejado.
+Regresa y lee para aprender prospección (3 antorchas y 8 de energía revelan una bajada sin extraer vetas),
+o recetas de cobre y vidrio en 20 segundos con los mismos ingredientes y requisitos originales.
+Encontrado y leído persisten por separado; relecturas no dan premios y un guardado fallido revierte también
+la escalera y el pago. Son textos técnicos propuestos, sin canon nuevo ni cambios de arte.
+
+Los documentos detallados están en el módulo: `PUEBLO-INTEGRACION.md`, `VIVIENDAS-INTEGRACION.md`, `DORMITORIOS-INTEGRACION.md`, `VIDA-SOCIAL-INTEGRACION.md`, `ENCARGOS-INTEGRACION.md`, `CORREO-INTEGRACION.md`, `COLECCIONES-INTEGRACION.md`, `LIBROS-INTEGRACION.md`, `FESTIVALES-INTEGRACION.md`, `CARPINTERIA-INTEGRACION.md` y `COMPANIA-INTEGRACION.md`. `PLAN-MOTOR-COMPLETO.md` registra las capacidades parciales y pendientes. `REPARTO-COMPLETO.md` y `PLAN-PUEBLOS-MUNDOS.md` son planificación de contenido, no un catálogo de mundos ya terminados.
 
 El cargador `src/granja-v2/biblioteca.ts` y los modelos de `public/modelos/granja-v2/` son dependencias visuales. Los antiguos motores y demos no se publican. No hay nuevas dependencias runtime. Las pruebas se ejecutan con `npm run probar:granja`; al integrar también se revisan `npm run build` y `npm run build:amigos` y el flujo de casa/retorno.
 

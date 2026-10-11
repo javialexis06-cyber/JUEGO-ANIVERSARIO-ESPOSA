@@ -2,6 +2,7 @@ import { PROYECTOS_CORRESPONDENCIA } from './correspondencia-datos';
 import { NIVEL_RECUPERADORA, materialesDe, porcentajeRecuperacion, previsionRecuperacion } from './recuperadora';
 import type { Calidad } from './inventario';
 import { recetaAprendida, requisitoReceta, NOMBRES_HABILIDAD } from './habilidades';
+import { LIBROS } from './libros-datos';
 import { calidadPila } from './inventario';
 import { nombreCalidad } from './agricultura';
 import type { EstadoGranja, Resultado } from './estado';
@@ -38,7 +39,7 @@ function casillas(pilas:(Pila|null)[],tipo:ReferenciaCasilla['tipo'],nombre:(id:
  return `<div class="prod-casillas" aria-label="${tipo==='mochila'?'Mochila':tipo==='maquina'?'Productos terminados':'Contenido del cofre'}">${pilas.map((p,i)=>`<button type="button" class="prod-casilla${p?' ocupada':''}${tipo==='maquina'?' salida':''}" data-prod-casilla="${i}" data-prod-tipo="${tipo}" data-prod-id="${esc(id)}" data-articulo="${esc(p?.articulo||'')}" data-nombre="${esc(p?nombre(p.articulo)+(calidadPila(p)>0?' · '+nombreCalidad(calidadPila(p)):''):'Casilla vacía')}" data-cantidad="${p?.cantidad||0}" draggable="${!!p}" aria-pressed="false" aria-label="${tipo==='maquina'?'Salida':'Casilla'} ${i+1}: ${p?`${esc(nombre(p.articulo)+(calidadPila(p)>0?' · '+nombreCalidad(calidadPila(p)):''))}, ${p.cantidad}`:'vacía'}" title="${p?`${esc(nombre(p.articulo)+(calidadPila(p)>0?' · '+nombreCalidad(calidadPila(p)):''))} · ${p.cantidad}`:'Casilla vacía'}"><span class="prod-casilla-num">${i+1}</span>${p?`<span class="prod-icon">${iconoInventario(p.articulo)}</span><strong class="prod-cantidad">${p.cantidad}</strong>${calidadPila(p)>0?`<span class="calidad-estrella calidad-${calidadPila(p)}">★</span>`:''}`:'<span class="prod-vacia" aria-hidden="true">·</span>'}</button>`).join('')}</div>`;
 }
 function recetaCard(r:RecetaProduccion,s:EstadoConProduccion,opts:OpcionesProduccion){
- const proyecto=PROYECTOS_CORRESPONDENCIA.find(p=>p.ramas.some(b=>b.receta.id===r.id)),origen=proyecto?'Completa la rama de esta receta en la carta «'+proyecto.carta.titulo+'».':'Necesitas descubrir esta receta en tus aventuras.';
+ const proyecto=PROYECTOS_CORRESPONDENCIA.find(p=>p.ramas.some(b=>b.receta.id===r.id)),libro=LIBROS.find(l=>l.receta?.id===r.id),origen=libro?'Recupera y lee «'+libro.titulo+'», en el campamento principal del piso '+libro.piso+'.':proyecto?'Completa la rama de esta receta en la carta «'+proyecto.carta.titulo+'».':'Necesitas descubrir esta receta en tus aventuras.';
  const nivel=opts.nivel??0,permitida=recetaPermitida(r,{casillas:s.casillasInventario,nivel,desbloqueos:s.desbloqueos,habilidades:s.habilidades});
  const disponibles=s.produccion.maquinas.filter(m=>m.zona===s.zona&&obtenerObjeto(m.articulo)?.maquina?.estacion===r.estacion);
  const materiales=Object.entries(r.ingredientes).every(([id,n])=>(s.inventario[id]||0)>=n),hayEstacion=r.estacion==='mano'||disponibles.length>0;

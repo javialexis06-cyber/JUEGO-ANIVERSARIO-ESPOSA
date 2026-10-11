@@ -27,6 +27,25 @@ Destinos: S21 FE y S24 Ultra. La granja puede probarse con teclado y mouse y con
 
 ## Estado real e historia
 
+### Cuadernos integrados · 11 de octubre de 2026
+
+La primera serie de K07 ya conecta los tres campamentos existentes con recuperación, lectura persistente,
+prospección pagada y dos recetas de horno. `LIBROS-INTEGRACION.md` registra su contrato y alcance parcial.
+No se agregan modelos, decoración, iconos ni texto de canon; la presentación final queda con Claude.
+Siguiente bloque previsto: identificar y usar hallazgos mineros (F11).
+
+### Contrato del bloque de libros y pistas (motor)
+
+Tres cuadernos técnicos se recuperan junto al campamento principal de los pisos 1, 5 y 9 de la mina.
+La acción exige cercanía física y recorrido despejado; los campamentos conservan su función y las
+partidas existentes pueden recuperar sus cuadernos sin regenerar el terreno. El registro persiste
+procedencia, recuperación y primera lectura; consultar un catálogo no concede el hallazgo ni su efecto.
+Leer fuera de la expedición enseña prospección con coste de antorchas/energía o recetas más rápidas de
+cobre y vidrio, con los mismos materiales y requisitos habituales. No hay monedas ni premios repetibles.
+La biblioteca del archivo y el panel de explorar usan texto y botones existentes, sin arte nuevo.
+V5, IDs, economía, calendario al dormir y reglas de cuidado se conservan. Los textos técnicos son
+propuestas internas de este bloque; no agregan acontecimientos ni personajes al canon de Astra.
+
 ### Contrato del bloque de colecciones y lotes (motor)
 
 El archivo existente registra seis lotes: cuatro de cultivos por estación, pesca y minerales/oficios.
