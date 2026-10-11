@@ -714,6 +714,7 @@ function noche() {
   // (la primera vez, el prólogo)
   if (!p.noche.escenas.includes('prologo')) return contarEscena('prologo', noche);
   pantalla = 'noche';
+  musica.cambiar('noche');
   const metas = p.noche.metas;
   const s = seccion('pantalla-noche opaca', '');
   const dibujar = () => {
@@ -1042,6 +1043,7 @@ async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: 
       sonarSucesos(suc, sim, local);
       const j = sim.J[local];
       if (j) musica.tension = Math.min(1, sim.E.vivos / 160 + (sim.fase !== 'juego' ? 0.4 : 0));
+      musica.jefe = sim.jefe >= 0 && !!sim.E.vivo[sim.jefe];
     },
     alCuadro: (p, dt) => {
       tutorial?.cuadro(p, dt);
@@ -1301,6 +1303,7 @@ function terminar(p: PartidaComun) {
 
 function resultados(p: PartidaComun, cb: Cobro, exito: boolean) {
   pantalla = 'resultado';
+  if (exito) musica.final();
   musica.cambiar('menu');
   const j = p.exp.J[p.o.local];
   const pr = P();
@@ -1650,6 +1653,7 @@ async function empezarInvitado(cfg: ConfigExpedicion, perfiles: PerfilJugador[],
       if (!sim) return;
       sonarSucesos(sim.suc, sim, local);
       musica.tension = Math.min(1, sim.E.vivos / 160 + (sim.fase !== 'juego' ? 0.4 : 0));
+      musica.jefe = sim.jefe >= 0 && !!sim.E.vivo[sim.jefe];
     },
     alCarga: (si, texto) => carga(si, texto, 0.4),
   });

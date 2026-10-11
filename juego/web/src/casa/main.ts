@@ -277,6 +277,7 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
   await alAbrir();
   pintarTodo();
   sonido.musica.iniciar('menu', 76, 'hogar');
+  pistaCasa();
   (window as any).__listo = true;
   if (s.modo === 'linea') void asegurarCuenta();
   return true;
@@ -329,6 +330,8 @@ function abrirFormCuenta(r: Rol, aviso = '') {
 }
 
 function elegirRol(r: Rol) {
+  // La canción de la casa suena en la bienvenida (después sigue la de la casa)
+  sonido.musica.pista('casa-cancion', { bucle: false, luego: 'casa-dia' });
   rolElegido = r;
   if (claveBien !== r) claveBien = null;
   $('bienv-aviso').textContent = '';
@@ -2018,12 +2021,24 @@ async function abrirRegaloDeVerdad() {
 // ---------------------------------------------------------------------------
 // Cuartos, botones y HUD
 // ---------------------------------------------------------------------------
+/** La música de la casa (docs/sistemas/musica.md): en el patio la del patio y de noche (de 8 de la noche a 6 de la
+ *  mañana) la de dormir; si no, la de día. Mientras está la canción de la bienvenida, se deja terminar. */
+function pistaCasa(c: Cuarto | undefined = casa3d?.actual) {
+  if (sonido.musica.enMinijuego) return;
+  const h = new Date().getHours();
+  const id = c === 'patio' ? 'casa-patio' : h >= 20 || h < 6 ? 'casa-noche' : 'casa-dia';
+  if (sonido.musica.pistaActual() === 'casa-cancion' && sonido.musica.pistaSonando() === 'casa-cancion') return;
+  sonido.musica.pista(id);
+}
+setInterval(() => pistaCasa(), 60000);
+
 /** Los cuartos propios solo los decora su dueño. */
 const puedeDecorar = (c: Cuarto) => !DUENO[c] || DUENO[c] === yo;
 
 function verCuarto(c: Cuarto) {
   if (c !== 'patio' && patio?.activo) patio.salir();
   casa3d.mostrar(c);
+  pistaCasa(c);
   if (c === 'patio') patio?.sincronizar();
   if (decorando) casa3d.modoDecorar(true, puedeDecorar);
   pintarCuartos();

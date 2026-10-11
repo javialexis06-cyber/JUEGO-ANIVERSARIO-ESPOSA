@@ -1,4 +1,4 @@
-// Sonidos de las reacciones, sintetizados como el resto del juego (sin archivos).
+// Sonidos de las reacciones (de la mesa y de las escenas premium): sintetizados, o de archivo si ya están.
 import * as sonido from '../sonido';
 
 const { nota, rumor } = sonido;
@@ -52,7 +52,43 @@ export const SONIDOS: Record<string, () => void> = {
   huida: () => { for (let i = 0; i < 6; i++) nota(i % 2 ? 330 : 294, 0.07, i * 0.11, 'triangle', 0.045); },
 };
 
+// Los mismos sonidos hechos con ElevenLabs (public/sfx/, ver docs/sistemas/musica.md): en cuanto cargan, suenan
+// esos; mientras tanto (o si no están) suena el sintetizado de siempre.
+const efectos = new Map<string, AudioBuffer>();
+let cargando = false;
+function cargarEfectos() {
+  const audio = sonido.contextoAudio();
+  if (cargando || !audio) return;
+  cargando = true;
+  void fetch('./sfx/lista.json')
+    .then((r) => (r.ok ? r.json() : {}))
+    .then((l: Record<string, [string, number]>) =>
+      Promise.all(
+        Object.entries(l ?? {}).map(([n, [archivo]]) =>
+          fetch(`./sfx/${archivo}`)
+            .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(String(r.status)))))
+            .then((b) => audio.ctx.decodeAudioData(b))
+            .then((buf) => void efectos.set(n, buf))
+            .catch(() => {}),
+        ),
+      ),
+    )
+    .catch(() => {});
+}
+
 export function sonar(nombre: string | undefined) {
   if (!nombre) return;
+  cargarEfectos();
+  const buf = efectos.get(nombre);
+  const audio = sonido.contextoAudio();
+  if (buf && audio && !sonido.silenciado()) {
+    const f = audio.ctx.createBufferSource();
+    f.buffer = buf;
+    const g = audio.ctx.createGain();
+    g.gain.value = 0.8;
+    f.connect(g).connect(audio.salida);
+    f.start();
+    return;
+  }
   (SONIDOS[nombre] ?? (sonido as unknown as Record<string, (() => void) | undefined>)[nombre])?.();
 }

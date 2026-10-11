@@ -20,6 +20,7 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | [`granja.md`](sistemas/granja.md) | La granja integrada: acceso desde la casa, motor y guardado, documentación de sistemas y límites actuales. |
 | [`salas.md`](sistemas/salas.md) | Salas de hasta 4, modo amigo y la app «Sala de Juegos» para amigos. |
 | [`sangre-y-ceniza.md`](sistemas/sangre-y-ceniza.md), [`sangre-figuras.md`](sistemas/sangre-figuras.md) | El survivors oscuro: diseño, código, contrato de arte y figuras. |
+| [`musica.md`](sistemas/musica.md) | La música de cada juego y los efectos de sonido (Eleven Music): qué suena dónde, el guion y cómo se generan. |
 | [`voces.md`](sistemas/voces.md) | Las voces de Él y Ella (ElevenLabs): dónde suenan, el guion con sus emociones y cómo se generan. |
 | [`supabase.md`](sistemas/supabase.md) | La base en línea: tablas, cuentas con contraseña, cambios pendientes, latido. |
 

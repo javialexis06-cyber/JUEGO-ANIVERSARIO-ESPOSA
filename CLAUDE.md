@@ -76,7 +76,7 @@ minijuegos adentro. Cada uno juega en su celular Android y la casa está siempre
 | Blender 4.x (solo para modelos) | `sudo apt-get install -y blender` y `python3.12 -m pip install --break-system-packages numpy scikit-image scipy` |
 | Pillow | `pip install pillow` (hojas de contacto) |
 | Supabase | URL y clave publicable en `src/casa/servidor.ts`; esquema en `supabase/esquema.sql`; los cambios de SQL los pega Javier en el SQL Editor |
-| ElevenLabs (voces) | `ELEVENLABS_API_KEY` en el entorno, `api.elevenlabs.io` permitido y `ffmpeg` (`docs/sistemas/voces.md`) |
+| ElevenLabs (voces, música, efectos) | `ELEVENLABS_API_KEY` en el entorno, `api.elevenlabs.io` permitido y `ffmpeg` (`docs/sistemas/voces.md`, `docs/sistemas/musica.md`) |
 
 La APK la compila GitHub Actions (usa las variables `SUPABASE_URL` y `SUPABASE_ANON_KEY` del repositorio si están).
 El contenedor se borra entre sesiones: `npm ci` en cada sesión nueva (los modelos optimizados ya están en

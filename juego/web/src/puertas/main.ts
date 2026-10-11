@@ -185,6 +185,7 @@ function controles() {
   const sonar = () => {
     sonido.activar();
     sonido.musica.iniciar('menu', 76, 'hogar');
+    if (!jugadas) sonido.musica.pista('puertas-menu');
   };
   window.addEventListener('pointerdown', sonar, { once: true });
   $('btn-mapa').onclick = () => {
@@ -316,6 +317,7 @@ function salirAlMapa(texto?: string) {
   paneles.quitar();
   terminarCtx();
   narrador.esconder();
+  if (sonido.musica.pistaSonando() !== 'puertas-final') sonido.musica.pista('puertas-menu');
   mapa();
 }
 
@@ -511,6 +513,8 @@ function armarCapitulo(cap: number) {
 
 async function jugar(n: number, plano?: PlanoDesorden) {
   const turno = ++jugadas;
+  // La música del capítulo (docs/sistemas/musica.md); la canción del final se deja terminar
+  if (sonido.musica.pistaSonando() !== 'puertas-final') sonido.musica.pista(`puertas-cap${Math.min(10, Math.floor((n - 1) / 10) + 1)}`);
   const papel: Papel | 'solo' = pareja?.papel ?? 'solo';
   // La tarjeta con el número de la puerta mientras se arma (sobre el fundido)
   const tapada = cubrir(n);
@@ -662,17 +666,23 @@ async function jugar(n: number, plano?: PlanoDesorden) {
   celebrarEstrellas(n, estrellas, ganadas);
   guardar();
   if (UNA) return;
+  sonido.musica.remate('puertas-abierta');
   if (!SIN_HISTORIA) {
     await narrador.celebrar(n);
     if (n % 10 === 0) await narrador.decir(capituloDe(n).despedida);
     // Cada cinco puertas vuelve un recuerdo de verdad, contado por los dos
     const r = recuerdoDe(n);
     if (r) {
+      sonido.musica.remate('puertas-recuerdo');
       if (n % 10 !== 0) await narrador.decir([elegir(HALLAZGO, n / 5)]);
       await tarjetaRecuerdo(r, RECUERDOS.indexOf(r) + 1, RECUERDOS.length);
       await narrador.conversar(r.dialogo, nombreDe(yo));
     }
-    if (n === 100) await narrador.decir(FINAL_DE[otro(yo)]);
+    if (n === 100) {
+      // El regalo: la canción de los dos suena mientras se despiden
+      sonido.musica.pista('puertas-final', { bucle: false, luego: 'puertas-cap10' });
+      await narrador.decir(FINAL_DE[otro(yo)]);
+    }
   }
   if (turno !== jugadas) return;
   // Cruzar la puerta

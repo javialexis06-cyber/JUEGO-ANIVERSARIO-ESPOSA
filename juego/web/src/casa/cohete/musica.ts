@@ -1,7 +1,8 @@
 // Música del retrete espacial: una por tramo (alegre en el cielo del barrio, flotante en la órbita, soñadora en la
 // Luna, tensa en Marte, con empuje en el cinturón, brillante en la nebulosa y romántica en la galaxia del amor).
-// Sintetizada en vivo con las notas de sonido.ts, bajita para que no estorbe.
-import { musica, nota, rumor } from '../../sonido';
+// Sintetizada en vivo con las notas de sonido.ts, bajita para que no estorbe. Si están las pistas de Eleven Music
+// (docs/sistemas/musica.md), suenan esas: «Del baño a la NASA» en el primer despegue y después una por tramo.
+import { hayPista, musica, nota, rumor } from '../../sonido';
 
 interface Tema {
   bpm: number;
@@ -77,12 +78,41 @@ export class MusicaEspacial {
   private siguienteTema = 0;
   private paso = 0;
   private proxima = 0;
-  /** 1 normal; con el turbo va un poco más rápido. */
-  prisa = 1;
+  private vel = 1;
   private parada = false;
+  private conArchivo: Promise<boolean> = hayPista('cohete-tramo0');
+  private archivo = false;
+  private antes: string | null = null;
+  private cantada = false;
+
+  /** 1 normal; con el turbo va un poco más rápido. */
+  get prisa() {
+    return this.vel;
+  }
+  set prisa(v: number) {
+    this.vel = v;
+    if (this.archivo) musica.prisa(v === 1 ? 1 : 1.06);
+  }
+
+  /** La música de la casa se calla mientras vuela (si suena la sintetizada de aquí). */
+  callarCasa() {
+    void this.conArchivo.then((si) => {
+      if (!si && this.reloj) musica.callar(true);
+    });
+  }
 
   iniciar() {
     if (this.reloj) return;
+    musica.enMinijuego = true;
+    this.antes = musica.pistaActual();
+    void this.conArchivo.then((si) => {
+      this.archivo = si;
+      if (!si || !this.reloj) return;
+      // La canción en el primer despegue de la vez; después, la del tramo
+      if (!this.cantada) musica.pista('cohete-cancion', { bucle: false, luego: `cohete-tramo${this.siguienteTema}` });
+      else musica.pista(`cohete-tramo${this.siguienteTema}`);
+      this.cantada = true;
+    });
     this.parada = false;
     this.proxima = performance.now() + 120;
     this.reloj = setInterval(() => this.programar(), 50);
@@ -91,25 +121,36 @@ export class MusicaEspacial {
   /** Cambia de tramo (entra en el próximo compás). */
   tramo(i: number) {
     this.siguienteTema = Math.max(0, Math.min(TEMAS.length - 1, i));
+    if (!this.archivo) return;
+    // Mientras suena la canción, el tramo nuevo espera a que termine
+    if (musica.pistaSonando() === 'cohete-cancion') musica.pista('cohete-cancion', { bucle: false, luego: `cohete-tramo${this.siguienteTema}` });
+    else musica.pista(`cohete-tramo${this.siguienteTema}`);
   }
 
   pausar(si: boolean) {
     this.parada = si;
+    if (this.archivo) musica.callar(si);
     if (!si) this.proxima = performance.now() + 80;
   }
 
   detener() {
     if (this.reloj) clearInterval(this.reloj);
     this.reloj = null;
+    if (this.archivo) {
+      musica.prisa(1);
+      musica.callar(false);
+      musica.pista(this.antes);
+    }
+    musica.enMinijuego = false;
   }
 
   private programar() {
-    if (this.parada) return;
+    if (this.parada || this.archivo) return;
     const ahora = performance.now();
     // Si el reloj se atrasó (celular ocupado), se salta lo perdido
     if (this.proxima < ahora - 300) this.proxima = ahora + 40;
     while (this.proxima < ahora + 220) {
-      const corchea = (60 / (TEMAS[this.tema].bpm * this.prisa) / 2) * 1000;
+      const corchea = (60 / (TEMAS[this.tema].bpm * this.vel) / 2) * 1000;
       if (!musica.apagada()) this.tocar(this.paso, (this.proxima - ahora) / 1000, corchea / 1000);
       this.proxima += corchea;
       this.paso = (this.paso + 1) % 32;

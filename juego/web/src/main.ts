@@ -231,6 +231,7 @@ async function iniciar() {
       mandarMando(linea!, m);
       ui.actualizar(juego, dt);
       sonido.musica.tempo((juego.legendario ? 112 : 100) + (!juego.cerrado && juego.restante < 25 ? 14 : 0));
+      sonido.musica.prisa(!juego.cerrado && juego.restante < 25 ? 1.07 : 1);
     } else if (juego && !espejo && !pausado && !juego.terminado) {
       // En pruebas (?bot&rapido=N) se simulan N pasos fijos de 0,1 s por cuadro
       const pasos = BOT ? RAPIDO : 1;
@@ -247,6 +248,7 @@ async function iniciar() {
       if (!juego.terminado) ui.actualizar(juego, BOT ? 0.1 * RAPIDO : dt);
       // La música se apura cuando falta poco para cerrar
       sonido.musica.tempo((juego.legendario ? 112 : 100) + (!juego.cerrado && juego.restante < 25 ? 14 : 0));
+      sonido.musica.prisa(!juego.cerrado && juego.restante < 25 ? 1.07 : 1);
       // Una foto de la tienda para el otro celular cada décima de segundo
       if (linea?.anfitrion && linea.fase === 'jugando' && !juego.terminado) {
         linea.relojFoto += dt;
@@ -298,6 +300,7 @@ function abrirMenu() {
   ui.terminarNivel();
   mandos.mostrar(false);
   sonido.musica.iniciar('menu');
+  pistaMenu();
   // ¿Se abrió el primer día de un tamaño nuevo? El local crece (con todo lo que tenía) y llega su sección de regalo
   const local = localActual();
   if (local.nivel > partida.tamano) {
@@ -357,6 +360,17 @@ function abrirMenu() {
   }
   // El riel arranca mostrando el último día abierto
   ultimo?.scrollIntoView({ inline: 'center', block: 'nearest' });
+}
+
+/** La música del súper (docs/sistemas/musica.md): en el menú la canción y después la del día; cada día empieza su
+ *  pista desde el comienzo, con el remate de abrir el local; el día 100 de la pareja tiene la suya. */
+function pistaMenu() {
+  sonido.musica.pista('super-cancion', { bucle: false, luego: 'super-dia' });
+}
+function pistaDia(n: number, leg: boolean) {
+  const id = leg ? 'super-legendario' : n === NIVELES_JUGABLES && !esNeutro() ? 'super-dia100' : 'super-dia';
+  sonido.musica.pista(id, { reiniciar: true, oSino: 'super-dia' });
+  sonido.musica.remate('super-abrir');
 }
 
 /** El día 100, para la pareja, es su aniversario (los amigos y las salas con amigos ven «Gran final»). */
@@ -463,6 +477,7 @@ async function jugar(n: number) {
   estrenarCallado();
   sonido.activar();
   sonido.musica.iniciar('juego', legendario ? 112 : 100);
+  pistaDia(n, legendario);
   pantallaUnica(null);
   if (juego) juego.destruir();
   turnoFondo++;
@@ -515,6 +530,8 @@ async function jugar(n: number) {
  * un amigo no se le paga nada a ninguna casa (`sueldoDe` = '' esconde la línea).
  */
 function terminarDia(j: Juego, n: number, r: Resultado, sueldoDe: string | null = null) {
+  sonido.musica.prisa(1);
+  sonido.musica.remate(r.estrellas[0] ? 'super-ganado' : 'super-perdido');
   const antes = partida.estrellas[n] ?? [false, false, false];
   const fichasAntes = guardado.fichasGanadas(partida);
   if (!j.legendario) partida.estrellas[n] = antes.map((e, i) => e || r.estrellas[i]);
@@ -1308,6 +1325,7 @@ function arrancarDia(l: Linea) {
   pantallaUnica(null);
   sonido.activar();
   sonido.musica.iniciar('juego', j.legendario ? 112 : 100);
+  pistaDia(0, j.legendario);
   const yo = j.jugadores.find((p) => p.id === l.yo) ?? j.jugador;
   ui.empezarNivel(j, partida.ayudas, yo);
   mandos.mostrar(true, false);
@@ -1659,6 +1677,7 @@ async function cicloSala(s: Sala) {
       pantallaUnica(null);
       mandos.mostrar(false);
       sonido.musica.iniciar('menu');
+      pistaMenu();
       s.ponerDatos({ jugando: false, dia: textoDia() });
       const e = esperarEnSala({
         sala: s,

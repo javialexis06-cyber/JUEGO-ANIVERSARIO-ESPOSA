@@ -657,8 +657,8 @@ class RetreteEspacial {
     this.cara('sorprendido', 99);
     rumor(this.durIntro - 0.2, 180, 0.12, 0, 0.6, 90);
     nota(90, this.durIntro - 0.4, 0, 'sawtooth', 0.05, 320);
-    musica.callar(true);
     this.musica.iniciar();
+    this.musica.callarCasa();
     this.musica.pausar(false);
     this.musica.prisa = 1;
     this.musica.tramo(0);

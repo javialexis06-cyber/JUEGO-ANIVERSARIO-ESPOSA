@@ -165,6 +165,10 @@ velocidad, se siente raro…»
   `probar-show-linea.mjs`, mirar capturas del estudio (Javier y Laura en la tarima, el texto de las pantallas al
   derecho), juntar y subir. Diseño en `docs/show.md` de esa rama.
 - Tele compartida, tocador de Laura, escenas premium (en pausa) y diseños premium.
+- ~~Música de todos los minijuegos y efectos de las escenas~~ **hecho** (11 de octubre): 60 pistas (81 min) con
+  Eleven Music, 5 canciones con letra (casa, Cien Puertas, súper, cohete, cocina), metal sin letra en Sangre y Ceniza
+  y Lavarse la cara, y 43 efectos de verdad para las escenas premium y la mesa (`docs/sistemas/musica.md`). Falta la
+  granja (cuando esté más avanzada) y el Show cuando se junte.
 - ~~Voces con IA~~ **hecho** (11 de octubre): 1.727 frases de Él y Ella con su voz y su emoción en Cien Puertas, la
   casa, la mesa, el cohete, la cocina, las cartas del súper y Sangre y Ceniza (`docs/sistemas/voces.md`). Falta
   sumar las frases sueltas que todavía no están en el guion (ver «Pendiente» allá).

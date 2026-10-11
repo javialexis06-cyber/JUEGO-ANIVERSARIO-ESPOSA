@@ -22,6 +22,12 @@ import { abrirCreador, type Creador } from './creador';
 import { JUEGOS, disponible, type JuegoAmigos } from './juegos';
 import { Muneco } from './muneco';
 
+// La música de la sala (docs/sistemas/musica.md): arranca con el primer toque, como exige el navegador
+document.addEventListener('pointerdown', () => {
+  sonido.activar();
+  if (!sonido.musica.enMinijuego) sonido.musica.pista('amigos-sala');
+}, { once: true });
+
 /** Esta es la app aparte para amigos (no hay casa ni «¿Eres Javier o Laura?»). */
 const SOLO_AMIGOS = import.meta.env.MODE === 'amigos';
 const raiz = document.getElementById('amigos')!;
@@ -126,6 +132,7 @@ function sala() {
     const j = t.closest<HTMLElement>('[data-j]');
     const a = t.closest<HTMLElement>('[data-a]');
     sonido.activar();
+    if (!sonido.musica.enMinijuego) sonido.musica.pista('amigos-sala');
     if (j) void jugar(JUEGOS.find((x) => x.id === j.dataset.j)!);
     else if (a?.dataset.a === 'editar') abrirElCreador();
     else if (a?.dataset.a === 'crear') void crearSala();

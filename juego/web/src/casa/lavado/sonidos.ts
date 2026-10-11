@@ -1,7 +1,7 @@
 // Sonidos de «Lavarse la cara» (sintetizados, con más cuerpo que los cortitos de antes) y su música: una canción
 // de bañera alegre y suave (ukelele, marimba, bajo redondo y un shaker de burbujas) que se anima con los minutos y
 // se pone seria cuando llega un jefe. Nada suena encima de nada: cada efecto tiene su límite por segundo.
-import { contextoAudio, musica as musicaCasa, nota, rumor, silenciado } from '../../sonido';
+import { contextoAudio, hayPista, musica as musicaCasa, nota, rumor, silenciado } from '../../sonido';
 import type { Efecto } from './tipos';
 
 const ultimo = new Map<string, number>();
@@ -190,15 +190,66 @@ class Musica {
   private proximo = 0;
   private gan: GainNode | null = null;
   private bpm = 112;
-  /** 0 tranquila … 3 a todo dar (sube con los minutos). */
-  intensidad = 0;
-  jefe = false;
+  private nivel = 0;
+  private conJefe = false;
   private apagada = false;
+  // Las pistas de rock pesado (docs/sistemas/musica.md): si están, suenan esas y esta sintetizada se calla
+  private conArchivo = false;
+  private callo = false;
+  private enPartida = false;
+  private antes: string | null = null;
+
+  /** 0 tranquila … 3 a todo dar (sube con los minutos): desde la 2, la pista más pesada. */
+  get intensidad() {
+    return this.nivel;
+  }
+  set intensidad(v: number) {
+    if (v === this.nivel) return;
+    this.nivel = v;
+    this.elegir();
+  }
+  get jefe() {
+    return this.conJefe;
+  }
+  set jefe(v: boolean) {
+    if (v === this.conJefe) return;
+    this.conJefe = v;
+    this.elegir();
+  }
+  /** En el menú (entre partidas). */
+  menu() {
+    this.enPartida = false;
+    this.elegir();
+  }
+  /** Empieza una partida. */
+  partida() {
+    this.enPartida = true;
+    this.nivel = 0;
+    this.conJefe = false;
+    this.elegir();
+  }
+  /** El remate de la partida. */
+  final(gano: boolean) {
+    musicaCasa.remate(gano ? 'lavado-victoria' : 'lavado-derrota');
+  }
+  private elegir() {
+    if (!this.reloj) return;
+    musicaCasa.pista(!this.enPartida ? 'lavado-menu' : this.conJefe ? 'lavado-jefe' : this.nivel >= 2 ? 'lavado-intensa' : 'lavado-partida');
+  }
 
   iniciar() {
     const a = contextoAudio();
     if (!a || this.reloj) return;
-    musicaCasa.callar(true);
+    musicaCasa.enMinijuego = true;
+    this.antes = musicaCasa.pistaActual();
+    void hayPista('lavado-partida').then((si) => {
+      this.conArchivo = si;
+      // Sin archivos: se calla la música de la casa y suena la sintetizada de aquí, como antes
+      if (!si && this.reloj) {
+        musicaCasa.callar(true);
+        this.callo = true;
+      }
+    });
     this.apagada = musicaCasa.apagada();
     const { ctx, salida } = a;
     this.gan = ctx.createGain();
@@ -210,11 +261,13 @@ class Musica {
     this.gan.gain.setTargetAtTime(this.apagada ? 0 : 0.5, ctx.currentTime, 0.8);
     this.proximo = ctx.currentTime + 0.15;
     this.reloj = window.setInterval(() => this.programar(), 40);
+    this.elegir();
   }
 
   /** La música de la casa se respeta: si la tienen apagada, aquí tampoco suena. */
   alternar() {
     this.apagada = !this.apagada;
+    if (this.conArchivo) musicaCasa.callar(this.apagada);
     const a = contextoAudio();
     if (a && this.gan) this.gan.gain.setTargetAtTime(this.apagada ? 0 : 0.5, a.ctx.currentTime, 0.2);
     return this.apagada;
@@ -225,6 +278,7 @@ class Musica {
   }
 
   pausar(si: boolean) {
+    if (this.conArchivo) musicaCasa.callar(si || this.apagada);
     const a = contextoAudio();
     if (a && this.gan) this.gan.gain.setTargetAtTime(si || this.apagada ? 0 : 0.5, a.ctx.currentTime, 0.25);
   }
@@ -239,7 +293,11 @@ class Musica {
       setTimeout(() => g.disconnect(), 1500);
     }
     this.gan = null;
-    musicaCasa.callar(false);
+    if (this.callo || this.conArchivo) musicaCasa.callar(false);
+    this.callo = false;
+    this.enPartida = false;
+    musicaCasa.enMinijuego = false;
+    musicaCasa.pista(this.antes);
   }
 
   private voz(f: number, t: number, dur: number, tipo: OscillatorType, vol: number, ataque = 0.01) {
@@ -279,7 +337,7 @@ class Musica {
 
   private programar() {
     const a = contextoAudio();
-    if (!a || !this.gan || silenciado()) return;
+    if (!a || !this.gan || silenciado() || this.conArchivo) return;
     const ctx = a.ctx;
     const bpm = this.jefe ? 124 : this.bpm + this.intensidad * 4;
     const corchea = 60 / bpm / 2;

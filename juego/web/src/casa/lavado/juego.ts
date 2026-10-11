@@ -177,6 +177,7 @@ export class Lavado {
       if (this.o.unirse) await this.enSala(() => unirseSala(this.o.unirse!, 'lavado', this.yoEnSala()));
       else if (this.o.crear) await this.enSala(() => crearSala({ juego: 'lavado', max: 4, yo: this.yoEnSala() }));
       for (;;) {
+        musicaLavado.menu();
         const a = await this.menu.abrir();
         if (a === 'salir') break;
         this.menu.cerrar();
@@ -790,8 +791,7 @@ export class Lavado {
     let tJefe = 0;
     let tFinEspera = 0;
     let nCuadros = 0;
-    musicaLavado.jefe = false;
-    musicaLavado.intensidad = 0;
+    musicaLavado.partida();
     const resumen = await new Promise<ResumenPartida | null>((ok) => {
       terminar = ok;
       // El bucle se detiene solo en segundo plano (no gasta batería escondido) y vuelve sin saltos
@@ -970,6 +970,7 @@ export class Lavado {
       // (la maestría es del disfraz de quien juega en este celular: en pareja, cada uno suma la suya)
       const maestria = sumarMaestria(this.p, r);
       const monedas = monedasPorPartida(r.segundos, r.gano);
+      musicaLavado.final(r.gano);
       this.resultado.partidas++;
       this.resultado.segundos = Math.max(this.resultado.segundos, Math.round(Math.min(r.segundos, DURACION + 600)));
       this.resultado.gano ||= r.gano;
