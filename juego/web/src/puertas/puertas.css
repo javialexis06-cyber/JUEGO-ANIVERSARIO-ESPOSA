@@ -274,6 +274,13 @@ body.puertas { background: #1d2340; }
   border-bottom: 0;
 }
 .globo p { margin: 0; font: 600 17px/1.35 var(--display); min-height: 1.35em; }
+/* Lo que falta por escribir: ocupa su lugar sin verse (el globo no crece ni salta mientras se escribe) */
+.globo-resto { visibility: hidden; }
+.globo.sin-cola::after { display: none; }
+/* Mientras el narrador habla, el letrero de la puerta, la ficha de la pareja y el tutorial se apartan */
+.hud-chip, .pareja-chip, .tuto-puertas { transition: opacity 0.25s; }
+body.con-dialogo .hud-chip, body.con-dialogo .pareja-chip, body.con-dialogo .tuto-puertas { opacity: 0; pointer-events: none; }
+body.con-dialogo .tuto-puertas * { pointer-events: none; }
 .globo-seguir {
   display: block;
   margin-top: 4px;

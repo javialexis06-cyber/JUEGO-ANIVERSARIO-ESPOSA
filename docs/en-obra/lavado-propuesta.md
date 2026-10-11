@@ -222,7 +222,18 @@ Ducha» → una carta…). Todo se ve en la colección y en la Sala de Trofeos.
    logros que las abren (L). Medir con `balance-lavado.mjs` y `progresion-lavado.mjs`.
 2. **Fase 2**: los modos (Del otro lado del espejo, Agua caliente sin fin, Sin límite, Ruleta de sorpresas, Hiper),
    los tesoros (F), el mercader y las cajitas (G).
+   - **2a hecha** (11 de octubre): los seis tesoros tirados (Cuento, Mapa, Ruleta, y después de ganar: Libro de
+     recetas, Calentador y Espejo al revés) y los seis modos. Mientras no existan los escenarios de la ducha, los
+     tesoros están en La Cara, El Lavamanos y La Bañera; el Espejito de mano y los tres frasquitos ya se abrían con
+     logros (fase 1). Quedan para después la Radio (cuando haya música por escenario) y la Mascarilla de noche (fase 4).
+   - **2b hecha** (11 de octubre): el vendedor ambulante es **Don Jabón** (pastilla de jabón de peluche con sombrero
+     vueltiao) con su carrito; vende con las gotas de la partida. Las **cajitas sorpresa** se pasan a la fase 4: cada
+     una trae un disfraz nuevo, así que se hacen junto con esos disfraces.
 3. **Fase 3**: los escenarios (E) con sus bichos y jefes (I) en Blender, empezando por La Ducha; los minijuegos (H).
+   - **3a hecha** (11 de octubre): La Ducha, con baldosas mojadas, 8 bichos (gota de agua dura, mosquita del desagüe,
+     tapita de champú, hongo del pie, espuma sucia, ciempiés, estropajo, costra de cal), 4 jefes (Rey Hongo, Regadera
+     Loca, Cortina Mohosa, Ciempiés Gigante) y los chorros que caen del techo. Como Javier pidió «partes de la
+     ducha», los siguientes son La Jabonera (pasillos de repisas, como la torre del original) y El Desagüe (el final).
 4. **Fase 4**: los disfraces nuevos con transformación (J), las cartas de la noche (B) y, si Javier cuenta las
    historias, las aventuras (K).
 

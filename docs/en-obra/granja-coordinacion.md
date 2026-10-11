@@ -287,14 +287,114 @@ Cambio de reglas (frente de motor, avisado aquí):
   deposita en los cofres; las fracciones se acumulan en `resto` (nada se pierde). Validación en `errorProduccion`.
 - A mano: acción de motor `recuperar` (junto a la máquina, desde una casilla de la mochila); redondea al azar.
 - Panel propio en Fabricar › Taller, modelo animado y tres íconos.
-- Interiores (Claude): `amoblarCabana` (cama doble, cocina, mesa, chimenea encendida, biblioteca, plantas y cuadros,
-  todo contra las paredes) y `adornosRefugio` (paja, farol que alumbra, ventanas, costales, escoba, aseladero).
-  Cámara a 2 de zoom en interiores y fondo oscuro cálido en lugar del verde del exterior.
+- Interiores (Claude): `adornosRefugio` (paja, farol que alumbra, ventanas, costales, escoba, aseladero). La cabaña
+  y los cuartos del pueblo pasaron al kit de muebles de Blender (sección siguiente). Cámara a 2 de zoom en interiores y
+  fondo oscuro cálido en lugar del verde del exterior.
+
+## Regla: todo de la granja en Blender (Javier, 11 de octubre de 2026)
+
+Javier pidió que **todo, absolutamente todo** lo que se ve en la granja se modele en Blender con la máxima calidad del
+estilo del juego (peluche, fieltro, madera, plastilina; formas redondeadas y llenas de detalle). Las figuras sueltas
+de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/blender/granja_*.py`, exportados a
+`juego/web/public/modelos/` y cargados con `src/recursos.ts`. El motor no cambia: solo la presentación.
+
+### Interiores con el kit de muebles de Blender (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_muebles.py` modela 54 piezas (mostrador, estantes, ventanas, lámparas, tapete, matas,
+  exhibidor de semillas, costales, fragua y yunque, banco de carpintero, vitrinas de frascos, camilla, barriles,
+  chimenea, bibliotecas, escritorio, globo, altar y cristales de Aura y Lara, cama, armario, cocina, piso y pared por
+  módulos de 1 m, marco y puertas…) y las exporta en un solo `public/modelos/granja_muebles.glb` con un vacío
+  `m_<clave>` por pieza.
+- `src/granja-v3/cuartos.ts` lo carga una vez y arma: `interiorCabana()` (8 × 8), `interiorLocal(servicio)` (9 × 8,
+  los nueve servicios, también `archivo` y los dos altares), `interiorVivienda(colores, tema)` (12 × 10, con extras por
+  tema) y `interiorDormitorio(color)` (8 × 8, cobija del color del vecino). `amueblar(g, puestos, tintes)` pone piezas
+  `[clave, x, z, giro, escala, altura]`; `mosaico` repite piso y pared con instancias; los tintes se aplican por
+  nombre de material (papel de pared, cobija, puerta del cuarto). Geometría y materiales del kit van marcados
+  `compartido` y `liberar()` no los destruye.
+- Las colisiones siguen siendo las del motor (`libreDormitorio`, `libreVivienda`/`SOLIDOS_VIVIENDA`, el rectángulo de
+  los locales): los muebles van contra las paredes o encima de esos sólidos, y lo que queda en el lado abierto (derecha
+  y frente, sin pared por la cámara) mira hacia la cámara. Si el motor mueve un sólido, se mueve el mueble aquí.
+- Se retiraron `amoblarCabana` y `adornosServicio` (cajas de three.js) de `zonas-render.ts`.
+
+### Decoración de los festivales (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_festivales.py` → `public/modelos/granja_festivales.glb` (1,7 MB, mallas juntadas por
+  material en cada pieza): para cada festival (`primavera`, `verano`, `otono`, `invierno`) un poste con cintas y remate
+  (flor, sol, hojas con bellota, estrella), un tramo de guirnalda de 2 m (banderines, farolillos, hojas de arce,
+  bombillos con estrellas), un arco con el emblema (brote, campana, calabaza, vela), lo principal (puesto de semillas
+  con toldo, tarima de la ronda con tambor y campana, mesa de la cosecha, árbol de los recuerdos con marcos y regalos),
+  un rincón (carretilla con plántulas, cojines y tambores, espantapájaros sobre pacas, muñeco de nieve) y la corona para
+  la repisa de la fuente.
+- `src/granja-v3/festejos-render.ts`: `decoracionFestival(dia)` arma la plaza solo cuando `festivalHoy(dia)` da un
+  festival (todo ese día); cuatro postes alrededor de la plaza unidos por guirnaldas en catenaria, el arco en la calle
+  del oeste (73, 0), lo principal al este (94,6; 2,6), el rincón al suroeste (75,8; 4) y la corona en la fuente.
+  `celdasFestejo(dia)` son las celdas que ocupan esas piezas: `vista.libre()` no deja pisarlas (solo movimiento del
+  personaje; las reglas del motor no cambian). El punto de inscripción (84, 10), la plaza, las calles y los seis
+  puestos de los participantes quedan libres. `animarFestejo` mece las guirnaldas y hace titilar las luces.
+- La clave de la vista del pueblo incluye el tema del festival de hoy, para que la plaza se rehaga si cambia el día
+  estando allí. Si el motor mueve la plaza, la fuente o los puestos de los participantes, se ajustan las constantes de
+  `festejos-render.ts`.
+
+### El Pueblo del Sol en Blender: utilería, edificios y altares (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_pueblo.py` → `public/modelos/granja_pueblo.glb` (0,7 MB): la fuente (pila con repisa,
+  columna con anillos, tacita, un sol con cara y cuatro ranitas en el borde; mismas alturas del agua de
+  `pueblo-adornos.ts`), banco de hierro forjado, farol con vidrio que alumbra, jardinera por módulos de 1 m con su
+  bordillo, tramo y poste de valla, dos árboles (manzano y florecido), la rueda del molino, vaca, gallina, bebedero,
+  rollo de heno, piedra del borde y el letrero de la entrada.
+- `crearPueblo()` arma esa utilería en una arcilla aparte (`utileria-arcilla`); en el navegador, apenas carga el kit
+  (se precarga con los muebles al abrir la granja) la cambia por `utileriaPueblo()`: las mismas posiciones, alturas y
+  giros (`BANCOS_PUEBLO`, `ARBOLES_PUEBLO`, `PUENTES_PUEBLO`, `VALLAS_CORRAL`, `FAROLES_PUEBLO`, `JARDINERAS_PUEBLO`),
+  juntadas por material con `fundir()` (`cuartos.ts`) para que sean pocas llamadas de dibujo. La rueda del kit va dentro
+  del grupo `rueda` que ya animaba el pueblo. En Node (pruebas del motor) queda la arcilla.
+- `liberarPueblo()` ya no destruye lo marcado `compartido` (geometrías, materiales y texturas de los kits).
+- Edificios y altares (`personajes/blender/granja_edificios.py` → `public/modelos/granja_edificios.glb`, 0,9 MB): una
+  pieza `edificio_<oficio>_<ancho>x<fondo>` por cada combinación de pueblo.ts (siete locales y cinco paletas de
+  vivienda) con zócalo, entramado, puerta con arco de vidrio, ventanas con postigos y jardineras, techo de tejas en
+  escama, frontón con ojo de buey y chimenea en el mismo sitio (el humo de la herrería sigue saliendo de la suya);
+  `altar_aura` y `altar_lara`. La utilería propia de cada edificio está en `granja_pueblo.glb` (puestos del mercado,
+  pila de troncos, banco de taller y barril, fragua, yunque y minerales, medallón y materas de la clínica, tablón y
+  cajas del archivo, mesa de la posada, materas de la puerta teñidas con el color de la fachada).
+- `building()` y `shrine()` dibujan todo en la arcilla reemplazable y anotan en una lista (`PuestoKit`) qué pieza va
+  dónde; `utileriaPueblo()` las pone con esa misma lista. Si al kit le falta cualquier pieza (por ejemplo, un edificio
+  de medidas nuevas que agregue el motor), se queda la arcilla completa: nada desaparece. Para un edificio nuevo, se
+  agrega su `(oficio, ancho, fondo)` a `EDIFICIOS` en `granja_edificios.py` y se exporta.
+- Lo único que sigue en arcilla en el pueblo: el piso de la plaza (debajo de la textura pintada), el pasto del corral y
+  el canal del molino.
+
+### El monte, las salidas, los adelantos y la cueva en Blender (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_monte.py` → `public/modelos/granja_monte.glb` (0,2 MB): `roble`, `pino`, `helecho`, `mata`,
+  `hongo` y `tronco_caido` livianos (van por instancias, cientos de copias), `arco_salida`, `senal_salida` y las piezas
+  de los adelantos y de la cueva.
+- `monteZona()` (zonas-render.ts) sigue calculando los mismos sitios; `monteDeBlender()` cambia las instancias
+  procedurales por las del kit (una por material de cada pieza), conservando posición, giro, escala y tinte por copia
+  (copas y corteza). En el bosque ancestral los hongos del kit brillan como antes.
+- `arcoSalida()` pone el arco de Blender y conserva el tablero con el nombre pintado (dos caras a ±0,046);
+  `señalesSalidas()` (paisaje-render.ts) cambia el letrerito de flecha. Si el kit no carga, queda lo de figuras.
+- Adelantos más allá de los arcos (`adelantoDeBlender` en zonas-render.ts): casitas del pueblo (los edificios del kit
+  a escala, mirando a la granja), faroles y cerca; pinos, tronco y hongos del bosque; la montaña con `boca_mina`,
+  `riel` y `vagoneta`; el `muelle`, `juncos` y `piedra_orilla` del lago (el agua y la arena siguen).
+- La cueva de la mina conserva sus paredes de roca y cambia lo hecho por mano: `entibado` (con farol), `marco_tunel`
+  de la salida, la vía con su vagoneta y los racimos de `cristales`, teñidos y brillantes con el color de cada piso.
+- Los árboles que se talan (obstáculos) siguen con sus modelos de la biblioteca.
+
+### Máquinas de producción en Blender (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_maquinas.py` → `public/modelos/granja_maquinas.glb` (0,4 MB): la parte fija de cada máquina
+  con las medidas de `figura()` (escenas-produccion.ts): cofres de cobre y de hierro, los tres portales, la nave
+  exploradora, aspersores, recuperadoras (cobre, hierro y astral), alto horno, trituradora, taladro de vapor,
+  ensambladora, horno, fundidora y forja, banco de trabajo, cocina y telar, fermentador y prensa, molino artesanal y
+  `maquina` (la genérica para lo que no tiene figura propia).
+- `figura()` arma todo como antes y, cuando carga el kit, cambia solo el grupo `fijo` por la pieza de
+  `claveMaquina(articulo)`. Lo que se mueve (rotores, rodillos, broca, brazo, engranajes, manivela, fuelle, el brillo y
+  las estrellas del portal) y el piloto siguen siendo del juego, así que la animación y los estados no cambian. Para una
+  máquina nueva: su figura en `figura()`, su pieza `m_<articulo>` en granja_maquinas.py y su clave en `claveMaquina`.
 
 ### Fuatia, Confluencia y primeras armas (Codex, 11 de octubre de 2026)
 
-- Pedido de Javier: añadir a Fuatia, ampliar pasados del reparto, dar recursos recurrentes a todos los mundos y centrar el RPG nuevo en armas. La wiki puede actualizarse; el push del código sigue pausado mientras Claude trabaja.
+- Pedido de Javier: añadir a Fuatia, ampliar pasados del reparto, dar recursos recurrentes a todos los mundos y centrar el RPG nuevo en armas. El usuario levantó la pausa con «has push a todo». Se integran los cambios remotos de Claude antes de publicar ambas ramas y la wiki.
 - Autoría: `docs/narrativa/08-fuatia.md`, vidas de los 142 NPC y 284 conversaciones, 36 principales, ocho secundarios de Fuatia, 24 territorios de recursos y 14 escenas largas. Confluencia, sus materiales y esas misiones todavía no están construidos en el juego.
-- Primer motor local: `aventura.ts` mantiene las expediciones actuales y añade arco, bastón y cuatro sellos; trayectorias, colisión, duración activa, una invocación, dominio limitado y compatibilidad V5. `objetos.ts` registra armas y recetas; `motor.ts` valida y paga energía y flechas. No se añade RPG de personajes o armaduras.
+- Primer motor integrado: `aventura.ts` mantiene las expediciones actuales y añade arco, bastón y cuatro sellos; trayectorias, colisión, duración activa, una invocación, dominio limitado y compatibilidad V5. `objetos.ts` registra armas y recetas; `motor.ts` valida y paga energía y flechas. No se añade RPG de personajes o armaduras.
 - Presentación mínima: `main.ts` respeta alcance de la familia; `escenas-aventura.ts` muestra esferas simples para proyectiles y patrones. Arte definitivo y animaciones siguen en el frente de Claude. No se han añadido modelos ni llamadas de audio.
-- No combinar ni subir estos cambios de motor hasta que se levante la pausa. Consultar `docs/narrativa/11-armas-y-combate.md` y la prueba `probar-armas.mjs` antes de integrar.
+- Publicar sin push forzado en `claude/supermarket-mania-minigame-xn2it8` y `work`, tras repetir las comprobaciones de integración. Consultar `docs/narrativa/11-armas-y-combate.md` y la prueba `probar-armas.mjs` antes de integrar.

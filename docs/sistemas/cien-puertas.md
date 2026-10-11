@@ -341,6 +341,12 @@ Lo de siempre de la puerta:
 - La lámpara del techo de la casa cuelga a un lado (`LAMPARA` en `cuarto.ts`), los muebles de los acertijos están a
   los lados de la puerta, el narrador cuenta la historia desde un lado y celebra sin taparla, su globo se acomoda
   entre el borde de la pantalla y la puerta, el inventario va en columna a la derecha y los avisos abajo a la izquierda.
+- Globos (`Globo` en `ui.ts`, arreglados el 11 de octubre de 2026): la frase completa ocupa su sitio desde la primera
+  letra (lo que falta va invisible, `.globo-resto`) y «toca para seguir» guarda su lugar, así el globo sale con su
+  tamaño y no crece ni brinca mientras se escribe. Mientras el narrador habla (`body.con-dialogo`), el letrero de la
+  puerta, la ficha de la pareja y el tutorial se apartan. Los globitos de los ánimos esquivan lo que haya arriba (el
+  letrero, los botones, la tarjeta del tutorial): se corren a un lado o se bajan lo justo.
+  `window.__puertas.narrador()` deja probarlos (`animar`, `conversar`, `susto`…).
 - Revisión automática: `window.__puertas.tapan()` pinta en una rejilla de la pantalla las hojas de la puerta y cuenta
   qué se les cruza desde la vista de siempre (objetos del cuarto y del acertijo, el desorden, el narrador contando, en
   la esquina y celebrando, y la interfaz con textos largos de prueba). `node scripts/_puertas_tapan.mjs 1 100` lo

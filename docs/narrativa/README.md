@@ -2,7 +2,7 @@
 
 Biblia narrativa encargada por Javier el 11 de octubre de 2026. **Autoría nueva sobre el canon de [mitologia.md](../mitologia.md), no recuperación de la conversación perdida.** Los acontecimientos añadidos, apellidos institucionales y relaciones son ficción del juego. No describen recuerdos reales de la pareja.
 
-Esta entrega contiene historia y especificaciones de producción; no activa por sí sola misiones, portales, voces ni recompensas en el motor. El push del código está pausado; la publicación documental en la wiki está autorizada. Las 142 identidades del reparto original y sus cinco figuras narrativas se conservan; Fuatia se añade como sexta figura; Sangrevil y los protagonistas se documentan aparte porque no están en ese catálogo. Los nombres antes propuestos se adoptan en esta biblia, sin modificar todavía las etiquetas de la partida.
+Esta entrega contiene historia y especificaciones de producción; no activa por sí sola misiones, portales, voces ni recompensas en el motor. El usuario autorizó publicar todo el trabajo. La primera versión de armas está integrada en las expediciones actuales; la expansión narrativa y Confluencia siguen pendientes de implementación. Las 142 identidades del reparto original y sus cinco figuras narrativas se conservan; Fuatia se añade como sexta figura; Sangrevil y los protagonistas se documentan aparte porque no están en ese catálogo. Los nombres antes propuestos se adoptan en esta biblia, sin modificar todavía las etiquetas de la partida.
 
 | Lectura | Contenido |
 |---|---|
@@ -17,7 +17,7 @@ Esta entrega contiene historia y especificaciones de producción; no activa por 
 | [Misiones de Fuatia](08-misiones-fuatia.md) | Ocho arcos secundarios, incluido un nuevo secreto. |
 | [Recursos y Confluencia](09-regiones-y-recursos.md) | 24 territorios de recursos, cultivos, fauna y motivos para regresar. |
 | [Figuras y escenas](10-figuras-y-escenas.md) | Pasados extensos de figuras y protagonistas; cuatro escenas nuevas. |
-| [Armas y combate](11-armas-y-combate.md) | Reglas RPG centradas en armas y estado del primer motor local. |
+| [Armas y combate](11-armas-y-combate.md) | Reglas RPG centradas en armas y estado del primer motor integrado. |
 | [Datos](datos/) | Fuente estructurada de personajes, misiones, relaciones y líneas. |
 | [Audio](audio/) | Guiones exportados por voz, catálogo de tomas y resumen de caracteres. |
 

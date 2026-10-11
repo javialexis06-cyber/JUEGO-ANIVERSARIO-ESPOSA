@@ -3,6 +3,7 @@ import { caja, esfera, compactar } from './suelo';
 import type { PaisajeGranja } from './paisaje';
 import { SALIDAS } from './caminos-mundo';
 import type { Zona } from './catalogo';
+import { conKit } from './cuartos';
 /** Agua viva: ondas que se mueven, centro más hondo, orilla clarita y destellos del sol. Sigue siendo un material
  * estándar (le llegan la luz, la niebla y la noche); el tiempo lo pone la malla justo antes de dibujarse. */
 const tiempoAgua={value:0};
@@ -39,11 +40,15 @@ export function paisajeGranja(p:PaisajeGranja):THREE.Group{
  compactar(g);return g;
 }
 export function señalesSalidas(zona:Zona):THREE.Group{
- const g=new THREE.Group();for(const s of SALIDAS.filter(s=>s.desde===zona)){
-  caja(g,[.09,1.05,.09],[s.x+1.2,.53,s.z+.7],'#9d805e');caja(g,[.72,.28,.09],[s.x+1.2,.9,s.z+.7],'#c6ae82');
-  const flecha=new THREE.Mesh(new THREE.ConeGeometry(.085,.25,3),new THREE.MeshStandardMaterial({color:'#6d815d'}));flecha.rotation.z=-Math.PI/2;flecha.position.set(s.x+1.25,.9,s.z+.765);g.add(flecha);
+ const g=new THREE.Group(),letreros=new THREE.Group(),salidas=SALIDAS.filter(s=>s.desde===zona);for(const s of salidas){
+  caja(letreros,[.09,1.05,.09],[s.x+1.2,.53,s.z+.7],'#9d805e');caja(letreros,[.72,.28,.09],[s.x+1.2,.9,s.z+.7],'#c6ae82');
+  const flecha=new THREE.Mesh(new THREE.ConeGeometry(.085,.25,3),new THREE.MeshStandardMaterial({color:'#6d815d'}));flecha.rotation.z=-Math.PI/2;flecha.position.set(s.x+1.25,.9,s.z+.765);letreros.add(flecha);
   for(let i=-1;i<=1;i++)caja(g,[.68,.012,.7],[s.x+.5,.009,s.z+.5+i*.75],'#c0b28a');
- }compactar(g);return g;
+ }compactar(g);compactar(letreros);g.add(letreros);
+ // El letrerito de flecha de Blender (granja_monte.glb) reemplaza al de figuras cuando carga
+ conKit(g,'granja_monte.glb',m=>{const base=m.get('senal_salida');if(!base)return;letreros.removeFromParent();letreros.traverse(o=>{const malla=o as THREE.Mesh;if(malla.isMesh){malla.geometry.dispose();(malla.material as THREE.Material).dispose();}});
+  for(const s of salidas){const o=base.clone(true);o.position.set(s.x+1.15,0,s.z+.75);g.add(o);}});
+ return g;
 }
 /** Nudo hundido en el tronco del árbol grande; acompaña el modelo original del follaje. */
 export function huecoArbolGrande(x:number,z:number):THREE.Group{

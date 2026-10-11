@@ -11,14 +11,20 @@ por las instrucciones anteriores de esta cola; los cuadernos K07 también perman
 
 Javier pidió integrar la granja existente, subir cada avance probado y repartir el trabajo: el frente de granja continúa motor, sistemas e historia; Claude hace gráficos, diseño de personajes y presentación visual. Leer [`en-obra/granja-coordinacion.md`](en-obra/granja-coordinacion.md). El motor sigue en desarrollo; cuatro festivales básicos ya conectados (ver `juego/web/src/granja-v3/FESTIVALES-INTEGRACION.md`); ofertas diarias/semanales y tres especiales de dos etapas ya integrados (ver `juego/web/src/granja-v3/ENCARGOS-INTEGRACION.md`); dos proyectos de correspondencia con cuatro ramas excluyentes, recetas útiles y decisiones persistentes ya integrados (ver `juego/web/src/granja-v3/CORREO-INTEGRACION.md`); seis lotes del archivo con donaciones, premios únicos y reserva de semillas durante todo el año ya integrados (ver `juego/web/src/granja-v3/COLECCIONES-INTEGRACION.md`); tres cuadernos recuperables con lectura persistente, prospección y recetas rápidas ya integrados (ver `juego/web/src/granja-v3/LIBROS-INTEGRACION.md`); siguiente bloque previsto: identificación y uso de hallazgos mineros (F11). Esto no reemplaza el orden de los demás pedidos de esta cola.
 
+**Gráficos de la granja (Claude, regla «todo en Blender»):** ya están en Blender los muebles de todos los interiores, la decoración de los cuatro festivales, el Pueblo del Sol entero (14 edificios, 2 altares, fuente, bancos, faroles, jardineras, vallas, árboles, molino, corral), el monte de todas las zonas, los arcos y letreros de las salidas, lo que se ve más allá de cada arco, lo hecho por mano en la cueva de la mina y el cuerpo de las máquinas de producción. Falta (en este orden): obras de construcción y refugios por dentro, invernadero por dentro, nodos de la mina, caja de envíos y cuencos de los compañeros, herramientas en la mano, monstruos de las aventuras e íconos 3D. Detalle en `en-obra/granja-coordinacion.md`.
+
 Lo que Javier pidió y todavía falta, en el orden en que se va a hacer. Se tacha (se borra) cuando queda hecho,
 probado y subido.
 
 ## Por dónde seguir (nota para el próximo Claude)
 
-Último trabajo subido: **Lavarse la cara 2, fase 1 completa** (las 24 armas del juego base y 5 de los DLC con sus
-evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros nuevos). Sigue
-la fase 2 (modos, tesoros, mercader y cajitas). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
+Último trabajo subido: **Lavarse la cara 2, fase 2** (seis tesoros del baño con flecha verde; los seis modos del
+original: Hiper, Del otro lado del espejo, Agua caliente sin fin, Sin límite, Ruleta de sorpresas y Nivel al azar; y
+Don Jabón, el vendedor ambulante, con el Monedero) y **La Ducha** (fase 3a: el cuarto escenario, con 8 bichos y 4
+jefes nuevos y los chorros que caen del techo). Siguen los demás escenarios de la ducha (3b). Las cajitas sorpresa
+quedan para la fase 4, con los disfraces que traen. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
+los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
+nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
 astral en pulso, el Guardián de una, sin pantallazo negro y los menús rehechos) y **la app de amigos con los seis
 juegos**. Antes, **Sangre y Ceniza 2, fase 5**, con la que **Sangre y Ceniza 2 queda completo**:
 equipo común a épico con rarezas especiales, la Forja con tres mostradores, el familiar (siete compañeros con modelo),
@@ -68,8 +74,16 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
      **hecho** (9 recogibles con la fiebre de gotas y el patito dorado que se guarda, 4 arcanos, 4 poderes y 7 logros).
    - ~~1d: una selección de armas de los DLC que encaje con el aseo~~ **hecho** (brisa, sales de las cuatro
      estaciones, bata de seda, gotas de colores y culebrita destapacaños, con sus evoluciones y 5 logros).
-   - Fases 2 a 4 de la propuesta: modos, tesoros y mercader; los escenarios de la ducha; disfraces con
-     transformación, cartas de la noche y las aventuras.
+   - ~~2a: tesoros y modos~~ **hecho** (seis tesoros con flecha verde; modos Hiper, Del otro lado del espejo, Agua
+     caliente sin fin, Sin límite, Ruleta de sorpresas y Nivel al azar; el mapa en la pausa; 4 logros).
+   - ~~2b: el vendedor ambulante y el Monedero~~ **hecho** (Don Jabón con su carrito: armas de rebote, patitos
+     dorados, el Monedero y, del otro lado del espejo, tiradas, saltos, vetos y una carta).
+   - 2c: las cajitas sorpresa (los ataúdes del original: un anillo de mugrosos que hay que vencer para abrir la caja de
+     un disfraz nuevo); van con los disfraces de la fase 4, así que se hacen ahí.
+   - ~~3a: La Ducha~~ **hecho** (baldosas mojadas, 8 bichos y 4 jefes en Blender, los chorros que caen del techo).
+   - 3b en adelante: los demás escenarios de la ducha (La Jabonera, El Desagüe y especiales como la Cortina en
+     laberinto o el Espejo empañado) y los minijuegos (la carrera del tobogán, el desfile de jefes).
+   - Fase 4: disfraces con transformación, cartas de la noche, cajitas sorpresa y las aventuras.
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
 6. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.

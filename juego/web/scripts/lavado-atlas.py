@@ -2,17 +2,21 @@
 atlas del juego: public/lavado/bichos.webp + bichos.json y public/lavado/objetos.webp + objetos.json.
 También arma una hoja de contacto para revisar a ojo.
 
-Uso: python3 scripts/lavado-atlas.py <carpeta_bichos | -> <carpeta_objetos> [hoja.png]
+Uso: python3 scripts/lavado-atlas.py <carpeta_bichos | +carpeta_nuevos | -> <carpeta_objetos> [hoja.png]
+Con «+carpeta» se suman (o se reemplazan) solo esos bichos a los que ya están en el atlas del juego, sin tener que
+volver a dibujar todos.
 """
 import json
 import os
+import shutil
 import sys
+import tempfile
 
 from PIL import Image, ImageDraw
 
 CUADROS = ['normal', 'paso', 'parpadeo', 'golpe']
 JEFES = {'espinillon', 'reinaCaspa', 'granMoco', 'senorLagana', 'barroNegro', 'senorSarro', 'donaCucaracha', 'motaPelo', 'tapon',
-         'esponjaPodrida', 'peloDesague', 'duchaHelada'}
+         'esponjaPodrida', 'peloDesague', 'duchaHelada', 'reyHongo', 'regaderaLoca', 'cortinaMohosa', 'ciempiesGigante'}
 SALIDA = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public', 'lavado')
 
 
@@ -27,12 +31,14 @@ def atlas_bichos(carpeta):
     comunes = [n for n in nombres if n not in JEFES]
     jefes = [n for n in nombres if n in JEFES]
     ANCHO = 2048
-    C1, C2 = 128, 192
+    # (los jefes en 160: con los escenarios de la ducha ya no caben todos en 192)
+    C1, C2 = 128, 160
     por1, por2 = ANCHO // C1, ANCHO // C2
     filas1 = -(-len(comunes) * 4 // por1)
     filas2 = -(-len(jefes) * 4 // por2)
     alto = filas1 * C1 + filas2 * C2
-    alto = 1 << (alto - 1).bit_length()
+    # (WebGL 2 no necesita potencias de dos: solo un múltiplo de 32)
+    alto = -(-alto // 32) * 32
     img = Image.new('RGBA', (ANCHO, alto), (0, 0, 0, 0))
     datos = {'ancho': ANCHO, 'alto': alto, 'bichos': {}}
     k = 0
@@ -59,6 +65,18 @@ def atlas_bichos(carpeta):
             k += 1
         datos['bichos'][n] = {'cuadros': rects, 'ancla': [round(pu, 4), round(pv, 4)], 'lado': round(tam, 4)}
     return img, datos
+
+
+def extraer_bichos(destino):
+    """Saca los cuadros de cada bicho del atlas que ya tiene el juego (como si fueran los PNG recién dibujados)."""
+    with open(os.path.join(SALIDA, 'bichos.json')) as f:
+        d = json.load(f)
+    img = Image.open(os.path.join(SALIDA, 'bichos.webp')).convert('RGBA')
+    for n, b in d['bichos'].items():
+        for c, (x, y, w, h) in zip(CUADROS, b['cuadros']):
+            img.crop((x, y, x + w, y + h)).save(os.path.join(destino, f'{n}_{c}.png'))
+        with open(os.path.join(destino, f'{n}.txt'), 'w') as f:
+            f.write(f"{b['ancla'][0]} {b['ancla'][1]} {b['lado']} {b['cuadros'][0][2]}\n")
 
 
 def atlas_objetos(carpeta):
@@ -94,6 +112,12 @@ if __name__ == '__main__':
     bichos, objetos = sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else ''
     # (con «-» en vez de la carpeta de los bichos, solo se rehace el atlas de los objetos)
     datos = {'ancho': 0, 'alto': 0, 'bichos': {}}
+    if bichos.startswith('+'):
+        tmp = tempfile.mkdtemp(prefix='bichos_')
+        extraer_bichos(tmp)
+        for f in os.listdir(bichos[1:]):
+            shutil.copy(os.path.join(bichos[1:], f), tmp)
+        bichos = tmp
     if bichos != '-':
         img, datos = atlas_bichos(bichos)
         img.save(os.path.join(SALIDA, 'bichos.webp'), 'WEBP', quality=88, method=6)

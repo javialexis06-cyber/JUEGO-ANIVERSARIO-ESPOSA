@@ -1174,6 +1174,8 @@ const probador = () => new ProbadorReal(() => escena.escena, escena, entrada, pa
 
 (window as unknown as Record<string, unknown>).__puertas = {
   jugar: (n: number) => jugar(n),
+  /** El narrador (para ver sus globos en las pruebas: decir, conversar, animar, celebrar…). */
+  narrador: () => narrador,
   estado: () => ({ jugando, progreso, bloqueada: entrada?.bloqueada, abierta: puerta?.abierta, items: inv.items, listo: !entrada?.bloqueada && $('fundido').hidden && escena.enVistaGeneral }),
   /** Resuelve la puerta que se está jugando con su prueba (toques y sensores simulados). */
   probar: async () => {

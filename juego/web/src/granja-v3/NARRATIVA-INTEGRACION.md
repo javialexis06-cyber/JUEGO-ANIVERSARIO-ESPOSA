@@ -73,6 +73,6 @@ No certifica jugabilidad, pronunciación ni equilibrio real.
 
 Primer bloque ejecutable recomendado: P01–P05 y tres arcos del pueblo, con guardado y recibos, antes
 de expandir mapas. Las pruebas del motor, builds y demo se hacen cuando ese bloque toque runtime.
-Esta entrega solo modifica autoría y documentación. No publicar mientras siga la pausa del usuario.
+La expansión narrativa modifica autoría y documentación. El usuario levantó la pausa de publicación con «has push a todo»; se conserva el trabajo remoto de Claude al integrar. Publicar la biblia no activa las misiones nuevas.
 
-La ampliación incluye 284 conversaciones VID repetibles y 14 escenas cinematográficas. `vidas.json` conserva recuerdos y vida cotidiana por ID; `regiones-recursos.json` propone 24 territorios y su renovación por jornadas dormidas. No activa recursos ni portales. El motor de armas local se describe en [Armas y combate](../../../../docs/narrativa/11-armas-y-combate.md): es un avance distinto del diseño de misiones, compatible con V5 y todavía sin push.
+La ampliación incluye 284 conversaciones VID repetibles y 14 escenas cinematográficas. `vidas.json` conserva recuerdos y vida cotidiana por ID; `regiones-recursos.json` propone 24 territorios y su renovación por jornadas dormidas. No activa recursos ni portales. El primer motor de armas integrado se describe en [Armas y combate](../../../../docs/narrativa/11-armas-y-combate.md): es un avance distinto del diseño de misiones, compatible con V5 y disponible en las expediciones actuales.

@@ -6,6 +6,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { ARMAS, ESCONDIDAS } from '../armas';
+import { TESOROS } from '../tesoros';
+import { hash2 } from '../azar';
 import { ENEMIGOS, ID_ENEMIGOS } from '../enemigos';
 import type { Enemigo, Jugador, Motor } from '../motor';
 import type { Efecto, IdArma, IdEnemigo, IdObjeto } from '../tipos';
@@ -52,7 +54,9 @@ const LETRAS = ['letraA', 'letraB', 'letraC'];
 const SIN_3D = typeof location !== 'undefined' && new URLSearchParams(location.search).has('sin3d');
 /** Pruebas con varios celulares en la misma máquina: empezar en la calidad más baja (`?calidad=0`). */
 const CALIDAD = typeof location !== 'undefined' ? Number(new URLSearchParams(location.search).get('calidad') ?? 3) : 3;
-const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante' } as const;
+/** Lo que hay tirado en el piso de La Ducha (los mismos modelos de las armas, como utilería). */
+const UTILERIA_DUCHA = ['champu', 'jabon', 'esponjas', 'patoAmarillo', 'peinilla', 'remolino', 'toalla'];
+const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
 
 const rgb = (hex: string): [number, number, number] => {
@@ -499,6 +503,9 @@ export class Dibujo {
         }
         break;
       }
+      case 'chorro':
+        this.chorros.push({ x: e.x, y: e.y, r: e.c, t: -e.d, dura: e.e });
+        break;
       case 'columna': {
         for (let q = 0; q < 4; q++) P.crear('gota', CAPA_NORMAL, e.x + (az() - 0.5) * e.c, e.y + (az() - 0.5) * e.d * 0.8, 6, (az() - 0.5) * 80, 0, 80 + az() * 80, 0.45, 5, 3, 0.65, 0.88, 1, 0.45, 400);
         break;
@@ -735,6 +742,7 @@ export class Dibujo {
     const dtv = pausa ? 0 : dt;
     this.dibujarManchas(dtv);
     this.dibujarZonas(m);
+    this.dibujarChorros(dtv);
     this.dibujarObjetos(m);
     this.dibujarBichos(m, dtv);
     this.dibujarProyectiles(m);
@@ -791,14 +799,18 @@ export class Dibujo {
   }
 
   /** Un anillo o un arete escondido: flota y brilla para que se vea desde lejos. */
-  private tesoro(x: number, y: number, nombre: string) {
+  private tesoro(x: number, y: number, nombre: string, grande = false) {
     const t = this.t;
     const c = this.cuadrosObj.get(nombre);
     if (!c) return;
     const b = this.fx.c.brillo;
-    this.pisoFx.poner(x, y, 0.1, 120, 84, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.9, 0.6, 0.55 + Math.sin(t * 4) * 0.2);
-    this.fxLuz.poner(x, y, 30, 70, 70, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.95, 0.75, 0.35 + Math.sin(t * 6) * 0.1);
-    this.objetos.poner(x, y, 14 + Math.sin(t * 3) * 6, 44, 44, 0.5, 0.92, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, 0, 1, Math.sin(t * 2) * 0.2, 0.15 + Math.max(0, Math.sin(t * 5)) * 0.2);
+    // (los tesoros del baño, más grandes y con brillo verde, como las reliquias del original)
+    const k = grande ? 1.35 : 1;
+    const [r, g, bl] = grande ? [0.6, 1, 0.65] : [1, 0.9, 0.6];
+    this.pisoFx.poner(x, y, 0.1, 120 * k, 84 * k, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, r, g, bl, 0.55 + Math.sin(t * 4) * 0.2);
+    // (el brillo de encima, suavecito en los tesoros grandes para que se vea bien qué es)
+    this.fxLuz.poner(x, y, 30, 70 * k, 70 * k, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, r, 0.95, bl + 0.1, grande ? 0.1 + Math.sin(t * 6) * 0.04 : 0.35 + Math.sin(t * 6) * 0.1);
+    this.objetos.poner(x, y, 14 + Math.sin(t * 3) * 6, 44 * k, 44 * k, 0.5, 0.92, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, 0, 1, Math.sin(t * 2) * 0.2, 0.15 + Math.max(0, Math.sin(t * 5)) * 0.2);
     this.sombra(x, y, 16, 0.3);
     if (Math.random() < 0.2) this.part.crear('estrella', CAPA_LUZ, x + (Math.random() - 0.5) * 50, y + (Math.random() - 0.5) * 30, 20 + Math.random() * 30, 0, 0, 30, 0.8, 10, 3, 1, 0.92, 0.6, 1, 0, 0, 4);
   }
@@ -820,6 +832,66 @@ export class Dibujo {
       const r = this.manchas[b + 2] * (0.7 + Math.min(1, edad * 6) * 0.5);
       this.pisoFx.poner(this.manchas[b], this.manchas[b + 1], 0.06, r * 2, r * 1.6, 0.5, 0.5, c.u0, c.v0, c.u1, c.v1,
         this.manchas[b + 4], this.manchas[b + 5], this.manchas[b + 6], a, 0, 0, 1, b);
+    }
+  }
+
+  private utileriaDucha() {
+    const C = 430;
+    const x0 = Math.floor((this.cx - this.vistaW * 0.6) / C), x1 = Math.floor((this.cx + this.vistaW * 0.6) / C);
+    const y0 = Math.floor((this.cy - this.vistaH * 0.7) / C), y1 = Math.floor((this.cy + this.vistaH * 0.65) / C);
+    for (let gy = y0; gy <= y1; gy++)
+      for (let gx = x0; gx <= x1; gx++) {
+        if ((gx === 0 || gx === -1) && (gy === 0 || gy === -1)) continue;
+        if (hash2(gx, gy, 41) > 0.42) continue;
+        const nombre = UTILERIA_DUCHA[Math.floor(hash2(gx, gy, 42) * UTILERIA_DUCHA.length)];
+        const q = this.cuadrosObj.get(nombre);
+        if (!q) continue;
+        const x = (gx + 0.15 + hash2(gx, gy, 43) * 0.7) * C, y = (gy + 0.15 + hash2(gx, gy, 44) * 0.7) * C;
+        const tam = 44 + hash2(gx, gy, 45) * 16;
+        this.objetos.poner(x, y, 0, tam, tam, 0.5, 0.92, q.u0, q.v0, q.u1, q.v1, 1, 1, 1, 1, 0, 0, 1, (hash2(gx, gy, 46) - 0.5) * 0.4, 0);
+        this.sombra(x, y, tam * 0.38, 0.3);
+      }
+  }
+
+  /** Los chorros de La Ducha: la sombra que avisa y, al caer, la columna de agua con su salpicada. */
+  private chorros: { x: number; y: number; r: number; t: number; dura: number }[] = [];
+  private dibujarChorros(dt: number) {
+    const P = this.part;
+    const s = this.fx.c.sombra, o = this.fx.c.onda, c = this.fx.c.chorro, b = this.fx.c.brillo, sal = this.fx.c.salpicadura;
+    for (let k = this.chorros.length - 1; k >= 0; k--) {
+      const ch = this.chorros[k];
+      ch.t += dt;
+      if (ch.t >= ch.dura) {
+        this.chorros.splice(k, 1);
+        continue;
+      }
+      if (!this.enVista(ch.x, ch.y, ch.r * 2)) continue;
+      if (ch.t < 0) {
+        // Avisa: la sombra se va oscureciendo y caen goticas sueltas
+        const f = 1 + ch.t / 1.3;
+        this.pisoFx.poner(ch.x, ch.y, 0.085, ch.r * 2.4, ch.r * 1.7, 0.5, 0.5, s.u0, s.v0, s.u1, s.v1, 0.15, 0.3, 0.5, 0.15 + 0.35 * f);
+        const pul = (this.t * 2.5) % 1;
+        this.pisoFx.poner(ch.x, ch.y, 0.09, ch.r * 2.6 * (1.2 - pul * 0.4), ch.r * 1.9 * (1.2 - pul * 0.4), 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 0.6, 0.85, 1, 0.5 * pul);
+        if (Math.random() < 0.35 * P.cupo) P.crear('gota', CAPA_NORMAL, ch.x + (Math.random() - 0.5) * ch.r, ch.y + (Math.random() - 0.5) * ch.r * 0.6, 360, 0, 0, -420, 0.75, 7, 5, 0.65, 0.88, 1, 0.8, 400);
+        continue;
+      }
+      // Cae: la columna de agua, el charco con ondas y la salpicada
+      const vida = Math.min(1, ch.t * 6) * Math.min(1, (ch.dura - ch.t) * 3);
+      this.pisoFx.poner(ch.x, ch.y, 0.085, ch.r * 2.6, ch.r * 1.9, 0.5, 0.5, sal.u0, sal.v0, sal.u1, sal.v1, 0.6, 0.85, 1, 0.55 * vida, 0, 0, 1, ch.x * 0.01);
+      for (let q = 0; q < 2; q++) {
+        const f = (this.t * 1.8 + q * 0.5) % 1;
+        this.pisoFx.poner(ch.x, ch.y, 0.09, ch.r * 2.8 * (0.4 + f), ch.r * 2 * (0.4 + f), 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 0.85, 0.95, 1, (1 - f) * 0.8 * vida);
+      }
+      for (let q = 0; q < 3; q++) {
+        const ox = Math.sin(this.t * 9 + q * 2.1) * ch.r * 0.12;
+        this.fxNormal.poner(ch.x + ox + (q - 1) * ch.r * 0.28, ch.y, 0, ch.r * 0.55, 420, 0.5, 1, c.u0, c.v0, c.u1, c.v1, 0.6, 0.85, 1, 0.42 * vida);
+      }
+      this.fxLuz.poner(ch.x, ch.y, 0, ch.r * 0.3, 420, 0.5, 1, b.u0, b.v0, b.u1, b.v1, 0.85, 0.95, 1, 0.3 * vida);
+      if (Math.random() < 0.6 * P.cupo) {
+        const a = Math.random() * Math.PI * 2;
+        P.crear('gota', CAPA_NORMAL, ch.x + Math.cos(a) * ch.r * 0.4, ch.y + Math.sin(a) * ch.r * 0.3, 6, Math.cos(a) * 240, Math.sin(a) * 170, 160 + Math.random() * 100, 0.5, 7, 4, 0.7, 0.9, 1, 0.9, 520);
+      }
+      if (Math.random() < 0.15 * P.cupo) P.crear('burbuja', CAPA_NORMAL, ch.x + (Math.random() - 0.5) * ch.r * 2, ch.y + (Math.random() - 0.5) * ch.r, 4, 0, 0, 30, 0.8, 5, 12, 1, 1, 1, 0.9);
     }
   }
 
@@ -900,6 +972,20 @@ export class Dibujo {
   private dibujarObjetos(m: Motor) {
     const t = this.t;
     const O = this.objetos;
+    // Lo que hay tirado en el piso de la ducha (siempre en el mismo sitio): el champú, el jabón, la esponja, el patico
+    if (m.esc.id === 'ducha') this.utileriaDucha();
+    // Don Jabón con su carrito (el vendedor ambulante): se mece, saluda y le salen burbujitas
+    const p = m.puesto;
+    if (p && this.enVista(p[0], p[1], 120)) {
+      const cc = this.cuadrosObj.get('carrito'), cd = this.cuadrosObj.get('donJabon');
+      const b = this.fx.c.brillo;
+      this.pisoFx.poner(p[0] + 10, p[1], 0.1, 190, 110, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.82, 0.55, 0.35 + Math.sin(t * 2.5) * 0.08);
+      if (cc) O.poner(p[0] - 26, p[1], 0, 104, 104, 0.5, 0.92, cc.u0, cc.v0, cc.u1, cc.v1, 1, 1, 1, 1, 0, 0, 1, 0, 0);
+      if (cd) O.poner(p[0] + 40, p[1] + 4, Math.abs(Math.sin(t * 3)) * 5, 70, 70, 0.5, 0.92, cd.u0, cd.v0, cd.u1, cd.v1, 1, 1, 1, 1, 0, Math.sin(t * 2) * 0.06, 1, 0, 0);
+      this.sombra(p[0] - 20, p[1], 46, 0.35);
+      this.sombra(p[0] + 40, p[1] + 4, 22, 0.35);
+      if (Math.random() < 0.06 * this.part.cupo) this.part.crear('estrella', CAPA_LUZ, p[0] - 30 + (Math.random() - 0.5) * 70, p[1], 60 + Math.random() * 30, 0, 0, 25, 1.2, 9, 3, 0.85, 0.95, 1, 0.9, 0, 0, 4);
+    }
     // Gotitas de experiencia
     for (let i = 0; i < m.gemas.length; i++) {
       const g = m.gemas[i];
@@ -919,6 +1005,10 @@ export class Dibujo {
       const cofre = o.tipo === 'cofre';
       if (o.tipo === 'tesoro') {
         this.tesoro(o.x, o.y, ESCONDIDAS[o.calidad]?.id ?? 'anilloPlata');
+        continue;
+      }
+      if (o.tipo === 'reliquia') {
+        this.tesoro(o.x, o.y, TESOROS[o.calidad]?.id ?? 'mapa', true);
         continue;
       }
       // (el dado extra usa el dado de volver a tirar)

@@ -10,11 +10,14 @@ import { ID_ARMAS, ID_PASIVAS, baseEnNivel } from './armas';
 import { ID_ENEMIGOS, ENEMIGOS } from './enemigos';
 import { LIMITE_COFRE, LIMITE_ESCOGER, MAX_ENEMIGOS, type CofreAbierto, type Jugador, type Motor, type Opcion, type OpcionesJugador } from './motor';
 import type { ResumenPartida } from './progreso';
-import type { Efecto, IdArma, IdCarta, IdEscenario, IdObjeto, IdPasiva, Stats, TipoEfecto } from './tipos';
+import type { IdVenta } from './vendedor';
+import type { Efecto, IdArma, IdCarta, IdEscenario, IdModo, IdObjeto, IdPasiva, Stats, TipoEfecto } from './tipos';
 
 export interface ConfigPartida {
   escenario: IdEscenario;
   apurado: boolean;
+  /** Los modos de la partida (los del anfitrión). */
+  modos?: IdModo[];
   semilla: number;
   /** En el orden de los puestos de la sala: el 0 es el anfitrión (y la cara es la suya). */
   jugadores: OpcionesJugador[];
@@ -35,6 +38,11 @@ export interface InvJugador {
   danos: [IdArma, number, number][];
   /** Puestos de pasivas de más (el bolsillo de la bata). */
   extra?: number;
+  /** El puesto del vendedor: si está abierto, lo comprado, lo gastado y las tiradas, saltos y vetos de más. */
+  tienda?: boolean;
+  compras?: Partial<Record<IdVenta, number>>;
+  gastado?: number;
+  extras?: [number, number, number];
 }
 
 /** Lo que se dicen los celulares durante la partida (tipos de mensaje de la sala). */
@@ -69,10 +77,12 @@ export interface Mando {
   man: boolean;
 }
 export interface Accion {
-  a: 'escoger' | 'tirar' | 'saltar' | 'vetar' | 'cofre' | 'carta';
+  a: 'escoger' | 'tirar' | 'saltar' | 'vetar' | 'cofre' | 'carta' | 'comprar' | 'tienda';
   k?: number;
   c?: IdCarta | null;
   n?: number;
+  /** Lo que se le compra al vendedor. */
+  v?: IdVenta;
 }
 
 // ---------------------------------------------------------------------------------------------------- Inventario
@@ -90,6 +100,10 @@ export function inventarioDe(m: Motor): InvJugador[] {
     vetadas: [...j.vetadas],
     danos: [...j.danos].map(([id, d]): [IdArma, number, number] => [id, Math.round(d.dano), d.desde]),
     extra: j.pasivasExtra,
+    tienda: j.tienda,
+    compras: { ...j.compras },
+    gastado: j.gastado,
+    extras: [j.dadosExtra, j.saltosExtra, j.vetosExtra],
   }));
 }
 
@@ -116,16 +130,20 @@ export function aplicarInventario(m: Motor, inv: InvJugador[]) {
     j.vetadas = new Set(d.vetadas);
     j.danos = new Map(d.danos.map(([id, dano, desde]) => [id, { dano, desde }]));
     j.pasivasExtra = d.extra ?? 0;
+    j.tienda = !!d.tienda;
+    j.compras = { ...(d.compras ?? {}) };
+    j.gastado = d.gastado ?? 0;
+    [j.dadosExtra, j.saltosExtra, j.vetosExtra] = d.extras ?? [0, 0, 0];
   });
 }
 
 // ---------------------------------------------------------------------------------------------------- La foto
 const TIPOS_EF: TipoEfecto[] = ['golpe', 'muere', 'latigo', 'rayo', 'charco', 'limpiar', 'explosion', 'gema', 'moneda', 'curar', 'nivel', 'cofre', 'herido',
-  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces', 'escudo', 'cohete'];
+  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces', 'escudo', 'cohete', 'chorro'];
 const IDX_EF = new Map(TIPOS_EF.map((t, i) => [t, i]));
 const IDX_ARMA = new Map(ID_ARMAS.map((a, i) => [a, i]));
 const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre', 'tesoro', 'trebolDorado', 'guante',
-  'patito', 'dado', 'paleta', 'corazoncito', 'pulsera', 'espejoVerdad', 'burbuja'];
+  'patito', 'dado', 'paleta', 'corazoncito', 'pulsera', 'espejoVerdad', 'burbuja', 'reliquia'];
 const IDX_OBJ = new Map(OBJETOS.map((o, i) => [o, i]));
 
 const buf = new ArrayBuffer(128 * 1024);
@@ -311,7 +329,9 @@ export function tomarFoto(m: Motor, efDesde: number, seq: number, extra = { band
   n = 0;
   for (const ob of m.objs) {
     if (!ob.vivo || n > 200) continue;
-    const a = quienVe(ob.x, ob.y);
+    let a = quienVe(ob.x, ob.y);
+    // (los tesoros van siempre, aunque nadie los vea: así todos tienen su flecha verde)
+    if (a < 0 && (ob.tipo === 'reliquia' || ob.tipo === 'tesoro')) a = cercana(ob.x, ob.y);
     if (a < 0) continue;
     b8(IDX_OBJ.get(ob.tipo) ?? 0);
     b8((ob.calidad & 15) | ((ob.dueno + 1) << 4));

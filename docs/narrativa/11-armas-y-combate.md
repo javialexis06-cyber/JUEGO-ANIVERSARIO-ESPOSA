@@ -1,10 +1,10 @@
 # Armas, dominio y combate
 
-**Estado: primera versión del motor de armas integrada localmente; código sin push.** Espadas, arco, bastón y cuatro sellos funcionan en las expediciones existentes. Confluencia, sus materiales, los ajustes regionales, jefes y misiones siguen siendo diseño pendiente de integración. No hay animaciones definitivas ni audio nuevo.
+**Estado: primera versión del motor de armas integrada en las expediciones actuales.** Espadas, arco, bastón y cuatro sellos funcionan en las expediciones existentes. Confluencia, sus materiales, los ajustes regionales, jefes y misiones siguen siendo diseño pendiente de integración. No hay animaciones definitivas ni audio nuevo.
 
 La referencia es la libertad de estilos y el combate de exploración de Terraria y Sun Haven, adaptados a la perspectiva actual del juego. No se cambia a una cámara lateral ni se crea otro motor. El jugador se mueve para evitar ataques anunciados, usa obstáculos y elige distancia, energía y consumibles. No se añaden niveles de personaje, talentos generales ni un árbol RPG para armaduras. Las habilidades y el equipo que ya existían conservan sus reglas.
 
-## Primera versión local
+## Primera versión integrada
 
 | Familia | Alcance | Costo por acción confirmada | Comportamiento |
 |---|---:|---|---|
