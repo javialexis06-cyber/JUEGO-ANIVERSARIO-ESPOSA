@@ -329,3 +329,15 @@ de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/bl
   agrega su `(oficio, ancho, fondo)` a `EDIFICIOS` en `granja_edificios.py` y se exporta.
 - Lo único que sigue en arcilla en el pueblo: el piso de la plaza (debajo de la textura pintada), el pasto del corral y
   el canal del molino.
+
+### El monte y las salidas en Blender (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_monte.py` → `public/modelos/granja_monte.glb` (0,1 MB): `roble`, `pino`, `helecho`, `mata`,
+  `hongo` y `tronco_caido` livianos (van por instancias, cientos de copias), y `arco_salida` y `senal_salida`.
+- `monteZona()` (zonas-render.ts) sigue calculando los mismos sitios; `monteDeBlender()` cambia las instancias
+  procedurales por las del kit (una por material de cada pieza), conservando posición, giro, escala y tinte por copia
+  (copas y corteza). En el bosque ancestral los hongos del kit brillan como antes.
+- `arcoSalida()` pone el arco de Blender y conserva el tablero con el nombre pintado (dos caras a ±0,046);
+  `señalesSalidas()` (paisaje-render.ts) cambia el letrerito de flecha. Si el kit no carga, queda lo de figuras.
+- Los árboles que se talan (obstáculos) siguen con sus modelos de la biblioteca; el adelanto de cada zona más allá de
+  los arcos (`adelantoZona`) y la cueva de la mina quedan para la siguiente tanda.

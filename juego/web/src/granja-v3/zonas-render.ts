@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { SALIDAS } from './caminos-mundo';
 import type { Zona } from './catalogo';
+import { conKit } from './cuartos';
 
 /** Arte de las zonas fuera de la granja: la cueva de la Mina de Cristal, el monte espeso alrededor del bosque, del
  * bosque ancestral y del lago, el sotobosque, la orilla del lago y la textura de los senderos. Todo es decorado: no
@@ -62,9 +63,11 @@ const enSendero=(x:number,z:number,m:number)=>libres.some(([cx,cz,w,d])=>Math.ab
  const roble=geoRoble(),pino=geoPino(),mat=matVertices();
  const verdes=(antiguo?['#9fb88c','#87a67c','#b2c49a','#7e9a73']:['#ffffff','#e9f3d2','#d8e8b8','#f4f0c8']).map(c=>new THREE.Color(c));
  const madera=['#ffffff','#e6d9c9','#d7c3ad'].map(c=>new THREE.Color(c));
- g.add(instancias(roble.tronco,mat,fuera[0],madera),instancias(roble.copa,mat,fuera[0],verdes),instancias(pino.tronco,mat,fuera[1],madera),instancias(pino.copa,mat,fuera[1],verdes));
+ const viejos:Record<string,THREE.InstancedMesh[]>={roble:[instancias(roble.tronco,mat,fuera[0],madera),instancias(roble.copa,mat,fuera[0],verdes)],pino:[instancias(pino.tronco,mat,fuera[1],madera),instancias(pino.copa,mat,fuera[1],verdes)]};
+ g.add(...viejos.roble,...viejos.pino);
+ const especies:Record<string,Sitio[]>={roble:fuera[0],pino:fuera[1]};
  // La granja y el pueblo solo llevan el monte del borde; el sotobosque es de los bosques y el lago
- if(zona==='granja'||zona==='pueblo')return g;
+ if(zona==='granja'||zona==='pueblo'){monteDeBlender(g,especies,viejos,verdes,madera,antiguo);return g;}
  // Sotobosque adentro: helechos, matas bajitas, hongos y troncos caídos, lejos de lo que se puede recoger
  const libre=(x:number,z:number,m:number)=>!enSendero(x,z,.6)&&!obstaculos.some(o=>Math.abs(o.x+.5-x)<m&&Math.abs(o.z+.5-z)<m);
  const helechos:Sitio[]=[],matas:Sitio[]=[],hongos:Sitio[]=[];
@@ -72,14 +75,32 @@ const enSendero=(x:number,z:number,m:number)=>libres.some(([cx,cz,w,d])=>Math.ab
   if(lago&&((x-28)**2/15**2+(z-89)**2/12**2<1))continue;if(!libre(x,z,1.1))continue;
   const t=hash(i,13),s:Sitio={x,z,s:.7+hash(i,14)*.6,r:hash(i,15)*6.3,especie:0};s.s*=t<.6?1.5:1;(t<.6?helechos:t<.8?matas:hongos).push(s);}
  const helecho=geoHelecho(),mata=pintar(unir([0,1,2].map(i=>bola(1,.1,i).scale(.42,.32,.42).translate((i-1)*.3,.22,(i%2)*.18))),'#577f3f','#a7c875',0,.55);
- g.add(instancias(helecho,matVertices({side:THREE.DoubleSide}),helechos,(antiguo?['#b9d0a8','#a2bf96']:['#ffffff','#e3efc5','#f2f7d8']).map(c=>new THREE.Color(c)),false));
- g.add(instancias(mata,mat,matas,(antiguo?['#8fae86','#7f9f7a']:['#c9d9b0','#b5c99a','#d6e2bd']).map(c=>new THREE.Color(c)),false));
- const hongo=geoHongo();g.add(instancias(hongo,matVertices(antiguo?{emissive:'#2c6f7a',emissiveIntensity:.55}:{}),hongos,(antiguo?['#9fe6ee','#c9b2ff','#a8f0d0']:['#ffffff','#fff1e0','#ffe0d0']).map(c=>new THREE.Color(c)),false));
+ viejos.helecho=[instancias(helecho,matVertices({side:THREE.DoubleSide}),helechos,(antiguo?['#b9d0a8','#a2bf96']:['#ffffff','#e3efc5','#f2f7d8']).map(c=>new THREE.Color(c)),false)];
+ viejos.mata=[instancias(mata,mat,matas,(antiguo?['#8fae86','#7f9f7a']:['#c9d9b0','#b5c99a','#d6e2bd']).map(c=>new THREE.Color(c)),false)];
+ const hongo=geoHongo();viejos.hongo=[instancias(hongo,matVertices(antiguo?{emissive:'#2c6f7a',emissiveIntensity:.55}:{}),hongos,(antiguo?['#9fe6ee','#c9b2ff','#a8f0d0']:['#ffffff','#fff1e0','#ffe0d0']).map(c=>new THREE.Color(c)),false)];
+ g.add(...viejos.helecho,...viejos.mata,...viejos.hongo);Object.assign(especies,{helecho:helechos,mata:matas,hongo:hongos});
  // Troncos caídos con musgo
  const troncos:Sitio[]=[];for(let i=0;i<40&&troncos.length<(lago?3:7);i++){const x=b[0]+3+hash(i,21)*(b[1]-b[0]-6),z=b[2]+3+hash(i,22)*(b[3]-b[2]-6);if(lago&&((x-28)**2/16**2+(z-89)**2/13**2<1))continue;if(libre(x,z,2.4))troncos.push({x,z,s:.9+hash(i,23)*.4,r:hash(i,24)*6.3,especie:0});}
- g.add(instancias(geoTronco(),mat,troncos,madera));
+ viejos.tronco_caido=[instancias(geoTronco(),mat,troncos,madera)];g.add(...viejos.tronco_caido);especies.tronco_caido=troncos;
  if(lago)g.add(orillaLago());
+ monteDeBlender(g,especies,viejos,verdes,madera,antiguo);
  return g;
+}
+/** Cambia el monte procedural por las piezas de granja_monte.glb (mismos sitios, giros y escalas), una instancia
+ * por material de cada pieza; las copas y la corteza conservan los tintes por copia. */
+function monteDeBlender(g:THREE.Group,especies:Record<string,Sitio[]>,viejos:Record<string,THREE.InstancedMesh[]>,verdes:THREE.Color[],madera:THREE.Color[],antiguo:boolean){
+ conKit(g,'granja_monte.glb',m=>{const o=new THREE.Object3D(),local=new THREE.Matrix4(),tinte=new THREE.Color();
+  for(const [clave,sitios] of Object.entries(especies)){const base=m.get(clave);if(!base||!sitios.length)continue;base.updateMatrixWorld(true);const inv=base.matrixWorld.clone().invert(),sombra=clave==='roble'||clave==='pino';
+   base.traverse(x=>{const malla=x as THREE.Mesh;if(!malla.isMesh||Array.isArray(malla.material))return;local.copy(inv).multiply(malla.matrixWorld);
+    let material=malla.material as THREE.MeshStandardMaterial;const nombre=material.name;
+    // En el bosque ancestral los hongos brillan
+    if(antiguo&&nombre.includes('sombrero hongo')){material=material.clone();material.userData={};material.color.set('#ffffff');material.emissive.set('#2c6f7a');material.emissiveIntensity=.55;}
+    const tintes=/copa|pino/.test(nombre)?verdes:/corteza/.test(nombre)?madera:null;
+    const im=new THREE.InstancedMesh(malla.geometry,material,sitios.length);im.castShadow=sombra;im.receiveShadow=true;
+    sitios.forEach((st,i)=>{o.position.set(st.x,0,st.z);o.rotation.set(0,st.r,0);o.scale.setScalar(st.s);o.updateMatrix();im.setMatrixAt(i,o.matrix.clone().multiply(local));if(tintes)im.setColorAt(i,tinte.copy(tintes[i%tintes.length]).multiplyScalar(.9+hash(i,77)*.2));});
+    im.computeBoundingSphere();g.add(im);});
+   for(const v of viejos[clave]??[]){v.removeFromParent();v.geometry.dispose();(v.material as THREE.Material).dispose();v.dispose();}
+  }});
 }
 function geoHelecho(){const partes:THREE.BufferGeometry[]=[];for(let i=0;i<7;i++){const a=i/7*Math.PI*2,h=new THREE.PlaneGeometry(.16,.62,1,4);const p=h.attributes.position;for(let k=0;k<p.count;k++){const y=p.getY(k)+.31;p.setXYZ(k,p.getX(k)*(1-y/.62*.85),0,0);p.setY(k,y*.7+.0);p.setZ(k,y*.75-y*y*.55);}h.rotateY(a);partes.push(h);}
  return pintar(unir(partes),'#4d7a3a','#b4d27c',0,.4);}
@@ -227,20 +248,26 @@ export function arbolesLejanos(arboles:{id:string;x:number;z:number}[],antiguo:b
 /** Arco de madera con letrero al final de un camino de la granja (como las salidas de Stardew). */
 export function arcoSalida(nombre:string,x:number,z:number,horizontal:boolean):THREE.Group{
  const g=new THREE.Group();g.position.set(x,0,z);if(horizontal)g.rotation.y=Math.PI/2;
+ // Lo de figuras va en su propio grupo: cuando carga granja_monte.glb se cambia por el arco de Blender (el nombre queda)
+ const arcilla=new THREE.Group();arcilla.name='arco-arcilla';
  const madera=new THREE.MeshStandardMaterial({color:'#8a6242',roughness:.9}),oscura=new THREE.MeshStandardMaterial({color:'#6b4a33',roughness:.9});
- for(const s of [-1.6,1.6]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.13,.16,2.8,8),madera);p.position.set(s,1.4,0);p.castShadow=true;g.add(p);
-  const piedra=new THREE.Mesh(new THREE.DodecahedronGeometry(.3,1),new THREE.MeshStandardMaterial({color:'#a9a596',roughness:.95}));piedra.scale.set(1,.5,1);piedra.position.set(s,.1,0);g.add(piedra);}
- const viga=new THREE.Mesh(new THREE.BoxGeometry(3.9,.22,.26),oscura);viga.position.y=2.75;viga.castShadow=true;g.add(viga);
+ for(const s of [-1.6,1.6]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.13,.16,2.8,8),madera);p.position.set(s,1.4,0);p.castShadow=true;arcilla.add(p);
+  const piedra=new THREE.Mesh(new THREE.DodecahedronGeometry(.3,1),new THREE.MeshStandardMaterial({color:'#a9a596',roughness:.95}));piedra.scale.set(1,.5,1);piedra.position.set(s,.1,0);arcilla.add(piedra);}
+ const viga=new THREE.Mesh(new THREE.BoxGeometry(3.9,.22,.26),oscura);viga.position.y=2.75;viga.castShadow=true;arcilla.add(viga);
  // Letrero con el nombre del destino, colgado de dos cadenitas
  const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d')!;ctx.fillStyle='#d9b98a';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#8a6242';ctx.lineWidth=10;ctx.strokeRect(5,5,502,118);
  for(let k=0;k<6;k++){ctx.strokeStyle='#c4a272';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(10,20+k*18);ctx.lineTo(502,24+k*18);ctx.stroke();}
  ctx.fillStyle='#4a3324';ctx.font='700 52px Nunito, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(nombre,256,68,480);
  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
- const tabla=new THREE.Mesh(new THREE.BoxGeometry(2.4,.6,.08),[madera,madera,madera,madera,new THREE.MeshStandardMaterial({map:tex,roughness:.85}),new THREE.MeshStandardMaterial({map:tex,roughness:.85})]);tabla.position.y=2.22;tabla.castShadow=true;g.add(tabla);
- for(const s of [-.9,.9]){const cad=new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,.3,4),new THREE.MeshStandardMaterial({color:'#5d5a58'}));cad.position.set(s,2.55,0);g.add(cad);}
+ const tabla=new THREE.Mesh(new THREE.BoxGeometry(2.4,.6,.08),madera);tabla.position.y=2.22;tabla.castShadow=true;arcilla.add(tabla);
+ // El nombre en las dos caras del tablero
+ const letrero=new THREE.MeshStandardMaterial({map:tex,roughness:.85});for(const lado of [1,-1]){const cara=new THREE.Mesh(new THREE.PlaneGeometry(2.3,.52),letrero);cara.position.set(0,2.22,.046*lado);cara.rotation.y=lado>0?0:Math.PI;g.add(cara);}
+ for(const s of [-.9,.9]){const cad=new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,.3,4),new THREE.MeshStandardMaterial({color:'#5d5a58'}));cad.position.set(s,2.55,0);arcilla.add(cad);}
  // Faroles a los lados y flores al pie
- for(const s of [-1.6,1.6]){const f=new THREE.Mesh(new THREE.BoxGeometry(.18,.24,.18),new THREE.MeshStandardMaterial({color:'#ffd88a',emissive:'#ffb347',emissiveIntensity:.9}));f.position.set(s,2.05,.2);g.add(f);
-  for(let k=0;k<5;k++){const fl=new THREE.Mesh(new THREE.SphereGeometry(.07,6,4),new THREE.MeshStandardMaterial({color:['#f4a7b9','#f7d55a','#ffffff','#c9a3e0'][k%4]}));fl.position.set(s+(k-2)*.13,.18,.35+(k%2)*.12);g.add(fl);}}
+ for(const s of [-1.6,1.6]){const f=new THREE.Mesh(new THREE.BoxGeometry(.18,.24,.18),new THREE.MeshStandardMaterial({color:'#ffd88a',emissive:'#ffb347',emissiveIntensity:.9}));f.position.set(s,2.05,.2);arcilla.add(f);
+  for(let k=0;k<5;k++){const fl=new THREE.Mesh(new THREE.SphereGeometry(.07,6,4),new THREE.MeshStandardMaterial({color:['#f4a7b9','#f7d55a','#ffffff','#c9a3e0'][k%4]}));fl.position.set(s+(k-2)*.13,.18,.35+(k%2)*.12);arcilla.add(fl);}}
+ g.add(arcilla);
+ conKit(g,'granja_monte.glb',m=>{const arco=m.get('arco_salida');if(!arco)return;arcilla.removeFromParent();arcilla.traverse(o=>{const malla=o as THREE.Mesh;if(malla.isMesh){malla.geometry.dispose();(malla.material as THREE.Material).dispose();}});g.add(arco.clone(true));});
  return g;
 }
 
