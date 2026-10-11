@@ -2,7 +2,7 @@
 
 ## Estructura y ritmo
 
-Son 24 misiones principales con tres momentos escritos —oferta, descubrimiento y cierre—, recogidos en [campana.json](datos/campana.json). El libro navegable con objetivos y todas esas líneas se exporta como [misiones principales](02-misiones-principales.md). Estas escenas extensas añaden el hilo emocional, el narrador y las indicaciones para animación. Las acotaciones no se pronuncian.
+La versión ampliada tiene 36 misiones principales: conserva P01–P24 y añade F01–F12. Los 24 hitos originales mantienen sus IDs y sus escenas; Fuatia interviene entre ellos con tres momentos escritos —oferta, descubrimiento y cierre—, recogidos en [campana.json](datos/campana.json). El libro navegable con objetivos y todas esas líneas se exporta como [misiones principales](02-misiones-principales.md). Estas escenas extensas añaden el hilo emocional, el narrador y las indicaciones para animación. Las acotaciones no se pronuncian.
 
 **Acto I, P01–P05: Lo que parecía un surco.** Una anomalía local lleva a una llamada de Valdemora. Antes de entrar se aprende a volver. El primer rescate demuestra que hay voluntad detrás de la corrupción. Damián y Aurelio revelan que la tranquilidad del pueblo dependía también de un silencio institucional.
 
@@ -14,7 +14,11 @@ Son 24 misiones principales con tres momentos escritos —oferta, descubrimiento
 
 **Acto V, P22–P24: La vasija abierta.** Se desarma la red de Vael sin destruir las esencias que contiene. Nath pierde acceso al Santuario mediante autorización retirada, rutas redundantes y límites sostenidos. El mundo sigue vivo y el jugador vuelve a cultivar. No se mata el principio de pérdida ni se promete inmortalidad a la pareja.
 
-La campaña está diseñada para unas 18–25 horas iniciales de juego, sin contar optimización ni arcos personales. Es una estimación de diseño que necesita pruebas: no se ha medido en una build. No se exige completar los 142 arcos, criar criaturas extremadamente raras o obtener todos los secretos. Las escenas se pueden pausar, saltar después de guardar el hito y releer; las decisiones tienen texto claro y confirmación cuando consumen materiales.
+La base original se estimó en 18–25 horas iniciales de juego; la expansión de Confluencia requiere medir de nuevo esa duración, sin contar optimización ni arcos personales. Es una estimación de diseño que necesita pruebas: no se ha medido en una build. No se exige completar los 142 arcos, criar criaturas extremadamente raras o obtener todos los secretos. Las escenas se pueden pausar, saltar después de guardar el hito y releer; las decisiones tienen texto claro y confirmación cuando consumen materiales.
+
+## La ruta de Fuatia y Confluencia
+
+P01 → F01 → P02–P06 → F02 → P07–P10 → F03 → P11–P12 → F04 → P13–P16 → F05 → P17–P20 → F06 → F07/F08/F09/F10 (cualquier orden) → F11 → F12 → P21–P24. Ninguna T, V, S o E bloquea el final. Fuatia no se incorpora como una bendición genérica: investiga retornos, discute el costo de castigar y restaura la circulación cuando las pruebas muestran el déficit. [Su canon](08-fuatia.md), [Confluencia](09-regiones-y-recursos.md) y [C11–C14](10-figuras-y-escenas.md) completan esta versión.
 
 ## Protagonistas y antagonista humano
 

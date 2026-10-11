@@ -26,6 +26,54 @@ Dirección: Pregunta respetuosa y confidencia sin espectáculo. Capa: pareja.
 
 Habrá fecha de calibración.
 
+## VID_fragmentos_pia_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Yo lo instalé suponiendo que ambas estaban en la ficha.
+
+## VID_fragmentos_pia_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Después me gustaría mirarlo sin ponerle una tarea.
+
+## VID_nocturna_gaspar_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Se veía nítido. Repetí esa defensa cuando Nerea preguntaba por una cifra incorrecta.
+
+## VID_nocturna_gaspar_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos devolver la función que prometimos sin negar lo hermoso que sí había.
+
+## VID_nocturna_gaspar_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Esta lente es para mirar. La otra tiene calibración y un límite térmico indicado.
+
+## VID_nocturna_gaspar_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me costó dejar de usar esa palabra. Ahora quiero mirar una vista sin venderla.
+
+## VID_nocturna_matea_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿La imagen estaba menos hermosa?
+
+## VID_nocturna_matea_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me gusta que el instrumento no tenga que ganar también un concurso de vistas.
+
 ## V_nocturna_gaspar.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

@@ -1,12 +1,12 @@
 {
   "npc": 142,
-  "figuras": 5,
+  "figuras": 6,
   "localidades": 19,
-  "misiones": 197,
+  "misiones": 217,
   "relaciones": 98,
-  "lineas": 1318,
+  "lineas": 2750,
   "ciclos": 0,
   "premios_con_bonus_global": 0,
-  "casos_invalidos_rechazados": 12,
+  "casos_invalidos_rechazados": 17,
   "estado": "autoria_validada; runtime_y_audio_no_integrados"
 }

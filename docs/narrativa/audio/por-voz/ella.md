@@ -140,6 +140,144 @@ Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: 
 
 ¿Y mañana?
 
+## C11.L003
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+¿Has notado el aire?
+
+## C11.L008
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Fuatia.
+
+## C11.L014
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Tampoco quiero prometerlo por los demás.
+
+## C12.L006
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Estamos preguntando qué ocurrió después.
+
+## C12.L014
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Ella recordaba una mesa. Ambas cosas pueden ser verdaderas sin dar permiso para repetir el daño.
+
+## C12.L019
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+¿Y a quienes quieran agradecerte?
+
+## C13.L003
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Aceptaremos tu ayuda. Eso no nos hará aceptar cada castigo que propongas.
+
+## C13.L009
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Entonces sabes cómo puede parecer protección lo que deja sin salida.
+
+## C13.L015
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Antes del cierre veremos quién necesita una salida, comida o calor.
+
+## C14.L006
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+La gente de la orilla tiene traslado y reserva. Tu amenaza ya no es su única alternativa.
+
+## C14.L013
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Hemos aprendido quién no podía salir de ella.
+
+## C14.L017
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Puedes decirlo. Seguiremos preguntando qué repara lo que hagamos después.
+
+## F01.giro.03
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Entonces no aceptaremos que se culpe a alguien por una semilla que no brotó.
+
+## F02.cierre.02
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Y no llamaremos reparación a trasladar la pérdida a otro lugar.
+
+## F03.cierre.02
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Cuidar a quienes dependían de él no lo vuelve inocente.
+
+## F04.giro.03
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+El archivo la hizo agradecer en una frase. Su propio relato necesitó muchas páginas.
+
+## F05.giro.03
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Podemos limitar ese uso sin hacer que cada jornada nueva sea la misma sentencia.
+
+## F06.giro.03
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Una alianza, entonces. No un examen de si te creemos buena.
+
+## F07.cierre.02
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Y el territorio sigue ofreciendo trabajo después de que salgamos.
+
+## F08.giro.02
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+¿El cierre dejará agua a quienes están río abajo?
+
+## F10.giro.02
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+¿Puedes liberar la corriente sin vaciar otro lugar?
+
+## F11.giro.03
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+El acuerdo debe poder detenerse antes de cobrar esa pérdida.
+
+## F12.giro.03
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+La matriz permite parar. También a nosotros.
+
 ## P01.giro.02
 
 Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
@@ -385,3 +523,51 @@ No vamos a darle un precio secreto para que parezca importante.
 Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
 
 Podemos dejar una página donde aprenda a contestarse.
+
+## T01.escena.05
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+El permiso dirá para qué alcanza.
+
+## T02.escena.05
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Y dejar de asistir no convierte a nadie en destructor.
+
+## T03.escena.05
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Entonces el encuentro puede terminar aquí.
+
+## T04.escena.04
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Puede ser bonito además de legible.
+
+## T05.escena.04
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+Ninguna víctima tiene que perdonar para que exista un criterio.
+
+## T06.escena.04
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+La decisión puede ser pequeña sin negar tu poder.
+
+## T07.escena.04
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+El intercambiador tendrá parada.
+
+## T08.escena.04
+
+Dirección: Natural, humor y límites claros; sin solemnidad automática. Capa: pareja.
+
+¿También alguien que recibió un favor hoy?

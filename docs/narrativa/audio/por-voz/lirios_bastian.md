@@ -20,6 +20,30 @@ Dirección: Respuesta natural y práctica. Capa: mundo.
 
 Las piezas se guardarán sin ocupar el paso del muelle.
 
+## VID_lirios_bastian_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Te hice un bote pequeño. Dalia dijo que primero te preguntara si querías uno.
+
+## VID_lirios_bastian_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Puedo ir. El bote todavía no tiene que resolver toda la tarde.
+
+## VID_lirios_bastian_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Publiqué el retiro y un cliente preguntó si todos mis barcos eran malos.
+
+## VID_lirios_bastian_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Empecé entero. Luego volví al plano. Me costó, pero no retiré el aviso.
+
 ## V_lirios_bastian.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

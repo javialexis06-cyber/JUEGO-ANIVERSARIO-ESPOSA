@@ -122,6 +122,126 @@ Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
 
 Miramos si brotó.
 
+## C11.L004
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Lo noto. No sé todavía qué significa.
+
+## C11.L010
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Hemos abierto el surco para cultivar. Si eso te duele, necesitamos saber cómo hacerlo.
+
+## C11.L016
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Podemos revisar el registro. No puedo afirmar por él qué quiso hacer.
+
+## C12.L012
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+No. Queremos que pudiera hablar de un recuerdo sin tener que cambiar el acta.
+
+## C13.L005
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Es algo que podrás saber antes de decidir si nos ayudas.
+
+## C13.L011
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Y ahora puedes coincidir con nosotros sin decir que somos tu bando para siempre.
+
+## C13.L017
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Estamos de acuerdo. La atención a los demás no será su escudo.
+
+## C14.L002
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Hemos encontrado a quién cargaba el déficit. Aquí está el retorno que contabas dos veces.
+
+## C14.L011
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Quedará una revisión de esta reparación. Alguien podrá decir que no sirve.
+
+## C14.L019
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Tampoco hemos terminado de cuidar el canal.
+
+## F01.cierre.02
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+La pondremos junto a las medidas, sin convertirte en explicación de lo que todavía no sabemos.
+
+## F01.rama2.02
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+La medida quedará pública; la conversación íntima, donde se autorizó.
+
+## F02.giro.01
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+¿Puedes apagarlo todo?
+
+## F04.cierre.02
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+No necesitamos que coincidan para reconocer lo que ocurrió.
+
+## F05.cierre.02
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+No te estamos pidiendo que lo quieras. Estamos acordando qué podrá hacer.
+
+## F06.cierre.02
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Traeremos lo que hizo cada intercambio y lo que todavía falta.
+
+## F07.giro.03
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+La abriremos por donde un humano puede mostrar lo que estaba escondido.
+
+## F09.giro.02
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Tampoco necesita que una rampa sea enemiga de todo árbol.
+
+## F11.giro.02
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Porque Vael puso una casilla donde nadie podría revisar. No hace falta llenarla; hace falta retirarla.
+
+## F12.cierre.02
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Preferimos condiciones claras a una lealtad que exija callarnos.
+
 ## P01.cierre.02
 
 Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
@@ -349,3 +469,9 @@ Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
 Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
 
 ¿Y qué título le ponemos?
+
+## T08.escena.06
+
+Dirección: Natural, práctico, escuchar antes de resolver. Capa: pareja.
+
+Lo registraremos sin obligar a la familia a representar esa discusión para nosotros.

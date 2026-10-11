@@ -32,6 +32,66 @@ Dirección: Respetar ambas decisiones; sin insinuar una opción correcta. Capa: 
 
 La guía quedará con ambas firmas.
 
+## T03.escena.04
+
+Dirección: Escuchar la contradicción; sostener un límite sin convertirlo en sermón. Capa: pareja.
+
+Dejaremos la observación sin volver diagnóstico cada palabra.
+
+## T03.rama2.01
+
+Dirección: Ambas elecciones mantienen una utilidad equivalente. Capa: pareja.
+
+La observación estará en la ficha con sus límites.
+
+## VID_bruma_zaira_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Yo tampoco separé bien el miedo del tono que usé contigo.
+
+## VID_bruma_zaira_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos revisar una ficha sin pedirle que resuelva nuestra relación anterior.
+
+## VID_cuidadora_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Te la traje porque la semana pasada envolviste a todos y saliste temblando.
+
+## VID_cuidadora_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Primero vamos a desayunar. No hace falta aprenderlo todo antes.
+
+## VID_veterinaria_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La taza fría significa que entraron pacientes; la tibia significa que olvidé cuál era la mía.
+
+## VID_veterinaria_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Mi letra era correcta, Mara. Eso fue lo primero que dije el día que alguien no pudo entenderla.
+
+## VID_veterinaria_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero dejar de usarlo, no fingir que jamás lo escribí. También conservo tus correcciones.
+
+## VID_veterinaria_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos aprender de ella sin volver a vivir juntas. Me alegra que hayas venido.
+
 ## V_veterinaria.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

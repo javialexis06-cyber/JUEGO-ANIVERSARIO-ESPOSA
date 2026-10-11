@@ -2,6 +2,42 @@
 
 Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
 
+## VID_nieve_otto_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Tu trabajo empezó a incluir lo que ni sabías que estaba ocurriendo.
+
+## VID_nieve_otto_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy podemos revisar turnos, sin inventar una persona que llegue a todos.
+
+## VID_nieve_quirina_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La jornada buena estaba fechada. Yo dejé de decir el año cuando comencé a vender el recorrido.
+
+## VID_nieve_quirina_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Te hice cargar una vuelta que no habías ofrecido.
+
+## VID_nieve_quirina_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy cancelé. El grupo vino a tomar caldo y algunos dijeron que igual habían disfrutado.
+
+## VID_nieve_quirina_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Estoy intentándolo. Todavía me gustó más la temporada extraordinaria.
+
 ## V_nieve_quirina.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

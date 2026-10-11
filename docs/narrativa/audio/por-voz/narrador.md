@@ -80,6 +80,48 @@ Dirección: Cercano y respirado; describir sin anunciar emociones grandiosas. Ca
 
 No cultivaron un mundo sin ceniza. Cultivaron uno donde la ceniza no decidía la forma de todo lo que vendría después.
 
+## C11.L001
+
+Dirección: Cercano y respirado; describir sin anunciar emociones grandiosas. Capa: pareja.
+
+El agua dejó de correr por la grieta. No desapareció. Encontró, bajo la pala, una orilla que hasta entonces nadie había visto.
+
+## C11.L020
+
+Dirección: Cercano y respirado; describir sin anunciar emociones grandiosas. Capa: pareja.
+
+Flora recogió la pala cuando terminó de comparar las marcas. La tierra siguió necesitando el trabajo de sus manos.
+
+## C12.L001
+
+Dirección: Cercano y respirado; describir sin anunciar emociones grandiosas. Capa: pareja.
+
+El acta conservaba una fecha y cuatro columnas. Nadie había reservado una quinta para el día posterior.
+
+## C12.L021
+
+Dirección: Cercano y respirado; describir sin anunciar emociones grandiosas. Capa: pareja.
+
+El acta no cambió sus muertos. La mesa hizo espacio para más de una memoria.
+
+## C13.L020
+
+Dirección: Cercano y respirado; describir sin anunciar emociones grandiosas. Capa: pareja.
+
+No se arrodillaron. La alianza empezó sobre una mesa que todavía podía corregirse.
+
+## C14.L008
+
+Dirección: Cercano y respirado; describir sin anunciar emociones grandiosas. Capa: pareja.
+
+Las válvulas no obedecieron una fuerza mayor que la diosa. Dejaron de falsear la fuerza que ya las atravesaba.
+
+## C14.L020
+
+Dirección: Cercano y respirado; describir sin anunciar emociones grandiosas. Capa: pareja.
+
+El balance volvió a las cuatro columnas. Ninguna prometía que mañana fuera un día sin trabajo.
+
 ## P24.cierre.03
 
 Dirección: Cercano y respirado; describir sin anunciar emociones grandiosas. Capa: pareja.

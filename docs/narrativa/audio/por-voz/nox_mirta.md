@@ -38,6 +38,78 @@ Dirección: Respetar ambas decisiones; sin insinuar una opción correcta. Capa: 
 
 Nadie podrá reutilizarlo mientras falta transporte.
 
+## VID_nox_dorian_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quedó procedencia y umbral. Podrás consultarlo al volver.
+
+## VID_nox_dorian_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Buena idea. Siguen siendo tuyas sin estar de guardia también ellas.
+
+## VID_nox_inigo_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quedó la respuesta escrita.
+
+## VID_nox_inigo_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos consultarla al final del turno. No tienes que justificar el gusto con una reparación.
+
+## VID_nox_mirta_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Le pedí que explicara el faltante. Yo no había dejado una casilla para el traslado que sí hizo.
+
+## VID_nox_mirta_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Porque tenía todas las líneas rectas. Me cuesta admitir lo fácil que fue confiar en eso.
+
+## VID_nox_mirta_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El historial conserva la omisión y la corrección. No tuvimos que borrar al operario para ordenar el caso.
+
+## VID_nox_mirta_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Mañana. Quiero una partida que no termine en inventario de quién se equivocó.
+
+## VID_nox_salma_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El traslado quedó registrado por ese término. Necesitamos corregir también la acción.
+
+## VID_nox_salma_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hagamos las dos. El empleado no puede esperar a que el informe vuelva a sonar correcto.
+
+## VID_nox_viggo_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El movimiento interno no aparecía en tu dibujo de refuerzos.
+
+## VID_nox_viggo_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy necesitamos ver también lo que ese trabajo dejó de permitirnos mirar.
+
 ## V_nox_mirta.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

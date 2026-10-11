@@ -50,13 +50,15 @@ def main():
     figures = load('datos/figuras.json')
     relations = load('datos/relaciones.json')
     rewards = {r['mision']: r for r in load('datos/recompensas.json')}
-    missions = load('datos/campana.json') + load('datos/secretos.json') + load('datos/encuentros.json')
+    missions = load('datos/campana.json') + load('datos/secretos.json') + load('datos/encuentros.json') + load('datos/elementales.json')
     missions += [dict(n['mision'], reparto=[n['id']], clase='personal') for n in roster]
     quests = {m['id']: m for m in missions}
+    recursos = load('datos/regiones-recursos.json')['regiones']
     npc_pages = {n['id']: 'Personaje-' + n['id'] for n in roster + figures}
     npc_pages.update({'el': 'Personaje-El', 'ella': 'Personaje-Ella', 'conde': 'Personaje-Conde-Sangrevil'})
     quest_pages = {k: 'Mision-' + k for k in quests}
     names = {n['id']: n['nombre'] for n in roster + figures}
+    names.update({f['alias_voz']:f['nombre'] for f in figures})
     names.update({'el': 'Él', 'ella': 'Ella', 'conde': 'Conde Sangrevil', 'narrador': 'Narrador'})
     region_names = ['Pueblo del Sol', 'Puerto de los Lirios', 'Brumaverde', 'Piedralumbre', 'Brasaviva', 'Nieveclara', 'Vigilia de Ceniza', 'Rosal Eterno', 'Jardines del Eco', 'Umbral de la Travesía', 'Refugio de los Hilos', 'Bastión del Velo', 'Estación sobre Celia', 'Huerto de Aurelia', 'Vigía de Nocturna', 'Cantera de Esmeralda', 'Campamento de los Fragmentos', 'Ambarina', 'Iridalia']
     groups = collections.defaultdict(list)
@@ -73,6 +75,7 @@ def main():
         return f'[{label or page}]({WIKI}{page})'
 
     def person(nid):
+        nid=next((f['id'] for f in figures if f['alias_voz']==nid),nid)
         return link(npc_pages[nid], names[nid]) if nid in npc_pages else names.get(nid, nid)
 
     def quest(mid):
@@ -130,7 +133,7 @@ def main():
         'docs/sistemas/juegos-mesa.md': ('Juegos-de-Mesa', 'Cinco juegos existentes, con diferencias de modalidad según cada juego.'),
         'docs/sistemas/clue.md': ('Clue', 'Juego existente. No ofrece modalidad local pasando el mismo celular, por las cartas secretas.'),
         'docs/sistemas/salas.md': ('Sala-de-Juegos-Amigos', 'Edición independiente para amigos; no incorpora casa, granja ni campaña privada.'),
-        'docs/sistemas/sangre-y-ceniza.md': ('Sangre-y-Ceniza', 'Juego existente. La campaña Astra de 24 misiones es una expansión diseñada y aún no integrada.'),
+        'docs/sistemas/sangre-y-ceniza.md': ('Sangre-y-Ceniza', 'Juego existente. La campaña Astra ampliada de 36 misiones es una expansión diseñada y aún no integrada.'),
         'docs/sistemas/sangre-figuras.md': ('Sangre-Figuras', 'Catálogo del juego existente. Los ecos de dioses no equivalen a sus identidades divinas.'),
         'docs/en-obra/sangre-propuesta.md': ('Plan-Sangre-y-Ceniza-2', 'Propuesta histórica. Consultar Estado-y-planes: sus cinco fases ya figuran completadas en la cola remota.'),
         'docs/en-obra/lavado-propuesta.md': ('Plan-Lavarse-la-Cara-2', 'Propuesta por fases: fase 1 y fase 2a documentadas como completas; fase 2b y posteriores pendientes.'),
@@ -139,7 +142,7 @@ def main():
     }
     for path, (page, _) in general.items():
         source_map[path] = page
-    local_docs = {'01-mundo.md': 'Astra-Mundo', '02-campana.md': 'Astra-Campana-y-cinematica', '05-jugabilidad.md': 'Astra-Jugabilidad-y-recompensas', '06-produccion.md': 'Astra-Voces-musica-y-produccion'}
+    local_docs = {'01-mundo.md': 'Astra-Mundo', '02-campana.md': 'Astra-Campana-y-cinematica', '05-jugabilidad.md': 'Astra-Jugabilidad-y-recompensas', '06-produccion.md': 'Astra-Voces-musica-y-produccion', '08-fuatia.md':'Fuatia', '08-misiones-fuatia.md':'Misiones-de-Fuatia', '09-regiones-y-recursos.md':'Confluencia-y-recursos', '10-figuras-y-escenas.md':'Figuras-y-escenas', '11-armas-y-combate.md':'Armas-y-combate'}
     for filename, page in local_docs.items():
         source_map['docs/narrativa/' + filename] = page
     source_map['docs/mitologia.md'] = 'Astra-Canon-base'
@@ -238,6 +241,12 @@ def main():
         body += 'Lugar: ' + link('Lugar-' + n['asentamiento'], region_title[n['asentamiento']]) + f'. Mundo: `{n["mundo"]}`. Hogar previsto: `{n["hogar_planeado"]}`.\n\n'
         for title, field in [('Oficio y papel', 'funcion'), ('Pasado', 'pasado'), ('Presente y personalidad', 'presente'), ('Cambio personal y sus motivos', 'arco'), ('Dirección de voz', 'voz')]:
             body += f'## {title}\n\n{n[field]}\n\n'
+        vida=n['profundidad']
+        for memoria in vida['memorias']:
+            body += f"## {memoria['etapa']}\n\n{memoria['texto']}\n\n"
+        body += '## Vida cotidiana fuera de la misión\n\n'+vida['cotidiano']+'\n\n## Qué piensa de Fuatia\n\n'+vida['postura_fuatia']+'\n\n'
+        for escena in vida['escenas']:
+            body += f"## {escena['momento']}\n\n`{escena['id']}` · condición `{escena['condicion']}`; escena repetible sin premio adicional.\n\n"+dialogue(escena['lineas'])+'\n\n'
         body += '## Misión personal\n\n' + quest(n['mision']['id']) + '\n\n'
         other = [m for m in missions if nid in m['reparto'] and m['id'] != n['mision']['id']]
         body += '## Otras historias en las que participa\n\n' + ('\n'.join('- ' + quest(m['id']) for m in other) if other else 'Su arco personal sostiene por ahora su participación escrita.') + '\n\n'
@@ -250,11 +259,13 @@ def main():
         body += 'Vínculos del reparto: ' + ', '.join(person(i) for i in n['vinculos']) + '.\n\n' + link('Voz-' + nid, 'Todas sus líneas listas para grabar')
         add(npc_pages[nid], body)
     for f in figures:
-        add(npc_pages[f['id']], '# ' + f['nombre'] + '\n\n' + PLANNED + '\n\n' + f['biografia'] + '\n\n' + link('Astra-Mundo', 'Poderes, límites, cronología y conflictos') + '\n\n' + link('Voz-' + f['alias_voz'], 'Guion de voz'))
+        add(npc_pages[f['id']], '# ' + f['nombre'] + '\n\n' + PLANNED + '\n\n' + convert(f.get('historia_extensa',f['biografia']), 'docs/narrativa/08-fuatia.md' if f['alias_voz']=='fuatia' else 'docs/narrativa/10-figuras-y-escenas.md') + '\n\n' + link('Astra-Mundo', 'Poderes, límites, cronología y conflictos') + '\n\n' + link('Voz-' + f['alias_voz'], 'Guion de voz'))
     protagonist = next(c for t, c in sections((NARR / '02-campana.md').read_text()) if t.startswith('Protagonistas'))
     for pid in ['el', 'ella', 'conde']:
         label = {'el': 'Él.', 'ella': 'Ella.', 'conde': 'Conde Sangrevil.'}[pid]
         bio = re.search(r'(?ms)^\*\*' + re.escape(label) + r'\*\*.*?(?=\n\n|\Z)', protagonist).group(0)
+        extra=next(c for t,c in sections((NARR/'10-figuras-y-escenas.md').read_text()) if t.startswith({'el':'Él ·','ella':'Ella ·','conde':'Conde Sangrevil ·'}[pid]))
+        bio += '\n\n'+extra
         add(npc_pages[pid], '# ' + names[pid] + '\n\n' + PLANNED + '\n\nPasado ficticio escrito para el juego.\n\n' + bio + '\n\n' + link('Astra-Campana-y-cinematica', 'Escenas completas y desenlace') + '\n\n' + link('Voz-' + pid, 'Guion de voz'))
 
     region_source = source('juego/web/src/granja-v3/PLAN-PUEBLOS-MUNDOS.md')
@@ -267,15 +278,32 @@ def main():
         community = [m for m in missions if m.get('asentamiento') == region]
         if community:
             body += '\n\n## Encuentro comunitario\n\n' + '\n'.join(quest(m['id']) for m in community)
+        territorios=[z for z in recursos if z['id']==region or (region=='campamento_fragmentos' and z['id'].startswith('fragmentos_'))]
+        body += '\n\n## Recursos y motivos para regresar\n\n'+'\n'.join('- '+link('Recursos-'+z['id'],z['nombre']) for z in territorios)
         add('Lugar-' + region, body)
+    for z in recursos:
+        body=f"# {z['nombre']} · recursos\n\n{PLANNED}\n\nMundo: {z['mundo']}. Acceso: {z['acceso']}.\n\n{z['conflicto']}\n\n"
+        for r in z['recursos']:
+            body+=f"## {r['nombre']} · {r['clase']}\n\n{r['obtencion']}\n\n"+'\n'.join('- '+uso for uso in r['usos'])+'\n\n'
+        body+=f"## Combate\n\n{z['combate']}\n\n## Renovación y regreso\n\nCiclo: {z['renovacion']['dias_dormidos']} jornadas dormidas.\n\n{z['renovacion']['politica']}\n\n{z['retorno']}\n\n"+link('Confluencia-y-recursos','Reglas, economía y catálogo completo')+' · '+link('Armas-y-combate','Armas y combate')
+        add('Recursos-'+z['id'],body)
+    add('Recursos-de-los-mundos','# Recursos de los mundos\n\n**24 territorios de recursos diseñados; no todos existen todavía en el juego.** Conservan 19 asentamientos: los Fragmentos tienen dos rutas y Confluencia cuatro territorios sin nuevas aldeas.\n\n'+'\n'.join('- '+link('Recursos-'+z['id'],z['nombre']) for z in recursos))
 
-    for page, prefix, title in [('Misiones-Principales', 'P', 'Campaña principal'), ('Misiones-Personales', 'V_', 'Arcos personales'), ('Misiones-Secretas', 'S', 'Misiones secretas'), ('Misiones-Encuentros', 'E', 'Encuentros comunitarios')]:
-        entries = [m for m in missions if m['id'].startswith(prefix)]
+
+    for page, prefix, title in [('Misiones-Principales', 'P', 'Campaña principal'), ('Misiones-Personales', 'V_', 'Arcos personales'), ('Misiones-Secretas', 'S', 'Misiones secretas'), ('Misiones-Encuentros', 'E', 'Encuentros comunitarios'), ('Misiones-Elementales','T','Arcos secundarios de Fuatia')]:
+        entries = [m for m in missions if m['id'].startswith(prefix) or (prefix=='P' and m['id'].startswith('F')) or (prefix=='S' and m.get('secreta'))]
+        if prefix=='P':
+            ordered=[];pending=entries[:]
+            while pending:
+                ready=[m for m in pending if set(m['requiere']) <= {q['id'] for q in ordered}]
+                if not ready:raise ValueError('Campaña sin ruta de índice')
+                ordered+=ready;pending=[m for m in pending if m not in ready]
+            entries=ordered
         add(page, f'# {title}\n\n{PLANNED}\n\n{len(entries)} misiones. Cada enlace contiene condiciones, recorrido, guion y recompensa.\n\n' + '\n'.join('- ' + quest(m['id']) for m in entries))
-    add('Personajes', '# Personajes de Astra\n\n142 habitantes con biografía y misión; cinco figuras cósmicas y tres protagonistas/antagonistas adicionales. Todos los arcos nuevos están diseñados, no activados en la partida.\n\n' + '\n\n'.join('## ' + link('Lugar-' + k, region_title[k]) + '\n\n' + '\n'.join('- ' + person(n['id']) for n in v) for k, v in groups.items()) + '\n\n## Figuras y protagonistas\n\n' + '\n'.join('- ' + person(k) for k in npc_pages if k not in people))
+    add('Personajes', '# Personajes de Astra\n\n142 habitantes con biografía y misión; seis figuras cósmicas y tres protagonistas/antagonistas adicionales. Todos los arcos nuevos están diseñados, no activados en la partida.\n\n' + '\n\n'.join('## ' + link('Lugar-' + k, region_title[k]) + '\n\n' + '\n'.join('- ' + person(n['id']) for n in v) for k, v in groups.items()) + '\n\n## Figuras y protagonistas\n\n' + '\n'.join('- ' + person(k) for k in npc_pages if k not in people))
     add('Lugares', '# Lugares de Astra\n\n**Mapa narrativo y expansión planificada.**\n\n' + '\n'.join('- ' + link('Lugar-' + k, region_title[k]) + f' · {len(v)} habitantes' for k, v in groups.items()) + '\n\n' + link('Plan-de-pueblos-y-mundos', 'Conexiones, viviendas y orden de integración'))
     add('Relaciones-y-secretos', '# Relaciones y secretos\n\n**Spoilers de la expansión diseñada.** 98 vínculos desarrollados.\n\n' + '\n\n'.join(f'## {r["id"]} · {person(r["a"])} y {person(r["b"])}\n\nTipo: `{r["tipo"]}`. Secreto: {"sí" if r["secreto"] else "no"}.\n\n{r["pasado"]}\n\n{r["presente"]}\n\nRevelación: ' + quest(r['revela']) for r in relations))
-    add('Misiones', '# Misiones\n\n## Contenido jugable de la granja\n\n' + link('Granja-Encargos', '12 pedidos permanentes, ofertas renovables y especiales: pasos, entregas, plazos y premios') + '\n\n' + link('Granja-Correo', 'Proyectos por correspondencia: elección de rama y recetas') + '\n\n## Expansión narrativa diseñada\n\n197 misiones sin activar todavía en el motor: 24 principales, 142 personales, 12 secretas y 19 encuentros.\n\n' + '\n'.join('- ' + link(p) for p in ['Misiones-Principales', 'Misiones-Personales', 'Misiones-Secretas', 'Misiones-Encuentros', 'Astra-Jugabilidad-y-recompensas']))
+    add('Misiones', '# Misiones\n\n## Contenido jugable de la granja\n\n' + link('Granja-Encargos', '12 pedidos permanentes, ofertas renovables y especiales: pasos, entregas, plazos y premios') + '\n\n' + link('Granja-Correo', 'Proyectos por correspondencia: elección de rama y recetas') + '\n\n## Expansión narrativa diseñada\n\n217 misiones sin activar todavía en el motor: 36 principales (P01–P24 y F01–F12), 142 personales, 12 secretos originales, 19 encuentros y 8 arcos secundarios elementales. T08 añade un secreto; está contado dentro de esos ocho.\n\n' + '\n'.join('- ' + link(p) for p in ['Misiones-Principales', 'Misiones-Personales', 'Misiones-Secretas', 'Misiones-Encuentros', 'Misiones-Elementales', 'Astra-Jugabilidad-y-recompensas']))
 
     voicefiles = sorted((NARR / 'audio/por-voz').glob('*.md'))
     voiceindex = []
@@ -284,7 +312,7 @@ def main():
         add('Voz-' + pid, '**Estado: guion escrito; no se ha generado ni contratado audio nuevo.**\n\n' + path.read_text() + '\n\n' + link('Voces-y-guiones', 'Índice de voces y producción'))
         voiceindex.append('- ' + link('Voz-' + pid, names.get(pid, pid)))
     summary = load('audio/resumen.json')
-    add('Voces-y-guiones', '# Voces y guiones\n\n**Guiones completos; audio nuevo pendiente.**\n\n1318 líneas para 151 voces; 1317 tomas únicas por hablante/texto, 80 642 caracteres únicos. Duración estimada: 93,6 minutos a 145 palabras/minuto; no es una medición de audio ni un presupuesto.\n\nNo se ha ejecutado generación ni gasto en ElevenLabs. La promoción y los modelos deben comprobarse al producir; los diálogos de pareja necesitan su adaptación antes de ir a la edición de amigos.\n\n' + link('Astra-Voces-musica-y-produccion', 'Dirección, prioridades, 22 encargos musicales y animación') + '\n\n## Guiones por voz\n\n' + '\n'.join(voiceindex))
+    add('Voces-y-guiones', f'# Voces y guiones\n\n**Guiones completos; audio nuevo pendiente.**\n\n{summary["total_lineas"]} líneas para {len(voicefiles)} voces; {summary["tomas_unicas_por_hablante_texto"]} tomas únicas por hablante/texto, {summary["caracteres_unicos"]} caracteres únicos. Duración estimada: {summary["minutos_estimados_a_145_palabras_por_minuto"]} minutos a 145 palabras/minuto; no es una medición de audio ni un presupuesto.\n\nNo se ha ejecutado generación ni gasto en ElevenLabs. La promoción y los modelos deben comprobarse al producir; los diálogos de pareja necesitan su adaptación antes de ir a la edición de amigos.\n\n' + link('Astra-Voces-musica-y-produccion', 'Dirección, prioridades, 22 encargos musicales y animación') + '\n\n## Guiones por voz\n\n' + '\n'.join(voiceindex))
 
     status = '''# Estado y planes
 
@@ -303,27 +331,27 @@ La documentación distingue el juego existente de los diseños. El estado de una
 | Sala de Juegos | Seis familias de juegos para amigos | Mantener economías y contenido separados |
 | Granja | Motor V5 y módulos integrados parcialmente | Capacidades pendientes del plan del motor |
 | Cuadernos de mina K07 | Implementación y comprobaciones locales, código sin publicar | Integrar después de que finalice el trabajo remoto en paralelo |
-| Astra ampliada | Biblia, 142 NPC, 197 misiones y guiones completos | Implementación de estados, condiciones, escenas y premios; producción de audio posterior |
+| Astra ampliada | Biblia ampliada con Fuatia, 142 NPC, 217 misiones y guiones completos | Implementación de estados, condiciones, escenas y premios; producción de audio posterior |
 | Sótano de terror y teléfono de crímenes | Ideas iniciales | Diseñar; no existen campañas completas jugables ni guiones cerrados |
 
 La publicación de esta wiki no levanta la pausa del push del código del juego. Los textos de Astra se publican aquí como documentación del diseño, sin activar misiones.
 '''
-    add('Estado-y-planes', status + '\n\n' + '\n'.join('- ' + link(p) for p in ['Plan-del-motor', 'Plan-de-pueblos-y-mundos', 'Plan-Sangre-y-Ceniza-2', 'Plan-Lavarse-la-Cara-2', 'El-Show-de-Nosotros', 'Ideas-futuras', 'Granja-Cuadernos-locales', 'Escenas-Premium', 'Musica-y-efectos-de-los-juegos', 'Astra-Canon-base']))
+    add('Estado-y-planes', status + '\n\n' + '\n'.join('- ' + link(p) for p in ['Plan-del-motor', 'Plan-de-pueblos-y-mundos', 'Plan-Sangre-y-Ceniza-2', 'Plan-Lavarse-la-Cara-2', 'El-Show-de-Nosotros', 'Ideas-futuras', 'Granja-Cuadernos-locales', 'Escenas-Premium', 'Musica-y-efectos-de-los-juegos', 'Astra-Canon-base', 'Fuatia', 'Confluencia-y-recursos', 'Recursos-de-los-mundos', 'Armas-y-combate']))
     add('Ideas-futuras', '# Ideas futuras\n\n**Estado: ideas sin desarrollo cerrado.**\n\n- Sótano de terror: juego de acceso por contraseña e identificación de visitantes, inspirado en la tensión de decidir a quién dejar entrar.\n- Teléfono de crímenes: propuesta de diez casos de investigación. Todavía no se han escrito aquí diez guiones ni soluciones definitivas.\n- Tele, tocador y ampliación de escenas premium: propuestas sujetas a diseño e integración.\n\nEstas ideas no son requisitos de Astra ni desbloqueos disponibles. Cuando exista un diseño concreto se añadirá su página con reglas, casos, guiones y estado verificable.')
     local_book = ROOT / 'juego/web/src/granja-v3/LIBROS-INTEGRACION.md'
     add('Granja-Cuadernos-locales', '# Cuadernos de mina\n\n**Estado: implementado y comprobado localmente; código aún sin publicar en la rama del juego.**\n\n' + local_book.read_text())
     add('Sistemas-de-Granja', '# Sistemas de la granja\n\n' + '\n'.join('- ' + link('Granja-' + m.title()) for m in modules) + '\n- ' + link('Granja-Cuadernos-locales') + '\n- ' + link('Plan-del-motor'))
     gamepages = ['Nuestro-Hogar', 'Supermercado-Mania', 'Cien-Puertas', 'Sangre-y-Ceniza', 'Nuestra-Granjita', 'Lavarse-la-Cara', 'Retrete-Espacial', 'Cocina-de-Chef', 'La-Wafleria', 'La-Freseria', 'La-Fraperia', 'Juegos-de-Mesa', 'Dados', 'Mancala', 'Puntos-y-Cajas', 'Parchis', 'Clue', 'Sala-de-Juegos-Amigos', 'El-Show-de-Nosotros', 'Ideas-futuras']
     add('Juegos', '# Juegos\n\nCada guía distingue reglas existentes y expansiones. La casa, la granja y Sangre comparten universo narrativo; los juegos casuales mantienen reglas y economías propias.\n\n' + '\n'.join('- ' + link(p) for p in gamepages))
-    add('Astra', '# Astra · La vida que no cabe en una vasija\n\n' + PLANNED + '\n\nMitología que conecta Sangre y Ceniza con Nuestra Granjita. Autoría nueva sobre el canon conservado; no es recuperación de la conversación perdida. Los pasados, conflictos y relaciones añadidos son ficción.\n\n' + '\n'.join('- ' + link(p) for p in ['Astra-Mundo', 'Astra-Campana-y-cinematica', 'Personajes', 'Lugares', 'Misiones', 'Relaciones-y-secretos', 'Astra-Jugabilidad-y-recompensas', 'Voces-y-guiones', 'Astra-Canon-base']))
-    add('Datos-y-fuentes', f'# Datos y fuentes\n\nLa wiki se exporta desde documentos y catálogos estructurados; no carga estos datos automáticamente en el juego.\n\n- Documentación remota de juegos: [{rev[:7]}]({REPO}/tree/{rev}), rama `{BRANCH}`.\n- Show: [{show[:7]}]({REPO}/tree/{show}), rama `trabajo/show`, pendiente de integración.\n- Biblia Astra: catálogo local `docs/narrativa`, commit `ff9723a`, publicado como texto en esta wiki; el commit del juego sigue sin subir.\n- Cuadernos K07: trabajo local `2ec0334`, sin push.\n\nPara actualizar se usa `docs/wiki/generar.py` desde el repositorio del juego, con una revisión remota explícita y un checkout separado de la wiki. El exportador no hace commits ni pushes. Los NPC usan IDs estables y cada misión enlaza la recompensa de su catálogo.\n\nLos recuerdos privados, las conversaciones personales y los datos de salud no se trasladan a estas páginas.\n\n## Catálogos descargables\n\n' + '\n'.join(f'- [{dest}]({RAW_WIKI}{dest})' for dest in sorted(downloads.values())))
-    add('Home', '# Nuestro Hogar · Wiki\n\nGuías de todos los juegos, sistemas de la granja y biblia completa de Astra. **Las páginas de personajes, relaciones y misiones contienen spoilers.**\n\n## Entradas principales\n\n' + '\n'.join('- ' + link(p, label) for p, label in [('Juegos', 'Juegos y cómo se juegan'), ('Estado-y-planes', 'Qué está terminado y qué falta'), ('Nuestra-Granjita', 'Granja: entrada, controles y guardado'), ('Sistemas-de-Granja', 'Sistemas, encargos, recetas y progreso'), ('Astra', 'Mitología, historia principal y escenas'), ('Personajes', '142 NPC y sus biografías completas'), ('Misiones', 'Misiones: requisitos, soluciones, decisiones y premios'), ('Lugares', 'Pueblos y mundos'), ('Relaciones-y-secretos', 'Relaciones y secretos'), ('Voces-y-guiones', 'Guiones por voz, música y narración'), ('Datos-y-fuentes', 'Fuentes y criterio de actualización')]) + '\n\n## Cómo leer el estado\n\n- **Existente / integrado:** documentado en el código remoto consultado; la APK puede corresponder a otro commit.\n- **Parcial:** funciona una parte y se detallan capacidades pendientes.\n- **Local sin publicar:** preparado y comprobado, pero el código no está subido.\n- **Diseño narrativo / plan:** historia o mecánica especificada; todavía no se puede completar en el juego.\n- **Idea:** propuesta pendiente de desarrollo.\n\nLa expansión incluye 24 misiones principales, 142 personales, 12 secretas y 19 encuentros, 98 relaciones, diez escenas cinematográficas y 151 guiones de voz. Publicar estos textos no activa la expansión ni modifica las partidas.\n')
-    add('_Sidebar', '**Nuestro Hogar**\n\n' + '\n'.join('- ' + link(p) for p in ['Home', 'Juegos', 'Estado-y-planes', 'Nuestra-Granjita', 'Sistemas-de-Granja', 'Astra', 'Personajes', 'Misiones', 'Lugares', 'Relaciones-y-secretos', 'Voces-y-guiones', 'Datos-y-fuentes']))
+    add('Astra', '# Astra · La vida que no cabe en una vasija\n\n' + PLANNED + '\n\nMitología que conecta Sangre y Ceniza con Nuestra Granjita. Autoría nueva sobre el canon conservado; no es recuperación de la conversación perdida. Los pasados, conflictos y relaciones añadidos son ficción.\n\n' + '\n'.join('- ' + link(p) for p in ['Astra-Mundo', 'Astra-Campana-y-cinematica', 'Personajes', 'Lugares', 'Misiones', 'Relaciones-y-secretos', 'Astra-Jugabilidad-y-recompensas', 'Voces-y-guiones', 'Astra-Canon-base', 'Fuatia', 'Confluencia-y-recursos', 'Recursos-de-los-mundos', 'Armas-y-combate']))
+    add('Datos-y-fuentes', f'# Datos y fuentes\n\nLa wiki se exporta desde documentos y catálogos estructurados; no carga estos datos automáticamente en el juego.\n\n- Documentación remota de juegos: [{rev[:7]}]({REPO}/tree/{rev}), rama `{BRANCH}`.\n- Show: [{show[:7]}]({REPO}/tree/{show}), rama `trabajo/show`, pendiente de integración.\n- Biblia Astra: catálogo local `docs/narrativa`, base `ff9723a` y ampliación de Fuatia, publicado como texto en esta wiki; el commit del juego sigue sin subir.\n- Cuadernos K07: trabajo local `2ec0334`, sin push.\n\nPara actualizar se usa `docs/wiki/generar.py` desde el repositorio del juego, con una revisión remota explícita y un checkout separado de la wiki. El exportador no hace commits ni pushes. Los NPC usan IDs estables y cada misión enlaza la recompensa de su catálogo.\n\nLos recuerdos privados, las conversaciones personales y los datos de salud no se trasladan a estas páginas.\n\n## Catálogos descargables\n\n' + '\n'.join(f'- [{dest}]({RAW_WIKI}{dest})' for dest in sorted(downloads.values())))
+    add('Home', '# Nuestro Hogar · Wiki\n\nGuías de todos los juegos, sistemas de la granja y biblia completa de Astra. **Las páginas de personajes, relaciones y misiones contienen spoilers.**\n\n## Entradas principales\n\n' + '\n'.join('- ' + link(p, label) for p, label in [('Juegos', 'Juegos y cómo se juegan'), ('Estado-y-planes', 'Qué está terminado y qué falta'), ('Nuestra-Granjita', 'Granja: entrada, controles y guardado'), ('Sistemas-de-Granja', 'Sistemas, encargos, recetas y progreso'), ('Astra', 'Mitología, historia principal y escenas'), ('Personajes', '142 NPC y sus biografías completas'), ('Misiones', 'Misiones: requisitos, soluciones, decisiones y premios'), ('Lugares', 'Pueblos y mundos'), ('Fuatia','Fuatia: historia, personalidad y poderes'), ('Recursos-de-los-mundos','Confluencia y recursos de cada mundo'), ('Armas-y-combate','Armas: reglas y motor local'), ('Relaciones-y-secretos', 'Relaciones y secretos'), ('Voces-y-guiones', 'Guiones por voz, música y narración'), ('Datos-y-fuentes', 'Fuentes y criterio de actualización')]) + '\n\n## Cómo leer el estado\n\n- **Existente / integrado:** documentado en el código remoto consultado; la APK puede corresponder a otro commit.\n- **Parcial:** funciona una parte y se detallan capacidades pendientes.\n- **Local sin publicar:** preparado y comprobado, pero el código no está subido.\n- **Diseño narrativo / plan:** historia o mecánica especificada; todavía no se puede completar en el juego.\n- **Idea:** propuesta pendiente de desarrollo.\n\nLa expansión incluye 36 misiones principales, 142 personales, 12 secretos originales, 19 encuentros y 8 secundarios elementales (T08 es un nuevo secreto), 98 relaciones, 284 conversaciones personales, 14 escenas cinematográficas y 152 guiones de voz. Tiene un catálogo de recursos para 24 territorios. El primer combate de armas se ha preparado localmente; Confluencia y las misiones siguen en diseño. Publicar estos textos no activa la expansión ni modifica las partidas.\n')
+    add('_Sidebar', '**Nuestro Hogar**\n\n' + '\n'.join('- ' + link(p) for p in ['Home', 'Juegos', 'Estado-y-planes', 'Nuestra-Granjita', 'Sistemas-de-Granja', 'Astra', 'Personajes', 'Misiones', 'Lugares', 'Fuatia', 'Recursos-de-los-mundos', 'Armas-y-combate', 'Relaciones-y-secretos', 'Voces-y-guiones', 'Datos-y-fuentes']))
     add('_Footer', link('Home', 'Inicio') + ' · ' + link('Estado-y-planes', 'Estado y planes') + ' · Los diseños futuros se identifican en cada página.')
 
     # Validación previa a toda escritura: cardinalidades, enlaces internos y contenido privado excluido.
-    assert len(roster) == 142 and len(figures) == 5 and len(quests) == 197 and len(relations) == 98
-    assert len(voicefiles) == 151 and summary['total_lineas'] == 1318
+    assert len(roster) == 142 and len(figures) == 6 and len(quests) == 217 and len(relations) == 98
+    assert len(voicefiles) == 152 and summary['total_lineas'] == len(load('audio/lineas.json'))
     assert set(rewards) == set(quests)
     for page, body in pages.items():
         for target in re.findall(re.escape(WIKI) + r'([A-Za-z0-9_-]+)', body):

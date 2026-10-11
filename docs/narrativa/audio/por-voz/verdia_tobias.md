@@ -14,6 +14,54 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 Mi pez más grande era...
 
+## VID_eco_violeta_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy solo quiero sombra.
+
+## VID_eco_violeta_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces volveré con ganas de escuchar otro día, no por deber lo que vi hoy.
+
+## VID_verdia_dimas_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Quieres que la revisemos ahora?
+
+## VID_verdia_dimas_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Yo conozco un lugar donde también podemos mirar sin llevarnos nada.
+
+## VID_verdia_tobias_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Dejé de trabajar y seguía buscando algo que justificara cada tarde junto al agua.
+
+## VID_verdia_tobias_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Hasta quiso convertirse en tarea recoger una pluma.
+
+## VID_verdia_tobias_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El dibujo quedó torcido. Lo guardé porque recuerdo dónde estaba sentado.
+
+## VID_verdia_tobias_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me gustaría que me enseñaras una cosa y después dejáramos el lápiz.
+
 ## V_verdia_tobias.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

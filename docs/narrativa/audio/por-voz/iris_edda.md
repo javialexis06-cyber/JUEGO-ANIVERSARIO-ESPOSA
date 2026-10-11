@@ -14,6 +14,54 @@ Dirección: Descubrimiento y reacción, dejar responder. Capa: pareja.
 
 Si la baliza desplaza el nido, busquen otra posición. Una emergencia también tiene alternativas.
 
+## VID_iris_edda_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Estaba sano. Yo usé rescate porque hacía más fácil aceptar que lo llevaríamos.
+
+## VID_iris_edda_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero investigar y no apropiarme de todo lo que no consigo observar quieto.
+
+## VID_iris_edda_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No apareció hoy y registramos ausencia. Nadie preparó una captura para completar el informe.
+
+## VID_iris_edda_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Me gusta este lugar también cuando no me da un dato.
+
+## VID_iris_mauro_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Después empezaron a preparar la batida como si la marca confirmara tu frase.
+
+## VID_iris_mauro_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos seguir siendo cuidadosos sin fabricar la prueba que falta.
+
+## VID_iris_mauro_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Te gustó la visita?
+
+## VID_iris_mauro_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hay bastante mundo para mirar sin organizar otra persecución.
+
 ## V_iris_edda.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

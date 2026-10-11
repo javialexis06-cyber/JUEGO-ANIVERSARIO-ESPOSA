@@ -20,6 +20,60 @@ Dirección: Respetar ambas decisiones; sin insinuar una opción correcta. Capa: 
 
 El retiro tendrá inventario y reserva de transporte.
 
+## T05.escena.01
+
+Dirección: Escuchar la contradicción; sostener un límite sin convertirlo en sermón. Capa: pareja.
+
+Respondí por las facturas. Quedan restituciones y quiero que tengan medida.
+
+## T05.escena.06
+
+Dirección: Escuchar la contradicción; sostener un límite sin convertirlo en sermón. Capa: pareja.
+
+Voy a recordar. No puedo vivir cada jornada inventando qué pérdida te parecería suficiente.
+
+## T05.rama2.01
+
+Dirección: Ambas elecciones mantienen una utilidad equivalente. Capa: pareja.
+
+El permiso limitado no retira mis obligaciones pendientes.
+
+## VID_brasa_ramiro_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Esta cláusula llegó cuando todavía podía decir que no. Dejé la factura debajo de las anteriores.
+
+## VID_brasa_ramiro_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quisiera una confesión que no costara el trabajo de nadie.
+
+## VID_brasa_ramiro_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Vendí un lote menor. El taller no está seguro para siempre, pero el destino quedó registrado.
+
+## VID_brasa_ramiro_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Voy a intentarlo. Hoy solo quiero que veas el borde que logré mejorar.
+
+## VID_brasa_sol_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Yo también me tranquilizaba con una pieza bonita. Luego podía evitar preguntar para qué la compraban.
+
+## VID_brasa_sol_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Esa pregunta habría cabido en mis facturas antes de que sirvieran para una prisión.
+
 ## V_brasa_ramiro.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

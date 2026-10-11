@@ -8,6 +8,30 @@ Dirección: Conversación al ofrecer misión. Capa: pareja.
 
 Una cicatriz no es tierra sucia. El unicornio devuelve vida sin fingir que nunca pasó nada.
 
+## VID_bruma_elio_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Anoté el momento exacto pensando que podría repetirlo. Me enfadé cuando no pasó nada.
+
+## VID_bruma_elio_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Esa respuesta dejó de bastarme y ahí empezó el problema.
+
+## VID_bruma_elio_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Presté la copia. No preguntaron si tenía que estar yo para entenderla.
+
+## VID_bruma_elio_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Las dos. Hoy quiero observar una madriguera bastante común.
+
 ## V_bruma_elio.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

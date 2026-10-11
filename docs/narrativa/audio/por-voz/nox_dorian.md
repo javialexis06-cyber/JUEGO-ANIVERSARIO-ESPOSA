@@ -26,6 +26,54 @@ Dirección: Conversación al ofrecer misión. Capa: pareja.
 
 La autorización permite revisar una grieta, no acercarse a una celda por curiosidad.
 
+## VID_nox_dorian_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El origen cabía en una casilla. La exposición requería preguntas que no quería oír después de la filtración.
+
+## VID_nox_dorian_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quería que vieran un puesto estable.
+
+## VID_nox_dorian_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El relevo revisó un permiso sin pedirme aprobación de cada línea.
+
+## VID_nox_dorian_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces hoy voy a mirar mis plantas, no el puesto desde lejos.
+
+## VID_nox_salma_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Tienes algo que revisar al final del turno?
+
+## VID_nox_salma_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Si invitas, puedo aprender a escuchar sin convertirlo en otro parte.
+
+## VID_nox_tamara_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿El relevo sabe cuándo debe volver a sonar?
+
+## VID_nox_tamara_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces tendrás una tarde donde los sonidos también pueden ser solamente sonidos.
+
 ## V_nox_dorian.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

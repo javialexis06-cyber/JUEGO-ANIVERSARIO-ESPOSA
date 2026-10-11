@@ -44,6 +44,66 @@ Dirección: Respetar ambas decisiones; sin insinuar una opción correcta. Capa: 
 
 Las dos voces seguirán pudiendo disentir.
 
+## VID_eco_esteban_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Uní dos voces y la frase quedó mejor. El camino que parecía seguro ya no era el mismo.
+
+## VID_eco_esteban_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No quiero dejar de escribir bien.
+
+## VID_eco_esteban_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy guardé un relato entero y preparé el resumen con permiso.
+
+## VID_eco_esteban_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. También dejé una diferencia que me incomoda porque no sé resolverla.
+
+## VID_eco_nazario_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La fuente sigue siendo legible. No perdimos nada que el estudio necesitara.
+
+## VID_eco_nazario_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Tengo dos. Dejaré que escojas sin escribir una recomendación solemne.
+
+## VID_eco_violeta_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Quién había decidido olvidarlo?
+
+## VID_eco_violeta_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Dejemos una señal para que puedan escoger qué aprender al pasar.
+
+## VID_verdia_isadora_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El archivo convirtió esas mañanas en un prólogo demasiado corto.
+
+## VID_verdia_isadora_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Puedo registrarla sin obligarla a demostrar otra cosa.
+
 ## V_eco_esteban.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

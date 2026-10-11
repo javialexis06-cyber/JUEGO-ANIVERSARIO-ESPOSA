@@ -8,6 +8,42 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 El mío llegó de lado. Voy a llamarlo muelle.
 
+## VID_lirios_julian_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me alegra estar vivo. También perdí cosas que no volvieron con esa frase.
+
+## VID_lirios_julian_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Empecemos por la carga. Después puedo contarte qué ya conseguí reemplazar.
+
+## VID_lirios_teo_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Escribí que estaba ocupado para que ella entendiera que hacía falta. Lo repetí hasta que dejó de preguntar.
+
+## VID_lirios_teo_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No. Quería una ayuda que se le ocurriera sola, porque pedirla me parecía valer menos.
+
+## VID_lirios_teo_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hay una lista, pero puede esperar. ¿Quieres el camino largo?
+
+## VID_lirios_teo_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Y si te aburres, no conviertas la salida en una entrega rápida. Trato hecho.
+
 ## V_lirios_teo.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

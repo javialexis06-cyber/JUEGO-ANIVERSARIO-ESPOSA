@@ -38,6 +38,42 @@ Dirección: Humor de cocina y cariño sin exigir espera; voz humana, no efecto f
 
 Las discusiones que eran solo nuestras. La receta puede ir.
 
+## VID_verdia_aina_2.vida.02
+
+Dirección: Humor de cocina y cariño sin exigir espera; voz humana, no efecto fantasmal. Capa: mundo.
+
+Entonces empezará con un té bastante corriente.
+
+## VID_verdia_aina_2.vida.04
+
+Dirección: Humor de cocina y cariño sin exigir espera; voz humana, no efecto fantasmal. Capa: mundo.
+
+Tenemos una mesa donde pueden pasar cosas pequeñas.
+
+## VID_verdia_lucio_1.vida.01
+
+Dirección: Humor de cocina y cariño sin exigir espera; voz humana, no efecto fantasmal. Capa: mundo.
+
+Yo cocinaba y Rosa recordaba que había que reparar una ventana. Siempre decía que ella era mejor organizando.
+
+## VID_verdia_lucio_1.vida.03
+
+Dirección: Humor de cocina y cariño sin exigir espera; voz humana, no efecto fantasmal. Capa: mundo.
+
+Las dos. Me costaría menos contarlo si una cancelara la otra.
+
+## VID_verdia_lucio_2.vida.01
+
+Dirección: Humor de cocina y cariño sin exigir espera; voz humana, no efecto fantasmal. Capa: mundo.
+
+La carta no pide que espere. Me descubrí queriendo explicar un plato antes de decir esa parte.
+
+## VID_verdia_lucio_2.vida.03
+
+Dirección: Humor de cocina y cariño sin exigir espera; voz humana, no efecto fantasmal. Capa: mundo.
+
+Bien. Hoy quiero recibir a alguien que no conoció la posada.
+
 ## V_verdia_lucio.A1.01
 
 Dirección: Humor de cocina y cariño sin exigir espera; voz humana, no efecto fantasmal. Capa: mundo.

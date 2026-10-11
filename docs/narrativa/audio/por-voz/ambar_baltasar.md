@@ -14,6 +14,42 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 Podemos hablar de tu cerámica.
 
+## VID_ambar_baltasar_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La presión era correcta. Les pedí acostumbrarse antes de preguntar dónde se sentían mal.
+
+## VID_ambar_baltasar_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero una prueba donde podamos detener sin fingir que terminó el diseño.
+
+## VID_ambar_baltasar_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Dejé una ventana que pierde un poco y mejora la circulación necesaria.
+
+## VID_ambar_baltasar_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Hoy entiendo mejor para qué estaba construyendo todo el resto.
+
+## VID_ambar_samira_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La claridad que prometemos también necesita probarse con usuarios.
+
+## VID_ambar_samira_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos hacer visible la incertidumbre y la acción que recomiendas.
+
 ## V_ambar_baltasar.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

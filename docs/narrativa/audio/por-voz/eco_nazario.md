@@ -2,6 +2,42 @@
 
 Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
 
+## VID_eco_nazario_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Esa frase me consoló. Cuando supe lo otro pensé que decirlo me haría parecer cómplice.
+
+## VID_eco_nazario_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero que se estudie sin que alguien se ría de la necesidad que la hizo útil.
+
+## VID_eco_nazario_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy presté el libro y elegí qué nota personal no saldría en la ficha.
+
+## VID_eco_nazario_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me alegra. Ahora quiero leer una historia graciosa que no me explique qué debo creer.
+
+## VID_eco_oriel_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Eso cuenta como una mediación terminada?
+
+## VID_eco_oriel_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces sentémonos. Hoy no traigo ningún conflicto para que te hagas imprescindible.
+
 ## V_eco_nazario.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

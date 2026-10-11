@@ -50,6 +50,42 @@ Dirección: Impulso cálido que aprende a hacer una pausa antes de invitar. Capa
 
 No quiero reemplazar su juramento por uno a mi nombre.
 
+## VID_canalizadora_aura_1.vida.01
+
+Dirección: Impulso cálido que aprende a hacer una pausa antes de invitar. Capa: mundo.
+
+Preparé una ceremonia para una familia que necesitaba dormir. Hasta ensayé la bienvenida.
+
+## VID_canalizadora_aura_1.vida.03
+
+Dirección: Impulso cálido que aprende a hacer una pausa antes de invitar. Capa: mundo.
+
+Mi peor parte fue querer que me consolaran por haberme equivocado.
+
+## VID_canalizadora_aura_2.vida.01
+
+Dirección: Impulso cálido que aprende a hacer una pausa antes de invitar. Capa: mundo.
+
+Dijeron que no vendrían y no les propuse otro horario. Dejé la invitación en paz.
+
+## VID_canalizadora_aura_2.vida.03
+
+Dirección: Impulso cálido que aprende a hacer una pausa antes de invitar. Capa: mundo.
+
+Un poquito. Y aliviada. Aura no me pidió sonreír para aprobar el día.
+
+## VID_canalizadora_lara_1.vida.02
+
+Dirección: Impulso cálido que aprende a hacer una pausa antes de invitar. Capa: mundo.
+
+¿Nunca inventaste un final para recordarlo entero?
+
+## VID_canalizadora_lara_1.vida.04
+
+Dirección: Impulso cálido que aprende a hacer una pausa antes de invitar. Capa: mundo.
+
+Me gusta que también hubiera juego en ella.
+
 ## V_canalizadora_aura.A1.01
 
 Dirección: Impulso cálido que aprende a hacer una pausa antes de invitar. Capa: mundo.

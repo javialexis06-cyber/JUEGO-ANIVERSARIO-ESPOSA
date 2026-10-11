@@ -14,6 +14,30 @@ Dirección: Precisión con curiosidad y dudas audibles, nunca voz robótica. Cap
 
 Una fisura cerrada deja una señal. Esta tiene ritmo. Alguien está buscando otro conducto.
 
+## VID_astronoma_1.vida.01
+
+Dirección: Precisión con curiosidad y dudas audibles, nunca voz robótica. Capa: mundo.
+
+A veces miro sin tomar una medida. Mi madre decía que también habíamos subido para eso.
+
+## VID_astronoma_1.vida.03
+
+Dirección: Precisión con curiosidad y dudas audibles, nunca voz robótica. Capa: mundo.
+
+Recibe demasiadas instrucciones. Yo pensaba que decir cuidado ya decía te extraño.
+
+## VID_astronoma_2.vida.01
+
+Dirección: Precisión con curiosidad y dudas audibles, nunca voz robótica. Capa: mundo.
+
+Escribí que estoy orgullosa antes de pedirle revisar reservas. Tuve miedo de que una frase anulara la otra.
+
+## VID_astronoma_2.vida.03
+
+Dirección: Precisión con curiosidad y dudas audibles, nunca voz robótica. Capa: mundo.
+
+Gracias. ¿Y había una respuesta que no sonara a informe de misión?
+
 ## V_astronoma.A1.01
 
 Dirección: Precisión con curiosidad y dudas audibles, nunca voz robótica. Capa: mundo.

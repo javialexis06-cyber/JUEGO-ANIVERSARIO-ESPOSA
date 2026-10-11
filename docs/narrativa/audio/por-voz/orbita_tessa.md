@@ -2,6 +2,42 @@
 
 Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
 
+## VID_orbita_said_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Era la misma respuesta que habrías recomendado a otra persona?
+
+## VID_orbita_said_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos preparar un turno que no espere a tu siguiente error.
+
+## VID_orbita_tessa_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El promedio era correcto. Yo lo enseñaba como respuesta a una zona que no estaba dentro del cálculo.
+
+## VID_orbita_tessa_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero seguir construyendo ayudas.
+
+## VID_orbita_tessa_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El aviso nuevo pide comprobar, no declara que todo está bien si nadie respondió.
+
+## VID_orbita_tessa_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me alegra más de lo que esperaba. Antes quería que pareciera impresionante.
+
 ## V_orbita_tessa.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

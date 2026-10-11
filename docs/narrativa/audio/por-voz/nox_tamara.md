@@ -32,6 +32,54 @@ Dirección: Respetar ambas decisiones; sin insinuar una opción correcta. Capa: 
 
 El contraste no dependerá solo del color.
 
+## T04.escena.03
+
+Dirección: Escuchar la contradicción; sostener un límite sin convertirlo en sermón. Capa: pareja.
+
+El aviso debe decir qué ocurre, qué falta y qué podemos hacer.
+
+## T04.rama2.01
+
+Dirección: Ambas elecciones mantienen una utilidad equivalente. Capa: pareja.
+
+El texto tiene una lectura de forma alternativa.
+
+## VID_nox_tamara_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Había sonado tantas veces que yo ya preparaba el silencio antes de leerlo.
+
+## VID_nox_tamara_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero cambiar las dos cosas sin que una sirva para culpar a la otra.
+
+## VID_nox_tamara_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La pausa tiene motivo y un aviso visible de lo que sigue pendiente.
+
+## VID_nox_tamara_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Lo probamos juntos. Hoy puedo salir sin escuchar la baliza imaginada en cada golpe de puerta.
+
+## VID_nox_viggo_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Se entiende mejor desde el panel.
+
+## VID_nox_viggo_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces puedo acompañarte sin estar esperando otro aviso.
+
 ## V_nox_tamara.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

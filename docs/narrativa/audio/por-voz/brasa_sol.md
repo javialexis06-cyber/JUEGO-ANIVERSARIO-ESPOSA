@@ -26,11 +26,95 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 El cuaderno permite tamaños que el horno no tiene que prometer.
 
+## F07.inicio.01
+
+Dirección: Conversación al ofrecer misión. Capa: pareja.
+
+Parece una pieza perfecta. La salida está en una junta que el plano trata como defecto.
+
+## F07.rama1.01
+
+Dirección: Consecuencia práctica de una elección válida. Capa: pareja.
+
+Tu golpe abrió el seguro, no una criatura que defendía su casa.
+
+## F12.giro.01
+
+Dirección: Descubrimiento y reacción, dejar responder. Capa: pareja.
+
+La junta abierta admite un cambio. No necesita que la pieza se deshaga.
+
+## F12.rama2.01
+
+Dirección: Consecuencia práctica de una elección válida. Capa: pareja.
+
+Cada territorio conserva una pieza mantenible y un registro común.
+
 ## P22.inicio.02
 
 Dirección: Conversación al ofrecer misión. Capa: pareja.
 
 Una taza sin abertura tampoco derrama. Sigue sin servir para beber.
+
+## T05.escena.03
+
+Dirección: Escuchar la contradicción; sostener un límite sin convertirlo en sermón. Capa: pareja.
+
+La reparación no pretende borrar ese uso. Necesita saber qué puede completar hoy.
+
+## T05.rama1.01
+
+Dirección: Ambas elecciones mantienen una utilidad equivalente. Capa: pareja.
+
+La restricción tiene alternativa y fecha agrícola de revisión acordada.
+
+## VID_brasa_ramiro_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Puedes disfrutar que salió bien sin volverlo prueba de inocencia?
+
+## VID_brasa_ramiro_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Lo miro. Luego comeremos algo que no venga servido en una sentencia.
+
+## VID_brasa_sol_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me gustó el fragmento. Lo digo porque contar que supe enseguida lo malo que era me haría parecer mejor.
+
+## VID_brasa_sol_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No quiero dejar de admirar una forma. Quiero acordarme de mirar si alguien puede salir de ella.
+
+## VID_brasa_sol_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hice una taza simétrica porque hoy me apetecía. No demuestra que volví a obedecer a Vael.
+
+## VID_brasa_sol_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Miramos si pueden usarse y si te gustan. No necesitamos convertir cada cuenco en un juicio.
+
+## VID_brasa_yago_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Vamos a revisar dónde pones las manos. No voy a cambiar tu tarde por una deuda de taller.
+
+## VID_brasa_yago_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Yo pensé algo muy parecido de grande. Podemos dejar de esconderlo los dos.
 
 ## V_brasa_sol.A1.01
 

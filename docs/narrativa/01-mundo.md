@@ -2,13 +2,13 @@
 
 ## La pregunta del mundo
 
-¿Cómo se protege algo amado sin encerrarlo? Aura, Lara y Celia responden creando un lugar donde se puede nacer, querer, equivocarse y descansar. Nath’Gora responde apagándolo. Vael’Thor responde fijándolo para siempre. La granja muestra la respuesta pequeña y diaria; Sangre y Ceniza muestra lo que ocurre cuando el miedo al final se convierte en poder sobre los demás.
+¿Cómo se protege algo amado sin encerrarlo? Aura, Lara y Celia responden creando un lugar donde se puede nacer, querer, equivocarse y descansar. Fuatia responde protegiendo y castigando desde el equilibrio de los cuatro elementos; puede apoyar a quien le convenga y ser cruel con quien considera destructor. Nath’Gora responde apagándolo. Vael’Thor responde fijándolo para siempre. La granja muestra la respuesta pequeña y diaria; Sangre y Ceniza muestra lo que ocurre cuando el miedo al final se convierte en poder sobre los demás.
 
 La campaña no termina demostrando que el amor evita toda pérdida. Termina con una comunidad capaz de acompañarla. Él y Ella conservan su vínculo y su protagonismo: su amor permite una defensa excepcional, pero no reemplaza las decisiones, el trabajo o el consentimiento de quienes viven bajo ella.
 
 **Primordial no fecha la edad de sus protagonistas.** Astra enlaza planos cuyos calendarios no tienen un mismo antes y después. El Lazo de Él y Ella es la primera fuente del amor del Santuario en ese orden cósmico; su reflejo es visible en la Constelación desde el Alzamiento. Eso no significa que dos personas mortales hayan vivido físicamente 312 años en Celia, ni que Rosa y Lucio no pudieran amarse antes de conocerlos. Los manuscritos describen una procedencia, no un acta de nacimiento. Esta conexión es una propiedad única del Lazo ya fijada por el canon, no un recurso para cambiar pasados o trasladar personajes por el tiempo. No garantiza cómo elegirá alguien mañana, no prolonga vidas y no permite descubrir reencarnaciones de la pareja en otros NPC.
 
-## Las cinco figuras
+## Las cinco figuras originales y Fuatia
 
 **Aura** recuerda cada mundo que quiso salvar y no pudo. En su juventud confundía ofrecer oportunidades con garantizar felicidad: llenó un valle de brotes que sus habitantes no tenían cómo cuidar. Lara le enseñó a esperar. Ahora pregunta antes de bendecir; aun así, ante una amenaza, su impulso es encender más. Su debilidad no es amar demasiado sino decidir demasiado rápido qué debería querer otro. Habla con verbos concretos, se entusiasma, reconoce errores sin perder alegría. Eliana aprende de ella a ofrecer un comienzo sin exigir entusiasmo a quien está agotado. Su objeto íntimo es una semilla que no germinó: recuerda que una oportunidad también puede rechazarse.
 
@@ -19,6 +19,8 @@ La campaña no termina demostrando que el amor evita toda pérdida. Termina con 
 **Nath’Gora** custodió una estrella cuyo panteón trató el agotamiento como un problema ajeno. Pidió ayuda, recibió homenajes en vez de recursos y vio morir su sistema. Conservó su función de custodio sin tener ya nada que custodiar. Decidió que toda pasión era una promesa de abandono y destruyó otros panteones para que nadie disfrutara una confianza que él había perdido. Su argumento tiene una herida verdadera y una conclusión criminal. No busca cariño secreto ni se cura con una conversación. Ofrece a los mortales quietud sin hambre, sin duelo y sin voluntad. Su voz es serena, casi útil; no grita porque cree estar explicando una solución. El final le quita acceso al Santuario; no borra sus víctimas ni proclama reconciliación.
 
 **Vael’Thor** fue arquitecto de rutas seguras entre planos. Una travesía que él diseñó falló y perdió a su compañera de oficio; decidió que el error era permitir que algo pudiera cambiar. Empezó a encerrar esencias divinas en geometrías perfectas. Fue exiliado cuando su obra dejó de permitir salida. Nath le ofrece materia de estrellas muertas y acceso a las ruinas de panteones; Vael ofrece prisiones, falsos recorridos y una red de repetición. Desprecia el apagamiento de Nath: quiere conservar, no reducir todo a ceniza. Se necesitan y se sabotean. Su debilidad es una geometría que presupone respuestas idénticas: testimonios incompatibles pero honestos y decisiones libres desajustan sus moldes. Sol no es su descendiente ni una reencarnación; su cerámica humana constituye un contraejemplo humilde. Habla con cortesía precisa y trata a las personas como material hasta que ellas le niegan esa autoridad.
+
+**Fuatia** nace en AV 156 de la unión voluntaria de fuego, agua, tierra y aire. Su origen conserva los desastres precisos: murieron quienes explotaban la naturaleza y quedaron protegidos quienes la cuidaban. Es los elementos mismos, siente su uso y limita su poder únicamente por el balance entre ellos. Su afinidad es neutral: ama a quienes cuidan, guarda resentimiento y puede cooperar sin prometer bondad. No procede del núcleo planetario de Celia ni reemplaza a Lara en el tránsito de almas. Su canon completo está en [Fuatia](08-fuatia.md); sus relaciones y conflictos atraviesan F01–F12 y T01–T08. Los pasados extensos de las seis figuras se leen junto a [las nuevas escenas](10-figuras-y-escenas.md).
 
 ## Reglas que nunca se rompen por conveniencia
 
@@ -43,12 +45,15 @@ Los años del Santuario se cuentan desde el Alzamiento del Velo (AV). El present
 | AV 0 | Aura y Lara alzan el Santuario Protegido. La Constelación refleja el Lazo en Astra; los manuscritos no asignan al vínculo una fecha de nacimiento mortal. No constituye una genealogía de todas las parejas. |
 | AV 37 | Las primeras Santas fijan ritos y reglas de extracción. Sus sucesoras son humanas de vida normal, no encarnaciones inmortales. |
 | AV 104 | El Pacto de los Tres Cuidados organiza suelo, límites de extracción y acompañamiento de la muerte. Se funda Pueblo del Sol como cruce de oficios, no capital imperial. |
+| AV 156 | Jornada de los Cuatro Núcleos: nace Fuatia. Sus desastres matan únicamente a explotadores y protegen a cuidadores; el día posterior deja preguntas familiares y comunitarias, sin inventar víctimas inocentes del nacimiento. |
 | AV 221 | La inundación de los Lirios obliga a compartir registros de agua. Los sobrevivientes discuten compensaciones durante generaciones. |
 | AV 268 | Una ruta hacia Senda se deforma. Se instala Refugio de los Hilos. Las voces rescatadas prueban que las almas siguen allí, no que Lara las abandonó. |
+| AV 276 | Fuatia cierra el canal de un explotador; las consecuencias indirectas sobre trabajadores llevan a negociar una transición sin devolverle su negocio dañino. |
 | AV 281 | Un cierre de galería mal comunicado causa el accidente de Piedralumbre. Aurelio, entonces encargado de convoy, firma una orden ambigua; Gonzalo pierde su brigada. El acta se fragmenta. |
 | AV 294 | Sequía regional. Inés compra semillas a crédito; Tomás prioriza su parcela; Mara organiza turnos. El conflicto deja deudas y una amistad que aprendió a discutir. |
 | AV 301 | Sangrevil, gobernante de Valdemora, acepta el pacto de inmortalidad. Vael construye el sistema de prisiones. Comienza la Noche Eterna local: once años de aislamiento, no siglos de edad para sus sobrevivientes. |
 | AV 303 | Vigilia recibe refugiados. Aldán restringe pasos; Noemí descubre ceniza en pacientes que nunca cruzaron la frontera. Nace una disputa real entre seguridad y atención. |
+| AV 304 | Vael ofrece inmovilizar extractores abusivos. Fuatia rechaza un equilibrio que detendría también los ciclos; más tarde los retornos falseados de Confluencia intentan ocultarle el déficit distante. |
 | AV 305 | Damián recibe un manuscrito incompleto; oculta el reverso por una promesa al Consejo. Paloma transporta cartas sin conocer todo su contenido. |
 | AV 308 | Helena establece la estación con reservas limitadas. Calista permite un intercambio con Iridalia, no una anexión. Nath intenta usar minerales resonantes para ampliar el conducto. |
 | AV 310 | Eliana y Serena asumen sus oficios; Lara advierte a Serena del borde. El Consejo posterga revelar la historia del escudo. |

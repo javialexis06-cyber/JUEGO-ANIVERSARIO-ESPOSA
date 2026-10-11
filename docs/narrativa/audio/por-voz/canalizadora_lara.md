@@ -122,6 +122,66 @@ Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de orácul
 
 Nadie aquí tiene permiso para perdonar en nombre de todos los muertos.
 
+## VID_canalizadora_aura_2.vida.02
+
+Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.
+
+¿Y tú cómo quedaste? Puedes decir que triste sin cambiar su respuesta.
+
+## VID_canalizadora_aura_2.vida.04
+
+Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.
+
+Entonces ven a sentarte. No he organizado ningún rito para el descanso.
+
+## VID_canalizadora_lara_1.vida.01
+
+Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.
+
+No sé cómo terminaba ese cuento. Mi abuela se quedó dormida y yo me fui a jugar.
+
+## VID_canalizadora_lara_1.vida.03
+
+Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.
+
+Algunos. No me gustaba ninguno. Al final guardé la tarde como había sido.
+
+## VID_canalizadora_lara_2.vida.01
+
+Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.
+
+Hoy dije que no. Vinieron a pedir un rito para avergonzar a alguien frente a su familia.
+
+## VID_canalizadora_lara_2.vida.03
+
+Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.
+
+Mañana. Primero quiero merendar sin preparar otra defensa de mi negativa.
+
+## VID_maestra_2.vida.02
+
+Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.
+
+A veces la vergüenza prepara más juicio del que el otro trae.
+
+## VID_maestra_2.vida.04
+
+Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.
+
+Guardemos el trabajo. Esta tarde solo estamos escogiendo fruta.
+
+## VID_nocturna_naim_1.vida.02
+
+Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.
+
+Una persona no necesita aparecer en tu libreta para conservar humanidad.
+
+## VID_nocturna_naim_1.vida.04
+
+Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.
+
+Podemos conservar lo útil que sí fue autorizado.
+
 ## V_canalizadora_lara.A1.01
 
 Dirección: Dejar terminar al otro; voz clara, risa baja, sin susurro de oráculo. Capa: mundo.

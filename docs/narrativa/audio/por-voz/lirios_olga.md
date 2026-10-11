@@ -2,6 +2,42 @@
 
 Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
 
+## VID_lirios_bastian_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Le mostraste qué cambió o empezaste a defenderte entero?
+
+## VID_lirios_bastian_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces cena. Mañana puedes volver a explicar un barco, sin justificar tu vida completa.
+
+## VID_lirios_olga_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Antes llevaba una cesta y esperaba el precio. Ahora veo gente esperando mi respuesta.
+
+## VID_lirios_olga_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me enfada que parezca que nunca basta. Ese enfado no contesta lo que preguntas.
+
+## VID_lirios_olga_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La inspección nueva rechazó un lote que yo ya quería comprar.
+
+## VID_lirios_olga_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Casi. Luego recordé por qué dejamos de hacerla detrás de mi puesto.
+
 ## V_lirios_olga.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

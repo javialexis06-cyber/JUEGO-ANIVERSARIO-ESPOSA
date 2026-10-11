@@ -10,15 +10,16 @@ import subprocess
 import sys
 from premios import EFECTOS
 ROOT=Path(__file__).resolve().parents[1]
-for script in ['autor_campana.py','autor_reparto.py','autor_secretos.py','autor_encuentros.py']:
+for script in ['autor_campana.py','autor_reparto.py','autor_secretos.py','autor_encuentros.py','ampliar_vidas.py','autor_fuatia.py','autor_recursos.py']:
     subprocess.run([sys.executable,str(ROOT/'herramientas'/script)],check=True)
 def leer(nombre): return json.loads((ROOT/'datos'/nombre).read_text())
 def guardar(path,datos): path.write_text(json.dumps(datos,ensure_ascii=False,indent=2)+'\n')
 personajes=leer('reparto.json'); principales=leer('campana.json'); secretos=leer('secretos.json'); relaciones=leer('relaciones.json')
-encuentros=leer('encuentros.json')
+encuentros=leer('encuentros.json'); elementales=leer('elementales.json')
 NOMBRES={x['id']:x['nombre'] for x in personajes}
-NOMBRES.update(el='Él',ella='Ella',narrador='Narrador',aura='Aura',lara='Lara',celia='Celia',nathgora='Nath’Gora',vaelthor='Vael’Thor',conde='Conde Sangrevil')
+NOMBRES.update(el='Él',ella='Ella',narrador='Narrador',aura='Aura',lara='Lara',celia='Celia',nathgora='Nath’Gora',vaelthor='Vael’Thor',conde='Conde Sangrevil',fuatia='Fuatia')
 DIRECCION={'narrador':'Cercano y respirado; describir sin anunciar emociones grandiosas.','aura':'Energía cálida, con escucha; firme sin gritar.','lara':'Serenidad clara, verdad difícil sin amenaza.','celia':'Cercana, cotidiana, asombro sin infantilizar.','nathgora':'Cortesía fría; convicción de estar ofreciendo una solución.','vaelthor':'Preciso y paciente; control que empieza a fallar.','conde':'Autoridad educada con miedo; sin pedir absolución.','el':'Natural, práctico, escuchar antes de resolver.','ella':'Natural, humor y límites claros; sin solemnidad automática.'}
+DIRECCION['fuatia']='Amable y precisa, con una reserva de resentimiento. La crueldad no exige gritar; escuchar una objeción no equivale a redimirse.'
 DIRECCION.update({
  'mercader':'Directa y cálida; hacer cuentas no la vuelve fría. Ofrecer corrección sin vender confianza.',
  'cuidadora':'Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar.',
@@ -50,6 +51,7 @@ def bloque(escena,sufijo,texto,capa,prioridad,direccion):
 def citas(texto):
     return '\n'.join(f'> **{NOMBRES[q]}:** {t}' for q,t in [x.split(': ',1) for x in texto.splitlines() if x.strip()])
 recompensas=[]
+EFECTOS.update({q['id']:q['efecto_premio'] for q in principales+elementales if 'efecto_premio' in q})
 POLITICAS={
  'conocimiento':('Ficha comparativa reutilizable de la prueba y sus límites.','No concede materiales, datos no descubiertos ni estadísticas.'),
  'agenda':('Plantilla de planificación del oficio y recordatorio en la partida.','Tres planes fijados; no altera tiempo ni consume recursos automáticamente.'),
@@ -61,7 +63,7 @@ def premio(id,titulo,familia,tema):
     utilidad,limite=POLITICAS[familia]
     recompensas.append(dict(id=f'Q_{id}',mision=id,nombre=titulo,familia=familia,tema=tema,utilidad=utilidad,efecto_diseno=EFECTOS.get(id,f'{utilidad} Tema exclusivo: {tema}'),limite=limite,insignia=f'I_{id}',unica=True,vendible=False,monedas=0,multiplicadores_globales=0,estado='diseno_no_integrado'))
 
-texto=['# El reparto de Astra','', '142 NPC, cada uno con biografía y un arco personal de tres actos. Los nombres se adoptan para autoría; sus IDs originales permanecen. Las cinco figuras divinas están en [Mundo](01-mundo.md) y Sangrevil y protagonistas en [Campaña](02-campana.md).','', 'Las acciones son instrucciones para diseño, no diálogo pronunciado ni funciones ya implementadas. Inicio, giro, cierre y ambas respuestas constituyen el guion breve completo de cada arco; las escenas extensas de los personajes centrales están en la campaña. No se cuentan los tres actos como tres misiones distintas.','']
+texto=['# El reparto de Astra','', '142 NPC, cada uno con biografía y un arco personal de tres actos. Los nombres se adoptan para autoría; sus IDs originales permanecen. Las seis figuras divinas están en [Mundo](01-mundo.md) y Sangrevil y protagonistas en [Campaña](02-campana.md).','', 'Las acciones son instrucciones para diseño, no diálogo pronunciado ni funciones ya implementadas. Inicio, giro, cierre y ambas respuestas constituyen el guion breve completo de cada arco; las escenas extensas de los personajes centrales están en la campaña. No se cuentan los tres actos como tres misiones distintas.','']
 texto += ['## Índice por localidad','','| Localidad | Personajes |','|---|---|']
 for region_id in dict.fromkeys(x['asentamiento'] for x in personajes):
     texto.append(f'| [{region_id}](#{region_id}) | {sum(x["asentamiento"]==region_id for x in personajes)} |')
@@ -72,6 +74,13 @@ for x in personajes:
         region=x['asentamiento'];texto+=['## '+region,'']
     q=x['mision']; prioridad='B' if region=='pueblo_sol' else 'C'
     texto += [f"### {x['nombre']} · `{x['id']}`",'',f"**Pasado:** {x['pasado']}",'',f"**Presente y personalidad:** {x['presente']}",'',f"**Cambio:** {x['arco']}",'',f"**Vínculos:** {', '.join(NOMBRES[v] for v in x['vinculos'])}. **Naturaleza:** {x['naturaleza']}. **Hogar planificado:** `{x['hogar_planeado']}`.",'',f"#### {q['titulo']} · `{q['id']}`",'']
+    vida=x['profundidad']
+    for memoria in vida['memorias']:
+        texto += [f"**{memoria['etapa']}:**",'',memoria['texto'],'']
+    texto += ['**Cuando no ofrece una misión:**','',vida['cotidiano'],'','**Ante Fuatia:**','',vida['postura_fuatia'],'','**Conversaciones personales:**','']
+    for escena in vida['escenas']:
+        texto += [f"##### {escena['id']} · {escena['momento']}",'',citas(escena['lineas']),'',f"Condición: `{escena['condicion']}`. Repetible; no entrega recursos, premios ni amistad por reproducción.",'']
+        bloque(escena['id'],'vida',escena['lineas'],'mundo',prioridad,'Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión.')
     for n,(accion,campo,tono) in enumerate(zip(q['actos'],['inicio','giro','cierre'],['Ofrecer sin presión, tono cotidiano.','Reconocer contradicción sin pedir consuelo al oyente.','Cambio pequeño y concreto, sin fanfarria.']),1):
         texto += [f'**Acto {n}:** {accion}.','',f"> **{x['nombre']}:** {q[campo]}",'']
         linea(q['id'],f'A{n}.01',x['id'],q[campo],tono,'mundo',prioridad)
@@ -82,7 +91,7 @@ for x in personajes:
     texto += [f"**Recuperación:** {q['recuperacion']}",'',f"**Premio único:** `{q['premio']}` y recuerdo «{q['titulo']}». {EFECTOS[q['id']]} Ver [límites](05-jugabilidad.md). Ambas ramas conservan utilidad equivalente.",'']
     premio(q['id'],q['titulo'],q['premio'],q['actos'][-1])
 (ROOT/'03-reparto.md').write_text('\n'.join(texto))
-texto=['# Guiones de las 24 misiones principales','', 'Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones reales antes de su escena; las acotaciones nunca se leen en voz alta.','']
+texto=[f'# Guiones de las {len(principales)} misiones principales','', 'Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones reales antes de su escena; las acotaciones nunca se leen en voz alta.','']
 for q in principales:
     texto += [f"## {q['id']} · {q['titulo']}",'',f"**Lugar:** {q['zona']}. **Precedente:** {', '.join(q['requiere']) or 'Inicio'}.",'',f"**Acciones y prueba:** {q['acciones']}",'']
     for campo,tono in [('inicio','Conversación al ofrecer misión.'),('giro','Descubrimiento y reacción, dejar responder.'),('cierre','Cierre concreto, sin triunfalismo.')]:
@@ -118,9 +127,22 @@ for q in encuentros:
     texto += [f"**Premio único:** `{q['premio']}` y recuerdo de la reunión. Ambas variantes dan utilidad equivalente.",'', '**Recuperación:** si falta equipo, material, permiso o turno, posponer conservando preparación no consumida; nadie pierde amistad por no asistir. Los niños participan con supervisión. Ningún evento consume reservas de seguridad para mantener apariencia de fiesta.','']
     premio(q['id'],q['titulo'],q['premio'],q['acciones'][-1])
 (ROOT/'07-encuentros.md').write_text('\n'.join(texto))
-# Solo párrafos de diálogo dentro de escenas C01–C10, no biografías ni instrucciones.
+texto=['# Misiones secundarias de Fuatia','','**Diseño no integrado.** T08 es un secreto nuevo, además de los doce secretos originales. No bloquean la campaña.','']
+for q in elementales:
+    texto += [f"## {q['id']} · {q['titulo']}",'',f"**Zona:** {q['zona']}. **Requiere:** {', '.join(q['requiere'])}.",'']
+    if q.get('pistas'):texto += ['**Pistas públicas:**','']+[f'{n}. {p}' for n,p in enumerate(q['pistas'],1)]+['']
+    texto += ['**Acciones:**','']+[f'{n}. {p}' for n,p in enumerate(q['acciones'],1)]+['','**Escena:**','',citas(q['lineas']),'',q['eleccion'],'']
+    bloque(q['id'],'escena',q['lineas'],'pareja','B','Escuchar la contradicción; sostener un límite sin convertirlo en sermón.')
+    for n,rama in enumerate(q['ramas'],1):
+        texto += [f'**Rama {n}:**','',citas(rama),'']
+        bloque(q['id'],f'rama{n}',rama,'pareja','B','Ambas elecciones mantienen una utilidad equivalente.')
+    texto += [f"**Premio:** {q['efecto_premio']}",'',q['recuperacion'],'']
+    premio(q['id'],q['titulo'],q['premio'],q['acciones'][-1])
+(ROOT/'08-misiones-fuatia.md').write_text('\n'.join(texto).rstrip()+'\n')
+# Solo párrafos de diálogo dentro de escenas cinematográficas, no biografías ni instrucciones.
+
 actual=None; contador=0
-for l in (ROOT/'02-campana.md').read_text().splitlines():
+for l in ((ROOT/'02-campana.md').read_text()+'\n'+(ROOT/'10-figuras-y-escenas.md').read_text()).splitlines():
     match=re.match(r'## (C\d{2}) ·',l)
     if match:actual=match[1];contador=0;continue
     if l.startswith('## ') and not match:actual=None
@@ -135,6 +157,11 @@ contenido_mundo=(ROOT/'01-mundo.md').read_text()
 for id,nombre,alias in [('figura_aura','Aura','aura'),('figura_lara','Lara','lara'),('figura_celia','Celia','celia'),('figura_nathgora','Nath’Gora','nathgora'),('figura_vaelthor','Vael’Thor','vaelthor')]:
     parrafo=re.search(r'\*\*'+re.escape(nombre)+r'\*\* (.+)',contenido_mundo).group(1)
     figuras.append(dict(id=id,nombre=nombre,alias_voz=alias,biografia=parrafo,estado='autoria_sin_npc_social'))
+capitulos=(ROOT/'10-figuras-y-escenas.md').read_text()
+for f in figuras:
+    titulo={'aura':'Aura','lara':'Lara','celia':'Celia','nathgora':'Nath’Gora','vaelthor':'Vael’Thor'}[f['alias_voz']]
+    f['historia_extensa']=re.search(r'(?ms)^## '+re.escape(titulo)+r' ·[^\n]*\n(.*?)(?=^## |\Z)',capitulos).group(1).strip()
+figuras.append(dict(id='figura_fuatia',nombre='Fuatia',alias_voz='fuatia',biografia='Diosa de los cuatro elementos, creada por la esposa del autor. Neutral entre bien y mal; protege el balance y conserva resentimiento.',historia_extensa=(ROOT/'08-fuatia.md').read_text(),estado='autoria_sin_npc_social'))
 guardar(ROOT/'datos/figuras.json',figuras)
 guardar(ROOT/'audio/lineas.json',guardados)
 guardar(ROOT/'audio/lineas-mundo.json',[l for l in guardados if l['capa']=='mundo'])
@@ -154,7 +181,7 @@ resumen={}
 for prioridad in ['A','B','C']:
     ls=[l for l in lineas if l['prioridad']==prioridad]
     resumen[prioridad]=dict(lineas=len(ls),caracteres=sum(len(l['texto']) for l in ls),palabras=sum(len(l['texto'].split()) for l in ls))
-resumen.update(total_lineas=len(lineas),voces_con_lineas=len({l['hablante'] for l in lineas}),misiones_principales=len(principales),arcos_personales=len(personajes),secretos=len(secretos),encuentros=len(encuentros),relaciones=len(relaciones),estado='guiones_sin_audio_generado',costo='Sin calcular; depende del proveedor, voz, modelo y promoción vigentes.')
+resumen.update(total_lineas=len(lineas),voces_con_lineas=len({l['hablante'] for l in lineas}),misiones_principales=len(principales),arcos_personales=len(personajes),secretos=len(secretos),encuentros=len(encuentros),secundarias_elementales=len(elementales),escenas_personales=sum(len(p['profundidad']['escenas']) for p in personajes),relaciones=len(relaciones),estado='guiones_sin_audio_generado',costo='Sin calcular; depende del proveedor, voz, modelo y promoción vigentes.')
 unicas={(l['hablante'],l['texto']) for l in lineas}
 resumen.update(tomas_unicas_por_hablante_texto=len(unicas),caracteres_unicos=sum(len(t) for _,t in unicas),minutos_estimados_a_145_palabras_por_minuto=round(sum(len(t.split()) for _,t in unicas)/145,1))
 guardar(ROOT/'audio/resumen.json',resumen)

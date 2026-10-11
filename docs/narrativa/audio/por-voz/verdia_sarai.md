@@ -2,6 +2,54 @@
 
 Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
 
+## VID_verdia_amaranta_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Vas a dibujar alrededor?
+
+## VID_verdia_amaranta_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me quedaré mirando contigo. No traje un pincel por obligación.
+
+## VID_verdia_sarai_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Dejé fuera a quienes habían montado la mesa. En el cuadro el funcionario parecía haber preparado todo.
+
+## VID_verdia_sarai_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quería conservarlo y usé limpio para no decirlo.
+
+## VID_verdia_sarai_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Una persona pidió no aparecer y dejó una idea para el color. También es una contribución.
+
+## VID_verdia_sarai_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Preguntaré. No tengo que publicar una identidad para admitir que no elegí todo sola.
+
+## VID_verdia_tobias_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No voy a corregirlo si no quieres.
+
+## VID_verdia_tobias_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Perfecto. No toda tarde necesita terminar en un taller.
+
 ## V_verdia_sarai.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

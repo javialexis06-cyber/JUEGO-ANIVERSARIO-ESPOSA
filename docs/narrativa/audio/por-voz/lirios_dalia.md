@@ -2,6 +2,42 @@
 
 Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
 
+## VID_lirios_dalia_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La vecina del bosque me ayudó después de leer mi acusación. Yo no sabía cómo agradecer sin sentirme en deuda.
+
+## VID_lirios_dalia_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me costó más borrar la frase que mover piedra.
+
+## VID_lirios_dalia_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Tina, mañana llega tu papá antes de la merienda. Yo voy a tener una tarde para mí.
+
+## VID_lirios_dalia_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Voy a terminar un tejido bastante lento y quizá tampoco lo termine.
+
+## VID_lirios_maite_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+A mí me pasó con el dique. Veía el canal recto y creía haber entendido el río.
+
+## VID_lirios_maite_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos pedirle que explique cómo la detendría si empieza a fallar.
+
 ## V_lirios_dalia.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

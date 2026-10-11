@@ -80,6 +80,30 @@ Dirección: Recuperar respiración al poder negar; no actuar confusión como car
 
 La siguiente respuesta tendrá que ser mía.
 
+## VID_hilos_elian_1.vida.01
+
+Dirección: Recuperar respiración al poder negar; no actuar confusión como caricatura. Capa: mundo.
+
+Mi hermano hacía una broma muy mala cada vez que arreglábamos una puerta. Vael la repetía igual en cada vuelta.
+
+## VID_hilos_elian_1.vida.03
+
+Dirección: Recuperar respiración al poder negar; no actuar confusión como caricatura. Capa: mundo.
+
+Lo distinto era poder decir que ya estaba cansado de oírla. En la casa perfecta siempre me reía.
+
+## VID_hilos_elian_2.vida.01
+
+Dirección: Recuperar respiración al poder negar; no actuar confusión como caricatura. Capa: mundo.
+
+Hoy no hablé del fuego. No porque lo negara; quería aprender el juego que trajiste.
+
+## VID_hilos_elian_2.vida.03
+
+Dirección: Recuperar respiración al poder negar; no actuar confusión como caricatura. Capa: mundo.
+
+Me gustaría perder sin que alguien me explique una lección del pasado.
+
 ## V_hilos_elian.A1.01
 
 Dirección: Recuperar respiración al poder negar; no actuar confusión como caricatura. Capa: mundo.

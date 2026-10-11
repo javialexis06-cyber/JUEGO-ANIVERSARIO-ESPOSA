@@ -26,6 +26,54 @@ Dirección: Conversación al ofrecer misión. Capa: pareja.
 
 Es el sello de Valdemora. No puedo prometer que su dueño siga vivo.
 
+## VID_vigilia_aldan_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿También mandamos la carta para tu hijo?
+
+## VID_vigilia_aldan_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces es una carta que podré entregar sin necesitar una carpeta de anexos.
+
+## VID_vigilia_kael_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Gracias. Si hay un indicio real, podremos discutirlo por el procedimiento acordado.
+
+## VID_vigilia_kael_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Empieza por quedarte a escuchar una respuesta que no tenga utilidad de servicio.
+
+## VID_vigilia_telmo_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quería dar una respuesta y fabriqué una que sonaba suficientemente parecida.
+
+## VID_vigilia_telmo_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Me cuesta decir no sé cuando alguien espera una noticia importante.
+
+## VID_vigilia_telmo_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy expliqué el horario y dejé dónde consultarlo. No era una carta privada ni una adivinación.
+
+## VID_vigilia_telmo_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+También se entiende más rápido. Después quiero escribir algo que no tenga sello.
+
 ## V_vigilia_telmo.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

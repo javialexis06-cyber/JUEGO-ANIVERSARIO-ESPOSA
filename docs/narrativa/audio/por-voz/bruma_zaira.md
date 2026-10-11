@@ -26,6 +26,42 @@ Dirección: Respetar ambas decisiones; sin insinuar una opción correcta. Capa: 
 
 Podemos seguir con la dosis; esa era la pregunta útil.
 
+## VID_bruma_zaira_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Cuando corrigieron la mezcla oí que mi abuela era una ignorante. No era lo que habías escrito.
+
+## VID_bruma_zaira_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero conservar nombres y cambiar medidas. Antes me parecía escoger una lealtad.
+
+## VID_bruma_zaira_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La receta de cocina sigue diciendo a gusto. No voy a convertir toda la casa en consulta.
+
+## VID_bruma_zaira_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Esa sí. La medicina viene en otra hoja y con instrucciones bastante menos poéticas.
+
+## VID_veterinaria_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Conservaste el protocolo anterior. Pensé que te gustaría olvidarlo.
+
+## VID_veterinaria_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Esta es de aquella temporada en que todavía nos escuchábamos bien.
+
 ## V_bruma_zaira.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

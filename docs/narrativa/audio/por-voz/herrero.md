@@ -26,6 +26,78 @@ Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo.
 
 Quiero volver al taller sin sentir que cada pieza es una disculpa.
 
+## VID_herrero_1.vida.01
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+Este martillo no era el de Gonzalo. Era mío. Llevo años contando mal esa parte.
+
+## VID_herrero_1.vida.03
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+Supongo que quería que la tarde hubiera tenido una salida más.
+
+## VID_herrero_2.vida.01
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+Dejé el taller cerrado a mediodía. Una señora preguntó si estaba enfermo.
+
+## VID_herrero_2.vida.03
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+Le dije almuerzo. Me pidió una reparación para cuando resucitara.
+
+## VID_minero_1.vida.02
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+Como si encontrarlas bonitas no justificara traerlas a casa.
+
+## VID_minero_1.vida.04
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+Por fin un material que no vas a pedirme transformar antes del almuerzo.
+
+## VID_piedra_gonzalo_1.vida.02
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+¿Quieres contarme el taller o prefieres que deje de preguntar también yo?
+
+## VID_piedra_gonzalo_1.vida.04
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+Puedo escuchar sin defender otra vez dónde me encontraba aquella tarde.
+
+## VID_piedra_gonzalo_2.vida.02
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+Agradezco que lo hicieras delante de quienes la oyeron. Necesitaré más tiempo para otra cosa.
+
+## VID_piedra_gonzalo_2.vida.04
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+Déjala. El trabajo tiene su precio y la conversación podrá esperar.
+
+## VID_piedra_santiago_2.vida.02
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+¿Y hoy?
+
+## VID_piedra_santiago_2.vida.04
+
+Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.
+
+Ese progreso sí puedo medir sin que tengamos que discutir de talento.
+
 ## V_herrero.A1.01
 
 Dirección: Humor seco, pausas de oficio; reconocer cansancio sin teatralizarlo. Capa: mundo.

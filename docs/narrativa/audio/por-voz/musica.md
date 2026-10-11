@@ -50,6 +50,54 @@ Dirección: Pregunta respetuosa y confidencia sin espectáculo. Capa: pareja.
 
 Dejaremos la pausa.
 
+## VID_artesana_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Esta hora me la regalas porque quieres o porque crees que debo sentirme menos incómoda?
+
+## VID_artesana_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Bien. Hoy ayudo a ordenar retales sin intentar convertirlo en pago.
+
+## VID_musica_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sora oyó estas tres notas cientos de veces. Nunca me dijo que dejara de intentar la cuarta.
+
+## VID_musica_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Antes habría oído solo lo primero. Como si quererme fuera tener oídos inagotables.
+
+## VID_musica_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La pago completa y te invito a cenar por una razón distinta de la factura.
+
+## VID_musica_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+También quiero eso. Tengo una nueva bastante ridícula, pero puede esperar al postre.
+
+## VID_nieve_anselmo_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Y ahora cuál prefieres?
+
+## VID_nieve_anselmo_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Puedes contar cuál te gusta hoy. La versión antigua seguirá teniendo su nombre.
+
 ## V_musica.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

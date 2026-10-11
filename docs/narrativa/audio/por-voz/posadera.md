@@ -26,6 +26,18 @@ Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto
 
 Las historias serán voluntarias y el postre llegará igual.
 
+## F03.inicio.02
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: pareja.
+
+Puedo recibir personas. Tengo seis camas, no una respuesta ilimitada.
+
+## F03.rama1.01
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: pareja.
+
+Cada mesa tendrá cupo y un horario que podamos cumplir.
+
 ## P10.giro.02
 
 Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: pareja.
@@ -79,6 +91,90 @@ Por fin no tendrá la última palabra sobre la sal.
 Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: pareja.
 
 Hoy la leo. Después quiero hablar de algo corriente.
+
+## VID_cocinero_1.vida.02
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Te preguntó si querías más pan. Siempre empezaba por una cosa bastante concreta.
+
+## VID_cocinero_1.vida.04
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Y yo todavía necesito que me recuerdes sentarme antes de que se enfríe.
+
+## VID_cocinero_2.vida.02
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Si no me gusta, ¿puedo decirlo sin que parezca un juicio sobre tu vida entera?
+
+## VID_cocinero_2.vida.04
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Trato hecho. Lo de la sal lo discutimos después de cenar.
+
+## VID_nox_inigo_1.vida.02
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Aquí puedes comer sin empezar por demostrar que nunca aceptaste nada de ellos.
+
+## VID_nox_inigo_1.vida.04
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Tendremos una cuenta concreta. Ninguna de sus líneas dirá obediencia.
+
+## VID_posadera_1.vida.01
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Lucio me habría dicho que esas cortinas son carísimas. Las escogí yo y habría insistido igual.
+
+## VID_posadera_1.vida.03
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Quiero que las laves para la habitación del fondo. También tenían utilidad fuera de nuestra pelea.
+
+## VID_posadera_2.vida.01
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Cambié el mantel. No tuve una revelación; simplemente se había roto en una esquina.
+
+## VID_posadera_2.vida.03
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Lo guardaré. Y mañana quiero escoger otro dibujo, de esos que a Lucio le parecían extravagantes.
+
+## VID_veterano_2.vida.02
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Puedes ayudar a cortar verduras. Aquí nadie necesita una orden de convoy.
+
+## VID_veterano_2.vida.04
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Pregúntame tú hoy. La mesa seguirá siendo la misma.
+
+## VID_vigilia_noemi_1.vida.02
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Puedes quererlo sin convertir cada descanso en traición a la gente que atendiste.
+
+## VID_vigilia_noemi_1.vida.04
+
+Dirección: Hospitalidad con carácter, humor de cocina; Lucio no provoca llanto obligatorio. Capa: mundo.
+
+Tengo una silla donde no tienes que responder como médica mientras comes.
 
 ## V_posadera.A1.01
 

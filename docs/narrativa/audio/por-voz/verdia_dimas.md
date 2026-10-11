@@ -2,6 +2,30 @@
 
 Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
 
+## VID_verdia_dimas_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Reponer parecía más fácil que decir por qué. La gente ya había gastado una temporada.
+
+## VID_verdia_dimas_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me costó entender que un fallo registrado podía ayudar más que otra promesa buena.
+
+## VID_verdia_dimas_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy anoté no germinó y dejé la ficha abierta para comparar causas.
+
+## VID_verdia_dimas_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Después. Primero quiero pasear sin medir un crecimiento que quizá no llegue hoy.
+
 ## V_verdia_dimas.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

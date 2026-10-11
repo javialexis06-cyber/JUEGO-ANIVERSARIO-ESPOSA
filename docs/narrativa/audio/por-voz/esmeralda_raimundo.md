@@ -20,6 +20,42 @@ Dirección: Respuesta natural y práctica. Capa: mundo.
 
 La ficha conservará escala y procedencia.
 
+## VID_esmeralda_olmo_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿La ruta conserva el nombre de quienes la señalaron?
+
+## VID_esmeralda_olmo_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Te daré los movimientos del sector, con las dudas incluidas.
+
+## VID_esmeralda_raimundo_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Dejé de enviar lo pequeño. Si no molestaba, parecía que volvía a ser buen compañero.
+
+## VID_esmeralda_raimundo_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No quiero volver a gritar cada dato para asegurar que me escuchen.
+
+## VID_esmeralda_raimundo_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El aviso menor quedó consultable y no detuvo la jornada por sí solo.
+
+## VID_esmeralda_raimundo_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Preguntaron el umbral. Esta vez pude oírlo como pregunta, no como otro alarmista.
+
 ## V_esmeralda_raimundo.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

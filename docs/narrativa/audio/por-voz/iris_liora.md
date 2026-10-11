@@ -8,6 +8,42 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 Es igual a la que pusiste mal ayer sin propósito.
 
+## VID_iris_liora_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Llamé nostalgia a guardar una semilla porque la venta nueva parecía demostrar todo lo que yo defendía.
+
+## VID_iris_liora_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero conservar lo que aprendí de adaptación sin borrar esa pérdida.
+
+## VID_iris_liora_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Vendimos una parte y conservamos otra variedad con su agua prevista.
+
+## VID_iris_liora_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Antes aprendía así y luego olvidé que una comida también puede ser la meta.
+
+## VID_iris_yuna_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No necesito que desaparezca tu colección para que podamos revisar esa decisión.
+
+## VID_iris_yuna_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos decirlo sin convertir la votación en un juicio sobre cuánto quieres el mundo.
+
 ## V_iris_liora.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

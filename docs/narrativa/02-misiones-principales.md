@@ -1,4 +1,4 @@
-# Guiones de las 24 misiones principales
+# Guiones de las 36 misiones principales
 
 Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones reales antes de su escena; las acotaciones nunca se leen en voz alta.
 
@@ -29,7 +29,7 @@ Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones 
 
 ## P02 · La carta sin campana
 
-**Lugar:** vigilia. **Precedente:** P01.
+**Lugar:** vigilia. **Precedente:** F01.
 
 **Acciones y prueba:** Recibir carta al dormir; contrastar sello con Telmo y visitar a Serena. Registrar hora agrícola de recepción; no exige sincronía entre celulares.
 
@@ -171,7 +171,7 @@ Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones 
 
 ## P07 · Los tres manuscritos
 
-**Lugar:** celia. **Precedente:** P06.
+**Lugar:** celia. **Precedente:** F02.
 
 **Acciones y prueba:** Reunir tres testimonios de criaturas mediante arcos de cuidado. Ruta principal alternativa: los custodios prestan copias tras una prueba ordinaria de cuidado y protección de hábitat; criar las tres especies míticas es opcional, no un bloqueo de genética rara.
 
@@ -286,7 +286,7 @@ Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones 
 
 ## P11 · Lo que la ceniza todavía quiere
 
-**Lugar:** pueblo_sol. **Precedente:** P10.
+**Lugar:** pueblo_sol. **Precedente:** F03.
 
 **Acciones y prueba:** Comparar tres lecturas nocturnas en jornadas dormidas, sin esperar noches reales. Detectar patrón repetido en envíos, no enfermedad universal de cultivos.
 
@@ -336,7 +336,7 @@ Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones 
 
 ## P13 · Dos maneras de recordar
 
-**Lugar:** rosal_eterno. **Precedente:** P12.
+**Lugar:** rosal_eterno. **Precedente:** F04.
 
 **Acciones y prueba:** Visitar Verdia con permiso y ancla; obtener dos testimonios del panteón destruido, aceptando contradicción. Una memoria solo se archiva con consentimiento.
 
@@ -436,7 +436,7 @@ Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones 
 
 ## P17 · Una órbita con reservas
 
-**Lugar:** estacion_celia. **Precedente:** P16.
+**Lugar:** estacion_celia. **Precedente:** F05.
 
 **Acciones y prueba:** Preparar combustible, aire y carga desde cantidades disponibles; tutorial sin viaje irreversible. Ensayo permite volver a puerto. Ninguna batería se carga leyendo diálogo.
 
@@ -550,7 +550,7 @@ Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones 
 
 ## P21 · El pacto que se puede revisar
 
-**Lugar:** celia. **Precedente:** P20.
+**Lugar:** celia. **Precedente:** F12.
 
 **Acciones y prueba:** Reunir representantes ya conocidos; publicar capacidades, reservas y retorno de cada ruta. Consejo con decisiones concretas y acta; no exige máxima amistad de todo el reparto.
 
@@ -588,6 +588,7 @@ Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones 
 
 > **Tecla:** Primer nodo: dos recuerdos. Segundo: permiso retirado. Tercero: una salida utilizada.
 > **Ella:** No son defectos. Son personas.
+> **Fuatia:** Esa perfección me estaba cobrando aire de un lugar que su plano no mostraba. La matriz ya sabe detener el cobro.
 
 **Cierre:**
 
@@ -614,6 +615,7 @@ Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones 
 > **Aura:** No puedo devolver tu estrella. Puedo negarte otra víctima.
 > **Lara:** Tu pérdida merece ser nombrada. Tu venganza no merece nuestro consentimiento.
 > **Él:** Este mundo puede cambiar. No te lo vamos a entregar para evitarlo.
+> **Fuatia:** Ahora sí. El fuego devuelve calor, el agua conserva curso, la tierra sostiene y el aire no paga una deuda inventada. No necesito arrasar este mundo para quitarte el intercambio.
 
 **Cierre:**
 
@@ -645,6 +647,7 @@ Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones 
 > **Ella:** ¿Mañana qué hacemos?
 > **Él:** Miramos si brotó.
 > **Narrador:** El mundo no quedó terminado. Quedó abierto.
+> **Fuatia:** Seguiré sintiendo lo que hagan. También podré escuchar cuando discrepen de mí sin dejar de cuidar.
 
 **Decisión:** Celebración pública o noche tranquila.
 
@@ -663,5 +666,485 @@ Complemento operativo de [Campaña](02-campana.md). Cada hito requiere acciones 
 > **Narrador:** El silencio de aquella noche no se parecía a la quietud de Nath. Podían salir de él cuando quisieran.
 
 **Premio:** `conocimiento` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F01 · Lo que bebe un surco
+
+**Lugar:** pueblo_sol. **Precedente:** P01.
+
+**Acciones y prueba:** Comparar humedad de dos surcos ordinarios y el registro de un canal; visitar una orilla autorizada con Flora. Reunir prueba de suministro sin agotar cultivos. Una primera aparición de Fuatia reconoce la semilla sana y señala un intercambio detenido: la culpa no está en que alguien no haya rezado. Registrar su advertencia y una ruta de consulta.
+
+**Inicio:**
+
+> **Flora:** El surco no está pidiendo una promesa. Está pidiendo que miremos por dónde llegó el agua.
+> **Fuatia:** Me estás tocando con esa pala. No he venido a reprocharte el gesto.
+
+**Giro:**
+
+> **Tomás:** ¿Si cuidas estos elementos, por qué una cosecha puede fallar?
+> **Fuatia:** Porque sentirlo todo no vuelve castigo cada cosa que ocurre. Y porque cuidar no significa impedir toda pérdida.
+> **Ella:** Entonces no aceptaremos que se culpe a alguien por una semilla que no brotó.
+
+**Cierre:**
+
+> **Fuatia:** Pueden llevarse una pregunta. ¿Quién recibe cuando esta agua parece desaparecer?
+> **Él:** La pondremos junto a las medidas, sin convertirte en explicación de lo que todavía no sabemos.
+
+**Decisión:** Pedir una visita abierta de explicación o conservar por ahora la aparición como testimonio de trabajo.
+
+**Consecuencias:** Ambas rutas conservan las medidas y abren P02. Visita abierta: Flora programa preguntas sin rito obligatorio. Testimonio de trabajo: el documento público conserva hechos sin publicar confidencias. Fuatia no concede ni retira clima por la opción.
+
+**Guion de rama 1:**
+
+> **Fuatia:** Hablaré ante quienes quieran venir. No fabricarás asistentes para que parezca una devoción.
+> **Flora:** También anotaremos las preguntas que no podamos resolver.
+
+**Guion de rama 2:**
+
+> **Fuatia:** No necesito que anuncies cada vez que he escuchado.
+> **Él:** La medida quedará pública; la conversación íntima, donde se autorizó.
+
+**Premio:** `conocimiento` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F02 · El intercambio falseado
+
+**Lugar:** sangre/subsuelo. **Precedente:** P06.
+
+**Acciones y prueba:** Con el Subsuelo ya completado, contrastar dos fragmentos de registro de su conducto con una copia accesible de Darío. No extraer material de un juego para acreditar inventario del otro. Identificar retorno cerrado y punto de compensación. Fuatia contiene una fuga elemental mientras los protagonistas retiran la conexión autorizada; eso no mata al Conde ni sustituye la puerta de Corte.
+
+**Inicio:**
+
+> **Fuatia:** Aquí el fuego sale, pero el retorno cuenta el mismo calor otra vez.
+> **Darío:** La pared continúa al otro lado. No significa que conozcamos la galería de allá.
+
+**Giro:**
+
+> **Él:** ¿Puedes apagarlo todo?
+> **Fuatia:** Puedo apagar todos los volcanes del planeta. Aquí haría que un circuito falso cobrara el intercambio donde ustedes no pueden verlo. Primero me mostrarán a quién está cargando el déficit.
+> **Idalia:** El manuscrito del dragón decía reserva. No potencia desperdiciada.
+
+**Cierre:**
+
+> **Fuatia:** Sostengo el tramo mientras desmontan esa unión. No confundan mi paciencia con debilidad.
+> **Ella:** Y no llamaremos reparación a trasladar la pérdida a otro lugar.
+
+**Decisión:** Documentar primero el retorno de agua o el retorno de aire; ambas pruebas ordinarias están disponibles.
+
+**Consecuencias:** La secuencia de investigación cambia, no su costo ni el acceso a P07. La segunda lectura queda anotada antes del cierre; ninguna rama destruye un núcleo.
+
+**Guion de rama 1:**
+
+> **Fuatia:** Seguiremos el agua. Si falta, no completarás la cuenta con una ofrenda.
+> **Darío:** La muestra de registro basta; no necesita otro mineral del botín.
+
+**Guion de rama 2:**
+
+> **Fuatia:** Seguiremos el aire. Escucha el aviso y mira también la marca.
+> **Idalia:** Nadie tendrá que oír perfectamente para identificar el mismo retorno.
+
+**Premio:** `conocimiento` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F03 · El hambre detrás del altar
+
+**Lugar:** vigilia. **Precedente:** P10.
+
+**Acciones y prueba:** Consultar el contrato público de un comedor de la Custodia y entrevistar voluntariamente a Íñigo en su relevo. Preparar una alternativa de provisiones con recetas y camas existentes. Fuatia propone cerrar el horno de quien contamina; registrar quién depende de esa mesa y garantizar traslado de atención antes de ejecutar un cierre material. No pedir testimonio a cambio de comida.
+
+**Inicio:**
+
+> **Fuatia:** Ese horno derrama en mi agua lo que les promete limpiar del dolor.
+> **Rosa:** Puedo recibir personas. Tengo seis camas, no una respuesta ilimitada.
+
+**Giro:**
+
+> **Íñigo:** Primero daban comida. La deuda de obediencia venía después.
+> **Fuatia:** Si detengo al responsable, deja de dañar.
+> **Noemí:** Sí. Y quienes comen allí todavía necesitarán cena esta noche.
+
+**Cierre:**
+
+> **Fuatia:** El cierre permanece. La transición empezará antes, no en la mañana que alguien ya pasó con hambre.
+> **Ella:** Cuidar a quienes dependían de él no lo vuelve inocente.
+
+**Decisión:** Organizar cocina distribuida o alojamiento con turnos de comida; el presupuesto total es equivalente.
+
+**Consecuencias:** Ambas alternativas mantienen atención y evidencias para P11. Cambian escenas posteriores de Rosa y Noemí. Ninguna obliga a todos los beneficiarios a declarar contra la secta.
+
+**Guion de rama 1:**
+
+> **Rosa:** Cada mesa tendrá cupo y un horario que podamos cumplir.
+> **Fuatia:** No pediré que me recen para recibir lo que prepararon ustedes.
+
+**Guion de rama 2:**
+
+> **Noemí:** Separaremos descanso y entrevista. Primero sabrán dónde dormir.
+> **Fuatia:** El responsable pierde su horno. Los demás no perderán el derecho a comer.
+
+**Premio:** `agenda` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F04 · Los que no celebraron el nacimiento
+
+**Lugar:** pueblo_sol. **Precedente:** P12.
+
+**Acciones y prueba:** Contrastar el acta de AV 156 con dos relatos autorizados de descendientes, disponibles en copia. Las muertes precisas y la protección del origen no se desmienten: investigar cómo los protegidos vivieron después. Escuchar a Fuatia y registrar que duelo familiar no hereda culpa. No usar recuerdos reales de la pareja ni enviar niños a un desastre recreado.
+
+**Inicio:**
+
+> **Damián:** Dice que murieron quienes se aprovechaban y que quienes cuidaban fueron protegidos. Las dos copias coinciden.
+> **Fuatia:** También yo lo sentí. No vas a encontrar una víctima secreta que vuelva torpe mi nacimiento.
+
+**Giro:**
+
+> **Alma:** Una mujer protegida lloró a alguien que sí había hecho daño.
+> **Fuatia:** No le cobré por llorarlo.
+> **Ella:** El archivo la hizo agradecer en una frase. Su propio relato necesitó muchas páginas.
+
+**Cierre:**
+
+> **Fuatia:** Puedes conservar esas páginas. No prometo gustarles en todas.
+> **Él:** No necesitamos que coincidan para reconocer lo que ocurrió.
+
+**Decisión:** Exponer las fuentes juntas o organizar lectura voluntaria por separado.
+
+**Consecuencias:** Las fuentes completas quedan disponibles en ambas rutas y P13 se abre. No hay bonus por hacer pública una identidad protegida; se conservan autorizaciones de copia.
+
+**Guion de rama 1:**
+
+> **Alma:** La exposición distinguirá hecho y respuesta. Nadie tiene que visitar para demostrar respeto.
+> **Fuatia:** Déjenme también leer una pregunta que no esté diseñada para absolverme.
+
+**Guion de rama 2:**
+
+> **Damián:** Las versiones se consultarán completas, con sus límites.
+> **Fuatia:** No retiraré una protección porque alguien prefiera hablar de la pérdida.
+
+**Premio:** `acceso` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F05 · Cuánto dura una sentencia
+
+**Lugar:** pueblo_sol. **Precedente:** P16.
+
+**Acciones y prueba:** Consultar una reparación ya confirmada de agua y un cierre elemental que persiste sobre un depósito de explotación. La campaña tiene su propio caso archivado: V_agricultor no es obligatorio. Verificar obligaciones, beneficios y afectados actuales. Contrastar con la diosa qué pérdida sigue corrigiendo daño y cuál prolonga sufrimiento después de lo reparable. Mantener devolución pendiente sin exigir perdón.
+
+**Inicio:**
+
+> **Fuatia:** Reconoce lo que tomó. No me pide que crea que el suelo debe olvidar.
+> **Tomás:** Yo tampoco puedo decir que una devolución borra todo. ¿Cómo sabré cuándo puedo seguir?
+
+**Giro:**
+
+> **Olivia:** El depósito sigue cerrado. Quienes reparan necesitan un lugar autorizado para guardar herramientas.
+> **Fuatia:** Quiere volver a usar lo que perdió.
+> **Ella:** Podemos limitar ese uso sin hacer que cada jornada nueva sea la misma sentencia.
+
+**Cierre:**
+
+> **Fuatia:** Habrá criterio de revisión. Mi rencor no cabe en esa cifra; el permiso sí tendrá que caber.
+> **Él:** No te estamos pidiendo que lo quieras. Estamos acordando qué podrá hacer.
+
+**Decisión:** Mantener cierre con depósito alternativo o reapertura limitada tras verificación; capacidad y costos equivalentes.
+
+**Consecuencias:** Ambas rutas responden al daño y permiten P17. Fuatia conserva reserva crítica; los vecinos discrepan. El depósito original no pasa al inventario ni se concede un multiplicador de producción.
+
+**Guion de rama 1:**
+
+> **Fuatia:** El cierre sigue. Las herramientas tendrán otra entrada que no cobre su castigo a todos.
+> **Olivia:** La alternativa tiene materiales y responsable, no solo una promesa.
+
+**Guion de rama 2:**
+
+> **Fuatia:** Abriré el uso limitado que fue comprobado. No lo confundan con haber olvidado.
+> **Tomás:** No lo haré. Tampoco pediré a otros que me perdonen para usarlo.
+
+**Premio:** `conocimiento` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F06 · Una alianza sin adoración
+
+**Lugar:** estacion_celia. **Precedente:** P20.
+
+**Acciones y prueba:** Reunir registros de intercambio de los mundos ya visitados con copias principales accesibles. Presentar a Fuatia un acuerdo para entrar a Confluencia, la región de los cuatro elementos. Cada territorio conserva consentimiento y reserva. La alianza declara objetivos compatibles y salida posible; no obliga a elegir culto, donar animales o completar todo el reparto. Quedan abiertas las cuatro rutas F07–F10 en paralelo.
+
+**Inicio:**
+
+> **Fuatia:** Puedo convertir un desierto en océano mientras terminas esa frase. No necesito un permiso para tener poder.
+> **Calista:** Nosotros sí necesitamos decidir qué vida continuaría en ese territorio después.
+
+**Giro:**
+
+> **Helena:** Queremos cerrar retornos de Vael, no pedirte cosechas infinitas.
+> **Fuatia:** Yo quiero que mis elementos dejen de alimentar su inmovilidad. Eso puede convenirnos a ambos.
+> **Ella:** Una alianza, entonces. No un examen de si te creemos buena.
+
+**Cierre:**
+
+> **Fuatia:** Entrarán en Confluencia con límites de retiro y retorno. Si me traen un altar bonito como prueba, perderán mi tiempo, no su vida.
+> **Él:** Traeremos lo que hizo cada intercambio y lo que todavía falta.
+
+**Decisión:** Usar mesa abierta de seguimiento o informes de equipos locales con consulta común.
+
+**Consecuencias:** La forma de coordinación cambia; la evidencia y el acceso a cuatro territorios son equivalentes. No es posible ceder soberanía de mundos como respuesta.
+
+**Guion de rama 1:**
+
+> **Calista:** La mesa puede revisar el acuerdo y conservar disenso.
+> **Fuatia:** Yo también revisaré mis términos si el balance cambia.
+
+**Guion de rama 2:**
+
+> **Helena:** Los informes dejan fuente y responsable local.
+> **Fuatia:** Que nadie me prometa el agua que otro territorio todavía no aceptó ceder.
+
+**Premio:** `acceso` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F07 · El horno que sabe detenerse
+
+**Lugar:** confluencia_fuego. **Precedente:** F06.
+
+**Acciones y prueba:** Visitar Caldera del Rescoldo. Seguir prueba segura de calor y un horno de retorno falseado. Recuperar ferrascua de un depósito autorizado y madera de brasa caída, sin talar el núcleo ni alimentar hornos con animales. Procesar una junta de cierre con receta definida; detener la amplificación y enfrentar el patrón opcional de prueba o usar una solución técnica equivalente. El guardián no otorga una obligación de matar fauna.
+
+**Inicio:**
+
+> **Sol:** Parece una pieza perfecta. La salida está en una junta que el plano trata como defecto.
+> **Fuatia:** La llama no tendría por qué quedarse aquí para siempre.
+
+**Giro:**
+
+> **Idalia:** Conservaremos reserva antes de cerrar. El dragón no gastó toda la suya por quedar heroico.
+> **Fuatia:** Puedo arrasar la máquina. Eso no me devuelve el retorno que envía su déficit a otro lugar.
+> **Él:** La abriremos por donde un humano puede mostrar lo que estaba escondido.
+
+**Cierre:**
+
+> **Fuatia:** El calor circula. Vael perdió una forma de cobrarme dos veces.
+> **Ella:** Y el territorio sigue ofreciendo trabajo después de que salgamos.
+
+**Decisión:** Completar prueba de combate contra constructos o ajuste técnico con el mismo componente y tiempo activo aproximado.
+
+**Consecuencias:** Ambas rutas entregan sello de retorno de fuego para F11. Armas de cualquier familia pueden completar combate; el ajuste técnico es alternativa de campaña sin exigir equipar espada.
+
+**Guion de rama 1:**
+
+> **Sol:** Tu golpe abrió el seguro, no una criatura que defendía su casa.
+> **Fuatia:** La fuerza tuvo un fin. No la convertirás en permiso de quemar después.
+
+**Guion de rama 2:**
+
+> **Idalia:** El ajuste dejó la salida abierta y la reserva medida.
+> **Fuatia:** No confundiré trabajo silencioso con una victoria menor.
+
+**Premio:** `tecnica` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F08 · La orilla que devuelve
+
+**Lugar:** confluencia_agua. **Precedente:** F06.
+
+**Acciones y prueba:** Visitar Mar de los Retornos, observar corriente con marcas accesibles y respetar refugio de juveniles. Obtener un lote autorizado de hidrita y juncovidrio después de comprobar recuperación. Desactivar una bomba que registra el mismo caudal como devolución; resolver defensas de constructos o revisar válvulas por ruta técnica equivalente. Registrar retorno real y reserva, no cantidad de peces capturados.
+
+**Inicio:**
+
+> **Maite:** Hay más agua en el dibujo que en el canal. La cifra crece cada vez que vuelve a circular.
+> **Fuatia:** Me conoce por caudal y cree que puede fingirme con una cuenta.
+
+**Giro:**
+
+> **Cora:** La zona de crías queda fuera. No necesitamos pescarla para probar que está viva.
+> **Ella:** ¿El cierre dejará agua a quienes están río abajo?
+> **Fuatia:** Si no vuelve a ellos, no es un retorno que pueda aceptar.
+
+**Cierre:**
+
+> **Maite:** El registro mide circulación una vez, con destino visible.
+> **Fuatia:** Esta orilla no tendrá que desaparecer para resolver la próxima amenaza.
+
+**Decisión:** Reparar ruta de válvulas o enfrentar constructos del muelle; mismas pruebas de caudal y costo de componente.
+
+**Consecuencias:** Ambas rutas entregan sello de retorno de agua para F11 y dejan zona rejugable. No cambia clima mundial ni permite vender el mismo lote más de una vez.
+
+**Guion de rama 1:**
+
+> **Maite:** La válvula puede mantenerse sin pedir otra aparición.
+> **Fuatia:** La ayuda también puede dejar un trabajo que ustedes sepan continuar.
+
+**Guion de rama 2:**
+
+> **Cora:** Los constructos se apagaron y la orilla de crías quedó fuera del combate.
+> **Fuatia:** Esa separación cuenta tanto como haber acertado el último golpe.
+
+**Premio:** `agenda` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F09 · Lo que sostiene una raíz
+
+**Lugar:** confluencia_tierra. **Precedente:** F06.
+
+**Acciones y prueba:** Visitar Terraza de las Raíces y contrastar necesidad de soporte con permiso de extracción. Obtener terralita y madera de raigal en áreas autorizadas, con restitución definida. Reparar un paso sin abrir una veta del núcleo. Desmontar plataforma falsa de Vael mediante constructos o recorrido técnico con peso seguro; ambas rutas identifican por dónde estaba desviando retorno de suelo.
+
+**Inicio:**
+
+> **Silvana:** Si prohíbo tocarlo todo, el paso se quedará roto. Si apruebo sin medir, llamaré cuidado a otra pérdida.
+> **Roque:** Esta vez podemos decir las dos cosas antes de cortar.
+
+**Giro:**
+
+> **Fuatia:** La raíz siente el apoyo que retiran. No acepta tus intenciones como sustituto del soporte.
+> **Él:** Tampoco necesita que una rampa sea enemiga de todo árbol.
+> **Fuatia:** Muestren carga y recuperación. Después discutiremos cuánto se puede retirar.
+
+**Cierre:**
+
+> **Roque:** Queda una reparación que otro puede mantener con el mismo material.
+> **Fuatia:** No exige que yo sostenga eternamente la forma que ustedes fabricaron.
+
+**Decisión:** Resolver el circuito por carga distribuida o combatir guardianes artificiales, conservando umbral y restitución.
+
+**Consecuencias:** Ambas rutas entregan sello de retorno de tierra para F11. No obliga a perdonar el conflicto Gael/Roque ni concede crecimiento instantáneo de árboles.
+
+**Guion de rama 1:**
+
+> **Silvana:** La carga está repartida y mi firma deja criterio de revisión.
+> **Fuatia:** El suelo podrá responder distinto otra estación; el permiso no se volverá eterno.
+
+**Guion de rama 2:**
+
+> **Roque:** La plataforma dejó de forzar el retorno. La madera usada tiene reposición prevista.
+> **Fuatia:** No confundas botín de constructo con propiedad de todas las raíces.
+
+**Premio:** `plano` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F10 · El aire no firma obediencia
+
+**Lugar:** confluencia_aire. **Precedente:** F06.
+
+**Acciones y prueba:** Visitar Altura de las Corrientes con aire y ruta de retorno declarados. Seguir señales por texto, forma y sonido opcional. Recuperar aeralita y ramas caídas de velaria dentro del cupo. Identificar un ventilador de Forma Fija que envía presión como si fuera reserva; resolver constructos de carga anunciada o calibración técnica alternativa. Nadie debe adivinar la ruta por audio o color solamente.
+
+**Inicio:**
+
+> **Hugo:** La señal suena, pero el texto dice otra vuelta. Podemos comparar sin pedir a nadie un oído perfecto.
+> **Fuatia:** El aire sigue pasando. La máquina registra que ya lo posee.
+
+**Giro:**
+
+> **Boris:** Reserva es una alternativa que puede usarse, no una cifra en movimiento perpetuo.
+> **Ella:** ¿Puedes liberar la corriente sin vaciar otro lugar?
+> **Fuatia:** Cuando retiremos el retorno falso, sí. Antes nos estaría cobrando donde no miran.
+
+**Cierre:**
+
+> **Hugo:** El aviso se entiende y el paso puede detenerse.
+> **Fuatia:** Respirar no firma tu lealtad. Tampoco la ayuda que recibiste hoy.
+
+**Decisión:** Desactivar por señales de presión o combatir constructos con rutas de esquiva, con la misma calibración final.
+
+**Consecuencias:** Ambas rutas entregan sello de retorno de aire para F11 y admiten todas las familias de arma. Se conserva oxígeno actual; no se obtiene una reserva infinita por escena.
+
+**Guion de rama 1:**
+
+> **Hugo:** La lectura tiene sustituto visual. Ya no depende de una sola forma de percibir.
+> **Fuatia:** También yo puedo hablar sin exigirte una respuesta que no recibiste.
+
+**Guion de rama 2:**
+
+> **Boris:** Regresaremos con margen después de la prueba.
+> **Fuatia:** La maniobra no merece más respeto por terminar casi sin aire.
+
+**Premio:** `conocimiento` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F11 · Cuatro cuentas y ninguna deuda oculta
+
+**Lugar:** confluencia. **Precedente:** F07, F08, F09, F10.
+
+**Acciones y prueba:** Reunir los cuatro sellos confirmados y verificar que cada compensación tiene destino distinto del retorno falseado. Los sellos son hitos, no consumibles vendibles. Construir una matriz con componentes obtenidos en las rutas autorizadas, comparar estados de reserva y bloquear activación incompleta. No vaciar hogares, granja ni otros mundos para completar una escena.
+
+**Inicio:**
+
+> **Rita:** Cuatro cuentas no hacen un equilibrio si todas apuntan al mismo depósito inventado.
+> **Indira:** Conservaremos las señales originales. No las amplificaré para que parezcan de acuerdo.
+
+**Giro:**
+
+> **Fuatia:** Siento que la materia vuelve. Quiero saber por qué pensaste que faltaba una quinta devolución.
+> **Él:** Porque Vael puso una casilla donde nadie podría revisar. No hace falta llenarla; hace falta retirarla.
+> **Ella:** El acuerdo debe poder detenerse antes de cobrar esa pérdida.
+
+**Cierre:**
+
+> **Fuatia:** Puedo sostener esta operación. El poder que pedían estaba aquí; el balance que necesitábamos ahora también.
+> **Rita:** Y nadie tendrá que fingir que apareció de la nada.
+
+**Decisión:** Mostrar lectura por territorio o por tipo de retorno; ambas vistas conservan los mismos datos y parada.
+
+**Consecuencias:** Se confirma matriz apta para F12. Las vistas son accesibilidad de consulta, no elecciones de afinidad. Ningún sello aumenta daño, minería, producción o amistad.
+
+**Guion de rama 1:**
+
+> **Indira:** Cada territorio ve su aporte y lo que recibe.
+> **Fuatia:** No borrarás una pérdida solo porque el total pueda escribirse como cero.
+
+**Guion de rama 2:**
+
+> **Rita:** Cada retorno conserva origen, salida y reserva.
+> **Fuatia:** La balanza no necesita una historia más limpia que los movimientos que la sostienen.
+
+**Premio:** `agenda` y recuerdo del hito; no transfiere botín entre juegos.
+
+**Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.
+
+## F12 · Confluencia puede cambiar
+
+**Lugar:** confluencia. **Precedente:** F11.
+
+**Acciones y prueba:** Activar la matriz confirmada y desmontar el circuito de Forma Fija en la Cámara de los Núcleos. La prueba final admite espada, arco, bastón o invocación pactada sin requisito exclusivo de familia; alternativa técnica de campaña usa la misma matriz y registros. Fuatia redistribuye calor, humedad, soporte y presión con balance verificado. Cerrar la conexión, conservar territorios, permitir futuras visitas y preparar tratado P21.
+
+**Inicio:**
+
+> **Vael’Thor:** Puedo garantizar que nadie extraiga más de lo que te conviene. Solo debes mantener cada cosa donde la he colocado.
+> **Fuatia:** Incluidas la llama y la semilla, que dejarían de ser lo que protejo.
+
+**Giro:**
+
+> **Sol:** La junta abierta admite un cambio. No necesita que la pieza se deshaga.
+> **Fuatia:** Vael, me ofreciste obediencia. Ahora puedo darte una devolución exacta de lo que quitaste.
+> **Ella:** La matriz permite parar. También a nosotros.
+
+**Cierre:**
+
+> **Fuatia:** Los territorios siguen vivos. Puedo colaborar otra vez si nuestros intereses coinciden. No les prometo volverme mansa.
+> **Él:** Preferimos condiciones claras a una lealtad que exija callarnos.
+
+**Decisión:** Dejar mesa de revisión comunitaria o custodia distribuida con consulta común.
+
+**Consecuencias:** Ambas rutas mantienen Confluencia accesible, abren P21 y conservan materiales regionales útiles. Fuatia no se redime automáticamente, Vael conserva responsabilidad y no se reemplaza el final contra Nath.
+
+**Guion de rama 1:**
+
+> **Calista:** La mesa puede revisar, incluso si la revisión nos incomoda.
+> **Fuatia:** Inclúyanme en la conversación. No me entreguen por eso la última palabra humana.
+
+**Guion de rama 2:**
+
+> **Sol:** Cada territorio conserva una pieza mantenible y un registro común.
+> **Fuatia:** Un acuerdo distribuido no tendrá que vivir preso en una forma perfecta.
+
+**Premio:** `trofeo` y recuerdo del hito; no transfiere botín entre juegos.
 
 **Si falla o se suspende:** conservar testimonios; devolver reservas no consumidas; volver al último puesto seguro. Reintentar prueba sin duplicar costos ya confirmados ni el premio. No vence con tiempo real.

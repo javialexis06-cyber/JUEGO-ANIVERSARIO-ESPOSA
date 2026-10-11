@@ -26,6 +26,54 @@ Dirección: Conversación al ofrecer misión. Capa: pareja.
 
 Estos cristales recuerdan presión, no palabras. No les pidamos declarar culpables.
 
+## VID_esmeralda_indira_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Yo había llamado aprobación a algo que ni siquiera era una decisión.
+
+## VID_esmeralda_indira_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Y hacer música después, cuando nadie vaya a usarla como permiso de extracción.
+
+## VID_iris_calista_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Podemos tocar música sin pedirle que lo celebre?
+
+## VID_iris_calista_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Tengo una bastante breve, incluso si le añades otra discusión.
+
+## VID_iris_orin_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La llamé voz del planeta. Después usaron mi frase para abrir una extracción.
+
+## VID_iris_orin_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Puedo conservar la música sin seguir dándole autoridad que no había medido.
+
+## VID_iris_orin_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy dije que era una pieza nueva, no una respuesta infalible de cristal.
+
+## VID_iris_orin_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+A algunos. Otros querían que les resolviera una disputa.
+
 ## V_iris_orin.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

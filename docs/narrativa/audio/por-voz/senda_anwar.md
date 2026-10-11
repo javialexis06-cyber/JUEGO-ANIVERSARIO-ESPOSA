@@ -2,6 +2,42 @@
 
 Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
 
+## VID_senda_anwar_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Ya había preparado la sala. Dije que irse era negarse a colaborar.
+
+## VID_senda_anwar_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No. El acuerdo que deseaba empezó antes de recibir sus respuestas.
+
+## VID_senda_anwar_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Rechazaron mediación y se acordó reparar por otra vía. No lo llamé fracaso personal.
+
+## VID_senda_anwar_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí, para el trabajo pendiente. El perdón no figura como material requerido.
+
+## VID_senda_pablo_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Y qué quieres hacer ahora?
+
+## VID_senda_pablo_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Puedo escucharte sin organizar el reencuentro.
+
 ## V_senda_anwar.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

@@ -56,6 +56,36 @@ Dirección: Preciso y paciente; control que empieza a fallar. Capa: pareja.
 
 He terminado mundos enteros.
 
+## C14.L001
+
+Dirección: Preciso y paciente; control que empieza a fallar. Capa: pareja.
+
+Pueden discutir una tabla. No pueden sostener todo lo que sostiene mi obra.
+
+## C14.L005
+
+Dirección: Preciso y paciente; control que empieza a fallar. Capa: pareja.
+
+Si lo abres de golpe, otros pagarán tu furia.
+
+## C14.L009
+
+Dirección: Preciso y paciente; control que empieza a fallar. Capa: pareja.
+
+Después volverán a extraer. Volverán a equivocarse.
+
+## C14.L012
+
+Dirección: Preciso y paciente; control que empieza a fallar. Capa: pareja.
+
+Han aprendido a llamar defecto a la única garantía que tenían.
+
+## F12.inicio.01
+
+Dirección: Preciso y paciente; control que empieza a fallar. Capa: pareja.
+
+Puedo garantizar que nadie extraiga más de lo que te conviene. Solo debes mantener cada cosa donde la he colocado.
+
 ## P15.giro.01
 
 Dirección: Preciso y paciente; control que empieza a fallar. Capa: pareja.

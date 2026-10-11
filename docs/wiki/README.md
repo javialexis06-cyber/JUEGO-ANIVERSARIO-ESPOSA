@@ -28,6 +28,9 @@ terminado por el mero hecho de exportarla. Si una página fuente cambia de nombr
 
 La exportación inicial contiene 585 páginas: guías de juegos y sistemas, 142 fichas de habitantes,
 cinco figuras, tres protagonistas/antagonistas, 197 misiones, 19 lugares, 98 relaciones y 151 guiones por voz.
+La ampliación de Fuatia exporta 638 páginas: seis figuras, 217 misiones, 284 conversaciones personales,
+14 escenas cinematográficas, 24 territorios de recursos y 152 guiones con 2.750 líneas.
+Las páginas Armas y combate distinguen el primer motor local de Confluencia y sus ajustes aún diseñados.
 También copia los catálogos JSON y el CSV de tomas a rutas descargables del repositorio de la wiki.
 `exportacion.json` registra revisiones y SHA-256 de las páginas; dos ejecuciones con las mismas fuentes
 deben producir el mismo manifiesto. Las páginas nuevas de Astra tienen una advertencia de diseño no integrado.

@@ -80,6 +80,42 @@ Dirección: Autoridad acostumbrada a explicar; acortar frases al reconocer su fi
 
 Habrá turno para quien todavía tenga preguntas.
 
+## VID_archivero_2.vida.01
+
+Dirección: Autoridad acostumbrada a explicar; acortar frases al reconocer su firma. Capa: mundo.
+
+Vinieron a pedir el acta y no preguntaron si yo permitía verla.
+
+## VID_archivero_2.vida.03
+
+Dirección: Autoridad acostumbrada a explicar; acortar frases al reconocer su firma. Capa: mundo.
+
+A veces me enfado. Ya no quiero que eso vuelva a cerrar un cajón.
+
+## VID_veterano_1.vida.01
+
+Dirección: Autoridad acostumbrada a explicar; acortar frases al reconocer su firma. Capa: mundo.
+
+Este carro llevaba dos cantidades distintas. Me gustaba que nadie tuviera que discutir delante de mí.
+
+## VID_veterano_1.vida.03
+
+Dirección: Autoridad acostumbrada a explicar; acortar frases al reconocer su firma. Capa: mundo.
+
+A veces. Otras entendía bastante bien que solo la estaba aplazando. Las cómodas son las que olvidé explicar.
+
+## VID_veterano_2.vida.01
+
+Dirección: Autoridad acostumbrada a explicar; acortar frases al reconocer su firma. Capa: mundo.
+
+La reunión terminó sin pedirme consejo. Vine caminando como si hubiera olvidado un trabajo.
+
+## VID_veterano_2.vida.03
+
+Dirección: Autoridad acostumbrada a explicar; acortar frases al reconocer su firma. Capa: mundo.
+
+No sé cuánto servir. Antes esa era justamente la cosa que todos me preguntaban.
+
 ## V_veterano.A1.01
 
 Dirección: Autoridad acostumbrada a explicar; acortar frases al reconocer su firma. Capa: mundo.

@@ -20,6 +20,30 @@ Dirección: Conversación al ofrecer misión. Capa: pareja.
 
 Quiero una respuesta que me deje descansar sin pedirle nada a nadie.
 
+## VID_senda_ofelia_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hablo de las casas que sí terminé cuando pienso en la que dejé. Es una forma bastante ordenada de no volver a ella.
+
+## VID_senda_ofelia_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me cuesta no usar lo bueno como defensa.
+
+## VID_senda_ofelia_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy pude nombrar la demora sin decir materiales como si hubiera sido una entrega que nunca llegó.
+
+## VID_senda_ofelia_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Después. También quiero hablar de una ventana que me gustó construir.
+
 ## V_senda_ofelia.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

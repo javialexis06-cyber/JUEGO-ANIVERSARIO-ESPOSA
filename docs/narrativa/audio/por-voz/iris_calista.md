@@ -14,6 +14,24 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 No voy a convocar una votación sobre eso.
 
+## F06.inicio.02
+
+Dirección: Conversación al ofrecer misión. Capa: pareja.
+
+Nosotros sí necesitamos decidir qué vida continuaría en ese territorio después.
+
+## F06.rama1.01
+
+Dirección: Consecuencia práctica de una elección válida. Capa: pareja.
+
+La mesa puede revisar el acuerdo y conservar disenso.
+
+## F12.rama1.01
+
+Dirección: Consecuencia práctica de una elección válida. Capa: pareja.
+
+La mesa puede revisar, incluso si la revisión nos incomoda.
+
 ## P20.cierre.02
 
 Dirección: Cierre concreto, sin triunfalismo. Capa: pareja.
@@ -43,6 +61,66 @@ Me gusta una amistad que no necesita que votemos lo mismo.
 Dirección: Respetar ambas decisiones; sin insinuar una opción correcta. Capa: pareja.
 
 La cita llevará permiso y contexto.
+
+## VID_ambar_kenzo_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+A mí me pasó anunciar un acuerdo antes del voto. El resultado útil no volvió completo el permiso.
+
+## VID_ambar_kenzo_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces expliquemos retorno y quién puede decir que todavía no.
+
+## VID_iris_calista_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Lo dije como si ya hubiéramos escogido. Después el comercio funcionó y yo repetía ese resultado.
+
+## VID_iris_calista_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero defender la propuesta sin apropiarme de la voz que todavía no recibí.
+
+## VID_iris_calista_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La votación rechazó una parte que yo quería. El acuerdo sigue y el disenso quedó público.
+
+## VID_iris_calista_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Hoy quiero una canción que me guste a mí, no un himno del resultado.
+
+## VID_iris_orin_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Le gustó al público?
+
+## VID_iris_orin_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos seguir oyéndola aunque no cierre ninguna votación.
+
+## VID_iris_yuna_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Vas a volver a la siguiente asamblea?
+
+## VID_iris_yuna_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Después podemos comer algo cuya receta nadie tenga que votar.
 
 ## V_iris_calista.A1.01
 

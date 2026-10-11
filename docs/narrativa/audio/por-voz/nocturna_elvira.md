@@ -20,6 +20,42 @@ Dirección: Respuesta natural y práctica. Capa: mundo.
 
 La luz mantendrá refugio oscuro para las plantas.
 
+## VID_nocturna_elvira_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+En la fotografía se veía extraordinaria. La usé para no mirar la ficha de daño.
+
+## VID_nocturna_elvira_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me gustaría conservar la imagen sin anunciar que fue un ejemplo correcto.
+
+## VID_nocturna_elvira_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy mostré el dibujo. Una visita prefirió no ver la planta si había que alterar su noche.
+
+## VID_nocturna_elvira_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Al comienzo. Después tuvimos una conversación más larga de la que permite una fotografía.
+
+## VID_nocturna_naim_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Sentiste que faltaba algo?
+
+## VID_nocturna_naim_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces podremos conversar de lo que tú quieras contar, sin un informe al final.
+
 ## V_nocturna_elvira.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

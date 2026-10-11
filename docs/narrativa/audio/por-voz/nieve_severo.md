@@ -8,6 +8,54 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 Hoy mi mejor pronóstico es que adentro hace más calor.
 
+## VID_nieve_otto_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Era angustia o gusto?
+
+## VID_nieve_otto_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No necesitan una emergencia evitada para justificar esa mañana.
+
+## VID_nieve_quirina_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Puedes creerles sin imaginar que te están consolando?
+
+## VID_nieve_quirina_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Puede seguir gustándote sin convertirse en regla del hielo.
+
+## VID_nieve_severo_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Había escrito posible. Me agarré de esa palabra como si todos hubieran aprendido a leerla igual que yo.
+
+## VID_nieve_severo_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me costaba parecer menos seguro después de aquel acierto.
+
+## VID_nieve_severo_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy dejé una recomendación y el dato que todavía falta. No tiene aspecto de profecía.
+
+## VID_nieve_severo_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Quiero perder una partida donde el resultado no decida la reputación de nadie.
+
 ## V_nieve_severo.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

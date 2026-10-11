@@ -14,6 +14,30 @@ Dirección: Respuesta natural y práctica. Capa: mundo.
 
 Después servimos merienda sin tocar las ollas calientes.
 
+## VID_piedra_ciro_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Esta receta tenía un olor distinto antes de que la describiera solo como cuarenta de energía.
+
+## VID_piedra_ciro_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Pensé que querer variar era un capricho cuando algunos necesitaban cualquier comida.
+
+## VID_piedra_ciro_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Guardé mi porción antes de terminar el servicio. Nadie se quedó sin comer.
+
+## VID_piedra_ciro_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy quiero probar esa especia que llevo dos meses defendiendo en el cajón.
+
 ## V_piedra_ciro.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

@@ -14,6 +14,18 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 Sin factura de extracción.
 
+## F11.inicio.02
+
+Dirección: Conversación al ofrecer misión. Capa: pareja.
+
+Conservaremos las señales originales. No las amplificaré para que parezcan de acuerdo.
+
+## F11.rama1.01
+
+Dirección: Consecuencia práctica de una elección válida. Capa: pareja.
+
+Cada territorio ve su aporte y lo que recibe.
+
 ## P18.cierre.02
 
 Dirección: Cierre concreto, sin triunfalismo. Capa: pareja.
@@ -25,6 +37,54 @@ Por eso su patrón deja una diferencia que podemos medir.
 Dirección: Descubrimiento y reacción, dejar responder. Capa: pareja.
 
 La resonancia de Esmeralda responde a intervalos, no a una demanda infinita.
+
+## VID_esmeralda_duna_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Otros podían creer que la prueba ya funcionaba fuera.
+
+## VID_esmeralda_duna_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Presentemos el límite como parte del resultado, no como una nota avergonzada.
+
+## VID_esmeralda_indira_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Amplifiqué para que vieran la señal. Después ya no se veían las diferencias que importaban.
+
+## VID_esmeralda_indira_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos mostrar lo que medimos sin pedir que el público se emocione de la misma manera.
+
+## VID_esmeralda_indira_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La señal de hoy parece menos espectacular y tiene rango completo.
+
+## VID_esmeralda_indira_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Me gustaría que mirara una parte pequeña con calma.
+
+## VID_iris_orin_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La lectura era presión. El acuerdo era humano y necesitaba permiso por otra vía.
+
+## VID_iris_orin_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. La metáfora no necesita convertirse en una licencia.
 
 ## V_esmeralda_indira.A1.01
 

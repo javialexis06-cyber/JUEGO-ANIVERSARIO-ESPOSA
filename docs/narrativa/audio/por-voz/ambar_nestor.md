@@ -2,6 +2,42 @@
 
 Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
 
+## VID_ambar_alina_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Quieres ver un huerto sin plantear otra prueba?
+
+## VID_ambar_alina_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces llevo una comida que no presume propiedades resistentes.
+
+## VID_ambar_nestor_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El precio me gustó y no pregunté por qué parecía tan bueno. Después dije que no podía saberlo.
+
+## VID_ambar_nestor_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero conservar utilidad de la aleación sin borrar la terraza.
+
+## VID_ambar_nestor_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Esta pieza cuesta más y tendrá devolución de recortes documentada.
+
+## VID_ambar_nestor_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La explicación está disponible. No le cobraré un sermón como precio de preguntar.
+
 ## V_ambar_nestor.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

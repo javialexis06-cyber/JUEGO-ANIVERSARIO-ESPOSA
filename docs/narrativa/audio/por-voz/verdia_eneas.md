@@ -8,6 +8,54 @@ Dirección: Descubrimiento y reacción, dejar responder. Capa: pareja.
 
 Y aquí ni siquiera permanecer es obligatorio.
 
+## VID_verdia_eneas_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Cuando ofrecieron relevo, me molestó imaginar que encontrarían otra manera de hacer las cosas.
+
+## VID_verdia_eneas_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Las dos. Me costó nombrar la segunda sin sentirme mezquino.
+
+## VID_verdia_eneas_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy dije que todavía no sé. Nadie me pidió que fijara una despedida para dejar la pregunta abierta.
+
+## VID_verdia_eneas_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Por gusto, no para representar un ensayo de partida.
+
+## VID_verdia_isadora_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Te gustó que hubiera una conversación después de decir no?
+
+## VID_verdia_isadora_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos seguir aquí mientras tú decides qué planta quieres mostrar.
+
+## VID_verdia_nilo_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Un miedo no debería tener que pedirte disculpas.
+
+## VID_verdia_nilo_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy podemos ofrecer compañía sin describir de antemano cómo se sentirá.
+
 ## V_verdia_eneas.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

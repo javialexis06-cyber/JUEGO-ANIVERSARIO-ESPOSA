@@ -32,6 +32,66 @@ Dirección: Respetar ambas decisiones; sin insinuar una opción correcta. Capa: 
 
 Hoy leeré mi parte. La de otros no me pertenece.
 
+## VID_eco_esteban_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Yo necesitaba que la duda sobreviviera a tu buena escritura.
+
+## VID_eco_esteban_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces escribe también dónde se separan las voces, sin llamar defecto a esa parte.
+
+## VID_verdia_celino_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Te molesta no poder cruzar ahora?
+
+## VID_verdia_celino_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Tenemos otro camino para esta tarde. Puedes escogerlo sin reformar el anterior.
+
+## VID_verdia_eneas_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Quieres caminar?
+
+## VID_verdia_eneas_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces escogeremos un camino que aún no conozcamos.
+
+## VID_verdia_isadora_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Antes del puente hubo muchas mañanas en que solo discutíamos cuánto regar.
+
+## VID_verdia_isadora_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quiero que alguien conozca la puerta azul aunque no ayude a vencerlo.
+
+## VID_verdia_isadora_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy no quise hablar del último viaje. La visita aceptó y preguntó por este huerto.
+
+## VID_verdia_isadora_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Mucho. No tuve que entregar un recuerdo para recibir compañía.
+
 ## V_verdia_isadora.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

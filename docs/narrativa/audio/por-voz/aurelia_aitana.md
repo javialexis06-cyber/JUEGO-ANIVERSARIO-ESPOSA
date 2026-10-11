@@ -26,6 +26,54 @@ Dirección: Conversación al ofrecer misión. Capa: pareja.
 
 Aurelia favorece crecimiento. Más luz de la debida también quema.
 
+## VID_aurelia_aitana_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La muestra extraordinaria tenía nombre. La que sufrió quedó como observación secundaria.
+
+## VID_aurelia_aitana_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me costaba darles el mismo espacio porque una defendía mi carrera.
+
+## VID_aurelia_aitana_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El lote de hoy es corriente y quedó completo en el registro.
+
+## VID_aurelia_aitana_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Quiero disfrutar que salió, no solo medir cuánto le faltó al extraordinario.
+
+## VID_aurelia_kiara_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Te sigue interesando el paisaje?
+
+## VID_aurelia_kiara_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces sentémonos a ver qué ya está ocurriendo.
+
+## VID_aurelia_oscar_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Te parece un depósito más pequeño?
+
+## VID_aurelia_oscar_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me gustaría verla encendida sin que tengamos que llamarla contingencia.
+
 ## V_aurelia_aitana.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

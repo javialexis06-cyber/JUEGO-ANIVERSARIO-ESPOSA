@@ -2,6 +2,30 @@
 
 Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
 
+## VID_eco_violeta_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hice que el lugar pareciera no haber sufrido. Me gustó cuando dijeron que todo estaba olvidado.
+
+## VID_eco_violeta_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Nadie. Yo había supuesto que una vista tranquila les devolvería seguridad.
+
+## VID_eco_violeta_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La marca queda, y el sendero nuevo puede recorrerse sin entrar a la exposición.
+
+## VID_eco_violeta_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Está bien. No voy a contarte el desastre como precio de sentarte.
+
 ## V_eco_violeta.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

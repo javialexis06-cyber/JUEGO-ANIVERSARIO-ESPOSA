@@ -44,6 +44,66 @@ Dirección: Respetar ambas decisiones; sin insinuar una opción correcta. Capa: 
 
 La pieza saldrá con permisos separados para cada uso.
 
+## VID_eco_oriel_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Nadie dijo que no frente al público.
+
+## VID_eco_oriel_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Puedes ofrecer distancia ahora, sin convertirla en otro gesto que deban aplaudir.
+
+## VID_eco_sora_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La partitura me devuelve aquella tarde. A Anselmo quizá le devuelva otra cosa.
+
+## VID_eco_sora_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí, aunque me cuesta. A veces proteger una versión parece proteger a quienes la cantaron.
+
+## VID_eco_sora_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy vinieron a oír. No preparé un turno para hacerlos cantar de todos modos.
+
+## VID_eco_sora_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Un poco al principio. Después oí el coro sin estar pensando quién faltaba dentro de él.
+
+## VID_verdia_sarai_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Pondrás su nombre?
+
+## VID_verdia_sarai_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me gusta que el mural pueda tener una parte que no está intentando cantar.
+
+## VID_verdia_yara_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Pudiste cambiarla?
+
+## VID_verdia_yara_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos contar una trayectoria sin convertirla en un instante perfecto.
+
 ## V_eco_sora.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

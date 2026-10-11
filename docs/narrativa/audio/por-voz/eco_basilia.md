@@ -8,6 +8,30 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 Traje luz pequeña, sin cuota de participación.
 
+## VID_eco_basilia_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Ofrecí descuento. Creí que así respondía a lo que la familia me había dicho.
+
+## VID_eco_basilia_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Tenía que cambiar una costumbre que también me daba ingresos.
+
+## VID_eco_basilia_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy no trajeron nada y dejé el sitio igual de abierto.
+
+## VID_eco_basilia_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Si quieren. También puede servir para sentarnos a no organizar una despedida.
+
 ## V_eco_basilia.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

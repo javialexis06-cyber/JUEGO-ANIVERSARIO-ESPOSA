@@ -20,6 +20,42 @@ Dirección: Respuesta natural y práctica. Capa: mundo.
 
 No devolverá materiales al venderse; no está en venta.
 
+## VID_fragmentos_axel_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Te molesta que no podamos contar ambas como material propio?
+
+## VID_fragmentos_axel_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Tendremos una cuenta que no necesite adornar el hallazgo.
+
+## VID_fragmentos_lazaro_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La caja estaba en el puesto. La conté otra vez porque había completado otro traslado.
+
+## VID_fragmentos_lazaro_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quería que se notara cuánto hacía sin dejar de conservar todo lo útil.
+
+## VID_fragmentos_lazaro_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Este depósito tiene menos unidades y nadie tiene que adivinar cuáles se contaron dos veces.
+
+## VID_fragmentos_lazaro_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+A veces. Hoy hice una caja pequeña para mis cosas y no la ofrecí como recurso del campamento.
+
 ## V_fragmentos_lazaro.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

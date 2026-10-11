@@ -69,10 +69,12 @@ El hogar podrá exhibir una reliquia simbólica por el hito, no extraer energía
 | Agricultura y cuidado | Motor V5, parcelas, productos, tiempo agrícola y cuidado real. | Recibos de ensayos narrativos, consentimiento y comparación de pruebas. |
 | Libros y archivo | Cuadernos mineros, lectura persistente y colecciones. | Biblioteca de testimonios, autorizaciones y corrección versionada. |
 | NPC | 24 identidades sociales funcionales, preferencias y encargos. | Nombres de autoría, biografías, escenas, reacciones posteriores y 118 habitantes nuevos. |
-| Campaña | Cinco escenas de Sangre, Noche de cuatro sectores. | 24 misiones coordinadas, adaptación de escenas sin perder audio actual y puente de hitos. |
+| Campaña | Cinco escenas de Sangre, Noche de cuatro sectores. | 36 misiones coordinadas, adaptación de escenas sin perder audio actual y puente de hitos. |
 | Relaciones | Interacciones básicas de jugador. | Relaciones entre NPC, privacidad, encuentros consentidos y consecuencias de rama. |
 | Mundos | Planes y rutas de aventura parciales. | Las 19 localidades con viviendas, horarios, logística y actividades reales. |
 | Audio | Reproducción, silencios, música y voces de otros frentes. | Revisión de guiones nuevos, reparto de voces, generación elegida e integración por línea. |
 | Secretos | Exploración y registros parciales. | Pistas localizadas, diario de deducciones y soluciones alternativas accesibles. |
 
 Orden recomendado de integración: P01–P05 y arcos del pueblo; P06–P10 y enlace con Noche; P11–P16 con Verdia/Senda/perímetro; viajes y acuerdos P17–P21; desenlace P22–P24. Los secretos pueden llegar con su región. Primero texto, estado y pruebas; después presentación de Claude y audio. Ninguna migración debe volver a V1 ni borrar genomas por tener una historia nueva.
+
+La expansión añade ocho secundarios T01–T08; T08 es un secreto además de S01–S12. [Confluencia](09-regiones-y-recursos.md) detalla recursos de 24 territorios y su renovación propuesta por jornadas dormidas. [Armas](11-armas-y-combate.md) separa el primer motor local de los ajustes regionales aún diseñados. Las conversaciones VID no otorgan amistad ni recursos por repetirse.

@@ -14,6 +14,42 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 Adelante pueden caber todos los bosques imaginados.
 
+## VID_esmeralda_olmo_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Yo llegué a la veta. El mapa ya sabía dónde estaba y lo dejé fuera del relato.
+
+## VID_esmeralda_olmo_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El contrato decía exclusivo. Me gustó demasiado la palabra.
+
+## VID_esmeralda_olmo_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Volví por material, no por otro trofeo de descubrimiento.
+
+## VID_esmeralda_olmo_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Hoy quiero probar una variante que todavía no conozco.
+
+## VID_esmeralda_raimundo_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Después la tendencia faltaba justo cuando intentábamos decidir.
+
+## VID_esmeralda_raimundo_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Preparemos niveles que podamos responder sin confundirlos con una orden de pánico.
+
 ## V_esmeralda_olmo.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

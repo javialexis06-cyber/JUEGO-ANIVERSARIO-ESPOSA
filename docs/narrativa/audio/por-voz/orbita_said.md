@@ -20,6 +20,42 @@ Dirección: Respuesta natural y práctica. Capa: mundo.
 
 Ambos turnos tendrán el mismo menú y descanso.
 
+## VID_orbita_said_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Reconocí fatiga y seguí. Cuando corrigieron la dosis quise quedarme más horas para demostrar atención.
+
+## VID_orbita_said_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No. Me trataba como si descansar tuviera otro significado cuando yo lo hacía.
+
+## VID_orbita_said_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Pedí relevo antes de la última consulta. Quedó otra profesional y una reserva clara.
+
+## VID_orbita_said_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Bastante común. Cociné, hablé y no tuve que merecerlo con una crisis evitada.
+
+## VID_orbita_tessa_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Lo entiendo sin conocer tu diagrama.
+
+## VID_orbita_tessa_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy parece usable. Eso sí ayuda a mi turno.
+
 ## V_orbita_said.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

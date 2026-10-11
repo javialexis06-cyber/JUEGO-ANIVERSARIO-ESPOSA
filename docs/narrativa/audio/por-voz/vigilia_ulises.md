@@ -14,6 +14,42 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 No sé si eso sostiene una correspondencia.
 
+## VID_vigilia_kael_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Qué podían decir sin acabar en un registro tuyo?
+
+## VID_vigilia_kael_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy podemos tomar café sin anotar que lo elegimos.
+
+## VID_vigilia_ulises_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me perdí una vez y volví. Nunca te lo conté porque parecías necesitar que yo supiera todo.
+
+## VID_vigilia_ulises_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Convertí tu confianza en una excusa para no mostrarte cómo hice la revisión.
+
+## VID_vigilia_ulises_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy llevé un cuaderno sin referencias de salida. Me salió un ave parecida a un bolso.
+
+## VID_vigilia_ulises_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No pensaba hacerlo. Me gusta tener una cosa que puede quedar mal sin cerrar una ruta.
+
 ## V_vigilia_ulises.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

@@ -14,6 +14,54 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 Y con destino de devolución, no olvido.
 
+## VID_ambar_kenzo_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿La copia quedó accesible aquí?
+
+## VID_ambar_kenzo_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me gustaría escuchar la historia que no se había llevado el museo.
+
+## VID_fragmentos_axel_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La firma era válida para el vendedor. No me decía cómo había llegado el objeto a su almacén.
+
+## VID_fragmentos_axel_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quisiera que el oficio fuera tan limpio como una factura ordenada.
+
+## VID_fragmentos_axel_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La carga vuelve a custodia comunitaria. Otra sí quedó autorizada y cobré recuperarla.
+
+## VID_fragmentos_axel_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy me alivia. Quiero conocer qué harán con la que sí nos cedieron.
+
+## VID_fragmentos_lazaro_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Todavía te parece escaso?
+
+## VID_fragmentos_lazaro_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Ese límite también deja lugar para una vida propia.
+
 ## V_fragmentos_axel.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

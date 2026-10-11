@@ -14,6 +14,66 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 La bandeja la salva.
 
+## VID_aurelia_saul_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+En mi balance también usé comida segura para esconder una procedencia distinta.
+
+## VID_aurelia_saul_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos servir la mezcla con todos sus lugares presentes.
+
+## VID_nocturna_elvira_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La exposición recibió aplausos y la planta no recibió condiciones.
+
+## VID_nocturna_elvira_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Puedes identificar cómo se tomó. También forma parte de lo que aprendiste.
+
+## VID_orbita_boris_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Tu planta también acepta que la movamos un poquito?
+
+## VID_orbita_boris_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Trato hecho. Hoy será una planta que nos gusta.
+
+## VID_orbita_valentina_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La comida estaba bien. Yo repetía eso para no decir que el balance la hacía parecer cultivada aquí.
+
+## VID_orbita_valentina_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quería tiempo para mejorar sin perder la promesa de independencia.
+
+## VID_orbita_valentina_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Este lote es pequeño y es nuestro. El otro ingrediente llegó de tierra y también se llama por su nombre.
+
+## VID_orbita_valentina_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. No necesita ser una bandera de autosuficiencia.
+
 ## V_orbita_valentina.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

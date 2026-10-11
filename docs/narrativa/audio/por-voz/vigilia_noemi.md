@@ -32,6 +32,18 @@ Dirección: Respuesta natural y práctica. Capa: mundo.
 
 El panel también tendrá días corrientes, sin obligación de alegría.
 
+## F03.giro.03
+
+Dirección: Descubrimiento y reacción, dejar responder. Capa: pareja.
+
+Sí. Y quienes comen allí todavía necesitarán cena esta noche.
+
+## F03.rama2.01
+
+Dirección: Consecuencia práctica de una elección válida. Capa: pareja.
+
+Separaremos descanso y entrevista. Primero sabrán dónde dormir.
+
 ## P10.inicio.01
 
 Dirección: Conversación al ofrecer misión. Capa: pareja.
@@ -43,6 +55,42 @@ No les preguntes primero qué recuerdan de la Noche. Pregunta dónde quieren dor
 Dirección: Consecuencia práctica de una elección válida. Capa: pareja.
 
 Registraremos atención sin preguntar cuándo piensa irse cada persona.
+
+## VID_vigilia_aldan_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+En mi registro aparecen las horas. No contradice el traslado; completa lo que falta.
+
+## VID_vigilia_aldan_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Una norma que no admite revisarlo nos pide bastante más fe de la que estás confesando.
+
+## VID_vigilia_noemi_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Dije que no podía irme. La verdad es que también quería quedarme y que mi trabajo se notara.
+
+## VID_vigilia_noemi_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Lo sé en consulta. Me cuesta cuando la persona soy yo.
+
+## VID_vigilia_noemi_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Retiré la causa del informe, no la necesidad de atender. Aldán lo leyó por completo.
+
+## VID_vigilia_noemi_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Bien. Seguiremos discutiendo otras cosas.
 
 ## V_vigilia_noemi.A1.01
 

@@ -32,6 +32,54 @@ Dirección: Respetar ambas decisiones; sin insinuar una opción correcta. Capa: 
 
 Las visitas no cruzarán el hábitat.
 
+## VID_bruma_ada_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La frase estaba en el borrador. Yo pude escribir al editor y no lo hice.
+
+## VID_bruma_ada_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Lo sé. Quiero corregir sin fingir que no hice ningún trabajo propio.
+
+## VID_bruma_ada_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Esta vez faltaba un nombre y pregunté antes de cerrar. La entrega se retrasó.
+
+## VID_bruma_ada_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+No. Pero habría seguido siendo lo correcto si tocaba defenderla con el informe más lento.
+
+## VID_bruma_amira_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Tu hermana pidió esa cantidad o la fijaste para sentir que seguías haciendo falta?
+
+## VID_bruma_amira_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos medir flores sin darles el trabajo de defender nuestra versión.
+
+## VID_bruma_zaira_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Puedo llevarme una porción aunque no tenga cantidad exacta?
+
+## VID_bruma_zaira_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me gusta saber dónde podemos bromear y dónde necesitamos medir.
+
 ## V_bruma_ada.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

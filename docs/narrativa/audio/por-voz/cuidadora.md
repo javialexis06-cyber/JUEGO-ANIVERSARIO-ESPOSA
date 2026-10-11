@@ -32,6 +32,156 @@ Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más 
 
 El agua sigue donde la dejaron. Alguien cuidó mientras ustedes cuidaban más lejos.
 
+## T03.escena.02
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: pareja.
+
+Yo esperaba que quisieras que la oyéramos también.
+
+## T03.escena.06
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: pareja.
+
+Y nosotros iremos a merendar sin que la cría tenga que agradecérnoslo.
+
+## T03.rama1.02
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: pareja.
+
+No traeré otra visita para demostrar que pasó.
+
+## VID_brasa_idalia_1.vida.02
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+¿Puedes agradecer el rescate y corregir el recorrido?
+
+## VID_brasa_idalia_1.vida.04
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Entonces no digas eso. Conserva la verdad y cambia lo que viene después.
+
+## VID_brasa_tarek_2.vida.02
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+¿Y tú qué pensaste?
+
+## VID_brasa_tarek_2.vida.04
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Entonces vamos a comer sin convertir la espera en una tragedia.
+
+## VID_bruma_elio_1.vida.02
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+¿El animal estaba bien?
+
+## VID_bruma_elio_1.vida.04
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Podemos volver a visitarlo sin preparar un descubrimiento.
+
+## VID_bruma_elio_2.vida.02
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+¿Te dolió o te dio descanso?
+
+## VID_bruma_elio_2.vida.04
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Esa todavía tendrá suficientes cosas para sorprenderte.
+
+## VID_cuidadora_1.vida.01
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Esa manta es para mí. Sí, yo también me sorprendo cada vez que la veo.
+
+## VID_cuidadora_1.vida.03
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Mi tía decía que aprender a quedarse era difícil. No me avisó que aprender a salir costaba más.
+
+## VID_cuidadora_2.vida.01
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Hoy salí y no revisé el corral desde la ventana. Miré una sola vez al volver.
+
+## VID_cuidadora_2.vida.03
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Quiero ir por ir, Cora. No a comprobar si tus peces tienen problemas.
+
+## VID_mercader_2.vida.01
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+El recibo está bien esta vez. Lo digo para que no creas que vine a reclamar por costumbre.
+
+## VID_mercader_2.vida.03
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Podemos hablar de algo que no haya que arreglar. ¿Cómo salió la mermelada?
+
+## VID_pescadora_1.vida.02
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+¿Querías aplausos por el ave o que alguien supiera que tú también sabías cuidar?
+
+## VID_pescadora_1.vida.04
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Podemos guardar el cartel. También sirve para recordar qué cosas sí reciben aplausos.
+
+## VID_pescadora_2.vida.02
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+¿Quieres que caminemos o prefieres hablar de lo que vas a vender?
+
+## VID_pescadora_2.vida.04
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Entonces cuéntamela despacio. Todavía no hemos llegado al río.
+
+## VID_veterinaria_1.vida.02
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Te traje una con tu nombre. Vas a encontrar otra interpretación, ya lo sé.
+
+## VID_veterinaria_1.vida.04
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Hoy me explicaste dos veces sin enfadarte. Yo noté la diferencia.
+
+## VID_vigilia_azucena_2.vida.02
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+¿Y el grifo?
+
+## VID_vigilia_azucena_2.vida.04
+
+Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.
+
+Me gusta una historia donde alguien vuelve y todavía puede decidir qué quiere contar.
+
 ## V_cuidadora.A1.01
 
 Dirección: Afectuosa y concreta, humor pequeño; aceptar relevo le cuesta más que enseñar. Capa: mundo.

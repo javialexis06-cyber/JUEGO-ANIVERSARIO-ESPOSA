@@ -1,14 +1,14 @@
 # Guiones para producción de voces
 
-1318 líneas en 151 identidades de voz; 1317 combinaciones únicas de hablante y texto. 80642 caracteres únicos de texto pronunciado, sin direcciones ni segundas tomas.
+2750 líneas en 152 identidades de voz; 2749 combinaciones únicas de hablante y texto. 181192 caracteres únicos de texto pronunciado, sin direcciones ni segundas tomas.
 
-Lectura estimada: 93.6 minutos a 145 palabras por minuto, antes de pausas. No es duración medida ni costo contratado.
+Lectura estimada: 211.1 minutos a 145 palabras por minuto, antes de pausas. No es duración medida ni costo contratado.
 
 | Prioridad | Líneas | Caracteres de texto |
 |---|---|---|
-| A | 298 | 19399 |
-| B | 250 | 15578 |
-| C | 770 | 45682 |
+| A | 514 | 34871 |
+| B | 522 | 35090 |
+| C | 1714 | 111248 |
 
 [Dirección completa](../06-produccion.md) · [Catálogo](lineas.json) · [Tomas CSV](tomas.csv) · [Resumen](resumen.json) · [Texto por voz](por-voz)
 

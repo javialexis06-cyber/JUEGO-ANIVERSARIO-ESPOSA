@@ -38,6 +38,54 @@ Dirección: Descubrimiento y reacción, dejar responder. Capa: pareja.
 
 El grifo bajó cuando alguien pidió ayuda. No cuando el guardián decidió que merecía rescate.
 
+## VID_nieve_celeste_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Yo tampoco dejaba salidas sin revisar. A veces llamaba cuidado a controlar el plan entero.
+
+## VID_nieve_celeste_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces ensayemos una llamada y también qué harías si no responde.
+
+## VID_vigilia_azucena_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Empecé controlando la llamada y acabé diciendo qué sueños merecían intentarse.
+
+## VID_vigilia_azucena_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me asustaba oír otra vez que faltaba solamente un botín antes de regresar.
+
+## VID_vigilia_azucena_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy una persona eligió retirarse. No le expliqué cómo podía haber seguido si me obedecía.
+
+## VID_vigilia_azucena_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Volvió a descansar. No necesitábamos convertir el regreso en demostración.
+
+## VID_vigilia_ulises_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Algunos bolsos viajan bastante. No lo uses como ficha de especie.
+
+## VID_vigilia_ulises_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Guárdala. Yo también dibujo alas que no pienso medir.
+
 ## V_vigilia_azucena.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

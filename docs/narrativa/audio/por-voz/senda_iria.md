@@ -26,6 +26,66 @@ Dirección: Conversación al ofrecer misión. Capa: pareja.
 
 Puedo acompañarte. No puedo convertir ese deseo en una prueba cumplida.
 
+## VID_senda_iria_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Pregunté si estaba bien y respondió antes de respirar. Lo guardé como una elección clara.
+
+## VID_senda_iria_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Quería ayudar. También quería que se notara.
+
+## VID_senda_iria_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy pidió aplazar. La ruta sigue disponible y usamos el archivo para otra prueba.
+
+## VID_senda_iria_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Un rato. Después volví al servicio sin llevar su negativa como problema que resolver.
+
+## VID_senda_leire_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Qué pidió?
+
+## VID_senda_leire_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos ofrecer una salida donde no haya otra invitación escondida.
+
+## VID_senda_mateo_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La seguridad que mediste era una parte de la que necesitaban.
+
+## VID_senda_mateo_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El retorno no sabe qué promesa profesional tenemos que proteger.
+
+## VID_senda_ofelia_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos mirar esa promesa sin pedirte que renuncies a todos tus recuerdos buenos.
+
+## VID_senda_ofelia_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Lo conservamos aparte. Aquí necesitamos saber qué quedó pendiente y qué puedes reconocer hoy.
+
 ## V_senda_iria.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

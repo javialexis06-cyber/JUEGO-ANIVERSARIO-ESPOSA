@@ -1,0 +1,240 @@
+[
+  {
+    "id": "T01",
+    "titulo": "Un árbol también sostiene una casa",
+    "zona": "brumaverde",
+    "requiere": [
+      "F01"
+    ],
+    "reparto": [
+      "guardabosques",
+      "bruma_roque",
+      "figura_fuatia"
+    ],
+    "acciones": [
+      "Consultar permiso de madera y necesidad de rampa",
+      "Comparar árbol protegido, pieza caída y materiales existentes sin retirar un núcleo",
+      "Acordar extracción o reutilización con costo y recuperación visibles"
+    ],
+    "lineas": "guardabosques: Usé protector del bosque para que nadie preguntara por la rampa.\nfuatia: Un corte deja una herida.\nbruma_roque: Un techo que no puede repararse deja gente fuera. Muestro la cantidad, no un derecho a tomarlo todo.\nfuatia: Puedo medir una solicitud. No me ofrezcas que jamás volverás a necesitar madera.\nella: El permiso dirá para qué alcanza.\nguardabosques: Y quién lo revisa sin tener que pedirle a un vecino que lo adore.",
+    "eleccion": "Reutilizar pieza almacenada o retirar madera autorizada con reposición equivalente.",
+    "ramas": [
+      "bruma_roque: La reutilización se paga y conserva límites del soporte.\nfuatia: No es una virtud invisible: quedó un recurso que no hubo que retirar.",
+      "guardabosques: La extracción tiene umbral y reparación prevista.\nfuatia: Mi permiso no volverá ilimitado el siguiente corte."
+    ],
+    "premio": "plano",
+    "efecto_premio": "Diseño reparable de rampa con entradas equivalentes, sin bonificación de venta ni ampliación gratis de vivienda.",
+    "clase": "secundaria_elemental",
+    "estado": "diseno_no_integrado",
+    "recuperacion": "Conservar pruebas y reservas confirmadas; posponer sin reloj real y retomar por ruta autorizada. Las ramas ofrecen utilidad equivalente. No se altera clima, cuidado o producción por escuchar un diálogo."
+  },
+  {
+    "id": "T02",
+    "titulo": "El pez no es una ofrenda",
+    "zona": "puerto_lirios",
+    "requiere": [
+      "F01"
+    ],
+    "reparto": [
+      "pescadora",
+      "lirios_maite",
+      "figura_fuatia"
+    ],
+    "acciones": [
+      "Observar altar público y reserva de juveniles",
+      "Ofrecer un gesto de limpieza con materiales reales en vez de capturar crías",
+      "Registrar cuota de acceso y devolución sin decidir devoción de otros"
+    ],
+    "lineas": "pescadora: Traían un pez pequeño porque lo llamaban la ofrenda más rara.\nfuatia: Quiero esta vida en el agua, no en mi altar.\nlirios_maite: La alternativa puede ser limpiar una orilla. Si siempre lo hace la misma familia, también habrá costo oculto.\nfuatia: Pongan turnos.\nella: Y dejar de asistir no convierte a nadie en destructor.\nfuatia: Cuidar sí tendrá que demostrarse por lo que hagan fuera de la ceremonia.",
+    "eleccion": "Mantener altar con gesto no extractivo o retirar la práctica y conservar punto de observación.",
+    "ramas": [
+      "pescadora: El altar queda sin pedir una captura.\nfuatia: Aceptaré gratitud sin hacerla una tarea de cada pez.",
+      "lirios_maite: La observación sigue disponible para todos.\nfuatia: No necesito una mesa para sentir quién cuida la orilla."
+    ],
+    "premio": "conocimiento",
+    "efecto_premio": "Ficha de refugios de juveniles y prácticas de devolución observadas; no mejora probabilidades de pesca ni revela especies no vistas.",
+    "clase": "secundaria_elemental",
+    "estado": "diseno_no_integrado",
+    "recuperacion": "Conservar pruebas y reservas confirmadas; posponer sin reloj real y retomar por ruta autorizada. Las ramas ofrecen utilidad equivalente. No se altera clima, cuidado o producción por escuchar un diálogo."
+  },
+  {
+    "id": "T03",
+    "titulo": "La cría que no quiere hablar",
+    "zona": "pueblo_sol",
+    "requiere": [
+      "F01"
+    ],
+    "reparto": [
+      "cuidadora",
+      "veterinaria",
+      "figura_fuatia"
+    ],
+    "acciones": [
+      "Observar descanso ordinario con Mara",
+      "Retirar visitantes y acordar una aparición discreta, sin comprar ni cruzar animales",
+      "Comparar bienestar por reglas existentes y dejar contacto voluntario"
+    ],
+    "lineas": "fuatia: Me oye. Está cansada de que ustedes esperen una respuesta.\ncuidadora: Yo esperaba que quisieras que la oyéramos también.\nfuatia: Hablar con ella no me convierte en dueña de su tarde.\nveterinaria: Dejaremos la observación sin volver diagnóstico cada palabra.\nella: Entonces el encuentro puede terminar aquí.\ncuidadora: Y nosotros iremos a merendar sin que la cría tenga que agradecérnoslo.",
+    "eleccion": "Visita breve silenciosa o retirarse y consultar observación autorizada después.",
+    "ramas": [
+      "fuatia: Pueden quedarse sin tocar. Ella puede continuar dormida.\ncuidadora: No traeré otra visita para demostrar que pasó.",
+      "veterinaria: La observación estará en la ficha con sus límites.\nfuatia: Ninguna de sus líneas tendrá que pronunciarla el animal."
+    ],
+    "premio": "agenda",
+    "efecto_premio": "Lista de visitas y descansos anotados por cuidado real; no alimenta, cura, acelera crecimiento ni altera genomas automáticamente.",
+    "clase": "secundaria_elemental",
+    "estado": "diseno_no_integrado",
+    "recuperacion": "Conservar pruebas y reservas confirmadas; posponer sin reloj real y retomar por ruta autorizada. Las ramas ofrecen utilidad equivalente. No se altera clima, cuidado o producción por escuchar un diálogo."
+  },
+  {
+    "id": "T04",
+    "titulo": "Una marca no es una orden",
+    "zona": "confluencia_aire",
+    "requiere": [
+      "F10"
+    ],
+    "reparto": [
+      "piedra_hugo",
+      "nox_tamara",
+      "figura_fuatia"
+    ],
+    "acciones": [
+      "Comparar tres señales de retorno por texto y forma",
+      "Ajustar aviso redundante con componentes autorizados",
+      "Probar lectura sin sonido y sin dependencia exclusiva de color"
+    ],
+    "lineas": "piedra_hugo: Los ojos rojos dicen que usa fuego, no que todos deben salir corriendo.\nfuatia: Una vez mostré ira y lo interpretaron como permiso para quemar una casa. Nunca lo di.\nnox_tamara: El aviso debe decir qué ocurre, qué falta y qué podemos hacer.\nella: Puede ser bonito además de legible.\nfuatia: Mientras no utilice belleza para esconder una amenaza.\npiedra_hugo: La prueba tendrá varias maneras de leer la misma condición.",
+    "eleccion": "Priorizar símbolos de presión o texto de estado, manteniendo ambas lecturas disponibles.",
+    "ramas": [
+      "piedra_hugo: Los símbolos no reemplazan la descripción.\nfuatia: No exigiré ojos perfectos para comprenderlos.",
+      "nox_tamara: El texto tiene una lectura de forma alternativa.\nfuatia: El silencio del aviso no significa que el riesgo se haya ido."
+    ],
+    "premio": "conocimiento",
+    "efecto_premio": "Guía consultable de señales elementales con equivalencia por texto, forma y sonido opcional; no introduce una cura o sentido superior.",
+    "clase": "secundaria_elemental",
+    "estado": "diseno_no_integrado",
+    "recuperacion": "Conservar pruebas y reservas confirmadas; posponer sin reloj real y retomar por ruta autorizada. Las ramas ofrecen utilidad equivalente. No se altera clima, cuidado o producción por escuchar un diálogo."
+  },
+  {
+    "id": "T05",
+    "titulo": "La cuenta de los días castigados",
+    "zona": "brasaviva",
+    "requiere": [
+      "F05"
+    ],
+    "reparto": [
+      "brasa_ramiro",
+      "brasa_sol",
+      "figura_fuatia"
+    ],
+    "acciones": [
+      "Consultar retirada segura de un lote y obligaciones confirmadas",
+      "Identificar qué pérdida protege todavía el entorno y cuál prolonga la sanción",
+      "Proponer revisión con responsable y derecho a mantener disenso"
+    ],
+    "lineas": "brasa_ramiro: Respondí por las facturas. Quedan restituciones y quiero que tengan medida.\nfuatia: Lo que hicieron con tus recipientes no cabe en una caja devuelta.\nbrasa_sol: La reparación no pretende borrar ese uso. Necesita saber qué puede completar hoy.\nella: Ninguna víctima tiene que perdonar para que exista un criterio.\nfuatia: Quiero que recuerde.\nbrasa_ramiro: Voy a recordar. No puedo vivir cada jornada inventando qué pérdida te parecería suficiente.",
+    "eleccion": "Mantener restricción con transición laboral o revisar un uso limitado después de inspección.",
+    "ramas": [
+      "brasa_sol: La restricción tiene alternativa y fecha agrícola de revisión acordada.\nfuatia: No usarán el plazo para declarar olvidado el daño.",
+      "brasa_ramiro: El permiso limitado no retira mis obligaciones pendientes.\nfuatia: También mi sentencia dejará visible qué todavía está corrigiendo."
+    ],
+    "premio": "agenda",
+    "efecto_premio": "Registro de restituciones y revisiones del taller, sin cancelar deudas o crear ingresos por decisión de diálogo.",
+    "clase": "secundaria_elemental",
+    "estado": "diseno_no_integrado",
+    "recuperacion": "Conservar pruebas y reservas confirmadas; posponer sin reloj real y retomar por ruta autorizada. Las ramas ofrecen utilidad equivalente. No se altera clima, cuidado o producción por escuchar un diálogo."
+  },
+  {
+    "id": "T06",
+    "titulo": "La lluvia que no nos deben",
+    "zona": "ambarina",
+    "requiere": [
+      "F06"
+    ],
+    "reparto": [
+      "ambar_zora",
+      "ambar_alina",
+      "figura_fuatia"
+    ],
+    "acciones": [
+      "Medir reserva de cultivo con una prueba local autorizada",
+      "Comparar intervención enorme de agua con ajuste viable y sus compensaciones",
+      "Acordar riego limitado o cultivo adaptado con necesidades reales"
+    ],
+    "lineas": "ambar_zora: Puedes hacer océano donde hay desierto. No quiero ofrecerte gratitud antes de preguntar qué desaparece de nuestra vida.\nfuatia: No estaba pidiendo que quieras el mar. Estaba mostrando que puedo hacerlo.\nambar_alina: Necesitamos agua, no un paisaje que borre toda adaptación.\nella: La decisión puede ser pequeña sin negar tu poder.\nfuatia: Si conserva balance, puede ser precisamente la decisión correcta.\nambar_zora: Y la comunidad podrá decirlo sin que yo hable por todos.",
+    "eleccion": "Ajustar reserva de riego o priorizar variedad de consumo menor; costos y metas equivalentes.",
+    "ramas": [
+      "ambar_alina: La reserva sigue medida y la semilla todavía necesita cuidado.\nfuatia: La ayuda no le quitará esa vida cotidiana.",
+      "ambar_zora: La adaptación se decide con quienes la cultivarán.\nfuatia: Protegeré el intercambio, no exigiré que me prometan otra geografía."
+    ],
+    "premio": "conocimiento",
+    "efecto_premio": "Comparador de necesidad hídrica de variedades observadas, sin semillas inmunes a sequía ni cambios gratuitos de clima.",
+    "clase": "secundaria_elemental",
+    "estado": "diseno_no_integrado",
+    "recuperacion": "Conservar pruebas y reservas confirmadas; posponer sin reloj real y retomar por ruta autorizada. Las ramas ofrecen utilidad equivalente. No se altera clima, cuidado o producción por escuchar un diálogo."
+  },
+  {
+    "id": "T07",
+    "titulo": "Un calor que puede compartirse",
+    "zona": "confluencia_fuego",
+    "requiere": [
+      "F07"
+    ],
+    "reparto": [
+      "brasa_rufina",
+      "brasa_nadia",
+      "figura_fuatia"
+    ],
+    "acciones": [
+      "Consultar usos de calor de baños, horno y refugio",
+      "Construir un intercambiador definido con componentes recuperables",
+      "Ensayar parada y turnos con una reserva que no use criaturas como combustible"
+    ],
+    "lineas": "brasa_rufina: El calor también sirve a una persona que no producirá nada después.\nbrasa_nadia: Lo dejé fuera cuando conté cosechas. Esta vez está en la primera fila.\nfuatia: Mi fuego puede durar. No sostendrá una promesa que exige secar el agua de otro territorio.\nella: El intercambiador tendrá parada.\nbrasa_rufina: Y un turno donde yo pueda entrar sin dirigirlo.\nfuatia: Eso lo decidirán ustedes, no mi altar.",
+    "eleccion": "Dar prioridad horaria a descanso o a operación, manteniendo cupos y reserva mínima iguales.",
+    "ramas": [
+      "brasa_rufina: El descanso tiene una franja real y otra persona responsable.\nfuatia: El calor no medirá cuánto merecía sentarse cada visitante.",
+      "brasa_nadia: La operación usa una franja limitada y devuelve calor al circuito.\nfuatia: No convertirán esa prioridad en una licencia de consumir siempre primero."
+    ],
+    "premio": "plano",
+    "efecto_premio": "Intercambiador mantenible con las mismas entradas y producción base, sin energía infinita, animales-combustible ni multiplicador apilable.",
+    "clase": "secundaria_elemental",
+    "estado": "diseno_no_integrado",
+    "recuperacion": "Conservar pruebas y reservas confirmadas; posponer sin reloj real y retomar por ruta autorizada. Las ramas ofrecen utilidad equivalente. No se altera clima, cuidado o producción por escuchar un diálogo."
+  },
+  {
+    "id": "T08",
+    "titulo": "Quien guardó una piedra sin altar",
+    "zona": "pueblo_sol",
+    "requiere": [
+      "F04"
+    ],
+    "reparto": [
+      "archivero",
+      "bruma_benicio",
+      "figura_fuatia"
+    ],
+    "acciones": [
+      "Reunir dos pistas públicas autorizadas de una tradición familiar",
+      "Contrastar nota completa sin invadir una vivienda",
+      "Escuchar una variante del relato con permiso o conservar privacidad con cierre equivalente"
+    ],
+    "lineas": "archivero: Guardaban la piedra porque les recordaba una protección. Nunca levantaron un altar.\nbruma_benicio: La copia resumida los hizo devotos perfectos. El relato completo decía agradecidos y asustados.\nfuatia: Pueden sentir ambas cosas.\nella: ¿También alguien que recibió un favor hoy?\nfuatia: Mientras el miedo no se convierta en otro daño que pretendan justificarme.\nel: Lo registraremos sin obligar a la familia a representar esa discusión para nosotros.",
+    "eleccion": "Leer relato autorizado o respetar privacidad y documentar únicamente la práctica pública.",
+    "ramas": [
+      "bruma_benicio: La versión conserva a quien cuenta y los límites que eligió.\nfuatia: No le pediré borrar el miedo para aceptar su agradecimiento.",
+      "archivero: La ficha no promete un nombre que no nos autorizaron.\nfuatia: La piedra sigue siendo suya sin que la historia se vuelva tu hallazgo."
+    ],
+    "premio": "trofeo",
+    "efecto_premio": "Recuerdo de interpretación del altar, exhibible por ambas ramas sin identificar a una familia que reserve privacidad; no paga monedas por lectura.",
+    "clase": "secundaria_elemental",
+    "estado": "diseno_no_integrado",
+    "recuperacion": "Conservar pruebas y reservas confirmadas; posponer sin reloj real y retomar por ruta autorizada. Las ramas ofrecen utilidad equivalente. No se altera clima, cuidado o producción por escuchar un diálogo.",
+    "pistas": [
+      "Piedra de cuatro colores registrada como préstamo público, no objeto para llevar",
+      "Nota de catálogo que distingue gratitud de devoción obligatoria",
+      "Verso de Benicio que anuncia una variante sin nombres familiares"
+    ],
+    "secreta": true
+  }
+]

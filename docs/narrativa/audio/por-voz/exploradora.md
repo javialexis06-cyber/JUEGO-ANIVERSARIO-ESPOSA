@@ -8,6 +8,78 @@ Dirección: Descubrimiento y reacción, dejar responder. Capa: pareja.
 
 Las rutas tienen salidas alternativas. El tratado también debería tenerlas.
 
+## VID_exploradora_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Cuando Ulises me encontró, yo seguía mirando el folleto. El bosque estaba delante y parecía menos real.
+
+## VID_exploradora_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Lo había escrito yo. Esa es la parte que siempre tardaba en contar.
+
+## VID_exploradora_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Dejé de explicarte por qué deberías tomar el camino corto. ¿Lo notaste?
+
+## VID_exploradora_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Qué difícil me lo estás poniendo, Darío.
+
+## VID_minero_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Dejaste el espacio blanco en el plano. La gente preguntará qué falta.
+
+## VID_minero_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos fechar la próxima revisión sin prometer que lo sabremos todo.
+
+## VID_nino_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Lo habías visto alguna vez o querías que el mapa tuviera una sorpresa?
+
+## VID_nino_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Puedes hacer un mapa pequeño que sí conozcas. Una sorpresa no tiene que ser un dato falso.
+
+## VID_piedra_santiago_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Necesitaba moverme, no felicitar al mecanismo.
+
+## VID_piedra_santiago_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Empezamos con una pieza sin filo y paramos cuando te lo diga.
+
+## VID_vigilia_ulises_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Necesitaba aprender a volver, no encontrar a alguien que nunca tuviera una duda.
+
+## VID_vigilia_ulises_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos dibujar esa vuelta. Sin volver a hacerla para demostrarla.
+
 ## V_exploradora.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

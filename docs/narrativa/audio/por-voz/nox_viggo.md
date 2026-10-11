@@ -14,6 +14,54 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 Ahora entiendo por qué piden utilería distinta.
 
+## VID_nox_mirta_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Vas a revisar más cosas hoy?
+
+## VID_nox_mirta_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Entonces escogeré un juego donde puedas reírte de mis fichas mal puestas.
+
+## VID_nox_tamara_1.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El panel enseñaba a reaccionar así. Eso no elimina la revisión de tu decisión.
+
+## VID_nox_tamara_1.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Empecemos por distinguir qué retorno estaba intentando mostrar.
+
+## VID_nox_viggo_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La capa se veía entera. Yo la mostraba antes de que alguien preguntara por debajo.
+
+## VID_nox_viggo_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Cada capa me daba una respuesta fácil sobre cuánto había trabajado.
+
+## VID_nox_viggo_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La inspección está abierta sin retirar contención. No es tan impresionante por fuera.
+
+## VID_nox_viggo_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me alegra. Esta tarde quiero arreglar un instrumento que nadie usará para comprobar seguridad.
+
 ## V_nox_viggo.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

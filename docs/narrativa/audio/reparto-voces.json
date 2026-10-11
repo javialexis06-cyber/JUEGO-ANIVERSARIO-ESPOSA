@@ -1206,5 +1206,13 @@
     "voz_proveedor": null,
     "estado": "por_elegir",
     "referencia_personaje": "conde"
+  },
+  {
+    "id": "fuatia",
+    "nombre": "Fuatia",
+    "direccion": "Amable y precisa, con una reserva de resentimiento. La crueldad no exige gritar; escuchar una objeción no equivale a redimirse.",
+    "voz_proveedor": null,
+    "estado": "por_elegir",
+    "referencia_personaje": "fuatia"
   }
 ]

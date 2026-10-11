@@ -20,6 +20,54 @@ Dirección: Preguntas rápidas y sentido del humor; sin declamar como una person
 
 Los dibujos tienen más sitio para dragones.
 
+## VID_lirios_bastian_1.vida.02
+
+Dirección: Preguntas rápidas y sentido del humor; sin declamar como una persona adulta. Capa: mundo.
+
+Quería que vieras el pez del dibujo antes de que cerraran la escuela.
+
+## VID_lirios_bastian_1.vida.04
+
+Dirección: Preguntas rápidas y sentido del humor; sin declamar como una persona adulta. Capa: mundo.
+
+Mejor. El dibujo no sabe navegar, pero sí sabe esperar un poquito.
+
+## VID_lirios_dalia_2.vida.02
+
+Dirección: Preguntas rápidas y sentido del humor; sin declamar como una persona adulta. Capa: mundo.
+
+¿Vas a hacer otra cosa que no sea ayudar a alguien?
+
+## VID_lirios_dalia_2.vida.04
+
+Dirección: Preguntas rápidas y sentido del humor; sin declamar como una persona adulta. Capa: mundo.
+
+Después me lo muestras así. No hay que tenerlo listo para que yo lo vea.
+
+## VID_lirios_tina_1.vida.01
+
+Dirección: Preguntas rápidas y sentido del humor; sin declamar como una persona adulta. Capa: mundo.
+
+Si devuelvo este pez, ¿cómo sabe que no lo quise guardar?
+
+## VID_lirios_tina_1.vida.03
+
+Dirección: Preguntas rápidas y sentido del humor; sin declamar como una persona adulta. Capa: mundo.
+
+Entonces puedo hacer un dibujo para recordarlo sin llevármelo.
+
+## VID_lirios_tina_2.vida.01
+
+Dirección: Preguntas rápidas y sentido del humor; sin declamar como una persona adulta. Capa: mundo.
+
+En el mapa puse una banca porque no quiero una aventura sin merienda.
+
+## VID_lirios_tina_2.vida.03
+
+Dirección: Preguntas rápidas y sentido del humor; sin declamar como una persona adulta. Capa: mundo.
+
+Esa sí la sabemos. El túnel de peces con sombrero lo dejamos para el cuento.
+
 ## V_lirios_tina.A1.01
 
 Dirección: Preguntas rápidas y sentido del humor; sin declamar como una persona adulta. Capa: mundo.

@@ -14,6 +14,42 @@ Dirección: Conversación ligera entre vecinos; humor sin remate exagerado. Capa
 
 El descanso tampoco necesita darlos.
 
+## VID_aurelia_aitana_2.vida.02
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+¿Podemos comer una parte sin compararla otra vez?
+
+## VID_aurelia_aitana_2.vida.04
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Esa también parece una buena jornada lunar.
+
+## VID_aurelia_kiara_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+El promedio mejoró. Lo repetía mientras Amira señalaba justamente el lugar que perdía.
+
+## VID_aurelia_kiara_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Podemos conservar los dos resultados separados.
+
+## VID_aurelia_kiara_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy observé una visita sin proponer otra colmena.
+
+## VID_aurelia_kiara_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Muchísimo. Me gusta descubrir que interés no siempre necesita instalar algo.
+
 ## V_aurelia_kiara.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.

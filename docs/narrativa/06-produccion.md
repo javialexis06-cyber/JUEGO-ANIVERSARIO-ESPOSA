@@ -35,7 +35,7 @@ Pronunciaciones acordadas: Astra «Ástra», Celia «Sélia», Aurelia «Auréli
 
 ## Prioridades y costo controlable
 
-1. **A:** diez escenas largas, 24 misiones principales, narrador y figuras centrales. Probar primero C01 y C04 completos para revisar ritmo entre voces.
+1. **A:** catorce escenas largas, 36 misiones principales, narrador y figuras centrales. Probar primero C01 y C04 completos para revisar ritmo entre voces.
 2. **B:** 24 arcos de Pueblo del Sol y los doce secretos. La conversación principal del pueblo tiene más probabilidad de escucharse que una visita orbital tardía.
 3. **C:** los otros 118 arcos. Grabar por región después de poder recorrerla; se pueden producir textos anticipados, pero la integración sigue necesitando escenas jugables.
 
@@ -87,3 +87,5 @@ Los guiones nuevos no se mezclan automáticamente con `voces-guion/` ni con `pub
 `capa: pareja` marca todas las intervenciones de Él/Ella y toda escena de campaña que supone su Lazo. El exportado neutral incluye únicamente arcos personales y secretos del mundo que no contienen esa capa; **no es todavía una adaptación jugable de la campaña para amigos**. No basta filtrar dos hablantes: el contexto de una escena puede ser privado aunque hable el narrador. Cien Puertas, apodos, álbum y voces reales siguen fuera de cualquier bundle neutral.
 
 Antes de publicar audio: revisión de guion elegido, prueba de pronunciación, reproducción completa de escena, subtítulos idénticos, silencio/pausa, tamaño móvil y verificación del build de amigos. Esta entrega no inicia compras ni generación remota.
+
+Fuatia requiere una sexta voz divina: amable sin ser sumisa, resentimiento contenido y escucha capaz de rechazar una condición. C11–C14 añaden narración y diálogos en [Figuras y escenas](10-figuras-y-escenas.md). Las 284 conversaciones VID permiten grabar el pasado y la vida cotidiana fuera de los premios de misión. Registrar el hash de cada toma para no pagar por una versión antigua después de corregir un guion.

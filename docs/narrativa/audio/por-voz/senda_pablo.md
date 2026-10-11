@@ -20,6 +20,30 @@ Dirección: Descubrimiento y reacción, dejar responder. Capa: pareja.
 
 Si digo que lo siento, ¿tiene que perdonarme?
 
+## VID_senda_pablo_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Contestaba tarde para que notara cuánto me había dolido. Si preguntaba, podía decir que estaba ocupado.
+
+## VID_senda_pablo_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Sí. Admití la cifra para no admitir esa parte.
+
+## VID_senda_pablo_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+La respuesta puede no llegar. Dejé de describirlo como algo que todavía debe darme.
+
+## VID_senda_pablo_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Recordar una comida buena sin usarla para demostrar que la amistad merece regresar.
+
 ## V_senda_pablo.A1.01
 
 Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.
