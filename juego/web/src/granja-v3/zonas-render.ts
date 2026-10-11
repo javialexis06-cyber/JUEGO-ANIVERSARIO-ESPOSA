@@ -339,3 +339,64 @@ export function adornosRefugio(especie:string):THREE.Group{
  }
  return g;
 }
+
+/** Detalle de los locales del pueblo por dentro (cuarto de 9 × 8, mostrador al fondo): ventanas con luz, lámparas
+ * colgadas, tapete y matas para todos, y lo propio de cada oficio contra las paredes, dejando libre el paso. */
+export function adornosServicio(servicio:string):THREE.Group{
+ const g=new THREE.Group();g.name='adornos-servicio';const h=(i:number,k:number)=>{const n=Math.sin(i*127.1+k*311.7)*43758.5453;return n-Math.floor(n);};
+ const m=(c:string,extra:THREE.MeshStandardMaterialParameters={})=>new THREE.MeshStandardMaterial({color:c,roughness:.8,...extra});
+ const caja=(w:number,hh:number,d:number,x:number,y:number,z:number,c:string|THREE.Material,ry=0)=>{const k=new THREE.Mesh(new THREE.BoxGeometry(w,hh,d),typeof c==='string'?m(c):c);k.position.set(x,y,z);k.rotation.y=ry;k.castShadow=k.receiveShadow=true;g.add(k);return k;};
+ const cil=(r:number,hh:number,x:number,y:number,z:number,c:string|THREE.Material,r2=r)=>{const k=new THREE.Mesh(new THREE.CylinderGeometry(r,r2,hh,12),typeof c==='string'?m(c):c);k.position.set(x,y,z);k.castShadow=true;g.add(k);return k;};
+ const bola=(r:number,x:number,y:number,z:number,c:string|THREE.Material,sy=1)=>{const k=new THREE.Mesh(new THREE.SphereGeometry(r,10,8),typeof c==='string'?m(c):c);k.position.set(x,y,z);k.scale.y=sy;k.castShadow=true;g.add(k);return k;};
+ const madera='#9a6f4c',oscura='#6e4b33',luz=m('#ffe2a0',{emissive:'#ffb347',emissiveIntensity:1});
+ // Comunes: ventanas en la pared del fondo, lámparas, tapete de entrada y matas
+ for(const x of [-2.6,2.6]){caja(1.3,1,.06,x,1.75,-3.88,oscura);caja(1.1,.8,.07,x,1.75,-3.86,m('#cfe9ef',{emissive:'#9fd6e6',emissiveIntensity:.35}));caja(.05,.8,.08,x,1.75,-3.83,oscura);caja(1.1,.05,.08,x,1.75,-3.83,oscura);caja(1.4,.08,.2,x,1.22,-3.82,oscura);for(let k=0;k<3;k++)bola(.09,x-.4+k*.4,1.32,-3.8,['#f4a7b9','#f7d55a','#c9a3e0'][k]);}
+ for(const x of [-1.5,1.5]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,.8,4),m('#5a4a3c'));c.position.set(x,2.6,.4);g.add(c);const p=new THREE.Mesh(new THREE.ConeGeometry(.3,.25,12,1,true),m('#c9563f',{side:THREE.DoubleSide}));p.position.set(x,2.15,.4);g.add(p);bola(.1,x,2.05,.4,luz);const l=new THREE.PointLight('#ffcf8a',4,8,1.6);l.position.set(x,1.9,.4);g.add(l);}
+ caja(2.4,.02,1.4,0,.02,3,'#b5553f');caja(2.1,.025,1.1,0,.025,3,'#e3b45a');
+ for(const [x,z] of [[-4,3.4],[4,3.4]] as [number,number][]){cil(.25,.4,x,.2,z,'#c26e45',.2);for(let k=0;k<7;k++)bola(.17,x+Math.cos(k)*.14,.55+k*.08,z+Math.sin(k)*.14,['#5f8a45','#7fae55','#4c7a45'][k%3]);}
+ const C=['#c9563f','#6fa3c7','#e3b45a','#7fb77e','#a58cc4','#d9cdb8'];
+ if(servicio==='semillas'){
+  // Exhibidor de sobres de semillas, costales de grano, canastas de frutas y calabazas
+  caja(.5,1.6,1.6,-4.1,.8,0,oscura);for(let f=0;f<4;f++)for(let k=0;k<5;k++)caja(.06,.26,.22,-3.83,.3+f*.36,-.6+k*.3,C[(f+k)%6]);
+  for(const [x,z] of [[-3.6,2],[-3.1,2.3],[3.6,1.2]] as [number,number][]){const s=bola(.32,x,.35,z,'#d8c49c',1.3);void s;caja(.3,.1,.3,x,.75,z,'#b39168');}
+  for(const [x,z,c] of [[3.4,-.4,'#d9453d'],[3.4,.4,'#f2a33a']] as [number,number,string][]){cil(.32,.3,x,.15,z,'#a07850',.28);for(let k=0;k<6;k++)bola(.1,x+Math.cos(k)*.15,.36,z+Math.sin(k)*.15,c);}
+  for(let k=0;k<3;k++)bola(.25,3.9-k*.35,.22,2.8,'#e8892f',.8);
+ }else if(servicio==='herreria'){
+  // Yunque, fragua encendida, barril de agua y herramientas colgadas
+  caja(.5,.5,.4,2.8,.25,1,'#3a3a3e');caja(.9,.2,.35,2.8,.6,1,'#4a4a50');caja(.25,.12,.25,3.3,.62,1,'#4a4a50');
+  caja(1.4,1,1.2,-3.6,.5,1.5,'#7b6f66');caja(1,.12,.8,-3.6,1.05,1.5,m('#ff8a3d',{emissive:'#ff5a1a',emissiveIntensity:1.2}));const f=new THREE.PointLight('#ff8a4a',6,6,1.6);f.position.set(-3.4,1.5,1.5);g.add(f);
+  cil(.35,.7,3.8,.35,2.6,madera);cil(.33,.05,3.8,.71,2.6,m('#5c8fa3',{roughness:.2}));
+  caja(.08,1.4,2.4,-4.4,1.6,-1.2,oscura);for(let k=0;k<5;k++){caja(.05,.8,.05,-4.3,1.6,-2.2+k*.5,'#8a6242');caja(.06,.12,.3,-4.3,2,-2.2+k*.5,'#9aa3ab');}
+ }else if(servicio==='carpinteria'){
+  // Tablas apiladas, banco con serrucho, aserrín y una silla de muestra
+  for(let k=0;k<6;k++)caja(2.4,.12,.3,-3.5,.08+k*.13,1.5+(k%2)*.05,['#c69a6b','#b88c5e','#cfa477'][k%3],Math.PI/2);
+  caja(1.8,.12,.8,3,.85,1.4,madera);for(const dx of [-.8,.8])for(const dz of [-.3,.3])caja(.1,.8,.1,3+dx,.4,1.4+dz,oscura);caja(.6,.05,.15,3,.94,1.4,'#c9cdd2');
+  for(let k=0;k<20;k++)caja(.1,.01,.06,2.2+h(k,1)*1.8,.01,1+h(k,2)*1.2,'#e3c79a',h(k,3)*6);
+  caja(.5,.06,.5,3.6,.45,3,madera);caja(.5,.6,.06,3.6,.78,2.77,madera);
+ }else if(servicio==='animales'){
+  // Pacas de heno, costales de alimento, montura y un afiche de vaca
+  for(const [x,y,z] of [[-3.6,.27,1.4],[-3.6,.27,2.1],[-3.6,.72,1.75]] as [number,number,number][]){caja(.7,.45,.55,x,y,z,'#e3c77a');}
+  for(const z of [-.4,.2])bola(.3,3.8,.36,z,'#d8c49c',1.3);
+  caja(.1,.7,.1,3.4,.35,2.2,oscura);caja(.6,.12,.4,3.4,.76,2.2,'#8a4a2e');
+  caja(.06,.8,1,-4.42,1.7,-1.5,'#f3ead8');bola(.18,-4.38,1.75,-1.5,'#ffffff',.7);
+ }else if(servicio==='clinica'){
+  // Vitrina con frascos, camilla, biombo y botiquín
+  caja(.5,1.6,1.4,-4.1,.8,-.2,'#e9ecd8');for(let f=0;f<3;f++)for(let k=0;k<4;k++)cil(.06,.18,-3.85,.45+f*.45,-.6+k*.25,['#9fd6e6','#f4a7b9','#bfe39a','#f7d55a'][(f+k)%4]);
+  caja(.9,.5,2,3.4,.45,1.6,'#c9cdd2');caja(.95,.12,2.05,3.4,.75,1.6,'#f3f6ee');caja(.8,.12,.4,3.4,.85,.8,'#ffffff');
+  caja(.06,1.4,1.2,2.4,.7,2.8,'#cfe0d0');caja(.4,.3,.15,-4.38,1.9,-2.2,'#ffffff');caja(.24,.06,.16,-4.36,1.9,-2.2,'#d9453d');caja(.06,.24,.16,-4.36,1.9,-2.2,'#d9453d');
+ }else if(servicio==='posada'){
+  // Mesas con jarras, barriles y estantería de botellas
+  for(const [x,z] of [[-2.8,1.8],[2.6,2]] as [number,number][]){cil(.6,.08,x,.8,z,madera);cil(.08,.76,x,.4,z,oscura);for(let k=0;k<3;k++){const a=k*2.1;cil(.25,.4,x+Math.cos(a)*.95,.2,z+Math.sin(a)*.95,madera);}cil(.08,.18,x+.15,.93,z,'#c9cdd2');cil(.08,.18,x-.2,.93,z+.1,'#c9cdd2');}
+  for(const z of [-.6,.2]){const b=cil(.35,.8,-4,.4,z,madera,.32);void b;for(const y of [.15,.65])cil(.37,.04,-4,y,z,'#5d5a58');}
+ }else if(servicio==='archivo'){
+  // Bibliotecas altas, globo, mesa de lectura con vela y pergaminos
+  for(const z of [-1.4,.2,1.8]){caja(.5,2.2,1.4,-4.1,1.1,z,oscura);for(let f=0;f<5;f++)for(let k=0;k<6;k++)caja(.3,.3,.15,-3.85,.25+f*.42,z-.55+k*.22,C[(f*2+k)%6]);}
+  cil(.05,.6,3.6,.3,1.6,'#8a6242');bola(.3,3.6,.85,1.6,'#6fa3c7');caja(1.4,.08,.8,2.6,.8,2.8,madera);for(const dx of [-.6,.6])caja(.08,.78,.7,2.6+dx,.4,2.8,oscura);cil(.05,.2,2.3,.94,2.8,'#f3ead8');bola(.05,2.3,1.08,2.8,luz,1.5);
+  for(let k=0;k<3;k++){const r=cil(.06,.5,2.8+k*.15,.88,2.75,'#efe2c8');r.rotation.z=Math.PI/2;}
+ }else{
+  // Altares: velas, cristales y flores
+  for(let k=0;k<8;k++){const x=-3.8+(k%4)*.25,z=1+Math.floor(k/4)*.4;cil(.05,.2+h(k,1)*.2,x,.15,z,'#f3ead8');bola(.04,x,.33+h(k,1)*.2,z,luz,1.6);}
+  for(let k=0;k<5;k++){const c=new THREE.Mesh(new THREE.OctahedronGeometry(.18),m(servicio==='altar_aura'?'#f2c14e':'#b48cff',{emissive:servicio==='altar_aura'?'#c08a20':'#7a5ac9',emissiveIntensity:.5}));c.position.set(3.4+h(k,2)*.6,.25+h(k,3)*.3,1+k*.35);c.scale.y=1.6;g.add(c);}
+ }
+ return g;
+}

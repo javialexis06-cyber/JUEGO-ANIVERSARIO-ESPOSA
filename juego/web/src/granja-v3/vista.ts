@@ -30,7 +30,7 @@ import { dormitorioDef, puertaDormitorio, libreDormitorio } from './dormitorios'
 import { viviendaInterior, VIVIENDAS_PUEBLO, libreVivienda } from './pueblo-datos';
 import { crearDormitorio, crearInteriorVivienda, updateInteriorVivienda } from './pueblo';
 import { cespedPueblo } from './pueblo-adornos';
-import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida, adelantoZona, amoblarCabana, adornosRefugio } from './zonas-render';
+import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida, adelantoZona, amoblarCabana, adornosRefugio, adornosServicio } from './zonas-render';
 import { CAMINOS_GRANJA, SALIDAS } from './caminos-mundo';
 /** Senderos de tierra entre zonas (centro x, centro z, ancho, fondo). */
 const SENDEROS_PUBLICOS:[number,number,number,number][]=[[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]];
@@ -136,7 +136,7 @@ export class VistaGranja{
  private fondo(e:EstadoGranja){this.efectos.clear();if(this.pueblo){liberarPueblo(this.pueblo);this.pueblo=undefined;}liberar(this.entorno);this.entorno=new THREE.Group();this.world.add(this.entorno);
   if(dormitorioDef(e.interior)){this.entorno.add(crearDormitorio(dormitorioDef(e.interior)!.id));return;}
   if(viviendaInterior(e.interior)){this.entorno.add(crearInteriorVivienda(viviendaInterior(e.interior)!));return;}
-  if(e.servicio){this.entorno.add(crearInteriorServicio(e.servicio));return;}
+  if(e.servicio){this.entorno.add(crearInteriorServicio(e.servicio));this.entorno.add(adornosServicio(e.servicio));return;}
   if(e.interior||e.servicio){const b=e.edificios.find(b=>b.id===e.interior);
    if(b?.articulo==='invernadero'){this.entorno.add(interiorInvernadero());}
    else if(b?.especie||b?.articulo==='establo'){const room=decorarInterior(b.especie??'caballo',true,capacidadRefugio(b));room.scale.set(2,1.4,2);this.entorno.add(room);this.entorno.add(adornosRefugio(b.especie??'caballo'));}
