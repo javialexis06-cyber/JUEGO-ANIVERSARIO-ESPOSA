@@ -1,0 +1,3122 @@
+[
+ {
+  "id": "0m7o165",
+  "g": "Reacción · presumir",
+  "q": "el",
+  "t": "¿Viste eso, mi amor?",
+  "d": "[smug] ¿Viste eso, mi amor?",
+  "revisada": true
+ },
+ {
+  "id": "0uj8kdd",
+  "g": "Reacción · presumir",
+  "q": "el",
+  "t": "Aprende del maestro",
+  "d": "[smug] Aprende del maestro",
+  "revisada": true
+ },
+ {
+  "id": "1glu14p",
+  "g": "Reacción · presumir",
+  "q": "el",
+  "t": "Soy un genio, ¿no?",
+  "d": "[playfully] Soy un genio, ¿no?",
+  "revisada": true
+ },
+ {
+  "id": "1cjlq90",
+  "g": "Reacción · presumir",
+  "q": "el",
+  "t": "Esto es pura estrategia",
+  "d": "[proudly] Esto es pura estrategia",
+  "revisada": true
+ },
+ {
+  "id": "0sxsl3b",
+  "g": "Reacción · presumir",
+  "q": "el",
+  "t": "Pan comido, ¿no?",
+  "d": "[confident] Pan comido, ¿no?",
+  "revisada": true
+ },
+ {
+  "id": "1qkabwt",
+  "g": "Reacción · presumir",
+  "q": "el",
+  "t": "¿Viste eso, esposha?",
+  "d": "[playfully] ¿Viste eso, esposha?",
+  "revisada": true
+ },
+ {
+  "id": "1iltw5q",
+  "g": "Reacción · presumir",
+  "q": "el",
+  "t": "Dico, ¿no? 😎",
+  "d": "[smug] Dico, ¿no?",
+  "revisada": true
+ },
+ {
+  "id": "1xry3c5",
+  "g": "Reacción · presumir",
+  "q": "ella",
+  "t": "¿Quién es la reina? Yo",
+  "d": "[proudly] ¿Quién es la reina? Yo",
+  "revisada": true
+ },
+ {
+  "id": "1qr3tze",
+  "g": "Reacción · presumir",
+  "q": "ella",
+  "t": "Mírame y aprende",
+  "d": "[sassy] Mírame y aprende",
+  "revisada": true
+ },
+ {
+  "id": "1fcux94",
+  "g": "Reacción · presumir",
+  "q": "ella",
+  "t": "Así se juega, bebé",
+  "d": "[sassy] Así se juega, bebé",
+  "revisada": true
+ },
+ {
+  "id": "177ymcu",
+  "g": "Reacción · presumir",
+  "q": "ella",
+  "t": "Pura intuición, amor",
+  "d": "[smug] Pura intuición, amor",
+  "revisada": true
+ },
+ {
+  "id": "00vg5ma",
+  "g": "Reacción · presumir",
+  "q": "ella",
+  "t": "Y ni me esforcé",
+  "d": "[smug] Y ni me esforcé",
+  "revisada": true
+ },
+ {
+  "id": "1lvb7wv",
+  "g": "Reacción · presumir",
+  "q": "ella",
+  "t": "Ay deoz, qué crack soy",
+  "d": "[laughs] Ay deoz, qué crack soy",
+  "revisada": true
+ },
+ {
+  "id": "08nr42h",
+  "g": "Reacción · presumir",
+  "q": "ella",
+  "t": "Aprende, mi niño",
+  "d": "[teasing] Aprende, mi niño",
+  "revisada": true
+ },
+ {
+  "id": "14591lz",
+  "g": "Reacción · bien",
+  "q": "el",
+  "t": "¡Eso!",
+  "d": "[excited] ¡Eso!",
+  "revisada": true
+ },
+ {
+  "id": "0rcjtk5",
+  "g": "Reacción · bien",
+  "q": "el",
+  "t": "Nada mal, ¿eh?",
+  "d": "[proudly] Nada mal, ¿eh?",
+  "revisada": true
+ },
+ {
+  "id": "1x8r1ng",
+  "g": "Reacción · bien",
+  "q": "el",
+  "t": "Vamos bien",
+  "d": "[confident] Vamos bien",
+  "revisada": true
+ },
+ {
+  "id": "196q1kn",
+  "g": "Reacción · bien",
+  "q": "el",
+  "t": "Uy, qué jugada",
+  "d": "[impressed] Uy, qué jugada",
+  "revisada": true
+ },
+ {
+  "id": "12v3p25",
+  "g": "Reacción · bien",
+  "q": "el",
+  "t": "Yei :D",
+  "d": "[cheerful] Yei",
+  "revisada": true
+ },
+ {
+  "id": "01fdc3s",
+  "g": "Reacción · bien",
+  "q": "el",
+  "t": "Shi, señor",
+  "d": "[cutesy] Shi, señor",
+  "revisada": true
+ },
+ {
+  "id": "0ki28cu",
+  "g": "Reacción · bien",
+  "q": "ella",
+  "t": "¡Toma!",
+  "d": "[excited] ¡Toma!",
+  "revisada": true
+ },
+ {
+  "id": "11ea215",
+  "g": "Reacción · bien",
+  "q": "ella",
+  "t": "Obvio, soy yo",
+  "d": "[smug] Obvio, soy yo",
+  "revisada": true
+ },
+ {
+  "id": "0m75h54",
+  "g": "Reacción · bien",
+  "q": "ella",
+  "t": "Así me gusta",
+  "d": "[satisfied] Así me gusta",
+  "revisada": true
+ },
+ {
+  "id": "10bpsad",
+  "g": "Reacción · bien",
+  "q": "ella",
+  "t": "¡Eso, eso!",
+  "d": "[excited] ¡Eso, eso!",
+  "revisada": true
+ },
+ {
+  "id": "16m64av",
+  "g": "Reacción · bien",
+  "q": "ella",
+  "t": "Shiii",
+  "d": "[cutesy] Shiii",
+  "revisada": true
+ },
+ {
+  "id": "01s2ixi",
+  "g": "Reacción · bien",
+  "q": "ella",
+  "t": "Okis, eso estuvo bien",
+  "d": "[cheerful] Okis, eso estuvo bien",
+  "revisada": true
+ },
+ {
+  "id": "15zbca8",
+  "g": "Reacción · mal",
+  "q": "el",
+  "t": "Eso no contaba…",
+  "d": "[defensive] Eso no contaba…",
+  "revisada": true
+ },
+ {
+  "id": "05jb9w1",
+  "g": "Reacción · mal",
+  "q": "el",
+  "t": "Estaba calentando",
+  "d": "[defensive] Estaba calentando",
+  "revisada": true
+ },
+ {
+  "id": "06sh1kc",
+  "g": "Reacción · mal",
+  "q": "el",
+  "t": "Fue sin querer",
+  "d": "[embarrassed] Fue sin querer",
+  "revisada": true
+ },
+ {
+  "id": "1w997o2",
+  "g": "Reacción · mal",
+  "q": "el",
+  "t": "Mmm… estrategia",
+  "d": "[unconvincing] Mmm… estrategia",
+  "revisada": true
+ },
+ {
+  "id": "05gb8xf",
+  "g": "Reacción · mal",
+  "q": "el",
+  "t": "Ay deos…",
+  "d": "[sighs] Ay deos…",
+  "revisada": true
+ },
+ {
+  "id": "1kgzjci",
+  "g": "Reacción · mal",
+  "q": "el",
+  "t": "Eso no valió .c",
+  "d": "[pouting] Eso no valió",
+  "revisada": true
+ },
+ {
+  "id": "062f2ak",
+  "g": "Reacción · mal",
+  "q": "ella",
+  "t": "Ay no…",
+  "d": "[disappointed] Ay no…",
+  "revisada": true
+ },
+ {
+  "id": "1144khj",
+  "g": "Reacción · mal",
+  "q": "ella",
+  "t": "No me mires así",
+  "d": "[embarrassed] No me mires así",
+  "revisada": true
+ },
+ {
+  "id": "1pd285m",
+  "g": "Reacción · mal",
+  "q": "ella",
+  "t": "Eso fue a propósito",
+  "d": "[defensive] Eso fue a propósito",
+  "revisada": true
+ },
+ {
+  "id": "1e2m91o",
+  "g": "Reacción · mal",
+  "q": "ella",
+  "t": "Déjame tranquila",
+  "d": "[annoyed] Déjame tranquila",
+  "revisada": true
+ },
+ {
+  "id": "1mxus8b",
+  "g": "Reacción · mal",
+  "q": "ella",
+  "t": "Ay deoz…",
+  "d": "[sighs] Ay deoz…",
+  "revisada": true
+ },
+ {
+  "id": "0aqt8rb",
+  "g": "Reacción · mal",
+  "q": "ella",
+  "t": "No vale :c",
+  "d": "[pouting] No vale",
+  "revisada": true
+ },
+ {
+  "id": "0yyyhgw",
+  "g": "Reacción · cero",
+  "q": "el",
+  "t": "¿Cero? ¿En serio?",
+  "d": "[disbelief] ¿Cero? ¿En serio?",
+  "revisada": true
+ },
+ {
+  "id": "10tb6x5",
+  "g": "Reacción · cero",
+  "q": "el",
+  "t": "Nooo…",
+  "d": "[whiny] Nooo…",
+  "revisada": true
+ },
+ {
+  "id": "0ujuu5p",
+  "g": "Reacción · cero",
+  "q": "el",
+  "t": "Me saboteaste",
+  "d": "[accusing] Me saboteaste",
+  "revisada": true
+ },
+ {
+  "id": "1y0zntc",
+  "g": "Reacción · cero",
+  "q": "el",
+  "t": "Esto es un complot",
+  "d": "[dramatically] Esto es un complot",
+  "revisada": true
+ },
+ {
+  "id": "0ysx56v",
+  "g": "Reacción · cero",
+  "q": "el",
+  "t": "Me niego .c",
+  "d": "[pouting] Me niego",
+  "revisada": true
+ },
+ {
+  "id": "07hnjs2",
+  "g": "Reacción · cero",
+  "q": "ella",
+  "t": "¡¿Cero?!",
+  "d": "[outraged] ¡¿Cero?!",
+  "revisada": true
+ },
+ {
+  "id": "1gd19di",
+  "g": "Reacción · cero",
+  "q": "ella",
+  "t": "Me quiero ir a casa",
+  "d": "[whiny] Me quiero ir a casa",
+  "revisada": true
+ },
+ {
+  "id": "0vj5bme",
+  "g": "Reacción · cero",
+  "q": "ella",
+  "t": "Esto está arreglado",
+  "d": "[annoyed] Esto está arreglado",
+  "revisada": true
+ },
+ {
+  "id": "0oq5s05",
+  "g": "Reacción · cero",
+  "q": "ella",
+  "t": "Qué injusticia",
+  "d": "[dramatically] Qué injusticia",
+  "revisada": true
+ },
+ {
+  "id": "1idj49w",
+  "g": "Reacción · cero",
+  "q": "ella",
+  "t": "Nop, nop, nop",
+  "d": "[stubborn] Nop, nop, nop",
+  "revisada": true
+ },
+ {
+  "id": "0xf88kz",
+  "g": "Reacción · celos",
+  "q": "el",
+  "t": "Suerte de principiante",
+  "d": "[jealous] Suerte de principiante",
+  "revisada": true
+ },
+ {
+  "id": "07stkhz",
+  "g": "Reacción · celos",
+  "q": "el",
+  "t": "Eso fue suerte",
+  "d": "[dismissive] Eso fue suerte",
+  "revisada": true
+ },
+ {
+  "id": "18ln7v0",
+  "g": "Reacción · celos",
+  "q": "el",
+  "t": "¿Hiciste trampa?",
+  "d": "[suspicious] ¿Hiciste trampa?",
+  "revisada": true
+ },
+ {
+  "id": "0b5h2zd",
+  "g": "Reacción · celos",
+  "q": "el",
+  "t": "Te dejé ganar esa",
+  "d": "[smug] Te dejé ganar esa",
+  "revisada": true
+ },
+ {
+  "id": "1d8fst9",
+  "g": "Reacción · celos",
+  "q": "el",
+  "t": "Suerte de mimilona",
+  "d": "[teasing] Suerte de mimilona",
+  "revisada": true
+ },
+ {
+  "id": "0zs9eoq",
+  "g": "Reacción · celos",
+  "q": "ella",
+  "t": "¡Tramposo!",
+  "d": "[accusing] ¡Tramposo!",
+  "revisada": true
+ },
+ {
+  "id": "1q2h5hu",
+  "g": "Reacción · celos",
+  "q": "ella",
+  "t": "Ni tan bueno…",
+  "d": "[dismissive] Ni tan bueno…",
+  "revisada": true
+ },
+ {
+  "id": "09lgnu4",
+  "g": "Reacción · celos",
+  "q": "ella",
+  "t": "Seguro hiciste trampa",
+  "d": "[suspicious] Seguro hiciste trampa",
+  "revisada": true
+ },
+ {
+  "id": "11dand6",
+  "g": "Reacción · celos",
+  "q": "ella",
+  "t": "Disfrútalo mientras dure",
+  "d": "[sassy] Disfrútalo mientras dure",
+  "revisada": true
+ },
+ {
+  "id": "1ddhynt",
+  "g": "Reacción · celos",
+  "q": "ella",
+  "t": "Tramposo lanudo",
+  "d": "[teasing] Tramposo lanudo",
+  "revisada": true
+ },
+ {
+  "id": "1g4je65",
+  "g": "Reacción · burla",
+  "q": "el",
+  "t": "Jajaja, qué pesar",
+  "d": "[laughs] Jajaja, qué pesar",
+  "revisada": true
+ },
+ {
+  "id": "0a7ej35",
+  "g": "Reacción · burla",
+  "q": "el",
+  "t": "¿Y eso qué fue?",
+  "d": "[laughs] ¿Y eso qué fue?",
+  "revisada": true
+ },
+ {
+  "id": "1jkhn0b",
+  "g": "Reacción · burla",
+  "q": "el",
+  "t": "Tranquila, yo te enseño",
+  "d": "[teasing] Tranquila, yo te enseño",
+  "revisada": true
+ },
+ {
+  "id": "1aczelf",
+  "g": "Reacción · burla",
+  "q": "el",
+  "t": "Te explico despacito",
+  "d": "[teasing] Te explico despacito",
+  "revisada": true
+ },
+ {
+  "id": "1vhq2cs",
+  "g": "Reacción · burla",
+  "q": "el",
+  "t": "Jajaja, ay esposa",
+  "d": "[laughs] Jajaja, ay esposa",
+  "revisada": true
+ },
+ {
+  "id": "1rfhiw2",
+  "g": "Reacción · burla",
+  "q": "el",
+  "t": "Ay, mi cotita :v",
+  "d": "[teasing] Ay, mi cotita",
+  "revisada": true
+ },
+ {
+  "id": "084ts1k",
+  "g": "Reacción · burla",
+  "q": "ella",
+  "t": "Jijiji",
+  "d": "[giggles] Jijiji",
+  "revisada": true
+ },
+ {
+  "id": "1txhvto",
+  "g": "Reacción · burla",
+  "q": "ella",
+  "t": "Ay, pobrecito",
+  "d": "[teasing] Ay, pobrecito",
+  "revisada": true
+ },
+ {
+  "id": "03tqebq",
+  "g": "Reacción · burla",
+  "q": "ella",
+  "t": "¿Quieres que te explique?",
+  "d": "[teasing] ¿Quieres que te explique?",
+  "revisada": true
+ },
+ {
+  "id": "0mfsum5",
+  "g": "Reacción · burla",
+  "q": "ella",
+  "t": "Ups…",
+  "d": "[mischievously] Ups…",
+  "revisada": true
+ },
+ {
+  "id": "0lct0l8",
+  "g": "Reacción · burla",
+  "q": "ella",
+  "t": "Jajaja, ay mi bb",
+  "d": "[laughs] Jajaja, ay mi bebé",
+  "revisada": true
+ },
+ {
+  "id": "0u6qhn0",
+  "g": "Reacción · burla",
+  "q": "ella",
+  "t": "Pobre mi niño",
+  "d": "[teasing] Pobre mi niño",
+  "revisada": true
+ },
+ {
+  "id": "0043mjp",
+  "g": "Reacción · captura",
+  "q": "el",
+  "t": "¡Mío!",
+  "d": "[excited] ¡Mío!",
+  "revisada": true
+ },
+ {
+  "id": "1orln9e",
+  "g": "Reacción · captura",
+  "q": "el",
+  "t": "Gracias por el regalo",
+  "d": "[teasing] Gracias por el regalo",
+  "revisada": true
+ },
+ {
+  "id": "0lov0m2",
+  "g": "Reacción · captura",
+  "q": "el",
+  "t": "Esto me lo llevo",
+  "d": "[mischievously] Esto me lo llevo",
+  "revisada": true
+ },
+ {
+  "id": "16w20y3",
+  "g": "Reacción · captura",
+  "q": "el",
+  "t": "¡Te comí!",
+  "d": "[excited] ¡Te comí!",
+  "revisada": true
+ },
+ {
+  "id": "0vtoyc0",
+  "g": "Reacción · captura",
+  "q": "el",
+  "t": "Esto me lo llevo, cotita",
+  "d": "[teasing] Esto me lo llevo, cotita",
+  "revisada": true
+ },
+ {
+  "id": "1knw62y",
+  "g": "Reacción · captura",
+  "q": "ella",
+  "t": "¡Mía, mía, mía!",
+  "d": "[excited] ¡Mía, mía, mía!",
+  "revisada": true
+ },
+ {
+  "id": "1xwqnbg",
+  "g": "Reacción · captura",
+  "q": "ella",
+  "t": "Gracias, mi amor",
+  "d": "[teasing] Gracias, mi amor",
+  "revisada": true
+ },
+ {
+  "id": "186yaaw",
+  "g": "Reacción · captura",
+  "q": "ella",
+  "t": "Me lo llevo",
+  "d": "[mischievously] Me lo llevo",
+  "revisada": true
+ },
+ {
+  "id": "1t6y3k8",
+  "g": "Reacción · captura",
+  "q": "ella",
+  "t": "¡Te comí!",
+  "d": "[excited] ¡Te comí!",
+  "revisada": true
+ },
+ {
+  "id": "19bmz7n",
+  "g": "Reacción · captura",
+  "q": "ella",
+  "t": "Mío, mío, mi bb",
+  "d": "[cutesy] Mío, mío, mi bebé",
+  "revisada": true
+ },
+ {
+  "id": "1xc4hht",
+  "g": "Reacción · capturado",
+  "q": "el",
+  "t": "¡Oye! ¡Eso era mío!",
+  "d": "[outraged] ¡Oye! ¡Eso era mío!",
+  "revisada": true
+ },
+ {
+  "id": "0y7jitt",
+  "g": "Reacción · capturado",
+  "q": "el",
+  "t": "¡Devuélvemelo!",
+  "d": "[whiny] ¡Devuélvemelo!",
+  "revisada": true
+ },
+ {
+  "id": "0w1kjgq",
+  "g": "Reacción · capturado",
+  "q": "el",
+  "t": "No puede ser…",
+  "d": "[disbelief] No puede ser…",
+  "revisada": true
+ },
+ {
+  "id": "1xgqk3e",
+  "g": "Reacción · capturado",
+  "q": "el",
+  "t": "Me robaste",
+  "d": "[pouting] Me robaste",
+  "revisada": true
+ },
+ {
+  "id": "12dn3mj",
+  "g": "Reacción · capturado",
+  "q": "el",
+  "t": "¡Esposha, devuélvemelo! .c",
+  "d": "[whiny] ¡Esposha, devuélvemelo!",
+  "revisada": true
+ },
+ {
+  "id": "0psi7j3",
+  "g": "Reacción · capturado",
+  "q": "ella",
+  "t": "¡Ladrón!",
+  "d": "[outraged] ¡Ladrón!",
+  "revisada": true
+ },
+ {
+  "id": "164q7ss",
+  "g": "Reacción · capturado",
+  "q": "ella",
+  "t": "¡Devuélvemelo ya!",
+  "d": "[angry] ¡Devuélvemelo ya!",
+  "revisada": true
+ },
+ {
+  "id": "0rvc3t1",
+  "g": "Reacción · capturado",
+  "q": "ella",
+  "t": "Me las vas a pagar",
+  "d": "[threatening, playfully] Me las vas a pagar",
+  "revisada": true
+ },
+ {
+  "id": "0w9vphh",
+  "g": "Reacción · capturado",
+  "q": "ella",
+  "t": "¡¿Qué hiciste?!",
+  "d": "[outraged] ¡¿Qué hiciste?!",
+  "revisada": true
+ },
+ {
+  "id": "083b8fi",
+  "g": "Reacción · capturado",
+  "q": "ella",
+  "t": "¡Ladrón lanudo!",
+  "d": "[outraged, playfully] ¡Ladrón lanudo!",
+  "revisada": true
+ },
+ {
+  "id": "1ez35z3",
+  "g": "Reacción · extra",
+  "q": "el",
+  "t": "¡Otra vez yo!",
+  "d": "[excited] ¡Otra vez yo!",
+  "revisada": true
+ },
+ {
+  "id": "0pnabbm",
+  "g": "Reacción · extra",
+  "q": "el",
+  "t": "Y sigo, y sigo…",
+  "d": "[smug] Y sigo, y sigo…",
+  "revisada": true
+ },
+ {
+  "id": "03p9ckt",
+  "g": "Reacción · extra",
+  "q": "el",
+  "t": "Todavía no acabo",
+  "d": "[smug] Todavía no acabo",
+  "revisada": true
+ },
+ {
+  "id": "0d4hscd",
+  "g": "Reacción · extra",
+  "q": "ella",
+  "t": "¡Me toca otra vez!",
+  "d": "[excited] ¡Me toca otra vez!",
+  "revisada": true
+ },
+ {
+  "id": "03zxuy2",
+  "g": "Reacción · extra",
+  "q": "ella",
+  "t": "Espera, que sigo yo",
+  "d": "[smug] Espera, que sigo yo",
+  "revisada": true
+ },
+ {
+  "id": "1kf38gr",
+  "g": "Reacción · extra",
+  "q": "ella",
+  "t": "Y va de nuevo",
+  "d": "[cheerful] Y va de nuevo",
+  "revisada": true
+ },
+ {
+  "id": "158ou8h",
+  "g": "Reacción · extra_otro",
+  "q": "el",
+  "t": "¿Otra vez tú?",
+  "d": "[annoyed] ¿Otra vez tú?",
+  "revisada": true
+ },
+ {
+  "id": "07gycy2",
+  "g": "Reacción · extra_otro",
+  "q": "el",
+  "t": "Ya, suelta el tablero",
+  "d": "[impatient] Ya, suelta el tablero",
+  "revisada": true
+ },
+ {
+  "id": "0d1p8w1",
+  "g": "Reacción · extra_otro",
+  "q": "el",
+  "t": "Me aburro…",
+  "d": "[bored] Me aburro…",
+  "revisada": true
+ },
+ {
+  "id": "1cudle4",
+  "g": "Reacción · extra_otro",
+  "q": "ella",
+  "t": "¿Y yo cuándo?",
+  "d": "[whiny] ¿Y yo cuándo?",
+  "revisada": true
+ },
+ {
+  "id": "0ef07km",
+  "g": "Reacción · extra_otro",
+  "q": "ella",
+  "t": "Ya, déjame jugar",
+  "d": "[impatient] Ya, déjame jugar",
+  "revisada": true
+ },
+ {
+  "id": "0jew5y0",
+  "g": "Reacción · extra_otro",
+  "q": "ella",
+  "t": "Qué afán…",
+  "d": "[sighs] Qué afán…",
+  "revisada": true
+ },
+ {
+  "id": "0saqo7a",
+  "g": "Reacción · lanzar",
+  "q": "el",
+  "t": "Suerte, suerte…",
+  "d": "[hopeful] Suerte, suerte…",
+  "revisada": true
+ },
+ {
+  "id": "0h7zqyh",
+  "g": "Reacción · lanzar",
+  "q": "el",
+  "t": "Vamos, dados",
+  "d": "[determined] Vamos, dados",
+  "revisada": true
+ },
+ {
+  "id": "0rf1h44",
+  "g": "Reacción · lanzar",
+  "q": "el",
+  "t": "Esta va por ti",
+  "d": "[flirty] Esta va por ti",
+  "revisada": true
+ },
+ {
+  "id": "0dfmmk4",
+  "g": "Reacción · lanzar",
+  "q": "el",
+  "t": "Va va…",
+  "d": "[hopeful] Va va…",
+  "revisada": true
+ },
+ {
+  "id": "1v94c2p",
+  "g": "Reacción · lanzar",
+  "q": "ella",
+  "t": "Sóplale conmigo",
+  "d": "[playfully] Sóplale conmigo",
+  "revisada": true
+ },
+ {
+  "id": "0ubevv6",
+  "g": "Reacción · lanzar",
+  "q": "ella",
+  "t": "Vamos, bebés",
+  "d": "[cutesy] Vamos, bebés",
+  "revisada": true
+ },
+ {
+  "id": "0uiwkzm",
+  "g": "Reacción · lanzar",
+  "q": "ella",
+  "t": "Denme algo bueno",
+  "d": "[pleading] Denme algo bueno",
+  "revisada": true
+ },
+ {
+  "id": "0ij3n82",
+  "g": "Reacción · lanzar",
+  "q": "ella",
+  "t": "Pera, pera… ahora sí",
+  "d": "[playfully] Pera, pera… ahora sí",
+  "revisada": true
+ },
+ {
+  "id": "0bm10wm",
+  "g": "Reacción · suerte",
+  "q": "el",
+  "t": "Por favor, por favor",
+  "d": "[pleading] Por favor, por favor",
+  "revisada": true
+ },
+ {
+  "id": "1nkt4ye",
+  "g": "Reacción · suerte",
+  "q": "el",
+  "t": "Tú puedes, dado",
+  "d": "[encouraging] Tú puedes, dado",
+  "revisada": true
+ },
+ {
+  "id": "1dcl1pc",
+  "g": "Reacción · suerte",
+  "q": "el",
+  "t": "Una sola vez…",
+  "d": "[pleading] Una sola vez…",
+  "revisada": true
+ },
+ {
+  "id": "03zwgnr",
+  "g": "Reacción · suerte",
+  "q": "ella",
+  "t": "Porfa, porfa, porfa",
+  "d": "[pleading, cutesy] Porfa, porfa, porfa",
+  "revisada": true
+ },
+ {
+  "id": "0j6e507",
+  "g": "Reacción · suerte",
+  "q": "ella",
+  "t": "Diosito, ayúdame",
+  "d": "[pleading] Diosito, ayúdame",
+  "revisada": true
+ },
+ {
+  "id": "1by6m60",
+  "g": "Reacción · suerte",
+  "q": "ella",
+  "t": "Sale, sale, sale…",
+  "d": "[excited] Sale, sale, sale…",
+  "revisada": true
+ },
+ {
+  "id": "1rr1n3a",
+  "g": "Reacción · suerte_otro",
+  "q": "el",
+  "t": "Que no, que no…",
+  "d": "[mischievously] Que no, que no…",
+  "revisada": true
+ },
+ {
+  "id": "0jysr4m",
+  "g": "Reacción · suerte_otro",
+  "q": "el",
+  "t": "Falla, falla…",
+  "d": "[mischievously] Falla, falla…",
+  "revisada": true
+ },
+ {
+  "id": "0xo9zn2",
+  "g": "Reacción · suerte_otro",
+  "q": "ella",
+  "t": "Que no le salga…",
+  "d": "[whispers] Que no le salga…",
+  "revisada": true
+ },
+ {
+  "id": "15sjvmn",
+  "g": "Reacción · suerte_otro",
+  "q": "ella",
+  "t": "Falla, falla, falla",
+  "d": "[mischievously] Falla, falla, falla",
+  "revisada": true
+ },
+ {
+  "id": "1pzgbja",
+  "g": "Reacción · casi",
+  "q": "el",
+  "t": "¡Casi!",
+  "d": "[frustrated] ¡Casi!",
+  "revisada": true
+ },
+ {
+  "id": "02pc3gp",
+  "g": "Reacción · casi",
+  "q": "el",
+  "t": "Faltó poquito",
+  "d": "[disappointed] Faltó poquito",
+  "revisada": true
+ },
+ {
+  "id": "1d3kd69",
+  "g": "Reacción · casi",
+  "q": "el",
+  "t": "Tan cerca…",
+  "d": "[sighs] Tan cerca…",
+  "revisada": true
+ },
+ {
+  "id": "18659qp",
+  "g": "Reacción · casi",
+  "q": "ella",
+  "t": "¡Uy, casi!",
+  "d": "[frustrated] ¡Uy, casi!",
+  "revisada": true
+ },
+ {
+  "id": "0nmafku",
+  "g": "Reacción · casi",
+  "q": "ella",
+  "t": "Por un pelito",
+  "d": "[disappointed] Por un pelito",
+  "revisada": true
+ },
+ {
+  "id": "13j288u",
+  "g": "Reacción · alivio",
+  "q": "el",
+  "t": "Uf… me salvé",
+  "d": "[relieved sigh] Uf… me salvé",
+  "revisada": true
+ },
+ {
+  "id": "0ovunk5",
+  "g": "Reacción · alivio",
+  "q": "el",
+  "t": "Qué susto",
+  "d": "[relieved] Qué susto",
+  "revisada": true
+ },
+ {
+  "id": "0934r5k",
+  "g": "Reacción · alivio",
+  "q": "el",
+  "t": "Uy, por poquito",
+  "d": "[relieved] Uy, por poquito",
+  "revisada": true
+ },
+ {
+  "id": "1s4mojd",
+  "g": "Reacción · alivio",
+  "q": "ella",
+  "t": "Uf… qué susto",
+  "d": "[relieved sigh] Uf… qué susto",
+  "revisada": true
+ },
+ {
+  "id": "0ka4yxi",
+  "g": "Reacción · alivio",
+  "q": "ella",
+  "t": "Me salvé",
+  "d": "[relieved] Me salvé",
+  "revisada": true
+ },
+ {
+  "id": "1ys1ulz",
+  "g": "Reacción · alivio",
+  "q": "ella",
+  "t": "Casi me da algo",
+  "d": "[relieved] Casi me da algo",
+  "revisada": true
+ },
+ {
+  "id": "09x4hq4",
+  "g": "Reacción · regalo",
+  "q": "el",
+  "t": "Ups… eso no",
+  "d": "[embarrassed] Ups… eso no",
+  "revisada": true
+ },
+ {
+  "id": "01eoipc",
+  "g": "Reacción · regalo",
+  "q": "el",
+  "t": "Error de cálculo",
+  "d": "[embarrassed] Error de cálculo",
+  "revisada": true
+ },
+ {
+  "id": "0bgeus5",
+  "g": "Reacción · regalo",
+  "q": "el",
+  "t": "No vi eso…",
+  "d": "[embarrassed] No vi eso…",
+  "revisada": true
+ },
+ {
+  "id": "1xu1o8k",
+  "g": "Reacción · regalo",
+  "q": "ella",
+  "t": "Ay, no vi eso",
+  "d": "[embarrassed] Ay, no vi eso",
+  "revisada": true
+ },
+ {
+  "id": "1jp9d64",
+  "g": "Reacción · regalo",
+  "q": "ella",
+  "t": "Eso no estaba en el plan",
+  "d": "[embarrassed] Eso no estaba en el plan",
+  "revisada": true
+ },
+ {
+  "id": "1pbdoz9",
+  "g": "Reacción · regalado",
+  "q": "el",
+  "t": "Gracias, muy amable",
+  "d": "[sarcastic] Gracias, muy amable",
+  "revisada": true
+ },
+ {
+  "id": "0e6854s",
+  "g": "Reacción · regalado",
+  "q": "el",
+  "t": "Qué detallista",
+  "d": "[sarcastic] Qué detallista",
+  "revisada": true
+ },
+ {
+  "id": "12mukjl",
+  "g": "Reacción · regalado",
+  "q": "el",
+  "t": "Jejeje…",
+  "d": "[giggles] Jejeje…",
+  "revisada": true
+ },
+ {
+  "id": "0m3gxgk",
+  "g": "Reacción · regalado",
+  "q": "el",
+  "t": "Gracias, esposa :3",
+  "d": "[cutesy] Gracias, esposa",
+  "revisada": true
+ },
+ {
+  "id": "14jnl6s",
+  "g": "Reacción · regalado",
+  "q": "ella",
+  "t": "Qué lindo regalo",
+  "d": "[sarcastic] Qué lindo regalo",
+  "revisada": true
+ },
+ {
+  "id": "0izsray",
+  "g": "Reacción · regalado",
+  "q": "ella",
+  "t": "Jijiji…",
+  "d": "[giggles] Jijiji…",
+  "revisada": true
+ },
+ {
+  "id": "07hcb9z",
+  "g": "Reacción · regalado",
+  "q": "ella",
+  "t": "Gracias, mi bb",
+  "d": "[cutesy] Gracias, mi bebé",
+  "revisada": true
+ },
+ {
+  "id": "0jpqoly",
+  "g": "Reacción · adelante",
+  "q": "el",
+  "t": "¡Voy ganando!",
+  "d": "[excited] ¡Voy ganando!",
+  "revisada": true
+ },
+ {
+  "id": "1dsft5t",
+  "g": "Reacción · adelante",
+  "q": "el",
+  "t": "Mira el marcador",
+  "d": "[smug] Mira el marcador",
+  "revisada": true
+ },
+ {
+  "id": "0rcq3ec",
+  "g": "Reacción · adelante",
+  "q": "el",
+  "t": "Ya te pasé",
+  "d": "[smug] Ya te pasé",
+  "revisada": true
+ },
+ {
+  "id": "17ls1od",
+  "g": "Reacción · adelante",
+  "q": "ella",
+  "t": "¡Voy adelante!",
+  "d": "[excited] ¡Voy adelante!",
+  "revisada": true
+ },
+ {
+  "id": "1mxdbmt",
+  "g": "Reacción · adelante",
+  "q": "ella",
+  "t": "Mira quién va ganando",
+  "d": "[smug] Mira quién va ganando",
+  "revisada": true
+ },
+ {
+  "id": "0nrw5xd",
+  "g": "Reacción · adelante",
+  "q": "ella",
+  "t": "Te pasé, bebé",
+  "d": "[teasing] Te pasé, bebé",
+  "revisada": true
+ },
+ {
+  "id": "1yuiyub",
+  "g": "Reacción · atras",
+  "q": "el",
+  "t": "Todavía no acaba",
+  "d": "[determined] Todavía no acaba",
+  "revisada": true
+ },
+ {
+  "id": "0imco97",
+  "g": "Reacción · atras",
+  "q": "el",
+  "t": "Ya te alcanzo",
+  "d": "[determined] Ya te alcanzo",
+  "revisada": true
+ },
+ {
+  "id": "0y9p5x9",
+  "g": "Reacción · atras",
+  "q": "el",
+  "t": "Esto se remonta",
+  "d": "[determined] Esto se remonta",
+  "revisada": true
+ },
+ {
+  "id": "19vt0ko",
+  "g": "Reacción · atras",
+  "q": "ella",
+  "t": "Ya te alcanzo",
+  "d": "[determined] Ya te alcanzo",
+  "revisada": true
+ },
+ {
+  "id": "0grkxi0",
+  "g": "Reacción · atras",
+  "q": "ella",
+  "t": "Esto no se queda así",
+  "d": "[determined] Esto no se queda así",
+  "revisada": true
+ },
+ {
+  "id": "0w9rj6t",
+  "g": "Reacción · atras",
+  "q": "ella",
+  "t": "Todavía falta",
+  "d": "[determined] Todavía falta",
+  "revisada": true
+ },
+ {
+  "id": "1vahriv",
+  "g": "Reacción · pensar",
+  "q": "el",
+  "t": "Déjame pensar…",
+  "d": "[thoughtful] Déjame pensar…",
+  "revisada": true
+ },
+ {
+  "id": "1kd57t4",
+  "g": "Reacción · pensar",
+  "q": "el",
+  "t": "Calculando…",
+  "d": "[thoughtful] Calculando…",
+  "revisada": true
+ },
+ {
+  "id": "0fs1yx2",
+  "g": "Reacción · pensar",
+  "q": "ella",
+  "t": "Déjame ver…",
+  "d": "[thoughtful] Déjame ver…",
+  "revisada": true
+ },
+ {
+  "id": "0sjqghv",
+  "g": "Reacción · pensar",
+  "q": "ella",
+  "t": "Estoy pensando",
+  "d": "[thoughtful] Estoy pensando",
+  "revisada": true
+ },
+ {
+  "id": "1kpn45o",
+  "g": "Reacción · impaciente",
+  "q": "el",
+  "t": "¿Hoy o mañana?",
+  "d": "[impatient] ¿Hoy o mañana?",
+  "revisada": true
+ },
+ {
+  "id": "1fx7to1",
+  "g": "Reacción · impaciente",
+  "q": "el",
+  "t": "Juega, mi amor",
+  "d": "[impatient] Juega, mi amor",
+  "revisada": true
+ },
+ {
+  "id": "0usq5qp",
+  "g": "Reacción · impaciente",
+  "q": "el",
+  "t": "Me estoy durmiendo",
+  "d": "[yawns] Me estoy durmiendo",
+  "revisada": true
+ },
+ {
+  "id": "1wbycup",
+  "g": "Reacción · impaciente",
+  "q": "el",
+  "t": "Dime esposa, ¿juegas o no? :v",
+  "d": "[impatient] Dime esposa, ¿juegas o no?",
+  "revisada": true
+ },
+ {
+  "id": "1yv4pms",
+  "g": "Reacción · impaciente",
+  "q": "el",
+  "t": "¿Hoy o mañana, mimilona?",
+  "d": "[impatient, playfully] ¿Hoy o mañana, mimilona?",
+  "revisada": true
+ },
+ {
+  "id": "0zlk249",
+  "g": "Reacción · impaciente",
+  "q": "ella",
+  "t": "¿Ya?",
+  "d": "[impatient] ¿Ya?",
+  "revisada": true
+ },
+ {
+  "id": "0n8a1r0",
+  "g": "Reacción · impaciente",
+  "q": "ella",
+  "t": "Juega ya, amor",
+  "d": "[impatient] Juega ya, amor",
+  "revisada": true
+ },
+ {
+  "id": "1bciylc",
+  "g": "Reacción · impaciente",
+  "q": "ella",
+  "t": "Me aburro…",
+  "d": "[bored] Me aburro…",
+  "revisada": true
+ },
+ {
+  "id": "1mbrko5",
+  "g": "Reacción · impaciente",
+  "q": "ella",
+  "t": "Bb, ¿ya?",
+  "d": "[impatient] Bebé, ¿ya?",
+  "revisada": true
+ },
+ {
+  "id": "1pxwt2u",
+  "g": "Reacción · impaciente",
+  "q": "ella",
+  "t": "Juega, mi niño",
+  "d": "[impatient] Juega, mi niño",
+  "revisada": true
+ },
+ {
+  "id": "0x7gn38",
+  "g": "Reacción · inicio",
+  "q": "el",
+  "t": "¡Prepárate!",
+  "d": "[excited] ¡Prepárate!",
+  "revisada": true
+ },
+ {
+  "id": "07lj0oi",
+  "g": "Reacción · inicio",
+  "q": "el",
+  "t": "Hoy te gano",
+  "d": "[confident] Hoy te gano",
+  "revisada": true
+ },
+ {
+  "id": "158rw4h",
+  "g": "Reacción · inicio",
+  "q": "el",
+  "t": "Suerte, mi amor",
+  "d": "[sweetly] Suerte, mi amor",
+  "revisada": true
+ },
+ {
+  "id": "0d73pap",
+  "g": "Reacción · inicio",
+  "q": "el",
+  "t": "Prepárate, esposha",
+  "d": "[playfully] Prepárate, esposha",
+  "revisada": true
+ },
+ {
+  "id": "19yupq0",
+  "g": "Reacción · inicio",
+  "q": "el",
+  "t": "Ti amu, pero hoy te gano",
+  "d": "[flirty] Ti amu, pero hoy te gano",
+  "revisada": true
+ },
+ {
+  "id": "12efqsd",
+  "g": "Reacción · inicio",
+  "q": "ella",
+  "t": "Hoy no te salvas",
+  "d": "[confident] Hoy no te salvas",
+  "revisada": true
+ },
+ {
+  "id": "1mmd74v",
+  "g": "Reacción · inicio",
+  "q": "ella",
+  "t": "Prepárate, bebé",
+  "d": "[sassy] Prepárate, bebé",
+  "revisada": true
+ },
+ {
+  "id": "0n57hou",
+  "g": "Reacción · inicio",
+  "q": "ella",
+  "t": "Te voy a ganar",
+  "d": "[confident] Te voy a ganar",
+  "revisada": true
+ },
+ {
+  "id": "0vfpj6i",
+  "g": "Reacción · inicio",
+  "q": "ella",
+  "t": "Hi baby, hoy pierdes",
+  "d": "[sassy] Hi baby, hoy pierdes",
+  "revisada": true
+ },
+ {
+  "id": "1aaxenz",
+  "g": "Reacción · inicio",
+  "q": "ella",
+  "t": "Okis, a jugar",
+  "d": "[cheerful] Okis, a jugar",
+  "revisada": true
+ },
+ {
+  "id": "1i1xnf3",
+  "g": "Reacción · ganar",
+  "q": "el",
+  "t": "¡Soy el campeón!",
+  "d": "[triumphant] ¡Soy el campeón!",
+  "revisada": true
+ },
+ {
+  "id": "09tkev2",
+  "g": "Reacción · ganar",
+  "q": "el",
+  "t": "Te lo dije",
+  "d": "[smug] Te lo dije",
+  "revisada": true
+ },
+ {
+  "id": "0t04hwc",
+  "g": "Reacción · ganar",
+  "q": "el",
+  "t": "Esto se lo dedico a ti",
+  "d": "[lovingly] Esto se lo dedico a ti",
+  "revisada": true
+ },
+ {
+  "id": "1ip8tpt",
+  "g": "Reacción · ganar",
+  "q": "el",
+  "t": "Mi reina, te gané",
+  "d": "[smug] Mi reina, te gané",
+  "revisada": true
+ },
+ {
+  "id": "1vbppa9",
+  "g": "Reacción · ganar",
+  "q": "el",
+  "t": "¡Yeiii! :D",
+  "d": "[excited] ¡Yeiii!",
+  "revisada": true
+ },
+ {
+  "id": "0gvfupl",
+  "g": "Reacción · ganar",
+  "q": "el",
+  "t": "Gané, pero te doy un betito de consolación",
+  "d": "[playfully] Gané, pero te doy un betito de consolación",
+  "revisada": true
+ },
+ {
+  "id": "0c1kvow",
+  "g": "Reacción · ganar",
+  "q": "ella",
+  "t": "¡Soy la reina!",
+  "d": "[triumphant] ¡Soy la reina!",
+  "revisada": true
+ },
+ {
+  "id": "1daoczv",
+  "g": "Reacción · ganar",
+  "q": "ella",
+  "t": "Te dije que ganaba",
+  "d": "[smug] Te dije que ganaba",
+  "revisada": true
+ },
+ {
+  "id": "0ppj0mc",
+  "g": "Reacción · ganar",
+  "q": "ella",
+  "t": "La mejor, obvio",
+  "d": "[smug] La mejor, obvio",
+  "revisada": true
+ },
+ {
+  "id": "0pkdimg",
+  "g": "Reacción · ganar",
+  "q": "ella",
+  "t": "Ríndete ante mí",
+  "d": "[dramatically] Ríndete ante mí",
+  "revisada": true
+ },
+ {
+  "id": "02o3uxa",
+  "g": "Reacción · ganar",
+  "q": "ella",
+  "t": "¡Yeiii! Ganó la cotita",
+  "d": "[excited] ¡Yeiii! Ganó la cotita",
+  "revisada": true
+ },
+ {
+  "id": "1b49f9h",
+  "g": "Reacción · ganar",
+  "q": "ella",
+  "t": "Ríndete, mi niño",
+  "d": "[smug] Ríndete, mi niño",
+  "revisada": true
+ },
+ {
+  "id": "1wa78n2",
+  "g": "Reacción · perder",
+  "q": "el",
+  "t": "¡Noooo!",
+  "d": "[dramatically] ¡Noooo!",
+  "revisada": true
+ },
+ {
+  "id": "0pnyhy1",
+  "g": "Reacción · perder",
+  "q": "el",
+  "t": "Esto está arreglado",
+  "d": "[annoyed] Esto está arreglado",
+  "revisada": true
+ },
+ {
+  "id": "0qtn92o",
+  "g": "Reacción · perder",
+  "q": "el",
+  "t": "Te dejé ganar…",
+  "d": "[unconvincing] Te dejé ganar…",
+  "revisada": true
+ },
+ {
+  "id": "1euz0ru",
+  "g": "Reacción · perder",
+  "q": "el",
+  "t": "La próxima es mía",
+  "d": "[determined] La próxima es mía",
+  "revisada": true
+ },
+ {
+  "id": "0xxii40",
+  "g": "Reacción · perder",
+  "q": "el",
+  "t": "Pido betito de consolación",
+  "d": "[cutesy] Pido betito de consolación",
+  "revisada": true
+ },
+ {
+  "id": "1h41bsp",
+  "g": "Reacción · perder",
+  "q": "ella",
+  "t": "¡Noooo!",
+  "d": "[dramatically] ¡Noooo!",
+  "revisada": true
+ },
+ {
+  "id": "1aoobd7",
+  "g": "Reacción · perder",
+  "q": "ella",
+  "t": "Hiciste trampa",
+  "d": "[accusing] Hiciste trampa",
+  "revisada": true
+ },
+ {
+  "id": "0cmbiet",
+  "g": "Reacción · perder",
+  "q": "ella",
+  "t": "No es justo",
+  "d": "[whiny] No es justo",
+  "revisada": true
+ },
+ {
+  "id": "0nq8i3o",
+  "g": "Reacción · perder",
+  "q": "ella",
+  "t": "No es justo :c",
+  "d": "[pouting] No es justo",
+  "revisada": true
+ },
+ {
+  "id": "0svk3wb",
+  "g": "Reacción · perder",
+  "q": "ella",
+  "t": "Exijo betitos de consolación",
+  "d": "[cutesy] Exijo betitos de consolación",
+  "revisada": true
+ },
+ {
+  "id": "1ikalok",
+  "g": "Reacción · empate",
+  "q": "el",
+  "t": "¡Empate!",
+  "d": "[surprised] ¡Empate!",
+  "revisada": true
+ },
+ {
+  "id": "11upuqt",
+  "g": "Reacción · empate",
+  "q": "el",
+  "t": "Somos el equipo perfecto",
+  "d": "[happy] Somos el equipo perfecto",
+  "revisada": true
+ },
+ {
+  "id": "19s2nr9",
+  "g": "Reacción · empate",
+  "q": "el",
+  "t": "Complemento perfecto",
+  "d": "[warmly] Complemento perfecto",
+  "revisada": true
+ },
+ {
+  "id": "0kzyvoc",
+  "g": "Reacción · empate",
+  "q": "el",
+  "t": "Complemento, como siempre",
+  "d": "[warmly] Complemento, como siempre",
+  "revisada": true
+ },
+ {
+  "id": "0txvmix",
+  "g": "Reacción · empate",
+  "q": "ella",
+  "t": "¡Empate!",
+  "d": "[surprised] ¡Empate!",
+  "revisada": true
+ },
+ {
+  "id": "0i2kecs",
+  "g": "Reacción · empate",
+  "q": "ella",
+  "t": "Iguales, como siempre",
+  "d": "[happy] Iguales, como siempre",
+  "revisada": true
+ },
+ {
+  "id": "0kbxoxs",
+  "g": "Reacción · empate",
+  "q": "ella",
+  "t": "Somos un equipo",
+  "d": "[happy] Somos un equipo",
+  "revisada": true
+ },
+ {
+  "id": "1q2c7bp",
+  "g": "Reacción · empate",
+  "q": "ella",
+  "t": "Iguales, mi bb",
+  "d": "[cutesy] Iguales, mi bebé",
+  "revisada": true
+ },
+ {
+  "id": "1c4c4vu",
+  "g": "Reacción · otra",
+  "q": "el",
+  "t": "¡Otra! ¡Revancha!",
+  "d": "[determined] ¡Otra! ¡Revancha!",
+  "revisada": true
+ },
+ {
+  "id": "02i1qxp",
+  "g": "Reacción · otra",
+  "q": "el",
+  "t": "Una más",
+  "d": "[pleading] Una más",
+  "revisada": true
+ },
+ {
+  "id": "19r3u6l",
+  "g": "Reacción · otra",
+  "q": "el",
+  "t": "¡Exijo revancha!",
+  "d": "[determined] ¡Exijo revancha!",
+  "revisada": true
+ },
+ {
+  "id": "03ukzmc",
+  "g": "Reacción · otra",
+  "q": "el",
+  "t": "Otra y te doy betitos",
+  "d": "[flirty] Otra y te doy betitos",
+  "revisada": true
+ },
+ {
+  "id": "1uvlnwh",
+  "g": "Reacción · otra",
+  "q": "ella",
+  "t": "¡Otra!",
+  "d": "[excited] ¡Otra!",
+  "revisada": true
+ },
+ {
+  "id": "0yqhuqb",
+  "g": "Reacción · otra",
+  "q": "ella",
+  "t": "Revancha, ya",
+  "d": "[determined] Revancha, ya",
+  "revisada": true
+ },
+ {
+  "id": "13ihfd6",
+  "g": "Reacción · otra",
+  "q": "ella",
+  "t": "Una más, porfa",
+  "d": "[pleading] Una más, porfa",
+  "revisada": true
+ },
+ {
+  "id": "1l4ynyx",
+  "g": "Reacción · otra",
+  "q": "ella",
+  "t": "Otra, porfi 🥺",
+  "d": "[pleading, cutesy] Otra, porfi",
+  "revisada": true
+ },
+ {
+  "id": "0u54y66",
+  "g": "Reacción · beso",
+  "q": "el",
+  "t": "Para ti, mi reina",
+  "d": "[lovingly] Para ti, mi reina",
+  "revisada": true
+ },
+ {
+  "id": "00iagxf",
+  "g": "Reacción · beso",
+  "q": "el",
+  "t": "Muack",
+  "d": "[kisses] Muack",
+  "revisada": true
+ },
+ {
+  "id": "07poprk",
+  "g": "Reacción · beso",
+  "q": "el",
+  "t": "Te amo",
+  "d": "[lovingly] Te amo",
+  "revisada": true
+ },
+ {
+  "id": "10yb5qt",
+  "g": "Reacción · beso",
+  "q": "el",
+  "t": "Betito pa ti",
+  "d": "[playfully] Betito pa ti",
+  "revisada": true
+ },
+ {
+  "id": "18vhl3c",
+  "g": "Reacción · beso",
+  "q": "ella",
+  "t": "Muack",
+  "d": "[kisses] Muack",
+  "revisada": true
+ },
+ {
+  "id": "1ih74vx",
+  "g": "Reacción · beso",
+  "q": "ella",
+  "t": "Para ti, amor",
+  "d": "[lovingly] Para ti, amor",
+  "revisada": true
+ },
+ {
+  "id": "0rd09d1",
+  "g": "Reacción · beso",
+  "q": "ella",
+  "t": "Te amo",
+  "d": "[lovingly] Te amo",
+  "revisada": true
+ },
+ {
+  "id": "16ucbh8",
+  "g": "Reacción · beso",
+  "q": "ella",
+  "t": "Para mi niño",
+  "d": "[lovingly] Para mi niño",
+  "revisada": true
+ },
+ {
+  "id": "12joebk",
+  "g": "Reacción · huir",
+  "q": "el",
+  "t": "¡No juego más!",
+  "d": "[dramatically] ¡No juego más!",
+  "revisada": true
+ },
+ {
+  "id": "0ljkazu",
+  "g": "Reacción · huir",
+  "q": "el",
+  "t": "Me voy…",
+  "d": "[sulking] Me voy…",
+  "revisada": true
+ },
+ {
+  "id": "1wzvfry",
+  "g": "Reacción · huir",
+  "q": "el",
+  "t": "¡Así no juego!",
+  "d": "[dramatically] ¡Así no juego!",
+  "revisada": true
+ },
+ {
+  "id": "0u3vxxv",
+  "g": "Reacción · huir",
+  "q": "el",
+  "t": "Me voy a dormir… mentiras",
+  "d": "[sulking] Me voy a dormir… [laughs] mentiras",
+  "revisada": true
+ },
+ {
+  "id": "07fkrzh",
+  "g": "Reacción · huir",
+  "q": "ella",
+  "t": "¡No quiero!",
+  "d": "[whiny] ¡No quiero!",
+  "revisada": true
+ },
+ {
+  "id": "05pb1i2",
+  "g": "Reacción · huir",
+  "q": "ella",
+  "t": "¡Ya no juego!",
+  "d": "[dramatically] ¡Ya no juego!",
+  "revisada": true
+ },
+ {
+  "id": "1wxwfk3",
+  "g": "Reacción · huir",
+  "q": "ella",
+  "t": "Me voy, bye",
+  "d": "[sulking] Me voy, bye",
+  "revisada": true
+ },
+ {
+  "id": "0zmkvy7",
+  "g": "Reacción · huir",
+  "q": "ella",
+  "t": "Bye, me voy a dormir",
+  "d": "[sulking] Bye, me voy a dormir",
+  "revisada": true
+ },
+ {
+  "id": "1begozz",
+  "g": "Reacción · sonrojo",
+  "q": "el",
+  "t": "Ay, mi amor…",
+  "d": "[shy] Ay, mi amor…",
+  "revisada": true
+ },
+ {
+  "id": "190sugt",
+  "g": "Reacción · sonrojo",
+  "q": "el",
+  "t": "Jejeje",
+  "d": "[shy giggle] Jejeje",
+  "revisada": true
+ },
+ {
+  "id": "18nus14",
+  "g": "Reacción · sonrojo",
+  "q": "el",
+  "t": "Yo también",
+  "d": "[lovingly] Yo también",
+  "revisada": true
+ },
+ {
+  "id": "0ag6pun",
+  "g": "Reacción · sonrojo",
+  "q": "el",
+  "t": "Uwu",
+  "d": "[cutesy] Uwu",
+  "revisada": true
+ },
+ {
+  "id": "0n77amk",
+  "g": "Reacción · sonrojo",
+  "q": "ella",
+  "t": "Ayy…",
+  "d": "[shy] Ayy…",
+  "revisada": true
+ },
+ {
+  "id": "0cnw773",
+  "g": "Reacción · sonrojo",
+  "q": "ella",
+  "t": "Yo también te amo",
+  "d": "[lovingly] Yo también te amo",
+  "revisada": true
+ },
+ {
+  "id": "1051jhr",
+  "g": "Reacción · sonrojo",
+  "q": "ella",
+  "t": "Ay deoz 🙈",
+  "d": "[shy giggle] Ay deoz",
+  "revisada": true
+ },
+ {
+  "id": "1rago2e",
+  "g": "Cohete · en el espacio",
+  "q": "el",
+  "t": "No debí comerme ese picante…",
+  "d": "[regretful] No debí comerme ese picante…",
+  "revisada": true
+ },
+ {
+  "id": "1wb40hg",
+  "g": "Cohete · en el espacio",
+  "q": "el",
+  "t": "Siempre supe que algún día saldría como un cohete del baño.",
+  "d": "[dramatically] Siempre supe que algún día saldría como un cohete del baño.",
+  "revisada": true
+ },
+ {
+  "id": "1n3gugz",
+  "g": "Cohete · en el espacio",
+  "q": "el",
+  "t": "¡Houston, tenemos un problema… estomacal!",
+  "d": "[panicked] ¡Houston, tenemos un problema… estomacal!",
+  "revisada": true
+ },
+ {
+  "id": "1bhd59s",
+  "g": "Cohete · en el espacio",
+  "q": "el",
+  "t": "¡Ni en un columpio volé tan alto!",
+  "d": "[excited] ¡Ni en un columpio volé tan alto!",
+  "revisada": true
+ },
+ {
+  "id": "1k697r9",
+  "g": "Cohete · en el espacio",
+  "q": "el",
+  "t": "¿Esto cuenta como viaje espacial? Quiero el certificado.",
+  "d": "[amused] ¿Esto cuenta como viaje espacial? Quiero el certificado.",
+  "revisada": true
+ },
+ {
+  "id": "0azv02l",
+  "g": "Cohete · en el espacio",
+  "q": "el",
+  "t": "El ají no perdona.",
+  "d": "[groaning] El ají no perdona.",
+  "revisada": true
+ },
+ {
+  "id": "0xjykdd",
+  "g": "Cohete · en el espacio",
+  "q": "el",
+  "t": "¡Mi amor, si me ves pasar por la ventana, saluda!",
+  "d": "[excited] ¡Mi amor, si me ves pasar por la ventana, saluda!",
+  "revisada": true
+ },
+ {
+  "id": "1sbnipc",
+  "g": "Cohete · en el espacio",
+  "q": "el",
+  "t": "La próxima vez pido el ají suavecito.",
+  "d": "[regretful] La próxima vez pido el ají suavecito.",
+  "revisada": true
+ },
+ {
+  "id": "1akshm3",
+  "g": "Cohete · en el espacio",
+  "q": "el",
+  "t": "Esto no estaba en el presupuesto del mes.",
+  "d": "[sighs] Esto no estaba en el presupuesto del mes.",
+  "revisada": true
+ },
+ {
+  "id": "1d3owo0",
+  "g": "Cohete · en el espacio",
+  "q": "el",
+  "t": "¡Guárdame la cena, ya vuelvo! Creo.",
+  "d": "[shouting] ¡Guárdame la cena, ya vuelvo! [unsure] Creo.",
+  "revisada": true
+ },
+ {
+  "id": "056axu0",
+  "g": "Cohete · tramos del viaje",
+  "q": "el",
+  "t": "¡Chao, barrio!",
+  "d": "[shouting, excited] ¡Chao, barrio!",
+  "revisada": true
+ },
+ {
+  "id": "15xw66a",
+  "g": "Cohete · tramos del viaje",
+  "q": "el",
+  "t": "Desde aquí la Tierra se ve chiquitica… como mi dignidad.",
+  "d": "[sighs] Desde aquí la Tierra se ve chiquitica… como mi dignidad.",
+  "revisada": true
+ },
+ {
+  "id": "1j7q91v",
+  "g": "Cohete · tramos del viaje",
+  "q": "el",
+  "t": "La Luna… y yo sin una serenata preparada.",
+  "d": "[sighs] La Luna… y yo sin una serenata preparada.",
+  "revisada": true
+ },
+ {
+  "id": "13z9vxx",
+  "g": "Cohete · tramos del viaje",
+  "q": "el",
+  "t": "¿Habrá baños en Marte? Pregunto por un amigo.",
+  "d": "[curious] ¿Habrá baños en Marte? Pregunto por un amigo.",
+  "revisada": true
+ },
+ {
+  "id": "1ir09np",
+  "g": "Cohete · tramos del viaje",
+  "q": "el",
+  "t": "Esto está más lleno que el metro de Medellín en hora pico.",
+  "d": "[amused] Esto está más lleno que el metro de Medellín en hora pico.",
+  "revisada": true
+ },
+ {
+  "id": "1jlqqni",
+  "g": "Cohete · tramos del viaje",
+  "q": "el",
+  "t": "Parece un concierto con luces de colores. Qué nivel.",
+  "d": "[amazed] Parece un concierto con luces de colores. Qué nivel.",
+  "revisada": true
+ },
+ {
+  "id": "1kcgz88",
+  "g": "Cohete · tramos del viaje",
+  "q": "el",
+  "t": "¡Todo es rosado! Esto lo decoró mi amor, seguro.",
+  "d": "[laughs] ¡Todo es rosado! Esto lo decoró mi amor, seguro.",
+  "revisada": true
+ },
+ {
+  "id": "1884j17",
+  "g": "Cohete · poder escudo",
+  "q": "el",
+  "t": "¡Limpiecito y protegido!",
+  "d": "[cheerful] ¡Limpiecito y protegido!",
+  "revisada": true
+ },
+ {
+  "id": "10ou0id",
+  "g": "Cohete · poder iman",
+  "q": "el",
+  "t": "¡Vengan, rollitos míos!",
+  "d": "[excited] ¡Vengan, rollitos míos!",
+  "revisada": true
+ },
+ {
+  "id": "1yb0hqe",
+  "g": "Cohete · poder turbo",
+  "q": "el",
+  "t": "¡Los frijoles de mi suegra!",
+  "d": "[excited] ¡Los frijoles de mi suegra!",
+  "revisada": true
+ },
+ {
+  "id": "1fgalce",
+  "g": "Cohete · poder lenta",
+  "q": "el",
+  "t": "Todo va como Netflix con mal internet…",
+  "d": "[bored] Todo va como Netflix con mal internet…",
+  "revisada": true
+ },
+ {
+  "id": "1idpatv",
+  "g": "Cohete · poder doble",
+  "q": "el",
+  "t": "¡Doble o nada!",
+  "d": "[excited] ¡Doble o nada!",
+  "revisada": true
+ },
+ {
+  "id": "0iz8dsp",
+  "g": "Cohete · poder laser",
+  "q": "el",
+  "t": "¡Destapando el universo!",
+  "d": "[excited] ¡Destapando el universo!",
+  "revisada": true
+ },
+ {
+  "id": "1ek2r00",
+  "g": "Cohete · poder mini",
+  "q": "el",
+  "t": "¡Mi retretico ayudante!",
+  "d": "[cheerful] ¡Mi retretico ayudante!",
+  "revisada": true
+ },
+ {
+  "id": "1k6ocb6",
+  "g": "Cohete · poder hormiga",
+  "q": "el",
+  "t": "¡Me encogí como ropa en lavadora!",
+  "d": "[laughs] ¡Me encogí como ropa en lavadora!",
+  "revisada": true
+ },
+ {
+  "id": "1r7itb7",
+  "g": "Cohete · poder ambientador",
+  "q": "el",
+  "t": "¡Huele a lavanda! Ya era hora.",
+  "d": "[relieved] ¡Huele a lavanda! Ya era hora.",
+  "revisada": true
+ },
+ {
+  "id": "0751cka",
+  "g": "Cohete · poder paca",
+  "q": "el",
+  "t": "¡Papel para todo el año!",
+  "d": "[excited] ¡Papel para todo el año!",
+  "revisada": true
+ },
+ {
+  "id": "009fyl2",
+  "g": "Cohete · otra vez",
+  "q": "el",
+  "t": "¡Una más y ya!",
+  "d": "[determined] ¡Una más y ya!",
+  "revisada": true
+ },
+ {
+  "id": "0soyvww",
+  "g": "Cohete · otra vez",
+  "q": "el",
+  "t": "Esta vez sí le gano a mi amor.",
+  "d": "[determined] Esta vez sí le gano a mi amor.",
+  "revisada": true
+ },
+ {
+  "id": "1i9rid1",
+  "g": "Cohete · otra vez",
+  "q": "el",
+  "t": "¡Revancha, universo!",
+  "d": "[shouting] ¡Revancha, universo!",
+  "revisada": true
+ },
+ {
+  "id": "1foty78",
+  "g": "Cohete · otra vez",
+  "q": "el",
+  "t": "Ya le cogí el tiro a esto.",
+  "d": "[confident] Ya le cogí el tiro a esto.",
+  "revisada": true
+ },
+ {
+  "id": "001037z",
+  "g": "Cohete · te pasé",
+  "q": "el",
+  "t": "¡Te pasé, mi amor! 😏",
+  "d": "[smug] ¡Te pasé, mi amor!",
+  "revisada": true
+ },
+ {
+  "id": "0wboan9",
+  "g": "Cohete · en el espacio",
+  "q": "ella",
+  "t": "¡Sabía que la leche me iba a hacer esto!",
+  "d": "[dramatically] ¡Sabía que la leche me iba a hacer esto!",
+  "revisada": true
+ },
+ {
+  "id": "01rjqht",
+  "g": "Cohete · en el espacio",
+  "q": "ella",
+  "t": "Intolerante a la lactosa… y ahora astronauta.",
+  "d": "[sighs] Intolerante a la lactosa… y ahora astronauta.",
+  "revisada": true
+ },
+ {
+  "id": "0p7fkii",
+  "g": "Cohete · en el espacio",
+  "q": "ella",
+  "t": "Nunca más un vaso de leche. NUNCA.",
+  "d": "[dramatically] Nunca más un vaso de leche. [shouting] ¡NUNCA!",
+  "revisada": true
+ },
+ {
+  "id": "1e2ihas",
+  "g": "Cohete · en el espacio",
+  "q": "ella",
+  "t": "¿Alguien tiene papel higiénico en el espacio?",
+  "d": "[desperate] ¿Alguien tiene papel higiénico en el espacio?",
+  "revisada": true
+ },
+ {
+  "id": "1gjt98b",
+  "g": "Cohete · en el espacio",
+  "q": "ella",
+  "t": "Siempre supe que algún día saldría como un cohete del baño.",
+  "d": "[dramatically] Siempre supe que algún día saldría como un cohete del baño.",
+  "revisada": true
+ },
+ {
+  "id": "1x81zj8",
+  "g": "Cohete · en el espacio",
+  "q": "ella",
+  "t": "¡Qué vista tan bonita… qué vergüenza tan grande!",
+  "d": "[amazed] ¡Qué vista tan bonita… [embarrassed] qué vergüenza tan grande!",
+  "revisada": true
+ },
+ {
+  "id": "1cntr8p",
+  "g": "Cohete · en el espacio",
+  "q": "ella",
+  "t": "Si esto sale en las noticias, no me conoces.",
+  "d": "[embarrassed] Si esto sale en las noticias, no me conoces.",
+  "revisada": true
+ },
+ {
+  "id": "11edv4k",
+  "g": "Cohete · en el espacio",
+  "q": "ella",
+  "t": "Ningún videojuego me preparó para esto.",
+  "d": "[dramatically] Ningún videojuego me preparó para esto.",
+  "revisada": true
+ },
+ {
+  "id": "0fiygif",
+  "g": "Cohete · en el espacio",
+  "q": "ella",
+  "t": "Del baño a la NASA en un solo jalón.",
+  "d": "[laughs] Del baño a la NASA en un solo jalón.",
+  "revisada": true
+ },
+ {
+  "id": "0yfl8sx",
+  "g": "Cohete · en el espacio",
+  "q": "ella",
+  "t": "¡Mi amor, esto es culpa de tu leche!",
+  "d": "[accusing, playfully] ¡Mi amor, esto es culpa de tu leche!",
+  "revisada": true
+ },
+ {
+  "id": "0w37bjz",
+  "g": "Cohete · tramos del viaje",
+  "q": "ella",
+  "t": "¡Chao, barrio! ¡Que nadie me vea!",
+  "d": "[shouting, embarrassed] ¡Chao, barrio! ¡Que nadie me vea!",
+  "revisada": true
+ },
+ {
+  "id": "0e853le",
+  "g": "Cohete · tramos del viaje",
+  "q": "ella",
+  "t": "Desde aquí la Tierra se ve chiquitica… como mi paciencia.",
+  "d": "[sighs] Desde aquí la Tierra se ve chiquitica… como mi paciencia.",
+  "revisada": true
+ },
+ {
+  "id": "1ayzorh",
+  "g": "Cohete · tramos del viaje",
+  "q": "ella",
+  "t": "¿La Luna es de queso? Ni loca la pruebo: lactosa.",
+  "d": "[playfully] ¿La Luna es de queso? Ni loca la pruebo: lactosa.",
+  "revisada": true
+ },
+ {
+  "id": "0ltcj22",
+  "g": "Cohete · tramos del viaje",
+  "q": "ella",
+  "t": "¿Habrá baños en Marte? Ojalá con papel.",
+  "d": "[curious] ¿Habrá baños en Marte? Ojalá con papel.",
+  "revisada": true
+ },
+ {
+  "id": "1o2qu10",
+  "g": "Cohete · tramos del viaje",
+  "q": "ella",
+  "t": "Esto está más lleno que el metro de Medellín en hora pico.",
+  "d": "[amused] Esto está más lleno que el metro de Medellín en hora pico.",
+  "revisada": true
+ },
+ {
+  "id": "14lfn39",
+  "g": "Cohete · tramos del viaje",
+  "q": "ella",
+  "t": "¡Qué colores tan bonitos! Parece un cuadro.",
+  "d": "[amazed] ¡Qué colores tan bonitos! Parece un cuadro.",
+  "revisada": true
+ },
+ {
+  "id": "1x6l4cv",
+  "g": "Cohete · tramos del viaje",
+  "q": "ella",
+  "t": "¡Todo rosado! Así sí me gusta el espacio.",
+  "d": "[happy] ¡Todo rosado! Así sí me gusta el espacio.",
+  "revisada": true
+ },
+ {
+  "id": "0ezkagm",
+  "g": "Cohete · poder escudo",
+  "q": "ella",
+  "t": "¡Burbujita protectora!",
+  "d": "[cheerful] ¡Burbujita protectora!",
+  "revisada": true
+ },
+ {
+  "id": "1ocz17l",
+  "g": "Cohete · poder iman",
+  "q": "ella",
+  "t": "¡Vengan a mamá, rollitos!",
+  "d": "[excited] ¡Vengan a mamá, rollitos!",
+  "revisada": true
+ },
+ {
+  "id": "1io0t59",
+  "g": "Cohete · poder turbo",
+  "q": "ella",
+  "t": "¡Esa bandeja paisa no perdona!",
+  "d": "[excited] ¡Esa bandeja paisa no perdona!",
+  "revisada": true
+ },
+ {
+  "id": "1l9e50n",
+  "g": "Cohete · poder lenta",
+  "q": "ella",
+  "t": "Ay, qué paz… todo despacito.",
+  "d": "[relaxed] Ay, qué paz… todo despacito.",
+  "revisada": true
+ },
+ {
+  "id": "0sl4h7y",
+  "g": "Cohete · poder doble",
+  "q": "ella",
+  "t": "¡Todo me sale doble!",
+  "d": "[excited] ¡Todo me sale doble!",
+  "revisada": true
+ },
+ {
+  "id": "1q5w61i",
+  "g": "Cohete · poder laser",
+  "q": "ella",
+  "t": "¡Desatascador láser, a la orden!",
+  "d": "[excited] ¡Desatascador láser, a la orden!",
+  "revisada": true
+ },
+ {
+  "id": "1tum7f7",
+  "g": "Cohete · poder mini",
+  "q": "ella",
+  "t": "¡Un retretico bebé!",
+  "d": "[cutesy] ¡Un retretico bebé!",
+  "revisada": true
+ },
+ {
+  "id": "0odqn0x",
+  "g": "Cohete · poder hormiga",
+  "q": "ella",
+  "t": "¡Quedé chiquitica!",
+  "d": "[giggles] ¡Quedé chiquitica!",
+  "revisada": true
+ },
+ {
+  "id": "1kr9yul",
+  "g": "Cohete · poder ambientador",
+  "q": "ella",
+  "t": "¡Aroma a lavanda, por fin!",
+  "d": "[relieved] ¡Aroma a lavanda, por fin!",
+  "revisada": true
+ },
+ {
+  "id": "06f2j1j",
+  "g": "Cohete · poder paca",
+  "q": "ella",
+  "t": "¡Papel pa’ la casa entera!",
+  "d": "[excited] ¡Papel pa’ la casa entera!",
+  "revisada": true
+ },
+ {
+  "id": "1lkq5mj",
+  "g": "Cohete · otra vez",
+  "q": "ella",
+  "t": "¡Una más y ya!",
+  "d": "[determined] ¡Una más y ya!",
+  "revisada": true
+ },
+ {
+  "id": "12jz0u2",
+  "g": "Cohete · otra vez",
+  "q": "ella",
+  "t": "Ahora sí voy con toda.",
+  "d": "[determined] Ahora sí voy con toda.",
+  "revisada": true
+ },
+ {
+  "id": "14l9eqc",
+  "g": "Cohete · otra vez",
+  "q": "ella",
+  "t": "¡Revancha, universo!",
+  "d": "[shouting] ¡Revancha, universo!",
+  "revisada": true
+ },
+ {
+  "id": "149t8c5",
+  "g": "Cohete · otra vez",
+  "q": "ella",
+  "t": "Me quedé con ganas de más.",
+  "d": "[excited] Me quedé con ganas de más.",
+  "revisada": true
+ },
+ {
+  "id": "0dowejt",
+  "g": "Cohete · te pasé",
+  "q": "ella",
+  "t": "¡Chao, mi amor! Te dejé atrás 💅",
+  "d": "[sassy] ¡Chao, mi amor! Te dejé atrás",
+  "revisada": true
+ },
+ {
+  "id": "1i1aszv",
+  "g": "Cocina · llega a comer (wafles)",
+  "q": "el",
+  "t": "¡Esposa! Vine a probar los wafles más famosos de la casa 🧇",
+  "d": "[excited] ¡Esposa! Vine a probar los wafles más famosos de la casa",
+  "revisada": true
+ },
+ {
+  "id": "0b34vpn",
+  "g": "Cocina · llega a comer (wafles)",
+  "q": "el",
+  "t": "Pulga aventurera, ¿hoy cocinas tú? ¡Qué lujo!",
+  "d": "[teasing] Pulga aventurera, ¿hoy cocinas tú? ¡Qué lujo!",
+  "revisada": true
+ },
+ {
+  "id": "11nmylt",
+  "g": "Cocina · llega a comer (wafles)",
+  "q": "el",
+  "t": "¿Me atiende la chef más linda de Sopetrán?",
+  "d": "[flirty] ¿Me atiende la chef más linda de Sopetrán?",
+  "revisada": true
+ },
+ {
+  "id": "1p4dclr",
+  "g": "Cocina · llega a comer (fresas)",
+  "q": "el",
+  "t": "¿Me haces unas fresas con crema gigantes… con un wafle de sorpresa? 😏🍓",
+  "d": "[mischievously] ¿Me haces unas fresas con crema gigantes… con un wafle de sorpresa?",
+  "revisada": true
+ },
+ {
+  "id": "1yh4t8c",
+  "g": "Cocina · llega a comer (fresas)",
+  "q": "el",
+  "t": "Pulga aventurera, vine por mis fresas con crema",
+  "d": "[cheerful] Pulga aventurera, vine por mis fresas con crema",
+  "revisada": true
+ },
+ {
+  "id": "1m81ykp",
+  "g": "Cocina · llega a comer (fresas)",
+  "q": "el",
+  "t": "Esposa, ¿me atiendes con amor?",
+  "d": "[flirty] Esposa, ¿me atiendes con amor?",
+  "revisada": true
+ },
+ {
+  "id": "12lfg4u",
+  "g": "Cocina · llega a comer (frappes)",
+  "q": "el",
+  "t": "¡Esposa! ¿Me recibes con un frappé de café como siempre? ☕💖",
+  "d": "[excited] ¡Esposa! ¿Me recibes con un frappé de café como siempre?",
+  "revisada": true
+ },
+ {
+  "id": "05zckcf",
+  "g": "Cocina · llega a comer (frappes)",
+  "q": "el",
+  "t": "Pulga, después del trabajo solo pienso en tu frappé",
+  "d": "[tired, lovingly] Pulga, después del trabajo solo pienso en tu frappé",
+  "revisada": true
+ },
+ {
+  "id": "1yylknz",
+  "g": "Cocina · llega a comer (frappes)",
+  "q": "el",
+  "t": "Un frappé de café para tu panda, por favor",
+  "d": "[playfully] Un frappé de café para tu panda, por favor",
+  "revisada": true
+ },
+ {
+  "id": "1yatwzm",
+  "g": "Cocina · reacción encantado",
+  "q": "el",
+  "t": "¡Esposa, esto está buenísimo! 💖",
+  "d": "[delighted] ¡Esposa, esto está buenísimo!",
+  "revisada": true
+ },
+ {
+  "id": "1k6lhns",
+  "g": "Cocina · reacción encantado",
+  "q": "el",
+  "t": "¡Mi pulga aventurera es toda una chef!",
+  "d": "[proudly] ¡Mi pulga aventurera es toda una chef!",
+  "revisada": true
+ },
+ {
+  "id": "03ws1ww",
+  "g": "Cocina · reacción encantado",
+  "q": "el",
+  "t": "¡Me casaría otra vez contigo por esto!",
+  "d": "[delighted] ¡Me casaría otra vez contigo por esto!",
+  "revisada": true
+ },
+ {
+  "id": "1eoomo2",
+  "g": "Cocina · reacción encantado",
+  "q": "el",
+  "t": "¡Hecho con amor se nota!",
+  "d": "[warmly] ¡Hecho con amor se nota!",
+  "revisada": true
+ },
+ {
+  "id": "0ypedab",
+  "g": "Cocina · reacción feliz",
+  "q": "el",
+  "t": "¡Qué rico, mi amor!",
+  "d": "[happy] ¡Qué rico, mi amor!",
+  "revisada": true
+ },
+ {
+  "id": "1fgejc5",
+  "g": "Cocina · reacción feliz",
+  "q": "el",
+  "t": "Gracias, esposa 💕",
+  "d": "[grateful] Gracias, esposa",
+  "revisada": true
+ },
+ {
+  "id": "1h3cuep",
+  "g": "Cocina · reacción feliz",
+  "q": "el",
+  "t": "Me encantó, pulga",
+  "d": "[happy] Me encantó, pulga",
+  "revisada": true
+ },
+ {
+  "id": "0o9j8e2",
+  "g": "Cocina · reacción normal",
+  "q": "el",
+  "t": "Te quedó… bien, esposa 😅",
+  "d": "[hesitant] Te quedó… bien, esposa",
+  "revisada": true
+ },
+ {
+  "id": "1i0xvax",
+  "g": "Cocina · reacción normal",
+  "q": "el",
+  "t": "Con amor todo sabe rico",
+  "d": "[warmly] Con amor todo sabe rico",
+  "revisada": true
+ },
+ {
+  "id": "1l7730h",
+  "g": "Cocina · reacción normal",
+  "q": "el",
+  "t": "Lo importante es la intención, pulguita",
+  "d": "[kindly] Lo importante es la intención, pulguita",
+  "revisada": true
+ },
+ {
+  "id": "1d2pfbv",
+  "g": "Cocina · reacción bravo",
+  "q": "el",
+  "t": "Pulga… ¿qué pasó aquí? 😂",
+  "d": "[confused, laughs] Pulga… ¿qué pasó aquí?",
+  "revisada": true
+ },
+ {
+  "id": "1jf7x8s",
+  "g": "Cocina · reacción bravo",
+  "q": "el",
+  "t": "Te perdono porque te amo",
+  "d": "[laughs] Te perdono porque te amo",
+  "revisada": true
+ },
+ {
+  "id": "1hd7gsc",
+  "g": "Cocina · reacción bravo",
+  "q": "el",
+  "t": "Mejor pedimos domicilio… mentiras 😘",
+  "d": "[teasing] Mejor pedimos domicilio… [laughs] mentiras",
+  "revisada": true
+ },
+ {
+  "id": "0eyafhu",
+  "g": "Cocina · su favorito (frappes)",
+  "q": "el",
+  "t": "¡Igualito al que me esperas después del trabajo! ☕💖",
+  "d": "[delighted] ¡Igualito al que me esperas después del trabajo!",
+  "revisada": true
+ },
+ {
+  "id": "07bmu2a",
+  "g": "Cocina · su favorito (fresas)",
+  "q": "el",
+  "t": "¡Ahora sí sé de quién eran esas fresas con crema! 😂🍓",
+  "d": "[laughs] ¡Ahora sí sé de quién eran esas fresas con crema!",
+  "revisada": true
+ },
+ {
+  "id": "0x143zx",
+  "g": "Cocina · llega a comer (wafles)",
+  "q": "ella",
+  "t": "¡Panda! Me prometiste wafles cada vez que yo quisiera… y hoy quiero 🧇💖",
+  "d": "[excited] ¡Panda! Me prometiste wafles cada vez que yo quisiera… y hoy quiero",
+  "revisada": true
+ },
+ {
+  "id": "1lhu047",
+  "g": "Cocina · llega a comer (wafles)",
+  "q": "ella",
+  "t": "Liefje, vine por mis wafles favoritos",
+  "d": "[cutesy] Lífie, vine por mis wafles favoritos",
+  "revisada": true
+ },
+ {
+  "id": "11h7327",
+  "g": "Cocina · llega a comer (wafles)",
+  "q": "ella",
+  "t": "Huele a wafle… ¿fuiste tú, perro lanudo?",
+  "d": "[curious] Huele a wafle… ¿fuiste tú, perro lanudo?",
+  "revisada": true
+ },
+ {
+  "id": "04yv3sc",
+  "g": "Cocina · llega a comer (fresas)",
+  "q": "ella",
+  "t": "¡Panda! ¿Me haces unas fresas con crema gigantes? 🍓",
+  "d": "[excited] ¡Panda! ¿Me haces unas fresas con crema gigantes?",
+  "revisada": true
+ },
+ {
+  "id": "0xlh8oi",
+  "g": "Cocina · llega a comer (fresas)",
+  "q": "ella",
+  "t": "Liefje… ¿me atiendes con amor?",
+  "d": "[flirty] Lífie… ¿me atiendes con amor?",
+  "revisada": true
+ },
+ {
+  "id": "1dz5i98",
+  "g": "Cocina · llega a comer (fresas)",
+  "q": "ella",
+  "t": "Vengo a ver a mi chef favorito, perro lanudo",
+  "d": "[flirty] Vengo a ver a mi chef favorito, perro lanudo",
+  "revisada": true
+ },
+ {
+  "id": "029wls7",
+  "g": "Cocina · llega a comer (frappes)",
+  "q": "ella",
+  "t": "Hoy me toca a mí que me reciban con frappé, ¿no, panda? 😏",
+  "d": "[sassy] Hoy me toca a mí que me reciban con frappé, ¿no, panda?",
+  "revisada": true
+ },
+ {
+  "id": "0otxars",
+  "g": "Cocina · llega a comer (frappes)",
+  "q": "ella",
+  "t": "Liefje, un frappecito para tu esposa",
+  "d": "[cutesy] Lífie, un frappecito para tu esposa",
+  "revisada": true
+ },
+ {
+  "id": "1fqk9tw",
+  "g": "Cocina · llega a comer (frappes)",
+  "q": "ella",
+  "t": "¿Aquí atiende el perro lanudo más lindo?",
+  "d": "[flirty] ¿Aquí atiende el perro lanudo más lindo?",
+  "revisada": true
+ },
+ {
+  "id": "0nsxiqk",
+  "g": "Cocina · reacción encantado",
+  "q": "ella",
+  "t": "¡Panda, esto está divino! 💖",
+  "d": "[delighted] ¡Panda, esto está divino!",
+  "revisada": true
+ },
+ {
+  "id": "0hqveoy",
+  "g": "Cocina · reacción encantado",
+  "q": "ella",
+  "t": "¡Liefje, me casaría otra vez contigo por esto!",
+  "d": "[delighted] ¡Lífie, me casaría otra vez contigo por esto!",
+  "revisada": true
+ },
+ {
+  "id": "1rwmnp5",
+  "g": "Cocina · reacción encantado",
+  "q": "ella",
+  "t": "¡Mi chef favorito! Te amo 💕",
+  "d": "[lovingly] ¡Mi chef favorito! Te amo",
+  "revisada": true
+ },
+ {
+  "id": "19fhpsm",
+  "g": "Cocina · reacción encantado",
+  "q": "ella",
+  "t": "¡Hecho con amor se nota, perro lanudo!",
+  "d": "[warmly] ¡Hecho con amor se nota, perro lanudo!",
+  "revisada": true
+ },
+ {
+  "id": "0fwqugs",
+  "g": "Cocina · reacción feliz",
+  "q": "ella",
+  "t": "¡Qué rico, mi amor!",
+  "d": "[happy] ¡Qué rico, mi amor!",
+  "revisada": true
+ },
+ {
+  "id": "0sht0el",
+  "g": "Cocina · reacción feliz",
+  "q": "ella",
+  "t": "Gracias, panda 💕",
+  "d": "[grateful] Gracias, panda",
+  "revisada": true
+ },
+ {
+  "id": "1hogm9w",
+  "g": "Cocina · reacción feliz",
+  "q": "ella",
+  "t": "Me encantó, liefje",
+  "d": "[happy] Me encantó, lífie",
+  "revisada": true
+ },
+ {
+  "id": "1vdksw1",
+  "g": "Cocina · reacción normal",
+  "q": "ella",
+  "t": "Te quedó… bien, perro lanudo 😅",
+  "d": "[hesitant] Te quedó… bien, perro lanudo",
+  "revisada": true
+ },
+ {
+  "id": "1623n6e",
+  "g": "Cocina · reacción normal",
+  "q": "ella",
+  "t": "Con amor todo sabe rico",
+  "d": "[warmly] Con amor todo sabe rico",
+  "revisada": true
+ },
+ {
+  "id": "1q6yke3",
+  "g": "Cocina · reacción normal",
+  "q": "ella",
+  "t": "Lo importante es la intención, panda",
+  "d": "[kindly] Lo importante es la intención, panda",
+  "revisada": true
+ },
+ {
+  "id": "0ag0h4t",
+  "g": "Cocina · reacción bravo",
+  "q": "ella",
+  "t": "Panda… ¿qué pasó aquí? 😂",
+  "d": "[confused, laughs] Panda… ¿qué pasó aquí?",
+  "revisada": true
+ },
+ {
+  "id": "0uxa4e2",
+  "g": "Cocina · reacción bravo",
+  "q": "ella",
+  "t": "Te perdono porque te amo, perro lanudo",
+  "d": "[laughs] Te perdono porque te amo, perro lanudo",
+  "revisada": true
+ },
+ {
+  "id": "0m6tjlj",
+  "g": "Cocina · reacción bravo",
+  "q": "ella",
+  "t": "Mejor pedimos domicilio… mentiras 😘",
+  "d": "[teasing] Mejor pedimos domicilio… [laughs] mentiras",
+  "revisada": true
+ },
+ {
+  "id": "0llsbe8",
+  "g": "Cocina · su favorito (wafles)",
+  "q": "ella",
+  "t": "¡Cumpliste tu promesa: wafles cuando yo quiera! 🧇💖",
+  "d": "[emotional] ¡Cumpliste tu promesa: wafles cuando yo quiera!",
+  "revisada": true
+ },
+ {
+  "id": "1l0aedg",
+  "g": "Carta del súper · día 7 · La primera lista",
+  "q": "el",
+  "t": "Pulga aventurera: ¿te has fijado que cada vez que llego a Sopetrán lo primero que hacemos es ir al súper? Tú con la lista y yo con el carrito, decidiendo entre los dos si llevamos una cosa o dos.\nEsta tiendita la hice pensando en eso: en que contigo hasta comprar arroz se vuelve plan.\nTu panda",
+  "d": "[warmly] Pulga aventurera: ¿te has fijado que cada vez que llego a Sopetrán lo primero que hacemos es ir al súper? Tú con la lista y yo con el carrito, decidiendo entre los dos si llevamos una cosa o dos. [tenderly] Esta tiendita la hice pensando en eso: en que contigo hasta comprar arroz se vuelve plan. Tu panda.",
+  "revisada": true
+ },
+ {
+  "id": "0670wey",
+  "g": "Carta del súper · día 15 · Cocinar juntitos",
+  "q": "el",
+  "t": "Lo mejor del mercado no es comprar: es llegar a tu casa con las bolsas y cocinar juntitos. Tú mandas en la cocina y yo obedezco (casi siempre).\nCuando la tienda se llene de clientes y no des abasto, acuérdate de que al final del día nos espera esa cocina.\nTu panda",
+  "d": "[warmly] Lo mejor del mercado no es comprar: es llegar a tu casa con las bolsas y cocinar juntitos. Tú mandas en la cocina y yo obedezco… [laughs] casi siempre. [tenderly] Cuando la tienda se llene de clientes y no des abasto, acuérdate de que al final del día nos espera esa cocina. Tu panda.",
+  "revisada": true
+ },
+ {
+  "id": "1cnwkop",
+  "g": "Carta del súper · día 25 · Nuestra tiendita",
+  "q": "el",
+  "t": "Último día de la tiendita. Empezó con una nevera, un estante y una caja, y mira todo lo que le pusimos.\nAsí somos nosotros, esposa: empezamos con poquito y lo vamos llenando de cosas bonitas. Mañana el local crece… y nosotros también.\nJavier",
+  "d": "[nostalgic] Último día de la tiendita. Empezó con una nevera, un estante y una caja, y mira todo lo que le pusimos. [tenderly] Así somos nosotros, esposa: empezamos con poquito y lo vamos llenando de cosas bonitas. [excited] Mañana el local crece… y nosotros también.",
+  "revisada": true
+ },
+ {
+  "id": "1oce7by",
+  "g": "Carta del súper · día 33 · El carrito",
+  "q": "el",
+  "t": "Dicen que uno conoce a su pareja empujando un carrito de mercado: si se antoja de todo, si choca contra las góndolas, si deja que el otro escoja el pan.\nYo ya te conozco: te antojas de todo y yo te lo quiero comprar todo. Y no cambio eso por nada.\nTu panda",
+  "d": "[playfully] Dicen que uno conoce a su pareja empujando un carrito de mercado: si se antoja de todo, si choca contra las góndolas, si deja que el otro escoja el pan. [lovingly] Yo ya te conozco: te antojas de todo y yo te lo quiero comprar todo. Y no cambio eso por nada. Tu panda.",
+  "revisada": true
+ },
+ {
+  "id": "073wd05",
+  "g": "Carta del súper · día 42 · Lo que no está en la lista",
+  "q": "el",
+  "t": "En la lista nunca está lo más importante: la canción del súper que tarareas sin darte cuenta, el antojo que se cuela al final y la fila que se hace cortica porque estamos juntos.\nEso no se paga en la caja, pero siempre me lo llevo para la casa.\nJavier",
+  "d": "[tenderly] En la lista nunca está lo más importante: la canción del súper que tarareas sin darte cuenta, el antojo que se cuela al final y la fila que se hace cortica porque estamos juntos. [softly] Eso no se paga en la caja, pero siempre me lo llevo para la casa.",
+  "revisada": true
+ },
+ {
+  "id": "0vggaew",
+  "g": "Carta del súper · día 50 · La mitad del camino",
+  "q": "el",
+  "t": "Cincuenta días atendiendo juntos, mi amor, sin soltarnos la mano ni cuando el súper se llena.\nSi este juego fuera nuestra vida, estaríamos en ese momento en que uno mira para atrás, sonríe y piensa: valió la pena cada viaje.\nTu panda",
+  "d": "[proudly] Cincuenta días atendiendo juntos, mi amor, sin soltarnos la mano ni cuando el súper se llena. [tenderly] Si este juego fuera nuestra vida, estaríamos en ese momento en que uno mira para atrás, sonríe y piensa: valió la pena cada viaje. Tu panda.",
+  "revisada": true
+ },
+ {
+  "id": "1nlz2km",
+  "g": "Carta del súper · día 60 · La bolsa más pesada",
+  "q": "el",
+  "t": "Te prometo una cosa sencilla, esposa: de aquí en adelante, la bolsa más pesada la cargo yo. La del mercado y las otras, las que no se ven.\nPara eso somos dos: para que a ninguno le toque cargar solo.\nJavier",
+  "d": "[sincerely] Te prometo una cosa sencilla, esposa: de aquí en adelante, la bolsa más pesada la cargo yo. La del mercado y las otras, las que no se ven. [softly] Para eso somos dos: para que a ninguno le toque cargar solo.",
+  "revisada": true
+ },
+ {
+  "id": "1sze97s",
+  "g": "Carta del súper · día 66 · La alacena de los dos",
+  "q": "el",
+  "t": "Cuando vivamos juntos, el mercado va a ser de los dos y la nevera también. Vamos a tener una alacena llena de lo que te gusta y un cajón solo para tus antojos, que nadie más puede tocar (ni yo… bueno, casi).\nYa lo tengo todo pensado. Lo único que me falta es contar los días.\nTu panda",
+  "d": "[dreamy] Cuando vivamos juntos, el mercado va a ser de los dos y la nevera también. Vamos a tener una alacena llena de lo que te gusta y un cajón solo para tus antojos, que nadie más puede tocar… [laughs] ni yo… bueno, casi. [tenderly] Ya lo tengo todo pensado. Lo único que me falta es contar los días. Tu panda.",
+  "revisada": true
+ },
+ {
+  "id": "1tqfzlr",
+  "g": "Carta del súper · día 75 · Un supermercado entero",
+  "q": "el",
+  "t": "Mira lo grande que está el local. Me acuerdo de la tiendita del principio y me da risa: así era yo antes de ti, con muy poquito adentro.\nTú llegaste y le pusiste luces, letreros y vida a todo.\nJavier",
+  "d": "[amused] Mira lo grande que está el local. Me acuerdo de la tiendita del principio y me da risa: así era yo antes de ti, con muy poquito adentro. [emotional] Tú llegaste y le pusiste luces, letreros y vida a todo.",
+  "revisada": true
+ },
+ {
+  "id": "1ahc59y",
+  "g": "Carta del súper · día 85 · La mejor socia",
+  "q": "el",
+  "t": "Si algún día tuviéramos una tienda de verdad, tú serías la jefa y yo el que repone. Tú atenderías a todo el mundo con esa sonrisa que convence a cualquiera, y yo correría feliz a la bodega solo por verte trabajar.\nEres la mejor socia que la vida me pudo dar.\nTu panda",
+  "d": "[dreamy] Si algún día tuviéramos una tienda de verdad, tú serías la jefa y yo el que repone. Tú atenderías a todo el mundo con esa sonrisa que convence a cualquiera, y yo correría feliz a la bodega solo por verte trabajar. [lovingly] Eres la mejor socia que la vida me pudo dar. Tu panda.",
+  "revisada": true
+ },
+ {
+  "id": "1i4idps",
+  "g": "Carta del súper · día 92 · Lo que me llevo",
+  "q": "el",
+  "t": "De todos los mercados que hemos hecho no me acuerdo de los precios ni de lo que compramos. Me acuerdo de ti: de tu risa en los pasillos, de cómo me miras cuando me antojo de algo y de lo bonito que es volver contigo a la casa.\nJavier",
+  "d": "[tenderly] De todos los mercados que hemos hecho no me acuerdo de los precios ni de lo que compramos. Me acuerdo de ti: de tu risa en los pasillos, de cómo me miras cuando me antojo de algo y de lo bonito que es volver contigo a la casa.",
+  "revisada": true
+ },
+ {
+  "id": "15gh758",
+  "g": "Carta del súper · día 100 · Cien días, un solo carrito",
+  "q": "el",
+  "t": "Cien días, una tiendita que se volvió hipermercado y dos que nunca se soltaron. Gracias por jugar esto conmigo, esposa.\nFeliz aniversario. Ojalá nos toquen mil mercados más, mil comidas juntitos en la cocina y una vida entera empujando el mismo carrito.\nTe amo.\nJavier",
+  "d": "[emotional] Cien días, una tiendita que se volvió hipermercado y dos que nunca se soltaron. Gracias por jugar esto conmigo, esposa. [tenderly] Feliz aniversario. Ojalá nos toquen mil mercados más, mil comidas juntitos en la cocina y una vida entera empujando el mismo carrito. [softly] Te amo.",
+  "revisada": true
+ },
+ {
+  "id": "17643mv",
+  "g": "Sangre y Ceniza · Prólogo · La Noche Eterna",
+  "q": "ella",
+  "t": "Panda… ¿esa no es la constelación que brilla encima de nuestra casa? ¿La de las dos manos?",
+  "d": "[awed] Panda… ¿esa no es la constelación que brilla encima de nuestra casa? ¿La de las dos manos?",
+  "revisada": true
+ },
+ {
+  "id": "1hrhfus",
+  "g": "Sangre y Ceniza · Prólogo · La Noche Eterna",
+  "q": "el",
+  "t": "La misma, esposa. Y acaba de parpadear. Eso nunca había pasado.",
+  "d": "[serious] La misma, esposa. Y acaba de parpadear. Eso nunca había pasado.",
+  "revisada": true
+ },
+ {
+  "id": "1dxzbvl",
+  "g": "Sangre y Ceniza · Prólogo · La Noche Eterna",
+  "q": "ella",
+  "t": "¿Y por qué nos llama a nosotros? Nosotros vivimos tranquilitos en el Hogar.",
+  "d": "[confused] ¿Y por qué nos llama a nosotros? Nosotros vivimos tranquilitos en el Hogar.",
+  "revisada": true
+ },
+ {
+  "id": "1tcv1j1",
+  "g": "Sangre y Ceniza · Prólogo · La Noche Eterna",
+  "q": "el",
+  "t": "Pues que venga. Pero primero tiene que pasar por encima de mí.",
+  "d": "[determined] Pues que venga. Pero primero tiene que pasar por encima de mí.",
+  "revisada": true
+ },
+ {
+  "id": "1vzr1zq",
+  "g": "Sangre y Ceniza · Prólogo · La Noche Eterna",
+  "q": "ella",
+  "t": "De nosotros, liefje. Por encima de nosotros dos.",
+  "d": "[lovingly] De nosotros, lífie. Por encima de nosotros dos.",
+  "revisada": true
+ },
+ {
+  "id": "1xvy569",
+  "g": "Sangre y Ceniza · I · Las Afueras · La grieta",
+  "q": "el",
+  "t": "¿Desde adentro? ¿Alguien de Valdemora le abrió la puerta a la ceniza?",
+  "d": "[shocked] ¿Desde adentro? ¿Alguien de Valdemora le abrió la puerta a la ceniza?",
+  "revisada": true
+ },
+ {
+  "id": "19ysu7e",
+  "g": "Sangre y Ceniza · I · Las Afueras · La grieta",
+  "q": "ella",
+  "t": "Ay deos… todo el mundo quiere vivir para siempre, hasta que le toca la eternidad de verdad.",
+  "d": "[sighs] Ay deos… todo el mundo quiere vivir para siempre, hasta que le toca la eternidad de verdad.",
+  "revisada": true
+ },
+ {
+  "id": "1l1f720",
+  "g": "Sangre y Ceniza · I · Las Afueras · La grieta",
+  "q": "el",
+  "t": "Entonces hay que cerrar esa grieta.",
+  "d": "[determined] Entonces hay que cerrar esa grieta.",
+  "revisada": true
+ },
+ {
+  "id": "1s1znwy",
+  "g": "Sangre y Ceniza · I · Las Afueras · La grieta",
+  "q": "el",
+  "t": "Tranquila, pulga aventurera, que yo voy adelante.",
+  "d": "[confident] Tranquila, pulga aventurera, que yo voy adelante.",
+  "revisada": true
+ },
+ {
+  "id": "1jjsibu",
+  "g": "Sangre y Ceniza · I · Las Afueras · La grieta",
+  "q": "ella",
+  "t": "Tú vas adelante, mi niño… pero yo llevo el mapa. Por la izquierda.",
+  "d": "[teasing] Tú vas adelante, mi niño… pero yo llevo el mapa. Por la izquierda.",
+  "revisada": true
+ },
+ {
+  "id": "1d3fjth",
+  "g": "Sangre y Ceniza · II · El Subsuelo · Por qué el escudo",
+  "q": "ella",
+  "t": "Mira, mor: son dibujos. Dos señoras y una niña chiquitica entre ellas.",
+  "d": "[curious] Mira, mor: son dibujos. Dos señoras y una niña chiquitica entre ellas.",
+  "revisada": true
+ },
+ {
+  "id": "0turytg",
+  "g": "Sangre y Ceniza · II · El Subsuelo · Por qué el escudo",
+  "q": "el",
+  "t": "Parece que se estuviera tragando un planeta entero.",
+  "d": "[awed] Parece que se estuviera tragando un planeta entero.",
+  "revisada": true
+ },
+ {
+  "id": "16wgf8p",
+  "g": "Sangre y Ceniza · II · El Subsuelo · Por qué el escudo",
+  "q": "ella",
+  "t": "…la escondieron detrás de un escudo. Como quien tapa una velita con la mano para que no se la lleve el viento.",
+  "d": "[softly] …la escondieron detrás de un escudo. Como quien tapa una velita con la mano para que no se la lleve el viento.",
+  "revisada": true
+ },
+ {
+  "id": "1eddzdo",
+  "g": "Sangre y Ceniza · II · El Subsuelo · Por qué el escudo",
+  "q": "el",
+  "t": "¿Y ese quién es?",
+  "d": "[curious] ¿Y ese quién es?",
+  "revisada": true
+ },
+ {
+  "id": "1snv6rx",
+  "g": "Sangre y Ceniza · II · El Subsuelo · Por qué el escudo",
+  "q": "ella",
+  "t": "Pues sus laberintos tienen una falla: nosotros no nos perdemos si vamos de la mano.",
+  "d": "[confident] Pues sus laberintos tienen una falla: nosotros no nos perdemos si vamos de la mano.",
+  "revisada": true
+ },
+ {
+  "id": "0jk2g5v",
+  "g": "Sangre y Ceniza · III · El Santuario · Los otros panteones",
+  "q": "ella",
+  "t": "«Los otros panteones dejaron apagar la estrella que Nath’Gora cuidaba. Por descuido. Por soberbia.»",
+  "d": "[reading solemnly] «Los otros panteones dejaron apagar la estrella que Nath’Gora cuidaba. Por descuido. Por soberbia.»",
+  "revisada": true
+ },
+ {
+  "id": "0t9rsb6",
+  "g": "Sangre y Ceniza · III · El Santuario · Los otros panteones",
+  "q": "el",
+  "t": "O sea que Nath’Gora no nació malo… se quedó sin su estrella.",
+  "d": "[thoughtful] O sea que Nath’Gora no nació malo… se quedó sin su estrella.",
+  "revisada": true
+ },
+ {
+  "id": "1t5zedw",
+  "g": "Sangre y Ceniza · III · El Santuario · Los otros panteones",
+  "q": "ella",
+  "t": "Las Reliquias de Sangre… ¿son pedazos de esas cárceles?",
+  "d": "[curious] Las Reliquias de Sangre… ¿son pedazos de esas cárceles?",
+  "revisada": true
+ },
+ {
+  "id": "1tkifqo",
+  "g": "Sangre y Ceniza · III · El Santuario · Los otros panteones",
+  "q": "el",
+  "t": "Y por eso los otros panteones «no se meten». No es que no quieran: están encerrados.",
+  "d": "[thoughtful] Y por eso los otros panteones «no se meten». No es que no quieran: están encerrados.",
+  "revisada": true
+ },
+ {
+  "id": "12bidls",
+  "g": "Sangre y Ceniza · III · El Santuario · Los otros panteones",
+  "q": "ella",
+  "t": "Qué tristeza. Una estrella apagada por un descuido, y un universo entero pagándolo.",
+  "d": "[sad] Qué tristeza. Una estrella apagada por un descuido, y un universo entero pagándolo.",
+  "revisada": true
+ },
+ {
+  "id": "1vlbmsx",
+  "g": "Sangre y Ceniza · III · El Santuario · Los otros panteones",
+  "q": "el",
+  "t": "Por eso yo te cuido tanto, esposa. A las estrellas no se les descuida.",
+  "d": "[tenderly] Por eso yo te cuido tanto, esposa. A las estrellas no se les descuida.",
+  "revisada": true
+ },
+ {
+  "id": "081gl3d",
+  "g": "Sangre y Ceniza · III · El Santuario · Los otros panteones",
+  "q": "ella",
+  "t": "Ay, mi niño. Tú y tus frases… shi, cuídame.",
+  "d": "[shy giggle] Ay, mi niño. Tú y tus frases… shi, cuídame.",
+  "revisada": true
+ },
+ {
+  "id": "1b08ubh",
+  "g": "Sangre y Ceniza · IV · La Corte del Conde · El Lazo Primordial",
+  "q": "el",
+  "t": "¿Nosotros?",
+  "d": "[surprised] ¿Nosotros?",
+  "revisada": true
+ },
+ {
+  "id": "0f0ue5v",
+  "g": "Sangre y Ceniza · IV · La Corte del Conde · El Lazo Primordial",
+  "q": "ella",
+  "t": "Por eso parpadeó la constelación… nos estaba buscando a nosotros.",
+  "d": "[awed] Por eso parpadeó la constelación… nos estaba buscando a nosotros.",
+  "revisada": true
+ },
+ {
+  "id": "120wff4",
+  "g": "Sangre y Ceniza · IV · La Corte del Conde · El Lazo Primordial",
+  "q": "el",
+  "t": "Pues inténtalo. Pero primero vas a tener que soltarnos. Y eso no va a pasar.",
+  "d": "[defiant] Pues inténtalo. Pero primero vas a tener que soltarnos. Y eso no va a pasar.",
+  "revisada": true
+ },
+ {
+  "id": "1ohcapv",
+  "g": "Sangre y Ceniza · IV · La Corte del Conde · El Lazo Primordial",
+  "q": "ella",
+  "t": "Vámonos a la casa, panda. Que la granja no se riega sola.",
+  "d": "[playfully] Vámonos a la casa, panda. Que la granja no se riega sola.",
+  "revisada": true
+ },
+ {
+  "id": "0a2va8k",
+  "g": "Sangre y Ceniza · IV · La Corte del Conde · El Lazo Primordial",
+  "q": "el",
+  "t": "Vámonos, esposa. De la mano, como siempre.",
+  "d": "[tenderly] Vámonos, esposa. De la mano, como siempre.",
+  "revisada": true
+ }
+]

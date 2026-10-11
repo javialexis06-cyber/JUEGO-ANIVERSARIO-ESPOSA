@@ -321,7 +321,9 @@ let cancion: 'cumbia' | 'hogar' | 'mesa' = 'cumbia';
 let musicaPendiente: 'menu' | 'juego' | null = null;
 /** Callada por un rato sin tocar la preferencia de quien juega (con la tele prendida, para oír el video). */
 let musicaCallada = false;
-const volumenMusica = () => (musicaApagada || musicaCallada ? 0 : musicaPendiente === 'menu' ? 0.45 : 0.8);
+/** Mientras habla alguien (las voces de la pareja) la música baja para que se le entienda. */
+let musicaAgachada = false;
+const volumenMusica = () => (musicaApagada || musicaCallada ? 0 : (musicaPendiente === 'menu' ? 0.45 : 0.8) * (musicaAgachada ? 0.35 : 1));
 let reloj: ReturnType<typeof setInterval> | null = null;
 let pasoActual = 0;
 let proximo = 0;
@@ -391,5 +393,11 @@ export const musica = {
     if (musicaCallada === si) return;
     musicaCallada = si;
     if (ctx && salidaMusica) salidaMusica.gain.setTargetAtTime(volumenMusica(), ctx.currentTime, si ? 0.15 : 0.8);
+  },
+  /** Baja la música mientras alguien habla (y la sube suavecito después). */
+  agachar(si: boolean) {
+    if (musicaAgachada === si) return;
+    musicaAgachada = si;
+    if (ctx && salidaMusica) salidaMusica.gain.setTargetAtTime(volumenMusica(), ctx.currentTime, si ? 0.12 : 0.6);
   },
 };

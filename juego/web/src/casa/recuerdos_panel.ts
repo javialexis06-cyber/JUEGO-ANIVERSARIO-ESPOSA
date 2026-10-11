@@ -12,7 +12,7 @@ import { esc } from './ui_casa';
 
 export type ModoRecuerdos = 'bano' | 'cama';
 
-interface Vineta {
+export interface Vineta {
   titulo: string;
   sub?: string;
   dibujo: string;
@@ -20,7 +20,7 @@ interface Vineta {
 }
 
 /** Discusiones bobas de todos los días (las del chat y otras en las que nunca se ponen de acuerdo). */
-const DISCUSIONES: Vineta[] = [
+export const DISCUSIONES: Vineta[] = [
   { titulo: '¿Muak o betito?', dibujo: 'charla', lineas: [['el', 'Un muak no es lo mismo que un betito.'], ['ella', '¿Y cuál es la diferencia?'], ['el', 'El betito es en persona.'], ['ella', 'Entonces ven y dame uno.']] },
   { titulo: '¿Casi o se quemó?', dibujo: 'casa', lineas: [['el', 'La base de Minecraft casi se quema toda.'], ['ella', 'Se quemó.'], ['el', 'CASI.'], ['ella', 'Quedó un hueco negro, mor.']] },
   { titulo: '¿Y la racha?', dibujo: 'lapiz', lineas: [['ella', '¿Hiciste el Duolingo?'], ['el', 'Shi.'], ['ella', '¿Y la racha?'], ['el', '…mañana hago dos.']] },
@@ -41,7 +41,7 @@ const DISCUSIONES: Vineta[] = [
 
 /** Deseos a futuro (lo que sueñan para cuando vivan juntos). Lo de la niña es de Cien Puertas, lo de la comida de
  *  la cocina y los juegos de mesa de la mesa: aquí no se repiten. */
-const DESEOS: Vineta[] = [
+export const DESEOS: Vineta[] = [
   { titulo: 'Algún día…', sub: 'Nuestra casita', dibujo: 'casa', lineas: [['el', 'Una casita propia, con jardín.'], ['ella', 'Y con un sofá grande para ver pelis.'], ['el', 'Y que siempre huela a desayuno.']] },
   { titulo: 'Algún día…', sub: 'La graduación', dibujo: 'birrete', lineas: [['el', 'Verte graduada de psicóloga.'], ['ella', 'Y tú en primera fila gritando mi nombre.'], ['el', 'Con pancarta y todo.']] },
   { titulo: 'Algún día…', sub: 'Sin distancia', dibujo: 'bus', lineas: [['ella', 'Que ya no haya que contar kilómetros.'], ['el', 'Que el único viaje sea de la cama a la cocina.'], ['ella', 'Juntos, todos los días.']] },
