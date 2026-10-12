@@ -3,6 +3,8 @@
 // cartas, armas y escenarios), la colección y los récords. Este archivo no importa nada de la casa en tiempo de
 // ejecución: modelo.ts lo usa para normalizar.
 import { ARMAS, PASIVAS } from './armas';
+import { AVENTURA, CAPITULO, ID_CAPITULOS, aventuraCompleta } from './aventuras';
+import { PISTA_RADIO } from './radio';
 import { CARTAS } from './cartas';
 import { DISFRACES } from './disfraces';
 import { ENEMIGOS } from './enemigos';
@@ -65,6 +67,10 @@ export interface ProgresoLavado {
   llaves: string[];
   /** Los disfraces que salieron de una cajita sorpresa (ya se pueden comprar). */
   cajitas: string[];
+  /** Los capítulos de las aventuras que ya pasó. */
+  aventuras: string[];
+  /** La canción escogida en la Radio de la ducha ('' = las de siempre, que van cambiando). */
+  radio: string;
 }
 
 export function progresoNuevo(rol: Rol): ProgresoLavado {
@@ -73,6 +79,7 @@ export function progresoNuevo(rol: Rol): ProgresoLavado {
     bestiario: {}, mejor: {}, ganados: [], mejorNivel: 0, mejorBajas: 0, partidas: 0, eliminados: 0, velitas: 0, cofres: 0, arepas: 0,
     oroTotal: 0, segundos: 0, apurado: false, escenario: 'cara', carta: '', manual: false, tutorial: false, maestria: {}, patitos: {},
     tesoros: [], hiper: [], modos: [], mejorSinFin: 0, llaves: [], cajitas: [],
+    aventuras: [], radio: '',
   };
 }
 
@@ -150,6 +157,8 @@ export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
     mejorSinFin: entero(x.mejorSinFin, 24 * 3600),
     llaves: listaDe(x.llaves, DISFRACES.filter((d) => d.transforma).map((d) => d.id)),
     cajitas: listaDe(x.cajitas, DISFRACES.filter((d) => d.cajita).map((d) => d.id)),
+    aventuras: listaDe(x.aventuras, ID_CAPITULOS),
+    radio: typeof x.radio === 'string' && x.radio in PISTA_RADIO ? x.radio : '',
   };
 }
 
@@ -192,6 +201,9 @@ export interface ResumenPartida {
   llaves?: string[];
   cajitas?: string[];
   transformado?: boolean;
+  /** Un capítulo de las aventuras (no cuenta como escenario ganado ni como récord) y si se pasó. */
+  capitulo?: string;
+  capituloGanado?: boolean;
 }
 
 // ---------------------------------------------------------------------------------------------------- Logros
@@ -309,6 +321,7 @@ export const LOGROS: DefLogro[] = [
   { id: 'feriaAbierta', nombre: 'Toda la feria', desc: 'Abre las tres partes de La Feria de las cremas en una partida', premio: 'Una corona más en la Sala de Trofeos', cumple: (p, r) => !!r && (r.feria ?? 0) >= 2 },
   // Fase 4: la Mascarilla de noche (las cartas de la noche), las llavecitas, la transformación y las cajitas sorpresa
   { id: 'mascarillaNoche', nombre: 'Buenas noches', desc: 'Encuentra la Mascarilla de noche (está tirada en La Bañera)', premio: 'Las seis cartas de la noche', cumple: (p) => p.tesoros.includes('mascarillaNoche') },
+  { id: 'radio', nombre: '¡Que suene!', desc: 'Encuentra la Radio de la ducha (está colgada en La Ducha)', premio: 'La Radio: escoges la canción de la lavada', cumple: (p) => p.tesoros.includes('radio') },
   { id: 'llavecita', nombre: 'La llavecita', desc: 'Encuentra la llavecita escondida de un disfraz', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.llaves.length >= 1 },
   { id: 'transformado', nombre: '¡Transformación!', desc: 'Llega al nivel 80 con un disfraz que tenga su llavecita', premio: 'Una corona más en la Sala de Trofeos', cumple: (p, r) => !!r?.transformado },
   { id: 'cajita1', nombre: '¡Sorpresa!', desc: 'Abre una cajita sorpresa (vence a los mugrosos que la cuidan)', premio: 'El disfraz que traía, para comprarlo', cumple: (p) => p.cajitas.length >= 1 },
@@ -372,7 +385,8 @@ export function sumarPartida(p: ProgresoLavado, r: ResumenPartida): string[] {
   p.segundos += Math.round(r.segundos);
   p.mejorNivel = Math.max(p.mejorNivel, r.nivel);
   p.mejorBajas = Math.max(p.mejorBajas, r.eliminados);
-  p.mejor[r.escenario] = Math.max(p.mejor[r.escenario] ?? 0, Math.round(r.segundos));
+  // (un capítulo de las aventuras es corto y con sus propias reglas: no cuenta para el récord del escenario)
+  if (!r.capitulo) p.mejor[r.escenario] = Math.max(p.mejor[r.escenario] ?? 0, Math.round(r.segundos));
   if (r.gano && !p.ganados.includes(r.escenario)) p.ganados.push(r.escenario);
   for (const a of r.armas) if (!p.armas.includes(a)) p.armas.push(a);
   for (const a of r.pasivas) if (!p.pasivas.includes(a)) p.pasivas.push(a);
@@ -397,6 +411,29 @@ export function sumarPartida(p: ProgresoLavado, r: ResumenPartida): string[] {
     }
   }
   return nuevos;
+}
+
+/** Lo que deja pasar un capítulo de las aventuras: la primera vez, sus gotas doradas (y las de la aventura si era el
+ *  último que faltaba). */
+export interface PremioCapitulo {
+  ganado: boolean;
+  primera: boolean;
+  oro: number;
+  /** Con este capítulo se terminó toda la aventura. */
+  aventura: boolean;
+}
+
+export function sumarCapitulo(p: ProgresoLavado, r: ResumenPartida): PremioCapitulo | null {
+  const c = r.capitulo ? CAPITULO[r.capitulo] : null;
+  if (!c) return null;
+  if (!r.capituloGanado) return { ganado: false, primera: false, oro: 0, aventura: false };
+  if (p.aventuras.includes(c.id)) return { ganado: true, primera: false, oro: 0, aventura: false };
+  p.aventuras.push(c.id);
+  const aventura = aventuraCompleta(p.aventuras, c.aventura);
+  const oro = c.premio + (aventura ? AVENTURA[c.aventura].premio : 0);
+  p.oro += oro;
+  p.oroTotal += oro;
+  return { ganado: true, primera: true, oro, aventura };
 }
 
 /** Suma los puntos de maestría del disfraz con que se jugó y paga las gotas de los niveles nuevos. */

@@ -16,8 +16,10 @@ export interface TextosPareja {
   avisos: [string | RegExp, string][];
   frases: {
     levantaAMi: string; levanta: string; revive: string; tituloCartas: string; sinCarta: string; iconoCarta: string; cartaPerdida: string;
-    leyendoCarta: string; iconoPareja: string;
+    leyendoCarta: string; iconoPareja: string; tituloAventuras: string;
   };
+  /** Las aventuras de «la protagonista» contadas por capítulos (las reglas de cada capítulo, en `aventuras.ts`). */
+  aventuras: Record<string, { titulo: string; desc: string; capitulos: Record<string, { titulo: string; antes: string; despues: string }> }>;
   /** Nombres de antes (partidas guardadas antes del cambio de nombres de las cartas y los disfraces). */
   cartasViejas: Record<string, IdCarta>;
   disfracesViejos: Record<string, string>;
@@ -208,7 +210,97 @@ export const PAREJA: TextosPareja | null = {
   frases: {
     levantaAMi: '¡Me levantaste! 💖', levanta: '¡Levántate, mi amor! 💖', revive: '¡A seguir! Te volviste a parar 💖', tituloCartas: 'Cartas de amor',
     sinCarta: 'Sin carta de amor', iconoCarta: '💌', cartaPerdida: '💌 Una carta de amor perdida', leyendoCarta: 'leyendo una carta de amor',
-    iconoPareja: '💞',
+    iconoPareja: '💞', tituloAventuras: 'Las aventuras de la protagonista',
+  },
+  // Las tres aventuras que contó Javier para volverlas capítulos: el carro andando, el bus a Barranquilla y los vuelos
+  // cancelados a Cartagena. Lo que él contó es lo de verdad; lo demás (los capítulos de en medio, los chistes) está
+  // INVENTADO alrededor y se cambia cuando él cuente más. Del bus no va el detalle de cómo terminó (el repositorio es
+  // público): solo que desde ese día ella no se vuelve a subir a uno, y eso se cuenta con ternura, sin chistes.
+  // Cartagena ya es un recuerdo de Cien Puertas: aquí la aventura termina cuando por fin despega el avión.
+  aventuras: {
+    a1: {
+      titulo: '¡Pare, que me bajo!',
+      desc: 'La vez que la pulga aventurera se bajó de un carro… con el carro andando.',
+      capitulos: {
+        a1c1: {
+          titulo: 'Arrancó el carro',
+          antes: 'Todo iba normal hasta que el carro arrancó y la pulga aventurera tenía que bajarse ya. El piso empezó a correr solito.',
+          despues: 'Primera lección de la aventura: cuando el carro arranca, el mundo entero se mueve. Y los mugrosos también.',
+        },
+        a1c2: {
+          titulo: 'Con el reloj encima',
+          antes: 'El carro coge velocidad y no hay tiempo de pensar: todo va al doble. Y por la carretera viene bajando un pato inflable gigante (no pregunten).',
+          despues: 'Pato desinflado. Ahora sí: hay que decidirse.',
+        },
+        a1c3: {
+          titulo: '¡El salto!',
+          antes: 'Las personas normales esperan a que el carro pare para bajarse. Ella no es una persona normal: es la protagonista.',
+          despues: '¡Saltó! Por un segundo todo quedó en cámara lenta, como en las películas de acción.',
+        },
+        a1c4: {
+          titulo: 'Aterrizaje de guerrera',
+          antes: 'Abajo la espera todo el barro de la carretera, y el Barro Negro no perdona a nadie que caiga en su terreno.',
+          despues: 'Y se paró como si nada, sacudiéndose el polvo. Por eso es la mejor guerrera de Dios: le pasa de todo y siempre se vuelve a parar. (Él todavía no se recupera del susto.)',
+        },
+      },
+    },
+    a2: {
+      titulo: 'El bus a Barranquilla',
+      desc: 'Un viaje en bus hasta la costa. El último viaje en bus de su vida.',
+      capitulos: {
+        a2c1: {
+          titulo: 'La terminal',
+          antes: 'Maleta lista, tiquete en la mano y la terminal llena de filas. La protagonista se va para Barranquilla en bus.',
+          despues: 'Tiquete validado, puesto de ventana y bolsita de mecato. ¡Arrancamos!',
+        },
+        a2c2: {
+          titulo: 'Calor de carretera',
+          antes: 'Rumbo a la costa el calor sube y sube: hasta el espejo del bus se empaña. Lo caliente pega más duro.',
+          despues: 'Ventana abierta, pelo al viento y un vallenato a todo volumen. Ya falta menos… creo.',
+        },
+        a2c3: {
+          titulo: 'Huecos y más huecos',
+          antes: 'La carretera tiene más huecos que un queso: cada minuto el bus brinca y pasa algo distinto.',
+          despues: 'Ni un hueco más. Por la ventana ya se ve la costa.',
+        },
+        a2c4: {
+          titulo: 'La guerrera llega',
+          antes: 'El último tramo fue el más difícil de todo el viaje. Lo que pasó ahí se queda entre los dos; lo que importa es que ella aguanta.',
+          despues: 'Llegó, porque ella siempre llega. Ese viaje terminó tan mal que desde ese día no se vuelve a subir a un bus, y está bien: nadie se lo va a pedir. Cuando viaje, él va a ir al lado.',
+        },
+      },
+    },
+    a3: {
+      titulo: 'Vuelos cancelados',
+      desc: 'Iban para Cartagena. El avión tenía otros planes.',
+      capitulos: {
+        a3c1: {
+          titulo: 'CANCELADO',
+          antes: 'Como en bus ya no, esta vez tocaba avión. Maletas, pasabordo, todo listo… y en la pantalla, en letras rojas: CANCELADO.',
+          despues: 'Nadie sabe cuándo sale el próximo vuelo. Toca hacer fila.',
+        },
+        a3c2: {
+          titulo: 'La fila de los reclamos',
+          antes: 'Una fila larguísima para reclamar, y siempre hay uno que se cuela: Don Frasco, con un champú de más de cien mililitros.',
+          despues: 'Por fin la atendieron. Respuesta oficial: «mañana, a primera hora». Mientras tanto, a esperar.',
+        },
+        a3c3: {
+          titulo: 'Puerta 3… no, puerta 12',
+          antes: 'Cambiaron la puerta de embarque tres veces. El aeropuerto se volvió un laberinto de cortinas y pasillos.',
+          despues: 'Puerta encontrada. ¿Y ahora dónde se duerme aquí?',
+        },
+        a3c4: {
+          titulo: 'La noche en la silla',
+          antes: 'A él le tocó dormir en un hotel; a ella, en una silla de metal del aeropuerto. Con sueño todo se ve empañado, y el reloj no avanza.',
+          despues: 'Amaneció. Él durmió en cama con almohada; ella, abrazada a la maleta. Todavía se lo recuerda cada vez que puede (y tiene toda la razón).',
+        },
+        a3c5: {
+          titulo: '¡Abordando!',
+          antes: 'Por fin llaman a abordar… pero antes, el control de seguridad: todos los jefes de la fila quieren pasar primero, y la Reina de las Cremas no suelta sus frascos.',
+          despues: '¡Despegaron! Lo que pasó en Cartagena es otra historia, y está detrás de otra puerta.',
+        },
+      },
+    },
   },
   cartasViejas: {
     transformice: 'oroBrillante',

@@ -4,6 +4,7 @@
 import { CELDA, enCortina, fueraDeCortinas } from './laberinto';
 import { ARMAS, BASICAS, DISPARAN, ESCONDIDAS, EVOLUCIONADAS, ID_PASIVAS, MAX_RANURAS, PASIVAS, baseEnNivel, linaje, maxNivelArma, pasivasDeEvo, type BaseArma } from './armas';
 import { Azar, hash2 } from './azar';
+import { CAPITULO, type DefCapitulo } from './aventuras';
 import { CARTAS } from './cartas';
 import { DISFRACES, DISFRAZ, type DefDisfraz } from './disfraces';
 import { ENEMIGOS, INDICE_ENEMIGO, type DefEnemigo } from './enemigos';
@@ -140,6 +141,11 @@ export class Enemigo {
   /** El vendaval lo ablanda (recibe este tanto más de daño) y la culebrita lo frena para siempre (0 a 0,8). */
   debil = 0;
   freno = 0;
+  /** Los bichos especiales: el Tapón que persigue (no se muere, se ahuyenta), el ratón que se robó un cofre (huye) y el
+   *  radio del charco de la Llave que gotea (la que inunda). */
+  acecho = false;
+  ladron = false;
+  inunda = 0;
 }
 
 export class Proyectil {
@@ -321,6 +327,8 @@ export interface OpcionesMotor {
   tutorial?: boolean;
   /** Los modos de la partida (los que se abren con los tesoros y el Hiper). */
   modos?: IdModo[];
+  /** Un capítulo de las aventuras (`aventuras.ts`): sus eventos, su tiempo y su jefe final; sin Ducha Helada. */
+  capitulo?: string;
 }
 
 export class Jugador {
@@ -420,6 +428,9 @@ export class Jugador {
   /** Las llavecitas que ya tiene y si su disfraz ya se transformó (nivel 80); los regalitos del hada. */
   llaves = new Set<string>();
   transformado = false;
+  /** Está dentro del charco de la Llave que gotea (camina despacio) y cuánto lleva mojándose. */
+  mojado = 0;
+  tMojado = 0;
   tRegalito = 0;
   /** La Feria de las cremas: el puesto abierto es la ruleta del Ruletero (no la tienda de Don Jabón), lo que salió
    * en las últimas tiradas y cuántas veces ha girado (para que la ruleta de la pantalla dé la vuelta). */
@@ -509,6 +520,11 @@ export const turboEn = (k: number): [number, number] => [k * TURBO.cada + TURBO.
 export const BANDERA_CADA = 1800;
 /** Qué tanto se lleva el agua a las gotitas (uno va al 100 %; los mugrosos nadan solos). */
 const ARRASTRE_TOBOGAN = 0.85;
+/** La Llave que gotea: hasta dónde llega su charco y cuánto crece por segundo. */
+export const RADIO_INUNDA = 340;
+const CRECE_INUNDA = 12;
+/** La vida del jefe final de un capítulo (sobre la de un jefe normal de su nivel). */
+const VIDA_JEFE_FINAL = 0.4;
 /** Los mugrosos que no caminan (las maticas de La Matera). */
 const QUIETAS = new Set(['planta', 'morder']);
 
@@ -558,6 +574,18 @@ export class Motor {
   ciclo = 0;
   /** Ya llegó la Ducha Helada (no salen más oleadas). */
   helada = false;
+  /** El Tapón que persigue: cuándo vuelve después de ahuyentarlo (reloj; 0 = no está por volver) y cuál es. */
+  private tAcecho = 0;
+  private tipoAcecho: IdEnemigo = 'tapon';
+  /** Cuánto falta para que pase el próximo ratón ladrón (segundos del reloj). */
+  private tLadron = 180;
+  /** El capítulo de las aventuras que se está jugando (o null en una partida normal). */
+  readonly capitulo: DefCapitulo | null;
+  /** El capítulo: ya salió su jefe final, ya se ganó y lo que falta para cerrar (para alcanzar a ver la fiesta). */
+  jefeFinal = false;
+  capituloGanado = false;
+  private uidJefeFinal = -1;
+  private tCierre = 0;
   /** Lo que falta para la siguiente vuelta de la ruleta de sorpresas (segundos del reloj). */
   tRuleta = 60;
   /** Los chorros de La Ducha que están avisando (t < 0) o cayendo. */
@@ -608,14 +636,21 @@ export class Motor {
   constructor(o: OpcionesMotor) {
     // La feria tiene su propia copia: la valla de la izquierda se corre cada vez que se abre una parte
     this.esc = o.escenario === 'feria' ? { ...ESCENARIOS.feria, limitesX: { xMin: xMinFeria(0), xMax: X_MAX_FERIA } } : ESCENARIOS[o.escenario];
-    this.ruletero = o.escenario === 'feria' && !o.tutorial ? RULETERO : null;
+    // Un capítulo de las aventuras: su escenario con sus propios eventos, desde el minuto que diga y con su tiempo
+    const cap = !o.tutorial && o.capitulo ? CAPITULO[o.capitulo] ?? null : null;
+    this.capitulo = cap && cap.escenario === o.escenario ? cap : null;
+    if (this.capitulo) {
+      const c = this.capitulo;
+      this.esc = { ...this.esc, oleadas: this.esc.oleadas.slice(Math.min(c.desde, this.esc.oleadas.length - 1)), eventos: c.eventos, duracion: c.duracion };
+    }
+    this.ruletero = o.escenario === 'feria' && !o.tutorial && !this.capitulo ? RULETERO : null;
     this.apurado = o.apurado;
     this.tutorial = !!o.tutorial;
     this.duracion = this.esc.duracion ?? DURACION;
     this.sigParca = this.duracion;
     this.modos = new Set(o.tutorial ? [] : o.modos ?? []);
     this.mapa = o.jugadores.some((x) => !!x.mapa);
-    this.puesto = !o.tutorial && (o.escenario === ESCENARIO_VENDEDOR || o.jugadores.some((x) => !!x.monedero)) ? PUESTO[o.escenario] : null;
+    this.puesto = !o.tutorial && !this.capitulo && (o.escenario === ESCENARIO_VENDEDOR || o.jugadores.some((x) => !!x.monedero)) ? PUESTO[o.escenario] : null;
     this.az = new Azar(o.semilla);
     for (let i = 0; i < POOL_EN; i++) this.en.push(new Enemigo());
     for (let i = 0; i < MAX_PROY; i++) this.pr.push(new Proyectil());
@@ -646,27 +681,29 @@ export class Motor {
     }
     this.tTanda = 0.5;
     this.tGrito = 1.2;
+    // (en los capítulos de las aventuras no hay nada escondido: solo la historia)
+    const extras = !this.tutorial && !this.capitulo;
     // Los anillos y los aretes escondidos de este escenario (si alguien ya tiene el espejito de mano)
-    if (!this.tutorial) ESCONDIDAS.forEach((t, k) => {
+    if (extras) ESCONDIDAS.forEach((t, k) => {
       if (t.escenario !== this.esc.id || !this.jug.some((j) => this.disponible(j, t.id))) return;
       const o = this.soltar('tesoro', t.x, t.y, k);
       if (o) this.tesoros.push({ o, guardia: false });
     });
     // Las llavecitas de los disfraces que se transforman (de quien juegue con ese disfraz y no la tenga todavía)
-    if (!this.tutorial) DISFRACES.forEach((d, k) => {
+    if (extras) DISFRACES.forEach((d, k) => {
       const t = d.transforma;
       if (!t || t.llave.escenario !== this.esc.id || !this.jug.some((j) => j.disfraz.id === d.id && !j.llaves.has(d.id))) return;
       this.soltar('llavecita', t.llave.x, t.llave.y, k);
     });
     // La cajita sorpresa de este escenario (si alguien todavía no ha sacado su disfraz)
-    if (!this.tutorial) DISFRACES.forEach((d, k) => {
+    if (extras) DISFRACES.forEach((d, k) => {
       if (!d.cajita || d.cajita.escenario !== this.esc.id || this.cajita) return;
       if (!o.jugadores.some((x) => !(x.cajitas ?? []).includes(d.id))) return;
       const obj = this.soltar('cajita', d.cajita.x, d.cajita.y, k);
       if (obj) this.cajita = { o: obj, k, estado: 0 };
     });
     // Los tesoros del baño que alguien todavía no tiene, cada uno en su sitio (con su flecha verde)
-    if (!this.tutorial) TESOROS.forEach((t, k) => {
+    if (extras) TESOROS.forEach((t, k) => {
       if (t.escenario === this.esc.id && o.jugadores.some((x) => x.reliquias?.includes(t.id))) this.soltar('reliquia', t.x, t.y, k);
     });
   }
@@ -680,7 +717,7 @@ export class Motor {
   velJugador(j: Jugador) {
     // (el borde del mundo: siempre al doble, suba o baje lo que suba o baje)
     if (j.tieneCarta('nocheBorde')) return VEL_JUGADOR * 2;
-    return VEL_JUGADOR * Math.max(0.2, 1 + j.st.movimiento) * (this.modo('hiper') ? 1.35 : 1);
+    return VEL_JUGADOR * Math.max(0.2, 1 + j.st.movimiento) * (this.modo('hiper') ? 1.35 : 1) * (j.mojado > 0 ? 0.6 : 1);
   }
 
   /** Los tesoros escondidos de la partida y si ya salió el mugroso que los cuida. */
@@ -1447,8 +1484,11 @@ export class Motor {
     this.subirNivel();
     if (this.modo('azar')) this.alAzar();
     if (!this.tutorial) this.elitesExtra(dReloj);
+    if (!this.tutorial && !this.capitulo) this.especiales(dReloj);
+    this.inundar(dt);
     if (this.tesoros.length) this.cuidarTesoros();
     if (this.cajita) this.cuidarCajita();
+    if (this.capituloGanado && (this.tCierre -= dt) <= 0) this.terminar();
     if (this.jug.every((j) => j.caido || j.fuera)) this.terminar();
   }
 
@@ -1494,7 +1534,7 @@ export class Motor {
   /** Con tres o cuatro (y un poquito en pareja), élites extra con cofre cada tanto. */
   private elitesExtra(dReloj: number) {
     const cada = this.porJugadores('elite');
-    if (!cada || this.helada || this.t < 90) return;
+    if (!cada || this.helada || this.capituloGanado || this.t < 90) return;
     this.tElite += dReloj;
     if (this.tElite < cada) return;
     this.tElite = 0;
@@ -1853,12 +1893,12 @@ export class Motor {
   /** Cuánto aguantan los mugrosos por los modos: del otro lado del espejo (el triple, y crece cada minuto) y cada
    *  vuelta del agua caliente sin fin (+100 %). */
   durezaModos() {
-    return (this.modo('inverso') ? 3 + 0.05 * (this.t / 60) : 1) * (1 + this.ciclo);
+    return (this.modo('inverso') ? 3 + 0.05 * (this.t / 60) : 1) * (1 + this.ciclo) * (this.capitulo?.dureza ?? 1);
   }
 
-  /** Lo que pegan de más (cada vuelta del agua caliente sin fin, +25 %). */
+  /** Lo que pegan de más (cada vuelta del agua caliente sin fin, +25 %; en los capítulos, como su vida). */
   danoModos() {
-    return 1 + 0.25 * this.ciclo;
+    return (1 + 0.25 * this.ciclo) * (this.capitulo ? 0.4 + 0.6 * this.capitulo.dureza : 1);
   }
 
   /** Qué tan rápido van (el Hiper acelera todo; del otro lado del espejo se van apurando con los minutos). */
@@ -1869,6 +1909,8 @@ export class Motor {
   private oleadas(dReloj: number) {
     const esc = this.esc;
     const t0 = this.ciclo * this.duracion;
+    // (con el capítulo ya ganado no sale nada más: es la fiesta)
+    if (this.capituloGanado) return;
     // Eventos fijos
     while (this.iEvento < esc.eventos.length && esc.eventos[this.iEvento].t + t0 <= this.t) this.evento(esc.eventos[this.iEvento++]);
     // La ruleta de sorpresas: cada minuto escoge algo
@@ -1879,8 +1921,13 @@ export class Motor {
         this.ruleta();
       }
     }
+    // Los capítulos de las aventuras no tienen Ducha Helada: se ganan al aguantar su tiempo o al vencer a su jefe final
+    if (this.capitulo) {
+      if (!this.jefeFinal && this.t >= this.duracion) this.finCapitulo();
+      if (this.capituloGanado) return;
+    }
     // Con el agua caliente sin fin no llega la Ducha Helada: todo vuelve a empezar, más duro
-    if (this.t >= this.sigParca && this.modo('infinito')) {
+    else if (this.t >= this.sigParca && this.modo('infinito')) {
       this.sigParca += this.duracion;
       this.ciclo++;
       this.iEvento = 0;
@@ -1888,7 +1935,7 @@ export class Motor {
       this.aviso(`♨️ ¡El agua sigue caliente! Vuelta ${this.ciclo + 1}: todo más duro`);
     }
     // ¡Se acabó el agua caliente!
-    if (this.t >= this.sigParca) {
+    if (this.t >= this.sigParca && !this.capitulo) {
       this.helada = true;
       if (!this.gano) {
         this.gano = true;
@@ -1929,6 +1976,123 @@ export class Motor {
       this.crearComun(ol.tipos[k % ol.tipos.length]);
       k++;
     }
+  }
+
+  // ------------------------------------------------------------------------------------------------- Bichos especiales
+  /** El Tapón que persigue (el Stalker del original): camina lento detrás de uno y a ratos arranca. No se muere: al
+   *  pegarle lo suficiente sale corriendo y al minuto vuelve. */
+  private soltarAcecho(tipo: IdEnemigo, j: Jugador) {
+    const e = this.crear(tipo, this.puntoAfuera(j, 60), j, { fijo: true, cofre: 0 });
+    if (!e) return;
+    this.tipoAcecho = tipo;
+    e.acecho = true;
+    // (no es un jefe: no cambia la música ni se queda en la Ducha Helada; cuenta como uno de los comunes)
+    if (e.jefe) {
+      e.jefe = false;
+      this.nComunes++;
+    }
+    e.et = this.az.entre(4, 6);
+  }
+
+  private ahuyentar(e: Enemigo) {
+    e.hp = e.hpMax;
+    e.estado = 5;
+    e.et = 2.5;
+    this.tAcecho = this.t + 60;
+    this.aviso(`💨 ¡${ENEMIGOS[e.tipo].nombre} salió corriendo! Ya vuelve…`);
+  }
+
+  /** El ratón ladrón (el bicho que carga el tesoro): sale a la vista con un cofre encima y huye; si se le alcanza a
+   *  tumbar, suelta el cofre y una bolsa de gotas; si no, a los 18 segundos se escapa. */
+  private soltarLadron(j: Jugador) {
+    const a = this.az.n() * Math.PI * 2;
+    let x = j.x + Math.cos(a) * j.vistaW * 0.3, y = j.y + Math.sin(a) * j.vistaH * 0.28;
+    const lim = this.esc.limites, limX = this.esc.limitesX;
+    if (lim) y = Math.max(lim.yMin + 40, Math.min(lim.yMax - 40, y));
+    if (limX) x = Math.max(limX.xMin + 40, Math.min(limX.xMax - 40, x));
+    const e = this.crear('ratoncito', [x, y], j, { elite: true, fijo: true, cofre: 0 });
+    if (!e) return;
+    e.ladron = true;
+    e.hp = e.hpMax = e.hpMax * 0.5;
+    e.vence = this.tReal + 18;
+    this.aviso('🐭 ¡Un ratón se robó un cofre! Atrápalo antes de que se escape');
+  }
+
+  /** Los especiales que salen solos: el ratón ladrón cada 4 o 5 minutos y el Tapón que vuelve después de ahuyentarlo. */
+  private especiales(dReloj: number) {
+    if (this.helada) return;
+    this.tLadron -= dReloj;
+    if (this.tLadron <= 0) {
+      this.tLadron = this.az.entre(240, 330);
+      const j = this.objetivoAzar();
+      if (j) this.soltarLadron(j);
+    }
+    if (this.tAcecho && this.t >= this.tAcecho) {
+      this.tAcecho = 0;
+      const j = this.objetivoAzar();
+      if (j) {
+        this.soltarAcecho(this.tipoAcecho, j);
+        this.aviso(`😱 ¡${ENEMIGOS[this.tipoAcecho].nombre} volvió y te sigue buscando!`);
+      }
+    }
+  }
+
+  /** La Llave que gotea (la que inunda): su charco crece mientras esté viva; quien esté adentro camina despacio y se
+   *  va mojando (pierde un poquito de vida cada rato). */
+  private inundar(dt: number) {
+    for (const j of this.jug) j.mojado = Math.max(0, j.mojado - dt);
+    for (let k = 0; k < this.nVivos; k++) {
+      const e = this.en[this.vivos[k]];
+      if (!e.vivo || e.tipo !== 'llaveGotea') continue;
+      e.inunda = Math.min(RADIO_INUNDA, e.inunda + CRECE_INUNDA * dt);
+      for (const j of this.jug) {
+        // (el charco se ve como un óvalo en el piso)
+        if (j.activo && Math.hypot(j.x - e.x, (j.y - e.y) / 0.72) < e.inunda) j.mojado = 0.25;
+      }
+    }
+    for (const j of this.jug) {
+      if (j.mojado <= 0 || !j.activo) {
+        j.tMojado = 0;
+        continue;
+      }
+      j.tMojado += dt;
+      if (j.tMojado >= 1.5) {
+        j.tMojado = 0;
+        this.herirJugador(j, 4 * this.danoModos(), null);
+      }
+    }
+  }
+
+  /** Se acabó el tiempo del capítulo: llega su jefe final (y se gana al vencerlo) o, si no tiene, se ganó ya. */
+  private finCapitulo() {
+    const c = this.capitulo!;
+    this.jefeFinal = true;
+    const j = this.objetivoAzar();
+    if (!c.jefeFinal || !j) return this.ganarCapitulo();
+    const e = this.crear(c.jefeFinal, this.puntoJefe(j), j, { jefe: true, cofre: 0 });
+    if (!e) return this.ganarCapitulo();
+    // (el jefe final llega cuando uno todavía no tiene todo: aguanta menos que uno de una partida larga)
+    e.hp = e.hpMax = e.hpMax * VIDA_JEFE_FINAL;
+    this.uidJefeFinal = e.uid;
+    this.aviso(`👑 ¡${ENEMIGOS[c.jefeFinal].nombre}! Vence al jefe para pasar el capítulo`);
+    this.emitir('jefe', 0, 0, INDICE_ENEMIGO[c.jefeFinal]);
+  }
+
+  /** ¡Capítulo superado! Se van los mugrosos, nadie se cae más y en un ratico (para ver la fiesta) se cierra. */
+  private ganarCapitulo() {
+    if (this.capituloGanado) return;
+    this.capituloGanado = true;
+    this.tCierre = 3.2;
+    for (let k = this.nVivos - 1; k >= 0; k--) {
+      const e = this.en[this.vivos[k]];
+      if (!e.luz) this.quitar(e);
+    }
+    for (const j of this.jug) {
+      if (j.fuera) continue;
+      j.invul = 99;
+      this.emitir('transforma', j.x, j.y, j.i);
+    }
+    this.aviso('🎉 ¡Capítulo superado!');
   }
 
   /** La ruleta de sorpresas (los eventos al azar del original): casi todo ayuda, a veces llega una horda. */
@@ -2239,6 +2403,8 @@ export class Motor {
     e.et = this.az.entre(1, 3);
     e.llamado = 0;
     e.debil = e.freno = 0;
+    e.acecho = e.ladron = false;
+    e.inunda = 0;
     // Desarmar (de la tienda): algunos salen sin dientes
     let desarmar = 0;
     for (const q of this.jug) if (!q.fuera) desarmar = Math.max(desarmar, q.st.desarmar);
@@ -2266,6 +2432,18 @@ export class Motor {
       }
       case 'elite': {
         this.crear(ev.enemigo, this.puntoJefe(j), j, { elite: true, cofre: 1 });
+        break;
+      }
+      case 'acecho':
+        this.soltarAcecho(ev.enemigo, j);
+        break;
+      case 'ladron':
+        this.soltarLadron(j);
+        break;
+      case 'inunda': {
+        // La Llave que gotea sale cerquita (a la vista): su charco empieza chiquito y crece mientras esté viva
+        const e = this.crear(ev.enemigo, this.puntoAfuera(j, 10), j, { elite: true, fijo: true, cofre: 1 });
+        if (e) e.inunda = 50;
         break;
       }
       case 'enjambre':
@@ -2531,6 +2709,43 @@ export class Motor {
           }
         } else if (e.estado === 3) {
           v *= 0.6;
+        } else if (e.acecho) {
+          e.et -= dt;
+          if (e.estado === 5) {
+            // Ahuyentado: sale corriendo para el otro lado y se va (vuelve al minuto)
+            ux = -ux;
+            uy = -uy;
+            v = e.def.vel * 3;
+            if (e.et <= 0) {
+              this.quitar(e);
+              continue;
+            }
+          } else {
+            // Camina lento detrás de uno y a ratos arranca (se queda quieto un instante antes, para avisar)
+            if (e.estado === 0 && e.et <= 0) {
+              e.estado = 6;
+              e.et = 1.7;
+            }
+            if (e.estado === 6) {
+              v = e.et > 1.2 ? 0 : v * 2.6;
+              if (e.et <= 0) {
+                e.estado = 0;
+                e.et = this.az.entre(5, 8);
+              }
+            } else v *= 0.7;
+          }
+        } else if (e.ladron) {
+          // Huye (culebreando un poquito) y si nadie lo alcanza, se escapa con el cofre
+          const s = Math.sin(e.fase * 2.3 + e.uid) * 0.5;
+          const nx = -ux + uy * s, ny = -uy - ux * s;
+          ux = nx;
+          uy = ny;
+          v = VEL_JUGADOR * 0.8;
+          if (this.tReal > e.vence) {
+            this.quitar(e);
+            this.aviso('🐭 El ratón se escapó con el cofre…');
+            continue;
+          }
         } else {
           switch (e.def.comp) {
             case 'revolotear': {
@@ -2664,6 +2879,11 @@ export class Motor {
           e.x = pto[0];
           e.y = pto[1];
         }
+      } else if (e.acecho && e.estado !== 5 && j && Math.hypot(e.x - j.x, e.y - j.y) > Math.max(j.vistaW, j.vistaH) * 1.2) {
+        // (el Tapón siempre sabe dónde está uno: si se queda muy atrás, aparece otra vez cerquita)
+        const pto = this.puntoAfuera(j, 60);
+        e.x = pto[0];
+        e.y = pto[1];
       } else if (e.fijo && !e.jefe && j && Math.hypot(e.x - j.x, e.y - j.y) > 2600) this.quitar(e);
       // En el tobogán los jefes que se quedan muy atrás vuelven a acercarse por detrás (la Ducha Helada, por delante)
       if (this.esc.tobogan && e.jefe && j && e.x < j.x - j.vistaW * 1.6) {
@@ -2708,17 +2928,30 @@ export class Motor {
       e.kx += (kx / m) * f;
       e.ky += (ky / m) * f;
     }
-    if (e.hp <= 0) this.matar(e, ji, false);
+    if (e.hp <= 0) {
+      if (e.acecho) {
+        if (e.estado !== 5) this.ahuyentar(e);
+        else e.hp = 1;
+      } else this.matar(e, ji, false);
+    }
   }
 
   matar(e: Enemigo, ji: number, borrado: boolean) {
     if (!e.vivo) return;
     this.quitar(e);
+    // El ratón ladrón suelta lo que se robó; la Llave que gotea deja de gotear (su charco se seca)
+    if (e.ladron) {
+      this.soltar('cofre', e.x, e.y, 3);
+      this.soltar('bolsa', e.x + 30, e.y + 10);
+      this.aviso('🐭 ¡Recuperaste el cofre que se robó el ratón!');
+    }
+    if (e.tipo === 'llaveGotea') this.emitir('seca', e.x, e.y, e.inunda);
     this.eliminados++;
     this.bestiario[e.tipo] = (this.bestiario[e.tipo] ?? 0) + 1;
     this.emitir('muere', e.x, e.y, e.ti, e.esc * (e.jefe ? 2.4 : 1), e.elite ? 1 : 0);
     const j = this.jug[ji];
     if (e.jefe && !this.jefes.includes(e.tipo)) this.jefes.push(e.tipo);
+    if (this.capitulo && e.uid === this.uidJefeFinal) this.ganarCapitulo();
     if (e.cofre) {
       // Con varios, el cofre del jefe sale repetido: uno para cada uno, con su color (los de élite, de quien llegue)
       const duenos = e.jefe && e.cofre >= 2 ? this.jug.filter((x) => !x.fuera) : [];
@@ -3214,6 +3447,7 @@ export class Motor {
       llaves: [...this.llavesHalladas],
       cajitas: [...this.cajitasHalladas],
       transformado: !!j?.transformado,
+      ...(this.capitulo ? { capitulo: this.capitulo.id, capituloGanado: this.capituloGanado } : {}),
     };
   }
 }

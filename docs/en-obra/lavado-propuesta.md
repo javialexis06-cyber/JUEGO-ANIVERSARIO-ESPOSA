@@ -184,6 +184,10 @@ ganar premio), la **ruleta** de La Feria de las cremas, la **carrera** del Tobog
 
 ### I. Bichos y jefes nuevos
 
+> **Hecho** (12 de octubre): los bichos y jefes de cada escenario nuevo y los especiales: el ratón ladrón (carga un
+> cofre), el Tapón que persigue y la Llave que gotea (la que inunda). Los guardianes de los anillos son los élites que
+> salen a cuidar cada tesoro.
+
 Cada escenario trae sus bichos y jefes (Blender, mismo estilo de arcilla y felpa). Además, los bichos especiales del
 original: el **que carga el tesoro** (cofre extra), el **que persigue** (el Stalker: aquí el Tapón que te sigue y se
 acelera a ratos), el **que inunda** (el Drowner: sube el agua desde abajo) y los **guardianes** de los anillos escondidos
@@ -201,6 +205,9 @@ con Javier, con los apodos de `la-pareja.md`):
   con un nivel más en todo).
 
 ### K. Aventuras (opcional)
+
+> **Hecho** (fase 4d, 12 de octubre): tres aventuras con 13 capítulos (las que contó Javier: el carro andando, el bus a
+> Barranquilla y los vuelos cancelados). Detalle en `docs/sistemas/nuestro-hogar.md`.
 
 Mini campañas de 4-6 capítulos con disfraces fijos y reglas propias por capítulo (como «A Garlic Paradise»). Aquí
 quedarían perfectas **las tres aventuras de «la protagonista»** que ya son de este juego (el iPhone más barato del
@@ -225,7 +232,7 @@ Ducha» → una carta…). Todo se ve en la colección y en la Sala de Trofeos.
    - **2a hecha** (11 de octubre): los seis tesoros tirados (Cuento, Mapa, Ruleta, y después de ganar: Libro de
      recetas, Calentador y Espejo al revés) y los seis modos. Mientras no existan los escenarios de la ducha, los
      tesoros están en La Cara, El Lavamanos y La Bañera; el Espejito de mano y los tres frasquitos ya se abrían con
-     logros (fase 1). Quedan para después la Radio (cuando haya música por escenario) y la Mascarilla de noche (fase 4).
+     logros (fase 1). La Radio y la Mascarilla de noche se hicieron después (fase 4).
    - **2b hecha** (11 de octubre): el vendedor ambulante es **Don Jabón** (pastilla de jabón de peluche con sombrero
      vueltiao) con su carrito; vende con las gotas de la partida. Las **cajitas sorpresa** se pasan a la fase 4: cada
      una trae un disfraz nuevo, así que se hacen junto con esos disfraces.

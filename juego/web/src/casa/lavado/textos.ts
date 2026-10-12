@@ -40,6 +40,15 @@ export function logroVisto(l: DefLogro): DefLogro {
   return n ? { ...l, ...n } : l;
 }
 
+/** Las aventuras de «la protagonista» (solo para la pareja: con amigos o en su versión no hay historia que contar). */
+export function aventuraVista(id: string) {
+  return !neutro && P ? P.aventuras[id] ?? null : null;
+}
+
+export function capituloVisto(aventura: string, id: string) {
+  return aventuraVista(aventura)?.capitulos[id] ?? null;
+}
+
 export function enemigoVisto<T extends DefEnemigo>(e: T): T {
   const d = !neutro && P ? P.enemigos[e.id] : null;
   return d ? { ...e, desc: d } : e;
@@ -60,6 +69,7 @@ export const FRASES = {
   revive: () => (!neutro && P ? P.frases.revive : '¡A seguir! Te volviste a parar ✨'),
   cayo: (quien: string) => `¡${quien} cayó! Quédate a su ladito para levantarle`,
   tituloCartas: () => (!neutro && P ? P.frases.tituloCartas : 'Cartas mágicas'),
+  tituloAventuras: () => (!neutro && P ? P.frases.tituloAventuras : 'Aventuras'),
   sinCarta: () => (!neutro && P ? P.frases.sinCarta : 'Sin carta mágica'),
   iconoCarta: () => (!neutro && P ? P.frases.iconoCarta : '🃏'),
   cartaPerdida: () => (!neutro && P ? P.frases.cartaPerdida : '🃏 Una carta mágica perdida'),

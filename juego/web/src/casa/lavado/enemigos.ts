@@ -148,6 +148,9 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   reinaCremas: E({ id: 'reinaCremas', nombre: 'La Reina de las Cremas', desc: 'Un frasco de crema de lujo con corona, capa de seda y pestañas larguísimas. La dueña de la feria.', vida: 1150, vel: 50, dano: 50, xp: 260, radio: 52, tam: 158, retro: 0, jefe: true, congelable: false }),
   // ------------------------------------------------------------------------------------------------ La Parca
   duchaHelada: E({ id: 'duchaHelada', nombre: 'La Ducha Helada', desc: '¡Se acabó el agua caliente! Si llega, ya ganaste… pero no la aguanta nadie.', vida: 655350, vel: 230, dano: 65535, xp: 0, radio: 34, tam: 140, retro: 0, comp: 'parca', jefe: true, congelable: false }),
+  // ------------------------------------------------------------------------------------------------ Los especiales
+  // (al final, para no correr el número de los demás: viaja en las fotos del juego en pareja)
+  llaveGotea: E({ id: 'llaveGotea', nombre: 'La Llave que gotea', desc: 'Un grifo pícaro que no deja de gotear. Mientras esté viva, el piso alrededor se inunda: el agua frena y moja. ¡Ciérrala!', vida: 22, vel: 26, dano: 10, xp: 6, radio: 22, tam: 72, retro: 0.3, congelable: true }),
 };
 
 export const ID_ENEMIGOS = Object.keys(ENEMIGOS) as IdEnemigo[];

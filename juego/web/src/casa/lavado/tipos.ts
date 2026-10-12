@@ -98,14 +98,16 @@ export type IdEnemigo =
   | 'patoInflable' | 'donaFlotador' | 'reyRaton'
   | 'ruletaLoca' | 'payasoBloqueador' | 'reinaCremas'
   // La Parca del baño
-  | 'duchaHelada';
+  | 'duchaHelada'
+  // Los bichos especiales (la Llave que gotea es la que inunda; el que persigue y el ladrón usan al Tapón y al ratoncito)
+  | 'llaveGotea';
 
 export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera' | 'desague' | 'desfile' | 'espejo' | 'matera' | 'tobogan' | 'laberinto' | 'feria';
 
 /** Los modos que se abren con los tesoros (y el Hiper de cada escenario, venciendo a su jefe del minuto 25). */
 export type IdModo = 'hiper' | 'inverso' | 'infinito' | 'sinLimite' | 'ruleta' | 'azar';
 /** Los tesoros del baño (las reliquias del original). */
-export type IdTesoro = 'espejoReves' | 'calentador' | 'recetas' | 'ruleta' | 'cuento' | 'mapa' | 'monedero' | 'mascarillaNoche';
+export type IdTesoro = 'espejoReves' | 'calentador' | 'recetas' | 'ruleta' | 'cuento' | 'mapa' | 'monedero' | 'mascarillaNoche' | 'radio';
 
 export type IdObjeto =
   | 'arepa' // vida (el pollo del original)
@@ -176,7 +178,8 @@ export type TipoEfecto =
   | 'chorro' // chorro de La Ducha que va a caer: x, y; c = radio; d = segundos de aviso; e = segundos que cae
   | 'frasco' // frasco de La Jabonera que se va a caer: x, y; c = radio; d = segundos de aviso; e = cuál frasco
   | 'remolino' // remolino de El Desagüe: x, y; c = radio; d = segundos que dura
-  | 'transforma'; // el disfraz del jugador c se transformó (nivel 80 con su llavecita)
+  | 'transforma' // el disfraz del jugador c se transformó (nivel 80 con su llavecita)
+  | 'seca'; // se secó el charco de la Llave que gotea (x, y; c = radio)
 
 export interface Efecto {
   tipo: TipoEfecto;

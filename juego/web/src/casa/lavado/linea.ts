@@ -8,7 +8,7 @@
 // cartas al subir de nivel y los cofres viajan aparte, en JSON, cuando cambian.
 import { ID_ARMAS, ID_PASIVAS, baseEnNivel } from './armas';
 import { ID_ENEMIGOS, ENEMIGOS } from './enemigos';
-import { LIMITE_COFRE, LIMITE_ESCOGER, MAX_ENEMIGOS, type CofreAbierto, type Jugador, type Motor, type Opcion, type OpcionesJugador } from './motor';
+import { LIMITE_COFRE, LIMITE_ESCOGER, MAX_ENEMIGOS, RADIO_INUNDA, type CofreAbierto, type Jugador, type Motor, type Opcion, type OpcionesJugador } from './motor';
 import type { ResumenPartida } from './progreso';
 import type { IdVenta } from './vendedor';
 import { PREMIO, type IdPremioRuleta } from './feria';
@@ -22,6 +22,8 @@ export interface ConfigPartida {
   semilla: number;
   /** En el orden de los puestos de la sala: el 0 es el anfitrión (y la cara es la suya). */
   jugadores: OpcionesJugador[];
+  /** Un capítulo de las aventuras (lo escoge el anfitrión). */
+  capitulo?: string;
 }
 
 /** Lo de cada jugador que no cambia cuadro a cuadro (viaja en JSON cuando cambia). */
@@ -157,7 +159,7 @@ export function aplicarInventario(m: Motor, inv: InvJugador[]) {
 
 // ---------------------------------------------------------------------------------------------------- La foto
 const TIPOS_EF: TipoEfecto[] = ['golpe', 'muere', 'latigo', 'rayo', 'charco', 'limpiar', 'explosion', 'gema', 'moneda', 'curar', 'nivel', 'cofre', 'herido',
-  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces', 'escudo', 'cohete', 'chorro', 'frasco', 'remolino', 'transforma'];
+  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces', 'escudo', 'cohete', 'chorro', 'frasco', 'remolino', 'transforma', 'seca'];
 const IDX_EF = new Map(TIPOS_EF.map((t, i) => [t, i]));
 const IDX_ARMA = new Map(ID_ARMAS.map((a, i) => [a, i]));
 const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre', 'tesoro', 'trebolDorado', 'guante',
@@ -285,10 +287,12 @@ export function tomarFoto(m: Motor, efDesde: number, seq: number, extra = { band
     dv.setUint16(o, e.uid & 0xffff, true);
     o += 2;
     b8(e.ti);
-    b8((e.elite ? 1 : 0) | (e.jefe ? 2 : 0) | (e.luz ? 4 : 0) | (e.congelado > 0 ? 8 : 0) | (e.lento > 0 ? 16 : 0) | (e.flash > 0 ? 32 : 0) | (e.sinDientes ? 64 : 0));
+    b8((e.elite ? 1 : 0) | (e.jefe ? 2 : 0) | (e.luz ? 4 : 0) | (e.congelado > 0 ? 8 : 0) | (e.lento > 0 ? 16 : 0) | (e.flash > 0 ? 32 : 0) | (e.sinDientes ? 64 : 0)
+      | (e.acecho || e.ladron ? 128 : 0));
     pos(a, e.x, e.y);
     b8((e.hp / e.hpMax) * 255);
-    b8(e.luz ? e.fase * 255 : (e.fase * 10) % 255);
+    // (la Llave que gotea manda el tamaño de su charco en vez de la fase)
+    b8(e.luz ? e.fase * 255 : e.tipo === 'llaveGotea' ? (e.inunda / RADIO_INUNDA) * 255 : (e.fase * 10) % 255);
     n++;
   }
   dv.setInt16(pos0, n, true);
@@ -545,6 +549,10 @@ export class Espejo {
       e.lento = fl & 16 ? 0.2 : 0;
       if (fl & 32) e.flash = 0.13;
       e.sinDientes = !!(fl & 64);
+      // (los especiales: el que persige es el Tapón y el ladrón es el ratoncito)
+      e.acecho = !!(fl & 128) && id !== 'ratoncito';
+      e.ladron = !!(fl & 128) && id === 'ratoncito';
+      e.inunda = id === 'llaveGotea' ? (fase / 255) * RADIO_INUNDA : 0;
       e.esc = e.elite ? 1.8 : 1;
       e.r = e.luz ? 14 : e.def.radio * e.esc;
       e.hp = hp;
