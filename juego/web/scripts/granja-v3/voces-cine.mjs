@@ -7,7 +7,7 @@
 //   SECO=1 node scripts/granja-v3/voces-cine.mjs     → cuenta lo que falta y lo que cuesta, no gasta nada
 //   node scripts/granja-v3/voces-cine.mjs            → genera lo que falte
 //
-// Las diosas pasan por un procesado celestial (reverberación de catedral, un coro muy suave y brillo arriba); el
+// Las diosas pasan por un procesado celestial suave (eco corto, un coro que casi no se nota y algo de brillo arriba); el
 // narrador, por una sala cálida. Cada audio va a public/audio/cine/<id>-<huella>.ogg y se declara con su duración en
 // public/granja/cine/medios.json (el cine mide así cada toma sin cargar el audio). La huella sale del modelo, la voz,
 // el procesado y cómo se dice: si algo cambia, se rehace solo esa línea.
@@ -31,8 +31,9 @@ const AJUSTES = { stability: 0.45, similarity_boost: 0.8, style: 0.35 };
 const DIVINAS = new Set(['celia', 'aura', 'lara']);
 /** Cómo se procesa cada quien (ffmpeg). */
 const FILTRO = {
-  // Catedral: dos ecos largos y suaves, un coro apenas perceptible y un poquito de brillo arriba
-  celestial: 'highpass=f=90,chorus=0.7:0.9:55|70:0.22|0.18:0.25|0.3:2|2.3,aecho=0.85:0.75:120|240|380:0.32|0.22|0.14,equalizer=f=9000:t=q:w=1:g=3',
+  // Celestial «suave» (Javier lo escogió el 12 de octubre de 2026; la catedral le pareció demasiado): un eco corto y
+  // discreto, un coro que casi no se nota y un poquito de brillo arriba
+  celestial: 'highpass=f=90,chorus=0.8:0.9:25|35:0.09|0.07:0.3|0.4:1|1.3,aecho=0.9:0.85:70|130:0.13|0.07,equalizer=f=8500:t=q:w=1:g=1.5',
   narrador: 'highpass=f=70,aecho=0.8:0.6:45|90:0.16|0.08',
   normal: 'highpass=f=70',
 };

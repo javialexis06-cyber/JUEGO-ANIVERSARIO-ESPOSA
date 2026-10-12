@@ -46,11 +46,12 @@ Mitología: `docs/mitologia.md` (Celia, las Diosas Hermanas y el Santuario Prote
 
 - `node scripts/granja-v3/voces-cine.mjs reparto` busca voces etéreas en español para Celia, Aura y Lara (el narrador es
   el de la granja) y las deja en `voces-guion/cine-reparto.json`; `node scripts/granja-v3/voces-cine.mjs` genera las
-  líneas. Las diosas pasan por un procesado celestial con ffmpeg (coro muy suave, ecos largos de catedral y brillo
-  arriba); el narrador, por una sala cálida. Salen a `public/audio/cine/` y se declaran con su duración en
+  líneas. Las diosas pasan por un procesado celestial «suave» con ffmpeg (eco corto y discreto, un coro que casi no se
+  nota y un poquito de brillo arriba; Javier descartó la catedral por exagerada); el narrador, por una sala cálida. Salen a `public/audio/cine/` y se declaran con su duración en
   `public/granja/cine/medios.json` (aparte de `granja/astra/medios.json`, que su script reescribe entero).
 - Música: `cine-prologo-cosmos` y `cine-prologo-valle` en `musica-guion/guion.mjs` (orquesta celestial con coro sin
   letra, arpa y celesta; piano y flauta al amanecer). Mientras no existan suenan M12 («Heaven Theme Loop») y M13
   («First Light Particles») de la granja.
-- **Pendiente para Javier**: esta sesión no tenía `ELEVENLABS_API_KEY` ni la red abierta a `api.elevenlabs.io`; con las
-  dos, una sesión nueva corre `voces-cine.mjs reparto`, `voces-cine.mjs` y `SOLO=granja node scripts/musica-ia.mjs`.
+- **Hecho (12 de octubre de 2026)**: las 10 voces del prólogo. Reparto: narrador Josué Maya (el de la granja), Celia
+  «Alejandra» (joven y dulce), Aura «Valentina» (cálida y luminosa), Lara «Esperanza» (colombiana, serena). Falta la
+  música propia: `SOLO=granja node scripts/musica-ia.mjs` (mientras tanto suenan M12 y M13).

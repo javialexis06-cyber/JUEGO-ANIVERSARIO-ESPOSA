@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "voces": {
+    "PRO.N1": {
+      "archivo": "./audio/cine/PRO.N1-1cd298.ogg",
+      "seg": 9.01
+    },
+    "PRO.AURA": {
+      "archivo": "./audio/cine/PRO.AURA-bb45fa.ogg",
+      "seg": 6.31
+    },
+    "PRO.LARA": {
+      "archivo": "./audio/cine/PRO.LARA-5d36ad.ogg",
+      "seg": 5.71
+    },
+    "PRO.N2": {
+      "archivo": "./audio/cine/PRO.N2-35dd20.ogg",
+      "seg": 7.71
+    },
+    "PRO.N3": {
+      "archivo": "./audio/cine/PRO.N3-2f8e71.ogg",
+      "seg": 4.61
+    },
+    "PRO.C1": {
+      "archivo": "./audio/cine/PRO.C1-e79fb4.ogg",
+      "seg": 8.41
+    },
+    "PRO.C2": {
+      "archivo": "./audio/cine/PRO.C2-84bbbe.ogg",
+      "seg": 8.41
+    },
+    "PRO.C3": {
+      "archivo": "./audio/cine/PRO.C3-a22694.ogg",
+      "seg": 7.91
+    },
+    "PRO.C4": {
+      "archivo": "./audio/cine/PRO.C4-02b028.ogg",
+      "seg": 7.31
+    },
+    "PRO.C5": {
+      "archivo": "./audio/cine/PRO.C5-88d434.ogg",
+      "seg": 9.11
+    }
+  }
+}

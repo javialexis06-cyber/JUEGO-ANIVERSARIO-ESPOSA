@@ -11,8 +11,8 @@ simples) 4 (minimapa y mapa grande con fotos de verdad y marcas) y 5 (salidas an
 cuadrada, semillas y estanques por casillas) quedaron **hechas**. La tanda 6 quedó **hecha** (12 de octubre): Gremio de Aventureros y
 Museo del Valle, terreno en la carpintería, vecinos por partes, inicio guiado, campaña por cartas y vecinos, y Campaña y
 Astra unificadas. **Siguiente**: el prólogo en película (`docs/sistemas/cine-granja.md`) espera que Javier lo vea; si le
-gusta, se hacen las demás escenas grandes con el mismo estilo. **Espera a Javier**: agregar `ELEVENLABS_API_KEY` y
-`api.elevenlabs.io` al entorno para generar las voces celestiales y la música del cine.
+gusta, se hacen las demás escenas grandes con el mismo estilo. Las voces del prólogo quedaron **hechas** (celestial «suave»); falta
+su música propia (`SOLO=granja node scripts/musica-ia.mjs`).
 
 
 **Prioridad actual, 11 de octubre:** Javier encargó una base narrativa profunda para conectar granja y
