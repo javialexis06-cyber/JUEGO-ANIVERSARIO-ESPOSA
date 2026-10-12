@@ -283,7 +283,8 @@ export class CineGranja {
       this.voz = a;
       const retraso = (toma.linea?.desde ?? 0.4) * 1000;
       window.setTimeout(() => { if (this.voz === a && !this.fin) void a.play().catch(() => undefined); }, retraso);
-      if (this.musica) this.musica.volume = 0.18;
+      // Debajo de la voz la música baja poquito: Javier quiere seguir oyéndola (12 de octubre de 2026)
+      if (this.musica) this.musica.volume = 0.3;
       a.onended = () => { if (this.musica && this.voz === a) this.musica.volume = 0.42; };
     } else if (this.musica) this.musica.volume = 0.42;
   }

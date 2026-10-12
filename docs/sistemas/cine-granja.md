@@ -49,9 +49,32 @@ Mitología: `docs/mitologia.md` (Celia, las Diosas Hermanas y el Santuario Prote
   líneas. Las diosas pasan por un procesado celestial «suave» con ffmpeg (eco corto y discreto, un coro que casi no se
   nota y un poquito de brillo arriba; Javier descartó la catedral por exagerada); el narrador, por una sala cálida. Salen a `public/audio/cine/` y se declaran con su duración en
   `public/granja/cine/medios.json` (aparte de `granja/astra/medios.json`, que su script reescribe entero).
-- Música: `cine-prologo-cosmos` y `cine-prologo-valle` en `musica-guion/guion.mjs` (orquesta celestial con coro sin
-  letra, arpa y celesta; piano y flauta al amanecer). Mientras no existan suenan M12 («Heaven Theme Loop») y M13
-  («First Light Particles») de la granja.
+- Música: el prólogo usa M12 («Heaven Theme Loop») en el cosmos y M13 («First Light Particles») en el valle, CC0, de
+  la granja; a Javier le gustaron y se quedan. Debajo de una voz la música baja a 0,3 (no a 0,18) para seguir
+  oyéndola.
 - **Hecho (12 de octubre de 2026)**: las 10 voces del prólogo. Reparto: narrador Josué Maya (el de la granja), Celia
-  «Alejandra» (joven y dulce), Aura «Valentina» (cálida y luminosa), Lara «Esperanza» (colombiana, serena). Falta la
-  música propia: `SOLO=granja node scripts/musica-ia.mjs` (mientras tanto suenan M12 y M13).
+  «Alejandra» (joven y dulce), Aura «Valentina» (cálida y luminosa), Lara «Esperanza» (colombiana, serena).
+
+## Las películas que faltan (las 14 cinemáticas de la campaña)
+
+Cada una sale al cerrar su contrato (`CINEMATICAS_ASTRA` en `astra.ts`). Hoy se juegan como escena de subtítulos con
+voz; falta hacerlas película con este motor, como el prólogo. Los guiones (planos, duración, sonido y líneas) están en
+`docs/narrativa/02-campana.md` (C01–C10) y `docs/narrativa/10-figuras-y-escenas.md` (C11–C14); las voces ya están
+generadas (`public/granja/astra/medios.json`) y la música, asignada (`MUSICA_ESCENAS_ASTRA`).
+
+| | Escena | Sale en | Duración | Voces | Música | Película |
+|---|---|---|---|---|---|---|
+| C01 | Dos surcos | P01 | 70–90 s | 12 | M01 (CC0) | falta |
+| C02 | La campana y la mesa | P03 | 100–120 s | 13 | M10 (compuesta) | falta |
+| C03 | La firma | P05 | 120–150 s | 13 | M09 (CC0) | falta |
+| C04 | La copa | P09 | 150–180 s | 16 | M11 (compuesta) | falta |
+| C05 | Una mañana que no basta | P10 | 90–110 s | 10 | M08 (CC0) | falta |
+| C06 | La casa de Elián | P15 | 150–180 s | 16 | M14 (compuesta) | falta |
+| C07 | El tratado | P21 | 120–150 s | 12 | M21 (compuesta) | falta |
+| C08 | El ceramista | P22 | 110–140 s | 13 | M22 (compuesta) | falta |
+| C09 | Una estrella sin dueño | P23 | 150–180 s | 14 | M19 (compuesta) | falta |
+| C10 | La parcela de mañana | P24 | 80–100 s | 11 | M20 (compuesta) | falta |
+| C11 | El agua que escucha | F01 | 2–3 min | 20 | M23 (CC0) | falta |
+| C12 | El día posterior al nacimiento | F04 | 3 min | 21 | M23 (CC0) | falta |
+| C13 | El precio de una alianza | F06 | 3 min | 20 | M23 (CC0) | falta |
+| C14 | La cuenta que ya no se cierra sola | F12 | 3–4 min | 20 | M23 (CC0) | falta |

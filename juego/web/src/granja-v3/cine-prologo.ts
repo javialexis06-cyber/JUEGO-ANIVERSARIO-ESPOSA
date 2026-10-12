@@ -589,13 +589,13 @@ const p = (pos: V3, mira: V3, fov = 0): { pos: V3; mira: V3; fov: number } => ({
 const L = LINEAS_PROLOGO;
 
 const TOMAS: Toma[] = [
-  { id: 'c_vacio', dur: 6, escena: 'cosmos', musica: 'cine-prologo-cosmos|M12', bloom: 0.9, entra: { color: '#000', dur: 2.5 }, cam: { de: p([0, 3, 82], [0, 0, 0], 34), a: p([0, 2.4, 50], [0, 0, 0], 34), curva: 'lineal' } },
+  { id: 'c_vacio', dur: 6, escena: 'cosmos', musica: 'M12', bloom: 0.9, entra: { color: '#000', dur: 2.5 }, cam: { de: p([0, 3, 82], [0, 0, 0], 34), a: p([0, 2.4, 50], [0, 0, 0], 34), curva: 'lineal' } },
   { id: 'c_nace', dur: 10, escena: 'cosmos', bloom: 1.25, linea: L.narrador1, cam: { de: p([0, 2.4, 50], [0, 0, 0], 34), a: p([4, 1.6, 21], [0, 0, 0], 38), curva: 'sale' } },
   { id: 'c_aura', dur: 9, escena: 'cosmos', bloom: 0.8, linea: L.aura, cam: { de: p([-1.5, 3.4, 19], [-16, 3.5, -3], 40), a: p([-4.4, 2.3, 10.2], [-10.5, 1.5, 2.2], 36), curva: 'sale' } },
   { id: 'c_lara', dur: 9, escena: 'cosmos', bloom: 0.8, linea: L.lara, cam: { de: p([1.5, 3.4, 19], [16, 0, -3], 40), a: p([4.4, 2.3, 10.2], [10.5, 1.5, 2.2], 36), curva: 'sale' } },
   { id: 'c_escudo', dur: 11, escena: 'cosmos', bloom: 1.15, linea: L.narrador2, cam: { de: p([0, 5, 34], [0, 1, 0], 40), a: p([0, 3, 26], [0, 1.2, 0], 42) } },
   { id: 'c_caida', dur: 4.8, escena: 'cosmos', bloom: 1.3, sale: { color: '#fff8ea', dur: 1.5 }, cam: { de: p([0, 3, 26], [0, 0.8, 0], 42), a: p([0.4, 1.4, 4.9], [0, 0.4, 0], 82), curva: 'entra' } },
-  { id: 'v_amanecer', dur: 9, escena: 'valle', musica: 'cine-prologo-valle|M13', bloom: 0.75, entra: { color: '#fff8ea', dur: 2.2 }, linea: L.narrador3, cam: { de: p([30, 19, 52], [0, 2, 0], 36), a: p([11, 4.6, 22], [0, 1.6, 0], 38) } },
+  { id: 'v_amanecer', dur: 9, escena: 'valle', musica: 'M13', bloom: 0.75, entra: { color: '#fff8ea', dur: 2.2 }, linea: L.narrador3, cam: { de: p([30, 19, 52], [0, 2, 0], 36), a: p([11, 4.6, 22], [0, 1.6, 0], 38) } },
   { id: 'v_llegan', dur: 9, escena: 'valle', bloom: 0.55, cam: { de: p([-1.2, 2.3, 9.5], [4.6, 1.1, 19.5], 36), a: p([-3.8, 1.8, 3.4], [0.6, 1.0, 8.6], 38), curva: 'lineal' } },
   { id: 'v_luz', dur: 6.5, escena: 'valle', bloom: 0.5, cam: { de: p([0.6, 1.25, 11.5], [0, 1.6, 2], 42), a: p([0.2, 1.05, 10.2], [0, 3.6, 1.4], 46) } },
   { id: 'v_celia1', dur: 7, escena: 'valle', bloom: 0.55, linea: L.celia1, cam: { de: p([1.6, 1.25, 6.4], [0, 1.75, 1.4], 36), a: p([1.1, 1.3, 5.6], [0, 1.85, 1.4], 34) } },
