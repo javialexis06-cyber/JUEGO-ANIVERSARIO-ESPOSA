@@ -2,6 +2,13 @@
 
 ## Frente de granja en paralelo
 
+**Arreglos de la granja (12 de octubre, lo siguiente que se hace):** Javier mandó una lista larga (rendimiento, menú de
+3 rayitas, mochila tipo Minecraft, mapas reales con marcadores, caminos, lagos, mina, semillas, historia que te lleve a
+los lugares físicos). ChatGPT se quedó sin uso: Claude hace todo. El plan por tandas, con lo ya encontrado en el código
+(archivos y líneas), está en [`en-obra/granja-arreglos.md`](en-obra/granja-arreglos.md). La tanda 1 (rendimiento y
+calidad alta en PC) quedó **hecha**; seguir con la tanda 2.
+
+
 **Prioridad actual, 11 de octubre:** Javier encargó una base narrativa profunda para conectar granja y
 Sangre y Ceniza. Entrega local en [narrativa/README.md](narrativa/README.md): cosmología y cronología,
 142 biografías y arcos personales, cinco figuras divinas, 24 misiones principales, doce secretos,
@@ -23,9 +30,7 @@ Javier pidió integrar la granja existente, subir cada avance probado y repartir
 - 42 encargos con recompensa, 6 de ellos entre pueblos.
 
 Falta:
-- Voz de las líneas de Astra (ver el presupuesto en `sistemas/musica.md`).
-- Música de la granja.
-- Lo que espera al frente de motor.
+- Los arreglos de [`en-obra/granja-arreglos.md`](en-obra/granja-arreglos.md) (voces y música de la granja ya están).
 
 Lo que Javier pidió y todavía falta, en el orden en que se va a hacer. Se tacha (se borra) cuando queda hecho,
 probado y subido.

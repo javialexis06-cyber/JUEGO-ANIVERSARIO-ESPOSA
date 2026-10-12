@@ -418,10 +418,12 @@ export function iniciarHud(h: Hud) {
   let elegida = '';
   try { elegida = localStorage.getItem(CLAVE_CALIDAD) ?? ''; } catch { /* nada */ }
   // Si la persona la cambia en Ajustes, se respeta su elección
+  // (antes se leía solo al abrir el juego: escoger «con detalle» en Ajustes no evitaba que bajara sola a ligeros)
   document.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).closest('[data-ajuste="calidad"]')) setTimeout(() => { try { localStorage.setItem(CLAVE_CALIDAD, vista.calidad); } catch { /* nada */ } }, 0);
+    if ((e.target as HTMLElement).closest('[data-ajuste="calidad"],[data-do="calidad"]')) setTimeout(() => { elegida = vista.calidad; lentos = 0; try { localStorage.setItem(CLAVE_CALIDAD, vista.calidad); } catch { /* nada */ } }, 0);
   }, true);
   let cuadros = 0, desde = performance.now(), lentos = 0;
+  const inicio = performance.now();
   const medir = (t: number) => {
     requestAnimationFrame(medir);
     if (document.hidden) { desde = t; cuadros = 0; return; }
@@ -429,8 +431,10 @@ export function iniciarHud(h: Hud) {
     if (t - desde < 4000) return;
     const fps = (cuadros * 1000) / (t - desde);
     cuadros = 0; desde = t;
-    lentos = fps < 22 && !h.panelAbierto() ? lentos + 1 : 0;
-    if (lentos >= 2 && vista.calidad === 'alta' && !elegida) { $('quality').click(); lentos = 0; }
+    // Solo baja sola si nadie la escogió, y después de 12 s seguidos lentos (un tirón suelto no cuenta)
+    // Los primeros segundos (cargar modelos y compilar) no cuentan
+    lentos = fps < 20 && !h.panelAbierto() && t - inicio > 12000 ? lentos + 1 : 0;
+    if (lentos >= 3 && vista.calidad === 'alta' && !elegida) { $('quality').click(); lentos = 0; }
   };
   requestAnimationFrame(medir);
 

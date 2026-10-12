@@ -1,5 +1,13 @@
 # Coordinación de la granja con el proyecto principal
 
+## Claude lleva todo el frente · 12 de octubre de 2026
+
+ChatGPT, que llevaba el motor, se quedó sin uso; Javier pidió que Claude haga todo. La lista grande de arreglos
+(rendimiento, menú, mochila, mapas, caminos, lagos, mina, semillas, historia con lugares físicos) está por tandas en
+[`granja-arreglos.md`](granja-arreglos.md). Hecha la tanda 1: `vista.sync` reutiliza las piezas que no cambiaron
+(`pieza(clave, crear)`), el guardado de los trabajos repetidos se agrupa, se precompilan los sombreadores y la calidad
+alta ya no se baja sola si se escogió.
+
 ## Premios funcionales en verificación · 11 de octubre de 2026
 
 La pestaña **Premios** conecta las 217 entregas únicas con fichas, agendas, patrones, instalaciones,
