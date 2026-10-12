@@ -145,7 +145,7 @@ def main():
         'docs/sistemas/sangre-y-ceniza.md': ('Sangre-y-Ceniza', 'Juego existente. Astra consulta sus hitos reales mediante un puente de lectura; sus 36 expedientes no equivalen a las 36 misiones finales.'),
         'docs/sistemas/sangre-figuras.md': ('Sangre-Figuras', 'Catálogo del juego existente. Los ecos de dioses no equivalen a sus identidades divinas.'),
         'docs/en-obra/sangre-propuesta.md': ('Plan-Sangre-y-Ceniza-2', 'Propuesta histórica. Consultar Estado-y-planes: sus cinco fases ya figuran completadas en la cola remota.'),
-        'docs/en-obra/lavado-propuesta.md': ('Plan-Lavarse-la-Cara-2', 'Propuesta por fases: fases 1 y 2 completas; La Ducha (3a) integrada; otros escenarios y fases posteriores pendientes.'),
+        'docs/en-obra/lavado-propuesta.md': ('Plan-Lavarse-la-Cara-2', 'Propuesta por fases: fases 1 y 2, La Ducha, La Feria, aventuras, radio y bichos especiales integrados por el frente visual; balance y revisión en dispositivos físicos pendientes.'),
         'docs/en-obra/escenas-premium.md': ('Escenas-Premium', 'Catálogo y funcionamiento de escenas existentes; sus nuevos escenarios y ampliaciones permanecen en pausa.'),
         'docs/sistemas/musica.md': ('Musica-y-efectos-de-los-juegos', 'Música y efectos existentes. La producción musical de Astra y la granja sigue pendiente y se especifica aparte.'),
     }
@@ -158,6 +158,12 @@ def main():
     source_map.update({'docs/narrativa/README.md': 'Astra', 'docs/narrativa/03-reparto.md': 'Personajes', 'docs/narrativa/02-misiones-principales.md': 'Misiones-Principales', 'docs/narrativa/04-relaciones-secretos.md': 'Relaciones-y-secretos', 'docs/narrativa/07-encuentros.md': 'Misiones-Encuentros', 'docs/narrativa/audio': 'Voces-y-guiones', 'docs/narrativa/datos': 'Datos-y-fuentes'})
     for path, (page, state) in general.items():
         doc(page, path, '**Estado:** ' + state)
+    cine_path = 'docs/sistemas/cine-granja.md'
+    source_map[cine_path] = 'Granja-Cine'
+    cine = source(cine_path)
+    cine = '# El cine de la granja\n\nPrólogo cinematográfico sobre el canon de Celia, Aura y Lara; reutiliza personajes y modelos existentes.\n\n## El prólogo' + cine.split('\n\n## El prólogo', 1)[1]
+    cine = cine.split('- **Pendiente para Javier**:', 1)[0] + '- **Producción pendiente:** voces celestiales y música propia del cine. Los scripts descritos pueden generar gasto; esta exportación no los ejecuta. Las demás películas de la campaña continúan en planificación.\n'
+    doc('Granja-Cine', cine_path, '**Estado: código del prólogo integrado por el frente visual; voces propias pendientes.** El motor pausa las acciones del valle durante la película; una sesión de pesca activa exige recoger o cancelar antes de verla.', text=cine)
     for path, page in list(source_map.items()):
         if path.startswith('juego/web/'):
             planning = path.endswith(('PLAN-MOTOR-COMPLETO.md', 'PLAN-PUEBLOS-MUNDOS.md', 'REPARTO-COMPLETO.md'))
@@ -392,7 +398,7 @@ La documentación distingue el juego existente de los diseños. El estado de una
 | Supermercado | Juego, niveles y logros existentes | Mejoras según la cola de trabajo |
 | Cien Puertas | 100 acertijos funcionales y revisión de pareja documentada | Continuar ajustes de presentación sin cambiar soluciones sin revisión |
 | Sangre y Ceniza 2 | Cinco fases de expansión completadas en la cola remota | Aceite de lámparas, sellos de Procesión, espejos del castillo y suelo de fuego de la abadía |
-| Lavarse la Cara 2 | Fases 1 y 2, La Ducha y La Feria; disfraces, cartas y cajitas integrados por Claude | Más escenarios y aventuras según su cola |
+| Lavarse la Cara 2 | Fases 1 y 2, La Ducha y La Feria; disfraces, cartas, cajitas, aventuras, radio y bichos especiales integrados por Claude | Balance y recorridos de aventuras; revisión en dispositivos físicos |
 | Retrete Espacial | Juego existente y edición amigos | Revisión y ampliaciones según cola |
 | Cocina de Chef | Tres restaurantes existentes | Balance y mejoras según cola |
 | Juegos de Mesa | Cinco juegos existentes | Show pendiente de integrar desde rama separada |
@@ -400,6 +406,7 @@ La documentación distingue el juego existente de los diseños. El estado de una
 | Granja | Siete bloques de software conectados; recorrido lógico ordinario de 36 contratos | No certifica paridad total ni rendimiento en teléfonos |
 | Cuadernos de mina K07 | Integrados: tres cuadernos, prospección y recetas alternativas | Ampliaciones del plan del motor |
 | Armas de granja | Siete familias, cuatro reguladores y dos cámaras; 16 destinos | Modelos y animación final; rendimiento físico |
+| Pesca con sedal | 26 especies, seis familias de movimiento, picada, tensión y captura recuperable | Animaciones de caña y pez; destreza y rendimiento en teléfonos |
 | Astra ampliada | 28 lugares, 27 rutas, 178 habitantes, 93 domicilios, 217 contratos propios y 42 encargos de pueblos | Expansiones, cinemáticas y prueba física |
 | Producción Astra | 3.590 líneas, 3.581 tomas existentes, 23 músicas y contrato de producción | Sustitución de kits, animaciones de historia y mediciones físicas |
 | Sótano de terror y teléfono de crímenes | Ideas iniciales | Diseñar; no existen campañas completas jugables ni guiones cerrados |
@@ -410,7 +417,7 @@ El motor completo sigue en desarrollo. La base de regiones y presencia está int
     add('Ideas-futuras', '# Ideas futuras\n\n**Estado: ideas sin desarrollo cerrado.**\n\n- Sótano de terror: juego de acceso por contraseña e identificación de visitantes, inspirado en la tensión de decidir a quién dejar entrar.\n- Teléfono de crímenes: propuesta de diez casos de investigación. Todavía no se han escrito aquí diez guiones ni soluciones definitivas.\n- Tele, tocador y ampliación de escenas premium: propuestas sujetas a diseño e integración.\n\nEstas ideas no son requisitos de Astra ni desbloqueos disponibles. Cuando exista un diseño concreto se añadirá su página con reglas, casos, guiones y estado verificable.')
     local_book = ROOT / 'juego/web/src/granja-v3/LIBROS-INTEGRACION.md'
     add('Granja-Cuadernos-locales', '# Cuadernos de mina\n\n**Estado: integrado en la rama del juego; tres cuadernos y sus aprendizajes conservan el guardado V5.**\n\n' + local_book.read_text())
-    add('Sistemas-de-Granja', '# Sistemas de la granja\n\n' + '\n'.join('- ' + link('Granja-' + m.title()) for m in modules) + '\n- ' + link('Granja-Cuadernos-locales') + '\n- ' + link('Granja-Astra-Integracion') + '\n- ' + link('Plan-del-motor'))
+    add('Sistemas-de-Granja', '# Sistemas de la granja\n\n' + '\n'.join('- ' + link('Granja-' + m.title()) for m in modules) + '\n- ' + link('Granja-Cine') + '\n- ' + link('Granja-Cuadernos-locales') + '\n- ' + link('Granja-Astra-Integracion') + '\n- ' + link('Plan-del-motor'))
     gamepages = ['Nuestro-Hogar', 'Supermercado-Mania', 'Cien-Puertas', 'Sangre-y-Ceniza', 'Nuestra-Granjita', 'Lavarse-la-Cara', 'Retrete-Espacial', 'Cocina-de-Chef', 'La-Wafleria', 'La-Freseria', 'La-Fraperia', 'Juegos-de-Mesa', 'Dados', 'Mancala', 'Puntos-y-Cajas', 'Parchis', 'Clue', 'Sala-de-Juegos-Amigos', 'El-Show-de-Nosotros', 'Ideas-futuras']
     add('Juegos', '# Juegos\n\nCada guía distingue reglas existentes y expansiones. La casa, la granja y Sangre comparten universo narrativo; los juegos casuales mantienen reglas y economías propias.\n\n' + '\n'.join('- ' + link(p) for p in gamepages))
     add('Astra', '# Astra · La vida que no cabe en una vasija\n\n' + REGIONAL + '\n\nMitología que conecta Sangre y Ceniza con Nuestra Granjita. Autoría nueva sobre el canon conservado; no es recuperación de la conversación perdida. Los pasados, conflictos y relaciones añadidos son ficción.\n\n' + '\n'.join('- ' + link(p) for p in ['Astra-Mundo', 'Astra-Campana-y-cinematica', 'Personajes', 'Lugares', 'Misiones', 'Relaciones-y-secretos', 'Astra-Jugabilidad-y-recompensas', 'Voces-y-guiones', 'Astra-Canon-base', 'Fuatia', 'Confluencia-y-recursos', 'Recursos-de-los-mundos', 'Armas-y-combate']))

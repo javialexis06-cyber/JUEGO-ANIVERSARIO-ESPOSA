@@ -8,6 +8,8 @@ La presentación utiliza controles sencillos y sonidos existentes. Para animacio
 consultar `motor.estadoSedal()` y el contrato `produccion.json → pesca_sedal`; conservar semilla,
 puestos, reservas y controles. No se producen gráficos nuevos ni llamadas de voz de pago.
 La API anterior `pescar` se conserva para compatibilidad, mientras la interfaz usa sesiones.
+Se incorporó `2a22e7ec`: aventuras, radio y bichos del lavado, y ajuste de franjas del prólogo.
+Sus archivos de lavado y cine permanecen idénticos a esa revisión.
 
 ## Reuniones y agendas comunitarias · 12 de octubre de 2026
 
