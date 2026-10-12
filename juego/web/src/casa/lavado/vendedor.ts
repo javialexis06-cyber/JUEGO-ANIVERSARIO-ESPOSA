@@ -41,7 +41,7 @@ export const VENTA = Object.fromEntries(VENTAS.map((v) => [v.id, v])) as Record<
 export const ID_VENTAS = VENTAS.map((v) => v.id);
 
 /** Dónde se para el carrito en cada escenario (cerquita del principio, para que se vea pronto). */
-export const PUESTO: Record<IdEscenario, [number, number]> = { cara: [620, -380], lavamanos: [820, -60], banera: [-700, 420], ducha: [700, 380], jabonera: [150, 620], desague: [-650, -420], desfile: [600, 420], espejo: [-620, 380] };
+export const PUESTO: Record<IdEscenario, [number, number]> = { cara: [620, -380], lavamanos: [820, -60], banera: [-700, 420], ducha: [700, 380], jabonera: [150, 620], desague: [-650, -420], desfile: [600, 420], espejo: [-620, 380], matera: [640, -360] };
 /** Sin el Monedero, el vendedor solo pasa por aquí. */
 export const ESCENARIO_VENDEDOR: IdEscenario = 'lavamanos';
 /** Qué tan cerca hay que llegar para que abra el puesto. */

@@ -306,6 +306,48 @@ const FRAG_ESPEJO = COMUN + /* glsl */ `
   }
 `;
 
+const FRAG_MATERA = COMUN + /* glsl */ `
+  void main() {
+    vec2 p = vMapa;
+    float d1 = texture2D(uDetalle, p / 120.0).r;
+    float d2 = texture2D(uDetalle, p / 41.0 + vec2(0.21, 0.6)).r;
+    vec4 n = texture2D(uRuido, p / 1500.0);
+    vec4 n2 = texture2D(uRuido, p / 430.0 + 0.4);
+    // La tierra negra de la matera: granulada, más seca (clarita) a parches y húmeda donde regaron
+    vec3 col = mix(uC1, uC2, smoothstep(0.3, 0.75, n.r));
+    col *= 0.82 + d1 * 0.22 + (d2 - 0.5) * 0.3;
+    float seca = smoothstep(0.62, 0.82, n2.r);
+    col = mix(col, col * 1.35 + vec3(0.05, 0.03, 0.0), seca * 0.5);
+    float mojada = smoothstep(0.66, 0.86, n2.b);
+    col = mix(col, col * 0.62, mojada * 0.6);
+    // Musgo verdecito a parches
+    float musgo = smoothstep(0.56, 0.74, n.g * 0.6 + n2.a * 0.4);
+    vec3 verde = mix(vec3(0.3, 0.48, 0.18), vec3(0.46, 0.64, 0.24), d2);
+    col = mix(col, verde * (0.75 + d1 * 0.45), musgo * 0.85);
+    // Piedritas regadas (de las que ponen encima de la tierra): pocas, de tamaños y colores distintos, con su sombrita
+    vec2 g = p / 58.0;
+    vec2 cg = floor(g);
+    float h = fract(sin(dot(cg, vec2(12.9898, 78.233))) * 43758.5453);
+    vec2 off = vec2(fract(h * 7.13), fract(h * 3.71)) - 0.5;
+    float tam = 0.07 + 0.09 * fract(h * 13.7);
+    vec2 dp = fract(g) - 0.5 - off * 0.5;
+    float piedra = (1.0 - smoothstep(tam, tam + 0.04, length(dp * vec2(1.0, 1.25)))) * step(0.9, h) * (1.0 - musgo);
+    float sombraP = (1.0 - smoothstep(tam, tam + 0.07, length((dp - vec2(0.03, 0.04)) * vec2(1.0, 1.25)))) * step(0.9, h) * (1.0 - musgo);
+    col = mix(col, col * 0.65, sombraP * 0.6);
+    vec3 cPiedra = mix(vec3(0.84, 0.8, 0.74), vec3(0.62, 0.6, 0.58), fract(h * 5.3));
+    col = mix(col, cPiedra * (0.8 + d1 * 0.3 + 0.25 * (0.5 - dp.y * 3.0)), piedra);
+    // Los bordes de barro de las materas (cada 900, un aro naranja grandote)
+    vec2 q = (fract(p / 900.0) - 0.5) * 900.0;
+    float rr = length(q);
+    float aro = 1.0 - smoothstep(10.0, 16.0, abs(rr - 300.0));
+    float sombraAro = (1.0 - smoothstep(16.0, 34.0, abs(rr - 286.0))) * (1.0 - aro);
+    col = mix(col, col * 0.7, sombraAro * 0.5);
+    col = mix(col, uC3 * (0.9 + 0.2 * sin(atan(q.y, q.x) * 3.0 + d1)), aro);
+    gl_FragColor = vec4(col, 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
 interface Paleta {
   c1: string;
   c2: string;
@@ -337,6 +379,7 @@ const DECOR: Record<IdEscenario, [IdDecor, number, number][]> = {
   desague: [['pelito', 4, 90], ['burbujitas', 3, 70], ['hojita', 1.2, 50], ['gotaAgua', 2, 60], ['espumaIsla', 0.8, 120]],
   desfile: [['pelito', 2, 70], ['petalos', 2, 70], ['burbujitas', 1.5, 60]],
   espejo: [['gotaAgua', 6, 70], ['burbujitas', 2, 60], ['manchaJabon', 1.5, 120]],
+  matera: [['hojita', 6, 80], ['petalos', 2.4, 70], ['pelito', 1.2, 60]],
 };
 
 export class Suelo {
@@ -350,7 +393,7 @@ export class Suelo {
 
   /** `piel`: el color de piel del anfitrión cuando es un amigo con su propio tono (la cara es la suya). */
   constructor(private esc: IdEscenario, rol: Rol, limites: { yMin: number; yMax: number } | null, piel?: string, private limX?: { xMin: number; xMax: number }) {
-    const detalle = esc === 'cara' || esc === 'desfile' ? detalleCara() : esc === 'lavamanos' || esc === 'ducha' || esc === 'jabonera' || esc === 'espejo' ? detalleLavamanos() : detalleBanera();
+    const detalle = esc === 'cara' || esc === 'desfile' || esc === 'matera' ? detalleCara() : esc === 'lavamanos' || esc === 'ducha' || esc === 'jabonera' || esc === 'espejo' ? detalleLavamanos() : detalleBanera();
     // El detalle es un dato (gris), no un color: se lee tal cual
     detalle.colorSpace = THREE.NoColorSpace;
     detalle.needsUpdate = true;
@@ -363,12 +406,13 @@ export class Suelo {
       : esc === 'desague' ? { c1: '#3c4a4a', c2: '#4e5e5a', c3: '#a8b2b6' }
       : esc === 'desfile' ? { c1: '#c8a8e0', c2: '#d8bce8', c3: '#8a5ab8' }
       : esc === 'espejo' ? { c1: '#b8c8d4', c2: '#d4e0e8', c3: '#f2f6f8' }
+      : esc === 'matera' ? { c1: '#4a3224', c2: '#5e4030', c3: '#c8683e' }
       : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
     // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
     const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({
       vertexShader: VERT,
-      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : esc === 'desfile' ? FRAG_TAPETE : esc === 'espejo' ? FRAG_ESPEJO : FRAG_BANERA,
+      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : esc === 'desfile' ? FRAG_TAPETE : esc === 'espejo' ? FRAG_ESPEJO : esc === 'matera' ? FRAG_MATERA : FRAG_BANERA,
       uniforms: {
         uDetalle: { value: detalle },
         uRuido: { value: ruido },
@@ -404,7 +448,7 @@ export class Suelo {
     const C = 150;
     const x0 = Math.floor((cx - ancho * 0.62) / C), x1 = Math.floor((cx + ancho * 0.62) / C);
     const y0 = Math.floor((cy - hondo * 0.7) / C), y1 = Math.floor((cy + hondo * 0.62) / C);
-    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : this.esc === 'desfile' ? 19 : this.esc === 'espejo' ? 23 : 7;
+    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : this.esc === 'desfile' ? 19 : this.esc === 'espejo' ? 23 : this.esc === 'matera' ? 29 : 7;
     for (let gy = y0; gy <= y1; gy++)
       for (let gx = x0; gx <= x1; gx++) {
         if (hash2(gx, gy, sem) > 0.62) continue;

@@ -80,16 +80,19 @@ export type IdEnemigo =
   | 'pompa' | 'cuchilla' | 'algodon' | 'champuDerramado' | 'hilacha' | 'frascoVacio' | 'mohoRosado'
   // El Desagüe
   | 'bolitaPelo' | 'grasaSifon' | 'gusanito' | 'burbujaGas' | 'sapito' | 'rejillita' | 'lodo'
+  // La Matera de la ventana
+  | 'brotecito' | 'cactus' | 'atrapamoscas' | 'caracol' | 'dienteLeon' | 'enredadera' | 'helecho'
   // Jefes
   | 'espinillon' | 'reinaCaspa' | 'granMoco' | 'senorLagana' | 'barroNegro' | 'senorSarro' | 'donaCucaracha' | 'motaPelo' | 'tapon'
   | 'esponjaPodrida' | 'peloDesague'
   | 'reyHongo' | 'regaderaLoca' | 'cortinaMohosa' | 'ciempiesGigante'
   | 'donFrasco' | 'reinaPompa' | 'senorCuchillas' | 'poteCrema'
   | 'reySapo' | 'pulpoDesague' | 'bocaSifon' | 'reinaGrasa'
+  | 'donCactus' | 'atrapamoscasGigante' | 'materaGigante'
   // La Parca del baño
   | 'duchaHelada';
 
-export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera' | 'desague' | 'desfile' | 'espejo';
+export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera' | 'desague' | 'desfile' | 'espejo' | 'matera';
 
 /** Los modos que se abren con los tesoros (y el Hiper de cada escenario, venciendo a su jefe del minuto 25). */
 export type IdModo = 'hiper' | 'inverso' | 'infinito' | 'sinLimite' | 'ruleta' | 'azar';

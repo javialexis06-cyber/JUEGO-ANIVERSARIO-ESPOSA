@@ -473,6 +473,9 @@ const NOMBRE_PATITO: Partial<Record<Stat, string>> = {
 };
 
 // ---------------------------------------------------------------------------------------------------- Motor
+/** Los mugrosos que no caminan (las maticas de La Matera). */
+const QUIETAS = new Set(['planta', 'morder']);
+
 export class Motor {
   readonly esc: DefEscenario;
   readonly apurado: boolean;
@@ -1887,7 +1890,7 @@ export class Motor {
       }
       return;
     }
-    this.crear(tipo, this.puntoAfuera(j), j);
+    this.crear(tipo, this.puntoAfuera(j, QUIETAS.has(def.comp) ? this.az.entre(30, 420) : 50), j);
   }
 
   crear(tipo: IdEnemigo, p: [number, number], j: Jugador | null, o: { elite?: boolean; jefe?: boolean; fijo?: boolean; cofre?: number } = {}): Enemigo | null {
@@ -2229,6 +2232,29 @@ export class Motor {
               uy = ny;
               break;
             }
+            case 'planta':
+              v = 0;
+              break;
+            case 'morder': {
+              // Quietica hasta que alguien se le acerca: entonces se estira y muerde (un salto cortico)
+              e.et -= dt;
+              if (e.estado === 0 && e.et <= 0 && d < 150) {
+                e.estado = 4;
+                e.et = 0.5;
+                e.dx = ux;
+                e.dy = uy;
+              }
+              if (e.estado === 4) {
+                v = e.et > 0.3 ? 0 : v * 4;
+                ux = e.dx;
+                uy = e.dy;
+                if (e.et <= 0) {
+                  e.estado = 0;
+                  e.et = this.az.entre(1.2, 2.2);
+                }
+              } else v = 0;
+              break;
+            }
             case 'saltar': {
               // Brinca un rato y descansa
               const c = (e.fase * 1.6 + e.uid * 0.37) % 1;
@@ -2325,7 +2351,8 @@ export class Motor {
           if (Math.abs(e.x - p.x) < p.vistaW * 0.95 && Math.abs(e.y - p.y) < p.vistaH * 1.2) lejos = false;
         }
         if (lejos) {
-          const pto = this.puntoAfuera(j, 40);
+          // (las maticas quietas se reparten en una franja más ancha, para que el jardín se vea parejo)
+          const pto = this.puntoAfuera(j, QUIETAS.has(e.def.comp) ? this.az.entre(30, 420) : 40);
           e.x = pto[0];
           e.y = pto[1];
         }
