@@ -91,10 +91,11 @@ export function luzCalida(g:THREE.Group,x:number,y:number,z:number,color='#ffcf8
 
 // ------------------------------------------------------------------ locales del pueblo (9 × 8)
 
-const PAPEL_LOCAL:Record<string,string>={semillas:'#E8D5B0',animales:'#E3D6A8',carpinteria:'#E2CBA6',herreria:'#C9C2B2',clinica:'#DCE6D6',posada:'#E6C9A2',archivo:'#D9C7A8',altar_aura:'#F0DEB0',altar_lara:'#DCD0EA'};
+const PAPEL_LOCAL:Record<string,string>={semillas:'#E8D5B0',animales:'#E3D6A8',carpinteria:'#E2CBA6',herreria:'#C9C2B2',clinica:'#DCE6D6',posada:'#E6C9A2',archivo:'#D9C7A8',altar_aura:'#F0DEB0',altar_lara:'#DCD0EA',gremio:'#D8C3A0',museo:'#EDE3D0'};
 
 export function interiorLocal(servicio:string):THREE.Group{
  const g=cascaron(9,8,PAPEL_LOCAL[servicio]??'#E8D5B0');g.name='interior-local';
+ if(servicio==='gremio'||servicio==='museo'){amueblar(g,servicio==='gremio'?interiorGremio(g):interiorMuseo(g));return g;}
  const altar=servicio.startsWith('altar');
  const p:Puesto[]=[
   [altar?'altar':'mostrador',0,-1.6],
@@ -117,6 +118,31 @@ export function interiorLocal(servicio:string):THREE.Group{
   default:{const cr=servicio==='altar_aura'?'cristales_aura':'cristales_lara';p.push([cr,-3.4,-3.4,0,1.6],[cr,3.4,-3.4,0,1.6],[cr,-3.8,1.8,0,1.2],[cr,3.8,1.2,0,1.2],['jarron_flores',-2.2,-3.3],['jarron_flores',2.2,-3.3],pared('cuadro',-1.4,1.9));luzCalida(g,0,1.5,-2.5,servicio==='altar_aura'?'#ffd27a':'#c9a8ff',4,7);}
  }
  amueblar(g,p);return g;
+}
+
+/** Gremio de aventureros: el tablón de expediciones al fondo, la mesa de mapas, la armadura, el cofre y la chimenea. */
+function interiorGremio(g:THREE.Group):Puesto[]{
+ const pared=(c:string,z:number,y=0,s=1):Puesto=>[c,-4.5,z,PI2,s,y];
+ for(const x of [-1.5,1.5])luzCalida(g,x,2.2,.4);luzCalida(g,-3.8,.6,1.6,'#ff9a4a',5,6);luzCalida(g,2.4,1.6,1.4,'#ffcf8a',2.5,4);
+ return [['mostrador',0,-1.6],['tablon_misiones',-2.3,-3.85],['ventana',1.1,-4,0,1,1.8],['estante_armas',3.3,-3.6],
+  pared('escudos_pared',-1.6),pared('chimenea',1.6),pared('estandarte_pared',-3.1),
+  ['mesa_mapas',2.3,1.5,-.15],['taburete',1.1,1.9],['taburete',3.5,1.1],['taburete',2.4,2.6],
+  ['armadura',3.9,-1.1,-.6],['cofre_tesoro',-3.5,3.1,.5],['barril',3.9,2.9],['barril_agua',3.9,3.6,0,.8],['estandarte_pared',-.1,-3.95,0,.85],
+  ['lampara',-1.5,.4,0,1,2.4],['lampara',1.5,.4,0,1,2.4],['tapete',0,2.4],['planta',-3.9,-.6]];
+}
+/** Museo del Valle: pedestales de los lotes al fondo con su cartela, las seis vitrinas del museo comunitario en dos
+ * filas, el fósil del dragoncito y bancos para mirar. Las piezas expuestas las pone museo-render.ts encima. */
+export const VITRINAS_MUSEO:[number,number][]=[[-2.5,-.4],[0,-.4],[2.5,-.4],[-2.5,1.9],[0,1.9],[2.5,1.9]];
+export const PEDESTALES_LOTES:[number,number][]=[[-3.75,-3.3],[-2.25,-3.3],[-.75,-3.3],[.75,-3.3],[2.25,-3.3],[3.75,-3.3]];
+function interiorMuseo(g:THREE.Group):Puesto[]{
+ for(const [x,z] of [[-2,0],[2,0],[0,-2.6]])luzCalida(g,x,2.4,z,'#fff1d6',3,6);
+ const pared=(c:string,z:number,y=0,s=1):Puesto=>[c,-4.5,z,PI2,s,y];
+ return [...PEDESTALES_LOTES.flatMap(([x,z]):Puesto[]=>[['pedestal_museo',x,z],['placa_pared',x,-3.97,0,.8,2.05]]),
+  ...VITRINAS_MUSEO.map(([x,z]):Puesto=>['vitrina_museo',x,z]),
+  ['cordon_museo',-1.5,-2.45],['cordon_museo',1.5,-2.45],
+  ['fosil',-3.7,.9,PI2],pared('cuadro',-2.2,1.9),pared('placa_pared',1.4,1.6),pared('cuadro',3,1.9),
+  ['banco_museo',-1.25,3.3],['banco_museo',1.25,3.3],['planta',3.9,3.4],['planta',-3.9,3.4],['planta',3.9,-2.3],
+  ['lampara',-2,0,0,1,2.4],['lampara',2,0,0,1,2.4],['tapete',0,.75,0,1.25]];
 }
 
 // ------------------------------------------------------------------ viviendas del pueblo (12 × 10)

@@ -5,9 +5,11 @@ import { cercaBuzon } from './buzon';
 import { actuarEncargo } from './encargos';
 import { CARTAS_CORRESPONDENCIA, PROYECTOS_CORRESPONDENCIA, proyectoPorCarta } from './correspondencia-datos';
 export { posicionBuzon, cercaBuzon } from './buzon';
-export interface CartaDef {id:string;remitente:string;titulo:string;texto:string;diaMin:number;actividad?:string;encargo?:string;estacion?:'verano'|'otono'|'invierno';monedas:number;objetos:readonly Pila[];proyecto?:string;eleccion?:number;momento?:'confirmacion'|'cierre'}
+export interface CartaDef {soloGuia?:boolean;id:string;remitente:string;titulo:string;texto:string;diaMin:number;actividad?:string;encargo?:string;estacion?:'verano'|'otono'|'invierno';monedas:number;objetos:readonly Pila[];proyecto?:string;eleccion?:number;momento?:'confirmacion'|'cierre'}
 export const CARTAS:readonly CartaDef[]=[
  {id:'bienvenida',remitente:'Casa de los Oficios',titulo:'Una nueva página',texto:'Bienvenidos al valle. Al dormir guardarás la jornada y avanzarás las estaciones. En el pueblo encontrarás herramientas, vecinos y encargos. Este buzón acompaña a tu cabaña cuando la reorganices.',diaMin:0,monedas:0,objetos:[]},
+ // La trae la guía del inicio apenas se trabaja el primer surco (guia.ts), no la noche
+ {id:'carta_campana',remitente:'Santa de Aura',titulo:'Un surco que no despierta',texto:'Querida familia de la granja: en el Pueblo del Sol hay un surco que no quiere despertar, aunque la tierra de al lado da fruto. La mercader y la botánica están preocupadas, y yo también. Vengan al pueblo por el camino de tierra; los postes guía los traen hasta la plaza. Conozcan a los vecinos, sus tiendas, el Gremio de Aventureros y el Museo del Valle. Cuando estén listos, acepten en su Diario la historia «La semilla que no despierta». Que el fuego de Aura los acompañe.',diaMin:0,soloGuia:true,monedas:0,objetos:[{articulo:'semilla_zanahoria',cantidad:4}]},
  {id:'primera_manana',remitente:'La cuidadora',titulo:'Para tu primera mañana',texto:'Una reserva de heno ayuda a empezar el día. Alimenta a tus animales y acompáñalos con cariño. Las crías crecen cuando avanzas las jornadas al dormir.',diaMin:1,monedas:0,objetos:[{articulo:'heno',cantidad:3}]},
  {id:'primeras_semillas',remitente:'La mercader',titulo:'Una cosecha que cuidar',texto:'Ya recogiste tu primera cosecha. Mira la temporada y los días que necesita cada semilla antes de volver a plantar. Un cultivo maduro puede conservarse como decoración.',diaMin:1,actividad:'cosechar',monedas:25,objetos:[]},
  {id:'herramientas',remitente:'El herrero',titulo:'Un oficio con práctica',texto:'Despejar recursos te dará materiales para reparar la granja. Lleva tus minerales a la forja cuando quieras mejorar una herramienta; prepara otra actividad mientras está en el taller.',diaMin:2,actividad:'limpiar',monedas:0,objetos:[{articulo:'carbon',cantidad:2}]},
@@ -28,7 +30,7 @@ export type AccionCorreo={tipo:'leer'|'reclamar'|'retomar';id:string}|{tipo:'ele
 export const crearCorreo=():EstadoCorreo=>({version:2,cartas:[{id:'bienvenida',recibidaDia:0,leidaDia:null,reclamadaDia:null}],decisiones:[]});
 export const cartaDef=(id:string)=>CARTAS.find(c=>c.id===id)??CARTAS_CORRESPONDENCIA.find(c=>c.id===id);
 export function entregarCorreo(s:EstadoGranja){for(const c of [...CARTAS,...CARTAS_CORRESPONDENCIA]){
- const dia=s.jornada.diasCompletados;if(s.correo.cartas.some(r=>r.id===c.id)||dia<c.diaMin||c.actividad&&!(s.estadisticas[c.actividad]>0)||c.encargo&&!s.encargos.registros.some(r=>r.id===c.encargo&&r.fase==='completado')||c.estacion&&fechaValle(dia).estacion!==c.estacion)continue;
+ const dia=s.jornada.diasCompletados;if((c as CartaDef).soloGuia||s.correo.cartas.some(r=>r.id===c.id)||dia<c.diaMin||c.actividad&&!(s.estadisticas[c.actividad]>0)||c.encargo&&!s.encargos.registros.some(r=>r.id===c.encargo&&r.fase==='completado')||c.estacion&&fechaValle(dia).estacion!==c.estacion)continue;
  if(c.proyecto){const d=s.correo.decisiones.find(d=>d.proyectoId===c.proyecto&&d.eleccion===c.eleccion);if(!d||dia<=d.elegidaDia||c.momento==='cierre'&&(d.completadaDia===null||dia<=d.completadaDia||!s.correo.cartas.some(r=>r.id===PROYECTOS_CORRESPONDENCIA.find(p=>p.id===c.proyecto)!.ramas[d.eleccion].confirmacion.id)))continue;}
  s.correo.cartas.push({id:c.id,recibidaDia:dia,leidaDia:null,reclamadaDia:null});
 }}

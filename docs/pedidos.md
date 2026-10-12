@@ -8,7 +8,10 @@ los lugares físicos). ChatGPT se quedó sin uso: Claude hace todo. El plan por 
 (archivos y líneas), está en [`en-obra/granja-arreglos.md`](en-obra/granja-arreglos.md). Las tandas 1 (rendimiento y
 calidad alta en PC), 2 (menú, Escape, E, mostradores y barra) 3 (mochila estilo Minecraft y habilidades
 simples) 4 (minimapa y mapa grande con fotos de verdad y marcas) y 5 (salidas anchas, caminos, pueblo, postes guía, mina
-cuadrada, semillas y estanques por casillas) quedaron **hechas**; seguir con la tanda 6 (historia y lugares físicos).
+cuadrada, semillas y estanques por casillas) quedaron **hechas**. De la tanda 6 quedó **hecho** (12 de octubre): Gremio de
+Aventureros y Museo del Valle (edificios e interiores de Blender), terreno en la carpintería, historia de los vecinos por
+partes e inicio guiado con Celia y la carta de campaña. Falta de la tanda 6: que cada paso de la campaña llegue por
+carta o lo cuente un vecino, y unificar Campaña y expedientes de Astra.
 
 
 **Prioridad actual, 11 de octubre:** Javier encargó una base narrativa profunda para conectar granja y
