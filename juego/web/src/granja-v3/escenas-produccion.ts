@@ -1,3 +1,4 @@
+import {ACCESOS_CAMPANA} from './accesos-campana';
 import * as THREE from 'three';
 import { caja, esfera, compactar, liberar } from './suelo';
 import { huellaProduccion } from './produccion';
@@ -10,7 +11,7 @@ function cilindro(g:THREE.Object3D,radio:number,alto:number,x:number,y:number,z:
 function aro(g:THREE.Object3D,radio:number,grosor:number,color:string){const m=new THREE.Mesh(new THREE.TorusGeometry(radio,grosor,6,24),new THREE.MeshStandardMaterial({color,metalness:.4,roughness:.5}));g.add(m);return m;}
 function piloto(g:THREE.Object3D){const m=new THREE.Mesh(new THREE.SphereGeometry(.047,8,6),new THREE.MeshBasicMaterial({color:PALETA.verde}));m.position.set(.31,.51,.38);g.add(m);return m;}
 /** Qué pieza de granja_maquinas.glb le toca a cada artículo (los que no tienen la suya usan la máquina genérica). */
-function claveMaquina(articulo:string){
+function claveMaquina(articulo:string){articulo=ACCESOS_CAMPANA.find(d=>d.id===articulo)?.base??articulo;
  if(articulo.startsWith('cofre_'))return articulo.includes('hierro')?'cofre_hierro':'cofre_cobre';
  if(articulo.startsWith('portal_'))return articulo==='portal_verdia'||articulo==='portal_senda'?articulo:'portal_otro';
  if(articulo.startsWith('aspersor_'))return articulo.includes('hierro')?'aspersor_hierro':'aspersor_cobre';
@@ -18,7 +19,7 @@ function claveMaquina(articulo:string){
  return ['nave_exploradora','alto_horno','trituradora','taladro_vapor','ensambladora','horno','fundidora','forja','banco_trabajo','cocina','telar','fermentador','prensa','molino_artesanal'].includes(articulo)?articulo:'maquina';
 }
 export function figura(articulo:string):FiguraProduccion{
- const grupo=new THREE.Group(),fijo=new THREE.Group(),moviles:THREE.Object3D[]=[],portal=articulo.startsWith('portal_'),aspersor=articulo.startsWith('aspersor_');grupo.add(fijo);
+ const grupo=new THREE.Group(),fijo=new THREE.Group(),moviles:THREE.Object3D[]=[],portal=articulo.startsWith('portal_')||articulo.startsWith('paso_'),aspersor=articulo.startsWith('aspersor_');grupo.add(fijo);
  const madera=PALETA.madera,oscuro=PALETA.oscuro,metal=articulo.includes('hierro')?PALETA.metal:PALETA.cobre;
  if(articulo.startsWith('cofre_')){
   caja(fijo,[.83,.48,.62],[0,.3,0],madera);caja(fijo,[.87,.14,.66],[0,.61,0],'#c9a06e');
@@ -33,7 +34,7 @@ export function figura(articulo:string):FiguraProduccion{
   const face=new THREE.Mesh(new THREE.CircleGeometry(.68,32),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.46,side:THREE.DoubleSide,depthWrite:false}));face.scale.y=1.22;face.position.set(0,1.15,.025);grupo.add(face);moviles.push(face);
   for(let i=0;i<7;i++){const star=esfera(grupo,[.035,.06,.025],[Math.sin(i*2.4)*.55,.4+i*.22,.065],i%2?color:'#f4e4ba');moviles.push(star);}
   for(const x of[-.76,.76]){const gem=new THREE.Mesh(new THREE.OctahedronGeometry(.12),new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.32,roughness:.4}));gem.position.set(x,1.57,.26);fijo.add(gem);}
- }else if(articulo==='nave_exploradora'){
+ }else if(['nave_exploradora','nave_ensayo'].includes(articulo)){
   caja(fijo,[2.65,.09,2.65],[0,.045,0],'#87948b');for(const x of[-1.12,1.12])for(const z of[-1.12,1.12])caja(fijo,[.3,.018,.12],[x,.1,z],PALETA.oro);
   esfera(fijo,[.78,.49,1.13],[0,.8,0],PALETA.claro);esfera(fijo,[.51,.24,.61],[0,1.13,.18],'#759da8');
   for(const x of[-1,1]){const wing=caja(fijo,[.63,.13,1.1],[x*.83,.59,-.07],PALETA.cobre);wing.rotation.z=x*-.13;cilindro(fijo,.22,.51,x*.74,.68,-.48,PALETA.metal);esfera(fijo,[.16,.1,.16],[x*.74,.38,-.48],'#a3dfe3');caja(fijo,[.12,.39,.13],[x*.55,.29,.63],PALETA.metal);caja(fijo,[.41,.07,.46],[x*.55,.12,.63],PALETA.oscuro);}

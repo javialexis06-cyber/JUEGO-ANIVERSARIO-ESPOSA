@@ -157,7 +157,7 @@ export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:n
   if(n?.v!==1||!Array.isArray(n.noche?.metas)||!n.noche.metas.includes('puerta_'+p.sector+':fin')||(p.cantidad??0)>0&&(n.cifras?.prisioneros??0)<p.cantidad!)return mal('Completa la puerta y los rescates reales en Sangre y Ceniza con este personaje.');
  }else if(p.tipo==='inspeccionar'){
   if(p.condicion==='equipo'&&(!s.inventario.pan||!s.inventario.herramienta_pico||!s.inventario.herramienta_espada&&!s.equipo.arma))return mal('Necesitas ración, pico y un arma del catálogo.');
-  if(p.condicion==='nave'&&!s.produccion.estructuras.some(n=>n.articulo==='nave_exploradora'))return mal('Fabrica y coloca tu nave; la escena no la construye.');
+  if(p.condicion==='nave'&&!s.produccion.estructuras.some(n=>n.articulo==='nave_exploradora'||n.articulo==='nave_ensayo'))return mal('Fabrica y coloca tu nave; la escena no la construye.');
   if(p.condicion==='refugio'&&((s.inventario.heno??0)<2||s.animales.filter(n=>a.cuidados.includes(n.id+':alimentar')&&a.cuidados.includes(n.id+':acompanar')&&s.edificios.some(b=>b.id===n.edificioId)&&!estadoAnimal(n.cuidado,s.ultimoTiempo).enfermo).length<2))return mal('Revisa el hogar y el alimento de los animales cuidados.');
   if(p.condicion==='matriz'&&!['F07','F08','F09','F10'].every(id=>h.completadas[id]&&h.sellos.includes(id)))return mal('Se requieren los cuatro sellos confirmados, uno por territorio.');
  }else return mal('Este objetivo se completa mediante su prueba, observación o consulta.');

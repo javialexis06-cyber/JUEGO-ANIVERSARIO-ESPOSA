@@ -8,7 +8,11 @@ los lugares físicos). ChatGPT se quedó sin uso: Claude hace todo. El plan por 
 (archivos y líneas), está en [`en-obra/granja-arreglos.md`](en-obra/granja-arreglos.md). Las tandas 1 (rendimiento y
 calidad alta en PC), 2 (menú, Escape, E, mostradores y barra) 3 (mochila estilo Minecraft y habilidades
 simples) 4 (minimapa y mapa grande con fotos de verdad y marcas) y 5 (salidas anchas, caminos, pueblo, postes guía, mina
-cuadrada, semillas y estanques por casillas) quedaron **hechas**; seguir con la tanda 6 (historia y lugares físicos).
+cuadrada, semillas y estanques por casillas) quedaron **hechas**. La tanda 6 quedó **hecha** (12 de octubre): Gremio de Aventureros y
+Museo del Valle, terreno en la carpintería, vecinos por partes, inicio guiado, campaña por cartas y vecinos, y Campaña y
+Astra unificadas. **Siguiente**: el prólogo en película (`docs/sistemas/cine-granja.md`) espera que Javier lo vea; si le
+gusta, se hacen las demás escenas grandes con el mismo estilo. **Espera a Javier**: agregar `ELEVENLABS_API_KEY` y
+`api.elevenlabs.io` al entorno para generar las voces celestiales y la música del cine.
 
 
 **Prioridad actual, 11 de octubre:** Javier encargó una base narrativa profunda para conectar granja y

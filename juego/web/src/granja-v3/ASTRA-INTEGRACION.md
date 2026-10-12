@@ -7,7 +7,7 @@ base descrita más abajo son históricas: consultar los planos y el contrato vig
 El motor completo sigue en desarrollo; los siete bloques autorizados se comprueban por separado.
 El bloque comunitario está en [COMUNIDAD-INTEGRACION.md](COMUNIDAD-INTEGRACION.md): ocho pesquerías,
 seis artefactos, 26 colecciones, conectores físicos, exportación opcional, terminales con carga pagada,
-cuatro obras, pedidos semanales y cuadernos. Queda el recorrido ordinario y el balance del bloque 7.
+cuatro obras, pedidos semanales y cuadernos. El recorrido ordinario de 36 contratos y los enlaces están en [BALANCE-INTEGRACION.md](BALANCE-INTEGRACION.md); el rendimiento físico y las cinemáticas finales quedan separados de esta entrega.
 
 Actualización: 11 de octubre de 2026. Fuente activa: esta carpeta. Se conserva el guardado V5; `astra`
 es un bloque aditivo versionado, sin sustituir inventario, calendario, relaciones anteriores ni genomas.

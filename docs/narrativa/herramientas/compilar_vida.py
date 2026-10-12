@@ -29,6 +29,8 @@ for index,n in enumerate(world['npc']):
         filas=posteriores if nivel>1 and posteriores else propias
         escenas['SOC_'+n['id']+'_'+str(nivel)]=[l['id'] for l in filas[:2]] or [l['id'] for l in lore['lineas'] if l['escena']=='VID_'+n['id']+'_1'][:1]
     perfiles.append({'id':n['id'],'region':n['region'],'original':original,'menor':menor,'naturaleza':n.get('naturaleza','persona_viva'),'oficio':familia[0],'descanso':index%7,'abre':540 if menor else 480,'cierra':960 if menor else 1020,'merienda':960 if menor else 750+(hashid%3)*30,'cumpleanos':{'dia':hashid%28+1,'estacion':['primavera','verano','otono','invierno'][hashid//28%4]},'encanta':encanta,'gusta':gusta,'desagrada':desagrada,'mercancia':[] if original or menor or n.get('naturaleza')!='persona_viva' else familia[3], 'mision':q,'cotidiano':b['profundidad']['cotidiano'],'postura_fuatia':b['profundidad']['postura_fuatia'],'cambio':b['arco'],'motivo_regalo':b['presente'],'estacional':familia[0] in ['semillas','pesca'],'nocturno':familia[0]=='archivo' and bool(re.search('astronom|cielo|estrella',texto))})
+for p in perfiles:
+    if p['id']=='orbita_rita':p['oficio']='logistica';p['mercancia']=['bateria','combustible_estelar']
 relaciones=json.loads((N/'datos/relaciones.json').read_text())
 data={'perfiles':perfiles,'relaciones':relaciones,'escenas':escenas}
 (N/'jugabilidad/vida-social.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')

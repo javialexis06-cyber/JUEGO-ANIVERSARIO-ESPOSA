@@ -3929,7 +3929,7 @@
       "original": false,
       "menor": false,
       "naturaleza": "persona_viva",
-      "oficio": "vecindad",
+      "oficio": "logistica",
       "descanso": 1,
       "abre": 480,
       "cierra": 1020,
@@ -3948,7 +3948,10 @@
       "desagrada": [
         "carbon"
       ],
-      "mercancia": [],
+      "mercancia": [
+        "bateria",
+        "combustible_estelar"
+      ],
       "mision": "V_orbita_rita",
       "cotidiano": "Guarda postales y compra una comida que no viaja bien porque justamente puede comerla allí. Tras el arco distingue traslado de creación de recurso y deja procedencia legible. Puede admitir un error sin narrar todo el equipo como desastre.",
       "postura_fuatia": "La intervención de Fuatia será un aporte registrado, no una reserva duplicable. Rita defenderá que el balance elemental tenga la misma honestidad de transferencia que sus manifiestos. Si la diosa ayuda a un territorio, los demás necesitan saber qué se cedió sin inventar una recompensa económica por leerlo.",

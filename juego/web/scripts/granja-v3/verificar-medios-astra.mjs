@@ -12,7 +12,7 @@ const R=await import(await moduloRegional(new URL('../../src/granja-v3/regiones-
 const errores=[];
 if(!validarMedios(medios))errores.push('Manifiesto de medios incompatible.');
 else {
- const lineas=new Map(produccion.lineas.map(l=>[l.id,l]));
+ const lineas=new Map([...produccion.lineas,...(produccion.reuniones?.escenas??[]).flatMap(d=>d.lineas)].map(l=>[l.id,l]));
  for(const [id,v] of Object.entries(medios.voces))if(lineas.get(id)?.huella_texto!==v.huella_texto)errores.push('Toma desconocida o texto cambiado: '+id);
  const modelos=new Set([...R.TERRITORIOS_REGIONALES.map(r=>'fauna:'+r.fauna.id),...R.TERRITORIOS_REGIONALES.filter(r=>r.fauna.colonia).map(r=>'habitat:'+r.id),...Object.keys(J.JEFES).map(id=>'jefe:'+id),...P.PREMIOS_NARRATIVOS.map(p=>'premio:'+p.id),...produccion.npc.map(n=>'npc:'+n.id),...produccion.regiones.map(r=>'region:'+r.id),...produccion.regiones.flatMap(r=>r.viviendas.map(h=>'vivienda:'+h.id)),...produccion.figuras.map(f=>'figura:'+f.id),...produccion.recursos.flatMap(r=>r.recursos.map(d=>'recurso:'+d.id))]);
  for(const id of Object.keys(medios.modelos))if(!modelos.has(id))errores.push('Modelo sin anclaje: '+id);
@@ -20,5 +20,5 @@ else {
  const archivos=[...Object.values(medios.voces).map(v=>v.archivo),...Object.values(medios.musica),...Object.values(medios.modelos).map(v=>v.archivo)];
  for(const a of new Set(archivos))try{const b=await fs.readFile(path.join(publico,a.slice(2)));if(!b.length)errores.push('Archivo vacío: '+a);if(a.endsWith('.glb')&&b.subarray(0,4).toString()!=='glTF')errores.push('GLB incompatible: '+a);}catch{errores.push('Archivo declarado sin producir: '+a);}
 }
-console.log(JSON.stringify({lineas:produccion.lineas.length,vocesDeclaradas:Object.keys(medios.voces??{}).length,modelosDeclarados:Object.keys(medios.modelos??{}).length,musicaDeclarada:Object.keys(medios.musica??{}).length,errores,estado:'Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir.'}));
+console.log(JSON.stringify({lineas:produccion.lineas.length,lineasReuniones:(produccion.reuniones?.escenas??[]).reduce((n,d)=>n+d.lineas.length,0),vocesDeclaradas:Object.keys(medios.voces??{}).length,modelosDeclarados:Object.keys(medios.modelos??{}).length,musicaDeclarada:Object.keys(medios.musica??{}).length,errores,estado:'Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir.'}));
 if(errores.length)process.exitCode=1;

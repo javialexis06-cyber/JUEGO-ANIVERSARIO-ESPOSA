@@ -36,3 +36,15 @@
 
 /* Retrato del peluche de cada vecino de Astra en su tarjeta */
 .vecino-astra{position:relative;padding-left:64px;min-height:62px}.vecino-astra .retrato-mini{position:absolute;left:8px;top:8px;width:48px;height:48px;border-radius:14px;background:linear-gradient(#edf0d4,#b5c7a3);border:1px solid #cfdbb8;object-fit:cover;object-position:50% 20%}
+/* Inicio guiado: Celia, primeras visitas y lo que sigue en el diario */
+.prologo{text-align:center;padding:6px 4px 10px}.prologo-sello{width:74px;height:74px;margin:2px auto 10px;border-radius:50%;display:grid;place-items:center;font-size:38px;background:radial-gradient(circle at 40% 35%,#fff8d8,#e9d48a 55%,#b9a14f);box-shadow:0 0 0 6px #f6ecc6,0 0 28px 8px #f2d97a99;animation:prologo-brillo 3.2s ease-in-out infinite}
+@keyframes prologo-brillo{50%{box-shadow:0 0 0 6px #f6ecc6,0 0 40px 14px #f2d97acc}}
+.prologo-texto{text-align:left;margin:10px 0 14px;min-height:96px}
+.presentacion{border-left:4px solid #c9a14f;background:#fffaf0}.presentacion .vecino-dialogo{font-size:13px;padding:12px;margin-top:6px}
+.diario-ahora{border-left:4px solid #7aa36a}.diario-ahora h3{margin:4px 0}.diario-ahora p{font-size:12px;line-height:1.6;margin:4px 0}
+.bio-cerrada{color:#9a9384}
+.guia-hud{position:fixed;left:12px;top:136px;width:168px;z-index:3;text-align:left;padding:9px 11px;border-radius:14px;border:1px solid #fffc;background:#fffbedf0;box-shadow:0 5px 22px #263f2522;color:#4f5f45;font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:3px}
+.guia-hud[hidden]{display:none}.guia-hud .caps{font-size:9px;color:#9b733e}.guia-hud strong{font-size:12px;line-height:1.25}
+.guia-hud small{font-size:10px;line-height:1.45;color:#6d7c64}.guia-hud .bar{display:block;height:5px;border-radius:4px;background:#e4e8d6;overflow:hidden}.guia-hud .bar span{display:block;height:100%;background:#7aa36a;border-radius:4px}
+.hide-ui .guia-hud,.catalog-active .guia-hud,body.menu-abierto .guia-hud{display:none!important}
+@media (max-height:420px){.guia-hud{top:135px;width:156px;padding:7px 9px}.guia-hud small{font-size:9px}}

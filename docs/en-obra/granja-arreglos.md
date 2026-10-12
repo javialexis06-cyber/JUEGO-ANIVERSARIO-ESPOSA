@@ -381,7 +381,47 @@ Hallazgos con coordenadas:
   - Plan: para la fase 0, montoncito de tierra removida con 3-5 semillitas claras encima. Modelarlo en Blender
     (`granja_*.py`) y verse siempre, también regado (más oscuro).
 
-## Tanda 6 · Historia natural y lugares físicos
+## Tanda 6 · Historia natural y lugares físicos — **hecha** (12 de octubre)
+
+Quedó así:
+- **Gremio de Aventureros** (`gremio`, 9×7 en (67,2), puerta a la callecita de los animales) y **Museo del Valle**
+  (`museo`, 9×7 en (86.8,-27), vereda propia a la calle norte–sur). Modelos `edificio_gremio_9x7` (sillares, entramado,
+  techo vino tinto, torre redonda con banderín, puerta de arco con clavos, estandartes, antorchas, escudo con espadas,
+  tablón y armero afuera) y `edificio_museo_9x7` (pórtico de cuatro columnas, frontón con medallón y laureles, cúpula
+  verde cobre con linterna, ventanas de arco y matas podadas) en `granja_edificios.py`. Atienden la exploradora (gremio)
+  y el vecino mayor (museo, 8:00–18:00 todos los días). Se quitaron el árbol (88,-26), la jardinera de (73,7) y se movió
+  un farol; la jardinera de (88,-20) quedó corta.
+- **Interiores** (`cuartos.ts` `interiorGremio` / `interiorMuseo`) con piezas nuevas de `granja_muebles.py`: tablón de
+  misiones, mesa de mapas, armadura, cofre del tesoro, escudos, estandarte, vitrinas con vidrio transparente, pedestales,
+  cordones, fósil del dragoncito, banco y cartelas. `museo-render.ts` expone en las **seis vitrinas** lo elegido en el
+  museo comunitario (las seis piezas comunitarias son modelos de Blender `pieza_<id>`; peces, cosechas y minerales usan la
+  figurita de los íconos) y cada **lote cerrado** pone su pieza en el pedestal de su cartela. La vista rehace el interior
+  si cambia lo expuesto (`firmaMuseo`).
+- **Mostradores**: el museo tiene lotes y reserva de semillas, donaciones y vitrinas y la galería de especies (el atlas,
+  que salió de la Casa de los Animales); el gremio, el tablón de expediciones y la campaña; la Casa de los Oficios queda
+  con encargos, biblioteca y obras comunitarias. `puedeUsarArchivo` acepta el archivo y el museo.
+- **Terreno**: «Oficina de tierras · comprar terreno» en la carpintería; el motor (`case 'sector'`) solo compra estando
+  en el Taller del Roble. El clic en un sector ajeno de la granja muestra dónde comprarlo.
+- **Vecinos por partes** (`astra-ui.ts`): al conocerlo, lo que vive hoy; con charlas en días distintos (`astra.charlas`,
+  5 puntos por día) se abren su vida cotidiana (2), cómo ve a Fuatia (3) y, si no tiene misión, su pasado (4), sus
+  recuerdos (6) y lo que puede cambiar (8). Con misión: el pasado al aceptarla; recuerdos y arco al completarla. Se quitó
+  el enlace a la biografía completa de la wiki.
+- **Inicio guiado** (`guia.ts`, estado aditivo `guia` con normalización): prólogo de Celia (panel `prologo`, se abre solo
+  en partida nueva), primer surco (3 labradas, sembradas y regadas), carta `carta_campana` de la Santa de Aura que llega
+  al buzón apenas se termina el surco (no de noche), camino al pueblo, entrar a mercado, carpintería, Casa de los
+  Animales, gremio y museo, aceptar P01 y dormir. Se ve en el recuadro de misión («Primeros pasos · n/7») y en «Lo que
+  sigue» del Diario. Las partidas con progreso no repiten el inicio. Cada local se presenta la primera vez que se entra
+  (`PRESENTACIONES`). Prueba: `scripts/granja-v3/probar-guia.mjs`.
+
+- **Campaña por carta y por los vecinos** (`correo-campana.ts`): cada misión principal (P02–P24 y F01–F12) que se abre
+  (`historiaDisponible`) y no se ha aceptado llega al buzón la noche siguiente, firmada por el primero de su reparto, con
+  a quiénes buscar y dónde. Los vecinos del Pueblo del Sol que participan en una misión abierta la mencionan al
+  conversar («Te cuenta»). Se sigue aceptando en el Diario, estando en la región.
+- **Campaña y Astra unificadas**: el panel de Astra ya no repite los 36 expedientes P/F (salvo los que la partida ya
+  tenía empezados, para no perder progreso); deja los expedientes propios de cada región y un botón a la campaña.
+- **El prólogo en película** (12 de octubre, pedido de Javier): ver `docs/sistemas/cine-granja.md`. Reemplaza al
+  prólogo escrito (que queda de respaldo si el teléfono no puede con la película).
+
 
 Lo pedido:
 

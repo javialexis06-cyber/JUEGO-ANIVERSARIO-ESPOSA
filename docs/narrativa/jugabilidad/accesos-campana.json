@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "estado": "Recorrido lógico ordinario de 36 contratos por vía técnica; hardware móvil y cinemáticas finales pendientes.",
+  "accesos": [
+    {
+      "id": "paso_verdia",
+      "nombre": "Paso acordado de Verdía",
+      "base": "portal_verdia",
+      "permiso": "F04",
+      "materiales": {
+        "madera": 12,
+        "fibra": 8,
+        "piedralumbre_mineral": 2
+      },
+      "receta": {
+        "id": "paso_verdia",
+        "nombre": "Paso acordado de Verdía",
+        "estacion": "banco_trabajo",
+        "ingredientes": {
+          "madera": 12,
+          "fibra": 8,
+          "piedralumbre_mineral": 2
+        },
+        "salida": {
+          "articulo": "paso_verdia",
+          "cantidad": 1
+        },
+        "duracionMs": 60000,
+        "nivel": 0,
+        "requisito": "campana_F04"
+      },
+      "venta": 0,
+      "expediciones_avanzadas": false
+    },
+    {
+      "id": "paso_senda",
+      "nombre": "Paso acordado de Senda",
+      "base": "portal_senda",
+      "permiso": "P13",
+      "materiales": {
+        "madera": 12,
+        "piedra": 8,
+        "fibra": 8
+      },
+      "receta": {
+        "id": "paso_senda",
+        "nombre": "Paso acordado de Senda",
+        "estacion": "banco_trabajo",
+        "ingredientes": {
+          "madera": 12,
+          "piedra": 8,
+          "fibra": 8
+        },
+        "salida": {
+          "articulo": "paso_senda",
+          "cantidad": 1
+        },
+        "duracionMs": 60000,
+        "nivel": 0,
+        "requisito": "campana_P13"
+      },
+      "venta": 0,
+      "expediciones_avanzadas": false
+    },
+    {
+      "id": "paso_nox",
+      "nombre": "Paso de visita al perímetro de Nox",
+      "base": "portal_nox",
+      "permiso": "P15",
+      "materiales": {
+        "madera": 12,
+        "piedra": 12,
+        "fibra": 8
+      },
+      "receta": {
+        "id": "paso_nox",
+        "nombre": "Paso de visita al perímetro de Nox",
+        "estacion": "banco_trabajo",
+        "ingredientes": {
+          "madera": 12,
+          "piedra": 12,
+          "fibra": 8
+        },
+        "salida": {
+          "articulo": "paso_nox",
+          "cantidad": 1
+        },
+        "duracionMs": 60000,
+        "nivel": 0,
+        "requisito": "campana_P15"
+      },
+      "venta": 0,
+      "expediciones_avanzadas": false
+    },
+    {
+      "id": "nave_ensayo",
+      "nombre": "Nave de enlace con Celia",
+      "base": "nave_exploradora",
+      "permiso": "P16",
+      "materiales": {
+        "madera": 20,
+        "fibra": 12,
+        "piedralumbre_mineral": 4,
+        "piedralumbre_madera": 6
+      },
+      "receta": {
+        "id": "nave_ensayo",
+        "nombre": "Nave de enlace con Celia",
+        "estacion": "banco_trabajo",
+        "ingredientes": {
+          "madera": 20,
+          "fibra": 12,
+          "piedralumbre_mineral": 4,
+          "piedralumbre_madera": 6
+        },
+        "salida": {
+          "articulo": "nave_ensayo",
+          "cantidad": 1
+        },
+        "duracionMs": 60000,
+        "nivel": 0,
+        "requisito": "campana_P16"
+      },
+      "venta": 0,
+      "expediciones_avanzadas": false
+    }
+  ],
+  "bosque_antiguo": {
+    "requisito_alternativo": "P05",
+    "preserva_permiso_antiguo": true
+  },
+  "logistica_celia": {
+    "npc": "orbita_rita",
+    "ofertas": [
+      {
+        "id": "bateria",
+        "precio": 270,
+        "cupo_semanal": 2
+      },
+      {
+        "id": "combustible_estelar",
+        "precio": 480,
+        "cupo_semanal": 2
+      }
+    ]
+  },
+  "regreso": "Desembarco transitable fuera de la huella; los portales conservan su llegada anterior cuando está libre.",
+  "modelos": "Se reutilizan los cuatro modelos anteriores. Huellas, recetas avanzadas, precios y guardado V5 se conservan."
+}

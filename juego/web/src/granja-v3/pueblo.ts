@@ -13,6 +13,7 @@ import { EDIFICIOS_PUEBLO, NPCS_PUEBLO, CAMINOS_PUEBLO, alturaSueloPueblo, ARBOL
 export * from './pueblo-datos';
 import { adornosPueblo, animarFuente } from './pueblo-adornos';
 import { mallaAgua } from './paisaje-render';
+import { exponerMuseo } from './museo-render';
 const C={wood:'#79523c',woodLight:'#b98e62',beam:'#674a39',cream:'#f0dabc',stone:'#ada793',darkStone:'#827e72',green:'#78955d',leaf:'#91ae6d',leafLight:'#b4c87b',metal:'#536271',soil:'#9c7851',white:'#f8ead3',glass:'#9ebcc0'};
 const hash=(i:number,k=0)=>{const n=Math.sin(i*124.16+k*271.7)*15423.724;return n-Math.floor(n);};
 
@@ -73,19 +74,19 @@ function crate(a:Arcilla,x:number,y:number,z:number,fruit?:string){
   a.box([.95,.58,.7],[x,y+.29,z],C.woodLight);for(const s of [-1,1])for(let i=0;i<3;i++)a.box([.98,.05,.045],[x,y+.13+i*.18,z+s*.37],C.wood);
   if(fruit)for(let i=0;i<6;i++)a.ball([.13,.12,.13],[x-.3+(i%3)*.3,y+.6,z-.15+Math.floor(i/3)*.3],fruit);
 }
-function sign(root:THREE.Group,e:EdificioPueblo,y=3.08){
+function sign(root:THREE.Group,e:EdificioPueblo,y=3.08,ancho=Math.min(e.ancho-.8,6.5)){
   // Nine tiny sign textures are separate from the batched architecture; no external font download.
   if(typeof document==='undefined')return;
   const canvas=document.createElement('canvas');canvas.width=768;canvas.height=128;const ctx=canvas.getContext('2d')!;
   ctx.fillStyle='#654832';ctx.fillRect(0,0,768,128);ctx.strokeStyle='#caa56e';ctx.lineWidth=5;ctx.strokeRect(9,9,750,110);
   ctx.fillStyle='#fff0ce';ctx.font='600 43px Georgia, serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(e.nombre,384,65,722);
   const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=2;
-  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(Math.min(e.ancho-.8,6.5),.8),new THREE.MeshStandardMaterial({map:tex,roughness:.9}));mesh.position.set(e.x+e.ancho/2,y,e.z+e.fondo+.21);root.add(mesh);
+  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(ancho,.8),new THREE.MeshStandardMaterial({map:tex,roughness:.9}));mesh.position.set(e.x+e.ancho/2,y,e.z+e.fondo+.21);root.add(mesh);
 }
 /** Pieza del kit del pueblo que reemplaza a la utilería de arcilla de un edificio (mismo sitio). */
 interface PuestoKit {clave:string;x:number;z:number;giro?:number;escala?:number;y?:number;tinte?:string}
 function building(u:Arcilla,root:THREE.Group,e:EdificioPueblo,kit:PuestoKit[]=[]){
-  const palettes:Record<string,[string,string,string]>={semillas:['#edc38f','#a56548','#809958'],animales:['#d7bf93','#699c91','#a95e4d'],carpinteria:['#caa77c','#656f50','#976b42'],herreria:['#b5b2a2','#637e8b','#525766'],clinica:['#e8e5c8','#78a492','#92ada4'],posada:['#ead6b0','#8f6976','#977346'],archivo:['#d8c7a8','#7d8399','#699181']};
+  const palettes:Record<string,[string,string,string]>={semillas:['#edc38f','#a56548','#809958'],animales:['#d7bf93','#699c91','#a95e4d'],carpinteria:['#caa77c','#656f50','#976b42'],herreria:['#b5b2a2','#637e8b','#525766'],clinica:['#e8e5c8','#78a492','#92ada4'],posada:['#ead6b0','#8f6976','#977346'],archivo:['#d8c7a8','#7d8399','#699181'],gremio:['#e8d6b0','#8e3b3b','#3e5c76'],museo:['#efe4cc','#6fa59a','#8e3b5e']};
   const [wall,roofColor,accent]=palettes[e.servicio],{x,z,ancho:w,fondo:d}=e,h=e.servicio==='posada'?4.65:3.7;
   u.box([w+.32,.42,d+.3],[x+w/2,.2,z+d/2],C.stone,.09);u.box([w,h-.3,d],[x+w/2,(h+.3)/2,z+d/2],wall,.09);
   for(const xx of [x+.06,x+w-.06])u.box([.2,h,.22],[xx,h/2,z+d+.04],C.beam);
@@ -105,7 +106,8 @@ function building(u:Arcilla,root:THREE.Group,e:EdificioPueblo,kit:PuestoKit[]=[]
     u.box([.9,2.7,1.05],[x+w*.8,h+.55,z+d*.33],e.servicio==='herreria'?C.darkStone:C.cream,.04);u.box([1.14,.23,1.2],[x+w*.8,h+1.97,z+d*.33],C.darkStone,.045);
   }
   for(const side of [-1,1]){flowerpot(u,x+w/2+side*1.5,front+.6,e.servicio==='clinica'?'#c8d8bd':'#c59679',.32);kit.push({clave:'maceta_puerta',x:x+w/2+side*1.5,z:front+.6,giro:side,tinte:e.servicio==='clinica'?'#c8d8bd':'#c59679'});}
-  sign(root,e,e.servicio==='posada'?5.05:3.19);
+  // El gremio lleva estandartes y ventanas altas a los lados de su letrero; el del museo va sobre el arquitrabe
+  if(e.servicio==='gremio')sign(root,e,3.25,3.2);else if(e.servicio==='museo')sign(root,e,3.6,5.2);else sign(root,e,e.servicio==='posada'?5.05:3.19);
   // El edificio entero también tiene su modelo de Blender (granja_edificios.py), centrado en su huella
   kit.push({clave:`edificio_${e.servicio}_${w}x${d}`,x:x+w/2,z:z+d/2});
   // Side windows make the buildings feel complete when viewed from the orthographic camera.
@@ -221,8 +223,8 @@ function chicken(a:Arcilla,x:number,z:number){
 }
 
 const VALLAS_CORRAL:readonly [number,number,number,number][]=[[58,12,70,12],[58,21,70,21],[58,12,58,21],[70,12,70,15.4],[70,17.6,70,21]];
-const FAROLES_PUEBLO:readonly [number,number][]=[[55,-8],[69,-6],[80,-10],[88,-6],[108,-6],[71,9],[92,8],[81,22],[102,23],[55,23]];
-const JARDINERAS_PUEBLO:readonly [number,number,number,number][]=[[70,-13,2,5],[88,-20,1.8,8],[56,-21,1.4,13],[87,13,1.7,8],[73,7,2.5,3.2],[102,-14,2,5]];
+const FAROLES_PUEBLO:readonly [number,number][]=[[55,-8],[69,-6],[80,-10],[88,-6],[108,-6],[77.4,9.2],[92,8],[81,22],[102,23],[55,23]];
+const JARDINERAS_PUEBLO:readonly [number,number,number,number][]=[[70,-13,2,5],[88,-16,1.8,4],[56,-21,1.4,13],[87,13,1.7,8],[102,-14,2,5]];
 
 /** La utilería del pueblo con las piezas de granja_pueblo.glb (mismas posiciones, alturas y huellas que la arcilla),
  * juntada por material para que sean pocas llamadas de dibujo. */
@@ -331,10 +333,10 @@ export function liberarPueblo(group:THREE.Group){
 }
 
 /** Optional shared interior for a service. The house/hogar remains the host project's scene. */
-export function crearInteriorServicio(servicio:ServicioPueblo):THREE.Group {
-  // Cascarón y muebles modelados en Blender (cuartos.ts); aquí solo se pone a quien atiende
-  const group=interiorLocal(servicio);
-  const vecino=NPCS_PUEBLO.find(n=>n.oficio===servicio);if(vecino){const personaje=vecinoPeluche(vecino.id,NPCS_PUEBLO.indexOf(vecino));personaje.name='dependiente';personaje.userData.npcId=vecino.id;personaje.position.set(-.8,0,-2.7);group.add(personaje);}return group;
+export function crearInteriorServicio(servicio:ServicioPueblo,s?:EstadoGranja):THREE.Group {
+  // Cascarón y muebles modelados en Blender (cuartos.ts); aquí solo se pone a quien atiende (y lo expuesto en el museo)
+  const group=interiorLocal(servicio);if(servicio==='museo'&&s)exponerMuseo(group,s);
+  const vecino=NPCS_PUEBLO.find(n=>n.oficio===servicio);if(vecino){const personaje=vecinoPeluche(vecino.id,NPCS_PUEBLO.indexOf(vecino));personaje.name='dependiente';personaje.userData.npcId=vecino.id;if(servicio==='museo')personaje.position.set(0,0,-2.55);else personaje.position.set(-.8,0,-2.7);group.add(personaje);}return group;
 }
 
 /** Interiores propios, agrupados en una malla de color por vivienda. */

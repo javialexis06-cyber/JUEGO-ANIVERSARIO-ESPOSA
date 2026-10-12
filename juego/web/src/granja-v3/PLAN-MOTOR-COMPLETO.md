@@ -1,5 +1,28 @@
 # Plan del motor completo: capacidades, variedad y aceptación
 
+## Auditoría vigente · 12 de octubre de 2026
+
+Se recorren 36 contratos desde una partida nueva por acciones ordinarias y vía técnica. Se conserva
+la V5, los recursos iniciales y la economía; el perfil de Sangre se prepara como entrada externa.
+La prueba de progresión no certifica rendimiento de teléfonos ni todas las ramas de una partida humana.
+Ver [BALANCE-INTEGRACION.md](BALANCE-INTEGRACION.md) y su evidencia, además de los contratos de cada bloque.
+
+| Frente | Capacidad disponible | Límite de esta entrega |
+|---|---|---|
+| Campaña | 36 principales, 181 adicionales, 727 objetivos y 217 premios únicos; 42 encargos de pueblos conservados | Ramas alternativas verificadas con preparación; recorrido ordinario por vía técnica |
+| Accesos | 28 regiones, 27 rutas, enlaces civiles por contratos y regreso transitable | Las expediciones avanzadas conservan sus construcciones y progresión |
+| Vida social | 178 residentes, 93 domicilios, 154 rutinas ampliadas, regalos, compras, 98 vínculos y recuerdos | Contenido adicional de futuras expansiones y romance configurable sin definir |
+| Regiones | 24 actividades renovables, habitats, cinco colonias con genética y cuidado, seis mecanismos | Formas finales y animación cinematográfica a cargo del frente visual |
+| Pesca y museo | 26 peces, seis artefactos, trampas, 26 colecciones nuevas, seis lotes anteriores y seis vitrinas | La captura manual usa el minijuego común; no 26 minijuegos físicos diferentes |
+| Producción y logística | Colas, reservas, cofres, conectores locales, exportación opcional y carga pagada entre archivos | Los cofres no forman un inventario global instantáneo; la carga necesita una noche y retirada |
+| Comunidad | Cuatro obras, pedidos semanales, 52 reuniones con 312 líneas y vecinos presentes; prioridades y decisiones recuperables | Rita e Ivo revisan la terminal; sin nuevas visitas al muelle, galería o banco. Las 312 voces nuevas siguen pendientes |
+| Validación | Regresión, ambos builds, navegador, CI e instaladores con SHA concreto | Sin dispositivos físicos: FPS, batería y memoria de Android real no medidos |
+
+La matriz histórica de abajo conserva la línea base V4 del 7 de octubre; sus rótulos «pendiente» no
+son una lista vigente de funciones inexistentes. Tampoco se convierte esta auditoría en certificación
+de paridad completa con juegos o mods externos. El contenido futuro y la producción cinematográfica
+permanecen separados del motor entregado.
+
 ## Campaña, historias y premios integrados · 11 de octubre de 2026
 
 El reparto actual suma 178 NPC y 93 viviendas tras integrar las ampliaciones visuales. La campaña
@@ -14,7 +37,7 @@ La vida social ampliada está conectada para 154 residentes, con posiciones real
 stock y revisión de acuerdos. Ver `VIDA-ASTRA-INTEGRACION.md`.
 Los 24 territorios tienen actividades y conservación; cinco colonias cuentan con módulos y genética.
 Cuatro jefes elementales y dos cámaras conservan alternativas técnicas. Ver `REGIONES-INTEGRACION.md`.
-La lista vigente está en `ASTRA-INTEGRACION.md`: el bloque comunitario está integrado y queda el recorrido ordinario con balance del bloque 7. Los apartados históricos siguientes conservan su fecha
+La lista vigente está en `ASTRA-INTEGRACION.md`: los siete bloques de software están conectados; el recorrido ordinario y sus límites están en [BALANCE-INTEGRACION.md](BALANCE-INTEGRACION.md). Los apartados históricos siguientes conservan su fecha
 original y no representan una certificación de paridad actual.
 
 ## Base de Astra para producción · 11 de octubre de 2026

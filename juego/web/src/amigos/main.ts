@@ -5,6 +5,7 @@
 // salas de juego. En la versión de la pareja, index.html manda aquí mientras el perfil esté activo y «¿Eres Javier
 // o Laura?» pide confirmar y apaga el modo amigo; en la versión para amigos (`--mode amigos`) la app arranca aquí y
 // no hay casa a la cual volver.
+import '../deslizar';
 import '@fontsource/fredoka/latin-500.css';
 import '@fontsource/fredoka/latin-600.css';
 import '@fontsource/fredoka/latin-700.css';

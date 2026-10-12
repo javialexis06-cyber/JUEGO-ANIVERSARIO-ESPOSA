@@ -1,0 +1,4006 @@
+[
+  {
+    "id": "COM_puerto_lirios_mesa",
+    "region": "puerto_lirios",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "lirios_bastian",
+      "lirios_olga"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "puerto_lirios_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_puerto_lirios_mesa.01",
+        "hablante": "lirios_bastian",
+        "texto": "Nos reunimos para revisar el canal y los embarcaderos. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "7600fc5f9b69d0f6366bfd01238cd5387e015a07d1411d8b3bbb3ca53b5faf3a",
+        "huella_texto": "7600fc5f9b69d0f6"
+      },
+      {
+        "id": "COM_puerto_lirios_mesa.02",
+        "hablante": "lirios_olga",
+        "texto": "Una cuerda aguanta más cuando alguien revisa el nudo; mirar el agua desde lejos no sustituye esa revisión.",
+        "huella": "2b0e798dc8e802ce2ec46a520af90ee46e055115e4743822e8f1b3cec4bb1129",
+        "huella_texto": "2b0e798dc8e802ce"
+      },
+      {
+        "id": "COM_puerto_lirios_mesa.03",
+        "hablante": "lirios_bastian",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_puerto_lirios_mesa.04",
+        "hablante": "lirios_olga",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_puerto_lirios_mesa.05",
+        "hablante": "lirios_bastian",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_puerto_lirios_mesa.06",
+        "hablante": "lirios_olga",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_puerto_lirios_clima",
+    "region": "puerto_lirios",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "lirios_bastian",
+      "lirios_olga"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "puerto_lirios_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_puerto_lirios_clima.01",
+        "hablante": "lirios_bastian",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar el canal y los embarcaderos antes de volver a la rutina.",
+        "huella": "ad6af87fcd52639c1318726a03210c57e39d7978d438b06f4a2c54eaa14025f8",
+        "huella_texto": "ad6af87fcd52639c"
+      },
+      {
+        "id": "COM_puerto_lirios_clima.02",
+        "hablante": "lirios_olga",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_puerto_lirios_clima.03",
+        "hablante": "lirios_bastian",
+        "texto": "Una cuerda aguanta más cuando alguien revisa el nudo; mirar el agua desde lejos no sustituye esa revisión.",
+        "huella": "2b0e798dc8e802ce2ec46a520af90ee46e055115e4743822e8f1b3cec4bb1129",
+        "huella_texto": "2b0e798dc8e802ce"
+      },
+      {
+        "id": "COM_puerto_lirios_clima.04",
+        "hablante": "lirios_olga",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_puerto_lirios_clima.05",
+        "hablante": "lirios_bastian",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_puerto_lirios_clima.06",
+        "hablante": "lirios_olga",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_puerto_lirios_cuidado",
+    "region": "puerto_lirios",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "lirios_bastian",
+      "lirios_olga"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "puerto_lirios_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_puerto_lirios_cuidado.01",
+        "hablante": "lirios_bastian",
+        "texto": "El refugio de Nutrias de estuario ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "a6c6d9bd3a0dbe4793e7675e2086fc38df263d499bdece4b10edff819cbb081f",
+        "huella_texto": "a6c6d9bd3a0dbe47"
+      },
+      {
+        "id": "COM_puerto_lirios_cuidado.02",
+        "hablante": "lirios_olga",
+        "texto": "Restaurar refugios y observar a distancia. No capturar fauna silvestre por un objeto ni alimentar con basura.",
+        "huella": "ff09c14e8faeb44160fff35d1cd48f5bbcac4e1043e9e25668a2f296c6a5f2ae",
+        "huella_texto": "ff09c14e8faeb441"
+      },
+      {
+        "id": "COM_puerto_lirios_cuidado.03",
+        "hablante": "lirios_bastian",
+        "texto": "Una cuerda aguanta más cuando alguien revisa el nudo; mirar el agua desde lejos no sustituye esa revisión.",
+        "huella": "2b0e798dc8e802ce2ec46a520af90ee46e055115e4743822e8f1b3cec4bb1129",
+        "huella_texto": "2b0e798dc8e802ce"
+      },
+      {
+        "id": "COM_puerto_lirios_cuidado.04",
+        "hablante": "lirios_olga",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_puerto_lirios_cuidado.05",
+        "hablante": "lirios_bastian",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_puerto_lirios_cuidado.06",
+        "hablante": "lirios_olga",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_brumaverde_mesa",
+    "region": "brumaverde",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "bruma_silvana",
+      "bruma_felix"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "brumaverde_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_brumaverde_mesa.01",
+        "hablante": "bruma_silvana",
+        "texto": "Nos reunimos para revisar los pasos del bosque. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "e1c9c832791207a3e97f5f03bd4074f79b5b3fa135630613339bca8f36231f9c",
+        "huella_texto": "e1c9c832791207a3"
+      },
+      {
+        "id": "COM_brumaverde_mesa.02",
+        "hablante": "bruma_felix",
+        "texto": "Un sendero abierto sirve poco si obliga a una cría a cruzar entre herramientas. También tenemos que saber dejar un paso vacío.",
+        "huella": "ac6a32af5d0a62e33956d86ec5d8b12b8088be38fea5d2a937aa193deb310b63",
+        "huella_texto": "ac6a32af5d0a62e3"
+      },
+      {
+        "id": "COM_brumaverde_mesa.03",
+        "hablante": "bruma_silvana",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_brumaverde_mesa.04",
+        "hablante": "bruma_felix",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_brumaverde_mesa.05",
+        "hablante": "bruma_silvana",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_brumaverde_mesa.06",
+        "hablante": "bruma_felix",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_brumaverde_clima",
+    "region": "brumaverde",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "bruma_silvana",
+      "bruma_felix"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "brumaverde_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_brumaverde_clima.01",
+        "hablante": "bruma_silvana",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar los pasos del bosque antes de volver a la rutina.",
+        "huella": "7c9d2bd73221a02e4e948a71ce8b402e74b3a18fee56b248e3b9c1e1c1542e3a",
+        "huella_texto": "7c9d2bd73221a02e"
+      },
+      {
+        "id": "COM_brumaverde_clima.02",
+        "hablante": "bruma_felix",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_brumaverde_clima.03",
+        "hablante": "bruma_silvana",
+        "texto": "Un sendero abierto sirve poco si obliga a una cría a cruzar entre herramientas. También tenemos que saber dejar un paso vacío.",
+        "huella": "ac6a32af5d0a62e33956d86ec5d8b12b8088be38fea5d2a937aa193deb310b63",
+        "huella_texto": "ac6a32af5d0a62e3"
+      },
+      {
+        "id": "COM_brumaverde_clima.04",
+        "hablante": "bruma_felix",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_brumaverde_clima.05",
+        "hablante": "bruma_silvana",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_brumaverde_clima.06",
+        "hablante": "bruma_felix",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_brumaverde_cuidado",
+    "region": "brumaverde",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "bruma_silvana",
+      "bruma_felix"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "brumaverde_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_brumaverde_cuidado.01",
+        "hablante": "bruma_silvana",
+        "texto": "El refugio de Ciervos de bruma ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "7573a50c30549ba55a5dcc669b2937bc0d1244bc919a6819f70566d5ee802101",
+        "huella_texto": "7573a50c30549ba5"
+      },
+      {
+        "id": "COM_brumaverde_cuidado.02",
+        "hablante": "bruma_felix",
+        "texto": "Pasillos de paso y registro de crías; el beneficio es información de senderos, no domesticar todo el bosque.",
+        "huella": "d2d3ab6f63e414992e94ac3f1515017473c00c6f3d4e59de71a830c53c2d7bbb",
+        "huella_texto": "d2d3ab6f63e41499"
+      },
+      {
+        "id": "COM_brumaverde_cuidado.03",
+        "hablante": "bruma_silvana",
+        "texto": "Un sendero abierto sirve poco si obliga a una cría a cruzar entre herramientas. También tenemos que saber dejar un paso vacío.",
+        "huella": "ac6a32af5d0a62e33956d86ec5d8b12b8088be38fea5d2a937aa193deb310b63",
+        "huella_texto": "ac6a32af5d0a62e3"
+      },
+      {
+        "id": "COM_brumaverde_cuidado.04",
+        "hablante": "bruma_felix",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_brumaverde_cuidado.05",
+        "hablante": "bruma_silvana",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_brumaverde_cuidado.06",
+        "hablante": "bruma_felix",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_piedralumbre_mesa",
+    "region": "piedralumbre",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "piedra_eloy",
+      "piedra_ursula"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "piedralumbre_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_piedralumbre_mesa.01",
+        "hablante": "piedra_eloy",
+        "texto": "Nos reunimos para revisar los soportes de la cantera. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "ba57c3ebc13eb2f83b966d96a7e2b1656a9d985307d300691136e59ba1a6126c",
+        "huella_texto": "ba57c3ebc13eb2f8"
+      },
+      {
+        "id": "COM_piedralumbre_mesa.02",
+        "hablante": "piedra_ursula",
+        "texto": "El mineral tiene utilidad; la gente que vuelve a casa tiene un valor que no cabe en la cuenta del mineral.",
+        "huella": "6d1486e8f100c47de4da8277a43e6ad98f9111b3f2603043f159335d939afea9",
+        "huella_texto": "6d1486e8f100c47d"
+      },
+      {
+        "id": "COM_piedralumbre_mesa.03",
+        "hablante": "piedra_eloy",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_piedralumbre_mesa.04",
+        "hablante": "piedra_ursula",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_piedralumbre_mesa.05",
+        "hablante": "piedra_eloy",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_piedralumbre_mesa.06",
+        "hablante": "piedra_ursula",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_piedralumbre_clima",
+    "region": "piedralumbre",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "piedra_eloy",
+      "piedra_ursula"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "piedralumbre_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_piedralumbre_clima.01",
+        "hablante": "piedra_eloy",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar los soportes de la cantera antes de volver a la rutina.",
+        "huella": "d46da463a954836ea5f1ea3bd1afb1bfd152906cc18e41c2539a6088c18b1019",
+        "huella_texto": "d46da463a954836e"
+      },
+      {
+        "id": "COM_piedralumbre_clima.02",
+        "hablante": "piedra_ursula",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_piedralumbre_clima.03",
+        "hablante": "piedra_eloy",
+        "texto": "El mineral tiene utilidad; la gente que vuelve a casa tiene un valor que no cabe en la cuenta del mineral.",
+        "huella": "6d1486e8f100c47de4da8277a43e6ad98f9111b3f2603043f159335d939afea9",
+        "huella_texto": "6d1486e8f100c47d"
+      },
+      {
+        "id": "COM_piedralumbre_clima.04",
+        "hablante": "piedra_ursula",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_piedralumbre_clima.05",
+        "hablante": "piedra_eloy",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_piedralumbre_clima.06",
+        "hablante": "piedra_ursula",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_piedralumbre_cuidado",
+    "region": "piedralumbre",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "piedra_eloy",
+      "piedra_ursula"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "piedralumbre_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_piedralumbre_cuidado.01",
+        "hablante": "piedra_eloy",
+        "texto": "El refugio de Topillos de piedra ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "e4261d1ab59a3f27e6f088ae1a2457565a048d1fe3b4765de510243936bf8327",
+        "huella_texto": "e4261d1ab59a3f27"
+      },
+      {
+        "id": "COM_piedralumbre_cuidado.02",
+        "hablante": "piedra_ursula",
+        "texto": "Abrir pasos seguros lejos de las vetas; no usar animales como alarma desechable de derrumbes.",
+        "huella": "07a5ce91dd7053f2501e81a5ed2e30d3a2d8ac5db7940cb2dadb6b33d616ed09",
+        "huella_texto": "07a5ce91dd7053f2"
+      },
+      {
+        "id": "COM_piedralumbre_cuidado.03",
+        "hablante": "piedra_eloy",
+        "texto": "El mineral tiene utilidad; la gente que vuelve a casa tiene un valor que no cabe en la cuenta del mineral.",
+        "huella": "6d1486e8f100c47de4da8277a43e6ad98f9111b3f2603043f159335d939afea9",
+        "huella_texto": "6d1486e8f100c47d"
+      },
+      {
+        "id": "COM_piedralumbre_cuidado.04",
+        "hablante": "piedra_ursula",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_piedralumbre_cuidado.05",
+        "hablante": "piedra_eloy",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_piedralumbre_cuidado.06",
+        "hablante": "piedra_ursula",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_brasaviva_mesa",
+    "region": "brasaviva",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "brasa_tarek",
+      "brasa_sol"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "brasaviva_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_brasaviva_mesa.01",
+        "hablante": "brasa_tarek",
+        "texto": "Nos reunimos para revisar la ventilación de los talleres. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "acb32ef53228c9799a4a5a4bacecd6e08becfb59da52ceff8e376b82a78431ed",
+        "huella_texto": "acb32ef53228c979"
+      },
+      {
+        "id": "COM_brasaviva_mesa.02",
+        "hablante": "brasa_sol",
+        "texto": "Trabajar con calor no vuelve a nadie resistente a todo. Pedir una pausa tiene que ser parte del oficio.",
+        "huella": "05820f4270ae49455859d1cba692c1af442ec3c052575814b37d24c7c0a1a53f",
+        "huella_texto": "05820f4270ae4945"
+      },
+      {
+        "id": "COM_brasaviva_mesa.03",
+        "hablante": "brasa_tarek",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_brasaviva_mesa.04",
+        "hablante": "brasa_sol",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_brasaviva_mesa.05",
+        "hablante": "brasa_tarek",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_brasaviva_mesa.06",
+        "hablante": "brasa_sol",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_brasaviva_clima",
+    "region": "brasaviva",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "brasa_tarek",
+      "brasa_sol"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "brasaviva_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_brasaviva_clima.01",
+        "hablante": "brasa_tarek",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar la ventilación de los talleres antes de volver a la rutina.",
+        "huella": "9ede9dde6c80e01bf6daf26222140f70c8e64685560c801dd2078d475d987295",
+        "huella_texto": "9ede9dde6c80e01b"
+      },
+      {
+        "id": "COM_brasaviva_clima.02",
+        "hablante": "brasa_sol",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_brasaviva_clima.03",
+        "hablante": "brasa_tarek",
+        "texto": "Trabajar con calor no vuelve a nadie resistente a todo. Pedir una pausa tiene que ser parte del oficio.",
+        "huella": "05820f4270ae49455859d1cba692c1af442ec3c052575814b37d24c7c0a1a53f",
+        "huella_texto": "05820f4270ae4945"
+      },
+      {
+        "id": "COM_brasaviva_clima.04",
+        "hablante": "brasa_sol",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_brasaviva_clima.05",
+        "hablante": "brasa_tarek",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_brasaviva_clima.06",
+        "hablante": "brasa_sol",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_brasaviva_cuidado",
+    "region": "brasaviva",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "brasa_tarek",
+      "brasa_sol"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "brasaviva_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_brasaviva_cuidado.01",
+        "hablante": "brasa_tarek",
+        "texto": "El refugio de Lagartos de ceniza ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "fa7ce04d7b503a68eca0ab0d4c74d5d3290535e56beb32b65b7324c52c6d9183",
+        "huella_texto": "fa7ce04d7b503a68"
+      },
+      {
+        "id": "COM_brasaviva_cuidado.02",
+        "hablante": "brasa_sol",
+        "texto": "Sombra y abrevaderos; las escamas desprendidas pueden estudiarse, no arrancarse para un catalizador.",
+        "huella": "36860b9f7dd8020c4fa941d898ba30820e575a37c91d4bf1780b745722ddeb48",
+        "huella_texto": "36860b9f7dd8020c"
+      },
+      {
+        "id": "COM_brasaviva_cuidado.03",
+        "hablante": "brasa_tarek",
+        "texto": "Trabajar con calor no vuelve a nadie resistente a todo. Pedir una pausa tiene que ser parte del oficio.",
+        "huella": "05820f4270ae49455859d1cba692c1af442ec3c052575814b37d24c7c0a1a53f",
+        "huella_texto": "05820f4270ae4945"
+      },
+      {
+        "id": "COM_brasaviva_cuidado.04",
+        "hablante": "brasa_sol",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_brasaviva_cuidado.05",
+        "hablante": "brasa_tarek",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_brasaviva_cuidado.06",
+        "hablante": "brasa_sol",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_nieveclara_mesa",
+    "region": "nieveclara",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "nieve_eira",
+      "nieve_anselmo"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "nieveclara_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_nieveclara_mesa.01",
+        "hablante": "nieve_eira",
+        "texto": "Nos reunimos para revisar los refugios y las reservas de invierno. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "d0df564747b8c99dc30be6aad66c9bd91010a582d21e0c177e2280c733303494",
+        "huella_texto": "d0df564747b8c99d"
+      },
+      {
+        "id": "COM_nieveclara_mesa.02",
+        "hablante": "nieve_anselmo",
+        "texto": "Una reserva compartida necesita una cuenta clara. Nadie debería tener que explicar su cansancio para recibir ayuda.",
+        "huella": "cbac545bf2383e4b861e9029345c0140445b9d5e6d4cf87fed084f49207caf9a",
+        "huella_texto": "cbac545bf2383e4b"
+      },
+      {
+        "id": "COM_nieveclara_mesa.03",
+        "hablante": "nieve_eira",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_nieveclara_mesa.04",
+        "hablante": "nieve_anselmo",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_nieveclara_mesa.05",
+        "hablante": "nieve_eira",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_nieveclara_mesa.06",
+        "hablante": "nieve_anselmo",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_nieveclara_clima",
+    "region": "nieveclara",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "nieve_eira",
+      "nieve_anselmo"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "nieveclara_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_nieveclara_clima.01",
+        "hablante": "nieve_eira",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar los refugios y las reservas de invierno antes de volver a la rutina.",
+        "huella": "e2c0ba0436cf2c5b210b236808ce56ce122bd09e54f96c733f43c8ed7f2ae470",
+        "huella_texto": "e2c0ba0436cf2c5b"
+      },
+      {
+        "id": "COM_nieveclara_clima.02",
+        "hablante": "nieve_anselmo",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_nieveclara_clima.03",
+        "hablante": "nieve_eira",
+        "texto": "Una reserva compartida necesita una cuenta clara. Nadie debería tener que explicar su cansancio para recibir ayuda.",
+        "huella": "cbac545bf2383e4b861e9029345c0140445b9d5e6d4cf87fed084f49207caf9a",
+        "huella_texto": "cbac545bf2383e4b"
+      },
+      {
+        "id": "COM_nieveclara_clima.04",
+        "hablante": "nieve_anselmo",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_nieveclara_clima.05",
+        "hablante": "nieve_eira",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_nieveclara_clima.06",
+        "hablante": "nieve_anselmo",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_nieveclara_cuidado",
+    "region": "nieveclara",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "nieve_eira",
+      "nieve_anselmo"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "nieveclara_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_nieveclara_cuidado.01",
+        "hablante": "nieve_eira",
+        "texto": "El refugio de Liebres de nieve ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "f9d9bdc18164b25d85122595ce0671dd4ad931c9392af197ca33f8deff01c7ea",
+        "huella_texto": "f9d9bdc18164b25d"
+      },
+      {
+        "id": "COM_nieveclara_cuidado.02",
+        "hablante": "nieve_anselmo",
+        "texto": "Corredores de desplazamiento, refugios sin cercos y atención en rescates supervisados.",
+        "huella": "5ea6437dd88632510168aac85b3f1b8182675b3a68de547bc708af7a603adeb5",
+        "huella_texto": "5ea6437dd8863251"
+      },
+      {
+        "id": "COM_nieveclara_cuidado.03",
+        "hablante": "nieve_eira",
+        "texto": "Una reserva compartida necesita una cuenta clara. Nadie debería tener que explicar su cansancio para recibir ayuda.",
+        "huella": "cbac545bf2383e4b861e9029345c0140445b9d5e6d4cf87fed084f49207caf9a",
+        "huella_texto": "cbac545bf2383e4b"
+      },
+      {
+        "id": "COM_nieveclara_cuidado.04",
+        "hablante": "nieve_anselmo",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_nieveclara_cuidado.05",
+        "hablante": "nieve_eira",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_nieveclara_cuidado.06",
+        "hablante": "nieve_anselmo",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_vigilia_mesa",
+    "region": "vigilia",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "vigilia_ulises",
+      "vigilia_aldan"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "vigilia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_vigilia_mesa.01",
+        "hablante": "vigilia_ulises",
+        "texto": "Nos reunimos para revisar los registros y las rutas fuera del humo. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "e38876d9b8f5300ed73dbaa965a4de6a3485f3bca9af6929f68228beb252fc31",
+        "huella_texto": "e38876d9b8f5300e"
+      },
+      {
+        "id": "COM_vigilia_mesa.02",
+        "hablante": "vigilia_aldan",
+        "texto": "Un registro sin nombres puede explicar un riesgo sin señalar una familia. No todo lo que sabemos nos pertenece para contarlo.",
+        "huella": "43031ba28a959e0952c942f95c9057bb35109dc45666b98bdc7dc7d1f53e1e7f",
+        "huella_texto": "43031ba28a959e09"
+      },
+      {
+        "id": "COM_vigilia_mesa.03",
+        "hablante": "vigilia_ulises",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_vigilia_mesa.04",
+        "hablante": "vigilia_aldan",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_vigilia_mesa.05",
+        "hablante": "vigilia_ulises",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_vigilia_mesa.06",
+        "hablante": "vigilia_aldan",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_vigilia_clima",
+    "region": "vigilia",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "vigilia_ulises",
+      "vigilia_aldan"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "vigilia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_vigilia_clima.01",
+        "hablante": "vigilia_ulises",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar los registros y las rutas fuera del humo antes de volver a la rutina.",
+        "huella": "9ddfbb76c3ecd3e832e1b7a752971a12731874d5c33f0c61ea64f054c428f011",
+        "huella_texto": "9ddfbb76c3ecd3e8"
+      },
+      {
+        "id": "COM_vigilia_clima.02",
+        "hablante": "vigilia_aldan",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_vigilia_clima.03",
+        "hablante": "vigilia_ulises",
+        "texto": "Un registro sin nombres puede explicar un riesgo sin señalar una familia. No todo lo que sabemos nos pertenece para contarlo.",
+        "huella": "43031ba28a959e0952c942f95c9057bb35109dc45666b98bdc7dc7d1f53e1e7f",
+        "huella_texto": "43031ba28a959e09"
+      },
+      {
+        "id": "COM_vigilia_clima.04",
+        "hablante": "vigilia_aldan",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_vigilia_clima.05",
+        "hablante": "vigilia_ulises",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_vigilia_clima.06",
+        "hablante": "vigilia_aldan",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_vigilia_cuidado",
+    "region": "vigilia",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "vigilia_ulises",
+      "vigilia_aldan"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "vigilia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_vigilia_cuidado.01",
+        "hablante": "vigilia_ulises",
+        "texto": "El refugio de Búhos de campanario ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "ad72856545e274983e968bae825275c7504db48d1b0dd08ccffa7fc21065b085",
+        "huella_texto": "ad72856545e27498"
+      },
+      {
+        "id": "COM_vigilia_cuidado.02",
+        "hablante": "vigilia_aldan",
+        "texto": "Restaurar nidales fuera del humo y mantener rutas de descanso; no convertir sus plumas en impuesto ritual.",
+        "huella": "11568fcf903df3bd1dd7374dc8cae1117a7307583bd03c390223eec3ecb815f8",
+        "huella_texto": "11568fcf903df3bd"
+      },
+      {
+        "id": "COM_vigilia_cuidado.03",
+        "hablante": "vigilia_ulises",
+        "texto": "Un registro sin nombres puede explicar un riesgo sin señalar una familia. No todo lo que sabemos nos pertenece para contarlo.",
+        "huella": "43031ba28a959e0952c942f95c9057bb35109dc45666b98bdc7dc7d1f53e1e7f",
+        "huella_texto": "43031ba28a959e09"
+      },
+      {
+        "id": "COM_vigilia_cuidado.04",
+        "hablante": "vigilia_aldan",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_vigilia_cuidado.05",
+        "hablante": "vigilia_ulises",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_vigilia_cuidado.06",
+        "hablante": "vigilia_aldan",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_rosal_eterno_mesa",
+    "region": "rosal_eterno",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "verdia_amaranta",
+      "verdia_nilo"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "rosal_eterno_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_rosal_eterno_mesa.01",
+        "hablante": "verdia_amaranta",
+        "texto": "Nos reunimos para revisar los senderos del jardín. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "15adc14b173af40eb0cee9324c5e5982a54d15db9b85595e9ef6b26e5940d6b5",
+        "huella_texto": "15adc14b173af40e"
+      },
+      {
+        "id": "COM_rosal_eterno_mesa.02",
+        "hablante": "verdia_nilo",
+        "texto": "Aquí un cuidado no compra obediencia. Quien recibe ayuda conserva el derecho a querer otra cosa.",
+        "huella": "a751c9134402dfa460270250bb4a5be61312af405039ceaba02cddb3f619e574",
+        "huella_texto": "a751c9134402dfa4"
+      },
+      {
+        "id": "COM_rosal_eterno_mesa.03",
+        "hablante": "verdia_amaranta",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_rosal_eterno_mesa.04",
+        "hablante": "verdia_nilo",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_rosal_eterno_mesa.05",
+        "hablante": "verdia_amaranta",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_rosal_eterno_mesa.06",
+        "hablante": "verdia_nilo",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_rosal_eterno_clima",
+    "region": "rosal_eterno",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "verdia_amaranta",
+      "verdia_nilo"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "rosal_eterno_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_rosal_eterno_clima.01",
+        "hablante": "verdia_amaranta",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar los senderos del jardín antes de volver a la rutina.",
+        "huella": "e3b4321b10c1410e580f6abc7e08977958680123346f0ddbe0b7ab124f4b6e29",
+        "huella_texto": "e3b4321b10c1410e"
+      },
+      {
+        "id": "COM_rosal_eterno_clima.02",
+        "hablante": "verdia_nilo",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_rosal_eterno_clima.03",
+        "hablante": "verdia_amaranta",
+        "texto": "Aquí un cuidado no compra obediencia. Quien recibe ayuda conserva el derecho a querer otra cosa.",
+        "huella": "a751c9134402dfa460270250bb4a5be61312af405039ceaba02cddb3f619e574",
+        "huella_texto": "a751c9134402dfa4"
+      },
+      {
+        "id": "COM_rosal_eterno_clima.04",
+        "hablante": "verdia_nilo",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_rosal_eterno_clima.05",
+        "hablante": "verdia_amaranta",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_rosal_eterno_clima.06",
+        "hablante": "verdia_nilo",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_rosal_eterno_cuidado",
+    "region": "rosal_eterno",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "verdia_amaranta",
+      "verdia_nilo"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "rosal_eterno_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_rosal_eterno_cuidado.01",
+        "hablante": "verdia_amaranta",
+        "texto": "El refugio de Mariposas del recuerdo ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "a15723c8712b89f82316c235715fb8550ebd8d9cfcf1a9581cbcc8291ddbd632",
+        "huella_texto": "a15723c8712b89f8"
+      },
+      {
+        "id": "COM_rosal_eterno_cuidado.02",
+        "hablante": "verdia_nilo",
+        "texto": "Jardinería consentida y observación; sus habitantes no trabajan obligados ni se recolectan sus recuerdos.",
+        "huella": "75f4834813b7a72ebd9cb51ef3fa61cf0b77df87a6202bd2a7556924ef340de4",
+        "huella_texto": "75f4834813b7a72e"
+      },
+      {
+        "id": "COM_rosal_eterno_cuidado.03",
+        "hablante": "verdia_amaranta",
+        "texto": "Aquí un cuidado no compra obediencia. Quien recibe ayuda conserva el derecho a querer otra cosa.",
+        "huella": "a751c9134402dfa460270250bb4a5be61312af405039ceaba02cddb3f619e574",
+        "huella_texto": "a751c9134402dfa4"
+      },
+      {
+        "id": "COM_rosal_eterno_cuidado.04",
+        "hablante": "verdia_nilo",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_rosal_eterno_cuidado.05",
+        "hablante": "verdia_amaranta",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_rosal_eterno_cuidado.06",
+        "hablante": "verdia_nilo",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_jardines_eco_mesa",
+    "region": "jardines_eco",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "eco_esteban",
+      "eco_sora"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "jardines_eco_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_jardines_eco_mesa.01",
+        "hablante": "eco_esteban",
+        "texto": "Nos reunimos para revisar las rutas de cuidado de Verdia. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "c2c95dd4b8dcdcfc37b0e7efa9e2b1c6f2f075a5c0831b187faddde0ca42e922",
+        "huella_texto": "c2c95dd4b8dcdcfc"
+      },
+      {
+        "id": "COM_jardines_eco_mesa.02",
+        "hablante": "eco_sora",
+        "texto": "El lugar sigue siendo un refugio aunque no produzca nada para tu mochila. Ese es el primer acuerdo que hay que conservar.",
+        "huella": "c4b6472c3fe5a52d3bf2ef8ab9caa28074307a630cd7cec8827c13c010c936bb",
+        "huella_texto": "c4b6472c3fe5a52d"
+      },
+      {
+        "id": "COM_jardines_eco_mesa.03",
+        "hablante": "eco_esteban",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_jardines_eco_mesa.04",
+        "hablante": "eco_sora",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_jardines_eco_mesa.05",
+        "hablante": "eco_esteban",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_jardines_eco_mesa.06",
+        "hablante": "eco_sora",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_jardines_eco_clima",
+    "region": "jardines_eco",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "eco_esteban",
+      "eco_sora"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "jardines_eco_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_jardines_eco_clima.01",
+        "hablante": "eco_esteban",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar las rutas de cuidado de Verdia antes de volver a la rutina.",
+        "huella": "9da1129039fb3480755638b903cd3c0babbb4fd119033200633602c5dda8d816",
+        "huella_texto": "9da1129039fb3480"
+      },
+      {
+        "id": "COM_jardines_eco_clima.02",
+        "hablante": "eco_sora",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_jardines_eco_clima.03",
+        "hablante": "eco_esteban",
+        "texto": "El lugar sigue siendo un refugio aunque no produzca nada para tu mochila. Ese es el primer acuerdo que hay que conservar.",
+        "huella": "c4b6472c3fe5a52d3bf2ef8ab9caa28074307a630cd7cec8827c13c010c936bb",
+        "huella_texto": "c4b6472c3fe5a52d"
+      },
+      {
+        "id": "COM_jardines_eco_clima.04",
+        "hablante": "eco_sora",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_jardines_eco_clima.05",
+        "hablante": "eco_esteban",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_jardines_eco_clima.06",
+        "hablante": "eco_sora",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_jardines_eco_cuidado",
+    "region": "jardines_eco",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "eco_esteban",
+      "eco_sora"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "jardines_eco_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_jardines_eco_cuidado.01",
+        "hablante": "eco_esteban",
+        "texto": "El refugio de Abejas de jardín ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "ec9f3846637c737235101fb0d60e0169df32701ae768e539276ad01af3becb37",
+        "huella_texto": "ec9f3846637c7372"
+      },
+      {
+        "id": "COM_jardines_eco_cuidado.02",
+        "hablante": "eco_sora",
+        "texto": "Colmenas voluntariamente atendidas, cupo de miel con reserva para la colonia; ninguna alma paga en productos.",
+        "huella": "ce0ae202404c3907c40fa7783a2122c474dc45ea6002b7c1158e30e71b06ae40",
+        "huella_texto": "ce0ae202404c3907"
+      },
+      {
+        "id": "COM_jardines_eco_cuidado.03",
+        "hablante": "eco_esteban",
+        "texto": "El lugar sigue siendo un refugio aunque no produzca nada para tu mochila. Ese es el primer acuerdo que hay que conservar.",
+        "huella": "c4b6472c3fe5a52d3bf2ef8ab9caa28074307a630cd7cec8827c13c010c936bb",
+        "huella_texto": "c4b6472c3fe5a52d"
+      },
+      {
+        "id": "COM_jardines_eco_cuidado.04",
+        "hablante": "eco_sora",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_jardines_eco_cuidado.05",
+        "hablante": "eco_esteban",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_jardines_eco_cuidado.06",
+        "hablante": "eco_sora",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_travesia_mesa",
+    "region": "travesia",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "senda_iria",
+      "senda_mateo"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "travesia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_travesia_mesa.01",
+        "hablante": "senda_iria",
+        "texto": "Nos reunimos para revisar las rutas públicas de la Travesía. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "aee0a80aabe13e099b11936fe753ebc73416c884d018aae01fb679c724592068",
+        "huella_texto": "aee0a80aabe13e09"
+      },
+      {
+        "id": "COM_travesia_mesa.02",
+        "hablante": "senda_mateo",
+        "texto": "Escuchar una memoria no nos autoriza a divulgarla ni a decidir cómo debe terminar. Quien habla también puede detenerse.",
+        "huella": "cf0d85167a1cdc86713c577b2f4771948c6da4b84c892ac9d3bb43a1bbf3874f",
+        "huella_texto": "cf0d85167a1cdc86"
+      },
+      {
+        "id": "COM_travesia_mesa.03",
+        "hablante": "senda_iria",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_travesia_mesa.04",
+        "hablante": "senda_mateo",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_travesia_mesa.05",
+        "hablante": "senda_iria",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_travesia_mesa.06",
+        "hablante": "senda_mateo",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_travesia_clima",
+    "region": "travesia",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "senda_iria",
+      "senda_mateo"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "travesia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_travesia_clima.01",
+        "hablante": "senda_iria",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar las rutas públicas de la Travesía antes de volver a la rutina.",
+        "huella": "e2ea1b3a35ce0750f6f702f69d2d23dbed472ffd99cbd7c545cb89879bb41911",
+        "huella_texto": "e2ea1b3a35ce0750"
+      },
+      {
+        "id": "COM_travesia_clima.02",
+        "hablante": "senda_mateo",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_travesia_clima.03",
+        "hablante": "senda_iria",
+        "texto": "Escuchar una memoria no nos autoriza a divulgarla ni a decidir cómo debe terminar. Quien habla también puede detenerse.",
+        "huella": "cf0d85167a1cdc86713c577b2f4771948c6da4b84c892ac9d3bb43a1bbf3874f",
+        "huella_texto": "cf0d85167a1cdc86"
+      },
+      {
+        "id": "COM_travesia_clima.04",
+        "hablante": "senda_mateo",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_travesia_clima.05",
+        "hablante": "senda_iria",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_travesia_clima.06",
+        "hablante": "senda_mateo",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_travesia_cuidado",
+    "region": "travesia",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "senda_iria",
+      "senda_mateo"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "travesia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_travesia_cuidado.01",
+        "hablante": "senda_iria",
+        "texto": "El refugio de Grullas de umbral ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "d9ee30ddc9388907128d7f4e0b7b82e3320b4d5335afcb489c4c085bc5f9fdac",
+        "huella_texto": "d9ee30ddc9388907"
+      },
+      {
+        "id": "COM_travesia_cuidado.02",
+        "hablante": "senda_mateo",
+        "texto": "Reponer agua y trayectos seguros. Ningún acompañante ni alma se obliga a producir materiales.",
+        "huella": "adc1b0acb654a90de4938fa6ed458b611a7c648081a7ec106e32e05196fb0276",
+        "huella_texto": "adc1b0acb654a90d"
+      },
+      {
+        "id": "COM_travesia_cuidado.03",
+        "hablante": "senda_iria",
+        "texto": "Escuchar una memoria no nos autoriza a divulgarla ni a decidir cómo debe terminar. Quien habla también puede detenerse.",
+        "huella": "cf0d85167a1cdc86713c577b2f4771948c6da4b84c892ac9d3bb43a1bbf3874f",
+        "huella_texto": "cf0d85167a1cdc86"
+      },
+      {
+        "id": "COM_travesia_cuidado.04",
+        "hablante": "senda_mateo",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_travesia_cuidado.05",
+        "hablante": "senda_iria",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_travesia_cuidado.06",
+        "hablante": "senda_mateo",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_refugio_hilos_mesa",
+    "region": "refugio_hilos",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "hilos_tecla",
+      "hilos_hector"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "refugio_hilos_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_refugio_hilos_mesa.01",
+        "hablante": "hilos_tecla",
+        "texto": "Nos reunimos para revisar las mesas y los pasos del refugio. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "5c12a2d806b277eed8b42cfaf78c035b75213547cda3554740edf05722b57efc",
+        "huella_texto": "5c12a2d806b277ee"
+      },
+      {
+        "id": "COM_refugio_hilos_mesa.02",
+        "hablante": "hilos_hector",
+        "texto": "Podemos reparar un tejido juntos sin exigir que su dueño nos cuente por qué se rompió.",
+        "huella": "dc363b310939765412449971cedad3fc2b392c5b3a79aad650b55d81701e18f7",
+        "huella_texto": "dc363b3109397654"
+      },
+      {
+        "id": "COM_refugio_hilos_mesa.03",
+        "hablante": "hilos_tecla",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_refugio_hilos_mesa.04",
+        "hablante": "hilos_hector",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_refugio_hilos_mesa.05",
+        "hablante": "hilos_tecla",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_refugio_hilos_mesa.06",
+        "hablante": "hilos_hector",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_refugio_hilos_clima",
+    "region": "refugio_hilos",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "hilos_tecla",
+      "hilos_hector"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "refugio_hilos_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_refugio_hilos_clima.01",
+        "hablante": "hilos_tecla",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar las mesas y los pasos del refugio antes de volver a la rutina.",
+        "huella": "d197e0f8bda80cb2d530a06144d7e8da9f5dc5bc1984fc273abf7130191f3ca5",
+        "huella_texto": "d197e0f8bda80cb2"
+      },
+      {
+        "id": "COM_refugio_hilos_clima.02",
+        "hablante": "hilos_hector",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_refugio_hilos_clima.03",
+        "hablante": "hilos_tecla",
+        "texto": "Podemos reparar un tejido juntos sin exigir que su dueño nos cuente por qué se rompió.",
+        "huella": "dc363b310939765412449971cedad3fc2b392c5b3a79aad650b55d81701e18f7",
+        "huella_texto": "dc363b3109397654"
+      },
+      {
+        "id": "COM_refugio_hilos_clima.04",
+        "hablante": "hilos_hector",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_refugio_hilos_clima.05",
+        "hablante": "hilos_tecla",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_refugio_hilos_clima.06",
+        "hablante": "hilos_hector",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_refugio_hilos_cuidado",
+    "region": "refugio_hilos",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "hilos_tecla",
+      "hilos_hector"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "refugio_hilos_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_refugio_hilos_cuidado.01",
+        "hablante": "hilos_tecla",
+        "texto": "El refugio de Polillas de telar ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "42604e59ba13b170c0b375b7991a415d75e1b37395f77d2cf70413bd8603f41f",
+        "huella_texto": "42604e59ba13b170"
+      },
+      {
+        "id": "COM_refugio_hilos_cuidado.02",
+        "hablante": "hilos_hector",
+        "texto": "Reducir lámparas dañinas y mantener plantas hospederas; seda solo de prácticas aceptadas, no extracción de criaturas.",
+        "huella": "36dd105d553a8cf5917147f7fdc5b6c114e8091fb5ebf1f0799329b6549d329b",
+        "huella_texto": "36dd105d553a8cf5"
+      },
+      {
+        "id": "COM_refugio_hilos_cuidado.03",
+        "hablante": "hilos_tecla",
+        "texto": "Podemos reparar un tejido juntos sin exigir que su dueño nos cuente por qué se rompió.",
+        "huella": "dc363b310939765412449971cedad3fc2b392c5b3a79aad650b55d81701e18f7",
+        "huella_texto": "dc363b3109397654"
+      },
+      {
+        "id": "COM_refugio_hilos_cuidado.04",
+        "hablante": "hilos_hector",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_refugio_hilos_cuidado.05",
+        "hablante": "hilos_tecla",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_refugio_hilos_cuidado.06",
+        "hablante": "hilos_hector",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_bastion_velo_mesa",
+    "region": "bastion_velo",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "nox_dorian",
+      "nox_salma"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "bastion_velo_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_bastion_velo_mesa.01",
+        "hablante": "nox_dorian",
+        "texto": "Nos reunimos para revisar los puestos de vigilancia del Bastión. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "18075963cee420d43dae787eb69c51166f91716b04845bf9265a49adeb68029d",
+        "huella_texto": "18075963cee420d4"
+      },
+      {
+        "id": "COM_bastion_velo_mesa.02",
+        "hablante": "nox_salma",
+        "texto": "Este trabajo ocurre dentro del Bastión. Un acuerdo de mantenimiento no cambia una sentencia ni concede una salida.",
+        "huella": "0469a8d4d4c97683ce536a27e09b663b8ac9c9611af3002339a1351346046ac9",
+        "huella_texto": "0469a8d4d4c97683"
+      },
+      {
+        "id": "COM_bastion_velo_mesa.03",
+        "hablante": "nox_dorian",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_bastion_velo_mesa.04",
+        "hablante": "nox_salma",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_bastion_velo_mesa.05",
+        "hablante": "nox_dorian",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_bastion_velo_mesa.06",
+        "hablante": "nox_salma",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_bastion_velo_clima",
+    "region": "bastion_velo",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "nox_dorian",
+      "nox_salma"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "bastion_velo_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_bastion_velo_clima.01",
+        "hablante": "nox_dorian",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar los puestos de vigilancia del Bastión antes de volver a la rutina.",
+        "huella": "3a01a27761687ffaac42c14b88ed4a498ab321c29488eb3e93453a4899e5af27",
+        "huella_texto": "3a01a27761687ffa"
+      },
+      {
+        "id": "COM_bastion_velo_clima.02",
+        "hablante": "nox_salma",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_bastion_velo_clima.03",
+        "hablante": "nox_dorian",
+        "texto": "Este trabajo ocurre dentro del Bastión. Un acuerdo de mantenimiento no cambia una sentencia ni concede una salida.",
+        "huella": "0469a8d4d4c97683ce536a27e09b663b8ac9c9611af3002339a1351346046ac9",
+        "huella_texto": "0469a8d4d4c97683"
+      },
+      {
+        "id": "COM_bastion_velo_clima.04",
+        "hablante": "nox_salma",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_bastion_velo_clima.05",
+        "hablante": "nox_dorian",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_bastion_velo_clima.06",
+        "hablante": "nox_salma",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_bastion_velo_cuidado",
+    "region": "bastion_velo",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "nox_dorian",
+      "nox_salma"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "bastion_velo_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_bastion_velo_cuidado.01",
+        "hablante": "nox_dorian",
+        "texto": "El refugio de Cuervos del perímetro ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "d29ebd0e99c25b4a20ec822d9861de5e103049fecc359618c178c45e0b7a64e3",
+        "huella_texto": "d29ebd0e99c25b4a"
+      },
+      {
+        "id": "COM_bastion_velo_cuidado.02",
+        "hablante": "nox_salma",
+        "texto": "Atención fuera del sello con equipo autorizado. No soltar entidades ni usar animales para probar corrupción.",
+        "huella": "b1758e5bf887de7767b843d5eca1900dcf3d5855847586f347d100f7eca5f8cb",
+        "huella_texto": "b1758e5bf887de77"
+      },
+      {
+        "id": "COM_bastion_velo_cuidado.03",
+        "hablante": "nox_dorian",
+        "texto": "Este trabajo ocurre dentro del Bastión. Un acuerdo de mantenimiento no cambia una sentencia ni concede una salida.",
+        "huella": "0469a8d4d4c97683ce536a27e09b663b8ac9c9611af3002339a1351346046ac9",
+        "huella_texto": "0469a8d4d4c97683"
+      },
+      {
+        "id": "COM_bastion_velo_cuidado.04",
+        "hablante": "nox_salma",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_bastion_velo_cuidado.05",
+        "hablante": "nox_dorian",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_bastion_velo_cuidado.06",
+        "hablante": "nox_salma",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_estacion_celia_mesa",
+    "region": "estacion_celia",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "orbita_ivo",
+      "orbita_helena"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "estacion_celia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_estacion_celia_mesa.01",
+        "hablante": "orbita_ivo",
+        "texto": "Nos reunimos para revisar los módulos y los turnos de la estación. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "1e1a262eb806a5c37d78db3f8cc426d61f12f537cd14491f564c62543ee060cc",
+        "huella_texto": "1e1a262eb806a5c3"
+      },
+      {
+        "id": "COM_estacion_celia_mesa.02",
+        "hablante": "orbita_helena",
+        "texto": "Un bulto tiene origen, destino y una persona que lo recibe. Anotar los tres evita que una urgencia se convierta en carga ajena.",
+        "huella": "69b4187d565fe8fe20d60b3a5c3f1fc7461c6ae631aaebbe28b35c3e86b0dc27",
+        "huella_texto": "69b4187d565fe8fe"
+      },
+      {
+        "id": "COM_estacion_celia_mesa.03",
+        "hablante": "orbita_ivo",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_estacion_celia_mesa.04",
+        "hablante": "orbita_helena",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_estacion_celia_mesa.05",
+        "hablante": "orbita_ivo",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_estacion_celia_mesa.06",
+        "hablante": "orbita_helena",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_estacion_celia_clima",
+    "region": "estacion_celia",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "orbita_ivo",
+      "orbita_helena"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "estacion_celia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_estacion_celia_clima.01",
+        "hablante": "orbita_ivo",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar los módulos y los turnos de la estación antes de volver a la rutina.",
+        "huella": "bcd70f54606e885dd57a4f418c9dd4ae767ad4bf965553e6e66db978b4d73e49",
+        "huella_texto": "bcd70f54606e885d"
+      },
+      {
+        "id": "COM_estacion_celia_clima.02",
+        "hablante": "orbita_helena",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_estacion_celia_clima.03",
+        "hablante": "orbita_ivo",
+        "texto": "Un bulto tiene origen, destino y una persona que lo recibe. Anotar los tres evita que una urgencia se convierta en carga ajena.",
+        "huella": "69b4187d565fe8fe20d60b3a5c3f1fc7461c6ae631aaebbe28b35c3e86b0dc27",
+        "huella_texto": "69b4187d565fe8fe"
+      },
+      {
+        "id": "COM_estacion_celia_clima.04",
+        "hablante": "orbita_helena",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_estacion_celia_clima.05",
+        "hablante": "orbita_ivo",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_estacion_celia_clima.06",
+        "hablante": "orbita_helena",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_estacion_celia_cuidado",
+    "region": "estacion_celia",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "orbita_ivo",
+      "orbita_helena"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "estacion_celia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_estacion_celia_cuidado.01",
+        "hablante": "orbita_ivo",
+        "texto": "El refugio de Geckos del módulo botánico ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "011d1a8743f4e19ca06907cca593512cf19e8beb4efb8b77ec7daffd4c173d3b",
+        "huella_texto": "011d1a8743f4e19c"
+      },
+      {
+        "id": "COM_estacion_celia_cuidado.02",
+        "hablante": "orbita_helena",
+        "texto": "Hábitat cerrado supervisado, cupos de aire y agua; no soltar fauna al vacío ni crear comida de la nada.",
+        "huella": "e0a75341f6306de3c973d6e294e67b4eef9abe31449522c51657d65fc9e5a56e",
+        "huella_texto": "e0a75341f6306de3"
+      },
+      {
+        "id": "COM_estacion_celia_cuidado.03",
+        "hablante": "orbita_ivo",
+        "texto": "Un bulto tiene origen, destino y una persona que lo recibe. Anotar los tres evita que una urgencia se convierta en carga ajena.",
+        "huella": "69b4187d565fe8fe20d60b3a5c3f1fc7461c6ae631aaebbe28b35c3e86b0dc27",
+        "huella_texto": "69b4187d565fe8fe"
+      },
+      {
+        "id": "COM_estacion_celia_cuidado.04",
+        "hablante": "orbita_helena",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_estacion_celia_cuidado.05",
+        "hablante": "orbita_ivo",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_estacion_celia_cuidado.06",
+        "hablante": "orbita_helena",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_huerto_aurelia_mesa",
+    "region": "huerto_aurelia",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "aurelia_saul",
+      "aurelia_aitana"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "huerto_aurelia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_huerto_aurelia_mesa.01",
+        "hablante": "aurelia_saul",
+        "texto": "Nos reunimos para revisar el riego dentro del módulo del huerto. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "a2aeef0fde881b158cf1efe1b2dc83b8fa2e15e5dbf5c857109945365ea500c1",
+        "huella_texto": "a2aeef0fde881b15"
+      },
+      {
+        "id": "COM_huerto_aurelia_mesa.02",
+        "hablante": "aurelia_aitana",
+        "texto": "Producir más no justifica olvidar el agua de mañana. El módulo que cuida las semillas también debe cuidar a quien trabaja.",
+        "huella": "b48a78d5072daae74c365c5d26e61848f9138f9eed3164b871b56d43dc334eee",
+        "huella_texto": "b48a78d5072daae7"
+      },
+      {
+        "id": "COM_huerto_aurelia_mesa.03",
+        "hablante": "aurelia_saul",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_huerto_aurelia_mesa.04",
+        "hablante": "aurelia_aitana",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_huerto_aurelia_mesa.05",
+        "hablante": "aurelia_saul",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_huerto_aurelia_mesa.06",
+        "hablante": "aurelia_aitana",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_huerto_aurelia_clima",
+    "region": "huerto_aurelia",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "aurelia_saul",
+      "aurelia_aitana"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "huerto_aurelia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_huerto_aurelia_clima.01",
+        "hablante": "aurelia_saul",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar el riego dentro del módulo del huerto antes de volver a la rutina.",
+        "huella": "ba13880bb84cff84a013ccd720121e78f6b50d62df5d897e6143006ad6d0d823",
+        "huella_texto": "ba13880bb84cff84"
+      },
+      {
+        "id": "COM_huerto_aurelia_clima.02",
+        "hablante": "aurelia_aitana",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_huerto_aurelia_clima.03",
+        "hablante": "aurelia_saul",
+        "texto": "Producir más no justifica olvidar el agua de mañana. El módulo que cuida las semillas también debe cuidar a quien trabaja.",
+        "huella": "b48a78d5072daae74c365c5d26e61848f9138f9eed3164b871b56d43dc334eee",
+        "huella_texto": "b48a78d5072daae7"
+      },
+      {
+        "id": "COM_huerto_aurelia_clima.04",
+        "hablante": "aurelia_aitana",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_huerto_aurelia_clima.05",
+        "hablante": "aurelia_saul",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_huerto_aurelia_clima.06",
+        "hablante": "aurelia_aitana",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_huerto_aurelia_cuidado",
+    "region": "huerto_aurelia",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "aurelia_saul",
+      "aurelia_aitana"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "huerto_aurelia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_huerto_aurelia_cuidado.01",
+        "hablante": "aurelia_saul",
+        "texto": "El refugio de Escarabajos polinizadores de cápsula ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "854e93c6ee44011a304492c0c48f50fe6ae644e10b6a7f030dda00239b3a16d0",
+        "huella_texto": "854e93c6ee44011a"
+      },
+      {
+        "id": "COM_huerto_aurelia_cuidado.02",
+        "hablante": "aurelia_aitana",
+        "texto": "Cúpula con refugios y cupo de polinización; productos permanecen ligados a cuidados, no a esperar fuera del juego.",
+        "huella": "a3f5b84b9eb9f8d30164fc63341168d254e3647bc263b3b74e80aa068bb87605",
+        "huella_texto": "a3f5b84b9eb9f8d3"
+      },
+      {
+        "id": "COM_huerto_aurelia_cuidado.03",
+        "hablante": "aurelia_saul",
+        "texto": "Producir más no justifica olvidar el agua de mañana. El módulo que cuida las semillas también debe cuidar a quien trabaja.",
+        "huella": "b48a78d5072daae74c365c5d26e61848f9138f9eed3164b871b56d43dc334eee",
+        "huella_texto": "b48a78d5072daae7"
+      },
+      {
+        "id": "COM_huerto_aurelia_cuidado.04",
+        "hablante": "aurelia_aitana",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_huerto_aurelia_cuidado.05",
+        "hablante": "aurelia_saul",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_huerto_aurelia_cuidado.06",
+        "hablante": "aurelia_aitana",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_vigia_nocturna_mesa",
+    "region": "vigia_nocturna",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "nocturna_matea",
+      "nocturna_elvira"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "vigia_nocturna_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_vigia_nocturna_mesa.01",
+        "hablante": "nocturna_matea",
+        "texto": "Nos reunimos para revisar las señales y los relevos de observación. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "eb1ffa7b15d53e915330c67f7d8d4f685a381e639eab4e0080a70b8bc4d917bf",
+        "huella_texto": "eb1ffa7b15d53e91"
+      },
+      {
+        "id": "COM_vigia_nocturna_mesa.02",
+        "hablante": "nocturna_elvira",
+        "texto": "Observar en silencio también es trabajo. Un relevo a tiempo puede ser más útil que una noche entera de esfuerzo.",
+        "huella": "74eda147244c04eb38b74f6be833bafb62e9d53703b8e08d4b5fa997bd8ae4e2",
+        "huella_texto": "74eda147244c04eb"
+      },
+      {
+        "id": "COM_vigia_nocturna_mesa.03",
+        "hablante": "nocturna_matea",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_vigia_nocturna_mesa.04",
+        "hablante": "nocturna_elvira",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_vigia_nocturna_mesa.05",
+        "hablante": "nocturna_matea",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_vigia_nocturna_mesa.06",
+        "hablante": "nocturna_elvira",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_vigia_nocturna_clima",
+    "region": "vigia_nocturna",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "nocturna_matea",
+      "nocturna_elvira"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "vigia_nocturna_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_vigia_nocturna_clima.01",
+        "hablante": "nocturna_matea",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar las señales y los relevos de observación antes de volver a la rutina.",
+        "huella": "40fac2a7909d6219cfd91c50643b0ff391a5503381b4e3f78dee6d48b3c279ea",
+        "huella_texto": "40fac2a7909d6219"
+      },
+      {
+        "id": "COM_vigia_nocturna_clima.02",
+        "hablante": "nocturna_elvira",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_vigia_nocturna_clima.03",
+        "hablante": "nocturna_matea",
+        "texto": "Observar en silencio también es trabajo. Un relevo a tiempo puede ser más útil que una noche entera de esfuerzo.",
+        "huella": "74eda147244c04eb38b74f6be833bafb62e9d53703b8e08d4b5fa997bd8ae4e2",
+        "huella_texto": "74eda147244c04eb"
+      },
+      {
+        "id": "COM_vigia_nocturna_clima.04",
+        "hablante": "nocturna_elvira",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_vigia_nocturna_clima.05",
+        "hablante": "nocturna_matea",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_vigia_nocturna_clima.06",
+        "hablante": "nocturna_elvira",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_vigia_nocturna_cuidado",
+    "region": "vigia_nocturna",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "nocturna_matea",
+      "nocturna_elvira"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "vigia_nocturna_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_vigia_nocturna_cuidado.01",
+        "hablante": "nocturna_matea",
+        "texto": "El refugio de Zorros de módulo nocturno ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "5a51a66ca074aad68a27db851f4e31bba7f2410eafff7682fbd63365ec42b5bf",
+        "huella_texto": "5a51a66ca074aad6"
+      },
+      {
+        "id": "COM_vigia_nocturna_cuidado.02",
+        "hablante": "nocturna_elvira",
+        "texto": "Refugio con atención; observar rutas sin empujar animales a túneles para abrir el mapa.",
+        "huella": "777c1e6eecb121b385502a6fe13c5e1b6e68139077fd3dddaf5e50b134f362a7",
+        "huella_texto": "777c1e6eecb121b3"
+      },
+      {
+        "id": "COM_vigia_nocturna_cuidado.03",
+        "hablante": "nocturna_matea",
+        "texto": "Observar en silencio también es trabajo. Un relevo a tiempo puede ser más útil que una noche entera de esfuerzo.",
+        "huella": "74eda147244c04eb38b74f6be833bafb62e9d53703b8e08d4b5fa997bd8ae4e2",
+        "huella_texto": "74eda147244c04eb"
+      },
+      {
+        "id": "COM_vigia_nocturna_cuidado.04",
+        "hablante": "nocturna_elvira",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_vigia_nocturna_cuidado.05",
+        "hablante": "nocturna_matea",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_vigia_nocturna_cuidado.06",
+        "hablante": "nocturna_elvira",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_cantera_esmeralda_mesa",
+    "region": "cantera_esmeralda",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "esmeralda_olmo",
+      "esmeralda_indira"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "cantera_esmeralda_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_cantera_esmeralda_mesa.01",
+        "hablante": "esmeralda_olmo",
+        "texto": "Nos reunimos para revisar los soportes y los corredores de la cantera. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "97c9205dc31bd26662ac244dafaec7424236f40110dbad5d27d4d3dd98564c17",
+        "huella_texto": "97c9205dc31bd266"
+      },
+      {
+        "id": "COM_cantera_esmeralda_mesa.02",
+        "hablante": "esmeralda_indira",
+        "texto": "Una veta no desaparece porque paremos a revisar un soporte. La prisa no debería decidir qué riesgo asume otra persona.",
+        "huella": "baafedfb8a77e033373f02854c910982d37bf8865634a47487197c34ce519a8f",
+        "huella_texto": "baafedfb8a77e033"
+      },
+      {
+        "id": "COM_cantera_esmeralda_mesa.03",
+        "hablante": "esmeralda_olmo",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_cantera_esmeralda_mesa.04",
+        "hablante": "esmeralda_indira",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_cantera_esmeralda_mesa.05",
+        "hablante": "esmeralda_olmo",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_cantera_esmeralda_mesa.06",
+        "hablante": "esmeralda_indira",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_cantera_esmeralda_clima",
+    "region": "cantera_esmeralda",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "esmeralda_olmo",
+      "esmeralda_indira"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "cantera_esmeralda_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_cantera_esmeralda_clima.01",
+        "hablante": "esmeralda_olmo",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar los soportes y los corredores de la cantera antes de volver a la rutina.",
+        "huella": "e3fbef2fe84f7cce6c6d63301d7ff6bca0745bde94ce6290f2dbc997d5d1bdeb",
+        "huella_texto": "e3fbef2fe84f7cce"
+      },
+      {
+        "id": "COM_cantera_esmeralda_clima.02",
+        "hablante": "esmeralda_indira",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_cantera_esmeralda_clima.03",
+        "hablante": "esmeralda_olmo",
+        "texto": "Una veta no desaparece porque paremos a revisar un soporte. La prisa no debería decidir qué riesgo asume otra persona.",
+        "huella": "baafedfb8a77e033373f02854c910982d37bf8865634a47487197c34ce519a8f",
+        "huella_texto": "baafedfb8a77e033"
+      },
+      {
+        "id": "COM_cantera_esmeralda_clima.04",
+        "hablante": "esmeralda_indira",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_cantera_esmeralda_clima.05",
+        "hablante": "esmeralda_olmo",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_cantera_esmeralda_clima.06",
+        "hablante": "esmeralda_indira",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_cantera_esmeralda_cuidado",
+    "region": "cantera_esmeralda",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "esmeralda_olmo",
+      "esmeralda_indira"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "cantera_esmeralda_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_cantera_esmeralda_cuidado.01",
+        "hablante": "esmeralda_olmo",
+        "texto": "El refugio de Caracoles de cúpula húmeda ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "932d442b3628e201d6c3a0186c8849182ba557ad9681c08f90005398ad8c266e",
+        "huella_texto": "932d442b3628e201"
+      },
+      {
+        "id": "COM_cantera_esmeralda_cuidado.02",
+        "hablante": "esmeralda_indira",
+        "texto": "Humedad y reserva de alimento; conchas vacías naturales pueden estudiarse sin matar fauna.",
+        "huella": "5fc8aa84e1c7c8851c17fdc6d7a9a6a3065241f092554ced6c7cf2b667482c54",
+        "huella_texto": "5fc8aa84e1c7c885"
+      },
+      {
+        "id": "COM_cantera_esmeralda_cuidado.03",
+        "hablante": "esmeralda_olmo",
+        "texto": "Una veta no desaparece porque paremos a revisar un soporte. La prisa no debería decidir qué riesgo asume otra persona.",
+        "huella": "baafedfb8a77e033373f02854c910982d37bf8865634a47487197c34ce519a8f",
+        "huella_texto": "baafedfb8a77e033"
+      },
+      {
+        "id": "COM_cantera_esmeralda_cuidado.04",
+        "hablante": "esmeralda_indira",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_cantera_esmeralda_cuidado.05",
+        "hablante": "esmeralda_olmo",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_cantera_esmeralda_cuidado.06",
+        "hablante": "esmeralda_indira",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_ambarina_mesa",
+    "region": "ambarina",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "ambar_rocio",
+      "ambar_zora"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "ambarina_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_ambarina_mesa.01",
+        "hablante": "ambar_rocio",
+        "texto": "Nos reunimos para revisar las cuentas de los cultivos y el taller. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "c0be2d98b1ef8a0e2b15adbf2a553b7548ce11006916988acf7ab571b3ec38bb",
+        "huella_texto": "c0be2d98b1ef8a0e"
+      },
+      {
+        "id": "COM_ambarina_mesa.02",
+        "hablante": "ambar_zora",
+        "texto": "Que una cosecha salga bien no vuelve pequeño el trabajo anterior. Queremos repartir el cuidado, no solamente celebrar el resultado.",
+        "huella": "79eb0fdd831212ec7ab62b75ff0c2d2e447eb4a0fcd12be6fc61f8d6ebc51b75",
+        "huella_texto": "79eb0fdd831212ec"
+      },
+      {
+        "id": "COM_ambarina_mesa.03",
+        "hablante": "ambar_rocio",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_ambarina_mesa.04",
+        "hablante": "ambar_zora",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_ambarina_mesa.05",
+        "hablante": "ambar_rocio",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_ambarina_mesa.06",
+        "hablante": "ambar_zora",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_ambarina_clima",
+    "region": "ambarina",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "ambar_rocio",
+      "ambar_zora"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "ambarina_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_ambarina_clima.01",
+        "hablante": "ambar_rocio",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar las cuentas de los cultivos y el taller antes de volver a la rutina.",
+        "huella": "ca009534b3874d322c6aa30588f33d28cdbde1ee919c12bb069cf674a25857dd",
+        "huella_texto": "ca009534b3874d32"
+      },
+      {
+        "id": "COM_ambarina_clima.02",
+        "hablante": "ambar_zora",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_ambarina_clima.03",
+        "hablante": "ambar_rocio",
+        "texto": "Que una cosecha salga bien no vuelve pequeño el trabajo anterior. Queremos repartir el cuidado, no solamente celebrar el resultado.",
+        "huella": "79eb0fdd831212ec7ab62b75ff0c2d2e447eb4a0fcd12be6fc61f8d6ebc51b75",
+        "huella_texto": "79eb0fdd831212ec"
+      },
+      {
+        "id": "COM_ambarina_clima.04",
+        "hablante": "ambar_zora",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_ambarina_clima.05",
+        "hablante": "ambar_rocio",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_ambarina_clima.06",
+        "hablante": "ambar_zora",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_ambarina_cuidado",
+    "region": "ambarina",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "ambar_rocio",
+      "ambar_zora"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "ambarina_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_ambarina_cuidado.01",
+        "hablante": "ambar_rocio",
+        "texto": "El refugio de Antílopes de sal ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "561fe76d312da8776ce490df30e936f621abca27aefb1bcfd590c164881c2e9b",
+        "huella_texto": "561fe76d312da877"
+      },
+      {
+        "id": "COM_ambarina_cuidado.02",
+        "hablante": "ambar_zora",
+        "texto": "Restaurar bebederos y rutas; el rendimiento no se paga cazando a los guardianes del agua.",
+        "huella": "863274d9f6fd867553898ab758cd43fea6b7ebd0951cfa7332b8b474ba5016a7",
+        "huella_texto": "863274d9f6fd8675"
+      },
+      {
+        "id": "COM_ambarina_cuidado.03",
+        "hablante": "ambar_rocio",
+        "texto": "Que una cosecha salga bien no vuelve pequeño el trabajo anterior. Queremos repartir el cuidado, no solamente celebrar el resultado.",
+        "huella": "79eb0fdd831212ec7ab62b75ff0c2d2e447eb4a0fcd12be6fc61f8d6ebc51b75",
+        "huella_texto": "79eb0fdd831212ec"
+      },
+      {
+        "id": "COM_ambarina_cuidado.04",
+        "hablante": "ambar_zora",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_ambarina_cuidado.05",
+        "hablante": "ambar_rocio",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_ambarina_cuidado.06",
+        "hablante": "ambar_zora",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_iridalia_mesa",
+    "region": "iridalia",
+    "tipo": "mesa",
+    "titulo": "Una mesa con lugar para todos",
+    "actores": [
+      "iris_calista",
+      "iris_orin"
+    ],
+    "prioridad": 1,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "iridalia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_iridalia_mesa.01",
+        "hablante": "iris_calista",
+        "texto": "Nos reunimos para revisar los turnos y los espacios de cultivo. No vamos a repartir tareas sin escuchar primero a quienes las sostienen.",
+        "huella": "29dd4198034fff592f735e6807c124c5a39c77b44e066c305ce7533da82a970a",
+        "huella_texto": "29dd4198034fff59"
+      },
+      {
+        "id": "COM_iridalia_mesa.02",
+        "hablante": "iris_orin",
+        "texto": "Cada quien percibe el lugar a su manera. Para revisar juntos podemos usar señales claras y respetar el ritmo de quien las lee.",
+        "huella": "3d49961422dacaea2bde251d98c852f8283259cf5ea2d3d60e7c2b824f55937f",
+        "huella_texto": "3d49961422dacaea"
+      },
+      {
+        "id": "COM_iridalia_mesa.03",
+        "hablante": "iris_calista",
+        "texto": "Traer materiales ayuda, pero también ayuda señalar lo que todavía no sabemos hacer con seguridad.",
+        "huella": "285dd6e31c5ed2dc4ae9cc1573951140d4aeba46784505a7c13caf5f9305402b",
+        "huella_texto": "285dd6e31c5ed2dc"
+      },
+      {
+        "id": "COM_iridalia_mesa.04",
+        "hablante": "iris_orin",
+        "texto": "Podemos preparar una cuerda con una madera local y una fibra. Si hoy no puedes aportar, puedes escuchar sin asumir un turno.",
+        "huella": "a676b07c72235f7216de835c72a7401cd9e20014c6496be94c0663f895f15274",
+        "huella_texto": "a676b07c72235f72"
+      },
+      {
+        "id": "COM_iridalia_mesa.05",
+        "hablante": "iris_calista",
+        "texto": "No vamos a cambiar los cupos del lugar ni a pedirte que extraigas más. El acuerdo empieza por cuidar lo que ya usamos.",
+        "huella": "e33634fbcc9fec1513b2806db71652bdeebca5ca92ea2420ae6a6d5791a94b0c",
+        "huella_texto": "e33634fbcc9fec15"
+      },
+      {
+        "id": "COM_iridalia_mesa.06",
+        "hablante": "iris_orin",
+        "texto": "¿Quieres aportar los materiales o dejar una observación sin prometer trabajo?",
+        "huella": "9220dc7e3a6ab6b7258faf576215587d2f86fe52a0d7b05449aa8ee61d2649ba",
+        "huella_texto": "9220dc7e3a6ab6b7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_iridalia_clima",
+    "region": "iridalia",
+    "tipo": "clima",
+    "titulo": "Antes de volver al trabajo",
+    "actores": [
+      "iris_calista",
+      "iris_orin"
+    ],
+    "prioridad": 3,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "iridalia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_iridalia_clima.01",
+        "hablante": "iris_calista",
+        "texto": "El registro de la jornada anterior marcó tiempo difícil. Queremos revisar los turnos y los espacios de cultivo antes de volver a la rutina.",
+        "huella": "2dd08ae2da20962794bf9c6c371b5f70adf1c46ab1d898da8dc9c25982353035",
+        "huella_texto": "2dd08ae2da209627"
+      },
+      {
+        "id": "COM_iridalia_clima.02",
+        "hablante": "iris_orin",
+        "texto": "No vamos a inventar pérdidas ni a enviar a nadie afuera mientras el tiempo siga siendo peligroso. Esta conversación espera a un momento seguro.",
+        "huella": "4c1102eee3a0df32c4bb6b9ec0d390b12b7993d89517fb7b280afff837dfa70d",
+        "huella_texto": "4c1102eee3a0df32"
+      },
+      {
+        "id": "COM_iridalia_clima.03",
+        "hablante": "iris_calista",
+        "texto": "Cada quien percibe el lugar a su manera. Para revisar juntos podemos usar señales claras y respetar el ritmo de quien las lee.",
+        "huella": "3d49961422dacaea2bde251d98c852f8283259cf5ea2d3d60e7c2b824f55937f",
+        "huella_texto": "3d49961422dacaea"
+      },
+      {
+        "id": "COM_iridalia_clima.04",
+        "hablante": "iris_orin",
+        "texto": "Preparar una cuerda puede servir para el mantenimiento. Una madera local y una fibra bastan; no necesitamos vaciar otra reserva.",
+        "huella": "461a51df29c641bb4f7ff4cea8c7e8327d6e1fe6080146bec59e05889952f32a",
+        "huella_texto": "461a51df29c641bb"
+      },
+      {
+        "id": "COM_iridalia_clima.05",
+        "hablante": "iris_calista",
+        "texto": "Escuchar y dejar constancia también es una forma de ayudar. Ninguna respuesta obliga a alguien a exponerse.",
+        "huella": "a30e1bba82204730e7b98cfde240ec77463b9adecf3da038b50304c778f1f1b7",
+        "huella_texto": "a30e1bba82204730"
+      },
+      {
+        "id": "COM_iridalia_clima.06",
+        "hablante": "iris_orin",
+        "texto": "¿Aportas esos materiales o prefieres registrar lo que escuchaste?",
+        "huella": "095303a35e573c83cbf9a58826fbfad10ed73f73b76b30210eb2183e6a00dc4c",
+        "huella_texto": "095303a35e573c83"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_iridalia_cuidado",
+    "region": "iridalia",
+    "tipo": "cuidado",
+    "titulo": "Cuidar después de inaugurar",
+    "actores": [
+      "iris_calista",
+      "iris_orin"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "iridalia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_iridalia_cuidado.01",
+        "hablante": "iris_calista",
+        "texto": "El refugio de Aves de prisma ya fue restaurado. Ahora falta conversar sobre cómo conservarlo sin volverlo una obligación ajena.",
+        "huella": "c2f8012d52753403437030cc20f9d0b7de1f710b8351f08a68668329eb65b743",
+        "huella_texto": "c2f8012d52753403"
+      },
+      {
+        "id": "COM_iridalia_cuidado.02",
+        "hablante": "iris_orin",
+        "texto": "Zonas de canto y nidales sin trampas; plumas caídas con cupo, nunca capturar animales por un instrumento.",
+        "huella": "ea8fca279fb4e1ee1900a7c405674b5be5b922e79810b4f86cedf7203dfd4eab",
+        "huella_texto": "ea8fca279fb4e1ee"
+      },
+      {
+        "id": "COM_iridalia_cuidado.03",
+        "hablante": "iris_calista",
+        "texto": "Cada quien percibe el lugar a su manera. Para revisar juntos podemos usar señales claras y respetar el ritmo de quien las lee.",
+        "huella": "3d49961422dacaea2bde251d98c852f8283259cf5ea2d3d60e7c2b824f55937f",
+        "huella_texto": "3d49961422dacaea"
+      },
+      {
+        "id": "COM_iridalia_cuidado.04",
+        "hablante": "iris_orin",
+        "texto": "Una cuerda hecha aquí puede acompañar el mantenimiento. No es una trampa ni concede permiso para capturar animales.",
+        "huella": "cd14f848d3435cec994296a6343b5fbc8a630469880d36982cf99a72f514924e",
+        "huella_texto": "cd14f848d3435cec"
+      },
+      {
+        "id": "COM_iridalia_cuidado.05",
+        "hablante": "iris_calista",
+        "texto": "La revisión sigue necesitando materiales y jornadas como antes. Esta reunión no borra el cuidado ni acelera la crianza.",
+        "huella": "fbce4e3a187389878de8e37fbd5b2c2779b3caa2a2ec3b7e4dedb8ff4ef93989",
+        "huella_texto": "fbce4e3a18738987"
+      },
+      {
+        "id": "COM_iridalia_cuidado.06",
+        "hablante": "iris_orin",
+        "texto": "¿Preparas la cuerda con una madera local y una fibra o acompañas la revisión escuchando?",
+        "huella": "6ad66325050cf56fee162daed14e68306814a1c786dec2a4465e2e959b9ee4b4",
+        "huella_texto": "6ad66325050cf56f"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  },
+  {
+    "id": "COM_estacion_celia_terminal",
+    "region": "estacion_celia",
+    "tipo": "terminal",
+    "titulo": "Quién recibe la carga",
+    "actores": [
+      "orbita_rita",
+      "orbita_ivo"
+    ],
+    "prioridad": 2,
+    "desdeMinuto": 840,
+    "hastaMinuto": 960,
+    "ventanaNoches": 6,
+    "materiales": {
+      "estacion_celia_madera": 1,
+      "fibra": 1
+    },
+    "salida": {
+      "articulo": "cuerda",
+      "cantidad": 1
+    },
+    "amistad": 5,
+    "lineas": [
+      {
+        "id": "COM_estacion_celia_terminal.01",
+        "hablante": "orbita_rita",
+        "texto": "La terminal comunitaria ya está abierta. Antes de usarla, quiero que hablemos de quién recibe cada bulto.",
+        "huella": "26b07fcb63a751a55cbb8d97d2f25c23d2061ad367349eafb070d1cf670d9f2b",
+        "huella_texto": "26b07fcb63a751a5"
+      },
+      {
+        "id": "COM_estacion_celia_terminal.02",
+        "hablante": "orbita_ivo",
+        "texto": "La batería paga un despacho concreto. La carga queda reservada y llega después de una noche dormida; una terminal no comparte todas las mochilas.",
+        "huella": "8ffe371cb658e1518b8cbb03ef500083da9409a1dd764cd0d652a2aadc637b74",
+        "huella_texto": "8ffe371cb658e151"
+      },
+      {
+        "id": "COM_estacion_celia_terminal.03",
+        "hablante": "orbita_rita",
+        "texto": "Un recibo claro cuida tanto al que envía como al que recibe. Cuando alguien está cansado, una etiqueta legible evita otro viaje.",
+        "huella": "edf959a42ab8efacb0adfde2d05c4ccf1c8ef46eaba66e897807d6759b0f2a7d",
+        "huella_texto": "edf959a42ab8efac"
+      },
+      {
+        "id": "COM_estacion_celia_terminal.04",
+        "hablante": "orbita_ivo",
+        "texto": "Podemos preparar una cuerda para el puesto con una madera de esta estación y una fibra. También puedes escuchar sin asumir una entrega.",
+        "huella": "eba3bc3e983ca8c8d9ff9fd0009be8184957d513b62d0dc7d1f6d3c556208953",
+        "huella_texto": "eba3bc3e983ca8c8"
+      },
+      {
+        "id": "COM_estacion_celia_terminal.05",
+        "hablante": "orbita_rita",
+        "texto": "El cupo, la calidad y el tiempo de llegada siguen siendo los mismos. Ayudar en el puesto no compra un envío gratuito.",
+        "huella": "83d88537fcaaf9fc5e667bfadb4c3c3f6644f2fd79b8443528b609faa67026c7",
+        "huella_texto": "83d88537fcaaf9fc"
+      },
+      {
+        "id": "COM_estacion_celia_terminal.06",
+        "hablante": "orbita_ivo",
+        "texto": "¿Aportas los materiales o dejas constancia del acuerdo de recepción?",
+        "huella": "61ad9fbe2a7d06d74970f0297553a8c04e615750051f6e4c320970e5c47692db",
+        "huella_texto": "61ad9fbe2a7d06d7"
+      }
+    ],
+    "opciones": [
+      {
+        "titulo": "Aportar madera y fibra",
+        "cierre": "Los materiales se transformaron en una cuerda. El acuerdo no altera los cupos ni obliga a nadie a un turno."
+      },
+      {
+        "titulo": "Escuchar sin prometer un turno",
+        "cierre": "Quedó registrada tu escucha. No entregaste materiales ni asumiste una tarea por otra persona."
+      }
+    ]
+  }
+]

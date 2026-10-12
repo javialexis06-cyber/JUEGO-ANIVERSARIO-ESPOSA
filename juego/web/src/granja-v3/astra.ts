@@ -1,3 +1,6 @@
+import {celdaTransitable} from './transito';
+import {huellaProduccion} from './produccion';
+import {construccionRuta} from './accesos-campana';
 import {crearVidaAstra,posicionVida,destinoVida,vidaAstraValida,ESCENAS_VIDA} from './vida-astra';
 import type {EstadoVidaAstra} from './vida-astra-tipos';
 import {comisionHistoria} from './historia-ubicaciones';
@@ -44,7 +47,7 @@ const cerca=(x:number,z:number,p:{x:number;z:number},radio=3)=>Math.hypot(x-p.x,
 export function puntoRuta(s:EstadoGranja,r:typeof RUTAS_ASTRA[number]){
  const here=regionActual(s);
  if(here!==r.desde&&here!==r.hacia)return null;
- if(here==='granja'&&r.construccion){const n=s.produccion.estructuras.find(n=>n.articulo===r.construccion&&n.zona==='granja');return n?{x:n.x+.5,z:n.z+.5}:null;}
+ if(here==='granja'&&r.construccion){const n=construccionRuta(s,r.construccion);return n?{x:n.x+.5,z:n.z+.5}:null;}
  return here===r.desde?r.desde_punto:r.hacia_punto;
 }
 export function rutasDesde(s:EstadoGranja){const here=regionActual(s);return RUTAS_ASTRA.filter(r=>r.desde===here||r.hacia===here).map(r=>({...r,destino:r.desde===here?r.hacia:r.desde,punto:puntoRuta(s,r)}));}
@@ -82,9 +85,9 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
   const r=RUTAS_ASTRA.find(r=>r.id===a.id),p=r&&puntoRuta(s,r);if(!r||!p||!cerca(x,z,p))return mal('Camina hasta el acceso físico de esta ruta.');
   const destino=here===r.desde?r.hacia:r.desde,reg=regionAstra(destino),retorno=here===r.hacia;
   if(!retorno&&reg?.permiso&&!t.expedientes[reg.permiso]?.cerrado&&!s.historia?.completadas[reg.permiso])return mal('El acceso requiere el expediente '+reg.permiso+'. El regreso permanece abierto.');
-  if(r.construccion&&!s.produccion.estructuras.some(n=>n.articulo===r.construccion&&n.zona==='granja'))return mal('Fabrica y coloca '+r.construccion+' para abrir esta ruta.');
+  if(r.construccion&&!construccionRuta(s,r.construccion))return mal('Fabrica y coloca '+r.construccion+' para abrir esta ruta.');
   let llegada=here===r.desde?r.hacia_punto:r.desde_punto;
-  if(destino==='granja'){const n=s.produccion.estructuras.find(n=>n.articulo===r.construccion&&n.zona==='granja')!;llegada={x:n.x+.5,z:n.z+2.5};}
+  if(destino==='granja'){const n=construccionRuta(s,r.construccion!)!,h=huellaProduccion(n),anterior={x:n.x+.5,z:n.z+2.5},candidatos=[...((anterior.x<n.x+h.ancho&&anterior.z<n.z+h.fondo)?[]:[anterior]),{x:n.x+h.ancho/2,z:n.z+h.fondo+.5},{x:n.x-.5,z:n.z+h.fondo/2},{x:n.x+h.ancho+.5,z:n.z+h.fondo/2},{x:n.x+h.ancho/2,z:n.z-.5}];const libre=candidatos.find(p=>celdaTransitable(s,Math.floor(p.x),Math.floor(p.z),'granja'));if(!libre)return mal('Despeja un lado del enlace en tu granja para poder regresar.');llegada=libre;}
   else if(destino!=='pueblo_sol')llegada={x:llegada.x>0?llegada.x-1.5:llegada.x+1.5,z:llegada.z};
   t.actual=['granja','pueblo_sol'].includes(destino)?null:destino;t.interior=null;t.posicion={...llegada};
   if(destino==='pueblo_sol')s.zona='pueblo';else if(destino==='granja')s.zona='granja';

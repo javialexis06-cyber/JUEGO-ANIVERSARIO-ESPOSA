@@ -79,5 +79,37 @@
   "produccion": {
     "checks": 25,
     "failures": 0
+  },
+  "publicacion": {
+    "sha": "b60c39ccf20ecf383c921b2be7c067a40d06fb3c",
+    "ci_apk": 38235734720,
+    "ci_motor": 38235734776,
+    "conclusion": "success",
+    "release": {
+      "assets": [
+        {
+          "name": "NuestroHogar-Amigos.apk",
+          "url": "https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/releases/download/apk-198/NuestroHogar-Amigos.apk",
+          "http": 200
+        },
+        {
+          "name": "NuestroHogar-Amigos.exe",
+          "url": "https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/releases/download/apk-198/NuestroHogar-Amigos.exe",
+          "http": 200
+        },
+        {
+          "name": "NuestroHogar.apk",
+          "url": "https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/releases/download/apk-198/NuestroHogar.apk",
+          "http": 200
+        },
+        {
+          "name": "NuestroHogar.exe",
+          "url": "https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/releases/download/apk-198/NuestroHogar.exe",
+          "http": 200
+        }
+      ],
+      "sha": "b60c39ccf20ecf383c921b2be7c067a40d06fb3c",
+      "tag": "apk-198"
+    }
   }
 }

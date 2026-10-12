@@ -1,7 +1,8 @@
 import type {Pila} from './inventario';
+import type {EstadoReuniones,AccionReunion} from './reuniones-tipos';
 export type HechoCuaderno='obtener'|'capturar'|'fabricar'|'vender'|'donar'|'identificar';
 export interface EstadoComunidad {
- version:1;secuencia:number;
+ version:1;secuencia:number;reuniones:EstadoReuniones;
  cuaderno:Record<string,Partial<Record<HechoCuaderno,{cantidad:number;dia:number}>>>;
  donaciones:{articulo:string;calidad:number;dia:number}[];vitrinas:(string|null)[];colecciones:string[];libros:string[];
  obras:{id:string;inicio:number;lista:number;abierta:boolean}[];
@@ -12,7 +13,7 @@ export interface EstadoComunidad {
  pedidos:Record<string,number>;pausaDia:number;cargasRecogidas:number;
  eventos:{id:string;region:string;desde:number;hasta:number;estado:'pendiente'|'aplazado'|'visto';prioridad:number}[];
 }
-export type AccionComunidad=
+export type AccionComunidad=AccionReunion
  |{tipo:'obra'|'abrir_obra';id:string}|{tipo:'pausa'}
  |{tipo:'identificar';casilla:number}
  |{tipo:'donar';casilla:number}|{tipo:'vitrina';indice:number;articulo:string|null}|{tipo:'coleccion';id:string}|{tipo:'leer';id:string}

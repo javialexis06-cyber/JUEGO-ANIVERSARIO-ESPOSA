@@ -39,3 +39,12 @@ El monte que rodea cada zona (robles, pinos, helechos, matas, hongos y troncos c
 El cargador `src/granja-v2/biblioteca.ts` y los modelos de `public/modelos/granja-v2/` son dependencias visuales. Los antiguos motores y demos no se publican. No hay nuevas dependencias runtime. Las pruebas se ejecutan con `npm run probar:granja`; al integrar también se revisan `npm run build` y `npm run build:amigos` y el flujo de casa/retorno.
 
 El reparto de trabajo solicitado por Javier está en [`../en-obra/granja-coordinacion.md`](../en-obra/granja-coordinacion.md): motor, historia y sistemas en el frente de granja; gráficos, personajes y presentación a cargo de Claude. Cada avance probado se sube al repositorio.
+
+**Lugares físicos e inicio guiado (12 de octubre de 2026).** El Pueblo del Sol tiene el **Gremio de Aventureros**
+(tablón de expediciones y campaña; atiende la exploradora) y el **Museo del Valle** (lotes de las estaciones, donaciones
+y seis vitrinas que muestran en 3D lo expuesto, pedestales de los lotes cerrados y galería de especies; atiende el vecino
+mayor). Los terrenos se compran en la Oficina de tierras del Taller del Roble. Las partidas nuevas empiezan con el
+prólogo de Celia y siete «Primeros pasos» (`guia.ts`) que llevan del primer surco a la carta del pueblo, sus lugares, la
+primera historia y la primera noche; cada local se presenta la primera vez. La historia de cada vecino se abre por partes
+(charlas en días distintos y su misión). Detalle en [`../en-obra/granja-arreglos.md`](../en-obra/granja-arreglos.md),
+tanda 6.

@@ -98,3 +98,10 @@ node scripts/granja-v3/voces-astra.mjs             # genera lo que falte
 - Frases que todavía no están en el guion (suenan escritas): lo que dicen en las coreografías de la casa (la
   nalgada, el cohete al despegar, «¡Soy todo un chef!»…), los textos sueltos del cohete (granizo, récord, patico) y
   las escenas premium. Se agregan sumándolas a `PARTES` y corriendo los tres pasos.
+
+## Las voces del cine de la granja (las diosas, celestiales)
+
+Las películas de la historia principal de la granja (el prólogo y las que sigan) tienen su propio guion de voces en
+`src/granja-v3/cine-lineas.ts` y su script, `scripts/granja-v3/voces-cine.mjs` (reparto propio para Celia, Aura y
+Lara con voces etéreas, procesado celestial con ffmpeg, salida en `public/audio/cine/` y `public/granja/cine/medios.json`
+con la duración de cada línea). Detalle en [`cine-granja.md`](cine-granja.md).
