@@ -48,3 +48,5 @@
 .guia-hud small{font-size:10px;line-height:1.45;color:#6d7c64}.guia-hud .bar{display:block;height:5px;border-radius:4px;background:#e4e8d6;overflow:hidden}.guia-hud .bar span{display:block;height:100%;background:#7aa36a;border-radius:4px}
 .hide-ui .guia-hud,.catalog-active .guia-hud,body.menu-abierto .guia-hud{display:none!important}
 @media (max-height:420px){.guia-hud{top:135px;width:156px;padding:7px 9px}.guia-hud small{font-size:9px}}
+/* Controles del sedal; la escena conserva sus modelos y agua. */
+.fish-game{max-height:calc(100dvh - 20px);overflow-y:auto}.fish-game .fish-goal{transform:none}.fish-game #reel{touch-action:none;user-select:none}.fish-medidas{display:flex;gap:12px;justify-content:center;font-size:12px}.fish-medidas label{display:flex;align-items:center;gap:5px}.fish-medidas progress{width:85px;height:10px;accent-color:#6d9968}.fish-medidas #fish-tension{accent-color:#bd665b}.fish-game #fish-estado{font-size:12px;min-height:16px;margin:5px 0}.fish-game .sub{font-size:12px;margin:8px 0}.fish-game h2{margin:6px 0}.fish-game .fish-track[hidden]{display:none}

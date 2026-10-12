@@ -1,3 +1,18 @@
+## Pesca con picada y sedal · 12 de octubre de 2026
+
+Se integraron también el prólogo cinematográfico, cartas y Astra de `5ef116e`, conservando sus
+modelos, películas, correo y presentación. El motor mantiene mapas, edificios y lavado. La caña añade sesiones
+V1 dentro de V5, 26 perfiles y seis movimientos, con costes al lanzar, pausa agrícola y captura
+única. Leer [PESCA-INTEGRACION.md](../../juego/web/src/granja-v3/PESCA-INTEGRACION.md).
+La presentación utiliza controles sencillos y sonidos existentes. Para animaciones futuras,
+consultar `motor.estadoSedal()` y el contrato `produccion.json → pesca_sedal`; conservar semilla,
+puestos, reservas y controles. No se producen gráficos nuevos ni llamadas de voz de pago.
+La API anterior `pescar` se conserva para compatibilidad, mientras la interfaz usa sesiones.
+Se incorporó `2a22e7ec`: aventuras, radio y bichos del lavado, y ajuste de franjas del prólogo.
+Sus archivos de lavado y cine permanecen idénticos a esa revisión.
+Se incorporó también `c9890322`, con las diez tomas de voz del prólogo y su manifiesto.
+Se reutilizan sin generar audio; el código del motor comprobado permanece idéntico.
+
 ## Reuniones y agendas comunitarias · 12 de octubre de 2026
 
 Se integró el gremio, museo e inicio guiado de Claude (`85fffaf`), conservando sus modelos,

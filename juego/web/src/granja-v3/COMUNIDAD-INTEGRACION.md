@@ -15,7 +15,8 @@ Se conservan los 18 peces anteriores, sus precios, cebos, rarezas, horas, estaci
 Se añaden ocho pesquerías: Lirios, Brumaverde, Piedralumbre, Ámbar, Aurelia, Celia, cuenca de Agua
 y fragmentos de Cristal. Su puesto está en **−24, 22**; se interactúa desde terreno libre a tres
 metros. Los tres puestos espaciales son acuarios cerrados, nunca agua expuesta al vacío.
-La caña utiliza el minijuego existente, gasta cebo y energía, comprueba espacio y conserva calidad.
+La caña usa ahora [PESCA-INTEGRACION.md](PESCA-INTEGRACION.md): lanzamiento, picada, sedal y
+captura guardada; gasta cebo y energía, comprueba espacio y conserva las reglas de calidad.
 La API anterior sin coordenadas sigue admitida en las cuatro zonas antiguas para sus contratos;
 la interfaz actual envía coordenadas y las pesquerías nuevas siempre las exigen.
 

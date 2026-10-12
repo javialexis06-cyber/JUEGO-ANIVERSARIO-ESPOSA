@@ -49,7 +49,7 @@ export function registrarHistoria(s:EstadoGranja,a:Accion,antes:EstadoGranja){
   for(const key of new Set(q.pasos.flatMap(p=>p.registro?[p.registro]:[]))){const delta=(s.estadisticas[key]??0)-(antes.estadisticas[key]??0);if(delta>0)p.estadisticas[key]=(p.estadisticas[key]??0)+delta;}
   if(a.tipo==='astra'&&a.accion.tipo==='recurso'){const key='recoleccion:'+a.accion.id;if(q.pasos.some(p=>p.registro===key))p.estadisticas[key]=(p.estadisticas[key]??0)+1;}
   if(a.tipo==='astra'&&a.accion.tipo==='observar'){const key='observacion:'+a.accion.id;if(q.pasos.some(p=>p.registro===key))p.estadisticas[key]=(p.estadisticas[key]??0)+1;}
-  if(a.tipo==='pescar'&&q.pasos.some(p=>p.tipo==='devolver_pesca'))for(const pez of PECES){const delta=(s.estadisticas['pez_'+pez.id]??0)-(antes.estadisticas['pez_'+pez.id]??0);if(delta>0){const key='captura:'+pez.id;p.estadisticas[key]=(p.estadisticas[key]??0)+delta;}}
+  if((a.tipo==='pescar'||a.tipo==='pesca')&&q.pasos.some(p=>p.tipo==='devolver_pesca'))for(const pez of PECES){const delta=(s.estadisticas['pez_'+pez.id]??0)-(antes.estadisticas['pez_'+pez.id]??0);if(delta>0){const key='captura:'+pez.id;p.estadisticas[key]=(p.estadisticas[key]??0)+delta;}}
   if(a.tipo==='cuidar'&&q.pasos.some(p=>p.tipo==='cuidar'||p.condicion==='refugio')&&['alimentar','acariciar','cepillar','musica','cuento'].includes(a.metodo)){
    const animal=s.animales.find(n=>n.id===a.animalId);if(animal&&!fenotipo(animal.especie,animal.genoma).fantasia){const key=animal.id+':'+(a.metodo==='alimentar'?'alimentar':'acompanar');if(!p.cuidados.includes(key))p.cuidados.push(key);p.cuidadosDias[key]=s.jornada.diasCompletados;}
   }

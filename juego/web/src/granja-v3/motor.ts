@@ -1,3 +1,4 @@
+import {crearPesca,actuarPesca,avanzarPesca,pescaValida,vistaSedal} from './pesca';
 import {crearGuia,guiaDePartida,guiaValida,actualizarGuia} from './guia';
 import {accesoBosqueAntiguo} from './accesos-campana';
 import {migrarReuniones} from './reuniones';
@@ -102,10 +103,14 @@ export class MotorGranja {
   }
   const inventario={...Object.fromEntries(HERRAMIENTAS_INICIALES.map(h=>['herramienta_'+h,1])),pan:3,semilla_zanahoria:12,semilla_trigo:6,semilla_fresa:4,semilla_pasto:8,heno:20,madera:12,piedra:8,creacion_banco:1,lombriz:8};
   obstaculos.push(...nodosExteriores());
-  return {...crearBarra(),guia:crearGuia(),comunidad:crearComunidad(),regional:crearRegional(),historia:crearHistoria(),astra:crearAstra(),libros:crearLibros(),colecciones:crearColecciones(),festivales:crearFestivales(),correo:crearCorreo(),vidaSocial:crearVidaSocial(),encargos:crearEncargos(now>>>0),pueblo:crearPuebloEstado(),obras:crearObras(),compania:crearCompania(),ganaderia:crearGanaderia('corral_inicial'),habilidades:crearHabilidades(),frutales:[],invernaderos:[],jornada:crearJornada(420),tiempo:crearTiempo(now),envios:{version:1,cajas:[crearCajaEnvio('envio_inicial')]},paisaje,produccion:crearProduccion(now),aventura:crearAventura(),posicionAventura:null,version:5,revision:0,ultimoTiempo:now,inicioTiempo:now,monedas:420,inventario,casillasInventario:distribuirInventario(inventario).casillas,almacenMigracion:{},nivelesHerramienta:Object.fromEntries(HERRAMIENTAS_MEJORABLES.map(h=>[h,0])),mejoraHerramienta:null,servicio:null,drops:[],ultimoGolpeAt:0,herramienta:'azada',personaje:'ella',sectorIds:[...SECTORES_INICIALES],edificios,obstaculos,parcelas:[],animales,estadisticas:{},misionesCompletadas:[],desbloqueos:['especie_gallina'],tokensCasa:[],zona:'granja',interior:null,vida:100,energia:100,enemigo:0,nivelMina:1,ayudante:null,secuencia:0};
+  return {...crearBarra(),pesca:crearPesca(),guia:crearGuia(),comunidad:crearComunidad(),regional:crearRegional(),historia:crearHistoria(),astra:crearAstra(),libros:crearLibros(),colecciones:crearColecciones(),festivales:crearFestivales(),correo:crearCorreo(),vidaSocial:crearVidaSocial(),encargos:crearEncargos(now>>>0),pueblo:crearPuebloEstado(),obras:crearObras(),compania:crearCompania(),ganaderia:crearGanaderia('corral_inicial'),habilidades:crearHabilidades(),frutales:[],invernaderos:[],jornada:crearJornada(420),tiempo:crearTiempo(now),envios:{version:1,cajas:[crearCajaEnvio('envio_inicial')]},paisaje,produccion:crearProduccion(now),aventura:crearAventura(),posicionAventura:null,version:5,revision:0,ultimoTiempo:now,inicioTiempo:now,monedas:420,inventario,casillasInventario:distribuirInventario(inventario).casillas,almacenMigracion:{},nivelesHerramienta:Object.fromEntries(HERRAMIENTAS_MEJORABLES.map(h=>[h,0])),mejoraHerramienta:null,servicio:null,drops:[],ultimoGolpeAt:0,herramienta:'azada',personaje:'ella',sectorIds:[...SECTORES_INICIALES],edificios,obstaculos,parcelas:[],animales,estadisticas:{},misionesCompletadas:[],desbloqueos:['especie_gallina'],tokensCasa:[],zona:'granja',interior:null,vida:100,energia:100,enemigo:0,nivelMina:1,ayudante:null,secuencia:0};
  }
  private random(){const r=this.azar();return Number.isFinite(r)?Math.max(0,Math.min(.999999999,r)):0.5}
  private id(prefijo:string){return `${prefijo}_${++this.estado.secuencia}`}
+ private sedalPresionado=false;
+ sujetarSedal(sujetar:boolean){this.sedalPresionado=!!sujetar&&this.estado.pesca?.actual?.fase==='tiron';}
+ pasoPesca(dt:number){avanzarPesca(this.estado,dt,this.sedalPresionado);}
+ estadoSedal(){return vistaSedal(this.estado);}
  private contar(clave:string,n=1){this.estado.estadisticas[clave]=(this.estado.estadisticas[clave]||0)+n}
  private experiencia(h:Habilidad,n:number){ganarExperiencia(this.estado.habilidades,h,n)}
  costeEnergia(h=this.estado.herramienta,base=1){return costeHerramienta(this.estado.habilidades,h,base)}
@@ -148,7 +153,7 @@ export class MotorGranja {
  pasoGanado(segundos:number){const s=this.estado;if(avanzarRutinas(s,segundos,b=>tiempoRegion(tiempoDia(s.tiempo,s.jornada.diasCompletados),b.clima)))s.revision++;}
  pausarAnimal(id:string){const a=this.estado.animales.find(a=>a.id===id);if(a)pausaAnimal(a);}
  calendario(){return relojValle(this.estado.jornada)}
- avanzarJornada(segundos:number){if(this.estado.festivales.actual||this.estado.comunidad?.reuniones.actual)return;if(Number.isFinite(segundos)&&segundos>0&&!this.estado.jornada.resumenPendiente&&(this.jornadaLluvia!==this.estado.jornada.diasCompletados||this.revisionLluvia!==this.estado.revision))this.atenderLluvia();avanzarReloj(this.estado.jornada,segundos);}
+ avanzarJornada(segundos:number){if(this.estado.festivales.actual||this.estado.comunidad?.reuniones.actual||this.estado.pesca?.actual)return;if(Number.isFinite(segundos)&&segundos>0&&!this.estado.jornada.resumenPendiente&&(this.jornadaLluvia!==this.estado.jornada.diasCompletados||this.revisionLluvia!==this.estado.revision))this.atenderLluvia();avanzarReloj(this.estado.jornada,segundos);}
  pronostico(){return pronostico(this.estado);}
  meteorologia(x=0,z=0){const s=this.estado;return tiempoRegion(tiempoDia(s.tiempo,s.jornada.diasCompletados),biomaZona(s.zona,s,x,z));}
  private atenderLluvia(){
@@ -282,13 +287,14 @@ export class MotorGranja {
  }
  private ejecutar(a:Accion):Resultado {
   const s=this.estado;const now=s.ultimoTiempo;let r:Resultado;
+  if(s.pesca?.actual&&a.tipo!=='pesca'&&!(s.pesca.actual.fase==='lista'&&['mover_item','seleccionar_casilla','fila_barra','ampliar_mochila','consumir'].includes(a.tipo)))return mal('Recoge o cancela el lanzamiento antes de realizar otra actividad.');
   if(s.comunidad?.reuniones.actual&&a.tipo!=='comunidad')return mal('Termina o deja la reunión comunitaria antes de continuar.');
   if(s.regional?.reto&&a.tipo!=='regional')return mal('Termina o devuelve las reservas del trabajo regional.');
   if(s.festivales.actual&&a.tipo!=='festival')return mal('Termina o abandona la actividad del festival antes de continuar.');
   if(s.vidaSocial.actual&&a.tipo!=='social')return mal('Termina o cancela el encuentro antes de continuar.');
   if(s.jornada.resumenPendiente&&a.tipo!=='continuar_dia')return mal('Lee el resumen de la jornada y comienza la mañana.');
   if(s.aventura.destinoActual&&!['seleccionar_casilla','fila_barra','herramienta','personaje','mover_item','consumir','equipar_objeto','desequipar_objeto','accion_aventura','salir_aventura','descender_aventura','construir_ascensor','libro'].includes(a.tipo))return mal('Regresa de la expedición antes de realizar esa actividad.');
-  if(s.astra?.actual&&!['comunidad','pescar','regional','vida_astra','premio','historia','astra','seleccionar_casilla','fila_barra','herramienta','personaje','mover_item','consumir','equipar_objeto','desequipar_objeto','entrar_aventura','salir_aventura','accion_aventura','descender_aventura'].includes(a.tipo))return mal('Regresa al valle para trabajar en la granja o usar sus servicios.');
+  if(s.astra?.actual&&!['pesca','comunidad','pescar','regional','vida_astra','premio','historia','astra','seleccionar_casilla','fila_barra','herramienta','personaje','mover_item','consumir','equipar_objeto','desequipar_objeto','entrar_aventura','salir_aventura','accion_aventura','descender_aventura'].includes(a.tipo)&&!(s.pesca?.actual?.fase==='lista'&&a.tipo==='ampliar_mochila'))return mal('Regresa al valle para trabajar en la granja o usar sus servicios.');
   if(s.historia?.reto&&a.tipo!=='historia')return mal('Termina o deja la prueba de la historia.');
   if(s.astra?.vida?.actual&&a.tipo!=='vida_astra')return mal('Termina o deja el encuentro de amistad.');
   if(s.astra?.escena&&a.tipo!=='astra'&&a.tipo!=='vida_astra')return mal('Termina la conversación antes de continuar.');
@@ -298,6 +304,7 @@ export class MotorGranja {
   // Actions validate all requirements before spending currency, stock, energy or RNG.
   switch(a.tipo){
    case 'guia':if(a.hecho!=='prologo'||!s.guia||s.guia.hechos.includes('prologo'))return mal('Ese momento ya pasó.');r=bien('Celia te dio la bienvenida.');break;
+   case 'pesca':{this.sedalPresionado=false;r=actuarPesca(s,a.accion,a.xJugador,a.zJugador,{azar:()=>this.random(),energia:costeHerramienta(s.habilidades,'cana',3),herramientaDisponible:this.herramientaDisponible(),pagar:coste=>this.pagar(coste),agregar:(id,n,calidad)=>this.agregar(id,n,calidad),captura:(pez,n,azarCaptura)=>{this.experiencia('pesca',8+pez.rareza*4);this.contar('pescar',n);this.contar('pez_'+pez.id,n);return hallarTesoro(s,azarCaptura);}});break;}
    case 'comunidad':r=actuarComunidad(s,a.accion,a.xJugador,a.zJugador,{agregar:(id,n,calidad)=>this.agregar(id,n,calidad),azar:()=>this.random()});break;
    case 'regional':r=actuarRegional(s,a.accion,a.xJugador,a.zJugador,{agregar:(id,n,calidad)=>this.agregar(id,n,calidad),azar:()=>this.random()});break;
    case 'vida_astra':r=actuarVidaAstra(s,a.accion,a.xJugador,a.zJugador,(id,n,calidad)=>this.agregar(id,n,calidad));break;
@@ -759,7 +766,7 @@ export class MotorGranja {
   let error:string|null;try{error=validarEstado(v)}catch{return mal('Partida no válida: estructura incompatible.')}
   if(error)return mal(`Partida no válida: ${error}`);
   const anterior=this.estado;
-  try{this.estado=clonar(v as EstadoGranja);this.paseosCompania.limpiar();this.jornadaLluvia=-1;this.revisionLluvia=-1;this.actualizar()}catch{this.estado=anterior;return mal('Partida no válida: fechas o cuidados incoherentes.')}
+  try{this.estado=clonar(v as EstadoGranja);this.sedalPresionado=false;this.paseosCompania.limpiar();this.jornadaLluvia=-1;this.revisionLluvia=-1;this.actualizar()}catch{this.estado=anterior;return mal('Partida no válida: fechas o cuidados incoherentes.')}
   return bien('Partida cargada. Se han calculado los cuidados pendientes.');
  }
 }
@@ -769,6 +776,7 @@ export function validarEstado(v:unknown):string|null {
  if(s.version!==5)return 'versión incompatible';
  if(!historiaValida(s.historia,s.jornada?.diasCompletados))return 'Historia inválida';
  if(!comunidadValida(s))return 'Comunidad inválida';
+ if(!pescaValida(s))return 'Pesca inválida';
  if(s.guia!==undefined&&!guiaValida(s.guia))return 'guía inválida';
  if(!regionalValido(s.regional,s.jornada?.diasCompletados,s.ultimoTiempo)||s.regional!.colonias.some(c=>!s.historia?.completadas[territorioRegional(c.region)!.fauna.permiso!]))return 'Región inválida';
  if(!astraValida(s.astra,s.jornada?.diasCompletados,s.historia?.completadas,s.regional?.colonias.map(c=>c.region)))return 'Astra inválida';
@@ -871,7 +879,7 @@ export function migrarEstado(valor:unknown):unknown {
   // Los senderos nuevos del bosque, del ancestral y del lago quedan despejados también en partidas guardadas
   if(Array.isArray(s.obstaculos))s.obstaculos=s.obstaculos.filter((o:any)=>!enSenderoZona(o?.zona,o?.x+.5,o?.z+.5));
   if(Array.isArray(s.obstaculos)){/* La mina del valle ahora es solo la entrada: las rocas viejas de sus 5 niveles se retiran */s.obstaculos=s.obstaculos.filter((o:any)=>o?.zona!=='mina');/* lo que quedó en el suelo de cualquier nivel se puede recoger en la entrada */if(Array.isArray(s.drops))for(const d of s.drops)if(d?.zona==='mina')d.nivelMina=1;if(s.zona==='mina'){s.enemigo=0;s.nivelMina=1;}const ids=new Set(s.obstaculos.map((o:any)=>o?.id)),ocupadas=new Set(s.obstaculos.map((o:any)=>`${o?.zona},${o?.x},${o?.z}`));for(const n of nodosExteriores())if(n.zona!=='mina'&&!ids.has(n.id)&&!ocupadas.has(`${n.zona},${n.x},${n.z}`))s.obstaculos.push(n);}
-  if(s.guia===undefined)s.guia=guiaDePartida(s);if(s.comunidad===undefined)s.comunidad=crearComunidad();else migrarReuniones(s);if(s.regional===undefined)s.regional=crearRegional();if(s.historia===undefined)s.historia=crearHistoria();else migrarHistoria(s.historia);if(s.astra===undefined)s.astra=crearAstra();migrarVidaAstra(s);reubicarAstra(s.astra);if(s.aventura)migrarPracticasElementales(s.aventura);if(s.libros===undefined)s.libros=crearLibros();if(s.colecciones===undefined)s.colecciones=crearColecciones();if(s.festivales===undefined)s.festivales=crearFestivales();if(s.correo===undefined)s.correo=crearCorreo();if(s.vidaSocial===undefined)s.vidaSocial=crearVidaSocial();if(s.encargos===undefined)s.encargos=crearEncargos();if(s.pueblo===undefined)s.pueblo=crearPuebloEstado();else if(s.pueblo?.version===1&&Array.isArray(s.pueblo.relaciones)&&s.pueblo.relaciones.length===9&&s.pueblo.relaciones.every((r:any)=>crearPuebloEstado().relaciones.slice(0,9).some(n=>n.id===r?.id)))s.pueblo.relaciones.push(...crearPuebloEstado().relaciones.filter(n=>!s.pueblo.relaciones.some((r:any)=>r?.id===n.id)));if(s.obras===undefined)s.obras=crearObras();if(s.compania===undefined)s.compania=crearCompania();if(s.ganaderia===undefined){s.ganaderia=crearGanaderia(s.edificios?.some((b:any)=>b.id==='corral_inicial'&&b.especie==='gallina')?'corral_inicial':undefined);if(Array.isArray(s.animales))for(const a of s.animales)if(a?.sexo==='macho'&&['vaca','cabra','gallina','pato','avestruz','dinosaurio'].includes(a.especie)&&a.productos>0)a.productoLegado=true;}if(s.tiempo===undefined&&finito(s.inicioTiempo))s.tiempo=crearTiempo(s.inicioTiempo);if(s.produccion===undefined)s.produccion=crearProduccion(s.ultimoTiempo);if(s.aventura===undefined){s.aventura=crearAventura();s.posicionAventura=null;}
+  if(s.pesca===undefined)s.pesca=crearPesca();if(s.guia===undefined)s.guia=guiaDePartida(s);if(s.comunidad===undefined)s.comunidad=crearComunidad();else migrarReuniones(s);if(s.regional===undefined)s.regional=crearRegional();if(s.historia===undefined)s.historia=crearHistoria();else migrarHistoria(s.historia);if(s.astra===undefined)s.astra=crearAstra();migrarVidaAstra(s);reubicarAstra(s.astra);if(s.aventura)migrarPracticasElementales(s.aventura);if(s.libros===undefined)s.libros=crearLibros();if(s.colecciones===undefined)s.colecciones=crearColecciones();if(s.festivales===undefined)s.festivales=crearFestivales();if(s.correo===undefined)s.correo=crearCorreo();if(s.vidaSocial===undefined)s.vidaSocial=crearVidaSocial();if(s.encargos===undefined)s.encargos=crearEncargos();if(s.pueblo===undefined)s.pueblo=crearPuebloEstado();else if(s.pueblo?.version===1&&Array.isArray(s.pueblo.relaciones)&&s.pueblo.relaciones.length===9&&s.pueblo.relaciones.every((r:any)=>crearPuebloEstado().relaciones.slice(0,9).some(n=>n.id===r?.id)))s.pueblo.relaciones.push(...crearPuebloEstado().relaciones.filter(n=>!s.pueblo.relaciones.some((r:any)=>r?.id===n.id)));if(s.obras===undefined)s.obras=crearObras();if(s.compania===undefined)s.compania=crearCompania();if(s.ganaderia===undefined){s.ganaderia=crearGanaderia(s.edificios?.some((b:any)=>b.id==='corral_inicial'&&b.especie==='gallina')?'corral_inicial':undefined);if(Array.isArray(s.animales))for(const a of s.animales)if(a?.sexo==='macho'&&['vaca','cabra','gallina','pato','avestruz','dinosaurio'].includes(a.especie)&&a.productos>0)a.productoLegado=true;}if(s.tiempo===undefined&&finito(s.inicioTiempo))s.tiempo=crearTiempo(s.inicioTiempo);if(s.produccion===undefined)s.produccion=crearProduccion(s.ultimoTiempo);if(s.aventura===undefined){s.aventura=crearAventura();s.posicionAventura=null;}
   if(s.envios===undefined){
    s.envios=crearEnvios();if(Array.isArray(s.edificios))s.envios.cajas=s.edificios.filter((e:any)=>e?.articulo===ARTICULO_ENVIO).map((e:any)=>crearCajaEnvio(e.id));
    // Un plano de bienvenida para partidas anteriores; no altera su paisaje ni construcciones.
