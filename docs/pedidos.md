@@ -37,8 +37,8 @@ original: Hiper, Del otro lado del espejo, Agua caliente sin fin, Sin límite, R
 Don Jabón, el vendedor ambulante, con el Monedero) y **La Ducha** (fase 3a: el cuarto escenario, con 8 bichos y 4
 jefes nuevos y los chorros que caen del techo) y **La Jabonera** (fase 3b: el pasillo de arriba abajo de la repisa con
 los frascos que se caen) y **El Desagüe** (fase 3c: el escenario final con sus remolinos) y los dos primeros
-especiales (3d: **El Desfile de jefes** y **El Espejo empañado**) y **La Matera de la ventana** (3e). Siguen los
-otros especiales (3f: El Tobogán). Las cajitas sorpresa
+especiales (3d: **El Desfile de jefes** y **El Espejo empañado**) y **La Matera de la ventana** (3e) y **El Tobogán del
+desagüe** (3f). Siguen los otros especiales (3g: El Laberinto de la cortina). Las cajitas sorpresa
 quedan para la fase 4, con los disfraces que traen. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
 los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
 nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
@@ -106,8 +106,9 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
      uno tras otro sobre el tapete; el vapor que tapa la vista y lo caliente que pega más).
    - ~~3e: La Matera de la ventana~~ **hecho** (las maticas que no caminan pero muerden, tres jefes y la lluvia de
      todo al final).
-   - 3f en adelante: El Tobogán del desagüe (la carrera: el mapa corre solo), El Laberinto de la cortina y la Feria de
-     las cremas con su ruleta.
+   - ~~3f: El Tobogán del desagüe~~ **hecho** (la carrera: la corriente lleva a todos, turbos en el piso y banderas
+     que recogen lo que quedó atrás).
+   - 3g en adelante: El Laberinto de la cortina y la Feria de las cremas con su ruleta.
    - Fase 4: disfraces con transformación, cartas de la noche, cajitas sorpresa y las aventuras.
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).

@@ -143,6 +143,8 @@ export function botMover(m: Motor, j: Jugador) {
     for (let i = 0; i < m.gemas.length; i++) {
       const g = m.gemas[i];
       if (!g.vivo || g.jalada >= 0) continue;
+      // (en el tobogán no se devuelve por las de atrás: esas las recogen las banderas)
+      if (m.esc.tobogan && g.x < j.x - 30) continue;
       const d = Math.hypot(g.x - j.x, g.y - j.y);
       if (d > 380) continue;
       const v = (1 + Math.min(20, g.xp)) / (60 + d);
@@ -186,12 +188,19 @@ export function botMover(m: Motor, j: Jugador) {
       if (cosD[q] > 0 && limX.xMax - j.x < 90) peligro[q] += 3 * cosD[q];
     }
   }
+  // En el tobogán la corriente empuja: lo que cuenta es para dónde se termina moviendo con cada dirección del joystick
+  const tob = m.esc.tobogan;
+  const real = (q: number) => {
+    if (!tob) return q;
+    const [vx, vy] = m.corriente(j, cosD[q], sinD[q], m.velJugador(j));
+    return ((Math.round((Math.atan2(vy, vx) / (Math.PI * 2)) * DIRS) % DIRS) + DIRS) % DIRS;
+  };
   // Un poquito de inercia (que no tiemble)
   let mejor = 0, v = Infinity;
   const ang = Math.atan2(j.my, j.mx);
   for (let q = 0; q < DIRS; q++) {
     const inercia = j.mx || j.my ? -0.15 * Math.cos((q / DIRS) * Math.PI * 2 - ang) : 0;
-    const x = peligro[q] + inercia;
+    const x = peligro[real(q)] + inercia;
     if (x < v) {
       v = x;
       mejor = q;

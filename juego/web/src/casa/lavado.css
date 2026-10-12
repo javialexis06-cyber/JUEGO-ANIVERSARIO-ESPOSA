@@ -726,6 +726,12 @@
     radial-gradient(circle at 50% 50%, transparent 0 40%, #c8683e 41% 45%, transparent 46%),
     linear-gradient(160deg, #4a3224, #5e4030);
 }
+.lv-escenario .vista.tobogan {
+  background:
+    repeating-linear-gradient(90deg, transparent 0 30px, rgba(255, 255, 255, 0.7) 30px 34px, transparent 34px 48px) 0 50% / 100% 3px no-repeat,
+    linear-gradient(90deg, transparent 58%, #ff8a2e 58% 60%, transparent 60% 64%, #ff8a2e 64% 66%, transparent 66%) 0 0 / 100% 100%,
+    linear-gradient(180deg, #3e8ab8 0 14%, #9ad8f0 14% 86%, #3e8ab8 86%);
+}
 .lv-escenario .vista .especial {
   position: absolute;
   right: 6px;
@@ -1014,7 +1020,7 @@ body.lavandose .hud-arriba-der { opacity: 0; pointer-events: none; transition: o
   box-shadow: inset 0 0 0 3px rgba(120, 80, 40, 0.25), inset 0 0 30px rgba(120, 80, 40, 0.2);
   overflow: hidden;
 }
-.lv-mapa.lavamanos, .lv-mapa.banera, .lv-mapa.ducha, .lv-mapa.jabonera, .lv-mapa.desague, .lv-mapa.desfile, .lv-mapa.espejo, .lv-mapa.matera {
+.lv-mapa.lavamanos, .lv-mapa.banera, .lv-mapa.ducha, .lv-mapa.jabonera, .lv-mapa.desague, .lv-mapa.desfile, .lv-mapa.espejo, .lv-mapa.matera, .lv-mapa.tobogan {
   background:
     repeating-linear-gradient(0deg, transparent 0 27px, rgba(60, 100, 140, 0.12) 27px 28px),
     repeating-linear-gradient(90deg, transparent 0 27px, rgba(60, 100, 140, 0.12) 27px 28px),

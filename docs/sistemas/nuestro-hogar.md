@@ -511,6 +511,22 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   de león que el viento cruza. Tres jefes en Blender: Don Cactus, la Atrapamoscas Gigante y la Matera Gigante (un
   girasol bravo con corona encima de su matera, el del Hiper). En los dos últimos minutos **se abre la ventana y
   llueve de todo**: oleadas de mugrosos de los otros escenarios cruzando en ondas. Tres logros más (79 en total).
+- **Versión 2, fase 3f: El Tobogán del desagüe** (Carlo Cart; especial de 15 minutos, se abre aguantando 20 minutos
+  en El Desagüe). Un tobogán de agua por dentro del caño (`FRAG_TOBOGAN`: plástico celeste con el agua corriendo,
+  carriles, paredes redondas y el caño oscuro afuera; carril de 600 de alto con `limites`). **La corriente lleva a
+  todos hacia adelante** (`DefEscenario.tobogan` = 110 por segundo; `Motor.corriente`): con el joystick uno se frena
+  hasta el 25 % o se apura al 160 %, pero no se para; el que se queda muy atrás del primero va más rápido y la
+  burbujita del caído también se va con el agua (para poder rescatarla). Las gotitas flotan y se van con el agua al
+  85 % (`ARRASTRE_TOBOGAN`) y el imán alcanza el doble. En el piso hay **turbos** (flechas naranjas cada 1150,
+  `turboEn`, el mismo cálculo en el sombreador y en el motor; cada celular revisa el suyo en `Motor.pasoCorriente`)
+  que dan 2,4 s al doble, con chorritos y sonido. Cada 1800 hay una **bandera** (raya de meta a cuadros con dos
+  banderas en Blender): al pasarla, las gotitas y los cofres que quedaron atrás se vienen con uno. Casi todos los
+  mugrosos salen adelante y persiguen (los que cruzan derecho se quedarían atrás); como no hay para dónde huir, pegan
+  al 65 % (`danoBichos`). Los jefes (con 55 % de vida y el doble de experiencia) salen **por detrás** y nadan casi a la
+  par de la corriente (90 %): si uno no frena, no lo alcanzan; si frena para pelear, llegan (`puntoJefe`). El bot
+  sabe de la corriente (escoge por hacia dónde termina moviéndose) y no se devuelve por las gotitas de atrás. Bichos
+  nuevos: patitos de hule (en manada) y chancletas perdidas (se lanzan); jefes nuevos: el Pato Inflable Gigante y la
+  Dona Flotadora (la del Hiper), más el Tapón. Tres logros más (82 en total).
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

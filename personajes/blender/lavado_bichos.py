@@ -1580,17 +1580,25 @@ def b_patito_hule(b):
 
 
 def b_chancleta(b):
-    """Chancleta perdida en el tobogán: se queda quietica y de pronto ¡se lanza de chancletazo!"""
+    """Chancleta perdida en el tobogán: parada en el talón, quietica… y de pronto ¡se lanza de chancletazo!"""
     suela = fieltro('#5AA6E0', '#9FD0F7', fuzz=0.3)
+    borde = fieltro('#FFFFFF', '#FFFFFF', fuzz=0.2)
     tira = fieltro('#F27BA0', '#FFB8CC', fuzz=0.3)
-    b.blob((0, 0, 0.1), (0.24, 0.42, 0.09), suela, cuerpo=False, n=12,
-           shaper=lambda v: np.column_stack([v[:, 0] * (1 - 0.18 * np.clip(-v[:, 1] / 0.42, 0, 1)), v[:, 1], v[:, 2]]))
-    b.blob((0, -0.05, 0.36), (0.2, 0.14, 0.2), suela, cuerpo=True, n=12)
+    forma = lambda v: np.column_stack([v[:, 0] * (0.82 + 0.3 * np.clip((v[:, 2] - 0.0) / 0.42, -1, 1) * 0.5), v[:, 1], v[:, 2]])
+    b.blob((0, 0.04, 0.46), (0.25, 0.07, 0.44), borde, n=12, shaper=forma)
+    b.blob((0, 0.0, 0.46), (0.23, 0.06, 0.42), suela, cuerpo=True, n=12, shaper=forma)
+    # La tira en Y (de la puntera a los lados) y su botoncito
     for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
-        b.tubo([(-0.2, -0.05, 0.14), (-0.06, -0.12, 0.3 + 0.02 * s_), (0.0, -0.18, 0.24)], 0.035, tira, grupo, segmentos=6)
-        b.tubo([(0.2, -0.05, 0.14), (0.06, -0.12, 0.3 + 0.02 * s_), (0.0, -0.18, 0.24)], 0.035, tira, grupo, segmentos=6)
+        for lado in (-1, 1):
+            b.tubo([(0.0, -0.08, 0.72), (lado * 0.1, -0.14, 0.62 + 0.02 * s_), (lado * 0.2, -0.07, 0.48)], 0.03, tira, grupo, segmentos=6)
+        b.blob((0.0, -0.09, 0.73), (0.04, 0.03, 0.04), tira, grupo, n=6)
     ojos(b, 0, 0.42, 0.075, sep=0.1, bravo=True, mirar=(0, -0.1))
-    boca(b, 0, 0.3, 0.07, 'dientes')
+    boca(b, 0, 0.27, 0.07, 'dientes')
+    cachetes(b, 0, 0.33, 0.15, 0.035)
+    # Gotitas de agua alrededor (en el paso salpica)
+    agua = clay.material('Gotas chancla', '#BFE6F7', rough=0.05, transmission=0.6, coat=1.0, coat_rough=0.03)
+    for (x, z, r) in [(-0.3, 0.12, 0.03), (0.32, 0.18, 0.025), (0.28, 0.05, 0.02)]:
+        b.blob((x, -0.05, z), (r, r, r * 1.3), agua, 'pasoB', n=6)
 
 
 def j_pato_inflable(b):
@@ -1633,8 +1641,8 @@ def j_dona_flotador(b):
         a = k * 2.399
         r = 0.27 + 0.18 * ((k * 0.618) % 1)
         x, z = math.cos(a) * r, 0.55 + math.sin(a) * r * 0.94
-        if abs(x) < 0.2 and 0.38 < z < 0.75:
-            continue
+        if abs(x) < 0.3 and z > 0.72:
+            continue  # la carita sin chispitas
         p_, n_ = b.frente(x, z)
         if p_ is None:
             continue
@@ -1644,15 +1652,48 @@ def j_dona_flotador(b):
         o2.rotation_euler.rotate_axis('Z', a)
         o2.location = Vector(p_ + n_ * 0.01)
         b.add(o2)
-    p_, n_ = b.frente(0, 0.86)
-    orientado(b, (0.2, 0.03, 0.06), glaseado, p_, n_, 'base', lift=0.005)
-    ojos(b, 0, 0.84, 0.075, sep=0.13, bravo=True, mirar=(0, -0.12))
-    boca(b, 0, 0.24, 0.09, 'colmillos')
-    cachetes(b, 0, 0.3, 0.3, 0.045)
+    ojos(b, 0, 0.95, 0.085, sep=0.14, bravo=True, mirar=(0, -0.12))
+    boca(b, 0, 0.82, 0.075, 'colmillos')
+    cachetes(b, 0, 0.86, 0.25, 0.04)
     corona(b, (0, 0.05, 1.04), 0.14, 0.13)
     for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
         for lado in (-1, 1):
             b.tubo([(lado * 0.4, -0.05, 0.25), (lado * 0.5, -0.08, 0.12 + 0.05 * s_ * lado), (lado * 0.48, -0.1, 0.0)], 0.05, m, grupo, segmentos=6)
+
+
+# ----------------------------------------------------------------------------------------------------- El Laberinto de la cortina
+def b_ratoncito(b, jefe=False):
+    """Ratoncito de la cortina: gris, orejón y loco por los quesitos de jabón."""
+    m = fieltro('#A9A4A8', '#D8D4D8', fuzz=0.6, escala=120)
+    rosa = fieltro('#F2A7B8', '#FFD0DA', fuzz=0.3)
+    b.blob((0, 0.06, 0.26), (0.32, 0.36, 0.26), m, n=12)
+    b.blob((0, -0.16, 0.42), (0.26, 0.24, 0.24), m, cuerpo=True, n=12)
+    b.blob((0, -0.36, 0.38), (0.07, 0.05, 0.06), rosa, n=8)
+    for s_ in (-1, 1):
+        b.blob((s_ * 0.24, -0.08, 0.66), (0.16, 0.04, 0.16), m, n=10)
+        b.blob((s_ * 0.24, -0.1, 0.66), (0.11, 0.02, 0.11), rosa, n=8)
+        for k in range(3):
+            b.tubo([(s_ * 0.1, -0.38, 0.38 - k * 0.025), (s_ * 0.3, -0.42, 0.4 - k * 0.05)], 0.005, plano('#3A3236', 0.4), segmentos=4)
+    for grupo, f_ in (('pasoA', 1), ('pasoB', -1)):
+        b.tubo([(0.0, 0.38, 0.14), (0.18 * f_, 0.6, 0.2), (0.3 * f_, 0.62, 0.42), (0.22 * f_, 0.6, 0.55)], 0.022, rosa, grupo, segmentos=6)
+        for s_ in (-1, 1):
+            b.blob((s_ * 0.2, -0.12 + 0.05 * f_ * s_, 0.04), (0.07, 0.09, 0.04), rosa, grupo, n=6)
+    ojos(b, 0, 0.5, 0.075, sep=0.1, bravo=jefe, mirar=(0, -0.12))
+    boca(b, 0, 0.33, 0.05, 'dientes')
+    cachetes(b, 0, 0.4, 0.17, 0.035)
+
+
+def j_rey_raton(b):
+    """El Rey Ratón: gordo, con capa, corona y un quesito de jabón mordido en la mano."""
+    b_ratoncito(b, jefe=True)
+    capa = fieltro('#7A3BA8', '#B98AD8', fuzz=0.5)
+    b.blob((0, 0.26, 0.3), (0.36, 0.08, 0.28), capa, n=10)
+    b.blob((0, -0.02, 0.5), (0.24, 0.12, 0.04), fieltro('#FFFFFF', '#FFFFFF', fuzz=0.8), n=8)
+    corona(b, (0, -0.12, 0.66), 0.13, 0.12)
+    queso = brillante('#F7D46A', rough=0.3, coat=0.5, sss=0.2)
+    b.blob((0.34, -0.2, 0.3), (0.1, 0.06, 0.08), queso, n=8)
+    for (x, z) in ((0.3, 0.32), (0.38, 0.28)):
+        b.blob((x, -0.26, z), (0.02, 0.01, 0.02), plano('#D8A830', 0.4), n=5)
 
 BICHOS = {
     'germen': b_germen, 'puntoNegro': b_punto_negro, 'gotaGrasa': b_gota_grasa, 'acaro': b_acaro, 'granito': b_granito, 'caspa': b_caspa,
@@ -1681,11 +1722,13 @@ BICHOS = {
     'donCactus': j_don_cactus, 'atrapamoscasGigante': j_atrapamoscas_gigante, 'materaGigante': j_matera_gigante,
     # El Tobogán del desagüe
     'patitoHule': b_patito_hule, 'chancleta': b_chancleta, 'patoInflable': j_pato_inflable, 'donaFlotador': j_dona_flotador,
+    # El Laberinto de la cortina
+    'ratoncito': b_ratoncito, 'reyRaton': j_rey_raton,
 }
 JEFES = {'espinillon', 'reinaCaspa', 'granMoco', 'senorLagana', 'barroNegro', 'senorSarro', 'donaCucaracha', 'motaPelo', 'tapon',
          'esponjaPodrida', 'peloDesague', 'duchaHelada', 'reyHongo', 'regaderaLoca', 'cortinaMohosa', 'ciempiesGigante',
          'donFrasco', 'reinaPompa', 'senorCuchillas', 'poteCrema', 'reySapo', 'pulpoDesague', 'bocaSifon', 'reinaGrasa',
-         'donCactus', 'atrapamoscasGigante', 'materaGigante', 'patoInflable', 'donaFlotador'}
+         'donCactus', 'atrapamoscasGigante', 'materaGigante', 'patoInflable', 'donaFlotador', 'reyRaton'}
 
 CUADROS = [
     ('normal', {'base', 'abiertos', 'boca', 'pasoA'}),

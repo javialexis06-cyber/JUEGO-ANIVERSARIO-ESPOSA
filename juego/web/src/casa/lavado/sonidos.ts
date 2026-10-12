@@ -92,6 +92,7 @@ export const sfx = {
   premio: () => [1046, 1318, 1568].forEach((f, i) => nota(f, 0.2, i * 0.05, 'triangle', 0.05)),
   carta: () => [659, 784, 988, 1318].forEach((f, i) => nota(f, 0.5, i * 0.12, 'sine', 0.05)),
   toque: () => nota(880, 0.06, 0, 'triangle', 0.04),
+  turbo: () => limite('turbo', 400) && [330, 494, 659, 988].forEach((f, i) => nota(f, 0.14, i * 0.035, 'sawtooth', 0.018, 2400)),
   aji: () => rumor(0.4, 900, 0.07, 0, 0.6, 300),
   fin: (gano: boolean) =>
     gano ? [523, 659, 784, 1046, 784, 1046, 1318].forEach((f, i) => nota(f, 0.3, i * 0.13, 'triangle', 0.06))

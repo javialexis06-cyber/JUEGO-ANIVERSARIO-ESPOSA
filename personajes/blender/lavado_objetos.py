@@ -933,6 +933,20 @@ def bandera(p):
             p.caja((x0 + 0.045, ond, z0 + 0.045 - i * 0.008), (0.045, 0.008, 0.045), blanco if (i + k) % 2 else negro, p=6.0)
 
 
+def quesito(p):
+    """Quesito de jabón (El Laberinto de la cortina): una cuña amarilla con huequitos y burbujas."""
+    m = M('#F7D46A', rough=0.35, coat=0.4, sss=0.25)
+    # La cuña: un prisma triangular redondeado
+    for k in range(6):
+        t = k / 5
+        p.blob((-0.2 + t * 0.4, 0.0, 0.12), (0.06 + 0.16 * (1 - t), 0.2 * (1 - 0.45 * t), 0.12), m, n=8, p=3.0)
+    hueco = M('#D8A830', rough=0.5)
+    for (x, y, z, r) in ((-0.12, -0.2, 0.14, 0.035), (0.0, -0.17, 0.08, 0.025), (-0.05, -0.2, 0.2, 0.02), (0.1, -0.12, 0.15, 0.02)):
+        p.blob((x, y, z), (r, r * 0.4, r), hueco, n=6)
+    for (x, z, r) in ((0.08, 0.32, 0.04), (-0.06, 0.38, 0.03), (0.15, 0.42, 0.022)):
+        burbuja(p, (x, -0.05, z), r)
+
+
 # ----------------------------------------------------------------------------------------------------- Accesorios (disfraces)
 def turbante(p):
     m = tela('#F7C6D2', '#FFE4EC')
@@ -2332,6 +2346,7 @@ ICONOS = {
     'velita': velita, 'vasoCepillos': vaso_cepillos, 'velaFlotante': vela_flotante, 'velaJabonera': vela_jabonera,
     'maceta': maceta, 'regadera': regadera, 'palita': palita, 'farolito': farolito,
     'bandera': bandera,
+    'quesito': quesito,
 }
 
 ACCESORIOS = {

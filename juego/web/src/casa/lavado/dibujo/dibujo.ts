@@ -9,7 +9,8 @@ import { ARMAS, ESCONDIDAS } from '../armas';
 import { TESOROS } from '../tesoros';
 import { hash2 } from '../azar';
 import { ENEMIGOS, ID_ENEMIGOS } from '../enemigos';
-import type { Enemigo, Jugador, Motor } from '../motor';
+import { BANDERA_CADA, TURBO, type Enemigo, type Jugador, type Motor } from '../motor';
+import { sfx } from '../sonidos';
 import type { Efecto, IdArma, IdEnemigo, IdObjeto } from '../tipos';
 import { Jugador3D } from './jugadores';
 import { CAPA_LUZ, CAPA_NORMAL, CAPA_PISO, Particulas } from './particulas';
@@ -62,10 +63,11 @@ const UTILERIA: Partial<Record<string, string[]>> = {
   desfile: ['pantuflas', 'toalla', 'patoAmarillo', 'gorro', 'corona', 'patoMorado'],
   espejo: ['espejoDoble', 'perfume', 'crema', 'secador', 'peinillaOro', 'cremaNoche'],
   matera: ['maceta', 'regadera', 'palita', 'maceta', 'mariposas', 'trebol', 'patoAmarillo'],
+  tobogan: ['patoAmarillo', 'barquito', 'bombaBano', 'patoMorado', 'pececitos', 'chancletas', 'bolitasGel'],
 };
 /** Los frascos que se caen de la repisa en La Jabonera. */
 const FRASCOS = ['champu', 'crema', 'perfume', 'colonia', 'cremaNoche'];
-const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita', desague: 'velaFlotante', desfile: 'velita', espejo: 'velaJabonera', matera: 'farolito' } as const;
+const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita', desague: 'velaFlotante', desfile: 'velita', espejo: 'velaJabonera', matera: 'farolito', tobogan: 'velaFlotante' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
 
 const rgb = (hex: string): [number, number, number] => {
@@ -852,7 +854,7 @@ export class Dibujo {
     }
   }
 
-  private utileria(lista: string[], limX: { xMin: number; xMax: number } | undefined, C: number, densidad: number) {
+  private utileria(lista: string[], limX: { xMin: number; xMax: number } | undefined, C: number, densidad: number, lim?: { yMin: number; yMax: number } | null) {
     const x0 = Math.floor((this.cx - this.vistaW * 0.6) / C), x1 = Math.floor((this.cx + this.vistaW * 0.6) / C);
     const y0 = Math.floor((this.cy - this.vistaH * 0.7) / C), y1 = Math.floor((this.cy + this.vistaH * 0.65) / C);
     for (let gy = y0; gy <= y1; gy++)
@@ -863,6 +865,7 @@ export class Dibujo {
         if (!q) continue;
         const x = (gx + 0.15 + hash2(gx, gy, 43) * 0.7) * C, y = (gy + 0.15 + hash2(gx, gy, 44) * 0.7) * C;
         if (limX && (x < limX.xMin + 40 || x > limX.xMax - 40)) continue;
+        if (lim && (y < lim.yMin + 40 || y > lim.yMax - 30)) continue;
         // (nada encima del sitio donde se empieza)
         if (Math.hypot(x, y) < 170) continue;
         const tam = 44 + hash2(gx, gy, 45) * 16;
@@ -871,8 +874,25 @@ export class Dibujo {
       }
   }
 
+  /** El Tobogán: las banderas a cuadros a los dos lados del tobogán (la raya de meta la pinta el piso). */
+  private banderasTobogan(m: Motor) {
+    const q = this.cuadrosObj.get('bandera');
+    const lim = m.esc.limites;
+    if (!q || !lim) return;
+    const k0 = Math.max(1, Math.floor((this.cx - this.vistaW) / BANDERA_CADA)), k1 = Math.floor((this.cx + this.vistaW) / BANDERA_CADA) + 1;
+    for (let k = k0; k <= k1; k++) {
+      const x = k * BANDERA_CADA;
+      for (const y of [lim.yMin + 6, lim.yMax + 4]) {
+        if (!this.enVista(x, y, 80)) continue;
+        this.objetos.poner(x + 8, y, 0, 78, 78, 0.5, 0.95, q.u0, q.v0, q.u1, q.v1, 1, 1, 1, 1, 0, Math.sin(this.t * 3 + k) * 0.05, 1, 0, 0);
+        this.sombra(x, y, 22, 0.3);
+      }
+    }
+  }
+
   /** Los remolinos de El Desagüe: espirales de agua turbia que giran, espumita en el borde y burbujas que se hunden. */
   private remolinos: { x: number; y: number; r: number; t: number; total: number }[] = [];
+  private turboSono = new Set<number>();
   private dibujarRemolinos(dt: number) {
     const o = this.fx.c.onda, h = this.fx.c.humo, b = this.fx.c.brillo;
     for (let k = this.remolinos.length - 1; k >= 0; k--) {
@@ -1042,7 +1062,8 @@ export class Dibujo {
     const O = this.objetos;
     // Lo que hay tirado en el piso de la ducha (siempre en el mismo sitio): el champú, el jabón, la esponja, el patico
     const utileria = UTILERIA[m.esc.id];
-    if (utileria) this.utileria(utileria, m.esc.limitesX, m.esc.limitesX ? 210 : 430, m.esc.limitesX ? 0.6 : 0.42);
+    if (utileria) this.utileria(utileria, m.esc.limitesX, m.esc.limitesX ? 210 : 430, m.esc.limitesX ? 0.6 : 0.42, m.esc.limites);
+    if (m.esc.tobogan) this.banderasTobogan(m);
     // Don Jabón con su carrito (el vendedor ambulante): se mece, saluda y le salen burbujitas
     const p = m.puesto;
     if (p && this.enVista(p[0], p[1], 120)) {
@@ -1445,6 +1466,15 @@ export class Dibujo {
         this.pisoFx.poner(j.x, j.y, 0.11, 90 + Math.sin(t * 6) * 10, 64, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 1, 0.85, 0.35, 0.9);
         if (Math.random() < 0.5 * this.part.cupo) this.part.crear('estrella', CAPA_LUZ, j.x + (Math.random() - 0.5) * 60, j.y, 10 + Math.random() * 50, 0, 0, 40, 0.6, 10, 3, 1, 0.85, 0.4, 1, 0, 0, 5);
       }
+      // El turbo del tobogán: chorritos de agua y estrellitas hacia atrás (y su sonido al agarrarlo)
+      if (j.turbo > 0) {
+        if (j.turbo > TURBO.dura - 0.1 && !this.turboSono.has(j.i)) {
+          this.turboSono.add(j.i);
+          if (j.i === this.o.yo) sfx.turbo();
+        }
+        for (let q = 0; q < 2; q++) if (Math.random() < 0.8 * this.part.cupo)
+          this.part.crear(q ? 'gota' : 'estrella', q ? CAPA_NORMAL : CAPA_LUZ, j.x - 26, j.y + (Math.random() - 0.5) * 30, 8 + Math.random() * 20, -260 - Math.random() * 120, (Math.random() - 0.5) * 60, 40, 0.45, 9, 4, 1, q ? 1 : 0.8, q ? 1 : 0.35, 0.9, 0, 0, 3);
+      } else this.turboSono.delete(j.i);
       if (j.espejo > 0 && Math.random() < 0.4 * this.part.cupo) {
         const a = Math.random() * Math.PI * 2;
         this.part.crear('brillo', CAPA_LUZ, j.x + Math.cos(a) * 40, j.y + Math.sin(a) * 30, 30, 0, 0, 30, 0.5, 14, 4, 0.8, 0.9, 1, 0.8);

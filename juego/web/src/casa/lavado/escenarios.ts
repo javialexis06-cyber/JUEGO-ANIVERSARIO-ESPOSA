@@ -53,6 +53,10 @@ export interface DefEscenario {
   /** El Desfile de jefes: los jefes llegan uno tras otro, así que tienen menos vida y dan más experiencia. */
   vidaJefes?: number;
   xpJefes?: number;
+  /** El Tobogán: la corriente que lleva a todos hacia adelante (unidades por segundo). */
+  tobogan?: number;
+  /** Cuánto pegan los mugrosos al tocarlo a uno (en el tobogán, menos: no hay para dónde huir). */
+  danoBichos?: number;
 }
 
 const o = (min: number, cada: number, ...tipos: IdEnemigo[]): Oleada => ({ min, cada, tipos });
@@ -625,8 +629,55 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
       { t: m(14, 45), tipo: 'flotar', enemigo: 'espumaSucia', cant: 24 },
     ],
   },
+  tobogan: {
+    id: 'tobogan',
+    nombre: 'El Tobogán del desagüe',
+    original: 'Carlo Cart',
+    desc: 'Un tobogán de agua por dentro del caño: la corriente te lleva y no se puede parar (con el joystick te frenas o te apuras). Los turbos empujan y las banderas recogen lo que quedó atrás.',
+    limites: { yMin: -300, yMax: 300 },
+    desbloqueo: 'Aguanta 20 minutos en El Desagüe',
+    jefeHiper: 'donaFlotador',
+    duracion: 15 * 60,
+    especial: true,
+    tobogan: 110,
+    danoBichos: 0.65,
+    vidaJefes: 0.55,
+    xpJefes: 2,
+    oleadas: [
+      // (casi todos persiguen: los que cruzan derecho se quedan atrás en el tobogán y no dan nada)
+      o(16, 1.0, 'mosquitaDesague'),
+      o(24, 0.9, 'mosquitaDesague', 'gusanito'),
+      o(30, 0.9, 'gusanito', 'sapito'),
+      o(36, 0.8, 'sapito', 'mosquitaDesague', 'patitoHule'),
+      o(42, 0.8, 'chancleta', 'gusanito', 'sapito'),
+      o(48, 0.7, 'gusanito', 'sapito', 'chancleta'),
+      o(54, 0.7, 'sapito', 'burbujaGas', 'mosquitaDesague'),
+      o(60, 0.65, 'grasaSifon', 'sapito', 'chancleta'),
+      o(66, 0.6, 'grasaSifon', 'sapito', 'gusanito'),
+      o(72, 0.55, 'grasaSifon', 'burbujaGas', 'chancleta'),
+      o(78, 0.5, 'rejillita', 'sapito', 'mosquitaDesague'),
+      o(84, 0.48, 'rejillita', 'grasaSifon', 'chancleta'),
+      o(90, 0.45, 'rejillita', 'grasaSifon', 'sapito'),
+      o(96, 0.42, 'rejillita', 'espumaSucia', 'chancleta'),
+      o(100, 0.4, 'rejillita', 'grasaSifon', 'lodo'),
+    ],
+    eventos: [
+      { t: m(0, 40), tipo: 'enjambre', enemigo: 'patitoHule', cant: 24, aviso: '¡Una manada de patitos bajando por el tobogán!' },
+      { t: m(2, 30), tipo: 'elite', enemigo: 'sapito' },
+      { t: m(3), tipo: 'enjambre', enemigo: 'gotaDura', cant: 30 },
+      { t: m(4, 15), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Una carta mágica flotando en el agua…' },
+      { t: m(5, 30), tipo: 'jefe', enemigo: 'patoInflable', aviso: '¡El Pato Inflable Gigante se soltó de la piscina!' },
+      { t: m(7), tipo: 'enjambre', enemigo: 'patitoHule', cant: 50 },
+      { t: m(9), tipo: 'jefe', enemigo: 'tapon', aviso: '¡El Tapón quiere tapar el tobogán!' },
+      { t: m(9, 30), tipo: 'muro', enemigo: 'bolitaPelo', cant: 30 },
+      { t: m(10, 30), tipo: 'elite', enemigo: 'chancleta' },
+      { t: m(12), tipo: 'jefe', enemigo: 'donaFlotador', aviso: '¡La Dona Flotadora viene dando vueltas!' },
+      { t: m(13), tipo: 'enjambre', enemigo: 'patitoHule', cant: 70 },
+      { t: m(14), tipo: 'muro', enemigo: 'grasaSifon', cant: 30 },
+    ],
+  },
 };
 
-export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague', 'desfile', 'espejo', 'matera'];
+export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague', 'desfile', 'espejo', 'matera', 'tobogan'];
 /** La partida completa (después llega la Ducha Helada). */
 export const DURACION = 30 * 60;
