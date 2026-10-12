@@ -1,4 +1,4 @@
-import {registrarBajasHistoria,crearHistoria,actuarHistoria,registrarHistoria,historiaValida} from './historia';
+import {migrarHistoria,registrarProduccionHistoria,registrarBajasHistoria,crearHistoria,actuarHistoria,registrarHistoria,historiaValida} from './historia';
 import { crearAstra, actuarAstra, astraValida, regionAstra, libreAstra, puntoCombate, reubicarAstra } from './astra';
 import { crearFestivales, invitarFestivales, actuarFestival, festivalesValidos } from './festivales';
 import { crearCorreo, entregarCorreo, actuarCorreo, correoValido, migrarCorreo, correspondenciaValida } from './correo';
@@ -263,7 +263,7 @@ export class MotorGranja {
   for(const nodo of s.obstaculos)if(nodo.hp===0&&nodo.regeneraEn!==null&&now>=nodo.regeneraEn){nodo.hp=nodo.hpMax;nodo.regeneraEn=null;s.revision++;}
   const produccion=avanzarProduccion(s.produccion,now,{...this.contextoProduccion(),ahora:now});
   s.produccion=produccion.estado;s.casillasInventario=produccion.casillas;s.inventario=resumirCasillas(produccion.casillas);
-  for(const [id,n]of Object.entries(produccion.producidos)){this.contar('fabricar_'+id,n);this.contar('fabricar',n);}
+  registrarProduccionHistoria(s,produccion.producidos);for(const [id,n]of Object.entries(produccion.producidos)){this.contar('fabricar_'+id,n);this.contar('fabricar',n);}
   actualizarCompania(s,now);s.ultimoTiempo=now;s.buffs=s.buffs.filter(b=>b.hasta>now);this.sincronizarSeleccion();
  }
  actuar(a:Accion):Resultado {
@@ -734,7 +734,7 @@ export function validarEstado(v:unknown):string|null {
  if(!v||typeof v!=='object')return 'falta el estado';const s=v as EstadoGranja;
  if(s.version!==5)return 'versión incompatible';
  if(!historiaValida(s.historia,s.jornada?.diasCompletados))return 'Historia inválida';
- if(!astraValida(s.astra,s.jornada?.diasCompletados))return 'Astra inválida';
+ if(!astraValida(s.astra,s.jornada?.diasCompletados,s.historia?.completadas))return 'Astra inválida';
  if(!festivalesValidos(s))return 'festivales inválidos';
   if(!correoValido(s.correo,s.jornada?.diasCompletados))return 'correo inválido';
   if(!vidaSocialValida(s.vidaSocial,s.jornada?.diasCompletados))return 'vida social inválida';
@@ -830,7 +830,7 @@ export function migrarEstado(valor:unknown):unknown {
   if(Array.isArray(s.sectorIds))for(const id of SECTORES_INICIALES)if(!s.sectorIds.includes(id))s.sectorIds.push(id);
   if(Array.isArray(s.obstaculos))s.obstaculos=s.obstaculos.filter((o:any)=>!(!o?.zona||o.zona==='granja')||!esSenderoGranja(o.x,o.z));
   if(Array.isArray(s.obstaculos)){/* La mina del valle ahora es solo la entrada: las rocas viejas de sus 5 niveles se retiran */s.obstaculos=s.obstaculos.filter((o:any)=>o?.zona!=='mina');/* lo que quedó en el suelo de cualquier nivel se puede recoger en la entrada */if(Array.isArray(s.drops))for(const d of s.drops)if(d?.zona==='mina')d.nivelMina=1;if(s.zona==='mina'){s.enemigo=0;s.nivelMina=1;}const ids=new Set(s.obstaculos.map((o:any)=>o?.id)),ocupadas=new Set(s.obstaculos.map((o:any)=>`${o?.zona},${o?.x},${o?.z}`));for(const n of nodosExteriores())if(n.zona!=='mina'&&!ids.has(n.id)&&!ocupadas.has(`${n.zona},${n.x},${n.z}`))s.obstaculos.push(n);}
-  if(s.historia===undefined)s.historia=crearHistoria();if(s.astra===undefined)s.astra=crearAstra();reubicarAstra(s.astra);if(s.libros===undefined)s.libros=crearLibros();if(s.colecciones===undefined)s.colecciones=crearColecciones();if(s.festivales===undefined)s.festivales=crearFestivales();if(s.correo===undefined)s.correo=crearCorreo();if(s.vidaSocial===undefined)s.vidaSocial=crearVidaSocial();if(s.encargos===undefined)s.encargos=crearEncargos();if(s.pueblo===undefined)s.pueblo=crearPuebloEstado();else if(s.pueblo?.version===1&&Array.isArray(s.pueblo.relaciones)&&s.pueblo.relaciones.length===9&&s.pueblo.relaciones.every((r:any)=>crearPuebloEstado().relaciones.slice(0,9).some(n=>n.id===r?.id)))s.pueblo.relaciones.push(...crearPuebloEstado().relaciones.filter(n=>!s.pueblo.relaciones.some((r:any)=>r?.id===n.id)));if(s.obras===undefined)s.obras=crearObras();if(s.compania===undefined)s.compania=crearCompania();if(s.ganaderia===undefined){s.ganaderia=crearGanaderia(s.edificios?.some((b:any)=>b.id==='corral_inicial'&&b.especie==='gallina')?'corral_inicial':undefined);if(Array.isArray(s.animales))for(const a of s.animales)if(a?.sexo==='macho'&&['vaca','cabra','gallina','pato','avestruz','dinosaurio'].includes(a.especie)&&a.productos>0)a.productoLegado=true;}if(s.tiempo===undefined&&finito(s.inicioTiempo))s.tiempo=crearTiempo(s.inicioTiempo);if(s.produccion===undefined)s.produccion=crearProduccion(s.ultimoTiempo);if(s.aventura===undefined){s.aventura=crearAventura();s.posicionAventura=null;}
+  if(s.historia===undefined)s.historia=crearHistoria();else migrarHistoria(s.historia);if(s.astra===undefined)s.astra=crearAstra();reubicarAstra(s.astra);if(s.libros===undefined)s.libros=crearLibros();if(s.colecciones===undefined)s.colecciones=crearColecciones();if(s.festivales===undefined)s.festivales=crearFestivales();if(s.correo===undefined)s.correo=crearCorreo();if(s.vidaSocial===undefined)s.vidaSocial=crearVidaSocial();if(s.encargos===undefined)s.encargos=crearEncargos();if(s.pueblo===undefined)s.pueblo=crearPuebloEstado();else if(s.pueblo?.version===1&&Array.isArray(s.pueblo.relaciones)&&s.pueblo.relaciones.length===9&&s.pueblo.relaciones.every((r:any)=>crearPuebloEstado().relaciones.slice(0,9).some(n=>n.id===r?.id)))s.pueblo.relaciones.push(...crearPuebloEstado().relaciones.filter(n=>!s.pueblo.relaciones.some((r:any)=>r?.id===n.id)));if(s.obras===undefined)s.obras=crearObras();if(s.compania===undefined)s.compania=crearCompania();if(s.ganaderia===undefined){s.ganaderia=crearGanaderia(s.edificios?.some((b:any)=>b.id==='corral_inicial'&&b.especie==='gallina')?'corral_inicial':undefined);if(Array.isArray(s.animales))for(const a of s.animales)if(a?.sexo==='macho'&&['vaca','cabra','gallina','pato','avestruz','dinosaurio'].includes(a.especie)&&a.productos>0)a.productoLegado=true;}if(s.tiempo===undefined&&finito(s.inicioTiempo))s.tiempo=crearTiempo(s.inicioTiempo);if(s.produccion===undefined)s.produccion=crearProduccion(s.ultimoTiempo);if(s.aventura===undefined){s.aventura=crearAventura();s.posicionAventura=null;}
   if(s.envios===undefined){
    s.envios=crearEnvios();if(Array.isArray(s.edificios))s.envios.cajas=s.edificios.filter((e:any)=>e?.articulo===ARTICULO_ENVIO).map((e:any)=>crearCajaEnvio(e.id));
    // Un plano de bienvenida para partidas anteriores; no altera su paisaje ni construcciones.

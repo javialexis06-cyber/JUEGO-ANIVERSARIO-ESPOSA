@@ -1,6 +1,3999 @@
 {
   "version": 1,
-  "voces": {},
+  "voces": {
+    "C01.L001": {
+      "archivo": "./audio/astra/C01.L001-2c213.ogg",
+      "huella_texto": "89f902ff55bb1c48"
+    },
+    "C01.L004": {
+      "archivo": "./audio/astra/C01.L004-7c3f8.ogg",
+      "huella_texto": "1d656e8a384a315b"
+    },
+    "C01.L006": {
+      "archivo": "./audio/astra/C01.L006-8e80a.ogg",
+      "huella_texto": "7cd8c69a5f17963b"
+    },
+    "C01.L007": {
+      "archivo": "./audio/astra/C01.L007-86c0f.ogg",
+      "huella_texto": "d993b6c7e651ca39"
+    },
+    "C01.L009": {
+      "archivo": "./audio/astra/C01.L009-694d9.ogg",
+      "huella_texto": "3d1bc1030b8ac798"
+    },
+    "C01.L011": {
+      "archivo": "./audio/astra/C01.L011-341c5.ogg",
+      "huella_texto": "6b0dd5af8f1ed1d4"
+    },
+    "C01.L012": {
+      "archivo": "./audio/astra/C01.L012-dd1c6.ogg",
+      "huella_texto": "b04f2aad91df5f1e"
+    },
+    "C02.L001": {
+      "archivo": "./audio/astra/C02.L001-55441.ogg",
+      "huella_texto": "26b7714ffa85faba"
+    },
+    "C02.L003": {
+      "archivo": "./audio/astra/C02.L003-1e1cb.ogg",
+      "huella_texto": "1ab30ad40013c63c"
+    },
+    "C02.L008": {
+      "archivo": "./audio/astra/C02.L008-c2a98.ogg",
+      "huella_texto": "5c32625bea671564"
+    },
+    "C02.L009": {
+      "archivo": "./audio/astra/C02.L009-0079a.ogg",
+      "huella_texto": "13efae50d7ed5312"
+    },
+    "C02.L011": {
+      "archivo": "./audio/astra/C02.L011-57ad6.ogg",
+      "huella_texto": "9bf8dbb3a9866540"
+    },
+    "C02.L013": {
+      "archivo": "./audio/astra/C02.L013-26764.ogg",
+      "huella_texto": "a2ce37ff5a745f3c"
+    },
+    "C03.L001": {
+      "archivo": "./audio/astra/C03.L001-3caf2.ogg",
+      "huella_texto": "ae0979430cb76a00"
+    },
+    "C03.L003": {
+      "archivo": "./audio/astra/C03.L003-9688d.ogg",
+      "huella_texto": "cefeef63e1831be0"
+    },
+    "C03.L005": {
+      "archivo": "./audio/astra/C03.L005-08716.ogg",
+      "huella_texto": "fda46f73c85715c3"
+    },
+    "C03.L006": {
+      "archivo": "./audio/astra/C03.L006-db313.ogg",
+      "huella_texto": "fc40ac37156b0d25"
+    },
+    "C03.L008": {
+      "archivo": "./audio/astra/C03.L008-c8598.ogg",
+      "huella_texto": "97c84996b454373f"
+    },
+    "C03.L009": {
+      "archivo": "./audio/astra/C03.L009-4076c.ogg",
+      "huella_texto": "39ae8a56b93dd0c5"
+    },
+    "C03.L012": {
+      "archivo": "./audio/astra/C03.L012-e6f39.ogg",
+      "huella_texto": "2eb050af5454cd35"
+    },
+    "C03.L013": {
+      "archivo": "./audio/astra/C03.L013-384a6.ogg",
+      "huella_texto": "4500ed6eddbe1f36"
+    },
+    "C04.L001": {
+      "archivo": "./audio/astra/C04.L001-457df.ogg",
+      "huella_texto": "fe17ffe05524708c"
+    },
+    "C04.L003": {
+      "archivo": "./audio/astra/C04.L003-9bbf9.ogg",
+      "huella_texto": "90b7d468d2d41599"
+    },
+    "C04.L005": {
+      "archivo": "./audio/astra/C04.L005-b2428.ogg",
+      "huella_texto": "8b3d3e21c4af91d8"
+    },
+    "C04.L006": {
+      "archivo": "./audio/astra/C04.L006-d4c1a.ogg",
+      "huella_texto": "2110f34ec66f4514"
+    },
+    "C04.L007": {
+      "archivo": "./audio/astra/C04.L007-46cb6.ogg",
+      "huella_texto": "bc28ffce9d89355b"
+    },
+    "C04.L008": {
+      "archivo": "./audio/astra/C04.L008-76584.ogg",
+      "huella_texto": "88f80c7573015e90"
+    },
+    "C04.L009": {
+      "archivo": "./audio/astra/C04.L009-c1339.ogg",
+      "huella_texto": "1072532238fe893f"
+    },
+    "C04.L012": {
+      "archivo": "./audio/astra/C04.L012-4bd2d.ogg",
+      "huella_texto": "b567d415ae84cf72"
+    },
+    "C04.L013": {
+      "archivo": "./audio/astra/C04.L013-06021.ogg",
+      "huella_texto": "7188d028bb1f90f3"
+    },
+    "C04.L014": {
+      "archivo": "./audio/astra/C04.L014-a7d06.ogg",
+      "huella_texto": "0a7e4b470ad3a509"
+    },
+    "C04.L016": {
+      "archivo": "./audio/astra/C04.L016-ecc1c.ogg",
+      "huella_texto": "f57aa9108236d0cd"
+    },
+    "C05.L001": {
+      "archivo": "./audio/astra/C05.L001-3de8b.ogg",
+      "huella_texto": "022970b70fa932ad"
+    },
+    "C05.L002": {
+      "archivo": "./audio/astra/C05.L002-ff323.ogg",
+      "huella_texto": "206cb4c9e18b4930"
+    },
+    "C05.L004": {
+      "archivo": "./audio/astra/C05.L004-7e25c.ogg",
+      "huella_texto": "d470b17d5959bf43"
+    },
+    "C05.L006": {
+      "archivo": "./audio/astra/C05.L006-55fa6.ogg",
+      "huella_texto": "ec7f06585bf9d5a1"
+    },
+    "C05.L007": {
+      "archivo": "./audio/astra/C05.L007-f776b.ogg",
+      "huella_texto": "a65d1158eb48b050"
+    },
+    "C05.L010": {
+      "archivo": "./audio/astra/C05.L010-667ce.ogg",
+      "huella_texto": "bbb9d7c58323dd2a"
+    },
+    "C06.L001": {
+      "archivo": "./audio/astra/C06.L001-c534f.ogg",
+      "huella_texto": "29c232e53765b0ac"
+    },
+    "C06.L002": {
+      "archivo": "./audio/astra/C06.L002-e0f66.ogg",
+      "huella_texto": "d6ed4e66d506b5ce"
+    },
+    "C06.L003": {
+      "archivo": "./audio/astra/C06.L003-3bd91.ogg",
+      "huella_texto": "75bcea6668c12e56"
+    },
+    "C06.L005": {
+      "archivo": "./audio/astra/C06.L005-2b5db.ogg",
+      "huella_texto": "6c92777fe6fc33ad"
+    },
+    "C06.L007": {
+      "archivo": "./audio/astra/C06.L007-ad735.ogg",
+      "huella_texto": "df0d4eb518d08604"
+    },
+    "C06.L008": {
+      "archivo": "./audio/astra/C06.L008-3565f.ogg",
+      "huella_texto": "cf392406420b927e"
+    },
+    "C06.L009": {
+      "archivo": "./audio/astra/C06.L009-43e83.ogg",
+      "huella_texto": "c6d990d1e9b6535d"
+    },
+    "C06.L010": {
+      "archivo": "./audio/astra/C06.L010-fa114.ogg",
+      "huella_texto": "0b7ad4d7f7d9eb30"
+    },
+    "C06.L011": {
+      "archivo": "./audio/astra/C06.L011-554c5.ogg",
+      "huella_texto": "a9eae35dd508bb77"
+    },
+    "C06.L012": {
+      "archivo": "./audio/astra/C06.L012-f07b8.ogg",
+      "huella_texto": "3c62431b09191145"
+    },
+    "C06.L014": {
+      "archivo": "./audio/astra/C06.L014-54007.ogg",
+      "huella_texto": "8991cf46a91b69f8"
+    },
+    "C06.L015": {
+      "archivo": "./audio/astra/C06.L015-8b199.ogg",
+      "huella_texto": "d81c050da1b33790"
+    },
+    "C06.L016": {
+      "archivo": "./audio/astra/C06.L016-11907.ogg",
+      "huella_texto": "5b275cdeb680cc9f"
+    },
+    "C07.L001": {
+      "archivo": "./audio/astra/C07.L001-b9ee5.ogg",
+      "huella_texto": "6b770707a58212fb"
+    },
+    "C07.L002": {
+      "archivo": "./audio/astra/C07.L002-6f7b0.ogg",
+      "huella_texto": "df75df0fd07cdf46"
+    },
+    "C07.L003": {
+      "archivo": "./audio/astra/C07.L003-7fa67.ogg",
+      "huella_texto": "462f01a036d9e691"
+    },
+    "C07.L004": {
+      "archivo": "./audio/astra/C07.L004-61e60.ogg",
+      "huella_texto": "69777483932ebd02"
+    },
+    "C07.L005": {
+      "archivo": "./audio/astra/C07.L005-3d716.ogg",
+      "huella_texto": "5326602599fb3682"
+    },
+    "C07.L008": {
+      "archivo": "./audio/astra/C07.L008-4824e.ogg",
+      "huella_texto": "bfd3834693f2bfea"
+    },
+    "C07.L009": {
+      "archivo": "./audio/astra/C07.L009-1c264.ogg",
+      "huella_texto": "fc52b732df9409c2"
+    },
+    "C07.L010": {
+      "archivo": "./audio/astra/C07.L010-8bd7e.ogg",
+      "huella_texto": "f408526c152c95eb"
+    },
+    "C07.L011": {
+      "archivo": "./audio/astra/C07.L011-ffefa.ogg",
+      "huella_texto": "b071c069429e091f"
+    },
+    "C07.L012": {
+      "archivo": "./audio/astra/C07.L012-4b8c9.ogg",
+      "huella_texto": "512ed96ab5d85943"
+    },
+    "C08.L001": {
+      "archivo": "./audio/astra/C08.L001-3a0a5.ogg",
+      "huella_texto": "da23ff87f9727d89"
+    },
+    "C08.L002": {
+      "archivo": "./audio/astra/C08.L002-139a5.ogg",
+      "huella_texto": "3ab3bbae79871326"
+    },
+    "C08.L003": {
+      "archivo": "./audio/astra/C08.L003-1efe1.ogg",
+      "huella_texto": "a840146691585f5d"
+    },
+    "C08.L005": {
+      "archivo": "./audio/astra/C08.L005-c5e0a.ogg",
+      "huella_texto": "46556e3b10e1d016"
+    },
+    "C08.L006": {
+      "archivo": "./audio/astra/C08.L006-f2368.ogg",
+      "huella_texto": "f10d2a551e27f3e7"
+    },
+    "C08.L008": {
+      "archivo": "./audio/astra/C08.L008-168a4.ogg",
+      "huella_texto": "db743be2b6f5da01"
+    },
+    "C08.L009": {
+      "archivo": "./audio/astra/C08.L009-027fa.ogg",
+      "huella_texto": "ea7f411d8b98eabf"
+    },
+    "C08.L010": {
+      "archivo": "./audio/astra/C08.L010-387ba.ogg",
+      "huella_texto": "10221c13d430d893"
+    },
+    "C08.L011": {
+      "archivo": "./audio/astra/C08.L011-4ba83.ogg",
+      "huella_texto": "e8ff4911e59a5ce1"
+    },
+    "C08.L012": {
+      "archivo": "./audio/astra/C08.L012-8d0f8.ogg",
+      "huella_texto": "5428f2ad10b93ec9"
+    },
+    "C09.L001": {
+      "archivo": "./audio/astra/C09.L001-cf2f3.ogg",
+      "huella_texto": "012ebdcef0c8a50b"
+    },
+    "C09.L002": {
+      "archivo": "./audio/astra/C09.L002-9d8d4.ogg",
+      "huella_texto": "bf13b8dc3d10f4be"
+    },
+    "C09.L003": {
+      "archivo": "./audio/astra/C09.L003-ceb68.ogg",
+      "huella_texto": "cabaf2f8dae01186"
+    },
+    "C09.L005": {
+      "archivo": "./audio/astra/C09.L005-78634.ogg",
+      "huella_texto": "81ac8a3dc13de4d4"
+    },
+    "C09.L007": {
+      "archivo": "./audio/astra/C09.L007-e1d2c.ogg",
+      "huella_texto": "350d31c81fdc1889"
+    },
+    "C09.L008": {
+      "archivo": "./audio/astra/C09.L008-2f16e.ogg",
+      "huella_texto": "9b7e92484cab13dc"
+    },
+    "C09.L009": {
+      "archivo": "./audio/astra/C09.L009-bebbf.ogg",
+      "huella_texto": "38f887263c40cb5b"
+    },
+    "C09.L010": {
+      "archivo": "./audio/astra/C09.L010-690f2.ogg",
+      "huella_texto": "f161493ba707a5ff"
+    },
+    "C09.L011": {
+      "archivo": "./audio/astra/C09.L011-24cca.ogg",
+      "huella_texto": "26aa8f55779f9adb"
+    },
+    "C09.L012": {
+      "archivo": "./audio/astra/C09.L012-e2271.ogg",
+      "huella_texto": "35adf0594a55129f"
+    },
+    "C09.L014": {
+      "archivo": "./audio/astra/C09.L014-7ff67.ogg",
+      "huella_texto": "063777d9dcfb3d39"
+    },
+    "C10.L001": {
+      "archivo": "./audio/astra/C10.L001-5a6f2.ogg",
+      "huella_texto": "05c9404ab986b701"
+    },
+    "C10.L003": {
+      "archivo": "./audio/astra/C10.L003-603ce.ogg",
+      "huella_texto": "707e95a1646ee522"
+    },
+    "C10.L005": {
+      "archivo": "./audio/astra/C10.L005-c0ec4.ogg",
+      "huella_texto": "4c8cedbf866105dd"
+    },
+    "C10.L007": {
+      "archivo": "./audio/astra/C10.L007-47d45.ogg",
+      "huella_texto": "db3fb39072a3a0c2"
+    },
+    "C10.L011": {
+      "archivo": "./audio/astra/C10.L011-da274.ogg",
+      "huella_texto": "7a63ed9a26c80129"
+    },
+    "C11.L001": {
+      "archivo": "./audio/astra/C11.L001-28c27.ogg",
+      "huella_texto": "f1ab84936a77d8f6"
+    },
+    "C11.L002": {
+      "archivo": "./audio/astra/C11.L002-5c860.ogg",
+      "huella_texto": "733a7fae2b3fc52a"
+    },
+    "C11.L005": {
+      "archivo": "./audio/astra/C11.L005-05dcb.ogg",
+      "huella_texto": "b34e1b0a954e0d6b"
+    },
+    "C11.L006": {
+      "archivo": "./audio/astra/C11.L006-9c97b.ogg",
+      "huella_texto": "cd0346390bab84cb"
+    },
+    "C11.L007": {
+      "archivo": "./audio/astra/C11.L007-38597.ogg",
+      "huella_texto": "b4f5a8f5136293d5"
+    },
+    "C11.L009": {
+      "archivo": "./audio/astra/C11.L009-d2df2.ogg",
+      "huella_texto": "0ee32956ef606410"
+    },
+    "C11.L011": {
+      "archivo": "./audio/astra/C11.L011-b5f40.ogg",
+      "huella_texto": "40c2ecd5941ab042"
+    },
+    "C11.L012": {
+      "archivo": "./audio/astra/C11.L012-fb20a.ogg",
+      "huella_texto": "ad85492c99a5115d"
+    },
+    "C11.L013": {
+      "archivo": "./audio/astra/C11.L013-79442.ogg",
+      "huella_texto": "25559d8d25c034e9"
+    },
+    "C11.L015": {
+      "archivo": "./audio/astra/C11.L015-f9018.ogg",
+      "huella_texto": "70d999b11b28830c"
+    },
+    "C11.L017": {
+      "archivo": "./audio/astra/C11.L017-a4d79.ogg",
+      "huella_texto": "b5880ad01a625494"
+    },
+    "C11.L018": {
+      "archivo": "./audio/astra/C11.L018-5efbf.ogg",
+      "huella_texto": "adf03540aff27385"
+    },
+    "C11.L019": {
+      "archivo": "./audio/astra/C11.L019-7457d.ogg",
+      "huella_texto": "5e49503e8cade6c6"
+    },
+    "C11.L020": {
+      "archivo": "./audio/astra/C11.L020-6b827.ogg",
+      "huella_texto": "5f6e366a75e13434"
+    },
+    "C12.L001": {
+      "archivo": "./audio/astra/C12.L001-fc1f0.ogg",
+      "huella_texto": "920a2491651aab1b"
+    },
+    "C12.L002": {
+      "archivo": "./audio/astra/C12.L002-c5b3d.ogg",
+      "huella_texto": "a2e8aeb8786a0154"
+    },
+    "C12.L003": {
+      "archivo": "./audio/astra/C12.L003-0663c.ogg",
+      "huella_texto": "bed2c5b6f9c5384a"
+    },
+    "C12.L004": {
+      "archivo": "./audio/astra/C12.L004-55af5.ogg",
+      "huella_texto": "513924f6307c1f73"
+    },
+    "C12.L005": {
+      "archivo": "./audio/astra/C12.L005-187fb.ogg",
+      "huella_texto": "af88e4b65bb1decd"
+    },
+    "C12.L007": {
+      "archivo": "./audio/astra/C12.L007-b8a53.ogg",
+      "huella_texto": "12d8b2887b6c304b"
+    },
+    "C12.L008": {
+      "archivo": "./audio/astra/C12.L008-c655c.ogg",
+      "huella_texto": "7ca96a1296e4607a"
+    },
+    "C12.L009": {
+      "archivo": "./audio/astra/C12.L009-6038a.ogg",
+      "huella_texto": "fe1d4ea985519056"
+    },
+    "C12.L010": {
+      "archivo": "./audio/astra/C12.L010-20832.ogg",
+      "huella_texto": "af3202fecf51332e"
+    },
+    "C12.L011": {
+      "archivo": "./audio/astra/C12.L011-20a41.ogg",
+      "huella_texto": "262a4d3144044534"
+    },
+    "C12.L013": {
+      "archivo": "./audio/astra/C12.L013-f1320.ogg",
+      "huella_texto": "78e583c0e38227a6"
+    },
+    "C12.L015": {
+      "archivo": "./audio/astra/C12.L015-63cee.ogg",
+      "huella_texto": "2bc8a039ca7fea2c"
+    },
+    "C12.L016": {
+      "archivo": "./audio/astra/C12.L016-5f1dd.ogg",
+      "huella_texto": "a8a02468631536ac"
+    },
+    "C12.L017": {
+      "archivo": "./audio/astra/C12.L017-3328c.ogg",
+      "huella_texto": "4d8ef6b0dfa62580"
+    },
+    "C12.L018": {
+      "archivo": "./audio/astra/C12.L018-6bb82.ogg",
+      "huella_texto": "26571b2adc14a6da"
+    },
+    "C12.L020": {
+      "archivo": "./audio/astra/C12.L020-9b78d.ogg",
+      "huella_texto": "2853cd4219be66b1"
+    },
+    "C12.L021": {
+      "archivo": "./audio/astra/C12.L021-e7b54.ogg",
+      "huella_texto": "8936f64f6dc50d24"
+    },
+    "C13.L001": {
+      "archivo": "./audio/astra/C13.L001-aff68.ogg",
+      "huella_texto": "8443fda418484f12"
+    },
+    "C13.L002": {
+      "archivo": "./audio/astra/C13.L002-94f01.ogg",
+      "huella_texto": "b4b9d3166e42c36e"
+    },
+    "C13.L004": {
+      "archivo": "./audio/astra/C13.L004-50d5c.ogg",
+      "huella_texto": "f47694a413501fa1"
+    },
+    "C13.L006": {
+      "archivo": "./audio/astra/C13.L006-931d6.ogg",
+      "huella_texto": "b8bb62ad04bdea29"
+    },
+    "C13.L007": {
+      "archivo": "./audio/astra/C13.L007-31722.ogg",
+      "huella_texto": "72e7bc4abcab57ff"
+    },
+    "C13.L008": {
+      "archivo": "./audio/astra/C13.L008-90535.ogg",
+      "huella_texto": "06ef0d5fe68fee7d"
+    },
+    "C13.L010": {
+      "archivo": "./audio/astra/C13.L010-25134.ogg",
+      "huella_texto": "a0a7b40251ceb9c2"
+    },
+    "C13.L012": {
+      "archivo": "./audio/astra/C13.L012-c5bed.ogg",
+      "huella_texto": "5e53ed1e000a7941"
+    },
+    "C13.L013": {
+      "archivo": "./audio/astra/C13.L013-10316.ogg",
+      "huella_texto": "54323eb5f5c8e60d"
+    },
+    "C13.L014": {
+      "archivo": "./audio/astra/C13.L014-95483.ogg",
+      "huella_texto": "b81fce68981d2a8d"
+    },
+    "C13.L016": {
+      "archivo": "./audio/astra/C13.L016-572bc.ogg",
+      "huella_texto": "bb12f352b6601e5a"
+    },
+    "C13.L018": {
+      "archivo": "./audio/astra/C13.L018-aaccd.ogg",
+      "huella_texto": "f4375b2a896fd91c"
+    },
+    "C13.L019": {
+      "archivo": "./audio/astra/C13.L019-aa6cf.ogg",
+      "huella_texto": "ca18c4cf7371d73c"
+    },
+    "C13.L020": {
+      "archivo": "./audio/astra/C13.L020-8eebe.ogg",
+      "huella_texto": "7e66b53619aaf05d"
+    },
+    "C14.L001": {
+      "archivo": "./audio/astra/C14.L001-f8851.ogg",
+      "huella_texto": "233b6b6c35278fb7"
+    },
+    "C14.L003": {
+      "archivo": "./audio/astra/C14.L003-79d4f.ogg",
+      "huella_texto": "2f6c955d2b25e58a"
+    },
+    "C14.L004": {
+      "archivo": "./audio/astra/C14.L004-da6dd.ogg",
+      "huella_texto": "fde8816f5361112d"
+    },
+    "C14.L005": {
+      "archivo": "./audio/astra/C14.L005-2510b.ogg",
+      "huella_texto": "8c05eca5994134d7"
+    },
+    "C14.L007": {
+      "archivo": "./audio/astra/C14.L007-f22f5.ogg",
+      "huella_texto": "23df168d38414bcf"
+    },
+    "C14.L008": {
+      "archivo": "./audio/astra/C14.L008-6502e.ogg",
+      "huella_texto": "4e62a9af5732aa56"
+    },
+    "C14.L009": {
+      "archivo": "./audio/astra/C14.L009-4c5a3.ogg",
+      "huella_texto": "7d7f6008698b843d"
+    },
+    "C14.L010": {
+      "archivo": "./audio/astra/C14.L010-8781c.ogg",
+      "huella_texto": "6a0354304ddc6934"
+    },
+    "C14.L012": {
+      "archivo": "./audio/astra/C14.L012-a2dfd.ogg",
+      "huella_texto": "e7eef51d57b56441"
+    },
+    "C14.L014": {
+      "archivo": "./audio/astra/C14.L014-36943.ogg",
+      "huella_texto": "6cf56ea181a440a1"
+    },
+    "C14.L015": {
+      "archivo": "./audio/astra/C14.L015-17d39.ogg",
+      "huella_texto": "e9fa4c4bfda35e90"
+    },
+    "C14.L016": {
+      "archivo": "./audio/astra/C14.L016-cf1ac.ogg",
+      "huella_texto": "2900b331009d3c52"
+    },
+    "C14.L018": {
+      "archivo": "./audio/astra/C14.L018-e01f2.ogg",
+      "huella_texto": "d45a8f116cd5c399"
+    },
+    "C14.L020": {
+      "archivo": "./audio/astra/C14.L020-7aaa9.ogg",
+      "huella_texto": "86d3f1a07c72651a"
+    },
+    "E01.escena.01": {
+      "archivo": "./audio/astra/E01.escena.01-ff956.ogg",
+      "huella_texto": "0091613aad504d25"
+    },
+    "E01.escena.02": {
+      "archivo": "./audio/astra/E01.escena.02-057a3.ogg",
+      "huella_texto": "e46b5150edf1641b"
+    },
+    "E01.escena.03": {
+      "archivo": "./audio/astra/E01.escena.03-57267.ogg",
+      "huella_texto": "2343650d25e16233"
+    },
+    "E01.escena.04": {
+      "archivo": "./audio/astra/E01.escena.04-3c696.ogg",
+      "huella_texto": "e62eb79ff6fae797"
+    },
+    "E01.escena.05": {
+      "archivo": "./audio/astra/E01.escena.05-f9baa.ogg",
+      "huella_texto": "b7aaec421c99a195"
+    },
+    "E01.escena.06": {
+      "archivo": "./audio/astra/E01.escena.06-29b50.ogg",
+      "huella_texto": "dd218f29516b5c43"
+    },
+    "E01.escena.07": {
+      "archivo": "./audio/astra/E01.escena.07-4b461.ogg",
+      "huella_texto": "8cc29ce8792cc1bf"
+    },
+    "E01.escena.08": {
+      "archivo": "./audio/astra/E01.escena.08-00ceb.ogg",
+      "huella_texto": "6e1dd07d92623225"
+    },
+    "E01.rama1.01": {
+      "archivo": "./audio/astra/E01.rama1.01-4f641.ogg",
+      "huella_texto": "323546f4d365572d"
+    },
+    "E01.rama2.01": {
+      "archivo": "./audio/astra/E01.rama2.01-99732.ogg",
+      "huella_texto": "f4ab8c9ff36b73cc"
+    },
+    "E02.escena.01": {
+      "archivo": "./audio/astra/E02.escena.01-c1a17.ogg",
+      "huella_texto": "8ef59d18328dcacf"
+    },
+    "E02.escena.02": {
+      "archivo": "./audio/astra/E02.escena.02-609e5.ogg",
+      "huella_texto": "0441d9f4f7eac500"
+    },
+    "E02.escena.03": {
+      "archivo": "./audio/astra/E02.escena.03-b52f7.ogg",
+      "huella_texto": "62ac5c2e2649e18c"
+    },
+    "E02.escena.04": {
+      "archivo": "./audio/astra/E02.escena.04-e6873.ogg",
+      "huella_texto": "4e89c0d7822122fe"
+    },
+    "E02.escena.05": {
+      "archivo": "./audio/astra/E02.escena.05-3f5cc.ogg",
+      "huella_texto": "69ff494b549d20e9"
+    },
+    "E02.escena.06": {
+      "archivo": "./audio/astra/E02.escena.06-c8dee.ogg",
+      "huella_texto": "39f271123dba1438"
+    },
+    "E02.escena.07": {
+      "archivo": "./audio/astra/E02.escena.07-2cfe2.ogg",
+      "huella_texto": "bcbc5eee4805fb6a"
+    },
+    "E02.escena.08": {
+      "archivo": "./audio/astra/E02.escena.08-f1168.ogg",
+      "huella_texto": "8cc9a965e3d5a609"
+    },
+    "E02.rama1.01": {
+      "archivo": "./audio/astra/E02.rama1.01-a2241.ogg",
+      "huella_texto": "222bbb8cfc2eb80f"
+    },
+    "E02.rama2.01": {
+      "archivo": "./audio/astra/E02.rama2.01-3ae79.ogg",
+      "huella_texto": "e70b51117b3ad4e5"
+    },
+    "E03.escena.01": {
+      "archivo": "./audio/astra/E03.escena.01-c3da1.ogg",
+      "huella_texto": "7c25c95122f730a6"
+    },
+    "E03.escena.02": {
+      "archivo": "./audio/astra/E03.escena.02-40f03.ogg",
+      "huella_texto": "003690208bad9815"
+    },
+    "E03.escena.03": {
+      "archivo": "./audio/astra/E03.escena.03-320ce.ogg",
+      "huella_texto": "f08d945a5a8b1178"
+    },
+    "E03.escena.04": {
+      "archivo": "./audio/astra/E03.escena.04-de6ea.ogg",
+      "huella_texto": "5914812a3276ff1b"
+    },
+    "E03.escena.05": {
+      "archivo": "./audio/astra/E03.escena.05-364ca.ogg",
+      "huella_texto": "dcf14ff64612dadf"
+    },
+    "E03.escena.06": {
+      "archivo": "./audio/astra/E03.escena.06-d3f6a.ogg",
+      "huella_texto": "f99af9e1a72e4de3"
+    },
+    "E03.escena.07": {
+      "archivo": "./audio/astra/E03.escena.07-53cde.ogg",
+      "huella_texto": "b40d6af75946d251"
+    },
+    "E03.escena.08": {
+      "archivo": "./audio/astra/E03.escena.08-51c41.ogg",
+      "huella_texto": "615b67dcdb26efab"
+    },
+    "E03.rama1.01": {
+      "archivo": "./audio/astra/E03.rama1.01-73e53.ogg",
+      "huella_texto": "e836689107ea4bfd"
+    },
+    "E03.rama2.01": {
+      "archivo": "./audio/astra/E03.rama2.01-3839a.ogg",
+      "huella_texto": "0f0dada79f5f18fd"
+    },
+    "E04.escena.01": {
+      "archivo": "./audio/astra/E04.escena.01-b9f35.ogg",
+      "huella_texto": "744db7ad55e8659a"
+    },
+    "E04.escena.02": {
+      "archivo": "./audio/astra/E04.escena.02-94a28.ogg",
+      "huella_texto": "da08caf30c103293"
+    },
+    "E04.escena.03": {
+      "archivo": "./audio/astra/E04.escena.03-55b6f.ogg",
+      "huella_texto": "d3e5b891bf6ce806"
+    },
+    "E04.escena.04": {
+      "archivo": "./audio/astra/E04.escena.04-e2701.ogg",
+      "huella_texto": "8a5136e7efd818b4"
+    },
+    "E04.escena.05": {
+      "archivo": "./audio/astra/E04.escena.05-5b089.ogg",
+      "huella_texto": "797b154823264781"
+    },
+    "E04.escena.06": {
+      "archivo": "./audio/astra/E04.escena.06-c99b9.ogg",
+      "huella_texto": "73ed7f9997edf172"
+    },
+    "E04.escena.07": {
+      "archivo": "./audio/astra/E04.escena.07-9d4ab.ogg",
+      "huella_texto": "5a3769059f761c5f"
+    },
+    "E04.escena.08": {
+      "archivo": "./audio/astra/E04.escena.08-4e2c2.ogg",
+      "huella_texto": "25219ee5626fbd79"
+    },
+    "E04.rama1.01": {
+      "archivo": "./audio/astra/E04.rama1.01-c6683.ogg",
+      "huella_texto": "70ef8fce21c4691d"
+    },
+    "E04.rama2.01": {
+      "archivo": "./audio/astra/E04.rama2.01-e1f7a.ogg",
+      "huella_texto": "a66274de0c1b0315"
+    },
+    "E05.escena.01": {
+      "archivo": "./audio/astra/E05.escena.01-f07b1.ogg",
+      "huella_texto": "6a6806106c9e8a68"
+    },
+    "E05.escena.02": {
+      "archivo": "./audio/astra/E05.escena.02-cc548.ogg",
+      "huella_texto": "4c08f8d9bd862644"
+    },
+    "E05.escena.03": {
+      "archivo": "./audio/astra/E05.escena.03-063df.ogg",
+      "huella_texto": "0f4c3a93e66c891b"
+    },
+    "E05.escena.04": {
+      "archivo": "./audio/astra/E05.escena.04-eb0b3.ogg",
+      "huella_texto": "89c1b36e65047f90"
+    },
+    "E05.escena.05": {
+      "archivo": "./audio/astra/E05.escena.05-0783b.ogg",
+      "huella_texto": "3914b77cf9879667"
+    },
+    "E05.escena.06": {
+      "archivo": "./audio/astra/E05.escena.06-98568.ogg",
+      "huella_texto": "88e03e1da4b6e673"
+    },
+    "E05.escena.07": {
+      "archivo": "./audio/astra/E05.escena.07-1834e.ogg",
+      "huella_texto": "8455c4e73c3d9f2b"
+    },
+    "E05.escena.08": {
+      "archivo": "./audio/astra/E05.escena.08-83b80.ogg",
+      "huella_texto": "0e430229ab1d1c22"
+    },
+    "E05.rama1.01": {
+      "archivo": "./audio/astra/E05.rama1.01-491d9.ogg",
+      "huella_texto": "ef32efcacb0f3c1d"
+    },
+    "E05.rama2.01": {
+      "archivo": "./audio/astra/E05.rama2.01-db585.ogg",
+      "huella_texto": "e107648a13ae7bf6"
+    },
+    "E06.escena.01": {
+      "archivo": "./audio/astra/E06.escena.01-f036d.ogg",
+      "huella_texto": "6333b99de63f7016"
+    },
+    "E06.escena.02": {
+      "archivo": "./audio/astra/E06.escena.02-3017a.ogg",
+      "huella_texto": "04d277449ad23bca"
+    },
+    "E06.escena.03": {
+      "archivo": "./audio/astra/E06.escena.03-b5408.ogg",
+      "huella_texto": "5bc3a6335005b48d"
+    },
+    "E06.escena.04": {
+      "archivo": "./audio/astra/E06.escena.04-86c62.ogg",
+      "huella_texto": "c2a9d6b01f65ad97"
+    },
+    "E06.escena.05": {
+      "archivo": "./audio/astra/E06.escena.05-9d465.ogg",
+      "huella_texto": "2e8ad51dd6c37c1a"
+    },
+    "E06.escena.06": {
+      "archivo": "./audio/astra/E06.escena.06-00a32.ogg",
+      "huella_texto": "d9784a1a1a3fb07f"
+    },
+    "E06.escena.07": {
+      "archivo": "./audio/astra/E06.escena.07-30680.ogg",
+      "huella_texto": "1e6a0a44aec91d06"
+    },
+    "E06.escena.08": {
+      "archivo": "./audio/astra/E06.escena.08-fc077.ogg",
+      "huella_texto": "0d11c2db0b8604ad"
+    },
+    "E06.rama1.01": {
+      "archivo": "./audio/astra/E06.rama1.01-0dd57.ogg",
+      "huella_texto": "63e5ac7cf7963340"
+    },
+    "E06.rama2.01": {
+      "archivo": "./audio/astra/E06.rama2.01-849d3.ogg",
+      "huella_texto": "70f46dd400928a67"
+    },
+    "E07.escena.01": {
+      "archivo": "./audio/astra/E07.escena.01-0b7e0.ogg",
+      "huella_texto": "3834be08abe26c20"
+    },
+    "E07.escena.02": {
+      "archivo": "./audio/astra/E07.escena.02-0d822.ogg",
+      "huella_texto": "b936d0b7545fba59"
+    },
+    "E07.escena.03": {
+      "archivo": "./audio/astra/E07.escena.03-56bfd.ogg",
+      "huella_texto": "60fe41fb074cab59"
+    },
+    "E07.escena.04": {
+      "archivo": "./audio/astra/E07.escena.04-f6dff.ogg",
+      "huella_texto": "823dbc0ee080018d"
+    },
+    "E07.escena.05": {
+      "archivo": "./audio/astra/E07.escena.05-5e0bc.ogg",
+      "huella_texto": "367832aaf4ed87de"
+    },
+    "E07.escena.06": {
+      "archivo": "./audio/astra/E07.escena.06-cfd81.ogg",
+      "huella_texto": "1ef9646f6e241e45"
+    },
+    "E07.escena.07": {
+      "archivo": "./audio/astra/E07.escena.07-abc60.ogg",
+      "huella_texto": "98f58128e46b6737"
+    },
+    "E07.escena.08": {
+      "archivo": "./audio/astra/E07.escena.08-8df4b.ogg",
+      "huella_texto": "7d84a9fcda6c7a03"
+    },
+    "E07.rama1.01": {
+      "archivo": "./audio/astra/E07.rama1.01-0a21e.ogg",
+      "huella_texto": "f169a10cc98599b5"
+    },
+    "E07.rama2.01": {
+      "archivo": "./audio/astra/E07.rama2.01-b0768.ogg",
+      "huella_texto": "e19c500fb09894df"
+    },
+    "E08.escena.01": {
+      "archivo": "./audio/astra/E08.escena.01-7bf92.ogg",
+      "huella_texto": "be05e89807801188"
+    },
+    "E08.escena.02": {
+      "archivo": "./audio/astra/E08.escena.02-57d2c.ogg",
+      "huella_texto": "7d0782073503791a"
+    },
+    "E08.escena.03": {
+      "archivo": "./audio/astra/E08.escena.03-4ed5a.ogg",
+      "huella_texto": "ed2232e13d842ac8"
+    },
+    "E08.escena.04": {
+      "archivo": "./audio/astra/E08.escena.04-2e8fb.ogg",
+      "huella_texto": "81e3ab241d6e70f7"
+    },
+    "E08.escena.05": {
+      "archivo": "./audio/astra/E08.escena.05-8d8ed.ogg",
+      "huella_texto": "6a519a3c525adad8"
+    },
+    "E08.escena.06": {
+      "archivo": "./audio/astra/E08.escena.06-09688.ogg",
+      "huella_texto": "10c1cb4dc781004a"
+    },
+    "E08.escena.07": {
+      "archivo": "./audio/astra/E08.escena.07-be0e2.ogg",
+      "huella_texto": "637d03c789492f61"
+    },
+    "E08.escena.08": {
+      "archivo": "./audio/astra/E08.escena.08-7589a.ogg",
+      "huella_texto": "6f42c7c594fe499e"
+    },
+    "E08.rama1.01": {
+      "archivo": "./audio/astra/E08.rama1.01-732b4.ogg",
+      "huella_texto": "0f188344f840d4a0"
+    },
+    "E08.rama2.01": {
+      "archivo": "./audio/astra/E08.rama2.01-3c163.ogg",
+      "huella_texto": "f99758e580a0020a"
+    },
+    "E09.escena.01": {
+      "archivo": "./audio/astra/E09.escena.01-8e9d9.ogg",
+      "huella_texto": "c3ddd491744e5a37"
+    },
+    "E09.escena.02": {
+      "archivo": "./audio/astra/E09.escena.02-1f685.ogg",
+      "huella_texto": "0ca9af75362e5d07"
+    },
+    "E09.escena.03": {
+      "archivo": "./audio/astra/E09.escena.03-46e5a.ogg",
+      "huella_texto": "8870fef5467dddcc"
+    },
+    "E09.escena.04": {
+      "archivo": "./audio/astra/E09.escena.04-f5ef2.ogg",
+      "huella_texto": "1bdfd2a66478233e"
+    },
+    "E09.escena.05": {
+      "archivo": "./audio/astra/E09.escena.05-4dfa9.ogg",
+      "huella_texto": "9fe74185c49a2d2c"
+    },
+    "E09.escena.06": {
+      "archivo": "./audio/astra/E09.escena.06-65bc6.ogg",
+      "huella_texto": "2a9b07768649fe1c"
+    },
+    "E09.escena.07": {
+      "archivo": "./audio/astra/E09.escena.07-140df.ogg",
+      "huella_texto": "194d1c26e24e10c8"
+    },
+    "E09.escena.08": {
+      "archivo": "./audio/astra/E09.escena.08-258ca.ogg",
+      "huella_texto": "b5052eed5f22a887"
+    },
+    "E09.rama1.01": {
+      "archivo": "./audio/astra/E09.rama1.01-77760.ogg",
+      "huella_texto": "6497a0244433fbcf"
+    },
+    "E09.rama2.01": {
+      "archivo": "./audio/astra/E09.rama2.01-72eae.ogg",
+      "huella_texto": "1f37ee073b970f95"
+    },
+    "E10.escena.01": {
+      "archivo": "./audio/astra/E10.escena.01-4a17e.ogg",
+      "huella_texto": "4ef769b0601b125f"
+    },
+    "E10.escena.02": {
+      "archivo": "./audio/astra/E10.escena.02-9cf42.ogg",
+      "huella_texto": "090c66b2f2c41975"
+    },
+    "E10.escena.03": {
+      "archivo": "./audio/astra/E10.escena.03-c6109.ogg",
+      "huella_texto": "a682fae6a50187ba"
+    },
+    "E10.escena.04": {
+      "archivo": "./audio/astra/E10.escena.04-4a5b1.ogg",
+      "huella_texto": "98118475e6f5a600"
+    },
+    "E10.escena.05": {
+      "archivo": "./audio/astra/E10.escena.05-1fcfa.ogg",
+      "huella_texto": "3f130f805116793d"
+    },
+    "E10.escena.06": {
+      "archivo": "./audio/astra/E10.escena.06-d8d45.ogg",
+      "huella_texto": "0ef72867bd0d7432"
+    },
+    "E10.escena.07": {
+      "archivo": "./audio/astra/E10.escena.07-82912.ogg",
+      "huella_texto": "eeefee883fa821b5"
+    },
+    "E10.escena.08": {
+      "archivo": "./audio/astra/E10.escena.08-0260c.ogg",
+      "huella_texto": "bcb9e65ab305a7d0"
+    },
+    "E10.rama1.01": {
+      "archivo": "./audio/astra/E10.rama1.01-711bf.ogg",
+      "huella_texto": "a469d741123cef63"
+    },
+    "E10.rama2.01": {
+      "archivo": "./audio/astra/E10.rama2.01-674a2.ogg",
+      "huella_texto": "b55f3c0ff0c01a69"
+    },
+    "E11.escena.01": {
+      "archivo": "./audio/astra/E11.escena.01-94ea0.ogg",
+      "huella_texto": "ca1ef603fdbf811e"
+    },
+    "E11.escena.02": {
+      "archivo": "./audio/astra/E11.escena.02-61b26.ogg",
+      "huella_texto": "e65c20a7ced01bcb"
+    },
+    "E11.escena.03": {
+      "archivo": "./audio/astra/E11.escena.03-f6ad2.ogg",
+      "huella_texto": "a545a340900f3358"
+    },
+    "E11.escena.04": {
+      "archivo": "./audio/astra/E11.escena.04-fa53e.ogg",
+      "huella_texto": "a07537536a2e92cd"
+    },
+    "E11.escena.05": {
+      "archivo": "./audio/astra/E11.escena.05-efac8.ogg",
+      "huella_texto": "5cf4cf8e26ed5ee9"
+    },
+    "E11.escena.06": {
+      "archivo": "./audio/astra/E11.escena.06-b372e.ogg",
+      "huella_texto": "3154d50409712adb"
+    },
+    "E11.escena.07": {
+      "archivo": "./audio/astra/E11.escena.07-5aca7.ogg",
+      "huella_texto": "e00cb56d354366fa"
+    },
+    "E11.escena.08": {
+      "archivo": "./audio/astra/E11.escena.08-b1081.ogg",
+      "huella_texto": "cc9219bf52a1577d"
+    },
+    "E11.rama1.01": {
+      "archivo": "./audio/astra/E11.rama1.01-880e2.ogg",
+      "huella_texto": "3c11d9c6191eb61e"
+    },
+    "E11.rama2.01": {
+      "archivo": "./audio/astra/E11.rama2.01-f0f4a.ogg",
+      "huella_texto": "b444dc5e07540528"
+    },
+    "E12.escena.01": {
+      "archivo": "./audio/astra/E12.escena.01-39ed5.ogg",
+      "huella_texto": "4aadab6d85e7c8fc"
+    },
+    "E12.escena.02": {
+      "archivo": "./audio/astra/E12.escena.02-6de8b.ogg",
+      "huella_texto": "b0316d85a271cb61"
+    },
+    "E12.escena.03": {
+      "archivo": "./audio/astra/E12.escena.03-87805.ogg",
+      "huella_texto": "cc0dd35e9e9bb829"
+    },
+    "E12.escena.04": {
+      "archivo": "./audio/astra/E12.escena.04-e798a.ogg",
+      "huella_texto": "0dc09491e4d45acb"
+    },
+    "E12.escena.05": {
+      "archivo": "./audio/astra/E12.escena.05-2688a.ogg",
+      "huella_texto": "d4a9ec3c4d4eec5f"
+    },
+    "E12.escena.06": {
+      "archivo": "./audio/astra/E12.escena.06-5fdaa.ogg",
+      "huella_texto": "eacd0417453e9ab7"
+    },
+    "E12.escena.07": {
+      "archivo": "./audio/astra/E12.escena.07-b828f.ogg",
+      "huella_texto": "009b405afd2ac1dc"
+    },
+    "E12.escena.08": {
+      "archivo": "./audio/astra/E12.escena.08-0577e.ogg",
+      "huella_texto": "bab443a938915f51"
+    },
+    "E12.rama1.01": {
+      "archivo": "./audio/astra/E12.rama1.01-f04c4.ogg",
+      "huella_texto": "f6bf6fb916c4774e"
+    },
+    "E12.rama2.01": {
+      "archivo": "./audio/astra/E12.rama2.01-9e59b.ogg",
+      "huella_texto": "1feb364b50f00a71"
+    },
+    "E13.escena.01": {
+      "archivo": "./audio/astra/E13.escena.01-95cd2.ogg",
+      "huella_texto": "aa0e1e0b3160d0b0"
+    },
+    "E13.escena.02": {
+      "archivo": "./audio/astra/E13.escena.02-b1e07.ogg",
+      "huella_texto": "6dd9a9596c08260b"
+    },
+    "E13.escena.03": {
+      "archivo": "./audio/astra/E13.escena.03-057b2.ogg",
+      "huella_texto": "6900f0ee292680eb"
+    },
+    "E13.escena.04": {
+      "archivo": "./audio/astra/E13.escena.04-41711.ogg",
+      "huella_texto": "96be3bf5f8e60831"
+    },
+    "E13.escena.05": {
+      "archivo": "./audio/astra/E13.escena.05-b8157.ogg",
+      "huella_texto": "b93207881528a59c"
+    },
+    "E13.escena.06": {
+      "archivo": "./audio/astra/E13.escena.06-e8708.ogg",
+      "huella_texto": "d7e7bdb0aa287631"
+    },
+    "E13.escena.07": {
+      "archivo": "./audio/astra/E13.escena.07-6a4a9.ogg",
+      "huella_texto": "df453c1eef2971fc"
+    },
+    "E13.escena.08": {
+      "archivo": "./audio/astra/E13.escena.08-f7afd.ogg",
+      "huella_texto": "8d97bd7b3d8126a4"
+    },
+    "E13.rama1.01": {
+      "archivo": "./audio/astra/E13.rama1.01-fc5b7.ogg",
+      "huella_texto": "e1260dbc638cf786"
+    },
+    "E13.rama2.01": {
+      "archivo": "./audio/astra/E13.rama2.01-0cbf3.ogg",
+      "huella_texto": "ddbd9a4a20867fa4"
+    },
+    "E14.escena.01": {
+      "archivo": "./audio/astra/E14.escena.01-91a5f.ogg",
+      "huella_texto": "e83bca2b7e92aa4f"
+    },
+    "E14.escena.02": {
+      "archivo": "./audio/astra/E14.escena.02-95262.ogg",
+      "huella_texto": "fa62b28b3490326b"
+    },
+    "E14.escena.03": {
+      "archivo": "./audio/astra/E14.escena.03-449b4.ogg",
+      "huella_texto": "d8741deac45b1443"
+    },
+    "E14.escena.04": {
+      "archivo": "./audio/astra/E14.escena.04-bc005.ogg",
+      "huella_texto": "63464901d1b8e7a4"
+    },
+    "E14.escena.05": {
+      "archivo": "./audio/astra/E14.escena.05-19401.ogg",
+      "huella_texto": "a9acf2a8a1a3e038"
+    },
+    "E14.escena.06": {
+      "archivo": "./audio/astra/E14.escena.06-f1c7c.ogg",
+      "huella_texto": "2d2ba916ef5f8395"
+    },
+    "E14.escena.07": {
+      "archivo": "./audio/astra/E14.escena.07-ae715.ogg",
+      "huella_texto": "1db50651231083d6"
+    },
+    "E14.escena.08": {
+      "archivo": "./audio/astra/E14.escena.08-73db6.ogg",
+      "huella_texto": "e6aa7ce286180469"
+    },
+    "E14.rama1.01": {
+      "archivo": "./audio/astra/E14.rama1.01-07c37.ogg",
+      "huella_texto": "451a320b07a4ba09"
+    },
+    "E14.rama2.01": {
+      "archivo": "./audio/astra/E14.rama2.01-9fdab.ogg",
+      "huella_texto": "c8355ab21398b6e4"
+    },
+    "E15.escena.01": {
+      "archivo": "./audio/astra/E15.escena.01-2d9dc.ogg",
+      "huella_texto": "35a638bf5c71bf88"
+    },
+    "E15.escena.02": {
+      "archivo": "./audio/astra/E15.escena.02-9fbd5.ogg",
+      "huella_texto": "a738cefd39226216"
+    },
+    "E15.escena.03": {
+      "archivo": "./audio/astra/E15.escena.03-2886b.ogg",
+      "huella_texto": "92e3259c40554ceb"
+    },
+    "E15.escena.04": {
+      "archivo": "./audio/astra/E15.escena.04-d7172.ogg",
+      "huella_texto": "b1263bfc1440449b"
+    },
+    "E15.escena.05": {
+      "archivo": "./audio/astra/E15.escena.05-80e23.ogg",
+      "huella_texto": "1ece52eab69f9496"
+    },
+    "E15.escena.06": {
+      "archivo": "./audio/astra/E15.escena.06-65920.ogg",
+      "huella_texto": "57b54ab2f8475c51"
+    },
+    "E15.escena.07": {
+      "archivo": "./audio/astra/E15.escena.07-98a43.ogg",
+      "huella_texto": "4c76e96b7d038487"
+    },
+    "E15.escena.08": {
+      "archivo": "./audio/astra/E15.escena.08-633b6.ogg",
+      "huella_texto": "b6d2645e72b036f9"
+    },
+    "E15.rama1.01": {
+      "archivo": "./audio/astra/E15.rama1.01-49d33.ogg",
+      "huella_texto": "671d8cc3bbad70af"
+    },
+    "E15.rama2.01": {
+      "archivo": "./audio/astra/E15.rama2.01-a6e2d.ogg",
+      "huella_texto": "4e9831aa16c06579"
+    },
+    "E16.escena.01": {
+      "archivo": "./audio/astra/E16.escena.01-9fff9.ogg",
+      "huella_texto": "65645feee46fd91b"
+    },
+    "E16.escena.02": {
+      "archivo": "./audio/astra/E16.escena.02-7d809.ogg",
+      "huella_texto": "3b4dc1618def60fc"
+    },
+    "E16.escena.03": {
+      "archivo": "./audio/astra/E16.escena.03-5c884.ogg",
+      "huella_texto": "f657eb1a3f8b4311"
+    },
+    "E16.escena.04": {
+      "archivo": "./audio/astra/E16.escena.04-90541.ogg",
+      "huella_texto": "ccfe1328b5d446c8"
+    },
+    "E16.escena.05": {
+      "archivo": "./audio/astra/E16.escena.05-13794.ogg",
+      "huella_texto": "beb27592c334f715"
+    },
+    "E16.escena.06": {
+      "archivo": "./audio/astra/E16.escena.06-1fa9b.ogg",
+      "huella_texto": "5c1a94a519b74362"
+    },
+    "E16.escena.07": {
+      "archivo": "./audio/astra/E16.escena.07-e2b16.ogg",
+      "huella_texto": "2a611bf2a0c16c79"
+    },
+    "E16.escena.08": {
+      "archivo": "./audio/astra/E16.escena.08-0ced3.ogg",
+      "huella_texto": "005c342182fc89cc"
+    },
+    "E16.rama1.01": {
+      "archivo": "./audio/astra/E16.rama1.01-7d101.ogg",
+      "huella_texto": "8879885c344fa2e6"
+    },
+    "E16.rama2.01": {
+      "archivo": "./audio/astra/E16.rama2.01-c503f.ogg",
+      "huella_texto": "6c616a63a4844678"
+    },
+    "E17.escena.01": {
+      "archivo": "./audio/astra/E17.escena.01-b0245.ogg",
+      "huella_texto": "41b3923dd2aa6218"
+    },
+    "E17.escena.02": {
+      "archivo": "./audio/astra/E17.escena.02-89eae.ogg",
+      "huella_texto": "2b1e6c58dcae2fdc"
+    },
+    "E17.escena.03": {
+      "archivo": "./audio/astra/E17.escena.03-e5b2e.ogg",
+      "huella_texto": "652fcc76b8156046"
+    },
+    "E17.escena.04": {
+      "archivo": "./audio/astra/E17.escena.04-c15c0.ogg",
+      "huella_texto": "0abe106d33a79b8c"
+    },
+    "E17.escena.05": {
+      "archivo": "./audio/astra/E17.escena.05-12934.ogg",
+      "huella_texto": "df11ad88bedf6b73"
+    },
+    "E17.escena.06": {
+      "archivo": "./audio/astra/E17.escena.06-2a488.ogg",
+      "huella_texto": "a9b8c453f16300a1"
+    },
+    "E17.escena.07": {
+      "archivo": "./audio/astra/E17.escena.07-aeaf1.ogg",
+      "huella_texto": "95bb6d6d04bdb1f7"
+    },
+    "E17.escena.08": {
+      "archivo": "./audio/astra/E17.escena.08-50b5e.ogg",
+      "huella_texto": "6a1020ea6efa8513"
+    },
+    "E17.rama1.01": {
+      "archivo": "./audio/astra/E17.rama1.01-fccad.ogg",
+      "huella_texto": "66f33a1dfba975e3"
+    },
+    "E17.rama2.01": {
+      "archivo": "./audio/astra/E17.rama2.01-d2990.ogg",
+      "huella_texto": "5a6e9cd5ad67c0fb"
+    },
+    "E18.escena.01": {
+      "archivo": "./audio/astra/E18.escena.01-60126.ogg",
+      "huella_texto": "c73f7364a15e0838"
+    },
+    "E18.escena.02": {
+      "archivo": "./audio/astra/E18.escena.02-0ccd2.ogg",
+      "huella_texto": "412994754b725838"
+    },
+    "E18.escena.03": {
+      "archivo": "./audio/astra/E18.escena.03-88ed4.ogg",
+      "huella_texto": "8cc3215a53c22783"
+    },
+    "E18.escena.04": {
+      "archivo": "./audio/astra/E18.escena.04-4f1c7.ogg",
+      "huella_texto": "78493427932f1c3c"
+    },
+    "E18.escena.05": {
+      "archivo": "./audio/astra/E18.escena.05-5996b.ogg",
+      "huella_texto": "439c77e0c7421fdf"
+    },
+    "E18.escena.06": {
+      "archivo": "./audio/astra/E18.escena.06-26ef4.ogg",
+      "huella_texto": "1bafe02bbeb6c729"
+    },
+    "E18.escena.07": {
+      "archivo": "./audio/astra/E18.escena.07-001d3.ogg",
+      "huella_texto": "b8358f2a65dd40ce"
+    },
+    "E18.escena.08": {
+      "archivo": "./audio/astra/E18.escena.08-16427.ogg",
+      "huella_texto": "c1254a8fea48905e"
+    },
+    "E18.rama1.01": {
+      "archivo": "./audio/astra/E18.rama1.01-86f0b.ogg",
+      "huella_texto": "40c0eb7d19436ef9"
+    },
+    "E18.rama2.01": {
+      "archivo": "./audio/astra/E18.rama2.01-a8fa4.ogg",
+      "huella_texto": "f9facc93cf4d9cec"
+    },
+    "E19.escena.01": {
+      "archivo": "./audio/astra/E19.escena.01-69ab5.ogg",
+      "huella_texto": "2a01c8059a926bcb"
+    },
+    "E19.escena.02": {
+      "archivo": "./audio/astra/E19.escena.02-70d57.ogg",
+      "huella_texto": "54215119bf09e509"
+    },
+    "E19.escena.03": {
+      "archivo": "./audio/astra/E19.escena.03-6e6d6.ogg",
+      "huella_texto": "835341b15de64fc5"
+    },
+    "E19.escena.04": {
+      "archivo": "./audio/astra/E19.escena.04-b89f3.ogg",
+      "huella_texto": "703f820b19c7d1d0"
+    },
+    "E19.escena.05": {
+      "archivo": "./audio/astra/E19.escena.05-a09dc.ogg",
+      "huella_texto": "bf28b92be6cffb0b"
+    },
+    "E19.escena.06": {
+      "archivo": "./audio/astra/E19.escena.06-ab90a.ogg",
+      "huella_texto": "bb732b19e6b3c29d"
+    },
+    "E19.escena.07": {
+      "archivo": "./audio/astra/E19.escena.07-6840e.ogg",
+      "huella_texto": "48dab898884b11c9"
+    },
+    "E19.escena.08": {
+      "archivo": "./audio/astra/E19.escena.08-90588.ogg",
+      "huella_texto": "7cf22f49db6e13ed"
+    },
+    "E19.rama1.01": {
+      "archivo": "./audio/astra/E19.rama1.01-a7755.ogg",
+      "huella_texto": "a2ec42c58beb50f7"
+    },
+    "E19.rama2.01": {
+      "archivo": "./audio/astra/E19.rama2.01-3ae71.ogg",
+      "huella_texto": "70b0b152951ccce5"
+    },
+    "F01.cierre.01": {
+      "archivo": "./audio/astra/F01.cierre.01-f681d.ogg",
+      "huella_texto": "4afc3a59cda56cb7"
+    },
+    "F01.giro.01": {
+      "archivo": "./audio/astra/F01.giro.01-7e1fb.ogg",
+      "huella_texto": "971eb09cbcd71362"
+    },
+    "F01.giro.02": {
+      "archivo": "./audio/astra/F01.giro.02-06713.ogg",
+      "huella_texto": "1a7bf4d360942988"
+    },
+    "F01.inicio.01": {
+      "archivo": "./audio/astra/F01.inicio.01-d4998.ogg",
+      "huella_texto": "61bcfe3f6d2f89fc"
+    },
+    "F01.inicio.02": {
+      "archivo": "./audio/astra/F01.inicio.02-65af7.ogg",
+      "huella_texto": "82e28077ccb7c1e9"
+    },
+    "F01.rama1.01": {
+      "archivo": "./audio/astra/F01.rama1.01-b32b9.ogg",
+      "huella_texto": "a042c74c1f410ca1"
+    },
+    "F01.rama1.02": {
+      "archivo": "./audio/astra/F01.rama1.02-01084.ogg",
+      "huella_texto": "b1bbdf7cf7187c30"
+    },
+    "F01.rama2.01": {
+      "archivo": "./audio/astra/F01.rama2.01-45ad7.ogg",
+      "huella_texto": "761554ce87223cbd"
+    },
+    "F02.cierre.01": {
+      "archivo": "./audio/astra/F02.cierre.01-0a9a8.ogg",
+      "huella_texto": "cfe8b8688cdf6e17"
+    },
+    "F02.giro.02": {
+      "archivo": "./audio/astra/F02.giro.02-70127.ogg",
+      "huella_texto": "33de92ace14eb154"
+    },
+    "F02.giro.03": {
+      "archivo": "./audio/astra/F02.giro.03-b46b1.ogg",
+      "huella_texto": "9cdbba539b7156b8"
+    },
+    "F02.inicio.01": {
+      "archivo": "./audio/astra/F02.inicio.01-48aaf.ogg",
+      "huella_texto": "0b8ac9c772317661"
+    },
+    "F02.inicio.02": {
+      "archivo": "./audio/astra/F02.inicio.02-aa06f.ogg",
+      "huella_texto": "257a8cdf31896ab7"
+    },
+    "F02.rama1.01": {
+      "archivo": "./audio/astra/F02.rama1.01-4930a.ogg",
+      "huella_texto": "a70ca38e49f5e8fc"
+    },
+    "F02.rama1.02": {
+      "archivo": "./audio/astra/F02.rama1.02-2b605.ogg",
+      "huella_texto": "a06928e584f1470f"
+    },
+    "F02.rama2.01": {
+      "archivo": "./audio/astra/F02.rama2.01-eea65.ogg",
+      "huella_texto": "eff9af979bd48993"
+    },
+    "F02.rama2.02": {
+      "archivo": "./audio/astra/F02.rama2.02-2bd88.ogg",
+      "huella_texto": "ab739d83793c447b"
+    },
+    "F03.cierre.01": {
+      "archivo": "./audio/astra/F03.cierre.01-ffc12.ogg",
+      "huella_texto": "8a0798611a164cf8"
+    },
+    "F03.giro.01": {
+      "archivo": "./audio/astra/F03.giro.01-d2573.ogg",
+      "huella_texto": "0e8d92b87c14a04e"
+    },
+    "F03.giro.02": {
+      "archivo": "./audio/astra/F03.giro.02-86c59.ogg",
+      "huella_texto": "8c71349339637463"
+    },
+    "F03.giro.03": {
+      "archivo": "./audio/astra/F03.giro.03-140ff.ogg",
+      "huella_texto": "e56f9a86f4c1e845"
+    },
+    "F03.inicio.01": {
+      "archivo": "./audio/astra/F03.inicio.01-94552.ogg",
+      "huella_texto": "68945480f362b2ee"
+    },
+    "F03.inicio.02": {
+      "archivo": "./audio/astra/F03.inicio.02-2c58f.ogg",
+      "huella_texto": "7c8f8ffc603f8d14"
+    },
+    "F03.rama1.01": {
+      "archivo": "./audio/astra/F03.rama1.01-b27a2.ogg",
+      "huella_texto": "c3cc3d6cbbdec9d5"
+    },
+    "F03.rama1.02": {
+      "archivo": "./audio/astra/F03.rama1.02-60eac.ogg",
+      "huella_texto": "ef440a4473688d1a"
+    },
+    "F03.rama2.01": {
+      "archivo": "./audio/astra/F03.rama2.01-4286b.ogg",
+      "huella_texto": "742fa54254a6324d"
+    },
+    "F03.rama2.02": {
+      "archivo": "./audio/astra/F03.rama2.02-cf4be.ogg",
+      "huella_texto": "97ee2a7f28451b21"
+    },
+    "F04.cierre.01": {
+      "archivo": "./audio/astra/F04.cierre.01-ab238.ogg",
+      "huella_texto": "0c05f4415dbbc6b8"
+    },
+    "F04.giro.01": {
+      "archivo": "./audio/astra/F04.giro.01-bb513.ogg",
+      "huella_texto": "b190bca84012bbcf"
+    },
+    "F04.giro.02": {
+      "archivo": "./audio/astra/F04.giro.02-24f7a.ogg",
+      "huella_texto": "aafcb3dbf1ca2817"
+    },
+    "F04.inicio.01": {
+      "archivo": "./audio/astra/F04.inicio.01-0e800.ogg",
+      "huella_texto": "d9ae0df9a4f1afb9"
+    },
+    "F04.inicio.02": {
+      "archivo": "./audio/astra/F04.inicio.02-3078d.ogg",
+      "huella_texto": "30c0bb1f279380ce"
+    },
+    "F04.rama1.01": {
+      "archivo": "./audio/astra/F04.rama1.01-b5323.ogg",
+      "huella_texto": "e6397f2b3c6cb62c"
+    },
+    "F04.rama1.02": {
+      "archivo": "./audio/astra/F04.rama1.02-5802b.ogg",
+      "huella_texto": "7cc1cd0dda0b754b"
+    },
+    "F04.rama2.01": {
+      "archivo": "./audio/astra/F04.rama2.01-7fd1d.ogg",
+      "huella_texto": "3beea524cef23155"
+    },
+    "F04.rama2.02": {
+      "archivo": "./audio/astra/F04.rama2.02-0c2f6.ogg",
+      "huella_texto": "728736599a69e792"
+    },
+    "F05.cierre.01": {
+      "archivo": "./audio/astra/F05.cierre.01-d2438.ogg",
+      "huella_texto": "5aa969e0488a2c19"
+    },
+    "F05.giro.01": {
+      "archivo": "./audio/astra/F05.giro.01-d8bd6.ogg",
+      "huella_texto": "dcf97c9c5dfef77e"
+    },
+    "F05.giro.02": {
+      "archivo": "./audio/astra/F05.giro.02-414a6.ogg",
+      "huella_texto": "89cefea1de781238"
+    },
+    "F05.inicio.01": {
+      "archivo": "./audio/astra/F05.inicio.01-9dde1.ogg",
+      "huella_texto": "63c1336e6e05723a"
+    },
+    "F05.inicio.02": {
+      "archivo": "./audio/astra/F05.inicio.02-14c77.ogg",
+      "huella_texto": "26e331fa71d2e17b"
+    },
+    "F05.rama1.01": {
+      "archivo": "./audio/astra/F05.rama1.01-d4ba2.ogg",
+      "huella_texto": "056a47515ac157e7"
+    },
+    "F05.rama1.02": {
+      "archivo": "./audio/astra/F05.rama1.02-f5e75.ogg",
+      "huella_texto": "631d2aa1201cb046"
+    },
+    "F05.rama2.01": {
+      "archivo": "./audio/astra/F05.rama2.01-40fae.ogg",
+      "huella_texto": "5513bb5eef69124b"
+    },
+    "F05.rama2.02": {
+      "archivo": "./audio/astra/F05.rama2.02-f7dcf.ogg",
+      "huella_texto": "73c732b65daca31b"
+    },
+    "F06.cierre.01": {
+      "archivo": "./audio/astra/F06.cierre.01-7f9d7.ogg",
+      "huella_texto": "152071317edf1c5f"
+    },
+    "F06.giro.01": {
+      "archivo": "./audio/astra/F06.giro.01-207d9.ogg",
+      "huella_texto": "c6cac9948ddd6fea"
+    },
+    "F06.giro.02": {
+      "archivo": "./audio/astra/F06.giro.02-0b4bd.ogg",
+      "huella_texto": "17b3e47d83d27028"
+    },
+    "F06.inicio.01": {
+      "archivo": "./audio/astra/F06.inicio.01-73f52.ogg",
+      "huella_texto": "97b5ccc9e69a5ee9"
+    },
+    "F06.inicio.02": {
+      "archivo": "./audio/astra/F06.inicio.02-c7485.ogg",
+      "huella_texto": "52cafab548985df2"
+    },
+    "F06.rama1.01": {
+      "archivo": "./audio/astra/F06.rama1.01-f9fb9.ogg",
+      "huella_texto": "e2c64ad7af7da717"
+    },
+    "F06.rama1.02": {
+      "archivo": "./audio/astra/F06.rama1.02-c90a3.ogg",
+      "huella_texto": "fbcdbba2d78be611"
+    },
+    "F06.rama2.01": {
+      "archivo": "./audio/astra/F06.rama2.01-15404.ogg",
+      "huella_texto": "130e05fc97b86548"
+    },
+    "F06.rama2.02": {
+      "archivo": "./audio/astra/F06.rama2.02-b6c3f.ogg",
+      "huella_texto": "8b4790b44e81ec6d"
+    },
+    "F07.cierre.01": {
+      "archivo": "./audio/astra/F07.cierre.01-db461.ogg",
+      "huella_texto": "74d7395ec4de6a02"
+    },
+    "F07.giro.01": {
+      "archivo": "./audio/astra/F07.giro.01-978ae.ogg",
+      "huella_texto": "04457d411303fc0b"
+    },
+    "F07.giro.02": {
+      "archivo": "./audio/astra/F07.giro.02-5890a.ogg",
+      "huella_texto": "eae3b385348c12c5"
+    },
+    "F07.inicio.01": {
+      "archivo": "./audio/astra/F07.inicio.01-2d090.ogg",
+      "huella_texto": "c7b1e7551dd3f4c8"
+    },
+    "F07.inicio.02": {
+      "archivo": "./audio/astra/F07.inicio.02-f1b57.ogg",
+      "huella_texto": "09a5c3bb6111e03e"
+    },
+    "F07.rama1.01": {
+      "archivo": "./audio/astra/F07.rama1.01-90fd2.ogg",
+      "huella_texto": "00b42e3e895a517f"
+    },
+    "F07.rama1.02": {
+      "archivo": "./audio/astra/F07.rama1.02-f5b5e.ogg",
+      "huella_texto": "8a8f8c439c05468a"
+    },
+    "F07.rama2.01": {
+      "archivo": "./audio/astra/F07.rama2.01-27f8f.ogg",
+      "huella_texto": "5913cd8b296edd7b"
+    },
+    "F07.rama2.02": {
+      "archivo": "./audio/astra/F07.rama2.02-92973.ogg",
+      "huella_texto": "04a71edd5125520b"
+    },
+    "F08.cierre.01": {
+      "archivo": "./audio/astra/F08.cierre.01-b88f6.ogg",
+      "huella_texto": "1878d5de2fd2c50b"
+    },
+    "F08.cierre.02": {
+      "archivo": "./audio/astra/F08.cierre.02-8b085.ogg",
+      "huella_texto": "16d53fec1d023444"
+    },
+    "F08.giro.01": {
+      "archivo": "./audio/astra/F08.giro.01-8b1a6.ogg",
+      "huella_texto": "12d77ffb64411ea5"
+    },
+    "F08.giro.03": {
+      "archivo": "./audio/astra/F08.giro.03-a462d.ogg",
+      "huella_texto": "7f685c5edc70ff43"
+    },
+    "F08.inicio.01": {
+      "archivo": "./audio/astra/F08.inicio.01-04233.ogg",
+      "huella_texto": "e1dc9747fc605c15"
+    },
+    "F08.inicio.02": {
+      "archivo": "./audio/astra/F08.inicio.02-1f7d2.ogg",
+      "huella_texto": "281cf425dc846efd"
+    },
+    "F08.rama1.01": {
+      "archivo": "./audio/astra/F08.rama1.01-707fb.ogg",
+      "huella_texto": "b83a2e55bf3823da"
+    },
+    "F08.rama1.02": {
+      "archivo": "./audio/astra/F08.rama1.02-ff983.ogg",
+      "huella_texto": "b3e6e7e884360841"
+    },
+    "F08.rama2.01": {
+      "archivo": "./audio/astra/F08.rama2.01-e6722.ogg",
+      "huella_texto": "184251270ef2cc21"
+    },
+    "F08.rama2.02": {
+      "archivo": "./audio/astra/F08.rama2.02-0477c.ogg",
+      "huella_texto": "37f04deb4f7c9f06"
+    },
+    "F09.cierre.01": {
+      "archivo": "./audio/astra/F09.cierre.01-dd06d.ogg",
+      "huella_texto": "b221bbdb0dcd722b"
+    },
+    "F09.cierre.02": {
+      "archivo": "./audio/astra/F09.cierre.02-f9e4a.ogg",
+      "huella_texto": "abd10d1862c531ef"
+    },
+    "F09.giro.01": {
+      "archivo": "./audio/astra/F09.giro.01-1f487.ogg",
+      "huella_texto": "0f4511b245801f35"
+    },
+    "F09.giro.03": {
+      "archivo": "./audio/astra/F09.giro.03-057a9.ogg",
+      "huella_texto": "569779fabdcf0776"
+    },
+    "F09.inicio.01": {
+      "archivo": "./audio/astra/F09.inicio.01-d80a1.ogg",
+      "huella_texto": "cb20da7d8f20ca07"
+    },
+    "F09.inicio.02": {
+      "archivo": "./audio/astra/F09.inicio.02-8bd83.ogg",
+      "huella_texto": "6c63a57994374598"
+    },
+    "F09.rama1.01": {
+      "archivo": "./audio/astra/F09.rama1.01-d768c.ogg",
+      "huella_texto": "00a0a5724c1075ff"
+    },
+    "F09.rama1.02": {
+      "archivo": "./audio/astra/F09.rama1.02-24f51.ogg",
+      "huella_texto": "02e4fcc8c936538b"
+    },
+    "F09.rama2.01": {
+      "archivo": "./audio/astra/F09.rama2.01-6a365.ogg",
+      "huella_texto": "7d5a7e3e4b3005fe"
+    },
+    "F09.rama2.02": {
+      "archivo": "./audio/astra/F09.rama2.02-f2b3c.ogg",
+      "huella_texto": "fe1c0207958a6396"
+    },
+    "F10.cierre.01": {
+      "archivo": "./audio/astra/F10.cierre.01-b2af2.ogg",
+      "huella_texto": "e203dfbc10597956"
+    },
+    "F10.cierre.02": {
+      "archivo": "./audio/astra/F10.cierre.02-dd958.ogg",
+      "huella_texto": "20abc8d92838fd89"
+    },
+    "F10.giro.01": {
+      "archivo": "./audio/astra/F10.giro.01-6ded7.ogg",
+      "huella_texto": "e98942449c0651a2"
+    },
+    "F10.giro.03": {
+      "archivo": "./audio/astra/F10.giro.03-4c240.ogg",
+      "huella_texto": "12dbcd7c07f43087"
+    },
+    "F10.inicio.01": {
+      "archivo": "./audio/astra/F10.inicio.01-c23a8.ogg",
+      "huella_texto": "b5161b9f77aca553"
+    },
+    "F10.inicio.02": {
+      "archivo": "./audio/astra/F10.inicio.02-7a223.ogg",
+      "huella_texto": "c457806643848608"
+    },
+    "F10.rama1.01": {
+      "archivo": "./audio/astra/F10.rama1.01-86862.ogg",
+      "huella_texto": "6ab305198872814a"
+    },
+    "F10.rama1.02": {
+      "archivo": "./audio/astra/F10.rama1.02-27147.ogg",
+      "huella_texto": "94c44c2c58298127"
+    },
+    "F10.rama2.01": {
+      "archivo": "./audio/astra/F10.rama2.01-09357.ogg",
+      "huella_texto": "1e22c7eb663110f5"
+    },
+    "F10.rama2.02": {
+      "archivo": "./audio/astra/F10.rama2.02-fb02b.ogg",
+      "huella_texto": "d7866801a004f71a"
+    },
+    "F11.cierre.01": {
+      "archivo": "./audio/astra/F11.cierre.01-82719.ogg",
+      "huella_texto": "ab714dce4d60bf53"
+    },
+    "F11.cierre.02": {
+      "archivo": "./audio/astra/F11.cierre.02-32d47.ogg",
+      "huella_texto": "e466c15ed664791c"
+    },
+    "F11.giro.01": {
+      "archivo": "./audio/astra/F11.giro.01-bdb7b.ogg",
+      "huella_texto": "3c489d0893e2146d"
+    },
+    "F11.inicio.01": {
+      "archivo": "./audio/astra/F11.inicio.01-6f61f.ogg",
+      "huella_texto": "90fb3653aad4919f"
+    },
+    "F11.inicio.02": {
+      "archivo": "./audio/astra/F11.inicio.02-863b2.ogg",
+      "huella_texto": "02be004ccb302b96"
+    },
+    "F11.rama1.01": {
+      "archivo": "./audio/astra/F11.rama1.01-4ce66.ogg",
+      "huella_texto": "6f554f650f66c07d"
+    },
+    "F11.rama1.02": {
+      "archivo": "./audio/astra/F11.rama1.02-e978c.ogg",
+      "huella_texto": "d2dfe0cb9e24d7b2"
+    },
+    "F11.rama2.01": {
+      "archivo": "./audio/astra/F11.rama2.01-efd24.ogg",
+      "huella_texto": "23e1077fc62e3ede"
+    },
+    "F11.rama2.02": {
+      "archivo": "./audio/astra/F11.rama2.02-5b27a.ogg",
+      "huella_texto": "3c5849c059e1b1f7"
+    },
+    "F12.cierre.01": {
+      "archivo": "./audio/astra/F12.cierre.01-cf982.ogg",
+      "huella_texto": "370a5ac730f005b1"
+    },
+    "F12.giro.01": {
+      "archivo": "./audio/astra/F12.giro.01-1dffd.ogg",
+      "huella_texto": "2bdca640d192b0fe"
+    },
+    "F12.giro.02": {
+      "archivo": "./audio/astra/F12.giro.02-81950.ogg",
+      "huella_texto": "86ea8223b5db6e1e"
+    },
+    "F12.inicio.01": {
+      "archivo": "./audio/astra/F12.inicio.01-1bdf7.ogg",
+      "huella_texto": "e1386fd419282331"
+    },
+    "F12.inicio.02": {
+      "archivo": "./audio/astra/F12.inicio.02-73f75.ogg",
+      "huella_texto": "c1f72879121d5d72"
+    },
+    "F12.rama1.01": {
+      "archivo": "./audio/astra/F12.rama1.01-9bdb9.ogg",
+      "huella_texto": "9010c462b8a8e396"
+    },
+    "F12.rama1.02": {
+      "archivo": "./audio/astra/F12.rama1.02-97483.ogg",
+      "huella_texto": "88cb3d074bc80582"
+    },
+    "F12.rama2.01": {
+      "archivo": "./audio/astra/F12.rama2.01-18b41.ogg",
+      "huella_texto": "9465d9ad549f1439"
+    },
+    "F12.rama2.02": {
+      "archivo": "./audio/astra/F12.rama2.02-3bbb1.ogg",
+      "huella_texto": "ecbbcc80bae0c8af"
+    },
+    "P01.cierre.01": {
+      "archivo": "./audio/astra/P01.cierre.01-3060b.ogg",
+      "huella_texto": "d072af8ac3bfc328"
+    },
+    "P01.giro.01": {
+      "archivo": "./audio/astra/P01.giro.01-3b7e6.ogg",
+      "huella_texto": "798c0050917d3146"
+    },
+    "P01.inicio.01": {
+      "archivo": "./audio/astra/P01.inicio.01-8d6c4.ogg",
+      "huella_texto": "fc5d6c543dc2c4ce"
+    },
+    "P01.inicio.02": {
+      "archivo": "./audio/astra/P01.inicio.02-07654.ogg",
+      "huella_texto": "1195dcae1a37905a"
+    },
+    "P02.cierre.02": {
+      "archivo": "./audio/astra/P02.cierre.02-baf5d.ogg",
+      "huella_texto": "828635c7b4688abe"
+    },
+    "P02.giro.01": {
+      "archivo": "./audio/astra/P02.giro.01-1d7ce.ogg",
+      "huella_texto": "8639d337776ffe71"
+    },
+    "P02.giro.03": {
+      "archivo": "./audio/astra/P02.giro.03-dee22.ogg",
+      "huella_texto": "76a12dc54d48e5d9"
+    },
+    "P02.inicio.01": {
+      "archivo": "./audio/astra/P02.inicio.01-f4b5b.ogg",
+      "huella_texto": "a367b0eaabc6a502"
+    },
+    "P02.inicio.02": {
+      "archivo": "./audio/astra/P02.inicio.02-4e8b3.ogg",
+      "huella_texto": "93146f36b43d1e50"
+    },
+    "P03.cierre.02": {
+      "archivo": "./audio/astra/P03.cierre.02-88736.ogg",
+      "huella_texto": "5cabf1c9926bddce"
+    },
+    "P03.giro.01": {
+      "archivo": "./audio/astra/P03.giro.01-0fed4.ogg",
+      "huella_texto": "b1885966c8519207"
+    },
+    "P03.giro.03": {
+      "archivo": "./audio/astra/P03.giro.03-8d152.ogg",
+      "huella_texto": "795f09c3824f170c"
+    },
+    "P03.inicio.01": {
+      "archivo": "./audio/astra/P03.inicio.01-9ea2e.ogg",
+      "huella_texto": "72e693129bf74049"
+    },
+    "P03.inicio.02": {
+      "archivo": "./audio/astra/P03.inicio.02-a6c7e.ogg",
+      "huella_texto": "86236e38298c4f3f"
+    },
+    "P04.cierre.01": {
+      "archivo": "./audio/astra/P04.cierre.01-e83cd.ogg",
+      "huella_texto": "d0e43c864bcf7707"
+    },
+    "P04.giro.01": {
+      "archivo": "./audio/astra/P04.giro.01-59e87.ogg",
+      "huella_texto": "c59cacf73e9cc347"
+    },
+    "P04.inicio.01": {
+      "archivo": "./audio/astra/P04.inicio.01-cffe9.ogg",
+      "huella_texto": "e33c64315e571d7b"
+    },
+    "P05.cierre.02": {
+      "archivo": "./audio/astra/P05.cierre.02-2aef5.ogg",
+      "huella_texto": "eba054270626a0ff"
+    },
+    "P05.giro.02": {
+      "archivo": "./audio/astra/P05.giro.02-dc779.ogg",
+      "huella_texto": "36e25adf3a2fc268"
+    },
+    "P05.giro.03": {
+      "archivo": "./audio/astra/P05.giro.03-9ed5e.ogg",
+      "huella_texto": "8d3e084a72ef4e73"
+    },
+    "P05.inicio.01": {
+      "archivo": "./audio/astra/P05.inicio.01-fdb0b.ogg",
+      "huella_texto": "c7eb7ade5a9f5655"
+    },
+    "P05.inicio.02": {
+      "archivo": "./audio/astra/P05.inicio.02-5d27c.ogg",
+      "huella_texto": "607f9be0547da51a"
+    },
+    "P05.rama1.01": {
+      "archivo": "./audio/astra/P05.rama1.01-10dc2.ogg",
+      "huella_texto": "f3a92eb94a78a529"
+    },
+    "P05.rama1.02": {
+      "archivo": "./audio/astra/P05.rama1.02-3f54b.ogg",
+      "huella_texto": "03f2d4abc4c6deba"
+    },
+    "P05.rama2.01": {
+      "archivo": "./audio/astra/P05.rama2.01-06bbd.ogg",
+      "huella_texto": "361ff9873d47443d"
+    },
+    "P05.rama2.02": {
+      "archivo": "./audio/astra/P05.rama2.02-6b38f.ogg",
+      "huella_texto": "2a9adebe08ab074e"
+    },
+    "P06.cierre.02": {
+      "archivo": "./audio/astra/P06.cierre.02-7d2f0.ogg",
+      "huella_texto": "1a8251acac2ec512"
+    },
+    "P06.giro.02": {
+      "archivo": "./audio/astra/P06.giro.02-e1293.ogg",
+      "huella_texto": "4a92e61533314143"
+    },
+    "P06.inicio.01": {
+      "archivo": "./audio/astra/P06.inicio.01-28d54.ogg",
+      "huella_texto": "08c810c2bd3dcaea"
+    },
+    "P06.inicio.02": {
+      "archivo": "./audio/astra/P06.inicio.02-9e26f.ogg",
+      "huella_texto": "b36ea3debf2ab663"
+    },
+    "P07.cierre.02": {
+      "archivo": "./audio/astra/P07.cierre.02-9fc21.ogg",
+      "huella_texto": "87722f0a1cccc705"
+    },
+    "P07.giro.01": {
+      "archivo": "./audio/astra/P07.giro.01-2caba.ogg",
+      "huella_texto": "8ba8de252aabb1cb"
+    },
+    "P07.inicio.01": {
+      "archivo": "./audio/astra/P07.inicio.01-4dcd7.ogg",
+      "huella_texto": "d03866d53898c901"
+    },
+    "P07.inicio.02": {
+      "archivo": "./audio/astra/P07.inicio.02-012e5.ogg",
+      "huella_texto": "3680cebc7bb71fe5"
+    },
+    "P08.cierre.02": {
+      "archivo": "./audio/astra/P08.cierre.02-27690.ogg",
+      "huella_texto": "23c683ea3c124a14"
+    },
+    "P08.giro.02": {
+      "archivo": "./audio/astra/P08.giro.02-8ca0a.ogg",
+      "huella_texto": "3bfed82a2393afd5"
+    },
+    "P08.inicio.01": {
+      "archivo": "./audio/astra/P08.inicio.01-e0c93.ogg",
+      "huella_texto": "0565051f920a1e11"
+    },
+    "P08.inicio.02": {
+      "archivo": "./audio/astra/P08.inicio.02-f4cf5.ogg",
+      "huella_texto": "fb6e58d558020922"
+    },
+    "P09.cierre.01": {
+      "archivo": "./audio/astra/P09.cierre.01-86069.ogg",
+      "huella_texto": "eb4f6e9e14ef210a"
+    },
+    "P09.giro.01": {
+      "archivo": "./audio/astra/P09.giro.01-3586f.ogg",
+      "huella_texto": "f2f502e057586b0c"
+    },
+    "P09.giro.03": {
+      "archivo": "./audio/astra/P09.giro.03-03f5b.ogg",
+      "huella_texto": "77cef1b67d7a26cc"
+    },
+    "P09.inicio.01": {
+      "archivo": "./audio/astra/P09.inicio.01-a1e6e.ogg",
+      "huella_texto": "86312b99d1607a3f"
+    },
+    "P10.giro.01": {
+      "archivo": "./audio/astra/P10.giro.01-f0f93.ogg",
+      "huella_texto": "04a9fc8ccb1a9dd6"
+    },
+    "P10.giro.02": {
+      "archivo": "./audio/astra/P10.giro.02-68d70.ogg",
+      "huella_texto": "9f7cb3b81d3b2c47"
+    },
+    "P10.inicio.01": {
+      "archivo": "./audio/astra/P10.inicio.01-11bba.ogg",
+      "huella_texto": "b8119016b55e4dc2"
+    },
+    "P10.inicio.02": {
+      "archivo": "./audio/astra/P10.inicio.02-dbe13.ogg",
+      "huella_texto": "94c8b3007282deb7"
+    },
+    "P10.rama1.01": {
+      "archivo": "./audio/astra/P10.rama1.01-7f60c.ogg",
+      "huella_texto": "3b3ba099c98aa2a6"
+    },
+    "P10.rama1.02": {
+      "archivo": "./audio/astra/P10.rama1.02-fd91f.ogg",
+      "huella_texto": "9c75c6d4d34ad000"
+    },
+    "P10.rama2.01": {
+      "archivo": "./audio/astra/P10.rama2.01-e44bb.ogg",
+      "huella_texto": "3f1d36e60aa67788"
+    },
+    "P10.rama2.02": {
+      "archivo": "./audio/astra/P10.rama2.02-c0fab.ogg",
+      "huella_texto": "27492a9d26ecad7a"
+    },
+    "P11.cierre.02": {
+      "archivo": "./audio/astra/P11.cierre.02-358bb.ogg",
+      "huella_texto": "a9c9ba607fc4ac1a"
+    },
+    "P11.giro.02": {
+      "archivo": "./audio/astra/P11.giro.02-16758.ogg",
+      "huella_texto": "aad560f901b0b861"
+    },
+    "P11.inicio.01": {
+      "archivo": "./audio/astra/P11.inicio.01-fc5b4.ogg",
+      "huella_texto": "064606e5b7a5702d"
+    },
+    "P11.inicio.02": {
+      "archivo": "./audio/astra/P11.inicio.02-9434a.ogg",
+      "huella_texto": "8456095a58348e1f"
+    },
+    "P12.cierre.01": {
+      "archivo": "./audio/astra/P12.cierre.01-d1e42.ogg",
+      "huella_texto": "9ecd005997ebaac9"
+    },
+    "P12.giro.01": {
+      "archivo": "./audio/astra/P12.giro.01-23547.ogg",
+      "huella_texto": "ad24d2135fc3c365"
+    },
+    "P12.inicio.01": {
+      "archivo": "./audio/astra/P12.inicio.01-cdba5.ogg",
+      "huella_texto": "b06caa576e504bc5"
+    },
+    "P12.inicio.02": {
+      "archivo": "./audio/astra/P12.inicio.02-61a22.ogg",
+      "huella_texto": "19de05910b4b2c7f"
+    },
+    "P13.cierre.02": {
+      "archivo": "./audio/astra/P13.cierre.02-cf579.ogg",
+      "huella_texto": "9f4016c82fb8b4cb"
+    },
+    "P13.giro.02": {
+      "archivo": "./audio/astra/P13.giro.02-d652e.ogg",
+      "huella_texto": "48fb2fac589fc813"
+    },
+    "P13.inicio.01": {
+      "archivo": "./audio/astra/P13.inicio.01-7528d.ogg",
+      "huella_texto": "dab16bab62d02294"
+    },
+    "P13.inicio.02": {
+      "archivo": "./audio/astra/P13.inicio.02-25424.ogg",
+      "huella_texto": "eb8c183d0f2db5f8"
+    },
+    "P14.cierre.01": {
+      "archivo": "./audio/astra/P14.cierre.01-caf6b.ogg",
+      "huella_texto": "0cab4284f2e58b62"
+    },
+    "P14.giro.01": {
+      "archivo": "./audio/astra/P14.giro.01-2a23e.ogg",
+      "huella_texto": "752f4e20d2902a8b"
+    },
+    "P14.inicio.01": {
+      "archivo": "./audio/astra/P14.inicio.01-56333.ogg",
+      "huella_texto": "2d995358d1998a27"
+    },
+    "P14.inicio.02": {
+      "archivo": "./audio/astra/P14.inicio.02-e6a78.ogg",
+      "huella_texto": "8145c1e2d57a8dc3"
+    },
+    "P15.cierre.01": {
+      "archivo": "./audio/astra/P15.cierre.01-81709.ogg",
+      "huella_texto": "6afa490f1452a08f"
+    },
+    "P15.cierre.02": {
+      "archivo": "./audio/astra/P15.cierre.02-b44d9.ogg",
+      "huella_texto": "a3558528d25323f0"
+    },
+    "P15.giro.01": {
+      "archivo": "./audio/astra/P15.giro.01-7ee77.ogg",
+      "huella_texto": "571b7e932da859a8"
+    },
+    "P15.inicio.01": {
+      "archivo": "./audio/astra/P15.inicio.01-1531e.ogg",
+      "huella_texto": "738398f2fcc3799a"
+    },
+    "P15.inicio.02": {
+      "archivo": "./audio/astra/P15.inicio.02-4a486.ogg",
+      "huella_texto": "aa2441d217cfe232"
+    },
+    "P16.cierre.02": {
+      "archivo": "./audio/astra/P16.cierre.02-d54a4.ogg",
+      "huella_texto": "d0017ea20458bddf"
+    },
+    "P16.giro.01": {
+      "archivo": "./audio/astra/P16.giro.01-5a659.ogg",
+      "huella_texto": "5f010d9cfebfd26f"
+    },
+    "P16.inicio.01": {
+      "archivo": "./audio/astra/P16.inicio.01-fe9ba.ogg",
+      "huella_texto": "ed256b98c4ca99b9"
+    },
+    "P16.inicio.02": {
+      "archivo": "./audio/astra/P16.inicio.02-3e8bb.ogg",
+      "huella_texto": "6607f80c7e863dc3"
+    },
+    "P17.cierre.02": {
+      "archivo": "./audio/astra/P17.cierre.02-285d4.ogg",
+      "huella_texto": "393843553ffa60da"
+    },
+    "P17.giro.02": {
+      "archivo": "./audio/astra/P17.giro.02-0e949.ogg",
+      "huella_texto": "ec22446bba74079d"
+    },
+    "P17.inicio.01": {
+      "archivo": "./audio/astra/P17.inicio.01-6a4b4.ogg",
+      "huella_texto": "08704642a2d6e010"
+    },
+    "P17.inicio.02": {
+      "archivo": "./audio/astra/P17.inicio.02-94ed3.ogg",
+      "huella_texto": "de1003c736bd32aa"
+    },
+    "P18.cierre.02": {
+      "archivo": "./audio/astra/P18.cierre.02-e9240.ogg",
+      "huella_texto": "e0b13f1c267766df"
+    },
+    "P18.giro.01": {
+      "archivo": "./audio/astra/P18.giro.01-7d894.ogg",
+      "huella_texto": "105e44b876c8d6cf"
+    },
+    "P18.inicio.01": {
+      "archivo": "./audio/astra/P18.inicio.01-d8f94.ogg",
+      "huella_texto": "c1405c092667deea"
+    },
+    "P18.inicio.02": {
+      "archivo": "./audio/astra/P18.inicio.02-2df4f.ogg",
+      "huella_texto": "c474e77bb833d317"
+    },
+    "P19.cierre.02": {
+      "archivo": "./audio/astra/P19.cierre.02-f4b50.ogg",
+      "huella_texto": "c0ec22f7b6ca9d80"
+    },
+    "P19.giro.02": {
+      "archivo": "./audio/astra/P19.giro.02-2d8ea.ogg",
+      "huella_texto": "22e06609412aba4a"
+    },
+    "P19.inicio.01": {
+      "archivo": "./audio/astra/P19.inicio.01-10087.ogg",
+      "huella_texto": "549ce0d451985969"
+    },
+    "P19.inicio.02": {
+      "archivo": "./audio/astra/P19.inicio.02-c8906.ogg",
+      "huella_texto": "43730b210e048f30"
+    },
+    "P19.rama1.01": {
+      "archivo": "./audio/astra/P19.rama1.01-10815.ogg",
+      "huella_texto": "848e4b56034f942a"
+    },
+    "P19.rama1.02": {
+      "archivo": "./audio/astra/P19.rama1.02-6a8a2.ogg",
+      "huella_texto": "d9549936c890fc22"
+    },
+    "P19.rama2.01": {
+      "archivo": "./audio/astra/P19.rama2.01-67041.ogg",
+      "huella_texto": "922f2a9731a0dd1d"
+    },
+    "P20.cierre.02": {
+      "archivo": "./audio/astra/P20.cierre.02-fdf60.ogg",
+      "huella_texto": "41c26c009d98fb06"
+    },
+    "P20.giro.01": {
+      "archivo": "./audio/astra/P20.giro.01-94187.ogg",
+      "huella_texto": "0c4986a4fdf6bc9c"
+    },
+    "P20.inicio.01": {
+      "archivo": "./audio/astra/P20.inicio.01-9d8c3.ogg",
+      "huella_texto": "fd0a10ccc23dbb13"
+    },
+    "P20.inicio.02": {
+      "archivo": "./audio/astra/P20.inicio.02-7f5d1.ogg",
+      "huella_texto": "bc5d325f4e0e31f3"
+    },
+    "P21.cierre.02": {
+      "archivo": "./audio/astra/P21.cierre.02-1f30d.ogg",
+      "huella_texto": "18c348fad81dcded"
+    },
+    "P21.giro.01": {
+      "archivo": "./audio/astra/P21.giro.01-c4a68.ogg",
+      "huella_texto": "481a4c014be958fc"
+    },
+    "P21.inicio.01": {
+      "archivo": "./audio/astra/P21.inicio.01-a2180.ogg",
+      "huella_texto": "ac71b94782becdae"
+    },
+    "P21.inicio.02": {
+      "archivo": "./audio/astra/P21.inicio.02-f2900.ogg",
+      "huella_texto": "817c891b2c78538a"
+    },
+    "P22.cierre.01": {
+      "archivo": "./audio/astra/P22.cierre.01-202e1.ogg",
+      "huella_texto": "fdd6d3a9a376b080"
+    },
+    "P22.giro.01": {
+      "archivo": "./audio/astra/P22.giro.01-c5f95.ogg",
+      "huella_texto": "0a46298ca27fdcb6"
+    },
+    "P22.giro.03": {
+      "archivo": "./audio/astra/P22.giro.03-4b078.ogg",
+      "huella_texto": "6f7787c656d2a3f3"
+    },
+    "P22.inicio.01": {
+      "archivo": "./audio/astra/P22.inicio.01-98431.ogg",
+      "huella_texto": "2ec1880050ba3d07"
+    },
+    "P22.inicio.02": {
+      "archivo": "./audio/astra/P22.inicio.02-41454.ogg",
+      "huella_texto": "851dc99a8ddd67fa"
+    },
+    "P23.cierre.01": {
+      "archivo": "./audio/astra/P23.cierre.01-6cfcc.ogg",
+      "huella_texto": "6abe234703029ca5"
+    },
+    "P23.giro.01": {
+      "archivo": "./audio/astra/P23.giro.01-efaff.ogg",
+      "huella_texto": "d042dd2bc500e138"
+    },
+    "P23.giro.02": {
+      "archivo": "./audio/astra/P23.giro.02-d3637.ogg",
+      "huella_texto": "bdd428129184c8b3"
+    },
+    "P23.giro.04": {
+      "archivo": "./audio/astra/P23.giro.04-c088b.ogg",
+      "huella_texto": "8b69efc07bc40745"
+    },
+    "P23.inicio.01": {
+      "archivo": "./audio/astra/P23.inicio.01-d970a.ogg",
+      "huella_texto": "5ca9f4df339b140c"
+    },
+    "P24.cierre.03": {
+      "archivo": "./audio/astra/P24.cierre.03-dafbc.ogg",
+      "huella_texto": "32ffc10b684b56de"
+    },
+    "P24.cierre.04": {
+      "archivo": "./audio/astra/P24.cierre.04-44517.ogg",
+      "huella_texto": "7b256ba4360def6e"
+    },
+    "P24.giro.01": {
+      "archivo": "./audio/astra/P24.giro.01-148c0.ogg",
+      "huella_texto": "34d301f9636188b4"
+    },
+    "P24.giro.02": {
+      "archivo": "./audio/astra/P24.giro.02-e28d4.ogg",
+      "huella_texto": "aacde592303a872c"
+    },
+    "P24.inicio.01": {
+      "archivo": "./audio/astra/P24.inicio.01-47098.ogg",
+      "huella_texto": "9792a77fc69dcc99"
+    },
+    "P24.rama1.01": {
+      "archivo": "./audio/astra/P24.rama1.01-36faa.ogg",
+      "huella_texto": "2d4bb3379b47c1f6"
+    },
+    "P24.rama1.02": {
+      "archivo": "./audio/astra/P24.rama1.02-90212.ogg",
+      "huella_texto": "f8658b96a02072e7"
+    },
+    "P24.rama2.03": {
+      "archivo": "./audio/astra/P24.rama2.03-4743b.ogg",
+      "huella_texto": "6d0a827b81ceeda3"
+    },
+    "S01.escena.01": {
+      "archivo": "./audio/astra/S01.escena.01-ee95f.ogg",
+      "huella_texto": "b6a947c0dc4c79e1"
+    },
+    "S01.escena.02": {
+      "archivo": "./audio/astra/S01.escena.02-c687e.ogg",
+      "huella_texto": "9289ebf38c8ae704"
+    },
+    "S01.escena.04": {
+      "archivo": "./audio/astra/S01.escena.04-d354d.ogg",
+      "huella_texto": "3bd1434a849f15a7"
+    },
+    "S01.escena.05": {
+      "archivo": "./audio/astra/S01.escena.05-92bfb.ogg",
+      "huella_texto": "2cf22591c96738f2"
+    },
+    "S01.escena.06": {
+      "archivo": "./audio/astra/S01.escena.06-4b821.ogg",
+      "huella_texto": "29a201988554644a"
+    },
+    "S01.escena.08": {
+      "archivo": "./audio/astra/S01.escena.08-c4b6d.ogg",
+      "huella_texto": "ada03cbf26bb3cb3"
+    },
+    "S01.rama1.01": {
+      "archivo": "./audio/astra/S01.rama1.01-e1106.ogg",
+      "huella_texto": "16f251f33da6e9bb"
+    },
+    "S01.rama2.01": {
+      "archivo": "./audio/astra/S01.rama2.01-adc14.ogg",
+      "huella_texto": "32cfaeb879dd9d39"
+    },
+    "S02.escena.01": {
+      "archivo": "./audio/astra/S02.escena.01-d7611.ogg",
+      "huella_texto": "142bedc7d5b1b0a2"
+    },
+    "S02.escena.02": {
+      "archivo": "./audio/astra/S02.escena.02-6530c.ogg",
+      "huella_texto": "9d18bab1c888cf47"
+    },
+    "S02.escena.04": {
+      "archivo": "./audio/astra/S02.escena.04-a5e94.ogg",
+      "huella_texto": "52f9222317af6167"
+    },
+    "S02.escena.05": {
+      "archivo": "./audio/astra/S02.escena.05-419aa.ogg",
+      "huella_texto": "69a8908cfebfac79"
+    },
+    "S02.escena.06": {
+      "archivo": "./audio/astra/S02.escena.06-eb9f8.ogg",
+      "huella_texto": "7c6368252090f2d9"
+    },
+    "S02.escena.08": {
+      "archivo": "./audio/astra/S02.escena.08-9fd20.ogg",
+      "huella_texto": "f961546f2a7abeb9"
+    },
+    "S02.rama1.01": {
+      "archivo": "./audio/astra/S02.rama1.01-bc1cc.ogg",
+      "huella_texto": "56b9490f2c6c4c99"
+    },
+    "S02.rama2.01": {
+      "archivo": "./audio/astra/S02.rama2.01-833a7.ogg",
+      "huella_texto": "1522ac667f383b4f"
+    },
+    "S03.escena.01": {
+      "archivo": "./audio/astra/S03.escena.01-b5b76.ogg",
+      "huella_texto": "68f7ab235e98e046"
+    },
+    "S03.escena.02": {
+      "archivo": "./audio/astra/S03.escena.02-7415e.ogg",
+      "huella_texto": "bfef4a88d7f68055"
+    },
+    "S03.escena.04": {
+      "archivo": "./audio/astra/S03.escena.04-b97db.ogg",
+      "huella_texto": "a47c30d780c32c7b"
+    },
+    "S03.escena.05": {
+      "archivo": "./audio/astra/S03.escena.05-7cbdb.ogg",
+      "huella_texto": "e44110cff604d577"
+    },
+    "S03.escena.07": {
+      "archivo": "./audio/astra/S03.escena.07-f044a.ogg",
+      "huella_texto": "0426a8eafa91b388"
+    },
+    "S03.escena.08": {
+      "archivo": "./audio/astra/S03.escena.08-8825e.ogg",
+      "huella_texto": "dbdb3c73f4331a5e"
+    },
+    "S03.rama1.01": {
+      "archivo": "./audio/astra/S03.rama1.01-16684.ogg",
+      "huella_texto": "163204c5a933e4b8"
+    },
+    "S03.rama2.01": {
+      "archivo": "./audio/astra/S03.rama2.01-85312.ogg",
+      "huella_texto": "ed9a010c95407526"
+    },
+    "S04.escena.01": {
+      "archivo": "./audio/astra/S04.escena.01-9941e.ogg",
+      "huella_texto": "8a9fb1c57a87e647"
+    },
+    "S04.escena.02": {
+      "archivo": "./audio/astra/S04.escena.02-e8810.ogg",
+      "huella_texto": "c5b4916ee62c940c"
+    },
+    "S04.escena.04": {
+      "archivo": "./audio/astra/S04.escena.04-c9285.ogg",
+      "huella_texto": "dfe08375a75b4053"
+    },
+    "S04.escena.06": {
+      "archivo": "./audio/astra/S04.escena.06-3f4a4.ogg",
+      "huella_texto": "d7cb0653c1a84daf"
+    },
+    "S04.escena.07": {
+      "archivo": "./audio/astra/S04.escena.07-e0b57.ogg",
+      "huella_texto": "82ce40f0cb3571fb"
+    },
+    "S04.escena.08": {
+      "archivo": "./audio/astra/S04.escena.08-81436.ogg",
+      "huella_texto": "6a922ba9d49aea84"
+    },
+    "S04.rama1.01": {
+      "archivo": "./audio/astra/S04.rama1.01-a6247.ogg",
+      "huella_texto": "050a45f0b7ce7bfb"
+    },
+    "S04.rama2.01": {
+      "archivo": "./audio/astra/S04.rama2.01-b829e.ogg",
+      "huella_texto": "0f5e69df27994faa"
+    },
+    "S05.escena.01": {
+      "archivo": "./audio/astra/S05.escena.01-31361.ogg",
+      "huella_texto": "a1852899f6335b47"
+    },
+    "S05.escena.02": {
+      "archivo": "./audio/astra/S05.escena.02-7ac1e.ogg",
+      "huella_texto": "cebb319da7d4ab05"
+    },
+    "S05.escena.03": {
+      "archivo": "./audio/astra/S05.escena.03-f8977.ogg",
+      "huella_texto": "e1616e866c1c2a04"
+    },
+    "S05.escena.05": {
+      "archivo": "./audio/astra/S05.escena.05-88fed.ogg",
+      "huella_texto": "4e5a45b8fddcf92b"
+    },
+    "S05.escena.07": {
+      "archivo": "./audio/astra/S05.escena.07-16908.ogg",
+      "huella_texto": "30dbb9b9cca7f06a"
+    },
+    "S05.escena.08": {
+      "archivo": "./audio/astra/S05.escena.08-01f0c.ogg",
+      "huella_texto": "d0dba02ee88e1a8a"
+    },
+    "S05.rama1.01": {
+      "archivo": "./audio/astra/S05.rama1.01-4647e.ogg",
+      "huella_texto": "bc686bc6bda2c056"
+    },
+    "S05.rama2.01": {
+      "archivo": "./audio/astra/S05.rama2.01-1c2ce.ogg",
+      "huella_texto": "d236051d510ebb1e"
+    },
+    "S06.escena.01": {
+      "archivo": "./audio/astra/S06.escena.01-bd1db.ogg",
+      "huella_texto": "cd84568045273892"
+    },
+    "S06.escena.02": {
+      "archivo": "./audio/astra/S06.escena.02-03a95.ogg",
+      "huella_texto": "e725210559b9ad7a"
+    },
+    "S06.escena.03": {
+      "archivo": "./audio/astra/S06.escena.03-3f30e.ogg",
+      "huella_texto": "8ffb284991c9bd7b"
+    },
+    "S06.escena.05": {
+      "archivo": "./audio/astra/S06.escena.05-12525.ogg",
+      "huella_texto": "a413eb062a97f5d6"
+    },
+    "S06.escena.07": {
+      "archivo": "./audio/astra/S06.escena.07-ac91d.ogg",
+      "huella_texto": "60cebd5847ea8315"
+    },
+    "S06.escena.08": {
+      "archivo": "./audio/astra/S06.escena.08-068b4.ogg",
+      "huella_texto": "747813d4f251e88a"
+    },
+    "S06.rama1.01": {
+      "archivo": "./audio/astra/S06.rama1.01-b8ba2.ogg",
+      "huella_texto": "38f09612ba9ce492"
+    },
+    "S06.rama2.01": {
+      "archivo": "./audio/astra/S06.rama2.01-fe3d3.ogg",
+      "huella_texto": "f77fc4a22b89401f"
+    },
+    "S07.escena.01": {
+      "archivo": "./audio/astra/S07.escena.01-5a847.ogg",
+      "huella_texto": "0051c8996f89b364"
+    },
+    "S07.escena.02": {
+      "archivo": "./audio/astra/S07.escena.02-3902c.ogg",
+      "huella_texto": "1f73d29d36786127"
+    },
+    "S07.escena.03": {
+      "archivo": "./audio/astra/S07.escena.03-ea3c6.ogg",
+      "huella_texto": "3e814d35f3644317"
+    },
+    "S07.escena.05": {
+      "archivo": "./audio/astra/S07.escena.05-60dbd.ogg",
+      "huella_texto": "2545328933ddea47"
+    },
+    "S07.escena.07": {
+      "archivo": "./audio/astra/S07.escena.07-006f9.ogg",
+      "huella_texto": "76a75b9e365ca1a3"
+    },
+    "S07.escena.08": {
+      "archivo": "./audio/astra/S07.escena.08-2c23e.ogg",
+      "huella_texto": "c71cba7db1451db6"
+    },
+    "S07.rama1.01": {
+      "archivo": "./audio/astra/S07.rama1.01-217c3.ogg",
+      "huella_texto": "2e677b5c1981214d"
+    },
+    "S07.rama2.01": {
+      "archivo": "./audio/astra/S07.rama2.01-c11c0.ogg",
+      "huella_texto": "fd2a5e65945eee2e"
+    },
+    "S08.escena.01": {
+      "archivo": "./audio/astra/S08.escena.01-7cf56.ogg",
+      "huella_texto": "07064a24a7ec27b8"
+    },
+    "S08.escena.02": {
+      "archivo": "./audio/astra/S08.escena.02-ffe4f.ogg",
+      "huella_texto": "1fd2488d3bd76514"
+    },
+    "S08.escena.04": {
+      "archivo": "./audio/astra/S08.escena.04-ebf51.ogg",
+      "huella_texto": "d479fad88042ef9c"
+    },
+    "S08.escena.06": {
+      "archivo": "./audio/astra/S08.escena.06-3d81d.ogg",
+      "huella_texto": "7008ea046e92ae27"
+    },
+    "S08.escena.07": {
+      "archivo": "./audio/astra/S08.escena.07-1a08f.ogg",
+      "huella_texto": "76334748fc2e4584"
+    },
+    "S08.escena.08": {
+      "archivo": "./audio/astra/S08.escena.08-34010.ogg",
+      "huella_texto": "a04cd2d2dedfa0fa"
+    },
+    "S08.rama1.01": {
+      "archivo": "./audio/astra/S08.rama1.01-853bc.ogg",
+      "huella_texto": "7a4c25254b8134bf"
+    },
+    "S08.rama2.01": {
+      "archivo": "./audio/astra/S08.rama2.01-21f63.ogg",
+      "huella_texto": "6e4b9912a6694f8f"
+    },
+    "S09.escena.01": {
+      "archivo": "./audio/astra/S09.escena.01-845bc.ogg",
+      "huella_texto": "09ae7742c30226c0"
+    },
+    "S09.escena.02": {
+      "archivo": "./audio/astra/S09.escena.02-fa078.ogg",
+      "huella_texto": "08705d9aa21cc786"
+    },
+    "S09.escena.03": {
+      "archivo": "./audio/astra/S09.escena.03-16c04.ogg",
+      "huella_texto": "4b8df45d28ac15e1"
+    },
+    "S09.escena.06": {
+      "archivo": "./audio/astra/S09.escena.06-bba11.ogg",
+      "huella_texto": "81b16901da970f9a"
+    },
+    "S09.escena.07": {
+      "archivo": "./audio/astra/S09.escena.07-ba5ca.ogg",
+      "huella_texto": "b137af0672873b98"
+    },
+    "S09.escena.08": {
+      "archivo": "./audio/astra/S09.escena.08-202fa.ogg",
+      "huella_texto": "08b8defdc69f7b44"
+    },
+    "S09.rama1.01": {
+      "archivo": "./audio/astra/S09.rama1.01-59ea7.ogg",
+      "huella_texto": "81cb366f50da2dda"
+    },
+    "S09.rama2.01": {
+      "archivo": "./audio/astra/S09.rama2.01-7aa72.ogg",
+      "huella_texto": "7837fd2d64ddc4c1"
+    },
+    "S10.escena.01": {
+      "archivo": "./audio/astra/S10.escena.01-ebd70.ogg",
+      "huella_texto": "118bef757b669830"
+    },
+    "S10.escena.02": {
+      "archivo": "./audio/astra/S10.escena.02-39d1b.ogg",
+      "huella_texto": "f121dfda429d087f"
+    },
+    "S10.escena.03": {
+      "archivo": "./audio/astra/S10.escena.03-93dfc.ogg",
+      "huella_texto": "b0575b667e5839cd"
+    },
+    "S10.escena.06": {
+      "archivo": "./audio/astra/S10.escena.06-004f7.ogg",
+      "huella_texto": "54fdd5581298d1e4"
+    },
+    "S10.escena.07": {
+      "archivo": "./audio/astra/S10.escena.07-4f551.ogg",
+      "huella_texto": "eb1b059e970db2ea"
+    },
+    "S10.escena.08": {
+      "archivo": "./audio/astra/S10.escena.08-67d79.ogg",
+      "huella_texto": "37d428220365f604"
+    },
+    "S10.rama1.01": {
+      "archivo": "./audio/astra/S10.rama1.01-c9099.ogg",
+      "huella_texto": "9195208a752d7094"
+    },
+    "S10.rama2.01": {
+      "archivo": "./audio/astra/S10.rama2.01-94756.ogg",
+      "huella_texto": "bbc375095751e9c4"
+    },
+    "S11.escena.01": {
+      "archivo": "./audio/astra/S11.escena.01-875b8.ogg",
+      "huella_texto": "7e281b85e5d3eb91"
+    },
+    "S11.escena.02": {
+      "archivo": "./audio/astra/S11.escena.02-ef9fc.ogg",
+      "huella_texto": "44530794fc531a17"
+    },
+    "S11.escena.03": {
+      "archivo": "./audio/astra/S11.escena.03-2d667.ogg",
+      "huella_texto": "677eec9e6d69e06f"
+    },
+    "S11.escena.06": {
+      "archivo": "./audio/astra/S11.escena.06-7b544.ogg",
+      "huella_texto": "7b8322857871ccde"
+    },
+    "S11.escena.07": {
+      "archivo": "./audio/astra/S11.escena.07-0b1c2.ogg",
+      "huella_texto": "5d2ce7d7901230b1"
+    },
+    "S11.escena.08": {
+      "archivo": "./audio/astra/S11.escena.08-aa711.ogg",
+      "huella_texto": "a0b182f120ae8f0c"
+    },
+    "S11.rama1.01": {
+      "archivo": "./audio/astra/S11.rama1.01-93962.ogg",
+      "huella_texto": "eb3d2645e2bdfb47"
+    },
+    "S11.rama2.01": {
+      "archivo": "./audio/astra/S11.rama2.01-9203a.ogg",
+      "huella_texto": "bb4d3275648c72d8"
+    },
+    "S12.escena.01": {
+      "archivo": "./audio/astra/S12.escena.01-84c7e.ogg",
+      "huella_texto": "e14a9517405603ee"
+    },
+    "S12.escena.02": {
+      "archivo": "./audio/astra/S12.escena.02-24b6d.ogg",
+      "huella_texto": "3f94e4c157354906"
+    },
+    "S12.escena.03": {
+      "archivo": "./audio/astra/S12.escena.03-ce009.ogg",
+      "huella_texto": "373d9b68ca69c837"
+    },
+    "S12.escena.06": {
+      "archivo": "./audio/astra/S12.escena.06-ddac5.ogg",
+      "huella_texto": "18d1c283d4b0325f"
+    },
+    "S12.escena.07": {
+      "archivo": "./audio/astra/S12.escena.07-30899.ogg",
+      "huella_texto": "2b51adc27f068bfc"
+    },
+    "S12.escena.08": {
+      "archivo": "./audio/astra/S12.escena.08-d3b75.ogg",
+      "huella_texto": "f4b9d235b3efe7ac"
+    },
+    "S12.rama1.01": {
+      "archivo": "./audio/astra/S12.rama1.01-bf4d1.ogg",
+      "huella_texto": "f63c169e8051d5cc"
+    },
+    "S12.rama2.01": {
+      "archivo": "./audio/astra/S12.rama2.01-332e0.ogg",
+      "huella_texto": "6867448851e74e40"
+    },
+    "T01.escena.01": {
+      "archivo": "./audio/astra/T01.escena.01-3e539.ogg",
+      "huella_texto": "2aadeff43636bee7"
+    },
+    "T01.escena.02": {
+      "archivo": "./audio/astra/T01.escena.02-abb66.ogg",
+      "huella_texto": "55f2bb016ab186a5"
+    },
+    "T01.escena.03": {
+      "archivo": "./audio/astra/T01.escena.03-11783.ogg",
+      "huella_texto": "5e0f74c03ab126db"
+    },
+    "T01.escena.04": {
+      "archivo": "./audio/astra/T01.escena.04-17f7e.ogg",
+      "huella_texto": "332084f938a7067a"
+    },
+    "T01.escena.06": {
+      "archivo": "./audio/astra/T01.escena.06-dd1a9.ogg",
+      "huella_texto": "690d0ef410a50574"
+    },
+    "T01.rama1.01": {
+      "archivo": "./audio/astra/T01.rama1.01-d0dce.ogg",
+      "huella_texto": "89fc754ac2719045"
+    },
+    "T01.rama1.02": {
+      "archivo": "./audio/astra/T01.rama1.02-e0290.ogg",
+      "huella_texto": "fc544987b4bd0893"
+    },
+    "T01.rama2.01": {
+      "archivo": "./audio/astra/T01.rama2.01-ca157.ogg",
+      "huella_texto": "8a2ca718fdaa4818"
+    },
+    "T01.rama2.02": {
+      "archivo": "./audio/astra/T01.rama2.02-d4a14.ogg",
+      "huella_texto": "de3427fd973d69ab"
+    },
+    "T02.escena.01": {
+      "archivo": "./audio/astra/T02.escena.01-100de.ogg",
+      "huella_texto": "d1f317532def651e"
+    },
+    "T02.escena.02": {
+      "archivo": "./audio/astra/T02.escena.02-ad94c.ogg",
+      "huella_texto": "0f724094cf3a6914"
+    },
+    "T02.escena.03": {
+      "archivo": "./audio/astra/T02.escena.03-eec01.ogg",
+      "huella_texto": "063f0597f9273cee"
+    },
+    "T02.escena.04": {
+      "archivo": "./audio/astra/T02.escena.04-7340c.ogg",
+      "huella_texto": "a288820f87cfe2a7"
+    },
+    "T02.escena.06": {
+      "archivo": "./audio/astra/T02.escena.06-82390.ogg",
+      "huella_texto": "458fbcb3fe604724"
+    },
+    "T02.rama1.01": {
+      "archivo": "./audio/astra/T02.rama1.01-fa378.ogg",
+      "huella_texto": "4968658670156fe5"
+    },
+    "T02.rama1.02": {
+      "archivo": "./audio/astra/T02.rama1.02-430e8.ogg",
+      "huella_texto": "57c77f559b68d473"
+    },
+    "T02.rama2.01": {
+      "archivo": "./audio/astra/T02.rama2.01-d544c.ogg",
+      "huella_texto": "46c5c573bc4c37f0"
+    },
+    "T02.rama2.02": {
+      "archivo": "./audio/astra/T02.rama2.02-f5488.ogg",
+      "huella_texto": "582c8909cad9a679"
+    },
+    "T03.escena.01": {
+      "archivo": "./audio/astra/T03.escena.01-1f7fa.ogg",
+      "huella_texto": "e4c516377f59e87b"
+    },
+    "T03.escena.02": {
+      "archivo": "./audio/astra/T03.escena.02-4f0d2.ogg",
+      "huella_texto": "a94656e58da6b2d0"
+    },
+    "T03.escena.03": {
+      "archivo": "./audio/astra/T03.escena.03-3bfb8.ogg",
+      "huella_texto": "4161244cf2185182"
+    },
+    "T03.escena.04": {
+      "archivo": "./audio/astra/T03.escena.04-b7448.ogg",
+      "huella_texto": "3bb46d115b03d9c3"
+    },
+    "T03.escena.06": {
+      "archivo": "./audio/astra/T03.escena.06-afc43.ogg",
+      "huella_texto": "f423019929f4e34a"
+    },
+    "T03.rama1.01": {
+      "archivo": "./audio/astra/T03.rama1.01-09003.ogg",
+      "huella_texto": "7feb297c3dd29252"
+    },
+    "T03.rama1.02": {
+      "archivo": "./audio/astra/T03.rama1.02-46ab3.ogg",
+      "huella_texto": "e1de356a8b73250a"
+    },
+    "T03.rama2.01": {
+      "archivo": "./audio/astra/T03.rama2.01-e28e7.ogg",
+      "huella_texto": "60aba34803683b93"
+    },
+    "T03.rama2.02": {
+      "archivo": "./audio/astra/T03.rama2.02-1d063.ogg",
+      "huella_texto": "fbbf6020513d13c2"
+    },
+    "T04.escena.01": {
+      "archivo": "./audio/astra/T04.escena.01-ee18e.ogg",
+      "huella_texto": "e9c15d1e7f336740"
+    },
+    "T04.escena.02": {
+      "archivo": "./audio/astra/T04.escena.02-52379.ogg",
+      "huella_texto": "e62923e47e1c0cc5"
+    },
+    "T04.escena.03": {
+      "archivo": "./audio/astra/T04.escena.03-7e3a2.ogg",
+      "huella_texto": "19efff31504eab27"
+    },
+    "T04.escena.05": {
+      "archivo": "./audio/astra/T04.escena.05-58ebd.ogg",
+      "huella_texto": "77d16f6324291811"
+    },
+    "T04.escena.06": {
+      "archivo": "./audio/astra/T04.escena.06-6b3eb.ogg",
+      "huella_texto": "791fceab04a12a83"
+    },
+    "T04.rama1.01": {
+      "archivo": "./audio/astra/T04.rama1.01-1b171.ogg",
+      "huella_texto": "25bbf2947fd6675b"
+    },
+    "T04.rama1.02": {
+      "archivo": "./audio/astra/T04.rama1.02-2bce3.ogg",
+      "huella_texto": "1f1f23f722b20a01"
+    },
+    "T04.rama2.01": {
+      "archivo": "./audio/astra/T04.rama2.01-81fcb.ogg",
+      "huella_texto": "9549ad1e2b5b036c"
+    },
+    "T04.rama2.02": {
+      "archivo": "./audio/astra/T04.rama2.02-ed7c7.ogg",
+      "huella_texto": "eaef48b035b5ee8e"
+    },
+    "T05.escena.01": {
+      "archivo": "./audio/astra/T05.escena.01-b2eed.ogg",
+      "huella_texto": "4ea2e16046a1b753"
+    },
+    "T05.escena.02": {
+      "archivo": "./audio/astra/T05.escena.02-6b581.ogg",
+      "huella_texto": "ab364736ed8144bd"
+    },
+    "T05.escena.03": {
+      "archivo": "./audio/astra/T05.escena.03-13ad2.ogg",
+      "huella_texto": "470289a1e965a964"
+    },
+    "T05.escena.05": {
+      "archivo": "./audio/astra/T05.escena.05-be893.ogg",
+      "huella_texto": "75217369ca2a1739"
+    },
+    "T05.escena.06": {
+      "archivo": "./audio/astra/T05.escena.06-0129f.ogg",
+      "huella_texto": "831fc25b436f4e46"
+    },
+    "T05.rama1.01": {
+      "archivo": "./audio/astra/T05.rama1.01-c8607.ogg",
+      "huella_texto": "9b50c96f457c71d3"
+    },
+    "T05.rama1.02": {
+      "archivo": "./audio/astra/T05.rama1.02-d6cd9.ogg",
+      "huella_texto": "53c0de4d83628019"
+    },
+    "T05.rama2.01": {
+      "archivo": "./audio/astra/T05.rama2.01-57687.ogg",
+      "huella_texto": "4be4e00f2e49e064"
+    },
+    "T05.rama2.02": {
+      "archivo": "./audio/astra/T05.rama2.02-5e289.ogg",
+      "huella_texto": "56c2cf8506da90b3"
+    },
+    "T06.escena.01": {
+      "archivo": "./audio/astra/T06.escena.01-25475.ogg",
+      "huella_texto": "b1e555c8c4c7ac17"
+    },
+    "T06.escena.02": {
+      "archivo": "./audio/astra/T06.escena.02-8c569.ogg",
+      "huella_texto": "51cd9b20b3be696f"
+    },
+    "T06.escena.03": {
+      "archivo": "./audio/astra/T06.escena.03-56b65.ogg",
+      "huella_texto": "9c64270dd291cdeb"
+    },
+    "T06.escena.05": {
+      "archivo": "./audio/astra/T06.escena.05-2ebd7.ogg",
+      "huella_texto": "a96d97c34db3a484"
+    },
+    "T06.escena.06": {
+      "archivo": "./audio/astra/T06.escena.06-87c51.ogg",
+      "huella_texto": "f36b9d2e246105f8"
+    },
+    "T06.rama1.01": {
+      "archivo": "./audio/astra/T06.rama1.01-f24e8.ogg",
+      "huella_texto": "e01c3e07be73fcd9"
+    },
+    "T06.rama1.02": {
+      "archivo": "./audio/astra/T06.rama1.02-8551e.ogg",
+      "huella_texto": "913970b98006997b"
+    },
+    "T06.rama2.01": {
+      "archivo": "./audio/astra/T06.rama2.01-6cf5b.ogg",
+      "huella_texto": "bcae70475ea680fe"
+    },
+    "T06.rama2.02": {
+      "archivo": "./audio/astra/T06.rama2.02-c5e0e.ogg",
+      "huella_texto": "331bd062266fae34"
+    },
+    "T07.escena.01": {
+      "archivo": "./audio/astra/T07.escena.01-e02a9.ogg",
+      "huella_texto": "beb57af92cb71513"
+    },
+    "T07.escena.02": {
+      "archivo": "./audio/astra/T07.escena.02-54574.ogg",
+      "huella_texto": "b956a5814600dc05"
+    },
+    "T07.escena.03": {
+      "archivo": "./audio/astra/T07.escena.03-13460.ogg",
+      "huella_texto": "35ef942e57197911"
+    },
+    "T07.escena.05": {
+      "archivo": "./audio/astra/T07.escena.05-b2a2c.ogg",
+      "huella_texto": "45408ddc96f7c8ca"
+    },
+    "T07.escena.06": {
+      "archivo": "./audio/astra/T07.escena.06-785a3.ogg",
+      "huella_texto": "457683cf92008184"
+    },
+    "T07.rama1.01": {
+      "archivo": "./audio/astra/T07.rama1.01-ea726.ogg",
+      "huella_texto": "d033891f0df90680"
+    },
+    "T07.rama1.02": {
+      "archivo": "./audio/astra/T07.rama1.02-d1b01.ogg",
+      "huella_texto": "54bfba0f9daffc49"
+    },
+    "T07.rama2.01": {
+      "archivo": "./audio/astra/T07.rama2.01-e4497.ogg",
+      "huella_texto": "bbd922b3e8706dcb"
+    },
+    "T07.rama2.02": {
+      "archivo": "./audio/astra/T07.rama2.02-7ceb4.ogg",
+      "huella_texto": "9416d20d3386dfcc"
+    },
+    "T08.escena.01": {
+      "archivo": "./audio/astra/T08.escena.01-9bcdc.ogg",
+      "huella_texto": "10222e911c9f58cb"
+    },
+    "T08.escena.02": {
+      "archivo": "./audio/astra/T08.escena.02-d6fde.ogg",
+      "huella_texto": "0fe241458e80afdb"
+    },
+    "T08.escena.03": {
+      "archivo": "./audio/astra/T08.escena.03-b8066.ogg",
+      "huella_texto": "54319d6d7ea21472"
+    },
+    "T08.escena.05": {
+      "archivo": "./audio/astra/T08.escena.05-9e1d1.ogg",
+      "huella_texto": "3e95ce4a9ebfdfba"
+    },
+    "T08.rama1.01": {
+      "archivo": "./audio/astra/T08.rama1.01-d5c68.ogg",
+      "huella_texto": "8d8bc161d30893db"
+    },
+    "T08.rama1.02": {
+      "archivo": "./audio/astra/T08.rama1.02-e1047.ogg",
+      "huella_texto": "4eef121c39f3ffdc"
+    },
+    "T08.rama2.01": {
+      "archivo": "./audio/astra/T08.rama2.01-66acb.ogg",
+      "huella_texto": "6d10602c13a229bd"
+    },
+    "T08.rama2.02": {
+      "archivo": "./audio/astra/T08.rama2.02-f0600.ogg",
+      "huella_texto": "27985059f487276e"
+    },
+    "VID_agricultor_1.vida.01": {
+      "archivo": "./audio/astra/VID_agricultor_1.vida.01-0f8c5.ogg",
+      "huella_texto": "36ff9bfbd757f832"
+    },
+    "VID_agricultor_1.vida.02": {
+      "archivo": "./audio/astra/VID_agricultor_1.vida.02-e01ef.ogg",
+      "huella_texto": "eef5a1a98e0c0469"
+    },
+    "VID_agricultor_1.vida.03": {
+      "archivo": "./audio/astra/VID_agricultor_1.vida.03-dce08.ogg",
+      "huella_texto": "4b17e15a3e2e4c4b"
+    },
+    "VID_agricultor_1.vida.04": {
+      "archivo": "./audio/astra/VID_agricultor_1.vida.04-bc99f.ogg",
+      "huella_texto": "f6d3e0e482b4752d"
+    },
+    "VID_agricultor_2.vida.01": {
+      "archivo": "./audio/astra/VID_agricultor_2.vida.01-bb3f3.ogg",
+      "huella_texto": "fa348db2a8eeb2e0"
+    },
+    "VID_agricultor_2.vida.02": {
+      "archivo": "./audio/astra/VID_agricultor_2.vida.02-da405.ogg",
+      "huella_texto": "034e5d05700809d2"
+    },
+    "VID_agricultor_2.vida.03": {
+      "archivo": "./audio/astra/VID_agricultor_2.vida.03-eaf7e.ogg",
+      "huella_texto": "1b17f2e01fe5828f"
+    },
+    "VID_agricultor_2.vida.04": {
+      "archivo": "./audio/astra/VID_agricultor_2.vida.04-35127.ogg",
+      "huella_texto": "f8bd90ebce425a92"
+    },
+    "VID_ambar_alina_1.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_alina_1.vida.01-30a15.ogg",
+      "huella_texto": "d62aaa77fd2a4e60"
+    },
+    "VID_ambar_alina_1.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_alina_1.vida.02-19921.ogg",
+      "huella_texto": "e1a30758d78bb04e"
+    },
+    "VID_ambar_alina_1.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_alina_1.vida.03-6ec98.ogg",
+      "huella_texto": "3e950215dbed169a"
+    },
+    "VID_ambar_alina_1.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_alina_1.vida.04-e05fd.ogg",
+      "huella_texto": "4b7c96ecbef4327b"
+    },
+    "VID_ambar_alina_2.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_alina_2.vida.01-96df3.ogg",
+      "huella_texto": "50838fccba405692"
+    },
+    "VID_ambar_alina_2.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_alina_2.vida.02-5ff10.ogg",
+      "huella_texto": "91d6f566192f39dc"
+    },
+    "VID_ambar_alina_2.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_alina_2.vida.03-ffbb9.ogg",
+      "huella_texto": "1322ee04fa22acfd"
+    },
+    "VID_ambar_alina_2.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_alina_2.vida.04-a8aae.ogg",
+      "huella_texto": "d0b41bc72c4445f4"
+    },
+    "VID_ambar_baltasar_1.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_baltasar_1.vida.01-2d17c.ogg",
+      "huella_texto": "4c48a0654075f68a"
+    },
+    "VID_ambar_baltasar_1.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_baltasar_1.vida.02-dce76.ogg",
+      "huella_texto": "69561a01b6e49850"
+    },
+    "VID_ambar_baltasar_1.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_baltasar_1.vida.03-a3edd.ogg",
+      "huella_texto": "5aa3e9f38b57702b"
+    },
+    "VID_ambar_baltasar_1.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_baltasar_1.vida.04-8c30c.ogg",
+      "huella_texto": "77d999c290128bd0"
+    },
+    "VID_ambar_baltasar_2.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_baltasar_2.vida.01-083d0.ogg",
+      "huella_texto": "0026a8bc3ef9d436"
+    },
+    "VID_ambar_baltasar_2.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_baltasar_2.vida.02-ff45a.ogg",
+      "huella_texto": "d9f11b673012f9ac"
+    },
+    "VID_ambar_baltasar_2.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_baltasar_2.vida.03-921dc.ogg",
+      "huella_texto": "aa9f1116043dba3f"
+    },
+    "VID_ambar_baltasar_2.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_baltasar_2.vida.04-ae6e6.ogg",
+      "huella_texto": "bfbfcabef4f54d4d"
+    },
+    "VID_ambar_kenzo_1.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_kenzo_1.vida.01-ddcd1.ogg",
+      "huella_texto": "8823fc8341e82795"
+    },
+    "VID_ambar_kenzo_1.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_kenzo_1.vida.02-fe8f5.ogg",
+      "huella_texto": "fe95fe1fa479d625"
+    },
+    "VID_ambar_kenzo_1.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_kenzo_1.vida.03-df5bc.ogg",
+      "huella_texto": "96bbcf3b217bff16"
+    },
+    "VID_ambar_kenzo_1.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_kenzo_1.vida.04-9cb40.ogg",
+      "huella_texto": "8585a1bd9e478c5a"
+    },
+    "VID_ambar_kenzo_2.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_kenzo_2.vida.01-0d4d0.ogg",
+      "huella_texto": "f77a6c24f2c85acc"
+    },
+    "VID_ambar_kenzo_2.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_kenzo_2.vida.02-2e15e.ogg",
+      "huella_texto": "69b9292546c278f2"
+    },
+    "VID_ambar_kenzo_2.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_kenzo_2.vida.03-7fa30.ogg",
+      "huella_texto": "9080bd65c499d6ec"
+    },
+    "VID_ambar_kenzo_2.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_kenzo_2.vida.04-53c5f.ogg",
+      "huella_texto": "d174ac2bf3e09012"
+    },
+    "VID_ambar_nestor_1.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_nestor_1.vida.01-f1dc9.ogg",
+      "huella_texto": "8bf2e13963742948"
+    },
+    "VID_ambar_nestor_1.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_nestor_1.vida.02-b9f90.ogg",
+      "huella_texto": "de600a80bb3ccf9d"
+    },
+    "VID_ambar_nestor_1.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_nestor_1.vida.03-519df.ogg",
+      "huella_texto": "f769c7f96c105e7f"
+    },
+    "VID_ambar_nestor_1.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_nestor_1.vida.04-3a3a8.ogg",
+      "huella_texto": "0dba33888e406380"
+    },
+    "VID_ambar_nestor_2.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_nestor_2.vida.01-b82dd.ogg",
+      "huella_texto": "7d43bcaf27b9ebaa"
+    },
+    "VID_ambar_nestor_2.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_nestor_2.vida.02-4b510.ogg",
+      "huella_texto": "8e0bf20b5fa8188d"
+    },
+    "VID_ambar_nestor_2.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_nestor_2.vida.03-498c8.ogg",
+      "huella_texto": "57238ae06890094a"
+    },
+    "VID_ambar_nestor_2.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_nestor_2.vida.04-ce6e0.ogg",
+      "huella_texto": "d63928d3bea637b1"
+    },
+    "VID_ambar_samira_1.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_samira_1.vida.01-bc966.ogg",
+      "huella_texto": "491e488a43444c9b"
+    },
+    "VID_ambar_samira_1.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_samira_1.vida.02-754a2.ogg",
+      "huella_texto": "bf2556aeb12452ee"
+    },
+    "VID_ambar_samira_1.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_samira_1.vida.03-ce725.ogg",
+      "huella_texto": "c0b1769ddf90c9a8"
+    },
+    "VID_ambar_samira_1.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_samira_1.vida.04-50485.ogg",
+      "huella_texto": "2e8d4277a7c00738"
+    },
+    "VID_ambar_samira_2.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_samira_2.vida.01-bdda2.ogg",
+      "huella_texto": "1c2ac09d6d3a42f0"
+    },
+    "VID_ambar_samira_2.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_samira_2.vida.02-df5ea.ogg",
+      "huella_texto": "7db036e2918af7dc"
+    },
+    "VID_ambar_samira_2.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_samira_2.vida.03-a3585.ogg",
+      "huella_texto": "61cdff5f097abc5f"
+    },
+    "VID_ambar_samira_2.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_samira_2.vida.04-b806b.ogg",
+      "huella_texto": "c0e620bf252c5ae4"
+    },
+    "VID_ambar_zora_1.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_zora_1.vida.01-3ef31.ogg",
+      "huella_texto": "667dcf61eef31427"
+    },
+    "VID_ambar_zora_1.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_zora_1.vida.02-eebba.ogg",
+      "huella_texto": "5ff8762765028ca2"
+    },
+    "VID_ambar_zora_1.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_zora_1.vida.03-c048b.ogg",
+      "huella_texto": "7026865dd93bec9e"
+    },
+    "VID_ambar_zora_1.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_zora_1.vida.04-abb5a.ogg",
+      "huella_texto": "3406b7b1690d16b3"
+    },
+    "VID_ambar_zora_2.vida.01": {
+      "archivo": "./audio/astra/VID_ambar_zora_2.vida.01-d931f.ogg",
+      "huella_texto": "d974b47770adfdc2"
+    },
+    "VID_ambar_zora_2.vida.02": {
+      "archivo": "./audio/astra/VID_ambar_zora_2.vida.02-e2e2f.ogg",
+      "huella_texto": "fa4abf33bf3d63dc"
+    },
+    "VID_ambar_zora_2.vida.03": {
+      "archivo": "./audio/astra/VID_ambar_zora_2.vida.03-c3984.ogg",
+      "huella_texto": "8edbd72799df677c"
+    },
+    "VID_ambar_zora_2.vida.04": {
+      "archivo": "./audio/astra/VID_ambar_zora_2.vida.04-09322.ogg",
+      "huella_texto": "041956e420d8d81c"
+    },
+    "VID_archivero_1.vida.01": {
+      "archivo": "./audio/astra/VID_archivero_1.vida.01-b18f1.ogg",
+      "huella_texto": "e73df78ba7ca33d8"
+    },
+    "VID_archivero_1.vida.02": {
+      "archivo": "./audio/astra/VID_archivero_1.vida.02-ed998.ogg",
+      "huella_texto": "ca0dc67bd0225283"
+    },
+    "VID_archivero_1.vida.03": {
+      "archivo": "./audio/astra/VID_archivero_1.vida.03-93f6f.ogg",
+      "huella_texto": "bebcea693001f991"
+    },
+    "VID_archivero_1.vida.04": {
+      "archivo": "./audio/astra/VID_archivero_1.vida.04-e3fd0.ogg",
+      "huella_texto": "7edb00f2c5acb781"
+    },
+    "VID_archivero_2.vida.01": {
+      "archivo": "./audio/astra/VID_archivero_2.vida.01-2a7f9.ogg",
+      "huella_texto": "4740b9a0ac604d86"
+    },
+    "VID_archivero_2.vida.02": {
+      "archivo": "./audio/astra/VID_archivero_2.vida.02-8e91d.ogg",
+      "huella_texto": "642e8b83ceb37fb3"
+    },
+    "VID_archivero_2.vida.03": {
+      "archivo": "./audio/astra/VID_archivero_2.vida.03-9bd91.ogg",
+      "huella_texto": "aae3adfdc41d9fd9"
+    },
+    "VID_archivero_2.vida.04": {
+      "archivo": "./audio/astra/VID_archivero_2.vida.04-83ac0.ogg",
+      "huella_texto": "840be077c8f5d1e0"
+    },
+    "VID_artesana_1.vida.01": {
+      "archivo": "./audio/astra/VID_artesana_1.vida.01-170a0.ogg",
+      "huella_texto": "045642adab7ea2b3"
+    },
+    "VID_artesana_1.vida.02": {
+      "archivo": "./audio/astra/VID_artesana_1.vida.02-68930.ogg",
+      "huella_texto": "f4d746f561355fc1"
+    },
+    "VID_artesana_1.vida.03": {
+      "archivo": "./audio/astra/VID_artesana_1.vida.03-0a8d6.ogg",
+      "huella_texto": "64d0b2fdae9c50a2"
+    },
+    "VID_artesana_1.vida.04": {
+      "archivo": "./audio/astra/VID_artesana_1.vida.04-48f4d.ogg",
+      "huella_texto": "4e750a4d96c57522"
+    },
+    "VID_artesana_2.vida.01": {
+      "archivo": "./audio/astra/VID_artesana_2.vida.01-05255.ogg",
+      "huella_texto": "7eff0e725362b6e6"
+    },
+    "VID_artesana_2.vida.02": {
+      "archivo": "./audio/astra/VID_artesana_2.vida.02-20533.ogg",
+      "huella_texto": "5947d471878121be"
+    },
+    "VID_artesana_2.vida.03": {
+      "archivo": "./audio/astra/VID_artesana_2.vida.03-5c5fd.ogg",
+      "huella_texto": "74084065e883f4f4"
+    },
+    "VID_artesana_2.vida.04": {
+      "archivo": "./audio/astra/VID_artesana_2.vida.04-c9075.ogg",
+      "huella_texto": "1513b9814aafc684"
+    },
+    "VID_astronoma_1.vida.01": {
+      "archivo": "./audio/astra/VID_astronoma_1.vida.01-005e0.ogg",
+      "huella_texto": "5af71c67dee765e4"
+    },
+    "VID_astronoma_1.vida.02": {
+      "archivo": "./audio/astra/VID_astronoma_1.vida.02-a98b8.ogg",
+      "huella_texto": "2bfff99cf9704281"
+    },
+    "VID_astronoma_1.vida.03": {
+      "archivo": "./audio/astra/VID_astronoma_1.vida.03-28f2d.ogg",
+      "huella_texto": "2ee262ef5183f235"
+    },
+    "VID_astronoma_1.vida.04": {
+      "archivo": "./audio/astra/VID_astronoma_1.vida.04-da989.ogg",
+      "huella_texto": "b41f91a89e706a76"
+    },
+    "VID_astronoma_2.vida.01": {
+      "archivo": "./audio/astra/VID_astronoma_2.vida.01-6d7bd.ogg",
+      "huella_texto": "32c2da27de53d36e"
+    },
+    "VID_astronoma_2.vida.02": {
+      "archivo": "./audio/astra/VID_astronoma_2.vida.02-db737.ogg",
+      "huella_texto": "b49351d3e078f945"
+    },
+    "VID_astronoma_2.vida.03": {
+      "archivo": "./audio/astra/VID_astronoma_2.vida.03-d5772.ogg",
+      "huella_texto": "e2b5a8549145b235"
+    },
+    "VID_astronoma_2.vida.04": {
+      "archivo": "./audio/astra/VID_astronoma_2.vida.04-92886.ogg",
+      "huella_texto": "fdb01628f8358b27"
+    },
+    "VID_aurelia_aitana_1.vida.01": {
+      "archivo": "./audio/astra/VID_aurelia_aitana_1.vida.01-8fd2d.ogg",
+      "huella_texto": "3b8bad6eba491b9b"
+    },
+    "VID_aurelia_aitana_1.vida.02": {
+      "archivo": "./audio/astra/VID_aurelia_aitana_1.vida.02-6e479.ogg",
+      "huella_texto": "dc4e776bcf4f8010"
+    },
+    "VID_aurelia_aitana_1.vida.03": {
+      "archivo": "./audio/astra/VID_aurelia_aitana_1.vida.03-c1fad.ogg",
+      "huella_texto": "d7d91093e30756fc"
+    },
+    "VID_aurelia_aitana_1.vida.04": {
+      "archivo": "./audio/astra/VID_aurelia_aitana_1.vida.04-3f029.ogg",
+      "huella_texto": "f8c458d79c3c3f9d"
+    },
+    "VID_aurelia_aitana_2.vida.01": {
+      "archivo": "./audio/astra/VID_aurelia_aitana_2.vida.01-5e42b.ogg",
+      "huella_texto": "e8a2d03e1e35ae3d"
+    },
+    "VID_aurelia_aitana_2.vida.02": {
+      "archivo": "./audio/astra/VID_aurelia_aitana_2.vida.02-e5c63.ogg",
+      "huella_texto": "9d14c8089da73fd2"
+    },
+    "VID_aurelia_aitana_2.vida.03": {
+      "archivo": "./audio/astra/VID_aurelia_aitana_2.vida.03-31cf9.ogg",
+      "huella_texto": "2fbbfb86c227c149"
+    },
+    "VID_aurelia_aitana_2.vida.04": {
+      "archivo": "./audio/astra/VID_aurelia_aitana_2.vida.04-4e0d1.ogg",
+      "huella_texto": "358f7f6d6d321813"
+    },
+    "VID_aurelia_kiara_1.vida.01": {
+      "archivo": "./audio/astra/VID_aurelia_kiara_1.vida.01-28a10.ogg",
+      "huella_texto": "869811ced09d6046"
+    },
+    "VID_aurelia_kiara_1.vida.02": {
+      "archivo": "./audio/astra/VID_aurelia_kiara_1.vida.02-9bdd0.ogg",
+      "huella_texto": "c6c3b2bc7ee13fc2"
+    },
+    "VID_aurelia_kiara_1.vida.03": {
+      "archivo": "./audio/astra/VID_aurelia_kiara_1.vida.03-c24a9.ogg",
+      "huella_texto": "42548cf545b8c89c"
+    },
+    "VID_aurelia_kiara_1.vida.04": {
+      "archivo": "./audio/astra/VID_aurelia_kiara_1.vida.04-e89fc.ogg",
+      "huella_texto": "6ce940059156601d"
+    },
+    "VID_aurelia_kiara_2.vida.01": {
+      "archivo": "./audio/astra/VID_aurelia_kiara_2.vida.01-052af.ogg",
+      "huella_texto": "ea58876f5427d0de"
+    },
+    "VID_aurelia_kiara_2.vida.02": {
+      "archivo": "./audio/astra/VID_aurelia_kiara_2.vida.02-8d443.ogg",
+      "huella_texto": "caa72713687065d1"
+    },
+    "VID_aurelia_kiara_2.vida.03": {
+      "archivo": "./audio/astra/VID_aurelia_kiara_2.vida.03-58ae8.ogg",
+      "huella_texto": "664572eed1c4c1bd"
+    },
+    "VID_aurelia_kiara_2.vida.04": {
+      "archivo": "./audio/astra/VID_aurelia_kiara_2.vida.04-68500.ogg",
+      "huella_texto": "6adee7f0835ed664"
+    },
+    "VID_aurelia_oscar_1.vida.01": {
+      "archivo": "./audio/astra/VID_aurelia_oscar_1.vida.01-4505e.ogg",
+      "huella_texto": "640d90ef5bb48bf7"
+    },
+    "VID_aurelia_oscar_1.vida.02": {
+      "archivo": "./audio/astra/VID_aurelia_oscar_1.vida.02-36809.ogg",
+      "huella_texto": "a15413f5c5b09475"
+    },
+    "VID_aurelia_oscar_1.vida.03": {
+      "archivo": "./audio/astra/VID_aurelia_oscar_1.vida.03-9fa5d.ogg",
+      "huella_texto": "edd60c3f3dac0b9e"
+    },
+    "VID_aurelia_oscar_1.vida.04": {
+      "archivo": "./audio/astra/VID_aurelia_oscar_1.vida.04-fba86.ogg",
+      "huella_texto": "351372d7fc52e2c4"
+    },
+    "VID_aurelia_oscar_2.vida.01": {
+      "archivo": "./audio/astra/VID_aurelia_oscar_2.vida.01-55ca5.ogg",
+      "huella_texto": "2dcf9faa963cf90f"
+    },
+    "VID_aurelia_oscar_2.vida.02": {
+      "archivo": "./audio/astra/VID_aurelia_oscar_2.vida.02-be7dc.ogg",
+      "huella_texto": "8da8cae3320c6595"
+    },
+    "VID_aurelia_oscar_2.vida.03": {
+      "archivo": "./audio/astra/VID_aurelia_oscar_2.vida.03-6b0ff.ogg",
+      "huella_texto": "d862993faf690cb8"
+    },
+    "VID_aurelia_oscar_2.vida.04": {
+      "archivo": "./audio/astra/VID_aurelia_oscar_2.vida.04-0cf69.ogg",
+      "huella_texto": "7c3264b6bce3c846"
+    },
+    "VID_aurelia_saul_1.vida.01": {
+      "archivo": "./audio/astra/VID_aurelia_saul_1.vida.01-3b7e1.ogg",
+      "huella_texto": "8f55c2d860b6c33f"
+    },
+    "VID_aurelia_saul_1.vida.02": {
+      "archivo": "./audio/astra/VID_aurelia_saul_1.vida.02-d16a0.ogg",
+      "huella_texto": "e67723e6bcdb7b1b"
+    },
+    "VID_aurelia_saul_1.vida.03": {
+      "archivo": "./audio/astra/VID_aurelia_saul_1.vida.03-32914.ogg",
+      "huella_texto": "7c77550665e803cf"
+    },
+    "VID_aurelia_saul_1.vida.04": {
+      "archivo": "./audio/astra/VID_aurelia_saul_1.vida.04-b89b4.ogg",
+      "huella_texto": "9b6f19af7404f164"
+    },
+    "VID_aurelia_saul_2.vida.01": {
+      "archivo": "./audio/astra/VID_aurelia_saul_2.vida.01-4e37e.ogg",
+      "huella_texto": "8cf55b38158efdfd"
+    },
+    "VID_aurelia_saul_2.vida.02": {
+      "archivo": "./audio/astra/VID_aurelia_saul_2.vida.02-960a4.ogg",
+      "huella_texto": "b81a8c315126a57f"
+    },
+    "VID_aurelia_saul_2.vida.03": {
+      "archivo": "./audio/astra/VID_aurelia_saul_2.vida.03-bc039.ogg",
+      "huella_texto": "523e262dd8fddad0"
+    },
+    "VID_aurelia_saul_2.vida.04": {
+      "archivo": "./audio/astra/VID_aurelia_saul_2.vida.04-36e0e.ogg",
+      "huella_texto": "7840abf0881d169a"
+    },
+    "VID_botanica_1.vida.01": {
+      "archivo": "./audio/astra/VID_botanica_1.vida.01-77b6e.ogg",
+      "huella_texto": "127852d6305abfe3"
+    },
+    "VID_botanica_1.vida.02": {
+      "archivo": "./audio/astra/VID_botanica_1.vida.02-0d8ac.ogg",
+      "huella_texto": "36698c71822b32fe"
+    },
+    "VID_botanica_1.vida.03": {
+      "archivo": "./audio/astra/VID_botanica_1.vida.03-86569.ogg",
+      "huella_texto": "462b5044e79cc148"
+    },
+    "VID_botanica_1.vida.04": {
+      "archivo": "./audio/astra/VID_botanica_1.vida.04-36041.ogg",
+      "huella_texto": "726d68040d22ea26"
+    },
+    "VID_botanica_2.vida.01": {
+      "archivo": "./audio/astra/VID_botanica_2.vida.01-cfc17.ogg",
+      "huella_texto": "2112c3843f2d1a9b"
+    },
+    "VID_botanica_2.vida.02": {
+      "archivo": "./audio/astra/VID_botanica_2.vida.02-f99f6.ogg",
+      "huella_texto": "e4def9a628303319"
+    },
+    "VID_botanica_2.vida.03": {
+      "archivo": "./audio/astra/VID_botanica_2.vida.03-c8246.ogg",
+      "huella_texto": "6a61f82fb60681fe"
+    },
+    "VID_botanica_2.vida.04": {
+      "archivo": "./audio/astra/VID_botanica_2.vida.04-531a1.ogg",
+      "huella_texto": "39a5a3039f79a48d"
+    },
+    "VID_brasa_dante_1.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_dante_1.vida.01-a36e4.ogg",
+      "huella_texto": "ab343aab3f9ad605"
+    },
+    "VID_brasa_dante_1.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_dante_1.vida.02-222c7.ogg",
+      "huella_texto": "c5957cedd90cbf00"
+    },
+    "VID_brasa_dante_1.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_dante_1.vida.03-6e7e8.ogg",
+      "huella_texto": "189401c81b36d212"
+    },
+    "VID_brasa_dante_1.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_dante_1.vida.04-0966d.ogg",
+      "huella_texto": "160683cae7de504a"
+    },
+    "VID_brasa_dante_2.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_dante_2.vida.01-f09a6.ogg",
+      "huella_texto": "a29ffaa28673b7cc"
+    },
+    "VID_brasa_dante_2.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_dante_2.vida.02-43727.ogg",
+      "huella_texto": "0a506d75b7319433"
+    },
+    "VID_brasa_dante_2.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_dante_2.vida.03-6a3fb.ogg",
+      "huella_texto": "2b3a185a9b0d80c4"
+    },
+    "VID_brasa_dante_2.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_dante_2.vida.04-78843.ogg",
+      "huella_texto": "2971c800663e888c"
+    },
+    "VID_brasa_idalia_1.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_idalia_1.vida.01-82270.ogg",
+      "huella_texto": "61e52325b6eea871"
+    },
+    "VID_brasa_idalia_1.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_idalia_1.vida.02-2c94a.ogg",
+      "huella_texto": "b04140d1c4fa0960"
+    },
+    "VID_brasa_idalia_1.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_idalia_1.vida.03-464e5.ogg",
+      "huella_texto": "254cdd33129f51f0"
+    },
+    "VID_brasa_idalia_1.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_idalia_1.vida.04-760d4.ogg",
+      "huella_texto": "9a09012c6ba947dd"
+    },
+    "VID_brasa_idalia_2.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_idalia_2.vida.01-6ab37.ogg",
+      "huella_texto": "243b899c5a2d79cd"
+    },
+    "VID_brasa_idalia_2.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_idalia_2.vida.02-2f45e.ogg",
+      "huella_texto": "d983395240cce1a8"
+    },
+    "VID_brasa_idalia_2.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_idalia_2.vida.03-02c3a.ogg",
+      "huella_texto": "d5661d2948a52f0c"
+    },
+    "VID_brasa_idalia_2.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_idalia_2.vida.04-4f77a.ogg",
+      "huella_texto": "41fcd036b6829a0c"
+    },
+    "VID_brasa_nadia_1.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_nadia_1.vida.01-fdba4.ogg",
+      "huella_texto": "d3185b0c99193a84"
+    },
+    "VID_brasa_nadia_1.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_nadia_1.vida.02-943af.ogg",
+      "huella_texto": "f971008040fad70e"
+    },
+    "VID_brasa_nadia_1.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_nadia_1.vida.03-3da38.ogg",
+      "huella_texto": "75676fc5b98c2337"
+    },
+    "VID_brasa_nadia_1.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_nadia_1.vida.04-7156c.ogg",
+      "huella_texto": "4039dae95e067e53"
+    },
+    "VID_brasa_nadia_2.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_nadia_2.vida.01-e1d15.ogg",
+      "huella_texto": "619dc2d725a97ac1"
+    },
+    "VID_brasa_nadia_2.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_nadia_2.vida.02-57da4.ogg",
+      "huella_texto": "cc5eaf9b47eaa4e7"
+    },
+    "VID_brasa_nadia_2.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_nadia_2.vida.03-c4c42.ogg",
+      "huella_texto": "508a512ed0091ac3"
+    },
+    "VID_brasa_nadia_2.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_nadia_2.vida.04-54167.ogg",
+      "huella_texto": "b251765e1b1ea172"
+    },
+    "VID_brasa_ramiro_1.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_ramiro_1.vida.01-738fe.ogg",
+      "huella_texto": "50814526f4a2a2a6"
+    },
+    "VID_brasa_ramiro_1.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_ramiro_1.vida.02-c065f.ogg",
+      "huella_texto": "66d4ec0cee33d303"
+    },
+    "VID_brasa_ramiro_1.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_ramiro_1.vida.03-9c3cd.ogg",
+      "huella_texto": "76a410f1eeccb1b1"
+    },
+    "VID_brasa_ramiro_1.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_ramiro_1.vida.04-fd1f2.ogg",
+      "huella_texto": "8d6fc606c4b74661"
+    },
+    "VID_brasa_ramiro_2.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_ramiro_2.vida.01-b201b.ogg",
+      "huella_texto": "f1cb5a543e516961"
+    },
+    "VID_brasa_ramiro_2.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_ramiro_2.vida.02-b7764.ogg",
+      "huella_texto": "cc6e05ac7524ec37"
+    },
+    "VID_brasa_ramiro_2.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_ramiro_2.vida.03-2aed9.ogg",
+      "huella_texto": "7a8cfbaeeb34b050"
+    },
+    "VID_brasa_ramiro_2.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_ramiro_2.vida.04-86aec.ogg",
+      "huella_texto": "9a25507d6c569fe1"
+    },
+    "VID_brasa_rufina_1.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_rufina_1.vida.01-14381.ogg",
+      "huella_texto": "a819216614bcc0e0"
+    },
+    "VID_brasa_rufina_1.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_rufina_1.vida.02-08d16.ogg",
+      "huella_texto": "7d929ad2d807df7d"
+    },
+    "VID_brasa_rufina_1.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_rufina_1.vida.03-ae926.ogg",
+      "huella_texto": "a5ee52856f8959d5"
+    },
+    "VID_brasa_rufina_1.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_rufina_1.vida.04-4bb65.ogg",
+      "huella_texto": "5e45b73c5d8f9298"
+    },
+    "VID_brasa_rufina_2.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_rufina_2.vida.01-5a868.ogg",
+      "huella_texto": "a2a9c63b71a0f9e1"
+    },
+    "VID_brasa_rufina_2.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_rufina_2.vida.02-08f9a.ogg",
+      "huella_texto": "2ba136ee86a8cf41"
+    },
+    "VID_brasa_rufina_2.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_rufina_2.vida.03-2e90e.ogg",
+      "huella_texto": "0d2863a1ae81adac"
+    },
+    "VID_brasa_rufina_2.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_rufina_2.vida.04-8d2cc.ogg",
+      "huella_texto": "84ac152230f66f44"
+    },
+    "VID_brasa_sol_1.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_sol_1.vida.01-92859.ogg",
+      "huella_texto": "3d46e45d4d3234ee"
+    },
+    "VID_brasa_sol_1.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_sol_1.vida.02-90fc6.ogg",
+      "huella_texto": "9d43db4552a0050b"
+    },
+    "VID_brasa_sol_1.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_sol_1.vida.03-d6adc.ogg",
+      "huella_texto": "f281bd03a9a3595a"
+    },
+    "VID_brasa_sol_1.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_sol_1.vida.04-e9385.ogg",
+      "huella_texto": "13d4a4cc4d67bc6e"
+    },
+    "VID_brasa_sol_2.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_sol_2.vida.01-c78ec.ogg",
+      "huella_texto": "4525820272611a36"
+    },
+    "VID_brasa_sol_2.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_sol_2.vida.02-b2664.ogg",
+      "huella_texto": "53dabd19d5b8ab73"
+    },
+    "VID_brasa_sol_2.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_sol_2.vida.03-4446c.ogg",
+      "huella_texto": "0de5b07cdd6951d2"
+    },
+    "VID_brasa_sol_2.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_sol_2.vida.04-2165b.ogg",
+      "huella_texto": "53dbfcc83d33d1b8"
+    },
+    "VID_brasa_tarek_1.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_tarek_1.vida.01-39c6d.ogg",
+      "huella_texto": "36a2d1ee9523c36e"
+    },
+    "VID_brasa_tarek_1.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_tarek_1.vida.02-730d1.ogg",
+      "huella_texto": "04b00d55647f92a1"
+    },
+    "VID_brasa_tarek_1.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_tarek_1.vida.03-11ed6.ogg",
+      "huella_texto": "1db00b3035674757"
+    },
+    "VID_brasa_tarek_1.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_tarek_1.vida.04-a10f1.ogg",
+      "huella_texto": "1d964ac379bfacef"
+    },
+    "VID_brasa_tarek_2.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_tarek_2.vida.01-aa614.ogg",
+      "huella_texto": "51f9a45f0c0b0119"
+    },
+    "VID_brasa_tarek_2.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_tarek_2.vida.02-3115f.ogg",
+      "huella_texto": "97d2bb1fb8615c74"
+    },
+    "VID_brasa_tarek_2.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_tarek_2.vida.03-a9c11.ogg",
+      "huella_texto": "3ddb4d0654224d00"
+    },
+    "VID_brasa_tarek_2.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_tarek_2.vida.04-9b487.ogg",
+      "huella_texto": "40dcb9ce625ed284"
+    },
+    "VID_brasa_yago_1.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_yago_1.vida.01-c2cd8.ogg",
+      "huella_texto": "31352108e4c68718"
+    },
+    "VID_brasa_yago_1.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_yago_1.vida.02-62d79.ogg",
+      "huella_texto": "0bc84d3031ca42a1"
+    },
+    "VID_brasa_yago_1.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_yago_1.vida.03-3441b.ogg",
+      "huella_texto": "a33d767b29c1fe32"
+    },
+    "VID_brasa_yago_1.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_yago_1.vida.04-2a9f2.ogg",
+      "huella_texto": "324c1b8ce654d1b4"
+    },
+    "VID_brasa_yago_2.vida.01": {
+      "archivo": "./audio/astra/VID_brasa_yago_2.vida.01-d854a.ogg",
+      "huella_texto": "559839a537d3c24b"
+    },
+    "VID_brasa_yago_2.vida.02": {
+      "archivo": "./audio/astra/VID_brasa_yago_2.vida.02-731a3.ogg",
+      "huella_texto": "9bc3bb63b4851a7f"
+    },
+    "VID_brasa_yago_2.vida.03": {
+      "archivo": "./audio/astra/VID_brasa_yago_2.vida.03-62b13.ogg",
+      "huella_texto": "5a56a75280291ca5"
+    },
+    "VID_brasa_yago_2.vida.04": {
+      "archivo": "./audio/astra/VID_brasa_yago_2.vida.04-018f0.ogg",
+      "huella_texto": "716e40b3831512b0"
+    },
+    "VID_bruma_ada_1.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_ada_1.vida.01-d9799.ogg",
+      "huella_texto": "03a5b32d4fbbcb24"
+    },
+    "VID_bruma_ada_1.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_ada_1.vida.02-f3098.ogg",
+      "huella_texto": "5eac78169563b701"
+    },
+    "VID_bruma_ada_1.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_ada_1.vida.03-4ef88.ogg",
+      "huella_texto": "46060df654613d99"
+    },
+    "VID_bruma_ada_1.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_ada_1.vida.04-d73df.ogg",
+      "huella_texto": "046f52e963445590"
+    },
+    "VID_bruma_ada_2.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_ada_2.vida.01-93c16.ogg",
+      "huella_texto": "7bc05a6e890bbb18"
+    },
+    "VID_bruma_ada_2.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_ada_2.vida.02-f7167.ogg",
+      "huella_texto": "4774ee105848ad09"
+    },
+    "VID_bruma_ada_2.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_ada_2.vida.03-d5cb0.ogg",
+      "huella_texto": "b77c56a06e004276"
+    },
+    "VID_bruma_ada_2.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_ada_2.vida.04-63243.ogg",
+      "huella_texto": "8d8d96d4449f764d"
+    },
+    "VID_bruma_amira_1.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_amira_1.vida.01-5586b.ogg",
+      "huella_texto": "e5fb2405d5b3f548"
+    },
+    "VID_bruma_amira_1.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_amira_1.vida.02-596c9.ogg",
+      "huella_texto": "6b2998bbaba997c2"
+    },
+    "VID_bruma_amira_1.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_amira_1.vida.03-cfe92.ogg",
+      "huella_texto": "b0cb0cc63d7fa8dc"
+    },
+    "VID_bruma_amira_1.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_amira_1.vida.04-d80ea.ogg",
+      "huella_texto": "80ce9dcf64363477"
+    },
+    "VID_bruma_amira_2.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_amira_2.vida.01-c63dd.ogg",
+      "huella_texto": "8bbf6b8985dbe3ce"
+    },
+    "VID_bruma_amira_2.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_amira_2.vida.02-fa4e0.ogg",
+      "huella_texto": "bbe2162db31cfaaa"
+    },
+    "VID_bruma_amira_2.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_amira_2.vida.03-18646.ogg",
+      "huella_texto": "5f9c764870f1c5b1"
+    },
+    "VID_bruma_amira_2.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_amira_2.vida.04-273d5.ogg",
+      "huella_texto": "0963c482457b50d2"
+    },
+    "VID_bruma_benicio_1.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_benicio_1.vida.01-2f725.ogg",
+      "huella_texto": "ecef4eab4eb7797f"
+    },
+    "VID_bruma_benicio_1.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_benicio_1.vida.02-d8b22.ogg",
+      "huella_texto": "bfb54a18f30b85f7"
+    },
+    "VID_bruma_benicio_1.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_benicio_1.vida.03-55047.ogg",
+      "huella_texto": "9604174f674e9251"
+    },
+    "VID_bruma_benicio_1.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_benicio_1.vida.04-d61c2.ogg",
+      "huella_texto": "5d15922313cdc063"
+    },
+    "VID_bruma_benicio_2.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_benicio_2.vida.01-7df0b.ogg",
+      "huella_texto": "47cd5180ad129de8"
+    },
+    "VID_bruma_benicio_2.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_benicio_2.vida.02-f5a61.ogg",
+      "huella_texto": "d6aa9f42dfe34dec"
+    },
+    "VID_bruma_benicio_2.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_benicio_2.vida.03-aea8c.ogg",
+      "huella_texto": "72390a258d53aa66"
+    },
+    "VID_bruma_benicio_2.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_benicio_2.vida.04-203ec.ogg",
+      "huella_texto": "352f8fd9dbe1b0bd"
+    },
+    "VID_bruma_elio_1.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_elio_1.vida.01-e7f2a.ogg",
+      "huella_texto": "b4547dbfc3fb9580"
+    },
+    "VID_bruma_elio_1.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_elio_1.vida.02-9e8a2.ogg",
+      "huella_texto": "86b275dda2c54fb8"
+    },
+    "VID_bruma_elio_1.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_elio_1.vida.03-e7dfc.ogg",
+      "huella_texto": "78bb6f0f18b7e400"
+    },
+    "VID_bruma_elio_1.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_elio_1.vida.04-e794d.ogg",
+      "huella_texto": "cf92e3d8c4f5e6bb"
+    },
+    "VID_bruma_elio_2.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_elio_2.vida.01-18003.ogg",
+      "huella_texto": "7114cfc5976539a1"
+    },
+    "VID_bruma_elio_2.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_elio_2.vida.02-8e31d.ogg",
+      "huella_texto": "342c5ddbc3d5ec7e"
+    },
+    "VID_bruma_elio_2.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_elio_2.vida.03-ae22b.ogg",
+      "huella_texto": "5311e9585c844e6a"
+    },
+    "VID_bruma_elio_2.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_elio_2.vida.04-0cf0f.ogg",
+      "huella_texto": "48456c580786b407"
+    },
+    "VID_bruma_felix_1.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_felix_1.vida.01-f324f.ogg",
+      "huella_texto": "53e7de54db2986cd"
+    },
+    "VID_bruma_felix_1.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_felix_1.vida.02-f5bb3.ogg",
+      "huella_texto": "955ac2a4a77387cc"
+    },
+    "VID_bruma_felix_1.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_felix_1.vida.03-dbc64.ogg",
+      "huella_texto": "eff8b368f86288ce"
+    },
+    "VID_bruma_felix_1.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_felix_1.vida.04-b0790.ogg",
+      "huella_texto": "8ab833a54dc5a589"
+    },
+    "VID_bruma_felix_2.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_felix_2.vida.01-de27a.ogg",
+      "huella_texto": "e95b587afd5b786c"
+    },
+    "VID_bruma_felix_2.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_felix_2.vida.02-6f4dd.ogg",
+      "huella_texto": "04b5dd86c5e4ad39"
+    },
+    "VID_bruma_felix_2.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_felix_2.vida.03-a2505.ogg",
+      "huella_texto": "5342000f1e453f9e"
+    },
+    "VID_bruma_felix_2.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_felix_2.vida.04-fd814.ogg",
+      "huella_texto": "9aafc373c207fa42"
+    },
+    "VID_bruma_roque_1.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_roque_1.vida.01-88886.ogg",
+      "huella_texto": "0db33eb42e43bdae"
+    },
+    "VID_bruma_roque_1.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_roque_1.vida.02-d0b60.ogg",
+      "huella_texto": "1c4b805aa6a08419"
+    },
+    "VID_bruma_roque_1.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_roque_1.vida.03-381bf.ogg",
+      "huella_texto": "9d37933c5a603873"
+    },
+    "VID_bruma_roque_1.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_roque_1.vida.04-a2f29.ogg",
+      "huella_texto": "7f9c957a64211df4"
+    },
+    "VID_bruma_roque_2.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_roque_2.vida.01-2e86f.ogg",
+      "huella_texto": "47b6fdeeb3ac5b9d"
+    },
+    "VID_bruma_roque_2.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_roque_2.vida.02-eb5ec.ogg",
+      "huella_texto": "34ce148e644fab73"
+    },
+    "VID_bruma_roque_2.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_roque_2.vida.03-921a9.ogg",
+      "huella_texto": "47f1addcb2525bec"
+    },
+    "VID_bruma_roque_2.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_roque_2.vida.04-9df3e.ogg",
+      "huella_texto": "6e35314ec0366c8d"
+    },
+    "VID_bruma_silvana_1.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_silvana_1.vida.01-581b0.ogg",
+      "huella_texto": "b3a1dd8f3c88a246"
+    },
+    "VID_bruma_silvana_1.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_silvana_1.vida.02-d3d14.ogg",
+      "huella_texto": "548c928a7fc6c116"
+    },
+    "VID_bruma_silvana_1.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_silvana_1.vida.03-07339.ogg",
+      "huella_texto": "3477629d27033fc8"
+    },
+    "VID_bruma_silvana_1.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_silvana_1.vida.04-7ede1.ogg",
+      "huella_texto": "864edd538db3704b"
+    },
+    "VID_bruma_silvana_2.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_silvana_2.vida.01-79f44.ogg",
+      "huella_texto": "7e37426b08c31e5b"
+    },
+    "VID_bruma_silvana_2.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_silvana_2.vida.02-1b137.ogg",
+      "huella_texto": "5923b86a0609a77e"
+    },
+    "VID_bruma_silvana_2.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_silvana_2.vida.03-56572.ogg",
+      "huella_texto": "4f4588f123b42b3e"
+    },
+    "VID_bruma_silvana_2.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_silvana_2.vida.04-d5e11.ogg",
+      "huella_texto": "90e43fa0f27e5ca8"
+    },
+    "VID_bruma_zaira_1.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_zaira_1.vida.01-051dd.ogg",
+      "huella_texto": "4c845b1bd9f3cb4c"
+    },
+    "VID_bruma_zaira_1.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_zaira_1.vida.02-6f4c8.ogg",
+      "huella_texto": "66a985793b1a4f1d"
+    },
+    "VID_bruma_zaira_1.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_zaira_1.vida.03-0148b.ogg",
+      "huella_texto": "83394a9c2d359380"
+    },
+    "VID_bruma_zaira_1.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_zaira_1.vida.04-1aa8a.ogg",
+      "huella_texto": "f64ed10ae6a496d0"
+    },
+    "VID_bruma_zaira_2.vida.01": {
+      "archivo": "./audio/astra/VID_bruma_zaira_2.vida.01-1c26e.ogg",
+      "huella_texto": "6f7246e6191a5246"
+    },
+    "VID_bruma_zaira_2.vida.02": {
+      "archivo": "./audio/astra/VID_bruma_zaira_2.vida.02-b327d.ogg",
+      "huella_texto": "91732e4c75f28f6f"
+    },
+    "VID_bruma_zaira_2.vida.03": {
+      "archivo": "./audio/astra/VID_bruma_zaira_2.vida.03-76179.ogg",
+      "huella_texto": "f69ddd0bb3708a27"
+    },
+    "VID_bruma_zaira_2.vida.04": {
+      "archivo": "./audio/astra/VID_bruma_zaira_2.vida.04-241ad.ogg",
+      "huella_texto": "67e40fc473f44b4d"
+    },
+    "VID_canalizadora_aura_1.vida.01": {
+      "archivo": "./audio/astra/VID_canalizadora_aura_1.vida.01-a5b70.ogg",
+      "huella_texto": "c14d35beed1e46d9"
+    },
+    "VID_canalizadora_aura_1.vida.02": {
+      "archivo": "./audio/astra/VID_canalizadora_aura_1.vida.02-e3c5d.ogg",
+      "huella_texto": "a524f7bd8429d292"
+    },
+    "VID_canalizadora_aura_1.vida.03": {
+      "archivo": "./audio/astra/VID_canalizadora_aura_1.vida.03-7428d.ogg",
+      "huella_texto": "2b815598c1838980"
+    },
+    "VID_canalizadora_aura_1.vida.04": {
+      "archivo": "./audio/astra/VID_canalizadora_aura_1.vida.04-12a21.ogg",
+      "huella_texto": "42a41d9d811ad0c5"
+    },
+    "VID_canalizadora_aura_2.vida.01": {
+      "archivo": "./audio/astra/VID_canalizadora_aura_2.vida.01-30542.ogg",
+      "huella_texto": "ef5186bacf601280"
+    },
+    "VID_canalizadora_aura_2.vida.02": {
+      "archivo": "./audio/astra/VID_canalizadora_aura_2.vida.02-a6344.ogg",
+      "huella_texto": "76a0a93f57031cde"
+    },
+    "VID_canalizadora_aura_2.vida.03": {
+      "archivo": "./audio/astra/VID_canalizadora_aura_2.vida.03-463d7.ogg",
+      "huella_texto": "06734f2a8c313f1a"
+    },
+    "VID_canalizadora_aura_2.vida.04": {
+      "archivo": "./audio/astra/VID_canalizadora_aura_2.vida.04-dc657.ogg",
+      "huella_texto": "d5b6a5fed0849ecb"
+    },
+    "VID_canalizadora_lara_1.vida.01": {
+      "archivo": "./audio/astra/VID_canalizadora_lara_1.vida.01-645ca.ogg",
+      "huella_texto": "754326a40efb3bc2"
+    },
+    "VID_canalizadora_lara_1.vida.02": {
+      "archivo": "./audio/astra/VID_canalizadora_lara_1.vida.02-2a561.ogg",
+      "huella_texto": "f9bcd61cf37c522e"
+    },
+    "VID_canalizadora_lara_1.vida.03": {
+      "archivo": "./audio/astra/VID_canalizadora_lara_1.vida.03-a673a.ogg",
+      "huella_texto": "3d109079e22b54fa"
+    },
+    "VID_canalizadora_lara_1.vida.04": {
+      "archivo": "./audio/astra/VID_canalizadora_lara_1.vida.04-1a7ea.ogg",
+      "huella_texto": "ec61b9eb406a5f25"
+    },
+    "VID_canalizadora_lara_2.vida.01": {
+      "archivo": "./audio/astra/VID_canalizadora_lara_2.vida.01-9bbc3.ogg",
+      "huella_texto": "09b9dba7c01c70eb"
+    },
+    "VID_canalizadora_lara_2.vida.02": {
+      "archivo": "./audio/astra/VID_canalizadora_lara_2.vida.02-c596f.ogg",
+      "huella_texto": "737f5ec5c5492075"
+    },
+    "VID_canalizadora_lara_2.vida.03": {
+      "archivo": "./audio/astra/VID_canalizadora_lara_2.vida.03-0ee4b.ogg",
+      "huella_texto": "2bd01240d18d5d61"
+    },
+    "VID_canalizadora_lara_2.vida.04": {
+      "archivo": "./audio/astra/VID_canalizadora_lara_2.vida.04-c70c9.ogg",
+      "huella_texto": "c60f4d17fe7db27f"
+    },
+    "VID_carpintera_1.vida.01": {
+      "archivo": "./audio/astra/VID_carpintera_1.vida.01-34e1e.ogg",
+      "huella_texto": "a35071f205b28709"
+    },
+    "VID_carpintera_1.vida.02": {
+      "archivo": "./audio/astra/VID_carpintera_1.vida.02-c0171.ogg",
+      "huella_texto": "c12e3d93df67a83a"
+    },
+    "VID_carpintera_1.vida.03": {
+      "archivo": "./audio/astra/VID_carpintera_1.vida.03-bbec8.ogg",
+      "huella_texto": "95482819adae9114"
+    },
+    "VID_carpintera_1.vida.04": {
+      "archivo": "./audio/astra/VID_carpintera_1.vida.04-40ee6.ogg",
+      "huella_texto": "5e4fc570ea84099e"
+    }
+  },
   "musica": {},
   "modelos": {}
 }

@@ -98,5 +98,8 @@ for q in main:
  compiled.append(dict(id=q['id'],titulo=q['titulo'],region=region,clase='principal',requiere=q['requiere'],reparto=q['reparto'],pasos=qsteps,decision=q['decision'],ramas=q['ramas_dialogo'],consecuencias=q['consecuencias']))
 assert len(compiled)==36
 (N/'jugabilidad/principales.json').write_text(json.dumps(compiled,ensure_ascii=False,indent=2)+'\n')
+adicional=N/'jugabilidad/secundarias.json'
+if adicional.exists():compiled+=json.loads(adicional.read_text())
+assert len({q['id'] for q in compiled})==len(compiled)
 (W/'historia-datos.ts').write_text('// Generado por docs/narrativa/herramientas/compilar_jugabilidad.py.\nimport type {MisionHistoria} from "./historia-tipos";\nexport const MISIONES_HISTORIA:MisionHistoria[]='+json.dumps(compiled,ensure_ascii=False,separators=(',',':'))+';\n')
 print(json.dumps({'misiones':len(compiled),'pasos':sum(len(q['pasos']) for q in compiled)}))

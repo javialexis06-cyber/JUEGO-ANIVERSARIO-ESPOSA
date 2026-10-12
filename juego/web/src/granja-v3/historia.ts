@@ -4,18 +4,20 @@ import {MISIONES_HISTORIA} from './historia-datos';
 import {crearReto,circuitoCorrecto,moverLaberinto} from './historia-retos';
 import {regionActual,posicionNpcAstra,npcAstra,regionAstra} from './astra';
 import {puedeConversar} from './aldeanos';
-import {CULTIVOS} from './catalogo';
+import {PECES,CULTIVOS} from './catalogo';
 import {obtenerObjeto} from './objetos';
 import {instanciaAventura} from './aventura';
 import {fenotipo} from './genetica';
 import {estadoAnimal} from './cuidados';
 export {MISIONES_HISTORIA};
 export const misionHistoria=(id:string)=>MISIONES_HISTORIA.find(q=>q.id===id);
-export const crearHistoria=():EstadoHistoria=>({version:1,activas:{},completadas:{},reto:null,cartas:[],sellos:[],consecuencias:{},premios:[]});
-export const historiaDisponible=(s:EstadoGranja,id:string)=>misionHistoria(id)?.requiere.every(r=>s.historia?.completadas[r]);
+export const crearHistoria=():EstadoHistoria=>({version:1,activas:{},completadas:{},reto:null,cartas:[],sellos:[],consecuencias:{},premios:[],pistas:{},notas:{}});
+export function historiaDisponible(s:EstadoGranja,id:string){const q=misionHistoria(id);return !!q&&q.requiere.every(r=>s.historia?.completadas[r])&&(!q.personal||s.astra?.conocidos.includes(q.personal)&&s.astra.lecturas.includes('VID_'+q.personal+'_1'))&&(!q.pistas||(s.historia?.pistas[q.id]?.length??0)>=2);}
+export function migrarHistoria(h:EstadoHistoria|undefined){if(h?.version===1){if(h.pistas===undefined)h.pistas={};if(h.notas===undefined)h.notas={};for(const a of Object.values(h.activas??{}))if(a&&typeof a==='object'&&!Array.isArray(a)&&a.cuidadosDias===undefined)a.cuidadosDias={};}}
 const bien=(mensaje:string):Resultado=>({ok:true,mensaje}),mal=(mensaje:string):Resultado=>({ok:false,mensaje});
 const cerca=(x:number,z:number,p:{x:number;z:number})=>Math.hypot(x-p.x,z-p.z)<=3;
 const enPuesto=(s:EstadoGranja,p:PasoHistoria,x:number,z:number)=>regionActual(s)===p.region&&!s.interior&&!s.servicio&&!s.astra?.interior&&(!p.punto||cerca(x,z,p.punto));
+export function registrarProduccionHistoria(s:EstadoGranja,producidos:Record<string,number>){for(const [id,a]of Object.entries(s.historia?.activas??{})){const q=misionHistoria(id)!;for(const [item,n]of Object.entries(producidos))if(q.pasos.some(p=>p.registro==='fabricar_'+item)){const key='fabricar_'+item;a.estadisticas[key]=(a.estadisticas[key]??0)+n;}}}
 function avanzar(s:EstadoGranja,id:string){const a=s.historia!.activas[id],q=misionHistoria(id)!;if(!a.recibos.includes(q.pasos[a.paso].id))a.recibos.push(q.pasos[a.paso].id);a.paso++;a.inicioPaso=s.jornada.diasCompletados;s.historia!.reto=null;if(a.paso===q.pasos.length)s.astra!.escena={id:'H:'+id+'#giro',linea:0};}
 function completarReto(s:EstadoGranja){const id=s.historia!.reto!.mision;avanzar(s,id);return bien('Prueba confirmada; la pieza y las reservas conservan su recibo.');}
 export const ordenHistoria=(p:PasoHistoria,a:ProgresoHistoria)=>a.plan===0&&p.ordenAlternativo?p.ordenAlternativo:p.orden;
@@ -27,13 +29,20 @@ export function registrarHistoria(s:EstadoGranja,a:Accion,antes:EstadoGranja){
  const h=s.historia;if(!h)return;
  for(const [id,p]of Object.entries(h.activas)){
   const q=misionHistoria(id);if(!q)continue;
-  if(a.tipo==='plantar'&&antes.zona==='granja'&&!antes.astra?.actual&&!antes.interior&&CULTIVOS.some(c=>c.id===a.cultivo&&!c.region))p.cultivos[a.x+','+a.z]={cultivo:a.cultivo,regado:false,cosechado:false};
-  if(a.tipo==='regar'&&!antes.astra?.actual&&antes.zona==='granja'&&!antes.interior)for(const key of Object.keys(p.cultivos)){
-   const [x,z]=key.split(',').map(Number),parcela=s.parcelas.find(c=>c.x===x&&c.z===z);if(parcela?.campo?.riegoDia===s.jornada.diasCompletados&&parcela.cultivo===p.cultivos[key].cultivo)p.cultivos[key].regado=true;
+  const contexto=antes.interior??'campo',parcelas=antes.invernaderos.find(i=>i.edificioId===antes.interior)?.parcelas??antes.parcelas;
+  const admite=(id:string)=>q.pasos.some(p=>p.tipo==='cultivar'&&(p.especiesPermitidas?p.especiesPermitidas.includes(id):CULTIVOS.some(c=>c.id===id&&!c.region)));
+  if(a.tipo==='plantar'&&antes.zona==='granja'&&!antes.astra?.actual&&admite(a.cultivo))p.cultivos[contexto+':'+a.x+','+a.z]={cultivo:a.cultivo,regado:false,cosechado:false,contexto};
+  if(a.tipo==='regar'&&!antes.astra?.actual&&antes.zona==='granja')for(const key of Object.keys(p.cultivos)){
+   const recibo=p.cultivos[key];if((recibo.contexto??'campo')!==contexto)continue;const [x,z]=key.split(':').pop()!.split(',').map(Number),parcela=(s.invernaderos.find(i=>i.edificioId===s.interior)?.parcelas??s.parcelas).find(c=>c.x===x&&c.z===z);
+   if(parcela?.campo?.riegoDia===s.jornada.diasCompletados&&parcela.cultivo===recibo.cultivo)recibo.regado=true;
   }
-  if(a.tipo==='cosechar'&&antes.zona==='granja'&&!antes.astra?.actual&&!antes.interior){const key=a.x+','+a.z,c=antes.parcelas.find(c=>c.x===a.x&&c.z===a.z),r=p.cultivos[key];if(r&&r.regado&&c?.cultivo===r.cultivo&&c.cuidado?.status==='maduro')r.cosechado=true;}
+  if(a.tipo==='cosechar'&&antes.zona==='granja'&&!antes.astra?.actual){const key=contexto+':'+a.x+','+a.z,c=parcelas.find(c=>c.x===a.x&&c.z===a.z),r=p.cultivos[key]??p.cultivos[a.x+','+a.z];if(r&&r.regado&&(r.contexto??'campo')===contexto&&c?.cultivo===r.cultivo&&c.cuidado?.status==='maduro')r.cosechado=true;}
+  for(const key of new Set(q.pasos.flatMap(p=>p.registro?[p.registro]:[]))){const delta=(s.estadisticas[key]??0)-(antes.estadisticas[key]??0);if(delta>0)p.estadisticas[key]=(p.estadisticas[key]??0)+delta;}
+  if(a.tipo==='astra'&&a.accion.tipo==='recurso'){const key='recoleccion:'+a.accion.id;if(q.pasos.some(p=>p.registro===key))p.estadisticas[key]=(p.estadisticas[key]??0)+1;}
+  if(a.tipo==='astra'&&a.accion.tipo==='observar'){const key='observacion:'+a.accion.id;if(q.pasos.some(p=>p.registro===key))p.estadisticas[key]=(p.estadisticas[key]??0)+1;}
+  if(a.tipo==='pescar'&&q.pasos.some(p=>p.tipo==='devolver_pesca'))for(const pez of PECES){const delta=(s.estadisticas['pez_'+pez.id]??0)-(antes.estadisticas['pez_'+pez.id]??0);if(delta>0){const key='captura:'+pez.id;p.estadisticas[key]=(p.estadisticas[key]??0)+delta;}}
   if(a.tipo==='cuidar'&&['alimentar','acariciar','cepillar','musica','cuento'].includes(a.metodo)){
-   const animal=s.animales.find(n=>n.id===a.animalId);if(animal&&!fenotipo(animal.especie,animal.genoma).fantasia){const key=animal.id+':'+(a.metodo==='alimentar'?'alimentar':'acompanar');if(!p.cuidados.includes(key))p.cuidados.push(key);}
+   const animal=s.animales.find(n=>n.id===a.animalId);if(animal&&!fenotipo(animal.especie,animal.genoma).fantasia){const key=animal.id+':'+(a.metodo==='alimentar'?'alimentar':'acompanar');if(!p.cuidados.includes(key))p.cuidados.push(key);p.cuidadosDias[key]=s.jornada.diasCompletados;}
   }
   if(a.tipo==='accion_aventura'&&a.objetivo==='monstruo'){
    const viejo=instanciaAventura(antes.aventura)?.monstruos.find(m=>m.id===a.id),nuevo=instanciaAventura(s.aventura)?.monstruos.find(m=>m.id===a.id);
@@ -71,11 +80,12 @@ export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:n
  }
  if(!('id'in accion))return mal('No hay una prueba activa.');
  const q=misionHistoria(accion.id),a=q&&h.activas[q.id];if(!q)return mal('Misión desconocida.');
+ if(accion.tipo==='descubrir'){const p=q.pistas?.[accion.indice];if(!p||!Number.isInteger(accion.indice)||!q.requiere.every(r=>h.completadas[r])||regionActual(s)!==p.region||s.interior||s.servicio||s.astra?.interior||!cerca(x,z,p))return mal('Examina el indicio desde su lugar público autorizado.');const lista=h.pistas[q.id]??(h.pistas[q.id]=[]);if(!lista.includes(accion.indice))lista.push(accion.indice);return bien(p.texto+(lista.length>=2?' · Ahora puedes consultar esta historia en Campaña.':''));}
  if(accion.tipo==='aceptar'){
-  if(!historiaDisponible(s,q.id))return mal('Completa antes '+q.requiere.join(', ')+'.');
+  if(!historiaDisponible(s,q.id))return mal('Revisa las historias previas, escucha el primer recuerdo del participante y reúne las pistas públicas cuando corresponda.');
   if(a||h.completadas[q.id])return mal('La misión ya está registrada.');
   if(regionActual(s)!==q.region||s.interior||s.servicio||s.astra?.interior)return mal('Visita '+regionAstra(q.region)?.nombre+' para iniciar.');
-  h.activas[q.id]={dia:s.jornada.diasCompletados,inicioPaso:s.jornada.diasCompletados,plan:null,paso:0,recibos:[],observados:[],permisos:{},cultivos:{},cuidados:[],entregas:{},estadisticas:{},enfoques:{}};escenaHistoria(s,q.id,'inicio');return bien('Misión iniciada: '+q.titulo+'.');
+  h.activas[q.id]={dia:s.jornada.diasCompletados,inicioPaso:s.jornada.diasCompletados,plan:null,paso:0,recibos:[],observados:[],permisos:{},cultivos:{},cuidados:[],cuidadosDias:{},entregas:{},estadisticas:{},enfoques:{}};escenaHistoria(s,q.id,'inicio');return bien('Misión iniciada: '+q.titulo+'.');
  }
  if(accion.tipo==='retomar'){
   if(!a&&!h.completadas[q.id])return mal('Inicia primero la misión.');
@@ -107,6 +117,8 @@ export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:n
   const id=p.id+':'+accion.indice;if(!a.observados.includes(id))a.observados.push(id);
   const dato=p.datos![accion.indice];if(p.datos!.every((_,i)=>a.observados.includes(p.id+':'+i)))avanzar(s,q.id);return bien(dato);
  }
+ if(accion.tipo==='devolver_pez'){const key='captura:'+accion.pez;if(p.tipo!=='devolver_pesca'||!PECES.some(p=>p.id===accion.pez)||(a.estadisticas[key]??0)<1||(s.inventario[accion.pez]??0)<1)return mal('Devuelve un ejemplar realmente capturado después de aceptar y que aún conservas.');ctx.agregar(accion.pez,-1);a.estadisticas[key]--;avanzar(s,q.id);return bien('Ejemplar devuelto al tramo autorizado; no se vende ni vuelve a la mochila al reintentar.');}
+ if(accion.tipo==='guardar_nota'){if(p.tipo!=='nota'||typeof accion.texto!=='string'||accion.texto.length>500||!accion.texto.trim())return mal('Escribe hasta 500 caracteres o escoge una frase del cuaderno.');h.notas[q.id]=accion.texto.trim();avanzar(s,q.id);return bien('Nota guardada solo en tu partida. No se envía ni se incorpora a voces.');}
  if(accion.tipo==='preparar'){
   if(p.tipo!=='entregar'||!p.materiales)return mal('Este paso no fabrica ni reserva materiales.');
   if(!Object.entries(p.materiales).every(([id,n])=>(s.inventario[id]??0)>=n))return mal('Necesitas '+Object.entries(p.materiales).map(([id,n])=>n+' '+(obtenerObjeto(id)?.nombre??id)).join(', ')+'.');
@@ -122,10 +134,11 @@ export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:n
  if(accion.tipo!=='comprobar')return mal('Acción desconocida para este objetivo.');
  if(a.enfoques[p.id]==='combate'){
   if((a.estadisticas['combate:'+p.destino!]??0)<2)return mal('Desactiva dos constructos de este territorio con tus armas.');
+ }else if(p.tipo==='oficio'){if((a.estadisticas[p.registro!]??0)<(p.cantidad??1))return mal('Realiza la actividad del oficio después de aceptar: '+p.texto);
  }else if(p.tipo==='cultivar'){
-  if(regionActual(s)!=='granja'||new Set(Object.values(a.cultivos).filter(p=>p.regado&&p.cosechado).map(p=>p.cultivo)).size<(p.cantidad??1))return mal('Faltan recibos de cultivos ordinarios propios sembrados, regados y cosechados después de aceptar.');
+  if(regionActual(s)!=='granja'||new Set(Object.values(a.cultivos).filter(r=>r.regado&&r.cosechado&&(!p.especiesPermitidas||p.especiesPermitidas.includes(r.cultivo))).map(p=>p.cultivo)).size<(p.cantidad??1))return mal('Faltan recibos de cultivos ordinarios propios sembrados, regados y cosechados después de aceptar.');
  }else if(p.tipo==='cuidar'){
-  const ids=a.cuidados.filter(k=>k.endsWith(':alimentar')).map(k=>k.slice(0,-10));if(regionActual(s)!=='granja'||ids.filter(id=>a.cuidados.includes(id+':acompanar')).length<(p.cantidad??1))return mal('Alimenta y acompaña a '+p.cantidad+' animales ordinarios distintos.');
+  const ids=a.cuidados.filter(k=>k.endsWith(':alimentar')).map(k=>k.slice(0,-10));if(regionActual(s)!=='granja'||ids.filter(id=>a.cuidados.includes(id+':acompanar')&&(!p.posterior||(a.cuidadosDias[id+':alimentar']??-1)>=a.inicioPaso&&(a.cuidadosDias[id+':acompanar']??-1)>=a.inicioPaso)).length<(p.cantidad??1))return mal('Alimenta y acompaña a '+p.cantidad+' animales ordinarios distintos.');
  }else if(p.tipo==='visitar'){
   if(!p.regiones?.every(r=>s.astra!.visitas.includes(r)))return mal('Visita '+p.regiones?.filter(r=>!s.astra!.visitas.includes(r)).join(', ')+'.');
  }else if(p.tipo==='jornadas'){
@@ -146,18 +159,18 @@ export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:n
 export function historiaValida(v:unknown,dia:number):v is EstadoHistoria {
  const h=v as EstadoHistoria,registro=(v:unknown)=>!!v&&typeof v==='object'&&!Array.isArray(v),entero=(n:unknown,min=0,max=1e9)=>Number.isSafeInteger(n)&&Number(n)>=min&&Number(n)<=max;
  const lista=(v:unknown,permitidos:string[])=>Array.isArray(v)&&new Set(v).size===v.length&&v.every(i=>typeof i==='string'&&permitidos.includes(i));
- if(!registro(h)||h.version!==1||!registro(h.activas)||!registro(h.completadas)||!registro(h.consecuencias)||!lista(h.cartas,MISIONES_HISTORIA.map(q=>q.id))||!lista(h.sellos,['F07','F08','F09','F10'])||!Array.isArray(h.premios)||h.premios.length>217||new Set(h.premios).size!==h.premios.length)return false;
+ if(!registro(h)||h.version!==1||!registro(h.activas)||!registro(h.completadas)||!registro(h.consecuencias)||!registro(h.pistas)||!registro(h.notas)||Object.entries(h.pistas).some(([id,x])=>{const q=misionHistoria(id);return !q?.pistas||!Array.isArray(x)||new Set(x).size!==x.length||x.some(i=>!entero(i,0,q.pistas!.length-1));})||Object.entries(h.notas).some(([id,x])=>!misionHistoria(id)?.pasos.some(p=>p.tipo==='nota')||typeof x!=='string'||!x.trim()||x.length>500)||!lista(h.cartas,MISIONES_HISTORIA.map(q=>q.id))||!lista(h.sellos,['F07','F08','F09','F10'])||!Array.isArray(h.premios)||h.premios.length>217||new Set(h.premios).size!==h.premios.length)return false;
  if(Object.keys(h.activas).length+Object.keys(h.completadas).length>MISIONES_HISTORIA.length)return false;
  for(const [id,c]of Object.entries(h.completadas)){const q=misionHistoria(id);if(!q||!registro(c)||!entero(c.dia,0,dia)||!entero(c.opcion,0,q.decision?1:0)||!lista(c.recibos,q.pasos.map(p=>p.id))||c.recibos.length!==q.pasos.length||!q.requiere.every(r=>h.completadas[r])||h.activas[id])return false;}
  for(const [id,a]of Object.entries(h.activas)){
-  const q=misionHistoria(id);if(!q||!registro(a)||!entero(a.dia,0,dia)||!entero(a.inicioPaso,a.dia,dia)||(a.plan!==null&&(!q.pasos.some(p=>p.planes)||!entero(a.plan,0,1)))||!entero(a.paso,0,q.pasos.length)||!lista(a.recibos,q.pasos.slice(0,a.paso).map(p=>p.id))||a.recibos.length!==a.paso||!q.requiere.every(r=>h.completadas[r])||!registro(a.cultivos)||!registro(a.entregas)||!registro(a.permisos)||!registro(a.enfoques)||!registro(a.estadisticas)||!Array.isArray(a.cuidados)||a.cuidados.length>600||new Set(a.cuidados).size!==a.cuidados.length)return false;
+  const q=misionHistoria(id);if(!q||!registro(a)||!entero(a.dia,0,dia)||!entero(a.inicioPaso,a.dia,dia)||(a.plan!==null&&(!q.pasos.some(p=>p.planes)||!entero(a.plan,0,1)))||!entero(a.paso,0,q.pasos.length)||!lista(a.recibos,q.pasos.slice(0,a.paso).map(p=>p.id))||a.recibos.length!==a.paso||!q.requiere.every(r=>h.completadas[r])||!registro(a.cultivos)||!registro(a.entregas)||!registro(a.permisos)||!registro(a.enfoques)||!registro(a.estadisticas)||!registro(a.cuidadosDias)||!Array.isArray(a.cuidados)||a.cuidados.some(k=>typeof k!=='string'||!/^[A-Za-z0-9_-]{1,100}:(?:alimentar|acompanar)$/.test(k))||Object.entries(a.cuidadosDias).some(([id,d])=>!a.cuidados.includes(id)||!entero(d,a.dia,dia))||a.cuidados.length>600||new Set(a.cuidados).size!==a.cuidados.length)return false;
   if(!lista(a.observados,q.pasos.flatMap(p=>(p.datos??[]).map((_,i)=>p.id+':'+i))))return false;
-  if(Object.entries(a.cultivos).some(([id,v])=>!/^[-\d]+,[-\d]+$/.test(id)||!registro(v)||!CULTIVOS.some(c=>c.id===v.cultivo&&!c.region)||typeof v.regado!=='boolean'||typeof v.cosechado!=='boolean'||v.cosechado&&!v.regado)||Object.keys(a.cultivos).length>512)return false;
+  if(Object.entries(a.cultivos).some(([id,v])=>!/^(?:[a-zA-Z0-9_-]+:)?[-\d]+,[-\d]+$/.test(id)||!registro(v)||!CULTIVOS.some(c=>c.id===v.cultivo)||(v.contexto!==undefined&&(typeof v.contexto!=='string'||v.contexto.length>100))||typeof v.regado!=='boolean'||typeof v.cosechado!=='boolean'||v.cosechado&&!v.regado)||Object.keys(a.cultivos).length>512)return false;
   if(Object.entries(a.permisos).some(([id,v])=>!['acepta','aplaza','rechaza'].includes(v)||!q.pasos.some(p=>p.participantes?.some(n=>id===p.id+':'+n.id&&v===n.respuesta))))return false;
   if(Object.entries(a.entregas).some(([id,v])=>{const p=q.pasos.find(p=>p.id===id);return !p?.materiales||!registro(v)||JSON.stringify(Object.entries(v).sort())!==JSON.stringify(Object.entries(p.materiales).sort());}))return false;
-  if(Object.entries(a.enfoques).some(([id,v])=>!['tecnica','combate'].includes(v)||!q.pasos.some(p=>p.id===id&&p.alternativa))||Object.entries(a.estadisticas).some(([id,v])=>!entero(v)||!id.startsWith('combate:')))return false;
+  if(Object.entries(a.enfoques).some(([id,v])=>!['tecnica','combate'].includes(v)||!q.pasos.some(p=>p.id===id&&p.alternativa))||Object.entries(a.estadisticas).some(([id,v])=>!entero(v)||!id.startsWith('combate:')&&!q.pasos.some(p=>p.registro===id)&&!(q.pasos.some(p=>p.tipo==='devolver_pesca')&&PECES.some(p=>id==='captura:'+p.id))))return false;
  }
  if(Object.entries(h.consecuencias).some(([id,v])=>!h.completadas[id]||v!==h.completadas[id].opcion)||h.sellos.some(id=>!h.completadas[id]))return false;
- if(h.reto!==null){const r=h.reto,a=h.activas[r?.mision],p=misionHistoria(r?.mision)?.pasos[a?.paso];if(!registro(r)||!a||!p||p.id!==r.paso||p.tipo!==r.tipo||!entero(r.progreso,0,p.orden?.length??0)||!entero(r.errores,0,100)||!entero(r.x,0,20)||!entero(r.z,0,20)||!lista(r.visitados,['A','B','R'])||typeof r.retiro!=='boolean'||r.retiro&&!r.visitados.includes('R')||!Array.isArray(r.giros)||r.giros.length!==9||r.giros.some(g=>!entero(g,0,3)))return false;if(r.tipo==='laberinto'&&(!p.mapa?.[r.z]?.[r.x]||p.mapa[r.z][r.x]==='#'))return false;}
+ if(h.reto!==null){const r=h.reto,a=h.activas[r?.mision],p=misionHistoria(r?.mision)?.pasos[a?.paso];if(!registro(r)||!['secuencia','contraste','laberinto','circuito'].includes(r.tipo)||!a||!p||p.id!==r.paso||p.tipo!==r.tipo||!entero(r.progreso,0,p.orden?.length??0)||!entero(r.errores,0,100)||!entero(r.x,0,20)||!entero(r.z,0,20)||!lista(r.visitados,['A','B','R'])||typeof r.retiro!=='boolean'||r.retiro&&!r.visitados.includes('R')||!Array.isArray(r.giros)||r.giros.length!==9||r.giros.some(g=>!entero(g,0,3)))return false;if(r.tipo==='laberinto'&&(!p.mapa?.[r.z]?.[r.x]||p.mapa[r.z][r.x]==='#'))return false;}
  return true;
 }
