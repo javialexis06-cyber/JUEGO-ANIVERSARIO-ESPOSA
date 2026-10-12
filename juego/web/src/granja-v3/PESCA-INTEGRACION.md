@@ -83,3 +83,9 @@ Para preparar la prueba de navegador: `PESCA_PARTIDA=/tmp/pesca-partida.json nod
 `verificar-pesca-sedal.mjs` verifica espera visible, botones, teclado, puntero, recogida, recarga y
 almacenamiento fallido. Usa un escenario preparado y pausa de dibujo declarada; la integración general
 casa/granja conserva WebGL real. No se certifica rendimiento o destreza en teléfonos físicos.
+
+La evidencia de entrega está en [PESCA-VERIFICACION.json](PESCA-VERIFICACION.json): 45 suites sin
+fallos, 18 comprobaciones lógicas con las 26 especies y 17 comprobaciones de navegador
+(11 de pesca y seis de integración general con WebGL). Incluye firmas de las fuentes y alcance
+de cada escenario. Se incorporan las diez voces del prólogo del frente visual; sus archivos,
+IDs y duraciones se verifican sin generar audio.

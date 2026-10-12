@@ -10,6 +10,8 @@ puestos, reservas y controles. No se producen gráficos nuevos ni llamadas de vo
 La API anterior `pescar` se conserva para compatibilidad, mientras la interfaz usa sesiones.
 Se incorporó `2a22e7ec`: aventuras, radio y bichos del lavado, y ajuste de franjas del prólogo.
 Sus archivos de lavado y cine permanecen idénticos a esa revisión.
+Se incorporó también `c9890322`, con las diez tomas de voz del prólogo y su manifiesto.
+Se reutilizan sin generar audio; el código del motor comprobado permanece idéntico.
 
 ## Reuniones y agendas comunitarias · 12 de octubre de 2026
 

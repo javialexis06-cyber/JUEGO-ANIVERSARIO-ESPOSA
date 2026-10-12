@@ -162,8 +162,10 @@ def main():
     source_map[cine_path] = 'Granja-Cine'
     cine = source(cine_path)
     cine = '# El cine de la granja\n\nPrólogo cinematográfico sobre el canon de Celia, Aura y Lara; reutiliza personajes y modelos existentes.\n\n## El prólogo' + cine.split('\n\n## El prólogo', 1)[1]
-    cine = cine.split('- **Pendiente para Javier**:', 1)[0] + '- **Producción pendiente:** voces celestiales y música propia del cine. Los scripts descritos pueden generar gasto; esta exportación no los ejecuta. Las demás películas de la campaña continúan en planificación.\n'
-    doc('Granja-Cine', cine_path, '**Estado: código del prólogo integrado por el frente visual; voces propias pendientes.** El motor pausa las acciones del valle durante la película; una sesión de pesca activa exige recoger o cancelar antes de verla.', text=cine)
+    cine = cine.split('- **Pendiente para Javier**:', 1)[0].replace('; Javier descartó la catedral por exagerada', '')
+    voces_cine = len(json.loads(source('juego/web/public/granja/cine/medios.json'))['voces'])
+    cine += '\nMúsica propia del cine pendiente; se conservan M12 y M13. Esta exportación no ejecuta generación de medios. Las demás películas de la campaña continúan en planificación.\n'
+    doc('Granja-Cine', cine_path, f'**Estado: prólogo y {voces_cine} tomas de voz integrados por el frente visual; música propia pendiente.** El motor pausa las acciones del valle durante la película; una sesión de pesca activa exige recoger o cancelar antes de verla.', text=cine)
     for path, page in list(source_map.items()):
         if path.startswith('juego/web/'):
             planning = path.endswith(('PLAN-MOTOR-COMPLETO.md', 'PLAN-PUEBLOS-MUNDOS.md', 'REPARTO-COMPLETO.md'))

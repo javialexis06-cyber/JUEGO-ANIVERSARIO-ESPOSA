@@ -36,6 +36,82 @@
     "errores": [],
     "estado": "Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir."
   },
+  "mediosCine": {
+    "voces": [
+      {
+        "id": "PRO.N1",
+        "archivo": "./audio/cine/PRO.N1-1cd298.ogg",
+        "bytes": 44108,
+        "segDeclarados": 9.01,
+        "segMedidos": 9.0065
+      },
+      {
+        "id": "PRO.AURA",
+        "archivo": "./audio/cine/PRO.AURA-bb45fa.ogg",
+        "bytes": 29749,
+        "segDeclarados": 6.31,
+        "segMedidos": 6.3065
+      },
+      {
+        "id": "PRO.LARA",
+        "archivo": "./audio/cine/PRO.LARA-5d36ad.ogg",
+        "bytes": 26317,
+        "segDeclarados": 5.71,
+        "segMedidos": 5.7065
+      },
+      {
+        "id": "PRO.N2",
+        "archivo": "./audio/cine/PRO.N2-35dd20.ogg",
+        "bytes": 38290,
+        "segDeclarados": 7.71,
+        "segMedidos": 7.7065
+      },
+      {
+        "id": "PRO.N3",
+        "archivo": "./audio/cine/PRO.N3-2f8e71.ogg",
+        "bytes": 23066,
+        "segDeclarados": 4.61,
+        "segMedidos": 4.6065
+      },
+      {
+        "id": "PRO.C1",
+        "archivo": "./audio/cine/PRO.C1-e79fb4.ogg",
+        "bytes": 39803,
+        "segDeclarados": 8.41,
+        "segMedidos": 8.4065
+      },
+      {
+        "id": "PRO.C2",
+        "archivo": "./audio/cine/PRO.C2-84bbbe.ogg",
+        "bytes": 40478,
+        "segDeclarados": 8.41,
+        "segMedidos": 8.4065
+      },
+      {
+        "id": "PRO.C3",
+        "archivo": "./audio/cine/PRO.C3-a22694.ogg",
+        "bytes": 37605,
+        "segDeclarados": 7.91,
+        "segMedidos": 7.906521
+      },
+      {
+        "id": "PRO.C4",
+        "archivo": "./audio/cine/PRO.C4-02b028.ogg",
+        "bytes": 34452,
+        "segDeclarados": 7.31,
+        "segMedidos": 7.3065
+      },
+      {
+        "id": "PRO.C5",
+        "archivo": "./audio/cine/PRO.C5-88d434.ogg",
+        "bytes": 43589,
+        "segDeclarados": 9.11,
+        "segMedidos": 9.106521
+      }
+    ],
+    "errores": [],
+    "alcance": "Archivos locales, encabezado OGG, IDs existentes y duraciones medidas. No se genera audio ni se ejecuta una película completa."
+  },
   "navegador": {
     "pesca": {
       "checks": [
@@ -80,7 +156,7 @@
     }
   },
   "conservado": {
-    "revisionClaude": "2a22e7ecd2af7f6afa09f9588dd4ce236a8bfdbe",
+    "revisionClaude": "c989032285d3d9eecb6778864ae26b01d59ac75d",
     "archivosIdenticos": [
       "juego/web/src/casa/lavado",
       "juego/web/src/casa/lavado.css",
@@ -113,6 +189,7 @@
     "vida-astra.ts": "8d4760c773a6e87d91a4377a1cc2511599deaaf5cf1a4df3e679771c4a990053"
   },
   "entradaBuildSha256": "24d84112cd913945535ba83c7f4ea4c5e8d42ff809fe4a37647f038fc0f1f67e",
+  "continuidadPruebas": "El código TypeScript/CSS y la entrada del build conservan la firma del recorrido WebGL. La última integración añade diez audios y un manifiesto del cine, verificados por archivo y duración.",
   "limites": [
     "El seguimiento de las 26 especies se automatiza con entradas del sedal; no mide destreza humana.",
     "La prueba específica prepara una partida y pausa dibujo; el recorrido general conserva WebGL real y fotos del mapa.",
