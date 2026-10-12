@@ -1,0 +1,526 @@
+[
+  {
+    "id": "E01",
+    "titulo": "La olla y el baile",
+    "asentamiento": "pueblo_sol",
+    "reparto": [
+      "cocinero",
+      "posadera",
+      "musica",
+      "artesana",
+      "veterano"
+    ],
+    "requiere": [
+      "P01"
+    ],
+    "acciones": [
+      "Preparar cuatro porciones con receta normal y cupos",
+      "Ensayar música y paso sentado o de pie",
+      "Reunir vecinos en cena breve sin obligar a actuar"
+    ],
+    "lineas": "cocinero: Preparé algo nuevo y algo conocido. Si todo es sorpresa, Rosa empieza a sospechar.\nposadera: Sospecho cuando el cocinero explica diez minutos antes de dejar probar.\nmusica: Traje una canción corta. Esta vez corta de verdad.\nartesana: Lo anoté como condición en el presupuesto.\nveterano: Yo puedo bailar sentado. Tiene la ventaja de que nadie me pisa.\nposadera: Aurelio, la última vez te pisaste tú solo.\ncocinero: ¿Les gustó? Pueden decir que no sin dar un discurso.\nartesana: Me gustó. Quiero repetir la parte donde nos sentamos.",
+    "eleccion": "Baile tranquilo o sobremesa de historias",
+    "ramas": [
+      "musica: Dejaré sitio para mirar sin bailar.",
+      "posadera: Las historias serán voluntarias y el postre llegará igual."
+    ],
+    "premio": "plano",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E02",
+    "titulo": "Una regata sin carrera",
+    "asentamiento": "puerto_lirios",
+    "reparto": [
+      "lirios_bastian",
+      "lirios_belen",
+      "lirios_tina",
+      "lirios_julian",
+      "lirios_teo"
+    ],
+    "requiere": [
+      "P01"
+    ],
+    "acciones": [
+      "Dibujar barquitos pequeños con material recuperado",
+      "Probar en canal seguro con supervisión",
+      "Recoger todas las piezas y celebrar diseño, no velocidad"
+    ],
+    "lineas": "lirios_tina: ¿Por qué todos quieren que el barco llegue primero? El mío lleva una casa.\nlirios_bastian: Entonces tendrá que llegar cómodo.\nlirios_belen: Mi barco lleva una red que no pesca. Era más fácil de hacer.\nlirios_teo: El mío llegó de lado. Voy a llamarlo muelle.\nlirios_julian: Ganó el nombre, no la navegación.\nlirios_tina: Quiero que cada barco tenga una historia.\nlirios_bastian: Y que ninguno se quede en el río.\nlirios_belen: Las historias pueden flotar; la basura no se queda.",
+    "eleccion": "Exhibir dibujos o barquitos secos",
+    "ramas": [
+      "lirios_tina: Los dibujos tienen más sitio para dragones.",
+      "lirios_bastian: Las piezas se guardarán sin ocupar el paso del muelle."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E03",
+    "titulo": "El club de los sombreros feos",
+    "asentamiento": "brumaverde",
+    "reparto": [
+      "bruma_felix",
+      "bruma_amira",
+      "bruma_ada",
+      "bruma_benicio",
+      "bruma_roque"
+    ],
+    "requiere": [
+      "P01"
+    ],
+    "acciones": [
+      "Reunir retazos y fibras del catálogo sin cortar bosque",
+      "Diseñar tres sombreros reutilizables",
+      "Celebrar muestra y devolver material sobrante"
+    ],
+    "lineas": "bruma_felix: El concurso tiene una regla: no admitiré sombreros discretos.\nbruma_amira: El mío lleva flores de tela. Las abejas no fueron invitadas a trabajar.\nbruma_ada: El mío parece un cerdo de musgo cansado.\nbruma_roque: Eso explica por qué tiene una almohada.\nbruma_benicio: Yo puedo contar que perteneció a un rey.\nbruma_ada: Primero di que te lo estás inventando.\nbruma_benicio: Me quitan toda la ceremonia. Está bien: perteneció a mí hace cinco minutos.\nbruma_felix: Tenemos ganador de historia. Falta decidir quién aguanta llevarlo.",
+    "eleccion": "Muestra pública o paseo corto",
+    "ramas": [
+      "bruma_amira: Nadie tendrá que usar su sombrero si no le gusta.",
+      "bruma_roque: El paseo irá por sendero; las ramas no participarán del concurso."
+    ],
+    "premio": "plano",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E04",
+    "titulo": "La sinfonía de herramientas quietas",
+    "asentamiento": "piedralumbre",
+    "reparto": [
+      "piedra_hugo",
+      "piedra_petra",
+      "piedra_mireya",
+      "piedra_ciro",
+      "herrero"
+    ],
+    "requiere": [
+      "P01"
+    ],
+    "acciones": [
+      "Usar muestras inertes y herramientas fuera de operación",
+      "Ensayar tres patrones de ritmo con texto visible",
+      "Presentar pieza sin ruido de máquinas reales"
+    ],
+    "lineas": "piedra_hugo: Aquí está el ritmo escrito. Quien no lo oiga puede seguirlo igual.\npiedra_petra: Yo traje una piedra que suena horrible. Puede ser la solista.\npiedra_mireya: Si la conectamos...\nherrero: Hoy ninguna máquina va a hacer nuestro pasatiempo.\npiedra_ciro: Yo golpeo cucharas. Cuando acaben, sí vuelven a la cocina.\npiedra_petra: Bruno está afinando un clavo.\nherrero: Estoy comprobando que no haya punta. Afinar será problema de ustedes.\npiedra_hugo: Por fin tenemos una banda que puede detenerse sin alarma.",
+    "eleccion": "Interpretación breve o juego de patrones",
+    "ramas": [
+      "piedra_ciro: Después servimos merienda sin tocar las ollas calientes.",
+      "piedra_hugo: El patrón podrá jugarse con fichas y sin audio."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E05",
+    "titulo": "El mapa de las tazas",
+    "asentamiento": "brasaviva",
+    "reparto": [
+      "brasa_sol",
+      "brasa_yago",
+      "brasa_rufina",
+      "brasa_tarek",
+      "brasa_dante"
+    ],
+    "requiere": [
+      "P01"
+    ],
+    "acciones": [
+      "Dibujar tazas de residentes con permiso",
+      "Clasificar uso y gusto sin concurso de perfección",
+      "Armar estante accesible o cuaderno de dibujos"
+    ],
+    "lineas": "brasa_yago: Esta taza tiene tres asas. ¿Quién tiene tres manos?\nbrasa_sol: Alguien que no pudo decidir dónde poner la primera.\nbrasa_rufina: La mía tiene una sola y se me pierde igual.\nbrasa_tarek: Yo quiero una grande para café.\nbrasa_dante: ¿Grande de verdad o grande de cuando cuentas tus viajes?\nbrasa_tarek: De verdad. Lo otro sería una piscina.\nbrasa_yago: Voy a dibujar esa también.\nbrasa_sol: El cuaderno permite tamaños que el horno no tiene que prometer.",
+    "eleccion": "Estante de piezas prestadas o álbum de dibujos",
+    "ramas": [
+      "brasa_rufina: Los préstamos volverán a sus dueños.",
+      "brasa_yago: El álbum tendrá permiso para cada dibujo."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E06",
+    "titulo": "Una merienda bajo techo",
+    "asentamiento": "nieveclara",
+    "reparto": [
+      "nieve_anselmo",
+      "nieve_eira",
+      "nieve_luz",
+      "nieve_severo",
+      "nieve_otto"
+    ],
+    "requiere": [
+      "P01"
+    ],
+    "acciones": [
+      "Consultar clima y preparar comida ordinaria",
+      "Tejer pequeño tapete con lana existente",
+      "Compartir merienda en refugio sin viaje peligroso"
+    ],
+    "lineas": "nieve_severo: Hoy mi mejor pronóstico es que adentro hace más calor.\nnieve_anselmo: Está ganando precisión con los años.\nnieve_eira: Traje lana para un tapete, no para que me conviertan la tarde en pedido.\nnieve_luz: Yo traje un juego que no necesita luz de aurora.\nnieve_otto: ¿Necesita ganar?\nnieve_luz: No, pero voy a intentar.\nnieve_anselmo: Esa es una buena descripción de la tarde.\nnieve_eira: Y la última taza la lava alguien que no sea quien cocinó.",
+    "eleccion": "Juego de mesa o historias ligeras",
+    "ramas": [
+      "nieve_luz: Las reglas tendrán dibujo y texto.",
+      "nieve_otto: Hoy ninguna historia tiene que terminar en rescate."
+    ],
+    "premio": "plano",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E07",
+    "titulo": "La postal que no da noticias",
+    "asentamiento": "vigilia",
+    "reparto": [
+      "vigilia_telmo",
+      "vigilia_noemi",
+      "vigilia_ulises",
+      "vigilia_azucena"
+    ],
+    "requiere": [
+      "P02"
+    ],
+    "acciones": [
+      "Dibujar lugar seguro sin datos de guardia",
+      "Pedir permiso para postal colectiva",
+      "Enviar copia o exhibir sin nombres privados"
+    ],
+    "lineas": "vigilia_telmo: Quiero una postal que no empiece con lamentamos informarle.\nvigilia_noemi: Dibuja la cocina cuando no se quema nada.\nvigilia_ulises: Es un lugar difícil de documentar.\nvigilia_azucena: Yo propongo el cielo que vimos mientras no ocurría ninguna extracción.\nvigilia_telmo: ¿Y qué escribimos?\nvigilia_noemi: Hoy comimos bien y Ulises hizo un chiste malo.\nvigilia_ulises: No sé si eso sostiene una correspondencia.\nvigilia_azucena: A mí me gustaría recibirla.",
+    "eleccion": "Correo a destinatario consentido o panel de cocina",
+    "ramas": [
+      "vigilia_telmo: No mostrará ubicación sensible ni listas de residentes.",
+      "vigilia_noemi: El panel también tendrá días corrientes, sin obligación de alegría."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E08",
+    "titulo": "La receta de estar juntos",
+    "asentamiento": "rosal_eterno",
+    "reparto": [
+      "verdia_lucio",
+      "verdia_amaranta",
+      "verdia_yara",
+      "verdia_tobias"
+    ],
+    "requiere": [
+      "P12"
+    ],
+    "acciones": [
+      "Preparar encuentro sin necesidades corporales fingidas",
+      "Elegir sabor recordado o aroma con permiso",
+      "Conversar y recoger objetos de visita"
+    ],
+    "lineas": "verdia_lucio: No tienen que comer para vivir. Igual pueden opinar de mi sopa.\nverdia_amaranta: Esa libertad abre demasiadas posibilidades.\nverdia_tobias: Yo recuerdo otra textura.\nverdia_lucio: Perfecto. No hemos venido a ganar una investigación de sopa.\nverdia_yara: ¿Puedo cantar sobre eso?\nverdia_amaranta: Solo si es muy corta.\nverdia_tobias: Mi pez más grande era...\nverdia_lucio: La sopa se enfría en el relato, Tobías. Volvamos a la mesa.",
+    "eleccion": "Encuentro con canción o conversación sin música",
+    "ramas": [
+      "verdia_yara: Cantaré solo después de preguntar.",
+      "verdia_lucio: La reunión no necesita otro motivo que querer compañía."
+    ],
+    "premio": "plano",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E09",
+    "titulo": "El ensayo que se detiene",
+    "asentamiento": "jardines_eco",
+    "reparto": [
+      "eco_sora",
+      "eco_esteban",
+      "eco_basilia",
+      "eco_oriel"
+    ],
+    "requiere": [
+      "P12"
+    ],
+    "acciones": [
+      "Preparar pieza corta con permisos",
+      "Ensayar una pausa de entrada y salida",
+      "Presentar versión musical o lectura rítmica"
+    ],
+    "lineas": "eco_sora: Esta pieza tiene una pausa donde pueden salir.\neco_oriel: ¿Y si nadie sale?\neco_sora: Sigue siendo pausa. No vamos a expulsar a alguien para demostrar la idea.\neco_esteban: Me gusta una instrucción que admite que no ocurra nada.\neco_basilia: Traje luz pequeña, sin cuota de participación.\neco_oriel: Yo traje demasiadas preguntas.\neco_sora: Guárdanos una para la sobremesa.\neco_esteban: La anotaré como pregunta, no como conclusión del ensayo.",
+    "eleccion": "Pieza musical o ritmo en lectura",
+    "ramas": [
+      "eco_sora: Nadie tiene que prestar voz a una grabación.",
+      "eco_esteban: La lectura tendrá puntuación y no dependerá del sonido."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E10",
+    "titulo": "La tarde sin pruebas",
+    "asentamiento": "travesia",
+    "reparto": [
+      "senda_leire",
+      "senda_iria",
+      "senda_fabian",
+      "senda_ofelia",
+      "senda_pablo"
+    ],
+    "requiere": [
+      "P13"
+    ],
+    "acciones": [
+      "Preparar zona de descanso autorizada",
+      "Separar provisiones de vivos de objetos simbólicos de almas",
+      "Elegir juego sin evaluación y permitir retiro"
+    ],
+    "lineas": "senda_leire: Hoy el juego no abre ninguna puerta.\nsenda_pablo: ¿Entonces cómo sé si lo hice bien?\nsenda_ofelia: Creo que esa es la pregunta que podemos dejar descansar.\nsenda_fabian: Las raciones son para quienes tienen cuerpo. Las fichas, para todos.\nsenda_iria: Y nadie tendrá que contar su reparación para jugar.\nsenda_pablo: Puedo perder una ronda sin perder el camino.\nsenda_leire: Exactamente.\nsenda_ofelia: Esto me gusta más de lo que esperaba.",
+    "eleccion": "Rompecabezas o paseo en zona segura",
+    "ramas": [
+      "senda_iria: No tendrá respuestas morales ocultas.",
+      "senda_leire: El paseo tendrá ancla y podrá terminar antes."
+    ],
+    "premio": "agenda",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E11",
+    "titulo": "Nudos que no atan",
+    "asentamiento": "refugio_hilos",
+    "reparto": [
+      "hilos_asha",
+      "hilos_hector",
+      "hilos_tecla",
+      "hilos_elian"
+    ],
+    "requiere": [
+      "P14"
+    ],
+    "acciones": [
+      "Usar cuerda de práctica distinta de anclas activas",
+      "Dibujar figuras abiertas",
+      "Guardar juego sin confundirlo con equipo de retorno"
+    ],
+    "lineas": "hilos_hector: Esta cuerda no es un ancla. Lo puse en dos etiquetas.\nhilos_asha: Yo puedo hacer un pez con ella.\nhilos_tecla: Desde cierto ángulo parece una ruta.\nhilos_elian: Desde este parece un fideo.\nhilos_asha: Por primera vez alguien mejoró mi descripción.\nhilos_hector: Les ruego no cocinar equipo de seguridad.\nhilos_tecla: Te estábamos esperando con ese chiste.\nhilos_elian: Quiero dejar la figura abierta. Se puede seguir mañana.",
+    "eleccion": "Figura abierta o juego de formas",
+    "ramas": [
+      "hilos_asha: No la usaremos para sujetar a nadie ni activar rutas.",
+      "hilos_hector: Se guardará aparte del equipo real."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E12",
+    "titulo": "El relevo y la comedia",
+    "asentamiento": "bastion_velo",
+    "reparto": [
+      "nox_dorian",
+      "nox_salma",
+      "nox_viggo",
+      "nox_mirta",
+      "nox_tamara"
+    ],
+    "requiere": [
+      "P15"
+    ],
+    "acciones": [
+      "Confirmar cobertura de guardia sin abandonar protocolo",
+      "Preparar sala del perímetro con capacidad",
+      "Leer comedia autorizada sin acercarse a celdas"
+    ],
+    "lineas": "nox_dorian: El siguiente turno está cubierto. Podemos comenzar.\nnox_salma: Esa es una buena entrada para una comedia.\nnox_viggo: El cerrojo del decorado no abre.\nnox_mirta: Porque decidiste hacerlo funcional.\nnox_tamara: Lo más divertido va a ser salir del escenario.\nnox_dorian: Yo leo al personaje que pierde las llaves.\nnox_salma: Por favor, no uses las reales.\nnox_viggo: Ahora entiendo por qué piden utilería distinta.",
+    "eleccion": "Lectura breve o representación sentada",
+    "ramas": [
+      "nox_mirta: El libreto no tendrá datos del servicio.",
+      "nox_tamara: El escenario mantendrá salidas claras y balizas sin apagar."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E13",
+    "titulo": "La comida que no flota",
+    "asentamiento": "estacion_celia",
+    "reparto": [
+      "orbita_said",
+      "orbita_dexo",
+      "orbita_valentina",
+      "orbita_rita"
+    ],
+    "requiere": [
+      "P16"
+    ],
+    "acciones": [
+      "Preparar alimento con receta de estación",
+      "Confirmar sujeción de bandejas y reserva",
+      "Cenar en turno libre con manifiesto de limpieza"
+    ],
+    "lineas": "orbita_dexo: La última vez mi pan hizo órbita propia.\norbita_rita: Seguía registrado como carga, por supuesto.\norbita_valentina: Esta hoja viene de Celia. La siguiente tanda sí será del huerto.\norbita_said: Podemos comer sin convertir cada ingrediente en examen.\norbita_rita: Solo quiero saber qué tengo que sujetar.\norbita_dexo: Mi dignidad no pesa mucho; se me escapa igual.\norbita_valentina: La bandeja la salva.\norbita_said: Y hoy alguien diferente lavará los utensilios.",
+    "eleccion": "Mesa común o dos turnos",
+    "ramas": [
+      "orbita_rita: La capacidad no cambiará porque invitemos a más gente.",
+      "orbita_said: Ambos turnos tendrán el mismo menú y descanso."
+    ],
+    "premio": "plano",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E14",
+    "titulo": "El picnic con sombra",
+    "asentamiento": "huerto_aurelia",
+    "reparto": [
+      "aurelia_aitana",
+      "aurelia_oscar",
+      "aurelia_kiara",
+      "aurelia_saul"
+    ],
+    "requiere": [
+      "P17"
+    ],
+    "acciones": [
+      "Medir lugar seguro de luz",
+      "Reservar comida ordinaria y sombra",
+      "Compartir merienda sin ampliar recinto ecológico"
+    ],
+    "lineas": "aurelia_saul: Lo llamé picnic lunar y después recordé que todo aquí es lunar.\naurelia_oscar: Puedes llamarlo comida. Es una marca amplia.\naurelia_kiara: La sombra es para nosotros; la planta de ensayo queda en su sitio.\naurelia_aitana: Por una tarde acepto no comparar rendimientos.\naurelia_saul: ¿Comparar sabores sí?\naurelia_aitana: Eso siempre.\naurelia_oscar: La batería no dará premios por quedarse más tiempo.\naurelia_kiara: El descanso tampoco necesita darlos.",
+    "eleccion": "Sombra de tela o refugio existente",
+    "ramas": [
+      "aurelia_aitana: La tela tendrá anclaje y se recogerá después.",
+      "aurelia_oscar: No gastaremos energía de retorno para iluminar la mesa."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E15",
+    "titulo": "Cuentos del lado oscuro",
+    "asentamiento": "vigia_nocturna",
+    "reparto": [
+      "nocturna_matea",
+      "nocturna_elvira",
+      "nocturna_gaspar",
+      "nocturna_naim"
+    ],
+    "requiere": [
+      "P17"
+    ],
+    "acciones": [
+      "Reunir relatos declarados como ficción",
+      "Preparar luz de lectura sin afectar plantas",
+      "Leer dos historias y guardar instrumentos"
+    ],
+    "lineas": "nocturna_matea: Este cuento no sirve para navegar. Aviso antes de empezar.\nnocturna_gaspar: Mi monstruo es una lente que nunca necesita calibración.\nnocturna_elvira: El mío es una visita que enciende todas las luces.\nnocturna_naim: Yo traje un cuento feliz.\nnocturna_matea: Puedes hacerlo. El lado oscuro también tiene sobremesa.\nnocturna_gaspar: ¿Y qué ocurre?\nnocturna_naim: Todos terminan la jornada a tiempo.\nnocturna_elvira: Eso sí que parece fantástico.",
+    "eleccion": "Cuentos humorísticos o lectura tranquila",
+    "ramas": [
+      "nocturna_matea: Ningún relato se archivará como fuente de rutas.",
+      "nocturna_elvira: La luz mantendrá refugio oscuro para las plantas."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E16",
+    "titulo": "Un dibujo de lo pequeño",
+    "asentamiento": "cantera_esmeralda",
+    "reparto": [
+      "esmeralda_olmo",
+      "esmeralda_indira",
+      "esmeralda_duna",
+      "esmeralda_raimundo"
+    ],
+    "requiere": [
+      "P17"
+    ],
+    "acciones": [
+      "Observar muestras autorizadas sin extracción extra",
+      "Dibujar detalles con escala",
+      "Armar lámina común y devolver piezas"
+    ],
+    "lineas": "esmeralda_duna: Parece un bosque si acerco mucho el dibujo.\nesmeralda_olmo: Es una muestra. No le cobres arriendo a ningún árbol.\nesmeralda_indira: Puedo ponerle ritmo a la forma.\nesmeralda_raimundo: Y yo puedo ponerle escala para que no pidan una excavadora.\nesmeralda_duna: ¿Todo tiene que ser informe?\nesmeralda_raimundo: No. Por eso la escala va atrás.\nesmeralda_olmo: Adelante pueden caber todos los bosques imaginados.\nesmeralda_indira: Sin factura de extracción.",
+    "eleccion": "Lámina artística o ficha comparativa",
+    "ramas": [
+      "esmeralda_duna: La portada dirá dibujo, no hábitat real.",
+      "esmeralda_raimundo: La ficha conservará escala y procedencia."
+    ],
+    "premio": "conocimiento",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E17",
+    "titulo": "El museo de cosas inútiles",
+    "asentamiento": "campamento_fragmentos",
+    "reparto": [
+      "fragmentos_axel",
+      "fragmentos_pia",
+      "fragmentos_lazaro",
+      "fragmentos_uma"
+    ],
+    "requiere": [
+      "P18"
+    ],
+    "acciones": [
+      "Identificar restos sin dueño pendiente de restitución",
+      "Crear pieza decorativa con costo real",
+      "Exponer sin registrar material ficticio recuperado"
+    ],
+    "lineas": "fragmentos_lazaro: No son inútiles. Todavía podrían servir.\nfragmentos_uma: Esa pieza no gira desde antes de que yo llegara.\nfragmentos_pia: Sirve para que la luz haga esto.\nfragmentos_axel: Entonces el museo tiene una función y perdió el nombre.\nfragmentos_lazaro: Podríamos llamarlo cosas que no tienen que salvarnos.\nfragmentos_uma: Me gusta mucho más.\nfragmentos_pia: Esta sí tenía dueño. La dejaremos fuera de la muestra.\nfragmentos_axel: Y con destino de devolución, no olvido.",
+    "eleccion": "Objeto pequeño o dibujo del conjunto",
+    "ramas": [
+      "fragmentos_lazaro: No devolverá materiales al venderse; no está en venta.",
+      "fragmentos_pia: El dibujo no reemplazará recibos de restitución."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E18",
+    "titulo": "La sombra de una conversación",
+    "asentamiento": "ambarina",
+    "reparto": [
+      "ambar_zora",
+      "ambar_alina",
+      "ambar_baltasar",
+      "ambar_samira",
+      "ambar_kenzo"
+    ],
+    "requiere": [
+      "P18"
+    ],
+    "acciones": [
+      "Contar agua y asientos de encuentro",
+      "Preparar té con ingredientes disponibles",
+      "Conversar en sombra y registrar gasto sin auditoría de afectos"
+    ],
+    "lineas": "ambar_zora: Hay agua para cinco tazas y una de reserva.\nambar_baltasar: ¿La reserva también viene a conversar?\nambar_alina: La sexta taza se sienta donde quiera.\nambar_samira: Pronostico chistes secos durante la tarde.\nambar_kenzo: El mío es antiguo y puede consultarse sin llevárselo.\nambar_zora: Quiero una conversación que no termine en tratado.\nambar_baltasar: Podemos hablar de tu cerámica.\nambar_zora: Ahora sí vamos a discutir.",
+    "eleccion": "Mesa de dibujos o sobremesa libre",
+    "ramas": [
+      "ambar_kenzo: Los dibujos conservarán permiso de sus autores.",
+      "ambar_zora: No habrá acta de lo que cada persona decidió callar."
+    ],
+    "premio": "agenda",
+    "estado": "diseno_no_integrado"
+  },
+  {
+    "id": "E19",
+    "titulo": "El cristal que desafina a propósito",
+    "asentamiento": "iridalia",
+    "reparto": [
+      "iris_orin",
+      "iris_calista",
+      "iris_liora",
+      "iris_edda",
+      "iris_mauro",
+      "iris_yuna"
+    ],
+    "requiere": [
+      "P19"
+    ],
+    "acciones": [
+      "Usar instrumento existente sin retirar cristal",
+      "Ensayar ritmo con pausas y volumen autorizado",
+      "Celebrar encuentro con salida de fauna y visitantes separada"
+    ],
+    "lineas": "iris_orin: Esta nota la puse mal a propósito.\niris_liora: Es igual a la que pusiste mal ayer sin propósito.\niris_calista: No voy a convocar una votación sobre eso.\niris_edda: El volumen está bien desde el nido. Pueden continuar.\niris_mauro: Yo traje un paso de baile terrestre.\niris_yuna: ¿Eso también necesita recinto de prueba?\niris_orin: Solo si Mauro decide girar otra vez.\niris_mauro: Me retiro de la demostración con dignidad reducida, pero intacto.",
+    "eleccion": "Música breve o juego rítmico sin audio",
+    "ramas": [
+      "iris_orin: La pieza no afirmará que el planeta aprobó nada.",
+      "iris_yuna: Las fichas permitirán participar sin escuchar ni bailar."
+    ],
+    "premio": "trofeo",
+    "estado": "diseno_no_integrado"
+  }
+]

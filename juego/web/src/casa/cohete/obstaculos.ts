@@ -2,7 +2,7 @@
 // cielo del barrio; satélites y basura espacial en la órbita; asteroides de todos los tamaños; ovnis que disparan;
 // cometas con aviso; lluvias de meteoritos y agujeros negros que jalan. Cada vez más seguido según la distancia.
 import * as THREE from 'three';
-import { nota, rumor } from '../../sonido';
+import { nota, rumor } from './silencio';
 import { CUADRO } from './arte';
 import type { Efectos } from './efectos';
 import type { Modelos, TipoBasura } from './modelos';

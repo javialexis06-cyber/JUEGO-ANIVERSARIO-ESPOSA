@@ -130,7 +130,8 @@ function versionAmigos(): Plugin {
         for (const [a] of Object.values(suya)) copiar(`musica/${a}`);
         writeFileSync(resolve(salida, 'musica/lista.json'), JSON.stringify(suya) + '\n');
       }
-      copiar('sfx/');
+      // Los efectos (los de la granja no: la granja no va en la versión para amigos)
+      for (const f of readdirSync(resolve(pub, 'sfx'))) if (f !== 'granja') copiar(`sfx/${f}`);
       // La app arranca en index.html: aquí lleva directo a la sala de juegos de los amigos
       writeFileSync(
         resolve(salida, 'index.html'),

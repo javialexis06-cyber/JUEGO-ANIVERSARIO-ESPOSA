@@ -1,0 +1,782 @@
+{
+  "residentes": [
+    {
+      "id": "lirios_genaro",
+      "nombre": "Genaro",
+      "asentamiento": "puerto_lirios",
+      "funcion": "Salinero: eras de sal de espejo, cupos por ciclo y sal para las conservas del muelle.",
+      "pasado": "Genaro, 62, pescó treinta años en el delta y dejó la barca cuando las reglas del vivero de Nerina redujeron su zona. Se pasó a la sal con rabia y abrió una era de más junto al humedal sin preguntarle a Julián por el agua. La era secó un rincón de los juncos de Dalia en una sola temporada; la cerró él mismo y le pagó plantones, aunque tardó un año en decir que había sido su culpa.",
+      "presente": "Es gruñón de mañana y tierno de tarde, prueba la sal con la punta del dedo y le pone nombre a cada era. Trata a los jóvenes del muelle con bromas pesadas que corrige enseguida cuando ve que dolieron.",
+      "arco": "Aprende a medir la sal por el agua que el humedal puede prestar y no por lo que pide el mercado, y a contar sus errores antes de que otro los cuente.",
+      "vinculos": ["lirios_carmela", "lirios_julian", "lirios_dalia"],
+      "naturaleza": "persona_viva",
+      "voz": "Grave y ronca, frases cortas de pescador viejo; se ríe por la nariz.",
+      "hogar": "puerto_lirios_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "De niño, Genaro remaba antes de saber nadar bien. Su madre le ataba una cuerda a la cintura y le enseñaba a leer el color del agua: verde que alimenta, café que se enoja. Aprendió a querer el olor de la madrugada en el muelle, los peces que regresaban cada año al mismo recodo y el silencio de los mayores que esperaban la marea sin quejarse."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Cuando protegieron el vivero, Genaro sintió que le quitaban el río. No fue a la asamblea; prefirió gritar en la lonja. Olga le ofreció trabajo de limpieza y él lo tomó como limosna. Terminó en las eras de sal, que nadie quería, y descubrió que la sal también tiene temporadas, paciencia y cuentas que no salen si uno se apura."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "La era de más fue la peor idea de su vida tranquila. Dalia vio sus juncos amarillear y Genaro fingió no entender por qué. Cerró la era una noche, a escondidas, como si así borrara el daño. Todavía le pesa no haber hablado primero. Ahora le pide a Julián las lecturas de agua antes de abrir cada compuerta, aunque refunfuñe."}
+      ],
+      "cotidiano": "Abre las compuertas al amanecer, rastrilla la sal a mediodía y por la tarde se sienta en la fonda de su hija a discutir el clima con quien se deje.",
+      "postura_fuatia": "Le tuvo rencor por el vivero y ahora le tiene un respeto incómodo: dice que Fuatia tenía razón, pero que pudo avisar con más cariño.",
+      "conversacion": [
+        {"hablante": "lirios_genaro", "texto": "¿Granjeros? Bien. No pisen la era tres, que está cuajando y es más delicada que un pez recién nacido."},
+        {"hablante": "lirios_dalia", "texto": "Antes no la cuidabas tanto, Genaro."},
+        {"hablante": "lirios_genaro", "texto": "Antes no sabía lo que costaba. Ahora mido el agua con Julián, Dalia. Pregúntale a él."},
+        {"hablante": "el", "texto": "Pisamos solo por el borde, entonces. ¿Qué más hay que saber de la sal?"}
+      ],
+      "ropa": ["el", 3, "#cfcac2", "pelo_calvo", "sombrero_pescador#f2c230", "bigote#d8d4cc", "chaqueta#f2c230", "pantalon#2c4a6e", "botas_lluvia#f2c230", "", "contar_a"]
+    },
+    {
+      "id": "lirios_carmela",
+      "nombre": "Carmela",
+      "asentamiento": "puerto_lirios",
+      "funcion": "Fondera: caldos de pescado, ahumadero del muelle y comida caliente para quien vuelve de noche.",
+      "pasado": "Carmela, 38, hija de Genaro, aprendió a cocinar en barcas de otros puertos y volvió al delta para abrir una fonda pequeña. Durante su primer invierno compró pescado juvenil barato porque el caldo salía igual de rico y nadie preguntaba. Maite le mostró de dónde venía ese pescado; Carmela cambió de proveedor, subió los precios y perdió clientes durante meses.",
+      "presente": "Cocina cantando a destiempo, guarda una olla siempre encendida para quien llegue tarde y se niega a cobrarle a Tina las sopas. Discute con su padre en voz alta y lo abraza en voz baja.",
+      "arco": "Convierte la fonda en un lugar donde se aprende qué pescado se come y cuándo, sin sermonear a nadie en la mesa.",
+      "vinculos": ["lirios_genaro", "lirios_maite", "lirios_teo"],
+      "naturaleza": "persona_viva",
+      "voz": "Cálida y rápida, con humor de cocina; baja la voz cuando habla de dinero.",
+      "hogar": "puerto_lirios_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "La primera cocina de Carmela fue un fogón de lata en la barca de un tío. Aprendió que una sopa caliente cambia la cara de un pescador mojado más que cualquier palabra. Le gustaba ver cómo la gente callaba al primer sorbo. Desde entonces soñó con una mesa larga, con bancos disparejos, donde nadie tuviera que explicar por qué llegaba tarde."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Cuando volvió al puerto, la fonda casi no tenía clientes. Comprar pescado chiquito fue fácil: barato, sabroso y sin preguntas. Maite no la acusó; le llevó una cartilla con dibujos de juveniles y se sentó a comer. Carmela se sintió más avergonzada que si le hubiera gritado. Esa misma tarde buscó otro proveedor y escribió los precios nuevos en la pizarra."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Perdió clientes y ganó una amiga. Todavía hay noches en que la olla sobra y la cuenta no cuadra, y piensa que el caldo de antes salía más barato. Le pesa que su padre y ella cometieran errores parecidos el mismo año sin contárselo. Ahora se cuentan todo, aunque sea a los gritos, mientras pelan cebollas en la cocina."}
+      ],
+      "cotidiano": "Abre la fonda antes del alba para los pescadores, duerme una siesta corta después del almuerzo y deja la olla encendida hasta que Teo amarra la última barca.",
+      "postura_fuatia": "Pone un plato de sopa en la ventana los días de tormenta; dice que no es para comprar a Fuatia sino porque así la criaron, y que una visita con hambre siempre es bienvenida.",
+      "conversacion": [
+        {"hablante": "lirios_carmela", "texto": "¡Llegaron con hambre de forastero! Siéntense: el caldo de hoy es de pescado grande, que el chiquito se queda en el vivero."},
+        {"hablante": "lirios_teo", "texto": "Lo dice antes de que alguien pregunte. Igual uno pregunta: tiene la cartilla pegada en la pared."},
+        {"hablante": "lirios_carmela", "texto": "Pregunten todo lo que quieran. Lo único que no se vale es dejar el plato a medias."},
+        {"hablante": "ella", "texto": "Entonces dos platos y después la cartilla. Primero el caldo."}
+      ],
+      "ropa": ["ella", 4, "#2a1a12", "pelo_mono", "panoleta#2f6fa8", "", "delantal#f6f2ea#2f6fa8", "falda#1f3f63", "botas_lluvia#2f6fa8", "", "jarras"]
+    },
+    {
+      "id": "bruma_jacinta",
+      "nombre": "Jacinta",
+      "asentamiento": "brumaverde",
+      "funcion": "Constructora: refuerzos de vivienda, cimientos junto a raíces y tejados de musgo.",
+      "pasado": "Jacinta, 44, levantaba casas rápidas en las afueras de Pueblo del Sol antes de mudarse al bosque. En su primer trabajo en Brumaverde vació un cimiento con cemento junto a un roble viejo; la casa quedó firme y el roble se secó en dos inviernos. Desde entonces estudia raíces con Silvana antes de tocar una pala y prefiere tardar el doble a matar un árbol por apuro.",
+      "presente": "Golpea las paredes con los nudillos para escucharlas, lleva un lápiz detrás de cada oreja y habla de las casas como si fueran pacientes. Es directa con los presupuestos y muy paciente con quien teme que su techo se caiga.",
+      "arco": "Aprende a decir a tiempo cuándo una casa debe ir antes que un árbol y a sostener esa decisión con Silvana sin que ninguna de las dos se sienta traicionada.",
+      "vinculos": ["bruma_silvana", "bruma_roque", "bruma_fausto"],
+      "naturaleza": "persona_viva",
+      "voz": "Seca y práctica, con chistes de obra; se suaviza cuando habla con mayores.",
+      "hogar": "brumaverde_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Jacinta creció entre andamios. Su padre le daba una plomada en vez de muñeca y ella la usaba para medir si los árboles del patio estaban derechos. Le encantaba entrar a una casa vacía y adivinar quién iba a vivir ahí por el tamaño de las ventanas. Aprendió que una pared bien hecha se nota en la tranquilidad de quien duerme detrás."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "En Brumaverde la contrataron para salvar una casa que se hundía. Trabajó rápido, orgullosa, y echó cemento donde había raíces. El roble del lado tardó dos inviernos en secarse. Nadie la acusó en voz alta, y eso fue peor. Fue a buscar a Silvana con el cuaderno de la obra y le pidió que le enseñara a leer una raíz antes de cavar."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Ahora sabe que a veces el árbol puede esperar y la casa no, y que otras veces es al revés. Lo difícil es decirlo a tiempo. Todavía guarda una astilla del roble en la caja de herramientas. No la usa como castigo: la usa para acordarse de preguntar. Roque le tomó el pelo por eso y después talló una cajita para guardarla."}
+      ],
+      "cotidiano": "Recorre las casas viejas con un martillo de goma y una libreta, almuerza pan de Fausto sentada en algún andamio y por la tarde ayuda a Roque con los cobertizos.",
+      "postura_fuatia": "Cree que Fuatia entiende de cimientos mejor que nadie y le pide permiso en voz baja antes de abrir una zanja.",
+      "conversacion": [
+        {"hablante": "bruma_jacinta", "texto": "No se apoyen en esa baranda. Está bonita, pero tiene más fe que clavos."},
+        {"hablante": "bruma_roque", "texto": "La hice yo, Jacinta."},
+        {"hablante": "bruma_jacinta", "texto": "Por eso te lo digo con cariño, Roque. Mañana le ponemos dos tornillos y sigue siendo tuya."},
+        {"hablante": "el", "texto": "Si hace falta madera, la traemos. ¿Qué otra casa le preocupa?"}
+      ],
+      "ropa": ["ella", 2, "#5a3a22", "pelo_trenzas", "gorra#5d7a3a", "", "camisa_cuadros#5d7a3a#2f4a26", "overol#6b5a3e", "botas#4a3626", "mochila#7a8f4a", "brazos_cruzados"]
+    },
+    {
+      "id": "bruma_fausto",
+      "nombre": "Fausto",
+      "asentamiento": "brumaverde",
+      "funcion": "Molinero: harina de castaña, horno comunal y pan para el consejo del bosque.",
+      "pasado": "Fausto, 66, heredó el molino de agua de su abuela y lo movió dos veces cuando el arroyo cambió de cauce. La segunda vez sujetó el agua con un muro de piedra que dejó seco el bebedero de los ciervos de bruma; Elio lo encontró midiendo huellas en el barro vacío. Abrió una brecha en el muro esa misma semana y aceptó moler menos los veranos secos.",
+      "presente": "Madruga para encender el horno, se sabe el pan favorito de cada casa y regala la miga a los pájaros. Es lento para hablar y rapidísimo para ofrecer una silla.",
+      "arco": "Deja de cargar solo el horno comunal y enseña a hornear a quien quiera, aunque los panes de los aprendices salgan como piedras.",
+      "vinculos": ["bruma_felix", "bruma_amira", "bruma_elio"],
+      "naturaleza": "persona_viva",
+      "voz": "Pausada y tibia, con silencios largos; se ríe antes de terminar sus propios chistes.",
+      "hogar": "brumaverde_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "La abuela de Fausto molía cantando y él aprendió a contar las vueltas de la rueda con la canción. Le gustaba el polvo blanco en las pestañas, el ruido del agua empujando y el olor del primer pan, que siempre era para quien hubiera ayudado. Aprendió a querer el molino como se quiere a un animal viejo: escuchando cuándo se cansa."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Cuando el arroyo se movió, Fausto movió el molino detrás, terco. La segunda vez construyó un muro para sujetar el agua y no miró río abajo. Elio llegó con un cuaderno de huellas y le mostró el bebedero seco. Fausto no discutió. Fue con una barra a abrir el muro y dejó que el agua decidiera cuánto pan habría ese verano."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Desde entonces muele lo que el arroyo presta. Hay veranos con poca harina y Félix le ayuda con masas madre que rinden más. Lo que todavía le pesa es la costumbre de hacerlo todo solo: el horno comunal se apaga cuando él se enferma. Está aprendiendo a prestar la llave y a no corregir cada pan torcido que sale."}
+      ],
+      "cotidiano": "Muele por la mañana si el arroyo lo permite, hornea a mediodía y deja una canasta de pan en la puerta del consejo los días de reunión.",
+      "postura_fuatia": "Le habla al arroyo como si Fuatia escuchara, sin pedirle nada; dice que basta con avisar antes de tocar el agua.",
+      "conversacion": [
+        {"hablante": "bruma_fausto", "texto": "Pasen, pasen. Si traen las manos frías, pónganlas cerca del horno, que el pan no se ofende."},
+        {"hablante": "bruma_felix", "texto": "Fausto, no les ofrezcas el pan de ayer como si fuera receta nueva."},
+        {"hablante": "bruma_fausto", "texto": "Es pan de ayer, Félix, no pan malo. Con miel de Amira resucita."},
+        {"hablante": "ella", "texto": "Lo probamos con gusto. ¿El molino trabaja todos los días?"}
+      ],
+      "ropa": ["el", 1, "#e6e2da", "pelo_lado", "boina#4f6b3a", "bigote#e6e2da", "sueter#7c9a5a", "pantalon#4a3c2c", "zapatos#3b2a1e", "", "frotar_manos_a"]
+    },
+    {
+      "id": "piedra_amparo",
+      "nombre": "Amparo",
+      "asentamiento": "piedralumbre",
+      "funcion": "Enfermera de mina: primeros auxilios, botiquines de galería y cuidado del polvo en los pulmones.",
+      "pasado": "Amparo, 58, era una enfermera recién llegada cuando ocurrió el accidente de AV 281 y atendió a los heridos en la boca de la galería. Anotó lo que cada uno decía mientras lo vendaba y guardó esas hojas por respeto, sin mostrarlas durante años. Comprendió tarde que su silencio también dejó a Bruno y a Darío sin una pieza de la historia; hoy no sabe a quién le pertenecen esas notas.",
+      "presente": "Revisa botiquines como quien riega plantas, regaña con dulzura a los mineros que tosen y no van a consulta y guarda caramelos de menta en todos los bolsillos. Escucha con toda la atención y nunca termina las frases de los demás.",
+      "arco": "Decide con las familias qué hacer con sus notas de aquella noche y entiende que cuidar también es devolver lo que uno guardó.",
+      "vinculos": ["piedra_gonzalo", "piedra_eloy", "piedra_lisandro"],
+      "naturaleza": "persona_viva",
+      "voz": "Suave y firme, de enfermera de turno largo; usa diminutivos sin volverse infantil.",
+      "hogar": "piedralumbre_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Amparo creció en una casa donde siempre había alguien enfermo y alguien cuidando. Su madre le enseñó a hervir paños y a sostener una mano sin apurar. Le gustaba el orden de un botiquín bien hecho: cada cosa en su sitio, para que nadie tuviera que buscar con miedo. Eligió la mina porque allá, decía su madre, pocos querían ir a cuidar."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "La noche de AV 281 vendó a once personas en la boca de la galería. Escribía lo que decían para no olvidar a quién avisar. Después nadie le preguntó por esas hojas y ella no se atrevió a ofrecerlas: le parecían demasiado íntimas. Siguió trabajando, formó brigadistas y se volvió la persona a quien todos le cuentan dónde les duele."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Cuando Gonzalo acusó a Bruno, Amparo tenía en algún lugar una frase que pudo haber ayudado. No la buscó. Pensaba que proteger a sus pacientes era callar. Ahora sabe que callar también decidió por ellos. No quiere publicar nada sin permiso, pero tampoco quiere seguir con ese peso guardado. Por eso empezó a buscar a las familias, una por una."}
+      ],
+      "cotidiano": "Abre la enfermería al cambio de turno, recorre los botiquines de galería con Hugo los lunes y por las tardes enseña primeros auxilios en la cocina de Ciro.",
+      "postura_fuatia": "Le tiene un respeto cauteloso: dice que Fuatia y ella hacen algo parecido, mirar dónde le duele a la tierra antes de tocarla, aunque Fuatia no siempre avise con suavidad.",
+      "conversacion": [
+        {"hablante": "piedra_amparo", "texto": "Bienvenidos. Antes de bajar a la mina, díganme: ¿alguno tose, se marea o se le olvidó desayunar?"},
+        {"hablante": "piedra_ciro", "texto": "Siempre pregunta lo del desayuno. Y siempre tiene razón."},
+        {"hablante": "piedra_amparo", "texto": "Tengo razón porque la gente se desmaya con el estómago vacío, Ciro, no porque sea adivina."},
+        {"hablante": "el", "texto": "Ya desayunamos. ¿Dónde están los botiquines, por si acaso?"}
+      ],
+      "ropa": ["ella", 3, "#8a8580", "pelo_mono_bajo", "panoleta#c8a25a", "gafas_redondas#5b5b5b", "bata_medico#ece6da", "pantalon#6b6660", "botas#5a4630", "carriel#a57a3a", "pensando"]
+    },
+    {
+      "id": "piedra_lisandro",
+      "nombre": "Lisandro",
+      "asentamiento": "piedralumbre",
+      "funcion": "Talabartero: botas, guantes, arneses y bolsas de herramienta para la faena.",
+      "pasado": "Lisandro, 24, creció en Nieveclara cosiendo arreos de trineo con su abuelo y llegó a Piedralumbre hace pocas semanas. En su primer pedido usó un hilo más barato para entregar a tiempo un arnés bordado que le quedó precioso. Lo descubrió él mismo en la prueba de carga, lo retiró antes de que nadie lo usara y pagó el cuero nuevo con su primer sueldo.",
+      "presente": "Habla rápido cuando está nervioso, borda estrellitas en el forro de todo lo que cose y escribe por dentro el nombre de cada minero. Alquila el cuarto de atrás en casa de Amparo, que le cobra poco a cambio de que le arregle los zapatos.",
+      "arco": "Aprende que lo bonito y lo seguro pueden ir juntos si no se apura, y se gana su lugar en el pueblo sin tener que demostrar algo cada día.",
+      "vinculos": ["piedra_santiago", "piedra_amparo", "nieve_tadeo"],
+      "naturaleza": "persona_viva",
+      "voz": "Juvenil y atropellada; se corrige a mitad de frase y se ríe nervioso.",
+      "hogar": "piedralumbre_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "En el taller del abuelo, en Nieveclara, el cuero olía a nieve y a grasa de oveja. Lisandro aprendió a coser con agujas curvas antes que a escribir bien. El abuelo le dejaba bordar una estrella escondida en cada arreo, para que el animal llevara algo bonito que nadie más veía. Esa costumbre se le quedó para siempre, como un saludo secreto."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Se fue a Piedralumbre porque allá pagaban mejor y porque quería que alguien lo conociera sin el abuelo al lado. Santiago lo miró con desconfianza el primer día. Para impresionar, Lisandro bordó un arnés hermoso con hilo barato. En la prueba de carga escuchó el hilo quejarse. Lo cortó delante de todos y empezó de nuevo, colorado hasta las orejas."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Nadie lo regañó, pero él sigue repasando aquel día cada vez que enhebra. Le pesa haber querido gustar antes que proteger. Amparo le dijo que un error descubierto a tiempo es medio trabajo bien hecho. Ahora pone hilo bueno primero y estrellas después. Le escribe a Tadeo, su amigo de infancia, contándole cuánto extraña el frío."}
+      ],
+      "cotidiano": "Cose en la puerta de la casa para aprovechar la luz, toma medidas de pies al cambio de turno y cena casi siempre en la cocina de Ciro.",
+      "postura_fuatia": "Le da curiosidad y un poco de miedo; se pregunta si Fuatia nota las costuras que uno hace con cariño.",
+      "conversacion": [
+        {"hablante": "piedra_lisandro", "texto": "¡Hola! ¿Necesitan botas? Digo, buenos días. Soy Lisandro. Y sí, hago botas."},
+        {"hablante": "piedra_santiago", "texto": "Respira, muchacho. Nadie te va a quitar el taller por saludar."},
+        {"hablante": "piedra_lisandro", "texto": "Es que todavía me pongo nervioso. Si me dejan, les tomo la medida del pie y les bordo una estrella adentro."},
+        {"hablante": "ella", "texto": "Aceptamos la estrella. Y las botas, si aguantan la mina."}
+      ],
+      "ropa": ["el", 5, "#1c1410", "pelo_rizos", "casco_minero#d4a020", "", "chaleco#b8862e", "jogger#5c5c5c", "botas#6b4a2a", "mochila#8a6a3a", "presumir_a"]
+    },
+    {
+      "id": "brasa_fermin",
+      "nombre": "Fermín",
+      "asentamiento": "brasaviva",
+      "funcion": "Fontanero de calor: tuberías, intercambiadores y reparto del calor del horno grande.",
+      "pasado": "Fermín, 51, aprendió el oficio arreglando las cañerías de los baños de Rufina cuando era muchacho. Hace dos años tapó una grieta del horno grande con un sello rápido para no dejar los baños fríos en invierno, y el sello escondió una fuga de calor que fue rajando la ladera. Cuando Dante le mostró la piedra resquebrajada, Fermín no buscó excusas: pidió ayuda y publicó el plano de la reparación.",
+      "presente": "Silba dentro de las tuberías para escuchar dónde se tapan, lleva una llave inglesa colgada del cinturón y se olvida de comer cuando un problema le interesa. Su hermana Azahar le guarda pan en el bolsillo de la chaqueta sin que se dé cuenta.",
+      "arco": "Deja de tapar problemas para que nadie pase frío esta semana y aprende a organizar arreglos que cuidan también a quienes dependen del calor mientras se hacen.",
+      "vinculos": ["brasa_rufina", "brasa_dante", "brasa_azahar"],
+      "naturaleza": "persona_viva",
+      "voz": "Ronca y entusiasta; explica con las manos y con ruidos de tubería.",
+      "hogar": "brasaviva_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Fermín se metía de niño entre las tuberías de los baños para buscar el ruido que hacía el agua. Rufina lo sacaba de una oreja y le regalaba un vaso de leche tibia. Le encantaba que el calor viajara invisible y llegara a lugares lejanos. Aprendió a querer el oficio de los que nadie ve hasta que algo deja de funcionar."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Rufina le pagó su primer curso de soldadura y él le devolvió el favor arreglándole cada tubo durante veinte años. Se volvió el que siempre llegaba. Cuando apareció la grieta del horno grande, en pleno invierno, eligió el sello rápido porque no soportaba imaginar a los mayores sin baño caliente. Funcionó. Por eso tardó tanto en ver que no había funcionado."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "La ladera rajada le enseñó que un arreglo rápido puede ser una promesa que otro paga después. Le pesa haber puesto en riesgo a los lagartos de ceniza que se asolean en esas piedras. Ahora quiere hacer la reparación completa, pero sin abandonar a nadie mientras tanto. Todavía no sabe cómo. Por eso, por primera vez en años, pregunta antes de soldar."}
+      ],
+      "cotidiano": "Recorre los intercambiadores al amanecer con una lámpara, almuerza lo que Azahar le dejó en el bolsillo y pasa las tardes dibujando planos de tuberías en la mesa de Rufina.",
+      "postura_fuatia": "Siente que Fuatia lo mira desde la grieta del horno y lo acepta: dice que se ganó esa mirada y que piensa merecer otra.",
+      "conversacion": [
+        {"hablante": "brasa_fermin", "texto": "¿Escuchan ese silbido? Es la tubería siete. Está bien, solo se queja de vieja."},
+        {"hablante": "brasa_rufina", "texto": "Como tú, Fermín. Saluda primero a la gente."},
+        {"hablante": "brasa_fermin", "texto": "Perdón, perdón. Bienvenidos a Brasaviva. Si algo de su granja necesita calor, me buscan; si necesita frío, no tanto."},
+        {"hablante": "el", "texto": "Lo tendremos en cuenta. ¿Y el horno grande cómo va?"}
+      ],
+      "ropa": ["el", 2, "#3a2a20", "pelo_rapado", "gorra#b0462a", "barba#3a2a20", "chaqueta_cuero#8a3a22", "overol#b0462a", "botas#4a2a1a", "", "senalar_a"]
+    },
+    {
+      "id": "brasa_azahar",
+      "nombre": "Azahar",
+      "asentamiento": "brasaviva",
+      "funcion": "Panadera: horno de barrio, pan de rescoldo y turnos de horneado para los vecinos.",
+      "pasado": "Azahar, 41, hermana menor de Fermín, volvió a Brasaviva después de trabajar años en una panadería grande de Pueblo del Sol. Al abrir su horno de barrio guardó los mejores turnos para sus clientes de siempre y dejó a las familias nuevas los de madrugada. Nadia le hizo notar que eran justo quienes no tenían horno propio; Azahar rehízo la lista por sorteo y desde entonces la pega en la puerta.",
+      "presente": "Se ríe a carcajadas, tiene harina hasta en las cejas y le pone nombre a cada masa madre. Deja que Yago amase a su lado mientras ella maneja el horno, y le enseña a respetar el calor sin tenerle miedo.",
+      "arco": "Convierte su horno en un lugar de todos sin perder el gusto por mandar en su cocina, y aprende a recibir ayuda de quien recién llega.",
+      "vinculos": ["brasa_fermin", "brasa_yago", "brasa_nadia"],
+      "naturaleza": "persona_viva",
+      "voz": "Alegre y ruidosa, de mercado; llama «vecino» a todo el mundo y «corazón» a los panes.",
+      "hogar": "brasaviva_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "La primera vez que Azahar vio pan inflándose en el horno de Rufina pensó que estaba vivo. Tenía cinco años y se quedó sentada en el piso esperando que respirara otra vez. Aprendió a querer la paciencia de la masa, el crujido de la corteza al enfriarse y la cara de la gente cuando recibe pan caliente sin haberlo pedido."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "En Pueblo del Sol trabajó en una panadería donde todo se medía en minutos. Aprendió rapidez, orden y a no quemarse. Volvió a Brasaviva con ahorros y ganas de mandar en su propio horno. Repartió los turnos como le pareció justo: primero los de siempre. No vio que los nuevos, los que no tenían horno en casa, horneaban de madrugada y con frío."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Nadia se lo dijo con calma, frente a la puerta del horno. Azahar se enojó una tarde entera y después hizo un sorteo. Le pesa haber tratado su horno como un favor para conocidos. Ahora la lista está pegada en la puerta, aunque a veces todavía le guarda a escondidas un pan extra a su hermano, que no come si nadie lo obliga."}
+      ],
+      "cotidiano": "Enciende el horno antes del amanecer, recibe a los vecinos por turnos hasta mediodía y por la tarde enseña a Yago a formar panecillos que salen con forma de dragón torcido.",
+      "postura_fuatia": "Le parece que Fuatia es como el fuego del horno: hay que respetarla, no adorarla, y avisarle antes de abrir la puerta.",
+      "conversacion": [
+        {"hablante": "brasa_azahar", "texto": "¡Vecinos nuevos! Tomen, pan de rescoldo. Pica un poquito, pero quita el frío de los huesos."},
+        {"hablante": "brasa_yago", "texto": "Ese lo formé yo. Es un dragón."},
+        {"hablante": "brasa_azahar", "texto": "Es un dragón muy creativo, Yago. Cómanselo por la cola, que es la parte mejor horneada."},
+        {"hablante": "ella", "texto": "Gracias, Yago. Nos lo comemos despacito."}
+      ],
+      "ropa": ["ella", 4, "#3b2416", "pelo_cola", "panoleta#c4562e", "", "delantal#f3e3cf#c4562e", "falda_larga#8e3b24", "sandalias#7a4a2a", "", "risita_a"]
+    },
+    {
+      "id": "nieve_casilda",
+      "nombre": "Casilda",
+      "asentamiento": "nieveclara",
+      "funcion": "Refugiera: albergue de paso, camas de invierno y lista de alojamiento de emergencia.",
+      "pasado": "Casilda, 49, heredó la posada de sus padres en el paso de montaña y la convirtió en albergue cuando las tormentas empezaron a dejar familias sin techo. Un invierno avisó a una familia de que su casa estaba en zona de alud, pero no tenía camas para ofrecerles y se quedaron; la casa resistió, aunque el miedo de esa noche no se le olvida. Desde entonces sostiene que un aviso sin alternativa es solo media ayuda y lleva una lista de camas libres en todo el pueblo.",
+      "presente": "Recuerda cuántas mantas hay en cada casa, prepara sopa de mora para los recién llegados y habla bajito para que los niños duerman. Es incapaz de cerrarle la puerta a alguien, y por eso a veces duerme en una silla.",
+      "arco": "Arma con el pueblo una red de camas compartidas para que el albergue no dependa solo de ella, y aprende a dormir en su propia cama.",
+      "vinculos": ["nieve_severo", "nieve_otto", "nieve_tadeo"],
+      "naturaleza": "persona_viva",
+      "voz": "Baja, cálida y ordenada; cuenta en voz alta mientras piensa.",
+      "hogar": "nieveclara_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "Casilda creció en la posada de sus padres, al pie del paso. En invierno la casa se llenaba de desconocidos con nieve en las pestañas, y a ella le tocaba repartir mantas. Aprendió a querer el ruido de muchas respiraciones dormidas bajo un mismo techo, y la certeza de que nadie se quedaba afuera mientras hubiera un rincón libre."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Cuando heredó la posada, las tormentas eran más largas. Cambió las habitaciones privadas por literas y dejó de cobrar a quien no podía. Crio a su hijo Tadeo entre sacos de harina y huéspedes curiosos. Severo le enseñó a leer pronósticos como rangos, no como sentencias, y ella empezó a tender camas antes de que llegara la primera ráfaga."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Aquel invierno avisó del alud y no tuvo una cama que ofrecer. La familia se quedó en su casa y pasó la noche despierta. Nada se derrumbó, pero Casilda entendió que su aviso había sido una frase sola. Le pesa todavía. Desde entonces anota cada cama libre del pueblo en una libreta azul, y la libreta nunca sale de su bolsillo."}
+      ],
+      "cotidiano": "Ventila las literas por la mañana, recorre el pueblo preguntando quién puede prestar una cama esta semana y cocina sopa de mora para quien llegue al atardecer.",
+      "postura_fuatia": "Le tiene respeto y un pequeño reclamo: dice que una tormenta también debería avisar con tiempo, como hace Severo.",
+      "conversacion": [
+        {"hablante": "nieve_casilda", "texto": "Pasen y sacúdanse la nieve en la entrada. Hay sopa, hay literas y hay un libro para escribir de dónde vienen."},
+        {"hablante": "nieve_otto", "texto": "Escriban también cuándo piensan volver a salir. Así sabemos a quién esperar."},
+        {"hablante": "nieve_casilda", "texto": "En eso Otto siempre tiene razón. Yo solo me aseguro de que nadie salga con el estómago vacío."},
+        {"hablante": "el", "texto": "Anotamos todo. ¿Le hace falta algo al albergue?"}
+      ],
+      "ropa": ["ella", 1, "#b98a5a", "pelo_ondas", "gorro_lana#f4f1ea", "", "ruana#f1ede4#8fb7d9", "falda_larga#6f8fae", "botas#e9e4da", "", "inclinado"]
+    },
+    {
+      "id": "nieve_tadeo",
+      "nombre": "Tadeo",
+      "asentamiento": "nieveclara",
+      "funcion": "Carpintero de nieve: trineos, raquetas, contraventanas y literas de madera de poda.",
+      "pasado": "Tadeo, 33, hijo de Casilda, creció en el albergue y aprendió carpintería arreglando las literas que se rompían cada invierno. Diseñó un trineo liviano que se vendió muy bien, hasta que Otto le mostró que en hielo duro se volcaba en las curvas. Dejó de venderlo, buscó a cada comprador para cambiarle los patines y todavía le debe el arreglo a dos familias que se mudaron lejos.",
+      "presente": "Es callado, mide todo tres veces y huele siempre a pino. Escribe cartas largas a su amigo Lisandro en Piedralumbre y responde con dibujos cuando no encuentra las palabras.",
+      "arco": "Aprende a pedir pruebas de terreno antes de presumir un diseño y a saldar las deudas que dejó sin que lo hundan.",
+      "vinculos": ["nieve_casilda", "nieve_otto", "piedra_lisandro"],
+      "naturaleza": "persona_viva",
+      "voz": "Pausada y tímida; frases cortas, a veces solo un «ajá» pensativo.",
+      "hogar": "nieveclara_vivienda_05",
+      "memorias": [
+        {"etapa": "Primeros años y lo que aprendió a querer", "texto": "En el albergue siempre había algo roto, y Tadeo descubrió que arreglarlo era su manera de hablar con los huéspedes. A los siete años ya cambiaba tablillas de literas con un martillo enorme. Le gustaba el olor del pino recién cepillado y el ruido de un trineo bien hecho sobre la nieve: un susurro largo, sin golpes. Ese sonido todavía lo hace sonreír."},
+        {"etapa": "Aprendizaje, decisiones y vínculos", "texto": "Su trineo liviano fue un éxito: barato, rápido y bonito. Tadeo se sintió por fin algo más que el hijo de la refugiera. Otto lo invitó a probarlo en hielo duro y el trineo se volcó en la primera curva. Nadie salió herido. Tadeo volvió a casa callado, desarmó el último trineo y escribió la lista de compradores en la pared del taller."},
+        {"etapa": "Lo que cambia y lo que todavía pesa", "texto": "Cambió patines casa por casa durante un invierno entero. Dos familias se mudaron antes de que llegara, y esos dos nombres siguen en la pared. Le pesan más que el error mismo. Lisandro le escribe que no se castigue tanto; él le contesta con dibujos de patines nuevos. Ahora no vende nada que Otto no haya probado en la peor curva."}
+      ],
+      "cotidiano": "Trabaja en el taller detrás del albergue, ayuda a su madre a entrar leña al atardecer y prueba cada trineo nuevo en la pendiente junto al corral de Eira.",
+      "postura_fuatia": "No sabe bien qué pensar de ella; le parece que Fuatia es como el hielo duro: honesta, aunque uno no esté preparado.",
+      "conversacion": [
+        {"hablante": "nieve_tadeo", "texto": "Hola. Cuidado con el escalón. Lo voy a cambiar mañana."},
+        {"hablante": "nieve_casilda", "texto": "Lleva tres semanas diciendo eso, porque cada día encuentra algo más urgente."},
+        {"hablante": "nieve_tadeo", "texto": "Ajá. Hoy era la puerta del gallinero de Luz. Mañana sí es el escalón."},
+        {"hablante": "ella", "texto": "Te ayudamos con el escalón, si quieres. Así mañana te queda libre."}
+      ],
+      "ropa": ["el", 0, "#a0642e", "pelo_colita", "gorro_lana#9ec4e6", "barba#a0642e", "sueter#f2efe8", "pantalon#5d7d9e", "botas#7a5a3a", "mochila#9ec4e6", "pensando_b"]
+    }
+  ],
+  "viviendas": [
+    {"id": "puerto_lirios_vivienda_05", "asentamientoId": "puerto_lirios", "nombre": "Casa de la Sal y el Caldo", "ocupantes": ["lirios_genaro", "lirios_carmela"]},
+    {"id": "brumaverde_vivienda_05", "asentamientoId": "brumaverde", "nombre": "Casa del Molino", "ocupantes": ["bruma_fausto", "bruma_jacinta"]},
+    {"id": "piedralumbre_vivienda_05", "asentamientoId": "piedralumbre", "nombre": "Casa del Botiquín", "ocupantes": ["piedra_amparo", "piedra_lisandro"]},
+    {"id": "brasaviva_vivienda_05", "asentamientoId": "brasaviva", "nombre": "Casa de las Tuberías Cantoras", "ocupantes": ["brasa_fermin", "brasa_azahar"]},
+    {"id": "nieveclara_vivienda_05", "asentamientoId": "nieveclara", "nombre": "Albergue del Paso", "ocupantes": ["nieve_casilda", "nieve_tadeo"]}
+  ],
+  "encargos": [
+    {
+      "id": "E_puerto_lirios_1",
+      "titulo": "Sal para la Fiesta de las Barcas",
+      "region": "puerto_lirios",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["lirios_genaro", "lirios_olga", "lirios_dalia", "lirios_julian"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Julián y con Dalia sobre el agua del humedal.", "npc": ["lirios_julian", "lirios_dalia"]},
+        {"tipo": "entrega", "texto": "Trae 4 de arcilla y 3 de piedra para levantar el muro de la era dos.", "materiales": {"arcilla": 4, "piedra": 3}},
+        {"tipo": "jornadas", "texto": "Espera una noche a que la era vuelva a cuajar.", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "lirios_genaro", "texto": "La crecida de anoche se metió en la era dos. La sal de la Fiesta de las Barcas se volvió agua turbia."},
+        {"hablante": "lirios_olga", "texto": "Sin sal no hay pescado curado para la mesa larga, Genaro. Y la fiesta es en cuatro días."},
+        {"hablante": "lirios_genaro", "texto": "Ya sé, ya sé. Podría abrir la era vieja, la del humedal. Cuaja más rápido."},
+        {"hablante": "lirios_dalia", "texto": "La que me secó los juncos. Antes de abrirla, pregúntale a Julián cuánta agua hay."}
+      ],
+      "giro": [
+        {"hablante": "lirios_julian", "texto": "El humedal está justo. Si abres la era vieja ahora, los juncos de Dalia lo vuelven a pagar."},
+        {"hablante": "lirios_genaro", "texto": "Entonces la era dos, con el muro nuevo. Alcanza, pero da menos. No habrá sal para todo lo que pide la lonja."}
+      ],
+      "decision": "¿Cómo se reparte la sal que hay?",
+      "opciones": ["A: primero las conservas de las familias pequeñas y la mesa de la fiesta", "B: la mitad para la lonja de Olga y la otra mitad por sorteo público entre las casas"],
+      "ramas": [
+        [
+          {"hablante": "lirios_olga", "texto": "Me va a faltar para vender, pero la fiesta es de todos. En la mesa larga pongo pescado fresco en vez de curado."},
+          {"hablante": "lirios_genaro", "texto": "Y la sal de las familias la llevo yo en persona, que así me ven la cara."}
+        ],
+        [
+          {"hablante": "lirios_olga", "texto": "Sorteo con lista pública. Nadie podrá decir que la lonja se quedó con lo mejor."},
+          {"hablante": "lirios_dalia", "texto": "Que la lista la escriba Tina con su letra grande. Así hasta yo la leo sin gafas."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "lirios_genaro", "texto": "La era vieja sigue cerrada y la fiesta tiene sal. No sabía que se podían las dos cosas."},
+        {"hablante": "lirios_dalia", "texto": "Se pudo porque preguntaste antes, Genaro. Guarda esa costumbre."},
+        {"hablante": "el", "texto": "Avísennos si vuelve la crecida. El muro aguanta, pero no hace milagros."}
+      ],
+      "recompensa": {"monedas": 140, "objetos": {"puerto_lirios_mineral": 1, "sal": 2}}
+    },
+    {
+      "id": "E_puerto_lirios_2",
+      "titulo": "El cuaderno de caldos",
+      "region": "puerto_lirios",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["lirios_carmela", "lirios_teo", "lirios_belen", "lirios_tina"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Pregunta a Teo y a Belén por las hojas que se llevó el viento.", "npc": ["lirios_teo", "lirios_belen"]},
+        {"tipo": "estadistica", "texto": "Pesca dos veces para el caldo de prueba.", "clave": "pescar", "cantidad": 2},
+        {"tipo": "entrega", "texto": "Trae 2 de salicornia azul cosechada y 1 de sal.", "materiales": {"puerto_lirios_cosecha": 2, "sal": 1}}
+      ],
+      "inicio": [
+        {"hablante": "lirios_carmela", "texto": "Se me voló el cuaderno de caldos. Iba en la barca de Teo y una ráfaga lo abrió como a un pájaro."},
+        {"hablante": "lirios_teo", "texto": "Recogí lo que pude del agua. Faltan hojas, y las que quedan están corridas."},
+        {"hablante": "lirios_carmela", "texto": "Ahí estaba el caldo de los que llegan tarde, el de mi madre. No me lo sé de memoria."},
+        {"hablante": "lirios_tina", "texto": "¡Yo vi una hoja enredada en las redes de Belén!"}
+      ],
+      "giro": [
+        {"hablante": "lirios_belen", "texto": "Aquí está la hoja. Se lee la mitad. La otra mitad la escribió alguien con hambre, porque son puros manchones."},
+        {"hablante": "lirios_carmela", "texto": "Con lo que pescaron y la salicornia lo puedo rehacer. Pero no va a quedar igual que el de mi madre."}
+      ],
+      "decision": "¿Qué hace Carmela con la receta rehecha?",
+      "opciones": ["A: copiarla en la pizarra de la fonda para que cualquiera la cocine en su casa", "B: guardarla en un cuaderno nuevo y enseñarla los martes a Tina y a quien quiera aprender"],
+      "ramas": [
+        [
+          {"hablante": "lirios_carmela", "texto": "Que la copie quien quiera. Si se vuela otra vez, estará en veinte cocinas."},
+          {"hablante": "lirios_teo", "texto": "Y en la mía, que llevo años comiéndome tu caldo sin saber qué tenía."}
+        ],
+        [
+          {"hablante": "lirios_carmela", "texto": "Un cuaderno nuevo, con tapa encerada. Y los martes, clase en la fonda."},
+          {"hablante": "lirios_tina", "texto": "¡Yo quiero ser la que prueba la sal!"}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "lirios_carmela", "texto": "No sabe igual que el de mi madre. Sabe a este muelle, que también está bien."},
+        {"hablante": "lirios_belen", "texto": "Mañana te tejo una bolsa con cierre para el cuaderno. Contra el viento no hay receta."}
+      ],
+      "recompensa": {"monedas": 110, "objetos": {"puerto_lirios_cosecha": 1, "pan": 2}}
+    },
+    {
+      "id": "E_brumaverde_1",
+      "titulo": "La casa bajo el aliso viejo",
+      "region": "brumaverde",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["bruma_jacinta", "bruma_silvana", "bruma_benicio", "bruma_ada"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Escucha a Silvana y a Benicio sobre el aliso y la casa.", "npc": ["bruma_silvana", "bruma_benicio"]},
+        {"tipo": "entrega", "texto": "Trae 3 de madera de aliso caído y 4 de piedra para los refuerzos.", "materiales": {"brumaverde_madera": 3, "piedra": 4}},
+        {"tipo": "estadistica", "texto": "Haz una reparación para practicar con Jacinta.", "clave": "reparar", "cantidad": 1},
+        {"tipo": "jornadas", "texto": "Espera una noche a que los puntales asienten.", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "bruma_jacinta", "texto": "El aliso grande de la casa de Benicio se inclinó otro poco con la lluvia. La pared norte ya cruje."},
+        {"hablante": "bruma_silvana", "texto": "Ese aliso tiene más años que todo el consejo. No lo vamos a tumbar por un crujido."},
+        {"hablante": "bruma_benicio", "texto": "Yo duermo pegado a esa pared, Silvana. Me gusta el árbol, pero me gusta más despertarme."},
+        {"hablante": "bruma_jacinta", "texto": "Nadie tumba nada todavía. Primero reforzamos la casa y después vemos cuánto puede quedarse el árbol."}
+      ],
+      "giro": [
+        {"hablante": "bruma_jacinta", "texto": "La casa ya aguanta. Pero la rama grande cae justo sobre el cuarto de Ada si viene una tormenta."},
+        {"hablante": "bruma_silvana", "texto": "Si cortamos esa rama, el aliso queda cojo de un lado. Puede vivir, pero va a sufrir unos años."},
+        {"hablante": "bruma_ada", "texto": "Y si no la cortamos, yo duermo con un ojo abierto. Decidamos con datos, no con miedo."}
+      ],
+      "decision": "¿Qué se hace con la rama grande del aliso?",
+      "opciones": ["A: cortarla con cuidado y sellar el corte; el árbol se queda", "B: dejarla con un cable de sujeción y que Ada se pase al cuarto del otro lado por una temporada"],
+      "ramas": [
+        [
+          {"hablante": "bruma_silvana", "texto": "Corto yo, que sé dónde le duele menos. Y con esa madera Roque le hace una banca a Benicio."},
+          {"hablante": "bruma_benicio", "texto": "Una banca debajo del mismo árbol. Me parece un final de cuento bastante decente."}
+        ],
+        [
+          {"hablante": "bruma_ada", "texto": "Me paso al cuarto de la ventana chiquita. Desde ahí también se ven los cerdos de musgo."},
+          {"hablante": "bruma_jacinta", "texto": "El cable lo reviso cada luna. Si suena raro, volvemos a hablarlo, y sin pelear."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "bruma_jacinta", "texto": "La casa primero, el árbol después, y los dos siguen en pie. Así me gusta terminar una obra."},
+        {"hablante": "bruma_silvana", "texto": "Me costó. Pero prefiero que me cueste a mí y no a Benicio."},
+        {"hablante": "bruma_benicio", "texto": "Esto lo voy a contar en la fiesta. Sin exagerar. Bueno, exagerando un poquito."}
+      ],
+      "recompensa": {"monedas": 160, "objetos": {"brumaverde_madera": 2, "brumaverde_semilla": 1}}
+    },
+    {
+      "id": "E_brumaverde_2",
+      "titulo": "Pan para el consejo de talas",
+      "region": "brumaverde",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["bruma_fausto", "bruma_felix", "bruma_amira", "bruma_roque"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Félix y con Amira sobre el pan del consejo.", "npc": ["bruma_felix", "bruma_amira"]},
+        {"tipo": "entrega", "texto": "Trae 3 de harina y 1 de azúcar para la hornada.", "materiales": {"harina": 3, "azucar": 1}},
+        {"tipo": "estadistica", "texto": "Cocina una comida para entender las masas de Fausto.", "clave": "comidas", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "bruma_fausto", "texto": "Mañana se reúne el consejo de talas y la rueda del molino amaneció trabada. Sin harina no hay pan, y sin pan la gente discute con hambre."},
+        {"hablante": "bruma_felix", "texto": "Y con hambre se decide más rápido, créanme. Masa madre tengo de sobra, solo falta harina."},
+        {"hablante": "bruma_fausto", "texto": "Si me traen harina de la cooperativa, yo pongo el horno. La rueda la miro después, con calma."}
+      ],
+      "giro": [
+        {"hablante": "bruma_roque", "texto": "La rueda la trabó un tronco de aliso que bajó con la lluvia. Lo saqué y lo dejé en la orilla."},
+        {"hablante": "bruma_amira", "texto": "Tengo un frasco de miel para el pan. No es mucha; este año el lote fue chico."},
+        {"hablante": "bruma_fausto", "texto": "Con miel queda más rico, pero es tu ganancia, Amira. No quiero que la regales por quedar bien."}
+      ],
+      "decision": "¿Qué pan se lleva al consejo?",
+      "opciones": ["A: pan con la miel de Amira, y el consejo le paga el frasco a precio justo", "B: pan sencillo, y cada casa trae algo para ponerle encima, como en una olla común"],
+      "ramas": [
+        [
+          {"hablante": "bruma_amira", "texto": "A precio justo, sí. Así no es regalo ni es un negocio raro."},
+          {"hablante": "bruma_fausto", "texto": "Lo anoto en la pizarra del consejo: miel de Amira, pagada. Que se vea."}
+        ],
+        [
+          {"hablante": "bruma_felix", "texto": "Yo llevo setas en conserva. Etiquetadas, con fecha y todo, antes de que alguien pregunte."},
+          {"hablante": "bruma_roque", "texto": "Y yo una tabla grande para servir, hecha con el tronco que trabó la rueda."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "bruma_fausto", "texto": "El consejo discutió tres horas y nadie se fue enojado. Eso es mérito del pan."},
+        {"hablante": "bruma_felix", "texto": "O de que la reunión empezó con la boca llena."},
+        {"hablante": "bruma_fausto", "texto": "Las dos cosas. Vengan mañana y les enseño a encender el horno, por si un día me resfrío."}
+      ],
+      "recompensa": {"monedas": 120, "objetos": {"pan": 3, "brumaverde_cosecha": 1}}
+    },
+    {
+      "id": "E_piedralumbre_1",
+      "titulo": "El botiquín de la cota tres",
+      "region": "piedralumbre",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["piedra_amparo", "piedra_hugo", "piedra_eloy", "piedra_gonzalo"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Pide a Hugo y a Eloy que te acompañen a revisar los botiquines.", "npc": ["piedra_hugo", "piedra_eloy"]},
+        {"tipo": "entrega", "texto": "Trae 3 de tela, 2 de resina y 2 de liquen de lámpara cosechado para rehacer los botiquines.", "materiales": {"tela": 3, "resina": 2, "piedralumbre_cosecha": 2}},
+        {"tipo": "archivo", "texto": "Consulta en el archivo público quién firmó la última revisión de la cota tres."}
+      ],
+      "inicio": [
+        {"hablante": "piedra_amparo", "texto": "Hoy toca revisar botiquines de galería. Hugo dice que el de la cota tres no se abre hace años."},
+        {"hablante": "piedra_hugo", "texto": "La cota tres la cerraron después de AV 281. Nadie volvió a bajar a cambiar nada."},
+        {"hablante": "piedra_eloy", "texto": "Está habilitada otra vez para revisión. Con casco, cuerda y conmigo adelante."},
+        {"hablante": "piedra_amparo", "texto": "Entonces vamos. Un botiquín viejo es un botiquín que miente."}
+      ],
+      "giro": [
+        {"hablante": "piedra_amparo", "texto": "Dentro del botiquín había una hoja doblada. Es mi letra: nombres y lo que cada herido dijo esa noche."},
+        {"hablante": "piedra_gonzalo", "texto": "¿Tú escribiste eso, Amparo? ¿Todos estos años estuvo ahí abajo?"},
+        {"hablante": "piedra_amparo", "texto": "La guardé para que nadie la perdiera y terminé perdiéndola yo. No sé a quién le pertenece, Gonzalo."}
+      ],
+      "decision": "¿Qué se hace con la hoja de Amparo?",
+      "opciones": ["A: llevarla primero a cada familia nombrada y preguntarles si quieren que vaya al acta", "B: entregarla sellada al archivo del acta con una nota de Amparo y avisar a las familias de que existe"],
+      "ramas": [
+        [
+          {"hablante": "piedra_amparo", "texto": "Casa por casa. Me va a tomar semanas, y está bien que me tome semanas."},
+          {"hablante": "piedra_gonzalo", "texto": "Te acompaño a las primeras. A algunas familias les cuesta abrirle la puerta a quien viene de la mina."}
+        ],
+        [
+          {"hablante": "piedra_eloy", "texto": "Sellada y con registro de quién la pide. Nadie la lee por curiosidad."},
+          {"hablante": "piedra_gonzalo", "texto": "Mientras esté completa y nadie la recorte para tener razón, me basta."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "piedra_amparo", "texto": "Botiquines nuevos en todas las cotas. Y un cajón menos pesando."},
+        {"hablante": "piedra_hugo", "texto": "Le puse una luz verde al de la cota tres, para que se vea desde lejos que ya no está olvidado."},
+        {"hablante": "piedra_gonzalo", "texto": "Gracias por bajar. No esperaba que una caja de vendas me devolviera algo de esa noche."}
+      ],
+      "recompensa": {"monedas": 170, "objetos": {"piedralumbre_cosecha": 1, "tela": 2}}
+    },
+    {
+      "id": "E_piedralumbre_2",
+      "titulo": "Botas para el primer turno",
+      "region": "piedralumbre",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["piedra_lisandro", "piedra_santiago", "piedra_ciro", "piedra_mireya"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Santiago y con Ciro sobre las botas de la nueva cuadrilla.", "npc": ["piedra_santiago", "piedra_ciro"]},
+        {"tipo": "entrega", "texto": "Trae 3 de cuero y 1 de estaño de junta para los ojales.", "materiales": {"cuero": 3, "piedralumbre_mineral": 1}},
+        {"tipo": "estadistica", "texto": "Fabrica algo una vez para echarle una mano al taller.", "clave": "fabricar", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "piedra_lisandro", "texto": "¡Me encargaron las botas de la nueva cuadrilla! Seis pares. Mi primer pedido grande en Piedralumbre."},
+        {"hablante": "piedra_santiago", "texto": "Seis pares para el lunes. Es mucho para alguien que llegó hace un mes."},
+        {"hablante": "piedra_lisandro", "texto": "Ya sé que no confía en mí, Santiago. Por eso las voy a hacer perfectas."},
+        {"hablante": "piedra_ciro", "texto": "Mejor que no aprieten. Las botas bonitas que lastiman las sufro yo, que reparto la comida a pie."}
+      ],
+      "giro": [
+        {"hablante": "piedra_mireya", "texto": "Las probé en la rampa del transportador. Agarran bien, pero el par de Ciro roza en el talón."},
+        {"hablante": "piedra_lisandro", "texto": "Si lo rehago, no llego al lunes. Si no lo rehago, Ciro camina con dolor todo el turno."},
+        {"hablante": "piedra_santiago", "texto": "Ahí está el oficio, muchacho. La decisión es tuya."}
+      ],
+      "decision": "¿Qué hace Lisandro con el par de Ciro?",
+      "opciones": ["A: entregar cinco pares el lunes y rehacer el de Ciro con calma, avisando del retraso", "B: entregar los seis con una plantilla de fieltro en el talón y rehacer el par después"],
+      "ramas": [
+        [
+          {"hablante": "piedra_ciro", "texto": "Prefiero esperar dos días a caminar mal un mes. Uso mis botas viejas, que ya me conocen."},
+          {"hablante": "piedra_santiago", "texto": "Avisaste antes de fallar. Eso vale más que llegar a tiempo."}
+        ],
+        [
+          {"hablante": "piedra_lisandro", "texto": "Le cosí fieltro doble en el talón. Mañana lo reviso y el jueves le tengo el par nuevo."},
+          {"hablante": "piedra_ciro", "texto": "Con el fieltro ya no roza. Y si roza, sé dónde vives."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "piedra_santiago", "texto": "Seis cuadrillas más así y te cedo los arneses. Bueno, cinco."},
+        {"hablante": "piedra_lisandro", "texto": "¡Tres! Digo... cuando usted diga. Gracias por probarlas."},
+        {"hablante": "piedra_ciro", "texto": "Le bordó una estrellita adentro a cada bota. No se lo conté a nadie, pero la vi."}
+      ],
+      "recompensa": {"monedas": 130, "objetos": {"cuero": 2, "piedralumbre_mineral": 1}}
+    },
+    {
+      "id": "E_brasaviva_1",
+      "titulo": "El horno grande no se arregla solo",
+      "region": "brasaviva",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["brasa_fermin", "brasa_rufina", "brasa_dante", "brasa_sol", "brasa_nadia"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Rufina y con Sol sobre los baños y el horno.", "npc": ["brasa_rufina", "brasa_sol"]},
+        {"tipo": "entrega", "texto": "Trae 3 de obsidiana porosa y 4 de arcilla para la junta nueva.", "materiales": {"brasaviva_mineral": 3, "arcilla": 4}},
+        {"tipo": "estadistica", "texto": "Haz dos reparaciones para ganar práctica con Fermín.", "clave": "reparar", "cantidad": 2},
+        {"tipo": "jornadas", "texto": "Espera una noche a que la junta cure.", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "brasa_fermin", "texto": "El sello que le puse al horno grande hace dos años esconde una fuga. La ladera ya tiene grietas."},
+        {"hablante": "brasa_dante", "texto": "Las vi en la ruta de basalto. Los lagartos de ceniza ya no se asolean en esas piedras."},
+        {"hablante": "brasa_rufina", "texto": "Si apagan el horno, los baños se quedan fríos. Hay mayores que solo duermen bien después del baño."},
+        {"hablante": "brasa_fermin", "texto": "No quiero tapar otra vez. Pero tampoco quiero dejarlos sin calor. Necesito ayuda para hacerlo bien."}
+      ],
+      "giro": [
+        {"hablante": "brasa_sol", "texto": "La junta nueva está lista. Le dejé la marca de reparación a la vista, para que nadie la confunda con piedra sana."},
+        {"hablante": "brasa_fermin", "texto": "Hay dos maneras de cambiarla: apagar el horno dos días y hacerlo de una vez, o hacerlo por mitades durante una semana."},
+        {"hablante": "brasa_nadia", "texto": "Si lo apagan, el invernadero termal tiene calor para una tina. Es pequeña, pero alcanza para los mayores."}
+      ],
+      "decision": "¿Cómo se repara el horno grande?",
+      "opciones": ["A: apagarlo dos días y llevar a los mayores a la tina del invernadero de Nadia", "B: repararlo por mitades durante una semana, con un baño siempre tibio"],
+      "ramas": [
+        [
+          {"hablante": "brasa_rufina", "texto": "Dos días en el invernadero. Llevo jabón perfumado para que huela a baño y no a tomate."},
+          {"hablante": "brasa_nadia", "texto": "Y yo dejo el riego medido esos días. El agua es para la tina."}
+        ],
+        [
+          {"hablante": "brasa_fermin", "texto": "Por mitades. Más lento y más caro, pero nadie se queda sin baño ni una noche."},
+          {"hablante": "brasa_dante", "texto": "Cierro la ruta de basalto esa semana. Que los lagartos tengan sus piedras tranquilas."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "brasa_fermin", "texto": "La ladera dejó de calentarse. La grieta se queda, pero ya no crece."},
+        {"hablante": "brasa_rufina", "texto": "Y nadie pasó frío. Fermín, esta vez te dejo dormir la siesta en mi banco."},
+        {"hablante": "brasa_sol", "texto": "La marca de la junta se ve desde el camino. Me gusta: es una cicatriz que cuenta que alguien preguntó."}
+      ],
+      "recompensa": {"monedas": 200, "objetos": {"brasaviva_mineral": 1, "arcilla": 2}}
+    },
+    {
+      "id": "E_brasaviva_2",
+      "titulo": "La torta de la Noche de las Brasas",
+      "region": "brasaviva",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["brasa_azahar", "brasa_yago", "brasa_tarek", "brasa_rufina"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Tarek y con Yago sobre la torta de la fiesta.", "npc": ["brasa_tarek", "brasa_yago"]},
+        {"tipo": "entrega", "texto": "Trae 3 de harina y 2 de pimiento rescoldo cosechado.", "materiales": {"harina": 3, "brasaviva_cosecha": 2}},
+        {"tipo": "estadistica", "texto": "Prepara una comida para practicar el relleno.", "clave": "comidas", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "brasa_azahar", "texto": "En la Noche de las Brasas cada barrio lleva una torta grande al baño comunal. Este año me toca a mí y me falta de todo."},
+        {"hablante": "brasa_tarek", "texto": "El queso lo pongo yo. Uno nuevo que se llama «Vaca Contenta». Bueno, el nombre todavía lo estoy pensando."},
+        {"hablante": "brasa_yago", "texto": "¡Y yo hago el dibujo de la corteza! Un dragón gigante."},
+        {"hablante": "brasa_azahar", "texto": "El horno lo manejo yo, Yago. Tú amasas y dibujas. Trato hecho."}
+      ],
+      "giro": [
+        {"hablante": "brasa_yago", "texto": "Mire el dragón. Le quedó un ala más grande que la otra y la cola parece un pan."},
+        {"hablante": "brasa_azahar", "texto": "La tradición es la corteza de espiga, como la hacía Rufina. Pero ese dragón tiene mucha personalidad."},
+        {"hablante": "brasa_rufina", "texto": "La espiga la inventé yo porque no sabía dibujar otra cosa, Azahar. No es sagrada."}
+      ],
+      "decision": "¿Qué corteza lleva la torta?",
+      "opciones": ["A: el dragón torcido de Yago, tal como quedó", "B: la espiga de siempre en la torta grande y el dragón de Yago en una torta pequeña al lado"],
+      "ramas": [
+        [
+          {"hablante": "brasa_yago", "texto": "¿De verdad va así? ¿Con el ala grande?"},
+          {"hablante": "brasa_azahar", "texto": "Con el ala grande. Así vuela de un lado, que es más de lo que hacen los panes."}
+        ],
+        [
+          {"hablante": "brasa_rufina", "texto": "Dos tortas, más mesa, más gente. No le veo ningún problema."},
+          {"hablante": "brasa_yago", "texto": "La mía se acabó primero. Lo vi. Lo anoté."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "brasa_azahar", "texto": "La Noche de las Brasas tuvo torta, queso y un dragón. Nadie se quemó, ni siquiera la masa."},
+        {"hablante": "brasa_tarek", "texto": "Ya decidí el nombre del queso: «Ala Grande». Por razones obvias."}
+      ],
+      "recompensa": {"monedas": 100, "objetos": {"pan": 2, "brasaviva_cosecha": 1}}
+    },
+    {
+      "id": "E_nieveclara_1",
+      "titulo": "Camas antes de la ventisca",
+      "region": "nieveclara",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["nieve_casilda", "nieve_severo", "nieve_otto", "nieve_eira"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Severo y con Otto sobre la ventisca que puede venir.", "npc": ["nieve_severo", "nieve_otto"]},
+        {"tipo": "entrega", "texto": "Trae 4 de madera de pino de poda y 3 de tela para literas y mantas.", "materiales": {"nieveclara_madera": 4, "tela": 3}},
+        {"tipo": "estadistica", "texto": "Construye algo una vez para aprender a armar literas.", "clave": "construir", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "nieve_casilda", "texto": "Severo dice que puede venir una ventisca larga. Hay tres casas del lado del alud y en el albergue faltan camas."},
+        {"hablante": "nieve_severo", "texto": "Puede. Entre cuatro y seis de cada diez. No lo digo para asustar; lo digo para que nadie diga después que fue sorpresa."},
+        {"hablante": "nieve_otto", "texto": "Avisar ya avisamos. Lo que falta es tener adónde llevar a la gente si dice que sí."},
+        {"hablante": "nieve_casilda", "texto": "Por eso. Un aviso sin cama es medio aviso."}
+      ],
+      "giro": [
+        {"hablante": "nieve_casilda", "texto": "Las literas están armadas. Eira ofreció el granero para los animales de las familias, porque nadie deja a sus ovejas solas."},
+        {"hablante": "nieve_eira", "texto": "Mis ovejas se van a poner celosas, pero se acostumbran."},
+        {"hablante": "nieve_severo", "texto": "La probabilidad subió un poco. Sigue sin ser segura."}
+      ],
+      "decision": "¿Cuándo se abre el albergue a las familias?",
+      "opciones": ["A: ya, aunque la ventisca no sea segura, para que se instalen con calma", "B: dejar todo listo y abrir cuando Severo dé la señal, para no sacar a nadie de su casa sin necesidad"],
+      "ramas": [
+        [
+          {"hablante": "nieve_casilda", "texto": "Ya. Si la ventisca no viene, habremos tenido una noche de cuentos con tres familias. No es tan grave."},
+          {"hablante": "nieve_otto", "texto": "Y yo duermo en mi casa sabiendo que están aquí. Eso también es un rescate."}
+        ],
+        [
+          {"hablante": "nieve_severo", "texto": "Doy la señal con seis horas de margen. Si cambia, lo digo, aunque quede mal."},
+          {"hablante": "nieve_casilda", "texto": "Y las camas esperan tendidas. Que nadie tenga que pensar adónde ir, solo cuándo."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "nieve_casilda", "texto": "Las tres familias saben dónde está su cama. Eso no lo arregla todo, pero cambia la noche."},
+        {"hablante": "nieve_otto", "texto": "Deberíamos repetirlo cada invierno, sin esperar una ventisca para pensarlo."},
+        {"hablante": "el", "texto": "Cuenten con nosotros para las mantas del próximo invierno."}
+      ],
+      "recompensa": {"monedas": 180, "objetos": {"nieveclara_cosecha": 2}}
+    },
+    {
+      "id": "E_nieveclara_2",
+      "titulo": "Los patines de Quirina",
+      "region": "nieveclara",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": ["nieve_tadeo", "nieve_quirina", "nieve_anselmo"],
+      "pasos": [
+        {"tipo": "testimonios", "texto": "Habla con Quirina y con Anselmo sobre el trineo viejo.", "npc": ["nieve_quirina", "nieve_anselmo"]},
+        {"tipo": "entrega", "texto": "Trae 3 de madera de pino de poda, 2 de cuerda y 1 de hierro.", "materiales": {"nieveclara_madera": 3, "cuerda": 2, "hierro": 1}},
+        {"tipo": "jornadas", "texto": "Espera una noche a que seque el barniz.", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "nieve_tadeo", "texto": "Quirina me trajo su trineo de pesca. Se le partió un patín en el hielo del lago."},
+        {"hablante": "nieve_quirina", "texto": "Ese trineo tiene veinte inviernos. Lo quiero como estaba."},
+        {"hablante": "nieve_tadeo", "texto": "Ajá. El problema es que, como estaba, se partió."},
+        {"hablante": "nieve_anselmo", "texto": "La funda se la tejí yo hace años. Al menos esa sí la pueden dejar como estaba."}
+      ],
+      "giro": [
+        {"hablante": "nieve_tadeo", "texto": "Hice patines nuevos, más anchos, probados con Otto en la curva mala. Y guardé los viejos."},
+        {"hablante": "nieve_quirina", "texto": "Se ve distinto. No sé si mis manos lo van a reconocer."}
+      ],
+      "decision": "¿Qué se hace con los patines viejos?",
+      "opciones": ["A: ponerlos como agarraderas del trineo nuevo, para que las manos de Quirina los encuentren", "B: convertirlos en una banca a la orilla del lago, donde Quirina enseña a su aprendiz"],
+      "ramas": [
+        [
+          {"hablante": "nieve_quirina", "texto": "Agarraderas. Mis manos los conocen. El resto que aprenda a conocerme."},
+          {"hablante": "nieve_tadeo", "texto": "Las lijé poquito, para que no pierdan las marcas de sus guantes."}
+        ],
+        [
+          {"hablante": "nieve_quirina", "texto": "Una banca. Así el aprendiz se sienta donde yo me sentaba, y los patines descansan."},
+          {"hablante": "nieve_anselmo", "texto": "Le tejo un cojín. A rayas chillonas, porque me da la gana."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "nieve_quirina", "texto": "Lo probé en el lago. Desliza callado. Como debe ser."},
+        {"hablante": "nieve_tadeo", "texto": "Un trineo menos en la pared de pendientes. Bueno, este no estaba en la pared, pero se siente igual."},
+        {"hablante": "nieve_anselmo", "texto": "Sonríe un poco, Tadeo, que nadie te va a cobrar por eso."}
+      ],
+      "recompensa": {"monedas": 120, "objetos": {"nieveclara_semilla": 1, "cuerda": 2}}
+    },
+    {
+      "id": "EP_1",
+      "titulo": "Sal de espejo para los baños de Brasaviva",
+      "region": "brasaviva",
+      "clase": "encargo_entre_pueblos",
+      "requiere": ["E_brasaviva_1"],
+      "reparto": ["brasa_fermin", "brasa_rufina", "lirios_genaro", "lirios_carmela"],
+      "pasos": [
+        {"tipo": "visitas", "texto": "Visita el Puerto de los Lirios y Piedralumbre.", "regiones": ["puerto_lirios", "piedralumbre"]},
+        {"tipo": "entrega", "texto": "Trae a Brasaviva 2 de sal de espejo y 1 de estaño de junta.", "materiales": {"puerto_lirios_mineral": 2, "piedralumbre_mineral": 1}},
+        {"tipo": "testimonios", "texto": "Cuéntaselo a Fermín y a Rufina.", "npc": ["brasa_fermin", "brasa_rufina"]}
+      ],
+      "inicio": [
+        {"hablante": "brasa_fermin", "texto": "La junta nueva aguanta, pero el intercambiador de los baños se llena de costra. Necesito un filtro de sal de espejo."},
+        {"hablante": "brasa_rufina", "texto": "Esa sal es del puerto. Allá la mide un señor que, dicen, no regala ni el saludo."},
+        {"hablante": "brasa_fermin", "texto": "Y para soldar el filtro, un poco de estaño de junta de Piedralumbre. Son dos viajes, lo sé."}
+      ],
+      "giro": [
+        {"hablante": "lirios_genaro", "texto": "Dos de sal, del cupo de este ciclo. No me sobra, pero el filtro dura ocho expediciones; no se gasta en un día."},
+        {"hablante": "lirios_carmela", "texto": "Papá, diles lo que querías pedir a cambio. Lo practicaste toda la mañana."},
+        {"hablante": "lirios_genaro", "texto": "Que los pescadores de invierno puedan usar los baños de Brasaviva cuando vuelvan entumecidos. Si se puede."}
+      ],
+      "decision": "¿Qué da Brasaviva a cambio de la sal?",
+      "opciones": ["A: turnos de baño para los pescadores del puerto en invierno", "B: pagar la sal a precio de lonja y mandar una vasija de Sol para la fonda de Carmela"],
+      "ramas": [
+        [
+          {"hablante": "brasa_rufina", "texto": "Turnos de baño para el puerto. Los anoto en la lista, con nombre y sin cobrarles el jabón."},
+          {"hablante": "brasa_fermin", "texto": "Y si alguno llega muy mojado, le subo la temperatura medio grado. Sin pasarme."}
+        ],
+        [
+          {"hablante": "brasa_fermin", "texto": "Precio de lonja, pagado sin regateo. Olga estaría orgullosa."},
+          {"hablante": "lirios_carmela", "texto": "Y la vasija de Sol en mi mesa larga, con su marca de reparación a la vista. Eso me gusta."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "brasa_fermin", "texto": "Filtro puesto. El agua de los baños sale limpia y el horno respira tranquilo."},
+        {"hablante": "brasa_rufina", "texto": "Sal del puerto, estaño de la mina y fuego de aquí. Este baño ya es de todos."},
+        {"hablante": "lirios_genaro", "texto": "Si se tapa, me escriben. Es mi sal; me hago cargo."}
+      ],
+      "recompensa": {"monedas": 220, "objetos": {"brasaviva_mineral": 1, "puerto_lirios_mineral": 1}}
+    },
+    {
+      "id": "EP_2",
+      "titulo": "Lo que sabe una casa vieja",
+      "region": "nieveclara",
+      "clase": "encargo_entre_pueblos",
+      "requiere": [],
+      "reparto": ["nieve_casilda", "nieve_otto", "nieve_tadeo", "bruma_jacinta", "piedra_lisandro"],
+      "pasos": [
+        {"tipo": "visitas", "texto": "Visita Brumaverde para pedirle consejo a Jacinta.", "regiones": ["brumaverde"]},
+        {"tipo": "entrega", "texto": "Trae a Nieveclara 3 de madera de aliso caído y 2 de madera de apuntalamiento recuperada.", "materiales": {"brumaverde_madera": 3, "piedralumbre_madera": 2}},
+        {"tipo": "testimonios", "texto": "Habla con Casilda y con Tadeo en el albergue.", "npc": ["nieve_casilda", "nieve_tadeo"]},
+        {"tipo": "estadistica", "texto": "Construye algo una vez con lo que aprendiste.", "clave": "construir", "cantidad": 1}
+      ],
+      "inicio": [
+        {"hablante": "nieve_casilda", "texto": "Las familias del lado del alud no quieren dejar sus casas para siempre. Y tienen razón: son sus casas."},
+        {"hablante": "nieve_otto", "texto": "Si se pudieran reforzar, el albergue quedaría para las noches peores y no para todo el invierno."},
+        {"hablante": "nieve_tadeo", "texto": "Lisandro me escribió que en Brumaverde hay una constructora que refuerza casas viejas sin tumbar nada. Se llama Jacinta."}
+      ],
+      "giro": [
+        {"hablante": "bruma_jacinta", "texto": "Las casas de montaña se parecen a las del bosque: quieren quedarse donde están. Con buenos puntales, pueden."},
+        {"hablante": "piedra_lisandro", "texto": "La madera de apuntalamiento la conseguí en la mina, de una galería que ya no se usa. Y vine a ver a Tadeo, de paso."},
+        {"hablante": "nieve_tadeo", "texto": "Ajá. De paso. Trajo dos bufandas de regalo y una se la puso él."}
+      ],
+      "decision": "¿Qué casa se refuerza primero?",
+      "opciones": ["A: la más cercana al alud, aunque la familia todavía dude en dejarse ayudar", "B: la de la familia que lo pidió primero, para que las demás vean el resultado antes de decidir"],
+      "ramas": [
+        [
+          {"hablante": "bruma_jacinta", "texto": "La de más riesgo. Les explico cada viga antes de clavarla. Si dicen que no, paramos."},
+          {"hablante": "nieve_casilda", "texto": "Y mientras tanto tienen su litera en el albergue, por si cambian de idea a medianoche."}
+        ],
+        [
+          {"hablante": "nieve_casilda", "texto": "La que lo pidió. Que las otras familias vengan a mirar y pregunten lo que quieran."},
+          {"hablante": "nieve_otto", "texto": "Mostrar funciona mejor que asustar. Lo aprendí a la mala en la montaña."}
+        ]
+      ],
+      "cierre": [
+        {"hablante": "bruma_jacinta", "texto": "Primera casa reforzada en la nieve. Aquí las raíces son de piedra, pero el principio es el mismo."},
+        {"hablante": "nieve_casilda", "texto": "Un aviso, una cama y una casa más fuerte. Ahora sí siento que ayudamos completo."},
+        {"hablante": "piedra_lisandro", "texto": "La próxima vez vengo con botas para todos. Bordadas."}
+      ],
+      "recompensa": {"monedas": 230, "objetos": {"nieveclara_mineral": 1, "brumaverde_madera": 1}}
+    }
+  ]
+}

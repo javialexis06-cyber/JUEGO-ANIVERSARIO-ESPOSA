@@ -63,7 +63,8 @@ funcionales existentes: se pueden colocar y usar con las reglas normales de prod
 
 I09 tiene una primera serie funcional: piezas concretas, categorías explícitas, calidad, avance persistido,
 premio único y una nueva oferta útil en el archivo. Quedan pendientes lotes regionales, exhibiciones físicas,
-artefactos, libros encontrados y colecciones semánticas completas. K06 continúa parcial: donado/reservado
+artefactos y colecciones semánticas completas. Tres libros encontrados con lectura y efectos ya se integraron
+en `LIBROS-INTEGRACION.md`. K06 continúa parcial: donado/reservado
 se distinguen del atlas, pero faltan registros independientes completos de descubrimiento, captura,
 crianza, fabricación y venta. Este bloque no certifica campaña completa ni rendimiento físico móvil.
 

@@ -1,5 +1,75 @@
 # Coordinación de la granja con el proyecto principal
 
+## Pueblos de Astra agrandados · 11 de octubre de 2026 (Claude, a pedido de Javier)
+
+Javier pidió pueblos más grandes y con vida, «con una estructura tan bonita como la del primero». Se hizo sin
+cambiar ningún ID ni el guardado V5:
+
+- **Plano por región** (`docs/narrativa/herramientas/planos_pueblos.py`, usado por `integrar_motor.py`): zona caminable
+  de 104 × 76 m (|x| < 52, |z| < 38). Tiene:
+  - Calle principal este-oeste, con las rutas en sus extremos (x = ±49,5).
+  - Plaza redonda en (0, 0) con monumento.
+  - Casas al norte, mirando a la calle (z −12 a −6).
+  - Un puesto de oficio por habitante al sur (z = 6,6), donde trabaja de día.
+  - Archivo en (0, −9,6).
+  - Recursos en las afueras (z = 22).
+  - Combate en (38, 24).
+  - Hito al norte en (0, −27).
+  - Adornos con colisión: faroles, bancos, árboles, pozo e hito.
+- Cada región trae `plano` en `astra-mundo-datos.ts`: `limites`, `plaza`, `inicio`, `archivo`, `combate`, `hito`, `solidos`,
+  `adornos` y `puestos`.
+- **Cambios en `astra.ts`**, todos con valor por defecto para regiones sin plano:
+  - `libreAstra` usa `libreRegionAstra`, que lee límites y sólidos.
+  - Nuevos `puntoArchivo`, `puntoCombate` y `planoAstra`.
+  - `reubicarAstra`, llamado desde `migrarEstado`, devuelve a la entrada del pueblo una posición guardada que quedó dentro
+    de algo nuevo. Una posición fuera de los límites sigue siendo inválida.
+- **Otros archivos:**
+  - `motor.ts`, `main.ts` y `astra-ui.ts` toman el combate y el balance del plano.
+  - `probar-astra.mjs` usa el archivo de cada región.
+- El arte (`astra-arte.ts`) dibuja exactamente lo que el plano declara. Los habitantes caminan por la calle entre su puesto,
+  la plaza y la puerta de su casa; es solo vista, la posición sigue saliendo de `posicionNpcAstra`.
+
+**Vida de los pueblos (mismo día, también a pedido de Javier).** Se sumaron, sin tocar los 142 IDs:
+- 36 vecinos con historia completa (`docs/narrativa/datos/pueblos/*.json`, guía en `GUIA.md`).
+- 17 casas.
+- 42 encargos: 36 locales `E_<region>_n` y 6 entre pueblos `EP_n`.
+
+Cómo se integran:
+- `integrar_motor.py` los compila.
+- `verificar_pueblos.py` los revisa: IDs, hablantes, materiales, estadísticas, ropa y nombres sin repetir.
+
+Los encargos usan solo pasos que el motor ya ejecuta (testimonios, archivo, entrega, visitas, estadística, jornadas).
+Entran en `CAMPANA_ASTRA` con `clase: 'encargo' | 'encargo_entre_pueblos'`.
+
+Cambios en el motor:
+- `decidir` paga la `recompensa` (monedas y objetos) una sola vez.
+- Los topes de `astraValida` ahora salen del total real (`NPC_ASTRA.length`, `CAMPANA_ASTRA.length`).
+- Los vecinos nuevos no tienen misión personal (`mision: null`).
+
+Las líneas de los pueblos tienen su huella como las demás, en `astra-lore-datos.ts` y `produccion.json`, pero sin voz todavía.
+
+**Para el frente de motor:** si cambian las posiciones o se agregan casas, háganlo en `planos_pueblos.py`, que caben hasta
+ocho casas y 16 puestos por pueblo. Lo que siga de historias y misiones secundarias de los pueblos lo coordino aquí antes de
+tocar `astra.ts`.
+
+## Entrega vigente para integrar arte y audio · 11 de octubre de 2026
+
+Leer [ASTRA-INTEGRACION.md](../../juego/web/src/granja-v3/ASTRA-INTEGRACION.md). Se conectaron 28 lugares,
+27 accesos físicos, 142 identidades y 76 domicilios, conservando el primer pueblo. Las 24 regiones
+de recursos tienen cupos, semillas cultivables, recetas y mantenimiento local; Confluencia tiene cuatro
+arenas de práctica. Los escenarios nuevos reutilizan kits existentes, sin producción de arte nuevo.
+
+La pestaña Astra se encuentra abriendo el menú del HUD y seleccionando **Astra**. Las conversaciones,
+lecturas, mundo, interior y expedientes se guardan en un bloque aditivo de V5. El contrato de producción
+está en `public/granja/astra/produccion.json`; Claude asocia sus archivos reales en `medios.json`.
+Hay IDs de actor/línea, huellas de texto, 14 escenas, 284 recuerdos y 23 claves musicales. El
+generador conserva el manifiesto de medios. No se han generado voces ni música de pago.
+
+**Alcance pendiente:** los 36 expedientes no sustituyen los retos de las 36 misiones finales. Faltan
+181 historias adicionales ejecutables, efectos especializados de premios, jefes finales y variedad
+mecánica regional. No presentar la campaña ni el motor completo como terminados. Los apartados
+anteriores de planificación quedan como antecedentes; esta entrega actualiza el estado de los accesos y el reparto.
+
 ## Mensaje para Claude · 10 de octubre de 2026
 
 Javier pidió integrar en este repositorio todo el trabajo de la granja y subir cada avance comprobado. Estamos desarrollando su motor y jugabilidad sobre el mismo juego de Three.js, con sistemas de agricultura, ganadería, genética, fabricación, automatización, pueblos y aventura inspirados en la amplitud de Stardew Valley, Expanded y Automate, más la mitología de Astra. El motor completo todavía está en desarrollo.
@@ -25,7 +95,47 @@ Conservar IDs de objetos, cultivos, animales, NPC, edificios, regiones y animaci
 
 Destinos: S21 FE y S24 Ultra. La granja puede probarse con teclado y mouse y controles móviles. La app principal mantiene su orientación horizontal. Los ensayos de viewport no certifican rendimiento físico; faltan medidas en ambos dispositivos. Mantener reuso de geometría/materiales, carga por zona y límites de partículas, luces y draw calls.
 
+## Verificación de la base de Astra · 11 de octubre de 2026
+
+34 suites del motor sin fallos, con 20 comprobaciones de Astra; ambas compilaciones correctas.
+El recorrido general conserva el dibujo real y pasó seis casos; Astra pasó once casos de controles,
+guardado y grafos con el dibujo pausado en Chromium por software. No certifica los mapas dibujados ni
+rendimiento en teléfonos. `ASTRA-VERIFICACION.json` conserva las pruebas y límites; el contrato explica
+cómo repetir con `ASTRA_RENDER_REAL=1` al incorporar arte en una máquina con GPU.
+
 ## Estado real e historia
+
+### Biblia narrativa ampliada · 11 de octubre de 2026
+
+Javier pidió desarrollar la mitología, la historia completa y los guiones de todo el reparto para futura
+producción de voces, música y escenas. Este bloque escribe en `docs/narrativa/`: conserva los 142 IDs
+del reparto, las cinco figuras narrativas y el canon importado de Astra. Los nombres propuestos se usan
+como nombres de autoría, sin renombrar todavía personajes del motor. Las capacidades nuevas se marcan
+como diseño pendiente: un guion no concede objetos ni acredita misiones en una partida.
+No se modifican modelos, renderizadores, audio existente ni el guardado V5. Las entregas narrativas
+requieren recibos de acciones reales y recompensas únicas con límites; los secretos tienen pistas
+descubribles sin reloj real ni compras. La publicación estuvo pausada por petición expresa del usuario durante la autoría.
+Se consultó el remoto `5099d4f` antes de editar y se conservaron sus avances gráficos sin publicar este bloque.
+La pausa quedó levantada posteriormente con «has push a todo»; la integración incorpora el remoto `a33deb0`.
+
+### Cuadernos integrados · 11 de octubre de 2026
+
+La primera serie de K07 ya conecta los tres campamentos existentes con recuperación, lectura persistente,
+prospección pagada y dos recetas de horno. `LIBROS-INTEGRACION.md` registra su contrato y alcance parcial.
+No se agregan modelos, decoración, iconos ni texto de canon; la presentación final queda con Claude.
+Siguiente bloque previsto: identificar y usar hallazgos mineros (F11).
+
+### Contrato del bloque de libros y pistas (motor)
+
+Tres cuadernos técnicos se recuperan junto al campamento principal de los pisos 1, 5 y 9 de la mina.
+La acción exige cercanía física y recorrido despejado; los campamentos conservan su función y las
+partidas existentes pueden recuperar sus cuadernos sin regenerar el terreno. El registro persiste
+procedencia, recuperación y primera lectura; consultar un catálogo no concede el hallazgo ni su efecto.
+Leer fuera de la expedición enseña prospección con coste de antorchas/energía o recetas más rápidas de
+cobre y vidrio, con los mismos materiales y requisitos habituales. No hay monedas ni premios repetibles.
+La biblioteca del archivo y el panel de explorar usan texto y botones existentes, sin arte nuevo.
+V5, IDs, economía, calendario al dormir y reglas de cuidado se conservan. Los textos técnicos son
+propuestas internas de este bloque; no agregan acontecimientos ni personajes al canon de Astra.
 
 ### Contrato del bloque de colecciones y lotes (motor)
 
@@ -346,3 +456,24 @@ de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/bl
 - La cueva de la mina conserva sus paredes de roca y cambia lo hecho por mano: `entibado` (con farol), `marco_tunel`
   de la salida, la vía con su vagoneta y los racimos de `cristales`, teñidos y brillantes con el color de cada piso.
 - Los árboles que se talan (obstáculos) siguen con sus modelos de la biblioteca.
+
+### Máquinas de producción en Blender (Claude, 11 de octubre de 2026)
+
+- `personajes/blender/granja_maquinas.py` → `public/modelos/granja_maquinas.glb` (0,4 MB): la parte fija de cada máquina
+  con las medidas de `figura()` (escenas-produccion.ts): cofres de cobre y de hierro, los tres portales, la nave
+  exploradora, aspersores, recuperadoras (cobre, hierro y astral), alto horno, trituradora, taladro de vapor,
+  ensambladora, horno, fundidora y forja, banco de trabajo, cocina y telar, fermentador y prensa, molino artesanal y
+  `maquina` (la genérica para lo que no tiene figura propia).
+- `figura()` arma todo como antes y, cuando carga el kit, cambia solo el grupo `fijo` por la pieza de
+  `claveMaquina(articulo)`. Lo que se mueve (rotores, rodillos, broca, brazo, engranajes, manivela, fuelle, el brillo y
+  las estrellas del portal) y el piloto siguen siendo del juego, así que la animación y los estados no cambian. Para una
+  máquina nueva: su figura en `figura()`, su pieza `m_<articulo>` en granja_maquinas.py y su clave en `claveMaquina`.
+
+### Fuatia, Confluencia y primeras armas (Codex, 11 de octubre de 2026)
+
+- Pedido de Javier: añadir a Fuatia, ampliar pasados del reparto, dar recursos recurrentes a todos los mundos y centrar el RPG nuevo en armas. El usuario levantó la pausa con «has push a todo». Se integran los cambios remotos de Claude antes de publicar ambas ramas y la wiki.
+- Autoría: `docs/narrativa/08-fuatia.md`, vidas de los 142 NPC y 284 conversaciones, 36 principales, ocho secundarios de Fuatia, 24 territorios de recursos y 14 escenas largas. Confluencia, sus materiales y esas misiones todavía no están construidos en el juego.
+- Primer motor integrado: `aventura.ts` mantiene las expediciones actuales y añade arco, bastón y cuatro sellos; trayectorias, colisión, duración activa, una invocación, dominio limitado y compatibilidad V5. `objetos.ts` registra armas y recetas; `motor.ts` valida y paga energía y flechas. No se añade RPG de personajes o armaduras.
+- Presentación mínima: `main.ts` respeta alcance de la familia; `escenas-aventura.ts` muestra esferas simples para proyectiles y patrones. Arte definitivo y animaciones siguen en el frente de Claude. No se han añadido modelos ni llamadas de audio.
+- Publicar sin push forzado en `claude/supermarket-mania-minigame-xn2it8` y `work`, tras repetir las comprobaciones de integración. Consultar `docs/narrativa/11-armas-y-combate.md` y la prueba `probar-armas.mjs` antes de integrar.
+- Integración comprobada sobre el remoto `a33deb0`: 33 suites sin fallos, ambas compilaciones correctas, seis comprobaciones del recorrido casa/granja y cinco de armas en navegador sin errores. Los escenarios de navegador usan partidas de prueba aisladas. `ARMAS-VERIFICACION.json` conserva alcance y pendientes.

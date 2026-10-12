@@ -2,12 +2,21 @@ import * as THREE from 'three';
 import { caja, esfera, compactar, liberar } from './suelo';
 import { huellaProduccion } from './produccion';
 import type { EstadoProduccion, MaquinaProduccion } from './produccion';
+import { conKit } from './cuartos';
 
 interface FiguraProduccion {grupo:THREE.Group;articulo:string;moviles:THREE.Object3D[];piloto:THREE.Mesh;proceso:boolean;llena:boolean;portal:boolean;aspersor:boolean}
 const PALETA={madera:'#b7885b',oscuro:'#6e5542',metal:'#647d81',claro:'#c8d4c2',cobre:'#bd8962',verde:'#a6d092',oro:'#d6bd80'};
 function cilindro(g:THREE.Object3D,radio:number,alto:number,x:number,y:number,z:number,color:string,vertices=12){const m=new THREE.Mesh(new THREE.CylinderGeometry(radio,radio,alto,vertices),new THREE.MeshStandardMaterial({color,roughness:.65,metalness:.12}));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}
 function aro(g:THREE.Object3D,radio:number,grosor:number,color:string){const m=new THREE.Mesh(new THREE.TorusGeometry(radio,grosor,6,24),new THREE.MeshStandardMaterial({color,metalness:.4,roughness:.5}));g.add(m);return m;}
 function piloto(g:THREE.Object3D){const m=new THREE.Mesh(new THREE.SphereGeometry(.047,8,6),new THREE.MeshBasicMaterial({color:PALETA.verde}));m.position.set(.31,.51,.38);g.add(m);return m;}
+/** Qué pieza de granja_maquinas.glb le toca a cada artículo (los que no tienen la suya usan la máquina genérica). */
+function claveMaquina(articulo:string){
+ if(articulo.startsWith('cofre_'))return articulo.includes('hierro')?'cofre_hierro':'cofre_cobre';
+ if(articulo.startsWith('portal_'))return articulo==='portal_verdia'||articulo==='portal_senda'?articulo:'portal_otro';
+ if(articulo.startsWith('aspersor_'))return articulo.includes('hierro')?'aspersor_hierro':'aspersor_cobre';
+ if(articulo.startsWith('recuperadora_'))return articulo.endsWith('astral')?'recuperadora_astral':articulo.endsWith('hierro')?'recuperadora_hierro':'recuperadora_cobre';
+ return ['nave_exploradora','alto_horno','trituradora','taladro_vapor','ensambladora','horno','fundidora','forja','banco_trabajo','cocina','telar','fermentador','prensa','molino_artesanal'].includes(articulo)?articulo:'maquina';
+}
 export function figura(articulo:string):FiguraProduccion{
  const grupo=new THREE.Group(),fijo=new THREE.Group(),moviles:THREE.Object3D[]=[],portal=articulo.startsWith('portal_'),aspersor=articulo.startsWith('aspersor_');grupo.add(fijo);
  const madera=PALETA.madera,oscuro=PALETA.oscuro,metal=articulo.includes('hierro')?PALETA.metal:PALETA.cobre;
@@ -85,6 +94,8 @@ export function figura(articulo:string):FiguraProduccion{
   caja(fijo,[.74,.69,.67],[0,.42,0],PALETA.metal);caja(fijo,[.61,.08,.57],[0,.8,0],PALETA.claro);const wheel=aro(grupo,.23,.075,PALETA.cobre);wheel.position.set(0,.45,.39);moviles.push(wheel);cilindro(fijo,.11,.23,-.22,.94,-.12,PALETA.metal);
  }
  compactar(fijo);const luz=piloto(grupo);luz.visible=false;
+ // La parte fija se cambia por su modelo de Blender (granja_maquinas.glb); lo que se mueve sigue siendo de aquí
+ conKit(grupo,'granja_maquinas.glb',m=>{const base=m.get(claveMaquina(articulo));if(!base)return;for(const o of [...fijo.children]){o.removeFromParent();o.traverse(x=>{const malla=x as THREE.Mesh;if(malla.isMesh){malla.geometry.dispose();for(const mt of ([] as THREE.Material[]).concat(malla.material))mt.dispose();}});}fijo.add(base.clone(true));});
  return {grupo,articulo,moviles,piloto:luz,proceso:false,llena:false,portal,aspersor};
 }
 

@@ -1,5 +1,10 @@
 # Reparto completo propuesto: 147 personajes únicos
 
+**Autoría del 11 de octubre:** [biblia de historias y misiones](../../../../docs/narrativa/README.md)
+desarrolla los 142 interlocutores y cinco figuras de este registro, adopta sus nombres para guiones y
+conserva IDs y viviendas. Estas historias no están integradas al motor. Los encargos de las tablas de
+este documento siguen siendo antecedentes de diseño; los arcos dialogados están en la biblia.
+
 Actualizado: 10 de octubre de 2026. **142 habitantes y aliados + cinco figuras del lore**, distribuidos en **19 pueblos, refugios, estaciones y campamentos**. Los 24 vecinos del primer pueblo tienen base social en el motor; **118 interlocutores adicionales están planificados**. Las cinco figuras tienen papel narrativo documentado, sin declarar implementadas sus escenas o enfrentamientos.
 
 Este listado cierra el reparto propuesto de la campaña de granja, reinos y Astra. Los nombres nuevos son revisables; ampliar el reparto en el futuro requiere actualizar este registro y sus totales. Los minijuegos independientes de Claude quedan fuera de este cómputo.
@@ -11,7 +16,7 @@ Este listado cierra el reparto propuesto de la campaña de granja, reinos y Astr
 | Mundo o región | Habitantes / aliados |
 |---|---|
 | Celia · Santuario Protegido | 64 |
-| Ceniza y Sangre · Fronteras de Astra | 6 |
+| Sangre y Ceniza · Fronteras de Astra | 6 |
 | Verdia | 18 |
 | Senda | 12 |
 | Nox | 6 |

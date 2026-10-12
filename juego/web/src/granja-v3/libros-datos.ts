@@ -1,0 +1,12 @@
+import type { RecetaProduccion } from './objetos';
+export interface DefLibro {id:string;titulo:string;piso:number;texto:string[];efecto:string;propuesta:true;receta?:RecetaProduccion}
+/** Cuadernos técnicos propuestos para el motor; no narran acontecimientos del canon. */
+export const LIBROS:DefLibro[]=[
+ {id:'piedra',titulo:'Señales bajo las rocas',piso:1,propuesta:true,efecto:'Prospección: revela una escalera en la mina por 3 antorchas y 8 de energía.',texto:['Las vetas rotas y las criaturas derrotadas pueden descubrir la escalera. El plano cambia al volver a entrar; las paradas de ascensor que alcanzaste permanecen.','Si no encuentras la bajada, prepara tres antorchas y ocho puntos de energía. En terreno despejado, la prospección marca un paso cercano sin extraer los minerales. No funciona si ya hay escalera ni en otros destinos.']},
+ {id:'fundicion',titulo:'Fundición por tandas pequeñas',piso:5,propuesta:true,efecto:'Receta de cobre en 20 segundos, con los mismos 5 minerales y 1 carbón.',texto:['Un horno procesa minerales y carbón; no basta con tener la receta en la mochila. Colócalo en la granja y prepara el lote cerca de él.','Esta secuencia funde cinco minerales de cobre y un carbón en un lingote en veinte segundos. Conserva el coste y los requisitos del lingote común; cambia el tiempo de trabajo. Un cofre contiguo puede abastecer el horno.'],receta:{id:'cobre_del_archivo',nombre:'Cobre del archivo',estacion:'horno',ingredientes:{cobre:5,carbon:1},salida:{articulo:'lingote_cobre',cantidad:1},duracionMs:20000,nivel:0,requisito:'libro_fundicion'}},
+ {id:'vidrio',titulo:'Cuarzo y vidrio',piso:9,propuesta:true,efecto:'Receta de 2 vidrios en 20 segundos, con los mismos 3 cuarzos.',texto:['El cuarzo de las primeras galerías se puede fundir en vidrio. Guarda una parte si todavía tienes pendiente el lote de Piedra y oficio. Entregar al archivo consume esas unidades.','La secuencia de este cuaderno transforma tres cuarzos en dos vidrios en veinte segundos dentro del horno. La salida conserva los usos y el valor del vidrio común. Recuperarlo no devuelve más materia de la que costó.'],receta:{id:'vidrio_del_archivo',nombre:'Vidrio del archivo',estacion:'horno',ingredientes:{cuarzo:3},salida:{articulo:'vidrio',cantidad:2},duracionMs:20000,nivel:0,requisito:'libro_vidrio'}},
+];
+export const libroDef=(id:string)=>LIBROS.find(l=>l.id===id);
+export const desbloqueoLibro=(id:string)=>'libro_'+id;
+export const fuenteLibro=(l:DefLibro)=>`mina_celia:${l.piso}:0,0:s`;
+export const RECETAS_LIBROS=LIBROS.flatMap(l=>l.receta?[l.receta]:[]);

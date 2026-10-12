@@ -1,0 +1,2779 @@
+{
+  "residentes": [
+    {
+      "id": "orbita_marisol",
+      "nombre": "Marisol",
+      "asentamiento": "estacion_celia",
+      "funcion": "Cocinera: comedor del anillo, menús con agua contada y albahaca orbital.",
+      "pasado": "Marisol, 47, cocinó veinte años en una posada de caravanas y llegó a la estación con una maleta de especias. En su primer mes sirvió caldos generosos para animar a un equipo cansado y gastó en cuatro días el agua de cocina de una semana; Boris recortó duchas para cubrirla. Aprendió que en órbita la abundancia se planea con lápiz antes de servirse con cucharón.",
+      "presente": "Pesa la sal como si fuera oro y les canta boleros a las ollas de presión. Recibe a cada visitante con algo caliente y una pregunta sobre qué comía de niño.",
+      "arco": "Quiere una cocina que alcance para todos y aprende a dejar que el cálculo se vea en la pizarra, sin vergüenza.",
+      "vinculos": [
+        "orbita_boris",
+        "orbita_valentina",
+        "orbita_rita"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Cálida y rápida, de cocina llena; mide con las manos mientras habla.",
+      "hogar": "estacion_celia_vivienda_05",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Marisol creció detrás del mostrador de una posada de caravanas, pelando papas mientras escuchaba de dónde venía cada viajero. Aprendió que un plato caliente abre conversaciones que un saludo no consigue. Su madre servía siempre un poco más de lo pedido y decía que nadie debía irse con hambre al camino. Marisol heredó esa regla, una libreta de recetas manchada y una paciencia enorme para las ollas lentas."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Cuando la estación pidió cocinera, aceptó sin imaginar lo que costaba el agua allá arriba. El primer mes sirvió caldos generosos para levantar a un equipo agotado y vació la reserva de cocina en cuatro días. Boris recortó duchas sin quejarse en público, pero le mostró la tabla. Ella lloró un rato en la despensa y después le pidió que le enseñara a leerla."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Ahora planea el menú con Valentina según lo que da el módulo hidropónico y con Rita según lo que trae la nave. Todavía le duele servir porciones medidas: siente que traiciona la regla de su madre. Está aprendiendo que alcanzar para todos también es servir de más, solo que repartido en la semana y no en un único plato desbordado."
+        }
+      ],
+      "cotidiano": "Abre el comedor antes del primer turno, deja una taza de albahaca para quien vuelve de guardia y anota cada litro en una pizarra llena de dibujos de ollas.",
+      "postura_fuatia": "Le tiene respeto de cocinera al fuego y al agua: si Fuatia es esas cosas, piensa ofrecerle una sopa sin pedirle nada a cambio.",
+      "conversacion": [
+        {
+          "hablante": "orbita_marisol",
+          "texto": "¡Llegaron justo! Hay caldo de albahaca y todavía me queda agua para dos tazas más."
+        },
+        {
+          "hablante": "orbita_boris",
+          "texto": "Una taza cada uno. La tercera es mía."
+        },
+        {
+          "hablante": "orbita_marisol",
+          "texto": "Boris cuenta litros como otros cuentan chistes. A mí me enseñó a contarlos sin dejar de reír."
+        },
+        {
+          "hablante": "el",
+          "texto": "Entonces una taza, y la próxima vez traemos algo para la olla."
+        }
+      ],
+      "ropa": [
+        "ella",
+        3,
+        "#2b1d16",
+        "pelo_mono",
+        "panoleta#2fa59a",
+        "",
+        "delantal#f4f6f5#2fa59a",
+        "falda_larga#3d6e6a",
+        "zapatos#e8ecea",
+        "",
+        "jarras"
+      ]
+    },
+    {
+      "id": "orbita_teodoro",
+      "nombre": "Teodoro",
+      "asentamiento": "estacion_celia",
+      "funcion": "Cartero y radio: correo, paquetes y avisos entre la estación, las lunas y Celia.",
+      "pasado": "Teodoro, 58, repartió cartas por los caminos de la sierra hasta que una rodilla le pidió un oficio más quieto. En la estación quiso ser tan rápido como en tierra y agrupó el correo por luna, no por fecha: una carta urgente para Said esperó nueve días bajo un paquete de semillas. Desde entonces cada sobre lleva escrita a mano su fecha de llegada.",
+      "presente": "Tiene letra de maestro antiguo, silba cuando sella sobres y jamás abre una carta ajena, ni siquiera para saber a quién devolverla. Guarda las cartas sin destinatario en una caja rotulada «Por si alguien pregunta».",
+      "arco": "Aprende a dejar que otros lleven sus rutas sin sentir que entrega el oficio.",
+      "vinculos": [
+        "viajera",
+        "orbita_said",
+        "orbita_ivo"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Pausada, con humor de oficina de correos; dice las fechas completas.",
+      "hogar": "estacion_celia_vivienda_05",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Teodoro aprendió el oficio caminando detrás de su tía, que repartía cartas por los pueblos de la sierra con una mula terca y un paraguas roto. Le fascinaba la cara de la gente al ver su nombre escrito por otra mano. Aprendió que un sobre puede traer una mala noticia y aun así llegar con cuidado, a buena hora y sin miradas curiosas encima."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Paloma le habló de la estación cuando la rodilla ya no le dejaba subir cuestas. Aceptó la radio y la oficina del anillo, y quiso ser tan rápido como en tierra. Agrupó el correo por luna para ahorrar viajes y una carta urgente para Said esperó nueve días bajo un paquete de semillas. Said no lo culpó; Teodoro igual le escribió la disculpa a mano."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Desde entonces cada sobre lleva fecha de llegada y pasa al frente si tiene más de tres días. Le pesa no poder hacer la ronda de las lunas tan seguido como quisiera: la nave tiene combustible contado y su rodilla, escalones contados. Está aprendiendo a dejar que otras manos lleven sus cartas sin sentir que se le cae el oficio."
+        }
+      ],
+      "cotidiano": "Abre la radio a las siete, lee en voz alta los avisos de la nave y deja los sobres de cada módulo prendidos con pinzas de ropa de colores.",
+      "postura_fuatia": "Si Fuatia escribiera cartas, dice, él se las llevaría como todas: cerradas, a tiempo y sin preguntar qué dicen.",
+      "conversacion": [
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "Buenos días. Tengo dos sobres para la granja; uno viene sin remitente. No lo abrí: eso se lo dejo a ustedes."
+        },
+        {
+          "hablante": "orbita_ivo",
+          "texto": "Teodoro guarda hasta las cartas que nadie reclama. Tiene una caja entera."
+        },
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "Por si alguien pregunta. Una carta perdida es una conversación que espera su turno."
+        },
+        {
+          "hablante": "ella",
+          "texto": "Gracias, Teodoro. ¿Quieres que llevemos algo de vuelta?"
+        }
+      ],
+      "ropa": [
+        "el",
+        1,
+        "#cfcfcf",
+        "pelo_lado",
+        "gorra#2a8c86",
+        "gafas_redondas#5a5a5a",
+        "chaleco#2a8c86",
+        "pantalon#e9eef0",
+        "zapatos#3b2a22",
+        "carriel#7a5236",
+        "senalar_a"
+      ]
+    },
+    {
+      "id": "aurelia_greta",
+      "nombre": "Greta",
+      "asentamiento": "huerto_aurelia",
+      "funcion": "Aprendiz de mecánica: ventiladores, bombas de riego y filtros de cúpula.",
+      "pasado": "Greta, 23, estudió en la escuela de Alma y llegó a Aurelia como aprendiz de Óscar. En su primera semana apretó un ventilador ruidoso hasta silenciarlo: giraba, pero movía la mitad del aire, y los escarabajos de Kiara se escondieron dos días en un rincón. Aprendió que un ruido también es información y que callar una máquina no es repararla.",
+      "presente": "Escucha las máquinas con la oreja pegada a la carcasa y les pone apodos. Discute con Óscar sobre qué pieza vieja sirve y casi siempre terminan riéndose.",
+      "arco": "Pasa de querer que las máquinas callen a saber explicar por qué hacen ruido.",
+      "vinculos": [
+        "aurelia_oscar",
+        "aurelia_kiara",
+        "maestra"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Entusiasta y un poco atropellada; imita con la boca el ruido de cada motor.",
+      "hogar": "huerto_aurelia_vivienda_03",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Greta desarmaba los relojes de su abuelo en el Pueblo del Sol y los volvía a armar con una pieza de sobra que nunca supo dónde iba. En la escuela, Alma le prestaba el cuarto de herramientas a cambio de que explicara a los más pequeños cómo giraba un molino. Aprendió a querer el instante exacto en que algo detenido vuelve a moverse."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Llegó a Aurelia como aprendiz de Óscar con una carta de Alma y demasiadas ganas de demostrar. En la primera semana apretó un ventilador ruidoso hasta silenciarlo; giraba, pero movía la mitad del aire. Los escarabajos de Kiara se escondieron dos días en un rincón tibio. Kiara no gritó: la sentó junto a la cápsula a escuchar qué había cambiado."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Ahora lleva un cuaderno de ruidos con un dibujo de cada zumbido y lo que significa. Todavía se sonroja cuando alguien menciona aquel ventilador y a veces revisa tres veces una pieza que ya estaba bien. Óscar le dice que eso también es miedo, solo que con guantes. Ella quiere ser la técnica a quien llaman antes de que algo falle."
+        }
+      ],
+      "cotidiano": "Hace la ronda de ventiladores al amanecer con el cuaderno de ruidos y termina el día aceitando algo que nadie le pidió aceitar.",
+      "postura_fuatia": "Le da curiosidad: quiere saber si el aire de Fuatia también hace ruido cuando algo anda mal.",
+      "conversacion": [
+        {
+          "hablante": "aurelia_greta",
+          "texto": "¿Oyen eso? Fffuuu, pausa, fffuuu. Es el ventilador dos diciendo que tiene sed de aceite."
+        },
+        {
+          "hablante": "aurelia_oscar",
+          "texto": "Greta les habla a las máquinas. Lo peor es que a veces le contestan."
+        },
+        {
+          "hablante": "aurelia_greta",
+          "texto": "Antes las callaba. Ahora las escucho. Sale más barato y los escarabajos lo agradecen."
+        },
+        {
+          "hablante": "el",
+          "texto": "Entonces avísanos cuando alguna de tus máquinas pida algo."
+        }
+      ],
+      "ropa": [
+        "ella",
+        2,
+        "#6b3b1f",
+        "pelo_colitas",
+        "gorra#d9a521",
+        "gafas_redondas#3c5a2c",
+        "camiseta#f2d36b",
+        "overol#4f8a3a",
+        "botas#5a3f22",
+        "mochila#d9a521",
+        "pulgares_a"
+      ]
+    },
+    {
+      "id": "aurelia_jacinto",
+      "nombre": "Jacinto",
+      "asentamiento": "huerto_aurelia",
+      "funcion": "Molinero y panadero: muele el trigo aurelio en piedra y hornea el pan de la luna.",
+      "pasado": "Jacinto, 61, tuvo un molino de piedra cerca del Pueblo del Sol. En la sequía de AV 294 guardó harina de más «por si acaso» mientras sus vecinos racionaban, y cuando la sacó la mitad tenía gorgojo. Pidió perdón en la asamblea y prestó su molino un año entero. Llegó a Aurelia porque el trigo aurelio necesitaba alguien que supiera moler despacio.",
+      "presente": "Habla poco antes del mediodía y mucho después de sacar el pan. Marca cada hogaza con el dedo de una forma distinta para saber quién se la comió.",
+      "arco": "Quiere que su pan sea parte del día de la luna y no una reserva escondida para la próxima crisis.",
+      "vinculos": [
+        "aurelia_saul",
+        "aurelia_aitana",
+        "orbita_marisol"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Grave y lenta, con chistes secos de molino; se anima al hablar de masa.",
+      "hogar": "huerto_aurelia_vivienda_03",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Jacinto creció oyendo la piedra del molino de su padre, un ruido que le parecía el corazón de la casa. Aprendió a reconocer el trigo bueno con los dientes y la harina buena con los dedos. Lo que más quería era la fila de vecinos los sábados, cada uno con su saco, contando chismes mientras la rueda giraba sin apuro."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "En la sequía de AV 294 tuvo miedo y guardó harina de más mientras los demás racionaban. Cuando por fin la sacó, la mitad tenía gorgojo. Mara le dijo en la asamblea que el miedo no se come. Él pidió perdón, prestó el molino un año entero sin cobrar y se hizo amigo de Simón discutiendo recetas de pan duro."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "En Aurelia muele solo lo que se va a comer esa semana y deja la semilla en el banco, donde todos la ven. A veces todavía siente ganas de esconder un saco debajo de la mesa, y se ríe de sí mismo en voz alta para que se le pasen. Saúl le pide nombres raros para sus panes; él siempre dice que no y luego acepta."
+        }
+      ],
+      "cotidiano": "Muele al amanecer, hornea al mediodía y por la tarde reparte pan tibio módulo por módulo, con una hogaza siempre reservada para quien llegó de turno.",
+      "postura_fuatia": "Le parece que Fuatia entiende de harina: tierra, agua, fuego y aire hacen una hogaza, y ninguno puede hacerla solo.",
+      "conversacion": [
+        {
+          "hablante": "aurelia_jacinto",
+          "texto": "No hablen todavía. La masa está escuchando."
+        },
+        {
+          "hablante": "aurelia_saul",
+          "texto": "Jacinto cree que el pan se pone triste si hay ruido. Yo creo que solo quiere silencio."
+        },
+        {
+          "hablante": "aurelia_jacinto",
+          "texto": "Las dos cosas. Prueben: pan de trigo aurelio, el primero que sale bien en esta luna."
+        },
+        {
+          "hablante": "ella",
+          "texto": "Está buenísimo. ¿Cuánto trigo hace falta para una hogaza?"
+        }
+      ],
+      "ropa": [
+        "el",
+        4,
+        "#e6e2d8",
+        "pelo_calvo",
+        "gorro_chef#f3ead0",
+        "bigote#e6e2d8",
+        "delantal#f3ead0#6a8f3a",
+        "pantalon#6a8f3a",
+        "zapatos#4a3322",
+        "",
+        "frotar_manos_a"
+      ]
+    },
+    {
+      "id": "nocturna_celestina",
+      "nombre": "Celestina",
+      "asentamiento": "vigia_nocturna",
+      "funcion": "Maestra del cielo: clases nocturnas, noches de mapas y lecciones por radio con la escuela de Alma.",
+      "pasado": "Celestina, 44, enseñó ciencias quince años en Nieveclara. Una noche llevó a su grupo a ver una aurora anunciada y la nube no se movió en cuatro horas; los alumnos se durmieron con frío y un padre le reclamó, con razón, que no había preparado un plan alterno. Aprendió que una clase del cielo necesita mantas, horario y la posibilidad de que no pase nada.",
+      "presente": "Habla bajito de noche y fuerte de día, tiene tiza en todos los bolsillos y le encanta que un adulto pregunte lo obvio. Nunca se burla de una pregunta.",
+      "arco": "Aprende a enseñar el cielo vacío con el mismo cariño que el cielo lleno.",
+      "vinculos": [
+        "nocturna_matea",
+        "maestra",
+        "nieve_severo"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Clara y paciente, de maestra; baja la voz cuando apagan las luces.",
+      "hogar": "vigia_nocturna_vivienda_03",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Celestina creció en Nieveclara, donde las noches largas se pasaban contando historias junto a la estufa. Su abuela le enseñó a encontrar el norte con tres estrellas y una taza de chocolate en la mano. Aprendió a querer el silencio de la noche antes de aprender sus nombres, y desde niña quiso compartir ese silencio con alguien que no lo hubiera escuchado nunca."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Fue maestra de ciencias quince años y Severo le pasaba los pronósticos para sus salidas. Una noche prometió una aurora sin mirar la incertidumbre y la nube no se movió en cuatro horas. Los alumnos se durmieron con frío. Un padre le reclamó con razón. Ella le escribió a Severo esa misma madrugada pidiéndole que le enseñara a leer los intervalos."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Matea la invitó a Nocturna para enseñar a visitantes y transmitir clases por radio a la escuela de Alma. Ahora cada noche de mapas tiene mantas, termos y un plan por si el cielo no colabora. Todavía le da un vuelco el estómago cuando una nube cruza a mitad de clase, pero ya tiene preparada la historia de por qué las nubes también importan."
+        }
+      ],
+      "cotidiano": "Prepara la clase de la tarde con dibujos de tiza en el piso del módulo y, a medianoche, enciende la radio para saludar a la escuela del Pueblo del Sol.",
+      "postura_fuatia": "Fuatia le da curiosidad de maestra: le gustaría preguntarle qué ve ella cuando mira el cielo, y no darle una respuesta antes.",
+      "conversacion": [
+        {
+          "hablante": "nocturna_celestina",
+          "texto": "Bienvenidos. Antes de mirar arriba, una regla: aquí no hay preguntas tontas, solo preguntas de noche."
+        },
+        {
+          "hablante": "nocturna_matea",
+          "texto": "Celestina hace llorar de risa a los pilotos cuando les pregunta dónde está el norte."
+        },
+        {
+          "hablante": "nocturna_celestina",
+          "texto": "Y siempre lo saben. Lo que no saben es que también vale decir «no sé»."
+        },
+        {
+          "hablante": "ella",
+          "texto": "Entonces, ¿dónde está el norte desde esta luna?"
+        }
+      ],
+      "ropa": [
+        "ella",
+        1,
+        "#c9ccd6",
+        "pelo_mono_bajo",
+        "",
+        "gafas_estrella#c0c6d0",
+        "sueter#1f2b52",
+        "falda_larga#2b3a66",
+        "botas#2b2b35",
+        "capa#c0c6d0",
+        "senalar_arriba"
+      ]
+    },
+    {
+      "id": "nocturna_bernardo",
+      "nombre": "Bernardo",
+      "asentamiento": "vigia_nocturna",
+      "funcion": "Farolero: balizas de tránsito, lámparas bajas y rondas de noche.",
+      "pasado": "Bernardo, 50, cuidó un faro en la costa del Puerto de los Lirios. Una temporada dejó una luz mal calibrada por no subir la escalera bajo la lluvia, y una barca de Olga pasó la noche anclada lejos del muelle. Nadie salió herido, pero él dejó el faro por vergüenza. Matea lo invitó a Nocturna, donde cada baliza tiene un registro y una segunda firma.",
+      "presente": "Camina despacio, prefiere la luz cálida y baja, y saluda a los zorros del módulo por su nombre aunque ellos no lo sepan. Prepara café para quien termina turno aunque no le toque.",
+      "arco": "Acepta que una segunda firma no lo acusa: lo acompaña.",
+      "vinculos": [
+        "nocturna_matea",
+        "lirios_olga",
+        "nocturna_elvira"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Grave, tranquila, de pocas palabras; se le escapa una risa corta y tímida.",
+      "hogar": "vigia_nocturna_vivienda_03",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Bernardo creció en una casa pegada al faro del puerto, y su madre lo dejaba subir a limpiar el cristal los domingos. Desde arriba se veían las barcas volviendo al muelle una por una. Aprendió a querer esa responsabilidad callada: nadie aplaude a un faro, pero todos lo buscan cuando oscurece. Se dormía contando los destellos como otros niños cuentan ovejas."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Una temporada de lluvias dejó una luz mal calibrada por no subir la escalera resbalosa. La barca de Olga pasó la noche anclada lejos del muelle. Olga no lo denunció; le llevó pescado y le pidió que revisara la luz. Él se sintió peor con esa amabilidad que con un regaño, y dejó el faro sin explicarle a nadie por qué."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Matea lo encontró años después arreglando lámparas en un mercado y le ofreció las balizas de Nocturna. Aquí cada revisión lleva su firma y la de otra persona. Al principio la segunda firma le parecía desconfianza; ahora le parece compañía. Le escribe a Olga una vez por temporada. Todavía no le ha contado lo del faro, pero ya empezó la carta."
+        }
+      ],
+      "cotidiano": "Hace la ronda de balizas dos veces por noche con una linterna baja, anota cada luz en el registro y se queda un rato mirando a los zorros dormir.",
+      "postura_fuatia": "Le tiene un respeto prudente: piensa que Fuatia, como el mar, merece una luz encendida y no una provocación.",
+      "conversacion": [
+        {
+          "hablante": "nocturna_bernardo",
+          "texto": "Cuidado con el escalón. Lo pinté de plata para que se vea, pero igual se esconde."
+        },
+        {
+          "hablante": "nocturna_elvira",
+          "texto": "Bernardo pinta todos los escalones de la luna. Ya no tropieza ni el zorro más torpe."
+        },
+        {
+          "hablante": "nocturna_bernardo",
+          "texto": "Una luz bien puesta no se nota. Por eso me gusta este oficio."
+        },
+        {
+          "hablante": "el",
+          "texto": "Gracias por avisar. ¿Cuántas balizas cuidas?"
+        }
+      ],
+      "ropa": [
+        "el",
+        5,
+        "#1a1a22",
+        "pelo_rizos",
+        "gorro_lana#1f2b52",
+        "barba#1a1a22",
+        "chaqueta#2b3a66",
+        "pantalon#c0c6d0",
+        "botas#202020",
+        "mochila#7d8597",
+        "reposo"
+      ]
+    },
+    {
+      "id": "esmeralda_herminia",
+      "nombre": "Herminia",
+      "asentamiento": "cantera_esmeralda",
+      "funcion": "Cocinera y encargada del refugio presurizado: comedor, literas y turnos de descanso.",
+      "pasado": "Herminia, 52, fue minera en Piedralumbre y dejó la galería cuando el frío le hizo temblar las manos. Abrió un comedor para mineros y fio a todo el mundo sin anotar nada; cuando quebró, nadie sabía cuánto debía cada quien y hubo peleas entre amigos. En la Cantera lleva un cuaderno de cuentas claras y una olla que alcanza dentro del cupo.",
+      "presente": "Manda a todos a quitarse las botas antes de entrar al refugio y regaña con cariño. Comparte recetas dulces con Raimundo y discuten la cantidad de canela.",
+      "arco": "Aprende a celebrar el descanso de la cantera tanto como su producción.",
+      "vinculos": [
+        "esmeralda_raimundo",
+        "esmeralda_olmo",
+        "piedra_ciro"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Mandona y tierna a la vez; habla fuerte y abraza con palmadas en la espalda.",
+      "hogar": "cantera_esmeralda_vivienda_03",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Herminia entró a la galería con dieciséis años, siguiendo a sus hermanos mayores. Le gustaba el cansancio honesto del final de turno y, sobre todo, la sopa que alguien siempre tenía lista en la boca de la mina. Aprendió que la gente trabaja mejor sabiendo que alguien la espera arriba con algo caliente y una silla seca."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Cuando el frío le hizo temblar las manos, dejó la galería y abrió un comedor para mineros. Fiaba a todos sin anotar, porque anotar le parecía desconfianza. Al quebrar, nadie sabía cuánto debía cada quien y dos amigos dejaron de hablarse. Ciro le enseñó a llevar un cuaderno de cuentas sin que la olla perdiera su cariño."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "En la Cantera dirige el refugio presurizado: comedor, literas y una lista de quién duerme cuándo. Todavía le cuesta cobrar y a veces paga ella misma una ración para no pedirla. Lo que más le pesa es haber visto mineros trabajar enfermos por no perder el turno; por eso defiende el descanso como otros defienden el sueldo."
+        }
+      ],
+      "cotidiano": "Abre el refugio antes del primer turno, revisa que cada litera tenga manta y a media tarde obliga a todo el mundo a sentarse diez minutos.",
+      "postura_fuatia": "Desconfía con cortesía: dice que respeta a Fuatia como respeta una galería, sin darle la espalda y sin pedirle más de la cuenta.",
+      "conversacion": [
+        {
+          "hablante": "esmeralda_herminia",
+          "texto": "¡Las botas! Afuera las botas. El polvo verde se pega a todo y luego yo lo como en la sopa."
+        },
+        {
+          "hablante": "esmeralda_raimundo",
+          "texto": "Herminia manda más que la jefa de turno. Y cocina mejor."
+        },
+        {
+          "hablante": "esmeralda_herminia",
+          "texto": "Siéntense. Aquí nadie come de pie, ni siquiera los que tienen prisa."
+        },
+        {
+          "hablante": "ella",
+          "texto": "Gracias, Herminia. Huele delicioso."
+        }
+      ],
+      "ropa": [
+        "ella",
+        2,
+        "#3a3a3a",
+        "pelo_corto",
+        "panoleta#4f9a5e",
+        "",
+        "chaqueta#6e7b74",
+        "pantalon#4f9a5e",
+        "botas#3a3a3a",
+        "",
+        "brazos_cruzados"
+      ]
+    },
+    {
+      "id": "esmeralda_quique",
+      "nombre": "Quique",
+      "asentamiento": "cantera_esmeralda",
+      "funcion": "Aprendiz de galería: lecturas sísmicas, marcas de ruta y ayudante de Olmo.",
+      "pasado": "Quique, 20, creció en Brasaviva entre intercambiadores de calor y llegó a la Cantera con una beca de oficios. Quería ser útil rápido y una vez marcó como segura una galería porque Olmo tenía prisa; Raimundo la cerró esa tarde por una tendencia que Quique no había mirado. No pasó nada, y justamente por eso le costó entender la gravedad.",
+      "presente": "Pregunta todo dos veces y se disculpa por preguntar. Juega con piedras comunes como si fueran canicas y le pone nombre a cada galería.",
+      "arco": "Aprende que decir «no estoy seguro» es una lectura, no una falla.",
+      "vinculos": [
+        "esmeralda_raimundo",
+        "esmeralda_olmo",
+        "esmeralda_herminia"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Joven, nerviosa al principio y entusiasta después; habla rápido cuando sabe algo.",
+      "hogar": "cantera_esmeralda_vivienda_03",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Quique se crio en Brasaviva oyendo los intercambiadores de calor, un ruido grave que para él sonaba a casa. Pasaba las tardes en el taller de Sol mirando cómo reparaba tazas con marcas visibles. Le gustaban las piedras comunes, las grises que nadie quería, y las juntaba en frascos con etiquetas inventadas. Soñaba con entender por qué la tierra tiembla."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Llegó a la Cantera con una beca de oficios y muchas ganas de que lo tomaran en serio. Un día de carga, Olmo tenía prisa y Quique marcó una galería como segura sin mirar la serie completa. Raimundo la cerró esa misma tarde. Nadie lo regañó en público. Raimundo solo le mostró la gráfica y se quedó callado hasta que él la entendió."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Ahora pregunta dos veces y anota sus dudas en el borde de cada lectura. Le pesa haber querido agradar más que leer bien, y todavía se pone rojo cuando Olmo dice «hay prisa». Herminia le guarda postre los días que dice «no estoy seguro» en voz alta. Él no sabe si es premio o casualidad, y prefiere no preguntar."
+        }
+      ],
+      "cotidiano": "Sigue a Raimundo en las rondas de sensores por la mañana, ayuda a Olmo a marcar rutas por la tarde y en la noche ordena sus piedras grises.",
+      "postura_fuatia": "Le da algo de miedo, pero mucha curiosidad: quiere saber si Fuatia siente los temblores como él los lee en las gráficas.",
+      "conversacion": [
+        {
+          "hablante": "esmeralda_quique",
+          "texto": "Hola. Perdón. ¿Ustedes son de la granja? Perdón, ya sé que sí. Hola otra vez."
+        },
+        {
+          "hablante": "esmeralda_olmo",
+          "texto": "El muchacho se disculpa por respirar. Lee las galerías mejor que yo a su edad."
+        },
+        {
+          "hablante": "esmeralda_quique",
+          "texto": "Todavía no. Pero ya sé decir cuándo no sé, y eso dice Raimundo que es la mitad."
+        },
+        {
+          "hablante": "el",
+          "texto": "Tranquilo, Quique. ¿Qué galería estás leyendo hoy?"
+        }
+      ],
+      "ropa": [
+        "el",
+        3,
+        "#1b1410",
+        "pelo_copete",
+        "casco_minero#c9cfc9",
+        "",
+        "chaleco#4f9a5e",
+        "jogger#6e7b74",
+        "botas#4a3a2a",
+        "mochila#6e7b74",
+        "pensando"
+      ]
+    },
+    {
+      "id": "fragmentos_remedios",
+      "nombre": "Remedios",
+      "asentamiento": "campamento_fragmentos",
+      "funcion": "Cocinera de campamento: raciones de turno, sopas de cápsula y despensa sellada.",
+      "pasado": "Remedios, 39, cocinó en las casas de baños de Brasaviva antes de subir al campamento. En su primer viaje escondió frutas frescas en el depósito para dar una sorpresa, y la fermentación infló un contenedor sellado; Uma pasó la noche revisando juntas. Aprendió que en un campamento cerrado hasta una sorpresa necesita permiso de alguien que cuida el aire.",
+      "presente": "Ríe fuerte, cocina con una radio vieja que le arregló Lázaro y le pone a cada sopa el nombre de quien la pidió. Sabe de memoria qué come cada persona cuando está triste.",
+      "arco": "Aprende a pedir ayuda con la despensa sin sentir que pierde la sorpresa.",
+      "vinculos": [
+        "fragmentos_uma",
+        "fragmentos_lazaro",
+        "fragmentos_lino"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Alegre y sonora, con risa contagiosa; se pone seria solo cuando habla de sellos.",
+      "hogar": "campamento_fragmentos_vivienda_03",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Remedios creció en la cocina de las casas de baños de Brasaviva, donde su tía preparaba caldos para gente que salía del agua caliente con hambre y sueño. Aprendió a cocinar con el vapor como compañero y a sorprender a los clientes con un plato que no habían pedido. Le encantaba esa cara de alguien que no esperaba nada y recibe algo."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Subió al campamento porque pagaban bien y porque nadie más quería cocinar en un asteroide. En su primer viaje escondió frutas frescas para una sorpresa y la fermentación infló un contenedor sellado. Uma revisó juntas toda la noche y no le gritó. A la mañana siguiente, Remedios le llevó desayuno y le pidió que le explicara qué era un sello."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Ahora cada sorpresa pasa primero por la lista de Uma, y la despensa tiene etiquetas de fecha y presión. Le pesa sentir que cocinar en el espacio tiene más reglas que sabor, y a veces extraña el vapor libre de Brasaviva. Lino le cultiva rábanos picantes y Lázaro le arregla la radio; con eso, dice, cualquier cocina es casa."
+        }
+      ],
+      "cotidiano": "Cocina tres turnos de comida al día, revisa la despensa sellada con Uma cada mañana y canta con la radio mientras pela rábanos.",
+      "postura_fuatia": "Le cae bien Fuatia por el fuego y el agua, pero dice que en su cocina manda ella, con todo respeto.",
+      "conversacion": [
+        {
+          "hablante": "fragmentos_remedios",
+          "texto": "¡Visitas! Siéntense, hoy hay «Sopa Uma»: la que pide cuando lleva doce horas despierta."
+        },
+        {
+          "hablante": "fragmentos_uma",
+          "texto": "No es tan grave. Once horas. Y la sopa está buena."
+        },
+        {
+          "hablante": "fragmentos_remedios",
+          "texto": "Aquí todo se come caliente y en su turno. Lo único sorpresa es el nombre."
+        },
+        {
+          "hablante": "ella",
+          "texto": "Entonces quiero probar la Sopa Uma."
+        }
+      ],
+      "ropa": [
+        "ella",
+        4,
+        "#2a1a12",
+        "pelo_afro",
+        "panoleta#b8693a",
+        "",
+        "delantal#e8d6c4#b8693a",
+        "jogger#7a4a2a",
+        "tenis#b8693a",
+        "",
+        "risita_a"
+      ]
+    },
+    {
+      "id": "fragmentos_lino",
+      "nombre": "Lino",
+      "asentamiento": "campamento_fragmentos",
+      "funcion": "Hortelano de cápsula: compost, rábanos y cuidado de los ácaros del módulo.",
+      "pasado": "Lino, 26, estudió suelos en Brumaverde y llegó al campamento con un contrato corto de compost; se quedó porque le gustó tener algo vivo entre tanta roca. Una vez encendió una lámpara extra para apurar los rábanos y secó la pila: murió la mitad de la colonia de ácaros. Lo contó esa misma tarde en la reunión, temblando, y Lázaro le regaló una lata para guardar la etiqueta de aquella lámpara.",
+      "presente": "Habla con voz suave, huele siempre un poco a tierra y mide la temperatura del compost con la mano antes que con el sensor. Le gusta que los demás vean crecer algo.",
+      "arco": "Aprende que cuidar algo pequeño también es trabajo importante, aunque no tenga cifras de mineral.",
+      "vinculos": [
+        "fragmentos_lazaro",
+        "fragmentos_remedios",
+        "esmeralda_duna"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Suave y tímida, con risa bajita; se emociona describiendo bichos diminutos.",
+      "hogar": "campamento_fragmentos_vivienda_03",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Lino creció entre los árboles de Brumaverde y pasaba las tardes levantando hojas caídas para ver qué vivía debajo. Le parecía que el suelo era una ciudad escondida. Silvana le prestaba lupas viejas y le enseñó a dejar cada hoja como la había encontrado. Aprendió a querer lo pequeño, lo lento y lo que casi nadie mira."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Llegó al campamento con un contrato de tres meses y se quedó porque una cápsula de compost en medio de tanta roca le pareció un milagro modesto. Quiso demostrar que valía la pena y encendió una lámpara extra para apurar los rábanos. Secó la pila. Murió la mitad de la colonia de ácaros. Lo dijo en la reunión esa tarde, aunque le temblaba la voz."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Duna le manda por radio consejos de musgo y él le responde con fotos de rábanos. Ahora anota temperatura, humedad y ánimo de la pila, porque dice que también tiene días malos. Todavía guarda la etiqueta de la lámpara en la lata de Lázaro. No la mira mucho, pero le gusta saber que está ahí."
+        }
+      ],
+      "cotidiano": "Revuelve el compost al empezar el turno, cosecha los rábanos que Remedios necesita y en la noche cuenta ácaros con una lupa.",
+      "postura_fuatia": "Le tiene curiosidad tímida: piensa que Fuatia, si es tierra, debe saber lo que se siente cuando alguien apura una cosecha.",
+      "conversacion": [
+        {
+          "hablante": "fragmentos_lino",
+          "texto": "Shh, despacio. Si se acercan mucho, los ácaros se esconden. Son tímidos, como yo."
+        },
+        {
+          "hablante": "fragmentos_lazaro",
+          "texto": "Lino cuida esa caja como si fuera un jardín de palacio."
+        },
+        {
+          "hablante": "fragmentos_lino",
+          "texto": "Es un jardín de palacio. Solo que el palacio es una lata grande con rábanos."
+        },
+        {
+          "hablante": "el",
+          "texto": "¿Cuánto tardan en crecer los rábanos aquí?"
+        }
+      ],
+      "ropa": [
+        "el",
+        0,
+        "#c46a2b",
+        "pelo_rizos",
+        "sombrero_paja#d39a5c",
+        "",
+        "camiseta#b8693a",
+        "overol#6b4a2e",
+        "botas#4a3322",
+        "",
+        "inclinado"
+      ]
+    },
+    {
+      "id": "ambar_ezequiel",
+      "nombre": "Ezequiel",
+      "asentamiento": "ambarina",
+      "funcion": "Aguatero y cartero: reparte agua medida y correo casa por casa.",
+      "pasado": "Ezequiel, 34, conduce el carro de agua desde los quince años, como su padre. En la temporada del acuerdo fallido de Zora repartió de más a su propia calle porque «eran los suyos», y el último barrio recibió agua tarde dos semanas. Su madre fue quien se lo dijo, y él todavía recuerda su cara. Desde entonces mide cada bidón delante de quien lo recibe.",
+      "presente": "Saluda a todo el mundo por su nombre y silba la misma canción en cada parada. Lleva también las cartas de Ambarina, y las entrega con la misma seriedad que el agua.",
+      "arco": "Aprende a repartir justo sin dejar de ser vecino de nadie.",
+      "vinculos": [
+        "ambar_zora",
+        "ambar_samira",
+        "orbita_teodoro"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Animada, de vendedor ambulante amable; cuenta litros en voz alta sin darse cuenta.",
+      "hogar": "ambarina_vivienda_04",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Ezequiel acompañaba a su padre en el carro de agua desde que tenía seis años, sentado sobre los bidones. Su padre se sabía el nombre de cada perro del pueblo y nunca llegaba tarde a la última casa. Ezequiel aprendió que el agua no es solo agua: es la hora del día en que alguien abre la puerta con una sonrisa y un vaso vacío."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Cuando su padre se enfermó, Ezequiel tomó la ruta con quince años. Durante el acuerdo fallido de Zora el agua escaseó y él repartió de más a su propia calle, porque eran sus vecinos de siempre. El último barrio esperó dos semanas. Su madre lo sentó en la cocina y le preguntó qué diría su papá. No hizo falta que contestara."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Ahora mide cada bidón delante de quien lo recibe y empieza la ruta por un barrio distinto cada semana. Teodoro le escribe desde la estación con consejos de correo y él le responde con dibujos de su carro. Todavía le duele que algunos del último barrio lo saluden con cortesía y no con cariño. Sabe que eso se gana despacio."
+        }
+      ],
+      "cotidiano": "Llena el carro antes del amanecer, recorre todos los barrios con bidones medidos y cartas, y en la noche anota los litros en el tablón de Zora.",
+      "postura_fuatia": "Le tiene un respeto práctico: dice que si Fuatia es el agua, él es solo quien la lleva, y que no pretende decidir por ella.",
+      "conversacion": [
+        {
+          "hablante": "ambar_ezequiel",
+          "texto": "¡Agua y correo! Doce litros para ustedes… ah, no, ustedes son visitas. Perdón, la costumbre."
+        },
+        {
+          "hablante": "ambar_zora",
+          "texto": "Ezequiel cuenta litros hasta cuando saluda. Es el mejor aguatero que ha tenido Ambarina."
+        },
+        {
+          "hablante": "ambar_ezequiel",
+          "texto": "El segundo mejor. El primero fue mi papá. Yo apenas voy aprendiendo a no tener favoritos."
+        },
+        {
+          "hablante": "el",
+          "texto": "Doce litros es bastante. ¿A cuántas casas llegas al día?"
+        }
+      ],
+      "ropa": [
+        "el",
+        4,
+        "#1c140e",
+        "pelo_rapado",
+        "sombrero_vaquero#c98a3a",
+        "",
+        "camisa#e8d2a6",
+        "bermuda#9a6a2a",
+        "sandalias#7a4a22",
+        "carriel#c98a3a",
+        "contar_a"
+      ]
+    },
+    {
+      "id": "ambar_rocio",
+      "nombre": "Rocío",
+      "asentamiento": "ambarina",
+      "funcion": "Maestra: escuela de Ambarina, lectura, cuentas de agua y huerta escolar.",
+      "pasado": "Rocío, 40, dirige la pequeña escuela de Ambarina desde hace diez años. Una vez llevó a sus alumnos a una terraza antigua sin pedir permiso a la comunidad, y uno se llevó de recuerdo una piedra marcada. La devolvieron juntos, con una disculpa leída en voz alta ante los mayores. Aprendió que enseñar historia también es enseñar a pedir permiso.",
+      "presente": "Tiene una voz que se oye en todo el patio sin gritar y convierte cualquier cuenta en un problema de litros. Guarda dibujos de sus alumnos en cajas de semillas vacías.",
+      "arco": "Quiere una escuela abierta al mundo sin que el mundo se lleve lo que no es suyo.",
+      "vinculos": [
+        "ambar_kenzo",
+        "ambar_alina",
+        "maestra"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Firme y risueña, de maestra de pueblo; hace preguntas en lugar de dar órdenes.",
+      "hogar": "ambarina_vivienda_04",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Rocío aprendió a leer con los boletines del agua que su abuela pegaba en la puerta de la cocina. Cada número era una historia: cuánto había llovido, cuánto se guardó, quién necesitaba más. Le encantaba explicárselos a sus primos menores con dibujos de gotas. Desde entonces supo que quería enseñar, y que enseñar empezaba por lo que la gente ya vive."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Al empezar como maestra quiso que sus alumnos conocieran las terrazas antiguas y los llevó sin pedir permiso a la comunidad. Un niño se guardó una piedra marcada. Kenzo los acompañó a devolverla y le explicó a Rocío por qué una firma de la escuela no era el permiso de los mayores. Desde entonces se hicieron amigos y él da una clase cada trimestre."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Ahora intercambia cartas con Alma, la maestra del Pueblo del Sol, y entre las dos inventan lecciones de agua y semillas. Le pesa que la escuela tenga tan pocos libros y que los visitantes prometan donaciones que nunca llegan. Prefiere un libro real a diez promesas. Alina le regala semillas para la huerta escolar y a cambio los niños le dibujan recetas."
+        }
+      ],
+      "cotidiano": "Abre la escuela temprano, da clases hasta el mediodía y por la tarde cuida la huerta escolar con quien quiera quedarse a regar con medida.",
+      "postura_fuatia": "Le parece que Fuatia sería una buena maestra exigente; le gustaría invitarla a una clase, si quisiera venir y si los mayores estuvieran de acuerdo.",
+      "conversacion": [
+        {
+          "hablante": "ambar_rocio",
+          "texto": "¿Ustedes son de la granja? Mis alumnos preguntan si allá el agua cae del cielo todos los días."
+        },
+        {
+          "hablante": "ambar_alina",
+          "texto": "Rocío convierte cualquier visita en una clase. Prepárense para responder preguntas."
+        },
+        {
+          "hablante": "ambar_rocio",
+          "texto": "Solo tres. Prometido. Bueno, cinco. Pero cortas."
+        },
+        {
+          "hablante": "ella",
+          "texto": "No todos los días, pero sí bastante. Con gusto respondemos."
+        }
+      ],
+      "ropa": [
+        "ella",
+        3,
+        "#5a3420",
+        "pelo_trenzas",
+        "sombrero_paja#e8c77a",
+        "gafas_redondas#7a4a22",
+        "blusa#f0dcae",
+        "falda#c98a3a",
+        "sandalias#7a4a22",
+        "carriel#9a6a2a",
+        "senalar_a"
+      ]
+    },
+    {
+      "id": "iris_nahuel",
+      "nombre": "Nahuel",
+      "asentamiento": "iridalia",
+      "funcion": "Intérprete: lenguas de los valles de Iridalia, lengua de señas y actas de la asamblea.",
+      "pasado": "Nahuel, 38, creció entre tres lenguas de Iridalia y la lengua de señas de su hermana mayor. En el primer tratado con la estación tradujo un «tal vez» como «sí» para no incomodar a nadie, y ese suavizar ayudó a que Calista anunciara un acuerdo antes de la votación. Desde entonces traduce también las dudas, aunque incomoden.",
+      "presente": "Escucha con todo el cuerpo y repite las frases difíciles despacio, para que nadie se pierda. Colecciona palabras que no tienen traducción y las escribe en tarjetas.",
+      "arco": "Aprende a traducir lo que duele con el mismo cuidado que lo que agrada.",
+      "vinculos": [
+        "iris_calista",
+        "iris_maia",
+        "orbita_helena"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Serena y precisa; cambia de ritmo según quién escucha y acompaña con las manos.",
+      "hogar": "iridalia_vivienda_04",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Nahuel creció en una casa donde se hablaban tres lenguas en la mesa y una más con las manos, la de su hermana mayor, que no oye. Aprendió que una misma idea cambia de forma según quién la recibe. Le encantaba ser el puente en las reuniones del valle, aunque a veces se cansaba de llevar palabras ajenas sin decir las suyas."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "En el primer tratado con la estación, Helena preguntó si había acuerdo y un sector respondió «tal vez». Nahuel tradujo «sí», porque el silencio que venía después le dio miedo. Calista anunció el acuerdo antes de votar. Cuando se supo, Nahuel fue a la asamblea y explicó su parte delante de todos, aunque nadie se lo pidió."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Ahora traduce dudas, silencios y desacuerdos completos, y Calista le pide que la corrija si resume demasiado bonito. Le pesa que algunos del valle bajo todavía revisen sus actas dos veces. Lo entiende. Comparte casa con Maia, aprendiz de Orin, y practican juntos señas nuevas para palabras de cristal que no existían hace un año."
+        }
+      ],
+      "cotidiano": "Prepara las actas de la asamblea en la mañana, interpreta reuniones por la tarde y en la noche ordena sus tarjetas de palabras intraducibles.",
+      "postura_fuatia": "Le interesa Fuatia como interlocutora: cree que una diosa de cuatro elementos debe saber lo que es hablar varias lenguas a la vez.",
+      "conversacion": [
+        {
+          "hablante": "iris_nahuel",
+          "texto": "Bienvenidos. Si alguien les habla rápido en el mercado, díganme y lo repito más despacio."
+        },
+        {
+          "hablante": "iris_calista",
+          "texto": "Nahuel traduce hasta lo que yo no quiero oír. Por eso confío en él."
+        },
+        {
+          "hablante": "iris_nahuel",
+          "texto": "Especialmente eso. Una traducción que solo trae lo bonito es medio mensaje."
+        },
+        {
+          "hablante": "el",
+          "texto": "Gracias. ¿Cuántas lenguas se hablan en Iridalia?"
+        }
+      ],
+      "ropa": [
+        "el",
+        2,
+        "#2a1f3a",
+        "pelo_colita",
+        "",
+        "gafas_redondas#7b5aa6",
+        "saco_corbata#5b3f8c",
+        "pantalon#2e2340",
+        "zapatos#2e2340",
+        "carriel#b79ad6",
+        "pensando_b"
+      ]
+    },
+    {
+      "id": "iris_maia",
+      "nombre": "Maia",
+      "asentamiento": "iridalia",
+      "funcion": "Aprendiz de luthier: afina cristales por vibración y diseña señales de luz para quien no oye.",
+      "pasado": "Maia, 24, es sorda de nacimiento y reconoce el cristal iridiano por cómo vibra en la palma. En el taller de Orin, por no retrasar un encargo, afinó un juego de campanas con una sola lectura de vibración y sin repetir la prueba en frío: sonaron bien en el taller y desafinadas en la plaza helada. Aprendió que una prueba bonita no es una prueba completa.",
+      "presente": "Es rápida, bromista y muy precisa con las manos; habla en señas y Nahuel o una pizarra la acompañan cuando hace falta. Pinta los cristales del taller con pigmento de lirio para ver sus notas.",
+      "arco": "Quiere que la música de Iridalia se vea tanto como se oye, sin vender sus luces como mensajes del planeta.",
+      "vinculos": [
+        "iris_orin",
+        "iris_nahuel",
+        "fragmentos_pia"
+      ],
+      "naturaleza": "persona_viva",
+      "voz": "Expresiva y ágil en señas; sus líneas llevan la marca «(En señas)» y un humor muy rápido.",
+      "hogar": "iridalia_vivienda_04",
+      "memorias": [
+        {
+          "etapa": "Primeros años y lo que aprendió a querer",
+          "texto": "Maia nació sorda en una familia de recolectores de cristal. De niña apoyaba las manos en las piedras del río y sentía cómo cada una vibraba distinto con el viento. Su abuela le inventó un juego: adivinar qué cristal era sin mirarlo. Aprendió a querer el temblor de las cosas, esa música que le llegaba por la piel antes que por cualquier otro camino."
+        },
+        {
+          "etapa": "Aprendizaje, decisiones y vínculos",
+          "texto": "Orin la aceptó como aprendiz cuando vio que afinaba con la palma más rápido que él con el oído. Por no retrasar un encargo, Maia probó unas campanas una sola vez, en el taller tibio. En la plaza helada sonaron desafinadas. Pía, que había cometido un error parecido con prismas, le escribió una carta larga sobre repetir mediciones. Se hicieron amigas."
+        },
+        {
+          "etapa": "Lo que cambia y lo que todavía pesa",
+          "texto": "Ahora repite cada prueba en frío y en calor, y apunta las dos lecturas en el mismo papel. Le pesa que algunos visitantes le hablen a Nahuel en lugar de mirarla a ella, y se los dice sin rodeos. Quiere que los conciertos de Orin tengan luces de colores para quien no oye, y que nadie las confunda con profecías."
+        }
+      ],
+      "cotidiano": "Afina cristales por la mañana con las palmas sobre el banco, prueba pigmentos de lirio por la tarde y en la noche le enseña señas nuevas a Nahuel.",
+      "postura_fuatia": "(En señas) Dice que le gustaría tocar a Fuatia como toca un cristal, para saber si vibra; pero que primero le preguntaría, claro.",
+      "conversacion": [
+        {
+          "hablante": "iris_maia",
+          "texto": "(En señas) ¡Hola! Pongan la mano aquí, sobre el cristal. ¿Lo sienten? Esa es la nota re."
+        },
+        {
+          "hablante": "iris_nahuel",
+          "texto": "Dice que pongan la mano en el cristal. Y que si no sienten nada, es que no han desayunado."
+        },
+        {
+          "hablante": "iris_maia",
+          "texto": "(En señas) Eso no lo dije. Pero es verdad. Pongan la mano."
+        },
+        {
+          "hablante": "ella",
+          "texto": "¡Vibra! Es como si el cristal tuviera pulso."
+        }
+      ],
+      "ropa": [
+        "ella",
+        1,
+        "#7b5aa6",
+        "pelo_flequillo",
+        "diadema_mono#d8c4f0",
+        "",
+        "vestido#8f6ac0",
+        "",
+        "tenis#f2ecfa",
+        "mochila#5b3f8c",
+        "presumir_a"
+      ]
+    }
+  ],
+  "viviendas": [
+    {
+      "id": "estacion_celia_vivienda_05",
+      "asentamientoId": "estacion_celia",
+      "nombre": "Módulo 05 · La Cocina del Anillo",
+      "ocupantes": [
+        "orbita_marisol",
+        "orbita_teodoro"
+      ]
+    },
+    {
+      "id": "huerto_aurelia_vivienda_03",
+      "asentamientoId": "huerto_aurelia",
+      "nombre": "Módulo 03 · El Molino y el Taller",
+      "ocupantes": [
+        "aurelia_greta",
+        "aurelia_jacinto"
+      ]
+    },
+    {
+      "id": "vigia_nocturna_vivienda_03",
+      "asentamientoId": "vigia_nocturna",
+      "nombre": "Módulo 03 · La Casa de la Tiza y la Linterna",
+      "ocupantes": [
+        "nocturna_celestina",
+        "nocturna_bernardo"
+      ]
+    },
+    {
+      "id": "cantera_esmeralda_vivienda_03",
+      "asentamientoId": "cantera_esmeralda",
+      "nombre": "Módulo 03 · El Refugio de la Olla",
+      "ocupantes": [
+        "esmeralda_herminia",
+        "esmeralda_quique"
+      ]
+    },
+    {
+      "id": "campamento_fragmentos_vivienda_03",
+      "asentamientoId": "campamento_fragmentos",
+      "nombre": "Módulo 03 · La Despensa Viva",
+      "ocupantes": [
+        "fragmentos_remedios",
+        "fragmentos_lino"
+      ]
+    },
+    {
+      "id": "ambarina_vivienda_04",
+      "asentamientoId": "ambarina",
+      "nombre": "Casa 04 · La Casa del Carro de Agua",
+      "ocupantes": [
+        "ambar_ezequiel",
+        "ambar_rocio"
+      ]
+    },
+    {
+      "id": "iridalia_vivienda_04",
+      "asentamientoId": "iridalia",
+      "nombre": "Casa 04 · La Casa de las Dos Lenguas",
+      "ocupantes": [
+        "iris_nahuel",
+        "iris_maia"
+      ]
+    }
+  ],
+  "encargos": [
+    {
+      "id": "E_estacion_celia_1",
+      "titulo": "Pan dulce para Boris",
+      "region": "estacion_celia",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "orbita_marisol",
+        "orbita_helena",
+        "orbita_boris"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Marisol y con Helena sobre el cumpleaños.",
+          "npc": [
+            "orbita_marisol",
+            "orbita_helena"
+          ]
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 2 de harina, 2 de azúcar y 1 cosecha del módulo de la estación para el pastel.",
+          "materiales": {
+            "harina": 2,
+            "azucar": 2,
+            "estacion_celia_cosecha": 1
+          }
+        },
+        {
+          "tipo": "jornadas",
+          "texto": "Duerme una noche: el horno chico está reservado para mañana.",
+          "cantidad": 1
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "orbita_marisol",
+          "texto": "Boris cumple cincuenta y tres pasado mañana y nadie le ha hecho nunca un pastel en órbita."
+        },
+        {
+          "hablante": "orbita_helena",
+          "texto": "Porque el horno grande se come la energía de un turno entero de cúpula. Boris lo sabe mejor que nadie."
+        },
+        {
+          "hablante": "orbita_marisol",
+          "texto": "Por eso pensé en el horno chico y en una receta que no pida agua de más. Me faltan harina, azúcar y algo verde del módulo."
+        },
+        {
+          "hablante": "el",
+          "texto": "Lo conseguimos. ¿Él sabe algo?"
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "orbita_boris",
+          "texto": "Marisol, el horno chico está reservado a tu nombre para mañana a las cuatro. ¿Para qué?"
+        },
+        {
+          "hablante": "orbita_marisol",
+          "texto": "Porque alguien en esta estación va a recibir un pastel. Y no te lo iba a contar a ti."
+        },
+        {
+          "hablante": "orbita_boris",
+          "texto": "No me gustan las sorpresas. En órbita, una sorpresa casi siempre es una alarma."
+        }
+      ],
+      "decision": "¿Guardar la sorpresa o cocinar el pastel con Boris?",
+      "opciones": [
+        "Sorpresa: Marisol cocina sola y Boris solo conoce la hora y el consumo del horno.",
+        "Con Boris: él hornea su pan dulce de siempre y Marisol le pone la albahaca."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "orbita_boris",
+            "texto": "Está bien. Sé la hora y la energía; lo demás puedo no saberlo."
+          },
+          {
+            "hablante": "orbita_marisol",
+            "texto": "Es la sorpresa más ordenada que he hecho en mi vida."
+          }
+        ],
+        [
+          {
+            "hablante": "orbita_boris",
+            "texto": "Mi pan dulce lleva canela, no albahaca."
+          },
+          {
+            "hablante": "orbita_marisol",
+            "texto": "Hoy lleva las dos. Cumples años, no eres dueño de la receta."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "orbita_helena",
+          "texto": "Pastel, horno chico y turno de cúpula sin tocar. Así da gusto firmar un cumpleaños."
+        },
+        {
+          "hablante": "orbita_boris",
+          "texto": "Gracias. De verdad. …Y que conste que el horno terminó a tiempo."
+        },
+        {
+          "hablante": "ella",
+          "texto": "Feliz cumpleaños, Boris."
+        }
+      ],
+      "recompensa": {
+        "monedas": 120,
+        "objetos": {
+          "pan": 2,
+          "estacion_celia_semilla": 1
+        }
+      }
+    },
+    {
+      "id": "E_estacion_celia_2",
+      "titulo": "La carta que dio la vuelta",
+      "region": "estacion_celia",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "orbita_teodoro",
+        "orbita_ivo"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Teodoro y con Ivo.",
+          "npc": [
+            "orbita_teodoro",
+            "orbita_ivo"
+          ]
+        },
+        {
+          "tipo": "visitas",
+          "texto": "Visita el Vigía de Nocturna, donde el sobre se quedó una semana.",
+          "regiones": [
+            "vigia_nocturna"
+          ]
+        },
+        {
+          "tipo": "archivo",
+          "texto": "Consulta en el archivo público el registro de correo de la estación para ver por dónde pasó el sobre."
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "Este sobre trae tres sellos de luna. Salió de Celia hace un mes para Ivo y dio la vuelta por Nocturna."
+        },
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "No lo abrí. Pero la letra es de Nerea, y Ivo lleva semanas sin escribirle."
+        },
+        {
+          "hablante": "orbita_ivo",
+          "texto": "Si es de mi hermana, seguro dice que me cuide. Lo dicen todas."
+        },
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "Entonces será corta. Ayúdenme a saber dónde se quedó: no me gusta perder una semana sin explicarla."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "Ahí está: alguien la dejó en la caja de Nocturna porque decía «para el observatorio». Nerea creyó que Ivo seguía allá."
+        },
+        {
+          "hablante": "orbita_ivo",
+          "texto": "Lo creyó porque no le conté que había vuelto. Esa parte es mía, no del correo."
+        }
+      ],
+      "decision": "¿Ivo lee la carta ahora o la guarda para responder con calma?",
+      "opciones": [
+        "Ahora: la abre en la oficina de Teodoro, con compañía.",
+        "Después: la guarda y escribe primero su propia carta."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "orbita_ivo",
+            "texto": "Dice que vio una nube con forma de lápiz y se acordó de mí. Nada más. Ni una palabra de cuidarme."
+          },
+          {
+            "hablante": "orbita_teodoro",
+            "texto": "A veces una carta solo quiere decir «te pensé»."
+          }
+        ],
+        [
+          {
+            "hablante": "orbita_ivo",
+            "texto": "Le voy a contar dónde estoy antes de leer qué me reclama. Así no respondo a la defensiva."
+          },
+          {
+            "hablante": "orbita_teodoro",
+            "texto": "Te la guardo en la caja. Tu respuesta sale en la próxima nave, la primera de la fila."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "Desde hoy, todo sobre «para el observatorio» pregunta en qué luna está la persona. Ya lo escribí en la pizarra."
+        },
+        {
+          "hablante": "orbita_ivo",
+          "texto": "Y yo voy a mandar datos incompletos, aunque se vean feos. Mejor que el silencio."
+        }
+      ],
+      "recompensa": {
+        "monedas": 100,
+        "objetos": {
+          "estacion_celia_madera": 2
+        }
+      }
+    },
+    {
+      "id": "E_huerto_aurelia_1",
+      "titulo": "El ventilador que suspira",
+      "region": "huerto_aurelia",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "aurelia_greta",
+        "aurelia_oscar",
+        "aurelia_kiara"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Greta, Kiara y Óscar sobre el ventilador tres.",
+          "npc": [
+            "aurelia_greta",
+            "aurelia_kiara",
+            "aurelia_oscar"
+          ]
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 2 de cobre, 2 de madera de tallo de invernadero y 1 cuerda para el soporte.",
+          "materiales": {
+            "cobre": 2,
+            "huerto_aurelia_madera": 2,
+            "cuerda": 1
+          }
+        },
+        {
+          "tipo": "estadistica",
+          "texto": "Repara algo en tu granja para soltar la mano con la llave.",
+          "clave": "reparar",
+          "cantidad": 1
+        },
+        {
+          "tipo": "jornadas",
+          "texto": "Deja una noche girando el ventilador y escúchalo al amanecer.",
+          "cantidad": 1
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "aurelia_greta",
+          "texto": "El ventilador tres suspira. No vibra ni chilla: suspira, como alguien cansado."
+        },
+        {
+          "hablante": "aurelia_kiara",
+          "texto": "Y los escarabajos se amontonan del otro lado de la cápsula. Algo del aire no les gusta."
+        },
+        {
+          "hablante": "aurelia_greta",
+          "texto": "La última vez que algo me molestó lo apreté hasta callarlo. Esta vez quiero entenderlo primero."
+        },
+        {
+          "hablante": "aurelia_oscar",
+          "texto": "Yo tengo un rodamiento viejo que seguro sirve. Seguro. Casi seguro."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "aurelia_greta",
+          "texto": "No era el motor. Era el aspa: está torcida por dentro y empuja el aire en remolino."
+        },
+        {
+          "hablante": "aurelia_oscar",
+          "texto": "El rodamiento viejo entra justo. Pero un aspa nueva tendría que venir con Rita, en diez días."
+        },
+        {
+          "hablante": "aurelia_kiara",
+          "texto": "Diez días de aire en remolino son muchos para una colonia pequeña."
+        }
+      ],
+      "decision": "¿Enderezar el aspa vieja ahora o esperar la nueva?",
+      "opciones": [
+        "Enderezar: arreglo provisional hoy, con una revisión diaria anotada.",
+        "Esperar: el ventilador a media marcha y la colonia mudada a la cápsula vecina, con permiso de Aitana."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "aurelia_greta",
+            "texto": "La enderezo en la prensa y la reviso cada mañana. Si vuelve a suspirar, la apago."
+          },
+          {
+            "hablante": "aurelia_oscar",
+            "texto": "Anotado en tu cuaderno de ruidos y en el mío. Dos cuadernos para un ventilador."
+          }
+        ],
+        [
+          {
+            "hablante": "aurelia_kiara",
+            "texto": "Muevo los refugios despacio, de noche, que es cuando menos se asustan."
+          },
+          {
+            "hablante": "aurelia_greta",
+            "texto": "Y el ventilador descansa. Hasta las máquinas merecen media marcha de vez en cuando."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "aurelia_kiara",
+          "texto": "Ya caminan por toda la cápsula. Eso era lo que quería ver."
+        },
+        {
+          "hablante": "aurelia_greta",
+          "texto": "Y el ventilador zumba. Zumbar está bien: zumbar es trabajar."
+        },
+        {
+          "hablante": "aurelia_oscar",
+          "texto": "Me quedo con el aspa torcida. Para el cuaderno, no para guardarla en un rincón, lo prometo."
+        }
+      ],
+      "recompensa": {
+        "monedas": 130,
+        "objetos": {
+          "huerto_aurelia_semilla": 2,
+          "cobre": 1
+        }
+      }
+    },
+    {
+      "id": "E_huerto_aurelia_2",
+      "titulo": "La primera harina de la luna",
+      "region": "huerto_aurelia",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "aurelia_jacinto",
+        "aurelia_aitana",
+        "aurelia_saul"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Jacinto y con Aitana.",
+          "npc": [
+            "aurelia_jacinto",
+            "aurelia_aitana"
+          ]
+        },
+        {
+          "tipo": "estadistica",
+          "texto": "Cosecha tres veces en tu granja: Jacinto quiere comparar granos.",
+          "clave": "cosechar",
+          "cantidad": 3
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 3 de trigo aurelio cosechado y 1 de sal para la masa.",
+          "materiales": {
+            "huerto_aurelia_cosecha": 3,
+            "sal": 1
+          }
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "aurelia_jacinto",
+          "texto": "El trigo aurelio dio su primera cosecha seria. Quiero molerla en piedra, despacio, como se debe."
+        },
+        {
+          "hablante": "aurelia_aitana",
+          "texto": "¡Y medir el rendimiento! Con un buen número el huerto consigue más cápsulas."
+        },
+        {
+          "hablante": "aurelia_jacinto",
+          "texto": "Un buen número se come en una semana. El pan también. Ayúdenme a juntar el grano y la sal; luego discutimos."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "aurelia_jacinto",
+          "texto": "Salieron doce hogazas. Doce. Y la estación pidió ocho para su despensa."
+        },
+        {
+          "hablante": "aurelia_saul",
+          "texto": "Si mandamos ocho, aquí quedan cuatro hasta la próxima cosecha. Nadie pasa hambre, pero se va a notar en la mesa."
+        },
+        {
+          "hablante": "aurelia_aitana",
+          "texto": "El número queda precioso si lo publicamos sin decir cuánto se quedó aquí."
+        }
+      ],
+      "decision": "¿Mandar ocho hogazas a la estación o quedarse la mitad en el huerto?",
+      "opciones": [
+        "Ocho: la estación come pan de luna y el huerto publica su reparto completo.",
+        "Cuatro: el huerto se queda la mitad y la estación recibe la receta y un saco de harina para hornear allá."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "aurelia_jacinto",
+            "texto": "Ocho hogazas al anillo, con una nota de cuántas quedaron. Que nadie crea que sobraron."
+          },
+          {
+            "hablante": "aurelia_aitana",
+            "texto": "Publico el rendimiento con el reparto al lado. Se ve menos brillante y más cierto."
+          }
+        ],
+        [
+          {
+            "hablante": "aurelia_saul",
+            "texto": "La receta va con mi letra. Y una advertencia: nada de llamarlo «lunar» si la harina no es de aquí."
+          },
+          {
+            "hablante": "aurelia_jacinto",
+            "texto": "Que Marisol hornee el suyo. El pan sabe a quien lo amasa."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "aurelia_jacinto",
+          "texto": "Primera harina de la luna. La próxima la muelo con ustedes mirando, para que aprendan el ruido de la piedra."
+        },
+        {
+          "hablante": "aurelia_aitana",
+          "texto": "Y yo me como mi pedazo sin medirlo. Prometido."
+        }
+      ],
+      "recompensa": {
+        "monedas": 120,
+        "objetos": {
+          "pan": 2,
+          "huerto_aurelia_semilla": 1
+        }
+      }
+    },
+    {
+      "id": "E_vigia_nocturna_1",
+      "titulo": "Noche de mapas",
+      "region": "vigia_nocturna",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "nocturna_celestina",
+        "nocturna_bernardo",
+        "nocturna_matea"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Celestina y con Bernardo.",
+          "npc": [
+            "nocturna_celestina",
+            "nocturna_bernardo"
+          ]
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 2 de tela para mantas y 2 de madera de lunaria para las bancas.",
+          "materiales": {
+            "tela": 2,
+            "vigia_nocturna_madera": 2
+          }
+        },
+        {
+          "tipo": "jornadas",
+          "texto": "Duerme una noche: la noche de mapas es mañana.",
+          "cantidad": 1
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "nocturna_celestina",
+          "texto": "Mañana hago una noche de mapas para quien quiera venir. Mantas, té de lunaria y el cielo entero."
+        },
+        {
+          "hablante": "nocturna_matea",
+          "texto": "Las balizas de tránsito iluminan media cúpula. Con esa luz no se ve ni la mitad de las estrellas."
+        },
+        {
+          "hablante": "nocturna_bernardo",
+          "texto": "Y las balizas no se apagan. Hay naves que se guían por ellas aunque aquí estemos de fiesta."
+        },
+        {
+          "hablante": "nocturna_celestina",
+          "texto": "Entonces necesito bancas, mantas y una idea. Las dos primeras me las pueden traer ustedes."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "nocturna_bernardo",
+          "texto": "Revisé el registro: entre la medianoche y las dos no pasa ninguna nave."
+        },
+        {
+          "hablante": "nocturna_matea",
+          "texto": "Podríamos bajar las balizas a la mitad, con segunda firma y mi radio abierta."
+        },
+        {
+          "hablante": "nocturna_celestina",
+          "texto": "O hacer la noche del lado oscuro, donde no llegan: menos cielo, pero todas las luces en su sitio."
+        }
+      ],
+      "decision": "¿Bajar las balizas dos horas o mover la noche al lado oscuro?",
+      "opciones": [
+        "Bajar: dos horas de cielo completo, con registro firmado y radio abierta.",
+        "Mover: las balizas siguen igual y la clase se hace en el lado oscuro de la cúpula."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "nocturna_bernardo",
+            "texto": "Firmo yo y firma Matea. Si llama una nave, enciendo en diez segundos."
+          },
+          {
+            "hablante": "nocturna_celestina",
+            "texto": "Y si nadie llama, tendremos el cielo más oscuro que ha visto esta luna en años."
+          }
+        ],
+        [
+          {
+            "hablante": "nocturna_celestina",
+            "texto": "Del lado oscuro se ven menos estrellas, pero se ve a Celia saliendo. Eso no lo trae ningún mapa."
+          },
+          {
+            "hablante": "nocturna_matea",
+            "texto": "Y las balizas trabajan tranquilas. Me gusta una fiesta que no necesita permiso especial."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "nocturna_celestina",
+          "texto": "Nadie vio una estrella fugaz. Les conté por qué a veces no pasa, y se quedaron igual."
+        },
+        {
+          "hablante": "nocturna_bernardo",
+          "texto": "Primera vez que me quedo a una clase. Me aprendí tres constelaciones y el nombre de un zorro."
+        },
+        {
+          "hablante": "el",
+          "texto": "Avísennos de la próxima."
+        }
+      ],
+      "recompensa": {
+        "monedas": 110,
+        "objetos": {
+          "vigia_nocturna_semilla": 2
+        }
+      }
+    },
+    {
+      "id": "E_vigia_nocturna_2",
+      "titulo": "La zorra de la baliza siete",
+      "region": "vigia_nocturna",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "nocturna_bernardo",
+        "nocturna_elvira"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Bernardo y con Elvira.",
+          "npc": [
+            "nocturna_bernardo",
+            "nocturna_elvira"
+          ]
+        },
+        {
+          "tipo": "estadistica",
+          "texto": "Alimenta a tus animales dos veces: Elvira quiere saber qué rutina les das.",
+          "clave": "alimentar",
+          "cantidad": 2
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 3 de madera de lunaria y 2 de heno para un refugio tibio.",
+          "materiales": {
+            "vigia_nocturna_madera": 3,
+            "heno": 2
+          }
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "nocturna_bernardo",
+          "texto": "Una zorra duerme pegada a la baliza siete. La caja está tibia y ella lo sabe."
+        },
+        {
+          "hablante": "nocturna_elvira",
+          "texto": "Es la de la oreja doblada. Se mudó cuando la poda dejó frío su rincón de siempre."
+        },
+        {
+          "hablante": "nocturna_bernardo",
+          "texto": "Si se le cuela pelo al ventilador, la baliza se para. Y no quiero espantarla con ruido."
+        },
+        {
+          "hablante": "nocturna_elvira",
+          "texto": "Nadie la va a encerrar. Pero podemos ofrecerle algo mejor que una caja eléctrica."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "nocturna_elvira",
+          "texto": "El refugio está listo, con piedra tibia y heno. Ahora falta que ella quiera."
+        },
+        {
+          "hablante": "nocturna_bernardo",
+          "texto": "Podría poner una rejilla en la baliza para que no quepa. O dejarla igual y ver si se cambia sola."
+        }
+      ],
+      "decision": "¿Poner la rejilla o esperar a que la zorra elija?",
+      "opciones": [
+        "Rejilla: proteger la baliza y dejar el refugio tibio a dos pasos.",
+        "Esperar: dejar la baliza como está unas noches y revisarla más seguido."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "nocturna_bernardo",
+            "texto": "Rejilla suave, sin bordes. El refugio queda a dos pasos, con la piedra tibia."
+          },
+          {
+            "hablante": "nocturna_elvira",
+            "texto": "Al tercer día ya estaba dentro, refunfuñando. Igual que yo cuando me cambian de módulo."
+          }
+        ],
+        [
+          {
+            "hablante": "nocturna_elvira",
+            "texto": "Fue al refugio la cuarta noche, sin que nadie la empujara. Volvió dos veces a la baliza y luego dejó de ir."
+          },
+          {
+            "hablante": "nocturna_bernardo",
+            "texto": "Cuatro noches revisando con linterna baja. Valieron la pena."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "nocturna_bernardo",
+          "texto": "La anoté en el registro como «Siete». No es mía, pero así sé a quién saludo."
+        },
+        {
+          "hablante": "nocturna_elvira",
+          "texto": "Saludar a una zorra sin querer quedártela ya es mucho, Bernardo."
+        }
+      ],
+      "recompensa": {
+        "monedas": 100,
+        "objetos": {
+          "vigia_nocturna_mineral": 1,
+          "heno": 2
+        }
+      }
+    },
+    {
+      "id": "E_cantera_esmeralda_1",
+      "titulo": "La primera guardia de Quique",
+      "region": "cantera_esmeralda",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "esmeralda_quique",
+        "esmeralda_raimundo",
+        "esmeralda_olmo"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Quique, Raimundo y Olmo.",
+          "npc": [
+            "esmeralda_quique",
+            "esmeralda_raimundo",
+            "esmeralda_olmo"
+          ]
+        },
+        {
+          "tipo": "estadistica",
+          "texto": "Pica mineral dos veces y fíjate qué suena distinto.",
+          "clave": "mineral",
+          "cantidad": 2
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 2 de madera de bastidor y 2 cuerdas para las marcas de ruta.",
+          "materiales": {
+            "cantera_esmeralda_madera": 2,
+            "cuerda": 2
+          }
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "esmeralda_quique",
+          "texto": "Raimundo dice que mañana puedo hacer mi primera guardia de lectura. Olmo dice que todavía no."
+        },
+        {
+          "hablante": "esmeralda_olmo",
+          "texto": "No dije que no. Dije que mañana hay carga y prisa, y con prisa yo también me equivoco."
+        },
+        {
+          "hablante": "esmeralda_raimundo",
+          "texto": "Las series no saben si hay carga. Si el muchacho las lee bien, sirve igual mañana que el jueves."
+        },
+        {
+          "hablante": "esmeralda_quique",
+          "texto": "Yo solo quiero que, si digo «no estoy seguro», nadie lo tome como que no sirvo."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "esmeralda_raimundo",
+          "texto": "Leyó la galería dos y la marcó «dudosa». Tenía razón: hay una tendencia chiquita."
+        },
+        {
+          "hablante": "esmeralda_olmo",
+          "texto": "Eso nos atrasa la carga medio día."
+        },
+        {
+          "hablante": "esmeralda_quique",
+          "texto": "Perdón… No. No pido perdón. Era dudosa."
+        }
+      ],
+      "decision": "¿La primera guardia de Quique va acompañada o con radio?",
+      "opciones": [
+        "Acompañada: Raimundo se sienta a su lado y solo habla si Quique pregunta.",
+        "Con radio: Quique lee solo y Raimundo escucha desde el refugio."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "esmeralda_raimundo",
+            "texto": "Me siento aquí y me callo. Es lo más difícil que me han pedido en años."
+          },
+          {
+            "hablante": "esmeralda_quique",
+            "texto": "Pregunté dos veces. Y las dos veces ya sabía la respuesta."
+          }
+        ],
+        [
+          {
+            "hablante": "esmeralda_quique",
+            "texto": "Radio abierta, lectura cada media hora. Si algo me suena raro, lo digo en voz alta."
+          },
+          {
+            "hablante": "esmeralda_raimundo",
+            "texto": "Habló dos veces y las dos tenía algo que decir. Eso es una guardia."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "esmeralda_olmo",
+          "texto": "Medio día de atraso y ninguna galería abierta a la carrera. Lo firmo."
+        },
+        {
+          "hablante": "esmeralda_quique",
+          "texto": "Mi primera guardia. Y Herminia me guardó postre."
+        }
+      ],
+      "recompensa": {
+        "monedas": 130,
+        "objetos": {
+          "cantera_esmeralda_mineral": 1,
+          "cuerda": 2
+        }
+      }
+    },
+    {
+      "id": "E_cantera_esmeralda_2",
+      "titulo": "La fiesta del cupo cumplido",
+      "region": "cantera_esmeralda",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "esmeralda_herminia",
+        "esmeralda_indira",
+        "esmeralda_duna"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Herminia y con Indira.",
+          "npc": [
+            "esmeralda_herminia",
+            "esmeralda_indira"
+          ]
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 3 patatas, 2 cosechas de la Cantera y 1 de azúcar para la mesa larga.",
+          "materiales": {
+            "patata": 3,
+            "cantera_esmeralda_cosecha": 2,
+            "azucar": 1
+          }
+        },
+        {
+          "tipo": "jornadas",
+          "texto": "Duerme una noche: la fiesta es cuando el depósito cierre su ciclo.",
+          "cantidad": 1
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "esmeralda_herminia",
+          "texto": "Mañana la cantera llega a su cupo y el depósito descansa cinco jornadas. Yo quiero celebrarlo."
+        },
+        {
+          "hablante": "esmeralda_indira",
+          "texto": "¿Celebrar que paramos? Mis gráficas van a quedar planas una semana."
+        },
+        {
+          "hablante": "esmeralda_herminia",
+          "texto": "Exacto. En Piedralumbre nadie celebraba parar, y así nos fue. Aquí va a haber sopa, dulce y siesta."
+        },
+        {
+          "hablante": "esmeralda_duna",
+          "texto": "El musgo también descansa. Puedo traer una bandeja para el centro de la mesa."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "esmeralda_herminia",
+          "texto": "La olla está lista. Indira trajo una gráfica… para colgarla en la pared."
+        },
+        {
+          "hablante": "esmeralda_indira",
+          "texto": "Muestra la energía bajando hasta su reserva. No es un fracaso: es el dibujo de cuidar."
+        },
+        {
+          "hablante": "esmeralda_duna",
+          "texto": "Raimundo quiere invitar a la estación por radio. Boris diría que una fiesta en dos lugares gasta el doble de aire."
+        }
+      ],
+      "decision": "¿Fiesta solo en la cantera o compartida por radio con la estación?",
+      "opciones": [
+        "Solo aquí: mesa larga en el refugio con quienes están en la luna.",
+        "Por radio: brindar a la vez con la estación, cada quien con su propia comida."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "esmeralda_herminia",
+            "texto": "Mesa larga, sillas de todos los turnos. Nadie trabaja hasta mañana."
+          },
+          {
+            "hablante": "esmeralda_duna",
+            "texto": "Olmo se quedó dormido en la silla. Primera vez que lo veo sin las botas puestas."
+          }
+        ],
+        [
+          {
+            "hablante": "esmeralda_indira",
+            "texto": "La radio de Teodoro conectó al primer intento. En la estación brindaron con té de albahaca."
+          },
+          {
+            "hablante": "esmeralda_herminia",
+            "texto": "Y nosotros con sopa. Cada quien con lo suyo, nadie gastando aire ajeno."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "esmeralda_herminia",
+          "texto": "Cinco jornadas de descanso. La cantera también tiene derecho a su siesta."
+        },
+        {
+          "hablante": "esmeralda_indira",
+          "texto": "Voy a colgar la gráfica en el comedor. Que se vea dónde paramos."
+        }
+      ],
+      "recompensa": {
+        "monedas": 140,
+        "objetos": {
+          "cantera_esmeralda_semilla": 2,
+          "pan": 1
+        }
+      }
+    },
+    {
+      "id": "E_campamento_fragmentos_1",
+      "titulo": "Las latas de Lázaro",
+      "region": "campamento_fragmentos",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "fragmentos_remedios",
+        "fragmentos_lazaro",
+        "fragmentos_uma"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Remedios y con Lázaro.",
+          "npc": [
+            "fragmentos_remedios",
+            "fragmentos_lazaro"
+          ]
+        },
+        {
+          "tipo": "estadistica",
+          "texto": "Fabrica algo en tu granja: Remedios quiere ver si sabes sellar bien.",
+          "clave": "fabricar",
+          "cantidad": 1
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 2 de vidrio para frascos y 1 lingote de cobre para las tapas.",
+          "materiales": {
+            "vidrio": 2,
+            "lingote_cobre": 1
+          }
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "fragmentos_remedios",
+          "texto": "Necesito envases sellados para la despensa. Si una sopa se abre en el depósito, Uma me mira con esa cara."
+        },
+        {
+          "hablante": "fragmentos_lazaro",
+          "texto": "Tengo latas. Muchas. Pero esas no; esas tienen cosas."
+        },
+        {
+          "hablante": "fragmentos_remedios",
+          "texto": "¿Qué cosas?"
+        },
+        {
+          "hablante": "fragmentos_lazaro",
+          "texto": "Un tornillo de mi primer taller, la etiqueta de la lámpara de Lino… cosas que cuentan algo."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "fragmentos_remedios",
+          "texto": "Con los frascos y el cobre ya tengo despensa. No necesito tus latas, Lázaro."
+        },
+        {
+          "hablante": "fragmentos_lazaro",
+          "texto": "Las abrí todas buscando cuál darte. Hay latas con cosas que ya ni recuerdo por qué guardé."
+        },
+        {
+          "hablante": "fragmentos_uma",
+          "texto": "Si se quedan, que no tapen la salida de emergencia. Es lo único que pido."
+        }
+      ],
+      "decision": "¿Lázaro regala las latas que no recuerda o las guarda?",
+      "opciones": [
+        "Regalar: las latas sin historia se van a la cocina de Remedios.",
+        "Guardar: se quedan todas, pero cada una lleva una etiqueta con lo que guarda."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "fragmentos_lazaro",
+            "texto": "Siete latas para la cocina. Me quedo las que cuentan algo."
+          },
+          {
+            "hablante": "fragmentos_remedios",
+            "texto": "La primera sopa que salga de una lata tuya se llama «Sopa Lázaro». Ya está decidido."
+          }
+        ],
+        [
+          {
+            "hablante": "fragmentos_lazaro",
+            "texto": "Les puse etiqueta a todas. Tres dicen «no sé», y eso también es saber algo."
+          },
+          {
+            "hablante": "fragmentos_remedios",
+            "texto": "Me alcanza con mis frascos. Tus latas se quedan donde son tuyas."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "fragmentos_remedios",
+          "texto": "Despensa sellada, revisada por Uma y con sopa para el turno largo."
+        },
+        {
+          "hablante": "fragmentos_lazaro",
+          "texto": "Guardar no es lo mismo que acumular. Lo estoy aprendiendo, una lata a la vez."
+        }
+      ],
+      "recompensa": {
+        "monedas": 110,
+        "objetos": {
+          "lingote_cobre": 1,
+          "vidrio": 1
+        }
+      }
+    },
+    {
+      "id": "E_campamento_fragmentos_2",
+      "titulo": "El compost que se enfrió",
+      "region": "campamento_fragmentos",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "fragmentos_lino",
+        "fragmentos_axel",
+        "fragmentos_uma",
+        "fragmentos_remedios"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Lino, Axel y Uma.",
+          "npc": [
+            "fragmentos_lino",
+            "fragmentos_axel",
+            "fragmentos_uma"
+          ]
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 3 de heno y 2 de fibra seca para alimentar la pila.",
+          "materiales": {
+            "heno": 3,
+            "fibra": 2
+          }
+        },
+        {
+          "tipo": "jornadas",
+          "texto": "Espera dos noches a que el compost recupere temperatura.",
+          "cantidad": 2
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "fragmentos_lino",
+          "texto": "El compost se enfrió de un día para otro. Los ácaros están lentos y los rábanos se van a quedar sin sustrato."
+        },
+        {
+          "hablante": "fragmentos_axel",
+          "texto": "Puede que yo moviera una caja… la del calefactor. Necesitaba el pasillo para una figura de chatarra."
+        },
+        {
+          "hablante": "fragmentos_lino",
+          "texto": "No me enojo. Bueno, un poco. Me enoja más no haberlo visto yo."
+        },
+        {
+          "hablante": "fragmentos_uma",
+          "texto": "El calefactor no puede volver al pasillo: tapa la salida de emergencia. Hay que pensar otra cosa."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "fragmentos_lino",
+          "texto": "La pila volvió a calentar con el heno y la fibra. Los ácaros se mueven otra vez."
+        },
+        {
+          "hablante": "fragmentos_axel",
+          "texto": "Dejé el calefactor en un rincón libre. La figura… la desarmé. Era fea de todas formas."
+        }
+      ],
+      "decision": "¿Dónde vive el compost ahora?",
+      "opciones": [
+        "Junto a la cocina: aprovecha el calor de la estufa de Remedios.",
+        "En su propio módulo: más caminata, pero aislado del paso y con sensor propio."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "fragmentos_remedios",
+            "texto": "Si huele raro, lo sabré antes que nadie. Trato hecho."
+          },
+          {
+            "hablante": "fragmentos_lino",
+            "texto": "Calor que ya existía. Eso es mejor que cualquier calefactor nuevo."
+          }
+        ],
+        [
+          {
+            "hablante": "fragmentos_uma",
+            "texto": "Módulo aparte, salida despejada y sensor de temperatura con alarma suave."
+          },
+          {
+            "hablante": "fragmentos_lino",
+            "texto": "Más caminata para mí. A cambio, nadie mueve una caja sin saber qué calienta."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "fragmentos_lino",
+          "texto": "Primeros rábanos de la temporada. Pequeños y picantes, como deben ser."
+        },
+        {
+          "hablante": "fragmentos_axel",
+          "texto": "Me como uno aunque no me gustan. Me lo debo."
+        }
+      ],
+      "recompensa": {
+        "monedas": 120,
+        "objetos": {
+          "fibra": 2,
+          "cobre": 2
+        }
+      }
+    },
+    {
+      "id": "E_ambarina_1",
+      "titulo": "La ruta del carro de agua",
+      "region": "ambarina",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "ambar_ezequiel",
+        "ambar_zora",
+        "ambar_nestor"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Ezequiel y con Zora.",
+          "npc": [
+            "ambar_ezequiel",
+            "ambar_zora"
+          ]
+        },
+        {
+          "tipo": "archivo",
+          "texto": "Consulta en el archivo público el registro de litros de las últimas cuatro semanas."
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 1 de oro de ámbar, 1 lingote de hierro y 2 de resina para la junta del tanque.",
+          "materiales": {
+            "ambarina_mineral": 1,
+            "lingote_hierro": 1,
+            "resina": 2
+          }
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "ambar_ezequiel",
+          "texto": "Al último barrio le llegan nueve litros menos cada semana. Lo medí tres veces."
+        },
+        {
+          "hablante": "ambar_zora",
+          "texto": "Hace años eso pasó por una decisión tuya. ¿Estás seguro de que esta vez no?"
+        },
+        {
+          "hablante": "ambar_ezequiel",
+          "texto": "Por eso lo vine a decir antes de que nadie pregunte. No es mi reparto: es el carro."
+        },
+        {
+          "hablante": "ambar_nestor",
+          "texto": "Si es una junta, la hago yo. Pero con material que no salga de una terraza ajena."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "ambar_nestor",
+          "texto": "La junta del tanque gotea sobre la piedra caliente y se evapora antes de que nadie la vea."
+        },
+        {
+          "hablante": "ambar_zora",
+          "texto": "El registro coincide: la pérdida empezó con la ola de calor."
+        },
+        {
+          "hablante": "ambar_ezequiel",
+          "texto": "Nueve litros por semana. Ese barrio los pagó en paciencia."
+        }
+      ],
+      "decision": "¿Cómo se compensa al último barrio?",
+      "opciones": [
+        "Primero ellos: durante un mes la ruta empieza por el último barrio.",
+        "Devolver litros: la reserva común les entrega lo perdido, anotado como préstamo."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "ambar_ezequiel",
+            "texto": "Un mes empezando por el final. Mi calle va a esperar, como esperaron ellos."
+          },
+          {
+            "hablante": "ambar_zora",
+            "texto": "Lo anoto en el tablón con la razón. Que nadie lo lea como castigo."
+          }
+        ],
+        [
+          {
+            "hablante": "ambar_zora",
+            "texto": "Préstamo de la reserva, con devolución en la próxima cosecha del condensador."
+          },
+          {
+            "hablante": "ambar_ezequiel",
+            "texto": "Y los bidones los llevo yo. Quiero ver sus caras cuando lleguen llenos."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "ambar_nestor",
+          "texto": "Junta nueva de oro de ámbar. No se corroe, y si vuelve a gotear, la gota se ve."
+        },
+        {
+          "hablante": "ambar_ezequiel",
+          "texto": "Mi mamá dice que ahora sí reparto como mi papá. Me lo voy a creer un rato."
+        }
+      ],
+      "recompensa": {
+        "monedas": 130,
+        "objetos": {
+          "ambarina_semilla": 2
+        }
+      }
+    },
+    {
+      "id": "E_ambarina_2",
+      "titulo": "Cometas sobre la terraza",
+      "region": "ambarina",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "ambar_rocio",
+        "ambar_baltasar",
+        "ambar_samira",
+        "ambar_kenzo"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Rocío, Baltasar y Samira.",
+          "npc": [
+            "ambar_rocio",
+            "ambar_baltasar",
+            "ambar_samira"
+          ]
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 2 de madera de tamarisco, 2 de tela y 1 cuerda para las cometas.",
+          "materiales": {
+            "ambarina_madera": 2,
+            "tela": 2,
+            "cuerda": 1
+          }
+        },
+        {
+          "tipo": "jornadas",
+          "texto": "Duerme una noche para que Samira lea el viento de mañana.",
+          "cantidad": 1
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "ambar_rocio",
+          "texto": "Quiero enseñar el viento con cometas. Baltasar sabe hacerlas y Samira sabe leer el aire."
+        },
+        {
+          "hablante": "ambar_baltasar",
+          "texto": "Puedo hacer veinte. Perfectas, si me das un mes."
+        },
+        {
+          "hablante": "ambar_samira",
+          "texto": "El viento bueno dura tres tardes, Baltasar. No espera a que nada sea perfecto."
+        },
+        {
+          "hablante": "ambar_rocio",
+          "texto": "Entonces cometas imperfectas. Faltan varillas de tamarisco, tela y cuerda."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "ambar_samira",
+          "texto": "Mañana hay viento bueno, pero sopla hacia las terrazas antiguas."
+        },
+        {
+          "hablante": "ambar_kenzo",
+          "texto": "Si una cometa cae en las terrazas, nadie baja a buscarla sin permiso de los mayores."
+        },
+        {
+          "hablante": "ambar_rocio",
+          "texto": "Nadie entra a una terraza a buscar nada. Eso ya lo aprendimos una vez."
+        }
+      ],
+      "decision": "¿Volar mañana con cuerda corta o esperar un viento que sople hacia el desierto?",
+      "opciones": [
+        "Mañana: cuerdas cortas y una persona adulta vigilando cada cometa.",
+        "Esperar: dos días más por un viento que no pase sobre las terrazas."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "ambar_baltasar",
+            "texto": "Cuerdas cortas, nudo doble. Las hice feas a propósito, para no llorar si se rompen."
+          },
+          {
+            "hablante": "ambar_rocio",
+            "texto": "Ninguna cayó en la terraza. Una se enredó en el tendedero de Alina, eso sí."
+          }
+        ],
+        [
+          {
+            "hablante": "ambar_samira",
+            "texto": "Dos días después, viento limpio hacia el desierto. Lo dije con margen y se cumplió dentro de él."
+          },
+          {
+            "hablante": "ambar_rocio",
+            "texto": "La escuela aprendió a esperar el viento. Eso también es una lección de clima."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "ambar_rocio",
+          "texto": "Mañana dibujamos el viento que vimos, cada quien a su manera."
+        },
+        {
+          "hablante": "ambar_baltasar",
+          "texto": "Me quedé con una cometa rota. La voy a arreglar mal, a propósito."
+        }
+      ],
+      "recompensa": {
+        "monedas": 100,
+        "objetos": {
+          "ambarina_madera": 2,
+          "tela": 1
+        }
+      }
+    },
+    {
+      "id": "E_iridalia_1",
+      "titulo": "Un concierto que se vea",
+      "region": "iridalia",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "iris_maia",
+        "iris_orin",
+        "iris_calista",
+        "iris_nahuel"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Maia, Orin y Nahuel.",
+          "npc": [
+            "iris_maia",
+            "iris_orin",
+            "iris_nahuel"
+          ]
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae 1 cristal iridiano, 2 semillas de lirio de prisma para pigmento y 2 de vidrio para las pantallas.",
+          "materiales": {
+            "iridalia_mineral": 1,
+            "iridalia_semilla": 2,
+            "vidrio": 2
+          }
+        },
+        {
+          "tipo": "jornadas",
+          "texto": "Espera una noche: Maia repite la prueba de luz en frío.",
+          "cantidad": 1
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "iris_maia",
+          "texto": "(En señas) Orin da un concierto en la plaza en tres días. Yo afiné la mitad de los cristales."
+        },
+        {
+          "hablante": "iris_maia",
+          "texto": "(En señas) Quiero que el concierto se vea: una luz en cada cristal cuando suena."
+        },
+        {
+          "hablante": "iris_orin",
+          "texto": "Mis cristales ya brillan cuando suenan. Un poco."
+        },
+        {
+          "hablante": "iris_calista",
+          "texto": "Un poco no alcanza para quien no oye, Orin. Y en la asamblea hay varias personas que no oyen."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "iris_maia",
+          "texto": "(En señas) Con pigmento de lirio la luz cambia de color con cada nota. Lo probé dos veces: en frío y en calor."
+        },
+        {
+          "hablante": "iris_orin",
+          "texto": "Es precioso. Pero alguien va a decir que los colores son el planeta hablando."
+        },
+        {
+          "hablante": "iris_nahuel",
+          "texto": "Y no lo son. Son una traducción de Maia."
+        }
+      ],
+      "decision": "¿Cómo se presenta la luz en el concierto?",
+      "opciones": [
+        "Anunciada: Calista explica que los colores los diseñó Maia para quien no oye.",
+        "Sin anuncio: la gente lo disfruta y pregunta si quiere; Maia responde en la plaza."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "iris_calista",
+            "texto": "Esta luz la diseñó Maia. No es una profecía: es una invitación."
+          },
+          {
+            "hablante": "iris_maia",
+            "texto": "(En señas) Nadie me había presentado antes de un concierto. Me tiemblan las manos, de las buenas."
+          }
+        ],
+        [
+          {
+            "hablante": "iris_maia",
+            "texto": "(En señas) Tres personas vinieron a preguntar. Una ya sabe decir «gracias» en señas."
+          },
+          {
+            "hablante": "iris_orin",
+            "texto": "Nadie dijo que era el planeta hablando. Dijeron que era bonito. Con eso me alcanza."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "iris_orin",
+          "texto": "Primera vez que veo mi música. Suena mejor de lo que pensaba."
+        },
+        {
+          "hablante": "iris_maia",
+          "texto": "(En señas) Para el próximo afino la otra mitad. Y repito la prueba en la plaza fría."
+        }
+      ],
+      "recompensa": {
+        "monedas": 140,
+        "objetos": {
+          "iridalia_semilla": 2,
+          "vidrio": 1
+        }
+      }
+    },
+    {
+      "id": "E_iridalia_2",
+      "titulo": "La votación de la madrugada",
+      "region": "iridalia",
+      "clase": "encargo",
+      "requiere": [],
+      "reparto": [
+        "iris_nahuel",
+        "iris_calista",
+        "iris_yuna"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Nahuel y con Yuna.",
+          "npc": [
+            "iris_nahuel",
+            "iris_yuna"
+          ]
+        },
+        {
+          "tipo": "archivo",
+          "texto": "Consulta en el archivo público el acta del primer tratado con la estación."
+        },
+        {
+          "tipo": "visitas",
+          "texto": "Visita el Huerto de Aurelia, de donde vendría la semilla del intercambio.",
+          "regiones": [
+            "huerto_aurelia"
+          ]
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "iris_nahuel",
+          "texto": "Mañana la asamblea vota si intercambia semillas de lirio de prisma con el Huerto de Aurelia."
+        },
+        {
+          "hablante": "iris_yuna",
+          "texto": "Yo estoy a favor. Pero los del valle bajo trabajan de noche y la votación es al mediodía."
+        },
+        {
+          "hablante": "iris_calista",
+          "texto": "Siempre la hacemos al mediodía. Y la última vez que me apuré, anuncié un acuerdo que no existía."
+        },
+        {
+          "hablante": "iris_nahuel",
+          "texto": "Y yo traduje ese «tal vez» como «sí». Esta vez quiero que cada duda llegue entera."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "iris_nahuel",
+          "texto": "El acta lo dice claro: suavicé tres frases. No mentí, pero no traduje lo que dolía."
+        },
+        {
+          "hablante": "iris_yuna",
+          "texto": "Aitana mandó la lista del huerto: piden cuatro variedades y ofrecen tres. Es justo, si se vota."
+        },
+        {
+          "hablante": "iris_calista",
+          "texto": "El valle bajo puede votar de madrugada, al salir del turno. Pero eso alarga todo un día."
+        }
+      ],
+      "decision": "¿Votar al mediodía o abrir una urna de madrugada?",
+      "opciones": [
+        "Mediodía: votan quienes estén y Nahuel lleva el acta completa al valle bajo después.",
+        "Madrugada: una urna más y un día más de espera, con todas las voces a la vez."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "iris_nahuel",
+            "texto": "Traduje el resultado entero, con las dudas. Dos del valle bajo pidieron revisarlo en un mes."
+          },
+          {
+            "hablante": "iris_calista",
+            "texto": "Y se revisará. Un acuerdo que se puede revisar dura más."
+          }
+        ],
+        [
+          {
+            "hablante": "iris_yuna",
+            "texto": "El valle bajo votó con el cielo todavía oscuro. Ganó el intercambio por poco."
+          },
+          {
+            "hablante": "iris_nahuel",
+            "texto": "Por poco, pero completo. Traduje cada «no» tan claro como cada «sí»."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "iris_calista",
+          "texto": "No soy dueña de esta semilla ni del acuerdo. Soy quien lo lee en voz alta."
+        },
+        {
+          "hablante": "iris_yuna",
+          "texto": "Salen cuatro variedades y llegan tres. Las feas también, que conste."
+        }
+      ],
+      "recompensa": {
+        "monedas": 120,
+        "objetos": {
+          "iridalia_semilla": 1,
+          "huerto_aurelia_semilla": 1
+        }
+      }
+    },
+    {
+      "id": "EP_5",
+      "titulo": "Musgo para los escarabajos",
+      "region": "huerto_aurelia",
+      "clase": "encargo_entre_pueblos",
+      "requiere": [
+        "E_huerto_aurelia_1"
+      ],
+      "reparto": [
+        "aurelia_kiara",
+        "aurelia_greta",
+        "esmeralda_duna"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Kiara y con Greta sobre la cápsula seca.",
+          "npc": [
+            "aurelia_kiara",
+            "aurelia_greta"
+          ]
+        },
+        {
+          "tipo": "visitas",
+          "texto": "Viaja a la Cantera de Esmeralda y pregúntale a Duna por su musgo.",
+          "regiones": [
+            "cantera_esmeralda"
+          ]
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae a Aurelia 2 semillas de musgo esmeralda y 2 de madera de bastidor de la Cantera.",
+          "materiales": {
+            "cantera_esmeralda_semilla": 2,
+            "cantera_esmeralda_madera": 2
+          }
+        },
+        {
+          "tipo": "jornadas",
+          "texto": "Espera una noche a que el musgo se asiente en su bastidor.",
+          "cantidad": 1
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "aurelia_kiara",
+          "texto": "Desde que el ventilador quedó bien, la cápsula está más seca. Los escarabajos necesitan un rincón húmedo."
+        },
+        {
+          "hablante": "aurelia_greta",
+          "texto": "Puedo bajar el aire, pero entonces vuelve el calor a las hojas. No quiero elegir entre plantas y bichos."
+        },
+        {
+          "hablante": "aurelia_kiara",
+          "texto": "Duna tiene musgo esmeralda que guarda humedad sin regar de más. Pero sale de su cupo, no del nuestro."
+        },
+        {
+          "hablante": "el",
+          "texto": "Vamos a la Cantera y se lo preguntamos."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "esmeralda_duna",
+          "texto": "Dos bandejas de semilla y dos bastidores. Es lo que puedo dar este ciclo sin dejar pelada mi zona de muestra."
+        },
+        {
+          "hablante": "aurelia_kiara",
+          "texto": "Con dos alcanza para un rincón. No para toda la cápsula."
+        },
+        {
+          "hablante": "aurelia_greta",
+          "texto": "Un rincón es lo que necesitan. No hay que convertir la luna en pantano."
+        }
+      ],
+      "decision": "¿Cómo se paga el musgo de la Cantera?",
+      "opciones": [
+        "Intercambio: Aurelia manda a la Cantera trigo aurelio por el mismo cupo.",
+        "Préstamo: el musgo vuelve a la Cantera en esquejes cuando crezca."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "esmeralda_duna",
+            "texto": "Trigo por musgo, anotado en los dos registros. Así nadie siente que le sacaron algo."
+          },
+          {
+            "hablante": "aurelia_kiara",
+            "texto": "Y Herminia va a tener harina de luna para su próxima fiesta."
+          }
+        ],
+        [
+          {
+            "hablante": "esmeralda_duna",
+            "texto": "Esquejes en tres ciclos. Si no prenden, me lo cuentas y lo resolvemos sin drama."
+          },
+          {
+            "hablante": "aurelia_kiara",
+            "texto": "Los cuido como lo que son: prestados."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "aurelia_kiara",
+          "texto": "Ya hay escarabajos dormidos en el musgo. Brillan un poquito cuando respiran."
+        },
+        {
+          "hablante": "aurelia_greta",
+          "texto": "Y el ventilador sigue zumbando. Todos trabajando y nadie agotado."
+        },
+        {
+          "hablante": "esmeralda_duna",
+          "texto": "Mándenme un dibujo del rincón. Mi musgo nunca había viajado."
+        }
+      ],
+      "recompensa": {
+        "monedas": 180,
+        "objetos": {
+          "huerto_aurelia_cosecha": 2,
+          "cantera_esmeralda_semilla": 1
+        }
+      }
+    },
+    {
+      "id": "EP_6",
+      "titulo": "La ronda de Teodoro",
+      "region": "estacion_celia",
+      "clase": "encargo_entre_pueblos",
+      "requiere": [
+        "E_estacion_celia_2"
+      ],
+      "reparto": [
+        "orbita_teodoro",
+        "orbita_rita",
+        "orbita_said",
+        "nocturna_celestina",
+        "fragmentos_remedios"
+      ],
+      "pasos": [
+        {
+          "tipo": "testimonios",
+          "texto": "Habla con Teodoro y con Rita sobre la ronda de correo.",
+          "npc": [
+            "orbita_teodoro",
+            "orbita_rita"
+          ]
+        },
+        {
+          "tipo": "visitas",
+          "texto": "Haz la ronda: pasa por el Huerto de Aurelia, el Vigía de Nocturna y el Campamento de los Fragmentos.",
+          "regiones": [
+            "huerto_aurelia",
+            "vigia_nocturna",
+            "campamento_fragmentos"
+          ]
+        },
+        {
+          "tipo": "entrega",
+          "texto": "Trae a la estación 2 de trigo aurelio, 2 semillas de lunaria para el té de Said y 1 lingote de cobre del campamento.",
+          "materiales": {
+            "huerto_aurelia_cosecha": 2,
+            "vigia_nocturna_semilla": 2,
+            "lingote_cobre": 1
+          }
+        }
+      ],
+      "inicio": [
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "Tengo sobres para tres lunas y una sola rodilla. Rita dice que la nave sale con sitio para alguien más."
+        },
+        {
+          "hablante": "orbita_rita",
+          "texto": "Sitio para una persona y una caja. No para tres paradas largas: combustible contado, como siempre."
+        },
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "Entonces paradas cortas: Aurelia, Nocturna y el campamento. Yo les explico qué recoger en cada una."
+        },
+        {
+          "hablante": "orbita_said",
+          "texto": "Si pasan por Nocturna, se me acabó la lunaria del té de descanso. Sin prisa, pero sin olvido."
+        }
+      ],
+      "giro": [
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "Volvieron con todo. Y Remedios mandó una receta escrita en una etiqueta de lata."
+        },
+        {
+          "hablante": "nocturna_celestina",
+          "texto": "(Por radio) Teodoro, la escuela de Alma recibió los mapas. Preguntan cuándo pasa la próxima nave."
+        },
+        {
+          "hablante": "orbita_rita",
+          "texto": "Ahí está el problema. Si prometemos fecha fija y falla el combustible, la promesa pesa más que la carta."
+        }
+      ],
+      "decision": "¿Ronda con día fijo o ronda cuando haya sitio?",
+      "opciones": [
+        "Día fijo: una ronda cada cuatro jornadas; si se cancela, se avisa por radio con la razón.",
+        "Cuando haya sitio: sin calendario, pero Teodoro publica cada mañana qué nave lleva espacio."
+      ],
+      "ramas": [
+        [
+          {
+            "hablante": "orbita_rita",
+            "texto": "Cada cuatro jornadas, con aviso si falla. Lo publico con margen, no como promesa."
+          },
+          {
+            "hablante": "orbita_teodoro",
+            "texto": "Un día fijo es lo que la gente espera junto a la ventana. Gracias, Rita."
+          }
+        ],
+        [
+          {
+            "hablante": "orbita_teodoro",
+            "texto": "Pizarra nueva en la oficina: «Hoy hay sitio para…». La lleno cada mañana."
+          },
+          {
+            "hablante": "orbita_rita",
+            "texto": "Así nadie gasta combustible en una ruta vacía, ni espera una nave que no viene."
+          }
+        ]
+      ],
+      "cierre": [
+        {
+          "hablante": "orbita_said",
+          "texto": "Té de lunaria. Esta noche me duermo antes de las once, lo prometo."
+        },
+        {
+          "hablante": "fragmentos_remedios",
+          "texto": "(Por radio) ¡Teodoro! La receta es la Sopa Uma. Cocínala con agua contada o no cuenta."
+        },
+        {
+          "hablante": "orbita_teodoro",
+          "texto": "La primera ronda de verdad desde que llegué. Mi rodilla y yo les debemos una."
+        }
+      ],
+      "recompensa": {
+        "monedas": 200,
+        "objetos": {
+          "estacion_celia_semilla": 2,
+          "vigia_nocturna_semilla": 1
+        }
+      }
+    }
+  ]
+}

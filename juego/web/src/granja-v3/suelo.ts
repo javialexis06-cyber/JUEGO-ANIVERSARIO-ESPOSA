@@ -96,10 +96,11 @@ export class Suelos{
  private matsCamino=new Map<string,THREE.MeshStandardMaterial>();
  constructor(){for(const o of [this.mata,this.flor,this.matPasto,this.matFlor])o.userData.compartido=true;}
  /** Prado grande: manchas de verde más claro, más oscuro y amarillento (ruido suave) sobre el fieltro de pasto. */
- terreno(){const g=new THREE.PlaneGeometry(260,240,130,120);g.rotateX(-Math.PI/2);const p=g.attributes.position,colors:number[]=[],base=new THREE.Color('#8db06c'),claro=new THREE.Color('#a9c77d'),oscuro=new THREE.Color('#6f9654'),seco=new THREE.Color('#b8bf78');
+ /** El pasto de siempre; las regiones de Astra le pasan su paleta (nieve, basalto, regolito… sin la textura de hierba). */
+ terreno(paleta?:{base:string;claro:string;oscuro:string;seco:string;textura?:boolean}){const g=new THREE.PlaneGeometry(260,240,130,120);g.rotateX(-Math.PI/2);const p=g.attributes.position,colors:number[]=[],base=new THREE.Color(paleta?.base??'#8db06c'),claro=new THREE.Color(paleta?.claro??'#a9c77d'),oscuro=new THREE.Color(paleta?.oscuro??'#6f9654'),seco=new THREE.Color(paleta?.seco??'#b8bf78');
   for(let i=0;i<p.count;i++){const x=p.getX(i),z=p.getZ(i),n=fbm2(x*.06,z*.06),m=fbm2(x*.17+40,z*.17),c=base.clone();if(n>.55)c.lerp(claro,(n-.55)*2.4);else c.lerp(oscuro,(.55-n)*1.6);if(m>.66)c.lerp(seco,(m-.66)*2.2);colors.push(c.r,c.g,c.b);}
   g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));const uv=g.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*65,uv.getY(i)*60);
-  const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,map:this.hierba,roughness:1}));mesh.position.y=-.04;mesh.receiveShadow=true;return mesh;}
+  const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,map:paleta?.textura===false?null:this.hierba,roughness:1}));mesh.position.y=-.04;mesh.receiveShadow=true;return mesh;}
  /** Tierra labrada con surcos de verdad (lomitos de tierra), continuos de casilla a casilla; la regada, oscura y brillante. */
  labrado(cells:{x:number;z:number;wet:boolean;dead:boolean}[]){const group=new THREE.Group();const N=8;
   for(const wet of [false,true]){const subset=cells.filter(p=>p.wet===wet);if(!subset.length)continue;const pos:number[]=[],uv:number[]=[],indices:number[]=[],col:number[]=[];

@@ -1,7 +1,7 @@
 // La pantalla del vuelo: mientras el personaje baja colgado de un paracaídas de papel higiénico, a la derecha
 // salen los números contando (distancia, rollitos, puntaje con el multiplicador), las misiones con su barrita y,
 // si se completaron las tres, el nivel nuevo con su cofre. Abajo: la tienda del retrete o volver a casa.
-import { nota } from '../../sonido';
+import { nota } from './silencio';
 import { type Cosmetico, type Mision, type ProgresoCohete, RAREZA, type TipoCosmetico, esDeVuelo, premioMision, textoMision, textoReto } from './datos';
 import { NOMBRE_ROL, otro, type Rol } from '../modelo';
 

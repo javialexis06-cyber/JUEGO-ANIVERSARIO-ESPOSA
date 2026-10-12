@@ -1,0 +1,57 @@
+# Dimas
+
+Texto pronunciado y dirección separados. No leer IDs, títulos ni acotaciones.
+
+## VID_verdia_dimas_1.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Reponer parecía más fácil que decir por qué. La gente ya había gastado una temporada.
+
+## VID_verdia_dimas_1.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Me costó entender que un fallo registrado podía ayudar más que otra promesa buena.
+
+## VID_verdia_dimas_2.vida.01
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Hoy anoté no germinó y dejé la ficha abierta para comparar causas.
+
+## VID_verdia_dimas_2.vida.03
+
+Dirección: Recuerdo y vida cotidiana; escuchar sin tratar cada conversación como una confesión. Capa: mundo.
+
+Después. Primero quiero pasear sin medir un crecimiento que quizá no llegue hoy.
+
+## V_verdia_dimas.A1.01
+
+Dirección: Ofrecer sin presión, tono cotidiano. Capa: mundo.
+
+Esta semilla no nació mejor por estar aquí. La guardamos mejor y anotamos lo que ocurrió.
+
+## V_verdia_dimas.A2.01
+
+Dirección: Reconocer contradicción sin pedir consuelo al oyente. Capa: mundo.
+
+Eliana me pidió una guía, no un milagro. Me costó creerle.
+
+## V_verdia_dimas.A3.01
+
+Dirección: Cambio pequeño y concreto, sin fanfarria. Capa: mundo.
+
+También van los lotes que fallaron. Si no, enseñaría solo la mitad.
+
+## V_verdia_dimas.R1.01
+
+Dirección: Responder a una elección válida, sin juzgar la otra. Capa: mundo.
+
+Completo: Habrá causas conocidas y desconocidas.
+
+## V_verdia_dimas.R2.01
+
+Dirección: Responder a una elección válida, sin juzgar la otra. Capa: mundo.
+
+Muestra: No concederá producción gratuita para la granja.

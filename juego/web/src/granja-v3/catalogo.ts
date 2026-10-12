@@ -1,3 +1,4 @@
+import { DATOS as SEMILLAS_ASTRA } from './astra-cultivos-datos';
 import type { Species } from './genetica';
 import type { Tiempo } from './clima';
 import { CULTIVOS_ADICIONALES } from './cultivos-datos';
@@ -51,7 +52,7 @@ export const SECTORES:Sector[]=coordenadas.map(({col,fila},id)=>({id,x:col*20-10
 export function sectorDeCelda(x:number,z:number):Sector|undefined{return SECTORES.find(s=>x>=s.x&&x<s.x+s.ancho&&z>=s.z&&z<s.z+s.fondo)}
 export function sonAdyacentes(a:Sector,b:Sector):boolean{return (Math.abs(a.x-b.x)===20&&a.z===b.z)||(Math.abs(a.z-b.z)===16&&a.x===b.x)}
 
-export interface CultivoDef{dias?:number;rebroteDias?:number;forma?:'raiz'|'cabeza'|'hoja'|'vaina'|'cereal'|'flor'|'baya'|'fruto'|'cactus'|'hongo';color?:string;rebroteHoras?:number;enrejado?:boolean;cosecha?:'mano'|'guadana';cantidad?:number;fases?:number[];requiere?:string;id:string;nombre:string;modelo:string;semilla:string;producto:string;horas:number;estaciones:Estacion[];climas:Clima[];precio:number;valor:number}
+export interface CultivoDef{region?:string;presurizado?:boolean;dias?:number;rebroteDias?:number;forma?:'raiz'|'cabeza'|'hoja'|'vaina'|'cereal'|'flor'|'baya'|'fruto'|'cactus'|'hongo';color?:string;rebroteHoras?:number;enrejado?:boolean;cosecha?:'mano'|'guadana';cantidad?:number;fases?:number[];requiere?:string;id:string;nombre:string;modelo:string;semilla:string;producto:string;horas:number;estaciones:Estacion[];climas:Clima[];precio:number;valor:number}
 export const CULTIVOS:CultivoDef[]=[
   {dias:6,id:'zanahoria',nombre:'Zanahoria',modelo:'zanahoria',semilla:'semilla_zanahoria',producto:'zanahoria',horas:6,estaciones:['primavera','otono'],climas:['templado','humedo'],precio:4,valor:12},
   {rebroteHoras:4,dias:11,id:'tomate',nombre:'Tomate',modelo:'tomate',semilla:'semilla_tomate',producto:'tomate',horas:12,estaciones:['primavera','verano'],climas:['templado'],precio:8,valor:24},
@@ -64,6 +65,7 @@ export const CULTIVOS:CultivoDef[]=[
   {dias:18,id:'calabaza_lunar',nombre:'Calabaza lunar',modelo:'calabaza',semilla:'semilla_calabaza_lunar',producto:'calabaza_lunar',horas:96,estaciones:['otono'],climas:['celeste','sombrio'],precio:25,valor:95},
 ];
 CULTIVOS.push(...CULTIVOS_ADICIONALES);
+CULTIVOS.push(...SEMILLAS_ASTRA.map(c=>({...c,climas:c.climas as Clima[],estaciones:c.estaciones as Estacion[]})));
 export interface PezDef{tiempos?:Tiempo[];id:string;nombre:string;zonas:Zona[];estaciones:Estacion[];desde:number;hasta:number;cebo:string;rareza:number;valor:number}
 const todas:Estacion[]=['primavera','verano','otono','invierno'];
 export const PECES:PezDef[]=[

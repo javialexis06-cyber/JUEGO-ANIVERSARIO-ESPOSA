@@ -1,7 +1,9 @@
+import { DATOS as RECURSOS_ASTRA } from './astra-recursos-datos';
 import { leerHuevo } from './ganaderia';
 import { FRUTALES } from './frutales-datos';
 import { ARTICULOS, CULTIVOS, ESPECIES, PECES, PRECIOS_VENTA } from './catalogo';
 import { RECETAS_CORRESPONDENCIA } from './correspondencia-datos';
+import { RECETAS_LIBROS } from './libros-datos';
 
 /** Un único vocabulario de objetos para mochila, cofres, cocina, equipo y botín. */
 export type RarezaObjeto='comun'|'inusual'|'raro'|'epico'|'legendario';
@@ -73,6 +75,10 @@ for(const [metal,nombre,ataque,defensa,precio,rareza] of metales){
   objeto(`${pieza}_${metal}`,`${etiqueta} de ${nombre}`,'equipo',Math.round(precio*factor),{pilaMax:1,rareza,equipo:{ranura:pieza,defensa:Math.max(1,Math.round(defensa*factor)),...(pieza==='botas'?{velocidad:metal==='astral'?.15:metal==='titanio'?.1:0}:{})}});
 }
 for(const [id,nombre,casillas,precio] of [['cofre_madera','Cofre de madera',24,70],['cofre_hierro','Cofre de hierro',48,260]] as const)objeto(id,nombre,'contenedor',precio,{pilaMax:20,contenedor:{casillas}});
+// Progresión de armas: no crea niveles de personaje ni de armadura.
+for(const [id,nombre] of [['arco_ribera','Arco de ribera'],['baston_cuarzo','Bastón de cuarzo'],['sello_fuego','Sello de fuego'],['sello_agua','Sello de agua'],['sello_tierra','Sello de tierra'],['sello_aire','Sello de aire']] as const)
+ objeto(id,nombre,'equipo',40,{pilaMax:1,equipo:{ranura:'arma'},descripcion:'Arma de expedición. Su dominio crece con impactos efectivos; se selecciona en la barra o se equipa en la ranura de arma.'});
+objeto('flecha_ribera','Flecha de ribera','insumo',0,{pilaMax:99,descripcion:'Munición del arco; cada disparo confirmado consume una flecha.'});
 for(const [id,nombre,precio] of [
  ['horno','Horno de piedra',100],['fundidora','Fundidora avanzada',440],['prensa','Prensa artesanal',140],['molino_artesanal','Molino de mesa',170],
  ['cocina','Cocina de campo',160],['fermentador','Fermentador de roble',180],['telar','Telar',190],['recicladora','Recicladora',210],
@@ -209,6 +215,13 @@ for(const [metal,_nombre,_ataque,_defensa,_precio] of metales){
  receta(`botas_${metal}`,'forja',{[material]:2,cuero:1},40+nivel*15,nivel);
 }
 receta('circuito_astral','forja',{bateria:2,lingote_oro:2,cristal_astral:1},100,3);
+receta('arco_ribera','banco_trabajo',{madera:8,fibra:6,cobre:2},30,0);
+receta('baston_cuarzo','banco_trabajo',{madera:6,cuarzo:3,cobre:2},30,0);
+receta('sello_fuego','banco_trabajo',{piedra:6,carbon:4,cuarzo:2},30,0);
+receta('sello_agua','banco_trabajo',{piedra:6,arcilla:4,cuarzo:2},30,0);
+receta('sello_tierra','banco_trabajo',{piedra:8,cobre:2,cuarzo:2},30,0);
+receta('sello_aire','banco_trabajo',{madera:6,fibra:4,cuarzo:2},30,0);
+tanda('flechas_ribera','mano',{madera:2,piedra:1},'flecha_ribera',4,0);
 receta('combustible_estelar','fundidora',{carbon:5,meteorita:2,polvo_estelar:1},65,3,3);
 receta('portal_verdia','banco_trabajo',{madera_ancestral:15,jade:4,lingote_cobre:8,cristal:10},100,1);
 receta('portal_senda','banco_trabajo',{lingote_plata:8,cuarzo:15,jade:4,bateria:3},120,2);
@@ -235,5 +248,14 @@ receta('mayonesa_pato','prensa',{huevo_pato:1,aceite:1},40);
 receta('mayonesa_avestruz','prensa',{huevo_avestruz:1,aceite:2},60,0,3);
 receta('mayonesa_antigua','prensa',{huevo_dinosaurio:1,aceite:2},80);
 RECETAS.push(...RECETAS_CORRESPONDENCIA);
+RECETAS.push(...RECETAS_LIBROS);
+for(const r of RECURSOS_ASTRA){
+ objeto('kit_'+r.id,'Mantenimiento · '+r.nombre,'insumo',0,{precioCompra:0,descripcion:'Reduce en uno la energía de recolección solo en su región durante ocho estancias. Un único kit activo, sin aumentar cupos ni combate.'});
+ receta('kit_'+r.id,'banco_trabajo',{[r.id+'_mineral']:2,[r.id+'_madera']:2,[r.id+'_cosecha']:1},45);
+ for(const d of r.recursos)if(['mineral','madera'].includes(d.clase))objeto(d.id,d.nombre,d.clase==='mineral'?'mineral':'recurso',0,{precioCompra:0,descripcion:d.usos.join(' ')});
+ RECETAS.push({id:'flechas_'+r.id,nombre:'Munición · '+r.nombre,estacion:'banco_trabajo',ingredientes:{[r.id+'_mineral']:1,[r.id+'_madera']:2},salida:{articulo:'flecha_ribera',cantidad:4},duracionMs:12000,nivel:0});
+ RECETAS.push({id:'racion_'+r.id,nombre:'Ración · '+r.nombre,estacion:'cocina',ingredientes:{[r.id+'_cosecha']:1,sal:1},salida:{articulo:'pan',cantidad:1},duracionMs:30000,nivel:0});
+ for(const d of r.recursos)if(d.clase==='semilla'&&OBJETOS[d.id]){OBJETOS[d.id].precioCompra=0;OBJETOS[d.id].precioVenta=0;}
+}
 const INDICE_RECETAS=new Map(RECETAS.map(r=>[r.id,r]));
 export function obtenerReceta(id:string):RecetaProduccion|undefined{return INDICE_RECETAS.get(id);}

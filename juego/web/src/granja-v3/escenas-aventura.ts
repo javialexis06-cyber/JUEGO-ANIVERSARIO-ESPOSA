@@ -64,11 +64,12 @@ export class EscenaAventura {
  private terreno=new THREE.Group();private objetos=new THREE.Group();private efectos=new THREE.Group();
  private particulas:{mesh:THREE.Mesh;vx:number;vz:number;vy:number;edad:number}[]=[];
  private monstruos=new Map<string,FiguraMonstruo>();private nodos=new Map<string,THREE.Group>();private botin=new Map<string,THREE.Group>();private situaciones=new Map<string,THREE.Group>();private entradas=new Map<string,THREE.Group>();
+ private trazosArma=new Map<string,THREE.Group>();
  private claveMapa='';private estado:EstadoAventura|null=null;private tiempo=0;
  constructor(){this.grupo.name='expedicion';this.grupo.add(this.terreno,this.objetos,this.efectos);}
  get seleccionables(){return this.objetos.children;}
  objetivoDeInterseccion(obj:THREE.Object3D):ObjetivoAventura|null {let actual:THREE.Object3D|null=obj;while(actual){if(actual.userData.aventura)return actual.userData.aventura as ObjetivoAventura;actual=actual.parent;}return null;}
- private limpiar(){liberar(this.terreno);liberar(this.objetos);liberar(this.efectos);this.terreno=new THREE.Group();this.objetos=new THREE.Group();this.efectos=new THREE.Group();this.particulas=[];this.grupo.add(this.terreno,this.objetos,this.efectos);this.monstruos.clear();this.nodos.clear();this.botin.clear();this.situaciones.clear();this.entradas.clear();}
+ private limpiar(){liberar(this.terreno);liberar(this.objetos);liberar(this.efectos);this.terreno=new THREE.Group();this.objetos=new THREE.Group();this.efectos=new THREE.Group();this.particulas=[];this.grupo.add(this.terreno,this.objetos,this.efectos);this.trazosArma.clear();this.monstruos.clear();this.nodos.clear();this.botin.clear();this.situaciones.clear();this.entradas.clear();}
  private deshacer(p:PuntoAventura,color:string){
   for(let k=0;k<7;k++){const a=k*2.399,mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(.09+(k%3)*.025,0),new THREE.MeshStandardMaterial({color,roughness:.9}));mesh.position.set(p.x,.4,p.z);this.efectos.add(mesh);this.particulas.push({mesh,vx:Math.cos(a)*1.3,vz:Math.sin(a)*1.3,vy:1.7+k*.1,edad:0});}
   while(this.particulas.length>70){const p=this.particulas.shift()!;liberar(p.mesh);}
@@ -124,6 +125,9 @@ export class EscenaAventura {
  update(dt:number,e:EstadoAventura|null=this.estado,centro?:PuntoAventura){
   this.tiempo+=Math.max(0,Math.min(.1,dt));if(!e)return;const i=instanciaAventura(e);if(!i)return;
   const visible=(p:PuntoAventura)=>!centro||Math.hypot(p.x-centro.x,p.z-centro.z)<30;
+  const trazos=[...(e.proyectiles??[]).map(p=>({...p,id:'p'+p.id})),...(e.invocacion?[{id:'inv',...e.invocacion}]:[])];
+  const ids=new Set(trazos.map(p=>p.id));for(const [id,g] of this.trazosArma)if(!ids.has(id)){liberar(g);this.trazosArma.delete(id);}
+  for(const p of trazos){let g=this.trazosArma.get(p.id);if(!g){g=new THREE.Group();const color=p.modo==='sello_fuego'?'#df7359':p.modo==='sello_agua'?'#69badb':p.modo==='sello_tierra'?'#86b878':p.modo==='sello_aire'?'#bcc4cd':'#ecdca3';esfera(g,[.14,.14,.14],[0,.65,0],color);this.efectos.add(g);this.trazosArma.set(p.id,g);}g.position.set(p.x,0,p.z);}
   for(const m of i.monstruos){const f=this.monstruos.get(m.id);if(!f)continue;this.animar(f,m);f.grupo.visible=m.vivo&&visible(m);}
   for(const n of i.nodos){const g=this.nodos.get(n.id);if(!g)continue;g.visible=visible(n);const t=Math.max(0,(g.userData.impacto??0)-dt);g.userData.impacto=t;g.rotation.z=t>0?Math.sin(t*90)*t*.5:0;}
   for(const p of this.particulas){p.edad+=dt;p.mesh.position.x+=p.vx*dt;p.mesh.position.z+=p.vz*dt;p.mesh.position.y+=p.vy*dt;p.vy-=dt*6;p.mesh.rotation.x+=dt*4;p.mesh.scale.setScalar(Math.max(0,1-p.edad/.65));}
@@ -144,5 +148,5 @@ export class EscenaAventura {
   f.barra.visible=m.hp<m.hpMax||wind;f.relleno.scale.x=Math.max(.001,m.hp/m.hpMax);f.relleno.position.x=-.425*(1-m.hp/m.hpMax);
   if(m.invulnerable>0)f.cuerpo.scale.multiplyScalar(1+Math.sin(t*45)*.035);
  }
- dispose(){liberar(this.grupo);this.monstruos.clear();this.nodos.clear();this.botin.clear();this.situaciones.clear();this.estado=null;this.claveMapa='';}
+ dispose(){liberar(this.grupo);this.trazosArma.clear();this.monstruos.clear();this.nodos.clear();this.botin.clear();this.situaciones.clear();this.estado=null;this.claveMapa='';}
 }

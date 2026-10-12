@@ -1,0 +1,12 @@
+{
+  "npc": 142,
+  "figuras": 6,
+  "localidades": 19,
+  "misiones": 217,
+  "relaciones": 98,
+  "lineas": 2750,
+  "ciclos": 0,
+  "premios_con_bonus_global": 0,
+  "casos_invalidos_rechazados": 17,
+  "estado": "autoria_validada; verificaciones_de_motor_y_medios_separadas"
+}

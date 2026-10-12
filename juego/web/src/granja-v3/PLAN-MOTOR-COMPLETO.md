@@ -1,5 +1,36 @@
 # Plan del motor completo: capacidades, variedad y aceptación
 
+## Base de Astra para producción · 11 de octubre de 2026
+
+Se integraron 28 lugares, 27 rutas físicas, 142 identidades y 76 domicilios; 118 residentes y
+59 interiores son nuevos. Hay 24 bancos regionales, 24 cultivos adicionales, 72 recetas regionales,
+mantenimiento local de ocho estancias, cuatro arenas elementales y lectura de hitos de Sangre y Ceniza.
+Los 36 expedientes adaptan la campaña a investigación y escenas: **no certifican las 36 misiones finales**.
+Las 181 historias adicionales y los efectos de 217 premios siguen pendientes.
+
+[ASTRA-INTEGRACION.md](ASTRA-INTEGRACION.md) reúne lo que puede producir el frente visual, el manifiesto
+de modelos/voz/música, las reglas de guardado y la lista actual de pendientes. El jugador de escenas
+tiene subtítulos y claves para 284 guiones de recuerdos y 14 cinematográficas. Se reproducen los 142 recuerdos iniciales; los 142 posteriores esperan sus misiones personales. El audio nuevo no se ha generado.
+El cuidado, el crecimiento al dormir y las economías anteriores se conservan.
+
+## Libros y pistas útiles integrados
+
+Actualización del 11 de octubre de 2026: tres cuadernos técnicos se recuperan junto a campamentos existentes
+en los pisos 1, 5 y 9 de Minas de Celia. Encontrado y leído se registran por separado con fechas y semilla
+de origen; consultar la biblioteca no concede aprendizaje. Leer tras regresar enseña prospección pagada
+con antorchas/energía o dos recetas más rápidas de cobre/vidrio con los materiales y requisitos originales.
+Los efectos, descubrimientos y pagos persisten; importaciones incoherentes se rechazan y el guardado fallido
+revierte toda la operación. Se conserva V5 y se utilizan paneles sencillos, sin trabajo de arte.
+
+[LIBROS-INTEGRACION.md](LIBROS-INTEGRACION.md) documenta fuentes, costes, recetas, API y límites.
+K07 pasa a parcial: tres hallazgos y textos técnicos propuestos, sin canon nuevo; faltan libros regionales,
+variedad y conexiones narrativas. K06 sigue parcial aunque ya distingue cuaderno encontrado y leído.
+Siguiente bloque previsto: hallazgos mineros, identificación de geodas/tesoros/artefactos y uso en museo/equipo (F11).
+No se certifica campaña completa desde cero. Catálogo actual: 149 recetas y 458 objetos.
+Verificación: 22 grupos nuevos de lógica, 32 suites y 17 comprobaciones de navegador
+(11 de cuadernos y seis de casa/granja), sin fallos; ambas compilaciones correctas.
+
+
 ## Colecciones y lotes integrados
 
 Actualización del 11 de octubre de 2026: seis lotes del archivo conectan piezas concretas y alternativas,
@@ -12,7 +43,7 @@ importaciones incoherentes se rechazan y fallos de almacenamiento revierten la a
 [COLECCIONES-INTEGRACION.md](COLECCIONES-INTEGRACION.md) documenta los seis lotes y sus reglas.
 I09 pasa a parcial: falta variedad regional, exhibición física y lotes de artefactos. K06 sigue parcial:
 se distinguen donaciones, reservas y vista previa; faltan todos los cuadernos semánticos independientes.
-No se certifica una campaña completa desde cero. Siguiente bloque: libros y pistas útiles (K07).
+No se certifica una campaña completa desde cero. La primera serie de K07 se describe al inicio de este plan.
 Verificación: 23 grupos nuevos de lógica, regresión de 31 suites y 17 comprobaciones de navegador
 (11 de colecciones y seis de casa/granja), sin fallos; compilaciones completa y de amigos correctas.
 
@@ -372,7 +403,7 @@ Referencias: [Socializar](https://es.stardewvalleywiki.com/Amistades), [Expanded
 
 | ID | Capacidad | Estado base | Criterio propio para cerrar |
 |---|---|---|---|
-| H01 | NPC independientes | Parcial · 24 habitantes con apariencia, rutina y relación; alojamiento compartido provisional | Identidad, apariencia, hogar, oficio y estado propio; hablar con una persona abre diálogo, no siempre la tienda. |
+| H01 | NPC independientes | Parcial · 142 identidades presentes, 76 domicilios y recuerdos; regalos/comercios completos solo en el primer pueblo | Identidad, apariencia, hogar, oficio y estado propio; hablar con una persona abre diálogo, no siempre la tienda. |
 | H02 | Horario y navegación | Parcial · rutas por hora, día y lluvia; pendientes estaciones/eventos y viajes entre regiones | Agenda por día, hora, estación, clima y evento; caminar entre nodos, entrar/salir, atender/descansar; sin teletransporte visible injustificado. |
 | H03 | Horarios comerciales | Parcial · apertura, cierre y días libres integrados; pendientes cierres especiales y alternativas de entrega | Edificio y mostrador pueden tener disponibilidad distinta; cartel/UI anticipan cierres; no bloquear una entrega sin alternativa razonable. |
 | H04 | Diálogo contextual | Parcial · diálogos propios por día/amistad y lluvia; pendientes misión, elecciones y escenas | Estado de misión, relación, lugar, evento y conversación previa eligen texto coherente; alternativas y condiciones persistidas. |
@@ -429,8 +460,8 @@ Referencias: [Productos artesanales](https://es.stardewvalleywiki.com/Productos_
 | K03 | Obras y mejoras | Parcial | Plano, materiales, huella/acceso, encargo, plazo y entrega; durante obra no ofrece cupo/servicio; mejoras cambian interior y capacidades. |
 | K04 | Decorar y reorganizar | Implementado | Mover/girar/retirar conserva estado de objetos funcionales y acceso; caminos, vallas y portones tienen conducta coherente. |
 | K05 | Museo físico | Pendiente | Donar pieza obtenida realmente, consumir una unidad, situarla/mostrarla, registrar donación única y reclamar recompensa sin duplicar. |
-| K06 | Colecciones y cuadernos | Parcial · cuaderno de donaciones separado de reservas y atlas; pendientes los demás registros semánticos | Separar descubierto, capturado, criado, fabricado, vendido y donado; atlas de vista previa no se muestra como colección conseguida. |
-| K07 | Libros y pistas | Pendiente | Hallazgos leíbles con registro y pistas útiles para sistemas/desbloqueos; textos provisionales etiquetados internamente, sin canon nuevo. |
+| K06 | Colecciones y cuadernos | Parcial · donado/reservado y cuaderno encontrado/leído separados del atlas; pendientes los demás registros semánticos | Separar descubierto, capturado, criado, fabricado, vendido y donado; atlas de vista previa no se muestra como colección conseguida. |
+| K07 | Libros y pistas | Parcial · tres cuadernos recuperables, lectura, prospección y dos recetas; pendientes variedad regional e historia | Hallazgos leíbles con registro y pistas útiles para sistemas/desbloqueos; textos provisionales etiquetados internamente, sin canon nuevo. |
 | K08 | Obras comunitarias | Pendiente | Contribuir materiales/categorías, terminar obra, abrir ruta o servicio y ver NPC usarlo; no solo añadir un token. |
 | K09 | Balance y vías alternativas | Parcial | Comprar/craftear/vender no crea dinero infinito; no hay dependencia circular entre herramienta, mineral y zona; el jugador puede recuperarse de falta de recursos. |
 
@@ -443,11 +474,11 @@ Referencias: red de regiones de [Expanded](https://stardew-valley-expanded.fando
 | L01 | Red de mapas | Parcial | Exteriores, interiores y transiciones definidos con acceso, salida, colisiones, recursos, NPC y estado persistente; mostrar mapa con rutas y restricciones. |
 | L02 | Diversidad regional | Parcial | Costa, río, montaña, bosque, subsuelo, ruinas y regiones avanzadas difieren en silueta, recorrido, encuentro, recurso y actividad. |
 | L03 | Desbloquear rutas | Parcial | Obra, equipo, misión, relación o colección abre acceso verificable; la barrera explica falta y no puede saltarse con UI de viaje. |
-| L04 | Portales | Pendiente | Descubrir, activar, seleccionar destino y cruzar un portal físico; validar requisitos/coste; regreso seguro incluso con inventario lleno o derrota. |
-| L05 | Verdia | Pendiente | Región propia con mapa recorrible, recursos/plantas, NPC o encuentro, cadena de actividad y recompensa que se use fuera de ella; contenido narrativo provisional. |
-| L06 | Senda | Pendiente | Región distinta de Verdia por actividad, distribución y materiales; entrada/salida y desbloqueo funcionan; no es recolor del mismo plano. |
-| L07 | Nox | Pendiente | Identidad mecánica, recursos, peligros/equipo apropiado, hallazgo y vuelta segura; no asignar doctrina o historia definitiva sin fuente del usuario. |
-| L08 | Espacio | Pendiente | Acceso avanzado, mapa navegable, actividad propia, recursos usados en fabricación y pedidos, gestión de peligros y retorno; fondo estrellado no cuenta como sistema. |
+| L04 | Portales | Parcial · accesos físicos, habitantes y recursos presentes; ver ASTRA-INTEGRACION.md para límites | Descubrir, activar, seleccionar destino y cruzar un portal físico; validar requisitos/coste; regreso seguro incluso con inventario lleno o derrota. |
+| L05 | Verdia | Parcial · accesos físicos, habitantes y recursos presentes; ver ASTRA-INTEGRACION.md para límites | Región propia con mapa recorrible, recursos/plantas, NPC o encuentro, cadena de actividad y recompensa que se use fuera de ella; contenido narrativo provisional. |
+| L06 | Senda | Parcial · accesos físicos, habitantes y recursos presentes; ver ASTRA-INTEGRACION.md para límites | Región distinta de Verdia por actividad, distribución y materiales; entrada/salida y desbloqueo funcionan; no es recolor del mismo plano. |
+| L07 | Nox | Parcial · accesos físicos, habitantes y recursos presentes; ver ASTRA-INTEGRACION.md para límites | Identidad mecánica, recursos, peligros/equipo apropiado, hallazgo y vuelta segura; no asignar doctrina o historia definitiva sin fuente del usuario. |
+| L08 | Espacio | Parcial · accesos físicos, habitantes y recursos presentes; ver ASTRA-INTEGRACION.md para límites | Acceso avanzado, mapa navegable, actividad propia, recursos usados en fabricación y pedidos, gestión de peligros y retorno; fondo estrellado no cuenta como sistema. |
 | L09 | Mundo que recuerda | Parcial | Cofres, nodos, encuentros, obras, NPC y pedidos conservan estado por zona; entrar/salir no reinicia recompensas ni desbloquea rutas ajenas. |
 | L10 | Casa y juegos existentes | Implementado | Viajar a casa y volver mantiene personaje, posición segura, inventario y sesión; nuevos sistemas no sustituyen ni rompen minijuegos existentes. |
 
@@ -610,6 +641,12 @@ Este orden expresa dependencias y prioridad actual. Los ajustes visuales y de re
 Los fixtures sirven para comprobar casos raros y regresiones. Deben etiquetarse como tales. Una partida preparada no demuestra que el contenido sea accesible o esté equilibrado desde el inicio.
 
 ## 7. Condición de entrega y registro de cierre
+
+**Actualización narrativa, 11 de octubre:** por encargo expreso de Javier existe ahora una biblia de
+autoría en `docs/narrativa/`, con 197 misiones escritas, todo el reparto y guiones de producción.
+`NARRATIVA-INTEGRACION.md` define cómo llevarla a este motor sin cambiar IDs o V5. Este avance no
+cierra capacidades pendientes de esta auditoría: ningún portal, personaje adicional o premio queda
+implementado porque tenga un guion. La publicación sigue pausada por petición del usuario.
 
 No declarar «motor completo», «igual a Stardew» ni «todo implementado» mientras exista una capacidad solicitada parcial o pendiente. Se puede informar de avances concretos, pero este plan no es el resultado final solicitado.
 
