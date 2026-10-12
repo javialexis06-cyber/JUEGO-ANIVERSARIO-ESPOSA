@@ -2,6 +2,7 @@
 // línea cada uno en su celular o en una sala con código de 2 a 4 con amigos). Con amigos (o en el aparato de un
 // amigo) todo va en modo neutro: nada personal de la pareja (neutro.ts).
 // Letras empacadas con el juego (funciona sin internet, también en la app de Android)
+import './deslizar';
 import '@fontsource/courier-prime/latin-400.css';
 import '@fontsource/courier-prime/latin-700.css';
 import '@fontsource/fredoka/latin-500.css';

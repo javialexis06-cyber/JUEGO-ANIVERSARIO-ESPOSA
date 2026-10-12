@@ -1,3 +1,15 @@
+## Reuniones y agendas comunitarias · 12 de octubre de 2026
+
+Se integró el gremio, museo e inicio guiado de Claude (`85fffaf`), conservando sus modelos,
+cuartos, progresión, vecinos por partes y avances del lavado. El motor continúa por instrucción
+de Javier. Se añaden 52 reuniones en 17 localidades y el turno
+comunitario de la terminal de Celia. Se reutilizan los actores, calles, retratos y música; no se cambia
+el lavado ni se producen gráficos nuevos. Leer [REUNIONES-INTEGRACION.md](../../juego/web/src/granja-v3/REUNIONES-INTEGRACION.md).
+Hay 312 subtítulos nuevos con IDs y firmas, todavía sin audio comprado. AudioAstra admite sus tomas
+cuando se declaren archivos reales. Conservar las voces anteriores; no volver a generarlas por estos IDs.
+El descanso, clima, misiones, cuidado real y permisos siguen teniendo prioridad. Las visitas a las
+otras tres obras aún no se atribuyen a ninguna agenda.
+
 ## Progresión y entrega del motor · 12 de octubre de 2026
 
 Se incorporaron los cambios de Claude hasta `ed1b571` (incluidas las cartas, disfraces y cajitas del lavado): mapa, salidas, retratos, interiores y La Feria

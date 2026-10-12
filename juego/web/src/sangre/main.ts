@@ -2,6 +2,7 @@
 // escoger clase y especialización, bioma, peligro, mutadores y equipo del Pozo, la expedición (cinco etapas con la
 // Forja entre medio), los resultados con la ceniza y la maestría, el Pozo de las Almas, los logros, la pausa y el
 // tutorial. Las partidas en grupo (hasta 4) van por `red/`.
+import '../deslizar';
 import './sangre.css';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';

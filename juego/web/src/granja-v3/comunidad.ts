@@ -1,4 +1,6 @@
 import {tiempoDia,tiempoRegion} from './clima';
+import {crearReuniones,actuarReunion,dormirReuniones,reunionesValidas} from './reuniones';
+import type {AccionReunion} from './reuniones-tipos';
 import type {Accion,EstadoGranja,Resultado} from './estado';
 import type {AccionComunidad,EstadoComunidad,HechoCuaderno} from './comunidad-tipos';
 import {ARTEFACTOS_COMUNIDAD,PESQUERIAS_REGIONALES,OBRAS_COMUNIDAD,CUADERNOS_COMUNIDAD} from './comunidad-datos';
@@ -11,7 +13,7 @@ import {puedeUsarArchivo} from './colecciones';
 import {admiteEnvio,transferirEnvio} from './envios';
 import {gruposProduccion} from './produccion';
 export {ARTEFACTOS_COMUNIDAD,PESQUERIAS_REGIONALES,OBRAS_COMUNIDAD,CUADERNOS_COMUNIDAD};
-export const crearComunidad=():EstadoComunidad=>({version:1,secuencia:0,cuaderno:{},donaciones:[],vitrinas:Array(6).fill(null),colecciones:[],libros:[],obras:[],tesoros:[],ultimoTesoro:-1,trampas:[],terminales:[],bultos:[],exportadores:[],pedidos:{},pausaDia:-1,cargasRecogidas:0,eventos:[]});
+export const crearComunidad=():EstadoComunidad=>({version:1,secuencia:0,reuniones:crearReuniones(),cuaderno:{},donaciones:[],vitrinas:Array(6).fill(null),colecciones:[],libros:[],obras:[],tesoros:[],ultimoTesoro:-1,trampas:[],terminales:[],bultos:[],exportadores:[],pedidos:{},pausaDia:-1,cargasRecogidas:0,eventos:[]});
 const bien=(mensaje:string):Resultado=>({ok:true,mensaje}),mal=(mensaje:string):Resultado=>({ok:false,mensaje});
 const lugar=(s:EstadoGranja)=>s.astra?.actual??s.zona;
 const cerca=(p:{x:number;z:number},x:number,z:number)=>Number.isFinite(x)&&Number.isFinite(z)&&Math.hypot(p.x-x,p.z-z)<=3;
@@ -51,6 +53,8 @@ function pagar(s:EstadoGranja,coste:Record<string,number>){let next=s.casillasIn
 function sacar(s:EstadoGranja,casilla:number,n=1):Pila|null{if(!Number.isInteger(casilla)||casilla<0||casilla>=s.casillasInventario.length)return null;const p=s.casillasInventario[casilla];if(!p||!Number.isInteger(n)||n<1||n>p.cantidad)return null;const tomado={articulo:p.articulo,cantidad:n,calidad:calidadPila(p)};p.cantidad-=n;if(!p.cantidad)s.casillasInventario[casilla]=null;s.inventario=resumirCasillas(s.casillasInventario);return tomado;}
 export function actuarComunidad(s:EstadoGranja,a:AccionComunidad,x:number,z:number,c:{agregar:(id:string,n:number,calidad?:Calidad)=>void;azar:()=>number}):Resultado{
  const v=s.comunidad!,dia=s.jornada.diasCompletados,region=lugar(s);
+ if(['reunion','aplazar_reunion','continuar_reunion','dejar_reunion','elegir_reunion'].includes(a.tipo))return actuarReunion(s,a as AccionReunion,x,z,c.agregar);
+ if(v.reuniones.actual||s.astra?.escena||s.historia?.reto)return mal('Termina o deja la conversación antes de usar otro servicio comunitario.');
  if(a.tipo==='obra'||a.tipo==='abrir_obra'){
   const d=OBRAS_COMUNIDAD.find(o=>o.id===a.id);if(!d||d.region!==region||s.astra?.interior||s.interior||!cerca(d,x,z)||d.region==='pueblo'&&!archivo(s,x,z))return mal('Acércate al puesto de esa obra comunitaria.');
   if('permiso'in d&&!s.historia?.completadas[d.permiso])return mal('Acuerda primero el acceso a la estación en la campaña.');const r=v.obras.find(o=>o.id===a.id);
@@ -106,6 +110,7 @@ export function actuarComunidad(s:EstadoGranja,a:AccionComunidad,x:number,z:numb
 }
 /** Solo dentro de una noche real del motor: ni cargar ni avanzar el reloj ejecutan estas operaciones. */
 export function dormirComunidad(s:EstadoGranja,azar:()=>number){const v=s.comunidad!,dia=s.jornada.diasCompletados;
+ dormirReuniones(s);
  for(const t of v.trampas){if(t.usos<=0||t.salida||t.ultimoDia>=dia)continue;t.ultimoDia=dia;t.usos--;
   const regional=PECES.filter(p=>p.regiones?.includes(t.region)),pool=regional.length?regional:PECES.filter(p=>!p.regiones&&p.zonas.includes('lago'));
   const tiempo=tiempoRegion(tiempoDia(s.tiempo,dia),'templado');const estacion=(['primavera','verano','otono','invierno'] as const)[Math.floor(dia/28)%4],disponibles=pool.filter(p=>p.cebo===t.cebo&&p.estaciones.includes(estacion)&&(!p.tiempos||p.tiempos.includes(tiempo))&&(p.desde<p.hasta?6>=p.desde&&6<p.hasta:6>=p.desde||6<p.hasta));
@@ -122,7 +127,7 @@ export function prepararExportaciones(s:EstadoGranja){const v=s.comunidad!;for(c
  }}
 const entero=(n:unknown,min=0,max=1e9)=>typeof n==='number'&&Number.isInteger(n)&&n>=min&&n<=max;
 const registro=(r:unknown):r is Record<string,any>=>!!r&&typeof r==='object'&&!Array.isArray(r);
-export function comunidadValida(s:EstadoGranja):boolean{const v=s.comunidad,dia=s.jornada?.diasCompletados;if(!v||v.version!==1||!entero(v.secuencia)||!registro(v.cuaderno)||Object.keys(v.cuaderno).length>2500||!entero(v.ultimoTesoro,-1,dia)||!entero(v.pausaDia,-1,dia)||!entero(v.cargasRecogidas))return false;
+export function comunidadValida(s:EstadoGranja):boolean{const v=s.comunidad,dia=s.jornada?.diasCompletados;if(!v||v.version!==1||!reunionesValidas(s)||!entero(v.secuencia)||!registro(v.cuaderno)||Object.keys(v.cuaderno).length>2500||!entero(v.ultimoTesoro,-1,dia)||!entero(v.pausaDia,-1,dia)||!entero(v.cargasRecogidas))return false;
  const unicos=(a:unknown[],key:(r:any)=>string)=>new Set(a.map(key)).size===a.length;
  const regiones=['pueblo',...TERRITORIOS_REGIONALES.map(r=>r.id)],items=itemsMuseo(),pila=(p:any)=>registro(p)&&!!obtenerObjeto(p.articulo)&&entero(p.cantidad,1,limitePila(p.articulo))&&(p.calidad===undefined||entero(p.calidad,0,3));
  if(!Object.entries(v.cuaderno).every(([id,e])=>!!obtenerObjeto(id)&&registro(e)&&Object.entries(e).every(([k,r])=>['obtener','capturar','fabricar','vender','donar','identificar'].includes(k)&&registro(r)&&entero(r.cantidad,1)&&entero(r.dia,0,dia))))return false;

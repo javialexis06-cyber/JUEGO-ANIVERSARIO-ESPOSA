@@ -1,5 +1,6 @@
 // Cien Puertas: escape room de un jugador con el otro personaje de narrador.
 // Flujo de cada puerta: el narrador cuenta → se juega → la puerta se abre → celebra → se cruza a la siguiente.
+import '../deslizar';
 import '@fontsource/fredoka/latin-500.css';
 import '@fontsource/fredoka/latin-600.css';
 import '@fontsource/fredoka/latin-700.css';

@@ -154,7 +154,12 @@ export class Globo {
           { izq: r.left - 8 - ancho, arriba }, // a la izquierda
           { izq, arriba: r.bottom + 8 }, // debajo
         ].filter((o) => o.izq >= 8 && o.izq + ancho <= Math.max(derecha, w - 8) && o.arriba + alto <= h - 8);
-        const mejor = opciones.sort((a, b) => Math.hypot(a.izq - izq, a.arriba - arriba) - Math.hypot(b.izq - izq, b.arriba - arriba))[0];
+        // Ni la cara del narrador (bajarse debajo del tutorial le tapaba la cabeza) ni, si se puede, la puerta
+        const tapa = (o: { izq: number; arriba: number }, z: { x0: number; y0: number; x1: number; y1: number } | null) =>
+          !!z && o.izq < z.x1 && o.izq + ancho > z.x0 && o.arriba < z.y1 && o.arriba + alto > z.y0;
+        const cara = { x0: x - 70, y0: y - 10, x1: x + 70, y1: y + 120 };
+        const costo = (o: { izq: number; arriba: number }) => Math.hypot(o.izq - izq, o.arriba - arriba) + (tapa(o, cara) ? 2000 : 0) + (tapa(o, e) ? 500 : 0);
+        const mejor = opciones.sort((a, b) => costo(a) - costo(b))[0];
         if (!mejor) break;
         izq = mejor.izq;
         arriba = mejor.arriba;
