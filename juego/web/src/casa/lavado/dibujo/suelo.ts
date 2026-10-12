@@ -348,6 +348,66 @@ const FRAG_MATERA = COMUN + /* glsl */ `
   }
 `;
 
+const FRAG_TOBOGAN = COMUN + /* glsl */ `
+  void main() {
+    vec2 p = vMapa;
+    float d1 = texture2D(uDetalle, p / 260.0).r;
+    vec4 n = texture2D(uRuido, p / 1600.0);
+    // El tobogán de plástico celeste, con el agua que corre hacia adelante
+    vec3 col = mix(uC1, uC2, smoothstep(0.3, 0.8, n.r));
+    col *= 0.94 + d1 * 0.1;
+    vec4 agua = texture2D(uRuido, vec2(p.x / 500.0 - uTiempo * 0.18, p.y / 260.0));
+    vec4 agua2 = texture2D(uRuido, vec2(p.x / 300.0 - uTiempo * 0.3, p.y / 180.0 + 0.5));
+    float brillo = smoothstep(0.62, 0.8, agua.r * 0.6 + agua2.g * 0.4);
+    col += brillo * vec3(0.16, 0.2, 0.22);
+    float raya = smoothstep(0.93, 1.0, sin(p.x * 0.03 - uTiempo * 9.0 + agua.b * 6.0) * 0.5 + 0.5) * smoothstep(0.5, 0.7, agua2.r);
+    col += raya * 0.1;
+    // Los carriles: rayitas blancas a lo largo
+    float mc = mod(p.y + 100.0, 200.0);
+    float dl = min(mc, 200.0 - mc);
+    float linea = (1.0 - smoothstep(2.5, 5.0, dl)) * step(0.45, fract(p.x / 150.0));
+    col = mix(col, vec3(0.97, 0.99, 1.0), linea * 0.65);
+    // Los turbos: flechas naranjas que corren (las mismas posiciones que turboEn en el motor)
+    float k = floor((p.x - 600.0) / 1150.0 + 0.5);
+    vec2 c = vec2(k * 1150.0 + 600.0, sin(k * 1.7) * 190.0);
+    vec2 l = p - c;
+    float caja = (1.0 - smoothstep(70.0, 80.0, abs(l.x))) * (1.0 - smoothstep(38.0, 46.0, abs(l.y)));
+    float ch = fract((l.x + abs(l.y) * 0.9) / 46.0 - uTiempo * 1.6);
+    float flecha = smoothstep(0.0, 0.06, ch) * (1.0 - smoothstep(0.38, 0.44, ch));
+    vec3 cTurbo = mix(vec3(1.0, 0.5, 0.18), vec3(1.0, 0.9, 0.35), flecha);
+    col = mix(col, cTurbo * (0.92 + 0.12 * sin(uTiempo * 8.0)), caja * 0.92);
+    // Las banderas: una raya de meta a cuadros cada 1800 (BANDERA_CADA)
+    float xb = floor(p.x / 1800.0 + 0.5) * 1800.0;
+    float db = abs(p.x - xb);
+    vec2 cq = floor(vec2(p.x - xb + 24.0, p.y) / 12.0);
+    float cuadro = mod(cq.x + cq.y, 2.0);
+    float meta = (1.0 - smoothstep(22.0, 24.0, db)) * step(1.0, xb);
+    col = mix(col, mix(vec3(0.12, 0.12, 0.16), vec3(1.0), cuadro), meta * 0.9);
+    if (uLimites.z > 0.5) {
+      float fuera = max(uLimites.x - p.y, p.y - uLimites.y);
+      if (fuera > 0.0) {
+        // Las paredes redondas del tobogán y, más allá, el caño oscuro
+        float t = clamp(fuera / 90.0, 0.0, 1.0);
+        vec3 pared = mix(uC3 * 1.2, uC3 * 0.55, t);
+        float filo = 1.0 - smoothstep(0.0, 9.0, abs(fuera - 16.0));
+        pared += filo * 0.28;
+        pared *= 0.95 + d1 * 0.1;
+        vec3 cano = vec3(0.16, 0.2, 0.22) * (0.8 + d1 * 0.4);
+        vec2 r = fract(vec2(p.x / 180.0, 0.5));
+        float remache = 1.0 - smoothstep(0.03, 0.05, abs(r.x - 0.5));
+        cano += remache * 0.05 * step(130.0, fuera);
+        col = mix(pared, cano, smoothstep(88.0, 120.0, fuera));
+      } else {
+        float cerca = min(p.y - uLimites.x, uLimites.y - p.y);
+        col *= 0.8 + 0.2 * smoothstep(0.0, 50.0, cerca);
+        col += (1.0 - smoothstep(0.0, 14.0, cerca)) * 0.12;
+      }
+    }
+    gl_FragColor = vec4(col, 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
 interface Paleta {
   c1: string;
   c2: string;
@@ -380,6 +440,7 @@ const DECOR: Record<IdEscenario, [IdDecor, number, number][]> = {
   desfile: [['pelito', 2, 70], ['petalos', 2, 70], ['burbujitas', 1.5, 60]],
   espejo: [['gotaAgua', 6, 70], ['burbujitas', 2, 60], ['manchaJabon', 1.5, 120]],
   matera: [['hojita', 6, 80], ['petalos', 2.4, 70], ['pelito', 1.2, 60]],
+  tobogan: [['burbujitas', 4, 80], ['espumaIsla', 1.2, 120], ['gotaAgua', 2, 60]],
 };
 
 export class Suelo {
@@ -407,12 +468,13 @@ export class Suelo {
       : esc === 'desfile' ? { c1: '#c8a8e0', c2: '#d8bce8', c3: '#8a5ab8' }
       : esc === 'espejo' ? { c1: '#b8c8d4', c2: '#d4e0e8', c3: '#f2f6f8' }
       : esc === 'matera' ? { c1: '#4a3224', c2: '#5e4030', c3: '#c8683e' }
+      : esc === 'tobogan' ? { c1: '#7fc8e8', c2: '#9ad8f0', c3: '#3e8ab8' }
       : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
     // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
     const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({
       vertexShader: VERT,
-      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : esc === 'desfile' ? FRAG_TAPETE : esc === 'espejo' ? FRAG_ESPEJO : esc === 'matera' ? FRAG_MATERA : FRAG_BANERA,
+      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : esc === 'desfile' ? FRAG_TAPETE : esc === 'espejo' ? FRAG_ESPEJO : esc === 'matera' ? FRAG_MATERA : esc === 'tobogan' ? FRAG_TOBOGAN : FRAG_BANERA,
       uniforms: {
         uDetalle: { value: detalle },
         uRuido: { value: ruido },
@@ -448,7 +510,7 @@ export class Suelo {
     const C = 150;
     const x0 = Math.floor((cx - ancho * 0.62) / C), x1 = Math.floor((cx + ancho * 0.62) / C);
     const y0 = Math.floor((cy - hondo * 0.7) / C), y1 = Math.floor((cy + hondo * 0.62) / C);
-    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : this.esc === 'desfile' ? 19 : this.esc === 'espejo' ? 23 : this.esc === 'matera' ? 29 : 7;
+    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : this.esc === 'desfile' ? 19 : this.esc === 'espejo' ? 23 : this.esc === 'matera' ? 29 : this.esc === 'tobogan' ? 31 : 7;
     for (let gy = y0; gy <= y1; gy++)
       for (let gx = x0; gx <= x1; gx++) {
         if (hash2(gx, gy, sem) > 0.62) continue;

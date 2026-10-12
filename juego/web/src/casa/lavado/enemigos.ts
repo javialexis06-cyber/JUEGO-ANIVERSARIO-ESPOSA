@@ -102,6 +102,9 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   dienteLeon: E({ id: 'dienteLeon', nombre: 'Diente de león', desc: 'Semillitas de pompón que el viento mete por la ventana.', vida: 9, vel: 70, dano: 4, xp: 1, radio: 10, tam: 36, comp: 'flotar' }),
   enredadera: E({ id: 'enredadera', nombre: 'Enredadera', desc: 'Un nudo de bejucos terco como él solo: tapa el camino.', vida: 280, vel: 0, dano: 16, xp: 3, radio: 17, tam: 54, retro: 0, comp: 'planta' }),
   helecho: E({ id: 'helecho', nombre: 'Helecho', desc: 'Frondoso, enorme y con una carita escondida entre las hojas.', vida: 900, vel: 0, dano: 22, xp: 5, radio: 22, tam: 66, retro: 0, comp: 'planta' }),
+  // ------------------------------------------------------------------------------------------------ El Tobogán del desagüe
+  patitoHule: E({ id: 'patitoHule', nombre: 'Patito de hule', desc: 'Bajaron todos juntos por el tobogán, felices y en manada.', vida: 8, vel: 96, dano: 4, xp: 1, radio: 10, tam: 32, comp: 'enjambre' }),
+  chancleta: E({ id: 'chancleta', nombre: 'Chancleta perdida', desc: 'Quietica en el agua… y de pronto, ¡chancletazo!', vida: 60, vel: 62, dano: 9, xp: 2, radio: 14, tam: 44, comp: 'embestir' }),
   // ------------------------------------------------------------------------------------------------ Jefes (vida × nivel)
   espinillon: E({ id: 'espinillon', nombre: 'El Espinillón', desc: 'El rey de los granitos, con corona y todo. Embiste cuando se enoja.', vida: 420, vel: 56, dano: 30, xp: 120, radio: 40, tam: 130, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
   reinaCaspa: E({ id: 'reinaCaspa', nombre: 'La Reina Caspa', desc: 'Llega nevando. Guarda una carta mágica perdida.', vida: 300, vel: 72, dano: 24, xp: 120, radio: 34, tam: 118, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
@@ -129,6 +132,8 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   donCactus: E({ id: 'donCactus', nombre: 'Don Cactus', desc: 'El cactus más viejo de la ventana, con corona y brazos. Quiere un abrazo (mejor no).', vida: 480, vel: 40, dano: 30, xp: 150, radio: 40, tam: 130, retro: 0, jefe: true, congelable: false }),
   atrapamoscasGigante: E({ id: 'atrapamoscasGigante', nombre: 'La Atrapamoscas Gigante', desc: 'Una boca de planta con corona y muchísima hambre.', vida: 700, vel: 58, dano: 36, xp: 170, radio: 44, tam: 140, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
   materaGigante: E({ id: 'materaGigante', nombre: 'La Matera Gigante', desc: 'La matera de barro se levantó y camina, con su girasol bravo encima.', vida: 1000, vel: 46, dano: 42, xp: 220, radio: 50, tam: 160, retro: 0, jefe: true, congelable: false }),
+  patoInflable: E({ id: 'patoInflable', nombre: 'El Pato Inflable Gigante', desc: 'Se soltó de la piscina y baja por el tobogán con corona y todo.', vida: 620, vel: 62, dano: 34, xp: 170, radio: 46, tam: 150, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
+  donaFlotador: E({ id: 'donaFlotador', nombre: 'La Dona Flotadora', desc: 'Un flotador rosado con chispitas que da vueltas y vueltas… y muerde.', vida: 900, vel: 72, dano: 40, xp: 220, radio: 46, tam: 150, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
   // ------------------------------------------------------------------------------------------------ La Parca
   duchaHelada: E({ id: 'duchaHelada', nombre: 'La Ducha Helada', desc: '¡Se acabó el agua caliente! Si llega, ya ganaste… pero no la aguanta nadie.', vida: 655350, vel: 230, dano: 65535, xp: 0, radio: 34, tam: 140, retro: 0, comp: 'parca', jefe: true, congelable: false }),
 };
