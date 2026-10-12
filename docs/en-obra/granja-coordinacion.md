@@ -1,3 +1,13 @@
+## Progresión y entrega del motor · 12 de octubre de 2026
+
+Se incorporaron los cambios de Claude hasta `ed1b571` (incluidas las cartas, disfraces y cajitas del lavado): mapa, salidas, retratos, interiores y La Feria
+se conservan. El recorrido nuevo cerró los 36 contratos principales desde una partida nueva con
+recursos propios, fabricación, compras y caminos físicos; Sangre usa una entrada de integración.
+Leer [BALANCE-INTEGRACION.md](../../juego/web/src/granja-v3/BALANCE-INTEGRACION.md). Los cuatro enlaces
+civiles tienen IDs nuevos y usan kits anteriores. Las expediciones avanzadas, recetas y huellas
+conservan sus requisitos. Rita ofrece suministros con precio normal y cupos; la nave retorna fuera
+de su volumen. No generar otra vez las voces existentes ni atribuir FPS físicos a estas pruebas.
+
 ## Comunidad y redes · 12 de octubre de 2026
 
 El frente de motor continúa por instrucción de Javier. No se modifican lavado, casas, inventario visual,

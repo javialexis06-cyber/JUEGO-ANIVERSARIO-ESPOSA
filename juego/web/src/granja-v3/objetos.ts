@@ -1,3 +1,4 @@
+import {ACCESOS_CAMPANA} from './accesos-campana';
 import {ARTEFACTOS_COMUNIDAD} from './comunidad-datos';
 import {TERRITORIOS_REGIONALES} from './regiones-datos';
 import {PREMIOS_NARRATIVOS} from './premios-datos';
@@ -29,6 +30,7 @@ function objeto(id:string,nombre:string,categoria:DefObjeto['categoria'],precioV
 for(const [id,nombre,descripcion]of ARTEFACTOS_COMUNIDAD)objeto(id,nombre,'recurso',0,{precioCompra:0,descripcion});
 for(const [id,nombre,descripcion]of [['trampa_cebo','Trampa de cebo','Cuatro cebos, un intento por noche y salida que bloquea nuevos intentos.'],['terminal_carga','Terminal de carga','Se instala en un archivo con el acuerdo de Celia.'],['exportador_envios','Exportador de envíos','Autoriza un solo producto y límite nocturno en un cofre cercano a la caja.']] as const)objeto(id,nombre,'insumo',0,{precioCompra:0,descripcion});
 objeto('conector_produccion','Conector de producción','estructura',0,{precioCompra:0,pilaMax:20,descripcion:'Un metro de conexión física; une dispositivos contiguos de la misma zona.'});
+for(const d of ACCESOS_CAMPANA)objeto(d.id,d.nombre,'estructura',0,{precioCompra:0,pilaMax:1,descripcion:'Enlace civil autorizado por '+d.permiso+'. Las expediciones de combate conservan sus dispositivos originales.'});
 objeto('alimento_mascota','Alimento para mascotas','insumo',4,{precioCompra:20,descripcion:'Una ración equilibrada para gatos, perros y tortugas.'});
 for(const [id,nombre,precio] of [
  ['madera','Madera',2],['piedra','Piedra',2],['fibra','Fibra vegetal',2],['heno','Heno',1],['madera_ancestral','Madera ancestral',30],
@@ -277,5 +279,6 @@ receta('exportador_envios','banco_trabajo',{madera:8,lingote_cobre:2,engranaje:1
 receta('conector_produccion','mano',{madera:2,fibra:2},0);
 RECETAS.push({id:'trampa_documentada',nombre:'Trampa de cuencas documentadas',estacion:'mano',ingredientes:{madera:8,fibra:4},salida:{articulo:'trampa_cebo',cantidad:1},duracionMs:0,nivel:0,requisito:'museo_cuencas'});
 for(const r of TERRITORIOS_REGIONALES)RECETAS.push({id:'conector_documentado_'+r.id,nombre:'Conector documentado · '+r.nombre,estacion:'mano',ingredientes:{madera:2,fibra:1},salida:{articulo:'conector_produccion',cantidad:1},duracionMs:0,nivel:0,requisito:'museo_'+r.id});
+for(const d of ACCESOS_CAMPANA)RECETAS.push({id:d.id,nombre:d.nombre,estacion:'banco_trabajo',ingredientes:{...d.materiales},salida:{articulo:d.id,cantidad:1},duracionMs:60000,nivel:0,requisito:'campana_'+d.permiso});
 const INDICE_RECETAS=new Map(RECETAS.map(r=>[r.id,r]));
 export function obtenerReceta(id:string):RecetaProduccion|undefined{return INDICE_RECETAS.get(id);}

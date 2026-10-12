@@ -1,0 +1,346 @@
+{
+  "bloque": 7,
+  "base_claude": "ed1b571",
+  "regresion": {
+    "suites": 42,
+    "fallos": 0
+  },
+  "logica": {
+    "comprobaciones": 8,
+    "fallos": 0,
+    "recorrido": {
+      "alcance": "Partida nueva; recursos iniciales y acciones ordinarias. Caminata simulada por celdas transitables; no certifica interfaz, voces ni teléfonos. Sangre utiliza un perfil externo de integración.",
+      "contratos": 36,
+      "acciones": 1491,
+      "metros": 18836,
+      "jornadas": 26,
+      "monedas": 68,
+      "traza": [
+        {
+          "id": "P01",
+          "dia": 6,
+          "monedas": 420,
+          "acciones": 39,
+          "metros": 355
+        },
+        {
+          "id": "F01",
+          "dia": 6,
+          "monedas": 420,
+          "acciones": 60,
+          "metros": 716
+        },
+        {
+          "id": "P02",
+          "dia": 7,
+          "monedas": 420,
+          "acciones": 98,
+          "metros": 2527
+        },
+        {
+          "id": "P03",
+          "dia": 7,
+          "monedas": 420,
+          "acciones": 119,
+          "metros": 2829
+        },
+        {
+          "id": "P04",
+          "dia": 7,
+          "monedas": 420,
+          "acciones": 132,
+          "metros": 3127
+        },
+        {
+          "id": "P05",
+          "dia": 8,
+          "monedas": 420,
+          "acciones": 156,
+          "metros": 3660
+        },
+        {
+          "id": "P06",
+          "dia": 8,
+          "monedas": 420,
+          "acciones": 183,
+          "metros": 3853
+        },
+        {
+          "id": "F02",
+          "dia": 8,
+          "monedas": 420,
+          "acciones": 210,
+          "metros": 3853
+        },
+        {
+          "id": "P07",
+          "dia": 9,
+          "monedas": 420,
+          "acciones": 236,
+          "metros": 4462
+        },
+        {
+          "id": "P08",
+          "dia": 9,
+          "monedas": 420,
+          "acciones": 251,
+          "metros": 4766
+        },
+        {
+          "id": "P09",
+          "dia": 9,
+          "monedas": 420,
+          "acciones": 261,
+          "metros": 4766
+        },
+        {
+          "id": "P10",
+          "dia": 9,
+          "monedas": 420,
+          "acciones": 280,
+          "metros": 4825
+        },
+        {
+          "id": "F03",
+          "dia": 9,
+          "monedas": 168,
+          "acciones": 312,
+          "metros": 5551
+        },
+        {
+          "id": "P11",
+          "dia": 12,
+          "monedas": 168,
+          "acciones": 338,
+          "metros": 6074
+        },
+        {
+          "id": "P12",
+          "dia": 13,
+          "monedas": 46,
+          "acciones": 409,
+          "metros": 6995
+        },
+        {
+          "id": "F04",
+          "dia": 13,
+          "monedas": 46,
+          "acciones": 426,
+          "metros": 7046
+        },
+        {
+          "id": "P13",
+          "dia": 14,
+          "monedas": 46,
+          "acciones": 515,
+          "metros": 7920
+        },
+        {
+          "id": "P14",
+          "dia": 14,
+          "monedas": 46,
+          "acciones": 581,
+          "metros": 8201
+        },
+        {
+          "id": "P15",
+          "dia": 15,
+          "monedas": 46,
+          "acciones": 636,
+          "metros": 8680
+        },
+        {
+          "id": "P16",
+          "dia": 15,
+          "monedas": 46,
+          "acciones": 698,
+          "metros": 8969
+        },
+        {
+          "id": "F05",
+          "dia": 15,
+          "monedas": 46,
+          "acciones": 726,
+          "metros": 9292
+        },
+        {
+          "id": "P17",
+          "dia": 17,
+          "monedas": 64,
+          "acciones": 961,
+          "metros": 12416
+        },
+        {
+          "id": "P18",
+          "dia": 17,
+          "monedas": 64,
+          "acciones": 978,
+          "metros": 13001
+        },
+        {
+          "id": "P19",
+          "dia": 19,
+          "monedas": 64,
+          "acciones": 1008,
+          "metros": 13458
+        },
+        {
+          "id": "P20",
+          "dia": 19,
+          "monedas": 64,
+          "acciones": 1022,
+          "metros": 13723
+        },
+        {
+          "id": "F06",
+          "dia": 19,
+          "monedas": 64,
+          "acciones": 1053,
+          "metros": 14285
+        },
+        {
+          "id": "F07",
+          "dia": 19,
+          "monedas": 64,
+          "acciones": 1096,
+          "metros": 14628
+        },
+        {
+          "id": "F08",
+          "dia": 19,
+          "monedas": 64,
+          "acciones": 1139,
+          "metros": 14977
+        },
+        {
+          "id": "F09",
+          "dia": 19,
+          "monedas": 64,
+          "acciones": 1182,
+          "metros": 15321
+        },
+        {
+          "id": "F10",
+          "dia": 19,
+          "monedas": 64,
+          "acciones": 1225,
+          "metros": 15675
+        },
+        {
+          "id": "F11",
+          "dia": 19,
+          "monedas": 64,
+          "acciones": 1269,
+          "metros": 16519
+        },
+        {
+          "id": "F12",
+          "dia": 19,
+          "monedas": 64,
+          "acciones": 1301,
+          "metros": 16519
+        },
+        {
+          "id": "P21",
+          "dia": 20,
+          "monedas": 64,
+          "acciones": 1327,
+          "metros": 17088
+        },
+        {
+          "id": "P22",
+          "dia": 20,
+          "monedas": 64,
+          "acciones": 1351,
+          "metros": 17338
+        },
+        {
+          "id": "P23",
+          "dia": 20,
+          "monedas": 68,
+          "acciones": 1444,
+          "metros": 18394
+        },
+        {
+          "id": "P24",
+          "dia": 26,
+          "monedas": 68,
+          "acciones": 1491,
+          "metros": 18836
+        }
+      ]
+    },
+    "combate": {
+      "casos": 42,
+      "armas": "básicas, sin daño extra",
+      "limites": "Simulación de impactos y presupuesto; no certifica evasión humana ni teléfonos."
+    }
+  },
+  "compilaciones": [
+    "build",
+    "build:amigos"
+  ],
+  "medios": {
+    "lineas": 3590,
+    "vocesDeclaradas": 3581,
+    "modelosDeclarados": 0,
+    "musicaDeclarada": 23,
+    "errores": [],
+    "estado": "Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir."
+  },
+  "navegador_balance": {
+    "url": "http://127.0.0.1:4192/",
+    "alcance": "Interfaz y guardado; escenario de partida producido por acciones ordinarias, ubicaciones preparadas. Dibujo pausado tras arranque y fotos del mapa desactivadas solo en este contexto.",
+    "comprobaciones": [
+      "El enlace civil de la partida ordinaria abre Celia desde el Diario y su punto físico",
+      "Volver coloca al avatar fuera de la nave y conserva la partida",
+      "Tocar el enlace reutilizado abre rutas civiles y mantiene los portales avanzados separados",
+      "El enlace se retira y vuelve a colocar desde la ranura real sin duplicar unidades",
+      "Una compra de logística rechazada por guardado conserva monedas, unidades y stock",
+      "La batería comprada, su coste y el cupo se conservan al recargar"
+    ],
+    "errores": [],
+    "respuestasFallidas": []
+  },
+  "navegador_general": {
+    "checks": [
+      "Botón de la casa abre la granja V5 sobre el build actual",
+      "Teclado mueve al personaje compartido actual",
+      "Mouse abre el buzón y conserva lectura",
+      "Inventario actual accesible en horizontal",
+      "Granja → casa real → granja conserva posición, inventario y jornada",
+      "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+    ],
+    "errors": [],
+    "bad": [],
+    "viewport": [
+      844,
+      390
+    ],
+    "escenariosPreparados": "Cuarto habilitado y avatar posicionado en contexto nuevo aislado.",
+    "dispositivosFisicos": []
+  },
+  "limites": [
+    "Perfil externo de Sangre preparado como entrada de integración",
+    "Recorrido ordinario por vía técnica; ramas alternativas tienen pruebas separadas",
+    "Sin teléfonos físicos; memoria, FPS y batería reales no medidos"
+  ],
+  "sha256": {
+    "accesos-campana.ts": "e2a6140659cafd3716d086b2be7619f78aa884e332724dd780916d66995c3880",
+    "astra.ts": "84563ab0203cba836f5b7c7a5e235d1310a91bffc4a40ba61ef167adc7056b84",
+    "vida-astra.ts": "3e16b3b304c40c7fdbbdd50d5118998f6c6768cd56cd9888bc53a3b90920b809",
+    "motor.ts": "8f7eebbcf78b7766ecd599a8efe7d222950632d7f6725cf3971dcc8d647153eb",
+    "historia.ts": "7398c24a96b18acdb545a44542bcb6be99d2b7b3981f7f3e1852f4b7ac6a7593",
+    "objetos.ts": "1bc23003308c3d8ead0f505f97a3b8e247bd0a77c5fbfc82a4984d0df2ed21ac",
+    "produccion.ts": "3ef930e58242288a724cea88e8d866f24d8f0b4f7a7d25c270aab80620f8a13f",
+    "produccion-ui.ts": "4fb62b6f55d4226ec85f18005a4998ffebe48c2e3311c5afa269da8fb84f1a4d",
+    "main.ts": "2d887edd7acbd33b8e16d8e10ccae5388fe1d117a29c4ea621c7fb74c0b9f4bf",
+    "escenas-produccion.ts": "3710528b5210a7fc23dcf6c9a1e4902da8dde2bbb127110754dea0f284b4ae32"
+  },
+  "compilaciones_conjunto_claude": {
+    "revision": "ed1b571",
+    "completa": "correcta",
+    "amigos": "correcta",
+    "granja_regresion": 42
+  }
+}
