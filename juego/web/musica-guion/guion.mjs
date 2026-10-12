@@ -163,6 +163,18 @@ export const PISTAS = [
 
   // ---------------------------------------------------------------------------------------- Sala de amigos
   i('amigos-sala', 'amigos', 'Sala de juegos', 90, 'Happy upbeat pop instrumental for a friends game lobby: bright guitars, claps, synth plucks, friendly and fun, 112 bpm.'),
+
+  // ---------------------------------------------------------------------------------------- Cine de la granja
+  // Las películas de la historia principal (src/granja-v3/cine-*.ts). Javier pidió (12 de octubre de 2026) que todo
+  // lo de las diosas suene «armonioso y celestial». No van en bucle: acompañan la película de principio a fin.
+  {
+    id: 'cine-prologo-cosmos', juego: 'granja', nombre: 'Prólogo · El nacimiento de Celia', seg: 50, bucle: false, pareja: true,
+    prompt: 'Celestial orchestral score for the opening of an animated fantasy film. Starts from near silence with a soft shimmering pad and distant ethereal female choir (wordless "aah", no lyrics), glass celesta and harp glissandos; slowly swells to a radiant, awe-filled climax as a planet is born from a heart of light; then a hushed, tender theme on solo cello and harp for two loving goddesses; finally a rising choir and strings as they weave a protective shield, ending on a luminous sustained chord. 60 bpm, cinematic, no drums, instrumental only, no lyrics.',
+  },
+  {
+    id: 'cine-prologo-valle', juego: 'granja', nombre: 'Prólogo · Amanecer en el valle', seg: 75, bucle: false, pareja: true,
+    prompt: 'Gentle sunrise score for an animated cozy fantasy film. Solo felt piano and soft wooden flute over warm low strings, delicate birdsong-like woodwinds, hopeful and tender as two travelers arrive at an overgrown farm at dawn; at the midpoint a magical harp and wordless female choir swell softly as a kind earth goddess descends in a column of light and flowers bloom; warm, heartfelt main theme while she speaks; ends with a resolved, luminous final chord. 72 bpm, cinematic, instrumental only, no lyrics.',
+  },
 ];
 
 // ------------------------------------------------------------------------------------- Efectos de sonido

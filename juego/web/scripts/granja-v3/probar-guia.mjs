@@ -2,7 +2,7 @@
 import { compilarModulo } from './modulos-prueba.mjs';
 import assert from 'node:assert/strict';
 const load=f=>compilarModulo(new URL('../../src/granja-v3/'+f+'.ts',import.meta.url)).then(s=>import(s));
-const {MotorGranja,validarEstado}=await load('motor'),G=await load('guia'),C=await load('correo');
+const {MotorGranja,validarEstado}=await load('motor'),G=await load('guia'),C=await load('correo'),CC=await load('correo-campana'),H=await load('historia');
 let now=1800000000000,checks=0,failures=0;const game=()=>new MotorGranja({ahora:()=>now,azar:()=>.1});
 const act=(m,a)=>{const r=m.actuar(a);assert.ok(r.ok,r.mensaje);return r;};
 const toque=m=>act(m,{tipo:'seleccionar_casilla',casilla:0});
@@ -24,4 +24,10 @@ test('Partidas anteriores: con progreso no repiten el inicio, sin progreso lo re
  const n=game(),t=structuredClone(n.estado);delete t.guia;assert.ok(n.cargarJSON(JSON.stringify(t)).ok);assert.equal(paso(n),'prologo');
  const u=structuredClone(n.estado);u.guia={paso:99,hechos:[]};assert.equal(n.cargarJSON(JSON.stringify(u)).ok,false);});
 test('Las primeras visitas se anotan aun con la guía terminada',()=>{const m=game();m.estado.guia={paso:G.PASOS_GUIA.length,hechos:['prologo']};m.estado.zona='pueblo';m.estado.servicio='herreria';toque(m);assert.ok(m.estado.guia.hechos.includes('lugar_herreria'));assert.ok(G.PRESENTACIONES.herreria);});
+test('Cada misión principal que se abre llega por carta de quien la cuenta, una sola vez y solo si falta aceptarla',()=>{const m=game();assert.equal(CC.CARTAS_CAMPANA.length,35);assert.ok(CC.CARTAS_CAMPANA.every(c=>c.remitente&&c.texto.includes(c.titulo)));
+ const dormir=()=>{const d=m.estado.jornada.diasCompletados;act(m,{tipo:'dormir',jornada:d,edificioId:'casa_inicial',xJugador:-5,zJugador:-.5});act(m,{tipo:'continuar_dia',jornada:d+1});};
+ dormir();assert.ok(!m.estado.correo.cartas.some(c=>c.id.startsWith('campana_')));
+ m.estado.historia.completadas.P01={dia:0};const abiertas=CC.CARTAS_CAMPANA.filter(c=>H.historiaDisponible(m.estado,c.campana));assert.ok(abiertas.length>0);
+ dormir();for(const c of abiertas)assert.ok(m.estado.correo.cartas.some(r=>r.id===c.id),c.id);const n=m.estado.correo.cartas.length;dormir();assert.equal(m.estado.correo.cartas.length,n);
+ const otra=CC.CARTAS_CAMPANA.find(c=>!H.historiaDisponible(m.estado,c.campana));if(otra)assert.ok(!m.estado.correo.cartas.some(r=>r.id===otra.id));});
 console.log(JSON.stringify({checks,failures}));if(failures)process.exitCode=1;
