@@ -202,6 +202,9 @@ con Javier, con los apodos de `la-pareja.md`):
 
 ### K. Aventuras (opcional)
 
+> **Hecho** (fase 4d, 12 de octubre): tres aventuras con 13 capítulos (las que contó Javier: el carro andando, el bus a
+> Barranquilla y los vuelos cancelados). Detalle en `docs/sistemas/nuestro-hogar.md`.
+
 Mini campañas de 4-6 capítulos con disfraces fijos y reglas propias por capítulo (como «A Garlic Paradise»). Aquí
 quedarían perfectas **las tres aventuras de «la protagonista»** que ya son de este juego (el iPhone más barato del
 mundo, bajarse del carro andando, las olas de diez metros), cada una contada en capítulos con humor… pero para eso

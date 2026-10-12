@@ -592,6 +592,24 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   cura 1 y da el doble de experiencia) y **Azabache** (cada golpe recibido revienta en espuma alrededor). En la
   versión de la pareja son cartas de amor sin historia (`pareja.ts`, marcadas como inventadas); los amigos ven la
   versión de cartas mágicas. Un logro más (93 en total).
+- **Versión 2, fase 4d: las aventuras de la protagonista** (las Adventures del original). Botón «📖 Aventuras» en el
+  menú (con un puntico rojo si hay un capítulo abierto sin jugar), **solo para la pareja**: las reglas viven en
+  `aventuras.ts` con ids neutros y la historia en `pareja.ts` (`aventuras`), así que con amigos en la sala o en la
+  versión de amigos no se ve. Tres aventuras con las anécdotas que contó Javier: **¡Pare, que me bajo!** (el carro
+  andando, 4 capítulos), **El bus a Barranquilla** (4; sin el detalle de cómo terminó, solo que desde ese día no se
+  sube a un bus, contado con ternura) y **Vuelos cancelados** (5; ella en la silla del aeropuerto y él en el hotel; la
+  aventura acaba cuando despega el avión porque Cartagena es de Cien Puertas). Cada capítulo es una partida corta (4
+  a 6 minutos) en un escenario conocido con su disfraz y su carta fijos (lo tenga o no), sus eventos propios, a veces
+  Apurado o un modo (Hiper, Ruleta) y a veces un **jefe final** que llega al acabarse el tiempo (se gana al vencerlo);
+  no hay Ducha Helada, ni tesoros, llavecitas, cajitas ni vendedor. La dificultad es de «modo historia»
+  (`DefCapitulo.dureza`: bichos con 50 a 70 % de la vida y pegando menos, sube capítulo a capítulo; el jefe final con
+  60 % de la vida de un jefe de su nivel). Antes de empezar sale la historia del capítulo (en pareja se cierra sola a
+  los 12 s) y al ganar, fiesta dorada, se van los mugrosos y la pantalla final cuenta cómo sigue, con las gotas de la
+  primera vez (200 a 600 por capítulo y 1.000 o 1.500 por terminar la aventura; `sumarCapitulo`). «Siguiente capítulo»
+  sigue de una; «📖 Las aventuras» vuelve al menú en esa aventura. En pareja: «Con Laura/Javier» abre la sala con el
+  capítulo (el anfitrión lo escoge, `ConfigPartida.capitulo`), los dos lo guardan y la sala sigue con el siguiente.
+  Los capítulos no cuentan como escenario ganado ni como récord. El progreso guarda `aventuras` (capítulos pasados).
+  Para el balance: `CAPITULO=a1c2 node scripts/balance-lavado.mjs 3 - el,ella`.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

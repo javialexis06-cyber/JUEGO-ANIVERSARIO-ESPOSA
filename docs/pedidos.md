@@ -48,8 +48,9 @@ especiales (3d: **El Desfile de jefes** y **El Espejo empañado**) y **La Matera
 desagüe** (3f), **El Laberinto de la cortina** (3g) y **La Feria de las cremas** (3h, con la ruleta del Ruletero:
 con ella quedan todos los escenarios de la propuesta). Javier pidió (12 de octubre) pasar ahora a los
 arreglos de la granja que venía haciendo el otro frente (`en-obra/granja-arreglos.md`: tandas 1 a 5 **hechas**; la 6
-espera que Javier diga si la hace este frente o el del motor) y después seguir con lo que falta del lavado: la fase 4. Las cajitas sorpresa
-quedan para la fase 4, con los disfraces que traen. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
+espera que Javier diga si la hace este frente o el del motor) y después seguir con lo que falta del lavado. La fase 4
+ya está completa (4a y 4b: ocho disfraces con transformación y cajitas sorpresa; 4c: las cartas de la noche; 4d: las
+aventuras de la protagonista por capítulos); del lavado queda lo pequeño: la Radio y los bichos especiales. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
 los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
 nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
 astral en pulso, el Guardián de una, sin pantallazo negro y los menús rehechos) y **la app de amigos con los seis
@@ -127,8 +128,8 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
        se transforman al nivel 80 con su llavecita escondida y 4 que salen de las cajitas sorpresa).
      - ~~4c: las cartas de la noche y la Mascarilla de noche~~ **hecho** (6 cartas que se abren con la Mascarilla de
        noche, tirada en La Bañera).
-     - 4d: las aventuras de la protagonista (el carro andando, el bus a Barranquilla sin el detalle, los vuelos a
-       Cartagena cancelados).
+     - ~~4d: las aventuras de la protagonista~~ **hecho** (13 capítulos en tres aventuras: el carro andando, el bus a
+       Barranquilla sin el detalle y los vuelos cancelados; sola o en pareja, con historia antes y después).
      - Lo pequeño que queda: la Radio (escoger la música) y los bichos especiales (el que persigue, el que inunda).
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).

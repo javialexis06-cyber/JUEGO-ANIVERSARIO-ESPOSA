@@ -23,13 +23,14 @@ import {
 } from './linea';
 import { Menu, retrato } from './menu';
 import { Motor, xpPara, type OpcionesJugador } from './motor';
-import { cartasDe, maestriaDe, modosDe, PATITO, reliquiasDe, SECRETO_LOGRO, secretoAbierto, sumarMaestria, sumarPartida, type ProgresoLavado, type ResumenPartida } from './progreso';
+import { cartasDe, maestriaDe, modosDe, PATITO, reliquiasDe, SECRETO_LOGRO, secretoAbierto, sumarCapitulo, sumarMaestria, sumarPartida, type ProgresoLavado, type ResumenPartida } from './progreso';
+import { AVENTURA, CAPITULO, siguienteCapitulo, type DefCapitulo } from './aventuras';
 import { ID_MODOS, ID_TESOROS } from './tesoros';
 import { ID_VENTAS } from './vendedor';
 import { MAESTRIA_MAX } from './maestria';
-import { musicaLavado, sonarEfecto } from './sonidos';
+import { musicaLavado, sfx, sonarEfecto } from './sonidos';
 import { botPaso } from './bot';
-import { disfrazVisto, ponerNeutro } from './textos';
+import { aventuraVista, capituloVisto, disfrazVisto, enemigoVisto, ponerNeutro } from './textos';
 import { Tutorial } from './tutorial';
 import type { IdArma, IdCarta, IdModo, IdPasiva, IdTesoro, Rol, Stat } from './tipos';
 
@@ -125,6 +126,19 @@ function opcionesSeguras(x: unknown, rol: Rol): OpcionesJugador {
 }
 
 /** Los modos que llegan de otro celular, revisados. */
+/** Lo de un jugador en un capítulo: el disfraz y la carta del capítulo (con su maestría, si ya la tiene con ese disfraz). */
+export function opcionesCapitulo(rol: Rol, p: ProgresoLavado, c: DefCapitulo): OpcionesJugador {
+  return opcionesJugador(rol, { ...p, disfraz: c.disfraz[rol], carta: c.carta });
+}
+
+/** Lo de otro jugador en un capítulo de la sala: su disfraz y su carta, los del capítulo (y su maestría, solo si es la
+ *  de ese disfraz). */
+function forzarCapitulo(op: OpcionesJugador, c: DefCapitulo): OpcionesJugador {
+  const disfraz = c.disfraz[op.rol];
+  if (op.disfraz === disfraz) return { ...op, carta: c.carta };
+  return { ...op, disfraz, carta: c.carta, maestria: 0, patitos: {}, manual: op.manual && puedeApuntar(disfraz) };
+}
+
 const modosSeguros = (v: unknown): IdModo[] => (Array.isArray(v) ? [...new Set(v.filter((x): x is IdModo => ID_MODOS.includes(x as IdModo)))] : []);
 
 export const lavado: { actual: Lavado | null } = { actual: null };
@@ -193,10 +207,25 @@ export class Lavado {
       else if (this.o.crear) await this.enSala(() => crearSala({ juego: 'lavado', max: 4, yo: this.yoEnSala() }));
       for (;;) {
         musicaLavado.menu();
-        const a = await this.menu.abrir();
+        const abierto = this.menu.abrir();
+        // (al volver de un capítulo, el menú se abre en las aventuras)
+        if (this.volverAventura) this.menu.abrirEnAventuras(this.volverAventura);
+        this.volverAventura = null;
+        const a = await abierto;
         if (a === 'salir') break;
         this.menu.cerrar();
-        if (a === 'jugar') {
+        if (a.startsWith('capitulo:')) {
+          await this.aventuraSola(a.slice(9));
+        } else if (a.startsWith('capituloPareja:') && this.o.pareja) {
+          const id = a.slice(15);
+          this.capituloSala = CAPITULO[id] ? id : null;
+          try {
+            await this.enSala(() => crearSala({ juego: 'lavado', max: 4, yo: this.yoEnSala() }), this.o.pareja.invitar);
+          } finally {
+            this.volverAventura = this.capituloSala ?? id;
+            this.capituloSala = null;
+          }
+        } else if (a === 'jugar') {
           // La primera vez, el tutorial (se puede saltar; si lo salta o termina, sigue a la partida de verdad)
           if (!this.p.tutorial && (await this.tutorial(true)) === 'menu') continue;
           await this.partidaSola();
@@ -245,6 +274,34 @@ export class Lavado {
     }
   }
 
+  // ------------------------------------------------------------------------------------------------- Aventuras
+  /** El capítulo que se jugó de último (para volver a las aventuras) y el que se está jugando en la sala. */
+  private volverAventura: string | null = null;
+  private capituloSala: string | null = null;
+  /** El resumen de la última partida (para saber si el capítulo se pasó). */
+  private ultimoResumen: ResumenPartida | null = null;
+
+  /** Un capítulo a solas: si se pasa y se pide el siguiente, sigue con ese; si no, se repite. */
+  private async aventuraSola(id: string) {
+    let cap = id;
+    for (;;) {
+      const c = CAPITULO[cap];
+      if (!c) return;
+      this.volverAventura = cap;
+      const config: ConfigPartida = {
+        escenario: c.escenario, apurado: !!c.apurado, modos: [...(c.modos ?? [])], semilla: (Math.random() * 1e9) >>> 0, capitulo: cap,
+        jugadores: [{ ...opcionesCapitulo(this.o.rol, this.p, c), nombre: this.o.amigo?.nombre ?? this.o.nombres[this.o.rol], aspecto: this.o.amigo?.aspecto }],
+      };
+      const r = await this.partida(config, 'solo', 0, null);
+      if (r !== 'otra') return;
+      if (this.ultimoResumen?.capituloGanado) {
+        const sig = siguienteCapitulo(cap);
+        if (!sig) return;
+        cap = sig;
+      }
+    }
+  }
+
   private misOpciones(): OpcionesJugador {
     return { ...opcionesJugador(this.o.rol, this.p), nombre: this.o.amigo?.nombre ?? this.o.nombres[this.o.rol], aspecto: this.o.amigo?.aspecto };
   }
@@ -277,21 +334,26 @@ export class Lavado {
 
   /** Lo que los demás ven de mí en la sala de espera y lo que se usa para armar la partida. */
   private ponerMisDatos(sala: Sala) {
-    const op = opcionesJugador(sala.yo.aspecto.cuerpo, this.p);
+    const cap = this.capituloSala ? CAPITULO[this.capituloSala] : null;
+    const op = cap ? opcionesCapitulo(sala.yo.aspecto.cuerpo, this.p, cap) : opcionesJugador(sala.yo.aspecto.cuerpo, this.p);
     sala.ponerDatos({ op, disfraz: op.disfraz, jugando: false });
   }
 
   /** La configuración que arma el anfitrión con lo que escogió cada uno (en el orden de los puestos). */
   private configSala(sala: Sala): ConfigPartida {
     const js = sala.jugadores.filter((j) => j.puesto >= 0);
+    // Un capítulo de las aventuras: su escenario y sus reglas, y a cada uno su disfraz y su carta fijos
+    const cap = this.capituloSala ? CAPITULO[this.capituloSala] : null;
     return {
-      escenario: this.p.escenario,
-      apurado: this.p.apurado,
-      modos: modosDe(this.p),
+      escenario: cap?.escenario ?? this.p.escenario,
+      apurado: cap ? !!cap.apurado : this.p.apurado,
+      modos: cap ? [...(cap.modos ?? [])] : modosDe(this.p),
       semilla: (Math.random() * 1e9) >>> 0,
+      ...(cap ? { capitulo: cap.id } : {}),
       jugadores: js.map((j) => {
         const rol: Rol = j.tipo === 'amigo' ? j.aspecto.cuerpo : j.tipo;
-        return { ...opcionesSeguras(j.datos?.op, rol), id: j.id, nombre: j.nombre, aspecto: j.tipo === 'amigo' ? j.aspecto : undefined };
+        const op = opcionesSeguras(j.datos?.op, rol);
+        return { ...(cap ? forzarCapitulo(op, cap) : op), id: j.id, nombre: j.nombre, aspecto: j.tipo === 'amigo' ? j.aspecto : undefined };
       }),
     };
   }
@@ -301,11 +363,13 @@ export class Lavado {
     const c = x as Partial<ConfigPartida> | null;
     if (!c || !Array.isArray(c.jugadores) || !c.jugadores.length || c.jugadores.length > 4) return null;
     if (!c.escenario || !(c.escenario in ESCENARIOS)) return null;
+    const cap = typeof c.capitulo === 'string' && CAPITULO[c.capitulo]?.escenario === c.escenario ? c.capitulo : undefined;
     return {
       escenario: c.escenario,
       apurado: !!c.apurado,
       modos: modosSeguros(c.modos),
       semilla: Number(c.semilla) >>> 0,
+      ...(cap ? { capitulo: cap } : {}),
       jugadores: c.jugadores.map((j) => {
         const rol: Rol = j?.rol === 'ella' ? 'ella' : 'el';
         return {
@@ -340,7 +404,9 @@ export class Lavado {
         const e = esperarEnSala({
           sala,
           titulo: 'Lavarse la cara',
-          subtitulo: pareja ? `Le llegó la invitación a ${this.o.nombres[otro(this.o.rol)]}: cuando se mire al espejo, entra. Con el código también entran amigos.` : 'Hasta 4 en la misma cara: más mugrosos por cada uno.',
+          subtitulo: this.capituloSala && capituloVisto(CAPITULO[this.capituloSala].aventura, this.capituloSala)
+            ? `📖 Capítulo ${CAPITULO[this.capituloSala].numero}: «${capituloVisto(CAPITULO[this.capituloSala].aventura, this.capituloSala)!.titulo}». ${pareja ? `Le llegó la invitación a ${this.o.nombres[otro(this.o.rol)]}.` : ''}`
+            : pareja ? `Le llegó la invitación a ${this.o.nombres[otro(this.o.rol)]}: cuando se mire al espejo, entra. Con el código también entran amigos.` : 'Hasta 4 en la misma cara: más mugrosos por cada uno.',
           tema: 'burbujas',
           contenedor: this.raiz,
           retrato: (j) => this.retratoEnSala(j),
@@ -380,6 +446,8 @@ export class Lavado {
           break;
         }
         const que = await this.partida(config, yo === 0 ? 'anfitrion' : 'invitado', yo, sala);
+        // (en un capítulo, si lo pasaron, la sala sigue con el siguiente)
+        if (this.capituloSala && this.ultimoResumen?.capituloGanado) this.capituloSala = siguienteCapitulo(this.capituloSala) ?? this.capituloSala;
         if (que === 'menu' || this.salaAcabada) break;
       }
     } finally {
@@ -453,7 +521,10 @@ export class Lavado {
 
   // ------------------------------------------------------------------------------------------------- Una partida
   private async partida(config: ConfigPartida, papel: Papel, yo: number, sala: Sala | null, conTutorial?: (m: Motor) => Tutorial): Promise<'otra' | 'menu'> {
-    const m = new Motor({ escenario: config.escenario, apurado: config.apurado, modos: config.modos, jugadores: config.jugadores, semilla: config.semilla, tutorial: !!conTutorial });
+    const m = new Motor({
+      escenario: config.escenario, apurado: config.apurado, modos: config.modos, jugadores: config.jugadores, semilla: config.semilla, tutorial: !!conTutorial,
+      capitulo: config.capitulo,
+    });
     this.m = m;
     const n = config.jugadores.length;
     const varios = n > 1;
@@ -527,6 +598,8 @@ export class Lavado {
     } finally {
       carga.cerrar();
     }
+    // Un capítulo de las aventuras empieza con su historia (en pareja se cierra solita, para no dejar esperando al otro)
+    if (m.capitulo) await this.historia(m.capitulo, varios, yoJ.disfraz.id);
     dib.alEfecto = (e) => {
       sonarEfecto(e, yo);
       ui.efecto(e, m);
@@ -994,6 +1067,8 @@ export class Lavado {
       // Si es invitado y no llegó el resumen, se arma uno con lo que se ve
       const r: ResumenPartida = resumen ?? m.resumen(yo, varios);
       const logros = sumarPartida(this.p, r);
+      const capitulo = sumarCapitulo(this.p, r);
+      this.ultimoResumen = r;
       // (la maestría es del disfraz de quien juega en este celular: en pareja, cada uno suma la suya)
       const maestria = sumarMaestria(this.p, r);
       const monedas = monedasPorPartida(r.segundos, r.gano);
@@ -1006,7 +1081,10 @@ export class Lavado {
       this.resultado.jefe ||= r.jefes.some((j) => ENEMIGOS[j].jefe && j !== 'duchaHelada');
       this.resultado.monedas += monedas;
       void this.o.guardar(this.p).catch(() => undefined);
-      que = await ui.mostrarFin(r, { logros, maestria, monedas: this.o.amigo ? 0 : monedas, pareja: varios, nombreOtro: nombres[1 - yo] ?? '', nota: notaFin });
+      que = await ui.mostrarFin(r, {
+        logros, maestria, monedas: this.o.amigo ? 0 : monedas, pareja: varios, nombreOtro: nombres[1 - yo] ?? '', nota: notaFin,
+        capitulo: capitulo ?? undefined, siguiente: r.capitulo ? !!siguienteCapitulo(r.capitulo) : false,
+      });
     }
     // Se suelta todo lo de la partida (y el contexto WebGL)
     this.lienzo.removeEventListener('webglcontextlost', perdido);
@@ -1023,6 +1101,49 @@ export class Lavado {
     this.ui = null;
     await esperar(50);
     return que;
+  }
+
+  /** La historia de un capítulo antes de empezar (solo con la pareja: con amigos o en su versión no hay historia). */
+  private historia(c: DefCapitulo, varios: boolean, disfraz: string): Promise<void> {
+    const t = capituloVisto(c.aventura, c.id);
+    if (!t) return Promise.resolve();
+    const a = AVENTURA[c.aventura];
+    const d = DISFRAZ[disfraz];
+    const jefe = c.jefeFinal ? enemigoVisto(ENEMIGOS[c.jefeFinal]).nombre : '';
+    return new Promise((ok) => {
+      const capa = document.createElement('div');
+      capa.className = 'lv-historia';
+      capa.style.setProperty('--c', a.color);
+      const pasos = a.capitulos.map((x) => `<i class="${x.id === c.id ? 'si' : this.p.aventuras.includes(x.id) ? 'ya' : ''}"></i>`).join('');
+      capa.innerHTML = `<div class="lv-panel">
+        <span class="cap">${a.emoji} ${esc(aventuraVista(a.id)?.titulo ?? '')} · Capítulo ${c.numero} de ${a.capitulos.length}</span>
+        <div class="pasos">${pasos}</div>
+        <div class="cuerpo-h">${d ? retrato(d, 'lv-retrato') : ''}<div>
+          <h2>${esc(t.titulo)}</h2>
+          <p class="texto">${esc(t.antes)}</p>
+          <p class="meta">🎯 Aguanta ${Math.floor(c.duracion / 60)}:${String(c.duracion % 60).padStart(2, '0')}${c.apurado ? ' con el reloj al doble' : ''}${jefe ? ` y vence a ${esc(jefe)}` : ''}</p>
+        </div></div>
+        <div class="lv-fila"><button class="lv-boton rosa grande">¡Vamos!</button></div>
+        ${varios ? '<span class="cuenta"></span>' : ''}</div>`;
+      this.raiz.append(capa);
+      let resto = 12;
+      const cuenta = capa.querySelector<HTMLElement>('.cuenta');
+      const reloj = varios ? setInterval(() => {
+        resto--;
+        if (cuenta) cuenta.textContent = `Empieza solito en ${resto} s`;
+        if (resto <= 0) fin();
+      }, 1000) : 0;
+      if (cuenta) cuenta.textContent = `Empieza solito en ${resto} s`;
+      const fin = () => {
+        if (reloj) clearInterval(reloj);
+        capa.remove();
+        ok();
+      };
+      capa.querySelector('button')!.addEventListener('click', () => {
+        sfx.toque();
+        fin();
+      });
+    });
   }
 
   /** Para las pruebas: adelantar el reloj, dar experiencia, abrir un cofre, aguantar, ganar. */

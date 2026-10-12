@@ -4,6 +4,7 @@
 import { CELDA, enCortina, fueraDeCortinas } from './laberinto';
 import { ARMAS, BASICAS, DISPARAN, ESCONDIDAS, EVOLUCIONADAS, ID_PASIVAS, MAX_RANURAS, PASIVAS, baseEnNivel, linaje, maxNivelArma, pasivasDeEvo, type BaseArma } from './armas';
 import { Azar, hash2 } from './azar';
+import { CAPITULO, type DefCapitulo } from './aventuras';
 import { CARTAS } from './cartas';
 import { DISFRACES, DISFRAZ, type DefDisfraz } from './disfraces';
 import { ENEMIGOS, INDICE_ENEMIGO, type DefEnemigo } from './enemigos';
@@ -321,6 +322,8 @@ export interface OpcionesMotor {
   tutorial?: boolean;
   /** Los modos de la partida (los que se abren con los tesoros y el Hiper). */
   modos?: IdModo[];
+  /** Un capítulo de las aventuras (`aventuras.ts`): sus eventos, su tiempo y su jefe final; sin Ducha Helada. */
+  capitulo?: string;
 }
 
 export class Jugador {
@@ -509,6 +512,8 @@ export const turboEn = (k: number): [number, number] => [k * TURBO.cada + TURBO.
 export const BANDERA_CADA = 1800;
 /** Qué tanto se lleva el agua a las gotitas (uno va al 100 %; los mugrosos nadan solos). */
 const ARRASTRE_TOBOGAN = 0.85;
+/** La vida del jefe final de un capítulo (sobre la de un jefe normal de su nivel). */
+const VIDA_JEFE_FINAL = 0.4;
 /** Los mugrosos que no caminan (las maticas de La Matera). */
 const QUIETAS = new Set(['planta', 'morder']);
 
@@ -558,6 +563,13 @@ export class Motor {
   ciclo = 0;
   /** Ya llegó la Ducha Helada (no salen más oleadas). */
   helada = false;
+  /** El capítulo de las aventuras que se está jugando (o null en una partida normal). */
+  readonly capitulo: DefCapitulo | null;
+  /** El capítulo: ya salió su jefe final, ya se ganó y lo que falta para cerrar (para alcanzar a ver la fiesta). */
+  jefeFinal = false;
+  capituloGanado = false;
+  private uidJefeFinal = -1;
+  private tCierre = 0;
   /** Lo que falta para la siguiente vuelta de la ruleta de sorpresas (segundos del reloj). */
   tRuleta = 60;
   /** Los chorros de La Ducha que están avisando (t < 0) o cayendo. */
@@ -608,14 +620,21 @@ export class Motor {
   constructor(o: OpcionesMotor) {
     // La feria tiene su propia copia: la valla de la izquierda se corre cada vez que se abre una parte
     this.esc = o.escenario === 'feria' ? { ...ESCENARIOS.feria, limitesX: { xMin: xMinFeria(0), xMax: X_MAX_FERIA } } : ESCENARIOS[o.escenario];
-    this.ruletero = o.escenario === 'feria' && !o.tutorial ? RULETERO : null;
+    // Un capítulo de las aventuras: su escenario con sus propios eventos, desde el minuto que diga y con su tiempo
+    const cap = !o.tutorial && o.capitulo ? CAPITULO[o.capitulo] ?? null : null;
+    this.capitulo = cap && cap.escenario === o.escenario ? cap : null;
+    if (this.capitulo) {
+      const c = this.capitulo;
+      this.esc = { ...this.esc, oleadas: this.esc.oleadas.slice(Math.min(c.desde, this.esc.oleadas.length - 1)), eventos: c.eventos, duracion: c.duracion };
+    }
+    this.ruletero = o.escenario === 'feria' && !o.tutorial && !this.capitulo ? RULETERO : null;
     this.apurado = o.apurado;
     this.tutorial = !!o.tutorial;
     this.duracion = this.esc.duracion ?? DURACION;
     this.sigParca = this.duracion;
     this.modos = new Set(o.tutorial ? [] : o.modos ?? []);
     this.mapa = o.jugadores.some((x) => !!x.mapa);
-    this.puesto = !o.tutorial && (o.escenario === ESCENARIO_VENDEDOR || o.jugadores.some((x) => !!x.monedero)) ? PUESTO[o.escenario] : null;
+    this.puesto = !o.tutorial && !this.capitulo && (o.escenario === ESCENARIO_VENDEDOR || o.jugadores.some((x) => !!x.monedero)) ? PUESTO[o.escenario] : null;
     this.az = new Azar(o.semilla);
     for (let i = 0; i < POOL_EN; i++) this.en.push(new Enemigo());
     for (let i = 0; i < MAX_PROY; i++) this.pr.push(new Proyectil());
@@ -646,27 +665,29 @@ export class Motor {
     }
     this.tTanda = 0.5;
     this.tGrito = 1.2;
+    // (en los capítulos de las aventuras no hay nada escondido: solo la historia)
+    const extras = !this.tutorial && !this.capitulo;
     // Los anillos y los aretes escondidos de este escenario (si alguien ya tiene el espejito de mano)
-    if (!this.tutorial) ESCONDIDAS.forEach((t, k) => {
+    if (extras) ESCONDIDAS.forEach((t, k) => {
       if (t.escenario !== this.esc.id || !this.jug.some((j) => this.disponible(j, t.id))) return;
       const o = this.soltar('tesoro', t.x, t.y, k);
       if (o) this.tesoros.push({ o, guardia: false });
     });
     // Las llavecitas de los disfraces que se transforman (de quien juegue con ese disfraz y no la tenga todavía)
-    if (!this.tutorial) DISFRACES.forEach((d, k) => {
+    if (extras) DISFRACES.forEach((d, k) => {
       const t = d.transforma;
       if (!t || t.llave.escenario !== this.esc.id || !this.jug.some((j) => j.disfraz.id === d.id && !j.llaves.has(d.id))) return;
       this.soltar('llavecita', t.llave.x, t.llave.y, k);
     });
     // La cajita sorpresa de este escenario (si alguien todavía no ha sacado su disfraz)
-    if (!this.tutorial) DISFRACES.forEach((d, k) => {
+    if (extras) DISFRACES.forEach((d, k) => {
       if (!d.cajita || d.cajita.escenario !== this.esc.id || this.cajita) return;
       if (!o.jugadores.some((x) => !(x.cajitas ?? []).includes(d.id))) return;
       const obj = this.soltar('cajita', d.cajita.x, d.cajita.y, k);
       if (obj) this.cajita = { o: obj, k, estado: 0 };
     });
     // Los tesoros del baño que alguien todavía no tiene, cada uno en su sitio (con su flecha verde)
-    if (!this.tutorial) TESOROS.forEach((t, k) => {
+    if (extras) TESOROS.forEach((t, k) => {
       if (t.escenario === this.esc.id && o.jugadores.some((x) => x.reliquias?.includes(t.id))) this.soltar('reliquia', t.x, t.y, k);
     });
   }
@@ -1449,6 +1470,7 @@ export class Motor {
     if (!this.tutorial) this.elitesExtra(dReloj);
     if (this.tesoros.length) this.cuidarTesoros();
     if (this.cajita) this.cuidarCajita();
+    if (this.capituloGanado && (this.tCierre -= dt) <= 0) this.terminar();
     if (this.jug.every((j) => j.caido || j.fuera)) this.terminar();
   }
 
@@ -1494,7 +1516,7 @@ export class Motor {
   /** Con tres o cuatro (y un poquito en pareja), élites extra con cofre cada tanto. */
   private elitesExtra(dReloj: number) {
     const cada = this.porJugadores('elite');
-    if (!cada || this.helada || this.t < 90) return;
+    if (!cada || this.helada || this.capituloGanado || this.t < 90) return;
     this.tElite += dReloj;
     if (this.tElite < cada) return;
     this.tElite = 0;
@@ -1853,12 +1875,12 @@ export class Motor {
   /** Cuánto aguantan los mugrosos por los modos: del otro lado del espejo (el triple, y crece cada minuto) y cada
    *  vuelta del agua caliente sin fin (+100 %). */
   durezaModos() {
-    return (this.modo('inverso') ? 3 + 0.05 * (this.t / 60) : 1) * (1 + this.ciclo);
+    return (this.modo('inverso') ? 3 + 0.05 * (this.t / 60) : 1) * (1 + this.ciclo) * (this.capitulo?.dureza ?? 1);
   }
 
-  /** Lo que pegan de más (cada vuelta del agua caliente sin fin, +25 %). */
+  /** Lo que pegan de más (cada vuelta del agua caliente sin fin, +25 %; en los capítulos, como su vida). */
   danoModos() {
-    return 1 + 0.25 * this.ciclo;
+    return (1 + 0.25 * this.ciclo) * (this.capitulo ? 0.4 + 0.6 * this.capitulo.dureza : 1);
   }
 
   /** Qué tan rápido van (el Hiper acelera todo; del otro lado del espejo se van apurando con los minutos). */
@@ -1869,6 +1891,8 @@ export class Motor {
   private oleadas(dReloj: number) {
     const esc = this.esc;
     const t0 = this.ciclo * this.duracion;
+    // (con el capítulo ya ganado no sale nada más: es la fiesta)
+    if (this.capituloGanado) return;
     // Eventos fijos
     while (this.iEvento < esc.eventos.length && esc.eventos[this.iEvento].t + t0 <= this.t) this.evento(esc.eventos[this.iEvento++]);
     // La ruleta de sorpresas: cada minuto escoge algo
@@ -1879,8 +1903,13 @@ export class Motor {
         this.ruleta();
       }
     }
+    // Los capítulos de las aventuras no tienen Ducha Helada: se ganan al aguantar su tiempo o al vencer a su jefe final
+    if (this.capitulo) {
+      if (!this.jefeFinal && this.t >= this.duracion) this.finCapitulo();
+      if (this.capituloGanado) return;
+    }
     // Con el agua caliente sin fin no llega la Ducha Helada: todo vuelve a empezar, más duro
-    if (this.t >= this.sigParca && this.modo('infinito')) {
+    else if (this.t >= this.sigParca && this.modo('infinito')) {
       this.sigParca += this.duracion;
       this.ciclo++;
       this.iEvento = 0;
@@ -1888,7 +1917,7 @@ export class Motor {
       this.aviso(`♨️ ¡El agua sigue caliente! Vuelta ${this.ciclo + 1}: todo más duro`);
     }
     // ¡Se acabó el agua caliente!
-    if (this.t >= this.sigParca) {
+    if (this.t >= this.sigParca && !this.capitulo) {
       this.helada = true;
       if (!this.gano) {
         this.gano = true;
@@ -1929,6 +1958,38 @@ export class Motor {
       this.crearComun(ol.tipos[k % ol.tipos.length]);
       k++;
     }
+  }
+
+  /** Se acabó el tiempo del capítulo: llega su jefe final (y se gana al vencerlo) o, si no tiene, se ganó ya. */
+  private finCapitulo() {
+    const c = this.capitulo!;
+    this.jefeFinal = true;
+    const j = this.objetivoAzar();
+    if (!c.jefeFinal || !j) return this.ganarCapitulo();
+    const e = this.crear(c.jefeFinal, this.puntoJefe(j), j, { jefe: true, cofre: 0 });
+    if (!e) return this.ganarCapitulo();
+    // (el jefe final llega cuando uno todavía no tiene todo: aguanta menos que uno de una partida larga)
+    e.hp = e.hpMax = e.hpMax * VIDA_JEFE_FINAL;
+    this.uidJefeFinal = e.uid;
+    this.aviso(`👑 ¡${ENEMIGOS[c.jefeFinal].nombre}! Vence al jefe para pasar el capítulo`);
+    this.emitir('jefe', 0, 0, INDICE_ENEMIGO[c.jefeFinal]);
+  }
+
+  /** ¡Capítulo superado! Se van los mugrosos, nadie se cae más y en un ratico (para ver la fiesta) se cierra. */
+  private ganarCapitulo() {
+    if (this.capituloGanado) return;
+    this.capituloGanado = true;
+    this.tCierre = 3.2;
+    for (let k = this.nVivos - 1; k >= 0; k--) {
+      const e = this.en[this.vivos[k]];
+      if (!e.luz) this.quitar(e);
+    }
+    for (const j of this.jug) {
+      if (j.fuera) continue;
+      j.invul = 99;
+      this.emitir('transforma', j.x, j.y, j.i);
+    }
+    this.aviso('🎉 ¡Capítulo superado!');
   }
 
   /** La ruleta de sorpresas (los eventos al azar del original): casi todo ayuda, a veces llega una horda. */
@@ -2719,6 +2780,7 @@ export class Motor {
     this.emitir('muere', e.x, e.y, e.ti, e.esc * (e.jefe ? 2.4 : 1), e.elite ? 1 : 0);
     const j = this.jug[ji];
     if (e.jefe && !this.jefes.includes(e.tipo)) this.jefes.push(e.tipo);
+    if (this.capitulo && e.uid === this.uidJefeFinal) this.ganarCapitulo();
     if (e.cofre) {
       // Con varios, el cofre del jefe sale repetido: uno para cada uno, con su color (los de élite, de quien llegue)
       const duenos = e.jefe && e.cofre >= 2 ? this.jug.filter((x) => !x.fuera) : [];
@@ -3214,6 +3276,7 @@ export class Motor {
       llaves: [...this.llavesHalladas],
       cajitas: [...this.cajitasHalladas],
       transformado: !!j?.transformado,
+      ...(this.capitulo ? { capitulo: this.capitulo.id, capituloGanado: this.capituloGanado } : {}),
     };
   }
 }

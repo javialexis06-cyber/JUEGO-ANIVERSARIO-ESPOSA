@@ -22,6 +22,8 @@ export interface ConfigPartida {
   semilla: number;
   /** En el orden de los puestos de la sala: el 0 es el anfitrión (y la cara es la suya). */
   jugadores: OpcionesJugador[];
+  /** Un capítulo de las aventuras (lo escoge el anfitrión). */
+  capitulo?: string;
 }
 
 /** Lo de cada jugador que no cambia cuadro a cuadro (viaja en JSON cuando cambia). */

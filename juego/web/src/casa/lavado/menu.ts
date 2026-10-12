@@ -9,6 +9,7 @@ function conQue(a: DefArma): string {
   const pide = [...(evo.arma ? [ARMAS[evo.arma].nombre] : []), ...pasivasDeEvo(a).map((p) => PASIVAS[p].nombre)];
   return pide.length ? `Evoluciona con ${pide.join(' y ')} en ${ARMAS[evo.a].nombre}.` : `Al nivel ${maxNivelArma(a.id)} se vuelve ${ARMAS[evo.a].nombre} (no pide nada más).`;
 }
+import { AVENTURA, AVENTURAS, CAPITULO, capituloAbierto, type DefCapitulo } from './aventuras';
 import { CARTAS, ID_CARTAS } from './cartas';
 import { DISFRAZ, disfracesDe, puedeApuntar, type DefDisfraz } from './disfraces';
 import { ENEMIGOS, ID_ENEMIGOS } from './enemigos';
@@ -23,10 +24,10 @@ import {
 import { MODO, MODOS, TESORO, TESORO_DE_MODO, TESOROS } from './tesoros';
 import { sfx } from './sonidos';
 import { PODER, PODERES, precioPoder } from './tienda';
-import { FRASES, cartaVista, disfrazVisto, enemigoVisto, logroVisto } from './textos';
+import { FRASES, aventuraVista, cartaVista, disfrazVisto, enemigoVisto, logroVisto } from './textos';
 import type { IdCarta, IdEscenario, IdModo, Rol, Stat } from './tipos';
 
-export type AccionMenu = 'jugar' | 'pareja' | 'amigos' | 'codigo' | 'tutorial' | 'salir';
+export type AccionMenu = 'jugar' | 'pareja' | 'amigos' | 'codigo' | 'tutorial' | 'salir' | `capitulo:${string}` | `capituloPareja:${string}`;
 
 const miles = (n: number) => Math.round(n).toLocaleString('es-CO');
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
@@ -142,7 +143,9 @@ export class Menu {
         </div>
       </div>
       <div class="lv-acciones">
-        <button class="lv-boton grande rosa" data-m="jugar">🫧 ¡A lavarse!</button>
+        <div class="lv-fila-jugar"><button class="lv-boton grande rosa" data-m="jugar">🫧 ¡A lavarse!</button>${
+          aventuraVista('a1') ? `<button class="lv-boton oro lv-boton-aventuras" data-m="aventuras">📖 Aventuras${this.aventurasNuevas() ? '<i class="lv-punto"></i>' : ''}</button>` : ''
+        }</div>
         ${this.o.puedePareja ? `<button class="lv-boton menta" data-m="pareja">${FRASES.iconoPareja()} Jugar con ${this.o.nombreOtro}</button>` : ''}
         ${this.o.puedeSalas ? `<div class="lv-fila-salas"><button class="lv-boton menta" data-m="amigos">👥 Con amigos</button><button class="lv-boton" data-m="codigo">🔑 Unirme con código</button></div>` : ''}
         <div class="lv-rejilla">
@@ -185,6 +188,7 @@ export class Menu {
   private abrirPantalla(cual: string) {
     this.actual = cual;
     this.sel = cual === 'disfraces' ? this.p.disfraz : cual === 'escenarios' ? this.p.escenario : cual === 'cartas' ? this.p.carta : cual === 'tienda' ? 'poder' : '';
+    if (cual === 'aventuras') this.sel = this.capituloSugerido(this.avSel);
     this.pantalla.hidden = false;
     this.pintarPantalla();
   }
@@ -205,6 +209,7 @@ export class Menu {
   private pintarPantalla() {
     const titulo: Record<string, string> = {
       disfraces: 'Disfraces', escenarios: '¿Dónde nos lavamos?', cartas: FRASES.tituloCartas(), tienda: 'Poderes para siempre', coleccion: 'Colección',
+      aventuras: FRASES.tituloAventuras(),
     };
     const cab = `<header><button class="lv-boton" data-v="volver">← Volver</button><h2>${titulo[this.actual]}</h2>
       <div class="lv-saldo" style="position:static">${icono('moneda', 22)}${miles(this.p.oro)}</div></header>`;
@@ -213,6 +218,7 @@ export class Menu {
     else if (this.actual === 'escenarios') cuerpo = this.htmlEscenarios();
     else if (this.actual === 'cartas') cuerpo = this.htmlCartas();
     else if (this.actual === 'tienda') cuerpo = this.htmlTienda();
+    else if (this.actual === 'aventuras') cuerpo = this.htmlAventuras();
     else cuerpo = this.htmlColeccion();
     this.pantalla.innerHTML = cab + cuerpo;
   }
@@ -430,12 +436,106 @@ export class Menu {
       <div class="lv-detalle">${det || '<h3>Toca algo para verlo</h3>'}${resumen}</div></div>`;
   }
 
+  // ------------------------------------------------------------------------------------------------- Aventuras
+  /** La aventura que se está viendo en la pantalla de aventuras. */
+  private avSel = 'a1';
+
+  /** El capítulo que conviene mostrar de una aventura: el primero que falte (o el último, si ya la pasó toda). */
+  private capituloSugerido(aventura: string) {
+    const caps = AVENTURA[aventura]?.capitulos ?? [];
+    return (caps.find((c) => !this.p.aventuras.includes(c.id)) ?? caps[caps.length - 1])?.id ?? '';
+  }
+
+  /** ¿Hay un capítulo abierto sin jugar? (el puntico del botón). */
+  private aventurasNuevas() {
+    return AVENTURAS.some((a) => a.capitulos.some((c) => capituloAbierto(this.p.aventuras, c.id) && !this.p.aventuras.includes(c.id)));
+  }
+
+  /** Abre el menú directo en la pantalla de aventuras, en la aventura de ese capítulo (al volver de jugar uno). */
+  abrirEnAventuras(capitulo: string) {
+    const c = CAPITULO[capitulo];
+    if (!c) return;
+    this.avSel = c.aventura;
+    this.abrirPantalla('aventuras');
+    this.sel = this.capituloSugerido(c.aventura);
+    this.pintarPantalla();
+  }
+
+  private htmlAventuras() {
+    const hechos = this.p.aventuras;
+    // A la izquierda las tres aventuras (la escogida, abierta con sus capítulos); a la derecha, la ficha del capítulo
+    const lista = AVENTURAS.map((a) => {
+      const t = aventuraVista(a.id);
+      const n = a.capitulos.filter((c) => hechos.includes(c.id)).length;
+      const todo = n === a.capitulos.length;
+      const abierta = this.avSel === a.id;
+      const caps = abierta
+        ? `<div class="lv-capitulos">${a.capitulos.map((c) => {
+          const ab = capituloAbierto(hechos, c.id);
+          const hecho = hechos.includes(c.id);
+          return `<button class="lv-capitulo ${this.sel === c.id ? 'sel' : ''} ${ab ? '' : 'bloq'} ${hecho ? 'hecho' : ''}" data-sel="${c.id}">
+            <b>${hecho ? '✓' : c.numero}</b><span>${t?.capitulos[c.id]?.titulo ?? ''}</span>${ab ? '' : '<em>🔒</em>'}</button>`;
+        }).join('')}</div>`
+        : '';
+      return `<div class="lv-aventura ${abierta ? 'sel' : ''} ${todo ? 'completa' : ''}" style="--c:${a.color}">
+        <button class="cab" data-av="${a.id}"><i>${a.emoji}</i><span><b>${t?.titulo ?? ''}</b><small>${todo ? '✨ ¡Completa!' : `${n} de ${a.capitulos.length} capítulos`}</small></span>
+        <u style="--p:${Math.round((n / a.capitulos.length) * 100)}%"></u></button>${caps}</div>`;
+    }).join('');
+    const a = AVENTURA[this.avSel] ?? AVENTURAS[0];
+    const c = CAPITULO[this.sel]?.aventura === a.id ? CAPITULO[this.sel] : CAPITULO[this.capituloSugerido(a.id)];
+    return `<div class="cuerpo lv-aventuras"><div class="lv-lista-aventuras">${lista}</div>
+      <div class="lv-detalle lv-detalle-aventura" style="--c:${a.color}">${c ? this.htmlCapitulo(c) : ''}</div></div>`;
+  }
+
+  /** La ficha de un capítulo: dónde se juega, cuánto dura, sus reglas, el disfraz y la carta fijos y el premio. */
+  private htmlCapitulo(c: DefCapitulo) {
+    const a = AVENTURA[c.aventura];
+    const ta = aventuraVista(a.id);
+    const tc = ta?.capitulos[c.id];
+    const ab = capituloAbierto(this.p.aventuras, c.id);
+    const hecho = this.p.aventuras.includes(c.id);
+    const d = disfrazVisto(DISFRAZ[c.disfraz[this.o.rol]] ?? this.disfraz);
+    const carta = cartaVista(c.carta);
+    const esc = ESCENARIOS[c.escenario];
+    const jefe = c.jefeFinal ? enemigoVisto(ENEMIGOS[c.jefeFinal]) : null;
+    const meta = `🎯 Aguanta <b>${mmss(c.duracion)}</b>${c.apurado ? ' con el reloj al doble' : ''}${jefe ? ` y vence a <b>${jefe.nombre}</b>` : ''}`;
+    const reglas = [
+      `<span class="lv-chip">🗺️ ${esc.nombre}</span>`,
+      c.apurado ? '<span class="lv-chip">⏩ ¡Apurado!</span>' : '',
+      ...(c.modos ?? []).map((m) => `<span class="lv-chip">${MODO[m].emoji} ${MODO[m].nombre}</span>`),
+      `<span class="lv-chip" style="border-color:${carta.color}">${FRASES.iconoCarta()} ${carta.nombre}</span>`,
+    ].join('');
+    const anterior = a.capitulos[c.numero - 2];
+    const todo = a.capitulos.every((x) => this.p.aventuras.includes(x.id));
+    return `<div class="lv-cap">
+      <div class="vista ${c.escenario}"><span>${a.emoji} ${ta?.titulo ?? ''} · Capítulo ${c.numero} de ${a.capitulos.length}</span><h3>${tc?.titulo ?? ''}</h3></div>
+      <p class="lv-cap-historia">${hecho ? `📖 ${tc?.despues ?? ''}` : tc?.antes ?? ''}</p>
+      <div class="lv-cap-quien">${retrato(d, 'lv-retrato')}<span><small>Juegas con</small><b>${d.nombre}</b></span><div class="lv-chips">${reglas}</div></div>
+      <p class="lv-cap-meta">${meta}</p>
+      <div class="lv-cap-pie">
+        <p class="lv-cap-premio">${hecho ? '✓ Ya lo pasaste' : `Primera vez: +${miles(c.premio)} ${icono('moneda', 14)}`}${todo ? '' : ` · 🏁 toda la aventura: +${miles(a.premio)} ${icono('moneda', 14)}`}</p>
+        ${ab
+          ? `<div class="lv-fila"><button class="lv-boton rosa" data-v="capitulo">▶ ¡A jugar!</button>${
+            this.o.puedePareja ? `<button class="lv-boton menta" data-v="capituloPareja">${FRASES.iconoPareja()} Con ${this.o.nombreOtro}</button>` : ''
+          }</div>`
+          : `<p class="lv-cap-bloq">🔒 Primero pasa «${ta?.capitulos[anterior?.id ?? '']?.titulo ?? 'el anterior'}»</p>`}
+      </div></div>`;
+  }
+
   private async clicPantalla(e: MouseEvent) {
     const t = e.target as HTMLElement;
     const tab = t.closest<HTMLElement>('[data-tab]');
     if (tab) {
       this.pestana = tab.dataset.tab!;
       this.sel = '';
+      sfx.toque();
+      this.pintarPantalla();
+      return;
+    }
+    const av = t.closest<HTMLElement>('[data-av]');
+    if (av) {
+      this.avSel = av.dataset.av ?? 'a1';
+      this.sel = this.capituloSugerido(this.avSel);
       sfx.toque();
       this.pintarPantalla();
       return;
@@ -476,6 +576,12 @@ export class Menu {
     }
     sfx.toque();
     if (a === 'volver') return this.cerrarPantalla();
+    if ((a === 'capitulo' || a === 'capituloPareja') && CAPITULO[this.sel] && capituloAbierto(this.p.aventuras, this.sel)) {
+      this.pantalla.hidden = true;
+      this.resolver?.(`${a}:${this.sel}`);
+      this.resolver = null;
+      return;
+    }
     if (a === 'ponerse') {
       this.p.disfraz = this.sel;
       // (los disfraces de área siempre disparan solos)

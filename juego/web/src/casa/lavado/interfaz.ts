@@ -4,11 +4,12 @@
 import { ARMAS, PASIVAS, MAX_RANURAS, maxNivelArma, pasivasDeEvo } from './armas';
 import { ENEMIGOS } from './enemigos';
 import { DISFRAZ, puedeApuntar } from './disfraces';
-import { FRASES, cartaVista, disfrazVisto, logroVisto, personalizar } from './textos';
+import { FRASES, aventuraVista, capituloVisto, cartaVista, disfrazVisto, logroVisto, personalizar } from './textos';
+import { AVENTURA, CAPITULO } from './aventuras';
 import { barraMaestria, MAESTRIA_MAX, tituloMaestria, type SubidaMaestria } from './maestria';
 import { icono } from './iconos';
 import { RECETAS, estadoReceta, recetaDeArma, recetasDePasiva, type EstadoReceta } from './evoluciones';
-import { LOGRO, type ResumenPartida } from './progreso';
+import { LOGRO, type PremioCapitulo, type ResumenPartida } from './progreso';
 import { sfx } from './sonidos';
 import { LIMITE_COFRE, LIMITE_ESCOGER, LIMITE_TIENDA, ORO_X, type Jugador, type Motor, type Opcion } from './motor';
 import { ESCONDIDAS } from './armas';
@@ -321,7 +322,10 @@ export class Interfaz {
     $(this.hud, '.lv-xp i').style.width = `${Math.min(100, (m.xp / req) * 100)}%`;
     $(this.hud, '.lv-xp b').textContent = `Nv ${m.nivel}`;
     const t = $(this.hud, '.lv-tiempo');
-    const txt = mmss(m.t);
+    // (en un capítulo de las aventuras, lo que falta; al acabarse el tiempo, el jefe final o la fiesta)
+    const txt = m.capitulo
+      ? m.capituloGanado ? '🎉 ¡Listo!' : m.t < m.duracion ? `⏳ ${mmss(m.duracion - m.t)}` : '👑 ¡El jefe!'
+      : mmss(m.t);
     // (debajo del reloj: Apurado y los modos prendidos)
     const modos = [...m.modos].map((x) => MODO[x].emoji).join('');
     if (t.firstChild?.textContent !== txt) t.innerHTML = `${txt}${m.apurado || modos ? `<small>${m.apurado ? '¡Apurado! ' : ''}${modos}</small>` : ''}`;
@@ -915,12 +919,25 @@ export class Interfaz {
   }
 
   // ------------------------------------------------------------------------------------------------- Final
-  mostrarFin(r: ResumenPartida, extra: { logros: string[]; maestria?: SubidaMaestria; monedas: number; pareja: boolean; nombreOtro: string; nota?: string }): Promise<'otra' | 'menu'> {
-    sfx.fin(r.gano);
+  mostrarFin(
+    r: ResumenPartida,
+    extra: {
+      logros: string[]; maestria?: SubidaMaestria; monedas: number; pareja: boolean; nombreOtro: string; nota?: string;
+      /** Un capítulo de las aventuras: si se pasó, lo que dejó y si hay uno después. */
+      capitulo?: PremioCapitulo; siguiente?: boolean;
+    },
+  ): Promise<'otra' | 'menu'> {
+    const cap = r.capitulo ? CAPITULO[r.capitulo] : null;
+    const ganoCap = !!cap && !!r.capituloGanado;
+    sfx.fin(r.gano || ganoCap);
     // (con el agua caliente sin fin no llega la Ducha Helada: se gana igual al pasar los 30:00)
     const sinFin = !!r.modos?.includes('infinito');
-    const titulo = r.gano ? (sinFin ? '¡Agua caliente para rato!' : '¡Se acabó el agua caliente!') : r.retiro ? (r.segundos < 60 ? 'Lavadita de gato' : '¡Bien lavadito!') : r.segundos < 60 ? 'Otro día te lavas bien…' : 'Te ganaron los mugrosos';
-    const sub = r.gano && sinFin ? `Pasaste los 30:00 y seguiste: ${Math.floor(r.segundos / 1800) + 1} vueltas de agua caliente.` : r.gano ? 'Aguantaste hasta la Ducha Helada: ¡cara limpiecita!' : r.retiro ? 'Te saliste a tiempo y cobraste todo lo que recogiste.' : r.segundos >= 15 * 60 ? '¡Qué lavada tan buena!' : '¡Ya casi! Con la tienda de poderes se aguanta más.';
+    const titulo = cap ? (ganoCap ? '¡Capítulo superado!' : r.retiro ? 'Capítulo en pausa' : '¡Casi!') : r.gano ? (sinFin ? '¡Agua caliente para rato!' : '¡Se acabó el agua caliente!') : r.retiro ? (r.segundos < 60 ? 'Lavadita de gato' : '¡Bien lavadito!') : r.segundos < 60 ? 'Otro día te lavas bien…' : 'Te ganaron los mugrosos';
+    const textoCap = cap ? capituloVisto(cap.aventura, cap.id) : null;
+    const subCap = cap
+      ? `${textoCap ? `«${textoCap.titulo}» · ` : ''}${ganoCap ? (extra.capitulo?.aventura ? '¡Terminaste toda la aventura!' : 'A seguir con la historia.') : 'Inténtalo otra vez: cada partida deja gotas para los poderes.'}`
+      : '';
+    const sub = cap ? subCap : r.gano && sinFin ? `Pasaste los 30:00 y seguiste: ${Math.floor(r.segundos / 1800) + 1} vueltas de agua caliente.` : r.gano ? 'Aguantaste hasta la Ducha Helada: ¡cara limpiecita!' : r.retiro ? 'Te saliste a tiempo y cobraste todo lo que recogiste.' : r.segundos >= 15 * 60 ? '¡Qué lavada tan buena!' : '¡Ya casi! Con la tienda de poderes se aguanta más.';
     const total = r.danos.reduce((a, d) => a + d.dano, 0) || 1;
     const filas = r.danos
       .slice()
@@ -942,19 +959,30 @@ export class Interfaz {
       .filter((t): t is (typeof TESOROS)[number] => !!t)
       .map((t) => `<div class="lv-logro">${icono(t.id, 30)}<span><b>¡${t.nombre}!</b>${t.abre}</span></div>`)
       .join('');
+    // El final del capítulo (la historia, solo con la pareja) y lo que dejó la primera vez
+    const av = cap ? AVENTURA[cap.aventura] : null;
+    const historia = cap && ganoCap && textoCap
+      ? `<div class="lv-fin-historia" style="--c:${av!.color}"><b>${av!.emoji} ${aventuraVista(cap.aventura)?.titulo ?? ''} · Capítulo ${cap.numero}</b>${textoCap.despues}</div>`
+      : '';
+    const premioCap = extra.capitulo?.primera && extra.capitulo.oro
+      ? `<div class="lv-logro">${icono('moneda', 26)}<span><b>+${miles(extra.capitulo.oro)} gotas doradas</b>${extra.capitulo.aventura ? 'Por el capítulo y por terminar toda la aventura' : 'Por pasar el capítulo la primera vez'}</span></div>`
+      : '';
+    const otra = cap
+      ? extra.pareja ? 'Volver a la sala' : ganoCap ? (extra.siguiente ? 'Siguiente capítulo ▶' : '') : 'Otra vez'
+      : extra.pareja ? 'Volver a la sala' : 'Otra lavada';
     this.capaFin.innerHTML = `<div class="lv-panel">
-      <h2>${titulo}<small style="color:#7a625a">${extra.nota ? `${esc(extra.nota)} · ` : ''}${sub}</small></h2>
+      <h2>${titulo}<small style="color:#7a625a">${extra.nota ? `${esc(extra.nota)} · ` : ''}${sub}</small></h2>${historia}
       <div class="lv-resumen">
         <span><b>${mmss(r.segundos)}</b>tiempo</span><span><b>${r.nivel}</b>nivel</span><span><b>${miles(r.eliminados)}</b>mugrosos</span>
         <span><b>${miles(r.oro)}</b>${extra.pareja ? 'gotas doradas tuyas' : 'gotas doradas'}${r.jornal ? `<small>${miles(r.jornal)} por aguantar</small>` : ''}</span>${extra.monedas ? `<span><b>+${extra.monedas}</b>monedas de la casa</span>` : ''}
       </div>
       <div class="cuerpo">
         <div class="col"><table class="lv-tabla"><tr><th>Arma</th><th>Nv</th><th>Daño</th><th>%</th><th>DPS</th></tr>${filas}</table></div>
-        ${logros || maestria || tesoros ? `<div class="col">${tesoros}${maestria}${logros}</div>` : ''}
+        ${logros || maestria || tesoros || premioCap ? `<div class="col">${premioCap}${tesoros}${maestria}${logros}</div>` : ''}
       </div>
       <div class="lv-fila">
-        <button class="lv-boton menta grande" data-f="otra">${extra.pareja ? 'Volver a la sala' : 'Otra lavada'}</button>
-        <button class="lv-boton" data-f="menu">Al menú</button>
+        ${otra ? `<button class="lv-boton menta grande" data-f="otra">${otra}</button>` : ''}
+        <button class="lv-boton${otra ? '' : ' menta grande'}" data-f="menu">${cap && aventuraVista(cap.aventura) ? '📖 Las aventuras' : 'Al menú'}</button>
       </div></div>`;
     this.capaFin.hidden = false;
     for (const c of [this.capaNivel, this.capaCofre, this.capaCarta, this.capaPausa, this.capaEspera, this.capaTienda]) c.hidden = true;
