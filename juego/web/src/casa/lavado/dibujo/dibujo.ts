@@ -31,6 +31,7 @@ interface DatoBicho {
 
 /** Color de la salpicadura de cada mugroso al reventar. */
 const COLOR: Partial<Record<IdEnemigo, string>> = {
+  llaveGotea: '#8fd3f2',
   germen: '#7ccf6b', puntoNegro: '#3a2b2e', gotaGrasa: '#f7c948', acaro: '#c9b9a6', granito: '#f08a7c', caspa: '#f4f1ea', bacteria: '#5aa6e0',
   pelusa: '#a9a4b2', virus: '#b56bd6', barrito: '#e2463e', lagana: '#e9c46a', mugre: '#6b5a48', moco: '#8fcb52', sarro: '#e6cb7a',
   pastaSeca: '#f4faff', hongo: '#c84b4b', cucaracha: '#6b3a22', pelo: '#2b2220', moho: '#3e5a3a', jabonSucio: '#b8e0d2', piojo: '#b98c6a',
@@ -530,6 +531,9 @@ export class Dibujo {
       case 'remolino':
         this.remolinos.push({ x: e.x, y: e.y, r: e.c, t: e.d, total: e.d });
         break;
+      case 'seca':
+        this.secandose.push({ x: e.x, y: e.y, r: e.c, t: 1.6 });
+        break;
       case 'frasco':
         this.frascos.push({ x: e.x, y: e.y, r: e.c, t: e.d, total: e.d, cual: FRASCOS[Math.round(e.e) % FRASCOS.length] });
         break;
@@ -785,6 +789,7 @@ export class Dibujo {
     this.dibujarChorros(dtv);
     this.dibujarFrascos(dtv);
     this.dibujarRemolinos(dtv);
+    this.dibujarCharcos(m, dtv);
     this.dibujarObjetos(m);
     this.dibujarBichos(m, dtv);
     this.dibujarProyectiles(m);
@@ -1014,6 +1019,40 @@ export class Dibujo {
         const a = Math.random() * Math.PI * 2;
         this.part.crear('espuma', CAPA_NORMAL, w.x + Math.cos(a) * w.r * 0.95, w.y + Math.sin(a) * w.r * 0.68, 2, -Math.sin(a) * 90 - Math.cos(a) * 60, Math.cos(a) * 60 - Math.sin(a) * 40, 0, 0.9, 10, 4, 0.85, 0.95, 0.95, 0.85);
       }
+    }
+  }
+
+  /** El charco de la Llave que gotea (crece mientras esté viva) y los que se están secando cuando la cierran. */
+  private secandose: { x: number; y: number; r: number; t: number }[] = [];
+  private dibujarCharcos(m: Motor, dt: number) {
+    const o = this.fx.c.onda, b = this.fx.c.brillo, h = this.fx.c.humo;
+    const charco = (x: number, y: number, r: number, a: number, k: number) => {
+      if (r < 8 || !this.enVista(x, y, r * 1.2)) return;
+      // Agua clarita con brillo, ondas que se abren y el borde espumoso
+      this.pisoFx.poner(x, y, 0.06, r * 2.15, r * 1.55, 0.5, 0.5, h.u0, h.v0, h.u1, h.v1, 0.45, 0.75, 0.98, 0.55 * a, 0, 0, 1, this.t * 0.2 + k);
+      this.pisoFx.poner(x, y, 0.065, r * 1.9, r * 1.37, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 0.45, 0.78, 1, 0.3 * a);
+      for (let q = 0; q < 3; q++) {
+        const f = (this.t * 0.45 + q / 3 + k * 0.13) % 1;
+        const tam = r * 2 * (0.25 + f * 0.75);
+        this.pisoFx.poner(x, y, 0.07 + q * 0.003, tam, tam * 0.72, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 0.85, 0.95, 1, (1 - f) * 0.6 * a);
+      }
+      if (a > 0.5 && Math.random() < 0.25 * this.part.cupo) {
+        const ang = Math.random() * Math.PI * 2, d = Math.random() * r * 0.9;
+        this.part.crear('gota', CAPA_NORMAL, x + Math.cos(ang) * d, y + Math.sin(ang) * d * 0.72, 2, 0, 0, 120, 0.5, 7, 3, 0.6, 0.85, 1, 0.8);
+      }
+    };
+    for (let k = 0; k < m.en.length; k++) {
+      const e = m.en[k];
+      if (e.vivo && e.tipo === 'llaveGotea') charco(e.x, e.y, e.inunda, 1, e.uid);
+    }
+    for (let k = this.secandose.length - 1; k >= 0; k--) {
+      const s = this.secandose[k];
+      s.t -= dt;
+      if (s.t <= 0) {
+        this.secandose.splice(k, 1);
+        continue;
+      }
+      charco(s.x, s.y, s.r * (0.4 + 0.6 * (s.t / 1.6)), s.t / 1.6, k);
     }
   }
 
@@ -1325,6 +1364,17 @@ export class Dibujo {
       const bl = this.fx.c.brillo;
       // Aura dorada en el piso, debajo (encima lo lavaría de blanco)
       this.pisoFx.poner(e.x, e.y, 0.11, tam * 1.25, tam * 0.85, 0.5, 0.5, bl.u0, bl.v0, bl.u1, bl.v1, 1, 0.78, 0.25, 0.55 + Math.sin(t * 5 + e.uid) * 0.15);
+    }
+    if (e.acecho) {
+      // El Tapón que persigue: sombra rojiza que palpita (no se muere: se ahuyenta)
+      const bl = this.fx.c.brillo;
+      this.pisoFx.poner(e.x, e.y, 0.11, tam * 1.4, tam * 0.95, 0.5, 0.5, bl.u0, bl.v0, bl.u1, bl.v1, 0.9, 0.18, 0.2, 0.45 + Math.sin(t * 6) * 0.15);
+    }
+    if (e.ladron) {
+      // El ratón ladrón carga el cofre en la cabeza (rebota al correr)
+      const cf = this.cuadrosObj.get('cofre');
+      // (va en el lote de encima: si no, el ratón lo tapa)
+      if (cf) this.proy.poner(e.x, e.y + 2, alto + tam * 0.95 + Math.abs(Math.sin(fase * 9)) * 6, 52, 52, 0.5, 0.5, cf.u0, cf.v0, cf.u1, cf.v1, 1, 1, 1, 1, 0, 0, voltear, Math.sin(fase * 9) * 0.12, 0.15);
     }
     if (e.jefe) tam *= 1;
     this.bichos.poner(e.x, e.y, alto, tam, tam, d.ancla[0], d.ancla[1], c.u0, c.v0, c.u1, c.v1, r, g, b, 1, golpe ? e.flash / 0.13 : 0, aplastar, voltear, 0, brillo);

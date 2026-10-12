@@ -703,22 +703,22 @@
 /* La franja de color no se encoge (si no, en la segunda fila el sello «Especial» quedaba encima del título) */
 .lv-escenario { min-height: max-content; }
 .lv-escenario .vista { flex: 0 0 44px; position: relative; }
-.lv-escenario .vista.cara { background: radial-gradient(circle at 30% 40%, #f4a0a8 0 18%, transparent 30%), radial-gradient(circle at 70% 60%, #b07a5e 0 3%, transparent 4%), #f3cbb1; }
-.lv-escenario .vista.lavamanos { background: linear-gradient(180deg, #bfe0ee 0 20%, #fff 20% 80%, #bfe0ee 80%), #fff; }
-.lv-escenario .vista.desfile {
+:is(.lv-escenario, .lv-cap) .vista.cara { background: radial-gradient(circle at 30% 40%, #f4a0a8 0 18%, transparent 30%), radial-gradient(circle at 70% 60%, #b07a5e 0 3%, transparent 4%), #f3cbb1; }
+:is(.lv-escenario, .lv-cap) .vista.lavamanos { background: linear-gradient(180deg, #bfe0ee 0 20%, #fff 20% 80%, #bfe0ee 80%), #fff; }
+:is(.lv-escenario, .lv-cap) .vista.desfile {
   background:
     radial-gradient(circle at 50% 55%, #ffe08a 0 6%, transparent 7%),
     radial-gradient(circle at 50% 55%, #f2d8f0 0 22%, transparent 23%),
     linear-gradient(90deg, #8a5ab8 0 6%, transparent 6% 94%, #8a5ab8 94%),
     linear-gradient(160deg, #c8a8e0, #d8bce8);
 }
-.lv-escenario .vista.espejo {
+:is(.lv-escenario, .lv-cap) .vista.espejo {
   background:
     linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.7) 40%, transparent 50%),
     radial-gradient(circle at 30% 60%, rgba(255, 255, 255, 0.85) 0 25%, transparent 45%),
     linear-gradient(160deg, #b8c8d4, #d4e0e8);
 }
-.lv-escenario .vista.matera {
+:is(.lv-escenario, .lv-cap) .vista.matera {
   background:
     radial-gradient(circle at 30% 45%, #7dba4e 0 9%, transparent 10%),
     radial-gradient(circle at 68% 60%, #4f9a5a 0 11%, transparent 12%),
@@ -726,13 +726,13 @@
     radial-gradient(circle at 50% 50%, transparent 0 40%, #c8683e 41% 45%, transparent 46%),
     linear-gradient(160deg, #4a3224, #5e4030);
 }
-.lv-escenario .vista.tobogan {
+:is(.lv-escenario, .lv-cap) .vista.tobogan {
   background:
     repeating-linear-gradient(90deg, transparent 0 30px, rgba(255, 255, 255, 0.7) 30px 34px, transparent 34px 48px) 0 50% / 100% 3px no-repeat,
     linear-gradient(90deg, transparent 58%, #ff8a2e 58% 60%, transparent 60% 64%, #ff8a2e 64% 66%, transparent 66%) 0 0 / 100% 100%,
     linear-gradient(180deg, #3e8ab8 0 14%, #9ad8f0 14% 86%, #3e8ab8 86%);
 }
-.lv-escenario .vista.laberinto {
+:is(.lv-escenario, .lv-cap) .vista.laberinto {
   background:
     linear-gradient(90deg, transparent 30%, #8fc9e8 30% 34%, transparent 34% 66%, #f2a7b8 66% 70%, transparent 70%),
     linear-gradient(0deg, transparent 45%, #a8dcb8 45% 52%, transparent 52%) 0 0 / 50% 100% no-repeat,
@@ -749,26 +749,26 @@
   font: 700 10px/1.2 var(--display);
   font-style: normal;
 }
-.lv-escenario .vista.desague {
+:is(.lv-escenario, .lv-cap) .vista.desague {
   background:
     radial-gradient(circle at 50% 55%, #1a2222 0 8%, transparent 9%),
     repeating-conic-gradient(from 0deg at 50% 55%, #1a2222 0 4deg, transparent 4deg 30deg),
     radial-gradient(circle at 50% 55%, #a8b2b6 0 30%, transparent 31%),
     linear-gradient(160deg, #3c4a4a, #4e5e5a);
 }
-.lv-escenario .vista.jabonera {
+:is(.lv-escenario, .lv-cap) .vista.jabonera {
   background:
     linear-gradient(90deg, #8fb6c6 0 14%, #dfe5ec 14% 18%, transparent 18% 82%, #dfe5ec 82% 86%, #8fb6c6 86%),
     repeating-linear-gradient(0deg, #efe4d2 0 10px, #f7f0e4 10px 18px);
 }
-.lv-escenario .vista.ducha {
+:is(.lv-escenario, .lv-cap) .vista.ducha {
   background:
     radial-gradient(circle at 70% 30%, rgba(140, 200, 230, 0.7) 0 6%, transparent 7%),
     repeating-linear-gradient(0deg, transparent 0 22px, #9fb6c1 22px 24px),
     repeating-linear-gradient(90deg, transparent 0 22px, #9fb6c1 22px 24px),
     linear-gradient(160deg, #e3f1f4, #c6e4ec);
 }
-.lv-escenario .vista.banera { background: radial-gradient(circle at 25% 35%, #fff 0 10%, transparent 12%), radial-gradient(circle at 70% 65%, #fff 0 8%, transparent 10%), linear-gradient(160deg, #5fbcd3, #8fd8e6); }
+:is(.lv-escenario, .lv-cap) .vista.banera { background: radial-gradient(circle at 25% 35%, #fff 0 10%, transparent 12%), radial-gradient(circle at 70% 65%, #fff 0 8%, transparent 10%), linear-gradient(160deg, #5fbcd3, #8fd8e6); }
 .lv-escenario b, .lv-escenario small, .lv-escenario em { padding: 0 8px; }
 .lv-escenario b { font: 700 15px/1.1 var(--display); }
 .lv-escenario em { font-style: normal; color: #7a625a; }
@@ -1168,7 +1168,7 @@ body.lavandose .hud-arriba-der { opacity: 0; pointer-events: none; transition: o
 .lv-mapa.feria { background: repeating-linear-gradient(0deg, transparent 0 27px, rgba(120, 80, 40, 0.1) 27px 28px), linear-gradient(135deg, #cfe8bf, #b5d8a2); }
 .lv-mapa .pasillo.feria { right: auto; border: 2px dashed rgba(228, 87, 75, 0.55); background: rgba(255, 240, 246, 0.8); }
 .lv-mapa .pasillo.cerrada { right: auto; border: 2px dashed rgba(90, 70, 60, 0.3); background: repeating-linear-gradient(45deg, rgba(90, 70, 60, 0.12) 0 6px, transparent 6px 12px); }
-.lv-escenario .vista.feria {
+:is(.lv-escenario, .lv-cap) .vista.feria {
   background:
     radial-gradient(circle at 26% 55%, #f2c14e 0 9%, #fff7e0 9% 11%, transparent 12%),
     conic-gradient(from 0deg at 26% 55%, #e4574b 0 30deg, #ffe7a3 0 60deg, #5ab4f0 0 90deg, #fffdf8 0 120deg, #7fcb5a 0 150deg, #e86a8a 0 180deg, #bfe3f2 0 210deg, #9c6bd6 0 240deg, #ffd86b 0 270deg, #ff8a3d 0 300deg, #a8dda0 0 330deg, #f6c9a8 0 360deg) 26% 55% / 0 0 no-repeat,
@@ -1177,3 +1177,111 @@ body.lavandose .hud-arriba-der { opacity: 0; pointer-events: none; transition: o
 }
 .lv-llave { display: flex; align-items: center; gap: 6px; font: 600 11.5px/1.3 var(--texto); color: #5a6f8a; }
 .lv-llave.si { color: #3e8a5c; }
+
+/* ---------------------------------------------------------------------------------------------- Aventuras */
+.lv-fila-jugar { display: flex; gap: 6px; }
+.lv-fila-jugar > [data-m="jugar"] { flex: 1.5; }
+.lv-boton-aventuras { flex: 1; position: relative; font-size: 13px !important; white-space: nowrap; }
+.lv-punto {
+  position: absolute; top: -3px; right: -3px; width: 12px; height: 12px; border-radius: 50%;
+  background: #e4574b; box-shadow: 0 0 0 2px #fff; animation: lv-latir 1.2s ease-in-out infinite;
+}
+@keyframes lv-latir { 50% { transform: scale(1.25); } }
+.lv-aventuras { gap: 10px; }
+.lv-lista-aventuras { flex: 0 0 36%; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; padding: 2px; overscroll-behavior: contain; }
+.lv-aventura {
+  position: relative; border-radius: 16px; overflow: hidden; flex: 0 0 auto;
+  background: linear-gradient(120deg, color-mix(in srgb, var(--c) 28%, #fff8ee), #fff8ee 70%);
+  box-shadow: 0 3px 0 rgba(61, 43, 39, 0.2), inset 0 0 0 2px color-mix(in srgb, var(--c) 45%, transparent);
+}
+.lv-aventura .cab {
+  position: relative; width: 100%; border: 0; background: none; padding: 7px 10px 11px; text-align: left;
+  display: flex; align-items: center; gap: 8px; color: inherit;
+}
+.lv-aventura i { font-style: normal; font-size: 24px; filter: drop-shadow(0 2px 0 rgba(61, 43, 39, 0.18)); }
+.lv-aventura b { display: block; font: 700 14px/1.1 var(--display); color: #3d2b27; }
+.lv-aventura small { display: block; margin-top: 2px; font: 700 10.5px/1.2 var(--texto); color: #7a625a; }
+.lv-aventura u { position: absolute; left: 10px; right: 10px; bottom: 4px; height: 4px; border-radius: 4px; background: rgba(61, 43, 39, 0.12); }
+.lv-aventura u::after { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--p); border-radius: 4px; background: var(--c); }
+.lv-aventura.sel { box-shadow: 0 3px 0 rgba(61, 43, 39, 0.2), inset 0 0 0 3px #d7708d; }
+.lv-aventura.completa .cab b::after { content: ' ✨'; }
+.lv-capitulos { display: flex; flex-direction: column; gap: 3px; padding: 0 6px 7px; }
+.lv-capitulo {
+  border: 0; border-radius: 10px; padding: 3px 6px; display: flex; align-items: center; gap: 6px;
+  background: rgba(255, 255, 255, 0.85); box-shadow: 0 2px 0 rgba(61, 43, 39, 0.12); font: 700 11px/1.15 var(--texto); text-align: left; color: #3d2b27;
+}
+.lv-capitulo b {
+  flex: 0 0 19px; height: 19px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--c); color: #fff; font: 700 11px/1 var(--display);
+}
+.lv-capitulo span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lv-capitulo em { font-style: normal; font-size: 10px; }
+.lv-capitulo.sel { background: #fff; outline: 2.5px solid #d7708d; }
+.lv-capitulo.bloq { opacity: 0.55; }
+.lv-capitulo.bloq b { background: #b9aaa4; }
+.lv-capitulo.hecho b { background: #2f8f68; }
+.lv-detalle-aventura { padding: 0; overflow: hidden; }
+.lv-cap { display: flex; flex-direction: column; gap: 7px; min-height: 100%; padding-bottom: 10px; }
+.lv-cap .vista {
+  flex: 0 0 auto; position: relative; padding: 8px 12px 9px; display: flex; flex-direction: column; justify-content: flex-end; min-height: 62px;
+  box-shadow: inset 0 -40px 30px -18px rgba(61, 43, 39, 0.55);
+}
+.lv-cap .vista span { font: 700 10.5px/1.1 var(--texto); color: #fff; letter-spacing: 0.04em; text-transform: uppercase; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45); }
+.lv-cap .vista h3 { margin: 2px 0 0; font: 700 20px/1.05 var(--display); color: #fff; text-shadow: 0 2px 0 rgba(61, 43, 39, 0.5); }
+.lv-cap > :not(.vista) { margin-left: 12px !important; margin-right: 12px !important; }
+.lv-cap-historia { font-style: italic; color: #5f4a44 !important; font-size: 12.5px !important; line-height: 1.4 !important; }
+.lv-cap-quien { display: flex; align-items: center; gap: 8px; }
+.lv-cap-quien .lv-retrato { width: 42px; height: 42px; flex: 0 0 42px; }
+.lv-cap-quien small { display: block; font: 700 10px/1.1 var(--texto); color: #7a625a; }
+.lv-cap-quien b { display: block; font: 700 14px/1.1 var(--display); color: #3d2b27; white-space: nowrap; }
+.lv-cap-quien .lv-chips { flex: 1; justify-content: flex-end; }
+.lv-cap-meta { color: #2f8f68 !important; }
+.lv-cap .lv-chips { gap: 4px; }
+.lv-cap .lv-chip { font-size: 10.5px; padding: 2px 8px; border: 2px solid transparent; }
+.lv-cap-pie { margin-top: auto !important; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.lv-cap-premio { color: #8a5a12 !important; display: flex; align-items: center; gap: 3px; flex-wrap: wrap; }
+.lv-cap-bloq { color: #a0524b !important; }
+.lv-cap .lv-fila { justify-content: flex-end; gap: 6px; }
+
+/* La historia del capítulo (antes de empezar) y su final (en la pantalla del final) */
+.lv-historia {
+  position: absolute; inset: 0; display: grid; place-items: center; z-index: 5;
+  background: radial-gradient(circle at 50% 40%, rgba(61, 43, 39, 0.35), rgba(61, 43, 39, 0.72));
+  animation: lv-aparecer 0.35s ease-out;
+}
+.lv-historia .lv-panel { width: min(560px, calc(100% - 32px)); text-align: center; gap: 8px; }
+.lv-historia .cap { font: 700 12px/1.1 var(--texto); letter-spacing: 0.06em; text-transform: uppercase; color: var(--c, #d7708d); }
+.lv-historia h2 { margin: 2px 0 0; font: 700 24px/1.05 var(--display); color: #3d2b27; }
+.lv-historia .texto { margin: 0; font: 700 14px/1.45 var(--texto); color: #5f4a44; }
+.lv-historia .meta { margin: 0; font: 700 12px/1.3 var(--texto); color: #2f8f68; }
+.lv-historia .lv-retrato { width: 84px; height: 84px; flex: 0 0 84px; border-radius: 22px; box-shadow: 0 0 0 3px var(--c, #d7708d); }
+.lv-historia .cuerpo-h { display: flex; gap: 14px; align-items: center; text-align: left; }
+.lv-historia .cuerpo-h h2 { margin: 0 0 4px; text-align: left; }
+.lv-historia .pasos { display: flex; justify-content: center; gap: 5px; }
+.lv-historia .pasos i { width: 9px; height: 9px; border-radius: 50%; background: rgba(61, 43, 39, 0.15); }
+.lv-historia .pasos i.si { background: var(--c, #d7708d); }
+.lv-historia .pasos i.ya { background: #2f8f68; }
+.lv-historia .cuenta { font: 700 11px/1 var(--texto); color: #a08a84; }
+@keyframes lv-aparecer { from { opacity: 0; transform: scale(0.96); } }
+.lv-fin-historia {
+  margin: 0 0 4px; padding: 7px 10px; border-radius: 12px; text-align: left;
+  background: color-mix(in srgb, var(--c, #f2c14e) 16%, #fff8ee); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--c, #f2c14e) 45%, transparent);
+  font: 700 12px/1.4 var(--texto); color: #5f4a44;
+}
+.lv-fin-historia b { display: block; font: 700 13px/1.2 var(--display); color: #3d2b27; margin-bottom: 2px; }
+
+/* La Radio de la ducha */
+.lv-radio { gap: 10px; }
+.lv-radio-lista { flex: 1.4; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; padding: 2px 4px 8px 2px; display: flex; flex-direction: column; gap: 4px; }
+.lv-radio-lista h4 { margin: 6px 0 0 4px; font: 700 13px/1.1 var(--display); color: #8a4a5a; }
+.lv-pistas { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px; }
+.lv-pista {
+  border: 0; border-radius: 12px; padding: 6px 9px; display: flex; align-items: center; gap: 7px; text-align: left; color: #3d2b27;
+  background: rgba(255, 248, 238, 0.95); box-shadow: 0 2px 0 rgba(61, 43, 39, 0.18); font: 700 11.5px/1.15 var(--texto);
+}
+.lv-pista i { font-style: normal; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: #6cc9d6; color: #fff; font-size: 10px; flex: 0 0 20px; }
+.lv-pista small { margin-left: auto; color: #7a625a; font-size: 10px; }
+.lv-pista.sel { outline: 3px solid #d7708d; background: #fff; }
+.lv-pista.sel i { background: #d7708d; animation: lv-latir 0.9s ease-in-out infinite; }
+.lv-radio-detalle { align-items: center; text-align: center; justify-content: center; }
+.lv-radio-detalle .lv-ico { filter: drop-shadow(0 4px 0 rgba(61, 43, 39, 0.15)); }
