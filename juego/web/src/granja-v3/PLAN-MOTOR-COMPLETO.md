@@ -15,7 +15,7 @@ Ver [BALANCE-INTEGRACION.md](BALANCE-INTEGRACION.md) y su evidencia, además de 
 | Regiones | 24 actividades renovables, habitats, cinco colonias con genética y cuidado, seis mecanismos | Formas finales y animación cinematográfica a cargo del frente visual |
 | Pesca y museo | 26 peces, seis artefactos, trampas, 26 colecciones nuevas, seis lotes anteriores y seis vitrinas | La captura manual usa el minijuego común; no 26 minijuegos físicos diferentes |
 | Producción y logística | Colas, reservas, cofres, conectores locales, exportación opcional y carga pagada entre archivos | Los cofres no forman un inventario global instantáneo; la carga necesita una noche y retirada |
-| Comunidad | Cuatro obras con servicios, pedidos semanales y encuentros pendientes recuperables | No se atribuyen nuevas visitas de NPC a obras cuya agenda no fue extendida |
+| Comunidad | Cuatro obras, pedidos semanales, 52 reuniones con 312 líneas y vecinos presentes; prioridades y decisiones recuperables | Rita e Ivo revisan la terminal; sin nuevas visitas al muelle, galería o banco. Las 312 voces nuevas siguen pendientes |
 | Validación | Regresión, ambos builds, navegador, CI e instaladores con SHA concreto | Sin dispositivos físicos: FPS, batería y memoria de Android real no medidos |
 
 La matriz histórica de abajo conserva la línea base V4 del 7 de octubre; sus rótulos «pendiente» no

@@ -1,6 +1,7 @@
 import type {EstadoGranja,Resultado} from './estado';
 import type {AccionVidaAstra,EstadoVidaAstra,PasoVida} from './vida-astra-tipos';
 import {PERFILES_VIDA,RELACIONES_VIDA,ESCENAS_VIDA} from './vida-astra-datos';
+import {destinoReunion} from './reuniones';
 import {npcAstra,regionAstra,regionActual,libreRegionAstra,planoAstra,posicionNpcAstra} from './astra';
 import {comisionHistoria} from './historia-ubicaciones';
 import {fechaValle} from './jornada';
@@ -21,6 +22,7 @@ export function destinoVida(s:EstadoGranja,id:string):PasoVida['destino']&{activ
  const descanso=dia%7===p.descanso,malTiempo=t==='tormenta'||t==='ceniza'&&p.oficio==='semillas';
  if(min<abre||min>=(p.menor?1140:1260)||descanso&&(min<600||min>=1080)||malTiempo)return {...puntoCasa(id),actividad:malTiempo?'Resguardándose del clima':'En casa'};
  if(p.menor&&min>=p.merienda&&min<p.merienda+60)return {...puntoCasa(id),actividad:'Merienda y descanso'};
+ const reunionComunitaria=!descanso&&destinoReunion(s,id);if(reunionComunitaria)return reunionComunitaria;
  if(min>=750&&min<810&&!p.menor)return {...n.plaza,interior:null,actividad:'Pausa del oficio'};
  const reunion=RELACIONES_VIDA.some(a=>!a.secreto&&(a.a===id||a.b===id)&&s.historia?.completadas[a.revela]&&npcAstra(a.a)?.region===npcAstra(a.b)?.region);
  if(reunion&&dia%7===5&&min>=960&&min<1020)return {...n.plaza,interior:null,actividad:'Revisión de acuerdos en la plaza'};
@@ -42,7 +44,7 @@ export function rutaVida(region:string,desde:Punto,hasta:Punto):Punto[]{
  if(padres[b]===-2)return [];const out:Punto[]=[];for(let i=b;i!==a;i=padres[i])out.push(p(i));out.reverse();out.push({...hasta});return out;
 }
 export function avanzarVidaAstra(s:EstadoGranja,dt:number){
- const t=s.astra,v=t?.vida,region=regionActual(s);if(!v||!t?.actual||t.escena||v.actual||s.aventura.destinoActual||s.jornada.resumenPendiente||!Number.isFinite(dt)||dt<=0)return;
+ const t=s.astra,v=t?.vida,region=regionActual(s);if(!v||!t?.actual||t.escena||v.actual||s.comunidad?.reuniones.actual||s.aventura.destinoActual||s.jornada.resumenPendiente||!Number.isFinite(dt)||dt<=0)return;
  for(const id of Object.keys(v.pasos))if(v.pasos[id].region!==region)delete v.pasos[id];
  for(const n of regionAstra(region)?.npc??[]){const perfil=perfilVida(n);if(!perfil||perfil.original||comisionHistoria(s,n))continue;const d=destinoVida(s,n),h=regionAstra(region)?.viviendas.find(h=>h.id===npcAstra(n)!.hogar),p=d.interior?sitioVida(region,h?.entrada??{x:0,z:8}):sitioVida(region,d);
   let estado=v.pasos[n];if(!estado||estado.dia!==s.jornada.diasCompletados){estado={region,dia:s.jornada.diasCompletados,x:d.interior?d.x:p.x,z:d.interior?d.z:p.z,interior:d.interior,destino:{...p,interior:d.interior},ruta:[],actividad:d.actividad,andando:false};v.pasos[n]=estado;continue;}
