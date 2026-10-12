@@ -1017,6 +1017,364 @@ def m_puerta(coll):
         bola(coll, f'corona hoja {k}', (-0.2 + k * 0.1, -0.09, 2.05 + 0.04 * math.sin(k)), (0.04, 0.02, 0.03), mat('hoja', '#5FA85A', 0.55), n=2)
 
 
+# ---------------------------------------------------------------- gremio de aventureros
+
+PAPELES = ('#F6EEDC', '#F2E3C4', '#EDE0F0', '#E6F0E4', '#F7E6D6')
+
+
+def _papel(coll, nombre, x, y, z, w, h, rot, k, renglones=3):
+    o = caja(coll, nombre, (0, 0, 0), (w, 0.008, h), mat(f'papel {k % 5}', PAPELES[k % 5], 0.9), p=10, sub=0)
+    o.location = (x, y, z)
+    o.rotation_euler = (0, rot, 0)
+    bola(coll, f'{nombre} chinche', (x, y - 0.02, z + h * 0.8), 0.022, laca('chinche', ('#E4566B', '#F2C94C', '#3B6FB6')[k % 3], 0.4), n=2, sub=0)
+    for j in range(renglones):
+        caja(coll, f'{nombre} renglón {j}', (x, y - 0.012, z + h * 0.35 - j * h * 0.3), (w * 0.7, 0.002, 0.008), mat('tinta', '#6E5A48', 0.9), p=12,
+             sub=0)
+
+
+def m_tablon_misiones(coll):
+    """Tablón grande de expediciones (de pared): marco con techito, avisos clavados, un «se busca» y un mapa."""
+    w, h = 1.25, 0.8
+    for sx in (-1, 1):
+        caja(coll, f'poste tablón {sx}', (sx * (w + 0.06), 0, 1.05), (0.07, 0.06, 1.05), CHOCO(), p=8)
+    caja(coll, 'tablero', (0, 0, 1.45), (w, 0.04, h), madera('corcho', '#B98A5E'), p=10)
+    caja(coll, 'marco alto', (0, -0.03, 1.45 + h + 0.04), (w + 0.12, 0.06, 0.05), OSC(), p=8)
+    caja(coll, 'marco bajo', (0, -0.03, 1.45 - h - 0.04), (w + 0.12, 0.06, 0.05), OSC(), p=8)
+    caja(coll, 'techito', (0, -0.12, 2.42), (w + 0.25, 0.22, 0.05), laca('techito', '#8E3B3B', 0.5), p=6)
+    caja(coll, 'letrero tablón', (0, -0.08, 2.18), (0.5, 0.025, 0.1), madera('letrero', '#F2E3C4'), p=6)
+    for k in range(5):
+        caja(coll, f'letra {k}', (-0.32 + k * 0.16, -0.11, 2.18), (0.045, 0.004, 0.05), mat('tinta', '#6E5A48', 0.9), p=12, sub=0)
+    sitios = ((-0.95, 1.85, 0.06), (-0.55, 1.95, -0.05), (-0.95, 1.2, -0.08), (-0.5, 1.15, 0.05), (0.15, 0.95, -0.04), (0.6, 0.95, 0.07),
+              (1.0, 1.15, -0.06), (1.0, 1.85, 0.04))
+    for k, (x, z, r) in enumerate(sitios):
+        _papel(coll, f'aviso {k}', x, -0.06, z, 0.17, 0.21, r, k)
+    # Se busca: con una carita de monstruo
+    _papel(coll, 'se busca', -0.05, -0.06, 1.75, 0.22, 0.3, 0.03, 1, renglones=1)
+    bola(coll, 'monstruo', (-0.05, -0.08, 1.8), (0.11, 0.01, 0.09), tela('monstruo', '#7FB069'), n=3, sub=0)
+    for sx in (-1, 1):
+        bola(coll, f'ojo monstruo {sx}', (-0.05 + sx * 0.04, -0.092, 1.82), 0.018, mat('ojo', '#2B2422', 0.5), n=2, sub=0)
+    # Mapa del valle con su ruta punteada
+    o = caja(coll, 'mapa', (0, 0, 0), (0.32, 0.008, 0.22), mat('mapa', '#E9D9AE', 0.9), p=10, sub=0)
+    o.location = (0.55, -0.06, 1.7)
+    for k, (x, z, c) in enumerate(((0.38, 1.78, '#7FB069'), (0.6, 1.62, '#7FB069'), (0.72, 1.8, '#8EC5F0'))):
+        bola(coll, f'mancha mapa {k}', (x, -0.07, z), (0.07, 0.004, 0.045), mat(f'mapa {c}', c, 0.9), n=2, sub=0)
+    for k in range(6):
+        bola(coll, f'ruta {k}', (0.36 + k * 0.07, -0.072, 1.62 + 0.05 * math.sin(k)), 0.011, laca('ruta', '#C0392B', 0.5), n=2, sub=0)
+    caja(coll, 'equis', (0.75, -0.074, 1.63), (0.035, 0.003, 0.008), laca('ruta', '#C0392B', 0.5), p=12, sub=0)
+    # Daga clavando un aviso y farolito colgado al lado
+    tubo(coll, 'daga', [(0.95, -0.08, 1.95), (0.95, -0.2, 2.0)], 0.012, metal('acero', '#C7CED6'), seg=5)
+    caja(coll, 'mango daga', (0.95, -0.24, 2.01), (0.02, 0.05, 0.02), madera('mango', '#5A3A28'), p=8, sub=0)
+
+
+def m_mesa_mapas(coll):
+    """Mesa de planear expediciones: mapa grande extendido, brújula, velas, catalejo y libreta."""
+    caja(coll, 'tablero mesa', (0, 0, 0.78), (0.95, 0.6, 0.05), OSC(), p=6)
+    patas(coll, 'mesa mapas', 0.85, 0.5, 0.76, 0.06, CHOCO())
+    caja(coll, 'travesaño', (0, 0, 0.22), (0.8, 0.04, 0.03), CHOCO(), p=10, sub=0)
+    caja(coll, 'mapa grande', (0, 0, 0.835), (0.72, 0.46, 0.006), mat('mapa', '#E9D9AE', 0.9), p=12, sub=0)
+    for k, (x, y, r, c) in enumerate(((-0.35, 0.1, 0.18, '#7FB069'), (0.2, -0.15, 0.22, '#7FB069'), (0.35, 0.2, 0.14, '#8EC5F0'),
+                                      (-0.2, -0.25, 0.1, '#C9B6EA'))):
+        bola(coll, f'mancha {k}', (x, y, 0.842), (r, r * 0.7, 0.004), mat(f'mapa {c}', c, 0.9), n=2, sub=0)
+    for k in range(9):
+        bola(coll, f'ruta {k}', (-0.5 + k * 0.11, -0.05 + 0.12 * math.sin(k * 0.9), 0.845), 0.012, laca('ruta', '#C0392B', 0.5), n=2, sub=0)
+    for sx in (-1, 1):  # pisapapeles en las esquinas
+        bola(coll, f'piedra {sx}', (sx * 0.66, 0.4, 0.86), (0.06, 0.05, 0.035), piedra('pisapapeles'), n=3)
+    clay.lathe('brújula', [(0.0, 0.0), (0.1, 0.0), (0.1, 0.03), (0.0, 0.035)], coll, metal('oro', '#E8C66A'), segments=20,
+               subsurf=0).location = (0.5, -0.3, 0.84)
+    caja(coll, 'aguja brújula', (0.5, -0.3, 0.878), (0.008, 0.07, 0.004), laca('aguja', '#C0392B', 0.4), p=12, sub=0)
+    for k, (x, y) in enumerate(((-0.75, -0.42), (0.78, 0.45))):
+        cilindro(coll, f'vela {k}', (x, y, 0.83), 0.035, 0.16 - k * 0.04, mat('cera', '#F6F1E6', 0.6), seg=10)
+        clay.blob(f'llama vela {k}', (x, y, 0.83 + 0.16 - k * 0.04 + 0.04), (0.02, 0.02, 0.04), coll, luz('llama', '#FFB347', 4.0), n=3, p=1.6)
+    tubo(coll, 'catalejo', [(-0.45, 0.42, 0.87), (0.05, 0.5, 0.9)], 0.04, metal('oro', '#E8C66A'), seg=10)
+    tubo(coll, 'catalejo fino', [(0.05, 0.5, 0.9), (0.2, 0.53, 0.91)], 0.028, metal('oro', '#E8C66A'), seg=10)
+    caja(coll, 'libreta', (-0.55, -0.3, 0.85), (0.12, 0.16, 0.02), laca('libreta', '#3E5C76', 0.6), p=8, sub=0)
+    tubo(coll, 'pluma', [(-0.48, -0.25, 0.87), (-0.3, -0.1, 0.95)], 0.012, mat('pluma', '#F6F1E6', 0.6), seg=5)
+
+
+def m_armadura(coll):
+    """Armadura de peluche en su soporte: yelmo con penacho, peto, hombreras, faldón y escudo apoyado."""
+    acero = metal('acero', '#B9C2CC')
+    oro = metal('oro', '#E8C66A')
+    caja(coll, 'base soporte', (0, 0, 0.05), (0.35, 0.3, 0.05), CHOCO(), p=8)
+    tubo(coll, 'palo soporte', [(0, 0, 0.1), (0, 0, 1.4)], 0.035, CHOCO(), seg=6)
+    bola(coll, 'peto', (0, 0, 1.05), (0.3, 0.22, 0.34), acero, n=4)
+    caja(coll, 'cinturón', (0, -0.01, 0.74), (0.3, 0.22, 0.05), madera('cuero', '#6B4430'), p=6)
+    bola(coll, 'hebilla', (0, -0.23, 0.74), (0.05, 0.02, 0.04), oro, n=2, sub=0)
+    for k in range(4):
+        a = (k - 1.5) * 0.45
+        caja(coll, f'faldón {k}', (math.sin(a) * 0.22, -math.cos(a) * 0.17, 0.57), (0.09, 0.03, 0.14), acero, p=6).rotation_euler = (0, 0, a)
+    for sx in (-1, 1):
+        bola(coll, f'hombrera {sx}', (sx * 0.33, 0, 1.3), (0.15, 0.16, 0.1), acero, n=3)
+        bola(coll, f'remache hombrera {sx}', (sx * 0.36, -0.12, 1.33), 0.025, oro, n=2, sub=0)
+    caja(coll, 'cruz peto', (0, -0.21, 1.08), (0.03, 0.02, 0.18), oro, p=8, sub=0)
+    caja(coll, 'cruz peto h', (0, -0.21, 1.14), (0.12, 0.02, 0.03), oro, p=8, sub=0)
+    bola(coll, 'yelmo', (0, 0, 1.6), (0.2, 0.2, 0.22), acero, n=4)
+    caja(coll, 'visera', (0, -0.18, 1.6), (0.14, 0.04, 0.03), mat('rendija', '#2B2422', 0.8), p=8, sub=0)
+    for k in range(5):
+        bola(coll, f'penacho {k}', (0, 0.02 - k * 0.0, 1.83 + 0.02 * math.sin(k)), (0.05, 0.08 + k * 0.01, 0.06), tela('penacho', '#C0392B'), n=2)
+    o = clay.lathe('escudo', [(0.0, 0.0), (0.26, 0.0), (0.26, 0.04), (0.2, 0.07), (0.0, 0.08)], coll, laca('escudo', '#3E5C76', 0.45), segments=24,
+                   subsurf=1)
+    o.location = (0.42, -0.2, 0.32)
+    o.rotation_euler = (math.pi / 2 - 0.2, 0, -0.3)
+    bola(coll, 'umbo escudo', (0.4, -0.29, 0.34), (0.06, 0.04, 0.06), oro, n=2)
+
+
+def m_cofre_tesoro(coll):
+    """Cofre abierto con monedas, gemas y un collar asomando."""
+    oro = metal('oro', '#E8C66A')
+    caja(coll, 'cofre', (0, 0, 0.24), (0.42, 0.28, 0.22), madera('cofre', '#9A6A44'), p=6)
+    for x in (-0.3, 0.3):
+        caja(coll, f'fleje {x}', (x, 0, 0.24), (0.04, 0.29, 0.23), metal('hierro', '#3E3A38'), p=8, sub=0)
+    o = caja(coll, 'tapa', (0, 0, 0), (0.42, 0.06, 0.2), madera('cofre', '#9A6A44'), p=6)
+    o.location = (0, 0.32, 0.62)
+    o.rotation_euler = (0.25, 0, 0)
+    bola(coll, 'cerradura', (0, -0.29, 0.38), (0.05, 0.02, 0.06), oro, n=2, sub=0)
+    for k in range(26):
+        x, y = float(RNG.uniform(-0.34, 0.34)), float(RNG.uniform(-0.2, 0.2))
+        cilindro(coll, f'moneda {k}', (x, y, 0.44 + float(RNG.uniform(0, 0.08)) - (abs(x) + abs(y)) * 0.1), 0.045, 0.012, oro, seg=12)
+    for k, c in enumerate(('#E4566B', '#8EC5F0', '#7FB069', '#C9B6EA')):
+        bola(coll, f'gema {k}', (-0.25 + k * 0.17, 0.05 - (k % 2) * 0.1, 0.52), 0.04, vidrio(f'gema {c}', c), n=3)
+    for k in range(7):
+        bola(coll, f'collar {k}', (0.3 + k * 0.03, -0.27 - k * 0.012, 0.44 - k * 0.05), 0.018, mat('perla', '#F6F1E6', 0.3), n=2, sub=0)
+    for k in range(5):  # monedas regadas
+        cilindro(coll, f'moneda suelo {k}', (float(RNG.uniform(-0.6, 0.6)), float(RNG.uniform(-0.55, -0.35)), 0.0), 0.045, 0.012, oro, seg=12)
+
+
+def m_escudos_pared(coll):
+    """Dos escudos de pared con hachas cruzadas (respaldo en y=0, centro a 1.9 m)."""
+    for k, (x, c) in enumerate(((-0.45, '#3E5C76'), (0.45, '#8E3B3B'))):
+        o = clay.lathe(f'escudo {k}', [(0.0, 0.0), (0.3, 0.0), (0.3, 0.04), (0.24, 0.08), (0.0, 0.09)], coll, laca(f'escudo {c}', c, 0.45),
+                       segments=24, subsurf=1)
+        o.location = (x, -0.02, 1.9)
+        o.rotation_euler = (math.pi / 2, 0, 0)
+        bola(coll, f'umbo {k}', (x, -0.12, 1.9), (0.07, 0.04, 0.07), metal('oro', '#E8C66A'), n=2)
+        for j in range(6):
+            t = j * math.pi / 3
+            bola(coll, f'remache {k}{j}', (x + math.cos(t) * 0.22, -0.1, 1.9 + math.sin(t) * 0.22), 0.02, metal('oro', '#E8C66A'), n=2, sub=0)
+    for s in (-1, 1):
+        o = caja(coll, f'asta hacha {s}', (0, 0, 0), (0.025, 0.025, 0.55), madera('asta', '#8A5A3B'), p=8, sub=0)
+        o.location = (0, -0.04, 1.75)
+        o.rotation_euler = (0, s * 0.6, 0)
+        bola(coll, f'hoja hacha {s}', (s * 0.3, -0.04, 2.18), (0.13, 0.025, 0.1), metal('acero', '#C7CED6'), n=3)
+
+
+def m_estandarte_pared(coll):
+    """Estandarte largo de tela azul con la estrella del gremio (respaldo en y=0)."""
+    oro = metal('oro', '#E8C66A')
+    tubo(coll, 'barra', [(-0.45, -0.06, 2.6), (0.45, -0.06, 2.6)], 0.025, oro, seg=6)
+    caja(coll, 'paño', (0, -0.06, 1.85), (0.36, 0.02, 0.72), tela('estandarte', '#3E5C76'), p=8)
+    for s in (-1, 1):
+        o = caja(coll, f'punta {s}', (0, 0, 0), (0.26, 0.019, 0.09), tela('estandarte', '#3E5C76'), p=8)
+        o.location = (s * 0.18, -0.06, 1.1)
+        o.rotation_euler = (0, s * 0.45, 0)
+        caja(coll, f'ribete {s}', (s * 0.34, -0.085, 1.85), (0.02, 0.01, 0.72), oro, p=10, sub=0)
+    bola(coll, 'estrella', (0, -0.09, 1.95), (0.1, 0.015, 0.1), oro, n=3, sub=0)
+    for k in range(5):
+        a = math.pi / 2 + k * 2 * math.pi / 5
+        o = bola(coll, f'rayo {k}', (0, 0, 0), (0.045, 0.012, 0.15), oro, n=2, sub=0)
+        o.location = (math.cos(a) * 0.12, -0.09, 1.95 + math.sin(a) * 0.12)
+        o.rotation_euler = (0, math.pi / 2 - a, 0)
+
+
+# ---------------------------------------------------------------- museo
+
+def m_vitrina_museo(coll):
+    """Vitrina de exposición: pedestal de madera con molduras, campana de vidrio y placa dorada al frente. El objeto
+    lo pone el juego encima (a 1.02 m)."""
+    caja(coll, 'pedestal', (0, 0, 0.48), (0.36, 0.36, 0.44), OSC(), p=8)
+    caja(coll, 'zócalo pedestal', (0, 0, 0.06), (0.42, 0.42, 0.06), CHOCO(), p=8)
+    caja(coll, 'tapa pedestal', (0, 0, 0.96), (0.42, 0.42, 0.04), CHOCO(), p=8)
+    for k in range(4):
+        a = k * math.pi / 2
+        caja(coll, f'panel pedestal {k}', (math.sin(a) * 0.365, -math.cos(a) * 0.365, 0.5), (0.24, 0.012, 0.3), MAD(), p=8).rotation_euler = (0, 0, a)
+    caja(coll, 'cojín', (0, 0, 1.02), (0.28, 0.28, 0.03), tela('terciopelo', '#8E3B5E'), p=6)
+    v = _mat('Granja | vidrio vitrina', '#E6F3F5', rough=0.05, alpha=0.22)
+    v.blend_method = 'BLEND'  # glTF lo exporta transparente solo si no es opaco
+    for sx in (-1, 1):
+        caja(coll, f'vidrio x {sx}', (sx * 0.38, 0, 1.38), (0.008, 0.38, 0.38), v, p=12, sub=0)
+        caja(coll, f'vidrio y {sx}', (0, sx * 0.38, 1.38), (0.38, 0.008, 0.38), v, p=12, sub=0)
+    caja(coll, 'vidrio tapa', (0, 0, 1.765), (0.38, 0.38, 0.008), v, p=12, sub=0)
+    oro = metal('oro', '#E8C66A')
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            caja(coll, f'canto {sx}{sy}', (sx * 0.38, sy * 0.38, 1.38), (0.014, 0.014, 0.39), oro, p=10, sub=0)
+    for z in (1.0, 1.77):
+        for sx in (-1, 1):
+            caja(coll, f'filo x {z}{sx}', (sx * 0.38, 0, z), (0.014, 0.39, 0.014), oro, p=10, sub=0)
+            caja(coll, f'filo y {z}{sx}', (0, sx * 0.38, z), (0.39, 0.014, 0.014), oro, p=10, sub=0)
+    caja(coll, 'placa', (0, -0.38, 0.75), (0.17, 0.012, 0.07), oro, p=8, sub=0)
+    caja(coll, 'placa letras', (0, -0.395, 0.75), (0.12, 0.003, 0.012), mat('tinta', '#6E5A48', 0.9), p=12, sub=0)
+
+
+def m_pedestal_museo(coll):
+    """Columna corta de mármol con capitel, para estatuas o piezas grandes (el juego pone la pieza a 1.1 m)."""
+    marmol = mat('mármol', '#F2ECDF', 0.35, coat=0.3)
+    clay.lathe('pedestal', [(0.0, 0.0), (0.34, 0.0), (0.34, 0.1), (0.26, 0.16), (0.22, 0.24), (0.2, 0.92), (0.26, 0.98), (0.32, 1.04),
+                            (0.32, 1.1), (0.0, 1.1)], coll, marmol, segments=24, subsurf=1)
+    for k in range(8):
+        a = k * math.pi / 4
+        tubo(coll, f'estría {k}', [(math.cos(a) * 0.215, math.sin(a) * 0.215, 0.28), (math.cos(a) * 0.2, math.sin(a) * 0.2, 0.9)], 0.014,
+             mat('estría mármol', '#E2DACB', 0.4), seg=4)
+    caja(coll, 'placa', (0, -0.22, 0.6), (0.12, 0.008, 0.05), metal('oro', '#E8C66A'), p=8, sub=0)
+
+
+def m_cordon_museo(coll):
+    """Dos postes dorados con un cordón de terciopelo colgando entre ellos (1.6 m de ancho)."""
+    oro = metal('oro', '#E8C66A')
+    for sx in (-1, 1):
+        clay.lathe(f'poste {sx}', [(0.0, 0.0), (0.16, 0.0), (0.15, 0.04), (0.04, 0.08), (0.03, 0.85), (0.06, 0.9), (0.0, 0.98)], coll, oro,
+                   segments=16, subsurf=1).location = (sx * 0.8, 0, 0)
+    pts = [(-0.78 + k * 1.56 / 8, 0, 0.88 - 0.22 * math.sin(math.pi * k / 8)) for k in range(9)]
+    tubo(coll, 'cordón', pts, 0.03, tela('terciopelo', '#8E3B5E'), seg=8)
+
+
+def m_fosil(coll):
+    """Fósil del valle: un dragoncito de huesos sobre su base, con placa (pieza de exposición grande)."""
+    hueso = mat('hueso', '#EFE3C8', 0.75)
+    caja(coll, 'base fósil', (0, 0, 0.12), (0.7, 0.32, 0.12), piedra('base fósil', '#B7AE98'), p=6)
+    caja(coll, 'placa', (0, -0.33, 0.12), (0.18, 0.01, 0.06), metal('oro', '#E8C66A'), p=8, sub=0)
+    for sx in (-0.3, 0.25):
+        tubo(coll, f'varilla {sx}', [(sx, 0, 0.24), (sx, 0, 0.62)], 0.015, metal('hierro', '#3E3A38'), seg=5)
+    columna = [(-0.6 + k * 0.1, 0, 0.66 + 0.12 * math.sin(k * 0.45)) for k in range(12)]
+    for k, (x, y, z) in enumerate(columna):
+        bola(coll, f'vértebra {k}', (x, y, z), (0.045, 0.045 - k * 0.002, 0.05), hueso, n=2)
+        if 2 <= k <= 7:
+            for sy in (-1, 1):
+                tubo(coll, f'costilla {k}{sy}', [(x, 0, z), (x + 0.02, sy * 0.1, z - 0.08), (x + 0.04, sy * 0.08, z - 0.2)], 0.012, hueso, seg=4)
+    cx, cy, cz = columna[-1]
+    bola(coll, 'cráneo', (cx + 0.12, 0, cz + 0.08), (0.13, 0.09, 0.09), hueso, n=3)
+    bola(coll, 'hocico', (cx + 0.24, 0, cz + 0.05), (0.08, 0.06, 0.05), hueso, n=3)
+    for sy in (-1, 1):
+        bola(coll, f'cuenca {sy}', (cx + 0.15, sy * 0.07, cz + 0.11), 0.03, mat('cuenca', '#5A4A3A', 0.9), n=2, sub=0)
+        tubo(coll, f'cuerno {sy}', [(cx + 0.08, sy * 0.05, cz + 0.15), (cx + 0.02, sy * 0.08, cz + 0.27)], 0.015, hueso, seg=4)
+    for k, x in enumerate((-0.25, 0.15)):
+        for sy in (-1, 1):
+            tubo(coll, f'pata {k}{sy}', [(x, sy * 0.05, 0.62), (x + 0.04, sy * 0.1, 0.42), (x, sy * 0.1, 0.25)], 0.018, hueso, seg=4)
+
+
+def m_banco_museo(coll):
+    """Banco tapizado para mirar las vitrinas."""
+    caja(coll, 'asiento', (0, 0, 0.42), (0.7, 0.24, 0.07), tela('terciopelo', '#8E3B5E'), p=6)
+    for k in range(4):
+        bola(coll, f'botón {k}', (-0.5 + k * 0.33, 0, 0.495), 0.018, metal('oro', '#E8C66A'), n=2, sub=0)
+    patas(coll, 'banco museo', 0.62, 0.18, 0.36, 0.035, CHOCO())
+
+
+def m_placa_pared(coll):
+    """Cartela enmarcada de pared con texto (respaldo en y=0; el juego la pone a 1.6 m)."""
+    caja(coll, 'marco', (0, -0.02, 0), (0.42, 0.02, 0.3), metal('oro', '#E8C66A'), p=8, sub=0)
+    caja(coll, 'cartela', (0, -0.04, 0), (0.36, 0.01, 0.24), mat('cartela', '#F6EEDC', 0.9), p=10, sub=0)
+    caja(coll, 'título', (0, -0.05, 0.14), (0.22, 0.003, 0.025), laca('título', '#8E3B5E', 0.6), p=12, sub=0)
+    for j in range(5):
+        caja(coll, f'renglón {j}', (0, -0.05, 0.05 - j * 0.055), (0.28 - (j % 2) * 0.05, 0.003, 0.009), mat('tinta', '#6E5A48', 0.9), p=12, sub=0)
+
+
+
+# ---------------------------------------------------------------- piezas del museo comunitario (van sobre el cojín de la vitrina)
+
+def m_pieza_fanal_portuario(coll):
+    """Fanal de los primeros muelles: farol de puerto de latón con un vidrio roto."""
+    laton = metal('latón', '#C9A44C')
+    cilindro(coll, 'base fanal', (0, 0, 0), 0.11, 0.04, laton, seg=16)
+    for k in range(4):
+        a = k * math.pi / 2 + math.pi / 4
+        tubo(coll, f'varilla fanal {k}', [(math.cos(a) * 0.09, math.sin(a) * 0.09, 0.04), (math.cos(a) * 0.09, math.sin(a) * 0.09, 0.3)], 0.012, laton,
+             seg=5)
+    for k in range(3):
+        a = k * math.pi / 2
+        o = caja(coll, f'vidrio fanal {k}', (0, 0, 0), (0.065, 0.004, 0.12), vidrio('fanal', '#F3E4B0'), p=12, sub=0)
+        o.location = (math.cos(a) * 0.085, math.sin(a) * 0.085, 0.17)
+        o.rotation_euler = (0, 0, a + math.pi / 2)
+    o = caja(coll, 'vidrio roto', (0, 0, 0), (0.04, 0.004, 0.05), vidrio('fanal', '#F3E4B0'), p=12, sub=0)  # solo queda un pedazo
+    o.location = (0.02, -0.085, 0.24)
+    o.rotation_euler = (0, 0.4, 0)
+    clay.blob('llama fanal', (0, 0, 0.14), (0.03, 0.03, 0.06), coll, luz('llama', '#FFB347', 3.0), n=3, p=1.6)
+    clay.lathe('techo fanal', [(0.0, 0.0), (0.13, 0.0), (0.06, 0.08), (0.0, 0.1)], coll, laton, segments=16, subsurf=1).location = (0, 0, 0.3)
+    clay.lathe('aro fanal', [(0.03, -0.012), (0.045, 0.0), (0.03, 0.012)], coll, laton, segments=12, subsurf=0, cap_bottom=False,
+               cap_top=False).location = (0, 0, 0.44)
+
+
+def m_pieza_vasija_riego(coll):
+    """Vasija de riego remendada: barro con tres parches de reparación y su cordel."""
+    clay.lathe('vasija', [(0.0, 0.0), (0.09, 0.0), (0.15, 0.08), (0.16, 0.16), (0.12, 0.25), (0.07, 0.29), (0.085, 0.33), (0.0, 0.33)], coll,
+               mat('barro', '#C8794B', 0.85), segments=24, subsurf=1)
+    for k, (a, z, c) in enumerate(((-1.6, 0.14, '#8EC5F0'), (-1.0, 0.22, '#F2C94C'), (-2.1, 0.08, '#7FB069'))):
+        o = caja(coll, f'parche {k}', (0, 0, 0), (0.045, 0.006, 0.035), tela(f'parche {c}', c), p=8, sub=1)
+        o.location = (math.cos(a) * 0.155, math.sin(a) * 0.155, z)
+        o.rotation_euler = (0, 0, a + math.pi / 2)
+        for j in range(3):
+            caja(coll, f'puntada {k}{j}', (0, 0, 0), (0.003, 0.004, 0.012), mat('hilo', '#F6F1E6', 0.8), p=12, sub=0).location = (
+                math.cos(a) * 0.162 + (j - 1) * 0.02 * math.sin(a), math.sin(a) * 0.162 - (j - 1) * 0.02 * math.cos(a), z + 0.035)
+    clay.lathe('cordel', [(0.13, -0.008), (0.14, 0.0), (0.13, 0.008)], coll, tela('cordel', '#B98A5E'), segments=24, subsurf=0, cap_bottom=False,
+               cap_top=False).location = (0, 0, 0.24)
+
+
+def m_pieza_campana_turno(coll):
+    """Campana de cambio de turno: bronce colgada de un marco de madera."""
+    for sx in (-1, 1):
+        caja(coll, f'pata campana {sx}', (sx * 0.13, 0, 0.18), (0.02, 0.03, 0.18), OSC(), p=8, sub=0)
+    caja(coll, 'travesaño campana', (0, 0, 0.37), (0.16, 0.035, 0.025), OSC(), p=8, sub=0)
+    caja(coll, 'base campana', (0, 0, 0.015), (0.17, 0.08, 0.015), CHOCO(), p=8, sub=0)
+    clay.lathe('campana', [(0.0, 0.0), (0.1, 0.0), (0.095, 0.02), (0.07, 0.1), (0.06, 0.17), (0.0, 0.19)], coll, metal('bronce', '#B9823F'),
+               segments=20, subsurf=1).location = (0, 0, 0.14)
+    bola(coll, 'badajo', (0, 0, 0.13), 0.025, metal('hierro', '#3E3A38'), n=2)
+    tubo(coll, 'cuerda campana', [(0.0, 0.0, 0.14), (0.05, -0.03, 0.05)], 0.008, tela('cordel', '#B98A5E'), seg=4)
+
+
+def m_pieza_placa_taller(coll):
+    """Placa de un taller cerrado: tabla con el nombre del dueño y seis plaquitas de aprendices."""
+    o = caja(coll, 'placa', (0, 0, 0), (0.17, 0.02, 0.13), madera('placa', '#9A6A44'), p=8, sub=1)
+    o.location = (0, 0.04, 0.15)
+    o.rotation_euler = (-0.25, 0, 0)
+    caja(coll, 'atril', (0, 0.08, 0.06), (0.06, 0.04, 0.06), OSC(), p=8, sub=0)
+    t = caja(coll, 'nombre dueño', (0, 0, 0), (0.12, 0.004, 0.02), metal('latón', '#C9A44C'), p=12, sub=0)
+    t.location = (0, 0.013 + 0.08 * 0.25, 0.23)
+    t.rotation_euler = (-0.25, 0, 0)
+    for k in range(6):
+        t = caja(coll, f'aprendiz {k}', (0, 0, 0), (0.05, 0.004, 0.012), metal('cobre', '#C27C4E'), p=12, sub=0)
+        z = 0.18 - (k // 2) * 0.045
+        t.location = (-0.065 + (k % 2) * 0.13, 0.013 + (z - 0.15) * 0.25, z)
+        t.rotation_euler = (-0.25, 0, 0)
+
+
+def m_pieza_aguja_camino(coll):
+    """Aguja de orientación: brújula de bolsillo abierta con su cadena y marcas de permiso en la tapa."""
+    oro = metal('latón', '#C9A44C')
+    cilindro(coll, 'caja brújula', (0, 0, 0), 0.12, 0.04, oro, seg=24)
+    cilindro(coll, 'esfera', (0, 0, 0.04), 0.1, 0.004, mat('esfera', '#F6EEDC', 0.6), seg=24)
+    o = caja(coll, 'aguja norte', (0, 0, 0), (0.012, 0.05, 0.004), laca('aguja', '#C0392B', 0.4), p=12, sub=0)
+    o.location = (0.015, 0.035, 0.05)
+    o.rotation_euler = (0, 0, -0.4)
+    o = caja(coll, 'aguja sur', (0, 0, 0), (0.012, 0.05, 0.004), metal('acero', '#C7CED6'), p=12, sub=0)
+    o.location = (-0.015, -0.035, 0.05)
+    o.rotation_euler = (0, 0, -0.4)
+    o = clay.lathe('tapa', [(0.0, 0.0), (0.12, 0.0), (0.12, 0.02), (0.0, 0.025)], coll, oro, segments=24, subsurf=0)
+    o.location = (0, 0.12, 0.05)
+    o.rotation_euler = (-1.9, 0, 0)
+    for k in range(3):
+        bola(coll, f'marca permiso {k}', (-0.04 + k * 0.04, 0.17, 0.12), 0.012, laca('marca', ('#7FB069', '#8EC5F0', '#F2C94C')[k], 0.5), n=2, sub=0)
+    for k in range(6):
+        bola(coll, f'cadena {k}', (0.12 + k * 0.025, -0.03 - k * 0.02, 0.01), (0.012, 0.008, 0.006), oro, n=2, sub=0)
+
+
+def m_pieza_azulejo_cuenca(coll):
+    """Azulejo de la cuenca compartida: baldosa en atril con cuatro colores, uno por acuerdo."""
+    caja(coll, 'atril azulejo', (0, 0.07, 0.05), (0.06, 0.05, 0.05), OSC(), p=8, sub=0)
+    colores = ('#3B6FB6', '#7FB069', '#F2C94C', '#E4566B')
+    for k in range(4):
+        o = caja(coll, f'cuarto {k}', (0, 0, 0), (0.07, 0.012, 0.07), laca(f'azulejo {colores[k]}', colores[k], 0.25), p=10, sub=1)
+        z = 0.27 - (k // 2) * 0.15
+        o.location = (-0.075 + (k % 2) * 0.15, 0.025 + (z - 0.2) * 0.2, z)
+        o.rotation_euler = (-0.2, 0, 0)
+    o = caja(coll, 'marco azulejo', (0, 0, 0), (0.16, 0.008, 0.16), mat('crema', '#F0DABC', 0.8), p=10, sub=0)
+    o.location = (0, 0.045, 0.2)
+    o.rotation_euler = (-0.2, 0, 0)
+    for k in range(4):  # olitas pintadas
+        z = 0.27 - (k // 2) * 0.15
+        bola(coll, f'ola {k}', (-0.075 + (k % 2) * 0.15, 0.009 + (z - 0.2) * 0.2, z), (0.04, 0.004, 0.012),
+             mat('esmalte', '#F6F1E6', 0.3), n=2, sub=0)
+
+
 PIEZAS = {k[2:]: v for k, v in globals().items() if k.startswith('m_') and callable(v)}
 
 
