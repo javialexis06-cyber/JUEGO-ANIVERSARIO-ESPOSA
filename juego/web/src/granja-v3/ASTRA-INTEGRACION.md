@@ -1,5 +1,11 @@
 # Astra: base del motor y entrega para arte, voces y música
 
+La entrega posterior de campaña está en [HISTORIA-INTEGRACION.md](HISTORIA-INTEGRACION.md).
+Incorpora los planos y voces recientes de Claude, 178 residentes y 93 domicilios, sus encargos de
+pueblos y el diario de 36 contratos principales con 110 objetivos. Las cifras y ubicaciones de la
+base descrita más abajo son históricas: consultar los planos y el contrato vigente para producción.
+El motor completo sigue en desarrollo; los siete bloques autorizados se comprueban por separado.
+
 Actualización: 11 de octubre de 2026. Fuente activa: esta carpeta. Se conserva el guardado V5; `astra`
 es un bloque aditivo versionado, sin sustituir inventario, calendario, relaciones anteriores ni genomas.
 

@@ -1,3 +1,4 @@
+import {comisionHistoria} from './historia-ubicaciones';
 import { DATOS } from './astra-mundo-datos';
 import { DATOS as CAMPANA } from './astra-campana-datos';
 import { DATOS as RECURSOS } from './astra-recursos-datos';
@@ -46,7 +47,7 @@ export function puntoRuta(s:EstadoGranja,r:typeof RUTAS_ASTRA[number]){
 }
 export function rutasDesde(s:EstadoGranja){const here=regionActual(s);return RUTAS_ASTRA.filter(r=>r.desde===here||r.hacia===here).map(r=>({...r,destino:r.desde===here?r.hacia:r.desde,punto:puntoRuta(s,r)}));}
 export function posicionNpcAstra(s:EstadoGranja,id:string):{x:number;z:number;interior:string|null}|null {
- const n=npcAstra(id);if(!n||n.region!==regionActual(s))return null;
+ const n=npcAstra(id);if(!n)return null;const comision=comisionHistoria(s,id);if(comision)return comision.region===regionActual(s)&&s.jornada.minutos>=480&&s.jornada.minutos<1020?{x:comision.x,z:comision.z,interior:null}:null;if(n.region!==regionActual(s))return null;
  if(n.region==='pueblo_sol'){const p=ubicacionAldeano(id,s.jornada.diasCompletados,s.jornada.minutos,false);return p?.visible?{x:p.x,z:p.z,interior:null}:null;}
  const r=regionAstra(n.region)!,h=r.viviendas.find(h=>h.id===n.hogar),min=s.jornada.minutos,descanso=s.jornada.diasCompletados%7===r.npc.indexOf(id)%7;
  if(descanso){if(h&&(min<600||min>=1080))return {x:-2+r.npc.filter(i=>npcAstra(i)?.hogar===n.hogar).indexOf(id)*3,z:1,interior:h.id};return {...n.plaza,interior:null};}
@@ -74,14 +75,14 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
  if(a.tipo==='continuar'){
   if(!t.escena)return mal('No hay una escena activa.');const n=(CAMPANA.escenas as Record<string,number>)[t.escena.id];
   if(++t.escena.linea>=n){const id=t.escena.id;if(!t.lecturas.includes(id))t.lecturas.push(id);t.escena=null;
-   if(id.endsWith('#cierre')){const q=id.split('#')[0],decision=t.expedientes[q]?.decision,ram=q+'#rama'+(decision===0?'1':'2');if(Object.hasOwn(CAMPANA.escenas,ram))t.escena={id:ram,linea:0};}
+   if(id.endsWith('#cierre')){const q=id.split('#')[0],decision=q.startsWith('H:')?s.historia?.completadas[q.slice(2)]?.opcion:t.expedientes[q]?.decision,ram=q+'#rama'+(decision===0?'1':'2');if(Object.hasOwn(CAMPANA.escenas,ram))t.escena={id:ram,linea:0};}
    return bien('Lectura guardada.');}return bien('');
  }
  if(a.tipo==='ruta'){
   if(s.interior||s.servicio||t.interior)return mal('Sal de la vivienda para viajar.');
   const r=RUTAS_ASTRA.find(r=>r.id===a.id),p=r&&puntoRuta(s,r);if(!r||!p||!cerca(x,z,p))return mal('Camina hasta el acceso físico de esta ruta.');
   const destino=here===r.desde?r.hacia:r.desde,reg=regionAstra(destino),retorno=here===r.hacia;
-  if(!retorno&&reg?.permiso&&!t.expedientes[reg.permiso]?.cerrado)return mal('El acceso requiere el expediente '+reg.permiso+'. El regreso permanece abierto.');
+  if(!retorno&&reg?.permiso&&!t.expedientes[reg.permiso]?.cerrado&&!s.historia?.completadas[reg.permiso])return mal('El acceso requiere el expediente '+reg.permiso+'. El regreso permanece abierto.');
   if(r.construccion&&!s.produccion.estructuras.some(n=>n.articulo===r.construccion&&n.zona==='granja'))return mal('Fabrica y coloca '+r.construccion+' para abrir esta ruta.');
   let llegada=here===r.desde?r.hacia_punto:r.desde_punto;
   if(destino==='granja'){const n=s.produccion.estructuras.find(n=>n.articulo===r.construccion&&n.zona==='granja')!;llegada={x:n.x+.5,z:n.z+2.5};}
@@ -102,7 +103,7 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
   const h=regionAstra(here)?.viviendas.find(h=>h.id===t.interior);if(!h)return mal('No estás en una vivienda.');
   t.interior=null;t.posicion={x:h.entrada.x,z:h.entrada.z+1};return bien('Saliste a la calle.',{posicionZona:t.posicion});
  }
- if(a.tipo==='cine'){const q=CINEMATICAS_ASTRA[a.id];if(!q||!t.expedientes[q]?.cerrado)return mal('Cierra primero el expediente de esta escena.');t.escena={id:a.id,linea:0};return bien('Escena narrativa: los subtítulos conservan toda la narración.');}
+ if(a.tipo==='cine'){const q=CINEMATICAS_ASTRA[a.id];if(!q||!t.expedientes[q]?.cerrado&&!s.historia?.completadas[q])return mal('Cierra primero el expediente de esta escena.');t.escena={id:a.id,linea:0};return bien('Escena narrativa: los subtítulos conservan toda la narración.');}
  if(a.tipo==='hablar'){
   const n=npcAstra(a.id),p=posicionNpcAstra(s,a.id);if(!n||!(n.region==='pueblo_sol'?puedeConversar(s,n.id,x,z):p&&p.interior===t.interior&&cerca(x,z,p)))return mal('Busca al personaje según su horario y acércate para conversar.');
   if(!t.conocidos.includes(n.id))t.conocidos.push(n.id);
