@@ -1,8 +1,8 @@
 import { enSenderoZona } from './caminos-mundo';
 import type { Herramienta, Zona } from './catalogo';
 import type { Obstaculo } from './estado';
-export type Servicio='semillas'|'animales'|'carpinteria'|'herreria'|'clinica'|'posada'|'archivo'|'altar_aura'|'altar_lara';
-export const SERVICIOS:Servicio[]=['semillas','animales','carpinteria','herreria','clinica','posada','archivo','altar_aura','altar_lara'];
+export type Servicio='semillas'|'animales'|'carpinteria'|'herreria'|'clinica'|'posada'|'archivo'|'altar_aura'|'altar_lara'|'gremio'|'museo';
+export const SERVICIOS:Servicio[]=['semillas','animales','carpinteria','herreria','clinica','posada','archivo','altar_aura','altar_lara','gremio','museo'];
 export interface NivelHerramienta {nivel:number;nombre:string;dano:number;monedas:number;receta:Record<string,number>;duracionMs:number}
 // Nombres y costes provisionales: la mitología definitiva se integra fuera del motor.
 export const NIVELES_HERRAMIENTA:NivelHerramienta[]=[

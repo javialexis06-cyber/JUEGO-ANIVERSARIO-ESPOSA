@@ -31,6 +31,7 @@ import type { EstadoAventura, PuntoAventura } from './aventura';
 import type { PaisajeGranja } from './paisaje';
 import type { Jornada, ResumenJornada } from './jornada';
 import type { EstadoTiempo } from './clima';
+import type { EstadoGuia } from './guia';
 
 export interface Animal {id:string;nombre:string;especie:Species;sexo:'hembra'|'macho';genoma:Genome;nacimiento:number;edadDias:number;ultimoCruce:number|null;edificioId:string;cuidado:AnimalCare;productos:number;ultimoProductoAt:number;ultimoDiaExperiencia?:number;productoLegado?:boolean;rutina?:RutinaAnimal}
 export interface Edificio {nivel?:1|2|3;id:string;articulo:string;x:number;z:number;giro:number;especie?:Species;clima:Clima;pasto:number;ultimoPastoAt:number;puertaGanado?:boolean;henoReserva?:number;henoCalidades?:[number,number,number,number]}
@@ -39,7 +40,7 @@ export interface Drop {id:string;articulo:string;cantidad:number;x:number;z:numb
 export interface Parcela {campo?:CampoCultivo;x:number;z:number;cultivo:string|null;cuidado:CropCare|null}
 export interface EstadoGranja extends EstadoBarra {
  libros:EstadoLibros;colecciones:EstadoColecciones;festivales:EstadoFestivales;correo:EstadoCorreo;vidaSocial:EstadoVidaSocial;encargos:EstadoEncargos;pueblo:EstadoPueblo;obras:EstadoObras;compania:EstadoCompania;ganaderia:EstadoGanaderia;habilidades:EstadoHabilidades;jornada:Jornada;tiempo:EstadoTiempo;envios:EstadoEnvios;frutales:Frutal[];invernaderos:Invernadero[];
- comunidad?:EstadoComunidad;regional?:EstadoRegional;historia?:EstadoHistoria;astra?:EstadoAstra;paisaje?:PaisajeGranja;posicionExterior?:{zona:Zona;x:number;z:number};
+ guia?:EstadoGuia;comunidad?:EstadoComunidad;regional?:EstadoRegional;historia?:EstadoHistoria;astra?:EstadoAstra;paisaje?:PaisajeGranja;posicionExterior?:{zona:Zona;x:number;z:number};
  produccion:EstadoProduccion;aventura:EstadoAventura;posicionAventura:PuntoAventura|null;
  version:5;revision:number;ultimoTiempo:number;inicioTiempo:number;monedas:number;inventario:Record<string,number>;casillasInventario:(Pila|null)[];almacenMigracion:Record<string,number>;nivelesHerramienta:Record<string,number>;mejoraHerramienta:{herramienta:Herramienta;nivel:number;hasta:number}|null;servicio:Servicio|null;drops:Drop[];ultimoGolpeAt:number;herramienta:Herramienta;personaje:'ella'|'el';sectorIds:number[];
  edificios:Edificio[];obstaculos:Obstaculo[];parcelas:Parcela[];animales:Animal[];estadisticas:Record<string,number>;misionesCompletadas:string[];desbloqueos:string[];tokensCasa:string[];
@@ -47,6 +48,7 @@ export interface EstadoGranja extends EstadoBarra {
 }
 export type Accion =
  |{tipo:'comunidad';accion:AccionComunidad;xJugador:number;zJugador:number}
+ |{tipo:'guia';hecho:'prologo'}
  |{tipo:'regional';accion:AccionRegional;xJugador:number;zJugador:number}
  |{tipo:'vida_astra';accion:AccionVidaAstra;xJugador:number;zJugador:number}
  |{tipo:'premio';accion:AccionPremio;xJugador:number;zJugador:number}

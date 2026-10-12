@@ -18,12 +18,12 @@ const bien=(mensaje:string):Resultado=>({ok:true,mensaje});
 export const crearColecciones=():EstadoColecciones=>({version:1,lotes:LOTES_COLECCION.map(l=>({id:l.id,iniciadoDia:null,completadoDia:null,entregas:[]}))});
 export const aceptaLote=(r:RequisitoLote,p:Pila)=>r.articulos.includes(p.articulo)&&calidadPila(p)>=r.calidad;
 export const progresoLote=(r:RegistroLote,d:DefLote)=>d.requisitos.map((_,i)=>r.entregas.filter(e=>e.objetivo===i).reduce((n,e)=>n+e.cantidad,0));
-export function puedeUsarArchivo(s:EstadoGranja,x:number,z:number){return s.zona==='pueblo'&&s.servicio==='archivo'&&!s.interior&&!s.aventura.destinoActual&&!s.jornada.resumenPendiente&&!s.festivales.actual&&!s.vidaSocial.actual&&Number.isFinite(x)&&Number.isFinite(z)&&x>=-4&&x<4&&z>=-3&&z<4&&atencionServicio('archivo',s.jornada.diasCompletados,s.jornada.minutos).abierto;}
+export function puedeUsarArchivo(s:EstadoGranja,x:number,z:number){return s.zona==='pueblo'&&(s.servicio==='archivo'||s.servicio==='museo')&&!s.interior&&!s.aventura.destinoActual&&!s.jornada.resumenPendiente&&!s.festivales.actual&&!s.vidaSocial.actual&&Number.isFinite(x)&&Number.isFinite(z)&&x>=-4&&x<4&&z>=-3&&z<4&&atencionServicio(s.servicio,s.jornada.diasCompletados,s.jornada.minutos).abierto;}
 export function semillasArchivo(s:EstadoGranja){const ids=new Set(s.colecciones.lotes.filter(r=>r.completadoDia!==null).flatMap(r=>loteDef(r.id)!.cultivos));return CULTIVOS.filter(c=>ids.has(c.id));}
 export function donacionesColeccion(s:EstadoGranja){const resumen=new Map<string,EntregaLote>();for(const r of s.colecciones.lotes)if(r.completadoDia!==null)for(const e of r.entregas){const k=e.articulo+':'+e.calidad,antes=resumen.get(k);resumen.set(k,{...e,cantidad:(antes?.cantidad??0)+e.cantidad});}return [...resumen.values()];}
 /** Todas las operaciones se preparan antes de alterar inventario, progreso o recompensa. */
 export function actuarColeccion(s:EstadoGranja,a:AccionColeccion,x:number,z:number):Resultado {
- if(!puedeUsarArchivo(s,x,z))return mal('Visita el interior de la Casa de los Oficios durante su horario de atención.');
+ if(!puedeUsarArchivo(s,x,z))return mal('Visita el Museo del Valle durante su horario de atención.');
  if(a.tipo==='comprar_semilla'){
   const c=semillasArchivo(s).find(c=>c.id===a.cultivoId);if(!c||!entero(a.cantidad,1,99))return mal('Completa su lote y elige entre 1 y 99 semillas de la reserva.');
   if(c.requiere&&!s.desbloqueos.includes(c.requiere))return mal('Todavía no conoces el lugar de origen de esa semilla.');const coste=c.precio*a.cantidad;

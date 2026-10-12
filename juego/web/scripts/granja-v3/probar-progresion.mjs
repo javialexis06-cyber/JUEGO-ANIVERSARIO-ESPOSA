@@ -66,7 +66,11 @@ test('La primera familia usa los adultos iniciales y desbloquea fantasía sin co
   assert.equal(motor.estado.animales.length, 3);
   assert.equal(motor.estado.estadisticas.nacimientos, 1);
   fail(motor, { tipo: 'criar', madreId: 'animal_inicial_0', padreId: 'animal_inicial_1' });
+  // Los terrenos se compran en la Oficina de tierras del Taller del Roble
+  fail(motor, { tipo: 'sector', sectorId: 5 });
+  motor.estado.zona = 'pueblo'; motor.estado.servicio = 'carpinteria';
   act(motor, { tipo: 'sector', sectorId: 5 });
+  motor.estado.zona = 'granja'; motor.estado.servicio = null;
   act(motor, { tipo: 'reclamar', misionId: 'familia' });
   // El primer sector por comprar ya es el 5 (se empieza con la cruz 0-4), que cuesta 90 más
   assert.equal(motor.estado.monedas, 910);

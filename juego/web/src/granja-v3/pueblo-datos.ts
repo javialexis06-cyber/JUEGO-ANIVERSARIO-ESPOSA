@@ -1,5 +1,5 @@
 /** Datos y colisiones del pueblo compartidos con el motor, sin dependencias de render. */
-export type ServicioPueblo = 'semillas'|'animales'|'carpinteria'|'herreria'|'clinica'|'posada'|'archivo'|'altar_aura'|'altar_lara';
+export type ServicioPueblo = 'semillas'|'animales'|'carpinteria'|'herreria'|'clinica'|'posada'|'archivo'|'altar_aura'|'altar_lara'|'gremio'|'museo';
 export interface EdificioPueblo {
   id:string; nombre:string; servicio:ServicioPueblo;
   /** Esquina mínima del volumen sólido; todas las coordenadas son mundiales. */
@@ -15,6 +15,10 @@ export const EDIFICIOS_PUEBLO:readonly EdificioPueblo[] = [
   {id:'posada',nombre:'Posada del Molino',servicio:'posada',x:90,z:13,ancho:10,fondo:8,entrada:{x:95,z:22.4},descripcion:'Una mesa caliente, descanso y conversaciones. Espacio preparado para los futuros vecinos.'},
   {id:'archivo',nombre:'Casa de los Oficios',servicio:'archivo',x:71,z:15,ancho:9,fondo:7,entrada:{x:75.5,z:23.4},descripcion:'Tablón de encargos, colección de manuscritos y memoria del pueblo. La historia se incorporará más adelante.'},
   {id:'altar_aura',nombre:'Altar del Despertar',servicio:'altar_aura',x:59,z:-26,ancho:4,fondo:4,entrada:{x:61,z:-20.6},descripcion:'Un jardín de luz y brotes dedicado a Aura, diosa de la Vida, la Pasión y el Fuego Interno.'},
+  // Lugares físicos de la historia (12 de octubre de 2026): las expediciones salen del gremio y las colecciones, las
+  // vitrinas y la galería de especies viven en el museo. Modelos propios en granja_edificios.py.
+  {id:'gremio',nombre:'Gremio de Aventureros',servicio:'gremio',x:67,z:2,ancho:9,fondo:7,entrada:{x:71.5,z:9.4},descripcion:'Tablón de expediciones, mapas de las ruinas y consejos para volver con vida de la mina y del bosque ancestral.'},
+  {id:'museo',nombre:'Museo del Valle',servicio:'museo',x:86.8,z:-27,ancho:9,fondo:7,entrada:{x:91.3,z:-19.6},descripcion:'Lotes de las estaciones, vitrinas con las piezas donadas y la galería de especies del valle.'},
   {id:'altar_lara',nombre:'Altar de la Calma',servicio:'altar_lara',x:99,z:-26,ancho:4,fondo:4,entrada:{x:101,z:-20.6},descripcion:'Un jardín de lirios y rosales dedicado a Lara, diosa de la Muerte, el Descanso y la Paz.'},
 ];
 export const NPCS_PUEBLO = [
@@ -29,7 +33,7 @@ export const NPCS_PUEBLO = [
   {id:'canalizadora_lara',nombre:'Santa de Lara',edificio:'altar_lara',oficio:'altar_lara',x:103.8,z:-20.7,color:'#7a7499'},
   {id:'pescadora',nombre:'La pescadora',edificio:'posada',oficio:null,x:103,z:24,color:'#4e8d9c'},
   {id:'minero',nombre:'El minero',edificio:'posada',oficio:null,x:95,z:10,color:'#947150'},
-  {id:'exploradora',nombre:'La exploradora',edificio:'posada',oficio:null,x:57,z:-4,color:'#6c8757'},
+  {id:'exploradora',nombre:'La exploradora',edificio:'gremio',oficio:'gremio',x:74,z:10.2,color:'#6c8757'},
   {id:'cocinero',nombre:'El cocinero',edificio:'posada',oficio:null,x:88,z:23,color:'#dbbd86'},
   {id:'botanica',nombre:'La botánica',edificio:'archivo',oficio:null,x:83,z:-18,color:'#819958'},
   {id:'agricultor',nombre:'El agricultor',edificio:'archivo',oficio:null,x:68,z:-5,color:'#c69952'},
@@ -38,7 +42,7 @@ export const NPCS_PUEBLO = [
   {id:'guardabosques',nombre:'El guardabosques',edificio:'posada',oficio:null,x:56,z:-17,color:'#557964'},
   {id:'artesana',nombre:'La artesana',edificio:'archivo',oficio:null,x:89,z:-8,color:'#bd7960'},
   {id:'astronoma',nombre:'La astrónoma',edificio:'archivo',oficio:null,x:86,z:-21,color:'#797da8'},
-  {id:'veterano',nombre:'El vecino mayor',edificio:'posada',oficio:null,x:76,z:6,color:'#998676'},
+  {id:'veterano',nombre:'El vecino mayor',edificio:'museo',oficio:'museo',x:93.6,z:-18.8,color:'#998676'},
   {id:'nina',nombre:'La joven aprendiz',edificio:'archivo',oficio:null,x:74,z:11,color:'#cc9588'},
   {id:'nino',nombre:'El joven aprendiz',edificio:'archivo',oficio:null,x:91,z:11,color:'#89a9b9'},
   {id:'viajera',nombre:'La viajera',edificio:'posada',oficio:null,x:85,z:-8,color:'#b19472'},
@@ -87,7 +91,9 @@ export const CAMINOS_PUEBLO:readonly [number,number,number,number][] = (()=>{
   if(e.servicio==='animales')r.push([e.entrada.x,9.85,20.8,1.6]);if(e.servicio==='herreria')r.push([86,8.05,16.5,1.5]);
  }
  r.push([55,-30,53,1.8],[55,39.5,53,1.8],[82.5,-30,3,2],[85.7,25,3,16]);for(const v of VIVIENDAS_PUEBLO.filter(v=>!v.edificio))r.push([v.entrada.x-.8,v.entrada.z-.6,1.6,v.entrada.z<0?2.4:2]);
- r.push([103.3,11.8,5.8,1.6],[103.3,20.9,5.8,1.6]);return r;
+ r.push([103.3,11.8,5.8,1.6],[103.3,20.9,5.8,1.6]);
+ // El gremio sale a la callecita de los animales; el museo, por una vereda propia a la calle norte–sur
+ r.push([70.65,9,1.7,.9],[85.5,-19.4,6.65,1.6]);return r;
 })();
 /** Altura del suelo, excluyendo paredes, vallas y la fuente sólida. */
 export function alturaSueloPueblo(x:number,z:number):number{
@@ -127,7 +133,7 @@ export function librePueblo(x:number,z:number,radius=.32):boolean {
   return true;
 }
 
-export const ARBOLES_PUEBLO:readonly [number,number,number][] = [[56,-11,3.6],[70,-22,3.2],[81,-25,3.7],[88,-26,4],[106,-23,3.8],[108,-11,3.5],[55,14,3.6],[55,26,4],[88,26,3.6],[102,26,4],[109,6,3.8]];
+export const ARBOLES_PUEBLO:readonly [number,number,number][] = [[56,-11,3.6],[70,-22,3.2],[81,-25,3.7],[106,-23,3.8],[108,-11,3.5],[55,14,3.6],[55,26,4],[88,26,3.6],[102,26,4],[109,6,3.8]];
 export const BANCOS_PUEBLO:readonly [number,number,number][] = [[77.1,1,Math.PI/2],[90.7,2,-Math.PI/2],[80,9,Math.PI],[88,-10,0]];
 export const PUENTES_PUEBLO = [11.8,20.9] as const;
 // x/z centre and half extents of outdoor furniture (doorsteps remain clear).
