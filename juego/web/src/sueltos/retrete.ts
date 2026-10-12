@@ -4,6 +4,7 @@
 // salir vuelve a su sala de juegos (./amigos.html), nunca a la casa.
 //   retrete.html           despega
 //   retrete.html?tienda    abre solo la tienda del retrete
+import '../deslizar';
 import '@fontsource/fredoka/latin-500.css';
 import '@fontsource/fredoka/latin-600.css';
 import '@fontsource/fredoka/latin-700.css';

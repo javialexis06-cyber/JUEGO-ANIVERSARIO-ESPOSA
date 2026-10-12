@@ -227,7 +227,9 @@ body.amigos::before {
 .am-error:empty { display: none; }
 
 .am-tabs {
+  /* Son 10 pestañas: en dos filas se ven todas (antes en el celular se veían 6 y las demás quedaban escondidas) */
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   overflow-x: auto;
   scrollbar-width: none;

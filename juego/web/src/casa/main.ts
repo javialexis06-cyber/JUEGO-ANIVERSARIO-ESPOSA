@@ -1,6 +1,7 @@
 // Nuestro Hogar: la mascota de pareja. Cada uno cuida a su personaje (Él o Ella), le da cariño al otro,
 // se mandan regalos y notas, decoran la casa, guardan fotos y cuentan los días para sus fechas.
 // El súper (Súper Manía) queda como minijuego que paga monedas para la casa.
+import '../deslizar';
 import '@fontsource/fredoka/latin-500.css';
 import '@fontsource/fredoka/latin-600.css';
 import '@fontsource/fredoka/latin-700.css';

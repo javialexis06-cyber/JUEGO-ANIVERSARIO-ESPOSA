@@ -2,6 +2,7 @@
 // La mesa lleva los turnos (contra la IA, los dos en el mismo celular, cada uno en el suyo por internet o en una
 // sala con código con amigos) y los dos muñequitos reaccionan arriba a cada jugada. Con amigos (o en el aparato de
 // un amigo) todo va en modo neutro: nada personal de la pareja (src/neutro.ts).
+import '../deslizar';
 import '@fontsource/fredoka/latin-500.css';
 import '@fontsource/fredoka/latin-600.css';
 import '@fontsource/fredoka/latin-700.css';
