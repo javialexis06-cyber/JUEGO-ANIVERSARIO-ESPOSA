@@ -618,6 +618,21 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   deja escogida (`progreso.radio`); en la lavada suena esa toda la partida, también con jefes
   (`musicaLavado.radio`), y «La de siempre» vuelve a la rueda de canciones que se pone más pesada con los minutos.
   Cada celular escoge la suya.
+- **Los bichos especiales del original** (`motor.ts`, «Bichos especiales»; eventos `acecho`, `ladron` e `inunda`):
+  - **El ratón ladrón** (el que carga el tesoro): cada 4 o 5 minutos, desde el minuto 3 y en cualquier escenario, sale
+    a la vista un ratoncito dorado con un cofre en la cabeza y huye culebreando (con flecha verde con el cofre si se
+    sale de la pantalla). Si se le tumba suelta un cofre de 5 premios y una bolsa de gotas; si no, a los 18 segundos
+    se escapa.
+  - **El Tapón que persigue** (el Stalker): en La Bañera (12:30, después de vencerlo como jefe) y en El Desagüe (8:00)
+    el Tapón vuelve con sombra roja: camina lento detrás de uno y a ratos se queda quieto y arranca. No se muere: con
+    suficiente daño sale corriendo y al minuto vuelve; si uno se aleja mucho, aparece otra vez cerquita. No es jefe
+    (no cambia la música y se va con la Ducha Helada).
+  - **La Llave que gotea** (la que inunda): un grifo cromado de peluche con cara pícara, nuevo en Blender
+    (`b_llave_gotea` en `lavado_bichos.py`). Sale en El Lavamanos (7:00 y 17:30), La Bañera (8:30 y 18:30) y La Ducha
+    (6:00 y 16:00) como élite con cofre; mientras esté viva su charco crece hasta 340 de radio: adentro se camina al
+    60 % y cada 1,5 s se pierde un poquito de vida. Al cerrarla el charco se seca (efecto `seca`). En pareja el tamaño
+    del charco viaja en la foto (en el byte de la fase) y el ladrón y el que persigue en el bit 128 de las banderas.
+  Los capítulos de las aventuras no los traen.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

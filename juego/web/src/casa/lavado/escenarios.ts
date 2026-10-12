@@ -13,7 +13,7 @@ export interface Oleada {
   tipos: IdEnemigo[];
 }
 
-export type TipoEvento = 'jefe' | 'elite' | 'enjambre' | 'anillo' | 'muro' | 'carta' | 'flotar';
+export type TipoEvento = 'jefe' | 'elite' | 'enjambre' | 'anillo' | 'muro' | 'carta' | 'flotar' | 'acecho' | 'ladron' | 'inunda';
 
 export interface EventoOleada {
   /** Segundo de la partida. */
@@ -781,6 +781,34 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
     ],
   },
 };
+
+// Los bichos especiales del original (además del ratón ladrón, que pasa solo cada 4 o 5 minutos en cualquier escenario):
+// la Llave que gotea (la que inunda) en los escenarios con agua y el Tapón que persigue en La Bañera (después de
+// vencerlo como jefe vuelve, y ya no se muere) y en El Desagüe.
+const INUNDA = '💧 ¡Una llave quedó goteando! Ciérrala antes de que se inunde todo';
+const ESPECIALES: Partial<Record<IdEscenario, EventoOleada[]>> = {
+  lavamanos: [
+    { t: m(7), tipo: 'inunda', enemigo: 'llaveGotea', aviso: INUNDA },
+    { t: m(17, 30), tipo: 'inunda', enemigo: 'llaveGotea', aviso: INUNDA },
+  ],
+  banera: [
+    { t: m(8, 30), tipo: 'inunda', enemigo: 'llaveGotea', aviso: INUNDA },
+    { t: m(12, 30), tipo: 'acecho', enemigo: 'tapon', aviso: '😱 ¡El Tapón volvió y ahora te persigue! No se muere: pégale duro para ahuyentarlo' },
+    { t: m(18, 30), tipo: 'inunda', enemigo: 'llaveGotea', aviso: INUNDA },
+  ],
+  ducha: [
+    { t: m(6), tipo: 'inunda', enemigo: 'llaveGotea', aviso: INUNDA },
+    { t: m(16), tipo: 'inunda', enemigo: 'llaveGotea', aviso: INUNDA },
+  ],
+  desague: [
+    { t: m(8), tipo: 'acecho', enemigo: 'tapon', aviso: '😱 ¡El Tapón se fue por el desagüe… y te encontró! No se muere: pégale duro para ahuyentarlo' },
+  ],
+};
+for (const [id, evs] of Object.entries(ESPECIALES) as [IdEscenario, EventoOleada[]][]) {
+  ESCENARIOS[id].eventos.push(...evs);
+  // (el motor los recorre en orden)
+  ESCENARIOS[id].eventos.sort((a, b) => a.t - b.t);
+}
 
 export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague', 'desfile', 'espejo', 'matera', 'tobogan', 'laberinto', 'feria'];
 /** La partida completa (después llega la Ducha Helada). */

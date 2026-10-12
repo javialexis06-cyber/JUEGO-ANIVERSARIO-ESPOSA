@@ -2029,6 +2029,47 @@ def j_reina_cremas(b):
             b.blob((lado * 0.22, -0.06 + 0.05 * f, 0.03), (0.1, 0.14, 0.04), brillante('#9C3B6E', rough=0.35), grupo, n=8)
 
 
+def b_llave_gotea(b):
+    """La Llave que gotea (la que inunda): un grifo cromado de peluche con la manija de cruz, el chorrito que no para
+    y el charquito a sus pies. Pícara: sabe que mientras esté viva, todo se moja."""
+    cromo = brillante('#C9D6E2', rough=0.18, coat=0.9, sss=0.02)
+    oscuro = brillante('#8FA3B5', rough=0.3, coat=0.6, sss=0.02)
+    agua = brillante('#7FD0F2', rough=0.05, coat=1.0, sss=0.1, transmision=0.6)
+    # El cuerpo: la base del grifo (un cilindro gordito, cromado)
+    b.torno([(0.0, 0.0), (0.3, 0.0), (0.33, 0.04), (0.3, 0.1), (0.27, 0.5), (0.24, 0.56), (0.0, 0.58)], cromo, segmentos=32)
+    b.cuerpo.append(b.g['base'][-1])
+    b._surf = None
+    # El anillo de abajo y el cuello de arriba
+    b.torno([(0.31, 0.0), (0.36, 0.02), (0.36, 0.07), (0.31, 0.09)], oscuro)
+    b.g['base'][-1].location = (0, 0, 0.0)
+    # La manija de cruz arriba, con sus botoncitos de frío y caliente
+    b.torno([(0.0, 0.0), (0.08, 0.0), (0.08, 0.12), (0.0, 0.12)], oscuro)
+    b.g['base'][-1].location = (0, 0, 0.56)
+    for (dx, dy, col) in ((1, 0, '#E4574B'), (-1, 0, '#4E8FE0'), (0, 1, '#C9D6E2'), (0, -1, '#C9D6E2')):
+        b.tubo([(0, 0, 0.66), (dx * 0.2, dy * 0.2, 0.68)], 0.04, cromo, segmentos=8)
+        b.blob((dx * 0.22, dy * 0.22, 0.68), (0.06,) * 3, brillante(col, rough=0.3, coat=0.6), n=8)
+    # El pico (sale por un lado y se dobla hacia abajo, para que se le vea la cara)
+    px = 0.56
+    b.tubo([(0.22, -0.04, 0.44), (0.42, -0.06, 0.48), (0.53, -0.06, 0.42), (px, -0.06, 0.32)], 0.07, cromo, segmentos=10)
+    b.torno([(0.0, 0.0), (0.075, 0.0), (0.085, 0.03), (0.0, 0.03)], oscuro)
+    b.g['base'][-1].location = (px, -0.06, 0.28)
+    # El agua: gota cayendo (se mueve entre los dos pasos), el chorrito y el charco
+    b.blob((px, -0.06, 0.18), (0.045, 0.045, 0.06), agua, 'pasoA', n=8)
+    b.blob((px, -0.06, 0.07), (0.05, 0.05, 0.065), agua, 'pasoB', n=8)
+    b.tubo([(px, -0.06, 0.27), (px, -0.06, 0.21)], [0.025, 0.015], agua, 'pasoA', segmentos=6)
+    b.blob((0.25, -0.12, 0.0), (0.5, 0.32, 0.02), agua, n=12, p=2.2)
+    for (x, y, r) in ((-0.28, -0.42, 0.05), (0.66, -0.3, 0.04), (0.42, -0.45, 0.035)):
+        b.blob((x, y, 0.02), (r, r, r * 0.8), agua, n=6)
+    # Las paticas de goma
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            b.blob((lado * 0.18, 0.02 + 0.05 * s_ * lado, 0.03), (0.08, 0.1, 0.045), brillante('#3D4A58', rough=0.5), grupo, n=6)
+    # La cara (en el cuerpo, debajo del pico): pícara, con una sonrisa ladeada
+    ojos(b, 0, 0.36, 0.085, sep=0.13, mirar=(0.08, -0.12))
+    boca(b, 0, 0.2, 0.08, 'ladeada')
+    cachetes(b, 0, 0.24, 0.18, 0.04, color='#9FD4F0')
+
+
 BICHOS = {
     'germen': b_germen, 'puntoNegro': b_punto_negro, 'gotaGrasa': b_gota_grasa, 'acaro': b_acaro, 'granito': b_granito, 'caspa': b_caspa,
     'bacteria': b_bacteria, 'pelusa': b_pelusa, 'virus': b_virus, 'barrito': b_barrito, 'lagana': b_lagana, 'mugre': b_mugre,
@@ -2061,6 +2102,7 @@ BICHOS = {
     # La Feria de las cremas
     'pompitaCrema': b_pompita_crema, 'tubitoCrema': b_tubito_crema, 'nubeAzucar': b_nube_azucar, 'potecito': b_potecito, 'mascarilla': b_mascarilla,
     'ruletaLoca': j_ruleta_loca, 'payasoBloqueador': j_payaso_tortazo, 'reinaCremas': j_reina_cremas,
+    'llaveGotea': b_llave_gotea,
 }
 JEFES = {'espinillon', 'reinaCaspa', 'granMoco', 'senorLagana', 'barroNegro', 'senorSarro', 'donaCucaracha', 'motaPelo', 'tapon',
          'esponjaPodrida', 'peloDesague', 'duchaHelada', 'reyHongo', 'regaderaLoca', 'cortinaMohosa', 'ciempiesGigante',

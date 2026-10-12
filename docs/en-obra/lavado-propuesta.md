@@ -184,6 +184,10 @@ ganar premio), la **ruleta** de La Feria de las cremas, la **carrera** del Tobog
 
 ### I. Bichos y jefes nuevos
 
+> **Hecho** (12 de octubre): los bichos y jefes de cada escenario nuevo y los especiales: el ratón ladrón (carga un
+> cofre), el Tapón que persigue y la Llave que gotea (la que inunda). Los guardianes de los anillos son los élites que
+> salen a cuidar cada tesoro.
+
 Cada escenario trae sus bichos y jefes (Blender, mismo estilo de arcilla y felpa). Además, los bichos especiales del
 original: el **que carga el tesoro** (cofre extra), el **que persigue** (el Stalker: aquí el Tapón que te sigue y se
 acelera a ratos), el **que inunda** (el Drowner: sube el agua desde abajo) y los **guardianes** de los anillos escondidos

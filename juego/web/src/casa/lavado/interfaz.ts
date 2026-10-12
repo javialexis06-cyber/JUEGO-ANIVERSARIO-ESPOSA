@@ -396,6 +396,24 @@ export class Interfaz {
       f.style.setProperty('--a', `${Math.atan2(py - y, px - x)}rad`);
       f.classList.add('si');
     }
+    // (el ratón ladrón también: corre con un cofre y hay que alcanzarlo)
+    for (let k = 0; k < m.nVivos && n < flechas.length; k++) {
+      const e = m.en[m.vivos[k]];
+      if (!e.vivo || !e.ladron) continue;
+      const [px, py] = aPantalla(e.x, e.y);
+      if (px > 0 && py > 0 && px < w && py < h) continue;
+      const f = flechas[n++];
+      const x = Math.max(30, Math.min(w - 30, px)), y = Math.max(x < 230 || x > w - 70 ? 104 : 76, Math.min(h - 34, py));
+      const metros = Math.round(Math.hypot(e.x - yo.x, e.y - yo.y) / 40);
+      const clave = `ladron|${metros}`;
+      if (f.dataset.k !== clave) {
+        f.dataset.k = clave;
+        f.firstElementChild!.innerHTML = `${icono('cofre', 26)}<em>${metros} m</em>`;
+      }
+      f.style.transform = `translate(${x}px, ${y}px)`;
+      f.style.setProperty('--a', `${Math.atan2(py - y, px - x)}rad`);
+      f.classList.add('si');
+    }
     for (let k = n; k < flechas.length; k++) flechas[k].classList.remove('si');
     // La flecha naranja hacia el carrito de Don Jabón y la rosada hacia el Ruletero (mientras falte feria por abrir)
     const puestos: [string, [number, number] | null, string][] = [
