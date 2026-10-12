@@ -54,19 +54,58 @@ mientras tanto, o si faltan, suena el sintetizado de siempre.
   81 min, más 43 efectos) gastó unos 74.000 créditos.
 - Peso: ≈ 39 MB la música de la pareja, ≈ 24 MB la de los amigos, 0,4 MB los efectos.
 
+## La música de la granja
+
+Las 23 claves de `docs/narrativa/06-produccion.md` (M01–M23) suenan en la granja con `AudioAstra`: en bucle, bajito,
+y bajan más cuando alguien habla. Las suena:
+- La granja y sus zonas: M01.
+- El Pueblo del Sol: M02.
+- Cada región de Astra: la suya.
+- Cada cinemática: su pieza propia (`MUSICA_ESCENAS_ASTRA`).
+
+Por pedido de Javier, lo general **se descargó** con licencia CC0 (libre, no pide crédito, pero aquí queda) y solo se
+**compusieron con Eleven Music** las 7 piezas de las cinemáticas que el guion describe muy en detalle:
+- M10 Extracción.
+- M11 Corte (de orquesta a metal y de vuelta al piano).
+- M14 Casa de Vael (el ostinato que pierde una nota).
+- M19 Borde de Astra.
+- M20 Final.
+- M21 Tratado.
+- M22 Vasija.
+
+Esas 7 suman unos 18 minutos y unos 12.700 créditos.
+
+| Clave | Dónde | Pista (OpenGameArt, CC0) | Autor |
+|---|---|---|---|
+| M01 | Granja y sus zonas | [Town Theme RPG](https://opengameart.org/content/town-theme-rpg) | cynicmusic |
+| M02 | Pueblo del Sol y posada | [Medieval: The Old Tower Inn](https://opengameart.org/content/medieval-the-old-tower-inn) | RandomMind |
+| M03 | Puerto de los Lirios | [Etirwer](https://opengameart.org/content/etirwer) | Kistol |
+| M04 | Brumaverde | [Forest](https://opengameart.org/content/forest-3) | symphony |
+| M05 | Piedralumbre | [Crystal Cave (song18)](https://opengameart.org/content/crystal-cave-song18) | cynicmusic |
+| M06 | Brasaviva | [Hot Springs Town](https://opengameart.org/content/hot-springs-town) | Kistol |
+| M07 | Nieveclara | [Snow Theme](https://opengameart.org/content/snow-theme) | CleytonKauffman |
+| M08 | Vigilia | [Waiting II](https://opengameart.org/content/waiting-ii) | Kistol |
+| M09 | Archivo | [At Home - Orchestral](https://opengameart.org/content/at-home-orchestral) | Wolfgang_ |
+| M12 | Verdia | [Heaven Theme Loop](https://opengameart.org/content/heaven-theme-loop) | beardalaxy |
+| M13 | Senda | [First Light Particles](https://opengameart.org/content/first-light-particles-%E2%80%93-cc0-atmospheric-pianoambient-track) | Yoiyami |
+| M15 | Nox | [Mysterious Ambience (song21)](https://opengameart.org/content/mysterious-ambience-song21) | cynicmusic |
+| M16 | Estación y lunas | [Another August](https://opengameart.org/content/another-august) | cynicmusic |
+| M17 | Ambarina | [Negev Desert (loop)](https://opengameart.org/content/desert-calmness-and-fighting-orchestral-141) | Dizzy Crow |
+| M18 | Iridalia | [Besai Crystal Gardens 2](https://opengameart.org/content/besai-crystal-gardens-2-forbidden-pathway) | Tozan |
+| M23 | Confluencia | [Somnium](https://opengameart.org/content/somnium) | Adiutorium |
+
+`node scripts/granja-v3/musica-granja.mjs` las descarga, compone lo que falte, las pasa a Opus estéreo 64 kb/s
+(−16 LUFS) en `public/audio/astra/musica/` y las declara en `public/granja/astra/medios.json` → `musica` (≈ 29 MB).
+Para cambiar una pista, se cambia su entrada en `MUSICA_GRANJA` y se vuelve a correr: rehace solo esa.
+
 ## Pendiente
 
-- La granja (cuando tenga todas sus zonas y personajes): música por estación y del pueblo, a coordinar con su frente.
-  **Presupuesto medido (11 de octubre de 2026):** la granja tiene 3.590 líneas (243.000 caracteres, 188 hablantes;
-  840 son de la vida de los pueblos) y 23 pistas de música escritas (≈ 48 min).
-  - Con Eleven v4 las voces gastaron unos 0,1 créditos por carácter, así que todo saldría en unos 30.000–40.000
-    créditos. Si el precio vuelve a 1 crédito por carácter, serían unos 300.000.
-  - La música va a unos 720 créditos por minuto: unos 35.000 créditos, o unos 50.000 con música por estación y de
-    festivales.
-  - En total son 70.000–90.000 créditos, que caben en un mes del plan Creator (160.000).
-  - El límite real son las voces: el plan Creator deja tener 30 voces (hay 27 libres). Hay dos caminos: repartir unas
-    25 voces por tipo de personaje, o un mes de Pro (160 voces) para darles voz propia a los principales.
-  - Conviene grabar primero los recuerdos y los encargos, que ya están cerrados, y dejar las escenas de los
-    expedientes para cuando el motor cierre sus misiones.
+- La granja: ya tiene su música (arriba). Faltaría una variación por estación, si Javier la quiere.
+  Lo que costó de verdad (11–12 de octubre de 2026):
+  - Voces: 3.581 líneas, ≈ 31.500 créditos.
+  - Efectos: ≈ 3.400 créditos.
+  - Música compuesta: ≈ 12.700 créditos.
+  - Lo descargado no costó nada.
+  - No hizo falta subir de plan: las voces de la biblioteca se usan sin ocupar cupo.
 - El Show de Nosotros (rama `trabajo/show`): cortina de concurso cuando se junte.
 - Las escenas premium siguen en los cuartos de la casa; los escenarios grandes propios están en `en-obra/escenas-premium.md`.
