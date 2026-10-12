@@ -283,7 +283,40 @@ Plan:
    - Clic otra vez sobre el marcador lo quita.
 4. Quitar `#mapa-buscar` y `#minimapa-buscando`. Los vecinos se ven siempre en el mapa.
 
-## Tanda 5 · El mundo
+## Tanda 5 · El mundo — **hecho** (12 de octubre)
+
+Quedó así:
+- **Salidas anchas:** se toman en un radio de 2,5 m (antes había que atinarle a una casilla: 0,85 m fuera de la
+  granja y 1,3 m adentro; el motor acepta 2,9). Al llegar a una zona la salida de regreso no se dispara hasta que uno
+  se aleja de ella (`salidaArmada` en `main.ts`), así que ya no hay rebotes. Llegadas corridas: a la mina (0.5, 3.5)
+  y al lago (14.5, 82.5). En cada salida hay una **boca de camino** ancha y el letrerito de Blender gira la flecha
+  hacia el destino (`salidasZona` en `zonas-render.ts`; se quitaron los «3 cuadraditos»).
+- **Caminos que conectan** (`SENDEROS_ZONA` en `caminos-mundo.ts`): en el bosque, de la salida a la granja al sendero
+  del bosque, al claro y a la salida del bosque ancestral; en el ancestral, de la salida al claro del guardián; en el
+  lago, de la salida al muelle. Van por donde el monte no tiene árboles. Se quitaron los senderos sueltos que no
+  llevaban a ningún lado (el del pueblo que atravesaba la Casa de los Oficios, el del sur y el que cruzaba tierra
+  comprable de la granja). El lago perdió el roble que quedaba en medio de la llegada.
+- **Pueblo:** la salida a la granja ahora es el final de la calle principal, junto al letrero de entrada (antes estaba
+  sobre el pasto y uno aparecía dentro del corral). Las veredas de la Casa de los Animales y de la Forja ya no
+  atraviesan sus edificios; la calle sur se corrió al hueco entre la Casa de los Tejidos y la del Observatorio; los dos
+  árboles que había en la calle se quitaron.
+- **Postes guía** (modelo de Blender `poste_guia` + `tabla_guia` en `granja_monte.glb`, con los nombres pintados en
+  las dos caras): en la plaza del pueblo (granja, mercado, taller, forja, posada, Casa de los Oficios) y en los cruces
+  del bosque, del ancestral y del lago.
+- **Mina cuadradita:** la entrada usa el mismo `terrenoMina` de los pisos de adentro (losas y paredes de bloque) con un
+  plano hecho a mano del cuarto [-10,10]×[-9,9] y la boca del túnel; entibados, cristales y piedritas siguen las
+  paredes rectas. El pozo se corrió a (0, -6.6).
+- **Semillas que se notan:** lo recién sembrado lleva un montoncito de tierra removida con semillitas (Blender,
+  `semillas_tierra`), más oscuro cuando está regado.
+- **Estanques por casillas:** `paisaje.agua` guarda las casillas de agua (las partidas viejas las sacan de sus óvalos
+  al cargar). En el modo diseño hay dos botones, «💧 Cavar agua» y «🟫 Rellenar»: se toca (o se arrastra con el
+  mouse) y la casilla se vuelve agua o tierra (2 y 1 de energía; hasta 320 casillas; no se cava sobre cultivos,
+  edificios ni donde uno está parado). El agua se dibuja con orilla redondeada (máscara borrosa de las casillas),
+  espuma en el borde y juncos y piedras de orilla de Blender; colisión, pesca y minimapa leen las mismas casillas.
+- **Retratos de los vecinos** (adelanto de la tanda 6): `scripts/granja-v3/retratos-vecinos.mjs` fotografía a cada
+  vecino (el peluche de Blender vestido con su ropa) y guarda `public/granja/retratos/<id>.webp`; salen en las tarjetas
+  de Vecinos, en la conversación y en los vecinos de Astra (si falta la foto, queda el dibujito de antes).
+
 
 Lo pedido:
 

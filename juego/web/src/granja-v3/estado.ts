@@ -85,6 +85,7 @@ export type Accion =
  |{tipo:'dormir';jornada:number;edificioId:string;xJugador:number;zJugador:number}
  |{tipo:'continuar_dia';jornada:number}
  |{tipo:'rellenar_hueco';id:string;xJugador:number;zJugador:number}
+ |{tipo:'cavar_agua';x:number;z:number}|{tipo:'rellenar_agua';x:number;z:number}
  |{tipo:'produccion';accion:AccionProduccion;xJugador:number;zJugador:number}
  |{tipo:'fertilizar';x:number;z:number;articulo:string}
  |{tipo:'vender_pila';casilla:number;cantidad?:number}

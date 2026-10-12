@@ -1,3 +1,4 @@
+import { enSenderoZona } from './caminos-mundo';
 import type { Herramienta, Zona } from './catalogo';
 import type { Obstaculo } from './estado';
 export type Servicio='semillas'|'animales'|'carpinteria'|'herreria'|'clinica'|'posada'|'archivo'|'altar_aura'|'altar_lara';
@@ -45,7 +46,8 @@ export function nodosExteriores():Obstaculo[]{
  const piedras=[[-6,-5],[-2,-5],[3,-5],[6,-2],[-6,0],[-3,2],[2,2],[5,3]];
  // La mina del valle es la entrada a las Minas de Celia (pisos al azar): ya no tiene rocas propias.
  void piedras;
- return nodos;
+ // Los senderos que unen cada salida con el centro de su zona quedan libres de árboles
+ return nodos.filter(n=>!enSenderoZona(n.zona,n.x+.5,n.z+.5));
 }
 export function botinDeNodo(o:Obstaculo):Record<string,number>{
  if(o.gigante)return {madera:20,madera_ancestral:3};

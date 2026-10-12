@@ -16,6 +16,7 @@ import { huellaProduccion } from './produccion';
 import { lluviaRiega, tiempoDia, TIEMPOS } from './clima';
 import { ARTICULO_ENVIO } from './envios';
 import { FotosMapa, MarcasMapa, LADO_FOTO } from './mapa-real';
+import { celdasAgua } from './paisaje';
 import './hud.css';
 
 interface Hud {
@@ -205,7 +206,11 @@ export function iniciarHud(h: Hud) {
     if (zona === 'granja') {
       for (const sec of SECTORES) if (!s.sectorIds.includes(sec.id)) rect(sec.x, sec.z, sec.ancho, sec.fondo, '#5f7d4a40');
       for (const [x, z, w, d] of CAMINOS_GRANJA) camino(x, z, w, d, '#e2cf9f');
-      for (const e of s.paisaje?.estanques ?? []) { elipse(e.x, e.z, e.radioX + 0.35, e.radioZ + 0.35, '#c9b98a'); elipse(e.x, e.z, e.radioX, e.radioZ, '#4f9cc4'); elipse(e.x - e.radioX * 0.2, e.z - e.radioZ * 0.25, e.radioX * 0.55, e.radioZ * 0.45, '#7cc0e0'); }
+      // El agua por casillas, con bordes redondeados (círculos que se tocan)
+      const agua = [...celdasAgua(s.paisaje)].map((k) => k.split(',').map(Number));
+      for (const [x, z] of agua) circulo(x + 0.5, z + 0.5, 0.95, '#c9b98a');
+      for (const [x, z] of agua) circulo(x + 0.5, z + 0.5, 0.74, '#4f9cc4');
+      for (const [x, z] of agua) circulo(x + 0.35, z + 0.35, 0.3, '#7cc0e0');
       for (const hu of s.paisaje?.huecos ?? []) if (!hu.relleno) circulo(hu.x + 0.5, hu.z + 0.5, 0.45, '#5b4a3c');
       for (const p of s.parcelas) {
         const regada = p.campo?.riegoDia === s.jornada.diasCompletados || p.campo?.riegoManualDia === s.jornada.diasCompletados;

@@ -76,14 +76,17 @@ export function libreVivienda(x:number,z:number,v?:ViviendaPueblo){return x>=-5.
 
 /** Rectángulos de pavimento compartidos por arte y altura de personajes. */
 export const CAMINOS_PUEBLO:readonly [number,number,number,number][] = (()=>{
- const r:[number,number,number,number][]=[[53,-1.4,28,2.8],[82.5,-28,3,55],[55,-6.3,53,2.6],[55,23,53,2.6]];
+ const r:[number,number,number,number][]=[[50,-1.4,3.2,2.8],[53,-1.4,28,2.8],[82.5,-28,3,55],[55,-6.3,53,2.6],[55,23,53,2.6]];
  for(const e of EDIFICIOS_PUEBLO){
   if(e.servicio==='altar_aura'){r.push([e.entrada.x,e.entrada.z-.75,8,1.5],[68.25,e.entrada.z,1.5,-6.2-e.entrada.z]);continue;}
   if(e.servicio==='altar_lara'){r.push([e.entrada.x-.75,e.entrada.z,1.5,-6.2-e.entrada.z]);continue;}
-  const zz=e.entrada.z,target=zz<0?-5:zz<12?-.1:24;if(Math.abs(target-zz)>.1)r.push([e.entrada.x-.85,Math.min(zz,target),1.7,Math.abs(target-zz)]);
+  // La vereda de la puerta sale hacia la calle más cercana, pero nunca por dentro de su propio edificio (la Casa de los
+  // Animales y la Forja tenían la vereda atravesada: se llega a ellas por sus callecitas de abajo)
+  const zz=e.entrada.z,target=zz<0?-5:zz<12?-.1:24,z0=Math.min(zz,target),largo=Math.abs(target-zz),atraviesa=e.entrada.x+.85>e.x&&e.entrada.x-.85<e.x+e.ancho&&z0<e.z+e.fondo&&z0+largo>e.z;
+  if(largo>.1&&!atraviesa)r.push([e.entrada.x-.85,z0,1.7,largo]);
   if(e.servicio==='animales')r.push([e.entrada.x,9.85,20.8,1.6]);if(e.servicio==='herreria')r.push([86,8.05,16.5,1.5]);
  }
- r.push([55,-30,53,1.8],[55,39.5,53,1.8],[82.5,-30,3,2],[82.5,25,3,16]);for(const v of VIVIENDAS_PUEBLO.filter(v=>!v.edificio))r.push([v.entrada.x-.8,v.entrada.z-.6,1.6,v.entrada.z<0?2.4:2]);
+ r.push([55,-30,53,1.8],[55,39.5,53,1.8],[82.5,-30,3,2],[85.7,25,3,16]);for(const v of VIVIENDAS_PUEBLO.filter(v=>!v.edificio))r.push([v.entrada.x-.8,v.entrada.z-.6,1.6,v.entrada.z<0?2.4:2]);
  r.push([103.3,11.8,5.8,1.6],[103.3,20.9,5.8,1.6]);return r;
 })();
 /** Altura del suelo, excluyendo paredes, vallas y la fuente sólida. */
@@ -124,8 +127,8 @@ export function librePueblo(x:number,z:number,radius=.32):boolean {
   return true;
 }
 
-export const ARBOLES_PUEBLO:readonly [number,number,number][] = [[56,-11,3.6],[70,-22,3.2],[81,-25,3.7],[88,-26,4],[106,-23,3.8],[108,-11,3.5],[56,1,3.4],[55,14,3.6],[55,26,4],[68,25,3.5],[88,26,3.6],[102,26,4],[109,6,3.8]];
+export const ARBOLES_PUEBLO:readonly [number,number,number][] = [[56,-11,3.6],[70,-22,3.2],[81,-25,3.7],[88,-26,4],[106,-23,3.8],[108,-11,3.5],[55,14,3.6],[55,26,4],[88,26,3.6],[102,26,4],[109,6,3.8]];
 export const BANCOS_PUEBLO:readonly [number,number,number][] = [[77.1,1,Math.PI/2],[90.7,2,-Math.PI/2],[80,9,Math.PI],[88,-10,0]];
 export const PUENTES_PUEBLO = [11.8,20.9] as const;
 // x/z centre and half extents of outdoor furniture (doorsteps remain clear).
-export const MOBILIARIO_SOLIDO:readonly [number,number,number,number][] = [[98.85,-6.75,1.4,.625],[92.1,-6.4,1.2,1.1],[100.4,8.7,.9,.71],[104.75,8.9,.825,.33],[98.5,22.7,.85,.85],[91.3,22.4,1.1,.37],[59.4,19.8,.9,.325]];
+export const MOBILIARIO_SOLIDO:readonly [number,number,number,number][] = [[79.6,-2.6,.3,.3],[98.85,-6.75,1.4,.625],[92.1,-6.4,1.2,1.1],[100.4,8.7,.9,.71],[104.75,8.9,.825,.33],[98.5,22.7,.85,.85],[91.3,22.4,1.1,.37],[59.4,19.8,.9,.325]];

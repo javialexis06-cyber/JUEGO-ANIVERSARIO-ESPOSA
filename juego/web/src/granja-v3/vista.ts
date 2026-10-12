@@ -33,12 +33,11 @@ import { dormitorioDef, puertaDormitorio, libreDormitorio } from './dormitorios'
 import { viviendaInterior, VIVIENDAS_PUEBLO, libreVivienda } from './pueblo-datos';
 import { crearDormitorio, crearInteriorVivienda, updateInteriorVivienda } from './pueblo';
 import { cespedPueblo } from './pueblo-adornos';
-import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida, adelantoZona, adornosRefugio } from './zonas-render';
+import { cuevaMina, monteZona, senderoTierra, arbolesLejanos, arcoSalida, adelantoZona, adornosRefugio, salidasZona, postesZona, senderosZona, semillero } from './zonas-render';
 import { interiorCabana } from './cuartos';
 import { decoracionFestival, animarFestejo, celdasFestejo, temaFestivalHoy } from './festejos-render';
 import { CAMINOS_GRANJA, SALIDAS } from './caminos-mundo';
 /** Senderos de tierra entre zonas (centro x, centro z, ancho, fondo). */
-const SENDEROS_PUBLICOS:[number,number,number,number][]=[[-74,34,2.2,83],[76,32,2.2,94],[-24,66,102,2.2],[28,64,2.2,26]];
 import { crearPueblo, crearInteriorServicio, updatePueblo, liberarPueblo, librePueblo, alturaSueloPueblo, EDIFICIOS_PUEBLO } from './pueblo';
 import { EfectosGranja } from './efectos';
 import { EscenaAventura, ambienteAventura, type ObjetivoAventura } from './escenas-aventura';
@@ -47,7 +46,7 @@ import { huellaProduccion } from './produccion';
 import { dentroDeZona } from './caminos-mundo';
 import { aguaEn, huecoEn } from './paisaje';
 import { AmbienteClima } from './clima-render';
-import { paisajeGranja, señalesSalidas, huecoArbolGrande, mallaAgua } from './paisaje-render';
+import { paisajeGranja, huecoArbolGrande, mallaAgua } from './paisaje-render';
 type EstadoVista = EstadoGranja & {aventura:EstadoAventura;posicionAventura:PuntoAventura|null};
 
 export const DESTINOS:Record<Zona,{x:number;z:number;nombre:string;sub:string}>={granja:{x:0,z:0,nombre:'Nuestra granjita',sub:'Un hogar que crece contigo'},pueblo:{x:79,z:0,nombre:'Pueblo del Sol',sub:'Mercado, vecinos y nuevos comienzos'},bosque:{x:-78,z:0,nombre:'Bosque de los Susurros',sub:'Madera, semillas y un río tranquilo'},lago:{x:24,z:90,nombre:'Lago de los Lirios',sub:'Cada estación trae otras especies'},mina:{x:0,z:0,nombre:'Mina de Cristal',sub:'Minerales y criaturas bajo la montaña'},bosque_ancestral:{x:-78,z:76,nombre:'Bosque ancestral',sub:'Maderas antiguas y guardianes del valle'}};
@@ -154,13 +153,14 @@ export class VistaGranja{
     // La cabaña por dentro: cascarón y muebles modelados en Blender
     this.entorno.add(interiorCabana());
    }return;}
-  if(e.zona!=='granja')this.entorno.add(señalesSalidas(e.zona));
+  // Bocas anchas en las salidas, con su letrerito apuntando al destino, y postes guía en la plaza y los cruces
+  if(e.zona!=='granja')this.entorno.add(salidasZona(e.zona));this.entorno.add(postesZona(e.zona));
   if(e.zona==='pueblo')this.entorno.add(señalesRecursosAstra('pueblo_sol'));
   if(e.zona==='pueblo')for(const r of rutasDesde(e))if(r.punto)this.entorno.add(arcoSalida(regionAstra(r.destino)?.nombre??'Astra',r.punto.x,r.punto.z,true));
   if(e.zona==='mina'){this.cueva=cuevaMina(e.nivelMina||1);this.cueva.userData.nivel=e.nivelMina||1;this.entorno.add(this.cueva);return;}
   this.entorno.add(this.suelos.terreno());if(e.zona==='pueblo'){this.pueblo=crearPueblo();this.entorno.add(this.pueblo);
    // El día de un festival, la plaza se decora (festejos-render.ts) y sus puestos no se atraviesan
-   this.festejo=decoracionFestival(e.jornada.diasCompletados);this.entorno.add(this.festejo);this.bloqueoFestejo=celdasFestejo(e.jornada.diasCompletados);this.entorno.add(this.suelos.pasto(52,-32,60,75,5200,cespedPueblo));this.entorno.add(senderoTierra(44,13,14,2.2));this.entorno.add(monteZona('pueblo',SENDEROS_PUBLICOS,[],[[45,13,12,4]]));}
+   this.festejo=decoracionFestival(e.jornada.diasCompletados);this.entorno.add(this.festejo);this.bloqueoFestejo=celdasFestejo(e.jornada.diasCompletados);this.entorno.add(this.suelos.pasto(52,-32,60,75,5200,cespedPueblo));this.entorno.add(senderoTierra(44,0,14,2.2));this.entorno.add(monteZona('pueblo',[],[],[[45,0,12,4]]));}
   // Caminos de tierra de la granja y arcos en sus salidas (los bordes de la granja llevan a las otras zonas)
   if(e.zona==='granja'){for(const [x,z,w,d] of CAMINOS_GRANJA)this.entorno.add(senderoTierra(x+w/2,z+d/2,w+.4,d+.4));
    // Más allá de cada salida: el camino sigue, monte espeso alrededor y un adelanto de la zona a la que se llega
@@ -170,14 +170,12 @@ export class VistaGranja{
     const ox=este?sal.x+2:oeste?sal.x-1:sal.x+1,oz=este||oeste?sal.z+1:norte?sal.z-1:sal.z+2;this.entorno.add(adelantoZona(sal.hacia,ox,oz,mallaAgua));
     libres.push(este?[ox+12,oz,24,16]:oeste?[ox-8,oz,16,10]:norte?[ox,oz-8,22,14]:[ox,oz+10,18,12]);}
    this.entorno.add(monteZona('granja',extensiones,[],libres));for(const sal of SALIDAS.filter(s=>s.desde==='granja')){const horizontal=Math.abs(sal.x)>40;this.entorno.add(arcoSalida(DESTINOS[sal.hacia].nombre,horizontal?sal.x+.5:sal.x+1,horizontal?sal.z+1:sal.z+.5,horizontal));}}
-  if(e.zona==='bosque'||e.zona==='bosque_ancestral'||e.zona==='lago')this.entorno.add(monteZona(e.zona,SENDEROS_PUBLICOS,e.obstaculos.filter(o=>o.zona===e.zona&&o.hp>0)));
+  if(e.zona==='bosque'||e.zona==='bosque_ancestral'||e.zona==='lago')this.entorno.add(monteZona(e.zona,senderosZona(e.zona),e.obstaculos.filter(o=>o.zona===e.zona&&o.hp>0)));
   // Background clumps and hills remain cheap instanced geometry; detailed props stream nearby.
   const geometry=new THREE.IcosahedronGeometry(1,1),hill=new THREE.InstancedMesh(geometry,material('#849765'),30),dummy=new THREE.Object3D();for(let i=0;i<30;i++){const a=i/30*Math.PI*2;dummy.position.set(Math.cos(a)*128,-3,Math.sin(a)*120);if(Math.hypot(dummy.position.x-DESTINOS[e.zona].x,dummy.position.z-DESTINOS[e.zona].z)<75)dummy.position.y=-60;dummy.scale.set(12+ruido(i)*13,8+ruido(i,6)*8,13);dummy.updateMatrix();hill.setMatrixAt(i,dummy.matrix);}this.entorno.add(hill);
   const water=mallaAgua(13,10,'#25708a','#68b6b2');water.scale.set(13,1,10);water.position.set(28,.015,89);this.entorno.add(water);this.entorno.add(this.suelos.pasto(-100,-24,36,48,1700));this.entorno.add(this.suelos.pasto(-102,52,45,46,1500));
-  // Public trails live outside the editable farm. Player paths use inventory cells.
-  for(let [x,z,w,d]of SENDEROS_PUBLICOS){
-   // En el pueblo el sendero llega hasta la calle del sur; adentro mandan las calles empedradas
-   if(e.zona==='pueblo'&&x===76){const z0=41.3,z1=z+d/2;z=(z0+z1)/2;d=z1-z0;}this.entorno.add(senderoTierra(x,z,w,d));}
+  // Senderos de tierra de la zona: cada salida unida al centro (los de la granja van en CAMINOS_GRANJA)
+  for(const [x,z,w,d] of senderosZona(e.zona))this.entorno.add(senderoTierra(x,z,w,d));
 
 
  }
@@ -199,7 +197,7 @@ export class VistaGranja{
   if(e.zona==='granja'&&!e.interior&&!e.servicio)this.pieza('buzon:'+JSON.stringify(posicionBuzon(e))+':'+JSON.stringify(e.correo.cartas.map(r=>[r.id,r.leidaDia,r.reclamadaDia])),()=>crearBuzon(e));
   const recinto=e.invernaderos.find(i=>i.edificioId===e.interior);
   const labrar=(plots:EstadoGranja['parcelas'])=>{const celdas=plots.map(p=>({x:p.x,z:p.z,wet:p.cuidado?.status==='creciendo'&&p.campo?.riegoDia===e.jornada.diasCompletados,dead:p.cuidado?.status==='arruinado'}));this.pieza('labrado:'+celdas.map(c=>c.x+','+c.z+(c.wet?'w':'')+(c.dead?'d':'')).join(';'),()=>this.suelos.labrado(celdas));};
-  const dibujarParcelas=(plots:EstadoGranja['parcelas'])=>{labrar(plots);for(const p of plots){if(!p.cultivo||!p.cuidado)continue;const d=CULTIVOS.find(c=>c.id===p.cultivo)!;if(p.cuidado.status==='arruinado'){const g=caja(this.detalle,[.035,.3,.035],[p.x+.5,.12,p.z+.5],'#967944');g.rotation.z=.3;continue;}const stage=faseCampo(d,p.campo??crearCampo(),p.cuidado);if(d.forma){this.pieza(`planta:${p.x},${p.z}:${d.id}:${stage}:${p.campo?.ciclo==='rebrote'}`,()=>{const g=plantaCultivo(d,stage,p.campo?.ciclo==='rebrote');g.position.set(p.x+.5,0,p.z+.5);g.rotation.y=((p.x*7+p.z*13)&7)*.785;return g;});}else for(let k=0;k<3;k++)add({key:'invernadero-'+recinto?.edificioId+'-'+p.x+','+p.z+'-'+stage+'-'+k,id:d.modelo+'_'+stage,x:p.x+.27+(k%2)*.43,z:p.z+.27+Math.floor(k/2)*.43,escala:.7,clip:'viento'});}};
+  const dibujarParcelas=(plots:EstadoGranja['parcelas'])=>{labrar(plots);for(const p of plots){if(!p.cultivo||!p.cuidado)continue;const d=CULTIVOS.find(c=>c.id===p.cultivo)!;if(p.cuidado.status==='arruinado'){const g=caja(this.detalle,[.035,.3,.035],[p.x+.5,.12,p.z+.5],'#967944');g.rotation.z=.3;continue;}const stage=faseCampo(d,p.campo??crearCampo(),p.cuidado);if(stage===0){const regado=p.campo?.riegoDia===e.jornada.diasCompletados||p.campo?.riegoManualDia===e.jornada.diasCompletados;this.pieza(`semillero:${p.x},${p.z}:${regado}`,()=>semillero(p.x,p.z,regado));}if(d.forma){this.pieza(`planta:${p.x},${p.z}:${d.id}:${stage}:${p.campo?.ciclo==='rebrote'}`,()=>{const g=plantaCultivo(d,stage,p.campo?.ciclo==='rebrote');g.position.set(p.x+.5,0,p.z+.5);g.rotation.y=((p.x*7+p.z*13)&7)*.785;return g;});}else for(let k=0;k<3;k++)add({key:'invernadero-'+recinto?.edificioId+'-'+p.x+','+p.z+'-'+stage+'-'+k,id:d.modelo+'_'+stage,x:p.x+.27+(k%2)*.43,z:p.z+.27+Math.floor(k/2)*.43,escala:.7,clip:'viento'});}};
   const visibles=e.zona==='granja'&&!e.servicio?e.frutales.filter(f=>f.edificioId===recinto?.edificioId&&(!e.interior||!!recinto)&&(!!recinto||Math.hypot(f.x-this.controles.target.x,f.z-this.controles.target.z)<=35)):[];
   const idsFrutales=new Set(visibles.map(f=>f.id));for(const[id,v]of this.frutalesVisuales)if(!idsFrutales.has(id)){liberar(v.root);this.frutalesVisuales.delete(id);}
   for(const f of visibles){const firma=[f.tipo,f.x,f.z,f.edificioId,faseFrutal(f),f.cuidado.status,f.frutos].join(':');let v=this.frutalesVisuales.get(f.id);if(v?.firma!==firma){if(v)liberar(v.root);const root=frutalVista(f),copa=root.getObjectByName('copa-frutal') as THREE.Group;v={root,copa,firma};this.huerto.add(root);this.frutalesVisuales.set(f.id,v);}this.copasFrutales.push(v.copa);}
@@ -216,7 +214,7 @@ export class VistaGranja{
    const activa=obraActiva(e);if(e.zona==='granja')for(const o of e.obras.encargos){if(!o.lugar||Math.hypot(o.lugar.x-this.controles.target.x,o.lugar.z-this.controles.target.z)>40)continue;this.pieza('obra:'+(activa?.id===o.id)+':'+JSON.stringify(o),()=>obraVista(o,activa?.id===o.id));}this.hayObras=e.zona==='granja'&&e.obras.encargos.some(o=>!!o.lugar);
     const ocupadas=new Set(e.parcelas.map(p=>p.x+','+p.z));for(const b of e.edificios){const {w,d}=medidas(b);for(let zz=b.z;zz<b.z+d;zz++)for(let xx=b.x;xx<b.x+w;xx++)ocupadas.add(xx+','+zz);}for(const o of e.obras.encargos){if(o.tipo!=='nueva'||!o.lugar)continue;const h=huellaObra(o);for(let z=h.z;z<h.z+h.fondo;z++)for(let x=h.x;x<h.x+h.ancho;x++)ocupadas.add(x+','+z);}this.pieza('pasto:'+[...ocupadas].sort().join(';')+'|'+JSON.stringify(e.paisaje??null),()=>this.suelos.pasto(-49,-39,98,94,6500,(x,z)=>!ocupadas.has(Math.floor(x)+','+Math.floor(z))&&!aguaEn(e.paisaje,Math.floor(x),Math.floor(z))&&!huecoEn(e.paisaje,Math.floor(x),Math.floor(z))));
    const plots=e.parcelas.filter(p=>Math.hypot(p.x-this.controles.target.x,p.z-this.controles.target.z)<40);labrar(e.parcelas);
-   for(const p of plots){if(!p.cultivo||!p.cuidado)continue;const d=CULTIVOS.find(c=>c.id===p.cultivo)!;if(p.cuidado.status==='arruinado'){this.pieza(`seca:${p.x},${p.z}`,()=>{const g=new THREE.Group();for(let i=0;i<3;i++){const stem=caja(g,[.035,.3,.035],[p.x+.25+i*.2,.12,p.z+.5],'#967944');stem.rotation.z=.3+i*.3;}return g;});continue;}const stage=faseCampo(d,p.campo??crearCampo(),p.cuidado);if(d.forma){this.pieza(`planta:${p.x},${p.z}:${d.id}:${stage}:${p.campo?.ciclo==='rebrote'}`,()=>{const g=plantaCultivo(d,stage,p.campo?.ciclo==='rebrote');g.position.set(p.x+.5,0,p.z+.5);g.rotation.y=((p.x*7+p.z*13)&7)*.785;return g;});continue;}for(let k=0;k<3;k++)add({key:`crop-${p.x},${p.z}-${stage}-${k}`,id:d.modelo+'_'+stage,x:p.x+.27+(k%2)*.43,z:p.z+.27+Math.floor(k/2)*.43,escala:.7,clip:'viento'});}
+   for(const p of plots){if(!p.cultivo||!p.cuidado)continue;const d=CULTIVOS.find(c=>c.id===p.cultivo)!;if(p.cuidado.status==='arruinado'){this.pieza(`seca:${p.x},${p.z}`,()=>{const g=new THREE.Group();for(let i=0;i<3;i++){const stem=caja(g,[.035,.3,.035],[p.x+.25+i*.2,.12,p.z+.5],'#967944');stem.rotation.z=.3+i*.3;}return g;});continue;}const stage=faseCampo(d,p.campo??crearCampo(),p.cuidado);if(stage===0){const regado=p.campo?.riegoDia===e.jornada.diasCompletados||p.campo?.riegoManualDia===e.jornada.diasCompletados;this.pieza(`semillero:${p.x},${p.z}:${regado}`,()=>semillero(p.x,p.z,regado));}if(d.forma){this.pieza(`planta:${p.x},${p.z}:${d.id}:${stage}:${p.campo?.ciclo==='rebrote'}`,()=>{const g=plantaCultivo(d,stage,p.campo?.ciclo==='rebrote');g.position.set(p.x+.5,0,p.z+.5);g.rotation.y=((p.x*7+p.z*13)&7)*.785;return g;});continue;}for(let k=0;k<3;k++)add({key:`crop-${p.x},${p.z}-${stage}-${k}`,id:d.modelo+'_'+stage,x:p.x+.27+(k%2)*.43,z:p.z+.27+Math.floor(k/2)*.43,escala:.7,clip:'viento'});}
    for(const b of e.edificios){if(Math.hypot(b.x-this.controles.target.x,b.z-this.controles.target.z)>44)continue;const a=articulo(b),{w,d}=medidas(b);if(a.categoria==='refugio'){this.pieza(`refugio:${b.id}:${b.articulo}:${b.especie}:${b.clima}:${b.x},${b.z},${b.giro}:${nivelEdificio(b)}:${puertaAbierta(b)}:${Math.floor(Math.min(b.pasto,50)/5)}`,()=>{
      const g=new THREE.Group(),ref=crearRefugio(b.articulo==='establo'?'caballo':b.especie??'gallina',b.clima==='templado'?'madera':b.clima);ref.position.set(2,0,2);g.add(ref);g.add(detalleAmpliacion(nivelEdificio(b)));const puerta=puertaGanadoVista(b.id,puertaAbierta(b));puerta.position.set(2,0,3.93);if(b.articulo==='establo')puerta.userData.ganado={tipo:'establo',id:b.id};g.add(puerta);this.valla(g,.15,4.15,3.7,3.7);g.add(patioRefugio(b.articulo==='establo'?'caballo':b.especie??'gallina'));if(b.pasto>0)g.add(this.suelos.pasto(.25,4.25,3.5,3.5,Math.max(20,Math.round(Math.min(b.pasto,50)*5))));g.rotation.y=-b.giro*Math.PI/2;g.position.set(b.x+(b.giro===1?8:b.giro===2?4:0),0,b.z+(b.giro===2?8:b.giro===3?4:0));return g;});
     }else if(a.id==='hogar_mascota'){const animal=e.compania.animales.find(a=>a.edificioId===b.id),agua=animal?.aguaDia===e.jornada.diasCompletados;this.pieza(`mascota:${b.id}:${animal?.id}:${agua}:${b.x},${b.z},${b.giro}`,()=>{const g=hogarMascotaVista(animal?.id??b.id,agua);g.position.set(b.x+1,0,b.z+1);g.rotation.y=-b.giro*Math.PI/2;return g;});
@@ -230,7 +228,7 @@ export class VistaGranja{
    if(e.zona==='granja'){e.animales.forEach((a,i)=>{const b=e.edificios.find(b=>b.id===a.edificioId);if(!b||!animalVisible(e,a))return;const f=fenotipo(a.especie,a.genoma),p=posicionAnimal(e,a);add({animalId:a.id,key:a.id+'-'+f.variante+'-'+f.fantasia+'-'+b.x+','+b.z+','+b.giro,id:a.especie,x:p.x,z:p.z,escala:escalaAnimal(a.especie,a.edadDias),rotation:Math.sin(i*2)*.8,animal:{...f,especie:a.especie},clip:clipRutina(a)});});for(const t of e.ganaderia.trufas){const b=e.edificios.find(b=>b.id===t.edificioId);if(!b)continue;const p=coordenadaRefugio(b,t.u,t.v);if(Math.hypot(p.x-this.controles.target.x,p.z-this.controles.target.z)>35)continue;this.pieza(`trufa:${t.id}:${p.x},${p.z}`,()=>{const g=trufaVista(t.id);g.position.set(p.x,0,p.z);return g;});}}
    // Dense, authored destinations beyond the buildable farm.
    for(let i=0;i<20;i++)add({key:'flower'+i,id:'flores_pradera',x:-90+ruido(i,1)*23,z:-8+ruido(i,3)*20,escala:1.3});
-   for(let i=0;i<10;i++){add({key:'laketree'+i,id:'roble',x:28+Math.cos(i*.63)*18,z:89+Math.sin(i*.63)*15,escala:1.25});if(i<6)add({key:'lily'+i,id:'nenufar',x:22+i*2,z:84+Math.sin(i)*3,escala:1.4,clip:'viento'});}
+   for(let i=0;i<10;i++){const tx=28+Math.cos(i*.63)*18,tz=89+Math.sin(i*.63)*15;if(Math.hypot(tx-13.5,tz-81)>4.5)add({key:'laketree'+i,id:'roble',x:tx,z:tz,escala:1.25});if(i<6)add({key:'lily'+i,id:'nenufar',x:22+i*2,z:84+Math.sin(i)*3,escala:1.4,clip:'viento'});}
    add({key:'pier',id:'puente_madera',x:15,z:88,escala:1.6,rotation:Math.PI/2});add({key:'benchlake',id:'banco',x:10,z:87,escala:1});for(let i=0;i<3;i++)add({key:'duck'+i,id:'pato',x:17+i*1.5,z:77+Math.sin(i),escala:.55,clip:'reposo'});if(e.zona==='bosque_ancestral'&&e.enemigo>0)this.monstruo(-76,74,e.enemigo/45);
   }
   for(const a of e.compania.animales)if(companeroVisible(e,a)){const p=a.posicion;add({key:'compania-'+a.id+'-'+varianteCompania(a),companiaId:a.id,id:a.tipo,x:p.x,z:p.z,rotation:a.direccion,companero:{tipo:a.tipo,variante:varianteCompania(a)},clip:clipCompania(e,a)});}

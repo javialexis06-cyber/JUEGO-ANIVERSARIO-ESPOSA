@@ -36,8 +36,8 @@ import type { Accion, Animal, Edificio, EstadoGranja, Resultado, Obstaculo, Drop
 import { RECETAS, obtenerObjeto, obtenerReceta } from './objetos';
 import { crearJornada, relojValle, avanzarReloj, cerrarJornada, jornadaValida, CRECIMIENTO_NOCHE_MS, INICIO_DIA, FIN_DIA } from './jornada';
 import { crearTiempo, tiempoValido, tiempoDia, tiempoRegion, biomaCelda, biomaZona, lluviaRiega, pronostico } from './clima';
-import { SALIDAS, dentroDeZona, esSenderoGranja } from './caminos-mundo';
-import { crearPaisaje, aguaEn, huecoEn, paisajeValido } from './paisaje';
+import { SALIDAS, dentroDeZona, esSenderoGranja, RADIO_SALIDA, enSenderoZona } from './caminos-mundo';
+import { crearPaisaje, aguaEn, huecoEn, paisajeValido, celdasEstanques, MAX_AGUA } from './paisaje';
 import { crearCampo, campoValido, duracionCampo, diasCultivo, calidadCosecha, siguienteCosecha, nombreCalidad, multiplicadorCalidad } from './agricultura';
 import { crearProduccion, aplicarProduccion, avanzarProduccion, errorProduccion, huellaProduccion } from './produccion';
 import { NIVEL_RECUPERADORA, materialesDe, porcentajeRecuperacion } from './recuperadora';
@@ -676,12 +676,26 @@ export class MotorGranja {
    case 'viajar':{
     if(!['granja','pueblo','bosque','lago','mina','bosque_ancestral'].includes(a.zona))return mal('Zona desconocida.');if((a.zona==='mina'||a.zona==='bosque_ancestral')&&!this.posee(a.zona))return mal('Completa misiones para abrir esta ruta.');
     let llegada:{x:number;z:number}|undefined;
-    if(a.ruta!==undefined||a.xJugador!==undefined||a.zJugador!==undefined){const camino=SALIDAS.find(p=>p.id===a.ruta&&p.desde===s.zona&&p.hacia===a.zona);if(!camino||s.interior||s.servicio||!this.cerca(camino.x,camino.z,a.xJugador!,a.zJugador!,1.2))return mal('Camina hasta el sendero que conecta estas zonas.');llegada=camino.llegada;}
+    if(a.ruta!==undefined||a.xJugador!==undefined||a.zJugador!==undefined){const camino=SALIDAS.find(p=>p.id===a.ruta&&p.desde===s.zona&&p.hacia===a.zona);if(!camino||s.interior||s.servicio||!this.cerca(camino.x,camino.z,a.xJugador!,a.zJugador!,RADIO_SALIDA+.4))return mal('Camina hasta el sendero que conecta estas zonas.');llegada=camino.llegada;}
     if(s.compania.montada&&(a.zona==='mina'||!llegada))return mal('Desmonta antes de entrar en la mina. Con montura debes viajar por los senderos.');
     // Cada entrada comienza en la boca de la mina: los minerales de pisos anteriores
     // siguen siendo accesibles aunque el jugador aún no pueda picar en los profundos.
     if(a.zona==='mina'&&s.zona!=='mina')s.nivelMina=1;
     s.zona=a.zona;s.interior=null;s.servicio=null;s.enemigo=a.zona==='bosque_ancestral'?50:0;if(llegada){s.posicionExterior={zona:a.zona,...llegada};posicionMontada(s,llegada.x,llegada.z);}else delete s.posicionExterior;r={...bien(`Has llegado a ${a.zona.replace('_',' ')}.`),...(llegada?{posicionZona:llegada}:{})};break;
+   }
+   case 'cavar_agua':case 'rellenar_agua':{
+    // En el modo diseño: cavar una casilla de agua (estanques que crecen o nacen donde uno quiera) o rellenarla
+    const p=s.paisaje;if(s.zona!=='granja'||s.interior||s.servicio||!p)return mal('Sal a tu granja para cambiar los estanques.');if(!entero(a.x,-60,60)||!entero(a.z,-60,60))return mal('Esa casilla no es válida.');
+    const k=a.x+','+a.z,agua=p.agua??celdasEstanques(p.estanques),yo=s.posicionExterior;
+    if(yo?.zona==='granja'&&Math.floor(yo.x)===a.x&&Math.floor(yo.z)===a.z)return mal('Córrete un pasito: estás parado ahí.');
+    if(a.tipo==='cavar_agua'){
+     if(agua.includes(k))return mal('Ahí ya hay agua.');if(!this.celdaPropia(a.x,a.z))return mal('Solo puedes cavar en tu terreno.');
+     if(!this.celdaLibre(a.x,a.z)||s.parcelas.some(c=>c.x===a.x&&c.z===a.z))return mal('Despeja la casilla antes de cavar.');
+     if(agua.length>=MAX_AGUA)return mal('Ya hay mucha agua en la granja: rellena otra parte primero.');
+     if(s.energia<2)return mal('Necesitas energía para cavar.');s.energia-=2;p.agua=[...agua,k];r=bien('Cavaste un pedacito de estanque.');
+    }else{
+     if(!agua.includes(k))return mal('Ahí no hay agua.');if(s.energia<1)return mal('Necesitas energía para rellenar.');s.energia-=1;p.agua=agua.filter(c=>c!==k);r=bien('Rellenaste ese pedacito de agua.');
+    }break;
    }
    case 'rellenar_hueco':{
     const h=s.paisaje?.huecos.find(h=>h.id===a.id&&!h.relleno);if(s.zona!=='granja'||s.interior||s.servicio||!h||!this.celdaPropia(h.x,h.z))return mal('Compra este sector antes de reparar el terreno.');if(!this.cerca(h.x,h.z,a.xJugador,a.zJugador,2.4))return mal('Acércate al hueco para rellenarlo.');if(!this.puedePagar({piedra:5}))return mal('Necesitas 5 piedras para rellenar el hueco.');this.pagar({piedra:5});h.relleno=true;this.contar('huecos_rellenados');r=bien('Terreno reparado: ya puedes caminar, cultivar y construir aquí.');break;
@@ -845,7 +859,11 @@ export function migrarEstado(valor:unknown):unknown {
   // Bosques más espesos: los árboles nuevos llegan también a las partidas guardadas, sin tocar los que ya había
   // Terreno inicial más grande y caminos despejados (también en partidas guardadas)
   if(Array.isArray(s.sectorIds))for(const id of SECTORES_INICIALES)if(!s.sectorIds.includes(id))s.sectorIds.push(id);
+  // Estanques por casillas: los óvalos de antes se vuelven casillas de agua (después se cavan o rellenan a gusto)
+  if(s.paisaje&&typeof s.paisaje==='object'&&Array.isArray(s.paisaje.estanques)&&s.paisaje.agua===undefined)s.paisaje.agua=celdasEstanques(s.paisaje.estanques);
   if(Array.isArray(s.obstaculos))s.obstaculos=s.obstaculos.filter((o:any)=>!(!o?.zona||o.zona==='granja')||!esSenderoGranja(o.x,o.z));
+  // Los senderos nuevos del bosque, del ancestral y del lago quedan despejados también en partidas guardadas
+  if(Array.isArray(s.obstaculos))s.obstaculos=s.obstaculos.filter((o:any)=>!enSenderoZona(o?.zona,o?.x+.5,o?.z+.5));
   if(Array.isArray(s.obstaculos)){/* La mina del valle ahora es solo la entrada: las rocas viejas de sus 5 niveles se retiran */s.obstaculos=s.obstaculos.filter((o:any)=>o?.zona!=='mina');/* lo que quedó en el suelo de cualquier nivel se puede recoger en la entrada */if(Array.isArray(s.drops))for(const d of s.drops)if(d?.zona==='mina')d.nivelMina=1;if(s.zona==='mina'){s.enemigo=0;s.nivelMina=1;}const ids=new Set(s.obstaculos.map((o:any)=>o?.id)),ocupadas=new Set(s.obstaculos.map((o:any)=>`${o?.zona},${o?.x},${o?.z}`));for(const n of nodosExteriores())if(n.zona!=='mina'&&!ids.has(n.id)&&!ocupadas.has(`${n.zona},${n.x},${n.z}`))s.obstaculos.push(n);}
   if(s.comunidad===undefined)s.comunidad=crearComunidad();if(s.regional===undefined)s.regional=crearRegional();if(s.historia===undefined)s.historia=crearHistoria();else migrarHistoria(s.historia);if(s.astra===undefined)s.astra=crearAstra();migrarVidaAstra(s);reubicarAstra(s.astra);if(s.aventura)migrarPracticasElementales(s.aventura);if(s.libros===undefined)s.libros=crearLibros();if(s.colecciones===undefined)s.colecciones=crearColecciones();if(s.festivales===undefined)s.festivales=crearFestivales();if(s.correo===undefined)s.correo=crearCorreo();if(s.vidaSocial===undefined)s.vidaSocial=crearVidaSocial();if(s.encargos===undefined)s.encargos=crearEncargos();if(s.pueblo===undefined)s.pueblo=crearPuebloEstado();else if(s.pueblo?.version===1&&Array.isArray(s.pueblo.relaciones)&&s.pueblo.relaciones.length===9&&s.pueblo.relaciones.every((r:any)=>crearPuebloEstado().relaciones.slice(0,9).some(n=>n.id===r?.id)))s.pueblo.relaciones.push(...crearPuebloEstado().relaciones.filter(n=>!s.pueblo.relaciones.some((r:any)=>r?.id===n.id)));if(s.obras===undefined)s.obras=crearObras();if(s.compania===undefined)s.compania=crearCompania();if(s.ganaderia===undefined){s.ganaderia=crearGanaderia(s.edificios?.some((b:any)=>b.id==='corral_inicial'&&b.especie==='gallina')?'corral_inicial':undefined);if(Array.isArray(s.animales))for(const a of s.animales)if(a?.sexo==='macho'&&['vaca','cabra','gallina','pato','avestruz','dinosaurio'].includes(a.especie)&&a.productos>0)a.productoLegado=true;}if(s.tiempo===undefined&&finito(s.inicioTiempo))s.tiempo=crearTiempo(s.inicioTiempo);if(s.produccion===undefined)s.produccion=crearProduccion(s.ultimoTiempo);if(s.aventura===undefined){s.aventura=crearAventura();s.posicionAventura=null;}
   if(s.envios===undefined){

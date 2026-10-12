@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { caja, esfera, compactar } from './suelo';
-import type { PaisajeGranja } from './paisaje';
+import { celdasAgua, type PaisajeGranja } from './paisaje';
 import { SALIDAS } from './caminos-mundo';
 import type { Zona } from './catalogo';
-import { conKit } from './cuartos';
+import { conKit, fundir } from './cuartos';
 /** Agua viva: ondas que se mueven, centro más hondo, orilla clarita y destellos del sol. Sigue siendo un material
  * estándar (le llegan la luz, la niebla y la noche); el tiempo lo pone la malla justo antes de dibujarse. */
 const tiempoAgua={value:0};
@@ -21,14 +21,53 @@ export function materialAgua(hondo='#2c7a8c',claro='#6fbdb6'){
 }
 /** Malla de agua (disco) que avanza su reloj al dibujarse. */
 export function mallaAgua(rx:number,rz:number,hondo?:string,claro?:string){const a=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.025,48,1),materialAgua(hondo,claro));a.scale.set(rx,1,rz);a.receiveShadow=true;a.userData.noCompactar=true;a.onBeforeRender=()=>{tiempoAgua.value=performance.now()/1000;};return a;}
+/** Agua con forma libre: lo hondo y la espuma salen de una máscara borrosa de las casillas (orilla redondeada). */
+function materialAguaMascara(mascara:THREE.Texture,ancho:number,fondo:number){
+ const m=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.5,metalness:0,envMapIntensity:.25});
+ m.onBeforeCompile=(sh)=>{
+  sh.uniforms.uTiempo=tiempoAgua;sh.uniforms.uHondo={value:new THREE.Color('#2c7a8c')};sh.uniforms.uClaro={value:new THREE.Color('#6fbdb6')};sh.uniforms.uMascara={value:mascara};sh.uniforms.uTam={value:new THREE.Vector2(ancho,fondo)};
+  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vMundoAgua;varying vec2 vLocalAgua;').replace('#include <worldpos_vertex>','#include <worldpos_vertex>\nvMundoAgua=(modelMatrix*vec4(transformed,1.0)).xyz;vLocalAgua=position.xz;');
+  sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float uTiempo;uniform vec3 uHondo;uniform vec3 uClaro;uniform sampler2D uMascara;uniform vec2 uTam;varying vec3 vMundoAgua;varying vec2 vLocalAgua;\nfloat ondaAgua(vec2 p){return sin(p.x*2.1+uTiempo*1.3)*.5+sin(p.y*2.7-uTiempo*1.1)*.5+sin((p.x+p.y)*3.9+uTiempo*1.9)*.35+sin((p.x-p.y)*5.3-uTiempo*2.3)*.2;}')
+   .replace('#include <color_fragment>','#include <color_fragment>\n{float d=texture2D(uMascara,vec2(vLocalAgua.x/uTam.x+.5,-vLocalAgua.y/uTam.y+.5)).r;if(d<.5)discard;float r=clamp(1.0-(d-.5)*2.6,0.,1.);float o=ondaAgua(vMundoAgua.xz);vec3 c=mix(uClaro,uHondo,1.0-smoothstep(.25,.95,r));c+=o*.035;c=mix(c,vec3(.93,.98,.96),smoothstep(.84,.98,r)*(.55+.25*sin(uTiempo*1.6+(vMundoAgua.x+vMundoAgua.z)*2.3)));diffuseColor.rgb=c;}')
+   .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n{vec2 q=vMundoAgua.xz;float e=.15;float h=ondaAgua(q);vec3 n2=normalize(vec3(-(ondaAgua(q+vec2(e,0.))-h)*.35,1.,-(ondaAgua(q+vec2(0.,e))-h)*.35));normal=normalize((viewMatrix*vec4(n2,0.)).xyz);}')
+   .replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n{float d=ondaAgua(vMundoAgua.xz*1.7+3.0);totalEmissiveRadiance+=vec3(1.,.98,.9)*smoothstep(1.05,1.3,d)*.35;}');
+ };
+ m.customProgramCacheKey=()=>'agua-mascara';return m;
+}
+/** Grupos de casillas de agua unidas por un lado. */
+function gruposAgua(celdas:Set<string>):[number,number][][]{
+ const vistas=new Set<string>(),grupos:[number,number][][]=[];
+ for(const k of celdas){if(vistas.has(k))continue;const grupo:[number,number][]=[],pila=[k];vistas.add(k);
+  while(pila.length){const c=pila.pop()!,[x,z]=c.split(',').map(Number);grupo.push([x,z]);for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1]]){const n=(x+dx)+','+(z+dz);if(celdas.has(n)&&!vistas.has(n)){vistas.add(n);pila.push(n);}}}
+  grupos.push(grupo);}
+ return grupos;
+}
+/** Un estanque hecho de casillas: orilla de pasto mojado, agua con la forma redondeada de las casillas y, en el borde,
+ * juncos y piedras de orilla de Blender. */
+function estanqueCasillas(celdas:[number,number][]):THREE.Group{
+ const g=new THREE.Group(),PX=8,PAD=1,xs=celdas.map(c=>c[0]),zs=celdas.map(c=>c[1]),x0=Math.min(...xs)-PAD,z0=Math.min(...zs)-PAD,ancho=Math.max(...xs)-x0+1+PAD,fondo=Math.max(...zs)-z0+1+PAD;
+ // Máscara borrosa calculada a mano (dos pasadas de caja): no depende del lienzo del navegador ni de su filtro
+ const W=ancho*PX,H=fondo*PX,m0=new Float32Array(W*H);
+ // La fila 0 es el borde de mayor z (así v=0 en la textura queda hacia +z, como la malla)
+ for(const [x,z] of celdas){const c0=(x-x0)*PX,f0=(z0+fondo-1-z)*PX;for(let f=f0;f<f0+PX;f++)for(let c=c0;c<c0+PX;c++)m0[f*W+c]=1;}
+ const caja1=(src:Float32Array,r:number,horizontal:boolean)=>{const dst=new Float32Array(W*H),n=2*r+1;for(let a=0;a<(horizontal?H:W);a++)for(let b=0;b<(horizontal?W:H);b++){let t=0;for(let k=-r;k<=r;k++){const bb=Math.min((horizontal?W:H)-1,Math.max(0,b+k));t+=horizontal?src[a*W+bb]:src[bb*W+a];}if(horizontal)dst[a*W+b]=t/n;else dst[b*W+a]=t/n;}return dst;};
+ let m1=m0;for(let k=0;k<2;k++){m1=caja1(m1,Math.round(PX*.45),true);m1=caja1(m1,Math.round(PX*.45),false);}
+ const datos=new Uint8Array(W*H*4);for(let k=0;k<W*H;k++){const v=Math.round(m1[k]*255);datos.set([v,v,v,255],k*4);}
+ const mascara=new THREE.DataTexture(datos,W,H);mascara.magFilter=THREE.LinearFilter;mascara.minFilter=THREE.LinearFilter;mascara.needsUpdate=true;
+ const cx=x0+ancho/2,cz=z0+fondo/2,geo=new THREE.PlaneGeometry(ancho,fondo).rotateX(-Math.PI/2);
+ const orilla=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:'#9fb08a',roughness:1,alphaMap:mascara,alphaTest:.2}));orilla.position.set(cx,.012,cz);orilla.receiveShadow=true;g.add(orilla);
+ const agua=new THREE.Mesh(geo,materialAguaMascara(mascara,ancho,fondo));agua.position.set(cx,.043,cz);agua.receiveShadow=true;agua.userData.noCompactar=true;agua.onBeforeRender=()=>{tiempoAgua.value=performance.now()/1000;};g.add(agua);
+ const set=new Set(celdas.map(([x,z])=>x+','+z)),bordes:[number,number,number][]=[];
+ for(const [x,z] of celdas)for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1]])if(!set.has((x+dx)+','+(z+dz)))bordes.push([x+.5+dx*.62,z+.5+dz*.62,Math.atan2(-dz,dx)]);
+ conKit(g,'granja_monte.glb',m=>{const juncos=m.get('juncos'),piedra=m.get('piedra_orilla');if(!juncos||!piedra)return;const kit=new THREE.Group();
+  bordes.forEach(([x,z,giro],k)=>{const h=Math.sin(x*12.9898+z*78.233)*43758.5453,azar=h-Math.floor(h);if(azar>.58)return;const o=(azar<.36?juncos:piedra).clone(true);o.position.set(x,0,z);o.rotation.y=giro+azar*2;o.scale.setScalar(azar<.36?.7+azar:.55+azar*.6);kit.add(o);void k;});
+  g.add(fundir(kit));});
+ return g;
+}
 export function paisajeGranja(p:PaisajeGranja):THREE.Group{
  const g=new THREE.Group();
- for(const e of p.estanques){
-  const borde=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.07,32),new THREE.MeshStandardMaterial({color:'#a8b793',roughness:1}));borde.scale.set(e.radioX+.26,1,e.radioZ+.26);borde.position.set(e.x,-.005,e.z);borde.receiveShadow=true;g.add(borde);
-  const agua=mallaAgua(e.radioX,e.radioZ);agua.position.set(e.x,.043,e.z);g.add(agua);
-  for(let i=0;i<12;i++){const a=i*Math.PI/6,x=e.x+Math.cos(a)*(e.radioX+.12),z=e.z+Math.sin(a)*(e.radioZ+.10);if(i%3===0)esfera(g,[.22,.16,.18],[x,.11,z],'#a9ada0');else{const tallo=caja(g,[.025,.35,.025],[x,.17,z],'#819771');tallo.rotation.z=.13;esfera(g,[.04,.1,.04],[x,.38,z],'#a18e68');}}
-  for(let i=0;i<3;i++){const nenufar=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.014,10),new THREE.MeshStandardMaterial({color:'#86a97d'}));nenufar.position.set(e.x+(i-1)*.4,.068,e.z+i*.13-.2);g.add(nenufar);if(i===1)esfera(g,[.07,.03,.07],[nenufar.position.x,.10,nenufar.position.z],'#e6bdc6');}
- }
+ // Estanques por casillas (se cavan y rellenan en el modo diseño): cada grupo de casillas unidas es un estanque
+ for(const grupo of gruposAgua(celdasAgua(p)))g.add(estanqueCasillas(grupo));
  for(const h of p.huecos){const cx=h.x+.5,cz=h.z+.5,r=(k:number)=>{const n=Math.sin((h.x*12.9+h.z*78.2+k)*43.1)*4375.5;return n-Math.floor(n);};
   if(h.relleno){const t=new THREE.Mesh(new THREE.CylinderGeometry(.5,.55,.04,16),new THREE.MeshStandardMaterial({color:'#9c8160',roughness:1}));t.position.set(cx,.012,cz);t.receiveShadow=true;g.add(t);for(let k=0;k<4;k++)esfera(g,[.08,.04,.07],[cx+(r(k)-.5)*.6,.04,cz+(r(k+5)-.5)*.6],'#8a7152');continue;}
   // Hoyo redondo: fondo oscuro con degradé, bordecito de tierra removida en terrones y piedritas
@@ -38,17 +77,6 @@ export function paisajeGranja(p:PaisajeGranja):THREE.Group{
   for(let k=0;k<3;k++)esfera(g,[.07,.05,.06],[cx+(r(k+50)-.5)*1.1,.04,cz+(r(k+60)-.5)*1.1],'#a9a596');
  }
  compactar(g);return g;
-}
-export function señalesSalidas(zona:Zona):THREE.Group{
- const g=new THREE.Group(),letreros=new THREE.Group(),salidas=SALIDAS.filter(s=>s.desde===zona);for(const s of salidas){
-  caja(letreros,[.09,1.05,.09],[s.x+1.2,.53,s.z+.7],'#9d805e');caja(letreros,[.72,.28,.09],[s.x+1.2,.9,s.z+.7],'#c6ae82');
-  const flecha=new THREE.Mesh(new THREE.ConeGeometry(.085,.25,3),new THREE.MeshStandardMaterial({color:'#6d815d'}));flecha.rotation.z=-Math.PI/2;flecha.position.set(s.x+1.25,.9,s.z+.765);letreros.add(flecha);
-  for(let i=-1;i<=1;i++)caja(g,[.68,.012,.7],[s.x+.5,.009,s.z+.5+i*.75],'#c0b28a');
- }compactar(g);compactar(letreros);g.add(letreros);
- // El letrerito de flecha de Blender (granja_monte.glb) reemplaza al de figuras cuando carga
- conKit(g,'granja_monte.glb',m=>{const base=m.get('senal_salida');if(!base)return;letreros.removeFromParent();letreros.traverse(o=>{const malla=o as THREE.Mesh;if(malla.isMesh){malla.geometry.dispose();(malla.material as THREE.Material).dispose();}});
-  for(const s of salidas){const o=base.clone(true);o.position.set(s.x+1.15,0,s.z+.75);g.add(o);}});
- return g;
 }
 /** Nudo hundido en el tronco del árbol grande; acompaña el modelo original del follaje. */
 export function huecoArbolGrande(x:number,z:number):THREE.Group{

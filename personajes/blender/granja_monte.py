@@ -189,8 +189,10 @@ def m_poste_guia(coll):
     clay.lathe('poste guía', [(0.0, 0.0), (0.1, 0.0), (0.085, 2.2), (0.0, 2.24)], coll, madera('poste arco', '#9D805E'), segments=10, subsurf=0)
     # Tejadito a dos aguas con su bolita, para que se vea de lejos
     for lado in (-1, 1):
-        t = caja(coll, f'tejado guía {lado}', (0.0, lado * 0.09, 2.3), (0.2, 0.12, 0.025), madera('tejado guía', '#8A5A3B'), p=6)
+        # Se arma en el origen y se mueve después (si no, el giro la manda lejos: el origen queda en el del mundo)
+        t = caja(coll, f'tejado guía {lado}', (0.0, 0.0, 0.0), (0.2, 0.12, 0.025), madera('tejado guía', '#8A5A3B'), p=6)
         t.rotation_euler = (lado * 0.6, 0, 0)
+        t.location = (0.0, lado * 0.09, 2.3)
     bola(coll, 'perilla guía', (0.0, 0.0, 2.42), 0.06, laca('perilla guía', '#E4A94B', 0.4), n=3, sub=0)
     # Anillos de amarre donde van las tablas
     for k, z in enumerate((1.25, 1.62, 1.99)):
