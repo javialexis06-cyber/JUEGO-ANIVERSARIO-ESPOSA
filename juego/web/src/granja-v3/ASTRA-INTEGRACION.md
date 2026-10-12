@@ -137,8 +137,8 @@ Pendientes principales, ordenados para evitar grabar escenas que luego requieran
    pistas físicas y decisiones. Las consecuencias de las 98 relaciones se conectan en el bloque social.
 3. **Premios integrados:** 217 utilidades únicas con consultas, agendas, planos, depósitos,
    accesos, trampas selectivas, exposición y técnicas acotadas. Ver `PREMIOS-INTEGRACION.md`.
-4. Completar vida social de los **154 residentes adicionales**: navegación real entre rutina y hogar,
-   agenda por estación/clima/evento, regalos, preferencias, comercios y consecuencias comunitarias.
+4. **Vida social integrada para los 154 residentes adicionales:** navegación real entre rutina y hogar,
+   agenda por estación/clima, regalos, preferencias, comercios y revisión de las 98 relaciones.
    Los 24 vecinos originales conservan su sistema; el reparto actual suma 178 personas.
 5. Dar identidad mecánica a cada región: actividades distintas, jefes elementales propios, circuitos
    y retornos, depósitos especiales, soporte y fauna criable donde el canon lo permita.

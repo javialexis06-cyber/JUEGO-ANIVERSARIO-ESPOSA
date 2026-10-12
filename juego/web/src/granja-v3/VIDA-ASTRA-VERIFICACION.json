@@ -1,0 +1,91 @@
+{
+  "bloque": "vida-social-astra",
+  "base_integrada_claude": "2b13083",
+  "residentes_totales": 178,
+  "rutinas_ampliadas": 154,
+  "viviendas": 93,
+  "relaciones": 98,
+  "escenas_referenciadas": 462,
+  "regresion": {
+    "suites": 38,
+    "fallos": 0
+  },
+  "logica": {
+    "checks": 10,
+    "recursos_y_ubicaciones_preparados": true
+  },
+  "compilaciones": {
+    "pareja": true,
+    "amigos": true
+  },
+  "navegador_aislado": {
+    "checks": [
+      "La agenda y preferencias están en la ficha del residente del mundo",
+      "Una entrega sin espacio para guardar revierte inventario y amistad",
+      "El regalo real descubre su gusto sin completar su misión",
+      "El encuentro conserva su paso al recargar y registra una sola respuesta",
+      "El modelo provisional usa la posición que recorre el motor sin avanzar jornadas"
+    ],
+    "errors": [],
+    "bad": [],
+    "viewport": [
+      844,
+      390
+    ],
+    "dibujoWebGLPausado": true,
+    "alcance": "Agenda, diálogo, regalos, almacenamiento y posiciones con jornada y recursos preparados; no certifica economía ni rendimiento físico."
+  },
+  "navegador_general_preintegracion": {
+    "checks": 6,
+    "errores": [],
+    "dibujo_real": true
+  },
+  "limites": [
+    "Conserva voces e IDs; reutiliza líneas canónicas en recuerdos de amistad.",
+    "Las simulaciones no certifican economía desde cero ni teléfonos físicos.",
+    "Identidad regional y ampliaciones comunitarias en los próximos bloques."
+  ],
+  "sha256": {
+    "juego/web/src/granja-v3/vida-astra-datos.ts": "9d3bf1679c6de5f0a82d85818e76cd53d5b96dce824f494b788672aa6dcddd8c",
+    "juego/web/src/granja-v3/vida-astra-tipos.ts": "59680dac3265ddb70456d9774a7f0703690973f9aeec59df35108da9833e9440",
+    "juego/web/src/granja-v3/vida-astra-ui.ts": "9df893a7885bbad89d005b87f51502e41131bc35abb1759b232b6f699e30cc0b",
+    "juego/web/src/granja-v3/vida-astra.ts": "ac38184d0d86513a3eb893de1954d6d2ce97eb393f10823d2a381e4c453ebeb9"
+  },
+  "navegador_integrado": {
+    "checks": [
+      "La agenda y preferencias están en la ficha del residente del mundo",
+      "Una entrega sin espacio para guardar revierte inventario y amistad",
+      "El regalo real descubre su gusto sin completar su misión",
+      "El encuentro conserva su paso al recargar y registra una sola respuesta",
+      "El modelo provisional usa la posición que recorre el motor sin avanzar jornadas"
+    ],
+    "errors": [],
+    "bad": [],
+    "viewport": [
+      844,
+      390
+    ],
+    "dibujoWebGLPausado": true,
+    "alcance": "Agenda, diálogo, regalos, almacenamiento y posiciones con jornada y recursos preparados; no certifica economía ni rendimiento físico."
+  },
+  "revision_frente_visual": "El diff con 2b13083 conserva menú, inventario, habilidades, vista y lavado; main.ts solo agrega guardas y llamadas de vida social.",
+  "navegacion_prueba": "El clic de inspección sobre la casa ahora entra directamente, conforme al menú de Claude. La prueba espera la navegación real y el retorno por su botón; conserva dibujo WebGL.",
+  "navegador_general_integrado": {
+    "checks": [
+      "Botón de la casa abre la granja V5 sobre el build actual",
+      "Teclado mueve al personaje compartido actual",
+      "Mouse abre el buzón y conserva lectura",
+      "Inventario actual accesible en horizontal",
+      "Granja → casa real → granja conserva posición, inventario y jornada",
+      "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+    ],
+    "errors": [],
+    "bad": [],
+    "viewport": [
+      844,
+      390
+    ],
+    "escenariosPreparados": "Cuarto habilitado y avatar posicionado en contexto nuevo aislado.",
+    "dispositivosFisicos": []
+  }
+}

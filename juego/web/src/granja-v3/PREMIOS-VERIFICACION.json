@@ -58,5 +58,13 @@
     "musicaDeclarada": 23,
     "errores": [],
     "estado": "Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir."
+  },
+  "publicacion": {
+    "sha": "bb43f0833eddc749f1ab69193083d80a9337d1c6",
+    "workflow": 38203130995,
+    "conclusion": "success",
+    "release": "apk-191",
+    "descargas_verificadas": 4,
+    "reintento": "Una subida del instalador fue interrumpida por la conexión; el job fallido se repitió sobre el mismo SHA y publicó correctamente."
   }
 }

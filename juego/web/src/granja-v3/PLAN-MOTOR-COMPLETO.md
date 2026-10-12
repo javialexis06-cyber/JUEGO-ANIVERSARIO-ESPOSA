@@ -10,7 +10,9 @@ los expedientes de lectura y las pruebas realizadas. Las 3.581 tomas y 23 músic
 se integraron con sus IDs y firmas de texto. Maia conserva sus subtítulos y lengua de señas.
 
 Ver `HISTORIA-INTEGRACION.md`, `HISTORIA-SECUNDARIAS-INTEGRACION.md` y `PREMIOS-INTEGRACION.md`.
-La lista vigente está en `ASTRA-INTEGRACION.md`: quedan vida social ampliada, identidad regional,
+La vida social ampliada está conectada para 154 residentes, con posiciones reales, agenda, regalos,
+stock y revisión de acuerdos. Ver `VIDA-ASTRA-INTEGRACION.md`.
+La lista vigente está en `ASTRA-INTEGRACION.md`: quedan identidad regional,
 capacidades comunitarias y balance completo. Los apartados históricos siguientes conservan su fecha
 original y no representan una certificación de paridad actual.
 
