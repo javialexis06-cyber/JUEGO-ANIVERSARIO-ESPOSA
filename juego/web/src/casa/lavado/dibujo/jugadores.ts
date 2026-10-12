@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { Personaje, type Cara } from '../../../personaje';
 import { cargar } from '../../../recursos';
 import { Vestuario } from '../../ropa';
-import type { Accesorio, Ajuste, DefDisfraz } from '../disfraces';
+import type { Accesorio, Ajuste, DefDisfraz, Transformacion } from '../disfraces';
 import type { Ranura } from '../../modelo';
 import type { Jugador } from '../motor';
 import type { Rol } from '../tipos';
@@ -52,6 +52,22 @@ export const PEGAR: Record<Accesorio, { hueso: string; p: [number, number, numbe
   bigote_barbero: { hueso: 'cabeza', p: [0, 0, 0], r: [0, 0, 0], s: 1 },
   rulos_cabeza: { hueso: 'cabeza', p: [0, 0, 0], r: [0, 0, 0], s: 1 },
   corona_guerrera: { hueso: 'cabeza', p: [0, 0, 0], r: [0, 0, 0], s: 1 },
+  // Fase 4 (lo dorado de los transformados va igual que lo de siempre)
+  hueso_mano: { hueso: 'manoL', p: [0, -0.34, 0.12], r: [0, 0, 0], s: 1.2 },
+  hueso_dorado: { hueso: 'manoL', p: [0, -0.34, 0.12], r: [0, 0, 0], s: 1.25 },
+  bomba_mano: { hueso: 'manoL', p: [0, -0.16, 0.13], r: [0, 0, 0], s: 1.1 },
+  bomba_dorada: { hueso: 'manoL', p: [0, -0.16, 0.13], r: [0, 0, 0], s: 1.15 },
+  barquito_mano: { hueso: 'manoL', p: [0, -0.06, 0.12], r: [0, 0, 0], s: 1.2 },
+  barquito_dorado: { hueso: 'manoL', p: [0, -0.06, 0.12], r: [0, 0, 0], s: 1.25 },
+  talco_mano: { hueso: 'manoL', p: [0, -0.08, 0.1], r: [0, 0, 0], s: 1.4 },
+  talco_dorado: { hueso: 'manoL', p: [0, -0.08, 0.1], r: [0, 0, 0], s: 1.45 },
+  maquina_mano: { hueso: 'manoL', p: [0, -0.08, 0.1], r: [0, 0, 0], s: 1.35 },
+  cartas_mano: { hueso: 'manoL', p: [0, -0.02, 0.14], r: [0, 0, 0], s: 1.2 },
+  regalito_mano: { hueso: 'manoL', p: [0, -0.1, 0.14], r: [0, 0, 0], s: 1.1 },
+  perrito_mochila: { hueso: 'torso', p: [0.46, 0.5, -0.3], r: [0, -25, -12], s: 1.25 },
+  llave_espalda: { hueso: 'torso', p: [0, 0.55, -0.36], r: [0, 0, 0], s: 2.5 },
+  gorro_papel: { hueso: 'cabeza', p: [0, 0.82, -0.02], r: [-6, 0, 0], s: 1.6 },
+  espuma_barba: { hueso: 'cabeza', p: [0, 0, 0], r: [0, 0, 0], s: 1 },
 };
 
 /**
@@ -129,9 +145,43 @@ export class Jugador3D {
         for (const m of this.vestAmigo?.mallasDe(r) ?? this.vest.mallasDe(r)) retocar(m as THREE.SkinnedMesh, a);
       }
     }
+    await this.ponerAccesorios(this.disfraz.accesorios);
+    // Los gorros, cascos y el turbante tapan el pelo (así no se sale por encima)
+    this.taparPelo(this.disfraz.sinPelo);
+    this.p.pose('reposo', true);
+    this.p.sincronizar();
+    this.listo = true;
+  }
+
+  /** Los accesorios puestos (para quitarlos al transformarse). */
+  private puestos: THREE.Object3D[] = [];
+  /** La transformación del nivel 80: la ropa y los accesorios del disfraz transformado (el brillo lo pone el dibujo). */
+  transformado = false;
+  async transformar(t: Transformacion) {
+    if (this.transformado) return;
+    this.transformado = true;
+    if (!this.aspecto) await this.vest.aplicar(t.ropa).catch(() => undefined);
+    for (const o of this.puestos) o.removeFromParent();
+    this.puestos = [];
+    await this.ponerAccesorios(t.accesorios);
+    this.taparPelo(t.sinPelo);
+    this.p.sincronizar();
+  }
+
+  /** Lo que se escondió del pelo por un gorro (se vuelve a mostrar si el disfraz transformado no lleva gorro). */
+  private pelosOcultos: THREE.Object3D[] = [];
+  private taparPelo(sinPelo: DefDisfraz['sinPelo']) {
+    for (const o of this.pelosOcultos) o.visible = true;
+    this.pelosOcultos = [];
+    if (!sinPelo) return;
+    const que = sinPelo === 'todo' ? /^(mechon|cabello)/ : /^mechon/;
+    for (const [n, l] of this.p.partes) if (que.test(n)) for (const o of l) if (o.visible) { o.visible = false; this.pelosOcultos.push(o); }
+  }
+
+  private async ponerAccesorios(lista: Accesorio[]) {
     const lib = await cargarAccesorios();
     if (lib) {
-      for (const a of this.disfraz.accesorios) {
+      for (const a of lista) {
         const molde = lib.getObjectByName(a);
         const d = PEGAR[a];
         const hueso = this.p.huesos.get(d.hueso) ?? this.p.huesos.get(d.hueso.replace('.', ''));
@@ -163,16 +213,9 @@ export class Jugador3D {
           }
         });
         hueso.add(o);
+        this.puestos.push(o);
       }
     }
-    // Los gorros, cascos y el turbante tapan el pelo (así no se sale por encima)
-    if (this.disfraz.sinPelo) {
-      const que = this.disfraz.sinPelo === 'todo' ? /^(mechon|cabello)/ : /^mechon/;
-      for (const [n, l] of this.p.partes) if (que.test(n)) for (const o of l) o.visible = false;
-    }
-    this.p.pose('reposo', true);
-    this.p.sincronizar();
-    this.listo = true;
   }
 
   /**

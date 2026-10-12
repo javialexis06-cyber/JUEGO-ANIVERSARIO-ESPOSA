@@ -231,17 +231,28 @@ export class Menu {
     const d = disfrazVisto(DISFRAZ[this.sel] ?? this.disfraz);
     const abierto = disfrazAbierto(this.p, d.id);
     const logro = d.logro ? logroVisto(LOGRO[d.logro]) : null;
+    // (los de cajita sorpresa no se pueden comprar hasta abrir su cajita)
+    const enCajita = !!d.cajita && !abierto && !this.p.cajitas.includes(d.id);
     const boton = abierto
       ? this.p.disfraz === d.id
         ? '<button class="lv-boton" disabled>Ya lo tienes puesto</button>'
         : `<button class="lv-boton rosa" data-v="ponerse">¡Ponérmelo!</button>`
-      : `<button class="lv-boton oro" data-v="comprar" ${this.p.oro >= d.precio ? '' : 'disabled'}>Comprar por ${miles(d.precio)} ${icono('moneda', 16)}</button>`;
+      : enCajita
+        ? '<button class="lv-boton" disabled>🎁 Primero hay que abrir su cajita</button>'
+        : `<button class="lv-boton oro" data-v="comprar" ${this.p.oro >= d.precio ? '' : 'disabled'}>Comprar por ${miles(d.precio)} ${icono('moneda', 16)}</button>`;
+    const t = d.transforma;
+    const llave = t ? (this.p.llaves.includes(d.id)
+      ? `<p class="lv-llave si">${icono('llavecita', 20)} Ya tiene su llavecita: al nivel ${t.nivel} se transforma en <b>${t.nombre}</b>.</p>`
+      : `<p class="lv-llave">${icono('llavecita', 20)} Su llavecita está escondida en <b>${ESCENARIOS[t.llave.escenario].nombre}</b> (sale con flecha verde cuando juegas con este disfraz). Con ella, al nivel ${t.nivel} se transforma en <b>${t.nombre}</b>.</p>`) : '';
     return `<div class="cuerpo"><div class="lv-lista">${lista}</div>
       <div class="lv-detalle"><div class="gran">${retrato(d, '', maestriaDe(this.p, d.id))}<div><h3>${d.nombre}</h3><p>Como ${d.original} en el original</p></div></div>
         <p>${d.desc}</p>
         <p class="esp">${icono(d.arma, 22)} ${d.especial}</p>
         <p class="lv-apunta">${puedeApuntar(d.id) ? '🎯 Se puede manejar a mano (segundo dedo o mouse)' : '🌀 Disfraz de área: sus armas pegan solitas alrededor'}</p>
         ${!abierto && logro ? `<p>🔒 Se gana con el logro <b>«${logro.nombre}»</b>: ${logro.desc}. O cómpralo ya.</p>` : ''}
+        ${enCajita ? `<p>🎁 Está en la <b>cajita sorpresa de ${ESCENARIOS[d.cajita!.escenario].nombre}</b>: acércate a la caja de regalo con moño y vence a los mugrosos que la cuidan. Después se compra aquí.</p>` : ''}
+        ${!abierto && d.cajita && !enCajita ? '<p>🎁 ¡Ya salió de su cajita! Ahora se puede comprar.</p>' : ''}
+        ${llave}
         ${boton}
         ${this.htmlMaestria(d)}</div></div>`;
   }
@@ -475,7 +486,7 @@ export class Menu {
     }
     if (a === 'comprar') {
       const d = DISFRAZ[this.sel];
-      if (!d || this.p.oro < d.precio || disfrazAbierto(this.p, d.id)) return;
+      if (!d || this.p.oro < d.precio || disfrazAbierto(this.p, d.id) || (d.cajita && !this.p.cajitas.includes(d.id))) return;
       this.p.oro -= d.precio;
       this.p.comprados.push(d.id);
       this.p.disfraz = d.id;

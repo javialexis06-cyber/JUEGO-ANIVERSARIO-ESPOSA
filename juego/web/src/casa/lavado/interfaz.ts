@@ -375,13 +375,13 @@ export class Interfaz {
     let n = 0;
     for (const o of m.objs) {
       if (n >= flechas.length) break;
-      if (!o.vivo || !(o.tipo === 'reliquia' || (o.tipo === 'tesoro' && m.mapa))) continue;
+      if (!o.vivo || !(o.tipo === 'reliquia' || o.tipo === 'llavecita' || o.tipo === 'cajita' || (o.tipo === 'tesoro' && m.mapa))) continue;
       const [px, py] = aPantalla(o.x, o.y);
       if (px > 0 && py > 0 && px < w && py < h) continue;
       const f = flechas[n++];
       // (sin tapar las armas de arriba a la izquierda ni el botón de pausa)
       const x = Math.max(30, Math.min(w - 30, px)), y = Math.max(x < 230 || x > w - 70 ? 104 : 76, Math.min(h - 34, py));
-      const id = o.tipo === 'reliquia' ? TESOROS[o.calidad]?.id ?? 'mapa' : ESCONDIDAS[o.calidad]?.id ?? 'anilloPlata';
+      const id = o.tipo === 'reliquia' ? TESOROS[o.calidad]?.id ?? 'mapa' : o.tipo === 'llavecita' ? 'llavecita' : o.tipo === 'cajita' ? 'cajita' : ESCONDIDAS[o.calidad]?.id ?? 'anilloPlata';
       const metros = Math.round(Math.hypot(o.x - yo.x, o.y - yo.y) / 40);
       const clave = `${id}|${metros}`;
       if (f.dataset.k !== clave) {

@@ -50,6 +50,8 @@ export interface InvJugador {
   tiradas?: number;
   ultimas?: IdPremioRuleta[];
   feria?: number;
+  /** El disfraz ya se transformó (nivel 80 con su llavecita). */
+  transformado?: boolean;
 }
 
 /** Lo que se dicen los celulares durante la partida (tipos de mensaje de la sala). */
@@ -114,6 +116,7 @@ export function inventarioDe(m: Motor): InvJugador[] {
     gastado: j.gastado,
     extras: [j.dadosExtra, j.saltosExtra, j.vetosExtra],
     ...(m.esc.feria ? { ruleta: j.ruleta, tiradas: j.tiradas, ultimas: [...j.ultimasTiradas], feria: m.feriaAbiertas } : {}),
+    ...(j.transformado ? { transformado: true } : {}),
   }));
 }
 
@@ -148,16 +151,17 @@ export function aplicarInventario(m: Motor, inv: InvJugador[]) {
     j.tiradas = d.tiradas ?? 0;
     j.ultimasTiradas = Array.isArray(d.ultimas) ? d.ultimas.filter((x) => x in PREMIO) : [];
     if (i === 0 && typeof d.feria === 'number' && d.feria !== m.feriaAbiertas) m.ponerFeria(d.feria);
+    if (d.transformado && !j.transformado && j.disfraz.transforma) j.transformado = true;
   });
 }
 
 // ---------------------------------------------------------------------------------------------------- La foto
 const TIPOS_EF: TipoEfecto[] = ['golpe', 'muere', 'latigo', 'rayo', 'charco', 'limpiar', 'explosion', 'gema', 'moneda', 'curar', 'nivel', 'cofre', 'herido',
-  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces', 'escudo', 'cohete', 'chorro', 'frasco', 'remolino'];
+  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces', 'escudo', 'cohete', 'chorro', 'frasco', 'remolino', 'transforma'];
 const IDX_EF = new Map(TIPOS_EF.map((t, i) => [t, i]));
 const IDX_ARMA = new Map(ID_ARMAS.map((a, i) => [a, i]));
 const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre', 'tesoro', 'trebolDorado', 'guante',
-  'patito', 'dado', 'paleta', 'corazoncito', 'pulsera', 'espejoVerdad', 'burbuja', 'reliquia', 'quesito'];
+  'patito', 'dado', 'paleta', 'corazoncito', 'pulsera', 'espejoVerdad', 'burbuja', 'reliquia', 'quesito', 'llavecita', 'cajita'];
 const IDX_OBJ = new Map(OBJETOS.map((o, i) => [o, i]));
 
 const buf = new ArrayBuffer(128 * 1024);

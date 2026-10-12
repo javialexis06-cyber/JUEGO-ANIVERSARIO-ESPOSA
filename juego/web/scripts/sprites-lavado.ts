@@ -24,6 +24,14 @@ const POSE: Record<string, [string, Cara, number]> = {
   ella_ranita: ['baile_a', 'carcajada', -16],
   ella_princesa: ['jarras', 'presumido', -16],
   ella_estilista: ['pulgares_a', 'guino', -18],
+  el_paseador: ['saludo_a', 'feliz', 18],
+  el_capitan: ['jarras', 'presumido', 16],
+  el_crupier: ['pulgares_a', 'guino', 18],
+  el_abuelo: ['reposo', 'feliz', 14],
+  ella_bomba: ['celebrar', 'carcajada', -16],
+  ella_bailarina: ['baile_a', 'feliz', -18],
+  ella_hada: ['saludo_a', 'feliz', -16],
+  ella_muneca: ['reposo', 'guino', -14],
 };
 
 export async function generar(ids: string[], lado = 256): Promise<Record<string, string>> {

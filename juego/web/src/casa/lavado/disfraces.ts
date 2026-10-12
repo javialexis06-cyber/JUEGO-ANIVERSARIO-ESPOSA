@@ -4,13 +4,16 @@
 // Imelda, Gennaro, Krochi o Poe, y un look que se reconoce (ropa del clóset + un accesorio del baño en la mano o en
 // la cabeza).
 import type { Ranura, Ropa } from '../modelo';
-import type { IdArma, Rol, Stat, Stats } from './tipos';
+import type { IdArma, IdEscenario, Rol, Stat, Stats } from './tipos';
 
 /** Accesorios que se le ponen encima (modelos del baño, ver personajes/blender/lavado_objetos.py). */
 export type Accesorio =
   | 'toalla_hombro' | 'espuma_cabeza' | 'cepillo_mano' | 'espejo_frente' | 'jabon_pecho' | 'champu_mano' | 'casco_burbuja' | 'casco_bombero'
   | 'manguera' | 'hilo_mano' | 'varita_mano' | 'escudo' | 'perfume_mano' | 'turbante' | 'patico_mano' | 'ranita_cabeza' | 'esponja_mano'
-  | 'secador_mano' | 'rulos' | 'antifaz_heroe' | 'bigote_lenador' | 'bigote_barbero' | 'rulos_cabeza' | 'corona_guerrera' | 'toalla_mano';
+  | 'secador_mano' | 'rulos' | 'antifaz_heroe' | 'bigote_lenador' | 'bigote_barbero' | 'rulos_cabeza' | 'corona_guerrera' | 'toalla_mano'
+  // Fase 4 (y lo dorado de los transformados)
+  | 'hueso_mano' | 'hueso_dorado' | 'bomba_mano' | 'bomba_dorada' | 'barquito_mano' | 'barquito_dorado' | 'talco_mano' | 'talco_dorado'
+  | 'maquina_mano' | 'cartas_mano' | 'regalito_mano' | 'perrito_mochila' | 'llave_espalda' | 'gorro_papel' | 'espuma_barba';
 
 export interface Ajuste {
   /** Corrimiento (x, y arriba, z adelante). */
@@ -32,6 +35,23 @@ export interface Crecimiento {
   hasta: number;
   /** Desde qué nivel (para «una vez al nivel 33»). */
   desde?: number;
+}
+
+/**
+ * La transformación del nivel 80 (Mortaccio, Cavallo, Ramba y O'Sole en el original): si antes encontró su llavecita
+ * escondida en un escenario, al llegar a ese nivel cambia de ropa y de accesorios, su arma se vuelve dorada y sube.
+ */
+export interface Transformacion {
+  nivel: number;
+  nombre: string;
+  ropa: Ropa;
+  accesorios: Accesorio[];
+  sinPelo?: 'mechones' | 'todo';
+  /** Lo que sube al transformarse (para lo que queda de partida). */
+  bono: Partial<Stats>;
+  grito: string;
+  /** Dónde está escondida su llavecita. */
+  llave: { escenario: IdEscenario; x: number; y: number };
 }
 
 export interface DefDisfraz {
@@ -61,6 +81,15 @@ export interface DefDisfraz {
   accesorios: Accesorio[];
   /** Cómo se gana (si no es el de siempre). */
   logro?: string;
+  /** Sale de la cajita sorpresa de ese escenario, en ese sitio (y después se compra). */
+  cajita?: { escenario: IdEscenario; x: number; y: number };
+  transforma?: Transformacion;
+  /** Una carta más para escoger al subir de nivel (como Queen Sigma). */
+  masOpciones?: number;
+  /** Cada tantos segundos le aparece un regalito en el piso (como Santa Ladonna). */
+  regalitos?: number;
+  /** Juega con un nivel más en cada poder de la tienda (como Christine). */
+  poderesExtra?: number;
   precio: number;
   inicial?: boolean;
 }
@@ -218,6 +247,108 @@ export const DISFRACES: DefDisfraz[] = [
     arma: 'secador', base: {}, crece: [{ cada: 10, stat: 'enfriamiento', paso: 0.05, hasta: 30 }],
     ropa: { arriba: 'blusa_rosada', abajo: 'falda_rosada', cara: 'gafas_corazon', pies: 'botas_rosadas' },
     accesorios: ['secador_mano', 'rulos_cabeza'],
+  },
+  // ------------------------------------------------------------------------------------------------ Fase 4: Él
+  {
+    id: 'el_paseador', rol: 'el', nombre: 'Paseador del perrito', original: 'Mortaccio', precio: 900, logro: 'jefes10',
+    desc: 'Gorra, buzo y tenis, y en la mochila el perrito de peluche asomado. Le tira el hueso a los mugrosos y el hueso vuelve.',
+    especial: 'Empieza con el Hueso del perrito. +1 hueso en los niveles 20, 40 y 60. Con su llavecita, al nivel 80 se transforma en el Rey de los perritos.',
+    grito: '🦴 ¡A buscar el hueso! En los niveles 20, 40 y 60, un hueso más', alCrecer: '🦴 ¡Otro hueso! +1 proyectil',
+    arma: 'hueso', base: {}, crece: [{ cada: 20, stat: 'cantidad', paso: 1, hasta: 60 }],
+    ropa: { arriba: 'buzo_gris', abajo: 'jogger_marino', cabeza: 'gorra_azul', pies: 'tenis_blancos' },
+    accesorios: ['hueso_mano', 'perrito_mochila'],
+    transforma: {
+      nivel: 80, nombre: 'Rey de los perritos', ropa: { arriba: 'enterizo_perrito', cabeza: 'corona', cola: 'cola_perrito', pies: 'pantuflas_perrito' },
+      accesorios: ['hueso_dorado', 'perrito_mochila'], bono: { poder: 0.5, cantidad: 1, area: 0.2 },
+      grito: '👑🦴 ¡Se transformó en el Rey de los perritos! El hueso se volvió de oro',
+      llave: { escenario: 'cara', x: 2600, y: -500 },
+    },
+  },
+  {
+    id: 'el_capitan', rol: 'el', nombre: 'Capitán del barquito', original: 'Bianca Ramba', precio: 900, logro: 'partidas25',
+    desc: 'Camiseta de marinero, botas de lluvia y un gorro de periódico doblado. Su barquito de papel atropella mugre de lado a lado.',
+    especial: 'Empieza con el Barquito de papel y +10 % de duración. +1 barquito en los niveles 20, 40 y 60. Con su llavecita, al nivel 80 se transforma en el Almirante de la bañera.',
+    grito: '⛵ ¡Leven anclas! En los niveles 20, 40 y 60, un barquito más', alCrecer: '⛵ ¡Otro barquito al agua! +1 proyectil',
+    arma: 'barquito', base: { duracion: 0.1 }, crece: [{ cada: 20, stat: 'cantidad', paso: 1, hasta: 60 }],
+    ropa: { arriba: 'camiseta_marinera', abajo: 'short_azul', pies: 'botas_lluvia' }, sinPelo: 'mechones',
+    accesorios: ['barquito_mano', 'gorro_papel'],
+    transforma: {
+      nivel: 80, nombre: 'Almirante de la bañera', ropa: { arriba: 'saco_marino', abajo: 'pantalon_blanco', cabeza: 'sombrero_pirata', pies: 'botas_negras' },
+      accesorios: ['barquito_dorado'], bono: { poder: 0.5, cantidad: 1, duracion: 0.3 },
+      grito: '⚓ ¡Se transformó en el Almirante de la bañera! El barquito ahora es de oro',
+      llave: { escenario: 'banera', x: 2100, y: 900 },
+    },
+  },
+  {
+    id: 'el_crupier', rol: 'el', nombre: 'Crupier de la feria', original: 'Queen Sigma', precio: 1500, cajita: { escenario: 'feria', x: 700, y: -450 },
+    desc: 'Chaleco, sombrero de copa, bigotico y un abanico de cartas. Sabe que la suerte se ayuda escogiendo bien.',
+    especial: 'Empieza con el Confeti de espuma. Al subir de nivel siempre escoge entre una carta más, y trae +20 % de suerte y una tirada extra.',
+    grito: '🎩 ¡Hagan sus apuestas! Siempre una carta más para escoger',
+    arma: 'confeti', base: { suerte: 0.2, tirar: 1 }, crece: [], masOpciones: 1,
+    ropa: { arriba: 'chaleco_negro', abajo: 'pantalon_negro', cabeza: 'sombrero_copa', cara: 'bigote', pies: 'zapatos_negros' },
+    accesorios: ['cartas_mano'],
+  },
+  {
+    id: 'el_abuelo', rol: 'el', nombre: 'Abuelito de la afeitada', original: "Zi'Assunta Belpaese", precio: 1500, cajita: { escenario: 'lavamanos', x: 1900, y: 0 },
+    desc: 'Suéter, boina, gafitas de carey, pantuflas de oso y la cara llena de espuma. Despacito, pero cada día mejor.',
+    especial: 'Empieza con la Máquina de afeitar. Cada nivel le sube medio por ciento de daño, área, velocidad, duración y experiencia (hasta el nivel 99).',
+    grito: '🪒 Despacito y con buena letra: cada nivel, un poquito de todo', alCrecer: '🪒 ¡El abuelito sigue mejorando!',
+    arma: 'maquina', base: { vida: 10 }, crece: [
+      { cada: 1, stat: 'poder', paso: 0.005, hasta: 99 }, { cada: 1, stat: 'area', paso: 0.005, hasta: 99 },
+      { cada: 1, stat: 'velocidad', paso: 0.005, hasta: 99 }, { cada: 1, stat: 'duracion', paso: 0.005, hasta: 99 },
+      { cada: 1, stat: 'crecimiento', paso: 0.005, hasta: 99 },
+    ],
+    ropa: { arriba: 'sueter_cafe', abajo: 'pantalon_caqui', cabeza: 'boina_negra', cara: 'gafas_redondas_carey', pies: 'pantuflas_oso' },
+    accesorios: ['maquina_mano', 'espuma_barba'],
+  },
+  // ------------------------------------------------------------------------------------------------ Fase 4: Ella
+  {
+    id: 'ella_bomba', rol: 'ella', nombre: 'Chef de bombas de baño', original: 'Yatta Cavallo', precio: 900, logro: 'cofres50',
+    desc: 'Chaqueta y gorro de chef: amasa bombas de baño de colores que rebotan por ahí y revientan en espuma.',
+    especial: 'Empieza con la Bomba de baño y +15 % de área. +1 bomba en los niveles 20, 40 y 60. Con su llavecita, al nivel 80 se transforma en la Reina de la efervescencia.',
+    grito: '🫧 ¡Salen bombas de baño! En los niveles 20, 40 y 60, una más', alCrecer: '🫧 ¡Otra bomba al horno! +1 proyectil',
+    arma: 'bombaBano', base: { area: 0.15 }, crece: [{ cada: 20, stat: 'cantidad', paso: 1, hasta: 60 }],
+    ropa: { arriba: 'chaqueta_chef', abajo: 'falda_lila', cabeza: 'gorro_chef', pies: 'tenis_lila' },
+    accesorios: ['bomba_mano'],
+    transforma: {
+      nivel: 80, nombre: 'Reina de la efervescencia', ropa: { arriba: 'vestido_lila', cabeza: 'tiara_dorada', espalda: 'alas_hada', pies: 'tacones_dorados' },
+      accesorios: ['bomba_dorada'], bono: { poder: 0.5, cantidad: 1, area: 0.3 },
+      grito: '👑🫧 ¡Se transformó en la Reina de la efervescencia! Las bombas son de oro',
+      llave: { escenario: 'ducha', x: -1900, y: -1000 },
+    },
+  },
+  {
+    id: 'ella_bailarina', rol: 'ella', nombre: 'Bailarina del talco', original: "O'Sole Meeo", precio: 900, logro: 'eliminar50000',
+    desc: 'Tutú rosado, florecita en el pelo y el tarro de talco: va bailando hacia atrás y las florecitas rebotan por todo lado.',
+    especial: 'Empieza con el Talco de florecitas y +10 % de velocidad al caminar. +1 florecita en los niveles 20, 40 y 60. Con su llavecita, al nivel 80 se transforma en el Hada del talco.',
+    grito: '🌸 ¡A bailar! En los niveles 20, 40 y 60, una florecita más', alCrecer: '🌸 ¡Otra florecita! +1 proyectil',
+    arma: 'talco', base: { movimiento: 0.1 }, crece: [{ cada: 20, stat: 'cantidad', paso: 1, hasta: 60 }],
+    ropa: { arriba: 'blusa_blanca', abajo: 'tutu_rosado', cabeza: 'flor_pelo_rosada', pies: 'sandalias_rosadas' },
+    accesorios: ['talco_mano'],
+    transforma: {
+      nivel: 80, nombre: 'Hada del talco', ropa: { arriba: 'blusa_lila', abajo: 'tutu_blanco', cabeza: 'aureola', espalda: 'alas_mariposa', pies: 'sandalias_doradas' },
+      accesorios: ['talco_dorado'], bono: { poder: 0.5, cantidad: 1, movimiento: 0.2 },
+      grito: '🧚 ¡Se transformó en el Hada del talco! Las florecitas son de oro',
+      llave: { escenario: 'lavamanos', x: -3000, y: 60 },
+    },
+  },
+  {
+    id: 'ella_hada', rol: 'ella', nombre: 'Hada de los regalitos', original: 'Santa Ladonna', precio: 1500, cajita: { escenario: 'matera', x: -900, y: 700 },
+    desc: 'Vestido menta, alas de hada y un regalito en la mano. Por donde pasa van apareciendo sorpresas en el piso.',
+    especial: 'Empieza con la Brillantina y +10 % de suerte. Cada 25 segundos aparece un regalito cerca de ella (arepa, trébol, gotas doradas, hielo…).',
+    grito: '🎁 ¡Sorpresa! Cada ratico aparece un regalito cerca',
+    arma: 'brillantina', base: { suerte: 0.1 }, crece: [], regalitos: 25,
+    ropa: { arriba: 'vestido_menta', cabeza: 'flor_pelo_blanca', espalda: 'alas_hada', pies: 'sandalias_doradas' },
+    accesorios: ['regalito_mano'],
+  },
+  {
+    id: 'ella_muneca', rol: 'ella', nombre: 'Muñeca de porcelana', original: 'Christine Davain', precio: 1500, cajita: { escenario: 'laberinto', x: 1350, y: 1350 },
+    desc: 'Vestido de puntos, moño y zapaticos blancos, con su llave de dar cuerda en la espalda. Llega con todo un poquito mejor.',
+    especial: 'Empieza con las Mariposas de la cortina y 1 de armadura. Juega con un nivel más en cada poder de la tienda (aunque no lo hayas comprado).',
+    grito: '🎀 Muñeca de porcelana: un nivel más en cada poder de la tienda',
+    arma: 'mariposas', base: { armadura: 1 }, crece: [], poderesExtra: 1,
+    ropa: { arriba: 'vestido_puntos', cabeza: 'diadema_mono_rosada', pies: 'zapatos_blancos' },
+    accesorios: ['llave_espalda'],
   },
 ];
 

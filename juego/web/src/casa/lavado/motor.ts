@@ -5,7 +5,7 @@ import { CELDA, enCortina, fueraDeCortinas } from './laberinto';
 import { ARMAS, BASICAS, DISPARAN, ESCONDIDAS, EVOLUCIONADAS, ID_PASIVAS, MAX_RANURAS, PASIVAS, baseEnNivel, linaje, maxNivelArma, pasivasDeEvo, type BaseArma } from './armas';
 import { Azar, hash2 } from './azar';
 import { CARTAS } from './cartas';
-import { DISFRAZ, type DefDisfraz } from './disfraces';
+import { DISFRACES, DISFRAZ, type DefDisfraz } from './disfraces';
 import { ENEMIGOS, INDICE_ENEMIGO, type DefEnemigo } from './enemigos';
 import { DURACION, ESCENARIOS, type DefEscenario, type EventoOleada } from './escenarios';
 import { bonosMaestria, MAESTRIA_MAX } from './maestria';
@@ -133,6 +133,8 @@ export class Enemigo {
   et = 0;
   /** El llamado de «Te busqué por todos lados». */
   llamado = 0;
+  /** Cuida la cajita sorpresa (cuando caen todos, la cajita se abre). */
+  guardia = false;
   /** La mascarilla lo dejó «sin dientes»: ya no le pega a nadie. */
   sinDientes = false;
   /** El vendaval lo ablanda (recibe este tanto más de daño) y la culebrita lo frena para siempre (0 a 0,8). */
@@ -298,6 +300,10 @@ export interface OpcionesJugador {
   maestria?: number;
   /** Lo que los patitos dorados le han subido a su disfraz (para siempre). */
   patitos?: Partial<Record<Stat, number>>;
+  /** Los disfraces cuya llavecita ya encontró (se transforman al nivel 80). */
+  llaves?: string[];
+  /** Los disfraces que ya sacó de su cajita sorpresa (esa cajita ya no sale). */
+  cajitas?: string[];
   /** Los tesoros del baño que todavía puede encontrar (salen en su sitio si es este escenario). */
   reliquias?: IdTesoro[];
   /** Trae el mapa del baño (flechas hacia lo escondido y el mapa en la pausa). */
@@ -381,6 +387,8 @@ export class Jugador {
   /** Contadores de algunas cartas. */
   eliminadosCarta = 0;
   bonoMaraton = 0;
+  /** La arepa encantada (carta de la noche): lo que han subido las arepas en la partida. */
+  bonoArepa = 0;
   quieto = 0;
   curado = 0;
   /** El trebolito suma suerte por el resto de la partida. */
@@ -409,6 +417,10 @@ export class Jugador {
   tienda = false;
   /** Sigue parado junto al puesto (para no volver a abrirlo hasta que se aleje). */
   enPuesto = false;
+  /** Las llavecitas que ya tiene y si su disfraz ya se transformó (nivel 80); los regalitos del hada. */
+  llaves = new Set<string>();
+  transformado = false;
+  tRegalito = 0;
   /** La Feria de las cremas: el puesto abierto es la ruleta del Ruletero (no la tienda de Don Jabón), lo que salió
    * en las últimas tiradas y cuántas veces ha girado (para que la ruleta de la pantalla dé la vuelta). */
   ruleta = false;
@@ -434,6 +446,13 @@ export class Jugador {
     this.secretos = new Set(o.secretos ?? []);
     this.cartasLibres = [...(o.cartas ?? [])];
     this.patitosBase = { ...(o.patitos ?? {}) };
+    this.llaves = new Set(o.llaves ?? []);
+    this.tRegalito = this.disfraz.regalitos ?? 0;
+    // La muñeca de porcelana: un nivel más en cada poder de la tienda (menos la maldición)
+    if (this.disfraz.poderesExtra) for (const [k, p] of Object.entries(PODER) as [Stat, (typeof PODER)[Stat]][]) {
+      if (k === 'maldicion' || !p) continue;
+      this.poderes[k] = Math.min(p.max, (this.poderes[k] ?? 0) + this.disfraz.poderesExtra);
+    }
   }
 
   get vivo() {
@@ -532,6 +551,9 @@ export class Motor {
   revivio = false;
   /** Los tesoros del baño que se encontraron en esta partida. */
   hallados: IdTesoro[] = [];
+  /** Las llavecitas y las cajitas sorpresa encontradas en la partida (ids de disfraces). */
+  llavesHalladas: string[] = [];
+  cajitasHalladas: string[] = [];
   /** Agua caliente sin fin: cuántas vueltas de 30 minutos van. */
   ciclo = 0;
   /** Ya llegó la Ducha Helada (no salen más oleadas). */
@@ -630,6 +652,19 @@ export class Motor {
       const o = this.soltar('tesoro', t.x, t.y, k);
       if (o) this.tesoros.push({ o, guardia: false });
     });
+    // Las llavecitas de los disfraces que se transforman (de quien juegue con ese disfraz y no la tenga todavía)
+    if (!this.tutorial) DISFRACES.forEach((d, k) => {
+      const t = d.transforma;
+      if (!t || t.llave.escenario !== this.esc.id || !this.jug.some((j) => j.disfraz.id === d.id && !j.llaves.has(d.id))) return;
+      this.soltar('llavecita', t.llave.x, t.llave.y, k);
+    });
+    // La cajita sorpresa de este escenario (si alguien todavía no ha sacado su disfraz)
+    if (!this.tutorial) DISFRACES.forEach((d, k) => {
+      if (!d.cajita || d.cajita.escenario !== this.esc.id || this.cajita) return;
+      if (!o.jugadores.some((x) => !(x.cajitas ?? []).includes(d.id))) return;
+      const obj = this.soltar('cajita', d.cajita.x, d.cajita.y, k);
+      if (obj) this.cajita = { o: obj, k, estado: 0 };
+    });
     // Los tesoros del baño que alguien todavía no tiene, cada uno en su sitio (con su flecha verde)
     if (!this.tutorial) TESOROS.forEach((t, k) => {
       if (t.escenario === this.esc.id && o.jugadores.some((x) => x.reliquias?.includes(t.id))) this.soltar('reliquia', t.x, t.y, k);
@@ -643,6 +678,8 @@ export class Motor {
 
   /** Velocidad al caminar (el Hiper acelera a todos). */
   velJugador(j: Jugador) {
+    // (el borde del mundo: siempre al doble, suba o baje lo que suba o baje)
+    if (j.tieneCarta('nocheBorde')) return VEL_JUGADOR * 2;
     return VEL_JUGADOR * Math.max(0.2, 1 + j.st.movimiento) * (this.modo('hiper') ? 1.35 : 1);
   }
 
@@ -662,6 +699,51 @@ export class Motor {
       if (e) e.hp = e.hpMax = e.hpMax * 2.5;
       this.aviso('💍 ¡Algo brilla por aquí… y alguien lo está cuidando!', j.i);
     }
+  }
+
+  /** La cajita sorpresa de la partida: 0 esperando a que alguien se acerque, 1 con su anillo de guardianes. */
+  private cajita: { o: Objeto; k: number; estado: 0 | 1 } | null = null;
+
+  /** Al acercarse a la cajita se cierra un anillo de mugrosos; cuando caen todos, se abre y sale el disfraz. */
+  private cuidarCajita() {
+    const c = this.cajita;
+    if (!c || !c.o.vivo) return;
+    const d = DISFRACES[c.k];
+    if (c.estado === 0) {
+      const j = this.jug.find((x) => x.activo && Math.hypot(x.x - c.o.x, x.y - c.o.y) < 170);
+      if (!j) return;
+      c.estado = 1;
+      const ol = this.esc.oleadas[Math.min(this.esc.oleadas.length - 1, Math.floor(this.tCiclo() / 60))];
+      const comunes = ol.tipos.filter((x) => !ENEMIGOS[x].jefe && ENEMIGOS[x].comp !== 'planta');
+      const tipo = comunes[comunes.length - 1] ?? ol.tipos[0] ?? 'germen';
+      const cant = 22 + Math.min(14, Math.floor(this.t / 60));
+      const lim = this.esc.limites, limX = this.esc.limitesX;
+      for (let q = 0; q < cant; q++) {
+        const a = (q / cant) * Math.PI * 2;
+        let x = c.o.x + Math.cos(a) * 240, y = c.o.y + Math.sin(a) * 180;
+        if (lim) y = Math.max(lim.yMin + 20, Math.min(lim.yMax - 20, y));
+        if (limX) x = Math.max(limX.xMin + 20, Math.min(limX.xMax - 20, x));
+        const e = this.crear(tipo, [x, y], j, { fijo: true });
+        if (!e) break;
+        e.guardia = true;
+        e.estado = 3;
+      }
+      this.aviso('🎁 ¡Una cajita sorpresa! Vence a los mugrosos que la cuidan', j.i);
+      this.emitir('cofre', c.o.x, c.o.y, j.i);
+      return;
+    }
+    for (let k = 0; k < this.nVivos; k++) {
+      const e = this.en[this.vivos[k]];
+      if (e.vivo && e.guardia) return;
+    }
+    c.o.vivo = false;
+    this.cajita = null;
+    if (!this.cajitasHalladas.includes(d.id)) this.cajitasHalladas.push(d.id);
+    const j = this.cercano(c.o.x, c.o.y);
+    this.emitir('evolucion', c.o.x, c.o.y, j?.i ?? 0);
+    this.aviso(`🎁 ¡De la cajita salió un disfraz nuevo: ${disfrazVisto(d).nombre}! Ya se puede comprar en el menú`);
+    this.soltar('bolsa', c.o.x + 20, c.o.y);
+    this.soltar('arepa', c.o.x - 20, c.o.y);
   }
 
   /** Cuándo se dice la habilidad de cada disfraz al empezar. */
@@ -738,6 +820,13 @@ export class Motor {
       for (let n = desde; n <= Math.min(this.nivel, c.hasta); n += c.cada) veces++;
       s[c.stat] += c.paso * veces;
     }
+    // La arepa encantada (carta de la noche)
+    if (j.bonoArepa) {
+      s.poder += j.bonoArepa;
+      vidaPct += j.bonoArepa;
+    }
+    // El disfraz transformado (nivel 80 con su llavecita)
+    if (j.transformado && j.disfraz.transforma) for (const [k, v] of Object.entries(j.disfraz.transforma.bono) as [Stat, number][]) if (k !== 'vida') s[k] += v;
     // Los patitos dorados (los de siempre del disfraz y los de esta partida)
     for (const fuente of [j.patitosBase, j.patitosGanados])
       for (const [k, v] of Object.entries(fuente) as [Stat, number][]) {
@@ -841,7 +930,7 @@ export class Motor {
       }
     }
     const suerte = 1 + j.st.suerte;
-    const cuantas = this.az.n() < Math.min(0.9, 1 - 1 / suerte) ? 4 : 3;
+    const cuantas = (this.az.n() < Math.min(0.9, 1 - 1 / suerte) ? 4 : 3) + (j.disfraz.masOpciones ?? 0);
     const r: Opcion[] = [];
     while (r.length < cuantas && l.length) {
       const x = this.az.pesado(l, (q) => q.peso);
@@ -1339,6 +1428,7 @@ export class Motor {
     this.alPuesto();
     this.alRuletero();
     this.cartasTiempo(dt);
+    if (!this.tutorial) this.regalitos(dReloj);
     if (!this.tutorial) {
       this.oleadas(dReloj);
       this.luces(dt);
@@ -1358,6 +1448,7 @@ export class Motor {
     if (this.modo('azar')) this.alAzar();
     if (!this.tutorial) this.elitesExtra(dReloj);
     if (this.tesoros.length) this.cuidarTesoros();
+    if (this.cajita) this.cuidarCajita();
     if (this.jug.every((j) => j.caido || j.fuera)) this.terminar();
   }
 
@@ -1516,6 +1607,7 @@ export class Motor {
 
   /** El Laberinto: abrirse paso entre una cortina es lento (por los pasillos se va rápido). */
   frenoCortina(j: Jugador): number {
+    if (j.tieneCarta('nocheBorde')) return 1;
     return this.esc.laberinto && enCortina(j.x, j.y, RADIO_JUGADOR) ? 0.35 : 1;
   }
 
@@ -1631,6 +1723,8 @@ export class Motor {
     // (en el tutorial nadie se cae: se aprende tranquilo)
     if (this.tutorial) j.vida = Math.max(j.vidaMax * 0.25, j.vida);
     this.emitir('herido', j.x, j.y, j.i, d);
+    // Azabache (carta de la noche): cada golpe revienta en espuma alrededor
+    if (j.tieneCarta('nocheAzabache')) this.explotar(j.i, -1, 'aji', j.x, j.y, 110, (30 + d * 4) * (1 + j.st.poder), 0);
     // Un cumpleaños de reina: el que pega recibe su merecido
     if (e && j.tieneCarta('coronaHierro')) this.herir(e, 20 + j.st.armadura * 10, j.i, -1, 0, 0, false, 'gorro');
     // La plancha y las mariposas contraatacan
@@ -2140,6 +2234,7 @@ export class Motor {
     e.dx = e.dy = 0;
     e.vence = 0;
     e.fijo = !!o.fijo || e.jefe;
+    e.guardia = false;
     e.estado = 0;
     e.et = this.az.entre(1, 3);
     e.llamado = 0;
@@ -2639,6 +2734,11 @@ export class Motor {
     // La experiencia
     let xp = e.def.xp * (e.elite ? 12 : 1) * (this.esc.grandes && !e.jefe ? 2 : 1);
     if (e.jefe) xp = (e.def.xp + this.nivel * 3) * (this.esc.xpJefes ?? 1);
+    // Lágrimas de cristal (carta de la noche): lo que revienta congelado cura y da el doble
+    if (j?.tieneCarta('nocheCristal') && (this.hielo > 0 || e.congelado > 0)) {
+      xp *= 2;
+      this.curar(j, 1);
+    }
     // Sin gotitas: si todos la llevan, la experiencia revienta en vez de caer
     if (this.sinGotitas()) {
       for (const q of this.pend) {
@@ -2784,6 +2884,8 @@ export class Motor {
     for (const o of this.objs) {
       if (!o.vivo) continue;
       o.t += dt;
+      // (la cajita sorpresa no se recoge: se abre cuando caen sus guardianes)
+      if (o.tipo === 'cajita') continue;
       if (o.jalado < 0) {
         for (const j of this.jug) {
           if (!j.activo || (o.dueno >= 0 && o.dueno !== j.i)) continue;
@@ -2813,6 +2915,10 @@ export class Motor {
     switch (o.tipo) {
       case 'arepa':
         this.arepas++;
+        if (j.tieneCarta('nocheArepa')) {
+          j.bonoArepa += 0.03;
+          this.recalcular(j);
+        }
         this.curar(j, 30);
         break;
       case 'ola':
@@ -2836,6 +2942,16 @@ export class Motor {
           g.v = 120;
         }
         break;
+      case 'llavecita': {
+        const d = DISFRACES[o.calidad];
+        if (!d?.transforma) break;
+        for (const q of this.jug) if (q.disfraz.id === d.id) q.llaves.add(d.id);
+        if (!this.llavesHalladas.includes(d.id)) this.llavesHalladas.push(d.id);
+        this.aviso(`🗝️ ¡La llavecita del disfraz ${disfrazVisto(d).nombre}! Al nivel ${d.transforma.nivel} se transforma`);
+        this.emitir('evolucion', j.x, j.y, j.i);
+        for (const q of this.jug) this.transformar(q);
+        break;
+      }
       case 'quesito': {
         // Quesito de jabón: gotas doradas y un poquito de vida
         const n = this.sumarOro(10, j);
@@ -2967,6 +3083,8 @@ export class Motor {
         j.nivelesPend++;
         // La habilidad del disfraz se nota: aviso cuando crece
         if (j.disfraz.alCrecer && this.crecioEn(j, this.nivel)) this.aviso(disfrazVisto(j.disfraz).alCrecer ?? '', j.i);
+        this.transformar(j);
+        if (j.activo && j.tieneCarta('nocheFuturo')) this.regaloCerca(j);
       }
     }
     if (!subio) return;
@@ -2978,6 +3096,58 @@ export class Motor {
         j.opciones = this.generarOpciones(j);
       }
     }
+  }
+
+  /** Nivel 80 con la llavecita encontrada: el disfraz se transforma (ropa nueva, arma dorada y su bono). */
+  transformar(j: Jugador) {
+    const t = j.disfraz.transforma;
+    if (!t || j.transformado || this.nivel < t.nivel || !j.llaves.has(j.disfraz.id)) return;
+    j.transformado = true;
+    this.recalcular(j);
+    j.invul = Math.max(j.invul, 2);
+    this.emitir('transforma', j.x, j.y, j.i);
+    this.aviso(t.grito, j.i);
+  }
+
+  /** El hada de los regalitos: cada tanto aparece una sorpresa cerca de ella. */
+  private regalitos(dt: number) {
+    for (const j of this.jug) {
+      const cada = j.disfraz.regalitos;
+      if (!cada || !j.activo) continue;
+      j.tRegalito -= dt;
+      if (j.tRegalito > 0) continue;
+      j.tRegalito = cada;
+      this.regaloCerca(j);
+    }
+    // El bolero de la luna (carta de la noche): cada minuto, un grandote con cofre
+    if (this.jug.some((j) => j.activo && j.tieneCarta('nocheBolero'))) {
+      this.tBolero -= dt;
+      if (this.tBolero <= 0) {
+        this.tBolero = 60;
+        const j = this.objetivoAzar();
+        if (j) {
+          const ol = this.esc.oleadas[Math.min(this.esc.oleadas.length - 1, Math.floor(this.tCiclo() / 60))];
+          const tipo = ol.tipos.find((x) => !ENEMIGOS[x].jefe && ENEMIGOS[x].comp !== 'planta') ?? ol.tipos[0] ?? 'germen';
+          const e = this.crear(tipo, this.puntoJefe(j), j, { elite: true, cofre: 1 });
+          if (e) this.aviso('🌙 ¡El bolero de la luna! Un grandote trae cofre');
+        }
+      }
+    }
+  }
+  private tBolero = 60;
+
+  /** Un regalito en el piso cerca de alguien (el hada y el granizo del futuro). */
+  regaloCerca(j: Jugador) {
+    const que = this.az.pesado<IdObjeto>(['arepa', 'trebolito', 'bolsa', 'moneda', 'hielo', 'aspiradora', 'dado', 'corazoncito', 'burbuja', 'paleta'],
+      (o) => (o === 'arepa' ? 4 : o === 'bolsa' || o === 'moneda' ? 3 : o === 'aspiradora' || o === 'paleta' ? 1 : 2));
+    if (!que) return;
+    const a = this.az.n() * Math.PI * 2, r = 70 + this.az.n() * 60;
+    let x = j.x + Math.cos(a) * r, y = j.y + Math.sin(a) * r * 0.7;
+    const lim = this.esc.limites, limX = this.esc.limitesX;
+    if (lim) y = Math.max(lim.yMin + 30, Math.min(lim.yMax - 30, y));
+    if (limX) x = Math.max(limX.xMin + 30, Math.min(limX.xMax - 30, x));
+    this.soltar(que, x, y);
+    this.emitir('evolucion', x, y, j.i);
   }
 
   private compactar() {
@@ -3041,6 +3211,9 @@ export class Motor {
       tesoros: [...this.hallados],
       modos: [...this.modos],
       feria: this.feriaAbiertas,
+      llaves: [...this.llavesHalladas],
+      cajitas: [...this.cajitasHalladas],
+      transformado: !!j?.transformado,
     };
   }
 }

@@ -122,7 +122,14 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
      Ratón).
    - ~~3h: la Feria de las cremas~~ **hecho** (la feria encerrada en vallas que se abre con la ruleta del Ruletero:
      plaza, calle de los puestos y carpa; 5 bichos y 3 jefes nuevos).
-   - Fase 4: disfraces con transformación, cartas de la noche, cajitas sorpresa y las aventuras.
+   - Fase 4:
+     - ~~4a y 4b: disfraces con transformación y cajitas sorpresa~~ **hecho** (8 disfraces nuevos: 4 de rebote que
+       se transforman al nivel 80 con su llavecita escondida y 4 que salen de las cajitas sorpresa).
+     - ~~4c: las cartas de la noche y la Mascarilla de noche~~ **hecho** (6 cartas que se abren con la Mascarilla de
+       noche, tirada en La Bañera).
+     - 4d: las aventuras de la protagonista (el carro andando, el bus a Barranquilla sin el detalle, los vuelos a
+       Cartagena cancelados).
+     - Lo pequeño que queda: la Radio (escoger la música) y los bichos especiales (el que persigue, el que inunda).
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
 6. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.

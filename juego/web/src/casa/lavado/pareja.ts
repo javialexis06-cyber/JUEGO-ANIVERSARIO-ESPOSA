@@ -119,6 +119,31 @@ export const PAREJA: TextosPareja | null = {
       nombre: 'Tercos los dos',
       frase: 'Testarudos como nadie: por eso nada nos tumba.',
     },
+    // Las cartas de la noche (fase 4): cartas de amor sin historia, inventadas (se cambian si Javier cuenta más)
+    nocheArepa: {
+      nombre: 'Desayuno en la cama',
+      frase: 'Si pudiera, todos los días te llevaría el desayuno a la cama, con arepita y todo.',
+    },
+    nocheBolero: {
+      nombre: 'La misma luna',
+      frase: 'Cada vez que veo la luna me acuerdo de que la estamos mirando los dos.',
+    },
+    nocheBorde: {
+      nombre: 'Hasta el fin del mundo',
+      frase: 'Si me toca caminar hasta el borde del mundo para llegar a ti, voy al doble.',
+    },
+    nocheFuturo: {
+      nombre: 'Lo que viene',
+      frase: 'Lo mejor no ya pasó: lo mejor está llegando, y llega contigo.',
+    },
+    nocheCristal: {
+      nombre: 'Lágrimas de risa',
+      frase: 'Las únicas lágrimas que te deseo son las de reírte tanto conmigo.',
+    },
+    nocheAzabache: {
+      nombre: 'Escudo de besos',
+      frase: 'Si algo te golpea, que salga volando con un montón de besos encima.',
+    },
   },
   disfraces: {
     // (el panda es como le dice ella)

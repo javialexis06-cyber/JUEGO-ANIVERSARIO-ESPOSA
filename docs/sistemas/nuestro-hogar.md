@@ -563,6 +563,35 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   Hiper), más el Pote de Crema y Don Frasco. Utilería: globos, tortas, algodón de azúcar, cremas y perfumes; las
   velitas son faroles de feria. El bot sabe ir donde el Ruletero y girar. Tres logros más (88 en total): llegar al
   final, vencer a la Reina y abrir toda la feria en una partida.
+- **Versión 2, fases 4a y 4b: ocho disfraces nuevos, la transformación y las cajitas sorpresa.** Cuatro de rebote
+  (como Mortaccio, Cavallo, Ramba y O'Sole): el **Paseador del perrito** (hueso, perrito de peluche asomado en la
+  mochila), el **Capitán del barquito** (gorro de periódico doblado), la **Chef de bombas de baño** y la **Bailarina
+  del talco**; +1 proyectil en los niveles 20, 40 y 60 y se abren con los logros que abren su arma. Cada uno tiene
+  una **llavecita** escondida (La Cara, La Bañera, La Ducha, El Lavamanos; sale con flecha verde solo cuando se juega
+  con ese disfraz y no la tiene). Con la llavecita, **al nivel 80 se transforma** (`Motor.transformar`): ropa y
+  accesorios nuevos (Rey de los perritos, Almirante de la bañera, Reina de la efervescencia, Hada del talco), el arma
+  en la mano se vuelve dorada, sube daño, cantidad y algo propio, y sale una columna de luz dorada
+  (`Jugador3D.transformar`; en pareja viaja con el inventario). Los otros cuatro salen de las **cajitas sorpresa**
+  (caja de regalo con moño y puntos, en Blender): la de La Feria trae al **Crupier de la feria** (como Queen Sigma:
+  una carta más al subir de nivel), la de El Lavamanos al **Abuelito de la afeitada** (Zi'Assunta: cada nivel medio
+  por ciento de casi todo, con barba de espuma), la de La Matera al **Hada de los regalitos** (Santa Ladonna: cada
+  25 s un regalito en el piso) y la del Laberinto a la **Muñeca de porcelana** (Christine: un nivel más en cada poder
+  de la tienda, con su llave de dar cuerda). Al acercarse a la cajita se cierra un anillo de mugrosos
+  (`Motor.cuidarCajita`, los guardianes llevan `guardia`); cuando caen todos, se abre, suelta bolsa y arepa, y el
+  disfraz queda para comprarlo en el menú (antes dice «Primero hay que abrir su cajita»). Accesorios nuevos en
+  `lavado_objetos.py` (hueso, bomba, barquito y talco normales y dorados, máquina de afeitar, abanico de cartas,
+  regalito, perrito en la mochila, llave de cuerda, gorro de papel y barba de espuma), retratos con
+  `generar-sprites-lavado.mjs` y sus prendas en `src/salas/prendas.json` para los amigos. El progreso guarda
+  `llaves` y `cajitas`. Cuatro logros más (92 en total).
+- **Versión 2, fase 4c: las cartas de la noche** (las Darkanas del original). Se abren con un tesoro nuevo, **la
+  Mascarilla de noche** (antifaz de dormir de satín con luna y estrellas, en Blender), tirada en La Bañera muy abajo a
+  la derecha con su flecha verde (logro «Buenas noches»). Seis cartas que se escogen como las demás: **La arepa
+  encantada** (cada arepa sube 3 % el daño y la vida para el resto de la partida), **El bolero de la luna** (cada
+  minuto un grandote con cofre), **El borde del mundo** (siempre al doble de velocidad y las cortinas no frenan),
+  **Granizo del futuro** (un regalito en el piso con cada nivel), **Lágrimas de cristal** (lo que revienta congelado
+  cura 1 y da el doble de experiencia) y **Azabache** (cada golpe recibido revienta en espuma alrededor). En la
+  versión de la pareja son cartas de amor sin historia (`pareja.ts`, marcadas como inventadas); los amigos ven la
+  versión de cartas mágicas. Un logro más (93 en total).
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

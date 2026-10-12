@@ -602,6 +602,19 @@ export class Dibujo {
         this.sacudir(0.5);
         break;
       }
+      case 'transforma': {
+        // La transformación del nivel 80: columna de luz dorada, estrellas, anillos y el sonido de la evolución
+        for (let q = 0; q < 60; q++) {
+          const a = (q / 60) * Math.PI * 2;
+          P.crear(q % 3 ? 'estrella' : 'brillo', CAPA_LUZ, e.x, e.y, 30 + (q % 5) * 12, Math.cos(a) * 260, Math.sin(a) * 190, 300, 1.8, 28, 6, 1, 0.85, 0.35, 1, 160, 0, 5, 1);
+        }
+        for (let q = 0; q < 6; q++) P.crear('anillo', CAPA_PISO, e.x, e.y, 0, 0, 0, 0, 0.8 + q * 0.25, 20, 320 + q * 50, 1, 0.82, 0.3, 1);
+        for (let q = 0; q < 18; q++) P.crear('brillo', CAPA_LUZ, e.x + (Math.random() - 0.5) * 40, e.y, q * 9, 0, 0, 180, 1.2, 30, 10, 1, 0.92, 0.6, 0.9);
+        sfx.evolucion();
+        this.jugadores[e.c]?.celebrar(2.2);
+        this.sacudir(0.8);
+        break;
+      }
       case 'fuego': {
         if (e.f === 1) {
           // El aliento de la paleta de hielo: escarcha y copitos
@@ -792,7 +805,11 @@ export class Dibujo {
         const b = this.fx.c.burbuja;
         const c = this.coloresRgb[i] ?? (j.rol === 'ella' ? [1, 0.6, 0.8] : [0.5, 0.6, 1]);
         this.fxNormal.poner(j.x, j.y, 0, 34, 40, 0.5, 1, b.u0, b.v0, b.u1, b.v1, c[0], c[1], c[2], 1);
-      } else p.actualizar(j, dt, pausa);
+      } else {
+        // (el disfraz transformado: también en el otro celular, aunque se haya perdido el efecto)
+        if (j.transformado && !p.transformado && p.listo && j.disfraz.transforma) void p.transformar(j.disfraz.transforma);
+        p.actualizar(j, dt, pausa);
+      }
       this.sombra(j.x, j.y, 26, 0.45);
       if (varios) this.anilloJugador(j, i);
       if (j.manual && !j.caido) this.mira(j, i === this.o.yo);
@@ -1190,9 +1207,9 @@ export class Dibujo {
       const nombre: string = cofre ? 'cofre' : o.tipo === 'dado' ? 'tirar' : o.tipo;
       const c = this.cuadrosObj.get(nombre);
       if (!c) continue;
-      const tam = cofre ? 52 : o.tipo === 'frasco' || o.tipo === 'aspiradora' || o.tipo === 'guante' || o.tipo === 'patito' || o.tipo === 'trebolDorado' || o.tipo === 'quesito' ? 34 : 30;
+      const tam = cofre ? 52 : o.tipo === 'frasco' || o.tipo === 'aspiradora' || o.tipo === 'guante' || o.tipo === 'patito' || o.tipo === 'trebolDorado' || o.tipo === 'quesito' || o.tipo === 'llavecita' ? 34 : o.tipo === 'cajita' ? 64 : 30;
       // Lo dorado brilla en el piso para que se vea
-      if (o.tipo === 'guante' || o.tipo === 'patito' || o.tipo === 'trebolDorado') {
+      if (o.tipo === 'guante' || o.tipo === 'patito' || o.tipo === 'trebolDorado' || o.tipo === 'llavecita') {
         const b = this.fx.c.brillo;
         this.pisoFx.poner(o.x, o.y, 0.1, 70, 48, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.85, 0.4, 0.45 + Math.sin(t * 5) * 0.15);
       }

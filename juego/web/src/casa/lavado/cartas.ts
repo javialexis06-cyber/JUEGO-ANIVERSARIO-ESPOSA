@@ -127,6 +127,37 @@ export const CARTAS: Record<IdCarta, DefCarta> = {
     frase: 'No se rinde ni rebotando.',
     efecto: 'Los proyectiles atraviesan a dos más y rebotan hasta 3 veces en los bordes de la pantalla.',
   },
+  // Fase 4: las cartas de la noche (las Darkanas del original), que se abren con la Mascarilla de noche
+  nocheArepa: {
+    id: 'nocheArepa', numero: '☾ I', nombre: 'La arepa encantada', original: 'Hidden Anathema', color: '#3B3168',
+    frase: 'La que se come de noche se queda para siempre.',
+    efecto: 'Cada arepa con queso además sube 3 % el daño y 3 % la vida máxima para el resto de la partida.',
+  },
+  nocheBolero: {
+    id: 'nocheBolero', numero: '☾ II', nombre: 'El bolero de la luna', original: 'Moonlight Bolero', color: '#2E3F6B',
+    frase: 'Cada minuto, alguien grande viene a cantar.',
+    efecto: 'Cada minuto llega un mugroso grandote que suelta un cofre.',
+  },
+  nocheBorde: {
+    id: 'nocheBorde', numero: '☾ III', nombre: 'El borde del mundo', original: 'Edge of the Earth', color: '#24324F',
+    frase: 'Ni cortinas ni corrientes: derecho y rápido.',
+    efecto: 'Caminas siempre al doble (no importa lo que suba o baje la velocidad) y no te frenan las cortinas del laberinto.',
+  },
+  nocheFuturo: {
+    id: 'nocheFuturo', numero: '☾ IV', nombre: 'Granizo del futuro', original: 'Hail from the Future', color: '#3C2D52',
+    frase: 'Cada nivel trae su regalito.',
+    efecto: 'Cada vez que subes de nivel aparece un regalito cerca: arepa, trébol, gotas doradas, hielo…',
+  },
+  nocheCristal: {
+    id: 'nocheCristal', numero: '☾ V', nombre: 'Lágrimas de cristal', original: 'Crystal Cries', color: '#2C4A6B',
+    frase: 'Lo que se congela, se vuelve tesoro.',
+    efecto: 'Cada mugroso que revientas congelado te cura 1 de vida y suelta el doble de experiencia.',
+  },
+  nocheAzabache: {
+    id: 'nocheAzabache', numero: '☾ VI', nombre: 'Azabache', original: 'Wandering the Jet Black', color: '#1E1E2A',
+    frase: 'El que te pegue, que se aguante.',
+    efecto: 'Cada vez que te pegan, revienta una explosión de espuma alrededor (más fuerte mientras más te dolió).',
+  },
 };
 
 export const ID_CARTAS = Object.keys(CARTAS) as IdCarta[];

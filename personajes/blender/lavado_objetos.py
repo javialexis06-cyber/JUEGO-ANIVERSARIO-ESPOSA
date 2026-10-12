@@ -2512,6 +2512,248 @@ def farol_feria(p):
         p.blob((x, 0, z), (0.06, 0.06, 0.07), M(c, rough=0.2, emision=2.2, ruido=0.0), n=8)
 
 
+def llavecita(p):
+    """La llavecita escondida que deja transformarse a un disfraz al nivel 80: plateada, con corazón y una cinta."""
+    m = plata()
+    corazon(p, (0, 0, 0.6), 0.18, m, grosor=0.35)
+    p.blob((0, -0.04, 0.61), (0.05, 0.03, 0.045), M('#7DD3E8', rough=0.2, coat=0.8, emision=0.6), n=6)
+    p.tubo([(0, 0, 0.48), (0, 0, 0.1)], 0.035, m, seg=10)
+    for z, w in ((0.14, 0.11), (0.23, 0.07)):
+        p.caja((w / 2 + 0.02, 0, z), (w / 2, 0.022, 0.028), m, p=4.0)
+    cinta = M('#7DB7E8', rough=0.6, fuzz=0.3)
+    for sx in (-1, 1):
+        p.blob((sx * 0.08, -0.02, 0.45), (0.07, 0.025, 0.05), cinta, n=8)
+    destellos(p, [(0.26, -0.1, 0.7), (-0.24, -0.1, 0.4)], 0.05, '#DDF4FF')
+
+def mascarilla_noche(p):
+    """La Mascarilla de noche (el tesoro que abre las cartas de la noche): antifaz de dormir de satín morado con luna y estrellas."""
+    import sdf
+
+    def f(P):
+        x, z = P[:, 0], P[:, 2]
+        y = P[:, 1]
+
+        def elipse(cx, cz, rx, rz):
+            return (np.sqrt(((x - cx) / rx) ** 2 + ((z - cz) / rz) ** 2) - 1) * min(rx, rz)
+        forma = sdf.smin(elipse(-0.2, 0.3, 0.24, 0.17), elipse(0.2, 0.3, 0.24, 0.17), 0.1)
+        forma = sdf.smin(forma, np.maximum(np.abs(x) - 0.08, np.abs(z - 0.34) - 0.1), 0.05)
+        capa = np.abs(y + 0.02 * np.cos(x * 3)) - 0.035
+        return sdf.smax(forma, capa, 0.02)
+    p.add(sdf.to_mesh(p.nom(), f, (-0.5, -0.1, 0.05), (0.5, 0.1, 0.55), voxel=0.006, coll=p.coll,
+                      material=M('#5E4FA8', rough=0.25, coat=0.6, fuzz=0.0)))
+    # El ribete y las pestañas cerradas bordadas
+    for sx in (-1, 1):
+        p.tubo([(sx * 0.32, -0.045, 0.3), (sx * 0.2, -0.05, 0.26), (sx * 0.09, -0.045, 0.3)], 0.012, M('#F2C14E', 0.4), seg=6)
+        for k in range(3):
+            x0 = sx * (0.14 + k * 0.06)
+            p.tubo([(x0, -0.05, 0.27), (x0 + sx * 0.012, -0.05, 0.22)], 0.007, M('#F2C14E', 0.4), seg=4)
+    # La lunita y las estrellas
+    p.blob((0.27, -0.05, 0.42), (0.06, 0.012, 0.06), M('#FFF3B0', 0.3, emision=1.2, ruido=0.0), n=6)
+    p.blob((0.3, -0.06, 0.44), (0.05, 0.012, 0.05), M('#5E4FA8', 0.25), n=6)
+    for (x, z, s_) in ((-0.3, 0.42, 0.04), (-0.08, 0.45, 0.03), (0.1, 0.44, 0.025)):
+        estrella(p, (x, -0.055, z), s_, M('#FFF3B0', 0.3, emision=1.0, ruido=0.0))
+    # Los elásticos
+    elastico = M('#C9B6EA', rough=0.6, fuzz=0.3)
+    for sx in (-1, 1):
+        p.tubo([(sx * 0.43, 0, 0.32), (sx * 0.52, 0.12, 0.3), (sx * 0.45, 0.25, 0.28)], 0.02, elastico, seg=6)
+    destellos(p, [(0.42, -0.1, 0.6), (-0.42, -0.1, 0.15)], 0.045, '#E8DEFF')
+
+
+def cajita_sorpresa(p):
+    """La cajita sorpresa: caja de regalo grande de rayas con moño enorme y una etiqueta con signo de pregunta."""
+    rosa = M('#F39AB0', rough=0.5, coat=0.3)
+    blanco = M('#FFF6F0', rough=0.5, coat=0.3)
+    p.caja((0, 0, 0.26), (0.3, 0.3, 0.26), rosa, p=5.0)
+    for (x, z) in ((-0.2, 0.42), (-0.13, 0.12), (0.13, 0.44), (0.21, 0.16), (-0.22, 0.24), (0.12, 0.28)):
+        p.blob((x, -0.302, z), (0.035, 0.008, 0.035), blanco, n=6)
+    for (y, z) in ((-0.2, 0.4), (0.1, 0.14), (0.2, 0.38)):
+        p.blob((0.302, y, z), (0.008, 0.035, 0.035), blanco, n=6)
+    p.caja((0, 0, 0.55), (0.33, 0.33, 0.05), M('#E86A8A', rough=0.5, coat=0.3), p=5.0)
+    cinta = M('#F7D046', rough=0.3, coat=0.6)
+    p.caja((0, 0, 0.3), (0.05, 0.335, 0.3), cinta, p=6.0)
+    p.caja((0, 0, 0.3), (0.335, 0.05, 0.3), cinta, p=6.0)
+    for sx in (-1, 1):
+        p.blob((sx * 0.14, 0, 0.7), (0.16, 0.06, 0.1), cinta, n=10)
+        p.tubo([(sx * 0.03, -0.04, 0.64), (sx * 0.14, -0.08, 0.55), (sx * 0.18, -0.09, 0.47)], 0.03, cinta, seg=6, perfil=(1.8, 0.4))
+    p.blob((0, -0.02, 0.68), (0.07,) * 3, cinta, n=8)
+    # La etiqueta con el signo de pregunta, colgada de la cinta
+    p.caja((0.2, -0.34, 0.38), (0.09, 0.008, 0.07), M('#FFFDF8', 0.6), p=6.0)
+    o = clay.lathe(p.nom(), [(0.03, -0.006), (0.04, 0.0), (0.03, 0.006), (0.024, 0.0)], p.coll, M('#C0503E', 0.5), segments=16, subsurf=1,
+                   cap_bottom=False, cap_top=False)
+    o.rotation_euler = (math.pi / 2, 0, 0)
+    o.location = (0.2, -0.35, 0.4)
+    p.add(o)
+    p.blob((0.2, -0.352, 0.34), (0.008, 0.004, 0.008), M('#C0503E', 0.5), n=4)
+    destellos(p, [(0.42, -0.1, 0.75), (-0.4, -0.1, 0.55), (0.3, -0.1, 0.1)], 0.05)
+
+
+# ----------------------------------------------------------------------------------------------------- Disfraces de la fase 4
+def dorar(fn):
+    """La versión dorada de un accesorio (la del disfraz transformado): todo de oro, menos lo que brilla."""
+    def f(p):
+        fn(p)
+        for o in p.objs:
+            if o.type != 'MESH':
+                continue
+            m = o.active_material
+            if m is not None and m.name.startswith('Obj #FFFFFF') and 'emis' in m.name:
+                continue
+            o.data.materials.clear()
+            o.data.materials.append(oro())
+        destellos(p, [(0.3, -0.12, 0.5), (-0.28, -0.12, 0.3)], 0.045)
+    return f
+
+
+def hueso_mano(p):
+    hueso(p)
+
+
+def bomba_mano(p):
+    """La bomba de baño en la mano (sin las burbujitas del ícono)."""
+    p.blob((0, 0, 0.25), (0.25, 0.25, 0.25), M('#C9A4F2', rough=0.9, ruido=0.3), n=12)
+    p.blob((0, 0, 0.25), (0.255, 0.255, 0.1), M('#F39AB0', rough=0.9, ruido=0.3), n=12)
+    for q in range(12):
+        a = q * 2.4
+        p.caja((math.cos(a) * 0.14, -0.2 + abs(math.sin(a)) * 0.02, 0.3 + (q % 4) * 0.04), (0.02, 0.006, 0.008), M(['#F7D046', '#7DB7E8', '#FFFFFF'][q % 3], 0.4), p=4.0)
+    for q in range(5):
+        a = q / 5 * TAU
+        p.blob((math.cos(a) * 0.04, -0.02 + math.sin(a) * 0.04, 0.5), (0.035, 0.035, 0.015), M('#FFFFFF', 0.5), n=6)
+    p.blob((0, -0.02, 0.51), (0.02,) * 3, M('#F7D046', 0.4), n=5)
+
+
+def barquito_mano(p):
+    """El barquito de papel en la mano (sin el agua del ícono)."""
+    papel = M('#F4F1E8', rough=0.8, ruido=0.12)
+    sombra = M('#E2DCCB', rough=0.85, ruido=0.12)
+    prisma(p, [(-0.46, 0.26), (0.46, 0.26), (0.28, 0.0), (-0.28, 0.0)], 0.05, papel, y=-0.05)
+    prisma(p, [(-0.44, 0.25), (0.44, 0.25), (0.27, 0.01), (-0.27, 0.01)], 0.05, sombra, y=0.06)
+    prisma(p, [(-0.2, 0.25), (0.2, 0.25), (0.0, 0.62)], 0.04, papel, y=0.0)
+    prisma(p, [(-0.2, 0.25), (0.0, 0.62), (0.0, 0.25)], 0.042, sombra, y=-0.004)
+    for z in (0.08, 0.15):
+        p.tubo([(-0.31 - z * 0.6, -0.08, z), (0.31 + z * 0.6, -0.08, z)], 0.006, M('#7DB7E8', rough=0.7), seg=4)
+
+
+def talco_mano(p):
+    """El tarro de talco en la mano, con su tapa rosada y sus florecitas (sin la nube del ícono)."""
+    m = M('#FFFFFF', rough=0.3, coat=0.6)
+    p.torno([(0.0, 0.0), (0.15, 0.0), (0.16, 0.03), (0.16, 0.4), (0.11, 0.5), (0.0, 0.52)], m)
+    p.torno([(0.0, 0.0), (0.07, 0.0), (0.07, 0.06), (0.0, 0.07)], M('#F39AB0', 0.3, coat=0.5), z=0.5)
+    for q in range(5):
+        a = q / 5 * TAU
+        p.blob((math.cos(a) * 0.035, math.sin(a) * 0.035, 0.575), (0.008,) * 3, M('#7A5C68', 0.6), n=4)
+        p.blob((math.cos(a) * 0.06, -0.165, 0.25 + math.sin(a) * 0.06), (0.04, 0.008, 0.04), M('#F7C6D2', 0.5), n=6)
+    p.blob((0, -0.168, 0.25), (0.025, 0.006, 0.025), M('#F7D046', 0.4), n=5)
+
+
+def maquina_mano(p):
+    """La máquina de afeitar del abuelito, con espumita en las hojas."""
+    mango = M('#7DB7E8', rough=0.3, coat=0.6)
+    p.tubo([(0.0, 0, 0.0), (0.02, 0, 0.25), (0.0, 0, 0.5)], [0.045, 0.05, 0.04], mango, seg=12)
+    for k in range(4):
+        p.torno([(0.052, 0.0), (0.054, 0.015), (0.052, 0.03)], M('#FFFFFF', 0.4), z=0.08 + k * 0.06, seg=20, tapas=(False, False))
+    p.caja((0, 0, 0.58), (0.22, 0.06, 0.07), M('#F2F4F8', rough=0.25, coat=0.6), p=4.0)
+    for k in range(3):
+        p.caja((0, -0.062, 0.55 + k * 0.03), (0.2, 0.008, 0.006), plata(), p=6.0)
+    for (x, z, r) in [(-0.18, 0.66, 0.05), (-0.1, 0.69, 0.04), (0.16, 0.67, 0.045)]:
+        p.blob((x, -0.04, z), (r, r, r), M('#FFFFFF', rough=0.85, fuzz=0.4), n=6)
+
+
+def cartas_mano(p):
+    """Abanico de cinco cartas del crupier: el dorso de rombos y al frente corazones y diamantes."""
+    from mathutils import Matrix
+    for k in range(5):
+        a = (k - 2) * 0.32
+        ini = len(p.objs)
+        y = -0.02 * k
+        p.caja((0, y, 0.2), (0.12, 0.008, 0.17), M('#FFFDF8', rough=0.5), p=6.0)
+        p.caja((0, y + 0.006, 0.2), (0.11, 0.004, 0.16), M('#C0503E' if k % 2 else '#3E5A98', rough=0.5), p=6.0)
+        corazon(p, (0, y - 0.012, 0.22), 0.07, M('#E4392B' if k % 2 == 0 else '#E86A8A', 0.4, coat=0.4), grosor=0.2)
+        for (dx, dz) in ((-0.08, 0.33), (0.08, 0.07)):
+            p.blob((dx, y - 0.011, dz), (0.015, 0.004, 0.02), M('#E4392B', 0.4), n=4)
+        p.girar(p.desde(ini), ry=a, pivote=(0, 0, 0.0))
+
+
+def regalito_mano(p):
+    """Un regalito con moño (el hada los va soltando por ahí)."""
+    p.caja((0, 0, 0.18), (0.17, 0.17, 0.17), M('#F39AB0', rough=0.5, coat=0.3), p=5.0)
+    cinta = M('#F7D046', rough=0.3, coat=0.5)
+    p.caja((0, 0, 0.18), (0.035, 0.175, 0.175), cinta, p=6.0)
+    p.caja((0, 0, 0.18), (0.175, 0.035, 0.175), cinta, p=6.0)
+    for sx in (-1, 1):
+        p.blob((sx * 0.08, 0, 0.39), (0.09, 0.04, 0.06), cinta, n=8)
+        p.tubo([(sx * 0.02, -0.02, 0.36), (sx * 0.08, -0.04, 0.3)], 0.02, cinta, seg=5, perfil=(1.6, 0.4))
+    p.blob((0, 0, 0.37), (0.04,) * 3, cinta, n=6)
+    for q in range(6):
+        a = q * 1.1
+        p.blob((math.cos(a) * 0.12, -0.172, 0.1 + (q % 3) * 0.08), (0.018, 0.004, 0.018), M('#FFFFFF', 0.5), n=4)
+
+
+def perrito_mochila(p):
+    """Mochila azul con un perrito de peluche asomado por encima del hombro (el del paseador)."""
+    tela_az = tela('#5A8FD6', '#9FC4F2')
+    p.caja((0, 0.05, 0.0), (0.3, 0.15, 0.32), tela_az, p=4.0)
+    p.caja((0, -0.08, -0.08), (0.22, 0.05, 0.14), tela('#4A7DC0', '#8FB4E2'), p=4.0)
+    p.caja((0, 0.0, 0.3), (0.31, 0.16, 0.04), tela('#F7D046'), p=4.0)
+    piel = M('#E8C9A0', rough=0.9, fuzz=0.6, pelusa='#F6E2C4')
+    oreja = M('#8A6242', rough=0.9, fuzz=0.5, pelusa='#B08A62')
+    p.blob((0.02, -0.02, 0.5), (0.24, 0.22, 0.21), piel, n=12)
+    p.blob((0.02, -0.18, 0.44), (0.12, 0.09, 0.08), piel, n=8)
+    for sx in (-1, 1):
+        p.tubo([(sx * 0.18, -0.02, 0.62), (sx * 0.27, -0.04, 0.52), (sx * 0.26, -0.06, 0.38)], [0.07, 0.07, 0.05], oreja, seg=8, perfil=(1.4, 0.5))
+        p.blob((sx * 0.08, -0.2, 0.55), (0.035, 0.015, 0.045), M('#1E1514', 0.2), n=5)
+        p.blob((sx * 0.08 - 0.01, -0.215, 0.565), (0.01, 0.004, 0.012), BRILLO, n=4)
+        p.blob((sx * 0.13, -0.22, 0.32), (0.06, 0.06, 0.05), piel, n=6)
+    p.blob((0.02, -0.27, 0.46), (0.035, 0.025, 0.028), M('#2B2422', 0.3, coat=0.4), n=5)
+    p.blob((0.02, -0.25, 0.38), (0.03, 0.015, 0.045), M('#F07A8E', 0.5), n=5)
+
+
+def llave_espalda(p):
+    """La llave de dar cuerda de la muñeca de porcelana, clavada en la espalda (asoma por los lados)."""
+    oro_ = oro()
+    p.tubo([(0, -0.05, 0), (0, 0.3, 0)], 0.035, oro_, seg=10)
+    p.blob((0, 0.32, 0), (0.06, 0.05, 0.06), oro_, n=8)
+    for sx in (-1, 1):
+        o = clay.lathe(p.nom(), [(0.1, -0.03), (0.16, 0.0), (0.1, 0.03), (0.08, 0.0), (0.1, -0.03)], p.coll, oro_, segments=24, subsurf=1,
+                       cap_bottom=False, cap_top=False)
+        o.rotation_euler = (math.pi / 2, 0, 0)
+        o.location = (sx * 0.2, 0.34, 0.02)
+        p.add(o)
+        p.blob((sx * 0.2, 0.31, 0.02), (0.04, 0.02, 0.04), M('#F39AB0', 0.4, coat=0.5), n=6)
+
+
+def gorro_papel(p):
+    """Gorro de papel periódico doblado (el del capitán del barquito), hondo para que abrace la cabeza, con su barquito."""
+    papel = M('#F2EEE2', rough=0.85, ruido=0.12)
+    sombra = M('#E0DACA', rough=0.85, ruido=0.12)
+    # Las dos caras inclinadas que se juntan arriba (como una carpa) y el doblez de abajo
+    for sy, m in ((-1, papel), (1, sombra)):
+        o = prisma(p, [(-0.62, 0.0), (0.62, 0.0), (0.0, 0.62)], 0.03, m, y=0.0, bisel=0.008)
+        o.rotation_euler = (sy * 0.42, 0, 0)
+        o.location = (0, sy * 0.3, 0.0)
+    p.caja((0, 0, 0.07), (0.64, 0.36, 0.07), papel, p=6.0)
+    letra = M('#8A8578', 0.8)
+    for k in range(4):
+        w = 0.34 - k * 0.07
+        o = p.caja((-0.05, -0.3 + k * 0.045 - 0.025, 0.18 + k * 0.1), (w, 0.004, 0.01), letra, p=6.0)
+    prisma(p, [(0.16, 0.16), (0.4, 0.16), (0.34, 0.09), (0.22, 0.09)], 0.01, M('#7DB7E8', 0.6), y=-0.37, bisel=0.002)
+    prisma(p, [(0.24, 0.16), (0.32, 0.16), (0.28, 0.25)], 0.01, M('#E4574B', 0.6), y=-0.37, bisel=0.002)
+
+
+def espuma_barba(p):
+    """Barba de espuma de afeitar del abuelito, por la quijada y los cachetes (en medidas de la cabeza)."""
+    m = M('#FFFFFF', rough=0.9, fuzz=0.6, pelusa='#F4F4F4')
+    for k in range(17):
+        t = (k / 16) * 2 - 1
+        x = t * 0.56
+        y = 0.16 + 0.34 * abs(t) ** 1.6
+        r = 0.1 - 0.025 * abs(t)
+        p.blob(H(x, y, frente_cara(x, 0.03)), (r, r * 0.9, r * 0.8), m, n=8)
+        if abs(t) < 0.5:
+            p.blob(H(x * 0.9, y - 0.08, frente_cara(x, -0.02)), (r * 0.9, r * 0.8, r * 0.7), m, n=6)
+    for (x, y) in ((0.42, 0.62), (-0.46, 0.55)):
+        p.blob(H(x, y, frente_cara(x, 0.04)), (0.045, 0.04, 0.035), m, n=6)
+
+
 ICONOS = {
     # Armas
     'toalla': lambda p: toalla(p), 'toallazo': lambda p: toalla(p, '#E4392B', '#FFD45C', caliente=True),
@@ -2581,6 +2823,10 @@ ICONOS = {
     'bandera': bandera,
     'quesito': quesito,
     # La Feria de las cremas
+    'llavecita': lambda p: llavecita(p), 'cajita': cajita_sorpresa, 'mascarillaNoche': mascarilla_noche,
+    'hueso_mano': hueso_mano, 'hueso_dorado': dorar(hueso_mano), 'bomba_dorada': dorar(bomba_mano), 'barquito_dorado': dorar(barquito_mano),
+    'talco_dorado': dorar(talco_mano), 'cartas_mano': cartas_mano, 'regalito_mano': regalito_mano, 'perrito_mochila': perrito_mochila,
+    'llave_espalda': llave_espalda, 'gorro_papel': gorro_papel, 'maquina_mano': maquina_mano,
     'ruedaFeria': rueda_feria, 'ruletero': ruletero, 'llaveFeria': llave_feria, 'nadaFeria': nada_feria, 'posteFeria': poste_feria,
     'portonFeria': porton_feria, 'globos': globos, 'tortaCrema': torta_crema, 'algodonAzucar': algodon_azucar, 'farolFeria': farol_feria,
 }
@@ -2596,6 +2842,11 @@ ACCESORIOS = {
     'esponja_mano': lambda p: esponja(p), 'secador_mano': lambda p: secador(p), 'rulos': rulos,
     'antifaz_heroe': antifaz_heroe, 'bigote_lenador': lambda p: bigote_grueso(p), 'bigote_barbero': lambda p: bigote_grueso(p, '#2E2420', rizado=True),
     'rulos_cabeza': rulos_cabeza, 'corona_guerrera': corona_guerrera, 'toalla_mano': toalla_mano,
+    # Fase 4: los disfraces nuevos (y lo dorado de los transformados)
+    'hueso_mano': hueso_mano, 'hueso_dorado': dorar(hueso_mano), 'bomba_mano': bomba_mano, 'bomba_dorada': dorar(bomba_mano),
+    'barquito_mano': barquito_mano, 'barquito_dorado': dorar(barquito_mano), 'talco_mano': talco_mano, 'talco_dorado': dorar(talco_mano),
+    'maquina_mano': maquina_mano, 'cartas_mano': cartas_mano, 'regalito_mano': regalito_mano, 'perrito_mochila': perrito_mochila,
+    'llave_espalda': llave_espalda, 'gorro_papel': gorro_papel, 'espuma_barba': espuma_barba,
 }
 
 

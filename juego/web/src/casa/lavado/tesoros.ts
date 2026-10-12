@@ -48,6 +48,10 @@ export const TESOROS: DefTesoro[] = [
     escenario: 'banera', x: -2200, y: 1000, gano: 'banera', modo: 'inverso', pista: 'Aparece en La Bañera (muy abajo a la izquierda) después de ganarla',
   },
   {
+    id: 'mascarillaNoche', nombre: 'La Mascarilla de noche', original: 'Darkasso', abre: 'Las seis cartas de la noche (se escogen como las demás)',
+    escenario: 'banera', x: 2300, y: 1300, pista: 'Está tirada en La Bañera, muy abajo a la derecha',
+  },
+  {
     id: 'monedero', nombre: 'El Monedero', original: 'Glass Vizard', abre: 'El vendedor ambulante sale en todos los escenarios',
     escenario: null, x: 0, y: 0, pista: 'Se lo compras al vendedor ambulante',
   },

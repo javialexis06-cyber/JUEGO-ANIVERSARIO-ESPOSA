@@ -105,7 +105,7 @@ export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera'
 /** Los modos que se abren con los tesoros (y el Hiper de cada escenario, venciendo a su jefe del minuto 25). */
 export type IdModo = 'hiper' | 'inverso' | 'infinito' | 'sinLimite' | 'ruleta' | 'azar';
 /** Los tesoros del baño (las reliquias del original). */
-export type IdTesoro = 'espejoReves' | 'calentador' | 'recetas' | 'ruleta' | 'cuento' | 'mapa' | 'monedero';
+export type IdTesoro = 'espejoReves' | 'calentador' | 'recetas' | 'ruleta' | 'cuento' | 'mapa' | 'monedero' | 'mascarillaNoche';
 
 export type IdObjeto =
   | 'arepa' // vida (el pollo del original)
@@ -128,12 +128,17 @@ export type IdObjeto =
   | 'espejoVerdad' // el espejo de la verdad: el doble de proyectiles y todo a la vez un ratico
   | 'burbuja' // burbuja protectora: ataja el siguiente golpe
   | 'reliquia' // un tesoro del baño (calidad = cuál, en TESOROS)
-  | 'quesito'; // quesito de jabón de El Laberinto de la cortina: gotas doradas y un poquito de vida
+  | 'quesito' // quesito de jabón de El Laberinto de la cortina: gotas doradas y un poquito de vida
+  // Fase 4
+  | 'llavecita' // la llavecita de un disfraz que se transforma (calidad = índice del disfraz en DISFRACES)
+  | 'cajita'; // la cajita sorpresa con moño: al acercarse se cierra un anillo de mugrosos (calidad = índice del disfraz)
 
 export type IdCarta =
   | 'oroBrillante' | 'certero' | 'silbato' | 'comienzo' | 'maraton' | 'dobleTurno' | 'curitaMagica' | 'relojQuieto' | 'ruedaFortuna'
   | 'solPlaya' | 'lucesFeria' | 'viajeLargo' | 'fiestaDisfraces' | 'coronaHierro' | 'estrellas' | 'conLoJusto' | 'diamante' | 'reboteSinFin'
-  | 'sinGotitas' | 'despierto' | 'nocheLoca' | 'terquedad';
+  | 'sinGotitas' | 'despierto' | 'nocheLoca' | 'terquedad'
+  // Las cartas de la noche (las Darkanas del original): se abren con la Mascarilla de noche
+  | 'nocheArepa' | 'nocheBolero' | 'nocheBorde' | 'nocheFuturo' | 'nocheCristal' | 'nocheAzabache';
 
 export type IdPoder = Stat;
 
@@ -170,7 +175,8 @@ export type TipoEfecto =
   | 'cohete' // fuego artificial de confeti subiendo: x, y (de dónde sale); c, d = adónde va; e = segundos
   | 'chorro' // chorro de La Ducha que va a caer: x, y; c = radio; d = segundos de aviso; e = segundos que cae
   | 'frasco' // frasco de La Jabonera que se va a caer: x, y; c = radio; d = segundos de aviso; e = cuál frasco
-  | 'remolino'; // remolino de El Desagüe: x, y; c = radio; d = segundos que dura
+  | 'remolino' // remolino de El Desagüe: x, y; c = radio; d = segundos que dura
+  | 'transforma'; // el disfraz del jugador c se transformó (nivel 80 con su llavecita)
 
 export interface Efecto {
   tipo: TipoEfecto;

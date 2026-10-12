@@ -61,6 +61,10 @@ export interface ProgresoLavado {
   modos: IdModo[];
   /** Lo más que ha aguantado con el agua caliente sin fin (segundos). */
   mejorSinFin: number;
+  /** Las llavecitas encontradas (de los disfraces que se transforman al nivel 80). */
+  llaves: string[];
+  /** Los disfraces que salieron de una cajita sorpresa (ya se pueden comprar). */
+  cajitas: string[];
 }
 
 export function progresoNuevo(rol: Rol): ProgresoLavado {
@@ -68,7 +72,7 @@ export function progresoNuevo(rol: Rol): ProgresoLavado {
     oro: 0, gastado: 0, poderes: {}, comprados: [], disfraz: rol === 'el' ? 'el_panda' : 'ella_pulga', logros: [], armas: [], pasivas: [],
     bestiario: {}, mejor: {}, ganados: [], mejorNivel: 0, mejorBajas: 0, partidas: 0, eliminados: 0, velitas: 0, cofres: 0, arepas: 0,
     oroTotal: 0, segundos: 0, apurado: false, escenario: 'cara', carta: '', manual: false, tutorial: false, maestria: {}, patitos: {},
-    tesoros: [], hiper: [], modos: [], mejorSinFin: 0,
+    tesoros: [], hiper: [], modos: [], mejorSinFin: 0, llaves: [], cajitas: [],
   };
 }
 
@@ -144,6 +148,8 @@ export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
     hiper: listaDe(x.hiper, ESCENARIOS),
     modos: listaDe(x.modos, ID_MODOS),
     mejorSinFin: entero(x.mejorSinFin, 24 * 3600),
+    llaves: listaDe(x.llaves, DISFRACES.filter((d) => d.transforma).map((d) => d.id)),
+    cajitas: listaDe(x.cajitas, DISFRACES.filter((d) => d.cajita).map((d) => d.id)),
   };
 }
 
@@ -182,6 +188,10 @@ export interface ResumenPartida {
   modos?: IdModo[];
   /** La Feria de las cremas: cuántas partes se abrieron con la ruleta (0 a 2). */
   feria?: number;
+  /** Las llavecitas y las cajitas sorpresa que se encontraron (ids de disfraces), y si alguien se transformó. */
+  llaves?: string[];
+  cajitas?: string[];
+  transformado?: boolean;
 }
 
 // ---------------------------------------------------------------------------------------------------- Logros
@@ -246,10 +256,10 @@ export const LOGROS: DefLogro[] = [
   { id: 'pasivas6', nombre: 'Bolsillos llenos', desc: 'Llena los seis puestos de pasivas en una partida', premio: 'Arma: Bolsillo de la bata', cumple: (p, r) => !!r && r.pasivas.length >= 6 },
   { id: 'banera10', nombre: 'Pecera en la tina', desc: 'Aguanta 10 minutos en La Bañera', premio: 'Arma: Pececitos de la pecera', cumple: (p) => minutosEn(p, 'banera') >= 10 },
   { id: 'velitas500', nombre: 'Fiesta de velitas', desc: 'Rompe 500 velitas en total', premio: 'Arma: Confeti de espuma', cumple: (p) => p.velitas >= 500 },
-  { id: 'jefes10', nombre: 'Cazajefes', desc: 'Vence 10 jefes en total', premio: 'Arma: Hueso del perrito', cumple: (p) => jefesVencidos(p) >= 10 },
-  { id: 'cofres50', nombre: 'Coleccionista de cofres', desc: 'Abre 50 cofres en total', premio: 'Arma: Bomba de baño', cumple: (p) => p.cofres >= 50 },
-  { id: 'partidas25', nombre: 'Lavado diario', desc: 'Juega 25 partidas', premio: 'Arma: Barquito de papel', cumple: (p) => p.partidas >= 25 },
-  { id: 'eliminar50000', nombre: 'Cincuenta mil', desc: 'Elimina 50.000 mugrosos en total', premio: 'Arma: Talco de florecitas', cumple: (p) => p.eliminados >= 50000 },
+  { id: 'jefes10', nombre: 'Cazajefes', desc: 'Vence 10 jefes en total', premio: 'Arma: Hueso del perrito · Disfraz: Paseador del perrito', cumple: (p) => jefesVencidos(p) >= 10 },
+  { id: 'cofres50', nombre: 'Coleccionista de cofres', desc: 'Abre 50 cofres en total', premio: 'Arma: Bomba de baño · Disfraz: Chef de bombas de baño', cumple: (p) => p.cofres >= 50 },
+  { id: 'partidas25', nombre: 'Lavado diario', desc: 'Juega 25 partidas', premio: 'Arma: Barquito de papel · Disfraz: Capitán del barquito', cumple: (p) => p.partidas >= 25 },
+  { id: 'eliminar50000', nombre: 'Cincuenta mil', desc: 'Elimina 50.000 mugrosos en total', premio: 'Arma: Talco de florecitas · Disfraz: Bailarina del talco', cumple: (p) => p.eliminados >= 50000 },
   { id: 'nivel60', nombre: 'Nivel 60', desc: 'Llega a nivel 60 en una partida', premio: 'Arma: Bolitas de gel', cumple: (p) => p.mejorNivel >= 60 },
   { id: 'eliminar100000', nombre: 'Cien mil', desc: 'Elimina 100.000 mugrosos en total', premio: 'Carta «Sin gotitas»', cumple: (p) => p.eliminados >= 100000 },
   { id: 'jefes25', nombre: 'Terror de los jefes', desc: 'Vence 25 jefes en total', premio: 'Carta «Despierto»', cumple: (p) => jefesVencidos(p) >= 25 },
@@ -297,6 +307,12 @@ export const LOGROS: DefLogro[] = [
   { id: 'ganarFeria', nombre: 'Se acabó la feria', desc: 'Llega al final de La Feria de las cremas', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.ganados.includes('feria') },
   { id: 'reinaCremas', nombre: 'Sin corona de crema', desc: 'Vence a la Reina de las Cremas', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => (p.bestiario.reinaCremas ?? 0) > 0 },
   { id: 'feriaAbierta', nombre: 'Toda la feria', desc: 'Abre las tres partes de La Feria de las cremas en una partida', premio: 'Una corona más en la Sala de Trofeos', cumple: (p, r) => !!r && (r.feria ?? 0) >= 2 },
+  // Fase 4: la Mascarilla de noche (las cartas de la noche), las llavecitas, la transformación y las cajitas sorpresa
+  { id: 'mascarillaNoche', nombre: 'Buenas noches', desc: 'Encuentra la Mascarilla de noche (está tirada en La Bañera)', premio: 'Las seis cartas de la noche', cumple: (p) => p.tesoros.includes('mascarillaNoche') },
+  { id: 'llavecita', nombre: 'La llavecita', desc: 'Encuentra la llavecita escondida de un disfraz', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.llaves.length >= 1 },
+  { id: 'transformado', nombre: '¡Transformación!', desc: 'Llega al nivel 80 con un disfraz que tenga su llavecita', premio: 'Una corona más en la Sala de Trofeos', cumple: (p, r) => !!r?.transformado },
+  { id: 'cajita1', nombre: '¡Sorpresa!', desc: 'Abre una cajita sorpresa (vence a los mugrosos que la cuidan)', premio: 'El disfraz que traía, para comprarlo', cumple: (p) => p.cajitas.length >= 1 },
+  { id: 'cajitas4', nombre: 'Todas las sorpresas', desc: 'Abre las cuatro cajitas sorpresa', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.cajitas.length >= 4 },
   { id: 'espejito', nombre: 'El espejito de mano', desc: 'Ten 5 armas evolucionadas distintas en la colección', premio: 'Tesoro: Espejito de mano (en los escenarios aparecen anillos y aretes escondidos)', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 5 },
 ];
 
@@ -309,6 +325,8 @@ export const CARTA_LOGRO: Record<IdCarta, string> = {
   diamante: 'ganarLavamanos', conLoJusto: 'ganarBanera', relojQuieto: 'espinillon', ruedaFortuna: 'nivel40', estrellas: 'eliminar10000',
   coronaHierro: 'evoluciones3', curitaMagica: 'arepas20', maraton: 'veinticuatro',
   sinGotitas: 'eliminar100000', despierto: 'jefes25', nocheLoca: 'apurado20', terquedad: 'evoluciones20',
+  nocheArepa: 'mascarillaNoche', nocheBolero: 'mascarillaNoche', nocheBorde: 'mascarillaNoche', nocheFuturo: 'mascarillaNoche',
+  nocheCristal: 'mascarillaNoche', nocheAzabache: 'mascarillaNoche',
 };
 /** Las armas y pasivas secretas (no salen en las cartas hasta su logro). */
 export const SECRETO_LOGRO: Partial<Record<IdArma | IdPasiva, string>> = {
@@ -337,7 +355,8 @@ export const reliquiasDe = (p: ProgresoLavado): IdTesoro[] =>
 export const modosDe = (p: ProgresoLavado): IdModo[] => p.modos.filter((m) => modoAbierto(p, m));
 export const disfrazAbierto = (p: ProgresoLavado, id: string) => {
   const d = DISFRACES.find((x) => x.id === id);
-  return !!d && (!!d.inicial || p.comprados.includes(id) || tieneLogro(p, d.logro));
+  // (los de cajita sorpresa no traen logro: solo se tienen comprándolos después de abrir su cajita)
+  return !!d && (!!d.inicial || p.comprados.includes(id) || (!d.cajita && tieneLogro(p, d.logro)));
 };
 export const secretoAbierto = (p: ProgresoLavado, id: IdArma | IdPasiva) => tieneLogro(p, SECRETO_LOGRO[id]);
 
@@ -359,6 +378,8 @@ export function sumarPartida(p: ProgresoLavado, r: ResumenPartida): string[] {
   for (const a of r.pasivas) if (!p.pasivas.includes(a)) p.pasivas.push(a);
   for (const [k, v] of Object.entries(r.bestiario) as [IdEnemigo, number][]) p.bestiario[k] = (p.bestiario[k] ?? 0) + v;
   for (const t of r.tesoros ?? []) if (ID_TESOROS.includes(t) && !p.tesoros.includes(t)) p.tesoros.push(t);
+  for (const id of r.llaves ?? []) if (DISFRACES.some((d) => d.id === id && d.transforma) && !p.llaves.includes(id)) p.llaves.push(id);
+  for (const id of r.cajitas ?? []) if (DISFRACES.some((d) => d.id === id && d.cajita) && !p.cajitas.includes(id)) p.cajitas.push(id);
   // El Hiper de cada escenario se abre venciendo a su jefe del minuto 25
   const jefeHiper = DEF_ESCENARIOS[r.escenario]?.jefeHiper;
   if (jefeHiper && r.jefes.includes(jefeHiper) && !p.hiper.includes(r.escenario)) p.hiper.push(r.escenario);

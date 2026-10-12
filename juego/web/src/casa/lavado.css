@@ -1175,3 +1175,5 @@ body.lavandose .hud-arriba-der { opacity: 0; pointer-events: none; transition: o
     linear-gradient(90deg, transparent 62%, #e4574b 62% 63.5%, transparent 63.5% 80%, #e4574b 80% 81.5%, transparent 81.5%),
     repeating-conic-gradient(#f6c9d6 0 25%, #fff4e6 0 50%) 0 0 / 22px 22px;
 }
+.lv-llave { display: flex; align-items: center; gap: 6px; font: 600 11.5px/1.3 var(--texto); color: #5a6f8a; }
+.lv-llave.si { color: #3e8a5c; }
