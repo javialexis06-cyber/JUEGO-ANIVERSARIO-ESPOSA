@@ -3,6 +3,7 @@
 // paredes de baldosín arriba y abajo), el agua de la bañera (cáusticas que se mueven, espuma) o las baldosas mojadas
 // de la ducha (con su junta, el moho y el agua que corre). Encima, decoración
 // que sale siempre en el mismo sitio (lunares con pelito, vellitos, cicatrices, gotas, pelos, pétalos, paticos).
+import { CELDA, enCortina, paredes } from '../laberinto';
 import * as THREE from 'three';
 import { hash2 } from '../azar';
 import type { IdEscenario, Rol } from '../tipos';
@@ -408,6 +409,64 @@ const FRAG_TOBOGAN = COMUN + /* glsl */ `
   }
 `;
 
+const FRAG_LABERINTO = COMUN + /* glsl */ `
+  uniform sampler2D uLab;
+  uniform vec2 uLabOrigen;
+  float celdaBits(vec2 c) {
+    vec2 l = c - uLabOrigen;
+    if (l.x < 0.0 || l.y < 0.0 || l.x > 127.0 || l.y > 127.0) return 0.0;
+    return floor(texture2D(uLab, (l + 0.5) / 128.0).r * 255.0 + 0.5);
+  }
+  float h21(vec2 c) { return fract(sin(dot(c, vec2(12.9898, 78.233))) * 43758.5453); }
+  vec3 tela(vec2 c) {
+    float h = h21(c);
+    return h < 0.25 ? vec3(0.55, 0.78, 0.92) : h < 0.5 ? vec3(0.95, 0.66, 0.76) : h < 0.75 ? vec3(0.62, 0.86, 0.72) : vec3(0.76, 0.68, 0.92);
+  }
+  void main() {
+    vec2 p = vMapa;
+    float d1 = texture2D(uDetalle, p / 200.0).r;
+    vec4 n = texture2D(uRuido, p / 1600.0);
+    // El piso del baño: baldosas color crema con su junta
+    vec3 col = mix(uC1, uC2, smoothstep(0.3, 0.8, n.r));
+    vec2 b = fract(p / 75.0);
+    float junta = 1.0 - smoothstep(0.0, 0.035, min(min(b.x, 1.0 - b.x), min(b.y, 1.0 - b.y)));
+    col = mix(col, col * 0.8, junta);
+    col *= 0.95 + d1 * 0.1;
+    // Las cortinas (las mismas de laberinto.ts, leídas de la textura uLab)
+    vec2 c = floor(p / 300.0);
+    vec2 f = p - c * 300.0;
+    float bC = celdaBits(c), bW = celdaBits(c - vec2(1.0, 0.0)), bN = celdaBits(c - vec2(0.0, 1.0));
+    // (las horizontales se dibujan más gruesas: con la cámara inclinada se ven aplastadas)
+    float dmin = 10000.0;
+    float largo = 0.0;
+    vec2 dueno = c;
+    if (mod(bC, 2.0) > 0.5 && (300.0 - f.x) / 14.0 < dmin) { dmin = (300.0 - f.x) / 14.0; largo = p.y; dueno = c; }
+    if (bC > 1.5 && (300.0 - f.y) / 26.0 < dmin) { dmin = (300.0 - f.y) / 26.0; largo = p.x; dueno = c + vec2(0.5, 0.0); }
+    if (mod(bW, 2.0) > 0.5 && f.x / 14.0 < dmin) { dmin = f.x / 14.0; largo = p.y; dueno = c - vec2(1.0, 0.0); }
+    if (bN > 1.5 && f.y / 26.0 < dmin) { dmin = f.y / 26.0; largo = p.x; dueno = c - vec2(0.0, 1.0) + vec2(0.5, 0.0); }
+    // Sombra suave a los lados
+    col *= 1.0 - 0.45 * (1.0 - smoothstep(1.0, 3.2, dmin));
+    dmin *= 10.0;
+    if (dmin < 10.0) {
+      // La tela con sus pliegues y su dibujo (rayitas o bolitas, según la cortina)
+      float pliegue = 0.5 + 0.5 * sin(largo * 0.16);
+      vec3 t = tela(dueno);
+      float bolitas = 1.0 - smoothstep(0.18, 0.26, length(vec2(fract(largo / 24.0) - 0.5, (dmin - 5.0) / 24.0)));
+      float rayas = step(0.5, fract(largo / 26.0));
+      float dibujo = h21(dueno + 7.0) < 0.5 ? rayas : bolitas;
+      t = mix(t, vec3(1.0), dibujo * 0.35);
+      t *= 0.62 + 0.5 * pliegue;
+      t *= 1.0 - 0.4 * smoothstep(7.5, 10.0, dmin);
+      col = t;
+      // Las argollas de la barra
+      float arg = (1.0 - smoothstep(2.0, 3.5, abs(fract(largo / 30.0) - 0.5) * 30.0)) * (1.0 - smoothstep(3.0, 4.5, dmin));
+      col = mix(col, vec3(0.86, 0.87, 0.92), arg * 0.9);
+    }
+    gl_FragColor = vec4(col, 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
 interface Paleta {
   c1: string;
   c2: string;
@@ -441,6 +500,7 @@ const DECOR: Record<IdEscenario, [IdDecor, number, number][]> = {
   espejo: [['gotaAgua', 6, 70], ['burbujitas', 2, 60], ['manchaJabon', 1.5, 120]],
   matera: [['hojita', 6, 80], ['petalos', 2.4, 70], ['pelito', 1.2, 60]],
   tobogan: [['burbujitas', 4, 80], ['espumaIsla', 1.2, 120], ['gotaAgua', 2, 60]],
+  laberinto: [['gotaAgua', 3, 60], ['pelito', 2, 70], ['manchaJabon', 1.5, 110], ['burbujitas', 1.5, 60]],
 };
 
 export class Suelo {
@@ -450,10 +510,20 @@ export class Suelo {
   private atlas: AtlasDecor;
   private texturas: THREE.Texture[] = [];
   private tablaDecor: [IdDecor, number, number][];
+  /** El Laberinto de la cortina: qué cortinas hay en 128 × 128 celdas alrededor de la cámara (se rehace al alejarse). */
+  private lab: THREE.DataTexture | null = null;
+  private labO: [number, number] | null = null;
   private pesoTotal = 0;
 
   /** `piel`: el color de piel del anfitrión cuando es un amigo con su propio tono (la cara es la suya). */
   constructor(private esc: IdEscenario, rol: Rol, limites: { yMin: number; yMax: number } | null, piel?: string, private limX?: { xMin: number; xMax: number }) {
+    if (esc === 'laberinto') {
+      this.lab = new THREE.DataTexture(new Uint8Array(128 * 128 * 4), 128, 128, THREE.RGBAFormat);
+      this.lab.magFilter = this.lab.minFilter = THREE.NearestFilter;
+      this.lab.generateMipmaps = false;
+      this.lab.colorSpace = THREE.NoColorSpace;
+      this.texturas.push(this.lab);
+    }
     const detalle = esc === 'cara' || esc === 'desfile' || esc === 'matera' ? detalleCara() : esc === 'lavamanos' || esc === 'ducha' || esc === 'jabonera' || esc === 'espejo' ? detalleLavamanos() : detalleBanera();
     // El detalle es un dato (gris), no un color: se lee tal cual
     detalle.colorSpace = THREE.NoColorSpace;
@@ -469,12 +539,13 @@ export class Suelo {
       : esc === 'espejo' ? { c1: '#b8c8d4', c2: '#d4e0e8', c3: '#f2f6f8' }
       : esc === 'matera' ? { c1: '#4a3224', c2: '#5e4030', c3: '#c8683e' }
       : esc === 'tobogan' ? { c1: '#7fc8e8', c2: '#9ad8f0', c3: '#3e8ab8' }
+      : esc === 'laberinto' ? { c1: '#f4efe6', c2: '#e8dfd2', c3: '#8fc9e8' }
       : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
     // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
     const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({
       vertexShader: VERT,
-      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : esc === 'desfile' ? FRAG_TAPETE : esc === 'espejo' ? FRAG_ESPEJO : esc === 'matera' ? FRAG_MATERA : esc === 'tobogan' ? FRAG_TOBOGAN : FRAG_BANERA,
+      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : esc === 'desfile' ? FRAG_TAPETE : esc === 'espejo' ? FRAG_ESPEJO : esc === 'matera' ? FRAG_MATERA : esc === 'tobogan' ? FRAG_TOBOGAN : esc === 'laberinto' ? FRAG_LABERINTO : FRAG_BANERA,
       uniforms: {
         uDetalle: { value: detalle },
         uRuido: { value: ruido },
@@ -484,6 +555,8 @@ export class Suelo {
         uC3: { value: lin(pal.c3) },
         // (el pasillo de arriba abajo usa los mismos tres números: xMin, xMax y activo)
         uLimites: { value: limX ? new THREE.Vector3(limX.xMin, limX.xMax, 1) : new THREE.Vector3(limites?.yMin ?? 0, limites?.yMax ?? 0, limites ? 1 : 0) },
+        uLab: { value: this.lab },
+        uLabOrigen: { value: new THREE.Vector2(0, 0) },
       },
     });
     // Los colores se escriben en lineal: three los pasa a sRGB al final
@@ -505,12 +578,13 @@ export class Suelo {
     this.plano.position.set(cx, 0, cy);
     this.plano.scale.set(ancho * 1.5, hondo * 1.6, 1);
     this.mat.uniforms.uTiempo.value = t;
+    if (this.lab) this.cortinas(cx, cy);
     const L = this.decor;
     L.empezar();
     const C = 150;
     const x0 = Math.floor((cx - ancho * 0.62) / C), x1 = Math.floor((cx + ancho * 0.62) / C);
     const y0 = Math.floor((cy - hondo * 0.7) / C), y1 = Math.floor((cy + hondo * 0.62) / C);
-    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : this.esc === 'desfile' ? 19 : this.esc === 'espejo' ? 23 : this.esc === 'matera' ? 29 : this.esc === 'tobogan' ? 31 : 7;
+    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : this.esc === 'desfile' ? 19 : this.esc === 'espejo' ? 23 : this.esc === 'matera' ? 29 : this.esc === 'tobogan' ? 31 : this.esc === 'laberinto' ? 37 : 7;
     for (let gy = y0; gy <= y1; gy++)
       for (let gx = x0; gx <= x1; gx++) {
         if (hash2(gx, gy, sem) > 0.62) continue;
@@ -528,6 +602,7 @@ export class Suelo {
         const y = (gy + 0.1 + hash2(gx, gy, sem + 3) * 0.8) * C;
         if (limites && (y < limites.yMin + 20 || y > limites.yMax - 20)) continue;
         if (this.limX && (x < this.limX.xMin + 20 || x > this.limX.xMax - 20)) continue;
+        if (this.lab && enCortina(x, y, 24)) continue;
         const tam = cual[2] * (0.7 + hash2(gx, gy, sem + 4) * 0.6);
         const giro = hash2(gx, gy, sem + 5) * Math.PI * 2;
         const q: Cuadro = this.atlas.c[cual[0]];
@@ -537,6 +612,18 @@ export class Suelo {
         L.poner(x + mece, y, 0.03, tam, tam, 0.5, 0.5, q.u0, q.v0, q.u1, q.v1, 1, 1, 1, alfa, 0, 0, 1, cual[0] === 'ceja' || cual[0] === 'lunar' ? 0 : giro);
       }
     L.terminar();
+  }
+
+  /** Rehace la textura de las cortinas cuando la cámara se aleja de su centro. */
+  private cortinas(cx: number, cy: number) {
+    const ci = Math.floor(cx / CELDA), cj = Math.floor(cy / CELDA);
+    if (this.labO && Math.abs(ci - this.labO[0] - 64) < 40 && Math.abs(cj - this.labO[1] - 64) < 40) return;
+    this.labO = [ci - 64, cj - 64];
+    const d = this.lab!.image.data as Uint8Array;
+    for (let b = 0; b < 128; b++)
+      for (let a = 0; a < 128; a++) d[(b * 128 + a) * 4] = paredes(this.labO[0] + a, this.labO[1] + b);
+    this.lab!.needsUpdate = true;
+    (this.mat.uniforms.uLabOrigen.value as THREE.Vector2).set(this.labO[0], this.labO[1]);
   }
 
   liberar() {

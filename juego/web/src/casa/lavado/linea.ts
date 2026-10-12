@@ -143,7 +143,7 @@ const TIPOS_EF: TipoEfecto[] = ['golpe', 'muere', 'latigo', 'rayo', 'charco', 'l
 const IDX_EF = new Map(TIPOS_EF.map((t, i) => [t, i]));
 const IDX_ARMA = new Map(ID_ARMAS.map((a, i) => [a, i]));
 const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre', 'tesoro', 'trebolDorado', 'guante',
-  'patito', 'dado', 'paleta', 'corazoncito', 'pulsera', 'espejoVerdad', 'burbuja', 'reliquia'];
+  'patito', 'dado', 'paleta', 'corazoncito', 'pulsera', 'espejoVerdad', 'burbuja', 'reliquia', 'quesito'];
 const IDX_OBJ = new Map(OBJETOS.map((o, i) => [o, i]));
 
 const buf = new ArrayBuffer(128 * 1024);

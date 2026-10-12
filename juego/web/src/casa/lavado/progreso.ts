@@ -77,7 +77,7 @@ const entero = (v: unknown, max = 1e9) => (typeof v === 'number' && Number.isFin
 const listaDe = <T extends string>(v: unknown, validos: readonly string[], max = 200): T[] =>
   Array.isArray(v) ? ([...new Set(v.filter((x) => typeof x === 'string' && validos.includes(x)))].slice(0, max) as T[]) : [];
 
-const ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague', 'desfile', 'espejo', 'matera', 'tobogan'];
+const ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague', 'desfile', 'espejo', 'matera', 'tobogan', 'laberinto'];
 
 /** El progreso siempre con la forma esperada (venga de otra versión, dañado o de otro celular). */
 export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
@@ -289,6 +289,9 @@ export const LOGROS: DefLogro[] = [
   { id: 'desague20', nombre: 'Caño de exposición', desc: 'Aguanta 20 minutos en El Desagüe', premio: 'Escenario especial: El Tobogán del desagüe', cumple: (p) => minutosEn(p, 'desague') >= 20 },
   { id: 'ganarTobogan', nombre: 'Primero en la meta', desc: 'Llega al final de El Tobogán del desagüe', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.ganados.includes('tobogan') },
   { id: 'donaFlotador', nombre: 'Se desinfló', desc: 'Vence a la Dona Flotadora', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => (p.bestiario.donaFlotador ?? 0) > 0 },
+  { id: 'cortinaMohosa', nombre: 'Cortina limpia', desc: 'Vence a la Cortina Mohosa', premio: 'Escenario especial: El Laberinto de la cortina', cumple: (p) => (p.bestiario.cortinaMohosa ?? 0) > 0 },
+  { id: 'ganarLaberinto', nombre: 'La salida del laberinto', desc: 'Llega al final de El Laberinto de la cortina', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.ganados.includes('laberinto') },
+  { id: 'reyRaton', nombre: 'Sin quesito', desc: 'Vence al Rey Ratón', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => (p.bestiario.reyRaton ?? 0) > 0 },
   { id: 'espejito', nombre: 'El espejito de mano', desc: 'Ten 5 armas evolucionadas distintas en la colección', premio: 'Tesoro: Espejito de mano (en los escenarios aparecen anillos y aretes escondidos)', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 5 },
 ];
 
@@ -313,7 +316,7 @@ export const SECRETO_LOGRO: Partial<Record<IdArma | IdPasiva, string>> = {
   bombaBano: 'cofres50', barquito: 'partidas25', talco: 'eliminar50000', bolitasGel: 'nivel60',
   brisa: 'lavamanos25', estaciones: 'cara25', bataEspejismo: 'evoHilo', gotasColores: 'evoPerfume', culebrita: 'tapon',
 };
-export const ESCENARIO_LOGRO: Record<IdEscenario, string | null> = { cara: null, lavamanos: 'cara15', banera: 'lavamanos15', ducha: 'banera15', jabonera: 'ducha15', desague: 'jabonera15', desfile: 'jefes40', espejo: 'ducha20', matera: 'jabonera20', tobogan: 'desague20' };
+export const ESCENARIO_LOGRO: Record<IdEscenario, string | null> = { cara: null, lavamanos: 'cara15', banera: 'lavamanos15', ducha: 'banera15', jabonera: 'ducha15', desague: 'jabonera15', desfile: 'jefes40', espejo: 'ducha20', matera: 'jabonera20', tobogan: 'desague20', laberinto: 'cortinaMohosa' };
 
 export const tieneLogro = (p: ProgresoLavado, id: string | null | undefined) => !id || p.logros.includes(id);
 export const cartasDe = (p: ProgresoLavado) => (Object.keys(CARTAS) as IdCarta[]).filter((c) => tieneLogro(p, CARTA_LOGRO[c]));

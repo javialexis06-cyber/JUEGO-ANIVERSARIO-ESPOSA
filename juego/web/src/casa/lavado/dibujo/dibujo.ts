@@ -11,6 +11,7 @@ import { hash2 } from '../azar';
 import { ENEMIGOS, ID_ENEMIGOS } from '../enemigos';
 import { BANDERA_CADA, TURBO, type Enemigo, type Jugador, type Motor } from '../motor';
 import { sfx } from '../sonidos';
+import { enCortina } from '../laberinto';
 import type { Efecto, IdArma, IdEnemigo, IdObjeto } from '../tipos';
 import { Jugador3D } from './jugadores';
 import { CAPA_LUZ, CAPA_NORMAL, CAPA_PISO, Particulas } from './particulas';
@@ -64,10 +65,11 @@ const UTILERIA: Partial<Record<string, string[]>> = {
   espejo: ['espejoDoble', 'perfume', 'crema', 'secador', 'peinillaOro', 'cremaNoche'],
   matera: ['maceta', 'regadera', 'palita', 'maceta', 'mariposas', 'trebol', 'patoAmarillo'],
   tobogan: ['patoAmarillo', 'barquito', 'bombaBano', 'patoMorado', 'pececitos', 'chancletas', 'bolitasGel'],
+  laberinto: ['toalla', 'esponjas', 'jabon', 'champu', 'patoAmarillo', 'gorro', 'pantuflas'],
 };
 /** Los frascos que se caen de la repisa en La Jabonera. */
 const FRASCOS = ['champu', 'crema', 'perfume', 'colonia', 'cremaNoche'];
-const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita', desague: 'velaFlotante', desfile: 'velita', espejo: 'velaJabonera', matera: 'farolito', tobogan: 'velaFlotante' } as const;
+const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita', desague: 'velaFlotante', desfile: 'velita', espejo: 'velaJabonera', matera: 'farolito', tobogan: 'velaFlotante', laberinto: 'velita' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
 
 const rgb = (hex: string): [number, number, number] => {
@@ -854,7 +856,7 @@ export class Dibujo {
     }
   }
 
-  private utileria(lista: string[], limX: { xMin: number; xMax: number } | undefined, C: number, densidad: number, lim?: { yMin: number; yMax: number } | null) {
+  private utileria(lista: string[], limX: { xMin: number; xMax: number } | undefined, C: number, densidad: number, lim?: { yMin: number; yMax: number } | null, evitar?: (x: number, y: number) => boolean) {
     const x0 = Math.floor((this.cx - this.vistaW * 0.6) / C), x1 = Math.floor((this.cx + this.vistaW * 0.6) / C);
     const y0 = Math.floor((this.cy - this.vistaH * 0.7) / C), y1 = Math.floor((this.cy + this.vistaH * 0.65) / C);
     for (let gy = y0; gy <= y1; gy++)
@@ -866,6 +868,7 @@ export class Dibujo {
         const x = (gx + 0.15 + hash2(gx, gy, 43) * 0.7) * C, y = (gy + 0.15 + hash2(gx, gy, 44) * 0.7) * C;
         if (limX && (x < limX.xMin + 40 || x > limX.xMax - 40)) continue;
         if (lim && (y < lim.yMin + 40 || y > lim.yMax - 30)) continue;
+        if (evitar && evitar(x, y)) continue;
         // (nada encima del sitio donde se empieza)
         if (Math.hypot(x, y) < 170) continue;
         const tam = 44 + hash2(gx, gy, 45) * 16;
@@ -1062,7 +1065,7 @@ export class Dibujo {
     const O = this.objetos;
     // Lo que hay tirado en el piso de la ducha (siempre en el mismo sitio): el champú, el jabón, la esponja, el patico
     const utileria = UTILERIA[m.esc.id];
-    if (utileria) this.utileria(utileria, m.esc.limitesX, m.esc.limitesX ? 210 : 430, m.esc.limitesX ? 0.6 : 0.42, m.esc.limites);
+    if (utileria) this.utileria(utileria, m.esc.limitesX, m.esc.limitesX ? 210 : 430, m.esc.limitesX ? 0.6 : 0.42, m.esc.limites, m.esc.laberinto ? (x, y) => enCortina(x, y, 40) : undefined);
     if (m.esc.tobogan) this.banderasTobogan(m);
     // Don Jabón con su carrito (el vendedor ambulante): se mece, saluda y le salen burbujitas
     const p = m.puesto;
@@ -1105,7 +1108,7 @@ export class Dibujo {
       const nombre: string = cofre ? 'cofre' : o.tipo === 'dado' ? 'tirar' : o.tipo;
       const c = this.cuadrosObj.get(nombre);
       if (!c) continue;
-      const tam = cofre ? 52 : o.tipo === 'frasco' || o.tipo === 'aspiradora' || o.tipo === 'guante' || o.tipo === 'patito' || o.tipo === 'trebolDorado' ? 34 : 30;
+      const tam = cofre ? 52 : o.tipo === 'frasco' || o.tipo === 'aspiradora' || o.tipo === 'guante' || o.tipo === 'patito' || o.tipo === 'trebolDorado' || o.tipo === 'quesito' ? 34 : 30;
       // Lo dorado brilla en el piso para que se vea
       if (o.tipo === 'guante' || o.tipo === 'patito' || o.tipo === 'trebolDorado') {
         const b = this.fx.c.brillo;

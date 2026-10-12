@@ -936,15 +936,15 @@ def bandera(p):
 def quesito(p):
     """Quesito de jabón (El Laberinto de la cortina): una cuña amarilla con huequitos y burbujas."""
     m = M('#F7D46A', rough=0.35, coat=0.4, sss=0.25)
-    # La cuña: un prisma triangular redondeado
-    for k in range(6):
-        t = k / 5
-        p.blob((-0.2 + t * 0.4, 0.0, 0.12), (0.06 + 0.16 * (1 - t), 0.2 * (1 - 0.45 * t), 0.12), m, n=8, p=3.0)
+    # La cuña vista de lado: alta atrás y bajita en la punta (la cara de arriba en pendiente)
+    alto = lambda x: np.clip(0.55 - x / 0.62, 0.12, 1.0)
+    p.blob((0, 0, 0.0), (0.3, 0.16, 0.2), m, n=14, p=4.0,
+           shaper=lambda v: np.column_stack([v[:, 0], v[:, 1], np.where(v[:, 2] > 0, v[:, 2] * alto(v[:, 0]) * 1.6, v[:, 2] * 0.1) + 0.03]))
     hueco = M('#D8A830', rough=0.5)
-    for (x, y, z, r) in ((-0.12, -0.2, 0.14, 0.035), (0.0, -0.17, 0.08, 0.025), (-0.05, -0.2, 0.2, 0.02), (0.1, -0.12, 0.15, 0.02)):
-        p.blob((x, y, z), (r, r * 0.4, r), hueco, n=6)
-    for (x, z, r) in ((0.08, 0.32, 0.04), (-0.06, 0.38, 0.03), (0.15, 0.42, 0.022)):
-        burbuja(p, (x, -0.05, z), r)
+    for (x, z, r) in ((-0.15, 0.17, 0.04), (-0.02, 0.09, 0.032), (-0.2, 0.06, 0.025), (0.1, 0.06, 0.022), (-0.08, 0.24, 0.02)):
+        p.blob((x, -0.162, z), (r, 0.01, r), hueco, n=6)
+    for (x, z, r) in ((0.0, 0.42, 0.04), (0.14, 0.38, 0.03), (-0.1, 0.5, 0.022)):
+        burbuja(p, (x, -0.02, z), r)
 
 
 # ----------------------------------------------------------------------------------------------------- Accesorios (disfraces)
