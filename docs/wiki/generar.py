@@ -130,7 +130,7 @@ def main():
         content = source(path, revision) if text is None else text
         add(page, f'# {page.replace("-", " ")}\n\n{status}\n\n' + convert(content, path, revision) + f'\n\nFuente técnica: [documento de referencia]({REPO}/blob/{revision}/{path}). Esta página no certifica la versión de la APK instalada.\n')
 
-    modules = ['PUEBLO', 'VIVIENDAS', 'DORMITORIOS', 'VIDA-SOCIAL', 'ENCARGOS', 'CORREO', 'COLECCIONES', 'FESTIVALES', 'CARPINTERIA', 'COMPANIA', 'HABILIDADES', 'GANADERIA', 'NARRATIVA']
+    modules = ['PUEBLO', 'VIVIENDAS', 'DORMITORIOS', 'VIDA-SOCIAL', 'ENCARGOS', 'CORREO', 'COLECCIONES', 'FESTIVALES', 'CARPINTERIA', 'COMPANIA', 'HABILIDADES', 'GANADERIA', 'NARRATIVA', 'COMUNIDAD']
     source_map.update({f'juego/web/src/granja-v3/{m}-INTEGRACION.md': 'Granja-' + m.title() for m in modules})
     source_map.update({'juego/web/src/granja-v3/PLAN-MOTOR-COMPLETO.md': 'Plan-del-motor', 'juego/web/src/granja-v3/PLAN-PUEBLOS-MUNDOS.md': 'Plan-de-pueblos-y-mundos', 'juego/web/src/granja-v3/REPARTO-COMPLETO.md': 'Catalogo-tecnico-del-reparto', 'juego/web/src/granja-v3/ASTRA-INTEGRACION.md': 'Granja-Astra-Integracion', 'juego/web/src/granja-v3/HISTORIA-INTEGRACION.md': 'Granja-Campana-Integracion', 'juego/web/src/granja-v3/PREMIOS-INTEGRACION.md': 'Granja-Premios-Integracion', 'juego/web/src/granja-v3/VIDA-ASTRA-INTEGRACION.md': 'Granja-Vida-Astra', 'juego/web/src/granja-v3/REGIONES-INTEGRACION.md': 'Granja-Regiones'})
     general = {
@@ -433,6 +433,14 @@ El motor completo sigue en desarrollo. La base de regiones y presencia está int
         page='Lugar-'+r['id']
         if page in pages:
             pages[page]+='\n\n## Actividades y conservación disponibles\n\n'+link('Granja-Regiones','Trabajo, costes, módulos y cuidados')+'\n\nTrabajo: '+r['actividad']+'. Renovación: '+str(r['diasRenovacion'])+' jornadas dormidas. Reserva un mineral y una madera locales para su pieza de mantenimiento.\n\nFauna: '+r['fauna']['nombre']+'. '+r['fauna']['limites']+'\n\n'+('Colonia con permiso '+r['fauna']['permiso']+', ocho plazas, genotipos y cuidados reales dentro del módulo.' if r['fauna']['colonia'] else 'Conservación silvestre, sin captura ni crianza forzada.')+'\n'
+    comunidad=load('jugabilidad/comunidad.json')
+    for p in comunidad['pesquerias']:
+        page='Lugar-'+p['region']
+        if page in pages:
+            pages[page]+='\n\n## Pesca y pedidos\n\n'+link('Granja-Comunidad','Caña, trampas, museo y carga')+'\n\nPuesto acuícola en −24, 22: '+p['nombre']+'. Cebo: `'+p['cebo']+'`. Horario: '+str(p['desde'])+'–'+str(p['hasta'])+' h. El pedido local se renueva cada siete jornadas dormidas.\n'
+    add('Colecciones-del-museo','# Colecciones del museo\n\n'+link('Granja-Comunidad','Donación real, calidad, vitrinas y desbloqueos')+'\n\n'+'\n'.join('## '+c['nombre']+'\n\n'+', '.join('`'+i+'`' for i in c['items'])+'\n' for c in comunidad['colecciones']))
+    for a in comunidad['artefactos']:
+        add('Artefacto-'+a['id'],'# '+a['nombre']+'\n\n**Pieza ordinaria identificable y donable; sin poder o valor de venta.**\n\n'+a['contexto']+'\n\nRecuperar con la caña o identificar una geoda en el archivo por veinte monedas. La mochila llena conserva el hallazgo. '+link('Granja-Comunidad','Reglas completas')+'\n')
     for page, body in pages.items():
         for target in re.findall(re.escape(WIKI) + r'([A-Za-z0-9_-]+)', body):
             if target not in pages:

@@ -14,7 +14,7 @@ La vida social ampliada está conectada para 154 residentes, con posiciones real
 stock y revisión de acuerdos. Ver `VIDA-ASTRA-INTEGRACION.md`.
 Los 24 territorios tienen actividades y conservación; cinco colonias cuentan con módulos y genética.
 Cuatro jefes elementales y dos cámaras conservan alternativas técnicas. Ver `REGIONES-INTEGRACION.md`.
-La lista vigente está en `ASTRA-INTEGRACION.md`: quedan capacidades comunitarias y balance completo. Los apartados históricos siguientes conservan su fecha
+La lista vigente está en `ASTRA-INTEGRACION.md`: el bloque comunitario está integrado y queda el recorrido ordinario con balance del bloque 7. Los apartados históricos siguientes conservan su fecha
 original y no representan una certificación de paridad actual.
 
 ## Base de Astra para producción · 11 de octubre de 2026

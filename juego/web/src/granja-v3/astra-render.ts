@@ -1,3 +1,5 @@
+import {PESQUERIAS_REGIONALES,OBRAS_COMUNIDAD,puntoPescaRegional,obraAbierta} from './comunidad';
+import {obtenerObjeto} from './objetos';
 import {territorioRegional} from './regiones';
 import {premioDef} from './premios';
 /** Escenarios provisionales: reutilizan los kits existentes. Las reglas y anclajes viven en astra.ts. */
@@ -44,7 +46,8 @@ export class EscenaAstra {
  sync(s:EstadoGranja){
   this.estado=s;const t=s.astra;if(!t)return;const region=t.actual??(s.zona==='pueblo'?'pueblo_sol':s.zona),visitantes=!t.actual;
   const ids=habitantesHistoria(s,region,visitantes?[]:regionAstra(region)!.npc);
-  const modulos=s.historia?.utilidades?.modulos.filter(m=>m.region===region)??[];this.grupo.visible=!visitantes||!s.interior&&!s.servicio&&(ids.length>0||modulos.length>0);const colonia=s.regional?.colonias.find(c=>t.interior==='habitat_'+c.region);const key=region+':'+t.interior+':'+(colonia?.animales.map(a=>a.id).join(',')??'')+':'+ids.join(',')+':'+modulos.map(m=>m.id+':'+m.x+':'+m.z).join(',');if(key!==this.clave){this.limpiar();this.clave=key;this.grupo.userData.liberado=false;const capa=new THREE.Group();this.grupo.add(capa);const r=regionAstra(region)!;
+  const comunidadRegion=t.actual??s.zona,puestos=OBRAS_COMUNIDAD.filter(d=>d.region===comunidadRegion),pesca=PESQUERIAS_REGIONALES.find(p=>p.region===comunidadRegion),trampas=s.comunidad?.trampas.filter(p=>p.region===comunidadRegion)??[],galeria=s.servicio==='archivo'&&obraAbierta(s,'galeria');
+  const modulos=s.historia?.utilidades?.modulos.filter(m=>m.region===region)??[];this.grupo.visible=!visitantes||!s.interior&&(galeria||!s.servicio&&(ids.length>0||modulos.length>0||puestos.length>0||trampas.length>0));const colonia=s.regional?.colonias.find(c=>t.interior==='habitat_'+c.region);const key=JSON.stringify([s.servicio,s.comunidad?.obras,s.comunidad?.vitrinas,s.comunidad?.trampas,s.comunidad?.terminales])+region+':'+t.interior+':'+(colonia?.animales.map(a=>a.id).join(',')??'')+':'+ids.join(',')+':'+modulos.map(m=>m.id+':'+m.x+':'+m.z).join(',');if(key!==this.clave){this.limpiar();this.clave=key;this.grupo.userData.liberado=false;const capa=new THREE.Group();this.grupo.add(capa);const r=regionAstra(region)!;
    if(!visitantes&&t.interior){const interior=interiorVivienda([r.color],'archivo');capa.add(interior);if(colonia){sustituir('habitat:'+colonia.region,capa,interior);for(const [i,a]of colonia.animales.entries()){const g=arcoSalida((territorioRegional(colonia.region)?.fauna.nombre??'Colonia')+' · '+a.id,0,0,false);g.scale.setScalar(.3);g.position.set(-3+(i%4)*2,0,-1-Math.floor(i/4)*2);g.userData.fauna={id:a.id,region:colonia.region,genoma:a.genoma};capa.add(g);sustituir('fauna:'+territorioRegional(colonia.region)!.fauna.id,capa,g);}}}
    else if(!visitantes){
     const terreno=this.suelos.terreno(paletaSueloAstra(r.id));capa.add(terreno);sustituir('region:'+r.id,capa,terreno);const plano=planoAstra(r.id) as Parameters<typeof paisajeAstra>[4];if(!plano){capa.add(senderoTierra(0,13,43,3));capa.add(senderoTierra(0,5,3,43));}
@@ -57,6 +60,12 @@ export class EscenaAstra {
     if(r.mundo==='confluencia'){if(r.id==='confluencia'){const figura=new THREE.Group();figura.position.set(0,0,20);capa.add(figura);sustituir('figura:figura_fuatia',capa,figura);}}
    }
    if(!s.interior&&!t.interior)for(const m of modulos){const marca=arcoSalida(premioDef(m.premio)?.nombre??'Instalación',m.x,m.z,false);capa.add(marca);sustituir('premio:'+m.premio,capa,marca);}
+   if(!s.interior&&!s.servicio&&!t.interior){
+    for(const d of puestos){const m=arcoSalida(d.nombre+(obraAbierta(s,d.id)?' · abierto':' · obra'),d.x,d.z,false);capa.add(m);sustituir('obra:'+d.id,capa,m);}
+    if(pesca){const p=puntoPescaRegional(comunidadRegion),m=arcoSalida('Puesto acuícola · '+pesca.nombre,p.x,p.z,false);capa.add(m);sustituir('pesca:'+comunidadRegion,capa,m);}
+    for(const tr of trampas){const m=arcoSalida('Trampa · '+(tr.salida?'recoger':tr.usos+' cebos'),tr.x,tr.z,false);m.scale.setScalar(.35);capa.add(m);sustituir('trampa:'+tr.region,capa,m);}
+   }
+   if(galeria)for(const [i,id]of (s.comunidad?.vitrinas??[]).entries()){const m=arcoSalida(id?obtenerObjeto(id)!.nombre:'Vitrina vacía',0,0,false);m.scale.setScalar(.32);m.position.set(-2.5+(i%3)*2.5,0,-2+Math.floor(i/3)*1.3);capa.add(m);sustituir(id?'museo:'+id:'museo:vitrina',capa,m);}
    for(const id of ids){const g=vecinoPeluche(id,NPC_ASTRA.findIndex(n=>n.id===id));g.name='astra-npc-'+id;g.userData.npcId=id;this.vecinos.set(id,g);capa.add(g);sustituir('npc:'+id,capa,g);}
   }
   this.update(0);

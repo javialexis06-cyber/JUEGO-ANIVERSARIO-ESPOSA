@@ -19,7 +19,7 @@ export function materialesDe(articulo:string):Record<string,number>|null{
  // Sin identidad de receta en cada pila, las alternativas usan solo materiales compartidos y su coste mínimo.
  // Así un aspersor con madera nunca devuelve hierro, ni un guiso de pan produce leche o trufas al reciclarlo.
  const r=RECETAS.find(r=>r.salida.articulo===articulo);
- if(r&&Object.keys(r.ingredientes).length){const c:Record<string,number>={},alternativas=RECETAS_CORRESPONDENCIA.some(r=>r.salida.articulo===articulo)?RECETAS.filter(r=>r.salida.articulo===articulo):[r];for(const [k,v] of Object.entries(r.ingredientes)){const minimo=Math.min(v/r.salida.cantidad,...alternativas.map(a=>(a.ingredientes[k]??0)/a.salida.cantidad));if(minimo>0)c[k]=minimo;}return Object.keys(c).length?c:null;}
+ if(r&&Object.keys(r.ingredientes).length){const c:Record<string,number>={},alternativas=(RECETAS_CORRESPONDENCIA.some(r=>r.salida.articulo===articulo)||['trampa_cebo','conector_produccion'].includes(articulo))?RECETAS.filter(r=>r.salida.articulo===articulo):[r];for(const [k,v] of Object.entries(r.ingredientes)){const minimo=Math.min(v/r.salida.cantidad,...alternativas.map(a=>(a.ingredientes[k]??0)/a.salida.cantidad));if(minimo>0)c[k]=minimo;}return Object.keys(c).length?c:null;}
  const d=obtenerObjeto(articulo);if(!d||d.categoria==='recurso'||d.categoria==='herramienta'||d.categoria==='insumo')return null;
  // Lo que no tiene receta se vuelve materia prima: minerales y gemas en piedra, lo orgánico en abono
  if(d.categoria==='mineral')return {piedra:Math.max(1,Math.round(d.precioVenta/15))};

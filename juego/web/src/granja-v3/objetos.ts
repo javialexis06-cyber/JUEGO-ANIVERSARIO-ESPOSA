@@ -1,3 +1,4 @@
+import {ARTEFACTOS_COMUNIDAD} from './comunidad-datos';
 import {TERRITORIOS_REGIONALES} from './regiones-datos';
 import {PREMIOS_NARRATIVOS} from './premios-datos';
 import { DATOS as RECURSOS_ASTRA } from './astra-recursos-datos';
@@ -25,6 +26,9 @@ export const OBJETOS:Record<string,DefObjeto>=Object.create(null);
 function objeto(id:string,nombre:string,categoria:DefObjeto['categoria'],precioVenta:number,extra:Partial<DefObjeto>={}){
  OBJETOS[id]={id,nombre,categoria,rareza:'comun',precioCompra:Math.max(1,precioVenta*3),precioVenta,pilaMax:999,descripcion:nombre,...extra};
 }
+for(const [id,nombre,descripcion]of ARTEFACTOS_COMUNIDAD)objeto(id,nombre,'recurso',0,{precioCompra:0,descripcion});
+for(const [id,nombre,descripcion]of [['trampa_cebo','Trampa de cebo','Cuatro cebos, un intento por noche y salida que bloquea nuevos intentos.'],['terminal_carga','Terminal de carga','Se instala en un archivo con el acuerdo de Celia.'],['exportador_envios','Exportador de envíos','Autoriza un solo producto y límite nocturno en un cofre cercano a la caja.']] as const)objeto(id,nombre,'insumo',0,{precioCompra:0,descripcion});
+objeto('conector_produccion','Conector de producción','estructura',0,{precioCompra:0,pilaMax:20,descripcion:'Un metro de conexión física; une dispositivos contiguos de la misma zona.'});
 objeto('alimento_mascota','Alimento para mascotas','insumo',4,{precioCompra:20,descripcion:'Una ración equilibrada para gatos, perros y tortugas.'});
 for(const [id,nombre,precio] of [
  ['madera','Madera',2],['piedra','Piedra',2],['fibra','Fibra vegetal',2],['heno','Heno',1],['madera_ancestral','Madera ancestral',30],
@@ -267,5 +271,11 @@ for(const r of TERRITORIOS_REGIONALES){
  RECETAS.push({id:'kit_ajustado_'+r.id,nombre:'Kit ajustado · '+r.nombre,estacion:'banco_trabajo',ingredientes:{[r.producto]:1,[r.id+'_mineral']:1,[r.id+'_madera']:2,[r.id+'_cosecha']:1},salida:{articulo:'kit_ajustado_'+r.id,cantidad:1},duracionMs:15000,nivel:0});
  if(r.fauna.colonia)RECETAS.push({id:'pieza_colonia_'+r.id,nombre:'Pieza de atención · '+r.nombre,estacion:'banco_trabajo',ingredientes:{[r.fauna.producto]:1,[r.id+'_mineral']:1},salida:{articulo:r.producto,cantidad:1},duracionMs:10000,nivel:0});
 }
+receta('trampa_cebo','mano',{madera:8,fibra:6},0);
+receta('terminal_carga','banco_trabajo',{lingote_hierro:2,engranaje:1,bateria:1},20);
+receta('exportador_envios','banco_trabajo',{madera:8,lingote_cobre:2,engranaje:1},15);
+receta('conector_produccion','mano',{madera:2,fibra:2},0);
+RECETAS.push({id:'trampa_documentada',nombre:'Trampa de cuencas documentadas',estacion:'mano',ingredientes:{madera:8,fibra:4},salida:{articulo:'trampa_cebo',cantidad:1},duracionMs:0,nivel:0,requisito:'museo_cuencas'});
+for(const r of TERRITORIOS_REGIONALES)RECETAS.push({id:'conector_documentado_'+r.id,nombre:'Conector documentado · '+r.nombre,estacion:'mano',ingredientes:{madera:2,fibra:1},salida:{articulo:'conector_produccion',cantidad:1},duracionMs:0,nivel:0,requisito:'museo_'+r.id});
 const INDICE_RECETAS=new Map(RECETAS.map(r=>[r.id,r]));
 export function obtenerReceta(id:string):RecetaProduccion|undefined{return INDICE_RECETAS.get(id);}
