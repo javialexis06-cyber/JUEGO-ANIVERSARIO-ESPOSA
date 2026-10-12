@@ -135,7 +135,8 @@ export class Interfaz {
     const otros = nombres.map((_, i) => i).filter((i) => i !== yo);
     raiz.insertAdjacentHTML(
       'beforeend',
-      `<div class="lv-hud">
+      `<div class="lv-velo-vapor"></div>
+      <div class="lv-hud">
         <div class="lv-xp"><i></i><b>Nv 1</b></div>
         <div class="lv-tiempo">0:00</div>
         <div class="lv-inv"></div>
@@ -354,6 +355,7 @@ export class Interfaz {
     }
     this.raiz.querySelector('.lv-velo-hielo')!.classList.toggle('si', m.hielo > 0);
     this.raiz.querySelector('.lv-velo-inverso')!.classList.toggle('si', m.modo('inverso'));
+    this.raiz.querySelector('.lv-velo-vapor')!.classList.toggle('si', !!m.esc.vapor);
   }
 
   /**

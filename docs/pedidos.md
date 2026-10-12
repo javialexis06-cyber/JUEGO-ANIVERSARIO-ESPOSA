@@ -36,8 +36,8 @@ probado y subido.
 original: Hiper, Del otro lado del espejo, Agua caliente sin fin, Sin límite, Ruleta de sorpresas y Nivel al azar; y
 Don Jabón, el vendedor ambulante, con el Monedero) y **La Ducha** (fase 3a: el cuarto escenario, con 8 bichos y 4
 jefes nuevos y los chorros que caen del techo) y **La Jabonera** (fase 3b: el pasillo de arriba abajo de la repisa con
-los frascos que se caen) y **El Desagüe** (fase 3c: el escenario final con sus remolinos). Siguen los escenarios
-especiales (3d). Las cajitas sorpresa
+los frascos que se caen) y **El Desagüe** (fase 3c: el escenario final con sus remolinos) y los dos primeros
+especiales (3d: **El Desfile de jefes** y **El Espejo empañado**). Siguen los otros especiales (3e). Las cajitas sorpresa
 quedan para la fase 4, con los disfraces que traen. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
 los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
 nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
@@ -101,8 +101,10 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
      caen).
    - ~~3c: El Desagüe~~ **hecho** (el escenario final: rejillas oscuras, 7 bichos y 4 jefes, los remolinos que se
      tragan la mugre y las gotitas).
-   - 3d en adelante: especiales (el Espejo empañado, el Desfile de jefes, la Cortina en laberinto) y los minijuegos
-     (la carrera del tobogán).
+   - ~~3d: El Desfile de jefes y El Espejo empañado~~ **hecho** (los dos primeros especiales de 15 minutos: 23 jefes
+     uno tras otro sobre el tapete; el vapor que tapa la vista y lo caliente que pega más).
+   - 3e: los otros especiales de la propuesta (La Matera de la ventana, El Laberinto de la cortina, El Tobogán del
+     desagüe, que es la carrera) y la Feria de las cremas con su ruleta.
    - Fase 4: disfraces con transformación, cartas de la noche, cajitas sorpresa y las aventuras.
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).

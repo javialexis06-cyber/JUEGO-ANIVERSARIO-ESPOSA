@@ -543,7 +543,9 @@ export class Motor {
   private sigUid = 1;
   private tTanda = 0;
   private iEvento = 0;
-  private sigParca = DURACION;
+  /** Lo que dura la lavada en este escenario (los especiales, 15 minutos). */
+  readonly duracion: number;
+  private sigParca: number;
   private lucesRotas = new Map<number, number>();
   private celdaLuz = new Map<number, number>();
   private tLuces = 0;
@@ -556,6 +558,8 @@ export class Motor {
     this.esc = ESCENARIOS[o.escenario];
     this.apurado = o.apurado;
     this.tutorial = !!o.tutorial;
+    this.duracion = this.esc.duracion ?? DURACION;
+    this.sigParca = this.duracion;
     this.modos = new Set(o.tutorial ? [] : o.modos ?? []);
     this.mapa = o.jugadores.some((x) => !!x.mapa);
     this.puesto = !o.tutorial && (o.escenario === ESCENARIO_VENDEDOR || o.jugadores.some((x) => !!x.monedero)) ? PUESTO[o.escenario] : null;
@@ -1565,7 +1569,7 @@ export class Motor {
 
   /** El reloj dentro de la vuelta (con el agua caliente sin fin, cada 30 minutos vuelve a empezar). */
   tCiclo() {
-    return this.t - this.ciclo * DURACION;
+    return this.t - this.ciclo * this.duracion;
   }
 
   /** Cuánto aguantan los mugrosos por los modos: del otro lado del espejo (el triple, y crece cada minuto) y cada
@@ -1586,7 +1590,7 @@ export class Motor {
 
   private oleadas(dReloj: number) {
     const esc = this.esc;
-    const t0 = this.ciclo * DURACION;
+    const t0 = this.ciclo * this.duracion;
     // Eventos fijos
     while (this.iEvento < esc.eventos.length && esc.eventos[this.iEvento].t + t0 <= this.t) this.evento(esc.eventos[this.iEvento++]);
     // La ruleta de sorpresas: cada minuto escoge algo
@@ -1599,7 +1603,7 @@ export class Motor {
     }
     // Con el agua caliente sin fin no llega la Ducha Helada: todo vuelve a empezar, más duro
     if (this.t >= this.sigParca && this.modo('infinito')) {
-      this.sigParca += DURACION;
+      this.sigParca += this.duracion;
       this.ciclo++;
       this.iEvento = 0;
       this.gano = true;
@@ -1915,7 +1919,7 @@ export class Motor {
     const tarde = this.tarde();
     const kv = this.porJugadores('vida');
     let hp = def.vida * mal * tarde * kv;
-    if (def.jefe && tipo !== 'duchaHelada') hp = def.vida * Math.max(1, this.nivel) * mal * this.porJugadores('jefe');
+    if (def.jefe && tipo !== 'duchaHelada') hp = def.vida * Math.max(1, this.nivel) * mal * this.porJugadores('jefe') * (this.esc.vidaJefes ?? 1);
     if (e.elite) hp = (def.vida * 16 * mal * tarde + 40 * this.nivel) * kv;
     if (tipo !== 'duchaHelada') hp *= this.durezaModos();
     e.hp = e.hpMax = hp;
@@ -2389,7 +2393,7 @@ export class Motor {
     if (borrado) return;
     // La experiencia
     let xp = e.def.xp * (e.elite ? 12 : 1);
-    if (e.jefe) xp = e.def.xp + this.nivel * 3;
+    if (e.jefe) xp = (e.def.xp + this.nivel * 3) * (this.esc.xpJefes ?? 1);
     // Sin gotitas: si todos la llevan, la experiencia revienta en vez de caer
     if (this.sinGotitas()) {
       for (const q of this.pend) {

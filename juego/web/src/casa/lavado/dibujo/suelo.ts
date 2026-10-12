@@ -256,6 +256,56 @@ const FRAG_DESAGUE = COMUN + /* glsl */ `
   }
 `;
 
+const FRAG_TAPETE = COMUN + /* glsl */ `
+  void main() {
+    vec2 p = vMapa;
+    float d1 = texture2D(uDetalle, p / 140.0).r;
+    float d2 = texture2D(uDetalle, p / 47.0 + 0.3).r;
+    vec4 n = texture2D(uRuido, p / 1500.0);
+    // El tapete peludito del baño: fibras (el detalle) y un tono que cambia suave
+    vec3 col = mix(uC1, uC2, smoothstep(0.3, 0.75, n.r));
+    col *= 0.88 + d1 * 0.18 + (d2 - 0.5) * 0.22;
+    // Su dibujo: franjas en el borde de cada pedazo grande y florecitas de felpa en el medio
+    vec2 q = p / 520.0;
+    vec2 f = fract(q);
+    float bx = min(f.x, 1.0 - f.x), by = min(f.y, 1.0 - f.y);
+    float franja = 1.0 - smoothstep(0.035, 0.05, min(bx, by));
+    float franja2 = (1.0 - smoothstep(0.075, 0.085, min(bx, by))) * smoothstep(0.06, 0.07, min(bx, by));
+    col = mix(col, uC3, franja * 0.85);
+    col = mix(col, uC3 * 1.1, franja2 * 0.7);
+    vec2 c = (f - 0.5) * 520.0;
+    float ang = atan(c.y, c.x);
+    float r = length(c);
+    float petalo = 1.0 - smoothstep(70.0 + 22.0 * cos(ang * 5.0), 76.0 + 22.0 * cos(ang * 5.0), r);
+    col = mix(col, mix(uC3, vec3(1.0, 0.92, 0.95), 0.45), petalo * 0.55);
+    col = mix(col, vec3(1.0, 0.88, 0.55), (1.0 - smoothstep(16.0, 20.0, r)) * 0.8);
+    gl_FragColor = vec4(col, 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
+const FRAG_ESPEJO = COMUN + /* glsl */ `
+  void main() {
+    vec2 p = vMapa;
+    float d1 = texture2D(uDetalle, p / 220.0).r;
+    vec4 n = texture2D(uRuido, p / 1400.0);
+    vec4 n2 = texture2D(uRuido, p / 380.0 + vec2(0.0, uTiempo * 0.01));
+    // El espejo plateado, empañado a parches (más claro y lechoso donde hay vapor)
+    vec3 col = mix(uC1, uC2, smoothstep(0.3, 0.8, n.r));
+    float empanado = smoothstep(0.35, 0.7, n2.g * 0.7 + n.b * 0.3);
+    col = mix(col, uC3, empanado * 0.55);
+    col *= 1.0 + (d1 - 0.5) * 0.18;
+    // Reflejos diagonales del espejo y goticas que escurren
+    float banda = smoothstep(0.92, 1.0, sin(p.x * 0.004 - p.y * 0.006 + n.g * 3.0) * 0.5 + 0.5);
+    col += banda * 0.14 * (1.0 - empanado);
+    vec2 g = vec2(p.x / 36.0, p.y / 36.0 + uTiempo * 0.15 * fract(sin(floor(p.x / 36.0) * 7.31) * 91.7));
+    float gota = 1.0 - smoothstep(0.08, 0.13, length(fract(g) - 0.5) / (0.6 + 0.4 * fract(sin(dot(floor(g), vec2(3.1, 7.7))) * 43.5)));
+    col = mix(col, uC1 * 0.9, gota * empanado * 0.6);
+    gl_FragColor = vec4(col, 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
 interface Paleta {
   c1: string;
   c2: string;
@@ -285,6 +335,8 @@ const DECOR: Record<IdEscenario, [IdDecor, number, number][]> = {
   ducha: [['gotaAgua', 5, 70], ['burbujitas', 3, 80], ['manchaJabon', 2, 120], ['pelito', 0.8, 80], ['espumaIsla', 0.8, 130], ['desague', 0.18, 130]],
   jabonera: [['manchaJabon', 4, 110], ['burbujitas', 4, 70], ['gotaAgua', 3, 60], ['espumaIsla', 1.2, 110], ['pelito', 0.8, 70], ['pasta', 0.8, 60]],
   desague: [['pelito', 4, 90], ['burbujitas', 3, 70], ['hojita', 1.2, 50], ['gotaAgua', 2, 60], ['espumaIsla', 0.8, 120]],
+  desfile: [['pelito', 2, 70], ['petalos', 2, 70], ['burbujitas', 1.5, 60]],
+  espejo: [['gotaAgua', 6, 70], ['burbujitas', 2, 60], ['manchaJabon', 1.5, 120]],
 };
 
 export class Suelo {
@@ -298,7 +350,7 @@ export class Suelo {
 
   /** `piel`: el color de piel del anfitrión cuando es un amigo con su propio tono (la cara es la suya). */
   constructor(private esc: IdEscenario, rol: Rol, limites: { yMin: number; yMax: number } | null, piel?: string, private limX?: { xMin: number; xMax: number }) {
-    const detalle = esc === 'cara' ? detalleCara() : esc === 'lavamanos' || esc === 'ducha' || esc === 'jabonera' ? detalleLavamanos() : detalleBanera();
+    const detalle = esc === 'cara' || esc === 'desfile' ? detalleCara() : esc === 'lavamanos' || esc === 'ducha' || esc === 'jabonera' || esc === 'espejo' ? detalleLavamanos() : detalleBanera();
     // El detalle es un dato (gris), no un color: se lee tal cual
     detalle.colorSpace = THREE.NoColorSpace;
     detalle.needsUpdate = true;
@@ -309,12 +361,14 @@ export class Suelo {
       : esc === 'ducha' ? { c1: '#e3f1f4', c2: '#c6e4ec', c3: '#8fa9b5' }
       : esc === 'jabonera' ? { c1: '#f7f0e4', c2: '#efe4d2', c3: '#b9a88e' }
       : esc === 'desague' ? { c1: '#3c4a4a', c2: '#4e5e5a', c3: '#a8b2b6' }
+      : esc === 'desfile' ? { c1: '#c8a8e0', c2: '#d8bce8', c3: '#8a5ab8' }
+      : esc === 'espejo' ? { c1: '#b8c8d4', c2: '#d4e0e8', c3: '#f2f6f8' }
       : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
     // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
     const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({
       vertexShader: VERT,
-      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : FRAG_BANERA,
+      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : esc === 'desfile' ? FRAG_TAPETE : esc === 'espejo' ? FRAG_ESPEJO : FRAG_BANERA,
       uniforms: {
         uDetalle: { value: detalle },
         uRuido: { value: ruido },
@@ -350,7 +404,7 @@ export class Suelo {
     const C = 150;
     const x0 = Math.floor((cx - ancho * 0.62) / C), x1 = Math.floor((cx + ancho * 0.62) / C);
     const y0 = Math.floor((cy - hondo * 0.7) / C), y1 = Math.floor((cy + hondo * 0.62) / C);
-    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : 7;
+    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : this.esc === 'desfile' ? 19 : this.esc === 'espejo' ? 23 : 7;
     for (let gy = y0; gy <= y1; gy++)
       for (let gx = x0; gx <= x1; gx++) {
         if (hash2(gx, gy, sem) > 0.62) continue;

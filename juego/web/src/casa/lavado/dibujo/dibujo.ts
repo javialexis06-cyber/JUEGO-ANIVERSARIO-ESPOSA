@@ -59,10 +59,12 @@ const UTILERIA: Partial<Record<string, string[]>> = {
   ducha: ['champu', 'jabon', 'esponjas', 'patoAmarillo', 'peinilla', 'remolino', 'toalla'],
   jabonera: ['jabon', 'crema', 'cremaNoche', 'perfume', 'colonia', 'liga', 'maquina', 'copito', 'champu'],
   desague: ['culebrita', 'peinilla', 'patoMorado', 'esponjas', 'liga', 'hilo', 'granDesague'],
+  desfile: ['pantuflas', 'toalla', 'patoAmarillo', 'gorro', 'corona', 'patoMorado'],
+  espejo: ['espejoDoble', 'perfume', 'crema', 'secador', 'peinillaOro', 'cremaNoche'],
 };
 /** Los frascos que se caen de la repisa en La Jabonera. */
 const FRASCOS = ['champu', 'crema', 'perfume', 'colonia', 'cremaNoche'];
-const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita', desague: 'velaFlotante' } as const;
+const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita', desague: 'velaFlotante', desfile: 'velita', espejo: 'velaJabonera' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
 
 const rgb = (hex: string): [number, number, number] => {

@@ -44,6 +44,15 @@ export interface DefEscenario {
   frascos?: boolean;
   /** El Desagüe: remolinos que se tragan a los mugrosos (y las gotitas que nadie recoja). */
   remolinos?: boolean;
+  /** Los especiales duran menos (en segundos; si no, 30 minutos) y salen aparte en el menú. */
+  duracion?: number;
+  especial?: boolean;
+  /** El Espejo empañado: el vapor tapa la vista y lo caliente pega más. */
+  vapor?: boolean;
+  calientes?: boolean;
+  /** El Desfile de jefes: los jefes llegan uno tras otro, así que tienen menos vida y dan más experiencia. */
+  vidaJefes?: number;
+  xpJefes?: number;
 }
 
 const o = (min: number, cada: number, ...tipos: IdEnemigo[]): Oleada => ({ min, cada, tipos });
@@ -464,8 +473,111 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
       { t: m(28, 30), tipo: 'muro', enemigo: 'lodo', cant: 38 },
     ],
   },
+  desfile: {
+    id: 'desfile',
+    nombre: 'El Desfile de jefes',
+    original: 'Desfile de jefes (Boss Rash)',
+    desc: 'Sobre el tapete del baño desfilan los jefes de todos los escenarios, uno tras otro. Pocos mugrosos, muchos cofres.',
+    limites: null,
+    desbloqueo: 'Vence 40 jefes en total',
+    jefeHiper: 'reinaGrasa',
+    duracion: 15 * 60,
+    especial: true,
+    vidaJefes: 0.6,
+    xpJefes: 4,
+    oleadas: [
+      o(13, 1.0, 'germen'),
+      o(19, 1.0, 'germen', 'sarro'),
+      o(26, 0.9, 'sarro', 'pulga'),
+      o(32, 0.8, 'pulga', 'gusanito'),
+      o(35, 0.8, 'acaro', 'gusanito'),
+      o(38, 0.75, 'hongoPie', 'acaro'),
+      o(42, 0.7, 'hongoPie', 'champuDerramado'),
+      o(45, 0.65, 'bacteria', 'champuDerramado'),
+      o(48, 0.6, 'bacteria', 'ciempies'),
+      o(51, 0.55, 'ciempies', 'grasaSifon'),
+      o(54, 0.5, 'espinilla', 'grasaSifon'),
+      o(58, 0.45, 'espinilla', 'rejillita'),
+      o(61, 0.42, 'rejillita', 'barrito'),
+      o(64, 0.4, 'barrito', 'estropajo'),
+      o(67, 0.36, 'estropajo', 'lagana'),
+    ],
+    eventos: [
+      { t: m(0, 30), tipo: 'jefe', enemigo: 'espinillon' },
+      { t: m(1, 10), tipo: 'jefe', enemigo: 'senorSarro' },
+      { t: m(1, 50), tipo: 'jefe', enemigo: 'tapon' },
+      { t: m(2, 30), tipo: 'jefe', enemigo: 'reyHongo' },
+      { t: m(3, 10), tipo: 'jefe', enemigo: 'donFrasco' },
+      { t: m(3, 50), tipo: 'jefe', enemigo: 'reySapo' },
+      { t: m(4, 30), tipo: 'jefe', enemigo: 'granMoco' },
+      { t: m(5, 10), tipo: 'jefe', enemigo: 'donaCucaracha' },
+      { t: m(5, 15), tipo: 'carta', enemigo: 'reinaCaspa', aviso: '¡Una carta mágica en el tapete!' },
+      { t: m(5, 50), tipo: 'jefe', enemigo: 'esponjaPodrida' },
+      { t: m(6, 30), tipo: 'jefe', enemigo: 'regaderaLoca' },
+      { t: m(7, 10), tipo: 'jefe', enemigo: 'reinaPompa' },
+      { t: m(7, 50), tipo: 'jefe', enemigo: 'pulpoDesague' },
+      { t: m(8, 30), tipo: 'jefe', enemigo: 'senorLagana' },
+      { t: m(9, 10), tipo: 'jefe', enemigo: 'motaPelo' },
+      { t: m(9, 50), tipo: 'jefe', enemigo: 'peloDesague' },
+      { t: m(10, 15), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Otra carta mágica perdida…' },
+      { t: m(10, 30), tipo: 'jefe', enemigo: 'cortinaMohosa' },
+      { t: m(11, 10), tipo: 'jefe', enemigo: 'senorCuchillas' },
+      { t: m(11, 50), tipo: 'jefe', enemigo: 'bocaSifon' },
+      { t: m(12, 30), tipo: 'jefe', enemigo: 'barroNegro' },
+      { t: m(13, 10), tipo: 'jefe', enemigo: 'ciempiesGigante' },
+      { t: m(13, 50), tipo: 'jefe', enemigo: 'poteCrema' },
+      { t: m(14, 30), tipo: 'jefe', enemigo: 'reinaGrasa', aviso: '¡La Reina Grasa cierra el desfile!' },
+      { t: m(14, 31), tipo: 'jefe', enemigo: 'barroNegro' },
+    ],
+  },
+  espejo: {
+    id: 'espejo',
+    nombre: 'El Espejo empañado',
+    original: 'Tormenta blanca (Whiteout)',
+    desc: 'El espejo de la ducha lleno de vapor: casi no se ve nada más allá de ti. El secador, el vapor y lo caliente pegan más.',
+    limites: null,
+    desbloqueo: 'Aguanta 20 minutos en La Ducha',
+    jefeHiper: 'senorLagana',
+    duracion: 15 * 60,
+    especial: true,
+    vapor: true,
+    calientes: true,
+    oleadas: [
+      o(13, 1.0, 'caspa'),
+      o(24, 1.0, 'caspa', 'germen'),
+      o(34, 0.9, 'germen', 'gotaGrasa'),
+      o(42, 0.8, 'gotaDura', 'acaro'),
+      o(50, 0.8, 'acaro', 'espumaSucia'),
+      o(58, 0.7, 'espumaSucia', 'pompa', 'acaro'),
+      o(66, 0.65, 'burbujaSucia', 'espumaSucia'),
+      o(74, 0.6, 'bacteria', 'burbujaGas'),
+      o(82, 0.55, 'bacteria', 'espumaSucia'),
+      o(86, 0.5, 'bacteria', 'burbujaGas'),
+      o(93, 0.48, 'lagana', 'bacteria'),
+      o(101, 0.45, 'lagana', 'espumaSucia'),
+      o(109, 0.42, 'lagana', 'burbujaGas'),
+      o(117, 0.4, 'burbujaGas', 'lagana'),
+      o(125, 0.36, 'moco', 'lagana', 'burbujaGas'),
+    ],
+    eventos: [
+      { t: m(0, 50), tipo: 'enjambre', enemigo: 'gotaGrasa', cant: 20, aviso: '¡Gotas de grasa entre el vapor!' },
+      { t: m(2), tipo: 'flotar', enemigo: 'caspa', cant: 18 },
+      { t: m(2, 45), tipo: 'elite', enemigo: 'acaro' },
+      { t: m(3, 30), tipo: 'enjambre', enemigo: 'gotaDura', cant: 30 },
+      { t: m(5), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Una carta mágica escrita en el espejo…' },
+      { t: m(6), tipo: 'flotar', enemigo: 'espumaSucia', cant: 14 },
+      { t: m(7, 30), tipo: 'jefe', enemigo: 'granMoco', aviso: '¡El Gran Moco salió del vapor!' },
+      { t: m(8, 30), tipo: 'anillo', enemigo: 'bacteria', cant: 30 },
+      { t: m(10), tipo: 'jefe', enemigo: 'regaderaLoca', aviso: '¡La Regadera Loca echando vapor!' },
+      { t: m(11), tipo: 'enjambre', enemigo: 'gotaGrasa', cant: 50 },
+      { t: m(11, 45), tipo: 'elite', enemigo: 'lagana' },
+      { t: m(12, 30), tipo: 'jefe', enemigo: 'senorLagana', aviso: '¡Don Lagaña, empañado y bravo!' },
+      { t: m(13, 30), tipo: 'muro', enemigo: 'espumaSucia', cant: 34 },
+      { t: m(14, 20), tipo: 'enjambre', enemigo: 'gotaDura', cant: 60 },
+    ],
+  },
 };
 
-export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague'];
+export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague', 'desfile', 'espejo'];
 /** La partida completa (después llega la Ducha Helada). */
 export const DURACION = 30 * 60;

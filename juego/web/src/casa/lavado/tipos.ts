@@ -89,7 +89,7 @@ export type IdEnemigo =
   // La Parca del baño
   | 'duchaHelada';
 
-export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera' | 'desague';
+export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera' | 'desague' | 'desfile' | 'espejo';
 
 /** Los modos que se abren con los tesoros (y el Hiper de cada escenario, venciendo a su jefe del minuto 25). */
 export type IdModo = 'hiper' | 'inverso' | 'infinito' | 'sinLimite' | 'ruleta' | 'azar';

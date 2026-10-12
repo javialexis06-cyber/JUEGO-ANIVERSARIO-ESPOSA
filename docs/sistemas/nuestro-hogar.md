@@ -490,6 +490,17 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   los mugrosos comunes hasta el centro y se los traga (cuentan como eliminados), pero también se traga las gotitas que
   nadie recoja: hay que pararse en el borde y recoger rápido. A los jefes y a los jugadores no los jala (así no hay
   que sincronizar empujones en línea). Tres logros más (72 en total).
+- **Versión 2, fase 3d: los dos primeros especiales** (duran 15 minutos, `DefEscenario.duracion`, y llevan el sello
+  «Especial · 15 min» en el menú). **El Desfile de jefes** (Boss Rash; se abre venciendo 40 jefes en total): sobre el
+  tapete del baño (`FRAG_TAPETE`, lila con franjas y flecos) desfilan 23 jefes de todos los escenarios, uno cada 40 s
+  desde el 0:30 (con 60 % de vida y 4 veces la experiencia: `vidaJefes` y `xpJefes`), pocos mugrosos, dos cartas mágicas en el piso (5:15 y 10:15) y la Reina Grasa con el Barro Negro
+  cerrando el desfile (vencerla abre su Hiper). **El Espejo empañado** (Whiteout; se abre aguantando 20 minutos en La
+  Ducha): el espejo con gotas y vaho (`FRAG_ESPEJO`) y un **velo de vapor** encima (`.lv-velo-vapor`, un div con
+  degradado, nada de filtros sobre el lienzo) que solo deja ver lo que está cerca; **lo caliente pega ×1,5**
+  (secador, vaporizador, sauna, plancha, piedras calientes, toallazo y sus evoluciones: `bonoCaliente` en
+  `disparos.ts`). Jefes: Gran Moco, Regadera Loca y Don Lagaña (el del Hiper). Al llegar a los 15 minutos llega la
+  Ducha Helada como en los otros. Cuatro logros más (76 en total): Coleccionista de jefes, Ducha larguita, Fin del
+  desfile y Espejo limpiecito.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.
