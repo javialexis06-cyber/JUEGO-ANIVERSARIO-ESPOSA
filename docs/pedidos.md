@@ -11,8 +11,14 @@ simples) 4 (minimapa y mapa grande con fotos de verdad y marcas) y 5 (salidas an
 cuadrada, semillas y estanques por casillas) quedaron **hechas**. La tanda 6 quedó **hecha** (12 de octubre): Gremio de Aventureros y
 Museo del Valle, terreno en la carpintería, vecinos por partes, inicio guiado, campaña por cartas y vecinos, y Campaña y
 Astra unificadas. **Siguiente**: el prólogo en película (`docs/sistemas/cine-granja.md`) espera que Javier lo vea; si le
-gusta, se hacen las demás escenas grandes con el mismo estilo. Las voces del prólogo quedaron **hechas** (celestial «suave»); falta
-su música propia (`SOLO=granja node scripts/musica-ia.mjs`).
+gusta, se hacen las demás escenas grandes con el mismo estilo. Las voces del prólogo quedaron **hechas** (celestial «suave») y se queda con su música
+de antes (M12 y M13).
+
+**La película de Astra (12 de octubre, propuesta esperando a Javier):** todas las escenas animadas unidas como una sola
+película (prólogo, 14 cinemáticas, 5 de Sangre y Ceniza, 6 secundarias, el Altar del Lazo y **la boda** «Siempre te
+elegiré»), más la planeación de cuatro minijuegos futuros (peleas, carreras, celular, tower defense). Está en
+[`en-obra/pelicula-de-astra.md`](en-obra/pelicula-de-astra.md); **espera a Javier**: las 7 decisiones del capítulo 9
+y la línea de Laura en la boda. Después: arreglos de coherencia → guiones → animar por actos.
 
 
 **Prioridad actual, 11 de octubre:** Javier encargó una base narrativa profunda para conectar granja y
