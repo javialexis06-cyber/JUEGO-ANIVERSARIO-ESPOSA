@@ -52,6 +52,10 @@ export const TESOROS: DefTesoro[] = [
     escenario: 'banera', x: 2300, y: 1300, pista: 'Está tirada en La Bañera, muy abajo a la derecha',
   },
   {
+    id: 'radio', nombre: 'La Radio de la ducha', original: 'Magic Banger', abre: 'La Radio en el menú: escoges la canción que suena en la lavada',
+    escenario: 'ducha', x: 2000, y: -1400, pista: 'Está colgada en La Ducha, muy arriba a la derecha',
+  },
+  {
     id: 'monedero', nombre: 'El Monedero', original: 'Glass Vizard', abre: 'El vendedor ambulante sale en todos los escenarios',
     escenario: null, x: 0, y: 0, pista: 'Se lo compras al vendedor ambulante',
   },

@@ -228,7 +228,7 @@ Ducha» → una carta…). Todo se ve en la colección y en la Sala de Trofeos.
    - **2a hecha** (11 de octubre): los seis tesoros tirados (Cuento, Mapa, Ruleta, y después de ganar: Libro de
      recetas, Calentador y Espejo al revés) y los seis modos. Mientras no existan los escenarios de la ducha, los
      tesoros están en La Cara, El Lavamanos y La Bañera; el Espejito de mano y los tres frasquitos ya se abrían con
-     logros (fase 1). Quedan para después la Radio (cuando haya música por escenario) y la Mascarilla de noche (fase 4).
+     logros (fase 1). La Radio y la Mascarilla de noche se hicieron después (fase 4).
    - **2b hecha** (11 de octubre): el vendedor ambulante es **Don Jabón** (pastilla de jabón de peluche con sombrero
      vueltiao) con su carrito; vende con las gotas de la partida. Las **cajitas sorpresa** se pasan a la fase 4: cada
      una trae un disfraz nuevo, así que se hacen junto con esos disfraces.

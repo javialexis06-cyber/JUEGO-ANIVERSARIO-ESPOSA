@@ -204,6 +204,10 @@ class Musica {
   private antes: string | null = null;
   // Las pistas que rotan en la partida (las que tengan archivo), barajadas en cada partida
   private ruedas: { normal: string[]; intensa: string[] } = { normal: ['lavado-partida'], intensa: ['lavado-intensa'] };
+  /** La canción de la Radio de la ducha: suena toda la partida, también con jefe (null: la rueda de siempre). */
+  radio: string | null = null;
+  /** La que se está escuchando en la pantalla de la Radio (en el menú). */
+  private escuchando: string | null = null;
 
   /** 0 tranquila … 3 a todo dar (sube con los minutos): desde la 2, la pista más pesada. */
   get intensidad() {
@@ -227,8 +231,14 @@ class Musica {
     this.enPartida = false;
     this.elegir();
   }
+  /** La Radio del menú: escuchar una canción (null: vuelve la del menú). */
+  escuchar(id: string | null) {
+    this.escuchando = id;
+    this.elegir();
+  }
   /** Empieza una partida. */
   partida() {
+    this.escuchando = null;
     this.enPartida = true;
     this.nivel = 0;
     this.conJefe = false;
@@ -241,6 +251,11 @@ class Musica {
   }
   private elegir() {
     if (!this.reloj) return;
+    if (!this.enPartida && this.escuchando) return musicaCasa.pista(this.escuchando, { bucle: true });
+    if (this.enPartida && this.radio) {
+      if (musicaCasa.pistaActual() !== this.radio) musicaCasa.pista(this.radio, { bucle: true });
+      return;
+    }
     if (!this.enPartida || this.conJefe) return musicaCasa.pista(!this.enPartida ? 'lavado-menu' : 'lavado-jefe');
     // En la partida, una rueda de canciones (normal o intensa): si ya suena una de la rueda que toca, se deja seguir
     const rueda = this.nivel >= 2 ? this.ruedas.intensa : this.ruedas.normal;

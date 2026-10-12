@@ -105,7 +105,7 @@ export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera'
 /** Los modos que se abren con los tesoros (y el Hiper de cada escenario, venciendo a su jefe del minuto 25). */
 export type IdModo = 'hiper' | 'inverso' | 'infinito' | 'sinLimite' | 'ruleta' | 'azar';
 /** Los tesoros del baño (las reliquias del original). */
-export type IdTesoro = 'espejoReves' | 'calentador' | 'recetas' | 'ruleta' | 'cuento' | 'mapa' | 'monedero' | 'mascarillaNoche';
+export type IdTesoro = 'espejoReves' | 'calentador' | 'recetas' | 'ruleta' | 'cuento' | 'mapa' | 'monedero' | 'mascarillaNoche' | 'radio';
 
 export type IdObjeto =
   | 'arepa' // vida (el pollo del original)

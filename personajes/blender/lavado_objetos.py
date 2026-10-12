@@ -2559,6 +2559,76 @@ def mascarilla_noche(p):
     destellos(p, [(0.42, -0.1, 0.6), (-0.42, -0.1, 0.15)], 0.045, '#E8DEFF')
 
 
+def nota_musical(p, c, s, m, doble=False):
+    """Una corchea (o dos unidas) de plastilina, de frente a la cámara."""
+    x, y, z = c
+    cabezas = [(x, z)] + ([(x + s * 0.9, z + s * 0.25)] if doble else [])
+    for (cx, cz) in cabezas:
+        p.blob((cx, y, cz), (s * 0.34, s * 0.16, s * 0.26), m, n=8)
+        p.tubo([(cx + s * 0.28, y, cz + s * 0.05), (cx + s * 0.28, y, cz + s * 1.1)], s * 0.07, m, seg=6)
+    if doble:
+        p.tubo([(x + s * 0.28, y, z + s * 1.1), (x + s * 1.18, y, z + s * 1.35)], s * 0.12, m, seg=6, perfil=(1.0, 0.6))
+    else:
+        p.tubo([(x + s * 0.28, y, z + s * 1.1), (x + s * 0.62, y, z + s * 0.82), (x + s * 0.6, y, z + s * 0.55)], s * 0.08, m, seg=6, perfil=(1.0, 0.6))
+
+
+def radio_ducha(p):
+    """La Radio de ducha (el tesoro que deja escoger la música): radiecito redondo de colgar en la ducha, con su parlante
+    grande, la perilla, la antena con bolita, la ventosa de atrás y notas que se le escapan."""
+    cuerpo = M('#6CC9D6', rough=0.4, coat=0.5)
+    borde = M('#F39AB0', rough=0.45, coat=0.4)
+    oscuro = M('#2F4858', rough=0.6)
+    # El cuerpo: una cajita bien redonda, con el borde rosado alrededor del frente
+    p.caja((0, 0, 0.3), (0.3, 0.13, 0.25), cuerpo, p=3.2)
+    o = clay.lathe(p.nom(), [(0.205, -0.02), (0.235, 0.0), (0.205, 0.02), (0.18, 0.0)], p.coll, borde, segments=40, subsurf=1,
+                   cap_bottom=False, cap_top=False)
+    o.rotation_euler = (math.pi / 2, 0, 0)
+    o.location = (-0.06, -0.125, 0.29)
+    p.add(o)
+    # El parlante: rejilla oscura con huequitos
+    o = clay.lathe(p.nom(), [(0.0, 0.0), (0.19, 0.0), (0.19, 0.012)], p.coll, oscuro, segments=40, subsurf=1, cap_bottom=True, cap_top=False)
+    o.rotation_euler = (math.pi / 2, 0, 0)
+    o.location = (-0.06, -0.118, 0.29)
+    p.add(o)
+    rejilla = M('#4E6E80', rough=0.5)
+    for i in range(-3, 4):
+        for k in range(-3, 4):
+            if i * i + k * k > 10:
+                continue
+            p.blob((-0.06 + i * 0.045, -0.135, 0.29 + k * 0.045), (0.016, 0.006, 0.016), rejilla, n=5)
+    # La pantallita con su onda y las dos perillas a la derecha
+    p.caja((0.22, -0.125, 0.4), (0.055, 0.012, 0.04), M('#BFF5D8', rough=0.3, emision=0.6, ruido=0.0), p=4.0)
+    p.tubo([(0.18, -0.14, 0.4), (0.2, -0.14, 0.42), (0.22, -0.14, 0.38), (0.24, -0.14, 0.42), (0.26, -0.14, 0.4)], 0.005,
+           M('#2F8F68', 0.4), seg=4)
+    for (z, col) in ((0.27, '#F7D046'), (0.15, '#F39AB0')):
+        k = M(col, rough=0.35, coat=0.6)
+        o = clay.lathe(p.nom(), [(0.0, 0.0), (0.045, 0.0), (0.045, 0.03), (0.038, 0.04), (0.0, 0.04)], p.coll, k, segments=24, subsurf=1,
+                       cap_bottom=True, cap_top=True)
+        o.rotation_euler = (math.pi / 2, 0, 0)
+        o.location = (0.22, -0.12, z)
+        p.add(o)
+        p.caja((0.22, -0.162, z + 0.022), (0.006, 0.004, 0.016), M('#FFFDF8', 0.4), p=4.0)
+    # La antena con bolita y la tira de colgar arriba
+    p.tubo([(0.2, 0.0, 0.52), (0.26, 0.0, 0.7), (0.29, 0.0, 0.82)], 0.012, M('#C9D3DA', rough=0.25, metal=0.8), seg=6)
+    p.blob((0.29, 0.0, 0.84), (0.035,) * 3, borde, n=8)
+    p.tubo([(-0.2, 0.0, 0.52), (-0.16, 0.0, 0.66), (-0.04, 0.0, 0.7), (0.04, 0.0, 0.66), (0.08, 0.0, 0.52)], 0.025, borde, seg=8,
+           perfil=(1.0, 0.55))
+    # La ventosa de atrás (asoma por los lados) y las paticas de goma
+    o = clay.lathe(p.nom(), [(0.0, 0.0), (0.11, 0.0), (0.13, 0.03), (0.06, 0.05), (0.0, 0.05)], p.coll,
+                   M('#E8F7F2', rough=0.2, coat=0.6, transmision=0.4), segments=32, subsurf=1, cap_bottom=True, cap_top=True)
+    o.rotation_euler = (-math.pi / 2, 0, 0)
+    o.location = (0.0, 0.13, 0.3)
+    p.add(o)
+    for sx in (-1, 1):
+        p.blob((sx * 0.2, -0.02, 0.05), (0.05, 0.05, 0.03), oscuro, n=6)
+    # Las notas que se le escapan y unas burbujitas
+    nota_musical(p, (-0.42, -0.1, 0.5), 0.13, M('#E86A8A', rough=0.35, coat=0.5))
+    nota_musical(p, (0.4, -0.12, 0.86), 0.1, M('#7B6CD9', rough=0.35, coat=0.5), doble=True)
+    burbuja(p, (-0.36, -0.12, 0.84), 0.05)
+    burbuja(p, (0.44, -0.12, 0.6), 0.035)
+    destellos(p, [(-0.44, -0.12, 0.2), (0.48, -0.12, 0.3)], 0.04)
+
+
 def cajita_sorpresa(p):
     """La cajita sorpresa: caja de regalo grande de rayas con moño enorme y una etiqueta con signo de pregunta."""
     rosa = M('#F39AB0', rough=0.5, coat=0.3)
@@ -2823,7 +2893,7 @@ ICONOS = {
     'bandera': bandera,
     'quesito': quesito,
     # La Feria de las cremas
-    'llavecita': lambda p: llavecita(p), 'cajita': cajita_sorpresa, 'mascarillaNoche': mascarilla_noche,
+    'llavecita': lambda p: llavecita(p), 'cajita': cajita_sorpresa, 'mascarillaNoche': mascarilla_noche, 'radio': radio_ducha,
     'hueso_mano': hueso_mano, 'hueso_dorado': dorar(hueso_mano), 'bomba_dorada': dorar(bomba_mano), 'barquito_dorado': dorar(barquito_mano),
     'talco_dorado': dorar(talco_mano), 'cartas_mano': cartas_mano, 'regalito_mano': regalito_mano, 'perrito_mochila': perrito_mochila,
     'llave_espalda': llave_espalda, 'gorro_papel': gorro_papel, 'maquina_mano': maquina_mano,

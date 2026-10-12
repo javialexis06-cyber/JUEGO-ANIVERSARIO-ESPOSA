@@ -54,7 +54,7 @@ con ella quedan todos los escenarios de la propuesta). Javier pidió (12 de octu
 arreglos de la granja que venía haciendo el otro frente (`en-obra/granja-arreglos.md`: tandas 1 a 5 **hechas**; la 6
 espera que Javier diga si la hace este frente o el del motor) y después seguir con lo que falta del lavado. La fase 4
 ya está completa (4a y 4b: ocho disfraces con transformación y cajitas sorpresa; 4c: las cartas de la noche; 4d: las
-aventuras de la protagonista por capítulos); del lavado queda lo pequeño: la Radio y los bichos especiales. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
+aventuras de la protagonista por capítulos); del lavado queda lo pequeño: los bichos especiales (la Radio ya está). Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
 los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
 nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
 astral en pulso, el Guardián de una, sin pantallazo negro y los menús rehechos) y **la app de amigos con los seis
@@ -134,7 +134,8 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
        noche, tirada en La Bañera).
      - ~~4d: las aventuras de la protagonista~~ **hecho** (13 capítulos en tres aventuras: el carro andando, el bus a
        Barranquilla sin el detalle y los vuelos cancelados; sola o en pareja, con historia antes y después).
-     - Lo pequeño que queda: la Radio (escoger la música) y los bichos especiales (el que persigue, el que inunda).
+     - ~~La Radio (escoger la música)~~ **hecho** (tesoro en La Ducha; 23 canciones del lavado y de los otros juegos).
+     - Lo pequeño que queda: los bichos especiales (el que persigue, el que inunda).
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
 6. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.

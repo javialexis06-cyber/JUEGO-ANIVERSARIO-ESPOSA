@@ -888,6 +888,8 @@ export class Lavado {
     let tJefe = 0;
     let tFinEspera = 0;
     let nCuadros = 0;
+    // (con la Radio de la ducha, la canción escogida; cada celular la suya)
+    musicaLavado.radio = this.p.tesoros.includes('radio') && this.p.radio ? this.p.radio : null;
     musicaLavado.partida();
     const resumen = await new Promise<ResumenPartida | null>((ok) => {
       terminar = ok;

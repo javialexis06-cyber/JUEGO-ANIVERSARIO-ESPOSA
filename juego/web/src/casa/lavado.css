@@ -1269,3 +1269,19 @@ body.lavandose .hud-arriba-der { opacity: 0; pointer-events: none; transition: o
   font: 700 12px/1.4 var(--texto); color: #5f4a44;
 }
 .lv-fin-historia b { display: block; font: 700 13px/1.2 var(--display); color: #3d2b27; margin-bottom: 2px; }
+
+/* La Radio de la ducha */
+.lv-radio { gap: 10px; }
+.lv-radio-lista { flex: 1.4; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; padding: 2px 4px 8px 2px; display: flex; flex-direction: column; gap: 4px; }
+.lv-radio-lista h4 { margin: 6px 0 0 4px; font: 700 13px/1.1 var(--display); color: #8a4a5a; }
+.lv-pistas { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px; }
+.lv-pista {
+  border: 0; border-radius: 12px; padding: 6px 9px; display: flex; align-items: center; gap: 7px; text-align: left; color: #3d2b27;
+  background: rgba(255, 248, 238, 0.95); box-shadow: 0 2px 0 rgba(61, 43, 39, 0.18); font: 700 11.5px/1.15 var(--texto);
+}
+.lv-pista i { font-style: normal; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: #6cc9d6; color: #fff; font-size: 10px; flex: 0 0 20px; }
+.lv-pista small { margin-left: auto; color: #7a625a; font-size: 10px; }
+.lv-pista.sel { outline: 3px solid #d7708d; background: #fff; }
+.lv-pista.sel i { background: #d7708d; animation: lv-latir 0.9s ease-in-out infinite; }
+.lv-radio-detalle { align-items: center; text-align: center; justify-content: center; }
+.lv-radio-detalle .lv-ico { filter: drop-shadow(0 4px 0 rgba(61, 43, 39, 0.15)); }

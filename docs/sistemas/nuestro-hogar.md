@@ -610,6 +610,14 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   capítulo (el anfitrión lo escoge, `ConfigPartida.capitulo`), los dos lo guardan y la sala sigue con el siguiente.
   Los capítulos no cuentan como escenario ganado ni como récord. El progreso guarda `aventuras` (capítulos pasados).
   Para el balance: `CAPITULO=a1c2 node scripts/balance-lavado.mjs 3 - el,ella`.
+- **La Radio de la ducha** (el Magic Banger del original): un tesoro más, colgado en La Ducha muy arriba a la derecha
+  (radiecito de colgar con parlante, perillas, antena y ventosa, en Blender: `radio_ducha` en `lavado_objetos.py`;
+  logro «¡Que suene!», 94 en total). Con ella sale en el menú el chip «📻» y la pantalla de la Radio (`radio.ts`): 23
+  canciones con nombre propio, las del lavado y las de Sangre y Ceniza, el cohete, el súper, la cocina y la mesa
+  (las que también trae la app de amigos; nunca las de la casa ni las de la pareja). Tocar una la pone a sonar y la
+  deja escogida (`progreso.radio`); en la lavada suena esa toda la partida, también con jefes
+  (`musicaLavado.radio`), y «La de siempre» vuelve a la rueda de canciones que se pone más pesada con los minutos.
+  Cada celular escoge la suya.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

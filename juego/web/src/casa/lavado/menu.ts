@@ -11,6 +11,7 @@ function conQue(a: DefArma): string {
 }
 import { AVENTURA, AVENTURAS, CAPITULO, capituloAbierto, type DefCapitulo } from './aventuras';
 import { CARTAS, ID_CARTAS } from './cartas';
+import { PISTA_RADIO, RADIO } from './radio';
 import { DISFRAZ, disfracesDe, puedeApuntar, type DefDisfraz } from './disfraces';
 import { ENEMIGOS, ID_ENEMIGOS } from './enemigos';
 import { ESCENARIOS, ID_ESCENARIOS } from './escenarios';
@@ -22,7 +23,7 @@ import {
   type ProgresoLavado,
 } from './progreso';
 import { MODO, MODOS, TESORO, TESORO_DE_MODO, TESOROS } from './tesoros';
-import { sfx } from './sonidos';
+import { musicaLavado, sfx } from './sonidos';
 import { PODER, PODERES, precioPoder } from './tienda';
 import { FRASES, aventuraVista, cartaVista, disfrazVisto, enemigoVisto, logroVisto } from './textos';
 import type { IdCarta, IdEscenario, IdModo, Rol, Stat } from './tipos';
@@ -139,6 +140,7 @@ export class Menu {
           <button class="lv-chip" data-m="cartas">${FRASES.iconoCarta()} ${carta ? carta.nombre : FRASES.sinCarta()}</button>
           <button class="lv-chip lv-chip-ataque ${apunta && this.p.manual ? 'si' : ''}" data-m="ataque" ${apunta ? '' : 'disabled'}
             title="${apunta ? 'Toca para cambiar' : 'Los disfraces de área siempre disparan solos'}">🎯 Ataque: ${apunta ? (this.p.manual ? 'a mano' : 'solito') : 'solito (de área)'}</button>
+          ${this.p.tesoros.includes('radio') ? `<button class="lv-chip" data-m="radio">📻 ${PISTA_RADIO[this.p.radio]?.nombre ?? 'Radio: la de siempre'}</button>` : ''}
           ${this.p.mejor[this.p.escenario] ? `<span class="lv-chip">🏆 ${mmss(this.p.mejor[this.p.escenario]!)}</span>` : ''}
         </div>
       </div>
@@ -189,11 +191,14 @@ export class Menu {
     this.actual = cual;
     this.sel = cual === 'disfraces' ? this.p.disfraz : cual === 'escenarios' ? this.p.escenario : cual === 'cartas' ? this.p.carta : cual === 'tienda' ? 'poder' : '';
     if (cual === 'aventuras') this.sel = this.capituloSugerido(this.avSel);
+    if (cual === 'radio') this.sel = this.p.radio;
     this.pantalla.hidden = false;
     this.pintarPantalla();
   }
 
   private cerrarPantalla() {
+    // (al salir de la Radio vuelve la música del menú)
+    if (this.actual === 'radio') musicaLavado.escuchar(null);
     this.pantalla.hidden = true;
     if (this.suelta) {
       this.suelta = false;
@@ -210,6 +215,7 @@ export class Menu {
     const titulo: Record<string, string> = {
       disfraces: 'Disfraces', escenarios: '¿Dónde nos lavamos?', cartas: FRASES.tituloCartas(), tienda: 'Poderes para siempre', coleccion: 'Colección',
       aventuras: FRASES.tituloAventuras(),
+      radio: '📻 La Radio de la ducha',
     };
     const cab = `<header><button class="lv-boton" data-v="volver">← Volver</button><h2>${titulo[this.actual]}</h2>
       <div class="lv-saldo" style="position:static">${icono('moneda', 22)}${miles(this.p.oro)}</div></header>`;
@@ -219,6 +225,7 @@ export class Menu {
     else if (this.actual === 'cartas') cuerpo = this.htmlCartas();
     else if (this.actual === 'tienda') cuerpo = this.htmlTienda();
     else if (this.actual === 'aventuras') cuerpo = this.htmlAventuras();
+    else if (this.actual === 'radio') cuerpo = this.htmlRadio();
     else cuerpo = this.htmlColeccion();
     this.pantalla.innerHTML = cab + cuerpo;
   }
@@ -436,6 +443,23 @@ export class Menu {
       <div class="lv-detalle">${det || '<h3>Toca algo para verlo</h3>'}${resumen}</div></div>`;
   }
 
+  // ------------------------------------------------------------------------------------------------- La Radio
+  private htmlRadio() {
+    const grupos = [...new Set(RADIO.map((r) => r.de))];
+    const fila = (id: string, nombre: string, extra = '') =>
+      `<button class="lv-pista ${this.sel === id ? 'sel' : ''}" data-sel="${id}"><i>${this.sel === id ? '🔊' : '▶'}</i><span>${nombre}</span>${extra}</button>`;
+    const lista = grupos.map((g) => `<h4>${g}</h4><div class="lv-pistas">${RADIO.filter((r) => r.de === g).map((r) => fila(r.id, r.nombre)).join('')}</div>`).join('');
+    const actual = PISTA_RADIO[this.sel];
+    return `<div class="cuerpo lv-radio">
+      <div class="lv-radio-lista">${fila('', '🔀 La de siempre', '<small>van cambiando y suben con el susto</small>')}${lista}</div>
+      <div class="lv-detalle lv-radio-detalle">${icono('radio', 92)}
+        <h3>${actual ? actual.nombre : 'La de siempre'}</h3>
+        <p>${actual ? `De ${actual.de}. Suena toda la lavada, también con los jefes.` : 'Las canciones del lavado van cambiando solas y se ponen más pesadas cuando la cosa se pone fea.'}</p>
+        <p class="esp">Toca una canción para escucharla: la que quede escogida es la que suena en la próxima lavada (cada celular la suya).</p>
+        <button class="lv-boton rosa" data-v="volver">¡Listo!</button>
+      </div></div>`;
+  }
+
   // ------------------------------------------------------------------------------------------------- Aventuras
   /** La aventura que se está viendo en la pantalla de aventuras. */
   private avSel = 'a1';
@@ -544,6 +568,12 @@ export class Menu {
     if (sel) {
       this.sel = sel.dataset.sel ?? '';
       sfx.toque();
+      if (this.actual === 'radio') {
+        // Tocar una canción la escoge y la pone a sonar (la de siempre: vuelve la del menú)
+        this.p.radio = this.sel in PISTA_RADIO ? this.sel : '';
+        musicaLavado.escuchar(this.p.radio || null);
+        void this.guardar();
+      }
       if (this.actual === 'escenarios') {
         const id = this.sel as IdEscenario;
         if (escenarioAbierto(this.p, id)) {
