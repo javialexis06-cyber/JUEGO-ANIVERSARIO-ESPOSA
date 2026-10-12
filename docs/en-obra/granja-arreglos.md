@@ -381,7 +381,7 @@ Hallazgos con coordenadas:
   - Plan: para la fase 0, montoncito de tierra removida con 3-5 semillitas claras encima. Modelarlo en Blender
     (`granja_*.py`) y verse siempre, también regado (más oscuro).
 
-## Tanda 6 · Historia natural y lugares físicos — **hecha en parte** (12 de octubre)
+## Tanda 6 · Historia natural y lugares físicos — **hecha** (12 de octubre)
 
 Quedó así:
 - **Gremio de Aventureros** (`gremio`, 9×7 en (67,2), puerta a la callecita de los animales) y **Museo del Valle**
@@ -413,11 +413,14 @@ Quedó así:
   sigue» del Diario. Las partidas con progreso no repiten el inicio. Cada local se presenta la primera vez que se entra
   (`PRESENTACIONES`). Prueba: `scripts/granja-v3/probar-guia.mjs`.
 
-Falta:
-- Que cada paso nuevo de la campaña llegue por carta o lo cuente un vecino (hoy P01 llega por carta; lo demás sigue en la
-  pestaña Campaña).
-- Unificar Campaña y expedientes de Astra (`CAMPANA_ASTRA` repite ids P/F).
-- Voz de Celia para el prólogo (ElevenLabs) si Javier quiere.
+- **Campaña por carta y por los vecinos** (`correo-campana.ts`): cada misión principal (P02–P24 y F01–F12) que se abre
+  (`historiaDisponible`) y no se ha aceptado llega al buzón la noche siguiente, firmada por el primero de su reparto, con
+  a quiénes buscar y dónde. Los vecinos del Pueblo del Sol que participan en una misión abierta la mencionan al
+  conversar («Te cuenta»). Se sigue aceptando en el Diario, estando en la región.
+- **Campaña y Astra unificadas**: el panel de Astra ya no repite los 36 expedientes P/F (salvo los que la partida ya
+  tenía empezados, para no perder progreso); deja los expedientes propios de cada región y un botón a la campaña.
+- **El prólogo en película** (12 de octubre, pedido de Javier): ver `docs/sistemas/cine-granja.md`. Reemplaza al
+  prólogo escrito (que queda de respaldo si el teléfono no puede con la película).
 
 
 Lo pedido:

@@ -4,8 +4,9 @@ import { fechaValle } from './jornada';
 import { cercaBuzon } from './buzon';
 import { actuarEncargo } from './encargos';
 import { CARTAS_CORRESPONDENCIA, PROYECTOS_CORRESPONDENCIA, proyectoPorCarta } from './correspondencia-datos';
+import { CARTAS_CAMPANA, campanaPorAceptar } from './correo-campana';
 export { posicionBuzon, cercaBuzon } from './buzon';
-export interface CartaDef {soloGuia?:boolean;id:string;remitente:string;titulo:string;texto:string;diaMin:number;actividad?:string;encargo?:string;estacion?:'verano'|'otono'|'invierno';monedas:number;objetos:readonly Pila[];proyecto?:string;eleccion?:number;momento?:'confirmacion'|'cierre'}
+export interface CartaDef {soloGuia?:boolean;campana?:string;id:string;remitente:string;titulo:string;texto:string;diaMin:number;actividad?:string;encargo?:string;estacion?:'verano'|'otono'|'invierno';monedas:number;objetos:readonly Pila[];proyecto?:string;eleccion?:number;momento?:'confirmacion'|'cierre'}
 export const CARTAS:readonly CartaDef[]=[
  {id:'bienvenida',remitente:'Casa de los Oficios',titulo:'Una nueva página',texto:'Bienvenidos al valle. Al dormir guardarás la jornada y avanzarás las estaciones. En el pueblo encontrarás herramientas, vecinos y encargos. Este buzón acompaña a tu cabaña cuando la reorganices.',diaMin:0,monedas:0,objetos:[]},
  // La trae la guía del inicio apenas se trabaja el primer surco (guia.ts), no la noche
@@ -28,9 +29,9 @@ export interface DecisionCorreo {proyectoId:string;eleccion:number;elegidaDia:nu
 export interface EstadoCorreo {version:2;cartas:CartaRecibida[];decisiones:DecisionCorreo[]}
 export type AccionCorreo={tipo:'leer'|'reclamar'|'retomar';id:string}|{tipo:'elegir';id:string;eleccion:number};
 export const crearCorreo=():EstadoCorreo=>({version:2,cartas:[{id:'bienvenida',recibidaDia:0,leidaDia:null,reclamadaDia:null}],decisiones:[]});
-export const cartaDef=(id:string)=>CARTAS.find(c=>c.id===id)??CARTAS_CORRESPONDENCIA.find(c=>c.id===id);
-export function entregarCorreo(s:EstadoGranja){for(const c of [...CARTAS,...CARTAS_CORRESPONDENCIA]){
- const dia=s.jornada.diasCompletados;if((c as CartaDef).soloGuia||s.correo.cartas.some(r=>r.id===c.id)||dia<c.diaMin||c.actividad&&!(s.estadisticas[c.actividad]>0)||c.encargo&&!s.encargos.registros.some(r=>r.id===c.encargo&&r.fase==='completado')||c.estacion&&fechaValle(dia).estacion!==c.estacion)continue;
+export const cartaDef=(id:string)=>CARTAS.find(c=>c.id===id)??CARTAS_CORRESPONDENCIA.find(c=>c.id===id)??CARTAS_CAMPANA.find(c=>c.id===id);
+export function entregarCorreo(s:EstadoGranja){for(const c of [...CARTAS,...CARTAS_CORRESPONDENCIA,...CARTAS_CAMPANA]){
+ const dia=s.jornada.diasCompletados;if((c as CartaDef).soloGuia||(c as CartaDef).campana&&!campanaPorAceptar(s,(c as CartaDef).campana!)||s.correo.cartas.some(r=>r.id===c.id)||dia<c.diaMin||c.actividad&&!(s.estadisticas[c.actividad]>0)||c.encargo&&!s.encargos.registros.some(r=>r.id===c.encargo&&r.fase==='completado')||c.estacion&&fechaValle(dia).estacion!==c.estacion)continue;
  if(c.proyecto){const d=s.correo.decisiones.find(d=>d.proyectoId===c.proyecto&&d.eleccion===c.eleccion);if(!d||dia<=d.elegidaDia||c.momento==='cierre'&&(d.completadaDia===null||dia<=d.completadaDia||!s.correo.cartas.some(r=>r.id===PROYECTOS_CORRESPONDENCIA.find(p=>p.id===c.proyecto)!.ramas[d.eleccion].confirmacion.id)))continue;}
  s.correo.cartas.push({id:c.id,recibidaDia:dia,leidaDia:null,reclamadaDia:null});
 }}
@@ -57,7 +58,7 @@ export function actuarCorreo(s:EstadoGranja,a:AccionCorreo,x:number,z:number):Re
  if(s.monedas+c.monedas>1e9)return mal('No cabe el adjunto en tu saldo.');let mochila=s.casillasInventario;for(const p of c.objetos){const copia=cambiarCantidad(mochila,p.articulo,p.cantidad,p.calidad);if(!copia)return mal('Libera espacio para recoger todos los adjuntos. La carta conserva su contenido.');mochila=copia;}
  s.casillasInventario=mochila;s.inventario=resumirCasillas(mochila);s.monedas+=c.monedas;r.reclamadaDia=s.jornada.diasCompletados;s.estadisticas.adjuntos_correo=(s.estadisticas.adjuntos_correo??0)+1;return {ok:true,mensaje:'Adjunto recogido y guardado.'};
 }
-function cartasValidas(v:EstadoCorreo,dia:number,anterior=false){if(!v||!Number.isInteger(dia)||dia<0||dia>1e6||!Array.isArray(v.cartas)||v.cartas.length>CARTAS.length+(anterior?0:CARTAS_CORRESPONDENCIA.length))return false;const ids=new Set<string>();for(const r of v.cartas){const c=anterior?CARTAS.find(c=>c.id===r?.id):cartaDef(r?.id);if(!c||ids.has(r.id)||!Number.isInteger(r.recibidaDia)||r.recibidaDia<c.diaMin||r.recibidaDia>dia||r.leidaDia!==null&&(!Number.isInteger(r.leidaDia)||r.leidaDia<r.recibidaDia||r.leidaDia>dia)||r.reclamadaDia!==null&&(!Number.isInteger(r.reclamadaDia)||r.leidaDia===null||r.reclamadaDia<r.leidaDia||r.reclamadaDia>dia||!c.monedas&&!c.objetos.length))return false;ids.add(r.id);}return ids.has('bienvenida');}
+function cartasValidas(v:EstadoCorreo,dia:number,anterior=false){if(!v||!Number.isInteger(dia)||dia<0||dia>1e6||!Array.isArray(v.cartas)||v.cartas.length>CARTAS.length+(anterior?0:CARTAS_CORRESPONDENCIA.length+CARTAS_CAMPANA.length))return false;const ids=new Set<string>();for(const r of v.cartas){const c=anterior?CARTAS.find(c=>c.id===r?.id):cartaDef(r?.id);if(!c||ids.has(r.id)||!Number.isInteger(r.recibidaDia)||r.recibidaDia<c.diaMin||r.recibidaDia>dia||r.leidaDia!==null&&(!Number.isInteger(r.leidaDia)||r.leidaDia<r.recibidaDia||r.leidaDia>dia)||r.reclamadaDia!==null&&(!Number.isInteger(r.reclamadaDia)||r.leidaDia===null||r.reclamadaDia<r.leidaDia||r.reclamadaDia>dia||!c.monedas&&!c.objetos.length))return false;ids.add(r.id);}return ids.has('bienvenida');}
 /** La subversión anterior conserva fechas y adjuntos exactamente; un formato corrupto se rechaza. */
 export function migrarCorreo(v:unknown,dia:number):unknown {const s=v as EstadoCorreo;if(s&&(s as {version:number}).version===1&&(s as EstadoCorreo).decisiones===undefined&&cartasValidas(s,dia,true))return {version:2,cartas:s.cartas,decisiones:[]};return v;}
 export function correoValido(v:EstadoCorreo,dia:number){
