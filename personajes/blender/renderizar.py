@@ -203,8 +203,29 @@ def retratos():
     scene.render.film_transparent = False
 
 
+def cuerpos():
+    """Cuerpo entero de frente (un poquito girado) con fondo transparente: el retrato de la mochila de la granja."""
+    room(False)
+    # Las luces del estudio se quedan; el piso, la pared y la tarima no salen en la foto
+    escondidos = [o for o in bpy.data.collections['Estudio'].all_objects if o.type == 'MESH' and not o.hide_render]
+    for o in escondidos:
+        o.hide_render = True
+    scene.render.film_transparent = True
+    for who, r in (('el', EL), ('ella', ELLA)):
+        show_collection('El | personaje', who == 'el')
+        show_collection('Ella | personaje', who == 'ella')
+        r.location.x = 0
+        r.rotation_euler.z = math.radians(-14)
+        render(f'cuerpo-{who}', (0.0, -8.2, 1.75), (0.0, 0.0, 1.2), 70, 420, 560)
+        r.rotation_euler.z = 0
+        r.location.x = X_EL if who == 'el' else X_ELLA
+    for o in escondidos:
+        o.hide_render = False
+    scene.render.film_transparent = False
+
+
 SHOTS = {
-    'retratos': retratos,
+    'retratos': retratos, 'cuerpos': cuerpos,
     'sala_pareja': sala_pareja, 'sala_el': sala_el, 'sala_el_tq': sala_el_tq, 'sala_ella': sala_ella, 'estudio_pareja': estudio_pareja,
     'pareja_feliz': pareja_feliz, 'caras': caras, 'giro': giro, 'giro_el': giro_el, 'giro_ella': giro_ella, 'poses': poses_juego,
 }

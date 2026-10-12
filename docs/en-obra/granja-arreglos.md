@@ -160,7 +160,28 @@ Plan:
      `flex-shrink:0`.
    - Revisar en 844×390 (celular) y en 1366×768.
 
-## Tanda 3 · Mochila estilo Minecraft y habilidades simples
+## Tanda 3 · Mochila estilo Minecraft y habilidades simples — **hecho** (12 de octubre)
+
+Quedó así:
+- **Mochila** (`renderMochila` en `inventario-ui.ts`): arriba, el retrato de cuerpo entero del personaje que juega
+  con las ranuras de cabeza, cuerpo y pies a la izquierda y el arma a la derecha (tocar una ranura llena la quita);
+  al lado, salud, energía, ataque y defensa (`motor.bonos()`); abajo, la rejilla. Al tocar un objeto, las barras se
+  cambian por su detalle y los botones «Separar mitad» y «Soltar». Ya no salen «Elige un objeto», ampliar, «Tu
+  partida» ni «Objetos de tu partida anterior».
+- **Retratos**: `public/granja/retratos/el.webp` y `ella.webp`, renderizados en Blender con fondo transparente
+  (toma `cuerpos` de `personajes/blender/renderizar.py`; el `.blend` se reconstruye con `construir.py` si el
+  Blender instalado es más viejo que el del archivo).
+- **Ajustes** tiene ahora «Tu partida» (`renderPartida`): exportar, importar y recuperar los objetos de la partida
+  anterior (`recuperar-legado`). **Ampliar la mochila a 36** se compra en el mostrador de la tienda de semillas
+  (`ampliar-mochila`, 250 monedas).
+- **Habilidades** (`habilidades-ui.ts`): una fila por habilidad con su ícono grande, el número de nivel y los 10
+  niveles; al pasar el mouse o tocar un nivel sale un globito con lo que da (menos energía de la herramienta,
+  probabilidad de oro, precisión, ataque, profesión y recetas de ese nivel). La profesión o la especialización se
+  elige en una tarjetica que solo aparece cuando toca; la elegida queda como etiqueta con su globito. Una lunita
+  avisa que hay aprendizajes que se reconocen al dormir.
+- Probado en 844×390 y 1366×768 (mochila con E, selección, Ajustes, globitos arriba y abajo, elegir profesión,
+  ampliar en la tienda).
+
 
 Lo pedido:
 
