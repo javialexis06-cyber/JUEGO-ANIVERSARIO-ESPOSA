@@ -1,0 +1,224 @@
+{
+  "bloque": "historias-secundarias",
+  "base_integrada": "d1c16f0",
+  "historias_adicionales": 181,
+  "objetivos_adicionales": 617,
+  "total_historias": 217,
+  "total_objetivos": 727,
+  "regresion": {
+    "suites": 36,
+    "fallos": 0
+  },
+  "compilaciones": {
+    "pareja": true,
+    "amigos": true
+  },
+  "contratos": {
+    "comprobaciones": 7,
+    "historias_completadas_por_acciones": 217,
+    "recuerdos_posteriores": 142,
+    "preparacion": "Ubicaciones, recursos y capacidad preparados; no certifica balance ordinario."
+  },
+  "navegador_secundarias": {
+    "checks": [
+      "La interfaz conserva cerrada una personal hasta conocer al participante",
+      "El recuerdo inicial abre su historia personal y mantiene los objetivos propios",
+      "La personal usa la prueba de cuentas del oficio, con salida y checkpoint",
+      "Dos pistas físicas abren un secreto; una sola no muestra su inicio",
+      "La nota del epílogo se guarda localmente y avanza por su acción",
+      "Recargar conserva el epílogo y la nota sin repetir sus objetivos",
+      "Biografía de un vecino nuevo de Claude funciona sin inventar una misión personal",
+      "El reproductor encuentra una toma existente de Claude con su ID original"
+    ],
+    "errors": [],
+    "bad": [],
+    "audios": [
+      {
+        "url": "S03.escena.01-b5b76.ogg",
+        "http": 206
+      },
+      {
+        "url": "S12.escena.01-84c7e.ogg",
+        "http": 206
+      },
+      {
+        "url": "S12.escena.02-24b6d.ogg",
+        "http": 206
+      },
+      {
+        "url": "S12.escena.03-ce009.ogg",
+        "http": 206
+      },
+      {
+        "url": "S12.escena.06-ddac5.ogg",
+        "http": 206
+      },
+      {
+        "url": "S12.escena.07-30899.ogg",
+        "http": 206
+      },
+      {
+        "url": "S12.escena.08-d3b75.ogg",
+        "http": 206
+      },
+      {
+        "url": "S12.rama1.01-bf4d1.ogg",
+        "http": 206
+      },
+      {
+        "url": "C01.L001-2c213.ogg",
+        "http": 206
+      }
+    ],
+    "viewport": [
+      844,
+      390
+    ],
+    "dibujoWebGLPausado": true,
+    "alcance": "Interfaz y guardado sobre campaña principal preparada por acciones; no certifica economía, render regional ni teléfonos."
+  },
+  "navegador_general": {
+    "comprobaciones": 6,
+    "errores": [],
+    "dibujo_real": true
+  },
+  "medios": {
+    "lineas": 3590,
+    "vocesDeclaradas": 998,
+    "modelosDeclarados": 0,
+    "musicaDeclarada": 0,
+    "errores": [],
+    "estado": "Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir."
+  },
+  "limites": [
+    "217 efectos especializados en el bloque siguiente.",
+    "Vida social, actividades regionales y jefes propios pendientes.",
+    "No certifica balance ordinario ni teléfonos físicos."
+  ],
+  "sha256": {
+    "juego/web/src/granja-v3/agricultura.ts": "1dbe366cc45bfff3eafae6fdf5ca3dbd441c10bfb2126576c1b94e39e183ae69",
+    "juego/web/src/granja-v3/aldeanos-ui.ts": "11d4d9f998b45eafe54a7006a0e7107777e4f34774f9e1f3d8df7e3c7b44eada",
+    "juego/web/src/granja-v3/aldeanos.ts": "bb698b9ba2185425011b06cd17806bad6dc374eea602f6361227b3888d47b790",
+    "juego/web/src/granja-v3/arte.ts": "73e612a5ac7554b40b9b633b8507190d5f6834feec8abbeb07f19cf15e278d92",
+    "juego/web/src/granja-v3/astra-arte.ts": "df0b8ba201d0c30b8985ae8e9049e2b5354b82f3287bb40aeaf4b5f55a6cd879",
+    "juego/web/src/granja-v3/astra-campana-datos.ts": "7c293ad90d4ab1dfc4fc879f4ee2e990f1eaba824b28ea19a4b2ba7858bfe6af",
+    "juego/web/src/granja-v3/astra-cultivos-datos.ts": "a2e7f96fdb3b9636dc2e7a221cc94d232dc1a3c264b8c3b47dbdf16dcd0a904a",
+    "juego/web/src/granja-v3/astra-lore-datos.ts": "0cbb02ea8e38c66753988d45b6fff74ebcd684caacb8edd76a66e0c837794896",
+    "juego/web/src/granja-v3/astra-medios.ts": "e46467a120a72212e544fbab74baf67b77db8b82011bfc9520bd866bb8f0e77e",
+    "juego/web/src/granja-v3/astra-misiones-datos.ts": "52db8877d4e712b1c0750fc2bb18f486044a655547d684d46714c269712db83b",
+    "juego/web/src/granja-v3/astra-mundo-datos.ts": "38919b4a41884e6470f1b58e9ad0459e3c1e216c21460cb783c337c4c2528b1c",
+    "juego/web/src/granja-v3/astra-recursos-datos.ts": "d3463a0381842b27f9b2ded7dc9f8eb4155a26fd6c645833e90ca07419f393d5",
+    "juego/web/src/granja-v3/astra-render.ts": "24540a9a204f4ba071dfc4d9436bdf70b76474fdcf1b528d532cecc9ee3c99bb",
+    "juego/web/src/granja-v3/astra-ui.ts": "ecc98afc2cf9801b63b5323f24730c91b20bd9abcade39e3c1d6ed1a181a3ee6",
+    "juego/web/src/granja-v3/astra.ts": "017cd23ec8292ba4ede6cbda99ee3dd5015b9fbc10a06687bcf9e3a5817291e5",
+    "juego/web/src/granja-v3/avatar.ts": "fcd5ff5ee5b6b356d59b89a6f597d4efe25cb1297596d84c6fde620e16809222",
+    "juego/web/src/granja-v3/aventura.ts": "5493e07f0ffff365363e0d3b0ad4d172d88caaeda6396bed92a57f8ac3b9dc15",
+    "juego/web/src/granja-v3/barra-ui.ts": "46b623cf80a64a24602031e24fe22c8991fe5fd9864053d0161a9868f11ab9c2",
+    "juego/web/src/granja-v3/barra.ts": "fdd3ba797032626b17f5ea9eb650d22948f2347e89013a23212b00ac38e096b5",
+    "juego/web/src/granja-v3/buzon.ts": "e7c7b0a598d558255e15d5336324395fa2ab766314786fe36ba68b5084230efc",
+    "juego/web/src/granja-v3/caminos-mundo.ts": "e86e0048b0c723c14fd4fd89d3eb3d46cc4a476bbef412426183864a685e9220",
+    "juego/web/src/granja-v3/catalogo.ts": "a896a89e237b84951d2fc1f9520253c3d7d8fd99db416e4a8d950cf6f59e82c9",
+    "juego/web/src/granja-v3/clima-render.ts": "086b2264153aab426f973844a82121dcda31e2f338f7f26fca81490a1f3bb779",
+    "juego/web/src/granja-v3/clima-ui.ts": "555b479161bef8fec32e6e46d8194a8650d7611a5d58676ed151a7a6f581f11b",
+    "juego/web/src/granja-v3/clima.ts": "bf9be0831e6d96bc2e4ea5c2fb4063a851a1ed4c2e9fc6023fdbd6c7c87c2643",
+    "juego/web/src/granja-v3/colecciones-datos.ts": "56a3f46708d18a5575bab0c1f0bfbc0f7694a9b13113aed3282145cce5bd2260",
+    "juego/web/src/granja-v3/colecciones-ui.ts": "d3d7ce9330fbac61335dfa5244f8e839bff7ba77dea1526f0b813503d476ac48",
+    "juego/web/src/granja-v3/colecciones.ts": "58569d79b4e750b7a502528d02b018d508c73d864d0f55f5ba2fd25a67eb6331",
+    "juego/web/src/granja-v3/compania-render.ts": "6aad355ce37c60a4f439caff76ec479132b053b0e5bfbd73c883ae6f700a60b8",
+    "juego/web/src/granja-v3/compania-ui.ts": "28d144b58d410df891dfd1544c918cd0a242bccb91794ad9e299c2159a7cd770",
+    "juego/web/src/granja-v3/compania.ts": "db4daf21fc5c6ee1618c09902be05f7cebf5c3c1e378e0661f26331934127269",
+    "juego/web/src/granja-v3/construccion-render.ts": "70b53faeb45ed5dfedc2b2d4d71f3037e3f2144b529cf1837d304e9427db38d2",
+    "juego/web/src/granja-v3/construccion-ui.ts": "82454492ec8d2049bb4382795be2ddb0db900a78f4a594c21c765e6b1764f564",
+    "juego/web/src/granja-v3/construccion.ts": "7f3783698ba873ddb5c0e63e3460b3a8f2fe63e575156490d3c90f2782ad997a",
+    "juego/web/src/granja-v3/controles.ts": "3e70fa39d222a61e25aba33980bb5af967d64f2c96eee8c267f69035f8d82746",
+    "juego/web/src/granja-v3/correo-render.ts": "530bf6942f84b4a7bb6cc58ece6e920e3b20cb99148b30ec7df739edf006f331",
+    "juego/web/src/granja-v3/correo-ui.ts": "d3a2a49354eb8ace1f109c5cd307972c643f81dc0e86e51d4d8fc2298d5f04d8",
+    "juego/web/src/granja-v3/correo.ts": "5045c7db7f691ce37778bdc6451a1daba1bb4cf31ec126f9961452fb7dc347dd",
+    "juego/web/src/granja-v3/correspondencia-datos.ts": "ff25ad643954467c9d635f894ca87598b6b7ca3287dba2ed5ea4db8d20dd4ba7",
+    "juego/web/src/granja-v3/cuartos.ts": "491e7e7009b715cde0f21bd2741d60614d0f78950c76b055a3c3dcdf64b7920d",
+    "juego/web/src/granja-v3/cuidados.ts": "cdf84b95cca3bf53e478de6af74bdc086840c3580f271d0c28b48401f42bcce5",
+    "juego/web/src/granja-v3/cultivos-datos.ts": "c60a215f476af0de093be678cb0083d09b683c30eb68d705e540ff891af1d65f",
+    "juego/web/src/granja-v3/cultivos-render.ts": "cbfeb71e0b1e94b46592fbb60a144602baa89cd8491c29046c58522b74513b62",
+    "juego/web/src/granja-v3/cultivos-ui.ts": "47c57a81d3b7531777ecc3477a5040795bf1c9e40394c2a3827b51b43620eeb7",
+    "juego/web/src/granja-v3/dormitorios.ts": "e9c71659f61b1035006631c5faae8b500500689d9930161ffeab62e10e7b19a6",
+    "juego/web/src/granja-v3/efectos.ts": "f3017f656849e1719c4a13dbd06c866f4aed9ed8fc2be15db377f1231ec2a23e",
+    "juego/web/src/granja-v3/encargos-datos.ts": "4001c3a7f3949d970d5ebf52a0037486e53e8d59dd7e5bb30bfc6852df66925b",
+    "juego/web/src/granja-v3/encargos-ui.ts": "b679ec3b13785ef84131d9f6913bcb629dae7e63adad8b50e227738e7fa1aa24",
+    "juego/web/src/granja-v3/encargos.ts": "d2e49a466df8199bab61e8e7942c78a1aa493ad58e79f039228a08446b272997",
+    "juego/web/src/granja-v3/envios-render.ts": "c87ea83eb74d71ed21724d8c38cf7c458019c5308240f455c1d28808c8127c29",
+    "juego/web/src/granja-v3/envios-ui.ts": "b67302cd0b0f9c0067e3911a1790b25a72c30803ca6d652b3b43c1a98cf7e750",
+    "juego/web/src/granja-v3/envios.ts": "700f54256d74c6a0cdbeaab0fff399c8fc9e8353e0b98ae551acacd8a83fb9d4",
+    "juego/web/src/granja-v3/escenas-aventura.ts": "710a3786e4984f545e0c17e433049d3abf2bd6a9f17d650da9b4da9c5e69cc1f",
+    "juego/web/src/granja-v3/escenas-produccion.ts": "2ebd5e7f6af2f640b8d509c50420aaaf96062b7ed61d7f1b28d8727fdfef968f",
+    "juego/web/src/granja-v3/estado.ts": "743ac1ca978ffc5f9167d097ed5fd63d9dd6ba2fa64e9a0f14b64545998b9259",
+    "juego/web/src/granja-v3/festejos-render.ts": "935536ddbc47016758af21c9c44a540d57624f6e070aee1a68fc66d5236c6000",
+    "juego/web/src/granja-v3/festivales-datos.ts": "581268958c1f87e742adc4f607964d36f6d030439359f8f9ada8cd178d9cb20b",
+    "juego/web/src/granja-v3/festivales-ui.ts": "9cb557708468b8e3927ab9ea4832c3e7aa013c1e067997bf8fac5d10049ca989",
+    "juego/web/src/granja-v3/festivales.ts": "2dd132079c07684b28786cf2b3b27aee6b039a75e632f0406ad8a6395838be98",
+    "juego/web/src/granja-v3/frutales-datos.ts": "7e173d414ef4600c390c6b14558efbb16ccc52c741094f9ab924ec847b67abb7",
+    "juego/web/src/granja-v3/frutales-ui.ts": "e1dfda27f7142b95ec0d09d29e90f41fc29d76ab6ed144a8bfa0a6d82383a527",
+    "juego/web/src/granja-v3/frutales.ts": "02c5b43fbffb9e020d39d20e37671dcf83ab8e7375eb7c38e33c13efba277c62",
+    "juego/web/src/granja-v3/ganaderia-render.ts": "d83eacabd775f2b4015ea6c78cfd1d43b16a9f76b75cdab390b4f61e3d0f912d",
+    "juego/web/src/granja-v3/ganaderia-ui.ts": "b0c99d4774e751659a59141f4f2bfaa1a02cc196820d91e7ac60738cda42ccf6",
+    "juego/web/src/granja-v3/ganaderia.ts": "da2618fbbb5b5b5bc8b04333995d831613c5b44a58c06f9b9ea3161f2ba4ded2",
+    "juego/web/src/granja-v3/genetica.ts": "8d9311d83049a21f4408b289c169a3b62b68894caee86ac54e993e38a414c8f9",
+    "juego/web/src/granja-v3/guardado.ts": "caa088c0fec2a8361b68553ac30daf5405d2e8f0825b2ec1c33c0f24fc4f5f84",
+    "juego/web/src/granja-v3/habilidades-ui.ts": "6dd52d8eafa0dd4e7be55d1007dfd3d4c46641c085951e7d0fa8d7960cf082ad",
+    "juego/web/src/granja-v3/habilidades.ts": "bba5bf58bf7b22c12a2823721da1f7d2c068fd4a912ac5d139acc5ddf27a70db",
+    "juego/web/src/granja-v3/herramientas3d.ts": "2c9a2396077241d2982eeac809f1bfffe3bf5984ebd10aa282c3179879990af3",
+    "juego/web/src/granja-v3/historia-datos.ts": "9055eb6d45bc1c7ad1084ebc749acbd4a923ce7171638a8d772de3ec9adb2bbb",
+    "juego/web/src/granja-v3/historia-retos.ts": "59e6b71eadebcb43016754b1ec50f606ddcb74e74833ed349a4ae34f61b100ac",
+    "juego/web/src/granja-v3/historia-tipos.ts": "9e211864c932268fe6be26e18d2191e398a583d9a28ab255e6631a599c361b9c",
+    "juego/web/src/granja-v3/historia-ubicaciones.ts": "0cbe419ff5b466c7e1b11670477e9b93309bf12ad736fb76b62288567922a0e7",
+    "juego/web/src/granja-v3/historia-ui.ts": "af9a0ebb62aaab8d5a3cccaee485f47e123d2e98957c973f1e90ea92c2f54267",
+    "juego/web/src/granja-v3/historia.ts": "8a132546023197e8cca4c488561d3ccef8bac7ca8d94b24ccd4cf93d629ca91c",
+    "juego/web/src/granja-v3/hogar.ts": "688907d773fd7a19a14d5d2465b26184b04bc719a0645435561eb179aa18d9ff",
+    "juego/web/src/granja-v3/hud.ts": "7554000471d92f22c35a9b1712d781a8bd5905f941c8302c8bafbeeb0e1ac1d4",
+    "juego/web/src/granja-v3/huerto-render.ts": "6da36dc336db6ccfc6a9dbd99ffc64b8d31fa4eb314a078dabab1e4727e66c86",
+    "juego/web/src/granja-v3/iconos-lista.ts": "591c39d4c716c7a0a8c6768f35b6db2538ff2dabe16097bbb601c1ba1070ce53",
+    "juego/web/src/granja-v3/iconos.ts": "7c4205eb120b32950eb7af01bff7f79b7aa8cf449da8b1e6a1256cb1e7e989a1",
+    "juego/web/src/granja-v3/iconos3d.ts": "c0c695673ce41add6d3aba3ec398844c6674fd1b4f63eb6144ee3db99f946956",
+    "juego/web/src/granja-v3/inventario-ui.ts": "0221c225752b8e03f8c18340e22de9c88006591da7e9d3b24fdbb14ca29e7167",
+    "juego/web/src/granja-v3/inventario.ts": "8fb9333d89b0e51d6bd25077be0ea8ebddb9c06ad13e34381831d1d3f49e03ba",
+    "juego/web/src/granja-v3/invernadero.ts": "25e984afaef6466b7abfae31b5bb3fe310c69d4e64a946847f7df7be7905bcd5",
+    "juego/web/src/granja-v3/jornada-ui.ts": "6ee01d670c817ba361b3eddd59ab7680ba2ebadbc71af5f25098df15c4cf0eed",
+    "juego/web/src/granja-v3/jornada.ts": "9eae2d4ba3e8768abcfc790b11f2458ebe4d2eda0e208ecee89b1b5917711a73",
+    "juego/web/src/granja-v3/libros-datos.ts": "63191690959736ec6a8020b93fa332a8acdec422749cb50b1685a3037184a91c",
+    "juego/web/src/granja-v3/libros-ui.ts": "01aa9b7fb92f4d8ed389062e07e1d069a1120dccdebf60381d12fed49360c08e",
+    "juego/web/src/granja-v3/libros.ts": "0b0d6fe002906ac0cbb71b7f93cb410901905a545b32ccba6a67c6b17c416bcf",
+    "juego/web/src/granja-v3/main.ts": "44c730b41da347bd375a45d228cac283f84ecc520e0acbb42953322f7506b67d",
+    "juego/web/src/granja-v3/mina-render.ts": "506ef9be6b95463046972eca2a62d12d8599959151153b8e72157d216fa17268",
+    "juego/web/src/granja-v3/motor.ts": "4ff856827f078f7052aca89468d4eb3b79fc65ed1ed10c197d2e8c5a1fd88029",
+    "juego/web/src/granja-v3/objetos.ts": "c002a7ef14cb423fbe59ee21fe61ca8e54c97c13594ea0cecde7abcb65daa972",
+    "juego/web/src/granja-v3/paisaje-render.ts": "b8721530ec6c341ec2bd827ef626ba37a7147981389f702bf0dbfcf4b1126256",
+    "juego/web/src/granja-v3/paisaje.ts": "c3504f46024dcf1884d4b49d6858de24828248f172d67bf1cfcfec4439ffc8a5",
+    "juego/web/src/granja-v3/produccion-ui.ts": "d8fab09aeb3161c2738970d2807b15aab03e169743df683cac4c6908c32c8f2a",
+    "juego/web/src/granja-v3/produccion.ts": "c6bc9a0b06f282d5e8c22ec88b1ebb6df38540763adef83cc84745651cbd78d6",
+    "juego/web/src/granja-v3/progresion.ts": "78d294e6c33c0e036eac349d039dbdba8df4729c92f85dbb30d64840764b5599",
+    "juego/web/src/granja-v3/pueblo-adornos.ts": "44f4aceee5a057ba33e3a325f5f6b2f844c7b606bb5602d9e0f6adca9f96a1fe",
+    "juego/web/src/granja-v3/pueblo-datos.ts": "82cf4cbae8d446269edc251899a15609f9a72dd554935c26bbb33d2f7a05ec1d",
+    "juego/web/src/granja-v3/pueblo.ts": "075069ad7dcf78ce68a685cf9105fdc585242bb0c661266a9a9f0d84dd350c3e",
+    "juego/web/src/granja-v3/recuperadora.ts": "90c74041530504ae0fce519e7f25f925087fc344a351b4d0c03c30b8d612a033",
+    "juego/web/src/granja-v3/refugios.ts": "46a20f80fe0973e02226883b051398b2fc78fafcbddd9e5ce09d7eae36f830d1",
+    "juego/web/src/granja-v3/rutinas-ganado.ts": "b63274ed78bf9161e038aa76cdb97a099e68c2b05ee217e8c31049ac3574a95d",
+    "juego/web/src/granja-v3/sonidos-granja.ts": "3da3b04ee2cb102bc8ea67805b2ed717c50522998e633bb6fce4a8ba75be01d2",
+    "juego/web/src/granja-v3/suelo.ts": "5e640cc1ceec6d14690a088f3cf238ffe600cc6d2cafeca0fdbbe9ddbc3a438a",
+    "juego/web/src/granja-v3/sueno-hogar.ts": "3870c6cc078f8515a38fd890ede18aa0bc58918b2a2028472c8904e131779059",
+    "juego/web/src/granja-v3/transito.ts": "a47a71e3f8f2ae53042920f7cac79794d2faa2153a83e471f427e8e54faf0ea6",
+    "juego/web/src/granja-v3/valor-venta.ts": "91ba076eb7585eed2c807bd580c7f49b1e25590fed4e715189d1942c04e8e7e7",
+    "juego/web/src/granja-v3/vecinos-astra.ts": "e9b98c30c36395f666b5198adafe3a41cf5767ee747d938aa42cd406d5eb185f",
+    "juego/web/src/granja-v3/vecinos3d.ts": "988f336fe4ed36d72aebe705a8db67a636309d04fab910a6d0e35a1c652654c9",
+    "juego/web/src/granja-v3/vida-social-ui.ts": "579c8fffa45e12363026638f4655685ce1159b923340ee8bc0bf82126c46018e",
+    "juego/web/src/granja-v3/vida-social.ts": "38714e572bd2a69aa07171b6772a1531ab64393b8d11c297f3e9fd62240d1ca6",
+    "juego/web/src/granja-v3/vista.ts": "9b732446e76a2fa3c5b89427e6e6b87db2e0bb60c7c22e965395a094f8d76167",
+    "juego/web/src/granja-v3/viviendas-ui.ts": "f05dee31f0010bf22ba9b35445a744f1b812a1fbbb3e973499345619bb4e9c47",
+    "juego/web/src/granja-v3/zonas-render.ts": "361a71dd7622dfcd0a5d97a58bb2896234a7c8d78302895eca24a58e9cc14928"
+  },
+  "publicacion": {
+    "sha": "0ed6b09fad3ba7b3ca476cb700fb8ec83face585",
+    "workflow": 38197085407,
+    "conclusion": "success",
+    "release": "apk-188",
+    "descargas_verificadas": 4
+  }
+}

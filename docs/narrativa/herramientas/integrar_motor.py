@@ -168,6 +168,31 @@ ts('astra-campana-datos.ts',{'misiones':[q for q in compiled if q['id'][0] in 'P
 lines=load('audio/lineas.json')+lineas_pueblos
 manifest={'version':1,'estado':'contrato_sin_medios_producidos','npc':np,'regiones':worlds,'rutas':routes,'voces':load('audio/reparto-voces.json'),'biografias':roster,'figuras':load('datos/figuras.json'),'misiones':compiled,'recursos':regiones,'lineas':lines,'escenas':sorted(set(l['escena'] for l in lines)),'musica':[{'id':m.group(1),'uso':m.group(2),'direccion':m.group(3)} for m in re.finditer(r'^\| (M\d+) \| ([^|]+) \| ([^|]+) \|', (N/'06-produccion.md').read_text(),re.M)]+[{'id':'M23','uso':'Confluencia','direccion':'Cuatro variaciones elementales y refugio; motivos separados, sin letra.'}],'medios':{'voces':{},'musica':{},'modelos':{}},'guardado':5,'nota':'Las misiones catalogadas incluyen adaptación de investigación; consultar los recibos reales adicionales y los efectos aún pendientes de cada premio.'}
 p=ROOT/'juego/web/public/granja/astra';p.mkdir(parents=True,exist_ok=True)
+contratos_jugables=[]
+for archivo in ['principales.json','secundarias.json']:
+ fuente=N/'jugabilidad'/archivo
+ if fuente.exists():contratos_jugables+=json.loads(fuente.read_text())
+manifest['contratos_jugables']=contratos_jugables
+manifest['escenas_historia']=guiones_historia
 (p/'produccion.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
 if not (p/'medios.json').exists(): (p/'medios.json').write_text(json.dumps({'version':1,'voces':{},'musica':{},'modelos':{}},indent=2)+'\n')
+# Reconectar únicamente tomas existentes cuya firma reproduce la del productor de Claude.
+# No hay llamadas a ElevenLabs, búsqueda de voces clonadas, borrado de tomas ni generación pagada.
+reparto_audio=ROOT/'juego/web/voces-guion/astra-reparto.json'
+if reparto_audio.exists():
+ asignaciones=json.loads(reparto_audio.read_text())
+ medios=json.loads((p/'medios.json').read_text())
+ for l in lines:
+  voz=asignaciones.get(l['hablante'],{}).get('voz')
+  if not voz or l['texto'].startswith('(En señas)'):continue
+  texto=re.sub(r'^\([^)]*\)\s*','',l['texto'])
+  firma=hashlib.sha1(('eleven_v4|{"stability":0.5,"similarity_boost":0.8}|'+voz+'|'+texto).encode()).hexdigest()[:5]
+  archivo=f'{l["id"]}-{firma}.ogg'
+  if (ROOT/'juego/web/public/audio/astra'/archivo).is_file():
+   medios['voces'].setdefault(l['id'],{'archivo':'./audio/astra/'+archivo,'huella_texto':l['huella_texto']})
+ (p/'medios.json').write_text(json.dumps(medios,ensure_ascii=False,indent=2)+'\n')
+ if medios['voces'] or medios['musica'] or medios['modelos']:
+  manifest['estado']='contrato_con_medios_parciales'
+  manifest['nota']='Los expedientes se conservan aparte. contratos_jugables contiene el diario nuevo; sus premios especializados se conectan por bloques.'
+  (p/'produccion.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps({'regiones':len(worlds),'npc':len(np),'viviendas':sum(len(r['viviendas']) for r in worlds),'misiones':len(compiled),'lineas':len(lines),'rutas':len(routes)},ensure_ascii=False))

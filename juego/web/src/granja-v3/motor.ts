@@ -1,4 +1,6 @@
-import {registrarBajasHistoria,crearHistoria,actuarHistoria,registrarHistoria,historiaValida} from './historia';
+import {celdaTransitable} from './transito';
+import {sincronizarSoportesPremio,actuarPremio,factorTecnica,dormirPremios} from './premios';
+import {migrarHistoria,registrarProduccionHistoria,registrarBajasHistoria,crearHistoria,actuarHistoria,registrarHistoria,historiaValida} from './historia';
 import { crearAstra, actuarAstra, astraValida, regionAstra, libreAstra, puntoCombate, reubicarAstra } from './astra';
 import { crearFestivales, invitarFestivales, actuarFestival, festivalesValidos } from './festivales';
 import { crearCorreo, entregarCorreo, actuarCorreo, correoValido, migrarCorreo, correspondenciaValida } from './correo';
@@ -103,7 +105,7 @@ export class MotorGranja {
  private agregar(id:string,n:number,calidad?:Calidad){const casillas=cambiarCantidad(this.estado.casillasInventario,id,n,calidad);if(!casillas)throw new MochilaLlena('La mochila está llena. Libera una casilla o combina pilas.');this.estado.casillasInventario=casillas;this.estado.inventario=resumirCasillas(casillas);this.sincronizarSeleccion()}
  nivelFabricacion(){return Math.max(0,...Object.values(this.estado.nivelesHerramienta))}
  nodosProduccion(){const p=this.estado.produccion;return [...p.cofres,...p.maquinas,...p.estructuras]}
- contextoProduccion(){return {casillas:this.estado.casillasInventario,habilidades:this.estado.habilidades,nivel:this.nivelFabricacion(),desbloqueos:this.estado.desbloqueos,zona:this.estado.zona,ahora:this.estado.ultimoTiempo}}
+ contextoProduccion(){return {premiosNarrativos:this.estado.historia?.premios??[],tecnica:factorTecnica(this.estado),casillas:this.estado.casillasInventario,habilidades:this.estado.habilidades,nivel:this.nivelFabricacion(),desbloqueos:this.estado.desbloqueos,zona:this.estado.zona,ahora:this.estado.ultimoTiempo}}
  rutasAventura(){return opcionesAventura({desbloqueos:this.estado.desbloqueos,construcciones:this.estado.produccion.estructuras.map(n=>n.articulo),nivelPico:this.nivelHerramienta('pico')})}
  pasoAventura(dt:number,x:number,z:number){
   const s=this.estado;if(!s.aventura.destinoActual||!finito(x,-1000,1000)||!finito(z,-1000,1000))return {dano:0,avisos:[] as string[]};
@@ -263,12 +265,12 @@ export class MotorGranja {
   for(const nodo of s.obstaculos)if(nodo.hp===0&&nodo.regeneraEn!==null&&now>=nodo.regeneraEn){nodo.hp=nodo.hpMax;nodo.regeneraEn=null;s.revision++;}
   const produccion=avanzarProduccion(s.produccion,now,{...this.contextoProduccion(),ahora:now});
   s.produccion=produccion.estado;s.casillasInventario=produccion.casillas;s.inventario=resumirCasillas(produccion.casillas);
-  for(const [id,n]of Object.entries(produccion.producidos)){this.contar('fabricar_'+id,n);this.contar('fabricar',n);}
+  registrarProduccionHistoria(s,produccion.producidos);for(const [id,n]of Object.entries(produccion.producidos)){this.contar('fabricar_'+id,n);this.contar('fabricar',n);}
   actualizarCompania(s,now);s.ultimoTiempo=now;s.buffs=s.buffs.filter(b=>b.hasta>now);this.sincronizarSeleccion();
  }
  actuar(a:Accion):Resultado {
   this.actualizar();const anterior=clonar(this.estado);
-  try{const resultado=this.ejecutar(a);if(!resultado.ok)this.estado=anterior;else {registrarHistoria(this.estado,a,anterior);if(a.tipo!=='herramienta')this.sincronizarSeleccion();if(a.tipo!=='dormir')this.atenderLluvia();const experiencia=HABILIDADES.filter(h=>this.estado.habilidades.experiencia[h]>anterior.habilidades.experiencia[h]).map(h=>({habilidad:h,cantidad:this.estado.habilidades.experiencia[h]-anterior.habilidades.experiencia[h],antes:nivelHabilidad(anterior.habilidades,h),despues:nivelHabilidad(this.estado.habilidades,h)}));if(experiencia.length)resultado.experiencia=experiencia;}return resultado}catch(e){this.estado=anterior;if(e instanceof MochilaLlena)return mal(e.message);throw e}
+  try{let resultado=this.ejecutar(a);if(resultado.ok){const apoyo=sincronizarSoportesPremio(this.estado,anterior,(x,z)=>this.celdaLibre(x,z));if(apoyo)resultado=apoyo;}if(!resultado.ok)this.estado=anterior;else {registrarHistoria(this.estado,a,anterior);if(a.tipo==='dormir')dormirPremios(this.estado,()=>this.random());if(a.tipo!=='herramienta')this.sincronizarSeleccion();if(a.tipo!=='dormir')this.atenderLluvia();const experiencia=HABILIDADES.filter(h=>this.estado.habilidades.experiencia[h]>anterior.habilidades.experiencia[h]).map(h=>({habilidad:h,cantidad:this.estado.habilidades.experiencia[h]-anterior.habilidades.experiencia[h],antes:nivelHabilidad(anterior.habilidades,h),despues:nivelHabilidad(this.estado.habilidades,h)}));if(experiencia.length)resultado.experiencia=experiencia;}return resultado}catch(e){this.estado=anterior;if(e instanceof MochilaLlena)return mal(e.message);throw e}
  }
  private ejecutar(a:Accion):Resultado {
   const s=this.estado;const now=s.ultimoTiempo;let r:Resultado;
@@ -276,7 +278,7 @@ export class MotorGranja {
   if(s.vidaSocial.actual&&a.tipo!=='social')return mal('Termina o cancela el encuentro antes de continuar.');
   if(s.jornada.resumenPendiente&&a.tipo!=='continuar_dia')return mal('Lee el resumen de la jornada y comienza la mañana.');
   if(s.aventura.destinoActual&&!['seleccionar_casilla','fila_barra','herramienta','personaje','mover_item','consumir','equipar_objeto','desequipar_objeto','accion_aventura','salir_aventura','descender_aventura','construir_ascensor','libro'].includes(a.tipo))return mal('Regresa de la expedición antes de realizar esa actividad.');
-  if(s.astra?.actual&&!['historia','astra','seleccionar_casilla','fila_barra','herramienta','personaje','mover_item','consumir','equipar_objeto','desequipar_objeto','entrar_aventura','salir_aventura','accion_aventura','descender_aventura'].includes(a.tipo))return mal('Regresa al valle para trabajar en la granja o usar sus servicios.');
+  if(s.astra?.actual&&!['premio','historia','astra','seleccionar_casilla','fila_barra','herramienta','personaje','mover_item','consumir','equipar_objeto','desequipar_objeto','entrar_aventura','salir_aventura','accion_aventura','descender_aventura'].includes(a.tipo))return mal('Regresa al valle para trabajar en la granja o usar sus servicios.');
   if(s.historia?.reto&&a.tipo!=='historia')return mal('Termina o deja la prueba de la historia.');
   if(s.astra?.escena&&a.tipo!=='astra')return mal('Termina la conversación antes de continuar.');
   if(['golpear','limpiar','labrar','regar','alisar','combatir','pescar','extraer'].includes(a.tipo)&&!this.herramientaDisponible())return mal('Esa herramienta está en la herrería. Retírala cuando termine el encargo.');
@@ -284,6 +286,7 @@ export class MotorGranja {
   if(s.zona==='pueblo'&&s.servicio&&(['comprar','craftear','comprar_objeto','adoptar','comprar_huevo_fertil','ampliar_mochila','vender','vender_pila','mejorar_herramienta','retirar_mejora','encargar_obra','ampliar_refugio','cancelar_obra'].includes(a.tipo)||(a.tipo==='compania'&&a.accion.tipo==='adoptar'))){const horario=atencionServicio(s.servicio,s.jornada.diasCompletados,s.jornada.minutos);if(!horario.abierto)return mal(horario.mensaje);}
   // Actions validate all requirements before spending currency, stock, energy or RNG.
   switch(a.tipo){
+   case 'premio':r=actuarPremio(s,a.accion,a.xJugador,a.zJugador,{agregar:(id,n,calidad)=>this.agregar(id,n,calidad),libre:(x,z)=>s.astra?.actual?libreAstra(s,x+.5,z+.5):s.zona==='granja'?this.celdaLibre(x,z)&&!s.parcelas.some(p=>p.x===x&&p.z===z):s.zona==='lago'?celdaTransitable(s,x,z):false});break;
    case 'historia':r=actuarHistoria(s,a.accion,a.xJugador,a.zJugador,{agregar:(id,n)=>this.agregar(id,n),noche:this.noche});break;
    case 'astra':r=actuarAstra(s,a.accion,a.xJugador,a.zJugador,{agregar:(id,n)=>this.agregar(id,n),noche:this.noche});break;
    case 'festival':r=actuarFestival(s,a.accion,a.xJugador,a.zJugador);break;
@@ -708,7 +711,7 @@ export class MotorGranja {
     for(const i of s.ganaderia.incubadoras){const h=i.huevo;if(!h)continue;const huevo=leerHuevo(h.articulo)!;h.dias++;if(h.dias>=GANADO[huevo.especie].incubacion){this.nacimiento(huevo.especie,huevo.genoma,huevo.sexo,i.edificioId,h.nombre,now);i.huevo=null;this.contar('huevos_incubados');}}
     cerrarDiaCompania(s);this.paseosCompania.limpiar();s.vida=100;s.energia=100;s.interior=null;s.servicio=null;s.enemigo=0;s.posicionExterior={zona:'granja',...p};this.contar('dias_dormidos');
     s.monedas+=ventas.total;for(const c of s.envios.cajas)c.casillas.fill(null);if(ventas.total){this.contar('ingresos_envio',ventas.total);this.contar('vender',ventas.lineas.reduce((n,p)=>n+p.cantidad,0));}
-    const terminadas=this.avanzarObras();const resumen=cerrarJornada(s.jornada,now,Math.floor(s.monedas),s.estadisticas,avanzados,maduros);if(terminadas.length)resumen.obras=terminadas;entregarCorreo(s);invitarFestivales(s);vencerEncargos(s);reiniciarRutinas(s);this.brotarMaleza();resumen.envios=ventas;resumen.aprendizajes=reconocerAprendizajes(s.habilidades,RECETAS);r={...bien('Jornada cerrada. Amanecerá a las 06:00.'),resumenJornada:resumen,posicionZona:p};break;
+    const terminadas=this.avanzarObras();const resumen=cerrarJornada(s.jornada,now,Math.floor(s.monedas),s.estadisticas,avanzados,maduros);if(terminadas.length)resumen.obras=terminadas;entregarCorreo(s);invitarFestivales(s);vencerEncargos(s);reiniciarRutinas(s);this.brotarMaleza();resumen.envios=ventas;resumen.aprendizajes=reconocerAprendizajes(s.habilidades,RECETAS.filter(r=>!r.premioNarrativo||s.historia!.premios.includes(r.premioNarrativo)));r={...bien('Jornada cerrada. Amanecerá a las 06:00.'),resumenJornada:resumen,posicionZona:p};break;
    }
    case 'descansar':if(s.zona!=='granja'&&s.zona!=='pueblo')return mal('Regresa a un lugar seguro para descansar.');s.vida=100;s.energia=100;r=bien('Descansaste y recuperaste fuerzas. El reloj de cuidado sigue su curso.');break;
    case 'reclamar':{
@@ -734,7 +737,7 @@ export function validarEstado(v:unknown):string|null {
  if(!v||typeof v!=='object')return 'falta el estado';const s=v as EstadoGranja;
  if(s.version!==5)return 'versión incompatible';
  if(!historiaValida(s.historia,s.jornada?.diasCompletados))return 'Historia inválida';
- if(!astraValida(s.astra,s.jornada?.diasCompletados))return 'Astra inválida';
+ if(!astraValida(s.astra,s.jornada?.diasCompletados,s.historia?.completadas))return 'Astra inválida';
  if(!festivalesValidos(s))return 'festivales inválidos';
   if(!correoValido(s.correo,s.jornada?.diasCompletados))return 'correo inválido';
   if(!vidaSocialValida(s.vidaSocial,s.jornada?.diasCompletados))return 'vida social inválida';
@@ -830,7 +833,7 @@ export function migrarEstado(valor:unknown):unknown {
   if(Array.isArray(s.sectorIds))for(const id of SECTORES_INICIALES)if(!s.sectorIds.includes(id))s.sectorIds.push(id);
   if(Array.isArray(s.obstaculos))s.obstaculos=s.obstaculos.filter((o:any)=>!(!o?.zona||o.zona==='granja')||!esSenderoGranja(o.x,o.z));
   if(Array.isArray(s.obstaculos)){/* La mina del valle ahora es solo la entrada: las rocas viejas de sus 5 niveles se retiran */s.obstaculos=s.obstaculos.filter((o:any)=>o?.zona!=='mina');/* lo que quedó en el suelo de cualquier nivel se puede recoger en la entrada */if(Array.isArray(s.drops))for(const d of s.drops)if(d?.zona==='mina')d.nivelMina=1;if(s.zona==='mina'){s.enemigo=0;s.nivelMina=1;}const ids=new Set(s.obstaculos.map((o:any)=>o?.id)),ocupadas=new Set(s.obstaculos.map((o:any)=>`${o?.zona},${o?.x},${o?.z}`));for(const n of nodosExteriores())if(n.zona!=='mina'&&!ids.has(n.id)&&!ocupadas.has(`${n.zona},${n.x},${n.z}`))s.obstaculos.push(n);}
-  if(s.historia===undefined)s.historia=crearHistoria();if(s.astra===undefined)s.astra=crearAstra();reubicarAstra(s.astra);if(s.libros===undefined)s.libros=crearLibros();if(s.colecciones===undefined)s.colecciones=crearColecciones();if(s.festivales===undefined)s.festivales=crearFestivales();if(s.correo===undefined)s.correo=crearCorreo();if(s.vidaSocial===undefined)s.vidaSocial=crearVidaSocial();if(s.encargos===undefined)s.encargos=crearEncargos();if(s.pueblo===undefined)s.pueblo=crearPuebloEstado();else if(s.pueblo?.version===1&&Array.isArray(s.pueblo.relaciones)&&s.pueblo.relaciones.length===9&&s.pueblo.relaciones.every((r:any)=>crearPuebloEstado().relaciones.slice(0,9).some(n=>n.id===r?.id)))s.pueblo.relaciones.push(...crearPuebloEstado().relaciones.filter(n=>!s.pueblo.relaciones.some((r:any)=>r?.id===n.id)));if(s.obras===undefined)s.obras=crearObras();if(s.compania===undefined)s.compania=crearCompania();if(s.ganaderia===undefined){s.ganaderia=crearGanaderia(s.edificios?.some((b:any)=>b.id==='corral_inicial'&&b.especie==='gallina')?'corral_inicial':undefined);if(Array.isArray(s.animales))for(const a of s.animales)if(a?.sexo==='macho'&&['vaca','cabra','gallina','pato','avestruz','dinosaurio'].includes(a.especie)&&a.productos>0)a.productoLegado=true;}if(s.tiempo===undefined&&finito(s.inicioTiempo))s.tiempo=crearTiempo(s.inicioTiempo);if(s.produccion===undefined)s.produccion=crearProduccion(s.ultimoTiempo);if(s.aventura===undefined){s.aventura=crearAventura();s.posicionAventura=null;}
+  if(s.historia===undefined)s.historia=crearHistoria();else migrarHistoria(s.historia);if(s.astra===undefined)s.astra=crearAstra();reubicarAstra(s.astra);if(s.libros===undefined)s.libros=crearLibros();if(s.colecciones===undefined)s.colecciones=crearColecciones();if(s.festivales===undefined)s.festivales=crearFestivales();if(s.correo===undefined)s.correo=crearCorreo();if(s.vidaSocial===undefined)s.vidaSocial=crearVidaSocial();if(s.encargos===undefined)s.encargos=crearEncargos();if(s.pueblo===undefined)s.pueblo=crearPuebloEstado();else if(s.pueblo?.version===1&&Array.isArray(s.pueblo.relaciones)&&s.pueblo.relaciones.length===9&&s.pueblo.relaciones.every((r:any)=>crearPuebloEstado().relaciones.slice(0,9).some(n=>n.id===r?.id)))s.pueblo.relaciones.push(...crearPuebloEstado().relaciones.filter(n=>!s.pueblo.relaciones.some((r:any)=>r?.id===n.id)));if(s.obras===undefined)s.obras=crearObras();if(s.compania===undefined)s.compania=crearCompania();if(s.ganaderia===undefined){s.ganaderia=crearGanaderia(s.edificios?.some((b:any)=>b.id==='corral_inicial'&&b.especie==='gallina')?'corral_inicial':undefined);if(Array.isArray(s.animales))for(const a of s.animales)if(a?.sexo==='macho'&&['vaca','cabra','gallina','pato','avestruz','dinosaurio'].includes(a.especie)&&a.productos>0)a.productoLegado=true;}if(s.tiempo===undefined&&finito(s.inicioTiempo))s.tiempo=crearTiempo(s.inicioTiempo);if(s.produccion===undefined)s.produccion=crearProduccion(s.ultimoTiempo);if(s.aventura===undefined){s.aventura=crearAventura();s.posicionAventura=null;}
   if(s.envios===undefined){
    s.envios=crearEnvios();if(Array.isArray(s.edificios))s.envios.cajas=s.edificios.filter((e:any)=>e?.articulo===ARTICULO_ENVIO).map((e:any)=>crearCajaEnvio(e.id));
    // Un plano de bienvenida para partidas anteriores; no altera su paisaje ni construcciones.

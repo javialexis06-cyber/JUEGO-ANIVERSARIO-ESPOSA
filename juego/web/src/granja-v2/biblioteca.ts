@@ -10,7 +10,7 @@ export class Objeto{
  update(dt:number){if(!this.dead)this.mixer.update(dt);}
  dispose(){if(this.dead)return;this.dead=true;this.mixer.stopAllAction();this.mixer.uncacheRoot(this.root);this.root.removeFromParent();this.release();}
 }
-function free(root:THREE.Object3D){const gs=new Set<THREE.BufferGeometry>(),ms=new Set<THREE.Material>();root.traverse(o=>{const m=o as THREE.Mesh;if(m.isMesh){gs.add(m.geometry);(Array.isArray(m.material)?m.material:[m.material]).forEach(m=>ms.add(m));}});gs.forEach(g=>g.dispose());ms.forEach(m=>m.dispose());}
+function free(root:THREE.Object3D){const gs=new Set<THREE.BufferGeometry>(),ms=new Set<THREE.Material>();root.traverse(o=>{const m=o as THREE.Mesh;if(m.isMesh){gs.add(m.geometry);(Array.isArray(m.material)?m.material:[m.material]).forEach(m=>ms.add(m));}});gs.forEach(g=>g.dispose());ms.forEach(m=>{/* también sus texturas: antes se quedaban en la tarjeta de video */for(const v of Object.values(m))if((v as THREE.Texture)?.isTexture)(v as THREE.Texture).dispose();m.dispose();});}
 export class BibliotecaV2{
  private loader=new GLTFLoader();private cache=new Map<string,Promise<Entry>>();private entries=new Map<string,Entry>();private borrowers=new Map<string,number>();private closed=false;
  private constructor(readonly assets:Asset[],readonly base:string){}
@@ -31,7 +31,7 @@ export class BibliotecaV2{
    return new Objeto(entry.root.clone(true),asset,entry.clips,()=>{entry.refs--;entry.used=performance.now();this.evict();});
   }finally{const n=(this.borrowers.get(key)??1)-1;if(n)this.borrowers.set(key,n);else this.borrowers.delete(key);}
  }
- private evict(){const unused=[...this.entries].filter(([key,e])=>e.refs===0&&!this.borrowers.has(key)).sort((a,b)=>a[1].used-b[1].used);while(unused.length>12){const[key,e]=unused.shift()!;free(e.root);this.entries.delete(key);this.cache.delete(key);}}
+ private evict(){const unused=[...this.entries].filter(([key,e])=>e.refs===0&&!this.borrowers.has(key)).sort((a,b)=>a[1].used-b[1].used);/* Guarda más prototipos sin usar: al caminar se volvían a descargar y compilar (tirones) */while(unused.length>40){const[key,e]=unused.shift()!;free(e.root);this.entries.delete(key);this.cache.delete(key);}}
  get resident(){return this.entries.size;}
  dispose(){this.closed=true;this.entries.forEach(e=>free(e.root));this.entries.clear();this.cache.clear();}
 }

@@ -61,3 +61,48 @@ ubicaciones, visitas y pruebas externas preparados: certifica el contrato, sus a
 no certifica balance económico, descubrimiento de accesos ni una campaña humana desde cero.
 También verifica migración, rechazo de bloques dañados, cultivo real y puestos alcanzables.
 La revisión final desde una partida ordinaria y la medición en los teléfonos siguen en el séptimo bloque.
+
+## Segundo bloque: historias personales y del mundo
+
+El diario añade 181 contratos y 617 objetivos: 142 personales, 12 secretos originales, 19 encuentros
+y ocho arcos elementales. El total es de 217 historias y 727 objetivos. Las personales exigen conocer
+al participante y escuchar su primer recuerdo completo; terminarlas registra `astra.personales` y abre
+`VID_<id>_2`. Las líneas y sus huellas no cambian. Los 42 encargos recientes de Claude se conservan
+aparte en Astra y aceptan como requisito tanto la campaña real como los expedientes anteriores.
+
+Las historias secretas, incluyendo T08, requieren dos pistas públicas. Los indicios conservan lugar,
+proximidad y recibo; no se encuentran por leer una ficha ni entrando a una habitación cerrada.
+Los permisos se piden a cada participante en su presencia. Los menores conservan acompañantes adultos.
+Ofelia puede aplazar y la práctica autorizada mantiene el avance; ninguna negativa se convierte en un sí.
+S12 admite una pregunta preescrita o una nota de hasta 500 caracteres guardada en la partida local;
+ese texto no se incorpora al catálogo de voces, la wiki ni una publicación automática.
+
+Los objetivos de oficio conservan producción posterior a aceptar, incluyendo lotes reales de horno y
+cocina. Tener pan comprado o un contador anterior no completa una fabricación. Las misiones de pesca
+registran capturas y exigen conservar el ejemplar para devolverlo al lago: devolver retira una unidad
+real y no genera productos o monedas. El turno posterior de Mara exige alimentación y compañía en
+la jornada nueva, sin acelerar cuidados de 48 horas. Los cultivos conservan parcela, contexto, riego
+y cosecha; el comparador de dos especies no se resuelve con dos cosechas de la misma especie.
+
+`autor_jugabilidad_secundaria.py` conserva el texto y las decisiones de la autoría, y genera las
+prácticas de oficio, contrastes, reservas y procedimientos en `jugabilidad/secundarias.json`.
+Los contratos de estas prácticas son funcionales; no convierten una secuencia de taller en fauna nueva,
+una construcción regional ya desplegada, un jefe propio o un efecto especializado de premio.
+Esas capacidades se conectan en los bloques siguientes. Las ramas conservan la misma utilidad base.
+
+Para regenerar todo:
+
+```sh
+python3 docs/narrativa/herramientas/integrar_motor.py
+python3 docs/narrativa/herramientas/autor_jugabilidad_secundaria.py
+python3 docs/narrativa/herramientas/compilar_jugabilidad.py
+```
+
+El generador de medios reconecta solo archivos OGG existentes cuya firma coincide con texto, voz y
+configuración del productor de Claude. Esta entrega asocia 998 tomas verificadas; conserva las
+asociaciones manuales, modelos y música. No llama a ElevenLabs ni borra las 174 tomas restantes.
+Las voces de protagonistas no se adivinan a partir de un nombre de archivo: siguen el contrato del productor.
+
+`probar-secundarias.mjs` completa las 181 historias por acciones después de cerrar las 36 principales,
+comprueba los 142 recuerdos posteriores, y verifica descubrimiento, fabricación, migración y datos dañados.
+Usa recursos, ubicaciones y capacidad preparados, y no certifica balance ni descubrimiento ordinarios.

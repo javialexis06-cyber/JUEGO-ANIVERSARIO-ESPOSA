@@ -207,9 +207,10 @@ function armarMedios(conVoz, voz) {
     voces[l.id] = { archivo: `./audio/astra/${a}`, huella_texto: l.huella_texto };
   }
   let borrados = 0;
-  if (existsSync(DIR)) for (const f of readdirSync(DIR)) if (!usados.has(f)) (unlinkSync(join(DIR, f)), borrados++);
+  // Solo los audios de voz de esta carpeta (la música de la granja vive en audio/astra/musica/)
+  if (existsSync(DIR)) for (const f of readdirSync(DIR)) if (f.endsWith('.ogg') && !usados.has(f)) (unlinkSync(join(DIR, f)), borrados++);
   medios.voces = voces;
-  writeFileSync(MEDIOS, JSON.stringify(medios, null, 1) + '\n');
+  writeFileSync(MEDIOS, JSON.stringify(medios, null, 2) + '\n');
   console.log(`medios.json: ${Object.keys(voces).length} voces${borrados ? ` (${borrados} audios viejos borrados)` : ''}`);
 }
 

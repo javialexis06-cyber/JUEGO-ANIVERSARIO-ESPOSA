@@ -1,3 +1,4 @@
+import {premioDef} from './premios';
 /** Escenarios provisionales: reutilizan los kits existentes. Las reglas y anclajes viven en astra.ts. */
 import {habitantesHistoria} from './historia-ubicaciones';
 import * as THREE from 'three';
@@ -39,9 +40,9 @@ export class EscenaAstra {
  readonly grupo=new THREE.Group();private clave='';private vecinos=new Map<string,THREE.Group>();private estado?:EstadoGranja;private suelos=new Suelos();
  constructor(){this.grupo.name='astra-escenario';this.grupo.visible=false;}
  sync(s:EstadoGranja){
-  this.estado=s;const t=s.astra;if(!t)return;const region=t.actual??'pueblo_sol',visitantes=!t.actual;
+  this.estado=s;const t=s.astra;if(!t)return;const region=t.actual??(s.zona==='pueblo'?'pueblo_sol':s.zona),visitantes=!t.actual;
   const ids=habitantesHistoria(s,region,visitantes?[]:regionAstra(region)!.npc);
-  this.grupo.visible=!visitantes||s.zona==='pueblo'&&!s.interior&&!s.servicio&&ids.length>0;const key=region+':'+t.interior+':'+ids.join(',');if(key!==this.clave){this.limpiar();this.clave=key;this.grupo.userData.liberado=false;const capa=new THREE.Group();this.grupo.add(capa);const r=regionAstra(region)!;
+  const modulos=s.historia?.utilidades?.modulos.filter(m=>m.region===region)??[];this.grupo.visible=!visitantes||!s.interior&&!s.servicio&&(ids.length>0||modulos.length>0);const key=region+':'+t.interior+':'+ids.join(',')+':'+modulos.map(m=>m.id+':'+m.x+':'+m.z).join(',');if(key!==this.clave){this.limpiar();this.clave=key;this.grupo.userData.liberado=false;const capa=new THREE.Group();this.grupo.add(capa);const r=regionAstra(region)!;
    if(!visitantes&&t.interior)capa.add(interiorVivienda([r.color],'archivo'));
    else if(!visitantes){
     const terreno=this.suelos.terreno(paletaSueloAstra(r.id));capa.add(terreno);sustituir('region:'+r.id,capa,terreno);const plano=planoAstra(r.id) as Parameters<typeof paisajeAstra>[4];if(!plano){capa.add(senderoTierra(0,13,43,3));capa.add(senderoTierra(0,5,3,43));}
@@ -53,6 +54,7 @@ export class EscenaAstra {
     capa.add(señalesRecursosAstra(r.id));
     if(r.mundo==='confluencia'){if(r.id==='confluencia'){const figura=new THREE.Group();figura.position.set(0,0,20);capa.add(figura);sustituir('figura:figura_fuatia',capa,figura);}}
    }
+   if(!s.interior&&!t.interior)for(const m of modulos){const marca=arcoSalida(premioDef(m.premio)?.nombre??'Instalación',m.x,m.z,false);capa.add(marca);sustituir('premio:'+m.premio,capa,marca);}
    for(const id of ids){const g=vecinoPeluche(id,NPC_ASTRA.findIndex(n=>n.id===id));g.name='astra-npc-'+id;g.userData.npcId=id;this.vecinos.set(id,g);capa.add(g);sustituir('npc:'+id,capa,g);}
   }
   this.update(0);

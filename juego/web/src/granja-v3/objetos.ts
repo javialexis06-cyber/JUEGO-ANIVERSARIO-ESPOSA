@@ -1,3 +1,4 @@
+import {PREMIOS_NARRATIVOS} from './premios-datos';
 import { DATOS as RECURSOS_ASTRA } from './astra-recursos-datos';
 import { leerHuevo } from './ganaderia';
 import { FRUTALES } from './frutales-datos';
@@ -18,7 +19,7 @@ export interface DefObjeto {
  herramienta?:{tipo:string;nivel:number};maquina?:{estacion:EstacionProduccion};contenedor?:{casillas:number};
  aspersor?:{radio:number;cruz?:boolean};recuperadora?:{nivel:number};
 }
-export interface RecetaProduccion {id:string;nombre:string;estacion:EstacionProduccion;ingredientes:Record<string,number>;salida:{articulo:string;cantidad:number};duracionMs:number;nivel:number;requisito?:string}
+export interface RecetaProduccion {premioNarrativo?:string;baseNarrativa?:string;id:string;nombre:string;estacion:EstacionProduccion;ingredientes:Record<string,number>;salida:{articulo:string;cantidad:number};duracionMs:number;nivel:number;requisito?:string}
 export const OBJETOS:Record<string,DefObjeto>=Object.create(null);
 function objeto(id:string,nombre:string,categoria:DefObjeto['categoria'],precioVenta:number,extra:Partial<DefObjeto>={}){
  OBJETOS[id]={id,nombre,categoria,rareza:'comun',precioCompra:Math.max(1,precioVenta*3),precioVenta,pilaMax:999,descripcion:nombre,...extra};
@@ -257,5 +258,7 @@ for(const r of RECURSOS_ASTRA){
  RECETAS.push({id:'racion_'+r.id,nombre:'Ración · '+r.nombre,estacion:'cocina',ingredientes:{[r.id+'_cosecha']:1,sal:1},salida:{articulo:'pan',cantidad:1},duracionMs:30000,nivel:0});
  for(const d of r.recursos)if(d.clase==='semilla'&&OBJETOS[d.id]){OBJETOS[d.id].precioCompra=0;OBJETOS[d.id].precioVenta=0;}
 }
+for(const p of PREMIOS_NARRATIVOS){if(p.plano?.tipo!=='receta')continue;const base=RECETAS.find(r=>r.id===p.plano!.base);if(base)RECETAS.push({...base,id:'variante_'+p.id,nombre:p.nombre+' · '+base.nombre,ingredientes:{...base.ingredientes},salida:{...base.salida},premioNarrativo:p.id,baseNarrativa:base.id});}
+
 const INDICE_RECETAS=new Map(RECETAS.map(r=>[r.id,r]));
 export function obtenerReceta(id:string):RecetaProduccion|undefined{return INDICE_RECETAS.get(id);}

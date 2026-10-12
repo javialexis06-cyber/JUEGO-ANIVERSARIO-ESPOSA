@@ -20,7 +20,7 @@ export interface EstadoProduccion {
  version:1;ultimoTiempo:number;secuencia:number;adyacencia:'cardinal'|'diagonal';
  cofres:CofreProduccion[];maquinas:MaquinaProduccion[];estructuras:EstructuraProduccion[];fabricados:Record<string,number>;
 }
-export interface ContextoProduccion {habilidades?:EstadoHabilidades;casillas:CasillasProduccion;nivel?:number;desbloqueos?:string[];ahora?:number;zona?:string}
+export interface ContextoProduccion {premiosNarrativos?:string[];tecnica?:{factor:number;estaciones:string[];recetas:string[]}|null;habilidades?:EstadoHabilidades;casillas:CasillasProduccion;nivel?:number;desbloqueos?:string[];ahora?:number;zona?:string}
 export interface ReferenciaCasilla {tipo:'mochila'|'cofre'|'maquina';id?:string;casilla:number}
 export type AccionProduccion=
  |{tipo:'recuperar_maquina';id:string;articulo:string|null}
@@ -97,7 +97,8 @@ export function gruposProduccion(e:EstadoProduccion):{ids:string[];cofres:string
   ids.sort();grupos.push({ids,cofres:ids.filter(id=>idsCofres.has(id)),maquinas:ids.filter(id=>!idsCofres.has(id))});
  }return grupos;
 }
-export const recetaPermitida=(r:RecetaProduccion,c:ContextoProduccion)=>recetaAprendida(c.habilidades,r)&&(c.nivel??0)>=r.nivel&&(!r.requisito||!!c.desbloqueos?.includes(r.requisito));
+export function duracionTecnica(r:RecetaProduccion,c:ContextoProduccion){const t=c.tecnica,base=r.baseNarrativa??r.id;const aplica=t&&t.estaciones.includes(r.estacion)&&(!t.recetas.length||t.recetas.includes(base))&&!(t.factor===.8&&base.endsWith('_del_archivo'));return r.duracionMs*(aplica?Number.isFinite(t.factor)?Math.max(.8,Math.min(1,t.factor)):1:1);}
+export const recetaPermitida=(r:RecetaProduccion,c:ContextoProduccion)=>(!r.premioNarrativo||!!c.premiosNarrativos?.includes(r.premioNarrativo))&&recetaAprendida(c.habilidades,r.baseNarrativa?obtenerReceta(r.baseNarrativa)??r:r)&&(c.nivel??0)>=r.nivel&&(!r.requisito||!!c.desbloqueos?.includes(r.requisito));
 function gastar(casillas:CasillasProduccion,ingredientes:Record<string,number>,cantidad=1):CasillasProduccion|null{
  let copia=copiaCasillas(casillas);for(const [id,n] of Object.entries(ingredientes)){const siguiente=cambiarCantidad(copia,id,-n*cantidad);if(!siguiente)return null;copia=siguiente;}return copia;
 }
@@ -157,8 +158,8 @@ export function avanzarProduccion(origen:EstadoProduccion,ahora:number,contexto:
    if(m.proceso||m.salida.some(Boolean))continue;
    if(m.cola.length){const pedido=m.cola[0],r=obtenerReceta(pedido.recetaId)!;
     if(pedido.reserva)pedido.reserva=gastar(pedido.reserva,r.ingredientes)!.filter((p):p is Pila=>p!==null);
-    m.proceso={recetaId:r.id,terminaEn:cursor+r.duracionMs};if(--pedido.cantidad===0)m.cola.shift();cambio=true;}
-   else if(m.recetaId){const r=obtenerReceta(m.recetaId)!;if(recetaPermitida(r,contexto)&&extraerDeCofres(cofres,r)){m.proceso={recetaId:r.id,terminaEn:cursor+r.duracionMs};cambio=true;}}
+    m.proceso={recetaId:r.id,terminaEn:cursor+duracionTecnica(r,contexto)};if(--pedido.cantidad===0)m.cola.shift();cambio=true;}
+   else if(m.recetaId){const r=obtenerReceta(m.recetaId)!;if(recetaPermitida(r,contexto)&&extraerDeCofres(cofres,r)){m.proceso={recetaId:r.id,terminaEn:cursor+duracionTecnica(r,contexto)};cambio=true;}}
   }
  }};
  asentar();

@@ -66,7 +66,7 @@ export function libreRegionAstra(region:string,x:number,z:number){
 export function reubicarAstra(t:EstadoAstra|undefined){
  if(!t?.actual||t.interior||!Number.isFinite(t.posicion?.x)||!Number.isFinite(t.posicion?.z))return;const l=limitesAstra(t.actual);/* Fuera de los límites es una partida corrupta: eso lo rechaza la validación */if(Math.abs(t.posicion.x)<l.x&&Math.abs(t.posicion.z)<l.z&&!libreRegionAstra(t.actual,t.posicion.x,t.posicion.z))t.posicion={...(planoAstra(t.actual)?.inicio??{x:0,z:8})};
 }
-export function campanaDisponible(s:EstadoGranja,q:typeof CAMPANA_ASTRA[number]){return q.requiere.every(id=>s.astra?.expedientes[id]?.cerrado);}
+export function campanaDisponible(s:EstadoGranja,q:typeof CAMPANA_ASTRA[number]){return q.requiere.every(id=>s.astra?.expedientes[id]?.cerrado||s.historia?.completadas[id]);}
 export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recursos:{agregar:(id:string,n:number)=>void;noche?:()=>unknown}) :Resultado {
  const t=s.astra??(s.astra=crearAstra()),here=regionActual(s);
  if(!Number.isFinite(x)||!Number.isFinite(z)||Math.abs(x)>1000||Math.abs(z)>1000)return mal('Posición inválida.');
@@ -112,7 +112,7 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
  }
  if(a.tipo==='escena'){
   const npc=NPC_ASTRA.find(n=>a.id==='VID_'+n.id+'_2');
-  if(npc&&!npc.mision)return mal('Su próximo recuerdo llegará con su historia.');if(npc&&npc.mision&&!t.personales.includes(npc.mision))return mal('Este recuerdo ocurre después de su misión personal. La misión '+npc.mision+' todavía está pendiente de integrar.');
+  if(npc&&!npc.mision)return mal('Su próximo recuerdo llegará con su historia.');if(npc&&npc.mision&&!t.personales.includes(npc.mision))return mal('Este recuerdo ocurre después de su misión personal. Completa primero '+npc.mision+' en Campaña.');
   if(!npc||!t.conocidos.includes(npc.id)||!t.lecturas.includes('VID_'+npc.id+'_1'))return mal('Escucha primero su recuerdo inicial.');
   const p=posicionNpcAstra(s,npc.id);if(!p||p.interior!==t.interior||!cerca(x,z,p))return mal('Acércate para escuchar este recuerdo.');
   t.escena={id:a.id,linea:0};return bien('Un recuerdo compartido.');
@@ -187,7 +187,7 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
 }
 
 /** Validación estricta y aditiva: una partida antigua recibe este bloque; un bloque corrupto se rechaza. */
-export function astraValida(t:EstadoAstra|undefined,dia:number):boolean {
+export function astraValida(t:EstadoAstra|undefined,dia:number,completadas?:Record<string,unknown>):boolean {
  if(!t||t.version!==1||t.actual!==null&&(!regionAstra(t.actual)||t.actual==='pueblo_sol')||!Number.isFinite(t.posicion?.x)||!Number.isFinite(t.posicion?.z)||Math.abs(t.posicion.x)>1000||Math.abs(t.posicion.z)>1000)return false;
  if(t.interior!==null&&!regionAstra(t.actual??'')?.viviendas.some(h=>h.id===t.interior))return false;
  if(t.actual&&(t.interior?!libreVivienda(t.posicion.x,t.posicion.z):Math.abs(t.posicion.x)>=limitesAstra(t.actual).x||Math.abs(t.posicion.z)>=limitesAstra(t.actual).z))return false;
@@ -198,7 +198,7 @@ export function astraValida(t:EstadoAstra|undefined,dia:number):boolean {
  if(!t.charlas||typeof t.charlas!=='object'||Object.keys(t.charlas).length>NPC_ASTRA.length||Object.entries(t.charlas).some(([id,v])=>!npcAstra(id)||!t.conocidos.includes(id)||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.puntos)||v.puntos<0||v.puntos>500))return false;
  if(!t.expedientes||typeof t.expedientes!=='object'||Object.keys(t.expedientes).length>CAMPANA_ASTRA.length)return false;
  for(const [id,v]of Object.entries(t.expedientes)){
-  const q=CAMPANA_ASTRA.find(q=>q.id===id);if(!q||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.paso)||v.paso<0||v.paso>q.pasos.length||typeof v.cerrado!=='boolean'||v.decision!==null&&v.decision!==0&&v.decision!==1||v.cerrado&&(v.paso!==q.pasos.length||v.decision===null)||!q.requiere.every(i=>t.expedientes[i]?.cerrado)||!v.estadisticas||typeof v.estadisticas!=='object'||Object.keys(v.estadisticas).length>500||Object.values(v.estadisticas).some(n=>!Number.isSafeInteger(n)||n<0))return false;
+  const q=CAMPANA_ASTRA.find(q=>q.id===id);if(!q||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.paso)||v.paso<0||v.paso>q.pasos.length||typeof v.cerrado!=='boolean'||v.decision!==null&&v.decision!==0&&v.decision!==1||v.cerrado&&(v.paso!==q.pasos.length||v.decision===null)||!q.requiere.every(i=>t.expedientes[i]?.cerrado||completadas?.[i])||!v.estadisticas||typeof v.estadisticas!=='object'||Object.keys(v.estadisticas).length>500||Object.values(v.estadisticas).some(n=>!Number.isSafeInteger(n)||n<0))return false;
  }
  if(!t.cupos||typeof t.cupos!=='object'||Array.isArray(t.cupos)||Object.keys(t.cupos).length>72||!lista(t.observaciones,RECURSOS.flatMap(r=>r.recursos.filter(d=>d.clase==='fauna').map(d=>d.id))))return false;
  if(t.mantenimiento!==null&&(!t.mantenimiento||!RECURSOS.some(r=>r.id===t.mantenimiento!.region)||!Number.isInteger(t.mantenimiento.visitasRestantes)||t.mantenimiento.visitasRestantes<1||t.mantenimiento.visitasRestantes>8))return false;

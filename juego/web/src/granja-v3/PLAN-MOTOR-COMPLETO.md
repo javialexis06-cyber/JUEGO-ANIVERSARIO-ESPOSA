@@ -1,5 +1,19 @@
 # Plan del motor completo: capacidades, variedad y aceptación
 
+## Campaña, historias y premios integrados · 11 de octubre de 2026
+
+El reparto actual suma 178 NPC y 93 viviendas tras integrar las ampliaciones visuales. La campaña
+jugable tiene 36 contratos/110 objetivos; las 181 historias adicionales añaden 617 objetivos. Las 217
+utilidades se entregan una vez y conservan partidas anteriores; consultas, agendas, recetas, depósitos,
+accesos, trampas selectivas, recuerdos y técnicas están conectados al motor. Se mantienen separados
+los expedientes de lectura y las pruebas realizadas. Las 3.581 tomas y 23 músicas producidas por Claude
+se integraron con sus IDs y firmas de texto. Maia conserva sus subtítulos y lengua de señas.
+
+Ver `HISTORIA-INTEGRACION.md`, `HISTORIA-SECUNDARIAS-INTEGRACION.md` y `PREMIOS-INTEGRACION.md`.
+La lista vigente está en `ASTRA-INTEGRACION.md`: quedan vida social ampliada, identidad regional,
+capacidades comunitarias y balance completo. Los apartados históricos siguientes conservan su fecha
+original y no representan una certificación de paridad actual.
+
 ## Base de Astra para producción · 11 de octubre de 2026
 
 Se integraron 28 lugares, 27 rutas físicas, 142 identidades y 76 domicilios; 118 residentes y

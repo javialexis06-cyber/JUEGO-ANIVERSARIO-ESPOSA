@@ -1,5 +1,36 @@
 # Coordinación de la granja con el proyecto principal
 
+## Claude lleva todo el frente · 12 de octubre de 2026
+
+ChatGPT, que llevaba el motor, se quedó sin uso; Javier pidió que Claude haga todo. La lista grande de arreglos
+(rendimiento, menú, mochila, mapas, caminos, lagos, mina, semillas, historia con lugares físicos) está por tandas en
+[`granja-arreglos.md`](granja-arreglos.md). Hecha la tanda 1: `vista.sync` reutiliza las piezas que no cambiaron
+(`pieza(clave, crear)`), el guardado de los trabajos repetidos se agrupa, se precompilan los sombreadores y la calidad
+alta ya no se baja sola si se escogió.
+
+## Premios funcionales en verificación · 11 de octubre de 2026
+
+La pestaña **Premios** conecta las 217 entregas únicas con fichas, agendas, patrones, instalaciones,
+exposición y técnicas. No paga por leer ni repetir escenas; hay tres planes fijados, seis recuerdos,
+una técnica activa y una instalación por plano. Contrato: [PREMIOS-INTEGRACION.md](../../juego/web/src/granja-v3/PREMIOS-INTEGRACION.md).
+Los servicios adicionales y las actividades regionales se completan en los bloques siguientes.
+
+La entrega secundaria `0ed6b09` terminó sus cuatro compilaciones en la corrida 38197085407;
+`apk-188` contiene los cuatro instaladores comprobados. La wiki registra sus 217 contratos.
+
+## Segundo bloque de campaña · 11 de octubre de 2026
+
+Se añadieron 181 contratos secundarios y 617 objetivos: el diario reúne 217 historias y 727 objetivos.
+Las 142 personales abren sus recuerdos posteriores, 13 secretos se encuentran por pistas públicas,
+y los oficios registran producción, pesca y cuidado reales posteriores a aceptar. S12 conserva una nota
+local de hasta 500 caracteres; no se publica ni se convierte en una toma de voz. Se reconectan 998
+audios existentes de Claude por firma verificable, sin generar voces ni borrar archivos.
+
+Los 42 encargos de pueblos de Claude se conservan y admiten los hitos de Campaña. La campaña inicial
+`d1c16f0` tuvo las cuatro compilaciones correctas en la corrida 38191558469 y la release `apk-186`.
+Los 217 efectos especializados, la vida social ampliada y las actividades regionales siguen en los
+bloques posteriores; no presentar los modelos de taller como construcciones o jefes terminados.
+
 ## Campaña jugable en desarrollo · 11 de octubre de 2026
 
 Javier autorizó desarrollar los siete bloques seguidos. Se incorporó el remoto de Claude `2aacf18`,
