@@ -57,6 +57,10 @@ export interface DefEscenario {
   tobogan?: number;
   /** Cuánto pegan los mugrosos al tocarlo a uno (en el tobogán, menos: no hay para dónde huir). */
   danoBichos?: number;
+  /** El Laberinto de la cortina: las cortinas de `laberinto.ts` atajan a los jugadores. */
+  laberinto?: boolean;
+  /** Los mugrosos salen grandotes (más grandes, con más vida y el doble de experiencia). */
+  grandes?: boolean;
 }
 
 const o = (min: number, cada: number, ...tipos: IdEnemigo[]): Oleada => ({ min, cada, tipos });
@@ -676,8 +680,52 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
       { t: m(14), tipo: 'muro', enemigo: 'grasaSifon', cant: 30 },
     ],
   },
+  laberinto: {
+    id: 'laberinto',
+    nombre: 'El Laberinto de la cortina',
+    original: 'Mazerella',
+    desc: 'Un laberinto de cortinas de baño colgadas: a ti te atajan, pero los mugrosos (grandotes) se cuelan por debajo. Por ahí aparecen quesitos de jabón.',
+    limites: null,
+    desbloqueo: 'Vence a la Cortina Mohosa',
+    jefeHiper: 'reyRaton',
+    duracion: 15 * 60,
+    especial: true,
+    laberinto: true,
+    grandes: true,
+    danoBichos: 0.75,
+    oleadas: [
+      o(7, 1.0, 'ratoncito'),
+      o(11, 1.0, 'ratoncito', 'pulga'),
+      o(14, 0.9, 'pulga', 'piojo'),
+      o(17, 0.9, 'piojo', 'ratoncito'),
+      o(20, 0.8, 'piojo', 'cucaracha', 'ratoncito'),
+      o(22, 0.8, 'cucaracha', 'pelusa'),
+      o(25, 0.75, 'pelusa', 'cucaracha', 'ratoncito'),
+      o(28, 0.7, 'pelusa', 'hongo'),
+      o(31, 0.65, 'hongo', 'cucaracha', 'ratoncito'),
+      o(34, 0.6, 'hongo', 'espinilla'),
+      o(36, 0.55, 'espinilla', 'pelusa', 'ratoncito'),
+      o(39, 0.5, 'espinilla', 'hongo'),
+      o(42, 0.48, 'moho', 'espinilla', 'ratoncito'),
+      o(45, 0.45, 'moho', 'hongo'),
+      o(48, 0.42, 'moho', 'espinilla', 'babosa'),
+    ],
+    eventos: [
+      { t: m(1), tipo: 'enjambre', enemigo: 'ratoncito', cant: 16, aviso: '¡Ratoncitos corriendo por el laberinto!' },
+      { t: m(2, 30), tipo: 'elite', enemigo: 'piojo' },
+      { t: m(4), tipo: 'jefe', enemigo: 'motaPelo', aviso: '¡La Mota de Pelo se enredó en las cortinas!' },
+      { t: m(5, 30), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Una carta mágica detrás de una cortina…' },
+      { t: m(6, 30), tipo: 'anillo', enemigo: 'ratoncito', cant: 24 },
+      { t: m(8), tipo: 'jefe', enemigo: 'cortinaMohosa', aviso: '¡La Cortina Mohosa, en su casa!' },
+      { t: m(9, 30), tipo: 'elite', enemigo: 'cucaracha' },
+      { t: m(10, 30), tipo: 'enjambre', enemigo: 'ratoncito', cant: 40 },
+      { t: m(11, 30), tipo: 'jefe', enemigo: 'donaCucaracha', aviso: '¡Doña Cucaracha sale de entre las cortinas!' },
+      { t: m(12, 45), tipo: 'jefe', enemigo: 'reyRaton', aviso: '¡El Rey Ratón vino por todos los quesitos!' },
+      { t: m(13, 45), tipo: 'anillo', enemigo: 'espinilla', cant: 26 },
+    ],
+  },
 };
 
-export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague', 'desfile', 'espejo', 'matera', 'tobogan'];
+export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague', 'desfile', 'espejo', 'matera', 'tobogan', 'laberinto'];
 /** La partida completa (después llega la Ducha Helada). */
 export const DURACION = 30 * 60;

@@ -41,11 +41,12 @@ function limites(zona: Zona): [number, number, number, number] {
 }
 const PISO: Record<string, string> = { granja: '#9cc77a', pueblo: '#b3cf8f', bosque: '#6f9e63', bosque_ancestral: '#5d8a6b', lago: '#a8cf8a', mina: '#8a7b70' };
 
-export function renderAjustes(personaje: string, calidad: string): string {
+export function renderAjustes(personaje: string, calidad: string, partida = ''): string {
   return `<div class="ajustes">
     <button class="ajuste" data-ajuste="personaje"><i>${personaje === 'ella' ? '👩' : '👨'}</i><span><b>Jugando con ${personaje === 'ella' ? 'Laura' : 'Javier'}</b><small>Toca para cambiar a ${personaje === 'ella' ? 'Javier' : 'Laura'}</small></span></button>
     <button class="ajuste" data-ajuste="calidad"><i>✨</i><span><b>Gráficos: ${calidad === 'Detalle' ? 'con detalle' : 'ligeros'}</b><small>${calidad === 'Detalle' ? 'Más bonito, gasta más batería' : 'Más fluido y fresco en el celular'}</small></span></button>
     <button class="ajuste" data-ajuste="rejilla"><i>▦</i><span><b>Cuadrícula</b><small>Para acomodar cultivos y construcciones</small></span></button>
+    ${partida}
     <div class="ajustes-ayuda"><b>Cómo se juega</b><p>Camina con la palanca (o WASD). Toca una casilla para usar lo que tienes en la mano; si está lejos, tu personaje camina hasta allá. Toca un vecino, un animal o una puerta para hablar o entrar. Duerme en la cabaña para pasar el día.</p></div>
   </div>`;
 }
@@ -74,6 +75,8 @@ export function iniciarHud(h: Hud) {
     if (h.panelAbierto()) { h.cerrarPanel(); return; }
     let id = 'inventario';
     try { id = localStorage.getItem(CLAVE_PESTANA) ?? id; } catch { /* nada */ }
+    if (!document.querySelector(`.menu-pestana[data-panel="${id}"]`)) id = 'inventario';
+    document.body.classList.remove('solo-mochila');
     h.mostrarPanel(id);
   };
   // Recordar la última pestaña del menú (como Stardew, que abre donde la dejaste)
@@ -382,7 +385,7 @@ export function iniciarHud(h: Hud) {
   // Al escoger un lugar del valle se cierra el mapa para ver la ruta marcada en el mundo
   document.querySelectorAll<HTMLElement>('#mapa-grande [data-zone]').forEach((g) => g.addEventListener('click', () => setTimeout(cerrarMapa, 30)));
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !$('mapa-grande').hidden) cerrarMapa();
+    if (e.key === 'Escape' && !$('mapa-grande').hidden) { e.preventDefault(); cerrarMapa(); }
     else if (e.key.toLowerCase() === 'm' && !(e.target as HTMLElement).matches('input,select,textarea')) $('mapa-grande').hidden ? abrirMapa() : cerrarMapa();
   });
 
@@ -418,10 +421,12 @@ export function iniciarHud(h: Hud) {
   let elegida = '';
   try { elegida = localStorage.getItem(CLAVE_CALIDAD) ?? ''; } catch { /* nada */ }
   // Si la persona la cambia en Ajustes, se respeta su elección
+  // (antes se leía solo al abrir el juego: escoger «con detalle» en Ajustes no evitaba que bajara sola a ligeros)
   document.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).closest('[data-ajuste="calidad"]')) setTimeout(() => { try { localStorage.setItem(CLAVE_CALIDAD, vista.calidad); } catch { /* nada */ } }, 0);
+    if ((e.target as HTMLElement).closest('[data-ajuste="calidad"],[data-do="calidad"]')) setTimeout(() => { elegida = vista.calidad; lentos = 0; try { localStorage.setItem(CLAVE_CALIDAD, vista.calidad); } catch { /* nada */ } }, 0);
   }, true);
   let cuadros = 0, desde = performance.now(), lentos = 0;
+  const inicio = performance.now();
   const medir = (t: number) => {
     requestAnimationFrame(medir);
     if (document.hidden) { desde = t; cuadros = 0; return; }
@@ -429,8 +434,10 @@ export function iniciarHud(h: Hud) {
     if (t - desde < 4000) return;
     const fps = (cuadros * 1000) / (t - desde);
     cuadros = 0; desde = t;
-    lentos = fps < 22 && !h.panelAbierto() ? lentos + 1 : 0;
-    if (lentos >= 2 && vista.calidad === 'alta' && !elegida) { $('quality').click(); lentos = 0; }
+    // Solo baja sola si nadie la escogió, y después de 12 s seguidos lentos (un tirón suelto no cuenta)
+    // Los primeros segundos (cargar modelos y compilar) no cuentan
+    lentos = fps < 20 && !h.panelAbierto() && t - inicio > 12000 ? lentos + 1 : 0;
+    if (lentos >= 3 && vista.calidad === 'alta' && !elegida) { $('quality').click(); lentos = 0; }
   };
   requestAnimationFrame(medir);
 

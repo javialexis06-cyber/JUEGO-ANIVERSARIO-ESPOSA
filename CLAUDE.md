@@ -2,6 +2,9 @@
 
 > **Frente de granja compartido (10 de octubre de 2026):** Javier pidió integrar la granja y subir cada avance. Su motor, sistemas, historia y misiones continúan en el frente de granja; Claude se encarga de sus gráficos, personajes y presentación visual. Antes de tocarla, leer [`docs/en-obra/granja-coordinacion.md`](docs/en-obra/granja-coordinacion.md). Fuente única: `juego/web/src/granja-v3/`; no crear otro motor ni borrar progreso.
 >
+> **Arreglos de la granja en curso (12 de octubre de 2026):** Claude lleva ahora todo el frente de granja (motor
+> incluido). Lo que falta, por tandas y con archivos y líneas: [`docs/en-obra/granja-arreglos.md`](docs/en-obra/granja-arreglos.md).
+>
 > **Regla de la granja (11 de octubre de 2026):** todo, absolutamente todo lo que se ve en la granja (edificios, muebles,
 > interiores, máquinas, árboles, piedras, utilería) se modela en Blender (`personajes/blender/granja_*.py`) con la
 > máxima calidad del estilo del juego (peluche, fieltro, madera y plastilina, caras y formas redondeadas). Nada de

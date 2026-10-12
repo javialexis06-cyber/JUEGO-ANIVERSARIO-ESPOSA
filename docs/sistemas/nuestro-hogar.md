@@ -527,6 +527,19 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   sabe de la corriente (escoge por hacia dónde termina moviéndose) y no se devuelve por las gotitas de atrás. Bichos
   nuevos: patitos de hule (en manada) y chancletas perdidas (se lanzan); jefes nuevos: el Pato Inflable Gigante y la
   Dona Flotadora (la del Hiper), más el Tapón. Tres logros más (82 en total).
+- **Versión 2, fase 3g: El Laberinto de la cortina** (Mazerella; especial de 15 minutos, se abre venciendo a la
+  Cortina Mohosa). Un laberinto sin fin de cortinas de baño colgadas sobre baldosas color crema (`laberinto.ts`):
+  celdas de 300 que abren su camino al sur o al este (árbol binario, todo conectado) y a algunas se les quita la otra
+  cortina para que haya vueltas; alrededor del principio no hay. El piso las dibuja con una textura de 128 × 128
+  celdas que se rehace al alejarse (`Suelo.cortinas`, `FRAG_LABERINTO`): tela de colores con pliegues, rayitas o
+  bolitas, argollas y sombra (las horizontales más gruesas por la cámara). **Las cortinas frenan**: uno se abre paso
+  entre la tela al 35 % (`Motor.frenoCortina`, también en el celular del invitado), los mugrosos se cuelan por
+  debajo al 70 % y los jefes al 60 %; así se va rápido por los pasillos y nadie queda encerrado (la primera versión
+  las hacía paredes y los jefes lo acorralaban a uno). Los mugrosos salen **grandotes** (`grandes`: 35 % más grandes,
+  40 % más de vida, el doble de experiencia) y pegan al 75 %. Cada tanto aparece un **quesito de jabón** (hasta seis)
+  en una celda cercana: 10 gotas doradas y un poquito de vida; nada del piso queda metido en una cortina. Bichos
+  nuevos: ratoncitos de la cortina; jefe nuevo: el Rey Ratón (el del Hiper), más la Mota de Pelo, la Cortina Mohosa y
+  Doña Cucaracha. Tres logros más (85 en total).
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

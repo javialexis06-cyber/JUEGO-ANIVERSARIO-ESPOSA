@@ -883,7 +883,7 @@ export class Lavado {
           if (!quieto && !m.pausa && !yoJ.caido && !yoJ.fuera && !m.fin) {
             const l = Math.hypot(mx, my);
             const ux = l > 1 ? mx / l : mx, uy = l > 1 ? my / l : my;
-            const v = m.velJugador(yoJ);
+            const v = m.velJugador(yoJ) * m.frenoCortina(yoJ);
             [yoJ.vx, yoJ.vy] = m.corriente(yoJ, ux, uy, v);
             yoJ.x += yoJ.vx * dt;
             yoJ.y += yoJ.vy * dt;

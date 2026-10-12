@@ -1,5 +1,7 @@
 // El piloto automático: se mueve esquivando, recoge gotitas y cofres, y escoge mejoras con sentido (sube lo que
 // tiene, busca las pasivas que evolucionan sus armas). Sirve para medir el balance en Node y para las pruebas.
+import { enCortina } from './laberinto';
+import { RADIO_JUGADOR } from './motor';
 import { ARMAS, PASIVAS, maxNivelArma } from './armas';
 import type { Jugador, Motor, Opcion } from './motor';
 import type { IdArma, IdPasiva } from './tipos';
@@ -195,6 +197,10 @@ export function botMover(m: Motor, j: Jugador) {
     const [vx, vy] = m.corriente(j, cosD[q], sinD[q], m.velJugador(j));
     return ((Math.round((Math.atan2(vy, vx) / (Math.PI * 2)) * DIRS) % DIRS) + DIRS) % DIRS;
   };
+  // Las cortinas del laberinto: mejor por los pasillos (entre la tela se va despacio)
+  if (m.esc.laberinto) {
+    for (let q = 0; q < DIRS; q++) if (enCortina(j.x + cosD[q] * 34, j.y + sinD[q] * 34, RADIO_JUGADOR)) peligro[q] += 1.2;
+  }
   // Un poquito de inercia (que no tiemble)
   let mejor = 0, v = Infinity;
   const ang = Math.atan2(j.my, j.mx);

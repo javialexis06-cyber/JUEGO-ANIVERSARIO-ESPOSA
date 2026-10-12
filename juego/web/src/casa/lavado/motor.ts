@@ -1,6 +1,7 @@
 // El motor de «Lavarse la cara»: la simulación completa del Vampire Survivors del baño, sin DOM ni three.js (corre
 // igual en el celular, en el anfitrión de una partida en pareja y en las pruebas de Node con el bot). Todo vive en
 // piscinas de objetos que se reutilizan: nada se crea por cuadro.
+import { CELDA, enCortina, fueraDeCortinas } from './laberinto';
 import { ARMAS, BASICAS, DISPARAN, ESCONDIDAS, EVOLUCIONADAS, ID_PASIVAS, MAX_RANURAS, PASIVAS, baseEnNivel, linaje, maxNivelArma, pasivasDeEvo, type BaseArma } from './armas';
 import { Azar, hash2 } from './azar';
 import { CARTAS } from './cartas';
@@ -1352,7 +1353,7 @@ export class Motor {
           mx /= m;
           my /= m;
         }
-        const v = this.velJugador(j);
+        const v = this.velJugador(j) * this.frenoCortina(j);
         [j.vx, j.vy] = this.corriente(j, mx, my, v);
         j.x += j.vx * dt;
         j.y += j.vy * dt;
@@ -1410,6 +1411,11 @@ export class Motor {
     return [base * (1 + (u < 0 ? 0.75 : 0.6) * u), uy * v];
   }
 
+  /** El Laberinto: abrirse paso entre una cortina es lento (por los pasillos se va rápido). */
+  frenoCortina(j: Jugador): number {
+    return this.esc.laberinto && enCortina(j.x, j.y, RADIO_JUGADOR) ? 0.35 : 1;
+  }
+
   /** El Tobogán: el turbo se gasta y se recarga al pasar por encima de las flechas del piso. */
   pasoCorriente(j: Jugador, dt: number) {
     j.turbo = Math.max(0, j.turbo - dt);
@@ -1438,6 +1444,21 @@ export class Motor {
       this.emitir('moneda', j.x, j.y, 0, j.i);
       break;
     }
+  }
+
+  /** El Laberinto de la cortina: cada tanto aparece un quesito de jabón en una celda cercana (hasta seis a la vez). */
+  private tQuesito = 8;
+  private quesitos(dt: number) {
+    this.tQuesito -= dt;
+    if (this.tQuesito > 0) return;
+    this.tQuesito = 14 + this.az.n() * 8;
+    if (this.objs.filter((o) => o.vivo && o.tipo === 'quesito').length >= 6) return;
+    const j = this.objetivoAzar();
+    if (!j) return;
+    const ci = Math.floor(j.x / CELDA), cj = Math.floor(j.y / CELDA);
+    const di = Math.round(this.az.entre(-4, 4)), dj = Math.round(this.az.entre(-3, 3));
+    if (Math.abs(di) + Math.abs(dj) < 2) return;
+    this.soltar('quesito', (ci + di + 0.5) * CELDA, (cj + dj + 0.5) * CELDA);
   }
 
   private finGuante(j: Jugador) {
@@ -1686,6 +1707,7 @@ export class Motor {
       this.emitir('jefe', 0, 0, INDICE_ENEMIGO.duchaHelada);
     }
     if (esc.tobogan) this.banderas();
+    if (esc.laberinto && !this.helada) this.quesitos(dReloj);
     if (this.helada) return;
     const ol = esc.oleadas[Math.min(esc.oleadas.length - 1, Math.floor(this.tCiclo() / 60))];
     const mal = this.maldicion() * (1 + 0.5 * this.ciclo);
@@ -1982,6 +2004,12 @@ export class Motor {
     e.jefe = !!def.jefe || !!o.jefe;
     e.esc = e.elite ? 1.8 : 1;
     e.r = def.radio * e.esc;
+    // Los grandotes del laberinto
+    const grande = !!this.esc.grandes && !e.jefe;
+    if (grande) {
+      e.esc *= 1.35;
+      e.r *= 1.3;
+    }
     // Después del minuto 14 el agua se pone más mugrosa: los bichos aguantan más y pegan más duro (sin la tienda
     // de poderes no se llega a los 30 minutos, como en el original)
     const tarde = this.tarde();
@@ -1990,6 +2018,7 @@ export class Motor {
     if (def.jefe && tipo !== 'duchaHelada') hp = def.vida * Math.max(1, this.nivel) * mal * this.porJugadores('jefe') * (this.esc.vidaJefes ?? 1);
     if (e.elite) hp = (def.vida * 16 * mal * tarde + 40 * this.nivel) * kv;
     if (tipo !== 'duchaHelada') hp *= this.durezaModos();
+    if (grande) hp *= 1.4;
     e.hp = e.hpMax = hp;
     e.cofre = o.cofre ?? (e.elite || (def.jefe && tipo !== 'duchaHelada') ? 1 : 0);
     e.luz = false;
@@ -2206,6 +2235,8 @@ export class Motor {
       o.tipo = tipo;
       o.x = x;
       o.y = y;
+      // (en el laberinto nada queda metido en una cortina, donde no se podría recoger)
+      if (this.esc.laberinto) [o.x, o.y] = fueraDeCortinas(x, y, 30);
       o.jalado = -1;
       o.v = 0;
       o.calidad = calidad;
@@ -2268,6 +2299,8 @@ export class Motor {
       if (!quieto && j) {
         let v = e.def.vel * (e.def.comp === 'parca' ? 1 : mal * velModos) * (e.lento > 0 ? 0.5 : 1) * (e.llamado > 0 ? 2 : 1) * (1 - e.freno);
         if (e.elite) v *= 0.85;
+        // En el laberinto todos se frenan al pasar por una cortina (los mugrosos se cuelan por debajo)
+        if (this.esc.laberinto && enCortina(e.x, e.y, e.r * 0.6)) v *= e.jefe ? 0.6 : 0.7;
         // En el tobogán los jefes nadan casi a la par de la corriente: si uno no frena, no lo alcanzan; si frena
         // para pelear, llegan
         if (this.esc.tobogan && e.jefe && e.def.comp !== 'parca') v = Math.max(v, this.esc.tobogan * 0.9);
@@ -2492,7 +2525,7 @@ export class Motor {
     }
     if (borrado) return;
     // La experiencia
-    let xp = e.def.xp * (e.elite ? 12 : 1);
+    let xp = e.def.xp * (e.elite ? 12 : 1) * (this.esc.grandes && !e.jefe ? 2 : 1);
     if (e.jefe) xp = (e.def.xp + this.nivel * 3) * (this.esc.xpJefes ?? 1);
     // Sin gotitas: si todos la llevan, la experiencia revienta en vez de caer
     if (this.sinGotitas()) {
@@ -2691,6 +2724,13 @@ export class Motor {
           g.v = 120;
         }
         break;
+      case 'quesito': {
+        // Quesito de jabón: gotas doradas y un poquito de vida
+        const n = this.sumarOro(10, j);
+        this.emitir('moneda', o.x, o.y, n, j.i);
+        this.curar(j, 10);
+        break;
+      }
       case 'moneda':
       case 'bolsa':
       case 'frasco': {

@@ -84,6 +84,8 @@ export type IdEnemigo =
   | 'brotecito' | 'cactus' | 'atrapamoscas' | 'caracol' | 'dienteLeon' | 'enredadera' | 'helecho'
   // El Tobogán del desagüe
   | 'patitoHule' | 'chancleta'
+  // El Laberinto de la cortina
+  | 'ratoncito'
   // Jefes
   | 'espinillon' | 'reinaCaspa' | 'granMoco' | 'senorLagana' | 'barroNegro' | 'senorSarro' | 'donaCucaracha' | 'motaPelo' | 'tapon'
   | 'esponjaPodrida' | 'peloDesague'
@@ -91,11 +93,11 @@ export type IdEnemigo =
   | 'donFrasco' | 'reinaPompa' | 'senorCuchillas' | 'poteCrema'
   | 'reySapo' | 'pulpoDesague' | 'bocaSifon' | 'reinaGrasa'
   | 'donCactus' | 'atrapamoscasGigante' | 'materaGigante'
-  | 'patoInflable' | 'donaFlotador'
+  | 'patoInflable' | 'donaFlotador' | 'reyRaton'
   // La Parca del baño
   | 'duchaHelada';
 
-export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera' | 'desague' | 'desfile' | 'espejo' | 'matera' | 'tobogan';
+export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera' | 'desague' | 'desfile' | 'espejo' | 'matera' | 'tobogan' | 'laberinto';
 
 /** Los modos que se abren con los tesoros (y el Hiper de cada escenario, venciendo a su jefe del minuto 25). */
 export type IdModo = 'hiper' | 'inverso' | 'infinito' | 'sinLimite' | 'ruleta' | 'azar';
@@ -122,7 +124,8 @@ export type IdObjeto =
   | 'pulsera' // pulsera de la amistad (solo con más de uno): a todos les sube un arma
   | 'espejoVerdad' // el espejo de la verdad: el doble de proyectiles y todo a la vez un ratico
   | 'burbuja' // burbuja protectora: ataja el siguiente golpe
-  | 'reliquia'; // un tesoro del baño (calidad = cuál, en TESOROS)
+  | 'reliquia' // un tesoro del baño (calidad = cuál, en TESOROS)
+  | 'quesito'; // quesito de jabón de El Laberinto de la cortina: gotas doradas y un poquito de vida
 
 export type IdCarta =
   | 'oroBrillante' | 'certero' | 'silbato' | 'comienzo' | 'maraton' | 'dobleTurno' | 'curitaMagica' | 'relojQuieto' | 'ruedaFortuna'

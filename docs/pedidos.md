@@ -2,6 +2,14 @@
 
 ## Frente de granja en paralelo
 
+**Arreglos de la granja (12 de octubre, lo siguiente que se hace):** Javier mandó una lista larga (rendimiento, menú de
+3 rayitas, mochila tipo Minecraft, mapas reales con marcadores, caminos, lagos, mina, semillas, historia que te lleve a
+los lugares físicos). ChatGPT se quedó sin uso: Claude hace todo. El plan por tandas, con lo ya encontrado en el código
+(archivos y líneas), está en [`en-obra/granja-arreglos.md`](en-obra/granja-arreglos.md). Las tandas 1 (rendimiento y
+calidad alta en PC), 2 (menú, Escape, E, mostradores y barra) y 3 (mochila estilo Minecraft y habilidades
+simples) quedaron **hechas**; seguir con la tanda 4 (minimapa y mapa grande).
+
+
 **Prioridad actual, 11 de octubre:** Javier encargó una base narrativa profunda para conectar granja y
 Sangre y Ceniza. Entrega local en [narrativa/README.md](narrativa/README.md): cosmología y cronología,
 142 biografías y arcos personales, cinco figuras divinas, 24 misiones principales, doce secretos,
@@ -23,9 +31,7 @@ Javier pidió integrar la granja existente, subir cada avance probado y repartir
 - 42 encargos con recompensa, 6 de ellos entre pueblos.
 
 Falta:
-- Voz de las líneas de Astra (ver el presupuesto en `sistemas/musica.md`).
-- Música de la granja.
-- Lo que espera al frente de motor.
+- Los arreglos de [`en-obra/granja-arreglos.md`](en-obra/granja-arreglos.md) (voces y música de la granja ya están).
 
 Lo que Javier pidió y todavía falta, en el orden en que se va a hacer. Se tacha (se borra) cuando queda hecho,
 probado y subido.
@@ -38,7 +44,9 @@ Don Jabón, el vendedor ambulante, con el Monedero) y **La Ducha** (fase 3a: el 
 jefes nuevos y los chorros que caen del techo) y **La Jabonera** (fase 3b: el pasillo de arriba abajo de la repisa con
 los frascos que se caen) y **El Desagüe** (fase 3c: el escenario final con sus remolinos) y los dos primeros
 especiales (3d: **El Desfile de jefes** y **El Espejo empañado**) y **La Matera de la ventana** (3e) y **El Tobogán del
-desagüe** (3f). Siguen los otros especiales (3g: El Laberinto de la cortina). Las cajitas sorpresa
+desagüe** (3f) y **El Laberinto de la cortina** (3g). Javier pidió (12 de octubre) pasar ahora a los
+arreglos de la granja que venía haciendo el otro frente (`en-obra/granja-arreglos.md`: tandas 1, 2 y 3 **hechas**; siguen
+la 4 a la 6) y después seguir con lo que falta del lavado: la Feria de las cremas (3h) y la fase 4. Las cajitas sorpresa
 quedan para la fase 4, con los disfraces que traen. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
 los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
 nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
@@ -108,7 +116,9 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
      todo al final).
    - ~~3f: El Tobogán del desagüe~~ **hecho** (la carrera: la corriente lleva a todos, turbos en el piso y banderas
      que recogen lo que quedó atrás).
-   - 3g en adelante: El Laberinto de la cortina y la Feria de las cremas con su ruleta.
+   - ~~3g: El Laberinto de la cortina~~ **hecho** (cortinas que frenan, bichos grandotes, quesitos de jabón y el Rey
+     Ratón).
+   - 3h: la Feria de las cremas con su ruleta (el último especial de la propuesta).
    - Fase 4: disfraces con transformación, cartas de la noche, cajitas sorpresa y las aventuras.
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
