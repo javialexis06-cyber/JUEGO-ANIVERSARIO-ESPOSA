@@ -28,8 +28,8 @@ function grow(g,cultivoId){at(g,'granja');const cultivo=cultivoId?C.CULTIVOS.fin
  for(let n=0;n<30;n++){const p=g.estado.parcelas.find(p=>p.x===celda.x&&p.z===celda.z);if(p.cuidado.status==='maduro')break;act(g,{tipo:'regar',...celda});sleep(g);}
  act(g,{tipo:'cosechar',...celda});
 }
-function finish(g,q,opcion=0){at(g,q.region);ha(g,{tipo:'aceptar',id:q.id});listen(g);
- while(g.estado.historia.activas[q.id].paso<q.pasos.length){const a=g.estado.historia.activas[q.id],p=q.pasos[a.paso],pos=p.punto??{x:0,z:22};at(g,p.region);
+function finish(g,q,opcion=0,detenerAntes=null){at(g,q.region);ha(g,{tipo:'aceptar',id:q.id});listen(g);
+ while(g.estado.historia.activas[q.id].paso<q.pasos.length){const a=g.estado.historia.activas[q.id],p=q.pasos[a.paso],pos=p.punto??{x:0,z:22};if(p.id===detenerAntes)return;at(g,p.region);
   if(p.tipo==='observar')for(let i=0;i<p.datos.length;i++)ha(g,{tipo:'observar',id:q.id,indice:i},pos);
   else if(p.tipo==='preguntar')for(const n of p.participantes){at(g,n.comision?.region??A.npcAstra(n.id).region);const pos=A.posicionNpcAstra(g.estado,n.id);assert.ok(pos,n.id);g.estado.astra.interior=pos.interior;if(pos.interior)g.estado.astra.posicion={x:0,z:3};ha(g,{tipo:'solicitar',id:q.id,npc:n.id},pos);}
   else if(p.tipo==='entregar'){give(g,{...g.estado.inventario,...p.materiales});ha(g,{tipo:'preparar',id:q.id},pos);}

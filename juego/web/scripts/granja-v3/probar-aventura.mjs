@@ -1,10 +1,6 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
-import { transform } from 'esbuild';
-
-const source = new URL('../../src/granja-v3/aventura.ts', import.meta.url);
-const { code } = await transform(await readFile(source, 'utf8'), { loader:'ts', format:'esm', target:'es2022' });
-const A = await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
+import {compilarModulo} from './modulos-prueba.mjs';
+const A=await import(await compilarModulo(new URL('../../src/granja-v3/aventura.ts',import.meta.url)));
 let total=0;
 const test=(nombre,fn)=>{fn();total++;console.log(`OK ${nombre}`);};
 const acceso={nivelPico:6,construcciones:['portal_verdia','portal_senda','portal_nox','nave_exploradora']};
@@ -144,7 +140,7 @@ test('Guardado íntegro de todos los destinos conserva hallazgos, monstruos y ma
  const e=A.crearAventura(887);
  for(const d of A.AVENTURAS){assert.equal(A.entrarAventura(e,d.id,{x:4,z:8},acceso).ok,true);
   const tope=Math.min(d.niveles,4);for(let nivel=1;nivel<=tope;nivel++){
-   const i=A.instanciaAventura(e);A.resolverSituacion(e,i.situaciones[0].id,i.situaciones[0]);
+   const i=A.instanciaAventura(e);const camara=i.monstruos.some(m=>m.patron);if(camara)assert.equal(i.situaciones.length,0);else{assert.ok(i.situaciones.length);A.resolverSituacion(e,i.situaciones[0].id,i.situaciones[0]);}
    for(const n of i.nodos.slice(0,2)){while(!n.agotado){e.enfriamientoGolpe=0;A.golpearNodo(e,n.id,n,6);}}
    assert.equal(A.errorAventura(e),null,`${d.id}, ${nivel}`);
    assert.deepEqual(A.restaurarAventura(JSON.parse(JSON.stringify(e))),e);

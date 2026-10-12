@@ -36,7 +36,7 @@ export type AccionAstra=
  |{tipo:'ruta';id:string}|{tipo:'hablar';id:string}|{tipo:'vivienda';id:string}|{tipo:'salir_vivienda'}
  |{tipo:'cine';id:string}|{tipo:'escena';id:string}|{tipo:'continuar'}|{tipo:'cancelar_escena'}
  |{tipo:'retomar';id:string}|{tipo:'aceptar';id:string}|{tipo:'comprobar';id:string}|{tipo:'decidir';id:string;opcion:number}
- |{tipo:'mantenimiento'}|{tipo:'recurso';id:string}|{tipo:'observar';id:string}|{tipo:'balance';elemento:string};
+ |{tipo:'mantenimiento';ajustado?:boolean}|{tipo:'recurso';id:string}|{tipo:'observar';id:string}|{tipo:'balance';elemento:string};
 export function crearAstra():EstadoAstra{return {version:1,vida:crearVidaAstra(),actual:null,interior:null,posicion:{x:0,z:8},visitas:[],conocidos:[],charlas:{},escena:null,lecturas:[],expedientes:{},cupos:{},observaciones:[],pruebas:[],mantenimiento:null,personales:[]};}
 const bien=(mensaje:string,extra:Partial<Resultado>={}):Resultado=>({ok:true,mensaje,...extra});
 const mal=(mensaje:string):Resultado=>({ok:false,mensaje});
@@ -131,9 +131,9 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
  }
  if(a.tipo==='mantenimiento'){
   if(!RECURSOS.some(r=>r.id===here)||t.interior||!cerca(x,z,puntoArchivo(here)))return mal('Instala el mantenimiento en el archivo público de su región.');
-  const id='kit_'+here;if(!(s.inventario[id]>0))return mal('Fabrica su kit en el banco: dos minerales, dos maderas y una cosecha regional.');
+  const id=(a.ajustado?'kit_ajustado_':'kit_')+here;if(!(s.inventario[id]>0))return mal('Fabrica su kit en el banco: dos minerales, dos maderas y una cosecha regional.');
   if(t.mantenimiento?.region===here)return mal('Este mantenimiento todavía tiene visitas disponibles.');
-  recursos.agregar(id,-1);t.mantenimiento={region:here,visitasRestantes:8};return bien('Mantenimiento local instalado: recoger cuesta una energía durante ocho estancias. Sustituye cualquier kit anterior; no aumenta cupos ni daño.');
+  recursos.agregar(id,-1);t.mantenimiento={region:here,visitasRestantes:a.ajustado?10:8};return bien('Mantenimiento local instalado: recoger cuesta una energía durante '+(a.ajustado?'diez':'ocho')+' estancias. Sustituye cualquier kit anterior; no aumenta cupos ni daño.');
  }
  if(a.tipo==='balance'){
   const id='confluencia_'+a.elemento;if(!['fuego','agua','tierra','aire'].includes(a.elemento)||here!==id||t.interior||!cerca(x,z,puntoArchivo(here)))return mal('Ve al puesto de balance del territorio.');
@@ -186,9 +186,9 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
 }
 
 /** Validación estricta y aditiva: una partida antigua recibe este bloque; un bloque corrupto se rechaza. */
-export function astraValida(t:EstadoAstra|undefined,dia:number,completadas?:Record<string,unknown>):boolean {
+export function astraValida(t:EstadoAstra|undefined,dia:number,completadas?:Record<string,unknown>,colonias?:string[]):boolean {
  if(!t||!vidaAstraValida(t.vida,dia)||t.version!==1||t.actual!==null&&(!regionAstra(t.actual)||t.actual==='pueblo_sol')||!Number.isFinite(t.posicion?.x)||!Number.isFinite(t.posicion?.z)||Math.abs(t.posicion.x)>1000||Math.abs(t.posicion.z)>1000)return false;
- if(t.interior!==null&&!regionAstra(t.actual??'')?.viviendas.some(h=>h.id===t.interior))return false;
+ if(t.interior!==null&&!regionAstra(t.actual??'')?.viviendas.some(h=>h.id===t.interior)&&!(t.interior==='habitat_'+t.actual&&colonias?.includes(t.actual??'')))return false;
  if(t.actual&&(t.interior?!libreVivienda(t.posicion.x,t.posicion.z):Math.abs(t.posicion.x)>=limitesAstra(t.actual).x||Math.abs(t.posicion.z)>=limitesAstra(t.actual).z))return false;
  const lista=(xs:unknown,ids:string[])=>Array.isArray(xs)&&xs.length<=ids.length&&new Set(xs).size===xs.length&&xs.every(id=>typeof id==='string'&&ids.includes(id));
  if(!lista(t.visitas,[...REGIONES_ASTRA.map(r=>r.id),'granja'])||!lista(t.conocidos,NPC_ASTRA.map(n=>n.id))||!lista(t.lecturas,[...Object.keys(CAMPANA.escenas),...Object.keys(ESCENAS_VIDA)])||!lista(t.pruebas,['fuego','agua','tierra','aire']))return false;
@@ -202,7 +202,7 @@ export function astraValida(t:EstadoAstra|undefined,dia:number,completadas?:Reco
   const q=CAMPANA_ASTRA.find(q=>q.id===id);if(!q||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.paso)||v.paso<0||v.paso>q.pasos.length||typeof v.cerrado!=='boolean'||v.decision!==null&&v.decision!==0&&v.decision!==1||v.cerrado&&(v.paso!==q.pasos.length||v.decision===null)||!q.requiere.every(i=>t.expedientes[i]?.cerrado||completadas?.[i])||!v.estadisticas||typeof v.estadisticas!=='object'||Object.keys(v.estadisticas).length>500||Object.values(v.estadisticas).some(n=>!Number.isSafeInteger(n)||n<0))return false;
  }
  if(!t.cupos||typeof t.cupos!=='object'||Array.isArray(t.cupos)||Object.keys(t.cupos).length>72||!lista(t.observaciones,RECURSOS.flatMap(r=>r.recursos.filter(d=>d.clase==='fauna').map(d=>d.id))))return false;
- if(t.mantenimiento!==null&&(!t.mantenimiento||!RECURSOS.some(r=>r.id===t.mantenimiento!.region)||!Number.isInteger(t.mantenimiento.visitasRestantes)||t.mantenimiento.visitasRestantes<1||t.mantenimiento.visitasRestantes>8))return false;
+ if(t.mantenimiento!==null&&(!t.mantenimiento||!RECURSOS.some(r=>r.id===t.mantenimiento!.region)||!Number.isInteger(t.mantenimiento.visitasRestantes)||t.mantenimiento.visitasRestantes<1||t.mantenimiento.visitasRestantes>10))return false;
  for(const [id,c]of Object.entries(t.cupos)){
   const r=RECURSOS.find(r=>r.recursos.some(d=>d.id===id)),d=r?.recursos.find(d=>d.id===id);if(!r||!d||d.clase==='fauna'||!Number.isInteger(c.ciclo)||c.ciclo<0||c.ciclo>Math.floor(dia/r.renovacion.dias_dormidos)||!Number.isInteger(c.cantidad)||c.cantidad<1||c.cantidad>(d.clase==='mineral'?6:d.clase==='madera'?8:1))return false;
  }

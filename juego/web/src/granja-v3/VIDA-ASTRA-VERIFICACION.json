@@ -87,5 +87,12 @@
     ],
     "escenariosPreparados": "Cuarto habilitado y avatar posicionado en contexto nuevo aislado.",
     "dispositivosFisicos": []
+  },
+  "publicacion": {
+    "sha": "5915a7f8d667f300ac845a6b32a64fbeb1017c76",
+    "workflow": 38219105573,
+    "conclusion": "success",
+    "release": "apk-196",
+    "descargas_verificadas": 4
   }
 }

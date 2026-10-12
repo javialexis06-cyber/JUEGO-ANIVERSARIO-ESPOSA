@@ -44,7 +44,7 @@ for r in worlds:
  if r['id']!='pueblo_sol':
   r['plano']={'limites':{'x':PL.LX,'z':PL.LZ},'plaza':PL.PLAZA,'inicio':PL.INICIO,'archivo':PL.ARCHIVO,'combate':None,'solidos':[],'puestos':[]}
  r['permiso']={'rosal_eterno':'F04','jardines_eco':'F04','travesia':'P13','refugio_hilos':'P14','bastion_velo':'P15','estacion_celia':'P16','huerto_aurelia':'P17','vigia_nocturna':'P17','cantera_esmeralda':'P17','campamento_fragmentos':'P17','fragmentos_cobre':'P17','fragmentos_cristal':'P17','ambarina':'P18','iridalia':'P19','confluencia':'F06','borde_astra':'P22'}.get(r['id'],'F06' if r['mundo']=='confluencia' else None)
- r['combate']={'brumaverde':'ruinas_celia','rosal_eterno':'reino_verdia','travesia':'reino_senda','bastion_velo':'reino_nox','fragmentos_cobre':'asteroide_cobre','fragmentos_cristal':'asteroide_cristal','ambarina':'planeta_ambar','iridalia':'planeta_iris'}.get(r['id'],r['id'] if r['id'].startswith('confluencia_') else None)
+ r['combate']={'brumaverde':'ruinas_celia','rosal_eterno':'reino_verdia','travesia':'reino_senda','bastion_velo':'reino_nox','fragmentos_cobre':'asteroide_cobre','fragmentos_cristal':'asteroide_cristal','ambarina':'planeta_ambar','iridalia':'planeta_iris','confluencia':'forma_fija','borde_astra':'proyeccion_nath'}.get(r['id'],r['id'] if r['id'].startswith('confluencia_') else None)
 routes=[]
 def connect(a,b,tipo='camino',construccion=None):
  routes.append({'id':a+'__'+b,'desde':a,'hacia':b,'tipo':tipo,'construccion':construccion})
@@ -195,4 +195,9 @@ if reparto_audio.exists():
   manifest['estado']='contrato_con_medios_parciales'
   manifest['nota']='Los expedientes se conservan aparte. contratos_jugables contiene el diario nuevo; sus premios especializados se conectan por bloques.'
   (p/'produccion.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+for archivo,clave in [('vida-social.json','vida_social'),('regiones.json','actividades_regionales'),('jefes.json','jefes')]:
+ fuente=N/'jugabilidad'/archivo
+ if fuente.exists():manifest[clave]=json.loads(fuente.read_text())
+manifest['nota']='Los expedientes se conservan aparte. Los contratos, premios, vida social y actividades regionales se conectan al motor; los módulos comunitarios y balance siguen en desarrollo. La ausencia de modelos opcionales no acredita arte final.'
+(p/'produccion.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps({'regiones':len(worlds),'npc':len(np),'viviendas':sum(len(r['viviendas']) for r in worlds),'misiones':len(compiled),'lineas':len(lines),'rutas':len(routes)},ensure_ascii=False))

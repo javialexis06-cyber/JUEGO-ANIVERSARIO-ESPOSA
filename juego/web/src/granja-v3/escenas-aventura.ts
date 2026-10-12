@@ -1,9 +1,14 @@
+import {clone} from 'three/examples/jsm/utils/SkeletonUtils.js';
+import type {MediosAstra} from './astra-medios';
 import * as THREE from 'three';
+import {JEFES} from './jefes';
 import { caja, esfera, liberar, compactar } from './suelo';
 import { destinoAventura, instanciaAventura, MINERALES, MONSTRUOS, MINA } from './aventura';
 import { terrenoMina, escaleraMina, cofreMina, paletaMina } from './mina-render';
 import type { EstadoAventura, InstanciaAventura, MonstruoAventura, NodoAventura, TipoMonstruo, PuntoAventura } from './aventura';
 
+let mediosJefe:MediosAstra['modelos']={},cargarJefe:((archivo:string)=>Promise<{escena:THREE.Group;clips:THREE.AnimationClip[]}>)|undefined;
+export function usarArteJefes(m:MediosAstra['modelos'],cargar:NonNullable<typeof cargarJefe>){mediosJefe=m;cargarJefe=cargar;}
 export type ObjetivoAventura = { tipo:'monstruo'|'nodo'|'botin'|'entrada'|'situacion'; id:string };
 interface FiguraMonstruo { grupo:THREE.Group; cuerpo:THREE.Group; miembros:THREE.Object3D[]; aviso:THREE.Mesh; barra:THREE.Group; relleno:THREE.Mesh; fase:number }
 const objetivo=(g:THREE.Object3D,tipo:ObjetivoAventura['tipo'],id:string)=>{g.userData.aventura={tipo,id};g.traverse(o=>{o.userData.aventura={tipo,id};});};
@@ -65,11 +70,12 @@ export class EscenaAventura {
  private particulas:{mesh:THREE.Mesh;vx:number;vz:number;vy:number;edad:number}[]=[];
  private monstruos=new Map<string,FiguraMonstruo>();private nodos=new Map<string,THREE.Group>();private botin=new Map<string,THREE.Group>();private situaciones=new Map<string,THREE.Group>();private entradas=new Map<string,THREE.Group>();
  private trazosArma=new Map<string,THREE.Group>();
+ private avisosJefe=new Map<string,{clave:string;grupo:THREE.Group}>();
  private claveMapa='';private estado:EstadoAventura|null=null;private tiempo=0;
  constructor(){this.grupo.name='expedicion';this.grupo.add(this.terreno,this.objetos,this.efectos);}
  get seleccionables(){return this.objetos.children;}
  objetivoDeInterseccion(obj:THREE.Object3D):ObjetivoAventura|null {let actual:THREE.Object3D|null=obj;while(actual){if(actual.userData.aventura)return actual.userData.aventura as ObjetivoAventura;actual=actual.parent;}return null;}
- private limpiar(){liberar(this.terreno);liberar(this.objetos);liberar(this.efectos);this.terreno=new THREE.Group();this.objetos=new THREE.Group();this.efectos=new THREE.Group();this.particulas=[];this.grupo.add(this.terreno,this.objetos,this.efectos);this.trazosArma.clear();this.monstruos.clear();this.nodos.clear();this.botin.clear();this.situaciones.clear();this.entradas.clear();}
+ private limpiar(){liberar(this.terreno);liberar(this.objetos);liberar(this.efectos);this.terreno=new THREE.Group();this.objetos=new THREE.Group();this.efectos=new THREE.Group();this.particulas=[];this.grupo.add(this.terreno,this.objetos,this.efectos);this.trazosArma.clear();this.avisosJefe.clear();this.monstruos.clear();this.nodos.clear();this.botin.clear();this.situaciones.clear();this.entradas.clear();}
  private deshacer(p:PuntoAventura,color:string){
   for(let k=0;k<7;k++){const a=k*2.399,mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(.09+(k%3)*.025,0),new THREE.MeshStandardMaterial({color,roughness:.9}));mesh.position.set(p.x,.4,p.z);this.efectos.add(mesh);this.particulas.push({mesh,vx:Math.cos(a)*1.3,vz:Math.sin(a)*1.3,vy:1.7+k*.1,edad:0});}
   while(this.particulas.length>70){const p=this.particulas.shift()!;liberar(p.mesh);}
@@ -106,7 +112,7 @@ export class EscenaAventura {
   // La escalera escondida aparece en pleno piso: se agrega sin rehacer el terreno
   if(i.destinoId===MINA)for(const entrada of i.entradas)if(!this.entradas.has(entrada.id)){const g=escaleraMina(entrada.tipo);g.position.set(entrada.x,0,entrada.z);objetivo(g,'entrada',entrada.id);this.objetos.add(g);this.entradas.set(entrada.id,g);this.deshacer(entrada,'#f6cf5a');}
   const vivos=new Set(i.monstruos.filter(m=>m.vivo).map(m=>m.id));for(const[id,f]of this.monstruos)if(!vivos.has(id)){const m=i.monstruos.find(m=>m.id===id);if(m)this.deshacer(m,MONSTRUOS[m.tipo].color);liberar(f.grupo);this.monstruos.delete(id);}
-  for(const m of i.monstruos)if(m.vivo&&!this.monstruos.has(m.id)){const f=figura(m.tipo);objetivo(f.grupo,'monstruo',m.id);this.monstruos.set(m.id,f);this.objetos.add(f.grupo);}
+  for(const m of i.monstruos)if(m.vivo&&!this.monstruos.has(m.id)){const f=figura((JEFES[m.tipo]?.modeloBase??m.tipo) as TipoMonstruo);objetivo(f.grupo,'monstruo',m.id);this.monstruos.set(m.id,f);this.objetos.add(f.grupo);this.arteJefe(f,m);}
   const activos=new Set(i.nodos.filter(n=>!n.agotado).map(n=>n.id));for(const[id,g]of this.nodos)if(!activos.has(id)){const n=i.nodos.find(n=>n.id===id);if(n)this.deshacer(n,MINERALES[n.mineral].color);liberar(g);this.nodos.delete(id);}
   for(const n of i.nodos)if(!n.agotado){let g=this.nodos.get(n.id);if(!g){g=rocaNodo(n);this.nodos.set(n.id,g);this.objetos.add(g);}else if(g.userData.hp!==n.hp)g.userData.impacto=.18;g.userData.hp=n.hp;}
   const drops=new Set(i.botin.map(b=>b.id));for(const[id,g]of this.botin)if(!drops.has(id)){liberar(g);this.botin.delete(id);}
@@ -125,10 +131,19 @@ export class EscenaAventura {
  update(dt:number,e:EstadoAventura|null=this.estado,centro?:PuntoAventura){
   this.tiempo+=Math.max(0,Math.min(.1,dt));if(!e)return;const i=instanciaAventura(e);if(!i)return;
   const visible=(p:PuntoAventura)=>!centro||Math.hypot(p.x-centro.x,p.z-centro.z)<30;
+  const activos=new Set<string>();for(const m of i.monstruos){const p=m.patron;if(!m.vivo||!p||!['aviso','activo'].includes(p.fase))continue;activos.add(m.id);const key=p.elemento+':'+p.ciclo+':'+JSON.stringify([p.centro,p.direccion,p.objetivos]);let aviso=this.avisosJefe.get(m.id);
+   if(aviso?.clave!==key){if(aviso)liberar(aviso.grupo);const g=new THREE.Group(),color=MONSTRUOS[m.tipo].color;g.name='patron-'+m.id;g.userData.jefeTipo=m.tipo;g.userData.modeloBase=JEFES[m.tipo]?.modeloBase;this.efectos.add(g);
+    const linea=(pts:number[][])=>{const geo=new THREE.BufferGeometry().setFromPoints(pts.map(([x,z])=>new THREE.Vector3(x,.08,z))),l=new THREE.LineLoop(geo,new THREE.LineBasicMaterial({color,transparent:true,opacity:.9}));g.add(l);};
+    const aroSimple=(x:number,z:number,r:number)=>linea(Array.from({length:48},(_,i)=>[x+Math.cos(i*Math.PI/24)*r,z+Math.sin(i*Math.PI/24)*r]));
+    const banda=(lado:number,frente:number,desde:number)=>linea([[-lado,desde],[lado,desde],[lado,frente],[-lado,frente]].map(([x,z])=>[p.centro.x+p.direccion.z*x+p.direccion.x*z,p.centro.z-p.direccion.x*x+p.direccion.z*z]));
+    if(p.elemento==='agua'){aroSimple(p.centro.x,p.centro.z,4.8);aroSimple(p.centro.x,p.centro.z,6.6);}else if(p.elemento==='tierra')for(const q of p.objetivos)aroSimple(q.x,q.z,1.7);else if(p.elemento==='aire')banda(1.1,11,-1);else{banda(.85,9,-9);linea([[-9,-.85],[9,-.85],[9,.85],[-9,.85]].map(([x,z])=>[p.centro.x+p.direccion.z*x+p.direccion.x*z,p.centro.z-p.direccion.x*x+p.direccion.z*z]));}
+    aviso={clave:key,grupo:g};this.avisosJefe.set(m.id,aviso);
+   }aviso.grupo.visible=visible(m);
+  }for(const [id,aviso]of this.avisosJefe)if(!activos.has(id)){liberar(aviso.grupo);this.avisosJefe.delete(id);}
   const trazos=[...(e.proyectiles??[]).map(p=>({...p,id:'p'+p.id})),...(e.invocacion?[{id:'inv',...e.invocacion}]:[])];
   const ids=new Set(trazos.map(p=>p.id));for(const [id,g] of this.trazosArma)if(!ids.has(id)){liberar(g);this.trazosArma.delete(id);}
   for(const p of trazos){let g=this.trazosArma.get(p.id);if(!g){g=new THREE.Group();const color=p.modo==='sello_fuego'?'#df7359':p.modo==='sello_agua'?'#69badb':p.modo==='sello_tierra'?'#86b878':p.modo==='sello_aire'?'#bcc4cd':'#ecdca3';esfera(g,[.14,.14,.14],[0,.65,0],color);this.efectos.add(g);this.trazosArma.set(p.id,g);}g.position.set(p.x,0,p.z);}
-  for(const m of i.monstruos){const f=this.monstruos.get(m.id);if(!f)continue;this.animar(f,m);f.grupo.visible=m.vivo&&visible(m);}
+  for(const m of i.monstruos){const f=this.monstruos.get(m.id);if(!f)continue;this.animar(f,m);const mixer=f.grupo.userData.mixerJefe as THREE.AnimationMixer|undefined;if(mixer){mixer.update(dt);const fase=m.fase==='anticipacion'?'anticipar':m.fase==='ataque'?'atacar':'reposo';if(f.grupo.userData.faseArte!==fase){f.grupo.userData.faseArte=fase;const clip=(f.grupo.userData.clipsJefe as THREE.AnimationClip[]).find(c=>c.name===fase);if(clip){mixer.stopAllAction();mixer.clipAction(clip).play();}}}f.grupo.visible=m.vivo&&visible(m);}
   for(const n of i.nodos){const g=this.nodos.get(n.id);if(!g)continue;g.visible=visible(n);const t=Math.max(0,(g.userData.impacto??0)-dt);g.userData.impacto=t;g.rotation.z=t>0?Math.sin(t*90)*t*.5:0;}
   for(const p of this.particulas){p.edad+=dt;p.mesh.position.x+=p.vx*dt;p.mesh.position.z+=p.vz*dt;p.mesh.position.y+=p.vy*dt;p.vy-=dt*6;p.mesh.rotation.x+=dt*4;p.mesh.scale.setScalar(Math.max(0,1-p.edad/.65));}
   this.particulas=this.particulas.filter(p=>{if(p.edad<.65)return true;liberar(p.mesh);return false;});
@@ -137,6 +152,7 @@ export class EscenaAventura {
   for(const s of i.situaciones){const g=this.situaciones.get(s.id);if(g)g.visible=!s.resuelta&&visible(s);}
  }
  frame(dt:number,e?:EstadoAventura){this.update(dt,e??this.estado);}
+ private arteJefe(f:FiguraMonstruo,m:MonstruoAventura){const d=mediosJefe['jefe:'+m.tipo],cargar=cargarJefe;if(!d||!cargar)return;void cargar(d.archivo.replace(/^\.\/modelos\//,'')).then(({escena,clips})=>{if(!f.grupo.parent||this.monstruos.get(m.id)!==f)return;const g=clone(escena);g.scale.setScalar(d.escala??1);g.traverse(o=>{const mesh=o as THREE.Mesh;if(!mesh.isMesh)return;mesh.geometry.userData.compartido=true;for(const mat of Array.isArray(mesh.material)?mesh.material:[mesh.material])mat.userData.compartido=true;});for(const hijo of [...f.cuerpo.children])liberar(hijo);f.miembros=[];f.cuerpo.add(g);objetivo(g,'monstruo',m.id);if(clips.length){const mixer=new THREE.AnimationMixer(g);f.grupo.userData.mixerJefe=mixer;f.grupo.userData.clipsJefe=clips;mixer.clipAction(clips.find(c=>c.name==='reposo')??clips[0]).play();}}).catch(()=>{});}
  private animar(f:FiguraMonstruo,m:MonstruoAventura){
   const t=this.tiempo,moving=['patrulla','persecucion'].includes(m.fase),wind=m.fase==='anticipacion',attack=m.fase==='ataque';
   f.grupo.visible=m.vivo;f.grupo.position.set(m.x,0,m.z);f.cuerpo.rotation.y=Math.atan2(m.direccion.x,m.direccion.z);
@@ -148,5 +164,5 @@ export class EscenaAventura {
   f.barra.visible=m.hp<m.hpMax||wind;f.relleno.scale.x=Math.max(.001,m.hp/m.hpMax);f.relleno.position.x=-.425*(1-m.hp/m.hpMax);
   if(m.invulnerable>0)f.cuerpo.scale.multiplyScalar(1+Math.sin(t*45)*.035);
  }
- dispose(){liberar(this.grupo);this.trazosArma.clear();this.monstruos.clear();this.nodos.clear();this.botin.clear();this.situaciones.clear();this.estado=null;this.claveMapa='';}
+ dispose(){liberar(this.grupo);this.avisosJefe.clear();this.trazosArma.clear();this.monstruos.clear();this.nodos.clear();this.botin.clear();this.situaciones.clear();this.estado=null;this.claveMapa='';}
 }

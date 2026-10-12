@@ -1,3 +1,4 @@
+import {esJefe} from './jefes';
 import {crearUtilidades,migrarUtilidades,entregarPremio,utilidadesValidas,premioDef} from './premios';
 import type {Accion,EstadoGranja,Resultado} from './estado';
 import type {AccionHistoria,EstadoHistoria,ProgresoHistoria,PasoHistoria} from './historia-tipos';
@@ -7,7 +8,7 @@ import {regionActual,posicionNpcAstra,npcAstra,regionAstra} from './astra';
 import {puedeConversar} from './aldeanos';
 import {PECES,CULTIVOS} from './catalogo';
 import {obtenerObjeto} from './objetos';
-import {instanciaAventura} from './aventura';
+import {instanciaAventura,destinoAventura} from './aventura';
 import {fenotipo} from './genetica';
 import {estadoAnimal} from './cuidados';
 export {MISIONES_HISTORIA};
@@ -22,7 +23,14 @@ export function registrarProduccionHistoria(s:EstadoGranja,producidos:Record<str
 function avanzar(s:EstadoGranja,id:string){const a=s.historia!.activas[id],q=misionHistoria(id)!;if(!a.recibos.includes(q.pasos[a.paso].id))a.recibos.push(q.pasos[a.paso].id);a.paso++;a.inicioPaso=s.jornada.diasCompletados;s.historia!.reto=null;if(a.paso===q.pasos.length)s.astra!.escena={id:'H:'+id+'#giro',linea:0};}
 function completarReto(s:EstadoGranja){const id=s.historia!.reto!.mision;avanzar(s,id);return bien('Prueba confirmada; la pieza y las reservas conservan su recibo.');}
 export const ordenHistoria=(p:PasoHistoria,a:ProgresoHistoria)=>a.plan===0&&p.ordenAlternativo?p.ordenAlternativo:p.orden;
-export function registrarBajasHistoria(s:EstadoGranja,destino:string,ids:string[]){for(const p of Object.values(s.historia?.activas??{}))if(ids.length){const key='combate:'+destino;p.estadisticas[key]=(p.estadisticas[key]??0)+ids.length;}}
+export function registrarBajasHistoria(s:EstadoGranja,destino:string,ids:string[]){
+ for(const [id,progreso]of Object.entries(s.historia?.activas??{})){
+  const q=misionHistoria(id)!;for(const muerto of new Set(ids)){const m=instanciaAventura(s.aventura)?.monstruos.find(m=>m.id===muerto);if(!m)continue;
+   const valido=m.tipo.startsWith('constructo_')||esJefe(m.tipo)&&q.pasos.some(p=>p.registro==='jefe'&&p.destino===destino);if(!valido)continue;
+   const key=(esJefe(m.tipo)?'jefe:':'combate:')+destino;progreso.estadisticas[key]=(progreso.estadisticas[key]??0)+1;
+  }
+ }
+}
 export function escenaHistoria(s:EstadoGranja,id:string,parte:string){s.astra!.escena={id:'H:'+id+'#'+parte,linea:0};}
 
 /** Las pruebas agrícolas conservan la asociación siembra-riego-cosecha; una estadística suelta no la sustituye. */
@@ -47,7 +55,7 @@ export function registrarHistoria(s:EstadoGranja,a:Accion,antes:EstadoGranja){
   }
   if(a.tipo==='accion_aventura'&&a.objetivo==='monstruo'){
    const viejo=instanciaAventura(antes.aventura)?.monstruos.find(m=>m.id===a.id),nuevo=instanciaAventura(s.aventura)?.monstruos.find(m=>m.id===a.id);
-   if(viejo?.vivo&&nuevo&&!nuevo.vivo){const key='combate:'+antes.aventura.destinoActual;p.estadisticas[key]=(p.estadisticas[key]??0)+1;}
+   if(viejo?.vivo&&nuevo&&!nuevo.vivo&&(nuevo.tipo.startsWith('constructo_')||esJefe(nuevo.tipo)&&q.pasos.some(p=>p.registro==='jefe'&&p.destino===antes.aventura.destinoActual))){const key=(esJefe(nuevo.tipo)?'jefe:':'combate:')+antes.aventura.destinoActual;p.estadisticas[key]=(p.estadisticas[key]??0)+1;}
   }
  }
  if(a.tipo==='dormir')for(const q of MISIONES_HISTORIA){const p=h.activas[q.id];if(p&&q.pasos.some(p=>p.tipo==='jornadas')&&s.jornada.diasCompletados>p.dia&&!h.cartas.includes(q.id))h.cartas.push(q.id);}
@@ -134,7 +142,7 @@ export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:n
  }
  if(accion.tipo!=='comprobar')return mal('Acción desconocida para este objetivo.');
  if(a.enfoques[p.id]==='combate'){
-  if((a.estadisticas['combate:'+p.destino!]??0)<2)return mal('Desactiva dos constructos de este territorio con tus armas.');
+  if((a.estadisticas[(p.registro==='jefe'?'jefe:':'combate:')+p.destino!]??0)<(p.registro==='jefe'?1:2))return mal(p.registro==='jefe'?'Desactiva el mecanismo de la cámara con tus armas después de aceptar esta historia.':'Desactiva dos constructos de este territorio con tus armas.');
  }else if(p.tipo==='oficio'){if((a.estadisticas[p.registro!]??0)<(p.cantidad??1))return mal('Realiza la actividad del oficio después de aceptar: '+p.texto);
  }else if(p.tipo==='cultivar'){
   if(regionActual(s)!=='granja'||new Set(Object.values(a.cultivos).filter(r=>r.regado&&r.cosechado&&(!p.especiesPermitidas||p.especiesPermitidas.includes(r.cultivo))).map(p=>p.cultivo)).size<(p.cantidad??1))return mal('Faltan recibos de cultivos ordinarios propios sembrados, regados y cosechados después de aceptar.');
@@ -168,7 +176,7 @@ export function historiaValida(v:unknown,dia:number):v is EstadoHistoria {
   if(Object.entries(a.cultivos).some(([id,v])=>!/^(?:[a-zA-Z0-9_-]+:)?[-\d]+,[-\d]+$/.test(id)||!registro(v)||!CULTIVOS.some(c=>c.id===v.cultivo)||(v.contexto!==undefined&&(typeof v.contexto!=='string'||v.contexto.length>100))||typeof v.regado!=='boolean'||typeof v.cosechado!=='boolean'||v.cosechado&&!v.regado)||Object.keys(a.cultivos).length>512)return false;
   if(Object.entries(a.permisos).some(([id,v])=>!['acepta','aplaza','rechaza'].includes(v)||!q.pasos.some(p=>p.participantes?.some(n=>id===p.id+':'+n.id&&v===n.respuesta))))return false;
   if(Object.entries(a.entregas).some(([id,v])=>{const p=q.pasos.find(p=>p.id===id);return !p?.materiales||!registro(v)||JSON.stringify(Object.entries(v).sort())!==JSON.stringify(Object.entries(p.materiales).sort());}))return false;
-  if(Object.entries(a.enfoques).some(([id,v])=>!['tecnica','combate'].includes(v)||!q.pasos.some(p=>p.id===id&&p.alternativa))||Object.entries(a.estadisticas).some(([id,v])=>!entero(v)||!id.startsWith('combate:')&&!q.pasos.some(p=>p.registro===id)&&!(q.pasos.some(p=>p.tipo==='devolver_pesca')&&PECES.some(p=>id==='captura:'+p.id))))return false;
+  if(Object.entries(a.enfoques).some(([id,v])=>!['tecnica','combate'].includes(v)||!q.pasos.some(p=>p.id===id&&p.alternativa))||Object.entries(a.estadisticas).some(([id,v])=>!entero(v)||!(id.startsWith('combate:')&&destinoAventura(id.slice(8)))&&!(id.startsWith('jefe:')&&q.pasos.some(p=>p.registro==='jefe'&&p.destino===id.slice(5)))&&!q.pasos.some(p=>p.registro===id)&&!(q.pasos.some(p=>p.tipo==='devolver_pesca')&&PECES.some(p=>id==='captura:'+p.id))))return false;
   return true;
  };
  for(const [id,c]of Object.entries(h.completadas)){const q=misionHistoria(id);if(!q||!registro(c)||!entero(c.dia,0,dia)||!entero(c.opcion,0,q.decision?1:0)||!lista(c.recibos,q.pasos.map(p=>p.id))||c.recibos.length!==q.pasos.length||!q.requiere.every(r=>h.completadas[r])||h.activas[id])return false;if(c.evidencia!==undefined&&(!validarProgreso(id,c.evidencia)||c.evidencia.paso!==q.pasos.length||c.evidencia.inicioPaso>c.dia||JSON.stringify(c.evidencia.recibos)!==JSON.stringify(c.recibos)))return false;}
