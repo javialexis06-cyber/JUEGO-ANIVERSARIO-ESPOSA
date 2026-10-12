@@ -50,5 +50,13 @@
     "juego/web/src/granja-v3/premios-tipos.ts": "ff0545d2e8a46ae87100dadd4f98e39f81ed48fe1eb9f653d1bd1425a7d036c6",
     "juego/web/src/granja-v3/premios-ui.ts": "93a3802e3869f6e6bb59b6fc9c2c170b0234989541b8c488f47ec54fec7805b4",
     "juego/web/src/granja-v3/premios.ts": "aa868b66a42d68a9394cac310db3da2dfadd4eb00749e24e3970857680b02b6f"
+  },
+  "medios_integrados": {
+    "lineas": 3590,
+    "vocesDeclaradas": 3581,
+    "modelosDeclarados": 0,
+    "musicaDeclarada": 23,
+    "errores": [],
+    "estado": "Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir."
   }
 }
