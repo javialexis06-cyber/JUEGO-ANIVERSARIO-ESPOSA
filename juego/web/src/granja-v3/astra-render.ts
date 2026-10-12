@@ -65,6 +65,7 @@ export class EscenaAstra {
   if(!g.userData.mixer||!g.userData.actorId)return;const hablando=g.userData.actorId===id;if(g.userData.hablando===hablando)return;g.userData.hablando=hablando;const clips=g.userData.clips as THREE.AnimationClip[],clip=clips.find(c=>c.name===(hablando?'hablar':'reposo'));if(clip){const mixer=g.userData.mixer as THREE.AnimationMixer;mixer.stopAllAction();mixer.clipAction(clip).play();}});}
  update(dt:number){if(!this.grupo.visible||!this.estado)return;const s=this.estado,dentro=s.astra?.interior??null,region=regionAstra(s.astra?.actual??'');
   this.grupo.traverse(g=>{if(g.userData.mixer)(g.userData.mixer as THREE.AnimationMixer).update(dt);if(!g.userData.npcId)return;const p=posicionNpcAstra(s,g.userData.npcId);
+   const caminata=s.astra?.vida?.pasos[g.userData.npcId];if(caminata&&caminata.dia===s.jornada.diasCompletados){g.visible=!!p&&p.interior===dentro;if(g.visible&&p){const dx=p.x-g.position.x,dz=p.z-g.position.z;g.position.set(p.x,0,p.z);if(Math.hypot(dx,dz)>.001)g.rotation.y=Math.atan2(dx,dz);if(!g.userData.mixer)animarVecino(g,dt,caminata.andando);}return;}
    // Adentro de una casa (o con arte propio), cada quien en su sitio, como lo dice el motor
    if(dentro||g.userData.mixer){g.visible=!!p&&p.interior===dentro;if(p&&g.visible){g.position.set(p.x,0,p.z);if(!g.userData.mixer)animarVecino(g,dt,false);}return;}
    // Afuera (solo arte): caminan por la calle entre su puesto, la plaza y la puerta de su casa, y entran por la puerta

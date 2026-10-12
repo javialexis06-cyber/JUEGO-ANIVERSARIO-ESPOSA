@@ -31,7 +31,7 @@ function grow(g,cultivoId){at(g,'granja');const cultivo=cultivoId?C.CULTIVOS.fin
 function finish(g,q,opcion=0){at(g,q.region);ha(g,{tipo:'aceptar',id:q.id});listen(g);
  while(g.estado.historia.activas[q.id].paso<q.pasos.length){const a=g.estado.historia.activas[q.id],p=q.pasos[a.paso],pos=p.punto??{x:0,z:22};at(g,p.region);
   if(p.tipo==='observar')for(let i=0;i<p.datos.length;i++)ha(g,{tipo:'observar',id:q.id,indice:i},pos);
-  else if(p.tipo==='preguntar')for(const n of p.participantes){at(g,n.comision?.region??A.npcAstra(n.id).region);const pos=A.posicionNpcAstra(g.estado,n.id);assert.ok(pos,n.id);g.estado.astra.interior=pos.interior;ha(g,{tipo:'solicitar',id:q.id,npc:n.id},pos);}
+  else if(p.tipo==='preguntar')for(const n of p.participantes){at(g,n.comision?.region??A.npcAstra(n.id).region);const pos=A.posicionNpcAstra(g.estado,n.id);assert.ok(pos,n.id);g.estado.astra.interior=pos.interior;if(pos.interior)g.estado.astra.posicion={x:0,z:3};ha(g,{tipo:'solicitar',id:q.id,npc:n.id},pos);}
   else if(p.tipo==='entregar'){give(g,{...g.estado.inventario,...p.materiales});ha(g,{tipo:'preparar',id:q.id},pos);}
   else if(['secuencia','contraste','circuito','laberinto'].includes(p.tipo)){
    if(p.planes)ha(g,{tipo:'elegir_plan',id:q.id,opcion},pos);if(process.env.HISTORIA_CHECKPOINTS&&['P03','P15','F07'].includes(q.id)&&['secuencia','laberinto','circuito'].includes(p.tipo)){g.estado.astra.posicion=q.region==='pueblo_sol'?{...pos}:Array.from({length:25},(_,i)=>({x:pos.x+i%5-2,z:pos.z+Math.floor(i/5)-2})).find(p=>A.libreRegionAstra(p.region??q.region,p.x,p.z));fs.mkdirSync(process.env.HISTORIA_CHECKPOINTS,{recursive:true});fs.writeFileSync(process.env.HISTORIA_CHECKPOINTS+'/'+q.id+'.json',g.exportar(true));}ha(g,{tipo:'iniciar_reto',id:q.id},pos);

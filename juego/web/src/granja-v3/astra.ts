@@ -1,3 +1,5 @@
+import {crearVidaAstra,posicionVida,destinoVida,vidaAstraValida,ESCENAS_VIDA} from './vida-astra';
+import type {EstadoVidaAstra} from './vida-astra-tipos';
 import {comisionHistoria} from './historia-ubicaciones';
 import { DATOS } from './astra-mundo-datos';
 import { DATOS as CAMPANA } from './astra-campana-datos';
@@ -22,7 +24,7 @@ export const regionAstra=(id:string)=>REGIONES_ASTRA.find(r=>r.id===id);
 export const npcAstra=(id:string)=>NPC_ASTRA.find(n=>n.id===id);
 export const regionActual=(s:EstadoGranja)=>s.astra?.actual??(s.zona==='pueblo'?'pueblo_sol':s.zona);
 export interface EstadoAstra {
- version:1;actual:string|null;interior:string|null;posicion:{x:number;z:number};
+ version:1;vida:EstadoVidaAstra;actual:string|null;interior:string|null;posicion:{x:number;z:number};
  visitas:string[];conocidos:string[];charlas:Record<string,{dia:number;puntos:number}>;
  escena:{id:string;linea:number}|null;lecturas:string[];
  expedientes:Record<string,{dia:number;estadisticas:Record<string,number>;paso:number;decision:number|null;cerrado:boolean}>;
@@ -35,7 +37,7 @@ export type AccionAstra=
  |{tipo:'cine';id:string}|{tipo:'escena';id:string}|{tipo:'continuar'}|{tipo:'cancelar_escena'}
  |{tipo:'retomar';id:string}|{tipo:'aceptar';id:string}|{tipo:'comprobar';id:string}|{tipo:'decidir';id:string;opcion:number}
  |{tipo:'mantenimiento'}|{tipo:'recurso';id:string}|{tipo:'observar';id:string}|{tipo:'balance';elemento:string};
-export function crearAstra():EstadoAstra{return {version:1,actual:null,interior:null,posicion:{x:0,z:8},visitas:[],conocidos:[],charlas:{},escena:null,lecturas:[],expedientes:{},cupos:{},observaciones:[],pruebas:[],mantenimiento:null,personales:[]};}
+export function crearAstra():EstadoAstra{return {version:1,vida:crearVidaAstra(),actual:null,interior:null,posicion:{x:0,z:8},visitas:[],conocidos:[],charlas:{},escena:null,lecturas:[],expedientes:{},cupos:{},observaciones:[],pruebas:[],mantenimiento:null,personales:[]};}
 const bien=(mensaje:string,extra:Partial<Resultado>={}):Resultado=>({ok:true,mensaje,...extra});
 const mal=(mensaje:string):Resultado=>({ok:false,mensaje});
 const cerca=(x:number,z:number,p:{x:number;z:number},radio=3)=>Math.hypot(x-p.x,z-p.z)<=radio;
@@ -49,10 +51,7 @@ export function rutasDesde(s:EstadoGranja){const here=regionActual(s);return RUT
 export function posicionNpcAstra(s:EstadoGranja,id:string):{x:number;z:number;interior:string|null}|null {
  const n=npcAstra(id);if(!n)return null;const comision=comisionHistoria(s,id);if(comision)return comision.region===regionActual(s)&&s.jornada.minutos>=480&&s.jornada.minutos<1020?{x:comision.x,z:comision.z,interior:null}:null;if(n.region!==regionActual(s))return null;
  if(n.region==='pueblo_sol'){const p=ubicacionAldeano(id,s.jornada.diasCompletados,s.jornada.minutos,false);return p?.visible?{x:p.x,z:p.z,interior:null}:null;}
- const r=regionAstra(n.region)!,h=r.viviendas.find(h=>h.id===n.hogar),min=s.jornada.minutos,descanso=s.jornada.diasCompletados%7===r.npc.indexOf(id)%7;
- if(descanso){if(h&&(min<600||min>=1080))return {x:-2+r.npc.filter(i=>npcAstra(i)?.hogar===n.hogar).indexOf(id)*3,z:1,interior:h.id};return {...n.plaza,interior:null};}
- if(min>=1260||min<480)return h?{x:-2+r.npc.filter(i=>npcAstra(i)?.hogar===n.hogar).indexOf(id)*3,z:1,interior:h.id}:null;
- return {...(min<1020?n.oficio:n.plaza),interior:null};
+ const vivo=posicionVida(s,id);if(vivo)return vivo;const destino=destinoVida(s,id);return {x:destino.x,z:destino.z,interior:destino.interior};
 }
 export function libreAstra(s:EstadoGranja,x:number,z:number){
  if(s.astra?.interior)return libreVivienda(x,z);
@@ -73,7 +72,7 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
  if(t.escena&&!['continuar','cancelar_escena'].includes(a.tipo))return mal('Termina o deja la conversación antes de continuar.');
  if(a.tipo==='cancelar_escena'){t.escena=null;return bien('Puedes retomar la conversación desde el principio.');}
  if(a.tipo==='continuar'){
-  if(!t.escena)return mal('No hay una escena activa.');const n=(CAMPANA.escenas as Record<string,number>)[t.escena.id];
+  if(!t.escena)return mal('No hay una escena activa.');const n=(CAMPANA.escenas as Record<string,number>)[t.escena.id]??ESCENAS_VIDA[t.escena.id]?.length;
   if(++t.escena.linea>=n){const id=t.escena.id;if(!t.lecturas.includes(id))t.lecturas.push(id);t.escena=null;
    if(id.endsWith('#cierre')){const q=id.split('#')[0],decision=q.startsWith('H:')?s.historia?.completadas[q.slice(2)]?.opcion:t.expedientes[q]?.decision,ram=q+'#rama'+(decision===0?'1':'2');if(Object.hasOwn(CAMPANA.escenas,ram))t.escena={id:ram,linea:0};}
    return bien('Lectura guardada.');}return bien('');
@@ -107,7 +106,7 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
  if(a.tipo==='hablar'){
   const n=npcAstra(a.id),p=posicionNpcAstra(s,a.id);if(!n||!(n.region==='pueblo_sol'?puedeConversar(s,n.id,x,z):p&&p.interior===t.interior&&cerca(x,z,p)))return mal('Busca al personaje según su horario y acércate para conversar.');
   if(!t.conocidos.includes(n.id))t.conocidos.push(n.id);
-  const f=t.charlas[n.id]??{dia:-1,puntos:0};if(f.dia!==s.jornada.diasCompletados){f.dia=s.jornada.diasCompletados;f.puntos=Math.min(500,f.puntos+5);}t.charlas[n.id]=f;
+  const f=t.charlas[n.id]??{dia:-1,puntos:0};if(f.dia!==s.jornada.diasCompletados){f.dia=s.jornada.diasCompletados;f.puntos=Math.min(2500,f.puntos+5);}t.charlas[n.id]=f;
   const scene='VID_'+n.id+'_1';if((CAMPANA.escenas as Record<string,number>)[scene])t.escena={id:scene,linea:0};return bien('Conversando con '+n.nombre+'.');
  }
  if(a.tipo==='escena'){
@@ -188,14 +187,16 @@ export function actuarAstra(s:EstadoGranja,a:AccionAstra,x:number,z:number,recur
 
 /** Validación estricta y aditiva: una partida antigua recibe este bloque; un bloque corrupto se rechaza. */
 export function astraValida(t:EstadoAstra|undefined,dia:number,completadas?:Record<string,unknown>):boolean {
- if(!t||t.version!==1||t.actual!==null&&(!regionAstra(t.actual)||t.actual==='pueblo_sol')||!Number.isFinite(t.posicion?.x)||!Number.isFinite(t.posicion?.z)||Math.abs(t.posicion.x)>1000||Math.abs(t.posicion.z)>1000)return false;
+ if(!t||!vidaAstraValida(t.vida,dia)||t.version!==1||t.actual!==null&&(!regionAstra(t.actual)||t.actual==='pueblo_sol')||!Number.isFinite(t.posicion?.x)||!Number.isFinite(t.posicion?.z)||Math.abs(t.posicion.x)>1000||Math.abs(t.posicion.z)>1000)return false;
  if(t.interior!==null&&!regionAstra(t.actual??'')?.viviendas.some(h=>h.id===t.interior))return false;
  if(t.actual&&(t.interior?!libreVivienda(t.posicion.x,t.posicion.z):Math.abs(t.posicion.x)>=limitesAstra(t.actual).x||Math.abs(t.posicion.z)>=limitesAstra(t.actual).z))return false;
  const lista=(xs:unknown,ids:string[])=>Array.isArray(xs)&&xs.length<=ids.length&&new Set(xs).size===xs.length&&xs.every(id=>typeof id==='string'&&ids.includes(id));
- if(!lista(t.visitas,[...REGIONES_ASTRA.map(r=>r.id),'granja'])||!lista(t.conocidos,NPC_ASTRA.map(n=>n.id))||!lista(t.lecturas,Object.keys(CAMPANA.escenas))||!lista(t.pruebas,['fuego','agua','tierra','aire']))return false;
+ if(!lista(t.visitas,[...REGIONES_ASTRA.map(r=>r.id),'granja'])||!lista(t.conocidos,NPC_ASTRA.map(n=>n.id))||!lista(t.lecturas,[...Object.keys(CAMPANA.escenas),...Object.keys(ESCENAS_VIDA)])||!lista(t.pruebas,['fuego','agua','tierra','aire']))return false;
  if(!lista(t.personales,NPC_ASTRA.flatMap(n=>n.mision?[n.mision]:[])))return false;
- if(t.escena!==null&&(!t.escena||!Object.hasOwn(CAMPANA.escenas,t.escena.id)||!Number.isInteger(t.escena.linea)||t.escena.linea<0||t.escena.linea>=(CAMPANA.escenas as Record<string,number>)[t.escena.id]))return false;
- if(!t.charlas||typeof t.charlas!=='object'||Object.keys(t.charlas).length>NPC_ASTRA.length||Object.entries(t.charlas).some(([id,v])=>!npcAstra(id)||!t.conocidos.includes(id)||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.puntos)||v.puntos<0||v.puntos>500))return false;
+ if(t.escena!==null&&(!t.escena||!Object.hasOwn(CAMPANA.escenas,t.escena.id)&&!Object.hasOwn(ESCENAS_VIDA,t.escena.id)||!Number.isInteger(t.escena.linea)||t.escena.linea<0||t.escena.linea>=((CAMPANA.escenas as Record<string,number>)[t.escena.id]??ESCENAS_VIDA[t.escena.id]?.length)))return false;
+ if(t.vida.actual&&(t.escena?.id!==t.vida.actual.id||t.escena.linea!==t.vida.actual.linea)||t.escena?.id.startsWith('SOC_')&&!t.vida.actual)return false;
+ if(Object.keys(t.vida.regalos).some(id=>!t.conocidos.includes(id))||Object.keys(t.vida.encuentros).some(id=>!t.conocidos.includes(id.slice(4).replace(/_[123]$/,''))))return false;
+ if(!t.charlas||typeof t.charlas!=='object'||Object.keys(t.charlas).length>NPC_ASTRA.length||Object.entries(t.charlas).some(([id,v])=>!npcAstra(id)||!t.conocidos.includes(id)||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.puntos)||v.puntos<0||v.puntos>2500))return false;
  if(!t.expedientes||typeof t.expedientes!=='object'||Object.keys(t.expedientes).length>CAMPANA_ASTRA.length)return false;
  for(const [id,v]of Object.entries(t.expedientes)){
   const q=CAMPANA_ASTRA.find(q=>q.id===id);if(!q||!Number.isInteger(v.dia)||v.dia<0||v.dia>dia||!Number.isInteger(v.paso)||v.paso<0||v.paso>q.pasos.length||typeof v.cerrado!=='boolean'||v.decision!==null&&v.decision!==0&&v.decision!==1||v.cerrado&&(v.paso!==q.pasos.length||v.decision===null)||!q.requiere.every(i=>t.expedientes[i]?.cerrado||completadas?.[i])||!v.estadisticas||typeof v.estadisticas!=='object'||Object.keys(v.estadisticas).length>500||Object.values(v.estadisticas).some(n=>!Number.isSafeInteger(n)||n<0))return false;

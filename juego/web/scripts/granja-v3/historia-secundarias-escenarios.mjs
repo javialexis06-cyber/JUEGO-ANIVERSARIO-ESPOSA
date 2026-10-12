@@ -21,11 +21,11 @@ function work(g,p){const key=p.registro,n=p.cantidad??1;
  else if(key.startsWith('observacion:')){const id=key.slice(12),region=A.RECURSOS_ASTRA.find(r=>r.recursos.some(d=>d.id===id)).id;at(g,region);const index=A.RECURSOS_ASTRA.find(r=>r.id===region).recursos.findIndex(d=>d.id===id),p=A.puntoRecurso(region,index);act(g,{tipo:'astra',accion:{tipo:'observar',id},xJugador:p.x,zJugador:p.z});}
  else assert.fail('Oficio sin escenario: '+key);
 }
-function extra(g,q){if(q.personal)meet(g,q.personal);for(let i=0;i<Math.min(2,q.pistas?.length??0);i++){const p=q.pistas[i];at(g,p.region);ha(g,{tipo:'descubrir',id:q.id,indice:i},p);}
+function extra(g,q,opcion=0){if(q.personal)meet(g,q.personal);for(let i=0;i<Math.min(2,q.pistas?.length??0);i++){const p=q.pistas[i];at(g,p.region);ha(g,{tipo:'descubrir',id:q.id,indice:i},p);}
  at(g,q.region);ha(g,{tipo:'aceptar',id:q.id});listen(g);
  while(g.estado.historia.activas[q.id].paso<q.pasos.length){const a=g.estado.historia.activas[q.id],p=q.pasos[a.paso],pos=p.punto??{x:0,z:22};at(g,p.region);
   if(p.tipo==='observar')for(let i=0;i<p.datos.length;i++)ha(g,{tipo:'observar',id:q.id,indice:i},pos);
-  else if(p.tipo==='preguntar')for(const n of p.participantes){const npc=A.npcAstra(n.id);at(g,npc.region);let pos=A.posicionNpcAstra(g.estado,n.id);if(!pos){meet(g,n.id);at(g,npc.region);pos=A.posicionNpcAstra(g.estado,n.id);}assert.ok(pos,n.id);g.estado.astra.interior=pos.interior;ha(g,{tipo:'solicitar',id:q.id,npc:n.id},pos);}
+  else if(p.tipo==='preguntar')for(const n of p.participantes){const npc=A.npcAstra(n.id);at(g,npc.region);let pos=A.posicionNpcAstra(g.estado,n.id);if(!pos){meet(g,n.id);at(g,npc.region);pos=A.posicionNpcAstra(g.estado,n.id);}assert.ok(pos,n.id);g.estado.astra.interior=pos.interior;if(pos.interior)g.estado.astra.posicion={x:0,z:3};ha(g,{tipo:'solicitar',id:q.id,npc:n.id},pos);}
   else if(p.tipo==='entregar'){give(g,{...g.estado.inventario,...p.materiales});ha(g,{tipo:'preparar',id:q.id},pos);}
   else if(p.tipo==='devolver_pesca'){const pez=Object.keys(a.estadisticas).find(k=>k.startsWith('captura:')&&a.estadisticas[k]>0).slice(8);ha(g,{tipo:'devolver_pez',id:q.id,pez},pos);}
   else if(p.tipo==='nota')ha(g,{tipo:'guardar_nota',id:q.id,texto:'¿Cómo se mantiene la reserva del río?'},pos);
@@ -42,7 +42,7 @@ function extra(g,q){if(q.personal)meet(g,q.personal);for(let i=0;i<Math.min(2,q.
   }
   assert.equal(M.validarEstado(g.estado),null,p.id);
  }
- listen(g);ha(g,{tipo:'terminar',id:q.id,opcion:0});listen(g);assert.equal(M.validarEstado(g.estado),null,q.id);assert.ok(game().cargarJSON(g.exportar(true)).ok,q.id+' recarga');
+ listen(g);ha(g,{tipo:'terminar',id:q.id,opcion});listen(g);assert.equal(M.validarEstado(g.estado),null,q.id);assert.ok(game().cargarJSON(g.exportar(true)).ok,q.id+' recarga');
 }
 
 
