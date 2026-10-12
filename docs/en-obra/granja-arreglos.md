@@ -61,7 +61,28 @@
   4. El minimapa recorre los 1.212 obstáculos cada 200 ms (`hud.ts` `tic`). Se arregla solo con la tanda 4.
   5. Texturas de lienzo de los arcos de salida que no se liberan (`zonas-render.ts:274-277`).
 
-## Tanda 2 · Menú de 3 rayitas, Escape, E y barra
+## Tanda 2 · Menú de 3 rayitas, Escape, E y barra — **hecho** (12 de octubre)
+
+Quedó así:
+- **Menú de 3 rayitas** con solo seis pestañas: Mochila, Diario, Vecinos, Habilidades, Premios y Ajustes. Si había
+  guardada una pestaña que ya no existe, abre la mochila (`hud.ts`).
+- **Escape**: si hay algo abierto (panel, colocación, diseño, atlas o tarjeta) lo cierra; si no, abre el menú. El mapa
+  grande se cierra con su propio Escape (`preventDefault` en `hud.ts`) y no abre el menú de paso.
+- **E** abre solo la mochila, sin la tira de pestañas (clase `solo-mochila` en el body; se quita al abrir otro panel
+  o cerrar).
+- **Fabricar, Construir, Diseñar, Animales, Mascotas, Crianza, Explorar, Colecciones, Atlas, Terreno, Cultivos,
+  Campaña y Astra** ya no son pestañas: se abren desde su lugar. Campaña y Astra, mientras llega la tanda 6, desde
+  dos botones arriba del Diario.
+- **Carpintería**: «Encargar obras y muebles» y «Mover edificios de mi granja». Si se pide desde el pueblo, sale del
+  mostrador y el modo diseño se abre solo al llegar a la granja (`disenoPendiente` en `actualizarUI`).
+- **Casa de los Animales**: adoptar animales de granja, mascotas y caballos, huevos e incubación, «Consultar a la
+  cuidadora sobre crianza» y el libro de los habitantes (el atlas).
+- **Clic en los edificios de la granja**: ya no sale tarjeta; entra directo a la casa, el refugio o el invernadero, o
+  abre la caja de envíos. Mover y guardar se hacen en el modo diseño (botón «Guardar en mochila» en la barra de
+  colocación). Lo del refugio (pasto, jardinero, habitantes) sigue dentro del refugio.
+- **Barra**: las 12 casillas se encogen para caber siempre (sin barra movible), probado en 844×390 y 1366×768.
+- `scripts/granja-v3/verificar-colecciones.mjs` abre las colecciones directo (ya no hay pestaña).
+
 
 Lo pedido:
 

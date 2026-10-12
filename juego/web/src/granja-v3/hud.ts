@@ -74,6 +74,8 @@ export function iniciarHud(h: Hud) {
     if (h.panelAbierto()) { h.cerrarPanel(); return; }
     let id = 'inventario';
     try { id = localStorage.getItem(CLAVE_PESTANA) ?? id; } catch { /* nada */ }
+    if (!document.querySelector(`.menu-pestana[data-panel="${id}"]`)) id = 'inventario';
+    document.body.classList.remove('solo-mochila');
     h.mostrarPanel(id);
   };
   // Recordar la última pestaña del menú (como Stardew, que abre donde la dejaste)
@@ -382,7 +384,7 @@ export function iniciarHud(h: Hud) {
   // Al escoger un lugar del valle se cierra el mapa para ver la ruta marcada en el mundo
   document.querySelectorAll<HTMLElement>('#mapa-grande [data-zone]').forEach((g) => g.addEventListener('click', () => setTimeout(cerrarMapa, 30)));
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !$('mapa-grande').hidden) cerrarMapa();
+    if (e.key === 'Escape' && !$('mapa-grande').hidden) { e.preventDefault(); cerrarMapa(); }
     else if (e.key.toLowerCase() === 'm' && !(e.target as HTMLElement).matches('input,select,textarea')) $('mapa-grande').hidden ? abrirMapa() : cerrarMapa();
   });
 

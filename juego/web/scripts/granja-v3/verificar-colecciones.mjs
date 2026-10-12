@@ -17,7 +17,8 @@ page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.statu
 const done=t=>{checks.push(t);console.log('OK '+t);},state=()=>page.evaluate(()=>window.__granjaV3.estado());
 const record=s=>s.colecciones.lotes.find(r=>r.id==='verano');
 const ready=async()=>{await page.waitForFunction(()=>window.__granjaV3?.ready,null,{timeout:180000});await page.evaluate(()=>window.__granjaV3.settled());};
-async function panel(){await page.evaluate(()=>window.__granjaV3.panel('inventario'));await page.locator('.menu-pestana[data-panel="colecciones"]').click();}
+// (las colecciones ya no son una pestaña del menú: se abren desde el archivo)
+async function panel(){await page.evaluate(()=>window.__granjaV3.panel('colecciones'));}
 async function fixture({archive=false,legacy=false,materiales=false,llena=false}={}){
  const r=await page.evaluate(async a=>{const h=window.__granjaV3,s=h.estado();s.zona=a.archive?'pueblo':'granja';s.servicio=a.archive?'archivo':null;s.interior=null;s.jornada.minutos=660;s.jornada.resumenPendiente=false;s.posicionExterior={zona:s.zona,x:a.archive?75.5:-6.6,z:a.archive?23.4:-.2};
   if(a.legacy)delete s.colecciones;
@@ -44,7 +45,7 @@ try{
  const libre=await page.evaluate(async()=>{const h=window.__granjaV3,s=h.estado();s.casillasInventario[1]=null;s.inventario.piedra-=999;const r=await h.cargar(s);if(r.ok)h.guardar();return r;});assert.equal(libre.ok,true,libre.mensaje);await panel();
  const semillasAntes=await state();await page.locator('#semilla-archivo-maiz').fill('2');await quota(true);await click('[data-do="lote-semilla"][data-id="maiz"]');after=await state();assert.deepEqual(after.casillasInventario,semillasAntes.casillasInventario);assert.equal(after.monedas,semillasAntes.monedas);await quota(false);
  await panel();await page.locator('#semilla-archivo-maiz').fill('2');await click('[data-do="lote-semilla"][data-id="maiz"]');after=await state();assert.equal(after.inventario.semilla_maiz,2);assert.equal(after.monedas,semillasAntes.monedas-20);await page.reload();await ready();assert.equal((await state()).inventario.semilla_maiz,2);done('Reserva vende maíz en primavera al precio original y persiste monedas y semillas');
- await fixture();await panel();assert.ok(await page.locator('[data-do="lote-semilla"][data-id="maiz"]').isDisabled());assert.ok((await page.locator('#panel-body').innerText()).includes('Maíz · Oro × 3'));assert.ok(await page.locator('.menu-pestana[data-panel="atlas"]').getAttribute('aria-label').then(t=>t.includes('vista previa')));done('Cuaderno conserva donaciones reales a distancia y mantiene separado el atlas de vista previa');
+ await fixture();await panel();assert.ok(await page.locator('[data-do="lote-semilla"][data-id="maiz"]').isDisabled());assert.ok((await page.locator('#panel-body').innerText()).includes('Maíz · Oro × 3'));done('Cuaderno conserva donaciones reales a distancia y mantiene separado el atlas de vista previa');
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.deepEqual(errors,[]);assert.deepEqual(bad,[]);done('Panel horizontal sin desbordamiento, errores JavaScript ni recursos fallidos');await page.screenshot({path:path.join(out,'colecciones.png')});
 }catch(e){errors.push(String(e.stack));process.exitCode=1;await page.screenshot({path:path.join(out,'fallo.png')}).catch(()=>{});}
 finally{fs.writeFileSync(path.join(out,'VERIFICACION-COLECCIONES.json'),JSON.stringify({checks,errors,bad,viewport:[844,390],escenariosPreparados:'V5 anterior, archivo, materiales y mochila llena; contexto aislado.',dispositivosFisicos:[]},null,2));console.log(JSON.stringify({checks:checks.length,errors,bad}));await browser.close();}
