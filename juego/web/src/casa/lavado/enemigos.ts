@@ -10,6 +10,8 @@ export type CompEnemigo =
   | 'flotar' // cruza en ondas (las cabezas de medusa)
   | 'saltar' // a brincos
   | 'embestir' // se queda quieto y se lanza
+  | 'planta' // no se mueve (las maticas de La Matera): hay que ir a buscarla
+  | 'morder' // no se mueve, pero si alguien se le acerca se estira y muerde
   | 'parca';
 
 export interface DefEnemigo {
@@ -92,6 +94,14 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   burbujaGas: E({ id: 'burbujaGas', nombre: 'Burbuja de gas', desc: 'Verdosa y hediondita. Sube flotando del caño.', vida: 240, vel: 46, dano: 18, xp: 3, radio: 15, tam: 50, comp: 'flotar' }),
   rejillita: E({ id: 'rejillita', nombre: 'Rejillita suelta', desc: 'La rejilla del desagüe que se soltó y salió a caminar. De metal.', vida: 360, vel: 52, dano: 19, xp: 4, radio: 17, tam: 52, retro: 0.3 }),
   lodo: E({ id: 'lodo', nombre: 'Lodo del caño', desc: 'Una montaña café con cositas atrapadas adentro. Pesadísima.', vida: 2300, vel: 32, dano: 34, xp: 6, radio: 24, tam: 66, retro: 0.12 }),
+  // ------------------------------------------------------------------------------------------------ La Matera de la ventana
+  brotecito: E({ id: 'brotecito', nombre: 'Brotecito', desc: 'Una semillita que acaba de echar dos hojas. No camina: espera a que pases.', vida: 6, vel: 0, dano: 4, xp: 1, radio: 11, tam: 34, retro: 0, comp: 'planta' }),
+  cactus: E({ id: 'cactus', nombre: 'Cactus de la ventana', desc: 'Redondo, con espinas y una flor. Bravo porque nadie lo abraza.', vida: 22, vel: 0, dano: 9, xp: 1, radio: 13, tam: 40, retro: 0, comp: 'planta' }),
+  atrapamoscas: E({ id: 'atrapamoscas', nombre: 'Atrapamoscas', desc: 'Quietica… hasta que te le acercas. Entonces se estira y ¡ñam!', vida: 60, vel: 70, dano: 12, xp: 2, radio: 14, tam: 48, retro: 0.2, comp: 'morder' }),
+  caracol: E({ id: 'caracol', nombre: 'Caracol', desc: 'Lentísimo y babosito, con su casita a la espalda. Pero no se cansa nunca.', vida: 50, vel: 24, dano: 8, xp: 2, radio: 13, tam: 40, retro: 0.5 }),
+  dienteLeon: E({ id: 'dienteLeon', nombre: 'Diente de león', desc: 'Semillitas de pompón que el viento mete por la ventana.', vida: 9, vel: 70, dano: 4, xp: 1, radio: 10, tam: 36, comp: 'flotar' }),
+  enredadera: E({ id: 'enredadera', nombre: 'Enredadera', desc: 'Un nudo de bejucos terco como él solo: tapa el camino.', vida: 280, vel: 0, dano: 16, xp: 3, radio: 17, tam: 54, retro: 0, comp: 'planta' }),
+  helecho: E({ id: 'helecho', nombre: 'Helecho', desc: 'Frondoso, enorme y con una carita escondida entre las hojas.', vida: 900, vel: 0, dano: 22, xp: 5, radio: 22, tam: 66, retro: 0, comp: 'planta' }),
   // ------------------------------------------------------------------------------------------------ Jefes (vida × nivel)
   espinillon: E({ id: 'espinillon', nombre: 'El Espinillón', desc: 'El rey de los granitos, con corona y todo. Embiste cuando se enoja.', vida: 420, vel: 56, dano: 30, xp: 120, radio: 40, tam: 130, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
   reinaCaspa: E({ id: 'reinaCaspa', nombre: 'La Reina Caspa', desc: 'Llega nevando. Guarda una carta mágica perdida.', vida: 300, vel: 72, dano: 24, xp: 120, radio: 34, tam: 118, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
@@ -116,6 +126,9 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   pulpoDesague: E({ id: 'pulpoDesague', nombre: 'El Pulpo del Desagüe', desc: 'Morado, con tentáculos llenos de pelo enredado.', vida: 700, vel: 54, dano: 40, xp: 170, radio: 46, tam: 146, retro: 0, jefe: true, congelable: false }),
   bocaSifon: E({ id: 'bocaSifon', nombre: 'La Boca del Sifón', desc: 'El tubo en U del lavamanos con dientes. Se lo traga todo.', vida: 950, vel: 50, dano: 46, xp: 220, radio: 48, tam: 150, retro: 0, jefe: true, congelable: false }),
   reinaGrasa: E({ id: 'reinaGrasa', nombre: 'La Reina Grasa', desc: 'La dueña de todo el desagüe: negra, brillante y con corona.', vida: 1150, vel: 56, dano: 52, xp: 260, radio: 52, tam: 158, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
+  donCactus: E({ id: 'donCactus', nombre: 'Don Cactus', desc: 'El cactus más viejo de la ventana, con corona y brazos. Quiere un abrazo (mejor no).', vida: 480, vel: 40, dano: 30, xp: 150, radio: 40, tam: 130, retro: 0, jefe: true, congelable: false }),
+  atrapamoscasGigante: E({ id: 'atrapamoscasGigante', nombre: 'La Atrapamoscas Gigante', desc: 'Una boca de planta con corona y muchísima hambre.', vida: 700, vel: 58, dano: 36, xp: 170, radio: 44, tam: 140, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
+  materaGigante: E({ id: 'materaGigante', nombre: 'La Matera Gigante', desc: 'La matera de barro se levantó y camina, con su girasol bravo encima.', vida: 1000, vel: 46, dano: 42, xp: 220, radio: 50, tam: 160, retro: 0, jefe: true, congelable: false }),
   // ------------------------------------------------------------------------------------------------ La Parca
   duchaHelada: E({ id: 'duchaHelada', nombre: 'La Ducha Helada', desc: '¡Se acabó el agua caliente! Si llega, ya ganaste… pero no la aguanta nadie.', vida: 655350, vel: 230, dano: 65535, xp: 0, radio: 34, tam: 140, retro: 0, comp: 'parca', jefe: true, congelable: false }),
 };

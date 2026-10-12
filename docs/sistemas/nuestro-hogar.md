@@ -501,6 +501,16 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   `disparos.ts`). Jefes: Gran Moco, Regadera Loca y Don Lagaña (el del Hiper). Al llegar a los 15 minutos llega la
   Ducha Helada como en los otros. Cuatro logros más (76 en total): Coleccionista de jefes, Ducha larguita, Fin del
   desfile y Espejo limpiecito.
+- **Versión 2, fase 3e: La Matera de la ventana** (Il Molise; especial de 15 minutos, se abre aguantando 20 minutos
+  en La Jabonera). La tierra negra de la matera de la ventanita de la ducha (`FRAG_MATERA`: granulada, a parches
+  seca o mojada, musgo, piedritas y los bordes de barro de las materas), con materas, regaderas y palitas de
+  utilería y farolitos de jardín como luces. Los bichos son **maticas que no caminan** (comportamientos nuevos
+  `planta` y `morder` en `enemigos.ts`): brotecito, cactus, enredadera y helecho se quedan quietos (hay que ir a
+  buscarlos: al caminar siguen saliendo adelante, repartidos en una franja ancha, `QUIETAS` en `motor.ts`) y la
+  **atrapamoscas** se estira y muerde si uno se le acerca; además caracoles lentos que persiguen y semillas de diente
+  de león que el viento cruza. Tres jefes en Blender: Don Cactus, la Atrapamoscas Gigante y la Matera Gigante (un
+  girasol bravo con corona encima de su matera, el del Hiper). En los dos últimos minutos **se abre la ventana y
+  llueve de todo**: oleadas de mugrosos de los otros escenarios cruzando en ondas. Tres logros más (79 en total).
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.
