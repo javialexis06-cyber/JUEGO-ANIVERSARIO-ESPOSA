@@ -1,5 +1,19 @@
 # Coordinación de la granja con el proyecto principal
 
+## Campaña jugable en desarrollo · 11 de octubre de 2026
+
+Javier autorizó desarrollar los siete bloques seguidos. Se incorporó el remoto de Claude `2aacf18`,
+con planos, voces, ambientes, 178 residentes y 93 domicilios; se conservan sus 42 encargos de pueblos
+y los avances del lavado. El frente de motor añade la pestaña **Campaña**, con 36 contratos principales
+y 110 objetivos, en un bloque aditivo `historia` de V5. El archivo anterior sigue disponible y no
+acredita estas misiones. Contrato: [HISTORIA-INTEGRACION.md](../../juego/web/src/granja-v3/HISTORIA-INTEGRACION.md).
+
+Las posiciones de trabajo se obtienen de los planos vigentes. Las voces conservan IDs y huellas.
+No producir de nuevo las tomas existentes por el prefijo interno `H:`. F12 tiene solución técnica;
+la alternativa final de combate y los jefes se completan en el bloque regional. Quedan las 181 historias
+originales adicionales, efectos de premios, vida social ampliada, variedad regional y sistemas restantes.
+Las comprobaciones de contrato preparan inventario y ubicaciones; el recorrido ordinario se hará al final.
+
 ## Pueblos de Astra agrandados · 11 de octubre de 2026 (Claude, a pedido de Javier)
 
 Javier pidió pueblos más grandes y con vida, «con una estructura tan bonita como la del primero». Se hizo sin

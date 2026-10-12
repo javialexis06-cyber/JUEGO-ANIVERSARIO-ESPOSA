@@ -2,7 +2,7 @@
 export interface PuntoAventura { x:number; z:number }
 export type SueloAventura = 'suelo'|'muro';
 export type FaseMonstruo = 'reposo'|'patrulla'|'alerta'|'persecucion'|'anticipacion'|'ataque'|'recuperacion';
-export type TipoMonstruo = 'gelatina'|'escarabajo'|'murcielago'|'guardian'|'ascua'|'sombra'|'centinela';
+export type TipoMonstruo = 'gelatina'|'escarabajo'|'murcielago'|'guardian'|'ascua'|'sombra'|'centinela'|'constructo_fuego'|'constructo_agua'|'constructo_tierra'|'constructo_aire';
 export type MineralAventura = 'piedra'|'carbon'|'cobre'|'hierro'|'oro'|'cuarzo'|'rubi'|'jade'|'obsidiana'|'plata'|'titanio'|'meteorita'|'cristal_astral'|'polvo_estelar'|'estano'|'mitrilo'|'amatista'|'topacio'|'aguamarina'|'esmeralda'|'diamante'|'geoda'|'geoda_helada'|'geoda_magma'|'geoda_omni';
 export interface AccesoAventura { desbloqueos?:string[]; construcciones?:string[]; nivelPico?:number }
 export interface DestinoAventura {
@@ -24,7 +24,7 @@ export const AVENTURAS:DestinoAventura[] = [
  {id:'planeta_iris',nombre:'Planeta Iris',tipo:'planeta',descripcion:'Bosques de cristal violeta. Las balizas marcan cada sala y la ubicación de la nave.',color:'#a18aa9',roca:'#5e607e',luz:'#e4c3ff',dificultad:5,espacial:true,construccion:'nave_exploradora',minerales:['jade','cristal_astral','polvo_estelar','titanio'],monstruos:['gelatina','sombra','centinela'],niveles:5},
 ];
 
-for(const [elemento,color,monstruo,mineral]of [['fuego','#bf735b','ascua','rubi'],['agua','#749cb5','gelatina','aguamarina'],['tierra','#8f9c6a','guardian','jade'],['aire','#babdcd','centinela','cuarzo']] as const)AVENTURAS.push({id:'confluencia_'+elemento,nombre:'Práctica elemental · '+elemento,tipo:'reino',descripcion:'Arena autorizada fuera del refugio. Los habitantes y los animales del territorio permanecen a salvo.',color,roca:'#78777d',luz:color,dificultad:3,espacial:false,minerales:[mineral,'piedra'],monstruos:[monstruo],niveles:3});
+for(const [elemento,color,monstruo,mineral]of [['fuego','#bf735b','ascua','rubi'],['agua','#749cb5','gelatina','aguamarina'],['tierra','#8f9c6a','guardian','jade'],['aire','#babdcd','centinela','cuarzo']] as const)AVENTURAS.push({id:'confluencia_'+elemento,nombre:'Práctica elemental · '+elemento,tipo:'reino',descripcion:'Arena autorizada fuera del refugio. Los habitantes y los animales del territorio permanecen a salvo.',color,roca:'#78777d',luz:color,dificultad:3,espacial:false,minerales:[mineral,'piedra'],monstruos:['constructo_'+elemento as TipoMonstruo],niveles:3});
 
 export interface ArquetipoMonstruo { nombre:string; vida:number; defensa:number; dano:number; velocidad:number; vision:number; alcance:number; anticipacion:number; recuperacion:number; color:string; botin:MineralAventura|'fibra' }
 export const MONSTRUOS:Record<TipoMonstruo,ArquetipoMonstruo> = {
@@ -35,6 +35,10 @@ export const MONSTRUOS:Record<TipoMonstruo,ArquetipoMonstruo> = {
  ascua:{nombre:'Ascua errante',vida:34,defensa:1,dano:9,velocidad:1.6,vision:7,alcance:1.5,anticipacion:.9,recuperacion:1.45,color:'#e89a68',botin:'carbon'},
  sombra:{nombre:'Velo nocturno',vida:38,defensa:2,dano:8,velocidad:2.1,vision:7.5,alcance:1.35,anticipacion:.78,recuperacion:1.25,color:'#9b8eaf',botin:'plata'},
  centinela:{nombre:'Centinela orbital',vida:54,defensa:3,dano:10,velocidad:1.35,vision:8,alcance:1.65,anticipacion:.95,recuperacion:1.6,color:'#89b4c0',botin:'titanio'},
+ constructo_fuego:{nombre:'Regulador térmico de práctica',vida:34,defensa:1,dano:9,velocidad:1.6,vision:7,alcance:1.5,anticipacion:.9,recuperacion:1.45,color:'#e89a68',botin:'carbon'},
+ constructo_agua:{nombre:'Bomba de retorno de práctica',vida:28,defensa:0,dano:5,velocidad:1.15,vision:6,alcance:1.1,anticipacion:.72,recuperacion:1.3,color:'#749cb5',botin:'fibra'},
+ constructo_tierra:{nombre:'Soporte móvil de práctica',vida:65,defensa:4,dano:12,velocidad:.9,vision:6,alcance:1.65,anticipacion:1,recuperacion:1.8,color:'#92977c',botin:'piedra'},
+ constructo_aire:{nombre:'Turbina de práctica',vida:54,defensa:3,dano:10,velocidad:1.35,vision:8,alcance:1.65,anticipacion:.95,recuperacion:1.6,color:'#babdcd',botin:'titanio'},
 };
 
 export const MINERALES:Record<MineralAventura,{nombre:string; color:string; hp:number; pico:number}> = {

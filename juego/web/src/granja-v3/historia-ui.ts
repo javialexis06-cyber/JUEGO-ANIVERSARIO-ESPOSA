@@ -1,0 +1,36 @@
+/** Interfaz funcional: los artistas pueden vestir los puestos sin cambiar sus contratos. */
+import type {EstadoGranja} from './estado';
+import {MISIONES_HISTORIA,historiaDisponible,ordenHistoria} from './historia';
+import {regionActual,regionAstra,npcAstra,posicionNpcAstra} from './astra';
+import {puertosCircuito} from './historia-retos';
+import {renderAstra} from './astra-ui';
+import {obtenerObjeto} from './objetos';
+const esc=(v:unknown)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
+const b=(t:string,a:string,id='',attrs='')=>`<button class="btn small" data-do="historia-${a}" data-id="${esc(id)}" ${attrs}>${esc(t)}</button>`;
+export function renderHistoria(s:EstadoGranja){
+ if(s.astra?.escena)return renderAstra(s);
+ const h=s.historia!,here=regionActual(s),r=h.reto;
+ if(r){const q=MISIONES_HISTORIA.find(q=>q.id===r.mision)!,p=q.pasos[h.activas[q.id].paso],a=h.activas[q.id];
+  let prueba='';
+  if(r.tipo==='laberinto')prueba=`<div style="display:grid;grid-template-columns:repeat(9,1.7em);gap:2px" role="img" aria-label="Mapa de la Casa Fija; arroba indica tu posición">${p.mapa!.flatMap((fila,z)=>[...fila].map((c,x)=>`<span style="text-align:center;border:1px solid #777;${c==='#'?'background:#aaa;':''}" aria-label="${x},${z}: ${x===r.x&&z===r.z?'jugador':esc(c)}">${x===r.x&&z===r.z?'@':esc(c)}</span>`)).join('')}</div><p>Posición ${r.x}, ${r.z} · Fuentes ${r.visitados.join(', ')||'pendientes'} · Permiso ${r.retiro?'retirado':'vigente'}. # pared; E salida.</p>${[[0,-1,'Arriba'],[-1,0,'Izquierda'],[1,0,'Derecha'],[0,1,'Abajo']].map(([dx,dz,t])=>b(String(t),'mover','',`data-dx="${dx}" data-dz="${dz}"`)).join('')}${b('Retirar permiso en R','retirar_permiso')}`;
+  else if(r.tipo==='circuito')prueba=`<p>Entrada: lado oeste de la celda 1. Retorno: lado este de la celda 9. Cada unión gira 90°. N = arriba, E = derecha, S = abajo, O = izquierda. El centro permanece aislado.</p><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">${r.giros.map((_,i)=>i===4?'<span style="padding:12px;border:2px solid #777">5 · Núcleo protegido</span>':b(`${i+1}: ${[[1,'N'],[2,'E'],[4,'S'],[8,'O']].filter(([bit])=>puertosCircuito(r,i)&Number(bit)).map(([,dir])=>dir).join(' ↔ ')}`,'girar','',`data-indice="${i}"`)).join('')}</div>${b('Comprobar conexión','probar_circuito')}`;
+  else if(r.tipo==='contraste')prueba=p.opciones!.map((t,i)=>b(t,'responder','',`data-opcion="${i}"`)).join('');
+  else {const orden=ordenHistoria(p,a)!;prueba=`<p>Operaciones confirmadas: ${r.progreso}/${orden.length}.</p>`+[...orden].sort((x,y)=>x.localeCompare(y,'es')).map(t=>b(t,'responder','',`data-opcion="${esc(t)}"`)).join('');}
+  return `<div class="caps">${esc(q.id)} · prueba guardable</div><h3>${esc(p.texto)}</h3>${(p.datos??[]).map(t=>`<p>${esc(t)}</p>`).join('')}${prueba}<p>Intentos con corrección: ${r.errores}. Los materiales se conservarán al reintentar.</p>${b('Reiniciar esta prueba','reiniciar_reto',q.id)}${b('Dejar prueba y volver al mundo','dejar_reto')}`;
+ }
+ const cards=MISIONES_HISTORIA.filter(q=>h.activas[q.id]||q.region===here&&historiaDisponible(s,q.id)).map(q=>{
+  const a=h.activas[q.id],done=h.completadas[q.id];if(done)return `<div class="card"><div class="caps">${esc(q.id)} · completada</div><h4>${esc(q.titulo)}</h4>${b('Escuchar cierre y decisión guardados','retomar',q.id)}</div>`;
+  if(!a)return `<div class="card"><div class="caps">${esc(q.id)} · ${esc(q.clase)}</div><h4>${esc(q.titulo)}</h4>${b('Iniciar esta historia','aceptar',q.id)}</div>`;
+  const p=q.pasos[a.paso];let actions='';
+  if(!s.astra!.lecturas.includes('H:'+q.id+'#inicio'))actions=b('Escuchar inicio pendiente','retomar',q.id);
+  else if(!p){actions=!s.astra!.lecturas.includes('H:'+q.id+'#giro')?b('Escuchar giro pendiente','retomar',q.id):q.ramas.slice(0,q.decision?2:1).map((t,i)=>b(q.decision?'Elegir: '+t.split('\n')[0]:'Conservar cierre','terminar',q.id,`data-opcion="${i}" ${a.plan!==null&&a.plan!==i?'disabled':''}`)).join('');}
+  else if(p.tipo==='observar')actions=p.datos!.map((t,i)=>b((a.observados.includes(p.id+':'+i)?'✓ ':'')+t,'observar',q.id,`data-indice="${i}"`)).join('');
+  else if(p.tipo==='preguntar')actions=p.participantes!.map(n=>{const npc=npcAstra(n.id)!,pos=posicionNpcAstra(s,n.id);return `<p>${esc(npc.nombre)} · ${esc(regionAstra(n.comision?.region??npc.region)?.nombre)} · ${pos?(pos.interior?'en su vivienda':`${pos.x.toFixed(1)}, ${pos.z.toFixed(1)}`):'consulta su turno en Astra'}</p>${b('Pedir permiso a '+npc.nombre,'solicitar',q.id,`data-npc="${n.id}" ${a.permisos[p.id+':'+n.id]?'disabled':''}`)}`;}).join('');
+  else if(p.tipo==='entregar')actions=`<p>Reserva real: ${Object.entries(p.materiales!).map(([id,n])=>`${n} ${esc(obtenerObjeto(id)?.nombre??id)} (${s.inventario[id]??0} disponibles)`).join(' · ')}. Se consume una sola vez.</p>${b('Preparar y entregar reserva','preparar',q.id)}`;
+  else if(['secuencia','contraste','laberinto','circuito'].includes(p.tipo))actions=(p.planes&&a.plan===null?p.planes.map((t,i)=>b(t,'elegir_plan',q.id,`data-opcion="${i}"`)).join(''):b('Comenzar prueba técnica','iniciar_reto',q.id))+(p.alternativa?b('Elegir prueba técnica','enfoque',q.id,'data-modo="tecnica"')+b('Elegir desactivación en combate','enfoque',q.id,'data-modo="combate"')+(a.enfoques[p.id]==='combate'?`<p>Desactivaciones: ${a.estadisticas['combate:'+p.destino]??0}/2. Arena: ${esc(p.destino)}.</p>${b('Confirmar desactivaciones','comprobar',q.id)}`:''):'');
+  else actions=b('Comprobar acción realizada','comprobar',q.id);
+  const cultivos=new Set(Object.values(a.cultivos).filter(c=>c.regado&&c.cosechado).map(c=>c.cultivo)).size;
+  return `<div class="card" data-historia="${q.id}"><div class="caps">${esc(q.id)} · ${a.paso}/${q.pasos.length} objetivos</div><h4>${esc(q.titulo)}</h4><p>${esc(p?.texto??q.decision??'Guardar el cierre de esta historia.')}</p>${p?`<p>Lugar: ${esc(regionAstra(p.region)?.nombre??p.region)}${p.punto?` · puesto ${p.punto.x}, ${p.punto.z}`:''}.</p>`:''}${p?.tipo==='cultivar'?`<p>Especies propias con siembra, riego y cosecha: ${cultivos}/${p.cantidad??1}.</p>`:''}${p?.tipo==='jornadas'?`<p>Jornadas desde este paso: ${s.jornada.diasCompletados-a.inicioPaso}/${a.plan===0?(p.cantidadAlternativa??p.cantidad??1):(p.cantidad??1)}. Duerme en la cabaña.</p>`:''}${actions}</div>`;
+ }).join('');
+ return `<h3>Diario de la campaña</h3><p>${Object.keys(h.completadas).length}/${MISIONES_HISTORIA.length} historias completadas. Cada objetivo exige acciones y conserva un recibo. Puedes dejar una escena y retomarla; leer un expediente no completa estas misiones.</p><p>Lugar actual: ${esc(regionAstra(here)?.nombre??'Nuestra granja')}. Las historias activas permanecen aquí aunque viajes. Las nuevas aparecen en su localidad.</p>${cards||'<p>No hay nuevas historias aquí. Consulta los accesos de Astra y vuelve al Pueblo del Sol para iniciar la campaña.</p>'}<h4>Próximos destinos</h4>${MISIONES_HISTORIA.filter(q=>!h.activas[q.id]&&!h.completadas[q.id]&&historiaDisponible(s,q.id)&&q.region!==here).map(q=>`<p>${esc(q.id)} · ${esc(q.titulo)}: ${esc(regionAstra(q.region)?.nombre??q.region)}</p>`).join('')}`;
+}

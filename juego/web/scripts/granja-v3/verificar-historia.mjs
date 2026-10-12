@@ -1,0 +1,34 @@
+/** Build servido, contexto aislado y checkpoints obtenidos por acciones en probar-historia. */
+import {chromium} from '@playwright/test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {compilarModulo} from './modulos-prueba.mjs';
+const H=await import(await compilarModulo(new URL('../../src/granja-v3/historia.ts',import.meta.url)));
+const base=new URL(process.argv[2]??'http://127.0.0.1:4192/'),dir=process.argv[3]??'/tmp/historia-checkpoints',out=process.argv[4]??'/tmp/historia-navegador.json';
+const browser=await chromium.launch({executablePath:process.env.CHROME_PATH??'/usr/bin/chromium',headless:true,args:['--enable-webgl','--ignore-gpu-blocklist']});
+const page=await browser.newPage({viewport:{width:844,height:390}}),checks=[],errors=[],bad=[];
+page.setDefaultTimeout(60000);page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)bad.push(r.status()+' '+r.url());});
+await page.addInitScript(()=>localStorage.setItem('granja-hud-calidad','ligera'));
+const done=t=>{checks.push(t);console.log('OK '+t);},state=()=>page.evaluate(()=>window.__granjaV3.estado());
+const pause=()=>page.evaluate(()=>window.__granjaV3.vista.renderer.render=()=>{});
+const click=async selector=>{await page.locator(selector).click();await page.evaluate(()=>window.__granjaV3.settled());};
+const press=async text=>{await page.locator('#panel-body').getByRole('button',{name:text,exact:true}).click();await page.evaluate(()=>window.__granjaV3.settled());};
+const load=async id=>{const s=JSON.parse(fs.readFileSync(dir+'/'+id+'.json','utf8')),r=await page.evaluate(s=>window.__granjaV3.cargar(s),s);assert.equal(r.ok,true,r.mensaje);await page.evaluate(()=>window.__granjaV3.panel('historia'));return s;};
+try{
+ await page.goto(new URL('granja-v3.html',base).href);await page.waitForFunction(()=>window.__granjaV3?.ready,null,{timeout:180000});await pause();
+ await page.locator('#hud-menu').click();await page.locator('[data-panel="historia"]').click();await page.locator('#panel-body').getByText('Diario de la campaña',{exact:true}).waitFor();done('Pestaña Campaña abre el diario real en el build');
+ let inicial=await state();inicial.zona='pueblo';inicial.jornada.minutos=700;await page.evaluate(s=>window.__granjaV3.cargar(s),inicial);await page.evaluate(()=>window.__granjaV3.panel('historia'));
+ await page.evaluate(()=>{window.__granjaV3.vista.avatar.setPosition(75.5,23.4);window.__granjaV3.vista.enfocarJugador();});await click('[data-do="historia-aceptar"][data-id="P01"]');assert.equal((await state()).astra.escena.id,'H:P01#inicio');await page.locator('.vecino-dialogo').waitFor();done('Iniciar misión reproduce las líneas originales con subtítulos');
+ for(let i=0;i<30&&(await state()).astra.escena;i++)await click('[data-do="astra-continuar"]');await page.evaluate(()=>{window.__setItemOriginal=Storage.prototype.setItem;Storage.prototype.setItem=function(){throw Error('Cuota de prueba');};});await click('[data-do="historia-observar"][data-id="P01"][data-indice="0"]');assert.deepEqual((await state()).historia.activas.P01.observados,[]);await page.evaluate(()=>Storage.prototype.setItem=window.__setItemOriginal);done('Error de almacenamiento revierte también los recibos de historia');
+ for(let i=0;i<2;i++)await click('[data-do="historia-observar"][data-id="P01"][data-indice="'+i+'"]');assert.equal((await state()).historia.activas.P01.paso,1);assert.ok((await page.locator('#panel-body').innerText()).includes('siembra, riego y cosecha'));done('Observación abre el trabajo agrícola sin conceder una cosecha');
+ const p03=await load('P03'),q03=H.misionHistoria('P03'),p=q03.pasos[p03.historia.activas.P03.paso];const inventario=p03.inventario;
+ await click('[data-do="historia-iniciar_reto"][data-id="P03"]');await press(p.orden[1]);assert.equal((await state()).historia.reto.errores,1);await press(p.orden[0]);assert.equal((await state()).historia.reto.progreso,1);await page.reload();await page.waitForFunction(()=>window.__granjaV3?.ready);await pause();await page.evaluate(()=>window.__granjaV3.panel('historia'));assert.equal((await state()).historia.reto.progreso,1);assert.deepEqual((await state()).inventario,inventario);done('Reintento y recarga conservan checkpoint y reserva pagada');
+ await click('[data-do="historia-reiniciar_reto"]');assert.equal((await state()).historia.reto.progreso,0);await click('[data-do="historia-dejar_reto"]');assert.equal((await state()).historia.reto,null);assert.deepEqual((await state()).inventario,inventario);done('Dejar o reiniciar una prueba no vuelve a descontar materiales');
+ await load('P15');await click('[data-do="historia-iniciar_reto"]');const mapa=H.misionHistoria('P15').pasos.find(p=>p.tipo==='laberinto').mapa;
+ const walk=async target=>{const r=(await state()).historia.reto,queue=[[r.x,r.z,[]]],seen=new Set([r.x+','+r.z]);let path;while(queue.length){const[x,z,steps]=queue.shift();if(mapa[z][x]===target){path=steps;break;}for(const[dx,dz,t]of [[1,0,'Derecha'],[-1,0,'Izquierda'],[0,1,'Abajo'],[0,-1,'Arriba']]){const xx=x+dx,zz=z+dz,c=mapa[zz]?.[xx],key=xx+','+zz;if(!c||c==='#'||c==='E'&&target!=='E'||seen.has(key))continue;seen.add(key);queue.push([xx,zz,[...steps,t]]);}}assert.ok(path);for(const t of path)await press(t);};
+ await walk('A');await walk('B');await walk('R');await press('Abajo');await press('Abajo');assert.equal((await state()).historia.reto.z,6);await press('Arriba');await press('Retirar permiso en R');await walk('E');assert.equal((await state()).historia.reto,null);assert.equal((await state()).astra.escena.id,'H:P15#giro');done('Casa Fija exige fuentes y retirada de permiso antes de salir');
+ const f07=await load('F07');await click('[data-do="historia-iniciar_reto"]');await click('[data-do="historia-probar_circuito"]');assert.equal((await state()).historia.reto.errores,1);
+ const r=(await state()).historia.reto,solution=[1,1,2,0,0,0,0,0,0];for(let i=0;i<9;i++)if(i!==4)for(let n=(solution[i]-r.giros[i]+4)%4;n>0;n--)await click('[data-do="historia-girar"][data-indice="'+i+'"]');await page.screenshot({path:'/tmp/historia-circuito.png'});await click('[data-do="historia-probar_circuito"]');assert.equal((await state()).historia.reto,null);assert.deepEqual((await state()).inventario,f07.inventario);done('Circuito en interfaz valida puertos y núcleo sin repetir entrega');
+ assert.deepEqual(errors,[]);assert.deepEqual(bad,[]);
+}catch(e){errors.push(String(e.stack));process.exitCode=1;await page.screenshot({path:'/tmp/historia-navegador-fallo.png',timeout:15000}).catch(()=>{});}
+finally{const result={checks,errors,bad,viewport:[844,390],dibujoWebGLPausado:true,alcance:'Controles, estado y checkpoints preparados por acciones; no certifica render regional, economía ni dispositivos físicos.'};fs.writeFileSync(out,JSON.stringify(result,null,2));console.log(JSON.stringify(result));await browser.close();}

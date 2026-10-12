@@ -146,7 +146,24 @@ for q in compiled:
   for parte in ['inicio','giro','cierre','rama1','rama2']:
    cantidad=sum(l['id'].startswith(q['id']+'.'+parte+'.') for l in lines)
    if cantidad:counts[q['id']+'#'+parte]=cantidad
-ts('astra-campana-datos.ts',{'misiones':[q for q in compiled if q['id'][0] in 'PF' or q['clase'].startswith('encargo')],'escenas':counts})
+guiones_historia={}
+for q in compiled:
+ escena=[l for l in lines if l['escena']==q['id']]
+ if q['id'].startswith('V_'):
+  prefijos={'inicio':'A1','giro':'A2','cierre':'A3','rama1':'R1','rama2':'R2'}
+ elif q['id'][0] in 'PF' or q['clase'].startswith('encargo'):
+  prefijos={p:p for p in ['inicio','giro','cierre','rama1','rama2']}
+ else:
+  prefijos={'rama1':'rama1','rama2':'rama2'}
+  basicas=[l['id'] for l in escena if '.escena.' in l['id']]
+  corte=(len(basicas)+2)//3
+  for parte,ids in [('inicio',basicas[:corte]),('giro',basicas[corte:2*corte]),('cierre',basicas[2*corte:])]:
+   if ids:guiones_historia['H:'+q['id']+'#'+parte]=ids
+ for parte,prefijo in prefijos.items():
+  ids=[l['id'] for l in escena if l['id'].startswith(q['id']+'.'+prefijo+'.')]
+  if ids:guiones_historia['H:'+q['id']+'#'+parte]=ids
+for id,ids in guiones_historia.items():counts[id]=len(ids)
+ts('astra-campana-datos.ts',{'misiones':[q for q in compiled if q['id'][0] in 'PF' or q['clase'].startswith('encargo')],'escenas':counts,'guionesHistoria':guiones_historia})
 # Contrato de producción: ningún archivo se da por producido y no hay rutas inventadas para reproducirlo.
 lines=load('audio/lineas.json')+lineas_pueblos
 manifest={'version':1,'estado':'contrato_sin_medios_producidos','npc':np,'regiones':worlds,'rutas':routes,'voces':load('audio/reparto-voces.json'),'biografias':roster,'figuras':load('datos/figuras.json'),'misiones':compiled,'recursos':regiones,'lineas':lines,'escenas':sorted(set(l['escena'] for l in lines)),'musica':[{'id':m.group(1),'uso':m.group(2),'direccion':m.group(3)} for m in re.finditer(r'^\| (M\d+) \| ([^|]+) \| ([^|]+) \|', (N/'06-produccion.md').read_text(),re.M)]+[{'id':'M23','uso':'Confluencia','direccion':'Cuatro variaciones elementales y refugio; motivos separados, sin letra.'}],'medios':{'voces':{},'musica':{},'modelos':{}},'guardado':5,'nota':'Las misiones catalogadas incluyen adaptación de investigación; consultar los recibos reales adicionales y los efectos aún pendientes de cada premio.'}

@@ -1,0 +1,2462 @@
+[
+  {
+    "id": "P01",
+    "titulo": "La semilla que no despierta",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [],
+    "reparto": [
+      "mercader",
+      "botanica",
+      "canalizadora_aura"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Examinar el surco de referencia y sus muestras.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Surco afectado: semilla viva, humedad suficiente y retorno detenido.",
+          "Surco testigo: semilla ordinaria, riego y crecimiento al dormir."
+        ],
+        "id": "P01.1"
+      },
+      {
+        "tipo": "cultivar",
+        "texto": "Sembrar, regar y cosechar cultivos ordinarios propios, conservando especie y procedencia.",
+        "region": "granja",
+        "punto": null,
+        "cantidad": 1,
+        "id": "P01.2"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Comparar el ensayo con el surco afectado.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Tu recibo conserva siembra, riego y cosecha del mismo surco.",
+          "El testigo creció con reglas agrícolas normales."
+        ],
+        "opciones": [
+          "Toda semilla está dañada",
+          "El fallo se limita al intercambio del surco afectado",
+          "Dormir sustituye al agua"
+        ],
+        "respuesta": 1,
+        "id": "P01.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P02",
+    "titulo": "La carta sin campana",
+    "region": "vigilia",
+    "clase": "principal",
+    "requiere": [
+      "F01"
+    ],
+    "reparto": [
+      "viajera",
+      "vigilia_telmo",
+      "canalizadora_lara"
+    ],
+    "pasos": [
+      {
+        "tipo": "jornadas",
+        "texto": "Dormir 1 jornada(s); las horas reales y entrar al mapa no cuentan.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "cantidad": 1,
+        "id": "P02.1"
+      },
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "vigilia",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "vigilia_telmo",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P02.2"
+      },
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "vigilia",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "canalizadora_lara",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P02.3"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Contrastar sello y ruta de regreso.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Sello: Valdemora; recepción: jornada agrícola posterior a la solicitud.",
+          "Serena conserva el ancla; no necesita que ambos teléfonos marquen la misma hora."
+        ],
+        "opciones": [
+          "La carta exige simultaneidad real",
+          "Mantener el ancla permite investigar y volver",
+          "La carta acredita una victoria de combate"
+        ],
+        "respuesta": 1,
+        "id": "P02.4"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P03",
+    "titulo": "El oficio del regreso",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [
+      "P02"
+    ],
+    "reparto": [
+      "cuidadora",
+      "veterinaria",
+      "vigilia_azucena"
+    ],
+    "pasos": [
+      {
+        "tipo": "inspeccionar",
+        "texto": "Revisar herramientas, arma y ración del catálogo.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "condicion": "equipo",
+        "id": "P03.1"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Reservar ancla y comida para un ensayo de retorno.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "materiales": {
+          "madera": 2,
+          "pan": 1
+        },
+        "id": "P03.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Practicar extracción y retorno con una pieza inerte.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "orden": [
+          "Declarar la reserva",
+          "Marcar la salida",
+          "Aislar la pieza de práctica",
+          "Retirar sin ocupar el paso",
+          "Regresar al ancla"
+        ],
+        "datos": [
+          "Es una prueba de equipo; no consume animales ni acredita una puerta de Sangre."
+        ],
+        "id": "P03.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P04",
+    "titulo": "Las Afueras",
+    "region": "vigilia",
+    "clase": "principal",
+    "requiere": [
+      "P03"
+    ],
+    "reparto": [
+      "canalizadora_lara"
+    ],
+    "pasos": [
+      {
+        "tipo": "sangre",
+        "texto": "Completar la puerta de afueras en Sangre y Ceniza con el mismo personaje.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "sector": "afueras",
+        "cantidad": 1,
+        "id": "P04.1"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P05",
+    "titulo": "Una grieta en el acta",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [
+      "P04"
+    ],
+    "reparto": [
+      "archivero",
+      "veterano"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Consultar las dos copias públicas.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Original firmado: tres lotes y tres destinatarios.",
+          "Resumen posterior: cuatro lotes; repite el segundo recibo sin nueva entrega."
+        ],
+        "id": "P05.1"
+      },
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "pueblo_sol",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "veterano",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P05.2"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Señalar la discrepancia demostrable.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Las firmas autorizan la consulta, no una acusación automática."
+        ],
+        "opciones": [
+          "Falta la firma de la diosa",
+          "Un recibo aparece dos veces",
+          "La cosecha produjo menos"
+        ],
+        "respuesta": 1,
+        "id": "P05.3"
+      }
+    ],
+    "decision": "Publicar de inmediato o primero leer el acta en asamblea.",
+    "ramas": [
+      "archivero: La copia está abierta desde hoy. Habrá un horario para preguntas individuales.\nveterano: Mi declaración irá al lado; no encima de los testimonios.",
+      "maestra: Leeré el acta antes de pedir opiniones. Nadie tendrá que responder hoy.\narchivero: Después de la asamblea quedará la misma copia pública."
+    ],
+    "consecuencias": "Ambas rutas publican el mismo contenido. Inmediato: Damián organiza preguntas individuales. Asamblea: Alma facilita una reunión. No se pierde amistad ni evidencia."
+  },
+  {
+    "id": "P06",
+    "titulo": "El fuego bajo la piedra",
+    "region": "piedralumbre",
+    "clase": "principal",
+    "requiere": [
+      "P05"
+    ],
+    "reparto": [
+      "minero",
+      "brasa_idalia"
+    ],
+    "pasos": [
+      {
+        "tipo": "sangre",
+        "texto": "Completar la puerta de subsuelo en Sangre y Ceniza con el mismo personaje.",
+        "region": "piedralumbre",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "sector": "subsuelo",
+        "cantidad": 0,
+        "id": "P06.1"
+      },
+      {
+        "tipo": "observar",
+        "texto": "Comparar roca y registro de Darío.",
+        "region": "piedralumbre",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "La prueba geológica es una copia; el mineral de Sangre no entra en la mochila agrícola.",
+          "Conducto: entrada 8, reserva 3 y devolución registrada 8 sin salida física."
+        ],
+        "id": "P06.2"
+      },
+      {
+        "tipo": "circuito",
+        "texto": "Aislar el retorno falseado del conducto y conservar su prueba.",
+        "region": "piedralumbre",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Entrada en el oeste; retorno autorizado en el este.",
+          "El núcleo central está protegido: ninguna conexión puede entrar en él.",
+          "La reserva y el retorno son destinos distintos. Cambia las uniones y comprueba el circuito."
+        ],
+        "id": "P06.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P07",
+    "titulo": "Los tres manuscritos",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [
+      "F02"
+    ],
+    "reparto": [
+      "bruma_elio",
+      "brasa_idalia",
+      "vigilia_azucena"
+    ],
+    "pasos": [
+      {
+        "tipo": "cuidar",
+        "texto": "Alimentar y acompañar a animales ordinarios distintos después de aceptar.",
+        "region": "granja",
+        "punto": null,
+        "cantidad": 2,
+        "id": "P07.1"
+      },
+      {
+        "tipo": "inspeccionar",
+        "texto": "Comprobar hogar, alimento y reserva de los animales cuidados.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "condicion": "refugio",
+        "id": "P07.2"
+      },
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "pueblo_sol",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "cuidadora",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P07.3"
+      },
+      {
+        "tipo": "observar",
+        "texto": "Recibir los tres manuscritos prestados tras el cuidado.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Custodio del unicornio: origen y límites de su testimonio.",
+          "Custodio del dragón: protección del hábitat, sin criar una especie rara.",
+          "Custodio del grifo: derecho de retirada y copia autorizada."
+        ],
+        "id": "P07.4"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P08",
+    "titulo": "El Santuario roto",
+    "region": "vigilia",
+    "clase": "principal",
+    "requiere": [
+      "P07"
+    ],
+    "reparto": [
+      "canalizadora_aura",
+      "canalizadora_lara"
+    ],
+    "pasos": [
+      {
+        "tipo": "sangre",
+        "texto": "Completar la puerta de santuario en Sangre y Ceniza con el mismo personaje.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "sector": "santuario",
+        "cantidad": 0,
+        "id": "P08.1"
+      },
+      {
+        "tipo": "observar",
+        "texto": "Registrar la prueba real del Santuario.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "La puerta y los rescates proceden de la partida de Sangre.",
+          "El rito agrícola no reemplaza ni repite la destrucción de los altares de la Noche."
+        ],
+        "id": "P08.2"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P09",
+    "titulo": "La copa del Conde",
+    "region": "vigilia",
+    "clase": "principal",
+    "requiere": [
+      "P08"
+    ],
+    "reparto": [
+      "canalizadora_lara"
+    ],
+    "pasos": [
+      {
+        "tipo": "sangre",
+        "texto": "Completar la puerta de corte en Sangre y Ceniza con el mismo personaje.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "sector": "corte",
+        "cantidad": 0,
+        "id": "P09.1"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P10",
+    "titulo": "La mañana de los nombres",
+    "region": "vigilia",
+    "clase": "principal",
+    "requiere": [
+      "P09"
+    ],
+    "reparto": [
+      "vigilia_noemi",
+      "vigilia_aldan",
+      "posadera"
+    ],
+    "pasos": [
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "vigilia",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "vigilia_noemi",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          },
+          {
+            "id": "vigilia_telmo",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P10.1"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Preparar provisiones y soporte para el refugio.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "materiales": {
+          "pan": 2,
+          "madera": 4
+        },
+        "id": "P10.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Organizar atención sin imponer retorno ni testimonio.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Contar plazas",
+          "Reservar alimento",
+          "Preguntar dónde quieren permanecer",
+          "Registrar la opción voluntaria",
+          "Publicar turnos de atención"
+        ],
+        "datos": [],
+        "id": "P10.3"
+      }
+    ],
+    "decision": "Priorizar residencia local o retorno voluntario.",
+    "ramas": [
+      "posadera: Estas plazas serán de residencia, no de espera obligatoria.\nvigilia_noemi: Registraremos atención sin preguntar cuándo piensa irse cada persona.",
+      "vigilia_aldan: El retorno será voluntario y con destino confirmado.\nposadera: Quien cambie de opinión conservará una cama mientras buscamos otra opción."
+    ],
+    "consecuencias": "Las plazas y el costo total son equivalentes; ninguna ruta fuerza a regresar a una ciudad destruida. Se habilitan dos cartas ambientales distintas."
+  },
+  {
+    "id": "P11",
+    "titulo": "Lo que la ceniza todavía quiere",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [
+      "F03"
+    ],
+    "reparto": [
+      "astronoma",
+      "viajera"
+    ],
+    "pasos": [
+      {
+        "tipo": "jornadas",
+        "texto": "Dormir 3 jornada(s); las horas reales y entrar al mapa no cuentan.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "cantidad": 3,
+        "id": "P11.1"
+      },
+      {
+        "tipo": "observar",
+        "texto": "Comparar las lecturas de tres jornadas agrícolas.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Jornada uno: lote A, retorno 4.",
+          "Jornada dos: lote B, mismo recibo del lote A.",
+          "Jornada tres: lote C, mismo recibo del lote A."
+        ],
+        "id": "P11.2"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Distinguir el patrón de la ceniza.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Tres envíos distintos conservan un único recibo copiado."
+        ],
+        "opciones": [
+          "Todos los cultivos están enfermos",
+          "El envío duplica el registro de retorno",
+          "Las tres jornadas son la misma noche real"
+        ],
+        "respuesta": 1,
+        "id": "P11.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P12",
+    "titulo": "Una mesa sin juramento",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [
+      "P11"
+    ],
+    "reparto": [
+      "posadera",
+      "canalizadora_aura",
+      "nox_inigo"
+    ],
+    "pasos": [
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "pueblo_sol",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "posadera",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          },
+          {
+            "id": "canalizadora_aura",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          },
+          {
+            "id": "nox_inigo",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera.",
+            "comision": {
+              "region": "pueblo_sol",
+              "x": 77.5,
+              "z": 25
+            }
+          }
+        ],
+        "id": "P12.1"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Preparar alojamiento y comida sin juramento.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "materiales": {
+          "pan": 3,
+          "madera": 6
+        },
+        "id": "P12.2"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Reconocer la cláusula de obediencia.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Contrato público: la ración se suspende si se retira el consentimiento.",
+          "La reserva de recipientes se presenta como condición de alojamiento."
+        ],
+        "opciones": [
+          "La comida legitima cualquier condición",
+          "Retirar consentimiento puede hacerse sin perder comida",
+          "No hace falta alojamiento independiente"
+        ],
+        "respuesta": 1,
+        "id": "P12.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P13",
+    "titulo": "Dos maneras de recordar",
+    "region": "rosal_eterno",
+    "clase": "principal",
+    "requiere": [
+      "F04"
+    ],
+    "reparto": [
+      "verdia_isadora",
+      "verdia_eneas",
+      "eco_esteban"
+    ],
+    "pasos": [
+      {
+        "tipo": "visitar",
+        "texto": "Recorrer los destinos autorizados y conservar sus recibos.",
+        "region": "rosal_eterno",
+        "punto": null,
+        "regiones": [
+          "rosal_eterno"
+        ],
+        "id": "P13.1"
+      },
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "rosal_eterno",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "verdia_amaranta",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          },
+          {
+            "id": "verdia_isadora",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P13.2"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Archivar dos memorias que no coinciden.",
+        "region": "rosal_eterno",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Amaranta recuerda una retirada antes de la campana.",
+          "Isadora recuerda la campana antes de salir del jardín.",
+          "Ambas autorizan conservar su versión, sin nombres de terceros."
+        ],
+        "opciones": [
+          "Borrar la memoria minoritaria",
+          "Conservar ambas con origen y contexto",
+          "Elegir a quien tiene más amistad"
+        ],
+        "respuesta": 1,
+        "id": "P13.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P14",
+    "titulo": "La puerta que admite un no",
+    "region": "travesia",
+    "clase": "principal",
+    "requiere": [
+      "P13"
+    ],
+    "reparto": [
+      "senda_iria",
+      "senda_ofelia",
+      "senda_pablo"
+    ],
+    "pasos": [
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "travesia",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "senda_ofelia",
+            "respuesta": "aplaza",
+            "texto": "Prefiero aplazarlo. Usa el caso autorizado del archivo; no cuentes mi silencio como un sí."
+          },
+          {
+            "id": "senda_pablo",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P14.1"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Distinguir reparación y exigencia de perdón.",
+        "region": "travesia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Ofelia aplaza y deja disponible un caso archivado equivalente.",
+          "Pablo ofrece restitución; su destinatario puede rechazar contacto."
+        ],
+        "opciones": [
+          "El perdón es un recibo obligatorio",
+          "La responsabilidad permite reparación sin contacto forzado",
+          "Aplazar impide seguir la campaña"
+        ],
+        "respuesta": 1,
+        "id": "P14.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Resolver el caso autorizado respetando una negativa.",
+        "region": "travesia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Identificar daño comprobado",
+          "Separar explicación y excusa",
+          "Ofrecer restitución",
+          "Aceptar aplazamiento",
+          "Conservar regreso"
+        ],
+        "datos": [],
+        "id": "P14.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P15",
+    "titulo": "Una casa que no cambia",
+    "region": "refugio_hilos",
+    "clase": "principal",
+    "requiere": [
+      "P14"
+    ],
+    "reparto": [
+      "hilos_tecla",
+      "hilos_elian",
+      "hilos_asha"
+    ],
+    "pasos": [
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "refugio_hilos",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "hilos_tecla",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          },
+          {
+            "id": "hilos_hector",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P15.1"
+      },
+      {
+        "tipo": "laberinto",
+        "texto": "Recorrer la Casa Fija, contrastar A y B y retirar permiso en R antes de salir por E.",
+        "region": "refugio_hilos",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "mapa": [
+          "#########",
+          "#S..#..A#",
+          "#.#.#.#.#",
+          "#.#...#.#",
+          "#.###.#.#",
+          "#B....#R#",
+          "#.#####.#",
+          "#......E#",
+          "#########"
+        ],
+        "datos": [
+          "A y B son testimonios autorizados no idénticos.",
+          "R permite retirar tu autorización. El mapa queda disponible y el reinicio conserva materiales."
+        ],
+        "id": "P15.2"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P16",
+    "titulo": "El límite de Nox",
+    "region": "bastion_velo",
+    "clase": "principal",
+    "requiere": [
+      "P15"
+    ],
+    "reparto": [
+      "nox_dorian",
+      "nox_mirta",
+      "nox_salma"
+    ],
+    "pasos": [
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "bastion_velo",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "nox_dorian",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          },
+          {
+            "id": "nox_salma",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P16.1"
+      },
+      {
+        "tipo": "observar",
+        "texto": "Examinar el sello desde el perímetro autorizado.",
+        "region": "bastion_velo",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "El Conde está contenido; esta investigación no abre sus celdas.",
+          "Operario: exposición confirmada, zona de atención y relevo disponibles."
+        ],
+        "id": "P16.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Ejecutar el protocolo de retirada y atención.",
+        "region": "bastion_velo",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Aislar la herramienta",
+          "Retirar al operario a zona segura",
+          "Solicitar atención autorizada",
+          "Relevar el puesto",
+          "Registrar exposición sin abrir celdas"
+        ],
+        "datos": [],
+        "id": "P16.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P17",
+    "titulo": "Una órbita con reservas",
+    "region": "estacion_celia",
+    "clase": "principal",
+    "requiere": [
+      "F05"
+    ],
+    "reparto": [
+      "orbita_helena",
+      "orbita_boris",
+      "orbita_rita"
+    ],
+    "pasos": [
+      {
+        "tipo": "inspeccionar",
+        "texto": "Comprobar nave construida, salida y espacio de carga.",
+        "region": "estacion_celia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "condicion": "nave",
+        "id": "P17.1"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Reservar combustible y energía para el ensayo orbital.",
+        "region": "estacion_celia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "materiales": {
+          "combustible_estelar": 1,
+          "bateria": 1
+        },
+        "id": "P17.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Ensayar salida, contingencia y regreso.",
+        "region": "estacion_celia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Verificar aire",
+          "Declarar consumo y reserva",
+          "Confirmar puerto de retorno",
+          "Ensayar aborto",
+          "Volver a puerto"
+        ],
+        "datos": [
+          "Una batería se fabrica y paga; el diálogo no la recarga."
+        ],
+        "id": "P17.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P18",
+    "titulo": "Las tres lunas distintas",
+    "region": "estacion_celia",
+    "clase": "principal",
+    "requiere": [
+      "P17"
+    ],
+    "reparto": [
+      "aurelia_aitana",
+      "nocturna_matea",
+      "esmeralda_indira"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Medir luz del puesto de Aurelia.",
+        "region": "huerto_aurelia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Aurelia: luz constante; reserva sin cambios."
+        ],
+        "id": "P18.1"
+      },
+      {
+        "tipo": "observar",
+        "texto": "Medir tránsito del puesto de Nocturna.",
+        "region": "vigia_nocturna",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Nocturna: tránsito variable; usar referencia estable."
+        ],
+        "id": "P18.2"
+      },
+      {
+        "tipo": "observar",
+        "texto": "Medir resonancia del puesto de Esmeralda.",
+        "region": "cantera_esmeralda",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Esmeralda: resonancia detectada en soporte, sin extracción."
+        ],
+        "id": "P18.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P19",
+    "titulo": "El precio de una terraza",
+    "region": "ambarina",
+    "clase": "principal",
+    "requiere": [
+      "P18"
+    ],
+    "reparto": [
+      "ambar_zora",
+      "ambar_kenzo",
+      "ambar_alina"
+    ],
+    "pasos": [
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "ambarina",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "ambar_zora",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P19.1"
+      },
+      {
+        "tipo": "observar",
+        "texto": "Examinar la terraza con permiso.",
+        "region": "ambarina",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "La muestra permanece bajo custodia local.",
+          "La copia in situ requiere trabajo; el préstamo requiere devolución."
+        ],
+        "id": "P19.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Elegir y realizar el estudio autorizado.",
+        "region": "ambarina",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Registrar origen",
+          "Acordar custodia",
+          "Tomar la medida autorizada",
+          "Devolver soporte",
+          "Confirmar conservación"
+        ],
+        "datos": [],
+        "planes": [
+          "Copia in situ",
+          "Préstamo con devolución"
+        ],
+        "ordenAlternativo": [
+          "Registrar origen",
+          "Mantener soporte en su sitio",
+          "Copiar con permiso",
+          "Verificar copia",
+          "Confirmar conservación"
+        ],
+        "id": "P19.3"
+      },
+      {
+        "tipo": "jornadas",
+        "texto": "Dormir 1 jornada(s); las horas reales y entrar al mapa no cuentan.",
+        "region": "ambarina",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "cantidad": 1,
+        "cantidadAlternativa": 2,
+        "id": "P19.4"
+      }
+    ],
+    "decision": "Copiar en el lugar o estudiar préstamo supervisado.",
+    "ramas": [
+      "ambar_kenzo: La copia está terminada y ustedes conservarán otra.\nambar_zora: No saldrá ninguna pieza del lugar para que el informe parezca más importante.",
+      "ambar_kenzo: El préstamo vuelve antes de cerrar el acuerdo. Aquí está la fecha.\nella: Lo devolveremos con el informe y con las preguntas que no resolvimos."
+    ],
+    "consecuencias": "Mismo dato principal y gasto de preparación equivalente. Préstamo exige devolución antes del cierre. Copia deja una jornada adicional de trabajo técnico."
+  },
+  {
+    "id": "P20",
+    "titulo": "Una voz no representa a todos",
+    "region": "iridalia",
+    "clase": "principal",
+    "requiere": [
+      "P19"
+    ],
+    "reparto": [
+      "iris_calista",
+      "iris_orin",
+      "iris_edda"
+    ],
+    "pasos": [
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "iridalia",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "iris_calista",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P20.1"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Separar representación y permiso de hábitat.",
+        "region": "iridalia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "La asamblea recibe evidencia, pero una sola voz no representa a todos.",
+          "Dos posiciones de baliza conservan paso y refugio."
+        ],
+        "opciones": [
+          "La baliza exige domesticar una criatura",
+          "Cualquiera de las dos posiciones seguras conserva el hábitat",
+          "La primera persona puede ceder todo el mundo"
+        ],
+        "respuesta": 1,
+        "id": "P20.2"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Instalar la baliza con materiales reales.",
+        "region": "iridalia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "materiales": {
+          "madera": 2,
+          "piedra": 2
+        },
+        "id": "P20.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P21",
+    "titulo": "El pacto que se puede revisar",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [
+      "F12"
+    ],
+    "reparto": [
+      "maestra",
+      "veterano",
+      "exploradora"
+    ],
+    "pasos": [
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "pueblo_sol",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "maestra",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          },
+          {
+            "id": "veterano",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          },
+          {
+            "id": "exploradora",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "P21.1"
+      },
+      {
+        "tipo": "observar",
+        "texto": "Publicar capacidades, reservas y rutas de regreso.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Se conservan cuatro sellos; las reservas de cada territorio siguen siendo propias.",
+          "El consejo no exige amistad máxima con todos los habitantes."
+        ],
+        "id": "P21.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Acordar obligaciones concretas y revisión.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "orden": [
+          "Publicar capacidad disponible",
+          "Conservar reservas locales",
+          "Confirmar tres relevos",
+          "Registrar salida y apelación",
+          "Fijar revisión del pacto"
+        ],
+        "datos": [],
+        "id": "P21.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P22",
+    "titulo": "La vasija abierta",
+    "region": "refugio_hilos",
+    "clase": "principal",
+    "requiere": [
+      "P21"
+    ],
+    "reparto": [
+      "hilos_tecla",
+      "brasa_sol",
+      "canalizadora_aura"
+    ],
+    "pasos": [
+      {
+        "tipo": "contraste",
+        "texto": "Desactivar el primer nodo: contradicción.",
+        "region": "refugio_hilos",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "La casa exige una memoria única.",
+          "Dos testigos autorizan recuerdos no idénticos."
+        ],
+        "opciones": [
+          "Forzar coincidencia",
+          "Conservar la contradicción comprobada",
+          "Elegir el relato más cómodo"
+        ],
+        "respuesta": 1,
+        "id": "P22.1"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Desactivar el segundo nodo: retirada de autorización.",
+        "region": "refugio_hilos",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Consultar alcance del permiso",
+          "Solicitar retirar autorización",
+          "Aceptar la retirada",
+          "Desconectar registro no autorizado"
+        ],
+        "datos": [],
+        "id": "P22.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Desactivar el tercer nodo: retorno voluntario.",
+        "region": "refugio_hilos",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Ofrecer dos salidas seguras",
+          "Aceptar la salida elegida",
+          "Conservar el ancla",
+          "Cerrar la prisión"
+        ],
+        "datos": [],
+        "id": "P22.3"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P23",
+    "titulo": "La estrella que no será nuestra casa",
+    "region": "borde_astra",
+    "clase": "principal",
+    "requiere": [
+      "P22"
+    ],
+    "reparto": [
+      "canalizadora_aura",
+      "canalizadora_lara"
+    ],
+    "pasos": [
+      {
+        "tipo": "entregar",
+        "texto": "Reservar soporte finito para los tres relevos.",
+        "region": "borde_astra",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "materiales": {
+          "madera": 4,
+          "piedra": 4,
+          "pan": 2
+        },
+        "id": "P23.1"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Sostener el relevo de calor y evacuar su puesto.",
+        "region": "borde_astra",
+        "punto": {
+          "x": -12,
+          "z": 22
+        },
+        "orden": [
+          "Declarar reserva",
+          "Abrir retorno",
+          "Retirar operarios",
+          "Confirmar puesto seguro"
+        ],
+        "datos": [],
+        "id": "P23.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Sostener el relevo de soporte sin usar minería como arma.",
+        "region": "borde_astra",
+        "punto": {
+          "x": 0,
+          "z": 22
+        },
+        "orden": [
+          "Distribuir carga",
+          "Señalar salida",
+          "Retirar operarios",
+          "Confirmar puesto seguro"
+        ],
+        "datos": [],
+        "id": "P23.3"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Sostener el relevo de presión y cerrar el conducto.",
+        "region": "borde_astra",
+        "punto": {
+          "x": 12,
+          "z": 22
+        },
+        "orden": [
+          "Mantener presión",
+          "Abrir retorno",
+          "Retirar operarios",
+          "Cerrar conducto"
+        ],
+        "datos": [],
+        "id": "P23.4"
+      }
+    ],
+    "decision": "",
+    "ramas": [],
+    "consecuencias": ""
+  },
+  {
+    "id": "P24",
+    "titulo": "La parcela de mañana",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [
+      "P23"
+    ],
+    "reparto": [
+      "cuidadora",
+      "mercader",
+      "archivero",
+      "canalizadora_lara"
+    ],
+    "pasos": [
+      {
+        "tipo": "cultivar",
+        "texto": "Sembrar, regar y cosechar cultivos ordinarios propios, conservando especie y procedencia.",
+        "region": "granja",
+        "punto": null,
+        "cantidad": 1,
+        "id": "P24.1"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Conservar el acta de cierre y seguir viviendo en la granja.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "orden": [
+          "Confirmar semilla ordinaria",
+          "Conservar la parcela",
+          "Leer acta común",
+          "Elegir celebración o descanso"
+        ],
+        "datos": [],
+        "id": "P24.2"
+      }
+    ],
+    "decision": "Celebración pública o noche tranquila.",
+    "ramas": [
+      "musica: Hay sitio para bailar y para mirar sentados.\nartesana: El escenario se recoge mañana, dentro de mi jornada.\nel: Me gusta una fiesta que también sabe terminar.",
+      "ella: Hoy quiero quedarme aquí, sin otra visita pendiente.\nel: Ponemos dos sillas y dejamos el cuaderno cerrado.\nnarrador: El silencio de aquella noche no se parecía a la quietud de Nath. Podían salir de él cuando quisieran."
+    ],
+    "consecuencias": "Mismos desbloqueos y trofeo final. Pública: concierto de Lía y relatos voluntarios. Tranquila: visita corta, luz de casa y dos sillas. Puede verse la otra escena después sin duplicar premio."
+  },
+  {
+    "id": "F01",
+    "titulo": "Lo que bebe un surco",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [
+      "P01"
+    ],
+    "reparto": [
+      "botanica",
+      "agricultor",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Medir dos surcos y el canal público.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Humedad del afectado: 62; testigo: 64. Ambos superan el mínimo de 50.",
+          "El canal recibe 12 unidades; devuelve 0. El cultivo no falla por ausencia de oración."
+        ],
+        "id": "F01.1"
+      },
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "pueblo_sol",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "botanica",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "F01.2"
+      },
+      {
+        "tipo": "visitar",
+        "texto": "Recorrer los destinos autorizados y conservar sus recibos.",
+        "region": "pueblo_sol",
+        "punto": null,
+        "regiones": [
+          "puerto_lirios"
+        ],
+        "id": "F01.3"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Identificar la causa comprobada.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "La orilla mantiene reserva; el canal no registra retorno.",
+          "Una semilla sana creció en el testigo."
+        ],
+        "opciones": [
+          "Falta de devoción",
+          "Falta global de agua",
+          "Un tramo de retorno está detenido"
+        ],
+        "respuesta": 2,
+        "id": "F01.4"
+      }
+    ],
+    "decision": "Pedir una visita abierta de explicación o conservar por ahora la aparición como testimonio de trabajo.",
+    "ramas": [
+      "fuatia: Hablaré ante quienes quieran venir. No fabricarás asistentes para que parezca una devoción.\nbotanica: También anotaremos las preguntas que no podamos resolver.",
+      "fuatia: No necesito que anuncies cada vez que he escuchado.\nel: La medida quedará pública; la conversación íntima, donde se autorizó."
+    ],
+    "consecuencias": "Ambas rutas conservan las medidas y abren P02. Visita abierta: Flora programa preguntas sin rito obligatorio. Testimonio de trabajo: el documento público conserva hechos sin publicar confidencias. Fuatia no concede ni retira clima por la opción."
+  },
+  {
+    "id": "F02",
+    "titulo": "El intercambio falseado",
+    "region": "piedralumbre",
+    "clase": "principal",
+    "requiere": [
+      "P06"
+    ],
+    "reparto": [
+      "minero",
+      "brasa_idalia",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "contraste",
+        "texto": "Distinguir reserva, entrada y retorno.",
+        "region": "piedralumbre",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Registro A: entran 8, quedan 3 y salen 5.",
+          "Registro B: entran 8, quedan 3 y se declaran 8 devueltas."
+        ],
+        "opciones": [
+          "Ambos balances son correctos",
+          "El registro B cuenta energía reservada como devolución",
+          "El agua dejó de existir"
+        ],
+        "respuesta": 1,
+        "id": "F02.1"
+      },
+      {
+        "tipo": "circuito",
+        "texto": "Retirar la conexión de Vael y abrir el retorno independiente.",
+        "region": "piedralumbre",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Entrada en el oeste; retorno autorizado en el este.",
+          "El núcleo central está protegido: ninguna conexión puede entrar en él.",
+          "La reserva y el retorno son destinos distintos. Cambia las uniones y comprueba el circuito."
+        ],
+        "id": "F02.2"
+      }
+    ],
+    "decision": "Documentar primero el retorno de agua o el retorno de aire; ambas pruebas ordinarias están disponibles.",
+    "ramas": [
+      "fuatia: Seguiremos el agua. Si falta, no completarás la cuenta con una ofrenda.\nminero: La muestra de registro basta; no necesita otro mineral del botín.",
+      "fuatia: Seguiremos el aire. Escucha el aviso y mira también la marca.\nbrasa_idalia: Nadie tendrá que oír perfectamente para identificar el mismo retorno."
+    ],
+    "consecuencias": "La secuencia de investigación cambia, no su costo ni el acceso a P07. La segunda lectura queda anotada antes del cierre; ninguna rama destruye un núcleo."
+  },
+  {
+    "id": "F03",
+    "titulo": "El hambre detrás del altar",
+    "region": "vigilia",
+    "clase": "principal",
+    "requiere": [
+      "P10"
+    ],
+    "reparto": [
+      "posadera",
+      "vigilia_noemi",
+      "nox_inigo",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Inspeccionar el contrato público del comedor.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "La comida no exige una declaración contra la Custodia.",
+          "Cerrar el horno antes de abrir otra mesa dejaría a sus usuarios sin atención."
+        ],
+        "id": "F03.1"
+      },
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "vigilia",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "nox_inigo",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera.",
+            "comision": {
+              "region": "vigilia",
+              "x": -4,
+              "z": 17
+            }
+          }
+        ],
+        "id": "F03.2"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Preparar la mesa alternativa antes del cierre.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "materiales": {
+          "pan": 2,
+          "madera": 4
+        },
+        "id": "F03.3"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Cambiar el servicio sin interrumpir la atención.",
+        "region": "vigilia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Abrir la mesa alternativa",
+          "Confirmar plazas y reserva",
+          "Trasladar a quien lo desea",
+          "Cerrar el horno contaminante",
+          "Conservar consulta voluntaria"
+        ],
+        "datos": [],
+        "id": "F03.4"
+      }
+    ],
+    "decision": "Organizar cocina distribuida o alojamiento con turnos de comida; el presupuesto total es equivalente.",
+    "ramas": [
+      "posadera: Cada mesa tendrá cupo y un horario que podamos cumplir.\nfuatia: No pediré que me recen para recibir lo que prepararon ustedes.",
+      "vigilia_noemi: Separaremos descanso y entrevista. Primero sabrán dónde dormir.\nfuatia: El responsable pierde su horno. Los demás no perderán el derecho a comer."
+    ],
+    "consecuencias": "Ambas alternativas mantienen atención y evidencias para P11. Cambian escenas posteriores de Rosa y Noemí. Ninguna obliga a todos los beneficiarios a declarar contra la secta."
+  },
+  {
+    "id": "F04",
+    "titulo": "Los que no celebraron el nacimiento",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [
+      "P12"
+    ],
+    "reparto": [
+      "archivero",
+      "maestra",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Leer el acta de AV 156 y las fuentes autorizadas.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "El nacimiento eliminó explotadores y protegió cuidadores.",
+          "Los descendientes protegidos también vivieron pérdidas y cambios; el duelo no hereda culpa."
+        ],
+        "id": "F04.1"
+      },
+      {
+        "tipo": "preguntar",
+        "texto": "Pedir permiso y escuchar la respuesta de cada participante.",
+        "region": "pueblo_sol",
+        "punto": null,
+        "participantes": [
+          {
+            "id": "veterano",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          },
+          {
+            "id": "maestra",
+            "respuesta": "acepta",
+            "texto": "Autorizo esta consulta y su uso para este trabajo. Las partes privadas quedan fuera."
+          }
+        ],
+        "id": "F04.2"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Conservar hechos y consentimiento.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "La fuente histórica y el duelo familiar responden a preguntas distintas."
+        ],
+        "opciones": [
+          "El nacimiento fue indiscriminado",
+          "La protección elimina todo duelo",
+          "El duelo posterior no cambia quién fue protegido"
+        ],
+        "respuesta": 2,
+        "id": "F04.3"
+      }
+    ],
+    "decision": "Exponer las fuentes juntas o organizar lectura voluntaria por separado.",
+    "ramas": [
+      "maestra: La exposición distinguirá hecho y respuesta. Nadie tiene que visitar para demostrar respeto.\nfuatia: Déjenme también leer una pregunta que no esté diseñada para absolverme.",
+      "archivero: Las versiones se consultarán completas, con sus límites.\nfuatia: No retiraré una protección porque alguien prefiera hablar de la pérdida."
+    ],
+    "consecuencias": "Las fuentes completas quedan disponibles en ambas rutas y P13 se abre. No hay bonus por hacer pública una identidad protegida; se conservan autorizaciones de copia."
+  },
+  {
+    "id": "F05",
+    "titulo": "Cuánto dura una sentencia",
+    "region": "pueblo_sol",
+    "clase": "principal",
+    "requiere": [
+      "P16"
+    ],
+    "reparto": [
+      "agricultor",
+      "carpintera",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Consultar reparación y cierre persistente.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "El tramo de agua reparado ya tiene devolución comprobada.",
+          "El depósito cerrado mantiene una restitución pendiente; hay un suministro alternativo limitado."
+        ],
+        "id": "F05.1"
+      },
+      {
+        "tipo": "contraste",
+        "texto": "Separar reparación, restitución y perdón.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "datos": [
+          "Una devolución no acredita perdón; la revisión protege a afectados actuales."
+        ],
+        "opciones": [
+          "Una reparación obliga a perdonar",
+          "La restitución puede seguir pendiente con atención alternativa",
+          "Abrir da permiso de extracción ilimitada"
+        ],
+        "respuesta": 1,
+        "id": "F05.2"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Sostener la alternativa de capacidad equivalente.",
+        "region": "pueblo_sol",
+        "punto": {
+          "x": 75.5,
+          "z": 23.4
+        },
+        "materiales": {
+          "madera": 2,
+          "piedra": 2
+        },
+        "id": "F05.3"
+      }
+    ],
+    "decision": "Mantener cierre con depósito alternativo o reapertura limitada tras verificación; capacidad y costos equivalentes.",
+    "ramas": [
+      "fuatia: El cierre sigue. Las herramientas tendrán otra entrada que no cobre su castigo a todos.\ncarpintera: La alternativa tiene materiales y responsable, no solo una promesa.",
+      "fuatia: Abriré el uso limitado que fue comprobado. No lo confundan con haber olvidado.\nagricultor: No lo haré. Tampoco pediré a otros que me perdonen para usarlo."
+    ],
+    "consecuencias": "Ambas rutas responden al daño y permiten P17. Fuatia conserva reserva crítica; los vecinos discrepan. El depósito original no pasa al inventario ni se concede un multiplicador de producción."
+  },
+  {
+    "id": "F06",
+    "titulo": "Una alianza sin adoración",
+    "region": "estacion_celia",
+    "clase": "principal",
+    "requiere": [
+      "P20"
+    ],
+    "reparto": [
+      "orbita_helena",
+      "iris_calista",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "visitar",
+        "texto": "Recorrer los destinos autorizados y conservar sus recibos.",
+        "region": "estacion_celia",
+        "punto": null,
+        "regiones": [
+          "huerto_aurelia",
+          "vigia_nocturna",
+          "cantera_esmeralda",
+          "ambarina",
+          "iridalia"
+        ],
+        "id": "F06.1"
+      },
+      {
+        "tipo": "observar",
+        "texto": "Presentar reservas y permisos de los destinos.",
+        "region": "estacion_celia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Cada mundo conserva consentimiento, reserva y salida.",
+          "El acuerdo permite entrar a Confluencia; no exige culto ni donación de animales."
+        ],
+        "id": "F06.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Formalizar una alianza revisable.",
+        "region": "estacion_celia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Declarar capacidades",
+          "Separar reserva y retorno",
+          "Conservar permisos de cada territorio",
+          "Declarar salida voluntaria",
+          "Abrir seguimiento común"
+        ],
+        "datos": [],
+        "id": "F06.3"
+      }
+    ],
+    "decision": "Usar mesa abierta de seguimiento o informes de equipos locales con consulta común.",
+    "ramas": [
+      "iris_calista: La mesa puede revisar el acuerdo y conservar disenso.\nfuatia: Yo también revisaré mis términos si el balance cambia.",
+      "orbita_helena: Los informes dejan fuente y responsable local.\nfuatia: Que nadie me prometa el agua que otro territorio todavía no aceptó ceder."
+    ],
+    "consecuencias": "La forma de coordinación cambia; la evidencia y el acceso a cuatro territorios son equivalentes. No es posible ceder soberanía de mundos como respuesta."
+  },
+  {
+    "id": "F07",
+    "titulo": "El horno que sabe detenerse",
+    "region": "confluencia_fuego",
+    "clase": "principal",
+    "requiere": [
+      "F06"
+    ],
+    "reparto": [
+      "brasa_sol",
+      "brasa_idalia",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Inspeccionar autorización, suministro y retorno.",
+        "region": "confluencia_fuego",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Territorio de fuego: reserva protegida y depósito autorizado.",
+          "El registro de Vael llama devolución al caudal que sigue reservado."
+        ],
+        "id": "F07.1"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Procesar el componente local de cierre.",
+        "region": "confluencia_fuego",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "materiales": {
+          "confluencia_fuego_mineral": 2,
+          "confluencia_fuego_madera": 2
+        },
+        "id": "F07.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Calibrar el componente antes de instalarlo.",
+        "region": "confluencia_fuego",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Verificar autorización",
+          "Medir suministro",
+          "Separar reserva",
+          "Comprobar componente"
+        ],
+        "datos": [],
+        "id": "F07.3"
+      },
+      {
+        "tipo": "circuito",
+        "texto": "Cerrar el retorno falseado y conservar el retorno autorizado.",
+        "region": "confluencia_fuego",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Entrada en el oeste; retorno autorizado en el este.",
+          "El núcleo central está protegido: ninguna conexión puede entrar en él.",
+          "La reserva y el retorno son destinos distintos. Cambia las uniones y comprueba el circuito."
+        ],
+        "destino": "confluencia_fuego",
+        "alternativa": "combate",
+        "id": "F07.4"
+      }
+    ],
+    "decision": "Completar prueba de combate contra constructos o ajuste técnico con el mismo componente y tiempo activo aproximado.",
+    "ramas": [
+      "brasa_sol: Tu golpe abrió el seguro, no una criatura que defendía su casa.\nfuatia: La fuerza tuvo un fin. No la convertirás en permiso de quemar después.",
+      "brasa_idalia: El ajuste dejó la salida abierta y la reserva medida.\nfuatia: No confundiré trabajo silencioso con una victoria menor."
+    ],
+    "consecuencias": "Ambas rutas entregan sello de retorno de fuego para F11. Armas de cualquier familia pueden completar combate; el ajuste técnico es alternativa de campaña sin exigir equipar espada."
+  },
+  {
+    "id": "F08",
+    "titulo": "La orilla que devuelve",
+    "region": "confluencia_agua",
+    "clase": "principal",
+    "requiere": [
+      "F06"
+    ],
+    "reparto": [
+      "lirios_maite",
+      "pescadora",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Inspeccionar autorización, suministro y retorno.",
+        "region": "confluencia_agua",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Territorio de agua: reserva protegida y depósito autorizado.",
+          "El registro de Vael llama devolución al caudal que sigue reservado."
+        ],
+        "id": "F08.1"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Procesar el componente local de cierre.",
+        "region": "confluencia_agua",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "materiales": {
+          "confluencia_agua_mineral": 2,
+          "confluencia_agua_madera": 2
+        },
+        "id": "F08.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Calibrar el componente antes de instalarlo.",
+        "region": "confluencia_agua",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Verificar autorización",
+          "Medir suministro",
+          "Separar reserva",
+          "Comprobar componente"
+        ],
+        "datos": [],
+        "id": "F08.3"
+      },
+      {
+        "tipo": "circuito",
+        "texto": "Cerrar el retorno falseado y conservar el retorno autorizado.",
+        "region": "confluencia_agua",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Entrada en el oeste; retorno autorizado en el este.",
+          "El núcleo central está protegido: ninguna conexión puede entrar en él.",
+          "La reserva y el retorno son destinos distintos. Cambia las uniones y comprueba el circuito."
+        ],
+        "destino": "confluencia_agua",
+        "alternativa": "combate",
+        "id": "F08.4"
+      }
+    ],
+    "decision": "Reparar ruta de válvulas o enfrentar constructos del muelle; mismas pruebas de caudal y costo de componente.",
+    "ramas": [
+      "lirios_maite: La válvula puede mantenerse sin pedir otra aparición.\nfuatia: La ayuda también puede dejar un trabajo que ustedes sepan continuar.",
+      "pescadora: Los constructos se apagaron y la orilla de crías quedó fuera del combate.\nfuatia: Esa separación cuenta tanto como haber acertado el último golpe."
+    ],
+    "consecuencias": "Ambas rutas entregan sello de retorno de agua para F11 y dejan zona rejugable. No cambia clima mundial ni permite vender el mismo lote más de una vez."
+  },
+  {
+    "id": "F09",
+    "titulo": "Lo que sostiene una raíz",
+    "region": "confluencia_tierra",
+    "clase": "principal",
+    "requiere": [
+      "F06"
+    ],
+    "reparto": [
+      "bruma_silvana",
+      "bruma_roque",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Inspeccionar autorización, suministro y retorno.",
+        "region": "confluencia_tierra",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Territorio de tierra: reserva protegida y depósito autorizado.",
+          "El registro de Vael llama devolución al caudal que sigue reservado."
+        ],
+        "id": "F09.1"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Procesar el componente local de cierre.",
+        "region": "confluencia_tierra",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "materiales": {
+          "confluencia_tierra_mineral": 2,
+          "confluencia_tierra_madera": 2
+        },
+        "id": "F09.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Calibrar el componente antes de instalarlo.",
+        "region": "confluencia_tierra",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Verificar autorización",
+          "Medir suministro",
+          "Separar reserva",
+          "Comprobar componente"
+        ],
+        "datos": [],
+        "id": "F09.3"
+      },
+      {
+        "tipo": "circuito",
+        "texto": "Cerrar el retorno falseado y conservar el retorno autorizado.",
+        "region": "confluencia_tierra",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Entrada en el oeste; retorno autorizado en el este.",
+          "El núcleo central está protegido: ninguna conexión puede entrar en él.",
+          "La reserva y el retorno son destinos distintos. Cambia las uniones y comprueba el circuito."
+        ],
+        "destino": "confluencia_tierra",
+        "alternativa": "combate",
+        "id": "F09.4"
+      }
+    ],
+    "decision": "Resolver el circuito por carga distribuida o combatir guardianes artificiales, conservando umbral y restitución.",
+    "ramas": [
+      "bruma_silvana: La carga está repartida y mi firma deja criterio de revisión.\nfuatia: El suelo podrá responder distinto otra estación; el permiso no se volverá eterno.",
+      "bruma_roque: La plataforma dejó de forzar el retorno. La madera usada tiene reposición prevista.\nfuatia: No confundas botín de constructo con propiedad de todas las raíces."
+    ],
+    "consecuencias": "Ambas rutas entregan sello de retorno de tierra para F11. No obliga a perdonar el conflicto Gael/Roque ni concede crecimiento instantáneo de árboles."
+  },
+  {
+    "id": "F10",
+    "titulo": "El aire no firma obediencia",
+    "region": "confluencia_aire",
+    "clase": "principal",
+    "requiere": [
+      "F06"
+    ],
+    "reparto": [
+      "piedra_hugo",
+      "orbita_boris",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "observar",
+        "texto": "Inspeccionar autorización, suministro y retorno.",
+        "region": "confluencia_aire",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Territorio de aire: reserva protegida y depósito autorizado.",
+          "El registro de Vael llama devolución al caudal que sigue reservado."
+        ],
+        "id": "F10.1"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Procesar el componente local de cierre.",
+        "region": "confluencia_aire",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "materiales": {
+          "confluencia_aire_mineral": 2,
+          "confluencia_aire_madera": 2
+        },
+        "id": "F10.2"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Calibrar el componente antes de instalarlo.",
+        "region": "confluencia_aire",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Verificar autorización",
+          "Medir suministro",
+          "Separar reserva",
+          "Comprobar componente"
+        ],
+        "datos": [],
+        "id": "F10.3"
+      },
+      {
+        "tipo": "circuito",
+        "texto": "Cerrar el retorno falseado y conservar el retorno autorizado.",
+        "region": "confluencia_aire",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Entrada en el oeste; retorno autorizado en el este.",
+          "El núcleo central está protegido: ninguna conexión puede entrar en él.",
+          "La reserva y el retorno son destinos distintos. Cambia las uniones y comprueba el circuito."
+        ],
+        "destino": "confluencia_aire",
+        "alternativa": "combate",
+        "id": "F10.4"
+      }
+    ],
+    "decision": "Desactivar por señales de presión o combatir constructos con rutas de esquiva, con la misma calibración final.",
+    "ramas": [
+      "piedra_hugo: La lectura tiene sustituto visual. Ya no depende de una sola forma de percibir.\nfuatia: También yo puedo hablar sin exigirte una respuesta que no recibiste.",
+      "orbita_boris: Regresaremos con margen después de la prueba.\nfuatia: La maniobra no merece más respeto por terminar casi sin aire."
+    ],
+    "consecuencias": "Ambas rutas entregan sello de retorno de aire para F11 y admiten todas las familias de arma. Se conserva oxígeno actual; no se obtiene una reserva infinita por escena."
+  },
+  {
+    "id": "F11",
+    "titulo": "Cuatro cuentas y ninguna deuda oculta",
+    "region": "confluencia",
+    "clase": "principal",
+    "requiere": [
+      "F07",
+      "F08",
+      "F09",
+      "F10"
+    ],
+    "reparto": [
+      "orbita_rita",
+      "esmeralda_indira",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "inspeccionar",
+        "texto": "Confirmar los cuatro sellos independientes de retorno.",
+        "region": "confluencia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "condicion": "matriz",
+        "id": "F11.1"
+      },
+      {
+        "tipo": "entregar",
+        "texto": "Fabricar la matriz con componentes de las rutas autorizadas.",
+        "region": "confluencia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "materiales": {
+          "confluencia_fuego_mineral": 1,
+          "confluencia_agua_mineral": 1,
+          "confluencia_tierra_mineral": 1,
+          "confluencia_aire_mineral": 1
+        },
+        "id": "F11.2"
+      },
+      {
+        "tipo": "circuito",
+        "texto": "Conectar la matriz sin contar una misma reserva dos veces.",
+        "region": "confluencia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Entrada en el oeste; retorno autorizado en el este.",
+          "El núcleo central está protegido: ninguna conexión puede entrar en él.",
+          "La reserva y el retorno son destinos distintos. Cambia las uniones y comprueba el circuito."
+        ],
+        "id": "F11.3"
+      }
+    ],
+    "decision": "Mostrar lectura por territorio o por tipo de retorno; ambas vistas conservan los mismos datos y parada.",
+    "ramas": [
+      "esmeralda_indira: Cada territorio ve su aporte y lo que recibe.\nfuatia: No borrarás una pérdida solo porque el total pueda escribirse como cero.",
+      "orbita_rita: Cada retorno conserva origen, salida y reserva.\nfuatia: La balanza no necesita una historia más limpia que los movimientos que la sostienen."
+    ],
+    "consecuencias": "Se confirma matriz apta para F12. Las vistas son accesibilidad de consulta, no elecciones de afinidad. Ningún sello aumenta daño, minería, producción o amistad."
+  },
+  {
+    "id": "F12",
+    "titulo": "Confluencia puede cambiar",
+    "region": "confluencia",
+    "clase": "principal",
+    "requiere": [
+      "F11"
+    ],
+    "reparto": [
+      "brasa_sol",
+      "iris_calista",
+      "figura_fuatia"
+    ],
+    "pasos": [
+      {
+        "tipo": "inspeccionar",
+        "texto": "Verificar los cuatro sellos y la matriz terminada.",
+        "region": "confluencia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "condicion": "matriz",
+        "id": "F12.1"
+      },
+      {
+        "tipo": "secuencia",
+        "texto": "Aislar las cuatro amplificaciones antes de intervenir.",
+        "region": "confluencia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "orden": [
+          "Aislar calor",
+          "Aislar humedad",
+          "Distribuir soporte",
+          "Mantener presión",
+          "Separar el retorno falseado"
+        ],
+        "datos": [
+          "La redistribución de Fuatia conserva equilibrio y los territorios."
+        ],
+        "id": "F12.2"
+      },
+      {
+        "tipo": "circuito",
+        "texto": "Desmontar el circuito de Forma Fija en la Cámara de los Núcleos.",
+        "region": "confluencia",
+        "punto": {
+          "x": 0,
+          "z": -9.6
+        },
+        "datos": [
+          "Entrada en el oeste; retorno autorizado en el este.",
+          "El núcleo central está protegido: ninguna conexión puede entrar en él.",
+          "La reserva y el retorno son destinos distintos. Cambia las uniones y comprueba el circuito."
+        ],
+        "id": "F12.3"
+      }
+    ],
+    "decision": "Dejar mesa de revisión comunitaria o custodia distribuida con consulta común.",
+    "ramas": [
+      "iris_calista: La mesa puede revisar, incluso si la revisión nos incomoda.\nfuatia: Inclúyanme en la conversación. No me entreguen por eso la última palabra humana.",
+      "brasa_sol: Cada territorio conserva una pieza mantenible y un registro común.\nfuatia: Un acuerdo distribuido no tendrá que vivir preso en una forma perfecta."
+    ],
+    "consecuencias": "Ambas rutas mantienen Confluencia accesible, abren P21 y conservan materiales regionales útiles. Fuatia no se redime automáticamente, Vael conserva responsabilidad y no se reemplaza el final contra Nath."
+  }
+]
