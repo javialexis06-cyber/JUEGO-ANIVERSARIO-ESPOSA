@@ -540,6 +540,29 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   en una celda cercana: 10 gotas doradas y un poquito de vida; nada del piso queda metido en una cortina. Bichos
   nuevos: ratoncitos de la cortina; jefe nuevo: el Rey Ratón (el del Hiper), más la Mota de Pelo, la Cortina Mohosa y
   Doña Cucaracha. Tres logros más (85 en total).
+- **Versión 2, fase 3h: La Feria de las cremas** (Westwoods; especial de 20 minutos, se abre venciendo al Pote de
+  Crema). Una feria encerrada en vallas (`feria.ts`): la plaza de la entrada (baldosas rosadas y crema con florecitas,
+  x de −1100 a 1100), la calle de los puestos (tablas de madera, hasta −3300) y la carpa de las cremas (rayas de circo
+  alrededor de la pista con su aro dorado, hasta −5500); afuera, pasto con florecitas y borde de madera (`FRAG_FERIA`).
+  Al principio solo se anda por la plaza: lo cerrado se ve más oscurito y rayado, con la cinta roja y blanca en el
+  piso, los postes de caramelo y un **portón con candado** en el medio. El **Ruletero** (un frasco de crema de menta
+  con sombrero de copa, chaleco a rayas, bigote crespo y su caballete) está en la plaza; su rueda gira despacio y da
+  vueltas cuando alguien juega (se dibuja aparte, encima del eje). Al pararse junto a él se abre **la ruleta** (usa
+  el mismo manejo del puesto de Don Jabón: pausa, reloj con varios y hay que alejarse para volver): girar 1, 5 o 10
+  veces por 75, 360 o 700 gotas doradas de la partida. Trece casillas: la **llave dorada** abre la siguiente parte
+  (la valla se corre, sale el aviso y un brillo en el portón; su probabilidad crece 7 puntos con cada tirada sin
+  ganarla), y las demás dan bolsa o frasco de gotas, arepa, aspiradora, ola, hielo, trébol, ají, cofre, patito
+  dorado, «¡Uy, casi!» o una ronda de mugrosos de crema. En la pantalla, la rueda (con sus casillas y el piquito)
+  da vueltas con tic-tic y se detiene en lo último que salió; los premios aparecen uno por uno. Una flecha rosada
+  señala al Ruletero mientras falte feria por abrir, y el mapa de la pausa muestra toda la caja. En pareja, cuántas
+  partes van abiertas y la ruleta de cada uno viajan con el inventario (`Motor.ponerFeria`). Los mugrosos salen
+  dentro de la caja (si el punto queda afuera, se prueba otro lado de la pantalla). Bichos nuevos (Blender): pompitas
+  de crema (copito en espiral con alitas de merengue), tubitos de crema de manos (brincan), nubes de algodón de
+  azúcar, potecitos de muestra (la tapa es la boca y muerden) y mascarillas de barro (con pepinos en la frente);
+  jefes nuevos: la Ruleta Loca, el Payaso Tortazo (tortas de crema en cada mano) y la Reina de las Cremas (la del
+  Hiper), más el Pote de Crema y Don Frasco. Utilería: globos, tortas, algodón de azúcar, cremas y perfumes; las
+  velitas son faroles de feria. El bot sabe ir donde el Ruletero y girar. Tres logros más (88 en total): llegar al
+  final, vencer a la Reina y abrir toda la feria en una partida.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

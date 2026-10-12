@@ -11,6 +11,7 @@ import { ID_ENEMIGOS, ENEMIGOS } from './enemigos';
 import { LIMITE_COFRE, LIMITE_ESCOGER, MAX_ENEMIGOS, type CofreAbierto, type Jugador, type Motor, type Opcion, type OpcionesJugador } from './motor';
 import type { ResumenPartida } from './progreso';
 import type { IdVenta } from './vendedor';
+import { PREMIO, type IdPremioRuleta } from './feria';
 import type { Efecto, IdArma, IdCarta, IdEscenario, IdModo, IdObjeto, IdPasiva, Stats, TipoEfecto } from './tipos';
 
 export interface ConfigPartida {
@@ -43,6 +44,12 @@ export interface InvJugador {
   compras?: Partial<Record<IdVenta, number>>;
   gastado?: number;
   extras?: [number, number, number];
+  /** La Feria de las cremas: si el puesto abierto es la ruleta, cuántas veces ha girado, lo último que salió y cuántas
+   * partes de la feria están abiertas (va en todos, igual). */
+  ruleta?: boolean;
+  tiradas?: number;
+  ultimas?: IdPremioRuleta[];
+  feria?: number;
 }
 
 /** Lo que se dicen los celulares durante la partida (tipos de mensaje de la sala). */
@@ -77,12 +84,14 @@ export interface Mando {
   man: boolean;
 }
 export interface Accion {
-  a: 'escoger' | 'tirar' | 'saltar' | 'vetar' | 'cofre' | 'carta' | 'comprar' | 'tienda';
+  a: 'escoger' | 'tirar' | 'saltar' | 'vetar' | 'cofre' | 'carta' | 'comprar' | 'tienda' | 'girar';
   k?: number;
   c?: IdCarta | null;
   n?: number;
   /** Lo que se le compra al vendedor. */
   v?: IdVenta;
+  /** La tirada de la ruleta de la feria (0, 1 o 2: una, cinco o diez). */
+  t?: number;
 }
 
 // ---------------------------------------------------------------------------------------------------- Inventario
@@ -104,6 +113,7 @@ export function inventarioDe(m: Motor): InvJugador[] {
     compras: { ...j.compras },
     gastado: j.gastado,
     extras: [j.dadosExtra, j.saltosExtra, j.vetosExtra],
+    ...(m.esc.feria ? { ruleta: j.ruleta, tiradas: j.tiradas, ultimas: [...j.ultimasTiradas], feria: m.feriaAbiertas } : {}),
   }));
 }
 
@@ -134,6 +144,10 @@ export function aplicarInventario(m: Motor, inv: InvJugador[]) {
     j.compras = { ...(d.compras ?? {}) };
     j.gastado = d.gastado ?? 0;
     [j.dadosExtra, j.saltosExtra, j.vetosExtra] = d.extras ?? [0, 0, 0];
+    j.ruleta = !!d.ruleta;
+    j.tiradas = d.tiradas ?? 0;
+    j.ultimasTiradas = Array.isArray(d.ultimas) ? d.ultimas.filter((x) => x in PREMIO) : [];
+    if (i === 0 && typeof d.feria === 'number' && d.feria !== m.feriaAbiertas) m.ponerFeria(d.feria);
   });
 }
 

@@ -2279,6 +2279,239 @@ def vendedor(p):
         burbuja(p, (x, -0.1, z), r)
 
 
+# ----------------------------------------------------------------------------------------------------- La Feria de las cremas
+COLORES_RUEDA = ['#E4574B', '#FFE7A3', '#5AB4F0', '#FFFDF8', '#7FCB5A', '#F6C9A8', '#E86A8A', '#BFE3F2', '#9C6BD6', '#FFD86B', '#FF8A3D', '#A8DDA0']
+
+
+def rueda_feria(p):
+    """La rueda de la fortuna del Ruletero, de frente (gira en el juego): doce casillas, aro dorado con bombillos y el eje."""
+    R = 0.5
+    n = len(COLORES_RUEDA)
+    for k, c in enumerate(COLORES_RUEDA):
+        a0, a1 = k / n * TAU, (k + 1) / n * TAU
+        pts = [(0.0, 0.0)] + [(math.cos(a0 + (a1 - a0) * t / 4) * R, math.sin(a0 + (a1 - a0) * t / 4) * R) for t in range(5)]
+        prisma(p, pts, 0.04, M(c, rough=0.35, coat=0.5), y=0.0, bisel=0.006)
+        # Un puntico en cada casilla (el premio)
+        am = (a0 + a1) / 2
+        p.blob((math.cos(am) * R * 0.72, -0.03, math.sin(am) * R * 0.72), (0.035, 0.012, 0.035), M('#FFFFFF' if c != '#FFFDF8' else '#E4574B', 0.4), n=5)
+    o = clay.lathe(p.nom(), [(R - 0.01, -0.04), (R + 0.05, -0.04), (R + 0.07, 0.0), (R + 0.05, 0.04), (R - 0.01, 0.04), (R - 0.03, 0.0), (R - 0.01, -0.04)],
+                   p.coll, oro(), segments=64, subsurf=1, cap_bottom=False, cap_top=False)
+    o.rotation_euler = (math.pi / 2, 0, 0)
+    p.add(o)
+    for k in range(n):
+        a = (k + 0.5) / n * TAU
+        p.blob((math.cos(a) * (R + 0.03), -0.05, math.sin(a) * (R + 0.03)), (0.026,) * 3, M('#FFF3B0', rough=0.3, emision=1.8, ruido=0.0), n=5)
+    # Los clavitos entre casilla y casilla
+    for k in range(n):
+        a = k / n * TAU
+        p.blob((math.cos(a) * R * 0.94, -0.035, math.sin(a) * R * 0.94), (0.014,) * 3, plata(), n=4)
+    p.torno([(0.0, 0.0), (0.09, 0.0), (0.1, 0.02), (0.07, 0.05), (0.0, 0.06)], oro())
+    p.objs[-1].rotation_euler = (math.pi / 2, 0, 0)
+    p.objs[-1].location = (0, -0.02, 0)
+    estrella(p, (0, -0.09, 0), 0.05, M('#E4392B', 0.35, coat=0.5))
+
+
+def ruletero(p):
+    """El Ruletero: un frasco de crema de menta con sombrero de copa, chaleco a rayas, corbatín y bigote crespo, con su
+    bastón y el soporte de la rueda (la rueda se dibuja aparte, encima del eje, porque gira)."""
+    x = 0.42
+    cuerpo = M('#9FE0D0', rough=0.35, coat=0.5, sss=0.2)
+    p.torno([(0.0, 0.0), (0.17, 0.0), (0.19, 0.03), (0.2, 0.36), (0.17, 0.41), (0.0, 0.42)], cuerpo, x=x)
+    # La crema de la coronilla, el sombrero de copa
+    p.blob((x, 0, 0.45), (0.15, 0.13, 0.05), M('#FFF7EC', rough=0.8, fuzz=0.3, pelusa='#FFFFFF'), n=8)
+    negro = M('#2B2422', rough=0.7, fuzz=0.3, pelusa='#4A3E3A')
+    p.torno([(0.0, 0.0), (0.2, 0.0), (0.21, 0.015), (0.0, 0.02)], negro, x=x, z=0.47)
+    p.torno([(0.0, 0.0), (0.11, 0.0), (0.12, 0.2), (0.0, 0.21)], negro, x=x, z=0.48)
+    p.torno([(0.112, 0.0), (0.118, 0.025), (0.112, 0.05), (0.106, 0.025)], M('#E4392B', rough=0.5, fuzz=0.3), x=x, z=0.5, tapas=(False, False))
+    p.blob((x + 0.08, -0.07, 0.56), (0.03, 0.01, 0.04), M('#FFE7A3', 0.4), n=5)
+    # El chaleco a rayas (una banda) con botones dorados
+    for k in range(10):
+        a = k / 10 * TAU
+        if math.sin(a) > -0.45:
+            continue
+        p.blob((x + math.cos(a) * 0.2, math.sin(a) * 0.2, 0.17), (0.035, 0.012, 0.11), M('#E4574B' if k % 2 else '#FFFDF8', rough=0.7, fuzz=0.3), n=6)
+    for z in (0.12, 0.2):
+        p.blob((x, -0.205, z), (0.016, 0.008, 0.016), oro(), n=5)
+    # Corbatín
+    for s_ in (-1, 1):
+        p.blob((x + s_ * 0.05, -0.19, 0.29), (0.05, 0.02, 0.03), M('#E4392B', rough=0.5, fuzz=0.3), n=6)
+    p.blob((x, -0.205, 0.29), (0.02, 0.015, 0.02), M('#B8282B', 0.5), n=5)
+    # La carita: ojos, cachetes, sonrisa y el bigote crespo
+    fy = -0.195
+    for s_ in (-1, 1):
+        p.blob((x + s_ * 0.06, fy, 0.37), (0.035, 0.012, 0.045), M('#FFFDF8', 0.3), n=6)
+        p.blob((x + s_ * 0.06 + 0.005, fy - 0.01, 0.365), (0.021, 0.008, 0.027), M('#1E1514', 0.2), n=5)
+        p.blob((x + s_ * 0.06 - 0.004, fy - 0.017, 0.38), (0.007, 0.004, 0.008), BRILLO, n=4)
+        p.blob((x + s_ * 0.12, fy + 0.01, 0.33), (0.028, 0.008, 0.02), M('#F59AAE', rough=0.7, fuzz=0.3), n=5)
+    bigote = M('#3A2C25', rough=0.85, fuzz=0.5, pelusa='#6B5446')
+    for s_ in (-1, 1):
+        p.tubo([(x, fy - 0.012, 0.325), (x + s_ * 0.05, fy - 0.016, 0.32), (x + s_ * 0.09, fy - 0.012, 0.335), (x + s_ * 0.1, fy - 0.01, 0.36),
+                (x + s_ * 0.08, fy - 0.01, 0.365)], [0.022, 0.02, 0.014, 0.01, 0.008], bigote, seg=8)
+    p.tubo([(x - 0.035, fy - 0.004, 0.3), (x, fy - 0.006, 0.287), (x + 0.035, fy - 0.004, 0.3)], 0.007, M('#7A2E2E', 0.4), seg=5)
+    # El brazo que saluda (guante blanco) y el del bastón que señala la rueda
+    guante = M('#FFFFFF', rough=0.6, fuzz=0.3)
+    p.tubo([(x + 0.18, -0.02, 0.25), (x + 0.27, -0.05, 0.33), (x + 0.3, -0.06, 0.43)], 0.028, cuerpo, seg=6)
+    p.blob((x + 0.3, -0.06, 0.46), (0.045, 0.035, 0.05), guante, n=6)
+    p.tubo([(x - 0.18, -0.02, 0.25), (x - 0.26, -0.08, 0.22)], 0.028, cuerpo, seg=6)
+    p.blob((x - 0.27, -0.09, 0.22), (0.045,) * 3, guante, n=6)
+    p.tubo([(x - 0.26, -0.1, 0.0), (x - 0.27, -0.1, 0.32), (x - 0.31, -0.1, 0.36), (x - 0.34, -0.1, 0.33)], 0.013, M('#2B2422', 0.4), seg=6)
+    p.blob((x - 0.27, -0.1, 0.0), (0.016,) * 3, oro(), n=4)
+    # Zapatos
+    for s_ in (-1, 1):
+        p.blob((x + s_ * 0.08, -0.06, 0.03), (0.06, 0.09, 0.035), M('#2B2422', rough=0.4, coat=0.5), n=6)
+    # El soporte de la rueda: un caballete de madera pintado con su eje dorado (el eje en (0, 0, 0.82))
+    madera = M('#C98A55', rough=0.6)
+    for s_ in (-1, 1):
+        p.tubo([(s_ * 0.16, 0.08, 0.0), (0.0, 0.06, 0.82)], 0.028, madera, seg=8)
+    p.tubo([(0.0, 0.2, 0.0), (0.0, 0.08, 0.82)], 0.024, madera, seg=8)
+    p.caja((0, 0.04, 0.03), (0.22, 0.12, 0.03), M('#E4574B', rough=0.5), p=4.0)
+    p.blob((0, 0.02, 0.82), (0.05, 0.05, 0.05), oro(), n=6)
+    # La plaquita con estrellas a los pies del caballete
+    p.caja((0, -0.04, 0.12), (0.12, 0.012, 0.06), M('#FFE7A3', rough=0.5), p=4.0)
+    for dx in (-0.06, 0.0, 0.06):
+        estrella(p, (dx, -0.06, 0.12), 0.022, M('#E4392B', 0.4))
+
+
+def llave_feria(p):
+    """La llave dorada de la feria (la casilla de la ruleta que abre la siguiente parte), con moño rosado."""
+    oro_ = oro()
+    # El ojo de la llave en forma de corazón
+    corazon(p, (0, 0, 0.62), 0.2, oro_, grosor=0.35)
+    p.blob((0, -0.04, 0.63), (0.06, 0.03, 0.05), M('#E86A8A', rough=0.3, coat=0.6), n=6)
+    p.tubo([(0, 0, 0.48), (0, 0, 0.08)], 0.04, oro_, seg=10)
+    for z, w in ((0.13, 0.12), (0.23, 0.08)):
+        p.caja((w / 2 + 0.02, 0, z), (w / 2, 0.025, 0.03), oro_, p=4.0)
+    for z in (0.42, 0.38):
+        p.torno([(0.05, -0.008), (0.058, 0.0), (0.05, 0.008), (0.044, 0.0)], oro_, z=z, tapas=(False, False))
+    # El moño
+    rosa = M('#F39AB0', rough=0.6, fuzz=0.35)
+    for s_ in (-1, 1):
+        p.blob((s_ * 0.1, -0.02, 0.46), (0.09, 0.03, 0.06), rosa, n=8)
+        p.tubo([(s_ * 0.02, -0.03, 0.44), (s_ * 0.07, -0.04, 0.32), (s_ * 0.09, -0.04, 0.27)], 0.02, rosa, seg=5, perfil=(1.6, 0.4))
+    p.blob((0, -0.04, 0.46), (0.035, 0.03, 0.035), rosa, n=6)
+    destellos(p, [(0.3, -0.1, 0.8), (-0.28, -0.1, 0.5), (0.22, -0.1, 0.2)], 0.05)
+
+
+def nada_feria(p):
+    """«¡Uy, casi!»: un globo desinflado tirado en el piso, con su cuerdita y la carita triste."""
+    rosa = M('#F28BB0', rough=0.25, coat=0.7)
+    p.blob((0, 0, 0.1), (0.3, 0.24, 0.1), rosa, n=12, shaper=lambda v: v * (1 + 0.12 * np.sin(v[:, 0:1] * 9) * np.sin(v[:, 1:2] * 7)))
+    p.blob((0.3, -0.02, 0.07), (0.05, 0.04, 0.04), rosa, n=6)
+    p.tubo([(0.34, -0.02, 0.06), (0.45, -0.1, 0.02), (0.38, -0.25, 0.01), (0.5, -0.32, 0.01)], 0.008, M('#FFFFFF', 0.6), seg=5)
+    for s_ in (-1, 1):
+        p.tubo([(s_ * 0.07 - 0.03, -0.24, 0.13), (s_ * 0.07, -0.245, 0.11), (s_ * 0.07 + 0.03, -0.24, 0.13)], 0.009, M('#1E1514', 0.2), seg=5)
+    p.tubo([(-0.04, -0.24, 0.05), (0.0, -0.245, 0.07), (0.04, -0.24, 0.05)], 0.009, M('#7A2E2E', 0.4), seg=5)
+    p.blob((-0.12, -0.22, 0.14), (0.04, 0.01, 0.02), BRILLO, n=4)
+    # El último suspiro de aire
+    for k, (dx, dz, r) in enumerate(((0.55, 0.12, 0.03), (0.62, 0.2, 0.04), (0.7, 0.3, 0.05))):
+        p.blob((dx, -0.02, dz), (r, r * 0.6, r), M('#DDEFFF', rough=0.1, transmision=0.6, coat=0.6, ruido=0.0), n=6)
+
+
+def poste_feria(p):
+    """El poste de las vallas de la feria: palo de caramelo (rayas rojas y blancas), bola dorada y banderín."""
+    blanco = M('#FFFDF8', rough=0.35, coat=0.5)
+    rojo = M('#E4574B', rough=0.35, coat=0.5)
+    p.torno([(0.0, 0.0), (0.12, 0.0), (0.13, 0.04), (0.1, 0.07), (0.0, 0.08)], M('#F6C9D6', rough=0.4, coat=0.4))
+    p.torno([(0.045, 0.0), (0.045, 0.9), (0.0, 0.91)], blanco, z=0.06)
+    for k in range(9):
+        z = 0.1 + k * 0.095
+        p.torno([(0.046, -0.02), (0.05, 0.0), (0.046, 0.02), (0.044, 0.0)], rojo, z=z, tapas=(False, False))
+        p.objs[-1].rotation_euler = (0.35, 0, 0)
+        p.objs[-1].location = (0, 0, z)
+    p.blob((0, 0, 1.0), (0.07,) * 3, oro(), n=8)
+    prisma(p, [(0.02, 0.95), (0.3, 0.88), (0.02, 0.8)], 0.012, M(COLORES_RUEDA[2], rough=0.7, fuzz=0.2), y=0.0, bisel=0.004)
+
+
+def porton_feria(p):
+    """El portón cerrado entre una parte y otra de la feria: arco de rayas con banderines, rejas y un candado dorado."""
+    blanco = M('#FFFDF8', rough=0.4, coat=0.4)
+    rosa = M('#F39AB0', rough=0.5, fuzz=0.2)
+    for s_ in (-1, 1):
+        p.torno([(0.0, 0.0), (0.09, 0.0), (0.09, 0.95), (0.0, 0.96)], blanco, x=s_ * 0.55)
+        for k in range(6):
+            z = 0.1 + k * 0.15
+            p.torno([(0.091, 0.0), (0.096, 0.03), (0.091, 0.06), (0.088, 0.03)], rosa, x=s_ * 0.55, z=z, tapas=(False, False))
+        p.blob((s_ * 0.55, 0, 1.0), (0.1,) * 3, oro(), n=8)
+    # El arco con su letrero en blanco y las bombillitas
+    pts = [(math.cos(a) * 0.55, 0.95 + math.sin(a) * 0.32) for a in np.linspace(0, math.pi, 12)]
+    p.tubo([(x, 0.0, z) for (x, z) in pts], 0.05, rosa, seg=10)
+    for k, (x, z) in enumerate(pts[1:-1]):
+        p.blob((x, -0.05, z), (0.025,) * 3, M('#FFF3B0', rough=0.3, emision=1.6, ruido=0.0), n=5)
+    p.caja((0, -0.02, 1.14), (0.3, 0.03, 0.09), M('#FFE7A3', rough=0.5), p=4.0)
+    for dx, c in ((-0.17, '#E4574B'), (-0.06, '#5AB4F0'), (0.05, '#7FCB5A'), (0.16, '#9C6BD6')):
+        estrella(p, (dx, -0.055, 1.14), 0.035, M(c, 0.4))
+    # Las rejas (dos hojas de barrotes con punta) y la cadena con el candado
+    for s_ in (-1, 1):
+        for k in range(5):
+            xx = s_ * (0.06 + k * 0.095)
+            p.tubo([(xx, 0.0, 0.05), (xx, 0.0, 0.8)], 0.016, blanco, seg=6)
+            p.blob((xx, 0.0, 0.83), (0.025, 0.02, 0.04), rosa, n=5)
+        p.tubo([(s_ * 0.04, 0.0, 0.25), (s_ * 0.48, 0.0, 0.25)], 0.018, blanco, seg=6)
+        p.tubo([(s_ * 0.04, 0.0, 0.65), (s_ * 0.48, 0.0, 0.65)], 0.018, blanco, seg=6)
+    for k in range(7):
+        a = (k - 3) * 0.12
+        p.torno([(0.022, -0.006), (0.03, 0.0), (0.022, 0.006), (0.016, 0.0)], plata(), x=a, y=-0.04, z=0.47 - abs(k - 3) * 0.015, tapas=(False, False))
+        p.objs[-1].rotation_euler = (math.pi / 2 if k % 2 else 0, 0, 0)
+        p.objs[-1].location = (a, -0.04, 0.47 - abs(k - 3) * 0.015)
+    p.caja((0, -0.07, 0.36), (0.07, 0.03, 0.06), oro(), p=4.0)
+    p.torno([(0.04, -0.008), (0.048, 0.0), (0.04, 0.008), (0.034, 0.0)], oro(), x=0, y=-0.07, z=0.42, tapas=(False, False))
+    p.objs[-1].rotation_euler = (math.pi / 2, 0, 0)
+    p.objs[-1].location = (0, -0.07, 0.42)
+    corazon(p, (0, -0.1, 0.36), 0.03, M('#E86A8A', 0.4), grosor=0.3)
+
+
+def globos(p):
+    """Un racimo de globos de la feria amarrado a un pesito de crema."""
+    for (x, z, c) in ((-0.15, 0.78, '#E86A8A'), (0.12, 0.82, '#7DB7E8'), (0.0, 1.0, '#F7D046'), (0.24, 1.02, '#7FCB5A'), (-0.22, 1.02, '#C9A4F2')):
+        m = M(c, rough=0.2, coat=0.8, sss=0.1)
+        p.blob((x, 0, z), (0.12, 0.11, 0.14), m, n=10)
+        p.blob((x, 0, z - 0.15), (0.025, 0.02, 0.025), m, n=5)
+        p.blob((x - 0.04, -0.09, z + 0.05), (0.025, 0.01, 0.035), BRILLO, n=4)
+        p.tubo([(x, 0, z - 0.17), (x * 0.5, -0.01, 0.4), (0.0, 0.0, 0.14)], 0.005, M('#FFFFFF', 0.6), seg=4)
+    p.torno([(0.0, 0.0), (0.08, 0.0), (0.09, 0.02), (0.09, 0.1), (0.07, 0.13), (0.0, 0.13)], M('#F6C9D6', rough=0.3, coat=0.6))
+    p.blob((0, 0, 0.15), (0.06, 0.06, 0.03), M('#FFF7EC', rough=0.8, fuzz=0.3), n=6)
+
+
+def torta_crema(p):
+    """La torta de crema del payaso: plato de lata, crema batida en copitos y una fresa."""
+    p.torno([(0.0, 0.0), (0.28, 0.0), (0.32, 0.07), (0.29, 0.08), (0.25, 0.03), (0.0, 0.03)], M('#C9C2B8', rough=0.25, metal=0.6))
+    p.torno([(0.0, 0.0), (0.26, 0.0), (0.27, 0.06), (0.0, 0.07)], M('#E8B26A', rough=0.6), z=0.03)
+    crema = M('#FFF7EC', rough=0.8, fuzz=0.3, pelusa='#FFFFFF')
+    p.blob((0, 0, 0.13), (0.25, 0.25, 0.07), crema, n=10)
+    for k in range(9):
+        a = k / 9 * TAU
+        p.blob((math.cos(a) * 0.19, math.sin(a) * 0.19, 0.18), (0.05, 0.05, 0.05), crema, n=6)
+        p.tubo([(math.cos(a) * 0.19, math.sin(a) * 0.19, 0.22), (math.cos(a) * 0.19 + 0.01, math.sin(a) * 0.19, 0.26)], [0.03, 0.005], crema, seg=5)
+    p.blob((0, 0, 0.25), (0.07, 0.07, 0.08), M('#E4392B', rough=0.3, coat=0.6), n=8)
+    for k in range(3):
+        a = k / 3 * TAU
+        p.blob((math.cos(a) * 0.04, math.sin(a) * 0.04, 0.32), (0.03, 0.03, 0.01), M('#5FAE4A', 0.5), n=5)
+
+
+def algodon_azucar(p):
+    """Algodón de azúcar rosado en su palito, clavado en un baldecito de la feria."""
+    m = M('#F7A8CE', rough=0.95, fuzz=0.9, pelusa='#FFD6EA')
+    for (x, z, r) in ((0, 0.62, 0.2), (-0.12, 0.56, 0.13), (0.13, 0.58, 0.13), (0.03, 0.76, 0.13)):
+        p.blob((x, 0, z), (r, r * 0.9, r), m, n=10)
+    p.tubo([(0, 0, 0.1), (0, 0, 0.5)], 0.015, M('#FFFDF8', 0.6), seg=6)
+    p.torno([(0.0, 0.0), (0.1, 0.0), (0.13, 0.16), (0.0, 0.16)], M('#7DB7E8', rough=0.4, coat=0.5))
+    for k in range(4):
+        a = k / 4 * TAU + 0.4
+        p.blob((math.cos(a) * 0.12, math.sin(a) * 0.12, 0.09), (0.03, 0.01, 0.06), M('#FFFDF8', 0.5), n=5)
+
+
+def farol_feria(p):
+    """El farol de la feria (se rompe como las velitas): palo a rayas y tres bombillos de colores encendidos."""
+    p.torno([(0.0, 0.0), (0.12, 0.0), (0.13, 0.04), (0.08, 0.07), (0.0, 0.08)], M('#9C6BD6', rough=0.4, coat=0.4))
+    p.torno([(0.03, 0.0), (0.03, 0.62), (0.0, 0.63)], M('#FFFDF8', rough=0.35, coat=0.5), z=0.06)
+    for k in range(5):
+        p.torno([(0.031, -0.015), (0.035, 0.0), (0.031, 0.015), (0.029, 0.0)], M('#E86A8A', 0.4), z=0.12 + k * 0.11, tapas=(False, False))
+    p.tubo([(-0.2, 0, 0.62), (0.0, 0, 0.7), (0.2, 0, 0.62)], 0.014, M('#2B2422', 0.5), seg=8)
+    for (x, z, c) in ((-0.2, 0.55, '#FFE27A'), (0.0, 0.64, '#FFB0C8'), (0.2, 0.55, '#A8E6FF')):
+        p.blob((x, 0, z + 0.04), (0.025,) * 3, M('#2B2422', 0.5), n=5)
+        p.blob((x, 0, z), (0.06, 0.06, 0.07), M(c, rough=0.2, emision=2.2, ruido=0.0), n=8)
+
+
 ICONOS = {
     # Armas
     'toalla': lambda p: toalla(p), 'toallazo': lambda p: toalla(p, '#E4392B', '#FFD45C', caliente=True),
@@ -2347,7 +2580,13 @@ ICONOS = {
     'maceta': maceta, 'regadera': regadera, 'palita': palita, 'farolito': farolito,
     'bandera': bandera,
     'quesito': quesito,
+    # La Feria de las cremas
+    'ruedaFeria': rueda_feria, 'ruletero': ruletero, 'llaveFeria': llave_feria, 'nadaFeria': nada_feria, 'posteFeria': poste_feria,
+    'portonFeria': porton_feria, 'globos': globos, 'tortaCrema': torta_crema, 'algodonAzucar': algodon_azucar, 'farolFeria': farol_feria,
 }
+# Los que se dibujan de frente, sin el giro de tres cuartos (la rueda gira en el juego: tiene que quedar redonda)
+DE_FRENTE = {'ruedaFeria'}
+ANCLAS = {'ruletero': (0.0, 0.02, 0.82)}
 
 ACCESORIOS = {
     'toalla_hombro': toalla_hombro, 'espuma_cabeza': espuma_cabeza, 'cepillo_mano': lambda p: cepillo(p), 'espejo_frente': espejo_frente,
@@ -2383,8 +2622,11 @@ def iconos(salida, pedidos):
         p = Pieza(n)
         ICONOS[n](p)
         objs = [o for o in p.objs if not o.hide_render]
-        # 3/4: girado un poquito
-        p.girar(objs, rz=-0.38)
+        # 3/4: girado un poquito (los de frente, inclinados hacia la cámara para que se vean redondos)
+        if n in DE_FRENTE:
+            p.girar(objs, rx=-elev)
+        else:
+            p.girar(objs, rz=-0.38)
         bpy.context.view_layer.update()
         d = Vector((0, -math.cos(elev), math.sin(elev)))
         arriba = Vector((0, math.sin(elev), math.cos(elev)))
@@ -2402,6 +2644,14 @@ def iconos(salida, pedidos):
         cam.data.type = 'ORTHO'
         cam.data.ortho_scale = tam
         scene.camera = cam
+        # Dónde queda un punto que el juego necesita (el eje de la rueda del Ruletero), en la imagen de 0 a 1
+        if n in ANCLAS:
+            from mathutils import Euler
+            q = Euler((0, 0, -0.38), 'XYZ').to_matrix() @ Vector(ANCLAS[n])
+            print('ANCLA', n, round((q.dot(derecha) - centro.dot(derecha)) / tam + 0.5, 4), round(0.5 - (q.dot(arriba) - centro.dot(arriba)) / tam, 4),
+                  round(tam, 4), flush=True)
+        else:
+            print('TAM', n, round(tam, 4), flush=True)
         scene.render.filepath = os.path.join(salida, f'{n}.png')
         bpy.ops.render.render(write_still=True)
         for o in list(p.coll.objects):

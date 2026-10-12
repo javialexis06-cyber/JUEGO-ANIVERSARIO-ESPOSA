@@ -1122,3 +1122,56 @@ body.lavandose .hud-arriba-der { opacity: 0; pointer-events: none; transition: o
 .lv-venta:disabled { opacity: 0.5; }
 .lv-venta:not(:disabled):active { transform: scale(0.97); }
 .lv-ventas .vacio { grid-column: 1 / -1; text-align: center; color: #7a625a; font: 700 13px/1.3 var(--texto); }
+
+/* La ruleta del Ruletero (La Feria de las cremas) */
+.lv-flecha-tesoro.ruletero { background: radial-gradient(circle at 40% 35%, #fff0f5, #f58fb3); box-shadow: 0 0 0 2px #fff, 0 0 12px rgba(240, 90, 150, 0.85); }
+.lv-flecha-tesoro.ruletero::after { border-left-color: #e8578f; }
+.lv-flecha-tesoro.ruletero em { background: rgba(140, 30, 80, 0.8); }
+.lv-panel-ruleta { width: min(96vw, 700px); }
+.lv-panel-ruleta .lv-tienda-cab h2 { color: #c23a6e; }
+.lv-ruleta-cuerpo { display: flex; align-items: center; gap: 16px; min-height: 0; padding: 4px 6px; }
+.lv-rueda { position: relative; flex: 0 0 156px; height: 156px; }
+.lv-rueda .disco {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 5px #f2c14e, 0 0 0 8px #fff7e0, 0 0 0 10px #c9962e, 0 5px 12px rgba(61, 43, 39, 0.35), inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+  transition: transform 1.8s cubic-bezier(0.12, 0.72, 0.18, 1);
+  will-change: transform;
+}
+.lv-rueda .disco .casilla { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px; display: grid; place-items: center;
+  transform: rotate(var(--a)) translateY(-50px); }
+.lv-rueda .disco .casilla.llave { filter: drop-shadow(0 0 4px #fff6b0); }
+.lv-rueda .disco .casilla.gastada { opacity: 0.35; filter: grayscale(1); }
+.lv-rueda .pico {
+  position: absolute; left: 50%; top: -2px; width: 0; height: 0; margin-left: -10px; z-index: 2;
+  border: 10px solid transparent; border-top: 20px solid #e4392b; border-bottom: 0;
+  filter: drop-shadow(0 2px 0 rgba(61, 43, 39, 0.35));
+}
+.lv-rueda .eje { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px; border-radius: 50%; z-index: 2;
+  background: radial-gradient(circle at 35% 35%, #fff3b0, #f2c14e 60%, #b8861f); box-shadow: 0 2px 0 rgba(61, 43, 39, 0.3); }
+.lv-ruleta-lado { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.lv-ultimas { min-height: 74px; display: flex; flex-wrap: wrap; gap: 4px; align-content: center; justify-content: center;
+  padding: 6px; border-radius: 14px; background: rgba(255, 255, 255, 0.7); box-shadow: inset 0 0 0 2px rgba(228, 87, 75, 0.25); }
+.lv-ultimas .vacio { margin: 0; font: 700 13px/1.3 var(--texto); color: #7a625a; }
+.lv-premio-ruleta { display: flex; flex-direction: column; align-items: center; gap: 1px; width: 72px; animation: lvPremioRuleta 0.4s var(--d, 0s) both cubic-bezier(0.3, 1.6, 0.5, 1); }
+.lv-premio-ruleta em { font: 700 10px/1.1 var(--texto); font-style: normal; text-align: center; color: #7a625a; }
+.lv-ultimas:not(.varias) .lv-premio-ruleta { width: auto; flex-direction: row; gap: 8px; }
+.lv-ultimas:not(.varias) .lv-premio-ruleta em { font: 700 16px/1.1 var(--display); color: #c23a6e; }
+.lv-ultimas.varias .lv-premio-ruleta { width: 58px; }
+.lv-ultimas.varias .lv-premio-ruleta em { font-size: 9.5px; max-height: 2.3em; overflow: hidden; }
+.lv-premio-ruleta.llave { border-radius: 10px; background: radial-gradient(circle, #fff6b0, transparent 70%); }
+@keyframes lvPremioRuleta { from { opacity: 0; transform: scale(0.3) translateY(10px); } to { opacity: 1; transform: none; } }
+.lv-giros { justify-content: center; gap: 8px; }
+.lv-giros .lv-boton { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 92px; }
+.lv-giros .precio { display: flex; align-items: center; gap: 3px; font: 700 12px/1 var(--display); color: #9a6a10; }
+.lv-mapa.feria { background: repeating-linear-gradient(0deg, transparent 0 27px, rgba(120, 80, 40, 0.1) 27px 28px), linear-gradient(135deg, #cfe8bf, #b5d8a2); }
+.lv-mapa .pasillo.feria { right: auto; border: 2px dashed rgba(228, 87, 75, 0.55); background: rgba(255, 240, 246, 0.8); }
+.lv-mapa .pasillo.cerrada { right: auto; border: 2px dashed rgba(90, 70, 60, 0.3); background: repeating-linear-gradient(45deg, rgba(90, 70, 60, 0.12) 0 6px, transparent 6px 12px); }
+.lv-escenario .vista.feria {
+  background:
+    radial-gradient(circle at 26% 55%, #f2c14e 0 9%, #fff7e0 9% 11%, transparent 12%),
+    conic-gradient(from 0deg at 26% 55%, #e4574b 0 30deg, #ffe7a3 0 60deg, #5ab4f0 0 90deg, #fffdf8 0 120deg, #7fcb5a 0 150deg, #e86a8a 0 180deg, #bfe3f2 0 210deg, #9c6bd6 0 240deg, #ffd86b 0 270deg, #ff8a3d 0 300deg, #a8dda0 0 330deg, #f6c9a8 0 360deg) 26% 55% / 0 0 no-repeat,
+    linear-gradient(90deg, transparent 62%, #e4574b 62% 63.5%, transparent 63.5% 80%, #e4574b 80% 81.5%, transparent 81.5%),
+    repeating-conic-gradient(#f6c9d6 0 25%, #fff4e6 0 50%) 0 0 / 22px 22px;
+}

@@ -467,6 +467,99 @@ const FRAG_LABERINTO = COMUN + /* glsl */ `
   }
 `;
 
+const FRAG_FERIA = COMUN + /* glsl */ `
+  uniform vec4 uFeria; // xMin (hasta dónde está abierta), xMax, yMin, yMax
+  float h21(vec2 c) { return fract(sin(dot(c, vec2(12.9898, 78.233))) * 43758.5453); }
+  // (los colores se escriben como en una paleta y se pasan a lineal: three los devuelve a la pantalla al final)
+  vec3 s(vec3 c) { return pow(c, vec3(2.2)); }
+  void main() {
+    vec2 p = vMapa;
+    float d1 = texture2D(uDetalle, p / 220.0).r;
+    vec4 n = texture2D(uRuido, p / 1500.0);
+    vec3 col;
+    if (p.x > -1100.0) {
+      // La plaza de la entrada: baldosas grandes rosadas y crema, como el mostrador de una tienda de cremas
+      vec2 q = p / 110.0;
+      vec2 c = floor(q);
+      vec2 f = fract(q);
+      float ch = mod(c.x + c.y, 2.0);
+      col = mix(s(vec3(0.97, 0.8, 0.85)), s(vec3(1.0, 0.95, 0.89)), ch);
+      col *= 0.97 + 0.06 * h21(c);
+      float junta = 1.0 - smoothstep(0.0, 0.03, min(min(f.x, 1.0 - f.x), min(f.y, 1.0 - f.y)));
+      col = mix(col, col * 0.82, junta);
+      // Una florecita de cinco pétalos en las baldosas crema
+      vec2 l = (f - 0.5) * 110.0;
+      float ang = atan(l.y, l.x), rr = length(l);
+      float petalo = 1.0 - smoothstep(0.0, 1.5, rr - (9.0 + 4.0 * cos(ang * 5.0)));
+      col = mix(col, s(vec3(0.95, 0.6, 0.7)), petalo * ch * 0.75);
+      col = mix(col, s(vec3(1.0, 0.85, 0.4)), (1.0 - smoothstep(2.5, 4.0, rr)) * ch);
+    } else if (p.x > -3300.0) {
+      // La calle de los puestos: tablas de madera a lo largo, con sus clavitos
+      float tabla = floor(p.y / 46.0);
+      float off = h21(vec2(tabla, 3.0)) * 400.0;
+      float k = floor((p.x + off) / 380.0);
+      float u = fract((p.x + off) / 380.0);
+      col = mix(s(vec3(0.8, 0.58, 0.38)), s(vec3(0.88, 0.68, 0.46)), h21(vec2(tabla, k)));
+      col *= 0.93 + 0.07 * sin(p.x * 0.045 + sin(p.y * 0.21 + k) * 2.5 + tabla * 1.7);
+      float fy = fract(p.y / 46.0);
+      float ranura = 1.0 - smoothstep(0.0, 0.07, min(fy, 1.0 - fy));
+      float corte = 1.0 - smoothstep(0.0, 0.01, min(u, 1.0 - u));
+      col = mix(col, s(vec3(0.45, 0.3, 0.2)), max(ranura, corte) * 0.75);
+      float lx = min(u, 1.0 - u) * 380.0;
+      float clavo = (1.0 - smoothstep(2.0, 3.2, length(vec2(lx - 10.0, (fy - 0.5) * 46.0)))) ;
+      col = mix(col, s(vec3(0.72, 0.72, 0.76)), clavo);
+    } else {
+      // La carpa de las cremas: rayas de carpa de circo alrededor de la pista, el aro dorado y aserrín afuera
+      vec2 l = p - vec2(-4400.0, 0.0);
+      float ang = atan(l.y, l.x), r = length(l);
+      float raya = step(0.5, fract(ang / 6.2831853 * 24.0));
+      col = mix(s(vec3(0.94, 0.45, 0.52)), s(vec3(1.0, 0.95, 0.88)), raya);
+      col *= 0.9 + 0.1 * smoothstep(640.0, 0.0, r);
+      float estrella = 1.0 - smoothstep(0.0, 3.0, r - (60.0 + 26.0 * cos(ang * 5.0)));
+      col = mix(col, s(vec3(1.0, 0.84, 0.36)), estrella);
+      if (r > 652.0) {
+        col = mix(s(vec3(0.92, 0.82, 0.62)), s(vec3(0.86, 0.74, 0.54)), smoothstep(0.3, 0.8, n.g));
+        float viruta = step(0.9, h21(floor(p / 9.0)));
+        col *= 1.0 - viruta * 0.12;
+      }
+      float aro = 1.0 - smoothstep(9.0, 15.0, abs(r - 646.0));
+      col = mix(col, s(vec3(0.98, 0.78, 0.32)) * (0.9 + 0.2 * sin(ang * 40.0)), aro);
+    }
+    col *= 0.95 + d1 * 0.1;
+    // Afuera de la feria: pasto con florecitas
+    float fueraY = max(uFeria.z - p.y, p.y - uFeria.w);
+    float fueraX = max(-5500.0 - p.x, p.x - uFeria.y);
+    float fuera = max(fueraY, fueraX);
+    if (fuera > 0.0) {
+      vec3 pasto = mix(s(vec3(0.55, 0.76, 0.44)), s(vec3(0.64, 0.83, 0.5)), smoothstep(0.3, 0.8, n.r));
+      pasto *= 0.9 + d1 * 0.2;
+      vec2 fc = floor(p / 40.0);
+      float fl = step(0.92, h21(fc)) * (1.0 - smoothstep(3.0, 6.0, length(fract(p / 40.0) * 40.0 - 20.0)));
+      pasto = mix(pasto, mix(s(vec3(1.0, 0.8, 0.88)), s(vec3(1.0, 0.95, 0.6)), h21(fc + 1.0)), fl);
+      pasto *= 0.82 + 0.18 * exp(-fuera / 260.0);
+      // El borde de madera de la feria
+      float borde = 1.0 - smoothstep(10.0, 16.0, fuera);
+      col = mix(pasto, s(vec3(0.72, 0.5, 0.34)) * (0.9 + 0.1 * sin(p.x * 0.3 + p.y * 0.3)), borde);
+    } else {
+      col *= 0.82 + 0.18 * smoothstep(0.0, 70.0, -fuera);
+      // Lo que todavía está cerrado: más oscurito, sin color y con rayas de «no pasar»
+      if (p.x < uFeria.x) {
+        float gris = dot(col, vec3(0.3, 0.55, 0.15));
+        col = mix(col, vec3(gris), 0.5) * 0.6;
+        col *= 0.9 + 0.1 * step(0.5, fract((p.x + p.y) / 90.0));
+      }
+      // La cinta de rayas en el piso, justo donde está la valla cerrada
+      if (uFeria.x > -5490.0) {
+        float cinta = 1.0 - smoothstep(9.0, 12.0, abs(p.x - uFeria.x));
+        vec3 cc = mix(s(vec3(0.9, 0.3, 0.34)), s(vec3(1.0, 0.97, 0.92)), step(0.5, fract(p.y / 36.0)));
+        col = mix(col, cc, cinta);
+      }
+    }
+    gl_FragColor = vec4(col, 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
 interface Paleta {
   c1: string;
   c2: string;
@@ -501,6 +594,7 @@ const DECOR: Record<IdEscenario, [IdDecor, number, number][]> = {
   matera: [['hojita', 6, 80], ['petalos', 2.4, 70], ['pelito', 1.2, 60]],
   tobogan: [['burbujitas', 4, 80], ['espumaIsla', 1.2, 120], ['gotaAgua', 2, 60]],
   laberinto: [['gotaAgua', 3, 60], ['pelito', 2, 70], ['manchaJabon', 1.5, 110], ['burbujitas', 1.5, 60]],
+  feria: [['petalos', 3, 60], ['burbujitas', 1.5, 60], ['manchaJabon', 1, 100]],
 };
 
 export class Suelo {
@@ -540,12 +634,13 @@ export class Suelo {
       : esc === 'matera' ? { c1: '#4a3224', c2: '#5e4030', c3: '#c8683e' }
       : esc === 'tobogan' ? { c1: '#7fc8e8', c2: '#9ad8f0', c3: '#3e8ab8' }
       : esc === 'laberinto' ? { c1: '#f4efe6', c2: '#e8dfd2', c3: '#8fc9e8' }
+      : esc === 'feria' ? { c1: '#f6c9d6', c2: '#fff4e6', c3: '#e4574b' }
       : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
     // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
     const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({
       vertexShader: VERT,
-      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : esc === 'desfile' ? FRAG_TAPETE : esc === 'espejo' ? FRAG_ESPEJO : esc === 'matera' ? FRAG_MATERA : esc === 'tobogan' ? FRAG_TOBOGAN : esc === 'laberinto' ? FRAG_LABERINTO : FRAG_BANERA,
+      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : esc === 'desfile' ? FRAG_TAPETE : esc === 'espejo' ? FRAG_ESPEJO : esc === 'matera' ? FRAG_MATERA : esc === 'tobogan' ? FRAG_TOBOGAN : esc === 'laberinto' ? FRAG_LABERINTO : esc === 'feria' ? FRAG_FERIA : FRAG_BANERA,
       uniforms: {
         uDetalle: { value: detalle },
         uRuido: { value: ruido },
@@ -557,6 +652,7 @@ export class Suelo {
         uLimites: { value: limX ? new THREE.Vector3(limX.xMin, limX.xMax, 1) : new THREE.Vector3(limites?.yMin ?? 0, limites?.yMax ?? 0, limites ? 1 : 0) },
         uLab: { value: this.lab },
         uLabOrigen: { value: new THREE.Vector2(0, 0) },
+        uFeria: { value: new THREE.Vector4(limX?.xMin ?? 0, limX?.xMax ?? 0, limites?.yMin ?? 0, limites?.yMax ?? 0) },
       },
     });
     // Los colores se escriben en lineal: three los pasa a sRGB al final
@@ -579,12 +675,14 @@ export class Suelo {
     this.plano.scale.set(ancho * 1.5, hondo * 1.6, 1);
     this.mat.uniforms.uTiempo.value = t;
     if (this.lab) this.cortinas(cx, cy);
+    // La feria: la valla de la izquierda se corre cuando se abre una parte (limX es el mismo objeto del motor)
+    if (this.esc === 'feria' && this.limX && limites) (this.mat.uniforms.uFeria.value as THREE.Vector4).set(this.limX.xMin, this.limX.xMax, limites.yMin, limites.yMax);
     const L = this.decor;
     L.empezar();
     const C = 150;
     const x0 = Math.floor((cx - ancho * 0.62) / C), x1 = Math.floor((cx + ancho * 0.62) / C);
     const y0 = Math.floor((cy - hondo * 0.7) / C), y1 = Math.floor((cy + hondo * 0.62) / C);
-    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : this.esc === 'desfile' ? 19 : this.esc === 'espejo' ? 23 : this.esc === 'matera' ? 29 : this.esc === 'tobogan' ? 31 : this.esc === 'laberinto' ? 37 : 7;
+    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : this.esc === 'desfile' ? 19 : this.esc === 'espejo' ? 23 : this.esc === 'matera' ? 29 : this.esc === 'tobogan' ? 31 : this.esc === 'laberinto' ? 37 : this.esc === 'feria' ? 41 : 7;
     for (let gy = y0; gy <= y1; gy++)
       for (let gx = x0; gx <= x1; gx++) {
         if (hash2(gx, gy, sem) > 0.62) continue;

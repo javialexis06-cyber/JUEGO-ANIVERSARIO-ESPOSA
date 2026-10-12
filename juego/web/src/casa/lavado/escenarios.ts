@@ -2,6 +2,7 @@
 // haber como mínimo en pantalla (si hay menos, llegan de golpe), cada cuánto aparece una tanda (uno de cada tipo
 // de la lista) y qué tipos salen. Encima, eventos a minutos fijos: enjambres que cruzan, anillos que se cierran,
 // muros, élites que sueltan cofre y jefes. A los 30:00 llega la Ducha Helada.
+import { LIMITES_FERIA, X_MAX_FERIA, xMinFeria } from './feria';
 import type { IdEnemigo, IdEscenario } from './tipos';
 
 export interface Oleada {
@@ -61,6 +62,8 @@ export interface DefEscenario {
   laberinto?: boolean;
   /** Los mugrosos salen grandotes (más grandes, con más vida y el doble de experiencia). */
   grandes?: boolean;
+  /** La Feria de las cremas: encerrada en vallas que se abren con la ruleta del Ruletero (`feria.ts`). */
+  feria?: boolean;
 }
 
 const o = (min: number, cada: number, ...tipos: IdEnemigo[]): Oleada => ({ min, cada, tipos });
@@ -724,8 +727,61 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
       { t: m(13, 45), tipo: 'anillo', enemigo: 'espinilla', cant: 26 },
     ],
   },
+  feria: {
+    id: 'feria',
+    nombre: 'La Feria de las cremas',
+    original: 'Westwoods',
+    desc: 'Una feria de cremas encerrada en vallas: al principio solo se anda por la plaza. Gánale a la ruleta del Ruletero (cada tirada cuesta gotas doradas) para abrir la calle de los puestos y la carpa.',
+    limites: LIMITES_FERIA,
+    limitesX: { xMin: xMinFeria(0), xMax: X_MAX_FERIA },
+    desbloqueo: 'Vence al Pote de Crema',
+    jefeHiper: 'reinaCremas',
+    duracion: 20 * 60,
+    especial: true,
+    feria: true,
+    oleadas: [
+      o(12, 1.0, 'pompitaCrema'),
+      o(20, 1.0, 'pompitaCrema', 'tubitoCrema'),
+      o(26, 0.9, 'tubitoCrema', 'pompa'),
+      o(32, 0.85, 'tubitoCrema', 'algodon', 'pompitaCrema'),
+      o(38, 0.8, 'champuDerramado', 'tubitoCrema'),
+      o(44, 0.75, 'champuDerramado', 'nubeAzucar', 'pompitaCrema'),
+      o(50, 0.7, 'nubeAzucar', 'potecito', 'tubitoCrema'),
+      o(55, 0.65, 'potecito', 'frascoVacio', 'algodon'),
+      o(60, 0.6, 'potecito', 'nubeAzucar', 'espinilla'),
+      o(65, 0.55, 'espinilla', 'frascoVacio', 'pompitaCrema'),
+      o(70, 0.5, 'mascarilla', 'potecito'),
+      o(75, 0.48, 'mascarilla', 'espinilla', 'tubitoCrema'),
+      o(80, 0.45, 'mascarilla', 'nubeAzucar', 'potecito'),
+      o(85, 0.42, 'mohoRosado', 'mascarilla', 'pompitaCrema'),
+      o(90, 0.4, 'mohoRosado', 'potecito', 'espinilla'),
+      o(95, 0.38, 'mascarilla', 'mohoRosado', 'frascoVacio'),
+      o(100, 0.36, 'mascarilla', 'mohoRosado', 'nubeAzucar'),
+      o(105, 0.34, 'mohoRosado', 'mascarilla', 'potecito'),
+      o(110, 0.32, 'mascarilla', 'mohoRosado', 'espinilla'),
+      o(115, 0.3, 'mascarilla', 'mohoRosado', 'potecito'),
+    ],
+    eventos: [
+      { t: m(0, 45), tipo: 'enjambre', enemigo: 'pompitaCrema', cant: 18, aviso: '¡Se voló la crema batida!' },
+      { t: m(2, 30), tipo: 'elite', enemigo: 'tubitoCrema' },
+      { t: m(3, 30), tipo: 'flotar', enemigo: 'nubeAzucar', cant: 10, aviso: '¡Nubes de algodón de azúcar!' },
+      { t: m(5), tipo: 'jefe', enemigo: 'ruletaLoca', aviso: '¡La Ruleta Loca se salió del eje!' },
+      { t: m(6, 15), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Una carta mágica entre los puestos…' },
+      { t: m(7, 30), tipo: 'anillo', enemigo: 'pompitaCrema', cant: 28 },
+      { t: m(8, 30), tipo: 'elite', enemigo: 'potecito' },
+      { t: m(10), tipo: 'jefe', enemigo: 'payasoBloqueador', aviso: '¡El Payaso Tortazo trae tortas de crema!' },
+      { t: m(11, 30), tipo: 'enjambre', enemigo: 'tubitoCrema', cant: 30 },
+      { t: m(12, 30), tipo: 'jefe', enemigo: 'poteCrema', aviso: '¡El Pote de Crema vino a la feria!' },
+      { t: m(14), tipo: 'flotar', enemigo: 'nubeAzucar', cant: 18 },
+      { t: m(15), tipo: 'elite', enemigo: 'mascarilla' },
+      { t: m(16), tipo: 'jefe', enemigo: 'donFrasco', aviso: '¡Don Frasco, de compras en la feria!' },
+      { t: m(17), tipo: 'anillo', enemigo: 'potecito', cant: 26 },
+      { t: m(18), tipo: 'jefe', enemigo: 'reinaCremas', aviso: '¡La Reina de las Cremas llegó a su feria!' },
+      { t: m(19), tipo: 'enjambre', enemigo: 'pompitaCrema', cant: 60 },
+    ],
+  },
 };
 
-export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague', 'desfile', 'espejo', 'matera', 'tobogan', 'laberinto'];
+export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague', 'desfile', 'espejo', 'matera', 'tobogan', 'laberinto', 'feria'];
 /** La partida completa (después llega la Ducha Helada). */
 export const DURACION = 30 * 60;

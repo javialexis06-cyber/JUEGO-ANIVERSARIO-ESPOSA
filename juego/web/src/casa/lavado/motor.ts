@@ -13,6 +13,7 @@ import { Rejilla } from './rejilla';
 import { PODER } from './tienda';
 import { LIMITE, TESOROS, type StatLimite } from './tesoros';
 import { ESCENARIO_VENDEDOR, PUESTO, RADIO_PUESTO, VENTA, VENTAS, type DefVenta, type IdVenta } from './vendedor';
+import { PARTES_FERIA, PREMIO, RADIO_RULETERO, RULETERO, TIRADAS, VALLAS_FERIA, X_MAX_FERIA, girarRuleta, xMinFeria, type IdPremioRuleta } from './feria';
 import { statsVacios, type Efecto, type IdArma, type IdCarta, type IdEnemigo, type IdEscenario, type IdModo, type IdObjeto, type IdPasiva, type IdTesoro, type Rol, type Stat, type Stats, type TipoEfecto } from './tipos';
 import { actualizarArmas, alHerido, alMatar, cortinaAtaja, moverProyectiles, moverZonas, pendientesGolpe } from './disparos';
 import { PATITO, type ResumenPartida } from './progreso';
@@ -408,6 +409,12 @@ export class Jugador {
   tienda = false;
   /** Sigue parado junto al puesto (para no volver a abrirlo hasta que se aleje). */
   enPuesto = false;
+  /** La Feria de las cremas: el puesto abierto es la ruleta del Ruletero (no la tienda de Don Jabón), lo que salió
+   * en las últimas tiradas y cuántas veces ha girado (para que la ruleta de la pantalla dé la vuelta). */
+  ruleta = false;
+  enRuleta = false;
+  ultimasTiradas: IdPremioRuleta[] = [];
+  tiradas = 0;
   /** Lo que le ha comprado al vendedor y las gotas doradas que se gastó. */
   compras: Partial<Record<IdVenta, number>> = {};
   gastado = 0;
@@ -497,6 +504,13 @@ export class Motor {
   readonly mapa: boolean;
   /** Dónde está parado el vendedor ambulante (o null si no pasa por este escenario). */
   readonly puesto: [number, number] | null;
+  /** La Feria de las cremas: dónde está el Ruletero y cuántas partes de la feria ya se abrieron (0 a 2). */
+  readonly ruletero: [number, number] | null;
+  feriaAbiertas = 0;
+  /** En qué segundo de la partida se abrió cada parte (para el balance y las pruebas). */
+  feriaCuando: number[] = [];
+  /** Tiradas seguidas sin abrir la siguiente parte (la probabilidad de abrirla crece). */
+  sinGanarFeria = 0;
   /** Segundos reales jugados y el reloj de la partida (en «Apurado» corre al doble). */
   tReal = 0;
   t = 0;
@@ -570,7 +584,9 @@ export class Motor {
   readonly tmp = new Int32Array(POOL_EN);
 
   constructor(o: OpcionesMotor) {
-    this.esc = ESCENARIOS[o.escenario];
+    // La feria tiene su propia copia: la valla de la izquierda se corre cada vez que se abre una parte
+    this.esc = o.escenario === 'feria' ? { ...ESCENARIOS.feria, limitesX: { xMin: xMinFeria(0), xMax: X_MAX_FERIA } } : ESCENARIOS[o.escenario];
+    this.ruletero = o.escenario === 'feria' && !o.tutorial ? RULETERO : null;
     this.apurado = o.apurado;
     this.tutorial = !!o.tutorial;
     this.duracion = this.esc.duracion ?? DURACION;
@@ -1115,11 +1131,11 @@ export class Motor {
 
   // ------------------------------------------------------------------------------------------------- Pausas
   /** Mientras alguien escoge cartas o abre un cofre, el juego se detiene (también para el otro). */
-  get pausa(): 'nivel' | 'cofre' | 'carta' | 'tienda' | null {
+  get pausa(): 'nivel' | 'cofre' | 'carta' | 'tienda' | 'ruleta' | null {
     for (const j of this.jug) if (j.cofre) return 'cofre';
     for (const j of this.jug) if (j.cartaOpciones) return 'carta';
     for (const j of this.jug) if (j.opciones) return 'nivel';
-    for (const j of this.jug) if (j.tienda) return 'tienda';
+    for (const j of this.jug) if (j.tienda) return j.ruleta ? 'ruleta' : 'tienda';
     return null;
   }
 
@@ -1173,7 +1189,7 @@ export class Motor {
 
   comprar(ji: number, id: IdVenta, n?: number) {
     const j = this.jug[ji];
-    if (!this.vigente(j, n) || !j.tienda) return;
+    if (!this.vigente(j, n) || !j.tienda || j.ruleta) return;
     const v = VENTA[id];
     if (!v || !this.ventasDe(j).includes(v)) return;
     const precio = this.precioVenta(j, v);
@@ -1202,11 +1218,97 @@ export class Motor {
     }
   }
 
+  // ------------------------------------------------------------------------------------------------- La Feria de las cremas
+  /** Al llegar donde el Ruletero se abre su ruleta (como el puesto de Don Jabón: hay que alejarse para volver). */
+  private alRuletero() {
+    const p = this.ruletero;
+    if (!p) return;
+    if (!this.avisoRuletero && this.tReal > 3) {
+      this.avisoRuletero = true;
+      this.aviso('🎡 ¡La feria está cerrada! Gánale a la ruleta del Ruletero para abrirla');
+    }
+    for (const j of this.jug) {
+      if (!j.activo) continue;
+      const d = Math.hypot(j.x - p[0], j.y - p[1]);
+      if (d > RADIO_RULETERO * 2.4) j.enRuleta = false;
+      else if (d < RADIO_RULETERO && !j.enRuleta && !j.opciones && !j.cofre && !j.cartaOpciones && !j.tienda) {
+        j.enRuleta = true;
+        j.tienda = true;
+        j.ruleta = true;
+        j.tEscoger = 0;
+        j.acciones++;
+        this.emitir('cofre', p[0], p[1], j.i);
+      }
+    }
+  }
+  private avisoRuletero = false;
+
+  /** Gira la ruleta 1, 5 o 10 veces (`cual` = 0, 1 o 2) pagando con las gotas doradas de la partida. */
+  girar(ji: number, cual: number, n?: number) {
+    const j = this.jug[ji];
+    if (!this.vigente(j, n) || !j.tienda || !j.ruleta) return;
+    const t = TIRADAS[cual];
+    if (!t || this.oroParaGastar(j) < t.precio) return;
+    j.acciones++;
+    j.gastado += t.precio;
+    const salieron: IdPremioRuleta[] = [];
+    for (let k = 0; k < t.veces; k++) {
+      const premio = girarRuleta(this.az.n(), this.feriaAbiertas < 2, this.sinGanarFeria);
+      salieron.push(premio);
+      if (premio === 'abrir') {
+        this.sinGanarFeria = 0;
+        this.abrirFeria();
+      } else this.sinGanarFeria++;
+      this.premioRuleta(j, premio, k);
+    }
+    j.ultimasTiradas = salieron;
+    j.tiradas += t.veces;
+    this.emitir('evolucion', j.x, j.y, j.i);
+  }
+
+  /** Se corre la valla de la izquierda: ya se puede pasar a la siguiente parte de la feria. */
+  abrirFeria() {
+    if (this.feriaAbiertas >= 2 || !this.esc.limitesX) return;
+    this.ponerFeria(this.feriaAbiertas + 1);
+    this.feriaCuando.push(Math.round(this.t));
+    const v = VALLAS_FERIA[this.feriaAbiertas - 1];
+    this.emitir('evolucion', v, 0, 0);
+    this.aviso(`🎪 ¡Se abrió ${PARTES_FERIA[this.feriaAbiertas]}! Sigue hacia la izquierda`);
+  }
+
+  /** Cuántas partes de la feria están abiertas (también la usa el espejo del juego en pareja). */
+  ponerFeria(n: number) {
+    if (!this.esc.feria || !this.esc.limitesX) return;
+    this.feriaAbiertas = Math.max(0, Math.min(2, Math.floor(n)));
+    this.esc.limitesX.xMin = xMinFeria(this.feriaAbiertas);
+  }
+
+  private premioRuleta(j: Jugador, premio: IdPremioRuleta, k: number) {
+    const def = PREMIO[premio];
+    if (def.objeto) {
+      // A los pies del jugador, un poquito regados para que no queden todos encima
+      const a = this.az.n() * Math.PI * 2, r = 30 + k * 6;
+      this.soltar(def.objeto, j.x + Math.cos(a) * r, j.y + Math.sin(a) * r * 0.7);
+    } else if (premio === 'bichos') {
+      // Una ronda de mugrosos de crema alrededor
+      const r = Math.max(j.vistaW, j.vistaH) * 0.5, cant = 10 + Math.min(14, Math.floor(this.t / 60));
+      const limX = this.esc.limitesX;
+      for (let q = 0; q < cant; q++) {
+        const a = (q / cant) * Math.PI * 2;
+        const x = limX ? Math.max(limX.xMin + 20, Math.min(limX.xMax - 20, j.x + Math.cos(a) * r)) : j.x + Math.cos(a) * r;
+        const e = this.crear(q % 2 ? 'pompitaCrema' : 'tubitoCrema', [x, j.y + Math.sin(a) * r * 0.7], j, { fijo: true });
+        if (!e) break;
+        e.estado = 3;
+      }
+    }
+  }
+
   cerrarTienda(ji: number, n?: number) {
     const j = this.jug[ji];
     if (!this.vigente(j, n) || !j.tienda) return;
     j.acciones++;
     j.tienda = false;
+    j.ruleta = false;
     j.tEscoger = 0;
   }
 
@@ -1235,6 +1337,7 @@ export class Motor {
     this.hielo = Math.max(0, this.hielo - dt);
     this.moverJugadores(dt);
     this.alPuesto();
+    this.alRuletero();
     this.cartasTiempo(dt);
     if (!this.tutorial) {
       this.oleadas(dReloj);
@@ -1716,7 +1819,8 @@ export class Motor {
     for (const j of this.jug) if (j.activo) enPie++;
     const pareja = POR_JUGADORES.densidad[Math.max(0, Math.min(3, enPie - 1))];
     // En el pasillo del lavamanos no hay para dónde huir arriba o abajo: llegan menos a la vez
-    const densidad = esc.limitesX ? 0.4 : esc.limites ? 0.5 : 1;
+    // (la feria es una caja grande: casi como un mapa abierto)
+    const densidad = esc.feria ? 0.75 : esc.limitesX ? 0.4 : esc.limites ? 0.5 : 1;
     this.tTanda -= dReloj * mal * this.atrae();
     let tandas = 0;
     while (this.tTanda <= 0 && tandas < 4) {
@@ -1935,6 +2039,14 @@ export class Motor {
           x = j.x + (this.az.n() < 0.5 ? -hw : hw);
           y = j.y - hh + (lado - hw * 2) * (hh / hw);
         }
+      }
+      // La feria es una caja cerrada (vallas por los cuatro lados): si el punto quedó por fuera, se prueba otro lado
+      // de la pantalla; si no hay ninguno (contra una esquina), sale pegado a la valla
+      const limF = this.esc.feria ? this.esc.limitesX : undefined;
+      if (lim && limF) {
+        const dentro = x > limF.xMin + 24 && x < limF.xMax - 24 && y > lim.yMin + 24 && y < lim.yMax - 24;
+        if (!dentro && intento < 5) continue;
+        return [Math.max(limF.xMin + 24, Math.min(limF.xMax - 24, x)), Math.max(lim.yMin + 24, Math.min(lim.yMax - 24, y))];
       }
       if (lim) {
         if (y < lim.yMin + 20 || y > lim.yMax - 20) {
@@ -2928,6 +3040,7 @@ export class Motor {
       patitos: j ? { ...j.patitosGanados } : {},
       tesoros: [...this.hallados],
       modos: [...this.modos],
+      feria: this.feriaAbiertas,
     };
   }
 }

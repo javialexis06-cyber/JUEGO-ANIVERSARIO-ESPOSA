@@ -12,10 +12,11 @@ import { ENEMIGOS, ID_ENEMIGOS } from '../enemigos';
 import { BANDERA_CADA, TURBO, type Enemigo, type Jugador, type Motor } from '../motor';
 import { sfx } from '../sonidos';
 import { enCortina } from '../laberinto';
+import { VALLAS_FERIA, X_MAX_FERIA, X_MIN_FERIA } from '../feria';
 import type { Efecto, IdArma, IdEnemigo, IdObjeto } from '../tipos';
 import { Jugador3D } from './jugadores';
 import { CAPA_LUZ, CAPA_NORMAL, CAPA_PISO, Particulas } from './particulas';
-import { ELEVACION, LoteSprites, cuadroDe, type Cuadro } from './sprites';
+import { ELEVACION, ESTIRAR, LoteSprites, cuadroDe, type Cuadro } from './sprites';
 import { Suelo } from './suelo';
 import { atlasFx, atlasNumeros, type AtlasFx, type AtlasNumeros } from './texturas';
 
@@ -36,6 +37,8 @@ const COLOR: Partial<Record<IdEnemigo, string>> = {
   mosquito: '#4a4e5c', pulga: '#7a3b1f', burbujaSucia: '#c9e8f2', babosa: '#c8a35e', espinilla: '#f2a285', espinillon: '#f08a7c',
   reinaCaspa: '#f4f1ea', granMoco: '#8fcb52', senorLagana: '#e9c46a', barroNegro: '#6b5a48', senorSarro: '#e6cb7a', donaCucaracha: '#6b3a22',
   motaPelo: '#a9a4b2', tapon: '#3d3d46', esponjaPodrida: '#c9c25a', peloDesague: '#2b2220', duchaHelada: '#bfe6f5',
+  pompitaCrema: '#fff7ec', tubitoCrema: '#8fd8c8', nubeAzucar: '#f7a8ce', potecito: '#c9a4f2', mascarilla: '#8fb96a', ruletaLoca: '#f2c14e',
+  payasoBloqueador: '#7db7e8', reinaCremas: '#fce4ec',
 };
 
 /** Qué dibujo del atlas de objetos usa cada proyectil (los demás son efectos). */
@@ -66,11 +69,16 @@ const UTILERIA: Partial<Record<string, string[]>> = {
   matera: ['maceta', 'regadera', 'palita', 'maceta', 'mariposas', 'trebol', 'patoAmarillo'],
   tobogan: ['patoAmarillo', 'barquito', 'bombaBano', 'patoMorado', 'pececitos', 'chancletas', 'bolitasGel'],
   laberinto: ['toalla', 'esponjas', 'jabon', 'champu', 'patoAmarillo', 'gorro', 'pantuflas'],
+  feria: ['globos', 'tortaCrema', 'algodonAzucar', 'crema', 'globos', 'cremaNoche', 'algodonAzucar', 'perfume', 'tortaCrema'],
 };
 /** Los frascos que se caen de la repisa en La Jabonera. */
 const FRASCOS = ['champu', 'crema', 'perfume', 'colonia', 'cremaNoche'];
-const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita', desague: 'velaFlotante', desfile: 'velita', espejo: 'velaJabonera', matera: 'farolito', tobogan: 'velaFlotante', laberinto: 'velita' } as const;
+const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita', desague: 'velaFlotante', desfile: 'velita', espejo: 'velaJabonera', matera: 'farolito', tobogan: 'velaFlotante', laberinto: 'velita', feria: 'farolFeria' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
+
+/** Un dibujo de objeto parado (cuadrado) con su ancla y un vaivén. */
+const O_poner = (L: LoteSprites, c: Cuadro, x: number, y: number, tam: number, ax: number, ay: number, giro = 0) =>
+  L.poner(x, y, 0, tam, tam, ax, ay, c.u0, c.v0, c.u1, c.v1, 1, 1, 1, 1, 0, 0, 1, giro, 0);
 
 const rgb = (hex: string): [number, number, number] => {
   const c = new THREE.Color(hex);
@@ -893,6 +901,77 @@ export class Dibujo {
     }
   }
 
+  /** La rueda del Ruletero: cuánto ha girado, qué tan rápido va y cuántas tiradas iban (para arrancarla al girar). */
+  private ruedaAng = 0;
+  private ruedaVel = 0.5;
+  private ruedaTiradas = 0;
+  private ruedaT = 0;
+
+  /**
+   * La Feria de las cremas: los postes de caramelo de las vallas (las de los bordes y las que siguen cerradas, con su
+   * portón y candado), y el Ruletero con su rueda de la fortuna, que gira despacio y da vueltas cuando alguien juega.
+   */
+  private feria(m: Motor) {
+    const lim = m.esc.limites, limX = m.esc.limitesX;
+    if (!lim || !limX) return;
+    const poste = this.cuadrosObj.get('posteFeria'), porton = this.cuadrosObj.get('portonFeria');
+    if (poste) {
+      const ponerPoste = (x: number, y: number, k: number) => {
+        if (!this.enVista(x, y, 70)) return;
+        this.objetos.poner(x, y, 0, 64, 64, 0.5, 0.92, poste.u0, poste.v0, poste.u1, poste.v1, 1, 1, 1, 1, 0, 0, k % 2 ? 1 : -1, 0, 0);
+        this.sombra(x, y, 12, 0.3);
+      };
+      // Arriba y abajo, de punta a punta (también donde sigue cerrado, para que se vea hasta dónde llega la feria)
+      const x0 = Math.max(X_MIN_FERIA, Math.floor((this.cx - this.vistaW) / 110) * 110), x1 = Math.min(X_MAX_FERIA, this.cx + this.vistaW);
+      for (let x = x0; x <= x1; x += 110) {
+        ponerPoste(x, lim.yMin + 4, x / 110);
+        ponerPoste(x, lim.yMax - 2, x / 110 + 1);
+      }
+      // Las vallas de los lados: la del fondo, la de la entrada y las que todavía no se abren (con su portón en el medio)
+      const cerradas = VALLAS_FERIA.filter((v) => v <= limX.xMin);
+      for (const x of [X_MIN_FERIA, X_MAX_FERIA, ...cerradas]) {
+        if (Math.abs(x - this.cx) > this.vistaW) continue;
+        const conPorton = x !== X_MIN_FERIA && x !== X_MAX_FERIA;
+        for (let y = lim.yMin + 90; y < lim.yMax - 40; y += 90) {
+          if (conPorton && Math.abs(y) < 100) continue;
+          ponerPoste(x, y, y / 90);
+        }
+        if (conPorton && porton && this.enVista(x, 0, 120)) {
+          this.objetos.poner(x, 8, 0, 150, 150, 0.5, 0.9, porton.u0, porton.v0, porton.u1, porton.v1, 1, 1, 1, 1, 0, 0, 1, 0, 0);
+          this.sombra(x, 8, 52, 0.32);
+        }
+      }
+    }
+    // El Ruletero y su rueda
+    const p = m.ruletero;
+    const dt = Math.min(0.1, Math.max(0, this.t - this.ruedaT));
+    this.ruedaT = this.t;
+    const tiradas = m.jug.reduce((a, j) => a + j.tiradas, 0);
+    if (tiradas > this.ruedaTiradas) this.ruedaVel = 11;
+    this.ruedaTiradas = tiradas;
+    this.ruedaVel += (0.5 - this.ruedaVel) * Math.min(1, dt * 0.9);
+    this.ruedaAng = (this.ruedaAng + this.ruedaVel * dt) % (Math.PI * 2);
+    if (!p || !this.enVista(p[0], p[1], 200)) return;
+    const cr = this.cuadrosObj.get('ruletero'), cw = this.cuadrosObj.get('ruedaFeria');
+    const t = this.t, b = this.fx.c.brillo;
+    // (el dibujo del Ruletero mide 1.15 en Blender y la rueda 1.26: el eje queda en (0.304, 0.146) del dibujo)
+    const W = 176, AX = 0.46, AY = 0.8;
+    this.pisoFx.poner(p[0], p[1], 0.1, 230, 130, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 1, 0.75, 0.85, 0.32 + Math.sin(t * 2.5) * 0.08);
+    if (cr) O_poner(this.objetos, cr, p[0], p[1], W, AX, AY, Math.sin(t * 2) * 0.03);
+    this.sombra(p[0] - 10, p[1], 60, 0.35);
+    if (cw) {
+      // (la rueda se dibuja un poco más chica que en el modelo, para que el Ruletero no quede enano a su lado)
+      const rw = W * (1.2598 / 1.1534) * 0.72;
+      const hx = p[0] + (0.3043 - AX) * W, hz = (AY - 0.146) * W * ESTIRAR;
+      this.objetos.poner(hx, p[1] + 2, hz, rw, rw, 0.5, 0.5, cw.u0, cw.v0, cw.u1, cw.v1, 1, 1, 1, 1, 0, 0, 1, -this.ruedaAng, 0);
+      // Los bombillos titilan (más cuando gira)
+      if (Math.random() < (0.05 + this.ruedaVel * 0.02) * this.part.cupo) {
+        const a = Math.random() * Math.PI * 2;
+        this.part.crear('estrella', CAPA_LUZ, hx + Math.cos(a) * rw * 0.42, p[1] + 4, hz + Math.sin(a) * rw * 0.42 * ESTIRAR * 0.55, 0, 0, 30, 0.9, 8, 3, 1, 0.9, 0.6, 0.9, 0, 0, 4);
+      }
+    }
+  }
+
   /** Los remolinos de El Desagüe: espirales de agua turbia que giran, espumita en el borde y burbujas que se hunden. */
   private remolinos: { x: number; y: number; r: number; t: number; total: number }[] = [];
   private turboSono = new Set<number>();
@@ -1065,8 +1144,11 @@ export class Dibujo {
     const O = this.objetos;
     // Lo que hay tirado en el piso de la ducha (siempre en el mismo sitio): el champú, el jabón, la esponja, el patico
     const utileria = UTILERIA[m.esc.id];
-    if (utileria) this.utileria(utileria, m.esc.limitesX, m.esc.limitesX ? 210 : 430, m.esc.limitesX ? 0.6 : 0.42, m.esc.limites, m.esc.laberinto ? (x, y) => enCortina(x, y, 40) : undefined);
+    // (la feria tiene vallas a los lados, pero es grande: la utilería va como en los mapas abiertos)
+    const pasillo = !!m.esc.limitesX && !m.esc.feria;
+    if (utileria) this.utileria(utileria, m.esc.limitesX, pasillo ? 210 : 430, pasillo ? 0.6 : 0.42, m.esc.limites, m.esc.laberinto ? (x, y) => enCortina(x, y, 40) : undefined);
     if (m.esc.tobogan) this.banderasTobogan(m);
+    if (m.esc.feria) this.feria(m);
     // Don Jabón con su carrito (el vendedor ambulante): se mece, saluda y le salen burbujitas
     const p = m.puesto;
     if (p && this.enVista(p[0], p[1], 120)) {

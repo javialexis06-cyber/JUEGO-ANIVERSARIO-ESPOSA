@@ -1,6 +1,7 @@
 // El piloto automático: se mueve esquivando, recoge gotitas y cofres, y escoge mejoras con sentido (sube lo que
 // tiene, busca las pasivas que evolucionan sus armas). Sirve para medir el balance en Node y para las pruebas.
 import { enCortina } from './laberinto';
+import { TIRADAS } from './feria';
 import { RADIO_JUGADOR } from './motor';
 import { ARMAS, PASIVAS, maxNivelArma } from './armas';
 import type { Jugador, Motor, Opcion } from './motor';
@@ -41,6 +42,14 @@ export function valorOpcion(j: Jugador, o: Opcion): number {
 
 /** Escoge entre las cartas que tiene enfrente (con «volver a tirar» si todo está malo). */
 export function botEscoger(m: Motor, j: Jugador) {
+  if (j.tienda && !j.opciones && !j.cartaOpciones && j.ruleta) {
+    // En la ruleta de la feria: mientras falte por abrir y le alcance (guardando un poquito), gira de a cinco o de a uno
+    const oro = m.oroParaGastar(j);
+    if (m.feriaAbiertas < 2 && oro >= TIRADAS[1].precio + 150) m.girar(j.i, 1);
+    else if (m.feriaAbiertas < 2 && oro >= TIRADAS[0].precio) m.girar(j.i, 0);
+    else m.cerrarTienda(j.i);
+    return;
+  }
   if (j.tienda && !j.opciones && !j.cartaOpciones) {
     // Donde Don Jabón: un patito si le alcanza, y a seguir
     const patito = m.ventasDe(j).find((v) => v.id === 'patito');
@@ -170,6 +179,8 @@ export function botMover(m: Motor, j: Jugador) {
     const o = m.jug.find((x) => x !== j)!;
     if (Math.hypot(o.x - j.x, o.y - j.y) > 260) premio(o.x, o.y, 3);
   }
+  // La feria: con gotas doradas para girar, ir donde el Ruletero (cuando ya se alejó de él)
+  if (m.ruletero && m.feriaAbiertas < 2 && !j.enRuleta && m.oroParaGastar(j) >= TIRADAS[0].precio && cerca < 6) premio(m.ruletero[0], m.ruletero[1], 5);
   // Velitas (gotas doradas y cosas)
   for (let k = 0; k < m.nVivos; k++) {
     const e = m.en[m.vivos[k]];

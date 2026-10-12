@@ -14,6 +14,7 @@ import { LIMITE_COFRE, LIMITE_ESCOGER, LIMITE_TIENDA, ORO_X, type Jugador, type 
 import { ESCONDIDAS } from './armas';
 import { LIMITE, MODO, TESOROS } from './tesoros';
 import type { IdVenta } from './vendedor';
+import { PARTES_FERIA, PREMIO, PREMIOS_RULETA, TIRADAS, X_MAX_FERIA, X_MIN_FERIA } from './feria';
 import type { Efecto, IdArma, IdCarta, IdPasiva, Rol } from './tipos';
 
 /** Las acciones llevan `n`: cuántas cosas había escogido cuando se pintó la capa (un toque viejo o doble no cuenta). */
@@ -34,6 +35,8 @@ export interface Acciones {
   /** El puesto del vendedor ambulante. */
   comprar(v: IdVenta, n: number): void;
   cerrarTienda(n: number): void;
+  /** La ruleta de la feria: girar una, cinco o diez veces (0, 1 o 2). */
+  girar(t: number, n: number): void;
 }
 
 const esc = (t: string) => t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -146,6 +149,7 @@ export class Interfaz {
         ${otros.map((i) => `<div class="lv-etiqueta" data-i="${i}" style="--c:${colores[i] ?? '#fff'}">${esc(nombres[i] ?? '')}</div>`).join('')}
         ${Array.from({ length: 6 }, () => '<div class="lv-flecha-tesoro"><span></span></div>').join('')}
         <div class="lv-flecha-tesoro vendedor"><span></span></div>
+        <div class="lv-flecha-tesoro ruletero"><span></span></div>
         <div class="lv-aviso"></div>
         <div class="lv-jefe"></div>
       </div>
@@ -216,10 +220,13 @@ export class Interfaz {
       this.desbloquearLuego(this.capaNivel);
     });
     this.capaTienda.addEventListener('click', (ev) => {
-      const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-venta], [data-cerrar]');
+      const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-venta], [data-cerrar], [data-girar]');
       if (!el || this.capaTienda.classList.contains('enviado') || this.recien(this.capaTienda) || (el as HTMLButtonElement).disabled) return;
       this.capaTienda.classList.add('enviado');
-      if (el.dataset.venta) {
+      if (el.dataset.girar) {
+        sfx.ruleta();
+        this.acc.girar(Number(el.dataset.girar), this.nTienda);
+      } else if (el.dataset.venta) {
         sfx.premio();
         this.acc.comprar(el.dataset.venta as IdVenta, this.nTienda);
       } else {
@@ -386,25 +393,30 @@ export class Interfaz {
       f.classList.add('si');
     }
     for (let k = n; k < flechas.length; k++) flechas[k].classList.remove('si');
-    // La flecha naranja hacia el carrito de Don Jabón
-    const fv = this.hud.querySelector<HTMLElement>('.lv-flecha-tesoro.vendedor')!;
-    const p = m.puesto;
-    let ver = false;
-    if (p) {
-      const [px, py] = aPantalla(p[0], p[1]);
-      if (px < 0 || py < 0 || px > w || py > h) {
-        ver = true;
-        const x = Math.max(30, Math.min(w - 30, px)), y = Math.max(x < 230 || x > w - 70 ? 104 : 76, Math.min(h - 34, py));
-        const metros = Math.round(Math.hypot(p[0] - yo.x, p[1] - yo.y) / 40);
-        if (fv.dataset.k !== String(metros)) {
-          fv.dataset.k = String(metros);
-          fv.firstElementChild!.innerHTML = `${icono('donJabon', 28)}<em>${metros} m</em>`;
+    // La flecha naranja hacia el carrito de Don Jabón y la rosada hacia el Ruletero (mientras falte feria por abrir)
+    const puestos: [string, [number, number] | null, string][] = [
+      ['vendedor', m.puesto, 'donJabon'],
+      ['ruletero', m.feriaAbiertas < 2 ? m.ruletero : null, 'ruletero'],
+    ];
+    for (const [clase, p, ic] of puestos) {
+      const fv = this.hud.querySelector<HTMLElement>(`.lv-flecha-tesoro.${clase}`)!;
+      let ver = false;
+      if (p) {
+        const [px, py] = aPantalla(p[0], p[1]);
+        if (px < 0 || py < 0 || px > w || py > h) {
+          ver = true;
+          const x = Math.max(30, Math.min(w - 30, px)), y = Math.max(x < 230 || x > w - 70 ? 104 : 76, Math.min(h - 34, py));
+          const metros = Math.round(Math.hypot(p[0] - yo.x, p[1] - yo.y) / 40);
+          if (fv.dataset.k !== String(metros)) {
+            fv.dataset.k = String(metros);
+            fv.firstElementChild!.innerHTML = `${icono(ic, 28)}<em>${metros} m</em>`;
+          }
+          fv.style.transform = `translate(${x}px, ${y}px)`;
+          fv.style.setProperty('--a', `${Math.atan2(py - y, px - x)}rad`);
         }
-        fv.style.transform = `translate(${x}px, ${y}px)`;
-        fv.style.setProperty('--a', `${Math.atan2(py - y, px - x)}rad`);
       }
+      fv.classList.toggle('si', ver);
     }
-    fv.classList.toggle('si', ver);
   }
 
   /**
@@ -513,12 +525,15 @@ export class Interfaz {
       } else this.cerrarCapa(this.capaNivel);
     } else if (!kn && !this.capaNivel.hidden) this.cerrarCapa(this.capaNivel);
     // El puesto del vendedor ambulante (debajo de todo lo demás)
-    const kt = j.tienda && !j.opciones && !j.cofre && !j.cartaOpciones ? `${JSON.stringify(j.compras)}|${m.oroParaGastar(j)}|${j.armas.length}#${j.acciones}` : '';
+    const kt = !(j.tienda && !j.opciones && !j.cofre && !j.cartaOpciones) ? ''
+      : j.ruleta ? `ruleta|${j.tiradas}|${m.oroParaGastar(j)}|${m.feriaAbiertas}#${j.acciones}`
+      : `${JSON.stringify(j.compras)}|${m.oroParaGastar(j)}|${j.armas.length}#${j.acciones}`;
     if (kt !== this.claveTienda) {
       this.claveTienda = kt;
       if (kt) {
         this.nTienda = j.acciones;
-        this.mostrarTienda(m, j);
+        if (j.ruleta) this.mostrarRuleta(m, j);
+        else this.mostrarTienda(m, j);
       } else this.cerrarCapa(this.capaTienda);
     } else if (!kt && !this.capaTienda.hidden) this.cerrarCapa(this.capaTienda);
     // Los demás están escogiendo (con varios, cada uno con su reloj: después se escoge solo)
@@ -532,7 +547,7 @@ export class Interfaz {
       if (espera) {
         const filas = escogiendo
           .map((x) => {
-            const que = x.cofre ? 'abre un cofre' : x.cartaOpciones ? FRASES.leyendoCarta().replace(/^escogiendo/, 'escoge').replace(/^leyendo/, 'lee') : x.opciones ? 'escoge su mejora' : 'le compra a Don Jabón';
+            const que = x.cofre ? 'abre un cofre' : x.cartaOpciones ? FRASES.leyendoCarta().replace(/^escogiendo/, 'escoge').replace(/^leyendo/, 'lee') : x.opciones ? 'escoge su mejora' : x.ruleta ? 'juega a la ruleta' : 'le compra a Don Jabón';
             const resta = Math.ceil(this.restante(m, x));
             return `<li style="--c:${this.colores[x.i] ?? '#fff'}"><b>${esc(this.nombres[x.i] ?? '')}</b> ${que}<em>${resta > 0 ? `${resta} s` : ''}</em></li>`;
           })
@@ -635,6 +650,64 @@ export class Interfaz {
         <span class="lv-tienda-oro">${icono('moneda', 22)}${miles(oro)}</span></div>
       <div class="lv-ventas">${filas || '<p class="vacio">Ya no me queda nada para ti, mijo. ¡Gracias por la compra!</p>'}</div>
       <div class="lv-fila"><button class="lv-boton menta grande" data-cerrar="1">🧼 Seguir lavándome</button></div></div>`;
+    this.capaTienda.classList.remove('enviado');
+    this.capaTienda.hidden = false;
+    this.pintada.set(this.capaTienda, performance.now());
+  }
+
+  /** La rueda de la pantalla: cuánto lleva girada y cuántas tiradas ya mostró (para girar solo cuando hay una nueva). */
+  private rotRuleta = 0;
+  private tiradasVistas = -1;
+
+  /**
+   * La ruleta del Ruletero (La Feria de las cremas): la rueda con sus casillas, lo que salió en las últimas tiradas y
+   * los botones de girar una, cinco o diez veces (con las gotas doradas de la partida). Al girar, la rueda da vueltas y
+   * se detiene en lo último que salió; los premios van apareciendo uno por uno.
+   */
+  private mostrarRuleta(m: Motor, j: Jugador) {
+    const oro = m.oroParaGastar(j);
+    const n = PREMIOS_RULETA.length, paso = 360 / n;
+    const abiertas = m.feriaAbiertas;
+    const conic = PREMIOS_RULETA.map((p, k) => `${p.id === 'abrir' && abiertas >= 2 ? '#d9d2c8' : p.color} ${k * paso}deg ${(k + 1) * paso}deg`).join(',');
+    const casillas = PREMIOS_RULETA.map((p, k) => `<span style="--a:${(k + 0.5) * paso}deg" class="casilla ${p.id === 'abrir' ? (abiertas >= 2 ? 'gastada' : 'llave') : ''}">${icono(p.icono, 24)}</span>`).join('');
+    const giro = this.tiradasVistas >= 0 && j.tiradas > this.tiradasVistas && j.ultimasTiradas.length > 0;
+    const antes = this.rotRuleta;
+    if (giro) {
+      const k = Math.max(0, PREMIOS_RULETA.findIndex((p) => p.id === j.ultimasTiradas[j.ultimasTiradas.length - 1]));
+      const destino = 360 - (k + 0.5) * paso + (Math.random() - 0.5) * paso * 0.6;
+      let r = antes - (antes % 360) + 360 * 4 + destino;
+      if (r - antes < 360 * 3) r += 360;
+      this.rotRuleta = r;
+    }
+    this.tiradasVistas = j.tiradas;
+    const varias = j.ultimasTiradas.length > 1;
+    const ultimas = j.ultimasTiradas
+      .map((id, k) => `<span class="lv-premio-ruleta ${id === 'abrir' ? 'llave' : ''}" style="--d:${giro ? 1.8 + k * 0.14 : 0}s">${icono(PREMIO[id].icono, varias ? 30 : 44)}<em>${esc(PREMIO[id].nombre)}</em></span>`)
+      .join('');
+    const sig = abiertas < 2
+      ? `Si sale la <b>llave dorada</b> se abre <b>${PARTES_FERIA[abiertas + 1]}</b>.`
+      : '¡Ya está abierta toda la feria! Igual se puede jugar por los premios.';
+    const botones = TIRADAS.map((t, k) => `<button class="lv-boton ${k === 0 ? 'menta' : ''}" data-girar="${k}" ${oro >= t.precio ? '' : 'disabled'}>🎡 ${t.veces === 1 ? 'Girar' : `×${t.veces}`}<span class="precio">${icono('moneda', 14)}${miles(t.precio)}</span></button>`).join('');
+    this.capaTienda.innerHTML = `<div class="lv-panel lv-panel-tienda lv-panel-ruleta">
+      <div class="lv-tienda-cab">${icono('ruletero', 58)}<div><h2>¡Pasen, pasen a la ruleta!</h2>
+        <p>${sig} Cada giro se paga con las gotas doradas de esta partida.</p></div>
+        <span class="lv-tienda-oro">${icono('moneda', 22)}${miles(oro)}</span></div>
+      <div class="lv-ruleta-cuerpo">
+        <div class="lv-rueda"><div class="disco" style="background:conic-gradient(${conic});transform:rotate(${antes}deg)">${casillas}</div><b class="pico"></b><b class="eje"></b></div>
+        <div class="lv-ruleta-lado">
+          <div class="lv-ultimas ${varias ? 'varias' : ''}">${ultimas || '<p class="vacio">¿Cuántas veces quieres girar?</p>'}</div>
+          <div class="lv-fila lv-giros">${botones}</div>
+        </div>
+      </div>
+      <div class="lv-fila"><button class="lv-boton grande" data-cerrar="1">🎪 Seguir lavándome</button></div></div>`;
+    if (giro) {
+      const disco = this.capaTienda.querySelector<HTMLElement>('.lv-rueda .disco')!;
+      requestAnimationFrame(() => requestAnimationFrame(() => (disco.style.transform = `rotate(${this.rotRuleta}deg)`)));
+      // El tic-tic del piquito contra los clavitos, cada vez más despacio
+      for (let k = 1; k <= 26; k++) setTimeout(() => sfx.ruleta(), 1800 * (k / 26) ** 2);
+      if (j.ultimasTiradas.includes('abrir')) setTimeout(() => sfx.evolucion(), 1800);
+      else setTimeout(() => sfx.premio(), 1800);
+    }
     this.capaTienda.classList.remove('enviado');
     this.capaTienda.hidden = false;
     this.pintada.set(this.capaTienda, performance.now());
@@ -825,10 +898,18 @@ export class Interfaz {
       x1 = Math.max(x1, limX.xMax + 300);
     }
     if (m.puesto) puntos.push({ x: m.puesto[0], y: m.puesto[1], html: icono('donJabon', 30) });
+    if (m.ruletero) puntos.push({ x: m.ruletero[0], y: m.ruletero[1], html: icono('ruletero', 30) });
+    // La feria: toda la caja (lo abierto clarito y lo que sigue cerrado, rayado)
+    if (m.esc.feria && lim && limX) {
+      x0 = Math.min(x0, X_MIN_FERIA - 300);
+      x1 = Math.max(x1, X_MAX_FERIA + 300);
+    }
     // (dónde se empezó, para ubicarse)
     puntos.unshift({ x: 0, y: 0, html: '<i class="inicio">🫧<small>inicio</small></i>' });
     const marcas = puntos.map((p) => `<span style="left:${((p.x - x0) / (x1 - x0)) * 100}%;top:${((p.y - y0) / (y1 - y0)) * 100}%">${p.html}</span>`).join('');
-    const pasillo = lim ? `<b class="pasillo" style="top:${((lim.yMin - y0) / (y1 - y0)) * 100}%;height:${((lim.yMax - lim.yMin) / (y1 - y0)) * 100}%"></b>`
+    const caja = (xa: number, xb: number, clase: string) => `<b class="pasillo ${clase}" style="left:${((xa - x0) / (x1 - x0)) * 100}%;width:${((xb - xa) / (x1 - x0)) * 100}%;top:${((lim!.yMin - y0) / (y1 - y0)) * 100}%;height:${((lim!.yMax - lim!.yMin) / (y1 - y0)) * 100}%"></b>`;
+    const pasillo = m.esc.feria && lim && limX ? caja(X_MIN_FERIA, limX.xMin, 'cerrada') + caja(limX.xMin, limX.xMax, 'feria')
+      : lim ? `<b class="pasillo" style="top:${((lim.yMin - y0) / (y1 - y0)) * 100}%;height:${((lim.yMax - lim.yMin) / (y1 - y0)) * 100}%"></b>`
       : limX ? `<b class="pasillo vertical" style="left:${((limX.xMin - x0) / (x1 - x0)) * 100}%;width:${((limX.xMax - limX.xMin) / (x1 - x0)) * 100}%"></b>` : '';
     return `<div class="lv-mapa ${m.esc.id}">${pasillo}<b class="rosa">🧭</b><b class="nombre">${m.esc.nombre}</b>${marcas}</div><p class="lv-mapa-pie">🗺️ ${m.esc.nombre}: ★ eres tú; los tesoros y lo escondido salen donde están.</p>`;
   }

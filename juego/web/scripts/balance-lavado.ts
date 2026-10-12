@@ -41,7 +41,8 @@ for (const [nombre, poderes] of Object.entries(TIENDAS).filter(([n]) => soloTien
       const j = m.jug[0];
       suma += m.t;
       const mm = `${Math.floor(m.t / 60)}:${String(Math.floor(m.t % 60)).padStart(2, '0')}`;
-      filas.push(`  ${mm} nv${m.nivel} bajas ${m.eliminados} oro ${m.oro} cofres ${m.cofres} evo [${m.evoluciones.join(',')}] (${(ms / 1000).toFixed(1)} s) · ${inventario(j).join(' · ')}`);
+      const feria = m.esc.feria ? ` feria ${m.feriaAbiertas} [${m.feriaCuando.map((t) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`).join(', ')}] tiradas ${j.tiradas} gastado ${j.gastado}` : '';
+      filas.push(`  ${mm} nv${m.nivel} bajas ${m.eliminados} oro ${m.oro}${feria} cofres ${m.cofres} evo [${m.evoluciones.join(',')}] (${(ms / 1000).toFixed(1)} s) · ${inventario(j).join(' · ')}`);
     }
     console.log(`${escenario} · tienda ${nombre} · ${disfraz}: promedio ${(suma / partidas / 60).toFixed(1)} min`);
     for (const f of filas) console.log(f);

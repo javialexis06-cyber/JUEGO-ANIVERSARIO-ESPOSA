@@ -479,6 +479,7 @@ export class Lavado {
       escogerCarta: (cc, nn) => (local ? m.escogerCarta(yo, cc, nn) : pedir({ a: 'carta', c: cc, n: nn })),
       comprar: (v, nn) => (local ? m.comprar(yo, v, nn) : pedir({ a: 'comprar', v, n: nn })),
       cerrarTienda: (nn) => (local ? m.cerrarTienda(yo, nn) : pedir({ a: 'tienda', n: nn })),
+      girar: (t, nn) => (local ? m.girar(yo, t, nn) : pedir({ a: 'girar', t, n: nn })),
       pausa: (si) => {
         pausado = si;
         ui.mostrarPausa(m, si, musicaLavado.muda, silenciado(), numeros);
@@ -770,6 +771,7 @@ export class Lavado {
             else if (x.a === 'carta') m.escogerCarta(i, (x.c ?? null) as IdCarta | null, x.n);
             else if (x.a === 'comprar' && typeof x.v === 'string' && ID_VENTAS.includes(x.v)) m.comprar(i, x.v, x.n);
             else if (x.a === 'tienda') m.cerrarTienda(i, x.n);
+            else if (x.a === 'girar') m.girar(i, Number(x.t), x.n);
           }),
           sala.al(MSJ.dentro, (_d, de) => {
             const i = indice.get(de.id);

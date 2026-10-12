@@ -1695,6 +1695,340 @@ def j_rey_raton(b):
     for (x, z) in ((0.3, 0.32), (0.38, 0.28)):
         b.blob((x, -0.26, z), (0.02, 0.01, 0.02), plano('#D8A830', 0.4), n=5)
 
+
+# ----------------------------------------------------------------------------------------------------- La Feria de las cremas
+def b_pompita_crema(b, jefe=False):
+    """Pompita de crema: un copito de crema batida en espiral, con su fresita de corona y alitas de merengue."""
+    crema = fieltro('#FFF7EC', '#FFFFFF', fuzz=0.35, rough=0.7, escala=110)
+    fresa = fieltro('#F48BA8', '#FFC2D2', fuzz=0.3, rough=0.6)
+    # Tres pisos de crema (el de abajo es la cara) y la punta torcida
+    b.blob((0, 0, 0.3), (0.36, 0.33, 0.26), crema, cuerpo=True, n=12, shaper=lambda v: v * (1 + 0.05 * np.sin(np.arctan2(v[:, 1:2], v[:, 0:1]) * 6)))
+    b.blob((0.02, 0.02, 0.55), (0.25, 0.23, 0.17), crema, n=10, shaper=lambda v: v * (1 + 0.06 * np.sin(np.arctan2(v[:, 1:2], v[:, 0:1]) * 6 + 1)))
+    b.blob((0.04, 0.03, 0.72), (0.14, 0.13, 0.11), crema, n=8)
+    b.tubo([(0.04, 0.03, 0.8), (0.07, 0.02, 0.88), (0.0, 0.02, 0.93)], [0.07, 0.04, 0.012], crema, segmentos=8)
+    # La rayita de fresa que da la vuelta
+    for k in range(9):
+        a = k / 9 * TAU
+        r, z = (0.34, 0.42) if k % 2 else (0.24, 0.62)
+        if abs(math.cos(a)) < 0.55 and math.sin(a) < 0:
+            continue  # la carita limpia
+        b.blob((math.cos(a) * r, math.sin(a) * r * 0.92, z), (0.05, 0.035, 0.03), fresa, n=6)
+    # Chispitas de colores
+    for k, c in enumerate(['#7DB7E8', '#F7D046', '#7FCB5A', '#E86A8A', '#9C6BD6', '#7DB7E8']):
+        a = 0.7 + k * 1.05
+        b.blob((math.cos(a) * 0.22, math.sin(a) * 0.2 + 0.05, 0.58 + 0.07 * math.sin(k * 2.1)), (0.03, 0.012, 0.012), plano(c, 0.4), n=5)
+    if not jefe:
+        # La fresita de corona
+        b.blob((0.0, 0.03, 0.98), (0.07, 0.07, 0.08), brillante('#E4392B', rough=0.3, coat=0.6), n=8)
+        for k in range(3):
+            a = k / 3 * TAU
+            b.blob((math.cos(a) * 0.04, 0.03 + math.sin(a) * 0.04, 1.05), (0.03, 0.03, 0.012), plano('#5FAE4A', 0.5), n=5)
+    # Alitas de merengue que aletean
+    alas(b, (0, 0.05, 0.42), 0.17, color='#FFF1F6', angulo=0.55, lado_x=0.26)
+    ojos(b, 0, 0.33, 0.09, sep=0.13, mirar=(0.05, -0.1), estilo='loco')
+    boca(b, 0, 0.17, 0.08, 'sonrisa')
+    cachetes(b, 0, 0.24, 0.22, 0.04)
+
+
+def b_tubito_crema(b):
+    """Tubito de crema de manos: aplastadito, con su tapa y la colita doblada; brinca apretándose solo."""
+    m = brillante('#8FD8C8', rough=0.3, coat=0.6, sss=0.1)
+    blanco = brillante('#FFFDF8', rough=0.35, coat=0.4)
+    b.blob((0, 0, 0.42), (0.26, 0.14, 0.34), m, cuerpo=True, n=12, p=2.6, shaper=lambda v: np.column_stack([v[:, 0] * (1 + 0.25 * np.clip(-v[:, 2], 0, 1)), v[:, 1] * (1 - 0.6 * np.clip(-v[:, 2], 0, 1)), v[:, 2]]))
+    # La colita doblada (abajo) y la tapa (arriba)
+    b.blob((0, 0, 0.07), (0.31, 0.04, 0.05), m, n=8, p=4.0)
+    for x in np.linspace(-0.24, 0.24, 7):
+        b.blob((x, -0.04, 0.07), (0.012, 0.008, 0.035), plano('#6AB8A8', 0.4), n=4)
+    b.torno([(0.0, 0.0), (0.09, 0.0), (0.1, 0.02), (0.1, 0.12), (0.08, 0.14), (0.0, 0.14)], blanco)
+    b.g['base'][-1].location = (0, 0, 0.73)
+    for k in range(10):
+        a = k / 10 * TAU
+        b.blob((math.cos(a) * 0.1, math.sin(a) * 0.1, 0.8), (0.008, 0.008, 0.05), plano('#E6E0D8', 0.4), n=4)
+    # La etiqueta con un corazón
+    p, nrm = b.frente(0, 0.46)
+    orientado(b, (0.19, 0.015, 0.12), blanco, p, nrm, 'base', lift=0.005)
+    q, nq = b.frente(0.0, 0.5)
+    orientado(b, (0.035, 0.01, 0.03), fieltro('#E86A8A', fuzz=0.2), q, nq, 'base', lift=0.02)
+    # El chorrito de crema que se le sale al brincar
+    crema = fieltro('#FFF7EC', '#FFFFFF', fuzz=0.3, rough=0.7)
+    b.tubo([(0, 0, 0.88), (0.05, -0.02, 0.98), (0.0, -0.02, 1.04)], [0.05, 0.04, 0.015], crema, 'pasoB', segmentos=8)
+    b.blob((0, 0, 0.9), (0.06, 0.06, 0.04), crema, 'pasoA', n=6)
+    # Patitas y manitos
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            b.tubo([(lado * 0.24, 0.0, 0.42), (lado * 0.34, -0.04, 0.4 + 0.08 * s_), (lado * 0.38, -0.05, 0.46 + 0.1 * s_)], 0.03, m, grupo, segmentos=6)
+            b.blob((lado * 0.39, -0.05, 0.47 + 0.1 * s_), (0.045,) * 3, blanco, grupo, n=6)
+            b.blob((lado * 0.13, -0.03, 0.0 + 0.03 * (s_ * lado > 0)), (0.07, 0.09, 0.04), brillante('#E86A8A', rough=0.4), grupo, n=6)
+    ojos(b, 0, 0.62, 0.075, sep=0.1, mirar=(0, -0.1))
+    boca(b, 0, 0.32, 0.06, 'o')
+    cachetes(b, 0, 0.36, 0.16, 0.035)
+
+
+def b_nube_azucar(b):
+    """Nube de algodón de azúcar: rosadita y esponjada, en su cucurucho de papel a rayas."""
+    m = fieltro('#F7A8CE', '#FFD6EA', fuzz=1.0, rough=0.95, escala=170)
+    m2 = fieltro('#C9B6F2', '#E8DEFF', fuzz=1.0, rough=0.95, escala=170)
+    for (x, y, z, r, mm) in [(0, 0, 0.55, 0.34, m), (-0.26, 0.05, 0.5, 0.22, m), (0.27, 0.04, 0.52, 0.22, m2), (-0.12, 0.06, 0.8, 0.2, m2),
+                              (0.15, 0.04, 0.82, 0.19, m), (0.0, 0.1, 0.36, 0.22, m)]:
+        b.blob((x, y, z), (r, r * 0.9, r * 0.92), mm, cuerpo=True, n=10)
+    pelitos(b, 22, (0, 0.02, 0.6), 0.42, 0.07, 0.012, fieltro('#FFD6EA'), z_min=-0.1, bola=False, ondas=0.6)
+    # El cucurucho
+    papel = fieltro('#FFFDF8', fuzz=0.15, rough=0.8)
+    b.torno([(0.0, 0.0), (0.02, 0.0), (0.13, 0.28), (0.14, 0.3), (0.0, 0.3)], papel)
+    b.g['base'][-1].location = (0, 0.05, 0.02)
+    for k in range(3):
+        z0 = 0.06 + k * 0.08
+        b.torno([(0.03 + (z0 + 0.0) * 0.4, 0.0), (0.035 + (z0 + 0.03) * 0.4, 0.03), (0.03 + (z0 + 0.0) * 0.4 - 0.002, 0.0)], plano('#7DB7E8', 0.6))
+        b.g['base'][-1].location = (0, 0.05, 0.02 + z0)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            b.blob((lado * 0.44, -0.02, 0.5 + 0.06 * s_ * lado), (0.08, 0.07, 0.07), m, grupo, n=8)
+    ojos(b, 0, 0.58, 0.1, sep=0.14, mirar=(0, -0.12), estilo='dormilon')
+    boca(b, 0, 0.42, 0.07, 'sonrisa')
+    cachetes(b, 0, 0.48, 0.23, 0.045, color='#F06BA8')
+
+
+def b_potecito(b):
+    """Potecito de muestra: un pote chiquito de crema; la tapa es su boca y se lanza a morder."""
+    m = brillante('#C9A4F2', rough=0.25, coat=0.7, sss=0.1)
+    oro_ = clay.material('Oro potecito', '#F2C14E', rough=0.25, metallic=0.75, coat=0.4)
+    b.torno([(0.0, 0.0), (0.3, 0.0), (0.33, 0.04), (0.34, 0.36), (0.3, 0.4), (0.0, 0.4)], m)
+    b.cuerpo.append(b.g['base'][-1])
+    b._surf = None
+    crema = fieltro('#FFF7EC', '#FFFFFF', fuzz=0.3, rough=0.7)
+    # La tapa: cerrada normalmente, abierta (con la crema adentro y dientes) en el golpe
+    for grupo, abierta in (('boca', False), ('bocaGolpe', True)):
+        o = clay.lathe(b.nom(), [(0.0, 0.0), (0.35, 0.0), (0.36, 0.02), (0.35, 0.1), (0.3, 0.12), (0.0, 0.12)], b.coll, oro_, segments=32, subsurf=1)
+        if abierta:
+            # (la bisagra queda atrás, en el borde del pote)
+            o.rotation_euler = (math.radians(-62), 0, 0)
+            o.location = (0, 0.17, 0.73)
+            b.add(o, grupo)
+            b.blob((0, 0, 0.42), (0.27, 0.25, 0.06), crema, grupo, n=10)
+            for x in np.linspace(-0.2, 0.2, 5):
+                b.blob((x, -0.27, 0.43), (0.035, 0.02, 0.04), DIENTE, grupo, n=5)
+        else:
+            o.location = (0, 0, 0.4)
+            b.add(o, grupo)
+            b.blob((0, 0, 0.53), (0.08, 0.08, 0.04), oro_, grupo, n=6)
+    # La etiqueta con una flor
+    p, nrm = b.frente(0, 0.16)
+    orientado(b, (0.24, 0.015, 0.08), plano('#FFFDF8', 0.5), p, nrm, 'base', lift=0.005)
+    for k in range(5):
+        a = k / 5 * TAU
+        q, nq = b.frente(math.cos(a) * 0.03, 0.16 + math.sin(a) * 0.03)
+        orientado(b, (0.022, 0.008, 0.022), plano('#E86A8A', 0.5), q, nq, 'base', lift=0.012)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            b.blob((lado * 0.18, -0.06 + 0.04 * s_ * lado, 0.03), (0.07, 0.09, 0.04), fieltro('#7A5AB8', fuzz=0.3), grupo, n=6)
+    ojos(b, 0, 0.29, 0.08, sep=0.12, bravo=True, mirar=(0, -0.12))
+
+
+def b_mascarilla(b):
+    """Mascarilla de barro: verde, cuarteada, con dos rodajas de pepino por ojos y los brazos estirados."""
+    m = fieltro('#8FB96A', '#B8D99A', fuzz=0.35, rough=0.85, escala=70)
+    oscuro = plano('#5E7E44', 0.7)
+    b.blob((0, 0, 0.45), (0.42, 0.36, 0.45), m, cuerpo=True, n=14, shaper=lambda v: v * (1 + 0.05 * np.sin(v[:, 0:1] * 13) * np.sin(v[:, 2:3] * 11)))
+    b.blob((0, 0.02, 0.92), (0.3, 0.28, 0.2), m, n=10)
+    # Las grietas del barro seco
+    for (x0, z0, x1, z1) in [(-0.3, 0.7, -0.15, 0.62), (-0.15, 0.62, -0.18, 0.5), (0.25, 0.28, 0.33, 0.18), (0.22, 0.75, 0.32, 0.66),
+                             (-0.3, 0.25, -0.2, 0.18), (0.05, 0.05, 0.12, 0.14)]:
+        b.tubo(b.trazo_frente([(x0, z0), ((x0 + x1) / 2 + 0.02, (z0 + z1) / 2), (x1, z1)], 0.01), 0.008, oscuro, 'base', segmentos=4)
+    # La toalla en la cabeza (como turbante de spa)
+    toalla = fieltro('#F7C6D8', '#FFE0EA', fuzz=0.7, escala=140)
+    b.blob((0, 0.04, 1.08), (0.32, 0.3, 0.13), toalla, n=10)
+    b.tubo([(-0.28, -0.02, 1.0), (0.0, -0.3, 1.12), (0.28, -0.02, 1.0)], 0.06, toalla, 'base', segmentos=10)
+    b.blob((0.08, -0.06, 1.22), (0.13, 0.12, 0.08), toalla, n=8)
+    # Rodajas de pepino subidas en la frente (como quien se las quitó de los ojos para ver a quién perseguir)
+    pepino = fieltro('#C9E89A', '#E8F6C8', fuzz=0.2, rough=0.6)
+    for s_ in (-1, 1):
+        p, nrm = b.frente(s_ * 0.16, 0.84)
+        orientado(b, (0.13, 0.025, 0.13), fieltro('#3E7A2E', fuzz=0.2), p, nrm, 'base', lift=0.01)
+        orientado(b, (0.115, 0.03, 0.115), pepino, p, nrm, 'base', lift=0.02)
+        for k in range(6):
+            a = k / 6 * TAU
+            orientado(b, (0.012, 0.01, 0.018), plano('#F6FBE8', 0.4), p + np.array([math.cos(a) * 0.06, 0, math.sin(a) * 0.06]), nrm, 'base', lift=0.045)
+    ojos(b, 0, 0.62, 0.085, sep=0.12, mirar=(0, -0.12), estilo='dormilon')
+    boca(b, 0, 0.36, 0.13, 'grande')
+    # Los brazos estirados hacia adelante (como zombi) y los pies
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            z = 0.55 + 0.05 * s_ * lado
+            b.tubo([(lado * 0.36, -0.05, 0.55), (lado * 0.4, -0.35, z), (lado * 0.36, -0.55, z + 0.03)], [0.09, 0.08, 0.07], m, grupo, segmentos=8)
+            b.blob((lado * 0.35, -0.6, z + 0.03), (0.08, 0.07, 0.07), m, grupo, n=8)
+            b.blob((lado * 0.2, -0.08 + 0.06 * s_ * lado, 0.04), (0.11, 0.14, 0.06), m, grupo, n=8)
+
+
+def lamina(b, puntos, grosor, m, y=0.0, bisel=0.006, grupo='base'):
+    """Una pieza plana (polígono `puntos` en x, z) con su grosor en y y un bisel suave."""
+    import bmesh
+    me = bpy.data.meshes.new(b.nom())
+    bm = bmesh.new()
+    fr = [bm.verts.new((x, y - grosor / 2, z)) for (x, z) in puntos]
+    at = [bm.verts.new((x, y + grosor / 2, z)) for (x, z) in puntos]
+    bm.faces.new(fr[::-1])
+    bm.faces.new(at)
+    for i in range(len(puntos)):
+        j = (i + 1) % len(puntos)
+        bm.faces.new((fr[i], fr[j], at[j], at[i]))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.to_mesh(me)
+    bm.free()
+    o = bpy.data.objects.new(b.nom(), me)
+    b.coll.objects.link(o)
+    o.data.materials.append(m)
+    bv = o.modifiers.new('bisel', 'BEVEL')
+    bv.width = bisel
+    bv.segments = 3
+    return b.add(o, grupo)
+
+
+def j_ruleta_loca(b):
+    """La Ruleta Loca: la rueda de la feria se salió del eje; camina en dos patas con cara en el centro y corona."""
+    cz = 0.72
+    R = 0.58
+    colores = ['#E4574B', '#F2C14E', '#5AB4F0', '#7FCB5A', '#E86A8A', '#9C6BD6', '#FF8A3D', '#68C9B9']
+    # El disco blanco de fondo (mirando hacia -y)
+    o = clay.lathe(b.nom(), [(0.0, -0.05), (R, -0.05), (R + 0.02, 0.0), (R, 0.05), (0.0, 0.05)], b.coll, brillante('#FFFDF8', rough=0.35), segments=48, subsurf=1)
+    o.rotation_euler = (math.pi / 2, 0, 0)
+    o.location = (0, 0, cz)
+    b.add(o)
+    # Las casillas de colores (gajos planos, como la rueda del Ruletero)
+    n_ = len(colores)
+    for k, c in enumerate(colores):
+        a0, a1 = k / n_ * TAU, (k + 1) / n_ * TAU
+        pts = [(0.0, cz)] + [(math.cos(a0 + (a1 - a0) * t / 4) * (R - 0.02), cz + math.sin(a0 + (a1 - a0) * t / 4) * (R - 0.02)) for t in range(5)]
+        lamina(b, pts, 0.03, brillante(c, rough=0.3, coat=0.6), y=-0.06)
+        am = (a0 + a1) / 2
+        b.blob((math.cos(am) * R * 0.66, -0.085, cz + math.sin(am) * R * 0.66), (0.04, 0.012, 0.04), plano('#FFFFFF' if k % 2 else '#FFF3B0', 0.4), n=5)
+    # El aro dorado con bombillos
+    oro_ = clay.material('Oro ruleta', '#F2C14E', rough=0.25, metallic=0.75, coat=0.4)
+    aro = clay.lathe(b.nom(), [(R - 0.03, -0.06), (R + 0.06, -0.06), (R + 0.08, 0.0), (R + 0.06, 0.06), (R - 0.03, 0.06), (R - 0.05, 0.0), (R - 0.03, -0.06)],
+                     b.coll, oro_, segments=56, subsurf=1, cap_bottom=False, cap_top=False)
+    aro.rotation_euler = (math.pi / 2, 0, 0)
+    aro.location = (0, 0, cz)
+    b.add(aro)
+    for k in range(16):
+        a = k / 16 * TAU
+        b.blob((math.cos(a) * (R + 0.02), -0.09, cz + math.sin(a) * (R + 0.02)), (0.035,) * 3,
+               plano('#FFF3B0' if k % 2 else '#FFD1E0', 0.3, emision=1.6), 'pasoA' if k % 2 else 'pasoB', n=5)
+        b.blob((math.cos(a) * (R + 0.02), -0.09, cz + math.sin(a) * (R + 0.02)), (0.03,) * 3, plano('#C9B27A', 0.4), 'pasoB' if k % 2 else 'pasoA', n=5)
+    # La cara en el centro (el eje)
+    b.blob((0, -0.12, cz), (0.22, 0.12, 0.22), brillante('#FFE7A3', rough=0.4, coat=0.4), cuerpo=True, n=12)
+    ojos(b, 0, cz + 0.05, 0.065, sep=0.09, mirar=(0.1, -0.1), estilo='loco', bravo=True)
+    boca(b, 0, cz - 0.1, 0.07, 'colmillos')
+    # El piquito arriba (torcido) y la corona
+    b.blob((0.12, -0.06, cz + R + 0.1), (0.06, 0.04, 0.1), brillante('#E4392B', rough=0.3), n=8)
+    corona(b, (-0.05, -0.02, cz + R + 0.04), 0.15, 0.14)
+    # Las patas (el soporte de madera que se volvió piernas) y los brazos
+    madera = fieltro('#B07A4F', '#D8A878', fuzz=0.2, rough=0.7)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            f = s_ * lado
+            b.tubo([(lado * 0.18, 0.06, cz - R + 0.05), (lado * 0.26, 0.0, 0.12 + 0.05 * f), (lado * 0.3, -0.02 - 0.05 * f, 0.04)], 0.05, madera, grupo, segmentos=8)
+            b.blob((lado * 0.31, -0.06 - 0.05 * f, 0.04), (0.09, 0.12, 0.05), brillante('#E4574B', rough=0.4), grupo, n=8)
+            b.tubo([(lado * (R + 0.04), -0.02, cz - 0.05), (lado * (R + 0.2), -0.1, cz + 0.08 * f), (lado * (R + 0.26), -0.12, cz + 0.2 + 0.06 * f)], 0.04, madera, grupo, segmentos=8)
+            b.blob((lado * (R + 0.27), -0.12, cz + 0.24 + 0.06 * f), (0.06,) * 3, brillante('#FFFDF8', rough=0.4), grupo, n=6)
+
+
+def j_payaso_tortazo(b):
+    """El Payaso Tortazo: payaso de peluche con nariz de pompón, cuello de vuelos y una torta de crema en cada mano."""
+    cuerpo = fieltro('#FFF4E2', '#FFFFFF', fuzz=0.45, escala=110)
+    b.blob((0, 0.04, 0.36), (0.4, 0.34, 0.36), fieltro('#7DB7E8', '#BFE0FA', fuzz=0.5), n=12)
+    # Botones de pompón en la barriga
+    for k, c in enumerate(['#E4574B', '#F2C14E', '#7FCB5A']):
+        b.blob((0, -0.32 + 0.03 * k, 0.48 - k * 0.14), (0.05,) * 3, fieltro(c, fuzz=0.8), n=6)
+    # El cuello de vuelos (de colores)
+    for k in range(14):
+        a = k / 14 * TAU
+        b.blob((math.cos(a) * 0.3, math.sin(a) * 0.26 + 0.02, 0.74), (0.12, 0.1, 0.06), fieltro(['#F7C948', '#E86A8A', '#68C9B9'][k % 3], fuzz=0.4), n=8)
+    # La cabeza cuadradita con la cara pintada
+    b.blob((0, 0, 1.0), (0.3, 0.27, 0.27), cuerpo, cuerpo=True, n=12, p=2.6)
+    for s_ in (-1, 1):
+        p, nrm = b.frente(s_ * 0.11, 1.07)
+        orientado(b, (0.06, 0.01, 0.1), plano('#7DB7E8', 0.6), p, nrm, 'base', lift=0.005)
+    ojos(b, 0, 1.06, 0.07, sep=0.11, bravo=True, mirar=(0, -0.12))
+    p, nrm = b.frente(0, 0.88)
+    orientado(b, (0.17, 0.02, 0.07), plano('#E4392B', 0.5), p, nrm, 'base', lift=0.004)
+    boca(b, 0, 0.88, 0.12, 'sonrisa')
+    # La nariz de pompón
+    q, nq = b.frente(0, 0.98)
+    b.blob(tuple(q + nq * 0.06), (0.075,) * 3, fieltro('#E4392B', '#FF7A6A', fuzz=0.9), n=8)
+    # El pelo de colores a los lados y la corona encima
+    pelo = fieltro('#FF8A3D', '#FFC08A', fuzz=1.0, escala=160)
+    for s_ in (-1, 1):
+        for (dx, dz, r) in ((0.3, 1.1, 0.12), (0.36, 0.98, 0.11), (0.26, 1.2, 0.09)):
+            b.blob((s_ * dx, 0.04, dz), (r, r, r), pelo, n=8)
+    corona(b, (0, 0.02, 1.22), 0.15, 0.14)
+    # Las tortas de crema en las manos (y los zapatotes)
+    plato = brillante('#E8B26A', rough=0.4)
+    crema = fieltro('#FFF7EC', '#FFFFFF', fuzz=0.35, rough=0.7)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            f = s_ * lado
+            hz = 0.62 + 0.12 * f
+            b.tubo([(lado * 0.34, 0.0, 0.55), (lado * 0.5, -0.06, 0.55 + 0.06 * f), (lado * 0.6, -0.1, hz)], 0.06, fieltro('#7DB7E8', fuzz=0.5), grupo, segmentos=8)
+            b.blob((lado * 0.62, -0.1, hz), (0.07,) * 3, fieltro('#FFFFFF', fuzz=0.6), grupo, n=6)
+            t = clay.lathe(b.nom(), [(0.0, 0.0), (0.16, 0.0), (0.18, 0.05), (0.15, 0.06), (0.0, 0.06)], b.coll, plato, segments=24, subsurf=1)
+            t.location = (lado * 0.64, -0.12, hz + 0.05)
+            b.add(t, grupo)
+            b.blob((lado * 0.64, -0.12, hz + 0.13), (0.15, 0.15, 0.07), crema, grupo, n=8)
+            b.blob((lado * 0.64, -0.14, hz + 0.21), (0.04, 0.04, 0.04), brillante('#E4392B', rough=0.3), grupo, n=6)
+            b.blob((lado * 0.2, -0.1 - 0.06 * f, 0.05), (0.13, 0.22, 0.07), brillante('#E4574B', rough=0.35, coat=0.5), grupo, n=8)
+
+
+def j_reina_cremas(b):
+    """La Reina de las Cremas: un frasco de crema de lujo con corona, capa de seda, pestañas larguísimas y labios rojos."""
+    m = brillante('#FCE4EC', rough=0.2, coat=0.9, sss=0.2)
+    oro_ = clay.material('Oro reina cremas', '#F2C14E', rough=0.22, metallic=0.8, coat=0.4)
+    b.torno([(0.0, 0.0), (0.4, 0.0), (0.44, 0.06), (0.46, 0.6), (0.42, 0.7), (0.0, 0.7)], m)
+    b.cuerpo.append(b.g['base'][-1])
+    b._surf = None
+    # La tapa dorada y la crema que rebosa en espiral
+    b.torno([(0.0, 0.0), (0.45, 0.0), (0.47, 0.03), (0.46, 0.1), (0.42, 0.12), (0.0, 0.12)], oro_)
+    b.g['base'][-1].location = (0, 0, 0.68)
+    crema = fieltro('#FFF7EC', '#FFFFFF', fuzz=0.3, rough=0.65)
+    for (z, r) in ((0.86, 0.34), (0.98, 0.25), (1.08, 0.16)):
+        b.blob((0, 0.02, z), (r, r * 0.95, 0.08), crema, n=10)
+    # Capa de seda
+    capa = fieltro('#9C3B6E', '#D86AA0', fuzz=0.35, rough=0.5)
+    b.blob((0, 0.32, 0.45), (0.5, 0.1, 0.45), capa, n=12)
+    b.tubo([(-0.44, 0.0, 0.66), (0.0, -0.46, 0.7), (0.44, 0.0, 0.66)], 0.05, fieltro('#FFFFFF', '#FFFFFF', fuzz=0.9), 'base', segmentos=12)
+    # Un collar de perlas abajo
+    for k in range(9):
+        q, nq = b.frente(-0.32 + k * 0.08, 0.06)
+        orientado(b, (0.025,) * 3, brillante('#FFFFFF', rough=0.15, coat=1.0), q, nq, 'base', lift=0.02)
+    ojos(b, 0, 0.47, 0.11, sep=0.16, mirar=(0, -0.12), bravo=True)
+    # Pestañas larguísimas
+    for s_ in (-1, 1):
+        for k in range(4):
+            x0 = s_ * (0.16 + (k - 1.5) * 0.045)
+            base, nrm = b.frente(x0, 0.6)
+            for grupo in ('abiertos', 'golpe'):
+                b.tubo([tuple(base + nrm * 0.03), tuple(base + nrm * 0.07 + np.array([s_ * 0.035 * (k - 1), 0, 0.06])),
+                        tuple(base + nrm * 0.09 + np.array([s_ * 0.05 * (k - 1), 0, 0.1]))], [0.016, 0.012, 0.006], NEGRO, grupo, segmentos=5)
+    # Los labios rojos (la boca de golpe es la de siempre: se arma y se le quita la boquita en «o»)
+    boca(b, 0, 0.3, 0.08, 'o')
+    for o in b.g['boca']:
+        bpy.data.objects.remove(o, do_unlink=True)
+    b.g['boca'] = []
+    q, nq = b.frente(0, 0.3)
+    for s_ in (-1, 1):
+        orientado(b, (0.075, 0.035, 0.045), brillante('#D6234A', rough=0.2, coat=0.9), q + np.array([s_ * 0.05, 0, 0.016]), nq, 'boca', lift=0.025)
+    orientado(b, (0.095, 0.035, 0.04), brillante('#D6234A', rough=0.2, coat=0.9), q - np.array([0, 0, 0.03]), nq, 'boca', lift=0.025)
+    r_, nr = b.frente(0.17, 0.33)
+    orientado(b, (0.018, 0.01, 0.018), NEGRO, r_, nr, 'base', lift=0.012)
+    cachetes(b, 0, 0.36, 0.3, 0.05)
+    corona(b, (0, 0.02, 1.1), 0.18, 0.18, joyas=('#E86A8A', '#7DD3E8'))
+    # Manitos con guante y un espejito
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            f = s_ * lado
+            b.tubo([(lado * 0.44, 0.0, 0.45), (lado * 0.58, -0.06, 0.4 + 0.06 * f), (lado * 0.64, -0.1, 0.5 + 0.08 * f)], 0.045, brillante('#FFFFFF', rough=0.4), grupo, segmentos=8)
+            b.blob((lado * 0.65, -0.1, 0.52 + 0.08 * f), (0.06,) * 3, brillante('#FFFFFF', rough=0.4), grupo, n=6)
+            b.blob((lado * 0.22, -0.06 + 0.05 * f, 0.03), (0.1, 0.14, 0.04), brillante('#9C3B6E', rough=0.35), grupo, n=8)
+
+
 BICHOS = {
     'germen': b_germen, 'puntoNegro': b_punto_negro, 'gotaGrasa': b_gota_grasa, 'acaro': b_acaro, 'granito': b_granito, 'caspa': b_caspa,
     'bacteria': b_bacteria, 'pelusa': b_pelusa, 'virus': b_virus, 'barrito': b_barrito, 'lagana': b_lagana, 'mugre': b_mugre,
@@ -1724,11 +2058,15 @@ BICHOS = {
     'patitoHule': b_patito_hule, 'chancleta': b_chancleta, 'patoInflable': j_pato_inflable, 'donaFlotador': j_dona_flotador,
     # El Laberinto de la cortina
     'ratoncito': b_ratoncito, 'reyRaton': j_rey_raton,
+    # La Feria de las cremas
+    'pompitaCrema': b_pompita_crema, 'tubitoCrema': b_tubito_crema, 'nubeAzucar': b_nube_azucar, 'potecito': b_potecito, 'mascarilla': b_mascarilla,
+    'ruletaLoca': j_ruleta_loca, 'payasoBloqueador': j_payaso_tortazo, 'reinaCremas': j_reina_cremas,
 }
 JEFES = {'espinillon', 'reinaCaspa', 'granMoco', 'senorLagana', 'barroNegro', 'senorSarro', 'donaCucaracha', 'motaPelo', 'tapon',
          'esponjaPodrida', 'peloDesague', 'duchaHelada', 'reyHongo', 'regaderaLoca', 'cortinaMohosa', 'ciempiesGigante',
          'donFrasco', 'reinaPompa', 'senorCuchillas', 'poteCrema', 'reySapo', 'pulpoDesague', 'bocaSifon', 'reinaGrasa',
-         'donCactus', 'atrapamoscasGigante', 'materaGigante', 'patoInflable', 'donaFlotador', 'reyRaton'}
+         'donCactus', 'atrapamoscasGigante', 'materaGigante', 'patoInflable', 'donaFlotador', 'reyRaton',
+         'ruletaLoca', 'payasoBloqueador', 'reinaCremas'}
 
 CUADROS = [
     ('normal', {'base', 'abiertos', 'boca', 'pasoA'}),

@@ -45,9 +45,10 @@ Don Jabón, el vendedor ambulante, con el Monedero) y **La Ducha** (fase 3a: el 
 jefes nuevos y los chorros que caen del techo) y **La Jabonera** (fase 3b: el pasillo de arriba abajo de la repisa con
 los frascos que se caen) y **El Desagüe** (fase 3c: el escenario final con sus remolinos) y los dos primeros
 especiales (3d: **El Desfile de jefes** y **El Espejo empañado**) y **La Matera de la ventana** (3e) y **El Tobogán del
-desagüe** (3f) y **El Laberinto de la cortina** (3g). Javier pidió (12 de octubre) pasar ahora a los
-arreglos de la granja que venía haciendo el otro frente (`en-obra/granja-arreglos.md`: tandas 1 a 5 **hechas**; sigue
-la 6) y después seguir con lo que falta del lavado: la Feria de las cremas (3h) y la fase 4. Las cajitas sorpresa
+desagüe** (3f), **El Laberinto de la cortina** (3g) y **La Feria de las cremas** (3h, con la ruleta del Ruletero:
+con ella quedan todos los escenarios de la propuesta). Javier pidió (12 de octubre) pasar ahora a los
+arreglos de la granja que venía haciendo el otro frente (`en-obra/granja-arreglos.md`: tandas 1 a 5 **hechas**; la 6
+espera que Javier diga si la hace este frente o el del motor) y después seguir con lo que falta del lavado: la fase 4. Las cajitas sorpresa
 quedan para la fase 4, con los disfraces que traen. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
 los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
 nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
@@ -119,7 +120,8 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
      que recogen lo que quedó atrás).
    - ~~3g: El Laberinto de la cortina~~ **hecho** (cortinas que frenan, bichos grandotes, quesitos de jabón y el Rey
      Ratón).
-   - 3h: la Feria de las cremas con su ruleta (el último especial de la propuesta).
+   - ~~3h: la Feria de las cremas~~ **hecho** (la feria encerrada en vallas que se abre con la ruleta del Ruletero:
+     plaza, calle de los puestos y carpa; 5 bichos y 3 jefes nuevos).
    - Fase 4: disfraces con transformación, cartas de la noche, cajitas sorpresa y las aventuras.
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).

@@ -86,6 +86,8 @@ export type IdEnemigo =
   | 'patitoHule' | 'chancleta'
   // El Laberinto de la cortina
   | 'ratoncito'
+  // La Feria de las cremas
+  | 'pompitaCrema' | 'tubitoCrema' | 'potecito' | 'mascarilla' | 'nubeAzucar'
   // Jefes
   | 'espinillon' | 'reinaCaspa' | 'granMoco' | 'senorLagana' | 'barroNegro' | 'senorSarro' | 'donaCucaracha' | 'motaPelo' | 'tapon'
   | 'esponjaPodrida' | 'peloDesague'
@@ -94,10 +96,11 @@ export type IdEnemigo =
   | 'reySapo' | 'pulpoDesague' | 'bocaSifon' | 'reinaGrasa'
   | 'donCactus' | 'atrapamoscasGigante' | 'materaGigante'
   | 'patoInflable' | 'donaFlotador' | 'reyRaton'
+  | 'ruletaLoca' | 'payasoBloqueador' | 'reinaCremas'
   // La Parca del baño
   | 'duchaHelada';
 
-export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera' | 'desague' | 'desfile' | 'espejo' | 'matera' | 'tobogan' | 'laberinto';
+export type IdEscenario = 'cara' | 'lavamanos' | 'banera' | 'ducha' | 'jabonera' | 'desague' | 'desfile' | 'espejo' | 'matera' | 'tobogan' | 'laberinto' | 'feria';
 
 /** Los modos que se abren con los tesoros (y el Hiper de cada escenario, venciendo a su jefe del minuto 25). */
 export type IdModo = 'hiper' | 'inverso' | 'infinito' | 'sinLimite' | 'ruleta' | 'azar';
