@@ -34,7 +34,8 @@ sistema. Las dos trampas selectivas narrativas anteriores conservan sus IDs y re
 
 ## Galería y cuadernos
 
-Se reutiliza el archivo público de la Casa de Oficios; no se cambia la huella de una casa ni una puerta.
+El Museo del Valle nuevo ofrece donaciones y vitrinas; la Casa de Oficios conserva compatibilidad
+para las partidas anteriores. Ambos usan sus espacios públicos y horarios vigentes.
 Donar transfiere exactamente **una unidad de la casilla elegida**, con calidad y fecha. Hay 26
 colecciones: seis contextos, ocho peces nuevos y una tríada mineral/madera/cosecha por cada uno
 de los 24 territorios. Los seis lotes antiguos se conservan. Cerrar una colección se acredita una

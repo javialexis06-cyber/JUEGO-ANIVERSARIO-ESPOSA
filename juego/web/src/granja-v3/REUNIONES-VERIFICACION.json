@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "fecha": "2026-10-12",
+  "bloque": "Reuniones comunitarias con presencia, prioridad y decisiones",
+  "guiones": 52,
+  "pueblos": 17,
+  "lineasNuevas": 312,
+  "decisionesVerificadas": 104,
+  "regresion": {
+    "suites": 44,
+    "fallos": 0
+  },
+  "logica": {
+    "suite": "reuniones",
+    "checks": 17,
+    "guiones": 52,
+    "lineas": 312,
+    "pueblos": 17,
+    "ramasLocales": 104,
+    "alcance": "Escenarios con recursos, visitas, fechas y permisos preparados; navegación, acciones y guardado reales. No certifica campaña ordinaria ni rendimiento físico."
+  },
+  "builds": {
+    "pareja": "correcto",
+    "amigos": "correcto; contenido de pareja excluido"
+  },
+  "astra": {
+    "comprobaciones": 21,
+    "resultado": "correcto"
+  },
+  "medios": {
+    "lineas": 3590,
+    "lineasReuniones": 312,
+    "vocesDeclaradas": 3581,
+    "modelosDeclarados": 0,
+    "musicaDeclarada": 23,
+    "errores": [],
+    "estado": "Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir."
+  },
+  "navegador": {
+    "comunidad": {
+      "checks": [
+        "Una reunión guardada abre su diálogo al cargar, con el vecino y turno correctos",
+        "Escape conserva la conversación y ofrece dejarla sin decidir",
+        "El almacenamiento rechazado revierte el turno y conserva la decisión",
+        "Continuar y recargar conserva exactamente la línea sin reiniciar el guion",
+        "Dejar mantiene materiales y asunto aplazado en la lista comunitaria",
+        "Retomar vuelve al principio y presenta ambas decisiones después de escuchar",
+        "Una decisión sin guardar devuelve coste, cuerda, amistad y estado de la conversación",
+        "El aporte paga materiales y guarda una única cuerda y reconocimiento tras recargar",
+        "El asunto visto conserva su decisión y no ofrece repetirla en horizontal"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenarioPreparado": "V5 con dos vecinos conocidos y presentes, línea 2, fecha y materiales preparados. Dibujo pausado después del arranque y fotos de mapa desactivadas solo en este contexto; prueba de controles y persistencia.",
+      "dispositivosFisicos": []
+    },
+    "integracionReal": {
+      "checks": [
+        "Botón de la casa abre la granja V5 sobre el build actual",
+        "Teclado mueve al personaje compartido actual",
+        "Mouse abre el buzón y conserva lectura",
+        "Inventario actual accesible en horizontal",
+        "Granja → casa real → granja conserva posición, inventario y jornada",
+        "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenariosPreparados": "Cuarto habilitado y avatar posicionado en contexto nuevo aislado.",
+      "dispositivosFisicos": []
+    }
+  },
+  "conservado": {
+    "gremioMuseoGuia": "85fffaf",
+    "listasOtrosJuegos": "6dc415d",
+    "graficosLavado": "Sin diferencias respecto a 6dc415d en vista, cuartos, museo, planos, inventario visual, modelos de edificios/muebles ni lavado."
+  },
+  "hashesFuente": {
+    "src/granja-v3/reuniones.ts": "b3d4d2843b063c39e88cd33d25d22e398bc576702d1965fde752db6026ad9f6f",
+    "src/granja-v3/reuniones-datos.ts": "5090ffc41c453d757c9bea9bc44cae96f6b386f02b2013cfee6471de605c6510",
+    "src/granja-v3/vida-astra.ts": "d3d4d5fedf885e3f07f310f3c518a46f793b2a07071c2764689788bce60824b4",
+    "src/granja-v3/comunidad.ts": "d80cf3eaa796c798133d7516ca87865469d8e5327865c7e51d28e1798d5ff459",
+    "src/granja-v3/motor.ts": "c085e6dbb8bfd12fd637682faf6d24167c9a6bc194767e4dade96ecdbddbb3aa",
+    "src/granja-v3/main.ts": "22c5b1d2697a02c23969d50e11f73fb116e11db799b983d52d80188270766368",
+    "scripts/granja-v3/probar-reuniones.mjs": "1020204da1ce48b8281ff7c356e5f7ad358f84b2bdd8b197221d570b4f4737fb",
+    "public/granja/astra/produccion.json": "7706da53e6dc071337a621da586d2c5fd254e6f5717d8bd54a4a64ba06bbb1f5"
+  },
+  "limites": [
+    "Recursos, fechas y visitas preparados en los casos de reuniones; el recorrido de 36 principales ordinario es una regresión independiente.",
+    "312 líneas nuevas sin archivos de voz producidos. Actores y música existentes conservados.",
+    "Navegador comunitario con dibujo pausado después de arrancar; integración general con WebGL real y fotos de mapa activas.",
+    "Sin prueba de FPS, memoria o batería en dispositivos físicos."
+  ]
+}

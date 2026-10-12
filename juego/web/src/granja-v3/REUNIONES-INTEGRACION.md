@@ -25,7 +25,8 @@ noches vencida conserva el asunto como aplazado, con las mismas decisiones y cos
 
 La revisión de la terminal lleva a Rita y al archivista Ivo al puesto comunitario. Durante ese turno
 Rita atiende el acuerdo; su compra sigue requiriendo estar en su oficio abierto. Las otras tres obras
-anteriores conservan sus servicios; esta entrega no añade visitas de NPC al muelle, galería o banco.
+anteriores conservan sus servicios. El Museo del Valle nuevo conserva el acceso a donaciones y
+vitrinas. Esta entrega no añade visitas de NPC al muelle, galería o banco.
 Los territorios sin habitantes conservan trabajos y mantenimiento; no se inventan residentes.
 
 ## Decisión y efectos

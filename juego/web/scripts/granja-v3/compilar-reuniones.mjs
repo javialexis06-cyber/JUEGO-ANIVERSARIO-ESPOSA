@@ -6,7 +6,7 @@ const ids=new Set();
 for(const d of defs){
  if(ids.has(d.id)||d.actores.length!==2||new Set(d.actores).size!==2||d.opciones.length!==2||d.lineas.length<2)throw Error('Reunión inválida: '+d.id);
  ids.add(d.id);
- for(const l of d.lineas)if(crypto.createHash('sha256').update(l.texto).digest('hex')!==l.huella)throw Error('Firma de texto inválida: '+l.id);
+ for(const l of d.lineas)if(crypto.createHash('sha256').update(l.texto).digest('hex')!==l.huella||l.huella_texto!==l.huella.slice(0,16))throw Error('Firma de texto inválida: '+l.id);
 }
 fs.writeFileSync(new URL('../../src/granja-v3/reuniones-datos.ts',import.meta.url),"// Generado por compilar-reuniones.mjs; editar la fuente narrativa.\nimport type {ReunionDef} from './reuniones-tipos';\nexport const REUNIONES:readonly ReunionDef[] = "+JSON.stringify(defs)+';\n');
 const p=new URL('../../public/granja/astra/produccion.json',import.meta.url),datos=JSON.parse(fs.readFileSync(p,'utf8'));
