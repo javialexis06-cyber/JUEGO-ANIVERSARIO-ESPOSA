@@ -588,7 +588,8 @@ export function iniciarHud(h: Hud) {
       if (!$('mapa-grande').hidden) pintarGrande();
       else if (!h.panelAbierto()) pintarMini();
       // Una foto de lo que está cerca (si falta o está vieja) para el mapa de verdad
-      if (!instanciaAventura(motor.estado.aventura)) { const z = claveZona(); fotos.tic(z.clave, z.lim); }
+      // (las pruebas pueden apagarlas con window.__sinFotosMapa: sin tarjeta de video cada foto es lenta)
+      if (!instanciaAventura(motor.estado.aventura) && !(window as any).__sinFotosMapa) { const z = claveZona(); fotos.tic(z.clave, z.lim); }
     } catch (e) { console.warn('HUD', e); }
   };
   tic();
