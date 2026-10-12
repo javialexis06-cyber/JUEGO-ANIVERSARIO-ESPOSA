@@ -1254,9 +1254,10 @@ def b_rejillita(b):
     o.location = (0, 0.0, 0.46)
     b.cuerpo.append(o)
     b._surf = None
+    # (las ranuras abajo, para que no le tapen los ojos)
     for k in range(5):
-        x = -0.24 + k * 0.12
-        b.tubo([(x, -0.08, 0.24), (x, -0.08, 0.68)], 0.025, plano('#2A2A30'), 'base', segmentos=4)
+        x = -0.2 + k * 0.1
+        b.tubo([(x, -0.1, 0.18), (x, -0.1, 0.32)], 0.02, plano('#2A2A30'), 'base', segmentos=4)
     for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
         for lado in (-1, 1):
             b.tubo([(lado * 0.3, 0.05, 0.1), (lado * 0.38, 0.0, 0.05 + 0.05 * s_ * lado), (lado * 0.4, -0.02, 0.0)], 0.04, metal, grupo, segmentos=6)

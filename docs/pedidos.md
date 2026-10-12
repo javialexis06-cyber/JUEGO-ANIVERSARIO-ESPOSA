@@ -36,7 +36,8 @@ probado y subido.
 original: Hiper, Del otro lado del espejo, Agua caliente sin fin, Sin límite, Ruleta de sorpresas y Nivel al azar; y
 Don Jabón, el vendedor ambulante, con el Monedero) y **La Ducha** (fase 3a: el cuarto escenario, con 8 bichos y 4
 jefes nuevos y los chorros que caen del techo) y **La Jabonera** (fase 3b: el pasillo de arriba abajo de la repisa con
-los frascos que se caen). Sigue El Desagüe (3c). Las cajitas sorpresa
+los frascos que se caen) y **El Desagüe** (fase 3c: el escenario final con sus remolinos). Siguen los escenarios
+especiales (3d). Las cajitas sorpresa
 quedan para la fase 4, con los disfraces que traen. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
 los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
 nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
@@ -98,8 +99,10 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
    - ~~3a: La Ducha~~ **hecho** (baldosas mojadas, 8 bichos y 4 jefes en Blender, los chorros que caen del techo).
    - ~~3b: La Jabonera~~ **hecho** (el pasillo de arriba abajo de la repisa, 7 bichos y 4 jefes, los frascos que se
      caen).
-   - 3c en adelante: El Desagüe (el escenario final) y especiales (la Cortina en laberinto, el Espejo empañado, el
-     Desfile de jefes) y los minijuegos (la carrera del tobogán).
+   - ~~3c: El Desagüe~~ **hecho** (el escenario final: rejillas oscuras, 7 bichos y 4 jefes, los remolinos que se
+     tragan la mugre y las gotitas).
+   - 3d en adelante: especiales (el Espejo empañado, el Desfile de jefes, la Cortina en laberinto) y los minijuegos
+     (la carrera del tobogán).
    - Fase 4: disfraces con transformación, cartas de la noche, cajitas sorpresa y las aventuras.
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).

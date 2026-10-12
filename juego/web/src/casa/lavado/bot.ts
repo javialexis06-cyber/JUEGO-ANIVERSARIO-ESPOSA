@@ -110,6 +110,15 @@ export function botMover(m: Motor, j: Jugador) {
       if (c > -0.2) peligro[q] += w * (c + 0.2) * (c + 0.2);
     }
   }
+  // Los remolinos de El Desagüe: recoger rápido lo que está cerca del borde (no meterse al centro)
+  for (const w of m.remolinos) {
+    const dx = w.x - j.x, dy = w.y - j.y, d = Math.hypot(dx, dy) || 1;
+    if (d > w.r * 0.6) continue;
+    for (let q = 0; q < DIRS; q++) {
+      const c = cosD[q] * (dx / d) + sinD[q] * (dy / d);
+      if (c > 0) peligro[q] += 2 * c;
+    }
+  }
   // Los frascos que van a caer en La Jabonera: quitarse de debajo
   for (const f of m.frascos) {
     const dx = f.x - j.x, dy = f.y - j.y, d = Math.hypot(dx, dy) || 1;

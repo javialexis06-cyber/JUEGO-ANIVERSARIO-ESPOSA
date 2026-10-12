@@ -42,6 +42,8 @@ export interface DefEscenario {
   chorros?: boolean;
   /** La Jabonera: frascos que se caen de la repisa (avisan con su sombra; al caer pegan a todos, también a ti). */
   frascos?: boolean;
+  /** El Desagüe: remolinos que se tragan a los mugrosos (y las gotitas que nadie recoja). */
+  remolinos?: boolean;
 }
 
 const o = (min: number, cada: number, ...tipos: IdEnemigo[]): Oleada => ({ min, cada, tipos });
@@ -393,8 +395,77 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
       { t: m(28, 30), tipo: 'muro', enemigo: 'cal', cant: 28 },
     ],
   },
+  desague: {
+    id: 'desague',
+    nombre: 'El Desagüe',
+    original: 'Capilla Magna',
+    desc: 'El fondo del caño: rejillas oscuras, agua turbia y remolinos que se tragan la mugre (y las gotitas que no recojas).',
+    limites: null,
+    desbloqueo: 'Aguanta 15 minutos en La Jabonera',
+    jefeHiper: 'reinaGrasa',
+    remolinos: true,
+    oleadas: [
+      o(16, 1.0, 'gusanito'),
+      o(30, 1.0, 'gusanito', 'sapito'),
+      o(42, 0.9, 'sapito', 'gusanito'),
+      o(52, 0.8, 'sapito', 'grasaSifon'),
+      o(62, 0.8, 'grasaSifon', 'gusanito'),
+      o(72, 0.7, 'grasaSifon', 'sapito', 'burbujaGas'),
+      o(82, 0.65, 'burbujaGas', 'grasaSifon'),
+      o(92, 0.6, 'rejillita', 'sapito'),
+      o(102, 0.55, 'rejillita', 'grasaSifon'),
+      o(108, 0.5, 'rejillita', 'burbujaGas'),
+      o(112, 0.5, 'burbujaGas', 'rejillita'),
+      o(122, 0.45, 'rejillita', 'grasaSifon'),
+      o(132, 0.42, 'estropajo', 'rejillita'),
+      o(142, 0.4, 'estropajo', 'burbujaGas'),
+      o(152, 0.36, 'estropajo', 'sapito', 'rejillita'),
+      o(162, 0.34, 'lodo', 'estropajo'),
+      o(172, 0.32, 'lodo', 'burbujaGas'),
+      o(182, 0.3, 'lodo', 'rejillita'),
+      o(192, 0.28, 'lodo', 'estropajo'),
+      o(202, 0.26, 'lodo', 'rejillita'),
+      o(212, 0.25, 'lodo', 'burbujaGas'),
+      o(222, 0.24, 'cal', 'lodo'),
+      o(232, 0.22, 'cal', 'estropajo'),
+      o(242, 0.2, 'moco', 'lodo'),
+      o(252, 0.2, 'moco', 'cal'),
+      o(262, 0.18, 'lodo', 'cal', 'estropajo'),
+      o(272, 0.16, 'cal', 'moco'),
+      o(282, 0.15, 'cal', 'lodo', 'estropajo'),
+      o(292, 0.12, 'cal', 'moco'),
+      o(302, 0.1, 'cal', 'lodo', 'estropajo'),
+    ],
+    eventos: [
+      { t: m(1), tipo: 'enjambre', enemigo: 'bolitaPelo', cant: 22, aviso: '¡Bolitas de pelo saliendo del sifón!' },
+      { t: m(2, 30), tipo: 'elite', enemigo: 'sapito' },
+      { t: m(3, 30), tipo: 'enjambre', enemigo: 'bolitaPelo', cant: 30 },
+      { t: m(4, 30), tipo: 'anillo', enemigo: 'gusanito', cant: 34, aviso: '¡Los gusanitos te rodearon!' },
+      { t: m(5, 30), tipo: 'flotar', enemigo: 'burbujaGas', cant: 10 },
+      { t: m(7), tipo: 'elite', enemigo: 'grasaSifon' },
+      { t: m(8, 30), tipo: 'enjambre', enemigo: 'bolitaPelo', cant: 40 },
+      { t: m(10), tipo: 'jefe', enemigo: 'reySapo', aviso: '¡El Rey Sapo saltó del caño!' },
+      { t: m(11), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Una carta mágica flotando en el agua turbia…' },
+      { t: m(12), tipo: 'anillo', enemigo: 'sapito', cant: 40 },
+      { t: m(13), tipo: 'elite', enemigo: 'rejillita' },
+      { t: m(14), tipo: 'enjambre', enemigo: 'bolitaPelo', cant: 50 },
+      { t: m(15), tipo: 'jefe', enemigo: 'pulpoDesague', aviso: '¡El Pulpo del Desagüe estiró los tentáculos!' },
+      { t: m(16, 30), tipo: 'flotar', enemigo: 'burbujaGas', cant: 18 },
+      { t: m(17, 30), tipo: 'elite', enemigo: 'estropajo' },
+      { t: m(18, 30), tipo: 'muro', enemigo: 'rejillita', cant: 36, aviso: '¡Un muro de rejillas!' },
+      { t: m(20), tipo: 'jefe', enemigo: 'bocaSifon', aviso: '¡La Boca del Sifón abrió los dientes!' },
+      { t: m(21), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Otra carta mágica perdida…' },
+      { t: m(22), tipo: 'enjambre', enemigo: 'bolitaPelo', cant: 62 },
+      { t: m(23), tipo: 'elite', enemigo: 'lodo' },
+      { t: m(24, 30), tipo: 'anillo', enemigo: 'lodo', cant: 30 },
+      { t: m(25), tipo: 'jefe', enemigo: 'reinaGrasa', aviso: '¡La Reina Grasa, la dueña del desagüe!' },
+      { t: m(26, 30), tipo: 'enjambre', enemigo: 'bolitaPelo', cant: 70 },
+      { t: m(27, 30), tipo: 'elite', enemigo: 'cal' },
+      { t: m(28, 30), tipo: 'muro', enemigo: 'lodo', cant: 38 },
+    ],
+  },
 };
 
-export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera'];
+export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague'];
 /** La partida completa (después llega la Ducha Helada). */
 export const DURACION = 30 * 60;

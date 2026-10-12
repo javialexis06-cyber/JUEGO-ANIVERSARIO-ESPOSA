@@ -77,7 +77,7 @@ const entero = (v: unknown, max = 1e9) => (typeof v === 'number' && Number.isFin
 const listaDe = <T extends string>(v: unknown, validos: readonly string[], max = 200): T[] =>
   Array.isArray(v) ? ([...new Set(v.filter((x) => typeof x === 'string' && validos.includes(x)))].slice(0, max) as T[]) : [];
 
-const ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera'];
+const ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera', 'desague'];
 
 /** El progreso siempre con la forma esperada (venga de otra versión, dañado o de otro celular). */
 export function normalizarProgresoLavado(x: unknown, rol: Rol): ProgresoLavado {
@@ -272,9 +272,12 @@ export const LOGROS: DefLogro[] = [
   { id: 'ducha15', nombre: 'Baldosa brillante', desc: 'Aguanta 15 minutos en La Ducha', premio: 'Escenario: La Jabonera', cumple: (p) => minutosEn(p, 'ducha') >= 15 },
   { id: 'ganarDucha', nombre: 'Ducha de campeones', desc: 'Llega a los 30:00 en La Ducha', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.ganados.includes('ducha') },
   { id: 'ciempies', nombre: 'Rejilla despejada', desc: 'Vence al Ciempiés Gigante', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => (p.bestiario.ciempiesGigante ?? 0) > 0 },
-  { id: 'jabonera15', nombre: 'Repisa ordenada', desc: 'Aguanta 15 minutos en La Jabonera', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => minutosEn(p, 'jabonera') >= 15 },
+  { id: 'jabonera15', nombre: 'Repisa ordenada', desc: 'Aguanta 15 minutos en La Jabonera', premio: 'Escenario: El Desagüe', cumple: (p) => minutosEn(p, 'jabonera') >= 15 },
   { id: 'ganarJabonera', nombre: 'Todo en su sitio', desc: 'Llega a los 30:00 en La Jabonera', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.ganados.includes('jabonera') },
   { id: 'poteCrema', nombre: 'Crema para todos', desc: 'Vence al Pote de Crema', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => (p.bestiario.poteCrema ?? 0) > 0 },
+  { id: 'desague15', nombre: 'Caño destapado', desc: 'Aguanta 15 minutos en El Desagüe', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => minutosEn(p, 'desague') >= 15 },
+  { id: 'ganarDesague', nombre: '¡Todo limpio!', desc: 'Llega a los 30:00 en El Desagüe', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => p.ganados.includes('desague') },
+  { id: 'reinaGrasa', nombre: 'Adiós, Reina Grasa', desc: 'Vence a la Reina Grasa', premio: 'Una corona más en la Sala de Trofeos', cumple: (p) => (p.bestiario.reinaGrasa ?? 0) > 0 },
   { id: 'espejito', nombre: 'El espejito de mano', desc: 'Ten 5 armas evolucionadas distintas en la colección', premio: 'Tesoro: Espejito de mano (en los escenarios aparecen anillos y aretes escondidos)', cumple: (p) => p.armas.filter((a) => !!ARMAS[a].de).length >= 5 },
 ];
 
@@ -299,7 +302,7 @@ export const SECRETO_LOGRO: Partial<Record<IdArma | IdPasiva, string>> = {
   bombaBano: 'cofres50', barquito: 'partidas25', talco: 'eliminar50000', bolitasGel: 'nivel60',
   brisa: 'lavamanos25', estaciones: 'cara25', bataEspejismo: 'evoHilo', gotasColores: 'evoPerfume', culebrita: 'tapon',
 };
-export const ESCENARIO_LOGRO: Record<IdEscenario, string | null> = { cara: null, lavamanos: 'cara15', banera: 'lavamanos15', ducha: 'banera15', jabonera: 'ducha15' };
+export const ESCENARIO_LOGRO: Record<IdEscenario, string | null> = { cara: null, lavamanos: 'cara15', banera: 'lavamanos15', ducha: 'banera15', jabonera: 'ducha15', desague: 'jabonera15' };
 
 export const tieneLogro = (p: ProgresoLavado, id: string | null | undefined) => !id || p.logros.includes(id);
 export const cartasDe = (p: ProgresoLavado) => (Object.keys(CARTAS) as IdCarta[]).filter((c) => tieneLogro(p, CARTA_LOGRO[c]));

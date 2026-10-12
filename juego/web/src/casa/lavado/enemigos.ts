@@ -84,6 +84,14 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   hilacha: E({ id: 'hilacha', nombre: 'Hilacha de estropajo', desc: 'Un nudito de fibras que flota de lado a lado.', vida: 200, vel: 50, dano: 16, xp: 2, radio: 14, tam: 46, comp: 'flotar' }),
   frascoVacio: E({ id: 'frascoVacio', nombre: 'Frasco vacío', desc: 'Un tarrito de crema sin crema. Embiste de la rabia.', vida: 320, vel: 92, dano: 20, xp: 3, radio: 14, tam: 48, comp: 'embestir' }),
   mohoRosado: E({ id: 'mohoRosado', nombre: 'Moho rosado', desc: 'La mancha rosada de las esquinas de la ducha. Blandita y tercísima.', vida: 1600, vel: 34, dano: 30, xp: 5, radio: 22, tam: 62, retro: 0.15 }),
+  // ------------------------------------------------------------------------------------------------ El Desagüe
+  bolitaPelo: E({ id: 'bolitaPelo', nombre: 'Bolita de pelos', desc: 'Negra y enredada. Sale del sifón de a montones.', vida: 7, vel: 108, dano: 5, xp: 1, radio: 9, tam: 30, comp: 'enjambre' }),
+  gusanito: E({ id: 'gusanito', nombre: 'Gusanito del desagüe', desc: 'Rojito y elástico. Se estira, se encoge y ya te alcanzó.', vida: 12, vel: 80, dano: 6, xp: 1, radio: 11, tam: 38 }),
+  sapito: E({ id: 'sapito', nombre: 'Sapito del caño', desc: 'Cachetón y brincón. Vive donde nadie quiere vivir.', vida: 30, vel: 84, dano: 9, xp: 2, radio: 13, tam: 42, comp: 'saltar' }),
+  grasaSifon: E({ id: 'grasaSifon', nombre: 'Grasa del sifón', desc: 'Negra, brillante y pegajosa. Tapa todo lo que toca.', vida: 110, vel: 46, dano: 13, xp: 2, radio: 15, tam: 48, retro: 0.6 }),
+  burbujaGas: E({ id: 'burbujaGas', nombre: 'Burbuja de gas', desc: 'Verdosa y hediondita. Sube flotando del caño.', vida: 240, vel: 46, dano: 18, xp: 3, radio: 15, tam: 50, comp: 'flotar' }),
+  rejillita: E({ id: 'rejillita', nombre: 'Rejillita suelta', desc: 'La rejilla del desagüe que se soltó y salió a caminar. De metal.', vida: 360, vel: 52, dano: 19, xp: 4, radio: 17, tam: 52, retro: 0.3 }),
+  lodo: E({ id: 'lodo', nombre: 'Lodo del caño', desc: 'Una montaña café con cositas atrapadas adentro. Pesadísima.', vida: 2300, vel: 32, dano: 34, xp: 6, radio: 24, tam: 66, retro: 0.12 }),
   // ------------------------------------------------------------------------------------------------ Jefes (vida × nivel)
   espinillon: E({ id: 'espinillon', nombre: 'El Espinillón', desc: 'El rey de los granitos, con corona y todo. Embiste cuando se enoja.', vida: 420, vel: 56, dano: 30, xp: 120, radio: 40, tam: 130, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
   reinaCaspa: E({ id: 'reinaCaspa', nombre: 'La Reina Caspa', desc: 'Llega nevando. Guarda una carta mágica perdida.', vida: 300, vel: 72, dano: 24, xp: 120, radio: 34, tam: 118, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
@@ -104,6 +112,10 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   reinaPompa: E({ id: 'reinaPompa', nombre: 'La Reina Pompa', desc: 'Una pompa de jabón enorme, con corona y séquito de pompitas.', vida: 620, vel: 66, dano: 34, xp: 160, radio: 40, tam: 132, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
   senorCuchillas: E({ id: 'senorCuchillas', nombre: 'El Señor Cuchillas', desc: 'Una máquina de tres hojas que no se afeita hace años.', vida: 880, vel: 74, dano: 44, xp: 210, radio: 44, tam: 140, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
   poteCrema: E({ id: 'poteCrema', nombre: 'El Pote de Crema', desc: 'El tarro gigante de la repisa, rebosado de crema. Lento pero imparable.', vida: 1050, vel: 44, dano: 50, xp: 240, radio: 52, tam: 158, retro: 0, jefe: true, congelable: false }),
+  reySapo: E({ id: 'reySapo', nombre: 'El Rey Sapo', desc: 'El sapo más cachetón del caño, con corona y capa. Brinca encima.', vida: 500, vel: 60, dano: 34, xp: 140, radio: 40, tam: 132, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
+  pulpoDesague: E({ id: 'pulpoDesague', nombre: 'El Pulpo del Desagüe', desc: 'Morado, con tentáculos llenos de pelo enredado.', vida: 700, vel: 54, dano: 40, xp: 170, radio: 46, tam: 146, retro: 0, jefe: true, congelable: false }),
+  bocaSifon: E({ id: 'bocaSifon', nombre: 'La Boca del Sifón', desc: 'El tubo en U del lavamanos con dientes. Se lo traga todo.', vida: 950, vel: 50, dano: 46, xp: 220, radio: 48, tam: 150, retro: 0, jefe: true, congelable: false }),
+  reinaGrasa: E({ id: 'reinaGrasa', nombre: 'La Reina Grasa', desc: 'La dueña de todo el desagüe: negra, brillante y con corona.', vida: 1150, vel: 56, dano: 52, xp: 260, radio: 52, tam: 158, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
   // ------------------------------------------------------------------------------------------------ La Parca
   duchaHelada: E({ id: 'duchaHelada', nombre: 'La Ducha Helada', desc: '¡Se acabó el agua caliente! Si llega, ya ganaste… pero no la aguanta nadie.', vida: 655350, vel: 230, dano: 65535, xp: 0, radio: 34, tam: 140, retro: 0, comp: 'parca', jefe: true, congelable: false }),
 };

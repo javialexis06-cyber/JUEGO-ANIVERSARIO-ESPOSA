@@ -480,6 +480,16 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   (8 de daño, que sube con los minutos; al principio caen cada 9-12 s y después más seguido). Como en el celular
   acostado se ve poco hacia arriba y hacia abajo, los mugrosos de ese pasillo llegan un poco más lejos y menos a la vez
   (densidad 0,4). Tres logros más (69 en total); el atlas de bichos queda en 2048 × 2528 con 61.
+- **Versión 2, fase 3c: El Desagüe** (el escenario final, como la capilla del original; se abre aguantando 15
+  minutos en La Jabonera). El fondo del caño (`FRAG_DESAGUE`): placas de metal oscuro remachadas, las rejillas
+  redondas del desagüe con sus ranuras cada 640, charcos de lama verdosa y el agua que corre hacia las rejillas, con
+  la culebrita, peinillas, ligas y patos perdidos como utilería y velas flotantes como luces. Siete bichos (bolita de
+  pelos, gusanito, sapito, grasa del sifón, burbuja de gas, rejillita suelta, lodo del caño) y cuatro jefes (el Rey
+  Sapo, el Pulpo del Desagüe, la Boca del Sifón y la Reina Grasa, que abre su Hiper). Lo especial: **los remolinos**
+  (`Motor.moverRemolinos`, efecto `remolino`): cada 8-13 s se abre uno cerca de alguien durante 6,5 s; jala girando a
+  los mugrosos comunes hasta el centro y se los traga (cuentan como eliminados), pero también se traga las gotitas que
+  nadie recoja: hay que pararse en el borde y recoger rápido. A los jefes y a los jugadores no los jala (así no hay
+  que sincronizar empujones en línea). Tres logros más (72 en total).
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

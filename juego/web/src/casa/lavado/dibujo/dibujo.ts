@@ -58,10 +58,11 @@ const CALIDAD = typeof location !== 'undefined' ? Number(new URLSearchParams(loc
 const UTILERIA: Partial<Record<string, string[]>> = {
   ducha: ['champu', 'jabon', 'esponjas', 'patoAmarillo', 'peinilla', 'remolino', 'toalla'],
   jabonera: ['jabon', 'crema', 'cremaNoche', 'perfume', 'colonia', 'liga', 'maquina', 'copito', 'champu'],
+  desague: ['culebrita', 'peinilla', 'patoMorado', 'esponjas', 'liga', 'hilo', 'granDesague'],
 };
 /** Los frascos que se caen de la repisa en La Jabonera. */
 const FRASCOS = ['champu', 'crema', 'perfume', 'colonia', 'cremaNoche'];
-const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita' } as const;
+const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita', desague: 'velaFlotante' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
 
 const rgb = (hex: string): [number, number, number] => {
@@ -511,6 +512,9 @@ export class Dibujo {
       case 'chorro':
         this.chorros.push({ x: e.x, y: e.y, r: e.c, t: -e.d, dura: e.e });
         break;
+      case 'remolino':
+        this.remolinos.push({ x: e.x, y: e.y, r: e.c, t: e.d, total: e.d });
+        break;
       case 'frasco':
         this.frascos.push({ x: e.x, y: e.y, r: e.c, t: e.d, total: e.d, cual: FRASCOS[Math.round(e.e) % FRASCOS.length] });
         break;
@@ -752,6 +756,7 @@ export class Dibujo {
     this.dibujarZonas(m);
     this.dibujarChorros(dtv);
     this.dibujarFrascos(dtv);
+    this.dibujarRemolinos(dtv);
     this.dibujarObjetos(m);
     this.dibujarBichos(m, dtv);
     this.dibujarProyectiles(m);
@@ -861,6 +866,33 @@ export class Dibujo {
         this.objetos.poner(x, y, 0, tam, tam, 0.5, 0.92, q.u0, q.v0, q.u1, q.v1, 1, 1, 1, 1, 0, 0, 1, (hash2(gx, gy, 46) - 0.5) * 0.4, 0);
         this.sombra(x, y, tam * 0.38, 0.3);
       }
+  }
+
+  /** Los remolinos de El Desagüe: espirales de agua turbia que giran, espumita en el borde y burbujas que se hunden. */
+  private remolinos: { x: number; y: number; r: number; t: number; total: number }[] = [];
+  private dibujarRemolinos(dt: number) {
+    const o = this.fx.c.onda, h = this.fx.c.humo, b = this.fx.c.brillo;
+    for (let k = this.remolinos.length - 1; k >= 0; k--) {
+      const w = this.remolinos[k];
+      w.t -= dt;
+      if (w.t <= 0) {
+        this.remolinos.splice(k, 1);
+        continue;
+      }
+      if (!this.enVista(w.x, w.y, w.r * 1.5)) continue;
+      const vida = Math.min(1, (w.total - w.t) / 1.2) * Math.min(1, w.t * 1.5);
+      this.pisoFx.poner(w.x, w.y, 0.07, w.r * 2.2, w.r * 1.6, 0.5, 0.5, h.u0, h.v0, h.u1, h.v1, 0.12, 0.2, 0.22, 0.75 * vida, 0, 0, 1, -this.t * 2.5);
+      for (let q = 0; q < 4; q++) {
+        const f = (this.t * 0.9 + q / 4) % 1;
+        const tam = w.r * 2.3 * (1 - f * 0.85);
+        this.pisoFx.poner(w.x, w.y, 0.08 + q * 0.004, tam, tam * 0.72, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 0.55, 0.78, 0.82, f * 0.9 * vida, 0, 0, 1, this.t * 3 + q * 1.6);
+      }
+      this.pisoFx.poner(w.x, w.y, 0.09, w.r * 0.5, w.r * 0.36, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 0.05, 0.08, 0.1, 0.8 * vida);
+      if (Math.random() < 0.4 * this.part.cupo) {
+        const a = Math.random() * Math.PI * 2;
+        this.part.crear('espuma', CAPA_NORMAL, w.x + Math.cos(a) * w.r * 0.95, w.y + Math.sin(a) * w.r * 0.68, 2, -Math.sin(a) * 90 - Math.cos(a) * 60, Math.cos(a) * 60 - Math.sin(a) * 40, 0, 0.9, 10, 4, 0.85, 0.95, 0.95, 0.85);
+      }
+    }
   }
 
   /** Los frascos de La Jabonera: la sombra roja que crece y el frasco que cae dando vueltas (la explosión la pone el motor). */

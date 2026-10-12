@@ -153,8 +153,9 @@ npm run dev                    # http://localhost:5173 (casa), /super.html, /pue
   `probar-cocina-linea`, `probar-sangre`, `estres-casa`, `estres-super`, `verificar-amigos`.
 - **Mira las capturas** (lee los PNG): la mayoría de errores de este proyecto son visuales.
 - Las pestañas en segundo plano van lentas: si una prueba de varias pestañas falla por tiempos, puede ser la prueba.
-  Ej.: `probar-lavado-salas` a veces falla solo en «Javier ve caminar a los tres» (a Laura no le llega la primera
-  tecla); se repite UNA vez y, si pasa, era la prueba.
+  Ej.: en `probar-lavado-salas` a la pestaña de Laura a veces no le llegaba la primera tecla («Javier ve caminar a
+  los tres»); ahora la prueba la vuelve a mandar mientras espera. Si algo así falla, se repite UNA vez y, si pasa,
+  era la prueba.
 - Servidor de pruebas sin recarga (en el scratchpad, se pierde entre sesiones): un `vite-pruebas.config.mjs` con
   `import base from '<repo>/juego/web/vite.config.ts'; export default { ...base, root: '<repo>/juego/web',
   server: { host: true, hmr: false } }` y `npx vite --config <ese archivo> --port 5176`. Amigos:

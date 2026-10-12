@@ -76,6 +76,8 @@ const AVISO_CHORRO = 1.3;
 const DURA_CHORRO = 2.6;
 /** Los frascos de La Jabonera: segundos desde que avisan hasta que revientan. */
 const AVISO_FRASCO = 1.6;
+/** Lo que dura un remolino de El Desagüe. */
+const DURA_REMOLINO = 6.5;
 /** Celda del mapa donde puede haber una velita. */
 const CELDA_LUZ = 380;
 
@@ -515,6 +517,9 @@ export class Motor {
   /** Los frascos de La Jabonera que se están cayendo (t: lo que les falta para tocar el piso). */
   readonly frascos: { x: number; y: number; r: number; t: number }[] = [];
   private tFrasco = 7;
+  /** Los remolinos de El Desagüe (t: lo que les queda). */
+  readonly remolinos: { x: number; y: number; r: number; t: number }[] = [];
+  private tRemolino = 10;
 
   readonly en: Enemigo[] = [];
   readonly vivos = new Int32Array(POOL_EN);
@@ -1222,6 +1227,7 @@ export class Motor {
     moverZonas(this, dt);
     if (this.esc.chorros && !this.tutorial) this.moverChorros(dt);
     if (this.esc.frascos && !this.tutorial) this.moverFrascos(dt);
+    if (this.esc.remolinos && !this.tutorial) this.moverRemolinos(dt);
     pendientesGolpe(this, dt);
     this.moverEnemigos(dt);
     this.recoger(dt);
@@ -1757,6 +1763,62 @@ export class Motor {
     }
   }
 
+  /** Los remolinos de El Desagüe: cada tanto se abre uno cerca de alguien y se traga a los mugrosos comunes que
+   *  jala hasta el centro (cuentan como eliminados y sueltan su gotita), pero también se traga las gotitas que nadie
+   *  recoja: hay que pararse en el borde y recoger rápido. A los jefes y a los jugadores no los jala. */
+  private moverRemolinos(dt: number) {
+    this.tRemolino -= dt;
+    if (this.tRemolino <= 0) {
+      this.tRemolino = 8 + this.az.n() * 5;
+      const j = this.objetivoAzar();
+      if (j) {
+        const a = this.az.n() * Math.PI * 2, d = this.az.entre(140, 260);
+        const r = this.az.entre(130, 170);
+        const x = j.x + Math.cos(a) * d, y = j.y + Math.sin(a) * d * 0.7;
+        this.remolinos.push({ x, y, r, t: DURA_REMOLINO });
+        this.emitir('remolino', x, y, r, DURA_REMOLINO);
+      }
+    }
+    for (let k = this.remolinos.length - 1; k >= 0; k--) {
+      const w = this.remolinos[k];
+      w.t -= dt;
+      if (w.t <= 0) {
+        this.remolinos.splice(k, 1);
+        continue;
+      }
+      // (los primeros segundos se va abriendo: jala menos)
+      const fuerza = Math.min(1, (DURA_REMOLINO - w.t) / 1.2);
+      const n = this.rej.circulo(w.x, w.y, w.r + 30);
+      for (let q = 0; q < n; q++) this.tmp[q] = this.rej.fuera[q];
+      for (let q = 0; q < n; q++) {
+        const e = this.en[this.tmp[q]];
+        if (!e.vivo || e.luz || e.jefe || e.def.comp === 'parca') continue;
+        const dx = w.x - e.x, dy = w.y - e.y, d = Math.hypot(dx, dy) || 1;
+        if (d > w.r) continue;
+        // Gira y se hunde hacia el centro
+        const v = (70 + 160 * (1 - d / w.r)) * fuerza * (e.elite ? 0.4 : 1);
+        e.x += ((dx / d) * 0.8 - (dy / d) * 0.6) * v * dt;
+        e.y += ((dy / d) * 0.8 + (dx / d) * 0.6) * v * dt;
+        e.lento = Math.max(e.lento, 0.3);
+        if (d < 22 && !e.elite) this.matar(e, this.cercano(e.x, e.y)?.i ?? 0, false);
+      }
+      for (let i = 0; i < this.gemas.length; i++) {
+        const g = this.gemas[i];
+        if (!g.vivo || g.jalada >= 0) continue;
+        const dx = w.x - g.x, dy = w.y - g.y, d = Math.hypot(dx, dy) || 1;
+        if (d > w.r) continue;
+        const v = (40 + 120 * (1 - d / w.r)) * fuerza;
+        g.x += ((dx / d) * 0.8 - (dy / d) * 0.6) * v * dt;
+        g.y += ((dy / d) * 0.8 + (dx / d) * 0.6) * v * dt;
+        if (d < 16 && g.t > 1.2) {
+          g.vivo = false;
+          if (i < this.gemas.length - 1) this.nGemas--;
+          else this.gemaGrande = -1;
+        }
+      }
+    }
+  }
+
   private objetivoAzar(): Jugador | null {
     const vivos = this.jug.filter((j) => j.activo);
     return vivos.length ? this.az.uno(vivos) : null;
@@ -1975,7 +2037,7 @@ export class Motor {
     if (this.tLuces > 0) return;
     this.tLuces = 0.5;
     const lim = this.esc.limites;
-    const sem = this.esc.id === 'cara' ? 11 : this.esc.id === 'lavamanos' ? 23 : this.esc.id === 'ducha' ? 41 : this.esc.id === 'jabonera' ? 53 : 37;
+    const sem = this.esc.id === 'cara' ? 11 : this.esc.id === 'lavamanos' ? 23 : this.esc.id === 'ducha' ? 41 : this.esc.id === 'jabonera' ? 53 : this.esc.id === 'desague' ? 61 : 37;
     for (const j of this.jug) {
       if (j.fuera) continue;
       const cx0 = Math.floor(j.x / CELDA_LUZ), cy0 = Math.floor(j.y / CELDA_LUZ);

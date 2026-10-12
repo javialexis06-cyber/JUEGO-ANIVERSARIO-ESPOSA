@@ -219,6 +219,43 @@ const FRAG_JABONERA = COMUN + /* glsl */ `
   }
 `;
 
+const FRAG_DESAGUE = COMUN + /* glsl */ `
+  void main() {
+    vec2 p = vMapa;
+    float d1 = texture2D(uDetalle, p / 280.0 + vec2(uTiempo * 0.003, 0.0)).r;
+    vec4 n = texture2D(uRuido, p / 1600.0);
+    // El fondo del caño: metal oscuro y verdoso, con agua turbia encima
+    vec3 col = mix(uC1, uC2, smoothstep(0.25, 0.8, n.r));
+    col *= 1.0 + (d1 - 0.5) * 0.4;
+    // Las placas del caño (remachadas) cada tanto
+    vec2 q = p / 160.0;
+    vec2 f = fract(q);
+    float borde = 1.0 - smoothstep(0.0, 0.03, min(min(f.x, 1.0 - f.x), min(f.y, 1.0 - f.y)));
+    col *= 1.0 - borde * 0.35;
+    float remache = 1.0 - smoothstep(0.03, 0.045, length(f - vec2(0.08, 0.08)));
+    col += remache * 0.12;
+    // Las rejillas grandes del desagüe: un círculo con ranuras, cada 640
+    vec2 g = p / 640.0;
+    vec2 c = (fract(g) - 0.5) * 640.0;
+    float rr = length(c);
+    float aro = 1.0 - smoothstep(4.0, 9.0, abs(rr - 118.0));
+    float dentro = 1.0 - smoothstep(110.0, 114.0, rr);
+    float ranura = smoothstep(0.55, 0.75, sin(atan(c.y, c.x) * 12.0)) * smoothstep(30.0, 40.0, rr) * dentro;
+    col = mix(col, uC3, aro * 0.9);
+    col = mix(col, vec3(0.02, 0.03, 0.03), ranura * 0.85);
+    col = mix(col, uC3 * 0.8, (1.0 - smoothstep(20.0, 26.0, rr)) * 0.9);
+    // Charcos de lama que brillan verdecito y el agua que corre hacia las rejillas
+    vec4 n2 = texture2D(uRuido, p / 520.0 + vec2(uTiempo * 0.004, uTiempo * 0.006));
+    float lama = smoothstep(0.62, 0.8, n2.g);
+    col = mix(col, vec3(0.32, 0.42, 0.18), lama * 0.28);
+    col += lama * smoothstep(0.75, 0.95, n2.b) * vec3(0.08, 0.14, 0.04);
+    float hilo = smoothstep(0.86, 1.0, sin(rr * 0.12 - uTiempo * 2.0) * 0.5 + 0.5) * (1.0 - smoothstep(118.0, 220.0, rr)) * (1.0 - dentro);
+    col += hilo * 0.05;
+    gl_FragColor = vec4(col, 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
 interface Paleta {
   c1: string;
   c2: string;
@@ -247,6 +284,7 @@ const DECOR: Record<IdEscenario, [IdDecor, number, number][]> = {
   banera: [['burbujitas', 4, 80], ['espumaIsla', 2.2, 150], ['petalos', 1.5, 70], ['hojita', 0.6, 40]],
   ducha: [['gotaAgua', 5, 70], ['burbujitas', 3, 80], ['manchaJabon', 2, 120], ['pelito', 0.8, 80], ['espumaIsla', 0.8, 130], ['desague', 0.18, 130]],
   jabonera: [['manchaJabon', 4, 110], ['burbujitas', 4, 70], ['gotaAgua', 3, 60], ['espumaIsla', 1.2, 110], ['pelito', 0.8, 70], ['pasta', 0.8, 60]],
+  desague: [['pelito', 4, 90], ['burbujitas', 3, 70], ['hojita', 1.2, 50], ['gotaAgua', 2, 60], ['espumaIsla', 0.8, 120]],
 };
 
 export class Suelo {
@@ -270,12 +308,13 @@ export class Suelo {
       : esc === 'lavamanos' ? { c1: '#e6ecf2', c2: '#c9d6e2', c3: '#9fcde3' }
       : esc === 'ducha' ? { c1: '#e3f1f4', c2: '#c6e4ec', c3: '#8fa9b5' }
       : esc === 'jabonera' ? { c1: '#f7f0e4', c2: '#efe4d2', c3: '#b9a88e' }
+      : esc === 'desague' ? { c1: '#3c4a4a', c2: '#4e5e5a', c3: '#a8b2b6' }
       : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
     // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
     const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({
       vertexShader: VERT,
-      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : FRAG_BANERA,
+      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : esc === 'desague' ? FRAG_DESAGUE : FRAG_BANERA,
       uniforms: {
         uDetalle: { value: detalle },
         uRuido: { value: ruido },
@@ -311,7 +350,7 @@ export class Suelo {
     const C = 150;
     const x0 = Math.floor((cx - ancho * 0.62) / C), x1 = Math.floor((cx + ancho * 0.62) / C);
     const y0 = Math.floor((cy - hondo * 0.7) / C), y1 = Math.floor((cy + hondo * 0.62) / C);
-    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : 7;
+    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : this.esc === 'desague' ? 17 : 7;
     for (let gy = y0; gy <= y1; gy++)
       for (let gx = x0; gx <= x1; gx++) {
         if (hash2(gx, gy, sem) > 0.62) continue;
