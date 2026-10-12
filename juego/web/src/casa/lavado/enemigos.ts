@@ -76,6 +76,14 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   ciempies: E({ id: 'ciempies', nombre: 'Ciempiés', desc: 'Sale de la rejilla con sus cien patas. Rapidísimo.', vida: 250, vel: 74, dano: 16, xp: 3, radio: 14, tam: 50 }),
   estropajo: E({ id: 'estropajo', nombre: 'Estropajo mugroso', desc: 'Verde de un lado, amarillo del otro. Se lanza a raspar.', vida: 640, vel: 92, dano: 23, xp: 4, radio: 18, tam: 54, comp: 'embestir', retro: 0.3 }),
   cal: E({ id: 'cal', nombre: 'Costra de cal', desc: 'La piedrita blanca que tapa los huequitos de la regadera. Durísima.', vida: 1900, vel: 32, dano: 30, xp: 6, radio: 23, tam: 64, retro: 0.1 }),
+  // ------------------------------------------------------------------------------------------------ La Jabonera
+  pompa: E({ id: 'pompa', nombre: 'Pompita de jabón', desc: 'Tornasolada y picarona. Flota en bandada y se ríe sola.', vida: 8, vel: 80, dano: 5, xp: 1, radio: 10, tam: 32, comp: 'flotar' }),
+  cuchilla: E({ id: 'cuchilla', nombre: 'Cuchillita de afeitar', desc: 'La que quedó en la repisa. Zumba y corta el aire.', vida: 12, vel: 80, dano: 6, xp: 1, radio: 10, tam: 34, comp: 'revolotear' }),
+  algodon: E({ id: 'algodon', nombre: 'Motica de algodón', desc: 'Blanquita y brincona. Se escapó del frasco de los copitos.', vida: 26, vel: 80, dano: 8, xp: 1, radio: 12, tam: 38, comp: 'saltar' }),
+  champuDerramado: E({ id: 'champuDerramado', nombre: 'Champú derramado', desc: 'Rosado y baboso. Se arrastra dejando el piso resbaloso.', vida: 110, vel: 40, dano: 13, xp: 2, radio: 16, tam: 48, retro: 0.5 }),
+  hilacha: E({ id: 'hilacha', nombre: 'Hilacha de estropajo', desc: 'Un nudito de fibras que flota de lado a lado.', vida: 200, vel: 50, dano: 16, xp: 2, radio: 14, tam: 46, comp: 'flotar' }),
+  frascoVacio: E({ id: 'frascoVacio', nombre: 'Frasco vacío', desc: 'Un tarrito de crema sin crema. Embiste de la rabia.', vida: 320, vel: 92, dano: 20, xp: 3, radio: 14, tam: 48, comp: 'embestir' }),
+  mohoRosado: E({ id: 'mohoRosado', nombre: 'Moho rosado', desc: 'La mancha rosada de las esquinas de la ducha. Blandita y tercísima.', vida: 1600, vel: 34, dano: 30, xp: 5, radio: 22, tam: 62, retro: 0.15 }),
   // ------------------------------------------------------------------------------------------------ Jefes (vida × nivel)
   espinillon: E({ id: 'espinillon', nombre: 'El Espinillón', desc: 'El rey de los granitos, con corona y todo. Embiste cuando se enoja.', vida: 420, vel: 56, dano: 30, xp: 120, radio: 40, tam: 130, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
   reinaCaspa: E({ id: 'reinaCaspa', nombre: 'La Reina Caspa', desc: 'Llega nevando. Guarda una carta mágica perdida.', vida: 300, vel: 72, dano: 24, xp: 120, radio: 34, tam: 118, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
@@ -92,6 +100,10 @@ export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
   regaderaLoca: E({ id: 'regaderaLoca', nombre: 'La Regadera Loca', desc: 'Llena de cal y de rabia. Escupe chorros para todos lados.', vida: 650, vel: 66, dano: 36, xp: 160, radio: 40, tam: 134, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
   cortinaMohosa: E({ id: 'cortinaMohosa', nombre: 'La Cortina Mohosa', desc: 'Nadie la lavó nunca. Ahora camina sola, con argollas y todo.', vida: 920, vel: 46, dano: 44, xp: 210, radio: 48, tam: 152, retro: 0, jefe: true, congelable: false }),
   ciempiesGigante: E({ id: 'ciempiesGigante', nombre: 'El Ciempiés Gigante', desc: 'El papá de todos los ciempiés del sifón. Embiste con sus pinzas.', vida: 1000, vel: 62, dano: 48, xp: 230, radio: 50, tam: 156, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
+  donFrasco: E({ id: 'donFrasco', nombre: 'Don Frasco', desc: 'El tarro de champú con dosificador y bigote. Embiste a chorros.', vida: 480, vel: 58, dano: 32, xp: 130, radio: 40, tam: 132, retro: 0, comp: 'embestir', jefe: true, congelable: false }),
+  reinaPompa: E({ id: 'reinaPompa', nombre: 'La Reina Pompa', desc: 'Una pompa de jabón enorme, con corona y séquito de pompitas.', vida: 620, vel: 66, dano: 34, xp: 160, radio: 40, tam: 132, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
+  senorCuchillas: E({ id: 'senorCuchillas', nombre: 'El Señor Cuchillas', desc: 'Una máquina de tres hojas que no se afeita hace años.', vida: 880, vel: 74, dano: 44, xp: 210, radio: 44, tam: 140, retro: 0, comp: 'revolotear', jefe: true, congelable: false }),
+  poteCrema: E({ id: 'poteCrema', nombre: 'El Pote de Crema', desc: 'El tarro gigante de la repisa, rebosado de crema. Lento pero imparable.', vida: 1050, vel: 44, dano: 50, xp: 240, radio: 52, tam: 158, retro: 0, jefe: true, congelable: false }),
   // ------------------------------------------------------------------------------------------------ La Parca
   duchaHelada: E({ id: 'duchaHelada', nombre: 'La Ducha Helada', desc: '¡Se acabó el agua caliente! Si llega, ya ganaste… pero no la aguanta nadie.', vida: 655350, vel: 230, dano: 65535, xp: 0, radio: 34, tam: 140, retro: 0, comp: 'parca', jefe: true, congelable: false }),
 };

@@ -110,6 +110,15 @@ export function botMover(m: Motor, j: Jugador) {
       if (c > -0.2) peligro[q] += w * (c + 0.2) * (c + 0.2);
     }
   }
+  // Los frascos que van a caer en La Jabonera: quitarse de debajo
+  for (const f of m.frascos) {
+    const dx = f.x - j.x, dy = f.y - j.y, d = Math.hypot(dx, dy) || 1;
+    if (d > f.r + 70) continue;
+    for (let q = 0; q < DIRS; q++) {
+      const c = cosD[q] * (dx / d) + sinD[q] * (dy / d);
+      if (c > -0.3) peligro[q] += 8 * (c + 0.3);
+    }
+  }
   // Premios: gotitas (si no está apretado), cofres siempre, arepas si le falta vida, y la velita más cercana
   const premio = (x: number, y: number, w: number) => {
     const dx = x - j.x, dy = y - j.y;
@@ -159,6 +168,13 @@ export function botMover(m: Motor, j: Jugador) {
     for (let q = 0; q < DIRS; q++) {
       if (sinD[q] < 0 && j.y - lim.yMin < 90) peligro[q] += 3 * -sinD[q];
       if (sinD[q] > 0 && lim.yMax - j.y < 90) peligro[q] += 3 * sinD[q];
+    }
+  }
+  const limX = m.esc.limitesX;
+  if (limX) {
+    for (let q = 0; q < DIRS; q++) {
+      if (cosD[q] < 0 && j.x - limX.xMin < 90) peligro[q] += 3 * -cosD[q];
+      if (cosD[q] > 0 && limX.xMax - j.x < 90) peligro[q] += 3 * cosD[q];
     }
   }
   // Un poquito de inercia (que no tiemble)

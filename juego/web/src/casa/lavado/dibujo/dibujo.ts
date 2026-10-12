@@ -54,9 +54,14 @@ const LETRAS = ['letraA', 'letraB', 'letraC'];
 const SIN_3D = typeof location !== 'undefined' && new URLSearchParams(location.search).has('sin3d');
 /** Pruebas con varios celulares en la misma máquina: empezar en la calidad más baja (`?calidad=0`). */
 const CALIDAD = typeof location !== 'undefined' ? Number(new URLSearchParams(location.search).get('calidad') ?? 3) : 3;
-/** Lo que hay tirado en el piso de La Ducha (los mismos modelos de las armas, como utilería). */
-const UTILERIA_DUCHA = ['champu', 'jabon', 'esponjas', 'patoAmarillo', 'peinilla', 'remolino', 'toalla'];
-const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera' } as const;
+/** Lo que hay tirado en el piso de La Ducha y en la repisa de La Jabonera (los mismos modelos de las armas, como utilería). */
+const UTILERIA: Partial<Record<string, string[]>> = {
+  ducha: ['champu', 'jabon', 'esponjas', 'patoAmarillo', 'peinilla', 'remolino', 'toalla'],
+  jabonera: ['jabon', 'crema', 'cremaNoche', 'perfume', 'colonia', 'liga', 'maquina', 'copito', 'champu'],
+};
+/** Los frascos que se caen de la repisa en La Jabonera. */
+const FRASCOS = ['champu', 'crema', 'perfume', 'colonia', 'cremaNoche'];
+const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
 
 const rgb = (hex: string): [number, number, number] => {
@@ -186,7 +191,7 @@ export class Dibujo {
     this.fx = atlasFx();
     this.num = atlasNumeros();
     this.texturas.push(this.fx.textura, this.num.textura);
-    this.suelo = new Suelo(m.esc.id, rolPiel, m.esc.limites, piel);
+    this.suelo = new Suelo(m.esc.id, rolPiel, m.esc.limites, piel, m.esc.limitesX);
     this.coloresRgb = (this.o.colores ?? []).map(rgb);
     this.escena.add(this.suelo.plano, this.suelo.decor.malla);
     this.sombras = new LoteSprites({ max: 700, mapa: this.fx.textura, piso: true, orden: 2 });
@@ -506,6 +511,9 @@ export class Dibujo {
       case 'chorro':
         this.chorros.push({ x: e.x, y: e.y, r: e.c, t: -e.d, dura: e.e });
         break;
+      case 'frasco':
+        this.frascos.push({ x: e.x, y: e.y, r: e.c, t: e.d, total: e.d, cual: FRASCOS[Math.round(e.e) % FRASCOS.length] });
+        break;
       case 'columna': {
         for (let q = 0; q < 4; q++) P.crear('gota', CAPA_NORMAL, e.x + (az() - 0.5) * e.c, e.y + (az() - 0.5) * e.d * 0.8, 6, (az() - 0.5) * 80, 0, 80 + az() * 80, 0.45, 5, 3, 0.65, 0.88, 1, 0.45, 400);
         break;
@@ -743,6 +751,7 @@ export class Dibujo {
     this.dibujarManchas(dtv);
     this.dibujarZonas(m);
     this.dibujarChorros(dtv);
+    this.dibujarFrascos(dtv);
     this.dibujarObjetos(m);
     this.dibujarBichos(m, dtv);
     this.dibujarProyectiles(m);
@@ -835,22 +844,46 @@ export class Dibujo {
     }
   }
 
-  private utileriaDucha() {
-    const C = 430;
+  private utileria(lista: string[], limX: { xMin: number; xMax: number } | undefined, C: number, densidad: number) {
     const x0 = Math.floor((this.cx - this.vistaW * 0.6) / C), x1 = Math.floor((this.cx + this.vistaW * 0.6) / C);
     const y0 = Math.floor((this.cy - this.vistaH * 0.7) / C), y1 = Math.floor((this.cy + this.vistaH * 0.65) / C);
     for (let gy = y0; gy <= y1; gy++)
       for (let gx = x0; gx <= x1; gx++) {
-        if ((gx === 0 || gx === -1) && (gy === 0 || gy === -1)) continue;
-        if (hash2(gx, gy, 41) > 0.42) continue;
-        const nombre = UTILERIA_DUCHA[Math.floor(hash2(gx, gy, 42) * UTILERIA_DUCHA.length)];
+        if (hash2(gx, gy, 41) > densidad) continue;
+        const nombre = lista[Math.floor(hash2(gx, gy, 42) * lista.length)];
         const q = this.cuadrosObj.get(nombre);
         if (!q) continue;
         const x = (gx + 0.15 + hash2(gx, gy, 43) * 0.7) * C, y = (gy + 0.15 + hash2(gx, gy, 44) * 0.7) * C;
+        if (limX && (x < limX.xMin + 40 || x > limX.xMax - 40)) continue;
+        // (nada encima del sitio donde se empieza)
+        if (Math.hypot(x, y) < 170) continue;
         const tam = 44 + hash2(gx, gy, 45) * 16;
         this.objetos.poner(x, y, 0, tam, tam, 0.5, 0.92, q.u0, q.v0, q.u1, q.v1, 1, 1, 1, 1, 0, 0, 1, (hash2(gx, gy, 46) - 0.5) * 0.4, 0);
         this.sombra(x, y, tam * 0.38, 0.3);
       }
+  }
+
+  /** Los frascos de La Jabonera: la sombra roja que crece y el frasco que cae dando vueltas (la explosión la pone el motor). */
+  private frascos: { x: number; y: number; r: number; t: number; total: number; cual: string }[] = [];
+  private dibujarFrascos(dt: number) {
+    const s = this.fx.c.sombra, o = this.fx.c.onda;
+    for (let k = this.frascos.length - 1; k >= 0; k--) {
+      const f = this.frascos[k];
+      f.t -= dt;
+      if (f.t <= 0) {
+        this.frascos.splice(k, 1);
+        continue;
+      }
+      if (!this.enVista(f.x, f.y, f.r * 2 + 200)) continue;
+      const avance = 1 - f.t / f.total;
+      this.pisoFx.poner(f.x, f.y, 0.085, f.r * 2.2 * (0.5 + avance * 0.5), f.r * 1.6 * (0.5 + avance * 0.5), 0.5, 0.5, s.u0, s.v0, s.u1, s.v1, 0.45, 0.12, 0.12, 0.2 + 0.4 * avance);
+      const pul = (this.t * 3) % 1;
+      this.pisoFx.poner(f.x, f.y, 0.09, f.r * 2.3 * (1.15 - pul * 0.3), f.r * 1.7 * (1.15 - pul * 0.3), 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 1, 0.45, 0.4, 0.55 * pul);
+      // El frasco cae en el último medio segundo, dando vueltas
+      const cae = Math.min(1, Math.max(0, 1 - f.t / 0.55));
+      const q = this.cuadrosObj.get(f.cual);
+      if (q && cae > 0) this.objetos.poner(f.x, f.y, 520 * (1 - cae * cae), 58, 58, 0.5, 0.5, q.u0, q.v0, q.u1, q.v1, 1, 1, 1, 1, 0, 0, 1, cae * 6, 0);
+    }
   }
 
   /** Los chorros de La Ducha: la sombra que avisa y, al caer, la columna de agua con su salpicada. */
@@ -973,7 +1006,8 @@ export class Dibujo {
     const t = this.t;
     const O = this.objetos;
     // Lo que hay tirado en el piso de la ducha (siempre en el mismo sitio): el champú, el jabón, la esponja, el patico
-    if (m.esc.id === 'ducha') this.utileriaDucha();
+    const utileria = UTILERIA[m.esc.id];
+    if (utileria) this.utileria(utileria, m.esc.limitesX, m.esc.limitesX ? 210 : 430, m.esc.limitesX ? 0.6 : 0.42);
     // Don Jabón con su carrito (el vendedor ambulante): se mece, saluda y le salen burbujitas
     const p = m.puesto;
     if (p && this.enVista(p[0], p[1], 120)) {

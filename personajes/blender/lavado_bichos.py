@@ -1021,12 +1021,13 @@ def j_ciempies_gigante(b):
 # ----------------------------------------------------------------------------------------------------- La Jabonera
 def b_pompa(b):
     """Pompita de jabón traviesa: transparente, tornasolada y con cara de picarona."""
-    m = clay.material('Pompa', '#E8F4FF', rough=0.04, transmission=0.85, coat=1.0, coat_rough=0.02, ior=1.2,
+    m = clay.material('Pompa', '#F3E6FF', rough=0.05, transmission=0.45, coat=1.0, coat_rough=0.02, ior=1.2, sss=0.2,
                       noise=dict(scale=12, strength=0.05, detail=2, distance=0.003))
     b.blob((0, 0, 0.48), (0.4, 0.38, 0.4), m, cuerpo=True, n=12)
-    for (x, z, c) in [(-0.2, 0.62, '#F7A8D8'), (0.18, 0.3, '#A8E0F7'), (0.25, 0.66, '#F7E2A8')]:
+    for (x, z, c, k) in [(-0.22, 0.62, '#F7A8D8', 1.2), (0.2, 0.28, '#A8E0F7', 1.1), (0.26, 0.66, '#F7E2A8', 0.9), (-0.28, 0.3, '#B8F2C8', 0.8),
+                         (0.0, 0.78, '#C8B8F7', 0.9)]:
         p, nrm = b.frente(x, z)
-        orientado(b, (0.1, 0.01, 0.06), plano(c, 0.2, emision=0.4), p, nrm, 'base', lift=0.005)
+        orientado(b, (0.11 * k, 0.01, 0.07 * k), plano(c, 0.2, emision=0.6), p, nrm, 'base', lift=0.005)
     b.blob((-0.16, -0.3, 0.68), (0.07, 0.02, 0.05), BRILLO, n=6)
     for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
         b.blob((0.36 * s_, -0.05, 0.12), (0.06, 0.06, 0.06), m, grupo, n=6)
@@ -1149,7 +1150,7 @@ def j_reina_pompa(b):
     b_pompa(b)
     corona(b, (0, 0.0, 0.86), 0.17, 0.16, color='#F2C14E', joyas=('#F7A8D8', '#A8E0F7'))
     for (x, z, r) in [(-0.55, 0.8, 0.12), (0.58, 0.7, 0.1), (0.5, 1.05, 0.07), (-0.45, 1.1, 0.08)]:
-        b.blob((x, 0.0, z), (r, r, r), clay.material('Pompa reina', '#E8F4FF', rough=0.04, transmission=0.85, coat=1.0), n=8)
+        b.blob((x, 0.0, z), (r, r, r), clay.material('Pompa reina', '#F3E6FF', rough=0.05, transmission=0.45, coat=1.0, sss=0.2), n=8)
 
 
 def j_senor_cuchillas(b):
@@ -1179,6 +1180,155 @@ def j_pote_crema(b):
             b.tubo([(lado * 0.45, 0.0, 0.08), (lado * 0.6, -0.05, 0.05 + 0.06 * s_ * lado), (lado * 0.65, -0.06, 0.0)], 0.06, m, grupo, segmentos=6)
 
 
+# ----------------------------------------------------------------------------------------------------- El Desagüe
+def b_bolita_pelo(b):
+    """Bolita de pelos del sifón: chiquita, negra y enredada; llegan de a montones."""
+    m = fieltro('#2E2624', '#5E4E4A', fuzz=0.9, escala=160)
+    b.blob((0, 0, 0.4), (0.3, 0.28, 0.3), m, cuerpo=True, n=10)
+    for k in range(14):
+        a = k / 14 * TAU
+        for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+            p0 = (math.cos(a) * 0.26, 0.0, 0.4 + math.sin(a) * 0.26)
+            p1 = (math.cos(a + 0.4 * s_) * 0.44, -0.02, 0.4 + math.sin(a + 0.4 * s_) * 0.42)
+            b.tubo([p0, p1], 0.012, m, grupo, segmentos=4)
+    ojos(b, 0, 0.44, 0.09, sep=0.11, bravo=True, mirar=(0, -0.1), color_ceja='#8A7A76')
+    boca(b, 0, 0.3, 0.07, 'brava')
+
+
+def b_grasa_sifon(b):
+    """Grasa del sifón: negra, brillante y pegajosa."""
+    m = brillante('#2B2A22', rough=0.12, coat=1.0, sss=0.1)
+    b.blob((0, 0, 0.38), (0.42, 0.38, 0.4), m, cuerpo=True, n=12, shaper=lambda v: v * (1 + 0.07 * np.sin(v[:, 0:1] * 10) * np.sin(v[:, 2:3] * 8)))
+    b.blob((-0.15, -0.3, 0.56), (0.07, 0.02, 0.1), BRILLO, n=6)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        b.blob((0.32 * s_, -0.05, 0.06), (0.08, 0.08, 0.06), m, grupo, n=6)
+    ojos(b, 0, 0.44, 0.1, sep=0.14, bravo=True, mirar=(0, -0.12))
+    boca(b, 0, 0.26, 0.1, 'dientes')
+
+
+def b_gusanito(b):
+    """Gusanito rojo del desagüe: se estira y se encoge para avanzar."""
+    m = fieltro('#D9473E', '#FF8A80', fuzz=0.35, sss=0.25)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        pts = [(-0.5, 0.1, 0.12), (-0.25, 0.0, 0.2 + 0.08 * s_), (0.0, 0.0, 0.14), (0.22, -0.05, 0.22 - 0.06 * s_), (0.36, -0.1, 0.3)]
+        b.tubo(pts, [0.09, 0.11, 0.12, 0.12, 0.13], m, grupo, segmentos=12)
+    b.blob((0.36, -0.12, 0.36), (0.16, 0.14, 0.15), m, cuerpo=True, n=10)
+    ojos(b, 0.36, 0.42, 0.06, sep=0.07, mirar=(0, -0.1))
+    boca(b, 0.36, 0.3, 0.05, 'sonrisa')
+
+
+def b_burbuja_gas(b):
+    """Burbuja de gas del caño: verdosa, hinchada y con mal olor."""
+    m = clay.material('Burbuja gas', '#B8D88A', rough=0.08, transmission=0.4, coat=1.0, coat_rough=0.03, sss=0.3)
+    b.blob((0, 0, 0.5), (0.4, 0.38, 0.4), m, cuerpo=True, n=12)
+    vaho = fieltro('#9FBF6A', '#D2E8A8', fuzz=0.6)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', 1.2)):
+        for (x, z, r) in [(-0.36, 0.9, 0.08), (0.3, 0.98, 0.07), (0.0, 1.06, 0.06)]:
+            b.blob((x * s_, 0.0, z), (r, r, r), vaho, grupo, n=6)
+    ojos(b, 0, 0.52, 0.1, sep=0.14, mirar=(0, -0.1), estilo='dormilon')
+    boca(b, 0, 0.34, 0.1, 'o')
+
+
+def b_sapito(b):
+    """Sapito del caño: verde, cachetón y brincón."""
+    m = fieltro('#5FA85A', '#9FD89A', fuzz=0.4, sss=0.15)
+    panza = fieltro('#E8E2A8', '#FFF8C8', fuzz=0.3)
+    b.blob((0, 0, 0.32), (0.42, 0.38, 0.3), m, cuerpo=True, n=12)
+    b.blob((0, -0.18, 0.28), (0.28, 0.2, 0.2), panza, n=10)
+    for s_ in (-1, 1):
+        b.blob((s_ * 0.2, -0.05, 0.6), (0.14, 0.13, 0.13), m, n=10)
+    for grupo, f_ in (('pasoA', 1), ('pasoB', -1)):
+        for s_ in (-1, 1):
+            b.tubo([(s_ * 0.35, 0.1, 0.18), (s_ * 0.52, 0.18, 0.12 + 0.12 * (f_ > 0)), (s_ * 0.56, 0.0, 0.0)], 0.06, m, grupo, segmentos=8)
+    ojos(b, 0, 0.6, 0.1, sep=0.2, mirar=(0, -0.12))
+    boca(b, 0, 0.34, 0.16, 'sonrisa')
+    cachetes(b, 0, 0.4, 0.3, 0.06)
+
+
+def b_rejillita(b):
+    """La rejillita del desagüe que se soltó: redonda, de metal, con sus huecos, y camina."""
+    metal = clay.material('Rejilla', '#B8C0CA', rough=0.25, metallic=0.85, coat=0.3)
+    b.torno([(0.0, 0.0), (0.44, 0.0), (0.46, 0.05), (0.44, 0.1), (0.0, 0.1)], metal)
+    o = b.g['base'][-1]
+    o.rotation_euler = (math.pi / 2 - 0.25, 0, 0)
+    o.location = (0, 0.0, 0.46)
+    b.cuerpo.append(o)
+    b._surf = None
+    for k in range(5):
+        x = -0.24 + k * 0.12
+        b.tubo([(x, -0.08, 0.24), (x, -0.08, 0.68)], 0.025, plano('#2A2A30'), 'base', segmentos=4)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            b.tubo([(lado * 0.3, 0.05, 0.1), (lado * 0.38, 0.0, 0.05 + 0.05 * s_ * lado), (lado * 0.4, -0.02, 0.0)], 0.04, metal, grupo, segmentos=6)
+    ojos(b, 0, 0.56, 0.09, sep=0.15, bravo=True, mirar=(0, -0.12))
+    boca(b, 0, 0.36, 0.1, 'brava')
+
+
+def b_lodo(b):
+    """El lodo del caño: una montaña café y pesadísima con cositas atrapadas."""
+    m = fieltro('#5A4632', '#8A7058', fuzz=0.5, rough=0.9)
+    b.blob((0, 0, 0.4), (0.6, 0.5, 0.42), m, cuerpo=True, n=14, shaper=lambda v: v * (1 + 0.08 * np.sin(v[:, 0:1] * 9) * np.sin(v[:, 2:3] * 7)))
+    for (x, z, c) in [(-0.35, 0.62, '#F2C14E'), (0.38, 0.55, '#E86A8A'), (0.1, 0.8, '#7DB7E8')]:
+        p, nrm = b.frente(x, z)
+        orientado(b, (0.06, 0.03, 0.05), brillante(c, 0.3), p, nrm, 'base', lift=0.01)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for (x, y) in [(-0.55, 0.1), (0.55, -0.05)]:
+            b.blob((x + 0.06 * s_, y, 0.06), (0.14, 0.12, 0.06), m, grupo, n=6)
+    ojos(b, 0, 0.5, 0.13, sep=0.2, bravo=True, mirar=(0, -0.15), grosor_ceja=0.035)
+    boca(b, 0, 0.26, 0.17, 'grande')
+
+
+def j_rey_sapo(b):
+    b_sapito(b)
+    corona(b, (0, 0.0, 0.78), 0.18, 0.16)
+    capa = fieltro('#7A3BA8', '#B98AD8', fuzz=0.5)
+    b.blob((0, 0.3, 0.32), (0.4, 0.08, 0.28), capa, n=10)
+
+
+def j_pulpo_desague(b):
+    """El Pulpo del Desagüe: morado, con tentáculos de pelo enredado."""
+    m = fieltro('#8A5AB8', '#C49AE8', fuzz=0.45, sss=0.15)
+    b.blob((0, 0, 0.62), (0.42, 0.38, 0.44), m, cuerpo=True, n=12)
+    pelo = fieltro('#2E2624', '#5E4E4A', fuzz=0.8)
+    for k in range(8):
+        a = (k / 8) * math.pi + 0.2
+        for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+            p0 = (math.cos(a) * 0.32, 0.0, 0.3)
+            p1 = (math.cos(a) * 0.6, -0.05, 0.16 + 0.08 * s_)
+            p2 = (math.cos(a) * 0.82 + 0.08 * s_, -0.1, 0.02)
+            b.tubo([p0, p1, p2], [0.07, 0.05, 0.02], m, grupo, segmentos=8)
+            b.tubo([p1, (p1[0] + 0.08, p1[1], p1[2] - 0.1)], 0.012, pelo, grupo, segmentos=4)
+    ojos(b, 0, 0.66, 0.13, sep=0.18, bravo=True, mirar=(0, -0.15))
+    boca(b, 0, 0.42, 0.13, 'o')
+    corona(b, (0, 0.0, 1.0), 0.17, 0.15)
+
+
+def j_boca_sifon(b):
+    """La Boca del Sifón: el tubo en U del lavamanos convertido en una bocota con dientes."""
+    metal = clay.material('Sifon', '#C9CED8', rough=0.25, metallic=0.85, coat=0.4)
+    pts = [(-0.4, 0.0, 1.0), (-0.4, 0.0, 0.4), (-0.3, 0.0, 0.18), (0.0, 0.0, 0.1), (0.3, 0.0, 0.18), (0.4, 0.0, 0.4), (0.4, 0.0, 0.7)]
+    b.tubo(pts, 0.17, metal, 'base', segmentos=16)
+    b.cuerpo.append(b.g['base'][-1])
+    b._surf = None
+    b.torno([(0.0, 0.0), (0.22, 0.0), (0.22, 0.06), (0.0, 0.06)], metal)
+    b.g['base'][-1].location = (0.4, 0, 0.7)
+    oscuro = plano('#1A1418', 0.6)
+    b.blob((0.4, 0.0, 0.77), (0.15, 0.15, 0.02), oscuro, n=8)
+    for k in range(6):
+        a = k / 6 * TAU
+        b.blob((0.4 + math.cos(a) * 0.15, math.sin(a) * 0.15, 0.8), (0.035, 0.035, 0.05), DIENTE, n=6)
+    ojos(b, -0.05, 0.42, 0.12, sep=0.2, bravo=True, mirar=(0, -0.15))
+    boca(b, 0.0, 0.22, 0.14, 'colmillos')
+    corona(b, (-0.4, 0.0, 1.12), 0.16, 0.14)
+
+
+def j_reina_grasa(b):
+    b_grasa_sifon(b)
+    corona(b, (0, 0.04, 0.78), 0.2, 0.18, color='#F2C14E', joyas=('#2B2A22', '#E86A8A'))
+    for (x, z, r) in [(-0.5, 0.2, 0.1), (0.52, 0.15, 0.09), (0.0, -0.02, 0.08)]:
+        b.blob((x, -0.1, z), (r, r, r * 0.6), brillante('#2B2A22', rough=0.12, coat=1.0), n=6)
+
+
 BICHOS = {
     'germen': b_germen, 'puntoNegro': b_punto_negro, 'gotaGrasa': b_gota_grasa, 'acaro': b_acaro, 'granito': b_granito, 'caspa': b_caspa,
     'bacteria': b_bacteria, 'pelusa': b_pelusa, 'virus': b_virus, 'barrito': b_barrito, 'lagana': b_lagana, 'mugre': b_mugre,
@@ -1196,10 +1346,14 @@ BICHOS = {
     'pompa': b_pompa, 'cuchilla': b_cuchilla, 'champuDerramado': b_champu_derramado, 'algodon': b_algodon, 'frascoVacio': b_frasco_vacio,
     'hilacha': b_hilacha, 'mohoRosado': b_moho_rosado,
     'donFrasco': j_don_frasco, 'reinaPompa': j_reina_pompa, 'senorCuchillas': j_senor_cuchillas, 'poteCrema': j_pote_crema,
+    # El Desagüe
+    'bolitaPelo': b_bolita_pelo, 'grasaSifon': b_grasa_sifon, 'gusanito': b_gusanito, 'burbujaGas': b_burbuja_gas, 'sapito': b_sapito,
+    'rejillita': b_rejillita, 'lodo': b_lodo,
+    'reySapo': j_rey_sapo, 'pulpoDesague': j_pulpo_desague, 'bocaSifon': j_boca_sifon, 'reinaGrasa': j_reina_grasa,
 }
 JEFES = {'espinillon', 'reinaCaspa', 'granMoco', 'senorLagana', 'barroNegro', 'senorSarro', 'donaCucaracha', 'motaPelo', 'tapon',
          'esponjaPodrida', 'peloDesague', 'duchaHelada', 'reyHongo', 'regaderaLoca', 'cortinaMohosa', 'ciempiesGigante',
-         'donFrasco', 'reinaPompa', 'senorCuchillas', 'poteCrema'}
+         'donFrasco', 'reinaPompa', 'senorCuchillas', 'poteCrema', 'reySapo', 'pulpoDesague', 'bocaSifon', 'reinaGrasa'}
 
 CUADROS = [
     ('normal', {'base', 'abiertos', 'boca', 'pasoA'}),

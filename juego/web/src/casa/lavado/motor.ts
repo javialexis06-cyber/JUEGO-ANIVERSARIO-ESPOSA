@@ -74,6 +74,8 @@ const VELITA_CONFETI = -1e12;
 /** Los chorros de La Ducha: segundos que avisan con su sombra y segundos que caen. */
 const AVISO_CHORRO = 1.3;
 const DURA_CHORRO = 2.6;
+/** Los frascos de La Jabonera: segundos desde que avisan hasta que revientan. */
+const AVISO_FRASCO = 1.6;
 /** Celda del mapa donde puede haber una velita. */
 const CELDA_LUZ = 380;
 
@@ -510,6 +512,9 @@ export class Motor {
   /** Los chorros de La Ducha que están avisando (t < 0) o cayendo. */
   readonly chorros: { x: number; y: number; r: number; t: number }[] = [];
   private tChorro = 9;
+  /** Los frascos de La Jabonera que se están cayendo (t: lo que les falta para tocar el piso). */
+  readonly frascos: { x: number; y: number; r: number; t: number }[] = [];
+  private tFrasco = 7;
 
   readonly en: Enemigo[] = [];
   readonly vivos = new Int32Array(POOL_EN);
@@ -1216,6 +1221,7 @@ export class Motor {
     moverProyectiles(this, dt);
     moverZonas(this, dt);
     if (this.esc.chorros && !this.tutorial) this.moverChorros(dt);
+    if (this.esc.frascos && !this.tutorial) this.moverFrascos(dt);
     pendientesGolpe(this, dt);
     this.moverEnemigos(dt);
     this.recoger(dt);
@@ -1293,6 +1299,7 @@ export class Motor {
   // ------------------------------------------------------------------------------------------------- Jugadores
   private moverJugadores(dt: number) {
     const lim = this.esc.limites;
+    const limX = this.esc.limitesX;
     for (const j of this.jug) {
       j.invul = Math.max(0, j.invul - dt);
       if (j.fuera) continue;
@@ -1336,6 +1343,7 @@ export class Motor {
         if (Math.abs(j.vx) > 8) j.mira = j.vx > 0 ? 1 : -1;
       }
       if (lim) j.y = Math.max(lim.yMin + 18, Math.min(lim.yMax - 18, j.y));
+      if (limX) j.x = Math.max(limX.xMin + 18, Math.min(limX.xMax - 18, j.x));
       j.quieto = Math.hypot(j.vx, j.vy) > 10 ? 0 : j.quieto + dt;
       // Recuperación (la de la carta de psicología cura el doble)
       if (j.st.recuperacion > 0 && j.vida < j.vidaMax) j.vida = Math.min(j.vidaMax, j.vida + j.st.recuperacion * dt * (j.tieneCarta('curitaMagica') ? 2 : 1));
@@ -1615,7 +1623,7 @@ export class Motor {
     for (const j of this.jug) if (j.activo) enPie++;
     const pareja = POR_JUGADORES.densidad[Math.max(0, Math.min(3, enPie - 1))];
     // En el pasillo del lavamanos no hay para dónde huir arriba o abajo: llegan menos a la vez
-    const densidad = esc.limites ? 0.5 : 1;
+    const densidad = esc.limitesX ? 0.4 : esc.limites ? 0.5 : 1;
     this.tTanda -= dReloj * mal * this.atrae();
     let tandas = 0;
     while (this.tTanda <= 0 && tandas < 4) {
@@ -1643,7 +1651,9 @@ export class Motor {
       const a = this.az.n() * Math.PI * 2, d = r * (0.5 + this.az.n() * 0.5);
       let y = j.y + Math.sin(a) * d * 0.7;
       if (lim) y = Math.max(lim.yMin + 30, Math.min(lim.yMax - 30, y));
-      return [j.x + Math.cos(a) * d, y];
+      const limX = this.esc.limitesX;
+      const x = limX ? Math.max(limX.xMin + 30, Math.min(limX.xMax - 30, j.x + Math.cos(a) * d)) : j.x + Math.cos(a) * d;
+      return [x, y];
     };
     const sorpresas: { peso: number; txt: string; f: () => void }[] = [
       { peso: 3, txt: '¡Lluvia de arepas!', f: () => { for (let k = 0; k < 4; k++) this.soltar('arepa', ...cerca(220)); } },
@@ -1712,6 +1722,41 @@ export class Motor {
     }
   }
 
+  /** Los frascos de La Jabonera: cada tanto se cae uno de la repisa cerca de alguien. Avisan con su sombra y, al
+   *  caer, revientan: a los mugrosos les pega duro y a quien esté debajo también (hay que quitarse). */
+  private moverFrascos(dt: number) {
+    this.tFrasco -= dt;
+    if (this.tFrasco <= 0) {
+      // (al principio caen de vez en cuando; con los minutos, más seguido)
+      this.tFrasco = Math.max(3.5, 9 - this.t / 240) + this.az.n() * 3;
+      const j = this.objetivoAzar();
+      if (j) {
+        const n = 1 + Math.floor(this.az.n() * Math.min(2.2, 1 + this.t / 600));
+        const limX = this.esc.limitesX;
+        for (let k = 0; k < n; k++) {
+          let x = j.x + this.az.entre(-220, 220);
+          if (limX) x = Math.max(limX.xMin + 50, Math.min(limX.xMax - 50, x));
+          const y = j.y + this.az.entre(-170, 170), r = this.az.entre(70, 95);
+          this.frascos.push({ x, y, r, t: AVISO_FRASCO });
+          this.emitir('frasco', x, y, r, AVISO_FRASCO, Math.floor(this.az.n() * 5));
+        }
+      }
+    }
+    for (let k = this.frascos.length - 1; k >= 0; k--) {
+      const f = this.frascos[k];
+      f.t -= dt;
+      if (f.t > 0) continue;
+      this.frascos.splice(k, 1);
+      // ¡Plaf! Revienta: a los mugrosos les pega según lo avanzado de la lavada; a los jugadores, poquito
+      const ji = this.cercano(f.x, f.y)?.i ?? 0;
+      this.explotar(ji, -1, 'aji', f.x, f.y, f.r, 60 + 12 * this.nivel, 0);
+      for (const p of this.jug) {
+        if (!p.activo) continue;
+        if (Math.hypot(p.x - f.x, p.y - f.y) < f.r + RADIO_JUGADOR) this.herirJugador(p, 8 + Math.min(24, this.t / 90), null);
+      }
+    }
+  }
+
   private objetivoAzar(): Jugador | null {
     const vivos = this.jug.filter((j) => j.activo);
     return vivos.length ? this.az.uno(vivos) : null;
@@ -1746,6 +1791,13 @@ export class Motor {
           y = Math.max(lim.yMin + 24, Math.min(lim.yMax - 24, y));
           x = j.x + (this.az.n() < 0.5 ? -hw : hw);
         }
+      }
+      // En el pasillo de arriba abajo llegan por arriba o por abajo (casi siempre por donde va)
+      const limX = this.esc.limitesX;
+      if (limX && (x < limX.xMin + 20 || x > limX.xMax - 20)) {
+        x = this.az.entre(limX.xMin + 30, limX.xMax - 30);
+        // (un poquito más lejos: en el celular acostado se ve poco hacia arriba y hacia abajo)
+        y = j.y + (Math.abs(j.vy) > 20 && this.az.n() < 0.6 ? Math.sign(j.vy) : this.az.n() < 0.5 ? -1 : 1) * (hh + 110);
       }
       return [x, y];
     }
@@ -1852,13 +1904,15 @@ export class Motor {
         const a = this.az.n() * Math.PI * 2;
         const ux = Math.cos(a), uy = Math.sin(a);
         const lim = this.esc.limites;
+        const limX = this.esc.limitesX;
         const lejos = Math.max(j.vistaW, j.vistaH) * 0.62;
         const cx = j.x - ux * lejos, cy = j.y - uy * lejos;
         for (let k = 0; k < cant; k++) {
           const lado = (k % 6) - 2.5, fila = Math.floor(k / 6);
           let y = cy - ux * lado * 26 - uy * fila * 30 + this.az.entre(-6, 6);
-          const x = cx + uy * lado * 26 - ux * fila * 30 + this.az.entre(-6, 6);
+          let x = cx + uy * lado * 26 - ux * fila * 30 + this.az.entre(-6, 6);
           if (lim) y = Math.max(lim.yMin + 20, Math.min(lim.yMax - 20, y));
+          if (limX) x = Math.max(limX.xMin + 20, Math.min(limX.xMax - 20, x));
           const e = this.crear(ev.enemigo, [x, y], j, { fijo: true });
           if (!e) break;
           e.dx = ux;
@@ -1873,13 +1927,31 @@ export class Motor {
         const r = Math.max(j.vistaW, j.vistaH) * 0.55;
         for (let k = 0; k < cant; k++) {
           const a = (k / cant) * Math.PI * 2;
-          const e = this.crear(ev.enemigo, [j.x + Math.cos(a) * r, j.y + Math.sin(a) * r * 0.75], j, { fijo: true });
+          const limX = this.esc.limitesX;
+          const x = limX ? Math.max(limX.xMin + 20, Math.min(limX.xMax - 20, j.x + Math.cos(a) * r)) : j.x + Math.cos(a) * r;
+          const e = this.crear(ev.enemigo, [x, j.y + Math.sin(a) * r * 0.75], j, { fijo: true });
           if (!e) break;
           e.estado = 3;
         }
         break;
       }
       case 'muro': {
+        const limX = this.esc.limitesX;
+        if (limX) {
+          // En el pasillo de arriba abajo, el muro baja (o sube) de pared a pared
+          const arriba = this.az.n() < 0.5;
+          const y0 = j.y + (arriba ? -1 : 1) * (j.vistaH / 2 + 60);
+          const ancho = limX.xMax - limX.xMin - 40;
+          for (let k = 0; k < cant; k++) {
+            const e = this.crear(ev.enemigo, [limX.xMin + 20 + (k / cant) * ancho, y0 + (arriba ? -1 : 1) * (k % 2) * 30], j, { fijo: true });
+            if (!e) break;
+            e.dx = 0;
+            e.dy = arriba ? 1 : -1;
+            e.estado = 2;
+            e.vence = this.tReal + 30;
+          }
+          break;
+        }
         const izq = this.az.n() < 0.5;
         const x0 = j.x + (izq ? -1 : 1) * (j.vistaW / 2 + 60);
         const alto = this.esc.limites ? this.esc.limites.yMax - this.esc.limites.yMin - 40 : j.vistaH * 1.3;
@@ -1903,7 +1975,7 @@ export class Motor {
     if (this.tLuces > 0) return;
     this.tLuces = 0.5;
     const lim = this.esc.limites;
-    const sem = this.esc.id === 'cara' ? 11 : this.esc.id === 'lavamanos' ? 23 : 37;
+    const sem = this.esc.id === 'cara' ? 11 : this.esc.id === 'lavamanos' ? 23 : this.esc.id === 'ducha' ? 41 : this.esc.id === 'jabonera' ? 53 : 37;
     for (const j of this.jug) {
       if (j.fuera) continue;
       const cx0 = Math.floor(j.x / CELDA_LUZ), cy0 = Math.floor(j.y / CELDA_LUZ);
@@ -1920,6 +1992,8 @@ export class Motor {
             if (y < lim.yMin + 40 || y > lim.yMax - 40) continue;
             y = Math.max(lim.yMin + 50, Math.min(lim.yMax - 50, y));
           }
+          const limX = this.esc.limitesX;
+          if (limX && (x < limX.xMin + 40 || x > limX.xMax - 40)) continue;
           // Que no aparezca de la nada a la vista
           if (this.jug.some((o) => !o.fuera && o.enVista(x, y, 20)) && this.tReal > 1) continue;
           const e = this.crear('germen', [x, y], null, { fijo: true });
@@ -2035,6 +2109,7 @@ export class Motor {
 
   private moverEnemigos(dt: number) {
     const lim = this.esc.limites;
+    const limX = this.esc.limitesX;
     const mal = this.maldicion();
     const velModos = this.velModos();
     const congelados = this.hielo > 0;
@@ -2161,6 +2236,7 @@ export class Motor {
         }
       }
       if (lim) e.y = Math.max(lim.yMin + e.r * 0.6, Math.min(lim.yMax - e.r * 0.6, e.y));
+      if (limX) e.x = Math.max(limX.xMin + e.r * 0.6, Math.min(limX.xMax - e.r * 0.6, e.x));
       e.vx = (e.x - ox) / Math.max(dt, 1e-4);
       e.vy = (e.y - oy) / Math.max(dt, 1e-4);
       // Toca a alguien

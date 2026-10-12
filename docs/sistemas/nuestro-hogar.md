@@ -468,6 +468,18 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   con su sombra y, al caer 2,6 s, empujan hacia afuera a los mugrosos, los frenan y les quitan vida (a los jefes solo
   los mojan). El atlas de bichos ahora se arma sumando los nuevos a los que ya tiene (`lavado-atlas.py +carpeta`), con
   los jefes en 160 px y alto múltiplo de 32 (2048 × 2112, 50 bichos). Tres logros más de La Ducha (66 en total).
+- **Versión 2, fase 3b: La Jabonera** (el quinto escenario, como la torre del original; se abre aguantando 15 minutos
+  en La Ducha). Es un **pasillo de arriba abajo** (`DefEscenario.limitesX`, que el motor respeta en todo: jugadores,
+  mugrosos, por dónde llegan, enjambres, anillos, el muro que baja de pared a pared, velitas, ruleta y el bot): la
+  repisa de plástico crema con canalitos y huequitos, y a los lados los barrotes cromados con la pared de baldosín
+  detrás (`FRAG_JABONERA`), con jabones, cremas, perfumes, ligas y máquinas de afeitar como utilería. Siete bichos
+  nuevos (pompita de jabón, cuchillita de afeitar, motica de algodón, champú derramado, hilacha de estropajo, frasco
+  vacío, moho rosado) y cuatro jefes (Don Frasco, la Reina Pompa, el Señor Cuchillas y el Pote de Crema, que abre su
+  Hiper). Lo especial: **los frascos que se caen** de la repisa (`Motor.moverFrascos`, efecto `frasco`): avisan 1,6 s
+  con una sombra roja, caen dando vueltas y revientan; a los mugrosos les pegan duro y a quien esté debajo también
+  (8 de daño, que sube con los minutos; al principio caen cada 9-12 s y después más seguido). Como en el celular
+  acostado se ve poco hacia arriba y hacia abajo, los mugrosos de ese pasillo llegan un poco más lejos y menos a la vez
+  (densidad 0,4). Tres logros más (69 en total); el atlas de bichos queda en 2048 × 2528 con 61.
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

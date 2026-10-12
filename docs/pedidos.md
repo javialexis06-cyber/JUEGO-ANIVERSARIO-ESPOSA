@@ -12,7 +12,8 @@ probado y subido.
 Último trabajo subido: **Lavarse la cara 2, fase 2** (seis tesoros del baño con flecha verde; los seis modos del
 original: Hiper, Del otro lado del espejo, Agua caliente sin fin, Sin límite, Ruleta de sorpresas y Nivel al azar; y
 Don Jabón, el vendedor ambulante, con el Monedero) y **La Ducha** (fase 3a: el cuarto escenario, con 8 bichos y 4
-jefes nuevos y los chorros que caen del techo). Siguen los demás escenarios de la ducha (3b). Las cajitas sorpresa
+jefes nuevos y los chorros que caen del techo) y **La Jabonera** (fase 3b: el pasillo de arriba abajo de la repisa con
+los frascos que se caen). Sigue El Desagüe (3c). Las cajitas sorpresa
 quedan para la fase 4, con los disfraces que traen. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
 los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
 nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
@@ -72,8 +73,10 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
    - 2c: las cajitas sorpresa (los ataúdes del original: un anillo de mugrosos que hay que vencer para abrir la caja de
      un disfraz nuevo); van con los disfraces de la fase 4, así que se hacen ahí.
    - ~~3a: La Ducha~~ **hecho** (baldosas mojadas, 8 bichos y 4 jefes en Blender, los chorros que caen del techo).
-   - 3b en adelante: los demás escenarios de la ducha (La Jabonera, El Desagüe y especiales como la Cortina en
-     laberinto o el Espejo empañado) y los minijuegos (la carrera del tobogán, el desfile de jefes).
+   - ~~3b: La Jabonera~~ **hecho** (el pasillo de arriba abajo de la repisa, 7 bichos y 4 jefes, los frascos que se
+     caen).
+   - 3c en adelante: El Desagüe (el escenario final) y especiales (la Cortina en laberinto, el Espejo empañado, el
+     Desfile de jefes) y los minijuegos (la carrera del tobogán).
    - Fase 4: disfraces con transformación, cartas de la noche, cajitas sorpresa y las aventuras.
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
 5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).

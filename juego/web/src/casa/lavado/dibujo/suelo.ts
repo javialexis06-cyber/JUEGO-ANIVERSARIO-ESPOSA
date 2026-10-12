@@ -169,6 +169,56 @@ const FRAG_DUCHA = COMUN + /* glsl */ `
   }
 `;
 
+const FRAG_JABONERA = COMUN + /* glsl */ `
+  void main() {
+    vec2 p = vMapa;
+    float d1 = texture2D(uDetalle, p / 260.0).r;
+    vec4 n = texture2D(uRuido, p / 1700.0);
+    float fuera = max(uLimites.x - p.x, p.x - uLimites.y);
+    vec3 col;
+    if (uLimites.z > 0.5 && fuera > 0.0) {
+      // Detrás de los barrotes: la pared de baldosín de la ducha, más oscurita
+      vec2 q = p / 70.0;
+      vec2 f = fract(q);
+      float junta = 1.0 - smoothstep(0.015, 0.035, min(min(f.x, 1.0 - f.x), min(f.y, 1.0 - f.y)));
+      float tono = fract(sin(dot(floor(q), vec2(12.9898, 78.233))) * 43758.5453);
+      col = mix(vec3(0.55, 0.72, 0.8), vec3(0.62, 0.78, 0.85), tono);
+      col = mix(col, vec3(0.42, 0.52, 0.58), junta);
+      col *= 0.62 + 0.25 * exp(-fuera / 160.0);
+      // Los barrotes cromados de la repisa (verticales, con su brillo)
+      float bx = fract((fuera + 6.0) / 46.0);
+      float barra = 1.0 - smoothstep(0.08, 0.16, abs(bx - 0.5));
+      float brillo = 1.0 - smoothstep(0.0, 0.05, abs(bx - 0.46));
+      col = mix(col, vec3(0.78, 0.82, 0.88) * (0.85 + 0.15 * sin(p.y * 0.02)), barra * step(fuera, 140.0));
+      col += brillo * 0.35 * step(fuera, 140.0);
+      // El borde de la repisa: un riel cromado gordo
+      float riel = 1.0 - smoothstep(10.0, 18.0, fuera);
+      col = mix(col, vec3(0.92, 0.94, 0.97), riel);
+    } else {
+      // La repisa: plástico color crema con canalitos para el agua y huequitos de desagüe
+      col = mix(uC1, uC2, smoothstep(0.3, 0.8, n.r));
+      col *= 1.0 + (d1 - 0.55) * 0.25;
+      float canal = fract(p.y / 38.0);
+      float surco = smoothstep(0.0, 0.18, canal) * (1.0 - smoothstep(0.82, 1.0, canal));
+      col *= 0.86 + 0.14 * surco;
+      col += (1.0 - smoothstep(0.0, 0.12, abs(canal - 0.3))) * 0.05;
+      vec2 h = vec2(fract(p.x / 90.0 + floor(p.y / 38.0) * 0.5), canal);
+      float hueco = 1.0 - smoothstep(0.035, 0.055, length((h - vec2(0.5, 0.5)) * vec2(90.0 / 38.0, 1.0) * 0.38));
+      col = mix(col, uC3, hueco * 0.8);
+      // Restos de jabón y agüita
+      vec4 n2 = texture2D(uRuido, p / 520.0 + 0.3);
+      float jabon = smoothstep(0.66, 0.82, n2.b);
+      col = mix(col, vec3(1.0, 0.97, 0.94), jabon * 0.35);
+      float agua = smoothstep(0.7, 0.85, n2.r) * (0.5 + 0.5 * sin(uTiempo * 1.5 + p.y * 0.02));
+      col += agua * vec3(0.04, 0.07, 0.09);
+      // Sombrita contra los rieles
+      if (uLimites.z > 0.5) col *= 0.78 + 0.22 * smoothstep(0.0, 70.0, -fuera);
+    }
+    gl_FragColor = vec4(col, 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
 interface Paleta {
   c1: string;
   c2: string;
@@ -196,6 +246,7 @@ const DECOR: Record<IdEscenario, [IdDecor, number, number][]> = {
   lavamanos: [['gotaAgua', 5, 70], ['manchaJabon', 2, 120], ['pelito', 1.2, 80], ['pasta', 0.7, 70], ['desague', 0.12, 110]],
   banera: [['burbujitas', 4, 80], ['espumaIsla', 2.2, 150], ['petalos', 1.5, 70], ['hojita', 0.6, 40]],
   ducha: [['gotaAgua', 5, 70], ['burbujitas', 3, 80], ['manchaJabon', 2, 120], ['pelito', 0.8, 80], ['espumaIsla', 0.8, 130], ['desague', 0.18, 130]],
+  jabonera: [['manchaJabon', 4, 110], ['burbujitas', 4, 70], ['gotaAgua', 3, 60], ['espumaIsla', 1.2, 110], ['pelito', 0.8, 70], ['pasta', 0.8, 60]],
 };
 
 export class Suelo {
@@ -208,8 +259,8 @@ export class Suelo {
   private pesoTotal = 0;
 
   /** `piel`: el color de piel del anfitrión cuando es un amigo con su propio tono (la cara es la suya). */
-  constructor(private esc: IdEscenario, rol: Rol, limites: { yMin: number; yMax: number } | null, piel?: string) {
-    const detalle = esc === 'cara' ? detalleCara() : esc === 'lavamanos' || esc === 'ducha' ? detalleLavamanos() : detalleBanera();
+  constructor(private esc: IdEscenario, rol: Rol, limites: { yMin: number; yMax: number } | null, piel?: string, private limX?: { xMin: number; xMax: number }) {
+    const detalle = esc === 'cara' ? detalleCara() : esc === 'lavamanos' || esc === 'ducha' || esc === 'jabonera' ? detalleLavamanos() : detalleBanera();
     // El detalle es un dato (gris), no un color: se lee tal cual
     detalle.colorSpace = THREE.NoColorSpace;
     detalle.needsUpdate = true;
@@ -218,12 +269,13 @@ export class Suelo {
     const pal: Paleta = esc === 'cara' ? (piel ? paletaDe(piel) : PIEL[rol])
       : esc === 'lavamanos' ? { c1: '#e6ecf2', c2: '#c9d6e2', c3: '#9fcde3' }
       : esc === 'ducha' ? { c1: '#e3f1f4', c2: '#c6e4ec', c3: '#8fa9b5' }
+      : esc === 'jabonera' ? { c1: '#f7f0e4', c2: '#efe4d2', c3: '#b9a88e' }
       : { c1: '#5fbcd3', c2: '#8fd8e6', c3: '#f2f8fc' };
     // (THREE.Color ya pasa el hexadecimal a lineal: no se convierte otra vez)
     const lin = (c: string) => new THREE.Color(c);
     this.mat = new THREE.ShaderMaterial({
       vertexShader: VERT,
-      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : FRAG_BANERA,
+      fragmentShader: esc === 'cara' ? FRAG_CARA : esc === 'lavamanos' ? FRAG_LAVAMANOS : esc === 'ducha' ? FRAG_DUCHA : esc === 'jabonera' ? FRAG_JABONERA : FRAG_BANERA,
       uniforms: {
         uDetalle: { value: detalle },
         uRuido: { value: ruido },
@@ -231,7 +283,8 @@ export class Suelo {
         uC1: { value: lin(pal.c1) },
         uC2: { value: lin(pal.c2) },
         uC3: { value: lin(pal.c3) },
-        uLimites: { value: new THREE.Vector3(limites?.yMin ?? 0, limites?.yMax ?? 0, limites ? 1 : 0) },
+        // (el pasillo de arriba abajo usa los mismos tres números: xMin, xMax y activo)
+        uLimites: { value: limX ? new THREE.Vector3(limX.xMin, limX.xMax, 1) : new THREE.Vector3(limites?.yMin ?? 0, limites?.yMax ?? 0, limites ? 1 : 0) },
       },
     });
     // Los colores se escriben en lineal: three los pasa a sRGB al final
@@ -258,7 +311,7 @@ export class Suelo {
     const C = 150;
     const x0 = Math.floor((cx - ancho * 0.62) / C), x1 = Math.floor((cx + ancho * 0.62) / C);
     const y0 = Math.floor((cy - hondo * 0.7) / C), y1 = Math.floor((cy + hondo * 0.62) / C);
-    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : 7;
+    const sem = this.esc === 'cara' ? 3 : this.esc === 'lavamanos' ? 5 : this.esc === 'ducha' ? 9 : this.esc === 'jabonera' ? 13 : 7;
     for (let gy = y0; gy <= y1; gy++)
       for (let gx = x0; gx <= x1; gx++) {
         if (hash2(gx, gy, sem) > 0.62) continue;
@@ -275,6 +328,7 @@ export class Suelo {
         const x = (gx + 0.1 + hash2(gx, gy, sem + 2) * 0.8) * C;
         const y = (gy + 0.1 + hash2(gx, gy, sem + 3) * 0.8) * C;
         if (limites && (y < limites.yMin + 20 || y > limites.yMax - 20)) continue;
+        if (this.limX && (x < this.limX.xMin + 20 || x > this.limX.xMax - 20)) continue;
         const tam = cual[2] * (0.7 + hash2(gx, gy, sem + 4) * 0.6);
         const giro = hash2(gx, gy, sem + 5) * Math.PI * 2;
         const q: Cuadro = this.atlas.c[cual[0]];

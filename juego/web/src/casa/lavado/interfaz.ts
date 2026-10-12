@@ -813,16 +813,21 @@ export class Interfaz {
       y0 = Math.min(y0, p.y - 250);
       y1 = Math.max(y1, p.y + 250);
     }
-    const lim = m.esc.limites;
+    const lim = m.esc.limites, limX = m.esc.limitesX;
     if (lim) {
       y0 = Math.min(y0, lim.yMin - 300);
       y1 = Math.max(y1, lim.yMax + 300);
+    }
+    if (limX) {
+      x0 = Math.min(x0, limX.xMin - 300);
+      x1 = Math.max(x1, limX.xMax + 300);
     }
     if (m.puesto) puntos.push({ x: m.puesto[0], y: m.puesto[1], html: icono('donJabon', 30) });
     // (dónde se empezó, para ubicarse)
     puntos.unshift({ x: 0, y: 0, html: '<i class="inicio">🫧<small>inicio</small></i>' });
     const marcas = puntos.map((p) => `<span style="left:${((p.x - x0) / (x1 - x0)) * 100}%;top:${((p.y - y0) / (y1 - y0)) * 100}%">${p.html}</span>`).join('');
-    const pasillo = lim ? `<b class="pasillo" style="top:${((lim.yMin - y0) / (y1 - y0)) * 100}%;height:${((lim.yMax - lim.yMin) / (y1 - y0)) * 100}%"></b>` : '';
+    const pasillo = lim ? `<b class="pasillo" style="top:${((lim.yMin - y0) / (y1 - y0)) * 100}%;height:${((lim.yMax - lim.yMin) / (y1 - y0)) * 100}%"></b>`
+      : limX ? `<b class="pasillo vertical" style="left:${((limX.xMin - x0) / (x1 - x0)) * 100}%;width:${((limX.xMax - limX.xMin) / (x1 - x0)) * 100}%"></b>` : '';
     return `<div class="lv-mapa ${m.esc.id}">${pasillo}<b class="rosa">🧭</b><b class="nombre">${m.esc.nombre}</b>${marcas}</div><p class="lv-mapa-pie">🗺️ ${m.esc.nombre}: ★ eres tú; los tesoros y lo escondido salen donde están.</p>`;
   }
 

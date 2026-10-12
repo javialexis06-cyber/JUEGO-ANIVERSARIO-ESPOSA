@@ -30,6 +30,8 @@ export interface DefEscenario {
   desc: string;
   /** Pasillo (como la biblioteca): el mapa tiene techo y piso. */
   limites: { yMin: number; yMax: number } | null;
+  /** Pasillo de arriba abajo (como la torre): paredes a la izquierda y a la derecha. */
+  limitesX?: { xMin: number; xMax: number };
   oleadas: Oleada[];
   eventos: EventoOleada[];
   /** Cómo se gana. */
@@ -38,6 +40,8 @@ export interface DefEscenario {
   jefeHiper: IdEnemigo;
   /** La Ducha: chorros de agua que caen del techo y empujan a todos. */
   chorros?: boolean;
+  /** La Jabonera: frascos que se caen de la repisa (avisan con su sombra; al caer pegan a todos, también a ti). */
+  frascos?: boolean;
 }
 
 const o = (min: number, cada: number, ...tipos: IdEnemigo[]): Oleada => ({ min, cada, tipos });
@@ -319,8 +323,78 @@ export const ESCENARIOS: Record<IdEscenario, DefEscenario> = {
       { t: m(28, 30), tipo: 'muro', enemigo: 'cal', cant: 36 },
     ],
   },
+  jabonera: {
+    id: 'jabonera',
+    nombre: 'La Jabonera',
+    original: 'Torre del Gallo',
+    desc: 'La repisa de la ducha, de abajo hacia arriba entre los barrotes. Ojo: de arriba se caen los frascos.',
+    limites: null,
+    limitesX: { xMin: -320, xMax: 320 },
+    desbloqueo: 'Aguanta 15 minutos en La Ducha',
+    jefeHiper: 'poteCrema',
+    frascos: true,
+    oleadas: [
+      o(14, 1.0, 'cuchilla'),
+      o(28, 1.0, 'cuchilla', 'algodon'),
+      o(40, 0.9, 'algodon', 'cuchilla'),
+      o(50, 0.8, 'algodon', 'champuDerramado'),
+      o(60, 0.8, 'champuDerramado', 'cuchilla'),
+      o(70, 0.7, 'champuDerramado', 'algodon', 'hilacha'),
+      o(80, 0.65, 'hilacha', 'champuDerramado'),
+      o(90, 0.6, 'frascoVacio', 'algodon'),
+      o(100, 0.55, 'frascoVacio', 'champuDerramado'),
+      o(105, 0.5, 'frascoVacio', 'hilacha'),
+      o(110, 0.5, 'hilacha', 'frascoVacio'),
+      o(120, 0.45, 'frascoVacio', 'champuDerramado'),
+      o(130, 0.42, 'estropajo', 'frascoVacio'),
+      o(140, 0.4, 'estropajo', 'hilacha'),
+      o(150, 0.36, 'estropajo', 'algodon', 'frascoVacio'),
+      o(160, 0.34, 'mohoRosado', 'estropajo'),
+      o(170, 0.32, 'mohoRosado', 'hilacha'),
+      o(180, 0.3, 'mohoRosado', 'frascoVacio'),
+      o(190, 0.28, 'mohoRosado', 'estropajo'),
+      o(200, 0.26, 'mohoRosado', 'frascoVacio'),
+      o(210, 0.25, 'mohoRosado', 'hilacha'),
+      o(220, 0.24, 'cal', 'mohoRosado'),
+      o(230, 0.22, 'cal', 'estropajo'),
+      o(240, 0.2, 'moco', 'mohoRosado'),
+      o(250, 0.2, 'moco', 'cal'),
+      o(260, 0.18, 'mohoRosado', 'cal', 'estropajo'),
+      o(270, 0.16, 'cal', 'moco'),
+      o(280, 0.15, 'cal', 'mohoRosado', 'estropajo'),
+      o(290, 0.12, 'cal', 'moco'),
+      o(300, 0.1, 'cal', 'mohoRosado', 'estropajo'),
+    ],
+    eventos: [
+      { t: m(1), tipo: 'flotar', enemigo: 'pompa', cant: 16, aviso: '¡Pompitas de jabón por toda la repisa!' },
+      { t: m(2, 30), tipo: 'elite', enemigo: 'algodon' },
+      { t: m(3, 30), tipo: 'flotar', enemigo: 'pompa', cant: 24 },
+      { t: m(4, 30), tipo: 'muro', enemigo: 'cuchilla', cant: 22, aviso: '¡Una fila de cuchillitas bajando!' },
+      { t: m(5, 30), tipo: 'flotar', enemigo: 'hilacha', cant: 8 },
+      { t: m(7), tipo: 'elite', enemigo: 'champuDerramado' },
+      { t: m(8, 30), tipo: 'flotar', enemigo: 'pompa', cant: 32 },
+      { t: m(10), tipo: 'jefe', enemigo: 'donFrasco', aviso: '¡Don Frasco se bajó de la repisa!' },
+      { t: m(11), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Una carta mágica entre los frascos…' },
+      { t: m(12), tipo: 'muro', enemigo: 'algodon', cant: 26 },
+      { t: m(13), tipo: 'elite', enemigo: 'frascoVacio' },
+      { t: m(14), tipo: 'flotar', enemigo: 'pompa', cant: 40 },
+      { t: m(15), tipo: 'jefe', enemigo: 'reinaPompa', aviso: '¡La Reina Pompa y su séquito!' },
+      { t: m(16, 30), tipo: 'flotar', enemigo: 'hilacha', cant: 14 },
+      { t: m(17, 30), tipo: 'elite', enemigo: 'estropajo' },
+      { t: m(18, 30), tipo: 'muro', enemigo: 'frascoVacio', cant: 26, aviso: '¡Una fila de frascos vacíos!' },
+      { t: m(20), tipo: 'jefe', enemigo: 'senorCuchillas', aviso: '¡El Señor Cuchillas, con sus tres hojas!' },
+      { t: m(21), tipo: 'carta', enemigo: 'reinaCaspa', aviso: 'Otra carta mágica perdida…' },
+      { t: m(22), tipo: 'flotar', enemigo: 'pompa', cant: 52 },
+      { t: m(23), tipo: 'elite', enemigo: 'mohoRosado' },
+      { t: m(24, 30), tipo: 'muro', enemigo: 'mohoRosado', cant: 24 },
+      { t: m(25), tipo: 'jefe', enemigo: 'poteCrema', aviso: '¡El Pote de Crema rebosó!' },
+      { t: m(26, 30), tipo: 'flotar', enemigo: 'pompa', cant: 60 },
+      { t: m(27, 30), tipo: 'elite', enemigo: 'cal' },
+      { t: m(28, 30), tipo: 'muro', enemigo: 'cal', cant: 28 },
+    ],
+  },
 };
 
-export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha'];
+export const ID_ESCENARIOS: IdEscenario[] = ['cara', 'lavamanos', 'banera', 'ducha', 'jabonera'];
 /** La partida completa (después llega la Ducha Helada). */
 export const DURACION = 30 * 60;

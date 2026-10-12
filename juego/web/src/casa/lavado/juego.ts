@@ -890,6 +890,8 @@ export class Lavado {
             yoJ.y += yoJ.vy * dt;
             const lim = m.esc.limites;
             if (lim) yoJ.y = Math.max(lim.yMin + 18, Math.min(lim.yMax - 18, yoJ.y));
+            const limX = m.esc.limitesX;
+            if (limX) yoJ.x = Math.max(limX.xMin + 18, Math.min(limX.xMax - 18, yoJ.x));
             if (l > 0.15) {
               yoJ.dx = ux / Math.max(l, 1e-6);
               yoJ.dy = uy / Math.max(l, 1e-6);
