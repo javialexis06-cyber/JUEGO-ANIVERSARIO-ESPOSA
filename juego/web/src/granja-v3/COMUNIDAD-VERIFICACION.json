@@ -1,0 +1,83 @@
+{
+  "bloque": 6,
+  "base_integrada_claude": "2b13083",
+  "obras": 4,
+  "pesquerias": 8,
+  "peces_anteriores": 18,
+  "artefactos": 6,
+  "colecciones_museo": 26,
+  "lotes_anteriores": 6,
+  "cuadernos": 3,
+  "pedidos_regionales": 24,
+  "regresion": {
+    "suites": 41,
+    "fallos": 0
+  },
+  "logica": {
+    "comprobaciones": 16,
+    "fallos": 0
+  },
+  "compilaciones": [
+    "build",
+    "build:amigos"
+  ],
+  "navegador_comunidad": {
+    "url": "http://127.0.0.1:4192/",
+    "alcance": "Interfaz y persistencia; dibujo pausado después del arranque. La prueba general usa WebGL real.",
+    "comprobaciones": [
+      "El menú de seis pestañas de Claude mantiene el acceso desde el Diario",
+      "Una exposición rechazada por almacenamiento revierte la selección",
+      "Las vitrinas guardan piezas donadas sin devolverlas ni duplicar premios",
+      "La caña usa el minijuego y un cebo real desde el puesto regional",
+      "El despacho conserva calidad y no permite retirar en origen o antes de la noche",
+      "El destino recibe una única carga tras dormir y recogerla en su archivo"
+    ],
+    "errores": [],
+    "respuestasFallidas": []
+  },
+  "navegador_general": {
+    "checks": [
+      "Botón de la casa abre la granja V5 sobre el build actual",
+      "Teclado mueve al personaje compartido actual",
+      "Mouse abre el buzón y conserva lectura",
+      "Inventario actual accesible en horizontal",
+      "Granja → casa real → granja conserva posición, inventario y jornada",
+      "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+    ],
+    "errors": [],
+    "bad": [],
+    "viewport": [
+      844,
+      390
+    ],
+    "escenariosPreparados": "Cuarto habilitado y avatar posicionado en contexto nuevo aislado.",
+    "dispositivosFisicos": []
+  },
+  "medios": {
+    "lineas": 3590,
+    "vocesDeclaradas": 3581,
+    "modelosDeclarados": 0,
+    "musicaDeclarada": 23,
+    "errores": [],
+    "estado": "Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir."
+  },
+  "compatibilidad": [
+    "Contrato anterior de producción idéntico al excluir el nuevo campo comunidad",
+    "Lavado, inventario visual, habilidades y menú de seis pestañas conservados"
+  ],
+  "limites": [
+    "Lógica con preparación explícita de recursos y ubicaciones; campaña ordinaria en bloque 7",
+    "Interfaz especializada con dibujo pausado; general con WebGL real",
+    "Sin teléfonos físicos ni producción pagada de audio"
+  ],
+  "sha256": {
+    "comunidad-tipos.ts": "6291ebd865defef93381dac1691d1065b3411cdd0f34333f6283009629be2f60",
+    "comunidad-datos.ts": "1716c909c90f9431af3f48a818b1a6e06d2b5389a6e746e8c13c18c09d9d8d64",
+    "comunidad.ts": "97e843121a06da62f5857a879d9b250a77ca6640d97958398dbcab98ca98fb81",
+    "comunidad-ui.ts": "58220cc993cc25b4283d0ace213229681aed3138d70085e7321e90102ba92e6a"
+  },
+  "produccion": {
+    "checks": 25,
+    "failures": 0
+  }
+}

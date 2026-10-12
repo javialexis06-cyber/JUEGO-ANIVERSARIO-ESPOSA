@@ -1,3 +1,4 @@
+import type {EstadoComunidad,AccionComunidad} from './comunidad-tipos';
 import type {EstadoRegional,AccionRegional} from './regiones-tipos';
 import type {AccionVidaAstra} from './vida-astra-tipos';
 import type {AccionPremio} from './premios-tipos';
@@ -38,13 +39,14 @@ export interface Drop {id:string;articulo:string;cantidad:number;x:number;z:numb
 export interface Parcela {campo?:CampoCultivo;x:number;z:number;cultivo:string|null;cuidado:CropCare|null}
 export interface EstadoGranja extends EstadoBarra {
  libros:EstadoLibros;colecciones:EstadoColecciones;festivales:EstadoFestivales;correo:EstadoCorreo;vidaSocial:EstadoVidaSocial;encargos:EstadoEncargos;pueblo:EstadoPueblo;obras:EstadoObras;compania:EstadoCompania;ganaderia:EstadoGanaderia;habilidades:EstadoHabilidades;jornada:Jornada;tiempo:EstadoTiempo;envios:EstadoEnvios;frutales:Frutal[];invernaderos:Invernadero[];
- regional?:EstadoRegional;historia?:EstadoHistoria;astra?:EstadoAstra;paisaje?:PaisajeGranja;posicionExterior?:{zona:Zona;x:number;z:number};
+ comunidad?:EstadoComunidad;regional?:EstadoRegional;historia?:EstadoHistoria;astra?:EstadoAstra;paisaje?:PaisajeGranja;posicionExterior?:{zona:Zona;x:number;z:number};
  produccion:EstadoProduccion;aventura:EstadoAventura;posicionAventura:PuntoAventura|null;
  version:5;revision:number;ultimoTiempo:number;inicioTiempo:number;monedas:number;inventario:Record<string,number>;casillasInventario:(Pila|null)[];almacenMigracion:Record<string,number>;nivelesHerramienta:Record<string,number>;mejoraHerramienta:{herramienta:Herramienta;nivel:number;hasta:number}|null;servicio:Servicio|null;drops:Drop[];ultimoGolpeAt:number;herramienta:Herramienta;personaje:'ella'|'el';sectorIds:number[];
  edificios:Edificio[];obstaculos:Obstaculo[];parcelas:Parcela[];animales:Animal[];estadisticas:Record<string,number>;misionesCompletadas:string[];desbloqueos:string[];tokensCasa:string[];
  zona:Zona;interior:string|null;vida:number;energia:number;enemigo:number;nivelMina:number;ayudante:{desde:number;hasta:number;ultimoTurno:number}|null;secuencia:number;
 }
 export type Accion =
+ |{tipo:'comunidad';accion:AccionComunidad;xJugador:number;zJugador:number}
  |{tipo:'regional';accion:AccionRegional;xJugador:number;zJugador:number}
  |{tipo:'vida_astra';accion:AccionVidaAstra;xJugador:number;zJugador:number}
  |{tipo:'premio';accion:AccionPremio;xJugador:number;zJugador:number}
@@ -103,6 +105,6 @@ export type Accion =
  |{tipo:'pasto'|'jardinero';edificioId:string}|{tipo:'entrar';edificioId:string;xJugador?:number;zJugador?:number}|{tipo:'salir'}
  |{tipo:'adoptar';especie:Species;sexo:'hembra'|'macho';nombre?:string;variante?:number|string;edificioId?:string;cria?:boolean}
  |{tipo:'criar';madreId:string;padreId:string}|{tipo:'cuidar';animalId:string;metodo:'alimentar'|'acariciar'|'musica'|'cuento'|'cepillar'}
- |{tipo:'medico'|'recoger';animalId:string;xJugador?:number;zJugador?:number}|{tipo:'viajar';zona:Zona;ruta?:string;xJugador?:number;zJugador?:number}|{tipo:'pescar';precision?:number;cebo?:string}
+ |{tipo:'medico'|'recoger';animalId:string;xJugador?:number;zJugador?:number}|{tipo:'viajar';zona:Zona;ruta?:string;xJugador?:number;zJugador?:number}|{tipo:'pescar';precision?:number;cebo?:string;xJugador?:number;zJugador?:number}
  |{tipo:'combatir'|'extraer'|'descansar'|'ayudante'|'descender'}|{tipo:'reclamar';misionId:string};
 export interface Resultado {conversacion?:Conversacion;ok:boolean;mensaje:string;experiencia?:GananciaExperiencia[];resumenJornada?:ResumenJornada;posicionZona?:{x:number;z:number};posicionAventura?:PuntoAventura;area?:{x:number;z:number}[];impacto?:{obstaculoId:string;x:number;z:number;tipo:Obstaculo['tipo'];hp:number;hpMax:number;destruido:boolean;dano:number};recogida?:{dropId:string;articulo:string;cantidad:number}}

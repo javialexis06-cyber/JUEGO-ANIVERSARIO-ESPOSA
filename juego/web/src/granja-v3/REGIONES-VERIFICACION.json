@@ -99,5 +99,37 @@
     "juego/web/src/granja-v3/regiones.ts": "a20d09b0c2492d209fac0e96168094106409e0ead22369a22132aa63a55c5b77",
     "juego/web/src/granja-v3/aventura.ts": "1366a1285553308bc8e2346ef72a4ec6dc393e20058b76b7e3268330699c00cc",
     "juego/web/src/granja-v3/historia.ts": "3186719d7728594b3ad16ef223dea1c09af2f8ce7d33df7ad86b8f77d95a07cf"
+  },
+  "publicacion": {
+    "sha": "28b9b3a97caa9c6cdbde18098789a2f72ac1ab35",
+    "ci_apk": 38228762519,
+    "ci_motor": 38228762658,
+    "conclusion": "success",
+    "release": {
+      "assets": [
+        {
+          "name": "NuestroHogar-Amigos.apk",
+          "url": "https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/releases/download/apk-197/NuestroHogar-Amigos.apk",
+          "http": 200
+        },
+        {
+          "name": "NuestroHogar-Amigos.exe",
+          "url": "https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/releases/download/apk-197/NuestroHogar-Amigos.exe",
+          "http": 200
+        },
+        {
+          "name": "NuestroHogar.apk",
+          "url": "https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/releases/download/apk-197/NuestroHogar.apk",
+          "http": 200
+        },
+        {
+          "name": "NuestroHogar.exe",
+          "url": "https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/releases/download/apk-197/NuestroHogar.exe",
+          "http": 200
+        }
+      ],
+      "sha": "28b9b3a97caa9c6cdbde18098789a2f72ac1ab35",
+      "tag": "apk-197"
+    }
   }
 }

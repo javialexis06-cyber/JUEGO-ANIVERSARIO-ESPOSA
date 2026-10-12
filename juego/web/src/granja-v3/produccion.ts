@@ -39,7 +39,7 @@ import { NIVEL_RECUPERADORA, materialesDe, porcentajeRecuperacion } from './recu
 /** Milisegundos por unidad en cada nivel de recuperadora. */
 const DURACION_RECUPERAR=[0,20_000,12_000,6_000];
 export const MAX_NODOS_PRODUCCION=128,MAX_COLA_PRODUCCION=100,MAX_AVANCE_PRODUCCION_MS=7*24*60*60_000,MAX_EVENTOS_PRODUCCION=20_000;
-export const ESTRUCTURAS_PRODUCCION=new Set(['portal_verdia','portal_senda','portal_nox','nave_exploradora','aspersor_basico','aspersor_cobre','aspersor_hierro','aspersor_astral']);
+export const ESTRUCTURAS_PRODUCCION=new Set(['conector_produccion','portal_verdia','portal_senda','portal_nox','nave_exploradora','aspersor_basico','aspersor_cobre','aspersor_hierro','aspersor_astral']);
 export function huellaProduccion(n:{articulo:string;x:number;z:number}){return {x:n.x,z:n.z,ancho:n.articulo==='nave_exploradora'?3:typeof n.articulo==='string'&&n.articulo.startsWith('portal_')?2:1,fondo:n.articulo==='nave_exploradora'?3:1};}
 export function solapanProduccion(a:PosicionProduccion&{articulo:string},b:PosicionProduccion&{articulo:string}){const p=huellaProduccion(a),q=huellaProduccion(b);return a.zona===b.zona&&p.x<q.x+q.ancho&&p.x+p.ancho>q.x&&p.z<q.z+q.fondo&&p.z+p.fondo>q.z;}
 const copiaCasillas=(casillas:CasillasProduccion)=>casillas.map(p=>p?{...p}:null);
@@ -91,10 +91,10 @@ export function sonAdyacentesProduccion(a:PosicionProduccion,b:PosicionProduccio
 }
 /** Toda conexión atraviesa dispositivos contiguos, pero nunca una zona diferente. Orden estable por ID. */
 export function gruposProduccion(e:EstadoProduccion):{ids:string[];cofres:string[];maquinas:string[]}[]{
- const nodos=ordenar([...e.cofres,...e.maquinas]),visitados=new Set<string>(),idsCofres=new Set(e.cofres.map(c=>c.id)),grupos:{ids:string[];cofres:string[];maquinas:string[]}[]=[];
+ const nodos=ordenar([...e.cofres,...e.maquinas,...e.estructuras.filter(n=>n.articulo==='conector_produccion')]),visitados=new Set<string>(),idsCofres=new Set(e.cofres.map(c=>c.id)),idsMaquinas=new Set(e.maquinas.map(m=>m.id)),grupos:{ids:string[];cofres:string[];maquinas:string[]}[]=[];
  for(const nodo of nodos){if(visitados.has(nodo.id))continue;const pila=[nodo],ids:string[]=[];visitados.add(nodo.id);
   while(pila.length){const actual=pila.shift()!;ids.push(actual.id);for(const vecino of nodos)if(!visitados.has(vecino.id)&&sonAdyacentesProduccion(actual,vecino,e.adyacencia)){visitados.add(vecino.id);pila.push(vecino);}}
-  ids.sort();grupos.push({ids,cofres:ids.filter(id=>idsCofres.has(id)),maquinas:ids.filter(id=>!idsCofres.has(id))});
+  ids.sort();grupos.push({ids,cofres:ids.filter(id=>idsCofres.has(id)),maquinas:ids.filter(id=>idsMaquinas.has(id))});
  }return grupos;
 }
 export function duracionTecnica(r:RecetaProduccion,c:ContextoProduccion){const t=c.tecnica,base=r.baseNarrativa??r.id;const aplica=t&&t.estaciones.includes(r.estacion)&&(!t.recetas.length||t.recetas.includes(base))&&!(t.factor===.8&&base.endsWith('_del_archivo'));return r.duracionMs*(aplica?Number.isFinite(t.factor)?Math.max(.8,Math.min(1,t.factor)):1:1);}

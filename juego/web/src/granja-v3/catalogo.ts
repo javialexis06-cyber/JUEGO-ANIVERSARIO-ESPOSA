@@ -1,3 +1,4 @@
+import {PESQUERIAS_REGIONALES} from './comunidad-datos';
 import { DATOS as SEMILLAS_ASTRA } from './astra-cultivos-datos';
 import type { Species } from './genetica';
 import type { Tiempo } from './clima';
@@ -66,7 +67,7 @@ export const CULTIVOS:CultivoDef[]=[
 ];
 CULTIVOS.push(...CULTIVOS_ADICIONALES);
 CULTIVOS.push(...SEMILLAS_ASTRA.map(c=>({...c,climas:c.climas as Clima[],estaciones:c.estaciones as Estacion[]})));
-export interface PezDef{tiempos?:Tiempo[];id:string;nombre:string;zonas:Zona[];estaciones:Estacion[];desde:number;hasta:number;cebo:string;rareza:number;valor:number}
+export interface PezDef{regiones?:string[];tiempos?:Tiempo[];id:string;nombre:string;zonas:Zona[];estaciones:Estacion[];desde:number;hasta:number;cebo:string;rareza:number;valor:number}
 const todas:Estacion[]=['primavera','verano','otono','invierno'];
 export const PECES:PezDef[]=[
   ['carpa','Carpa','lago',todas,0,24,'lombriz',1,18],['perca','Perca','lago',todas,6,18,'lombriz',1,20],
@@ -79,6 +80,8 @@ export const PECES:PezDef[]=[
   ['anguila_cristal','Anguila de cristal','mina',todas,0,24,'cebo_magico',4,110],['pez_lava','Pez de lava','mina',['verano'],12,18,'cebo_magico',5,140],
   ['carpa_ancestral','Carpa ancestral','bosque_ancestral',['primavera','otono'],5,9,'cebo_magico',5,150],['pez_aurora','Pez aurora','bosque_ancestral',['invierno'],20,3,'cebo_magico',5,160],
 ].map(row=>({id:row[0],nombre:row[1],zonas:[row[2]],estaciones:row[3],desde:row[4],hasta:row[5],cebo:row[6],rareza:row[7],valor:row[8]} as PezDef));
+
+PECES.push(...PESQUERIAS_REGIONALES.map(p=>({...p,regiones:[p.region],zonas:[],estaciones:todas})));
 
 const TIEMPOS_PECES:Record<string,Tiempo[]>={bagre:['lluvia','tormenta'],anguila:['lluvia','tormenta'],pez_sol:['sol','brisa'],trucha_arcoiris:['sol','brisa'],pez_hielo:['nieve']};
 for(const pez of PECES)if(TIEMPOS_PECES[pez.id])pez.tiempos=TIEMPOS_PECES[pez.id];

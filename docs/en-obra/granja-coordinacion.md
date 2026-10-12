@@ -1,3 +1,12 @@
+## Comunidad y redes · 12 de octubre de 2026
+
+El frente de motor continúa por instrucción de Javier. No se modifican lavado, casas, inventario visual,
+menú de seis pestañas ni navegación de Claude. Leer [COMUNIDAD-INTEGRACION.md](../../juego/web/src/granja-v3/COMUNIDAD-INTEGRACION.md).
+Puestos y vitrinas reutilizan kits; ocho pesquerías, cuatro obras, 26 colecciones y carga pagada
+conservan V5, calidad, calendario al dormir y cuidados reales. Las claves opcionales de modelos
+están en el contrato de producción. Las pruebas comunitarias preparan ubicaciones y recursos;
+el recorrido ordinario y balance continúan en el bloque 7.
+
 # Coordinación de la granja con el proyecto principal
 
 ## Claude lleva todo el frente · 12 de octubre de 2026

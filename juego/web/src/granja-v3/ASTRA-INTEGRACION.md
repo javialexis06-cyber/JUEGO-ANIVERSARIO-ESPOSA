@@ -5,6 +5,9 @@ Incorpora los planos y voces recientes de Claude, 178 residentes y 93 domicilios
 pueblos y el diario de 36 contratos principales con 110 objetivos. Las cifras y ubicaciones de la
 base descrita más abajo son históricas: consultar los planos y el contrato vigente para producción.
 El motor completo sigue en desarrollo; los siete bloques autorizados se comprueban por separado.
+El bloque comunitario está en [COMUNIDAD-INTEGRACION.md](COMUNIDAD-INTEGRACION.md): ocho pesquerías,
+seis artefactos, 26 colecciones, conectores físicos, exportación opcional, terminales con carga pagada,
+cuatro obras, pedidos semanales y cuadernos. Queda el recorrido ordinario y el balance del bloque 7.
 
 Actualización: 11 de octubre de 2026. Fuente activa: esta carpeta. Se conserva el guardado V5; `astra`
 es un bloque aditivo versionado, sin sustituir inventario, calendario, relaciones anteriores ni genomas.

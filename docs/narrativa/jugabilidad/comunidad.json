@@ -1,0 +1,947 @@
+{
+  "version": 1,
+  "estado": "Bloque comunitario jugable; pruebas de módulos con preparación explícita, recorrido ordinario posterior.",
+  "obras": [
+    {
+      "id": "muelle",
+      "nombre": "Puesto de cuidado del lago",
+      "region": "lago",
+      "x": 28,
+      "z": 77,
+      "noches": 2,
+      "materiales": {
+        "madera": 24,
+        "piedra": 12,
+        "fibra": 8
+      },
+      "efecto": "Dos trampas de cebo, un intento por noche dormida y salida que debe recogerse."
+    },
+    {
+      "id": "galeria",
+      "nombre": "Galería de oficios y cuencas",
+      "region": "pueblo",
+      "x": 0,
+      "z": 1,
+      "noches": 3,
+      "materiales": {
+        "madera": 30,
+        "piedra": 20,
+        "vidrio": 4
+      },
+      "efecto": "Donaciones físicas, colecciones regionales y seis vitrinas. Se reutiliza la Casa de Oficios."
+    },
+    {
+      "id": "descanso",
+      "nombre": "Banco del sendero antiguo",
+      "region": "bosque_ancestral",
+      "x": -72,
+      "z": 72,
+      "noches": 2,
+      "materiales": {
+        "madera_ancestral": 8,
+        "piedra": 16,
+        "fibra": 8
+      },
+      "efecto": "Una pausa diaria con una ración recupera diez puntos de energía."
+    },
+    {
+      "id": "terminal",
+      "nombre": "Terminal de carga acordada",
+      "region": "estacion_celia",
+      "x": 0,
+      "z": -9.6,
+      "noches": 3,
+      "materiales": {
+        "lingote_hierro": 6,
+        "bateria": 2,
+        "engranaje": 2
+      },
+      "efecto": "Hasta cuatro terminales y seis bultos pagados: entrega al dormir y retirada presencial.",
+      "permiso": "P16"
+    }
+  ],
+  "pesquerias": [
+    {
+      "region": "puerto_lirios",
+      "id": "lisa_lirios",
+      "nombre": "Lisa de los lirios",
+      "cebo": "lombriz",
+      "rareza": 1,
+      "valor": 22,
+      "desde": 6,
+      "hasta": 20,
+      "punto": {
+        "x": -24,
+        "z": 22
+      }
+    },
+    {
+      "region": "brumaverde",
+      "id": "barbo_bruma",
+      "nombre": "Barbo de la bruma",
+      "cebo": "lombriz",
+      "rareza": 2,
+      "valor": 30,
+      "desde": 5,
+      "hasta": 18,
+      "punto": {
+        "x": -24,
+        "z": 22
+      }
+    },
+    {
+      "region": "piedralumbre",
+      "id": "locha_tibia",
+      "nombre": "Locha del estanque tibio",
+      "cebo": "lombriz",
+      "rareza": 2,
+      "valor": 30,
+      "desde": 6,
+      "hasta": 22,
+      "punto": {
+        "x": -24,
+        "z": 22
+      }
+    },
+    {
+      "region": "ambarina",
+      "id": "gobio_ambar",
+      "nombre": "Gobio de Ámbar",
+      "cebo": "pez_cebo",
+      "rareza": 3,
+      "valor": 50,
+      "desde": 5,
+      "hasta": 20,
+      "punto": {
+        "x": -24,
+        "z": 22
+      }
+    },
+    {
+      "region": "huerto_aurelia",
+      "id": "carpin_aurelia",
+      "nombre": "Carpín del vivero cerrado",
+      "cebo": "lombriz",
+      "rareza": 1,
+      "valor": 22,
+      "desde": 0,
+      "hasta": 24,
+      "punto": {
+        "x": -24,
+        "z": 22
+      }
+    },
+    {
+      "region": "estacion_celia",
+      "id": "siluro_celia",
+      "nombre": "Siluro del módulo acuícola",
+      "cebo": "pez_cebo",
+      "rareza": 2,
+      "valor": 38,
+      "desde": 0,
+      "hasta": 24,
+      "punto": {
+        "x": -24,
+        "z": 22
+      }
+    },
+    {
+      "region": "confluencia_agua",
+      "id": "perca_cuenca",
+      "nombre": "Perca de la cuenca acordada",
+      "cebo": "lombriz",
+      "rareza": 2,
+      "valor": 32,
+      "desde": 6,
+      "hasta": 20,
+      "punto": {
+        "x": -24,
+        "z": 22
+      }
+    },
+    {
+      "region": "fragmentos_cristal",
+      "id": "danio_cristal",
+      "nombre": "Danio del acuario cerrado",
+      "cebo": "cebo_magico",
+      "rareza": 3,
+      "valor": 60,
+      "desde": 0,
+      "hasta": 24,
+      "punto": {
+        "x": -24,
+        "z": 22
+      }
+    }
+  ],
+  "artefactos": [
+    {
+      "id": "fanal_portuario",
+      "nombre": "Fanal de los primeros muelles",
+      "contexto": "El vidrio estaba roto; la luz servía para volver, no para vigilar."
+    },
+    {
+      "id": "vasija_riego",
+      "nombre": "Vasija de riego remendada",
+      "contexto": "Tres reparaciones explican por qué una familia no pudo reemplazarla."
+    },
+    {
+      "id": "campana_turno",
+      "nombre": "Campana de cambio de turno",
+      "contexto": "Anunciaba el descanso de quienes mantenían las primeras galerías."
+    },
+    {
+      "id": "placa_taller",
+      "nombre": "Placa de un taller cerrado",
+      "contexto": "Se conservaron los nombres de aprendices, además del dueño."
+    },
+    {
+      "id": "aguja_camino",
+      "nombre": "Aguja de orientación",
+      "contexto": "Quien la llevó marcó también lugares donde debía pedir permiso."
+    },
+    {
+      "id": "azulejo_cuenca",
+      "nombre": "Azulejo de la cuenca compartida",
+      "contexto": "Sus cuatro colores registran acuerdos humanos: no contienen poder divino."
+    }
+  ],
+  "colecciones": [
+    {
+      "id": "artefactos",
+      "nombre": "Objetos con una vida anterior",
+      "items": [
+        "fanal_portuario",
+        "vasija_riego",
+        "campana_turno",
+        "placa_taller",
+        "aguja_camino",
+        "azulejo_cuenca"
+      ]
+    },
+    {
+      "id": "cuencas",
+      "nombre": "Ocho cuencas cuidadas",
+      "items": [
+        "lisa_lirios",
+        "barbo_bruma",
+        "locha_tibia",
+        "gobio_ambar",
+        "carpin_aurelia",
+        "siluro_celia",
+        "perca_cuenca",
+        "danio_cristal"
+      ]
+    },
+    {
+      "id": "pueblo_sol",
+      "nombre": "Pueblo del Sol",
+      "items": [
+        "pueblo_sol_mineral",
+        "pueblo_sol_madera",
+        "pueblo_sol_cosecha"
+      ]
+    },
+    {
+      "id": "puerto_lirios",
+      "nombre": "Puerto de los Lirios",
+      "items": [
+        "puerto_lirios_mineral",
+        "puerto_lirios_madera",
+        "puerto_lirios_cosecha"
+      ]
+    },
+    {
+      "id": "brumaverde",
+      "nombre": "Brumaverde",
+      "items": [
+        "brumaverde_mineral",
+        "brumaverde_madera",
+        "brumaverde_cosecha"
+      ]
+    },
+    {
+      "id": "piedralumbre",
+      "nombre": "Piedralumbre",
+      "items": [
+        "piedralumbre_mineral",
+        "piedralumbre_madera",
+        "piedralumbre_cosecha"
+      ]
+    },
+    {
+      "id": "brasaviva",
+      "nombre": "Brasaviva",
+      "items": [
+        "brasaviva_mineral",
+        "brasaviva_madera",
+        "brasaviva_cosecha"
+      ]
+    },
+    {
+      "id": "nieveclara",
+      "nombre": "Nieveclara",
+      "items": [
+        "nieveclara_mineral",
+        "nieveclara_madera",
+        "nieveclara_cosecha"
+      ]
+    },
+    {
+      "id": "vigilia",
+      "nombre": "Vigilia de Ceniza",
+      "items": [
+        "vigilia_mineral",
+        "vigilia_madera",
+        "vigilia_cosecha"
+      ]
+    },
+    {
+      "id": "rosal_eterno",
+      "nombre": "Rosal Eterno",
+      "items": [
+        "rosal_eterno_mineral",
+        "rosal_eterno_madera",
+        "rosal_eterno_cosecha"
+      ]
+    },
+    {
+      "id": "jardines_eco",
+      "nombre": "Jardines del Eco",
+      "items": [
+        "jardines_eco_mineral",
+        "jardines_eco_madera",
+        "jardines_eco_cosecha"
+      ]
+    },
+    {
+      "id": "travesia",
+      "nombre": "Umbral de la Travesía",
+      "items": [
+        "travesia_mineral",
+        "travesia_madera",
+        "travesia_cosecha"
+      ]
+    },
+    {
+      "id": "refugio_hilos",
+      "nombre": "Refugio de los Hilos",
+      "items": [
+        "refugio_hilos_mineral",
+        "refugio_hilos_madera",
+        "refugio_hilos_cosecha"
+      ]
+    },
+    {
+      "id": "bastion_velo",
+      "nombre": "Bastión del Velo",
+      "items": [
+        "bastion_velo_mineral",
+        "bastion_velo_madera",
+        "bastion_velo_cosecha"
+      ]
+    },
+    {
+      "id": "estacion_celia",
+      "nombre": "Estación sobre Celia",
+      "items": [
+        "estacion_celia_mineral",
+        "estacion_celia_madera",
+        "estacion_celia_cosecha"
+      ]
+    },
+    {
+      "id": "huerto_aurelia",
+      "nombre": "Huerto de Aurelia",
+      "items": [
+        "huerto_aurelia_mineral",
+        "huerto_aurelia_madera",
+        "huerto_aurelia_cosecha"
+      ]
+    },
+    {
+      "id": "vigia_nocturna",
+      "nombre": "Vigía de Nocturna",
+      "items": [
+        "vigia_nocturna_mineral",
+        "vigia_nocturna_madera",
+        "vigia_nocturna_cosecha"
+      ]
+    },
+    {
+      "id": "cantera_esmeralda",
+      "nombre": "Cantera de Esmeralda",
+      "items": [
+        "cantera_esmeralda_mineral",
+        "cantera_esmeralda_madera",
+        "cantera_esmeralda_cosecha"
+      ]
+    },
+    {
+      "id": "fragmentos_cobre",
+      "nombre": "Fragmento Cobrizo",
+      "items": [
+        "fragmentos_cobre_mineral",
+        "fragmentos_cobre_madera",
+        "fragmentos_cobre_cosecha"
+      ]
+    },
+    {
+      "id": "fragmentos_cristal",
+      "nombre": "Fragmento Prismático",
+      "items": [
+        "fragmentos_cristal_mineral",
+        "fragmentos_cristal_madera",
+        "fragmentos_cristal_cosecha"
+      ]
+    },
+    {
+      "id": "ambarina",
+      "nombre": "Ambarina",
+      "items": [
+        "ambarina_mineral",
+        "ambarina_madera",
+        "ambarina_cosecha"
+      ]
+    },
+    {
+      "id": "iridalia",
+      "nombre": "Iridalia",
+      "items": [
+        "iridalia_mineral",
+        "iridalia_madera",
+        "iridalia_cosecha"
+      ]
+    },
+    {
+      "id": "confluencia_fuego",
+      "nombre": "Caldera del Rescoldo",
+      "items": [
+        "confluencia_fuego_mineral",
+        "confluencia_fuego_madera",
+        "confluencia_fuego_cosecha"
+      ]
+    },
+    {
+      "id": "confluencia_agua",
+      "nombre": "Mar de los Retornos",
+      "items": [
+        "confluencia_agua_mineral",
+        "confluencia_agua_madera",
+        "confluencia_agua_cosecha"
+      ]
+    },
+    {
+      "id": "confluencia_tierra",
+      "nombre": "Terraza de las Raíces",
+      "items": [
+        "confluencia_tierra_mineral",
+        "confluencia_tierra_madera",
+        "confluencia_tierra_cosecha"
+      ]
+    },
+    {
+      "id": "confluencia_aire",
+      "nombre": "Altura de las Corrientes",
+      "items": [
+        "confluencia_aire_mineral",
+        "confluencia_aire_madera",
+        "confluencia_aire_cosecha"
+      ]
+    }
+  ],
+  "cuadernos": [
+    {
+      "id": "cuencas",
+      "titulo": "Cuencas que regresan",
+      "condicion": "tres capturas regionales distintas",
+      "texto": "Anota el cebo, la hora y el estanque. Una observación no autoriza capturar fauna protegida. Las trampas consumen cebo aunque el pez escape."
+    },
+    {
+      "id": "vitrinas",
+      "titulo": "Devolver un nombre",
+      "condicion": "tres artefactos donados",
+      "texto": "Una pieza sin contexto cuenta menos que una reparación documentada. La donación transfiere el objeto; las vistas previas y los secretos reservados quedan fuera de la exposición."
+    },
+    {
+      "id": "carga",
+      "titulo": "La distancia tiene un coste",
+      "condicion": "un bulto recogido en otra terminal",
+      "texto": "El registro permite acordar una quinta terminal, con sus materiales originales. Registra cada carga, batería y jornada. Un puerto no comparte mágicamente su cofre con otro; el contenido viaja una sola vez y mantiene su calidad."
+    }
+  ],
+  "recetas": [
+    {
+      "id": "trampa_cebo",
+      "nombre": "Trampa de cebo",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 8,
+        "fibra": 6
+      },
+      "salida": {
+        "articulo": "trampa_cebo",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0
+    },
+    {
+      "id": "terminal_carga",
+      "nombre": "Terminal de carga",
+      "estacion": "banco_trabajo",
+      "ingredientes": {
+        "lingote_hierro": 2,
+        "engranaje": 1,
+        "bateria": 1
+      },
+      "salida": {
+        "articulo": "terminal_carga",
+        "cantidad": 1
+      },
+      "duracionMs": 20000,
+      "nivel": 0
+    },
+    {
+      "id": "exportador_envios",
+      "nombre": "Exportador de envíos",
+      "estacion": "banco_trabajo",
+      "ingredientes": {
+        "madera": 8,
+        "lingote_cobre": 2,
+        "engranaje": 1
+      },
+      "salida": {
+        "articulo": "exportador_envios",
+        "cantidad": 1
+      },
+      "duracionMs": 15000,
+      "nivel": 0
+    },
+    {
+      "id": "conector_produccion",
+      "nombre": "Conector de producción",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 2
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0
+    },
+    {
+      "id": "trampa_documentada",
+      "nombre": "Trampa de cuencas documentadas",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 8,
+        "fibra": 4
+      },
+      "salida": {
+        "articulo": "trampa_cebo",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_cuencas"
+    },
+    {
+      "id": "conector_documentado_pueblo_sol",
+      "nombre": "Conector documentado · Pueblo del Sol",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_pueblo_sol"
+    },
+    {
+      "id": "conector_documentado_puerto_lirios",
+      "nombre": "Conector documentado · Puerto de los Lirios",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_puerto_lirios"
+    },
+    {
+      "id": "conector_documentado_brumaverde",
+      "nombre": "Conector documentado · Brumaverde",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_brumaverde"
+    },
+    {
+      "id": "conector_documentado_piedralumbre",
+      "nombre": "Conector documentado · Piedralumbre",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_piedralumbre"
+    },
+    {
+      "id": "conector_documentado_brasaviva",
+      "nombre": "Conector documentado · Brasaviva",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_brasaviva"
+    },
+    {
+      "id": "conector_documentado_nieveclara",
+      "nombre": "Conector documentado · Nieveclara",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_nieveclara"
+    },
+    {
+      "id": "conector_documentado_vigilia",
+      "nombre": "Conector documentado · Vigilia de Ceniza",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_vigilia"
+    },
+    {
+      "id": "conector_documentado_rosal_eterno",
+      "nombre": "Conector documentado · Rosal Eterno",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_rosal_eterno"
+    },
+    {
+      "id": "conector_documentado_jardines_eco",
+      "nombre": "Conector documentado · Jardines del Eco",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_jardines_eco"
+    },
+    {
+      "id": "conector_documentado_travesia",
+      "nombre": "Conector documentado · Umbral de la Travesía",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_travesia"
+    },
+    {
+      "id": "conector_documentado_refugio_hilos",
+      "nombre": "Conector documentado · Refugio de los Hilos",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_refugio_hilos"
+    },
+    {
+      "id": "conector_documentado_bastion_velo",
+      "nombre": "Conector documentado · Bastión del Velo",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_bastion_velo"
+    },
+    {
+      "id": "conector_documentado_estacion_celia",
+      "nombre": "Conector documentado · Estación sobre Celia",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_estacion_celia"
+    },
+    {
+      "id": "conector_documentado_huerto_aurelia",
+      "nombre": "Conector documentado · Huerto de Aurelia",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_huerto_aurelia"
+    },
+    {
+      "id": "conector_documentado_vigia_nocturna",
+      "nombre": "Conector documentado · Vigía de Nocturna",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_vigia_nocturna"
+    },
+    {
+      "id": "conector_documentado_cantera_esmeralda",
+      "nombre": "Conector documentado · Cantera de Esmeralda",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_cantera_esmeralda"
+    },
+    {
+      "id": "conector_documentado_fragmentos_cobre",
+      "nombre": "Conector documentado · Fragmento Cobrizo",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_fragmentos_cobre"
+    },
+    {
+      "id": "conector_documentado_fragmentos_cristal",
+      "nombre": "Conector documentado · Fragmento Prismático",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_fragmentos_cristal"
+    },
+    {
+      "id": "conector_documentado_ambarina",
+      "nombre": "Conector documentado · Ambarina",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_ambarina"
+    },
+    {
+      "id": "conector_documentado_iridalia",
+      "nombre": "Conector documentado · Iridalia",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_iridalia"
+    },
+    {
+      "id": "conector_documentado_confluencia_fuego",
+      "nombre": "Conector documentado · Caldera del Rescoldo",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_confluencia_fuego"
+    },
+    {
+      "id": "conector_documentado_confluencia_agua",
+      "nombre": "Conector documentado · Mar de los Retornos",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_confluencia_agua"
+    },
+    {
+      "id": "conector_documentado_confluencia_tierra",
+      "nombre": "Conector documentado · Terraza de las Raíces",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_confluencia_tierra"
+    },
+    {
+      "id": "conector_documentado_confluencia_aire",
+      "nombre": "Conector documentado · Altura de las Corrientes",
+      "estacion": "mano",
+      "ingredientes": {
+        "madera": 2,
+        "fibra": 1
+      },
+      "salida": {
+        "articulo": "conector_produccion",
+        "cantidad": 1
+      },
+      "duracionMs": 0,
+      "nivel": 0,
+      "requisito": "museo_confluencia_aire"
+    }
+  ],
+  "medios": {
+    "modelos": [
+      "pesca:<region>",
+      "obra:<id>",
+      "trampa:<region>",
+      "museo:<articulo>",
+      "museo:vitrina"
+    ],
+    "regla": "Kits existentes como sustitutos. No cambiar colisiones, puestos, inventarios ni reglas por el arte."
+  }
+}
