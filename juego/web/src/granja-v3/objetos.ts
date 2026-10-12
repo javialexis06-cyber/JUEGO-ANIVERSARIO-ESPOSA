@@ -1,3 +1,4 @@
+import {TERRITORIOS_REGIONALES} from './regiones-datos';
 import {PREMIOS_NARRATIVOS} from './premios-datos';
 import { DATOS as RECURSOS_ASTRA } from './astra-recursos-datos';
 import { leerHuevo } from './ganaderia';
@@ -230,6 +231,7 @@ receta('portal_nox','forja',{obsidiana:20,lingote_oro:6,cristal:15,rubi:5},150,3
 // El despegue sólo exige materiales terrestres; ningún recurso espacial bloquea la primera nave.
 receta('nave_exploradora','forja',{lingote_acero:12,lingote_oro:8,lingote_plata:6,vidrio:12,bateria:8,engranaje:10},240,3);
 
+for(const r of TERRITORIOS_REGIONALES){objeto(r.producto,'Pieza ajustada · '+r.nombre,'insumo',0,{precioCompra:0});objeto(r.fauna.producto,'Aporte conservado · '+r.fauna.nombre,'insumo',0,{precioCompra:0});}
 export function obtenerObjeto(id:string):DefObjeto|undefined{const normal=Object.hasOwn(OBJETOS,id)?OBJETOS[id]:undefined;if(normal)return normal;const h=leerHuevo(id);return h?{id,nombre:'Huevo fértil de '+ESPECIES[h.especie].nombre.toLowerCase()+' · '+(h.sexo==='hembra'?'hembra':'macho'),categoria:'producto',rareza:'inusual',precioCompra:0,precioVenta:Math.max(10,Math.floor(ESPECIES[h.especie].precio/3)),pilaMax:20,descripcion:'Conserva su genotipo y sexo. Incúbalo en un refugio de su especie; avanza solo al dormir.'}:undefined;}
 objeto('fertilizante_mejorado','Abono mejorado','insumo',25,{precioCompra:75});
 RECETAS.push({id:'fertilizante_mejorado',nombre:'Abono mejorado',estacion:'mano',ingredientes:{fertilizante:3,cuarzo:1},salida:{articulo:'fertilizante_mejorado',cantidad:2},duracionMs:0,nivel:1});
@@ -260,5 +262,10 @@ for(const r of RECURSOS_ASTRA){
 }
 for(const p of PREMIOS_NARRATIVOS){if(p.plano?.tipo!=='receta')continue;const base=RECETAS.find(r=>r.id===p.plano!.base);if(base)RECETAS.push({...base,id:'variante_'+p.id,nombre:p.nombre+' · '+base.nombre,ingredientes:{...base.ingredientes},salida:{...base.salida},premioNarrativo:p.id,baseNarrativa:base.id});}
 
+for(const r of TERRITORIOS_REGIONALES){
+ objeto('kit_ajustado_'+r.id,'Kit ajustado · '+r.nombre,'insumo',0,{precioCompra:0});
+ RECETAS.push({id:'kit_ajustado_'+r.id,nombre:'Kit ajustado · '+r.nombre,estacion:'banco_trabajo',ingredientes:{[r.producto]:1,[r.id+'_mineral']:1,[r.id+'_madera']:2,[r.id+'_cosecha']:1},salida:{articulo:'kit_ajustado_'+r.id,cantidad:1},duracionMs:15000,nivel:0});
+ if(r.fauna.colonia)RECETAS.push({id:'pieza_colonia_'+r.id,nombre:'Pieza de atención · '+r.nombre,estacion:'banco_trabajo',ingredientes:{[r.fauna.producto]:1,[r.id+'_mineral']:1},salida:{articulo:r.producto,cantidad:1},duracionMs:10000,nivel:0});
+}
 const INDICE_RECETAS=new Map(RECETAS.map(r=>[r.id,r]));
 export function obtenerReceta(id:string):RecetaProduccion|undefined{return INDICE_RECETAS.get(id);}

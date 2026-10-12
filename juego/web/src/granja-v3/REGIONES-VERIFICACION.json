@@ -1,0 +1,103 @@
+{
+  "bloque": "territorios-y-mecanismos",
+  "base_integrada_claude": "2b13083",
+  "territorios": 24,
+  "familias_actividad": 6,
+  "colonias_autorizadas": 5,
+  "jefes": 6,
+  "destinos_aventura": 16,
+  "contratos_principales": 36,
+  "objetivos_principales": 110,
+  "regresion": {
+    "suites": 40,
+    "fallos": 0
+  },
+  "logica": {
+    "jefes": 10,
+    "regiones": 13,
+    "campana_cierre_combate": [
+      "F12",
+      "P23"
+    ],
+    "preparacion": "Recursos, ubicaciones y prueba externa de Sangre preparados; cierres y genotipos por acciones."
+  },
+  "compilaciones": {
+    "pareja": true,
+    "amigos": true
+  },
+  "navegador_regiones": {
+    "checks": [
+      "El Diario de Claude conserva el acceso a trabajos y fauna de cada territorio",
+      "Una reserva que no puede guardarse devuelve sus materiales",
+      "El trabajo conserva su reserva y ajuste al recargar",
+      "Retirar da una pieza real y deja cerrado el trabajo de este ciclo",
+      "La fauna de cápsula se atiende dentro del módulo protegido con alimentación real",
+      "Recarga conserva colonia e interior y la salida vuelve a su puesto"
+    ],
+    "errors": [],
+    "bad": [],
+    "viewport": [
+      844,
+      390
+    ],
+    "dibujoWebGLPausado": true,
+    "alcance": "Actividades, escrows, módulos y cuidados sobre recursos y posiciones preparados; no certifica economía ordinaria, modelos finales o teléfonos."
+  },
+  "navegador_jefes": {
+    "checks": [
+      "La cámara de Forma Fija se abre desde su acceso físico de Confluencia",
+      "Reintentar desde la baliza reactiva el mecanismo y conserva su entrega única",
+      "El aviso comparte área con el motor y conserva su patrón al recargar",
+      "El regreso seguro conserva mochila y vuelve al territorio"
+    ],
+    "errors": [],
+    "bad": [],
+    "viewport": [
+      844,
+      390
+    ],
+    "dibujoWebGLPausado": true,
+    "alcance": "Acceso, reintento, telegráficas, recarga y regreso con campaña, posición y recursos preparados; no certifica combate humano ni GPU."
+  },
+  "navegador_general": {
+    "checks": [
+      "Botón de la casa abre la granja V5 sobre el build actual",
+      "Teclado mueve al personaje compartido actual",
+      "Mouse abre el buzón y conserva lectura",
+      "Inventario actual accesible en horizontal",
+      "Granja → casa real → granja conserva posición, inventario y jornada",
+      "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+    ],
+    "errors": [],
+    "bad": [],
+    "viewport": [
+      844,
+      390
+    ],
+    "escenariosPreparados": "Cuarto habilitado y avatar posicionado en contexto nuevo aislado.",
+    "dispositivosFisicos": []
+  },
+  "medios": {
+    "lineas": 3590,
+    "vocesDeclaradas": 3581,
+    "modelosDeclarados": 0,
+    "musicaDeclarada": 23,
+    "errores": [],
+    "estado": "Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir."
+  },
+  "limites": [
+    "Colonias adicionales separadas de los genomas y especies anteriores.",
+    "Arte provisional; los modelos y clips finales corresponden al frente visual.",
+    "No certifica economía desde cero o teléfonos físicos.",
+    "Pesca, museo, logística y obras comunitarias en el sexto bloque."
+  ],
+  "sha256": {
+    "juego/web/src/granja-v3/jefes.ts": "8797186226c3a2db21d96855784935104ecc37e096d224105d7492d6fc4cc74f",
+    "juego/web/src/granja-v3/regiones-datos.ts": "ea1b73557a9c6b5d04ebd81f4a9abfce4ceda18f3b451ed4f32c1b30b9202585",
+    "juego/web/src/granja-v3/regiones-tipos.ts": "8a0bfed609d2f40b918042c93dc90c6a290b07760a67f1238b3facfd358faf91",
+    "juego/web/src/granja-v3/regiones-ui.ts": "410188ada30f8f30783cad51b37c431fedc550670c29c94ecdfaab87e1aae1fe",
+    "juego/web/src/granja-v3/regiones.ts": "a20d09b0c2492d209fac0e96168094106409e0ead22369a22132aa63a55c5b77",
+    "juego/web/src/granja-v3/aventura.ts": "1366a1285553308bc8e2346ef72a4ec6dc393e20058b76b7e3268330699c00cc",
+    "juego/web/src/granja-v3/historia.ts": "3186719d7728594b3ad16ef223dea1c09af2f8ce7d33df7ad86b8f77d95a07cf"
+  }
+}

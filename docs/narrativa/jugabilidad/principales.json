@@ -1497,7 +1497,10 @@
           "Cerrar conducto"
         ],
         "datos": [],
-        "id": "P23.4"
+        "id": "P23.4",
+        "alternativa": "combate",
+        "destino": "proyeccion_nath",
+        "registro": "jefe"
       }
     ],
     "decision": "",
@@ -2449,7 +2452,10 @@
           "El núcleo central está protegido: ninguna conexión puede entrar en él.",
           "La reserva y el retorno son destinos distintos. Cambia las uniones y comprueba el circuito."
         ],
-        "id": "F12.3"
+        "id": "F12.3",
+        "alternativa": "combate",
+        "destino": "forma_fija",
+        "registro": "jefe"
       }
     ],
     "decision": "Dejar mesa de revisión comunitaria o custodia distribuida con consulta común.",

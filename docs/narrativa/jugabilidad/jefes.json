@@ -1,0 +1,44 @@
+{
+  "regulador_fuego": {
+    "nombre": "Horno del Resentimiento",
+    "elemento": "fuego",
+    "vida": 140,
+    "dano": 12,
+    "modeloBase": "constructo_fuego"
+  },
+  "regulador_agua": {
+    "nombre": "Bomba de los Retornos Rotos",
+    "elemento": "agua",
+    "vida": 140,
+    "dano": 10,
+    "modeloBase": "constructo_agua"
+  },
+  "regulador_tierra": {
+    "nombre": "Ancla de la Raíz Cerrada",
+    "elemento": "tierra",
+    "vida": 170,
+    "dano": 13,
+    "modeloBase": "constructo_tierra"
+  },
+  "regulador_aire": {
+    "nombre": "Turbina del Viento Cautivo",
+    "elemento": "aire",
+    "vida": 145,
+    "dano": 10,
+    "modeloBase": "constructo_aire"
+  },
+  "forma_fija": {
+    "nombre": "Circuito de Forma Fija",
+    "elemento": "cuatro",
+    "vida": 200,
+    "dano": 12,
+    "modeloBase": "guardian"
+  },
+  "proyeccion_nath": {
+    "nombre": "Proyección del conducto de Nath",
+    "elemento": "cuatro",
+    "vida": 240,
+    "dano": 14,
+    "modeloBase": "centinela"
+  }
+}

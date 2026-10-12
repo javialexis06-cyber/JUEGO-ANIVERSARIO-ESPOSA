@@ -1,3 +1,5 @@
+import type {EstadoRegional,AccionRegional} from './regiones-tipos';
+import type {AccionVidaAstra} from './vida-astra-tipos';
 import type {AccionPremio} from './premios-tipos';
 import type {EstadoHistoria,AccionHistoria} from './historia-tipos';
 import type { EstadoAstra, AccionAstra } from './astra';
@@ -36,13 +38,15 @@ export interface Drop {id:string;articulo:string;cantidad:number;x:number;z:numb
 export interface Parcela {campo?:CampoCultivo;x:number;z:number;cultivo:string|null;cuidado:CropCare|null}
 export interface EstadoGranja extends EstadoBarra {
  libros:EstadoLibros;colecciones:EstadoColecciones;festivales:EstadoFestivales;correo:EstadoCorreo;vidaSocial:EstadoVidaSocial;encargos:EstadoEncargos;pueblo:EstadoPueblo;obras:EstadoObras;compania:EstadoCompania;ganaderia:EstadoGanaderia;habilidades:EstadoHabilidades;jornada:Jornada;tiempo:EstadoTiempo;envios:EstadoEnvios;frutales:Frutal[];invernaderos:Invernadero[];
- historia?:EstadoHistoria;astra?:EstadoAstra;paisaje?:PaisajeGranja;posicionExterior?:{zona:Zona;x:number;z:number};
+ regional?:EstadoRegional;historia?:EstadoHistoria;astra?:EstadoAstra;paisaje?:PaisajeGranja;posicionExterior?:{zona:Zona;x:number;z:number};
  produccion:EstadoProduccion;aventura:EstadoAventura;posicionAventura:PuntoAventura|null;
  version:5;revision:number;ultimoTiempo:number;inicioTiempo:number;monedas:number;inventario:Record<string,number>;casillasInventario:(Pila|null)[];almacenMigracion:Record<string,number>;nivelesHerramienta:Record<string,number>;mejoraHerramienta:{herramienta:Herramienta;nivel:number;hasta:number}|null;servicio:Servicio|null;drops:Drop[];ultimoGolpeAt:number;herramienta:Herramienta;personaje:'ella'|'el';sectorIds:number[];
  edificios:Edificio[];obstaculos:Obstaculo[];parcelas:Parcela[];animales:Animal[];estadisticas:Record<string,number>;misionesCompletadas:string[];desbloqueos:string[];tokensCasa:string[];
  zona:Zona;interior:string|null;vida:number;energia:number;enemigo:number;nivelMina:number;ayudante:{desde:number;hasta:number;ultimoTurno:number}|null;secuencia:number;
 }
 export type Accion =
+ |{tipo:'regional';accion:AccionRegional;xJugador:number;zJugador:number}
+ |{tipo:'vida_astra';accion:AccionVidaAstra;xJugador:number;zJugador:number}
  |{tipo:'premio';accion:AccionPremio;xJugador:number;zJugador:number}
  |{tipo:'historia';accion:AccionHistoria;xJugador:number;zJugador:number}
  |{tipo:'astra';accion:AccionAstra;xJugador:number;zJugador:number}
@@ -85,7 +89,7 @@ export type Accion =
  |{tipo:'comprar_objeto';articulo:string;cantidad?:number}
  |{tipo:'entrar_aventura';destino:string;xJugador:number;zJugador:number;piso?:number}|{tipo:'construir_ascensor';xJugador:number;zJugador:number}|{tipo:'recuperar';estructuraId:string;casilla:number;cantidad:number;xJugador:number;zJugador:number}
  |{tipo:'salir_aventura'}|{tipo:'descender_aventura';xJugador:number;zJugador:number}
- |{tipo:'accion_aventura';objetivo:'monstruo'|'nodo'|'botin'|'situacion';id:string;xJugador:number;zJugador:number}
+ |{tipo:'accion_aventura';objetivo:'monstruo'|'nodo'|'botin'|'situacion'|'reintentar_jefe';id:string;xJugador:number;zJugador:number}
  |{tipo:'seleccionar_casilla';casilla:number}|{tipo:'fila_barra';fila:number}|{tipo:'consumir';casilla?:number}
  |{tipo:'equipar_objeto';casilla:number}|{tipo:'desequipar_objeto';ranura:RanuraEquipo}
  |{tipo:'herramienta';herramienta:Herramienta}|{tipo:'personaje';personaje:'ella'|'el'}

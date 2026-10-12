@@ -90,6 +90,8 @@ for q in main:
   s['id']=q['id']+'.'+str(i+1);s['region']=s['region'] or region
   s['punto']=({'x':75.5,'z':23.4} if s['region']=='pueblo_sol' else regiones.get(s['region'],{}).get('plano',{}).get('archivo',{'x':0,'z':22})) if s['tipo'] not in ['cultivar','cuidar','preguntar','visitar'] else None
   if q['id']=='P23' and s['tipo']=='secuencia': s['punto']={'x':[-12,0,12][i-1],'z':22}
+  if (q['id']=='F12' and i==2) or (q['id']=='P23' and i==3):
+   s.update(alternativa='combate',destino='forma_fija' if q['id']=='F12' else 'proyeccion_nath',registro='jefe')
   for person in s.get('participantes',[]):
    person['id']=aliases.get(person['id'],person['id'])
    assert person['id'] in known,person['id']

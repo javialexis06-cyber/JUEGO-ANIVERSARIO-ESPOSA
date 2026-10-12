@@ -1,3 +1,4 @@
+import {territorioRegional} from './regiones';
 import {premioDef} from './premios';
 /** Escenarios provisionales: reutilizan los kits existentes. Las reglas y anclajes viven en astra.ts. */
 import {habitantesHistoria} from './historia-ubicaciones';
@@ -20,6 +21,7 @@ function sustituir(id:string,raiz:THREE.Group,provisional:THREE.Object3D){
   const g=clone(escena);g.scale.setScalar(d.escala??1);g.position.copy(provisional.position);g.name='arte-'+id;
   g.traverse(o=>{const m=o as THREE.Mesh;if(!m.isMesh)return;m.geometry.userData.compartido=true;for(const mm of Array.isArray(m.material)?m.material:[m.material])mm.userData.compartido=true;});
   if(provisional.userData.npcId){g.userData.npcId=provisional.userData.npcId;g.userData.peluche=true;g.userData.artePropio=true;g.visible=provisional.visible;}
+  if(provisional.userData.fauna)g.userData.fauna=provisional.userData.fauna;
   g.userData.actorId=provisional.userData.npcId??(id.startsWith('figura:')?id.slice(7).replace(/^figura_/,''):undefined);
   if(clips.length){const mixer=new THREE.AnimationMixer(g);g.userData.mixer=mixer;g.userData.clips=clips;const reposo=clips.find(c=>c.name==='reposo')??clips[0];mixer.clipAction(reposo).play();}
   if(provisional.userData.peluche)sacarVecinos(provisional);else liberar(provisional);raiz.add(g);
@@ -42,8 +44,8 @@ export class EscenaAstra {
  sync(s:EstadoGranja){
   this.estado=s;const t=s.astra;if(!t)return;const region=t.actual??(s.zona==='pueblo'?'pueblo_sol':s.zona),visitantes=!t.actual;
   const ids=habitantesHistoria(s,region,visitantes?[]:regionAstra(region)!.npc);
-  const modulos=s.historia?.utilidades?.modulos.filter(m=>m.region===region)??[];this.grupo.visible=!visitantes||!s.interior&&!s.servicio&&(ids.length>0||modulos.length>0);const key=region+':'+t.interior+':'+ids.join(',')+':'+modulos.map(m=>m.id+':'+m.x+':'+m.z).join(',');if(key!==this.clave){this.limpiar();this.clave=key;this.grupo.userData.liberado=false;const capa=new THREE.Group();this.grupo.add(capa);const r=regionAstra(region)!;
-   if(!visitantes&&t.interior)capa.add(interiorVivienda([r.color],'archivo'));
+  const modulos=s.historia?.utilidades?.modulos.filter(m=>m.region===region)??[];this.grupo.visible=!visitantes||!s.interior&&!s.servicio&&(ids.length>0||modulos.length>0);const colonia=s.regional?.colonias.find(c=>t.interior==='habitat_'+c.region);const key=region+':'+t.interior+':'+(colonia?.animales.map(a=>a.id).join(',')??'')+':'+ids.join(',')+':'+modulos.map(m=>m.id+':'+m.x+':'+m.z).join(',');if(key!==this.clave){this.limpiar();this.clave=key;this.grupo.userData.liberado=false;const capa=new THREE.Group();this.grupo.add(capa);const r=regionAstra(region)!;
+   if(!visitantes&&t.interior){const interior=interiorVivienda([r.color],'archivo');capa.add(interior);if(colonia){sustituir('habitat:'+colonia.region,capa,interior);for(const [i,a]of colonia.animales.entries()){const g=arcoSalida((territorioRegional(colonia.region)?.fauna.nombre??'Colonia')+' · '+a.id,0,0,false);g.scale.setScalar(.3);g.position.set(-3+(i%4)*2,0,-1-Math.floor(i/4)*2);g.userData.fauna={id:a.id,region:colonia.region,genoma:a.genoma};capa.add(g);sustituir('fauna:'+territorioRegional(colonia.region)!.fauna.id,capa,g);}}}
    else if(!visitantes){
     const terreno=this.suelos.terreno(paletaSueloAstra(r.id));capa.add(terreno);sustituir('region:'+r.id,capa,terreno);const plano=planoAstra(r.id) as Parameters<typeof paisajeAstra>[4];if(!plano){capa.add(senderoTierra(0,13,43,3));capa.add(senderoTierra(0,5,3,43));}
     // Casas, paisaje, archivo y combate con el arte de su región (astra-arte.ts)
@@ -65,6 +67,7 @@ export class EscenaAstra {
   if(!g.userData.mixer||!g.userData.actorId)return;const hablando=g.userData.actorId===id;if(g.userData.hablando===hablando)return;g.userData.hablando=hablando;const clips=g.userData.clips as THREE.AnimationClip[],clip=clips.find(c=>c.name===(hablando?'hablar':'reposo'));if(clip){const mixer=g.userData.mixer as THREE.AnimationMixer;mixer.stopAllAction();mixer.clipAction(clip).play();}});}
  update(dt:number){if(!this.grupo.visible||!this.estado)return;const s=this.estado,dentro=s.astra?.interior??null,region=regionAstra(s.astra?.actual??'');
   this.grupo.traverse(g=>{if(g.userData.mixer)(g.userData.mixer as THREE.AnimationMixer).update(dt);if(!g.userData.npcId)return;const p=posicionNpcAstra(s,g.userData.npcId);
+   const caminata=s.astra?.vida?.pasos[g.userData.npcId];if(caminata&&caminata.dia===s.jornada.diasCompletados){g.visible=!!p&&p.interior===dentro;if(g.visible&&p){const dx=p.x-g.position.x,dz=p.z-g.position.z;g.position.set(p.x,0,p.z);if(Math.hypot(dx,dz)>.001)g.rotation.y=Math.atan2(dx,dz);if(!g.userData.mixer)animarVecino(g,dt,caminata.andando);}return;}
    // Adentro de una casa (o con arte propio), cada quien en su sitio, como lo dice el motor
    if(dentro||g.userData.mixer){g.visible=!!p&&p.interior===dentro;if(p&&g.visible){g.position.set(p.x,0,p.z);if(!g.userData.mixer)animarVecino(g,dt,false);}return;}
    // Afuera (solo arte): caminan por la calle entre su puesto, la plaza y la puerta de su casa, y entran por la puerta

@@ -522,3 +522,17 @@ de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/bl
 - Presentación mínima: `main.ts` respeta alcance de la familia; `escenas-aventura.ts` muestra esferas simples para proyectiles y patrones. Arte definitivo y animaciones siguen en el frente de Claude. No se han añadido modelos ni llamadas de audio.
 - Publicar sin push forzado en `claude/supermarket-mania-minigame-xn2it8` y `work`, tras repetir las comprobaciones de integración. Consultar `docs/narrativa/11-armas-y-combate.md` y la prueba `probar-armas.mjs` antes de integrar.
 - Integración comprobada sobre el remoto `a33deb0`: 33 suites sin fallos, ambas compilaciones correctas, seis comprobaciones del recorrido casa/granja y cinco de armas en navegador sin errores. Los escenarios de navegador usan partidas de prueba aisladas. `ARMAS-VERIFICACION.json` conserva alcance y pendientes.
+
+### Vida social de Astra (motor, 12 de octubre de 2026)
+
+- Los 154 residentes adicionales caminan según `astra.vida.pasos`; `posicionNpcAstra` utiliza el mismo punto para vista e interacción. Se conservan los 24 vecinos originales, los 178 IDs y los 93 domicilios.
+- Agendas, merienda infantil, clima, descanso, regalos por semana, preferencias descubiertas, cumpleaños, comercios con stock y encuentros de amistad. Las 98 relaciones derivan el cierre real; la rama privada conserva anonimato.
+- Se mantienen las comisiones de campaña, huellas, puertas y cada línea grabada. El arte consume posición/`andando`; sus reemplazos de modelos no cambian la cercanía. Ver `VIDA-ASTRA-INTEGRACION.md`.
+- Antes de publicar se combinan los cambios recientes de Claude en menú, mochila y habilidades, y se repiten las comprobaciones sobre el conjunto.
+
+### Territorios y mecanismos (motor, 12 de octubre de 2026)
+
+- 24 actividades en seis familias, reservas recuperables, renovación al dormir, 24 kits ajustados y conservación física. Cinco colonias autorizadas admiten crianza en su módulo con genomas y cuidados reales; las otras faunas permanecen libres.
+- Cuatro jefes elementales de nivel 3 y dos cámaras: Forma Fija para F12, proyección del conducto de Nath para P23. Conservan soluciones técnicas, IDs y voces; Fuatia no es un jefe. Reintentar no repite botín.
+- Arte: claves `jefe:<tipo>`, `fauna:<id>` y `habitat:<region>`. Marcadores y salas reutilizan piezas existentes; los avisos sencillos describen el área real de daño. Las animaciones no controlan costes ni colisiones.
+- Ver `REGIONES-INTEGRACION.md`; continúan museo, pesca ampliada, logística, obras comunitarias y balance. Los avances visuales y del lavado se combinan antes de publicar.

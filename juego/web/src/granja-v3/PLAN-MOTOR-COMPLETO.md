@@ -10,8 +10,11 @@ los expedientes de lectura y las pruebas realizadas. Las 3.581 tomas y 23 músic
 se integraron con sus IDs y firmas de texto. Maia conserva sus subtítulos y lengua de señas.
 
 Ver `HISTORIA-INTEGRACION.md`, `HISTORIA-SECUNDARIAS-INTEGRACION.md` y `PREMIOS-INTEGRACION.md`.
-La lista vigente está en `ASTRA-INTEGRACION.md`: quedan vida social ampliada, identidad regional,
-capacidades comunitarias y balance completo. Los apartados históricos siguientes conservan su fecha
+La vida social ampliada está conectada para 154 residentes, con posiciones reales, agenda, regalos,
+stock y revisión de acuerdos. Ver `VIDA-ASTRA-INTEGRACION.md`.
+Los 24 territorios tienen actividades y conservación; cinco colonias cuentan con módulos y genética.
+Cuatro jefes elementales y dos cámaras conservan alternativas técnicas. Ver `REGIONES-INTEGRACION.md`.
+La lista vigente está en `ASTRA-INTEGRACION.md`: quedan capacidades comunitarias y balance completo. Los apartados históricos siguientes conservan su fecha
 original y no representan una certificación de paridad actual.
 
 ## Base de Astra para producción · 11 de octubre de 2026
