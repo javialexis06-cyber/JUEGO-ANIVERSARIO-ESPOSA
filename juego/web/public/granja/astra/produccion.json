@@ -147819,5 +147819,727 @@
       "recompensa": "Una cuerda por materiales reales, o escucha sin pago; +5 amistad por vecino una sola vez.",
       "voces": "312 líneas nuevas con ID y SHA-256, todavía sin audio. Música y actores regionales existentes."
     }
+  },
+  "pesca_sedal": {
+    "version": 1,
+    "perfiles": [
+      {
+        "pez": "carpa",
+        "movimiento": "sereno",
+        "amplitud": 0.18,
+        "periodo": 6,
+        "centro": 0.5,
+        "ganancia": 0.14,
+        "ventana": 3.2,
+        "especie": {
+          "id": "carpa",
+          "nombre": "Carpa",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ],
+          "desde": 0,
+          "hasta": 24,
+          "cebo": "lombriz",
+          "rareza": 1,
+          "valor": 18
+        }
+      },
+      {
+        "pez": "sardina_lago",
+        "movimiento": "sereno",
+        "amplitud": 0.18,
+        "periodo": 6,
+        "centro": 0.5,
+        "ganancia": 0.14,
+        "ventana": 3.2,
+        "especie": {
+          "id": "sardina_lago",
+          "nombre": "Sardina de lago",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "primavera",
+            "verano"
+          ],
+          "desde": 6,
+          "hasta": 20,
+          "cebo": "lombriz",
+          "rareza": 1,
+          "valor": 15
+        }
+      },
+      {
+        "pez": "tenca",
+        "movimiento": "sereno",
+        "amplitud": 0.18,
+        "periodo": 6,
+        "centro": 0.5,
+        "ganancia": 0.14,
+        "ventana": 3.2,
+        "especie": {
+          "id": "tenca",
+          "nombre": "Tenca",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "primavera",
+            "verano"
+          ],
+          "desde": 4,
+          "hasta": 10,
+          "cebo": "lombriz",
+          "rareza": 2,
+          "valor": 28
+        }
+      },
+      {
+        "pez": "lisa_lirios",
+        "movimiento": "sereno",
+        "amplitud": 0.18,
+        "periodo": 6,
+        "centro": 0.5,
+        "ganancia": 0.14,
+        "ventana": 3.2,
+        "especie": {
+          "region": "puerto_lirios",
+          "id": "lisa_lirios",
+          "nombre": "Lisa de los lirios",
+          "cebo": "lombriz",
+          "rareza": 1,
+          "valor": 22,
+          "desde": 6,
+          "hasta": 20,
+          "regiones": [
+            "puerto_lirios"
+          ],
+          "zonas": [],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ]
+        }
+      },
+      {
+        "pez": "carpin_aurelia",
+        "movimiento": "sereno",
+        "amplitud": 0.18,
+        "periodo": 6,
+        "centro": 0.5,
+        "ganancia": 0.14,
+        "ventana": 3.2,
+        "especie": {
+          "region": "huerto_aurelia",
+          "id": "carpin_aurelia",
+          "nombre": "Carpín del vivero cerrado",
+          "cebo": "lombriz",
+          "rareza": 1,
+          "valor": 22,
+          "desde": 0,
+          "hasta": 24,
+          "regiones": [
+            "huerto_aurelia"
+          ],
+          "zonas": [],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ]
+        }
+      },
+      {
+        "pez": "perca",
+        "movimiento": "zigzag",
+        "amplitud": 0.27,
+        "periodo": 4.8,
+        "centro": 0.5,
+        "ganancia": 0.13,
+        "ventana": 3,
+        "especie": {
+          "id": "perca",
+          "nombre": "Perca",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ],
+          "desde": 6,
+          "hasta": 18,
+          "cebo": "lombriz",
+          "rareza": 1,
+          "valor": 20
+        }
+      },
+      {
+        "pez": "trucha",
+        "movimiento": "zigzag",
+        "amplitud": 0.27,
+        "periodo": 4.8,
+        "centro": 0.5,
+        "ganancia": 0.13,
+        "ventana": 3,
+        "especie": {
+          "id": "trucha",
+          "nombre": "Trucha",
+          "zonas": [
+            "bosque"
+          ],
+          "estaciones": [
+            "primavera",
+            "otono"
+          ],
+          "desde": 5,
+          "hasta": 12,
+          "cebo": "lombriz",
+          "rareza": 2,
+          "valor": 30
+        }
+      },
+      {
+        "pez": "trucha_arcoiris",
+        "movimiento": "zigzag",
+        "amplitud": 0.27,
+        "periodo": 4.8,
+        "centro": 0.5,
+        "ganancia": 0.13,
+        "ventana": 3,
+        "especie": {
+          "id": "trucha_arcoiris",
+          "nombre": "Trucha arcoíris",
+          "zonas": [
+            "bosque"
+          ],
+          "estaciones": [
+            "verano"
+          ],
+          "desde": 6,
+          "hasta": 19,
+          "cebo": "lombriz",
+          "rareza": 2,
+          "valor": 38,
+          "tiempos": [
+            "sol",
+            "brisa"
+          ]
+        }
+      },
+      {
+        "pez": "barbo_bruma",
+        "movimiento": "zigzag",
+        "amplitud": 0.27,
+        "periodo": 4.8,
+        "centro": 0.5,
+        "ganancia": 0.13,
+        "ventana": 3,
+        "especie": {
+          "region": "brumaverde",
+          "id": "barbo_bruma",
+          "nombre": "Barbo de la bruma",
+          "cebo": "lombriz",
+          "rareza": 2,
+          "valor": 30,
+          "desde": 5,
+          "hasta": 18,
+          "regiones": [
+            "brumaverde"
+          ],
+          "zonas": [],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ]
+        }
+      },
+      {
+        "pez": "perca_cuenca",
+        "movimiento": "zigzag",
+        "amplitud": 0.27,
+        "periodo": 4.8,
+        "centro": 0.5,
+        "ganancia": 0.13,
+        "ventana": 3,
+        "especie": {
+          "region": "confluencia_agua",
+          "id": "perca_cuenca",
+          "nombre": "Perca de la cuenca acordada",
+          "cebo": "lombriz",
+          "rareza": 2,
+          "valor": 32,
+          "desde": 6,
+          "hasta": 20,
+          "regiones": [
+            "confluencia_agua"
+          ],
+          "zonas": [],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ]
+        }
+      },
+      {
+        "pez": "bagre",
+        "movimiento": "fondo",
+        "amplitud": 0.18,
+        "periodo": 5.5,
+        "centro": 0.33,
+        "ganancia": 0.13,
+        "ventana": 3,
+        "especie": {
+          "id": "bagre",
+          "nombre": "Bagre",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "verano",
+            "otono"
+          ],
+          "desde": 18,
+          "hasta": 5,
+          "cebo": "lombriz",
+          "rareza": 3,
+          "valor": 45,
+          "tiempos": [
+            "lluvia",
+            "tormenta"
+          ]
+        }
+      },
+      {
+        "pez": "anguila",
+        "movimiento": "fondo",
+        "amplitud": 0.18,
+        "periodo": 5.5,
+        "centro": 0.33,
+        "ganancia": 0.13,
+        "ventana": 3,
+        "especie": {
+          "id": "anguila",
+          "nombre": "Anguila",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "primavera",
+            "otono"
+          ],
+          "desde": 20,
+          "hasta": 5,
+          "cebo": "lombriz",
+          "rareza": 3,
+          "valor": 48,
+          "tiempos": [
+            "lluvia",
+            "tormenta"
+          ]
+        }
+      },
+      {
+        "pez": "esturion",
+        "movimiento": "fondo",
+        "amplitud": 0.18,
+        "periodo": 5.5,
+        "centro": 0.33,
+        "ganancia": 0.13,
+        "ventana": 3,
+        "especie": {
+          "id": "esturion",
+          "nombre": "Esturión",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "verano",
+            "invierno"
+          ],
+          "desde": 6,
+          "hasta": 19,
+          "cebo": "pez_cebo",
+          "rareza": 4,
+          "valor": 80
+        }
+      },
+      {
+        "pez": "siluro_celia",
+        "movimiento": "fondo",
+        "amplitud": 0.18,
+        "periodo": 5.5,
+        "centro": 0.33,
+        "ganancia": 0.13,
+        "ventana": 3,
+        "especie": {
+          "region": "estacion_celia",
+          "id": "siluro_celia",
+          "nombre": "Siluro del módulo acuícola",
+          "cebo": "pez_cebo",
+          "rareza": 2,
+          "valor": 38,
+          "desde": 0,
+          "hasta": 24,
+          "regiones": [
+            "estacion_celia"
+          ],
+          "zonas": [],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ]
+        }
+      },
+      {
+        "pez": "gobio_ambar",
+        "movimiento": "fondo",
+        "amplitud": 0.18,
+        "periodo": 5.5,
+        "centro": 0.33,
+        "ganancia": 0.13,
+        "ventana": 3,
+        "especie": {
+          "region": "ambarina",
+          "id": "gobio_ambar",
+          "nombre": "Gobio de Ámbar",
+          "cebo": "pez_cebo",
+          "rareza": 3,
+          "valor": 50,
+          "desde": 5,
+          "hasta": 20,
+          "regiones": [
+            "ambarina"
+          ],
+          "zonas": [],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ]
+        }
+      },
+      {
+        "pez": "lucio",
+        "movimiento": "rafaga",
+        "amplitud": 0.31,
+        "periodo": 4.4,
+        "centro": 0.5,
+        "ganancia": 0.12,
+        "ventana": 2.8,
+        "especie": {
+          "id": "lucio",
+          "nombre": "Lucio",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "otono",
+            "invierno"
+          ],
+          "desde": 6,
+          "hasta": 18,
+          "cebo": "pez_cebo",
+          "rareza": 3,
+          "valor": 50
+        }
+      },
+      {
+        "pez": "salmon",
+        "movimiento": "rafaga",
+        "amplitud": 0.31,
+        "periodo": 4.4,
+        "centro": 0.5,
+        "ganancia": 0.12,
+        "ventana": 2.8,
+        "especie": {
+          "id": "salmon",
+          "nombre": "Salmón",
+          "zonas": [
+            "bosque"
+          ],
+          "estaciones": [
+            "otono"
+          ],
+          "desde": 5,
+          "hasta": 19,
+          "cebo": "pez_cebo",
+          "rareza": 3,
+          "valor": 55
+        }
+      },
+      {
+        "pez": "pez_lava",
+        "movimiento": "rafaga",
+        "amplitud": 0.31,
+        "periodo": 4.4,
+        "centro": 0.5,
+        "ganancia": 0.12,
+        "ventana": 2.8,
+        "especie": {
+          "id": "pez_lava",
+          "nombre": "Pez de lava",
+          "zonas": [
+            "mina"
+          ],
+          "estaciones": [
+            "verano"
+          ],
+          "desde": 12,
+          "hasta": 18,
+          "cebo": "cebo_magico",
+          "rareza": 5,
+          "valor": 140
+        }
+      },
+      {
+        "pez": "locha_tibia",
+        "movimiento": "rafaga",
+        "amplitud": 0.31,
+        "periodo": 4.4,
+        "centro": 0.5,
+        "ganancia": 0.12,
+        "ventana": 2.8,
+        "especie": {
+          "region": "piedralumbre",
+          "id": "locha_tibia",
+          "nombre": "Locha del estanque tibio",
+          "cebo": "lombriz",
+          "rareza": 2,
+          "valor": 30,
+          "desde": 6,
+          "hasta": 22,
+          "regiones": [
+            "piedralumbre"
+          ],
+          "zonas": [],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ]
+        }
+      },
+      {
+        "pez": "pez_sol",
+        "movimiento": "ondulante",
+        "amplitud": 0.3,
+        "periodo": 4.2,
+        "centro": 0.5,
+        "ganancia": 0.12,
+        "ventana": 2.8,
+        "especie": {
+          "id": "pez_sol",
+          "nombre": "Pez sol",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "verano"
+          ],
+          "desde": 10,
+          "hasta": 16,
+          "cebo": "lombriz",
+          "rareza": 2,
+          "valor": 30,
+          "tiempos": [
+            "sol",
+            "brisa"
+          ]
+        }
+      },
+      {
+        "pez": "pez_hielo",
+        "movimiento": "ondulante",
+        "amplitud": 0.3,
+        "periodo": 4.2,
+        "centro": 0.5,
+        "ganancia": 0.12,
+        "ventana": 2.8,
+        "especie": {
+          "id": "pez_hielo",
+          "nombre": "Pez de hielo",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "invierno"
+          ],
+          "desde": 0,
+          "hasta": 24,
+          "cebo": "cebo_magico",
+          "rareza": 4,
+          "valor": 95,
+          "tiempos": [
+            "nieve"
+          ]
+        }
+      },
+      {
+        "pez": "anguila_cristal",
+        "movimiento": "ondulante",
+        "amplitud": 0.3,
+        "periodo": 4.2,
+        "centro": 0.5,
+        "ganancia": 0.12,
+        "ventana": 2.8,
+        "especie": {
+          "id": "anguila_cristal",
+          "nombre": "Anguila de cristal",
+          "zonas": [
+            "mina"
+          ],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ],
+          "desde": 0,
+          "hasta": 24,
+          "cebo": "cebo_magico",
+          "rareza": 4,
+          "valor": 110
+        }
+      },
+      {
+        "pez": "danio_cristal",
+        "movimiento": "ondulante",
+        "amplitud": 0.3,
+        "periodo": 4.2,
+        "centro": 0.5,
+        "ganancia": 0.12,
+        "ventana": 2.8,
+        "especie": {
+          "region": "fragmentos_cristal",
+          "id": "danio_cristal",
+          "nombre": "Danio del acuario cerrado",
+          "cebo": "cebo_magico",
+          "rareza": 3,
+          "valor": 60,
+          "desde": 0,
+          "hasta": 24,
+          "regiones": [
+            "fragmentos_cristal"
+          ],
+          "zonas": [],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ]
+        }
+      },
+      {
+        "pez": "koi_lunar",
+        "movimiento": "erratico",
+        "amplitud": 0.34,
+        "periodo": 3.8,
+        "centro": 0.5,
+        "ganancia": 0.11,
+        "ventana": 2.6,
+        "especie": {
+          "id": "koi_lunar",
+          "nombre": "Koi lunar",
+          "zonas": [
+            "lago"
+          ],
+          "estaciones": [
+            "primavera",
+            "verano",
+            "otono",
+            "invierno"
+          ],
+          "desde": 21,
+          "hasta": 4,
+          "cebo": "cebo_magico",
+          "rareza": 5,
+          "valor": 125
+        }
+      },
+      {
+        "pez": "carpa_ancestral",
+        "movimiento": "erratico",
+        "amplitud": 0.34,
+        "periodo": 3.8,
+        "centro": 0.5,
+        "ganancia": 0.11,
+        "ventana": 2.6,
+        "especie": {
+          "id": "carpa_ancestral",
+          "nombre": "Carpa ancestral",
+          "zonas": [
+            "bosque_ancestral"
+          ],
+          "estaciones": [
+            "primavera",
+            "otono"
+          ],
+          "desde": 5,
+          "hasta": 9,
+          "cebo": "cebo_magico",
+          "rareza": 5,
+          "valor": 150
+        }
+      },
+      {
+        "pez": "pez_aurora",
+        "movimiento": "erratico",
+        "amplitud": 0.34,
+        "periodo": 3.8,
+        "centro": 0.5,
+        "ganancia": 0.11,
+        "ventana": 2.6,
+        "especie": {
+          "id": "pez_aurora",
+          "nombre": "Pez aurora",
+          "zonas": [
+            "bosque_ancestral"
+          ],
+          "estaciones": [
+            "invierno"
+          ],
+          "desde": 20,
+          "hasta": 3,
+          "cebo": "cebo_magico",
+          "rareza": 5,
+          "valor": 160
+        }
+      }
+    ],
+    "reglas": {
+      "fases": [
+        "espera",
+        "picada",
+        "tiron",
+        "lista",
+        "escapo"
+      ],
+      "coste": "Un cebo y energía de caña al lanzar; cancelar no los devuelve.",
+      "captura": "Ejemplar y semilla reservados. Seguir al pez controla progreso y tensión; se cobra una vez.",
+      "calendario": "Pausado durante el lanzamiento; cuidados reales continúan. No hay progreso fuera de pantalla.",
+      "controles": "Mantener y soltar el botón o Espacio; enganchar en la picada, guardar al llegar a la orilla.",
+      "medios": "Controles simples, sonidos y escenarios existentes; no hay recursos de arte nuevos."
+    }
   }
 }

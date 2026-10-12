@@ -13,7 +13,7 @@ Ver [BALANCE-INTEGRACION.md](BALANCE-INTEGRACION.md) y su evidencia, además de 
 | Accesos | 28 regiones, 27 rutas, enlaces civiles por contratos y regreso transitable | Las expediciones avanzadas conservan sus construcciones y progresión |
 | Vida social | 178 residentes, 93 domicilios, 154 rutinas ampliadas, regalos, compras, 98 vínculos y recuerdos | Contenido adicional de futuras expansiones y romance configurable sin definir |
 | Regiones | 24 actividades renovables, habitats, cinco colonias con genética y cuidado, seis mecanismos | Formas finales y animación cinematográfica a cargo del frente visual |
-| Pesca y museo | 26 peces, seis artefactos, trampas, 26 colecciones nuevas, seis lotes anteriores y seis vitrinas | La captura manual usa el minijuego común; no 26 minijuegos físicos diferentes |
+| Pesca y museo | 26 peces con sesiones guardadas, picada y seis movimientos de sedal; artefactos, trampas y colecciones | Una misma familia de controles con 26 perfiles; destreza y rendimiento en teléfonos reales no medidos |
 | Producción y logística | Colas, reservas, cofres, conectores locales, exportación opcional y carga pagada entre archivos | Los cofres no forman un inventario global instantáneo; la carga necesita una noche y retirada |
 | Comunidad | Cuatro obras, pedidos semanales, 52 reuniones con 312 líneas y vecinos presentes; prioridades y decisiones recuperables | Rita e Ivo revisan la terminal; sin nuevas visitas al muelle, galería o banco. Las 312 voces nuevas siguen pendientes |
 | Validación | Regresión, ambos builds, navegador, CI e instaladores con SHA concreto | Sin dispositivos físicos: FPS, batería y memoria de Android real no medidos |

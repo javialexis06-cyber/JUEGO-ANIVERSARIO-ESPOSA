@@ -44,7 +44,7 @@ export function rutaVida(region:string,desde:Punto,hasta:Punto):Punto[]{
  if(padres[b]===-2)return [];const out:Punto[]=[];for(let i=b;i!==a;i=padres[i])out.push(p(i));out.reverse();out.push({...hasta});return out;
 }
 export function avanzarVidaAstra(s:EstadoGranja,dt:number){
- const t=s.astra,v=t?.vida,region=regionActual(s);if(!v||!t?.actual||t.escena||v.actual||s.comunidad?.reuniones.actual||s.aventura.destinoActual||s.jornada.resumenPendiente||!Number.isFinite(dt)||dt<=0)return;
+ const t=s.astra,v=t?.vida,region=regionActual(s);if(!v||!t?.actual||t.escena||v.actual||s.comunidad?.reuniones.actual||s.pesca?.actual||s.aventura.destinoActual||s.jornada.resumenPendiente||!Number.isFinite(dt)||dt<=0)return;
  for(const id of Object.keys(v.pasos))if(v.pasos[id].region!==region)delete v.pasos[id];
  for(const n of regionAstra(region)?.npc??[]){const perfil=perfilVida(n);if(!perfil||perfil.original||comisionHistoria(s,n))continue;const d=destinoVida(s,n),h=regionAstra(region)?.viviendas.find(h=>h.id===npcAstra(n)!.hogar),p=d.interior?sitioVida(region,h?.entrada??{x:0,z:8}):sitioVida(region,d);
   let estado=v.pasos[n];if(!estado||estado.dia!==s.jornada.diasCompletados){estado={region,dia:s.jornada.diasCompletados,x:d.interior?d.x:p.x,z:d.interior?d.z:p.z,interior:d.interior,destino:{...p,interior:d.interior},ruta:[],actividad:d.actividad,andando:false};v.pasos[n]=estado;continue;}
