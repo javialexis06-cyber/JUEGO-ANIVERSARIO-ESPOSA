@@ -1,3 +1,5 @@
+import {ACCESOS_CAMPANA} from './accesos-campana';
+import {obtenerObjeto} from './objetos';
 import {ESCENAS_VIDA} from './vida-astra';
 import {renderEncuentroVida,renderFichaVida,renderRelacionesVida} from './vida-astra-ui';
 import {DATOS as datosCampana} from './astra-campana-datos';
@@ -33,7 +35,7 @@ export function renderAstra(s:EstadoGranja,npcId=''){
    +boton('Escuchar su primer recuerdo','hablar',n.id)
    +(n.mision?boton('Recuerdo después de su misión','escena','VID_'+n.id+'_2',cumplida?'':'disabled')+`<p class="small-text">Su historia personal ${esc(mision)} se juega en Campaña.</p>`:'<p class="small-text">Sus encargos están en el archivo del pueblo.</p>');
  }
- const rutas=rutasDesde(s).map(r=>`<div class="card"><h4>${esc(regionAstra(r.destino)?.nombre??'Granja')}</h4><p>${r.punto?`Acceso físico: ${r.punto.x}, ${r.punto.z}`:'Fabrica y coloca '+esc(r.construccion)}${regionAstra(r.destino)?.permiso?' · Expediente '+esc(regionAstra(r.destino)?.permiso):''}</p>${boton('Cruzar acceso','ruta',r.id,r.punto?'':'disabled')}</div>`).join('');
+ const rutas=rutasDesde(s).map(r=>`<div class="card"><h4>${esc(regionAstra(r.destino)?.nombre??'Granja')}</h4><p>${r.punto?`Acceso físico: ${r.punto.x}, ${r.punto.z}`:'Fabrica y coloca '+esc(ACCESOS_CAMPANA.find(d=>d.base===r.construccion)?.nombre??obtenerObjeto(r.construccion??'')?.nombre??'el enlace de esta ruta')}${regionAstra(r.destino)?.permiso?' · Expediente '+esc(regionAstra(r.destino)?.permiso):''}</p>${boton('Cruzar acceso','ruta',r.id,r.punto?'':'disabled')}</div>`).join('');
  const vecinos=NPC_ASTRA.filter(n=>habitantesHistoria(s,here,NPC_ASTRA.filter(n=>n.region===here).map(n=>n.id)).includes(n.id)).map(n=>{const p=posicionNpcAstra(s,n.id);return `<div class="card vecino-astra"><img class="retrato-mini" src="./granja/retratos/${esc(n.id)}.webp" alt="" loading="lazy" onerror="this.remove()"><h4>${esc(n.nombre)}</h4><p>${esc(n.funcion)} · ${p?(p.interior?'En casa':`Posición ${p.x.toFixed(1)}, ${p.z.toFixed(1)}`):'Descansando en casa'}</p>${boton('Conversar','hablar',n.id)}${t.conocidos.includes(n.id)?boton('Conocer su historia','bio',n.id):''}${renderFichaVida(s,n.id)}</div>`;}).join('');
  const viviendas=t.actual&&!t.interior?reg?.viviendas.map(h=>`<div class="card"><h4>${esc(h.nombre)}</h4><p>Entrada: ${h.entrada.x}, ${h.entrada.z} · 08:00–21:00</p>${boton("Visitar","vivienda",h.id)}</div>`).join('')??'':'';
  const recursos=RECURSOS_ASTRA.find(r=>r.id===here)?.recursos.map((d,i)=>`<div class="card"><h4>${esc(d.nombre)}</h4><p>Posición ${puntoRecurso(here,i).x}, ${puntoRecurso(here,i).z} · ${esc(d.obtencion)}</p>${boton(d.clase==='fauna'?'Observar':'Recoger',d.clase==='fauna'?'observar':'recurso',d.id)}</div>`).join('')??'';

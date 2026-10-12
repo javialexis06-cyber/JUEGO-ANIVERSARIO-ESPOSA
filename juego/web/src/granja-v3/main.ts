@@ -1,3 +1,5 @@
+import {ACCESOS_CAMPANA} from './accesos-campana';
+import {ESTRUCTURAS_PRODUCCION} from './produccion';
 import {renderComunidad} from './comunidad-ui';
 import { pasoGuia, PASOS_GUIA, PROLOGO_CELIA, PRESENTACIONES } from './guia';
 import { misionHistoria } from './historia';
@@ -240,7 +242,7 @@ async function usarCelda(x:number,z:number,interactuar=false){if(!ready||vista.e
  if(!interactuar&&activo?.comida){const r=await actuar({tipo:'consumir'},false);if(r.ok)vista.avatar.accion();return;}
  if(s.aventura.destinoActual)return;
  const dispositivo=s.interior?undefined:motor.nodosProduccion().find(n=>{const h=huellaProduccion(n);return n.zona===s.zona&&x>=h.x&&x<h.x+h.ancho&&z>=h.z&&z<h.z+h.fondo});
- if(dispositivo){if(!cerca(dispositivo.x+.5,dispositivo.z+.5,3.3)){toast('Acércate para abrir el cofre o usar la máquina.',true);return;}if(dispositivo.articulo.startsWith('portal_')||dispositivo.articulo==='nave_exploradora')mostrarPanel('expediciones');else{produccionSeleccionada=dispositivo.id;mostrarPanel('produccion');}return;}
+ if(dispositivo){if(!cerca(dispositivo.x+.5,dispositivo.z+.5,3.3)){toast('Acércate para abrir el cofre o usar la máquina.',true);return;}if(ACCESOS_CAMPANA.some(d=>d.id===dispositivo.articulo))mostrarPanel('astra');else if(dispositivo.articulo.startsWith('portal_')||dispositivo.articulo==='nave_exploradora')mostrarPanel('expediciones');else{produccionSeleccionada=dispositivo.id;mostrarPanel('produccion');}return;}
  if(!interactuar&&activo?.categoria==='semilla' &&modo!=='sembrar'){const cultivo=CULTIVOS.find(c=>c.semilla===activo.id);if(cultivo){cultivoElegido=cultivo.id;modo='sembrar';}}
  if(viviendaInterior(s.interior)){const id=puertaDormitorioEn(s.interior,x+.5,z+.5);if(id){const p=vista.avatar.position;await actuar({tipo:'entrar_dormitorio',npcId:id,xJugador:p.x,zJugador:p.z});return;}contextHTML(renderDentroVivienda(s,vista.avatar.position.x,vista.avatar.position.z));return;}if(s.servicio){mostrarPanel('servicio');return;}if(s.interior&&!motor.invernaderoActual()){return;}
  const frutal=motor.frutalesActuales().find(f=>f.x===x&&f.z===z);if(frutal){if(interactuar){inspeccionar(x,z);return;}if(s.herramienta==='hacha'){await trabajar({tipo:'golpear_frutal',id:frutal.id,xJugador:vista.avatar.position.x,zJugador:vista.avatar.position.z},x,z);return;}if(s.herramienta==='mano'&&frutal.frutos){await trabajar({tipo:'recoger_frutal',id:frutal.id,xJugador:vista.avatar.position.x,zJugador:vista.avatar.position.z},x,z);return;}if(s.herramienta!=='regadera'){inspeccionar(x,z);return;}}
@@ -249,7 +251,7 @@ async function usarCelda(x:number,z:number,interactuar=false){if(!ready||vista.e
  if(!s.interior&&s.zona==='granja'&&huecoEn(s.paisaje,x,z)){mantener=false;inspeccionar(x,z);return;}
  if(!interactuar&&s.zona==='granja'){
   if(activo?.id==='fertilizante'||activo?.id==='fertilizante_mejorado'){await trabajar({tipo:'fertilizar',x,z,articulo:activo.id},x,z);return;}
-  if(!s.interior&&activo&&(activo.maquina||activo.contenedor||activo.aspersor||activo.id.startsWith('portal_')||activo.id==='nave_exploradora')){empezarProduccion(activo.id);if(colocacion){colocacion.x=x;colocacion.z=z;marcarPlano();}return;}
+  if(!s.interior&&activo&&(activo.maquina||activo.contenedor||activo.aspersor||ESTRUCTURAS_PRODUCCION.has(activo.id))){empezarProduccion(activo.id);if(colocacion){colocacion.x=x;colocacion.z=z;marcarPlano();}return;}
   const parcela=motor.parcelasActuales().find(p=>p.x===x&&p.z===z),def=CULTIVOS.find(c=>c.id===parcela?.cultivo);
   if(parcela?.cuidado&&parcela.cuidado.status!=='creciendo'&&modo==='normal'&&(s.herramienta==='mano'||s.herramienta==='guadana')){
    if(parcela.cuidado.status==='maduro'&&def?.cosecha==='guadana'&&s.herramienta!=='guadana'){toast('Equipa la guadaña para cosechar este cultivo.',true);return;}

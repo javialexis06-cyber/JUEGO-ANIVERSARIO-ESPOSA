@@ -1,4 +1,5 @@
 import {crearGuia,guiaDePartida,guiaValida,actualizarGuia} from './guia';
+import {accesoBosqueAntiguo} from './accesos-campana';
 import {crearComunidad,actuarComunidad,comunidadValida,pecesRegion,puedePescarComunidad,hallarTesoro,registrarComunidad,dormirComunidad,prepararExportaciones,anotarHecho} from './comunidad';
 import {crearRegional,actuarRegional,actualizarRegional,dormirRegional,regionalValido,territorioRegional} from './regiones';
 import {migrarPracticasElementales,reintentarJefe} from './aventura';
@@ -110,7 +111,7 @@ export class MotorGranja {
  private agregar(id:string,n:number,calidad?:Calidad){const casillas=cambiarCantidad(this.estado.casillasInventario,id,n,calidad);if(!casillas)throw new MochilaLlena('La mochila está llena. Libera una casilla o combina pilas.');this.estado.casillasInventario=casillas;this.estado.inventario=resumirCasillas(casillas);this.sincronizarSeleccion()}
  nivelFabricacion(){return Math.max(0,...Object.values(this.estado.nivelesHerramienta))}
  nodosProduccion(){const p=this.estado.produccion;return [...p.cofres,...p.maquinas,...p.estructuras]}
- contextoProduccion(){return {premiosNarrativos:this.estado.historia?.premios??[],tecnica:factorTecnica(this.estado),casillas:this.estado.casillasInventario,habilidades:this.estado.habilidades,nivel:this.nivelFabricacion(),desbloqueos:[...this.estado.desbloqueos,...(this.estado.comunidad?.colecciones??[]).map(id=>'museo_'+id)],zona:this.estado.zona,ahora:this.estado.ultimoTiempo}}
+ contextoProduccion(){return {premiosNarrativos:this.estado.historia?.premios??[],tecnica:factorTecnica(this.estado),casillas:this.estado.casillasInventario,habilidades:this.estado.habilidades,nivel:this.nivelFabricacion(),desbloqueos:[...this.estado.desbloqueos,...Object.keys(this.estado.historia?.completadas??{}).map(id=>'campana_'+id),...(this.estado.comunidad?.colecciones??[]).map(id=>'museo_'+id)],zona:this.estado.zona,ahora:this.estado.ultimoTiempo}}
  rutasAventura(){return opcionesAventura({desbloqueos:this.estado.desbloqueos,construcciones:this.estado.produccion.estructuras.map(n=>n.articulo),nivelPico:this.nivelHerramienta('pico')})}
  pasoAventura(dt:number,x:number,z:number){
   const s=this.estado;if(!s.aventura.destinoActual||!finito(x,-1000,1000)||!finito(z,-1000,1000))return {dano:0,avisos:[] as string[]};
@@ -676,7 +677,7 @@ export class MotorGranja {
     s.interior=e.id;s.servicio=null;r=bien(e.articulo==='invernadero'?'Dentro del invernadero: cultiva fuera de temporada, con riego.':'Estás dentro del refugio.');break;}
    case 'salir':{const dormitorio=dormitorioDef(s.interior);if(dormitorio){const v=viviendaInterior(s.interior)!;s.interior='vivienda_'+v.id;r={...bien('De vuelta a la sala común.'),posicionZona:puertaDormitorio(dormitorio.id)!};break;}const vivienda=viviendaInterior(s.interior);if(vivienda){s.interior=null;s.servicio=null;s.posicionExterior={zona:'pueblo',...vivienda.entrada};r={...bien('De vuelta al barrio.'),posicionZona:{...vivienda.entrada}};break;}const e=s.edificios.find(e=>e.id===s.interior&&e.articulo==='invernadero');let p;if(e){const h=huella(e);p=e.giro===0?{x:e.x+h.ancho/2,z:e.z+h.fondo+.5}:e.giro===1?{x:e.x-.5,z:e.z+h.fondo/2}:e.giro===2?{x:e.x+h.ancho/2,z:e.z-.5}:{x:e.x+h.ancho+.5,z:e.z+h.fondo/2};s.posicionExterior={zona:'granja',...p};}s.interior=null;s.servicio=null;r={...bien('De vuelta al exterior.'),...(p?{posicionZona:p}:{})};break;}
    case 'viajar':{
-    if(!['granja','pueblo','bosque','lago','mina','bosque_ancestral'].includes(a.zona))return mal('Zona desconocida.');if((a.zona==='mina'||a.zona==='bosque_ancestral')&&!this.posee(a.zona))return mal('Completa misiones para abrir esta ruta.');
+    if(!['granja','pueblo','bosque','lago','mina','bosque_ancestral'].includes(a.zona))return mal('Zona desconocida.');if((a.zona==='mina'&&!this.posee('mina')||a.zona==='bosque_ancestral'&&!accesoBosqueAntiguo(s)))return mal('Completa misiones para abrir esta ruta.');
     let llegada:{x:number;z:number}|undefined;
     if(a.ruta!==undefined||a.xJugador!==undefined||a.zJugador!==undefined){const camino=SALIDAS.find(p=>p.id===a.ruta&&p.desde===s.zona&&p.hacia===a.zona);if(!camino||s.interior||s.servicio||!this.cerca(camino.x,camino.z,a.xJugador!,a.zJugador!,RADIO_SALIDA+.4))return mal('Camina hasta el sendero que conecta estas zonas.');llegada=camino.llegada;}
     if(s.compania.montada&&(a.zona==='mina'||!llegada))return mal('Desmonta antes de entrar en la mina. Con montura debes viajar por los senderos.');

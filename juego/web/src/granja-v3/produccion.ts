@@ -39,8 +39,8 @@ import { NIVEL_RECUPERADORA, materialesDe, porcentajeRecuperacion } from './recu
 /** Milisegundos por unidad en cada nivel de recuperadora. */
 const DURACION_RECUPERAR=[0,20_000,12_000,6_000];
 export const MAX_NODOS_PRODUCCION=128,MAX_COLA_PRODUCCION=100,MAX_AVANCE_PRODUCCION_MS=7*24*60*60_000,MAX_EVENTOS_PRODUCCION=20_000;
-export const ESTRUCTURAS_PRODUCCION=new Set(['conector_produccion','portal_verdia','portal_senda','portal_nox','nave_exploradora','aspersor_basico','aspersor_cobre','aspersor_hierro','aspersor_astral']);
-export function huellaProduccion(n:{articulo:string;x:number;z:number}){return {x:n.x,z:n.z,ancho:n.articulo==='nave_exploradora'?3:typeof n.articulo==='string'&&n.articulo.startsWith('portal_')?2:1,fondo:n.articulo==='nave_exploradora'?3:1};}
+export const ESTRUCTURAS_PRODUCCION=new Set(['paso_verdia','paso_senda','paso_nox','nave_ensayo','conector_produccion','portal_verdia','portal_senda','portal_nox','nave_exploradora','aspersor_basico','aspersor_cobre','aspersor_hierro','aspersor_astral']);
+export function huellaProduccion(n:{articulo:string;x:number;z:number}){return {x:n.x,z:n.z,ancho:['nave_exploradora','nave_ensayo'].includes(n.articulo)?3:typeof n.articulo==='string'&&(n.articulo.startsWith('portal_')||n.articulo.startsWith('paso_'))?2:1,fondo:['nave_exploradora','nave_ensayo'].includes(n.articulo)?3:1};}
 export function solapanProduccion(a:PosicionProduccion&{articulo:string},b:PosicionProduccion&{articulo:string}){const p=huellaProduccion(a),q=huellaProduccion(b);return a.zona===b.zona&&p.x<q.x+q.ancho&&p.x+p.ancho>q.x&&p.z<q.z+q.fondo&&p.z+p.fondo>q.z;}
 const copiaCasillas=(casillas:CasillasProduccion)=>casillas.map(p=>p?{...p}:null);
 function clonar(e:EstadoProduccion):EstadoProduccion{return {...e,fabricados:{...e.fabricados},estructuras:e.estructuras.map(n=>({...n})),cofres:e.cofres.map(c=>({...c,casillas:copiaCasillas(c.casillas)})),maquinas:e.maquinas.map(m=>({...m,cola:m.cola.map(p=>({...p,...(p.reserva?{reserva:p.reserva.map(i=>({...i}))}:{})})),proceso:m.proceso?{...m.proceso}:null,salida:copiaCasillas(m.salida)}))};}
