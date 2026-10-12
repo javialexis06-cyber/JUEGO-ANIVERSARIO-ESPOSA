@@ -1,4 +1,5 @@
 import { camaAnimal } from './refugios';
+import { conKit, fundir } from './cuartos';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -80,7 +81,8 @@ function collectResources(root: THREE.Object3D) {
 /** Call only for objects produced by crearRefugio / decorarInterior. */
 export function disponerArte(root: THREE.Object3D) {
   const resources = collectResources(root); root.removeFromParent();
-  resources.geometry.forEach(g => g.dispose()); resources.material.forEach(m => m.dispose());
+  // (las piezas del kit de Blender comparten materiales con las demás copias: esos no se destruyen)
+  resources.geometry.forEach(g => { if (!g.userData.compartido) g.dispose(); }); resources.material.forEach(m => { if (!m.userData.compartido) m.dispose(); });
 }
 function compact(root: THREE.Group) {
   const byMaterial = new Map<THREE.Material, THREE.Mesh[]>();
@@ -360,5 +362,34 @@ export function decorarInterior(especie: string, comederoInteractivo = false, ca
   } else if (especie === 'dragon') {
     for (let i = 0; i < 7; i++) crystal(root, [Math.cos(i) * .50, .10, -1.4 + Math.sin(i) * .21], .30, .12, stone);
   } else { box(root, [1.1, .5, .46], [0, .25, -1.62], wood); box(root, [.98, .05, .34], [0, .52, -1.62], hay); }
-  compact(root); return root;
+  compact(root);
+  // Cuando carga granja_obras.glb (personajes/blender/granja_obras.py) todo se cambia por sus piezas, en los mismos
+  // sitios: el piso de tablas con nudos, las paredes con sus juntas, herraduras y cuadrito, pesebres, corrales, el
+  // bebedero y el comedero de piedra, las camas, la percha con los nidales, la madriguera, los cristales o el pesebre alto
+  conKit(root, 'granja_obras.glb', m => {
+    if (!m.get('ref_piso') || !m.get('ref_pared_fondo')) return;
+    const kit = new THREE.Group();
+    const poner = (clave: string, x: number, y: number, z: number, ry = 0) => { const b = m.get(clave); if (!b) return; const c = b.clone(true); c.position.set(x, y, z); c.rotation.y = ry; kit.add(c); };
+    poner('ref_piso', 0, 0, 0);
+    poner('ref_pared_fondo', 0, 0, -1.95);
+    for (const s of [-1, 1]) {
+      poner('ref_pared_lado', s * 1.95, 0, 0);
+      if (capacidad <= 6) {
+        for (const z of [-.95, .72]) poner('ref_pesebre', s * 1.34, .03, z, s < 0 ? Math.PI : 0);
+        for (const z of [-1.67, -.2, 1.39]) poner('ref_corral', s * 1.315, 0, z);
+      }
+      if (!(comederoInteractivo && s < 0)) poner(s < 0 ? 'ref_comedero_verde' : 'ref_bebedero', s * .44, 0, -.38);
+    }
+    if (capacidad > 6) for (let i = 0; i < capacidad; i++) { const p = camaAnimal(i, capacidad); poner('ref_cama', p.u - 2, 0, p.v - 2); }
+    if (['gallina', 'pato', 'dinosaurio', 'avestruz', 'grifo'].includes(especie)) {
+      poner('ref_percha', 0, .8, -1.48);
+      for (const x of [-.95, 0, .95]) poner('ref_nidal', x, 0, -1.56);
+    } else if (especie === 'conejo') poner('ref_madriguera', 0, 0, -1.35);
+    else if (especie === 'dragon') poner('ref_cristales', 0, 0, -1.4);
+    else poner('ref_heno_alto', 0, 0, -1.62);
+    const unida = fundir(kit); unida.name = 'interior-kit';
+    for (const c of [...root.children]) { c.removeFromParent(); c.traverse(o => { if (o instanceof THREE.Mesh) { o.geometry.dispose(); for (const mt of Array.isArray(o.material) ? o.material : [o.material]) if (!mt.userData.compartido) mt.dispose(); } }); }
+    root.add(unida);
+  });
+  return root;
 }

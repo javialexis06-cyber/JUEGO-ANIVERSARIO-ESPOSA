@@ -353,7 +353,7 @@ export function adornosRefugio(especie:string):THREE.Group{
  const luz=new THREE.PointLight('#ffc27a',6,9,1.5);luz.position.set(0,1.9,-.5);g.add(luz);
  // Ventana en la pared del fondo con su luz entrando
  for(const z of [-1.6,1.2]){caja(.06,.7,1.1,-3.8,1.05,z,'#6e4b33');caja(.07,.52,.9,-3.78,1.05,z,m('#cfe9ef',{emissive:'#9fd6e6',emissiveIntensity:.35}));caja(.08,.52,.05,-3.75,1.05,z,'#6e4b33');caja(.08,.05,.9,-3.75,1.05,z,'#6e4b33');
-  const haz=new THREE.Mesh(new THREE.PlaneGeometry(1,1.8),new THREE.MeshBasicMaterial({color:'#fff4d0',transparent:true,opacity:.12,depthWrite:false,side:THREE.DoubleSide}));haz.position.set(-3,.5,z);haz.rotation.set(-Math.PI/2,0,0);haz.scale.set(1,1,1);g.add(haz);}
+  const haz=new THREE.Mesh(new THREE.PlaneGeometry(1,1.8),new THREE.MeshBasicMaterial({color:'#fff4d0',transparent:true,opacity:.12,depthWrite:false,side:THREE.DoubleSide}));haz.position.set(-3,.5,z);haz.rotation.set(-Math.PI/2,0,0);haz.scale.set(1,1,1);haz.name='haz';g.add(haz);}
  // Costales de alimento y escoba junto a la puerta
  for(const [x,z,s] of [[3.3,3.2,1],[2.8,3.4,.85],[3.35,2.65,.8]] as [number,number,number][]){const c=new THREE.Mesh(new THREE.SphereGeometry(.3*s,10,8),m('#d8c49c'));c.scale.set(1,1.35,.9);c.position.set(x,.38*s,z);c.castShadow=true;g.add(c);caja(.12*s,.08,.12*s,x,.8*s,z,'#b39168');}
  const palo=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,1.5,5),m('#8a6242'));palo.position.set(-1.4,.75,3.8);palo.rotation.z=.18;g.add(palo);caja(.32,.3,.08,-1.53,.12,3.8,'#c9a95c');
@@ -362,6 +362,21 @@ export function adornosRefugio(especie:string):THREE.Group{
   for(const x of [-3.3,-1.9])caja(.08,1.1,.08,x,.55,3.2,'#7a5236');for(let k=0;k<2;k++)caja(1.6,.06,.06,-2.6,.7+k*.3,3.2-k*.35,'#9a6f4c');
   const esc=caja(.3,.04,1.2,-2.6,.35,2.4,'#9a6f4c');esc.rotation.x=.6;
  }
+ // Con granja_obras.glb: paja regada en parches, el farol colgado, las ventanas, los costales, la escoba y el aseladero
+ // de Blender en los mismos sitios (la luz del farol y los haces de las ventanas se quedan)
+ conKit(g,'granja_obras.glb',kit=>{
+  if(!kit.get('ref_paja')||!kit.get('ref_farol'))return;
+  const piezas=new THREE.Group();
+  const poner=(clave:string,x:number,y:number,z:number,ry=0,s=1)=>{const b=kit.get(clave);if(!b)return;const c=b.clone(true);c.position.set(x,y,z);c.rotation.y=ry;c.scale.setScalar(s);piezas.add(c);};
+  for(let i=0;i<16;i++){const x=-3+h(i,7)*6,z=-3+h(i,8)*6;if(Math.abs(x)<1.3&&z>1.6)continue;poner('ref_paja',x,0,z,h(i,9)*6.3,.8+h(i,10)*.5);}
+  poner('ref_farol',0,2.15,-.5);
+  for(const z of [-1.6,1.2])poner('ref_ventana',-3.8,1.05,z);
+  for(const [x,z,s] of [[3.3,3.2,1],[2.8,3.4,.85],[3.35,2.65,.8]] as [number,number,number][])poner('ref_costal',x,0,z,x*1.7,s);
+  poner('ref_escoba',-1.5,0,3.8,Math.PI);
+  if(especie==='gallina'||especie==='pato')poner('ref_aseladero',-2.6,0,3.2,Math.PI);
+  for(const c of [...g.children]){const malla=c as THREE.Mesh;if(!malla.isMesh||c.name==='haz')continue;c.removeFromParent();malla.geometry.dispose();(malla.material as THREE.Material).dispose();}
+  const unida=fundir(piezas);unida.name='adornos-kit';g.add(unida);
+ });
  return g;
 }
 

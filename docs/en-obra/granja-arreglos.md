@@ -454,6 +454,17 @@ Dónde está:
 - **Diario:** una sola pestaña con lo activo de campaña, encargos, Astra y el paso siguiente. Es de solo lectura; se
   acepta en el mundo (carta, vecino o tablón).
 
+## Además (gráficos)
+
+- **Obras y refugios por dentro en Blender** **hecho** (12 de octubre): `granja_obras.glb` (`personajes/blender/granja_obras.py`)
+  ya está en el juego. La obra (`construccion-render.ts`) usa sus postes con zapata, vigas, escalera, tablas con
+  serrucho, cajón de herramientas, cartel con casco, estacas y el obrero de peluche con el brazo del martillo aparte
+  (lo anima `animarObras`); el piso de la obra y la barra de avance siguen como estaban. Por dentro, los refugios
+  (`arte.ts decorarInterior`) cambian piso, paredes, pesebres, corrales, bebedero y comedero de piedra, camas, percha
+  con nidales, madriguera, cristales o pesebre alto por las piezas del modelo, y los adornos (`zonas-render.ts
+  adornosRefugio`) ponen paja regada, farol, ventanas, costales, escoba y aseladero. Mientras carga el modelo se ve lo
+  de siempre; todo queda fundido por material (pocas llamadas de dibujo).
+
 ## Datos útiles
 
 - El Pueblo del Sol está en las coordenadas del mundo:
