@@ -14,13 +14,12 @@ Astra unificadas. **Siguiente**: el prólogo en película (`docs/sistemas/cine-g
 gusta, se hacen las demás escenas grandes con el mismo estilo. Las voces del prólogo quedaron **hechas** (celestial «suave») y se queda con su música
 de antes (M12 y M13).
 
-**La película de Astra (12 de octubre, aprobada con cambios):** todas las escenas animadas unidas como una sola película
+**La película de Astra (12 de octubre, plan aprobado):** todas las escenas animadas unidas como una sola película
 (prólogo, 14 cinemáticas, 5 de Sangre y Ceniza, 6 secundarias, el Altar del Lazo y **la boda** «Siempre te elegiré» en
-un escenario tipo Casa Eterna de Sopetrán, oficiada por Lara), más **presentaciones de cada lugar** (6 llegadas y 33
-postales) y la planeación de cuatro minijuegos futuros. Está en [`en-obra/pelicula-de-astra.md`](en-obra/pelicula-de-astra.md).
-Los **arreglos de coherencia quedaron hechos** (una voz por diosa, Fuatia celestial, Serena y Eliana con nombre, entrada
-de Fuatia en C11, la boda como canon). **Siguiente**: escribir los guiones que faltan y animar el Acto I. **Espera a
-Javier**: qué dice Laura en la boda, fotos o descripción de la Casa Eterna y revisar los votos.
+Eterna, Sopetrán, oficiada por Lara y sin votos), más **presentaciones de cada lugar** (6 llegadas y 33 postales) y la
+planeación de cuatro minijuegos futuros. Plan completo en [`en-obra/pelicula-de-astra.md`](en-obra/pelicula-de-astra.md)
+(escenas plano a plano, modelos de Blender y fases A-H). Los **arreglos de coherencia quedaron hechos**. **Siguiente**:
+fase A (guiones y voces del Acto I), cuando Javier dé la orden.
 
 
 **Prioridad actual, 11 de octubre:** Javier encargó una base narrativa profunda para conectar granja y

@@ -7,7 +7,7 @@ le dice que sin importar cuántos ciclos pasen, cuántos universos o mundos visi
 va a elegir a ella. También deja planeados cuatro minijuegos futuros: peleas, carreras, buscar a una persona
 desaparecida en un celular y un tower defense del lore.
 
-Este documento es **solo la propuesta**: qué escenas, en qué orden, qué guion tiene cada una y qué falta en voces y
+Este documento es **el plan, aprobado por Javier el 12 de octubre de 2026**: qué escenas, en qué orden, qué guion tiene cada una y qué falta en voces y
 música. Los minijuegos nuevos se desarrollan después; aquí solo queda lo que van a necesitar en animación y voces.
 
 Motor de las películas: [`sistemas/cine-granja.md`](../sistemas/cine-granja.md). Canon: [`mitologia.md`](../mitologia.md)
@@ -121,7 +121,7 @@ Granja = misión de la campaña; Sangre = puerta del mapa de la Noche; Casa = el
 | # | Escena | Sale en | Dur. | Guion | Voces | Música |
 |---|---|---|---|---|---|---|
 | 26 | **El Altar del Lazo**: las reliquias de la granja y de Sangre y Ceniza encienden el altar de la casa y la constelación se dibuja sobre el techo. Celia, Aura, Lara y Fuatia anuncian la boda | Casa: al completar el Altar (P24 + final de Sangre + F12) | 60 s | nuevo | nuevas (~6) | Por definir |
-| 27 | **★ «Siempre te elegiré», la boda** | Casa, después del Altar | 3-4 min | nuevo (borrador abajo) | nuevas (~25, con las voces de Javier y Laura) | Compuesta o CC0 |
+| 27 | **★ «Siempre te elegiré», la boda** | Casa, después del Altar | 3-4 min | nuevo (borrador abajo) | nuevas (~8; Javier en off, Laura no habla) | Compuesta o CC0 |
 | — | **Créditos** con las fotos de las 27 escenas y «Feliz aniversario» | Al terminar la boda | 1,5 min | nuevo | — | La de la boda |
 
 ★ = misión secundaria con escena propia (6). Son las que tienen más peso emocional y, además, explican piezas que la
@@ -133,52 +133,74 @@ Nuevas desde cero: 3 (SC4, el Altar y la boda).
 
 ---
 
-## 4. La boda: «Siempre te elegiré» (borrador para que Javier lo corrija)
+## 4. La boda: «Siempre te elegiré»
 
-**Dónde (decidido):** un escenario tipo **Casa Eterna**, el lugar de Sopetrán donde Javier y Laura quieren celebrar su
-boda de verdad: una casa de campo con jardines, de noche, bajo la Constelación de los Amantes. Se llega desde el valle
-del prólogo (la cámara baja desde las estrellas como al principio) y se modela en Blender como un escenario propio.
-**Falta de Javier:** fotos o una descripción del lugar (entrada, jardín, dónde sería el altar, árboles, luces) para
-que se parezca de verdad.
+**Decidido con Javier:** sin votos. Ni Javier ni Laura recitan votos en la ceremonia. Lara oficia. La frase que pidió
+Javier («sin importar cuántos ciclos pasen…») **no es un voto**: es la última línea de toda la película, dicha por Javier
+en voz en off sobre el último plano, ya terminada la boda (decisión de Claude; si no le gusta, la dice el narrador).
 
-**Quiénes:** Javier y Laura con ropa de boda (traje y vestido nuevos en el clóset de Blender). Celia, Aura, Lara y
-Fuatia. Las Santas Eliana y Serena. Los vecinos que el jugador ayudó (Elián, Ofelia y Eneas, que bajan de Verdia, si
-completaste su escena). Un unicornio, un dragón y un grifo.
+**Dónde: Eterna, casa boutique en Sopetrán** (el lugar donde quieren la boda real; se vio la página de Wink Eventos y
+sus fotos, que no se suben al repositorio). Lo que se modela en Blender, en el estilo del juego (peluche, fieltro y
+madera, formas redondeadas):
+- **El pabellón**: una construcción blanca y moderna de techo plano, con vigas negras, un tragaluz cuadrado con
+  enredaderas que cuelgan y lucecitas en el techo. Ahí va la mesa larga de la fiesta, con velas blancas altas, calas y
+  rosas blancas, y la torta blanca.
+- **Las cabañas**: casitas en A con frente de madera y techo gris oscuro, entre los árboles (ahí se hospedan los
+  invitados).
+- **El jardín**: tropical y frondoso (platanillos, palmas, hojas grandes), un árbol enorme de tronco claro y ramas
+  abiertas con musgo, y la piscina con jacuzzi y asoleadoras.
+- **La ceremonia**: un **arco de rosas blancas** sobre el pasto, junto a la piscina, con el monte detrás. Los invitados
+  en sillas a los lados del camino.
+- **El río**: dos decks de madera junto a un río natural, y la **fogata**. Ahí cierra la noche.
+
+**Quiénes:** Javier (traje azul noche con moño) y Laura (vestido blanco con velo largo), ropa nueva para el clóset de
+Blender. Celia, Aura, Lara y Fuatia. Las Santas Eliana y Serena. Los vecinos que el jugador ayudó (Elián, Ofelia y
+Eneas bajan de Verdia si viste su escena). Un unicornio, un dragón y un grifo.
 
 **Planos (3-4 min):**
-1. Atardecer. La cámara baja desde las estrellas igual que en el prólogo (el mismo movimiento, al revés del final de
-   Celia). Los vecinos llegan con faroles.
-2. Celia levanta un arco de flores desde la tierra. Aura enciende las velas con su fuego. Fuatia trae los cuatro
-   elementos y con ellos teje **un lazo de cuatro hilos** (fuego, agua, tierra y aire) para las manos.
-3. **Lara oficia (decidido)**, sin velo por primera vez: es la que guía cada ciclo.
-4. Los votos. Las manos se juntan y la constelación brilla entera: el escudo ya no se puede romper.
-5. Fiesta corta (baile lento, los animales, fuegos de Aura) y la mañana siguiente: los dos en la parcela. «¿Y mañana?»
-   «Miramos si brotó» (la misma frase de C10).
+1. **La llegada** (20 s): la cámara baja desde la Constelación de los Amantes, pasa sobre el valle del prólogo ya
+   florecido y llega a Eterna al atardecer: el río, las cabañas, el pabellón iluminado. Los vecinos llegan con faroles.
+2. **Los regalos de las diosas** (40 s): Celia hace florecer el arco de rosas desde la tierra; Aura enciende las velas
+   del camino con una sola chispa que va saltando; Fuatia junta fuego, agua, tierra y aire en **un lazo de cuatro
+   hilos**; el grifo trae el velo de Laura volando.
+3. **Laura entra** (25 s): camina sola por el camino de velas; Javier, en el arco, no sabe qué hacer con las manos
+   (un detalle chistoso, como él). Sin diálogo, solo la música.
+4. **Lara oficia** (50 s): se quita el velo por primera vez en todo el juego. Ata el lazo de cuatro hilos en sus manos.
+   Habla ella; ellos solo se miran.
+5. **La constelación** (20 s): las manos se juntan, el lazo brilla y la Constelación de los Amantes se enciende entera
+   sobre Eterna. Un pulso de luz recorre el escudo del mundo: ya no se puede romper.
+6. **La fiesta** (40 s): la mesa larga del pabellón, el baile lento, el dragón calienta la fogata, el unicornio se come
+   las flores del centro de mesa, los vecinos brindan.
+7. **El río** (30 s): ya tarde, los dos solos en el deck junto a la fogata, mirando la constelación. Javier en off dice
+   la frase. Fundido a blanco.
+8. **La mañana siguiente** (15 s): los dos en la parcela. «¿Y mañana?» «Miramos si brotó» (la frase de C10). Créditos.
 
-**Borrador de las líneas** (lo romántico es de Javier: lo corrige o lo reescribe él):
+**Líneas** (sin votos; lo romántico es de Javier, que lo corrige si quiere):
 
-> **Lara:** He tomado de la mano a cada alma de este mundo cuando terminó su tiempo. Y en cada ciclo, sin falta, los vi
-> a ustedes dos buscarse.
+> **Lara:** He tomado de la mano a cada alma de este mundo cuando terminó su tiempo. Y en cada ciclo, sin falta, los vi a
+> ustedes dos buscarse.
 >
-> **Aura:** Y cada vez que se encontraron, el fuego volvió a encenderse. No porque yo lo prendiera. Porque ustedes lo
+> **Aura:** Y cada vez que se encontraron, el fuego volvió a encenderse. No porque yo lo prendiera: porque ustedes lo
 > eligieron.
 >
 > **Celia:** Esta tierra nació de mis manos. Este lazo nació de las suyas.
 >
-> **Fuatia:** Lo que se elige libremente pesa más que cualquier juramento. Fuego, agua, tierra y aire: que los cuatro
-> sean testigos.
+> **Fuatia:** Lo que se elige libremente pesa más que cualquier juramento. Fuego, agua, tierra y aire: los cuatro son
+> testigos.
 >
-> **Javier:** Laura… esposa mía, mi pulga aventurera. No sé cuántos ciclos vamos a vivir, ni cuántos universos o mundos
-> nos falten por recorrer, ni en qué planeta nos toque despertar. Pero sé una cosa: en todos, siempre, te voy a elegir a
-> ti.
->
-> **Laura:** *(la escribe Javier: ver la decisión 1)*
+> **Lara:** Entonces no les pido promesas. Ya se eligieron. Vayan juntos.
 >
 > **Narrador:** Y la Constelación de los Amantes brilló entera sobre la casa. Desde esa noche, ninguna ceniza volvió a
 > encontrar por dónde entrar.
+>
+> **Javier** *(en off, junto al río)*: Laura… sin importar cuántos ciclos pasen, cuántos universos o mundos visitemos, ni
+> en qué planeta nos toque vivir… siempre te voy a elegir a ti.
 
-**Voces:** las de Javier y Laura son las clonadas («EL» y «ELLA», `docs/sistemas/voces.md`). Las diosas usan sus voces
-de siempre con el efecto «suave». El narrador, Josué Maya.
+**Voces:** Javier, con su voz clonada («EL», `docs/sistemas/voces.md`); Laura no habla. Las diosas con sus voces de
+siempre y el sonido celestial suave; el narrador, Josué Maya.
+
+**Música:** primero se busca una pieza gratuita (CC0) romántica y orquestal para la ceremonia y otra cálida para la
+fiesta; si ninguna está a la altura, se compone una con un tema que vuelve en los créditos.
 
 ---
 
@@ -277,17 +299,9 @@ llevan su versión de amigos.
 
 ---
 
-## 8. En qué orden se haría (después de que Javier apruebe)
+## 8. En qué orden se hace
 
-1. ~~Arreglos de coherencia~~ **hechos**.
-2. **Escribir los guiones que faltan** (10 de base y 3 nuevos) en `narrativa/` y en `cine-lineas.ts`, con su versión de
-   amigos donde toque. **Javier revisa la boda antes de grabar.**
-3. **Animar por actos** (con las presentaciones de los lugares de cada acto), en el orden de la película: Acto I primero (C01, C11, SC0, C02, Eliana, SC1, C03), probando
-   cada escena con capturas antes de subirla.
-4. **Generar las voces** de cada acto cuando su guion esté aprobado.
-5. **El Altar del Lazo y la boda**: modelos nuevos en Blender (traje, vestido, arco de flores, lazo de cuatro hilos,
-   faroles), la escena y los créditos.
-6. Los minijuegos, cada uno en su momento, con lo del capítulo 6.
+Ver las fases del capítulo 12 (A a H). Los arreglos de coherencia ya están hechos.
 
 ---
 
@@ -295,17 +309,119 @@ llevan su versión de amigos.
 
 | # | Pregunta | Decidido |
 |---|---|---|
-| 1 | ¿Qué dice Laura en la boda? | **Pendiente** (ver abajo) |
-| 2 | ¿Dónde es la boda? | Un escenario tipo **Casa Eterna**, el lugar de Sopetrán donde quieren la boda real (faltan fotos o descripción) |
+| 1 | ¿Qué dice Laura en la boda? | **Nada: sin votos.** Laura no habla; responde con gestos |
+| 2 | ¿Dónde es la boda? | **Eterna**, casa boutique en Sopetrán (descrita en el capítulo 4 a partir de sus fotos) |
 | 3 | ¿Quién oficia? | **Lara** |
 | 4 | El tower defense | La batalla de **P23**, y se juega cuando quieras desde el **Cuarto de Juegos** |
 | 5 | El juego del celular | Lo decide Claude: **8 casos** de lore, todos completos (el primero, la sobreviviente de Valdemora) |
 | 6 | Peleas y carreras | Casuales, y se juegan también en la **Sala de Juegos** |
 | 7 | Las 6 escenas secundarias | **Aprobadas** las seis |
-| + | Presentaciones de cada lugar | **Propuestas** en el capítulo 6 bis |
+| + | Presentaciones de cada lugar | **Incluidas en el plan** (capítulo 6 bis) |
 
-**Lo que falta de Javier:**
-1. Qué dice Laura en sus votos: (a) una respuesta corta que escribes tú *(recomendado)*; (b) solo «Sí, acepto»; (c) no
-   habla: solo tus votos y su sonrisa.
-2. Fotos o descripción de la Casa Eterna.
-3. Revisar el borrador de los votos (capítulo 4) antes de grabarlos.
+**Lo que falta de Javier:** nada para empezar. Solo, cuando quiera, revisar las líneas de la boda (capítulo 4).
+
+---
+
+## 10. Las escenas que faltan por escribir, plano a plano
+
+Las 14 cinemáticas ya tienen guion (`narrativa/02-campana.md` y `10-figuras-y-escenas.md`). Estas son las 13 que no,
+con su esqueleto: lo que pasa, lo que se ve y la idea con que se queda el jugador. Los diálogos se escriben sobre esto
+al empezar cada acto (con versión de amigos en las de Sangre y Ceniza).
+
+**SC0 · La Noche Eterna** (70 s, Sangre: primera vez en el mapa). El castillo de Valdemora en AV 301, todavía con luz. El
+Conde enfermo, solo, con la copa sencilla de su juventud. Una voz fría desde las estrellas le ofrece no morir nunca.
+Bebe la ceniza: la luna se mancha, cae la Noche Eterna y en el cielo la Constelación de los Amantes parpadea. Corte a
+Javier y Laura que la miran desde el Hogar. *Idea: alguien abrió la puerta desde adentro, por miedo.*
+
+**SC1 · Las Afueras** (80 s, puerta del sector 1). El cementerio en niebla. Serena intenta guiar a un alma y su mano la
+atraviesa: la ceniza le tapa el camino. Encuentran la grieta, una herida de luz negra en el borde del escudo. Suena la
+Campana de Extracción y baja el primer grifo por el haz de Aura. *Idea: las almas no se pierden, las tapan.*
+
+**SC2 · El fuego bajo la piedra** (90 s, sector 2). La Mina Profunda: dragones de piedra dormidos y La Cría que los
+defiende. Serena enciende el manuscrito y se ve el **Misterio 1**: Aura y Lara, hace siglos, ven a Nath'Gora apagar el
+plano de otro panteón como quien sopla una vela; luego miran a Celia recién nacida y levantan el escudo. *Idea: el escudo
+no fue por si acaso.*
+
+**SC3 · El Santuario roto** (90 s, sector 3). La abadía en llamas: monjes que rezan, pero a otro. Bajo el altar, el
+manuscrito de las Santas. **Misterio 2**: Vael'Thor encerrando la esencia de los dioses en geometrías oscuras; las
+Reliquias de Sangre son astillas de esas prisiones. Al levantar una, se oye un dios dormido. *Idea: cada reliquia es
+alguien que espera.*
+
+**C04 · La copa** (ya escrita) + **Misterio 3**: antes de que Lara selle al Conde, Serena explica el Lazo Primordial y
+la constelación se dibuja sobre las manos de Javier y Laura. Se escribe en la biblia como una ampliación de C04.
+
+**SC4 · El descenso** (40 s, después de los créditos de Sangre). El abismo de Astra. Nath'Gora, de espaldas, junto a una
+estrella apagada. Mira la constelación sobre el Hogar. «Todavía no.» *Idea: lo de la granja sigue.*
+
+**Eliana · El brote que puede esperar** (60 s). La Fiesta del Despertar Dorado. Eliana prepara un rito enorme y vistoso;
+una familia cansada solo necesita comida. Ella guarda el rito y reparte pan de miel. Aura aparece entre las fogatas, se
+ríe y le prende una sola llamita en la mano. *Idea: cuidar también es no imponer.*
+
+**T03 · La cría que no quiere hablar** (60 s). Una cría de unicornio escondida en el corral, con miedo a los visitantes.
+Javier y Laura sacan a los curiosos y se sientan lejos. Fuatia mira sin intervenir. La cría se acerca sola, al final.
+*Idea: el cariño no se compra ni se fuerza.*
+
+**S08 · La ayuda que no llegó** (70 s). Un recuerdo antiquísimo, en papel animado: un ser frío cuida una estrella que se
+apaga y pide ayuda a un panteón; el panteón le manda coronas y homenajes en vez de ayuda. La estrella muere en sus manos.
+Así nació Nath'Gora. *Idea: el villano también perdió algo; eso no lo justifica.*
+
+**Eneas · Lo que no vuelve idéntico** (70 s). Verdia. Eneas cuida un rosal y confiesa que quiere renacer, pero le da
+miedo que sea abandonar a los suyos. Lara le explica los ciclos: se vuelve distinto, pero lo que uno ama sabe
+reconocerse. Eneas no decide todavía. *Idea: los ciclos (prepara la frase final de la boda).*
+
+**Ofelia · La casa que dejé esperando** (80 s). Senda. Ofelia termina por fin, en recuerdo, la casa que dejó a medias.
+No pide perdón: repara. El camino de Senda se abre en escalones de luz y Lara la toma de la mano hacia Verdia. *Idea:
+reparar no es comprar el perdón.*
+
+**Serena · El nombre que no se pronuncia por otro** (60 s). De noche, Serena acompaña a una anciana que se va. No
+promete que no duela; se queda. Lara aparece con el velo, la toma de la mano y se van despacio. Serena llora tranquila y
+apaga la vela. *Idea: acompañar no es resolver.*
+
+**El Altar del Lazo** (60 s, casa). Las reliquias de la granja y de Sangre y Ceniza llegan al altar de la casa y lo
+encienden; sobre el techo se dibuja la constelación. Celia, Aura, Lara y Fuatia aparecen en el patio: «Hay algo que
+todavía no han celebrado». Corte a negro: invitación a la boda.
+
+**Llegadas a un mundo** (6, de 35-45 s; capítulo 6 bis). Cada una: plano desde el cielo, qué es en el mito, quién manda
+ahí y el letrero del mundo. Frontera (la grieta y Vigilia), Verdia (los Cuidadores y la luz dorada), Senda (los
+caminos de prueba), Nox (el foso fuera del ciclo, visto desde el Bastión), el cielo de Astra (la Estación y las tres
+lunas) y Confluencia (los cuatro elementos girando).
+
+---
+
+## 11. Lo que hay que modelar en Blender (regla de la granja: todo en Blender)
+
+| Para | Modelo | Estado |
+|---|---|---|
+| Diosas | Celia, Aura y Lara (muñeco de Ella con `ropa_diosas.py`) | **Hecho** |
+| Diosas | **Fuatia**: vestido de cuatro colores, corona de los cuatro elementos y la figura de luz para su entrada | Falta |
+| Diosas | Lara **sin velo** (la boda) | Falta (variante) |
+| Villanos | **Nath'Gora** y **Vael'Thor** como actores (hoy son medallones) | Falta |
+| Villanos | El Conde | Hecho (jefe de Sangre); falta el **Conde humano** con la copa, antes del pacto |
+| Criaturas | Dragón, grifo y unicornio de la granja | **Hecho**; falta la **cría de unicornio** (T03) |
+| Gente | Serena, Eliana, Eneas, Ofelia, Elián y los vecinos | Hechos como habitantes de Astra; revisar que tengan cara para planos cercanos |
+| Lugares | Valle, pueblo, regiones de Astra y biomas de Sangre | **Hechos** (`granja_*.glb`, `sangre/bioma_*.glb`) |
+| Lugares | El cosmos (estrellas, planeta, escudo) | Hecho en el motor (prólogo) |
+| Boda | **Eterna**: pabellón, cabañas en A, piscina, árbol grande, arco de rosas, río con decks, fogata, mesa larga | Falta |
+| Boda | Traje y vestido de boda, velo, lazo de cuatro hilos, faroles, velas, calas | Falta |
+| Casa | **El Altar del Lazo** (también se usa en el juego de la casa) | Falta |
+| Papel animado | Láminas para S08 y los recuerdos de C08 | Falta (se pintan con texturas) |
+
+---
+
+## 12. Fases (cada una se prueba con capturas, se sube y la APK sale en verde)
+
+| Fase | Qué | Entrega |
+|---|---|---|
+| A | Guiones del Acto I (SC0, Eliana, SC1) y la entrada de Fuatia; voces del Acto I | Javier oye las voces antes de animar |
+| B | Actores que faltan del Acto I: Fuatia y el Conde humano | Hoja de contacto de los modelos |
+| C | **Acto I animado**: C01, C11, SC0, C02, Eliana, SC1, C03 + llegada a la Frontera y postales del valle | Video corto de cada escena |
+| D | Acto II: SC2, T03, SC3, C04 compartida (+ Misterio 3), C05, SC4 + postales de Sangre | Ídem |
+| E | Acto III: S08, C12, Eneas, Ofelia, C06, Serena + llegadas a Verdia, Senda y Nox | Ídem |
+| F | Actos IV y V: C13, C14, C07, C08, C09, C10 + llegadas al cielo de Astra y Confluencia | Ídem |
+| G | El Altar del Lazo, **Eterna**, la ropa de boda, **la boda** y los créditos | La película completa de punta a punta |
+| H | Los minijuegos (cada uno por su lado, cuando Javier lo pida) | — |
+
+Cada escena: guion → voces → actores y escenario → animación con el motor del cine (`cine-granja.ts`) → pruebas en el
+navegador (cuadros sueltos y video) → captura revisada → commit y push. Las de Sangre y Ceniza llevan su versión de amigos
+y pasan `verificar-amigos`.
+
