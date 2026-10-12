@@ -18,6 +18,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFile
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compilarModulo } from './modulos-prueba.mjs';
+import { FILTRO_CELESTIAL } from './filtro-celestial.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PUB = join(RAIZ, 'public');
@@ -31,9 +32,7 @@ const AJUSTES = { stability: 0.45, similarity_boost: 0.8, style: 0.35 };
 const DIVINAS = new Set(['celia', 'aura', 'lara']);
 /** Cómo se procesa cada quien (ffmpeg). */
 const FILTRO = {
-  // Celestial «suave» (Javier lo escogió el 12 de octubre de 2026; la catedral le pareció demasiado): un eco corto y
-  // discreto, un coro que casi no se nota y un poquito de brillo arriba
-  celestial: 'highpass=f=90,chorus=0.8:0.9:25|35:0.09|0.07:0.3|0.4:1|1.3,aecho=0.9:0.85:70|130:0.13|0.07,equalizer=f=8500:t=q:w=1:g=1.5',
+  celestial: FILTRO_CELESTIAL, // filtro-celestial.mjs
   narrador: 'highpass=f=70,aecho=0.8:0.6:45|90:0.16|0.08',
   normal: 'highpass=f=70',
 };

@@ -74,7 +74,7 @@ export const LUGARES: DefLugar[] = [
   { id: 'reja', premio: 'humo_azufre', nombre: 'La reja del cementerio', sector: 'afueras', bioma: 'cementerio', peligro: 1, lema: 'Donde empieza la Noche.', retos: [muertos(1000), minerales(15)] },
   { id: 'lapidas', premio: 'latigo_espinas', nombre: 'Las lápidas torcidas', sector: 'afueras', bioma: 'cementerio', peligro: 2, lema: 'Los nombres ya no se leen.', retos: [sinCaer, botin(3)] },
   { id: 'mausoleo', premio: 'cuervos_cazadores', nombre: 'El mausoleo sin dueño', sector: 'afueras', bioma: 'cementerio', peligro: 2, lema: 'Alguien abrió la tumba desde adentro.', retos: [conClase('sepulturero', 'el Sepulturero'), nivel(35)] },
-  { id: 'puerta_afueras', premio: 'murcielagos', nombre: 'La grieta del pantano', sector: 'afueras', bioma: 'cementerio', peligro: 2, puerta: true, mutadores: ['nocturna', 'sangrienta', 'sin_antorchas'], lema: 'La Santa de Lara espera al otro lado.', retos: [elites(30), sinCaer] },
+  { id: 'puerta_afueras', premio: 'murcielagos', nombre: 'La grieta del pantano', sector: 'afueras', bioma: 'cementerio', peligro: 2, puerta: true, mutadores: ['nocturna', 'sangrienta', 'sin_antorchas'], lema: 'Serena, la Santa de Lara, espera al otro lado.', retos: [elites(30), sinCaer] },
   // ----------------------------------------------------------------------------------------- II. El Subsuelo
   { id: 'osarios', premio: 'cepos', nombre: 'Los osarios', sector: 'subsuelo', bioma: 'catacumbas', peligro: 2, lema: 'Huesos que sostienen el techo.', retos: [elites(40), excavar(400)] },
   { id: 'mina_dragones', premio: 'bomba_racimo', nombre: 'La mina de los dragones', sector: 'subsuelo', bioma: 'minas', peligro: 2, lema: 'Donde Celia guardaba sus gemas.', retos: [minerales(30), oro(1500)] },

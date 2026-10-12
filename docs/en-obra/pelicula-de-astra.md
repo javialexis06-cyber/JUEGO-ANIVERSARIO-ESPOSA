@@ -28,8 +28,8 @@ en voz alta.
 1. **Las dos manos.** La Constelación de los Amantes dibuja dos manos entrelazadas. Cada escena termina con un plano
    corto de las manos de Javier y Laura (sembrando, sosteniendo la copa, cerrando una válvula, plantando la última
    semilla). En la boda, las manos de verdad se juntan y la constelación brilla entera.
-2. **Los dos surcos.** C01 empieza con dos surcos y C10 vuelve a ellos. La boda es en el mismo valle del prólogo, ya
-   florecido: la granja dormida del principio es el jardín de la boda.
+2. **Los dos surcos.** C01 empieza con dos surcos y C10 vuelve a ellos. La boda empieza
+   en el mismo valle del prólogo, ya florecido, y de ahí la cámara llega a la Casa Eterna.
 3. **Elegir.** Toda la campaña repite que nadie queda obligado: Ofelia elige, Eneas elige si renacer, Elián elige salir
    de la casa perfecta, P23 elige no quedarse con una estrella ajena. La boda cierra ese hilo: el amor no es una
    cadena, es **una elección que se vuelve a hacer siempre**. Así la frase de Javier no rompe el canon («no se promete
@@ -45,18 +45,18 @@ en voz alta.
 
 ---
 
-## 2. Lo que hay que arreglar para que todo cuadre (encontrado al revisar)
+## 2. Arreglos de coherencia (**hechos** el 12 de octubre de 2026)
 
-| # | Choque | Propuesta |
+| # | Choque | Qué se hizo |
 |---|---|---|
-| 1 | **El Conde termina en Nox dos veces**: en la granja (P09, C04 «La copa») y al final de Sangre y Ceniza (sector 4). | Es **el mismo momento**. P04, P06, P08 y P09 de la granja ya piden puertas de Sangre: los sectores 1-4 del mapa de la Noche **son** esas misiones. C04 se vuelve una película compartida: sale en el juego donde ocurra primero y en el otro queda para volver a verla. |
-| 2 | **Las diosas tienen dos voces distintas**: el prólogo usa Alejandra, Valentina y Esperanza (con el efecto «suave»); las cinemáticas usaban otras (Lizy, Carolina, Malena). | Una sola voz por diosa en todo el juego: las del prólogo. Hay que rehacer solo 7 líneas (unos 480 caracteres). |
-| 3 | **Fuatia** (la diosa que creó Laura) tiene voz, pero sin el efecto celestial. | Pasarle el mismo efecto «suave» a sus líneas de las películas. Se reprocesan las que ya existen: no gasta créditos. |
-| 4 | **Las Santas no tienen nombre en Sangre y Ceniza** («la Santa de Lara»), pero en la biblia sí: **Eliana** (la de Aura) y **Serena** (la de Lara). | Usar los nombres en las escenas de Sangre y Ceniza. |
-| 5 | **Fuatia aparece por primera vez en C11** sin una presentación a su altura. | Darle en C11 una entrada de 20 s (los cuatro elementos se juntan en una figura). Es la diosa de Laura: tiene que lucirse. |
-| 6 | La biblia dice que el final «no promete inmortalidad» y que no se le pide al jugador una declaración sentimental. | La boda es una escena (no una decisión del jugador) y la frase habla de **elegirla en cada vida**, no de no morir. Hay que agregar una línea en `narrativa/02-campana.md` («Desenlaces») para que la boda sea canon. |
-| 7 | «Quién cuenta qué» (`la-pareja.md`): la cama ya tiene «la boda con misterio» como sueño dicho en el chat. | La boda de la película es otra: la del mito, no la del chat. Se agrega una fila nueva para la película de Astra y no se toca el misterio por mesa (ese es de la cama). |
-| 8 | Los amigos juegan Sangre y Ceniza. | Las escenas nuevas de Sangre y Ceniza llevan su versión de amigos (con «sobrevivientes», como ya hace `sangre_historia.ts`). La boda, el Altar y todo lo de la pareja **nunca** entran en la versión de amigos. |
+| 1 | **El Conde terminaba en Nox dos veces** (granja P09 y final de Sangre y Ceniza). | Ya estaba amarrado en el motor: P04, P06, P08 y P09 piden cruzar la puerta del sector de Sangre (`tipo: 'sangre'`, `historia.ts`). Es **el mismo momento** contado en los dos juegos. Al animarla, C04 «La copa» será una sola película: sale donde ocurra primero y en el otro queda para volver a verla. |
+| 2 | **Las diosas tenían dos voces distintas.** | Una sola voz por diosa en todo el juego, la del prólogo (`astra-reparto.json` apunta a `cine-reparto.json`). Se rehicieron las 7 líneas de Celia, Aura y Lara en las escenas de la campaña (481 caracteres). |
+| 3 | **Fuatia no sonaba celestial.** | Sus 127 líneas pasaron al mismo sonido «suave» sin gastar créditos (`voces-astra.mjs celestial` reprocesa lo que ya había). El filtro vive en un solo lugar: `scripts/granja-v3/filtro-celestial.mjs`. |
+| 4 | **Las Santas no tenían nombre en Sangre y Ceniza.** | Ahora son **Serena** (Santa de Lara) y **Eliana** (Santa de Aura) en Sangre y Ceniza (pareja y amigos), en el pueblo de la granja y en la carta de la campana. Serena ya no dice que el manuscrito lo escribieron «sus hermanas hace siglos» (la biblia dice que no tiene recuerdos de siglos): lo escribieron las Santas de antes. |
+| 5 | **Fuatia aparecía sin presentación.** | C11 tiene su entrada de 20 s con dos líneas nuevas (`narrativa/10-figuras-y-escenas.md`), escritas para no correr la numeración de las líneas que ya tienen voz. |
+| 6 | **La boda no era canon.** | Quedó en `narrativa/02-campana.md` («Desenlaces»): escena, no decisión del jugador; los votos prometen elegirse en cada ciclo, no inmortalidad; no está en la versión de amigos. |
+| 7 | **«Quién cuenta qué».** | Fila nueva en `la-pareja.md` para la película de Astra; el misterio por mesa sigue siendo de la cama. |
+| 8 | **Los amigos.** | Las escenas nuevas de Sangre y Ceniza llevan versión de amigos; la boda, el Altar y lo de la pareja nunca entran (revisado con `verificar-amigos`). |
 
 ---
 
@@ -127,16 +127,19 @@ Granja = misión de la campaña; Sangre = puerta del mapa de la Noche; Casa = el
 ★ = misión secundaria con escena propia (6). Son las que tienen más peso emocional y, además, explican piezas que la
 boda necesita: los ciclos (Eneas, Ofelia), el villano (S08), las diosas de cerca (Eliana, Serena) y las criaturas (T03).
 
-**Totales:** 28 escenas, unos **55 minutos** de película. Hecho: 1. Con guion completo: 14. Con base para escribir: 10.
+**Totales:** 28 escenas, unos **55 minutos** de película (más las presentaciones de los lugares del capítulo 6 bis,
+unos 14 minutos). Hecho: 1. Con guion completo: 14. Con base para escribir: 10.
 Nuevas desde cero: 3 (SC4, el Altar y la boda).
 
 ---
 
 ## 4. La boda: «Siempre te elegiré» (borrador para que Javier lo corrija)
 
-**Dónde:** el valle del prólogo, que ahora es el jardín de la granja florecido, frente a la casa, de noche. La
-Constelación de los Amantes cubre el cielo. Todas las escenas acaban apuntando aquí: el prólogo empieza en este mismo
-valle, dormido y lleno de maleza.
+**Dónde (decidido):** un escenario tipo **Casa Eterna**, el lugar de Sopetrán donde Javier y Laura quieren celebrar su
+boda de verdad: una casa de campo con jardines, de noche, bajo la Constelación de los Amantes. Se llega desde el valle
+del prólogo (la cámara baja desde las estrellas como al principio) y se modela en Blender como un escenario propio.
+**Falta de Javier:** fotos o una descripción del lugar (entrada, jardín, dónde sería el altar, árboles, luces) para
+que se parezca de verdad.
 
 **Quiénes:** Javier y Laura con ropa de boda (traje y vestido nuevos en el clóset de Blender). Celia, Aura, Lara y
 Fuatia. Las Santas Eliana y Serena. Los vecinos que el jugador ayudó (Elián, Ofelia y Eneas, que bajan de Verdia, si
@@ -147,7 +150,7 @@ completaste su escena). Un unicornio, un dragón y un grifo.
    Celia). Los vecinos llegan con faroles.
 2. Celia levanta un arco de flores desde la tierra. Aura enciende las velas con su fuego. Fuatia trae los cuatro
    elementos y con ellos teje **un lazo de cuatro hilos** (fuego, agua, tierra y aire) para las manos.
-3. Lara, sin velo por primera vez, oficia: es la que guía cada ciclo.
+3. **Lara oficia (decidido)**, sin velo por primera vez: es la que guía cada ciclo.
 4. Los votos. Las manos se juntan y la constelación brilla entera: el escudo ya no se puede romper.
 5. Fiesta corta (baile lento, los animales, fuegos de Aura) y la mañana siguiente: los dos en la parcela. «¿Y mañana?»
    «Miramos si brotó» (la misma frase de C10).
@@ -202,21 +205,69 @@ propuesta:
 
 ## 6. Los cuatro minijuegos nuevos (solo lo que necesitan; se hacen después)
 
+Decidido: **peleas y carreras** son casuales y se juegan también en la **Sala de Juegos** (la app de amigos, sin nada de
+la pareja). **El tower defense** es la batalla de la misión 23, pero se juega cuando quieras desde el **Cuarto de
+Juegos** de la casa. **El del celular** tiene **entre 5 y 10 casos, todos completos**.
+
 | Juego | Dónde cae en el lore | Animaciones | Voces | Amigos |
 |---|---|---|---|---|
-| **Peleas tipo Street Fighter / Smash**: «El Torneo del Despertar Dorado» | Casual (no avanza la historia). Es el torneo de la Fiesta del Despertar Dorado en el Pueblo del Sol, con muñecos de peluche. | Por luchador: entrada, 4-6 golpes, especial, victoria y derrota; escenarios del pueblo, Brasaviva y Nieveclara. | Unas 8 frases por luchador (Javier, Laura, las Santas, vecinos; el Conde y Vael'Thor como «máscaras de feria» que se desbloquean) y un presentador. | Sí, con luchadores neutros |
-| **Carreras tipo Mario Kart**: «La Carrera de las Tres Lunas» | Casual. Pistas por las regiones de Astra (Brasaviva, Nieveclara, Iridalia, Estación Celia, Borde de Astra); carros tirados por criaturas. | Carros y personajes al volante, objetos, podio. | Presentador y unas 5 frases por corredor. | Sí |
-| **Buscar a alguien desaparecido en un celular** | **De lore** (recomendado): el celular de una sobreviviente de Valdemora que desapareció la noche del pacto del Conde (AV 301). Con mensajes, fotos y notas se descubren los últimos días del Conde humano y dónde está ella (viva, en Vigilia). Une Sangre y la granja. **Nunca la desaparecida es Laura.** | Casi nada en 3D: la interfaz del teléfono y fotos renderizadas de lugares que ya existen; una escena final corta (el reencuentro). | Notas de voz de la desaparecida y de 3-4 personas más (unas 30 líneas). | La versión de amigos funciona igual (el misterio no es de la pareja) |
-| **Tower defense del lore**: «El Escudo de las Hermanas» | **De lore**: la defensa del Borde de Astra durante P23 (C09), contada en unos 10 niveles. Las torres son altares de Aura (fuego) y de Lara (velo), dragones, grifos, unicornios y los cuatro elementos de Fuatia; los enemigos, la ceniza de Nath'Gora. | Torres, enemigos y un mapa por nivel; una escena de 30 s al empezar y otra al final (empalma con C09). | El narrador, las Santas y Nath'Gora (unas 25 líneas). | Sí (sin nombrar a la pareja) |
+| **Peleas tipo Street Fighter / Smash**: «El Torneo del Despertar Dorado» | Casual. El torneo de la Fiesta del Despertar Dorado, con muñecos de peluche. | Por luchador: entrada, 4-6 golpes, especial, victoria y derrota; escenarios del pueblo, Brasaviva y Nieveclara. | Unas 8 frases por luchador (Javier, Laura, las Santas, vecinos; el Conde y Vael'Thor como «máscaras de feria») y un presentador. | Sí, en la Sala de Juegos, con luchadores neutros |
+| **Carreras tipo Mario Kart**: «La Carrera de las Tres Lunas» | Casual. Pistas por las regiones de Astra; carros tirados por criaturas. | Carros y personajes al volante, objetos, podio. | Presentador y unas 5 frases por corredor. | Sí, en la Sala de Juegos |
+| **El celular**: «Desaparecidos de Astra» | De lore. Cada caso es un celular encontrado en un lugar de Astra: mensajes, fotos, notas de voz y contraseñas para saber qué pasó y dónde está la persona. **Nunca la desaparecida es Laura.** | Interfaz del teléfono, fotos renderizadas de lugares que ya existen y una escena corta al cerrar cada caso. | Notas de voz: unas 25 líneas por caso. | Sí: ningún caso es de la pareja |
+| **Tower defense**: «El Escudo de las Hermanas» | De lore: la defensa del Borde de Astra en P23 (empalma con C09). Torres: altares de Aura y de Lara, dragones, grifos, unicornios y los elementos de Fuatia; enemigos: la ceniza de Nath'Gora. | Torres, enemigos y un mapa por nivel; escena de 30 s al empezar y al final. | Narrador, las Santas y Nath'Gora (unas 25 líneas). | En el Cuarto de Juegos siempre; en la Sala de Juegos, sin nombrar a la pareja |
+
+**Los casos del celular (propuesta de 8; cada uno completo: desaparición, pistas, giro, final y su escena):**
+
+| # | Caso | Dónde | De qué trata |
+|---|---|---|---|
+| 1 | **La noche del pacto** | Valdemora | Una criada del castillo desapareció la noche en que el Conde bebió la ceniza (AV 301). Su teléfono cuenta los últimos días del Conde humano y la copa de su juventud. Está viva, en Vigilia. |
+| 2 | **El faro que no encendió** | Puerto de los Lirios | El farero no prendió el faro la noche de la Fiesta de las Barcas. Se fue a buscar a una barca perdida, solo. |
+| 3 | **La cota tres** | Piedralumbre | Una minera entró a la galería cerrada siguiendo un ruido. Los dragones de Celia la tienen guardada (y la cuidan). |
+| 4 | **La niña del Eco** | Jardines del Eco | Un alma que se quedó entre Senda y Verdia: uno de los laberintos de Vael'Thor que nadie desarmó. |
+| 5 | **El astrónomo de Nocturna** | Vigía de Nocturna | Anotaba una estrella que se mueve sola; sus notas llevan a la luna manchada. |
+| 6 | **La ruta del carro de agua** | Ambarina | El repartidor de agua dejó el carro en mitad del desierto con el agua intacta. |
+| 7 | **Un concierto que se vea** | Iridalia | Una música sorda desapareció antes de su concierto; el caso se resuelve con lo que se ve, no con lo que se oye. |
+| 8 | **El último turno** | Estación sobre Celia | Un técnico no regresó de una salida al casco; su bitácora y las cámaras no coinciden. |
+
+---
+
+## 6 bis. Las presentaciones de cada lugar (pedido de Javier)
+
+Al llegar por primera vez a un mundo, pueblo o bioma sale una animación corta que lo presenta bonito: la cámara recorre
+el lugar, aparece su nombre y el narrador dice qué es, quién vive ahí y qué misiones principales van a pasar ahí. Se
+salta con un toque, sale una sola vez y se vuelve a ver desde el mapa. Se hacen con el mismo motor de las películas y
+con los modelos que ya existen de cada lugar, así que salen mucho más baratas que una película.
+
+**Dos tamaños:**
+- **Llegada a un mundo** (35-45 s): un plano grande desde el cielo, el lugar en el mito y los que mandan ahí. Son 6:
+  la Frontera (Vigilia y Valdemora), Verdia, Senda, Nox, el cielo de Astra (la Estación y las lunas) y Confluencia. El
+  valle de Celia ya tiene el prólogo.
+- **Postal de un lugar** (12-20 s): un vuelo por la calle principal, su hito, dos o tres vecinos haciendo su oficio, el
+  letrero con el nombre y una línea del narrador.
+
+| Mundo | Lugares con postal | Llegada | Música |
+|---|---|---|---|
+| Valle de Celia | Pueblo del Sol, Cruce del Valle, Puerto de los Lirios, Brumaverde, Piedralumbre, Brasaviva, Nieveclara | (el prólogo) | La de cada lugar |
+| Frontera | Vigilia de Ceniza | Sí | M08 |
+| Verdia | Rosal Eterno, Jardines del Eco | Sí | M12 |
+| Senda | Umbral de la Travesía, Refugio de los Hilos | Sí | M13 / M14 |
+| Nox | Bastión del Velo | Sí | M15 |
+| Cielo de Astra | Estación sobre Celia, Huerto de Aurelia, Vigía de Nocturna, Cantera de Esmeralda, Campamento de los Fragmentos, Asteroide Cobrizo, Asteroide Prisma, Ambarina, Iridalia, Borde de Astra | Sí | M16-M19 |
+| Confluencia | Refugio de Confluencia, Caldera del Rescoldo, Mar de los Retornos, Terraza de las Raíces, Altura de las Corrientes | Sí | M23 |
+| Sangre y Ceniza | El Cementerio Hundido, Las Catacumbas, Las Minas de Sangre, La Abadía en Llamas, El Castillo del Conde | (la llegada es SC0) | La de Sangre |
+
+Son **6 llegadas y 33 postales** (unos 14 minutos en total). La boda tiene su propia llegada (la Casa Eterna) dentro de
+su película. Voces: 1 a 3 líneas del narrador por lugar, unas 100 líneas (≈ 7.000 caracteres). Las de Sangre y Ceniza
+llevan su versión de amigos.
 
 ---
 
 ## 7. Lo que cuesta en voces y música
 
 - **Voces nuevas**: unas 140 líneas, contando las de los jefes (≈ 14.000 caracteres) más un margen para repetir tomas: unos **20.000
-  caracteres**. Hoy quedan ≈ 51.000 de 243.000 y el cupo se renueva el **28 de octubre**. Alcanza para todas las
-  escenas sin tocar lo de los minijuegos (esas voces quedan para después).
-- **Unificar las diosas** (arreglo 2): unos 480 caracteres. Fuatia (arreglo 3): gratis.
+  caracteres**. Hoy quedan ≈ 51.000 de 243.000 y el cupo se renueva el **28 de octubre**. Con las presentaciones de los lugares (≈ 7.000 más) son unos **27.000 caracteres**: alcanza
+  con lo que queda hoy y el cupo nuevo del 28 de octubre. Lo de los minijuegos queda para después.
+- **Unificar las diosas** (arreglo 2): **hecho**, 481 caracteres. Fuatia (arreglo 3): **hecho**, gratis.
 - **Música** (como pidió Javier: primero gratuita y, si no hay nada adecuado, compuesta):
   - Las escenas de la granja ya tienen su pieza (las M de `musica.md`). Sangre y Ceniza usa la suya.
   - **La boda**: primero se busca una pieza CC0 romántica y orquestal; si ninguna tiene la altura del final, se compone
@@ -228,11 +279,10 @@ propuesta:
 
 ## 8. En qué orden se haría (después de que Javier apruebe)
 
-1. **Arreglos de coherencia**: unificar las voces de las diosas, el efecto de Fuatia, los nombres de las Santas y
-   amarrar los sectores de Sangre con P04/P06/P08/P09.
+1. ~~Arreglos de coherencia~~ **hechos**.
 2. **Escribir los guiones que faltan** (10 de base y 3 nuevos) en `narrativa/` y en `cine-lineas.ts`, con su versión de
    amigos donde toque. **Javier revisa la boda antes de grabar.**
-3. **Animar por actos**, en el orden de la película: Acto I primero (C01, C11, SC0, C02, Eliana, SC1, C03), probando
+3. **Animar por actos** (con las presentaciones de los lugares de cada acto), en el orden de la película: Acto I primero (C01, C11, SC0, C02, Eliana, SC1, C03), probando
    cada escena con capturas antes de subirla.
 4. **Generar las voces** de cada acto cuando su guion esté aprobado.
 5. **El Altar del Lazo y la boda**: modelos nuevos en Blender (traje, vestido, arco de flores, lazo de cuatro hilos,
@@ -241,16 +291,21 @@ propuesta:
 
 ---
 
-## 9. Lo que tiene que decidir Javier
+## 9. Decisiones de Javier (12 de octubre de 2026)
 
-1. **¿Qué dice Laura en la boda?** (a) Una respuesta corta que escribes tú *(recomendado)*; (b) solo «Sí, acepto»;
-   (c) no habla: solo tus votos y su sonrisa.
-2. **¿Dónde es la boda?** (a) El valle del prólogo, frente a la casa, bajo la constelación *(recomendado)*; (b) la
-   rosaleda de Verdia; (c) el Altar del Lazo dentro de la casa.
-3. **¿Quién oficia?** (a) Lara, que guía los ciclos *(recomendado)*; (b) Fuatia, la diosa de Laura; (c) las cuatro
-   diosas, una línea cada una.
-4. **El tower defense**: (a) la defensa del Borde en P23 *(recomendado: no cambia el canon)*; (b) un último ataque de
-   Nath'Gora la víspera de la boda, más épico pero hay que cambiar el final de la biblia.
-5. **El juego del celular**: (a) la sobreviviente de Valdemora *(recomendado)*; (b) otra persona que tú propongas.
-6. **Peleas y carreras**: (a) casuales, de festival *(recomendado)*; (b) con historia.
-7. **Las 6 escenas secundarias** (★): ¿quitas o agregas alguna?
+| # | Pregunta | Decidido |
+|---|---|---|
+| 1 | ¿Qué dice Laura en la boda? | **Pendiente** (ver abajo) |
+| 2 | ¿Dónde es la boda? | Un escenario tipo **Casa Eterna**, el lugar de Sopetrán donde quieren la boda real (faltan fotos o descripción) |
+| 3 | ¿Quién oficia? | **Lara** |
+| 4 | El tower defense | La batalla de **P23**, y se juega cuando quieras desde el **Cuarto de Juegos** |
+| 5 | El juego del celular | Lo decide Claude: **8 casos** de lore, todos completos (el primero, la sobreviviente de Valdemora) |
+| 6 | Peleas y carreras | Casuales, y se juegan también en la **Sala de Juegos** |
+| 7 | Las 6 escenas secundarias | **Aprobadas** las seis |
+| + | Presentaciones de cada lugar | **Propuestas** en el capítulo 6 bis |
+
+**Lo que falta de Javier:**
+1. Qué dice Laura en sus votos: (a) una respuesta corta que escribes tú *(recomendado)*; (b) solo «Sí, acepto»; (c) no
+   habla: solo tus votos y su sonrisa.
+2. Fotos o descripción de la Casa Eterna.
+3. Revisar el borrador de los votos (capítulo 4) antes de grabarlos.

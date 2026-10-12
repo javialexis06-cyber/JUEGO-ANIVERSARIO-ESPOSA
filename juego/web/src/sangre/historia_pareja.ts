@@ -20,7 +20,7 @@ export interface EscenaHistoria {
 
 /** Cómo se llama cada uno en las escenas. */
 export const NOMBRES_HABLANTES: Record<Hablante, string> = {
-  el: NOMBRE_PAREJA.el, ella: NOMBRE_PAREJA.ella, santa: 'La Santa de Lara', conde: 'El Conde Sangrevil', nathgora: 'Nath’Gora',
+  el: NOMBRE_PAREJA.el, ella: NOMBRE_PAREJA.ella, santa: 'Serena, Santa de Lara', conde: 'El Conde Sangrevil', nathgora: 'Nath’Gora',
   vaelthor: 'Vael’Thor', narrador: '',
 };
 
@@ -40,7 +40,7 @@ export const ESCENAS: Record<IdEscena, EscenaHistoria> = {
       n('Una noche, la Constelación de los Amantes parpadeó. Y sobre Valdemora cayó una noche que no se acaba.'),
       ella('Panda… ¿esa no es la constelación que brilla encima de nuestra casa? ¿La de las dos manos?'),
       el('La misma, esposa. Y acaba de parpadear. Eso nunca había pasado.'),
-      santa('Viajeros del Hogar: soy la Santa de Lara. Las almas de Valdemora ya no llegan a la mano de mi señora.'),
+      santa('Viajeros del Hogar: soy Serena, la Santa de Lara. Las almas de Valdemora ya no llegan a la mano de mi señora.'),
       santa('Algo abrió una grieta en el escudo. Por ahí entra la ceniza.'),
       ella('¿Y por qué nos llama a nosotros? Nosotros vivimos tranquilitos en el Hogar.'),
       santa('Porque Nath’Gora, el Señor de la Ceniza, no viene por Valdemora. Viene por lo que brilla en ustedes dos.'),
@@ -85,7 +85,7 @@ export const ESCENAS: Record<IdEscena, EscenaHistoria> = {
     titulo: 'Los otros panteones', subtitulo: 'III · El Santuario',
     lineas: [
       n('Bajo el altar quemado de la abadía había un cofre. Adentro estaba el manuscrito de las Santas.'),
-      santa('Esto lo escribieron mis hermanas hace siglos. Nunca pensé volver a verlo.'),
+      santa('Esto lo escribieron las Santas que vinieron antes que yo, hace siglos. Nunca pensé tenerlo en las manos.'),
       ella('«Los otros panteones dejaron apagar la estrella que Nath’Gora cuidaba. Por descuido. Por soberbia.»'),
       el('O sea que Nath’Gora no nació malo… se quedó sin su estrella.'),
       santa('Y se vengó apagando sus planos uno por uno. Vael’Thor encerró la esencia de esos dioses en geometrías oscuras.'),

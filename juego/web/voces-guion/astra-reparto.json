@@ -181,13 +181,13 @@
   "motivo": "casual"
  },
  "celia": {
-  "voz": "g10k86KeEUyBqW9lcKYg",
-  "nombre": "Lizy - Passionate, Warm, Joyful",
+  "voz": "NYPV3zHpSYleWL30LnJx",
+  "nombre": "Alejandra - Young, Soft and Calm",
   "sexo": "ella",
   "edad": null,
   "franja": "middle_aged",
   "acento": "latin american",
-  "motivo": "pleasant"
+  "motivo": "la misma del prólogo (cine-reparto.json): una sola voz por diosa"
  },
  "brasa_sol": {
   "voz": "JYyJjNPfmNJdaby8LdZs",
@@ -199,22 +199,22 @@
   "motivo": "cute"
  },
  "aura": {
-  "voz": "cIBxLwfshLYhRB9lCXEg",
-  "nombre": "Carolina - Conversational, Balanced",
+  "voz": "xzWD1ftyNVsuUMY2ll3j",
+  "nombre": "Valentina - Radiant, Expressive and Warm",
   "sexo": "ella",
   "edad": null,
   "franja": "middle_aged",
   "acento": "latin american",
-  "motivo": "professional"
+  "motivo": "la misma del prólogo (cine-reparto.json): una sola voz por diosa"
  },
  "lara": {
-  "voz": "1WXz8v08ntDcSTeVXMN2",
-  "nombre": "Malena Tango - Storyteller",
+  "voz": "6sefJctHkzCgLShKcnrI",
+  "nombre": "Esperanza - Serene and Assured",
   "sexo": "ella",
   "edad": null,
   "franja": "middle_aged",
-  "acento": "argentine",
-  "motivo": "casual"
+  "acento": "colombian",
+  "motivo": "la misma del prólogo (cine-reparto.json): una sola voz por diosa"
  },
  "mercader": {
   "voz": "p4w8j6zCUDJ0nGJ3okKs",
