@@ -1,3 +1,4 @@
+import type {UtilidadesHistoria} from './premios-tipos';
 /** Misiones de Astra: los recibos describen acciones, no lecturas del expediente anterior. */
 export type ClasePasoHistoria='observar'|'preguntar'|'cultivar'|'cuidar'|'jornadas'|'entregar'|'visitar'|'sangre'|'secuencia'|'contraste'|'laberinto'|'circuito'|'inspeccionar'|'combate'|'oficio'|'nota'|'devolver_pesca';
 export interface PasoHistoria {
@@ -22,9 +23,9 @@ export interface RetoHistoria {
 }
 export interface EstadoHistoria {
  version:1;activas:Record<string,ProgresoHistoria>;
- completadas:Record<string,{dia:number;opcion:number;recibos:string[]}>;
+ completadas:Record<string,{dia:number;opcion:number;recibos:string[];evidencia?:ProgresoHistoria}>;
  reto:RetoHistoria|null;cartas:string[];sellos:string[];consecuencias:Record<string,number>;
- premios:string[];pistas:Record<string,number[]>;notas:Record<string,string>;
+ premios:string[];utilidades:UtilidadesHistoria;pistas:Record<string,number[]>;notas:Record<string,string>;
 }
 export type AccionHistoria=
  |{tipo:'aceptar'|'comprobar'|'preparar'|'retomar'|'iniciar_reto'|'reiniciar_reto';id:string}

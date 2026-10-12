@@ -1,3 +1,4 @@
+import type {AccionPremio} from './premios-tipos';
 import type {EstadoHistoria,AccionHistoria} from './historia-tipos';
 import type { EstadoAstra, AccionAstra } from './astra';
 import type { EstadoFestivales, AccionFestival } from './festivales';
@@ -42,6 +43,7 @@ export interface EstadoGranja extends EstadoBarra {
  zona:Zona;interior:string|null;vida:number;energia:number;enemigo:number;nivelMina:number;ayudante:{desde:number;hasta:number;ultimoTurno:number}|null;secuencia:number;
 }
 export type Accion =
+ |{tipo:'premio';accion:AccionPremio;xJugador:number;zJugador:number}
  |{tipo:'historia';accion:AccionHistoria;xJugador:number;zJugador:number}
  |{tipo:'astra';accion:AccionAstra;xJugador:number;zJugador:number}
  |{tipo:'libro';accion:AccionLibro;xJugador:number;zJugador:number}

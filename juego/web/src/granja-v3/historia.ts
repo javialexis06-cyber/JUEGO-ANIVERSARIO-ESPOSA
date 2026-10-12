@@ -1,3 +1,4 @@
+import {crearUtilidades,migrarUtilidades,entregarPremio,utilidadesValidas,premioDef} from './premios';
 import type {Accion,EstadoGranja,Resultado} from './estado';
 import type {AccionHistoria,EstadoHistoria,ProgresoHistoria,PasoHistoria} from './historia-tipos';
 import {MISIONES_HISTORIA} from './historia-datos';
@@ -11,9 +12,9 @@ import {fenotipo} from './genetica';
 import {estadoAnimal} from './cuidados';
 export {MISIONES_HISTORIA};
 export const misionHistoria=(id:string)=>MISIONES_HISTORIA.find(q=>q.id===id);
-export const crearHistoria=():EstadoHistoria=>({version:1,activas:{},completadas:{},reto:null,cartas:[],sellos:[],consecuencias:{},premios:[],pistas:{},notas:{}});
+export const crearHistoria=():EstadoHistoria=>({version:1,activas:{},completadas:{},reto:null,cartas:[],sellos:[],consecuencias:{},premios:[],utilidades:crearUtilidades(),pistas:{},notas:{}});
 export function historiaDisponible(s:EstadoGranja,id:string){const q=misionHistoria(id);return !!q&&q.requiere.every(r=>s.historia?.completadas[r])&&(!q.personal||s.astra?.conocidos.includes(q.personal)&&s.astra.lecturas.includes('VID_'+q.personal+'_1'))&&(!q.pistas||(s.historia?.pistas[q.id]?.length??0)>=2);}
-export function migrarHistoria(h:EstadoHistoria|undefined){if(h?.version===1){if(h.pistas===undefined)h.pistas={};if(h.notas===undefined)h.notas={};for(const a of Object.values(h.activas??{}))if(a&&typeof a==='object'&&!Array.isArray(a)&&a.cuidadosDias===undefined)a.cuidadosDias={};}}
+export function migrarHistoria(h:EstadoHistoria|undefined){if(h?.version===1){migrarUtilidades(h);if(h.pistas===undefined)h.pistas={};if(h.notas===undefined)h.notas={};for(const a of Object.values(h.activas??{}))if(a&&typeof a==='object'&&!Array.isArray(a)&&a.cuidadosDias===undefined)a.cuidadosDias={};}}
 const bien=(mensaje:string):Resultado=>({ok:true,mensaje}),mal=(mensaje:string):Resultado=>({ok:false,mensaje});
 const cerca=(x:number,z:number,p:{x:number;z:number})=>Math.hypot(x-p.x,z-p.z)<=3;
 const enPuesto=(s:EstadoGranja,p:PasoHistoria,x:number,z:number)=>regionActual(s)===p.region&&!s.interior&&!s.servicio&&!s.astra?.interior&&(!p.punto||cerca(x,z,p.punto));
@@ -41,7 +42,7 @@ export function registrarHistoria(s:EstadoGranja,a:Accion,antes:EstadoGranja){
   if(a.tipo==='astra'&&a.accion.tipo==='recurso'){const key='recoleccion:'+a.accion.id;if(q.pasos.some(p=>p.registro===key))p.estadisticas[key]=(p.estadisticas[key]??0)+1;}
   if(a.tipo==='astra'&&a.accion.tipo==='observar'){const key='observacion:'+a.accion.id;if(q.pasos.some(p=>p.registro===key))p.estadisticas[key]=(p.estadisticas[key]??0)+1;}
   if(a.tipo==='pescar'&&q.pasos.some(p=>p.tipo==='devolver_pesca'))for(const pez of PECES){const delta=(s.estadisticas['pez_'+pez.id]??0)-(antes.estadisticas['pez_'+pez.id]??0);if(delta>0){const key='captura:'+pez.id;p.estadisticas[key]=(p.estadisticas[key]??0)+delta;}}
-  if(a.tipo==='cuidar'&&['alimentar','acariciar','cepillar','musica','cuento'].includes(a.metodo)){
+  if(a.tipo==='cuidar'&&q.pasos.some(p=>p.tipo==='cuidar'||p.condicion==='refugio')&&['alimentar','acariciar','cepillar','musica','cuento'].includes(a.metodo)){
    const animal=s.animales.find(n=>n.id===a.animalId);if(animal&&!fenotipo(animal.especie,animal.genoma).fantasia){const key=animal.id+':'+(a.metodo==='alimentar'?'alimentar':'acompanar');if(!p.cuidados.includes(key))p.cuidados.push(key);p.cuidadosDias[key]=s.jornada.diasCompletados;}
   }
   if(a.tipo==='accion_aventura'&&a.objetivo==='monstruo'){
@@ -97,7 +98,7 @@ export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:n
   if(a.paso!==q.pasos.length||!s.astra!.lecturas.includes('H:'+q.id+'#giro'))return mal('Completa los objetivos y escucha el giro.');
   if(!Number.isInteger(accion.opcion)||accion.opcion<0||accion.opcion>(q.decision?1:0))return mal('Elección inválida.');
   if(q.pasos.some(p=>p.planes)&&a.plan!==accion.opcion)return mal('El cierre debe conservar la vía de estudio que elegiste y completaste.');
-  h.completadas[q.id]={dia:s.jornada.diasCompletados,opcion:accion.opcion,recibos:[...a.recibos]};h.consecuencias[q.id]=accion.opcion;
+  h.completadas[q.id]={dia:s.jornada.diasCompletados,opcion:accion.opcion,recibos:[...a.recibos],evidencia:structuredClone(a)};entregarPremio(h,q.id);h.consecuencias[q.id]=accion.opcion;
   if(/^F(07|08|09|10)$/.test(q.id)&&!h.sellos.includes(q.id))h.sellos.push(q.id);
   if(q.id.startsWith('V_')&&!s.astra!.personales.includes(q.id))s.astra!.personales.push(q.id);
   delete h.activas[q.id];escenaHistoria(s,q.id,'cierre');return bien('Historia completada con acciones y decisión guardadas.');
@@ -159,17 +160,19 @@ export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:n
 export function historiaValida(v:unknown,dia:number):v is EstadoHistoria {
  const h=v as EstadoHistoria,registro=(v:unknown)=>!!v&&typeof v==='object'&&!Array.isArray(v),entero=(n:unknown,min=0,max=1e9)=>Number.isSafeInteger(n)&&Number(n)>=min&&Number(n)<=max;
  const lista=(v:unknown,permitidos:string[])=>Array.isArray(v)&&new Set(v).size===v.length&&v.every(i=>typeof i==='string'&&permitidos.includes(i));
- if(!registro(h)||h.version!==1||!registro(h.activas)||!registro(h.completadas)||!registro(h.consecuencias)||!registro(h.pistas)||!registro(h.notas)||Object.entries(h.pistas).some(([id,x])=>{const q=misionHistoria(id);return !q?.pistas||!Array.isArray(x)||new Set(x).size!==x.length||x.some(i=>!entero(i,0,q.pistas!.length-1));})||Object.entries(h.notas).some(([id,x])=>!misionHistoria(id)?.pasos.some(p=>p.tipo==='nota')||typeof x!=='string'||!x.trim()||x.length>500)||!lista(h.cartas,MISIONES_HISTORIA.map(q=>q.id))||!lista(h.sellos,['F07','F08','F09','F10'])||!Array.isArray(h.premios)||h.premios.length>217||new Set(h.premios).size!==h.premios.length)return false;
+ if(!registro(h)||h.version!==1||!registro(h.activas)||!registro(h.completadas)||!registro(h.consecuencias)||!registro(h.pistas)||!registro(h.notas)||Object.entries(h.pistas).some(([id,x])=>{const q=misionHistoria(id);return !q?.pistas||!Array.isArray(x)||new Set(x).size!==x.length||x.some(i=>!entero(i,0,q.pistas!.length-1));})||Object.entries(h.notas).some(([id,x])=>!misionHistoria(id)?.pasos.some(p=>p.tipo==='nota')||typeof x!=='string'||!x.trim()||x.length>500)||!lista(h.cartas,MISIONES_HISTORIA.map(q=>q.id))||!lista(h.sellos,['F07','F08','F09','F10'])||!Array.isArray(h.premios)||h.premios.length>217||new Set(h.premios).size!==h.premios.length||h.premios.some(id=>!premioDef(id)||!h.completadas[premioDef(id)!.mision])||!utilidadesValidas(h,dia))return false;
  if(Object.keys(h.activas).length+Object.keys(h.completadas).length>MISIONES_HISTORIA.length)return false;
- for(const [id,c]of Object.entries(h.completadas)){const q=misionHistoria(id);if(!q||!registro(c)||!entero(c.dia,0,dia)||!entero(c.opcion,0,q.decision?1:0)||!lista(c.recibos,q.pasos.map(p=>p.id))||c.recibos.length!==q.pasos.length||!q.requiere.every(r=>h.completadas[r])||h.activas[id])return false;}
- for(const [id,a]of Object.entries(h.activas)){
+ const validarProgreso=(id:string,a:ProgresoHistoria)=>{
   const q=misionHistoria(id);if(!q||!registro(a)||!entero(a.dia,0,dia)||!entero(a.inicioPaso,a.dia,dia)||(a.plan!==null&&(!q.pasos.some(p=>p.planes)||!entero(a.plan,0,1)))||!entero(a.paso,0,q.pasos.length)||!lista(a.recibos,q.pasos.slice(0,a.paso).map(p=>p.id))||a.recibos.length!==a.paso||!q.requiere.every(r=>h.completadas[r])||!registro(a.cultivos)||!registro(a.entregas)||!registro(a.permisos)||!registro(a.enfoques)||!registro(a.estadisticas)||!registro(a.cuidadosDias)||!Array.isArray(a.cuidados)||a.cuidados.some(k=>typeof k!=='string'||!/^[A-Za-z0-9_-]{1,100}:(?:alimentar|acompanar)$/.test(k))||Object.entries(a.cuidadosDias).some(([id,d])=>!a.cuidados.includes(id)||!entero(d,a.dia,dia))||a.cuidados.length>600||new Set(a.cuidados).size!==a.cuidados.length)return false;
   if(!lista(a.observados,q.pasos.flatMap(p=>(p.datos??[]).map((_,i)=>p.id+':'+i))))return false;
   if(Object.entries(a.cultivos).some(([id,v])=>!/^(?:[a-zA-Z0-9_-]+:)?[-\d]+,[-\d]+$/.test(id)||!registro(v)||!CULTIVOS.some(c=>c.id===v.cultivo)||(v.contexto!==undefined&&(typeof v.contexto!=='string'||v.contexto.length>100))||typeof v.regado!=='boolean'||typeof v.cosechado!=='boolean'||v.cosechado&&!v.regado)||Object.keys(a.cultivos).length>512)return false;
   if(Object.entries(a.permisos).some(([id,v])=>!['acepta','aplaza','rechaza'].includes(v)||!q.pasos.some(p=>p.participantes?.some(n=>id===p.id+':'+n.id&&v===n.respuesta))))return false;
   if(Object.entries(a.entregas).some(([id,v])=>{const p=q.pasos.find(p=>p.id===id);return !p?.materiales||!registro(v)||JSON.stringify(Object.entries(v).sort())!==JSON.stringify(Object.entries(p.materiales).sort());}))return false;
   if(Object.entries(a.enfoques).some(([id,v])=>!['tecnica','combate'].includes(v)||!q.pasos.some(p=>p.id===id&&p.alternativa))||Object.entries(a.estadisticas).some(([id,v])=>!entero(v)||!id.startsWith('combate:')&&!q.pasos.some(p=>p.registro===id)&&!(q.pasos.some(p=>p.tipo==='devolver_pesca')&&PECES.some(p=>id==='captura:'+p.id))))return false;
- }
+  return true;
+ };
+ for(const [id,c]of Object.entries(h.completadas)){const q=misionHistoria(id);if(!q||!registro(c)||!entero(c.dia,0,dia)||!entero(c.opcion,0,q.decision?1:0)||!lista(c.recibos,q.pasos.map(p=>p.id))||c.recibos.length!==q.pasos.length||!q.requiere.every(r=>h.completadas[r])||h.activas[id])return false;if(c.evidencia!==undefined&&(!validarProgreso(id,c.evidencia)||c.evidencia.paso!==q.pasos.length||c.evidencia.inicioPaso>c.dia||JSON.stringify(c.evidencia.recibos)!==JSON.stringify(c.recibos)))return false;}
+ for(const [id,a]of Object.entries(h.activas))if(!validarProgreso(id,a))return false;
  if(Object.entries(h.consecuencias).some(([id,v])=>!h.completadas[id]||v!==h.completadas[id].opcion)||h.sellos.some(id=>!h.completadas[id]))return false;
  if(h.reto!==null){const r=h.reto,a=h.activas[r?.mision],p=misionHistoria(r?.mision)?.pasos[a?.paso];if(!registro(r)||!['secuencia','contraste','laberinto','circuito'].includes(r.tipo)||!a||!p||p.id!==r.paso||p.tipo!==r.tipo||!entero(r.progreso,0,p.orden?.length??0)||!entero(r.errores,0,100)||!entero(r.x,0,20)||!entero(r.z,0,20)||!lista(r.visitados,['A','B','R'])||typeof r.retiro!=='boolean'||r.retiro&&!r.visitados.includes('R')||!Array.isArray(r.giros)||r.giros.length!==9||r.giros.some(g=>!entero(g,0,3)))return false;if(r.tipo==='laberinto'&&(!p.mapa?.[r.z]?.[r.x]||p.mapa[r.z][r.x]==='#'))return false;}
  return true;

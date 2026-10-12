@@ -1,5 +1,15 @@
 # Coordinación de la granja con el proyecto principal
 
+## Premios funcionales en verificación · 11 de octubre de 2026
+
+La pestaña **Premios** conecta las 217 entregas únicas con fichas, agendas, patrones, instalaciones,
+exposición y técnicas. No paga por leer ni repetir escenas; hay tres planes fijados, seis recuerdos,
+una técnica activa y una instalación por plano. Contrato: [PREMIOS-INTEGRACION.md](../../juego/web/src/granja-v3/PREMIOS-INTEGRACION.md).
+Los servicios adicionales y las actividades regionales se completan en los bloques siguientes.
+
+La entrega secundaria `0ed6b09` terminó sus cuatro compilaciones en la corrida 38197085407;
+`apk-188` contiene los cuatro instaladores comprobados. La wiki registra sus 217 contratos.
+
 ## Segundo bloque de campaña · 11 de octubre de 2026
 
 Se añadieron 181 contratos secundarios y 617 objetivos: el diario reúne 217 historias y 727 objetivos.

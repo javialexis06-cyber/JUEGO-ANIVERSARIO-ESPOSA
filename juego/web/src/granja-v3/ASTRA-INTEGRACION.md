@@ -131,25 +131,21 @@ La cámara, los gestos adicionales, los escenarios de las cinematográficas y la
 Claude puede comenzar el arte y el audio con esta base. **El motor completo todavía no está terminado.**
 Pendientes principales, ordenados para evitar grabar escenas que luego requieran cambios mecánicos:
 
-1. Convertir los expedientes en las **36 misiones finales**: laberinto, relevos, contradicciones,
-   consentimientos y negativas, reparaciones físicas, matriz de retornos y combate final con recuperación.
-   Las lecturas del archivo son una adaptación explícita; no acreditan esas acciones originales.
-2. Implementar las **181 historias adicionales**: 142 personales, 12 secretos, 19 encuentros y ocho
-   arcos elementales. Sus guiones existen; faltan disparadores, retos propios, consecuencias y recompensas.
-   Las 98 relaciones escritas tampoco son todavía 98 sistemas de consecuencias.
-3. Implementar los efectos concretos de los **217 premios narrativos**. Las escenas separan inicio, giro, cierre y una sola rama elegida; se pueden retomar sin repetir entregas. Los expedientes guardan actas
-   y abren rutas; no inventan planos funcionales, descuentos o trofeos físicos al leer un guion.
-4. Dar identidad mecánica a cada región: actividades distintas, jefes elementales propios, circuitos
-   y retornos, depósitos especiales, módulos de soporte y fauna regional criable donde el canon lo permita.
-   La observación de fauna actual **no equivale** a nuevas especies productivas ni nuevos genomas.
-5. Completar vida social de los 118 nuevos residentes: navegación entre rutina y hogar, agenda por
-   estación/clima/evento, regalos, preferencias, comercios, escenas de amistad y cambios comunitarios.
-6. Completar las capacidades restantes del plan general: pesca con tesoros y trampas, museo y exhibiciones,
-   redes de automatización y logística, obras comunitarias y variedad regional de encargos/colecciones.
-   La tabla de `PLAN-MOTOR-COMPLETO.md` conserva el alcance y criterios; algunas filas históricas se
-   complementan con sus actualizaciones posteriores sobre dormir, clima, envíos y correspondencia.
-7. Recorrer la campaña completa desde una partida nueva con medios ordinarios, balancear economía y combate,
-   medir memoria y tiempos en teléfonos reales y verificar que los accesos se encuentran sin herramientas de prueba.
+1. **Campaña integrada:** 36 historias con 110 objetivos verificables, reintentos y guardado.
+   El cierre técnico de F12 está disponible; la alternativa de jefe propio pertenece al bloque regional.
+2. **Historias adicionales integradas:** 181 contratos con 617 objetivos, recuerdos posteriores,
+   pistas físicas y decisiones. Las consecuencias de las 98 relaciones se conectan en el bloque social.
+3. **Premios integrados:** 217 utilidades únicas con consultas, agendas, planos, depósitos,
+   accesos, trampas selectivas, exposición y técnicas acotadas. Ver `PREMIOS-INTEGRACION.md`.
+4. Completar vida social de los **154 residentes adicionales**: navegación real entre rutina y hogar,
+   agenda por estación/clima/evento, regalos, preferencias, comercios y consecuencias comunitarias.
+   Los 24 vecinos originales conservan su sistema; el reparto actual suma 178 personas.
+5. Dar identidad mecánica a cada región: actividades distintas, jefes elementales propios, circuitos
+   y retornos, depósitos especiales, soporte y fauna criable donde el canon lo permita.
+6. Completar pesca con tesoros y trampas generales, museo, redes de automatización y logística,
+   obras comunitarias y variedad regional de encargos y colecciones.
+7. Recorrer la campaña desde una partida nueva con medios ordinarios, balancear economía y combate,
+   verificar accesos sin herramientas de prueba y medir memoria y tiempos en teléfonos reales.
 
 No cambiar el nacimiento de Fuatia, su neutralidad ni su límite de equilibrio para justificar el combate.
 Verdia no requiere combate contra sus habitantes; Senda conserva las tres almas y su consentimiento;

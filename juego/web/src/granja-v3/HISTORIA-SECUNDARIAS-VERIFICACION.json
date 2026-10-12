@@ -213,5 +213,12 @@
     "juego/web/src/granja-v3/vista.ts": "9b732446e76a2fa3c5b89427e6e6b87db2e0bb60c7c22e965395a094f8d76167",
     "juego/web/src/granja-v3/viviendas-ui.ts": "f05dee31f0010bf22ba9b35445a744f1b812a1fbbb3e973499345619bb4e9c47",
     "juego/web/src/granja-v3/zonas-render.ts": "361a71dd7622dfcd0a5d97a58bb2896234a7c8d78302895eca24a58e9cc14928"
+  },
+  "publicacion": {
+    "sha": "0ed6b09fad3ba7b3ca476cb700fb8ec83face585",
+    "workflow": 38197085407,
+    "conclusion": "success",
+    "release": "apk-188",
+    "descargas_verificadas": 4
   }
 }

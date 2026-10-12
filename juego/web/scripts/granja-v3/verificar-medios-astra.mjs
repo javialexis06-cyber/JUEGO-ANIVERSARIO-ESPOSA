@@ -6,12 +6,13 @@ const publico=fileURLToPath(new URL('../../public/',import.meta.url));
 const produccion=JSON.parse(await fs.readFile(path.join(publico,'granja/astra/produccion.json'),'utf8'));
 const medios=JSON.parse(await fs.readFile(path.join(publico,'granja/astra/medios.json'),'utf8'));
 const {validarMedios}=await import(await compilarModulo(new URL('../../src/granja-v3/astra-medios.ts',import.meta.url)));
+const P=await import(await compilarModulo(new URL('../../src/granja-v3/premios-datos.ts',import.meta.url)));
 const errores=[];
 if(!validarMedios(medios))errores.push('Manifiesto de medios incompatible.');
 else {
  const lineas=new Map(produccion.lineas.map(l=>[l.id,l]));
  for(const [id,v] of Object.entries(medios.voces))if(lineas.get(id)?.huella_texto!==v.huella_texto)errores.push('Toma desconocida o texto cambiado: '+id);
- const modelos=new Set([...produccion.npc.map(n=>'npc:'+n.id),...produccion.regiones.map(r=>'region:'+r.id),...produccion.regiones.flatMap(r=>r.viviendas.map(h=>'vivienda:'+h.id)),...produccion.figuras.map(f=>'figura:'+f.id),...produccion.recursos.flatMap(r=>r.recursos.map(d=>'recurso:'+d.id))]);
+ const modelos=new Set([...P.PREMIOS_NARRATIVOS.map(p=>'premio:'+p.id),...produccion.npc.map(n=>'npc:'+n.id),...produccion.regiones.map(r=>'region:'+r.id),...produccion.regiones.flatMap(r=>r.viviendas.map(h=>'vivienda:'+h.id)),...produccion.figuras.map(f=>'figura:'+f.id),...produccion.recursos.flatMap(r=>r.recursos.map(d=>'recurso:'+d.id))]);
  for(const id of Object.keys(medios.modelos))if(!modelos.has(id))errores.push('Modelo sin anclaje: '+id);
  for(const id of Object.keys(medios.musica))if(!produccion.musica.some(m=>m.id===id))errores.push('Pista musical desconocida: '+id);
  const archivos=[...Object.values(medios.voces).map(v=>v.archivo),...Object.values(medios.musica),...Object.values(medios.modelos).map(v=>v.archivo)];
