@@ -182,6 +182,59 @@ def m_senal_salida(coll):
         bola(coll, f'mata señal {k}', (math.cos(k * 2.1) * 0.15, math.sin(k * 2.1) * 0.12, 0.06), (0.1, 0.08, 0.07), COPA() if k % 2 else COPA_CLARA(), n=2, sub=0)
 
 
+
+def m_poste_guia(coll):
+    """Poste guía de las plazas y los cruces (≈2,4 m): el juego le cuelga las tablas con los nombres."""
+    from granja_muebles import caja
+    clay.lathe('poste guía', [(0.0, 0.0), (0.1, 0.0), (0.085, 2.2), (0.0, 2.24)], coll, madera('poste arco', '#9D805E'), segments=10, subsurf=0)
+    # Tejadito a dos aguas con su bolita, para que se vea de lejos
+    for lado in (-1, 1):
+        t = caja(coll, f'tejado guía {lado}', (0.0, lado * 0.09, 2.3), (0.2, 0.12, 0.025), madera('tejado guía', '#8A5A3B'), p=6)
+        t.rotation_euler = (lado * 0.6, 0, 0)
+    bola(coll, 'perilla guía', (0.0, 0.0, 2.42), 0.06, laca('perilla guía', '#E4A94B', 0.4), n=3, sub=0)
+    # Anillos de amarre donde van las tablas
+    for k, z in enumerate((1.25, 1.62, 1.99)):
+        clay.lathe(f'anillo guía {k}', [(0.0, z - 0.03), (0.11, z - 0.03), (0.11, z + 0.03), (0.0, z + 0.03)], coll, madera('anillo guía', '#6B4430'), segments=10, subsurf=0)
+    # Base de piedras con matas y florecitas
+    for k in range(6):
+        a = k * math.tau / 6 + 0.3
+        bola(coll, f'piedra guía {k}', (math.cos(a) * 0.24, math.sin(a) * 0.24, 0.05), (0.13, 0.1, 0.07), mat('piedra guía', '#B9B2A4', 0.9), n=2, sub=0)
+    for k in range(4):
+        a = k * math.tau / 4 + 0.9
+        bola(coll, f'mata guía {k}', (math.cos(a) * 0.4, math.sin(a) * 0.36, 0.08), (0.13, 0.11, 0.1), COPA() if k % 2 else COPA_CLARA(), n=2, sub=0)
+        bola(coll, f'flor guía {k}', (math.cos(a) * 0.42, math.sin(a) * 0.38, 0.17), 0.035, laca('flor guía', '#F2C14E' if k % 2 else '#E98AA0', 0.5), n=2, sub=0)
+
+
+def m_tabla_guia(coll):
+    """Tabla en flecha para el poste guía (1 m, apunta a +x; el nombre lo pinta el juego en las dos caras)."""
+    from granja_muebles import caja
+    caja(coll, 'tabla guía', (0.46, 0.0, 0.0), (0.46, 0.03, 0.13), madera('tablero arco', '#C6AE82'), p=8)
+    o = clay.lathe('punta guía', [(0.0, 0.0), (0.155, 0.0), (0.0, 0.17)], coll, madera('tablero arco', '#C6AE82'), segments=3, subsurf=0)
+    o.location = (0.9, 0.0, 0.0)
+    o.rotation_euler = (math.pi / 2, -math.pi / 2, 0)
+    o.scale = (1, 1, 0.3)
+    # Listones más oscuros arriba y abajo, y dos clavitos
+    for lado in (-1, 1):
+        caja(coll, f'listón guía {lado}', (0.45, 0.0, lado * 0.115), (0.44, 0.035, 0.014), madera('listón guía', '#8A5A3B'), p=8, sub=0)
+    for k, x in enumerate((0.08, 0.84)):
+        for cara in (-1, 1):
+            bola(coll, f'clavo guía {k}{cara}', (x, cara * 0.034, 0.0), 0.016, laca('clavo guía', '#5A4A3A', 0.3), n=2, sub=0)
+
+
+
+def m_semillas_tierra(coll):
+    """Lo recién sembrado: montoncito de tierra removida con cinco semillitas claras encima (≈0,4 m). El juego le
+    oscurece la tierra cuando está regado (material «tierra semillero»)."""
+    tierra = mat('tierra semillero', '#86603F', 0.95)
+    bola(coll, 'montoncito', (0.0, 0.0, 0.0), (0.2, 0.18, 0.075), tierra, n=3, sub=1)
+    for k in range(5):
+        a = k * math.tau / 5 + 0.4
+        bola(coll, f'terrón {k}', (math.cos(a) * 0.17, math.sin(a) * 0.15, 0.025), (0.06, 0.05, 0.04), tierra, n=2, sub=0)
+    for k, (x, y, giro) in enumerate([(-0.07, 0.03, 0.4), (0.05, 0.06, 1.9), (0.0, -0.05, 0.9), (0.09, -0.03, 2.6), (-0.04, -0.08, 1.4)]):
+        o = bola(coll, f'semillita {k}', (x, y, 0.07), (0.03, 0.017, 0.014), laca('semillita', '#F2E2B6', 0.6), n=2, sub=1)
+        o.rotation_euler = (0, 0, giro)
+
+
 # ---------------------------------------------------------------- adelantos de cada zona (más allá de los arcos)
 
 def m_boca_mina(coll):

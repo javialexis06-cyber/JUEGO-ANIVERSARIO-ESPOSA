@@ -220,7 +220,33 @@ Plan:
    - Al pasar el mouse por cada nivel (o mantenerlo en el celular), un `title` o tooltip propio con la mejora.
    - La profesión se elige en una tarjeta pequeña solo cuando toca.
 
-## Tanda 4 · Minimapa y mapa grande
+## Tanda 4 · Minimapa y mapa grande — **hecho** (12 de octubre)
+
+Quedó así:
+- **Vista de verdad:** como el mundo solo tiene cargado lo que está cerca (29 m en ligero, 46 en detalle), el mapa se
+  va **fotografiando por cuadros de 16 m** a medida que uno recorre: `vista.fotoCenital()` saca una foto desde arriba
+  (cámara ortográfica, sin personajes, animales, niebla ni lluvia, con luz de mediodía) de cada cuadro cercano que
+  falte o tenga más de 45 s, una cada 380 ms como mucho (`mapa-real.ts`, `FotosMapa`). Las fotos se guardan en el
+  celular (IndexedDB `granja-mapas`, una hoja WebP por zona y partida), así que al volver a abrir el juego el mapa
+  sigue explorado. Funciona igual en las regiones de Astra.
+- Lo que todavía no se ha recorrido se ve como un **plano dibujado** (árboles con sombra y brillo, techos, caminos con
+  borde, agua con orilla), más pálido. Ese plano se pinta una vez en su lienzo y solo se rehace cuando cambia la
+  partida, como mucho cada 2,5 s (antes se recorrían los 1.212 recursos cinco veces por segundo).
+- **Nombres:** salidas (pastilla dorada con ➜ y el destino), edificios del pueblo, casas de los vecinos, la cabaña,
+  los refugios, la caja de envíos y el hogar de la mascota, el lago y el muelle; en el minimapa se saltan los que se
+  montan encima de otro. Los vecinos se ven siempre como puntitos; su nombre sale en el mapa grande o si están cerca.
+- **Mapa grande:** ocupa toda la pantalla (Javier pidió quitar el panel del lado para que haya más espacio y los
+  nombres no queden encimados); arriba a la izquierda, el nombre de la zona y el porcentaje explorado, y abajo una
+  ayudita. Zoom con la rueda o pellizcando, y se arrastra. Un toque pone una **marca** que te guía; tocar otra marca
+  la vuelve la guía y tocar la que guía la quita. Los nombres que chocan se corren un poquito arriba o abajo antes de
+  saltarse, y los de los vecinos salen al acercar el mapa.
+- **Minimapa:** muestra las marcas; la que guía tiene una flecha dorada en el borde y, abajo, «📍 Tu marca · 23 m».
+  Si la marca está en otra zona, dice por cuál salida ir. Al llegar avisa «¡Llegaste a tu marca!» y la quita.
+- Se quitó el buscador de vecinos (`#mapa-buscar`, `#minimapa-buscando`) y el mapita del valle del lado.
+- De paso: `vista.precalentar()` ya no usa `compileAsync` de three.js, que reventaba si un material se liberaba
+  mientras compilaba y dejaba la carga de la granja pegada para siempre; ahora espera a mano y como mucho 8 s.
+- Las marcas se guardan en `localStorage` (`granja-mapa-marcas`) junto con la semilla de la partida.
+
 
 Lo pedido:
 
