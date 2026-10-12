@@ -6,6 +6,7 @@
 //   cocina.html                 el menú de los restaurantes
 //   cocina.html?unirse=ABCDE    entra directo a la sala de otro (lo usa «Unirme con un código» de la sala de juegos)
 //   cocina.html?receta=wafles   abre directo ese restaurante, cocinando solo
+import '../deslizar';
 import '@fontsource/fredoka/latin-500.css';
 import '@fontsource/fredoka/latin-600.css';
 import '@fontsource/fredoka/latin-700.css';
