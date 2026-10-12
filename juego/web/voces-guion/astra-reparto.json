@@ -1,0 +1,1666 @@
+{
+ "narrador": {
+  "voz": "SAGbayTufdvOWwIvhMH2",
+  "nombre": "Josué Maya",
+  "motivo": "Grave y sereno: cercano, sin anunciar emociones grandiosas",
+  "sexo": "el",
+  "edad": null
+ },
+ "botanica": {
+  "voz": "9oPKasc15pfAbMr7N6Gs",
+  "nombre": "Valeria - Cheerful, Youthful, Catchy",
+  "sexo": "ella",
+  "edad": 37,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "confident"
+ },
+ "canalizadora_aura": {
+  "voz": "CaJslL1xziwefCeTNzHv",
+  "nombre": "Cristina Campos - Friendly and Soft",
+  "sexo": "ella",
+  "edad": 29,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "canalizadora_lara": {
+  "voz": "kcQkGnn0HAT2JRDQ4Ljp",
+  "nombre": "Norah - Warm, Friendly and Clear",
+  "sexo": "ella",
+  "edad": 31,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "vigilia_azucena": {
+  "voz": "2Lb1en5ujrODDIqmp7F3",
+  "nombre": "Jhenny - Soft, Calm, Sweet",
+  "sexo": "ella",
+  "edad": 44,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "cuidadora": {
+  "voz": "qHkrJuifPpn95wK3rm2A",
+  "nombre": "Andrea - Polite, Cheerful and Calm",
+  "sexo": "ella",
+  "edad": 35,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "archivero": {
+  "voz": "dlGxemPxFMTY7iXagmOj",
+  "nombre": "Fernando Martínez - Rapid, Persuasive",
+  "sexo": "el",
+  "edad": 46,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "veterano": {
+  "voz": "8mBRP99B2Ng2QwsJMFQl",
+  "nombre": "El Faraon - Full, Clear, Mellow",
+  "sexo": "el",
+  "edad": 64,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "deep"
+ },
+ "conde": {
+  "voz": "HMCmDsbKeaSZp5LMOYKR",
+  "nombre": "Johnny",
+  "motivo": "Burlón y rico, el Conde de Sangre y Ceniza",
+  "sexo": "el",
+  "edad": null
+ },
+ "nathgora": {
+  "voz": "5egO01tkUjEzu7xSSE8M",
+  "nombre": "Carmelo",
+  "motivo": "Maduro y misterioso",
+  "sexo": "el",
+  "edad": null
+ },
+ "vigilia_noemi": {
+  "voz": "1BxAZWANeDIxeyHKSJF2",
+  "nombre": "Isabela - Pleasant, Calm and Melodic",
+  "sexo": "ella",
+  "edad": 38,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "pleasant"
+ },
+ "vigilia_aldan": {
+  "voz": "l1zE9xgNpUTaQCZzpNJa",
+  "nombre": "Alberto Rodríguez - Serious, Narrative",
+  "sexo": "el",
+  "edad": 49,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "posadera": {
+  "voz": "bN1bDXgDIGX5lw0rtY2B",
+  "nombre": "Melanie - Warm, Clear and Professional",
+  "sexo": "ella",
+  "edad": 52,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "professional"
+ },
+ "hilos_elian": {
+  "voz": "htFfPSZGJwjBv1CL0aMD",
+  "nombre": "Antonio - Confident, Gentle and Clear",
+  "sexo": "el",
+  "edad": 28,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "hilos_tecla": {
+  "voz": "iBGVhgcEZS6A5gTOjqSJ",
+  "nombre": "Gabiyoya - Warm, Gentle and Friendly",
+  "sexo": "ella",
+  "edad": 36,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "calm"
+ },
+ "vaelthor": {
+  "voz": "k8cFOyAg7B9qwBlDDNTC",
+  "nombre": "Miguel",
+  "motivo": "Profundo y cinematográfico",
+  "sexo": "el",
+  "edad": null
+ },
+ "hilos_asha": {
+  "voz": "YPh7OporwNAJ28F5IQrm",
+  "nombre": "Angie Vendedora - Polite and Soft",
+  "sexo": "ella",
+  "edad": 29,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "ambar_zora": {
+  "voz": "hHjbwzYZW17oh0p05AKv",
+  "nombre": "Gabriela - Warm, Rich and Balanced",
+  "sexo": "ella",
+  "edad": 42,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "casual"
+ },
+ "iris_calista": {
+  "voz": "zl1Ut8dvwcVSuQSB9XkG",
+  "nombre": "Ninoska - Spanish Teacher",
+  "sexo": "ella",
+  "edad": 41,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "classy"
+ },
+ "orbita_helena": {
+  "voz": "FXGrCtY3PEyfqczBAlqm",
+  "nombre": "Jhenny - Warm, Fluid, Smooth",
+  "sexo": "ella",
+  "edad": 46,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "gentle"
+ },
+ "maestra": {
+  "voz": "ay4iqk10DLwc8KGSrf2t",
+  "nombre": "Azucena Ortega - Confident and Engaging",
+  "sexo": "ella",
+  "edad": 43,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "casual"
+ },
+ "celia": {
+  "voz": "g10k86KeEUyBqW9lcKYg",
+  "nombre": "Lizy - Passionate, Warm, Joyful",
+  "sexo": "ella",
+  "edad": null,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "pleasant"
+ },
+ "brasa_sol": {
+  "voz": "JYyJjNPfmNJdaby8LdZs",
+  "nombre": "Marlene - Melodic, Pleasant and Bright",
+  "sexo": "ella",
+  "edad": 28,
+  "franja": "young",
+  "acento": "mexican",
+  "motivo": "cute"
+ },
+ "aura": {
+  "voz": "cIBxLwfshLYhRB9lCXEg",
+  "nombre": "Carolina - Conversational, Balanced",
+  "sexo": "ella",
+  "edad": null,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "lara": {
+  "voz": "1WXz8v08ntDcSTeVXMN2",
+  "nombre": "Malena Tango - Storyteller",
+  "sexo": "ella",
+  "edad": null,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "casual"
+ },
+ "mercader": {
+  "voz": "p4w8j6zCUDJ0nGJ3okKs",
+  "nombre": "Ninoska - Bright, Genuine and Friendly",
+  "sexo": "ella",
+  "edad": 39,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "fuatia": {
+  "voz": "2rigMbVWLdqtBSCahJFX",
+  "nombre": "Tatiana Martin",
+  "motivo": "Amable y precisa, con una reserva: sabia y calmada",
+  "sexo": "ella",
+  "edad": null
+ },
+ "cocinero": {
+  "voz": "tomkxGQGz4b1kE0EM722",
+  "nombre": "Mario - Animated and chatty",
+  "sexo": "el",
+  "edad": 34,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "excited"
+ },
+ "musica": {
+  "voz": "m7yTemJqdIqrcNleANfX",
+  "nombre": "Ana María - Calm, Natural and Clear",
+  "sexo": "ella",
+  "edad": 26,
+  "franja": "young",
+  "acento": "mexican",
+  "motivo": "conversational"
+ },
+ "artesana": {
+  "voz": "tTQzD8U9VSnJgfwC6HbY",
+  "nombre": "Nathalia - Neutral, Sweet and Friendly",
+  "sexo": "ella",
+  "edad": 28,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "lirios_tina": {
+  "voz": "2CGcaXd1E04jesxY7nfq",
+  "nombre": "Fruna - Playful, Mischievous, Sweet",
+  "sexo": "ella",
+  "edad": 8,
+  "franja": "nino",
+  "acento": "latin american",
+  "motivo": "voz infantil"
+ },
+ "lirios_bastian": {
+  "voz": "sDh3eviBhiuHKi0MjTNq",
+  "nombre": "Alejandro - Corporate and Elegant",
+  "sexo": "el",
+  "edad": 48,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "professional"
+ },
+ "lirios_belen": {
+  "voz": "D9MdulIxfrCUUJcGNQon",
+  "nombre": "Jhenny - Gentle, Soothing and Meditative",
+  "sexo": "ella",
+  "edad": 42,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "lirios_teo": {
+  "voz": "qRUgOhnxGASxirG4fKjv",
+  "nombre": "David - Energetic, Deep and Pleasant",
+  "sexo": "el",
+  "edad": 34,
+  "franja": "young",
+  "acento": "mexican",
+  "motivo": "professional"
+ },
+ "lirios_julian": {
+  "voz": "9TcPbUAhHnAV8mzFDAWU",
+  "nombre": "El Faraón - Powerful and Resonant",
+  "sexo": "el",
+  "edad": 60,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "bruma_felix": {
+  "voz": "YKUjKbMlejgvkOZlnnvt",
+  "nombre": "Alejandro Ballesteros-Warm and Joyful",
+  "sexo": "el",
+  "edad": 29,
+  "franja": "young",
+  "acento": "mexican",
+  "motivo": "excited"
+ },
+ "bruma_amira": {
+  "voz": "9Godp7dNohUvXk6qp0gS",
+  "nombre": "Regina - Contact Center",
+  "sexo": "ella",
+  "edad": 33,
+  "franja": "young",
+  "acento": "mexican",
+  "motivo": "casual"
+ },
+ "bruma_ada": {
+  "voz": "p7AwDmKvTdoHTBuueGvP",
+  "nombre": "Malena - Warm, Dynamic and Confident",
+  "sexo": "ella",
+  "edad": 25,
+  "franja": "young",
+  "acento": "argentine",
+  "motivo": "confident"
+ },
+ "bruma_roque": {
+  "voz": "iDEmt5MnqUotdwCIVplo",
+  "nombre": "Enrique Mondragón - Elegant and Dynamic",
+  "sexo": "el",
+  "edad": 47,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "calm"
+ },
+ "bruma_benicio": {
+  "voz": "Rl2JPHsuEWSfwCD4ZHIQ",
+  "nombre": "El Faraon - Powerful and Mysterious",
+  "sexo": "el",
+  "edad": 72,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "deep"
+ },
+ "piedra_hugo": {
+  "voz": "gbTn1bmCvNgk0QEAVyfM",
+  "nombre": "Enrique M. Nieto - Credible and Rich",
+  "sexo": "el",
+  "edad": 40,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "gentle"
+ },
+ "piedra_petra": {
+  "voz": "x5IDPSl4ZUbhosMmVFTk",
+  "nombre": "Lumina - Neutral and Clear",
+  "sexo": "ella",
+  "edad": 30,
+  "franja": "young",
+  "acento": "colombian",
+  "motivo": "confident"
+ },
+ "piedra_mireya": {
+  "voz": "qBvury71WUJfVeT1STkG",
+  "nombre": "Samanta - Warm, Tender, Expressive",
+  "sexo": "ella",
+  "edad": 32,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "herrero": {
+  "voz": "94zOad0g7T7K4oa7zhDq",
+  "nombre": "Mauricio - Calm and Conversational",
+  "sexo": "el",
+  "edad": 49,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "gentle"
+ },
+ "piedra_ciro": {
+  "voz": "YExhVa4bZONzeingloMX",
+  "nombre": "Juan Carlos - Warm and Conversational",
+  "sexo": "el",
+  "edad": 46,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "brasa_yago": {
+  "voz": "cQIBhnciTWugZAxX52uW",
+  "nombre": "Charlee - Playful Fantasy Character",
+  "sexo": "el",
+  "edad": 11,
+  "franja": "nino",
+  "acento": "latin american",
+  "motivo": "voz infantil"
+ },
+ "brasa_rufina": {
+  "voz": "D3ws14YxTqcjPaXEOehR",
+  "nombre": "Azu - Calm, Soft and Melodic",
+  "sexo": "ella",
+  "edad": 67,
+  "franja": "old",
+  "acento": "mexican",
+  "motivo": "mature"
+ },
+ "brasa_tarek": {
+  "voz": "W1hAcdh0RNsPYUA7fkJh",
+  "nombre": "El Faraon - Deep, Powerful and Peaceful",
+  "sexo": "el",
+  "edad": 36,
+  "franja": "middle_aged",
+  "acento": "colombian",
+  "motivo": "deep"
+ },
+ "brasa_dante": {
+  "voz": "bnes5tb6xZ5GxqUjhUSq",
+  "nombre": "Sebastian - Nonchalant, Chatty, Neutral",
+  "sexo": "el",
+  "edad": 31,
+  "franja": "young",
+  "acento": "colombian",
+  "motivo": "casual"
+ },
+ "nieve_severo": {
+  "voz": "Wl3O9lmFSMgGFTTwuS6f",
+  "nombre": "Martin Alvarez - Soothing and Hopeful",
+  "sexo": "el",
+  "edad": 59,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "nieve_anselmo": {
+  "voz": "HNSF1CTQmub252yhXROX",
+  "nombre": "God - Deep, Powerful and Authoritative",
+  "sexo": "el",
+  "edad": 70,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "deep"
+ },
+ "nieve_eira": {
+  "voz": "SLiC4fN7sbVbYUgtVxNM",
+  "nombre": "Emily - Soft, Welcoming and Upbeat",
+  "sexo": "ella",
+  "edad": 36,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "calm"
+ },
+ "nieve_luz": {
+  "voz": "b2htR0pMe28pYwCY9gnP",
+  "nombre": "Sofía - Natural and Conversational",
+  "sexo": "ella",
+  "edad": 27,
+  "franja": "young",
+  "acento": "colombian",
+  "motivo": "pleasant"
+ },
+ "nieve_otto": {
+  "voz": "w7IU2bIH6xHcyfkUUWi3",
+  "nombre": "Santiago - Enthusiastic, Assertive",
+  "sexo": "el",
+  "edad": 39,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "vigilia_telmo": {
+  "voz": "ByVRQtaK1WDOvTmP1PKO",
+  "nombre": "Agustín - Relaxed, Warm and Approachable",
+  "sexo": "el",
+  "edad": 36,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "casual"
+ },
+ "vigilia_ulises": {
+  "voz": "452WrNT9o8dphaYW5YGU",
+  "nombre": "Abel - Reflective, Clear, Expressive",
+  "sexo": "el",
+  "edad": 42,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "verdia_lucio": {
+  "voz": "jBlmi27XRORxjPquUeCh",
+  "nombre": "Brian - Warm, Smooth, Confident",
+  "sexo": "el",
+  "edad": 59,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "verdia_amaranta": {
+  "voz": "efcRUax7uSa9kpBwtDPe",
+  "nombre": "Luisa - Friendly, Calm, Versatile",
+  "sexo": "ella",
+  "edad": 63,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "deep"
+ },
+ "verdia_tobias": {
+  "voz": "N2HSRirbsHTZ8DE2WqjB",
+  "nombre": "Arturo Casares - Smooth, Rich and Tender",
+  "sexo": "el",
+  "edad": 62,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "mature"
+ },
+ "verdia_yara": {
+  "voz": "86V9x9hrQds83qf7zaGn",
+  "nombre": "Marcela - Youthful, Smooth and Natural",
+  "sexo": "ella",
+  "edad": 33,
+  "franja": "young",
+  "acento": "colombian",
+  "motivo": "relaxed"
+ },
+ "eco_sora": {
+  "voz": "7uSWXMmzGnsyxZwYFfmK",
+  "nombre": "Alexander-Clear - Warm and Youthful",
+  "sexo": "ella",
+  "edad": 44,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "casual"
+ },
+ "eco_oriel": {
+  "voz": "NWqMOQLlMBaUbjKYdhbW",
+  "nombre": "Alejandro - Expressive and Polished",
+  "sexo": "el",
+  "edad": 39,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "neutral"
+ },
+ "eco_esteban": {
+  "voz": "oqO5cdAzjE5Ik5xWIZRL",
+  "nombre": "Ivan - Breathy, Wise-Sounding",
+  "sexo": "el",
+  "edad": 71,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "wise"
+ },
+ "eco_basilia": {
+  "voz": "eBthAb30UYbt2nojGXeA",
+  "nombre": "Regina - Meditative, Expressive, Soft",
+  "sexo": "ella",
+  "edad": 79,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "senda_leire": {
+  "voz": "JddqVF50ZSIR7SRbJE6u",
+  "nombre": "Valeria - Casual, Friendly and Chatty",
+  "sexo": "ella",
+  "edad": 35,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "crisp"
+ },
+ "senda_pablo": {
+  "voz": "YqZLNYWZm98oKaaLZkUA",
+  "nombre": "Edoardo - Dark, Measured, Natural",
+  "sexo": "el",
+  "edad": 36,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "classy"
+ },
+ "senda_ofelia": {
+  "voz": "zl7szWVBXnpgrJmAalgz",
+  "nombre": "Lily - Spanish Storyteller",
+  "sexo": "ella",
+  "edad": 42,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "senda_fabian": {
+  "voz": "KuCuu213C5LmCbAvbEb8",
+  "nombre": "Luis - Full, Clear, Mellow",
+  "sexo": "el",
+  "edad": 41,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "senda_iria": {
+  "voz": "x6LHvMgpXmty838MUqHh",
+  "nombre": "Pilar Durán - Sweet, Clear, and Resonant",
+  "sexo": "ella",
+  "edad": 45,
+  "franja": "middle_aged",
+  "acento": "colombian",
+  "motivo": "pleasant"
+ },
+ "hilos_hector": {
+  "voz": "zsNrTi54AOcO2sUuJpdJ",
+  "nombre": "Juan Limón - Alert, Friendly and Clear",
+  "sexo": "el",
+  "edad": 43,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "nox_dorian": {
+  "voz": "RyfjEHnKbtma4Srae2za",
+  "nombre": "Juan Carlos - Warm, Calm and Deep",
+  "sexo": "el",
+  "edad": 50,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "nox_salma": {
+  "voz": "twZzvyYIl5ntDHC1Vatv",
+  "nombre": "Angelica - Friendly, Energetic & Professional",
+  "sexo": "ella",
+  "edad": 44,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "professional"
+ },
+ "nox_viggo": {
+  "voz": "7UB6WMKyZDj19XRGC8Sb",
+  "nombre": "Francis - Deep, Touching",
+  "sexo": "el",
+  "edad": 39,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "deep"
+ },
+ "nox_mirta": {
+  "voz": "nbcvT3C2tyOd2OsRAtUf",
+  "nombre": "Maya -  Dynamic Agent & Storyteller",
+  "sexo": "ella",
+  "edad": 47,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "nox_tamara": {
+  "voz": "VmejBeYhbrcTPwDniox7",
+  "nombre": "Lina - Sunny, Kind and Friendly",
+  "sexo": "ella",
+  "edad": 28,
+  "franja": "young",
+  "acento": "colombian",
+  "motivo": "casual"
+ },
+ "orbita_dexo": {
+  "voz": "HJmys3t5KLr6DUWl0kSe",
+  "nombre": "Rada - Relaxed, Confident, Calm",
+  "sexo": "el",
+  "edad": 31,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "neutral"
+ },
+ "orbita_rita": {
+  "voz": "Tzf8K1T8bC5nay312fzF",
+  "nombre": "Virginia - Resolute and Determined",
+  "sexo": "ella",
+  "edad": 38,
+  "franja": "middle_aged",
+  "acento": "colombian",
+  "motivo": "narrative_story"
+ },
+ "orbita_valentina": {
+  "voz": "rixsIpPlTphvsJd2mI03",
+  "nombre": "Isabel - Neutral, Balanced and Calm",
+  "sexo": "ella",
+  "edad": 29,
+  "franja": "young",
+  "acento": "mexican",
+  "motivo": "neutral"
+ },
+ "orbita_said": {
+  "voz": "gBTPbHzRd0ZmV75Z5Zk4",
+  "nombre": "Carlos Pro - Argentinian Documentary & Radio",
+  "sexo": "el",
+  "edad": 41,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "professional"
+ },
+ "aurelia_saul": {
+  "voz": "js7Ktj7UJCd7W0StVolw",
+  "nombre": "Santiago Méndez Bravo - News Presenter",
+  "sexo": "el",
+  "edad": 36,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "modulated"
+ },
+ "aurelia_oscar": {
+  "voz": "G4IAP30yc6c1gK0csDfu",
+  "nombre": "Juan Carlos - Confident and Upbeat",
+  "sexo": "el",
+  "edad": 45,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "excited"
+ },
+ "aurelia_kiara": {
+  "voz": "crQgCQuWgUucmYHEPsrB",
+  "nombre": "Fran - Vibrant, Energetic and Neutral",
+  "sexo": "ella",
+  "edad": 28,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "excited"
+ },
+ "aurelia_aitana": {
+  "voz": "Gyqu9jCJup6lkiLgiu0l",
+  "nombre": "Emilia - Joyful, Friendly, Optimistic",
+  "sexo": "ella",
+  "edad": 32,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "nocturna_matea": {
+  "voz": "EYBbN7OENxAX5QX56IiW",
+  "nombre": "Kate 1 - Warm, Close and Natural",
+  "sexo": "ella",
+  "edad": 40,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "nocturna_gaspar": {
+  "voz": "8MeTTgXVwMEhRVfblXOj",
+  "nombre": "Carlos Aguilar - Resonate and Powerful",
+  "sexo": "el",
+  "edad": 53,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "nocturna_elvira": {
+  "voz": "5vkxOzoz40FrElmLP4P7",
+  "nombre": "Gaby - Friendly, Expressive and Vibrant",
+  "sexo": "ella",
+  "edad": 34,
+  "franja": "young",
+  "acento": "peruvian",
+  "motivo": "casual"
+ },
+ "nocturna_naim": {
+  "voz": "9XaoraKgpXhItOQktYsV",
+  "nombre": "Zabra - Energetic and Engaging Announcer",
+  "sexo": "el",
+  "edad": 30,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "esmeralda_duna": {
+  "voz": "n4x17EKVqyxfey8QMqvy",
+  "nombre": "Mauro - Neutral, Friendly, Balanced",
+  "sexo": "ella",
+  "edad": 27,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "upbeat"
+ },
+ "esmeralda_olmo": {
+  "voz": "lRf3yb6jZby4fn3q3Q7M",
+  "nombre": "Tony - Witty, Upbeat and Engaging",
+  "sexo": "el",
+  "edad": 43,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "confident"
+ },
+ "esmeralda_indira": {
+  "voz": "MbMvLOFbicjtQwgx0j2r",
+  "nombre": "Michelle - Warm, Clear and Professional",
+  "sexo": "ella",
+  "edad": 35,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "modulated"
+ },
+ "esmeralda_raimundo": {
+  "voz": "IoWn77TsmQnza94sYlfg",
+  "nombre": "Matías - Relaxed and Friendly",
+  "sexo": "el",
+  "edad": 56,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "excited"
+ },
+ "fragmentos_lazaro": {
+  "voz": "PHKlYg202ODwQRa3Fxuo",
+  "nombre": "Julio - Resonate and Commanding",
+  "sexo": "el",
+  "edad": 46,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "fragmentos_uma": {
+  "voz": "pByxw7qatIX3pUp9m0XD",
+  "nombre": "Lizy - Customer Service Assistant",
+  "sexo": "ella",
+  "edad": 37,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "gentle"
+ },
+ "fragmentos_pia": {
+  "voz": "p5EUznrYaWnafKvUkNiR",
+  "nombre": "Gaby - Natura & Casual",
+  "sexo": "ella",
+  "edad": 28,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "fragmentos_axel": {
+  "voz": "dF1Qg3iMRirscWEMtEKb",
+  "nombre": "Diego Cárdenas - Soothing and Mediative",
+  "sexo": "el",
+  "edad": 33,
+  "franja": "young",
+  "acento": "peruvian",
+  "motivo": "deep"
+ },
+ "ambar_baltasar": {
+  "voz": "Czw3Dn181ypdrCOnPfif",
+  "nombre": "Brian C - Clean, professional, warm",
+  "sexo": "el",
+  "edad": 44,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "ambar_alina": {
+  "voz": "ajOR9IDAaubDK5qtLUqQ",
+  "nombre": "Daniela - Warm, Clear and Positive",
+  "sexo": "ella",
+  "edad": 31,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "upbeat"
+ },
+ "ambar_samira": {
+  "voz": "Wuv1s5YTNCjL9mFJTqo4",
+  "nombre": "Karolina - Warm, Calm and Deep",
+  "sexo": "ella",
+  "edad": 38,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "chill"
+ },
+ "ambar_kenzo": {
+  "voz": "SIpDYvpsUzCaJ0WmnSA8",
+  "nombre": "Joseph Corona - Clear and Professional",
+  "sexo": "el",
+  "edad": 35,
+  "franja": "young",
+  "acento": "venezuelan",
+  "motivo": "confident"
+ },
+ "iris_orin": {
+  "voz": "FT9r1rAZNP1NDa9qgrTd",
+  "nombre": "Oliver Prada",
+  "sexo": "el",
+  "edad": 33,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "iris_liora": {
+  "voz": "oJIuRMopN0sojGjwD6rQ",
+  "nombre": "Camila",
+  "sexo": "ella",
+  "edad": 29,
+  "franja": "young",
+  "acento": "chilean",
+  "motivo": "confident"
+ },
+ "iris_edda": {
+  "voz": "1vvbVDm3EpGMyY1WVZ3r",
+  "nombre": "Yessenia Mazón - Nasal, Light and Cute",
+  "sexo": "ella",
+  "edad": 37,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "formal"
+ },
+ "iris_mauro": {
+  "voz": "GTY55jD77hLBRrnQOhNk",
+  "nombre": "Ludovico - Soothing, Bassy, Booming",
+  "sexo": "el",
+  "edad": 45,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "iris_yuna": {
+  "voz": "J4vZAFDEcpenkMp3f3R9",
+  "nombre": "Valentina - Joyful, Lively Friend",
+  "sexo": "ella",
+  "edad": 32,
+  "franja": "young",
+  "acento": "colombian",
+  "motivo": "casual"
+ },
+ "agricultor": {
+  "voz": "57D8YIbQSuE3REDPO6Vm",
+  "nombre": "Horacio - Natural, Warm and Confident",
+  "sexo": "el",
+  "edad": 50,
+  "franja": "middle_aged",
+  "acento": "colombian",
+  "motivo": "confident"
+ },
+ "brasa_idalia": {
+  "voz": "9rvdnhrYoXoUt4igKpBw",
+  "nombre": "Mariana - Intimate and Assertive",
+  "sexo": "ella",
+  "edad": 45,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "meditative"
+ },
+ "minero": {
+  "voz": "o2vbTbO3g4GrKUg7rehy",
+  "nombre": "Cristian Sanchez - Lively and Deep",
+  "sexo": "el",
+  "edad": 49,
+  "franja": "middle_aged",
+  "acento": "colombian",
+  "motivo": "chill"
+ },
+ "nox_inigo": {
+  "voz": "K3TeN3ZVK8WnOeJ0NYqZ",
+  "nombre": "David - Deep, Attractive, Mysterious",
+  "sexo": "el",
+  "edad": 34,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "carpintera": {
+  "voz": "JM2A9JbRp8XUJ7bdCXJc",
+  "nombre": "Fernanda Olea - Cheerful and Powerful",
+  "sexo": "ella",
+  "edad": 32,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "lirios_maite": {
+  "voz": "IqGIz3dgA7lYSRe3s8tS",
+  "nombre": "Melisa - Warm, Versatile and Joyful",
+  "sexo": "ella",
+  "edad": 31,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "cute"
+ },
+ "pescadora": {
+  "voz": "9EU0h6CVtEDS6vriwwq5",
+  "nombre": "Veronica - Warm, Soft and Inviting",
+  "sexo": "ella",
+  "edad": 27,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "bruma_silvana": {
+  "voz": "lLsDvdl6OjtZfLJPM2HA",
+  "nombre": "Olivia Pro - Strategic Business & Tech",
+  "sexo": "ella",
+  "edad": 58,
+  "franja": "middle_aged",
+  "acento": "chilean",
+  "motivo": "gentle"
+ },
+ "orbita_boris": {
+  "voz": "ojGau167OE7nUATM1xDa",
+  "nombre": "Marto - Español & Conversational",
+  "sexo": "el",
+  "edad": 52,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "crisp"
+ },
+ "viajera": {
+  "voz": "7nCYbNPCi8RLAKVnYEoO",
+  "nombre": "Luisa - News Anchor",
+  "sexo": "ella",
+  "edad": 40,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "serious"
+ },
+ "veterinaria": {
+  "voz": "DVckUv1C6yTiOFMjZW4e",
+  "nombre": "Dora Lanarra - Warm, Clear, Enveloping",
+  "sexo": "ella",
+  "edad": 41,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "bruma_elio": {
+  "voz": "JgmJ33RuT4tPQOENamHR",
+  "nombre": "Julián A-Calm - Warm and Conversational",
+  "sexo": "el",
+  "edad": 39,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "casual"
+ },
+ "astronoma": {
+  "voz": "rEVYTKPqwSMhytFPayIb",
+  "nombre": "Sandra - Dynamic, Engaging and Energetic",
+  "sexo": "ella",
+  "edad": 33,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "hyped"
+ },
+ "verdia_isadora": {
+  "voz": "GJid0jgRsqjUy21Avuex",
+  "nombre": "Emma - Authoritative, Assured and Clear",
+  "sexo": "ella",
+  "edad": 51,
+  "franja": "middle_aged",
+  "acento": "chilean",
+  "motivo": "professional"
+ },
+ "verdia_eneas": {
+  "voz": "t3eeeqhBjrUqcrPvDqUn",
+  "nombre": "Salvatore - Epic, Deep & Trustworthy",
+  "sexo": "el",
+  "edad": 76,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "deep"
+ },
+ "exploradora": {
+  "voz": "nTkjq09AuYgsNR8E4sDe",
+  "nombre": "Cristina Campos - Natural Conversations",
+  "sexo": "ella",
+  "edad": 30,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "excited"
+ },
+ "verdia_berenice": {
+  "voz": "nAFxIJGj7iSTeltygOfB",
+  "nombre": "Nieve - Argentinian Grandmother",
+  "sexo": "ella",
+  "edad": 68,
+  "franja": "old",
+  "acento": "argentine",
+  "motivo": "mature"
+ },
+ "bruma_zaira": {
+  "voz": "BYzs2jBcHhCzX4QmS6fd",
+  "nombre": "Lizy - Calm, Gentle and Soothing",
+  "sexo": "ella",
+  "edad": 42,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "meditative"
+ },
+ "brasa_ramiro": {
+  "voz": "MjtZn5tagxL1RO6w9ER5",
+  "nombre": "Lionel - Natural and Versatile Narrator",
+  "sexo": "el",
+  "edad": 49,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "confident"
+ },
+ "piedra_gonzalo": {
+  "voz": "WOSzFvlJRm2hkYb3KA5w",
+  "nombre": "Juan Campillo - Warm, Clear and Calm",
+  "sexo": "el",
+  "edad": 57,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "senda_nora": {
+  "voz": "cAvMBIZ0VNTU8XdsUpEq",
+  "nombre": "Susana Elizabeth - Warm, Soft and Clear",
+  "sexo": "ella",
+  "edad": 33,
+  "franja": "young",
+  "acento": "mexican",
+  "motivo": "casual"
+ },
+ "guardabosques": {
+  "voz": "D7fO4LMKxU3UYXGDpTnA",
+  "nombre": "Maxi Argames - Engaging and Friendly",
+  "sexo": "el",
+  "edad": 36,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "brasa_nadia": {
+  "voz": "8tm9IYjg8ybDoxe8w6Rk",
+  "nombre": "Daniela - Tender, Friendly and Youthful",
+  "sexo": "ella",
+  "edad": 34,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "cute"
+ },
+ "nino": {
+  "voz": "ihKwLOjVUMG4lgUI6meZ",
+  "nombre": "Leo - Curious Character",
+  "sexo": "el",
+  "edad": 10,
+  "franja": "nino",
+  "acento": "latin american",
+  "motivo": "voz infantil"
+ },
+ "ambar_nestor": {
+  "voz": "xOvnoQKq9gB2hiJkIlul",
+  "nombre": "Juan Manuel - Articulate and Genuine",
+  "sexo": "el",
+  "edad": 50,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "nina": {
+  "voz": "CPv3Zr3CQCqE4ZzuCgBP",
+  "nombre": "Lulu - Adorable, Bright & Playful",
+  "sexo": "ella",
+  "edad": 9,
+  "franja": "nino",
+  "acento": "latin american",
+  "motivo": "voz infantil"
+ },
+ "eco_nazario": {
+  "voz": "Yb8JGzcZyW5YYzenhRCm",
+  "nombre": "El Abuelo Charlie - Wise-sounding, Calm",
+  "sexo": "el",
+  "edad": 66,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "eco_violeta": {
+  "voz": "imFXYz8XIletRKLZZQaA",
+  "nombre": "Kate 2 - Warm & Friendly Spanish Storyteller",
+  "sexo": "ella",
+  "edad": 58,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "piedra_ursula": {
+  "voz": "spPXlKT5a4JMfbhPRAzA",
+  "nombre": "Camila - Inviting, Rich and Warm",
+  "sexo": "ella",
+  "edad": 35,
+  "franja": "young",
+  "acento": "mexican",
+  "motivo": "calm"
+ },
+ "senda_mateo": {
+  "voz": "j7XQZUnVCfhpa94EsaJS",
+  "nombre": "Dipemo - Clear, Neutral and Natural",
+  "sexo": "el",
+  "edad": 37,
+  "franja": "middle_aged",
+  "acento": "colombian",
+  "motivo": "professional"
+ },
+ "lirios_olga": {
+  "voz": "oWSxI36XAKnfMWmzmQok",
+  "nombre": "Milena - Silky, Sweet and Neutral",
+  "sexo": "ella",
+  "edad": 55,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "lirios_dalia": {
+  "voz": "3ttovAt5bt3Kk38UGIob",
+  "nombre": "Alma - Warm, Clear and Friendly",
+  "sexo": "ella",
+  "edad": 45,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "nieve_celeste": {
+  "voz": "6Gr4AVmTax1pMJO0lHRK",
+  "nombre": "Catalina - Chilean Spanish",
+  "sexo": "ella",
+  "edad": 32,
+  "franja": "young",
+  "acento": "chilean",
+  "motivo": "professional"
+ },
+ "nieve_milena": {
+  "voz": "uDhfdG2VwEjWZ4JYzggn",
+  "nombre": "Amelia - Mellow, Natural, Neutral",
+  "sexo": "ella",
+  "edad": 34,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "chill"
+ },
+ "nieve_quirina": {
+  "voz": "h60rOzgfLmYsntfqgGu2",
+  "nombre": "Sofía",
+  "sexo": "ella",
+  "edad": 46,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "casual"
+ },
+ "orbita_ivo": {
+  "voz": "QK4xDwo9ESPHA4JNUpX3",
+  "nombre": "Tomas - Argentina & Uruguaya",
+  "sexo": "el",
+  "edad": 28,
+  "franja": "young",
+  "acento": "argentine",
+  "motivo": "confident"
+ },
+ "orbita_tessa": {
+  "voz": "ewn5JTa3lNPY8QVuZJi6",
+  "nombre": "Ana Sofía-Conversational",
+  "sexo": "ella",
+  "edad": 34,
+  "franja": "young",
+  "acento": "mexican",
+  "motivo": "casual"
+ },
+ "piedra_eloy": {
+  "voz": "NDcVpQJv7Naa7ZKrqtEk",
+  "nombre": "Gerardo -  Cool Latin American voice",
+  "sexo": "el",
+  "edad": 54,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "piedra_santiago": {
+  "voz": "U9jmr7kY6mMqS39kfA01",
+  "nombre": "Alex - Deep, Resonant and Confident",
+  "sexo": "el",
+  "edad": 37,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "confident"
+ },
+ "senda_anwar": {
+  "voz": "3mmJ2Z5SLZ9OkeZZcv5p",
+  "nombre": "Oscar - Fluid pitch, easy to listen",
+  "sexo": "el",
+  "edad": 48,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "verdia_aina": {
+  "voz": "aYQAm4rWuigkeuRA5i92",
+  "nombre": "Grandma Aurora - Warm, Deep & Loving",
+  "sexo": "ella",
+  "edad": 84,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "pleasant"
+ },
+ "verdia_sarai": {
+  "voz": "gt8UWQljAEAt5YLqG4LW",
+  "nombre": "Ninoska - Warm, Expressive and Engaging",
+  "sexo": "ella",
+  "edad": 40,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "pleasant"
+ },
+ "verdia_celino": {
+  "voz": "ClNifCEVq1smkl4M3aTk",
+  "nombre": "Cristian Cornejo - Spanish Chilean",
+  "sexo": "el",
+  "edad": 55,
+  "franja": "middle_aged",
+  "acento": "chilean",
+  "motivo": "confident"
+ },
+ "verdia_dimas": {
+  "voz": "biVhKaGPFRZ0mT3FINbI",
+  "nombre": "El Marino - Narrator",
+  "sexo": "el",
+  "edad": 49,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "professional"
+ },
+ "verdia_nilo": {
+  "voz": "HAsl3FenyWHYwECSP6Hl",
+  "nombre": "Jorge - Measured, Calm, Warm",
+  "sexo": "el",
+  "edad": 47,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "classy"
+ },
+ "vigilia_kael": {
+  "voz": "rpqlUOplj0Q0PIilat8h",
+  "nombre": "Jaider - Clear, Balanced, Calm",
+  "sexo": "el",
+  "edad": 30,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "lirios_genaro": {
+  "voz": "PmftKnYApJBBAFl8y1Pu",
+  "nombre": "Kiko - Narrative, Deep, Soft",
+  "sexo": "el",
+  "edad": 62,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "lirios_carmela": {
+  "voz": "WTBAKGZfWChuWfbiYUyc",
+  "nombre": "Ali Carrillo - Impactful and Immersive",
+  "sexo": "ella",
+  "edad": 38,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "bruma_jacinta": {
+  "voz": "CDrROTHWaKY3O9vD3F3t",
+  "nombre": "Andrea - Calm, Balanced and Didactic",
+  "sexo": "ella",
+  "edad": 44,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "confident"
+ },
+ "bruma_fausto": {
+  "voz": "wfTWLJ20rcMqvU8gIiAB",
+  "nombre": "Salvatore - Natural Conversations & Storyteller",
+  "sexo": "el",
+  "edad": 66,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "neutral"
+ },
+ "piedra_amparo": {
+  "voz": "r3SDVYUIvcC4EweQtSj0",
+  "nombre": "Erika - Raspy and Genuine",
+  "sexo": "ella",
+  "edad": 58,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "pleasant"
+ },
+ "piedra_lisandro": {
+  "voz": "61Yorma5H9xnZos9rERQ",
+  "nombre": "El Faraon - Fresh and Dynamic",
+  "sexo": "el",
+  "edad": 24,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "chill"
+ },
+ "brasa_fermin": {
+  "voz": "8MlXhVr7f7x9lck6CiCF",
+  "nombre": "Alessio - Persuasive & Modulated",
+  "sexo": "el",
+  "edad": 51,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "pleasant"
+ },
+ "brasa_azahar": {
+  "voz": "ByzPpv6d6pT90CCpgb7k",
+  "nombre": "Luisa - Smooth, Friendly and Engaging",
+  "sexo": "ella",
+  "edad": 41,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "excited"
+ },
+ "nieve_casilda": {
+  "voz": "z1o4UXhrDfZ9yFTF1GMZ",
+  "nombre": "Camila - Gentle and Approachable",
+  "sexo": "ella",
+  "edad": 49,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "nieve_tadeo": {
+  "voz": "J3JSkWXJwqClE1dIxQM9",
+  "nombre": "Diego - Narrative, Clear, Soft",
+  "sexo": "el",
+  "edad": 33,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "orbita_marisol": {
+  "voz": "dyTONAae6PhdRb3hMKPM",
+  "nombre": "Elena - Versátil, Natural, Cercana",
+  "sexo": "ella",
+  "edad": 47,
+  "franja": "middle_aged",
+  "acento": "peruvian",
+  "motivo": "crisp"
+ },
+ "orbita_teodoro": {
+  "voz": "hqEPCg9GXahfwPfWiK84",
+  "nombre": "Roberto - Rich, Clear and Enunciated",
+  "sexo": "el",
+  "edad": 58,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "confident"
+ },
+ "aurelia_greta": {
+  "voz": "br0MPoLVxuslVxf61qHn",
+  "nombre": "Lizy - Vibrant, Dynamic and Persuasive",
+  "sexo": "ella",
+  "edad": 23,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "excited"
+ },
+ "aurelia_jacinto": {
+  "voz": "gSYqSbtMajxq5LUT0bNl",
+  "nombre": " Elder - Firm, Deep, Authority",
+  "sexo": "el",
+  "edad": 61,
+  "franja": "old",
+  "acento": "latin american",
+  "motivo": "modulated"
+ },
+ "nocturna_celestina": {
+  "voz": "1aJyZpkt0vxhGPBnPyrs",
+  "nombre": "Fernanda Sanmiguel - Neutral and Serious",
+  "sexo": "ella",
+  "edad": 44,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "nocturna_bernardo": {
+  "voz": "B5TKeu06uYzJCV6Pss3g",
+  "nombre": "Fernando - Scientist",
+  "sexo": "el",
+  "edad": 50,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "esmeralda_herminia": {
+  "voz": "4kkDPYdSYNR6dFZZFGUQ",
+  "nombre": "Kate – Soothing Meditation & Sleep Voice",
+  "sexo": "ella",
+  "edad": 52,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "meditative"
+ },
+ "esmeralda_quique": {
+  "voz": "id7LQ3n0ft94moeTT1ER",
+  "nombre": "David - Intense, Rapid, and Expressive",
+  "sexo": "el",
+  "edad": 20,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "professional"
+ },
+ "fragmentos_remedios": {
+  "voz": "SmgKjOvC1aIujLWcMzqq",
+  "nombre": "Alisson - Tender and Mellow",
+  "sexo": "ella",
+  "edad": 39,
+  "franja": "middle_aged",
+  "acento": "colombian",
+  "motivo": "casual"
+ },
+ "fragmentos_lino": {
+  "voz": "6BEk9bRlUBhlAoIbhBYK",
+  "nombre": "Arthur - Warm, Friendly and Upbeat",
+  "sexo": "el",
+  "edad": 26,
+  "franja": "young",
+  "acento": "mexican",
+  "motivo": "professional"
+ },
+ "ambar_ezequiel": {
+  "voz": "EK54is7sa3aPFLD9BwCC",
+  "nombre": "Francisco - Friendly, Clean, Natural",
+  "sexo": "el",
+  "edad": 34,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "casual"
+ },
+ "ambar_rocio": {
+  "voz": "JHRoZowzSW795l89k0En",
+  "nombre": "Kata - Clear, Bright, Assertive",
+  "sexo": "ella",
+  "edad": 40,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "iris_nahuel": {
+  "voz": "KqSsYz0buWgkvSbaGn1n",
+  "nombre": "Agustín - Fast and Energetic",
+  "sexo": "el",
+  "edad": 38,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "confident"
+ },
+ "iris_maia": {
+  "voz": "qWWAqFomnJ99VwQLREfT",
+  "nombre": "Kate - Bright, Friendly & Positive voice",
+  "sexo": "ella",
+  "edad": 24,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "hyped"
+ },
+ "vigilia_brigida": {
+  "voz": "arMlPrYpUo1XH5F2zM6R",
+  "nombre": "Argie - Warm Argentine Female Voice",
+  "sexo": "ella",
+  "edad": 52,
+  "franja": "middle_aged",
+  "acento": "argentine",
+  "motivo": "pleasant"
+ },
+ "vigilia_evaristo": {
+  "voz": "Rt1JHkPO27QCUX6Nd5bV",
+  "nombre": "Jorge - Neutral Latin American Spanish ",
+  "sexo": "el",
+  "edad": 61,
+  "franja": "old",
+  "acento": "mexican",
+  "motivo": "raspy"
+ },
+ "verdia_eulalia": {
+  "voz": "prblQcKOdF08ozhxP2mk",
+  "nombre": "Angela - Warm, Calm and Assured",
+  "sexo": "ella",
+  "edad": 74,
+  "franja": "old",
+  "acento": "chilean",
+  "motivo": "calm"
+ },
+ "verdia_anibal": {
+  "voz": "1hB7zCGWj11SeMuBseeI",
+  "nombre": "Yasser - Professional and Serious",
+  "sexo": "el",
+  "edad": 81,
+  "franja": "old",
+  "acento": "cuban",
+  "motivo": "calm"
+ },
+ "eco_gregoria": {
+  "voz": "1VQaMRazTeAqnqdb5C33",
+  "nombre": "Monica Mendez - Assured and Serious",
+  "sexo": "ella",
+  "edad": 67,
+  "franja": "old",
+  "acento": "mexican",
+  "motivo": "formal"
+ },
+ "eco_casiano": {
+  "voz": "gwk2CKlAQ1B4a2RPxJoF",
+  "nombre": "Luis Guillermo - Warm and Engaging",
+  "sexo": "el",
+  "edad": 45,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "intense"
+ },
+ "senda_lorenzo": {
+  "voz": "LnGOA2SxH2fX1e1iNzEp",
+  "nombre": "Carlos Corella - Authoritative and Deep",
+  "sexo": "el",
+  "edad": 50,
+  "franja": "middle_aged",
+  "acento": "mexican",
+  "motivo": "confident"
+ },
+ "senda_socorro": {
+  "voz": "AqTsqzKuY71B3KFBr39g",
+  "nombre": "Kate - Velvet Midnight Narrator",
+  "sexo": "ella",
+  "edad": 57,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "deep"
+ },
+ "hilos_hermelinda": {
+  "voz": "66GCRddBZdfy2kKoaZyV",
+  "nombre": "Manuela - Resonant, Melodious, Strong",
+  "sexo": "ella",
+  "edad": 55,
+  "franja": "middle_aged",
+  "acento": "colombian",
+  "motivo": "confident"
+ },
+ "hilos_abel": {
+  "voz": "dQ0C8BEdKF2odmELvNee",
+  "nombre": "David - Clear, Warm and Patient",
+  "sexo": "el",
+  "edad": 31,
+  "franja": "young",
+  "acento": "latin american",
+  "motivo": "calm"
+ },
+ "nox_griselda": {
+  "voz": "vYui54mlc1I9tFZBBz4i",
+  "nombre": "Cony Iglesias - Warm, Expressive",
+  "sexo": "ella",
+  "edad": 46,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "gentle"
+ },
+ "nox_leandro": {
+  "voz": "1IVWxPHWEi1qouA3cAop",
+  "nombre": "Omar - Articulate and Conversational",
+  "sexo": "el",
+  "edad": 39,
+  "franja": "middle_aged",
+  "acento": "latin american",
+  "motivo": "casual"
+ }
+}
