@@ -32,7 +32,8 @@ real no hace picar, luchar, ganar o perder al pez.
 
 El calendario agrícola y la navegación ampliada de NPC quedan pausados; los cuidados reales de
 48 horas siguen activos. Cambiar herramienta, fabricar, comprar, viajar, dormir o abrir otra actividad
-requiere recoger o cancelar primero. Los puestos espaciales siguen en módulos cerrados, y los peces
+requiere recoger o cancelar primero. El prólogo tampoco interrumpe una sesión; las acciones del
+valle esperan mientras la película está activa. Los puestos espaciales siguen en módulos cerrados, y los peces
 no amplían la captura a fauna protegida de Fuatia. Las trampas anteriores conservan sus noches y reglas.
 
 ## Entrada y controles
