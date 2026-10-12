@@ -9,7 +9,8 @@ import { ARMAS, ESCONDIDAS } from '../armas';
 import { TESOROS } from '../tesoros';
 import { hash2 } from '../azar';
 import { ENEMIGOS, ID_ENEMIGOS } from '../enemigos';
-import type { Enemigo, Jugador, Motor } from '../motor';
+import { BANDERA_CADA, TURBO, type Enemigo, type Jugador, type Motor } from '../motor';
+import { sfx } from '../sonidos';
 import type { Efecto, IdArma, IdEnemigo, IdObjeto } from '../tipos';
 import { Jugador3D } from './jugadores';
 import { CAPA_LUZ, CAPA_NORMAL, CAPA_PISO, Particulas } from './particulas';
@@ -54,9 +55,19 @@ const LETRAS = ['letraA', 'letraB', 'letraC'];
 const SIN_3D = typeof location !== 'undefined' && new URLSearchParams(location.search).has('sin3d');
 /** Pruebas con varios celulares en la misma máquina: empezar en la calidad más baja (`?calidad=0`). */
 const CALIDAD = typeof location !== 'undefined' ? Number(new URLSearchParams(location.search).get('calidad') ?? 3) : 3;
-/** Lo que hay tirado en el piso de La Ducha (los mismos modelos de las armas, como utilería). */
-const UTILERIA_DUCHA = ['champu', 'jabon', 'esponjas', 'patoAmarillo', 'peinilla', 'remolino', 'toalla'];
-const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera' } as const;
+/** Lo que hay tirado en el piso de La Ducha y en la repisa de La Jabonera (los mismos modelos de las armas, como utilería). */
+const UTILERIA: Partial<Record<string, string[]>> = {
+  ducha: ['champu', 'jabon', 'esponjas', 'patoAmarillo', 'peinilla', 'remolino', 'toalla'],
+  jabonera: ['jabon', 'crema', 'cremaNoche', 'perfume', 'colonia', 'liga', 'maquina', 'copito', 'champu'],
+  desague: ['culebrita', 'peinilla', 'patoMorado', 'esponjas', 'liga', 'hilo', 'granDesague'],
+  desfile: ['pantuflas', 'toalla', 'patoAmarillo', 'gorro', 'corona', 'patoMorado'],
+  espejo: ['espejoDoble', 'perfume', 'crema', 'secador', 'peinillaOro', 'cremaNoche'],
+  matera: ['maceta', 'regadera', 'palita', 'maceta', 'mariposas', 'trebol', 'patoAmarillo'],
+  tobogan: ['patoAmarillo', 'barquito', 'bombaBano', 'patoMorado', 'pececitos', 'chancletas', 'bolitasGel'],
+};
+/** Los frascos que se caen de la repisa en La Jabonera. */
+const FRASCOS = ['champu', 'crema', 'perfume', 'colonia', 'cremaNoche'];
+const LUZ_ESCENARIO = { cara: 'velita', lavamanos: 'vasoCepillos', banera: 'velaFlotante', ducha: 'velaJabonera', jabonera: 'velita', desague: 'velaFlotante', desfile: 'velita', espejo: 'velaJabonera', matera: 'farolito', tobogan: 'velaFlotante' } as const;
 const OBJETO_GEMA = ['gemaAzul', 'gemaVerde', 'gemaRoja', 'gemaGrande'];
 
 const rgb = (hex: string): [number, number, number] => {
@@ -186,7 +197,7 @@ export class Dibujo {
     this.fx = atlasFx();
     this.num = atlasNumeros();
     this.texturas.push(this.fx.textura, this.num.textura);
-    this.suelo = new Suelo(m.esc.id, rolPiel, m.esc.limites, piel);
+    this.suelo = new Suelo(m.esc.id, rolPiel, m.esc.limites, piel, m.esc.limitesX);
     this.coloresRgb = (this.o.colores ?? []).map(rgb);
     this.escena.add(this.suelo.plano, this.suelo.decor.malla);
     this.sombras = new LoteSprites({ max: 700, mapa: this.fx.textura, piso: true, orden: 2 });
@@ -506,6 +517,12 @@ export class Dibujo {
       case 'chorro':
         this.chorros.push({ x: e.x, y: e.y, r: e.c, t: -e.d, dura: e.e });
         break;
+      case 'remolino':
+        this.remolinos.push({ x: e.x, y: e.y, r: e.c, t: e.d, total: e.d });
+        break;
+      case 'frasco':
+        this.frascos.push({ x: e.x, y: e.y, r: e.c, t: e.d, total: e.d, cual: FRASCOS[Math.round(e.e) % FRASCOS.length] });
+        break;
       case 'columna': {
         for (let q = 0; q < 4; q++) P.crear('gota', CAPA_NORMAL, e.x + (az() - 0.5) * e.c, e.y + (az() - 0.5) * e.d * 0.8, 6, (az() - 0.5) * 80, 0, 80 + az() * 80, 0.45, 5, 3, 0.65, 0.88, 1, 0.45, 400);
         break;
@@ -743,6 +760,8 @@ export class Dibujo {
     this.dibujarManchas(dtv);
     this.dibujarZonas(m);
     this.dibujarChorros(dtv);
+    this.dibujarFrascos(dtv);
+    this.dibujarRemolinos(dtv);
     this.dibujarObjetos(m);
     this.dibujarBichos(m, dtv);
     this.dibujarProyectiles(m);
@@ -835,22 +854,91 @@ export class Dibujo {
     }
   }
 
-  private utileriaDucha() {
-    const C = 430;
+  private utileria(lista: string[], limX: { xMin: number; xMax: number } | undefined, C: number, densidad: number, lim?: { yMin: number; yMax: number } | null) {
     const x0 = Math.floor((this.cx - this.vistaW * 0.6) / C), x1 = Math.floor((this.cx + this.vistaW * 0.6) / C);
     const y0 = Math.floor((this.cy - this.vistaH * 0.7) / C), y1 = Math.floor((this.cy + this.vistaH * 0.65) / C);
     for (let gy = y0; gy <= y1; gy++)
       for (let gx = x0; gx <= x1; gx++) {
-        if ((gx === 0 || gx === -1) && (gy === 0 || gy === -1)) continue;
-        if (hash2(gx, gy, 41) > 0.42) continue;
-        const nombre = UTILERIA_DUCHA[Math.floor(hash2(gx, gy, 42) * UTILERIA_DUCHA.length)];
+        if (hash2(gx, gy, 41) > densidad) continue;
+        const nombre = lista[Math.floor(hash2(gx, gy, 42) * lista.length)];
         const q = this.cuadrosObj.get(nombre);
         if (!q) continue;
         const x = (gx + 0.15 + hash2(gx, gy, 43) * 0.7) * C, y = (gy + 0.15 + hash2(gx, gy, 44) * 0.7) * C;
+        if (limX && (x < limX.xMin + 40 || x > limX.xMax - 40)) continue;
+        if (lim && (y < lim.yMin + 40 || y > lim.yMax - 30)) continue;
+        // (nada encima del sitio donde se empieza)
+        if (Math.hypot(x, y) < 170) continue;
         const tam = 44 + hash2(gx, gy, 45) * 16;
         this.objetos.poner(x, y, 0, tam, tam, 0.5, 0.92, q.u0, q.v0, q.u1, q.v1, 1, 1, 1, 1, 0, 0, 1, (hash2(gx, gy, 46) - 0.5) * 0.4, 0);
         this.sombra(x, y, tam * 0.38, 0.3);
       }
+  }
+
+  /** El Tobogán: las banderas a cuadros a los dos lados del tobogán (la raya de meta la pinta el piso). */
+  private banderasTobogan(m: Motor) {
+    const q = this.cuadrosObj.get('bandera');
+    const lim = m.esc.limites;
+    if (!q || !lim) return;
+    const k0 = Math.max(1, Math.floor((this.cx - this.vistaW) / BANDERA_CADA)), k1 = Math.floor((this.cx + this.vistaW) / BANDERA_CADA) + 1;
+    for (let k = k0; k <= k1; k++) {
+      const x = k * BANDERA_CADA;
+      for (const y of [lim.yMin + 6, lim.yMax + 4]) {
+        if (!this.enVista(x, y, 80)) continue;
+        this.objetos.poner(x + 8, y, 0, 78, 78, 0.5, 0.95, q.u0, q.v0, q.u1, q.v1, 1, 1, 1, 1, 0, Math.sin(this.t * 3 + k) * 0.05, 1, 0, 0);
+        this.sombra(x, y, 22, 0.3);
+      }
+    }
+  }
+
+  /** Los remolinos de El Desagüe: espirales de agua turbia que giran, espumita en el borde y burbujas que se hunden. */
+  private remolinos: { x: number; y: number; r: number; t: number; total: number }[] = [];
+  private turboSono = new Set<number>();
+  private dibujarRemolinos(dt: number) {
+    const o = this.fx.c.onda, h = this.fx.c.humo, b = this.fx.c.brillo;
+    for (let k = this.remolinos.length - 1; k >= 0; k--) {
+      const w = this.remolinos[k];
+      w.t -= dt;
+      if (w.t <= 0) {
+        this.remolinos.splice(k, 1);
+        continue;
+      }
+      if (!this.enVista(w.x, w.y, w.r * 1.5)) continue;
+      const vida = Math.min(1, (w.total - w.t) / 1.2) * Math.min(1, w.t * 1.5);
+      this.pisoFx.poner(w.x, w.y, 0.07, w.r * 2.2, w.r * 1.6, 0.5, 0.5, h.u0, h.v0, h.u1, h.v1, 0.12, 0.2, 0.22, 0.75 * vida, 0, 0, 1, -this.t * 2.5);
+      for (let q = 0; q < 4; q++) {
+        const f = (this.t * 0.9 + q / 4) % 1;
+        const tam = w.r * 2.3 * (1 - f * 0.85);
+        this.pisoFx.poner(w.x, w.y, 0.08 + q * 0.004, tam, tam * 0.72, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 0.55, 0.78, 0.82, f * 0.9 * vida, 0, 0, 1, this.t * 3 + q * 1.6);
+      }
+      this.pisoFx.poner(w.x, w.y, 0.09, w.r * 0.5, w.r * 0.36, 0.5, 0.5, b.u0, b.v0, b.u1, b.v1, 0.05, 0.08, 0.1, 0.8 * vida);
+      if (Math.random() < 0.4 * this.part.cupo) {
+        const a = Math.random() * Math.PI * 2;
+        this.part.crear('espuma', CAPA_NORMAL, w.x + Math.cos(a) * w.r * 0.95, w.y + Math.sin(a) * w.r * 0.68, 2, -Math.sin(a) * 90 - Math.cos(a) * 60, Math.cos(a) * 60 - Math.sin(a) * 40, 0, 0.9, 10, 4, 0.85, 0.95, 0.95, 0.85);
+      }
+    }
+  }
+
+  /** Los frascos de La Jabonera: la sombra roja que crece y el frasco que cae dando vueltas (la explosión la pone el motor). */
+  private frascos: { x: number; y: number; r: number; t: number; total: number; cual: string }[] = [];
+  private dibujarFrascos(dt: number) {
+    const s = this.fx.c.sombra, o = this.fx.c.onda;
+    for (let k = this.frascos.length - 1; k >= 0; k--) {
+      const f = this.frascos[k];
+      f.t -= dt;
+      if (f.t <= 0) {
+        this.frascos.splice(k, 1);
+        continue;
+      }
+      if (!this.enVista(f.x, f.y, f.r * 2 + 200)) continue;
+      const avance = 1 - f.t / f.total;
+      this.pisoFx.poner(f.x, f.y, 0.085, f.r * 2.2 * (0.5 + avance * 0.5), f.r * 1.6 * (0.5 + avance * 0.5), 0.5, 0.5, s.u0, s.v0, s.u1, s.v1, 0.45, 0.12, 0.12, 0.2 + 0.4 * avance);
+      const pul = (this.t * 3) % 1;
+      this.pisoFx.poner(f.x, f.y, 0.09, f.r * 2.3 * (1.15 - pul * 0.3), f.r * 1.7 * (1.15 - pul * 0.3), 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 1, 0.45, 0.4, 0.55 * pul);
+      // El frasco cae en el último medio segundo, dando vueltas
+      const cae = Math.min(1, Math.max(0, 1 - f.t / 0.55));
+      const q = this.cuadrosObj.get(f.cual);
+      if (q && cae > 0) this.objetos.poner(f.x, f.y, 520 * (1 - cae * cae), 58, 58, 0.5, 0.5, q.u0, q.v0, q.u1, q.v1, 1, 1, 1, 1, 0, 0, 1, cae * 6, 0);
+    }
   }
 
   /** Los chorros de La Ducha: la sombra que avisa y, al caer, la columna de agua con su salpicada. */
@@ -973,7 +1061,9 @@ export class Dibujo {
     const t = this.t;
     const O = this.objetos;
     // Lo que hay tirado en el piso de la ducha (siempre en el mismo sitio): el champú, el jabón, la esponja, el patico
-    if (m.esc.id === 'ducha') this.utileriaDucha();
+    const utileria = UTILERIA[m.esc.id];
+    if (utileria) this.utileria(utileria, m.esc.limitesX, m.esc.limitesX ? 210 : 430, m.esc.limitesX ? 0.6 : 0.42, m.esc.limites);
+    if (m.esc.tobogan) this.banderasTobogan(m);
     // Don Jabón con su carrito (el vendedor ambulante): se mece, saluda y le salen burbujitas
     const p = m.puesto;
     if (p && this.enVista(p[0], p[1], 120)) {
@@ -1376,6 +1466,15 @@ export class Dibujo {
         this.pisoFx.poner(j.x, j.y, 0.11, 90 + Math.sin(t * 6) * 10, 64, 0.5, 0.5, o.u0, o.v0, o.u1, o.v1, 1, 0.85, 0.35, 0.9);
         if (Math.random() < 0.5 * this.part.cupo) this.part.crear('estrella', CAPA_LUZ, j.x + (Math.random() - 0.5) * 60, j.y, 10 + Math.random() * 50, 0, 0, 40, 0.6, 10, 3, 1, 0.85, 0.4, 1, 0, 0, 5);
       }
+      // El turbo del tobogán: chorritos de agua y estrellitas hacia atrás (y su sonido al agarrarlo)
+      if (j.turbo > 0) {
+        if (j.turbo > TURBO.dura - 0.1 && !this.turboSono.has(j.i)) {
+          this.turboSono.add(j.i);
+          if (j.i === this.o.yo) sfx.turbo();
+        }
+        for (let q = 0; q < 2; q++) if (Math.random() < 0.8 * this.part.cupo)
+          this.part.crear(q ? 'gota' : 'estrella', q ? CAPA_NORMAL : CAPA_LUZ, j.x - 26, j.y + (Math.random() - 0.5) * 30, 8 + Math.random() * 20, -260 - Math.random() * 120, (Math.random() - 0.5) * 60, 40, 0.45, 9, 4, 1, q ? 1 : 0.8, q ? 1 : 0.35, 0.9, 0, 0, 3);
+      } else this.turboSono.delete(j.i);
       if (j.espejo > 0 && Math.random() < 0.4 * this.part.cupo) {
         const a = Math.random() * Math.PI * 2;
         this.part.crear('brillo', CAPA_LUZ, j.x + Math.cos(a) * 40, j.y + Math.sin(a) * 30, 30, 0, 0, 30, 0.5, 14, 4, 0.8, 0.9, 1, 0.8);

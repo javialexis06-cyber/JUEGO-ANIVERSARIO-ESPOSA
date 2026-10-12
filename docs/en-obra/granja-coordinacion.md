@@ -1,5 +1,32 @@
 # Coordinación de la granja con el proyecto principal
 
+## Segundo bloque de campaña · 11 de octubre de 2026
+
+Se añadieron 181 contratos secundarios y 617 objetivos: el diario reúne 217 historias y 727 objetivos.
+Las 142 personales abren sus recuerdos posteriores, 13 secretos se encuentran por pistas públicas,
+y los oficios registran producción, pesca y cuidado reales posteriores a aceptar. S12 conserva una nota
+local de hasta 500 caracteres; no se publica ni se convierte en una toma de voz. Se reconectan 998
+audios existentes de Claude por firma verificable, sin generar voces ni borrar archivos.
+
+Los 42 encargos de pueblos de Claude se conservan y admiten los hitos de Campaña. La campaña inicial
+`d1c16f0` tuvo las cuatro compilaciones correctas en la corrida 38191558469 y la release `apk-186`.
+Los 217 efectos especializados, la vida social ampliada y las actividades regionales siguen en los
+bloques posteriores; no presentar los modelos de taller como construcciones o jefes terminados.
+
+## Campaña jugable en desarrollo · 11 de octubre de 2026
+
+Javier autorizó desarrollar los siete bloques seguidos. Se incorporó el remoto de Claude `2aacf18`,
+con planos, voces, ambientes, 178 residentes y 93 domicilios; se conservan sus 42 encargos de pueblos
+y los avances del lavado. El frente de motor añade la pestaña **Campaña**, con 36 contratos principales
+y 110 objetivos, en un bloque aditivo `historia` de V5. El archivo anterior sigue disponible y no
+acredita estas misiones. Contrato: [HISTORIA-INTEGRACION.md](../../juego/web/src/granja-v3/HISTORIA-INTEGRACION.md).
+
+Las posiciones de trabajo se obtienen de los planos vigentes. Las voces conservan IDs y huellas.
+No producir de nuevo las tomas existentes por el prefijo interno `H:`. F12 tiene solución técnica;
+la alternativa final de combate y los jefes se completan en el bloque regional. Quedan las 181 historias
+originales adicionales, efectos de premios, vida social ampliada, variedad regional y sistemas restantes.
+Las comprobaciones de contrato preparan inventario y ubicaciones; el recorrido ordinario se hará al final.
+
 ## Pueblos de Astra agrandados · 11 de octubre de 2026 (Claude, a pedido de Javier)
 
 Javier pidió pueblos más grandes y con vida, «con una estructura tan bonita como la del primero». Se hizo sin

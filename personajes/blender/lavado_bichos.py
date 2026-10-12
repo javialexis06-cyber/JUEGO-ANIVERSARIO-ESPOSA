@@ -1021,12 +1021,13 @@ def j_ciempies_gigante(b):
 # ----------------------------------------------------------------------------------------------------- La Jabonera
 def b_pompa(b):
     """Pompita de jabón traviesa: transparente, tornasolada y con cara de picarona."""
-    m = clay.material('Pompa', '#E8F4FF', rough=0.04, transmission=0.85, coat=1.0, coat_rough=0.02, ior=1.2,
+    m = clay.material('Pompa', '#F3E6FF', rough=0.05, transmission=0.45, coat=1.0, coat_rough=0.02, ior=1.2, sss=0.2,
                       noise=dict(scale=12, strength=0.05, detail=2, distance=0.003))
     b.blob((0, 0, 0.48), (0.4, 0.38, 0.4), m, cuerpo=True, n=12)
-    for (x, z, c) in [(-0.2, 0.62, '#F7A8D8'), (0.18, 0.3, '#A8E0F7'), (0.25, 0.66, '#F7E2A8')]:
+    for (x, z, c, k) in [(-0.22, 0.62, '#F7A8D8', 1.2), (0.2, 0.28, '#A8E0F7', 1.1), (0.26, 0.66, '#F7E2A8', 0.9), (-0.28, 0.3, '#B8F2C8', 0.8),
+                         (0.0, 0.78, '#C8B8F7', 0.9)]:
         p, nrm = b.frente(x, z)
-        orientado(b, (0.1, 0.01, 0.06), plano(c, 0.2, emision=0.4), p, nrm, 'base', lift=0.005)
+        orientado(b, (0.11 * k, 0.01, 0.07 * k), plano(c, 0.2, emision=0.6), p, nrm, 'base', lift=0.005)
     b.blob((-0.16, -0.3, 0.68), (0.07, 0.02, 0.05), BRILLO, n=6)
     for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
         b.blob((0.36 * s_, -0.05, 0.12), (0.06, 0.06, 0.06), m, grupo, n=6)
@@ -1149,7 +1150,7 @@ def j_reina_pompa(b):
     b_pompa(b)
     corona(b, (0, 0.0, 0.86), 0.17, 0.16, color='#F2C14E', joyas=('#F7A8D8', '#A8E0F7'))
     for (x, z, r) in [(-0.55, 0.8, 0.12), (0.58, 0.7, 0.1), (0.5, 1.05, 0.07), (-0.45, 1.1, 0.08)]:
-        b.blob((x, 0.0, z), (r, r, r), clay.material('Pompa reina', '#E8F4FF', rough=0.04, transmission=0.85, coat=1.0), n=8)
+        b.blob((x, 0.0, z), (r, r, r), clay.material('Pompa reina', '#F3E6FF', rough=0.05, transmission=0.45, coat=1.0, sss=0.2), n=8)
 
 
 def j_senor_cuchillas(b):
@@ -1179,6 +1180,521 @@ def j_pote_crema(b):
             b.tubo([(lado * 0.45, 0.0, 0.08), (lado * 0.6, -0.05, 0.05 + 0.06 * s_ * lado), (lado * 0.65, -0.06, 0.0)], 0.06, m, grupo, segmentos=6)
 
 
+# ----------------------------------------------------------------------------------------------------- El Desagüe
+def b_bolita_pelo(b):
+    """Bolita de pelos del sifón: chiquita, negra y enredada; llegan de a montones."""
+    m = fieltro('#2E2624', '#5E4E4A', fuzz=0.9, escala=160)
+    b.blob((0, 0, 0.4), (0.3, 0.28, 0.3), m, cuerpo=True, n=10)
+    for k in range(14):
+        a = k / 14 * TAU
+        for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+            p0 = (math.cos(a) * 0.26, 0.0, 0.4 + math.sin(a) * 0.26)
+            p1 = (math.cos(a + 0.4 * s_) * 0.44, -0.02, 0.4 + math.sin(a + 0.4 * s_) * 0.42)
+            b.tubo([p0, p1], 0.012, m, grupo, segmentos=4)
+    ojos(b, 0, 0.44, 0.09, sep=0.11, bravo=True, mirar=(0, -0.1), color_ceja='#8A7A76')
+    boca(b, 0, 0.3, 0.07, 'brava')
+
+
+def b_grasa_sifon(b):
+    """Grasa del sifón: negra, brillante y pegajosa."""
+    m = brillante('#2B2A22', rough=0.12, coat=1.0, sss=0.1)
+    b.blob((0, 0, 0.38), (0.42, 0.38, 0.4), m, cuerpo=True, n=12, shaper=lambda v: v * (1 + 0.07 * np.sin(v[:, 0:1] * 10) * np.sin(v[:, 2:3] * 8)))
+    b.blob((-0.15, -0.3, 0.56), (0.07, 0.02, 0.1), BRILLO, n=6)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        b.blob((0.32 * s_, -0.05, 0.06), (0.08, 0.08, 0.06), m, grupo, n=6)
+    ojos(b, 0, 0.44, 0.1, sep=0.14, bravo=True, mirar=(0, -0.12))
+    boca(b, 0, 0.26, 0.1, 'dientes')
+
+
+def b_gusanito(b):
+    """Gusanito rojo del desagüe: se estira y se encoge para avanzar."""
+    m = fieltro('#D9473E', '#FF8A80', fuzz=0.35, sss=0.25)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        pts = [(-0.5, 0.1, 0.12), (-0.25, 0.0, 0.2 + 0.08 * s_), (0.0, 0.0, 0.14), (0.22, -0.05, 0.22 - 0.06 * s_), (0.36, -0.1, 0.3)]
+        b.tubo(pts, [0.09, 0.11, 0.12, 0.12, 0.13], m, grupo, segmentos=12)
+    b.blob((0.36, -0.12, 0.36), (0.16, 0.14, 0.15), m, cuerpo=True, n=10)
+    ojos(b, 0.36, 0.42, 0.06, sep=0.07, mirar=(0, -0.1))
+    boca(b, 0.36, 0.3, 0.05, 'sonrisa')
+
+
+def b_burbuja_gas(b):
+    """Burbuja de gas del caño: verdosa, hinchada y con mal olor."""
+    m = clay.material('Burbuja gas', '#B8D88A', rough=0.08, transmission=0.4, coat=1.0, coat_rough=0.03, sss=0.3)
+    b.blob((0, 0, 0.5), (0.4, 0.38, 0.4), m, cuerpo=True, n=12)
+    vaho = fieltro('#9FBF6A', '#D2E8A8', fuzz=0.6)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', 1.2)):
+        for (x, z, r) in [(-0.36, 0.9, 0.08), (0.3, 0.98, 0.07), (0.0, 1.06, 0.06)]:
+            b.blob((x * s_, 0.0, z), (r, r, r), vaho, grupo, n=6)
+    ojos(b, 0, 0.52, 0.1, sep=0.14, mirar=(0, -0.1), estilo='dormilon')
+    boca(b, 0, 0.34, 0.1, 'o')
+
+
+def b_sapito(b):
+    """Sapito del caño: verde, cachetón y brincón."""
+    m = fieltro('#5FA85A', '#9FD89A', fuzz=0.4, sss=0.15)
+    panza = fieltro('#E8E2A8', '#FFF8C8', fuzz=0.3)
+    b.blob((0, 0, 0.32), (0.42, 0.38, 0.3), m, cuerpo=True, n=12)
+    b.blob((0, -0.18, 0.28), (0.28, 0.2, 0.2), panza, n=10)
+    for s_ in (-1, 1):
+        b.blob((s_ * 0.2, -0.05, 0.6), (0.14, 0.13, 0.13), m, n=10)
+    for grupo, f_ in (('pasoA', 1), ('pasoB', -1)):
+        for s_ in (-1, 1):
+            b.tubo([(s_ * 0.35, 0.1, 0.18), (s_ * 0.52, 0.18, 0.12 + 0.12 * (f_ > 0)), (s_ * 0.56, 0.0, 0.0)], 0.06, m, grupo, segmentos=8)
+    ojos(b, 0, 0.6, 0.1, sep=0.2, mirar=(0, -0.12))
+    boca(b, 0, 0.34, 0.16, 'sonrisa')
+    cachetes(b, 0, 0.4, 0.3, 0.06)
+
+
+def b_rejillita(b):
+    """La rejillita del desagüe que se soltó: redonda, de metal, con sus huecos, y camina."""
+    metal = clay.material('Rejilla', '#B8C0CA', rough=0.25, metallic=0.85, coat=0.3)
+    b.torno([(0.0, 0.0), (0.44, 0.0), (0.46, 0.05), (0.44, 0.1), (0.0, 0.1)], metal)
+    o = b.g['base'][-1]
+    o.rotation_euler = (math.pi / 2 - 0.25, 0, 0)
+    o.location = (0, 0.0, 0.46)
+    b.cuerpo.append(o)
+    b._surf = None
+    # (las ranuras abajo, para que no le tapen los ojos)
+    for k in range(5):
+        x = -0.2 + k * 0.1
+        b.tubo([(x, -0.1, 0.18), (x, -0.1, 0.32)], 0.02, plano('#2A2A30'), 'base', segmentos=4)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            b.tubo([(lado * 0.3, 0.05, 0.1), (lado * 0.38, 0.0, 0.05 + 0.05 * s_ * lado), (lado * 0.4, -0.02, 0.0)], 0.04, metal, grupo, segmentos=6)
+    ojos(b, 0, 0.56, 0.09, sep=0.15, bravo=True, mirar=(0, -0.12))
+    boca(b, 0, 0.36, 0.1, 'brava')
+
+
+def b_lodo(b):
+    """El lodo del caño: una montaña café y pesadísima con cositas atrapadas."""
+    m = fieltro('#5A4632', '#8A7058', fuzz=0.5, rough=0.9)
+    b.blob((0, 0, 0.4), (0.6, 0.5, 0.42), m, cuerpo=True, n=14, shaper=lambda v: v * (1 + 0.08 * np.sin(v[:, 0:1] * 9) * np.sin(v[:, 2:3] * 7)))
+    for (x, z, c) in [(-0.35, 0.62, '#F2C14E'), (0.38, 0.55, '#E86A8A'), (0.1, 0.8, '#7DB7E8')]:
+        p, nrm = b.frente(x, z)
+        orientado(b, (0.06, 0.03, 0.05), brillante(c, 0.3), p, nrm, 'base', lift=0.01)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for (x, y) in [(-0.55, 0.1), (0.55, -0.05)]:
+            b.blob((x + 0.06 * s_, y, 0.06), (0.14, 0.12, 0.06), m, grupo, n=6)
+    ojos(b, 0, 0.5, 0.13, sep=0.2, bravo=True, mirar=(0, -0.15), grosor_ceja=0.035)
+    boca(b, 0, 0.26, 0.17, 'grande')
+
+
+def j_rey_sapo(b):
+    b_sapito(b)
+    corona(b, (0, 0.0, 0.78), 0.18, 0.16)
+    capa = fieltro('#7A3BA8', '#B98AD8', fuzz=0.5)
+    b.blob((0, 0.3, 0.32), (0.4, 0.08, 0.28), capa, n=10)
+
+
+def j_pulpo_desague(b):
+    """El Pulpo del Desagüe: morado, con tentáculos de pelo enredado."""
+    m = fieltro('#8A5AB8', '#C49AE8', fuzz=0.45, sss=0.15)
+    b.blob((0, 0, 0.62), (0.42, 0.38, 0.44), m, cuerpo=True, n=12)
+    pelo = fieltro('#2E2624', '#5E4E4A', fuzz=0.8)
+    for k in range(8):
+        a = (k / 8) * math.pi + 0.2
+        for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+            p0 = (math.cos(a) * 0.32, 0.0, 0.3)
+            p1 = (math.cos(a) * 0.6, -0.05, 0.16 + 0.08 * s_)
+            p2 = (math.cos(a) * 0.82 + 0.08 * s_, -0.1, 0.02)
+            b.tubo([p0, p1, p2], [0.07, 0.05, 0.02], m, grupo, segmentos=8)
+            b.tubo([p1, (p1[0] + 0.08, p1[1], p1[2] - 0.1)], 0.012, pelo, grupo, segmentos=4)
+    ojos(b, 0, 0.66, 0.13, sep=0.18, bravo=True, mirar=(0, -0.15))
+    boca(b, 0, 0.42, 0.13, 'o')
+    corona(b, (0, 0.0, 1.0), 0.17, 0.15)
+
+
+def j_boca_sifon(b):
+    """La Boca del Sifón: el tubo en U del lavamanos convertido en una bocota con dientes."""
+    metal = clay.material('Sifon', '#C9CED8', rough=0.25, metallic=0.85, coat=0.4)
+    pts = [(-0.4, 0.0, 1.0), (-0.4, 0.0, 0.4), (-0.3, 0.0, 0.18), (0.0, 0.0, 0.1), (0.3, 0.0, 0.18), (0.4, 0.0, 0.4), (0.4, 0.0, 0.7)]
+    b.tubo(pts, 0.17, metal, 'base', segmentos=16)
+    b.cuerpo.append(b.g['base'][-1])
+    b._surf = None
+    b.torno([(0.0, 0.0), (0.22, 0.0), (0.22, 0.06), (0.0, 0.06)], metal)
+    b.g['base'][-1].location = (0.4, 0, 0.7)
+    oscuro = plano('#1A1418', 0.6)
+    b.blob((0.4, 0.0, 0.77), (0.15, 0.15, 0.02), oscuro, n=8)
+    for k in range(6):
+        a = k / 6 * TAU
+        b.blob((0.4 + math.cos(a) * 0.15, math.sin(a) * 0.15, 0.8), (0.035, 0.035, 0.05), DIENTE, n=6)
+    ojos(b, -0.05, 0.42, 0.12, sep=0.2, bravo=True, mirar=(0, -0.15))
+    boca(b, 0.0, 0.22, 0.14, 'colmillos')
+    corona(b, (-0.4, 0.0, 1.12), 0.16, 0.14)
+
+
+def j_reina_grasa(b):
+    b_grasa_sifon(b)
+    corona(b, (0, 0.04, 0.78), 0.2, 0.18, color='#F2C14E', joyas=('#2B2A22', '#E86A8A'))
+    for (x, z, r) in [(-0.5, 0.2, 0.1), (0.52, 0.15, 0.09), (0.0, -0.02, 0.08)]:
+        b.blob((x, -0.1, z), (r, r, r * 0.6), brillante('#2B2A22', rough=0.12, coat=1.0), n=6)
+
+
+
+# ----------------------------------------------------------------------------------------------------- La Matera de la ventana
+def hojita(b, base, dir_, largo, ancho, mat, grupo='base', curva=0.35):
+    """Una hoja de fieltro: un blob aplanado que sale de base hacia dir_ (construida en el origen y movida)."""
+    d = np.array(dir_, dtype=float)
+    d /= np.linalg.norm(d) or 1
+    o = clay.blob(b.nom(), (0, 0, 0), (ancho, ancho * 0.22, largo * 0.5), b.coll, mat, n=8, subsurf=1,
+                  shaper=lambda v: np.column_stack([v[:, 0] * (1 - 0.55 * np.clip(v[:, 2] / (largo * 0.5), 0, 1) ** 2),
+                                                    v[:, 1] + curva * (v[:, 2] / (largo * 0.5)) ** 2 * ancho, v[:, 2]]))
+    clay.orient_to(o, tuple(d))
+    o.location = Vector(np.array(base) + d * largo * 0.5)
+    b.add(o, grupo)
+    # La vena del centro
+    b.tubo([tuple(np.array(base) + d * largo * 0.1 - np.array([0, ancho * 0.25, 0])), tuple(np.array(base) + d * largo * 0.85 - np.array([0, ancho * 0.25, 0]))],
+           ancho * 0.06, fieltro('#4E8A3A'), grupo, segmentos=4)
+    return o
+
+
+def b_brotecito(b):
+    """Brotecito: una semillita gordita que acaba de echar dos hojas. No camina: espera a que pases."""
+    m = fieltro('#9BCB5C', '#D4F09A', fuzz=0.45, sss=0.12)
+    hoja = fieltro('#6DB04A', '#B8E68A', fuzz=0.4)
+    b.blob((0, 0, 0.3), (0.32, 0.29, 0.3), m, cuerpo=True, n=12)
+    b.tubo([(0, 0.02, 0.56), (0.0, 0.03, 0.7), (0.02, 0.03, 0.78)], 0.035, hoja, segmentos=6)
+    for grupo, s_ in (('pasoA', 0.0), ('pasoB', 0.18)):
+        hojita(b, (0.0, 0.03, 0.76), (-1, 0, 0.55 + s_), 0.34, 0.12, hoja, grupo)
+        hojita(b, (0.0, 0.03, 0.76), (1, 0, 0.55 - s_), 0.34, 0.12, hoja, grupo)
+    tierra = fieltro('#6B4A34', '#8A6A50', fuzz=0.6)
+    for k in range(6):
+        a = k / 6 * TAU
+        b.blob((math.cos(a) * 0.3, math.sin(a) * 0.26, 0.02), (0.1, 0.08, 0.05), tierra, n=6)
+    ojos(b, 0, 0.32, 0.085, sep=0.11, estilo='dormilon', mirar=(0, -0.1))
+    boca(b, 0, 0.19, 0.07, 'sonrisa')
+    cachetes(b, 0, 0.24, 0.19, 0.045)
+
+
+def b_cactus(b):
+    """Cactus de la ventana: redondo, con costillas, espinas y una flor rosada; bravo porque nadie lo abraza."""
+    m = fieltro('#4F9A5A', '#8FD08A', fuzz=0.4, sss=0.08)
+    b.blob((0, 0, 0.38), (0.36, 0.33, 0.38), m, cuerpo=True, n=14,
+           shaper=lambda v: v * (1 + 0.06 * np.cos(np.arctan2(v[:, 1:2], v[:, 0:1]) * 8)))
+    raya = fieltro('#3E7E48', '#6FB070', fuzz=0.3)
+    for k in range(8):
+        a = k / 8 * TAU + TAU / 16
+        if math.sin(a) < -0.55:
+            continue
+        pts = [(math.cos(a) * 0.36 * math.sin(t), math.sin(a) * 0.33 * math.sin(t), 0.38 - 0.38 * math.cos(t)) for t in np.linspace(0.35, 2.8, 6)]
+        b.tubo(pts, 0.012, raya, segmentos=4)
+    espina = plano('#FFF6DA', 0.5)
+    for k in range(26):
+        a = k * 2.399
+        z = 0.08 + (k * 0.618 % 1) * 0.6
+        r = math.sqrt(max(0.0, 1 - ((z - 0.38) / 0.38) ** 2))
+        d = np.array([math.cos(a) * r, math.sin(a) * r * 0.92, (z - 0.38) / 0.38 * 0.8])
+        if d[1] < -0.55 and abs(d[0]) < 0.5 and 0.15 < z < 0.6:
+            continue  # la carita sin espinas
+        base = np.array([math.cos(a) * 0.36 * r, math.sin(a) * 0.33 * r, z])
+        b.tubo([tuple(base), tuple(base + d / (np.linalg.norm(d) or 1) * 0.1)], 0.01, espina, segmentos=4, caps=('round', 'point'))
+    flor = fieltro('#F27BA0', '#FFC2D4', fuzz=0.35)
+    for grupo, s_ in (('pasoA', 0), ('pasoB', 0.3)):
+        for k in range(6):
+            a = k / 6 * TAU + s_
+            o = clay.blob(b.nom(), (0, 0, 0), (0.07, 0.04, 0.03), b.coll, flor, n=6, subsurf=1)
+            o.rotation_euler = (0.4 * math.sin(a), -0.4 * math.cos(a), a)
+            o.location = (math.cos(a) * 0.07, math.sin(a) * 0.07 + 0.04, 0.78)
+            b.add(o, grupo)
+    b.blob((0, 0.04, 0.8), (0.04, 0.04, 0.03), fieltro('#F7D046', '#FFF0A0'), n=6)
+    ojos(b, 0, 0.42, 0.095, sep=0.13, bravo=True, mirar=(0, -0.12))
+    boca(b, 0, 0.27, 0.09, 'brava')
+    cachetes(b, 0, 0.33, 0.21, 0.045)
+
+
+def b_atrapamoscas(b):
+    """La atrapamoscas: una boca de planta con dientes verdes sobre un tallito. Quieta, pero muerde si te acercas."""
+    tallo = fieltro('#5E9A44', '#9CD07A', fuzz=0.4)
+    afuera = fieltro('#7DBA4E', '#B8E68A', fuzz=0.4, sss=0.1)
+    adentro = fieltro('#D9475A', '#FF8A9A', fuzz=0.3)
+    b.tubo([(0, 0.05, 0.0), (0.03, 0.04, 0.2), (0.0, 0.02, 0.36)], [0.06, 0.05, 0.05], tallo, segmentos=8)
+    for s_ in (-1, 1):
+        hojita(b, (0.0, 0.05, 0.04), (s_ * 1, 0.1, 0.25), 0.3, 0.1, tallo)
+    # Cabeza: el lóbulo de arriba (con la carita) y el de abajo
+    b.blob((0, 0, 0.6), (0.3, 0.26, 0.2), afuera, cuerpo=True, n=12)
+    for grupo, ab in (('pasoA', 0.0), ('pasoB', 0.08)):
+        b.blob((0, -0.02, 0.4 - ab), (0.28, 0.24, 0.12), afuera, grupo, n=12)
+        b.blob((0, -0.05, 0.47 - ab * 0.5), (0.24, 0.2, 0.05 + ab * 0.6), adentro, grupo, n=10)
+        for k in range(9):
+            t = (k / 8 - 0.5) * 2.4
+            x, y = math.sin(t) * 0.27, -math.cos(t) * 0.23
+            b.tubo([(x, y, 0.5 - ab * 0.2), (x * 1.08, y * 1.1, 0.42 - ab)], 0.014, plano('#E8F5C8', 0.5), grupo, segmentos=4, caps=('round', 'point'))
+            b.tubo([(x, y, 0.46), (x * 1.08, y * 1.1, 0.53)], 0.014, plano('#E8F5C8', 0.5), grupo, segmentos=4, caps=('round', 'point'))
+    ojos(b, 0, 0.66, 0.085, sep=0.12, bravo=True, mirar=(0, -0.14))
+    manchas(b, [(-0.2, 0.62, 1.0), (0.21, 0.6, 0.8)], 0.03, '#C94A5A')
+
+
+def b_caracol(b):
+    """Caracol de la matera: lento, babosito y con su casita de espiral a la espalda."""
+    piel = fieltro('#E8C9A0', '#FFE8C8', fuzz=0.35, sss=0.2)
+    concha = fieltro('#C97A4A', '#F2B080', fuzz=0.45)
+    raya = fieltro('#8A4A2A', '#B8724A', fuzz=0.3)
+    for grupo, s_ in (('pasoA', 0.0), ('pasoB', 0.05)):
+        b.tubo([(-0.45, 0.05, 0.06), (-0.1 - s_, 0.0, 0.08), (0.25, -0.05, 0.12), (0.36, -0.1, 0.3)], [0.06, 0.1, 0.12, 0.13], piel, grupo, segmentos=10)
+    b.blob((0.36, -0.12, 0.38), (0.14, 0.13, 0.14), piel, cuerpo=True, n=10)
+    b.blob((-0.1, 0.06, 0.38), (0.3, 0.2, 0.3), concha, n=12)
+    pts = []
+    for k in range(40):
+        t = k / 39
+        a = t * 2.6 * TAU
+        r = 0.27 * (1 - t * 0.85)
+        pts.append((-0.1 + math.cos(a) * r, -0.15, 0.38 + math.sin(a) * r))
+    b.tubo(pts, 0.025, raya, segmentos=6)
+    antenas(b, [(0.32, -0.15, 0.48), (0.42, -0.15, 0.48)], 0.22, 0.018, piel, bola_mat=fieltro('#3A2A24'))
+    ojos(b, 0.37, 0.4, 0.06, sep=0.07, mirar=(0, -0.1), estilo='dormilon')
+    boca(b, 0.37, 0.3, 0.05, 'sonrisa')
+
+
+def b_diente_leon(b):
+    """Semillita de diente de león: un pompón blanco con carita que el viento trae flotando."""
+    m = fieltro('#FFFDF4', '#FFFFFF', fuzz=0.9, escala=180)
+    b.blob((0, 0, 0.42), (0.2, 0.18, 0.2), fieltro('#E8E0B8', '#FFF8D8', fuzz=0.5), cuerpo=True, n=10)
+    pelitos(b, 34, (0, 0.04, 0.42), 0.2, 0.24, 0.011, m, z_min=-0.45, bola=True, ondas=0.1, mat_bola=fieltro('#FFFFFF', fuzz=0.9))
+    # Un halo de pelusa detrás para que se vea esponjoso
+    b.blob((0, 0.12, 0.46), (0.36, 0.06, 0.34), fieltro('#FFFDF4', '#FFFFFF', fuzz=1.0, escala=220), n=10)
+    b.tubo([(0, 0.02, 0.22), (0.02, 0.03, 0.1), (0.0, 0.03, 0.0)], 0.014, fieltro('#B8C878'), segmentos=4)
+    ojos(b, 0, 0.44, 0.06, sep=0.075, mirar=(0, -0.1))
+    boca(b, 0, 0.35, 0.05, 'o')
+
+
+def b_enredadera(b):
+    """Enredadera: un nudo de bejucos con hojas, terca como ella sola; tapa el camino."""
+    m = fieltro('#4C8A3A', '#86C26A', fuzz=0.45)
+    hoja = fieltro('#62A84A', '#A8DC88', fuzz=0.4)
+    b.blob((0, 0, 0.42), (0.36, 0.32, 0.36), fieltro('#3E7230', '#6AA050', fuzz=0.6), cuerpo=True, n=12)
+    for k in range(7):
+        a = k / 7 * TAU
+        pts = [(math.cos(a + t) * (0.34 + 0.04 * math.sin(t * 3)), math.sin(a + t) * 0.3 * (0.6 if math.sin(a + t) < 0 else 1),
+                0.42 + math.sin(t * 2 + k) * 0.3) for t in np.linspace(0, 2.4, 7)]
+        b.tubo(pts, 0.035, m, segmentos=6)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for k in range(6):
+            a = k / 6 * TAU + 0.3
+            if math.sin(a) < -0.5 and abs(math.cos(a)) < 0.7:
+                continue  # ninguna hoja encima de la cara
+            base = (math.cos(a) * 0.34, math.sin(a) * 0.28 + 0.05, 0.42 + math.sin(a * 2) * 0.25)
+            hojita(b, base, (math.cos(a + 0.3 * s_), math.sin(a) * 0.5 + 0.3, 0.4), 0.2, 0.08, hoja, grupo)
+    ojos(b, 0, 0.46, 0.09, sep=0.13, bravo=True, mirar=(0, -0.12))
+    boca(b, 0, 0.3, 0.09, 'dientes')
+
+
+def b_helecho(b):
+    """Helecho de la ducha: frondoso y enorme, con carita escondida entre las hojas."""
+    m = fieltro('#6FA85A', '#A8DC8A', fuzz=0.45, sss=0.1)
+    hoja = fieltro('#58A04A', '#9AD87A', fuzz=0.4)
+    b.blob((0, 0, 0.3), (0.34, 0.3, 0.3), m, cuerpo=True, n=12)
+    for grupo, s_ in (('pasoA', 0), ('pasoB', 0.12)):
+        for k in range(9):
+            a = math.pi * (0.1 + 0.8 * k / 8)
+            d = (math.cos(a) * 1.0, 0.25 + 0.2 * (k % 2), math.sin(a) * 0.9 + s_ * (1 if k % 2 else -1))
+            base = (math.cos(a) * 0.2, 0.08, 0.42)
+            dd = np.array(d) / np.linalg.norm(d)
+            pts = [tuple(np.array(base) + dd * 0.65 * t + np.array([0, 0, -0.25 * t * t])) for t in np.linspace(0, 1, 5)]
+            b.tubo(pts, 0.02, fieltro('#3E7E36'), grupo, segmentos=4)
+            for q in range(1, 6):
+                t = q / 6
+                c = np.array(base) + dd * 0.65 * t + np.array([0, 0, -0.25 * t * t])
+                for lado in (-1, 1):
+                    lat = np.cross(dd, [0, 1, 0]) * lado
+                    hojita(b, tuple(c), tuple(lat + dd * 0.4 + np.array([0, -0.2, 0.1])), 0.14 * (1 - t * 0.6), 0.045, hoja, grupo, curva=0.2)
+    ojos(b, 0, 0.3, 0.09, sep=0.12, mirar=(0, -0.1))
+    boca(b, 0, 0.17, 0.08, 'sonrisa')
+    cachetes(b, 0, 0.22, 0.2, 0.05)
+
+
+def j_don_cactus(b):
+    b_cactus(b)
+    corona(b, (0, 0.04, 0.76), 0.17, 0.16)
+    for s_ in (-1, 1):
+        for grupo, f_ in (('pasoA', 1), ('pasoB', -1)):
+            b.tubo([(s_ * 0.3, 0.0, 0.42), (s_ * 0.48, -0.02, 0.46), (s_ * 0.52, -0.02, 0.62 + 0.06 * f_ * s_)], [0.09, 0.08, 0.08],
+                   fieltro('#4F9A5A', '#8FD08A', fuzz=0.4), grupo, segmentos=8)
+
+
+def j_atrapamoscas_gigante(b):
+    b_atrapamoscas(b)
+    corona(b, (0, 0.02, 0.76), 0.16, 0.15)
+
+
+def j_matera_gigante(b):
+    """La Matera Gigante: una matera de barro que camina, con un girasol enorme y bravo (la cara va en el girasol)."""
+    barro = fieltro('#C8683E', '#E89A70', fuzz=0.35, rough=0.8)
+    b.torno([(0.0, 0.0), (0.3, 0.0), (0.4, 0.42), (0.44, 0.44), (0.46, 0.52), (0.42, 0.54), (0.0, 0.54)], barro)
+    tierra = fieltro('#5A3E2A', '#7A5A40', fuzz=0.6)
+    b.blob((0, 0, 0.54), (0.4, 0.4, 0.04), tierra, n=10)
+    # La franja pintada de la matera, con corazoncitos
+    for k in range(7):
+        a = math.pi * (1.15 + 0.7 * k / 6)
+        b.blob((math.cos(a) * 0.36, math.sin(a) * 0.36, 0.26), (0.045, 0.02, 0.04), fieltro('#F2E2C8', '#FFFFFF', fuzz=0.3), n=6)
+    tallo = fieltro('#5E9A44', '#9CD07A', fuzz=0.4)
+    b.tubo([(0, 0.05, 0.54), (0.03, 0.06, 0.78), (0.0, 0.08, 0.98)], 0.06, tallo, segmentos=8)
+    for s_ in (-1, 1):
+        hojita(b, (0.0, 0.06, 0.72), (s_, -0.1, 0.45), 0.34, 0.12, tallo)
+    petalo = fieltro('#F7C531', '#FFE68A', fuzz=0.35)
+    petalo2 = fieltro('#F2A91E', '#FFD66A', fuzz=0.35)
+    for grupo, s_ in (('pasoA', 0.0), ('pasoB', 0.12)):
+        for k in range(13):
+            a = k / 13 * TAU + s_
+            o = clay.blob(b.nom(), (0, 0, 0), (0.16, 0.035, 0.065), b.coll, petalo if k % 2 else petalo2, n=8, subsurf=1,
+                          shaper=lambda v: np.column_stack([v[:, 0], v[:, 1] - 0.03 * (v[:, 0] / 0.16) ** 2, v[:, 2] * (1 - 0.5 * np.clip(v[:, 0] / 0.16, 0, 1) ** 2)]))
+            o.rotation_euler = (0, -a, 0)
+            o.location = (math.cos(a) * 0.36, 0.08, 1.16 + math.sin(a) * 0.36)
+            b.add(o, grupo)
+    centro = fieltro('#6A4428', '#8A6040', fuzz=0.7, escala=150)
+    b.blob((0, 0.04, 1.16), (0.25, 0.09, 0.25), centro, cuerpo=True, n=12)
+    semilla = fieltro('#4A2E1A', '#6A4A30', fuzz=0.5)
+    for k in range(18):
+        a = k * 2.399
+        r = 0.21 * math.sqrt((k + 0.5) / 18)
+        x, z = math.cos(a) * r, 1.16 + math.sin(a) * r
+        if abs(x) < 0.17 and 1.02 < z < 1.27:
+            continue  # la carita sin semillas
+        p_, n_ = b.frente(x, z)
+        orientado(b, (0.018, 0.008, 0.018), semilla, p_, n_, 'base', lift=0.004)
+    ojos(b, 0, 1.2, 0.07, sep=0.1, bravo=True, mirar=(0, -0.12))
+    boca(b, 0, 1.08, 0.07, 'colmillos')
+    cachetes(b, 0, 1.12, 0.16, 0.035, color='#E8805A')
+    corona(b, (0, 0.06, 1.52), 0.14, 0.14)
+    for grupo, f_ in (('pasoA', 1), ('pasoB', -1)):
+        for s_ in (-1, 1):
+            b.tubo([(s_ * 0.18, 0.0, 0.08), (s_ * 0.22, -0.04 * f_ * s_, 0.03), (s_ * 0.24, -0.08 * f_ * s_, 0.0)], 0.06, barro, grupo, segmentos=6)
+            b.blob((s_ * 0.24, -0.1 * f_ * s_, 0.02), (0.08, 0.1, 0.04), barro, grupo, n=6)
+
+
+# ----------------------------------------------------------------------------------------------------- El Tobogán del desagüe
+def b_patito_hule(b):
+    """Patito de hule que bajó por el tobogán: amarillo, brillante y en manada."""
+    m = brillante('#F7D046', rough=0.22, coat=0.7, sss=0.1)
+    b.blob((0, 0.02, 0.22), (0.3, 0.24, 0.2), m, n=12, shaper=lambda v: np.column_stack([v[:, 0], v[:, 1], v[:, 2] + 0.35 * np.clip(-v[:, 0], 0, 1) ** 2]))
+    b.blob((0.06, -0.02, 0.5), (0.2, 0.18, 0.18), m, cuerpo=True, n=12)
+    b.blob((0.06, -0.21, 0.44), (0.09, 0.07, 0.035), brillante('#F29B38', rough=0.3, coat=0.5), 'boca', n=8)
+    b.blob((0.06, -0.21, 0.42), (0.09, 0.08, 0.06), brillante('#F29B38', rough=0.3, coat=0.5), 'bocaGolpe', n=8)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            o = clay.blob(b.nom(), (0, 0, 0), (0.12, 0.05, 0.08), b.coll, m, n=8, subsurf=1)
+            o.rotation_euler = (0, lado * (0.4 + 0.3 * s_), 0)
+            o.location = (lado * 0.27, 0.04, 0.26 + 0.04 * s_)
+            b.add(o, grupo)
+    ojos(b, 0.06, 0.56, 0.06, sep=0.08, mirar=(0, -0.1))
+    cachetes(b, 0.06, 0.48, 0.13, 0.035)
+
+
+def b_chancleta(b):
+    """Chancleta perdida en el tobogán: parada en el talón, quietica… y de pronto ¡se lanza de chancletazo!"""
+    suela = fieltro('#5AA6E0', '#9FD0F7', fuzz=0.3)
+    borde = fieltro('#FFFFFF', '#FFFFFF', fuzz=0.2)
+    tira = fieltro('#F27BA0', '#FFB8CC', fuzz=0.3)
+    forma = lambda v: np.column_stack([v[:, 0] * (0.82 + 0.3 * np.clip((v[:, 2] - 0.0) / 0.42, -1, 1) * 0.5), v[:, 1], v[:, 2]])
+    b.blob((0, 0.04, 0.46), (0.25, 0.07, 0.44), borde, n=12, shaper=forma)
+    b.blob((0, 0.0, 0.46), (0.23, 0.06, 0.42), suela, cuerpo=True, n=12, shaper=forma)
+    # La tira en Y (de la puntera a los lados) y su botoncito
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            b.tubo([(0.0, -0.08, 0.72), (lado * 0.1, -0.14, 0.62 + 0.02 * s_), (lado * 0.2, -0.07, 0.48)], 0.03, tira, grupo, segmentos=6)
+        b.blob((0.0, -0.09, 0.73), (0.04, 0.03, 0.04), tira, grupo, n=6)
+    ojos(b, 0, 0.42, 0.075, sep=0.1, bravo=True, mirar=(0, -0.1))
+    boca(b, 0, 0.27, 0.07, 'dientes')
+    cachetes(b, 0, 0.33, 0.15, 0.035)
+    # Gotitas de agua alrededor (en el paso salpica)
+    agua = clay.material('Gotas chancla', '#BFE6F7', rough=0.05, transmission=0.6, coat=1.0, coat_rough=0.03)
+    for (x, z, r) in [(-0.3, 0.12, 0.03), (0.32, 0.18, 0.025), (0.28, 0.05, 0.02)]:
+        b.blob((x, -0.05, z), (r, r, r * 1.3), agua, 'pasoB', n=6)
+
+
+def j_pato_inflable(b):
+    """El Pato Inflable Gigante: de piscina, brillante, con su válvula y su corona."""
+    m = brillante('#F7D046', rough=0.15, coat=0.9, sss=0.05)
+    b.blob((0, 0.04, 0.3), (0.5, 0.42, 0.3), m, n=14, shaper=lambda v: np.column_stack([v[:, 0], v[:, 1], v[:, 2] + 0.4 * np.clip(-v[:, 0], 0, 1) ** 2]))
+    # El hueco del flotador (por donde se mete uno)
+    b.blob((0.08, 0.06, 0.58), (0.24, 0.2, 0.04), fieltro('#3A6A8A', '#5A8AAA', fuzz=0.2), n=10)
+    b.tubo([(0.2, -0.06, 0.4), (0.18, -0.1, 0.65), (0.12, -0.12, 0.85)], [0.16, 0.14, 0.14], m, segmentos=12)
+    b.blob((0.1, -0.14, 0.95), (0.24, 0.22, 0.22), m, cuerpo=True, n=12)
+    b.blob((0.1, -0.36, 0.88), (0.13, 0.1, 0.05), brillante('#F29B38', rough=0.25, coat=0.6), 'boca', n=8)
+    b.blob((0.1, -0.36, 0.86), (0.13, 0.1, 0.09), brillante('#F29B38', rough=0.25, coat=0.6), 'bocaGolpe', n=8)
+    # Costuras del plástico y la válvula
+    for k in range(5):
+        a = math.pi * (0.1 + 0.8 * k / 4)
+        b.tubo([(math.cos(a) * 0.48, math.sin(a) * 0.4 + 0.04, 0.3), (math.cos(a) * 0.3, math.sin(a) * 0.25 + 0.04, 0.55)], 0.008, plano('#E0B030', 0.3), segmentos=4)
+    b.tubo([(-0.42, 0.1, 0.4), (-0.48, 0.12, 0.46)], 0.03, plano('#FFFFFF', 0.3), segmentos=6)
+    b.blob((-0.1, -0.35, 0.36), (0.1, 0.02, 0.06), BRILLO, n=6)
+    ojos(b, 0.1, 1.0, 0.075, sep=0.1, bravo=True, mirar=(0, -0.12))
+    cachetes(b, 0.1, 0.92, 0.16, 0.04)
+    corona(b, (0.1, -0.12, 1.12), 0.13, 0.13)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            b.blob((lado * 0.44, 0.0, 0.08 + 0.04 * s_ * lado), (0.12, 0.16, 0.04), brillante('#F29B38', rough=0.3, coat=0.5), grupo, n=8)
+
+
+def j_dona_flotador(b):
+    """La Dona Flotadora: un flotador rosado de dona con chispitas, que da vueltas y vueltas."""
+    m = brillante('#F59AB5', rough=0.18, coat=0.85, sss=0.05)
+    o = clay.lathe(b.nom(), [(0.18, 0.0), (0.3, -0.13), (0.45, -0.1), (0.52, 0.0), (0.45, 0.1), (0.3, 0.13), (0.18, 0.0)], b.coll, m, segments=36, subsurf=1,
+                   cap_bottom=False, cap_top=False)
+    o.rotation_euler = (math.pi / 2 - 0.35, 0, 0)
+    o.location = (0, 0, 0.55)
+    b.add(o)
+    b.cuerpo.append(o)
+    b._surf = None
+    glaseado = brillante('#FFFFFF', rough=0.3, coat=0.5)
+    colores = ['#7DB7E8', '#F7D046', '#7FCB5A', '#E86A8A', '#9C6BD6']
+    for k in range(22):
+        a = k * 2.399
+        r = 0.27 + 0.18 * ((k * 0.618) % 1)
+        x, z = math.cos(a) * r, 0.55 + math.sin(a) * r * 0.94
+        if abs(x) < 0.3 and z > 0.72:
+            continue  # la carita sin chispitas
+        p_, n_ = b.frente(x, z)
+        if p_ is None:
+            continue
+        o2 = clay.blob(b.nom(), (0, 0, 0), (0.035, 0.012, 0.012), b.coll, plano(colores[k % 5], 0.4), n=5, subsurf=1)
+        clay.orient_to(o2, tuple(n_))
+        o2.rotation_mode = 'XYZ'
+        o2.rotation_euler.rotate_axis('Z', a)
+        o2.location = Vector(p_ + n_ * 0.01)
+        b.add(o2)
+    ojos(b, 0, 0.95, 0.085, sep=0.14, bravo=True, mirar=(0, -0.12))
+    boca(b, 0, 0.82, 0.075, 'colmillos')
+    cachetes(b, 0, 0.86, 0.25, 0.04)
+    corona(b, (0, 0.05, 1.04), 0.14, 0.13)
+    for grupo, s_ in (('pasoA', 1), ('pasoB', -1)):
+        for lado in (-1, 1):
+            b.tubo([(lado * 0.4, -0.05, 0.25), (lado * 0.5, -0.08, 0.12 + 0.05 * s_ * lado), (lado * 0.48, -0.1, 0.0)], 0.05, m, grupo, segmentos=6)
+
+
+# ----------------------------------------------------------------------------------------------------- El Laberinto de la cortina
+def b_ratoncito(b, jefe=False):
+    """Ratoncito de la cortina: gris, orejón y loco por los quesitos de jabón."""
+    m = fieltro('#A9A4A8', '#D8D4D8', fuzz=0.6, escala=120)
+    rosa = fieltro('#F2A7B8', '#FFD0DA', fuzz=0.3)
+    b.blob((0, 0.06, 0.26), (0.32, 0.36, 0.26), m, n=12)
+    b.blob((0, -0.16, 0.42), (0.26, 0.24, 0.24), m, cuerpo=True, n=12)
+    b.blob((0, -0.36, 0.38), (0.07, 0.05, 0.06), rosa, n=8)
+    for s_ in (-1, 1):
+        b.blob((s_ * 0.24, -0.08, 0.66), (0.16, 0.04, 0.16), m, n=10)
+        b.blob((s_ * 0.24, -0.1, 0.66), (0.11, 0.02, 0.11), rosa, n=8)
+        for k in range(3):
+            b.tubo([(s_ * 0.1, -0.38, 0.38 - k * 0.025), (s_ * 0.3, -0.42, 0.4 - k * 0.05)], 0.005, plano('#3A3236', 0.4), segmentos=4)
+    for grupo, f_ in (('pasoA', 1), ('pasoB', -1)):
+        b.tubo([(0.0, 0.38, 0.14), (0.18 * f_, 0.6, 0.2), (0.3 * f_, 0.62, 0.42), (0.22 * f_, 0.6, 0.55)], 0.022, rosa, grupo, segmentos=6)
+        for s_ in (-1, 1):
+            b.blob((s_ * 0.2, -0.12 + 0.05 * f_ * s_, 0.04), (0.07, 0.09, 0.04), rosa, grupo, n=6)
+    ojos(b, 0, 0.5, 0.075, sep=0.1, bravo=jefe, mirar=(0, -0.12))
+    boca(b, 0, 0.33, 0.05, 'dientes')
+    cachetes(b, 0, 0.4, 0.17, 0.035)
+
+
+def j_rey_raton(b):
+    """El Rey Ratón: gordo, con capa, corona y un quesito de jabón mordido en la mano."""
+    b_ratoncito(b, jefe=True)
+    capa = fieltro('#7A3BA8', '#B98AD8', fuzz=0.5)
+    b.blob((0, 0.26, 0.3), (0.36, 0.08, 0.28), capa, n=10)
+    b.blob((0, -0.02, 0.5), (0.24, 0.12, 0.04), fieltro('#FFFFFF', '#FFFFFF', fuzz=0.8), n=8)
+    corona(b, (0, -0.12, 0.66), 0.13, 0.12)
+    queso = brillante('#F7D46A', rough=0.3, coat=0.5, sss=0.2)
+    b.blob((0.34, -0.2, 0.3), (0.1, 0.06, 0.08), queso, n=8)
+    for (x, z) in ((0.3, 0.32), (0.38, 0.28)):
+        b.blob((x, -0.26, z), (0.02, 0.01, 0.02), plano('#D8A830', 0.4), n=5)
+
 BICHOS = {
     'germen': b_germen, 'puntoNegro': b_punto_negro, 'gotaGrasa': b_gota_grasa, 'acaro': b_acaro, 'granito': b_granito, 'caspa': b_caspa,
     'bacteria': b_bacteria, 'pelusa': b_pelusa, 'virus': b_virus, 'barrito': b_barrito, 'lagana': b_lagana, 'mugre': b_mugre,
@@ -1196,10 +1712,23 @@ BICHOS = {
     'pompa': b_pompa, 'cuchilla': b_cuchilla, 'champuDerramado': b_champu_derramado, 'algodon': b_algodon, 'frascoVacio': b_frasco_vacio,
     'hilacha': b_hilacha, 'mohoRosado': b_moho_rosado,
     'donFrasco': j_don_frasco, 'reinaPompa': j_reina_pompa, 'senorCuchillas': j_senor_cuchillas, 'poteCrema': j_pote_crema,
+    # El Desagüe
+    'bolitaPelo': b_bolita_pelo, 'grasaSifon': b_grasa_sifon, 'gusanito': b_gusanito, 'burbujaGas': b_burbuja_gas, 'sapito': b_sapito,
+    'rejillita': b_rejillita, 'lodo': b_lodo,
+    'reySapo': j_rey_sapo, 'pulpoDesague': j_pulpo_desague, 'bocaSifon': j_boca_sifon, 'reinaGrasa': j_reina_grasa,
+    # La Matera de la ventana
+    'brotecito': b_brotecito, 'cactus': b_cactus, 'atrapamoscas': b_atrapamoscas, 'caracol': b_caracol, 'dienteLeon': b_diente_leon,
+    'enredadera': b_enredadera, 'helecho': b_helecho,
+    'donCactus': j_don_cactus, 'atrapamoscasGigante': j_atrapamoscas_gigante, 'materaGigante': j_matera_gigante,
+    # El Tobogán del desagüe
+    'patitoHule': b_patito_hule, 'chancleta': b_chancleta, 'patoInflable': j_pato_inflable, 'donaFlotador': j_dona_flotador,
+    # El Laberinto de la cortina
+    'ratoncito': b_ratoncito, 'reyRaton': j_rey_raton,
 }
 JEFES = {'espinillon', 'reinaCaspa', 'granMoco', 'senorLagana', 'barroNegro', 'senorSarro', 'donaCucaracha', 'motaPelo', 'tapon',
          'esponjaPodrida', 'peloDesague', 'duchaHelada', 'reyHongo', 'regaderaLoca', 'cortinaMohosa', 'ciempiesGigante',
-         'donFrasco', 'reinaPompa', 'senorCuchillas', 'poteCrema'}
+         'donFrasco', 'reinaPompa', 'senorCuchillas', 'poteCrema', 'reySapo', 'pulpoDesague', 'bocaSifon', 'reinaGrasa',
+         'donCactus', 'atrapamoscasGigante', 'materaGigante', 'patoInflable', 'donaFlotador', 'reyRaton'}
 
 CUADROS = [
     ('normal', {'base', 'abiertos', 'boca', 'pasoA'}),

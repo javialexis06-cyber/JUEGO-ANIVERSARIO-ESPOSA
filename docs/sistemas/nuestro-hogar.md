@@ -468,6 +468,65 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
   con su sombra y, al caer 2,6 s, empujan hacia afuera a los mugrosos, los frenan y les quitan vida (a los jefes solo
   los mojan). El atlas de bichos ahora se arma sumando los nuevos a los que ya tiene (`lavado-atlas.py +carpeta`), con
   los jefes en 160 px y alto múltiplo de 32 (2048 × 2112, 50 bichos). Tres logros más de La Ducha (66 en total).
+- **Versión 2, fase 3b: La Jabonera** (el quinto escenario, como la torre del original; se abre aguantando 15 minutos
+  en La Ducha). Es un **pasillo de arriba abajo** (`DefEscenario.limitesX`, que el motor respeta en todo: jugadores,
+  mugrosos, por dónde llegan, enjambres, anillos, el muro que baja de pared a pared, velitas, ruleta y el bot): la
+  repisa de plástico crema con canalitos y huequitos, y a los lados los barrotes cromados con la pared de baldosín
+  detrás (`FRAG_JABONERA`), con jabones, cremas, perfumes, ligas y máquinas de afeitar como utilería. Siete bichos
+  nuevos (pompita de jabón, cuchillita de afeitar, motica de algodón, champú derramado, hilacha de estropajo, frasco
+  vacío, moho rosado) y cuatro jefes (Don Frasco, la Reina Pompa, el Señor Cuchillas y el Pote de Crema, que abre su
+  Hiper). Lo especial: **los frascos que se caen** de la repisa (`Motor.moverFrascos`, efecto `frasco`): avisan 1,6 s
+  con una sombra roja, caen dando vueltas y revientan; a los mugrosos les pegan duro y a quien esté debajo también
+  (8 de daño, que sube con los minutos; al principio caen cada 9-12 s y después más seguido). Como en el celular
+  acostado se ve poco hacia arriba y hacia abajo, los mugrosos de ese pasillo llegan un poco más lejos y menos a la vez
+  (densidad 0,4). Tres logros más (69 en total); el atlas de bichos queda en 2048 × 2528 con 61.
+- **Versión 2, fase 3c: El Desagüe** (el escenario final, como la capilla del original; se abre aguantando 15
+  minutos en La Jabonera). El fondo del caño (`FRAG_DESAGUE`): placas de metal oscuro remachadas, las rejillas
+  redondas del desagüe con sus ranuras cada 640, charcos de lama verdosa y el agua que corre hacia las rejillas, con
+  la culebrita, peinillas, ligas y patos perdidos como utilería y velas flotantes como luces. Siete bichos (bolita de
+  pelos, gusanito, sapito, grasa del sifón, burbuja de gas, rejillita suelta, lodo del caño) y cuatro jefes (el Rey
+  Sapo, el Pulpo del Desagüe, la Boca del Sifón y la Reina Grasa, que abre su Hiper). Lo especial: **los remolinos**
+  (`Motor.moverRemolinos`, efecto `remolino`): cada 8-13 s se abre uno cerca de alguien durante 6,5 s; jala girando a
+  los mugrosos comunes hasta el centro y se los traga (cuentan como eliminados), pero también se traga las gotitas que
+  nadie recoja: hay que pararse en el borde y recoger rápido. A los jefes y a los jugadores no los jala (así no hay
+  que sincronizar empujones en línea). Tres logros más (72 en total).
+- **Versión 2, fase 3d: los dos primeros especiales** (duran 15 minutos, `DefEscenario.duracion`, y llevan el sello
+  «Especial · 15 min» en el menú). **El Desfile de jefes** (Boss Rash; se abre venciendo 40 jefes en total): sobre el
+  tapete del baño (`FRAG_TAPETE`, lila con franjas y flecos) desfilan 23 jefes de todos los escenarios, uno cada 40 s
+  desde el 0:30 (con 60 % de vida y 4 veces la experiencia: `vidaJefes` y `xpJefes`), pocos mugrosos, dos cartas mágicas en el piso (5:15 y 10:15) y la Reina Grasa con el Barro Negro
+  cerrando el desfile (vencerla abre su Hiper). **El Espejo empañado** (Whiteout; se abre aguantando 20 minutos en La
+  Ducha): el espejo con gotas y vaho (`FRAG_ESPEJO`) y un **velo de vapor** encima (`.lv-velo-vapor`, un div con
+  degradado, nada de filtros sobre el lienzo) que solo deja ver lo que está cerca; **lo caliente pega ×1,5**
+  (secador, vaporizador, sauna, plancha, piedras calientes, toallazo y sus evoluciones: `bonoCaliente` en
+  `disparos.ts`). Jefes: Gran Moco, Regadera Loca y Don Lagaña (el del Hiper). Al llegar a los 15 minutos llega la
+  Ducha Helada como en los otros. Cuatro logros más (76 en total): Coleccionista de jefes, Ducha larguita, Fin del
+  desfile y Espejo limpiecito.
+- **Versión 2, fase 3e: La Matera de la ventana** (Il Molise; especial de 15 minutos, se abre aguantando 20 minutos
+  en La Jabonera). La tierra negra de la matera de la ventanita de la ducha (`FRAG_MATERA`: granulada, a parches
+  seca o mojada, musgo, piedritas y los bordes de barro de las materas), con materas, regaderas y palitas de
+  utilería y farolitos de jardín como luces. Los bichos son **maticas que no caminan** (comportamientos nuevos
+  `planta` y `morder` en `enemigos.ts`): brotecito, cactus, enredadera y helecho se quedan quietos (hay que ir a
+  buscarlos: al caminar siguen saliendo adelante, repartidos en una franja ancha, `QUIETAS` en `motor.ts`) y la
+  **atrapamoscas** se estira y muerde si uno se le acerca; además caracoles lentos que persiguen y semillas de diente
+  de león que el viento cruza. Tres jefes en Blender: Don Cactus, la Atrapamoscas Gigante y la Matera Gigante (un
+  girasol bravo con corona encima de su matera, el del Hiper). En los dos últimos minutos **se abre la ventana y
+  llueve de todo**: oleadas de mugrosos de los otros escenarios cruzando en ondas. Tres logros más (79 en total).
+- **Versión 2, fase 3f: El Tobogán del desagüe** (Carlo Cart; especial de 15 minutos, se abre aguantando 20 minutos
+  en El Desagüe). Un tobogán de agua por dentro del caño (`FRAG_TOBOGAN`: plástico celeste con el agua corriendo,
+  carriles, paredes redondas y el caño oscuro afuera; carril de 600 de alto con `limites`). **La corriente lleva a
+  todos hacia adelante** (`DefEscenario.tobogan` = 110 por segundo; `Motor.corriente`): con el joystick uno se frena
+  hasta el 25 % o se apura al 160 %, pero no se para; el que se queda muy atrás del primero va más rápido y la
+  burbujita del caído también se va con el agua (para poder rescatarla). Las gotitas flotan y se van con el agua al
+  85 % (`ARRASTRE_TOBOGAN`) y el imán alcanza el doble. En el piso hay **turbos** (flechas naranjas cada 1150,
+  `turboEn`, el mismo cálculo en el sombreador y en el motor; cada celular revisa el suyo en `Motor.pasoCorriente`)
+  que dan 2,4 s al doble, con chorritos y sonido. Cada 1800 hay una **bandera** (raya de meta a cuadros con dos
+  banderas en Blender): al pasarla, las gotitas y los cofres que quedaron atrás se vienen con uno. Casi todos los
+  mugrosos salen adelante y persiguen (los que cruzan derecho se quedarían atrás); como no hay para dónde huir, pegan
+  al 65 % (`danoBichos`). Los jefes (con 55 % de vida y el doble de experiencia) salen **por detrás** y nadan casi a la
+  par de la corriente (90 %): si uno no frena, no lo alcanzan; si frena para pelear, llegan (`puntoJefe`). El bot
+  sabe de la corriente (escoge por hacia dónde termina moviéndose) y no se devuelve por las gotitas de atrás. Bichos
+  nuevos: patitos de hule (en manada) y chancletas perdidas (se lanzan); jefes nuevos: el Pato Inflable Gigante y la
+  Dona Flotadora (la del Hiper), más el Tapón. Tres logros más (82 en total).
 - **Cofres** con la tragamonedas de 1, 3 o 5 premios. En el piso: arepa con queso (vida), ola de agua fría
   (limpia la pantalla), hielo (congela), aspiradora (todas las gotitas), monedas y bolsas de gotas doradas,
   trébol, ají y velitas que se rompen.

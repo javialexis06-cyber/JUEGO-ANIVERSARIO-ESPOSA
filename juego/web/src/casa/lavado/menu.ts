@@ -273,7 +273,7 @@ export class Menu {
       const mejor = this.p.mejor[id];
       const logro = ESCENARIO_LOGRO[id] ? logroVisto(LOGRO[ESCENARIO_LOGRO[id]!]) : null;
       return `<button class="lv-escenario ${this.sel === id ? 'sel' : ''} ${abierto ? '' : 'bloq'}" data-sel="${id}">
-        <div class="vista ${id}"></div><b>${e.nombre}${this.p.ganados.includes(id) ? ' ✨' : ''}</b>
+        <div class="vista ${id}">${e.especial ? '<i class="especial">Especial · 15 min</i>' : ''}</div><b>${e.nombre}${this.p.ganados.includes(id) ? ' ✨' : ''}</b>
         <em>${abierto ? e.desc : `🔒 ${logro?.desc ?? e.desbloqueo}`}</em>
         <small>${mejor ? `Lo más que has aguantado: ${mmss(mejor)}` : abierto ? '¡Sin estrenar!' : ''}</small></button>`;
     }).join('');
@@ -291,7 +291,7 @@ export class Menu {
       desc = modoAbierto(this.p, d.id)
         ? `${d.emoji} ${d.desc}`
         : d.id === 'hiper'
-          ? `🔒 Vence al jefe del minuto 25 de ${ESCENARIOS[this.p.escenario].nombre} para abrir su modo Hiper.`
+          ? `🔒 Vence ${ESCENARIOS[this.p.escenario].especial ? 'al último jefe' : 'al jefe del minuto 25'} de ${ESCENARIOS[this.p.escenario].nombre} para abrir su modo Hiper.`
           : `🔒 Se abre con ${TESORO[t!].nombre}. ${TESORO[t!].pista}.`;
     }
     return `<div class="cuerpo" style="flex-direction:column"><div class="lv-lista anchos" style="flex:1">${lista}</div>

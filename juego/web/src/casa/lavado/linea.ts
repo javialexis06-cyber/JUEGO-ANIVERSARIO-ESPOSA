@@ -139,7 +139,7 @@ export function aplicarInventario(m: Motor, inv: InvJugador[]) {
 
 // ---------------------------------------------------------------------------------------------------- La foto
 const TIPOS_EF: TipoEfecto[] = ['golpe', 'muere', 'latigo', 'rayo', 'charco', 'limpiar', 'explosion', 'gema', 'moneda', 'curar', 'nivel', 'cofre', 'herido',
-  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces', 'escudo', 'cohete', 'chorro'];
+  'revive', 'cae', 'levanta', 'congela', 'jefe', 'aviso', 'romper', 'evolucion', 'columna', 'haz', 'fuego', 'tajo', 'lanza', 'luces', 'escudo', 'cohete', 'chorro', 'frasco', 'remolino'];
 const IDX_EF = new Map(TIPOS_EF.map((t, i) => [t, i]));
 const IDX_ARMA = new Map(ID_ARMAS.map((a, i) => [a, i]));
 const OBJETOS: IdObjeto[] = ['arepa', 'ola', 'hielo', 'aspiradora', 'moneda', 'bolsa', 'frasco', 'trebolito', 'aji', 'cofre', 'tesoro', 'trebolDorado', 'guante',

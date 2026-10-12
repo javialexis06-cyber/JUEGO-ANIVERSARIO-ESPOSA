@@ -173,6 +173,8 @@ for (const [p, i, k] of [[laura, idx.Laura, 'd'], [pipe, idx.Pipe, 'w'], [caro, 
   const yo0 = (await estado(p)).jug[i];
   await tecla(p, 'keydown', k);
   const camino = await esperarQue(async () => {
+    // (en el navegador de prueba, a la pestaña de atrás a veces no le llega la primera tecla: se vuelve a mandar)
+    await tecla(p, 'keydown', k);
     const yo = (await estado(p)).jug[i];
     return Math.hypot(yo.x - yo0.x, yo.y - yo0.y) > 90;
   }, 30000, 400);

@@ -862,6 +862,91 @@ def vela_jabonera(p):
 
 
 
+# ---------------------------------------------------------------------------------------------- La Matera de la ventana
+def maceta(p):
+    """Una matera chiquita de barro con su matica de hojas redondas."""
+    barro = M('#C8683E', rough=0.75, ruido=0.12)
+    p.torno([(0.0, 0.0), (0.13, 0.0), (0.17, 0.22), (0.2, 0.23), (0.2, 0.29), (0.16, 0.29), (0.15, 0.24), (0.0, 0.24)], barro)
+    p.torno([(0.0, 0.0), (0.155, 0.0), (0.155, 0.02), (0.0, 0.02)], M('#5A3E2A', 0.9, fuzz=0.5), z=0.25)
+    hoja = M('#62A84A', rough=0.6, fuzz=0.4, sss=0.1)
+    for k in range(5):
+        a = k / 5 * TAU
+        p.tubo([(0, 0, 0.26), (math.cos(a) * 0.06, math.sin(a) * 0.06, 0.38), (math.cos(a) * 0.1, math.sin(a) * 0.1, 0.44)], 0.012, M('#4E8A3A', 0.6), seg=5)
+        p.blob((math.cos(a) * 0.14, math.sin(a) * 0.14, 0.47), (0.08, 0.06, 0.03), hoja, n=8)
+    p.blob((0, 0, 0.5), (0.05, 0.05, 0.05), M('#F27BA0', 0.55, fuzz=0.3), n=8)
+    p.blob((0, -0.19, 0.14), (0.05, 0.01, 0.04), M('#F7D046', 0.5), n=6)
+
+
+def regadera(p):
+    """La regadera verde de la ventana, con su flor de huequitos."""
+    m = M('#5FB89A', rough=0.35, coat=0.5)
+    p.torno([(0.0, 0.0), (0.18, 0.0), (0.2, 0.04), (0.2, 0.3), (0.17, 0.33), (0.0, 0.33)], m)
+    p.tubo([(0.16, 0.0, 0.08), (0.3, 0.0, 0.22), (0.42, 0.0, 0.36)], [0.035, 0.03, 0.025], m, seg=8)
+    p.torno([(0.0, 0.0), (0.04, 0.0), (0.07, 0.05), (0.0, 0.05)], M('#4E9A80', 0.35, coat=0.5), x=0.43, z=0.36)
+    p.tubo([(-0.17, 0.0, 0.08), (-0.27, 0.0, 0.2), (-0.17, 0.0, 0.32)], 0.025, m, seg=8)
+    p.tubo([(-0.08, 0.0, 0.33), (0.0, 0.0, 0.45), (0.08, 0.0, 0.33)], 0.022, m, seg=8)
+    for (x, z) in ((-0.06, 0.18), (0.06, 0.12)):
+        p.blob((x, -0.2, z), (0.04, 0.01, 0.04), M('#FFFFFF', 0.5), n=6)
+    for k in range(3):
+        p.blob((0.5 + k * 0.03, 0.0, 0.32 - k * 0.07), (0.018, 0.018, 0.026), vidrio('#BFE3F7'), n=6)
+
+
+def palita(p):
+    """La palita de jardín: hoja plateada y mango de madera."""
+    p.blob((0.12, 0, 0.06), (0.16, 0.09, 0.02), plata(), n=10,
+           shaper=lambda v: np.column_stack([v[:, 0], v[:, 1] * (1 - 0.5 * np.clip(v[:, 0] / 0.16, 0, 1)), v[:, 2] + 0.25 * v[:, 1] ** 2 / 0.09]))
+    p.tubo([(-0.04, 0, 0.07), (-0.1, 0, 0.09)], 0.02, plata(), seg=6)
+    p.tubo([(-0.1, 0, 0.09), (-0.32, 0, 0.14)], 0.035, M('#C98A55', 0.6), seg=8)
+    p.blob((-0.34, 0, 0.145), (0.02, 0.02, 0.02), M('#E4574B', 0.5), n=6)
+
+
+def farolito(p):
+    """Farolito de jardín con su velita (las luces de La Matera: se rompen y sueltan premios)."""
+    marco = M('#3E5A4A', rough=0.4, metal=0.5)
+    p.torno([(0.0, 0.0), (0.16, 0.0), (0.16, 0.04), (0.0, 0.04)], marco)
+    for k in range(4):
+        a = k / 4 * TAU + TAU / 8
+        p.tubo([(math.cos(a) * 0.13, math.sin(a) * 0.13, 0.04), (math.cos(a) * 0.13, math.sin(a) * 0.13, 0.34)], 0.014, marco, seg=5)
+    p.torno([(0.0, 0.0), (0.12, 0.0), (0.12, 0.3), (0.0, 0.3)], vidrio('#FFF2C8'), z=0.04)
+    p.torno([(0.0, 0.0), (0.06, 0.0), (0.06, 0.1), (0.0, 0.1)], M('#FFF6E8', 0.55, sss=0.3), z=0.04)
+    fuego = M('#FFB347', rough=0.5, emision=8.0, ruido=0.0)
+    p.blob((0, 0, 0.2), (0.03, 0.03, 0.06), fuego, n=8, shaper=lambda x: x * (1 - 0.6 * np.clip(x[:, 2:3], 0, 1)))
+    p.torno([(0.0, 0.0), (0.19, 0.0), (0.0, 0.12)], marco, z=0.34)
+    p.tubo([(0, 0, 0.46), (0.0, 0.0, 0.52), (0.05, 0, 0.56), (0.0, 0, 0.6), (-0.05, 0, 0.56), (0.0, 0.0, 0.52)], 0.012, marco, seg=5)
+    hoja = M('#62A84A', rough=0.6, fuzz=0.4)
+    for (x, y, r) in ((0.16, -0.08, 0.06), (-0.15, -0.1, 0.05), (0.05, -0.17, 0.045)):
+        p.blob((x, y, 0.02), (r, r * 0.7, 0.015), hoja, n=6)
+
+
+def bandera(p):
+    """La bandera a cuadros del tobogán (al pasarla, recoge las gotitas que quedaron atrás)."""
+    palo = M('#E8E4DC', rough=0.35, metal=0.4)
+    p.tubo([(0, 0, 0.0), (0, 0, 0.75)], 0.02, palo, seg=8)
+    p.blob((0, 0, 0.77), (0.035, 0.035, 0.035), oro(), n=8)
+    p.torno([(0.0, 0.0), (0.09, 0.0), (0.09, 0.03), (0.0, 0.03)], M('#3E5A7A', 0.5))
+    blanco, negro = M('#FFFFFF', 0.6, fuzz=0.3), M('#2A2226', 0.6, fuzz=0.3)
+    for i in range(4):
+        for k in range(3):
+            x0 = 0.02 + i * 0.09
+            z0 = 0.46 + k * 0.09
+            ond = 0.025 * math.sin(i * 1.3)
+            p.caja((x0 + 0.045, ond, z0 + 0.045 - i * 0.008), (0.045, 0.008, 0.045), blanco if (i + k) % 2 else negro, p=6.0)
+
+
+def quesito(p):
+    """Quesito de jabón (El Laberinto de la cortina): una cuña amarilla con huequitos y burbujas."""
+    m = M('#F7D46A', rough=0.35, coat=0.4, sss=0.25)
+    # La cuña: un prisma triangular redondeado
+    for k in range(6):
+        t = k / 5
+        p.blob((-0.2 + t * 0.4, 0.0, 0.12), (0.06 + 0.16 * (1 - t), 0.2 * (1 - 0.45 * t), 0.12), m, n=8, p=3.0)
+    hueco = M('#D8A830', rough=0.5)
+    for (x, y, z, r) in ((-0.12, -0.2, 0.14, 0.035), (0.0, -0.17, 0.08, 0.025), (-0.05, -0.2, 0.2, 0.02), (0.1, -0.12, 0.15, 0.02)):
+        p.blob((x, y, z), (r, r * 0.4, r), hueco, n=6)
+    for (x, z, r) in ((0.08, 0.32, 0.04), (-0.06, 0.38, 0.03), (0.15, 0.42, 0.022)):
+        burbuja(p, (x, -0.05, z), r)
+
+
 # ----------------------------------------------------------------------------------------------------- Accesorios (disfraces)
 def turbante(p):
     m = tela('#F7C6D2', '#FFE4EC')
@@ -2259,6 +2344,9 @@ ICONOS = {
     'gemaAzul': lambda p: gema(p, '#5AB4F0'), 'gemaVerde': lambda p: gema(p, '#5DCB7A'), 'gemaRoja': lambda p: gema(p, '#F0566B'),
     'gemaGrande': lambda p: gema(p, '#FF3D6A', 0.24),
     'velita': velita, 'vasoCepillos': vaso_cepillos, 'velaFlotante': vela_flotante, 'velaJabonera': vela_jabonera,
+    'maceta': maceta, 'regadera': regadera, 'palita': palita, 'farolito': farolito,
+    'bandera': bandera,
+    'quesito': quesito,
 }
 
 ACCESORIOS = {

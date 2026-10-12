@@ -66,6 +66,7 @@ function calcular(j: Jugador, a: ArmaJ) {
       E.dur = b.dur;
       break;
   }
+  if (bonoCaliente > 1 && CALIENTES.has(a.id)) E.dano *= bonoCaliente;
   // Lo que le ha subido «Sin límite»
   const l = a.lim;
   if (l) {
@@ -239,7 +240,12 @@ function rectangulo(m: Motor, j: Jugador, slot: number, cx: number, cy: number, 
 }
 
 // ---------------------------------------------------------------------------------------------------- Disparar
+/** En El Espejo empañado lo caliente pega más (se pone al empezar cada cuadro de armas). */
+let bonoCaliente = 1;
+const CALIENTES = new Set<IdArma>(['secador', 'secadorInfernal', 'vaporizador', 'sauna', 'plancha', 'planchaDiva', 'piedrasCalientes', 'toallazo']);
+
 export function actualizarArmas(m: Motor, j: Jugador, dt: number) {
+  bonoCaliente = m.esc.calientes ? 1.5 : 1;
   const moviendo = Math.hypot(j.vx, j.vy) > 20;
   let ritmo = 1;
   if (j.tieneCarta('viajeLargo') && moviendo) ritmo *= 1.3;

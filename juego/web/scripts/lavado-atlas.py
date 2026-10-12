@@ -16,7 +16,9 @@ from PIL import Image, ImageDraw
 
 CUADROS = ['normal', 'paso', 'parpadeo', 'golpe']
 JEFES = {'espinillon', 'reinaCaspa', 'granMoco', 'senorLagana', 'barroNegro', 'senorSarro', 'donaCucaracha', 'motaPelo', 'tapon',
-         'esponjaPodrida', 'peloDesague', 'duchaHelada', 'reyHongo', 'regaderaLoca', 'cortinaMohosa', 'ciempiesGigante'}
+         'esponjaPodrida', 'peloDesague', 'duchaHelada', 'reyHongo', 'regaderaLoca', 'cortinaMohosa', 'ciempiesGigante',
+         'donFrasco', 'reinaPompa', 'senorCuchillas', 'poteCrema', 'reySapo', 'pulpoDesague', 'bocaSifon', 'reinaGrasa',
+         'donCactus', 'atrapamoscasGigante', 'materaGigante', 'patoInflable', 'donaFlotador'}
 SALIDA = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public', 'lavado')
 
 
