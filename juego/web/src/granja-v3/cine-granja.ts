@@ -71,14 +71,15 @@ export interface MediosCine {
  * pistas propias (public/musica/pareja/lista.json, Eleven Music) o, si todavía no existen, las de la granja. */
 export async function cargarMediosCine(musicaGranja: Record<string, string>): Promise<MediosCine> {
   const leer = async <T>(url: string, vacio: T): Promise<T> => { try { const r = await fetch(url); return r.ok ? (await r.json()) as T : vacio; } catch { return vacio; } };
-  const [cine, pistas] = await Promise.all([
+  const [cine, pistas, neutras] = await Promise.all([
     leer<{ voces?: Record<string, { archivo: string; seg: number; huella?: string }> }>('./granja/cine/medios.json', {}),
     leer<Record<string, [string, number]>>('./musica/pareja/lista.json', {}),
+    leer<Record<string, [string, number]>>('./musica/lista.json', {}),
   ]);
   return {
     voz: (id) => { const v = cine.voces?.[id]; return v && Number.isFinite(v.seg) ? { url: v.archivo, seg: v.seg } : null; },
     // «cine-prologo-cosmos|M12»: la primera que exista
-    musica: (ids) => { for (const id of ids.split('|')) { if (pistas[id]) return `./musica/pareja/${pistas[id][0]}`; if (musicaGranja[id]) return musicaGranja[id]; } return null; },
+    musica: (ids) => { for (const id of ids.split('|')) { if (pistas[id]) return `./musica/pareja/${pistas[id][0]}`; if (neutras[id]) return `./musica/${neutras[id][0]}`; if (musicaGranja[id]) return musicaGranja[id]; } return null; },
   };
 }
 

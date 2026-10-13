@@ -344,7 +344,7 @@ function altarLara(): Escenario {
 export const SC0: Guion = (() => {
   const [n1, c1, ng1, c2, ng2, n2, e1, l1, s1] = LINEAS_SC0;
   const tomas: Toma[] = [
-    { ...toma('sc0_abre', 'castillo', 7, plano([0, 6, 18], [0, 4, -40], 40), plano([0, 2.4, 8], [0, 1.2, -2], 38), { entra: { color: '#000', dur: 3 }, bloom: 0.8 }), linea: n1 },
+    { ...toma('sc0_abre', 'castillo', 7, plano([0, 6, 18], [0, 4, -40], 40), plano([0, 2.4, 8], [0, 1.2, -2], 38), { musica: 'sangre-noche', entra: { color: '#000', dur: 3 }, bloom: 0.8 }), linea: n1 },
     { ...toma('sc0_c1', 'castillo', 4, plano([2.9, 1.5, 2.2], [0, 0.85, -1.6], 30), plano([2.5, 1.4, 1.6], [0, 0.85, -1.6], 30)), linea: c1, bloom: 0.7 },
     { ...toma('sc0_trato', 'castillo', 6, plano([-3.4, 2.0, -4.8], [0, 0.9, -1.6], 36), plano([-3.0, 1.7, -4.2], [0, 0.9, -1.6], 34)), linea: ng1, bloom: 0.9 },
     { ...toma('sc0_c2', 'castillo', 3, plano([-2.2, 1.35, 1.6], [0, 0.85, -1.6], 30)), linea: c2, bloom: 0.7 },
@@ -552,7 +552,7 @@ export const SC1: Guion = (() => {
   const [n1, s1, n2, s2, l1, s3, e1, s4, l2, e2, s5, n3] = LINEAS_SC1;
   const puestos: Record<string, Puesto> = { el: { x: -2.2, z: 2.2 }, ella: { x: -0.6, z: 3.0 }, canalizadora_lara: { x: 0.0, z: 0.3 } };
   const tomas: Toma[] = [
-    { ...toma('sc1_abre', 'cementerio', 7, plano([8, 4, 12], [0, 0.5, -3], 40), plano([2.4, 1.6, 4.8], [0, 0.2, -3], 36), { entra: { color: '#000', dur: 2.5 }, bloom: 0.8 }), linea: n1 },
+    { ...toma('sc1_abre', 'cementerio', 7, plano([8, 4, 12], [0, 0.5, -3], 40), plano([2.4, 1.6, 4.8], [0, 0.2, -3], 36), { musica: 'sangre-noche', entra: { color: '#000', dur: 2.5 }, bloom: 0.8 }), linea: n1 },
     { ...toma('sc1_ven', 'cementerio', 3, plano([3.4, 1.6, 3.2], [0.4, 1.0, -0.2], 32)), linea: s1, bloom: 0.8 },
     { ...toma('sc1_mano', 'cementerio', 5, plano([-2.4, 1.5, 1.6], [0.6, 1.0, -0.4], 32), plano([-2.0, 1.4, 1.2], [0.6, 0.95, -0.4], 30)), linea: n2, bloom: 1 },
     ...tomasDialogo([s2, l1, s3, e1, s4, l2, e2, s5], { escena: 'cementerio', puestos, centro: [-0.8, 1.6], semilla: 51, prefijo: 'SC1', bloom: 0.8, obstaculos: [[-6, -8, 2], [5, -6, 1], [-3.6, -5.5, 1.2], [-3, 2, 0.4], [3.4, -1, 0.4], [-5, -3, 0.4]], audiencia: [0.1, 1] }),
