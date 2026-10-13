@@ -47,7 +47,16 @@ function figura(tipo:TipoMonstruo):FiguraMonstruo {
  }
  const aviso=new THREE.Mesh(new THREE.CircleGeometry(MONSTRUOS[tipo].alcance+.15,32),new THREE.MeshBasicMaterial({color:'#f2b669',transparent:true,opacity:.18,depthWrite:false,side:THREE.DoubleSide}));aviso.rotation.x=-Math.PI/2;aviso.position.y=.027;aviso.visible=false;grupo.add(aviso);
  const barra=new THREE.Group();barra.position.set(0,1.8,0);caja(barra,[.9,.07,.04],[0,0,0],'#423a53');const relleno=caja(barra,[.85,.05,.05],[0,.005,.003],'#c5df8f');grupo.add(barra);barra.visible=false;
- return {grupo,cuerpo,miembros,aviso,barra,relleno,fase:0};
+ const f:FiguraMonstruo={grupo,cuerpo,miembros,aviso,barra,relleno,fase:0};
+ // Con granja_monstruos.glb (personajes/blender/granja_monstruos.py): el bicho de plastilina con su cara; las patas,
+ // brazos y alas vienen en vacíos «miembro_<k>» que se siguen meciendo (mientras carga, lo de arriba)
+ conKit(grupo,'granja_monstruos.glb',m=>{
+  const base=m.get('mon_'+tipo);if(!base||grupo.userData.arteJefe)return;const nuevo=base.clone(true),patas:THREE.Object3D[]=[];
+  nuevo.traverse(o=>{if(/^miembro_\d+$/.test(o.name))patas.push(o);});patas.sort((x,y)=>Number(x.name.slice(8))-Number(y.name.slice(8)));
+  for(const hijo of [...cuerpo.children])liberar(hijo);cuerpo.add(nuevo);f.miembros=patas;
+  const a=grupo.userData.aventura as ObjetivoAventura|undefined;if(a)objetivo(grupo,a.tipo,a.id);
+ });
+ return f;
 }
 function rocaNodo(n:NodoAventura){
  // Roca grande y redondita con la veta a la vista: trozos de metal o cristales del color del mineral
@@ -174,7 +183,7 @@ export class EscenaAventura {
   for(const s of i.situaciones){const g=this.situaciones.get(s.id);if(g)g.visible=!s.resuelta&&visible(s);}
  }
  frame(dt:number,e?:EstadoAventura){this.update(dt,e??this.estado);}
- private arteJefe(f:FiguraMonstruo,m:MonstruoAventura){const d=mediosJefe['jefe:'+m.tipo],cargar=cargarJefe;if(!d||!cargar)return;void cargar(d.archivo.replace(/^\.\/modelos\//,'')).then(({escena,clips})=>{if(!f.grupo.parent||this.monstruos.get(m.id)!==f)return;const g=clone(escena);g.scale.setScalar(d.escala??1);g.traverse(o=>{const mesh=o as THREE.Mesh;if(!mesh.isMesh)return;mesh.geometry.userData.compartido=true;for(const mat of Array.isArray(mesh.material)?mesh.material:[mesh.material])mat.userData.compartido=true;});for(const hijo of [...f.cuerpo.children])liberar(hijo);f.miembros=[];f.cuerpo.add(g);objetivo(g,'monstruo',m.id);if(clips.length){const mixer=new THREE.AnimationMixer(g);f.grupo.userData.mixerJefe=mixer;f.grupo.userData.clipsJefe=clips;mixer.clipAction(clips.find(c=>c.name==='reposo')??clips[0]).play();}}).catch(()=>{});}
+ private arteJefe(f:FiguraMonstruo,m:MonstruoAventura){const d=mediosJefe['jefe:'+m.tipo],cargar=cargarJefe;if(!d||!cargar)return;void cargar(d.archivo.replace(/^\.\/modelos\//,'')).then(({escena,clips})=>{if(!f.grupo.parent||this.monstruos.get(m.id)!==f)return;f.grupo.userData.arteJefe=true;const g=clone(escena);g.scale.setScalar(d.escala??1);g.traverse(o=>{const mesh=o as THREE.Mesh;if(!mesh.isMesh)return;mesh.geometry.userData.compartido=true;for(const mat of Array.isArray(mesh.material)?mesh.material:[mesh.material])mat.userData.compartido=true;});for(const hijo of [...f.cuerpo.children])liberar(hijo);f.miembros=[];f.cuerpo.add(g);objetivo(g,'monstruo',m.id);if(clips.length){const mixer=new THREE.AnimationMixer(g);f.grupo.userData.mixerJefe=mixer;f.grupo.userData.clipsJefe=clips;mixer.clipAction(clips.find(c=>c.name==='reposo')??clips[0]).play();}}).catch(()=>{});}
  private animar(f:FiguraMonstruo,m:MonstruoAventura){
   const t=this.tiempo,moving=['patrulla','persecucion'].includes(m.fase),wind=m.fase==='anticipacion',attack=m.fase==='ataque';
   f.grupo.visible=m.vivo;f.grupo.position.set(m.x,0,m.z);f.cuerpo.rotation.y=Math.atan2(m.direccion.x,m.direccion.z);

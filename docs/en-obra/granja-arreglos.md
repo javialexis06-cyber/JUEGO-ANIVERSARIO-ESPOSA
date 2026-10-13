@@ -528,6 +528,11 @@ Dónde está:
   hechas a mano por las del kit y les pone los materiales de la calidad (los nombres `h metal`, `h filo`, `h mango`,
   `h agarre`, `h adorno` del kit se reemplazan por los de `tono(nivel)`); `avatar.ts` hace lo mismo con el cubo de
   ordeño, las tijeras y la bolsa de semillas (pasto incluido). Mientras carga el kit se ve la versión de antes.
+- **Monstruos de las aventuras en Blender** **hecho** (13 de octubre): `granja_monstruos.glb`
+  (`personajes/blender/granja_monstruos.py`, 11 piezas `mon_<tipo>`: gelatina, escarabajo, murciélago, guardián, ascua,
+  velo nocturno, centinela y los cuatro constructos). `escenas-aventura.ts figura` cambia el cuerpo por el del kit y
+  toma las patas, brazos y alas de los vacíos `miembro_<k>` (se siguen meciendo). Si el jefe tiene su arte propio,
+  ese gana (`userData.arteJefe`). Los reguladores y las formas sin pieza siguen con la figura de antes.
 
 ## Datos útiles
 
