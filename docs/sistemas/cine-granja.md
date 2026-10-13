@@ -146,3 +146,12 @@ llegar a un lugar nuevo (`vigilarLugar` en `main.ts`) y se recuerdan en el telé
 
 `archivo(cast)` y `cuarto(m, ancho, fondo)` (en `cine-acto1.ts`) arman cuartos de cualquier tamaño con cualquier reparto.
 En interiores la cámara de los diálogos va más alta (mira por encima de las cabezas) y el narrador habla desde una esquina.
+
+## Las películas de los Actos IV y V (13 de octubre de 2026)
+
+`src/granja-v3/cine-acto4.ts`: C13 (la estación sobre Celia, con el planeta en el cielo y las cuatro lecturas), C14
+(Confluencia: cuatro pilares de los elementos que se cierran uno a uno y Vael'Thor en proyección), C07 (el tratado
+en la plaza del Pueblo del Sol; los representantes de los otros mundos con un halo de comunicación; Celia aparece en
+la mesa), C08 (el ceramista: la vasija abierta y dos recuerdos en papel), C09 (el Borde de Astra: el escudo, la
+constelación y Nath'Gora como una sombra enorme que se aleja) y C10 (los dos surcos de C01, ya sanos, con
+`granja(false, { reparto })`). Las 14 cinemáticas de la campaña ya son película y se ven al tocar «Ver».

@@ -80,7 +80,9 @@ export function agua(ancho: number, largo: number, color = '#3f8fb0') {
 
 /** La parcela de la granja: dos surcos frente a la cabaña, el pozo, la cerca y el monte. Con `canal`, un canal de agua
  * al lado y la entrada de Fuatia (brasa, agua que sube, polvo de tierra y viento que lo junta todo). */
-function granja(conCanal: boolean): Escenario {
+/** Para C10: los dos surcos sanos y otro reparto ([id, quién lo actúa, x, z, mira x, mira z]). */
+export interface FinalGranja { reparto: [string, string, number, number, number, number][] }
+export function granja(conCanal: boolean, final?: FinalGranja): Escenario {
   const SURCOS: [number, number][] = [[-0.85, 0], [0.85, 0]];
   const CANAL_X = 2.9;
   let escarcha: THREE.Points, entrada: THREE.Group | null = null;
@@ -92,7 +94,9 @@ function granja(conCanal: boolean): Escenario {
         cargar('granja_monte.glb'), cargar('granja-v2/casita_pueblo.glb'), cargar('granja-v2/cerca.glb'), cargar('granja-v2/maleza_hierba.glb'),
         cargar('granja-v2/flores_pradera.glb'), cargar('granja-v2/arbusto_flores.glb'), cargar('granja-v2/parcela_seca.glb'),
         cargar('granja-v2/zanahoria_1.glb'), cargar('granja-v2/pozo.glb'), cargar('granja-v2/regadera.glb'),
-        conCanal
+        final
+          ? Promise.all(final.reparto.map(([, q]) => q === 'el' || q === 'ella' ? actorPareja(q) : actorVecino(q))).then((as) => Object.fromEntries(final.reparto.map(([id], i) => [id, as[i]])))
+          : conCanal
           ? Promise.all([actorPareja('el'), actorPareja('ella'), actorVecino('botanica'), actorDiosa('fuatia')]).then(([el, ella, botanica, fuatia]) => ({ el, ella, botanica, fuatia }))
           : Promise.all([actorPareja('el'), actorPareja('ella'), actorVecino('botanica'), actorVecino('canalizadora_aura')]).then(([el, ella, botanica, eliana]) => ({ el, ella, botanica, canalizadora_aura: eliana })),
       ]);
@@ -114,8 +118,8 @@ function granja(conCanal: boolean): Escenario {
       g.add(instanciar(cerca, tramos));
       // Los dos surcos: tierra arada y, en el de la izquierda, los brotes; el de la derecha, la semilla que no despierta
       for (const [x] of SURCOS) for (let k = 0; k < 3; k++) g.add(copia(parcela, x, -1.1 + k * 1.1, 0, 1));
-      for (let k = 0; k < 5; k++) g.add(copia(zanahoria, SURCOS[0][0] + (k % 2 ? 0.18 : -0.18), -1.4 + k * 0.7, r() * 6, 1.1));
-      escarcha = motasFlotantes(70, [SURCOS[1][0], 0.05, 0], 0.55, 0.5, [0.75, 0.88, 1], 1.8, 3);
+      for (const [sx] of final ? SURCOS : [SURCOS[0]]) for (let k = 0; k < 5; k++) g.add(copia(zanahoria, sx + (k % 2 ? 0.18 : -0.18), -1.4 + k * 0.7, r() * 6, 1.1));
+      escarcha = final ? motasFlotantes(120, [0, 0.4, 0], 6, 2.5, [1, 0.9, 0.6], 1.6, 3) : motasFlotantes(70, [SURCOS[1][0], 0.05, 0], 0.55, 0.5, [0.75, 0.88, 1], 1.8, 3);
       g.add(escarcha);
       if (conCanal) {
         efectos.canal = agua(1.5, 26);
@@ -139,7 +143,8 @@ function granja(conCanal: boolean): Escenario {
         g.add(entrada);
       }
       const reparto2 = reparto as Reparto;
-      if (conCanal) {
+      if (final) for (const [id, , x, z, mx, mz] of final.reparto) colocar(reparto2[id], x, z, mx, mz);
+      else if (conCanal) {
         colocar(reparto2.el, -0.5, -0.6, 2.7, 0.4);
         colocar(reparto2.ella, -0.9, 0.9, 2.7, 0.4);
         colocar(reparto2.botanica, -0.1, 2.3, 2.7, 0.4);

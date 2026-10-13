@@ -433,6 +433,7 @@ lunas) y Confluencia (los cuatro elementos girando).
   cerrar su historia.
 - **Fase D (Acto II) animada**: SC2, T03, SC3, C04 (con el Lazo; la misma en la granja y en Sangre), C05 y SC4.
 - **Fase E (Acto III) animada**: S08 (papel animado), C12, Eneas, Ofelia, C06 y Serena.
+- **Fase F (Actos IV y V) animada**: C13, C14, C07, C08, C09 y C10. Las 14 cinemáticas ya son película.
 - Falta: las postales de los biomas dentro de Sangre y Ceniza.
 
 Cada escena: guion → voces → actores y escenario → animación con el motor del cine (`cine-granja.ts`) → pruebas en el
