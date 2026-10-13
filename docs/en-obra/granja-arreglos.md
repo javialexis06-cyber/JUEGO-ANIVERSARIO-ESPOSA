@@ -505,6 +505,14 @@ Dónde está:
   adornosRefugio`) ponen paja regada, farol, ventanas, costales, escoba y aseladero. Mientras carga el modelo se ve lo
   de siempre; todo queda fundido por material (pocas llamadas de dibujo).
 
+- **Invernadero por dentro en Blender** **hecho** (13 de octubre): `granja_invernadero.glb`
+  (`personajes/blender/granja_invernadero.py`). `huerto-render.ts interiorInvernadero` cambia las cajas por el piso de
+  baldosas de barro con el caminito de lajas y musgo, las dos camas de madera con postes y estaquitas, las paredes de
+  vidrio con murito de ladrillo y arcos de hierro, el termómetro, la puerta con letrero, faroles y tapete, y lo que le
+  da vida (estantes con materas y semillero, mesa de trasplantar, regadera, costales, manguera, carretilla, matas
+  colgadas y helechos). `riegoInvernadero` usa el tubo de cobre con aspersores y su llavecita roja. Todo fundido por
+  material.
+
 ## Datos útiles
 
 - El Pueblo del Sol está en las coordenadas del mundo:
