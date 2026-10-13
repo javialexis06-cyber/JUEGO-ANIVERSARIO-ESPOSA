@@ -202,7 +202,7 @@ def main():
     doors = sections(source('docs/sistemas/cien-puertas.md'))
     public_doors = '\n'.join(c for t, c in doors if not t.startswith(('La historia', 'Los recuerdos (de verdad)', 'Investigación:')))
     doc('Cien-Puertas', 'docs/sistemas/cien-puertas.md', '**Estado: cien puertas funcionales documentadas; las revisiones y cambios pendientes se indican en el texto.** El Olvido oculta fragmentos del camino de regreso. Esta guía contiene los acertijos y soluciones documentadas; los recuerdos personales no se reproducen.', text=public_doors)
-    doc('El-Show-de-Nosotros', 'docs/show.md', '**Estado: desarrollo en rama separada `trabajo/show`; integración y revisión pendientes en la rama principal.** No se da por publicado en la APK.', revision=show)
+    doc('El-Show-de-Nosotros', 'docs/sistemas/show.md', '**Estado: juego existente (en la mesa, desde el 13 de octubre de 2026).**', revision=show)
 
     for page, title in [('Dados', 'Dados'), ('Mancala', 'Mancala'), ('Puntos-y-Cajas', 'Puntos y Cajas'), ('Parchis', 'Parchís')]:
         table = source('docs/sistemas/juegos-mesa.md')

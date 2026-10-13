@@ -150,7 +150,8 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
      - ~~Los bichos especiales~~ **hecho** (el ratón ladrón con su cofre, el Tapón que persigue y la Llave que gotea, que
        inunda el piso).
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
-5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
+5. ~~**El Show de Nosotros**~~ **hecho** (13 de octubre): juntado a la rama principal y probado (solo, los dos en un
+   celular y en línea); en la sala con código y en la app de amigos no sale. Diseño en `docs/sistemas/show.md`.
 6. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.
 
 Esperan a Javier (no se empiezan solos): lo que sigue abierto de la mitología (sección 2 de `docs/mitologia.md`), las
@@ -245,11 +246,8 @@ velocidad, se siente raro…»
 - **La casa y la mitología** (cuando exista la granja): el Altar del Lazo Primordial, el Álbum y las reliquias del
   multiverso para decorar, con lo que se gana en Sangre y Ceniza y en la granja (`docs/mitologia.md`, sección 5).
 
-- **El Show de Nosotros** (rama `trabajo/show`, sin juntar; `mesa.html?juego=show`): concurso de preguntas de pareja
-  con estudio 3D, presentador perrito, seis tipos de preguntas, pregunta del día en la nevera, el libro de nosotros y en
-  línea. El último commit (`ab7d01a`, «avance en obra») quedó sin revisar. Falta: revisarlo, correr `probar-show.mjs` y
-  `probar-show-linea.mjs`, mirar capturas del estudio (Javier y Laura en la tarima, el texto de las pantallas al
-  derecho), juntar y subir. Diseño en `docs/show.md` de esa rama.
+- ~~**El Show de Nosotros**~~ **hecho** (13 de octubre): juntado a la rama principal (`mesa.html?juego=show`), con sus
+  dos pruebas en verde y el estudio revisado en capturas. Diseño en `docs/sistemas/show.md`. Falta su música.
 - Tele compartida, tocador de Laura, escenas premium (en pausa) y diseños premium.
 - ~~Música de todos los minijuegos y efectos de las escenas~~ **hecho** (11 de octubre): 60 pistas (81 min) con
   Eleven Music, 5 canciones con letra (casa, Cien Puertas, súper, cohete, cocina), metal sin letra en Sangre y Ceniza

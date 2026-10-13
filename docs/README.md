@@ -36,7 +36,7 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | [`lavado-propuesta.md`](en-obra/lavado-propuesta.md) | Lavarse la cara 2: lo que le falta frente a Vampire Survivors (24 armas, cartas, modos, tesoros, mercader, escenarios, disfraces), para pulirla con Javier. |
 | [`escenas-premium.md`](en-obra/escenas-premium.md) | Escenas pagas: en pausa. |
 
-El Show de Nosotros está en la rama `trabajo/show` (con su `docs/show.md` allá).
+El Show de Nosotros: [`sistemas/show.md`](sistemas/show.md) (en la mesa, `mesa.html?juego=show`).
 
 ## `referencias/` · wikis de otros juegos (solo para consultar)
 

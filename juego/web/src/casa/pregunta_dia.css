@@ -1,0 +1,76 @@
+/* La pregunta del día: una tarjetica de papel con su sobre, en la nevera de la casa y en la cabina del show. */
+.dia { display: grid; gap: 8px; color: #3d2b27; font: 700 14px/1.35 var(--texto, 'Nunito', sans-serif); }
+.dia-cargando { margin: 8px 0; font: 600 14px/1.3 var(--display, 'Fredoka', sans-serif); color: #7a625a; }
+.dia-cabeza { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.dia-cabeza span { padding: 2px 9px; border-radius: 999px; background: var(--cat, #f6cf5a); font: 700 12px/1.4 var(--display, 'Fredoka', sans-serif); }
+.dia-cabeza small { font: 600 11.5px/1.2 var(--texto, 'Nunito', sans-serif); color: #7a625a; }
+.dia-texto { margin: 0; font: 600 18px/1.25 var(--display, 'Fredoka', sans-serif); text-wrap: balance; }
+.dia-paso { margin: 0; font: 600 13.5px/1.3 var(--display, 'Fredoka', sans-serif); color: #b8405f; }
+.dia-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.dia-op {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 10px 6px 6px;
+  border: 0;
+  border-radius: 14px;
+  background: #fff8ee;
+  color: #3d2b27;
+  text-align: left;
+  font: 600 14px/1.15 var(--display, 'Fredoka', sans-serif);
+  box-shadow: 0 3px 0 #e2c9b0, inset 0 0 0 2px #f0dfcc;
+  animation: dia-entra 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+.dia-op:nth-child(2) { animation-delay: 0.05s; }
+.dia-op:nth-child(3) { animation-delay: 0.1s; }
+.dia-op:nth-child(4) { animation-delay: 0.15s; }
+@keyframes dia-entra { from { transform: translateY(10px) scale(0.92); opacity: 0; } }
+.dia-op i { flex: none; width: 26px; height: 26px; border-radius: 8px; display: grid; place-content: center; background: #f4b6c2; font-style: normal; }
+.dia-op.elegida { background: #ffe58f; box-shadow: 0 3px 0 #d99a1a, 0 0 0 3px #fff; }
+.dia-termo { display: grid; gap: 6px; justify-items: center; }
+.dia-termo output { font: 700 36px/1 var(--display, 'Fredoka', sans-serif); color: #e4574b; }
+.dia-termo input { width: 100%; accent-color: #e4574b; }
+.dia-termo span { display: flex; justify-content: space-between; width: 100%; gap: 8px; color: #7a625a; }
+.dia-boton { justify-self: center; border: 0; border-radius: 14px; padding: 9px 16px; background: #e4574b; color: #fff8ee; font: 600 15px/1.1 var(--display, 'Fredoka', sans-serif); box-shadow: 0 3px 0 #b93d33; }
+.dia-pie { margin: 0; font: 600 12.5px/1.3 var(--texto, 'Nunito', sans-serif); color: #7a625a; }
+.dia-espera { display: grid; justify-items: center; gap: 2px; padding: 12px; border-radius: 16px; background: #f3efff; text-align: center; }
+.dia-espera i { font-size: 34px; font-style: normal; animation: dia-sobre 1.6s ease-in-out infinite; }
+@keyframes dia-sobre { 50% { transform: translateY(-5px) rotate(-6deg); } }
+.dia-espera b { font: 700 17px/1.2 var(--display, 'Fredoka', sans-serif); color: #6a59c8; }
+.dia-espera small { font-weight: 600; color: #6b5d8f; }
+.dia-revela { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.dia-bloque { padding: 8px 10px; border-radius: 14px; background: #fff; box-shadow: 0 2px 0 rgba(61, 43, 39, 0.12); }
+.dia-bloque[data-r='el'] { box-shadow: 0 2px 0 rgba(61, 43, 39, 0.12), inset 5px 0 0 #5b8fd6; }
+.dia-bloque[data-r='ella'] { box-shadow: 0 2px 0 rgba(61, 43, 39, 0.12), inset 5px 0 0 #e86a8a; }
+.dia-bloque > small { font: 700 11px/1 var(--display, 'Fredoka', sans-serif); color: #7a625a; text-transform: uppercase; letter-spacing: 0.06em; }
+.dia-bloque p { margin: 3px 0 0; font: 600 13px/1.3 var(--texto, 'Nunito', sans-serif); }
+.dia-bloque span { font-weight: 800; }
+.dia-bloque i { font-style: normal; padding: 0 5px; border-radius: 6px; color: #fff; font-weight: 800; }
+.dia-bloque .ok-si { background: #2f8f68; }
+.dia-bloque .ok-no { background: #e4574b; }
+.dia-bloque .ok-casi { background: #d99a1a; }
+.dia-revela.anima .dia-bloque { animation: dia-voltea 0.7s cubic-bezier(0.3, 1.3, 0.5, 1) both; }
+.dia-revela.anima .dia-bloque:nth-child(2) { animation-delay: 0.25s; }
+@keyframes dia-voltea { from { transform: perspective(500px) rotateY(90deg); opacity: 0; } }
+.dia-frase { margin: 0; text-align: center; font: 700 16px/1.2 var(--display, 'Fredoka', sans-serif); color: #b8405f; }
+.dia-premio { justify-self: center; margin: 0; padding: 3px 12px; border-radius: 999px; background: #f6cf5a; font: 700 13px/1.4 var(--display, 'Fredoka', sans-serif); animation: dia-entra 0.5s 0.6s both; }
+.dia-tarjeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff3c4, #ffd6e0);
+  color: #3d2b27;
+  text-align: left;
+  box-shadow: 0 3px 0 rgba(61, 43, 39, 0.18);
+}
+.dia-tarjeta-icono { font-size: 26px; }
+.dia-tarjeta b { display: block; font: 600 16px/1.1 var(--display, 'Fredoka', sans-serif); }
+.dia-tarjeta small { font: 600 12.5px/1.2 var(--texto, 'Nunito', sans-serif); color: #7a625a; }
+.dia-tarjeta.nueva .dia-tarjeta-icono { animation: dia-sobre 1.4s ease-in-out infinite; }
+@media (max-width: 420px) { .dia-ops, .dia-revela { grid-template-columns: 1fr; } }

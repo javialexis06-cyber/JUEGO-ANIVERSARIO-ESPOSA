@@ -28,6 +28,12 @@ const SUSTITUTOS: Record<string, string> = {
   'src/escenas/catalogo.ts': 'src/amigos/sin_pareja/escenas.ts',
   'src/escenas/cine.ts': 'src/amigos/sin_pareja/cine.ts',
   'src/reacciones/pareja.ts': 'src/amigos/sin_pareja/reacciones.ts',
+  // El Show de Nosotros es de la pareja (preguntas, libro y cabina): en amigos no abre nada
+  'src/mesa/show/show.ts': 'src/amigos/sin_pareja/show.ts',
+  // Las postales de los lugares cuentan la mitología de la pareja: en amigos no salen
+  'src/granja-v3/cine-lineas-lugares.ts': 'src/amigos/sin_pareja/lugares.ts',
+  'src/mesa/show/cabina.ts': 'src/amigos/sin_pareja/show.ts',
+  'src/mesa/show/libro.ts': 'src/amigos/sin_pareja/show.ts',
 };
 
 /**
