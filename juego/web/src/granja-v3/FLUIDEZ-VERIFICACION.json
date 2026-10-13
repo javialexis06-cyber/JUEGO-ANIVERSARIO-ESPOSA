@@ -98,9 +98,25 @@
       ],
       "escenarioPreparado": "Partida y posición preparados. Dibujo pausado y fotos de mapa apagadas después del arranque. Espera/picada por cuadros reales; seguimiento automatizado con entradas del sedal y pasos del motor, congelados para los controles y la prueba de guardado.",
       "dispositivosFisicos": []
+    },
+    "aventurasIntegradas": {
+      "checks": [
+        "La cámara de Forma Fija se abre desde su acceso físico de Confluencia",
+        "Reintentar desde la baliza reactiva el mecanismo y conserva su entrega única",
+        "El aviso comparte área con el motor y conserva su patrón al recargar",
+        "El regreso seguro conserva mochila y vuelve al territorio"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "dibujoWebGLPausado": true,
+      "alcance": "Acceso, reintento, telegráficas, recarga y regreso con campaña, posición y recursos preparados; no certifica combate humano ni GPU."
     }
   },
-  "totalNavegador": 38,
+  "totalNavegador": 42,
   "builds": {
     "pareja": "correcto",
     "amigos": "correcto; contenido privado de pareja excluido"
@@ -225,41 +241,41 @@
           "particulas": 0,
           "drawCalls": 0
         },
-        "drawCalls": 320,
-        "triangulos": 1097041
+        "drawCalls": 351,
+        "triangulos": 1108835
       },
       "seleccion": {
-        "medianaMs": 3.4,
+        "medianaMs": 3.5,
         "p95Ms": 9.4
       },
       "sincronizar": {
-        "medianaMs": 3,
-        "p95Ms": 4.1
+        "medianaMs": 3.1,
+        "p95Ms": 3.9
       },
       "cambios": [
         {
           "servicio": null,
-          "ms": 0.4
+          "ms": 0.2
         },
         {
           "servicio": "semillas",
-          "ms": 4.4
+          "ms": 3.9
         },
         {
           "servicio": null,
-          "ms": 9
+          "ms": 11.1
         },
         {
           "servicio": "semillas",
-          "ms": 0.1
+          "ms": 0.2
         },
         {
           "servicio": null,
-          "ms": 7.8
+          "ms": 9.1
         },
         {
           "servicio": "semillas",
-          "ms": 0.1
+          "ms": 0.2
         }
       ],
       "errores": []
@@ -268,7 +284,7 @@
   "fuentesSha256": {
     "granja-v3/main.ts": "1d529a55e7df8a3a1328f3c57ead2eeeaad84c0f1e9a5bed644d3aabccb35066",
     "granja-v3/vista.ts": "fc2208633d2d669ac3ab5725948b2c7260dde81a1523b81f03134b26336be658",
-    "granja-v3/avatar.ts": "2793ec9c017478cd224db26fd67257447582aa23a0dd642a42306454b7e99053",
+    "granja-v3/avatar.ts": "c40d00980ea178b6de26b4e269e0ddeacbe6a42e6561ebd8e8ac023958f42e40",
     "granja-v3/motor.ts": "0888af4dc0776ec5811a0f7b62961101efdb862e2f84ca55bb1c02d88aece6fa",
     "granja-v3/astra-render.ts": "d61e317bd60e1586d642a3bc98cbb28873c4dc0ae857c30febbb7df88ff91a3f",
     "granja-v3/accesos-fisicos.ts": "532d9ae0ed4282e992f1db83a24e44bc47cb6923a2d2b6f143204b4d8c651a86",
@@ -286,9 +302,14 @@
     "casa/escena_casa.ts": "f8a6011401a7bc4d9abbbf17f0a42837b04b7403ae8f8de46676933e66431e70"
   },
   "conservado": {
-    "revisionVisual": "73ebc3ca5ef96b1816bc298f6610bd8c6ee81fa3",
+    "revisionVisual": "dce94b067126bdc48a34889ae57a7afb33448bd1",
     "archivosIdenticos": [
       "juego/web/src/casa/lavado",
+      "juego/web/src/granja-v3/compania-render.ts",
+      "juego/web/src/granja-v3/envios-render.ts",
+      "juego/web/src/granja-v3/huerto-render.ts",
+      "juego/web/src/granja-v3/escenas-aventura.ts",
+      "juego/web/src/granja-v3/herramientas3d.ts",
       "juego/web/src/granja-v3/cine-actores.ts",
       "juego/web/src/granja-v3/cine-acto1.ts",
       "juego/web/src/granja-v3/cine-acto2.ts",

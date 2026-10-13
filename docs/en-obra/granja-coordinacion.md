@@ -1,3 +1,5 @@
+> Integrados también los modelos de `dce94b06`: herramientas, invernadero, envíos, monstruos y vetas. La selección conserva el camino con mouse junto al nuevo kit en la mano. Repetidos regresión, builds y recorridos sobre la combinación.
+
 > Integrados los Actos III, IV y V de Claude hasta `73ebc3ca`. Se mantienen sus películas, actores, música y voces; los cambios de rendimiento reutilizan esos recursos.
 
 ## Puertas, mostradores y fluidez · 12 de octubre de 2026
