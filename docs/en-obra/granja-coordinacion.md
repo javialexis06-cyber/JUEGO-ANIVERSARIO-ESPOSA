@@ -1,3 +1,5 @@
+> Integrados también `9bd7107f` (postales y películas en Sangre y Ceniza) y el plano frontal de Fuatia. La postal espera mientras hay un lance de pesca; no modifica las escenas ni sus recursos.
+
 ## Cercos y llamada de compañeros · 12 de octubre de 2026
 
 Se integró el remoto hasta `b13394e5`, conservando actores, películas, voces de diosas, mapas,

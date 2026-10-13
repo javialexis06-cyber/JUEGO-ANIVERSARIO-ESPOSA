@@ -147,7 +147,7 @@ const PELICULA_MISION:Record<string,string>={V_canalizadora_aura:'ELI',V_canaliz
 /** El prólogo en película (cine-prologo.ts). Si el teléfono no puede con ella, queda el prólogo escrito. */
 /** La presentación del lugar la primera vez que se llega (postal.ts): solo con el juego quieto y sin paneles. */
 let ultimoLugar='',enPostal=false;
-async function vigilarLugar(forzar=false){const s=motor.estado;if(enCine||enPostal||!ready)return;const lugar=regionActual(s);if(!forzar&&lugar===ultimoLugar)return;if(!ultimoLugar&&!forzar){ultimoLugar=lugar;return;}
+async function vigilarLugar(forzar=false){const s=motor.estado;if(enCine||enPostal||!ready||s.pesca?.actual)return;const lugar=regionActual(s);if(!forzar&&lugar===ultimoLugar)return;if(!ultimoLugar&&!forzar){ultimoLugar=lugar;return;}
  // Si hay un panel abierto o se está adentro de algo, se espera (se vuelve a intentar en el siguiente segundo)
  if(panel||jornadaModal||s.aventura.destinoActual||s.interior||s.servicio)return;ultimoLugar=lugar;const reg=regionAstra(lugar);
  const {planPostal,verPostal}=await import('./postal');const plan=planPostal(lugar,reg?.nombre??(lugar==='pueblo_sol'?'Pueblo del Sol':lugar),reg?.mundo,forzar);if(!plan)return;
