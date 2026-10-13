@@ -36,6 +36,9 @@ partida anterior. Las monedas, materiales y productos no se acreditan dos veces.
 - Tres fondos recientes del valle, incluyendo el activo; dos capas recientes de Astra. Reutilizar
   un exterior evita reconstruirlo cada vez que se sale de una vivienda o local. Las claves incluyen
   partida, zona, interior, nivel de mina, nivel de refugio, festival y exposición del museo.
+- El exterior guardado y el pueblo vecino se preparan en la pantalla de carga inicial; una
+  vivienda guardada de Astra prepara también su exterior. Los escenarios ocultos dejan de
+  animarse y se sacan de la escena activa sin destruir sus recursos.
 - La puerta o salida cercana del valle se prepara durante un turno libre del navegador. No se
   precargan todos los mundos ni se concede acceso a zonas bloqueadas. La precarga no expulsa el
   escenario activo. Los recursos compartidos de Claude conservan su propietario.
@@ -66,3 +69,18 @@ Mide costes de JavaScript y conteos de dibujo, con dibujo continuo y fotos pausa
 benchmark. No acredita FPS, consumo, batería ni ausencia de tirones en un PC o teléfono físico.
 La primera visita todavía carga recursos y puede compilar shaders; la caché tiene límites deliberados.
 El recorrido general aparte conserva WebGL y fotos activos. La evidencia final se añade tras las pruebas.
+
+## Verificación de entrega
+
+47 suites sin fallos; 14 casos nuevos de puertas, permisos, anexo, cachés e instancias.
+Ambos builds pasan, incluida la exclusión del contenido privado en la edición de amigos.
+Navegador: diez comprobaciones de puertas, mostradores y mapas; seis del recorrido con WebGL
+y fotos; once de cercos y once de pesca, 38 en total. Se inspeccionaron las capturas.
+
+En la misma partida y perfil ligero, los retornos al pueblo bajan de 2.431–2.847 ms a
+7,8–9 ms. La selección en el motor baja de 1,624 a 0,149 ms de mediana; el flujo de selección
+completo, de 8,5 a 3,4 ms. El dibujo pasa de 408 a 320 llamadas, con aproximadamente un 6 %
+más de triángulos por agrupación. La sincronización forzada mide 3 ms frente a 1,8 ms;
+la selección evita ese trabajo. Son mediciones del contenedor, no FPS físicos.
+
+Evidencia y límites: [FLUIDEZ-VERIFICACION.json](FLUIDEZ-VERIFICACION.json).

@@ -72,6 +72,7 @@ export class EscenaAstra {
   }
   this.update(0);
  }
+ prepararVecindario(s:EstadoGranja){if(!s.astra?.actual||!s.astra.interior)return;const fuera={...s,astra:{...s.astra,interior:null}};this.sync(fuera);this.sync(s);}
  actorHabla(id:string|null){this.grupo.traverse(g=>{
   // El peluche provisional habla con las manos y la boca (vecinos3d); el arte propio, con su clip «hablar»
   if(g.userData.peluche&&g.userData.npcId&&!g.userData.mixer){g.userData.hablando=g.userData.npcId===id;return;}

@@ -1,3 +1,5 @@
+> Integrados los Actos III, IV y V de Claude hasta `73ebc3ca`. Se mantienen sus películas, actores, música y voces; los cambios de rendimiento reutilizan esos recursos.
+
 ## Puertas, mostradores y fluidez · 12 de octubre de 2026
 
 Javier solicitó continuar el motor y optimizar interacciones, entrada y salida física, compras desde
