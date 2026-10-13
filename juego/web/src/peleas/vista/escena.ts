@@ -229,7 +229,7 @@ export class EscenaPelea {
     const s = this.sacudida * this.sacudida * 0.25;
     const sx = (Math.sin(this.t * 61) + Math.sin(this.t * 37)) * s;
     const sy = (Math.sin(this.t * 53) + Math.sin(this.t * 29)) * s;
-    this.camara.position.set(this.foco.x + sx, this.foco.y + 0.85 + this.dist * 0.07 + sy, this.dist);
+    this.camara.position.set(this.foco.x + sx, this.foco.y + 0.3 + this.dist * 0.05 + sy, this.dist);
     this.camara.lookAt(this.foco.x + sx * 0.5, this.foco.y + sy * 0.5, 0);
     this.cielo.position.copy(this.camara.position);
     // El sol (y sus sombras) siguen a la pelea

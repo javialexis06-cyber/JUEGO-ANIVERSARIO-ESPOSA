@@ -1,0 +1,10 @@
+{
+ "presentador": { "voz": "QpDQJR3frbDwOhTIo8nW", "nombre": "El Faraon - Energetic Commentator", "motivo": "comentarista colombiano con energía de estadio" },
+ "eliana": { "voz": "CaJslL1xziwefCeTNzHv", "nombre": "Cristina Campos", "motivo": "la misma Eliana de la granja (canalizadora_aura)" },
+ "serena": { "voz": "kcQkGnn0HAT2JRDQ4Ljp", "nombre": "Norah", "motivo": "la misma Serena de la granja (canalizadora_lara)" },
+ "tarek": { "voz": "W1hAcdh0RNsPYUA7fkJh", "nombre": "El Faraon - Deep, Powerful and Peaceful", "motivo": "el mismo Tarek de Brasaviva" },
+ "otto": { "voz": "w7IU2bIH6xHcyfkUUWi3", "nombre": "Santiago - Enthusiastic, Assertive", "motivo": "el mismo Otto de Nieveclara" },
+ "conde": { "voz": "HMCmDsbKeaSZp5LMOYKR", "nombre": "Johnny", "motivo": "la voz del Conde, aquí un vecino que lo imita" },
+ "vaelthor": { "voz": "k8cFOyAg7B9qwBlDDNTC", "nombre": "Miguel", "motivo": "la voz de Vael'Thor, aquí un vecino disfrazado" },
+ "dragon": { "voz": "cQIBhnciTWugZAxX52uW", "nombre": "Charlee - Playful Fantasy Character", "motivo": "un niño del pueblo con disfraz de dragón" }
+}

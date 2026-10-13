@@ -29,6 +29,7 @@ import { Hud } from './ui/hud';
 import { Mando } from './ui/mando';
 import { ESCENARIOS, EscenaPelea, ORDEN_ESCENARIOS, type Calidad } from './vista/escena';
 import { Muneco } from './vista/muneco';
+import { brazo, probarPose } from './poses';
 import { VistaPelea } from './vista/pelea';
 import { retrato } from './vista/retratos';
 import { entrarEnLinea, type Linea } from './red';
@@ -736,6 +737,8 @@ async function arrancar() {
     await m.cargar();
     escena.capa.add(m.raiz);
     let nombre = 'guardia', lado = 1, t = 0;
+    w.__brazo = brazo;
+    w.__probarPose = probarPose;
     w.__pose = (n: string, l = 1) => {
       nombre = n;
       lado = l;
