@@ -16,13 +16,13 @@ import { LINEAS_C11_FUATIA, LINEAS_ELIANA, LINEAS_SC0, LINEAS_SC1 } from './cine
 
 // ------------------------------------------------------------------ utilidades de este acto
 
-type Reparto = Record<string, Actor>;
-const colocar = (a: Actor, x: number, z: number, mx = 0, mz = 0, y = 0) => { a.raiz.position.set(x, y, z); a.raiz.rotation.y = Math.atan2(mx - x, mz - z); };
-const sombras = (o: THREE.Object3D) => { o.traverse((x) => { const m = x as THREE.Mesh; if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); o.userData.noLiberar = true; return o; };
-const copia = (o: THREE.Object3D, x: number, z: number, giro = 0, esc = 1, y = 0) => { const c = o.clone(true); c.position.set(x, y, z); c.rotation.y = giro; c.scale.setScalar(esc); return sombras(c); };
+export type Reparto = Record<string, Actor>;
+export const colocar = (a: Actor, x: number, z: number, mx = 0, mz = 0, y = 0) => { a.raiz.position.set(x, y, z); a.raiz.rotation.y = Math.atan2(mx - x, mz - z); };
+export const sombras = (o: THREE.Object3D) => { o.traverse((x) => { const m = x as THREE.Mesh; if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); o.userData.noLiberar = true; return o; };
+export const copia = (o: THREE.Object3D, x: number, z: number, giro = 0, esc = 1, y = 0) => { const c = o.clone(true); c.position.set(x, y, z); c.rotation.y = giro; c.scale.setScalar(esc); return sombras(c); };
 
 /** Lugares al azar en un anillo, lejos de una lista de zonas prohibidas. */
-function anillo(r: () => number, n: number, rmin: number, rmax: number, cx: number, cz: number, esc: [number, number], libre: (x: number, z: number) => boolean) {
+export function anillo(r: () => number, n: number, rmin: number, rmax: number, cx: number, cz: number, esc: [number, number], libre: (x: number, z: number) => boolean) {
   const out: [number, number, number, number, number][] = [];
   for (let k = 0; out.length < n && k < n * 40; k++) {
     const a = r() * Math.PI * 2, d = rmin + (rmax - rmin) * Math.sqrt(r()), x = cx + Math.cos(a) * d, z = cz + Math.sin(a) * d;
@@ -32,7 +32,7 @@ function anillo(r: () => number, n: number, rmin: number, rmax: number, cx: numb
 }
 
 /** Un escenario armado con las piezas comunes: cielo (o fondo), suelo, luces, niebla y lo propio de cada película. */
-function escenario(o: {
+export function escenario(o: {
   hora: Hora; sol?: THREE.Vector3; colores?: string[] | null; fondo?: string; niebla?: [string, number, number]; exposicion?: number; radio?: number;
   montar: (g: THREE.Group) => Promise<Reparto>;
   animar: (c: ContextoToma, reparto: Reparto, g: THREE.Group) => void;
@@ -54,11 +54,11 @@ function escenario(o: {
 }
 
 /** Toma sin diálogo. */
-const toma = (id: string, escena: string, dur: number, de: ReturnType<typeof plano>, a?: ReturnType<typeof plano>, extra: Partial<Toma> = {}): Toma =>
+export const toma = (id: string, escena: string, dur: number, de: ReturnType<typeof plano>, a?: ReturnType<typeof plano>, extra: Partial<Toma> = {}): Toma =>
   ({ id, escena, dur, cam: { de, a: a ?? de, curva: 'ambas' }, ...extra });
 
 /** Agua de canal o charco: ondas suaves, reflejo del cielo y brillo en las crestas. */
-function agua(ancho: number, largo: number, color = '#3f8fb0') {
+export function agua(ancho: number, largo: number, color = '#3f8fb0') {
   const mat = new THREE.ShaderMaterial({
     uniforms: { uT: { value: 0 }, uColor: { value: new THREE.Color(color) }, uSube: { value: 0 } },
     vertexShader: `uniform float uT;varying vec2 vUv;varying vec3 vMundo;void main(){vUv=uv;vec3 p=position;p.z+=sin(p.x*3.+uT*2.)*.015+sin(p.y*5.-uT*1.6)*.012;vec4 w=modelMatrix*vec4(p,1.);vMundo=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}`,

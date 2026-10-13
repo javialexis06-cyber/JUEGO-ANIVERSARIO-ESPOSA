@@ -429,8 +429,10 @@ lunas) y Confluencia (los cuatro elementos girando).
 - **Fase C (Acto I) animada**: C01, C11 (con la entrada de Fuatia), SC0, C02, Eliana, SC1 y C03. Fuatia y el Conde se
   armaron con el clóset que ya había (vestido de diosa en los colores de los cuatro elementos; el Conde con traje de
   monarca, corona y capa); los modelos propios de la fase B siguen pendientes.
-- Falta del Acto I: las llegadas y postales de los lugares, llevar SC0 y SC1 al mapa de la Noche y disparar la de
-  Eliana al cerrar su misión.
+- Acto I completo en el juego: presentaciones de lugares (`postal.ts`), SC0 y SC1 en el mapa de la Noche, Eliana al
+  cerrar su historia.
+- **Fase D (Acto II) animada**: SC2, T03, SC3, C04 (con el Lazo; la misma en la granja y en Sangre), C05 y SC4.
+- Falta: las postales de los biomas dentro de Sangre y Ceniza.
 
 Cada escena: guion → voces → actores y escenario → animación con el motor del cine (`cine-granja.ts`) → pruebas en el
 navegador (cuadros sueltos y video) → captura revisada → commit y push. Las de Sangre y Ceniza llevan su versión de amigos
