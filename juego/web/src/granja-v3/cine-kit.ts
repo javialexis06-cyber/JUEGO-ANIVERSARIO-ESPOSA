@@ -205,6 +205,11 @@ export function tomasDialogo(lineas: LineaCine[], o: OpcionesDialogo): Toma[] {
     if (!P || l.quien === 'narrador') {
       const propio = o.narrador?.[nNarr++ % Math.max(1, o.narrador?.length ?? 1)];
       if (propio) { tomas.push({ id, dur: 5, escena: o.escena, linea: l, bloom: o.bloom, cam: { de: propio[0], a: propio[1] ?? propio[0], curva: 'ambas' } }); return; }
+      if (o.dentro) {
+        const [x0, x1, z0, z1] = o.dentro, esq: V3 = [r() < 0.5 ? x0 + 0.3 : x1 - 0.3, 2.6, z1 - 0.3];
+        tomas.push({ id, dur: 5, escena: o.escena, linea: l, bloom: o.bloom, cam: { de: plano(esq, [cx, 0.8, cz], 42), a: plano([esq[0] * 0.92, 2.4, esq[2] * 0.92], [cx, 0.85, cz], 40), curva: 'ambas' } });
+        return;
+      }
       let ang = r() * Math.PI * 2;
       if (aud) ang = Math.atan2(aud[1], aud[0]) + (r() - 0.5) * 1.6;
       const d = 9 + r() * 4, h = 3.2 + r() * 2;
@@ -266,6 +271,7 @@ export function tomasDialogo(lineas: LineaCine[], o: OpcionesDialogo): Toma[] {
       const d = o.dentro ? 3 : 8;
       elegido = [plano([cx + Math.cos(ang) * d, 2.4, cz + Math.sin(ang) * d], [cx, 0.8, cz], 40), plano([cx + Math.cos(ang) * (d - 0.6), 2.2, cz + Math.sin(ang) * (d - 0.6)], [cx, 0.85, cz], 38)];
     }
+    if (o.dentro) for (const pl of elegido) { pl.pos = [pl.pos[0], pl.pos[1] + 0.55, pl.pos[2]]; pl.mira = [pl.mira[0], pl.mira[1] - 0.12, pl.mira[2]]; }
     tomas.push({ id, dur: 3.2, escena: o.escena, linea: l, bloom: o.bloom, cam: { de: elegido[0], a: elegido[1], curva: 'ambas' } });
     anterior = l.quien;
   });

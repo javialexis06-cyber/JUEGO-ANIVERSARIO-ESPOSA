@@ -140,7 +140,7 @@ function salirAtlas(){if(vista.enCatalogo){vista.volverMundo();document.body.cla
 const receta=(r:Record<string,number>)=>Object.entries(r).map(([k,n])=>`${n} ${nombre(k)}`).join(' · ');
 let lineaPrologo=0,primeraVisita:string|null=null,enCine=false;
 /** Las cinemáticas de la campaña que ya tienen película (cine-catalogo.ts). */
-const PELICULAS_CAMPANA=new Set(['C01','C02','C03','C04','C05','C11']);
+const PELICULAS_CAMPANA=new Set(['C01','C02','C03','C04','C05','C06','C11','C12']);
 /** Las misiones secundarias que terminan en película (docs/en-obra/pelicula-de-astra.md, las ★). */
 const PELICULA_MISION:Record<string,string>={V_canalizadora_aura:'ELI',V_canalizadora_lara:'SER',V_verdia_eneas:'ENE',V_senda_ofelia:'OFE',T03:'T03',S08:'S08'};
 /** El prólogo en película (cine-prologo.ts). Si el teléfono no puede con ella, queda el prólogo escrito. */

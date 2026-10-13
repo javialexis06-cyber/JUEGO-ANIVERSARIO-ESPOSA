@@ -16,4 +16,10 @@ export const PELICULAS: Record<string, () => Promise<Guion>> = {
   C04: async () => (await import('./cine-acto2')).C04,
   C05: async () => (await import('./cine-acto2')).C05,
   SC4: async () => (await import('./cine-acto2')).SC4,
+  S08: async () => (await import('./cine-acto3')).S08,
+  C12: async () => (await import('./cine-acto3')).C12,
+  ENE: async () => (await import('./cine-acto3')).ENEAS,
+  OFE: async () => (await import('./cine-acto3')).OFELIA,
+  C06: async () => (await import('./cine-acto3')).C06,
+  SER: async () => (await import('./cine-acto3')).SERENA,
 };

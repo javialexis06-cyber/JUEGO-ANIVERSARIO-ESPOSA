@@ -564,42 +564,52 @@ export const SC1: Guion = (() => {
 
 // ------------------------------------------------------------------ C03 · La firma (el archivo)
 
-function archivo(): Escenario {
+/** Quién está en el archivo: [id del reparto, quién lo actúa ('el', 'ella', un vecino o una diosa), x, z, mira x, mira z]. */
+export type PuestoArchivo = [string, string, number, number, number, number];
+const CAST_C03: PuestoArchivo[] = [['archivero', 'archivero', 0, -1.6, 0, 2], ['veterano', 'veterano', 2.4, 0.4, 0, 0], ['el', 'el', -1.0, 2.0, 0, -0.6], ['ella', 'ella', -2.6, 0.6, 0, -0.6]];
+/** Un cuarto de tablas: piso y cuatro paredes (de ±ancho en x y ±fondo en z), con los módulos de los muebles. */
+export function cuarto(m: THREE.Object3D, ancho: number, fondo: number) {
+  const g = new THREE.Group();
+  const piso = piezaKit(m, 'piso_modulo'), pared = piezaKit(m, 'pared_modulo');
+  if (piso) { const ls: [number, number, number, number, number][] = []; for (let x = -ancho; x < ancho; x++) for (let z = 0; z < Math.ceil(fondo * 2 / 0.19); z++) ls.push([x + 0.5, 0, -fondo + z * 0.19 + 0.1, 0, 1]); g.add(instanciar(piso, ls)); }
+  if (pared) {
+    const ls: [number, number, number, number, number][] = [];
+    for (let x = -ancho; x < ancho; x++) { ls.push([x + 0.5, 0, -fondo - 0.1, 0, 1]); ls.push([x + 0.5, 0, fondo + 0.1, Math.PI, 1]); }
+    for (let z = -fondo; z < fondo; z++) { ls.push([-ancho - 0.1, 0, z + 0.5, Math.PI / 2, 1]); ls.push([ancho + 0.1, 0, z + 0.5, -Math.PI / 2, 1]); }
+    g.add(instanciar(pared, ls));
+  }
+  return g;
+}
+export function archivo(cast: PuestoArchivo[] = CAST_C03, alMontar?: (g: THREE.Group) => void, alAnimar?: (c: ContextoToma, rp: Reparto) => void): Escenario {
   return escenario({
     hora: 'tarde', sol: new THREE.Vector3(-0.9, 0.5, 0.2), colores: null, fondo: '#1a130e', exposicion: 1.1, radio: 8,
     async montar(g) {
-      const [m, archivero, veterano, el, ella] = await Promise.all([cargar('granja_muebles.glb'), actorVecino('archivero'), actorVecino('veterano', ['cabeza']), actorPareja('el'), actorPareja('ella')]);
+      const crear = (quien: string) => quien === 'el' || quien === 'ella' ? actorPareja(quien) : ['celia', 'aura', 'lara', 'fuatia'].includes(quien) ? actorDiosa(quien as 'fuatia') : actorVecino(quien, quien === 'veterano' ? ['cabeza'] : []);
+      const [m, ...actores] = await Promise.all([cargar('granja_muebles.glb'), ...cast.map(([, quien]) => crear(quien))]);
       // Piso de tablas y tres paredes (el cuarto mide 8 × 6)
       const piso = piezaKit(m, 'piso_modulo'), pared = piezaKit(m, 'pared_modulo');
-      if (piso) { const ls: [number, number, number, number, number][] = []; for (let x = -4; x < 4; x++) for (let z = 0; z < 32; z++) ls.push([x + 0.5, 0, -3 + z * 0.19 + 0.1, 0, 1]); g.add(instanciar(piso, ls)); }
-      if (pared) {
-        const ls: [number, number, number, number, number][] = [];
-        for (let x = -4; x < 4; x++) { ls.push([x + 0.5, 0, -3.1, 0, 1]); ls.push([x + 0.5, 0, 3.1, Math.PI, 1]); }
-        for (let z = -3; z < 3; z++) { ls.push([-4.1, 0, z + 0.5, Math.PI / 2, 1]); ls.push([4.1, 0, z + 0.5, -Math.PI / 2, 1]); }
-        g.add(instanciar(pared, ls));
-      }
-      for (const x of [-3, -1.5, 1.5, 3]) g.add(poner(m, 'biblioteca', x, -2.75));
+      g.add(cuarto(m, 5, 4));
+      for (const x of [-3.8, -2.3, 2.3, 3.8]) g.add(poner(m, 'biblioteca', x, -3.75));
       g.add(poner(m, 'escritorio', 0, -0.6, 0), poner(m, 'lampara', 0.5, -0.7, 0, 0.6, 0.76, false), poner(m, 'globo', -3.2, 0.8), poner(m, 'mesa_mapas', 2.4, 1.0, Math.PI / 2, 0.9));
-      g.add(poner(m, 'ventana', -4.0, 0.2, Math.PI / 2, 1, 1.1, false), poner(m, 'cuadro', 4.0, -0.5, -Math.PI / 2, 1, 1.4, false), poner(m, 'baul', 3.2, -1.9), poner(m, 'tapete', 0, 1.2, 0, 1.4, 0.01, false), poner(m, 'planta', -3.4, -1.8));
+      g.add(poner(m, 'ventana', -5.0, 0.2, Math.PI / 2, 1, 1.1, false), poner(m, 'cuadro', 5.0, -0.5, -Math.PI / 2, 1, 1.4, false), poner(m, 'baul', 4.2, -2.6), poner(m, 'tapete', 0, 1.2, 0, 1.4, 0.01, false), poner(m, 'planta', -4.4, -2.6));
       const lampara = luzCalida('#ffc98a', 2.2, 7); lampara.position.set(0.5, 1.4, -0.6); g.add(lampara);
-      const ventana = new THREE.SpotLight('#cfe0ff', 6, 14, 0.6, 0.5, 1.2); ventana.position.set(-6, 2.6, 0.2); ventana.target.position.set(0, 0, 0.4); ventana.castShadow = true; g.add(ventana, ventana.target);
+      const ventana = new THREE.SpotLight('#cfe0ff', 6, 14, 0.6, 0.5, 1.2); ventana.position.set(-7, 2.6, 0.2); ventana.target.position.set(0, 0, 0.4); ventana.castShadow = true; g.add(ventana, ventana.target);
       g.add(motasFlotantes(90, [-1.5, 0.4, 0.3], 2.2, 2, [1, 0.92, 0.75], 1.4, 3));
-      colocar(archivero, 0, -1.5, 0, 2);
-      colocar(veterano, 1.7, 0.3, 0, 0);
-      colocar(el, -1.0, 1.4, 0, -0.6);
-      colocar(ella, -1.8, 0.4, 0, -0.6);
-      return { archivero, veterano, el, ella };
+      const rp: Reparto = {};
+      cast.forEach(([id, quien, x, z, mx, mz], i) => { colocar(actores[i], x, z, mx, mz, ['celia', 'aura', 'lara', 'fuatia'].includes(quien) ? 0.35 : 0); rp[id] = actores[i]; });
+      alMontar?.(g);
+      return rp;
     },
-    animar(c, reparto) { actuarDialogo(reparto, c, {}, { veterano: 'brazos_cruzados' }); },
+    animar(c, reparto) { alAnimar?.(c, reparto); actuarDialogo(reparto, c, {}, { veterano: 'brazos_cruzados' }); },
   });
 }
 
 export const C03: Guion = (() => {
   const L = LINEAS_CAMPANA.C03;
-  const puestos: Record<string, Puesto> = { archivero: { x: 0, z: -1.5 }, veterano: { x: 1.7, z: 0.3 }, el: { x: -1.0, z: 1.4 }, ella: { x: -1.8, z: 0.4 } };
+  const puestos: Record<string, Puesto> = { archivero: { x: 0, z: -1.6 }, veterano: { x: 2.4, z: 0.4 }, el: { x: -1.0, z: 2.0 }, ella: { x: -2.6, z: 0.6 } };
   const tomas: Toma[] = [
     toma('c03_abre', 'archivo', 5, plano([3.2, 2.4, 4.6], [0, 0.8, -1], 40), plano([2.2, 1.6, 3.4], [0, 0.8, -0.8], 38), { musica: 'M09', entra: { color: '#000', dur: 2 }, bloom: 0.5 }),
-    ...tomasDialogo(L.slice(0, -1), { escena: 'archivo', puestos, centro: [0, 0], semilla: 61, prefijo: 'C03', bloom: 0.45, dentro: [-3.7, 3.7, -2.3, 2.85], bajos: [[0, -0.6, 0.9], [2.4, 1.0, 1.0], [-3.2, 0.8, 0.5]] }),
+    ...tomasDialogo(L.slice(0, -1), { escena: 'archivo', puestos, centro: [0, 0], semilla: 61, prefijo: 'C03', bloom: 0.45, dentro: [-4.6, 4.6, -3.0, 3.75], bajos: [[0, -0.6, 0.9], [2.4, 1.0, 1.0], [-3.2, 0.8, 0.5]] }),
     { ...toma('c03_cierre', 'archivo', 7, plano([0.3, 1.2, 0.5], [0, 0.8, -0.6], 30), plano([2.8, 2.6, 4.6], [0, 0.9, -1], 40)), linea: L[L.length - 1], bloom: 0.5 },
     toma('c03_titulo', 'archivo', 5, plano([2.8, 2.6, 4.6], [0, 0.9, -1], 40), plano([3.4, 3, 5.4], [0, 1, -1.5], 40), { titulo: { grande: 'La firma', chico: 'Capítulo V' }, sale: { color: '#000', dur: 2 } }),
   ];
