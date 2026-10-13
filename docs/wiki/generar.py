@@ -130,7 +130,7 @@ def main():
         content = source(path, revision) if text is None else text
         add(page, f'# {page.replace("-", " ")}\n\n{status}\n\n' + convert(content, path, revision) + f'\n\nFuente técnica: [documento de referencia]({REPO}/blob/{revision}/{path}). Esta página no certifica la versión de la APK instalada.\n')
 
-    modules = ['PUEBLO', 'VIVIENDAS', 'DORMITORIOS', 'VIDA-SOCIAL', 'ENCARGOS', 'CORREO', 'COLECCIONES', 'FESTIVALES', 'CARPINTERIA', 'COMPANIA', 'HABILIDADES', 'GANADERIA', 'NARRATIVA', 'COMUNIDAD', 'BALANCE', 'REUNIONES', 'PESCA', 'CERCOS']
+    modules = ['PUEBLO', 'VIVIENDAS', 'DORMITORIOS', 'VIDA-SOCIAL', 'ENCARGOS', 'CORREO', 'COLECCIONES', 'FESTIVALES', 'CARPINTERIA', 'COMPANIA', 'HABILIDADES', 'GANADERIA', 'NARRATIVA', 'COMUNIDAD', 'BALANCE', 'REUNIONES', 'PESCA', 'CERCOS', 'FLUIDEZ']
     source_map.update({f'juego/web/src/granja-v3/{m}-INTEGRACION.md': 'Granja-' + m.title() for m in modules})
     source_map.update({'juego/web/src/granja-v3/PLAN-MOTOR-COMPLETO.md': 'Plan-del-motor', 'juego/web/src/granja-v3/PLAN-PUEBLOS-MUNDOS.md': 'Plan-de-pueblos-y-mundos', 'juego/web/src/granja-v3/REPARTO-COMPLETO.md': 'Catalogo-tecnico-del-reparto', 'juego/web/src/granja-v3/ASTRA-INTEGRACION.md': 'Granja-Astra-Integracion', 'juego/web/src/granja-v3/HISTORIA-INTEGRACION.md': 'Granja-Campana-Integracion', 'juego/web/src/granja-v3/PREMIOS-INTEGRACION.md': 'Granja-Premios-Integracion', 'juego/web/src/granja-v3/VIDA-ASTRA-INTEGRACION.md': 'Granja-Vida-Astra', 'juego/web/src/granja-v3/REGIONES-INTEGRACION.md': 'Granja-Regiones'})
     general = {

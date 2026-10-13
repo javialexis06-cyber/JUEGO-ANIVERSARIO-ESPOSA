@@ -1,3 +1,4 @@
+import { CacheEntornos } from './cache-entornos';
 import {PESQUERIAS_REGIONALES,OBRAS_COMUNIDAD,puntoPescaRegional,obraAbierta} from './comunidad';
 import {obtenerObjeto} from './objetos';
 import {territorioRegional} from './regiones';
@@ -41,13 +42,13 @@ function rutaCalle(a:{x:number;z:number},b:{x:number;z:number},plaza?:{x:number;
  return out;
 }
 export class EscenaAstra {
- readonly grupo=new THREE.Group();private clave='';private vecinos=new Map<string,THREE.Group>();private estado?:EstadoGranja;private suelos=new Suelos();
+ readonly grupo=new THREE.Group();private almacen=new THREE.Group();private capas=new CacheEntornos<THREE.Group>(g=>{g.userData.liberado=true;sacarVecinos(g);liberar(g);},2);private clave='';private vecinos=new Map<string,THREE.Group>();private estado?:EstadoGranja;private suelos=new Suelos();
  constructor(){this.grupo.name='astra-escenario';this.grupo.visible=false;}
  sync(s:EstadoGranja){
   this.estado=s;const t=s.astra;if(!t)return;const region=t.actual??(s.zona==='pueblo'?'pueblo_sol':s.zona),visitantes=!t.actual;
   const ids=habitantesHistoria(s,region,visitantes?[]:regionAstra(region)!.npc);
   const comunidadRegion=t.actual??s.zona,puestos=OBRAS_COMUNIDAD.filter(d=>d.region===comunidadRegion),pesca=PESQUERIAS_REGIONALES.find(p=>p.region===comunidadRegion),trampas=s.comunidad?.trampas.filter(p=>p.region===comunidadRegion)??[],galeria=s.servicio==='archivo'&&obraAbierta(s,'galeria');
-  const modulos=s.historia?.utilidades?.modulos.filter(m=>m.region===region)??[];this.grupo.visible=!visitantes||!s.interior&&(galeria||!s.servicio&&(ids.length>0||modulos.length>0||puestos.length>0||trampas.length>0));const colonia=s.regional?.colonias.find(c=>t.interior==='habitat_'+c.region);const key=JSON.stringify([s.servicio,s.comunidad?.obras,s.comunidad?.vitrinas,s.comunidad?.trampas,s.comunidad?.terminales])+region+':'+t.interior+':'+(colonia?.animales.map(a=>a.id).join(',')??'')+':'+ids.join(',')+':'+modulos.map(m=>m.id+':'+m.x+':'+m.z).join(',');if(key!==this.clave){this.limpiar();this.clave=key;this.grupo.userData.liberado=false;const capa=new THREE.Group();this.grupo.add(capa);const r=regionAstra(region)!;
+  const modulos=s.historia?.utilidades?.modulos.filter(m=>m.region===region)??[];this.grupo.visible=!visitantes||!s.interior&&(galeria||!s.servicio&&(ids.length>0||modulos.length>0||puestos.length>0||trampas.length>0));const colonia=s.regional?.colonias.find(c=>t.interior==='habitat_'+c.region);const key=s.inicioTiempo+':'+s.tiempo.semilla+':'+JSON.stringify([s.servicio,s.comunidad?.obras,s.comunidad?.vitrinas,s.comunidad?.trampas,s.comunidad?.terminales])+region+':'+t.interior+':'+(colonia?.animales.map(a=>a.id).join(',')??'')+':'+ids.join(',')+':'+modulos.map(m=>m.id+':'+m.x+':'+m.z).join(',');if(key!==this.clave){for(const g of [...this.grupo.children])this.almacen.add(g);this.clave=key;this.vecinos.clear();this.grupo.userData.liberado=false;if(this.capas.tiene(key)){this.grupo.add(this.capas.obtener(key,()=>new THREE.Group(),true));this.update(0);return;}const capa=new THREE.Group();this.grupo.add(capa);const r=regionAstra(region)!;
    if(!visitantes&&t.interior){const interior=interiorVivienda([r.color],'archivo');capa.add(interior);if(colonia){sustituir('habitat:'+colonia.region,capa,interior);for(const [i,a]of colonia.animales.entries()){const g=arcoSalida((territorioRegional(colonia.region)?.fauna.nombre??'Colonia')+' · '+a.id,0,0,false);g.scale.setScalar(.3);g.position.set(-3+(i%4)*2,0,-1-Math.floor(i/4)*2);g.userData.fauna={id:a.id,region:colonia.region,genoma:a.genoma};capa.add(g);sustituir('fauna:'+territorioRegional(colonia.region)!.fauna.id,capa,g);}}}
    else if(!visitantes){
     const terreno=this.suelos.terreno(paletaSueloAstra(r.id));capa.add(terreno);sustituir('region:'+r.id,capa,terreno);const plano=planoAstra(r.id) as Parameters<typeof paisajeAstra>[4];if(!plano){capa.add(senderoTierra(0,13,43,3));capa.add(senderoTierra(0,5,3,43));}
@@ -67,6 +68,7 @@ export class EscenaAstra {
    }
    if(galeria)for(const [i,id]of (s.comunidad?.vitrinas??[]).entries()){const m=arcoSalida(id?obtenerObjeto(id)!.nombre:'Vitrina vacía',0,0,false);m.scale.setScalar(.32);m.position.set(-2.5+(i%3)*2.5,0,-2+Math.floor(i/3)*1.3);capa.add(m);sustituir(id?'museo:'+id:'museo:vitrina',capa,m);}
    for(const id of ids){const g=vecinoPeluche(id,NPC_ASTRA.findIndex(n=>n.id===id));g.name='astra-npc-'+id;g.userData.npcId=id;this.vecinos.set(id,g);capa.add(g);sustituir('npc:'+id,capa,g);}
+   this.capas.obtener(key,()=>capa,true);
   }
   this.update(0);
  }
@@ -90,6 +92,7 @@ export class EscenaAstra {
    if(d<=paso){g.position.set(q.x,0,q.z);ruta.shift();}else{g.position.x+=dx/d*paso;g.position.z+=dz/d*paso;g.rotation.y=Math.atan2(dx,dz);}
    animarVecino(g,dt,true);
   });}
- private limpiar(){sacarVecinos(this.grupo);for(const g of [...this.grupo.children]){g.userData.liberado=true;liberar(g);}this.vecinos.clear();}
+ get stats(){return this.capas.stats;}
+ private limpiar(){this.capas.dispose();this.vecinos.clear();}
  dispose(){this.limpiar();this.suelos.dispose();this.grupo.userData.liberado=true;this.grupo.removeFromParent();}
 }

@@ -335,7 +335,7 @@ export function liberarPueblo(group:THREE.Group){
 /** Optional shared interior for a service. The house/hogar remains the host project's scene. */
 export function crearInteriorServicio(servicio:ServicioPueblo,s?:EstadoGranja):THREE.Group {
   // Cascarón y muebles modelados en Blender (cuartos.ts); aquí solo se pone a quien atiende (y lo expuesto en el museo)
-  const group=interiorLocal(servicio);if(servicio==='museo'&&s)exponerMuseo(group,s);
+  const group=interiorLocal(servicio);if(VIVIENDAS_PUEBLO.some(v=>v.edificio===EDIFICIOS_PUEBLO.find(b=>b.servicio===servicio)?.id))puertaCuarto(group,3.2,-4,'#b38b65');if(servicio==='museo'&&s)exponerMuseo(group,s);
   const vecino=NPCS_PUEBLO.find(n=>n.oficio===servicio);if(vecino){const personaje=vecinoPeluche(vecino.id,NPCS_PUEBLO.indexOf(vecino));personaje.name='dependiente';personaje.userData.npcId=vecino.id;if(servicio==='museo')personaje.position.set(0,0,-2.55);else personaje.position.set(-.8,0,-2.7);group.add(personaje);}return group;
 }
 

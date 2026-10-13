@@ -6,7 +6,7 @@ import type { VistaGranja } from './vista';
 export const LADO_FOTO = 16, PPM_FOTO = 8;
 const PX = LADO_FOTO * PPM_FOTO;
 /** Cada cuánto se puede sacar una foto, y cuándo una ya está vieja (las matas crecen, los árboles caen). */
-const ENTRE_FOTOS = 600, VIEJA = 45000, GUARDAR_TRAS = 12000;
+const ENTRE_FOTOS = 1200, VIEJA = 45000, GUARDAR_TRAS = 12000;
 
 export interface HojaMapa { clave: string; x0: number; z0: number; cols: number; filas: number; lienzo: HTMLCanvasElement; tomadas: Float64Array; version: number }
 
@@ -38,7 +38,7 @@ async function escribir(k: string, v: unknown) {
 
 export class FotosMapa {
   private hojas = new Map<string, HojaMapa>();
-  private ultima = 0;
+  private ultima = 0;private fotografiando=false;
   private pendientesGuardar = new Map<string, number>();
   private tile = document.createElement('canvas');
   constructor(private vista: VistaGranja, private partida: () => string) {
@@ -70,8 +70,8 @@ export class FotosMapa {
     return h;
   }
   /** Saca (como mucho) una foto de un cuadro cercano que falte o esté viejo. */
-  tic(clave: string, limites: [number, number, number, number], ahora = performance.now()) {
-    if (ahora - this.ultima < ENTRE_FOTOS) return;
+  async tic(clave: string, limites: [number, number, number, number], ahora = performance.now()) {
+    if (this.fotografiando || ahora - this.ultima < ENTRE_FOTOS) return;
     const f = this.vista.zonaFotografiable();
     if (!f || f.clave !== clave) return;
     const h = this.hoja(clave, limites);
@@ -88,7 +88,9 @@ export class FotosMapa {
     if (mejor < 0) return;
     this.ultima = ahora;
     const i = mejor % h.cols, j = Math.floor(mejor / h.cols);
-    const px = this.vista.fotoCenital(h.x0 + (i + 0.5) * LADO_FOTO, h.z0 + (j + 0.5) * LADO_FOTO, LADO_FOTO, PX);
+    this.fotografiando=true;try {
+    const px = await this.vista.fotoCenital(h.x0 + (i + 0.5) * LADO_FOTO, h.z0 + (j + 0.5) * LADO_FOTO, LADO_FOTO, PX, true);
+    if(this.hojas.get(h.clave)!==h||h.clave!==this.partida()+':'+clave)return;
     const t = this.tile.getContext('2d')!, img = t.createImageData(PX, PX), fila = PX * 4;
     // WebGL entrega las filas de abajo hacia arriba
     for (let y = 0; y < PX; y++) img.data.set(px.subarray((PX - 1 - y) * fila, (PX - y) * fila), y * fila);
@@ -100,6 +102,7 @@ export class FotosMapa {
     h.version++;
     this.pendientesGuardar.set(h.clave, ahora);
     for (const [k, desde] of this.pendientesGuardar) if (ahora - desde > GUARDAR_TRAS) this.guardar(k);
+    } catch { /* Sin foto esta vez: la base y las anteriores siguen disponibles. */ } finally { this.fotografiando=false; }
   }
   /** Cuántos cuadros de la zona ya tienen foto (para las pruebas). */
   cobertura(clave: string) {
