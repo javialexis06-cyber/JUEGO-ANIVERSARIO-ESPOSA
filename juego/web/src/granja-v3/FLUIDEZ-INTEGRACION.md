@@ -88,3 +88,8 @@ Evidencia y límites: [FLUIDEZ-VERIFICACION.json](FLUIDEZ-VERIFICACION.json).
 Los nuevos modelos de Claude de `dce94b06` (herramientas, monstruos, vetas, invernadero y envíos)
 se incorporaron antes de repetir regresión, ambos builds y los recorridos de navegador.
 La comparación de dibujo incluye también esos modelos nuevos; no los revierte para reducir el conteo.
+
+Se incorporan después los iconos de Blender de `ad5a6e80`; las 18 fuentes del motor y navegación
+comprobadas conservan su SHA256. Se repiten ambos builds y los diez pasos de tienda, puertas y
+mapas con esos iconos. La compilación por rama evita que los nuevos pushes del frente visual
+cancelen la verificación de instaladores de `work`.

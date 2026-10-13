@@ -332,5 +332,33 @@
     "La API económica anterior se mantiene compatible; la interfaz exige mostrador y revierte compras cuando falla el guardado.",
     "La modificación final del catálogo excluye semillas regionales no vendibles; se repitieron ambos builds y el recorrido de diez comprobaciones tras ese ajuste.",
     "Navegación libre del ganado, reproducción y equipo de compañeros y monturas fantásticas continúan pendientes."
-  ]
+  ],
+  "integracionIconos": {
+    "revision": "ad5a6e80d93bc811ea965e8c97bad1507a4ba4c1",
+    "fuentesMotorSinCambios": 18,
+    "builds": "pareja y amigos correctos",
+    "recorrido": {
+      "checks": [
+        "Clic en la puerta entra en el negocio y deja caminar sin panel ni cuadro de salida",
+        "En la entrada no se puede comprar a distancia ni gastar monedas",
+        "Si falla guardar una compra, monedas y productos se restauran sin doble entrega",
+        "Caminar al mostrador abre iconos y precios; comprar entrega una unidad con su precio anterior",
+        "Clic en la puerta de salida devuelve al pueblo desde caché sin reconstruirlo ni usar un botón de texto",
+        "El teclado cruza el umbral para entrar y salir; el regreso no vuelve a abrir la puerta",
+        "La puerta del anexo da acceso a la vivienda y su umbral devuelve al barrio",
+        "El mapa conserva nombres de ubicaciones y usa retratos donde están los vecinos, sin sus nombres",
+        "El minimapa sigue posiciones decimales en los cuadros de movimiento, sin esperar el tic de 200 ms",
+        "Recarga conserva V5, la compra y la jornada en escritorio sin desbordamiento"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        1280,
+        720
+      ],
+      "escenarioPreparado": "Pueblo y mediodía preparados; movimiento, clics, umbrales, compras y guardado reales. Fotos y dibujo continuo pausados en este recorrido específico; capturas con un render real. El recorrido general aparte conserva dibujo y fotos.",
+      "dispositivosFisicos": []
+    },
+    "workflow": "Agrupación por rama; compilación estable desde work para evitar cancelaciones del frente visual."
+  }
 }

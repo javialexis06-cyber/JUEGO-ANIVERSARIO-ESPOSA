@@ -1,3 +1,5 @@
+> Integrados los iconos de Blender de `ad5a6e80`, conservando todos los archivos del motor comprobados. La compilación APK/Windows se agrupa por rama para que `work` pueda verificar una entrega estable mientras el frente visual publica en la rama compartida.
+
 > Integrados también los modelos de `dce94b06`: herramientas, invernadero, envíos, monstruos y vetas. La selección conserva el camino con mouse junto al nuevo kit en la mano. Repetidos regresión, builds y recorridos sobre la combinación.
 
 > Integrados los Actos III, IV y V de Claude hasta `73ebc3ca`. Se mantienen sus películas, actores, música y voces; los cambios de rendimiento reutilizan esos recursos.
