@@ -552,6 +552,11 @@ Dónde está:
   piedras con vigas y musgo, floral con enredadera y flores), el portón (cerrado, o abierto de par en par), la puerta
   del corral (`puertaGanadoVista`, tablas con bandas, remaches y herradura), el comedero vacío o con heno
   (`comederoVista`) y la pérgola de la enredadera con su banquito.
+- **Patio de los refugios, nidos, incubadora, trufas y ampliación en Blender** **hecho** (13 de octubre):
+  `granja_patio.glb` (`personajes/blender/granja_patio.py`). `patioRefugio` (lajas con tierra pisada, paja, bebedero de
+  piedra con agua y comedero con paja, y el maíz de los gallineros), `detalleAmpliacion` (pilares con anillos y el
+  letrero colgado con sus estrellas, dorado en el nivel 3), `incubadoraVista` (lámpara, rejillas, termómetro y el huevo
+  aparte), `trufaVista` y `huevosRefugio` (nido de paja trenzada y huevitos del color de la especie).
 
 ## Datos útiles
 

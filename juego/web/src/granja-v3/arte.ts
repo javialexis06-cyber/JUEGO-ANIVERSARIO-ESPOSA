@@ -1,5 +1,5 @@
 import { camaAnimal } from './refugios';
-import { conKit, fundir } from './cuartos';
+import { conKit, fundir, cambiarPorKit } from './cuartos';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -339,7 +339,10 @@ export function patioRefugio(especie: string): THREE.Group {
   box(root, [.9, .22, .32], [3.2, .14, 7.25], madera, .03); for (const x of [2.8, 3.6]) box(root, [.06, .28, .32], [x, .14, 7.25], madera, .01);
   for (let i = 0; i < 6; i++) rod(root, [2.85 + i * .13, .26, 7.15], [2.9 + i * .12, .27, 7.35], .015, paja);
   if (especie === 'gallina' || especie === 'pato' || especie === 'avestruz') for (let i = 0; i < 40; i++) ell(root, [.025, .018, .025], [.8 + h(i, 11) * 2.4, .02, 5 + h(i, 12) * 2.4], maiz);
-  compact(root); return root;
+  compact(root);
+  // Con granja_patio.glb (personajes/blender/granja_patio.py): lajas, paja, bebedero y comedero de Blender
+  cambiarPorKit(root, 'granja_patio.glb', m => { const suelo = m.get('patio_suelo'); if (!suelo) return null; const g = new THREE.Group(); g.add(suelo.clone(true)); const maiz = m.get('patio_maiz'); if (maiz && (especie === 'gallina' || especie === 'pato' || especie === 'avestruz')) g.add(maiz.clone(true)); return g; });
+  return root;
 }
 
 /** Decorative interior shell. Entry at +Z; beds are along the side walls and
