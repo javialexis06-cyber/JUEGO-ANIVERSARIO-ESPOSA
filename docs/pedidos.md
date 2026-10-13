@@ -258,3 +258,8 @@ velocidad, se siente raro…»
 - ~~Voces con IA~~ **hecho** (11 de octubre): 1.727 frases de Él y Ella con su voz y su emoción en Cien Puertas, la
   casa, la mesa, el cohete, la cocina, las cartas del súper y Sangre y Ceniza (`docs/sistemas/voces.md`). Falta
   sumar las frases sueltas que todavía no están en el guion (ver «Pendiente» allá).
+
+
+### Motor de granja · pastoreo libre (13 de octubre de 2026)
+
+**Hecho en el motor:** control desde el comedero, paseo por el terreno propio, rutas con cercas y portones, regreso, posición guardada y trufas del terreno; presupuesto de búsqueda distribuido. Se conservan los avances visuales de Claude. Contrato y alcance: `juego/web/src/granja-v3/PASTOREO-INTEGRACION.md`. Bebida, gestación y las ampliaciones pendientes de compañía continúan en el plan; esta tanda no termina todo el motor.

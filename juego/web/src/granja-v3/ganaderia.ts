@@ -1,4 +1,4 @@
-import { capacidadRefugio, camaAnimal, esperaCorral } from './refugios';
+import { capacidadRefugio, camaAnimal, esperaCorral, dentroPastoreo } from './refugios';
 import { crearGenoma, validarGenoma, type Genome, type Species } from './genetica';
 import type { EstadoGranja, Animal, Edificio } from './estado';
 export type MetodoProducto='recoger'|'ordenar'|'esquilar'|'buscar_trufas';
@@ -14,7 +14,7 @@ export function articuloHuevo(especie:Species,genoma:Genome,sexo:'hembra'|'macho
 export function leerHuevo(id:string):HuevoFertil|undefined{const m=/^huevo_fertil_([a-z]+)_([012]{4})([01])$/.exec(id);if(!m||!Object.hasOwn(GANADO,m[1])||!GANADO[m[1] as Species].incubacion)return;const pares=['A','B','F','E'].map((l,i)=>m[2][i]==='0'?l+l:m[2][i]==='1'?l+l.toLowerCase():l.toLowerCase().repeat(2));return {especie:m[1] as Species,genoma:crearGenoma(...pares as [string,string,string,string]),sexo:m[3]==='0'?'hembra':'macho'};}
 export interface Incubadora {edificioId:string;grande:boolean;huevo:{articulo:string;calidad:0|1|2|3;nombre:string;dias:number;inicioDia:number}|null}
 /** Coordenadas del corral, no del mundo: trasladarlo conserva sus hallazgos. */
-export interface TrufaGanado {id:string;animalId:string;edificioId:string;u:number;v:number;cantidad:number;base:number;calidad:0|1|2|3}
+export interface TrufaGanado {id:string;animalId:string;edificioId:string;u:number;v:number;campo?:true;cantidad:number;base:number;calidad:0|1|2|3}
 export interface EstadoGanaderia {version:1;incubadoras:Incubadora[];trufas:TrufaGanado[]}
 export const crearGanaderia=(refugioInicial?:string):EstadoGanaderia=>({version:1,incubadoras:refugioInicial?[{edificioId:refugioInicial,grande:false,huevo:null}]:[],trufas:[]});
 export const COSTE_INCUBADORA={monedas:120,materiales:{madera:15,cobre:4,vidrio:2}};
@@ -29,5 +29,5 @@ export function ganaderiaValida(v:unknown,s:Pick<EstadoGranja,'edificios'|'anima
  if(!v||typeof v!=='object')return false;const g=v as EstadoGanaderia,entero=(v:unknown,a:number,b:number)=>Number.isSafeInteger(v)&&Number(v)>=a&&Number(v)<=b;
  if(g.version!==1||!Array.isArray(g.incubadoras)||g.incubadoras.length>240||!Array.isArray(g.trufas)||g.trufas.length>1200||s.animales.length+g.incubadoras.filter(i=>i?.huevo).length>240)return false;
  const edificios=new Set<string>();for(const i of g.incubadoras){const b=s.edificios.find(b=>b.id===i?.edificioId);if(!i||!b?.especie||!GANADO[b.especie]?.incubacion||edificios.has(i.edificioId)||typeof i.grande!=='boolean')return false;edificios.add(i.edificioId);if(i.huevo!==null){const h=i.huevo,e=leerHuevo(h?.articulo??'');if(!h||!e||e.especie!==b.especie||GANADO[e.especie].grande&&!i.grande||typeof h.nombre!=='string'||h.nombre.length>32||!entero(h.calidad,0,3)||!entero(h.dias,0,GANADO[e.especie].incubacion-1)||!entero(h.inicioDia,0,s.jornada.diasCompletados)||h.dias>s.jornada.diasCompletados-h.inicioDia)return false;}}
- const ids=new Set<string>();for(const t of g.trufas){if(!t||typeof t.id!=='string'||!/^[a-z0-9_]{1,99}$/.test(t.id)||ids.has(t.id)||!s.animales.some(a=>a.id===t.animalId&&a.especie==='cerdito'&&a.edificioId===t.edificioId)||!s.edificios.some(b=>b.id===t.edificioId)||!Number.isFinite(t.u)||t.u<.3||t.u>3.7||!Number.isFinite(t.v)||t.v<4.3||t.v>7.7||!entero(t.cantidad,1,6)||!entero(t.base,1,5)||t.base>t.cantidad||!entero(t.calidad,0,3))return false;ids.add(t.id);}return true;
+ const ids=new Set<string>();for(const t of g.trufas){if(!t||typeof t.id!=='string'||!/^[a-z0-9_]{1,99}$/.test(t.id)||ids.has(t.id)||!s.animales.some(a=>a.id===t.animalId&&a.especie==='cerdito'&&a.edificioId===t.edificioId)||!s.edificios.some(b=>b.id===t.edificioId)||(t.campo!==undefined&&t.campo!==true)||(t.campo? !dentroPastoreo(t):!Number.isFinite(t.u)||t.u<.3||t.u>3.7||!Number.isFinite(t.v)||t.v<4.3||t.v>7.7)||!entero(t.cantidad,1,6)||!entero(t.base,1,5)||t.base>t.cantidad||!entero(t.calidad,0,3))return false;ids.add(t.id);}return true;
 }

@@ -102,3 +102,11 @@ Referencias consultadas para contrastar mecanismos: [Animals](https://stardewval
 
 
 La fase de compañía conserva el ganado productivo y sus 33 pruebas de rutinas. Gatos, perros, tortugas y caballos tienen estado, adquisición, alimento, cuidados y movimiento propios, con 16 apariencias iniciales. El establo comparte la regla de pasto finito de ocho horas reales; caminar o la animación de pastoreo no generan productos ni crecimiento.
+
+
+## Ampliación del 13 de octubre: pastoreo libre
+
+El paseo fuera del corral y sus rutas con cercas y regreso ya están conectados en el bloque posterior.
+Se activan desde el comedero y conservan posición, genes, cuidado y productos. Consulte
+[PASTOREO-INTEGRACION.md](PASTOREO-INTEGRACION.md) para reglas, presupuesto, API, comprobaciones y límites.
+Los apartados históricos anteriores mantienen su fecha: no son una lista vigente de funciones inexistentes.

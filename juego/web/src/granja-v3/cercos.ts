@@ -23,5 +23,5 @@ export function cercoOcupado(s:EstadoGranja,b:Pick<Edificio,'articulo'|'x'|'z'|'
  const p=jugador??(s.posicionExterior?.zona==='granja'?s.posicionExterior:undefined);
  if(exterior&&p&&intersectaCerco(b,p.x,p.z,s.compania.montada ? .45 : .24))return true;
  if(s.compania.animales.some(a=>a.posicion.zona==='granja'&&intersectaCerco(b,a.posicion.x,a.posicion.z,a.tipo==='caballo'?.45:.2)))return true;
- return s.animales.some(a=>a.rutina?.lugar==='corral'&&(()=>{const p=posicionAnimal({...s,interior:null},a);return intersectaCerco(b,p.x,p.z,.25);})());
+ return s.animales.some(a=>a.rutina&&a.rutina.lugar!=='refugio'&&(()=>{const p=posicionAnimal({...s,interior:null},a);return intersectaCerco(b,p.x,p.z,.25);})());
 }

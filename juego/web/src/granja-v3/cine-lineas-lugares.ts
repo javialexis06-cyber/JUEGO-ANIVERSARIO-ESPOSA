@@ -2,6 +2,7 @@
 // (35-45 s, dos líneas) y la postal de cada lugar (12-20 s, una línea), siempre con el narrador. Las lee también
 // scripts/granja-v3/voces-cine.mjs. El id de la postal es el id del lugar (astra-mundo-datos.ts) o del bioma de Sangre.
 import type { LineaCine } from './cine-granja';
+import { POSTALES_SANGRE } from '../sangre/datos/postales';
 
 const N = (id: string, texto: string, d?: string): LineaCine => ({ id, quien: 'narrador', nombre: 'Narrador', texto, d, desde: 0.8 });
 
@@ -63,12 +64,7 @@ export const POSTALES: Record<string, LineaCine> = {
   confluencia_agua: N('LUG.confluencia_agua', 'El Mar de los Retornos: el agua que siempre vuelve a casa.', '[flowing, tender] El Mar de los Retornos: el agua que siempre vuelve a casa.'),
   confluencia_tierra: N('LUG.confluencia_tierra', 'La Terraza de las Raíces: la tierra que sostiene sin apretar.', '[grounded, calm] La Terraza de las Raíces: la tierra que sostiene sin apretar.'),
   confluencia_aire: N('LUG.confluencia_aire', 'La Altura de las Corrientes: el aire que no le obedece a nadie.', '[light, free] La Altura de las Corrientes: el aire que no le obedece a nadie.'),
-  // Los biomas de Sangre y Ceniza (también para los amigos: no nombran a la pareja)
-  cementerio: N('LUG.cementerio', 'El Cementerio Hundido: los muertos que Lara no alcanzó a guiar. La niebla es ceniza.', '[low, eerie] El Cementerio Hundido: los muertos que Lara no alcanzó a guiar. [whispering] La niebla es ceniza.'),
-  catacumbas: N('LUG.catacumbas', 'Las Catacumbas: los laberintos de Vael’Thor, hechos para que ninguna alma encuentre la salida.', '[ominous] Las Catacumbas: los laberintos de Vael’Thor, hechos para que ninguna alma encuentre la salida.'),
-  minas: N('LUG.minas', 'Las Minas de Sangre: la mina de los dragones de Celia, corrompida por la Noche.', '[grave, sad] Las Minas de Sangre: la mina de los dragones de Celia, corrompida por la Noche.'),
-  abadia: N('LUG.abadia', 'La Abadía en Llamas: un templo de Aura y Lara donde ahora se reza… pero a otro.', '[unsettling, slow] La Abadía en Llamas: un templo de Aura y Lara donde ahora se reza… [whispering] pero a otro.'),
-  castillo: N('LUG.castillo', 'El Castillo del Conde: donde el Conde guarda la grieta.', '[dark, menacing] El Castillo del Conde: donde el Conde guarda la grieta.'),
+  ...POSTALES_SANGRE,
 };
 
 export const LINEAS_LUGARES: LineaCine[] = [...Object.values(LLEGADAS).flat(), ...Object.values(POSTALES)];

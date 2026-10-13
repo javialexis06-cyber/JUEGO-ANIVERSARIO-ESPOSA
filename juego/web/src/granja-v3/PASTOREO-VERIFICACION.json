@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "fecha": "2026-10-13",
+  "zonaHoraria": "America/Bogota",
+  "bloque": "Pastoreo libre y regreso del ganado",
+  "regresion": {
+    "suites": 48,
+    "fallos": 0,
+    "logicaPastoreo": 20
+  },
+  "navegador": {
+    "pastoreo": {
+      "checks": [
+        "V5 anterior inicia con pastoreo en corral y conserva sus animales",
+        "La puerta física abre el refugio y tocar el comedero presenta el control de pastoreo",
+        "Guardado rechazado restaura el modo de pastoreo sin perder comida ni animales",
+        "Activar desde el comedero guarda el modo y permite salir por la puerta sin botón de texto",
+        "El portón cerrado mantiene el ganado dentro y las búsquedas respetan su presupuesto",
+        "Abrir el portón desde el mundo permite atravesarlo con pasos y pastorear por el terreno",
+        "Recarga conserva el modo, las posiciones libres y los genomas sin guardar rutas de sesión",
+        "Solicitar regreso desde el comedero lleva la manada caminando al corral",
+        "El regreso y el inventario sobreviven otra recarga en horizontal sin desbordamiento"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenarioPreparado": "Refugio, recinto, hora, terreno y posiciones de aproximación preparados en contexto aislado. Controles, puertas, portón, guardado y recarga reales. Fotos y dibujo continuo pausados; rutinas adelantadas con el paso real del motor en intervalos de 0.25 s, sin escribir posiciones de ganado. Captura con render real; el recorrido general mantiene WebGL y fotos.",
+      "dispositivosFisicos": []
+    },
+    "puertasMostradoresMapas": {
+      "checks": [
+        "Clic en la puerta entra en el negocio y deja caminar sin panel ni cuadro de salida",
+        "En la entrada no se puede comprar a distancia ni gastar monedas",
+        "Si falla guardar una compra, monedas y productos se restauran sin doble entrega",
+        "Caminar al mostrador abre iconos y precios; comprar entrega una unidad con su precio anterior",
+        "Clic en la puerta de salida devuelve al pueblo desde caché sin reconstruirlo ni usar un botón de texto",
+        "El teclado cruza el umbral para entrar y salir; el regreso no vuelve a abrir la puerta",
+        "La puerta del anexo da acceso a la vivienda y su umbral devuelve al barrio",
+        "El mapa conserva nombres de ubicaciones y usa retratos donde están los vecinos, sin sus nombres",
+        "El minimapa sigue posiciones decimales en los cuadros de movimiento, sin esperar el tic de 200 ms",
+        "Recarga conserva V5, la compra y la jornada en escritorio sin desbordamiento"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        1280,
+        720
+      ],
+      "escenarioPreparado": "Pueblo y mediodía preparados; movimiento, clics, umbrales, compras y guardado reales. Fotos y dibujo continuo pausados en este recorrido específico; capturas con un render real. El recorrido general aparte conserva dibujo y fotos.",
+      "dispositivosFisicos": []
+    },
+    "integracionWebGL": {
+      "checks": [
+        "Botón de la casa abre la granja V5 sobre el build actual",
+        "Teclado mueve al personaje compartido actual",
+        "Mouse abre el buzón y conserva lectura",
+        "Inventario actual accesible en horizontal",
+        "Puertas de granja → casa real → granja conservan posición, inventario y jornada",
+        "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenariosPreparados": "Cuarto habilitado, avatar posicionado y sesión local de casa preparada en contexto nuevo aislado.",
+      "dispositivosFisicos": []
+    }
+  },
+  "totalNavegador": 25,
+  "builds": {
+    "pareja": "correcto",
+    "amigos": "correcto; filtro de contenidos conservado"
+  },
+  "rendimiento": {
+    "contexto": "Coste JS del paso de ganado en Node, escenarios válidos preparados y 30 segundos activos por caso. Sin dibujo, GPU, casas, fotos o tiempo real; no es FPS de hardware.",
+    "casos": [
+      {
+        "animales": 2,
+        "refugios": 1,
+        "cuadros": 600,
+        "medianaMs": 0.012,
+        "p95Ms": 0.079,
+        "maxMs": 7.073,
+        "maxBusquedas": 2,
+        "maxNodos": 52,
+        "maxCeldas": 53
+      },
+      {
+        "animales": 12,
+        "refugios": 1,
+        "cuadros": 600,
+        "medianaMs": 0.045,
+        "p95Ms": 0.454,
+        "maxMs": 2.826,
+        "maxBusquedas": 2,
+        "maxNodos": 52,
+        "maxCeldas": 24
+      },
+      {
+        "animales": 240,
+        "refugios": 20,
+        "cuadros": 600,
+        "medianaMs": 1.18,
+        "p95Ms": 3.751,
+        "maxMs": 14.421,
+        "maxBusquedas": 2,
+        "maxNodos": 64,
+        "maxCeldas": 288
+      }
+    ]
+  },
+  "rendimientoAntesDelReparto": {
+    "contexto": "Coste JS del paso de ganado en Node, escenarios válidos preparados y 30 segundos activos por caso. Sin dibujo, GPU, casas, fotos o tiempo real; no es FPS de hardware.",
+    "casos": [
+      {
+        "animales": 2,
+        "refugios": 1,
+        "cuadros": 600,
+        "medianaMs": 0.016,
+        "p95Ms": 0.084,
+        "maxMs": 6.974,
+        "maxBusquedas": 2,
+        "maxNodos": 52,
+        "maxCeldas": 53
+      },
+      {
+        "animales": 12,
+        "refugios": 1,
+        "cuadros": 600,
+        "medianaMs": 0.046,
+        "p95Ms": 0.277,
+        "maxMs": 2.533,
+        "maxBusquedas": 2,
+        "maxNodos": 52,
+        "maxCeldas": 24
+      },
+      {
+        "animales": 240,
+        "refugios": 20,
+        "cuadros": 600,
+        "medianaMs": 0.891,
+        "p95Ms": 9.451,
+        "maxMs": 18.422,
+        "maxBusquedas": 2,
+        "maxNodos": 768,
+        "maxCeldas": 335
+      }
+    ]
+  },
+  "fuentesSha256": {
+    "granja-v3/pastoreo-ganado.ts": "67b46fe5a52e47816f3d8cc11f920b8dc2253393e2e5e986251fa1641bb7b73c",
+    "granja-v3/rutinas-ganado.ts": "6f4e131e0df33ab552bae7c956ef988003324de9daac9c1fef1b43e011efa246",
+    "granja-v3/refugios.ts": "2878b5abb64afe53e17808512ca2fb106d7c581c49de6b740f2748eea4a70cfa",
+    "granja-v3/estado.ts": "6437f6f63dea08ea9f8a77612e7ca435449963d23c4ad24a10d2ba355bf9d35f",
+    "granja-v3/motor.ts": "b8ad5c966e2c9d0726b95f2c86b3b30d9bc7dccf142ca4b431d643680ce8d49e",
+    "granja-v3/main.ts": "8538defd3940a842a065cb4bb2c540b0350bb8eb2421be6d8c770d52081fc2c8",
+    "granja-v3/cercos.ts": "a188d57f62aacd95c31c490ae2ee852b0c297296d5d37c9a1763903ac761e85f",
+    "granja-v3/ganaderia.ts": "ebd0fe2b020476e3b9228b8cf9625e67794d4bb3c64f46a379a5af23ed5722c3",
+    "granja-v3/ganaderia-ui.ts": "3521d55567c74f84e6a41a40635647c209cb85f0fa1ee4e5dfe3fba5838bdaa3",
+    "granja-v3/cine-lineas-lugares.ts": "465ca07f6460b6bdd08d0293d815c3632c2b54ee4db25f502085f68d351a4c66",
+    "sangre/datos/postales.ts": "76a1d91c7543637d6e5ff63e4fbfbc97d92a9e2a4c5c9f46e0e5deb9aea154c0",
+    "sangre/ui/postal.ts": "c824113c57f71f4dee4c4593e014c996e1a675b31a9d3c7bafc31d2144238325"
+  },
+  "conservado": {
+    "revisionVisual": "d2e7bbb59c442fca3d0939889860f7e917d17a68",
+    "archivosIdenticos": [
+      "juego/web/public",
+      "personajes/blender",
+      "juego/web/src/casa",
+      "juego/web/src/granja-v3/vista.ts",
+      "juego/web/src/granja-v3/ganaderia-render.ts",
+      "juego/web/src/granja-v3/compania-render.ts",
+      "juego/web/src/granja-v3/escenas-produccion.ts",
+      "juego/web/src/granja-v3/cine-actores.ts",
+      "juego/web/src/granja-v3/cine-epilogo.ts",
+      "juego/web/src/granja-v3/genetica.ts",
+      "juego/web/src/granja-v3/cuidados.ts"
+    ],
+    "postalesPublicas": "Cinco IDs, textos y dirección de voz idénticos; sin nuevas llamadas de audio"
+  },
+  "publicacion": {
+    "instaladorAnteriorVerificado": "apk-219",
+    "shaAnterior": "d4b3eeeb1b4ce61e495a8d975e52505787d5deec",
+    "requiereCompilacionPosterior": true
+  },
+  "limites": [
+    "Partidas, hora, recinto y posiciones de aproximación preparados; no certifica una campaña desde cero.",
+    "El recorrido específico adelanta rutinas por su paso real, sin escribir posiciones, y pausa dibujo continuo y fotos; el recorrido general los conserva.",
+    "Las métricas de Node usan suelo despejado y 30 segundos de tiempo activo preparado; no son FPS de hardware o del juego completo.",
+    "Distribuir búsquedas reduce su concentración pero añade espera y trabajo de mantenimiento; se conservan mediana, p95 y máximo.",
+    "Bebida, gestación, reproducción y equipo de compañeros, monturas fantásticas y formación avanzada de manadas siguen pendientes."
+  ]
+}

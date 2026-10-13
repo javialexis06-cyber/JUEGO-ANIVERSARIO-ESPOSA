@@ -612,3 +612,12 @@ de three.js (cajas, cilindros) se van reemplazando por modelos de `personajes/bl
 - Cuatro jefes elementales de nivel 3 y dos cámaras: Forma Fija para F12, proyección del conducto de Nath para P23. Conservan soluciones técnicas, IDs y voces; Fuatia no es un jefe. Reintentar no repite botín.
 - Arte: claves `jefe:<tipo>`, `fauna:<id>` y `habitat:<region>`. Marcadores y salas reutilizan piezas existentes; los avisos sencillos describen el área real de daño. Las animaciones no controlan costes ni colisiones.
 - Ver `REGIONES-INTEGRACION.md`; continúan museo, pesca ampliada, logística, obras comunitarias y balance. Los avances visuales y del lavado se combinan antes de publicar.
+
+
+### Pastoreo libre y protección de la manada · 13 de octubre de 2026
+
+- Continúa el frente de motor por instrucción de Javier. Se integra el frente visual hasta `d2e7bbb5`, conservando películas, lavado, modelos, movimientos e iconos de máquinas. No se generan recursos de arte o audio.
+- El comedero activa el paseo fuera del corral y solicita regreso. Caminan en terreno propio respetando cercas, portones, obstáculos y cuerpos próximos; lluvia, enfermedad y noche conducen al refugio. Genes, cuidados reales, productos y calendario se conservan.
+- V5 mantiene campos opcionales del refugio y rutinas locales. La operación se guarda con reversión completa si falla almacenamiento. No se mueve un refugio mientras su ganado esté en el terreno. Las trufas de esos cerdos aparecen junto a su posición y se recogen una vez.
+- Dos inicios y 64 pasos de búsqueda por cuadro, con máximo de 384 nodos por búsqueda y caché acotada. La revisión y los modelos no se reconstruyen por caminar. Ver `PASTOREO-INTEGRACION.md` y la evidencia de pruebas antes de integrar.
+- Sangre y Ceniza comparte ahora sus cinco postales públicas desde un módulo propio. Se conservan IDs, textos y dirección de voz; el filtro de amigos permanece activo y su paquete no solicita los medios de la granja.

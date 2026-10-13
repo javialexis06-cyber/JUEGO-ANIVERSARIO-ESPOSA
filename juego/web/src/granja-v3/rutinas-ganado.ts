@@ -1,10 +1,11 @@
-import { capacidadRefugio, camaAnimal, esperaCorral } from './refugios';
+import { capacidadRefugio, camaAnimal, esperaCorral, dentroPastoreo } from './refugios';
 import type { Animal, Edificio, EstadoGranja } from './estado';
+import type { PastoreoGanado } from './pastoreo-ganado';
 
 export type ActividadGanado='caminar'|'pastorear'|'descansar'|'dormir'|'esperar';
 /** Posiciones locales: mover o girar el refugio también mueve su manada. */
 export interface RutinaAnimal {
- version:1;lugar:'corral'|'refugio';u:number;v:number;objetivoU:number;objetivoV:number;
+ version:1;lugar:'corral'|'refugio'|'campo';u:number;v:number;objetivoU:number;objetivoV:number;
  actividad:ActividadGanado;espera:number;paso:number;direccion:number;pausa:number;
 }
 const limite=(n:number,a:number,b:number)=>Math.max(a,Math.min(b,n));
@@ -17,19 +18,22 @@ export function rutinaValida(r:unknown):r is RutinaAnimal {
  if(!r||typeof r!=='object')return false;const a=r as RutinaAnimal;
  const rango=(v:number,x:number,y:number)=>Number.isFinite(v)&&v>=x&&v<=y;
  const min=a.lugar==='corral'?4.3:.3,max=a.lugar==='corral'?7.7:3.85;
- return a.version===1&&['corral','refugio'].includes(a.lugar)&&['caminar','pastorear','descansar','dormir','esperar'].includes(a.actividad)&&rango(a.u,.3,3.7)&&rango(a.v,min,max)&&rango(a.objetivoU,.3,3.7)&&rango(a.objetivoV,min,max)&&rango(a.espera,0,60)&&rango(a.pausa,0,3)&&rango(a.direccion,-Math.PI,Math.PI)&&Number.isSafeInteger(a.paso)&&a.paso>=0&&a.paso<=1e9;
+ const posicion=a.lugar==='campo'?dentroPastoreo(a)&&dentroPastoreo({u:a.objetivoU,v:a.objetivoV}):rango(a.u,.3,3.7)&&rango(a.v,min,max)&&rango(a.objetivoU,.3,3.7)&&rango(a.objetivoV,min,max);
+ return a.version===1&&['corral','refugio','campo'].includes(a.lugar)&&['caminar','pastorear','descansar','dormir','esperar'].includes(a.actividad)&&posicion&&rango(a.espera,0,60)&&rango(a.pausa,0,3)&&rango(a.direccion,-Math.PI,Math.PI)&&Number.isSafeInteger(a.paso)&&a.paso>=0&&a.paso<=1e9;
 }
 export const puertaAbierta=(b:Edificio)=>b.puertaGanado!==false;
 export function puedePastorear(s:EstadoGranja,b:Edificio,tiempo:string){return s.jornada.minutos>=360&&s.jornada.minutos<1020&&!['lluvia','tormenta','nieve'].includes(tiempo)&&!(Math.floor(s.jornada.diasCompletados/28)%4===3&&b.clima==='templado');}
-export function animalVisible(s:Pick<EstadoGranja,'interior'>,a:Animal){return !a.rutina||(s.interior===a.edificioId?a.rutina.lugar==='refugio':!s.interior&&a.rutina.lugar==='corral');}
+export function animalVisible(s:Pick<EstadoGranja,'interior'>,a:Animal){return !a.rutina||(s.interior===a.edificioId?a.rutina.lugar==='refugio':!s.interior&&a.rutina.lugar!=='refugio');}
 export const clipRutina=(a:Animal)=>a.rutina?.actividad==='caminar'?'caminar':a.rutina?.actividad==='pastorear'?'comer':'reposo';
-export function textoRutina(a:Animal){const r=a.rutina;return !r?'En su refugio':({caminar:'Paseando',pastorear:'Pastoreando',descansar:'Descansando',dormir:'Durmiendo',esperar:'Esperando que abras la puerta'}[r.actividad])+` · ${r.lugar==='corral'?'corral':'refugio'}`;}
+export function textoRutina(a:Animal){const r=a.rutina;return !r?'En su refugio':({caminar:'Paseando',pastorear:'Pastoreando',descansar:'Descansando',dormir:'Durmiendo',esperar:'Esperando paso libre'}[r.actividad])+` · ${r.lugar==='campo'?'terreno':r.lugar==='corral'?'corral':'refugio'}`;}
 export function pausaAnimal(a:Animal,segundos=1.2){if(a.rutina)a.rutina.pausa=limite(segundos,0,3);}
 export function reiniciarRutinas(s:EstadoGranja){const grupos=new Map<string,number>();for(const a of s.animales){const i=grupos.get(a.edificioId)??0;grupos.set(a.edificioId,i+1);a.rutina=crearRutina(i,'refugio',capacidadRefugio(s.edificios.find(b=>b.id===a.edificioId)!));}}
 
 /** Solo recibe segundos de juego activo. Nunca se llama desde la reconciliación offline. */
-export function avanzarRutinas(s:EstadoGranja,segundos:number,tiempo:(b:Edificio)=>string):boolean {
- if(!Number.isFinite(segundos)||segundos<=0||s.jornada.resumenPendiente||s.zona!=='granja'||s.servicio||s.aventura.destinoActual)return false;
+export function avanzarRutinas(s:EstadoGranja,segundos:number,tiempo:(b:Edificio)=>string,pastoreo?:PastoreoGanado,jugador?:{x:number;z:number}):boolean {
+ if(!Number.isFinite(segundos)||segundos<=0||s.jornada.resumenPendiente||s.zona!=='granja'||s.servicio||s.astra?.actual||s.aventura.destinoActual)return false;
+ const pastoreoActivo=!!pastoreo&&(s.edificios.some(b=>b.pastoreoLibre===true)||s.animales.some(a=>a.rutina?.lugar==='campo'));
+ if(pastoreoActivo)pastoreo!.preparar(s,segundos,jugador);
  const dt=Math.min(segundos,.25),grupos=new Map<string,Animal[]>();for(const a of s.animales){const grupo=grupos.get(a.edificioId)??[];grupo.push(a);grupos.set(a.edificioId,grupo);}
  let cambió=false;
  for(const b of s.edificios){const animales=grupos.get(b.id);if(!animales)continue;const exterior=puedePastorear(s,b,tiempo(b)),abierta=puertaAbierta(b),capacidad=capacidadRefugio(b);
@@ -37,6 +41,7 @@ export function avanzarRutinas(s:EstadoGranja,segundos:number,tiempo:(b:Edificio
    if(!a.rutina){a.rutina=crearRutina(indice,exterior&&abierta?'corral':'refugio',capacidad);cambió=true;}
    const r=a.rutina,cama=camaAnimal(indice,capacidad),corral=esperaCorral(indice,capacidad);if(r.pausa>0){r.pausa=Math.max(0,r.pausa-dt);continue;}
    const sano=a.cuidado.illnessSince===null,salir=exterior&&abierta&&sano;
+   if(pastoreoActivo&&pastoreo!.paso(s,b,a,dt,exterior))continue;
    const quiereCambiar=r.lugar==='refugio'?salir:!exterior||!sano;
    if(quiereCambiar){
     r.objetivoU=!abierta&&r.lugar==='corral'?corral.u:2;r.objetivoV=r.lugar==='refugio'?(Math.abs(r.u-2)>.035?r.v:3.8):!abierta?corral.v:4.45;r.espera=0;

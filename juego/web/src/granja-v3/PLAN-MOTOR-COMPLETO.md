@@ -1,6 +1,6 @@
 # Plan del motor completo: capacidades, variedad y aceptación
 
-## Auditoría vigente · 12 de octubre de 2026
+## Auditoría vigente · 13 de octubre de 2026
 
 Se recorren 36 contratos desde una partida nueva por acciones ordinarias y vía técnica. Se conserva
 la V5, los recursos iniciales y la economía; el perfil de Sangre se prepara como entrada externa.
@@ -14,7 +14,7 @@ Ver [BALANCE-INTEGRACION.md](BALANCE-INTEGRACION.md) y su evidencia, además de 
 | Vida social | 178 residentes, 93 domicilios, 154 rutinas ampliadas, regalos, compras, 98 vínculos y recuerdos | Contenido adicional de futuras expansiones y romance configurable sin definir |
 | Regiones | 24 actividades renovables, habitats, cinco colonias con genética y cuidado, seis mecanismos | Formas finales y animación cinematográfica a cargo del frente visual |
 | Pesca y museo | 26 peces con sesiones guardadas, picada y seis movimientos de sedal; artefactos, trampas y colecciones | Una misma familia de controles con 26 perfiles; destreza y rendimiento en teléfonos reales no medidos |
-| Cercos y compañeros | Tres vallas sólidas, portón guardado, protección del paso y llamada por rutas | Ganado fuera del corral, reproducción, equipamiento y monturas fantásticas pendientes |
+| Cercos y compañeros | Tres vallas sólidas, portón guardado, protección del paso, llamada y pastoreo libre por rutas con regreso | Bebida, gestación, reproducción y equipo de compañeros, monturas fantásticas y formación de manadas pendientes |
 | Producción y logística | Colas, reservas, cofres, conectores locales, exportación opcional y carga pagada entre archivos | Los cofres no forman un inventario global instantáneo; la carga necesita una noche y retirada |
 | Comunidad | Cuatro obras, pedidos semanales, 52 reuniones con 312 líneas y vecinos presentes; prioridades y decisiones recuperables | Rita e Ivo revisan la terminal; sin nuevas visitas al muelle, galería o banco. Las 312 voces nuevas siguen pendientes |
 | Navegación y rendimiento | Puertas y umbrales, mostradores, retratos, minimapa continuo, cachés acotadas y utilería por instancias | Primera carga y compilación de shaders siguen existiendo; hardware físico sin medir |
@@ -24,6 +24,14 @@ La matriz histórica de abajo conserva la línea base V4 del 7 de octubre; sus r
 son una lista vigente de funciones inexistentes. Tampoco se convierte esta auditoría en certificación
 de paridad completa con juegos o mods externos. El contenido futuro y la producción cinematográfica
 permanecen separados del motor entregado.
+
+## Pastoreo libre · 13 de octubre de 2026
+
+La manada puede salir por los pasos del corral, recorrer terreno propio respetando obstáculos y portones,
+regresar a petición, por lluvia o de noche y conservar posición al recargar. Se activa desde el comedero;
+las rutinas anteriores permanecen por defecto. El cálculo tiene un presupuesto compartido y cachés de sesión;
+caminar no modifica productos, genética o cuidado real. Ver [PASTOREO-INTEGRACION.md](PASTOREO-INTEGRACION.md).
+Esta ampliación no cierra bebida, gestación ni las capacidades pendientes de compañía.
 
 ## Campaña, historias y premios integrados · 11 de octubre de 2026
 
