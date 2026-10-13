@@ -130,3 +130,28 @@ elementos), `actorVecino(id)` (cualquier habitante con su ropa; `sin` quita el s
 Actores nuevos: `actorNathGora()` y `actorVaelThor()` (armados con el clóset; los modelos propios siguen pendientes).
 Las presentaciones de lugares viven en `postal.ts` (cámara del juego, franjas, nombre y narrador), se disparan al
 llegar a un lugar nuevo (`vigilarLugar` en `main.ts`) y se recuerdan en el teléfono (`granja-postales-vistas`).
+
+## Las películas del Acto III (13 de octubre de 2026)
+
+`src/granja-v3/cine-acto3.ts`:
+
+| Id | Película | Escenario | Cómo se ve |
+|---|---|---|---|
+| S08 | La ayuda que no llegó (cómo nació Nath'Gora) | papel animado: láminas pintadas en lienzo (guardián, estrella, templo, coronas que caen) | al cerrar el secreto S08 |
+| C12 | El día posterior al nacimiento | el archivo (más grande) con las cuatro marcas de los elementos | «Ver C12» |
+| ENE | Lo que no vuelve idéntico (Eneas, los ciclos) | el Rosal Eterno de Verdia (casa de Verdia, rosales, cerezos, arco de rosas) | al cerrar la historia de Eneas |
+| OFE | La casa que dejé esperando (Ofelia) | Senda al atardecer (casa de Senda con andamio que se va, escalones de luz) | al cerrar la historia de Ofelia |
+| C06 | La casa de Elián | el refugio de la Forma Fija: el vaso, la ventana y la marca de humo cambian | «Ver C06» |
+| SER | El nombre que no se pronuncia por otro (Serena) | un cuarto de noche con una vela | al cerrar la historia de Serena |
+
+`archivo(cast)` y `cuarto(m, ancho, fondo)` (en `cine-acto1.ts`) arman cuartos de cualquier tamaño con cualquier reparto.
+En interiores la cámara de los diálogos va más alta (mira por encima de las cabezas) y el narrador habla desde una esquina.
+
+## Las películas de los Actos IV y V (13 de octubre de 2026)
+
+`src/granja-v3/cine-acto4.ts`: C13 (la estación sobre Celia, con el planeta en el cielo y las cuatro lecturas), C14
+(Confluencia: cuatro pilares de los elementos que se cierran uno a uno y Vael'Thor en proyección), C07 (el tratado
+en la plaza del Pueblo del Sol; los representantes de los otros mundos con un halo de comunicación; Celia aparece en
+la mesa), C08 (el ceramista: la vasija abierta y dos recuerdos en papel), C09 (el Borde de Astra: el escudo, la
+constelación y Nath'Gora como una sombra enorme que se aleja) y C10 (los dos surcos de C01, ya sanos, con
+`granja(false, { reparto })`). Las 14 cinemáticas de la campaña ya son película y se ven al tocar «Ver».
